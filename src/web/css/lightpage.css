@@ -1,0 +1,108 @@
+/*
+ * lightpage.css
+ */
+
+h1 {
+	color: blue;
+	text-align: center;
+}
+body {
+	background-color: #d0e4fe;
+}
+
+/*----------------------------------------------------
+ * Slider stuff
+ *   back:   rgb(230,230,230)
+ *   dark:   rgb(90,97,90)
+ *   medium  rgb(189,190,189)
+ */
+ 
+.slider {
+	position:			relative;
+    background-color:	rgb(230,230,230);
+    -moz-user-focus:	normal;
+    -moz-user-select:	none;
+    cursor:				default;
+}
+
+.horizontal {
+	width:				200px;
+	height:				29px;
+}
+
+.slider input {
+	display:			none;
+}
+
+.slider .handle {
+	position:			absolute;
+    -moz-user-select:	none;
+	cursor:				default;
+	background:			rgb(189,190,189);
+	border:				1px solid;
+	border-color:		rgb(200,200,200) rgb(120,120,120)
+						rgb(120,120,120) rgb(200,200,200)
+}
+
+/*      inner sets size 
+.slider.horizontal .handle {
+	width:				31px;
+	height:				14px;
+	background-image:	url("handle.horizontal.png");
+}
+*/
+
+.slider.horizontal .handle div {
+}
+
+.slider.horizontal .handle.hover {
+}
+
+.slider .line {
+	position:			absolute;
+	font-size:			0.01mm;
+	overflow:			hidden;
+	border:				1px solid;
+	background:			rgb(189,190,189);
+	box-sizing:			content-box;
+	-moz-box-sizing:	content-box;
+	border-color:		rgb(230,230,230) rgb(189,190,189)
+						rgb(189,190,189) rgb(230,230,230);
+}
+
+.slider.horizontal .line {
+	height:				1px;
+}
+
+.slider .line div {
+	width:				1px;
+	height:				1px;        
+	border:				1px solid;
+	border-color:		rgb(230,230,230) rgb(189,190,189)
+						rgb(189,190,189) rgb(230,230,230);
+}
+
+/* -- */
+/* inner border */
+.slider .handle div {
+	font-size:			1px;
+	border:				1px solid;
+	box-sizing:			content-box;
+	-mozbox-sizing:		content-box;
+	background:			rgb(230,230,230);
+	border:				1px solid;
+	background-image:	url("handle.horizontal.png");
+	border-color:		rgb(230,230,230) rgb(189,190,189)
+						rgb(189,190,189) rgb(230,230,230);
+}
+
+.slider.horizontal .handle div {
+	width:				8px;
+	height:				18px;
+}
+
+.slider.horizontal .handle.hover {
+				
+}
+
+/* ### END */

@@ -1,0 +1,85 @@
+/*
+ * mainpage.css
+ */
+
+body {
+	background-color: #d0e4fe;
+}
+h1 {
+	color: blue;
+	text-align: center;
+}
+
+.good_floatingWindow{
+	width:300px;
+	font-family: Trebuchet MS, Lucida Sans Unicode, Arial, sans-serif;
+	font-size:0.9em;
+	position:absolute;
+	overflow:hidden;	
+	z-index:10000;	
+	}
+
+.good_floatingWindow div{
+	position:relative;
+	}
+
+.good_floatingWindow .good_windowTop{
+	width:100%;
+	height:17px;
+	position:relative;
+	background-color: #707070;
+	}
+
+.good_floatingWindow .good_topButtons{
+	float: right;
+	z-index: 10;
+	position:absolute;
+	right:0px;
+	width:35px;
+	}
+
+.good_topButtons img{
+	float:left;
+	padding-left:2px;
+	}
+
+.good_windowMiddle {
+	border-left:3px solid #707070;	
+	}
+
+.good_windowContent{
+	border-right:3px solid #707070;
+	padding-left:5px;
+	padding-right:2px;
+	height:100%;
+	overflow:hidden;
+	background-color:#FFF;
+	}
+
+.good_windowBottom{
+	border-left: 3px solid #707070;
+	border-right:3px solid #707070;
+	border-bottom: 3px solid #707070;
+	position:relative;
+	height:0px;
+	background-color:#FFFFFF;
+	}
+
+.good_windowBottom img{
+	float:right;
+	}
+
+.topCenterImage{
+	position:absolute;
+	left:3px;
+	width:5000px;
+	height:17px;
+	}
+
+.resizeImage{
+	position:absolute;
+	right:1px;
+	bottom:1px;
+	}
+
+/* ### END */
