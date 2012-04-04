@@ -98,7 +98,9 @@ class UPBControllerAPI(lighting.ControllerAPI):
         for l_key, l_dict in p_dict.iteritems():
             print " - ", l_key, l_dict
             Name = l_dict.get('Name', 'InsteonLightingController')
-            l_ctlr = UPBControllerData(Name)
+            #l_ctlr = UPBControllerData(Name)
+            l_ctlr = lighting.ControllerAPI.load_controller(self, l_dict)
+            """
             l_ctlr.Family = l_dict.get('Family', 'Insteon')
             l_ctlr.Interface = l_dict.get('Interface', 'serial')
             l_ctlr.Port = l_dict.get('Port', '/dev/ttyUSB0')
@@ -112,6 +114,7 @@ class UPBControllerAPI(lighting.ControllerAPI):
             l_ctlr.XonXoff = l_dict.get('XonXoff', False)
             l_ctlr.RtsCts = l_dict.get('RtsCts', False)
             l_ctlr.DsrDtr = l_dict.get('DsrDtr', False)
+            """
             lighting.Controller_Data[Name] = l_ctlr
 
     def dump_controllers(self):

@@ -59,7 +59,7 @@ class SerialDriverUtility(SerialDriverData):
         #(la, lb, lc) = self.get_one_message()
         #if la > 0:
         #    print "~~~Driver_Serial.SerialDriver._serialLoop()"
-        self.read_response()
+        self.read_device()
 
     def get_config(self, p_family, p_key):
         for l_key, l_obj in lighting.Controller_Data.iteritems():
@@ -90,22 +90,22 @@ class SerialDriverAPI(SerialDriverUtility):
     """Contains all external commands.
     """
 
-    def open_serial(self):
+    def open_device(self):
         """will open and initialize the serial port.
         """
 
-    def close_serial(self):
+    def close_device(self):
         """Flush all pending output and close the serial port.
         """
         self.m_serial.close()
 
-    def write_command(self, p_message):
+    def write_device(self, p_message):
         """Send the command to the PLM and wait a very short time to be sure we sent it.
         """
         self.m_serial.write(p_message)
         time.sleep(0.1)
 
-    def read_response(self):
+    def read_device(self):
         """Read the serial device.
         Attempt reading till a new read returns nothing.
         Return the bytearray ending with ACK or NAK, hold the rest 
@@ -130,7 +130,7 @@ class SerialDriverMain(SerialDriverAPI):
         #print "---SerialDriverMain.__init__()", p_obj
         self.m_message = bytearray()
         self.m_logger = logging.getLogger('PyHouse.SerialDriver')
-        self.m_logger.info(" Initializing serial port")
+        #self.m_logger.info(" Initializing serial port")
         self.m_serial = serial.Serial(p_obj.Port)
         self.m_serial.baudrate = p_obj.BaudRate
         self.m_serial.bytesize = int(p_obj.ByteSize)
@@ -142,8 +142,8 @@ class SerialDriverMain(SerialDriverAPI):
             self.m_serial.stopbits = serial.STOPBITS_ONE
         self.m_serial.timeout = float(p_obj.Timeout)
         #
-        self.m_logger.info("Configure() - serial port {0:} @ {1:}".format(p_obj.Port, p_obj.BaudRate))
-        self.open_serial()
+        self.m_logger.info("Initialized serial port {0:} @ {1:} Baud".format(p_obj.Port, p_obj.BaudRate))
+        self.open_device()
         LoopingCall(self._serialLoop).start(1)
 
 ### END

@@ -131,12 +131,12 @@ class InsteonControllerData(lighting.ControllerData):
         lighting.ControllerData.__init__(self, Name)
 
     def XX__repr__(self):
-        #l_ret = lighting.ControllerData.__repr__(self)
-        #l_ret += " Vendor:{0}".format(self.Vendor)
-        return #l_ret
+        l_ret = lighting.ControllerData.__repr__(self)
+        l_ret += " Vendor:{0:x}:{1:x} ".format(self.Vendor, self.Product)
+        return l_ret
 
 
-class InsteonControllerAPI(object):
+class InsteonControllerAPI(lighting.ControllerAPI):
     """
     """
 
@@ -145,24 +145,7 @@ class InsteonControllerAPI(object):
         for l_key, l_dict in p_dict.iteritems():
             #print " - Loading ", l_key, l_dict
             Name = l_dict.get('Name', 'InsteonLightingController')
-            l_ctlr = InsteonControllerData(Name)
-            l_ctlr.Active = l_dict.get('Active', False)
-            l_ctlr.BaudRate = l_dict.get('BaudRate', None)
-            l_ctlr.ByteSize = l_dict.get('ByteSize', None)
-            l_ctlr.DsrDtr = l_dict.get('DsrDtr', None)
-            l_ctlr.Family = l_dict.get('Family', 'Insteon')
-            l_ctlr.InterCharTimeout = l_dict.get('InterCharTimeout', None)
-            l_ctlr.Interface = l_dict.get('Interface', None)
-            l_ctlr.Parity = l_dict.get('Parity', None)
-            l_ctlr.Port = l_dict.get('Port', None)
-            l_ctlr.Product = l_dict.get('Product', None)
-            l_ctlr.RtsCts = l_dict.get('RtsCts', None)
-            l_ctlr.StopBits = l_dict.get('StopBits', None)
-            l_ctlr.Timeout = l_dict.get('Timeout', None)
-            l_ctlr.Type = l_dict.get('Type', None)
-            l_ctlr.WriteTimeout = l_dict.get('WriteTimeout', None)
-            l_ctlr.XonXoff = l_dict.get('XonXoff', None)
-            l_ctlr.Vendor = l_dict.get('Vendor', None)
+            l_ctlr = lighting.ControllerAPI.load_controller(self, l_dict)
             lighting.Controller_Data[Name] = l_ctlr
             #print " - Result ", l_ctlr
 
@@ -173,12 +156,21 @@ class InsteonButtonData(lighting.ButtonData):
         lighting.ButtonData.__init__(self, Name)
 
 
-class InsteonButtonAPI(InsteonButtonData):
+class InsteonButtonAPI(lighting.ButtonAPI, InsteonButtonData):
     """
     """
 
+    def load_insteon_buttons(self, p_dict):
+        print " - Insteon_Device.load_insteon_buttons ", p_dict.keys()
+        for l_key, l_dict in p_dict.iteritems():
+            print " - Loading ", l_key, l_dict
+            Name = l_dict.get('Name', 'InsteonLightingButton')
+            l_ctlr = lighting.ButtonAPI.load_button(self, l_dict)
+            #lighting.Button_Data[Name] = l_ctlr
+            #print " - Result ", l_ctlr
 
-class LoadSaveInsteonData(InsteonLightingAPI, InsteonControllerAPI):
+
+class LoadSaveInsteonData(InsteonLightingAPI, InsteonControllerAPI, InsteonButtonAPI):
 
     def build_light_entry(self, p_key, p_dict):
         """convert a config dict entry to a lighting object
@@ -296,6 +288,7 @@ class InsteonDeviceMain(InsteonDeviceUtility):
         """Load each section of the Insteon family.
         """
         self.load_insteon_controllers(self.m_config.get_value('InsteonControllers'))
+        self.load_insteon_buttons(self.m_config.get_value('InsteonButtons'))
         self.extract_insteon_devices(self.m_config.get_value('InsteonLights'))
         #self.dump_all_devices()
 

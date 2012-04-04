@@ -433,7 +433,7 @@ class InsteonResponses(InsteonAllLinks):
         @return: True if ACK and all is ok
         @return: False if NAK / No response or any other error!
         '''
-        (l_bytes, l_msg) = self.m_serial.read_response()
+        (l_bytes, l_msg) = self.m_serial.read_device()
         Last_Response = l_msg
         l_repeat = 0
         while l_bytes == 0:
@@ -442,7 +442,7 @@ class InsteonResponses(InsteonAllLinks):
                 return False
             else:
                 time.sleep(1.0)
-                (l_bytes, l_msg) = self.m_serial.read_response()
+                (l_bytes, l_msg) = self.m_serial.read_device()
                 l_repeat += 1
         #self.m_logger.debug("response - msg rxed.={0:}".format(self._print_bytearray(l_msg)))
         Last_Response = l_msg
@@ -707,7 +707,7 @@ class SendInsteonCommands(InsteonResponses):
         @return: True is we got back an ACK
         @return: False if we got back a NAK or other error
         """
-        self.m_serial.write_command(p_command)          # Send the command
+        self.m_serial.write_device(p_command)          # Send the command
         l_ret = self.handle_plm_response()
         if l_ret == False:
             l_ret = self.retry_plm_command(p_command)    #something went wrong - try the command again

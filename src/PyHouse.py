@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-""" Run the python version house automation.
+""" PyHouse.py - Run the python version house automation.
 
 During development this is run by hand.
 It is, however, planned to be a daemon that is kicked off on system start-up.
