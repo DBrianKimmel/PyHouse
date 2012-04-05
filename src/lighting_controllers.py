@@ -36,10 +36,14 @@ class ControllerAPI(ControllerData):
     """
     """
 
+    def load_all_controllers(self, p_dict):
+        for _l_key, l_dict in p_dict.iteritems():
+            self.load_controller(l_dict)
+
     def load_controller(self, p_dict):
         """Load the common part of the controller.
         """
-        print "## lighting.load_controller ", p_dict.keys()
+        #print "## lighting.load_controller ", p_dict.keys()
         Name = p_dict.get('Name', 'LightingController')
         l_ctlr = ControllerData(Name)
         # Common Data
@@ -69,7 +73,11 @@ class ControllerAPI(ControllerData):
         return l_ctlr
 
     def dump_all_controllers(self):
-        pass
+        print "***** All Controllers *****"
+        for l_key, l_obj in Controller_Data.iteritems():
+            print "~~~Controller: {0:}".format(l_key)
+            print "     ", l_obj
+        print
 
 
 ### END

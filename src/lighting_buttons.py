@@ -20,10 +20,14 @@ class ButtonAPI(ButtonData):
     """
     """
 
+    def load_all_buttons(self, p_dict):
+        for l_key, l_dict in p_dict.iteritems():
+            self.load_button(l_dict)
+
     def load_button(self, p_dict):
         """Load the button.
         """
-        print "$$ lighting.load_button ", p_dict.keys()
+        #print "$$ lighting.load_button ", p_dict.keys()
         Name = p_dict.get('Name', 'NoName')
         l_button = ButtonData(Name)
         # Common Data
@@ -50,8 +54,11 @@ class ButtonAPI(ButtonData):
         Button_Data[Name] = l_button
         return l_button
 
-    def dump_all_buttonss(self):
+    def dump_all_buttons(self):
+        print "***** All Buttons *****"
         for l_key, l_obj in Button_Data.iteritems():
-            pass
+            print "~~~Button: {0:}".format(l_key)
+            print "     ", l_obj
+        print
 
 ### END

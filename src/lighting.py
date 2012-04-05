@@ -25,15 +25,19 @@ import logging
 # Import PyMh files
 import configure_mh
 import lighting_buttons
+import lighting_controllers
+import lighting_lights
+import lighting_scenes
+import lighting_status
 
 #from tools import Lister
 
 
 # These globals in the lighting singleton hold the operating data loaded at startup.
-Light_Data = {}
 Light_Status = {}
 Scene_Data = {}
-Controller_Data = {}
+Controller_Data = lighting_controllers.Controller_Data
+Light_Data = lighting_lights.Light_Data
 
 
 Singletons = {}
@@ -47,177 +51,15 @@ m_X10Device = None
 m_UpbDevice = None
 
 
-class ButtonData(lighting_buttons.ButtonData):
-    pass
-
-class ButtonAPI(lighting_buttons.ButtonAPI):
-    def load_button(self, p_dict):
-        lighting_buttons.ButtonAPI.load_button(self, p_dict)
-
-
-class LightingData(object):
-    """Static data we wish to export/share.
-    
-    This is the base data for all sub-classed lighting data
-    
-    Each entry should contain enough information to allow functionality of various family of
-    lighting controllers.  Insteon is the first type coded and UPB is to follow.
-    
-    The real work of controlling the devices is delegated to the modules for that family of devices.
-    
-    Standard characteristics for each light / switch button:
-    """
-
-    Name = 'NoName'
-    Family = None
-    Address = 'varies'
-    Type = 'Undefined'
-    Comment = 'Empty Comment'
-    Controller = False
-    Responder = False
-    Dimmable = False
-    Room = None
-    Coords = 0, 0
-    Master = False
-
-    def __init__(self, Name):
-        self.Name = Name
-
-    def __repr__(self):
-        l_str = "Lighting Name:{0:20.20s} Family: {1:10.10s} Type: {2:10.10s} Comment: {3:40.40s} Room: {4:} Coords: {5:}".format(
-                            self.Family, self.Name, self.Type, self.Comment, self.Room, self.Coords)
-        return l_str
-
-    def get_Name(self):
-        return self.Name
-
-    def get_Type(self):
-        return self.Type
-
-    def get_Family(self):
-        return self.Family
-
-    def get_Comment(self):
-        return self.Comment
-
-    def get_Room(self):
-        return self.Room
-
-    def get_Coords(self):
-        return self.Coords
-
-
-class LightingStatus(object):
-    """
-    """
-    CurLevel = 0
-
-    def __init__(self, CurLevel):
-        self.CurLevel = CurLevel
-
-    def get_CurLevel(self):
-        return self.CurLevel
-
-
-class LightingAPI(LightingData):
-    """A standardized dispatcher to control the lights.
-    The actual work is passed to a family specific module.
-    """
-
-    def turn_light_off(self, _p_name):
-        assert 0, "Turn light off must be subclassed."
-
-    def turn_light_on(self, _p_name):
-        assert 0, "Turn light on must be subclassed."
-
-    def turn_light_dim(self, _p_name, _p_level):
-        assert 0, "Turn light dim must be subclassed."
-
-    def load_all_devices(self):
-        assert 0, "Load all devices must be subclassed."
-
-    def dump_all_devices(self):
-        assert 0, "dump all devices must be subclassed."
-
-    def update_all_devices(self):
-        assert 0, "update all devices must be subclassed."
-
-    def update_all_statuses(self):
-        assert 0, "dump all statuses must be subclassed."
-
-
-class SceneData(object):
-    """
-    """
-
-
-class SceneAPI(SceneData):
-    """
-    """
-
-
-class ControllerData(object):
-    """
-    """
-
-    def __init__(self, Name):
-        #print " --lighting.Controller_Data.__init__() ", Name
-        self.Name = Name
-
-    def X__repr__(self):
-        l_ret = "Lighting Controller Name:{0:}, Family:{1:} ".format(self.Name, self.Family)
-        return l_ret
-
-    def get_Port(self):
-        return self.Port
-
-    def get_BaudRate(self):
-        return int(self.BaudRate)
-
-    def get_Family(self):
-        return self.Family
-
-    def get_Interface(self):
-        return self.Interface
-
-
-class ControllerAPI(ControllerData):
-    """
-    """
-
-    def load_controller(self, p_dict):
-        """Load the common part of the controller.
-        """
-        print "## lighting.load_controller ", p_dict.keys()
-        Name = p_dict.get('Name', 'LightingController')
-        l_ctlr = ControllerData(Name)
-        # Common Data
-        l_ctlr.Active = p_dict.get('Active', 'False')
-        l_ctlr.Family = p_dict.get('Family', 'None')
-        l_ctlr.Interface = p_dict.get('Interface', 'None')
-        l_ctlr.Port = p_dict.get('Port', 'None')
-        l_ctlr.Type = p_dict.get('Type', None)
-        # Serial Data
-        l_ctlr.BaudRate = p_dict.get('BaudRate', None)
-        l_ctlr.ByteSize = p_dict.get('ByteSize', None)
-        l_ctlr.DsrDtr = p_dict.get('DsrDtr', None)
-        l_ctlr.InterCharTimeout = p_dict.get('InterCharTimeout', None)
-        l_ctlr.Parity = p_dict.get('Parity', None)
-        l_ctlr.RtsCts = p_dict.get('RtsCts', None)
-        l_ctlr.StopBits = p_dict.get('StopBits', None)
-        l_ctlr.Timeout = p_dict.get('Timeout', None)
-        l_ctlr.WriteTimeout = p_dict.get('WriteTimeout', None)
-        l_ctlr.XonXoff = p_dict.get('XonXoff', None)
-        # USB Data
-        l_ctlr.Product = p_dict.get('Product', None)
-        l_ctlr.Vendor = p_dict.get('Vendor', None)
-        # Ethernet Data
-        # ---None yet
-        #
-        return l_ctlr
-
-    def dump_all_controllers(self):
-        pass
+class ButtonData(lighting_buttons.ButtonData): pass
+class ButtonAPI(lighting_buttons.ButtonAPI): pass
+class ControllerData(lighting_controllers.ControllerData): pass
+class ControllerAPI(lighting_controllers.ControllerAPI): pass
+class LightingData(lighting_lights.LightingData): pass
+class LightingAPI(lighting_lights.LightingAPI): pass
+class LightingStatus(lighting_status.LightingStatus): pass
+class SceneData(lighting_scenes.SceneData): pass
+class SceneAPI(lighting_scenes.SceneAPI): pass
 
 
 class LightingUtility(LightingAPI):

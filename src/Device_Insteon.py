@@ -21,8 +21,6 @@ import configure_mh
 import lighting
 #from tools import Lister
 
-#from tools import Lister
-
 
 class InsteonLightingData(lighting.LightingData):
     """Insteon specific data we wish to export.  Extends the LightingData class.
@@ -55,7 +53,7 @@ class InsteonLightingData(lighting.LightingData):
     def get_DevCat(self):
         return self.DevCat
 
-    def get_Code(self):
+    def XXget_Code(self):
         return self.Code
 
     def get_GroupList(self):
@@ -101,17 +99,6 @@ class InsteonLightingAPI(lighting.LightingAPI):
         """
         self.m_insteonPLM.turn_light_dim(p_name, p_level)
 
-    def XXload_all_devices(self):
-        """Called from lighting.
-        
-            Load all the insteon devices into a lighting compatable dict and pass back to lighting.py
-        """
-        #print " insteon_Device.load_all_devices() Loading all Insteon lights."
-        #self.clear_lighting_data()
-        self.extract_insteon_devices(self.m_config.get_value('InsteonLights'))
-        #self.extract_insteon_controllers(self.m_config.get_value('InsteonControllers'))
-        #self.extract_insteon_buttons(self.m_config.get_value('InsteonButtons'))
-
     def dump_all_devices(self):
         print "\nDump all Insteon devices"
         for _l_key, l_value in lighting.Light_Data.iteritems():
@@ -130,24 +117,13 @@ class InsteonControllerData(lighting.ControllerData):
     def __init__(self, Name):
         lighting.ControllerData.__init__(self, Name)
 
-    def XX__repr__(self):
-        l_ret = lighting.ControllerData.__repr__(self)
-        l_ret += " Vendor:{0:x}:{1:x} ".format(self.Vendor, self.Product)
-        return l_ret
 
-
-class InsteonControllerAPI(lighting.ControllerAPI):
+class InsteonControllerAPI(lighting.ControllerAPI, InsteonControllerData):
     """
     """
 
     def load_insteon_controllers(self, p_dict):
-        #print " - Insteon_Device.load_insteon_controllers ", p_dict.keys()
-        for l_key, l_dict in p_dict.iteritems():
-            #print " - Loading ", l_key, l_dict
-            Name = l_dict.get('Name', 'InsteonLightingController')
-            l_ctlr = lighting.ControllerAPI.load_controller(self, l_dict)
-            lighting.Controller_Data[Name] = l_ctlr
-            #print " - Result ", l_ctlr
+        lighting.ControllerAPI.load_all_controllers(self, p_dict)
 
 
 class InsteonButtonData(lighting.ButtonData):
@@ -161,13 +137,8 @@ class InsteonButtonAPI(lighting.ButtonAPI, InsteonButtonData):
     """
 
     def load_insteon_buttons(self, p_dict):
-        print " - Insteon_Device.load_insteon_buttons ", p_dict.keys()
-        for l_key, l_dict in p_dict.iteritems():
-            print " - Loading ", l_key, l_dict
-            Name = l_dict.get('Name', 'InsteonLightingButton')
-            l_ctlr = lighting.ButtonAPI.load_button(self, l_dict)
-            #lighting.Button_Data[Name] = l_ctlr
-            #print " - Result ", l_ctlr
+        lighting.ButtonAPI.load_all_buttons(self, p_dict)
+        lighting.ButtonAPI.dump_all_buttons(self)
 
 
 class LoadSaveInsteonData(InsteonLightingAPI, InsteonControllerAPI, InsteonButtonAPI):
@@ -206,14 +177,6 @@ class LoadSaveInsteonData(InsteonLightingAPI, InsteonControllerAPI, InsteonButto
             l_status.CurLevel = 0
             lighting.Light_Status[l_key] = l_status
         self.m_logger.info('Insteon Lights loaded.')
-
-    def extract_insteon_buttons(self, p_dict):
-        for l_key, l_dict in p_dict.iteritems():
-            l_button = InsteonButtonData(l_key)
-            l_button.Name = l_dict.get('Name', 'NoName Button')
-            l_button.Family = l_dict.get('Family', 'Insteon')
-            lighting.Button_Data[l_key] = l_button
-        self.m_logger.info('Insteon Buttons loaded.')
 
     def write_insteon_lights(self, p_lights,):
         """
