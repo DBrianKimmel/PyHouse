@@ -26,50 +26,82 @@ import lighting
 import sunrisesunset
 
 
-"""A dict of data about each schedule entry (slot).
-Schedule_Data[Slot]{'Time': 'xxx', 'Type':'xxx', ... }
-
-Slot = schedule number/name to identify the slot (may change on save).
-Type = Device | Scene
-Name = light or scene name
-Time = Sunrise or sunset + optional offset -or- time
-Level = 0 (off), 100 (on) or 1-99 (dim if supported)
-Rate = Optional - 0 (predefined) -or- 1-9 (if supported)
-"""
-Schedule_Data = {} # hold the internal dict of dicts of all the schedule slots configured.
+Schedule_Data = {}
+Scheduled_Slotlist = []
 
 
 class ScheduleData(object):
 
-    Scheduled_Slotlist = []
+    def __init__(self):
+        self.Level = 0
+        self.Name = None
+        self.Rate = 0
+        self.Slot = 0
+        self.Time = None
+        self.Type = 'Device'
+
+    def __repr__(self):
+        l_ret = "Schedule Slot:{0:}, LightName:{1:}, Time:{2:}, Level:{3:}, Rate:{4:}, Type:{5:}".format(
+                self.Slot, self.Name, self.Time, self.Level, self.Rate, self.Type)
+        return l_ret
 
 
-class ScheduleExecution(ScheduleData):
+class ScheduleAPI(ScheduleData):
 
-    def _get_slot_info(self, p_slot, p_dict):
-        """Be sure we get values in case someone misedit's the config file.
+    def load_all_schedules(self, p_dict):
+        for l_key, l_obj in p_dict.iteritems():
+            self.load_schedule(l_key, l_obj)
+
+    def load_schedule(self, p_slot, p_obj):
+        l_sched = ScheduleData()
+        l_sched.Level = p_obj.get('Level', 0)
+        l_sched.Name = p_obj.get('Name', 'NoName')
+        l_sched.Rate = p_obj.get('Rate', 0)
+        l_sched.Slot = p_slot
+        l_sched.Time = p_obj.get('Time', None)
+        l_sched.Type = p_obj.get('Type', None)
+        Schedule_Data[p_slot] = l_sched
+
+    def dump_all_schedules(self):
+        print "***** All Schedules *****"
+        for l_key, l_obj in Schedule_Data.iteritems():
+            print "~~~Schedule: {0:}".format(l_key)
+            print "     ", l_obj
+        print
+
+    def update_schedule(self, p_schedule):
+        """Update the schedule as updated by the web server.
+        """
+        Schedule_Data = p_schedule
+        configure_mh.write_module(self, Dict = Schedule_Data, Section = 'Schedule')
+
+
+class ScheduleExecution(ScheduleAPI):
+
+    def _get_slot_info(self, p_slot, p_obj):
+        """Be sure we get values in case someone mis-edits the config file.
         """
         try:
-            l_device = p_dict['Name']
+            l_device = p_obj.Name
         except:
             l_device = '**no-such-device**'
             l_message = 'Schedule for slot {0:} has no Name/Device entry'.format(p_slot)
             self.m_logger.error(l_message)
 
         try:
-            l_type = p_dict['Type']
+            l_type = p_obj.Type
         except:
             l_type = '**no-such-Type**'
             l_message = 'Schedule for slot {0:} has no Type entry'.format(p_slot)
             self.m_logger.error(l_message)
 
         try:
-            l_level = int(p_dict['Level'])
+            l_level = int(p_obj.Level)
         except:
             l_level = 0
 
         try:
-            l_rate = int(p_dict['Rate'])
+            l_rate = int(p_obj.Rate)
         except:
             l_rate = 0
 
@@ -78,66 +110,30 @@ class ScheduleExecution(ScheduleData):
         return (l_device, l_type, l_level, l_rate)
 
     def execute_schedule(self, p_slot = []):
+        """
+        For each slot in the passed in list, execute the scheduled event.
+        Delay before generating the next schedule to avoid a race condition
+        that duplicates an event if it completes before the clock goes to the next second.
+        
+        @param p_slot: a list of slots in the next time schedule
+        """
+        #print " Execute_schedule p_slot=>>{0:}<<".format(p_slot)
         for ix in range(len(p_slot)):
-            l_slot = self.Scheduled_Slotlist[ix]
-            l_dict = Schedule_Data[l_slot]
-            (l_device, _l_type, l_level, _l_rate) = self._get_slot_info(l_slot, l_dict)
+            l_slot = p_slot[ix]
+            l_obj = Schedule_Data[l_slot]
+            (l_device, _l_type, l_level, _l_rate) = self._get_slot_info(l_slot, l_obj)
             self.m_lighting.change_light_setting(l_device, l_level)
-        time.sleep(10)
+        # TODO change this to a non blocking call.
+        time.sleep(1)
         self.get_next_sched()
 
-    def create_timer(self, p_seconds):
-        l_slot = self.execute_schedule
-        self.m_reactor.callLater(p_seconds, l_slot, self.Scheduled_Slotlist)
+    def create_timer(self, p_seconds, p_list):
+        """Create a timer that will go off when the next slot time comes up on the clock.
+        """
+        self.m_reactor.callLater(p_seconds, self.execute_schedule, p_list)
 
 
 class ScheduleUtility(ScheduleExecution):
-
-    def load_schedule(self):
-        """Load all the schedule entries.
-        """
-        l_config = self.m_config.get_value()
-        if 'Schedule' in l_config:
-            p_dict = l_config['Schedule']
-            for l_slot, l_dict in p_dict.iteritems():
-                Schedule_Data[l_slot] = {}
-                Schedule_Data[l_slot]['Type'] = 'None'
-                Schedule_Data[l_slot]['Name'] = 'NoName'
-                Schedule_Data[l_slot]['Time'] = 0
-                Schedule_Data[l_slot]['Level'] = 0
-                Schedule_Data[l_slot]['Rate'] = 0
-                for l_key, l_value in l_dict.iteritems():
-                    l_kl = l_key.lower()
-                    if l_kl == 'device':
-                        Schedule_Data[l_slot]['Name'] = l_value
-                        Schedule_Data[l_slot]['Type'] = 'Device'
-                    elif l_kl == 'link':
-                        Schedule_Data[l_slot]['Name'] = l_value
-                        Schedule_Data[l_slot]['Type'] = 'Scene'
-                    elif l_kl == 'name':
-                        Schedule_Data[l_slot]['Name'] = l_value
-                    elif l_kl == 'type':
-                        Schedule_Data[l_slot]['Type'] = l_value
-                    elif l_kl == 'time':
-                        Schedule_Data[l_slot]['Time'] = l_value
-                    elif l_kl == 'level':
-                        Schedule_Data[l_slot]['Level'] = l_value
-                    elif l_kl == 'rate':
-                        Schedule_Data[l_slot]['Rate'] = l_value
-                    elif l_kl == 'state':
-                        if l_value.lower() == 'off':
-                            Schedule_Data[l_slot]['Level'] = 0
-                    else:
-                        Schedule_Data[l_slot][l_key] = l_value
-        return Schedule_Data
-
-    def updateSchedule(self, p_schedule):
-        """Update the schedule as updated by the web server.
-        """
-        #pprint.pprint(p_schedule, width = 40, indent = 4)
-        Schedule_Data = p_schedule
-        configure_mh.write_module(self, Dict = Schedule_Data, Section = 'Schedule')
-        #self.load_schedule()
 
     def _extract_time(self, p_timefield):
         """Convert the schedule time to an actual time of day.
@@ -162,15 +158,6 @@ class ScheduleUtility(ScheduleExecution):
             pass
         return l_timefield
 
-    def dump_schedule(self):
-        """Print out the schedule in a nice format for debugging.
-        """
-        print "\n   Schedule_Data follows:"
-        pprint.pprint(Schedule_Data, width = 40, indent = 4)
-        print "   Schedule_Slotlist follows:"
-        pprint.pprint(self.Scheduled_Slotlist, width = 40, indent = 4)
-        print "------------------"
-
     def _make_delta(self, p_time):
         """Convert a date time to a timedelta.
         Notice that seconds are truncated to be 0.
@@ -188,12 +175,9 @@ class ScheduleUtility(ScheduleExecution):
         l_time_scheduled = l_now
         self.m_sun.set_date(l_date)
         l_next = 100000.0
-        self.Scheduled_Slotlist = []
-        for l_key, l_value in Schedule_Data.iteritems():
-            if 'Time' in l_value:
-                l_time = l_value['Time']
-            else:
-                l_time = '23:59'
+        l_list = []
+        for l_key, l_obj in Schedule_Data.iteritems():
+            l_time = l_obj.Time
             l_time_sch = self._extract_time(l_time)
             # now see if this is 1) part of a chain -or- 2) an earlier schedule
             l_diff = self._make_delta(l_time_sch).total_seconds() - self._make_delta(l_time_now).total_seconds()
@@ -202,31 +186,19 @@ class ScheduleUtility(ScheduleExecution):
             # earlier schedule upcoming.
             if l_diff < l_next:
                 l_next = l_diff
-                self.Scheduled_Slotlist = []
+                l_list = []
                 l_time_scheduled = l_time_sch
             # add to a chain
             if l_diff == l_next:
-                self.Scheduled_Slotlist.append(l_key)
-        l_message = "Get_next_schedule complete. Delaying {0:} seconds until {1:}, Slotlist = {2:}".format(l_next, l_time_scheduled, self.Scheduled_Slotlist)
-        self.m_logger.info(l_message)
-        self.create_timer(l_next)
+                l_list.append(l_key)
+        self.m_logger.info("Get_next_schedule complete. Delaying {0:} seconds until {1:}, Slotlist = {2:}".format(l_next, l_time_scheduled, l_list))
+        self.create_timer(l_next, l_list)
         return l_next
-
-
-class ScheduleAPI(ScheduleUtility):
-    """ All the external methods.
-    """
-
-    def get_all_schedule_slots(self):
-        """
-        """
-        self.m_logger.info("Retrieving Schedule Info")
-        return Schedule_Data
 
 
 Singletons = {}
 
-class ScheduleMain(ScheduleAPI):
+class ScheduleMain(ScheduleUtility):
 
     def __new__(cls, *args, **kwargs):
         """Create a singleton.
@@ -236,17 +208,13 @@ class ScheduleMain(ScheduleAPI):
         self = object.__new__(cls)
         cls.__init__(self, *args, **kwargs)
         Singletons[cls] = self
-        #print " = ScheduleMain 1"
         self.m_logger = logging.getLogger('PyHouse.Schedule')
         self.m_logger.info("Initializing.")
-        #print " = ScheduleMain 2"
         self.m_config = configure_mh.ConfigureMain()
         self.m_sun = sunrisesunset.SunriseSunsetMain()
-        #print " = ScheduleMain 3"
         self.m_entertainment = entertainment.EntertainmentMain()
-        #print " = ScheduleMain 4"
         self.m_lighting = lighting.LightingMain()
-        self.load_schedule()
+        self.load_all_schedules(self.m_config.get_value('Schedule'))
         self.m_logger.info("Initialized.")
         return self
 
@@ -255,16 +223,9 @@ class ScheduleMain(ScheduleAPI):
         Schedule controls lighting and entertainment modules.
         """
 
-    def configure(self):
-        """Set up the proper schedules according to the config files.
-        """
-        self.m_logger.info("Configured.")
-
     def start(self, p_reactor):
-        """
-        """
         self.m_reactor = p_reactor
-        self.m_lighting.lighting_startup()
+        self.m_lighting.start(p_reactor)
         self.m_delay = self.m_next = self.get_next_sched()
         self.m_logger.info("Started.")
 

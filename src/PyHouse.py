@@ -35,6 +35,7 @@ m_logger = None
 g_configure = None
 g_house = None
 g_logging = None
+g_reactor = None
 g_schedule = None
 g_web_server = None
 

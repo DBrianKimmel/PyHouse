@@ -2,9 +2,6 @@
 
 """Configure for PyMh module.
 This is a Main Module - always present.
-Read:
-    PyMh.conf - for all standard configuration
-    PyMh_Private.conf - for the current installation.
 """
 
 
@@ -42,6 +39,7 @@ class ConfigUtility(ConfigData):
 
     def _read_all_config(self):
         """Read all the files in the config directory.
+        keep a list of sections in each file.
         """
         l_files = os.listdir(CONFIGDIR)
         for l_file in l_files:

@@ -17,13 +17,13 @@ from twisted.internet.task import LoopingCall
 
 # Import PyMh files
 import configure_mh
-#import insteon_Device
 import lighting
+#from tools import PrintBytes
 
 g_message = bytearray()
 
 
-class SerialDriverData(lighting.ControllerData):
+class SerialDeviceData(lighting.ControllerData):
 
     SerialPort = {}
     m_config = None
@@ -31,34 +31,16 @@ class SerialDriverData(lighting.ControllerData):
     m_serial = None
     m_message = bytearray()
 
-    def __init__(self, Name):
-        #insteon_Device.InsteonControllerData.__init__(self, Name)
-        pass
+    def __init__(self):
+        self.BaudRate = 0
+        self.Port = None
 
 
-class SerialDriverUtility(SerialDriverData):
-
-    def _print_bytearray(self, p_ba):
-        """Print all the bytes of a bytearray as hex bytes.
-        """
-        l_len = len(p_ba)
-        l_message = ''
-        if l_len == 0:
-            l_message = "<NONE>"
-        else:
-            for l_x in range(l_len):
-                l_message += " {0:#x}".format(p_ba[l_x])
-        l_message += " <END>"
-        return l_message
+class SerialDriverUtility(SerialDeviceData):
 
     def _serialLoop(self):
         """This is invoked every 1 second.
-        It will read and send chars to the serial port.
-        It will catch the non-send responses like from a KeyPadLink or Motion Sensor.
         """
-        #(la, lb, lc) = self.get_one_message()
-        #if la > 0:
-        #    print "~~~Driver_Serial.SerialDriver._serialLoop()"
         self.read_device()
 
     def get_config(self, p_family, p_key):
@@ -93,6 +75,7 @@ class SerialDriverAPI(SerialDriverUtility):
     def open_device(self):
         """will open and initialize the serial port.
         """
+        self.m_bytes = 0
 
     def close_device(self):
         """Flush all pending output and close the serial port.
@@ -102,35 +85,40 @@ class SerialDriverAPI(SerialDriverUtility):
     def write_device(self, p_message):
         """Send the command to the PLM and wait a very short time to be sure we sent it.
         """
+        #self.m_logger.debug("write_device() - {0:}".format(PrintBytes(p_message)))
         self.m_serial.write(p_message)
         time.sleep(0.1)
 
     def read_device(self):
-        """Read the serial device.
-        Attempt reading till a new read returns nothing.
-        Return the bytearray ending with ACK or NAK, hold the rest 
-        Returns a a tuple of (int)Bytecount, (bytearray)MessageRead of the size of bytes read.
-        Use the read timeout set at init/open time to fetch all the bytes available.
+        """Read the serial device and add to a buffer to be fetched asynchronously.
         """
-        l_buf = bytearray(256)
+        l_buffer = bytearray(256)
         try:
-            l_bytes = self.m_serial.readinto(l_buf)
+            l_bytes = self.m_serial.readinto(l_buffer)
+            self.m_bytes += l_bytes
+            self.m_message += l_buffer[:l_bytes]
         except:
-            l_bytes = 0
-        if l_bytes == 0:
-            return (0, bytearray())
-        self.m_message = l_buf[:l_bytes]
-        #self.m_logger.debug("ser_read() - got {0:} bytes ={1:}".format(l_bytes, self._print_bytearray(self.m_message)))
-        return (l_bytes, l_buf[:l_bytes])
+            pass
+        if self.m_bytes > 0:
+            #self.m_logger.debug("read_device() - got {0:} bytes ={1:}".format(self.m_bytes, PrintBytes(self.m_message)))
+            #print "== Driver_Serial Received {0:} bytes ->{1:}".format(self.m_bytes, PrintBytes(self.m_message))
+            pass
+
+    def fetch_read_data(self):
+        l_ret = (self.m_bytes, self.m_message)
+        self.m_bytes = 0
+        self.m_message = ''
+        return (l_ret)
 
 
 class SerialDriverMain(SerialDriverAPI):
 
     def __init__(self, p_obj):
-        #print "---SerialDriverMain.__init__()", p_obj
+        """
+        @param p_obj:is the Controller_Data object for a serial device to open. 
+        """
         self.m_message = bytearray()
         self.m_logger = logging.getLogger('PyHouse.SerialDriver')
-        #self.m_logger.info(" Initializing serial port")
         self.m_serial = serial.Serial(p_obj.Port)
         self.m_serial.baudrate = p_obj.BaudRate
         self.m_serial.bytesize = int(p_obj.ByteSize)
@@ -142,7 +130,7 @@ class SerialDriverMain(SerialDriverAPI):
             self.m_serial.stopbits = serial.STOPBITS_ONE
         self.m_serial.timeout = float(p_obj.Timeout)
         #
-        self.m_logger.info("Initialized serial port {0:} @ {1:} Baud".format(p_obj.Port, p_obj.BaudRate))
+        self.m_logger.info("Initialized serial port {0:} - {1:} @ {2:} Baud".format(p_obj.Name, p_obj.Port, p_obj.BaudRate))
         self.open_device()
         LoopingCall(self._serialLoop).start(1)
 

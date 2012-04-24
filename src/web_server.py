@@ -13,6 +13,7 @@ import os
 import random
 #import time
 import twisted.python.components as tpc
+import nevow
 from nevow import appserver
 from nevow import flat
 from nevow import inevow
@@ -28,9 +29,10 @@ from formless import iformless
 # Import PyMh files
 import configure_mh
 import entertainment
-import Device_Insteon
+#import Device_Insteon
 import lighting
 import schedule
+from lighting import Light_Status
 
 
 
@@ -39,11 +41,20 @@ BUTTON = 'post_btn'
 
 Entertainment = {}
 Lights = {}
-Light_Data = {}
-Scenes = {}
-Schedule_Data = {}
+XLight_Data = {}
+XLight_Status = {}
+#Schedule_Data = {}
 g_lighting = None
-g_schedule = None
+#g_schedule = None
+
+
+class WebLightingData(lighting.LightingData): pass
+class WebLightingAPI(lighting.LightingAPI): pass
+class WebLightingStatusData(lighting.LightingStatusData): pass
+class WebLightingStatusAPI(lighting.LightingStatusAPI): pass
+
+class WebSceneData(lighting.SceneData): pass
+class WebSceneAPI(lighting.SceneAPI): pass
 
 
 class WebException(Exception):
@@ -51,16 +62,9 @@ class WebException(Exception):
     """
 
 
-class WebLightingData(lighting.LightingData):
-    """
-    """
-
-
 class WebData(object):
 
     g_lighting = None
-    g_schedule = None
-    g_entertainment = None
 
 
 class WebUtilities(WebData):
@@ -72,36 +76,31 @@ class WebUtilities(WebData):
         """
         # These are real files on disk
         setattr(RootPage, 'child_mainpage.css', static.File('web/css/mainpage.css'))
+        setattr(RootPage, 'child_ajax.js', static.File('web/js/ajax.js'))
+        setattr(RootPage, 'child_floating_window.js', static.File('web/js/floating-window.js'))
+        setattr(RootPage, 'child_lightpage.js', static.File('web/js/lightpage.js'))
         setattr(RootPage, 'child_mainpage.js', static.File('web/js/mainpage.js'))
+        setattr(RootPage, 'child_schedpage.js', static.File('web/js/schedpage.js'))
+        setattr(RootPage, 'child_scenepage.js', static.File('web/js/scenepage.js'))
         #------------------------------------
-        setattr(LightingPage, 'child_lightpage.css', static.File('web/css/lightpage.css'))
+        setattr(RootPage, 'child_bottomRight.gif', static.File('web/images/bottom_right.gif'))
+        setattr(RootPage, 'child_close.gif', static.File('web/images/close.gif'))
+        setattr(RootPage, 'child_minimize.gif', static.File('web/images/minimize.gif'))
+        setattr(RootPage, 'child_topCenter.gif', static.File('web/images/top_center.gif'))
+        setattr(RootPage, 'child_topLeft.gif', static.File('web/images/top_left.gif'))
+        setattr(RootPage, 'child_topRight.gif', static.File('web/images/top_right.gif'))
+        setattr(RootPage, 'child_handle.horizontal.png', static.File('web/images/handle.horizontal.png'))
 
+        setattr(LightingPage, 'child_mainpage.css', static.File('web/css/mainpage.css'))
         setattr(LightingPage, 'child_ajax.js', static.File('web/js/ajax.js'))
         setattr(LightingPage, 'child_floating_window.js', static.File('web/js/floating-window.js'))
         setattr(LightingPage, 'child_lightpage.js', static.File('web/js/lightpage.js'))
-
+        setattr(LightingPage, 'child_bottomRight.gif', static.File('web/images/bottom_right.gif'))
         setattr(LightingPage, 'child_close.gif', static.File('web/images/close.gif'))
         setattr(LightingPage, 'child_minimize.gif', static.File('web/images/minimize.gif'))
-        setattr(LightingPage, 'child_topLeft.gif', static.File('web/images/top_left.gif'))
         setattr(LightingPage, 'child_topCenter.gif', static.File('web/images/top_center.gif'))
+        setattr(LightingPage, 'child_topLeft.gif', static.File('web/images/top_left.gif'))
         setattr(LightingPage, 'child_topRight.gif', static.File('web/images/top_right.gif'))
-        setattr(LightingPage, 'child_bottomRight.gif', static.File('web/images/bottom_right.gif'))
-        setattr(LightingPage, 'child_handle.horizontal.png', static.File('web/images/handle.horizontal.png'))
-        #------------------------------------
-        setattr(SchedulePage, 'child_ajax.js', static.File('web/js/ajax.js'))
-        setattr(SchedulePage, 'child_floating_window.js', static.File('web/js/floating-window.js'))
-        setattr(SchedulePage, 'child_schedpage.js', static.File('web/js/schedpage.js'))
-
-        setattr(SchedulePage, 'child_close.gif', static.File('web/images/close.gif'))
-        setattr(SchedulePage, 'child_minimize.gif', static.File('web/images/minimize.gif'))
-        setattr(SchedulePage, 'child_topLeft.gif', static.File('web/images/top_left.gif'))
-        setattr(SchedulePage, 'child_topCenter.gif', static.File('web/images/top_center.gif'))
-        setattr(SchedulePage, 'child_topRight.gif', static.File('web/images/top_right.gif'))
-        setattr(SchedulePage, 'child_bottomRight.gif', static.File('web/images/bottom_right.gif'))
-        setattr(SchedulePage, 'child_handle.horizontal.png', static.File('web/images/handle.horizontal.png'))
-        #------------------------------------
-        setattr(ScenesPage, 'child_mainpage.css', static.File('web/css/mainpage.css'))
-        setattr(ScenesPage, 'child_scenepage.js', static.File('web/js/scenepage.js'))
 
     def lighting_sub_win(self):
         pass
@@ -136,7 +135,7 @@ class ManualFormMixin(rend.Page, WebUtilities):
             if method is not None:
                 return self.onManualPost(context, method, bindingName, kwargs)
             else:
-                raise WebException("You should define a form_action_button method")
+                raise WebException("You should define a form_action_button method for {0:}".format(name))
         (l_child, l_segments) = super(ManualFormMixin, self).locateChild(context, segments)
         return (l_child, l_segments)
 
@@ -185,7 +184,37 @@ class ManualFormMixin(rend.Page, WebUtilities):
             ).addErrback(self.onPostFailure, request, ctx, bindingName, redirectAfterPost)
 
 
-class LightingPage(ManualFormMixin):
+class EntertainmentPage(rend.Page):
+    """
+    """
+    addSlash = True
+    docFactory = loaders.stan(
+        Tag.html[
+            Tag.title['PyHouse - Entertainment Page'],
+                Tag.link(rel = 'stylesheet', type = 'text/css', href = url.root.child('mainpage.css'))["\n"],
+            Tag.body[
+                Tag.h1['PyHouse Entertainment'],
+                Tag.p['Select the entertainment:'],
+                Tag.form(action = url.here.child('_submit!!post'),
+                       enctype = "multipart/form-data",
+                       method = 'post'
+                      )[
+                    Tag.input(type = 'submit', value = 'Add Entertainment', name = BUTTON),
+                    Tag.input(type = 'submit', value = 'Delete Entertainment', name = BUTTON)
+                    ]
+                ]
+            ]
+        )
+
+    def __init__(self, name):
+        rend.Page.__init__(self)
+        self.name = name
+
+
+class HousePage(rend.Page): pass
+
+
+class LightingPage(rend.Page, WebLightingData, WebLightingAPI, WebLightingStatusData, WebLightingStatusAPI):
     """Define the page layout of the lighting selection web page.
     """
     addSlash = True
@@ -224,11 +253,10 @@ class LightingPage(ManualFormMixin):
         """Build up a list of lights.
         Omit controllers and buttons (scenes???)
         """
-        #self.load_all_light_info()
-        #global Light_Data
         l_light = {}
         for l_key, l_obj in lighting.Light_Data.iteritems():
-            if lighting.LightingData.get_Family(l_obj) != 'Insteon': continue
+            if l_obj.Family != 'Insteon': continue
+            if l_obj.Type != 'Light': continue
             l_obj.CurLevel = lighting.Light_Status[l_key].CurLevel
             if l_obj.Type == 'Light':
                 l_light[l_key] = l_obj
@@ -248,14 +276,15 @@ class LightingPage(ManualFormMixin):
             if l_cnt % 2 == 0:
                 l_ret.append(Tag.tr)
             l_ret.append(Tag.td)
-            l_ret.append(Tag.input(type = 'submit', value = l_key, name = BUTTON, onclick = "createChangeLightWindow(\'{0:}\',\'{1:}\')".format(l_key, l_cur_lev, l_family))
-                         [ l_family, '-', l_type, ' ', l_name, ' ', l_cur_lev, "\n" ])
+            l_ret.append(Tag.input(type = 'submit', value = l_key, name = BUTTON, onclick = "createChangeLightWindow(\'{0:}\',\'{1:}\',\'{2:}\')".format(l_key, l_cur_lev, l_family))
+                         [ l_family, '-', l_type, ' ', l_name, ' ', l_cur_lev])
             l_cnt += 1
         return l_ret
 
     def load_all_light_info(self):
         global Light_Data, g_lighting
         #Light_Data = g_lighting.get_light_tables()
+        pass
 
     def _store_light(self, **kwargs):
         """Send the updated lighting info back to the lighting module.
@@ -282,10 +311,11 @@ class LightingPage(ManualFormMixin):
         """Browser user changed a light (on/off/dim)
         Now send the change to the light.
         """
-        global g_lighting
+        #global g_lighting
         print " - form_post_changelight - kwargs=", kwargs
-        g_lighting.change_light_setting(kwargs['Name'], kwargs['slider_val'], kwargs['Family'])
-        g_lighting.update_all_light_tables(Lights)
+        #g_lighting.change_light_setting(kwargs['Name'], kwargs['slider_val'], kwargs['Family'])
+        #g_lighting.update_all_light_tables(Lights)
+        return LightingPage(self.name)
 
     def form_post_deletelight(self, **kwargs):
         print " - form_post_delete - ", kwargs
@@ -303,7 +333,13 @@ class LightingPage(ManualFormMixin):
         self.load_all_light_info()
 
 
-class ScenesPage(LightingPage):
+class LocationPage(rend.Page): pass
+
+
+class RoomsPage(rend.Page): pass
+
+
+class ScenesPage(rend.Page):
     addSlash = True
     docFactory = loaders.stan(
         Tag.html["\n",
@@ -337,22 +373,14 @@ class ScenesPage(LightingPage):
         self.name = name
 
     def _store_scene(self, **kwargs):
-        global g_lighting, Scenes
-        l_name = kwargs['Name']
-        Scenes[l_name] = {}
-        Scenes[l_name]['Controller'] = kwargs['Controller']
-        Scenes[l_name]['Responder'] = kwargs['Responder']
-        Scenes[l_name]['Level'] = kwargs['Level']
-        Scenes[l_name]['Ramp'] = kwargs['Ramp']
-        g_lighting.update_scene_config(Scenes)
+        pass
 
     def data_scenelist(self, _context, _data):
         """Build up a list of Scenes.
         """
-        global Scenes
         l_scene = {}
-        for l_key, l_value in Scenes.iteritems():
-            l_scene[l_key] = l_value
+        for l_key, l_obj in lighting.Scene_Data.iteritems():
+            l_scene[l_key] = l_obj
         return l_scene
 
     def render_scenelist(self, _context, links):
@@ -366,7 +394,7 @@ class ScenesPage(LightingPage):
                 l_ret.append(Tag.tr)
             l_ret.append(Tag.td)
             l_ret.append(Tag.input(type = 'submit', value = l_key, name = BUTTON, onclick = "createChangeSceneWindow(\'{0:}\', '100', '2s')".format(l_key))
-                         [ l_value.get('Family', '.'), '-', l_value.get('Type', '-'), ' ', l_value.get('Name', '_'), "\n" ])
+                         [ l_value.Name, "\n" ])
             l_cnt += 1
         return l_ret
 
@@ -380,15 +408,9 @@ class ScenesPage(LightingPage):
 
     def form_post_deletescene(self, **kwargs):
         print " - form_post_deleteScene - ", kwargs
-        global g_lighting, Scenes
-        del Scenes[kwargs['Name']]
-        g_lighting.update_scene_config(Scenes)
-        return ScenesPage(self.name)
 
 
-class SchedulePage(ScenesPage):
-    """
-    """
+class SchedulePage(rend.Page):
     addSlash = True
     docFactory = loaders.stan(
         Tag.html[
@@ -420,10 +442,10 @@ class SchedulePage(ScenesPage):
         @param _data: is the page object we are extracting for.
         @return: an object to render.
         """
-        l_sched_dict = {}
-        for k, v in schedule.Schedule_Data.iteritems():
-            l_sched_dict[k] = v
-        return l_sched_dict
+        l_sched = {}
+        for l_key, l_obj in schedule.Schedule_Data.iteritems():
+            l_sched[l_key] = l_obj
+        return l_sched
 
     def render_schedlist(self, _context, links):
         """
@@ -434,20 +456,23 @@ class SchedulePage(ScenesPage):
         global l_ret
         l_ret = []
         l_cnt = 0
-        for l_key, l_value in sorted(links.iteritems()):
-            if not 'Rate' in l_value:
-                l_value['Rate'] = 0
+        for l_key, l_obj in sorted(links.iteritems()):
+            l_level = l_obj.Level
+            l_name = l_obj.Name
+            l_rate = l_obj.Rate
+            l_time = l_obj.Time
+            l_type = l_obj.Type
             if l_cnt % 2 == 0:
                 l_ret.append(Tag.tr)
             l_ret.append(Tag.td)
             l_ret.append(Tag.input(type = 'submit', value = l_key, name = BUTTON, onclick = "createChangeScheduleWindow(\'{0:}\', \'{1:}\', \'{2:}\', \'{3:}\', \'{4:}\', \'{5:}\')".format(
-                                                    l_key, l_value['Type'], l_value['Name'], l_value['Time'], l_value['Level'], l_value['Rate']))
-                         [ l_value['Name'], ' ', l_value['Type'], ' ', l_value['Time'], ' ', l_value['Level'], ' ', "\n" ])
+                                                    l_key, l_type, l_name, l_time, l_level, l_rate))
+                         [ l_name, ' ', l_type, ' ', l_time, ' ', l_level, ' ', "\n" ])
             l_cnt += 1
         return l_ret
 
     def _store_schedule(self, **kwargs):
-        #global g_schedule, Schedule
+        # FIXME this is old - change to new format schedule
         l_slot = kwargs['Slot']
         schedule.Schedule_Data[l_slot] = {}
         schedule.Schedule_Data[l_slot]['Name'] = kwargs['Name']
@@ -455,7 +480,7 @@ class SchedulePage(ScenesPage):
         schedule.Schedule_Data[l_slot]['Time'] = kwargs['Time']
         schedule.Schedule_Data[l_slot]['Level'] = kwargs['Level']
         schedule.Schedule_Data[l_slot]['Rate'] = kwargs['Rate']
-        g_schedule.updateSchedule(schedule.Schedule_Data)
+        #g_schedule.update_schedule(schedule.Schedule_Data)
 
     def form_post_changesched(self, **kwargs):
         """Browser user changed a schedule
@@ -472,47 +497,20 @@ class SchedulePage(ScenesPage):
     def form_post_changeschedule(self, **kwargs):
         print " - form_post_changeschedule (add) - kwargs=", kwargs
         self._store_schedule(**kwargs)
-        g_schedule.updateSchedule(schedule.Schedule_Data)
+        g_schedule.update_schedule(schedule.Schedule_Data)
         return SchedulePage(self.name)
 
     def form_post_deleteschedule(self, **kwargs):
         print " - form_post_deleteschedule - kwargs=", kwargs
         del schedule.Schedule_Data[kwargs['Slot']]
-        g_schedule.updateSchedule(schedule.Schedule_Data)
+        g_schedule.update_schedule(schedule.Schedule_Data)
         return SchedulePage(self.name)
 
 
-class EntertainmentPage(SchedulePage):
-    """
-    """
-    addSlash = True
-    docFactory = loaders.stan(
-        Tag.html[
-            Tag.title['PyHouse - Entertainment Page'],
-            Tag.body[
-                Tag.h1['PyHouse Entertainment'],
-                Tag.p['Select the entertainment:'],
-                Tag.form(action = url.here.child('_submit!!post'),
-                       enctype = "multipart/form-data",
-                       method = 'post'
-                      )[
-                    Tag.input(type = 'submit', value = 'Add Entertainment', name = BUTTON),
-                    Tag.input(type = 'submit', value = 'Delete Entertainment', name = BUTTON)
-                    ]
-                ]
-            ]
-        )
-
-    def __init__(self, name):
-        rend.Page.__init__(self)
-        self.name = name
+class WeatherPage(rend.Page): pass
 
 
-#class RoomsPage(EntertainmentPage):
-
-    #import ws_rooms
-
-class RootPage(EntertainmentPage):
+class RootPage(ManualFormMixin, EntertainmentPage, HousePage, LightingPage, LocationPage, RoomsPage, ScenesPage, SchedulePage, WeatherPage):
     """The main page of the web server.
     """
     addSlash = True
@@ -536,14 +534,14 @@ class RootPage(EntertainmentPage):
                             Tag.td[ Tag.input(type = 'submit', value = 'House', name = BUTTON), ],
                             Tag.td[ Tag.input(type = 'submit', value = 'Weather', name = BUTTON), ],
                             Tag.td[ Tag.input(type = 'submit', value = '1,4', name = BUTTON), ],
-                            Tag.td[ Tag.input(type = 'submit', value = '1,5', name = BUTTON), ],
+                            Tag.td[ Tag.input(type = 'submit', value = 'Controllers', name = BUTTON), ],
                             ],
                         Tag.tr[
                             Tag.td[ Tag.input(type = 'submit', value = 'Lighting', name = BUTTON), ],
                             Tag.td[ Tag.input(type = 'submit', value = 'Rooms', name = BUTTON), ],
                             Tag.td[ Tag.input(type = 'submit', value = '2,3', name = BUTTON), ],
                             Tag.td[ Tag.input(type = 'submit', value = '2,4', name = BUTTON), ],
-                            Tag.td[ Tag.input(type = 'submit', value = '2,5', name = BUTTON), ],
+                            Tag.td[ Tag.input(type = 'submit', value = 'Buttons', name = BUTTON), ],
                             ],
                          Tag.tr[
                             Tag.td[ Tag.input(type = 'submit', value = 'Scenes', name = BUTTON), ],
@@ -588,9 +586,6 @@ class RootPage(EntertainmentPage):
     def form_post_entertainment(self, **_kwargs):
         return EntertainmentPage('entertainment')
 
-    def form_post_rooms(self, **_kwargs):
-        return RoomsPage('rooms')
-
     def form_post(self, *args, **kwargs):
         print " - form_post - args={0:}, kwargs={1:}".format(args, kwargs)
         return LightingPage('Root')
@@ -622,10 +617,6 @@ class Web_ServerMain(ManualFormMixin):
 
     def start(self, p_reactor):
         self.m_reactor = p_reactor
-        global Lights, Scenes, Schedule, Entertainment, g_lighting, g_schedule, g_entertainment
-        #Lights = g_lighting.get_light_tables()
-        Scenes = g_lighting.load_scene_data()
-        Schedule_Data = g_schedule.get_all_schedule_slots()
         self.m_site_dir = os.path.split(os.path.abspath(__file__))[0]
         print "Webserver path = ", self.m_site_dir
         l_site = appserver.NevowSite(RootPage('/'))

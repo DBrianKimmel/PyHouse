@@ -65,7 +65,7 @@ function fillChangeLightWindow(p_divid, p_name, p_level, p_family) {
 	ret = ret + '  <input type="hidden" value="' + p_divid + '" name="slider_no" />\n' +
 				'  <input type="hidden" value="' + p_name + '" name="Name" />\n' +
 				'  <input type="hidden" value="' + p_family + '" name="Family" />\n';
-	ret = ret + '  <input type="submit" name="post_btn" value="ChangeLight" />\n';
+	ret = ret + '  <input type="submit" name="post_btn" value="changelight" />\n';
 	ret = ret + '  <input type="submit" name="post_btn" value="DeleteLight" />\n';
 	ret = ret + '</form>\n';
 	return ret;

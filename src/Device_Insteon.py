@@ -21,162 +21,250 @@ import configure_mh
 import lighting
 #from tools import Lister
 
+Button_Data = lighting.Button_Data
+Controller_Data = lighting.Controller_Data
+Light_Data = lighting.Light_Data
+Light_Status = lighting.Light_Status
 
-class InsteonLightingData(lighting.LightingData):
+
+class ButtonData(lighting.ButtonData):
+
+    def __init__(self):
+        lighting.ButtonData.__init__(self)
+        self.Address = None
+        self.Code = None
+        self.Controller = None
+        self.DevCat = None
+        self.Family = 'Insteon'
+        self.GroupList = None
+        self.GroupNumber = None
+        self.Master = None
+        self.Responder = None
+
+    def __repr__(self):
+        l_str = lighting.ButtonData.__repr__(self)
+        l_str += " Address: {0:10.10} Controller: {1:}".format(self.Address, self.Controller)
+        return l_str
+
+    def get_address(self):
+        return self.__Address
+    def set_address(self, value):
+        self.__Address = value
+    def get_code(self):
+        return self.__Code
+    def set_code(self, value):
+        self.__Code = value
+    def get_controller(self):
+        return self.__Controller
+    def set_controller(self, value):
+        self.__Controller = value
+    def get_dev_cat(self):
+        return self.__DevCat
+    def set_dev_cat(self, value):
+        self.__DevCat = value
+    def get_group_list(self):
+        return self.__GroupList
+    def set_group_list(self, value):
+        self.__GroupList = value
+    def get_group_number(self):
+        return self.__GroupNumber
+    def set_group_number(self, value):
+        self.__GroupNumber = value
+    def get_master(self):
+        return self.__Master
+    def set_master(self, value):
+        self.__Master = value
+    def get_responder(self):
+        return self.__Responder
+    def set_responder(self, value):
+        self.__Responder = value
+
+    Address = property(get_address, set_address, None, None)
+    Code = property(get_code, set_code, None, None)
+    Controller = property(get_controller, set_controller, None, None)
+    DevCat = property(get_dev_cat, set_dev_cat, None, None)
+    GroupList = property(get_group_list, set_group_list, None, None)
+    GroupNumber = property(get_group_number, set_group_number, None, None)
+    Master = property(get_master, set_master, None, None)
+    Responder = property(get_responder, set_responder, None, None)
+
+
+class ButtonAPI(lighting.ButtonAPI, ButtonData): pass
+
+
+class ControllerData(lighting.ControllerData):
+
+    def __init__(self):
+        lighting.ControllerData.__init__(self)
+        self.Address = None
+        self.Code = None
+        self.Controller = None
+        self.DevCat = None
+        self.Family = 'Insteon'
+        self.GroupList = None
+        self.GroupNumber = None
+        self.Master = None
+        self.Responder = None
+
+    def __repr__(self):
+        l_str = lighting.ControllerData.__repr__(self)
+        l_str += " Address: {0:10.10}".format(self.Address)
+        return l_str
+
+    def get_address(self):
+        return self.__Address
+    def set_address(self, value):
+        self.__Address = value
+    def get_code(self):
+        return self.__Code
+    def set_code(self, value):
+        self.__Code = value
+    def get_controller(self):
+        return self.__Controller
+    def set_controller(self, value):
+        self.__Controller = value
+    def get_dev_cat(self):
+        return self.__DevCat
+    def set_dev_cat(self, value):
+        self.__DevCat = value
+    def get_group_list(self):
+        return self.__GroupList
+    def set_group_list(self, value):
+        self.__GroupList = value
+    def get_group_number(self):
+        return self.__GroupNumber
+    def set_group_number(self, value):
+        self.__GroupNumber = value
+    def get_master(self):
+        return self.__Master
+    def set_master(self, value):
+        self.__Master = value
+    def get_responder(self):
+        return self.__Responder
+    def set_responder(self, value):
+        self.__Responder = value
+
+    Address = property(get_address, set_address, None, None)
+    Code = property(get_code, set_code, None, None)
+    Controller = property(get_controller, set_controller, None, None)
+    DevCat = property(get_dev_cat, set_dev_cat, None, None)
+    GroupList = property(get_group_list, set_group_list, None, None)
+    GroupNumber = property(get_group_number, set_group_number, None, None)
+    Master = property(get_master, set_master, None, None)
+    Responder = property(get_responder, set_responder, None, None)
+
+
+class ControllerAPI(lighting.ControllerAPI, ControllerData):
+
+    def load_all_controllers(self, p_dict):
+        lighting.ControllerAPI.load_all_controllers(self, p_dict)
+
+    def load_controller(self, p_dict):
+        l_ctlr = lighting.ControllerAPI.load_controller(self, p_dict)
+        l_ctlr.Address = p_dict.get('Address', None)
+        l_ctlr.Code = p_dict.get('Code', '')
+        l_ctlr.Controller = p_dict.get('Controller', False)
+        l_ctlr.DevCat = p_dict.get('DevCat', 0)
+        l_ctlr.GroupList = p_dict.get('GroupList', '')
+        l_ctlr.GroupNumber = p_dict.get('GroupNumber', 0)
+        l_ctlr.Master = p_dict.get('Master', True)
+        l_ctlr.Responder = p_dict.get('Responder', False)
+        return l_ctlr
+
+
+class LightingData(lighting.LightingData):
     """Insteon specific data we wish to export.  Extends the LightingData class.
     Create a dict of devices.
     Each device will contain a dict of attributes and vales
     """
 
-    Family = 'Insteon'
-    Address = ''
-    Code = ''
-    GroupList = ''
-    GroupNumber = 0
-    DevCat = 0x0000
-    Controller = True
-    Responder = True
-    Master = False
-    Dimmable = False
-
-    def __init__(self, Name):
-        lighting.LightingData.__init__(self, Name)
+    def __init__(self):
+        lighting.LightingData.__init__(self)
+        self.Address = None
+        self.Code = None
+        self.Controller = None
+        self.DevCat = None
+        self.GroupList = None
+        self.GroupNumber = None
+        self.Master = None
+        self.Responder = None
 
     def __repr__(self):
         l_str = lighting.LightingData.__repr__(self)
         l_str += " Address: {0:10.10} Controller: {1:}".format(self.Address, self.Controller)
         return l_str
 
-    def get_Address(self):
-        return self.Address.upper()
+    def get_address(self):
+        return self.__Address
+    def set_address(self, value):
+        self.__Address = value
+    def get_code(self):
+        return self.__Code
+    def set_code(self, value):
+        self.__Code = value
+    def get_controller(self):
+        return self.__Controller
+    def set_controller(self, value):
+        self.__Controller = value
+    def get_dev_cat(self):
+        return self.__DevCat
+    def set_dev_cat(self, value):
+        self.__DevCat = value
+    def get_group_list(self):
+        return self.__GroupList
+    def set_group_list(self, value):
+        self.__GroupList = value
+    def get_group_number(self):
+        return self.__GroupNumber
+    def set_group_number(self, value):
+        self.__GroupNumber = value
+    def get_master(self):
+        return self.__Master
+    def set_master(self, value):
+        self.__Master = value
+    def get_responder(self):
+        return self.__Responder
+    def set_responder(self, value):
+        self.__Responder = value
 
-    def get_DevCat(self):
-        return self.DevCat
-
-    def XXget_Code(self):
-        return self.Code
-
-    def get_GroupList(self):
-        return self.GroupList
-
-    def get_GroupNumber(self):
-        return self.GroupNumber
-
-    def get_Controller(self):
-        return self.Controller
-
-    def get_Responder(self):
-        return self.Responder
-
-    def get_Dimmable(self):
-        return self.Dimmable
-
-    def get_Master(self):
-        return self.Master
+    Address = property(get_address, set_address, None, None)
+    Code = property(get_code, set_code, None, None)
+    Controller = property(get_controller, set_controller, None, None)
+    DevCat = property(get_dev_cat, set_dev_cat, None, None)
+    GroupList = property(get_group_list, set_group_list, None, None)
+    GroupNumber = property(get_group_number, set_group_number, None, None)
+    Master = property(get_master, set_master, None, None)
+    Responder = property(get_responder, set_responder, None, None)
 
 
-class InsteonLightingStatus(lighting.LightingStatus):
-    """
-    """
-
-
-class InsteonLightingAPI(lighting.LightingAPI):
+class LightingAPI(lighting.LightingAPI, LightingData):
     """Interface to the lights of this module.
     """
 
-    def turn_light_on(self, p_name):
-        """Turn a light on (level 100).
-        """
-        self.m_insteonPLM.turn_light_on(p_name)
-
-    def turn_light_off(self, p_name):
-        """Turn a light off (level 0).
-        """
-        self.m_insteonPLM.turn_light_off(p_name)
-
-    def turn_light_dim(self, p_name, p_level):
-        """Turn on a light to a given level (1-100).
-        """
-        self.m_insteonPLM.turn_light_dim(p_name, p_level)
-
-    def dump_all_devices(self):
-        print "\nDump all Insteon devices"
-        for _l_key, l_value in lighting.Light_Data.iteritems():
-            print l_value
-        print
-
-    def update_all_devices(self):
-        self.write_insteon_lights(lighting.Light_Data)
-
-    def update_all_statuses(self):
-        assert 0, "dump all statuses must be subclassed."
-
-
-class InsteonControllerData(lighting.ControllerData):
-
-    def __init__(self, Name):
-        lighting.ControllerData.__init__(self, Name)
-
-
-class InsteonControllerAPI(lighting.ControllerAPI, InsteonControllerData):
-    """
-    """
-
-    def load_insteon_controllers(self, p_dict):
-        lighting.ControllerAPI.load_all_controllers(self, p_dict)
-
-
-class InsteonButtonData(lighting.ButtonData):
-
-    def __init__(self, Name):
-        lighting.ButtonData.__init__(self, Name)
-
-
-class InsteonButtonAPI(lighting.ButtonAPI, InsteonButtonData):
-    """
-    """
-
-    def load_insteon_buttons(self, p_dict):
-        lighting.ButtonAPI.load_all_buttons(self, p_dict)
-        lighting.ButtonAPI.dump_all_buttons(self)
-
-
-class LoadSaveInsteonData(InsteonLightingAPI, InsteonControllerAPI, InsteonButtonAPI):
-
-    def build_light_entry(self, p_key, p_dict):
-        """convert a config dict entry to a lighting object
-        """
-        l_light = InsteonLightingData(p_key)
-        l_light.Name = p_dict.get('Name', 'NoName')
-        l_light.Family = p_dict.get('Family', 'Insteon')
+    def load_light(self, p_dict):
+        l_light = lighting.LightingAPI.load_light(self, p_dict)
         l_light.Address = p_dict.get('Address', '01.23.45')
-        l_light.Type = p_dict.get('Type', None)
-        l_light.Comment = p_dict.get('Comment', '')
-        l_light.Coords = p_dict.get('Coords', (0, 0))
+        l_light.Code = p_dict.get('Code', '')
+        l_light.Controller = p_dict.get('Controller', False)
+        l_light.DevCat = p_dict.get('DevCat', 0)
         l_light.GroupList = p_dict.get('GroupList', '')
         l_light.GroupNumber = p_dict.get('GroupNumber', 0)
-        l_light.Room = p_dict.get('Room', None)
-        l_light.Controller = p_dict.get('Controller', False)
-        l_light.Responder = p_dict.get('Responder', False)
-        l_light.Dimmable = p_dict.get('Dimmable', False)
-        l_light.DevCat = p_dict.get('DevCat', 0)
         l_light.Master = p_dict.get('Master', True)
-        l_light.Code = p_dict.get('Code', '')
         l_light.Responder = p_dict.get('Responder', False)
-        lighting.Light_Data[p_key] = l_light
+        return l_light
 
-    def extract_insteon_devices(self, p_dict):
-        """Create all device entries from the dict.
-        
-        @param p_dict:All the InsteonLights config dict. 
-        @return: the insteon lighting dict.
-        """
-        for l_key, l_data in p_dict.iteritems():
-            self.build_light_entry(l_key, l_data)
-            l_status = InsteonLightingStatus(l_key)
-            l_status.CurLevel = 0
-            lighting.Light_Status[l_key] = l_status
-        self.m_logger.info('Insteon Lights loaded.')
+    def change_light_setting(self, p_name, p_level):
+        self.m_insteonPLM.change_light_setting(p_name, p_level)
+
+    def update_all_lights(self):
+        self.write_insteon_lights(lighting.Light_Data)
+
+
+class LightingStatusData(lighting.LightingStatusData): pass
+class LightingStatusAPI(lighting.LightingStatusAPI, LightingStatusData): pass
+
+
+class LoadSaveInsteonData(LightingAPI, ControllerAPI, ButtonAPI, LightingStatusAPI):
 
     def write_insteon_lights(self, p_lights,):
         """
@@ -208,24 +296,12 @@ class LoadSaveInsteonData(InsteonLightingAPI, InsteonControllerAPI, InsteonButto
 
 class InsteonDeviceUtility(LoadSaveInsteonData):
 
-    def scan_insteon_devices(self, _p_lights):
+    def scan_all_lights(self, _p_lights):
         print "insteon_Device.scan_insteon_devices "
         self.m_insteonPLM.scan_all_lights(lighting.Light_Data)
 
-    def change_light_setting(self, p_name, p_level):
-        print " insteon_Device.change_light_settings "
-        if int(p_level) == 0:
-            self.turn_light_off(p_name)
-        elif int(p_level) == 100:
-            self.turn_light_on(p_name)
-        else:
-            self.turn_light_dim(p_name, p_level)
-        lighting.Light_Status[p_name].CurLevel = p_level
 
-
-class InsteonDeviceMain(InsteonDeviceUtility):
-    """
-    """
+class DeviceMain(InsteonDeviceUtility):
 
     m_config = None
     m_logger = None
@@ -234,25 +310,24 @@ class InsteonDeviceMain(InsteonDeviceUtility):
 
     def __init__(self):
         self.m_config = configure_mh.ConfigureMain()
-        self.m_logger = logging.getLogger('PyHouse.InsteonDevice')
-        self.load_all_Insteon()
+        self.m_logger = logging.getLogger('PyHouse.Device_Insteon')
+        self.m_logger.info('Initializing.')
+        self.load_all_controllers(self.m_config.get_value('InsteonControllers'))
+        #self.dump_all_controllers()
+        self.load_all_lights(self.m_config.get_value('InsteonLights'))
+        #self.dump_all_lights()
+        self.load_all_buttons(self.m_config.get_value('InsteonButtons'))
+        self.load_all_status(self.m_config.get_value('InsteonLights'))
         import Insteon_Link
         self.m_insteonLink = Insteon_Link.InsteonLinkMain()
         import Insteon_PLM
         self.m_insteonPLM = Insteon_PLM.InsteonPLMMain()
         self.m_logger.info('Initialized.')
 
-    def Insteon_startup(self):
-        #print " # InteonDevice.Insteon_Startup 1"
-        self.m_insteonPLM.PLM_startup()
+    def start(self, p_reactor):
+        self.m_reactor = p_reactor
+        self.m_logger.info('Starting.')
+        self.m_insteonPLM.start(p_reactor)
         self.m_logger.info('Started.')
-
-    def load_all_Insteon(self):
-        """Load each section of the Insteon family.
-        """
-        self.load_insteon_controllers(self.m_config.get_value('InsteonControllers'))
-        self.load_insteon_buttons(self.m_config.get_value('InsteonButtons'))
-        self.extract_insteon_devices(self.m_config.get_value('InsteonLights'))
-        #self.dump_all_devices()
 
 ### END
