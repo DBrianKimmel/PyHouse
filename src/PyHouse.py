@@ -6,6 +6,12 @@ During development this is run by hand.
 It is, however, planned to be a daemon that is kicked off on system start-up.
 It is intended to run on a small, low power barebones system.
 
+Python modules used:
+    Core python 2.7
+    twisted
+    nevow
+    PySerial 2.6
+
 Modules desired are:
     Web server - allow control over the internet by a browser
     Scheduler - kick off automation that follows a schedule
@@ -16,6 +22,7 @@ Modules desired are:
 
 # Import system type stuff
 import logging
+import platform
 import signal
 from twisted.internet import reactor
 
@@ -49,15 +56,15 @@ class MainProgram(object):
         """The constructor for the class.
         Establish all pointers needed.
         """
-        signal.signal(signal.SIGHUP, self.SigHupHandler)
+        if platform.uname()[0] != 'Windows':
+            signal.signal(signal.SIGHUP, self.SigHupHandler)
         signal.signal(signal.SIGINT, self.SigIntHandler)
 
         self.print_license()
         # These need to be first and in this order
         self.g_configure = configure_mh.ConfigureMain()
         self.g_configure.load_config()
-        self.g_logging = log.LoggingMain()
-        self.g_logging.configure()
+        log.LoggingMain()
         # 2nd. Now the logging will be set up and work properly
         self.m_logger = logging.getLogger('PyHouse')
         self.m_logger.info("Initializing.")
@@ -81,7 +88,7 @@ class MainProgram(object):
         """
         self.m_logger.info("Starting.")
         self.g_schedule.start(reactor)
-        self.g_web_server.start(reactor)
+        #self.g_web_server.start(reactor)
         self.m_logger.info("Started.\n")
         reactor.run()
 
@@ -91,6 +98,7 @@ class MainProgram(object):
         self.g_schedule.stop()
         reactor.stop()
         self.m_logger.info("Stopped.\n")
+        log.LoggingMain().stop()
 
     def restart(self):
         """Allow for a running restart of PyMh.

@@ -4,13 +4,17 @@
 This is a Main Module - always present.
 
 Default to /var/log/pymh
-Be sure it exists and is read/write for the user running PyMh.
+Be sure it exists and is read/write for the user running PyHouse.
+
+This module sets up the logging used by PyHouse.
+It configures 'PyHouse' in the logging standard library module.
 """
 
 # Import system type stuff
 import datetime
 import logging
 import logging.handlers
+import platform
 
 # Import PyMh files
 import configure_mh
@@ -21,10 +25,10 @@ class LoggingUtility(object):
     def setup_debug_log (self):
         """Debug and more severe goes to the base logger
         """
-        l_formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s - %(message)s')
         l_debug = logging.getLogger('PyHouse')
+        l_formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s - %(message)s')
         l_debug.setLevel(logging.DEBUG)
-        l_fh = logging.handlers.RotatingFileHandler(self.m_debug_name, maxBytes = 1000000, backupCount = 9)
+        l_fh = logging.handlers.TimedRotatingFileHandler(self.m_debug_name, when='midnight', backupCount = 31)
         l_fh.setLevel(logging.DEBUG)
         l_fh.setFormatter(l_formatter)
         l_debug.addHandler(l_fh)
@@ -41,9 +45,16 @@ class LoggingUtility(object):
 class LoggingMain(LoggingUtility):
 
     def __init__(self):
-        self.m_debug_name = '/var/log/pymh/debug.log'
-        self.m_error_name = '/var/log/pymh/error.log'
+        if platform.uname()[0] == 'Windows':
+            print 'Windows platform'
+            self.m_debug_name = 'C:/var/debug.log'
+            self.m_error_name = 'C:/var/error.log'
+        else:
+            print 'Linux platform'
+            self.m_debug_name = '/var/log/pymh/debug.log'
+            self.m_error_name = '/var/log/pymh/error.log'
         self.m_formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s - %(message)s')
+        self.configure()
 
     def configure(self):
         self.m_config = configure_mh.ConfigureMain()
@@ -52,5 +63,8 @@ class LoggingMain(LoggingUtility):
         self.m_error_name = l_dict['error_log']
         self.setup_debug_log()
         #self.setup_error_log()
+
+    def stop(self):
+        logging.shutdown()
 
 ### END
