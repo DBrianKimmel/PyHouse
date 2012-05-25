@@ -95,6 +95,7 @@ class MainProgram(object):
     def stop(self):
         """Stop twisted in preparation to exit PyMh.
         """
+        self.g_schedule.stop()
         reactor.stop()
         self.m_logger.info("Stopped.\n")
         log.LoggingMain().stop()

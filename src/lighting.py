@@ -100,6 +100,10 @@ class LightingUtility(LightingAPI, LightingData):
         for l_ptr in m_family_module:
             l_ptr.start(self.m_reactor)
 
+    def stop_all_lighting_families(self):
+        for l_ptr in m_family_module:
+            l_ptr.stop()
+
     def change_light_setting(self, p_name, p_level = 0, _p_family = None):
         """ *!* 
         Turn a light to a given level (0-100) off/dimmed/on.
@@ -183,5 +187,8 @@ class LightingMain(LightingUtility, SceneUtility, LightingAPI, ControllerAPI, Bu
     def start(self, p_reactor):
         self.m_reactor = p_reactor
         self.start_all_lighting_families()
+
+    def stop(self):
+        pass
 
 ### END

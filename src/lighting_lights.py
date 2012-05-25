@@ -29,6 +29,36 @@ class LightingData(lighting_tools.CoreData):
 
 
 class LightingAPI(lighting_tools.CoreAPI, LightingData):
+
+    @staticmethod
+    def get_LightCount():
+        return LightingData.LightCount
+
+    def __init__(self):
+        lighting_tools.LightingTools.__init__(self)
+        LightingData.LightCount += 1
+        self.Coords = None
+        self.Dimmable = None
+        self.Type = 'Light'
+
+    def __Xrepr__(self):
+        l_str = "Light Name:{0:20.20s} Family: {1:10.10s} Type: {2:10.10s} Comment: {3:40.40s} Room: {4:} Coords: {5:}".format(
+                            self.get_family, self.get_name, self.get_type, self.get_comment, self.get_room, self.get_coords)
+        return l_str
+
+    def get_coords(self):
+        return self.__Coords
+    def set_coords(self, value):
+        self.__Coords = value
+    def get_dimmable(self):
+        return self.__Dimmable
+    def set_dimmable(self, value):
+        self.__Dimmable = value
+
+    Coords = property(get_coords, set_coords, None, None)
+    Dimmable = property(get_dimmable, set_dimmable, None, None)
+
+
     """
     """
 
@@ -42,7 +72,7 @@ class LightingAPI(lighting_tools.CoreAPI, LightingData):
         """
         l_light = LightingData()
         # Common Data
-        l_light.Active = p_dict.get('Active', 'False')
+        l_light.Active = self.getBool(p_dict, 'Active')
         l_light.Comment = p_dict.get('Comment', None)
         l_light.Coords = p_dict.get('Coords', None)
         l_light.Dimmable = p_dict.get('Dimmable', False)

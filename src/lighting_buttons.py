@@ -12,10 +12,6 @@ Button_Data = {}
 class ButtonData(lighting_tools.LightingTools):
 
     def __init__(self):
-        self.Active = None
-        self.Family = None
-        self.Name = None
-        self.Room = None
         self.Type = 'Button'
 
     def __repr__(self):

@@ -96,7 +96,7 @@ message_types = {
 
 
 Last_Response = bytearray()
-m_serial = None
+m_driver = []
 
 
 class LightingStatusAPI(Device_Insteon.LightingStatusAPI): pass
@@ -152,6 +152,7 @@ class LightingAPI(Device_Insteon.LightingAPI):
 class LightHandlerAPI(LightingAPI, LightingStatusAPI):
     """This is the API for light control.
     """
+    m_driver = []
 
     def scan_all_lights(self, p_lights):
         """Exported command - used by other modules.
@@ -162,11 +163,10 @@ class LightHandlerAPI(LightingAPI, LightingStatusAPI):
             if l_obj.get_Type == 'Light':
                 self._scan_one_light(l_key)
 
-    def initialize_controller_port(self):
-        self.m_driver = []
+    def initialize_all_controllers(self):
         #Device_Insteon.ControllerAPI.dump_all_controllers(Device_Insteon.ControllerAPI())
         for _l_key, l_obj in Device_Insteon.Controller_Data.iteritems():
-            #print " & PLM.initialize_controller_port ", l_key, l_obj
+            #print " & PLM.initialize_all_controllers ", l_key, l_obj
             if l_obj.Family != 'Insteon': continue
             if l_obj.Active != True: continue
             if l_obj.Interface.lower() == 'serial':
@@ -808,7 +808,8 @@ class InsteonPLMMain(PlmDriverInterface, PlmTesting):
         """Constructor for the PLM.
         """
         self.m_logger = logging.getLogger('PyHouse.Insteon_PLM')
-        self.initialize_controller_port()
+        self.m_driver = []
+        self.initialize_all_controllers()
         self.m_retry_count = 0
         self.m_queue = Queue.Queue(30)
         self.m_logger.info('Initialized.')
@@ -823,5 +824,8 @@ class InsteonPLMMain(PlmDriverInterface, PlmTesting):
         #self.get_all_allinks()
         #self._get_all_ids()
         self.m_logger.info('Started.')
+
+    def stop(self):
+        pass
 
 ### END

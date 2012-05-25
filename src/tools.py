@@ -13,7 +13,7 @@ def PrintBytes(p_message):
         l_message = "<NONE>"
     else:
         for l_x in range(l_len):
-            l_message += " {0:#x}".format(p_message[l_x])
+            l_message += " {0:#x}".format(int(p_message[l_x]))
     l_message += " <END>"
     return l_message
 

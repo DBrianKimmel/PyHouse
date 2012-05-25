@@ -1,6 +1,35 @@
 #!/usr/bin/python
 
-"""Driver_USB.py - USB Driver module. 
+# Copyright (C) 2012 by D. Brian Kimmel 
+# 
+# The following terms apply to all files associated
+# with the software unless explicitly disclaimed in individual files.
+# 
+# The authors hereby grant permission to use, copy, modify, distribute,
+# and license this software and its documentation for any purpose, provided
+# that existing copyright notices are retained in all copies and that this
+# notice is included verbatim in any distributions. No written agreement,
+# license, or royalty fee is required for any of the authorized uses.
+# Modifications to this software may be copyrighted by their authors
+# and need not follow the licensing terms described here, provided that
+# the new terms are clearly indicated on the first page of each file where
+# they apply.
+# 
+# IN NO EVENT SHALL THE AUTHORS OR DISTRIBUTORS BE LIABLE TO ANY PARTY
+# FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+# ARISING OUT OF THE USE OF THIS SOFTWARE, ITS DOCUMENTATION, OR ANY
+# DERIVATIVES THEREOF, EVEN IF THE AUTHORS HAVE BEEN ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+# 
+# THE AUTHORS AND DISTRIBUTORS SPECIFICALLY DISCLAIM ANY WARRANTIES,
+# INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.  THIS SOFTWARE
+# IS PROVIDED ON AN "AS IS" BASIS, AND THE AUTHORS AND DISTRIBUTORS HAVE
+# NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR
+# MODIFICATIONS.
+
+"""
+Driver_USB.py - USB Driver module. 
 
 This will interface various PyHouse modules to a USB device.
 
@@ -9,18 +38,21 @@ This may be instanced as many times as there are USB devices to control.
 This should also allow control of many different houses.
 """
 
+__author__ = 'D. Brian Kimmel'
+
 # Import system type stuff
 import logging
+import sys
+# Use USB package that was written by Wander Lairson Costa
+# PYUSB_DEBUG_LEVEL=debug
+# export PYUSB_DEBUG_LEVEL
 import usb.core
 import usb.util
-from tools import PrintBytes
 from twisted.internet.task import LoopingCall
 
 # Import PyHouse modules
-#from tools import PrintBytes
+from tools import PrintBytes
 
-ENDPOINT = 0x81
-REQUEST_TYPE = 0x21
 
 
 class UsbDeviceData(object):
@@ -32,7 +64,6 @@ class UsbDeviceData(object):
         self.Port = None
         self.Product = None
         self.Vendor = None
-
     def get_device(self):
         return self.__Device
     def set_device(self, value):
@@ -57,14 +88,12 @@ class UsbDeviceData(object):
         return self.__Vendor
     def set_vendor(self, value):
         self.__Vendor = value
-
     Device = property(get_device, set_device, None, None)
     Interface = property(get_interface, set_interface, None, None)
     Name = property(get_name, set_name, None, None)
     Port = property(get_port, set_port, None, None)
     Product = property(get_product, set_product, None, None)
     Vendor = property(get_vendor, set_vendor, None, None)
-
 
 class UsbUtility(UsbDeviceData):
     """
@@ -73,7 +102,7 @@ class UsbUtility(UsbDeviceData):
     def _serialLoop(self):
         """This is invoked every 1 second.
         """
-        self.read_device(self.get_device())
+        self.read_device()
 
     def extract_usb(self, p_obj):
         self.m_device_data = UsbDeviceData()
@@ -95,61 +124,119 @@ class UsbUtility(UsbDeviceData):
                 print "\tName: {0:}={1:}".format(attr, self.m_device_data.Device.__dict__ [attr])
         print
 
-
 class UsbDriverAPI(UsbUtility):
-    """
-    """
+
+    def _setup_find_device(self, p_vendor, p_product):
+        """First step in opening a USB device.
+
+        @return:  None if no such device or a pyusb device object
+        """
+        print "! !Driver_USB._setup_find_device"
+        print " -- Name:{0:}".format(self.get_name())
+        l_device = usb.core.find(idVendor = p_vendor, idProduct = p_product)
+        print " -- device =", l_device.__dict__
+        self.set_device(l_device)
+        self.m_message = ''
+        if l_device is None:
+            self.m_logger.error('USB device not found  {0:X}:{1:X}, {2:}'.format(p_vendor, p_product, self.get_name()))
+        return l_device
+
+    def _setup_detach_kernel(self, p_driver):
+        if not p_driver.is_kernel_driver_active(0): return
+        print "! !Driver_USB._setup_detach_kernel"
+        try:
+            p_driver.detach_kernel_driver(0)
+        except Exception, e:
+            print " -- Error in detaching_kernel_driver ", sys.exc_info()[0], e
+            pass
+
+    def _setup_configurations(self, p_device):
+        """Now we deal with the USB configurtation - use the 'proper' config.
+
+        @return: the active configuration object.
+        """
+        print "! !Driver_USB._setup_configurations"
+        p_device.set_configuration()
+        l_config = p_device.get_active_configuration()
+        print " -- cfg =", l_config.__dict__
+        return l_config
+
+    def _setup_interfaces(self, p_config):
+        print "! !Driver_USB._setup_interfaces"
+        l_interface_number = p_config[(0, 0)].bInterfaceNumber
+        print " -- interface_number =", l_interface_number
+        try:
+            l_alternate_setting = usb.control.get_interface(self.get_device(), l_interface_number)
+            print " -- alternate_setting =", l_alternate_setting
+        except Exception, e:
+            print " -- Error in alt setting ", sys.exc_info()[0], e
+            l_alternate_setting = 0
+        l_interface = usb.util.find_descriptor(
+            p_config, bInterfaceNumber = l_interface_number,
+            bAlternateSetting = l_alternate_setting)
+        print " -- interface =", l_interface.__dict__
+        return l_interface
+
+    def _setup_endpoints(self, p_interface):
+        print "! !Driver_USB._setup_endpoints"
+        self.m_ep_out = usb.util.find_descriptor(
+            p_interface, custom_match = lambda e: usb.util.endpoint_direction(e.bEndpointAddress) == usb.util.ENDPOINT_OUT
+        )
+        print " -- ep_out =", self.m_ep_out.__dict__
+        self.m_endpoint_out = self.m_ep_out.bEndpointAddress
+        self.m_ep_in = usb.util.find_descriptor(
+            p_interface, custom_match = lambda e: usb.util.endpoint_direction(e.bEndpointAddress) == usb.util.ENDPOINT_IN
+        )
+        print " -- ep_in  =", self.m_ep_in.__dict__
+        self.m_endpoint_in = self.m_ep_in.bEndpointAddress
+
 
     def open_device(self):
-        l_vendor = self.get_vendor()
-        l_product = self.get_product()
-        l_dev = usb.core.find(idVendor = l_vendor, idProduct = l_product)
-        self.set_device(l_dev)
-        self.m_message = ''
-        if l_dev is None:
-            self.m_logger.error('USB device not found  {0:X}:{1:X}, {2:}'.format(l_vendor, l_product, self.get_name()))
-            return False
-        try:
-            l_dev.set_configuration(1)
-        except:
-            pass
-        self.m_device_data.m_endpoint_cfg = l_dev.get_active_configuration()
-        try:
-            l_dev.detach_kernel_driver(0)
-        except:
-            pass
-        return l_dev
+        print "! !Driver_USB.open_device"
+        self.m_device = self._setup_find_device(self.get_vendor(), self.get_product())
+        self.m_device.baudrate = 19200
+        self._setup_detach_kernel(self.m_device)
+        l_config = self._setup_configurations(self.m_device)
+        l_interface = self._setup_interfaces(l_config)
+        self._setup_endpoints(l_interface)
+        return self.m_device
 
     def close_device(self, p_dev):
-        pass
+        self.m_device.reset()
 
-    def read_device(self, p_dev):
+    def read_device(self):
         try:
-            l_msg = usb.core.Device.read(p_dev, ENDPOINT, REQUEST_TYPE)
+            l_msg = self.m_device.read(self.m_endpoint_in, 64, timeout = 1000)
             self.m_message += l_msg
-        except:
+        except Exception, e:
+            #print " -- Error in read_device ", sys.exc_info()[0], e
             pass
-        #print " !!UsbDriver.read_device() >>{0:}<<".format(PrintBytes(self.m_message))
+        l_len = len(self.m_message)
+        if l_len > 0:
+            print " !!UsbDriver.read_device() - ep:{0:#X} {1:} bytes -{2:}".format(self.m_endpoint_in, l_len, PrintBytes(self.m_message))
 
     def fetch_read_data(self):
-        l_ret = self.m_message
+        l_ret = (len(self.m_message), self.m_message)
         self.m_message = ''
-        return l_ret
+        return (l_ret)
 
-    def write_device(self, p_dev, p_message):
+    def write_device(self, p_message):
         """Send message to the USB device.
         
         @return: the number of bytes written
         """
-        print " !!UsbDriver.write_device() - {0:}".format(PrintBytes(p_message))
-        l_len = len(p_message)
-        usb.core.Device.write(p_dev, 2, p_message)
+        l_message = p_message
+        print " !! Driver_USB.write_device() - ep={0:#04X} - {1:}".format(self.m_endpoint_out, p_message)
+        try:
+            #l_len = self.m_device.write(self.m_endpoint_out, l_message, timeout = 500)
+            l_len = self.m_ep_out.write(l_message, timeout = 200)
+        except Exception, e:
+            print " -- Error in writing to USB device ", sys.exc_info()[0], e
+            l_len = 0
         return l_len
 
 
 class USBDriverMain(UsbDriverAPI):
-    """
-    """
 
     def __init__(self, p_obj):
         """
@@ -157,8 +244,8 @@ class USBDriverMain(UsbDriverAPI):
         """
         self.m_logger = logging.getLogger('PyHouse.USBDriver')
         self.extract_usb(p_obj)
-        self.m_logger.info(" Initializing USB port - {0:} on port {1:}".format(self.get_name(), self.get_port()))
-        _l_dev = self.open_device()
+        self.m_logger.info(" Initializing USB port - {0:}:{1:} - {2:} on port {3:}".format(self.get_vendor(), self.get_product(), self.get_name(), self.get_port()))
+        self.open_device()
         LoopingCall(self._serialLoop).start(1)
 
     """
@@ -215,10 +302,8 @@ const int HID_SET_PROTOCOL  = 0x0B;
 // EDOM            33      /* Math argument out of domain of func */
 // ERANGE          34      /* Math result not representable */
 // ENODATA         61      /* No data available */
-
-// Public routines
-
-UsbHidSerial::UsbHidSerial( int k_vendor, int k_product, int k_debug ) :
+    """
+    """ UsbHidSerial::UsbHidSerial( int k_vendor, int k_product, int k_debug ) :
             m_idVendor( k_vendor ),
             m_idProduct( k_product ),
             m_debugLevel( k_debug ),
@@ -241,19 +326,17 @@ UsbHidSerial::UsbHidSerial( int k_vendor, int k_product, int k_debug ) :
     AcquireDevice();
     DEBUG( -1, "UsbHidSerial::Constructor - Exit" );
 }
-
-UsbHidSerial::~UsbHidSerial() {
-    DEBUG( -1, "UsbHidSerial::Destructor - Entry" );
+    """
+    """ UsbHidSerial::~UsbHidSerial() {
     if ( mp_Device == NULL ) {
         DEBUG( 0, "UsbHidSerial::Destructor - Invalid Device - FAIL!!!\n" );
         return;
     }
     libusb_release_interface(mp_deviceHandle, m_interface );
     libusb_exit( NULL );
-    DEBUG( -2, "UsbHidSerial::Destructor - Exit" );
 }
-
-void UsbHidSerial::AcquireDevice() {
+    """
+    """ void UsbHidSerial::AcquireDevice() {
     bool l_ok = FALSE;
     mp_Device    = NULL;
        DEBUG( -1, "UsbHidSerial::AcquireDevice - Entry" );
@@ -279,10 +362,9 @@ void UsbHidSerial::AcquireDevice() {
     if ( l_ok ) { l_ok = SetConfig(); }
     if ( l_ok ) { l_ok = InitializeHID(); }
     libusb_free_device_list(mpp_list,1);
-    DEBUG( -2, "UsbHidSerial::AcquireDevice - Exit " );
 }
-
-bool UsbHidSerial::is_interesting(libusb_device* p_dev) {
+    """
+    """ bool UsbHidSerial::is_interesting(libusb_device* p_dev) {
     DEBUG( 1, "UsbHidSerial::is_interesting - Entry  " << (&p_dev) );
     int l_err = libusb_get_device_descriptor(p_dev, &m_deviceDescriptor);
     if (l_err != 0) {
@@ -306,8 +388,8 @@ bool UsbHidSerial::is_interesting(libusb_device* p_dev) {
     DEBUG( -2, "UsbHidSerial::is_interesting - Exit - Found it." );
     return TRUE;
 }
-
-void UsbHidSerial::DropDevice() {
+    """
+    """ void UsbHidSerial::DropDevice() {
     DEBUG( -1, "UsbHidSerial::DropDevice" );
 /*
     int l_result = libusb_release_interface( mp_handle, m_interface );
@@ -319,8 +401,8 @@ void UsbHidSerial::DropDevice() {
     DEBUG( 2, "UsbHidSerial::usbDropDevice - Exit" );
 */
 }
-
-int UsbHidSerial::usbReadBytes( QByteArray& kr_buffer ) {
+    """
+    """ int UsbHidSerial::usbReadBytes( QByteArray& kr_buffer ) {
     int     l_ret;
     int     l_endPoint = 0x81; // Interrupt IN End Point
     char    l_buff[128];
@@ -344,8 +426,8 @@ int UsbHidSerial::usbReadBytes( QByteArray& kr_buffer ) {
     DEBUG( 7, "UsbHidSerial::usbReadBytes - Returned " << l_size << " " << l_str.toAscii() );
     return l_ret;
 }
-
-int UsbHidSerial::Write1Byte(char k_byte) {
+    """
+    """ int UsbHidSerial::Write1Byte(char k_byte) {
     int     l_transferred;
     int l_ret = 0;
     QByteArray l_buf;
@@ -360,8 +442,8 @@ int UsbHidSerial::Write1Byte(char k_byte) {
     DEBUG( 3, "UsbHidSerial::Write1Byte - Erc:" << l_ret << ", Sent:" << l_transferred );
     return l_ret;
 }
-
-int UsbHidSerial::usbWriteBytes( const QByteArray& k_buffer ) {
+    """
+    """ int UsbHidSerial::usbWriteBytes( const QByteArray& k_buffer ) {
     int         l_ret = 0;
     QString l_str = ToString( k_buffer );
     DEBUG( 6, "UsbHidSerial::usbWriteBytes - Entry Len=" << k_buffer.size() << " " << l_str.toAscii() );
@@ -387,10 +469,8 @@ int UsbHidSerial::usbWriteBytes( const QByteArray& k_buffer ) {
     DEBUG( 7, "UsbHidSerial::usbWriteBytes - Exit" );
     return l_ret;
 }
-
-// Protected routines
-
-bool UsbHidSerial::OpenDevice() {
+    """
+    """ bool UsbHidSerial::OpenDevice() {
     DEBUG( -1, "UsbHidSerial::OpenDevice - Entry" );
     // Open the device that we found for the given vendor/product.
     int l_int = libusb_open( mp_Device, &mp_deviceHandle );
@@ -401,20 +481,18 @@ bool UsbHidSerial::OpenDevice() {
     DEBUG( -2, "UsbHidSerial::OpenDevice - Exit OK");
     return TRUE;
 }
-
-bool UsbHidSerial::SetConfig() {
-    DEBUG( 1, "UsbHidSerial::SetConfig - Entry" );
+    """
+    """ bool UsbHidSerial::SetConfig() {
     m_configuration = 1;
     int l_ret = libusb_set_configuration( mp_deviceHandle,  m_configuration );
     if ( l_ret != 0 ) {
         DEBUG( 0, "UsbHidSerial::SetConfig - FAILED returned " << l_ret );
         return TRUE;
     }
-    DEBUG( 2, "UsbHidSerial::SetConfig - Exit OK" );
     return TRUE;
 }
-
-bool UsbHidSerial::InitializeHID() {
+    """
+    """ bool UsbHidSerial::InitializeHID() {
     int l_ret;
     DEBUG( 1, "UsbHidSerial::InitializeHID - Entry" );
     QByteArray l_report = "12345";
@@ -443,8 +521,8 @@ bool UsbHidSerial::InitializeHID() {
     DEBUG( 2, "UsbHidSerial::InitializeHID - Exit OK - Bytes=" << l_ret );
     return TRUE;
 }
-
-bool UsbHidSerial::ClaimInterface() {
+    """
+    """ bool UsbHidSerial::ClaimInterface() {
     m_interface = 0;
     DEBUG( 1, "UsbHidSerial::ClaimInterface - Entry - Interface=" << m_interface );
     // zero if no kernel driver is active.
@@ -459,8 +537,8 @@ bool UsbHidSerial::ClaimInterface() {
     DEBUG(  2, "UsbHidSerial::ClaimInterface - Exit OK Interface=" << m_interface );
     return TRUE;
 }
-
-QString UsbHidSerial::GetString( int k_index ) {
+    """
+    """ QString UsbHidSerial::GetString( int k_index ) {
     QString     l_str;
     unsigned char        l_chr[1024];
     int l_ret = libusb_get_string_descriptor( mp_deviceHandle, k_index, 0, l_chr , 1024 );
@@ -471,8 +549,8 @@ QString UsbHidSerial::GetString( int k_index ) {
     l_str.append( (char*)l_chr );
     return l_str;
 }
-
-QString UsbHidSerial::ToString( const QByteArray& k_ba ) {
+    """
+    """ QString UsbHidSerial::ToString( const QByteArray& k_ba ) {
     QString l_str( " " );
     char    l_char[128];
     int     l_size = k_ba.size();

@@ -37,79 +37,36 @@ pim_commands = {
 }
 
 
+Controller_Data = Device_UPB.Controller_Data
+
+class ControllerData(Device_UPB.ControllerData): pass
+class ControllerAPI(Device_UPB.ControllerAPI, ControllerData): pass
+
 class LightingStatusAPI(Device_UPB.LightingStatusAPI): pass
 
 class LightingAPI(Device_UPB.LightingAPI):
 
     def change_light_setting(self, p_name, p_level):
-        print " UPB_PIM.change_light_settings "
-        self.m_logger.info('change_light_setting()')
         for _l_key, l_obj in Device_UPB.Light_Data.iteritems():
+            #print " UPB_PIM.change_light_settings ", l_obj.__dict__
             if l_obj.get_family() != 'UPB': continue
-            print " PIM ", l_obj
+            #print " UPB_PIM.change_light_settings found UPB device"
+            if l_obj.get_active() == False: continue
+            #print " UPB_PIM.change_light_settings found Active device"
             if l_obj.get_name() == p_name:
-                l_cmd = self.compose_command(pim_commands['goto'], 0xff01)
-                l_cmd = self.calculate_checksum(l_cmd)
-                self.send_plm_command(l_cmd)
-                #if int(p_level) == 0:
-                #    self.turn_light_off(p_name)
-                #elif int(p_level) == 100:
-                #    self.turn_light_on(p_name)
-                #else:
-                #    self.turn_light_dim(p_name, p_level)
-                #Device_UPB.Light_Status[p_name].CurLevel = p_level
-                #return
+                l_id = self._get_id_from_name(p_name)
+                print " & UPB_Pim.change_light_settings "
+                self.m_logger.info('change_light_setting()')
+                l_cmd = self.compose_command(pim_commands['goto'], l_id, p_level, 0x01)
+                #self.send_pim_command(l_cmd)
+                return
 
-    """
-void PIMMain::pimOperateDevice( LightDevice* kp_device ) {
-    QByteArray  l_response;
-    int l_level = kp_device->property( "LightLevel" ).toInt();
-    int l_rate  = kp_device->property( "FadeRate" ).toInt();
-    int l_index = kp_device->property( "Index" ).toInt();
-    QString l_name =  kp_device->property( "DeviceName" ).toString();
-    QDateTime l_lastTime    = kp_device->property( "LastActionTime" ).toDateTime();
-    if ( l_lastTime.secsTo( QDateTime::currentDateTime() ) < 9 ) {
-        m_debugLevel = 0;
-        return;
-    }
-    DEBUG( 1, "PIMMain::pimOperateDevice " << kp_device->property( "DeviceName" ).toString().toAscii() << "to level" << l_level );
-    //Logger::Instance()->writeSyslog(QString( "Operating device %1" ).arg(l_name ) );
-    QByteArray      l_out( 2, (char)0 );
-    l_out[0] = l_level & 0xFF;
-    l_out[1] = l_rate  & 0xFF;
-    int l_command = CMD_FADE_START;
-    if ( l_index == 10 || l_index == 15 || l_index == 16 ) {
-        l_command = CMD_GOTO;
-        DEBUG( -1, "PIMMain::pimOperateDevice - Using GOTO" );
-    }
-    QByteArray l_msg = pimComposeMessage( kp_device, l_command, l_out, FALSE );
-    sendMessageGetResponse(l_msg, l_response);
-    exitSetupMode( kp_device );
-}
-    """
-
-    def turn_light_off(self, p_name):
+    def XXturn_light_off(self, p_name):
         """Implement turning off an Insteon light.
         """
         self.m_logger.debug('***Turning off light {0:}'.format(p_name))
         #self.send_62_command(p_name, message_types['off'], 0)
         self.m_logger.info('Turned off light {0:}'.format(p_name))
-
-    def turn_light_on(self, p_name):
-        """Turn on a light to a level = 0 - 100 %.
-        """
-        self.m_logger.debug('***Turning on light={0:}'.format(p_name))
-        l_level = 0xFF
-        #self.send_62_command(p_name, message_types['on'], l_level)
-        self.m_logger.info('Turned on light={0:}'.format(p_name))
-
-    def turn_light_dim(self, p_name, p_level):
-        """Turn on a light to a level = 0 - 100 %.
-        """
-        self.m_logger.debug('***Dimming light={0:} to level={1:}'.format(p_name, p_level))
-        l_level = int(p_level) * 255 / 100
-        #self.send_62_command(p_name, message_types['on'], l_level)
-        self.m_logger.info('Turned on light={0:} to level={1:}'.format(p_name, p_level))
 
     def update_all_devices(self):
         #Device_Insteon.InsteonLightingAPI.update_all_devices(Device_Insteon.InsteonLightingAPI())
@@ -119,61 +76,56 @@ class LightHandlerAPI(LightingAPI, LightingStatusAPI):
     """This is the API for light control.
     """
 
-    def initialize_controller_port(self):
-        #Device_Insteon.ControllerAPI.dump_all_controllers(Device_Insteon.ControllerAPI())
-        for _l_key, l_obj in Device_UPB.Controller_Data.iteritems():
-            #print " & PLM.initialize_controller_port ", l_key, l_obj
-            if l_obj.Family != 'UPB': continue
-            if l_obj.Active != 'True': continue
-            self.m_network_id = l_obj.NetworkID
-            self.m_unit_id = l_obj.UnitID
-            if l_obj.Interface.lower() == 'serial':
-                import Driver_Serial
-                self.m_serial = Driver_Serial.SerialDriverMain(l_obj)
-            elif l_obj.Interface.lower() == 'ethernet':
-                import Driver_Ethernet
-                self.m_ethernet = Driver_Ethernet.EthernetDriverMain(l_obj)
-            elif l_obj.Interface.lower() == 'usb':
-                import Driver_USB
-                self.m_usb = Driver_USB.USBDriverMain(l_obj)
-
-    def compose_command(self, p_command, _p_args):
+    def compose_command(self, p_command, p_device_id, *p_args):
         """
         """
-        print "  PIM compose command"
-        l_cmd = bytearray(8)
-        l_cmd[0] = 0x09 # 'UPBMSG_CONTROL_HIGH'
+        print " & UPB_Pim.compose command - Network:{0:#02x}, Command:{1:#02x}, ID:{2:} ".format(self.m_network_id, p_command, p_device_id)
+        l_cmd = bytearray(6 + len(p_args))
+        l_cmd[0] = 7 + len(p_args) # 'UPBMSG_CONTROL_HIGH'
         l_cmd[1] = 0x00 # 'UPBMSG_CONTROL_LOW'
         l_cmd[2] = self.m_network_id # 'UPBMSG_NETWORK_ID'
-        l_cmd[3] = 20 # 'UPBMSG_DEST_ID'
+        l_cmd[3] = p_device_id # 'UPBMSG_DEST_ID'
         l_cmd[4] = self.m_unit_id # 'UPBMSG_SOURCE_ID'
         l_cmd[5] = p_command # 'UPBMSG_MESSAGE_ID'
-        l_cmd[6] = 0x00
-        l_cmd[7] = 0x00
+        for l_ix in range(len(p_args)):
+            #print "   ", (6 + l_ix), p_args[l_ix]
+            l_cmd[6 + l_ix] = p_args[l_ix]
+        l_cmd = self.calculate_checksum(l_cmd)
+        self.send_pim_command(l_cmd)
         return l_cmd
 
 class UpbPimUtility(LightHandlerAPI):
 
     def _get_id_from_name(self, p_name):
+        print " & UPB_Pim._get_id_from_name ", p_name
+        for l_obj in Device_UPB.Light_Data.itervalues():
+            if l_obj.Family != 'UPB': continue
+            if l_obj.Active != True: continue
+            if l_obj.Name == p_name:
+                l_unit_id = int(l_obj.UnitID)
+                return l_unit_id
         for l_obj in Device_UPB.Controller_Data.itervalues():
             if l_obj.Family != 'UPB': continue
-            l_unit_id = l_obj.UnitID
-        return l_unit_id
+            if l_obj.Active != True: continue
+            if l_obj.Name == p_name:
+                l_unit_id = int(l_obj.UnitID)
+                return l_unit_id
+        return 0
 
     def set_pim_mode(self):
         l_val = bytearray(1)
         l_val[0] = 0x03
-        self.set_register_value(0x70, l_val)
+        self.set_register_value(self.m_pim_name[0], 0x70, l_val)
 
     def calculate_checksum(self, p_msg):
-        print "   PIM calculate checksum"
+        print " & UPB_Pim.calculate checksum"
         l_out = '14'
         l_cs = 0
-        for l_ix in p_msg:
-            l_byte = ord(l_ix)
+        for l_ix in range(len(p_msg)):
+            l_byte = p_msg[l_ix]
             l_cs = (l_cs + l_byte) % 256
-            l_out = "{0:}{0:02X}".format(l_out, l_byte)
-        l_out = "{0:}{1:02X}0D".format(l_out, (256 - l_cs))
+            l_out = "{0:}{1:02X}".format(l_out, l_byte)
+        l_out = "{0:}{1:02X}0D".format(l_out, int(256 - l_cs))
         return l_out
     """
     for ( int l_ix = 0; l_ix < k_array.size(); l_ix++ ) {
@@ -196,8 +148,8 @@ class PimDriverInterface(DecodeResponses):
         self.m_reactor.callLater(1, self.receive_loop)
         self.m_repeat = 0
 
-    def send_plm_command(self, p_command):
-        print "    PIM send plm ", PrintBytes(p_command)
+    def send_pim_command(self, p_command):
+        print " & UPB_Pim.send_pim_command ", p_command
         self.m_queue.put(p_command)
 
     def dequeue_and_send(self):
@@ -206,11 +158,14 @@ class PimDriverInterface(DecodeResponses):
         except: # No commands queued
             self.m_reactor.callLater(3, self.dequeue_and_send)
             return
-        self.m_usb.write_device(l_command)
+        print " dequeue_and_send ", l_command
+        #self.m_driver[0].write_device(l_command)
+        for l_ix in range(len(l_command)):
+            self.m_driver[0].write_device(l_command[l_ix])
         self.m_reactor.callLater(1, self.dequeue_and_send)
 
     def receive_loop(self):
-        (l_bytes, l_msg) = self.m_usb.fetch_read_data()
+        (l_bytes, l_msg) = self.m_driver[0].fetch_read_data()
         if l_bytes == 0:
             self.m_reactor.callLater(1, self.receive_loop)
             return False
@@ -221,28 +176,50 @@ class PimDriverInterface(DecodeResponses):
 
 class UpbPimAPI(PimDriverInterface):
 
-    def initialize_controllers(self):
-        for _l_key, l_obj in Device_UPB.Controller_Data.iteritems():
+    m_driver = []
+    m_pim_name = []
+
+    def initialize_all_controllers(self):
+        for l_key, l_obj in Device_UPB.Controller_Data.iteritems():
             if l_obj.Family.lower() != 'upb': continue
             if l_obj.Active != True: continue
+            #
+            print " & UPB_Pim.initialize_all_controllers - Loading: ", l_key
+            self.m_network_id = l_obj.NetworkID
+            self.m_unit_id = l_obj.UnitID
             if l_obj.Interface.lower() == 'serial':
                 import Driver_Serial
-                self.m_serial = Driver_Serial.SerialDriverMain(l_obj)
+                l_driver = Driver_Serial.SerialDriverMain(l_obj)
             elif l_obj.Interface.lower() == 'ethernet':
                 import Driver_Ethernet
-                self.m_ethernet = Driver_Ethernet.EthernetDriverMain(l_obj)
+                l_driver = Driver_Ethernet.EthernetDriverMain(l_obj)
             elif l_obj.Interface.lower() == 'usb':
                 import Driver_USB
-                self.m_usb = Driver_USB.USBDriverMain(l_obj)
+                l_driver = Driver_USB.USBDriverMain(l_obj)
             else:
-                self.m_logger.error("UPB PIM has no known type! {0}, {1:}".format(l_obj.Name, l_obj.Interface))
+                self.m_logger.error("UPB PIM has no known interface type! {0}, {1:}".format(l_obj.get_name, l_obj.get_interface))
+            self.m_driver.append(l_driver)
+            self.m_pim_name.append(l_obj.Name)
+            self.initialize_one_controller(l_driver, l_obj)
 
-    def set_register_value(self, p_register, p_value):
+    def initialize_one_controller(self, p_driver, p_obj):
+        """Do whatever it takes to set the controller up for working on the UPB network.
+        Send a write register 70 to set PIM mode
+        Command is <17>70 03 8D <0D>
+        """
+        self.set_register_value(p_obj.get_name(), 0x70, [0x03])
+
+    def set_register_value(self, p_name, p_register, p_values):
+        """Set one of the device's registers.
+        """
+        print " & UPB_Pim.set_register_value - Name:{0:}, Register:{1:02X}, Values:{2:}".format(p_name, p_register, p_values)
+        self.compose_command(pim_commands['set_register_value'], self._get_id_from_name(p_name), int(p_register), p_values[0])
         pass
 
     def send_pim_command_get_response(self, p_command):
+        print " & PIM.send_pim_command_get_response ", p_command
         self.m_logger.info('Sending command {0:}'.format(PrintBytes(p_command)))
-        self.m_usb.write_device(self.m_usb, p_command)
+        self.m_driver[0].write_device(self.m_driver[0], p_command)
         _l_ret = None
         # Pim should always get a PA for getting the message to send.
         _l_ret = self.get_response()
@@ -250,8 +227,7 @@ class UpbPimAPI(PimDriverInterface):
         l_ret = self.get_response()
         return l_ret
 
-    """
-void PIMMain::slotPimSendMessage( QByteArray k_msg ) {
+    """ void PIMMain::slotPimSendMessage( QByteArray k_msg ) {
     if ( m_interface == PIM_USB ) {
         int l_ret = mp_pimUsbPort->usbWriteBytes( k_msg );
     }
@@ -261,8 +237,7 @@ void PIMMain::slotPimSendMessage( QByteArray k_msg ) {
     def get_response(self):
         pass
 
-    """
-int PIMMain::getResponse( QByteArray& kr_msg ) {
+    """ int PIMMain::getResponse( QByteArray& kr_msg ) {
     QByteArray  l_response, l_qba, l_decoded;
     int l_ret = receiveLong( l_response );
     l_ret = decodeResponse( l_response, l_decoded );
@@ -270,8 +245,7 @@ int PIMMain::getResponse( QByteArray& kr_msg ) {
     return l_ret;
 }
     """
-    """
-int PIMMain::receiveShort( QByteArray& kr_msg ) {
+    """ int PIMMain::receiveShort( QByteArray& kr_msg ) {
     int l_ret = -1;
     if ( m_interface == PIM_USB ) {
         l_ret = mp_pimUsbPort->usbReadBytes( kr_msg );
@@ -282,8 +256,7 @@ int PIMMain::receiveShort( QByteArray& kr_msg ) {
     return l_ret;
 }
     """
-    """
-int PIMMain::receiveLong( QByteArray& kr_msg ) {
+    """ int PIMMain::receiveLong( QByteArray& kr_msg ) {
     QByteArray l_qba, l_response;
     int l_ret = receiveShort( l_qba );
     int l_len = l_qba[0] & 0x0F;
@@ -326,17 +299,20 @@ class UpbPimMain(UpbPimAPI):
     def __init__(self):
         self.m_logger = logging.getLogger('PyHouse.UPB_PIM')
         self.m_logger.info('Initializing.')
-        self.initialize_controllers()
         self.m_queue = Queue.Queue(30)
+        self.initialize_all_controllers()
         self.m_logger.info('Initialized.')
 
-    def PIM_startup(self):
-        print "   UPB_PIM.Starting"
-        self.set_pim_mode()
+    def PIM_start(self, p_reactor):
+        print " & UPB_Pim.Starting"
+        self.m_logger.info('Starting.')
+        self.m_reactor = p_reactor
+        self.driver_loop_start()
 
+    def stop(self):
+        pass
 
     """
-
 //< Offsets into a UPB message
 const int UPBMSG_CONTROL_HIGH = 0;
 const int UPBMSG_CONTROL_LOW  = 1;
@@ -358,8 +334,7 @@ const int CMD_FADE_STOP                 = 0x24;
 const int CMD_REPORT_STATE              = 0x30;
 
 PIMMain::PIMMain(int k_debug, QObject* kp_parent ) :
-        mp_parent( kp_parent ),
-        m_debugLevel( k_debug ) {
+        mp_parent( kp_parent ) {
     m_pimConfigured = FALSE;
     m_isOpen = FALSE;
     mp_pimUsbPort    = new UsbPort( PIM_USB_VENDOR_ID, PIM_USB_PRODUCT_ID, m_debugLevel );
@@ -373,7 +348,8 @@ PIMMain::PIMMain(int k_debug, QObject* kp_parent ) :
     QObject::connect( this, SIGNAL( signalPimRxed( QByteArray ) ), this, SLOT( slotReceivedPimMessage( QByteArray ) ) );
     mp_nextTimer->start( 1*1000 );
 }
-
+    """
+    """
 Erc_t PIMMain::pimOpen( const QString& k_portName, const QString& k_controllerName, const QString& k_interface) {
     m_portName = k_portName;
     m_controllerName = k_controllerName;
@@ -384,17 +360,8 @@ Erc_t PIMMain::pimOpen( const QString& k_portName, const QString& k_controllerNa
     } else {
         m_interface = PIM_INVALID;
     }
-    DEBUG( -1, "PIMMain::pimOpen - Entry " << m_Name.toAscii() );
     m_pimConfigured = FALSE;
     if ( m_interface == PIM_SERIAL ) {
-#ifdef INCLUDE_X10
-        m_isOpen = mp_pimSerialPort->open( QIODevice::ReadWrite );
-        if ( ! m_isOpen ) {
-            DEBUG( 0, "PIMMain::pimOpen open r/w returned false for port " << m_portName.toAscii() );
-            return ERC_SERVICE_NOT_AVAIL;
-        }
-        DEBUG( 2, "PIMMain::pimOpen - Serial - Exit OK" );
-#endif
         return ERC_OK;
     } else if ( m_interface == PIM_USB ) {
         // Send a write register 70 to set PIM mode
@@ -409,7 +376,6 @@ Erc_t PIMMain::pimOpen( const QString& k_portName, const QString& k_controllerNa
     }
     // Something we do not know about then.
     m_isOpen = FALSE;
-    DEBUG( 0, "PIMMain::pimOpen - ERROR Exit - Unknown pim device " << m_interface );
     return ERC_SERVICE_NOT_AVAIL;
 }
 
@@ -424,8 +390,8 @@ bool PIMMain::pimReOpen() {
     pimOpen();
     return TRUE;
 }
-
-
+    """
+    """
 QByteArray PIMMain::pimReadRegisters( int k_regStart, int k_count ) {
     QByteArray  l_msg( 2, 0 );
     QByteArray  l_response;
@@ -453,7 +419,8 @@ int PIMMain::pimWriteRegisters( int k_regStart, QByteArray& k_values ) {
     DEBUG( -2, "PIMMain::pimWriteRegisters - Exit" );
     return 0;
 }
-
+    """
+    """
 QByteArray PIMMain::pimDetectNetworks() {
     QByteArray  l_msg, l_answer;
     QByteArray  l_response;
@@ -481,7 +448,8 @@ QByteArray PIMMain::pimDetectNetworks() {
     m_debugLevel = 0;
     return l_answer;
 }
-
+    """
+    """
 QByteArray PIMMain::ScanDevices(int k_net, int k_min, int k_max) {
     QByteArray l_out, l_answer, l_response;
     for ( int l_ix = k_min; l_ix < k_max; l_ix++ ) {
@@ -527,7 +495,8 @@ int PIMMain::pimGetNetworkInfo(  LightDevice* kp_device, QByteArray& k_nameRet )
     k_nameRet = l_out;
     return l_netID;
 }
-
+    """
+    """
 void PIMMain::ProgramDeviceInSetup( LightDevice* kp_device ) {
     // These are what we want to program into the device - so build the proper array.
     int l_unitID    = kp_device->property( "UnitID" ).toInt();
@@ -562,7 +531,8 @@ void PIMMain::ProgramDeviceInSetup( LightDevice* kp_device ) {
     DEBUG( -2, "PIMMain::ProgramDeviceInSetup - Exit" );
     m_debugLevel = 0;
 }
-
+    """
+    """
 int PIMMain::getDeviceRegisterReport( LightDevice* kp_device, int k_start, int k_count, QByteArray& k_value ) {
     QByteArray  l_response;
     DEBUG( 1, "PIMMain::getDeviceRegisterReport  start=" << k_start << ", Count=" << k_count );
@@ -602,7 +572,8 @@ int PIMMain::writeDeviceRegisters( LightDevice* kp_device, int k_start, int k_co
     DEBUG( -2, "PIMMain::writeDeviceRegisters - Exit" );
     return 0;
 }
-
+    """
+    """
 bool PIMMain::getDeviceInfo( LightDevice* kp_device ) {
     QString l_name = kp_device->property( "DeviceName" ).toString();
     QByteArray  l_response;
@@ -665,6 +636,8 @@ bool PIMMain::pimIsValid() {
     return TRUE; // m_isOpen;
 }
 
+    """
+    """
 // Protected methods.
 
 QByteArray PIMMain::pimComposeMessage( LightDevice* kp_device, int k_cmd, QByteArray k_values, bool k_link ) {
@@ -689,26 +662,11 @@ QByteArray PIMMain::pimComposeMessage( LightDevice* kp_device, int k_cmd, QByteA
 }
 
 bool PIMMain::pimConfigure() {
-
-    DEBUG( 1, "PIMMain::pimConfigure" );
-    if ( m_interface == PIM_SERIAL ) {
-#ifdef INCLUDE_X10
-    // This is the serial port configuration
-        mp_pimSerialPort->setParity( PAR_NONE );
-        mp_pimSerialPort->setBaudRate( BAUD9600 );
-        mp_pimSerialPort->setStopBits( STOP_1 );
-        mp_pimSerialPort->setFlowControl( FLOW_OFF );
-        mp_pimSerialPort->setDataBits( DATA_8 );
-        mp_pimSerialPort->setDtr();
-        m_pimConfigured = TRUE;
-#endif
-    } else if ( m_interface == PIM_USB ) {
-        m_pimConfigured = TRUE;
-    }
     return TRUE;
 }
 
-
+    """
+    """
 // Private Methods
 
 int PIMMain::decodeResponse( QByteArray& k_msg, QByteArray& k_msgRet ) {
@@ -910,7 +868,8 @@ void PIMMain::decode89Report( const QByteArray& k_rept ) {
     DEBUG( -2, "PIMMain::decode89Report field1=" << l_field1 << ", Net=" << l_netID << ", LinkID=" << l_linkID
             << ", field-4=" << l_field4 << ", DeviceCommand=" << l_field5 << ", field-6=" << l_field6 << ", field-7=" << l_field7 );
 }
-
+    """
+    """
 // S L O T S
 
 void PIMMain::slotTimer() {
