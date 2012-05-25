@@ -19,6 +19,29 @@ Light_Status = lighting.Light_Status
 m_config = None
 m_logger = None
 
+class CommonData(object):
+    def __init__(self):
+        self.Family = 'UPB'
+        self.NetworkID = None
+        self.Password = None
+        self.UnitID = None
+    def get_network_id(self):
+        return self.__NetworkID
+    def set_network_id(self, value):
+        self.__NetworkID = value
+    def get_password(self):
+        return self.__Password
+    def set_password(self, value):
+        self.__Password = value
+    def get_unit_id(self):
+        return self.__UnitID
+    def set_unit_id(self, value):
+        self.__UnitID = value
+    NetworkID = property(get_network_id, set_network_id, None, None)
+    Password = property(get_password, set_password, None, None)
+    UnitID = property(get_unit_id, set_unit_id, None, None)
+class CommonAPI(CommonData):
+    pass
 
 class ButtonData(lighting.ButtonData): pass
 class ButtonAPI(lighting.ButtonAPI, ButtonData): pass
@@ -59,11 +82,11 @@ class ControllerAPI(lighting.ControllerAPI, ControllerData):
         lighting.ControllerAPI.load_all_controllers(self, p_dict)
 
     def load_controller(self, p_dict):
-        l_ctlr = lighting.ControllerAPI.load_controller(self, p_dict)
-        l_ctlr.NetworkID = p_dict.get('NetworkID', None)
-        l_ctlr.Password = p_dict.get('Password', None)
-        l_ctlr.UnitID = p_dict.get('UnitID', None)
-        return l_ctlr
+        l_device = lighting.ControllerAPI.load_controller(self, p_dict)
+        l_device.NetworkID = self.getInt(p_dict, 'NetworkID')
+        l_device.Password = self.getInt(p_dict, 'Password')
+        l_device.UnitID = self.getInt(p_dict, 'UnitID')
+        return l_device
 
 
 class LightingData(lighting.LightingData):
@@ -83,9 +106,9 @@ class LightingAPI(lighting.LightingAPI, LightingData):
 
     def load_light(self, p_dict):
         l_light = lighting.LightingAPI.load_light(self, p_dict)
-        l_light.NetworkID = p_dict.get('NetworkID', None)
-        l_light.Password = p_dict.get('Password', None)
-        l_light.UnitID = p_dict.get('UnitID', None)
+        #l_light.NetworkID = self.getInt(p_dict, 'NetworkID')
+        l_light.Password = self.getInt(p_dict, 'Password')
+        l_light.UnitID = self.getInt(p_dict, 'UnitID')
         return l_light
 
     def change_light_setting(self, p_name, p_level):
@@ -110,6 +133,7 @@ class DeviceMain(LoadSaveInsteonData):
         self.m_logger.info('Initializing.')
         self.load_all_controllers(self.m_config.get_value('UPBControllers'))
         self.load_all_lights(self.m_config.get_value('UPBLights'))
+        #self.dump_all_lights()
         self.load_all_buttons(self.m_config.get_value('UPBButtons'))
         import UPB_Pim
         self.m_pim = UPB_Pim.UpbPimMain()
@@ -118,7 +142,10 @@ class DeviceMain(LoadSaveInsteonData):
     def start(self, p_reactor):
         self.m_reactor = p_reactor
         self.m_logger.info('Starting.')
-        self.m_pim.PIM_startup()
+        self.m_pim.PIM_start(p_reactor)
         self.m_logger.info('Started.')
+
+    def stop(self):
+        self.m_pim.stop()
 
 ### END

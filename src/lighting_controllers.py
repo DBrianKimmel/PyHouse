@@ -15,12 +15,9 @@ Controller_Data = {}
 class ControllerData(lighting_tools.LightingTools):
 
     def __init__(self):
+        lighting_tools.LightingTools.__init__(self)
         # All controlers (Common)
-        self.Active = None
-        self.Comment = None
-        self.Family = None
         self.Interface = None
-        self.Name = None
         self.Port = None
         self.Type = 'Controller'
         # Serial Controllers
@@ -47,34 +44,14 @@ class ControllerData(lighting_tools.LightingTools):
                 self.Name, self.Family, self.Interface, self.Port, self.Type)
         return l_ret
 
-    def get_active(self):
-        return self.__Active
-    def set_active(self, value):
-        self.__Active = value
-    def get_comment(self):
-        return self.__Comment
-    def set_comment(self, value):
-        self.__Comment = value
-    def get_family(self):
-        return self.__Family
-    def set_family(self, value):
-        self.__Family = value
     def get_interface(self):
         return self.__Interface
     def set_interface(self, value):
         self.__Interface = value
-    def get_name(self):
-        return self.__Name
-    def set_name(self, value):
-        self.__Name = value
     def get_port(self):
         return self.__Port
     def set_port(self, value):
         self.__Port = value
-    def get_type(self):
-        return self.__Type
-    def set_type(self, value):
-        self.__Type = value
 
     def get_baud_rate(self):
         return self.__BaudRate
@@ -134,13 +111,8 @@ class ControllerData(lighting_tools.LightingTools):
     def set_vendor(self, value):
         self.__Vendor = value
 
-    Active = property(get_active, set_active, None, "Active's docstring")
-    Comment = property(get_comment, set_comment, None, None)
-    Family = property(get_family, set_family, None, "Family's docstring")
     Interface = property(get_interface, set_interface, None, "Interface's docstring")
-    Name = property(get_name, set_name, None, "Name's docstring")
     Port = property(get_port, set_port, None, "Port's docstring")
-    Type = property(get_type, set_type, None, "Type's docstring")
 
     BaudRate = property(get_baud_rate, set_baud_rate, None, "BaudRate's docstring")
     ByteSize = property(get_byte_size, set_byte_size, None, "ByteSize's docstring")
@@ -181,11 +153,11 @@ class ControllerAPI(ControllerData):
         l_ctlr.Type = self.getValue(p_dict, 'Type')
         # Serial Data
         l_ctlr.BaudRate = self.getValue(p_dict, 'BaudRate')
-        l_ctlr.ByteSize = p_dict.get('ByteSize', None)
-        l_ctlr.DsrDtr = p_dict.get('DsrDtr', None)
+        l_ctlr.ByteSize = self.getInt(p_dict, 'ByteSize')
+        l_ctlr.DsrDtr = self.getBool(p_dict, 'DsrDtr')
         l_ctlr.InterCharTimeout = p_dict.get('InterCharTimeout', None)
         l_ctlr.Parity = p_dict.get('Parity', None)
-        l_ctlr.RtsCts = p_dict.get('RtsCts', None)
+        l_ctlr.RtsCts = self.getBool(p_dict, 'RtsCts')
         l_ctlr.StopBits = p_dict.get('StopBits', None)
         l_ctlr.Timeout = p_dict.get('Timeout', None)
         l_ctlr.WriteTimeout = p_dict.get('WriteTimeout', None)

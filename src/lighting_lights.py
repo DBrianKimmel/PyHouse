@@ -19,15 +19,17 @@ Light_Data = {}
 
 
 class LightingData(lighting_tools.LightingTools):
+    LightCount = 0
+
+    @staticmethod
+    def get_LightCount():
+        return LightingData.LightCount
 
     def __init__(self):
-        self.Active = None
-        self.Comment = None
+        lighting_tools.LightingTools.__init__(self)
+        LightingData.LightCount += 1
         self.Coords = None
         self.Dimmable = None
-        self.Family = None
-        self.Name = None
-        self.Room = None
         self.Type = 'Light'
 
     def __Xrepr__(self):
@@ -35,14 +37,6 @@ class LightingData(lighting_tools.LightingTools):
                             self.get_family, self.get_name, self.get_type, self.get_comment, self.get_room, self.get_coords)
         return l_str
 
-    def get_active(self):
-        return self.__Active
-    def set_active(self, value):
-        self.__Active = value
-    def get_comment(self):
-        return self.__Comment
-    def set_comment(self, value):
-        self.__Comment = value
     def get_coords(self):
         return self.__Coords
     def set_coords(self, value):
@@ -51,31 +45,9 @@ class LightingData(lighting_tools.LightingTools):
         return self.__Dimmable
     def set_dimmable(self, value):
         self.__Dimmable = value
-    def get_family(self):
-        return self.__Family
-    def set_family(self, value):
-        self.__Family = value
-    def get_name(self):
-        return self.__Name
-    def set_name(self, value):
-        self.__Name = value
-    def get_room(self):
-        return self.__Room
-    def set_room(self, value):
-        self.__Room = value
-    def get_type(self):
-        return self.__Type
-    def set_type(self, value):
-        self.__Type = value
 
-    Active = property(get_active, set_active, None, None)
-    Comment = property(get_comment, set_comment, None, None)
     Coords = property(get_coords, set_coords, None, None)
     Dimmable = property(get_dimmable, set_dimmable, None, None)
-    Family = property(get_family, set_family, None, "Family's docstring")
-    Name = property(get_name, set_name, None, None)
-    Room = property(get_room, set_room, None, None)
-    Type = property(get_type, set_type, None, None)
 
 
 class LightingAPI(LightingData):
@@ -92,7 +64,7 @@ class LightingAPI(LightingData):
         """
         l_light = LightingData()
         # Common Data
-        l_light.Active = p_dict.get('Active', 'False')
+        l_light.Active = self.getBool(p_dict, 'Active')
         l_light.Comment = p_dict.get('Comment', None)
         l_light.Coords = p_dict.get('Coords', None)
         l_light.Dimmable = p_dict.get('Dimmable', False)

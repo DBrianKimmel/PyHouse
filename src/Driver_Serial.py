@@ -18,7 +18,7 @@ from twisted.internet.task import LoopingCall
 # Import PyMh files
 import configure_mh
 import lighting
-#from tools import PrintBytes
+from tools import PrintBytes
 
 g_message = bytearray()
 
@@ -82,13 +82,6 @@ class SerialDriverAPI(SerialDriverUtility):
         """
         self.m_serial.close()
 
-    def write_device(self, p_message):
-        """Send the command to the PLM and wait a very short time to be sure we sent it.
-        """
-        #self.m_logger.debug("write_device() - {0:}".format(PrintBytes(p_message)))
-        self.m_serial.write(p_message)
-        time.sleep(0.1)
-
     def read_device(self):
         """Read the serial device and add to a buffer to be fetched asynchronously.
         """
@@ -109,6 +102,14 @@ class SerialDriverAPI(SerialDriverUtility):
         self.m_bytes = 0
         self.m_message = ''
         return (l_ret)
+
+    def write_device(self, p_message):
+        """Send the command to the PLM and wait a very short time to be sure we sent it.
+        """
+        self.m_logger.debug("write_device() - {0:}".format(PrintBytes(p_message)))
+        #print " == Driver_Serial Wrote {0:} bytes - {1:}".format(len(p_message), PrintBytes(p_message))
+        self.m_serial.write(p_message)
+        time.sleep(0.1)
 
 
 class SerialDriverMain(SerialDriverAPI):

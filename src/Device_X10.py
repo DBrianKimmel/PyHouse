@@ -67,4 +67,7 @@ class DeviceMain(X10DeviceAPI):
         self.m_logger.info('Starting.')
         self.m_logger.info('Started.')
 
+    def stop(self):
+        pass
+
 ### END

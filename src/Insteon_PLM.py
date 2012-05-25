@@ -96,7 +96,7 @@ message_types = {
 
 
 Last_Response = bytearray()
-m_serial = None
+m_driver = []
 
 
 class LightingStatusAPI(Device_Insteon.LightingStatusAPI): pass
@@ -152,6 +152,7 @@ class LightingAPI(Device_Insteon.LightingAPI):
 class LightHandlerAPI(LightingAPI, LightingStatusAPI):
     """This is the API for light control.
     """
+    m_driver = []
 
     def scan_all_lights(self, p_lights):
         """Exported command - used by other modules.
@@ -162,21 +163,23 @@ class LightHandlerAPI(LightingAPI, LightingStatusAPI):
             if l_obj.get_Type == 'Light':
                 self._scan_one_light(l_key)
 
-    def initialize_controller_port(self):
+    def initialize_all_controllers(self):
         #Device_Insteon.ControllerAPI.dump_all_controllers(Device_Insteon.ControllerAPI())
         for _l_key, l_obj in Device_Insteon.Controller_Data.iteritems():
-            #print " & PLM.initialize_controller_port ", l_key, l_obj
+            #print " & PLM.initialize_all_controllers ", l_key, l_obj
             if l_obj.Family != 'Insteon': continue
             if l_obj.Active != True: continue
             if l_obj.Interface.lower() == 'serial':
                 import Driver_Serial
-                self.m_serial = Driver_Serial.SerialDriverMain(l_obj)
+                l_dvr = Driver_Serial.SerialDriverMain(l_obj)
             elif l_obj.Interface.lower() == 'ethernet':
                 import Driver_Ethernet
-                self.m_ethernet = Driver_Ethernet.EthernetDriverMain(l_obj)
+                l_dvr = Driver_Ethernet.EthernetDriverMain(l_obj)
             elif l_obj.Interface.lower() == 'usb':
                 import Driver_USB
-                self.m_usb = Driver_USB.USBDriverMain(l_obj)
+                l_dvr = Driver_USB.USBDriverMain(l_obj)
+            self.m_driver.append(l_dvr)
+            self.g_driver = l_dvr
 
     def ping_plm(self):
         """Send a command to the plm and get its response.
@@ -758,12 +761,11 @@ class PlmDriverInterface(InsteonPlmAPI):
             self.m_reactor.callLater(3, self.dequeue_and_send)
             return
         #print "- Got a command to send ", PrintBytes(l_command)
-        self.m_serial.write_device(l_command)
+        self.g_driver.write_device(l_command)
         self.m_reactor.callLater(1, self.dequeue_and_send)
 
     def receive_loop(self):
-        #print "=Receive_loop"
-        (l_bytes, l_msg) = self.m_serial.fetch_read_data()
+        (l_bytes, l_msg) = self.g_driver.fetch_read_data()
         #print l_bytes, PrintBytes(l_msg)
         if l_bytes == 0:
             self.m_reactor.callLater(1, self.receive_loop)
@@ -800,7 +802,8 @@ class InsteonPLMMain(PlmDriverInterface, PlmTesting):
         """Constructor for the PLM.
         """
         self.m_logger = logging.getLogger('PyHouse.Insteon_PLM')
-        self.initialize_controller_port()
+        self.m_driver = []
+        self.initialize_all_controllers()
         self.m_retry_count = 0
         self.m_queue = Queue.Queue(30)
         self.m_logger.info('Initialized.')
@@ -815,5 +818,8 @@ class InsteonPLMMain(PlmDriverInterface, PlmTesting):
         #self.get_all_allinks()
         #self._get_all_ids()
         self.m_logger.info('Started.')
+
+    def stop(self):
+        pass
 
 ### END

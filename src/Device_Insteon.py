@@ -330,4 +330,7 @@ class DeviceMain(InsteonDeviceUtility):
         self.m_insteonPLM.start(p_reactor)
         self.m_logger.info('Started.')
 
+    def stop(self):
+        self.m_insteonPLM.stop()
+
 ### END

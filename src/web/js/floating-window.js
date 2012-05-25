@@ -404,6 +404,7 @@ function createNewWindow(name, width, height, left, top)	{
 
 	var buttonDiv = document.createElement('DIV');
 	buttonDiv.className = 'topButtons';
+	buttonDiv.align = 'right'
 	topDiv.appendChild(buttonDiv);
 
 	var img = document.createElement('IMG');

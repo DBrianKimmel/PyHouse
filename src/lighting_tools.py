@@ -11,13 +11,45 @@ from inspect import getmembers
 
 class LightingTools(object):
 
-    def getInt(self, p_dict, p_field):
-        l_field = p_dict.get(p_field, 0)
-        try:
-            l_field = int(l_field, 0)
-        except:
-            l_field = int(l_field)
-        return l_field
+    def __init__(self):
+        self.Active = None
+        self.Comment = None
+        self.Family = None
+        self.Name = None
+        self.Room = None
+        self.Type = None
+
+    def get_active(self):
+        return self.__Active
+    def set_active(self, value):
+        self.__Active = value
+    def get_comment(self):
+        return self.__Comment
+    def set_comment(self, value):
+        self.__Comment = value
+    def get_family(self):
+        return self.__Family
+    def set_family(self, value):
+        self.__Family = value
+    def get_name(self):
+        return self.__Name
+    def set_name(self, value):
+        self.__Name = value
+    def get_room(self):
+        return self.__Room
+    def set_room(self, value):
+        self.__Room = value
+    def get_type(self):
+        return self.__Type
+    def set_type(self, value):
+        self.__Type = value
+
+    Active = property(get_active, set_active, None, "Active device or not - Bool")
+    Comment = property(get_comment, set_comment, None, "A general comment about the device")
+    Family = property(get_family, set_family, None, "The Family - Insteon, UPB, X10, etc.")
+    Name = property(get_name, set_name, None, "The Name of the device")
+    Room = property(get_room, set_room, None, "The room where the device is located")
+    Type = property(get_type, set_type, None, "The device Type - Light, Controller, Button, Scene, ...")
 
     def getBool(self, p_dict, p_field):
         l_field = p_dict.get(p_field, 0)
@@ -26,6 +58,18 @@ class LightingTools(object):
         if l_field.lower() == 'true':
             return True
         return False
+
+    def getInt(self, p_dict, p_field):
+        l_field = p_dict.get(p_field, 0)
+        try:
+            l_field = int(l_field, 0)
+        except:
+            l_field = int(l_field)
+        return l_field
+
+    def getText(self, p_dict, p_field):
+        l_field = p_dict.get(p_field, 0)
+        return l_field
 
     def getValue(self, p_dict, p_field):
         """Return None if config value is 'None'

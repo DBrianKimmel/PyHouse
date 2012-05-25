@@ -229,4 +229,7 @@ class ScheduleMain(ScheduleUtility):
         self.m_delay = self.m_next = self.get_next_sched()
         self.m_logger.info("Started.")
 
+    def stop(self):
+        self.m_lighting.stop()
+
 ### END
