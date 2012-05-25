@@ -18,67 +18,17 @@ import pprint
 Light_Data = {}
 
 
-class LightingData(lighting_tools.LightingTools):
+class LightingData(lighting_tools.CoreData):
 
     def __init__(self):
-        self.Active = None
-        self.Comment = None
-        self.Coords = None
-        self.Dimmable = None
-        self.Family = None
-        self.Name = None
-        self.Room = None
-        self.Type = 'Light'
+        super(LightingData, self).__init__()
 
-    def __Xrepr__(self):
-        l_str = "Light Name:{0:20.20s} Family: {1:10.10s} Type: {2:10.10s} Comment: {3:40.40s} Room: {4:} Coords: {5:}".format(
-                            self.get_family, self.get_name, self.get_type, self.get_comment, self.get_room, self.get_coords)
+    def __str__(self):
+        l_str = super(LightingData, self).__str__()
         return l_str
 
-    def get_active(self):
-        return self.__Active
-    def set_active(self, value):
-        self.__Active = value
-    def get_comment(self):
-        return self.__Comment
-    def set_comment(self, value):
-        self.__Comment = value
-    def get_coords(self):
-        return self.__Coords
-    def set_coords(self, value):
-        self.__Coords = value
-    def get_dimmable(self):
-        return self.__Dimmable
-    def set_dimmable(self, value):
-        self.__Dimmable = value
-    def get_family(self):
-        return self.__Family
-    def set_family(self, value):
-        self.__Family = value
-    def get_name(self):
-        return self.__Name
-    def set_name(self, value):
-        self.__Name = value
-    def get_room(self):
-        return self.__Room
-    def set_room(self, value):
-        self.__Room = value
-    def get_type(self):
-        return self.__Type
-    def set_type(self, value):
-        self.__Type = value
 
-    Active = property(get_active, set_active, None, None)
-    Comment = property(get_comment, set_comment, None, None)
-    Coords = property(get_coords, set_coords, None, None)
-    Dimmable = property(get_dimmable, set_dimmable, None, None)
-    Family = property(get_family, set_family, None, "Family's docstring")
-    Name = property(get_name, set_name, None, None)
-    Room = property(get_room, set_room, None, None)
-    Type = property(get_type, set_type, None, None)
-
-
-class LightingAPI(LightingData):
+class LightingAPI(lighting_tools.CoreAPI, LightingData):
     """
     """
 
@@ -103,7 +53,8 @@ class LightingAPI(LightingData):
         return l_light
 
     def dump_all_lights(self):
-        print "***** All Lights *****"
+        #super(LightingAPI, self).dump_all_lights()
+        print "***** All Lights ***** lighting_lights"
         for l_key, l_obj in Light_Data.iteritems():
             print "~~~Light: {0:}".format(l_key)
             print "     ", l_obj

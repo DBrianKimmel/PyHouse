@@ -179,7 +179,7 @@ class LightingData(lighting.LightingData):
     """
 
     def __init__(self):
-        lighting.LightingData.__init__(self)
+        super(LightingData, self).__init__()
         self.Address = None
         self.Code = None
         self.Controller = None
@@ -189,9 +189,9 @@ class LightingData(lighting.LightingData):
         self.Master = None
         self.Responder = None
 
-    def __repr__(self):
-        l_str = lighting.LightingData.__repr__(self)
-        l_str += " Address: {0:10.10} Controller: {1:}".format(self.Address, self.Controller)
+    def __str__(self):
+        l_str = super(LightingData, self).__str__()
+        l_str += " Address:{0:}, Controller:{1:}, ".format(self.get_address(), self.Controller)
         return l_str
 
     def get_address(self):
@@ -315,7 +315,7 @@ class DeviceMain(InsteonDeviceUtility):
         self.load_all_controllers(self.m_config.get_value('InsteonControllers'))
         #self.dump_all_controllers()
         self.load_all_lights(self.m_config.get_value('InsteonLights'))
-        #self.dump_all_lights()
+        self.dump_all_lights()
         self.load_all_buttons(self.m_config.get_value('InsteonButtons'))
         self.load_all_status(self.m_config.get_value('InsteonLights'))
         import Insteon_Link

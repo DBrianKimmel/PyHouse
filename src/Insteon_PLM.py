@@ -163,6 +163,7 @@ class LightHandlerAPI(LightingAPI, LightingStatusAPI):
                 self._scan_one_light(l_key)
 
     def initialize_controller_port(self):
+        self.m_driver = []
         #Device_Insteon.ControllerAPI.dump_all_controllers(Device_Insteon.ControllerAPI())
         for _l_key, l_obj in Device_Insteon.Controller_Data.iteritems():
             #print " & PLM.initialize_controller_port ", l_key, l_obj
@@ -170,13 +171,14 @@ class LightHandlerAPI(LightingAPI, LightingStatusAPI):
             if l_obj.Active != True: continue
             if l_obj.Interface.lower() == 'serial':
                 import Driver_Serial
-                self.m_serial = Driver_Serial.SerialDriverMain(l_obj)
+                l_driver = Driver_Serial.SerialDriverMain(l_obj)
             elif l_obj.Interface.lower() == 'ethernet':
                 import Driver_Ethernet
-                self.m_ethernet = Driver_Ethernet.EthernetDriverMain(l_obj)
+                l_driver = Driver_Ethernet.EthernetDriverMain(l_obj)
             elif l_obj.Interface.lower() == 'usb':
                 import Driver_USB
-                self.m_usb = Driver_USB.USBDriverMain(l_obj)
+                l_driver = Driver_USB.USBDriverMain(l_obj)
+            self.m_driver.append(l_driver)
 
     def ping_plm(self):
         """Send a command to the plm and get its response.
@@ -758,12 +760,18 @@ class PlmDriverInterface(InsteonPlmAPI):
             self.m_reactor.callLater(3, self.dequeue_and_send)
             return
         #print "- Got a command to send ", PrintBytes(l_command)
-        self.m_serial.write_device(l_command)
+        try:
+            self.m_driver[0].write_device(l_command)
+        except IndexError:
+            pass
         self.m_reactor.callLater(1, self.dequeue_and_send)
 
     def receive_loop(self):
         #print "=Receive_loop"
-        (l_bytes, l_msg) = self.m_serial.fetch_read_data()
+        try:
+            (l_bytes, l_msg) = self.m_driver[0].fetch_read_data()
+        except IndexError:
+            (l_bytes, l_msg) = (0, '')
         #print l_bytes, PrintBytes(l_msg)
         if l_bytes == 0:
             self.m_reactor.callLater(1, self.receive_loop)

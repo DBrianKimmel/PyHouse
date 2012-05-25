@@ -108,7 +108,8 @@ class DeviceMain(LoadSaveInsteonData):
         self.m_config = configure_mh.ConfigureMain()
         self.m_logger = logging.getLogger('PyHouse.Device_UPB')
         self.m_logger.info('Initializing.')
-        self.load_all_controllers(self.m_config.get_value('UPBControllers'))
+        #self.load_all_controllers(self.m_config.get_value('UPBControllers'))
+        self.load_all_controllers(configure_mh.ConfigureAPI().get_value('UPBControllers'))
         self.load_all_lights(self.m_config.get_value('UPBLights'))
         self.load_all_buttons(self.m_config.get_value('UPBButtons'))
         import UPB_Pim
