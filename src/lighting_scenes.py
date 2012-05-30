@@ -18,7 +18,7 @@ class SceneData(object):
         self.Level = None
         self.Rate = None
 
-    def __repr__(self):
+    def __str__(self):
         l_ret = "Scene Name:{0:} - Light:{1:}".format(self.Name, self.Light)
         return l_ret
 

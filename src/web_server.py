@@ -300,7 +300,7 @@ class LightingPage(rend.Page, WebLightingData, WebLightingAPI, WebLightingStatus
         Lights[l_name]['Dimmable'] = kwargs['Dimmable']
         Lights[l_name]['Coords'] = kwargs['Coords']
         Lights[l_name]['Master'] = kwargs['Master']
-        g_lighting.update_all_light_tables(Lights)
+        g_lighting.update_all_lighting_families()
 
     def form_post_addlight(self, **kwargs):
         print " - form_post_add - ", kwargs
@@ -314,14 +314,13 @@ class LightingPage(rend.Page, WebLightingData, WebLightingAPI, WebLightingStatus
         #global g_lighting
         print " - form_post_changelight - kwargs=", kwargs
         #g_lighting.change_light_setting(kwargs['Name'], kwargs['slider_val'], kwargs['Family'])
-        #g_lighting.update_all_light_tables(Lights)
         return LightingPage(self.name)
 
     def form_post_deletelight(self, **kwargs):
         print " - form_post_delete - ", kwargs
         global g_lighting, Lights
         del Lights[kwargs['Name']]
-        g_lighting.update_all_light_tables(Lights)
+        g_lighting.update_all_lighting_families()
         return LightingPage(self.name)
 
     def form_post_scan(self, **kwargs):

@@ -28,7 +28,7 @@ class LoggingUtility(object):
         l_debug = logging.getLogger('PyHouse')
         l_formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s - %(message)s')
         l_debug.setLevel(logging.DEBUG)
-        l_fh = logging.handlers.TimedRotatingFileHandler(self.m_debug_name, when='midnight', backupCount = 31)
+        l_fh = logging.handlers.TimedRotatingFileHandler(self.m_debug_name, when = 'midnight', backupCount = 31)
         l_fh.setLevel(logging.DEBUG)
         l_fh.setFormatter(l_formatter)
         l_debug.addHandler(l_fh)
@@ -46,11 +46,11 @@ class LoggingMain(LoggingUtility):
 
     def __init__(self):
         if platform.uname()[0] == 'Windows':
-            print 'Windows platform'
+            #print 'Windows platform'
             self.m_debug_name = 'C:/var/debug.log'
             self.m_error_name = 'C:/var/error.log'
         else:
-            print 'Linux platform'
+            #print 'Linux platform'
             self.m_debug_name = '/var/log/pymh/debug.log'
             self.m_error_name = '/var/log/pymh/error.log'
         self.m_formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s - %(message)s')

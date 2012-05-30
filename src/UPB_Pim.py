@@ -47,7 +47,7 @@ class LightingStatusAPI(Device_UPB.LightingStatusAPI): pass
 class LightingAPI(Device_UPB.LightingAPI):
 
     def change_light_setting(self, p_name, p_level):
-        for _l_key, l_obj in Device_UPB.Light_Data.iteritems():
+        for l_obj in Device_UPB.Light_Data.itervalues():
             #print " UPB_PIM.change_light_settings ", l_obj.__dict__
             if l_obj.get_family() != 'UPB': continue
             #print " UPB_PIM.change_light_settings found UPB device"
@@ -79,7 +79,7 @@ class LightHandlerAPI(LightingAPI, LightingStatusAPI):
     def compose_command(self, p_command, p_device_id, *p_args):
         """
         """
-        print " & UPB_Pim.compose command - Network:{0:#02x}, Command:{1:#02x}, ID:{2:} ".format(self.m_network_id, p_command, p_device_id)
+        print " & UPB_Pim.compose command - Network:{0:}, Command:{1:#02x}, ID:{2:} ".format(self.m_network_id, p_command, p_device_id)
         l_cmd = bytearray(6 + len(p_args))
         l_cmd[0] = 7 + len(p_args) # 'UPBMSG_CONTROL_HIGH'
         l_cmd[1] = 0x00 # 'UPBMSG_CONTROL_LOW'
@@ -165,7 +165,10 @@ class PimDriverInterface(DecodeResponses):
         self.m_reactor.callLater(1, self.dequeue_and_send)
 
     def receive_loop(self):
-        (l_bytes, l_msg) = self.m_driver[0].fetch_read_data()
+        try:
+            (l_bytes, l_msg) = self.m_driver[0].fetch_read_data()
+        except IndexError:
+            (l_bytes, l_msg) = (0, '')
         if l_bytes == 0:
             self.m_reactor.callLater(1, self.receive_loop)
             return False
@@ -180,6 +183,7 @@ class UpbPimAPI(PimDriverInterface):
     m_pim_name = []
 
     def initialize_all_controllers(self):
+        self.m_network_id = 0
         for l_key, l_obj in Device_UPB.Controller_Data.iteritems():
             if l_obj.Family.lower() != 'upb': continue
             if l_obj.Active != True: continue

@@ -67,7 +67,7 @@ class MainProgram(object):
         log.LoggingMain()
         # 2nd. Now the logging will be set up and work properly
         self.m_logger = logging.getLogger('PyHouse')
-        self.m_logger.info("Initializing.")
+        self.m_logger.info("Initializing - Starting PyHouse.")
         # 3rd. Now the rest of the system will be set up
         house.HouseMain()
         self.g_schedule = schedule.ScheduleMain()

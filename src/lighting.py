@@ -58,81 +58,91 @@ m_UpbDevice = None
 
 
 class ButtonData(lighting_buttons.ButtonData): pass
-class ButtonAPI(lighting_buttons.ButtonAPI): pass
 
-class ControllerData(lighting_controllers.ControllerData):
-    def __init__(self):
-        lighting_controllers.ControllerData.__init__(self)
-class ControllerAPI(lighting_controllers.ControllerAPI):
-    def load_all_controllers(self, p_dict):
-        lighting_controllers.ControllerAPI.load_all_controllers(self, p_dict)
+class ButtonAPI(lighting_buttons.ButtonAPI, ButtonData): pass
+
+
+class ControllerData(lighting_controllers.ControllerData): pass
+
+class ControllerAPI(lighting_controllers.ControllerAPI): pass
+
 
 class LightingData(lighting_lights.LightingData): pass
+
 class LightingAPI(lighting_lights.LightingAPI): pass
 
+
 class LightingStatusData(lighting_status.LightingStatusData): pass
+
 class LightingStatusAPI(lighting_status.LightingStatusAPI): pass
 
+
 class SceneData(lighting_scenes.SceneData): pass
+
 class SceneAPI(lighting_scenes.SceneAPI): pass
 
-class LightingUtility(LightingAPI, LightingData):
+
+class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, LightingStatusAPI):
     """The routines in this class ALL need modifying when a new 'Family' is added.
+    
+    To add a family do the following:
+        Add the family name (Capitalized) to FAMILIES_AVAILABLE above
+        Add a module named Device_<Family>.py
+        Add any other modules needed by the Device module.  A module to interface with the controller is recommended.
+        
+    If the family uses a different driver, add the driver and add to INTERFACES_AVAILABLE above.
     """
 
-    def load_all_lighting_families(self):
-        """Get all the config information for all types of lights and scenes.
-        
-        # *!* 
+    def _load_all_lighting_families(self):
+        """ *!* 
+        Get all the config information for all types of lights and scenes.
         """
-        self.m_logger.info("load_all_lighting_families()")
-        cfg_dict = self.m_config.get_value()
-        for l_ix, i_family in enumerate(FAMILIES_AVAILABLE):
+        self.m_logger.info("_load_all_lighting_families()")
+        #cfg_dict = self.m_config.get_value()
+        for _l_ix, i_family in enumerate(FAMILIES_AVAILABLE):
             l_import = 'Device_' + i_family
             l_ptr = __import__(l_import)
             l_main_ptr = l_ptr.DeviceMain()
             m_family_module.append(l_main_ptr)
 
-    def start_all_lighting_families(self):
+    def _dump_all_lighting_families(self):
+        #print "-- families ", m_family_module
+        #for l_ptr in m_family_module:
+        #    print "-- dump all ", l_ptr.__dict__
+        self.dump_all_buttons()
+        self.dump_all_controllers()
+        self.dump_all_lights()
+
+    def _start_all_lighting_families(self):
         """ *!* 
         """
-        self.m_logger.info("start_all_lighting_families()")
+        self.m_logger.info("_start_all_lighting_families()")
         for l_ptr in m_family_module:
             l_ptr.start(self.m_reactor)
 
-    def stop_all_lighting_families(self):
+    def _stop_all_lighting_families(self):
+        """ *!* 
+        """
+        self.m_logger.info("_stop_all_lighting_families()")
         for l_ptr in m_family_module:
             l_ptr.stop()
 
     def change_light_setting(self, p_name, p_level = 0, _p_family = None):
-        """ *!* 
+        """ *!* API
         Turn a light to a given level (0-100) off/dimmed/on.
+        The schedule does not know what the family that controls the light.
         """
-        #self.m_logger.info("change_light_setting()")
-        #self.m_logger.info("Turn Light {0:} to level {1:}.".format(p_name, p_level))
+        self.m_logger.info("Turn Light {0:} to level {1:}.".format(p_name, p_level))
         for l_ptr in m_family_module:
             l_ptr.change_light_setting(p_name, p_level)
 
     def update_all_lighting_families(self):
+        """ *!*  API
+        Update the light configs in the appropriate module.
+        """
         self.m_logger.info("update_all_lighting_families()")
         for l_ptr in m_family_module:
             l_ptr.update_all_lights()
-
-    def update_all_light_tables(self, p_lights):
-        """ *!* 
-        Get an updated lighting table from a module (say web server).
-        Call each of the loaded family type classes to store its particular information.
-        Load updated tables back into the config files.
-        
-        @param p_lights: is the entire lighting table (from web server and perhaps others)
-        """
-
-        if self.m_InsteonDevice != None:
-            self.m_InsteonDevice.update_all_lights()
-        if self.m_UpbDevice != None:
-            self.m_UpbDevice.update_all_lights()
-        if self.m_X10Device != None:
-            self.m_X10Device.update_all_lights()
 
     def scan_all_lighting(self, p_lights):
         """ *!* 
@@ -147,6 +157,8 @@ class LightingUtility(LightingAPI, LightingData):
 
 
 class SceneUtility(SceneAPI):
+    """As of now, all scenes are across all light families.
+    """
 
     def load_scene_data(self):
         self.m_logger.info("Using Scenes.")
@@ -158,7 +170,7 @@ class SceneUtility(SceneAPI):
         return self.Scene_Data
 
 
-class LightingMain(LightingUtility, SceneUtility, LightingAPI, ControllerAPI, ButtonAPI):
+class LightingMain(LightingUtility, SceneUtility):
     """Main interface to lighting for the home.
     
     Create a singleton since this will be called from many different places/
@@ -175,8 +187,9 @@ class LightingMain(LightingUtility, SceneUtility, LightingAPI, ControllerAPI, Bu
         Singletons[cls] = self
         self.m_logger = logging.getLogger('PyHouse.Lighting')
         self.m_config = configure_mh.ConfigureMain()
-        self.load_all_lighting_families()
+        self._load_all_lighting_families()
         self.load_all_scenes(self.m_config.get_value('Scenes'))
+        #self._dump_all_lighting_families()
         self.m_logger.info("Initialized.")
         return self
 
@@ -185,10 +198,14 @@ class LightingMain(LightingUtility, SceneUtility, LightingAPI, ControllerAPI, Bu
         """
 
     def start(self, p_reactor):
+        """Allow loading of sub modules and drivers.
+        """
         self.m_reactor = p_reactor
-        self.start_all_lighting_families()
+        self._start_all_lighting_families()
 
     def stop(self):
-        pass
+        """Allow cleanup of all drivers.
+        """
+        self._stop_all_lighting_families()
 
 ### END
