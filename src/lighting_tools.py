@@ -117,14 +117,14 @@ class CoreData(LightingTools):
     def set_type(self, value):
         self.__Type = value
 
-    Active = property(get_active, set_active, None, "Active device or not - Bool")
-    Comment = property(get_comment, set_comment, None, "A general comment about the device")
+    Active = property(get_active, set_active, None, "Bool - Active device or not.")
+    Comment = property(get_comment, set_comment, None, "A general comment about the device.")
     Coords = property(get_coords, set_coords, None, None)
     Dimmable = property(get_dimmable, set_dimmable, None, None)
     Family = property(get_family, set_family, None, "The Family - Insteon, UPB, X10, etc.")
-    Key = property(get_key, set_key, None, None)
-    Name = property(get_name, set_name, None, "The Name of the device")
-    Room = property(get_room, set_room, None, "The room where the device is located")
+    Key = property(get_key, set_key, None, "Number 1..x that will be the dict key for this device.")
+    Name = property(get_name, set_name, None, "The Name of the device.")
+    Room = property(get_room, set_room, None, "The room where the device is located.")
     Type = property(get_type, set_type, None, "The device Type - Light, Controller, Button, Scene, ...")
 
 

@@ -88,7 +88,7 @@ class MainProgram(object):
         """
         self.m_logger.info("Starting.")
         self.g_schedule.start(reactor)
-        #self.g_web_server.start(reactor)
+        self.g_web_server.start(reactor)
         self.m_logger.info("Started.\n")
         reactor.run()
 

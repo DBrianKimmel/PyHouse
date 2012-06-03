@@ -158,10 +158,13 @@ class PimDriverInterface(DecodeResponses):
         except: # No commands queued
             self.m_reactor.callLater(3, self.dequeue_and_send)
             return
-        print " dequeue_and_send ", l_command
-        #self.m_driver[0].write_device(l_command)
-        for l_ix in range(len(l_command)):
-            self.m_driver[0].write_device(l_command[l_ix])
+        try:
+            print " dequeue_and_send ", l_command
+            #self.m_driver[0].write_device(l_command)
+            for l_ix in range(len(l_command)):
+                self.m_driver[0].write_device(l_command[l_ix])
+        except:
+            pass
         self.m_reactor.callLater(1, self.dequeue_and_send)
 
     def receive_loop(self):
@@ -184,6 +187,7 @@ class UpbPimAPI(PimDriverInterface):
 
     def initialize_all_controllers(self):
         self.m_network_id = 0
+        self.m_unit_id = 0xff
         for l_key, l_obj in Device_UPB.Controller_Data.iteritems():
             if l_obj.Family.lower() != 'upb': continue
             if l_obj.Active != True: continue

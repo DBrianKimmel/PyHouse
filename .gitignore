@@ -1,0 +1,7 @@
+.project
+.pydevproject
+.settings
+.buildpath
+.SaveConfig/
+src/*.pyc
+src/*.pyo

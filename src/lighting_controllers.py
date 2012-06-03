@@ -16,9 +16,9 @@ class ControllerData(lighting_tools.CoreData):
 
     def __init__(self):
         global ControllerCount
+        ControllerCount += 1
         #print " C lighting_controllers.__init__()"
         super(ControllerData, self).__init__()
-        ControllerCount += 1
         self.Type = 'Controller'
         # All controlers (Common)
         self.Interface = None

@@ -78,10 +78,10 @@ class CoreData (object):
     def set_responder(self, value):
         self.__Responder = value
 
-    Address = property(get_address, set_address, None, None)
+    Address = property(get_address, set_address, None, "Device Address as string 'aa.bb.cc'.")
     Code = property(get_code, set_code, None, None)
     Controller = property(get_controller, set_controller, None, None)
-    DevCat = property(get_dev_cat, set_dev_cat, None, None)
+    DevCat = property(get_dev_cat, set_dev_cat, None, 'Device Category and SubCategory as 0x0123.')
     GroupList = property(get_group_list, set_group_list, None, None)
     GroupNumber = property(get_group_number, set_group_number, None, None)
     Master = property(get_master, set_master, None, None)

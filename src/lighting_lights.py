@@ -23,15 +23,24 @@ class LightingData(lighting_tools.CoreData):
 
     def __init__(self):
         global LightCount
-        #print " L lighting_lights LightingData init"
-        super(LightingData, self).__init__()
         LightCount += 1
+        #print " C lighting_lights.__init__()"
+        super(LightingData, self).__init__()
         self.Type = 'Light'
+        self.CurLevel = 0
 
     def __str__(self):
         l_str = super(LightingData, self).__str__()
         l_str = l_str + " Key:{0} ".format(self.get_key())
         return l_str
+
+    def get_cur_level(self):
+        return self.__CurLevel
+    def set_cur_level(self, value):
+        self.__CurLevel = value
+
+    CurLevel = property(get_cur_level, set_cur_level, None, "Device light level - 0=Off, 100=Full On")
+
 
 class LightingAPI(lighting_tools.CoreAPI):
 
@@ -41,7 +50,6 @@ class LightingAPI(lighting_tools.CoreAPI):
 
     def get_LightCount(self):
         global LightCount
-        #print " L LightCount = ", LightCount
         return LightCount
 
     def load_light(self, p_dict, p_light):
@@ -49,6 +57,7 @@ class LightingAPI(lighting_tools.CoreAPI):
         """
         #print " L load_light() - {0:}".format(p_light.Name)
         l_light = super(LightingAPI, self).load_core_device(p_dict, self.get_LightCount())
+        l_light.CurLevel = 0
         return l_light
 
     def dump_all_lights(self):

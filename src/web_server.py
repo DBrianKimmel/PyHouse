@@ -61,7 +61,6 @@ class WebException(Exception):
     """Raised when there is a web error of some sort.
     """
 
-
 class WebData(object):
 
     g_lighting = None
@@ -95,12 +94,12 @@ class WebUtilities(WebData):
         setattr(LightingPage, 'child_ajax.js', static.File('web/js/ajax.js'))
         setattr(LightingPage, 'child_floating_window.js', static.File('web/js/floating-window.js'))
         setattr(LightingPage, 'child_lightpage.js', static.File('web/js/lightpage.js'))
-        setattr(LightingPage, 'child_bottomRight.gif', static.File('web/images/bottom_right.gif'))
-        setattr(LightingPage, 'child_close.gif', static.File('web/images/close.gif'))
-        setattr(LightingPage, 'child_minimize.gif', static.File('web/images/minimize.gif'))
-        setattr(LightingPage, 'child_topCenter.gif', static.File('web/images/top_center.gif'))
-        setattr(LightingPage, 'child_topLeft.gif', static.File('web/images/top_left.gif'))
-        setattr(LightingPage, 'child_topRight.gif', static.File('web/images/top_right.gif'))
+        #setattr(LightingPage, 'child_bottomRight.gif', static.File('web/images/bottom_right.gif'))
+        #setattr(LightingPage, 'child_close.gif', static.File('web/images/close.gif'))
+        #setattr(LightingPage, 'child_minimize.gif', static.File('web/images/minimize.gif'))
+        #setattr(LightingPage, 'child_topCenter.gif', static.File('web/images/top_center.gif'))
+        #setattr(LightingPage, 'child_topLeft.gif', static.File('web/images/top_left.gif'))
+        #setattr(LightingPage, 'child_topRight.gif', static.File('web/images/top_right.gif'))
 
     def lighting_sub_win(self):
         pass
@@ -131,7 +130,9 @@ class ManualFormMixin(rend.Page, WebUtilities):
                 name = name_prefix
             else:
                 name = name_prefix + '_' + bindingName.split()[0].lower()
+            #print "locateChild - name:", name
             method = getattr(self, 'form_' + name, None)
+            #print "locateChild - method:", method
             if method is not None:
                 return self.onManualPost(context, method, bindingName, kwargs)
             else:
@@ -146,6 +147,7 @@ class ManualFormMixin(rend.Page, WebUtilities):
         def redirectAfterPost(aspects):
             """
             """
+            #print " -- Start - ctx:", ctx, ", method:", method, ", bindingName:", bindingName, ", kwargs", kwargs
             l_handler = aspects.get(inevow.IHand)
             refpath = None
             ref = None
@@ -156,6 +158,7 @@ class ManualFormMixin(rend.Page, WebUtilities):
                         refpath = refpath.child('freeform_hand')
                 if isinstance(l_handler, (url.URL, url.URLOverlay)):
                     refpath, l_handler = l_handler, None
+            #print " -- refpath-1:", refpath
             if refpath is None:
                 redirectAfterPost = request.getComponent(iformless.IRedirectAfterPost, None)
                 if redirectAfterPost is None:
@@ -168,6 +171,7 @@ class ManualFormMixin(rend.Page, WebUtilities):
                     self.m_logger.warn("[0.5] IRedirectAfterPost is deprecated. Return a URL instance from your autocallable instead.", DeprecationWarning, 2)
                     ref = str(redirectAfterPost)
                     refpath = url.URL.fromString(ref)
+            #print " -- refpath-2:", refpath
             if l_handler is not None or aspects.get(iformless.IFormErrors) is not None:
                 magicCookie = '%s%s%s' % (datetime.datetime.now(), request.getClientIP(), random.random())
                 refpath = refpath.replace('_nevow_carryover_', magicCookie)
@@ -183,6 +187,30 @@ class ManualFormMixin(rend.Page, WebUtilities):
             ).addCallback(self.onPostSuccess, request, ctx, bindingName, redirectAfterPost
             ).addErrback(self.onPostFailure, request, ctx, bindingName, redirectAfterPost)
 
+class ControllersPage(rend.Page):
+
+    addSlash = True
+    docFactory = loaders.stan(
+        Tag.html[
+            Tag.title['PyHouse - Controller Page'],
+                Tag.link(rel = 'stylesheet', type = 'text/css', href = url.root.child('mainpage.css'))["\n"],
+            Tag.body[
+                Tag.h1['PyHouse Controllers'],
+                Tag.p['Select the controller:'],
+                Tag.form(action = url.here.child('_submit!!post'),
+                       enctype = "multipart/form-data",
+                       method = 'post'
+                      )[
+                    Tag.input(type = 'submit', value = 'Add Controller', name = BUTTON),
+                    Tag.input(type = 'submit', value = 'Delete Controller', name = BUTTON)
+                    ]
+                ]
+            ]
+        )
+
+    def __init__(self, name):
+        rend.Page.__init__(self)
+        self.name = name
 
 class EntertainmentPage(rend.Page):
     """
@@ -210,9 +238,7 @@ class EntertainmentPage(rend.Page):
         rend.Page.__init__(self)
         self.name = name
 
-
 class HousePage(rend.Page): pass
-
 
 class LightingPage(rend.Page, WebLightingData, WebLightingAPI, WebLightingStatusData, WebLightingStatusAPI):
     """Define the page layout of the lighting selection web page.
@@ -257,7 +283,7 @@ class LightingPage(rend.Page, WebLightingData, WebLightingAPI, WebLightingStatus
         for l_key, l_obj in lighting.Light_Data.iteritems():
             if l_obj.Family != 'Insteon': continue
             if l_obj.Type != 'Light': continue
-            l_obj.CurLevel = lighting.Light_Status[l_key].CurLevel
+            l_obj.CurLevel = lighting.Light_Data[l_key].CurLevel
             if l_obj.Type == 'Light':
                 l_light[l_key] = l_obj
         return l_light
@@ -314,7 +340,7 @@ class LightingPage(rend.Page, WebLightingData, WebLightingAPI, WebLightingStatus
         #global g_lighting
         print " - form_post_changelight - kwargs=", kwargs
         #g_lighting.change_light_setting(kwargs['Name'], kwargs['slider_val'], kwargs['Family'])
-        return LightingPage(self.name)
+        return None # LightingPage(self.name)
 
     def form_post_deletelight(self, **kwargs):
         print " - form_post_delete - ", kwargs
@@ -327,16 +353,13 @@ class LightingPage(rend.Page, WebLightingData, WebLightingAPI, WebLightingStatus
         """Trigger a scan of all lights and then update light info.
         """
         print " - form_post_scan- ", kwargs
-        global g_lighting, Lights
-        g_lighting.scan_all_lighting(Lights)
-        self.load_all_light_info()
-
+        #global g_lighting, Lights
+        #g_lighting.scan_all_lighting(Lights)
+        #self.load_all_light_info()
 
 class LocationPage(rend.Page): pass
 
-
 class RoomsPage(rend.Page): pass
-
 
 class ScenesPage(rend.Page):
     addSlash = True
@@ -407,7 +430,6 @@ class ScenesPage(rend.Page):
 
     def form_post_deletescene(self, **kwargs):
         print " - form_post_deleteScene - ", kwargs
-
 
 class SchedulePage(rend.Page):
     addSlash = True
@@ -505,9 +527,7 @@ class SchedulePage(rend.Page):
         g_schedule.update_schedule(schedule.Schedule_Data)
         return SchedulePage(self.name)
 
-
 class WeatherPage(rend.Page): pass
-
 
 class RootPage(ManualFormMixin, EntertainmentPage, HousePage, LightingPage, LocationPage, RoomsPage, ScenesPage, SchedulePage, WeatherPage):
     """The main page of the web server.
@@ -573,17 +593,23 @@ class RootPage(ManualFormMixin, EntertainmentPage, HousePage, LightingPage, Loca
         rend.Page.__init__(self)
         self.name = name
 
+    def form_post_controllers(self, **kwargs):
+        return ControllersPage('controllers')
+
+    def form_post_entertainment(self, **_kwargs):
+        return EntertainmentPage('entertainment')
+
     def form_post_lighting(self, **_kwargs):
         return LightingPage('lighting')
+
+    def form_post_rooms(self, **kwargs):
+        return RoomsPage('rooms')
 
     def form_post_scenes(self, **_kwargs):
         return ScenesPage('scenes')
 
     def form_post_schedule(self, **_kwargs):
         return SchedulePage('schedule')
-
-    def form_post_entertainment(self, **_kwargs):
-        return EntertainmentPage('entertainment')
 
     def form_post(self, *args, **kwargs):
         print " - form_post - args={0:}, kwargs={1:}".format(args, kwargs)
@@ -597,7 +623,7 @@ class Web_ServerMain(ManualFormMixin):
 
     def __init__(self, p_debug = False):
         self.m_debug = p_debug
-        self.m_logger = logging.getLogger('PyMh.WebServer')
+        self.m_logger = logging.getLogger('PyHouse.WebServer')
         self.m_config = configure_mh.ConfigureMain()
         global g_lighting, g_schedule, g_entertainment
         g_lighting = lighting.LightingMain()
