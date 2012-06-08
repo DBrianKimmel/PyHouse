@@ -11,13 +11,14 @@ It configures 'PyHouse' in the logging standard library module.
 """
 
 # Import system type stuff
-import datetime
-import logging
 import logging.handlers
 import platform
 
 # Import PyMh files
 import configure_mh
+
+
+Configure_Data = configure_mh.Configure_Data
 
 
 class LoggingUtility(object):
@@ -46,23 +47,16 @@ class LoggingMain(LoggingUtility):
 
     def __init__(self):
         if platform.uname()[0] == 'Windows':
-            #print 'Windows platform'
             self.m_debug_name = 'C:/var/debug.log'
             self.m_error_name = 'C:/var/error.log'
         else:
-            #print 'Linux platform'
             self.m_debug_name = '/var/log/pymh/debug.log'
             self.m_error_name = '/var/log/pymh/error.log'
         self.m_formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s - %(message)s')
-        self.configure()
-
-    def configure(self):
-        self.m_config = configure_mh.ConfigureMain()
-        l_dict = self.m_config.get_value('Logs')
+        l_dict = Configure_Data['Logs']
         self.m_debug_name = l_dict['debug_log']
         self.m_error_name = l_dict['error_log']
         self.setup_debug_log()
-        #self.setup_error_log()
 
     def stop(self):
         logging.shutdown()

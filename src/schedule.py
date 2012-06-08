@@ -26,9 +26,13 @@ import lighting
 import sunrisesunset
 
 
+Configure_Data = configure_mh.Configure_Data
+
+
 Schedule_Data = {}
 Scheduled_Slotlist = []
-
+g_logger = None
+g_reactor = None
 
 class ScheduleData(object):
 
@@ -86,14 +90,14 @@ class ScheduleExecution(ScheduleAPI):
         except:
             l_device = '**no-such-device**'
             l_message = 'Schedule for slot {0:} has no Name/Device entry'.format(p_slot)
-            self.m_logger.error(l_message)
+            g_logger.error(l_message)
 
         try:
             l_type = p_obj.Type
         except:
             l_type = '**no-such-Type**'
             l_message = 'Schedule for slot {0:} has no Type entry'.format(p_slot)
-            self.m_logger.error(l_message)
+            g_logger.error('Schedule for slot {0:} has no Type entry'.format(p_slot))
 
         try:
             l_level = int(p_obj.Level)
@@ -106,7 +110,7 @@ class ScheduleExecution(ScheduleAPI):
             l_rate = 0
 
         l_message = 'For slot={0:}, Device={1:}, Type={2:}, Level={3:}, Rate={4:}'.format(p_slot, l_device, l_type, l_level, l_rate)
-        self.m_logger.info(l_message)
+        g_logger.info(l_message)
         return (l_device, l_type, l_level, l_rate)
 
     def execute_schedule(self, p_slot = []):
@@ -122,7 +126,7 @@ class ScheduleExecution(ScheduleAPI):
             l_slot = p_slot[ix]
             l_obj = Schedule_Data[l_slot]
             (l_device, _l_type, l_level, _l_rate) = self._get_slot_info(l_slot, l_obj)
-            self.m_lighting.change_light_setting(l_device, l_level)
+            lighting.LightingUtility().change_light_setting(l_device, l_level)
         # TODO change this to a non blocking call.
         time.sleep(1)
         self.get_next_sched()
@@ -130,7 +134,7 @@ class ScheduleExecution(ScheduleAPI):
     def create_timer(self, p_seconds, p_list):
         """Create a timer that will go off when the next slot time comes up on the clock.
         """
-        self.m_reactor.callLater(p_seconds, self.execute_schedule, p_list)
+        g_reactor.callLater(p_seconds, self.execute_schedule, p_list)
 
 
 class ScheduleUtility(ScheduleExecution):
@@ -146,9 +150,9 @@ class ScheduleUtility(ScheduleExecution):
         """
         l_timefield = p_timefield
         if 'sunset' in l_timefield:
-            l_timefield = self.m_sun.get_sunset()
+            l_timefield = self.m_sunset
         elif 'sunrise' in l_timefield:
-            l_timefield = self.m_sun.get_sunrise()
+            l_timefield = self.m_sunrise
         else:
             l_time = time.strptime(p_timefield, '%H:%M')
             l_timefield = datetime.time(l_time.tm_hour, l_time.tm_min)
@@ -169,11 +173,15 @@ class ScheduleUtility(ScheduleExecution):
         Be sure to get the next in a chain of things happening at the same time.
         Establish a list of slots that have equal schedule times
         """
+        global g_logger
         l_now = datetime.datetime.now()
         l_time_now = datetime.time(l_now.hour, l_now.minute, l_now.second)
         l_date = datetime.date(l_now.year, l_now.month, l_now.day)
+        sunrisesunset.SSAPI().set_date(l_date)
+        self.m_sunset = sunrisesunset.SSAPI().get_sunset()
+        self.m_sunrise = sunrisesunset.SSAPI().get_sunrise()
+        g_logger.info("Sunrise:{0:}, Sunset:{1:}".format(self.m_sunrise, self.m_sunset))
         l_time_scheduled = l_now
-        self.m_sun.set_date(l_date)
         l_next = 100000.0
         l_list = []
         for l_key, l_obj in Schedule_Data.iteritems():
@@ -191,45 +199,29 @@ class ScheduleUtility(ScheduleExecution):
             # add to a chain
             if l_diff == l_next:
                 l_list.append(l_key)
-        self.m_logger.info("Get_next_schedule complete. Delaying {0:} seconds until {1:}, Slotlist = {2:}".format(l_next, l_time_scheduled, l_list))
+        g_logger.info("Get_next_schedule complete. Delaying {0:} seconds until {1:}, Slotlist = {2:}".format(l_next, l_time_scheduled, l_list))
         self.create_timer(l_next, l_list)
         return l_next
 
 
-Singletons = {}
+def Init():
+    global g_logger
+    g_logger = logging.getLogger('PyHouse.Schedule')
+    g_logger.info("Initializing.")
+    sunrisesunset.Init()
+    entertainment.EntertainmentMain()
+    lighting.Init()
+    ScheduleAPI().load_all_schedules(Configure_Data['Schedule'])
+    g_logger.info("Initialized.")
 
-class ScheduleMain(ScheduleUtility):
+def Start(p_reactor):
+    global g_reactor
+    g_reactor = p_reactor
+    lighting.start(g_reactor)
+    ScheduleUtility().get_next_sched()
+    g_logger.info("Started.")
 
-    def __new__(cls, *args, **kwargs):
-        """Create a singleton.
-        """
-        if cls in Singletons:
-            return Singletons[cls]
-        self = object.__new__(cls)
-        cls.__init__(self, *args, **kwargs)
-        Singletons[cls] = self
-        self.m_logger = logging.getLogger('PyHouse.Schedule')
-        self.m_logger.info("Initializing.")
-        self.m_config = configure_mh.ConfigureMain()
-        self.m_sun = sunrisesunset.SunriseSunsetMain()
-        self.m_entertainment = entertainment.EntertainmentMain()
-        self.m_lighting = lighting.LightingMain()
-        self.load_all_schedules(self.m_config.get_value('Schedule'))
-        self.m_logger.info("Initialized.")
-        return self
-
-    def __init__(self):
-        """Constructor for the schedule.
-        Schedule controls lighting and entertainment modules.
-        """
-
-    def start(self, p_reactor):
-        self.m_reactor = p_reactor
-        self.m_lighting.start(p_reactor)
-        self.m_delay = self.m_next = self.get_next_sched()
-        self.m_logger.info("Started.")
-
-    def stop(self):
-        self.m_lighting.stop()
+def Stop():
+    lighting.stop()
 
 ### END

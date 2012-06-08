@@ -12,13 +12,12 @@ import configure_mh
 import lighting
 
 
-m_config = None
-m_logger = None
+Configure_Data = configure_mh.Configure_Data
 
 
 class X10LightingData(lighting.LightingData):
 
-    def __init__(self, Name):
+    def __init__(self):
         lighting.LightingData.__init__(self)
         self.set_family("X10")
         self.Address = 'asdf'
@@ -58,12 +57,11 @@ class DeviceMain(X10DeviceAPI):
     def __init__(self):
         """Constructor for the PLM.
         """
-        self.m_config = configure_mh.ConfigureMain()
         self.m_logger = logging.getLogger('PyHouse.Device_X10')
-        self.load_all_lights(self.m_config.get_value('X10Lights'))
+        self.load_all_lights(Configure_Data['X10Lights'])
         self.m_logger.info('Initialized.')
 
-    def start(self, p_reactor):
+    def start(self, _p_reactor):
         self.m_logger.info('Starting.')
         self.m_logger.info('Started.')
 

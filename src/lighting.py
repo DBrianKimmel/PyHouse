@@ -40,7 +40,9 @@ Controller_Data = lighting_controllers.Controller_Data
 Light_Data = lighting_lights.Light_Data
 Light_Status = lighting_status.Light_Status
 Scene_Data = lighting_scenes.Scene_Data
+Configure_Data = configure_mh.Configure_Data
 g_reactor = None
+g_logger = None
 
 
 Singletons = {}
@@ -97,8 +99,6 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, LightingStatusAPI):
         """ *!* 
         Get all the config information for all types of lights and scenes.
         """
-        self.m_logger.info("_load_all_lighting_families()")
-        #cfg_dict = self.m_config.get_value()
         for _l_ix, i_family in enumerate(FAMILIES_AVAILABLE):
             l_import = 'Device_' + i_family
             l_ptr = __import__(l_import)
@@ -106,24 +106,21 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, LightingStatusAPI):
             m_family_module.append(l_main_ptr)
 
     def _dump_all_lighting_families(self):
-        #print "-- families ", m_family_module
-        #for l_ptr in m_family_module:
-        #    print "-- dump all ", l_ptr.__dict__
         self.dump_all_buttons()
         self.dump_all_controllers()
         self.dump_all_lights()
 
-    def _start_all_lighting_families(self):
+    def _start_all_lighting_families(self, p_reactor):
         """ *!* 
         """
-        self.m_logger.info("_start_all_lighting_families()")
+        g_logger.info("_start_all_lighting_families()")
         for l_ptr in m_family_module:
-            l_ptr.start(self.m_reactor)
+            l_ptr.start(p_reactor)
 
     def _stop_all_lighting_families(self):
         """ *!* 
         """
-        self.m_logger.info("_stop_all_lighting_families()")
+        g_logger.info("_stop_all_lighting_families()")
         for l_ptr in m_family_module:
             l_ptr.stop()
 
@@ -132,7 +129,7 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, LightingStatusAPI):
         Turn a light to a given level (0-100) off/dimmed/on.
         The schedule does not know what the family that controls the light.
         """
-        self.m_logger.info("Turn Light {0:} to level {1:}.".format(p_name, p_level))
+        g_logger.info("Turn Light {0:} to level {1:}.".format(p_name, p_level))
         for l_ptr in m_family_module:
             l_ptr.change_light_setting(p_name, p_level)
 
@@ -140,7 +137,7 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, LightingStatusAPI):
         """ *!*  API
         Update the light configs in the appropriate module.
         """
-        self.m_logger.info("update_all_lighting_families()")
+        g_logger.info("update_all_lighting_families()")
         for l_ptr in m_family_module:
             l_ptr.update_all_lights()
 
@@ -156,56 +153,24 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, LightingStatusAPI):
             self.m_X10Device.scan_all_lights(p_lights)
 
 
-class SceneUtility(SceneAPI):
-    """As of now, all scenes are across all light families.
+def Init():
+    global g_logger
+    g_logger = logging.getLogger('PyHouse.Lighting')
+    g_logger.info("Initializing")
+    LightingUtility()._load_all_lighting_families()
+    SceneAPI().load_all_scenes(configure_mh.Configure_Data['Scenes'])
+    #self._dump_all_lighting_families()
+    g_logger.info("Initialized.")
+    pass
+
+def start(p_reactor):
+    """Allow loading of sub modules and drivers.
     """
+    LightingUtility()._start_all_lighting_families(p_reactor)
 
-    def load_scene_data(self):
-        self.m_logger.info("Using Scenes.")
-        l_dict = self.m_config.get_value('Scenes')
-        for l_key, l_value in l_dict.iteritems():
-            self.Scene_Data[l_key] = {}
-            for l_par, l_var in l_value.iteritems():
-                self.Scene_Data[l_key][l_par] = l_var
-        return self.Scene_Data
-
-
-class LightingMain(LightingUtility, SceneUtility):
-    """Main interface to lighting for the home.
-    
-    Create a singleton since this will be called from many different places/
+def stop():
+    """Allow cleanup of all drivers.
     """
-
-    def __new__(cls, *args, **kwargs):
-        """Create a singleton.
-        Initialize the 1st time only - after that just return the single instance
-        """
-        if cls in Singletons:
-            return Singletons[cls]
-        self = object.__new__(cls)
-        cls.__init__(self, *args, **kwargs)
-        Singletons[cls] = self
-        self.m_logger = logging.getLogger('PyHouse.Lighting')
-        self.m_config = configure_mh.ConfigureMain()
-        self._load_all_lighting_families()
-        self.load_all_scenes(self.m_config.get_value('Scenes'))
-        #self._dump_all_lighting_families()
-        self.m_logger.info("Initialized.")
-        return self
-
-    def __init__(self):
-        """Constructor for the component
-        """
-
-    def start(self, p_reactor):
-        """Allow loading of sub modules and drivers.
-        """
-        self.m_reactor = p_reactor
-        self._start_all_lighting_families()
-
-    def stop(self):
-        """Allow cleanup of all drivers.
-        """
-        self._stop_all_lighting_families()
+    LightingUtility()._stop_all_lighting_families()
 
 ### END

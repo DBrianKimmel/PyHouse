@@ -9,13 +9,13 @@ import logging
 # Import PyMh files
 import configure_mh
 import lighting
-import lighting_tools
 
 
 Button_Data = lighting.Button_Data
 Controller_Data = lighting.Controller_Data
 Light_Data = lighting.Light_Data
 Light_Status = lighting.Light_Status
+Configure_Data = configure_mh.Configure_Data
 
 m_config = None
 m_logger = None
@@ -62,19 +62,15 @@ class ButtonAPI(lighting.ButtonAPI, CoreAPI):
         """
         @param p_dict: outer layer of all buttons in a dict.
         """
-        #print " U load_all_buttons"
-        for l_key, l_dict in p_dict.iteritems():
+        for l_dict in p_dict.itervalues():
             l_button = ButtonData()
             l_button = self.load_upb_button(l_dict, l_button)
             Button_Data[l_button.Key] = l_button
-        #print " U Loaded all buttons\n"
 
     def load_upb_button(self, p_dict, p_button):
-        #print " U Insteon load_insteon_button() begin"
         l_button = p_button
         l_button = super(ButtonAPI, self).load_button(p_dict, l_button)
         l_button = self.load_device(p_dict, l_button)
-        #print " U Loaded button {0:} -------".format(l_button.Name)
         return l_button
 
 
@@ -111,19 +107,15 @@ class ControllerData(lighting.ControllerData):
 class ControllerAPI(lighting.ControllerAPI, ControllerData):
 
     def load_all_controllers(self, p_dict):
-        #print " U load_all_controllers"
-        for l_key, l_dict in p_dict.iteritems():
+        for l_dict in p_dict.itervalues():
             l_ctlr = ControllerData()
             l_ctlr = self.load_upb_controller(l_dict, l_ctlr)
             Controller_Data[l_ctlr.Key] = l_ctlr
-        #print " U Loaded all controllers\n"
 
     def load_upb_controller(self, p_dict, p_controller):
-        #print " U load_upb_controller() begin"
         l_ctlr = p_controller
         l_ctlr = super(ControllerAPI, self).load_controller(p_dict, l_ctlr)
         l_ctlr = self.load_device(p_dict, l_ctlr)
-        #print " U Loaded controller {0:} -------".format(l_ctlr.Name)
         return l_ctlr
 
 
@@ -141,12 +133,10 @@ class LightingAPI(lighting.LightingAPI, CoreAPI):
     """
 
     def load_all_lights(self, p_dict):
-        #print " U load_all_lights"
-        for l_key, l_dict in p_dict.iteritems():
+        for l_dict in p_dict.itervalues():
             l_light = LightingData()
             l_light = self.load_upb_light(l_dict, l_light)
             Light_Data[l_light.Key] = l_light
-        #print " U Loaded all lights\n"
 
     def load_upb_light(self, p_dict, p_light):
         l_light = p_light
@@ -171,17 +161,13 @@ class DeviceMain(LoadSaveInsteonData):
     def __init__(self):
         """Constructor for the UPB .
         """
-        self.m_config = configure_mh.ConfigureMain()
         self.m_logger = logging.getLogger('PyHouse.Device_UPB')
         self.m_logger.info('Initializing.')
-        #print " U About to Load all UPB Buttons"
-        self.load_all_buttons(self.m_config.get_value('UPBButtons'))
+        self.load_all_buttons(Configure_Data['UPBButtons'])
         #self.dump_all_buttons()
-        #print " U About to Load all UPB Controllers"
-        self.load_all_controllers(self.m_config.get_value('UPBControllers'))
+        self.load_all_controllers(Configure_Data['UPBControllers'])
         #self.dump_all_controllers()
-        #print " U About to Load all UPB Lights"
-        self.load_all_lights(self.m_config.get_value('UPBLights'))
+        self.load_all_lights(Configure_Data['UPBLights'])
         #self.dump_all_lights()
         import UPB_Pim
         self.m_pim = UPB_Pim.UpbPimMain()

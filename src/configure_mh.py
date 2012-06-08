@@ -14,7 +14,7 @@ import os
 
 Singletons = {}
 
-Config_Dict = {}
+Configure_Data = {}
 CONFIGDIR = './config/'
 Sections = {}
 
@@ -47,7 +47,7 @@ class ConfigUtility(ConfigData):
                 continue
             Sections[l_file] = []
             cfg = ConfigObj(CONFIGDIR + l_file)
-            Config_Dict.update(cfg)
+            Configure_Data.update(cfg)
             for l_key in cfg.keys():
                 Sections[l_file].append(l_key)
 
@@ -56,50 +56,15 @@ class ConfigureAPI(ConfigUtility):
     """What the world can see.
     """
 
-    def get_value(self, p_arg1 = None, p_arg2 = None, p_arg3 = None):
-        """Allow access to various parts of the overall config.
-        
-        @param p_arg1: ?
-        """
-        #print "---", self.Combined.keys()
-        l_ans = Config_Dict
-        if p_arg1 != None:
-            l_ans = Config_Dict[p_arg1]
-        if type(p_arg2) == int:
-            l_ans = l_ans[p_arg2]
-        if p_arg3 != None:
-            l_ans = l_ans[p_arg3]
-        return l_ans
-
     def get_cfg_file(self, p_file):
         """Get a ConfigObj that we can write into.
         """
         cfg = ConfigObj(p_file)
         return cfg
 
-    def write_scenes(self, p_scene):
-        cfg = ConfigObj('./config/Scene.conf')
-        cfg['Scenes'] = p_scene
-        cfg.write()
-
 class ConfigureMain(ConfigureAPI):
 
-    def __new__(cls, *args, **kwargs):
-        """Create a singleton.
-        """
-        if cls in Singletons:
-            return Singletons[cls]
-        self = object.__new__(cls)
-        cls.__init__(self, *args, **kwargs)
-        Singletons[cls] = self
-        self._read_all_config()
-        return self
-
     def __init__(self):
-        """Perhaps just calling singleton.
-        """
-
-    def load_config(self):
         self._read_all_config()
 
     def restart(self):

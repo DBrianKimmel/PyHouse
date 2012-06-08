@@ -4,19 +4,20 @@
 """
 
 # Import system type stuff
-#import binascii
 import logging
 import Queue
 
 # Import PyMh files
 import Device_Insteon
 from tools import PrintBytes
-#from twisted.internet import reactor
-
 
 STX = 0x02
 ACK = 0x06
 NAK = 0x15
+
+# Timeouts for send/receive delays
+SEND_TIMEOUT = 0.8
+RECEIVE_TIMEOUT = 0.3
 
 # Modes for setting PLM mode
 MODE_DISABLE_DEADMAN = 0x10
@@ -96,20 +97,19 @@ message_types = {
 #                        sprinkler_program_off => 0x43,
 #                        sprinkler_control => 0x44,
 #                        sprinkler_timers_request => 0x45,
-#                        thermostat_temp_up => 0x68,
-#                        thermostat_temp_down => 0x69,
-#                        thermostat_get_zone_temp => 0x6a,
-#                        thermostat_get_zone_setpoint => 0x6a,
-#                        thermostat_get_zone_humidity => 0x6a,
-#                        thermostat_control => 0x6b,
-#                        thermostat_get_mode => 0x6b,
-#                        thermostat_get_temp => 0x6b,
-#                        thermostat_setpoint_cool => 0x6c,
-#                        thermostat_setpoint_heat => 0x6d
+'thermostat_temp_up'    : 0x68,
+'thermostat_temp_down'  : 0x69,
+'thermostat_get_zone_temp' : 0x6a,
+'thermostat_get_zone_setpoint' : 0x6a,
+'thermostat_get_zone_humidity' : 0x6a,
+'thermostat_control'    : 0x6b,
+'thermostat_get_mode'   : 0x6b,
+'thermostat_get_temp'   : 0x6b,
+'thermostat_setpoint_cool' : 0x6c,
+'thermostat_setpoint_heat' : 0x6d
 }
 
 
-#Last_Response = bytearray()
 m_driver = []
 
 
@@ -440,7 +440,7 @@ class DecodeResponses(InsteonAllLinks):
             self.m_logger.error("Message started with {0:#x} not STX, Message={1:}".format(l_stx, PrintBytes(p_message)))
             return l_ret
         l_cmd = p_message[1]
-        print "- Message from PIM ==>", PrintBytes(p_message)
+        #print "- Message from PIM ==>", PrintBytes(p_message)
         if l_cmd == 0:
             self.m_logger.warning("Found a '0' record ->{0:}.".format(PrintBytes(p_message)))
             return l_ret
@@ -509,13 +509,17 @@ class DecodeResponses(InsteonAllLinks):
                 self.m_logger.info("== 50E From={0:}".format(l_name_from,))
                 pass
             elif self.m_last_command == 0x11: # light ON
-                pass
+                l_obj.CurLevel = 100
+                self.update_object(l_obj)
             elif self.m_last_command == 0x13: # light OFF
-                pass
+                l_obj.CurLevel = 0
+                self.update_object(l_obj)
             elif self.m_last_command == 0x19: # light status request
                 l_level = int(((p_message[10] + 2) * 100) / 256)
-                print " --- Got light status for {0:} - At level {1:}".format(l_name_from, l_level)
+                print " --- Got light status for {0:} - at level {1:}".format(l_name_from, l_level)
                 self.m_logger.info("== 50F From={0:}, Level={1:}".format(l_name_from, l_level))
+                l_obj.CurLevel = l_level
+                self.update_object(l_obj)
             else:
                 print " --- Got unknown type - last command was {0:#x}".format(self.m_last_command)
             Device_Insteon.LightingStatusAPI.update_status_by_name(self, l_name_from, 'Insteon', p_message[10])
@@ -836,8 +840,8 @@ class PlmDriverInterface(InsteonPlmAPI):
     """
 
     def driver_loop_start(self):
-        self.m_reactor.callLater(3, self.dequeue_and_send)
-        self.m_reactor.callLater(1, self.receive_loop)
+        self.m_reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send)
+        self.m_reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop)
         self.m_repeat = 0
 
     def send_plm_command(self, p_command):
@@ -851,15 +855,15 @@ class PlmDriverInterface(InsteonPlmAPI):
         except:
             # No commands queued
             #print "  nothing to dequeue"
-            self.m_reactor.callLater(3, self.dequeue_and_send)
+            self.m_reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send)
             return
         #print "- Got a command to send ", PrintBytes(l_command)
         try:
             self.m_driver[0].write_device(l_command)
-            print "- Send to PIM ------->", PrintBytes(l_command)
+            #print "- Send to PIM ------->", PrintBytes(l_command)
         except IndexError:
             pass
-        self.m_reactor.callLater(1, self.dequeue_and_send)
+        self.m_reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send)
 
     def receive_loop(self):
         #print "=Receive_loop"
@@ -869,11 +873,11 @@ class PlmDriverInterface(InsteonPlmAPI):
             (l_bytes, l_msg) = (0, '')
         #print l_bytes, PrintBytes(l_msg)
         if l_bytes == 0:
-            self.m_reactor.callLater(1, self.receive_loop)
+            self.m_reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop)
             return False
         #print "= Received a buffer of {0:} bytes =>{1:}".format(l_bytes, PrintBytes(l_msg))
         l_ret = self._decode_message(l_msg, l_bytes)
-        self.m_reactor.callLater(1, self.receive_loop)
+        self.m_reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop)
         return l_ret
 
 

@@ -35,7 +35,10 @@ class LightingTools(object):
     def getFloat(self, p_dict, p_field):
         """Get field as a number - floating point is ok.
         """
-        l_field = p_dict.get(p_field, None)
+        try:
+            l_field = float(p_dict.get(p_field, 0.0))
+        except TypeError:
+            l_field = 0.0
         return l_field
 
     def getText(self, p_dict, p_field):
@@ -132,7 +135,7 @@ class CoreAPI(LightingTools):
     """
     """
 
-    def load_core_device(self, p_dict, p_key = 7):
+    def load_core_device(self, p_dict, p_key = 0):
         """Load the device (light/button/controller/... information into a new CoreData object.
         
         @param p_dict: The dict of config items for this one device.

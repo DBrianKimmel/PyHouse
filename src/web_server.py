@@ -35,6 +35,11 @@ import schedule
 from lighting import Light_Status
 
 
+Light_Data = lighting.Light_Data
+Configure_Data = configure_mh.Configure_Data
+
+g_port = 8080
+g_logger = None
 
 SUBMIT = '_submit'
 BUTTON = 'post_btn'
@@ -43,9 +48,6 @@ Entertainment = {}
 Lights = {}
 XLight_Data = {}
 XLight_Status = {}
-#Schedule_Data = {}
-g_lighting = None
-#g_schedule = None
 
 
 class WebLightingData(lighting.LightingData): pass
@@ -62,9 +64,8 @@ class WebException(Exception):
     """
 
 class WebData(object):
-
-    g_lighting = None
-
+    """
+    """
 
 class WebUtilities(WebData):
     """
@@ -94,12 +95,12 @@ class WebUtilities(WebData):
         setattr(LightingPage, 'child_ajax.js', static.File('web/js/ajax.js'))
         setattr(LightingPage, 'child_floating_window.js', static.File('web/js/floating-window.js'))
         setattr(LightingPage, 'child_lightpage.js', static.File('web/js/lightpage.js'))
-        #setattr(LightingPage, 'child_bottomRight.gif', static.File('web/images/bottom_right.gif'))
-        #setattr(LightingPage, 'child_close.gif', static.File('web/images/close.gif'))
-        #setattr(LightingPage, 'child_minimize.gif', static.File('web/images/minimize.gif'))
-        #setattr(LightingPage, 'child_topCenter.gif', static.File('web/images/top_center.gif'))
-        #setattr(LightingPage, 'child_topLeft.gif', static.File('web/images/top_left.gif'))
-        #setattr(LightingPage, 'child_topRight.gif', static.File('web/images/top_right.gif'))
+        setattr(LightingPage, 'child_bottomRight.gif', static.File('web/images/bottom_right.gif'))
+        setattr(LightingPage, 'child_close.gif', static.File('web/images/close.gif'))
+        setattr(LightingPage, 'child_minimize.gif', static.File('web/images/minimize.gif'))
+        setattr(LightingPage, 'child_topCenter.gif', static.File('web/images/top_center.gif'))
+        setattr(LightingPage, 'child_topLeft.gif', static.File('web/images/top_left.gif'))
+        setattr(LightingPage, 'child_topRight.gif', static.File('web/images/top_right.gif'))
 
     def lighting_sub_win(self):
         pass
@@ -145,7 +146,7 @@ class ManualFormMixin(rend.Page, WebUtilities):
         """
 
         def redirectAfterPost(aspects):
-            """
+            """See: nevow.rend.Page.WebFormPost
             """
             #print " -- Start - ctx:", ctx, ", method:", method, ", bindingName:", bindingName, ", kwargs", kwargs
             l_handler = aspects.get(inevow.IHand)
@@ -169,6 +170,7 @@ class ManualFormMixin(rend.Page, WebUtilities):
                         refpath = url.here
                 else:
                     self.m_logger.warn("[0.5] IRedirectAfterPost is deprecated. Return a URL instance from your autocallable instead.", DeprecationWarning, 2)
+                    ## Use the redirectAfterPost url
                     ref = str(redirectAfterPost)
                     refpath = url.URL.fromString(ref)
             #print " -- refpath-2:", refpath
@@ -283,9 +285,9 @@ class LightingPage(rend.Page, WebLightingData, WebLightingAPI, WebLightingStatus
         for l_key, l_obj in lighting.Light_Data.iteritems():
             if l_obj.Family != 'Insteon': continue
             if l_obj.Type != 'Light': continue
-            l_obj.CurLevel = lighting.Light_Data[l_key].CurLevel
-            if l_obj.Type == 'Light':
-                l_light[l_key] = l_obj
+            #l_obj.CurLevel = lighting.Light_Data[l_key].CurLevel
+            #if l_obj.Type == 'Light':
+            l_light[l_key] = l_obj
         return l_light
 
     def render_lightlist(self, _context, links):
@@ -303,20 +305,19 @@ class LightingPage(rend.Page, WebLightingData, WebLightingAPI, WebLightingStatus
                 l_ret.append(Tag.tr)
             l_ret.append(Tag.td)
             l_ret.append(Tag.input(type = 'submit', value = l_key, name = BUTTON, onclick = "createChangeLightWindow(\'{0:}\',\'{1:}\',\'{2:}\')".format(l_key, l_cur_lev, l_family))
-                         [ l_family, '-', l_type, ' ', l_name, ' ', l_cur_lev])
+                         [ l_family, '-', l_type, ':', l_name, ' ', l_cur_lev])
             l_cnt += 1
         return l_ret
 
     def load_all_light_info(self):
-        global Light_Data, g_lighting
-        #Light_Data = g_lighting.get_light_tables()
+        global Light_Data
         pass
 
     def _store_light(self, **kwargs):
         """Send the updated lighting info back to the lighting module.
         Update the lighting page with the new information.
         """
-        global g_lighting, Lights
+        global Lights
         l_name = kwargs['Name']
         Lights[l_name] = {}
         Lights[l_name]['Address'] = kwargs['Address']
@@ -326,7 +327,7 @@ class LightingPage(rend.Page, WebLightingData, WebLightingAPI, WebLightingStatus
         Lights[l_name]['Dimmable'] = kwargs['Dimmable']
         Lights[l_name]['Coords'] = kwargs['Coords']
         Lights[l_name]['Master'] = kwargs['Master']
-        g_lighting.update_all_lighting_families()
+        lighting.LightingUtility().update_all_lighting_families()
 
     def form_post_addlight(self, **kwargs):
         print " - form_post_add - ", kwargs
@@ -337,25 +338,20 @@ class LightingPage(rend.Page, WebLightingData, WebLightingAPI, WebLightingStatus
         """Browser user changed a light (on/off/dim)
         Now send the change to the light.
         """
-        #global g_lighting
         print " - form_post_changelight - kwargs=", kwargs
-        #g_lighting.change_light_setting(kwargs['Name'], kwargs['slider_val'], kwargs['Family'])
-        return None # LightingPage(self.name)
+        return LightingPage(self.name)
 
     def form_post_deletelight(self, **kwargs):
         print " - form_post_delete - ", kwargs
-        global g_lighting, Lights
+        global Lights
         del Lights[kwargs['Name']]
-        g_lighting.update_all_lighting_families()
+        lighting.LightingUtility().update_all_lighting_families()
         return LightingPage(self.name)
 
     def form_post_scan(self, **kwargs):
         """Trigger a scan of all lights and then update light info.
         """
         print " - form_post_scan- ", kwargs
-        #global g_lighting, Lights
-        #g_lighting.scan_all_lighting(Lights)
-        #self.load_all_light_info()
 
 class LocationPage(rend.Page): pass
 
@@ -501,7 +497,6 @@ class SchedulePage(rend.Page):
         schedule.Schedule_Data[l_slot]['Time'] = kwargs['Time']
         schedule.Schedule_Data[l_slot]['Level'] = kwargs['Level']
         schedule.Schedule_Data[l_slot]['Rate'] = kwargs['Rate']
-        #g_schedule.update_schedule(schedule.Schedule_Data)
 
     def form_post_changesched(self, **kwargs):
         """Browser user changed a schedule
@@ -518,13 +513,13 @@ class SchedulePage(rend.Page):
     def form_post_changeschedule(self, **kwargs):
         print " - form_post_changeschedule (add) - kwargs=", kwargs
         self._store_schedule(**kwargs)
-        g_schedule.update_schedule(schedule.Schedule_Data)
+        schedule.ScheduleAPI().update_schedule(schedule.Schedule_Data)
         return SchedulePage(self.name)
 
     def form_post_deleteschedule(self, **kwargs):
         print " - form_post_deleteschedule - kwargs=", kwargs
         del schedule.Schedule_Data[kwargs['Slot']]
-        g_schedule.update_schedule(schedule.Schedule_Data)
+        schedule.ScheduleAPI().update_schedule(schedule.Schedule_Data)
         return SchedulePage(self.name)
 
 class WeatherPage(rend.Page): pass
@@ -621,32 +616,36 @@ class Web_ServerMain(ManualFormMixin):
     Other classes are to build pages and handle requests.
     """
 
-    def __init__(self, p_debug = False):
-        self.m_debug = p_debug
+    def __init__(self):
         self.m_logger = logging.getLogger('PyHouse.WebServer')
-        self.m_config = configure_mh.ConfigureMain()
-        global g_lighting, g_schedule, g_entertainment
-        g_lighting = lighting.LightingMain()
-        g_schedule = schedule.ScheduleMain()
+        global g_entertainment
         g_entertainment = entertainment.EntertainmentMain()
-        self.m_logger.info("Initialized.")
-
-    def configure(self, p_port = 8080):
-        self.m_port = p_port
-        l_config = self.m_config.get_value()
-        if 'web_server' in l_config:
-            l_dict = l_config['web_server']
+        self.m_port = 8080
+        if 'web_server' in Configure_Data:
+            l_dict = Configure_Data['web_server']
             if 'port' in l_dict:
                 self.m_port = int(l_dict['port'])
-        self.m_logger.info("Configured.  Start the web server on port {0:}".format(self.m_port))
+        self.m_logger.info("Initialized - Start the web server on port {0:}".format(self.m_port))
 
-    def start(self, p_reactor):
-        self.m_reactor = p_reactor
-        self.m_site_dir = os.path.split(os.path.abspath(__file__))[0]
-        print "Webserver path = ", self.m_site_dir
-        l_site = appserver.NevowSite(RootPage('/'))
-        self.build_child_tree()
-        p_reactor.listenTCP(self.m_port, l_site)
-        self.m_logger.info("Started.")
+def Init():
+    global g_logger
+    g_logger = logging.getLogger('PyHouse.WebServer')
+    entertainment.EntertainmentMain()
+    if 'web_server' in Configure_Data:
+        l_dict = Configure_Data['web_server']
+        if 'port' in l_dict:
+            g_port = int(l_dict['port'])
+    g_logger.info("Initialized - Start the web server on port {0:}".format(g_port))
+
+def Start(p_reactor):
+    g_site_dir = os.path.split(os.path.abspath(__file__))[0]
+    print "Webserver path = ", g_site_dir
+    l_site = appserver.NevowSite(RootPage('/'))
+    WebUtilities().build_child_tree()
+    p_reactor.listenTCP(g_port, l_site)
+    g_logger.info("Started.")
+
+def Stop():
+    pass
 
 ### END

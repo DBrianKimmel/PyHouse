@@ -24,6 +24,7 @@ Button_Data = lighting.Button_Data
 Controller_Data = lighting.Controller_Data
 Light_Data = lighting.Light_Data
 Light_Status = lighting.Light_Status
+Configure_Data = configure_mh.Configure_Data
 
 
 class CoreData (object):
@@ -90,24 +91,21 @@ class CoreData (object):
 class CoreAPI(object):
 
     def load_device(self, p_dict, p_dev):
-        l_dev = p_dev
-        l_dev.Family = 'Insteon'
-        l_dev.Address = self.getText(p_dict, 'Address')
-        l_dev.Code = self.getText(p_dict, 'Code')
-        l_dev.Controller = self.getBool(p_dict, 'Controller')
-        l_dev.DevCat = self.getInt(p_dict, 'DevCat')
-        l_dev.GroupList = self.getText(p_dict, 'GroupList')
-        l_dev.GroupNumber = self.getInt(p_dict, 'GroupNumber')
-        l_dev.Master = self.getBool(p_dict, 'Master')
-        l_dev.Responder = self.getBool(p_dict, 'Responder')
-        #print " I Insteon Load device - {0:}".format(l_dev.Name)
-        return l_dev
+        p_dev.Family = 'Insteon'
+        p_dev.Address = self.getText(p_dict, 'Address')
+        p_dev.Code = self.getText(p_dict, 'Code')
+        p_dev.Controller = self.getBool(p_dict, 'Controller')
+        p_dev.DevCat = self.getInt(p_dict, 'DevCat')
+        p_dev.GroupList = self.getText(p_dict, 'GroupList')
+        p_dev.GroupNumber = self.getInt(p_dict, 'GroupNumber')
+        p_dev.Master = self.getBool(p_dict, 'Master')
+        p_dev.Responder = self.getBool(p_dict, 'Responder')
+        return p_dev
 
 
 class ButtonData(lighting.ButtonData, CoreData):
 
     def __init__(self):
-        #print " I Insteon ButtonData.__init_()"
         super(ButtonData, self).__init__()
 
     def __str__(self):
@@ -121,19 +119,15 @@ class ButtonAPI(lighting.ButtonAPI, CoreAPI):
         """
         @param p_dict: outer layer of all buttons in a dict.
         """
-        #print " I load_all_buttons"
-        for l_key, l_dict in p_dict.iteritems():
+        for l_dict in p_dict.itervalues():
             l_button = ButtonData()
             l_button = self.load_insteon_button(l_dict, l_button)
             Button_Data[l_button.Key] = l_button
-        #print " I Loaded all buttons\n"
 
     def load_insteon_button(self, p_dict, p_button):
-        #print " I load_insteon_button() begin"
         l_button = p_button
         l_button = super(ButtonAPI, self).load_button(p_dict, l_button)
         l_button = self.load_device(p_dict, l_button)
-        #print " I Loaded button {0:} -------".format(l_button.Name)
         return l_button
 
 
@@ -150,19 +144,15 @@ class ControllerData(lighting.ControllerData, CoreData):
 class ControllerAPI(lighting.ControllerAPI, CoreAPI):
 
     def load_all_controllers(self, p_dict):
-        #print " I load_all_controllers"
-        for l_key, l_dict in p_dict.iteritems():
+        for l_dict in p_dict.itervalues():
             l_ctlr = ControllerData()
             l_ctlr = self.load_insteon_controller(l_dict, l_ctlr)
             Controller_Data[l_ctlr.Key] = l_ctlr
-        #print " I Loaded all controllers\n"
 
     def load_insteon_controller(self, p_dict, p_controller):
-        #print " I load_insteon_controller() begin"
         l_ctlr = p_controller
         l_ctlr = super(ControllerAPI, self).load_controller(p_dict, l_ctlr)
         l_ctlr = self.load_device(p_dict, l_ctlr)
-        #print " I Loaded controller {0:} -------".format(l_ctlr.Name)
         return l_ctlr
 
 
@@ -173,7 +163,6 @@ class LightingData(lighting.LightingData, CoreData):
     """
 
     def __init__(self):
-        #print " I Insteon LightingData.__init_()"
         super(LightingData, self).__init__()
 
     def __str__(self):
@@ -186,19 +175,15 @@ class LightingAPI(lighting.LightingAPI, CoreAPI):
     """
 
     def load_all_lights(self, p_dict):
-        #print " I load_all_lights"
-        for l_key, l_dict in p_dict.iteritems():
+        for l_dict in p_dict.itervalues():
             l_light = LightingData()
             l_light = self.load_insteon_light(l_dict, l_light)
             Light_Data[l_light.Key] = l_light
-        #print " I Loaded all lights\n"
 
     def load_insteon_light(self, p_dict, p_light):
-        #print " I load_insteon_light() begin"
         l_light = p_light
         l_light = super(LightingAPI, self).load_light(p_dict, l_light)
         l_light = self.load_device(p_dict, l_light)
-        #print " I Loaded light {0:} -------".format(l_light.Name)
         return l_light
 
     def change_light_setting(self, p_name, p_level):
@@ -252,24 +237,20 @@ class InsteonDeviceUtility(LoadSaveInsteonData):
 
 class DeviceMain(InsteonDeviceUtility):
 
-    m_config = None
     m_logger = None
     m_insteonLink = None
     m_insteonPLM = None
 
     def __init__(self):
-        self.m_config = configure_mh.ConfigureMain()
         self.m_logger = logging.getLogger('PyHouse.Device_Insteon')
         self.m_logger.info('Initializing.')
-        #print " I About to Load all Insteon Buttons"
-        self.load_all_buttons(self.m_config.get_value('InsteonButtons'))
+        self.load_all_buttons(Configure_Data['InsteonButtons'])
         #self.dump_all_buttons()
-        #print " I Loading Insteon Controllers"
-        self.load_all_controllers(self.m_config.get_value('InsteonControllers'))
+        self.load_all_controllers(Configure_Data['InsteonControllers'])
         #self.dump_all_controllers()
-        self.load_all_lights(self.m_config.get_value('InsteonLights'))
+        self.load_all_lights(Configure_Data['InsteonLights'])
         #self.dump_all_lights()
-        self.load_all_status(self.m_config.get_value('InsteonLights'))
+        self.load_all_status(Configure_Data['InsteonLights'])
         #self.dump_all_status()
         import Insteon_Link
         self.m_insteonLink = Insteon_Link.InsteonLinkMain()

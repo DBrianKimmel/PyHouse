@@ -20,13 +20,15 @@ import configure_mh
 import lighting
 from tools import PrintBytes
 
+
+Configure_Data = configure_mh.Configure_Data
+
 g_message = bytearray()
 
 
 class SerialDeviceData(lighting.ControllerData):
 
     SerialPort = {}
-    m_config = None
     m_logger = None
     m_serial = None
     m_message = bytearray()
@@ -53,8 +55,7 @@ class SerialDriverUtility(SerialDeviceData):
                     print " _ Driver_Serial. ", p_key, p_family, l_key, l_obj
         return l_obj.get_Port(), l_obj.get_BaudRate
 
-        self.m_config = configure_mh.ConfigureMain()
-        l_dict = self.m_config.get_value('InsteonControllers')
+        l_dict = Configure_Data['InsteonControllers']
         self.SerialPort['Port'] = l_dict.get('Port', '/dev/ttyUSB0')
         self.SerialPort['BaudRate'] = l_dict.get('BaudRate', 19200)
         self.SerialPort['ByteSize'] = l_dict.get('ByteSize', 8)
@@ -93,8 +94,6 @@ class SerialDriverAPI(SerialDriverUtility):
         except:
             pass
         if self.m_bytes > 0:
-            #self.m_logger.debug("read_device() - got {0:} bytes ={1:}".format(self.m_bytes, PrintBytes(self.m_message)))
-            #print "== Driver_Serial Received {0:} bytes ->{1:}".format(self.m_bytes, PrintBytes(self.m_message))
             pass
 
     def fetch_read_data(self):
@@ -107,7 +106,6 @@ class SerialDriverAPI(SerialDriverUtility):
         """Send the command to the PLM and wait a very short time to be sure we sent it.
         """
         self.m_logger.debug("write_device() - {0:}".format(PrintBytes(p_message)))
-        #print " == Driver_Serial Wrote {0:} bytes - {1:}".format(len(p_message), PrintBytes(p_message))
         self.m_serial.write(p_message)
         time.sleep(0.1)
 
@@ -124,13 +122,10 @@ class SerialDriverMain(SerialDriverAPI):
         self.m_serial.baudrate = p_obj.BaudRate
         self.m_serial.bytesize = int(p_obj.ByteSize)
         if p_obj.Parity == 'None':
-            #print "  -Parity = None"
             self.m_serial.parity = serial.PARITY_NONE
         if float(p_obj.StopBits) == 1.0:
-            #print "  -Stopbits = 1"
             self.m_serial.stopbits = serial.STOPBITS_ONE
         self.m_serial.timeout = float(p_obj.Timeout)
-        #
         self.m_logger.info("Initialized serial port {0:} - {1:} @ {2:} Baud".format(p_obj.Name, p_obj.Port, p_obj.BaudRate))
         self.open_device()
         LoopingCall(self._serialLoop).start(1)
