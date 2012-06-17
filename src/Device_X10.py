@@ -50,22 +50,19 @@ class X10DeviceAPI(lighting.LightingAPI):
         pass
 
 
-class DeviceMain(X10DeviceAPI):
+def Init():
+    """Constructor for the PLM.
     """
-    """
+    global g_logger
+    g_logger = logging.getLogger('PyHouse.Device_X10')
+    X10DeviceAPI().load_all_lights(Configure_Data['X10Lights'])
+    g_logger.info('Initialized.')
 
-    def __init__(self):
-        """Constructor for the PLM.
-        """
-        self.m_logger = logging.getLogger('PyHouse.Device_X10')
-        self.load_all_lights(Configure_Data['X10Lights'])
-        self.m_logger.info('Initialized.')
+def Start(_p_reactor):
+    g_logger.info('Starting.')
+    g_logger.info('Started.')
 
-    def start(self, _p_reactor):
-        self.m_logger.info('Starting.')
-        self.m_logger.info('Started.')
-
-    def stop(self):
-        pass
+def Stop():
+    pass
 
 ### END

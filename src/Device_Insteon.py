@@ -26,6 +26,9 @@ Light_Data = lighting.Light_Data
 Light_Status = lighting.Light_Status
 Configure_Data = configure_mh.Configure_Data
 
+g_logger = None
+g_InsteonLink = None
+g_InsteonPLM = None
 
 class CoreData (object):
 
@@ -39,6 +42,7 @@ class CoreData (object):
         self.GroupList = None
         self.GroupNumber = None
         self.Master = None
+        self.ProductKey = None
         self.Responder = None
 
     def __str__(self):
@@ -74,6 +78,10 @@ class CoreData (object):
         return self.__Master
     def set_master(self, value):
         self.__Master = value
+    def get_product_key(self):
+        return self.__ProductKey
+    def set_product_key(self, value):
+        self.__ProductKey = value
     def get_responder(self):
         return self.__Responder
     def set_responder(self, value):
@@ -86,6 +94,7 @@ class CoreData (object):
     GroupList = property(get_group_list, set_group_list, None, None)
     GroupNumber = property(get_group_number, set_group_number, None, None)
     Master = property(get_master, set_master, None, None)
+    ProductKey = property(get_product_key, set_product_key, None, None)
     Responder = property(get_responder, set_responder, None, None)
 
 class CoreAPI(object):
@@ -232,39 +241,29 @@ class InsteonDeviceUtility(LoadSaveInsteonData):
 
     def scan_all_lights(self, _p_lights):
         print "insteon_Device.scan_insteon_devices "
-        self.m_insteonPLM.scan_all_lights(lighting.Light_Data)
+        Insteon_PLM.LightingAPI().scan_all_lights(lighting.Light_Data)
 
+import Insteon_Link
+import Insteon_PLM
 
-class DeviceMain(InsteonDeviceUtility):
+def Init():
+    global g_logger, g_InsteonLink, g_InsteonPLM
+    g_logger = logging.getLogger('PyHouse.Device_Insteon')
+    g_logger.info('Initializing.')
+    ButtonAPI().load_all_buttons(Configure_Data['InsteonButtons'])
+    ControllerAPI().load_all_controllers(Configure_Data['InsteonControllers'])
+    LightingAPI().load_all_lights(Configure_Data['InsteonLights'])
+    LightingStatusAPI().load_all_status(Configure_Data['InsteonLights'])
+    g_InsteonLink = Insteon_Link.InsteonLinkMain()
+    Insteon_PLM.Init()
+    g_logger.info('Initialized.')
 
-    m_logger = None
-    m_insteonLink = None
-    m_insteonPLM = None
+def Start(p_reactor):
+    g_logger.info('Starting.')
+    Insteon_PLM.Start(p_reactor)
+    g_logger.info('Started.')
 
-    def __init__(self):
-        self.m_logger = logging.getLogger('PyHouse.Device_Insteon')
-        self.m_logger.info('Initializing.')
-        self.load_all_buttons(Configure_Data['InsteonButtons'])
-        #self.dump_all_buttons()
-        self.load_all_controllers(Configure_Data['InsteonControllers'])
-        #self.dump_all_controllers()
-        self.load_all_lights(Configure_Data['InsteonLights'])
-        #self.dump_all_lights()
-        self.load_all_status(Configure_Data['InsteonLights'])
-        #self.dump_all_status()
-        import Insteon_Link
-        self.m_insteonLink = Insteon_Link.InsteonLinkMain()
-        import Insteon_PLM
-        self.m_insteonPLM = Insteon_PLM.InsteonPLMMain()
-        self.m_logger.info('Initialized.')
-
-    def start(self, p_reactor):
-        self.m_reactor = p_reactor
-        self.m_logger.info('Starting.')
-        self.m_insteonPLM.start(p_reactor)
-        self.m_logger.info('Started.')
-
-    def stop(self):
-        self.m_insteonPLM.stop()
+def Stop():
+    Insteon_PLM.Stop()
 
 ### END

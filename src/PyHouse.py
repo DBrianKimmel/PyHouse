@@ -66,6 +66,7 @@ def Start():
     """
     global g_logger
     g_logger.info("Starting.")
+    house.Start(reactor)
     schedule.Start(reactor)
     web_server.Start(reactor)
     g_logger.info("Started.\n")

@@ -126,6 +126,12 @@ class UsbUtility(UsbDeviceData):
 
 class UsbDriverAPI(UsbUtility):
 
+    m_message = ''
+    m_endpoint_in = 0
+    m_endpoint_out = 0
+    m_ep_in = None
+    m_ep_out = None
+
     def _setup_find_device(self, p_vendor, p_product):
         """First step in opening a USB device.
 
@@ -134,6 +140,8 @@ class UsbDriverAPI(UsbUtility):
         print "! !Driver_USB._setup_find_device"
         print " -- Name:{0:}".format(self.get_name())
         l_device = usb.core.find(idVendor = p_vendor, idProduct = p_product)
+        if l_device == None:
+            return None
         print " -- device =", l_device.__dict__
         self.set_device(l_device)
         self.m_message = ''
@@ -190,15 +198,16 @@ class UsbDriverAPI(UsbUtility):
         print " -- ep_in  =", self.m_ep_in.__dict__
         self.m_endpoint_in = self.m_ep_in.bEndpointAddress
 
-
     def open_device(self):
         print "! !Driver_USB.open_device"
         self.m_device = self._setup_find_device(self.get_vendor(), self.get_product())
+        if self.m_device == None: return None
         self.m_device.baudrate = 19200
         self._setup_detach_kernel(self.m_device)
         l_config = self._setup_configurations(self.m_device)
         l_interface = self._setup_interfaces(l_config)
         self._setup_endpoints(l_interface)
+        self.m_message = ''
         return self.m_device
 
     def close_device(self, p_dev):
@@ -226,9 +235,8 @@ class UsbDriverAPI(UsbUtility):
         @return: the number of bytes written
         """
         l_message = p_message
-        print " !! Driver_USB.write_device() - ep={0:#04X} - {1:}".format(self.m_endpoint_out, p_message)
+        print " !! Driver_USB.write_device() - ep={0:#04X} - {1:}".format(self.m_endpoint_out, PrintBytes(p_message))
         try:
-            #l_len = self.m_device.write(self.m_endpoint_out, l_message, timeout = 500)
             l_len = self.m_ep_out.write(l_message, timeout = 200)
         except Exception, e:
             print " -- Error in writing to USB device ", sys.exc_info()[0], e
