@@ -45,6 +45,7 @@ class ConfigUtility(ConfigData):
         for l_file in l_files:
             if l_file[0] == '.':
                 continue
+            print "Loading file", l_file
             Sections[l_file] = []
             cfg = ConfigObj(CONFIGDIR + l_file)
             Configure_Data.update(cfg)
