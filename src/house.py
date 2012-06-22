@@ -8,6 +8,7 @@ import logging
 
 # Import PyMh files
 import configure_mh
+import internet
 import lighting_tools
 
 
@@ -231,5 +232,9 @@ def Init():
     HouseAPI().load_all_rooms(Configure_Data['Rooms'])
     #HouseAPI().dump_location()
     #HouseAPI().dump_rooms()
+    internet.Init()
+
+def Start(p_reactor):
+    pass
 
 ###  END

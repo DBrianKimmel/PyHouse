@@ -18,7 +18,8 @@ Light_Status = lighting.Light_Status
 Configure_Data = configure_mh.Configure_Data
 
 m_config = None
-m_logger = None
+g_logger = None
+g_pim = None
 
 
 class CoreData(object):
@@ -104,7 +105,7 @@ class ControllerData(lighting.ControllerData):
     Password = property(get_password, set_password, None, None)
     UnitID = property(get_unit_id, set_unit_id, None, None)
 
-class ControllerAPI(lighting.ControllerAPI, ControllerData):
+class ControllerAPI(lighting.ControllerAPI, CoreAPI):
 
     def load_all_controllers(self, p_dict):
         for l_dict in p_dict.itervalues():
@@ -156,30 +157,25 @@ class LightingStatusAPI(lighting.LightingStatusAPI, LightingStatusData): pass
 
 class LoadSaveInsteonData(LightingAPI, ControllerAPI, ButtonAPI, LightingStatusAPI): pass
 
-class DeviceMain(LoadSaveInsteonData):
+def Init():
+    """Constructor for the UPB .
+    """
+    global g_logger, g_pim
+    g_logger = logging.getLogger('PyHouse.Device_UPB')
+    g_logger.info('Initializing.')
+    ButtonAPI().load_all_buttons(Configure_Data['UPBButtons'])
+    ControllerAPI().load_all_controllers(Configure_Data['UPBControllers'])
+    LightingAPI().load_all_lights(Configure_Data['UPBLights'])
+    import UPB_Pim
+    g_pim = UPB_Pim.UpbPimMain()
+    g_logger.info('Initialized.')
 
-    def __init__(self):
-        """Constructor for the UPB .
-        """
-        self.m_logger = logging.getLogger('PyHouse.Device_UPB')
-        self.m_logger.info('Initializing.')
-        self.load_all_buttons(Configure_Data['UPBButtons'])
-        #self.dump_all_buttons()
-        self.load_all_controllers(Configure_Data['UPBControllers'])
-        #self.dump_all_controllers()
-        self.load_all_lights(Configure_Data['UPBLights'])
-        #self.dump_all_lights()
-        import UPB_Pim
-        self.m_pim = UPB_Pim.UpbPimMain()
-        self.m_logger.info('Initialized.')
+def Start(p_reactor):
+    g_logger.info('Starting.')
+    g_pim.PIM_start(p_reactor)
+    g_logger.info('Started.')
 
-    def start(self, p_reactor):
-        self.m_reactor = p_reactor
-        self.m_logger.info('Starting.')
-        self.m_pim.PIM_start(p_reactor)
-        self.m_logger.info('Started.')
-
-    def stop(self):
-        self.m_pim.stop()
+def Stop():
+    g_pim.stop()
 
 ### END

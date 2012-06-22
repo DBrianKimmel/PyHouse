@@ -217,11 +217,11 @@ def Init():
 def Start(p_reactor):
     global g_reactor
     g_reactor = p_reactor
-    lighting.start(g_reactor)
+    lighting.Start(g_reactor)
     ScheduleUtility().get_next_sched()
     g_logger.info("Started.")
 
 def Stop():
-    lighting.stop()
+    lighting.Stop()
 
 ### END
