@@ -28,7 +28,7 @@ Configure_Data = configure_mh.Configure_Data
 
 g_logger = None
 g_InsteonLink = None
-g_InsteonPLM = None
+
 
 class CoreData (object):
 
@@ -196,7 +196,7 @@ class LightingAPI(lighting.LightingAPI, CoreAPI):
         return l_light
 
     def change_light_setting(self, p_name, p_level):
-        self.m_insteonPLM.change_light_setting(p_name, p_level)
+        Inston_PLM.LightingAPI().change_light_setting(p_name, p_level)
 
     def update_all_lights(self):
         self.write_insteon_lights(lighting.Light_Data)
@@ -247,7 +247,7 @@ import Insteon_Link
 import Insteon_PLM
 
 def Init():
-    global g_logger, g_InsteonLink, g_InsteonPLM
+    global g_logger, g_InsteonLink
     g_logger = logging.getLogger('PyHouse.Device_Insteon')
     g_logger.info('Initializing.')
     ButtonAPI().load_all_buttons(Configure_Data['InsteonButtons'])

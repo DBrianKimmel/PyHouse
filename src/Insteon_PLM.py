@@ -141,7 +141,7 @@ class InsteonPlmUtility(object):
             if l_obj.Name == p_name: return l_obj
         return None
 
-    def get_obj_using_addr(self, p_addr):
+    def _get_obj_using_addr(self, p_addr):
         """
         @param p_addr: String 'aa.bb.cc' is the address
         @return: the entire object
@@ -777,6 +777,26 @@ class InsteonPlmAPI(DecodeResponses):
     def put_aldb_record(self, p_addr, p_record):
         pass
 
+    def get_engine_version(self, p_name):
+        """ i1 = pre 2007 I think
+            i2 = no checksun - new commands
+            i2cs = 2012 add checksums + new commands.
+        """
+        g_logger.debug('***Getting Insteon Envine version')
+        self.send_62_command(p_name, message_types['engine_version'], 0) # 0x0D
+
+    def get_id_request(self, p_name):
+        """Get the device DevCat
+        """
+        g_logger.debug('request ID from device {0:}'.format(p_name))
+        self.send_62_command(p_name, message_types['id_request'], 0) # 0x10
+
+    def ping_plm(self):
+        """Send a command to the plm and get its response.
+        """
+        l_ret = self.send_60_command()
+        return l_ret
+
 
 class LightHandlerAPI(InsteonPlmAPI, CreateCommands):
     """This is the API for light control.
@@ -797,12 +817,6 @@ class LightHandlerAPI(InsteonPlmAPI, CreateCommands):
                 l_driver = Driver_USB.USBDriverMain(l_obj)
             g_driver.append(l_driver)
 
-    def ping_plm(self):
-        """Send a command to the plm and get its response.
-        """
-        l_ret = self.send_60_command()
-        return l_ret
-
     def set_plm_mode(self):
         """Set the PLM to a mode 
         """
@@ -816,39 +830,22 @@ class LightHandlerAPI(InsteonPlmAPI, CreateCommands):
         g_logger.info('Getting light levels of all lights')
         for l_obj in Device_Insteon.Button_Data.itervalues():
             if l_obj.Family != 'Insteon': continue
-            self.get_one_light_status(l_obj.Name)
+            self._get_one_light_status(l_obj.Name)
         for l_obj in Device_Insteon.Controller_Data.itervalues():
             if l_obj.Family != 'Insteon': continue
-            self.get_one_light_status(l_obj.Name)
+            self._get_one_light_status(l_obj.Name)
         for l_obj in Device_Insteon.Light_Data.itervalues():
             if l_obj.Family != 'Insteon': continue
-            self.get_one_light_status(l_obj.Name)
+            self._get_one_light_status(l_obj.Name)
 
-    def get_one_light_status(self, p_name):
+    def _get_one_light_status(self, p_name):
         """Get the status of a light.
         
         We will (apparently) get back a 62-ACK followed by a 50 with the level in the response.
 
         @return: the light current level (0-100%)
         """
-        #self.scan_one_light(p_name)       # 0x03
-        #self.get_engine_version(p_name)                # 0x0D
-        #self.id_request(p_name)                    # 0x10
         self.send_62_command(p_name, message_types['status_request'], 0)                # 0x19
-
-    def id_request(self, p_name):
-        """Get the device DevCat
-        """
-        g_logger.debug('request ID from device {0:}'.format(p_name))
-        self.send_62_command(p_name, message_types['id_request'], 0) # 0x10
-
-    def get_engine_version(self, p_name):
-        """ i1 = pre 2007 I think
-            i2 = no checksun - new commands
-            i2cs = 2012 add checksums + new commands.
-        """
-        g_logger.debug('***Getting Insteon Envine version')
-        self.send_62_command(p_name, message_types['engine_version'], 0) # 0x0D
 
 
 class PlmTesting(object):

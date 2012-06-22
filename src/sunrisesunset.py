@@ -19,6 +19,7 @@ import house
 
 RAD2DEG = 180.0 / pi
 DEG2RAD = pi / 180.0
+JDATE2000 = 2451545.0 # convert Julian Date ot Epoch 2000 (J2000)
 
 Earth_Data = {}
 Solar_Data = {}
@@ -68,7 +69,8 @@ class EarthParameters(object):
         self.DayOfLocalMeanSolarNoon = None
         self.DST = False
         self.J2000 = None
-        self.JulianDay = None
+        self.JulianDay = 0.0
+        self.JulianDayNumber = 0.0
         self.Latitude = 0.0
         self.Longitude = 0.0
         self.Sunrise = None
@@ -98,6 +100,7 @@ class SolarParameters(object):
         self.Eccentricity = 0.0
         self.EclipticLongitude = 0.0
         self.EclipticLatitude = 0.0
+        self.HourAngle = 0.0
         self.MeanAnomaly = 0.0
         self.MeanLongitude = 0.0
         self.ObliquityOfEcliptic = 0.0
@@ -115,8 +118,10 @@ class SunCalcs(SunriseMathd, EarthParameters, SolarParameters):
 
     def _calcJulianDates(self, p_earth):
         """From Wikipedia.
+        JulianDayNumber is real for convenience
         Julian date (JD) system of time measurement for scientific use by the astronomy community,
         presenting the interval of time in days and fractions of a day since January 1, 4713 BC Greenwich noon.
+        This Julian date is as of Noon, UT
         """
         l_year = p_earth.Date.year
         l_month = p_earth.Date.month
@@ -124,11 +129,10 @@ class SunCalcs(SunriseMathd, EarthParameters, SolarParameters):
         l_a = (14 - l_month) // 12
         l_y = l_year + 4800 - l_a
         l_m = l_month + (12 * l_a) - 3
-        l_jdn = (l_day + (((153 * l_m) + 2) // 5) + (365 * l_y) + (l_y // 4) - (l_y // 100) + (l_y // 400) - 32045)
-        p_earth.JulianDay = l_jdn
-        p_earth.J2000 = l_jdn - 2451545.0
-        g_logger.debug("Calculating julian date {0:}".format(p_earth.JulianDay))
-        g_logger.debug("Calculating j2000 day {0:}".format(p_earth.J2000))
+        p_earth.JulianDayNumber = (l_day + (((153 * l_m) + 2) // 5) + (365 * l_y) + (l_y // 4) - (l_y // 100) + (l_y // 400) - 32045) + 0.0
+        p_earth.JulianDay = p_earth.JulianDayNumber + 0.5 # Make into real number
+        p_earth.J2000 = p_earth.JulianDayNumber - JDATE2000
+        g_logger.debug("Calculating julian day:{0:}, JulianDayNumber:{1:}, J2000:{2:}".format(p_earth.JulianDay, p_earth.JulianDayNumber, p_earth.J2000))
 
     def _calcSolarNoonParams(self, p_earth, p_sun):
         """This is an Ecliptic calculations.  Taken from the wikipedia 'Position of the Sun' entry.
@@ -139,7 +143,7 @@ class SunCalcs(SunriseMathd, EarthParameters, SolarParameters):
         Where the obliquity of the ecliptic is not obtained elsewhere, it can be approximated for use with these equations.
         The Earth's axial tilt (called the obliquity of the ecliptic by astronomers) is the angle between the Earth's axis and a line perpendicular to the Earth's orbit.
          """
-        p_earth.DayOfLocalMeanSolarNoon = l_domsn = p_earth.J2000 - 0.0009 - (p_earth.Longitude / 360.0)
+        p_earth.DayOfLocalMeanSolarNoon = l_domsn = p_earth.J2000 - 0.0009 + (p_earth.Longitude / 360.0)
         g_logger.debug("Calculating the JDN(2000) of Local Mean Solar Noon {0:} at {1:}".format(l_domsn, p_earth.Longitude))
         # These progress each day
         p_sun.Eccentricity = 0.016709 - (1.151E-9 * l_domsn)
@@ -276,7 +280,7 @@ class SunCalcs(SunriseMathd, EarthParameters, SolarParameters):
         l_DecRad = self._2calcSolarDeclinationRadians(p_earth, p_sun)
         l_cost = ((math.sin(-l_AltRad) - (math.sin(l_LatRad) * math.sin(l_DecRad))) / \
                 (math.cos(l_LatRad) * math.cos(l_DecRad)))
-        l_ha = math.acos(l_cost)
+        p_sun.HourAngle = l_ha = math.acos(l_cost)
         g_logger.debug("Calculating Solar COST {0:} {1:} {2:}".format(l_cost, l_ha, l_ha * RAD2DEG))
         return l_cost
 
@@ -293,6 +297,11 @@ class SunCalcs(SunriseMathd, EarthParameters, SolarParameters):
                 0 when computing start/end of twilight.
         """
         l_Altitude = -35.0 / 60.0
+        l_ha = p_sun.HourAngle
+        l_lon = p_earth.Longitude
+        l_jul = p_earth.JulianDay
+        l_ma = p_sun.MeanAnomaly
+        l_el = p_sun.EclipticLongitude
         self._2calcSolarNoon(p_earth, p_sun) # compute self.m_solar_noon_hrs
         tsouth = p_sun.SolarNoonHrs
         l_Altitude = l_Altitude - p_sun.SolarRadius
@@ -307,7 +316,9 @@ class SunCalcs(SunriseMathd, EarthParameters, SolarParameters):
         p_earth.Sunrise = self._convert_to_time(tsouth - t)# + p_earth.TimeZone)
         p_earth.Sunset = self._convert_to_time(tsouth + t) # + p_earth.TimeZone)
         g_logger.info("Sunrise / Sunset {0:}, {1:}".format(p_earth.Sunrise, p_earth.Sunset))
-        j_set = 2451545.0009 + ((l_ha + l_w) / 360.0) + n + 0.0053 * sin(M) - 0.0069 * sin(2.0 * lam)
+        #j_set = 2451545.0009 + ((l_ha + l_lon) / 360.0) + l_jul + 0.0053 * math.sin(l_ma) - 0.0069 * math.sin(2.0 * l_el)
+        j_set = 0.0009 + ((l_ha + l_lon) / 360.0) + l_jul + 0.0053 * math.sin(l_ma) - 0.0069 * math.sin(2.0 * l_el)
+        g_logger.info("Sunrise / Sunset {0:}".format(j_set))
 
     def _convert_to_time(self, p_hours):
         """Convert a time in hours (float) to a datetime.time object.
