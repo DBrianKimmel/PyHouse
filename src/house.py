@@ -12,6 +12,7 @@ import lighting_tools
 
 
 Configure_Data = configure_mh.Configure_Data
+House_Data = {}
 LocationCount = 0
 Location_Data = {}
 RoomCount = 0
@@ -20,6 +21,12 @@ Room_Data = {}
 
 g_logger = None
 
+
+class HouseData(object):
+
+    def __init__(self):
+        self.Active = False
+        self.Name = None
 
 class LocationData(lighting_tools.CoreData):
 
@@ -169,13 +176,16 @@ class HouseAPI(lighting_tools.CoreAPI):
             self.load_location(l_dict)
 
     def load_location(self, p_dict):
+        l_house = HouseData()
         l_entry = LocationData()
         l_entry.Active = self.getBool(p_dict, 'Active')
+        l_house.Active = l_entry.Active
         l_entry.City = self.getText(p_dict, 'City')
         l_entry.Latitude = self.getFloat(p_dict, 'Latitude')
         l_entry.Longitude = self.getFloat(p_dict, 'Longitude')
         l_entry.Key = self.get_LocationCount()
         l_entry.Name = self.getText(p_dict, 'Name')
+        l_house.Name = l_entry.Name
         l_entry.Phone = self.getText(p_dict, 'Phone')
         l_entry.SavingTime = self.getBool(p_dict, 'SavingTime')
         l_entry.State = self.getText(p_dict, 'State')
@@ -183,6 +193,7 @@ class HouseAPI(lighting_tools.CoreAPI):
         l_entry.TimeZone = self.getFloat(p_dict, 'TimeZone')
         l_entry.ZipCode = self.getText(p_dict, 'ZipCode')
         Location_Data[l_entry.Key] = l_entry
+        House_Data[l_entry.Key] = l_house
 
     def dump_location(self):
         print "***** All House Locations *****"

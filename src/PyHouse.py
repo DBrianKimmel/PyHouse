@@ -4,20 +4,43 @@
 
 During development this is run by hand.
 It is, however, planned to be a daemon that is kicked off on system start-up.
-It is intended to run on a small, low power barebones system.
+It is intended to run on eveerything from a small, low power barebones system
+to a server running multiple houses in several, sidespread locations.
+
+The system is controlled via a browser connecting to a web server that will
+be either integrated or seperate from PyHouse.
+
+The highest level is the House/Location.  Every house has a location and
+contains a number of rooms.
+Each house must be unique and its name is used to qualify lower level rooms
+and devices.
+
+Each house may share a central schedule and also have a schedule that is only
+for that house.  It is recommended that the schedule be mostly on a house by
+house basis and only a very few actions are done on all houses.
+Each house will need at least a small barebone system to control all the USB
+and Ethernet devices used to control the various devices in the house.
+
+The next level is the room.  Rooms may be duplicated between houses but must
+be unique within a single house.  Therefore you may not have 3 bedrooms named
+'bedroom' and so on.
 
 Python modules used:
     Core python 2.7
     twisted
-    nevow
-    PySerial 2.6
+    nevow (for integrated web server)
+    PySerial 2.6 
+    PyUsb
 
 Modules desired are:
     Web server - allow control over the internet by a browser
     Scheduler - kick off automation that follows a schedule
     Lighting - allow cautmation of home lighting systems
+    Heating,
+    Pool Contgrol.
+    Irrigation control.
     Entertainment - allow control of tv, video systems, audio systems etc
-    Surveillance - allow remote control ov video cameras etc.
+    Surveillance - allow remote control of video cameras etc.
 """
 
 # Import system type stuff

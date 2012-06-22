@@ -29,6 +29,7 @@ from formless import iformless
 # Import PyMh files
 import configure_mh
 import entertainment
+import house
 #import Device_Insteon
 import lighting
 import schedule
@@ -36,6 +37,7 @@ from lighting import Light_Status
 
 
 Light_Data = lighting.Light_Data
+House_Data = house.House_Data
 Configure_Data = configure_mh.Configure_Data
 
 g_port = 8080
@@ -240,7 +242,70 @@ class EntertainmentPage(rend.Page):
         rend.Page.__init__(self)
         self.name = name
 
-class HousePage(rend.Page): pass
+class HousePage(rend.Page):
+    """
+    """
+    addSlash = True
+    docFactory = loaders.stan(
+        Tag.html["\n",
+            Tag.head["\n",
+                Tag.title['PyHouse - House Page'],
+                Tag.link(rel = 'stylesheet', type = 'text/css', href = url.root.child('mainpage.css'))["\n"],
+                Tag.script(type = 'text/javascript', src = 'ajax.js')["\n"],
+                Tag.script(type = 'text/javascript', src = 'floating_window.js'),
+                Tag.script(type = 'text/javascript', src = 'lightpage.js')["\n"],
+                ],
+            Tag.body[
+                Tag.h1['PyHouse Houses'],
+                Tag.p['\n'],
+                Tag.p['Select the house to control:'],
+                Tag.table(style = 'width: 100%;', border = 0)["\n",
+                    Tag.invisible(data = Tag.directive('houselist'), render = Tag.directive('houselist'))
+                    ],
+                Tag.form(action = url.here.child('_submit!!post'),
+                       enctype = "multipart/form-data",
+                       method = 'post'
+                      )["\n",
+                    Tag.input(type = 'button', onclick = "createNewHouseWindow('1')", value = 'Add House')
+                    ]
+                ]
+            ]
+        )
+
+    def __init__(self, name):
+        rend.Page.__init__(self)
+        self.name = name
+
+    def data_houselist(self, context, data):
+        l_house = {}
+        for l_key, l_obj in house.House_Data.iteritems():
+            l_house[l_key] = l_obj
+        return l_house
+
+    def render_houselist(self, context, links):
+        l_ret = []
+        l_cnt = 0
+        for l_key, l_value in sorted(links.iteritems()):
+            l_name = l_value.Name
+            if l_cnt % 2 == 0:
+                l_ret.append(Tag.tr)
+            l_ret.append(Tag.td)
+            l_ret.append(Tag.input(type = 'submit', value = l_key, name = BUTTON, onclick = "createChangeHouseWindow(\'{0:}\')".format(l_key))
+                         [ l_name])
+            l_cnt += 1
+        return l_ret
+
+    def form_post_addhouse(self, **kwargs):
+        return HousePage(self.name)
+
+    def form_post_changehouse(self, **kwargs):
+        return HousePage(self.name)
+
+    def form_post_deletehouse(self, **kwargs):
+        return HousePage(self.name)
+
+    def form_post_house(self, **kwargs):
+        return HousePage(self.name)
 
 class LightingPage(rend.Page, WebLightingData, WebLightingAPI, WebLightingStatusData, WebLightingStatusAPI):
     """Define the page layout of the lighting selection web page.
