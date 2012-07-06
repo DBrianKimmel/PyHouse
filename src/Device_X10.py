@@ -23,7 +23,7 @@ class X10LightingData(lighting.LightingData):
         self.Address = 'asdf'
 
 
-class X10DeviceAPI(lighting.LightingAPI):
+class LightingAPI(lighting.LightingAPI):
     """Overload the base methods with specific ones here.
     """
 
@@ -55,7 +55,7 @@ def Init():
     """
     global g_logger
     g_logger = logging.getLogger('PyHouse.Device_X10')
-    X10DeviceAPI().load_all_lights(Configure_Data['X10Lights'])
+    LightingAPI().load_all_lights(Configure_Data['X10Lights'])
     g_logger.info('Initialized.')
 
 def Start(_p_reactor):

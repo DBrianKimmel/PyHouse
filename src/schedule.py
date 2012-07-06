@@ -173,7 +173,6 @@ class ScheduleUtility(ScheduleExecution):
         Be sure to get the next in a chain of things happening at the same time.
         Establish a list of slots that have equal schedule times
         """
-        global g_logger
         l_now = datetime.datetime.now()
         l_time_now = datetime.time(l_now.hour, l_now.minute, l_now.second)
         l_date = datetime.date(l_now.year, l_now.month, l_now.day)

@@ -161,8 +161,11 @@ class UsbDriverAPI(UsbUtility):
     def _setup_configurations(self, p_device):
         """Now we deal with the USB configurtation - use the 'proper' config.
 
+        NOTE - We should not have to do this; the device should alreeady be in the proper config.
+
         @return: the active configuration object.
         """
+        # TODO don't do if not needed
         print "! !Driver_USB._setup_configurations"
         p_device.set_configuration()
         l_config = p_device.get_active_configuration()

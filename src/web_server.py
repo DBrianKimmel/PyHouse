@@ -38,6 +38,8 @@ from lighting import Light_Status
 
 Light_Data = lighting.Light_Data
 House_Data = house.House_Data
+Location_Data = house.Location_Data
+Room_Data = house.Room_Data
 Configure_Data = configure_mh.Configure_Data
 
 g_port = 8080
@@ -80,6 +82,7 @@ class WebUtilities(WebData):
         setattr(RootPage, 'child_mainpage.css', static.File('web/css/mainpage.css'))
         setattr(RootPage, 'child_ajax.js', static.File('web/js/ajax.js'))
         setattr(RootPage, 'child_floating_window.js', static.File('web/js/floating-window.js'))
+        setattr(RootPage, 'child_housepage.js', static.File('web/js/housepage.js'))
         setattr(RootPage, 'child_lightpage.js', static.File('web/js/lightpage.js'))
         setattr(RootPage, 'child_mainpage.js', static.File('web/js/mainpage.js'))
         setattr(RootPage, 'child_schedpage.js', static.File('web/js/schedpage.js'))
@@ -104,11 +107,55 @@ class WebUtilities(WebData):
         setattr(LightingPage, 'child_topLeft.gif', static.File('web/images/top_left.gif'))
         setattr(LightingPage, 'child_topRight.gif', static.File('web/images/top_right.gif'))
 
+        setattr(HousePage, 'child_mainpage.css', static.File('web/css/mainpage.css'))
+        setattr(HousePage, 'child_ajax.js', static.File('web/js/ajax.js'))
+        setattr(HousePage, 'child_floating_window.js', static.File('web/js/floating-window.js'))
+        setattr(HousePage, 'child_housepage.js', static.File('web/js/housepage.js'))
+        setattr(HousePage, 'child_bottomRight.gif', static.File('web/images/bottom_right.gif'))
+        setattr(HousePage, 'child_close.gif', static.File('web/images/close.gif'))
+        setattr(HousePage, 'child_minimize.gif', static.File('web/images/minimize.gif'))
+        setattr(HousePage, 'child_topCenter.gif', static.File('web/images/top_center.gif'))
+        setattr(HousePage, 'child_topLeft.gif', static.File('web/images/top_left.gif'))
+        setattr(HousePage, 'child_topRight.gif', static.File('web/images/top_right.gif'))
+
     def lighting_sub_win(self):
         pass
 
 
 class ManualFormMixin(rend.Page, WebUtilities):
+    """
+    This came from 404 code in rend.py
+
+
+xxx cookies []
+xxx code 404
+xxx received_headers {'accept-language': 'en-US,en;q=0.8', 'accept-encoding': 'gzip,deflate,sdch', 'host': 'localhost:8080', 'accept': '*/*', 'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/536.5 (KHTML, like Gecko) Chrome/19.0.1084.52 Safari/536.5', 'accept-charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.3', 'connection': 'keep-alive', 'referer': 'http://localhost:8080/freeform_hand/?_nevow_carryover_=2012-06-28%2014%3A28%3A52.124743127.0.0.10.879904703826', 'cookie': 'good_id2_attr=1200%2C50%2C250%2C120%2C10008%2C0; good_id3_attr=1200%2C50%2C300%2C350%2C10010%2C0; good_id1_attr=1200%2C50%2C400%2C350%2C10002%2C0; TWISTED_SESSION=56503d0ede2321ea2672c167d565c643'}
+xxx site <nevow.appserver.NevowSite instance at 0x158d8c0>
+xxx session <twisted.web.server.Session instance at 0x172a7e8>
+xxx responseHeaders Headers({'date': ['Thu, 28 Jun 2012 18:28:52 GMT'], 'content-type': ['text/html; charset=UTF-8'], 'server': ['TwistedWeb/11.0.0']})
+xxx transport <HTTPChannel #6 on 8080>
+xxx deferred <Deferred at 0x17595a8>
+xxx requestHeaders Headers({'accept-language': ['en-US,en;q=0.8'], 'accept-encoding': ['gzip,deflate,sdch'], 'connection': ['keep-alive'], 'accept': ['*/*'], 'user-agent': ['Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/536.5 (KHTML, like Gecko) Chrome/19.0.1084.52 Safari/536.5'], 'accept-charset': ['ISO-8859-1,utf-8;q=0.7,*;q=0.3'], 'host': ['localhost:8080'], 'referer': ['http://localhost:8080/freeform_hand/?_nevow_carryover_=2012-06-28%2014%3A28%3A52.124743127.0.0.10.879904703826'], 'cookie': ['good_id2_attr=1200%2C50%2C250%2C120%2C10008%2C0; good_id3_attr=1200%2C50%2C300%2C350%2C10010%2C0; good_id1_attr=1200%2C50%2C400%2C350%2C10002%2C0; TWISTED_SESSION=56503d0ede2321ea2672c167d565c643']})
+xxx content <cStringIO.StringO object at 0x17bc148>
+xxx code_message Not Found
+xxx method GET
+xxx channel <twisted.web.http.HTTPChannel instance at 0x16ba950>
+xxx args {}
+xxx notifications []
+xxx host IPv4Address(TCP, '127.0.0.1', 8080)
+xxx path /freeform_hand/schedpage.js
+xxx postpath ['schedpage.js']
+xxx sitepath []
+xxx stack []
+xxx _adapterCache {}
+xxx clientproto HTTP/1.1
+xxx prepath ['freeform_hand']
+xxx received_cookies {'good_id2_attr': '1200%2C50%2C250%2C120%2C10008%2C0', 'good_id1_attr': '1200%2C50%2C400%2C350%2C10002%2C0', 'good_id3_attr': '1200%2C50%2C300%2C350%2C10010%2C0', 'TWISTED_SESSION': '56503d0ede2321ea2672c167d565c643'}
+xxx uri /freeform_hand/schedpage.js
+xxx headers {'date': 'Thu, 28 Jun 2012 18:28:52 GMT', 'content-type': 'text/html; charset=UTF-8', 'server': 'TwistedWeb/11.0.0'}
+xxx client IPv4Address(TCP, '127.0.0.1', 51383)
+xxx queued 0
+    """
 
     def locateChild(self, context, segments):
         """Add to the standard find child to handle POST of forms
@@ -135,7 +182,7 @@ class ManualFormMixin(rend.Page, WebUtilities):
                 name = name_prefix + '_' + bindingName.split()[0].lower()
             #print "locateChild - name:", name
             method = getattr(self, 'form_' + name, None)
-            #print "locateChild - method:", method
+            print "locateChild - method:", method
             if method is not None:
                 return self.onManualPost(context, method, bindingName, kwargs)
             else:
@@ -150,7 +197,7 @@ class ManualFormMixin(rend.Page, WebUtilities):
         def redirectAfterPost(aspects):
             """See: nevow.rend.Page.WebFormPost
             """
-            #print " -- Start - ctx:", ctx, ", method:", method, ", bindingName:", bindingName, ", kwargs", kwargs
+            print " -- Start - ctx:", ctx, ", method:", method, ", bindingName:", bindingName, ", kwargs", kwargs
             l_handler = aspects.get(inevow.IHand)
             refpath = None
             ref = None
@@ -184,9 +231,11 @@ class ManualFormMixin(rend.Page, WebUtilities):
                     C.setComponent(k, v)
             destination = flat.flatten(refpath, ctx)
             request.redirect(destination)
+            print "Posted a form to >", bindingName, "<"
             return static.Data('You posted a form to %s' % bindingName, 'text/plain'), ()
 
         request = inevow.IRequest(ctx)
+        print " --  defer ", kwargs
         return util.maybeDeferred(method, **kwargs
             ).addCallback(self.onPostSuccess, request, ctx, bindingName, redirectAfterPost
             ).addErrback(self.onPostFailure, request, ctx, bindingName, redirectAfterPost)
@@ -253,7 +302,7 @@ class HousePage(rend.Page):
                 Tag.link(rel = 'stylesheet', type = 'text/css', href = url.root.child('mainpage.css'))["\n"],
                 Tag.script(type = 'text/javascript', src = 'ajax.js')["\n"],
                 Tag.script(type = 'text/javascript', src = 'floating_window.js'),
-                Tag.script(type = 'text/javascript', src = 'lightpage.js')["\n"],
+                Tag.script(type = 'text/javascript', src = 'housepage.js')["\n"],
                 ],
             Tag.body[
                 Tag.h1['PyHouse Houses'],
@@ -266,7 +315,7 @@ class HousePage(rend.Page):
                        enctype = "multipart/form-data",
                        method = 'post'
                       )["\n",
-                    Tag.input(type = 'button', onclick = "createNewHouseWindow('1')", value = 'Add House')
+                    Tag.input(type = 'button', onclick = "createNewHouseWindow('1')", value = 'add')
                     ]
                 ]
             ]
@@ -278,7 +327,7 @@ class HousePage(rend.Page):
 
     def data_houselist(self, context, data):
         l_house = {}
-        for l_key, l_obj in house.House_Data.iteritems():
+        for l_key, l_obj in Location_Data.iteritems():
             l_house[l_key] = l_obj
         return l_house
 
@@ -290,21 +339,26 @@ class HousePage(rend.Page):
             if l_cnt % 2 == 0:
                 l_ret.append(Tag.tr)
             l_ret.append(Tag.td)
-            l_ret.append(Tag.input(type = 'submit', value = l_key, name = BUTTON, onclick = "createChangeHouseWindow(\'{0:}\')".format(l_key))
+            l_ret.append(Tag.input(type = 'submit', value = l_key, name = BUTTON, onclick = "createChangeHouseWindow(\'{0:}\', \'{1:}\', \'{2:}\', \'{3:}\', \'{4:}\', \'{5:}\', \'{6:}\', \'{7:}\', \'{8:}\', \'{9:}\' )".format(
+                        l_value.Name, l_value.Active, l_value.Street, l_value.City, l_value.State, l_value.ZipCode, l_value.Latitude, l_value.Longitude, l_value.TimeZone, l_value.SavingTime))
                          [ l_name])
             l_cnt += 1
         return l_ret
 
-    def form_post_addhouse(self, **kwargs):
+    def form_post_add(self, **kwargs):
+        print "form_post_addhouse (HousePage)", kwargs
         return HousePage(self.name)
 
-    def form_post_changehouse(self, **kwargs):
+    def form_post_change_house(self, **kwargs):
+        print "form_post_change_house (HousePage)", kwargs
         return HousePage(self.name)
 
     def form_post_deletehouse(self, **kwargs):
+        print "form_post_deletehouse (HousePage)", kwargs
         return HousePage(self.name)
 
     def form_post_house(self, **kwargs):
+        print "form_post_house (HousePage)", kwargs
         return HousePage(self.name)
 
 class LightingPage(rend.Page, WebLightingData, WebLightingAPI, WebLightingStatusData, WebLightingStatusAPI):
@@ -395,7 +449,7 @@ class LightingPage(rend.Page, WebLightingData, WebLightingAPI, WebLightingStatus
         lighting.LightingUtility().update_all_lighting_families()
 
     def form_post_addlight(self, **kwargs):
-        print " - form_post_add - ", kwargs
+        print " - form_post_addlight - ", kwargs
         self._store_light(**kwargs)
         return LightingPage(self.name)
 
@@ -417,6 +471,11 @@ class LightingPage(rend.Page, WebLightingData, WebLightingAPI, WebLightingStatus
         """Trigger a scan of all lights and then update light info.
         """
         print " - form_post_scan- ", kwargs
+        return LightingPage(self.name)
+
+    def form_post_lighting(self, **kwargs):
+        print " - form_post_lighting - ", kwargs
+        return LightingPage(self.name)
 
 class LocationPage(rend.Page): pass
 
@@ -659,8 +718,13 @@ class RootPage(ManualFormMixin, EntertainmentPage, HousePage, LightingPage, Loca
     def form_post_entertainment(self, **_kwargs):
         return EntertainmentPage('entertainment')
 
-    def form_post_lighting(self, **_kwargs):
-        return LightingPage('lighting')
+    def form_post_house(self, **kwargs):
+        print "form_post_house (RootPage)", kwargs
+        return HousePage('House')
+
+    def form_post_lighting(self, **kwargs):
+        print "form_post_lighting (RootPage)", kwargs
+        return LightingPage('Lighting')
 
     def form_post_rooms(self, **kwargs):
         return RoomsPage('rooms')
@@ -673,7 +737,7 @@ class RootPage(ManualFormMixin, EntertainmentPage, HousePage, LightingPage, Loca
 
     def form_post(self, *args, **kwargs):
         print " - form_post - args={0:}, kwargs={1:}".format(args, kwargs)
-        return LightingPage('Root')
+        return RootPage('Root')
 
 
 class Web_ServerMain(ManualFormMixin):

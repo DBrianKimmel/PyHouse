@@ -87,7 +87,6 @@ def Start():
     After they are all set-up we will start the reactor process.
     Every thing that is to run must be in the main reactor event loop as reactor.run() does not return.
     """
-    global g_logger
     g_logger.info("Starting.")
     house.Start(reactor)
     schedule.Start(reactor)

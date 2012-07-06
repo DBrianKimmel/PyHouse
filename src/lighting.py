@@ -48,7 +48,8 @@ g_logger = None
 Singletons = {}
 m_config = None
 m_logger = None
-m_family_module = []
+g_family_module = []
+g_Device_family = []
 
 ' *!* Modules and pointers to the modules'
 FAMILIES_AVAILABLE = ['Insteon', 'UPB', 'X10']
@@ -71,7 +72,7 @@ class ControllerAPI(lighting_controllers.ControllerAPI): pass
 
 class LightingData(lighting_lights.LightingData): pass
 
-class LightingAPI(lighting_lights.LightingAPI): pass
+class LightingAPI(lighting_lights.LightsAPI): pass
 
 
 class LightingStatusData(lighting_status.LightingStatusData): pass
@@ -99,11 +100,13 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, LightingStatusAPI):
         """ *!* 
         Get all the config information for all types of lights and scenes.
         """
+        global g_family_module
         g_logger.info("Loading all lighting families.")
         for _l_ix, i_family in enumerate(FAMILIES_AVAILABLE):
             l_import = 'Device_' + i_family
             l_module = __import__(l_import)
-            m_family_module.append(l_module)
+            g_family_module.append(l_module)
+            g_Device_family.append(l_import)
             l_module.Init()
 
     def _dump_all_lighting_families(self):
@@ -115,14 +118,14 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, LightingStatusAPI):
         """ *!* 
         """
         g_logger.info("Starting all lighting families.")
-        for l_module in m_family_module:
+        for l_module in g_family_module:
             l_module.Start(p_reactor)
 
     def _stop_all_lighting_families(self):
         """ *!* 
         """
         g_logger.info("Stopping all lighting families.")
-        for l_module in m_family_module:
+        for l_module in g_family_module:
             l_module.Stop()
 
     def change_light_setting(self, p_name, p_level = 0, _p_family = None):
@@ -131,7 +134,8 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, LightingStatusAPI):
         The schedule does not know what the family that controls the light.
         """
         g_logger.info("Turn Light {0:} to level {1:}.".format(p_name, p_level))
-        for l_module in m_family_module:
+        for l_module in g_family_module:
+            print " Processing Module ", l_module
             l_module.LightingAPI().change_light_setting(p_name, p_level)
 
     def update_all_lighting_families(self):
@@ -139,7 +143,7 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, LightingStatusAPI):
         Update the light configs in the appropriate module.
         """
         g_logger.info("Updating all lighting families.")
-        for l_module in m_family_module:
+        for l_module in g_family_module:
             l_module.LightingAPI().update_all_lights()
 
     def scan_all_lighting(self, p_lights):
@@ -160,7 +164,6 @@ def Init():
     g_logger.info("Initializing")
     LightingUtility()._load_all_lighting_families()
     SceneAPI().load_all_scenes(configure_mh.Configure_Data['Scenes'])
-    #self._dump_all_lighting_families()
     g_logger.info("Initialized.")
     pass
 

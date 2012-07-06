@@ -139,8 +139,6 @@ class ControllerAPI(lighting_tools.CoreAPI):
         super(ControllerAPI, self).__init__()
 
     def get_ControllerCount(self):
-        global ControllerCount
-        #print " C ControllerCount = ", ControllerCount
         return ControllerCount
 
     def load_controller(self, p_dict, p_ctlr):

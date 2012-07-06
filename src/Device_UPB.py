@@ -146,7 +146,7 @@ class LightingAPI(lighting.LightingAPI, CoreAPI):
         return l_light
 
     def change_light_setting(self, p_name, p_level):
-        self.m_pim.change_light_setting(p_name, p_level)
+        g_pim.LightingAPI().change_light_setting(p_name, p_level)
 
     def update_all_lights(self):
         pass
@@ -157,6 +157,8 @@ class LightingStatusAPI(lighting.LightingStatusAPI, LightingStatusData): pass
 
 class LoadSaveInsteonData(LightingAPI, ControllerAPI, ButtonAPI, LightingStatusAPI): pass
 
+import UPB_Pim
+
 def Init():
     """Constructor for the UPB .
     """
@@ -166,16 +168,16 @@ def Init():
     ButtonAPI().load_all_buttons(Configure_Data['UPBButtons'])
     ControllerAPI().load_all_controllers(Configure_Data['UPBControllers'])
     LightingAPI().load_all_lights(Configure_Data['UPBLights'])
-    import UPB_Pim
-    g_pim = UPB_Pim.UpbPimMain()
+    UPB_Pim.Init()
     g_logger.info('Initialized.')
+    g_pim = UPB_Pim
 
 def Start(p_reactor):
     g_logger.info('Starting.')
-    g_pim.PIM_start(p_reactor)
+    UPB_Pim.Start(p_reactor)
     g_logger.info('Started.')
 
 def Stop():
-    g_pim.stop()
+    UPB_Pim.Stop()
 
 ### END

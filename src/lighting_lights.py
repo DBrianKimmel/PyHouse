@@ -42,11 +42,11 @@ class LightingData(lighting_tools.CoreData):
     CurLevel = property(get_cur_level, set_cur_level, None, "Device light level - 0=Off, 100=Full On")
 
 
-class LightingAPI(lighting_tools.CoreAPI):
+class LightsAPI(lighting_tools.CoreAPI):
 
     def __init__(self):
         #print " L lightingAPI.__init__()"
-        super(LightingAPI, self).__init__()
+        super(LightsAPI, self).__init__()
 
     def get_LightCount(self):
         global LightCount
@@ -56,7 +56,7 @@ class LightingAPI(lighting_tools.CoreAPI):
         """Load the light information.
         """
         #print " L load_light() - {0:}".format(p_light.Name)
-        l_light = super(LightingAPI, self).load_core_device(p_dict, self.get_LightCount())
+        l_light = super(LightsAPI, self).load_core_device(p_dict, self.get_LightCount())
         l_light.CurLevel = 0
         return l_light
 

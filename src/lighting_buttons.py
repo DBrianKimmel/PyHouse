@@ -32,8 +32,6 @@ class ButtonAPI(lighting_tools.CoreAPI):
         super(ButtonAPI, self).__init__()
 
     def get_ButtonCount(self):
-        global ButtonCount
-        #print " B ButtonCount = ", ButtonCount
         return ButtonCount
 
     def load_button(self, p_dict, p_button):

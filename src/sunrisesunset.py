@@ -112,7 +112,36 @@ class SolarParameters(object):
         self.SolarRadius = 0.0
         self.TrueAnomaly = 0.0
 
-class SunCalcs(SunriseMathd, EarthParameters, SolarParameters):
+class SSUtility(object):
+
+    def _revolution(self, p_degrees):
+        """
+        This function reduces any angle to within the first revolution 
+        by subtracting or adding even multiples of 360.0 until the     
+        result is >= 0.0 and < 360.0
+        
+        Reduce angle to within 0..360 degrees
+        """
+        return (p_degrees - 360.0 * math.floor(p_degrees / 360.0))
+
+    def _rev180(self, x):
+        """Reduce angle to within +180..+180 degrees."""
+        return (x - 360.0 * math.floor(x / 360.0 + 0.5))
+
+    def _convert_to_time(self, p_hours):
+        """Convert a time in hours (float) to a datetime.time object.
+        """
+        #print "convert-to-time ", p_hours
+        if p_hours > 24.0: p_hours -= 24.0
+        if p_hours < 0.0: p_hours += 24.0
+        l_hours = int(p_hours)
+        l_minutes = int(60.0 * (p_hours - l_hours))
+        l_seconds = int(60 * (60.0 * (p_hours - l_hours) - l_minutes))
+        l_time = datetime.time(l_hours, l_minutes, l_seconds)
+        return l_time
+
+
+class SunCalcs(SSUtility, SunriseMathd, EarthParameters, SolarParameters):
     """
     """
 
@@ -148,8 +177,8 @@ class SunCalcs(SunriseMathd, EarthParameters, SolarParameters):
         # These progress each day
         p_sun.Eccentricity = 0.016709 - (1.151E-9 * l_domsn)
         p_sun.ObliquityOfEcliptic = (23.4393 - (3.563E-7 * l_domsn)) * DEG2RAD
-        p_sun.MeanLongitude = self.revolution(280.460 + (0.9856474 * l_domsn)) * DEG2RAD
-        p_sun.MeanAnomaly = l_ma = self.revolution(357.5291 + (0.9856002585 * l_domsn)) * DEG2RAD
+        p_sun.MeanLongitude = self._revolution(280.460 + (0.9856474 * l_domsn)) * DEG2RAD
+        p_sun.MeanAnomaly = l_ma = self._revolution(357.5291 + (0.9856002585 * l_domsn)) * DEG2RAD
         p_sun.ArgumentOfPerihelion = (282.9404 + 4.70935E-5 * l_domsn) * DEG2RAD
         g_logger.debug("Calculating solar Eccentricity {0:}".format(p_sun.Eccentricity * RAD2DEG))
         g_logger.debug("Calculating solar Obliquity of Ecliptic {0:}".format(p_sun.ObliquityOfEcliptic * RAD2DEG))
@@ -222,7 +251,7 @@ class SunCalcs(SunriseMathd, EarthParameters, SolarParameters):
         """ Sidtime at 0h UT = L (Sun's mean longitude) + 180.0 degr 
         L = M + w, as defined in sunpos().
         """
-        sidtim0 = self.revolution((180.0 + 356.0470 + 282.9404) +
+        sidtim0 = self._revolution((180.0 + 356.0470 + 282.9404) +
                           (0.9856002585 + 4.70935E-5) * p_earth.DayOfLocalMeanSolarNoon)
         return sidtim0
 
@@ -242,9 +271,9 @@ class SunCalcs(SunriseMathd, EarthParameters, SolarParameters):
         Compute Sun's RA + Decl at this moment
         Compute time when Sun is at south - in hours UT
         """
-        l_SiderealTime = self.revolution(self._2calcGMST0(p_earth) + 180.0 + p_earth.Longitude)
+        l_SiderealTime = self._revolution(self._2calcGMST0(p_earth) + 180.0 + p_earth.Longitude)
         l_solarRA = self._2calcSolarRARadians(p_sun)
-        tsouth = 12.0 - self.rev180(l_SiderealTime - l_solarRA * RAD2DEG) / 15.0;
+        tsouth = 12.0 - self._rev180(l_SiderealTime - l_solarRA * RAD2DEG) / 15.0;
         l_south = self._convert_to_time(tsouth)
         p_sun.SolarNoonHrs = tsouth
         g_logger.debug("Calculating Solar Noon {0:} {1:}".format(p_sun.SolarNoonHrs, l_south))
@@ -320,39 +349,12 @@ class SunCalcs(SunriseMathd, EarthParameters, SolarParameters):
         j_set = 0.0009 + ((l_ha + l_lon) / 360.0) + l_jul + 0.0053 * math.sin(l_ma) - 0.0069 * math.sin(2.0 * l_el)
         g_logger.info("Sunrise / Sunset {0:}".format(j_set))
 
-    def _convert_to_time(self, p_hours):
-        """Convert a time in hours (float) to a datetime.time object.
-        """
-        #print "convert-to-time ", p_hours
-        if p_hours > 24.0: p_hours -= 24.0
-        if p_hours < 0.0: p_hours += 24.0
-        l_hours = int(p_hours)
-        l_minutes = int(60.0 * (p_hours - l_hours))
-        l_seconds = int(60 * (60.0 * (p_hours - l_hours) - l_minutes))
-        l_time = datetime.time(l_hours, l_minutes, l_seconds)
-        return l_time
-
-    def revolution(self, p_degrees):
-        """
-        This function reduces any angle to within the first revolution 
-        by subtracting or adding even multiples of 360.0 until the     
-        result is >= 0.0 and < 360.0
-        
-        Reduce angle to within 0..360 degrees
-        """
-        return (p_degrees - 360.0 * math.floor(p_degrees / 360.0))
-
-    def rev180(self, x):
-        """Reduce angle to within +180..+180 degrees."""
-        return (x - 360.0 * math.floor(x / 360.0 + 0.5))
-
     def calc_sunrise_sunset(self):
         """Trigger all calculations.
         Calculate the coordinates of the Sun in the ecliptic coordinate system.
         Convert to the equatorial coordinate system.
         Convert to the horizontal coordinate system for the observer's local circumstances.
         """
-        global g_logger
         self._calcJulianDates(Earth_Data[0])
         self._calcSolarNoonParams(Earth_Data[0], Solar_Data[0])
         self._calcEccentricAnomaly(Solar_Data[0])
@@ -412,5 +414,9 @@ def Init():
     g_logger.info("Initializing.")
     SSAPI().load_location()
     g_logger.info("Initialized.")
+
+def GetSunriseSunset(p_date):
+    Earth_Data[0].Date = p_date
+
 
 ### END

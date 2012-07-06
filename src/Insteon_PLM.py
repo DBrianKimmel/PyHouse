@@ -280,7 +280,87 @@ class PlmDriverInterface(object):
         return l_ret
 
 
-class LightingAPI(Device_Insteon.LightingAPI):
+class CreateCommands(PlmDriverInterface, InsteonPlmUtility):
+    """Send various commands to the PLM.
+    """
+
+    def send_60_command(self):
+        """Insteon - get IM info (2 bytes).
+        See p 273 of developers guide.
+        PLM will respond with a 0x60 response.
+        """
+        g_logger.debug("Send command to get IM info")
+        l_command = bytearray(2)
+        l_command[0] = STX
+        l_command[1] = plm_commands['plm_info']
+        return self.send_plm_command(l_command)
+
+    def send_62_command(self, p_name, p_cmd1, p_cmd2):
+        """Send Insteon Standard Length Message (8 bytes).
+        See page 243 of Insteon Developers Guide.
+        
+        @param p_name: is the name of the device
+        @param p_cmd1: is the first command byte
+        @param p_cmd2: is the second command byte
+        @return: the response from send_plm_command    
+        """
+        l_addr = self._get_addr_from_name(p_name)
+        l_command = bytearray(8)
+        l_command[0] = STX
+        l_command[1] = plm_commands['insteon_send']
+        l_command[2] = l_addr[0]
+        l_command[3] = l_addr[1]
+        l_command[4] = l_addr[2]
+        l_command[5] = FLAG_MAX_HOPS + FLAG_HOPS_LEFT #0x0F
+        l_command[6] = p_cmd1
+        l_command[7] = p_cmd2
+        g_logger.debug("Send 62 command {0:X},{1:X} to {2:} ({3:x}.{4:x}.{5:x})".format(p_cmd1, p_cmd2, p_name, l_command[2], l_command[3], l_command[4]))
+        return self.send_plm_command(l_command)
+
+    def send_69_command(self):
+        """Get the first all-link record from the plm (2 bytes).
+        See p 261 of developers guide.
+        """
+        #g_logger.debug("Send command to get First all-link record.")
+        l_command = bytearray(2)
+        l_command[0] = STX
+        l_command[1] = plm_commands['plm_first_all_link']
+        return self.send_plm_command(l_command)
+
+    def send_6A_command(self):
+        """Get the next record - will get a nak if no more (2 bytes).
+        See p 262 of developers guide.
+        Returns True if more - False if no more.
+        """
+        #g_logger.debug("Send command to get Next all-link record.")
+        l_command = bytearray(2)
+        l_command[0] = STX
+        l_command[1] = plm_commands['plm_next_all_link']
+        return self.send_plm_command(l_command)
+
+    def send_6B_command(self, p_flags):
+        """Set IM configuration flags (3 bytes).
+        See page 271  of Insteon Developers Guide.
+        """
+        g_logger.debug("Send command to set PLM config to {0:X}".format(p_flags))
+        l_command = bytearray(3)
+        l_command[0] = STX
+        l_command[1] = plm_commands['plm_set_config']
+        l_command[2] = p_flags
+        return self.send_plm_command(l_command)
+
+    def send_73_command(self):
+        """Send request for PLM configuration (2 bytes).
+        See page 270 of Insteon Developers Guide.
+        """
+        g_logger.debug("Send command to get PLM config.")
+        l_command = bytearray(8)
+        l_command[0] = STX
+        l_command[1] = plm_commands['plm_get_config']
+        return self.send_plm_command(l_command)
+
+
+class LightingAPI(Device_Insteon.LightingAPI, CreateCommands):
 
     def change_light_setting(self, p_name, p_level):
         for l_obj in Device_Insteon.Light_Data.itervalues():
@@ -339,7 +419,7 @@ class InsteonPlmCommands(LightingAPI):
         pass
 
 
-class InsteonAllLinks(InsteonPlmUtility):
+class InsteonAllLinks(InsteonPlmCommands):
 
     def get_all_allinks(self):
         """A command to fetch the all-link database from the PLM
@@ -687,86 +767,6 @@ class DecodeResponses(InsteonAllLinks):
         return l_ret
 
 
-class CreateCommands(PlmDriverInterface):
-    """Send various commands to the PLM.
-    """
-
-    def send_60_command(self):
-        """Insteon - get IM info (2 bytes).
-        See p 273 of developers guide.
-        PLM will respond with a 0x60 response.
-        """
-        g_logger.debug("Send command to get IM info")
-        l_command = bytearray(2)
-        l_command[0] = STX
-        l_command[1] = plm_commands['plm_info']
-        return self.send_plm_command(l_command)
-
-    def send_62_command(self, p_name, p_cmd1, p_cmd2):
-        """Send Insteon Standard Length Message (8 bytes).
-        See page 243 of Insteon Developers Guide.
-        
-        @param p_name: is the name of the device
-        @param p_cmd1: is the first command byte
-        @param p_cmd2: is the second command byte
-        @return: the response from send_plm_command    
-        """
-        l_addr = self._get_addr_from_name(p_name)
-        l_command = bytearray(8)
-        l_command[0] = STX
-        l_command[1] = plm_commands['insteon_send']
-        l_command[2] = l_addr[0]
-        l_command[3] = l_addr[1]
-        l_command[4] = l_addr[2]
-        l_command[5] = FLAG_MAX_HOPS + FLAG_HOPS_LEFT #0x0F
-        l_command[6] = p_cmd1
-        l_command[7] = p_cmd2
-        g_logger.debug("Send 62 command {0:X},{1:X} to {2:} ({3:x}.{4:x}.{5:x})".format(p_cmd1, p_cmd2, p_name, l_command[2], l_command[3], l_command[4]))
-        return self.send_plm_command(l_command)
-
-    def send_69_command(self):
-        """Get the first all-link record from the plm (2 bytes).
-        See p 261 of developers guide.
-        """
-        #g_logger.debug("Send command to get First all-link record.")
-        l_command = bytearray(2)
-        l_command[0] = STX
-        l_command[1] = plm_commands['plm_first_all_link']
-        return self.send_plm_command(l_command)
-
-    def send_6A_command(self):
-        """Get the next record - will get a nak if no more (2 bytes).
-        See p 262 of developers guide.
-        Returns True if more - False if no more.
-        """
-        #g_logger.debug("Send command to get Next all-link record.")
-        l_command = bytearray(2)
-        l_command[0] = STX
-        l_command[1] = plm_commands['plm_next_all_link']
-        return self.send_plm_command(l_command)
-
-    def send_6B_command(self, p_flags):
-        """Set IM configuration flags (3 bytes).
-        See page 271  of Insteon Developers Guide.
-        """
-        g_logger.debug("Send command to set PLM config to {0:X}".format(p_flags))
-        l_command = bytearray(3)
-        l_command[0] = STX
-        l_command[1] = plm_commands['plm_set_config']
-        l_command[2] = p_flags
-        return self.send_plm_command(l_command)
-
-    def send_73_command(self):
-        """Send request for PLM configuration (2 bytes).
-        See page 270 of Insteon Developers Guide.
-        """
-        g_logger.debug("Send command to get PLM config.")
-        l_command = bytearray(8)
-        l_command[0] = STX
-        l_command[1] = plm_commands['plm_get_config']
-        return self.send_plm_command(l_command)
-
-
 class InsteonPlmAPI(DecodeResponses):
     """
     """
@@ -798,7 +798,7 @@ class InsteonPlmAPI(DecodeResponses):
         return l_ret
 
 
-class LightHandlerAPI(InsteonPlmAPI, CreateCommands):
+class LightHandlerAPI(InsteonPlmAPI):
     """This is the API for light control.
     """
 

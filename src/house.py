@@ -14,12 +14,12 @@ import lighting_tools
 
 Configure_Data = configure_mh.Configure_Data
 House_Data = {}
-LocationCount = 0
 Location_Data = {}
-RoomCount = 0
 Room_Data = {}
 
 
+LocationCount = 0
+RoomCount = 0
 g_logger = None
 
 
@@ -165,11 +165,9 @@ class HouseAPI(lighting_tools.CoreAPI):
     """
 
     def get_LocationCount(self):
-        global LocationCount
         return LocationCount
 
     def get_RoomCount(self):
-        global RoomCount
         return RoomCount
 
     def load_all_locations(self, p_dict):

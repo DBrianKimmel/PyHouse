@@ -23,6 +23,14 @@ ACK_REQ = 0x10
 ACK_ID = 0x20
 ACK_MSG = 0x40
 
+# Timeouts for send/receive delays
+SEND_TIMEOUT = 0.8
+RECEIVE_TIMEOUT = 0.3
+
+g_driver = []
+g_logger = None
+g_queue = None
+g_reactor = None
 
 pim_commands = {
 'start_setup_mode'          : 0x03,
@@ -141,42 +149,45 @@ class UpbPimUtility(LightHandlerAPI):
 
 class CreateCommands(UpbPimUtility): pass
 class DecodeResponses(CreateCommands): pass
-class PimDriverInterface(DecodeResponses):
+
+class PimDriverInterface(object):
 
     def driver_loop_start(self):
-        self.m_reactor.callLater(3, self.dequeue_and_send)
-        self.m_reactor.callLater(1, self.receive_loop)
-        self.m_repeat = 0
+        global g_queue
+        print "---DriverLoopStart"
+        g_queue = Queue.Queue(300)
+        g_reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send)
+        g_reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop)
 
     def send_pim_command(self, p_command):
         print " & UPB_Pim.send_pim_command ", p_command
-        self.m_queue.put(p_command)
+        g_queue.put(p_command)
 
     def dequeue_and_send(self):
         try:
             l_command = self.m_queue.get(False)
         except: # No commands queued
-            self.m_reactor.callLater(3, self.dequeue_and_send)
+            g_reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send)
             return
         try:
             print " dequeue_and_send ", l_command
             #self.m_driver[0].write_device(l_command)
             for l_ix in range(len(l_command)):
-                self.m_driver[0].write_device(l_command[l_ix])
+                g_driver[0].write_device(l_command[l_ix])
         except:
             pass
-        self.m_reactor.callLater(1, self.dequeue_and_send)
+        g_reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send)
 
     def receive_loop(self):
         try:
-            (l_bytes, l_msg) = self.m_driver[0].fetch_read_data()
+            (l_bytes, l_msg) = g_driver[0].fetch_read_data()
         except IndexError:
             (l_bytes, l_msg) = (0, '')
         if l_bytes == 0:
-            self.m_reactor.callLater(1, self.receive_loop)
+            g_reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop)
             return False
         l_ret = self._decode_message(l_msg, l_bytes)
-        self.m_reactor.callLater(1, self.receive_loop)
+        g_reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop)
         return l_ret
 
 
@@ -300,25 +311,21 @@ class UpbPimAPI(PimDriverInterface):
 class PimTesting(UpbPimAPI): pass
 
 
-class UpbPimMain(UpbPimAPI):
-    """
-    """
+def Init():
+    global g_logger, g_driver
+    g_logger = logging.getLogger('PyHouse.UPB_PIM')
+    g_logger.info('Initializing.')
+    UpbPimAPI().initialize_all_controllers()
+    g_logger.info('Initialized.')
 
-    def __init__(self):
-        self.m_logger = logging.getLogger('PyHouse.UPB_PIM')
-        self.m_logger.info('Initializing.')
-        self.m_queue = Queue.Queue(30)
-        self.initialize_all_controllers()
-        self.m_logger.info('Initialized.')
+def Start(p_reactor):
+    global g_reactor
+    g_logger.info('Starting.')
+    g_reactor = p_reactor
+    PimDriverInterface().driver_loop_start()
 
-    def PIM_start(self, p_reactor):
-        print " & UPB_Pim.Starting"
-        self.m_logger.info('Starting.')
-        self.m_reactor = p_reactor
-        self.driver_loop_start()
-
-    def stop(self):
-        pass
+def Stop():
+    pass
 
     """
 //< Offsets into a UPB message
