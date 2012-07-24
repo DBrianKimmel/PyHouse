@@ -54,12 +54,15 @@ from twisted.internet.task import LoopingCall
 from tools import PrintBytes
 
 
+g_logger = None
+
 
 class UsbDeviceData(object):
+    """This is the data object for one USB controller device.
+    """
 
     def __init__(self):
         self.Device = None
-        self.Interface = None
         self.Name = None
         self.Port = None
         self.Product = None
@@ -68,10 +71,6 @@ class UsbDeviceData(object):
         return self.__Device
     def set_device(self, value):
         self.__Device = value
-    def get_interface(self):
-        return self.__Interface
-    def set_interface(self, value):
-        self.__Interface = value
     def get_name(self):
         return self.__Name
     def set_name(self, value):
@@ -88,14 +87,13 @@ class UsbDeviceData(object):
         return self.__Vendor
     def set_vendor(self, value):
         self.__Vendor = value
-    Device = property(get_device, set_device, None, None)
-    Interface = property(get_interface, set_interface, None, None)
-    Name = property(get_name, set_name, None, None)
-    Port = property(get_port, set_port, None, None)
-    Product = property(get_product, set_product, None, None)
-    Vendor = property(get_vendor, set_vendor, None, None)
+    Device = property(get_device, set_device, None, "The USB device object returned bu libusb find.")
+    Name = property(get_name, set_name, None, "The configuration name for the device.")
+    Port = property(get_port, set_port, None, "The name of the USB port to which the device is attached.")
+    Product = property(get_product, set_product, None, "The device's assigned Product (idProduct).")
+    Vendor = property(get_vendor, set_vendor, None, "The devices assigned Vendor number (idVendor).")
 
-class UsbUtility(UsbDeviceData):
+class UsbUtility(object):
     """
     """
 
@@ -105,14 +103,18 @@ class UsbUtility(UsbDeviceData):
         self.read_device()
 
     def extract_usb(self, p_obj):
+        """We are passed the Controller_Data dictionary entry for the device.
+        Extract the USB info we will need and store it in this module.
+        """
         self.m_device_data = UsbDeviceData()
-        self.set_name(p_obj.Name)
-        self.set_port(p_obj.Port)
-        self.set_product(p_obj.Product)
-        self.set_vendor(p_obj.Vendor)
+        self.m_device_data.set_name(p_obj.Name)
+        self.m_device_data.set_port(p_obj.Port)
+        self.m_device_data.set_product(p_obj.Product)
+        self.m_device_data.set_vendor(p_obj.Vendor)
+        return self.m_device_data
 
     def dump_usb_info_for_debugging(self):
-        Vend = self.get_vendor()
+        Vend = self.m_device_data.get_vendor()
         Prod = self.m_device_data.Device.idProduct
         Cfgs = self.m_device_data.Device.bNumConfigurations
         print "! !Driver_USB.usb_open"
@@ -127,83 +129,102 @@ class UsbUtility(UsbDeviceData):
 class UsbDriverAPI(UsbUtility):
 
     m_message = ''
-    m_endpoint_in = 0
-    m_endpoint_out = 0
-    m_ep_in = None
-    m_ep_out = None
+    m_vendor = None
+    m_product = None
 
-    def _setup_find_device(self, p_vendor, p_product):
+    m_ep_in = None
+    m_epi_addr = 0
+    m_ep_out = None
+    m_epo_addr = 0
+
+    def _setup_find_device(self):
         """First step in opening a USB device.
+        Fill in the number of configurations.
 
         @return:  None if no such device or a pyusb device object
         """
-        print "! !Driver_USB._setup_find_device"
-        print " -- Name:{0:}".format(self.get_name())
-        l_device = usb.core.find(idVendor = p_vendor, idProduct = p_product)
+        print "! !  Driver_USB._setup_find_device"
+        print "   -- Name:{0:}".format(self.m_device_data.get_name())
+        l_device = usb.core.find(idVendor = self.m_device_data.get_vendor(), idProduct = self.m_device_data.get_product())
         if l_device == None:
+            g_logger.error('USB device not found  {0:X}:{1:X}, {2:}'.format(self.m_device_data.get_vendor(), self.m_device_data.get_product(), self.m_device_data.get_name()))
             return None
-        print " -- device =", l_device.__dict__
-        self.set_device(l_device)
-        self.m_message = ''
-        if l_device is None:
-            self.m_logger.error('USB device not found  {0:X}:{1:X}, {2:}'.format(p_vendor, p_product, self.get_name()))
+        print "   -- device =", l_device.__dict__
+        self.m_device_data.set_device(l_device)
+        self.m_device_data.num_configs = l_device.bNumConfigurations
         return l_device
 
     def _setup_detach_kernel(self, p_driver):
+        """Get rid of any kernel device driver that is in our way.
+        On a restart of PyHouse we expect no such kernel driver to exist.
+        """
         if not p_driver.is_kernel_driver_active(0): return
-        print "! !Driver_USB._setup_detach_kernel"
+        print "! !  Driver_USB._setup_detach_kernel"
         try:
             p_driver.detach_kernel_driver(0)
         except Exception, e:
-            print " -- Error in detaching_kernel_driver ", sys.exc_info()[0], e
+            print "   -- Error in detaching_kernel_driver ", sys.exc_info()[0], e
             pass
 
     def _setup_configurations(self, p_device):
-        """Now we deal with the USB configurtation - use the 'proper' config.
+        """Now we deal with the USB configuration - use the 'proper' config.
 
-        NOTE - We should not have to do this; the device should alreeady be in the proper config.
+        NOTE - We should not have to do this; the device should already be in the proper config.
 
         @return: the active configuration object.
         """
         # TODO don't do if not needed
-        print "! !Driver_USB._setup_configurations"
+        print "! !  Driver_USB._setup_configurations"
         p_device.set_configuration()
         l_config = p_device.get_active_configuration()
-        print " -- cfg =", l_config.__dict__
+        print "   -- cfg =", l_config.__dict__
+        self.m_device_data.num_interfaces = l_config.bNumInterfaces
         return l_config
 
     def _setup_interfaces(self, p_config):
-        print "! !Driver_USB._setup_interfaces"
+        """
+        """
+        print "! !  Driver_USB._setup_interfaces"
         l_interface_number = p_config[(0, 0)].bInterfaceNumber
-        print " -- interface_number =", l_interface_number
+        print "   -- interface_number =", l_interface_number
         try:
-            l_alternate_setting = usb.control.get_interface(self.get_device(), l_interface_number)
-            print " -- alternate_setting =", l_alternate_setting
+            l_alternate_setting = usb.control.get_interface(self.m_device_data.get_device(), l_interface_number)
+            print "   -- alternate_setting =", l_alternate_setting
         except Exception, e:
-            print " -- Error in alt setting ", sys.exc_info()[0], e
+            print "   -- Error in alt setting ", sys.exc_info()[0], e
             l_alternate_setting = 0
         l_interface = usb.util.find_descriptor(
             p_config, bInterfaceNumber = l_interface_number,
             bAlternateSetting = l_alternate_setting)
-        print " -- interface =", l_interface.__dict__
+        print "   -- interface =", l_interface.__dict__
+        self.m_device_data.num_endpoints = l_interface.bNumEndpoints
+        self.m_device_data.interface_num = l_interface.bInterfaceNumber
         return l_interface
 
     def _setup_endpoints(self, p_interface):
-        print "! !Driver_USB._setup_endpoints"
+        """We will deal with 2 endpoints here - as that is what I expect a controller to have.
+        No use in be too general if no device exists that is more complex.
+        """
+        print "! !  Driver_USB._setup_endpoints"
         self.m_ep_out = usb.util.find_descriptor(
             p_interface, custom_match = lambda e: usb.util.endpoint_direction(e.bEndpointAddress) == usb.util.ENDPOINT_OUT
         )
-        print " -- ep_out =", self.m_ep_out.__dict__
-        self.m_endpoint_out = self.m_ep_out.bEndpointAddress
+        print "   -- ep_out =", self.m_ep_out.__dict__
+        self.m_epo_addr = self.m_ep_out.bEndpointAddress
+        self.m_epo_type = self.m_ep_out.bmAttributes & 0x03
+        self.m_epo_packet_size = self.m_ep_out.wMaxPacketSize
+
         self.m_ep_in = usb.util.find_descriptor(
             p_interface, custom_match = lambda e: usb.util.endpoint_direction(e.bEndpointAddress) == usb.util.ENDPOINT_IN
         )
-        print " -- ep_in  =", self.m_ep_in.__dict__
-        self.m_endpoint_in = self.m_ep_in.bEndpointAddress
+        print "   -- ep_in  =", self.m_ep_in.__dict__
+        self.m_epi_addr = self.m_ep_in.bEndpointAddress
+        self.m_epi_type = self.m_ep_in.bmAttributes & 0x03
+        self.m_epi_packet_size = self.m_ep_in.wMaxPacketSize
 
     def open_device(self):
-        print "! !Driver_USB.open_device"
-        self.m_device = self._setup_find_device(self.get_vendor(), self.get_product())
+        print "! ! Driver_USB.open_device"
+        self.m_device = self._setup_find_device()
         if self.m_device == None: return None
         self.m_device.baudrate = 19200
         self._setup_detach_kernel(self.m_device)
@@ -213,19 +234,31 @@ class UsbDriverAPI(UsbUtility):
         self.m_message = ''
         return self.m_device
 
-    def close_device(self, p_dev):
+    def close_device(self, _p_dev):
         self.m_device.reset()
 
     def read_device(self):
         try:
-            l_msg = self.m_device.read(self.m_endpoint_in, 64, timeout = 1000)
-            self.m_message += l_msg
+            l_msg = self.m_device.read(self.m_epi_addr, self.m_epi_packet_size, self.m_device_data.interface_num, 250)
+            l_len = len(l_msg)
+            l_message = ''
+            if l_len == 0:
+                l_message = "<NONE>"
+            else:
+                l_message = " Len:{0:} ".format(l_len)
+                for l_x in range(l_len):
+                    l_message += " {0:#04x}".format(l_msg[l_x])
+                l_message += " <END>"
+
+            #self.m_message = ''.join([chr(x) for x in l_msg])
+            self.m_message = l_message
         except Exception, e:
-            #print " -- Error in read_device ", sys.exc_info()[0], e
+            print " -- Error in read_device ", sys.exc_info()[0], e
             pass
         l_len = len(self.m_message)
         if l_len > 0:
-            print " !!UsbDriver.read_device() - ep:{0:#X} {1:} bytes -{2:}".format(self.m_endpoint_in, l_len, PrintBytes(self.m_message))
+            #print " !! Driver_USB.read_device()  - ep:{0:#X} - {1:}".format(self.m_epi_addr, self.m_message)
+            pass
 
     def fetch_read_data(self):
         l_ret = (len(self.m_message), self.m_message)
@@ -237,14 +270,27 @@ class UsbDriverAPI(UsbUtility):
         
         @return: the number of bytes written
         """
+        if self.m_epi_type == 0:
+            self.write_control_device(p_message)
+        else:
+            self.write_bis_device(p_message)
+
+    def write_bis_device(self, p_message):
+        """Bulk, Interrupt, isoSynchronous
+        """
         l_message = p_message
-        print " !! Driver_USB.write_device() - ep={0:#04X} - {1:}".format(self.m_endpoint_out, PrintBytes(p_message))
+        print " !! Driver_USB.write_device() - ep={0:#04X} - {1:}".format(self.m_epo_addr, PrintBytes(l_message))
         try:
-            l_len = self.m_ep_out.write(l_message, timeout = 200)
+            #l_len = self.m_ep_out.write(l_message, timeout = 200)
+            l_len = self.m_device_data.Device.write(self.m_epo_addr, p_message, self.m_device_data.interface_num, 200)
         except Exception, e:
             print " -- Error in writing to USB device ", sys.exc_info()[0], e
             l_len = 0
         return l_len
+        pass
+
+    def write_control_device(self, p_message):
+        pass
 
 
 class USBDriverMain(UsbDriverAPI):
@@ -253,11 +299,13 @@ class USBDriverMain(UsbDriverAPI):
         """
         @param p_obj:is the Controller_Data object for a USB device to open. 
         """
-        self.m_logger = logging.getLogger('PyHouse.USBDriver')
-        self.extract_usb(p_obj)
-        self.m_logger.info(" Initializing USB port - {0:}:{1:} - {2:} on port {3:}".format(self.get_vendor(), self.get_product(), self.get_name(), self.get_port()))
+        g_logger = logging.getLogger('PyHouse.USBDriver')
+        l_dev = self.extract_usb(p_obj)
+        g_logger.info(" Initializing USB port - {0:#04X}:{1:#04X} - {2:} on port {3:}".format(
+            l_dev.get_vendor(), l_dev.get_product(), l_dev.get_name(), l_dev.get_port()))
         self.open_device()
         LoopingCall(self._serialLoop).start(1)
+
 
     """
 /**
@@ -558,22 +606,6 @@ const int HID_SET_PROTOCOL  = 0x0B;
     }
     l_chr[l_ret] = 0x00;
     l_str.append( (char*)l_chr );
-    return l_str;
-}
-    """
-    """ QString UsbHidSerial::ToString( const QByteArray& k_ba ) {
-    QString l_str( " " );
-    char    l_char[128];
-    int     l_size = k_ba.size();
-    for ( int l_ix = 0; l_ix < l_size; l_ix++ ) {
-        int l_byte = (unsigned int)k_ba[l_ix]&0xFF;
-        if ( ( l_byte > 0x1F ) && ( l_byte < 0x7F ) ) {
-            sprintf( l_char, "%c ", l_byte );
-        } else {
-            sprintf( l_char, "0x%2.2X ", l_byte );
-        }
-        l_str.append( l_char );
-    }
     return l_str;
 }
     """

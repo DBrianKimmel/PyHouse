@@ -103,7 +103,7 @@ class LocationData(lighting_tools.CoreData):
     Longitude = property(get_longitude, set_longitude, None, None)
     Name = property(get_name, set_name, None, None)
     Phone = property(get_phone, set_phone, None, None)
-    SavingTime = property(get_saving_time, set_saving_time, None, None)
+    SavingTime = property(get_saving_time, set_saving_time, None, "Minutes offset from standard time Eastern is +60")
     State = property(get_state, set_state, None, None)
     Street = property(get_street, set_street, None, None)
     TimeZone = property(get_time_zone, set_time_zone, None, None)
@@ -186,7 +186,7 @@ class HouseAPI(lighting_tools.CoreAPI):
         l_entry.Name = self.getText(p_dict, 'Name')
         l_house.Name = l_entry.Name
         l_entry.Phone = self.getText(p_dict, 'Phone')
-        l_entry.SavingTime = self.getBool(p_dict, 'SavingTime')
+        l_entry.SavingTime = self.getFloat(p_dict, 'SavingTime')
         l_entry.State = self.getText(p_dict, 'State')
         l_entry.Street = self.getText(p_dict, 'Street')
         l_entry.TimeZone = self.getFloat(p_dict, 'TimeZone')

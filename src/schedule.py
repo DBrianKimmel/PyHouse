@@ -87,26 +87,26 @@ class ScheduleExecution(ScheduleAPI):
         """
         try:
             l_device = p_obj.Name
-        except:
+        except AttributeError:
             l_device = '**no-such-device**'
             l_message = 'Schedule for slot {0:} has no Name/Device entry'.format(p_slot)
             g_logger.error(l_message)
 
         try:
             l_type = p_obj.Type
-        except:
+        except AttributeError:
             l_type = '**no-such-Type**'
             l_message = 'Schedule for slot {0:} has no Type entry'.format(p_slot)
             g_logger.error('Schedule for slot {0:} has no Type entry'.format(p_slot))
 
         try:
             l_level = int(p_obj.Level)
-        except:
+        except AttributeError:
             l_level = 0
 
         try:
             l_rate = int(p_obj.Rate)
-        except:
+        except AttributeError:
             l_rate = 0
 
         l_message = 'For slot={0:}, Device={1:}, Type={2:}, Level={3:}, Rate={4:}'.format(p_slot, l_device, l_type, l_level, l_rate)

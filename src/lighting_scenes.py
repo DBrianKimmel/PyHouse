@@ -6,7 +6,7 @@
 
 Scene_Data = {}
 
-class SceneData(object):
+class ScenesData(object):
     """
     """
 
@@ -23,7 +23,7 @@ class SceneData(object):
         return l_ret
 
 
-class SceneAPI(SceneData):
+class ScenesAPI(ScenesData):
     """
     """
 
@@ -32,7 +32,7 @@ class SceneAPI(SceneData):
             self.load_scene(l_value)
 
     def load_scene(self, p_dict):
-        l_scene = SceneData()
+        l_scene = ScenesData()
         Name = l_scene.Active = p_dict.get('Active', None)
         Name = l_scene.Name = p_dict.get('Name', None)
         Scene_Data[Name] = l_scene

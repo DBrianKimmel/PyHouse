@@ -60,17 +60,17 @@ m_X10Device = None
 m_UpbDevice = None
 
 
-class ButtonData(lighting_buttons.ButtonData): pass
+class ButtonData(lighting_buttons.ButtonsData): pass
 
-class ButtonAPI(lighting_buttons.ButtonAPI, ButtonData): pass
-
-
-class ControllerData(lighting_controllers.ControllerData): pass
-
-class ControllerAPI(lighting_controllers.ControllerAPI): pass
+class ButtonAPI(lighting_buttons.ButtonsAPI): pass
 
 
-class LightingData(lighting_lights.LightingData): pass
+class ControllerData(lighting_controllers.ControllersData): pass
+
+class ControllerAPI(lighting_controllers.ControllersAPI): pass
+
+
+class LightingData(lighting_lights.LightsData): pass
 
 class LightingAPI(lighting_lights.LightsAPI): pass
 
@@ -80,9 +80,9 @@ class LightingStatusData(lighting_status.LightingStatusData): pass
 class LightingStatusAPI(lighting_status.LightingStatusAPI): pass
 
 
-class SceneData(lighting_scenes.SceneData): pass
+class SceneData(lighting_scenes.ScenesData): pass
 
-class SceneAPI(lighting_scenes.SceneAPI): pass
+class SceneAPI(lighting_scenes.ScenesAPI): pass
 
 
 class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, LightingStatusAPI):

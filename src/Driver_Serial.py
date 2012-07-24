@@ -6,7 +6,7 @@ This will interface various PyHouse modules to a serial device.
 
 This may be instanced as many times as there are serial devices to control.
 
-This should also allow control of many different houses.
+This should also allow control of many different houses and using different families.
 """
 
 # Import system type stuff
@@ -24,12 +24,12 @@ from tools import PrintBytes
 Configure_Data = configure_mh.Configure_Data
 
 g_message = bytearray()
+g_logger = None
 
 
 class SerialDeviceData(lighting.ControllerData):
 
     SerialPort = {}
-    m_logger = None
     m_serial = None
     m_message = bytearray()
 
@@ -69,7 +69,7 @@ class SerialDriverUtility(SerialDeviceData):
         self.SerialPort['DsrDtr'] = False
 
 
-class SerialDriverAPI(SerialDriverUtility):
+class API(SerialDriverUtility):
     """Contains all external commands.
     """
 
@@ -91,7 +91,7 @@ class SerialDriverAPI(SerialDriverUtility):
             l_bytes = self.m_serial.readinto(l_buffer)
             self.m_bytes += l_bytes
             self.m_message += l_buffer[:l_bytes]
-        except:
+        except IOError:
             pass
         if self.m_bytes > 0:
             pass
@@ -110,7 +110,7 @@ class SerialDriverAPI(SerialDriverUtility):
         time.sleep(0.1)
 
 
-class SerialDriverMain(SerialDriverAPI):
+class SerialDriverMain(API):
 
     def __init__(self, p_obj):
         """
@@ -129,5 +129,6 @@ class SerialDriverMain(SerialDriverAPI):
         self.m_logger.info("Initialized serial port {0:} - {1:} @ {2:} Baud".format(p_obj.Name, p_obj.Port, p_obj.BaudRate))
         self.open_device()
         LoopingCall(self._serialLoop).start(1)
+
 
 ### END

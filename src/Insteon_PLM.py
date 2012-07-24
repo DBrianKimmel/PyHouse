@@ -172,7 +172,7 @@ class InsteonPlmUtility(object):
         try:
             l_str = l_obj.Address
             return self._str_to_addr_list(l_str)
-        except:
+        except AttributeError:
             g_logger.error("_get_addr_from_name() - Did not find 'Address' for Insteon device named={0:}".format(p_name))
             return [0xbb, 0xaa, 0xdd]
 
@@ -257,8 +257,7 @@ class PlmDriverInterface(object):
     def dequeue_and_send(self):
         try:
             l_command = g_queue.get(False)
-        except:
-            # No commands queued
+        except Queue.Empty:
             g_reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send)
             return
         try:
@@ -275,7 +274,8 @@ class PlmDriverInterface(object):
         if l_bytes == 0:
             g_reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop)
             return False
-        l_ret = self._decode_message(l_msg, l_bytes)
+        #l_ret = self._decode_message(l_msg, l_bytes)
+        l_ret = l_msg
         g_reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop)
         return l_ret
 

@@ -10,26 +10,26 @@ Button_Data = {}
 ButtonCount = 0
 
 
-class ButtonData(lighting_tools.CoreData):
+class ButtonsData(lighting_tools.CoreData):
 
     def __init__(self):
         global ButtonCount
         #print " B lighting_buttons ButtonData init"
-        super(ButtonData, self).__init__()
+        super(ButtonsData, self).__init__()
         ButtonCount += 1
         self.Type = 'Button'
 
     def __str__(self):
-        l_str = super(ButtonData, self).__str__()
+        l_str = super(ButtonsData, self).__str__()
         return l_str
 
-class ButtonAPI(lighting_tools.CoreAPI):
+class ButtonsAPI(lighting_tools.CoreAPI):
     """
     """
 
     def __init__(self):
         #print " B lighting_buttons.__init__()"
-        super(ButtonAPI, self).__init__()
+        super(ButtonsAPI, self).__init__()
 
     def get_ButtonCount(self):
         return ButtonCount
@@ -37,7 +37,7 @@ class ButtonAPI(lighting_tools.CoreAPI):
     def load_button(self, p_dict, p_button):
         """Load the button.
         """
-        l_button = super(ButtonAPI, self).load_core_device(p_dict, self.get_ButtonCount())
+        l_button = super(ButtonsAPI, self).load_core_device(p_dict, self.get_ButtonCount())
         #print " B lighting_buttons.load_button() - {0:}".format(p_button.Name)
         #l_button.Address = p_dict.get('Address', '01.23.45')
         #l_button.GroupList = p_dict.get('GroupList', '')

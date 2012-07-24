@@ -17,7 +17,7 @@ Light_Data = {}
 LightCount = 0
 
 
-class LightingData(lighting_tools.CoreData):
+class LightsData(lighting_tools.CoreData):
 
     #LightCount = 0
 
@@ -25,12 +25,12 @@ class LightingData(lighting_tools.CoreData):
         global LightCount
         LightCount += 1
         #print " C lighting_lights.__init__()"
-        super(LightingData, self).__init__()
+        super(LightsData, self).__init__()
         self.Type = 'Light'
         self.CurLevel = 0
 
     def __str__(self):
-        l_str = super(LightingData, self).__str__()
+        l_str = super(LightsData, self).__str__()
         l_str = l_str + " Key:{0} ".format(self.get_key())
         return l_str
 

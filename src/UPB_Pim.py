@@ -32,6 +32,8 @@ g_logger = None
 g_queue = None
 g_reactor = None
 
+m_logger = None
+
 pim_commands = {
 'start_setup_mode'          : 0x03,
 'stop_setup_mode'           : 0x04,
@@ -47,62 +49,10 @@ pim_commands = {
 
 Controller_Data = Device_UPB.Controller_Data
 
-class ControllerData(Device_UPB.ControllerData): pass
-class ControllerAPI(Device_UPB.ControllerAPI, ControllerData): pass
+g_network_id = 0
+g_unit_id = 0xFF
 
-class LightingStatusAPI(Device_UPB.LightingStatusAPI): pass
-
-class LightingAPI(Device_UPB.LightingAPI):
-
-    def change_light_setting(self, p_name, p_level):
-        for l_obj in Device_UPB.Light_Data.itervalues():
-            #print " UPB_PIM.change_light_settings ", l_obj.__dict__
-            if l_obj.get_family() != 'UPB': continue
-            #print " UPB_PIM.change_light_settings found UPB device"
-            if l_obj.get_active() == False: continue
-            #print " UPB_PIM.change_light_settings found Active device"
-            if l_obj.get_name() == p_name:
-                l_id = self._get_id_from_name(p_name)
-                print " & UPB_Pim.change_light_settings "
-                self.m_logger.info('change_light_setting()')
-                l_cmd = self.compose_command(pim_commands['goto'], l_id, p_level, 0x01)
-                #self.send_pim_command(l_cmd)
-                return
-
-    def XXturn_light_off(self, p_name):
-        """Implement turning off an Insteon light.
-        """
-        self.m_logger.debug('***Turning off light {0:}'.format(p_name))
-        #self.send_62_command(p_name, message_types['off'], 0)
-        self.m_logger.info('Turned off light {0:}'.format(p_name))
-
-    def update_all_devices(self):
-        #Device_Insteon.InsteonLightingAPI.update_all_devices(Device_Insteon.InsteonLightingAPI())
-        pass
-
-class LightHandlerAPI(LightingAPI, LightingStatusAPI):
-    """This is the API for light control.
-    """
-
-    def compose_command(self, p_command, p_device_id, *p_args):
-        """
-        """
-        print " & UPB_Pim.compose command - Network:{0:}, Command:{1:#02x}, ID:{2:} ".format(self.m_network_id, p_command, p_device_id)
-        l_cmd = bytearray(6 + len(p_args))
-        l_cmd[0] = 7 + len(p_args) # 'UPBMSG_CONTROL_HIGH'
-        l_cmd[1] = 0x00 # 'UPBMSG_CONTROL_LOW'
-        l_cmd[2] = self.m_network_id # 'UPBMSG_NETWORK_ID'
-        l_cmd[3] = p_device_id # 'UPBMSG_DEST_ID'
-        l_cmd[4] = self.m_unit_id # 'UPBMSG_SOURCE_ID'
-        l_cmd[5] = p_command # 'UPBMSG_MESSAGE_ID'
-        for l_ix in range(len(p_args)):
-            #print "   ", (6 + l_ix), p_args[l_ix]
-            l_cmd[6 + l_ix] = p_args[l_ix]
-        l_cmd = self.calculate_checksum(l_cmd)
-        self.send_pim_command(l_cmd)
-        return l_cmd
-
-class UpbPimUtility(LightHandlerAPI):
+class UpbPimUtility(object):
 
     def _get_id_from_name(self, p_name):
         print " & UPB_Pim._get_id_from_name ", p_name
@@ -125,7 +75,7 @@ class UpbPimUtility(LightHandlerAPI):
         l_val[0] = 0x03
         self.set_register_value(self.m_pim_name[0], 0x70, l_val)
 
-    def calculate_checksum(self, p_msg):
+    def _calculate_checksum(self, p_msg):
         print " & UPB_Pim.calculate checksum"
         l_out = '14'
         l_cs = 0
@@ -147,6 +97,47 @@ class UpbPimUtility(LightHandlerAPI):
     l_out.append( 0x0d );
     """
 
+    def _compose_command(self, p_command, p_device_id, *p_args):
+        """
+        """
+        print " & UPB_Pim.compose command - Network:{0:}, Command:{1:#02x}, ID:{2:} ".format(g_network_id, p_command, p_device_id)
+        l_cmd = bytearray(6 + len(p_args))
+        l_cmd[0] = 7 + len(p_args) # 'UPBMSG_CONTROL_HIGH'
+        l_cmd[1] = 0x00 # 'UPBMSG_CONTROL_LOW'
+        l_cmd[2] = g_network_id # 'UPBMSG_NETWORK_ID'
+        l_cmd[3] = p_device_id # 'UPBMSG_DEST_ID'
+        l_cmd[4] = g_unit_id # 'UPBMSG_SOURCE_ID'
+        l_cmd[5] = p_command # 'UPBMSG_MESSAGE_ID'
+        for l_ix in range(len(p_args)):
+            #print "   ", (6 + l_ix), p_args[l_ix]
+            l_cmd[6 + l_ix] = p_args[l_ix]
+        l_cmd = self._calculate_checksum(l_cmd)
+        self.send_pim_command(l_cmd)
+        return l_cmd
+
+
+class LightingAPI(Device_UPB.LightingAPI, UpbPimUtility):
+
+    def change_light_setting(self, p_name, p_level):
+        for l_obj in Device_UPB.Light_Data.itervalues():
+            if l_obj.get_family() != 'UPB': continue
+            if l_obj.get_active() == False: continue
+            if l_obj.get_name() == p_name:
+                l_id = self._get_id_from_name(p_name)
+                print " & UPB_Pim.change_light_settings "
+                g_logger.info('change_light_setting()')
+                l_cmd = self._compose_command(pim_commands['goto'], l_id, p_level, 0x01)
+                self.send_pim_command(l_cmd)
+                return
+
+    def update_all_devices(self):
+        #Device_Insteon.InsteonLightingAPI.update_all_devices(Device_Insteon.InsteonLightingAPI())
+        pass
+
+class LightHandlerAPI(LightingAPI):
+    """This is the API for light control.
+    """
+
 class CreateCommands(UpbPimUtility): pass
 class DecodeResponses(CreateCommands): pass
 
@@ -166,7 +157,7 @@ class PimDriverInterface(object):
     def dequeue_and_send(self):
         try:
             l_command = self.m_queue.get(False)
-        except: # No commands queued
+        except AttributeError: # No commands queued
             g_reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send)
             return
         try:
@@ -174,7 +165,7 @@ class PimDriverInterface(object):
             #self.m_driver[0].write_device(l_command)
             for l_ix in range(len(l_command)):
                 g_driver[0].write_device(l_command[l_ix])
-        except:
+        except IOError:
             pass
         g_reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send)
 
@@ -197,15 +188,14 @@ class UpbPimAPI(PimDriverInterface):
     m_pim_name = []
 
     def initialize_all_controllers(self):
-        self.m_network_id = 0
-        self.m_unit_id = 0xff
+        global g_network_id, g_unit_id
         for l_key, l_obj in Device_UPB.Controller_Data.iteritems():
             if l_obj.Family.lower() != 'upb': continue
             if l_obj.Active != True: continue
             #
             print " & UPB_Pim.initialize_all_controllers - Loading: ", l_key
-            self.m_network_id = l_obj.NetworkID
-            self.m_unit_id = l_obj.UnitID
+            g_network_id = l_obj.NetworkID
+            g_unit_id = l_obj.UnitID
             if l_obj.Interface.lower() == 'serial':
                 import Driver_Serial
                 l_driver = Driver_Serial.SerialDriverMain(l_obj)
@@ -216,12 +206,12 @@ class UpbPimAPI(PimDriverInterface):
                 import Driver_USB
                 l_driver = Driver_USB.USBDriverMain(l_obj)
             else:
-                self.m_logger.error("UPB PIM has no known interface type! {0}, {1:}".format(l_obj.get_name, l_obj.get_interface))
+                g_logger.error("UPB PIM has no known interface type! {0}, {1:}".format(l_obj.get_name, l_obj.get_interface))
             self.m_driver.append(l_driver)
             self.m_pim_name.append(l_obj.Name)
             self.initialize_one_controller(l_driver, l_obj)
 
-    def initialize_one_controller(self, p_driver, p_obj):
+    def initialize_one_controller(self, _p_driver, p_obj):
         """Do whatever it takes to set the controller up for working on the UPB network.
         Send a write register 70 to set PIM mode
         Command is <17>70 03 8D <0D>
@@ -232,12 +222,12 @@ class UpbPimAPI(PimDriverInterface):
         """Set one of the device's registers.
         """
         print " & UPB_Pim.set_register_value - Name:{0:}, Register:{1:02X}, Values:{2:}".format(p_name, p_register, p_values)
-        self.compose_command(pim_commands['set_register_value'], self._get_id_from_name(p_name), int(p_register), p_values[0])
+        self._compose_command(pim_commands['set_register_value'], self._get_id_from_name(p_name), int(p_register), p_values[0])
         pass
 
     def send_pim_command_get_response(self, p_command):
         print " & PIM.send_pim_command_get_response ", p_command
-        self.m_logger.info('Sending command {0:}'.format(PrintBytes(p_command)))
+        g_logger.info('Sending command {0:}'.format(PrintBytes(p_command)))
         self.m_driver[0].write_device(self.m_driver[0], p_command)
         _l_ret = None
         # Pim should always get a PA for getting the message to send.
@@ -882,41 +872,6 @@ void PIMMain::decode89Report( const QByteArray& k_rept ) {
     l_report.remove( 0, 2 );
     DEBUG( -2, "PIMMain::decode89Report field1=" << l_field1 << ", Net=" << l_netID << ", LinkID=" << l_linkID
             << ", field-4=" << l_field4 << ", DeviceCommand=" << l_field5 << ", field-6=" << l_field6 << ", field-7=" << l_field7 );
-}
-    """
-    """
-// S L O T S
-
-void PIMMain::slotTimer() {
-    DEBUG( 1, "PIMMain::slotTimer" );
-    QByteArray l_msg;
-    int l_ret = receiveLong( l_msg ); // sneaky method of polling for messages!
-    int l_len = l_msg[0] & 0x0F;
-    if ( ( 0 == l_len ) && ( 0 == l_ret ) )
-        return;
-    QString l_str = messageToString( l_msg );
-    DEBUG( 2, "PIMMain::slotTimer len=" << l_ret << " " << l_str.toAscii() );
-    emit signalPimRxed( l_msg );
-}
-
-void PIMMain::slotReceivedPimMessage( QByteArray k_message ) {
-//QTime("17:31:36") PIMMain::slotReceivedPimMessage " P U 8 9 0 4 0 6 6 B 0 2 2 0 F F F F E 2 0x0D "
-    QString l_str = messageToString( k_message );
-    DEBUG( -1, "PIMMain::slotReceivedPimMessage" << l_str.toAscii() );
-    QByteArray l_report = k_message;
-    bool l_ok;
-    l_str = l_report.left( 2 );
-    if ( l_str != "PU" ) {
-        DEBUG( 0, "" );
-        return;
-    }
-    // We got a PU message from the pim - figure out which report it is and call
-    // the appropriate method to decode the report.
-    l_report.remove( 0, 2 );    // remove the PU
-    int l_reportType = l_report.left( 2 ).toInt( &l_ok, 10 );
-    if ( 89 == l_reportType ) {
-        decode89Report( l_report );
-    }
 }
     """
 

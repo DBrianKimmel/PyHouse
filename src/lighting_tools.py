@@ -28,7 +28,7 @@ class LightingTools(object):
         l_field = p_dict.get(p_field, 0)
         try:
             l_field = int(l_field, 0)
-        except:
+        except TypeError:
             l_field = int(l_field)
         return l_field
 

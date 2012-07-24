@@ -12,13 +12,13 @@ Controller_Data = {}
 ControllerCount = 0
 
 
-class ControllerData(lighting_tools.CoreData):
+class ControllersData(lighting_tools.CoreData):
 
     def __init__(self):
         global ControllerCount
         ControllerCount += 1
         #print " C lighting_controllers.__init__()"
-        super(ControllerData, self).__init__()
+        super(ControllersData, self).__init__()
         self.Type = 'Controller'
         # All controlers (Common)
         self.Interface = None
@@ -132,17 +132,17 @@ class ControllerData(lighting_tools.CoreData):
     Vendor = property(get_vendor, set_vendor, None, None)
 
 
-class ControllerAPI(lighting_tools.CoreAPI):
+class ControllersAPI(lighting_tools.CoreAPI):
 
     def __init__(self):
         #print " C lighting_controller.ControllerAPI.__init__()"
-        super(ControllerAPI, self).__init__()
+        super(ControllersAPI, self).__init__()
 
     def get_ControllerCount(self):
         return ControllerCount
 
     def load_controller(self, p_dict, p_ctlr):
-        l_ctlr = super(ControllerAPI, self).load_core_device(p_dict, self.get_ControllerCount())
+        l_ctlr = super(ControllersAPI, self).load_core_device(p_dict, self.get_ControllerCount())
         #print " C lighting_controllers.load_controller() - {0:}".format(p_ctlr.Name)
         l_ctlr.Interface = self.getValue(p_dict, 'Interface')
         l_ctlr.Port = self.getValue(p_dict, 'Port')
