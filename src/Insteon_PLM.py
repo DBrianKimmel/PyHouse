@@ -245,13 +245,13 @@ class PlmDriverInterface(object):
 
     def driver_loop_start(self):
         global g_queue
-        print "---DriverLoopStart"
+        print "--- Insteon PLM DriverLoopStart"
         g_queue = Queue.Queue(300)
         g_reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send)
         g_reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop)
 
     def send_plm_command(self, p_command):
-        #print "---SendCommand"
+        print "--- Insteon PLM SendCommand"
         g_queue.put(p_command)
 
     def dequeue_and_send(self):

@@ -144,7 +144,7 @@ class UsbDriverAPI(UsbUtility):
         @return:  None if no such device or a pyusb device object
         """
         print "! !  Driver_USB._setup_find_device"
-        print "   -- Name:{0:}".format(self.m_device_data.get_name())
+        print "   -- Name:{0:} V:{1:X}:P:{2:X}".format(self.m_device_data.get_name(), self.m_device_data.Vendor, self.m_device_data.Product)
         l_device = usb.core.find(idVendor = self.m_device_data.get_vendor(), idProduct = self.m_device_data.get_product())
         if l_device == None:
             g_logger.error('USB device not found  {0:X}:{1:X}, {2:}'.format(self.m_device_data.get_vendor(), self.m_device_data.get_product(), self.m_device_data.get_name()))
@@ -223,7 +223,7 @@ class UsbDriverAPI(UsbUtility):
         self.m_epi_packet_size = self.m_ep_in.wMaxPacketSize
 
     def open_device(self):
-        print "! ! Driver_USB.open_device"
+        print "\n! ! Driver_USB.open_device"
         self.m_device = self._setup_find_device()
         if self.m_device == None: return None
         self.m_device.baudrate = 19200

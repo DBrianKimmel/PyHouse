@@ -51,6 +51,19 @@ Controller_Data = Device_UPB.Controller_Data
 
 g_network_id = 0
 g_unit_id = 0xFF
+g_controller = []
+
+
+class PimData(object):
+    """Locally held data about each of the PIM controllers we find.
+    """
+
+    def __init__(self):
+        self.Name = None
+        self.NetworkID = 0
+        self.UnitID = 0xFF
+        self.Interface = None
+        self.Password = None
 
 class UpbPimUtility(object):
 
@@ -69,11 +82,6 @@ class UpbPimUtility(object):
                 l_unit_id = int(l_obj.UnitID)
                 return l_unit_id
         return 0
-
-    def set_pim_mode(self):
-        l_val = bytearray(1)
-        l_val[0] = 0x03
-        self.set_register_value(self.m_pim_name[0], 0x70, l_val)
 
     def _calculate_checksum(self, p_msg):
         print " & UPB_Pim.calculate checksum"
@@ -116,7 +124,65 @@ class UpbPimUtility(object):
         return l_cmd
 
 
-class LightingAPI(Device_UPB.LightingAPI, UpbPimUtility):
+class PimDriverInterface(object):
+
+    def driver_loop_start(self):
+        print "--- UPB PIM DriverLoopStart"
+        g_reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send)
+        g_reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop)
+
+    def send_pim_command(self, p_command):
+        print " & UPB_Pim.send_pim_command ", p_command
+        g_queue.put(p_command)
+
+    def dequeue_and_send(self):
+        try:
+            l_command = g_queue.get(False)
+        except  Queue.Empty:
+            g_reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send)
+            return
+        try:
+            print " dequeue_and_send ", l_command
+            g_driver[0].write_device(l_command)
+            #for l_ix in range(len(l_command)):
+            #    g_driver[0].write_device(l_command[l_ix])
+        except IOError:
+            pass
+        except IndexError: # No controller defined so [0] will be invalid
+            pass
+        g_reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send)
+
+    def receive_loop(self):
+        try:
+            (l_bytes, l_msg) = g_driver[0].fetch_read_data()
+        except IndexError:
+            (l_bytes, l_msg) = (0, '')
+        if l_bytes == 0:
+            g_reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop)
+            return False
+        #l_ret = self._decode_message(l_msg, l_bytes)
+        l_ret = l_msg
+        g_reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop)
+        return l_ret
+
+
+class CreateCommands(UpbPimUtility, PimDriverInterface):
+    """
+    """
+
+    def set_register_value(self, p_name, p_register, p_values):
+        """Set one of the device's registers.
+        """
+        print " & UPB_Pim.set_register_value - Name:{0:}, Register:{1:02X}, Values:{2:}".format(p_name, p_register, p_values)
+        self._compose_command(pim_commands['set_register_value'], self._get_id_from_name(p_name), int(p_register), p_values[0])
+        pass
+
+    def set_pim_mode(self):
+        l_val = bytearray(1)
+        l_val[0] = 0x03
+        self.set_register_value(self.m_pim_name[0], 0x70, l_val)
+
+class LightingAPI(Device_UPB.LightingAPI, CreateCommands):
 
     def change_light_setting(self, p_name, p_level):
         for l_obj in Device_UPB.Light_Data.itervalues():
@@ -138,61 +204,24 @@ class LightHandlerAPI(LightingAPI):
     """This is the API for light control.
     """
 
-class CreateCommands(UpbPimUtility): pass
 class DecodeResponses(CreateCommands): pass
 
-class PimDriverInterface(object):
-
-    def driver_loop_start(self):
-        global g_queue
-        print "---DriverLoopStart"
-        g_queue = Queue.Queue(300)
-        g_reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send)
-        g_reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop)
-
-    def send_pim_command(self, p_command):
-        print " & UPB_Pim.send_pim_command ", p_command
-        g_queue.put(p_command)
-
-    def dequeue_and_send(self):
-        try:
-            l_command = self.m_queue.get(False)
-        except AttributeError: # No commands queued
-            g_reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send)
-            return
-        try:
-            print " dequeue_and_send ", l_command
-            #self.m_driver[0].write_device(l_command)
-            for l_ix in range(len(l_command)):
-                g_driver[0].write_device(l_command[l_ix])
-        except IOError:
-            pass
-        g_reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send)
-
-    def receive_loop(self):
-        try:
-            (l_bytes, l_msg) = g_driver[0].fetch_read_data()
-        except IndexError:
-            (l_bytes, l_msg) = (0, '')
-        if l_bytes == 0:
-            g_reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop)
-            return False
-        l_ret = self._decode_message(l_msg, l_bytes)
-        g_reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop)
-        return l_ret
-
-
-class UpbPimAPI(PimDriverInterface):
-
-    m_driver = []
-    m_pim_name = []
+class UpbPimAPI(CreateCommands):
 
     def initialize_all_controllers(self):
+        """Find and initialize all UPB PIM type controllers.
+        """
         global g_network_id, g_unit_id
+        l_count = 0
         for l_key, l_obj in Device_UPB.Controller_Data.iteritems():
             if l_obj.Family.lower() != 'upb': continue
             if l_obj.Active != True: continue
             #
+            l_pim = PimData()
+            l_pim.Name = l_obj.Name
+            l_interface = l_obj.Interface
+            g_network_id = l_obj.NetworkID
+            g_logger.info('Found UPB PIM named: {0:}, Type={1:}'.format(l_pim.Name, l_interface))
             print " & UPB_Pim.initialize_all_controllers - Loading: ", l_key
             g_network_id = l_obj.NetworkID
             g_unit_id = l_obj.UnitID
@@ -207,9 +236,10 @@ class UpbPimAPI(PimDriverInterface):
                 l_driver = Driver_USB.USBDriverMain(l_obj)
             else:
                 g_logger.error("UPB PIM has no known interface type! {0}, {1:}".format(l_obj.get_name, l_obj.get_interface))
-            self.m_driver.append(l_driver)
-            self.m_pim_name.append(l_obj.Name)
+            g_driver.append(l_driver)
             self.initialize_one_controller(l_driver, l_obj)
+            l_count += 1
+        g_logger.info("Loaded {0:} UPB_PIM controllers".format(l_count))
 
     def initialize_one_controller(self, _p_driver, p_obj):
         """Do whatever it takes to set the controller up for working on the UPB network.
@@ -218,30 +248,16 @@ class UpbPimAPI(PimDriverInterface):
         """
         self.set_register_value(p_obj.get_name(), 0x70, [0x03])
 
-    def set_register_value(self, p_name, p_register, p_values):
-        """Set one of the device's registers.
-        """
-        print " & UPB_Pim.set_register_value - Name:{0:}, Register:{1:02X}, Values:{2:}".format(p_name, p_register, p_values)
-        self._compose_command(pim_commands['set_register_value'], self._get_id_from_name(p_name), int(p_register), p_values[0])
-        pass
-
     def send_pim_command_get_response(self, p_command):
         print " & PIM.send_pim_command_get_response ", p_command
         g_logger.info('Sending command {0:}'.format(PrintBytes(p_command)))
-        self.m_driver[0].write_device(self.m_driver[0], p_command)
+        g_driver[0].write_device(g_driver[0], p_command)
         _l_ret = None
         # Pim should always get a PA for getting the message to send.
         _l_ret = self.get_response()
         # if the remote light device got a good message we should get an ack next.
         l_ret = self.get_response()
         return l_ret
-
-    """ void PIMMain::slotPimSendMessage( QByteArray k_msg ) {
-    if ( m_interface == PIM_USB ) {
-        int l_ret = mp_pimUsbPort->usbWriteBytes( k_msg );
-    }
-}
-    """
 
     def get_response(self):
         pass
@@ -302,9 +318,10 @@ class PimTesting(UpbPimAPI): pass
 
 
 def Init():
-    global g_logger, g_driver
+    global g_logger, g_queue
     g_logger = logging.getLogger('PyHouse.UPB_PIM')
     g_logger.info('Initializing.')
+    g_queue = Queue.Queue(300)
     UpbPimAPI().initialize_all_controllers()
     g_logger.info('Initialized.')
 
@@ -316,6 +333,9 @@ def Start(p_reactor):
 
 def Stop():
     pass
+
+
+
 
     """
 //< Offsets into a UPB message

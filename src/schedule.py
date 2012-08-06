@@ -176,9 +176,11 @@ class ScheduleUtility(ScheduleExecution):
         l_now = datetime.datetime.now()
         l_time_now = datetime.time(l_now.hour, l_now.minute, l_now.second)
         l_date = datetime.date(l_now.year, l_now.month, l_now.day)
-        sunrisesunset.SSAPI().set_date(l_date)
+        #sunrisesunset.SSAPI().set_date(l_date)
+        sunrisesunset.Start()
         self.m_sunset = sunrisesunset.SSAPI().get_sunset()
         self.m_sunrise = sunrisesunset.SSAPI().get_sunrise()
+        print "-Schedule - sunrise/sunset = ", self.m_sunrise, self.m_sunset
         g_logger.info("Sunrise:{0:}, Sunset:{1:}".format(self.m_sunrise, self.m_sunset))
         l_time_scheduled = l_now
         l_next = 100000.0
@@ -186,6 +188,7 @@ class ScheduleUtility(ScheduleExecution):
         for l_key, l_obj in Schedule_Data.iteritems():
             l_time = l_obj.Time
             l_time_sch = self._extract_time(l_time)
+            #print " - Schedule ", l_time_sch
             # now see if this is 1) part of a chain -or- 2) an earlier schedule
             l_diff = self._make_delta(l_time_sch).total_seconds() - self._make_delta(l_time_now).total_seconds()
             if l_diff < 0:

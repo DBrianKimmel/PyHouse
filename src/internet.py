@@ -4,6 +4,7 @@
 """
 
 def Init():
-    print "in internet.py.__init__()"
+    #print "in internet.py.__init__()"
+    pass
 
 ### END

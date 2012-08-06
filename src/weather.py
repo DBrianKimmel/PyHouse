@@ -4,6 +4,7 @@
 """
 
 def Init():
-    print "in weather.py.__init__()"
+    #print "in weather.py.__init__()"
+    pass
 
 ### END

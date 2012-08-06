@@ -19,7 +19,8 @@ import house
 
 RAD2DEG = 180.0 / pi
 DEG2RAD = pi / 180.0
-JDATE2000 = 2451545.0 # convert Julian Date to Epoch 2000 (J2000)
+JDATE2000_9 = 2451545.0009 # convert Julian Date to Epoch 2000 (J2000)
+JDATE2000 = 2451545 # convert Julian Date to Epoch 2000 (J2000)
 
 Earth_Data = {}
 Solar_Data = {}
@@ -143,7 +144,6 @@ class EarthParameters(object):
     Sunrise = property(get_sunrise, set_sunrise, None, "Time of Sunrise at observer's location.")
     Sunset = property(get_sunset, set_sunset, None, "Time of Sunset at observer's location.")
 
-
 class SolarParameters(object):
     """The ecliptic coordinate system is a celestial coordinate system that uses the ecliptic for its fundamental plane.
         The ecliptic is the path that the sun appears to follow across the celestial sphere over the course of a year.
@@ -251,75 +251,85 @@ class SunCalcs(SSUtility, SunriseMathd, EarthParameters, SolarParameters):
         l_m = l_month + (12 * l_a) - 3
         p_earth.JulianDayNumber = (l_day + (((153 * l_m) + 2) // 5) + (365 * l_y) + (l_y // 4) - (l_y // 100) + (l_y // 400) - 32045) # integer
         p_earth.JulianDate = p_earth.JulianDayNumber + 0.5 # Real - Noon
-        p_earth.J2000 = p_earth.JulianDate - JDATE2000
-        p_earth.JulianCycle = math.floor(p_earth.JulianDate - JDATE2000 + 0.0009 + (p_earth.Longitude / 360.0) + 0.5)
-        p_earth.DayOfLocalMeanSolarNoon = p_earth.J2000 + 0.0009 - (p_earth.Longitude / 360.0) - 0.5
-        g_logger.debug("        Calculating julian date:{0:}, JulianDayNumber:{1:}, J2000:{2:}".format(p_earth.JulianDate, p_earth.JulianDayNumber, p_earth.J2000))
-        g_logger.debug("n*      Calculating the JDN(2000) of Local Mean Solar Noon {0:} at Longitude {1:}".format(p_earth.DayOfLocalMeanSolarNoon, p_earth.Longitude))
-        g_logger.debug("n(2000) Calculating the JulianCycle(2000) of Local Mean Solar Noon {0:}".format(p_earth.JulianCycle))
+        l_nstar = p_earth.JulianDayNumber - JDATE2000_9 + (p_earth.Longitude / 360.0)
+        l_n = math.floor(l_nstar + 0.5)
+        p_earth.JulianCycle = math.floor(p_earth.JulianDate - JDATE2000_9 + (p_earth.Longitude / 360.0) + 0.5)
+        g_logger.debug("        Calculating julian date:{0:}, JulianDayNumber:{1:}".format(p_earth.JulianDate, p_earth.JulianDayNumber))
+        g_logger.debug("n* n    Calculating     {0:} {1:} ".format(l_nstar, l_n))
 
     def _calcSolarNoonParams(self, p_earth, p_sun):
-        """This is an Ecliptic calculations.  Taken from the wikipedia 'Position of the Sun' entry.
-        First we get the JDN of the local solar noon (l_domsn)
-        The mean longitude of the Sun, corrected for the aberration of light.
-        The mean anomaly of the Sun (actually, of the Earth in its orbit around the Sun, but it is convenient here to assume the Sun orbits the Earth).
-        Next, the ecliptic longitude of the Sun.
-        Where the obliquity of the ecliptic is not obtained elsewhere, it can be approximated for use with these equations.
-        The Earth's axial tilt (called the obliquity of the ecliptic by astronomers) is the angle between the Earth's axis and a line perpendicular to the Earth's orbit.
-         """
-        l_domsn = p_earth.DayOfLocalMeanSolarNoon
+        """
+        """
+        # Approximate Solar Noon
+        l_nstar = p_earth.JulianDayNumber - JDATE2000_9 + (p_earth.Longitude / 360.0)
+        l_n = math.floor(l_nstar + 0.5)
+        p_earth.J2000 = p_earth.JulianDate - JDATE2000_9
+        #p_earth.JulianCycle = math.floor(p_earth.JulianDate - JDATE2000_9 + (p_earth.Longitude / 360.0) + 0.5)
+        p_earth.DayOfLocalMeanSolarNoon = l_domsn = p_earth.J2000 - (p_earth.Longitude / 360.0) - 0.5
+        l_jstar = JDATE2000_9 - (p_earth.Longitude / 360.0) + p_earth.JulianCycle
+        l_jstar2k = l_jstar - JDATE2000
+        g_logger.debug("n*      Calculating the JDN(2000) of Local Mean Solar Noon {0:} at Longitude {1:}".format(p_earth.DayOfLocalMeanSolarNoon, p_earth.Longitude))
+        g_logger.debug("n       Calculating the JulianCycle(2000) of Local Mean Solar Noon {0:}".format(p_earth.JulianCycle))
+        g_logger.debug("J*      Calculating Approximate solar noon {0:} ({1:})".format(l_jstar, l_jstar2k))
+        #Solar Mean Anomaly
+        p_sun.MeanAnomaly = l_ma = self._revolution(357.5291 + (0.98560028 * l_jstar2k)) * DEG2RAD
+        g_logger.debug("M g     Calculating solar Mean Anomaly {0:}".format(p_sun.MeanAnomaly * RAD2DEG))
+        # Equation of Center
+        p_sun.EquationCenter = l_ec = (1.9148 * math.sin(l_ma) + 0.02000 * math.sin(2.0 * l_ma) + 0.0003 * math.sin(3.0 * l_ma)) * DEG2RAD
+        g_logger.debug("C       Calculating solar Equation of Center {0:}".format(p_sun.EquationCenter * RAD2DEG))
+        # Ecliptic Longitude
+        p_sun.EclipticLongitude = self._revolution((l_ma * RAD2DEG) + 102.9372 + (l_ec * RAD2DEG) + 180.0) * DEG2RAD
+        p_sun.EclipticLatitude = 0.0 # very, very close at all times.
+        g_logger.debug("lamda   Calculating solar Ecliptic Longitude {0:}".format(p_sun.EclipticLongitude * RAD2DEG))
+        g_logger.debug("beta    Calculating solar Ecliptic Latitude {0:}".format(p_sun.EclipticLatitude * RAD2DEG))
+        # Solar Transit
+        p_sun.SolarTransit = l_jstar + 0.0053 * math.sin(p_sun.MeanAnomaly) - 0.0069 * math.sin(2.0 * p_sun.EclipticLongitude)
+        g_logger.debug("J_transit Calculating solar transit {0:}  {1:}  {2:}".format(p_sun.SolarTransit, self._convert_julian_to_time(p_sun.SolarTransit + 0.5, True), p_earth.TimeZone / 60.0))
+
+        # Declination of the Sun
+        p_sun.SolarDeclination = math.asin(math.sin(p_sun.EclipticLongitude) * math.sin(23.45 * DEG2RAD))
+        g_logger.debug("delta   Calculating solar declination {0:}".format(p_sun.SolarDeclination * RAD2DEG))
+        # Hour Angle
+        p_sun.SolarHourAngle = math.acos((math.sin(-0.83 * DEG2RAD) - (math.sin(p_earth.Latitude) * math.sin(p_sun.SolarDeclination))) / (math.cos(p_earth.Latitude) * math.cos(p_sun.SolarDeclination)))
+        g_logger.debug("H       Calculating solar hour angle {0:}".format(p_sun.SolarHourAngle * RAD2DEG))
+
+
         # These progress each day
         p_sun.Eccentricity = 0.016709 - (1.151E-9 * l_domsn)
         p_sun.ArgumentOfPerihelion = (282.9404 + 4.70935E-5 * l_domsn) * DEG2RAD
-        g_logger.debug("J*2000  Using local solar noon {0:}".format(l_domsn))
         g_logger.debug("        Calculating solar Eccentricity {0:}".format(p_sun.Eccentricity * RAD2DEG))
         g_logger.debug("        Calculating solar Argument of Perihelion {0:}".format(p_sun.ArgumentOfPerihelion * RAD2DEG))
 
     def _calcEclipticCoords(self, p_earth, p_sun):
         l_domsn = p_earth.DayOfLocalMeanSolarNoon
         p_sun.MeanLongitude = _l_ml = self._revolution(280.460 + (0.9856474 * l_domsn)) * DEG2RAD
-        p_sun.MeanAnomaly = l_ma = self._revolution(357.5291 + (0.98560028 * l_domsn)) * DEG2RAD
-        p_sun.EquationCenter = l_ec = (1.9148 * math.sin(l_ma) + 0.02000 * math.sin(2.0 * l_ma) + 0.0003 * math.sin(3.0 * l_ma)) * DEG2RAD
         #p_sun.EclipticLongitude = l_ml + (1.915 * DEG2RAD * math.sin(l_ma)) + (0.020 * DEG2RAD * math.sin(2.0 * l_ma))
-        p_sun.EclipticLongitude = self._revolution((l_ma * RAD2DEG) + 102.9372 + (l_ec * RAD2DEG) + 180.0) * DEG2RAD
-        p_sun.EclipticLatitude = 0.0 # very, very close at all times.
-        p_sun.SolarDistance = l_sd = 1.00014 - (0.01671 * math.cos(l_ma)) - (.00014 * math.cos(2.0 * l_ma))
-        p_sun.SolarRadius = 0.2666 / l_sd
-        p_sun.EquationCenter = 1.9148 * math.sin(l_ma) + 0.02000 * math.sin(2.0 * l_ma) + 0.0003 * math.sin(3.0 * l_ma)
-        g_logger.debug("J*2000  Using local solar noon {0:} Lon:{1:}, J2000:{2:}".format(l_domsn, p_earth.Longitude, p_earth.J2000))
-        g_logger.debug("M g     Calculating solar Mean Anomaly {0:}".format(p_sun.MeanAnomaly * RAD2DEG))
-        g_logger.debug("L       Calculating solar Mean Longitude {0:}".format(p_sun.MeanLongitude * RAD2DEG))
-        g_logger.debug("C       Calculating solar Equation of Center {0:}".format(p_sun.EquationCenter))
-        g_logger.debug("lamda   Calculating solar Ecliptic Longitude {0:}".format(p_sun.EclipticLongitude * RAD2DEG))
-        g_logger.debug("beta    Calculating solar Ecliptic Latitude {0:}".format(p_sun.EclipticLatitude * RAD2DEG))
-        g_logger.debug("R       Calculating solar Solar Distance {0:}".format(p_sun.SolarDistance))
+        #p_sun.SolarDistance = l_sd = 1.00014 - (0.01671 * math.cos(l_ma)) - (.00014 * math.cos(2.0 * l_ma))
+        #p_sun.SolarRadius = 0.2666 / l_sd
+        #g_logger.debug("J*2000  Using local solar noon {0:} Lon:{1:}, J2000:{2:}".format(l_domsn, p_earth.Longitude, p_earth.J2000))
+        #g_logger.debug("L       Calculating solar Mean Longitude {0:}".format(p_sun.MeanLongitude * RAD2DEG))
+        #g_logger.debug("R       Calculating solar Solar Distance {0:}".format(p_sun.SolarDistance))
 
     def _calcEquitorialCoords(self, p_earth, p_sun):
         l_domsn = p_earth.J2000 + 0.0009 - (p_earth.Longitude / 360.0) - 0.5
         p_sun.ObliquityOfEcliptic = (23.4393 - (3.563E-7 * l_domsn)) * DEG2RAD
-        p_sun.SolarDeclination = math.asin(math.sin(p_sun.EclipticLongitude) * math.sin(23.45 * DEG2RAD))
-        p_sun.SolarHourAngle = math.acos((math.sin(0.83 * DEG2RAD) - (math.sin(p_earth.Latitude) * math.sin(p_sun.SolarDeclination))) / (math.cos(p_earth.Latitude) * math.cos(p_sun.SolarDeclination)))
         g_logger.debug("        Calculating solar Obliquity of Ecliptic {0:}".format(p_sun.ObliquityOfEcliptic * RAD2DEG))
-        g_logger.debug("delta   Calculating solar declination {0:}".format(p_sun.SolarDeclination * RAD2DEG))
-        g_logger.debug("H       Calculating solar hour angle {0:}".format(p_sun.SolarHourAngle * RAD2DEG))
 
     def _calcSolarTransit(self, p_earth, p_sun):
         """
         """
-        p_sun.SolarTransit = p_earth.DayOfLocalMeanSolarNoon + 0.0053 * math.sin(p_sun.MeanAnomaly) - 0.0069 * math.sin(2.0 * p_sun.EclipticLongitude)
         l_jstarstar = p_earth.J2000 + ((p_earth.Longitude + p_sun.SolarHourAngle) / 360.0) - 0.5
         l_set = l_jstarstar + 0.0053 * math.sin(p_sun.MeanAnomaly) - 0.0069 * math.sin(2.0 * p_sun.EclipticLongitude)
-        g_logger.debug("J_transit Calculating solar transit {0:}  {1:}  {2:}".format(p_sun.SolarTransit, self._convert_julian_to_time(p_sun.SolarTransit + 0.5, True), p_earth.TimeZone / 60.0))
         g_logger.debug("J**       Calculating using hour angle {0:}".format(l_jstarstar))
-        g_logger.debug("J_set     Calculating sunset {0:}  {1:}".format(l_set, self._convert_julian_to_time(l_set + 0.5, True)))
+        g_logger.debug("J_set 1    Calculating sunset {0:}  {1:}".format(l_set, self._convert_julian_to_time(l_set + 0.5, True)))
 
-    def _calcSunRiseSet(self, p_earth, _p_sun):
+    def _calcSunRiseSet(self, p_earth, p_sun):
         """
         """
-        p_earth.Sunrise = .4
-        p_earth.Sunset = .6
-        p_earth.Sunrise = self._convert_to_time(.5 - 4)# + p_earth.TimeZone)
-        p_earth.Sunset = self._convert_to_time(.5 + .4) # + p_earth.TimeZone)
+        p_earth.Sunset = JDATE2000_9 + ((p_sun.SolarHourAngle - p_earth.Longitude) / 360.0) * RAD2DEG + p_earth.JulianCycle + 0.0053 * math.sin(p_sun.MeanAnomaly) - 0.0069 * math.sin(2 * p_sun.EclipticLongitude)
+        g_logger.debug("Jset  2     Sunset {0:}   {1:}".format(p_earth.Sunset, self._convert_julian_to_time(p_earth.Sunset, False)))
+        p_earth.Sunrise = p_sun.SolarTransit - (p_earth.Sunset - p_sun.SolarTransit)
+        g_logger.debug("Jrise       Sunrise {0:}   {1:}".format(p_earth.Sunrise, self._convert_julian_to_time(p_earth.Sunrise, False)))
 
     def calc_sunrise_sunset(self):
         """Trigger all calculations.
@@ -341,28 +351,12 @@ class SSAPI(SunCalcs):
     def get_sunrise(self):
         """Returns a sunrise time as a datetime.time object.
         """
-        return Earth_Data[0].Sunrise
+        return self._convert_julian_to_time(Earth_Data[0].Sunrise, False)
 
     def get_sunset(self):
         """Returns a sunset time as a datetime.time object.
         """
-        return Earth_Data[0].Sunset
-
-    def set_date(self, p_date = datetime.date.today()):
-        """Pass in the datetime date to calculate for.
-        Using this will trigger a recalculation of Sunrise and Sunset.
-        """
-        Earth_Data[0].Date = p_date
-        g_logger.info("Setting date to {0:}".format(Earth_Data[0].Date))
-        self.calc_sunrise_sunset()
-
-    def set_latitude_longitude(self, p_obj, p_latitude = 28.938464, p_longitude = -82.517208):
-        """The lat and long in decimal degrees (-) for South and West.
-        Using this will trigger a recalculation of Sunrise and Sunset.
-        """
-        g_logger.info("Loading location data for house {0:} - Lat:{1:}, Long:{2:}".format(p_obj.Name, p_latitude, p_longitude))
-        Earth_Data[0].Latitude = p_latitude
-        Earth_Data[0].Longitude = p_longitude
+        return self._convert_julian_to_time(Earth_Data[0].Sunset, False)
 
     def load_location(self):
         """Extract from houde information"""
@@ -376,8 +370,6 @@ class SSAPI(SunCalcs):
             Earth_Data[0].TimeZone = l_obj.TimeZone
             Earth_Data[0].Name = l_obj.Name
             Earth_Data[0].Date = l_date
-            self.set_latitude_longitude(l_obj, Earth_Data[0].Latitude, Earth_Data[0].Longitude)
-        self.set_date(l_date)
 
 def Init():
     global g_logger
@@ -386,8 +378,8 @@ def Init():
     SSAPI().load_location()
     g_logger.info("Initialized.")
 
-def GetSunriseSunset(p_date):
+def Start(p_date = datetime.date.today()):
     Earth_Data[0].Date = p_date
-
+    SSAPI().calc_sunrise_sunset()
 
 ### END
