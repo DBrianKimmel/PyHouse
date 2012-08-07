@@ -27,10 +27,12 @@ be unique within a single house.  Therefore you may not have 3 bedrooms named
 
 Python modules used:
     Core python 2.7
-    twisted
-    nevow (for integrated web server)
-    PySerial 2.6 
+    Twisted
+    zope.interface
+    nevow
+    PySerial
     PyUsb
+    ConfigObj
 
 Modules desired are:
     Web server - allow control over the internet by a browser
