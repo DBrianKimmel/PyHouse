@@ -16,7 +16,7 @@ def PrintBytes(p_message):
             try:
                 l_message += " {0:#04x}".format(int(p_message[l_x]))
             except ValueError:
-                l_message += " {0:}".format(p_message[l_x])
+                l_message += " {0:#04X}".format(ord(p_message[l_x]))
     l_message += " <END>"
     return l_message
 

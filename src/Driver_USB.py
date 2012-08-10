@@ -252,8 +252,10 @@ class UsbDriverAPI(UsbUtility):
 
             #self.m_message = ''.join([chr(x) for x in l_msg])
             self.m_message = l_message
+        except usb.USBError:
+            pass
         except Exception, e:
-            print " -- Error in read_device ", sys.exc_info()[0], e
+            print " -- Error in USB read_device ", sys.exc_info(), e
             pass
         l_len = len(self.m_message)
         if l_len > 0:
