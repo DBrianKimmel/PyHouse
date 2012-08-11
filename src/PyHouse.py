@@ -34,6 +34,9 @@ Python modules used:
     PyUsb
     ConfigObj
 
+also install:
+    libusb
+
 Modules desired are:
     Web server - allow control over the internet by a browser
     Scheduler - kick off automation that follows a schedule
