@@ -58,6 +58,7 @@ from twisted.internet import reactor
 import configure_mh
 import log
 import house
+import gui
 import web_server
 import schedule
 import weather
