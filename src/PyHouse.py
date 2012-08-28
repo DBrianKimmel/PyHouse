@@ -56,6 +56,7 @@ from twisted.internet import reactor
 
 # Import PyMh files and modules.
 import configure_mh
+import config_xml
 import log
 import house
 import gui
@@ -79,6 +80,7 @@ def Init():
     # These need to be first and in this order
     configure_mh.ConfigureMain()
     log.LoggingMain()
+    config_xml.ReadConfig()
     # 2nd. Now the logging will be set up and work properly
     g_logger = logging.getLogger('PyHouse')
     g_logger.info("Initializing - Starting PyHouse.")
