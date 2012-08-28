@@ -71,7 +71,7 @@ class HouseWindow(object):
             if l_obj.Key > self.m_max:
                 self.m_max = l_obj.Key
             #print l_obj.Name, l_obj.Key
-            h = Button(self.m_frame, text = l_obj.Name, command = lambda x = l_obj.Key: self.edit_house(x) )
+            h = Button(self.m_frame, text = l_obj.Name, command = lambda x = l_obj.Key: self.edit_house(x))
             l_house.append(h)
             l_house[self.m_ix].grid(row = self.m_ix)
             self.m_ix += 1
@@ -84,7 +84,7 @@ class HouseWindow(object):
     def edit_house(self, p_arg):
         print "Edit House", p_arg
         d = HouseDialog(self.m_frame, p_arg, "Editing House")
-        
+
 
 
 class HouseDialog(Toplevel):
@@ -102,7 +102,7 @@ class HouseDialog(Toplevel):
 
         self.create_vars()
         self.load_vars(p_key)
-        
+
         self.m_frame = Frame(self)
         #self.initial_focus = self.body(self.m_frame)
         self.m_frame.grid(padx = 5, pady = 5)
@@ -153,7 +153,7 @@ class HouseDialog(Toplevel):
         l_12 = Label(self.m_frame, text = "Key")
         l_12.grid(row = 12, column = 0)
         l_active = Entry(self.m_frame, textvar = self.Key, state = DISABLED)
-        l_active.grid(row = 12, column = 1)        
+        l_active.grid(row = 12, column = 1)
 
         #self.buttonbox()
         self.grab_set()
@@ -228,7 +228,7 @@ class HouseDialog(Toplevel):
         self.Longitude.set(l_obj.Longitude)
         self.Active.set(l_obj.Active)
         self.Key.set(l_obj.Key)
-        
+
 
 
 class StatusBar(Frame):
@@ -238,17 +238,17 @@ class StatusBar(Frame):
 
     def __init__(self, master):
         Frame.__init__(self, master)
-        self.label = Label(self, bd=1, relief=SUNKEN, anchor=W)
+        self.label = Label(self, bd = 1, relief = SUNKEN, anchor = W)
         self.label.grid()
 
     def set(self, format, *args):
-        self.label.config(text=format % args)
+        self.label.config(text = format % args)
         self.label.update_idletasks()
 
     def clear(self):
-        self.label.config(text="")
+        self.label.config(text = "")
         self.label.update_idletasks()
-        
+
 
 class LightingWindow(object):
     """
