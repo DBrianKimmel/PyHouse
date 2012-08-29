@@ -323,19 +323,23 @@ class LightingWindow(object):
 
     def edit_lights(self, p_arg):
         print "Edit lights", p_arg
-        d = LightingDialog(self.m_frame, "Adding Light")
+        d = LightingDialog(self.m_frame, "Editing Light")
+        config_xml.WriteConfig().write_lights()
 
     def edit_controllers(self, p_arg):
         print "Edit Controllers", p_arg
         d = LightingDialog(self.m_frame, "Adding Controller")
+        config_xml.WriteConfig().write_lights()
 
     def edit_buttons(self, p_arg):
         print "Edit Buttons", p_arg
         d = LightingDialog(self.m_frame, "Adding Button")
+        config_xml.WriteConfig().write_lights()
 
     def add_lights(self):
         print "Adding lights"
         d = LightingDialog(self.m_frame, "Adding Lights")
+        config_xml.WriteConfig().write_lights()
 
 
 class LightingDialog(Toplevel, GuiTools):

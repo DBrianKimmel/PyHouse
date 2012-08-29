@@ -7,10 +7,14 @@ import xml.etree.ElementTree as ET
 from xml.dom import minidom
 
 import house
+import lighting
 import xml_tools
 
 
 House_Data = house.Location_Data
+Light_Data = lighting.Light_Data
+Button_Data = lighting.Button_Data
+Controller_Data = lighting.Controller_Data
 
 g_xmltree = ''
 
@@ -45,20 +49,26 @@ class WriteConfig(object):
 
     def write_file(self):
         l_fh = open(self.m_filename, 'w')
-        g_xmltree.write(self.m_filename)
+        l_fh.write(xml_tools.prettify(self.m_root))
+        #g_xmltree.write(self.m_filename)
+
+    def build_common(self, p_parent, p_title, p_obj):
+        l_ret = ET.SubElement(p_parent, p_title)
+        l_ret.set('Name', p_obj.Name)
+        l_ret.set('Key', str(p_obj.Key))
+        l_actv = ET.SubElement(l_ret, 'Active')
+        l_actv.text = str(p_obj.Active)
+        return l_ret
 
     def write_houses(self):
         """Replace the data in the 'Houses' section with the current data.
         """
-        #for h in g_xmltree.findall('House'):
-        #    self.m_root.remove(h)
         l_sect = self.m_root.find('Houses')
+        # TODO - Create 'Houses' if it is missing.
         l_sect.clear()
         for l_obj in House_Data.itervalues():
             print "XLM writing houses: {0:}".format(l_obj.Name)
-            l_house = ET.SubElement(l_sect, 'House')
-            l_house.set('Name', l_obj.Name)
-            l_house.set('Key', str(l_obj.Key))
+            l_house = self.build_common(l_sect, 'House', l_obj)
             l_strt = ET.SubElement(l_house, 'Street')
             l_strt.text = l_obj.Street
             l_city = ET.SubElement(l_house, 'City')
@@ -73,12 +83,25 @@ class WriteConfig(object):
             l_latl.text = str(l_obj.Latitude)
             l_long = ET.SubElement(l_house, 'Longitude')
             l_long.text = str(l_obj.Longitude)
-            l_actv = ET.SubElement(l_house, 'Active')
-            l_actv.text = str(l_obj.Active)
             l_timz = ET.SubElement(l_house, 'TimeZone')
             l_timz.text = str(l_obj.TimeZone)
             l_svgt = ET.SubElement(l_house, 'SavingTime')
             l_svgt.text = str(l_obj.SavingTime)
+        self.write_file()
+
+    def write_lights(self):
+        l_sect = self.m_root.find('Lighting')
+        # TODO - Create 'Lighting' if it is missing.
+        l_sect.clear()
+        l_lgts = ET.SubElement(l_sect, 'Lights')
+        l_ctls = ET.SubElement(l_sect, 'Controllers')
+        l_btns = ET.SubElement(l_sect, 'Buttons')
+        for l_obj in Light_Data.itervalues():
+            l_lght = self.build_common(l_lgts, 'Light', l_obj)
+        for l_obj in Button_Data.itervalues():
+            l_bttn = self.build_common(l_btns, 'Button', l_obj)
+        for l_obj in Controller_Data.itervalues():
+            l_ctlr = self.build_common(l_ctls, 'Controller', l_obj)
         self.write_file()
 
 ### END
