@@ -52,8 +52,8 @@ g_family_module = []
 g_Device_family = []
 
 ' *!* Modules and pointers to the modules'
-FAMILIES_AVAILABLE = ['Insteon', 'UPB', 'X10']
-INTERFACES_AVAILABLE = ['Serial', 'USB', 'Ethernet']
+VALID_FAMILIES = ['Insteon', 'UPB', 'X10']
+VALID_INTERFACES = ['Serial', 'USB', 'Ethernet']
 
 m_InsteonDevice = None
 m_X10Device = None
@@ -89,11 +89,12 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, LightingStatusAPI):
     """The routines in this class ALL need modifying when a new 'Family' is added.
     
     To add a family do the following:
-        Add the family name (Capitalized) to FAMILIES_AVAILABLE above
+        Add the family name (Capitalized) to VALID_FAMILIES above
         Add a module named Device_<Family>.py
-        Add any other modules needed by the Device module.  A module to interface with the controller is recommended.
+        Add any other modules needed by the Device module.
+        A module to interface with the controller is recommended.
         
-    If the family uses a different driver, add the driver and add to INTERFACES_AVAILABLE above.
+    If the family uses a different driver, add the driver and add to VALID_INTERFACES above.
     """
 
     def _load_all_lighting_families(self):
@@ -102,7 +103,7 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, LightingStatusAPI):
         """
         global g_family_module
         g_logger.info("Loading all lighting families.")
-        for _l_ix, i_family in enumerate(FAMILIES_AVAILABLE):
+        for _l_ix, i_family in enumerate(VALID_FAMILIES):
             l_import = 'Device_' + i_family
             l_module = __import__(l_import)
             g_family_module.append(l_module)

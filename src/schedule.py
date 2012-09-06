@@ -27,44 +27,59 @@ import sunrisesunset
 
 
 Configure_Data = configure_mh.Configure_Data
-
-
 Schedule_Data = {}
-Scheduled_Slotlist = []
+
+ScheduleCount = 0
+Scheduled_Namelist = []
 g_logger = None
 g_reactor = None
+
+VALID_TYPES = ['Device', 'Scene']
 
 class ScheduleData(object):
 
     def __init__(self):
+        global ScheduleCount
+        ScheduleCount += 1
+        self.Active = None
+        self.Key = 0
         self.Level = 0
-        self.Name = None
+        self.LightName = None
         self.Rate = 0
-        self.Slot = 0
+        self.Name = 0
         self.Time = None
         self.Type = 'Device'
 
     def __repr__(self):
-        l_ret = "Schedule Slot:{0:}, LightName:{1:}, Time:{2:}, Level:{3:}, Rate:{4:}, Type:{5:}".format(
-                self.Slot, self.Name, self.Time, self.Level, self.Rate, self.Type)
+        l_ret = "Schedule Name:{0:}, LightName:{1:}, Time:{2:}, Level:{3:}, Rate:{4:}, Type:{5:}".format(
+                self.Name, self.LightName, self.Time, self.Level, self.Rate, self.Type)
         return l_ret
 
 
 class ScheduleAPI(ScheduleData):
 
+    def get_ScheduleCount(self):
+        return ScheduleCount
+
     def load_all_schedules(self, p_dict):
         for l_key, l_obj in p_dict.iteritems():
             self.load_schedule(l_key, l_obj)
 
-    def load_schedule(self, p_slot, p_obj):
+    def load_schedule(self, p_Name, p_obj):
+        l_key = self.get_ScheduleCount()
         l_sched = ScheduleData()
+        l_sched.Active = p_obj.get('Active', False)
+        l_sched.Key = l_key
         l_sched.Level = p_obj.get('Level', 0)
-        l_sched.Name = p_obj.get('Name', 'NoName')
+        l_sched.LightName = p_obj.get('Name', 'NoLightName')
         l_sched.Rate = p_obj.get('Rate', 0)
-        l_sched.Slot = p_slot
+        l_sched.Name = p_Name
         l_sched.Time = p_obj.get('Time', None)
         l_sched.Type = p_obj.get('Type', None)
-        Schedule_Data[p_slot] = l_sched
+        Schedule_Data[l_key] = l_sched
+
+    def load_xml_schedule(self):
+        config_xml.ReadConfig().read_schedule()
 
     def dump_all_schedules(self):
         print "***** All Schedules *****"
@@ -82,22 +97,22 @@ class ScheduleAPI(ScheduleData):
 
 class ScheduleExecution(ScheduleAPI):
 
-    def _get_slot_info(self, p_slot, p_obj):
+    def _get_Name_info(self, p_Name, p_obj):
         """Be sure we get values in case someone mis-edits the config file.
         """
         try:
-            l_device = p_obj.Name
+            l_device = p_obj.LightName
         except AttributeError:
             l_device = '**no-such-device**'
-            l_message = 'Schedule for slot {0:} has no Name/Device entry'.format(p_slot)
+            l_message = 'Schedule for Name {0:} has no LightName/Device entry'.format(p_Name)
             g_logger.error(l_message)
 
         try:
             l_type = p_obj.Type
         except AttributeError:
             l_type = '**no-such-Type**'
-            l_message = 'Schedule for slot {0:} has no Type entry'.format(p_slot)
-            g_logger.error('Schedule for slot {0:} has no Type entry'.format(p_slot))
+            l_message = 'Schedule for Name {0:} has no Type entry'.format(p_Name)
+            g_logger.error('Schedule for Name {0:} has no Type entry'.format(p_Name))
 
         try:
             l_level = int(p_obj.Level)
@@ -109,30 +124,30 @@ class ScheduleExecution(ScheduleAPI):
         except AttributeError:
             l_rate = 0
 
-        l_message = 'For slot={0:}, Device={1:}, Type={2:}, Level={3:}, Rate={4:}'.format(p_slot, l_device, l_type, l_level, l_rate)
+        l_message = 'For Name={0:}, Device={1:}, Type={2:}, Level={3:}, Rate={4:}'.format(p_Name, l_device, l_type, l_level, l_rate)
         g_logger.info(l_message)
         return (l_device, l_type, l_level, l_rate)
 
-    def execute_schedule(self, p_slot = []):
+    def execute_schedule(self, p_Name = []):
         """
-        For each slot in the passed in list, execute the scheduled event.
+        For each Name in the passed in list, execute the scheduled event.
         Delay before generating the next schedule to avoid a race condition
         that duplicates an event if it completes before the clock goes to the next second.
         
-        @param p_slot: a list of slots in the next time schedule
+        @param p_Name: a list of Names in the next time schedule
         """
-        #print " Execute_schedule p_slot=>>{0:}<<".format(p_slot)
-        for ix in range(len(p_slot)):
-            l_slot = p_slot[ix]
-            l_obj = Schedule_Data[l_slot]
-            (l_device, _l_type, l_level, _l_rate) = self._get_slot_info(l_slot, l_obj)
+        #print " Execute_schedule p_Name=>>{0:}<<".format(p_Name)
+        for ix in range(len(p_Name)):
+            l_Name = p_Name[ix]
+            l_obj = Schedule_Data[l_Name]
+            (l_device, _l_type, l_level, _l_rate) = self._get_Name_info(l_Name, l_obj)
             lighting.LightingUtility().change_light_setting(l_device, l_level)
         # TODO change this to a non blocking call.
         time.sleep(1)
         self.get_next_sched()
 
     def create_timer(self, p_seconds, p_list):
-        """Create a timer that will go off when the next slot time comes up on the clock.
+        """Create a timer that will go off when the next Name time comes up on the clock.
         """
         g_reactor.callLater(p_seconds, self.execute_schedule, p_list)
 
@@ -144,7 +159,7 @@ class ScheduleUtility(ScheduleExecution):
         Sunset and sunrise are converted.
         Arithmetic is performed.
         seconds are forced to 00.
-        Returns a datetime.time of the slot information.  Be careful of date wrapping!
+        Returns a datetime.time of the Name information.  Be careful of date wrapping!
         
         WIP
         """
@@ -171,7 +186,7 @@ class ScheduleUtility(ScheduleExecution):
     def get_next_sched(self):
         """Get the next schedule from the current time.
         Be sure to get the next in a chain of things happening at the same time.
-        Establish a list of slots that have equal schedule times
+        Establish a list of Names that have equal schedule times
         """
         l_now = datetime.datetime.now()
         l_time_now = datetime.time(l_now.hour, l_now.minute, l_now.second)
@@ -201,7 +216,7 @@ class ScheduleUtility(ScheduleExecution):
             # add to a chain
             if l_diff == l_next:
                 l_list.append(l_key)
-        g_logger.info("Get_next_schedule complete. Delaying {0:} seconds until {1:}, Slotlist = {2:}".format(l_next, l_time_scheduled, l_list))
+        g_logger.info("Get_next_schedule complete. Delaying {0:} seconds until {1:}, Namelist = {2:}".format(l_next, l_time_scheduled, l_list))
         self.create_timer(l_next, l_list)
         return l_next
 
@@ -214,6 +229,8 @@ def Init():
     entertainment.EntertainmentMain()
     lighting.Init()
     ScheduleAPI().load_all_schedules(Configure_Data['Schedule'])
+    #ScheduleAPI().load_xml_schedules(Configure_Data['Schedule'])
+    #ScheduleAPI().dump_all_schedules()
     g_logger.info("Initialized.")
 
 def Start(p_reactor):

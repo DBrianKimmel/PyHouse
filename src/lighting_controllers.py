@@ -35,7 +35,8 @@ class ControllersData(lighting_tools.CoreData):
         self.WriteTimeout = None
         self.XonXoff = None
         # USB Data
-        self.Network = None
+        self.UnitID = None
+        self.NetworkID = None
         self.Password = None
         self.Product = None
         self.Vendor = None
@@ -95,10 +96,14 @@ class ControllersData(lighting_tools.CoreData):
     def set_xon_xoff(self, value):
         self.__XonXoff = value
 
-    def get_network(self):
-        return self.__Network
-    def set_network(self, value):
-        self.__Network = value
+    def get_network_id(self):
+        return self.__NetworkID
+    def set_network_id(self, value):
+        self.__NetworkID = value
+    def get_unit_id(self):
+        return self.__UnitID
+    def set_unit_id(self, value):
+        self.__UnitID = value
     def get_password(self):
         return self.__Password
     def set_password(self, value):
@@ -126,7 +131,8 @@ class ControllersData(lighting_tools.CoreData):
     WriteTimeout = property(get_write_timeout, set_write_timeout, None, None)
     XonXoff = property(get_xon_xoff, set_xon_xoff, None, None)
 
-    Network = property(get_network, set_network, None, None)
+    NetworkID = property(get_network_id, set_network_id, None, None)
+    UnitID = property(get_unit_id, set_unit_id, None, None)
     Password = property(get_password, set_password, None, None)
     Product = property(get_product, set_product, None, None)
     Vendor = property(get_vendor, set_vendor, None, None)
@@ -158,7 +164,8 @@ class ControllersAPI(lighting_tools.CoreAPI):
         l_ctlr.WriteTimeout = self.getFloat(p_dict, 'WriteTimeout')
         l_ctlr.XonXoff = self.getBool(p_dict, 'XonXoff')
         # USB Data
-        l_ctlr.Network = self.getInt(p_dict, 'Network')
+        l_ctlr.NetworkID = self.getInt(p_dict, 'Network')
+        l_ctlr.UnitID = self.getInt(p_dict, 'UnitID')
         l_ctlr.Password = self.getInt(p_dict, 'Password')
         l_ctlr.Product = self.getInt(p_dict, 'Product')
         l_ctlr.Vendor = self.getInt(p_dict, 'Vendor')

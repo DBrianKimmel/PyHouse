@@ -8,6 +8,7 @@ import logging
 
 # Import PyMh files
 import configure_mh
+import config_xml
 import internet
 import lighting_tools
 
@@ -37,18 +38,20 @@ class LocationData(lighting_tools.CoreData):
         self.Active = False
         self.City = None
         self.Key = 0
-        self.Latitude = None
-        self.Longitude = None
+        self.Latitude = 0.0
+        self.Longitude = 0.0
         self.Name = None
         self.Phone = None
-        self.SavingTime = None
+        self.SavingTime = 0.0
         self.State = None
         self.Street = None
-        self.TimeZone = None
+        self.TimeZone = 0.0
         self.ZipCode = None
 
     def __str__(self):
-        l_ret = ' House:{0:}, Active:{1:}, Lat:{2:}, Lon:{3:}'.format(self.get_name(), self.get_active(), self.get_latitude(), self.get_longitude())
+        l_ret = ' House:{0:}, Active:{1:}, Lat:{2:}, Lon:{3:}'.format(
+            self.get_name(), self.get_active(), self.get_latitude(),
+            self.get_longitude())
         return l_ret
 
     def get_active(self):
@@ -171,6 +174,8 @@ class HouseAPI(lighting_tools.CoreAPI):
         return RoomCount
 
     def load_all_locations(self, p_dict):
+        """Get the data from the config file.
+        """
         for l_dict in p_dict.itervalues():
             self.load_location(l_dict)
 
@@ -193,6 +198,11 @@ class HouseAPI(lighting_tools.CoreAPI):
         l_entry.ZipCode = self.getText(p_dict, 'ZipCode')
         Location_Data[l_entry.Key] = l_entry
         House_Data[l_entry.Key] = l_house
+
+    def load_xml_house(self):
+        l_ct = config_xml.ReadConfig().read_house()
+        if l_ct == 0:
+            self.load_all_locations(Configure_Data['HouseLocation'])
 
     def dump_location(self):
         print "***** All House Locations *****"
@@ -226,8 +236,9 @@ def Init():
     global g_logger
     g_logger = logging.getLogger('PyHouse.House')
     g_logger.info("Initializing.")
-    HouseAPI().load_all_locations(Configure_Data['HouseLocation'])
-    HouseAPI().load_all_rooms(Configure_Data['Rooms'])
+    #HouseAPI().load_all_locations(Configure_Data['HouseLocation'])
+    HouseAPI().load_xml_house()
+    #HouseAPI().load_all_rooms(Configure_Data['Rooms'])
     #HouseAPI().dump_location()
     #HouseAPI().dump_rooms()
     internet.Init()

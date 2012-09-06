@@ -33,6 +33,7 @@ Python modules used:
     PySerial
     PyUsb
     ConfigObj
+    Pmw
 
 also install:
     libusb
@@ -63,6 +64,7 @@ import gui
 import web_server
 import schedule
 import weather
+import UPnP_core
 
 
 Configure_Data = configure_mh.Configure_Data
@@ -87,6 +89,7 @@ def Init():
     house.Init()
     weather.Init()
     schedule.Init()
+    UPnP_core.Init()
     web_server.Init()
     g_logger.info("Initialized.\n")
 

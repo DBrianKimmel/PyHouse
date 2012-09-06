@@ -251,7 +251,7 @@ class PlmDriverInterface(object):
         g_reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop)
 
     def send_plm_command(self, p_command):
-        print "--- Insteon PLM SendCommand"
+        #print "--- Insteon PLM SendCommand"
         g_queue.put(p_command)
 
     def dequeue_and_send(self):
@@ -820,13 +820,13 @@ class LightHandlerAPI(InsteonPlmAPI):
     def set_plm_mode(self):
         """Set the PLM to a mode 
         """
-        print " Sending mode command to Insteon PLM"
+        #print " Sending mode command to Insteon PLM"
         self.send_6B_command(MODE_MONITOR)
 
     def get_all_lights_status(self):
         """Get the status (current level) of all lights.
         """
-        print " Getting the status of all (Insteon?) Lights"
+        #print " Getting the status of all (Insteon?) Lights"
         g_logger.info('Getting light levels of all lights')
         for l_obj in Device_Insteon.Button_Data.itervalues():
             if l_obj.Family != 'Insteon': continue
