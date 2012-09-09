@@ -54,21 +54,18 @@ class SSDPServer(DatagramProtocol):
 		DatagramProtocol.doStop(self)
 
 	def datagramReceived(self, data, (host, port)):
-		"""Handle a received multicast datagram."""
-
+		"""Handle a received multicast datagram.
+                """
 		# Break up message in to command and headers
 		# TODO: use the email module after trimming off the request line..
 		# This gets us much better header support.
-
 		header, payload = data.split('\r\n\r\n')
 		lines = header.split('\r\n')
 		cmd = string.split(lines[0], ' ')
 		lines = map(lambda x: x.replace(': ', ':', 1), lines[1:])
 		lines = filter(lambda x: len(x) > 0, lines)
-
 		headers = [string.split(x, ':', 1) for x in lines]
 		headers = dict(map(lambda x: (x[0].lower(), x[1]), headers))
-
 		if cmd[0] == 'M-SEARCH' and cmd[1] == '*':
 			# SSDP discovery
 			self.discoveryRequest(headers, (host, port))
@@ -80,10 +77,9 @@ class SSDPServer(DatagramProtocol):
 
 	def discoveryRequest(self, headers, (host, port)):
 		"""Process a discovery request.  The response must be sent to
-		the address specified by (host, port)."""
-
+		the address specified by (host, port).
+		"""
 		log.msg('Discovery request for %s' % headers['st'])
-
 		# Do we know about this service?
 		if headers['st'] == 'ssdp:all':
 			for i in self.known:
@@ -93,14 +89,11 @@ class SSDPServer(DatagramProtocol):
 			return
 		if not self.known.has_key(headers['st']):
 			return
-
 		# Generate a response
 		response = []
 		response.append('HTTP/1.1 200 OK')
-
 		for k, v in self.known[headers['st']].items():
 			response.append('%s: %s' % (k, v))
-
 		response.extend(('', ''))
 		delay = random.randint(0, int(headers['mx']))
 		reactor.callLater(delay, self.transport.write,
@@ -108,10 +101,9 @@ class SSDPServer(DatagramProtocol):
 
 	def register(self, usn, st, location):
 		"""Register a service or device that this SSDP server will
-		respond to."""
-
+		respond to.
+		"""
 		log.msg('Registering %s' % st)
-
 		self.known[st] = {}
 		self.known[st]['USN'] = usn
 		self.known[st]['LOCATION'] = location
@@ -120,7 +112,6 @@ class SSDPServer(DatagramProtocol):
 		self.known[st]['SERVER'] = 'Twisted, UPnP/1.0, python-upnp'
 		self.known[st]['CACHE-CONTROL'] = 'max-age=%d' % self.maxage
 		self.doNotifySchedule(st)
-
 		reactor.callLater(random.uniform(.5, 1), lambda: self.doNotify(st))
 		reactor.callLater(random.uniform(1, 5), lambda: self.doNotify(st))
 
@@ -130,10 +121,9 @@ class SSDPServer(DatagramProtocol):
 		    self.maxage / 2), lambda: self.doNotifySchedule(st))
 
 	def doByebye(self, st):
-		"""Do byebye"""
-
+		"""Do byebye
+                """
 		log.msg('Sending byebye notification for %s' % st)
-
 		resp = [ 'NOTIFY * HTTP/1.1',
 			 'Host: %s:%d' % (SSDP_ADDR, SSDP_PORT),
 			 'NTS: ssdp:byebye',
@@ -148,10 +138,9 @@ class SSDPServer(DatagramProtocol):
 		self.transport.write(resp, (SSDP_ADDR, SSDP_PORT))
 
 	def doNotify(self, st):
-		"""Do notification"""
-
+		"""Do notification
+                """
 		log.msg('Sending alive notification for %s' % st)
-
 		resp = [ 'NOTIFY * HTTP/1.1',
 			'Host: %s:%d' % (SSDP_ADDR, SSDP_PORT),
 			'NTS: ssdp:alive',
@@ -165,8 +154,8 @@ class SSDPServer(DatagramProtocol):
 
 	def notifyReceived(self, headers, (host, port)):
 		"""Process a presence announcement.  We just remember the
-		details of the SSDP service announced."""
-
+		details of the SSDP service announced.
+		"""
 		if headers['nts'] == 'ssdp:alive':
 			if not self.elements.has_key(headers['nt']):
 				# Register device/service
@@ -184,17 +173,17 @@ class SSDPServer(DatagramProtocol):
 			    (headers['nts'], headers['nt']))
 
 	def findService(self, name):
-		"""Return information about a service registered over SSDP."""
-
+		"""Return information about a service registered over SSDP.
+                """
 		# TODO: Implement me.
-
 		# TODO: Send out a discovery request if we haven't registered
 		# a presence announcement.
 
 	def findDevice(self, name):
-		"""Return information about a device registered over SSDP."""
-
+		"""Return information about a device registered over SSDP.
+                """
 		# TODO: Implement me.
-
 		# TODO: Send out a discovery request if we haven't registered
 		# a presence announcement.
+
+### END

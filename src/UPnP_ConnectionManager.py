@@ -5,6 +5,15 @@
 
 # Connection Manager service
 
+"""
+The ConnectionManager service is used by the ControlPoint to carry out the following three actions:
+
+Perform capability matching between source/server devices and sink/renderer devices
+Find information about currently ongoing transfers in the network
+Setup and teardown connections between devices (when required by the streaming protocol)
+
+"""
+
 from twisted.python import log
 from twisted.web import resource, static, soap
 from UPnP_upnp import UPnPPublisher

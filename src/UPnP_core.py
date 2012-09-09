@@ -1,26 +1,49 @@
 #!/usr/bin/env python
 
 """
+# Licensed under the MIT license
+# http://opensource.org/licenses/mit-license.php
+# Copyright 2005, Tim Potter <tpot@samba.org>
+# Copyright 2006 John-Mark Gurney <jmg@funkthat.com>
+
+0.  Addressing - Obtain IP address (already done before UPnP starting)
+1.  Discovery - Using l_ssdp to advertise and discover other UPnP thingies.
+2.  Description - XML queries back and forth to provide details of UPnP workings.
+3.  Control - A UPnP control point controls UPnP devices.
+4.  Eventing - How a device gets notified about happenings in the UPnP network.
+5.  Presentation - How to retrieve content from a UPnP device.
 
 DBK Notes:
 
 1. requires directory 'media' in this source directory.
 """
 
-# Licensed under the MIT license
-# http://opensource.org/licenses/mit-license.php
-# Copyright 2005, Tim Potter <tpot@samba.org>
-# Copyright 2006 John-Mark Gurney <jmg@funkthat.com>
+__version__ = '1.00.00'
 
-__version__ = '$Change: 1230 $'
-# $Id: //depot/python/pymeds/pymeds-0.5/pymediaserv#2 $
+import os
+import os.path
+import random
+import socket
+import string
+import sys
+from twisted.python import log
+from twisted.internet import reactor
+from twisted.web import server, resource, static
+
+import UPnP_debug		# my debugging module
+from UPnP_DIDLLite import TextItem, AudioItem, VideoItem, ImageItem, Resource, StorageFolder
+from UPnP_FSStorage import FSDirectory
+from UPnP_SSDP import SSDPServer, SSDP_PORT, SSDP_ADDR
+from UPnP_ContentDirectory import ContentDirectoryServer
+from UPnP_ConnectionManager import ConnectionManagerServer
 
 # make sure debugging is initalized first, other modules can be pulled in
-# before the "real" debug stuff is setup.  (hmm I could make this a two
-# stage, where we simulate a namespace to either be thrown away when the
-# time comes, or merge into the correct one)
-import UPnP_debug		# my debugging module
+# before the "real" debug stuff is setup.
 UPnP_debug.doDebugging(True)	# open up debugging port
+
+listenAddr = '127.0.0.1'    # DBK easier to debug this way
+listenPort = 12345  # DBK Forced for easier debugging
+urlbase = 'http://%s:%d/' % (listenAddr, listenPort)
 
 # Modules to import, maybe config file or something?
 def tryloadmodule(mod):
@@ -34,30 +57,19 @@ def tryloadmodule(mod):
 # ZipStorage w/ tar support should be last as it will gobble up empty files.
 # These should be sorted by how much work they do, the least work the earlier.
 # mpegtsmod can be really expensive.
-modules = [
+l_modules = [
 	'shoutcast',
 	'pyvr',
 	'dvd',
 	'ZipStorage',
 	'mpegtsmod',
 	]
-modmap = {}
-for i in modules:
-    modmap[i] = tryloadmodule(i)
+l_modmap = {}
+for i in l_modules:
+    l_modmap[i] = tryloadmodule(i)
 
-for i in modules:
-    UPnP_debug.insertnamespace(i, modmap[i])
-
-from UPnP_DIDLLite import TextItem, AudioItem, VideoItem, ImageItem, Resource, StorageFolder
-from UPnP_FSStorage import FSDirectory
-import os
-import os.path
-import random
-import socket
-import string
-import sys
-from twisted.python import log
-from twisted.internet import reactor
+for i in l_modules:
+    UPnP_debug.insertnamespace(i, l_modmap[i])
 
 def generateuuid():
     if False: return 'uuid:asdflkjewoifjslkdfj'
@@ -65,57 +77,34 @@ def generateuuid():
 	'uuid:'] + map(lambda x:
 	random.choice(string.letters), xrange(20)))
 
-#listenAddr = sys.argv[1]
-#listenAddr = '192.168.1.39'
-listenAddr = '127.0.0.1'    # DBK easier to debug this way
-
-if len(sys.argv) > 2:
-    listenPort = int(sys.argv[2])
-    if listenPort < 1024 or listenPort > 65535:
-        raise ValueError, 'port out of range'
-else:
-    listenPort = random.randint(10000, 65000)
-
-listenPort = 12345  # DBK Forced for easier debugging
-
 log.startLogging(sys.stdout)
 
 # Create SSDP server
+l_ssdp = SSDPServer()
+UPnP_debug.insertnamespace('s', l_ssdp)
 
-from UPnP_SSDP import SSDPServer, SSDP_PORT, SSDP_ADDR
-
-s = SSDPServer()
-UPnP_debug.insertnamespace('s', s)
-
-port = reactor.listenMulticast(SSDP_PORT, s, listenMultiple=True)
-port.joinGroup(SSDP_ADDR)
-port.setLoopbackMode(0)		# don't get our own sends
-
-uuid = generateuuid()
-urlbase = 'http://%s:%d/' % (listenAddr, listenPort)
+l_port = reactor.listenMulticast(SSDP_PORT, l_ssdp, listenMultiple=True)
+l_port.joinGroup(SSDP_ADDR)
+l_port.setLoopbackMode(0)		# don't get our own sends
+l_uuid = generateuuid()
 
 # Create SOAP server
-
-from twisted.web import server, resource, static
-from UPnP_ContentDirectory import ContentDirectoryServer
-from UPnP_ConnectionManager import ConnectionManagerServer
-
 class WebServer(resource.Resource):
-	def __init__(self):
-		resource.Resource.__init__(self)
+    def __init__(self):
+        resource.Resource.__init__(self)
 
 class RootDevice(static.Data):
 	def __init__(self):
-		r = {
+		l_root_dict = {
 			'hostname': socket.gethostname(),
-			'uuid': uuid,
+			'uuid': l_uuid,
 			'urlbase': urlbase,
 		}
-		d = file(os.path.expanduser('~/media/root-device.xml')).read() % r
-		static.Data.__init__(self, d, 'text/xml')
+		l_d = file(os.path.expanduser('~/media/root-device.xml')).read() % l_root_dict
+		static.Data.__init__(self, l_d, 'text/xml')
 
-root = WebServer()
-UPnP_debug.insertnamespace('root', root)
+l_wsroot = WebServer()
+UPnP_debug.insertnamespace('root', l_wsroot)
 content = resource.Resource()
 mediapath = os.path.expanduser('~/media')
 if not os.path.isdir(mediapath):
@@ -125,14 +114,14 @@ if not os.path.isdir(mediapath):
 
 # This sets up the root to be the media dir so we don't have to
 # enumerate the directory
-cds = ContentDirectoryServer('My Media Server', klass=FSDirectory,
+l_cds = ContentDirectoryServer('My Media Server', klass=FSDirectory,
     path=mediapath, urlbase=os.path.join(urlbase, 'content'), webbase=content)
-UPnP_debug.insertnamespace('cds', cds)
-root.putChild('ContentDirectory', cds)
-cds = cds.control
-root.putChild('ConnectionManager', ConnectionManagerServer())
-root.putChild('root-device.xml', RootDevice())
-root.putChild('content', content)
+UPnP_debug.insertnamespace('cds', l_cds)
+l_wsroot.putChild('ContentDirectory', l_cds)
+l_cds = l_cds.control
+l_wsroot.putChild('ConnectionManager', ConnectionManagerServer())
+l_wsroot.putChild('root-device.xml', RootDevice())
+l_wsroot.putChild('content', content)
 
 
 # Purely to ensure some sane mime-types.  On MacOSX I need these.
@@ -147,42 +136,37 @@ medianode.contentTypes.update( {
 	'.wvx':	'video/x-ms-wvx',
 	'.wm':	'video/x-ms-wm',
 	'.wmx':	'video/x-ms-wmx',
-
-	#'.ts':	'video/mp2t',
 	'.ts':	'video/mpeg',	# we may want this instead of mp2t
 	'.m2t':	'video/mpeg',
 	'.m2ts':	'video/mpeg',
 	'.mp4':	'video/mp4',
-	#'.mp4':	'video/mpeg',
 	'.dat':	'video/mpeg',	# VCD tracks
 	'.ogm':	'application/ogg',
 	'.vob':	'video/mpeg',
-	#'.m4a': 'audio/mp4',   # D-Link can't seem to play AAC files.
 })
 del medianode
 
-site = server.Site(root)
-reactor.listenTCP(listenPort, site)
+l_site = server.Site(l_wsroot)
+reactor.listenTCP(listenPort, l_site)
 
 # we need to do this after the children are there, since we send notifies
-s.register('%s::upnp:rootdevice' % uuid,
+l_ssdp.register('%s::upnp:rootdevice' % l_uuid,
 		'upnp:rootdevice',
 		urlbase + 'root-device.xml')
-
-s.register(uuid,
-		uuid,
+l_ssdp.register(l_uuid,
+		l_uuid,
 		urlbase + 'root-device.xml')
-
-s.register('%s::urn:schemas-upnp-org:device:MediaServer:1' % uuid,
+l_ssdp.register('%s::urn:schemas-upnp-org:device:MediaServer:1' % l_uuid,
 		'urn:schemas-upnp-org:device:MediaServer:1',
 		urlbase + 'root-device.xml')
-
-s.register('%s::urn:schemas-upnp-org:service:ConnectionManager:1' % uuid,
+l_ssdp.register('%s::urn:schemas-upnp-org:service:ConnectionManager:1' % l_uuid,
 		'urn:schemas-upnp-org:device:ConnectionManager:1',
 		urlbase + 'root-device.xml')
-
-s.register('%s::urn:schemas-upnp-org:service:ContentDirectory:1' % uuid,
+l_ssdp.register('%s::urn:schemas-upnp-org:service:ContentDirectory:1' % l_uuid,
 		'urn:schemas-upnp-org:device:ContentDirectory:1',
+		urlbase + 'root-device.xml')
+l_ssdp.register('%s::urn:schemas-upnp-org:service:LightingControl:1' % l_uuid,
+		'urn:schemas-upnp-org:device:LightingControl:1',
 		urlbase + 'root-device.xml')
 
 # Main loop
@@ -191,3 +175,5 @@ def Init():
     pass
 
 #reactor.run()
+
+### END

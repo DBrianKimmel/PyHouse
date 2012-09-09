@@ -37,7 +37,7 @@ class Resource(object):
 
 	def __init__(self, data, protocolInfo):
 		object.__init__(self)
-		# Use thses so setattr can be more simple
+		# Use these so setattr can be more simple
 		object.__setattr__(self, 'data',  data)
 		object.__setattr__(self, 'attrs',  {})
 		self.protocolInfo = protocolInfo

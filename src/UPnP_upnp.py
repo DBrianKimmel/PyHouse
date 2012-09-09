@@ -31,7 +31,7 @@ class UPnPPublisher(soap.SOAPPublisher):
 		else:
 			meth = methodName
 		response = soap_lite.build_soap_call(meth, result,
-		    is_response=True, encoding=None)
+		    is_response=True, p_encoding=None)
 		self._sendResponse(request, response)
 
 	def _gotError(self, failure, request, methodName):

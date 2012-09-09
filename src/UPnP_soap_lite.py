@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # Licensed under the MIT license
 # http://opensource.org/licenses/mit-license.php
 
@@ -50,10 +52,10 @@ def build_soap_error(status,description='without words'):
     ET.SubElement(e,'errorDescription').text=UPNPERRORS.get(status,description)
     return build_soap_call(None, root, encoding=None)
 
-def build_soap_call(method, arguments, is_response=False,
-                                       encoding=SOAP_ENCODING,
-                                       envelope_attrib=None,
-                                       typed=None):
+def build_soap_call(p_method, arguments, is_response = False,
+                                       encoding = SOAP_ENCODING,
+                                       envelope_attrib = None,
+                                       typed = None):
     """ create a shell for a SOAP request or response element
         - set method to none to omitt the method element and
           add the arguments directly to the body (for an error msg)
@@ -66,19 +68,16 @@ def build_soap_call(method, arguments, is_response=False,
     else:
         envelope.attrib.update({'s:encodingStyle' : "http://schemas.xmlsoap.org/soap/encoding/"})
         envelope.attrib.update({'xmlns:s' :"http://schemas.xmlsoap.org/soap/envelope/"})
-
     body = ET.SubElement(envelope, "s:Body")
-
-    if method:
+    if p_method:
         # append the method call
         if is_response is True:
-            method += "Response"
-        re = ET.SubElement(body,method)
+            p_method += "Response"
+        re = ET.SubElement(body, p_method)
         if encoding:
             re.set(NS_SOAP_ENV + "encodingStyle", encoding)
     else:
         re = body
-
     # append the arguments
     if isinstance(arguments,dict):
         type_map = {str: 'xsd:string',
@@ -87,7 +86,6 @@ def build_soap_call(method, arguments, is_response=False,
                     long: 'xsd:int',
                     float: 'xsd:float',
                     bool: 'xsd:boolean'}
-
         for arg_name, arg_val in arguments.iteritems():
             arg_type = type_map[type(arg_val)]
             if arg_type == 'xsd:string' and type(arg_val) == unicode:
@@ -105,8 +103,7 @@ def build_soap_call(method, arguments, is_response=False,
             e.text = arg_val
     else:
         re.append(arguments)
-
-
-
     preamble = """<?xml version="1.0" encoding="utf-8"?>"""
     return preamble + ET.tostring(envelope,'utf-8')
+
+### END
