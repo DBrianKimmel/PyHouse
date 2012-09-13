@@ -14,7 +14,9 @@ Button_Data = lighting.Button_Data
 Controller_Data = lighting.Controller_Data
 
 VAL_FAM = lighting.VALID_FAMILIES
-
+BG_LIGHT = '#C0C090'
+BG_CTLR = '#90C090'
+BG_BUTTN = '#C09090'
 
 class LightingWindow(gui_tools.GuiTools):
     """
@@ -25,11 +27,11 @@ class LightingWindow(gui_tools.GuiTools):
         self.m_ix = 0
         self.m_frame.grid(padx = 5, pady = 5)
         self.show_all_lights()
-        self.light_button = Button(self.m_frame, text = "ADD New Light", command = self.add_light)
+        self.light_button = Button(self.m_frame, text = "ADD New Light", bg = BG_LIGHT, command = self.add_light)
         self.light_button.grid(row = self.m_ix, column = 0)
-        self.light_button = Button(self.m_frame, text = "ADD New Controller", command = self.add_controller)
+        self.light_button = Button(self.m_frame, text = "ADD New Controller", bg = BG_CTLR, command = self.add_controller)
         self.light_button.grid(row = self.m_ix, column = 1)
-        self.light_button = Button(self.m_frame, text = "ADD New Button", command = self.add_button)
+        self.light_button = Button(self.m_frame, text = "ADD New Button", bg = BG_BUTTN, command = self.add_button)
         self.light_button.grid(row = self.m_ix, column = 2)
         self.button = Button(self.m_frame, text = "Back", fg = "red", command = self.main_screen)
         self.button.grid(row = self.m_ix, column = 3)
@@ -39,7 +41,7 @@ class LightingWindow(gui_tools.GuiTools):
         self.m_max_light = 0
         for l_obj in Light_Data.itervalues():
             if l_obj.Key > self.m_max_light: self.m_max_light = l_obj.Key
-            l = Button(self.m_frame, text = l_obj.Name,
+            l = Button(self.m_frame, text = l_obj.Name, bg = BG_LIGHT,
                        command = lambda x = l_obj.Key, y = 1: self.edit_lights(x, y))
             l_light.append(l)
             l_row = self.m_ix // 4
@@ -49,7 +51,7 @@ class LightingWindow(gui_tools.GuiTools):
         self.m_max_controller = 0
         for l_obj in Controller_Data.itervalues():
             if l_obj.Key > self.m_max_controller: self.m_max_controller = l_obj.Key
-            c = Button(self.m_frame, fg = "red", text = l_obj.Name,
+            c = Button(self.m_frame, fg = "red", text = l_obj.Name, bg = BG_CTLR,
                        command = lambda x = l_obj.Key, y = 2: self.edit_controllers(x, y))
             l_light.append(c)
             l_row = self.m_ix // 4
@@ -59,7 +61,7 @@ class LightingWindow(gui_tools.GuiTools):
         self.m_max_button = 0
         for l_obj in Button_Data.itervalues():
             if l_obj.Key > self.m_max_button: self.m_max_button = l_obj.Key
-            b = Button(self.m_frame, fg = "blue", text = l_obj.Name,
+            b = Button(self.m_frame, fg = "blue", text = l_obj.Name, bg = BG_BUTTN,
                        command = lambda x = l_obj.Key, y = 3: self.edit_buttons(x, y))
             l_light.append(b)
             l_row = self.m_ix // 4
@@ -143,21 +145,30 @@ class LightingDialog(gui_tools.GuiTools):
             Entry(self.m_frame, textvar = self.Interface).grid(row = 31, column = 1)
             Label(self.m_frame, text = 'Port').grid(row = 33, column = 0)
             Entry(self.m_frame, textvar = self.Port).grid(row = 33, column = 1)
-            pass
         if l_family == 'Insteon':
-            Label(self.m_frame, text = 'Address').grid(row = 41, column = 0)
+            Label(self.m_frame, text = 'Address').grid(row = 41, column = 0, sticky = E)
             Entry(self.m_frame, textvar = self.Address).grid(row = 41, column = 1)
-            Label(self.m_frame, text = 'DevCat').grid(row = 42, column = 0)
-            Entry(self.m_frame, textvar = self.DevCat).grid(row = 42, column = 1)
-            pass
-        if l_family == 'UPB':
+            Label(self.m_frame, text = 'Controller').grid(row = 42, column = 0, sticky = E)
+            Entry(self.m_frame, textvar = self.Controller).grid(row = 42, column = 1)
+            Label(self.m_frame, text = 'DevCat').grid(row = 43, column = 0, sticky = E)
+            Entry(self.m_frame, textvar = self.DevCat).grid(row = 43, column = 1)
+            Label(self.m_frame, text = 'GroupList').grid(row = 44, column = 0, sticky = E)
+            Entry(self.m_frame, textvar = self.GroupList).grid(row = 44, column = 1)
+            Label(self.m_frame, text = 'GroupNumber').grid(row = 45, column = 0, sticky = E)
+            Entry(self.m_frame, textvar = self.GroupNumber).grid(row = 45, column = 1)
+            Label(self.m_frame, text = 'Master').grid(row = 46, column = 0, sticky = E)
+            Entry(self.m_frame, textvar = self.Master).grid(row = 46, column = 1)
+            Label(self.m_frame, text = 'ProductKey').grid(row = 47, column = 0, sticky = E)
+            Entry(self.m_frame, textvar = self.ProductKey).grid(row = 47, column = 1)
+            Label(self.m_frame, text = 'Responder').grid(row = 48, column = 0, sticky = E)
+            Entry(self.m_frame, textvar = self.Responder).grid(row = 48, column = 1)
+        elif l_family == 'UPB':
             Label(self.m_frame, text = 'UnitID').grid(row = 51, column = 0)
             Entry(self.m_frame, textvar = self.UnitID).grid(row = 51, column = 1)
             Label(self.m_frame, text = 'NetworkID').grid(row = 52, column = 0)
             Entry(self.m_frame, textvar = self.NetworkID).grid(row = 52, column = 1)
             Label(self.m_frame, text = 'Password').grid(row = 53, column = 0)
             Entry(self.m_frame, textvar = self.Password).grid(row = 53, column = 1)
-            pass
         l_text = "Add"
         if p_title.startswith("Edit"):
             l_text = "Save"
@@ -188,7 +199,9 @@ class LightingDialog(gui_tools.GuiTools):
         self.quit_dialog()
     
     def create_vars(self):
-        # Common
+        """Create everything - used or not.
+        """
+        # Common / Lights, Buttons
         self.Active = IntVar()
         self.Comment = StringVar()
         self.Coords = StringVar()
@@ -201,25 +214,31 @@ class LightingDialog(gui_tools.GuiTools):
         # Controllers
         self.Interface = StringVar()
         self.Port = StringVar()
-        # Controller - USB
+        # Interface USB
         self.Vendor = IntVar()
         self.Product = IntVar()
-        # Family - UPB
-        self.NetworkID = IntVar()
-        self.Password = IntVar()
-        self.UnitID = IntVar()
-        # Controller - Serial
+        # Interface Serial
         self.BaudRate = IntVar()
         self.ByteSize = IntVar()
         self.Parity = StringVar()
         self.StopBits = DoubleVar()
         self.Timeout = DoubleVar()
+        # Family - UPB
+        self.NetworkID = IntVar()
+        self.Password = IntVar()
+        self.UnitID = IntVar()
         # Family - Insteon
         self.Address = StringVar()
+        self.Controller = IntVar()
         self.DevCat = StringVar()
+        self.GroupList = StringVar()
+        self.GroupNumber = StringVar()
+        self.Master = IntVar()
+        self.ProductKey = IntVar()
+        self.Responder = IntVar()
 
     def load_vars(self, p_key, p_kind):
-        print "LoadVars key, Kind = {0:} - {1:}".format(p_key, p_kind)
+        #print "LoadVars key, Kind = {0:} - {1:}".format(p_key, p_kind)
         try:
             if p_kind == 1 or p_kind == 4:
                 l_type = "Light"
@@ -244,7 +263,7 @@ class LightingDialog(gui_tools.GuiTools):
             l_obj = lighting.LightingData()
             l_obj.Key = p_key
         l_family = l_obj.Family
-        print "LoadVars", l_type, l_family, p_key
+        print "LoadVars", l_type, l_family, p_key, l_obj.Active
         #
         self.Active.set(self.get_bool(l_obj.Active))
         self.Comment.set(l_obj.Comment)
@@ -272,8 +291,14 @@ class LightingDialog(gui_tools.GuiTools):
         if l_family == 'Insteon':
             # Family - Insteon
             self.Address.set(l_obj.Address)
+            self.Controller.set(self.get_bool(l_obj.Controller))
             self.DevCat.set(l_obj.DevCat)
-        if l_family == 'UPB':
+            self.GroupList.set(l_obj.GroupList)
+            self.GroupNumber.set(l_obj.GroupNumber)
+            self.Master.set(self.get_bool(l_obj.Master))
+            self.ProductKey.set(l_obj.ProductKey)
+            self.Responder.set(self.get_bool(l_obj.Responder))
+        elif l_family == 'UPB':
             # Family - UPB
             self.NetworkID.set(l_obj.NetworkID)
             self.Password.set(l_obj.Password)
@@ -281,19 +306,39 @@ class LightingDialog(gui_tools.GuiTools):
         return l_type, l_family
 
     def get_vars(self):
-        print "lighting dialog get vars"
         l_type = self.Type.get()
         l_key = self.Key.get()
+        l_family = self.Family.get()
+        l_interface = self.Interface.get()
         l_obj = lighting.LightingData()
-        l_obj.Active = self.Active.get()
+        l_obj.Active = int(self.Active.get())
         l_obj.Comment = self.Comment.get()
         l_obj.Coords = self.Coords.get()
         l_obj.Dimmable = self.Dimmable.get()
-        l_obj.Family = self.Family.get()
+        l_obj.Family = l_family
         l_obj.Key = l_key
         l_obj.Name = self.Name.get()
         l_obj.Room = self.Room.get()
         l_obj.Type = l_type
+        if l_family == 'Insteon':
+            l_obj.Address = self.Address.get()
+            l_obj.Controller = int(self.Controller.get())
+            l_obj.DevCat = int(self.DevCat.get())
+            l_obj.GroupList = self.GroupList.get()
+            l_obj.GroupNumber = self.GroupNumber.get()
+            l_obj.Master = int(self.Master.get())
+            l_obj.ProductKey = int(self.ProductKey.get())
+            l_obj.Responder = int(self.Responder.get())
+        elif l_family == 'UPB':
+            l_obj.NetworkID = int(self.NetworkID.get())
+            l_obj.Password = int(self.Password.get())
+            l_obj.UnitID = int(self.UnitID.get())
+        if l_interface == 'USB':
+            pass
+        elif l_interface == 'Serial':
+            pass
+        else:
+            pass
         if l_type == 'Light':
             Light_Data[l_key] = l_obj
         elif l_type == 'Controller':
@@ -302,6 +347,7 @@ class LightingDialog(gui_tools.GuiTools):
             Controller_Data[l_key] = l_obj
         else:
             Button_Data[l_key] = l_obj
+        print "lighting dialog get_vars", l_obj.Active
         config_xml.WriteConfig().write_lights()
         self.quit_dialog()
 

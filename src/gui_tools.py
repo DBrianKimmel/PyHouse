@@ -33,9 +33,11 @@ class GuiTools(object):
         return 
 
     def yes_no_radio(self, p_frame, p_var):
+        l_entry = int(p_var.get())
+        print "Creating Y/N buttons with value {0:} <{1:}>".format(p_var, l_entry)
         l_frame = Frame(p_frame)
-        Radiobutton(l_frame, text = "Yes", variable = p_var, value = 1).grid(row = 0, column = 0)
-        Radiobutton(l_frame, text = "No", variable = p_var, value = 0).grid(row = 0, column = 1)
+        Radiobutton(l_frame, text = "Yes", variable = p_var, value = True).grid(row = 0, column = 0)
+        Radiobutton(l_frame, text = "No", variable = p_var, value = False).grid(row = 0, column = 1)
         return l_frame
 
     def frame_delete(self, p_frame):
@@ -45,8 +47,8 @@ class GuiTools(object):
             pass
 
     def get_bool(self, p_arg):
-        l_ret = 0
-        if p_arg == 'True': l_ret = 1
+        l_ret = False
+        if p_arg == 'True': l_ret = True
         return l_ret
 
     def pulldown_box(self, p_parent, p_list, p_sel):
@@ -58,7 +60,7 @@ class GuiTools(object):
         @return: widget to be positioned in container.
         """
         l_entry = str(p_sel.get())
-        print "debug pulldown_box ", p_list, l_entry
+        #print "debug pulldown_box ", p_list, l_entry
         l_box = Pmw.ComboBox(p_parent,
                     scrolledlist_items = p_list,
                     )

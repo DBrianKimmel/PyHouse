@@ -36,10 +36,10 @@ class CoreData (object):
     def __init__(self):
         #super(LightingData, self).__init__()
         self.Address = None
-        self.Code = None
+        #self.Code = None
         self.Controller = None
         self.DevCat = None
-        self.Family = 'Insteon-1'
+        self.Family = 'Insteon'
         self.GroupList = None
         self.GroupNumber = None
         self.Master = None
@@ -55,10 +55,10 @@ class CoreData (object):
         return self.__Address
     def set_address(self, value):
         self.__Address = value
-    def get_code(self):
-        return self.__Code
-    def set_code(self, value):
-        self.__Code = value
+    #def get_code(self):
+    #    return self.__Code
+    #def set_code(self, value):
+    #    self.__Code = value
     def get_controller(self):
         return self.__Controller
     def set_controller(self, value):
@@ -89,26 +89,27 @@ class CoreData (object):
         self.__Responder = value
 
     Address = property(get_address, set_address, None, "Device Address as string 'aa.bb.cc'.")
-    Code = property(get_code, set_code, None, None)
-    Controller = property(get_controller, set_controller, None, None)
+    #Code = property(get_code, set_code, None, None)
+    Controller = property(get_controller, set_controller, None, "Bool - device can act as a controller of others")
     DevCat = property(get_dev_cat, set_dev_cat, None, 'Device Category and SubCategory as 0x0123.')
     GroupList = property(get_group_list, set_group_list, None, None)
     GroupNumber = property(get_group_number, set_group_number, None, None)
     Master = property(get_master, set_master, None, None)
-    ProductKey = property(get_product_key, set_product_key, None, None)
-    Responder = property(get_responder, set_responder, None, None)
+    ProductKey = property(get_product_key, set_product_key, None, "New - Replacing devcat someday perhaps.")
+    Responder = property(get_responder, set_responder, None, "Device can act as responder from a controller")
 
 class CoreAPI(object):
 
     def load_device(self, p_dict, p_dev):
         p_dev.Family = 'Insteon'
         p_dev.Address = self.getText(p_dict, 'Address')
-        p_dev.Code = self.getText(p_dict, 'Code')
+        #p_dev.Code = self.getText(p_dict, 'Code')
         p_dev.Controller = self.getBool(p_dict, 'Controller')
         p_dev.DevCat = self.getInt(p_dict, 'DevCat')
         p_dev.GroupList = self.getText(p_dict, 'GroupList')
         p_dev.GroupNumber = self.getInt(p_dict, 'GroupNumber')
         p_dev.Master = self.getBool(p_dict, 'Master')
+        p_dev.ProductKey = self.getInt(p_dict, 'ProductKey')
         p_dev.Responder = self.getBool(p_dict, 'Responder')
         return p_dev
 
@@ -232,7 +233,7 @@ class LoadSaveInsteonData(LightingAPI, ControllerAPI, ButtonAPI, LightingStatusA
             l_cfg[l_name]['Dimmable'] = l_obj.get_Dimmable()
             l_cfg[l_name]['DevCat'] = l_obj.get_DevCat()
             l_cfg[l_name]['Master'] = l_obj.get_Master()
-            l_cfg[l_name]['Code'] = l_obj.get_Code()
+            #l_cfg[l_name]['Code'] = l_obj.get_Code()
         cfg = configure_mh.ConfigureAPI.get_cfg_file(configure_mh.ConfigureAPI(), './config/Insteon.conf')
         cfg['InsteonLights'] = l_cfg
         cfg.write()

@@ -35,9 +35,9 @@ class ControllersData(lighting_tools.CoreData):
         self.WriteTimeout = None
         self.XonXoff = None
         # USB Data
-        self.UnitID = None
-        self.NetworkID = None
-        self.Password = None
+        #self.UnitID = None
+        #self.NetworkID = None
+        #self.Password = None
         self.Product = None
         self.Vendor = None
 

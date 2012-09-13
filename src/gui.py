@@ -19,31 +19,51 @@ class MainWindow(object):
         self.m_main = Frame(g_root, bg='#600000')
         g_root.title('PyHouse Main Menu')
         self.m_main.grid(padx = 5, pady = 5)
-        self.m_main.grid_columnconfigure(0, minsize=70)
-        self.m_main.grid_columnconfigure(1, minsize=70)
-        self.m_main.grid_columnconfigure(2, minsize=70)
-        self.m_main.grid_columnconfigure(3, minsize=70)
-        self.m_main.grid_columnconfigure(4, minsize=70)
+        self.m_main.grid_columnconfigure(0, minsize=120)
+        self.m_main.grid_columnconfigure(1, minsize=120)
+        self.m_main.grid_columnconfigure(2, minsize=120)
+        self.m_main.grid_columnconfigure(3, minsize=120)
+        self.m_main.grid_columnconfigure(4, minsize=120)
+        self.m_main.grid_columnconfigure(5, minsize=120)
+        self.m_main.grid_columnconfigure(6, minsize=120)
+        self.m_main.grid_columnconfigure(7, minsize=120)
+        self.m_main.grid_columnconfigure(8, minsize=120)
+        self.m_main.grid_columnconfigure(0, minsize=120)
         Button(self.m_main, text = "House", command = self.house_screen).grid(row = 0, column = 0)
         Button(self.m_main, text = "Lighting", command = self.lighting_screen).grid(row = 0, column = 1)
         Button(self.m_main, text = "Schedule", command = self.schedule_screen).grid(row = 0, column = 2)
         Button(self.m_main, text = "Logging", command = self.logging_screen).grid(row = 0, column = 3)
         Button(self.m_main, text = "Web Server", command = self.webserv_screen).grid(row = 0, column = 4)
+        Button(self.m_main, text = "UPnP", command = self.upnp_screen).grid(row = 0, column = 5)
+        Button(self.m_main, text = "Weather", command = self.weather_screen).grid(row = 0, column = 6)
+        Button(self.m_main, text = "Internet", command = self.internet_screen).grid(row = 0, column = 7)
         Button(self.m_main, text = "QUIT", fg = "red", command = self.main_quit).grid(row = 91, column = 1)
 
     def house_screen(self):
         self.m_main.grid_forget() # Main Window
         h = gui_house.HouseWindow(g_root)
 
+    def internet_screen(self):
+        self.m_main.grid_forget() # Main Window
+        h = DummyWindow(g_root)
+
     def lighting_screen(self):
         self.m_main.grid_forget() # Main Window
         h = gui_lighting.LightingWindow(g_root)
+
+    def logging_screen(self):
+        self.m_main.grid_forget() # Main Window
+        h = DummyWindow(g_root)
 
     def schedule_screen(self):
         self.m_main.grid_forget() # Main Window
         h = gui_schedule.ScheduleWindow(g_root, self.m_main)
 
-    def logging_screen(self):
+    def upnp_screen(self):
+        self.m_main.grid_forget() # Main Window
+        h = DummyWindow(g_root)
+
+    def weather_screen(self):
         self.m_main.grid_forget() # Main Window
         h = DummyWindow(g_root)
 

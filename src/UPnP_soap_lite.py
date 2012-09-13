@@ -50,12 +50,10 @@ def build_soap_error(status,description='without words'):
     e.attrib['xmlns']='urn:schemas-upnp-org:control-1-0'
     ET.SubElement(e,'errorCode').text=str(status)
     ET.SubElement(e,'errorDescription').text=UPNPERRORS.get(status,description)
-    return build_soap_call(None, root, encoding=None)
+    return build_soap_call(None, root, p_encoding=None)
 
-def build_soap_call(p_method, arguments, is_response = False,
-                                       encoding = SOAP_ENCODING,
-                                       envelope_attrib = None,
-                                       typed = None):
+def build_soap_call(p_method, p_arguments, is_response = False,
+                    p_encoding = SOAP_ENCODING, envelope_attrib = None, p_typed = None):
     """ create a shell for a SOAP request or response element
         - set method to none to omitt the method element and
           add the arguments directly to the body (for an error msg)
@@ -74,19 +72,19 @@ def build_soap_call(p_method, arguments, is_response = False,
         if is_response is True:
             p_method += "Response"
         re = ET.SubElement(body, p_method)
-        if encoding:
-            re.set(NS_SOAP_ENV + "encodingStyle", encoding)
+        if p_encoding:
+            re.set(NS_SOAP_ENV + "encodingStyle", p_encoding)
     else:
         re = body
     # append the arguments
-    if isinstance(arguments,dict):
+    if isinstance(p_arguments, dict):
         type_map = {str: 'xsd:string',
                     unicode: 'xsd:string',
                     int: 'xsd:int',
                     long: 'xsd:int',
                     float: 'xsd:float',
                     bool: 'xsd:boolean'}
-        for arg_name, arg_val in arguments.iteritems():
+        for arg_name, arg_val in p_arguments.iteritems():
             arg_type = type_map[type(arg_val)]
             if arg_type == 'xsd:string' and type(arg_val) == unicode:
                 arg_val = arg_val.encode('utf-8')
@@ -96,13 +94,13 @@ def build_soap_call(p_method, arguments, is_response = False,
                 arg_val = arg_val.lower()
 
             e = ET.SubElement(re, arg_name)
-            if typed and arg_type:
+            if p_typed and arg_type:
                 if not isinstance(type, ET.QName):
                     arg_type = ET.QName("http://www.w3.org/1999/XMLSchema", arg_type)
                 e.set(NS_XSI + "type", arg_type)
             e.text = arg_val
     else:
-        re.append(arguments)
+        re.append(p_arguments)
     preamble = """<?xml version="1.0" encoding="utf-8"?>"""
     return preamble + ET.tostring(envelope,'utf-8')
 

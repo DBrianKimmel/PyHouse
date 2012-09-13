@@ -200,7 +200,11 @@ class HouseAPI(lighting_tools.CoreAPI):
         House_Data[l_entry.Key] = l_house
 
     def load_xml_house(self):
-        l_ct = config_xml.ReadConfig().read_house()
+        """Load all the xml house info.
+        If there is none, fall back to using the old config files.
+        This fallback is temporary until the xml and gui is fully functional.
+        """
+        l_ct = config_xml.ReadConfig().read_houses()
         if l_ct == 0:
             self.load_all_locations(Configure_Data['HouseLocation'])
 

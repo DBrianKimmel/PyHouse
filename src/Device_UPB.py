@@ -56,7 +56,15 @@ class CoreAPI(object):
         l_dev.UnitID = self.getInt(p_dict, 'UnitID')
         return l_dev
 
-class ButtonData(lighting.ButtonData, CoreData): pass
+class ButtonData(lighting.ButtonData, CoreData):
+
+    def __init__(self):
+        super(ButtonData, self).__init__()
+
+    def __str__(self):
+        l_str = super(ButtonData, self).__str__()
+        return l_str
+
 class ButtonAPI(lighting.ButtonAPI, CoreAPI):
 
     def load_all_buttons(self, p_dict):
@@ -75,35 +83,14 @@ class ButtonAPI(lighting.ButtonAPI, CoreAPI):
         return l_button
 
 
-class ControllerData(lighting.ControllerData):
+class ControllerData(lighting.ControllerData, CoreData):
 
     def __init__(self):
-        lighting.ControllerData.__init__(self)
-        self.Family = 'UPB'
-        self.NetworkID = None
-        self.Password = None
-        self.UnitID = None
+        super(ControllerData, self).__init__()
 
-    def __repr__(self):
-        l_str = lighting.ControllerData.__repr__(self)
+    def __str__(self):
+        l_str = super(ControllerData, self).__str__()
         return l_str
-
-    def get_network_id(self):
-        return self.__NetworkID
-    def set_network_id(self, value):
-        self.__NetworkID = value
-    def get_password(self):
-        return self.__Password
-    def set_password(self, value):
-        self.__Password = value
-    def get_unit_id(self):
-        return self.__UnitID
-    def set_unit_id(self, value):
-        self.__UnitID = value
-
-    NetworkID = property(get_network_id, set_network_id, None, None)
-    Password = property(get_password, set_password, None, None)
-    UnitID = property(get_unit_id, set_unit_id, None, None)
 
 class ControllerAPI(lighting.ControllerAPI, CoreAPI):
 

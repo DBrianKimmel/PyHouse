@@ -77,10 +77,12 @@ class CoreData(LightingTools):
         self.Type = None
 
     def __str__(self):
-        l_str = "Light:: Name:{0:}, Family:{1:}, Type:{2:}, Comment:{3:}, Room:{4:}, Coords:{5:}, Active:{6:}, Dimmable:{7:}, ".format(
-                            self.get_name(), self.get_family(), self.get_type(), self.get_comment(),
-                            self.get_room(), self.get_coords(),
-                            self.get_active(), self.get_dimmable())
+        l_str = "Light:: Name:{0:}, Family:{1:}, Type:{2:}, Comment:{3:}," +\
+                "Room:{4:}, Coords:{5:}, Active:{6:}, Dimmable:{7:}, ".format(
+                self.get_name(), self.get_family(),
+                self.get_type(), self.get_comment(),
+                self.get_room(), self.get_coords(),
+                self.get_active(), self.get_dimmable())
         return l_str
 
     def get_active(self):

@@ -23,8 +23,8 @@ class HouseWindow(gui_tools.GuiTools):
         self.house_button.grid(row = self.m_ix, column = 0)
         self.button = Button(self.m_frame, text = "Back", fg = "red", command = self.main_screen)
         self.button.grid(row = self.m_ix, column = 1)
-        status = gui.StatusBar(p_root)
-        status.grid()
+        #status = gui.StatusBar(p_root)
+        #status.grid()
 
     def show_all_houses(self):
         l_house = []
@@ -68,30 +68,30 @@ class HouseDialog(gui_tools.GuiTools):
         self.m_frame = Frame(self.m_top)
         #self.initial_focus = self.body(self.m_frame)
         self.m_frame.grid(padx = 5, pady = 5)
-        Label(self.m_frame, text = "Name").grid(row = 1, column = 0)
+        Label(self.m_frame, text = "Name").grid(row = 1, column = 0, sticky = E)
         self.m_name = Entry(self.m_frame, textvar = self.Name)
         self.m_name.grid(row = 1, column = 1)
-        Label(self.m_frame, text = "Street").grid(row = 3, column = 0)
+        Label(self.m_frame, text = "Street").grid(row = 3, column = 0, sticky = E)
         Entry(self.m_frame, textvar = self.Street).grid(row = 3, column = 1)
-        Label(self.m_frame, text = "City").grid(row = 5, column = 0)
+        Label(self.m_frame, text = "City").grid(row = 5, column = 0, sticky = E)
         Entry(self.m_frame, textvar = self.City).grid(row = 5, column = 1)
-        Label(self.m_frame, text = "State").grid(row = 7, column = 0)
+        Label(self.m_frame, text = "State").grid(row = 7, column = 0, sticky = E)
         Entry(self.m_frame, textvar = self.State).grid(row = 7, column = 1)
-        Label(self.m_frame, text = "Zip Code").grid(row = 9, column = 0)
+        Label(self.m_frame, text = "Zip Code").grid(row = 9, column = 0, sticky = E)
         Entry(self.m_frame, textvar = self.Zip).grid(row = 9, column = 1)
-        Label(self.m_frame, text = "Time Zone").grid(row = 11, column = 0)
+        Label(self.m_frame, text = "Time Zone").grid(row = 11, column = 0, sticky = E)
         Entry(self.m_frame, textvar = self.Timezone).grid(row = 11, column = 1)
-        Label(self.m_frame, text = "Savings Time").grid(row = 13, column = 0)
+        Label(self.m_frame, text = "Savings Time").grid(row = 13, column = 0, sticky = E)
         Entry(self.m_frame, textvar = self.SavingTime).grid(row = 13, column = 1)
-        Label(self.m_frame, text = "Phone").grid(row = 15, column = 0)
+        Label(self.m_frame, text = "Phone").grid(row = 15, column = 0, sticky = E)
         Entry(self.m_frame, textvar = self.Phone).grid(row = 15, column = 1)
-        Label(self.m_frame, text = "Latitude").grid(row = 17, column = 0)
+        Label(self.m_frame, text = "Latitude").grid(row = 17, column = 0, sticky = E)
         Entry(self.m_frame, textvar = self.Latitude).grid(row = 17, column = 1)
-        Label(self.m_frame, text = "Longitude").grid(row = 19, column = 0)
+        Label(self.m_frame, text = "Longitude").grid(row = 19, column = 0, sticky = E)
         Entry(self.m_frame, textvar = self.Longitude).grid(row = 19, column = 1)
-        Label(self.m_frame, text = "Active").grid(row = 21, column = 0)
-        self.yes_no_radio(self.m_frame, self.Active).grid(row = 21, column = 1)
-        Label(self.m_frame, text = "Key").grid(row = 23, column = 0)
+        Label(self.m_frame, text = "Active").grid(row = 21, column = 0, sticky = E)
+        self.yes_no_radio(self.m_frame, self.Active).grid(row = 21, column = 1, sticky = W)
+        Label(self.m_frame, text = "Key").grid(row = 23, column = 0, sticky = E)
         Entry(self.m_frame, textvar = self.Key, state = DISABLED).grid(row = 23, column = 1)
         l_text = "Add"
         if p_title.startswith("Edit"):
@@ -109,6 +109,21 @@ class HouseDialog(gui_tools.GuiTools):
     def quit_dialog(self):
         self.m_top.destroy()
 
+    def create_vars(self):
+        self.Active = IntVar()
+        print "Created House Active in var {0:}".format(self.Active)
+        self.Name = StringVar()
+        self.Street = StringVar()
+        self.City = StringVar()
+        self.State = StringVar()
+        self.Zip = StringVar()
+        self.Timezone = StringVar()
+        self.SavingTime = StringVar()
+        self.Phone = StringVar()
+        self.Latitude = DoubleVar()
+        self.Longitude = DoubleVar()
+        self.Key = IntVar()
+
     def add_house(self):
         l_obj = house.LocationData()
         l_obj.Name = self.Name.get()
@@ -122,26 +137,12 @@ class HouseDialog(gui_tools.GuiTools):
         l_obj.Latitude = self.Latitude.get()
         l_obj.Longitude = self.Longitude.get()
         l_obj.Active = self.Active.get()
-        #print "Add House Active = {0:}".format(l_obj.Active)
+        print "Add House - Active={0:}".format(l_obj.Active)
         l_obj.Key = self.Key.get()
         Location_Data[l_obj.Key] = l_obj
         config_xml.WriteConfig().write_houses()
         self.quit_dialog()
 
-
-    def create_vars(self):
-        self.Active = IntVar()
-        self.Name = StringVar()
-        self.Street = StringVar()
-        self.City = StringVar()
-        self.State = StringVar()
-        self.Zip = StringVar()
-        self.Timezone = StringVar()
-        self.SavingTime = StringVar()
-        self.Phone = StringVar()
-        self.Latitude = DoubleVar()
-        self.Longitude = DoubleVar()
-        self.Key = IntVar()
 
     def load_vars(self, p_key):
         try:
@@ -150,6 +151,8 @@ class HouseDialog(gui_tools.GuiTools):
             l_obj = house.LocationData()
             l_obj.Key = p_key
         self.Name.set(l_obj.Name)
+        print "Setting Active to {0:}".format(l_obj.Active)
+        self.Active.set(self.get_bool(l_obj.Active))
         self.Street.set(l_obj.Street)
         self.City.set(l_obj.City)
         self.State.set(l_obj.State)
@@ -159,7 +162,6 @@ class HouseDialog(gui_tools.GuiTools):
         self.Phone.set(l_obj.Phone)
         self.Latitude.set(l_obj.Latitude)
         self.Longitude.set(l_obj.Longitude)
-        self.Active.set(self.get_bool(l_obj.Active))
         self.Key.set(l_obj.Key)
 
 

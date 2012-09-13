@@ -64,7 +64,6 @@ import gui
 import web_server
 import schedule
 import weather
-import UPnP_core
 
 
 Configure_Data = configure_mh.Configure_Data
@@ -74,21 +73,24 @@ g_logger = None
 
 
 def Init():
-    global g_logger
+    #print "INIT"
     if platform.uname()[0] != 'Windows':
         signal.signal(signal.SIGHUP, SigHupHandler)
     signal.signal(signal.SIGINT, SigIntHandler)
 
+    global g_logger
     # These need to be first and in this order
-    configure_mh.ConfigureMain()
+    configure_mh.ConfigureMain() # Temp till xml fully functional.
+    config_xml.read_config()
     log.LoggingMain()
-    config_xml.ReadConfig()
     # 2nd. Now the logging will be set up and work properly
     g_logger = logging.getLogger('PyHouse')
     g_logger.info("Initializing - Starting PyHouse.")
+    # Now everything else.
     house.Init()
     weather.Init()
     schedule.Init()
+    import UPnP_core
     UPnP_core.Init()
     web_server.Init()
     g_logger.info("Initialized.\n")
@@ -109,6 +111,7 @@ def Start():
 def Stop():
     """Stop twisted in preparation to exit PyMh.
     """
+    config_xml.write_config()
     reactor.stop()
     schedule.Stop()
     web_server.Stop()
@@ -132,6 +135,7 @@ def SigIntHandler(signum, _stackframe):
 
 
 if __name__ == "__main__":
+    #print "MAIN"
     Init()
     Start()
 

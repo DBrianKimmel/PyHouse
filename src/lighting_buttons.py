@@ -46,7 +46,6 @@ class ButtonsAPI(lighting_tools.CoreAPI):
         #l_button.Responder = p_dict.get('Responder', False)
         #l_button.DevCat = p_dict.get('DevCat', 0)
         #l_button.Master = p_dict.get('Master', True)
-        #l_button.Code = p_dict.get('Code', '')
         #l_button.Responder = p_dict.get('Responder', False)
         #Button_Data[l_button.Key] = l_button
         return l_button
