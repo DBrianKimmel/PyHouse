@@ -34,7 +34,7 @@ class GuiTools(object):
 
     def yes_no_radio(self, p_frame, p_var):
         l_entry = int(p_var.get())
-        print "Creating Y/N buttons with value {0:} <{1:}>".format(p_var, l_entry)
+        #print "Creating Y/N buttons with value {0:} <{1:}>".format(p_var, l_entry)
         l_frame = Frame(p_frame)
         Radiobutton(l_frame, text = "Yes", variable = p_var, value = True).grid(row = 0, column = 0)
         Radiobutton(l_frame, text = "No", variable = p_var, value = False).grid(row = 0, column = 1)

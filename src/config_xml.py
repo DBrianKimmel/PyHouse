@@ -12,11 +12,15 @@ import lighting
 import schedule
 import xml_tools
 
-
+# Various data stores.
 House_Data = house.Location_Data
+Location_Data = house.Location_Data
+Room_Data = house.Room_Data
+#
 Light_Data = lighting.Light_Data
 Button_Data = lighting.Button_Data
 Controller_Data = lighting.Controller_Data
+#
 Schedule_Data = schedule.Schedule_Data
 
 g_xmltree = ''
@@ -57,6 +61,14 @@ class ConfigTools(object):
         return l_var
 
     def build_common(self, p_parent, p_title, p_obj):
+        """Build a common entry.
+
+        <p_parent>
+            <p_title Name=p_obj.Name Key=p_obj.Key>
+                <Active>p_obj.Active</Active>
+            </p_title>
+        ...
+        """
         l_ret = ET.SubElement(p_parent, p_title)
         l_ret.set('Name', p_obj.Name)
         l_ret.set('Key', str(p_obj.Key))
@@ -70,7 +82,10 @@ class ReadConfig(ConfigTools):
     """
 
     def __init__(self):
-        print "ReadConfig XML"
+        """Open the xml config file.
+
+        If the file is missing, an empty minimal skeleton is created.
+        """
         global g_xmltree
         self.m_fname = xml_tools.open_config()
         try:
@@ -80,38 +95,82 @@ class ReadConfig(ConfigTools):
             g_xmltree = ET.parse(self.m_fname)
         self.m_root = g_xmltree.getroot()
 
+    def read_location(self, p_entry):
+        l_obj = house.HouseData()
+        l_obj.Name = l_name = p_entry.get('Name')
+        l_obj.Key = int(p_entry.get('Key'))
+        l_obj.Active = self.get_bool(p_entry.findtext('Active'))
+        # Now read the location subsection
+        l_entry = p_entry.find('Location')
+        l_obj.Street = l_entry.findtext('Street')
+        l_obj.City = l_entry.findtext('City')
+        l_obj.State = l_entry.findtext('State')
+        l_obj.ZipCode = l_entry.findtext('ZipCode')
+        l_obj.Phone   = l_entry.findtext('Phone')
+        l_obj.Latitude = self.get_float(l_entry, 'Latitude')
+        l_obj.Longitude = self.get_float(l_entry, 'Longitude')
+        l_obj.TimeZone = self.get_float(l_entry, 'TimeZone')
+        l_obj.SavingTime = self.get_float(l_entry, 'SavingTime')
+        House_Data[l_obj.Key] = l_obj
+        Location_Data[l_obj.Key] = l_obj
+        self.m_location += 1
+        return l_name
+
+    def read_rooms(self, p_entry, p_house):
+        l_rooms = p_entry.find('Rooms')
+        l_list = l_rooms.iterfind('Room')
+        for l_entry in l_list:
+            l_obj = house.RoomData()
+            l_obj.HouseName = p_house
+            l_obj.Active = self.get_bool(l_entry.findtext('Active'))
+            l_obj.Comment = l_entry.findtext('Comment')
+            l_obj.Corner = l_entry.findtext('Corner')
+            l_obj.HouseName = l_entry.findtext('HouseName')
+            l_obj.Key = int(l_entry.get('Key'))
+            l_obj.Name = l_entry.get('Name')
+            l_obj.Size = l_entry.findtext('Size')
+            Room_Data[l_obj.Key] = l_obj
+            self.m_rooms += 1
 
     def read_houses(self):
+        """Read house information, location and rooms.
+
+        <Houses>
+            <House Name=name Key=key>
+                <Active>.val.</Active>
+                <Location>
+                    ...
+                </Location>
+                <Rooms>
+                    <Room Name=name Key=key>
+                        ...
+                    </Room>
+                </Rooms>
+            </House>
+            ...
+        </Houses>
+        """
         l_count = 0
+        self.m_location = 0
+        self.m_rooms = 0
         try:
             l_sect = self.m_root.find('Houses')
-            l_list = l_sect.iterfind('House')
+            l_list = l_sect.iterfind('House') # use l_sect to force error if it is missing
         except AttributeError:
             print " -- Error in read_house - Adding 'Houses'"
             l_sect = ET.SubElement(self.m_root, 'Houses')
             l_list = l_sect.iterfind('House')
         for l_house in l_list:
-            #print 'Iterlist', l_house, l_list
+            l_name = self.read_location(l_house)
+            self.read_rooms(l_house, l_name)
             l_count += 1
-            l_obj = house.HouseData()
-            l_obj.Active = self.get_bool(l_house.findtext('Active'))
-            l_obj.Name = l_house.get('Name')
-            l_obj.Key = int(l_house.get('Key'))
-            l_obj.Street = l_house.findtext('Street')
-            l_obj.City = l_house.findtext('City')
-            l_obj.State = l_house.findtext('State')
-            l_obj.ZipCode = l_house.findtext('ZipCode')
-            l_obj.Phone   = l_house.findtext('Phone')
-            l_obj.Latitude = self.get_float(l_house, 'Latitude')
-            l_obj.Longitude = self.get_float(l_house, 'Longitude')
-            l_obj.TimeZone = self.get_float(l_house, 'TimeZone')
-            l_obj.SavingTime = self.get_float(l_house, 'SavingTime')
-            #print '  found name', l_obj.Name, l_obj.Street
-            House_Data[l_obj.Key] = l_obj
+        print "--- Read {0:} House entries from xml config file.".format(l_count)
+        print "--- Read {0:}/{1:} location entries from xml config file.".format(self.m_location, len(House_Data))
+        print "--- Read {0:}/{1:} room entries from xml config file.".format(self.m_rooms, len(Room_Data))
         return l_count
 
     def read_light_common(self, p_entry, p_obj):
-        print "Read_light_common - Entry={0:}, Name={1:}".format(p_entry, p_entry.get('Name'))
+        #print "Read_light_common - Entry={0:}, Name={1:}".format(p_entry, p_entry.get('Name'))
         p_obj.Key = int(p_entry.get('Key'))
         p_obj.Name = p_entry.get('Name')
         p_obj.Active = self.get_bool(p_entry.get('Active'))
@@ -140,34 +199,31 @@ class ReadConfig(ConfigTools):
         l_count = 0
         try:
             l_sect = self.m_root.find('Lighting')
-            l_list = l_sect.iterfind('Controller') # use l_sect to force error if Lighting is missing
+            l_list = l_sect.iterfind('Controllers') # use l_sect to force error if Lighting is missing
         except AttributeError:
             print " -- Error in read_lights - Adding 'Lighting'"
             l_sect = ET.SubElement(self.m_root, 'Lighting')
             l_l = ET.SubElement(l_sect, 'Lights')
             l_c = ET.SubElement(l_sect, 'Controllers')
             l_b = ET.SubElement(l_sect, 'Buttons')
-
         # read the lights section
         try:
-            l_list = l_sect.iterfind('Lights')
-            l_list = ET.SubElement(l_sect, 'Lights')
+            l_list = l_sect.iterfind('Lights/Light')
         except AttributeError:
+            print "-- Error in getting a list of Lights"
             l_list = ET.SubElement(l_sect, 'Lights')
         for l_entry in l_list:
             l_obj = lighting.LightingData()
-            print 'Lights Iterlist =', l_entry
             self.read_light_common(l_entry, l_obj)
             Light_Data[l_obj.Key] = l_obj
             l_count += 1
-
         # Read the controllers section
         try:
-            l_list = l_sect.iterfind('Controller')
+            l_list = l_sect.iterfind('Controllers/Controller')
         except AttributeError:
+            print "-- Error in getting a list of Controllers"
             l_list = ET.SubElement(l_sect, 'Controllers')
         for l_entry in l_list:
-            print 'Controller Iterlist', l_entry, l_list
             l_obj = lighting.ControllerData()
             self.read_light_common(l_entry, l_obj)
             l_obj.Interface = l_if = l_entry.findtext('Interface')
@@ -188,18 +244,18 @@ class ReadConfig(ConfigTools):
                 l_obj.Vendor = l_entry.findtext('Vendor')
             Controller_Data[l_obj.Key] = l_obj
             l_count += 1
-
         # Read the button section
         try:
-            l_list = l_sect.iterfind('Button')
+            l_list = l_sect.iterfind('Buttons/Button')
         except AttributeError:
+            print "-- Error in getting a list of Buttons"
             l_list = ET.SubElement(l_sect, 'Buttons')
         for l_entry in l_list:
             l_obj = lighting.ButtonData()
             self.read_light_common(l_entry, l_obj)
-            l_obj.Interface = l_entry.findtext('Interface')
-            Controller_Data[l_obj.Key] = l_obj
+            Button_Data[l_obj.Key] = l_obj
             l_count += 1
+        print "--- Read {0:} Lighting entries from xml config file.".format(l_count)
         return l_count
 
     def read_schedules(self):
@@ -211,8 +267,20 @@ class ReadConfig(ConfigTools):
             print " -- Error in read_Schedules - Adding 'Schedules'"
             l_sect = ET.SubElement(self.m_root, 'Schedules')
             l_list = l_sect.iterfind('Schedule')
-        for l_sched in l_list:
-            pass
+        for l_entry in l_list:
+            l_obj = schedule.ScheduleData()
+            l_obj.Active = self.get_bool(l_entry.findtext('Active'))
+            l_obj.Name = l_entry.get('Name')
+            l_obj.Key = int(l_entry.get('Key'))
+            l_obj.Level = int(l_entry.findtext('Level'))
+            l_obj.LightName = l_entry.findtext('LightName')
+            l_obj.Rate = int(l_entry.findtext('Rate'))
+            l_obj.Time = l_entry.findtext('Time')
+            l_obj.Type = l_entry.findtext('Type')
+            Schedule_Data[l_obj.Key] = l_obj
+            l_count += 1
+        print "--- Read {0:} Schedule entries from xml config file.".format(l_count)
+        return l_count
 
 
 class WriteConfig(ConfigTools):
@@ -225,7 +293,7 @@ class WriteConfig(ConfigTools):
     m_root = None
 
     def __init__(self):
-        print "WriteConfig XML"
+        #print "WriteConfig XML"
         global g_xmltree
         self.m_filename = xml_tools.open_config()
         try:
@@ -237,30 +305,45 @@ class WriteConfig(ConfigTools):
 
 
     def write_file(self):
-        print "Writing config file named", self.m_filename
+        #print "Writing config file named", self.m_filename
         g_xmltree.write(self.m_filename)
+
+    def write_rooms(self, p_parent, p_name):
+        for l_obj in Room_Data.itervalues():
+            if l_obj.HouseName == p_name:
+                l_entry = self.build_common(p_parent, 'Room', l_obj)
+                ET.SubElement(l_entry, 'Comment').text = l_obj.Comment
+                ET.SubElement(l_entry, 'Corner').text = l_obj.Corner
+                ET.SubElement(l_entry, 'HouseName').text = p_name
+                ET.SubElement(l_entry, 'Size').text = l_obj.Size
+                self.m_room_count += 1
 
     def write_houses(self):
         """Replace the data in the 'Houses' section with the current data.
         """
         l_sect = self.m_root.find('Houses')
+        self.m_room_count = 0
         try:
             l_sect.clear()
         except AttributeError:
             l_sect = ET.SubElement(self.m_root, 'Houses')
         for l_obj in House_Data.itervalues():
-            print "XLM writing houses: {0:}".format(l_obj.Name)
+            l_name = l_obj.Name
             l_house = self.build_common(l_sect, 'House', l_obj)
-            ET.SubElement(l_house, 'Street').text = l_obj.Street
-            ET.SubElement(l_house, 'City').text = l_obj.City
-            ET.SubElement(l_house, 'State').text = l_obj.State
-            ET.SubElement(l_house, 'ZipCode').text = l_obj.ZipCode
-            ET.SubElement(l_house, 'Phone').text = l_obj.Phone
-            ET.SubElement(l_house, 'Latitude').text = str(l_obj.Latitude)
-            ET.SubElement(l_house, 'Longitude').text = str(l_obj.Longitude)
-            ET.SubElement(l_house, 'TimeZone').text = str(l_obj.TimeZone)
-            ET.SubElement(l_house, 'SavingTime').text = str(l_obj.SavingTime)
+            l_entry = ET.SubElement(l_house, 'Location')
+            ET.SubElement(l_entry, 'Street').text = l_obj.Street
+            ET.SubElement(l_entry, 'City').text = l_obj.City
+            ET.SubElement(l_entry, 'State').text = l_obj.State
+            ET.SubElement(l_entry, 'ZipCode').text = l_obj.ZipCode
+            ET.SubElement(l_entry, 'Phone').text = l_obj.Phone
+            ET.SubElement(l_entry, 'Latitude').text = str(l_obj.Latitude)
+            ET.SubElement(l_entry, 'Longitude').text = str(l_obj.Longitude)
+            ET.SubElement(l_entry, 'TimeZone').text = str(l_obj.TimeZone)
+            ET.SubElement(l_entry, 'SavingTime').text = str(l_obj.SavingTime)
+            l_entry = ET.SubElement(l_house, 'Rooms')
+            self.write_rooms(l_entry, l_name)
         self.write_file()
+        print " Wrote {0:} Locations and {1:}/{2:} rooms.".format(len(House_Data), len(Room_Data), self.m_room_count)
 
     def write_light_common(self, p_entry, p_obj):
         ET.SubElement(p_entry, 'Comment').text = str(p_obj.Comment)
@@ -307,6 +390,7 @@ class WriteConfig(ConfigTools):
             l_entry = self.build_common(l_ctls, 'Controller', l_obj)
             self.write_light_common(l_entry, l_obj)
         self.write_file()
+        print " Wrote {0:} Lights, {1:} Controllers and {2:} Buttons.".format(len(Light_Data), len(Controller_Data), len(Button_Data))
 
     def write_schedules(self):
         """Replace all the data in the 'Schedules' section with the current data.
@@ -325,6 +409,7 @@ class WriteConfig(ConfigTools):
             ET.SubElement(l_entry, 'Time').text = l_obj.Time
             ET.SubElement(l_entry, 'Type').text = l_obj.Type
         self.write_file()
+        print " Wrote {0:} Schedules.".format(len(Schedule_Data))
 
 def read_config():
     l_rf = ReadConfig()

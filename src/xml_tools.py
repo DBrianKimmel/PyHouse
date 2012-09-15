@@ -24,23 +24,24 @@ class ConfigFile(object):
 
         @return: the path we created or found
         """
-        print "Create_config_dir()"
+        #print "Create_config_dir()"
         for l_dir in self.m_std_path:
-            print "1. Processing dir ", l_dir
+            #print "1. Processing dir ", l_dir
             l_dir = os.path.expanduser(l_dir)
             if os.path.exists(l_dir):
-                print "Found directory path ", l_dir
+                #print "Found directory path ", l_dir
                 return l_dir
         print "No directory found, try creating one."
         for l_dir in self.m_std_path:
-            print "2, Processing dir ", l_dir
+            #print "2, Processing dir ", l_dir
             l_dir = os.path.expanduser(l_dir)
             try:
                 os.mkdir(l_dir)
-                print "Directory created - ", l_dir
+                #print "Directory created - ", l_dir
                 return l_dir
             except OSError:
-                print "Could not make a directory -", l_dir
+                #print "Could not make a directory -", l_dir
+                pass
         print "Could not create any of the following ", self.m_std_path
         sys.exit(1)
 

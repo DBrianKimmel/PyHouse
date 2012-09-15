@@ -206,7 +206,9 @@ class HouseAPI(lighting_tools.CoreAPI):
         """
         l_ct = config_xml.ReadConfig().read_houses()
         if l_ct == 0:
+            print "*** Old config file loaded - House ***"
             self.load_all_locations(Configure_Data['HouseLocation'])
+            self.load_all_rooms(Configure_Data['Rooms'])
 
     def dump_location(self):
         print "***** All House Locations *****"
@@ -240,9 +242,7 @@ def Init():
     global g_logger
     g_logger = logging.getLogger('PyHouse.House')
     g_logger.info("Initializing.")
-    #HouseAPI().load_all_locations(Configure_Data['HouseLocation'])
     HouseAPI().load_xml_house()
-    #HouseAPI().load_all_rooms(Configure_Data['Rooms'])
     #HouseAPI().dump_location()
     #HouseAPI().dump_rooms()
     internet.Init()

@@ -91,36 +91,41 @@ class ScheduleDialog(gui_tools.GuiTools):
 
     Allow add of new schedule or change or delete of existing schedule.
     """
+
+    m_frame = None
+    m_top = None
+    
     def __init__(self, p_root, p_parent, p_key, p_title):
         print "ScheduleDialog.__init__", p_root, p_parent, p_key, p_title
         self.m_root = p_root
-        self.m_parent = p_parent
         self.m_top = Toplevel()
-        self.m_frame = Frame(self.m_top, bg = '#000060')
-        p_root.withdraw()
         if p_title:
             self.m_top.title(p_title)
+        self.m_parent = p_parent
         self.l_result = None
         self.create_vars()
         self.load_vars(p_key)
-        #self.initial_focus = self.body(self.m_frame)
+        #
+        self.m_frame = Frame(self.m_top)
+        self.m_frame.grid_columnconfigure(0, minsize=120)
+        self.m_frame.grid_columnconfigure(1, minsize=300)
         self.m_frame.grid(padx = 5, pady = 5)
-        Label(self.m_top, text = "Name").grid(row = 1, column = 0)
-        Entry(self.m_frame, textvar = self.Name).grid(row = 1, column = 1)
-        Label(self.m_frame, text = "Active").grid(row = 3, column = 0)
-        self.yes_no_radio(self.m_frame, self.Active).grid(row = 3, column = 1)
-        Label(self.m_frame, text = "Time").grid(row = 5, column = 0)
-        Entry(self.m_frame, textvar = self.Time).grid(row = 5, column = 1)
-        Label(self.m_frame, text = "Key").grid(row = 7, column = 0)
-        Entry(self.m_frame, textvar = self.Key, state = DISABLED).grid(row = 7, column = 1)
-        Label(self.m_frame, text = "Level").grid(row = 9, column = 0)
-        Entry(self.m_frame, textvar = self.Level).grid(row = 9, column = 1)
-        Label(self.m_frame, text = "Rate").grid(row = 11, column = 0)
-        Entry(self.m_frame, textvar = self.Rate).grid(row = 11, column = 1)
-        Label(self.m_frame, text = "Type").grid(row = 15, column = 0)
-        Entry(self.m_frame, textvar = self.Type).grid(row = 15, column = 1)
-        Label(self.m_frame, text = "LightName").grid(row = 51, column = 0)
-        self.light_box(self.m_frame).grid(row = 51, column = 1)
+        Label(self.m_frame, text = "Key").grid(row = 1, column = 0, sticky = E)
+        Entry(self.m_frame, textvar = self.Key, state = DISABLED).grid(row = 1, column = 1, sticky = W)
+        Label(self.m_frame, text = "Active").grid(row = 2, column = 0, sticky = E)
+        self.yes_no_radio(self.m_frame, self.Active).grid(row = 2, column = 1, sticky = W)
+        Label(self.m_frame, text = "Name").grid(row = 3, column = 0, sticky = E)
+        Entry(self.m_frame, textvar = self.Name).grid(row = 3, column = 1, sticky = W)
+        Label(self.m_frame, text = "Time").grid(row = 5, column = 0, sticky = E)
+        Entry(self.m_frame, textvar = self.Time).grid(row = 5, column = 1, sticky = W)
+        Label(self.m_frame, text = "Level").grid(row = 9, column = 0, sticky = E)
+        Entry(self.m_frame, textvar = self.Level).grid(row = 9, column = 1, sticky = W)
+        Label(self.m_frame, text = "Rate").grid(row = 11, column = 0, sticky = E)
+        Entry(self.m_frame, textvar = self.Rate).grid(row = 11, column = 1, sticky = W)
+        Label(self.m_frame, text = "Type").grid(row = 15, column = 0, sticky = E)
+        Entry(self.m_frame, textvar = self.Type).grid(row = 15, column = 1, sticky = W)
+        Label(self.m_frame, text = "LightName").grid(row = 31, column = 0, sticky = E)
+        self.light_box(self.m_frame).grid(row = 31, column = 1, sticky = W)
         l_text = "Add"
         if p_title.startswith("Edit"):
             l_text = "Save"

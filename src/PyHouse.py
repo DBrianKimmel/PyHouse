@@ -81,7 +81,7 @@ def Init():
     global g_logger
     # These need to be first and in this order
     configure_mh.ConfigureMain() # Temp till xml fully functional.
-    config_xml.read_config()
+    #config_xml.read_config()
     log.LoggingMain()
     # 2nd. Now the logging will be set up and work properly
     g_logger = logging.getLogger('PyHouse')

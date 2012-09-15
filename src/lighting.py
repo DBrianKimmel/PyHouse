@@ -24,6 +24,7 @@ import logging
 
 # Import PyMh files
 import configure_mh
+import config_xml
 import lighting_buttons
 import lighting_controllers
 import lighting_lights
@@ -110,6 +111,12 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, LightingStatusAPI):
             g_Device_family.append(l_import)
             l_module.Init()
 
+    def load_lighting_xml(self):
+        l_ct = config_xml.ReadConfig().read_lights()
+        if l_ct == 0:
+            print "*** Old config file loaded - Lights ***"
+            self._load_all_lighting_families()
+
     def _dump_all_lighting_families(self):
         self.dump_all_buttons()
         self.dump_all_controllers()
@@ -163,7 +170,7 @@ def Init():
     global g_logger
     g_logger = logging.getLogger('PyHouse.Lighting')
     g_logger.info("Initializing")
-    LightingUtility()._load_all_lighting_families()
+    LightingUtility().load_lighting_xml()
     SceneAPI().load_all_scenes(configure_mh.Configure_Data['Scenes'])
     g_logger.info("Initialized.")
     pass

@@ -21,6 +21,7 @@ import time
 
 # Import PyMh files
 import configure_mh
+import config_xml
 import entertainment
 import lighting
 import sunrisesunset
@@ -78,8 +79,11 @@ class ScheduleAPI(ScheduleData):
         l_sched.Type = p_obj.get('Type', None)
         Schedule_Data[l_key] = l_sched
 
-    def load_xml_schedule(self):
-        config_xml.ReadConfig().read_schedule()
+    def load_schedules_xml(self):
+        l_ct = config_xml.ReadConfig().read_schedules()
+        if l_ct == 0:
+            print "*** Old config file loaded - Schedule ***"
+            self.load_all_schedules(Configure_Data['Schedule'])
 
     def dump_all_schedules(self):
         print "***** All Schedules *****"
@@ -228,8 +232,8 @@ def Init():
     sunrisesunset.Init()
     entertainment.EntertainmentMain()
     lighting.Init()
-    ScheduleAPI().load_all_schedules(Configure_Data['Schedule'])
-    #ScheduleAPI().load_xml_schedules(Configure_Data['Schedule'])
+    #ScheduleAPI().load_all_schedules(Configure_Data['Schedule'])
+    ScheduleAPI().load_schedules_xml()
     #ScheduleAPI().dump_all_schedules()
     g_logger.info("Initialized.")
 
