@@ -5,7 +5,6 @@
 
 # Import system type stuff
 import logging
-import time
 
 # Import PyMh files
 import configure_mh

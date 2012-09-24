@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # Licensed under the MIT license
 # http://opensource.org/licenses/mit-license.php
 
@@ -84,10 +86,10 @@ class Object(object):
 	content = property(lambda x: x._content)
 	needupdate = None	# do we update before sending? (for res)
 
-	def __init__(self, cd, id, parentID, title, restricted = False,
+	def __init__(self, cd, p_id, parentID, title, restricted = False,
                         creator = None, **kwargs):
 		self.cd = cd
-		self.id = id
+		self.id = p_id
 		self.parentID = parentID
 		self.title = title
 		self.creator = creator
@@ -276,9 +278,9 @@ class Container(Object, list):
 	updateID = 0
 	needupdate = False
 
-	def __init__(self, cd, id, parentID, title, restricted = 0,
+	def __init__(self, cd, p_id, parentID, title, restricted = 0,
 	    creator = None, **kwargs):
-		Object.__init__(self, cd, id, parentID, title, restricted,
+		Object.__init__(self, cd, p_id, parentID, title, restricted,
 		    creator, **kwargs)
 		list.__init__(self)
 
@@ -300,7 +302,7 @@ class Container(Object, list):
 		if self.searchClass is not None:
 			if not isinstance(self.searchClass, (list, tuple)):
 				self.searchClass = ['searchClass']
-			for i in searchClass:
+			for i in self.searchClass:
 				SubElement(root, 'upnp:searchclass').text = i
 		if self.searchable is not None:
 			root.attrib['searchable'] = str(self.searchable)
@@ -388,8 +390,8 @@ class DIDLElement(_ElementInterface):
 		self.attrib['xmlns:dc'] = 'http://purl.org/dc/elements/1.1/'
 		self.attrib['xmlns:upnp'] = 'urn:schemas-upnp-org:metadata-1-0/upnp'
 
-	def addContainer(self, id, parentID, title, restricted = False):
-		e = Container(id, parentID, title, restricted, creator = '')
+	def addContainer(self, P_id, parentID, title, restricted = False):
+		e = Container(P_id, parentID, title, restricted, creator = '')
 		self.append(e.toElement())
 
 	def addItem(self, item):

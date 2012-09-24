@@ -5,7 +5,7 @@
 
 
 # Import system type stuff
-import inspect
+#import inspect
 from inspect import getmembers
 import pprint
 

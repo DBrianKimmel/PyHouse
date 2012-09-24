@@ -7,7 +7,7 @@
 # Copyright 2006 John-Mark Gurney <jmg@funkthat.com>
 
 0.  Addressing - Obtain IP address (already done before UPnP starting)
-1.  Discovery - Using l_ssdp to advertise and discover other UPnP thingies.
+1.  Discovery - Using SSDP to advertise and discover other UPnP thingies.
 2.  Description - XML queries back and forth to provide details of UPnP workings.
 3.  Control - A UPnP control point controls UPnP devices.
 4.  Eventing - How a device gets notified about happenings in the UPnP network.
@@ -20,7 +20,7 @@ DBK Notes:
 
 __version__ = '1.00.00'
 
-import os
+#import os
 import os.path
 import random
 import socket
@@ -31,19 +31,18 @@ from twisted.internet import reactor
 from twisted.web import server, resource, static
 
 import UPnP_debug		# my debugging module
-from UPnP_DIDLLite import TextItem, AudioItem, VideoItem, ImageItem, Resource, StorageFolder
+#from UPnP_DIDLLite import TextItem, AudioItem, VideoItem, ImageItem, Resource, StorageFolder
 from UPnP_FSStorage import FSDirectory
 from UPnP_SSDP import SSDPServer, SSDP_PORT, SSDP_ADDR
 from UPnP_ContentDirectory import ContentDirectoryServer
 from UPnP_ConnectionManager import ConnectionManagerServer
 
-# make sure debugging is initalized first, other modules can be pulled in
-# before the "real" debug stuff is setup.
-UPnP_debug.doDebugging(True)	# open up debugging port
-
 listenAddr = '127.0.0.1'    # DBK easier to debug this way
 listenPort = 12345  # DBK Forced for easier debugging
 urlbase = 'http://%s:%d/' % (listenAddr, listenPort)
+
+g_uuid = None
+g_ssdp = None
 
 # Modules to import, maybe config file or something?
 def tryloadmodule(mod):
@@ -79,14 +78,11 @@ def generateuuid():
 
 log.startLogging(sys.stdout)
 
-# Create SSDP server
-l_ssdp = SSDPServer()
-UPnP_debug.insertnamespace('s', l_ssdp)
 
-l_port = reactor.listenMulticast(SSDP_PORT, l_ssdp, listenMultiple=True)
-l_port.joinGroup(SSDP_ADDR)
-l_port.setLoopbackMode(0)		# don't get our own sends
-l_uuid = generateuuid()
+
+
+
+
 
 # Create SOAP server
 class WebServer(resource.Resource):
@@ -94,23 +90,24 @@ class WebServer(resource.Resource):
         resource.Resource.__init__(self)
 
 class RootDevice(static.Data):
-	def __init__(self):
-		l_root_dict = {
-			'hostname': socket.gethostname(),
-			'uuid': l_uuid,
-			'urlbase': urlbase,
-		}
-		l_d = file(os.path.expanduser('~/media/root-device.xml')).read() % l_root_dict
-		static.Data.__init__(self, l_d, 'text/xml')
+    def __init__(self):
+        global g_uuid
+        l_root_dict = {
+            'hostname': socket.gethostname(),
+            'uuid': g_uuid,
+            'urlbase': urlbase,
+        }
+        l_d = file(os.path.expanduser('~/media/root-device.xml')).read() % l_root_dict
+        static.Data.__init__(self, l_d, 'text/xml')
 
 l_wsroot = WebServer()
 UPnP_debug.insertnamespace('root', l_wsroot)
 content = resource.Resource()
 mediapath = os.path.expanduser('~/media')
 if not os.path.isdir(mediapath):
-	print >>sys.stderr, \
+    print >>sys.stderr, \
 	    'Sorry, %s is not a directory, no content to serve.' % `mediapath`
-	sys.exit(1)
+    sys.exit(1)
 
 # This sets up the root to be the media dir so we don't have to
 # enumerate the directory
@@ -149,31 +146,55 @@ del medianode
 l_site = server.Site(l_wsroot)
 reactor.listenTCP(listenPort, l_site)
 
-# we need to do this after the children are there, since we send notifies
-l_ssdp.register('%s::upnp:rootdevice' % l_uuid,
-		'upnp:rootdevice',
-		urlbase + 'root-device.xml')
-l_ssdp.register(l_uuid,
-		l_uuid,
-		urlbase + 'root-device.xml')
-l_ssdp.register('%s::urn:schemas-upnp-org:device:MediaServer:1' % l_uuid,
-		'urn:schemas-upnp-org:device:MediaServer:1',
-		urlbase + 'root-device.xml')
-l_ssdp.register('%s::urn:schemas-upnp-org:service:ConnectionManager:1' % l_uuid,
-		'urn:schemas-upnp-org:device:ConnectionManager:1',
-		urlbase + 'root-device.xml')
-l_ssdp.register('%s::urn:schemas-upnp-org:service:ContentDirectory:1' % l_uuid,
-		'urn:schemas-upnp-org:device:ContentDirectory:1',
-		urlbase + 'root-device.xml')
-l_ssdp.register('%s::urn:schemas-upnp-org:service:LightingControl:1' % l_uuid,
-		'urn:schemas-upnp-org:device:LightingControl:1',
-		urlbase + 'root-device.xml')
+class CreateServers(object):
+    """
+    """
 
-# Main loop
+    def __init__(self):
+        # Create SSDP server
+        self.create_ssdp_server()
+        global g_uuid
+        g_uuid = generateuuid()
+
+    def create_ssdp_server(self):
+        global g_ssdp
+        g_ssdp = SSDPServer()
+        UPnP_debug.insertnamespace('s', g_ssdp)
+        l_port = reactor.listenMulticast(SSDP_PORT, g_ssdp, listenMultiple = True)
+        l_port.joinGroup(SSDP_ADDR)
+        l_port.setLoopbackMode(0)		# don't get our own sends
+
 
 def Init():
-    pass
+    print "UPnP_core Init"
+    # make sure debugging is initalized first, other modules can be pulled in
+    # before the "real" debug stuff is setup.
+    UPnP_debug.doDebugging(True)	# open up debugging port
+    CreateServers()
 
-#reactor.run()
+def Start():
+    print "UPnP_core Start"
+    # we need to do this after the children are there, since we send notifies
+    g_ssdp.register('%s::upnp:rootdevice' % g_uuid,
+                    'upnp:rootdevice',
+                    urlbase + 'root-device.xml')
+    g_ssdp.register(g_uuid,
+                    g_uuid,
+                    urlbase + 'root-device.xml')
+    g_ssdp.register('%s::urn:schemas-upnp-org:device:MediaServer:1' % g_uuid,
+                    'urn:schemas-upnp-org:device:MediaServer:1',
+                    urlbase + 'root-device.xml')
+    g_ssdp.register('%s::urn:schemas-upnp-org:service:ConnectionManager:1' % g_uuid,
+                    'urn:schemas-upnp-org:device:ConnectionManager:1',
+                    urlbase + 'root-device.xml')
+    g_ssdp.register('%s::urn:schemas-upnp-org:service:ContentDirectory:1' % g_uuid,
+                    'urn:schemas-upnp-org:device:ContentDirectory:1',
+                    urlbase + 'root-device.xml')
+    g_ssdp.register('%s::urn:schemas-upnp-org:service:LightingControl:1' % g_uuid,
+                    'urn:schemas-upnp-org:device:LightingControl:1',
+                    urlbase + 'root-device.xml')
+
+def Stop():
+    print "UPnP_core Stop"
 
 ### END

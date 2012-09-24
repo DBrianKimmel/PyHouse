@@ -20,7 +20,7 @@ class ControllersData(lighting_tools.CoreData):
         #print " C lighting_controllers.__init__()"
         super(ControllersData, self).__init__()
         self.Type = 'Controller'
-        # All controlers (Common)
+        # All controllers (Common)
         self.Interface = None
         self.Port = None
         # Serial Controllers
@@ -34,10 +34,7 @@ class ControllersData(lighting_tools.CoreData):
         self.Timeout = None
         self.WriteTimeout = None
         self.XonXoff = None
-        # USB Data
-        #self.UnitID = None
-        #self.NetworkID = None
-        #self.Password = None
+        # USB Controllers
         self.Product = None
         self.Vendor = None
 

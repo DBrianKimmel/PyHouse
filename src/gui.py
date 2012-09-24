@@ -1,12 +1,16 @@
 #!/usr/bin/env python
 
-from Tkinter import *
+from Tkinter import Tk, Frame, Button, Label, SUNKEN, W
 from twisted.internet import tksupport
 
 import gui_tools
 import gui_house
 import gui_lighting
+import gui_logs
 import gui_schedule
+import gui_web
+import config_xml
+import PyHouse
 
 g_root = None # TkInter root window.
 
@@ -15,8 +19,7 @@ class MainWindow(object):
     A dispatch (menu button) window.
     """
     def __init__(self):
-        print "MainWindow.__init__"
-        self.m_main = Frame(g_root, bg='#600000')
+        self.m_main = Frame(g_root)
         g_root.title('PyHouse Main Menu')
         self.m_main.grid(padx = 5, pady = 5)
         self.m_main.grid_columnconfigure(0, minsize=120)
@@ -37,43 +40,52 @@ class MainWindow(object):
         Button(self.m_main, text = "UPnP", command = self.upnp_screen).grid(row = 0, column = 5)
         Button(self.m_main, text = "Weather", command = self.weather_screen).grid(row = 0, column = 6)
         Button(self.m_main, text = "Internet", command = self.internet_screen).grid(row = 0, column = 7)
+#
+        Button(self.m_main, text = "Scenes", command = self.scene_screen).grid(row = 1, column = 0)
+#
         Button(self.m_main, text = "QUIT", fg = "red", command = self.main_quit).grid(row = 91, column = 1)
 
     def house_screen(self):
         self.m_main.grid_forget() # Main Window
-        h = gui_house.HouseWindow(g_root)
+        gui_house.HouseWindow(g_root)
 
     def internet_screen(self):
         self.m_main.grid_forget() # Main Window
-        h = DummyWindow(g_root)
+        DummyWindow(g_root)
 
     def lighting_screen(self):
         self.m_main.grid_forget() # Main Window
-        h = gui_lighting.LightingWindow(g_root)
+        gui_lighting.LightingWindow(g_root)
 
     def logging_screen(self):
         self.m_main.grid_forget() # Main Window
-        h = DummyWindow(g_root)
+        gui_logs.LogsWindow(g_root)
+
+    def scene_screen(self):
+        self.m_main.grid_forget() # Main Window
+        DummyWindow(g_root)
 
     def schedule_screen(self):
         self.m_main.grid_forget() # Main Window
-        h = gui_schedule.ScheduleWindow(g_root, self.m_main)
+        gui_schedule.ScheduleWindow(g_root, self.m_main)
 
     def upnp_screen(self):
         self.m_main.grid_forget() # Main Window
-        h = DummyWindow(g_root)
+        DummyWindow(g_root)
 
     def weather_screen(self):
         self.m_main.grid_forget() # Main Window
-        h = DummyWindow(g_root)
+        DummyWindow(g_root)
 
     def webserv_screen(self):
         self.m_main.grid_forget() # Main Window
-        h = DummyWindow(g_root)
+        gui_web.WebWindow(g_root)
 
     def main_quit(self):
+        config_xml.WriteConfig()
         self.m_main.grid_forget() # Main Window
         g_root.withdraw()
+        Stop()
 
 
 class DummyWindow(gui_tools.GuiTools):
@@ -86,7 +98,7 @@ class DummyWindow(gui_tools.GuiTools):
 
     def main_screen(self):
         self.frame_delete(self.m_frame)
-        m = MainWindow()
+        MainWindow()
 
     
 class StatusBar(Frame):
@@ -100,7 +112,7 @@ class StatusBar(Frame):
         self.label = Label(self, bd = 1, relief = SUNKEN, anchor = W)
         self.label.grid()
 
-    def set(self, format, *args):
+    def set(self, _format, *args):
         self.label.config(text = format % args)
         self.label.update_idletasks()
 
@@ -109,10 +121,16 @@ class StatusBar(Frame):
         self.label.update_idletasks()
 
 
-global g_root
-g_root = Tk()
-tksupport.install(g_root)
+def Init():
+    print "Gui Init"
+    global g_root
+    g_root = Tk()
+    tksupport.install(g_root)
+    MainWindow()
 
-app = MainWindow()
+def Stop():
+    print "Gui Stop"
+    #g_root.destroy()
+    PyHouse.Stop('Gui')
 
 ### END

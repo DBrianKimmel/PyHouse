@@ -61,9 +61,10 @@ import config_xml
 import log
 import house
 import gui
-import web_server
+#import web_server
 import schedule
 import weather
+import UPnP_core
 
 
 Configure_Data = configure_mh.Configure_Data
@@ -80,8 +81,8 @@ def Init():
 
     global g_logger
     # These need to be first and in this order
-    configure_mh.ConfigureMain() # Temp till xml fully functional.
-    #config_xml.read_config()
+    #configure_mh.ConfigureMain() # Temp till xml fully functional.
+    config_xml.read_config()
     log.LoggingMain()
     # 2nd. Now the logging will be set up and work properly
     g_logger = logging.getLogger('PyHouse')
@@ -90,9 +91,9 @@ def Init():
     house.Init()
     weather.Init()
     schedule.Init()
-    import UPnP_core
     UPnP_core.Init()
-    web_server.Init()
+    gui.Init()
+    #web_server.Init()
     g_logger.info("Initialized.\n")
 
 def Start():
@@ -103,20 +104,29 @@ def Start():
     g_logger.info("Starting.")
     house.Start(reactor)
     schedule.Start(reactor)
-    web_server.Start(reactor)
+    #web_server.Start(reactor)
     g_logger.info("Started.\n")
+    UPnP_core.Start()
     # reactor never returns so must be last - Event loop will now run
     reactor.run()
 
-def Stop():
+def Stop(p_tag = None):
     """Stop twisted in preparation to exit PyMh.
     """
     config_xml.write_config()
-    reactor.stop()
+    UPnP_core.Stop()
+    if p_tag != 'Gui':
+        gui.Stop()
     schedule.Stop()
-    web_server.Stop()
-    g_logger.info("Stopped.\n")
+    #web_server.Stop()
+    try:
+        g_logger.info("Stopped.\n")
+    except AttributeError:
+        pass
     log.LoggingMain().stop()
+    reactor.stop()
+    raise SystemExit, "PyHouse says Bye Now."
+    
 
 def Restart():
     """Allow for a running restart of PyMh.

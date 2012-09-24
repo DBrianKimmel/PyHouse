@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # Licensed under the MIT license
 # http://opensource.org/licenses/mit-license.php
 
@@ -5,12 +7,14 @@
 # Copyright 2006-2007 John-Mark Gurney <jmg@funkthat.com>
 
 __version__ = '$Change: 1227 $'
-# $Id: //depot/python/pymeds/pymeds-0.5/upnp.py#1 $
+
+"""
+"""
 
 from twisted.web import soap
 from twisted.python import log
 
-from types import *
+#from types import *
 
 import UPnP_soap_lite
 
@@ -30,7 +34,7 @@ class UPnPPublisher(soap.SOAPPublisher):
 			meth = "{%s}%s" % (ns, methodName)
 		else:
 			meth = methodName
-		response = soap_lite.build_soap_call(meth, result,
+		response = UPnP_soap_lite.build_soap_call(meth, result,
 		    is_response=True, p_encoding=None)
 		self._sendResponse(request, response)
 
@@ -41,5 +45,7 @@ class UPnPPublisher(soap.SOAPPublisher):
 			status = e.status
 		else:
 			failure.printTraceback(file = log.logfile)
-		response = soap_lite.build_soap_error(status)
+		response = UPnP_soap_lite.build_soap_error(status)
 		self._sendResponse(request, response, status=status)
+
+### END

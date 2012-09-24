@@ -23,7 +23,7 @@ This is a Main Module - always present.
 import logging
 
 # Import PyMh files
-import configure_mh
+#import configure_mh
 import config_xml
 import lighting_buttons
 import lighting_controllers
@@ -41,7 +41,7 @@ Controller_Data = lighting_controllers.Controller_Data
 Light_Data = lighting_lights.Light_Data
 Light_Status = lighting_status.Light_Status
 Scene_Data = lighting_scenes.Scene_Data
-Configure_Data = configure_mh.Configure_Data
+#Configure_Data = configure_mh.Configure_Data
 g_reactor = None
 g_logger = None
 
@@ -171,7 +171,7 @@ def Init():
     g_logger = logging.getLogger('PyHouse.Lighting')
     g_logger.info("Initializing")
     LightingUtility().load_lighting_xml()
-    SceneAPI().load_all_scenes(configure_mh.Configure_Data['Scenes'])
+    #SceneAPI().load_all_scenes(configure_mh.Configure_Data['Scenes'])
     g_logger.info("Initialized.")
     pass
 

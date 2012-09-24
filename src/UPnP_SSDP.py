@@ -20,7 +20,7 @@ import string
 
 from twisted.python import log
 from twisted.internet.protocol import DatagramProtocol
-from twisted.internet import reactor, task
+from twisted.internet import reactor
 
 # TODO: Is there a better way of hooking the SSDPServer into a reactor
 # without having to know the default SSDP port and multicast address?
@@ -59,7 +59,7 @@ class SSDPServer(DatagramProtocol):
 		# Break up message in to command and headers
 		# TODO: use the email module after trimming off the request line..
 		# This gets us much better header support.
-		header, payload = data.split('\r\n\r\n')
+		header, _payload = data.split('\r\n\r\n')
 		lines = header.split('\r\n')
 		cmd = string.split(lines[0], ' ')
 		lines = map(lambda x: x.replace(': ', ':', 1), lines[1:])

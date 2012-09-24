@@ -27,7 +27,7 @@ class RingBuffer:
 			self.cur=0
 			self.__class__ = RingBufferFull
 	def get(self):
-  		""" return a list of elements from the oldest to the newest"""
+		""" return a list of elements from the oldest to the newest"""
 		return self.data
 
 class RingBufferFull:
@@ -68,3 +68,5 @@ def doDebugging(opt):
 	sf = telnet.ShellFactory()
 	sf.protocol = Debug
 	reactor.listenTCP(44444, sf)
+
+### END

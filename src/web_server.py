@@ -13,7 +13,7 @@ import os
 import random
 #import time
 import twisted.python.components as tpc
-import nevow
+#import nevow
 from nevow import appserver
 from nevow import flat
 from nevow import inevow
@@ -27,20 +27,20 @@ from nevow.rend import _CARRYOVER
 from formless import iformless
 
 # Import PyMh files
-import configure_mh
+import config_xml
 import entertainment
 import house
 #import Device_Insteon
 import lighting
 import schedule
-from lighting import Light_Status
+#from lighting import Light_Status
 
 
 Light_Data = lighting.Light_Data
 House_Data = house.House_Data
 Location_Data = house.Location_Data
 Room_Data = house.Room_Data
-Configure_Data = configure_mh.Configure_Data
+Web_Data = {}
 
 g_port = 8080
 g_logger = None
@@ -53,6 +53,22 @@ Lights = {}
 XLight_Data = {}
 XLight_Status = {}
 
+# Only to move the eclipse error flags to one small spot 
+T_p = Tag.p
+T_h1 = Tag.h1
+T_td = Tag.td
+T_tr = Tag.tr
+T_html = Tag.html
+T_head = Tag.head
+T_body = Tag.body
+T_form = Tag.form
+T_link = Tag.link
+T_table = Tag.table
+T_title = Tag.title
+T_input = Tag.input
+T_script = Tag.script
+U_R_child = url.root.child
+U_H_child = url.here.child
 
 class WebLightingData(lighting.LightingData): pass
 class WebLightingAPI(lighting.LightingAPI): pass
@@ -70,6 +86,8 @@ class WebException(Exception):
 class WebData(object):
     """
     """
+    def __init__(self):
+        self.WebPort = 8080
 
 class WebUtilities(WebData):
     """
@@ -244,18 +262,18 @@ class ControllersPage(rend.Page):
 
     addSlash = True
     docFactory = loaders.stan(
-        Tag.html[
-            Tag.title['PyHouse - Controller Page'],
-                Tag.link(rel = 'stylesheet', type = 'text/css', href = url.root.child('mainpage.css'))["\n"],
-            Tag.body[
-                Tag.h1['PyHouse Controllers'],
-                Tag.p['Select the controller:'],
-                Tag.form(action = url.here.child('_submit!!post'),
+        T_html[
+            T_title['PyHouse - Controller Page'],
+                T_link(rel = 'stylesheet', type = 'text/css', href = U_R_child('mainpage.css'))["\n"],
+            T_body[
+                T_h1['PyHouse Controllers'],
+                T_p['Select the controller:'],
+                T_form(action = U_H_child('_submit!!post'),
                        enctype = "multipart/form-data",
                        method = 'post'
                       )[
-                    Tag.input(type = 'submit', value = 'Add Controller', name = BUTTON),
-                    Tag.input(type = 'submit', value = 'Delete Controller', name = BUTTON)
+                    T_input(type = 'submit', value = 'Add Controller', name = BUTTON),
+                    T_input(type = 'submit', value = 'Delete Controller', name = BUTTON)
                     ]
                 ]
             ]
@@ -270,18 +288,18 @@ class EntertainmentPage(rend.Page):
     """
     addSlash = True
     docFactory = loaders.stan(
-        Tag.html[
-            Tag.title['PyHouse - Entertainment Page'],
-                Tag.link(rel = 'stylesheet', type = 'text/css', href = url.root.child('mainpage.css'))["\n"],
-            Tag.body[
-                Tag.h1['PyHouse Entertainment'],
-                Tag.p['Select the entertainment:'],
-                Tag.form(action = url.here.child('_submit!!post'),
+        T_html[
+            T_title['PyHouse - Entertainment Page'],
+                T_link(rel = 'stylesheet', type = 'text/css', href = U_R_child('mainpage.css'))["\n"],
+            T_body[
+                T_h1['PyHouse Entertainment'],
+                T_p['Select the entertainment:'],
+                T_form(action = U_H_child('_submit!!post'),
                        enctype = "multipart/form-data",
                        method = 'post'
                       )[
-                    Tag.input(type = 'submit', value = 'Add Entertainment', name = BUTTON),
-                    Tag.input(type = 'submit', value = 'Delete Entertainment', name = BUTTON)
+                    T_input(type = 'submit', value = 'Add Entertainment', name = BUTTON),
+                    T_input(type = 'submit', value = 'Delete Entertainment', name = BUTTON)
                     ]
                 ]
             ]
@@ -296,26 +314,26 @@ class HousePage(rend.Page):
     """
     addSlash = True
     docFactory = loaders.stan(
-        Tag.html["\n",
-            Tag.head["\n",
-                Tag.title['PyHouse - House Page'],
-                Tag.link(rel = 'stylesheet', type = 'text/css', href = url.root.child('mainpage.css'))["\n"],
-                Tag.script(type = 'text/javascript', src = 'ajax.js')["\n"],
-                Tag.script(type = 'text/javascript', src = 'floating_window.js'),
-                Tag.script(type = 'text/javascript', src = 'housepage.js')["\n"],
+        T_html["\n",
+            T_head["\n",
+                T_title['PyHouse - House Page'],
+                T_link(rel = 'stylesheet', type = 'text/css', href = U_R_child('mainpage.css'))["\n"],
+                T_script(type = 'text/javascript', src = 'ajax.js')["\n"],
+                T_script(type = 'text/javascript', src = 'floating_window.js'),
+                T_script(type = 'text/javascript', src = 'housepage.js')["\n"],
                 ],
-            Tag.body[
-                Tag.h1['PyHouse Houses'],
-                Tag.p['\n'],
-                Tag.p['Select the house to control:'],
-                Tag.table(style = 'width: 100%;', border = 0)["\n",
+            T_body[
+                T_h1['PyHouse Houses'],
+                T_p['\n'],
+                T_p['Select the house to control:'],
+                T_table(style = 'width: 100%;', border = 0)["\n",
                     Tag.invisible(data = Tag.directive('houselist'), render = Tag.directive('houselist'))
                     ],
-                Tag.form(action = url.here.child('_submit!!post'),
+                T_form(action = U_H_child('_submit!!post'),
                        enctype = "multipart/form-data",
                        method = 'post'
                       )["\n",
-                    Tag.input(type = 'button', onclick = "createNewHouseWindow('1')", value = 'add')
+                    T_input(type = 'button', onclick = "createNewHouseWindow('1')", value = 'add')
                     ]
                 ]
             ]
@@ -337,9 +355,9 @@ class HousePage(rend.Page):
         for l_key, l_value in sorted(links.iteritems()):
             l_name = l_value.Name
             if l_cnt % 2 == 0:
-                l_ret.append(Tag.tr)
-            l_ret.append(Tag.td)
-            l_ret.append(Tag.input(type = 'submit', value = l_key, name = BUTTON, onclick = "createChangeHouseWindow(\'{0:}\', \'{1:}\', \'{2:}\', \'{3:}\', \'{4:}\', \'{5:}\', \'{6:}\', \'{7:}\', \'{8:}\', \'{9:}\' )".format(
+                l_ret.append(T_tr)
+            l_ret.append(T_td)
+            l_ret.append(T_input(type = 'submit', value = l_key, name = BUTTON, onclick = "createChangeHouseWindow(\'{0:}\', \'{1:}\', \'{2:}\', \'{3:}\', \'{4:}\', \'{5:}\', \'{6:}\', \'{7:}\', \'{8:}\', \'{9:}\' )".format(
                         l_value.Name, l_value.Active, l_value.Street, l_value.City, l_value.State, l_value.ZipCode, l_value.Latitude, l_value.Longitude, l_value.TimeZone, l_value.SavingTime))
                          [ l_name])
             l_cnt += 1
@@ -366,27 +384,27 @@ class LightingPage(rend.Page, WebLightingData, WebLightingAPI, WebLightingStatus
     """
     addSlash = True
     docFactory = loaders.stan(
-        Tag.html["\n",
-            Tag.head["\n",
-                Tag.title['PyHouse - Lighting Page'],
-                Tag.link(rel = 'stylesheet', type = 'text/css', href = url.root.child('mainpage.css'))["\n"],
-                Tag.script(type = 'text/javascript', src = 'ajax.js')["\n"],
-                Tag.script(type = 'text/javascript', src = 'floating_window.js'),
-                Tag.script(type = 'text/javascript', src = 'lightpage.js')["\n"],
+        T_html["\n",
+            T_head["\n",
+                T_title['PyHouse - Lighting Page'],
+                T_link(rel = 'stylesheet', type = 'text/css', href = U_R_child('mainpage.css'))["\n"],
+                T_script(type = 'text/javascript', src = 'ajax.js')["\n"],
+                T_script(type = 'text/javascript', src = 'floating_window.js'),
+                T_script(type = 'text/javascript', src = 'lightpage.js')["\n"],
                 ],
-            Tag.body[
-                Tag.h1['PyHouse Lighting'],
-                Tag.p['\n'],
-                Tag.p['Select the light to control:'],
-                Tag.table(style = 'width: 100%;', border = 0)["\n",
+            T_body[
+                T_h1['PyHouse Lighting'],
+                T_p['\n'],
+                T_p['Select the light to control:'],
+                T_table(style = 'width: 100%;', border = 0)["\n",
                     Tag.invisible(data = Tag.directive('lightlist'), render = Tag.directive('lightlist'))
                     ],
-                Tag.form(action = url.here.child('_submit!!post'),
+                T_form(action = U_H_child('_submit!!post'),
                        enctype = "multipart/form-data",
                        method = 'post'
                       )["\n",
-                    Tag.input(type = 'button', onclick = "createNewLightWindow('1234')", value = 'Add Light'),
-                    Tag.input(type = 'submit', value = 'Scan Lights', name = BUTTON)
+                    T_input(type = 'button', onclick = "createNewLightWindow('1234')", value = 'Add Light'),
+                    T_input(type = 'submit', value = 'Scan Lights', name = BUTTON)
                     ]
                 ]
             ]
@@ -421,9 +439,9 @@ class LightingPage(rend.Page, WebLightingData, WebLightingAPI, WebLightingStatus
             l_type = l_value.Type
             l_name = l_value.Name
             if l_cnt % 2 == 0:
-                l_ret.append(Tag.tr)
-            l_ret.append(Tag.td)
-            l_ret.append(Tag.input(type = 'submit', value = l_key, name = BUTTON, onclick = "createChangeLightWindow(\'{0:}\',\'{1:}\',\'{2:}\')".format(l_key, l_cur_lev, l_family))
+                l_ret.append(T_tr)
+            l_ret.append(T_td)
+            l_ret.append(T_input(type = 'submit', value = l_key, name = BUTTON, onclick = "createChangeLightWindow(\'{0:}\',\'{1:}\',\'{2:}\')".format(l_key, l_cur_lev, l_family))
                          [ l_family, '-', l_type, ':', l_name, ' ', l_cur_lev])
             l_cnt += 1
         return l_ret
@@ -484,27 +502,27 @@ class RoomsPage(rend.Page): pass
 class ScenesPage(rend.Page):
     addSlash = True
     docFactory = loaders.stan(
-        Tag.html["\n",
-            Tag.head["\n",
-                Tag.title['PyHouse - Scenes Page'],
-                Tag.link(rel = 'stylesheet', type = 'text/css', href = url.root.child('mainpage.css'))["\n"],
-                Tag.script(type = 'text/javascript', src = 'ajax.js')["\n"],
-                Tag.script(type = 'text/javascript', src = 'floating_window.js'),
-                Tag.script(type = 'text/javascript', src = 'scenepage.js')["\n"],
+        T_html["\n",
+            T_head["\n",
+                T_title['PyHouse - Scenes Page'],
+                T_link(rel = 'stylesheet', type = 'text/css', href = U_R_child('mainpage.css'))["\n"],
+                T_script(type = 'text/javascript', src = 'ajax.js')["\n"],
+                T_script(type = 'text/javascript', src = 'floating_window.js'),
+                T_script(type = 'text/javascript', src = 'scenepage.js')["\n"],
                 ],
-            Tag.body[
-                Tag.h1['PyHouse Scenes'],
-                Tag.p['\n'],
-                Tag.p['Select the scene:'],
-                Tag.table(style = 'width: 100%;', border = 0)["\n",
+            T_body[
+                T_h1['PyHouse Scenes'],
+                T_p['\n'],
+                T_p['Select the scene:'],
+                T_table(style = 'width: 100%;', border = 0)["\n",
                     Tag.invisible(data = Tag.directive('scenelist'), render = Tag.directive('scenelist'))
                     ],
-                Tag.form(action = url.here.child('_submit!!post'),
+                T_form(action = U_H_child('_submit!!post'),
                        enctype = "multipart/form-data",
                        method = 'post'
                       )["\n",
-                    Tag.input(type = 'button', onclick = "createNewSceneWindow()", value = 'Add Scene'),
-                    Tag.input(type = 'submit', value = 'Scan Lights', name = BUTTON)
+                    T_input(type = 'button', onclick = "createNewSceneWindow()", value = 'Add Scene'),
+                    T_input(type = 'submit', value = 'Scan Lights', name = BUTTON)
                     ]
                 ]
             ]
@@ -533,9 +551,9 @@ class ScenesPage(rend.Page):
         l_cnt = 0
         for l_key, l_value in sorted(links.iteritems()):
             if l_cnt % 2 == 0:
-                l_ret.append(Tag.tr)
-            l_ret.append(Tag.td)
-            l_ret.append(Tag.input(type = 'submit', value = l_key, name = BUTTON, onclick = "createChangeSceneWindow(\'{0:}\', '100', '2s')".format(l_key))
+                l_ret.append(T_tr)
+            l_ret.append(T_td)
+            l_ret.append(T_input(type = 'submit', value = l_key, name = BUTTON, onclick = "createChangeSceneWindow(\'{0:}\', '100', '2s')".format(l_key))
                          [ l_value.Name, "\n" ])
             l_cnt += 1
         return l_ret
@@ -554,21 +572,21 @@ class ScenesPage(rend.Page):
 class SchedulePage(rend.Page):
     addSlash = True
     docFactory = loaders.stan(
-        Tag.html[
-            Tag.head[
-                Tag.title['PyHouse - Schedule Page'],
-                Tag.link(rel = 'stylesheet', type = 'text/css', href = url.root.child('mainpage.css'))["\n"],
-                Tag.script(type = 'text/javascript', src = 'ajax.js')["\n"],
-                Tag.script(type = 'text/javascript', src = 'floating_window.js')["\n"],
-                Tag.script(type = 'text/javascript', src = 'schedpage.js'),
+        T_html[
+            T_head[
+                T_title['PyHouse - Schedule Page'],
+                T_link(rel = 'stylesheet', type = 'text/css', href = U_R_child('mainpage.css'))["\n"],
+                T_script(type = 'text/javascript', src = 'ajax.js')["\n"],
+                T_script(type = 'text/javascript', src = 'floating_window.js')["\n"],
+                T_script(type = 'text/javascript', src = 'schedpage.js'),
                 ],
-            Tag.body[
-                Tag.h1['PyHouse Schedule'],
-                Tag.p['Select the schedule:'],
-                Tag.table(style = 'width: 100%;', border = 0)["\n",
+            T_body[
+                T_h1['PyHouse Schedule'],
+                T_p['Select the schedule:'],
+                T_table(style = 'width: 100%;', border = 0)["\n",
                     Tag.invisible(data = Tag.directive('schedlist'), render = Tag.directive('schedlist'))
                     ],
-                Tag.input(type = "button", onclick = "createNewSchedule('1234')", value = "Add Slot")
+                T_input(type = "button", onclick = "createNewSchedule('1234')", value = "Add Slot")
                 ]
             ]
         )
@@ -604,9 +622,9 @@ class SchedulePage(rend.Page):
             l_time = l_obj.Time
             l_type = l_obj.Type
             if l_cnt % 2 == 0:
-                l_ret.append(Tag.tr)
-            l_ret.append(Tag.td)
-            l_ret.append(Tag.input(type = 'submit', value = l_key, name = BUTTON, onclick = "createChangeScheduleWindow(\'{0:}\', \'{1:}\', \'{2:}\', \'{3:}\', \'{4:}\', \'{5:}\')".format(
+                l_ret.append(T_tr)
+            l_ret.append(T_td)
+            l_ret.append(T_input(type = 'submit', value = l_key, name = BUTTON, onclick = "createChangeScheduleWindow(\'{0:}\', \'{1:}\', \'{2:}\', \'{3:}\', \'{4:}\', \'{5:}\')".format(
                                                     l_key, l_type, l_name, l_time, l_level, l_rate))
                          [ l_name, ' ', l_type, ' ', l_time, ' ', l_level, ' ', "\n" ])
             l_cnt += 1
@@ -653,54 +671,54 @@ class RootPage(ManualFormMixin, EntertainmentPage, HousePage, LightingPage, Loca
     """
     addSlash = True
     docFactory = loaders.stan(
-        Tag.html(xmlns = 'http://www.w3.org/1999/xhtml', lang = 'en')[
-            Tag.head[
-                Tag.title['PyHouse - Main Page'],
-                Tag.link(rel = 'stylesheet', type = 'text/css', href = url.root.child('mainpage.css')),
-                Tag.script(type = 'text/javascript', src = 'mainpage.js'),
+        T_html(xmlns = 'http://www.w3.org/1999/xhtml', lang = 'en')[
+            T_head[
+                T_title['PyHouse - Main Page'],
+                T_link(rel = 'stylesheet', type = 'text/css', href = U_R_child('mainpage.css')),
+                T_script(type = 'text/javascript', src = 'mainpage.js'),
                 ],
-            Tag.body[
-                Tag.h1['PyHouse_2'],
-                Tag.form(name = 'mainmenuofbuttons',
-                    action = url.here.child('_submit!!post'),
+            T_body[
+                T_h1['PyHouse_2'],
+                T_form(name = 'mainmenuofbuttons',
+                    action = U_H_child('_submit!!post'),
                     enctype = "multipart/form-data",
                     method = 'post')
                     [
-                    Tag.table(style = 'width: 100%;', border = 0)[
-                        Tag.tr[
-                            Tag.td[ Tag.input(type = 'submit', value = 'Entertainment', name = BUTTON), ],
-                            Tag.td[ Tag.input(type = 'submit', value = 'House', name = BUTTON), ],
-                            Tag.td[ Tag.input(type = 'submit', value = 'Weather', name = BUTTON), ],
-                            Tag.td[ Tag.input(type = 'submit', value = '1,4', name = BUTTON), ],
-                            Tag.td[ Tag.input(type = 'submit', value = 'Controllers', name = BUTTON), ],
+                    T_table(style = 'width: 100%;', border = 0)[
+                        T_tr[
+                            T_td[ T_input(type = 'submit', value = 'Entertainment', name = BUTTON), ],
+                            T_td[ T_input(type = 'submit', value = 'House', name = BUTTON), ],
+                            T_td[ T_input(type = 'submit', value = 'Weather', name = BUTTON), ],
+                            T_td[ T_input(type = 'submit', value = '1,4', name = BUTTON), ],
+                            T_td[ T_input(type = 'submit', value = 'Controllers', name = BUTTON), ],
                             ],
-                        Tag.tr[
-                            Tag.td[ Tag.input(type = 'submit', value = 'Lighting', name = BUTTON), ],
-                            Tag.td[ Tag.input(type = 'submit', value = 'Rooms', name = BUTTON), ],
-                            Tag.td[ Tag.input(type = 'submit', value = '2,3', name = BUTTON), ],
-                            Tag.td[ Tag.input(type = 'submit', value = '2,4', name = BUTTON), ],
-                            Tag.td[ Tag.input(type = 'submit', value = 'Buttons', name = BUTTON), ],
+                        T_tr[
+                            T_td[ T_input(type = 'submit', value = 'Lighting', name = BUTTON), ],
+                            T_td[ T_input(type = 'submit', value = 'Rooms', name = BUTTON), ],
+                            T_td[ T_input(type = 'submit', value = '2,3', name = BUTTON), ],
+                            T_td[ T_input(type = 'submit', value = '2,4', name = BUTTON), ],
+                            T_td[ T_input(type = 'submit', value = 'Buttons', name = BUTTON), ],
                             ],
-                         Tag.tr[
-                            Tag.td[ Tag.input(type = 'submit', value = 'Scenes', name = BUTTON), ],
-                            Tag.td[ Tag.input(type = 'submit', value = 'Location', name = BUTTON), ],
-                            Tag.td[ Tag.input(type = 'submit', value = '3,3', name = BUTTON), ],
-                            Tag.td[ Tag.input(type = 'submit', value = '3,4', name = BUTTON), ],
-                            Tag.td[ Tag.input(type = 'submit', value = '3,5', name = BUTTON), ],
+                         T_tr[
+                            T_td[ T_input(type = 'submit', value = 'Scenes', name = BUTTON), ],
+                            T_td[ T_input(type = 'submit', value = 'Location', name = BUTTON), ],
+                            T_td[ T_input(type = 'submit', value = '3,3', name = BUTTON), ],
+                            T_td[ T_input(type = 'submit', value = '3,4', name = BUTTON), ],
+                            T_td[ T_input(type = 'submit', value = '3,5', name = BUTTON), ],
                             ],
-                        Tag.tr[
-                            Tag.td[ Tag.input(type = 'submit', value = 'Schedule', name = BUTTON) ],
-                            Tag.td[ Tag.input(type = 'submit', value = '4,2', name = BUTTON), ],
-                            Tag.td[ Tag.input(type = 'submit', value = '4,3', name = BUTTON), ],
-                            Tag.td[ Tag.input(type = 'submit', value = '4,4', name = BUTTON), ],
-                            Tag.td[ Tag.input(type = 'submit', value = '4,5', name = BUTTON), ],
+                        T_tr[
+                            T_td[ T_input(type = 'submit', value = 'Schedule', name = BUTTON) ],
+                            T_td[ T_input(type = 'submit', value = '4,2', name = BUTTON), ],
+                            T_td[ T_input(type = 'submit', value = '4,3', name = BUTTON), ],
+                            T_td[ T_input(type = 'submit', value = '4,4', name = BUTTON), ],
+                            T_td[ T_input(type = 'submit', value = '4,5', name = BUTTON), ],
                             ],
-                        Tag.tr[
-                            Tag.td[ Tag.input(type = 'submit', value = '5,1', name = BUTTON) ],
-                            Tag.td[ Tag.input(type = 'submit', value = '5,2', name = BUTTON), ],
-                            Tag.td[ Tag.input(type = 'submit', value = '5,3', name = BUTTON), ],
-                            Tag.td[ Tag.input(type = 'submit', value = '5,4', name = BUTTON), ],
-                            Tag.td[ Tag.input(type = 'submit', value = '5,5', name = BUTTON), ],
+                        T_tr[
+                            T_td[ T_input(type = 'submit', value = '5,1', name = BUTTON) ],
+                            T_td[ T_input(type = 'submit', value = '5,2', name = BUTTON), ],
+                            T_td[ T_input(type = 'submit', value = '5,3', name = BUTTON), ],
+                            T_td[ T_input(type = 'submit', value = '5,4', name = BUTTON), ],
+                            T_td[ T_input(type = 'submit', value = '5,5', name = BUTTON), ],
                             ],
                         ] # table
                     ] # form
@@ -740,30 +758,13 @@ class RootPage(ManualFormMixin, EntertainmentPage, HousePage, LightingPage, Loca
         return RootPage('Root')
 
 
-class Web_ServerMain(ManualFormMixin):
-    """This is the main web server.
-    Other classes are to build pages and handle requests.
-    """
-
-    def __init__(self):
-        self.m_logger = logging.getLogger('PyHouse.WebServer')
-        global g_entertainment
-        g_entertainment = entertainment.EntertainmentMain()
-        self.m_port = 8080
-        if 'web_server' in Configure_Data:
-            l_dict = Configure_Data['web_server']
-            if 'port' in l_dict:
-                self.m_port = int(l_dict['port'])
-        self.m_logger.info("Initialized - Start the web server on port {0:}".format(self.m_port))
-
 def Init():
     global g_logger
+    Web_Data[0] = WebData()
+    Web_Data[0].WebPort = 8080
     g_logger = logging.getLogger('PyHouse.WebServer')
     entertainment.EntertainmentMain()
-    if 'web_server' in Configure_Data:
-        l_dict = Configure_Data['web_server']
-        if 'port' in l_dict:
-            g_port = int(l_dict['port'])
+    config_xml.ReadConfig().read_log_web()
     g_logger.info("Initialized - Start the web server on port {0:}".format(g_port))
 
 def Start(p_reactor):

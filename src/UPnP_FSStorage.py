@@ -2,7 +2,6 @@
 # Copyright 2006-2008 John-Mark Gurney <jmg@funkthat.com>
 
 __version__ = '$Change: 1227 $'
-# $Id: //depot/python/pymeds/pymeds-0.5/FSStorage.py#1 $
 
 ffmpeg_path = '/usr/local/bin/ffmpeg'
 
@@ -13,7 +12,7 @@ import os
 import sets
 import stat
 
-from UPnP_DIDLLite import Container, StorageFolder, Item, VideoItem, AudioItem, TextItem, ImageItem, Resource, ResourceList
+from UPnP_DIDLLite import Container, StorageFolder, Item, Resource, ResourceList #, VideoItem, AudioItem, TextItem, ImageItem
 from twisted.web import resource, server, static
 from twisted.python import log
 from twisted.internet import abstract
@@ -146,7 +145,7 @@ class DynamTransfer(protocol.ProcessProtocol):
 		if mods[0] not in ('xvid', 'mpeg2', ):
 			vcodec = 'xvid'
 
-		mimetype = { 'xvid': 'video/avi', 'mpeg2': 'video/mpeg', }
+		#mimetype = { 'xvid': 'video/avi', 'mpeg2': 'video/mpeg', }
 		mimetype = { 'xvid': 'video/x-msvideo', 'mpeg2': 'video/mpeg', }
 		request.setHeader('content-type', mimetype[vcodec])
 		if request.method == 'HEAD':
@@ -236,7 +235,7 @@ def defFS(path, fobj):
 		log.msg('skipping (not dir or reg): %s' % path)
 		return None, None
 
-	klass, mt = FileDIDL.buildClassMT(FSItem, path)
+	klass, mt = UPnP_FileDIDL.buildClassMT(FSItem, path)
 
 	return klass, { 'path': path, 'mimetype': mt }
 
@@ -270,8 +269,8 @@ def dofileadd(cd, parent, path, name):
 	return cd.addItem(parent, klass, name, **kwargs)
 
 class FSDirectory(FSObject, StorageFolder):
-        """Class to be imported.
-        """
+	"""Class to be imported.
+	"""
 	def __init__(self, *args, **kwargs):
 		path = kwargs['path']
 		del kwargs['path']

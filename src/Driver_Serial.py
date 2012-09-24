@@ -16,12 +16,10 @@ import time
 from twisted.internet.task import LoopingCall
 
 # Import PyMh files
-import configure_mh
 import lighting
 from tools import PrintBytes
 
 
-Configure_Data = configure_mh.Configure_Data
 
 g_message = bytearray()
 g_logger = None
@@ -54,20 +52,6 @@ class SerialDriverUtility(SerialDeviceData):
                     BaudRate = l_obj.get_BaudRate
                     print " _ Driver_Serial. ", p_key, p_family, l_key, l_obj
         return l_obj.get_Port(), l_obj.get_BaudRate
-
-        l_dict = Configure_Data['InsteonControllers']
-        self.SerialPort['Port'] = l_dict.get('Port', '/dev/ttyUSB0')
-        self.SerialPort['BaudRate'] = l_dict.get('BaudRate', 19200)
-        self.SerialPort['ByteSize'] = l_dict.get('ByteSize', 8)
-        self.SerialPort['Parity'] = l_dict.get('Parity', 'None')
-        self.SerialPort['StopBits'] = l_dict.get('StopBits', 1.0)
-        self.SerialPort['Timeout'] = 0.1
-        self.SerialPort['WriteTimeout'] = 1
-        self.SerialPort['InterCharTimeout'] = 1
-        self.SerialPort['XonXoff'] = False
-        self.SerialPort['RtsCts'] = False
-        self.SerialPort['DsrDtr'] = False
-
 
 class API(SerialDriverUtility):
     """Contains all external commands.

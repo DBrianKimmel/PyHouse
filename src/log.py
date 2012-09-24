@@ -15,14 +15,18 @@ import logging.handlers
 import platform
 
 # Import PyMh files
-import configure_mh
+import config_xml
 
 
-Configure_Data = configure_mh.Configure_Data
+Log_Data = {}
 
+class LogData(object):
+    def __init__(self):
+        self.Debug = None
+        self.Error = None
 
+    
 class LoggingUtility(object):
-
     def setup_debug_log (self):
         """Debug and more severe goes to the base logger
         """
@@ -46,16 +50,16 @@ class LoggingUtility(object):
 class LoggingMain(LoggingUtility):
 
     def __init__(self):
-        if platform.uname()[0] == 'Windows':
-            self.m_debug_name = 'C:/var/debug.log'
-            self.m_error_name = 'C:/var/error.log'
-        else:
-            self.m_debug_name = '/var/log/pymh/debug.log'
-            self.m_error_name = '/var/log/pymh/error.log'
+        #if platform.uname()[0] == 'Windows':
+        #    self.m_debug_name = 'C:/var/debug.log'
+        #    self.m_error_name = 'C:/var/error.log'
+        #else:
+        #    self.m_debug_name = '/var/log/pymh/debug.log'
+        #    self.m_error_name = '/var/log/pymh/error.log'
+        config_xml.ReadConfig().read_log_web()
+        self.m_debug_name = Log_Data[0].Debug
+        self.m_error_name = Log_Data[0].Error
         self.m_formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s - %(message)s')
-        l_dict = Configure_Data['Logs']
-        self.m_debug_name = l_dict['debug_log']
-        self.m_error_name = l_dict['error_log']
         self.setup_debug_log()
 
     def stop(self):

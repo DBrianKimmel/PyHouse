@@ -29,16 +29,16 @@ reqname = 'requests'
 from twisted.python import log
 from twisted.web import resource, static
 
-from xml.etree.ElementTree import Element, SubElement, tostring
+#from xml.etree.ElementTree import Element, SubElement, tostring
 from UPnP_upnp import UPnPPublisher, errorCode
-from UPnP_DIDLLite import DIDLElement, Container, Movie, Resource, MusicTrack
+from UPnP_DIDLLite import DIDLElement, Container #, Movie, Resource, MusicTrack
 
 from twisted.internet import defer
 from twisted.python import failure
 
 import UPnP_debug
-import traceback
-from urllib import quote
+#import traceback
+#from urllib import quote
 
 class doRecall(defer.Deferred):
 	'''A class that will upon any callback from the Deferred object passed
@@ -78,8 +78,8 @@ class doRecall(defer.Deferred):
 			self.defer.callback(ret)
 
 def doRecallgen(defer, fun, *args, **kwargs):
-        i = doRecall(defer, fun, *args, **kwargs)
-        return i.defer
+	i = doRecall(defer, fun, *args, **kwargs)
+	return i.defer
 
 class ContentDirectoryControl(UPnPPublisher, dict):
 	"""This class implements the CDS actions over SOAP.
@@ -195,8 +195,8 @@ class ContentDirectoryControl(UPnPPublisher, dict):
 		"""Required: Incrementally browse the native heirachy of the Content
 		Directory objects exposed by the Content Directory Service.
                 """
-		(ObjectID, BrowseFlag, Filter, StartingIndex, RequestedCount,
-		    SortCriteria) = args
+		(ObjectID, BrowseFlag, _Filter, StartingIndex, RequestedCount,
+		    _SortCriteria) = args
 		StartingIndex = int(StartingIndex)
 		RequestedCount = int(RequestedCount)
 		didl = DIDLElement()

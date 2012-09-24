@@ -33,7 +33,7 @@ class GuiTools(object):
         return 
 
     def yes_no_radio(self, p_frame, p_var):
-        l_entry = int(p_var.get())
+        _l_entry = int(p_var.get())
         #print "Creating Y/N buttons with value {0:} <{1:}>".format(p_var, l_entry)
         l_frame = Frame(p_frame)
         Radiobutton(l_frame, text = "Yes", variable = p_var, value = True).grid(row = 0, column = 0)
@@ -162,10 +162,10 @@ class ToolTip:
         self._id = self.master.after(self._opts['delay'], self._show)
 
     def _unschedule(self):
-        id = self._id
+        l_id = self._id
         self._id = None
-        if id:
-            self.master.after_cancel(id)
+        if l_id:
+            self.master.after_cancel(l_id)
 
     def _show(self):
         if self._opts['state'] == 'disabled':
@@ -235,10 +235,10 @@ def demo():
     l = Listbox(root)
     l.insert('end', "I'm a listbox")
     l.pack(side='top')
-    t1 = ToolTip(l, follow_mouse=1, text="I'm a tooltip with follow_mouse set to 1, so I won't be placed outside my parent")
+    _t1 = ToolTip(l, follow_mouse=1, text="I'm a tooltip with follow_mouse set to 1, so I won't be placed outside my parent")
     b = Button(root, text='Quit', command=root.quit)
     b.pack(side='bottom')
-    t2 = ToolTip(b, text='Enough of this')
+    _t2 = ToolTip(b, text='Enough of this')
     root.mainloop()
 
 if __name__ == '__main__':

@@ -15,7 +15,7 @@ Read/reread the schedule file at:
 # Import system type stuff
 import datetime
 import logging
-import pprint
+#import pprint
 import time
 #from twisted.internet.defer import Deferred
 
@@ -194,7 +194,7 @@ class ScheduleUtility(ScheduleExecution):
         """
         l_now = datetime.datetime.now()
         l_time_now = datetime.time(l_now.hour, l_now.minute, l_now.second)
-        l_date = datetime.date(l_now.year, l_now.month, l_now.day)
+        _l_date = datetime.date(l_now.year, l_now.month, l_now.day)
         #sunrisesunset.SSAPI().set_date(l_date)
         sunrisesunset.Start()
         self.m_sunset = sunrisesunset.SSAPI().get_sunset()

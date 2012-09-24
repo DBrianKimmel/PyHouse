@@ -31,7 +31,7 @@ mimetoclass = {
 def getClassMT(name, mimetype = None, fp = None):
 	'''Return a tuple of the DIDLLite class and mimetype responsible for the named/mimetyped/fpd file.'''
 	if mimetype is None:
-		fn, ext = os.path.splitext(name)
+		_fn, ext = os.path.splitext(name)
 		ext = ext.lower()
 		try:
 			mimetype = mimedict[ext]

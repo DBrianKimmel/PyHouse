@@ -11,6 +11,9 @@
     needed by UPnP with ElementTree
 
     inspired by ElementSOAP.py
+
+    SOAP is the UPnP control protocol.
+    
 """
 
 from UPnP_et import ET

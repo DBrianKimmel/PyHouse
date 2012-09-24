@@ -3,7 +3,7 @@
 from Tkinter import *
 import Pmw
 
-import gui
+#import gui
 import gui_tools
 import lighting
 import schedule
@@ -19,11 +19,9 @@ class ScheduleWindow(gui_tools.GuiTools):
     def __init__(self, p_root, p_main_frame = None):
         self.m_root = p_root
         self.m_main_frame = p_main_frame
-        self.m_sched_frame = Frame(p_root, bg = '#006000')
+        self.m_sched_frame = Frame(p_root)
         self.m_sched_frame.grid(padx = 5, pady = 5)
-        
         self.m_ix = 0
-        print "ScheduleWindow.__init__", p_root, self.m_sched_frame
         self.show_all_schedules()
         Button(self.m_sched_frame, text = "ADD Schedule", command = self.add_schedule).grid(row = self.m_ix, column = 0)
         Button(self.m_sched_frame, text = "Back", fg = "red", command = self.main_screen).grid(row = self.m_ix, column = 1)
@@ -33,7 +31,7 @@ class ScheduleWindow(gui_tools.GuiTools):
         for l_obj in Schedule_Data.itervalues():
             l_bg, l_fg = self.color_button(int(l_obj.Level))
             l_row, l_col = self.get_grid(self.m_ix)
-            l = Button(self.m_sched_frame, text = l_obj.Name + ' ' + l_obj.LightName + ' ' + l_obj.Level,
+            l = Button(self.m_sched_frame, text = l_obj.Name + ' ' + l_obj.LightName,
                        bg = l_bg, fg = l_fg,
                        command = lambda x = l_obj.Key: self.edit_schedule(x))
             l_sched.append(l)
@@ -41,24 +39,20 @@ class ScheduleWindow(gui_tools.GuiTools):
             self.m_ix += 1
 
     def edit_schedule(self, p_key):
-        print "edit schedule", self.m_sched_frame, self.m_ix 
-        d = ScheduleDialog(self.m_root, self.m_sched_frame, p_key, "Editing Schedule")
+        ScheduleDialog(self.m_root, self.m_sched_frame, p_key, "Editing Schedule")
         self.save_schedule()
 
     def add_schedule(self):
-        print "add schedule", self.m_sched_frame, self.m_ix 
-        d = ScheduleDialog(self.m_root, self.m_sched_frame, self.m_ix + 1, "Adding Schedule")
+        ScheduleDialog(self.m_root, self.m_sched_frame, self.m_ix + 1, "Adding Schedule")
         self.save_schedule()
 
     def save_schedule(self):
-        print "Save_Schedule"
         config_xml.WriteConfig().write_schedules()
         self.main_screen()
         
     def main_screen(self):
         """Exit the schedule screen.
         """
-        print "MainScreen"
         self.frame_delete(self.m_sched_frame)
         self.m_main_frame.grid()
 
@@ -96,7 +90,6 @@ class ScheduleDialog(gui_tools.GuiTools):
     m_top = None
     
     def __init__(self, p_root, p_parent, p_key, p_title):
-        print "ScheduleDialog.__init__", p_root, p_parent, p_key, p_title
         self.m_root = p_root
         self.m_top = Toplevel()
         if p_title:
@@ -149,7 +142,6 @@ class ScheduleDialog(gui_tools.GuiTools):
         except:
             l_obj = schedule.ScheduleData()
             l_obj.Key = p_key
-        print "Load vars - got schedule #{0:} {1:}".format(p_key, l_obj.Name)
         self.Active.set(self.get_bool(l_obj.Active))
         self.Key.set(l_obj.Key)
         self.Level.set(l_obj.Level)

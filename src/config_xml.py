@@ -3,13 +3,15 @@
 """
 """
 
-import sys
+#import sys
 import xml.etree.ElementTree as ET
-from xml.dom import minidom
+#from xml.dom import minidom
 
 import house
 import lighting
 import schedule
+import log
+import web_server
 import xml_tools
 
 # Various data stores.
@@ -22,6 +24,8 @@ Button_Data = lighting.Button_Data
 Controller_Data = lighting.Controller_Data
 #
 Schedule_Data = schedule.Schedule_Data
+Log_Data = log.Log_Data
+Web_Data = web_server.Web_Data
 
 g_xmltree = ''
 
@@ -121,13 +125,13 @@ class ReadConfig(ConfigTools):
         l_list = l_rooms.iterfind('Room')
         for l_entry in l_list:
             l_obj = house.RoomData()
+            l_obj.Name = l_entry.get('Name')
+            l_obj.Key = int(l_entry.get('Key'))
             l_obj.HouseName = p_house
             l_obj.Active = self.get_bool(l_entry.findtext('Active'))
             l_obj.Comment = l_entry.findtext('Comment')
             l_obj.Corner = l_entry.findtext('Corner')
             l_obj.HouseName = l_entry.findtext('HouseName')
-            l_obj.Key = int(l_entry.get('Key'))
-            l_obj.Name = l_entry.get('Name')
             l_obj.Size = l_entry.findtext('Size')
             Room_Data[l_obj.Key] = l_obj
             self.m_rooms += 1
@@ -164,9 +168,9 @@ class ReadConfig(ConfigTools):
             l_name = self.read_location(l_house)
             self.read_rooms(l_house, l_name)
             l_count += 1
-        print "--- Read {0:} House entries from xml config file.".format(l_count)
-        print "--- Read {0:}/{1:} location entries from xml config file.".format(self.m_location, len(House_Data))
-        print "--- Read {0:}/{1:} room entries from xml config file.".format(self.m_rooms, len(Room_Data))
+        #print "--- Read {0:} House entries from xml config file.".format(l_count)
+        #print "--- Read {0:}/{1:} location entries from xml config file.".format(self.m_location, len(House_Data))
+        #print "--- Read {0:}/{1:} room entries from xml config file.".format(self.m_rooms, len(Room_Data))
         return l_count
 
     def read_light_common(self, p_entry, p_obj):
@@ -203,9 +207,9 @@ class ReadConfig(ConfigTools):
         except AttributeError:
             print " -- Error in read_lights - Adding 'Lighting'"
             l_sect = ET.SubElement(self.m_root, 'Lighting')
-            l_l = ET.SubElement(l_sect, 'Lights')
-            l_c = ET.SubElement(l_sect, 'Controllers')
-            l_b = ET.SubElement(l_sect, 'Buttons')
+            ET.SubElement(l_sect, 'Lights')
+            ET.SubElement(l_sect, 'Controllers')
+            ET.SubElement(l_sect, 'Buttons')
         # read the lights section
         try:
             l_list = l_sect.iterfind('Lights/Light')
@@ -255,7 +259,6 @@ class ReadConfig(ConfigTools):
             self.read_light_common(l_entry, l_obj)
             Button_Data[l_obj.Key] = l_obj
             l_count += 1
-        print "--- Read {0:} Lighting entries from xml config file.".format(l_count)
         return l_count
 
     def read_schedules(self):
@@ -279,9 +282,25 @@ class ReadConfig(ConfigTools):
             l_obj.Type = l_entry.findtext('Type')
             Schedule_Data[l_obj.Key] = l_obj
             l_count += 1
-        print "--- Read {0:} Schedule entries from xml config file.".format(l_count)
         return l_count
 
+    def read_log_web(self):
+        print "reading log_web"
+        try:
+            l_sect = self.m_root.find('Logs')
+        except:
+            l_sect = ET.SubElement(self.m_root, 'Logs')
+        l_obj = log.LogData()
+        l_obj.Debug = l_sect.findtext('Debug')
+        l_obj.Error = l_sect.findtext('Error')
+        Log_Data[0] = l_obj
+        try:
+            l_sect = self.m_root.find('Web')
+        except:
+            l_sect = ET.SubElement(self.m_root, 'Web')
+        l_obj = web_server.WebData()
+        l_obj.WebPort = l_sect.findtext('WebPort')
+        Web_Data[0] = l_obj
 
 class WriteConfig(ConfigTools):
     """Use the internal data to write an updated config file.
@@ -293,7 +312,6 @@ class WriteConfig(ConfigTools):
     m_root = None
 
     def __init__(self):
-        #print "WriteConfig XML"
         global g_xmltree
         self.m_filename = xml_tools.open_config()
         try:
@@ -303,11 +321,18 @@ class WriteConfig(ConfigTools):
             g_xmltree = ET.parse(self.m_filename)
         self.m_root = g_xmltree.getroot()
 
-
     def write_file(self):
-        #print "Writing config file named", self.m_filename
-        g_xmltree.write(self.m_filename)
+        g_xmltree.write(self.m_filename,  xml_declaration=True)
 
+    def write_create_empty(self, p_name):
+        l_sect = self.m_root.find(p_name)
+        try:
+            l_sect.clear()
+        except AttributeError:
+            print "Creating a new sub-element named ", p_name
+            l_sect = ET.SubElement(self.m_root, p_name)
+        return l_sect
+    
     def write_rooms(self, p_parent, p_name):
         for l_obj in Room_Data.itervalues():
             if l_obj.HouseName == p_name:
@@ -321,12 +346,8 @@ class WriteConfig(ConfigTools):
     def write_houses(self):
         """Replace the data in the 'Houses' section with the current data.
         """
-        l_sect = self.m_root.find('Houses')
+        l_sect = self.write_create_empty('Houses')
         self.m_room_count = 0
-        try:
-            l_sect.clear()
-        except AttributeError:
-            l_sect = ET.SubElement(self.m_root, 'Houses')
         for l_obj in House_Data.itervalues():
             l_name = l_obj.Name
             l_house = self.build_common(l_sect, 'House', l_obj)
@@ -343,7 +364,6 @@ class WriteConfig(ConfigTools):
             l_entry = ET.SubElement(l_house, 'Rooms')
             self.write_rooms(l_entry, l_name)
         self.write_file()
-        print " Wrote {0:} Locations and {1:}/{2:} rooms.".format(len(House_Data), len(Room_Data), self.m_room_count)
 
     def write_light_common(self, p_entry, p_obj):
         ET.SubElement(p_entry, 'Comment').text = str(p_obj.Comment)
@@ -372,11 +392,7 @@ class WriteConfig(ConfigTools):
                 pass
         
     def write_lights(self):
-        l_sect = self.m_root.find('Lighting')
-        try:
-            l_sect.clear()
-        except AttributeError:
-            l_sect = ET.SubElement(self.m_root, 'Lighting')
+        l_sect = self.write_create_empty('Lighting')
         l_lgts = ET.SubElement(l_sect, 'Lights')
         l_ctls = ET.SubElement(l_sect, 'Controllers')
         l_btns = ET.SubElement(l_sect, 'Buttons')
@@ -390,18 +406,12 @@ class WriteConfig(ConfigTools):
             l_entry = self.build_common(l_ctls, 'Controller', l_obj)
             self.write_light_common(l_entry, l_obj)
         self.write_file()
-        print " Wrote {0:} Lights, {1:} Controllers and {2:} Buttons.".format(len(Light_Data), len(Controller_Data), len(Button_Data))
 
     def write_schedules(self):
         """Replace all the data in the 'Schedules' section with the current data.
         """
-        l_sect = self.m_root.find('Schedules')
-        try:
-            l_sect.clear()
-        except AttributeError:
-            l_sect = ET.SubElement(self.m_root, 'Schedules')
+        l_sect = self.write_create_empty('Schedules')
         for l_obj in Schedule_Data.itervalues():
-            #print "XLM writing schedule: {0:}".format(l_obj.Name)
             l_entry = self.build_common(l_sect, 'Schedule', l_obj)
             ET.SubElement(l_entry, 'Level').text = str(l_obj.Level)
             ET.SubElement(l_entry, 'LightName').text = l_obj.LightName
@@ -409,18 +419,31 @@ class WriteConfig(ConfigTools):
             ET.SubElement(l_entry, 'Time').text = l_obj.Time
             ET.SubElement(l_entry, 'Type').text = l_obj.Type
         self.write_file()
-        print " Wrote {0:} Schedules.".format(len(Schedule_Data))
+
+    def write_log_web(self):
+        print "Write log_web", Log_Data[0], vars(Log_Data[0])
+        l_sect = self.write_create_empty('Logs')
+        l_obj = Log_Data[0]
+        #l_entry = self.build_common(l_sect, 'Log', l_obj)
+        ET.SubElement(l_sect, 'Debug').text = str(l_obj.Debug)
+        ET.SubElement(l_sect, 'Error').text = str(Log_Data[0].Error)
+        l_sect = self.write_create_empty('Web')
+        ET.SubElement(l_sect, 'WebPort').text = str(Web_Data[0].WebPort)
+        self.write_file()
+
 
 def read_config():
     l_rf = ReadConfig()
     l_rf.read_houses()
     l_rf.read_lights()
     l_rf.read_schedules()
+    l_rf.read_log_web()
 
 def write_config():
     l_wf = WriteConfig()
     l_wf.write_houses()
     l_wf.write_lights()
     l_wf.write_schedules()
+    l_wf.write_log_web()
     
 ### END

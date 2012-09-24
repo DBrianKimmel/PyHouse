@@ -50,7 +50,7 @@ class ConfigFile(object):
         """
         l_file_name = os.path.join(p_dir, self.m_std_name)
         try:
-            l_fh = open(l_file_name, mode='r')
+            open(l_file_name, mode='r')
         except IOError:
             self.create_empty_config_file(l_file_name)
         return l_file_name
@@ -69,7 +69,7 @@ class ConfigFile(object):
         #l_sched = ET.SubElement(l_top, 'Schedules')
         #l_light = ET.SubElement(l_top, 'Lighting')
         #l_web = ET.SubElement(l_top, 'WebServer')
-        l_fh = open(os.path.expanduser(p_name), 'w')
+        open(os.path.expanduser(p_name), 'w')
         l_nice = prettify(l_top)
         print l_nice
         ET.ElementTree(l_top).write(p_name)
@@ -99,13 +99,12 @@ def open_config():
     l_dir = l_cf.create_find_config_dir()
     l_file = l_cf.find_config_file(l_dir)
     try:
-        l_fh = open(l_file, mode='r')
+        open(l_file, mode='r')
     except Exception, e: # IOError:
         print " -- Error in open_config ", sys.exc_info(), e           
         l_file = '~/.PyHouse/PyHouse.xml'
         l_file = os.path.expanduser(l_file)
-        create_empty_config_file(l_file)
+        ConfigFile().create_empty_config_file(l_file)
     return l_file
-
 
 ### END

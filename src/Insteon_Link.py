@@ -9,7 +9,7 @@ Handle the all-link database(s) in insteon devices.
 import logging
 
 # Import PyMh files
-import configure_mh
+#import configure_mh
 
 Link_Data = {}
 

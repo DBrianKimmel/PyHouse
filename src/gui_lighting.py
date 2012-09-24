@@ -72,32 +72,32 @@ class LightingWindow(gui_tools.GuiTools):
 
     def edit_lights(self, p_arg, p_kind):
         print "Edit lights", p_arg, p_kind
-        d = LightingDialog(self.m_frame, p_arg, p_kind, "Editing Light")
+        LightingDialog(self.m_frame, p_arg, p_kind, "Editing Light")
         self.save_lights()
 
     def edit_controllers(self, p_arg, p_kind):
         print "Edit Controllers", p_arg, p_kind
-        d = LightingDialog(self.m_frame, p_arg, p_kind, "Editing Controller")
+        LightingDialog(self.m_frame, p_arg, p_kind, "Editing Controller")
         self.save_lights()
 
     def edit_buttons(self, p_arg, p_kind):
         print "Edit Buttons", p_arg, p_kind
-        d = LightingDialog(self.m_frame, p_arg, p_kind, "Editing Button")
+        LightingDialog(self.m_frame, p_arg, p_kind, "Editing Button")
         self.save_lights()
 
     def add_light(self):
         print "Adding lights"
-        d = LightingDialog(self.m_frame, self.m_max_light + 1, 4, "Adding Light")
+        LightingDialog(self.m_frame, self.m_max_light + 1, 4, "Adding Light")
         self.save_lights()
 
     def add_controller(self):
         print "Adding controller"
-        d = LightingDialog(self.m_frame, self.m_max_controller + 1, 5, "Adding Controller")
+        LightingDialog(self.m_frame, self.m_max_controller + 1, 5, "Adding Controller")
         self.save_lights()
 
     def add_button(self):
         print "Adding button"
-        d = LightingDialog(self.m_frame, self.m_max_button + 1, 6, "Adding Button")
+        LightingDialog(self.m_frame, self.m_max_button + 1, 6, "Adding Button")
         self.save_lights()
 
     def save_lights(self):
@@ -106,7 +106,7 @@ class LightingWindow(gui_tools.GuiTools):
         
     def main_screen(self):
         self.frame_delete(self.m_frame)
-        m = gui.MainWindow()
+        gui.MainWindow()
 
 
 class LightingDialog(gui_tools.GuiTools):

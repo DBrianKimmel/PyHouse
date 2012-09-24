@@ -221,15 +221,15 @@ class HouseAPI(lighting_tools.CoreAPI):
             self.load_room(l_dict)
 
     def load_room(self, p_dict):
-        l_entry = RoomData()
-        l_entry.Active = self.getBool(p_dict, 'Active')
-        l_entry.Comment = self.getText(p_dict, 'Comment')
-        l_entry.Corner = self.getText(p_dict, 'Corner')
-        l_entry.HouseName = self.getText(p_dict, 'HouseName')
-        l_entry.Key = self.get_RoomCount()
-        l_entry.Name = self.getText(p_dict, 'Name')
-        l_entry.Size = self.getText(p_dict, 'Size')
-        Room_Data[l_entry.Key] = l_entry
+        l_obj = RoomData()
+        l_obj.Active = self.getBool(p_dict, 'Active')
+        l_obj.Comment = self.getText(p_dict, 'Comment')
+        l_obj.Corner = self.getText(p_dict, 'Corner')
+        l_obj.HouseName = self.getText(p_dict, 'HouseName')
+        l_obj.Key = self.get_RoomCount()
+        l_obj.Name = self.getText(p_dict, 'Name')
+        l_obj.Size = self.getText(p_dict, 'Size')
+        Room_Data[l_obj.Key] = l_obj
 
     def dump_rooms(self):
         print "***** All House Rooms *****"

@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # Licensed under the MIT license
 # http://opensource.org/licenses/mit-license.php
 
@@ -15,7 +17,7 @@ Setup and teardown connections between devices (when required by the streaming p
 """
 
 from twisted.python import log
-from twisted.web import resource, static, soap
+from twisted.web import resource, static
 from UPnP_upnp import UPnPPublisher
 
 class ConnectionManagerControl(UPnPPublisher):
@@ -39,3 +41,5 @@ class ConnectionManagerServer(resource.Resource):
 		resource.Resource.__init__(self)
 		self.putChild('scpd.xml', static.File('connection-manager-scpd.xml'))
 		self.putChild('control', ConnectionManagerControl())
+
+### END
