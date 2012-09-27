@@ -24,7 +24,8 @@ import logging
 
 # Import PyMh files
 #import configure_mh
-import config_xml
+import configure
+import configure.config_xml
 import lighting_buttons
 import lighting_controllers
 import lighting_lights
@@ -112,7 +113,7 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, LightingStatusAPI):
             l_module.Init()
 
     def load_lighting_xml(self):
-        l_ct = config_xml.ReadConfig().read_lights()
+        l_ct = configure.config_xml.ReadConfig().read_lights()
         if l_ct == 0:
             print "*** Old config file loaded - Lights ***"
             self._load_all_lighting_families()

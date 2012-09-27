@@ -56,25 +56,18 @@ import signal
 from twisted.internet import reactor
 
 # Import PyMh files and modules.
-import configure_mh
-import config_xml
+import configure
+import configure.config_xml as config_xml
 import log
 import house
-import gui
-#import web_server
-import schedule
+import schedule.schedule as schedule
 import weather
-import UPnP_core
-
-
-Configure_Data = configure_mh.Configure_Data
-
+#import UPnP_core
 
 g_logger = None
 
-
 def Init():
-    #print "INIT"
+    print "PyHouse.Init()"
     if platform.uname()[0] != 'Windows':
         signal.signal(signal.SIGHUP, SigHupHandler)
     signal.signal(signal.SIGINT, SigIntHandler)
@@ -91,8 +84,8 @@ def Init():
     house.Init()
     weather.Init()
     schedule.Init()
-    UPnP_core.Init()
-    gui.Init()
+#    UPnP_core.Init()
+    configure.gui.Init()
     #web_server.Init()
     g_logger.info("Initialized.\n")
 
@@ -101,22 +94,24 @@ def Start():
     After they are all set-up we will start the reactor process.
     Every thing that is to run must be in the main reactor event loop as reactor.run() does not return.
     """
+    print "PyHouse.Start()"
     g_logger.info("Starting.")
     house.Start(reactor)
     schedule.Start(reactor)
     #web_server.Start(reactor)
     g_logger.info("Started.\n")
-    UPnP_core.Start()
+#    UPnP_core.Start()
     # reactor never returns so must be last - Event loop will now run
     reactor.run()
 
 def Stop(p_tag = None):
     """Stop twisted in preparation to exit PyMh.
     """
+    print "PyHouse.Stop()"
     config_xml.write_config()
-    UPnP_core.Stop()
+#    UPnP_core.Stop()
     if p_tag != 'Gui':
-        gui.Stop()
+        configure.gui.Stop()
     schedule.Stop()
     #web_server.Stop()
     try:

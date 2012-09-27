@@ -20,14 +20,15 @@ import time
 #from twisted.internet.defer import Deferred
 
 # Import PyMh files
-import configure_mh
-import config_xml
-import entertainment
-import lighting
+#import configure_mh
+import configure
+#from configure import config_xml
+import entertainment.entertainment as entertainment
+import lighting.lighting as lighting
 import sunrisesunset
 
 
-Configure_Data = configure_mh.Configure_Data
+#Configure_Data = configure_mh.Configure_Data
 Schedule_Data = {}
 
 ScheduleCount = 0
@@ -80,10 +81,10 @@ class ScheduleAPI(ScheduleData):
         Schedule_Data[l_key] = l_sched
 
     def load_schedules_xml(self):
-        l_ct = config_xml.ReadConfig().read_schedules()
-        if l_ct == 0:
-            print "*** Old config file loaded - Schedule ***"
-            self.load_all_schedules(Configure_Data['Schedule'])
+        configure.config_xml.ReadConfig().read_schedules()
+#        if l_ct == 0:
+#            print "*** Old config file loaded - Schedule ***"
+#            self.load_all_schedules(Configure_Data['Schedule'])
 
     def dump_all_schedules(self):
         print "***** All Schedules *****"
@@ -96,7 +97,8 @@ class ScheduleAPI(ScheduleData):
         """Update the schedule as updated by the web server.
         """
         Schedule_Data = p_schedule
-        configure_mh.write_module(self, Dict = Schedule_Data, Section = 'Schedule')
+        configure.config_xml.WriteConfig().write_schedules()
+#        configure_mh.write_module(self, Dict = Schedule_Data, Section = 'Schedule')
 
 
 class ScheduleExecution(ScheduleAPI):
@@ -230,7 +232,7 @@ def Init():
     g_logger = logging.getLogger('PyHouse.Schedule')
     g_logger.info("Initializing.")
     sunrisesunset.Init()
-    entertainment.EntertainmentMain()
+    entertainment.Init()
     lighting.Init()
     #ScheduleAPI().load_all_schedules(Configure_Data['Schedule'])
     ScheduleAPI().load_schedules_xml()

@@ -3,16 +3,22 @@
 """
 """
 
-#import sys
 import xml.etree.ElementTree as ET
-#from xml.dom import minidom
 
-import house
-import lighting
-import schedule
+# required
 import log
-import web_server
 import xml_tools
+# Optional
+try:
+    import house
+    l_house = True
+except:
+    l_house = False
+import lighting
+import lighting.lighting as lighting
+import schedule
+import schedule.schedule as schedule
+import web_server
 
 # Various data stores.
 House_Data = house.Location_Data
@@ -33,7 +39,8 @@ class ConfigTools(object):
 
     def get_bool(self, p_arg):
         l_ret = False
-        if p_arg == 'True': l_ret = True
+        if p_arg == 'True' or p_arg == True:
+            l_ret = True
         return l_ret
 
     def get_float(self, p_obj, p_name):
@@ -76,8 +83,8 @@ class ConfigTools(object):
         l_ret = ET.SubElement(p_parent, p_title)
         l_ret.set('Name', p_obj.Name)
         l_ret.set('Key', str(p_obj.Key))
-        #print "build common - Name{0:} Active {1:}".format(p_obj.Name, p_obj.Active)
-        ET.SubElement(l_ret, 'Active').text = self.put_bool(p_obj.Active)
+        l_ret.set('Active', self.put_bool(p_obj.Active))
+        #ET.SubElement(l_ret, 'Active').text = self.put_bool(p_obj.Active)
         return l_ret
 
 
@@ -103,7 +110,8 @@ class ReadConfig(ConfigTools):
         l_obj = house.HouseData()
         l_obj.Name = l_name = p_entry.get('Name')
         l_obj.Key = int(p_entry.get('Key'))
-        l_obj.Active = self.get_bool(p_entry.findtext('Active'))
+        l_obj.Active = self.get_bool(p_entry.get('Active'))
+        print "ReadConfig.read_location - Active=", l_obj.Active, l_obj.Name
         # Now read the location subsection
         l_entry = p_entry.find('Location')
         l_obj.Street = l_entry.findtext('Street')
@@ -128,7 +136,7 @@ class ReadConfig(ConfigTools):
             l_obj.Name = l_entry.get('Name')
             l_obj.Key = int(l_entry.get('Key'))
             l_obj.HouseName = p_house
-            l_obj.Active = self.get_bool(l_entry.findtext('Active'))
+            l_obj.Active = self.get_bool(l_entry.get('Active'))
             l_obj.Comment = l_entry.findtext('Comment')
             l_obj.Corner = l_entry.findtext('Corner')
             l_obj.HouseName = l_entry.findtext('HouseName')
@@ -140,7 +148,7 @@ class ReadConfig(ConfigTools):
         """Read house information, location and rooms.
 
         <Houses>
-            <House Name=name Key=key>
+            <House Name=name Key=key Active=active>
                 <Active>.val.</Active>
                 <Location>
                     ...
@@ -174,7 +182,6 @@ class ReadConfig(ConfigTools):
         return l_count
 
     def read_light_common(self, p_entry, p_obj):
-        #print "Read_light_common - Entry={0:}, Name={1:}".format(p_entry, p_entry.get('Name'))
         p_obj.Key = int(p_entry.get('Key'))
         p_obj.Name = p_entry.get('Name')
         p_obj.Active = self.get_bool(p_entry.get('Active'))
@@ -272,9 +279,9 @@ class ReadConfig(ConfigTools):
             l_list = l_sect.iterfind('Schedule')
         for l_entry in l_list:
             l_obj = schedule.ScheduleData()
-            l_obj.Active = self.get_bool(l_entry.findtext('Active'))
             l_obj.Name = l_entry.get('Name')
             l_obj.Key = int(l_entry.get('Key'))
+            l_obj.Active = self.get_bool(l_entry.get('Active'))
             l_obj.Level = int(l_entry.findtext('Level'))
             l_obj.LightName = l_entry.findtext('LightName')
             l_obj.Rate = int(l_entry.findtext('Rate'))
@@ -421,7 +428,7 @@ class WriteConfig(ConfigTools):
         self.write_file()
 
     def write_log_web(self):
-        print "Write log_web", Log_Data[0], vars(Log_Data[0])
+        #print "Write log_web", Log_Data[0], vars(Log_Data[0])
         l_sect = self.write_create_empty('Logs')
         l_obj = Log_Data[0]
         #l_entry = self.build_common(l_sect, 'Log', l_obj)
@@ -433,6 +440,7 @@ class WriteConfig(ConfigTools):
 
 
 def read_config():
+    print "read_config()"
     l_rf = ReadConfig()
     l_rf.read_houses()
     l_rf.read_lights()
@@ -440,6 +448,7 @@ def read_config():
     l_rf.read_log_web()
 
 def write_config():
+    print "write_config()"
     l_wf = WriteConfig()
     l_wf.write_houses()
     l_wf.write_lights()

@@ -10,6 +10,8 @@ import config_xml
 Location_Data = house.Location_Data
 Room_Data = house.Room_Data
 
+FG = 'red'
+
 class HouseWindow(gui_tools.GuiTools):
     """
     Displays all defined houses and handles house add/change/delete.
@@ -20,8 +22,8 @@ class HouseWindow(gui_tools.GuiTools):
         self.m_ix = 0
         self.m_frame.grid()
         self.show_all_houses()
-        Button(self.m_frame, text = "ADD New House", command = self.add_house).grid(row = self.m_ix, column = 0)
-        Button(self.m_frame, text = "Back", fg = "red", command = self.main_screen).grid(row = self.m_ix, column = 1)
+        Button(self.m_frame, text = "ADD New House", fg = FG, bg = gui_tools.BG_BOTTOM, command = self.add_house).grid(row = self.m_ix, column = 0)
+        Button(self.m_frame, text = "Back", fg = FG, bg = gui_tools.BG_BOTTOM, command = self.main_screen).grid(row = self.m_ix, column = 1)
 
     def show_all_houses(self):
         l_house = []
@@ -30,7 +32,7 @@ class HouseWindow(gui_tools.GuiTools):
             if l_obj.Key > self.m_max:
                 self.m_max = l_obj.Key
             #print l_obj.Name, l_obj.Key
-            h = Button(self.m_frame, text = l_obj.Name, command = lambda x = l_obj.Key: self.edit_house(x))
+            h = Button(self.m_frame, text = l_obj.Name, bg = gui_tools.BG_TOP, command = lambda x = l_obj.Key: self.edit_house(x))
             l_house.append(h)
             l_house[self.m_ix].grid(row = self.m_ix, sticky = W)
             self.m_ix += 1
@@ -99,10 +101,10 @@ class HouseDialog(gui_tools.GuiTools):
         l_text = "Add"
         if p_title.startswith("Edit"):
             l_text = "Save"
-            Button(self.m_frame, text = 'Delete', command = self.delete_house).grid(row = 91, column = 1)
-        Button(self.m_frame, text = l_text, fg = "blue", command = self.add_house).grid(row = 91, column = 0)
-        Button(self.m_frame, text = 'Add Room', command = self.add_room).grid(row = 91, column = 2)
-        Button(self.m_frame, text = "Cancel", fg = "red", command = self.quit_house).grid(row = 91, column = 3)
+            Button(self.m_frame, text = 'Delete', bg = gui_tools.BG_BOTTOM, command = self.delete_house).grid(row = 91, column = 1)
+        Button(self.m_frame, text = l_text, fg = "blue", bg = gui_tools.BG_BOTTOM, command = self.add_house).grid(row = 91, column = 0)
+        Button(self.m_frame, text = 'Add Room', bg = gui_tools.BG_BOTTOM, command = self.add_room).grid(row = 91, column = 2)
+        Button(self.m_frame, text = "Cancel", fg = "red", bg = gui_tools.BG_BOTTOM, command = self.quit_house).grid(row = 91, column = 3)
 
     def show_all_rooms(self):
         l_name = self.Name.get()
@@ -115,7 +117,7 @@ class HouseDialog(gui_tools.GuiTools):
             if l_obj.HouseName != l_name: continue
             l_r = l_ix // 5
             l_c = l_ix % 5
-            Button(l_frame, text = l_obj.Name, command = lambda x = l_obj.Key: self.edit_room(x)).grid(row = l_r, column = l_c)
+            Button(l_frame, text = l_obj.Name, bg = gui_tools.BG_TOP, command = lambda x = l_obj.Key: self.edit_room(x)).grid(row = l_r, column = l_c)
             l_ix += 1
         l_frame.grid(row = 31, column = 0, columnspan = 3)
 
@@ -142,7 +144,7 @@ class HouseDialog(gui_tools.GuiTools):
 
     def create_vars(self):
         self.Active = IntVar()
-        print "Created House Active in var {0:}".format(self.Active)
+        #print "Created House Active in var {0:}".format(self.Active)
         self.Name = StringVar()
         self.Street = StringVar()
         self.City = StringVar()
@@ -163,8 +165,9 @@ class HouseDialog(gui_tools.GuiTools):
             l_obj.Key = p_key
         self.HouseName = l_obj.Name
         self.Name.set(l_obj.Name)
-        print "Setting Active to {0:}".format(l_obj.Active)
+        #print "gui_house() Setting Active to {0:}".format(l_obj.Active)
         self.Active.set(self.get_bool(l_obj.Active))
+        #print "Now active is ", self.Active.get()
         self.Street.set(l_obj.Street)
         self.City.set(l_obj.City)
         self.State.set(l_obj.State)
@@ -224,9 +227,9 @@ class RoomDialog(gui_tools.GuiTools):
         l_text = "Add"
         if p_title.startswith("Edit"):
             l_text = "Save"
-            Button(self.m_frame, text = 'Delete', command = self.delete_room).grid(row = 91, column = 1)
-        Button(self.m_frame, text = l_text, fg = "blue", command = self.add_room).grid(row = 91, column = 0)
-        Button(self.m_frame, text = "Cancel", fg = "red", command = self.quit_room).grid(row = 91, column = 2)
+            Button(self.m_frame, text = 'Delete', bg = gui_tools.BG_BOTTOM, command = self.delete_room).grid(row = 91, column = 1)
+        Button(self.m_frame, text = l_text, fg = "blue", bg = gui_tools.BG_BOTTOM, command = self.add_room).grid(row = 91, column = 0)
+        Button(self.m_frame, text = "Cancel", fg = "red", bg = gui_tools.BG_BOTTOM, command = self.quit_room).grid(row = 91, column = 2)
 
     def delete_room(self):
         l_key = self.Key.get()

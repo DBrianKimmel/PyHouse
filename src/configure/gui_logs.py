@@ -27,8 +27,8 @@ class LogsWindow(gui_tools.GuiTools):
         Entry(self.m_frame, textvar = self.Debug).grid(row = 1, column = 1, sticky = W)
         Label(self.m_frame, text = "Error Log Location").grid(row = 2, column = 0, sticky = E)
         Entry(self.m_frame, textvar = self.Error).grid(row = 2, column = 1, sticky = W)
-        Button(self.m_frame, text = "Update", command = self.update_logs).grid(row = 91, column = 0)
-        Button(self.m_frame, text = "Back", fg = "red", command = self.main_screen).grid(row = 91, column = 1)
+        Button(self.m_frame, text = "Update", bg = BG_BOTTOM, command = self.update_logs).grid(row = 91, column = 0)
+        Button(self.m_frame, text = "Back", fg = "red", bg = gui_tools.BG_BOTTOM, command = self.main_screen).grid(row = 91, column = 1)
 
     def update_logs(self):
         l_obj = log.LogData

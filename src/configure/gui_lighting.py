@@ -5,7 +5,7 @@ import Pmw
 
 import gui
 import gui_tools
-import lighting
+import lighting.lighting as lighting
 import config_xml
 
 
@@ -33,7 +33,7 @@ class LightingWindow(gui_tools.GuiTools):
         self.light_button.grid(row = self.m_ix, column = 1)
         self.light_button = Button(self.m_frame, text = "ADD New Button", bg = BG_BUTTN, command = self.add_button)
         self.light_button.grid(row = self.m_ix, column = 2)
-        self.button = Button(self.m_frame, text = "Back", fg = "red", command = self.main_screen)
+        self.button = Button(self.m_frame, text = "Back", fg = "red", bg = gui_tools.BG_BOTTOM, command = self.main_screen)
         self.button.grid(row = self.m_ix, column = 3)
 
     def show_all_lights(self):
@@ -174,9 +174,9 @@ class LightingDialog(gui_tools.GuiTools):
         l_text = "Add"
         if p_title.startswith("Edit"):
             l_text = "Save"
-            Button(self.m_dia_frame, text = 'Delete', command = self.delete_entry).grid(row = 91, column = 1)
-        Button(self.m_dia_frame, text = l_text, fg = "blue", command = self.get_vars).grid(row = 91, column = 0)
-        Button(self.m_dia_frame, text = "Cancel", fg = "red", command = self.quit_dialog).grid(row = 91, column = 2)
+            Button(self.m_dia_frame, text = 'Delete', bg = gui_tools.BG_BOTTOM, command = self.delete_entry).grid(row = 91, column = 1)
+        Button(self.m_dia_frame, text = l_text, fg = "blue", bg = gui_tools.BG_BOTTOM, command = self.get_vars).grid(row = 91, column = 0)
+        Button(self.m_dia_frame, text = "Cancel", fg = "red", bg = gui_tools.BG_BOTTOM, command = self.quit_dialog).grid(row = 91, column = 2)
 
     def family_box(self, p_parent):
         l_list = lighting.VALID_FAMILIES

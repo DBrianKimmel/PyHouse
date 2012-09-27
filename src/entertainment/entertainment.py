@@ -11,10 +11,12 @@ Can act as a UPnP Control point
 import logging
 
 # Import PyMh files
-
+import upnp.UPnP_core
+from upnp.UPnP_core import g_uuid
 
 Entertainment_Data = {}
-
+g_logger = None
+g_upnp = None
 
 class EntertainmentAPI(object):
     """
@@ -27,16 +29,6 @@ class EntertainmentAPI(object):
         return self.Entertainment_Data
 
 
-class EntertainmentMain(EntertainmentAPI):
-    """
-    """
-
-    def __init__(self):
-        """Constructor for the PLM.
-        """
-        self.m_logger = logging.getLogger('PyMh.Entertainment')
-        self.m_logger.info("Initialized.")
-
 class UPnPControlPoint(object):
     """
     0.  Addressing - not needed since we already have an IP address.
@@ -48,7 +40,9 @@ class UPnPControlPoint(object):
     """
 
     def __init__(self):
-        pass
+        print "entertainment.UPnPControlPoint.__init__()"
+        upnp.UPnP_core.Init()
+        upnp.UPnP_core.Start()
 
     def discover_all_media_servers(self):
         pass
@@ -60,6 +54,17 @@ class UPnPControlPoint(object):
         pass
 
 def Init():
-    l_upnp = UPnPControlPoint()
+    global g_logger, g_upnp
+    print "Entertainment.Init()"
+    g_logger = logging.getLogger('PyMh.Entertainment')
+    g_logger.info("Initializing.")
+    g_upnp = UPnPControlPoint()
+    g_logger.info("Initialized.")
+    
+def Start():
+    pass
+
+def Stop():
+    pass
 
 ### END

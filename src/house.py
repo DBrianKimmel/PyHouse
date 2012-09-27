@@ -7,17 +7,13 @@
 import logging
 
 # Import PyMh files
-import configure_mh
-import config_xml
+import configure.config_xml
 import internet
-import lighting_tools
+import lighting.lighting_tools as lighting_tools
 
-
-Configure_Data = configure_mh.Configure_Data
 House_Data = {}
 Location_Data = {}
 Room_Data = {}
-
 
 LocationCount = 0
 RoomCount = 0
@@ -204,11 +200,7 @@ class HouseAPI(lighting_tools.CoreAPI):
         If there is none, fall back to using the old config files.
         This fallback is temporary until the xml and gui is fully functional.
         """
-        l_ct = config_xml.ReadConfig().read_houses()
-        if l_ct == 0:
-            print "*** Old config file loaded - House ***"
-            self.load_all_locations(Configure_Data['HouseLocation'])
-            self.load_all_rooms(Configure_Data['Rooms'])
+        configure.config_xml.ReadConfig().read_houses()
 
     def dump_location(self):
         print "***** All House Locations *****"

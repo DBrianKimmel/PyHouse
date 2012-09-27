@@ -27,11 +27,12 @@ from nevow.rend import _CARRYOVER
 from formless import iformless
 
 # Import PyMh files
-import config_xml
+import configure.config_xml
 import entertainment
 import house
 #import Device_Insteon
 import lighting
+import lighting.lighting as lighting
 import schedule
 #from lighting import Light_Status
 
@@ -763,7 +764,7 @@ def Init():
     Web_Data[0] = WebData()
     Web_Data[0].WebPort = 8080
     g_logger = logging.getLogger('PyHouse.WebServer')
-    entertainment.EntertainmentMain()
+    entertainment.Init()
     config_xml.ReadConfig().read_log_web()
     g_logger.info("Initialized - Start the web server on port {0:}".format(g_port))
 

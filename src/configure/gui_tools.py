@@ -4,16 +4,9 @@ from Tkinter import *
 import Pmw
 
 
-class ActiveBox(object):
-    """An active radiobutton box that supplies 0/1.
-    """
-    def __init__(self, p_parent, p_var):
-        l_frame = Frame(p_parent)
-        Radiobutton(l_frame, text = "Yes", variable = p_var, value = 1).grid(row = 0, column = 0)
-        Radiobutton(l_frame, text = "No", variable = p_var, value = 0).grid(row = 0, column = 1)
-        #return l_frame
+BG_BOTTOM = '#C0C090'
+BG_TOP = '#E0F0E0'
 
-    
 class GuiTools(object):
 
     def columnize(self, p_count, p_cols = 4):
@@ -34,7 +27,7 @@ class GuiTools(object):
 
     def yes_no_radio(self, p_frame, p_var):
         _l_entry = int(p_var.get())
-        #print "Creating Y/N buttons with value {0:} <{1:}>".format(p_var, l_entry)
+        #print "Creating Y/N buttons with value {0:} <{1:}>".format(p_var, _l_entry)
         l_frame = Frame(p_frame)
         Radiobutton(l_frame, text = "Yes", variable = p_var, value = True).grid(row = 0, column = 0)
         Radiobutton(l_frame, text = "No", variable = p_var, value = False).grid(row = 0, column = 1)
@@ -48,7 +41,9 @@ class GuiTools(object):
 
     def get_bool(self, p_arg):
         l_ret = False
-        if p_arg == 'True': l_ret = True
+        if p_arg == 'True' or p_arg == True:
+            l_ret = True
+        #print "get_bool ", p_arg, l_ret
         return l_ret
 
     def pulldown_box(self, p_parent, p_list, p_sel):
@@ -135,8 +130,8 @@ class ToolTip:
             if self._opts.has_key(key):
                 self._opts[key] = opts[key]
             else:
-                KeyError = 'KeyError: Unknown option: "%s"' %key
-                raise KeyError
+                l_msg = 'KeyError: Unknown option: "%s"' %key
+                raise KeyError, l_msg
     
     ##----these methods handle the callbacks on "<Enter>", "<Leave>" and "<Motion>"---------------##
     ##----events on the parent widget; override them if you want to change the widget's behavior--##

@@ -5,8 +5,8 @@ import Pmw
 
 #import gui
 import gui_tools
-import lighting
-import schedule
+import lighting.lighting as lighting
+import schedule.schedule as schedule
 import config_xml
 
 Schedule_Data = schedule.Schedule_Data
@@ -23,8 +23,8 @@ class ScheduleWindow(gui_tools.GuiTools):
         self.m_sched_frame.grid(padx = 5, pady = 5)
         self.m_ix = 0
         self.show_all_schedules()
-        Button(self.m_sched_frame, text = "ADD Schedule", command = self.add_schedule).grid(row = self.m_ix, column = 0)
-        Button(self.m_sched_frame, text = "Back", fg = "red", command = self.main_screen).grid(row = self.m_ix, column = 1)
+        Button(self.m_sched_frame, text = "ADD Schedule", bg = gui_tools.BG_BOTTOM, command = self.add_schedule).grid(row = self.m_ix, column = 0)
+        Button(self.m_sched_frame, text = "Back", fg = "red", bg = gui_tools.BG_BOTTOM, command = self.main_screen).grid(row = self.m_ix, column = 1)
 
     def show_all_schedules(self):
         l_sched = []
@@ -122,9 +122,9 @@ class ScheduleDialog(gui_tools.GuiTools):
         l_text = "Add"
         if p_title.startswith("Edit"):
             l_text = "Save"
-            Button(self.m_frame, text = 'Delete', command = self.delete_schedule).grid(row = 91, column = 1)
-        Button(self.m_frame, text = l_text, fg = "blue", command = self.get_vars).grid(row = 91, column = 0)
-        Button(self.m_frame, text = "Cancel", fg = "red", command = self.quit_dialog).grid(row = 91, column = 2)
+            Button(self.m_frame, text = 'Delete', bg = gui_tools.BG_BOTTOM, command = self.delete_schedule).grid(row = 91, column = 1)
+        Button(self.m_frame, text = l_text, fg = "blue", bg = gui_tools.BG_BOTTOM, command = self.get_vars).grid(row = 91, column = 0)
+        Button(self.m_frame, text = "Cancel", fg = "red", bg = gui_tools.BG_BOTTOM, command = self.quit_dialog).grid(row = 91, column = 2)
 
     def create_vars(self):
         self.Active = IntVar()
