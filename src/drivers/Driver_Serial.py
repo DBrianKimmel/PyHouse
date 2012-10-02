@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-"""Driver_Serial.py - Serial Driver module. 
+"""Driver_Serial.py - Serial Driver module.
 
 This will interface various PyHouse modules to a serial device.
 
@@ -20,12 +20,11 @@ import lighting
 from tools import PrintBytes
 
 
-
 g_message = bytearray()
 g_logger = None
 
 
-class SerialDeviceData(lighting.ControllerData):
+class SerialDeviceData(lighting.lighting.ControllerData):
 
     SerialPort = {}
     m_serial = None
@@ -44,7 +43,7 @@ class SerialDriverUtility(SerialDeviceData):
         self.read_device()
 
     def get_config(self, p_family, p_key):
-        for l_key, l_obj in lighting.Controller_Data.iteritems():
+        for l_key, l_obj in lighting.lighting.Controller_Data.iteritems():
             print " _ Driver_Serial.get_config ", l_key, l_obj
             if l_key == p_key:
                 print " - serial extracting ", p_key
@@ -98,7 +97,7 @@ class SerialDriverMain(API):
 
     def __init__(self, p_obj):
         """
-        @param p_obj:is the Controller_Data object for a serial device to open. 
+        @param p_obj:is the Controller_Data object for a serial device to open.
         """
         self.m_message = bytearray()
         self.m_logger = logging.getLogger('PyHouse.SerialDriver')

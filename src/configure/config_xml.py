@@ -50,7 +50,7 @@ class ConfigTools(object):
         except ValueError:
             l_var = 0.0
         return l_var
-            
+
     def get_int(self, p_obj, p_name):
         l_var = p_obj.findtext(p_name)
         try:
@@ -58,7 +58,7 @@ class ConfigTools(object):
         except ValueError:
             l_var = 0
         return l_var
-            
+
     def put_bool(self, p_arg):
         l_text = 'False'
         if p_arg != False: l_text = 'True'
@@ -118,7 +118,7 @@ class ReadConfig(ConfigTools):
         l_obj.City = l_entry.findtext('City')
         l_obj.State = l_entry.findtext('State')
         l_obj.ZipCode = l_entry.findtext('ZipCode')
-        l_obj.Phone   = l_entry.findtext('Phone')
+        l_obj.Phone = l_entry.findtext('Phone')
         l_obj.Latitude = self.get_float(l_entry, 'Latitude')
         l_obj.Longitude = self.get_float(l_entry, 'Longitude')
         l_obj.TimeZone = self.get_float(l_entry, 'TimeZone')
@@ -146,21 +146,6 @@ class ReadConfig(ConfigTools):
 
     def read_houses(self):
         """Read house information, location and rooms.
-
-        <Houses>
-            <House Name=name Key=key Active=active>
-                <Active>.val.</Active>
-                <Location>
-                    ...
-                </Location>
-                <Rooms>
-                    <Room Name=name Key=key>
-                        ...
-                    </Room>
-                </Rooms>
-            </House>
-            ...
-        </Houses>
         """
         l_count = 0
         self.m_location = 0
@@ -176,9 +161,6 @@ class ReadConfig(ConfigTools):
             l_name = self.read_location(l_house)
             self.read_rooms(l_house, l_name)
             l_count += 1
-        #print "--- Read {0:} House entries from xml config file.".format(l_count)
-        #print "--- Read {0:}/{1:} location entries from xml config file.".format(self.m_location, len(House_Data))
-        #print "--- Read {0:}/{1:} room entries from xml config file.".format(self.m_rooms, len(Room_Data))
         return l_count
 
     def read_light_common(self, p_entry, p_obj):
@@ -309,6 +291,10 @@ class ReadConfig(ConfigTools):
         l_obj.WebPort = l_sect.findtext('WebPort')
         Web_Data[0] = l_obj
 
+    def read_upnp(self):
+        pass
+
+
 class WriteConfig(ConfigTools):
     """Use the internal data to write an updated config file.
 
@@ -329,7 +315,7 @@ class WriteConfig(ConfigTools):
         self.m_root = g_xmltree.getroot()
 
     def write_file(self):
-        g_xmltree.write(self.m_filename,  xml_declaration=True)
+        g_xmltree.write(self.m_filename, xml_declaration = True)
 
     def write_create_empty(self, p_name):
         l_sect = self.m_root.find(p_name)
@@ -339,7 +325,7 @@ class WriteConfig(ConfigTools):
             print "Creating a new sub-element named ", p_name
             l_sect = ET.SubElement(self.m_root, p_name)
         return l_sect
-    
+
     def write_rooms(self, p_parent, p_name):
         for l_obj in Room_Data.itervalues():
             if l_obj.HouseName == p_name:
@@ -397,7 +383,7 @@ class WriteConfig(ConfigTools):
                 ET.SubElement(p_entry, 'UnitID').text = str(p_obj.UnitID)
             except AttributeError:
                 pass
-        
+
     def write_lights(self):
         l_sect = self.write_create_empty('Lighting')
         l_lgts = ET.SubElement(l_sect, 'Lights')
@@ -412,6 +398,8 @@ class WriteConfig(ConfigTools):
         for l_obj in Controller_Data.itervalues():
             l_entry = self.build_common(l_ctls, 'Controller', l_obj)
             self.write_light_common(l_entry, l_obj)
+            ET.SubElement(l_entry, 'Interface').text = l_obj.Interface
+            ET.SubElement(l_entry, 'Port').text = l_obj.Port
         self.write_file()
 
     def write_schedules(self):
@@ -438,6 +426,9 @@ class WriteConfig(ConfigTools):
         ET.SubElement(l_sect, 'WebPort').text = str(Web_Data[0].WebPort)
         self.write_file()
 
+    def write_upnp(self):
+        self.write_file()
+
 
 def read_config():
     print "read_config()"
@@ -446,6 +437,7 @@ def read_config():
     l_rf.read_lights()
     l_rf.read_schedules()
     l_rf.read_log_web()
+    l_rf.read_upnp()
 
 def write_config():
     print "write_config()"
@@ -454,5 +446,6 @@ def write_config():
     l_wf.write_lights()
     l_wf.write_schedules()
     l_wf.write_log_web()
-    
+    l_wf.write_upnp()
+
 ### END

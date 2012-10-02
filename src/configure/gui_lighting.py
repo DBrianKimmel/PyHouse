@@ -14,6 +14,7 @@ Button_Data = lighting.Button_Data
 Controller_Data = lighting.Controller_Data
 
 VAL_FAM = lighting.VALID_FAMILIES
+VAL_INTER = lighting.VALID_INTERFACES
 BG_LIGHT = '#C0C090'
 BG_CTLR = '#90C090'
 BG_BUTTN = '#C09090'
@@ -103,7 +104,7 @@ class LightingWindow(gui_tools.GuiTools):
     def save_lights(self):
         config_xml.WriteConfig().write_lights()
         self.main_screen()
-        
+
     def main_screen(self):
         self.frame_delete(self.m_frame)
         gui.MainWindow()
@@ -121,21 +122,21 @@ class LightingDialog(gui_tools.GuiTools):
         self.create_vars()
         l_type, l_family = self.load_vars(p_key, p_kind)
         self.m_dia_frame = Frame(self.m_top)
-        self.m_dia_frame.grid_columnconfigure(0, minsize=130)
-        self.m_dia_frame.grid_columnconfigure(1, minsize=300)
+        self.m_dia_frame.grid_columnconfigure(0, minsize = 130)
+        self.m_dia_frame.grid_columnconfigure(1, minsize = 300)
         self.m_dia_frame.grid(padx = 5, pady = 5)
         Label(self.m_dia_frame, text = "Key").grid(row = 1, column = 0, sticky = E)
         Entry(self.m_dia_frame, textvar = self.Key, state = DISABLED).grid(row = 1, column = 1, sticky = W)
-        Label(self.m_dia_frame, text = "Active").grid(row = 2, column = 0, sticky = E)
-        self.yes_no_radio(self.m_dia_frame, self.Active).grid(row = 2, column = 1, sticky = W)
-        Label(self.m_dia_frame, text = "Name").grid(row = 3, column = 0, sticky = E)
-        Entry(self.m_dia_frame, textvar = self.Name).grid(row = 3, column = 1, sticky = W)
-        Label(self.m_dia_frame, text = "Family").grid(row = 5, column = 0, sticky = E)
-        self.pulldown_box(self.m_dia_frame, VAL_FAM, self.Family).grid(row = 5, column = 1, sticky = W)
-        Label(self.m_dia_frame, text = "Comment").grid(row = 7, column = 0, sticky = E)
-        Entry(self.m_dia_frame, textvar = self.Comment).grid(row = 7, column = 1, sticky = W)
-        Label(self.m_dia_frame, text = "Type").grid(row = 11, column = 0, sticky = E)
-        Entry(self.m_dia_frame, textvar = self.Type).grid(row = 11, column = 1, sticky = W)
+        Label(self.m_dia_frame, text = "Active").grid(row = 3, column = 0, sticky = E)
+        self.yes_no_radio(self.m_dia_frame, self.Active).grid(row = 3, column = 1, sticky = W)
+        Label(self.m_dia_frame, text = "Type").grid(row = 5, column = 0, sticky = E)
+        Entry(self.m_dia_frame, textvar = self.Type, state = DISABLED).grid(row = 5, column = 1, sticky = W)
+        Label(self.m_dia_frame, text = "Name").grid(row = 7, column = 0, sticky = E)
+        Entry(self.m_dia_frame, textvar = self.Name, width = 50).grid(row = 7, column = 1, sticky = W)
+        Label(self.m_dia_frame, text = "Family").grid(row = 9, column = 0, sticky = E)
+        self.pulldown_box(self.m_dia_frame, VAL_FAM, self.Family).grid(row = 9, column = 1, sticky = W)
+        Label(self.m_dia_frame, text = "Comment").grid(row = 11, column = 0, sticky = E)
+        Entry(self.m_dia_frame, textvar = self.Comment, width = 50).grid(row = 11, column = 1, sticky = W)
         Label(self.m_dia_frame, text = "Coords").grid(row = 13, column = 0, sticky = E)
         Entry(self.m_dia_frame, textvar = self.Coords).grid(row = 13, column = 1, sticky = W)
         Label(self.m_dia_frame, text = "Room").grid(row = 15, column = 0, sticky = E)
@@ -144,9 +145,9 @@ class LightingDialog(gui_tools.GuiTools):
         Entry(self.m_dia_frame, textvar = self.Dimmable).grid(row = 17, column = 1, sticky = W)
         if l_type == 'Controller':
             Label(self.m_dia_frame, text = 'Interface').grid(row = 31, column = 0, sticky = E)
-            Entry(self.m_dia_frame, textvar = self.Interface).grid(row = 31, column = 1, sticky = W)
+            self.pulldown_box(self.m_dia_frame, VAL_INTER, self.Interface).grid(row = 31, column = 1, sticky = W)
             Label(self.m_dia_frame, text = 'Port').grid(row = 33, column = 0, sticky = E)
-            Entry(self.m_dia_frame, textvar = self.Port).grid(row = 33, column = 1, sticky = W)
+            Entry(self.m_dia_frame, textvar = self.Port, width = 50).grid(row = 33, column = 1, sticky = W)
         if l_family == 'Insteon':
             Label(self.m_dia_frame, text = 'Address').grid(row = 41, column = 0, sticky = E)
             Entry(self.m_dia_frame, textvar = self.Address).grid(row = 41, column = 1, sticky = W)
@@ -178,16 +179,6 @@ class LightingDialog(gui_tools.GuiTools):
         Button(self.m_dia_frame, text = l_text, fg = "blue", bg = gui_tools.BG_BOTTOM, command = self.get_vars).grid(row = 91, column = 0)
         Button(self.m_dia_frame, text = "Cancel", fg = "red", bg = gui_tools.BG_BOTTOM, command = self.quit_dialog).grid(row = 91, column = 2)
 
-    def family_box(self, p_parent):
-        l_list = lighting.VALID_FAMILIES
-        l_family_box = Pmw.ComboBox(p_parent,
-                        scrolledlist_items = l_list,
-                        )
-        l_entry = self.Family.get()
-        l_sel = l_list.index(l_entry)
-        l_family_box.selectitem(l_sel)
-        return l_family_box
-
     def delete_entry(self):
         l_type = self.Type.get()
         l_key = self.Key.get()
@@ -199,7 +190,7 @@ class LightingDialog(gui_tools.GuiTools):
             del Button_Data[l_key]
         config_xml.WriteConfig().write_lights()
         self.quit_dialog()
-    
+
     def create_vars(self):
         """Create everything - used or not.
         """

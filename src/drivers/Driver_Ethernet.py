@@ -21,7 +21,6 @@ class EthernetDriverMain(object):
     """
 
     def __init__(self, p_obj):
-        #print "--EthernetDriverMain.__init__()", p_obj
         self.m_logger = logging.getLogger('PyHouse.EthernetDriver')
         self.m_logger.info(" Initializing Ethernet port")
 

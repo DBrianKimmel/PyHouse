@@ -13,10 +13,10 @@
     inspired by ElementSOAP.py
 
     SOAP is the UPnP control protocol.
-    
+
 """
 
-from UPnP_et import ET
+from et import ET
 
 NS_SOAP_ENV = "{http://schemas.xmlsoap.org/soap/envelope/}"
 NS_SOAP_ENC = "{http://schemas.xmlsoap.org/soap/encoding/}"
@@ -40,20 +40,20 @@ UPNPERRORS = {401:'Invalid Action',
               609:'Not Encrypted',
               610:'Invalid Sequence',
               611:'Invalid Control URL',
-              612:'No Such Session',}
+              612:'No Such Session', }
 
-def build_soap_error(status,description='without words'):
+def build_soap_error(status, description = 'without words'):
     """ builds an UPnP SOAP error msg
     """
     root = ET.Element('s:Fault')
-    ET.SubElement(root,'faultcode').text='s:Client'
-    ET.SubElement(root,'faultstring').text='UPnPError'
-    e = ET.SubElement(root,'detail')
+    ET.SubElement(root, 'faultcode').text = 's:Client'
+    ET.SubElement(root, 'faultstring').text = 'UPnPError'
+    e = ET.SubElement(root, 'detail')
     e = ET.SubElement(e, 'UPnPError')
-    e.attrib['xmlns']='urn:schemas-upnp-org:control-1-0'
-    ET.SubElement(e,'errorCode').text=str(status)
-    ET.SubElement(e,'errorDescription').text=UPNPERRORS.get(status,description)
-    return build_soap_call(None, root, p_encoding=None)
+    e.attrib['xmlns'] = 'urn:schemas-upnp-org:control-1-0'
+    ET.SubElement(e, 'errorCode').text = str(status)
+    ET.SubElement(e, 'errorDescription').text = UPNPERRORS.get(status, description)
+    return build_soap_call(None, root, p_encoding = None)
 
 def build_soap_call(p_method, p_arguments, is_response = False,
                     p_encoding = SOAP_ENCODING, envelope_attrib = None, p_typed = None):
@@ -105,6 +105,6 @@ def build_soap_call(p_method, p_arguments, is_response = False,
     else:
         re.append(p_arguments)
     preamble = """<?xml version="1.0" encoding="utf-8"?>"""
-    return preamble + ET.tostring(envelope,'utf-8')
+    return preamble + ET.tostring(envelope, 'utf-8')
 
 ### END

@@ -16,7 +16,7 @@ from twisted.python import log
 
 #from types import *
 
-import UPnP_soap_lite
+import soap_lite
 
 class errorCode(Exception):
 	def __init__(self, status):
@@ -34,8 +34,8 @@ class UPnPPublisher(soap.SOAPPublisher):
 			meth = "{%s}%s" % (ns, methodName)
 		else:
 			meth = methodName
-		response = UPnP_soap_lite.build_soap_call(meth, result,
-		    is_response=True, p_encoding=None)
+		response = soap_lite.build_soap_call(meth, result,
+		    is_response = True, p_encoding = None)
 		self._sendResponse(request, response)
 
 	def _gotError(self, failure, request, methodName):
@@ -45,7 +45,7 @@ class UPnPPublisher(soap.SOAPPublisher):
 			status = e.status
 		else:
 			failure.printTraceback(file = log.logfile)
-		response = UPnP_soap_lite.build_soap_error(status)
-		self._sendResponse(request, response, status=status)
+		response = soap_lite.build_soap_error(status)
+		self._sendResponse(request, response, status = status)
 
 ### END

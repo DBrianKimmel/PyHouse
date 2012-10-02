@@ -1,6 +1,6 @@
-#
+"""
 # lighting/__init__.py
-#
+""""
 
 import sys
 

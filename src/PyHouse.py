@@ -4,11 +4,11 @@
 
 During development this is run by hand.
 It is, however, planned to be a daemon that is kicked off on system start-up.
-It is intended to run on eveerything from a small, low power barebones system
-to a server running multiple houses in several, sidespread locations.
+It is intended to run on everything from a small, low power bare bones system
+to a server running multiple houses in several, widespread locations.
 
 The system is controlled via a browser connecting to a web server that will
-be either integrated or seperate from PyHouse.
+be either integrated or separate from PyHouse.
 
 The highest level is the House/Location.  Every house has a location and
 contains a number of rooms.
@@ -18,7 +18,7 @@ and devices.
 Each house may share a central schedule and also have a schedule that is only
 for that house.  It is recommended that the schedule be mostly on a house by
 house basis and only a very few actions are done on all houses.
-Each house will need at least a small barebone system to control all the USB
+Each house will need at least a small bare bone system to control all the USB
 and Ethernet devices used to control the various devices in the house.
 
 The next level is the room.  Rooms may be duplicated between houses but must
@@ -39,11 +39,11 @@ also install:
     libusb
 
 Modules desired are:
-    Web server - allow control over the internet by a browser
+    Web server - allow control over the Internet by a browser
     Scheduler - kick off automation that follows a schedule
-    Lighting - allow cautmation of home lighting systems
+    Lighting - allow automation of home lighting systems
     Heating,
-    Pool Contgrol.
+    Pool Control.
     Irrigation control.
     Entertainment - allow control of tv, video systems, audio systems etc
     Surveillance - allow remote control of video cameras etc.
@@ -121,7 +121,7 @@ def Stop(p_tag = None):
     log.LoggingMain().stop()
     reactor.stop()
     raise SystemExit, "PyHouse says Bye Now."
-    
+
 
 def Restart():
     """Allow for a running restart of PyMh.

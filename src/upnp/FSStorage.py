@@ -5,19 +5,15 @@ __version__ = '$Change: 1227 $'
 
 ffmpeg_path = '/usr/local/bin/ffmpeg'
 
-import UPnP_FileDIDL
 import errno
 import itertools
 import os
 import sets
-import stat
-
-from UPnP_DIDLLite import Container, StorageFolder, Item, Resource, ResourceList #, VideoItem, AudioItem, TextItem, ImageItem
+from DIDLLite import Container, StorageFolder, Item, Resource, ResourceList
 from twisted.web import resource, server, static
 from twisted.python import log
 from twisted.internet import abstract
 from twisted.internet import interfaces
-#from twisted.internet import process
 from twisted.internet import protocol
 from twisted.internet import reactor
 from zope.interface import implements
@@ -74,7 +70,7 @@ class FSObject(object):
 			self.doUpdate()
 		except OSError, x:
 			log.msg('os.stat, OSError: %s' % x)
-			if x.errno in (errno.ENOENT, errno.ENOTDIR, errno.EPERM, ):
+			if x.errno in (errno.ENOENT, errno.ENOTDIR, errno.EPERM,):
 				# We can't access it anymore, delete it
 				self.cd.delItem(self.id)
 				return None
@@ -142,7 +138,7 @@ class DynamTransfer(protocol.ProcessProtocol):
 		request = self.request
 
 		vcodec = mods[0]
-		if mods[0] not in ('xvid', 'mpeg2', ):
+		if mods[0] not in ('xvid', 'mpeg2',):
 			vcodec = 'xvid'
 
 		#mimetype = { 'xvid': 'video/avi', 'mpeg2': 'video/mpeg', }
@@ -246,7 +242,7 @@ def dofileadd(cd, parent, path, name):
 		fobj = open(fsname)
 	except:
 		fobj = None
-	for i in itertools.chain(( ignoreFiles, ), _klassfuns, ( defFS, )):
+	for i in itertools.chain((ignoreFiles,), _klassfuns, (defFS,)):
 		try:
 			try:
 				fobj.seek(0)	# incase the call expects a clean file

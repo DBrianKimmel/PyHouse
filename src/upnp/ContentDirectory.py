@@ -4,41 +4,22 @@
 # Copyright 2006-2008 John-Mark Gurney <jmg@funkthat.com>
 
 __version__ = '$Change: 1227 $'
-# $Id: //depot/python/pymeds/pymeds-0.5/ContentDirectory.py#1 $
 
 """
-#
-# This module implements the Content Directory Service (CDS) service
-# type as documented in the ContentDirectory:1 Service Template
-# Version 1.01
-#
+This module implements the Content Directory Service (CDS) service type as
+documented in the ContentDirectory:1 Service Template Version 1.01
 
-#
-# TODO: Figure out a nicer pattern for debugging soap server calls as
-# twisted swallows the tracebacks.  At the moment I'm going:
-#
-# try:
-#	....
-# except:
-#	traceback.print_exc(file = log.logfile)
-#
 """
-
-reqname = 'requests'
 
 from twisted.python import log
 from twisted.web import resource, static
-
-#from xml.etree.ElementTree import Element, SubElement, tostring
-from UPnP_upnp import UPnPPublisher, errorCode
-from UPnP_DIDLLite import DIDLElement, Container #, Movie, Resource, MusicTrack
-
+from upnp import UPnPPublisher, errorCode
+from DIDLLite import DIDLElement, Container
 from twisted.internet import defer
 from twisted.python import failure
+import debug
 
-import UPnP_debug
-#import traceback
-#from urllib import quote
+reqname = 'requests'
 
 class doRecall(defer.Deferred):
 	'''A class that will upon any callback from the Deferred object passed
@@ -120,30 +101,30 @@ class ContentDirectoryControl(UPnPPublisher, dict):
 	def has_key(self, key):
 		return dict.has_key(self, key)
 
-	def delItem(self, id):
-		if not self.has_key(id):
-			log.msg('already removed:', id)
+	def delItem(self, p_id):
+		if not self.has_key(p_id):
+			log.msg('already removed:', p_id)
 			return
-		#log.msg('removing:', id)
-		if isinstance(self[id], Container):
-			#log.msg('children:', Container.__repr__(self.children[id]), map(None, self.children[id]))
-			while self.children[id]:
-				self.delItem(self.children[id][0].id)
-			assert len(self.children[id]) == 0
-			del self.children[id]
+		#log.msg('removing:', p_id)
+		if isinstance(self[p_id], Container):
+			#log.msg('children:', Container.__repr__(self.children[p_id]), map(None, self.children[p_id]))
+			while self.children[p_id]:
+				self.delItem(self.children[p_id][0].id)
+			assert len(self.children[p_id]) == 0
+			del self.children[p_id]
 		# Remove from parent
-		self.children[self[id].parentID].remove(self[id])
+		self.children[self[p_id].parentID].remove(self[p_id])
 		# Remove content
-		if hasattr(self[id], 'content'):
-			self.webbase.delEntity(id)
-		del self[id]
+		if hasattr(self[p_id], 'content'):
+			self.webbase.delEntity(p_id)
+		del self[p_id]
 
 	def getchildren(self, item):
 		assert isinstance(self[item], Container)
 		return self.children[item][:]
 
 	def __init__(self, title, *args, **kwargs):
-		UPnP_debug.insertringbuf(reqname)
+		debug.insertringbuf(reqname)
 		super(ContentDirectoryControl, self).__init__(*args)
 		self.webbase = kwargs['webbase']
 		self._urlbase = kwargs['urlbase']
@@ -178,7 +159,7 @@ class ContentDirectoryControl(UPnPPublisher, dict):
 
 	def soap_Browse(self, *args):
 		l = {}
-		UPnP_debug.appendnamespace(reqname, l)
+		debug.appendnamespace(reqname, l)
 		if self.has_key(args[0]):
 			l['object'] = self[args[0]]
 		l['query'] = 'Browse(ObjectID=%s, BrowseFlags=%s, Filter=%s, ' \
@@ -281,7 +262,7 @@ class ContentDirectoryControl(UPnPPublisher, dict):
 		(TransferID, TransferStatus, TransferLength, TransferTotal) = args
 		log.msg('GetTransferProgress(TransferID=%s, TransferStatus=%s, ' \
 		    'TransferLength=%s, TransferTotal=%s)' %
-		    (`TransferId`, `TransferStatus`, `TransferLength`,
+		    (`TransferID`, `TransferStatus`, `TransferLength`,
 		    `TransferTotal`))
 
 	def soap_DeleteResource(self, *args, **kwargs):

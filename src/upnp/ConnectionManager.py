@@ -2,10 +2,8 @@
 
 # Licensed under the MIT license
 # http://opensource.org/licenses/mit-license.php
-
 # Copyright 2005, Tim Potter <tpot@samba.org>
 
-# Connection Manager service
 
 """
 The ConnectionManager service is used by the ControlPoint to carry out the following three actions:
@@ -18,7 +16,7 @@ Setup and teardown connections between devices (when required by the streaming p
 
 from twisted.python import log
 from twisted.web import resource, static
-from UPnP_upnp import UPnPPublisher
+from upnp import UPnPPublisher
 
 class ConnectionManagerControl(UPnPPublisher):
 	def soap_GetProtocolInfo(self, *args, **kwargs):

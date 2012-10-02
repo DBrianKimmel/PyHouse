@@ -1,30 +1,22 @@
 #!/usr/bin/env python
 
 """SSDP = Simple Service Discovery Protocol
+
+Implementation of SSDP server under Twisted Python.
+
+Licensed under the MIT license
+http://opensource.org/licenses/mit-license.php
+Copyright 2005, Tim Potter <tpot@samba.org>
+Copyright 2006-2007 John-Mark Gurney <jmg@funkthat.com>
 """
 
-# Licensed under the MIT license
-# http://opensource.org/licenses/mit-license.php
-# Copyright 2005, Tim Potter <tpot@samba.org>
-# Copyright 2006-2007 John-Mark Gurney <jmg@funkthat.com>
-
-__version__ = '$Change: 1227 $'
-# $Id: //depot/python/pymeds/pymeds-0.5/SSDP.py#1 $
-
-#
-# Implementation of SSDP server under Twisted Python.
-#
+__version__ = '1.00.00'
 
 import random
 import string
-
 from twisted.python import log
 from twisted.internet.protocol import DatagramProtocol
 from twisted.internet import reactor
-
-# TODO: Is there a better way of hooking the SSDPServer into a reactor
-# without having to know the default SSDP port and multicast address?
-# There must be a twisted idiom for doing this.
 
 SSDP_PORT = 1900
 SSDP_ADDR = '239.255.255.250'
@@ -34,31 +26,28 @@ SSDP_ADDR = '239.255.255.250'
 # class to handle services etc.
 
 class SSDPServer(DatagramProtocol):
-	"""A class implementing a SSDP server.  The notifyReceived and
-	searchReceived methods are called when the appropriate type of
-	datagram is received by the server."""
+	"""A class implementing a SSDP server.
 
-	# not used yet
-	stdheaders = [ ('Server', 'Twisted, UPnP/1.0, python-upnp'), ]
+	The notifyReceived and searchReceived methods are called when the
+	appropriate type of datagram is received by the server.
+	"""
 	elements = {}
 	known = {}
 	maxage = 7 * 24 * 60 * 60
 
 	def doStop(self):
-		'''Make sure we send out the byebye notifications.'''
-
+		'''Make sure we send out the byebye notifications.
+		'''
 		for st in self.known.keys():
 			self.doByebye(st)
 			del self.known[st]
-
 		DatagramProtocol.doStop(self)
 
 	def datagramReceived(self, data, (host, port)):
 		"""Handle a received multicast datagram.
-                """
-		# Break up message in to command and headers
-		# TODO: use the email module after trimming off the request line..
-		# This gets us much better header support.
+
+		Break up message in to command and headers
+        """
 		header, _payload = data.split('\r\n\r\n')
 		lines = header.split('\r\n')
 		cmd = string.split(lines[0], ' ')
@@ -76,10 +65,11 @@ class SSDPServer(DatagramProtocol):
 			log.msg('Unknown SSDP command %s %s' % cmd)
 
 	def discoveryRequest(self, headers, (host, port)):
-		"""Process a discovery request.  The response must be sent to
-		the address specified by (host, port).
+		"""Process a discovery request.
+
+		The response must be sent to the address specified by (host, port).
 		"""
-		log.msg('Discovery request for %s' % headers['st'])
+		log.msg('___Discovery request for {0:}, Host:{1:}, Port:{2:}'.format(headers['st'], host, port))
 		# Do we know about this service?
 		if headers['st'] == 'ssdp:all':
 			for i in self.known:
@@ -96,14 +86,12 @@ class SSDPServer(DatagramProtocol):
 			response.append('%s: %s' % (k, v))
 		response.extend(('', ''))
 		delay = random.randint(0, int(headers['mx']))
-		reactor.callLater(delay, self.transport.write,
-		    '\r\n'.join(response), (host, port))
+		reactor.callLater(delay, self.transport.write, '\r\n'.join(response), (host, port))
 
 	def register(self, usn, st, location):
-		"""Register a service or device that this SSDP server will
-		respond to.
+		"""Register a service or device that this SSDP server will respond to.
 		"""
-		log.msg('Registering %s' % st)
+		log.msg('___Registering {0:}, USN:{1:}, Location:{2:}'.format(st, usn, location))
 		self.known[st] = {}
 		self.known[st]['USN'] = usn
 		self.known[st]['LOCATION'] = location
@@ -122,8 +110,8 @@ class SSDPServer(DatagramProtocol):
 
 	def doByebye(self, st):
 		"""Do byebye
-                """
-		log.msg('Sending byebye notification for %s' % st)
+        """
+		log.msg('___Sending byebye notification for %s' % st)
 		resp = [ 'NOTIFY * HTTP/1.1',
 			 'Host: %s:%d' % (SSDP_ADDR, SSDP_PORT),
 			 'NTS: ssdp:byebye',
@@ -162,7 +150,9 @@ class SSDPServer(DatagramProtocol):
 				self.elements[headers['nt']] = {}
 				self.elements[headers['nt']]['USN'] = headers['usn']
 				self.elements[headers['nt']]['host'] = (host, port)
-				log.msg('Detected presence of %s' % headers['nt'])
+				log.msg('===Detected presence of %s' % headers['nt'])
+				print("    notifyRxed - Headers:{0:}".format(headers))
+				print("    notifyRxed - Host:{0:}, Port:{1:}".format(host, str(port)))
 		elif headers['nts'] == 'ssdp:byebye':
 			if self.elements.has_key(headers['nt']):
 				# Unregister device/service
@@ -174,14 +164,14 @@ class SSDPServer(DatagramProtocol):
 
 	def findService(self, name):
 		"""Return information about a service registered over SSDP.
-                """
+        """
 		# TODO: Implement me.
 		# TODO: Send out a discovery request if we haven't registered
 		# a presence announcement.
 
 	def findDevice(self, name):
 		"""Return information about a device registered over SSDP.
-                """
+        """
 		# TODO: Implement me.
 		# TODO: Send out a discovery request if we haven't registered
 		# a presence announcement.

@@ -11,8 +11,8 @@ Can act as a UPnP Control point
 import logging
 
 # Import PyMh files
-import upnp.UPnP_core
-from upnp.UPnP_core import g_uuid
+import upnp.core
+from upnp.core import g_uuid
 
 Entertainment_Data = {}
 g_logger = None
@@ -41,17 +41,13 @@ class UPnPControlPoint(object):
 
     def __init__(self):
         print "entertainment.UPnPControlPoint.__init__()"
-        upnp.UPnP_core.Init()
-        upnp.UPnP_core.Start()
+        upnp.core.Init()
+        upnp.core.Start()
+        self.discover_all_upnp()
 
-    def discover_all_media_servers(self):
+    def discover_all_upnp(self):
         pass
 
-    def discover_all_media_renderers(self):
-        pass
-
-    def locate_desired_content(self):
-        pass
 
 def Init():
     global g_logger, g_upnp
@@ -60,7 +56,7 @@ def Init():
     g_logger.info("Initializing.")
     g_upnp = UPnPControlPoint()
     g_logger.info("Initialized.")
-    
+
 def Start():
     pass
 

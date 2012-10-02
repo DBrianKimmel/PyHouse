@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # Copyright 2006 John-Mark Gurney <jmg@funkthat.com>
 
-__version__ = '$Change: 1227 $'
-# $Id: //depot/python/pymeds/pymeds-0.5/debug.py#1 $
 
 from twisted.internet import reactor
 
@@ -44,7 +42,6 @@ def doDebugging(opt):
 		return
 
 	global insertnamespace, appendnamespace, insertringbuf
-
 	def insertnamespace(k, v):
 		assert isinstance(k, basestring)
 		sf.namespace[k] = v
