@@ -62,12 +62,13 @@ import log
 import house
 import schedule.schedule as schedule
 import weather
-#import UPnP_core
+#import upnp
 
+g_debug = True
 g_logger = None
 
 def Init():
-    print "PyHouse.Init()"
+    if g_debug: print "PyHouse.Init()"
     if platform.uname()[0] != 'Windows':
         signal.signal(signal.SIGHUP, SigHupHandler)
     signal.signal(signal.SIGINT, SigIntHandler)
@@ -84,9 +85,9 @@ def Init():
     house.Init()
     weather.Init()
     schedule.Init()
-#    UPnP_core.Init()
-    configure.gui.Init()
+    #upnp.core.Init()
     #web_server.Init()
+    configure.gui.Init()
     g_logger.info("Initialized.\n")
 
 def Start():
@@ -94,20 +95,20 @@ def Start():
     After they are all set-up we will start the reactor process.
     Every thing that is to run must be in the main reactor event loop as reactor.run() does not return.
     """
-    print "PyHouse.Start()"
+    if g_debug: print "PyHouse.Start()"
     g_logger.info("Starting.")
     house.Start(reactor)
     schedule.Start(reactor)
+    #upnp.core.Start()
     #web_server.Start(reactor)
     g_logger.info("Started.\n")
-#    UPnP_core.Start()
     # reactor never returns so must be last - Event loop will now run
     reactor.run()
 
 def Stop(p_tag = None):
     """Stop twisted in preparation to exit PyMh.
     """
-    print "PyHouse.Stop()"
+    if g_debug: print "PyHouse.Stop()"
     config_xml.write_config()
 #    UPnP_core.Stop()
     if p_tag != 'Gui':
@@ -130,11 +131,11 @@ def Restart():
     Start()
 
 def SigHupHandler(signum, _stackframe):
-    print 'Hup Signal handler called with signal', signum
+    if g_debug: print 'Hup Signal handler called with signal', signum
     Restart()
 
 def SigIntHandler(signum, _stackframe):
-    print 'Signal handler called with signal', signum
+    if g_debug: print 'Signal handler called with signal', signum
     Stop()
     exit
 

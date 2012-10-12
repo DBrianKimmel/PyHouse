@@ -4,6 +4,7 @@ from Tkinter import Tk, Frame, Button, Label, SUNKEN, W
 from twisted.internet import tksupport
 
 import gui_tools
+import gui_ctl_lights
 import gui_house
 import gui_lighting
 import gui_logs
@@ -22,16 +23,16 @@ class MainWindow(object):
         self.m_main = Frame(g_root)
         g_root.title('PyHouse Main Menu')
         self.m_main.grid(padx = 5, pady = 5)
-        self.m_main.grid_columnconfigure(0, minsize=120)
-        self.m_main.grid_columnconfigure(1, minsize=120)
-        self.m_main.grid_columnconfigure(2, minsize=120)
-        self.m_main.grid_columnconfigure(3, minsize=120)
-        self.m_main.grid_columnconfigure(4, minsize=120)
-        self.m_main.grid_columnconfigure(5, minsize=120)
-        self.m_main.grid_columnconfigure(6, minsize=120)
-        self.m_main.grid_columnconfigure(7, minsize=120)
-        self.m_main.grid_columnconfigure(8, minsize=120)
-        self.m_main.grid_columnconfigure(0, minsize=120)
+        self.m_main.grid_columnconfigure(0, minsize = 120)
+        self.m_main.grid_columnconfigure(1, minsize = 120)
+        self.m_main.grid_columnconfigure(2, minsize = 120)
+        self.m_main.grid_columnconfigure(3, minsize = 120)
+        self.m_main.grid_columnconfigure(4, minsize = 120)
+        self.m_main.grid_columnconfigure(5, minsize = 120)
+        self.m_main.grid_columnconfigure(6, minsize = 120)
+        self.m_main.grid_columnconfigure(7, minsize = 120)
+        self.m_main.grid_columnconfigure(8, minsize = 120)
+        self.m_main.grid_columnconfigure(0, minsize = 120)
         Button(self.m_main, text = "House", bg = gui_tools.BG_TOP, command = self.house_screen).grid(row = 0, column = 0)
         Button(self.m_main, text = "Lighting", bg = gui_tools.BG_TOP, command = self.lighting_screen).grid(row = 0, column = 1)
         Button(self.m_main, text = "Schedule", bg = gui_tools.BG_TOP, command = self.schedule_screen).grid(row = 0, column = 2)
@@ -42,8 +43,13 @@ class MainWindow(object):
         Button(self.m_main, text = "Internet", bg = gui_tools.BG_TOP, command = self.internet_screen).grid(row = 0, column = 7)
 #
         Button(self.m_main, text = "Scenes", bg = gui_tools.BG_TOP, command = self.scene_screen).grid(row = 1, column = 0)
+        Button(self.m_main, text = "Ctl Lights", bg = gui_tools.BG_TOP, command = self.ctl_lights_screen).grid(row = 1, column = 1)
 #
         Button(self.m_main, text = "QUIT", fg = "red", bg = gui_tools.BG_BOTTOM, command = self.main_quit).grid(row = 91, column = 1)
+
+    def ctl_lights_screen(self):
+        self.m_main.grid_forget() # Main Window
+        gui_ctl_lights.CtlLightsWindow(g_root)
 
     def house_screen(self):
         self.m_main.grid_forget() # Main Window
@@ -100,7 +106,7 @@ class DummyWindow(gui_tools.GuiTools):
         self.frame_delete(self.m_frame)
         MainWindow()
 
-    
+
 class StatusBar(Frame):
     """
     Status bar.
@@ -122,7 +128,7 @@ class StatusBar(Frame):
 
 
 def Init():
-    print "Gui Init"
+    #print "Gui Init"
     global g_root
     g_root = Tk()
     tksupport.install(g_root)
@@ -130,7 +136,6 @@ def Init():
 
 def Stop():
     print "Gui Stop"
-    #g_root.destroy()
     PyHouse.Stop('Gui')
 
 ### END

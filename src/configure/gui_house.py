@@ -9,6 +9,7 @@ import config_xml
 
 Location_Data = house.Location_Data
 Room_Data = house.Room_Data
+g_debug = False
 
 FG = 'red'
 
@@ -31,8 +32,10 @@ class HouseWindow(gui_tools.GuiTools):
         for l_obj in Location_Data.itervalues():
             if l_obj.Key > self.m_max:
                 self.m_max = l_obj.Key
-            #print l_obj.Name, l_obj.Key
-            h = Button(self.m_frame, text = l_obj.Name, bg = gui_tools.BG_TOP, command = lambda x = l_obj.Key: self.edit_house(x))
+            l_relief = SUNKEN
+            if l_obj.Active: l_relief = RAISED
+            if g_debug: print l_obj.Name, l_obj.Key
+            h = Button(self.m_frame, text = l_obj.Name, bg = gui_tools.BG_TOP, relief = l_relief, command = lambda x = l_obj.Key: self.edit_house(x))
             l_house.append(h)
             l_house[self.m_ix].grid(row = self.m_ix, sticky = W)
             self.m_ix += 1
@@ -76,11 +79,11 @@ class HouseDialog(gui_tools.GuiTools):
         Label(self.m_frame, text = "Active").grid(row = 2, column = 0, sticky = E)
         self.yes_no_radio(self.m_frame, self.Active).grid(row = 2, column = 1, sticky = W)
         Label(self.m_frame, text = "Name").grid(row = 3, column = 0, sticky = E)
-        Entry(self.m_frame, textvar = self.Name, state = DISABLED).grid(row = 3, column = 1, sticky = W)
+        Entry(self.m_frame, textvar = self.Name, state = DISABLED, width = 50).grid(row = 3, column = 1, sticky = W)
         Label(self.m_frame, text = "Street").grid(row = 4, column = 0, sticky = E)
-        Entry(self.m_frame, textvar = self.Street).grid(row = 4, column = 1, sticky = W)
+        Entry(self.m_frame, textvar = self.Street, width = 50).grid(row = 4, column = 1, sticky = W)
         Label(self.m_frame, text = "City").grid(row = 5, column = 0, sticky = E)
-        Entry(self.m_frame, textvar = self.City).grid(row = 5, column = 1, sticky = W)
+        Entry(self.m_frame, textvar = self.City, width = 50).grid(row = 5, column = 1, sticky = W)
         Label(self.m_frame, text = "State").grid(row = 7, column = 0, sticky = E)
         Entry(self.m_frame, textvar = self.State).grid(row = 7, column = 1, sticky = W)
         Label(self.m_frame, text = "Zip Code").grid(row = 9, column = 0, sticky = E)
@@ -138,7 +141,7 @@ class HouseDialog(gui_tools.GuiTools):
         del Location_Data[l_key]
         config_xml.WriteConfig().write_houses()
         self.quit_house()
-    
+
     def quit_house(self):
         self.m_top.destroy()
 
@@ -247,7 +250,7 @@ class RoomDialog(gui_tools.GuiTools):
 
     def quit_room(self):
         self.m_top.destroy()
-    
+
     def create_vars(self):
         self.Active = IntVar()
         self.Comment = StringVar()

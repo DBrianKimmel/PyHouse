@@ -7,11 +7,11 @@
 import logging
 
 # Import PyMh files
-import configure_mh
-import lighting
+#import configure_mh
+from lighting import lighting
 
 
-Configure_Data = configure_mh.Configure_Data
+#Configure_Data = configure_mh.Configure_Data
 
 
 class X10LightingData(lighting.LightingData):
@@ -54,7 +54,7 @@ def Init():
     """
     global g_logger
     g_logger = logging.getLogger('PyHouse.Device_X10')
-    LightingAPI().load_all_lights(Configure_Data['X10Lights'])
+    #LightingAPI().load_all_lights(Configure_Data['X10Lights'])
     g_logger.info('Initialized.')
 
 def Start(_p_reactor):

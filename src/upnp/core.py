@@ -133,6 +133,7 @@ class CreateServers(object):
         debug.insertnamespace('root', l_wsroot)
         content = resource.Resource()
         mediapath = os.path.expanduser('~/media')
+        #mediapath = os.path.expanduser('~/')
         if not os.path.isdir(mediapath):
             print >> sys.stderr, \
                 'Sorry, %s is not a directory, no content to serve.' % `mediapath`

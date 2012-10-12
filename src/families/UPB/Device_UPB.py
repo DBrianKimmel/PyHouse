@@ -7,15 +7,15 @@
 import logging
 
 # Import PyMh files
-import configure_mh
-import lighting
+#import configure_mh
+from lighting import lighting
 
 
 Button_Data = lighting.Button_Data
 Controller_Data = lighting.Controller_Data
 Light_Data = lighting.Light_Data
 Light_Status = lighting.Light_Status
-Configure_Data = configure_mh.Configure_Data
+#Configure_Data = configure_mh.Configure_Data
 
 m_config = None
 g_logger = None
@@ -152,9 +152,9 @@ def Init():
     global g_logger, g_pim
     g_logger = logging.getLogger('PyHouse.Device_UPB')
     g_logger.info('Initializing.')
-    ButtonAPI().load_all_buttons(Configure_Data['UPBButtons'])
-    ControllerAPI().load_all_controllers(Configure_Data['UPBControllers'])
-    LightingAPI().load_all_lights(Configure_Data['UPBLights'])
+    #ButtonAPI().load_all_buttons(Configure_Data['UPBButtons'])
+    #ControllerAPI().load_all_controllers(Configure_Data['UPBControllers'])
+    #LightingAPI().load_all_lights(Configure_Data['UPBLights'])
     UPB_Pim.Init()
     g_logger.info('Initialized.')
     g_pim = UPB_Pim

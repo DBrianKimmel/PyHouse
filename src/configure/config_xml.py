@@ -4,20 +4,11 @@
 """
 
 import xml.etree.ElementTree as ET
-
-# required
 import log
 import xml_tools
-# Optional
-try:
-    import house
-    l_house = True
-except:
-    l_house = False
-import lighting
-import lighting.lighting as lighting
-import schedule
-import schedule.schedule as schedule
+import house
+from lighting import lighting
+from schedule import schedule
 import web_server
 
 # Various data stores.
@@ -111,7 +102,7 @@ class ReadConfig(ConfigTools):
         l_obj.Name = l_name = p_entry.get('Name')
         l_obj.Key = int(p_entry.get('Key'))
         l_obj.Active = self.get_bool(p_entry.get('Active'))
-        print "ReadConfig.read_location - Active=", l_obj.Active, l_obj.Name
+        #print "ReadConfig.read_location - Active=", l_obj.Active, l_obj.Name
         # Now read the location subsection
         l_entry = p_entry.find('Location')
         l_obj.Street = l_entry.findtext('Street')
@@ -233,8 +224,12 @@ class ReadConfig(ConfigTools):
                 l_obj.WriteTimeout = l_entry.findtext('WriteTimeout')
                 l_obj.XonXoff = l_entry.findtext('XonXoff')
             elif l_if == 'USB':
-                l_obj.Product = l_entry.findtext('Product')
-                l_obj.Vendor = l_entry.findtext('Vendor')
+                try:
+                    l_obj.Product = int(l_entry.findtext('Product'), 0)
+                    l_obj.Vendor = int(l_entry.findtext('Vendor'), 0)
+                except TypeError:
+                    l_obj.Product = 0
+                    l_obj.Vendor = 0
             Controller_Data[l_obj.Key] = l_obj
             l_count += 1
         # Read the button section
@@ -274,7 +269,7 @@ class ReadConfig(ConfigTools):
         return l_count
 
     def read_log_web(self):
-        print "reading log_web"
+        #print "reading log_web"
         try:
             l_sect = self.m_root.find('Logs')
         except:
@@ -292,6 +287,9 @@ class ReadConfig(ConfigTools):
         Web_Data[0] = l_obj
 
     def read_upnp(self):
+        pass
+
+    def read_scenes(self):
         pass
 
 
@@ -414,6 +412,7 @@ class WriteConfig(ConfigTools):
             ET.SubElement(l_entry, 'Time').text = l_obj.Time
             ET.SubElement(l_entry, 'Type').text = l_obj.Type
         self.write_file()
+        schedule.Reload()
 
     def write_log_web(self):
         #print "Write log_web", Log_Data[0], vars(Log_Data[0])
@@ -429,15 +428,19 @@ class WriteConfig(ConfigTools):
     def write_upnp(self):
         self.write_file()
 
+    def write_scenes(self):
+        pass
+
 
 def read_config():
-    print "read_config()"
+    #print "read_config()"
     l_rf = ReadConfig()
     l_rf.read_houses()
     l_rf.read_lights()
     l_rf.read_schedules()
     l_rf.read_log_web()
     l_rf.read_upnp()
+    l_rf.read_scenes()
 
 def write_config():
     print "write_config()"
@@ -447,5 +450,6 @@ def write_config():
     l_wf.write_schedules()
     l_wf.write_log_web()
     l_wf.write_upnp()
+    l_wf.write_scenes()
 
 ### END

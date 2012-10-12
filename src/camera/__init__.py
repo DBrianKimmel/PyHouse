@@ -1,7 +1,7 @@
 """
-# entertainment/__init__.py
+camera.__init__.py
 
-The AV portion of UPNP is controlled here.
+The interface to video surveillance UPNP.
 
 """
 

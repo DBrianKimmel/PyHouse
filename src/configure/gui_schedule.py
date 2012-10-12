@@ -29,10 +29,12 @@ class ScheduleWindow(gui_tools.GuiTools):
     def show_all_schedules(self):
         l_sched = []
         for l_obj in Schedule_Data.itervalues():
+            l_relief = SUNKEN
+            if l_obj.Active: l_relief = RAISED
             l_bg, l_fg = self.color_button(int(l_obj.Level))
             l_row, l_col = self.get_grid(self.m_ix)
             l = Button(self.m_sched_frame, text = l_obj.Name + ' ' + l_obj.LightName,
-                       bg = l_bg, fg = l_fg,
+                       bg = l_bg, fg = l_fg, relief = l_relief,
                        command = lambda x = l_obj.Key: self.edit_schedule(x))
             l_sched.append(l)
             l_sched[self.m_ix].grid(row = l_row, column = l_col, padx = 5, sticky = W)
@@ -49,7 +51,7 @@ class ScheduleWindow(gui_tools.GuiTools):
     def save_schedule(self):
         config_xml.WriteConfig().write_schedules()
         self.main_screen()
-        
+
     def main_screen(self):
         """Exit the schedule screen.
         """
@@ -88,7 +90,7 @@ class ScheduleDialog(gui_tools.GuiTools):
 
     m_frame = None
     m_top = None
-    
+
     def __init__(self, p_root, p_parent, p_key, p_title):
         self.m_root = p_root
         self.m_top = Toplevel()
@@ -100,8 +102,8 @@ class ScheduleDialog(gui_tools.GuiTools):
         self.load_vars(p_key)
         #
         self.m_frame = Frame(self.m_top)
-        self.m_frame.grid_columnconfigure(0, minsize=120)
-        self.m_frame.grid_columnconfigure(1, minsize=300)
+        self.m_frame.grid_columnconfigure(0, minsize = 120)
+        self.m_frame.grid_columnconfigure(1, minsize = 300)
         self.m_frame.grid(padx = 5, pady = 5)
         Label(self.m_frame, text = "Key").grid(row = 1, column = 0, sticky = E)
         Entry(self.m_frame, textvar = self.Key, state = DISABLED).grid(row = 1, column = 1, sticky = W)
@@ -169,7 +171,7 @@ class ScheduleDialog(gui_tools.GuiTools):
 
     def delete_schedule(self):
         pass
-    
+
     def quit_dialog(self):
         """Remove the dialog box and return to the schedule window.
         """
@@ -181,7 +183,7 @@ class ScheduleDialog(gui_tools.GuiTools):
         for l_obj in p_dict.itervalues():
             l_ret.append(l_obj.Name)
         return l_ret
-    
+
     def light_box(self, p_parent, p_light = None):
         # Create and pack the dropdown ComboBox.
         items = self.build_names(Light_Data)

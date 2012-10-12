@@ -56,8 +56,7 @@ class GuiTools(object):
         """
         l_entry = str(p_sel.get())
         #print "debug pulldown_box ", p_list, l_entry
-        l_box = Pmw.ComboBox(p_parent,
-                    scrolledlist_items = p_list,
+        l_box = Pmw.ComboBox(p_parent, scrolledlist_items = p_list,
                     )
         try:
             l_sel = p_list.index(l_entry)

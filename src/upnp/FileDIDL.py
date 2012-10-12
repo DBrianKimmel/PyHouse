@@ -13,7 +13,7 @@ __all__ = [ 'mimetoclass', 'buildClassMT', 'getClassMT', ]
 
 import os.path
 import weakref
-from UPnP_DIDLLite import VideoItem, AudioItem, TextItem, ImageItem
+from DIDLLite import VideoItem, AudioItem, TextItem, ImageItem
 from twisted.python import log
 from twisted.web import static
 

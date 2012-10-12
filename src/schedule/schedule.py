@@ -6,7 +6,7 @@ This is a Main Module - always present.
 The schedule is at the core of PyMh.
 Lighting events, entertainment events etc. are triggered by the schedule and are run by twisted.
 
-Read/reread the schedule file at: 
+Read/reread the schedule file at:
     1. Start up
     2. Midnight
     3. After each set of scheduled events.
@@ -33,6 +33,7 @@ Schedule_Data = {}
 
 ScheduleCount = 0
 Scheduled_Namelist = []
+g_debug = 0
 g_logger = None
 g_reactor = None
 
@@ -139,7 +140,7 @@ class ScheduleExecution(ScheduleAPI):
         For each Name in the passed in list, execute the scheduled event.
         Delay before generating the next schedule to avoid a race condition
         that duplicates an event if it completes before the clock goes to the next second.
-        
+
         @param p_Name: a list of Names in the next time schedule
         """
         #print " Execute_schedule p_Name=>>{0:}<<".format(p_Name)
@@ -166,7 +167,7 @@ class ScheduleUtility(ScheduleExecution):
         Arithmetic is performed.
         seconds are forced to 00.
         Returns a datetime.time of the Name information.  Be careful of date wrapping!
-        
+
         WIP
         """
         l_timefield = p_timefield
@@ -201,15 +202,16 @@ class ScheduleUtility(ScheduleExecution):
         sunrisesunset.Start()
         self.m_sunset = sunrisesunset.SSAPI().get_sunset()
         self.m_sunrise = sunrisesunset.SSAPI().get_sunrise()
-        print "-Schedule - sunrise/sunset = ", self.m_sunrise, self.m_sunset
+        if g_debug > 0: print "-Schedule - sunrise/sunset = ", self.m_sunrise, self.m_sunset
         g_logger.info("Sunrise:{0:}, Sunset:{1:}".format(self.m_sunrise, self.m_sunset))
         l_time_scheduled = l_now
         l_next = 100000.0
         l_list = []
         for l_key, l_obj in Schedule_Data.iteritems():
+            if not l_obj.Active: continue
             l_time = l_obj.Time
             l_time_sch = self._extract_time(l_time)
-            #print " - Schedule ", l_time_sch
+            if g_debug: print " - Schedule ", l_time_sch
             # now see if this is 1) part of a chain -or- 2) an earlier schedule
             l_diff = self._make_delta(l_time_sch).total_seconds() - self._make_delta(l_time_now).total_seconds()
             if l_diff < 0:
@@ -234,17 +236,19 @@ def Init():
     sunrisesunset.Init()
     entertainment.Init()
     lighting.Init()
-    #ScheduleAPI().load_all_schedules(Configure_Data['Schedule'])
     ScheduleAPI().load_schedules_xml()
-    #ScheduleAPI().dump_all_schedules()
+    if g_debug > 0: ScheduleAPI().dump_all_schedules()
     g_logger.info("Initialized.")
 
 def Start(p_reactor):
     global g_reactor
     g_reactor = p_reactor
     lighting.Start(g_reactor)
-    ScheduleUtility().get_next_sched()
+    Reload()
     g_logger.info("Started.")
+
+def Reload():
+    ScheduleUtility().get_next_sched()
 
 def Stop():
     lighting.Stop()

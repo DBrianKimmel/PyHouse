@@ -1,13 +1,16 @@
 #!/usr/bin/env python
 
-# Licensed under the MIT license
-# http://opensource.org/licenses/mit-license.php
+""" DIDL = Digital Item Description Language
 
-# Copyright 2005, Tim Potter <tpot@samba.org>
-# Copyright 2006-2008 John-Mark Gurney <jmg@funkthat.com>
+Licensed under the MIT license
+http://opensource.org/licenses/mit-license.php
 
-__version__ = '$Change: 1227 $'
-# $Id: //depot/python/pymeds/pymeds-0.5/DIDLLite.py#1 $
+Copyright 2005, Tim Potter <tpot@samba.org>
+Copyright 2006-2008 John-Mark Gurney <jmg@funkthat.com>
+
+"""
+
+__version__ = '1.0.0'
 
 from xml.etree.ElementTree import Element, SubElement, tostring, _ElementInterface
 
@@ -40,8 +43,8 @@ class Resource(object):
 	def __init__(self, data, protocolInfo):
 		object.__init__(self)
 		# Use these so setattr can be more simple
-		object.__setattr__(self, 'data',  data)
-		object.__setattr__(self, 'attrs',  {})
+		object.__setattr__(self, 'data', data)
+		object.__setattr__(self, 'attrs', {})
 		self.protocolInfo = protocolInfo
 
 	def __getattr__(self, key):

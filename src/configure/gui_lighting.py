@@ -42,7 +42,9 @@ class LightingWindow(gui_tools.GuiTools):
         self.m_max_light = 0
         for l_obj in Light_Data.itervalues():
             if l_obj.Key > self.m_max_light: self.m_max_light = l_obj.Key
-            l = Button(self.m_frame, text = l_obj.Name, bg = BG_LIGHT,
+            l_relief = SUNKEN
+            if l_obj.Active: l_relief = RAISED
+            l = Button(self.m_frame, text = l_obj.Name, bg = BG_LIGHT, relief = l_relief,
                        command = lambda x = l_obj.Key, y = 1: self.edit_lights(x, y))
             l_light.append(l)
             l_row = self.m_ix // 4
@@ -52,7 +54,9 @@ class LightingWindow(gui_tools.GuiTools):
         self.m_max_controller = 0
         for l_obj in Controller_Data.itervalues():
             if l_obj.Key > self.m_max_controller: self.m_max_controller = l_obj.Key
-            c = Button(self.m_frame, fg = "red", text = l_obj.Name, bg = BG_CTLR,
+            l_relief = SUNKEN
+            if l_obj.Active: l_relief = RAISED
+            c = Button(self.m_frame, fg = "red", text = l_obj.Name, bg = BG_CTLR, relief = l_relief,
                        command = lambda x = l_obj.Key, y = 2: self.edit_controllers(x, y))
             l_light.append(c)
             l_row = self.m_ix // 4
@@ -62,7 +66,9 @@ class LightingWindow(gui_tools.GuiTools):
         self.m_max_button = 0
         for l_obj in Button_Data.itervalues():
             if l_obj.Key > self.m_max_button: self.m_max_button = l_obj.Key
-            b = Button(self.m_frame, fg = "blue", text = l_obj.Name, bg = BG_BUTTN,
+            l_relief = SUNKEN
+            if l_obj.Active: l_relief = RAISED
+            b = Button(self.m_frame, fg = "blue", text = l_obj.Name, bg = BG_BUTTN, relief = l_relief,
                        command = lambda x = l_obj.Key, y = 3: self.edit_buttons(x, y))
             l_light.append(b)
             l_row = self.m_ix // 4

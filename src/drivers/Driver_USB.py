@@ -29,7 +29,7 @@
 # MODIFICATIONS.
 
 """
-Driver_USB.py - USB Driver module. 
+Driver_USB.py - USB Driver module.
 
 This will interface various PyHouse modules to a USB device.
 
@@ -53,7 +53,7 @@ from twisted.internet.task import LoopingCall
 # Import PyHouse modules
 from tools import PrintBytes
 
-
+g_debug = True
 g_logger = None
 
 
@@ -143,13 +143,14 @@ class UsbDriverAPI(UsbUtility):
 
         @return:  None if no such device or a pyusb device object
         """
-        print "! !  Driver_USB._setup_find_device"
-        print "   -- Name:{0:} V:{1:X}:P:{2:X}".format(self.m_device_data.get_name(), self.m_device_data.Vendor, self.m_device_data.Product)
+        if g_debug:
+            print "! !  Driver_USB._setup_find_device"
+            print "   -- Name:{0:} V:{1:X}:P:{2:X}".format(self.m_device_data.get_name(), self.m_device_data.Vendor, self.m_device_data.Product)
         l_device = usb.core.find(idVendor = self.m_device_data.get_vendor(), idProduct = self.m_device_data.get_product())
         if l_device == None:
             g_logger.error('USB device not found  {0:X}:{1:X}, {2:}'.format(self.m_device_data.get_vendor(), self.m_device_data.get_product(), self.m_device_data.get_name()))
             return None
-        print "   -- device =", l_device.__dict__
+        if g_debug: print "   -- device =", l_device.__dict__
         self.m_device_data.set_device(l_device)
         self.m_device_data.num_configs = l_device.bNumConfigurations
         return l_device
@@ -269,7 +270,7 @@ class UsbDriverAPI(UsbUtility):
 
     def write_device(self, p_message):
         """Send message to the USB device.
-        
+
         @return: the number of bytes written
         """
         if self.m_epi_type == 0:
@@ -299,8 +300,9 @@ class USBDriverMain(UsbDriverAPI):
 
     def __init__(self, p_obj):
         """
-        @param p_obj:is the Controller_Data object for a USB device to open. 
+        @param p_obj:is the Controller_Data object for a USB device to open.
         """
+        print "Driver_USB __init__()"
         g_logger = logging.getLogger('PyHouse.USBDriver')
         l_dev = self.extract_usb(p_obj)
         g_logger.info(" Initializing USB port - {0:#04X}:{1:#04X} - {2:} on port {3:}".format(

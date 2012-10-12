@@ -9,6 +9,9 @@ import errno
 import itertools
 import os
 import sets
+import upnp
+#from upnp import FileDIDL
+import FileDIDL
 from DIDLLite import Container, StorageFolder, Item, Resource, ResourceList
 from twisted.web import resource, server, static
 from twisted.python import log
@@ -231,7 +234,7 @@ def defFS(path, fobj):
 		log.msg('skipping (not dir or reg): %s' % path)
 		return None, None
 
-	klass, mt = UPnP_FileDIDL.buildClassMT(FSItem, path)
+	klass, mt = FileDIDL.buildClassMT(FSItem, path)
 
 	return klass, { 'path': path, 'mimetype': mt }
 

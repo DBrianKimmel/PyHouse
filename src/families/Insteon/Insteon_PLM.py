@@ -10,7 +10,6 @@ import Queue
 # Import PyMh files
 import Device_Insteon
 from tools import PrintBytes
-#from lighting import g_reactor
 
 STX = 0x02
 ACK = 0x06
@@ -35,6 +34,7 @@ FLAG_HOPS_LEFT = 0x0C
 FLAG_MAX_HOPS = 0x03
 
 
+g_debug = 0
 g_driver = []
 g_logger = None
 g_queue = None
@@ -128,9 +128,9 @@ class InsteonPlmUtility(object):
 
     def _get_obj_using_name(self, p_name):
         """Return a button/controller/light object with a Name = argument
-        
+
         @param p_name: string of the object's Name
-        
+
         @return: the entire object of various types.
         """
         for l_obj in Device_Insteon.Light_Data.itervalues():
@@ -160,9 +160,9 @@ class InsteonPlmUtility(object):
     def _get_addr_from_name(self, p_name):
         """Given a device name, return a 3 bytearray(3) containing the devices address.
         Addresses are in the data as a string 'C1.A2.33'.
-        
+
         @param p_name: is the name of a button/controller/light
-        
+
         @return: a list of 3 bytes that are the address
                  or bb.aa.dd if no Insteon address exists
                  or 00.00.00 if not Insteon.
@@ -179,8 +179,8 @@ class InsteonPlmUtility(object):
     def _get_name_from_id(self, p_addr):
         """
         Get the Name from the database using the Address (ID)
-        
-        @param p_addr:The addreess in the form AA.BB.CC  
+
+        @param p_addr:The addreess in the form AA.BB.CC
         """
         for l_obj in Device_Insteon.Light_Data.itervalues():
             if l_obj.Family != 'Insteon': continue
@@ -245,13 +245,13 @@ class PlmDriverInterface(object):
 
     def driver_loop_start(self):
         global g_queue
-        print "--- Insteon PLM DriverLoopStart"
+        if g_debug: print "--- Insteon PLM DriverLoopStart"
         g_queue = Queue.Queue(300)
         g_reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send)
         g_reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop)
 
     def send_plm_command(self, p_command):
-        #print "--- Insteon PLM SendCommand"
+        if g_debug: print "--- Insteon PLM SendCommand"
         g_queue.put(p_command)
 
     def dequeue_and_send(self):
@@ -298,11 +298,11 @@ class CreateCommands(PlmDriverInterface, InsteonPlmUtility):
     def send_62_command(self, p_name, p_cmd1, p_cmd2):
         """Send Insteon Standard Length Message (8 bytes).
         See page 243 of Insteon Developers Guide.
-        
+
         @param p_name: is the name of the device
         @param p_cmd1: is the first command byte
         @param p_cmd2: is the second command byte
-        @return: the response from send_plm_command    
+        @return: the response from send_plm_command
         """
         l_addr = self._get_addr_from_name(p_name)
         l_command = bytearray(8)
@@ -363,6 +363,7 @@ class CreateCommands(PlmDriverInterface, InsteonPlmUtility):
 class LightingAPI(Device_Insteon.LightingAPI, CreateCommands):
 
     def change_light_setting(self, p_name, p_level):
+        if g_debug: print "Insteon_PLM change light settings for {0:} to {1:}".format(p_name, p_level)
         for l_obj in Device_Insteon.Light_Data.itervalues():
             if l_obj.get_family() != 'Insteon': continue
             if l_obj.get_name() == p_name:
@@ -399,8 +400,8 @@ class InsteonPlmCommands(LightingAPI):
         pause a bit
         get response
         ???
-        
-        @param p_name: is the key for the entry in Light_Data 
+
+        @param p_name: is the key for the entry in Light_Data
         """
         self.send_62_command(p_name, message_types['product_data_request'], 0x00)
 
@@ -454,7 +455,7 @@ class DecodeResponses(InsteonAllLinks):
     def _decode_message(self, p_message, p_length = 1):
         """Decode a message that was ACKed / NAked.
         see IDM pages 238-241
-        
+
         @return: a flag that is True for ACK and False for NAK/Invalid response.
         """
         l_stx = p_message[0]
@@ -583,7 +584,7 @@ class DecodeResponses(InsteonAllLinks):
         return l_ret
 
     def _decode_52_record(self, p_message, p_length):
-        """Insteon X-10 message received (4 bytes). 
+        """Insteon X-10 message received (4 bytes).
         See p 253 of developers guide.
         """
         g_logger.warning("== 52 message not decoded yet.")
@@ -594,7 +595,7 @@ class DecodeResponses(InsteonAllLinks):
         return l_ret
 
     def _decode_53_record(self, p_message, p_length):
-        """Insteon All-Linking completed (10 bytes). 
+        """Insteon All-Linking completed (10 bytes).
         See p 260 of developers guide.
         """
         g_logger.warning("== 53 message not decoded yet.")
@@ -605,7 +606,7 @@ class DecodeResponses(InsteonAllLinks):
         return l_ret
 
     def _decode_54_record(self, p_message, p_length):
-        """Insteon Button Press event (3 bytes). 
+        """Insteon Button Press event (3 bytes).
         See p 276 of developers guide.
         """
         g_logger.warning("== 54 message not decoded yet.")
@@ -616,7 +617,7 @@ class DecodeResponses(InsteonAllLinks):
         return l_ret
 
     def _decode_55_record(self, p_message, p_length):
-        """Insteon User Reset detected (2 bytes). 
+        """Insteon User Reset detected (2 bytes).
         See p 269 of developers guide.
         """
         g_logger.warning("== 55 message not decoded yet.")
@@ -627,7 +628,7 @@ class DecodeResponses(InsteonAllLinks):
         return l_ret
 
     def _decode_56_record(self, p_message, p_length):
-        """Insteon All-Link cleanup failure report (7 bytes). 
+        """Insteon All-Link cleanup failure report (7 bytes).
         See p 256 of developers guide.
         """
         g_logger.warning("== 56 message not decoded yet.")
@@ -655,7 +656,7 @@ class DecodeResponses(InsteonAllLinks):
         return l_ret
 
     def _decode_58_record(self, p_message, p_length):
-        """Insteon All-Link cleanup status report (3 bytes). 
+        """Insteon All-Link cleanup status report (3 bytes).
         See p 257 of developers guide.
         """
         g_logger.warning("== 58 message not decoded yet.")
@@ -689,9 +690,9 @@ class DecodeResponses(InsteonAllLinks):
         """Get response to Send Insteon standard-length message (9 bytes).
         Basically, a response to the 62 command.
         See p 243 of developers guide.
-        
+
         This is an ack of the command.
-        It seems that a 50 response MAY immediately follow this response with any data requested.   
+        It seems that a 50 response MAY immediately follow this response with any data requested.
         """
         l_id = "{0:X}.{1:X}.{2:X}".format(p_message[2], p_message[3], p_message[4]).upper()
         l_msgflags = self._decode_message_flag(p_message[5])
@@ -782,7 +783,7 @@ class InsteonPlmAPI(DecodeResponses):
             i2 = no checksun - new commands
             i2cs = 2012 add checksums + new commands.
         """
-        g_logger.debug('***Getting Insteon Envine version')
+        g_logger.debug('***Getting Insteon Engine version')
         self.send_62_command(p_name, message_types['engine_version'], 0) # 0x0D
 
     def get_id_request(self, p_name):
@@ -803,22 +804,24 @@ class LightHandlerAPI(InsteonPlmAPI):
     """
 
     def initialize_all_controllers(self):
+        if g_debug: print "Insteon_PLM initializing all controllers"
         for l_obj in Device_Insteon.Controller_Data.itervalues():
+            if g_debug: print "Insteon_PLM Family:{0:}, Interface:{1:}".format(l_obj.Family, l_obj.Interface)
             if l_obj.Family != 'Insteon': continue
             if l_obj.Active != True: continue
             if l_obj.Interface.lower() == 'serial':
-                import Driver_Serial
-                l_driver = Driver_Serial.SerialDriverMain(l_obj)
+                import drivers.Driver_Serial
+                l_driver = drivers.Driver_Serial.SerialDriverMain(l_obj)
             elif l_obj.Interface.lower() == 'ethernet':
-                import Driver_Ethernet
-                l_driver = Driver_Ethernet.EthernetDriverMain(l_obj)
+                import drivers.Driver_Ethernet
+                l_driver = drivers.Driver_Ethernet.EthernetDriverMain(l_obj)
             elif l_obj.Interface.lower() == 'usb':
-                import Driver_USB
-                l_driver = Driver_USB.USBDriverMain(l_obj)
+                import drivers.Driver_USB
+                l_driver = drivers.Driver_USB.USBDriverMain(l_obj)
             g_driver.append(l_driver)
 
     def set_plm_mode(self):
-        """Set the PLM to a mode 
+        """Set the PLM to a mode
         """
         #print " Sending mode command to Insteon PLM"
         self.send_6B_command(MODE_MONITOR)
@@ -840,7 +843,7 @@ class LightHandlerAPI(InsteonPlmAPI):
 
     def _get_one_light_status(self, p_name):
         """Get the status of a light.
-        
+
         We will (apparently) get back a 62-ACK followed by a 50 with the level in the response.
 
         @return: the light current level (0-100%)

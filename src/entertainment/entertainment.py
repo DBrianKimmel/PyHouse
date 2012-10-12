@@ -9,14 +9,20 @@ Can act as a UPnP Control point
 
 # Import system type stuff
 import logging
+#from twisted.web import xmlrpc, client
+from twisted.internet import reactor
 
 # Import PyMh files
-import upnp.core
-from upnp.core import g_uuid
+from coherence.base import Coherence
+from coherence.upnp.devices.control_point import ControlPoint
+from coherence.upnp.core import DIDLLite
+from coherence.upnp.devices.dimmable_light import DimmableLight
 
 Entertainment_Data = {}
+g_debug = 10
 g_logger = None
 g_upnp = None
+
 
 class EntertainmentAPI(object):
     """
@@ -40,18 +46,113 @@ class UPnPControlPoint(object):
     """
 
     def __init__(self):
-        print "entertainment.UPnPControlPoint.__init__()"
-        upnp.core.Init()
-        upnp.core.Start()
-        self.discover_all_upnp()
+        if g_debug > 0: print "entertainment.UPnPControlPoint.__init__()"
+        reactor.callWhenRunning(self.start)
 
-    def discover_all_upnp(self):
+    def discover(self):
+        """Send out a discovery message.
+        """
         pass
+
+    def check_device(self, device):
+        """
+        @param device: an instance of coherence.upnp.core.Device()
+        """
+        print "__Found device:{0:s}, Type:{1:s}, Client:{2:}, Id:{3:}".format(device.get_friendly_name(), device.get_device_type(), device.client, device.get_id())
+
+    def state_variable_change(self, p_variable):
+        if p_variable.name == 'CurrentTrackMetaData':
+            if p_variable.value != None and len(p_variable.value) > 0:
+                try:
+                    elt = DIDLLite.DIDLElement.fromString(p_variable.value)
+                    for item in elt.getItems():
+                        print "__Variable - CurrentTrackMetaData - Now playing: %r - %r (%s/%r)" % (item.artist, item.title, item.id, item.upnp_class)
+                except SyntaxError:
+                    print "__Variable - CurrentTrackMetaData - Seems we haven't got an XML string"
+                    return
+        elif p_variable.name == 'TransportState':
+            print p_variable.name, '__Variable - TransportState - Changed from:{0:}, To:{1:}'.format(p_variable.old_value, p_variable.value)
+        elif p_variable.name == 'ExternalIPAddress':
+            print "__Our external IP address is %r" % p_variable.value
+        elif p_variable.name == 'PortMappingNumberOfEntries':
+            if p_variable.value != '':
+                print "__There are %d port-mappings defined" % int(p_variable.value)
+            else:
+                print "__There are no port-mappings defined"
+        elif p_variable.name == 'LoadLevelTarget':
+            print '__Variable - LoadLevelTarget - {0:}'.format(p_variable.value)
+        elif p_variable.name == 'LoadLevelStatus':
+            print '__Variable - LoadLevelStatus - {0:}'.format(p_variable.value)
+
+    def process_media_server_browse(self, result, client):
+        print "__Browsing root of", client.device.get_friendly_name()
+        print "__Result contains %d out of %d total matches" % (int(result['NumberReturned']), int(result['TotalMatches']))
+        elt = DIDLLite.DIDLElement.fromString(result['Result'])
+        for item in elt.getItems():
+            if item.upnp_class.startswith("object.container"):
+                print "__  container %s (%s) with %d items" % (item.title, item.id, item.childCount)
+            if item.upnp_class.startswith("object.item"):
+                print "__  item %s (%s)" % (item.title, item.id)
+
+    def media_server_found(self, client, udn):
+        """
+        Called for each media server found.
+        """
+        print "__Media_server_found", client
+        print "__Media_server_found",
+        d = client.content_directory.browse(0, browse_flag = '++BrowseDirectChildren', process_result = False, backward_compatibility = False)
+        d.addCallback(self.process_media_server_browse, client)
+
+    def media_server_removed(self, udn):
+    # sadly they sometimes get removed as well :(
+        print "__Media_server_removed", udn
+
+    def media_renderer_found(self, client, udn):
+        print "__Media_renderer_found", client
+        print "__Media_renderer_found", client.device.get_friendly_name()
+        client.av_transport.subscribe_for_variable('CurrentTrackMetaData', self.state_variable_change)
+        client.av_transport.subscribe_for_variable('TransportState', self.state_variable_change)
+
+    def media_renderer_removed(self, udn):
+        print "__Media_renderer_removed", udn
+
+    def igd_found(self, p_client, p_udn):
+        print "__IGD found", p_client.device.get_friendly_name()
+        wan_ip_connection_service = p_client.wan_device.wan_connection_device.wan_ip_connection
+        wan_ip_connection_service.subscribe_for_variable('PortMappingNumberOfEntries', callback = self.state_variable_change)
+        wan_ip_connection_service.subscribe_for_variable('ExternalIPAddress', callback = self.state_variable_change)
+
+    def igd_removed(self, p_udn):
+        print "__IGD_removed", p_udn
+
+    def light_found(self, p_client, p_udn):
+        print "__Light_found", p_udn, p_client.device.get_friendly_name()
+        light_service = p_client.dimming.wan_connection_device.wan_ip_connection
+        light_service.subscribe_for_variable('LoadLevelTarget', callback = self.state_variable_change)
+        light_service.subscribe_for_variable('LoadLevelStatus', callback = self.state_variable_change)
+
+        """
+http://<VERA_IP>:3480/data_request?id=lu_action&DeviceNum=<ID>&serviceId=urn:upnp-org:serviceId:Dimming1&action=SetLoadLevelTarget&newLoadlevelTarget=<LEVEL>
+Will set a dimmable lite with device number <ID> to level <LEVEL>
+        """
+
+    def start(self):
+        self.discover()
+        control_point = ControlPoint(Coherence({'logmode':'warning'}), auto_client = ['MediaRenderer'])
+        control_point.connect(self.check_device, 'Coherence.UPnP.Device.detection_completed')
+        control_point.connect(self.media_server_found, 'Coherence.UPnP.ControlPoint.MediaServer.detected')
+        control_point.connect(self.media_server_removed, 'Coherence.UPnP.ControlPoint.MediaServer.removed')
+        control_point.connect(self.media_renderer_found, 'Coherence.UPnP.ControlPoint.MediaRenderer.detected')
+        control_point.connect(self.media_renderer_removed, 'Coherence.UPnP.ControlPoint.MediaRenderer.removed')
+        control_point.connect(self.igd_found, 'Coherence.UPnP.ControlPoint.InternetGatewayDevice.detected')
+        control_point.connect(self.igd_removed, 'Coherence.UPnP.ControlPoint.InternetGatewayDevice.removed')
+        control_point.connect(self.light_found, 'Coherence.UPnP.ControlPoint.BinaryLight.detected')
+        control_point.connect(self.light_found, 'Coherence.UPnP.ControlPoint.DimmableLight.detected')
 
 
 def Init():
     global g_logger, g_upnp
-    print "Entertainment.Init()"
+    if g_debug > 0: print "Entertainment.Init()"
     g_logger = logging.getLogger('PyMh.Entertainment')
     g_logger.info("Initializing.")
     g_upnp = UPnPControlPoint()

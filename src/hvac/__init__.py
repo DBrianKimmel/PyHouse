@@ -1,7 +1,7 @@
 """
-# entertainment/__init__.py
+hvac.__init__.py
 
-The AV portion of UPNP is controlled here.
+This is the interface from UPnP to PyHouse.
 
 """
 

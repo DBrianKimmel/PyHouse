@@ -27,6 +27,7 @@ ACK_MSG = 0x40
 SEND_TIMEOUT = 0.8
 RECEIVE_TIMEOUT = 0.3
 
+g_debug = 0
 g_driver = []
 g_logger = None
 g_queue = None
@@ -68,7 +69,7 @@ class PimData(object):
 class UpbPimUtility(object):
 
     def _get_id_from_name(self, p_name):
-        print " & UPB_Pim._get_id_from_name ", p_name
+        if g_debug > 1: print " & UPB_Pim._get_id_from_name ", p_name
         for l_obj in Device_UPB.Light_Data.itervalues():
             if l_obj.Family != 'UPB': continue
             if l_obj.Active != True: continue
@@ -84,7 +85,7 @@ class UpbPimUtility(object):
         return 0
 
     def _calculate_checksum(self, p_msg):
-        print " & UPB_Pim.calculate checksum"
+        if g_debug > 1: print " & UPB_Pim.calculate checksum"
         l_out = '14'
         l_cs = 0
         for l_ix in range(len(p_msg)):
@@ -108,7 +109,7 @@ class UpbPimUtility(object):
     def _compose_command(self, p_command, p_device_id, *p_args):
         """
         """
-        print " & UPB_Pim.compose command - Network:{0:}, Command:{1:#02x}, ID:{2:} ".format(g_network_id, p_command, p_device_id)
+        if g_debug > 1: print " & UPB_Pim.compose command - Network:{0:}, Command:{1:#02x}, ID:{2:} ".format(g_network_id, p_command, p_device_id)
         l_cmd = bytearray(6 + len(p_args))
         l_cmd[0] = 7 + len(p_args) # 'UPBMSG_CONTROL_HIGH'
         l_cmd[1] = 0x00 # 'UPBMSG_CONTROL_LOW'
@@ -127,7 +128,7 @@ class UpbPimUtility(object):
 class PimDriverInterface(object):
 
     def driver_loop_start(self):
-        print "--- UPB PIM DriverLoopStart"
+        if g_debug > 0: print "--- UPB PIM DriverLoopStart"
         g_reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send)
         g_reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop)
 
