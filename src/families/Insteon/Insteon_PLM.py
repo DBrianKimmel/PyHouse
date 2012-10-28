@@ -40,7 +40,7 @@ g_logger = None
 g_queue = None
 g_reactor = None
 
-#PLM Serial Commands
+# PLM Serial Commands
 plm_commands = {
 'insteon_received'      : 0x50,
 'insteon_ext_received'  : 0x51,
@@ -185,7 +185,7 @@ class InsteonPlmUtility(object):
         for l_obj in Device_Insteon.Light_Data.itervalues():
             if l_obj.Family != 'Insteon': continue
             if l_obj.Address == p_addr: return l_obj.Name
-        #print " **name_from_id {0:}, {1:}".format(p_addr, l_obj.Address)
+        # print " **name_from_id {0:}, {1:}".format(p_addr, l_obj.Address)
         for l_obj in Device_Insteon.Button_Data.itervalues():
             if l_obj.Family != 'Insteon': continue
             if l_obj.Address == p_addr: return l_obj.Name
@@ -211,21 +211,21 @@ class InsteonPlmUtility(object):
         l_hops_left = (p_byte & 0x0C) >> 2
         l_max_hops = (p_byte & 0x03)
         if l_type == 4:
-            l_ret = 'Broadcast'    # Broadcast
+            l_ret = 'Broadcast'  # Broadcast
         elif l_type == 0:
-            l_ret = 'Direct'    # Direct message
+            l_ret = 'Direct'  # Direct message
         elif l_type == 1:
-            l_ret = 'DirACK'    # Direct message ACK
+            l_ret = 'DirACK'  # Direct message ACK
         elif l_type == 5:
-            l_ret = 'DirNAK'    # Direct message NAK
+            l_ret = 'DirNAK'  # Direct message NAK
         elif l_type == 6:
-            l_ret = 'All_Brdcst'    # All-Link Broadcast
+            l_ret = 'All_Brdcst'  # All-Link Broadcast
         elif l_type == 2:
-            l_ret = 'All_Cleanup'    # All-Link Cleanup
+            l_ret = 'All_Cleanup'  # All-Link Cleanup
         elif l_type == 3:
-            l_ret = 'All_Clean_ACK'    # All-Link Cleanup ACK
+            l_ret = 'All_Clean_ACK'  # All-Link Cleanup ACK
         else:
-            l_ret = 'All_Clean_NAK'    # All-Link Cleanup NAK
+            l_ret = 'All_Clean_NAK'  # All-Link Cleanup NAK
         if l_extended == 0:
             l_ret += '-Std-'
         else:
@@ -274,7 +274,7 @@ class PlmDriverInterface(object):
         if l_bytes == 0:
             g_reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop)
             return False
-        #l_ret = self._decode_message(l_msg, l_bytes)
+        # l_ret = self._decode_message(l_msg, l_bytes)
         l_ret = l_msg
         g_reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop)
         return l_ret
@@ -311,7 +311,7 @@ class CreateCommands(PlmDriverInterface, InsteonPlmUtility):
         l_command[2] = l_addr[0]
         l_command[3] = l_addr[1]
         l_command[4] = l_addr[2]
-        l_command[5] = FLAG_MAX_HOPS + FLAG_HOPS_LEFT #0x0F
+        l_command[5] = FLAG_MAX_HOPS + FLAG_HOPS_LEFT  # 0x0F
         l_command[6] = p_cmd1
         l_command[7] = p_cmd2
         g_logger.debug("Send 62 command {0:X},{1:X} to {2:} ({3:x}.{4:x}.{5:x})".format(p_cmd1, p_cmd2, p_name, l_command[2], l_command[3], l_command[4]))
@@ -321,7 +321,7 @@ class CreateCommands(PlmDriverInterface, InsteonPlmUtility):
         """Get the first all-link record from the plm (2 bytes).
         See p 261 of developers guide.
         """
-        #g_logger.debug("Send command to get First all-link record.")
+        # g_logger.debug("Send command to get First all-link record.")
         l_command = bytearray(2)
         l_command[0] = STX
         l_command[1] = plm_commands['plm_first_all_link']
@@ -332,7 +332,7 @@ class CreateCommands(PlmDriverInterface, InsteonPlmUtility):
         See p 262 of developers guide.
         Returns True if more - False if no more.
         """
-        #g_logger.debug("Send command to get Next all-link record.")
+        # g_logger.debug("Send command to get Next all-link record.")
         l_command = bytearray(2)
         l_command[0] = STX
         l_command[1] = plm_commands['plm_next_all_link']
@@ -374,7 +374,7 @@ class LightingAPI(Device_Insteon.LightingAPI, CreateCommands):
                 else:
                     l_level = int(p_level) * 255 / 100
                     self.send_62_command(p_name, message_types['on'], l_level)
-                Device_Insteon.Light_Status[p_name].CurLevel = p_level
+                # Device_Insteon.Light_Status[p_name].CurLevel = p_level
                 return
 
     def scan_all_lights(self, p_lights):
@@ -467,7 +467,7 @@ class DecodeResponses(InsteonAllLinks):
             g_logger.error("Message started with {0:#x} not STX, Message={1:}".format(l_stx, PrintBytes(p_message)))
             return l_ret
         l_cmd = p_message[1]
-        #print "- Message from PIM ==>", PrintBytes(p_message)
+        # print "- Message from PIM ==>", PrintBytes(p_message)
         if l_cmd == 0:
             g_logger.warning("Found a '0' record ->{0:}.".format(PrintBytes(p_message)))
             return l_ret
@@ -483,7 +483,7 @@ class DecodeResponses(InsteonAllLinks):
         #
         elif l_cmd == 0x60: l_ret = self._decode_60_record(p_message, p_length)
         elif l_cmd == 0x61: print "   insteon_PLM._decode got msg type 61"
-        elif l_cmd == 0x62: l_ret = self._decode_62_record(p_message, p_length) # print "   insteon_PLM._decode got msg type 62"
+        elif l_cmd == 0x62: l_ret = self._decode_62_record(p_message, p_length)  # print "   insteon_PLM._decode got msg type 62"
         elif l_cmd == 0x63: print "   insteon_PLM._decode got msg type 63"
         elif l_cmd == 0x64: print "   insteon_PLM._decode got msg type 64"
         elif l_cmd == 0x65: print "   insteon_PLM._decode got msg type 65"
@@ -507,41 +507,41 @@ class DecodeResponses(InsteonAllLinks):
         l_name_from = self._get_name_from_id(l_id_from)
         l_flags = self._decode_message_flag(p_message[8])
         l_ret = True
-        if p_message[8] & 0xE0 == 0x80: #devcat type 
+        if p_message[8] & 0xE0 == 0x80:  # devcat type
             l_devcat = p_message[5] * 256 + p_message[6]
             l_obj.DevCat = l_devcat
             self.update_object(l_obj)
             print " --- Got devcat type  From={0:}, DevCat={1:}, flags={2:}".format(l_name_from, l_devcat, l_flags)
             g_logger.info("== 50A From={0:}, DevCat={1:}, flags={2:} ==".format(l_name_from, l_devcat, l_flags))
-        elif p_message[8] & 0xE0 == 0xC0: # all link broadcast of group is
+        elif p_message[8] & 0xE0 == 0xC0:  # all link broadcast of group is
             # This is a all-link broadcast message that is sent to a group
             l_group = p_message[7]
             l_data = [p_message[9], p_message[10]]
             print " --- Got all-link broadcast  From={0:}, Group={1:}, Flags={2:}, Data={3:} ".format(l_name_from, l_group, l_flags, l_data)
             g_logger.info("== 50B All-link Broadcast From={0:}, Group={1:}, Flags={2:}, Data={3:} ==".format(l_name_from, l_group, l_flags, l_data))
-        else: # all other cases contain to address
-            #Last_Response = p_message
+        else:  # all other cases contain to address
+            # Last_Response = p_message
             l_id_to = "{0:X}.{1:X}.{2:X}".format(p_message[5], p_message[6], p_message[7]).upper()
             l_name_to = self._get_name_from_id(l_id_to)
             l_data = [p_message[9], p_message[10]]
-            if self.m_last_command == 0x03: # Product data request
+            if self.m_last_command == 0x03:  # Product data request
                 print " --- Got product data request."
-            elif self.m_last_command == 0x0D: # engine version
+            elif self.m_last_command == 0x0D:  # engine version
                 l_engine_id = p_message[10]
                 print " --- Got Engine version ", l_name_from, l_engine_id
                 g_logger.info("== 50C From={0:}, To={1:}, EngineID={2:}".format(l_name_from, l_name_to, l_engine_id))
                 pass
-            elif self.m_last_command == 0x10: # request for ID
+            elif self.m_last_command == 0x10:  # request for ID
                 print " --- Got Request ID From={0:}".format(l_name_from,)
                 g_logger.info("== 50E From={0:}".format(l_name_from,))
                 pass
-            elif self.m_last_command == 0x11: # light ON
+            elif self.m_last_command == 0x11:  # light ON
                 l_obj.CurLevel = 100
                 self.update_object(l_obj)
-            elif self.m_last_command == 0x13: # light OFF
+            elif self.m_last_command == 0x13:  # light OFF
                 l_obj.CurLevel = 0
                 self.update_object(l_obj)
-            elif self.m_last_command == 0x19: # light status request
+            elif self.m_last_command == 0x19:  # light status request
                 l_level = int(((p_message[10] + 2) * 100) / 256)
                 print " --- Got light status for {0:} - at level {1:}".format(l_name_from, l_level)
                 g_logger.info("== 50F From={0:}, Level={1:}".format(l_name_from, l_level))
@@ -643,7 +643,7 @@ class DecodeResponses(InsteonAllLinks):
         See p 264 of developers guide.
         """
         l_flags = p_message[2]
-        #l_flag_control = l_flags & 0x40
+        # l_flag_control = l_flags & 0x40
         l_group = p_message[3]
         l_id = "{0:X}.{1:X}.{2:X}".format(p_message[4], p_message[5], p_message[6]).upper()
         l_data = [p_message[7], p_message[8], p_message[9]]
@@ -696,8 +696,8 @@ class DecodeResponses(InsteonAllLinks):
         """
         l_id = "{0:X}.{1:X}.{2:X}".format(p_message[2], p_message[3], p_message[4]).upper()
         l_msgflags = self._decode_message_flag(p_message[5])
-        self.m_last_command = p_message[6] # save for following 50 record
-        #l_cmd2 = p_message[7]
+        self.m_last_command = p_message[6]  # save for following 50 record
+        # l_cmd2 = p_message[7]
         l_ack = self._get_ack_nak(p_message[8])
         l_name = self._get_name_from_id(l_id)
         g_logger.info("== 62 {0:} {1:} {2:}".format(l_name, l_msgflags, l_ack))
@@ -712,7 +712,7 @@ class DecodeResponses(InsteonAllLinks):
         See p 261 of developers guide.
         """
         if p_message[2] == ACK:
-            #g_logger.info("== 69 - ACK")
+            # g_logger.info("== 69 - ACK")
             l_ret = True
         else:
             g_logger.info("== 69 - NAK")
@@ -727,10 +727,10 @@ class DecodeResponses(InsteonAllLinks):
         See p 262 of developers guide.
         """
         if p_message[2] == ACK:
-            #g_logger.info("== 6A - ACK")
+            # g_logger.info("== 6A - ACK")
             l_ret = True
         else:
-            #g_logger.info("== 6A - NAK")
+            # g_logger.info("== 6A - NAK")
             return False
         if l_ret & (p_length > 3):
             l_msg = p_message[3:]
@@ -784,13 +784,13 @@ class InsteonPlmAPI(DecodeResponses):
             i2cs = 2012 add checksums + new commands.
         """
         g_logger.debug('***Getting Insteon Engine version')
-        self.send_62_command(p_name, message_types['engine_version'], 0) # 0x0D
+        self.send_62_command(p_name, message_types['engine_version'], 0)  # 0x0D
 
     def get_id_request(self, p_name):
         """Get the device DevCat
         """
         g_logger.debug('request ID from device {0:}'.format(p_name))
-        self.send_62_command(p_name, message_types['id_request'], 0) # 0x10
+        self.send_62_command(p_name, message_types['id_request'], 0)  # 0x10
 
     def ping_plm(self):
         """Send a command to the plm and get its response.
@@ -823,13 +823,13 @@ class LightHandlerAPI(InsteonPlmAPI):
     def set_plm_mode(self):
         """Set the PLM to a mode
         """
-        #print " Sending mode command to Insteon PLM"
+        # print " Sending mode command to Insteon PLM"
         self.send_6B_command(MODE_MONITOR)
 
     def get_all_lights_status(self):
         """Get the status (current level) of all lights.
         """
-        #print " Getting the status of all (Insteon?) Lights"
+        # print " Getting the status of all (Insteon?) Lights"
         g_logger.info('Getting light levels of all lights')
         for l_obj in Device_Insteon.Button_Data.itervalues():
             if l_obj.Family != 'Insteon': continue
@@ -848,7 +848,7 @@ class LightHandlerAPI(InsteonPlmAPI):
 
         @return: the light current level (0-100%)
         """
-        self.send_62_command(p_name, message_types['status_request'], 0)                # 0x19
+        self.send_62_command(p_name, message_types['status_request'], 0)  # 0x19
 
 
 class PlmTesting(object):
@@ -858,11 +858,11 @@ class PlmTesting(object):
     def test_light_commands(self):
         """Turn some stuff on and off to see if things are working.
         """
-        #self.ping_plm()
-        #self._turn_light_on('wet_bar', 100)
-        #self._get_one_light_status('wet_bar')
-        #self._turn_light_off('wet_bar')
-        #self._get_one_light_status('wet_bar')
+        # self.ping_plm()
+        # self._turn_light_on('wet_bar', 100)
+        # self._get_one_light_status('wet_bar')
+        # self._turn_light_off('wet_bar')
+        # self._get_one_light_status('wet_bar')
         pass
 
 
@@ -887,4 +887,4 @@ def Start(p_reactor):
 def Stop():
     pass
 
-### END
+# ## END

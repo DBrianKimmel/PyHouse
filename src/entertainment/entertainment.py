@@ -21,7 +21,7 @@ from coherence.upnp.core.msearch import MSearch
 from coherence.upnp.devices.dimmable_light import DimmableLight
 
 Entertainment_Data = {}
-g_debug = 10
+g_debug = 9
 g_logger = None
 g_upnp = None
 
@@ -90,7 +90,8 @@ class UPnPControlPoint(object):
         """
         @param device: an instance of coherence.upnp.core.Device()
         """
-        print "__Found device:{0:s}, Type:{1:s}, Client:{2:}, Id:{3:}".format(device.get_friendly_name(), device.get_device_type(), device.client, device.get_id())
+        if g_debug > 1:
+            print "__Found device:{0:s}, Type:{1:s}, Client:{2:}, Id:{3:}".format(device.get_friendly_name(), device.get_device_type(), device.client, device.get_id())
 
     def state_variable_change(self, p_variable):
         if p_variable.name == 'CurrentTrackMetaData':
@@ -98,67 +99,67 @@ class UPnPControlPoint(object):
                 try:
                     elt = DIDLLite.DIDLElement.fromString(p_variable.value)
                     for item in elt.getItems():
-                        print "__Variable - CurrentTrackMetaData - Now playing: %r - %r (%s/%r)" % (item.artist, item.title, item.id, item.upnp_class)
+                        if g_debug > 3: print "__Variable - CurrentTrackMetaData - Now playing: %r - %r (%s/%r)" % (item.artist, item.title, item.id, item.upnp_class)
                 except SyntaxError:
                     print "__Variable - CurrentTrackMetaData - Seems we haven't got an XML string"
                     return
         elif p_variable.name == 'TransportState':
-            print '__Variable - TransportState - Changed from:{0:}, To:{1:}'.format(p_variable.old_value, p_variable.value)
+            if g_debug > 3: print '__Variable - TransportState - Changed from:{0:}, To:{1:}'.format(p_variable.old_value, p_variable.value)
         elif p_variable.name == 'ExternalIPAddress':
-            print "__Our external IP address is %r" % p_variable.value
+            if g_debug > 3: print "__Our external IP address is %r" % p_variable.value
         elif p_variable.name == 'PortMappingNumberOfEntries':
             if p_variable.value != '':
                 print "__There are %d port-mappings defined" % int(p_variable.value)
             else:
                 print "__There are no port-mappings defined"
         elif p_variable.name == 'LoadLevelTarget':
-            print '__Variable - LoadLevelTarget - {0:}'.format(p_variable.value)
+            if g_debug > 3: print '__Variable - LoadLevelTarget - {0:}'.format(p_variable.value)
         elif p_variable.name == 'LoadLevelStatus':
-            print '__Variable - LoadLevelStatus - {0:}'.format(p_variable.value)
+            if g_debug > 3: print '__Variable - LoadLevelStatus - {0:}'.format(p_variable.value)
 
     def process_media_server_browse(self, result, client):
-        print "__Browsing root of", client.device.get_friendly_name()
-        print "__Result contains %d out of %d total matches" % (int(result['NumberReturned']), int(result['TotalMatches']))
+        if g_debug > 2: print "__Browsing root of", client.device.get_friendly_name()
+        if g_debug > 2: print "__Result contains %d out of %d total matches" % (int(result['NumberReturned']), int(result['TotalMatches']))
         elt = DIDLLite.DIDLElement.fromString(result['Result'])
         for item in elt.getItems():
             if item.upnp_class.startswith("object.container"):
-                print "__  container %s (%s) with %d items" % (item.title, item.id, item.childCount)
+                if g_debug > 2: print "__  container %s (%s) with %d items" % (item.title, item.id, item.childCount)
             if item.upnp_class.startswith("object.item"):
-                print "__  item %s (%s)" % (item.title, item.id)
+                if g_debug > 2: print "__  item %s (%s)" % (item.title, item.id)
 
     def media_server___found(self, client, udn):
         """
         Called for each media server found.
         """
-        print "__Media_server_found", client
-        print "__Media_server_found",
+        if g_debug > 2: print "__Media_server_found", client
+        if g_debug > 2: print "__Media_server_found",
         d = client.content_directory.browse(0, browse_flag = '++BrowseDirectChildren', process_result = False, backward_compatibility = False)
         d.addCallback(self.process_media_server_browse, client)
 
     def media_server_removed(self, udn):
     # sadly they sometimes get removed as well :(
-        print "__Media_server_removed", udn
+        if g_debug > 2: print "__Media_server_removed", udn
 
     def media_renderer_found(self, client, udn):
         #print "__Media_renderer_found", client
-        print "__Media_renderer_found", client.device.get_friendly_name()
+        if g_debug > 2: print "__Media_renderer_found", client.device.get_friendly_name()
         client.av_transport.subscribe_for_variable('CurrentTrackMetaData', self.state_variable_change)
         client.av_transport.subscribe_for_variable('TransportState', self.state_variable_change)
 
     def media_render_removed(self, udn):
-        print "__Media_renderer_removed", udn
+        if g_debug > 2: print "__Media_renderer_removed", udn
 
     def igd_found(self, p_client, p_udn):
-        print "__IGD found", p_client.device.get_friendly_name()
+        if g_debug > 2: print "__IGD found", p_client.device.get_friendly_name()
         wan_ip_connection_service = p_client.wan_device.wan_connection_device.wan_ip_connection
         wan_ip_connection_service.subscribe_for_variable('PortMappingNumberOfEntries', callback = self.state_variable_change)
         wan_ip_connection_service.subscribe_for_variable('ExternalIPAddress', callback = self.state_variable_change)
 
     def igd_removed(self, p_udn):
-        print "__IGD_removed", p_udn
+        if g_debug > 2: print "__IGD_removed", p_udn
 
     def light_found(self, client, udn):
-        print "__Light_found", udn, client.device.get_friendly_name()
+        if g_debug > 2: print "__Light_found", udn, client.device.get_friendly_name()
         dim_service = client.dimming.dimmable
         dim_service.subscribe_for_variable('LoadLevelTarget', callback = self.state_variable_change)
         dim_service.subscribe_for_variable('LoadLevelStatus', callback = self.state_variable_change)
@@ -170,7 +171,7 @@ Will set a dimmable lite with device number <ID> to level <LEVEL>
         """
 
     def start(self):
-        print "entertainment.UPnPControlPoint.start()"
+        if g_debug > 0: print "entertainment.UPnPControlPoint.start()"
         self.discover()
         control_point = ControlPoint(Coherence({'logmode':'warning',
                             'subsystem_log':{'coherence':'warning', 'simple_light':'debug', 'better_light':'debug'}}),

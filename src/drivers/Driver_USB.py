@@ -303,6 +303,7 @@ class USBDriverMain(UsbDriverAPI):
         @param p_obj:is the Controller_Data object for a USB device to open.
         """
         print "Driver_USB __init__()"
+        global g_logger
         g_logger = logging.getLogger('PyHouse.USBDriver')
         l_dev = self.extract_usb(p_obj)
         g_logger.info(" Initializing USB port - {0:#04X}:{1:#04X} - {2:} on port {3:}".format(

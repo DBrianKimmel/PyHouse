@@ -55,6 +55,7 @@ class SerialDriverUtility(SerialDeviceData):
 class API(SerialDriverUtility):
     """Contains all external commands.
     """
+    m_bytes = 0
 
     def open_device(self):
         """will open and initialize the serial port.
@@ -89,7 +90,10 @@ class API(SerialDriverUtility):
         """Send the command to the PLM and wait a very short time to be sure we sent it.
         """
         self.m_logger.debug("write_device() - {0:}".format(PrintBytes(p_message)))
-        self.m_serial.write(p_message)
+        try:
+            self.m_serial.write(p_message)
+        except:
+            pass
         time.sleep(0.1)
 
 
@@ -101,7 +105,16 @@ class SerialDriverMain(API):
         """
         self.m_message = bytearray()
         self.m_logger = logging.getLogger('PyHouse.SerialDriver')
-        self.m_serial = serial.Serial(p_obj.Port)
+        p_obj.BaudRate = 9600
+        p_obj.ByteSize = 8
+        p_obj.StopBits = 1.0
+        p_obj.Parity = serial.PARITY_NONE
+        p_obj.Timeout = 1
+        try:
+            self.m_serial = serial.Serial(p_obj.Port)
+        except serial.SerialException:
+            print "Error - Serial port {0:} has an error in opening port {1:}.".format(p_obj.Name, p_obj.Port)
+            return
         self.m_serial.baudrate = p_obj.BaudRate
         self.m_serial.bytesize = int(p_obj.ByteSize)
         if p_obj.Parity == 'None':

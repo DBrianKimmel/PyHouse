@@ -15,20 +15,16 @@ Read/reread the schedule file at:
 # Import system type stuff
 import datetime
 import logging
-#import pprint
 import time
-#from twisted.internet.defer import Deferred
 
 # Import PyMh files
-#import configure_mh
 import configure
-#from configure import config_xml
 import entertainment.entertainment as entertainment
 import lighting.lighting as lighting
 import sunrisesunset
 
 
-#Configure_Data = configure_mh.Configure_Data
+# Configure_Data = configure_mh.Configure_Data
 Schedule_Data = {}
 
 ScheduleCount = 0
@@ -83,9 +79,6 @@ class ScheduleAPI(ScheduleData):
 
     def load_schedules_xml(self):
         configure.config_xml.ReadConfig().read_schedules()
-#        if l_ct == 0:
-#            print "*** Old config file loaded - Schedule ***"
-#            self.load_all_schedules(Configure_Data['Schedule'])
 
     def dump_all_schedules(self):
         print "***** All Schedules *****"
@@ -97,9 +90,9 @@ class ScheduleAPI(ScheduleData):
     def update_schedule(self, p_schedule):
         """Update the schedule as updated by the web server.
         """
+        if g_debug > 5: print 'schedule.schedule.update_schedule({0:}'.format(p_schedule)
         Schedule_Data = p_schedule
         configure.config_xml.WriteConfig().write_schedules()
-#        configure_mh.write_module(self, Dict = Schedule_Data, Section = 'Schedule')
 
 
 class ScheduleExecution(ScheduleAPI):
@@ -143,7 +136,7 @@ class ScheduleExecution(ScheduleAPI):
 
         @param p_Name: a list of Names in the next time schedule
         """
-        #print " Execute_schedule p_Name=>>{0:}<<".format(p_Name)
+        # print " Execute_schedule p_Name=>>{0:}<<".format(p_Name)
         for ix in range(len(p_Name)):
             l_Name = p_Name[ix]
             l_obj = Schedule_Data[l_Name]
@@ -198,7 +191,7 @@ class ScheduleUtility(ScheduleExecution):
         l_now = datetime.datetime.now()
         l_time_now = datetime.time(l_now.hour, l_now.minute, l_now.second)
         _l_date = datetime.date(l_now.year, l_now.month, l_now.day)
-        #sunrisesunset.SSAPI().set_date(l_date)
+        # sunrisesunset.SSAPI().set_date(l_date)
         sunrisesunset.Start()
         self.m_sunset = sunrisesunset.SSAPI().get_sunset()
         self.m_sunrise = sunrisesunset.SSAPI().get_sunrise()
@@ -215,7 +208,7 @@ class ScheduleUtility(ScheduleExecution):
             # now see if this is 1) part of a chain -or- 2) an earlier schedule
             l_diff = self._make_delta(l_time_sch).total_seconds() - self._make_delta(l_time_now).total_seconds()
             if l_diff < 0:
-                l_diff = l_diff + 86400.0 # tomorrow
+                l_diff = l_diff + 86400.0  # tomorrow
             # earlier schedule upcoming.
             if l_diff < l_next:
                 l_next = l_diff
@@ -253,4 +246,4 @@ def Reload():
 def Stop():
     lighting.Stop()
 
-### END
+# ## END

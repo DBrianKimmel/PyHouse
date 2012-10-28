@@ -126,7 +126,7 @@ class LightingDialog(gui_tools.GuiTools):
         self.m_parent = p_parent
         self.l_result = None
         self.create_vars()
-        l_type, l_family = self.load_vars(p_key, p_kind)
+        l_type, l_family, l_interface = self.load_vars(p_key, p_kind)
         self.m_dia_frame = Frame(self.m_top)
         self.m_dia_frame.grid_columnconfigure(0, minsize = 130)
         self.m_dia_frame.grid_columnconfigure(1, minsize = 300)
@@ -154,30 +154,49 @@ class LightingDialog(gui_tools.GuiTools):
             self.pulldown_box(self.m_dia_frame, VAL_INTER, self.Interface).grid(row = 31, column = 1, sticky = W)
             Label(self.m_dia_frame, text = 'Port').grid(row = 33, column = 0, sticky = E)
             Entry(self.m_dia_frame, textvar = self.Port, width = 50).grid(row = 33, column = 1, sticky = W)
+            if l_interface == 'Serial':
+                Label(self.m_dia_frame, text = "Baud Rate").grid(row = 41, column = 0, sticky = E)
+                Entry(self.m_dia_frame, textvar = self.BaudRate).grid(row = 41, column = 1, sticky = W)
+                Label(self.m_dia_frame, text = "Byte Size").grid(row = 42, column = 0, sticky = E)
+                Entry(self.m_dia_frame, textvar = self.ByteSize).grid(row = 42, column = 1, sticky = W)
+                Label(self.m_dia_frame, text = "Parity").grid(row = 43, column = 0, sticky = E)
+                Entry(self.m_dia_frame, textvar = self.Parity).grid(row = 43, column = 1, sticky = W)
+                Label(self.m_dia_frame, text = "Stop Bits").grid(row = 44, column = 0, sticky = E)
+                Entry(self.m_dia_frame, textvar = self.StopBits).grid(row = 44, column = 1, sticky = W)
+                Label(self.m_dia_frame, text = "Timeout").grid(row = 45, column = 0, sticky = E)
+                Entry(self.m_dia_frame, textvar = self.Timeout).grid(row = 45, column = 1, sticky = W)
+            elif l_interface == 'USB':
+                pass
+            elif l_interface == 'Ethernet4':
+                pass
+        elif l_type == 'Button':
+            pass
         if l_family == 'Insteon':
-            Label(self.m_dia_frame, text = 'Address').grid(row = 41, column = 0, sticky = E)
-            Entry(self.m_dia_frame, textvar = self.Address).grid(row = 41, column = 1, sticky = W)
-            Label(self.m_dia_frame, text = 'Controller').grid(row = 42, column = 0, sticky = E)
-            Entry(self.m_dia_frame, textvar = self.Controller).grid(row = 42, column = 1, sticky = W)
-            Label(self.m_dia_frame, text = 'DevCat').grid(row = 43, column = 0, sticky = E)
-            Entry(self.m_dia_frame, textvar = self.DevCat).grid(row = 43, column = 1, sticky = W)
-            Label(self.m_dia_frame, text = 'GroupList').grid(row = 44, column = 0, sticky = E)
-            Entry(self.m_dia_frame, textvar = self.GroupList).grid(row = 44, column = 1, sticky = W)
-            Label(self.m_dia_frame, text = 'GroupNumber').grid(row = 45, column = 0, sticky = E)
-            Entry(self.m_dia_frame, textvar = self.GroupNumber).grid(row = 45, column = 1, sticky = W)
-            Label(self.m_dia_frame, text = 'Master').grid(row = 46, column = 0, sticky = E)
-            Entry(self.m_dia_frame, textvar = self.Master).grid(row = 46, column = 1, sticky = W)
-            Label(self.m_dia_frame, text = 'ProductKey').grid(row = 47, column = 0, sticky = E)
-            Entry(self.m_dia_frame, textvar = self.ProductKey).grid(row = 47, column = 1, sticky = W)
-            Label(self.m_dia_frame, text = 'Responder').grid(row = 48, column = 0, sticky = E)
-            Entry(self.m_dia_frame, textvar = self.Responder).grid(row = 48, column = 1, sticky = W)
+            Label(self.m_dia_frame, text = 'Address').grid(row = 61, column = 0, sticky = E)
+            Entry(self.m_dia_frame, textvar = self.Address).grid(row = 61, column = 1, sticky = W)
+            Label(self.m_dia_frame, text = 'Controller').grid(row = 62, column = 0, sticky = E)
+            Entry(self.m_dia_frame, textvar = self.Controller).grid(row = 62, column = 1, sticky = W)
+            Label(self.m_dia_frame, text = 'DevCat').grid(row = 63, column = 0, sticky = E)
+            Entry(self.m_dia_frame, textvar = self.DevCat).grid(row = 63, column = 1, sticky = W)
+            Label(self.m_dia_frame, text = 'GroupList').grid(row = 64, column = 0, sticky = E)
+            Entry(self.m_dia_frame, textvar = self.GroupList).grid(row = 64, column = 1, sticky = W)
+            Label(self.m_dia_frame, text = 'GroupNumber').grid(row = 65, column = 0, sticky = E)
+            Entry(self.m_dia_frame, textvar = self.GroupNumber).grid(row = 65, column = 1, sticky = W)
+            Label(self.m_dia_frame, text = 'Master').grid(row = 66, column = 0, sticky = E)
+            Entry(self.m_dia_frame, textvar = self.Master).grid(row = 66, column = 1, sticky = W)
+            Label(self.m_dia_frame, text = 'ProductKey').grid(row = 67, column = 0, sticky = E)
+            Entry(self.m_dia_frame, textvar = self.ProductKey).grid(row = 67, column = 1, sticky = W)
+            Label(self.m_dia_frame, text = 'Responder').grid(row = 68, column = 0, sticky = E)
+            Entry(self.m_dia_frame, textvar = self.Responder).grid(row = 68, column = 1, sticky = W)
         elif l_family == 'UPB':
-            Label(self.m_dia_frame, text = 'UnitID').grid(row = 51, column = 0, sticky = E)
-            Entry(self.m_dia_frame, textvar = self.UnitID).grid(row = 51, column = 1, sticky = W)
-            Label(self.m_dia_frame, text = 'NetworkID').grid(row = 52, column = 0, sticky = E)
-            Entry(self.m_dia_frame, textvar = self.NetworkID).grid(row = 52, column = 1, sticky = W)
-            Label(self.m_dia_frame, text = 'Password').grid(row = 53, column = 0, sticky = E)
-            Entry(self.m_dia_frame, textvar = self.Password).grid(row = 53, column = 1, sticky = W)
+            Label(self.m_dia_frame, text = 'UnitID').grid(row = 61, column = 0, sticky = E)
+            Entry(self.m_dia_frame, textvar = self.UnitID).grid(row = 61, column = 1, sticky = W)
+            Label(self.m_dia_frame, text = 'NetworkID').grid(row = 62, column = 0, sticky = E)
+            Entry(self.m_dia_frame, textvar = self.NetworkID).grid(row = 62, column = 1, sticky = W)
+            Label(self.m_dia_frame, text = 'Password').grid(row = 63, column = 0, sticky = E)
+            Entry(self.m_dia_frame, textvar = self.Password).grid(row = 63, column = 1, sticky = W)
+        elif l_family == 'X10':
+            pass
         l_text = "Add"
         if p_title.startswith("Edit"):
             l_text = "Save"
@@ -238,6 +257,7 @@ class LightingDialog(gui_tools.GuiTools):
 
     def load_vars(self, p_key, p_kind):
         #print "LoadVars key, Kind = {0:} - {1:}".format(p_key, p_kind)
+        l_interface = None
         try:
             if p_kind == 1 or p_kind == 4:
                 l_type = "Light"
@@ -251,6 +271,7 @@ class LightingDialog(gui_tools.GuiTools):
                     l_obj = Controller_Data[p_key]
                 except KeyError:
                     l_obj = lighting.ControllerData()
+                l_interface = l_obj.Interface
             else:
                 l_type = "Button"
                 try:
@@ -274,6 +295,7 @@ class LightingDialog(gui_tools.GuiTools):
         self.Room.set(l_obj.Room)
         self.Type.set(l_type)
         if l_type == 'Controller':
+            print "Interface =", l_obj.Interface
             self.Interface.set(l_obj.Interface)
             self.Port.set(l_obj.Port)
             if l_obj.Interface == 'USB':
@@ -302,7 +324,7 @@ class LightingDialog(gui_tools.GuiTools):
             self.NetworkID.set(l_obj.NetworkID)
             self.Password.set(l_obj.Password)
             self.UnitID.set(l_obj.UnitID)
-        return l_type, l_family
+        return l_type, l_family, l_interface
 
     def get_vars(self):
         l_type = self.Type.get()
@@ -335,6 +357,11 @@ class LightingDialog(gui_tools.GuiTools):
         if l_interface == 'USB':
             pass
         elif l_interface == 'Serial':
+            l_obj.BaudRate = int(self.BaudRate.get())
+            l_obj.ByteSize = self.ByteSize.get()
+            l_obj.Parity = self.Parity.get()
+            l_obj.StopBits = self.StopBits.get()
+            l_obj.Timeout = self.Timeout.get()
             pass
         else:
             pass

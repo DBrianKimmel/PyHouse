@@ -3,7 +3,7 @@
 from Tkinter import *
 import Pmw
 
-#import gui
+# import gui
 import gui_tools
 import lighting.lighting as lighting
 import schedule.schedule as schedule
@@ -59,20 +59,20 @@ class ScheduleWindow(gui_tools.GuiTools):
         self.m_main_frame.grid()
 
     def color_button(self, p_level):
-        l_bg = '#FFFFD0' # Very Light yellow - full on
+        l_bg = '#FFFFD0'  # Very Light yellow - full on
         l_fg = 'black'
-        if p_level < 10: # Dark
+        if p_level < 10:  # Dark
             l_bg = '#505010'
             l_fg = 'white'
-        elif p_level <= 40: # Dark Yellow
+        elif p_level <= 40:  # Dark Yellow
             l_bg = '#707030'
             l_fg = 'white'
-        elif p_level <= 60: # Dark Yellow
+        elif p_level <= 60:  # Dark Yellow
             l_bg = '#909050'
             l_fg = 'white'
-        elif p_level <= 80: # Dark Yellow
+        elif p_level <= 80:  # Dark Yellow
             l_bg = '#B0B070'
-        elif p_level < 90: # Medium Yellow
+        elif p_level < 90:  # Medium Yellow
             l_bg = '#D0D080'
         return l_bg, l_fg
 
@@ -119,8 +119,9 @@ class ScheduleDialog(gui_tools.GuiTools):
         Entry(self.m_frame, textvar = self.Rate).grid(row = 11, column = 1, sticky = W)
         Label(self.m_frame, text = "Type").grid(row = 15, column = 0, sticky = E)
         Entry(self.m_frame, textvar = self.Type).grid(row = 15, column = 1, sticky = W)
-        Label(self.m_frame, text = "LightName").grid(row = 31, column = 0, sticky = E)
-        self.light_box(self.m_frame).grid(row = 31, column = 1, sticky = W)
+        Label(self.m_frame, text = "Light Name").grid(row = 31, column = 0, sticky = E)
+        # self.light_box(self.m_frame).grid(row = 31, column = 1, sticky = W)
+        self.pulldown_box(self.m_frame, self.build_names(Light_Data), self.LightName).grid(row = 31, column = 1, sticky = W)
         l_text = "Add"
         if p_title.startswith("Edit"):
             l_text = "Save"
@@ -166,6 +167,7 @@ class ScheduleDialog(gui_tools.GuiTools):
         l_obj.Time = self.Time.get()
         l_obj.Type = self.Type.get()
         Schedule_Data[l_obj.Key] = l_obj
+        print "Saving schedule data ", l_obj
         config_xml.WriteConfig().write_schedules()
         self.quit_dialog()
 
@@ -198,4 +200,4 @@ class ScheduleDialog(gui_tools.GuiTools):
         dropdown.selectitem(l_sel)
         return dropdown
 
-### END
+# ## END

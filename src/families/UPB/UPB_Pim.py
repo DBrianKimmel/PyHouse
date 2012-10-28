@@ -225,16 +225,16 @@ class UpbPimAPI(CreateCommands):
             g_logger.info('Found UPB PIM named: {0:}, Type={1:}'.format(l_pim.Name, l_interface))
             print " & UPB_Pim.initialize_all_controllers - Loading: ", l_key
             g_network_id = l_obj.NetworkID
-            g_unit_id = l_obj.UnitID
+            g_unit_id = int(l_obj.UnitID)
             if l_obj.Interface.lower() == 'serial':
-                import Driver_Serial
-                l_driver = Driver_Serial.SerialDriverMain(l_obj)
+                import drivers.Driver_Serial
+                l_driver = drivers.Driver_Serial.SerialDriverMain(l_obj)
             elif l_obj.Interface.lower() == 'ethernet':
-                import Driver_Ethernet
-                l_driver = Driver_Ethernet.EthernetDriverMain(l_obj)
+                import drivers.Driver_Ethernet
+                l_driver = drivers.Driver_Ethernet.EthernetDriverMain(l_obj)
             elif l_obj.Interface.lower() == 'usb':
-                import Driver_USB
-                l_driver = Driver_USB.USBDriverMain(l_obj)
+                import drivers.Driver_USB
+                l_driver = drivers.Driver_USB.USBDriverMain(l_obj)
             else:
                 g_logger.error("UPB PIM has no known interface type! {0}, {1:}".format(l_obj.get_name, l_obj.get_interface))
             g_driver.append(l_driver)

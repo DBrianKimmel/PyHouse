@@ -64,7 +64,7 @@ import schedule.schedule as schedule
 import weather
 #import upnp
 
-g_debug = True
+g_debug = 0
 g_logger = None
 
 def Init():
