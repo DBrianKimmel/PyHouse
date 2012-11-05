@@ -19,6 +19,7 @@ import time
 
 # Import PyMh files
 import configure
+# from configure import config_xml
 import entertainment.entertainment as entertainment
 import lighting.lighting as lighting
 import sunrisesunset
@@ -81,6 +82,7 @@ class ScheduleAPI(ScheduleData):
         configure.config_xml.ReadConfig().read_schedules()
 
     def dump_all_schedules(self):
+        if g_debug < 7: return
         print "***** All Schedules *****"
         for l_key, l_obj in Schedule_Data.iteritems():
             print "~~~Schedule: {0:}".format(l_key)
@@ -136,7 +138,7 @@ class ScheduleExecution(ScheduleAPI):
 
         @param p_Name: a list of Names in the next time schedule
         """
-        # print " Execute_schedule p_Name=>>{0:}<<".format(p_Name)
+        if g_debug > 3: print " Execute_schedule p_Name=>>{0:}<<".format(p_Name)
         for ix in range(len(p_Name)):
             l_Name = p_Name[ix]
             l_obj = Schedule_Data[l_Name]
@@ -204,7 +206,7 @@ class ScheduleUtility(ScheduleExecution):
             if not l_obj.Active: continue
             l_time = l_obj.Time
             l_time_sch = self._extract_time(l_time)
-            if g_debug: print " - Schedule ", l_time_sch
+            if g_debug > 1: print " - Schedule ", l_time_sch
             # now see if this is 1) part of a chain -or- 2) an earlier schedule
             l_diff = self._make_delta(l_time_sch).total_seconds() - self._make_delta(l_time_now).total_seconds()
             if l_diff < 0:
@@ -223,6 +225,8 @@ class ScheduleUtility(ScheduleExecution):
 
 
 def Init():
+    """Set up the scheduled items initialization.
+    """
     global g_logger
     g_logger = logging.getLogger('PyHouse.Schedule')
     g_logger.info("Initializing.")
@@ -230,7 +234,7 @@ def Init():
     entertainment.Init()
     lighting.Init()
     ScheduleAPI().load_schedules_xml()
-    if g_debug > 0: ScheduleAPI().dump_all_schedules()
+    if g_debug > 2: ScheduleAPI().dump_all_schedules()
     g_logger.info("Initialized.")
 
 def Start(p_reactor):

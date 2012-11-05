@@ -1,6 +1,8 @@
 #!/usr/bin/python
 
 """Insteon PLM module.
+
+Create commands and interpret results from any Insteon controller regardless of interface.
 """
 
 # Import system type stuff
@@ -245,13 +247,13 @@ class PlmDriverInterface(object):
 
     def driver_loop_start(self):
         global g_queue
-        if g_debug: print "--- Insteon PLM DriverLoopStart"
+        if g_debug > 2: print "Insteon_PLM.driver_loop_start()"
         g_queue = Queue.Queue(300)
         g_reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send)
         g_reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop)
 
-    def send_plm_command(self, p_command):
-        if g_debug: print "--- Insteon PLM SendCommand"
+    def queue_plm_command(self, p_command):
+        if g_debug > 2: print "Insteon_PLM.queue_plm_command() - {0:}".format(PrintBytes(p_command))
         g_queue.put(p_command)
 
     def dequeue_and_send(self):
@@ -264,6 +266,7 @@ class PlmDriverInterface(object):
             g_driver[0].write_device(l_command)
         except IndexError:
             pass
+        if g_debug > 2: print "Insteon_PLM.dequeue_and_send() - {0:}".format(PrintBytes(l_command))
         g_reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send)
 
     def receive_loop(self):
@@ -274,6 +277,7 @@ class PlmDriverInterface(object):
         if l_bytes == 0:
             g_reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop)
             return False
+        if g_debug > 2: print "Insteon_PLM.receive_loop() - {0:}".format(PrintBytes(l_msg))
         # l_ret = self._decode_message(l_msg, l_bytes)
         l_ret = l_msg
         g_reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop)
@@ -293,7 +297,7 @@ class CreateCommands(PlmDriverInterface, InsteonPlmUtility):
         l_command = bytearray(2)
         l_command[0] = STX
         l_command[1] = plm_commands['plm_info']
-        return self.send_plm_command(l_command)
+        return self.queue_plm_command(l_command)
 
     def send_62_command(self, p_name, p_cmd1, p_cmd2):
         """Send Insteon Standard Length Message (8 bytes).
@@ -302,7 +306,7 @@ class CreateCommands(PlmDriverInterface, InsteonPlmUtility):
         @param p_name: is the name of the device
         @param p_cmd1: is the first command byte
         @param p_cmd2: is the second command byte
-        @return: the response from send_plm_command
+        @return: the response from queue_plm_command
         """
         l_addr = self._get_addr_from_name(p_name)
         l_command = bytearray(8)
@@ -315,7 +319,7 @@ class CreateCommands(PlmDriverInterface, InsteonPlmUtility):
         l_command[6] = p_cmd1
         l_command[7] = p_cmd2
         g_logger.debug("Send 62 command {0:X},{1:X} to {2:} ({3:x}.{4:x}.{5:x})".format(p_cmd1, p_cmd2, p_name, l_command[2], l_command[3], l_command[4]))
-        return self.send_plm_command(l_command)
+        return self.queue_plm_command(l_command)
 
     def send_69_command(self):
         """Get the first all-link record from the plm (2 bytes).
@@ -325,7 +329,7 @@ class CreateCommands(PlmDriverInterface, InsteonPlmUtility):
         l_command = bytearray(2)
         l_command[0] = STX
         l_command[1] = plm_commands['plm_first_all_link']
-        return self.send_plm_command(l_command)
+        return self.queue_plm_command(l_command)
 
     def send_6A_command(self):
         """Get the next record - will get a nak if no more (2 bytes).
@@ -336,7 +340,7 @@ class CreateCommands(PlmDriverInterface, InsteonPlmUtility):
         l_command = bytearray(2)
         l_command[0] = STX
         l_command[1] = plm_commands['plm_next_all_link']
-        return self.send_plm_command(l_command)
+        return self.queue_plm_command(l_command)
 
     def send_6B_command(self, p_flags):
         """Set IM configuration flags (3 bytes).
@@ -347,7 +351,7 @@ class CreateCommands(PlmDriverInterface, InsteonPlmUtility):
         l_command[0] = STX
         l_command[1] = plm_commands['plm_set_config']
         l_command[2] = p_flags
-        return self.send_plm_command(l_command)
+        return self.queue_plm_command(l_command)
 
     def send_73_command(self):
         """Send request for PLM configuration (2 bytes).
@@ -357,13 +361,13 @@ class CreateCommands(PlmDriverInterface, InsteonPlmUtility):
         l_command = bytearray(8)
         l_command[0] = STX
         l_command[1] = plm_commands['plm_get_config']
-        return self.send_plm_command(l_command)
+        return self.queue_plm_command(l_command)
 
 
 class LightingAPI(Device_Insteon.LightingAPI, CreateCommands):
 
     def change_light_setting(self, p_name, p_level):
-        if g_debug: print "Insteon_PLM change light settings for {0:} to {1:}".format(p_name, p_level)
+        if g_debug > 0: print "Insteon_PLM change light settings for {0:} to {1:}".format(p_name, p_level)
         for l_obj in Device_Insteon.Light_Data.itervalues():
             if l_obj.get_family() != 'Insteon': continue
             if l_obj.get_name() == p_name:
@@ -380,7 +384,7 @@ class LightingAPI(Device_Insteon.LightingAPI, CreateCommands):
     def scan_all_lights(self, p_lights):
         """Exported command - used by other modules.
         """
-        print "insteon_PLM.scan_all_lights"
+        if g_debug > 2: print "insteon_PLM.scan_all_lights"
         for l_obj in p_lights.itervalues():
             if Device_Insteon.LightingData.get_family(l_obj) != 'Insteon': continue
             if l_obj.get_Type == 'Light':
@@ -408,7 +412,7 @@ class InsteonPlmCommands(LightingAPI):
     def _get_all_ids(self):
         """Get the devcat from all devices that are 0.
         """
-        print "~~PLM.get_all_ids"
+        if g_debug > 3: print "~~PLM.get_all_ids"
         for l_obj in Device_Insteon.Light_Data.itervalues():
             if l_obj.Family != 'Insteon': continue
             l_devcat = l_obj.DevCat
@@ -467,7 +471,7 @@ class DecodeResponses(InsteonAllLinks):
             g_logger.error("Message started with {0:#x} not STX, Message={1:}".format(l_stx, PrintBytes(p_message)))
             return l_ret
         l_cmd = p_message[1]
-        # print "- Message from PIM ==>", PrintBytes(p_message)
+        if g_debug > 5: print "- Message from PIM ==>", PrintBytes(p_message)
         if l_cmd == 0:
             g_logger.warning("Found a '0' record ->{0:}.".format(PrintBytes(p_message)))
             return l_ret
@@ -511,13 +515,13 @@ class DecodeResponses(InsteonAllLinks):
             l_devcat = p_message[5] * 256 + p_message[6]
             l_obj.DevCat = l_devcat
             self.update_object(l_obj)
-            print " --- Got devcat type  From={0:}, DevCat={1:}, flags={2:}".format(l_name_from, l_devcat, l_flags)
+            if g_debug > 2: print " --- Got devcat type  From={0:}, DevCat={1:}, flags={2:}".format(l_name_from, l_devcat, l_flags)
             g_logger.info("== 50A From={0:}, DevCat={1:}, flags={2:} ==".format(l_name_from, l_devcat, l_flags))
         elif p_message[8] & 0xE0 == 0xC0:  # all link broadcast of group is
             # This is a all-link broadcast message that is sent to a group
             l_group = p_message[7]
             l_data = [p_message[9], p_message[10]]
-            print " --- Got all-link broadcast  From={0:}, Group={1:}, Flags={2:}, Data={3:} ".format(l_name_from, l_group, l_flags, l_data)
+            if g_debug > 3: print " --- Got all-link broadcast  From={0:}, Group={1:}, Flags={2:}, Data={3:} ".format(l_name_from, l_group, l_flags, l_data)
             g_logger.info("== 50B All-link Broadcast From={0:}, Group={1:}, Flags={2:}, Data={3:} ==".format(l_name_from, l_group, l_flags, l_data))
         else:  # all other cases contain to address
             # Last_Response = p_message
@@ -804,10 +808,10 @@ class LightHandlerAPI(InsteonPlmAPI):
     """
 
     def initialize_all_controllers(self):
-        if g_debug: print "Insteon_PLM initializing all controllers"
+        if g_debug > 0: print "Insteon_PLM.initialize_all_controllers()"
         for l_obj in Device_Insteon.Controller_Data.itervalues():
-            if g_debug: print "Insteon_PLM Family:{0:}, Interface:{1:}".format(l_obj.Family, l_obj.Interface)
             if l_obj.Family != 'Insteon': continue
+            if g_debug > 0: print "Insteon_PLM.initialize_all_controllers() - Family:{0:}, Interface:{1:}".format(l_obj.Family, l_obj.Interface)
             if l_obj.Active != True: continue
             if l_obj.Interface.lower() == 'serial':
                 import drivers.Driver_Serial
@@ -823,13 +827,13 @@ class LightHandlerAPI(InsteonPlmAPI):
     def set_plm_mode(self):
         """Set the PLM to a mode
         """
-        # print " Sending mode command to Insteon PLM"
+        if g_debug > 2: print " Sending mode command to Insteon PLM"
         self.send_6B_command(MODE_MONITOR)
 
     def get_all_lights_status(self):
         """Get the status (current level) of all lights.
         """
-        # print " Getting the status of all (Insteon?) Lights"
+        if g_debug > 1: print " Getting the status of all (Insteon?) Lights"
         g_logger.info('Getting light levels of all lights')
         for l_obj in Device_Insteon.Button_Data.itervalues():
             if l_obj.Family != 'Insteon': continue

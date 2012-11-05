@@ -19,9 +19,9 @@ from twisted.internet.task import LoopingCall
 import lighting
 from tools import PrintBytes
 
-
-g_message = bytearray()
+g_debug = 0
 g_logger = None
+g_message = bytearray()
 
 
 class SerialDeviceData(lighting.lighting.ControllerData):
@@ -60,6 +60,7 @@ class API(SerialDriverUtility):
     def open_device(self):
         """will open and initialize the serial port.
         """
+        if g_debug > 5: print "Driver_Serial.open_device()"
         self.m_bytes = 0
 
     def close_device(self):
@@ -82,6 +83,7 @@ class API(SerialDriverUtility):
 
     def fetch_read_data(self):
         l_ret = (self.m_bytes, self.m_message)
+        if g_debug > 5 and self.m_bytes > 0: print "Driver_Serial.fetch_read_data() - {0:} {1:}".format(self.m_bytes, PrintBytes(self.m_message))
         self.m_bytes = 0
         self.m_message = ''
         return (l_ret)
@@ -105,7 +107,7 @@ class SerialDriverMain(API):
         """
         self.m_message = bytearray()
         self.m_logger = logging.getLogger('PyHouse.SerialDriver')
-        p_obj.BaudRate = 9600
+        p_obj.BaudRate = 19200
         p_obj.ByteSize = 8
         p_obj.StopBits = 1.0
         p_obj.Parity = serial.PARITY_NONE
@@ -127,4 +129,4 @@ class SerialDriverMain(API):
         LoopingCall(self._serialLoop).start(1)
 
 
-### END
+# ## END

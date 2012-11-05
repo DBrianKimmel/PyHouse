@@ -75,7 +75,7 @@ class ConfigTools(object):
         l_ret.set('Name', p_obj.Name)
         l_ret.set('Key', str(p_obj.Key))
         l_ret.set('Active', self.put_bool(p_obj.Active))
-        #ET.SubElement(l_ret, 'Active').text = self.put_bool(p_obj.Active)
+        # ET.SubElement(l_ret, 'Active').text = self.put_bool(p_obj.Active)
         return l_ret
 
     def write_file(self):
@@ -87,7 +87,7 @@ class ReadConfig(ConfigTools):
     """
 
     m_filename = None
-    
+
     def __init__(self):
         """Open the xml config file.
 
@@ -107,7 +107,7 @@ class ReadConfig(ConfigTools):
         l_obj.Name = l_name = p_entry.get('Name')
         l_obj.Key = int(p_entry.get('Key'))
         l_obj.Active = self.get_bool(p_entry.get('Active'))
-        #print "ReadConfig.read_location - Active=", l_obj.Active, l_obj.Name
+        # print "ReadConfig.read_location - Active=", l_obj.Active, l_obj.Name
         # Now read the location subsection
         l_entry = p_entry.find('Location')
         l_obj.Street = l_entry.findtext('Street')
@@ -148,7 +148,7 @@ class ReadConfig(ConfigTools):
         self.m_rooms = 0
         try:
             l_sect = self.m_root.find('Houses')
-            l_list = l_sect.iterfind('House') # use l_sect to force error if it is missing
+            l_list = l_sect.iterfind('House')  # use l_sect to force error if it is missing
         except AttributeError:
             print " -- Error in read_house - Adding 'Houses'"
             l_sect = ET.SubElement(self.m_root, 'Houses')
@@ -188,7 +188,7 @@ class ReadConfig(ConfigTools):
         l_count = 0
         try:
             l_sect = self.m_root.find('Lighting')
-            l_list = l_sect.iterfind('Controllers') # use l_sect to force error if Lighting is missing
+            l_list = l_sect.iterfind('Controllers')  # use l_sect to force error if Lighting is missing
         except AttributeError:
             print " -- Error in read_lights - Adding 'Lighting'"
             l_sect = ET.SubElement(self.m_root, 'Lighting')
@@ -254,7 +254,7 @@ class ReadConfig(ConfigTools):
         l_count = 0
         try:
             l_sect = self.m_root.find('Schedules')
-            l_list = l_sect.iterfind('Schedule') 
+            l_list = l_sect.iterfind('Schedule')
         except AttributeError:
             print " -- Error in read_Schedules - Adding 'Schedules'"
             l_sect = ET.SubElement(self.m_root, 'Schedules')
@@ -274,33 +274,33 @@ class ReadConfig(ConfigTools):
         return l_count
 
     def read_log_web(self):
-        #print "reading log_web"
+        # print "reading log_web"
         global Log_Data, Web_Data
-        Log_Data['0'] = log.LogData() 
+        Log_Data['0'] = log.LogData()
         try:
             l_sect = self.m_root.find('Logs')
-            l_list = l_sect.iterfind('Logs') 
+            l_list = l_sect.iterfind('Logs')
         except:
             l_sect = ET.SubElement(self.m_root, 'Logs')
-            l_list = l_sect.iterfind('Logs') 
+            l_list = l_sect.iterfind('Logs')
         for l_entry in l_list:
             l_obj = log.LogData()
-            #l_obj.Debug = l_entry.findtext('Debug')
+            # l_obj.Debug = l_entry.findtext('Debug')
             l_obj.Debug = '/var/log/pyhouse/debug'
             l_obj.Error = l_entry.findtext('Error')
             Log_Data['0'] = l_obj
         try:
             l_sect = self.m_root.find('Web')
-            l_list = l_sect.iterfind('Web') 
+            l_list = l_sect.iterfind('Web')
         except:
             l_sect = ET.SubElement(self.m_root, 'Web')
-            l_list = l_sect.iterfind('Web') 
+            l_list = l_sect.iterfind('Web')
         for l_entry in l_list:
             l_obj = web_server.WebData()
             l_obj.WebPort = l_list.findtext('WebPort')
             Web_Data['0'] = l_obj
         Log_Data['0'].Debug = '/var/log/pyhouse/debug'
-        #print " xx ", Log_Data, Log_Data['0'].__dict__
+        # print " xx ", Log_Data, Log_Data['0'].__dict__
         self.write_file()
 
     def read_upnp(self):
@@ -378,7 +378,7 @@ class WriteConfig(ConfigTools):
         ET.SubElement(p_entry, 'Room').text = p_obj.Room
         ET.SubElement(p_entry, 'Type').text = p_obj.Type
         if p_obj.Family == 'Insteon':
-            #print "WriteLightCommon Insteon=", p_obj
+            # print "WriteLightCommon Insteon=", p_obj
             ET.SubElement(p_entry, 'Address').text = p_obj.Address
             ET.SubElement(p_entry, 'Controller').text = str(p_obj.Controller)
             ET.SubElement(p_entry, 'DevCat').text = str(p_obj.DevCat)
@@ -388,7 +388,7 @@ class WriteConfig(ConfigTools):
             ET.SubElement(p_entry, 'ProductKey').text = str(p_obj.ProductKey)
             ET.SubElement(p_entry, 'Responder').text = str(p_obj.Responder)
         elif p_obj.Family == 'UPB':
-            #print "WriteLightCommon UPB=", p_obj
+            # print "WriteLightCommon UPB=", p_obj
             try:
                 ET.SubElement(p_entry, 'NetworkID').text = self.put_str(p_obj.NetworkID)
                 ET.SubElement(p_entry, 'Password').text = str(p_obj.Password)
@@ -429,15 +429,15 @@ class WriteConfig(ConfigTools):
         schedule.Reload()
 
     def write_log_web(self):
-        #print "Write log_web", Log_Data[0], vars(Log_Data[0])
+        # print "Write log_web", Log_Data[0], vars(Log_Data[0])
         l_sect = self.write_create_empty('Logs')
         l_obj = Log_Data['0']
-        #l_entry = self.build_common(l_sect, 'Log', l_obj)
+        # l_entry = self.build_common(l_sect, 'Log', l_obj)
         ET.SubElement(l_sect, 'Debug').text = str(l_obj.Debug)
         ET.SubElement(l_sect, 'Error').text = str(Log_Data['0'].Error)
         l_sect = self.write_create_empty('Web')
-        #l_obj = Web_Data['0']
-        #ET.SubElement(l_sect, 'WebPort').text = str(Web_Data['0'].WebPort)
+        # l_obj = Web_Data['0']
+        # ET.SubElement(l_sect, 'WebPort').text = str(Web_Data['0'].WebPort)
         self.write_file()
 
     def write_upnp(self):
@@ -448,7 +448,7 @@ class WriteConfig(ConfigTools):
 
 
 def read_config():
-    #print "read_config()"
+    # print "read_config()"
     l_rf = ReadConfig()
     l_rf.read_houses()
     l_rf.read_lights()
@@ -468,4 +468,4 @@ def write_config():
     l_wf.write_upnp()
     l_wf.write_scenes()
 
-### END
+# ## END

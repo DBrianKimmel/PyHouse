@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from Tkinter import *
+from Tkinter import Frame, Label, Entry, Toplevel, Button, IntVar, StringVar, W, E, DISABLED, SUNKEN, RAISED
 import Pmw
 
 # import gui
@@ -8,6 +8,7 @@ import gui_tools
 import lighting.lighting as lighting
 import schedule.schedule as schedule
 import config_xml
+# from src.schedule.schedule import Schedule_Data, ScheduleData
 
 Schedule_Data = schedule.Schedule_Data
 Light_Data = lighting.Light_Data
@@ -120,7 +121,6 @@ class ScheduleDialog(gui_tools.GuiTools):
         Label(self.m_frame, text = "Type").grid(row = 15, column = 0, sticky = E)
         Entry(self.m_frame, textvar = self.Type).grid(row = 15, column = 1, sticky = W)
         Label(self.m_frame, text = "Light Name").grid(row = 31, column = 0, sticky = E)
-        # self.light_box(self.m_frame).grid(row = 31, column = 1, sticky = W)
         self.pulldown_box(self.m_frame, self.build_names(Light_Data), self.LightName).grid(row = 31, column = 1, sticky = W)
         l_text = "Add"
         if p_title.startswith("Edit"):
@@ -185,19 +185,5 @@ class ScheduleDialog(gui_tools.GuiTools):
         for l_obj in p_dict.itervalues():
             l_ret.append(l_obj.Name)
         return l_ret
-
-    def light_box(self, p_parent, p_light = None):
-        # Create and pack the dropdown ComboBox.
-        items = self.build_names(Light_Data)
-        dropdown = Pmw.ComboBox(p_parent,
-                scrolledlist_items = items,
-        )
-        l_name = self.LightName.get()
-        try:
-            l_sel = items.index(l_name)
-        except ValueError:
-            l_sel = items[0]
-        dropdown.selectitem(l_sel)
-        return dropdown
 
 # ## END

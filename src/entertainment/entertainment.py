@@ -9,7 +9,7 @@ Can act as a UPnP Control point
 
 # Import system type stuff
 import logging
-#from twisted.web import xmlrpc, client
+# from twisted.web import xmlrpc, client
 from twisted.internet import reactor
 
 # Import PyMh files
@@ -21,7 +21,7 @@ from coherence.upnp.core.msearch import MSearch
 from coherence.upnp.devices.dimmable_light import DimmableLight
 
 Entertainment_Data = {}
-g_debug = 9
+g_debug = 0
 g_logger = None
 g_upnp = None
 
@@ -59,7 +59,7 @@ class UPnPControlPoint(object):
         eventing (Step 4) where control points listen to state changes in device(s),
         and presentation (Step 5) where control points display a user interface for device(s).
         """
-        #MSearch().double_discover()
+        # MSearch().double_discover()
         pass
 
     def description(self):
@@ -141,7 +141,7 @@ class UPnPControlPoint(object):
         if g_debug > 2: print "__Media_server_removed", udn
 
     def media_renderer_found(self, client, udn):
-        #print "__Media_renderer_found", client
+        # print "__Media_renderer_found", client
         if g_debug > 2: print "__Media_renderer_found", client.device.get_friendly_name()
         client.av_transport.subscribe_for_variable('CurrentTrackMetaData', self.state_variable_change)
         client.av_transport.subscribe_for_variable('TransportState', self.state_variable_change)
@@ -175,7 +175,7 @@ Will set a dimmable lite with device number <ID> to level <LEVEL>
         self.discover()
         control_point = ControlPoint(Coherence({'logmode':'warning',
                             'subsystem_log':{'coherence':'warning', 'simple_light':'debug', 'better_light':'debug'}}),
-                            #auto_client = ['MediaRenderer']
+                            # auto_client = ['MediaRenderer']
                             )
         control_point.connect(self.check_device, 'Coherence.UPnP.Device.detection_completed')
         control_point.connect(self.light_found, 'Coherence.UPnP.ControlPoint.BinaryLight.detected')
@@ -202,4 +202,4 @@ def Start():
 def Stop():
     pass
 
-### END
+# ## END

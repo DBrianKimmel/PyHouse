@@ -53,6 +53,8 @@ class GuiTools(object):
         @param p_list: a list of the items for the box
         @param p_sel: a variable holding the selection to be used
         @return: widget to be positioned in container.
+
+        FIXME: does not properly update the calling variable with a new selection.
         """
         l_entry = str(p_sel.get())
         print "debug pulldown_box ", p_list, p_sel, l_entry
