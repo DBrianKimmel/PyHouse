@@ -19,11 +19,19 @@ from coherence.upnp.core import DIDLLite
 from coherence.upnp.core import ssdp
 from coherence.upnp.core.msearch import MSearch
 from coherence.upnp.devices.dimmable_light import DimmableLight
+from coherence.upnp.devices.dimmable_light_client import DimmableLightClient
+from coherence.upnp.services.servers.dimming_server import DimmingServer
 
 Entertainment_Data = {}
 g_debug = 0
 g_logger = None
 g_upnp = None
+
+callLater = reactor.callLater
+callWhenRunning = reactor.callWhenRunning
+
+
+
 
 class EntertainmentAPI(object):
     """
@@ -48,7 +56,10 @@ class UPnPControlPoint(object):
 
     def __init__(self):
         if g_debug > 0: print "entertainment.UPnPControlPoint.__init__()"
-        reactor.callWhenRunning(self.start)
+        callWhenRunning(self.start)
+        callLater(60, self.lights_on)
+        callLater(120, self.lights_off)
+        self.devices = []
 
     def discover(self):
         """Discover devices.
@@ -90,8 +101,14 @@ class UPnPControlPoint(object):
         """
         @param device: an instance of coherence.upnp.core.Device()
         """
+<<<<<<< HEAD
         if g_debug > 1:
             print "__Found device:{0:s}, Type:{1:s}, Client:{2:}, Id:{3:}".format(device.get_friendly_name(), device.get_device_type(), device.client, device.get_id())
+=======
+        print "__Found device:{0:s}, Type:{1:s}, Client:{2:}, Id:{3:}".format(device.get_friendly_name(), device.get_device_type(), device.client, device.get_id())
+        if not device in self.devices:
+            self.devices.append(device)
+>>>>>>> 430bd36324cc3c8ce1abe262593116b6da80f166
 
     def state_variable_change(self, p_variable):
         if p_variable.name == 'CurrentTrackMetaData':
@@ -163,6 +180,30 @@ class UPnPControlPoint(object):
         dim_service = client.dimming.dimmable
         dim_service.subscribe_for_variable('LoadLevelTarget', callback = self.state_variable_change)
         dim_service.subscribe_for_variable('LoadLevelStatus', callback = self.state_variable_change)
+
+
+    def lights_on(self):
+        print "Turning all lights on..."
+        for l_device in self.devices:
+            l_type = l_device.get_friendly_device_type()
+            if l_type == 'BinaryLight':
+                print " -- ", l_device.__dict__
+                pass
+            elif l_type == 'DimmableLight':
+                #print " == ", l_device.__dict__
+                l_light = DimmableLightClient(l_device)
+                l_level = l_light.dimming.get_load_level_target()
+                print " ~~ Before light {0:} is at level {1:}".format(l_device.get_friendly_name(), l_level)
+                l_light.dimming.set_load_level_target(50)
+                l_level = l_light.dimming.get_load_level_target()
+                print " ~~ After light {0:} is at level {1:}".format(l_device.get_friendly_name(), l_level)
+                pass
+            print " - {0:}, {1:}".format(l_device.get_friendly_name(), l_device.get_friendly_device_type())
+        pass
+
+    def lights_off(self):
+        print "Turning all lights off..."
+        pass
 
 
         """
