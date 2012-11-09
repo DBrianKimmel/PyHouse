@@ -1,4 +1,6 @@
 '''
+Gui to turn lights on/off or dim.
+
 Created on Oct 7, 2012
 
 @author: briank
@@ -11,7 +13,7 @@ from configure.gui_tools import GuiTools
 
 
 Light_Data = lighting.Light_Data
-g_debug = False
+g_debug = 0
 
 FG = 'red'
 BG_LIGHT = '#C0C090'
@@ -19,9 +21,8 @@ BG_LIGHT = '#C0C090'
 
 class CtlLightsWindow(GuiTools):
     '''
-    classdocs
+    Display a window showing all lights.
     '''
-
 
     def __init__(self, p_root):
         '''
@@ -40,17 +41,20 @@ class CtlLightsWindow(GuiTools):
             if l_obj.Key > self.m_max_light: self.m_max_light = l_obj.Key
             l_relief = SUNKEN
             if l_obj.Active: l_relief = RAISED
-            l = Button(self.m_frame, text = l_obj.Name, bg = BG_LIGHT, relief = l_relief,
+            l_long = l_obj.HouseName + '-' + l_obj.RoomName + '-' + l_obj.Name
+            l = Button(self.m_frame, text = l_long, bg = BG_LIGHT, relief = l_relief,
                        command = lambda x = l_obj.Key, y = 1: self.ctl_lights(x, y))
             l_light.append(l)
-            l_row = self.m_ix // 4
-            l_col = self.m_ix % 4
+            l_row, l_col = self.columnize(self.m_ix, 4)
             l_light[self.m_ix].grid(row = l_row, column = l_col, padx = 5, sticky = W)
             self.m_ix += 1
 
-    def ctl_lights(self, p_arg, p_kind):
-        print "Edit lights", p_arg, p_kind
-        LightingDialog(self.m_frame, p_arg, p_kind, "Editing Light")
+    def ctl_lights(self, p_key, p_kind):
+        """
+        @param p_key: the key to look up the light info.
+        """
+        #print "Edit lights", p_key, p_kind
+        LightingDialog(self.m_frame, p_key, p_kind, "Editing Light")
 
     def main_screen(self):
         self.frame_delete(self.m_frame)
@@ -67,8 +71,23 @@ class LightingDialog(gui_tools.GuiTools):
         self.m_parent = p_parent
         self.l_result = None
         self.create_vars()
-        l_type, l_family = self.load_vars(p_key, p_kind)
-        Button(self.m_dia_frame, text = "Cancel", fg = "red", bg = gui_tools.BG_BOTTOM, command = self.quit_dialog).grid(row = 91, column = 2)
+        _l_type, _l_family = self.load_vars(p_key, p_kind)
+        l_res = 100
+        if self.Dimmable.get() == 1: l_res = 1
+        self.m_frame = Frame(self.m_top)
+        self.m_frame.grid_columnconfigure(0, minsize = 130)
+        self.m_frame.grid_columnconfigure(1, minsize = 300)
+        self.m_frame.grid(padx = 5, pady = 5)
+        #
+        self.get_entry_str(self.m_frame, 1, 'Key', self.Key, state = DISABLED)
+        self.get_entry_str(self.m_frame, 2, 'House Name', self.HouseName, state = DISABLED)
+        self.get_entry_str(self.m_frame, 3, 'Room Name', self.RoomName, state = DISABLED)
+        self.get_entry_str(self.m_frame, 4, 'Light Name', self.Name, state = DISABLED)
+        self.level = Scale(self.m_frame, from_ = 0, to = 100, orient = HORIZONTAL, resolution = l_res)
+        self.level.grid(row = 11, column = 1, sticky = W)
+        Button(self.m_frame, text = 'Change', fg = "blue", bg = gui_tools.BG_BOTTOM, command = self.change_light).grid(row = 91, column = 0)
+        Button(self.m_frame, text = "Cancel", fg = "red", bg = gui_tools.BG_BOTTOM, command = self.quit_dialog).grid(row = 91, column = 2)
+        if g_debug > 0: print "Resolution = ", l_res
 
     def create_vars(self):
         """Create everything - used or not.
@@ -81,7 +100,8 @@ class LightingDialog(gui_tools.GuiTools):
         self.Family = StringVar()
         self.Key = IntVar()
         self.Name = StringVar()
-        self.Room = StringVar()
+        self.HouseName = StringVar()
+        self.RoomName = StringVar()
         self.Type = StringVar()
         # Controllers
         self.Interface = StringVar()
@@ -111,10 +131,35 @@ class LightingDialog(gui_tools.GuiTools):
 
     def load_vars(self, p_key, p_kind):
         #print "LoadVars key, Kind = {0:} - {1:}".format(p_key, p_kind)
-        pass
+        try:
+            l_obj = Light_Data[p_key]
+        except:
+            l_obj = lighting.LightingData()
+            l_obj.Key = p_key
+        l_family = l_obj.Family
+        l_type = l_obj.Type
+        self.Active.set(self.get_bool(l_obj.Active))
+        self.Comment.set(l_obj.Comment)
+        self.Coords.set(l_obj.Coords)
+        self.Dimmable.set(self.get_bool(l_obj.Dimmable))
+        self.Family.set(l_family)
+        self.Key.set(l_obj.Key)
+        self.Name.set(l_obj.Name)
+        self.HouseName.set(l_obj.HouseName)
+        self.RoomName.set(l_obj.RoomName)
+        self.Type.set(l_type)
+        if g_debug > 0: print "Dim ", l_obj.Dimmable, self.Dimmable.get()
+        return l_type, l_family
 
     def get_vars(self):
         pass
+
+    def change_light(self):
+        l_light = self.Name.get()
+        l_level = self.level.get()
+        l_family = self.Family.get()
+        if g_debug > 0: print "level = ", l_level, l_light, l_family
+        lighting.LightingUtility().change_light_setting(l_light, l_level, l_family)
 
     def quit_dialog(self):
         self.m_top.destroy()

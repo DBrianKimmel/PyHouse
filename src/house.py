@@ -1,6 +1,12 @@
 #!/usr/bin/python
 
 """Handle the house information.
+
+There is location information for the house.  This is for calculating the
+time of sunrise and sunset.  Additional calculations ma be added such as
+moonrise, tides, etc.
+
+Rooms and lights and HVAC are associated with a particular house.
 """
 
 # Import system type stuff
@@ -203,7 +209,7 @@ class HouseAPI(lighting_tools.CoreAPI):
         configure.config_xml.ReadConfig().read_houses()
 
     def dump_location(self):
-        print "***** All House Locations *****"
+        print "***** All House Locations ***"
         for l_key, l_obj in Location_Data.iteritems():
             self.dump_device(l_obj, 'Location', l_key)
         print

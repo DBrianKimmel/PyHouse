@@ -3,8 +3,8 @@
 """Insteon Device module.
 
 This is the main module for the Insteon family of devices.
-it provides the single interface into the
-Several other insteon modules are included by this and are invisible to the other families.
+it provides the single interface into the family.
+Several other Insteon modules are included by this and are invisible to the other families.
 
 This module loads the information about all the Insteon devices.
 
@@ -17,20 +17,23 @@ serial_port
 import logging
 
 # Import PyMh files
-#import configure_mh
 from lighting import lighting
+
 
 Button_Data = lighting.Button_Data
 Controller_Data = lighting.Controller_Data
 Light_Data = lighting.Light_Data
 Light_Status = lighting.Light_Status
 
-g_debug = True
+g_debug = 0
 g_logger = None
 g_InsteonLink = None
 g_PLM = None
 
 class CoreData (object):
+    """This class contains the Insteon specific information about the various devices
+    controlled by PyHouse.
+    """
 
     def __init__(self):
         self.Address = None
@@ -43,7 +46,7 @@ class CoreData (object):
         self.ProductKey = None
         self.Responder = None
 
-    def __str__(self):
+    def __repr__(self):
         l_str = lighting.ControllerData.__repr__(self)
         l_str += " Address: {0:} Controller: {1:}".format(self.get_address(), self.Controller)
         return l_str
@@ -81,14 +84,14 @@ class CoreData (object):
     def set_responder(self, value):
         self.__Responder = value
 
-    Address = property(get_address, set_address, None, "Device Address as string 'aa.bb.cc'.")
-    Controller = property(get_controller, set_controller, None, "Bool - device can act as a controller of others")
-    DevCat = property(get_dev_cat, set_dev_cat, None, 'Device Category and SubCategory as 0x0123.')
+    Address = property(get_address, set_address, None, "'Str' Device Address as 'aa.bb.cc'.")
+    Controller = property(get_controller, set_controller, None, "Bool Device can act as a controller of others.")
+    DevCat = property(get_dev_cat, set_dev_cat, None, "Int16' Device Category and SubCategory as 0x0123.")
     GroupList = property(get_group_list, set_group_list, None, None)
     GroupNumber = property(get_group_number, set_group_number, None, None)
-    Master = property(get_master, set_master, None, None)
+    Master = property(get_master, set_master, None, "'Bool' ???")
     ProductKey = property(get_product_key, set_product_key, None, "New - Replacing devcat someday perhaps.")
-    Responder = property(get_responder, set_responder, None, "Device can act as responder from a controller")
+    Responder = property(get_responder, set_responder, None, "'Bool' Device can act as responder from a controller.")
 
 class CoreAPI(object):
 
@@ -203,7 +206,7 @@ class LoadSaveInsteonData(LightingAPI, ControllerAPI, ButtonAPI, LightingStatusA
         """
         """
         l_cfg = {}
-        if g_debug: print "  insteon_Device.writing_insteon "
+        if g_debug > 0: print "  Device_Insteon.write_insteon_lights()"
         for l_name, l_obj in p_lights.iteritems():
             if l_obj.get_Family() != 'Insteon': continue
             l_cfg[l_name] = {}
@@ -221,29 +224,22 @@ class LoadSaveInsteonData(LightingAPI, ControllerAPI, ButtonAPI, LightingStatusA
             l_cfg[l_name]['Dimmable'] = l_obj.get_Dimmable()
             l_cfg[l_name]['DevCat'] = l_obj.get_DevCat()
             l_cfg[l_name]['Master'] = l_obj.get_Master()
-            #l_cfg[l_name]['Code'] = l_obj.get_Code()
-        #cfg = configure_mh.ConfigureAPI.get_cfg_file(configure_mh.ConfigureAPI(), './config/Insteon.conf')
-        #cfg['InsteonLights'] = l_cfg
-        #cfg.write()
 
 
 class InsteonDeviceUtility(LoadSaveInsteonData):
 
     def scan_all_lights(self, _p_lights):
-        print "insteon_Device.scan_insteon_devices "
+        if g_debug > 0: print "insteon_Device.scan_insteon_devices "
         Insteon_PLM.LightingAPI().scan_all_lights(lighting.Light_Data)
 
 import Insteon_Link
 import Insteon_PLM
 
+
 def Init():
     global g_logger, g_InsteonLink, g_PLM
     g_logger = logging.getLogger('PyHouse.Device_Insteon')
     g_logger.info('Initializing.')
-    #ButtonAPI().load_all_buttons(Configure_Data['InsteonButtons'])
-    #ControllerAPI().load_all_controllers(Configure_Data['InsteonControllers'])
-    #LightingAPI().load_all_lights(Configure_Data['InsteonLights'])
-    #LightingStatusAPI().load_all_status(Configure_Data['InsteonLights'])
     g_InsteonLink = Insteon_Link.InsteonLinkMain()
     Insteon_PLM.Init()
     g_PLM = Insteon_PLM

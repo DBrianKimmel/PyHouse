@@ -101,14 +101,10 @@ class UPnPControlPoint(object):
         """
         @param device: an instance of coherence.upnp.core.Device()
         """
-<<<<<<< HEAD
         if g_debug > 1:
             print "__Found device:{0:s}, Type:{1:s}, Client:{2:}, Id:{3:}".format(device.get_friendly_name(), device.get_device_type(), device.client, device.get_id())
-=======
-        print "__Found device:{0:s}, Type:{1:s}, Client:{2:}, Id:{3:}".format(device.get_friendly_name(), device.get_device_type(), device.client, device.get_id())
         if not device in self.devices:
             self.devices.append(device)
->>>>>>> 430bd36324cc3c8ce1abe262593116b6da80f166
 
     def state_variable_change(self, p_variable):
         if p_variable.name == 'CurrentTrackMetaData':

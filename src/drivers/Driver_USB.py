@@ -146,7 +146,11 @@ class UsbDriverAPI(UsbUtility):
         if g_debug:
             print "! !  Driver_USB._setup_find_device"
             print "   -- Name:{0:} V:{1:X}:P:{2:X}".format(self.m_device_data.get_name(), self.m_device_data.Vendor, self.m_device_data.Product)
-        l_device = usb.core.find(idVendor = self.m_device_data.get_vendor(), idProduct = self.m_device_data.get_product())
+        try:
+            l_device = usb.core.find(idVendor = self.m_device_data.get_vendor(), idProduct = self.m_device_data.get_product())
+        except:
+            print "no such device"
+            return None
         if l_device == None:
             g_logger.error('USB device not found  {0:X}:{1:X}, {2:}'.format(self.m_device_data.get_vendor(), self.m_device_data.get_product(), self.m_device_data.get_name()))
             return None
@@ -226,7 +230,8 @@ class UsbDriverAPI(UsbUtility):
     def open_device(self):
         print "\n! ! Driver_USB.open_device"
         self.m_device = self._setup_find_device()
-        if self.m_device == None: return None
+        if self.m_device == None:
+            return None
         self.m_device.baudrate = 19200
         self._setup_detach_kernel(self.m_device)
         l_config = self._setup_configurations(self.m_device)
@@ -308,8 +313,8 @@ class USBDriverMain(UsbDriverAPI):
         l_dev = self.extract_usb(p_obj)
         g_logger.info(" Initializing USB port - {0:#04X}:{1:#04X} - {2:} on port {3:}".format(
             l_dev.get_vendor(), l_dev.get_product(), l_dev.get_name(), l_dev.get_port()))
-        self.open_device()
-        LoopingCall(self._serialLoop).start(1)
+        if self.open_device() != None:
+            LoopingCall(self._serialLoop).start(1)
 
 
     """

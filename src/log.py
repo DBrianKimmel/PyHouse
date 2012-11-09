@@ -24,7 +24,7 @@ class LogData(object):
         self.Debug = None
         self.Error = None
 
-    
+
 class LoggingUtility(object):
 
     def setup_debug_log (self, p_filename):
@@ -33,7 +33,6 @@ class LoggingUtility(object):
         l_debug = logging.getLogger('PyHouse')
         l_formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s - %(message)s')
         l_debug.setLevel(logging.DEBUG)
-        #print " / Filename=", p_filename
         l_fh = logging.handlers.TimedRotatingFileHandler(p_filename, when = 'midnight', backupCount = 31)
         l_fh.setLevel(logging.DEBUG)
         l_fh.setFormatter(l_formatter)
@@ -51,17 +50,17 @@ class LoggingUtility(object):
 class LoggingMain(LoggingUtility):
 
     def __init__(self):
-        Log_Data['0'] = LogData()
+        Log_Data[0] = LogData()
         configure.config_xml.ReadConfig().read_log_web()
         try:
-            l_debug_name = Log_Data['0'].Debug
+            l_debug_name = Log_Data[0].Debug
         except:
-            l_debug_name  = '/var/log/pyhouse/debug'
-            Log_Data['0'].Debug = l_debug_name
+            l_debug_name = '/var/log/pyhouse/debug'
+            Log_Data[0].Debug = l_debug_name
         try:
             self.m_error_name = Log_Data[0].Error
         except:
-            self.m_error_name  = '/var/log/pyhouse/error'
+            self.m_error_name = '/var/log/pyhouse/error'
         self.m_formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s - %(message)s')
         self.setup_debug_log(l_debug_name)
 

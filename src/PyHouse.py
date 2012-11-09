@@ -62,7 +62,6 @@ import log
 import house
 import schedule.schedule as schedule
 import weather
-#import upnp
 
 g_debug = 0
 g_logger = None
@@ -75,7 +74,6 @@ def Init():
 
     global g_logger
     # These need to be first and in this order
-    #configure_mh.ConfigureMain() # Temp till xml fully functional.
     config_xml.read_config()
     log.LoggingMain()
     # 2nd. Now the logging will be set up and work properly
@@ -85,7 +83,6 @@ def Init():
     house.Init()
     weather.Init()
     schedule.Init()
-    #upnp.core.Init()
     #web_server.Init()
     configure.gui.Init()
     g_logger.info("Initialized.\n")
@@ -99,7 +96,6 @@ def Start():
     g_logger.info("Starting.")
     house.Start(reactor)
     schedule.Start(reactor)
-    #upnp.core.Start()
     #web_server.Start(reactor)
     g_logger.info("Started.\n")
     # reactor never returns so must be last - Event loop will now run
@@ -110,7 +106,6 @@ def Stop(p_tag = None):
     """
     if g_debug: print "PyHouse.Stop()"
     config_xml.write_config()
-#    UPnP_core.Stop()
     if p_tag != 'Gui':
         configure.gui.Stop()
     schedule.Stop()

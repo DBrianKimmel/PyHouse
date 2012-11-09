@@ -30,7 +30,7 @@ Schedule_Data = {}
 
 ScheduleCount = 0
 Scheduled_Namelist = []
-g_debug = 0
+g_debug = 1
 g_logger = None
 g_reactor = None
 
@@ -42,11 +42,13 @@ class ScheduleData(object):
         global ScheduleCount
         ScheduleCount += 1
         self.Active = None
+        self.HouseName = None
         self.Key = 0
         self.Level = 0
         self.LightName = None
-        self.Rate = 0
         self.Name = 0
+        self.Rate = 0
+        self.RoomName = None
         self.Time = None
         self.Type = 'Device'
 
@@ -60,23 +62,6 @@ class ScheduleAPI(ScheduleData):
 
     def get_ScheduleCount(self):
         return ScheduleCount
-
-    def load_all_schedules(self, p_dict):
-        for l_key, l_obj in p_dict.iteritems():
-            self.load_schedule(l_key, l_obj)
-
-    def load_schedule(self, p_Name, p_obj):
-        l_key = self.get_ScheduleCount()
-        l_sched = ScheduleData()
-        l_sched.Active = p_obj.get('Active', False)
-        l_sched.Key = l_key
-        l_sched.Level = p_obj.get('Level', 0)
-        l_sched.LightName = p_obj.get('Name', 'NoLightName')
-        l_sched.Rate = p_obj.get('Rate', 0)
-        l_sched.Name = p_Name
-        l_sched.Time = p_obj.get('Time', None)
-        l_sched.Type = p_obj.get('Type', None)
-        Schedule_Data[l_key] = l_sched
 
     def load_schedules_xml(self):
         configure.config_xml.ReadConfig().read_schedules()
@@ -144,7 +129,7 @@ class ScheduleExecution(ScheduleAPI):
             l_obj = Schedule_Data[l_Name]
             (l_device, _l_type, l_level, _l_rate) = self._get_Name_info(l_Name, l_obj)
             lighting.LightingUtility().change_light_setting(l_device, l_level)
-        # TODO change this to a non blocking call.
+        # TODO: change this to a non blocking call.
         time.sleep(1)
         self.get_next_sched()
 
@@ -193,10 +178,13 @@ class ScheduleUtility(ScheduleExecution):
         l_now = datetime.datetime.now()
         l_time_now = datetime.time(l_now.hour, l_now.minute, l_now.second)
         _l_date = datetime.date(l_now.year, l_now.month, l_now.day)
-        # sunrisesunset.SSAPI().set_date(l_date)
-        sunrisesunset.Start()
-        self.m_sunset = sunrisesunset.SSAPI().get_sunset()
-        self.m_sunrise = sunrisesunset.SSAPI().get_sunrise()
+        try:
+            sunrisesunset.Start()
+            self.m_sunset = sunrisesunset.SSAPI().get_sunset()
+            self.m_sunrise = sunrisesunset.SSAPI().get_sunrise()
+        except:
+            self.m_sunrise = '06:00'
+            self.m_sunset = '18:00'
         if g_debug > 0: print "-Schedule - sunrise/sunset = ", self.m_sunrise, self.m_sunset
         g_logger.info("Sunrise:{0:}, Sunset:{1:}".format(self.m_sunrise, self.m_sunset))
         l_time_scheduled = l_now

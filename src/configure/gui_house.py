@@ -67,37 +67,28 @@ class HouseDialog(gui_tools.GuiTools):
         self.m_top = Toplevel(p_parent)
         if p_title:
             self.m_top.title(p_title)
+        l_adding = "normal"
+        if p_title.startswith("Edit"):
+            l_adding = 'disabled'
         self.m_parent = p_parent
         self.l_result = None
         self.create_vars()
         self.load_vars(p_key)
         self.m_frame = Frame(self.m_top)
-        #self.initial_focus = self.body(self.m_frame)
         self.m_frame.grid(padx = 5, pady = 5)
-        Label(self.m_frame, text = "Key").grid(row = 1, column = 0, sticky = E)
-        Entry(self.m_frame, textvar = self.Key, state = DISABLED).grid(row = 1, column = 1, sticky = W)
-        Label(self.m_frame, text = "Active").grid(row = 2, column = 0, sticky = E)
-        self.yes_no_radio(self.m_frame, self.Active).grid(row = 2, column = 1, sticky = W)
-        Label(self.m_frame, text = "Name").grid(row = 3, column = 0, sticky = E)
-        Entry(self.m_frame, textvar = self.Name, state = DISABLED, width = 50).grid(row = 3, column = 1, sticky = W)
-        Label(self.m_frame, text = "Street").grid(row = 4, column = 0, sticky = E)
-        Entry(self.m_frame, textvar = self.Street, width = 50).grid(row = 4, column = 1, sticky = W)
-        Label(self.m_frame, text = "City").grid(row = 5, column = 0, sticky = E)
-        Entry(self.m_frame, textvar = self.City, width = 50).grid(row = 5, column = 1, sticky = W)
-        Label(self.m_frame, text = "State").grid(row = 7, column = 0, sticky = E)
-        Entry(self.m_frame, textvar = self.State).grid(row = 7, column = 1, sticky = W)
-        Label(self.m_frame, text = "Zip Code").grid(row = 9, column = 0, sticky = E)
-        Entry(self.m_frame, textvar = self.Zip).grid(row = 9, column = 1, sticky = W)
-        Label(self.m_frame, text = "Time Zone").grid(row = 11, column = 0, sticky = E)
-        Entry(self.m_frame, textvar = self.Timezone).grid(row = 11, column = 1, sticky = W)
-        Label(self.m_frame, text = "Savings Time").grid(row = 13, column = 0, sticky = E)
-        Entry(self.m_frame, textvar = self.SavingTime).grid(row = 13, column = 1, sticky = W)
-        Label(self.m_frame, text = "Phone").grid(row = 15, column = 0, sticky = E)
-        Entry(self.m_frame, textvar = self.Phone).grid(row = 15, column = 1, sticky = W)
-        Label(self.m_frame, text = "Latitude").grid(row = 17, column = 0, sticky = E)
-        Entry(self.m_frame, textvar = self.Latitude).grid(row = 17, column = 1, sticky = W)
-        Label(self.m_frame, text = "Longitude").grid(row = 19, column = 0, sticky = E)
-        Entry(self.m_frame, textvar = self.Longitude).grid(row = 19, column = 1, sticky = W)
+        #
+        self.get_entry_str(self.m_frame, 1, 'Key', self.Key, state = DISABLED)
+        self.get_entry_bol(self.m_frame, 2, 'Active', self.Active)
+        self.get_entry_str(self.m_frame, 3, 'Name', self.Name, width = 50)
+        self.get_entry_str(self.m_frame, 4, 'Street', self.Street, width = 50)
+        self.get_entry_str(self.m_frame, 5, 'City', self.City)
+        self.get_entry_str(self.m_frame, 6, 'State', self.State)
+        self.get_entry_str(self.m_frame, 7, 'Zip Code', self.Zip)
+        self.get_entry_str(self.m_frame, 8, 'Time Zone', self.Timezone)
+        self.get_entry_str(self.m_frame, 9, 'Savings Time', self.SavingTime)
+        self.get_entry_str(self.m_frame, 10, 'Phone', self.Phone)
+        self.get_entry_str(self.m_frame, 11, 'Latitude', self.Latitude)
+        self.get_entry_str(self.m_frame, 12, 'Longitude', self.Longitude)
         #
         self.show_all_rooms()
         #
@@ -118,9 +109,8 @@ class HouseDialog(gui_tools.GuiTools):
             self.room_count += 1
             #print "Adding room", l_obj.Name, l_name, l_obj
             if l_obj.HouseName != l_name: continue
-            l_r = l_ix // 5
-            l_c = l_ix % 5
-            Button(l_frame, text = l_obj.Name, bg = gui_tools.BG_TOP, command = lambda x = l_obj.Key: self.edit_room(x)).grid(row = l_r, column = l_c)
+            l_row, l_col = self.columnize(l_ix, 5)
+            Button(l_frame, text = l_obj.Name, bg = gui_tools.BG_TOP, command = lambda x = l_obj.Key: self.edit_room(x)).grid(row = l_row, column = l_col)
             l_ix += 1
         l_frame.grid(row = 31, column = 0, columnspan = 3)
 
@@ -213,26 +203,19 @@ class RoomDialog(gui_tools.GuiTools):
         self.load_vars(p_key, p_house_name)
         self.m_frame = Frame(self.m_top)
         self.m_frame.grid(padx = 5, pady = 5)
-        Label(self.m_frame, text = "Key").grid(row = 1, column = 0, sticky = E)
-        Entry(self.m_frame, textvar = self.Key, state = DISABLED).grid(row = 1, column = 1, sticky = W)
-        Label(self.m_frame, text = "Active").grid(row = 3, column = 0, sticky = E)
-        self.yes_no_radio(self.m_frame, self.Active).grid(row = 3, column = 1, sticky = W)
-        Label(self.m_frame, text = "Name").grid(row = 5, column = 0, sticky = E)
-        Entry(self.m_frame, textvar = self.Name).grid(row = 5, column = 1, sticky = W)
-        Label(self.m_frame, text = "Comment").grid(row = 7, column = 0, sticky = E)
-        Entry(self.m_frame, textvar = self.Comment).grid(row = 7, column = 1, sticky = W)
-        Label(self.m_frame, text = "Size").grid(row = 9, column = 0, sticky = E)
-        Entry(self.m_frame, textvar = self.Size).grid(row = 9, column = 1, sticky = W)
-        Label(self.m_frame, text = "Corner").grid(row = 11, column = 0, sticky = E)
-        Entry(self.m_frame, textvar = self.Corner).grid(row = 11, column = 1, sticky = W)
-        Label(self.m_frame, text = "HouseName").grid(row = 13, column = 0, sticky = E)
-        Entry(self.m_frame, textvar = self.HouseName, state = DISABLED).grid(row = 13, column = 1, sticky = W)
+        self.get_entry_str(self.m_frame, 1, 'Key', self.Key, state = DISABLED)
+        self.get_entry_bol(self.m_frame, 2, 'Active', self.Active)
+        self.get_entry_str(self.m_frame, 3, 'Name', self.Name, width = 50)
+        self.get_entry_str(self.m_frame, 4, 'Comment', self.Comment, width = 50)
+        self.get_entry_str(self.m_frame, 5, 'Size', self.Size)
+        self.get_entry_str(self.m_frame, 6, 'Corner', self.Corner)
+        self.get_entry_str(self.m_frame, 7, 'House Name', self.HouseName, state = DISABLED)
         l_text = "Add"
         if p_title.startswith("Edit"):
             l_text = "Save"
-            Button(self.m_frame, text = 'Delete', bg = gui_tools.BG_BOTTOM, command = self.delete_room).grid(row = 91, column = 1)
-        Button(self.m_frame, text = l_text, fg = "blue", bg = gui_tools.BG_BOTTOM, command = self.add_room).grid(row = 91, column = 0)
-        Button(self.m_frame, text = "Cancel", fg = "red", bg = gui_tools.BG_BOTTOM, command = self.quit_room).grid(row = 91, column = 2)
+            self.get_entry_btn(self.m_frame, 91, 1, 'Delete', self.delete_room, bg = gui_tools.BG_BOTTOM)
+        self.get_entry_btn(self.m_frame, 91, 0, l_text, self.add_room, fg = "blue", bg = gui_tools.BG_BOTTOM)
+        self.get_entry_btn(self.m_frame, 91, 2, "Cancel", self.quit_room, fg = "red", bg = gui_tools.BG_BOTTOM)
 
     def delete_room(self):
         l_key = self.Key.get()
@@ -284,5 +267,9 @@ class RoomDialog(gui_tools.GuiTools):
         l_obj.Name = self.Name.get()
         l_obj.Size = self.Size.get()
         return l_obj
+
+    def get_housename(self, p_val):
+        self.HouseName.set(p_val)
+        if g_debug > 0: print "get house name - ", p_val
 
 ### END

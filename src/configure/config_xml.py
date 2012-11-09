@@ -24,6 +24,7 @@ Schedule_Data = schedule.Schedule_Data
 Log_Data = log.Log_Data
 Web_Data = web_server.Web_Data
 
+g_debug = 0
 g_xmltree = ''
 
 class ConfigTools(object):
@@ -107,7 +108,7 @@ class ReadConfig(ConfigTools):
         l_obj.Name = l_name = p_entry.get('Name')
         l_obj.Key = int(p_entry.get('Key'))
         l_obj.Active = self.get_bool(p_entry.get('Active'))
-        # print "ReadConfig.read_location - Active=", l_obj.Active, l_obj.Name
+        if g_debug > 5: print "ReadConfig.read_location - Active=", l_obj.Active, l_obj.Name
         # Now read the location subsection
         l_entry = p_entry.find('Location')
         l_obj.Street = l_entry.findtext('Street')
@@ -121,6 +122,7 @@ class ReadConfig(ConfigTools):
         l_obj.SavingTime = self.get_float(l_entry, 'SavingTime')
         House_Data[l_obj.Key] = l_obj
         Location_Data[l_obj.Key] = l_obj
+        House_Data[l_obj.Key] = l_obj
         self.m_location += 1
         return l_name
 
@@ -150,7 +152,7 @@ class ReadConfig(ConfigTools):
             l_sect = self.m_root.find('Houses')
             l_list = l_sect.iterfind('House')  # use l_sect to force error if it is missing
         except AttributeError:
-            print " -- Error in read_house - Adding 'Houses'"
+            if g_debug > 0: print "Warning - in read_house - Adding 'Houses' section"
             l_sect = ET.SubElement(self.m_root, 'Houses')
             l_list = l_sect.iterfind('House')
         for l_house in l_list:
@@ -167,7 +169,8 @@ class ReadConfig(ConfigTools):
         p_obj.Coords = p_entry.findtext('Coords')
         p_obj.Dimmable = self.get_bool(p_entry.findtext('Dimmable'))
         p_obj.Family = l_fam = p_entry.findtext('Family')
-        p_obj.Room = p_entry.findtext('Room')
+        p_obj.RoomName = p_entry.findtext('Room')
+        p_obj.HouseName = p_entry.findtext('House')
         p_obj.Type = p_entry.findtext('Type')
         if l_fam == 'UPB':
             p_obj.NetworkID = l_fam = p_entry.findtext('NetworkID')
@@ -190,7 +193,7 @@ class ReadConfig(ConfigTools):
             l_sect = self.m_root.find('Lighting')
             l_list = l_sect.iterfind('Controllers')  # use l_sect to force error if Lighting is missing
         except AttributeError:
-            print " -- Error in read_lights - Adding 'Lighting'"
+            if g_debug > 0: print "Warning - in read_lights - Adding 'Lighting' secyion"
             l_sect = ET.SubElement(self.m_root, 'Lighting')
             ET.SubElement(l_sect, 'Lights')
             ET.SubElement(l_sect, 'Controllers')
@@ -199,7 +202,7 @@ class ReadConfig(ConfigTools):
         try:
             l_list = l_sect.iterfind('Lights/Light')
         except AttributeError:
-            print "-- Error in getting a list of Lights"
+            if g_debug > 0: print "Warning - in getting a list of Lights"
             l_list = ET.SubElement(l_sect, 'Lights')
         for l_entry in l_list:
             l_obj = lighting.LightingData()
@@ -210,7 +213,7 @@ class ReadConfig(ConfigTools):
         try:
             l_list = l_sect.iterfind('Controllers/Controller')
         except AttributeError:
-            print "-- Error in getting a list of Controllers"
+            if g_debug > 0: print "-- Error in getting a list of Controllers"
             l_list = ET.SubElement(l_sect, 'Controllers')
         for l_entry in l_list:
             l_obj = lighting.ControllerData()
@@ -241,7 +244,7 @@ class ReadConfig(ConfigTools):
         try:
             l_list = l_sect.iterfind('Buttons/Button')
         except AttributeError:
-            print "-- Error in getting a list of Buttons"
+            if g_debug > 0: print "-- Error in getting a list of Buttons"
             l_list = ET.SubElement(l_sect, 'Buttons')
         for l_entry in l_list:
             l_obj = lighting.ButtonData()
@@ -256,17 +259,19 @@ class ReadConfig(ConfigTools):
             l_sect = self.m_root.find('Schedules')
             l_list = l_sect.iterfind('Schedule')
         except AttributeError:
-            print " -- Error in read_Schedules - Adding 'Schedules'"
+            if g_debug > 0: print "Warning - in read_Schedules - Adding 'Schedules'"
             l_sect = ET.SubElement(self.m_root, 'Schedules')
             l_list = l_sect.iterfind('Schedule')
         for l_entry in l_list:
             l_obj = schedule.ScheduleData()
-            l_obj.Name = l_entry.get('Name')
-            l_obj.Key = int(l_entry.get('Key'))
             l_obj.Active = self.get_bool(l_entry.get('Active'))
+            l_obj.HouseName = l_entry.findtext('HouseName')
+            l_obj.Key = int(l_entry.get('Key'))
             l_obj.Level = int(l_entry.findtext('Level'))
             l_obj.LightName = l_entry.findtext('LightName')
+            l_obj.Name = l_entry.get('Name')
             l_obj.Rate = int(l_entry.findtext('Rate'))
+            l_obj.RoomName = l_entry.findtext('RoomName')
             l_obj.Time = l_entry.findtext('Time')
             l_obj.Type = l_entry.findtext('Type')
             Schedule_Data[l_obj.Key] = l_obj
@@ -274,34 +279,30 @@ class ReadConfig(ConfigTools):
         return l_count
 
     def read_log_web(self):
-        # print "reading log_web"
-        global Log_Data, Web_Data
-        Log_Data['0'] = log.LogData()
+        if g_debug > 8:
+            print "Debug - reading log_web"
+            print xml_tools.prettify(self.m_root)
         try:
             l_sect = self.m_root.find('Logs')
-            l_list = l_sect.iterfind('Logs')
+            l_sect.find('Debug')
         except:
+            if g_debug > 0: print "Warning - Logs section is missing - Adding empty values now."
             l_sect = ET.SubElement(self.m_root, 'Logs')
-            l_list = l_sect.iterfind('Logs')
-        for l_entry in l_list:
-            l_obj = log.LogData()
-            # l_obj.Debug = l_entry.findtext('Debug')
-            l_obj.Debug = '/var/log/pyhouse/debug'
-            l_obj.Error = l_entry.findtext('Error')
-            Log_Data['0'] = l_obj
+            ET.SubElement(l_sect, 'Debug').text = 'None'
+            ET.SubElement(l_sect, 'Error').text = 'None'
+        l_obj = log.LogData()
+        l_obj.Debug = l_sect.findtext('Debug')
+        l_obj.Error = l_sect.findtext('Error')
+        Log_Data[0] = l_obj
         try:
             l_sect = self.m_root.find('Web')
-            l_list = l_sect.iterfind('Web')
+            l_sect.find('WebPort')
         except:
             l_sect = ET.SubElement(self.m_root, 'Web')
-            l_list = l_sect.iterfind('Web')
-        for l_entry in l_list:
-            l_obj = web_server.WebData()
-            l_obj.WebPort = l_list.findtext('WebPort')
-            Web_Data['0'] = l_obj
-        Log_Data['0'].Debug = '/var/log/pyhouse/debug'
-        # print " xx ", Log_Data, Log_Data['0'].__dict__
-        self.write_file()
+            ET.SubElement(l_sect, 'WebPort').text = 'None'
+        l_obj = web_server.WebData()
+        l_obj.WebPort = l_sect.findtext('WebPort')
+        Web_Data[0] = l_obj
 
     def read_upnp(self):
         pass
@@ -334,7 +335,7 @@ class WriteConfig(ConfigTools):
         try:
             l_sect.clear()
         except AttributeError:
-            print "Creating a new sub-element named ", p_name
+            if g_debug > 0: print "Creating a new sub-element named ", p_name
             l_sect = ET.SubElement(self.m_root, p_name)
         return l_sect
 
@@ -375,20 +376,21 @@ class WriteConfig(ConfigTools):
         ET.SubElement(p_entry, 'Coords').text = str(p_obj.Coords)
         ET.SubElement(p_entry, 'Dimmable').text = self.put_bool(p_obj.Dimmable)
         ET.SubElement(p_entry, 'Family').text = p_obj.Family
-        ET.SubElement(p_entry, 'Room').text = p_obj.Room
+        ET.SubElement(p_entry, 'House').text = p_obj.HouseName
+        ET.SubElement(p_entry, 'Room').text = p_obj.RoomName
         ET.SubElement(p_entry, 'Type').text = p_obj.Type
         if p_obj.Family == 'Insteon':
-            # print "WriteLightCommon Insteon=", p_obj
+            if g_debug > 2: print "WriteLightCommon Insteon=", p_obj
             ET.SubElement(p_entry, 'Address').text = p_obj.Address
-            ET.SubElement(p_entry, 'Controller').text = str(p_obj.Controller)
+            ET.SubElement(p_entry, 'Controller').text = self.put_bool(p_obj.Controller)
             ET.SubElement(p_entry, 'DevCat').text = str(p_obj.DevCat)
             ET.SubElement(p_entry, 'GroupList').text = str(p_obj.GroupList)
             ET.SubElement(p_entry, 'GroupNumber').text = str(p_obj.GroupNumber)
             ET.SubElement(p_entry, 'Master').text = str(p_obj.Master)
             ET.SubElement(p_entry, 'ProductKey').text = str(p_obj.ProductKey)
-            ET.SubElement(p_entry, 'Responder').text = str(p_obj.Responder)
+            ET.SubElement(p_entry, 'Responder').text = self.put_bool(p_obj.Responder)
         elif p_obj.Family == 'UPB':
-            # print "WriteLightCommon UPB=", p_obj
+            if g_debug > 2: print "WriteLightCommon UPB=", p_obj
             try:
                 ET.SubElement(p_entry, 'NetworkID').text = self.put_str(p_obj.NetworkID)
                 ET.SubElement(p_entry, 'Password').text = str(p_obj.Password)
@@ -420,24 +422,26 @@ class WriteConfig(ConfigTools):
         l_sect = self.write_create_empty('Schedules')
         for l_obj in Schedule_Data.itervalues():
             l_entry = self.build_common(l_sect, 'Schedule', l_obj)
+            ET.SubElement(l_entry, 'HouseName').text = str(l_obj.HouseName)
             ET.SubElement(l_entry, 'Level').text = str(l_obj.Level)
             ET.SubElement(l_entry, 'LightName').text = l_obj.LightName
             ET.SubElement(l_entry, 'Rate').text = str(l_obj.Rate)
+            ET.SubElement(l_entry, 'RoomName').text = str(l_obj.RoomName)
             ET.SubElement(l_entry, 'Time').text = l_obj.Time
             ET.SubElement(l_entry, 'Type').text = l_obj.Type
         self.write_file()
         schedule.Reload()
 
     def write_log_web(self):
-        # print "Write log_web", Log_Data[0], vars(Log_Data[0])
+        if g_debug > 2: print "Write log_web", Log_Data[0], vars(Log_Data[0])
         l_sect = self.write_create_empty('Logs')
-        l_obj = Log_Data['0']
+        l_obj = Log_Data[0]
         # l_entry = self.build_common(l_sect, 'Log', l_obj)
         ET.SubElement(l_sect, 'Debug').text = str(l_obj.Debug)
-        ET.SubElement(l_sect, 'Error').text = str(Log_Data['0'].Error)
+        ET.SubElement(l_sect, 'Error').text = str(Log_Data[0].Error)
         l_sect = self.write_create_empty('Web')
-        # l_obj = Web_Data['0']
-        # ET.SubElement(l_sect, 'WebPort').text = str(Web_Data['0'].WebPort)
+        l_obj = Web_Data[0]
+        ET.SubElement(l_sect, 'WebPort').text = str(Web_Data[0].WebPort)
         self.write_file()
 
     def write_upnp(self):
@@ -448,7 +452,7 @@ class WriteConfig(ConfigTools):
 
 
 def read_config():
-    # print "read_config()"
+    if g_debug > 0: print "read_config()"
     l_rf = ReadConfig()
     l_rf.read_houses()
     l_rf.read_lights()
@@ -459,7 +463,7 @@ def read_config():
     l_rf.write_file()
 
 def write_config():
-    print "write_config()"
+    if g_debug > 0: print "write_config()"
     l_wf = WriteConfig()
     l_wf.write_houses()
     l_wf.write_lights()

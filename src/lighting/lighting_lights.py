@@ -4,10 +4,10 @@
 
     Handle the lights component of the lighting system.
     This is the base data for all sub-classed lighting data
-    
+
     Each entry should contain enough information to allow functionality of various family of
     lighting controllers.  Insteon is the first type coded and UPB is to follow.
-    
+
     The real work of controlling the devices is delegated to the modules for that family of devices.
 """
 
@@ -15,16 +15,15 @@ import lighting_tools
 
 Light_Data = {}
 LightCount = 0
+g_debug = 0
 
 
 class LightsData(lighting_tools.CoreData):
 
-    #LightCount = 0
-
     def __init__(self):
         global LightCount
         LightCount += 1
-        #print " C lighting_lights.__init__()"
+        if g_debug > 0: print "lighting_lights.LightsData.__init__()"
         super(LightsData, self).__init__()
         self.Type = 'Light'
         self.CurLevel = 0
@@ -45,18 +44,18 @@ class LightsData(lighting_tools.CoreData):
 class LightsAPI(lighting_tools.CoreAPI):
 
     def __init__(self):
-        #print " L lightingAPI.__init__()"
+        if g_debug > 0: print "lighting_lights.lightsAPI.__init__()"
         super(LightsAPI, self).__init__()
 
-    def get_LightCount(self):
+    def _get_LightCount(self):
         global LightCount
         return LightCount
 
     def load_light(self, p_dict, p_light):
         """Load the light information.
         """
-        #print " L load_light() - {0:}".format(p_light.Name)
-        l_light = super(LightsAPI, self).load_core_device(p_dict, self.get_LightCount())
+        if g_debug > 0: print "lighting_lights.LightsAPI.load_light() - {0:}".format(p_light.Name)
+        l_light = super(LightsAPI, self).load_core_device(p_dict, self._get_LightCount())
         l_light.CurLevel = 0
         return l_light
 

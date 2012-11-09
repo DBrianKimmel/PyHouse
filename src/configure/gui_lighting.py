@@ -7,11 +7,16 @@ import gui
 import gui_tools
 import lighting.lighting as lighting
 import config_xml
+import house
 
 
+g_debug = 9
 Light_Data = lighting.Light_Data
 Button_Data = lighting.Button_Data
 Controller_Data = lighting.Controller_Data
+House_Data = house.House_Data
+Location_Data = house.Location_Data
+Room_Data = house.Room_Data
 
 VAL_FAM = lighting.VALID_FAMILIES
 VAL_INTER = lighting.VALID_INTERFACES
@@ -93,7 +98,7 @@ class LightingWindow(gui_tools.GuiTools):
         self.save_lights()
 
     def add_light(self):
-        print "Adding lights"
+        if g_debug > 0: print "Adding lights"
         LightingDialog(self.m_frame, self.m_max_light + 1, 4, "Adding Light")
         self.save_lights()
 
@@ -120,6 +125,7 @@ class LightingDialog(gui_tools.GuiTools):
     """
     """
     def __init__(self, p_parent, p_key, p_kind, p_title = None):
+        print "LightingDialog.__init__()", p_parent, p_key, p_kind, p_title
         self.m_top = Toplevel(p_parent)
         if p_title:
             self.m_top.title(p_title)
@@ -127,44 +133,30 @@ class LightingDialog(gui_tools.GuiTools):
         self.l_result = None
         self.create_vars()
         l_type, l_family, l_interface = self.load_vars(p_key, p_kind)
-        self.m_dia_frame = Frame(self.m_top)
-        self.m_dia_frame.grid_columnconfigure(0, minsize = 130)
-        self.m_dia_frame.grid_columnconfigure(1, minsize = 300)
-        self.m_dia_frame.grid(padx = 5, pady = 5)
-        Label(self.m_dia_frame, text = "Key").grid(row = 1, column = 0, sticky = E)
-        Entry(self.m_dia_frame, textvar = self.Key, state = DISABLED).grid(row = 1, column = 1, sticky = W)
-        Label(self.m_dia_frame, text = "Active").grid(row = 3, column = 0, sticky = E)
-        self.yes_no_radio(self.m_dia_frame, self.Active).grid(row = 3, column = 1, sticky = W)
-        Label(self.m_dia_frame, text = "Type").grid(row = 5, column = 0, sticky = E)
-        Entry(self.m_dia_frame, textvar = self.Type, state = DISABLED).grid(row = 5, column = 1, sticky = W)
-        Label(self.m_dia_frame, text = "Name").grid(row = 7, column = 0, sticky = E)
-        Entry(self.m_dia_frame, textvar = self.Name, width = 50).grid(row = 7, column = 1, sticky = W)
-        Label(self.m_dia_frame, text = "Family").grid(row = 9, column = 0, sticky = E)
-        self.pulldown_box(self.m_dia_frame, VAL_FAM, self.Family).grid(row = 9, column = 1, sticky = W)
-        Label(self.m_dia_frame, text = "Comment").grid(row = 11, column = 0, sticky = E)
-        Entry(self.m_dia_frame, textvar = self.Comment, width = 50).grid(row = 11, column = 1, sticky = W)
-        Label(self.m_dia_frame, text = "Coords").grid(row = 13, column = 0, sticky = E)
-        Entry(self.m_dia_frame, textvar = self.Coords).grid(row = 13, column = 1, sticky = W)
-        Label(self.m_dia_frame, text = "Room").grid(row = 15, column = 0, sticky = E)
-        Entry(self.m_dia_frame, textvar = self.Room).grid(row = 15, column = 1, sticky = W)
-        Label(self.m_dia_frame, text = "Dimmable").grid(row = 17, column = 0, sticky = E)
-        Entry(self.m_dia_frame, textvar = self.Dimmable).grid(row = 17, column = 1, sticky = W)
+        self.m_frame = Frame(self.m_top)
+        self.m_frame.grid_columnconfigure(0, minsize = 130)
+        self.m_frame.grid_columnconfigure(1, minsize = 300)
+        self.m_frame.grid(padx = 5, pady = 5)
+        #
+        self.get_entry_str(self.m_frame, 1, 'Key', self.Key, state = DISABLED)
+        self.get_entry_bol(self.m_frame, 2, 'Active', self.Active)
+        self.get_entry_str(self.m_frame, 3, 'Type', self.Type, state = DISABLED)
+        self.get_entry_str(self.m_frame, 4, 'Name', self.Name, width = 50)
+        self.get_entry_pdb(self.m_frame, 5, 'Family', self.Family, VAL_FAM, self.Family, self.get_family)
+        self.get_entry_str(self.m_frame, 6, 'Comment', self.Comment, width = 50)
+        self.get_entry_str(self.m_frame, 7, 'Coords', self.Coords)
+        self.get_entry_pdb(self.m_frame, 8, 'House Name', self.HouseName, self.build_names(Location_Data), self.HouseName, self.get_housename)
+        self.get_entry_pdb(self.m_frame, 9, 'Room Name', self.RoomName, self.build_names(Room_Data), self.RoomName, self.get_roomname)
+        self.get_entry_bol(self.m_frame, 10, 'Dimmable', self.Dimmable)
         if l_type == 'Controller':
-            Label(self.m_dia_frame, text = 'Interface').grid(row = 31, column = 0, sticky = E)
-            self.pulldown_box(self.m_dia_frame, VAL_INTER, self.Interface).grid(row = 31, column = 1, sticky = W)
-            Label(self.m_dia_frame, text = 'Port').grid(row = 33, column = 0, sticky = E)
-            Entry(self.m_dia_frame, textvar = self.Port, width = 50).grid(row = 33, column = 1, sticky = W)
+            self.get_entry_pdb(self.m_frame, 31, 'Interface', self.Interface, VAL_INTER, self.Interface, self.get_interface)
+            self.get_entry_str(self.m_frame, 33, 'Port', self.Port, width = 50)
             if l_interface == 'Serial':
-                Label(self.m_dia_frame, text = "Baud Rate").grid(row = 41, column = 0, sticky = E)
-                Entry(self.m_dia_frame, textvar = self.BaudRate).grid(row = 41, column = 1, sticky = W)
-                Label(self.m_dia_frame, text = "Byte Size").grid(row = 42, column = 0, sticky = E)
-                Entry(self.m_dia_frame, textvar = self.ByteSize).grid(row = 42, column = 1, sticky = W)
-                Label(self.m_dia_frame, text = "Parity").grid(row = 43, column = 0, sticky = E)
-                Entry(self.m_dia_frame, textvar = self.Parity).grid(row = 43, column = 1, sticky = W)
-                Label(self.m_dia_frame, text = "Stop Bits").grid(row = 44, column = 0, sticky = E)
-                Entry(self.m_dia_frame, textvar = self.StopBits).grid(row = 44, column = 1, sticky = W)
-                Label(self.m_dia_frame, text = "Timeout").grid(row = 45, column = 0, sticky = E)
-                Entry(self.m_dia_frame, textvar = self.Timeout).grid(row = 45, column = 1, sticky = W)
+                self.get_entry_str(self.m_frame, 41, 'Baud Rate', self.BaudRate)
+                self.get_entry_str(self.m_frame, 42, 'Byte Size', self.ByteSize)
+                self.get_entry_str(self.m_frame, 43, 'Parity', self.Parity)
+                self.get_entry_str(self.m_frame, 44, 'Stop Bits', self.StopBits)
+                self.get_entry_str(self.m_frame, 45, 'Timeout', self.Timeout)
             elif l_interface == 'USB':
                 pass
             elif l_interface == 'Ethernet4':
@@ -172,37 +164,26 @@ class LightingDialog(gui_tools.GuiTools):
         elif l_type == 'Button':
             pass
         if l_family == 'Insteon':
-            Label(self.m_dia_frame, text = 'Address').grid(row = 61, column = 0, sticky = E)
-            Entry(self.m_dia_frame, textvar = self.Address).grid(row = 61, column = 1, sticky = W)
-            Label(self.m_dia_frame, text = 'Controller').grid(row = 62, column = 0, sticky = E)
-            Entry(self.m_dia_frame, textvar = self.Controller).grid(row = 62, column = 1, sticky = W)
-            Label(self.m_dia_frame, text = 'DevCat').grid(row = 63, column = 0, sticky = E)
-            Entry(self.m_dia_frame, textvar = self.DevCat).grid(row = 63, column = 1, sticky = W)
-            Label(self.m_dia_frame, text = 'GroupList').grid(row = 64, column = 0, sticky = E)
-            Entry(self.m_dia_frame, textvar = self.GroupList).grid(row = 64, column = 1, sticky = W)
-            Label(self.m_dia_frame, text = 'GroupNumber').grid(row = 65, column = 0, sticky = E)
-            Entry(self.m_dia_frame, textvar = self.GroupNumber).grid(row = 65, column = 1, sticky = W)
-            Label(self.m_dia_frame, text = 'Master').grid(row = 66, column = 0, sticky = E)
-            Entry(self.m_dia_frame, textvar = self.Master).grid(row = 66, column = 1, sticky = W)
-            Label(self.m_dia_frame, text = 'ProductKey').grid(row = 67, column = 0, sticky = E)
-            Entry(self.m_dia_frame, textvar = self.ProductKey).grid(row = 67, column = 1, sticky = W)
-            Label(self.m_dia_frame, text = 'Responder').grid(row = 68, column = 0, sticky = E)
-            Entry(self.m_dia_frame, textvar = self.Responder).grid(row = 68, column = 1, sticky = W)
+            self.get_entry_str(self.m_frame, 61, 'Address', self.Address)
+            self.get_entry_bol(self.m_frame, 62, 'Controller', self.Controller)
+            self.get_entry_str(self.m_frame, 63, 'DevCat', self.DevCat)
+            self.get_entry_str(self.m_frame, 64, 'Group Number', self.GroupNumber)
+            self.get_entry_str(self.m_frame, 65, 'Group List', self.GroupList)
+            self.get_entry_str(self.m_frame, 66, 'Master', self.Master)
+            self.get_entry_str(self.m_frame, 67, 'Product Key', self.ProductKey)
+            self.get_entry_bol(self.m_frame, 68, 'Responder', self.Responder)
         elif l_family == 'UPB':
-            Label(self.m_dia_frame, text = 'UnitID').grid(row = 61, column = 0, sticky = E)
-            Entry(self.m_dia_frame, textvar = self.UnitID).grid(row = 61, column = 1, sticky = W)
-            Label(self.m_dia_frame, text = 'NetworkID').grid(row = 62, column = 0, sticky = E)
-            Entry(self.m_dia_frame, textvar = self.NetworkID).grid(row = 62, column = 1, sticky = W)
-            Label(self.m_dia_frame, text = 'Password').grid(row = 63, column = 0, sticky = E)
-            Entry(self.m_dia_frame, textvar = self.Password).grid(row = 63, column = 1, sticky = W)
+            self.get_entry_str(self.m_frame, 61, 'Unit ID', self.UnitID)
+            self.get_entry_str(self.m_frame, 62, 'Network ID', self.NetworkID)
+            self.get_entry_str(self.m_frame, 63, 'Password', self.Password)
         elif l_family == 'X10':
             pass
         l_text = "Add"
         if p_title.startswith("Edit"):
             l_text = "Save"
-            Button(self.m_dia_frame, text = 'Delete', bg = gui_tools.BG_BOTTOM, command = self.delete_entry).grid(row = 91, column = 1)
-        Button(self.m_dia_frame, text = l_text, fg = "blue", bg = gui_tools.BG_BOTTOM, command = self.get_vars).grid(row = 91, column = 0)
-        Button(self.m_dia_frame, text = "Cancel", fg = "red", bg = gui_tools.BG_BOTTOM, command = self.quit_dialog).grid(row = 91, column = 2)
+            self.get_entry_btn(self.m_frame, 91, 1, 'Delete', self.delete_entry, bg = gui_tools.BG_BOTTOM)
+        self.get_entry_btn(self.m_frame, 91, 0, l_text, self.get_vars, fg = "blue", bg = gui_tools.BG_BOTTOM)
+        self.get_entry_btn(self.m_frame, 91, 3, "Cancel", self.quit_dialog, fg = "blue", bg = gui_tools.BG_BOTTOM)
 
     def delete_entry(self):
         l_type = self.Type.get()
@@ -227,7 +208,8 @@ class LightingDialog(gui_tools.GuiTools):
         self.Family = StringVar()
         self.Key = IntVar()
         self.Name = StringVar()
-        self.Room = StringVar()
+        self.RoomName = StringVar()
+        self.HouseName = StringVar()
         self.Type = StringVar()
         # Controllers
         self.Interface = StringVar()
@@ -265,6 +247,7 @@ class LightingDialog(gui_tools.GuiTools):
                     l_obj = Light_Data[p_key]
                 except KeyError:
                     l_obj = lighting.LightingData()
+                    l_obj.Key = p_key
             elif p_kind == 2 or p_kind == 5:
                 l_type = "Controller"
                 try:
@@ -292,10 +275,11 @@ class LightingDialog(gui_tools.GuiTools):
         self.Family.set(l_family)
         self.Key.set(l_obj.Key)
         self.Name.set(l_obj.Name)
-        self.Room.set(l_obj.Room)
+        self.RoomName.set(l_obj.RoomName)
+        self.HouseName.set(l_obj.HouseName)
         self.Type.set(l_type)
         if l_type == 'Controller':
-            print "Interface =", l_obj.Interface
+            if g_debug > 0: print "gui_lighting() - Interface =", l_obj.Interface
             self.Interface.set(l_obj.Interface)
             self.Port.set(l_obj.Port)
             if l_obj.Interface == 'USB':
@@ -339,12 +323,13 @@ class LightingDialog(gui_tools.GuiTools):
         l_obj.Family = l_family
         l_obj.Key = l_key
         l_obj.Name = self.Name.get()
-        l_obj.Room = self.Room.get()
+        l_obj.RoomName = self.RoomName.get()
+        l_obj.HouseName = self.HouseName.get()
         l_obj.Type = l_type
         if l_family == 'Insteon':
             l_obj.Address = self.Address.get()
             l_obj.Controller = int(self.Controller.get())
-            l_obj.DevCat = int(self.DevCat.get())
+            l_obj.DevCat = self.DevCat.get()
             l_obj.GroupList = self.GroupList.get()
             l_obj.GroupNumber = self.GroupNumber.get()
             l_obj.Master = int(self.Master.get())
@@ -379,5 +364,21 @@ class LightingDialog(gui_tools.GuiTools):
 
     def quit_dialog(self):
         self.m_top.destroy()
+
+    def get_family(self, p_val):
+        self.Family.set(p_val)
+        if g_debug > 0: print "get family - ", p_val
+
+    def get_housename(self, p_val):
+        self.HouseName.set(p_val)
+        if g_debug > 0: print "get house name - ", p_val
+
+    def get_interface(self, p_val):
+        self.Interface.set(p_val)
+        if g_debug > 0: print "get interface - ", p_val
+
+    def get_roomname(self, p_val):
+        self.RoomName.set(p_val)
+        if g_debug > 0: print "get room name - ", p_val
 
 ### END

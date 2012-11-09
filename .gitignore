@@ -3,5 +3,5 @@
 .settings
 .buildpath
 .SaveConfig/
-src/*.pyc
-src/*.pyo
+*.pyc
+*.pyo

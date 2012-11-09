@@ -5,13 +5,19 @@ import Pmw
 
 # import gui
 import gui_tools
+import house
 import lighting.lighting as lighting
 import schedule.schedule as schedule
 import config_xml
 # from src.schedule.schedule import Schedule_Data, ScheduleData
 
+
+g_debug = 1
 Schedule_Data = schedule.Schedule_Data
 Light_Data = lighting.Light_Data
+House_Data = house.House_Data
+Location_Data = house.Location_Data
+Room_Data = house.Room_Data
 
 class ScheduleWindow(gui_tools.GuiTools):
     """Display a schedule selection window.
@@ -106,22 +112,17 @@ class ScheduleDialog(gui_tools.GuiTools):
         self.m_frame.grid_columnconfigure(0, minsize = 120)
         self.m_frame.grid_columnconfigure(1, minsize = 300)
         self.m_frame.grid(padx = 5, pady = 5)
-        Label(self.m_frame, text = "Key").grid(row = 1, column = 0, sticky = E)
-        Entry(self.m_frame, textvar = self.Key, state = DISABLED).grid(row = 1, column = 1, sticky = W)
-        Label(self.m_frame, text = "Active").grid(row = 2, column = 0, sticky = E)
-        self.yes_no_radio(self.m_frame, self.Active).grid(row = 2, column = 1, sticky = W)
-        Label(self.m_frame, text = "Name").grid(row = 3, column = 0, sticky = E)
-        Entry(self.m_frame, textvar = self.Name).grid(row = 3, column = 1, sticky = W)
-        Label(self.m_frame, text = "Time").grid(row = 5, column = 0, sticky = E)
-        Entry(self.m_frame, textvar = self.Time).grid(row = 5, column = 1, sticky = W)
-        Label(self.m_frame, text = "Level").grid(row = 9, column = 0, sticky = E)
-        Entry(self.m_frame, textvar = self.Level).grid(row = 9, column = 1, sticky = W)
-        Label(self.m_frame, text = "Rate").grid(row = 11, column = 0, sticky = E)
-        Entry(self.m_frame, textvar = self.Rate).grid(row = 11, column = 1, sticky = W)
-        Label(self.m_frame, text = "Type").grid(row = 15, column = 0, sticky = E)
-        Entry(self.m_frame, textvar = self.Type).grid(row = 15, column = 1, sticky = W)
-        Label(self.m_frame, text = "Light Name").grid(row = 31, column = 0, sticky = E)
-        self.pulldown_box(self.m_frame, self.build_names(Light_Data), self.LightName).grid(row = 31, column = 1, sticky = W)
+        #
+        self.get_entry_str(self.m_frame, 1, 'Key', self.Key, state = DISABLED)
+        self.get_entry_bol(self.m_frame, 2, 'Active', self.Active)
+        self.get_entry_str(self.m_frame, 3, 'Name', self.Name)
+        self.get_entry_pdb(self.m_frame, 4, 'House Name', self.HouseName, self.build_names(Location_Data), self.HouseName, self.get_housename)
+        self.get_entry_pdb(self.m_frame, 5, 'Room Name', self.RoomName, self.build_names(Room_Data), self.RoomName, self.get_roomname)
+        self.get_entry_str(self.m_frame, 6, 'Time', self.Time)
+        self.get_entry_str(self.m_frame, 7, 'Level', self.Level)
+        self.get_entry_str(self.m_frame, 8, 'Rate', self.Rate)
+        self.get_entry_str(self.m_frame, 9, 'Type', self.Type)
+        self.get_entry_pdb(self.m_frame, 10, 'Light Name', self.LightName, self.build_names(Light_Data), self.LightName, self.get_lightname)
         l_text = "Add"
         if p_title.startswith("Edit"):
             l_text = "Save"
@@ -131,11 +132,13 @@ class ScheduleDialog(gui_tools.GuiTools):
 
     def create_vars(self):
         self.Active = IntVar()
+        self.HouseName = StringVar()
         self.Key = IntVar()
         self.Level = IntVar()
+        self.LightName = StringVar()
         self.Name = StringVar()
         self.Rate = IntVar()
-        self.LightName = StringVar()
+        self.RoomName = StringVar()
         self.Time = StringVar()
         self.Type = StringVar()
 
@@ -146,11 +149,13 @@ class ScheduleDialog(gui_tools.GuiTools):
             l_obj = schedule.ScheduleData()
             l_obj.Key = p_key
         self.Active.set(self.get_bool(l_obj.Active))
+        self.HouseName.set(l_obj.HouseName)
         self.Key.set(l_obj.Key)
         self.Level.set(l_obj.Level)
-        self.Name.set(l_obj.Name)
         self.LightName.set(l_obj.LightName)
+        self.Name.set(l_obj.Name)
         self.Rate.set(l_obj.Rate)
+        self.RoomName.set(l_obj.RoomName)
         self.Time.set(l_obj.Time)
         self.Type.set(l_obj.Type)
 
@@ -159,11 +164,13 @@ class ScheduleDialog(gui_tools.GuiTools):
         """
         l_obj = schedule.ScheduleData()
         l_obj.Active = self.Active.get()
+        l_obj.HouseName = self.HouseName.get()
         l_obj.Key = self.Key.get()
         l_obj.Level = self.Level.get()
+        l_obj.LightName = self.LightName.get()
         l_obj.Name = self.Name.get()
         l_obj.Rate = self.Rate.get()
-        l_obj.LightName = self.LightName.get()
+        l_obj.RoomName = self.RoomName.get()
         l_obj.Time = self.Time.get()
         l_obj.Type = self.Type.get()
         Schedule_Data[l_obj.Key] = l_obj
@@ -185,5 +192,17 @@ class ScheduleDialog(gui_tools.GuiTools):
         for l_obj in p_dict.itervalues():
             l_ret.append(l_obj.Name)
         return l_ret
+
+    def get_housename(self, p_val):
+        self.HouseName.set(p_val)
+        if g_debug > 0: print "get house name - ", p_val
+
+    def get_lightname(self, p_val):
+        self.LightName.set(p_val)
+        if g_debug > 0: print "get light name - ", p_val
+
+    def get_roomname(self, p_val):
+        self.RoomName.set(p_val)
+        if g_debug > 0: print "get room name - ", p_val
 
 # ## END

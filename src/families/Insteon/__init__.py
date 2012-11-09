@@ -1,10 +1,15 @@
 """
 # insteon/__init__.py
+
+This interfaces PyHouse to the Insteon family of products.
+This includes light switches, thermostats and a number of other devices.
+
+
 """
 
 import sys
 
-__version_info__ = (0, 1, 8)
+__version_info__ = (1, 0, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
 try:
@@ -17,6 +22,9 @@ except ImportError, exc:
                      "Please install them.\n")
     raise
 
-print twisted_version
+#print "families.insteon.__init__.py ", twisted_version
+
+import Device_Insteon
+import Insteon_PLM
 
 ### END#

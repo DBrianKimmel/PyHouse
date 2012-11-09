@@ -122,10 +122,13 @@ message_types = {
 class InsteonPlmUtility(object):
 
     def _str_to_addr_list(self, p_str):
-        l_ret = [1, 2, 3]
-        l_ret[0] = int(p_str[0:2], 16)
-        l_ret[1] = int(p_str[3:5], 16)
-        l_ret[2] = int(p_str[6:8], 16)
+        l_ret = [0, 0, 0]
+        try:
+            l_ret[0] = int(p_str[0:2], 16)
+            l_ret[1] = int(p_str[3:5], 16)
+            l_ret[2] = int(p_str[6:8], 16)
+        except ValueError:
+            pass
         return l_ret
 
     def _get_obj_using_name(self, p_name):
@@ -822,7 +825,8 @@ class LightHandlerAPI(InsteonPlmAPI):
             elif l_obj.Interface.lower() == 'usb':
                 import drivers.Driver_USB
                 l_driver = drivers.Driver_USB.USBDriverMain(l_obj)
-            g_driver.append(l_driver)
+            if l_driver != None:
+                g_driver.append(l_driver)
 
     def set_plm_mode(self):
         """Set the PLM to a mode
