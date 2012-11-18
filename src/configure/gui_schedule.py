@@ -13,6 +13,7 @@ import config_xml
 
 
 g_debug = 1
+VAL_TYPES = schedule.VALID_TYPES
 Schedule_Data = schedule.Schedule_Data
 Light_Data = lighting.Light_Data
 House_Data = house.House_Data
@@ -121,7 +122,7 @@ class ScheduleDialog(gui_tools.GuiTools):
         self.get_entry_str(self.m_frame, 6, 'Time', self.Time)
         self.get_entry_str(self.m_frame, 7, 'Level', self.Level)
         self.get_entry_str(self.m_frame, 8, 'Rate', self.Rate)
-        self.get_entry_str(self.m_frame, 9, 'Type', self.Type)
+        self.get_entry_pdb(self.m_frame, 9, 'Type', self.Type, VAL_TYPES, self.Type, self.get_type)
         self.get_entry_pdb(self.m_frame, 10, 'Light Name', self.LightName, self.build_names(Light_Data), self.LightName, self.get_lightname)
         l_text = "Add"
         if p_title.startswith("Edit"):
@@ -204,5 +205,9 @@ class ScheduleDialog(gui_tools.GuiTools):
     def get_roomname(self, p_val):
         self.RoomName.set(p_val)
         if g_debug > 0: print "get room name - ", p_val
+
+    def get_type(self, p_val):
+        self.Type.set(p_val)
+        if g_debug > 0: print "get type - ", p_val
 
 # ## END

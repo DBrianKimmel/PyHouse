@@ -1,16 +1,17 @@
 #!/usr/bin/env python
 
 from Tkinter import *
-import Pmw
+# import Pmw
 
 import gui
 import gui_tools
 import lighting.lighting as lighting
 import config_xml
 import house
+from operator import attrgetter
 
 
-g_debug = 9
+g_debug = 0
 Light_Data = lighting.Light_Data
 Button_Data = lighting.Button_Data
 Controller_Data = lighting.Controller_Data
@@ -45,7 +46,7 @@ class LightingWindow(gui_tools.GuiTools):
     def show_all_lights(self):
         l_light = []
         self.m_max_light = 0
-        for l_obj in Light_Data.itervalues():
+        for l_obj in sorted(Light_Data.itervalues(), key = attrgetter('Name')):
             if l_obj.Key > self.m_max_light: self.m_max_light = l_obj.Key
             l_relief = SUNKEN
             if l_obj.Active: l_relief = RAISED
@@ -83,32 +84,38 @@ class LightingWindow(gui_tools.GuiTools):
         self.m_ix += 2
 
     def edit_lights(self, p_arg, p_kind):
-        print "Edit lights", p_arg, p_kind
+        if g_debug > 0:
+            print "Edit lights", p_arg, p_kind
         LightingDialog(self.m_frame, p_arg, p_kind, "Editing Light")
         self.save_lights()
 
     def edit_controllers(self, p_arg, p_kind):
-        print "Edit Controllers", p_arg, p_kind
+        if g_debug > 0:
+            print "Edit Controllers", p_arg, p_kind
         LightingDialog(self.m_frame, p_arg, p_kind, "Editing Controller")
         self.save_lights()
 
     def edit_buttons(self, p_arg, p_kind):
-        print "Edit Buttons", p_arg, p_kind
+        if g_debug > 0:
+            print "Edit Buttons", p_arg, p_kind
         LightingDialog(self.m_frame, p_arg, p_kind, "Editing Button")
         self.save_lights()
 
     def add_light(self):
-        if g_debug > 0: print "Adding lights"
+        if g_debug > 0:
+            print "Adding lights"
         LightingDialog(self.m_frame, self.m_max_light + 1, 4, "Adding Light")
         self.save_lights()
 
     def add_controller(self):
-        print "Adding controller"
+        if g_debug > 0:
+            print "Adding controller"
         LightingDialog(self.m_frame, self.m_max_controller + 1, 5, "Adding Controller")
         self.save_lights()
 
     def add_button(self):
-        print "Adding button"
+        if g_debug > 0:
+            print "Adding button"
         LightingDialog(self.m_frame, self.m_max_button + 1, 6, "Adding Button")
         self.save_lights()
 
@@ -125,7 +132,8 @@ class LightingDialog(gui_tools.GuiTools):
     """
     """
     def __init__(self, p_parent, p_key, p_kind, p_title = None):
-        print "LightingDialog.__init__()", p_parent, p_key, p_kind, p_title
+        if g_debug > 3:
+            print "LightingDialog.__init__()", p_parent, p_key, p_kind, p_title
         self.m_top = Toplevel(p_parent)
         if p_title:
             self.m_top.title(p_title)
@@ -238,7 +246,7 @@ class LightingDialog(gui_tools.GuiTools):
         self.Responder = IntVar()
 
     def load_vars(self, p_key, p_kind):
-        #print "LoadVars key, Kind = {0:} - {1:}".format(p_key, p_kind)
+        # print "LoadVars key, Kind = {0:} - {1:}".format(p_key, p_kind)
         l_interface = None
         try:
             if p_kind == 1 or p_kind == 4:
@@ -261,12 +269,12 @@ class LightingDialog(gui_tools.GuiTools):
                     l_obj = Button_Data[p_key]
                 except KeyError:
                     l_obj = lighting.ButtonData()
-        except Exception, e: # KeyError
+        except Exception, e:  # KeyError
             print "Load vars exception", sys.exc_info()[0], e
             l_obj = lighting.LightingData()
             l_obj.Key = p_key
         l_family = l_obj.Family
-        #print "LoadVars", l_type, l_family, p_key, l_obj.Active
+        # print "LoadVars", l_type, l_family, p_key, l_obj.Active
         #
         self.Active.set(self.get_bool(l_obj.Active))
         self.Comment.set(l_obj.Comment)
@@ -279,7 +287,8 @@ class LightingDialog(gui_tools.GuiTools):
         self.HouseName.set(l_obj.HouseName)
         self.Type.set(l_type)
         if l_type == 'Controller':
-            if g_debug > 0: print "gui_lighting() - Interface =", l_obj.Interface
+            if g_debug > 0:
+                print "gui_lighting() - Interface =", l_obj.Interface
             self.Interface.set(l_obj.Interface)
             self.Port.set(l_obj.Port)
             if l_obj.Interface == 'USB':
@@ -358,7 +367,7 @@ class LightingDialog(gui_tools.GuiTools):
             Controller_Data[l_key] = l_obj
         else:
             Button_Data[l_key] = l_obj
-        #print "lighting dialog get_vars", l_obj.Active
+        # print "lighting dialog get_vars", l_obj.Active
         config_xml.WriteConfig().write_lights()
         self.quit_dialog()
 
@@ -367,11 +376,13 @@ class LightingDialog(gui_tools.GuiTools):
 
     def get_family(self, p_val):
         self.Family.set(p_val)
-        if g_debug > 0: print "get family - ", p_val
+        if g_debug > 0:
+            print "get family - ", p_val
 
     def get_housename(self, p_val):
         self.HouseName.set(p_val)
-        if g_debug > 0: print "get house name - ", p_val
+        if g_debug > 0:
+            print "get house name - ", p_val
 
     def get_interface(self, p_val):
         self.Interface.set(p_val)
@@ -379,6 +390,7 @@ class LightingDialog(gui_tools.GuiTools):
 
     def get_roomname(self, p_val):
         self.RoomName.set(p_val)
-        if g_debug > 0: print "get room name - ", p_val
+        if g_debug > 0:
+            print "get room name - ", p_val
 
-### END
+# ## END

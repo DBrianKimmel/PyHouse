@@ -57,8 +57,8 @@ class UPnPControlPoint(object):
     def __init__(self):
         if g_debug > 0: print "entertainment.UPnPControlPoint.__init__()"
         callWhenRunning(self.start)
-        callLater(60, self.lights_on)
-        callLater(120, self.lights_off)
+        # callLater(60, self.lights_on)
+        # callLater(120, self.lights_off)
         self.devices = []
 
     def discover(self):
@@ -186,7 +186,7 @@ class UPnPControlPoint(object):
                 print " -- ", l_device.__dict__
                 pass
             elif l_type == 'DimmableLight':
-                #print " == ", l_device.__dict__
+                # print " == ", l_device.__dict__
                 l_light = DimmableLightClient(l_device)
                 l_level = l_light.dimming.get_load_level_target()
                 print " ~~ Before light {0:} is at level {1:}".format(l_device.get_friendly_name(), l_level)

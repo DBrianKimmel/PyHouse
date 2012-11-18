@@ -23,6 +23,7 @@ Room_Data = {}
 
 LocationCount = 0
 RoomCount = 0
+g_debug = 0
 g_logger = None
 
 
@@ -241,11 +242,11 @@ def Init():
     g_logger = logging.getLogger('PyHouse.House')
     g_logger.info("Initializing.")
     HouseAPI().load_xml_house()
-    #HouseAPI().dump_location()
-    #HouseAPI().dump_rooms()
+    # HouseAPI().dump_location()
+    # HouseAPI().dump_rooms()
     internet.Init()
 
 def Start(p_reactor):
     pass
 
-###  END
+# ##  END

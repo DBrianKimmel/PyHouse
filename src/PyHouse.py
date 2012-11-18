@@ -67,23 +67,24 @@ g_debug = 0
 g_logger = None
 
 def Init():
-    if g_debug: print "PyHouse.Init()"
+    if g_debug > 0:
+        print "PyHouse.Init()"
     if platform.uname()[0] != 'Windows':
         signal.signal(signal.SIGHUP, SigHupHandler)
     signal.signal(signal.SIGINT, SigIntHandler)
 
-    global g_logger
     # These need to be first and in this order
     config_xml.read_config()
     log.LoggingMain()
     # 2nd. Now the logging will be set up and work properly
+    global g_logger
     g_logger = logging.getLogger('PyHouse')
     g_logger.info("Initializing - Starting PyHouse.")
     # Now everything else.
     house.Init()
     weather.Init()
     schedule.Init()
-    #web_server.Init()
+    # web_server.Init()
     configure.gui.Init()
     g_logger.info("Initialized.\n")
 
@@ -92,11 +93,12 @@ def Start():
     After they are all set-up we will start the reactor process.
     Every thing that is to run must be in the main reactor event loop as reactor.run() does not return.
     """
-    if g_debug: print "PyHouse.Start()"
+    if g_debug > 0:
+        print "PyHouse.Start()"
     g_logger.info("Starting.")
     house.Start(reactor)
     schedule.Start(reactor)
-    #web_server.Start(reactor)
+    # web_server.Start(reactor)
     g_logger.info("Started.\n")
     # reactor never returns so must be last - Event loop will now run
     reactor.run()
@@ -104,16 +106,16 @@ def Start():
 def Stop(p_tag = None):
     """Stop twisted in preparation to exit PyMh.
     """
-    if g_debug: print "PyHouse.Stop()"
+    print "PyHouse.Stop()"
     config_xml.write_config()
     if p_tag != 'Gui':
         configure.gui.Stop()
     schedule.Stop()
-    #web_server.Stop()
+    # web_server.Stop()
     try:
         g_logger.info("Stopped.\n")
-    except AttributeError:
-        pass
+    except AttributeError, emsg:
+        print "Got attribute error while trying to log stopped from PyHouse. ", emsg
     log.LoggingMain().stop()
     reactor.stop()
     raise SystemExit, "PyHouse says Bye Now."
@@ -126,18 +128,20 @@ def Restart():
     Start()
 
 def SigHupHandler(signum, _stackframe):
-    if g_debug: print 'Hup Signal handler called with signal', signum
+    if g_debug > 0:
+        print 'Hup Signal handler called with signal', signum
     Restart()
 
 def SigIntHandler(signum, _stackframe):
-    if g_debug: print 'Signal handler called with signal', signum
+    if g_debug > 0:
+        print 'Signal handler called with signal', signum
     Stop()
     exit
 
 
 if __name__ == "__main__":
-    #print "MAIN"
+    # print "MAIN"
     Init()
     Start()
 
-### END
+# ## END

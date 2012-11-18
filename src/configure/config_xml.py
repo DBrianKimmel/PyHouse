@@ -39,7 +39,7 @@ class ConfigTools(object):
         l_var = p_obj.findtext(p_name)
         try:
             l_var = float(l_var)
-        except ValueError:
+        except (ValueError, TypeError):
             l_var = 0.0
         return l_var
 
@@ -47,7 +47,7 @@ class ConfigTools(object):
         l_var = p_obj.findtext(p_name)
         try:
             l_var = int(l_var)
-        except ValueError:
+        except (ValueError, TypeError):
             l_var = 0
         return l_var
 
@@ -221,15 +221,15 @@ class ReadConfig(ConfigTools):
             l_obj.Interface = l_if = l_entry.findtext('Interface')
             l_obj.Port = l_entry.findtext('Port')
             if l_if == 'Serial':
-                l_obj.BaudRate = l_entry.findtext('BaudRate')
-                l_obj.ByteSize = l_entry.findtext('ByteSize')
+                l_obj.BaudRate = self.get_int(l_entry, 'BaudRate')
+                l_obj.ByteSize = self.get_int(l_entry, 'ByteSize')
                 l_obj.DtsDtr = l_entry.findtext('DtsDtr')
                 l_obj.InterCharTimeout = l_entry.findtext('InterCharTimeout')
                 l_obj.Parity = l_entry.findtext('Parity')
                 l_obj.RtsCts = l_entry.findtext('RtsCts')
-                l_obj.StopBits = l_entry.findtext('StopBits')
-                l_obj.Timeout = l_entry.findtext('Timeout')
-                l_obj.WriteTimeout = l_entry.findtext('WriteTimeout')
+                l_obj.StopBits = self.get_float(l_entry, 'StopBits')
+                l_obj.Timeout = self.get_float(l_entry, 'Timeout')
+                l_obj.WriteTimeout = self.get_float(l_entry, 'WriteTimeout')
                 l_obj.XonXoff = l_entry.findtext('XonXoff')
             elif l_if == 'USB':
                 try:
@@ -414,6 +414,11 @@ class WriteConfig(ConfigTools):
             self.write_light_common(l_entry, l_obj)
             ET.SubElement(l_entry, 'Interface').text = l_obj.Interface
             ET.SubElement(l_entry, 'Port').text = l_obj.Port
+            ET.SubElement(l_entry, 'BaudRate').text = str(l_obj.BaudRate)
+            ET.SubElement(l_entry, 'Parity').text = str(l_obj.Parity)
+            ET.SubElement(l_entry, 'ByteSize').text = str(l_obj.ByteSize)
+            ET.SubElement(l_entry, 'StopBits').text = str(l_obj.StopBits)
+            ET.SubElement(l_entry, 'imeout').text = str(l_obj.Timeout)
         self.write_file()
 
     def write_schedules(self):

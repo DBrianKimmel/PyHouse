@@ -6,10 +6,11 @@ import gui
 import gui_tools
 import house
 import config_xml
+from operator import attrgetter
 
 Location_Data = house.Location_Data
 Room_Data = house.Room_Data
-g_debug = False
+g_debug = 0
 
 FG = 'red'
 
@@ -29,12 +30,13 @@ class HouseWindow(gui_tools.GuiTools):
     def show_all_houses(self):
         l_house = []
         self.m_max = 0
-        for l_obj in Location_Data.itervalues():
+        for l_obj in sorted(Location_Data.itervalues(), key = attrgetter('Name')):
             if l_obj.Key > self.m_max:
                 self.m_max = l_obj.Key
             l_relief = SUNKEN
             if l_obj.Active: l_relief = RAISED
-            if g_debug: print l_obj.Name, l_obj.Key
+            if g_debug > 0:
+                print l_obj.Name, l_obj.Key
             h = Button(self.m_frame, text = l_obj.Name, bg = gui_tools.BG_TOP, relief = l_relief, command = lambda x = l_obj.Key: self.edit_house(x))
             l_house.append(h)
             l_house[self.m_ix].grid(row = self.m_ix, sticky = W)
@@ -67,9 +69,9 @@ class HouseDialog(gui_tools.GuiTools):
         self.m_top = Toplevel(p_parent)
         if p_title:
             self.m_top.title(p_title)
-        l_adding = "normal"
+        _l_adding = "normal"
         if p_title.startswith("Edit"):
-            l_adding = 'disabled'
+            _l_adding = 'disabled'
         self.m_parent = p_parent
         self.l_result = None
         self.create_vars()
@@ -105,9 +107,8 @@ class HouseDialog(gui_tools.GuiTools):
         l_frame = Frame(self.m_frame)
         l_ix = 0
         self.room_count = 0
-        for l_obj in Room_Data.itervalues():
+        for l_obj in sorted(Room_Data.itervalues(), key = attrgetter('Name')):
             self.room_count += 1
-            #print "Adding room", l_obj.Name, l_name, l_obj
             if l_obj.HouseName != l_name: continue
             l_row, l_col = self.columnize(l_ix, 5)
             Button(l_frame, text = l_obj.Name, bg = gui_tools.BG_TOP, command = lambda x = l_obj.Key: self.edit_room(x)).grid(row = l_row, column = l_col)
@@ -137,7 +138,7 @@ class HouseDialog(gui_tools.GuiTools):
 
     def create_vars(self):
         self.Active = IntVar()
-        #print "Created House Active in var {0:}".format(self.Active)
+        # print "Created House Active in var {0:}".format(self.Active)
         self.Name = StringVar()
         self.Street = StringVar()
         self.City = StringVar()
@@ -158,9 +159,9 @@ class HouseDialog(gui_tools.GuiTools):
             l_obj.Key = p_key
         self.HouseName = l_obj.Name
         self.Name.set(l_obj.Name)
-        #print "gui_house() Setting Active to {0:}".format(l_obj.Active)
+        # print "gui_house() Setting Active to {0:}".format(l_obj.Active)
         self.Active.set(self.get_bool(l_obj.Active))
-        #print "Now active is ", self.Active.get()
+        # print "Now active is ", self.Active.get()
         self.Street.set(l_obj.Street)
         self.City.set(l_obj.City)
         self.State.set(l_obj.State)
@@ -270,6 +271,7 @@ class RoomDialog(gui_tools.GuiTools):
 
     def get_housename(self, p_val):
         self.HouseName.set(p_val)
-        if g_debug > 0: print "get house name - ", p_val
+        if g_debug > 0:
+            print "get house name - ", p_val
 
-### END
+# ## END

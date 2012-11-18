@@ -30,6 +30,7 @@ g_logger = None
 g_InsteonLink = None
 g_PLM = None
 
+
 class CoreData (object):
     """This class contains the Insteon specific information about the various devices
     controlled by PyHouse.
@@ -53,34 +54,49 @@ class CoreData (object):
 
     def get_address(self):
         return self.__Address
+
     def set_address(self, value):
         self.__Address = value
+
     def get_controller(self):
         return self.__Controller
+
     def set_controller(self, value):
         self.__Controller = value
+
     def get_dev_cat(self):
         return self.__DevCat
+
     def set_dev_cat(self, value):
         self.__DevCat = value
+
     def get_group_list(self):
         return self.__GroupList
+
     def set_group_list(self, value):
         self.__GroupList = value
+
     def get_group_number(self):
         return self.__GroupNumber
+
     def set_group_number(self, value):
         self.__GroupNumber = value
+
     def get_master(self):
         return self.__Master
+
     def set_master(self, value):
         self.__Master = value
+
     def get_product_key(self):
         return self.__ProductKey
+
     def set_product_key(self, value):
         self.__ProductKey = value
+
     def get_responder(self):
         return self.__Responder
+
     def set_responder(self, value):
         self.__Responder = value
 
@@ -92,6 +108,7 @@ class CoreData (object):
     Master = property(get_master, set_master, None, "'Bool' ???")
     ProductKey = property(get_product_key, set_product_key, None, "New - Replacing devcat someday perhaps.")
     Responder = property(get_responder, set_responder, None, "'Bool' Device can act as responder from a controller.")
+
 
 class CoreAPI(object):
 
@@ -107,6 +124,7 @@ class CoreAPI(object):
         p_dev.Responder = self.getBool(p_dict, 'Responder')
         return p_dev
 
+
 class ButtonData(lighting.ButtonData, CoreData):
 
     def __init__(self):
@@ -116,6 +134,7 @@ class ButtonData(lighting.ButtonData, CoreData):
         l_str = super(ButtonData, self).__str__()
         l_str += " Address:{0:}".format(self.get_address())
         return l_str
+
 
 class ButtonAPI(lighting.ButtonAPI, CoreAPI):
 
@@ -134,6 +153,7 @@ class ButtonAPI(lighting.ButtonAPI, CoreAPI):
         l_button = self.load_device(p_dict, l_button)
         return l_button
 
+
 class ControllerData(lighting.ControllerData, CoreData):
 
     def __init__(self):
@@ -143,6 +163,7 @@ class ControllerData(lighting.ControllerData, CoreData):
         l_str = super(ControllerData, self).__str__()
         l_str += " Address:{0:}".format(self.get_address())
         return l_str
+
 
 class ControllerAPI(lighting.ControllerAPI, CoreAPI):
 
@@ -158,8 +179,9 @@ class ControllerAPI(lighting.ControllerAPI, CoreAPI):
         l_ctlr = self.load_device(p_dict, l_ctlr)
         return l_ctlr
 
+
 class LightingData(lighting.LightingData, CoreData):
-    """Insteon specific data we wish to export.  Extends the LightingData class.
+    """Insteon specific data we wish to export.  Extends the LightingData class
     Create a dict of devices.
     Each device will contain a dict of attributes and vales
     """
@@ -171,6 +193,7 @@ class LightingData(lighting.LightingData, CoreData):
         l_str = super(LightingData, self).__str__()
         l_str += " Address:{0:}".format(self.get_address())
         return l_str
+
 
 class LightingAPI(lighting.LightingAPI, CoreAPI):
     """Interface to the lights of this module.
@@ -195,9 +218,12 @@ class LightingAPI(lighting.LightingAPI, CoreAPI):
         self.write_insteon_lights(lighting.Light_Data)
 
 
-class LightingStatusData(lighting.LightingStatusData): pass
+class LightingStatusData(lighting.LightingStatusData):
+    pass
 
-class LightingStatusAPI(lighting.LightingStatusAPI, LightingStatusData): pass
+
+class LightingStatusAPI(lighting.LightingStatusAPI, LightingStatusData):
+    pass
 
 
 class LoadSaveInsteonData(LightingAPI, ControllerAPI, ButtonAPI, LightingStatusAPI):
@@ -206,9 +232,11 @@ class LoadSaveInsteonData(LightingAPI, ControllerAPI, ButtonAPI, LightingStatusA
         """
         """
         l_cfg = {}
-        if g_debug > 0: print "  Device_Insteon.write_insteon_lights()"
+        if g_debug > 0:
+            print "  Device_Insteon.write_insteon_lights()"
         for l_name, l_obj in p_lights.iteritems():
-            if l_obj.get_Family() != 'Insteon': continue
+            if l_obj.get_Family() != 'Insteon':
+                continue
             l_cfg[l_name] = {}
             l_cfg[l_name]['Name'] = l_obj.get_Name()
             l_cfg[l_name]['Family'] = l_obj.get_Family()
@@ -229,7 +257,8 @@ class LoadSaveInsteonData(LightingAPI, ControllerAPI, ButtonAPI, LightingStatusA
 class InsteonDeviceUtility(LoadSaveInsteonData):
 
     def scan_all_lights(self, _p_lights):
-        if g_debug > 0: print "insteon_Device.scan_insteon_devices "
+        if g_debug > 0:
+            print "insteon_Device.scan_insteon_devices "
         Insteon_PLM.LightingAPI().scan_all_lights(lighting.Light_Data)
 
 import Insteon_Link
@@ -245,12 +274,14 @@ def Init():
     g_PLM = Insteon_PLM
     g_logger.info('Initialized.')
 
+
 def Start(p_reactor):
     g_logger.info('Starting.')
     Insteon_PLM.Start(p_reactor)
     g_logger.info('Started.')
 
+
 def Stop():
     Insteon_PLM.Stop()
 
-### END
+# ## END

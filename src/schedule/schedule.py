@@ -19,7 +19,6 @@ import time
 
 # Import PyMh files
 import configure
-# from configure import config_xml
 import entertainment.entertainment as entertainment
 import lighting.lighting as lighting
 import sunrisesunset
@@ -27,10 +26,9 @@ import sunrisesunset
 
 # Configure_Data = configure_mh.Configure_Data
 Schedule_Data = {}
-
 ScheduleCount = 0
 Scheduled_Namelist = []
-g_debug = 1
+g_debug = 0
 g_logger = None
 g_reactor = None
 
@@ -47,6 +45,7 @@ class ScheduleData(object):
         self.Level = 0
         self.LightName = None
         self.Name = 0
+        self.Object = None  # a light (perhaps other) object
         self.Rate = 0
         self.RoomName = None
         self.Time = None
@@ -67,7 +66,8 @@ class ScheduleAPI(ScheduleData):
         configure.config_xml.ReadConfig().read_schedules()
 
     def dump_all_schedules(self):
-        if g_debug < 7: return
+        if g_debug < 7:
+            return
         print "***** All Schedules *****"
         for l_key, l_obj in Schedule_Data.iteritems():
             print "~~~Schedule: {0:}".format(l_key)
@@ -77,7 +77,8 @@ class ScheduleAPI(ScheduleData):
     def update_schedule(self, p_schedule):
         """Update the schedule as updated by the web server.
         """
-        if g_debug > 5: print 'schedule.schedule.update_schedule({0:}'.format(p_schedule)
+        if g_debug > 5:
+            print 'schedule.scheduleAPI.update_schedule({0:}'.format(p_schedule)
         Schedule_Data = p_schedule
         configure.config_xml.WriteConfig().write_schedules()
 
@@ -86,6 +87,8 @@ class ScheduleExecution(ScheduleAPI):
 
     def _get_Name_info(self, p_Name, p_obj):
         """Be sure we get values in case someone mis-edits the config file.
+
+        @param p_obj: is a Schedule_Data object
         """
         try:
             l_device = p_obj.LightName
@@ -111,7 +114,7 @@ class ScheduleExecution(ScheduleAPI):
         except AttributeError:
             l_rate = 0
 
-        l_message = 'For Name={0:}, Device={1:}, Type={2:}, Level={3:}, Rate={4:}'.format(p_Name, l_device, l_type, l_level, l_rate)
+        l_message = 'For Slot={0:}, Device={1:}, Type={2:}, Level={3:}, Rate={4:}'.format(p_Name, l_device, l_type, l_level, l_rate)
         g_logger.info(l_message)
         return (l_device, l_type, l_level, l_rate)
 
@@ -123,11 +126,12 @@ class ScheduleExecution(ScheduleAPI):
 
         @param p_Name: a list of Names in the next time schedule
         """
-        if g_debug > 3: print " Execute_schedule p_Name=>>{0:}<<".format(p_Name)
+        if g_debug > 0:
+            print " Execute_schedule p_Name=>>{0:}<<".format(p_Name)
         for ix in range(len(p_Name)):
-            l_Name = p_Name[ix]
-            l_obj = Schedule_Data[l_Name]
-            (l_device, _l_type, l_level, _l_rate) = self._get_Name_info(l_Name, l_obj)
+            l_slot = p_Name[ix]
+            l_sched_obj = Schedule_Data[l_slot]
+            (l_device, _l_type, l_level, _l_rate) = self._get_Name_info(l_slot, l_sched_obj)
             lighting.LightingUtility().change_light_setting(l_device, l_level)
         # TODO: change this to a non blocking call.
         time.sleep(1)
@@ -185,7 +189,8 @@ class ScheduleUtility(ScheduleExecution):
         except:
             self.m_sunrise = '06:00'
             self.m_sunset = '18:00'
-        if g_debug > 0: print "-Schedule - sunrise/sunset = ", self.m_sunrise, self.m_sunset
+        if g_debug > 0:
+            print "schedule.get_next_schedule() - sunrise/sunset = ", self.m_sunrise, self.m_sunset
         g_logger.info("Sunrise:{0:}, Sunset:{1:}".format(self.m_sunrise, self.m_sunset))
         l_time_scheduled = l_now
         l_next = 100000.0
@@ -194,7 +199,8 @@ class ScheduleUtility(ScheduleExecution):
             if not l_obj.Active: continue
             l_time = l_obj.Time
             l_time_sch = self._extract_time(l_time)
-            if g_debug > 1: print " - Schedule ", l_time_sch
+            if g_debug > 1:
+                print " - Schedule  Slot:{0:}, Light:{1:}, Level:{2:}, Time:{3:}".format(l_obj.Name, l_obj.LightName, l_obj.Level, l_time_sch)
             # now see if this is 1) part of a chain -or- 2) an earlier schedule
             l_diff = self._make_delta(l_time_sch).total_seconds() - self._make_delta(l_time_now).total_seconds()
             if l_diff < 0:
@@ -222,11 +228,12 @@ def Init():
     entertainment.Init()
     lighting.Init()
     ScheduleAPI().load_schedules_xml()
-    if g_debug > 2: ScheduleAPI().dump_all_schedules()
+    ScheduleAPI().dump_all_schedules()
     g_logger.info("Initialized.")
 
 def Start(p_reactor):
     global g_reactor
+    g_logger.info("Starting.")
     g_reactor = p_reactor
     lighting.Start(g_reactor)
     Reload()
@@ -236,6 +243,8 @@ def Reload():
     ScheduleUtility().get_next_sched()
 
 def Stop():
+    g_logger.info("Stopping.")
     lighting.Stop()
+    g_logger.info("Stopped.\n\n\n")
 
 # ## END

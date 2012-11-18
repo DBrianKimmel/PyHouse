@@ -31,7 +31,7 @@ import lighting_lights
 import lighting_scenes
 import lighting_status
 
-#from tools import Lister
+# from tools import Lister
 
 
 # These globals in the lighting singleton hold the operating data loaded at startup.
@@ -92,7 +92,7 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, LightingStatusAPI):
         """
         g_logger.info("Loading all lighting families.")
         for l_family in VALID_FAMILIES:
-            #l_name = 'Device_' + l_family
+            # l_name = 'Device_' + l_family
             l_package = 'families.' + l_family
             l_import = '.Device_' + l_family
             if g_debug: print "lighting.load_all_lighting_families - Package:{0:}, Import:{1:}".format(l_package, l_import)
@@ -117,11 +117,10 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, LightingStatusAPI):
             l_module.Start(p_reactor)
 
     def _stop_all_lighting_families(self):
-        g_logger.info("Stopping all lighting families.")
         for l_module in g_family_module:
             l_module.Stop()
 
-    def change_light_setting(self, p_name, p_level = 0, _p_family = None):
+    def change_light_setting(self, p_name, p_level = 0, _p_family = None, p_obj = None):
         """ *!* API
         Turn a light to a given level (0-100) off/dimmed/on.
         The schedule does not know what the family that controls the light.
@@ -154,19 +153,23 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, LightingStatusAPI):
 def Init():
     global g_logger
     g_logger = logging.getLogger('PyHouse.Lighting')
-    g_logger.info("Initializing")
+    g_logger.info("Initializing.")
     LightingUtility().load_lighting_xml()
-    #SceneAPI().load_all_scenes(configure_mh.Configure_Data['Scenes'])
+    # SceneAPI().load_all_scenes(configure_mh.Configure_Data['Scenes'])
     g_logger.info("Initialized.")
 
 def Start(p_reactor):
     """Allow loading of sub modules and drivers.
     """
+    g_logger.info("Starting.")
     LightingUtility()._start_all_lighting_families(p_reactor)
+    g_logger.info("Started.")
 
 def Stop():
     """Allow cleanup of all drivers.
     """
+    g_logger.info("Stopping all lighting families.")
     LightingUtility()._stop_all_lighting_families()
+    g_logger.info("Stopped..")
 
-### END
+# ## END

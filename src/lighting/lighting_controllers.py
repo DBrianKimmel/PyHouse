@@ -11,19 +11,21 @@ import lighting_tools
 Controller_Data = {}
 ControllerCount = 0
 
+g_debug = 9
+
 
 class ControllersData(lighting_tools.CoreData):
 
     def __init__(self):
         global ControllerCount
         ControllerCount += 1
-        #print " C lighting_controllers.__init__()"
+        # print " C lighting_controllers.__init__()"
         super(ControllersData, self).__init__()
         self.Type = 'Controller'
         # All controllers (Common)
         self.Interface = None
         self.Port = None
-        # Serial Controllers
+        # Serial Controllers interface
         self.BaudRate = None
         self.ByteSize = 8
         self.DsrDtr = None
@@ -34,30 +36,37 @@ class ControllersData(lighting_tools.CoreData):
         self.Timeout = None
         self.WriteTimeout = None
         self.XonXoff = None
-        # USB Controllers
+        # USB Controllers interface
         self.Product = None
         self.Vendor = None
 
     def __str__(self):
-        l_ret = "Lighting Controller Name:{0:}, Family:{1:}, Interface:{2:}, Port:{3:}, Type:{4:} ".format(
+        l_ret = "Lighting Controller Name:{0:}, Family:{1:}, Interface:{2:}, Port:{3:}, Type:{4:}, ".format(
                 self.Name, self.Family, self.Interface, self.Port, self.Type)
+        l_ret += "Baud:{0:}, ByteSize{1:}, Parity:{2:}, StopBits:{3:} ".format(self.BaudRate, self.ByteSize, self.Parity, self.StopBits)
         return l_ret
 
     def get_interface(self):
         return self.__Interface
+
     def set_interface(self, value):
         self.__Interface = value
+
     def get_port(self):
         return self.__Port
+
     def set_port(self, value):
         self.__Port = value
 
     def get_baud_rate(self):
         return self.__BaudRate
+
     def set_baud_rate(self, value):
         self.__BaudRate = value
+
     def get_byte_size(self):
         return self.__ByteSize
+
     def set_byte_size(self, value):
         self.__ByteSize = value
     def get_dsr_dtr(self):
@@ -138,7 +147,7 @@ class ControllersData(lighting_tools.CoreData):
 class ControllersAPI(lighting_tools.CoreAPI):
 
     def __init__(self):
-        #print " C lighting_controller.ControllerAPI.__init__()"
+        # print " C lighting_controller.ControllerAPI.__init__()"
         super(ControllersAPI, self).__init__()
 
     def get_ControllerCount(self):
@@ -146,7 +155,8 @@ class ControllersAPI(lighting_tools.CoreAPI):
 
     def load_controller(self, p_dict, p_ctlr):
         l_ctlr = super(ControllersAPI, self).load_core_device(p_dict, self.get_ControllerCount())
-        #print " C lighting_controllers.load_controller() - {0:}".format(p_ctlr.Name)
+        if g_debug > 0:
+            print " C lighting_controllers.load_controller() - {0:}".format(p_ctlr.Name)
         l_ctlr.Interface = self.getValue(p_dict, 'Interface')
         l_ctlr.Port = self.getValue(p_dict, 'Port')
         # Serial Data
@@ -181,4 +191,4 @@ class ControllersAPI(lighting_tools.CoreAPI):
         """
         pass
 
-### END
+# ## END
