@@ -65,7 +65,8 @@ class SerialDriverUtility(SerialDeviceData):
                 continue
             l_x = l_ix.group()
             l_usb += l_x
-            print l_x
+            if g_debug > 0:
+                print l_x
 
 
 class API(SerialDriverUtility):
@@ -123,7 +124,7 @@ class API(SerialDriverUtility):
     def fetch_read_data(self):
         l_ret = (self.m_bytes, self.m_message)
         if self.m_bytes > 0:
-            self.m_logger.debug("fetch_read_data() - {0:} {1:}".format(self.m_bytes, PrintBytes(self.m_message)))
+            # self.m_logger.debug("fetch_read_data() - {0:} {1:}".format(self.m_bytes, PrintBytes(self.m_message)))
             if g_debug > 5:
                 print "Driver_Serial.fetch_read_data() - {0:} {1:}".format(self.m_bytes, PrintBytes(self.m_message))
         self.m_bytes = 0
@@ -133,13 +134,14 @@ class API(SerialDriverUtility):
     def write_device(self, p_message):
         """Send the command to the PLM and wait a very short time to be sure we sent it.
         """
-        self.m_logger.debug("write_device() - {0:}".format(PrintBytes(p_message)))
+        # self.m_logger.debug("write_device() - {0:}".format(PrintBytes(p_message)))
         if g_debug > 5:
             print "Driver_Serial.write_device() {0:}".format(PrintBytes(p_message))
         try:
             self.m_serial.write(p_message)
         except:
             pass
+        # TODO: make non blocking call here
         time.sleep(0.1)
 
 
