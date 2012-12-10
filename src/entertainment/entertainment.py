@@ -16,14 +16,14 @@ from twisted.internet import reactor
 from coherence.base import Coherence
 from coherence.upnp.devices.control_point import ControlPoint
 from coherence.upnp.core import DIDLLite
-#from coherence.upnp.core import ssdp
-#from coherence.upnp.core.msearch import MSearch
-#from coherence.upnp.devices.dimmable_light import DimmableLight
+# from coherence.upnp.core import ssdp
+# from coherence.upnp.core.msearch import MSearch
+# from coherence.upnp.devices.dimmable_light import DimmableLight
 from coherence.upnp.devices.dimmable_light_client import DimmableLightClient
-#from coherence.upnp.services.servers.dimming_server import DimmingServer
+# from coherence.upnp.services.servers.dimming_server import DimmingServer
 
 Entertainment_Data = {}
-g_debug = 9
+g_debug = 0
 g_logger = None
 g_upnp = None
 
@@ -101,7 +101,7 @@ class UPnPControlPoint(object):
         """
         @param device: an instance of coherence.upnp.core.Device()
         """
-        if g_debug > 1:
+        if g_debug > 0:
             print '__Found = Device -- Signal: Coherence.UPnP.Device.detection_completed'
             print "   Device Name:   {0:s}".format(device.get_friendly_name())
             print "   Device Type:   {0:s}".format(device.get_device_type())
@@ -238,20 +238,21 @@ Will set a dimmable lite with device number <ID> to level <LEVEL>
         self.discover()
         control_point = ControlPoint(Coherence({'logmode':'warning',
                             'subsystem_log':{'coherence':'warning',
+                                             'controlpoint':'warning',
                                              'simple_light':'debug',
                                              'better_light':'debug',
                                              'msearch':'warning',
-                                             'ssdp':'debug',
+                                             'ssdp':'warning',
                                              'ms_client': 'warning',
                                              }}),
                             # auto_client = ['MediaRenderer']
                             # auto_client = ['MediaServer', 'MediaRenderer', 'BinaryLight', 'DimmableLight']
                             )
         control_point.connect(self.check_device, 'Coherence.UPnP.Device.detection_completed')
-        control_point.connect(self.light_found, 'Coherence.UPnP.ControlPoint.BinaryLight.detected')#  Coherence.UPnP.DeviceClient.detection_completed
-        control_point.connect(self.light_found, 'Coherence.UPnP.ControlPoint.DimmableLight.detected')#Coherence.UPnP.DeviceClient.detection_completed
+        control_point.connect(self.light_found, 'Coherence.UPnP.ControlPoint.BinaryLight.detected')  #  Coherence.UPnP.DeviceClient.detection_completed
+        control_point.connect(self.light_found, 'Coherence.UPnP.ControlPoint.DimmableLight.detected')  # Coherence.UPnP.DeviceClient.detection_completed
         control_point.connect(self.media_server_found, 'Coherence.UPnP.ControlPoint.MediaServer.detected')
-        #control_point.connect(self.media_server_found, 'Coherence.UPnP.DeviceClient.Service.notified')
+        # control_point.connect(self.media_server_found, 'Coherence.UPnP.DeviceClient.Service.notified')
         control_point.connect(self.media_server_removed, 'Coherence.UPnP.ControlPoint.MediaServer.removed')
         control_point.connect(self.media_renderer_found, 'Coherence.UPnP.ControlPoint.MediaRenderer.detected')
         control_point.connect(self.media_render_removed, 'Coherence.UPnP.ControlPoint.MediaRenderer.removed')

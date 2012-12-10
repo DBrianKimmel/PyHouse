@@ -60,6 +60,10 @@ class GuiTools(object):
         # print "get_bool ", p_arg, l_ret
         return l_ret
 
+    def get_int(self, p_arg):
+        l_ret = int(p_arg, 0)
+        return l_ret
+
     def get_true(self, p_arg):
         """Return 1 if a filed is true, 0 otherwise.
         """

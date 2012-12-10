@@ -211,8 +211,8 @@ class LightingAPI(lighting.LightingAPI, CoreAPI):
         l_light = self.load_device(p_dict, l_light)
         return l_light
 
-    def change_light_setting(self, p_name, p_level):
-        g_PLM.LightingAPI().change_light_setting(p_name, p_level)
+    def change_light_setting(self, p_obj, p_level):
+        g_PLM.LightingAPI().change_light_setting(p_obj, p_level)
 
     def update_all_lights(self):
         self.write_insteon_lights(lighting.Light_Data)

@@ -14,13 +14,13 @@ ControllerCount = 0
 g_debug = 9
 
 
-class ControllersData(lighting_tools.CoreData):
+class ControllerData(lighting_tools.CoreData):
 
     def __init__(self):
         global ControllerCount
         ControllerCount += 1
         # print " C lighting_controllers.__init__()"
-        super(ControllersData, self).__init__()
+        super(ControllerData, self).__init__()
         self.Type = 'Controller'
         # All controllers (Common)
         self.Interface = None

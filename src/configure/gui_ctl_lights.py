@@ -53,7 +53,8 @@ class CtlLightsWindow(GuiTools):
         """
         @param p_key: the key to look up the light info.
         """
-        #print "Edit lights", p_key, p_kind
+        if g_debug > 0:
+            print "Control lights", p_key, p_kind
         LightingDialog(self.m_frame, p_key, p_kind, "Editing Light")
 
     def main_screen(self):
@@ -62,7 +63,12 @@ class CtlLightsWindow(GuiTools):
 
 
 class LightingDialog(gui_tools.GuiTools):
-    """
+    """Create a dialog window o control a light.
+
+    @param p_parent: The parent widget for this dialog.
+    @param p_key:
+    @param p_kind:
+    @param p_title:
     """
     def __init__(self, p_parent, p_key, p_kind, p_title = None):
         self.m_top = Toplevel(p_parent)
@@ -71,7 +77,7 @@ class LightingDialog(gui_tools.GuiTools):
         self.m_parent = p_parent
         self.l_result = None
         self.create_vars()
-        _l_type, _l_family = self.load_vars(p_key, p_kind)
+        _l_type, _l_family, l_obj = self.load_vars(p_key, p_kind)
         l_res = 100
         if self.Dimmable.get() == 1: l_res = 1
         self.m_frame = Frame(self.m_top)
@@ -85,9 +91,11 @@ class LightingDialog(gui_tools.GuiTools):
         self.get_entry_str(self.m_frame, 4, 'Light Name', self.Name, state = DISABLED)
         self.level = Scale(self.m_frame, from_ = 0, to = 100, orient = HORIZONTAL, resolution = l_res)
         self.level.grid(row = 11, column = 1, sticky = W)
-        Button(self.m_frame, text = 'Change', fg = "blue", bg = gui_tools.BG_BOTTOM, command = self.change_light).grid(row = 91, column = 0)
+        self.level.set(l_obj.CurLevel)
+        Button(self.m_frame, text = 'Change', fg = "blue", bg = gui_tools.BG_BOTTOM, command = lambda k = self.Key: self.change_light(k)).grid(row = 91, column = 0)
         Button(self.m_frame, text = "Cancel", fg = "red", bg = gui_tools.BG_BOTTOM, command = self.quit_dialog).grid(row = 91, column = 2)
-        if g_debug > 0: print "Resolution = ", l_res
+        if g_debug > 0:
+            print "Resolution: {0:}, CurLevel: {1:}".format(l_res, l_obj.CurLevel)
 
     def create_vars(self):
         """Create everything - used or not.
@@ -129,8 +137,9 @@ class LightingDialog(gui_tools.GuiTools):
         self.ProductKey = IntVar()
         self.Responder = IntVar()
 
-    def load_vars(self, p_key, p_kind):
-        #print "LoadVars key, Kind = {0:} - {1:}".format(p_key, p_kind)
+    def load_vars(self, p_key, _p_kind):
+        if g_debug > 0:
+            print "LoadVars key, Kind = {0:} - {1:}".format(p_key, _p_kind)
         try:
             l_obj = Light_Data[p_key]
         except:
@@ -148,20 +157,24 @@ class LightingDialog(gui_tools.GuiTools):
         self.HouseName.set(l_obj.HouseName)
         self.RoomName.set(l_obj.RoomName)
         self.Type.set(l_type)
-        if g_debug > 0: print "Dim ", l_obj.Dimmable, self.Dimmable.get()
-        return l_type, l_family
+        if g_debug > 0:
+            print "Dim ", l_obj.Dimmable, self.Dimmable.get()
+        return l_type, l_family, l_obj
 
     def get_vars(self):
         pass
 
-    def change_light(self):
+    def change_light(self, p_key):
+        l_key = p_key.get()
+        l_obj = Light_Data[l_key]
         l_light = self.Name.get()
         l_level = self.level.get()
         l_family = self.Family.get()
-        if g_debug > 0: print "level = ", l_level, l_light, l_family
-        lighting.LightingUtility().change_light_setting(l_light, l_level, l_family)
+        if g_debug > 0:
+            print "change_light()", l_level, l_light, l_family, l_obj
+        lighting.LightingUtility().change_light_setting(l_obj, l_level)
 
     def quit_dialog(self):
         self.m_top.destroy()
 
-### END
+# ## END

@@ -50,9 +50,13 @@ Modules desired are:
 """
 
 # Import system type stuff
+import errno
 import logging
+import optparse
+import os
 import platform
 import signal
+import sys
 from twisted.internet import reactor
 
 # Import PyMh files and modules.
@@ -63,8 +67,82 @@ import house
 import schedule.schedule as schedule
 import weather
 
+__version_info__ = (1, 0, 1)
+__version__ = '.'.join(map(str, __version_info__))
+
 g_debug = 0
 g_logger = None
+
+class OptionParser(optparse.OptionParser):
+    """
+    Simple wrapper to add list of available plugins to help
+    message, but only if help message is really printed
+    """
+    def print_help(self, file = None):
+        sys.argv = sys.argv[:1]
+        optparse.OptionParser.print_help(self, file)
+
+
+
+def daemonize():
+    """Taken from twisted.scripts._twistd_unix.py
+    """
+    if g_debug > 0:
+        print "PyHouse is making itself into a daemon !!"
+    if os.fork():  # launch child and...
+        os._exit(0)  # kill off parent
+    os.setsid()
+    if os.fork():  # launch child and...
+        os._exit(0)  # kill off parent again.
+    os.umask(077)
+    null = os.open('/dev/null', os.O_RDWR)
+    for i in range(3):
+        try:
+            os.dup2(null, i)
+        except OSError, e:
+            if e.errno != errno.EBADF:
+                raise
+    os.close(null)
+
+def __opt_option(option, opt, value, parser):
+    try:
+        key, val = value.split(':', 1)
+    except:
+        key = value
+        val = ''
+    parser.values.options[key] = val
+
+def setConfigFile():
+    def findConfigDir():
+        try:
+            configDir = os.path.expanduser('~')
+        except:
+            configDir = os.getcwd()
+        return configDir
+    return os.path.join(findConfigDir(), '.PyHouse/PyHouse.xml')
+
+
+def parse_command_line():
+    parser = OptionParser('%prog [options]', version = "Coherence version: %s" % __version__)
+    parser.add_option('-d', '--daemon', action = 'store_true', help = 'daemonize')
+    parser.add_option('--noconfig', action = 'store_false', dest = 'configfile', help = 'ignore any configfile found')
+    parser.add_option('-c', '--configfile', default = setConfigFile(), help = 'configfile to use, default: %default')
+    parser.add_option('-l', '--logfile', help = 'logfile to use')
+    parser.add_option('-o', '--option', action = 'callback', dest = 'options', metavar = 'NAME:VALUE', default = {}, callback = __opt_option, type = 'string',
+                      help = "activate option (name and value separated by a colon (`:`), may be given multiple times)")
+    parser.add_option('-p', '--plugins', action = 'append',
+                      help = 'activate plugins (may be given multiple times) Example: --plugin=backend:FSStore,name:MyCoherence')
+    options, args = parser.parse_args()
+    if args:
+        parser.error('takes no arguments')
+    if options.daemon:
+        try:
+            daemonize()
+        except:
+            print "*** ERROR - Unable to daemonize!"
+    config = {}
+    config['logging'] = {}
+
 
 def Init():
     if g_debug > 0:
@@ -72,7 +150,7 @@ def Init():
     if platform.uname()[0] != 'Windows':
         signal.signal(signal.SIGHUP, SigHupHandler)
     signal.signal(signal.SIGINT, SigIntHandler)
-
+    parse_command_line()
     # These need to be first and in this order
     config_xml.read_config()
     log.LoggingMain()
@@ -95,6 +173,7 @@ def Start():
     """
     if g_debug > 0:
         print "PyHouse.Start()"
+    global g_logger
     g_logger.info("Starting.")
     house.Start(reactor)
     schedule.Start(reactor)
@@ -106,7 +185,10 @@ def Start():
 def Stop(p_tag = None):
     """Stop twisted in preparation to exit PyMh.
     """
-    print "PyHouse.Stop()"
+    print "PyHouse.Stop() - Tag: ", p_tag
+    global g_logger
+    g_logger = logging.getLogger('PyHouse')
+    g_logger.info("Stopping has begun.\n")
     config_xml.write_config()
     if p_tag != 'Gui':
         configure.gui.Stop()
@@ -115,11 +197,10 @@ def Stop(p_tag = None):
     try:
         g_logger.info("Stopped.\n")
     except AttributeError, emsg:
-        print "Got attribute error while trying to log stopped from PyHouse. ", emsg
+        print "Got attribute error while trying to log 'Stopped' from PyHouse. ", emsg
     log.LoggingMain().stop()
     reactor.stop()
     raise SystemExit, "PyHouse says Bye Now."
-
 
 def Restart():
     """Allow for a running restart of PyMh.

@@ -10,10 +10,10 @@ zigbee
 z-wave
 and others
 
-To add a family do the following:
-    * Add a package named family.
-    * Add the family name (Capitalized) to VALID_FAMILIES below.
-    * Add a module named Device_<Family>.py
+To add a family named 'NewFamily', do the following:
+    * Add a package named 'New_Family'.
+    * Add the family name (Capitalized) to the list VALID_FAMILIES below.
+    * Add a module named Device_<NewFamily>.py
     * Add any other modules needed by the Device module.
     * A module to interface with the controller is recommended.
 
@@ -29,9 +29,9 @@ try:
     for l_family in VALID_FAMILIES:
         l_name = 'Device_' + l_family
         l_package = 'families.' + l_family
-        #print "families.__init__.py - Family:{0:}, Name:{1}, Package:{2:}".format(l_family, l_name, l_package)
+        # print "families.__init__.py - Family:{0:}, Name:{1}, Package:{2:}".format(l_family, l_name, l_package)
         l_module = importlib.import_module(l_package, l_family)
 except ImportError:
     print "Error - Package missing from families."
 
-### END
+# ## END

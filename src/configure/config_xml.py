@@ -67,16 +67,13 @@ class ConfigTools(object):
         """Build a common entry.
 
         <p_parent>
-            <p_title Name=p_obj.Name Key=p_obj.Key>
-                <Active>p_obj.Active</Active>
+            <p_title Name=p_obj.Name Key=p_obj.Key Active=o_obj.Active>
             </p_title>
-        ...
         """
         l_ret = ET.SubElement(p_parent, p_title)
         l_ret.set('Name', p_obj.Name)
         l_ret.set('Key', str(p_obj.Key))
         l_ret.set('Active', self.put_bool(p_obj.Active))
-        # ET.SubElement(l_ret, 'Active').text = self.put_bool(p_obj.Active)
         return l_ret
 
     def write_file(self):
@@ -238,6 +235,8 @@ class ReadConfig(ConfigTools):
                 except TypeError:
                     l_obj.Product = 0
                     l_obj.Vendor = 0
+            elif l_if == 'Ethernet':
+                pass
             Controller_Data[l_obj.Key] = l_obj
             l_count += 1
         # Read the button section
@@ -413,12 +412,18 @@ class WriteConfig(ConfigTools):
             l_entry = self.build_common(l_ctls, 'Controller', l_obj)
             self.write_light_common(l_entry, l_obj)
             ET.SubElement(l_entry, 'Interface').text = l_obj.Interface
-            ET.SubElement(l_entry, 'Port').text = l_obj.Port
-            ET.SubElement(l_entry, 'BaudRate').text = str(l_obj.BaudRate)
-            ET.SubElement(l_entry, 'Parity').text = str(l_obj.Parity)
-            ET.SubElement(l_entry, 'ByteSize').text = str(l_obj.ByteSize)
-            ET.SubElement(l_entry, 'StopBits').text = str(l_obj.StopBits)
-            ET.SubElement(l_entry, 'imeout').text = str(l_obj.Timeout)
+            if l_obj.Interface == 'Serial':
+                ET.SubElement(l_entry, 'Port').text = l_obj.Port
+                ET.SubElement(l_entry, 'BaudRate').text = str(l_obj.BaudRate)
+                ET.SubElement(l_entry, 'Parity').text = str(l_obj.Parity)
+                ET.SubElement(l_entry, 'ByteSize').text = str(l_obj.ByteSize)
+                ET.SubElement(l_entry, 'StopBits').text = str(l_obj.StopBits)
+                ET.SubElement(l_entry, 'Timeout').text = str(l_obj.Timeout)
+            elif l_obj.Interface == 'USB':
+                ET.SubElement(l_entry, 'Vendor').text = str(l_obj.Vendor)
+                ET.SubElement(l_entry, 'Product').text = str(l_obj.Product)
+            elif l_obj.Interface == 'Ethernet':
+                pass
         self.write_file()
 
     def write_schedules(self):

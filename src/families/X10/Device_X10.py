@@ -7,11 +7,11 @@
 import logging
 
 # Import PyMh files
-#import configure_mh
+# import configure_mh
 from lighting import lighting
 
 
-#Configure_Data = configure_mh.Configure_Data
+# Configure_Data = configure_mh.Configure_Data
 
 
 class X10LightingData(lighting.LightingData):
@@ -26,7 +26,7 @@ class LightingAPI(lighting.LightingAPI):
     """Overload the base methods with specific ones here.
     """
 
-    def change_light_setting(self, p_name, p_level):
+    def change_light_setting(self, p_obj, p_level):
         pass
 
     def update_all_lights(self):
@@ -43,7 +43,7 @@ class LightingAPI(lighting.LightingAPI):
 
     def load_all_lights(self, p_dict):
         pass
-        #lighting.LightingAPI.load_all_lights(self, p_dict)
+        # lighting.LightingAPI.load_all_lights(self, p_dict)
 
     def scan_all_lights(self, p_lights):
         pass
@@ -54,7 +54,7 @@ def Init():
     """
     global g_logger
     g_logger = logging.getLogger('PyHouse.Device_X10')
-    #LightingAPI().load_all_lights(Configure_Data['X10Lights'])
+    # LightingAPI().load_all_lights(Configure_Data['X10Lights'])
     g_logger.info('Initialized.')
 
 def Start(_p_reactor):
@@ -64,4 +64,4 @@ def Start(_p_reactor):
 def Stop():
     pass
 
-### END
+# ## END

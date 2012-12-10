@@ -128,7 +128,9 @@ class ScheduleDialog(gui_tools.GuiTools):
         if p_title.startswith("Edit"):
             l_text = "Save"
             Button(self.m_frame, text = 'Delete', bg = gui_tools.BG_BOTTOM, command = self.delete_schedule).grid(row = 91, column = 1)
-        Button(self.m_frame, text = l_text, fg = "blue", bg = gui_tools.BG_BOTTOM, command = self.get_vars).grid(row = 91, column = 0)
+        l_as = Button(self.m_frame, text = l_text, fg = "blue", bg = gui_tools.BG_BOTTOM, command = self.get_vars)
+        l_as.grid(row = 91, column = 0)
+        l_as.focus_set()
         Button(self.m_frame, text = "Cancel", fg = "red", bg = gui_tools.BG_BOTTOM, command = self.quit_dialog).grid(row = 91, column = 2)
 
     def create_vars(self):

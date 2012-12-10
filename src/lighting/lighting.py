@@ -62,7 +62,7 @@ class ButtonData(lighting_buttons.ButtonsData): pass
 class ButtonAPI(lighting_buttons.ButtonsAPI): pass
 
 
-class ControllerData(lighting_controllers.ControllersData): pass
+class ControllerData(lighting_controllers.ControllerData): pass
 
 class ControllerAPI(lighting_controllers.ControllersAPI): pass
 
@@ -120,15 +120,16 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, LightingStatusAPI):
         for l_module in g_family_module:
             l_module.Stop()
 
-    def change_light_setting(self, p_name, p_level = 0, _p_family = None, p_obj = None):
-        """ *!* API
-        Turn a light to a given level (0-100) off/dimmed/on.
-        The schedule does not know what the family that controls the light.
+    def change_light_setting(self, p_obj, p_level):
         """
-        g_logger.info("Turn Light {0:} to level {1:}.".format(p_name, p_level))
+        Turn a light to a given level (0-100) off/dimmed/on.
+        """
+        print "lighting.change_light_settings() obj=", p_obj
+        g_logger.info("Turn Light {0:} to level {1:}.".format(p_obj.Name, p_level))
         for l_module in g_family_module:
-            if g_debug: print " Processing Module ", l_module
-            l_module.LightingAPI().change_light_setting(p_name, p_level)
+            if g_debug > 0:
+                print " Processing Module ", l_module
+            l_module.LightingAPI().change_light_setting(p_obj, p_level)
 
     def update_all_lighting_families(self):
         """ *!*  API
@@ -148,6 +149,15 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, LightingStatusAPI):
             self.m_UpbDevice.scan_all_lights(p_lights)
         if self.m_X10Device != None:
             self.m_X10Device.scan_all_lights(p_lights)
+
+    def get_light_ref(self, p_house, p_light):
+        """Return a light object reference for the given light in a house.
+        """
+        for l_obj in Light_Data.itervalues():
+            print "get_light_ref()", l_obj.HouseName, l_obj.Name
+            if l_obj.HouseName == p_house and l_obj.Name == p_light:
+                return l_obj
+        return None
 
 
 def Init():
@@ -170,6 +180,14 @@ def Stop():
     """
     g_logger.info("Stopping all lighting families.")
     LightingUtility()._stop_all_lighting_families()
-    g_logger.info("Stopped..")
+    g_logger.info("Stopped.")
+
+def GetLightRef(p_house, p_light):
+    """Return a light object reference for the given light in a house.
+    """
+    for l_obj in Light_Data.itervalues():
+        if l_obj.HouseName == p_house and l_obj.Name == p_light:
+            return l_obj
+    return None
 
 # ## END

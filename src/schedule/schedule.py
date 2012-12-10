@@ -16,6 +16,7 @@ Read/reread the schedule file at:
 import datetime
 import logging
 import time
+from twisted.internet import reactor
 
 # Import PyMh files
 import configure
@@ -23,11 +24,13 @@ import entertainment.entertainment as entertainment
 import lighting.lighting as lighting
 import sunrisesunset
 
+callLater = reactor.callLater
 
 # Configure_Data = configure_mh.Configure_Data
 Schedule_Data = {}
 ScheduleCount = 0
 Scheduled_Namelist = []
+
 g_debug = 0
 g_logger = None
 g_reactor = None
@@ -52,7 +55,7 @@ class ScheduleData(object):
         self.Type = 'Device'
 
     def __repr__(self):
-        l_ret = "Schedule Name:{0:}, LightName:{1:}, Time:{2:}, Level:{3:}, Rate:{4:}, Type:{5:}".format(
+        l_ret = "Schedule SlotName:{0:}, LightName:{1:}, Time:{2:}, Level:{3:}, Rate:{4:}, Type:{5:}".format(
                 self.Name, self.LightName, self.Time, self.Level, self.Rate, self.Type)
         return l_ret
 
@@ -66,12 +69,13 @@ class ScheduleAPI(ScheduleData):
         configure.config_xml.ReadConfig().read_schedules()
 
     def dump_all_schedules(self):
-        if g_debug < 7:
+        if g_debug < 9:
             return
         print "***** All Schedules *****"
         for l_key, l_obj in Schedule_Data.iteritems():
             print "~~~Schedule: {0:}".format(l_key)
             print "     ", l_obj
+            print(vars(l_obj))
         print
 
     def update_schedule(self, p_schedule):
@@ -85,57 +89,23 @@ class ScheduleAPI(ScheduleData):
 
 class ScheduleExecution(ScheduleAPI):
 
-    def _get_Name_info(self, p_Name, p_obj):
-        """Be sure we get values in case someone mis-edits the config file.
-
-        @param p_obj: is a Schedule_Data object
+    def execute_schedule(self, p_slot_list = []):
         """
-        try:
-            l_device = p_obj.LightName
-        except AttributeError:
-            l_device = '**no-such-device**'
-            l_message = 'Schedule for Name {0:} has no LightName/Device entry'.format(p_Name)
-            g_logger.error(l_message)
-
-        try:
-            l_type = p_obj.Type
-        except AttributeError:
-            l_type = '**no-such-Type**'
-            l_message = 'Schedule for Name {0:} has no Type entry'.format(p_Name)
-            g_logger.error('Schedule for Name {0:} has no Type entry'.format(p_Name))
-
-        try:
-            l_level = int(p_obj.Level)
-        except AttributeError:
-            l_level = 0
-
-        try:
-            l_rate = int(p_obj.Rate)
-        except AttributeError:
-            l_rate = 0
-
-        l_message = 'For Slot={0:}, Device={1:}, Type={2:}, Level={3:}, Rate={4:}'.format(p_Name, l_device, l_type, l_level, l_rate)
-        g_logger.info(l_message)
-        return (l_device, l_type, l_level, l_rate)
-
-    def execute_schedule(self, p_Name = []):
-        """
-        For each Name in the passed in list, execute the scheduled event.
+        For each SlotName in the passed in list, execute the scheduled event.
         Delay before generating the next schedule to avoid a race condition
         that duplicates an event if it completes before the clock goes to the next second.
 
-        @param p_Name: a list of Names in the next time schedule
+        @param p_slot_list: a list of Slots in the next time schedule
         """
         if g_debug > 0:
-            print " Execute_schedule p_Name=>>{0:}<<".format(p_Name)
-        for ix in range(len(p_Name)):
-            l_slot = p_Name[ix]
+            print " Execute_schedule p_slot_list=>>{0:}<<".format(p_slot_list)
+        for ix in range(len(p_slot_list)):
+            l_slot = p_slot_list[ix]
             l_sched_obj = Schedule_Data[l_slot]
-            (l_device, _l_type, l_level, _l_rate) = self._get_Name_info(l_slot, l_sched_obj)
-            lighting.LightingUtility().change_light_setting(l_device, l_level)
-        # TODO: change this to a non blocking call.
-        time.sleep(1)
-        self.get_next_sched()
+            l_obj = lighting.GetLightRef(l_sched_obj.HouseName, l_sched_obj.LightName)
+            l_sched_obj.Object = l_obj
+            lighting.LightingUtility().change_light_setting(l_sched_obj.Object, l_sched_obj.Level)
+        callLater(2, self.get_next_sched)
 
     def create_timer(self, p_seconds, p_list):
         """Create a timer that will go off when the next Name time comes up on the clock.
@@ -181,7 +151,6 @@ class ScheduleUtility(ScheduleExecution):
         """
         l_now = datetime.datetime.now()
         l_time_now = datetime.time(l_now.hour, l_now.minute, l_now.second)
-        _l_date = datetime.date(l_now.year, l_now.month, l_now.day)
         try:
             sunrisesunset.Start()
             self.m_sunset = sunrisesunset.SSAPI().get_sunset()
@@ -190,17 +159,17 @@ class ScheduleUtility(ScheduleExecution):
             self.m_sunrise = '06:00'
             self.m_sunset = '18:00'
         if g_debug > 0:
-            print "schedule.get_next_schedule() - sunrise/sunset = ", self.m_sunrise, self.m_sunset
+            print "schedule.get_next_sched() - sunrise/sunset = ", self.m_sunrise, self.m_sunset
         g_logger.info("Sunrise:{0:}, Sunset:{1:}".format(self.m_sunrise, self.m_sunset))
         l_time_scheduled = l_now
         l_next = 100000.0
         l_list = []
         for l_key, l_obj in Schedule_Data.iteritems():
-            if not l_obj.Active: continue
-            l_time = l_obj.Time
-            l_time_sch = self._extract_time(l_time)
+            if not l_obj.Active:
+                continue
+            l_time_sch = self._extract_time(l_obj.Time)
             if g_debug > 1:
-                print " - Schedule  Slot:{0:}, Light:{1:}, Level:{2:}, Time:{3:}".format(l_obj.Name, l_obj.LightName, l_obj.Level, l_time_sch)
+                print " - Schedule  SlotName: {0:}, Light: {1:}, Level: {2:}, Time: {3:}".format(l_obj.Name, l_obj.LightName, l_obj.Level, l_time_sch)
             # now see if this is 1) part of a chain -or- 2) an earlier schedule
             l_diff = self._make_delta(l_time_sch).total_seconds() - self._make_delta(l_time_now).total_seconds()
             if l_diff < 0:

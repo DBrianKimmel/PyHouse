@@ -116,7 +116,7 @@ class API(SerialDriverUtility):
             l_bytes = self.m_serial.readinto(l_buffer)
             self.m_bytes += l_bytes
             self.m_message += l_buffer[:l_bytes]
-        except IOError:
+        except (IOError, AttributeError):
             pass
         if self.m_bytes > 0:
             pass

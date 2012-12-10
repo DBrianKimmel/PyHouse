@@ -145,7 +145,7 @@ class LightingDialog(gui_tools.GuiTools):
         self.m_frame.grid_columnconfigure(0, minsize = 130)
         self.m_frame.grid_columnconfigure(1, minsize = 300)
         self.m_frame.grid(padx = 5, pady = 5)
-        #
+        # Common Part - Light
         self.get_entry_str(self.m_frame, 1, 'Key', self.Key, state = DISABLED)
         self.get_entry_bol(self.m_frame, 2, 'Active', self.Active)
         self.get_entry_str(self.m_frame, 3, 'Type', self.Type, state = DISABLED)
@@ -156,7 +156,11 @@ class LightingDialog(gui_tools.GuiTools):
         self.get_entry_pdb(self.m_frame, 8, 'House Name', self.HouseName, self.build_names(Location_Data), self.HouseName, self.get_housename)
         self.get_entry_pdb(self.m_frame, 9, 'Room Name', self.RoomName, self.build_names(Room_Data), self.RoomName, self.get_roomname)
         self.get_entry_bol(self.m_frame, 10, 'Dimmable', self.Dimmable)
-        if l_type == 'Controller':
+        # nothing extra for buttons yet.
+        if l_type == 'Button':
+            pass
+        # controllers have a lot more.
+        elif l_type == 'Controller':
             self.get_entry_pdb(self.m_frame, 31, 'Interface', self.Interface, VAL_INTER, self.Interface, self.get_interface)
             self.get_entry_str(self.m_frame, 33, 'Port', self.Port, width = 50)
             if l_interface == 'Serial':
@@ -166,11 +170,12 @@ class LightingDialog(gui_tools.GuiTools):
                 self.get_entry_str(self.m_frame, 44, 'Stop Bits', self.StopBits)
                 self.get_entry_str(self.m_frame, 45, 'Timeout', self.Timeout)
             elif l_interface == 'USB':
+                self.get_entry_str(self.m_frame, 46, 'Vendor', self.Vendor)
+                self.get_entry_str(self.m_frame, 47, 'Product', self.Product)
                 pass
-            elif l_interface == 'Ethernet4':
+            elif l_interface == 'Ethernet':
                 pass
-        elif l_type == 'Button':
-            pass
+        # Now for interfaces add the following:
         if l_family == 'Insteon':
             self.get_entry_str(self.m_frame, 61, 'Address', self.Address)
             self.get_entry_bol(self.m_frame, 62, 'Controller', self.Controller)
@@ -223,8 +228,8 @@ class LightingDialog(gui_tools.GuiTools):
         self.Interface = StringVar()
         self.Port = StringVar()
         # Interface USB
-        self.Vendor = IntVar()
-        self.Product = IntVar()
+        self.Vendor = StringVar()
+        self.Product = StringVar()
         # Interface Serial
         self.BaudRate = IntVar()
         self.ByteSize = IntVar()
@@ -256,12 +261,14 @@ class LightingDialog(gui_tools.GuiTools):
                 except KeyError:
                     l_obj = lighting.LightingData()
                     l_obj.Key = p_key
+                    l_obj.Family = 'Insteon'
             elif p_kind == 2 or p_kind == 5:
                 l_type = "Controller"
                 try:
                     l_obj = Controller_Data[p_key]
                 except KeyError:
                     l_obj = lighting.ControllerData()
+                    l_obj.Family = 'Insteon'
                 l_interface = l_obj.Interface
             else:
                 l_type = "Button"
@@ -269,11 +276,14 @@ class LightingDialog(gui_tools.GuiTools):
                     l_obj = Button_Data[p_key]
                 except KeyError:
                     l_obj = lighting.ButtonData()
+                    l_obj.Family = 'Insteon'
         except Exception, e:  # KeyError
             print "Load vars exception", sys.exc_info()[0], e
             l_obj = lighting.LightingData()
             l_obj.Key = p_key
+            l_obj.Family = 'Insteon'
         l_family = l_obj.Family
+#        l_interface = l_obj.Interface
         # print "LoadVars", l_type, l_family, p_key, l_obj.Active
         #
         self.Active.set(self.get_bool(l_obj.Active))
@@ -349,7 +359,8 @@ class LightingDialog(gui_tools.GuiTools):
             l_obj.Password = int(self.Password.get())
             l_obj.UnitID = int(self.UnitID.get())
         if l_interface == 'USB':
-            pass
+            l_obj.Vendor = self.Vendor.get()
+            l_obj.Product = self.Product.get()
         elif l_interface == 'Serial':
             l_obj.BaudRate = int(self.BaudRate.get())
             l_obj.ByteSize = self.ByteSize.get()
