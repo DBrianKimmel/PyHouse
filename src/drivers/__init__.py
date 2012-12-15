@@ -1,13 +1,5 @@
 """ drivers/__init__.py
 
-These are the drivers for various interfaces with the computer.
-
-Serial - going away but it still exists.  Serial commands thru a USB dongle work here.
-
-USB - the new standard.
-
-Ethernet - not too much of this is used yet.
-
 Copyright (C) 2012 by D. Brian Kimmel
 
 The following terms apply to all files associated
@@ -36,11 +28,21 @@ THE AUTHORS AND DISTRIBUTORS SPECIFICALLY DISCLAIM ANY WARRANTIES,
  NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR
  MODIFICATIONS.
 
+----------------------------------------------------------------------------
+
+These are the drivers for various interfaces with the computer.
+
+Serial - going away but it still exists.  Serial commands thru a USB dongle work here.
+
+USB - the new standard.
+
+Ethernet - not too much of this is used yet.
+
 """
 
-__version_info__ = (1, 0, 2)
+__version_info__ = (1, 0, 3)
 __version__ = '.' . join(map(str, __version_info__))
 
 
 
-### END
+# ## END

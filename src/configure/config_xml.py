@@ -228,6 +228,12 @@ class ReadConfig(ConfigTools):
                 l_obj.Timeout = self.get_float(l_entry, 'Timeout')
                 l_obj.WriteTimeout = self.get_float(l_entry, 'WriteTimeout')
                 l_obj.XonXoff = l_entry.findtext('XonXoff')
+                try:
+                    l_obj.Product = int(l_entry.findtext('Product'), 0)
+                    l_obj.Vendor = int(l_entry.findtext('Vendor'), 0)
+                except TypeError:
+                    l_obj.Product = 0
+                    l_obj.Vendor = 0
             elif l_if == 'USB':
                 try:
                     l_obj.Product = int(l_entry.findtext('Product'), 0)

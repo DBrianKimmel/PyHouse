@@ -162,7 +162,9 @@ class LightingDialog(gui_tools.GuiTools):
         # controllers have a lot more.
         elif l_type == 'Controller':
             self.get_entry_pdb(self.m_frame, 31, 'Interface', self.Interface, VAL_INTER, self.Interface, self.get_interface)
-            self.get_entry_str(self.m_frame, 33, 'Port', self.Port, width = 50)
+            self.get_entry_str(self.m_frame, 32, 'Port', self.Port, width = 50)
+            self.get_entry_str(self.m_frame, 33, 'Vendor', self.Vendor)
+            self.get_entry_str(self.m_frame, 34, 'Product', self.Product)
             if l_interface == 'Serial':
                 self.get_entry_str(self.m_frame, 41, 'Baud Rate', self.BaudRate)
                 self.get_entry_str(self.m_frame, 42, 'Byte Size', self.ByteSize)
@@ -170,8 +172,6 @@ class LightingDialog(gui_tools.GuiTools):
                 self.get_entry_str(self.m_frame, 44, 'Stop Bits', self.StopBits)
                 self.get_entry_str(self.m_frame, 45, 'Timeout', self.Timeout)
             elif l_interface == 'USB':
-                self.get_entry_str(self.m_frame, 46, 'Vendor', self.Vendor)
-                self.get_entry_str(self.m_frame, 47, 'Product', self.Product)
                 pass
             elif l_interface == 'Ethernet':
                 pass
@@ -227,9 +227,9 @@ class LightingDialog(gui_tools.GuiTools):
         # Controllers
         self.Interface = StringVar()
         self.Port = StringVar()
-        # Interface USB
         self.Vendor = StringVar()
         self.Product = StringVar()
+        # Interface USB
         # Interface Serial
         self.BaudRate = IntVar()
         self.ByteSize = IntVar()
@@ -301,10 +301,13 @@ class LightingDialog(gui_tools.GuiTools):
                 print "gui_lighting() - Interface =", l_obj.Interface
             self.Interface.set(l_obj.Interface)
             self.Port.set(l_obj.Port)
+            self.Vendor.set(l_obj.Vendor)
+            self.Product.set(l_obj.Product)
             if l_obj.Interface == 'USB':
                 # USB
-                self.Vendor.set(l_obj.Vendor)
-                self.Product.set(l_obj.Product)
+                # self.Vendor.set(l_obj.Vendor)
+                # self.Product.set(l_obj.Product)
+                pass
             if l_obj.Interface == 'Serial':
                 # Serial
                 self.BaudRate.set(l_obj.BaudRate)
@@ -358,6 +361,7 @@ class LightingDialog(gui_tools.GuiTools):
             l_obj.NetworkID = int(self.NetworkID.get())
             l_obj.Password = int(self.Password.get())
             l_obj.UnitID = int(self.UnitID.get())
+        #
         if l_interface == 'USB':
             l_obj.Vendor = self.Vendor.get()
             l_obj.Product = self.Product.get()
@@ -370,6 +374,7 @@ class LightingDialog(gui_tools.GuiTools):
             pass
         else:
             pass
+        #
         if l_type == 'Light':
             Light_Data[l_key] = l_obj
         elif l_type == 'Controller':

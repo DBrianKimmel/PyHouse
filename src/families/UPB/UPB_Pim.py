@@ -27,12 +27,12 @@ ACK_MSG = 0x40
 SEND_TIMEOUT = 0.8
 RECEIVE_TIMEOUT = 0.3
 
-g_debug = 8
+g_debug = 6
 g_driver = []
 g_logger = None
 g_queue = None
 g_reactor = None
-g_network_id = 9
+g_network_id = 6
 g_unit_id = 0xFF
 g_controller = []
 
@@ -68,59 +68,60 @@ class PimData(object):
 class UpbPimUtility(object):
 
     def _get_id_from_name(self, p_name):
-        if g_debug > 1:
+        if g_debug > 5:
             print "UPB_Pim._get_id_from_name() ", p_name
         for l_obj in Device_UPB.Light_Data.itervalues():
-            if l_obj.Family != 'UPB': continue
-            if l_obj.Active != True: continue
+            if l_obj.Family != 'UPB':
+                continue
+            if l_obj.Active != True:
+                continue
             if l_obj.Name == p_name:
                 l_unit_id = int(l_obj.UnitID)
                 return l_unit_id
         for l_obj in Device_UPB.Controller_Data.itervalues():
-            if l_obj.Family != 'UPB': continue
-            if l_obj.Active != True: continue
+            if l_obj.Family != 'UPB':
+                continue
+            if l_obj.Active != True:
+                continue
             if l_obj.Name == p_name:
                 l_unit_id = int(l_obj.UnitID)
                 return l_unit_id
         return 0
 
     def _calculate_checksum(self, p_msg):
-        if g_debug > 1:
-            print "UPB_Pim._calculate checksum()"
-        l_out = '14'
+        l_out = bytearray(0)
         l_cs = 0
         for l_ix in range(len(p_msg)):
             l_byte = p_msg[l_ix]
             l_cs = (l_cs + l_byte) % 256
-            l_out = "{0:}{1:02X}".format(l_out, l_byte)
-        l_out = "{0:}{1:02X}0D".format(l_out, int(256 - l_cs))
+            l_out.append(l_byte)
+        l_out.append(int(256 - l_cs))
+        if g_debug > 1:
+            print "UPB_Pim._calculate checksum() - {0:}".format(PrintBytes(l_out))
         return l_out
-    """
-    for ( int l_ix = 0; l_ix < k_array.size(); l_ix++ ) {
-        l_byte = k_array[l_ix]&0xFF;
-        l_cs = ( l_cs + l_byte ) % 256;
-        if ( l_byte < 0x10 )
-            l_out.append( '0' );
-        l_out.append( QByteArray().setNum( l_byte, 16 ) );
-    }
-    l_out.append( QByteArray().setNum( 256 - l_cs, 16 ) );
-    l_out.append( 0x0d );
-    """
+
+    def _build_packet_header(self, p_device_id, *p_args):
+        """Build a 5 byte packet header.
+        See 3.4 on page 6 of UPB System Description.
+        """
+        l_hdr = bytearray(6 + len(p_args))
+        l_hdr[0] = 7 + len(p_args)  # 'UPBMSG_CONTROL_HIGH'
+        l_hdr[1] = 0x00  # 'UPBMSG_CONTROL_LOW'
+        l_hdr[2] = g_network_id  # 'UPBMSG_NETWORK_ID'
+        l_hdr[3] = p_device_id  # 'UPBMSG_DEST_ID'
+        l_hdr[4] = g_unit_id  # 'UPBMSG_SOURCE_ID'
+        if g_debug > 6:
+            print "UPB_PacketHeader  Network:{0:#x}, ID:{1:} = {2:}".format(g_network_id, p_device_id, PrintBytes(l_hdr))
+        return l_hdr
 
     def _compose_command(self, p_command, p_device_id, *p_args):
         """
         """
+        l_cmd = self._build_packet_header(p_device_id, *p_args)
         if g_debug > 1:
-            print "UPB_Pim._compose command() - Network:{0:}, Command:{1:#02x}, ID:{2:} ".format(g_network_id, p_command, p_device_id)
-        l_cmd = bytearray(6 + len(p_args))
-        l_cmd[0] = 7 + len(p_args)  # 'UPBMSG_CONTROL_HIGH'
-        l_cmd[1] = 0x00  # 'UPBMSG_CONTROL_LOW'
-        l_cmd[2] = g_network_id  # 'UPBMSG_NETWORK_ID'
-        l_cmd[3] = p_device_id  # 'UPBMSG_DEST_ID'
-        l_cmd[4] = g_unit_id  # 'UPBMSG_SOURCE_ID'
+            print "UPB_Pim._compose command() - Command:{0:#02x}".format(p_command)
         l_cmd[5] = p_command  # 'UPBMSG_MESSAGE_ID'
         for l_ix in range(len(p_args)):
-            # print "   ", (6 + l_ix), p_args[l_ix]
             l_cmd[6 + l_ix] = p_args[l_ix]
         l_cmd = self._calculate_checksum(l_cmd)
         self.queue_pim_command(l_cmd)
@@ -129,65 +130,81 @@ class UpbPimUtility(object):
 
 class DecodeResponses(object):
 
+    def _next_char(self):
+        try:
+            self.l_hdr = self.l_message[0]
+            self.l_message = self.l_message[1:]
+            self.l_bytes = self.l_bytes - 1
+        except IndexError:
+            self.l_hdr = 0x00
+            self.l_bytes = 0
+
+    def _get_rest(self):
+        l_rest = self.l_hdr
+        while self.l_hdr != 0x0d:
+            self._next_char()
+            l_rest += self.l_hdr
+        return l_rest
+
+    def _flushing(self):
+        if g_debug > 5:
+            print "  Flushing ",
+        while self.l_hdr != 0x0d:
+            if self.l_hdr == 0:
+                return
+            if g_debug > 5:
+                print "{0:#2x} ".format(self.l_hdr),
+            self._next_char()
+        if g_debug > 5:
+            print
+
     def decode_response(self, p_message, p_bytes):
         """A message starts with a 'P' (0x50) and ends with a '\r' (0x0D).
         """
-        if g_debug > 4:
-            print "UPB_Pim.decode_response() - {0:} {1}".format(p_bytes, PrintBytes(p_message))
         if p_bytes < 1:
             return
         # All pIM response messages begin with 'P' which is 0x50
-        l_hdr = p_message[0]
-        l_message = p_message[1:]
-        l_bytes = p_bytes - 1
-        if l_hdr == 0x0D:
-            if g_debug > 0:
-                print "UPB_Pim.decode_response() found end of response (0x0D)"
-            self.decode_response(l_message, l_bytes)
-        if l_hdr != 0x50:
-            print("UPB_Pim.decode_response() did not find valid message - ERROR! char was ", l_hdr)
-            self.decode_response(l_message, l_bytes)
-        #
-        l_hdr = l_message[0]
-        l_message = l_message[1:]
-        l_bytes -= 1
-        if l_hdr == 0x41:  # 'A'
-            if g_debug > 0:
-                print "UPB_Pim.decode_response() found 'A' (0x41)"
-            self.decode_response(l_message, l_bytes)
-        elif l_hdr == 0x42:  # 'B'
-            if g_debug > 0:
-                print "UPB_Pim.decode_response() found 'B' (0x42)"
-            self.decode_response(l_message, l_bytes)
-        elif l_hdr == 0x45:  # 'E'
-            if g_debug > 0:
-                print "UPB_Pim.decode_response() found 'E' (0x45)"
-            self.decode_response(l_message, l_bytes)
-        elif l_hdr == 0x4B:  # 'K'
-            if g_debug > 0:
-                print "UPB_Pim.decode_response() found 'K' (0x4b)"
-            self.decode_response(l_message, l_bytes)
-        elif l_hdr == 0x4E:  # 'N'
-            if g_debug > 0:
-                print "UPB_Pim.decode_response() found 'N' (0x4E)"
-            self.decode_response(l_message, l_bytes)
-        elif l_hdr == 0x52:  # 'R'
-            if g_debug > 0:
-                print "UPB_Pim.decode_response() found 'R' (0x52)"
-            self.decode_response(l_message, l_bytes)
-        elif l_hdr == 0x55:  # 'U'
-            if g_debug > 0:
-                print "UPB_Pim.decode_response() found 'U' (0x55)"
-            self.decode_response(l_message, l_bytes)
-""" int PIMMain::decodeResponse( QByteArray& k_msg, QByteArray& k_msgRet ) {
-    int         l_ret = 0;
-    QByteArray  l_response = k_msg;
-    int l_len = k_msg.size();
-    QByteArray  l_reg;
-    k_msgRet.clear();
+        self.l_message = p_message
+        self.l_bytes = p_bytes
+        while self.l_bytes > 0:
+            if g_debug > 5:
+                print "UPB_Pim.decode_response() - {0:} {1}".format(self.l_bytes, PrintBytes(self.l_message))
+            self._next_char()
+            if self.l_hdr != 0x50:
+                print "UPB_Pim.decode_response() - Did not find valid message start 'P'(0x50)  - ERROR! char was {0:#x} - Flushing till next 0x0D".format(self.l_hdr)
+                self._flushing()
+                continue
+            #
+            self._next_char()  # drop the 0x50 char
+            if self.l_hdr == 0x41:  # 'A'
+                if g_debug > 4:
+                    print "UPB_Pim - Previous command was accepted"
+            elif self.l_hdr == 0x42:  # 'B'
+                if g_debug > 4:
+                    print "UPB_Pim - Previous command was rejected because device is busy."
+            elif self.l_hdr == 0x45:  # 'E'
+                if g_debug > 4:
+                    print "UPB_Pim - Previous command was rejected with a command error."
+            elif self.l_hdr == 0x4B:  # 'K'
+                if g_debug > 4:
+                    print "UPB_Pim.decode_response() found 'K' (0x4b) - ACK pulse also received."
+            elif self.l_hdr == 0x4E:  # 'N'
+                if g_debug > 4:
+                    print "UPB_Pim.decode_response() found 'N' (0x4E) - No ACK pulse received from device."
+            elif self.l_hdr == 0x52:  # 'R'
+                if g_debug > 4:
+                    print "UPB_Pim.decode_response() found 'R' (0x52) - Register report recieved"
+                self._get_rest()
+            elif self.l_hdr == 0x55:  # 'U'
+                if g_debug > 4:
+                    print "UPB_Pim.decode_response() found 'U' (0x55) - Message report received."
+                self._get_rest()
+            else:
+                print "UPB_Pim.decode_response() found unknown code {0:#x} {1:}".format(self.l_hdr, PrintBytes(self.l_message))
+            self._next_char()
 
+""" int PIMMain::decodeResponse( QByteArray& k_msg, QByteArray& k_msgRet ) {
     QString l_str = messageToString( k_msg );
-    DEBUG( 7, "PIMMain::decodeResponse - Len=" << l_len << " " << l_str.toAscii() );
     // All pIM response messages begin with 'P' which is 0x50
     if ( l_response[0] != (char)0x50 ) {
         DEBUG( 1, "decodeResponse did not find valid message 1 - ERROR! char was " << (int)l_response[0] );
@@ -288,47 +305,53 @@ class DecodeResponses(object):
 
 class PimDriverInterface(DecodeResponses):
 
+    def _convert_pim(self, p_array):
+        l_string = chr(0x14)
+        for l_byte in p_array:
+            l_char = "{0:02X}".format(l_byte)
+            l_string += l_char
+        l_string += '0D'  # chr(0x0D)
+        if g_debug > 8:
+            print " Convert_pim() {0:}".format(PrintBytes(l_string))
+        return l_string
+
     def driver_loop_start(self):
         if g_debug > 0:
             print "UPB PIM.driver_loop_start()"
-        g_reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send)
-        g_reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop)
+        self.dequeue_and_send()
+        self.receive_loop()
 
     def queue_pim_command(self, p_command):
         if g_debug > 1:
-            print "UPB_Pim.queue_pim_command()", p_command
+            print "UPB_Pim.queue_pim_command() {0:}".format(PrintBytes(p_command))
         g_queue.put(p_command)
 
     def dequeue_and_send(self):
+        g_reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send)
         try:
             l_command = g_queue.get(False)
         except  Queue.Empty:
-            g_reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send)
             return
+        l_send = self._convert_pim(l_command)
+        print "UPB_Pim.dequeue_and_send()", l_send
         try:
-            print "UPB_Pim.dequeue_and_send()", l_command
-            g_driver[0].write_device(l_command)
-            # for l_ix in range(len(l_command)):
-            #    g_driver[0].write_device(l_command[l_ix])
+            g_driver[0].write_device(l_send)
         except IOError:
             pass
         except IndexError:  # No controller defined so [0] will be invalid
             pass
-        g_reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send)
 
     def receive_loop(self):
+        g_reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop)
         try:
             (l_bytes, l_msg) = g_driver[0].fetch_read_data()
         except IndexError:
             (l_bytes, l_msg) = (0, '')
         if l_bytes == 0:
-            g_reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop)
             return False
         if g_debug > 8:
             print "UPB_Pim.receive_loop() - {0:}".format(PrintBytes(l_msg))
         l_ret = self.decode_response(l_msg, l_bytes)
-        # l_ret = l_msg
-        g_reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop)
         return l_ret
 
 
@@ -345,24 +368,27 @@ class CreateCommands(UpbPimUtility, PimDriverInterface):
         pass
 
     def set_pim_mode(self):
+        # Send a write register 70 to set PIM mode
+        # Command is <17>70 03 8D <0D>
         l_val = bytearray(1)
         l_val[0] = 0x03
-        self.set_register_value(self.m_pim_name[0], 0x70, l_val)
+        self.set_register_value(0xFF, 0x70, l_val)
 
 
 class LightingAPI(Device_UPB.LightingAPI, CreateCommands):
 
     def change_light_setting(self, p_obj, p_level):
         for l_obj in Device_UPB.Light_Data.itervalues():
-            if l_obj.get_family() != 'UPB': continue
-            if l_obj.get_active() == False: continue
+            if l_obj.get_family() != 'UPB':
+                continue
+            if l_obj.get_active() == False:
+                continue
             l_name = p_obj.Name
             if l_obj.get_name() == l_name:
                 l_id = self._get_id_from_name(l_name)
-                print " & UPB_Pim.change_light_settings "
+                print "UPB_Pim.change_light_settings() for {0:} to Level {1:}".format(l_name, p_level)
                 g_logger.info('change_light_setting()')
-                l_cmd = self._compose_command(pim_commands['goto'], l_id, p_level, 0x01)
-                self.queue_pim_command(l_cmd)
+                self._compose_command(pim_commands['goto'], l_id, p_level, 0x01)
                 return
 
     def update_all_devices(self):
@@ -377,23 +403,20 @@ class LightHandlerAPI(LightingAPI):
 
 class UpbPimAPI(CreateCommands):
 
-    def initialize_all_controllers(self):
-        """Find and initialize all UPB PIM type controllers.
-        """
-        global g_network_id, g_unit_id
+    def _find_all_drivers(self):
         l_count = 0
-        for l_key, l_obj in Device_UPB.Controller_Data.iteritems():
-            if l_obj.Family.lower() != 'upb': continue
-            if l_obj.Active != True: continue
-            #
+        for l_obj in Device_UPB.Controller_Data.itervalues():
+            if l_obj.Family.lower() != 'upb':
+                continue
+            if l_obj.Active != True:
+                continue
             l_pim = PimData()
             l_pim.Name = l_obj.Name
             l_interface = l_obj.Interface
-            g_network_id = l_obj.NetworkID
+            g_network_id = int(l_obj.NetworkID, 0)
             g_logger.info('Found UPB PIM named: {0:}, Type={1:}'.format(l_pim.Name, l_interface))
             if g_debug > 0:
-                print "UPB_Pim.initialize_all_controllers() - Key:", l_key
-            g_network_id = l_obj.NetworkID
+                print "UPB_Pim.initialize_all_controllers() - Name:", l_pim.Name
             g_unit_id = int(l_obj.UnitID)
             if l_obj.Interface.lower() == 'serial':
                 import drivers.Driver_Serial
@@ -402,13 +425,22 @@ class UpbPimAPI(CreateCommands):
                 import drivers.Driver_Ethernet
                 l_driver = drivers.Driver_Ethernet.EthernetDriverMain(l_obj)
             elif l_obj.Interface.lower() == 'usb':
-                import drivers.Driver_USB
-                l_driver = drivers.Driver_USB.USBDriverMain(l_obj)
+                # TODO: Detect any other controllers here and load them
+                import drivers.Driver_USB_17DD_5500
+                l_driver = drivers.Driver_USB_17DD_5500.Init(l_obj)
             else:
                 g_logger.error("UPB PIM has no known interface type! {0}, {1:}".format(l_obj.get_name, l_obj.get_interface))
             g_driver.append(l_driver)
             self.initialize_one_controller(l_driver, l_obj)
             l_count += 1
+            return l_count
+
+
+    def initialize_all_controllers(self):
+        """Find and initialize all UPB PIM type controllers.
+        """
+        global g_network_id, g_unit_id
+        l_count = self._find_all_drivers()
         g_logger.info("Loaded {0:} UPB_PIM controllers".format(l_count))
 
     def initialize_one_controller(self, _p_driver, p_obj):
@@ -504,33 +536,13 @@ def Start(p_reactor):
     g_logger.info('Starting.')
     g_reactor = p_reactor
     PimDriverInterface().driver_loop_start()
+    LightHandlerAPI().set_pim_mode()
 
 def Stop():
     if g_debug > 0:
         print "UPB_Pim.Stop()"
     pass
 
-"""
-//< Offsets into a UPB message
-const int UPBMSG_CONTROL_HIGH = 0;
-const int UPBMSG_CONTROL_LOW  = 1;
-const int UPBMSG_NETWORK_ID   = 2;
-const int UPBMSG_DEST_ID      = 3;
-const int UPBMSG_SOURCE_ID    = 4;
-const int UPBMSG_MESSAGE_ID   = 5;
-const int UPBMSG_BODY         = 6;
-
-// Commands to the pim
-const int CMD_START_SETUP_MODE          = 0x03;
-const int CMD_STOP_SETUP_MODE           = 0x04;
-const int CMD_GET_DEVICE_STATUS         = 0x07;
-const int CMD_GET_REGISTER_VALUE        = 0x10;
-const int CMD_SET_REGISTER_VALUE        = 0x11;
-const int CMD_GOTO                      = 0x22;
-const int CMD_FADE_START                = 0x23;
-const int CMD_FADE_STOP                 = 0x24;
-const int CMD_REPORT_STATE              = 0x30;
-"""
 """ PIMMain::PIMMain(int k_debug, QObject* kp_parent ) :
         mp_parent( kp_parent ) {
     m_pimConfigured = FALSE;
@@ -574,18 +586,6 @@ const int CMD_REPORT_STATE              = 0x30;
     // Something we do not know about then.
     m_isOpen = FALSE;
     return ERC_SERVICE_NOT_AVAIL;
-}
-"""
-""" Erc_t PIMMain::pimClose() {
-    DEBUG( 1, "PIMMain::pimClose()" );
-    return ERC_OK;
-}
-"""
-""" bool PIMMain::pimReOpen() {
-    DEBUG( 1, "PIMMain::pimReOpen" );
-    pimClose();
-    pimOpen();
-    return TRUE;
 }
 """
 """ QByteArray PIMMain::pimReadRegisters( int k_regStart, int k_count ) {
