@@ -210,10 +210,11 @@ class HouseAPI(lighting_tools.CoreAPI):
         configure.config_xml.ReadConfig().read_houses()
 
     def dump_location(self):
-        print "***** All House Locations ***"
-        for l_key, l_obj in Location_Data.iteritems():
-            self.dump_device(l_obj, 'Location', l_key)
-        print
+        if g_debug > 8:
+            print "***** All House Locations ***"
+            for l_key, l_obj in Location_Data.iteritems():
+                self.dump_device(l_obj, 'Location', l_key)
+            print
 
     def load_all_rooms(self, p_dict):
         for l_dict in p_dict.itervalues():
@@ -231,10 +232,11 @@ class HouseAPI(lighting_tools.CoreAPI):
         Room_Data[l_obj.Key] = l_obj
 
     def dump_rooms(self):
-        print "***** All House Rooms *****"
-        for l_key, l_obj in Room_Data.iteritems():
-            self.dump_device(l_obj, 'Room', l_key)
-        print
+        if g_debug > 8:
+            print "***** All House Rooms *****"
+            for l_key, l_obj in Room_Data.iteritems():
+                self.dump_device(l_obj, 'Room', l_key)
+            print
 
 
 def Init():
@@ -242,11 +244,11 @@ def Init():
     g_logger = logging.getLogger('PyHouse.House')
     g_logger.info("Initializing.")
     HouseAPI().load_xml_house()
-    # HouseAPI().dump_location()
-    # HouseAPI().dump_rooms()
+    HouseAPI().dump_location()
+    HouseAPI().dump_rooms()
     internet.Init()
 
-def Start(p_reactor):
+def Start():
     pass
 
 # ##  END

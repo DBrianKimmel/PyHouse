@@ -9,10 +9,20 @@ Create commands and interpret results from any Insteon controller regardless
 # Import system type stuff
 import logging
 import Queue
+from twisted.internet import reactor
 
 # Import PyMh files
 import Device_Insteon
 from tools import PrintBytes
+
+callLater = reactor.callLater
+
+
+g_debug = 0
+g_driver = []
+g_logger = None
+g_queue = None
+
 
 STX = 0x02
 ACK = 0x06
@@ -36,12 +46,6 @@ FLAG_EXTENDED_CMD = 0x10
 FLAG_HOPS_LEFT = 0x0C
 FLAG_MAX_HOPS = 0x03
 
-
-g_debug = 0
-g_driver = []
-g_logger = None
-g_queue = None
-g_reactor = None
 
 # PLM Serial Commands
 plm_commands = {
@@ -174,8 +178,8 @@ class InsteonPlmUtility(object):
                 continue
             if l_obj.Address == p_addr:
                 return l_obj
-        print " -- No Insteon object has string {0:} for an Address."\
-        .format(p_addr)
+        print "No Insteon object has string {0:} for an Address.".format(p_addr)
+        return Device_Insteon.LightingData()  # an empty new object
 
     def _get_addr_from_name(self, p_name):
         """Given a device name, return a 3 bytearray(3) containing the devices
@@ -278,8 +282,8 @@ class PlmDriverInterface(object):
         if g_debug > 0:
             print "Insteon_PLM.driver_loop_start()"
         g_queue = Queue.Queue(300)
-        g_reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send)
-        g_reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop)
+        callLater(SEND_TIMEOUT, self.dequeue_and_send)
+        callLater(RECEIVE_TIMEOUT, self.receive_loop)
 
     def queue_plm_command(self, p_command):
         if g_debug > 5:
@@ -296,7 +300,7 @@ class PlmDriverInterface(object):
         try:
             l_command = g_queue.get(False)
         except Queue.Empty:
-            g_reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send)
+            callLater(SEND_TIMEOUT, self.dequeue_and_send)
             return
         # call the correct driver to send the command
         try:
@@ -306,7 +310,7 @@ class PlmDriverInterface(object):
         if g_debug > 5:
             print "Insteon_PLM.dequeue_and_send() - {0:}".format(
                     PrintBytes(l_command))
-        g_reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send)
+        callLater(SEND_TIMEOUT, self.dequeue_and_send)
 
     def receive_loop(self):
         """Check the driver to see if the controller returned any messages.
@@ -316,14 +320,14 @@ class PlmDriverInterface(object):
         except IndexError:
             (l_bytes, l_msg) = (0, '')
         if l_bytes == 0:
-            g_reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop)
+            callLater(RECEIVE_TIMEOUT, self.receive_loop)
             return False
         if g_debug > 5:
             print "Insteon_PLM.receive_loop() - {0:}".format(PrintBytes(l_msg))
         # g_logger.debug("receive_loop() - {0:}".format(PrintBytes(l_msg)))
         l_ret = DecodeResponses()._decode_message(l_msg, l_bytes)
         # l_ret = l_msg
-        g_reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop)
+        callLater(RECEIVE_TIMEOUT, self.receive_loop)
         return l_ret
 
 
@@ -642,7 +646,7 @@ class DecodeResponses(InsteonAllLinks, PlmDriverInterface):
                 self.update_object(l_obj_from)
             #
             else:
-                print " --- Got unknown type - last command was {0:#x} - {1:}".format(self.m_last_command, PrintBytes(p_message))
+                print "Insteon_PLM._decode_50_record() unknown type - last command was {0:#x} - {1:}".format(self.m_last_command, PrintBytes(p_message))
             #
             Device_Insteon.LightingStatusAPI().update_status_by_name(l_name_from, 'Insteon', p_message[10])
             g_logger.info("== 50G From={0:}, To={1:}, Flags={2:}, Data={3:} ==".format(l_name_from, l_name_to, l_flags, l_data))
@@ -664,14 +668,14 @@ class DecodeResponses(InsteonAllLinks, PlmDriverInterface):
                     p_message[11], p_message[12], p_message[13], p_message[14], p_message[15], p_message[16], p_message[17],
                     p_message[18], p_message[19], p_message[20], p_message[21], p_message[22], p_message[23], p_message[24])
         l_product_key = self._get_addr_from_message(p_message, 12)
-        l_obj.ProductKey = l_product_key
         l_devcat = p_message[15] * 256 + p_message[16]
         l_name_from = self._get_name_from_id(l_id_from)
         l_name_to = self._get_name_from_id(l_id_to)
-        l_obj.DevCat = l_devcat
         self.update_object(l_obj)
         print " --- Got Product Data response from={0:}, ".format(l_name_from), l_extended
         g_logger.info("== 51 From={0:}, To={1:}, Flags={2:#x}, Data={3:} Extended={4:} ==".format(l_name_from, l_name_to, l_flags, l_data, l_extended))
+        l_obj.ProductKey = l_product_key
+        l_obj.DevCat = l_devcat
         l_ret = True
         if p_length > 25:
             l_msg = p_message[25:]
@@ -912,6 +916,7 @@ class LightHandlerAPI(InsteonPlmAPI):
     """
 
     def initialize_all_controllers(self):
+        l_count = 0
         for l_obj in Device_Insteon.Controller_Data.itervalues():
             if l_obj.Family != 'Insteon':
                 continue
@@ -932,10 +937,16 @@ class LightHandlerAPI(InsteonPlmAPI):
             elif l_obj.Interface.lower() == 'usb':
                 if g_debug > 0:
                     print "  Insteon_PLM - USB = ", l_obj
-                import drivers.Driver_USB
-                l_driver = drivers.Driver_USB.USBDriverMain(l_obj)
+                import drivers.Driver_USB_0403_6001
+                l_driver = drivers.Driver_USB_0403_6001.Init(l_obj)
+            l_count += 1
+            if g_debug > 2:
+                print "Insteon_PLM has just worked on a driver.  Name: {0:}".format(l_obj.Name)
             if l_driver != None:
                 g_driver.append(l_driver)
+        if g_debug > 0:
+            print "Insteon_PLM - Found {0:} controllers configured and initialized {1:} of them.".format(l_count, len(g_driver))
+            print g_driver
 
     def set_plm_mode(self):
         """Set the PLM to a mode
@@ -987,16 +998,15 @@ class PlmTesting(object):
 def Init():
     """Constructor for the PLM.
     """
-    global g_logger, g_driver
+    global g_logger, g_driver, g_queue
     g_logger = logging.getLogger('PyHouse.Insteon_PLM')
     g_logger.info('Initializing.')
     g_driver = []
+    g_queue = Queue.Queue(300)
     LightHandlerAPI().initialize_all_controllers()
     g_logger.info('Initialized.')
 
-def Start(p_reactor):
-    global g_reactor
-    g_reactor = p_reactor
+def Start():
     g_logger.info('Starting.')
     PlmDriverInterface().driver_loop_start()
     LightHandlerAPI().set_plm_mode()

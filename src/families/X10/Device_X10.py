@@ -57,7 +57,7 @@ def Init():
     # LightingAPI().load_all_lights(Configure_Data['X10Lights'])
     g_logger.info('Initialized.')
 
-def Start(_p_reactor):
+def Start():
     g_logger.info('Starting.')
     g_logger.info('Started.')
 

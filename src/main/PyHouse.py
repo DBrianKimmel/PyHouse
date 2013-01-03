@@ -61,6 +61,7 @@ from twisted.internet import reactor
 
 # Import PyMh files and modules.
 import configure
+import configure.config_etc as config_etc
 import configure.config_xml as config_xml
 import log
 import house
@@ -144,43 +145,50 @@ def parse_command_line():
     config['logging'] = {}
 
 
-def Init():
-    if g_debug > 0:
-        print "PyHouse.Init()"
+def handle_signals():
     if platform.uname()[0] != 'Windows':
         signal.signal(signal.SIGHUP, SigHupHandler)
     signal.signal(signal.SIGINT, SigIntHandler)
+
+def Init():
+    """This is the startup of the entire system.
+    All permanent services are started here.
+    These core routines are an integral part of the daemon process.
+
+    Notice that the reactor starts here as the very last step and that
+    call never returns.
+    """
+    if g_debug > 0:
+        print "PyHouse.Init()"
+    handle_signals()
     parse_command_line()
-    # These need to be first and in this order
+    l_config = config_etc.find_etc_config_file()
     config_xml.read_config()
     log.LoggingMain()
     # 2nd. Now the logging will be set up and work properly
     global g_logger
     g_logger = logging.getLogger('PyHouse')
     g_logger.info("Initializing - Starting PyHouse.")
-    # Now everything else.
     house.Init()
     weather.Init()
     schedule.Init()
     # web_server.Init()
     configure.gui.Init()
     g_logger.info("Initialized.\n")
+    # reactor never returns so must be last - Event loop will now run
+    reactor.run()
 
 def Start():
-    """Put twisted setup functions in here.
-    After they are all set-up we will start the reactor process.
+    """New.  This will start all non-core services.
+    This may be called multiple times along with stop to reerun various modules
     Every thing that is to run must be in the main reactor event loop as reactor.run() does not return.
     """
     if g_debug > 0:
         print "PyHouse.Start()"
-    global g_logger
     g_logger.info("Starting.")
-    house.Start(reactor)
-    schedule.Start(reactor)
-    # web_server.Start(reactor)
+    schedule.Start()
+    # web_server.Start()
     g_logger.info("Started.\n")
-    # reactor never returns so must be last - Event loop will now run
-    reactor.run()
 
 def Stop(p_tag = None):
     """Stop twisted in preparation to exit PyMh.

@@ -6,12 +6,15 @@
 # Import system type stuff
 import logging
 import Queue
+from twisted.internet import reactor
 
 # Import PyMh files
 # import configure_mh
 import Device_UPB
 from tools import PrintBytes
 
+
+callLater = reactor.callLater
 
 
 # UPB Control Word
@@ -27,14 +30,11 @@ ACK_MSG = 0x40
 SEND_TIMEOUT = 0.8
 RECEIVE_TIMEOUT = 0.3
 
-g_debug = 6
+g_debug = 9
 g_driver = []
 g_logger = None
 g_queue = None
-g_reactor = None
-g_network_id = 6
-g_unit_id = 0xFF
-g_controller = []
+g_pim = {}
 
 
 pim_commands = {
@@ -58,11 +58,12 @@ class PimData(object):
     """
 
     def __init__(self):
+        self.Driver = None
+        self.Interface = None
         self.Name = None
         self.NetworkID = 0
-        self.UnitID = 0xFF
-        self.Interface = None
         self.Password = None
+        self.UnitID = 0xFF
 
 
 class UpbPimUtility(object):
@@ -100,32 +101,32 @@ class UpbPimUtility(object):
             print "UPB_Pim._calculate checksum() - {0:}".format(PrintBytes(l_out))
         return l_out
 
-    def _build_packet_header(self, p_device_id, *p_args):
+    def _build_packet_header(self, p_device_id, p_pim, *p_args):
         """Build a 5 byte packet header.
         See 3.4 on page 6 of UPB System Description.
         """
         l_hdr = bytearray(6 + len(p_args))
         l_hdr[0] = 7 + len(p_args)  # 'UPBMSG_CONTROL_HIGH'
         l_hdr[1] = 0x00  # 'UPBMSG_CONTROL_LOW'
-        l_hdr[2] = g_network_id  # 'UPBMSG_NETWORK_ID'
+        l_hdr[2] = p_pim.NetworkID  # 'UPBMSG_NETWORK_ID'
         l_hdr[3] = p_device_id  # 'UPBMSG_DEST_ID'
-        l_hdr[4] = g_unit_id  # 'UPBMSG_SOURCE_ID'
+        l_hdr[4] = p_pim.UnitID  # 'UPBMSG_SOURCE_ID'
         if g_debug > 6:
-            print "UPB_PacketHeader  Network:{0:#x}, ID:{1:} = {2:}".format(g_network_id, p_device_id, PrintBytes(l_hdr))
+            print "UPB_Pim._build_packet_header() - Network: {0:#x}, ID: {1:}, Packet: {2:}".format(p_pim.NetworkID, p_device_id, PrintBytes(l_hdr))
         return l_hdr
 
     def _compose_command(self, p_command, p_device_id, *p_args):
+        """Build the command for each controller found.
         """
-        """
-        l_cmd = self._build_packet_header(p_device_id, *p_args)
-        if g_debug > 1:
-            print "UPB_Pim._compose command() - Command:{0:#02x}".format(p_command)
-        l_cmd[5] = p_command  # 'UPBMSG_MESSAGE_ID'
-        for l_ix in range(len(p_args)):
-            l_cmd[6 + l_ix] = p_args[l_ix]
-        l_cmd = self._calculate_checksum(l_cmd)
-        self.queue_pim_command(l_cmd)
-        return l_cmd
+        for l_pim in g_pim.itervalues():
+            l_cmd = self._build_packet_header(p_device_id, l_pim, *p_args)
+            if g_debug > 1:
+                print "UPB_Pim._compose command() - Command: {0:#02x}".format(p_command)
+            l_cmd[5] = p_command  # 'UPBMSG_MESSAGE_ID'
+            for l_ix in range(len(p_args)):
+                l_cmd[6 + l_ix] = p_args[l_ix]
+            l_cmd = self._calculate_checksum(l_cmd)
+            self.queue_pim_command(l_cmd)
 
 
 class DecodeResponses(object):
@@ -169,7 +170,7 @@ class DecodeResponses(object):
         while self.l_bytes > 0:
             if g_debug > 5:
                 print "UPB_Pim.decode_response() - {0:} {1}".format(self.l_bytes, PrintBytes(self.l_message))
-            self._next_char()
+            self._next_char()  # Get the starting char - must be 'P' (0x50)
             if self.l_hdr != 0x50:
                 print "UPB_Pim.decode_response() - Did not find valid message start 'P'(0x50)  - ERROR! char was {0:#x} - Flushing till next 0x0D".format(self.l_hdr)
                 self._flushing()
@@ -201,7 +202,7 @@ class DecodeResponses(object):
                 self._get_rest()
             else:
                 print "UPB_Pim.decode_response() found unknown code {0:#x} {1:}".format(self.l_hdr, PrintBytes(self.l_message))
-            self._next_char()
+            self._next_char()  # Drop the 0x0d char
 
 """ int PIMMain::decodeResponse( QByteArray& k_msg, QByteArray& k_msgRet ) {
     QString l_str = messageToString( k_msg );
@@ -310,9 +311,9 @@ class PimDriverInterface(DecodeResponses):
         for l_byte in p_array:
             l_char = "{0:02X}".format(l_byte)
             l_string += l_char
-        l_string += '0D'  # chr(0x0D)
+        l_string += chr(0x0D)
         if g_debug > 8:
-            print " Convert_pim() {0:}".format(PrintBytes(l_string))
+            print "UPB_Pim._convert_pim() - {0:}".format(PrintBytes(l_string))
         return l_string
 
     def driver_loop_start(self):
@@ -327,7 +328,7 @@ class PimDriverInterface(DecodeResponses):
         g_queue.put(p_command)
 
     def dequeue_and_send(self):
-        g_reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send)
+        callLater(SEND_TIMEOUT, self.dequeue_and_send)
         try:
             l_command = g_queue.get(False)
         except  Queue.Empty:
@@ -335,20 +336,26 @@ class PimDriverInterface(DecodeResponses):
         l_send = self._convert_pim(l_command)
         print "UPB_Pim.dequeue_and_send()", l_send
         try:
-            g_driver[0].write_device(l_send)
+            g_pim[0].write_device(l_send)
         except IOError:
             pass
         except IndexError:  # No controller defined so [0] will be invalid
             pass
+        except:
+            pass
 
     def receive_loop(self):
-        g_reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop)
+        callLater(RECEIVE_TIMEOUT, self.receive_loop)
         try:
-            (l_bytes, l_msg) = g_driver[0].fetch_read_data()
+            (l_bytes, l_msg) = g_pim[0].fetch_read_data()
         except IndexError:
             (l_bytes, l_msg) = (0, '')
+        except:
+            (l_bytes, l_msg) = (0, '')
+            pass
         if l_bytes == 0:
             return False
+            # pass
         if g_debug > 8:
             print "UPB_Pim.receive_loop() - {0:}".format(PrintBytes(l_msg))
         l_ret = self.decode_response(l_msg, l_bytes)
@@ -403,7 +410,16 @@ class LightHandlerAPI(LightingAPI):
 
 class UpbPimAPI(CreateCommands):
 
-    def _find_all_drivers(self):
+    def _find_all_upb_controllers(self):
+        """Iterate thru all controllers and skip all NON UPB controllers.
+        Also skip controllers that are not active.
+
+        For each remaining controller:
+            Set up the controller and create links to it.
+            Initialize the controller
+            Initialize any interface special requirements.
+        """
+        global g_pim
         l_count = 0
         for l_obj in Device_UPB.Controller_Data.itervalues():
             if l_obj.Family.lower() != 'upb':
@@ -411,13 +427,15 @@ class UpbPimAPI(CreateCommands):
             if l_obj.Active != True:
                 continue
             l_pim = PimData()
+            l_pim.Interface = l_obj.Interface
             l_pim.Name = l_obj.Name
-            l_interface = l_obj.Interface
-            g_network_id = int(l_obj.NetworkID, 0)
-            g_logger.info('Found UPB PIM named: {0:}, Type={1:}'.format(l_pim.Name, l_interface))
+            l_pim.NetworkID = int(l_obj.NetworkID, 0)
+            l_pim.Password = l_obj.Password
+            l_pim.UnitID = int(l_obj.UnitID, 0)
+
+            g_logger.info('Found UPB PIM named: {0:}, Type={1:}'.format(l_pim.Name, l_pim.Interface))
             if g_debug > 0:
-                print "UPB_Pim.initialize_all_controllers() - Name:", l_pim.Name
-            g_unit_id = int(l_obj.UnitID)
+                print "UPB_Pim._find_all_upb_controllers() - Name:", l_pim.Name
             if l_obj.Interface.lower() == 'serial':
                 import drivers.Driver_Serial
                 l_driver = drivers.Driver_Serial.SerialDriverMain(l_obj)
@@ -429,8 +447,10 @@ class UpbPimAPI(CreateCommands):
                 import drivers.Driver_USB_17DD_5500
                 l_driver = drivers.Driver_USB_17DD_5500.Init(l_obj)
             else:
-                g_logger.error("UPB PIM has no known interface type! {0}, {1:}".format(l_obj.get_name, l_obj.get_interface))
-            g_driver.append(l_driver)
+                g_logger.error("UPB PIM has no known interface type! {0}, {1:}".format(l_pim.Name, l_pim.Interface))
+                l_driver = None
+            l_pim.Driver = l_driver
+            g_pim[l_count] = l_pim
             self.initialize_one_controller(l_driver, l_obj)
             l_count += 1
             return l_count
@@ -439,8 +459,9 @@ class UpbPimAPI(CreateCommands):
     def initialize_all_controllers(self):
         """Find and initialize all UPB PIM type controllers.
         """
-        global g_network_id, g_unit_id
-        l_count = self._find_all_drivers()
+        if g_debug > 1:
+            print "UPB_Pim.initialize_all_controlers()"
+        l_count = self._find_all_upb_controllers()
         g_logger.info("Loaded {0:} UPB_PIM controllers".format(l_count))
 
     def initialize_one_controller(self, _p_driver, p_obj):
@@ -448,12 +469,14 @@ class UpbPimAPI(CreateCommands):
         Send a write register 70 to set PIM mode
         Command is <17>70 03 8D <0D>
         """
+        if g_debug > 1:
+            print "UPB_Pim.initialize_one_controller() - Name: {0:}".format(p_obj.Name)
         self.set_register_value(p_obj.get_name(), 0x70, [0x03])
 
-    def send_pim_command_get_response(self, p_command):
+    def XXXsend_pim_command_get_response(self, p_command):
         print " & PIM.send_pim_command_get_response ", p_command
         g_logger.info('Sending command {0:}'.format(PrintBytes(p_command)))
-        g_driver[0].write_device(g_driver[0], p_command)
+        g_pim[0].write_device(g_pim[0], p_command)
         _l_ret = None
         # Pim should always get a PA for getting the message to send.
         _l_ret = self.get_response()
@@ -526,22 +549,27 @@ def Init():
     g_logger = logging.getLogger('PyHouse.UPB_PIM')
     g_logger.info('Initializing.')
     g_queue = Queue.Queue(300)
-    UpbPimAPI().initialize_all_controllers()
+    l_api = UpbPimAPI()
+    l_api.initialize_all_controllers()
+    l_api.driver_loop_start()
     g_logger.info('Initialized.')
+    return l_api
 
-def Start(p_reactor):
+def Start():
     if g_debug > 0:
         print "UPB_Pim.Start()"
-    global g_reactor
     g_logger.info('Starting.')
-    g_reactor = p_reactor
-    PimDriverInterface().driver_loop_start()
-    LightHandlerAPI().set_pim_mode()
 
 def Stop():
     if g_debug > 0:
         print "UPB_Pim.Stop()"
     pass
+
+
+
+
+
+
 
 """ PIMMain::PIMMain(int k_debug, QObject* kp_parent ) :
         mp_parent( kp_parent ) {

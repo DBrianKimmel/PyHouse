@@ -40,9 +40,12 @@ callLater = reactor.callLater
 
 g_debug = Driver_USB.g_debug
 
+# Timeouts for send/receive delays
+SEND_TIMEOUT = 0.8
+RECEIVE_TIMEOUT = 0.3
 READ_TIMER = 0.100  # Every 100 miliseconds
 
-class UsbDriverAPI(object):
+class UsbDriverAPI(Driver_USB.UsbDriverAPI):
 
     def setup_hid_device(self):
         """Use the control endpoint to set up report descriptors for HID devices.
@@ -50,56 +53,50 @@ class UsbDriverAPI(object):
         Much of this was determined empirically for a smarthome UPB PIM
         """
         if g_debug > 0:
-            print "Driver_USB._setup_hid_device()"
+            print "Driver_USB_17DD_5500._setup_hid_device() 2 "
         l_report = array.array('B', "12345")
         l_report[0] = 0xc0
         l_report[1] = 0x12
         l_report[2] = 0x00
         l_report[3] = 0x00
         l_report[4] = 0x03
-        l_requestType = 0x20  # LIBUSB_ENDPOINT_OUT (0x00) | LIBUSB_REQUEST_TYPE_CLASS (0x20) | LIBUSB_RECIPIENT_DEVICE (0x00)
+        l_requestType = 0x21  # LIBUSB_ENDPOINT_OUT (0x00) | LIBUSB_REQUEST_TYPE_CLASS (0x20) | LIBUSB_RECIPIENT_DEVICE (0x00)
         l_request = Driver_USB.HID_SET_REPORT  # 0x09
         l_value = 0x0003  # Report type & Report ID
         l_index = 0
-        l_ret = self.m_ddata.Device.ctrl_transfer(
-                                 l_requestType,
-                                 l_request,
-                                 l_value,
-                                 l_index,
-                                 l_report,
-                                 timeout = 100)
-        if l_ret < 0:
-            print("UsbHidSerial::InitializeHID = ERROR returned=", l_ret)
-            return -1
-        if g_debug > 5:
-            print("Driver_USB._setup_hid_device() - Exit OK - Bytes=", l_ret)
-        return 1
-        pass
+        l_ret = (l_requestType,
+                l_request,
+                l_value,
+                l_index,
+                l_report)
+        return l_ret
 
-    def read_device(self):
+    def read_device(self, p_usb):
         l_len = -1
         while l_len != 0:
             try:
-                l_msg = self.m_device.read(self.m_epi_addr, self.m_epi_packet_size, timeout = 100)
+                l_msg = p_usb.Device.read(0x81, 8, timeout = 100)
                 # we seem to have actual length + 240 as 1st char
                 l_len = l_msg[0] - 240
                 if l_len > 0:
-                    if g_debug > 1:
+                    if g_debug > 0:
                         print "Driver_USB.read_device() {0:} - {1:}".format(l_len, l_msg)
-                    self.m_bytes += l_len
+                    p_usb.msg_len += l_len
                     for l_x in range(l_len):
-                        self.m_message.append(l_msg[l_x + 1])
+                        p_usb.message.append(l_msg[l_x + 1])
             except usb.USBError, e:
                 print "Driver_USB.read_device() got USBError", e
             except Exception, e:
                 print " -- Error in Driver_USB.read_device() ", sys.exc_info(), e
-            time.sleep(0.1)
+            # time.sleep(0.1)
 
 
 def Init(p_obj):
     """
     """
-    l_ret = Driver_USB.USBDriverMain(p_obj, READ_TIMER)
+    if g_debug > 0:
+        print "\nDriver_USB_17DD_5500.Init()"
+    l_ret = Driver_USB.Init(p_obj, READ_TIMER, UsbDriverAPI())
     return l_ret
 
 

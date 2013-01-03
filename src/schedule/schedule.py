@@ -33,7 +33,6 @@ Scheduled_Namelist = []
 
 g_debug = 0
 g_logger = None
-g_reactor = None
 
 VALID_TYPES = ['Device', 'Scene']
 
@@ -110,7 +109,7 @@ class ScheduleExecution(ScheduleAPI):
     def create_timer(self, p_seconds, p_list):
         """Create a timer that will go off when the next Name time comes up on the clock.
         """
-        g_reactor.callLater(p_seconds, self.execute_schedule, p_list)
+        callLater(p_seconds, self.execute_schedule, p_list)
 
 
 class ScheduleUtility(ScheduleExecution):
@@ -193,18 +192,18 @@ def Init():
     global g_logger
     g_logger = logging.getLogger('PyHouse.Schedule')
     g_logger.info("Initializing.")
+    l_api = ScheduleAPI()
     sunrisesunset.Init()
     entertainment.Init()
     lighting.Init()
-    ScheduleAPI().load_schedules_xml()
-    ScheduleAPI().dump_all_schedules()
+    l_api.load_schedules_xml()
+    l_api.dump_all_schedules()
     g_logger.info("Initialized.")
+    return l_api
 
-def Start(p_reactor):
-    global g_reactor
+def Start():
     g_logger.info("Starting.")
-    g_reactor = p_reactor
-    lighting.Start(g_reactor)
+    lighting.Start()
     Reload()
     g_logger.info("Started.")
 

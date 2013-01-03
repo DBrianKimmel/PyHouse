@@ -25,7 +25,7 @@ Controller_Data = lighting.Controller_Data
 Light_Data = lighting.Light_Data
 Light_Status = lighting.Light_Status
 
-g_debug = 0
+g_debug = 1
 g_logger = None
 g_InsteonLink = None
 g_PLM = None
@@ -275,9 +275,9 @@ def Init():
     g_logger.info('Initialized.')
 
 
-def Start(p_reactor):
+def Start():
     g_logger.info('Starting.')
-    Insteon_PLM.Start(p_reactor)
+    Insteon_PLM.Start()
     g_logger.info('Started.')
 
 

@@ -33,6 +33,12 @@ class GuiTools(object):
         l_name.grid(row = p_row, column = 1, sticky = W)
         return l_name
 
+    def get_entry_hex(self, p_parent, p_row, p_label, p_field, **kwargs):
+        Label(p_parent, text = p_label).grid(row = p_row, column = 0, sticky = E)
+        l_name = Entry(p_parent, textvar = p_field, **kwargs)
+        l_name.grid(row = p_row, column = 1, sticky = W)
+        return l_name
+
     def get_entry_bol(self, p_parent, p_row, p_label, p_var):
         Label(p_parent, text = p_label).grid(row = p_row, column = 0, sticky = E)
         l_frame = self._yes_no_radio(p_parent, p_var)
@@ -64,6 +70,10 @@ class GuiTools(object):
         l_ret = int(p_arg, 0)
         return l_ret
 
+    def get_hex(self, p_arg):
+        l_ret = int(p_arg, 16)
+        return l_ret
+
     def get_true(self, p_arg):
         """Return 1 if a filed is true, 0 otherwise.
         """
@@ -71,6 +81,12 @@ class GuiTools(object):
         if l_arg == 'true' or l_arg == 'yes' or l_arg != 0:
             return 1
         return 0
+
+    def put_hex(self, p_arg):
+        """Convert an int to a hex string with 0x
+        """
+        l_ret = hex(p_arg)
+        return l_ret
 
     def build_names(self, p_dict):
         if g_debug > 0: print "Build_Names ", p_dict

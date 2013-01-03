@@ -5,6 +5,10 @@ This package is required for PyHouse.
 
 It will use XML to read/store the configuration.
 
+There is a skeleton config file in /etc named pyhouse.conf
+The only purpose of this file is to set up the location of the full config file
+which is updated by the PyHouse daemon after it has given up root permissions.
+
 Major subsections will have an active flag set to true if they are used.
 If a section is not used it will be preserved and the active flag will be
  set to false.
@@ -44,4 +48,4 @@ import gui_schedule
 import gui_lighting
 import gui_web
 
-### END
+# ## END

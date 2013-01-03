@@ -163,8 +163,8 @@ class LightingDialog(gui_tools.GuiTools):
         elif l_type == 'Controller':
             self.get_entry_pdb(self.m_frame, 31, 'Interface', self.Interface, VAL_INTER, self.Interface, self.get_interface)
             self.get_entry_str(self.m_frame, 32, 'Port', self.Port, width = 50)
-            self.get_entry_str(self.m_frame, 33, 'Vendor', self.Vendor)
-            self.get_entry_str(self.m_frame, 34, 'Product', self.Product)
+            self.get_entry_hex(self.m_frame, 33, 'Vendor', self.Vendor)
+            self.get_entry_hex(self.m_frame, 34, 'Product', self.Product)
             if l_interface == 'Serial':
                 self.get_entry_str(self.m_frame, 41, 'Baud Rate', self.BaudRate)
                 self.get_entry_str(self.m_frame, 42, 'Byte Size', self.ByteSize)
@@ -247,10 +247,12 @@ class LightingDialog(gui_tools.GuiTools):
         self.GroupList = StringVar()
         self.GroupNumber = StringVar()
         self.Master = IntVar()
-        self.ProductKey = IntVar()
+        self.ProductKey = StringVar()
         self.Responder = IntVar()
 
     def load_vars(self, p_key, p_kind):
+        """put the values in the gui boxes
+        """
         # print "LoadVars key, Kind = {0:} - {1:}".format(p_key, p_kind)
         l_interface = None
         try:
@@ -301,8 +303,8 @@ class LightingDialog(gui_tools.GuiTools):
                 print "gui_lighting() - Interface =", l_obj.Interface
             self.Interface.set(l_obj.Interface)
             self.Port.set(l_obj.Port)
-            self.Vendor.set(l_obj.Vendor)
-            self.Product.set(l_obj.Product)
+            self.Vendor.set(self.put_hex(int(str(l_obj.Vendor), 0)))  # Displays hex
+            self.Product.set(self.put_hex(int(str(l_obj.Product), 0)))  # Displays hex
             if l_obj.Interface == 'USB':
                 # USB
                 # self.Vendor.set(l_obj.Vendor)
@@ -319,7 +321,7 @@ class LightingDialog(gui_tools.GuiTools):
             # Family - Insteon
             self.Address.set(l_obj.Address)
             self.Controller.set(self.get_bool(l_obj.Controller))
-            self.DevCat.set(l_obj.DevCat)
+            self.DevCat.set(self.put_hex(int(str(l_obj.DevCat), 0)))  # Displays hex
             self.GroupList.set(l_obj.GroupList)
             self.GroupNumber.set(l_obj.GroupNumber)
             self.Master.set(self.get_bool(l_obj.Master))
@@ -355,7 +357,7 @@ class LightingDialog(gui_tools.GuiTools):
             l_obj.GroupList = self.GroupList.get()
             l_obj.GroupNumber = self.GroupNumber.get()
             l_obj.Master = int(self.Master.get())
-            l_obj.ProductKey = int(self.ProductKey.get())
+            l_obj.ProductKey = self.ProductKey.get()
             l_obj.Responder = int(self.Responder.get())
         elif l_family == 'UPB':
             l_obj.NetworkID = int(self.NetworkID.get())

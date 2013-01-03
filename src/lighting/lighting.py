@@ -92,10 +92,10 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, LightingStatusAPI):
         """
         g_logger.info("Loading all lighting families.")
         for l_family in VALID_FAMILIES:
-            # l_name = 'Device_' + l_family
             l_package = 'families.' + l_family
             l_import = '.Device_' + l_family
-            if g_debug: print "lighting.load_all_lighting_families - Package:{0:}, Import:{1:}".format(l_package, l_import)
+            if g_debug > 0:
+                print "lighting.load_all_lighting_families - Package: {0:}, Import: {1:}".format(l_package, l_import)
             l_module = importlib.import_module(l_package + l_import, l_package)
             g_family_module.append(l_module)
             g_Device_family.append(l_import)
@@ -110,11 +110,11 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, LightingStatusAPI):
         self.dump_all_controllers()
         self.dump_all_lights()
 
-    def _start_all_lighting_families(self, p_reactor):
+    def _start_all_lighting_families(self):
         if g_debug: print "lighting start all lighting"
         g_logger.info("Starting all lighting families.")
         for l_module in g_family_module:
-            l_module.Start(p_reactor)
+            l_module.Start()
 
     def _stop_all_lighting_families(self):
         for l_module in g_family_module:
@@ -164,15 +164,17 @@ def Init():
     global g_logger
     g_logger = logging.getLogger('PyHouse.Lighting')
     g_logger.info("Initializing.")
-    LightingUtility().load_lighting_xml()
+    l_api = LightingUtility()
+    l_api.load_lighting_xml()
     # SceneAPI().load_all_scenes(configure_mh.Configure_Data['Scenes'])
     g_logger.info("Initialized.")
+    return l_api
 
-def Start(p_reactor):
+def Start():
     """Allow loading of sub modules and drivers.
     """
     g_logger.info("Starting.")
-    LightingUtility()._start_all_lighting_families(p_reactor)
+    LightingUtility()._start_all_lighting_families()
     g_logger.info("Started.")
 
 def Stop():

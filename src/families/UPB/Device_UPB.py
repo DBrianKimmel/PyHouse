@@ -15,7 +15,6 @@ Controller_Data = lighting.Controller_Data
 Light_Data = lighting.Light_Data
 Light_Status = lighting.Light_Status
 
-
 g_debug = 0
 g_logger = None
 g_pim = None
@@ -143,7 +142,9 @@ class LightingStatusAPI(lighting.LightingStatusAPI, LightingStatusData): pass
 
 class LoadSaveInsteonData(LightingAPI, ControllerAPI, ButtonAPI, LightingStatusAPI): pass
 
+
 import UPB_Pim
+
 
 def Init():
     """Constructor for the UPB .
@@ -157,11 +158,11 @@ def Init():
     g_logger.info('Initialized.')
     g_pim = UPB_Pim
 
-def Start(p_reactor):
+def Start():
     if g_debug > 0:
         print "Device_UPB.Start()"
     g_logger.info('Starting.')
-    UPB_Pim.Start(p_reactor)
+    UPB_Pim.Start()
     g_logger.info('Started.')
 
 def Stop():
