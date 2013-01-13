@@ -4,7 +4,7 @@ from Tkinter import *
 
 import gui
 import gui_tools
-import house
+import main.house as house
 import config_xml
 from operator import attrgetter
 

@@ -18,7 +18,7 @@ from tools import PrintBytes
 callLater = reactor.callLater
 
 
-g_debug = 0
+g_debug = 1
 g_driver = []
 g_logger = None
 g_queue = None
@@ -30,7 +30,7 @@ NAK = 0x15
 
 # Timeouts for send/receive delays
 SEND_TIMEOUT = 0.8
-RECEIVE_TIMEOUT = 0.3
+RECEIVE_TIMEOUT = 0.3  # this is for fetching data in the rx buffer
 
 # Modes for setting PLM mode
 MODE_DISABLE_DEADMAN = 0x10
@@ -278,12 +278,17 @@ class PlmDriverInterface(object):
     m_queue = None
 
     def driver_loop_start(self):
-        global g_queue
-        if g_debug > 0:
+        if g_debug > 1:
             print "Insteon_PLM.driver_loop_start()"
+        global g_queue
         g_queue = Queue.Queue(300)
         callLater(SEND_TIMEOUT, self.dequeue_and_send)
         callLater(RECEIVE_TIMEOUT, self.receive_loop)
+
+    def driver_loop_stop(self):
+        if g_debug > 0:
+            print "Insteon_PLM.driver_loop_stop()"
+        pass
 
     def queue_plm_command(self, p_command):
         if g_debug > 5:
@@ -915,36 +920,39 @@ class LightHandlerAPI(InsteonPlmAPI):
     """This is the API for light control.
     """
 
-    def initialize_all_controllers(self):
+    def start_all_controllers(self):
         l_count = 0
         for l_obj in Device_Insteon.Controller_Data.itervalues():
             if l_obj.Family != 'Insteon':
                 continue
-            if g_debug > 0:
-                print "Insteon_PLM.initialize_all_controllers() - Family:{0:}, Interface:{1:}, Active:{2:}".format(l_obj.Family, l_obj.Interface, l_obj.Active)
+            if g_debug > 1:
+                print "Insteon_PLM.start_all_controllers() - Family:{0:}, Interface:{1:}, Active:{2:}".format(l_obj.Family, l_obj.Interface, l_obj.Active)
             if l_obj.Active != True:
                 continue
             if l_obj.Interface.lower() == 'serial':
-                if g_debug > 0:
-                    print "  Insteon_PLM - serial = ", l_obj
+                if g_debug > 1:
+                    print "  Insteon_PLM - serial"
                 import drivers.Driver_Serial
-                l_driver = drivers.Driver_Serial.SerialDriverMain(l_obj)
+                l_driver = drivers.Driver_Serial.Init()
+                l_driver = drivers.Driver_Serial.Start(l_obj)
             elif l_obj.Interface.lower() == 'ethernet':
-                if g_debug > 0:
-                    print "  Insteon_PLM - ethernet = ", l_obj
+                if g_debug > 1:
+                    print "  Insteon_PLM - ethernet = "
                 import drivers.Driver_Ethernet
-                l_driver = drivers.Driver_Ethernet.EthernetDriverMain(l_obj)
+                l_driver = drivers.Driver_Ethernet.Init()
+                l_driver = drivers.Driver_Ethernet.Start(l_obj)
             elif l_obj.Interface.lower() == 'usb':
-                if g_debug > 0:
-                    print "  Insteon_PLM - USB = ", l_obj
+                if g_debug > 1:
+                    print "  Insteon_PLM - USB = "
                 import drivers.Driver_USB_0403_6001
-                l_driver = drivers.Driver_USB_0403_6001.Init(l_obj)
+                l_driver = drivers.Driver_USB_0403_6001.Init()
+                l_driver = drivers.Driver_USB_0403_6001.Start(l_obj)
             l_count += 1
             if g_debug > 2:
                 print "Insteon_PLM has just worked on a driver.  Name: {0:}".format(l_obj.Name)
             if l_driver != None:
                 g_driver.append(l_driver)
-        if g_debug > 0:
+        if g_debug > 1:
             print "Insteon_PLM - Found {0:} controllers configured and initialized {1:} of them.".format(l_count, len(g_driver))
             print g_driver
 
@@ -998,22 +1006,30 @@ class PlmTesting(object):
 def Init():
     """Constructor for the PLM.
     """
+    if g_debug > 0:
+        print "Insteon_PLM.Init()"
     global g_logger, g_driver, g_queue
     g_logger = logging.getLogger('PyHouse.Insteon_PLM')
     g_logger.info('Initializing.')
     g_driver = []
     g_queue = Queue.Queue(300)
-    LightHandlerAPI().initialize_all_controllers()
     g_logger.info('Initialized.')
 
 def Start():
+    if g_debug > 0:
+        print "Insteon_PLM.Start()"
     g_logger.info('Starting.')
+    LightHandlerAPI().start_all_controllers()
     PlmDriverInterface().driver_loop_start()
     LightHandlerAPI().set_plm_mode()
     LightHandlerAPI().get_all_lights_status()
     g_logger.info('Started.')
 
 def Stop():
-    pass
+    if g_debug > 0:
+        print "Insteon_PLM.Stop()"
+    g_logger.info('Stopping.')
+    PlmDriverInterface().driver_loop_stop()
+    g_logger.info('Stopped.')
 
 # ## END

@@ -15,7 +15,8 @@ import math
 from math import pi
 
 # Import PyMh files
-import house as house
+import main
+# import main.house as house
 
 RAD2DEG = 180.0 / pi
 DEG2RAD = pi / 180.0
@@ -363,7 +364,7 @@ class SunCalcs(SSUtility, EarthParameters, SolarParameters):
         self._calcJulianDates(Earth_Data[0])
         self._calcSolarNoonParams(Earth_Data[0], Solar_Data[0])
         self._calcSolarTransit(Earth_Data[0], Solar_Data[0])
-        g_logger.info("Calculating sunrise/sunset now. Rise={0:}, Set={1:}".format(Earth_Data[0].Sunrise, Earth_Data[0].Sunset))
+        # g_logger.info("Calculating sunrise/sunset now. Rise={0:}, Set={1:}".format(Earth_Data[0].Sunrise, Earth_Data[0].Sunset))
 
 
 class SSAPI(SunCalcs):
@@ -383,7 +384,7 @@ class SSAPI(SunCalcs):
         l_date = datetime.date.today()
         Earth_Data[0] = EarthParameters()
         Solar_Data[0] = SolarParameters()
-        for l_obj in house.Location_Data.itervalues():
+        for l_obj in main.house.Location_Data.itervalues():
             if l_obj.Active != True:
                 continue
             Earth_Data[0].Latitude = l_obj.Latitude
@@ -402,8 +403,10 @@ class SSAPI(SunCalcs):
 def Init():
     global g_logger
     g_logger = logging.getLogger('PyHouse.SunriseSunset')
-    g_logger.info("Initializing.")
+    # g_logger.info("Initializing.")
     SSAPI().load_location()
+    Earth_Data[0].Date = datetime.date.today()
+    SSAPI().calc_sunrise_sunset()
     g_logger.info("Initialized.")
 
 def Start(p_date = datetime.date.today()):

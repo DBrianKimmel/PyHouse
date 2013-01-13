@@ -24,7 +24,7 @@ import re
 import lighting
 from tools import PrintBytes
 
-g_debug = 0
+g_debug = 1
 g_logger = None
 g_message = bytearray()
 
@@ -65,7 +65,7 @@ class SerialDriverUtility(SerialDeviceData):
                 continue
             l_x = l_ix.group()
             l_usb += l_x
-            if g_debug > 0:
+            if g_debug > 8:
                 print l_x
 
 
@@ -91,7 +91,7 @@ class API(SerialDriverUtility):
                 print "Driver_Serial opened port 1"
         except serial.SerialException, erm:
             print "Error - Serial port {0:} has an error in opening port {1:}.".format(p_obj.Name, p_obj.Port), erm
-            self.m_logger.warn("Error - Serial port problem opening {0:} - {1:}".format(p_obj.Name, p_obj.Port))
+            g_logger.warn("Error - Serial port problem opening {0:} - {1:}".format(p_obj.Name, p_obj.Port))
             return None
         l_serial.baudrate = p_obj.BaudRate
         l_serial.bytesize = int(p_obj.ByteSize)
@@ -100,7 +100,7 @@ class API(SerialDriverUtility):
         if float(p_obj.StopBits) == 1.0:
             l_serial.stopbits = serial.STOPBITS_ONE
         l_serial.timeout = float(p_obj.Timeout)
-        self.m_logger.info("Initialized serial port {0:} - {1:} @ {2:} Baud".format(p_obj.Name, p_obj.Port, p_obj.BaudRate))
+        g_logger.info("Initialized serial port {0:} - {1:} @ {2:} Baud".format(p_obj.Name, p_obj.Port, p_obj.BaudRate))
         return l_serial
 
     def close_device(self):
@@ -117,6 +117,8 @@ class API(SerialDriverUtility):
             self.m_bytes += l_bytes
             self.m_message += l_buffer[:l_bytes]
         except (IOError, AttributeError):
+            pass
+        except OSSError:
             pass
         if self.m_bytes > 0:
             pass
@@ -151,12 +153,33 @@ class SerialDriverMain(API):
         """
         @param p_obj:is the Controller_Data object for a serial device to open.
         """
-        self.m_logger = logging.getLogger('PyHouse.SerialDriver')
-        self.m_logger.debug("Initializing.")
-        self.parse_dmesg()
-        self.m_message = bytearray()
-        self.m_serial = self.open_device(p_obj)
-        LoopingCall(self._serialLoop).start(1)
-        self.m_logger.debug("Initializied.")
+        if g_debug > 0:
+            print "Driver_Serial.__init__()"
+
+def Init():
+    if g_debug > 0:
+        print "Driver_Serial.Init()"
+    global g_logger, g_api, g_message
+    g_logger = logging.getLogger('PyHouse.SerialDriver')
+    g_logger.debug("Initializing.")
+    g_api = API()
+    g_api.parse_dmesg()
+    g_message = bytearray()
+    g_logger.debug("Initializied.")
+    return g_api
+
+def Start(p_obj):
+    if g_debug > 0:
+        print "Driver_Serial.Start()"
+    global g_api
+    g_logger.debug("Starting.")
+    g_api.m_serial = g_api.open_device(p_obj)
+    LoopingCall(g_api._serialLoop).start(1)
+    g_logger.debug("Started.")
+    return g_api
+
+def Stop():
+    if g_debug > 0:
+        print "Driver_Serial.Stop()"
 
 # ## END

@@ -266,22 +266,29 @@ import Insteon_PLM
 
 
 def Init():
+    if g_debug > 0:
+        print "Device_Insteon.Init()"
     global g_logger, g_InsteonLink, g_PLM
     g_logger = logging.getLogger('PyHouse.Device_Insteon')
     g_logger.info('Initializing.')
     g_InsteonLink = Insteon_Link.InsteonLinkMain()
     Insteon_PLM.Init()
+    # Insteon_PLM.Start()
     g_PLM = Insteon_PLM
     g_logger.info('Initialized.')
 
 
 def Start():
+    if g_debug > 0:
+        print "Device_Insteon.Start()"
     g_logger.info('Starting.')
     Insteon_PLM.Start()
     g_logger.info('Started.')
 
 
 def Stop():
+    if g_debug > 0:
+        print "Device_Insteon.Stop()"
     Insteon_PLM.Stop()
 
 # ## END

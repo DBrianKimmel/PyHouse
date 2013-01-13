@@ -15,7 +15,7 @@ import lighting_tools
 
 Light_Data = {}
 LightCount = 0
-g_debug = 0
+g_debug = 1
 
 
 class LightsData(lighting_tools.CoreData):
@@ -23,7 +23,8 @@ class LightsData(lighting_tools.CoreData):
     def __init__(self):
         global LightCount
         LightCount += 1
-        if g_debug > 0: print "lighting_lights.LightsData.__init__()"
+        if g_debug > 1:
+            print "lighting_lights.LightsData.__init__()"
         super(LightsData, self).__init__()
         self.Type = 'Light'
         self.CurLevel = 0
@@ -44,7 +45,8 @@ class LightsData(lighting_tools.CoreData):
 class LightsAPI(lighting_tools.CoreAPI):
 
     def __init__(self):
-        if g_debug > 0: print "lighting_lights.lightsAPI.__init__()"
+        if g_debug > 1:
+            print "lighting_lights.lightsAPI.__init__()"
         super(LightsAPI, self).__init__()
 
     def _get_LightCount(self):
@@ -54,7 +56,8 @@ class LightsAPI(lighting_tools.CoreAPI):
     def load_light(self, p_dict, p_light):
         """Load the light information.
         """
-        if g_debug > 0: print "lighting_lights.LightsAPI.load_light() - {0:}".format(p_light.Name)
+        if g_debug > 1:
+            print "lighting_lights.LightsAPI.load_light() - {0:}".format(p_light.Name)
         l_light = super(LightsAPI, self).load_core_device(p_dict, self._get_LightCount())
         l_light.CurLevel = 0
         return l_light
@@ -71,4 +74,4 @@ class LightsAPI(lighting_tools.CoreAPI):
     def update_all_statuses(self):
         assert 0, "dump all statuses must be subclassed."
 
-### END
+# ## END

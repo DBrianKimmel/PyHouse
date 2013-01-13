@@ -42,7 +42,7 @@ Light_Status = lighting_status.Light_Status
 Scene_Data = lighting_scenes.Scene_Data
 Singletons = {}
 
-g_debug = 0
+g_debug = 1
 g_reactor = None
 g_logger = None
 g_family_module = []
@@ -94,7 +94,7 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, LightingStatusAPI):
         for l_family in VALID_FAMILIES:
             l_package = 'families.' + l_family
             l_import = '.Device_' + l_family
-            if g_debug > 0:
+            if g_debug > 1:
                 print "lighting.load_all_lighting_families - Package: {0:}, Import: {1:}".format(l_package, l_import)
             l_module = importlib.import_module(l_package + l_import, l_package)
             g_family_module.append(l_module)
@@ -111,7 +111,8 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, LightingStatusAPI):
         self.dump_all_lights()
 
     def _start_all_lighting_families(self):
-        if g_debug: print "lighting start all lighting"
+        if g_debug > 1:
+            print "lighting start all lighting"
         g_logger.info("Starting all lighting families.")
         for l_module in g_family_module:
             l_module.Start()
@@ -127,7 +128,7 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, LightingStatusAPI):
         print "lighting.change_light_settings() obj=", p_obj
         g_logger.info("Turn Light {0:} to level {1:}.".format(p_obj.Name, p_level))
         for l_module in g_family_module:
-            if g_debug > 0:
+            if g_debug > 1:
                 print " Processing Module ", l_module
             l_module.LightingAPI().change_light_setting(p_obj, p_level)
 
@@ -159,8 +160,18 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, LightingStatusAPI):
                 return l_obj
         return None
 
+def GetLightRef(p_house, p_light):
+    """Return a light object reference for the given light in a house.
+    """
+    for l_obj in Light_Data.itervalues():
+        if l_obj.HouseName == p_house and l_obj.Name == p_light:
+            return l_obj
+    return None
+
 
 def Init():
+    if g_debug > 0:
+        print "lighting.Init()"
     global g_logger
     g_logger = logging.getLogger('PyHouse.Lighting')
     g_logger.info("Initializing.")
@@ -173,6 +184,8 @@ def Init():
 def Start():
     """Allow loading of sub modules and drivers.
     """
+    if g_debug > 0:
+        print "lighting.Start()"
     g_logger.info("Starting.")
     LightingUtility()._start_all_lighting_families()
     g_logger.info("Started.")
@@ -180,16 +193,10 @@ def Start():
 def Stop():
     """Allow cleanup of all drivers.
     """
+    if g_debug > 0:
+        print "lighting.Stop()"
     g_logger.info("Stopping all lighting families.")
     LightingUtility()._stop_all_lighting_families()
     g_logger.info("Stopped.")
-
-def GetLightRef(p_house, p_light):
-    """Return a light object reference for the given light in a house.
-    """
-    for l_obj in Light_Data.itervalues():
-        if l_obj.HouseName == p_house and l_obj.Name == p_light:
-            return l_obj
-    return None
 
 # ## END

@@ -5,10 +5,11 @@ import Pmw
 
 # import gui
 import gui_tools
-import house
+import main.house as house
 import lighting.lighting as lighting
 import schedule.schedule as schedule
 import config_xml
+from main.house import House_Data
 # from src.schedule.schedule import Schedule_Data, ScheduleData
 
 
@@ -16,7 +17,8 @@ g_debug = 1
 VAL_TYPES = schedule.VALID_TYPES
 Schedule_Data = schedule.Schedule_Data
 Light_Data = lighting.Light_Data
-House_Data = house.House_Data
+#
+HouseData = house.House_Data
 Location_Data = house.Location_Data
 Room_Data = house.Room_Data
 
@@ -147,9 +149,12 @@ class ScheduleDialog(gui_tools.GuiTools):
         self.Type = StringVar()
 
     def load_vars(self, p_key):
+        """Get the data to show in the Add/Edit dialog box
+        """
         try:
             l_obj = Schedule_Data[p_key]
         except:
+            # No such schedule - create empty one
             l_obj = schedule.ScheduleData()
             l_obj.Key = p_key
         self.Active.set(self.get_bool(l_obj.Active))
@@ -199,18 +204,27 @@ class ScheduleDialog(gui_tools.GuiTools):
 
     def get_housename(self, p_val):
         self.HouseName.set(p_val)
-        if g_debug > 0: print "get house name - ", p_val
+        if g_debug > 0:
+            print "get house name - ", p_val
+            for l_obj in House_Data.itervalues():
+                if l_obj.Name == p_val:
+                    for l_rm in l_obj.Rooms.itervalues():
+                        print l_rm.Name, ' ',
+                    print
 
     def get_lightname(self, p_val):
         self.LightName.set(p_val)
-        if g_debug > 0: print "get light name - ", p_val
+        if g_debug > 0:
+            print "get light name - ", p_val
 
     def get_roomname(self, p_val):
         self.RoomName.set(p_val)
-        if g_debug > 0: print "get room name - ", p_val
+        if g_debug > 0:
+            print "get room name - ", p_val
 
     def get_type(self, p_val):
         self.Type.set(p_val)
-        if g_debug > 0: print "get type - ", p_val
+        if g_debug > 0:
+            print "get type - ", p_val
 
 # ## END

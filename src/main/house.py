@@ -2,9 +2,13 @@
 
 """Handle the house information.
 
+main/house.py
+
 There is location information for the house.  This is for calculating the
 time of sunrise and sunset.  Additional calculations ma be added such as
 moonrise, tides, etc.
+
+There is one instance of this for each house configured.
 
 Rooms and lights and HVAC are associated with a particular house.
 """
@@ -13,25 +17,39 @@ Rooms and lights and HVAC are associated with a particular house.
 import logging
 
 # Import PyMh files
+import schedule
 import configure.config_xml
 import internet
 import lighting.lighting_tools as lighting_tools
+# import schedule.schedule as schedule
+import weather
 
 House_Data = {}
 Location_Data = {}
 Room_Data = {}
 
+HouseCount = 0
 LocationCount = 0
 RoomCount = 0
-g_debug = 0
+g_debug = 1
 g_logger = None
+g_api = None
 
 
 class HouseData(object):
 
     def __init__(self):
+        global HouseCount
+        HouseCount += 1
         self.Active = False
+        self.Key = 0
         self.Name = None
+        self.Buttons = {}
+        self.Controllers = {}
+        self.Lights = {}
+        self.Location = {}
+        self.Rooms = {}
+        self.Schedule = {}
 
 class LocationData(lighting_tools.CoreData):
 
@@ -170,85 +188,80 @@ class HouseAPI(lighting_tools.CoreAPI):
     """
     """
 
-    def get_LocationCount(self):
-        return LocationCount
-
-    def get_RoomCount(self):
-        return RoomCount
-
-    def load_all_locations(self, p_dict):
-        """Get the data from the config file.
-        """
-        for l_dict in p_dict.itervalues():
-            self.load_location(l_dict)
-
-    def load_location(self, p_dict):
-        l_house = HouseData()
-        l_entry = LocationData()
-        l_entry.Active = self.getBool(p_dict, 'Active')
-        l_house.Active = l_entry.Active
-        l_entry.City = self.getText(p_dict, 'City')
-        l_entry.Latitude = self.getFloat(p_dict, 'Latitude')
-        l_entry.Longitude = self.getFloat(p_dict, 'Longitude')
-        l_entry.Key = self.get_LocationCount()
-        l_entry.Name = self.getText(p_dict, 'Name')
-        l_house.Name = l_entry.Name
-        l_entry.Phone = self.getText(p_dict, 'Phone')
-        l_entry.SavingTime = self.getFloat(p_dict, 'SavingTime')
-        l_entry.State = self.getText(p_dict, 'State')
-        l_entry.Street = self.getText(p_dict, 'Street')
-        l_entry.TimeZone = self.getFloat(p_dict, 'TimeZone')
-        l_entry.ZipCode = self.getText(p_dict, 'ZipCode')
-        Location_Data[l_entry.Key] = l_entry
-        House_Data[l_entry.Key] = l_house
-
     def load_xml_house(self):
         """Load all the xml house info.
-        If there is none, fall back to using the old config files.
-        This fallback is temporary until the xml and gui is fully functional.
         """
-        configure.config_xml.ReadConfig().read_houses()
+        global House_Data, Location_Data, Room_Data
+        if g_debug > 1:
+            print "house.load_xml_house() 1 ", Location_Data, Room_Data
+        House_Data, Location_Data = configure.config_xml.ReadConfig().read_houses()
+        if g_debug > 1:
+            print "house.load_xml_house() 2 ", Location_Data, Room_Data
+
+    def save_xml_house(self):
+        pass
+
+    def dump_house(self):
+        if g_debug > 0:
+            print "*** House ****"
+            for l_obj in House_Data.itervalues():
+                self.dump_device(l_obj, 'House')
 
     def dump_location(self):
         if g_debug > 8:
-            print "***** All House Locations ***"
+            print "***** All House Locations ***", Location_Data
             for l_key, l_obj in Location_Data.iteritems():
                 self.dump_device(l_obj, 'Location', l_key)
             print
 
-    def load_all_rooms(self, p_dict):
-        for l_dict in p_dict.itervalues():
-            self.load_room(l_dict)
-
-    def load_room(self, p_dict):
-        l_obj = RoomData()
-        l_obj.Active = self.getBool(p_dict, 'Active')
-        l_obj.Comment = self.getText(p_dict, 'Comment')
-        l_obj.Corner = self.getText(p_dict, 'Corner')
-        l_obj.HouseName = self.getText(p_dict, 'HouseName')
-        l_obj.Key = self.get_RoomCount()
-        l_obj.Name = self.getText(p_dict, 'Name')
-        l_obj.Size = self.getText(p_dict, 'Size')
-        Room_Data[l_obj.Key] = l_obj
-
     def dump_rooms(self):
         if g_debug > 8:
-            print "***** All House Rooms *****"
+            print "***** All House Rooms *****", Room_Data
             for l_key, l_obj in Room_Data.iteritems():
                 self.dump_device(l_obj, 'Room', l_key)
             print
 
 
-def Init():
-    global g_logger
-    g_logger = logging.getLogger('PyHouse.House')
-    g_logger.info("Initializing.")
-    HouseAPI().load_xml_house()
-    HouseAPI().dump_location()
-    HouseAPI().dump_rooms()
-    internet.Init()
+class API(HouseAPI):
+    """
+    """
 
-def Start():
-    pass
+    def __init__(self):
+        if g_debug > 0:
+            print "house.Init()"
+        global g_logger
+        g_logger = logging.getLogger('PyHouse.House')
+        g_logger.info("Initializing.")
+        #
+        schedule.schedule.Init()
+        internet.Init()
+        weather.Init()
+        g_logger.info("Initialized.")
+
+    def Start(self):
+        if g_debug > 0:
+            print "house.Start()"
+        g_logger.info("Starting.")
+        self.load_xml_house()
+        self.dump_house()
+        self.dump_location()
+        self.dump_rooms()
+        #
+        schedule.schedule.Start()
+        internet.Start()
+        weather.Start()
+        g_logger.info("Started.")
+
+
+    def Stop(self):
+        if g_debug > 0:
+            print "house.Stop()"
+        g_logger.info("Stopping.")
+        self.save_xml_house()
+        #
+        schedule.schedule.Stop()
+        internet.Stop()
+        weather.Stop()
+        g_logger.info("Stopped.")
 
 # ##  END

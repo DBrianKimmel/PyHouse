@@ -12,7 +12,7 @@ name of the real/runtime XML config file.
 import sys
 
 
-g_debug = 9
+g_debug = 0
 
 
 class ConfigEtc(object):
@@ -47,6 +47,8 @@ def find_etc_config_file():
             continue
         else:
             l_ret = l_line
+            if g_debug > 1:
+                print "config_etc.find_etc_config_file() found", l_ret
             return l_ret
     return None
 

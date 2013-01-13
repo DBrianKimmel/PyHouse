@@ -15,13 +15,13 @@ Read/reread the schedule file at:
 # Import system type stuff
 import datetime
 import logging
-import time
 from twisted.internet import reactor
 
 # Import PyMh files
 import configure
 import entertainment.entertainment as entertainment
 import lighting.lighting as lighting
+import schedule
 import sunrisesunset
 
 callLater = reactor.callLater
@@ -31,7 +31,7 @@ Schedule_Data = {}
 ScheduleCount = 0
 Scheduled_Namelist = []
 
-g_debug = 0
+g_debug = 1
 g_logger = None
 
 VALID_TYPES = ['Device', 'Scene']
@@ -114,27 +114,46 @@ class ScheduleExecution(ScheduleAPI):
 
 class ScheduleUtility(ScheduleExecution):
 
+    def _find_numbers(self, p_field):
+        pass
+
     def _extract_time(self, p_timefield):
         """Convert the schedule time to an actual time of day.
         Sunset and sunrise are converted.
         Arithmetic is performed.
         seconds are forced to 00.
-        Returns a datetime.time of the Name information.  Be careful of date wrapping!
+
+        @param p_timefield: a text field containing time information.
+        @return: datetime.time of the time information.  Be careful of date wrapping!
 
         WIP
         """
-        l_timefield = p_timefield
-        if 'sunset' in l_timefield:
+        l_ptime = p_timefield
+        l_timefield = datetime.time(0, 0, 0)
+        if 'sunset' in p_timefield:
             l_timefield = self.m_sunset
-        elif 'sunrise' in l_timefield:
+            l_ptime = l_ptime[6:]
+        elif 'sunrise' in p_timefield:
             l_timefield = self.m_sunrise
+            l_ptime = l_ptime[7:]
+        #
+        if ':' in p_timefield:
+            try:
+                h, m = map(int, p_timefield.split(':'))
+                l_ret = datetime.time(h, m, 0)
+            except ValueError:
+                h, m = map(int, l_ptime.split(':'))
+                l_ret = datetime.time(h, m, 0)
         else:
-            l_time = time.strptime(p_timefield, '%H:%M')
-            l_timefield = datetime.time(l_time.tm_hour, l_time.tm_min)
-        if '+' in p_timefield:
-            pass
+            l_ret = datetime.time(0, 0, 0)
+        #
         if '-' in p_timefield:
-            pass
+            l_td = datetime.timedelta(hours = l_timefield.hour, minutes = l_timefield.minute) - datetime.timedelta(hours = l_ret.hour, minutes = l_ret.minute)
+        else:
+            l_td = datetime.timedelta(hours = l_timefield.hour, minutes = l_timefield.minute) + datetime.timedelta(hours = l_ret.hour, minutes = l_ret.minute)
+        l_timefield = datetime.time(hour = int(l_td.seconds / 3600), minute = int((l_td.seconds % 3600) / 60))
+        if g_debug > 3:
+            print "schedule._extract_time({0:}) = {1:}".format(p_timefield, l_timefield)
         return l_timefield
 
     def _make_delta(self, p_time):
@@ -151,9 +170,9 @@ class ScheduleUtility(ScheduleExecution):
         l_now = datetime.datetime.now()
         l_time_now = datetime.time(l_now.hour, l_now.minute, l_now.second)
         try:
-            sunrisesunset.Start()
-            self.m_sunset = sunrisesunset.SSAPI().get_sunset()
-            self.m_sunrise = sunrisesunset.SSAPI().get_sunrise()
+            schedule.sunrisesunset.Start()
+            self.m_sunset = schedule.sunrisesunset.SSAPI().get_sunset()
+            self.m_sunrise = schedule.sunrisesunset.SSAPI().get_sunrise()
         except:
             self.m_sunrise = '06:00'
             self.m_sunset = '18:00'
@@ -189,29 +208,36 @@ class ScheduleUtility(ScheduleExecution):
 def Init():
     """Set up the scheduled items initialization.
     """
-    global g_logger
+    if g_debug > 0:
+        print "schedule.Init()"
+    global g_logger, g_api
     g_logger = logging.getLogger('PyHouse.Schedule')
     g_logger.info("Initializing.")
-    l_api = ScheduleAPI()
-    sunrisesunset.Init()
+    g_api = ScheduleAPI()
+    schedule.sunrisesunset.Init()
     entertainment.Init()
     lighting.Init()
-    l_api.load_schedules_xml()
-    l_api.dump_all_schedules()
     g_logger.info("Initialized.")
-    return l_api
+    return g_api
 
 def Start():
+    if g_debug > 0:
+        print "schedule.Start()"
     g_logger.info("Starting.")
+    schedule.sunrisesunset.Start()
+    g_api.load_schedules_xml()
+    g_api.dump_all_schedules()
+    ScheduleUtility().get_next_sched()
+    #
+    entertainment.Start()
     lighting.Start()
-    Reload()
     g_logger.info("Started.")
 
-def Reload():
-    ScheduleUtility().get_next_sched()
-
 def Stop():
+    if g_debug > 0:
+        print "schedule.Stop()"
     g_logger.info("Stopping.")
+    entertainment.Stop()
     lighting.Stop()
     g_logger.info("Stopped.\n\n\n")
 

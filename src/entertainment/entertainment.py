@@ -12,18 +12,15 @@ import logging
 # from twisted.web import xmlrpc, client
 from twisted.internet import reactor
 
-# Import PyMh files
+# Import coherence files
 from coherence.base import Coherence
 from coherence.upnp.devices.control_point import ControlPoint
 from coherence.upnp.core import DIDLLite
-# from coherence.upnp.core import ssdp
-# from coherence.upnp.core.msearch import MSearch
-# from coherence.upnp.devices.dimmable_light import DimmableLight
 from coherence.upnp.devices.dimmable_light_client import DimmableLightClient
-# from coherence.upnp.services.servers.dimming_server import DimmingServer
+
 
 Entertainment_Data = {}
-g_debug = 0
+g_debug = 1
 g_logger = None
 g_upnp = None
 
@@ -101,7 +98,7 @@ class UPnPControlPoint(object):
         """
         @param device: an instance of coherence.upnp.core.Device()
         """
-        if g_debug > 0:
+        if g_debug > 1:
             print '__Found = Device -- Signal: Coherence.UPnP.Device.detection_completed'
             print "   Device Name:   {0:s}".format(device.get_friendly_name())
             print "   Device Type:   {0:s}".format(device.get_device_type())
@@ -261,18 +258,22 @@ Will set a dimmable lite with device number <ID> to level <LEVEL>
         # 'Coherence.UPnP.EmbeddedDeviceClient.detection_completed
 
 def Init():
-    global g_logger, g_upnp
     if g_debug > 0:
-        print "Entertainment.Init()"
+        print "entertainment.Init()"
+    global g_logger
     g_logger = logging.getLogger('PyMh.Entertainment')
     g_logger.info("Initializing.")
-    g_upnp = UPnPControlPoint()
     g_logger.info("Initialized.")
 
 def Start():
-    pass
+    if g_debug > 0:
+        print "entertainment.Start()"
+    global g_upnp
+    g_upnp = UPnPControlPoint()
 
 def Stop():
+    if g_debug > 0:
+        print "entertainment.Stop()"
     pass
 
 # ## END

@@ -28,9 +28,9 @@ ACK_MSG = 0x40
 
 # Timeouts for send/receive delays
 SEND_TIMEOUT = 0.8
-RECEIVE_TIMEOUT = 0.3
+RECEIVE_TIMEOUT = 0.3  # this is for fetching data in the rx buffer
 
-g_debug = 9
+g_debug = 0
 g_driver = []
 g_logger = None
 g_queue = None
@@ -334,7 +334,8 @@ class PimDriverInterface(DecodeResponses):
         except  Queue.Empty:
             return
         l_send = self._convert_pim(l_command)
-        print "UPB_Pim.dequeue_and_send()", l_send
+        if g_debug > 0:
+            print "UPB_Pim.dequeue_and_send()", l_send
         try:
             g_pim[0].write_device(l_send)
         except IOError:
@@ -438,14 +439,17 @@ class UpbPimAPI(CreateCommands):
                 print "UPB_Pim._find_all_upb_controllers() - Name:", l_pim.Name
             if l_obj.Interface.lower() == 'serial':
                 import drivers.Driver_Serial
-                l_driver = drivers.Driver_Serial.SerialDriverMain(l_obj)
+                l_driver = drivers.Driver_Serial.Init()
+                l_driver = drivers.Driver_Serial.Start(l_obj)
             elif l_obj.Interface.lower() == 'ethernet':
                 import drivers.Driver_Ethernet
-                l_driver = drivers.Driver_Ethernet.EthernetDriverMain(l_obj)
+                l_driver = drivers.Driver_Ethernet.Init()
+                l_driver = drivers.Driver_Ethernet.Start(l_obj)
             elif l_obj.Interface.lower() == 'usb':
                 # TODO: Detect any other controllers here and load them
                 import drivers.Driver_USB_17DD_5500
-                l_driver = drivers.Driver_USB_17DD_5500.Init(l_obj)
+                l_driver = drivers.Driver_USB_17DD_5500.Init()
+                l_driver = drivers.Driver_USB_17DD_5500.Start(l_obj)
             else:
                 g_logger.error("UPB PIM has no known interface type! {0}, {1:}".format(l_pim.Name, l_pim.Interface))
                 l_driver = None

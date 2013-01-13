@@ -16,12 +16,28 @@ import logging
 # Import PyHouse modules
 
 
-class EthernetDriverMain(object):
-    """
-    """
+g_debug = 1
+g_logger = None
 
-    def __init__(self, p_obj):
-        self.m_logger = logging.getLogger('PyHouse.EthernetDriver')
-        self.m_logger.info(" Initializing Ethernet port")
+def Init():
+    """
+    @param p_obj: is the Controller_Data object we are using.
+    """
+    if g_debug > 0:
+        print "Driver_Ethernet.Init()"
+    global g_logger
+    g_logger = logging.getLogger('PyHouse.USBDriver')
+    g_logger.info(" Initializing Ethernet port.")
+    return None
 
-### END
+def Start(p_obj):
+    if g_debug > 0:
+        print "Driver_Ethernet.Start()"
+    g_logger.info("Starting Ethernet port.")
+    return None
+
+def Stop():
+    if g_debug > 0:
+        print "Driver_Ethernet.Stop()"
+
+# ## END

@@ -11,9 +11,10 @@ import gui_logs
 import gui_schedule
 import gui_web
 import config_xml
-import PyHouse
 
-g_root = None # TkInter root window.
+g_debug = 1
+g_root = None  # TkInter root window.
+g_parent = None
 
 class MainWindow(object):
     """
@@ -46,57 +47,65 @@ class MainWindow(object):
         Button(self.m_main, text = "Ctl Lights", bg = gui_tools.BG_TOP, command = self.ctl_lights_screen).grid(row = 1, column = 1)
 #
         Button(self.m_main, text = "QUIT", fg = "red", bg = gui_tools.BG_BOTTOM, command = self.main_quit).grid(row = 91, column = 1)
+        Button(self.m_main, text = "Restart", fg = "red", bg = gui_tools.BG_BOTTOM, command = self.main_restart).grid(row = 91, column = 2)
 
     def ctl_lights_screen(self):
-        self.m_main.grid_forget() # Main Window
+        self.m_main.grid_forget()  # Main Window
         gui_ctl_lights.CtlLightsWindow(g_root)
 
     def house_screen(self):
-        self.m_main.grid_forget() # Main Window
+        self.m_main.grid_forget()  # Main Window
         gui_house.HouseWindow(g_root)
 
     def internet_screen(self):
-        self.m_main.grid_forget() # Main Window
+        self.m_main.grid_forget()  # Main Window
         DummyWindow(g_root)
 
     def lighting_screen(self):
-        self.m_main.grid_forget() # Main Window
+        self.m_main.grid_forget()  # Main Window
         gui_lighting.LightingWindow(g_root)
 
     def logging_screen(self):
-        self.m_main.grid_forget() # Main Window
+        self.m_main.grid_forget()  # Main Window
         gui_logs.LogsWindow(g_root)
 
     def scene_screen(self):
-        self.m_main.grid_forget() # Main Window
+        self.m_main.grid_forget()  # Main Window
         DummyWindow(g_root)
 
     def schedule_screen(self):
-        self.m_main.grid_forget() # Main Window
+        self.m_main.grid_forget()  # Main Window
         gui_schedule.ScheduleWindow(g_root, self.m_main)
 
     def upnp_screen(self):
-        self.m_main.grid_forget() # Main Window
+        self.m_main.grid_forget()  # Main Window
         DummyWindow(g_root)
 
     def weather_screen(self):
-        self.m_main.grid_forget() # Main Window
+        self.m_main.grid_forget()  # Main Window
         DummyWindow(g_root)
 
     def webserv_screen(self):
-        self.m_main.grid_forget() # Main Window
+        self.m_main.grid_forget()  # Main Window
         gui_web.WebWindow(g_root)
+
+    def main_restart(self):
+        self.Stop()
+        self.Start()
 
     def main_quit(self):
         config_xml.WriteConfig()
-        self.m_main.grid_forget() # Main Window
+        self.m_main.grid_forget()  # Main Window
         g_root.withdraw()
-        Stop()
+        if g_debug > 0:
+            print "Gui/daemon Quit"
+        g_parent.Quit()
 
 
 class DummyWindow(gui_tools.GuiTools):
     def __init__(self, p_root):
-        print "DummyWindow.__init__"
+        if g_debug > 1:
+            print "DummyWindow.__init__"
         self.m_frame = Frame(p_root)
         self.m_frame.grid(padx = 5, pady = 5)
         self.button = Button(self.m_frame, text = "Back", fg = "red", command = self.main_screen)
@@ -113,7 +122,8 @@ class StatusBar(Frame):
     """
 
     def __init__(self, master):
-        print "StatusBar.__init__"
+        if g_debug > 1:
+            print "StatusBar.__init__"
         Frame.__init__(self, master)
         self.label = Label(self, bd = 1, relief = SUNKEN, anchor = W)
         self.label.grid()
@@ -127,15 +137,23 @@ class StatusBar(Frame):
         self.label.update_idletasks()
 
 
-def Init():
-    #print "Gui Init"
-    global g_root
-    g_root = Tk()
-    tksupport.install(g_root)
-    MainWindow()
+class API(MainWindow):
+    """
+    """
 
-def Stop():
-    print "Gui Stop"
-    PyHouse.Stop('Gui')
+    def __init__(self, p_parent):
+        if g_debug > 0:
+            print "gui.API.__init__() - Parent = ", p_parent
+        global g_root, g_parent
+        g_root = Tk()
+        g_parent = p_parent
+        tksupport.install(g_root)
+        MainWindow()
 
-### END
+    def Start(self):
+        g_parent.Start()
+
+    def Stop(self):
+        g_parent.Stop()
+
+# ## END

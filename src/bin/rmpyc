@@ -1,0 +1,9 @@
+#!/bin/bash
+
+cd /home/briank/workspace/PyHouse/src
+rm -fv *.pyc
+rm -fv */*.pyc
+rm -fv */*/*.pyc
+rm -fv */*/*/*.pyc
+
+### END

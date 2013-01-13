@@ -15,8 +15,10 @@ import logging.handlers
 
 # Import PyMh files
 import configure
+import configure.config_xml
 
 
+g_debug = 0
 Log_Data = {}
 
 class LogData(object):
@@ -30,6 +32,8 @@ class LoggingUtility(object):
     def setup_debug_log (self, p_filename):
         """Debug and more severe goes to the base logger
         """
+        if g_debug > 0:
+            print "log.setup_debug_log() - Name: {0:}".format(p_filename)
         l_debug = logging.getLogger('PyHouse')
         l_formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s - %(message)s')
         l_debug.setLevel(logging.DEBUG)
@@ -50,6 +54,8 @@ class LoggingUtility(object):
 class LoggingMain(LoggingUtility):
 
     def __init__(self):
+        if g_debug > 0:
+            print "log.LoggingMain()"
         Log_Data[0] = LogData()
         configure.config_xml.ReadConfig().read_log_web()
         try:
@@ -57,6 +63,10 @@ class LoggingMain(LoggingUtility):
         except:
             l_debug_name = '/var/log/pyhouse/debug'
             Log_Data[0].Debug = l_debug_name
+        if l_debug_name == None:
+             l_debug_name = '/var/log/pyhouse/debug'
+        if g_debug > 4:
+            print "log.LoggingMain() debug name ", l_debug_name
         try:
             self.m_error_name = Log_Data[0].Error
         except:
@@ -67,4 +77,4 @@ class LoggingMain(LoggingUtility):
     def stop(self):
         logging.shutdown()
 
-### END
+# ## END

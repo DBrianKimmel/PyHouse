@@ -7,7 +7,7 @@ import gui
 import gui_tools
 import lighting.lighting as lighting
 import config_xml
-import house
+import main.house as house
 from operator import attrgetter
 
 
@@ -15,7 +15,6 @@ g_debug = 0
 Light_Data = lighting.Light_Data
 Button_Data = lighting.Button_Data
 Controller_Data = lighting.Controller_Data
-House_Data = house.House_Data
 Location_Data = house.Location_Data
 Room_Data = house.Room_Data
 
@@ -264,6 +263,7 @@ class LightingDialog(gui_tools.GuiTools):
                     l_obj = lighting.LightingData()
                     l_obj.Key = p_key
                     l_obj.Family = 'Insteon'
+                    l_obj.Address = ''
             elif p_kind == 2 or p_kind == 5:
                 l_type = "Controller"
                 try:

@@ -11,7 +11,7 @@ from Tkinter import Frame, Label, Entry, Button, IntVar, E, W
 import gui
 import gui_tools
 import config_xml
-import web_server
+import web.web_server as web_server
 
 Web_Data = web_server.Web_Data
 
@@ -45,4 +45,4 @@ class WebWindow(gui_tools.GuiTools):
         self.frame_delete(self.m_frame)
         gui.MainWindow()
 
-### END
+# ## END

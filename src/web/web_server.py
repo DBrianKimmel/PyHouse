@@ -11,9 +11,8 @@ import datetime
 import logging
 import os
 import random
-#import time
 import twisted.python.components as tpc
-#import nevow
+from twisted.internet import reactor
 from nevow import appserver
 from nevow import flat
 from nevow import inevow
@@ -27,20 +26,16 @@ from nevow.rend import _CARRYOVER
 from formless import iformless
 
 # Import PyMh files
-import configure.config_xml
-import entertainment
-import house
-#import Device_Insteon
-import lighting
+import entertainment.entertainment as entertainment
+import main.house as house
 import lighting.lighting as lighting
-import schedule
-#from lighting import Light_Status
+import schedule.schedule as schedule
 
 
 Light_Data = lighting.Light_Data
-House_Data = house.House_Data
 Location_Data = house.Location_Data
 Room_Data = house.Room_Data
+Schedule_Data = schedule.Schedule_Data
 Web_Data = {}
 
 g_port = 8080
@@ -54,7 +49,7 @@ Lights = {}
 XLight_Data = {}
 XLight_Status = {}
 
-# Only to move the eclipse error flags to one small spot 
+# Only to move the eclipse error flags to one small spot
 T_p = Tag.p
 T_h1 = Tag.h1
 T_td = Tag.td
@@ -178,11 +173,11 @@ xxx queued 0
 
     def locateChild(self, context, segments):
         """Add to the standard find child to handle POST of forms
-        
+
         def form_post_lighting for a submit button valued 'lighting'
         def form_post for the form without a key
         """
-        if segments[0].startswith(SUBMIT): # Handle the form post
+        if segments[0].startswith(SUBMIT):  # Handle the form post
             # Get a method name from the action in the form plus the first word in the button name,
             #  or simply the form action if no button name is specified
             kwargs = {}
@@ -199,7 +194,7 @@ xxx queued 0
                 name = name_prefix
             else:
                 name = name_prefix + '_' + bindingName.split()[0].lower()
-            #print "locateChild - name:", name
+            # print "locateChild - name:", name
             method = getattr(self, 'form_' + name, None)
             print "locateChild - method:", method
             if method is not None:
@@ -227,7 +222,7 @@ xxx queued 0
                         refpath = refpath.child('freeform_hand')
                 if isinstance(l_handler, (url.URL, url.URLOverlay)):
                     refpath, l_handler = l_handler, None
-            #print " -- refpath-1:", refpath
+            # print " -- refpath-1:", refpath
             if refpath is None:
                 redirectAfterPost = request.getComponent(iformless.IRedirectAfterPost, None)
                 if redirectAfterPost is None:
@@ -238,10 +233,10 @@ xxx queued 0
                         refpath = url.here
                 else:
                     self.m_logger.warn("[0.5] IRedirectAfterPost is deprecated. Return a URL instance from your autocallable instead.", DeprecationWarning, 2)
-                    ## Use the redirectAfterPost url
+                    # # Use the redirectAfterPost url
                     ref = str(redirectAfterPost)
                     refpath = url.URL.fromString(ref)
-            #print " -- refpath-2:", refpath
+            # print " -- refpath-2:", refpath
             if l_handler is not None or aspects.get(iformless.IFormErrors) is not None:
                 magicCookie = '%s%s%s' % (datetime.datetime.now(), request.getClientIP(), random.random())
                 refpath = refpath.replace('_nevow_carryover_', magicCookie)
@@ -344,13 +339,13 @@ class HousePage(rend.Page):
         rend.Page.__init__(self)
         self.name = name
 
-    def data_houselist(self, context, data):
+    def data_houselist(self, _context, _data):
         l_house = {}
         for l_key, l_obj in Location_Data.iteritems():
             l_house[l_key] = l_obj
         return l_house
 
-    def render_houselist(self, context, links):
+    def render_houselist(self, _context, links):
         l_ret = []
         l_cnt = 0
         for l_key, l_value in sorted(links.iteritems()):
@@ -423,8 +418,8 @@ class LightingPage(rend.Page, WebLightingData, WebLightingAPI, WebLightingStatus
         for l_key, l_obj in lighting.Light_Data.iteritems():
             if l_obj.Family != 'Insteon': continue
             if l_obj.Type != 'Light': continue
-            #l_obj.CurLevel = lighting.Light_Data[l_key].CurLevel
-            #if l_obj.Type == 'Light':
+            # l_obj.CurLevel = lighting.Light_Data[l_key].CurLevel
+            # if l_obj.Type == 'Light':
             l_light[l_key] = l_obj
         return l_light
 
@@ -610,7 +605,7 @@ class SchedulePage(rend.Page):
     def render_schedlist(self, _context, links):
         """
         @param: _context is ...
-        @param: links are ...  
+        @param: links are ...
         @return: the list to be added into the stan.dom
         """
         global l_ret
@@ -721,17 +716,17 @@ class RootPage(ManualFormMixin, EntertainmentPage, HousePage, LightingPage, Loca
                             T_td[ T_input(type = 'submit', value = '5,4', name = BUTTON), ],
                             T_td[ T_input(type = 'submit', value = '5,5', name = BUTTON), ],
                             ],
-                        ] # table
-                    ] # form
-                ] # body
-            ] # html
-        ) # stan
+                        ]  # table
+                    ]  # form
+                ]  # body
+            ]  # html
+        )  # stan
 
     def __init__(self, name):
         rend.Page.__init__(self)
         self.name = name
 
-    def form_post_controllers(self, **kwargs):
+    def form_post_controllers(self, **_kwargs):
         return ControllersPage('controllers')
 
     def form_post_entertainment(self, **_kwargs):
@@ -745,7 +740,7 @@ class RootPage(ManualFormMixin, EntertainmentPage, HousePage, LightingPage, Loca
         print "form_post_lighting (RootPage)", kwargs
         return LightingPage('Lighting')
 
-    def form_post_rooms(self, **kwargs):
+    def form_post_rooms(self, **_kwargs):
         return RoomsPage('rooms')
 
     def form_post_scenes(self, **_kwargs):
@@ -760,23 +755,25 @@ class RootPage(ManualFormMixin, EntertainmentPage, HousePage, LightingPage, Loca
 
 
 def Init():
+    return
     global g_logger
     Web_Data[0] = WebData()
     Web_Data[0].WebPort = 8080
     g_logger = logging.getLogger('PyHouse.WebServer')
     entertainment.Init()
-    config_xml.ReadConfig().read_log_web()
+    # config_xml.ReadConfig().read_log_web()
     g_logger.info("Initialized - Start the web server on port {0:}".format(g_port))
 
-def Start(p_reactor):
+def Start():
+    return
     g_site_dir = os.path.split(os.path.abspath(__file__))[0]
     print "Webserver path = ", g_site_dir
     l_site = appserver.NevowSite(RootPage('/'))
     WebUtilities().build_child_tree()
-    p_reactor.listenTCP(g_port, l_site)
+    reactor.listenTCP(g_port, l_site)
     g_logger.info("Started.")
 
 def Stop():
     pass
 
-### END
+# ## END

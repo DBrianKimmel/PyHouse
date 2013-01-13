@@ -5,7 +5,7 @@ from Tkinter import Frame, Label, Entry, Button, StringVar, E, W
 import gui
 import gui_tools
 import config_xml
-import log
+import main.log as log
 
 Log_Data = log.Log_Data
 
@@ -44,4 +44,4 @@ class LogsWindow(gui_tools.GuiTools):
         self.frame_delete(self.m_frame)
         gui.MainWindow()
 
-### END
+# ## END
