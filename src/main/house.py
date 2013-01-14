@@ -194,7 +194,7 @@ class HouseAPI(lighting_tools.CoreAPI):
         global House_Data, Location_Data, Room_Data
         if g_debug > 1:
             print "house.load_xml_house() 1 ", Location_Data, Room_Data
-        House_Data, Location_Data = configure.config_xml.ReadConfig().read_houses()
+        House_Data = configure.config_xml.ReadConfig().read_houses()
         if g_debug > 1:
             print "house.load_xml_house() 2 ", Location_Data, Room_Data
 

@@ -195,33 +195,6 @@ class ReadConfig(ConfigTools):
             print "config_xml.read_rooms()  loaded {0:} rooms".format(l_count)
         return l_dict
 
-    def read_houses(self):
-        """Read house information, location and rooms.
-
-        The main data is House_Data - one dict entry for each house.
-        """
-        l_count = 0
-        try:
-            l_sect = self.m_root.find('Houses')
-            l_list = l_sect.iterfind('House')  # use l_sect to force error if it is missing
-        except AttributeError:
-            print "Warning - in read_house - Adding 'Houses' section"
-            l_sect = ET.SubElement(self.m_root, 'Houses')
-            l_list = l_sect.iterfind('House')
-        for l_house in l_list:
-            l_obj = House.HouseData()
-            l_name, l_key, l_loc = self.read_location(l_house)
-            l_obj.Name = l_name
-            l_obj.Key = l_key
-            l_obj.Location = l_loc
-            House_Data[l_key] = l_obj
-            l_obj.Rooms = self.read_rooms(l_house, l_name)
-            l_obj.Schedule = self.read_schedules(l_name)
-            l_count += 1
-        if g_debug > 1:
-            print "config_xml.read_houses() loaded {0:} houses.".format(l_count)
-        return House_Data, Location_Data
-
     def read_light_common(self, p_entry, p_obj):
         p_obj.Key = int(p_entry.get('Key'))
         p_obj.Name = p_entry.get('Name')
@@ -248,13 +221,13 @@ class ReadConfig(ConfigTools):
             p_obj.Responder = p_entry.findtext('Responder')
         return p_obj
 
-    def read_lights(self):
+    def read_lights(self, p_house = ''):
         l_count = 0
         try:
             l_sect = self.m_root.find('Lighting')
             l_list = l_sect.iterfind('Controllers')  # use l_sect to force error if Lighting is missing
         except AttributeError:
-            print "Warning - in read_lights - Adding 'Lighting' secyion"
+            print "Warning - in read_lights - Adding 'Lighting' section"
             l_sect = ET.SubElement(self.m_root, 'Lighting')
             ET.SubElement(l_sect, 'Lights')
             ET.SubElement(l_sect, 'Controllers')
@@ -321,6 +294,33 @@ class ReadConfig(ConfigTools):
             Button_Data[l_obj.Key] = l_obj
             l_count += 1
         return l_count
+
+    def read_houses(self):
+        """Read house information, location and rooms.
+
+        The main data is House_Data - one dict entry for each house.
+        """
+        l_count = 0
+        try:
+            l_sect = self.m_root.find('Houses')
+            l_list = l_sect.iterfind('House')  # use l_sect to force error if it is missing
+        except AttributeError:
+            print "Warning - in read_house - Adding 'Houses' section"
+            l_sect = ET.SubElement(self.m_root, 'Houses')
+            l_list = l_sect.iterfind('House')
+        for l_house in l_list:
+            l_obj = House.HouseData()
+            l_name, l_key, l_loc = self.read_location(l_house)
+            l_obj.Name = l_name
+            l_obj.Key = l_key
+            l_obj.Location = l_loc
+            House_Data[l_key] = l_obj
+            l_obj.Rooms = self.read_rooms(l_house, l_name)
+            l_obj.Schedule = self.read_schedules(l_name)
+            l_count += 1
+        if g_debug > 1:
+            print "config_xml.read_houses() loaded {0:} houses.".format(l_count)
+        return House_Data
 
     def read_log_web(self):
         if g_debug > 8:
