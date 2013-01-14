@@ -28,7 +28,7 @@ Schedule_Data = schedule.Schedule_Data
 Log_Data = Log.Log_Data
 Web_Data = web_server.Web_Data
 
-g_debug = 0
+g_debug = 2
 g_xmltree = ''
 g_logger = None
 
@@ -105,6 +105,41 @@ class ReadConfig(ConfigTools):
             g_xmltree = ET.parse(self.m_filename)
         self.m_root = g_xmltree.getroot()
 
+    def read_schedules(self, p_name = ''):
+        l_count = 0
+        l_dict = {}
+        try:
+            l_sect = self.m_root.find('Schedules')
+            l_list = l_sect.iterfind('Schedule')
+        except AttributeError:
+            print "Warning - in read_Schedules - Adding 'Schedules'"
+            l_sect = ET.SubElement(self.m_root, 'Schedules')
+            l_list = l_sect.iterfind('Schedule')
+        for l_entry in l_list:
+            l_obj = schedule.ScheduleData()
+            l_obj.Active = self.get_bool(l_entry.get('Active'))
+            l_obj.HouseName = l_name = l_entry.findtext('HouseName')
+            l_obj.Key = int(l_entry.get('Key'))
+            l_obj.Level = int(l_entry.findtext('Level'))
+            l_obj.LightName = l_entry.findtext('LightName')
+            l_obj.Name = l_entry.get('Name')
+            l_obj.Rate = int(l_entry.findtext('Rate'))
+            l_obj.RoomName = l_entry.findtext('RoomName')
+            l_obj.Time = l_entry.findtext('Time')
+            l_obj.Type = l_entry.findtext('Type')
+            Schedule_Data[l_obj.Key] = l_obj
+            #
+            if p_name != '':
+                if l_name == p_name:
+                    l_dict[l_count] = l_obj
+                    l_count += 1
+            else:
+                l_dict[l_count] = l_obj
+                l_count += 1
+        if g_debug > 1:
+            print "config_xml.read_schedule()  loaded {0:} scheds for {1:}".format(l_count, p_name)
+        return l_dict
+
     def read_location(self, p_entry):
         if g_debug > 7:
             print "config_xml.read_location()"
@@ -143,7 +178,7 @@ class ReadConfig(ConfigTools):
         l_list = l_rooms.iterfind('Room')
         for l_entry in l_list:
             l_obj = House.RoomData()
-            l_obj.Name = l_entry.get('Name')
+            l_obj.Name = l_name = l_entry.get('Name')
             l_obj.Key = l_key = int(l_entry.get('Key'))
             l_obj.HouseName = p_house
             l_obj.Active = self.get_bool(l_entry.get('Active'))
@@ -181,6 +216,7 @@ class ReadConfig(ConfigTools):
             l_obj.Location = l_loc
             House_Data[l_key] = l_obj
             l_obj.Rooms = self.read_rooms(l_house, l_name)
+            l_obj.Schedule = self.read_schedules(l_name)
             l_count += 1
         if g_debug > 1:
             print "config_xml.read_houses() loaded {0:} houses.".format(l_count)
@@ -283,31 +319,6 @@ class ReadConfig(ConfigTools):
             l_obj = lighting.ButtonData()
             self.read_light_common(l_entry, l_obj)
             Button_Data[l_obj.Key] = l_obj
-            l_count += 1
-        return l_count
-
-    def read_schedules(self):
-        l_count = 0
-        try:
-            l_sect = self.m_root.find('Schedules')
-            l_list = l_sect.iterfind('Schedule')
-        except AttributeError:
-            print "Warning - in read_Schedules - Adding 'Schedules'"
-            l_sect = ET.SubElement(self.m_root, 'Schedules')
-            l_list = l_sect.iterfind('Schedule')
-        for l_entry in l_list:
-            l_obj = schedule.ScheduleData()
-            l_obj.Active = self.get_bool(l_entry.get('Active'))
-            l_obj.HouseName = l_entry.findtext('HouseName')
-            l_obj.Key = int(l_entry.get('Key'))
-            l_obj.Level = int(l_entry.findtext('Level'))
-            l_obj.LightName = l_entry.findtext('LightName')
-            l_obj.Name = l_entry.get('Name')
-            l_obj.Rate = int(l_entry.findtext('Rate'))
-            l_obj.RoomName = l_entry.findtext('RoomName')
-            l_obj.Time = l_entry.findtext('Time')
-            l_obj.Type = l_entry.findtext('Type')
-            Schedule_Data[l_obj.Key] = l_obj
             l_count += 1
         return l_count
 

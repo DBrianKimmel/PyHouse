@@ -90,8 +90,8 @@ class MainWindow(object):
         gui_web.WebWindow(g_root)
 
     def main_restart(self):
-        self.Stop()
-        self.Start()
+        g_parent.Stop()
+        g_parent.Start()
 
     def main_quit(self):
         config_xml.WriteConfig()
@@ -149,11 +149,5 @@ class API(MainWindow):
         g_parent = p_parent
         tksupport.install(g_root)
         MainWindow()
-
-    def Start(self):
-        g_parent.Start()
-
-    def Stop(self):
-        g_parent.Stop()
 
 # ## END
