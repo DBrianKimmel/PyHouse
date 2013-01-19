@@ -14,10 +14,10 @@ from lighting import lighting
 # Configure_Data = configure_mh.Configure_Data
 
 
-class X10LightingData(lighting.LightingData):
+class X10LightingData(lighting.LightData):
 
     def __init__(self):
-        lighting.LightingData.__init__(self)
+        lighting.LightData.__init__(self)
         self.set_family("X10")
         self.Address = 'asdf'
 

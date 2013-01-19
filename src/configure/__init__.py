@@ -39,17 +39,4 @@ except ImportError, exc:
     sys.stderr.write("Tkinter is required.  Please install it.\n")
     raise
 
-import config_etc
-import configure.config_xml as config_xml
-import xml_tools
-import gui
-import gui_ctl_lights
-import gui_house
-import gui_lighting
-import gui_logs
-import gui_schedule
-import gui_tools
-import gui_upnp
-import gui_web
-
 # ## END

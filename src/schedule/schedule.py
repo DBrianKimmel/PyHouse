@@ -54,8 +54,8 @@ class ScheduleData(object):
         self.Type = 'Device'
 
     def __repr__(self):
-        l_ret = "Schedule SlotName:{0:}, LightName:{1:}, Time:{2:}, Level:{3:}, Rate:{4:}, Type:{5:}".format(
-                self.Name, self.LightName, self.Time, self.Level, self.Rate, self.Type)
+        l_ret = "Schedule SlotName:{0:}, LightName:{1:}, Time:{2:}, Level:{3:}, Rate:{4:}, Type:{5:}, House{6:}".format(
+                self.Name, self.LightName, self.Time, self.Level, self.Rate, self.Type, self.HouseName)
         return l_ret
 
 
@@ -65,7 +65,7 @@ class ScheduleAPI(ScheduleData):
         return ScheduleCount
 
     def load_schedules_xml(self):
-        configure.config_xml.ReadConfig().read_schedules()
+        configure.config_xml.ReadConfig().read_houses()
 
     def dump_all_schedules(self):
         if g_debug < 9:
@@ -83,7 +83,7 @@ class ScheduleAPI(ScheduleData):
         if g_debug > 5:
             print 'schedule.scheduleAPI.update_schedule({0:}'.format(p_schedule)
         Schedule_Data = p_schedule
-        configure.config_xml.WriteConfig().write_schedules()
+        configure.config_xml.WriteConfig().write_houses()
 
 
 class ScheduleExecution(ScheduleAPI):
@@ -205,40 +205,44 @@ class ScheduleUtility(ScheduleExecution):
         return l_next
 
 
-def Init():
-    """Set up the scheduled items initialization.
-    """
-    if g_debug > 0:
-        print "schedule.Init()"
-    global g_logger, g_api
-    g_logger = logging.getLogger('PyHouse.Schedule')
-    g_logger.info("Initializing.")
-    g_api = ScheduleAPI()
-    schedule.sunrisesunset.Init()
-    entertainment.Init()
-    lighting.Init()
-    g_logger.info("Initialized.")
-    return g_api
+class API(ScheduleUtility):
 
-def Start():
-    if g_debug > 0:
-        print "schedule.Start()"
-    g_logger.info("Starting.")
-    schedule.sunrisesunset.Start()
-    g_api.load_schedules_xml()
-    g_api.dump_all_schedules()
-    ScheduleUtility().get_next_sched()
-    #
-    entertainment.Start()
-    lighting.Start()
-    g_logger.info("Started.")
+    def __init__(self, p_obj):
+        if g_debug > 0:
+            print "schedule.Init()"
+        global g_logger, g_api
+        g_logger = logging.getLogger('PyHouse.Schedule')
+        g_logger.info("Initializing house {0:}".format(p_obj.Name))
+        g_api = ScheduleAPI()
+        schedule.sunrisesunset.Init()
+        entertainment.Init()
+        lighting.Init()
+        g_logger.info("Initialized.")
 
-def Stop():
-    if g_debug > 0:
-        print "schedule.Stop()"
-    g_logger.info("Stopping.")
-    entertainment.Stop()
-    lighting.Stop()
-    g_logger.info("Stopped.\n\n\n")
+    def Start(self, p_obj):
+        """
+
+        @param p_obj: is a House object for the house being scheduled
+        """
+        if g_debug > 0:
+            print "schedule.Start() for house {0:}".format(p_obj.Name)
+        g_logger.info("Starting.")
+        schedule.sunrisesunset.Start()
+        g_api.load_schedules_xml()
+        g_api.dump_all_schedules()
+        ScheduleUtility().get_next_sched()
+        #
+        entertainment.Start()
+        lighting.Start()
+        g_logger.info("Started.")
+        return self
+
+    def Stop(self):
+        if g_debug > 0:
+            print "schedule.Stop()"
+        g_logger.info("Stopping.")
+        entertainment.Stop()
+        lighting.Stop()
+        g_logger.info("Stopped.\n\n\n")
 
 # ## END

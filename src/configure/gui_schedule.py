@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from Tkinter import Frame, Label, Entry, Toplevel, Button, IntVar, StringVar, W, E, DISABLED, SUNKEN, RAISED
+from Tkinter import Frame, Toplevel, Button, IntVar, StringVar, W, E, DISABLED, SUNKEN, RAISED
 import Pmw
 
 # import gui
@@ -15,10 +15,10 @@ from main.house import House_Data
 
 g_debug = 1
 VAL_TYPES = schedule.VALID_TYPES
-Schedule_Data = schedule.Schedule_Data
-Light_Data = lighting.Light_Data
+XSchedule_Data = schedule.Schedule_Data
+XXLight_Data = lighting.Light_Data
 #
-HouseData = house.House_Data
+House_Data = house.House_Data
 Location_Data = house.Location_Data
 Room_Data = house.Room_Data
 
@@ -27,23 +27,58 @@ class ScheduleWindow(gui_tools.GuiTools):
     """
 
     def __init__(self, p_root, p_main_frame = None):
+        """Initialize then bring up the 'select house' menu.
+        """
         self.m_root = p_root
         self.m_main_frame = p_main_frame
-        self.m_sched_frame = Frame(p_root)
+        self.m_house_frame = Frame(p_root)
+        self.m_house_frame.grid(padx = 5, pady = 5)
+        self.m_ix = 0
+        self.show_all_houses()
+        Button(self.m_house_frame, text = "Back", fg = "red", bg = gui_tools.BG_BOTTOM, command = self.main_screen).grid(row = self.m_ix, column = 1)
+
+    def show_all_houses(self):
+        """Place a button for each house in the select house menu.
+        """
+        l_house = []
+        for l_obj in House_Data.itervalues():
+            l_relief = SUNKEN
+            if l_obj.Active: l_relief = RAISED
+            l_row, l_col = self.get_grid(self.m_ix)
+            l = Button(self.m_house_frame, text = l_obj.Name,
+                      relief = l_relief,
+                      command = lambda x = l_obj: self.show_one_house(x))
+            l_house.append(l)
+            l_house[self.m_ix].grid(row = l_row, column = l_col, padx = 5, sticky = W)
+            self.m_ix += 1
+
+    def show_one_house(self, p_obj):
+        """Display the schedule selection with the schedules for the selected house.
+
+        @param p_obj: is one House_Data object (see house.py).
+        """
+        self.frame_delete(self.m_house_frame)
+        self.m_sched_frame = Frame(self.m_root)
         self.m_sched_frame.grid(padx = 5, pady = 5)
         self.m_ix = 0
-        self.show_all_schedules()
+        self.show_one_house_schedules(p_obj)
         Button(self.m_sched_frame, text = "ADD Schedule", bg = gui_tools.BG_BOTTOM, command = self.add_schedule).grid(row = self.m_ix, column = 0)
         Button(self.m_sched_frame, text = "Back", fg = "red", bg = gui_tools.BG_BOTTOM, command = self.main_screen).grid(row = self.m_ix, column = 1)
 
-    def show_all_schedules(self):
+    def show_one_house_schedules(self, p_obj):
+        """Display all the buttons for each schedule of the selected house.
+
+        @param p_obj: is one House_Data object (see house.py).
+        """
         l_sched = []
-        for l_obj in Schedule_Data.itervalues():
+        for l_obj in p_obj.Schedule.itervalues():
+            if l_obj.HouseName != p_obj.Name:
+                continue
             l_relief = SUNKEN
             if l_obj.Active: l_relief = RAISED
             l_bg, l_fg = self.color_button(int(l_obj.Level))
             l_row, l_col = self.get_grid(self.m_ix)
-            l = Button(self.m_sched_frame, text = l_obj.Name + ' ' + l_obj.LightName,
+            l = Button(self.m_sched_frame, text = str(l_obj.Name) + ' ' + str(l_obj.LightName),
                        bg = l_bg, fg = l_fg, relief = l_relief,
                        command = lambda x = l_obj.Key: self.edit_schedule(x))
             l_sched.append(l)

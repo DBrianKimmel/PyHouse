@@ -18,19 +18,19 @@ LightCount = 0
 g_debug = 1
 
 
-class LightsData(lighting_tools.CoreData):
+class LightData(lighting_tools.CoreData):
 
     def __init__(self):
         global LightCount
         LightCount += 1
         if g_debug > 1:
             print "lighting_lights.LightsData.__init__()"
-        super(LightsData, self).__init__()
+        super(LightData, self).__init__()
         self.Type = 'Light'
         self.CurLevel = 0
 
     def __str__(self):
-        l_str = super(LightsData, self).__str__()
+        l_str = super(LightData, self).__str__()
         l_str = l_str + " Key:{0} ".format(self.get_key())
         return l_str
 

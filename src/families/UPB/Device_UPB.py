@@ -13,7 +13,6 @@ from lighting import lighting
 Button_Data = lighting.Button_Data
 Controller_Data = lighting.Controller_Data
 Light_Data = lighting.Light_Data
-Light_Status = lighting.Light_Status
 
 g_debug = 0
 g_logger = None
@@ -105,13 +104,13 @@ class ControllerAPI(lighting.ControllerAPI, CoreAPI):
         return l_ctlr
 
 
-class LightingData(lighting.LightingData, CoreData):
+class LightData(lighting.LightData, CoreData):
 
     def __init__(self):
-        super(LightingData, self).__init__()
+        super(LightData, self).__init__()
 
     def __str__(self):
-        l_str = super(LightingData, self).__str__()
+        l_str = super(LightData, self).__str__()
         return l_str
 
 class LightingAPI(lighting.LightingAPI, CoreAPI):
@@ -120,7 +119,7 @@ class LightingAPI(lighting.LightingAPI, CoreAPI):
 
     def load_all_lights(self, p_dict):
         for l_dict in p_dict.itervalues():
-            l_light = LightingData()
+            l_light = LightData()
             l_light = self.load_upb_light(l_dict, l_light)
             Light_Data[l_light.Key] = l_light
 

@@ -14,11 +14,15 @@ from twisted.internet import reactor
 # Import PyMh files
 import Device_Insteon
 from tools import PrintBytes
+from main import house
+
 
 callLater = reactor.callLater
 
 
-g_debug = 1
+House_Data = house.House_Data
+
+g_debug = 3
 g_driver = []
 g_logger = None
 g_queue = None
@@ -140,24 +144,6 @@ class InsteonPlmUtility(object):
             pass
         return l_ret
 
-    def _get_obj_using_name(self, p_name):
-        """Return a button/controller/light object with a Name = argument
-
-        @param p_name: string of the object's Name
-
-        @return: the entire object of various types.
-        """
-        for l_obj in Device_Insteon.Light_Data.itervalues():
-            if l_obj.Name == p_name:
-                return l_obj
-        for l_obj in Device_Insteon.Controller_Data.itervalues():
-            if l_obj.Name == p_name:
-                return l_obj
-        for l_obj in Device_Insteon.Button_Data.itervalues():
-            if l_obj.Name == p_name:
-                return l_obj
-        return None
-
     def _get_obj_using_addr(self, p_addr):
         """
         @param p_addr: String 'aa.bb.cc' is the address
@@ -179,28 +165,7 @@ class InsteonPlmUtility(object):
             if l_obj.Address == p_addr:
                 return l_obj
         print "No Insteon object has string {0:} for an Address.".format(p_addr)
-        return Device_Insteon.LightingData()  # an empty new object
-
-    def _get_addr_from_name(self, p_name):
-        """Given a device name, return a 3 bytearray(3) containing the devices
-        address.
-        Addresses are in the data as a string 'C1.A2.33'.
-
-        @param p_name: is the name of a button/controller/light
-
-        @return: a list of 3 bytes that are the address
-                 or bb.aa.dd if no Insteon address exists
-                 or 00.00.00 if not Insteon.
-        """
-        l_obj = self._get_obj_using_name(p_name)
-        if l_obj.Family != 'Insteon':
-            return [0x00, 0x00, 0x00]
-        try:
-            l_str = l_obj.Address
-            return self._str_to_addr_list(l_str)
-        except AttributeError:
-            g_logger.error("_get_addr_from_name() - Did not find 'Address' for Insteon device named={0:}".format(p_name))
-            return [0xbb, 0xaa, 0xdd]
+        return Device_Insteon.LightData()  # an empty new object
 
     def _get_name_from_id(self, p_addr):
         """
@@ -351,16 +316,18 @@ class CreateCommands(PlmDriverInterface, InsteonPlmUtility):
         l_command[1] = plm_commands['plm_info']
         return self.queue_plm_command(l_command)
 
-    def send_62_command(self, p_name, p_cmd1, p_cmd2):
+    def send_62_command(self, p_obj, p_cmd1, p_cmd2):
         """Send Insteon Standard Length Message (8 bytes).
         See page 243 of Insteon Developers Guide.
 
-        @param p_name: is the name of the device
+        @param p_obj: is the Light object of the device
         @param p_cmd1: is the first command byte
         @param p_cmd2: is the second command byte
         @return: the response from queue_plm_command
         """
-        l_addr = self._get_addr_from_name(p_name)
+        if g_debug > 1:
+            print "Insteon_PLM.send_62_command() ", p_obj, p_cmd1, p_cmd2
+        l_addr = self._str_to_addr_list(p_obj.Address)
         l_command = bytearray(8)
         l_command[0] = STX
         l_command[1] = plm_commands['insteon_send']
@@ -370,7 +337,7 @@ class CreateCommands(PlmDriverInterface, InsteonPlmUtility):
         l_command[5] = FLAG_MAX_HOPS + FLAG_HOPS_LEFT  # 0x0F
         l_command[6] = p_cmd1
         l_command[7] = p_cmd2
-        g_logger.debug("Send 62 command to device: {2:}, Command: {0:#X},{1:#X}, Address: ({3:x}.{4:x}.{5:x})".format(p_cmd1, p_cmd2, p_name, l_command[2], l_command[3], l_command[4]))
+        g_logger.debug("Send 62 command to device: {2:}, Command: {0:#X},{1:#X}, Address: ({3:x}.{4:x}.{5:x})".format(p_cmd1, p_cmd2, p_obj.Name, l_command[2], l_command[3], l_command[4]))
         return self.queue_plm_command(l_command)
 
     def send_69_command(self):
@@ -420,16 +387,15 @@ class CreateCommands(PlmDriverInterface, InsteonPlmUtility):
 class LightingAPI(Device_Insteon.LightingAPI, CreateCommands):
 
     def change_light_setting(self, p_obj, p_level):
-        l_name = p_obj.Name
         if g_debug > 0:
-            print "Insteon_PLM change light settings for {0:} to {1:}".format(l_name, p_level)
+            print "Insteon_PLM.change_light_settings()  {0:} to {1:}".format(p_obj.Name, p_level)
         if int(p_level) == 0:
-            self.send_62_command(l_name, message_types['off'], 0)
+            self.send_62_command(p_obj, message_types['off'], 0)
         elif int(p_level) == 100:
-            self.send_62_command(l_name, message_types['on'], 255)
+            self.send_62_command(p_obj, message_types['on'], 255)
         else:
             l_level = int(p_level) * 255 / 100
-            self.send_62_command(l_name, message_types['on'], l_level)
+            self.send_62_command(p_obj, message_types['on'], l_level)
 
     def scan_all_lights(self, p_lights):
         """Exported command - used by other modules.
@@ -437,7 +403,7 @@ class LightingAPI(Device_Insteon.LightingAPI, CreateCommands):
         if g_debug > 0:
             print "insteon_PLM.scan_all_lights"
         for l_obj in p_lights.itervalues():
-            if Device_Insteon.LightingData.get_family(l_obj) != 'Insteon':
+            if Device_Insteon.LightData.get_family(l_obj) != 'Insteon':
                 continue
             if l_obj.get_Type == 'Light':
                 self.scan_one_light(l_obj.Name)
@@ -921,6 +887,50 @@ class LightHandlerAPI(InsteonPlmAPI):
     """
 
     def start_all_controllers(self):
+        for l_obj in House_Data.itervalues():
+            if l_obj.Active != True:
+                continue
+            self.start_one_house(l_obj)
+
+    def start_one_house(self, p_obj):
+        l_count = 0
+        for l_obj in p_obj.Controllers.itervalues():
+            if l_obj.Active != True:
+                continue
+            if l_obj.Family != 'Insteon':
+                continue
+            if g_debug > 1:
+                print "Insteon_PLM.start_all_controllers() - Family:{0:}, Interface:{1:}, Active:{2:}".format(l_obj.Family, l_obj.Interface, l_obj.Active)
+            if l_obj.Active != True:
+                continue
+            if l_obj.Interface.lower() == 'serial':
+                if g_debug > 1:
+                    print "  Insteon_PLM - serial"
+                import drivers.Driver_Serial
+                l_driver = drivers.Driver_Serial.Init()
+                l_driver = drivers.Driver_Serial.Start(l_obj)
+            elif l_obj.Interface.lower() == 'ethernet':
+                if g_debug > 1:
+                    print "  Insteon_PLM - ethernet = "
+                import drivers.Driver_Ethernet
+                l_driver = drivers.Driver_Ethernet.Init()
+                l_driver = drivers.Driver_Ethernet.Start(l_obj)
+            elif l_obj.Interface.lower() == 'usb':
+                if g_debug > 1:
+                    print "  Insteon_PLM - USB = "
+                import drivers.Driver_USB_0403_6001
+                l_driver = drivers.Driver_USB_0403_6001.Init()
+                l_driver = drivers.Driver_USB_0403_6001.Start(l_obj)
+            l_count += 1
+            if g_debug > 2:
+                print "Insteon_PLM has just worked on a driver.  Name: {0:}".format(l_obj.Name)
+            if l_driver != None:
+                g_driver.append(l_driver)
+        if g_debug > 1:
+            print "Insteon_PLM - Found {0:} controllers configured and initialized {1:} of them.".format(l_count, len(g_driver))
+            print g_driver
+
+    def XXstart_all_controllers(self):
         l_count = 0
         for l_obj in Device_Insteon.Controller_Data.itervalues():
             if l_obj.Family != 'Insteon':

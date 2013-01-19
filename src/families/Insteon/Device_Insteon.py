@@ -18,8 +18,10 @@ import logging
 
 # Import PyMh files
 from lighting import lighting
+from main import house
 
 
+House_Data = house.House_Data
 Button_Data = lighting.Button_Data
 Controller_Data = lighting.Controller_Data
 Light_Data = lighting.Light_Data
@@ -167,7 +169,7 @@ class ControllerData(lighting.ControllerData, CoreData):
 
 class ControllerAPI(lighting.ControllerAPI, CoreAPI):
 
-    def load_all_controllers(self, p_dict):
+    def XXload_all_controllers(self, p_dict):
         for l_dict in p_dict.itervalues():
             l_ctlr = ControllerData()
             l_ctlr = self.load_insteon_controller(l_dict, l_ctlr)
@@ -180,17 +182,17 @@ class ControllerAPI(lighting.ControllerAPI, CoreAPI):
         return l_ctlr
 
 
-class LightingData(lighting.LightingData, CoreData):
-    """Insteon specific data we wish to export.  Extends the LightingData class
+class LightData(lighting.LightData, CoreData):
+    """Insteon specific data we wish to export.  Extends the LightData class
     Create a dict of devices.
     Each device will contain a dict of attributes and vales
     """
 
     def __init__(self):
-        super(LightingData, self).__init__()
+        super(LightData, self).__init__()
 
     def __str__(self):
-        l_str = super(LightingData, self).__str__()
+        l_str = super(LightData, self).__str__()
         l_str += " Address:{0:}".format(self.get_address())
         return l_str
 
@@ -201,7 +203,7 @@ class LightingAPI(lighting.LightingAPI, CoreAPI):
 
     def load_all_lights(self, p_dict):
         for l_dict in p_dict.itervalues():
-            l_light = LightingData()
+            l_light = LightData()
             l_light = self.load_insteon_light(l_dict, l_light)
             Light_Data[l_light.Key] = l_light
 

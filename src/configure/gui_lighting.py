@@ -119,7 +119,7 @@ class LightingWindow(gui_tools.GuiTools):
         self.save_lights()
 
     def save_lights(self):
-        config_xml.WriteConfig().write_lights()
+        config_xml.WriteConfig().write_file()
         self.main_screen()
 
     def main_screen(self):
@@ -206,7 +206,7 @@ class LightingDialog(gui_tools.GuiTools):
             del Controller_Data[l_key]
         else:
             del Button_Data[l_key]
-        config_xml.WriteConfig().write_lights()
+        config_xml.WriteConfig().write_file()
         self.quit_dialog()
 
     def create_vars(self):
@@ -260,7 +260,7 @@ class LightingDialog(gui_tools.GuiTools):
                 try:
                     l_obj = Light_Data[p_key]
                 except KeyError:
-                    l_obj = lighting.LightingData()
+                    l_obj = lighting.LightData()
                     l_obj.Key = p_key
                     l_obj.Family = 'Insteon'
                     l_obj.Address = ''
@@ -281,7 +281,7 @@ class LightingDialog(gui_tools.GuiTools):
                     l_obj.Family = 'Insteon'
         except Exception, e:  # KeyError
             print "Load vars exception", sys.exc_info()[0], e
-            l_obj = lighting.LightingData()
+            l_obj = lighting.LightData()
             l_obj.Key = p_key
             l_obj.Family = 'Insteon'
         l_family = l_obj.Family
@@ -339,7 +339,7 @@ class LightingDialog(gui_tools.GuiTools):
         l_key = self.Key.get()
         l_family = self.Family.get()
         l_interface = self.Interface.get()
-        l_obj = lighting.LightingData()
+        l_obj = lighting.LightData()
         l_obj.Active = int(self.Active.get())
         l_obj.Comment = self.Comment.get()
         l_obj.Coords = self.Coords.get()
@@ -386,7 +386,7 @@ class LightingDialog(gui_tools.GuiTools):
         else:
             Button_Data[l_key] = l_obj
         # print "lighting dialog get_vars", l_obj.Active
-        config_xml.WriteConfig().write_lights()
+        config_xml.WriteConfig().write_file()
         self.quit_dialog()
 
     def quit_dialog(self):

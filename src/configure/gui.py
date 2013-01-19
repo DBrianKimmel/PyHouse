@@ -51,7 +51,7 @@ class MainWindow(object):
 
     def ctl_lights_screen(self):
         self.m_main.grid_forget()  # Main Window
-        gui_ctl_lights.CtlLightsWindow(g_root)
+        gui_ctl_lights.CtlLightsWindow(g_root, self.m_main)
 
     def house_screen(self):
         self.m_main.grid_forget()  # Main Window

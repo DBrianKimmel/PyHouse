@@ -25,12 +25,12 @@ import sys
 from twisted.internet import reactor
 
 # Import PyMh files and modules.
-import configure
-import main
+from configure import config_etc
+from configure import config_xml
+from configure import gui
 import log
 import house
 import web.web_server as web_server
-import PyHouse as XYZ
 
 __version_info__ = (1, 1, 0)
 __version__ = '.'.join(map(str, __version_info__))
@@ -156,7 +156,7 @@ class API(object):
         g_logger.info("Initializing.\n")
         self.m_house = house.API()
         web_server.Init()
-        self.m_gui = configure.gui.API(self)
+        self.m_gui = gui.API(self)
         #
         g_logger.info("Initialized.\n")
         # reactor never returns so must be last - Event loop will now run
@@ -167,8 +167,9 @@ class API(object):
             print "PyHouse._setup_core()"
         handle_signals()
         parse_command_line()
-        configure.config_etc.find_etc_config_file()
-        configure.config_xml.read_config()
+        l_etc = config_etc.API()
+        l_file = l_etc.find_etc_config_file()
+        config_xml.API(l_file)
         log.LoggingMain()
         # Now the logging will be set up and work properly
         global g_logger
@@ -197,7 +198,7 @@ class API(object):
         global g_logger
         g_logger = logging.getLogger('PyHouse')
         g_logger.info("Stopping has begun.\n")
-        configure.config_xml.write_config()
+        config_xml.write_config()
         self.m_house.Stop()
         web_server.Stop()
         try:

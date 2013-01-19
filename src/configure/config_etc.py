@@ -15,45 +15,42 @@ import sys
 g_debug = 0
 
 
-class ConfigEtc(object):
+class API(object):
     '''
     classdocs
     '''
 
+    def __init__(self):
+        pass
 
-    def __init__(self, params):
-        '''
-        Constructor
-        '''
+    def find_etc_config_file(self):
+        """Check for /etc/pyhouse.conf existence.
+        If not, ABORT and do not become a daemon.
 
-def find_etc_config_file():
-    """Check for /etc/pyhouse.conf existence.
-    If not, ABORT and do not become a daemon.
+        @return: the filename we found.
+        """
+        if g_debug > 0:
+            print "config_etc.find_etc_config_file()"
+        l_file_name = '/etc/pyhouse.conf'
+        try:
+            l_file = open(l_file_name, mode = 'r')
+        except IOError:
+            self.config_abort()
+        l_text = l_file.readlines()
+        for l_line in l_text:
+            if l_line == '':
+                continue
+            elif l_line[0] == '#':
+                continue
+            else:
+                l_ret = l_line
+                if g_debug > 1:
+                    print "config_etc.find_etc_config_file() found", l_ret
+                return l_ret
+        return None
 
-    @return: the filename we found.
-    """
-    if g_debug > 0:
-        print "config_etc.find_etc_config_file()"
-    l_file_name = '/etc/pyhouse.conf'
-    try:
-        l_file = open(l_file_name, mode = 'r')
-    except IOError:
-        config_abort()
-    l_text = l_file.readlines()
-    for l_line in l_text:
-        if l_line == '':
-            continue
-        elif l_line[0] == '#':
-            continue
-        else:
-            l_ret = l_line
-            if g_debug > 1:
-                print "config_etc.find_etc_config_file() found", l_ret
-            return l_ret
-    return None
-
-def config_abort():
-    print "Could not find or read '/etc/pyhouse.conf'.  Please create it and rerun PyHouse!"
-    sys.exit(1)
+    def config_abort(self):
+        print "Could not find or read '/etc/pyhouse.conf'.  Please create it and rerun PyHouse!"
+        sys.exit(1)
 
 # ## END

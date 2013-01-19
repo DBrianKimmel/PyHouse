@@ -17,12 +17,15 @@ Rooms and lights and HVAC are associated with a particular house.
 import logging
 
 # Import PyMh files
-import schedule
-import configure.config_xml
+from schedule import schedule
+# from configure import config_xml
+from lighting import lighting_tools
 import internet
-import lighting.lighting_tools as lighting_tools
-# import schedule.schedule as schedule
 import weather
+
+g_debug = 2
+g_logger = None
+g_api = None
 
 House_Data = {}
 Location_Data = {}
@@ -31,9 +34,6 @@ Room_Data = {}
 HouseCount = 0
 LocationCount = 0
 RoomCount = 0
-g_debug = 1
-g_logger = None
-g_api = None
 
 
 class HouseData(object):
@@ -50,6 +50,11 @@ class HouseData(object):
         self.Location = {}
         self.Rooms = {}
         self.Schedule = {}
+
+    def __str__(self):
+        l_ret = ' House:: Name :{0:}, Active:{1:}, Key:{2:}'.format(self.Name, self.Active, self.Key)
+        return l_ret
+
 
 class LocationData(lighting_tools.CoreData):
 
@@ -70,9 +75,7 @@ class LocationData(lighting_tools.CoreData):
         self.ZipCode = None
 
     def __str__(self):
-        l_ret = ' House:{0:}, Active:{1:}, Lat:{2:}, Lon:{3:}'.format(
-            self.get_name(), self.get_active(), self.get_latitude(),
-            self.get_longitude())
+        l_ret = ' Location:: Lat:{0:}, Lon:{1:}'.format(self.Latitude, self.Longitude)
         return l_ret
 
     def get_active(self):
@@ -148,7 +151,7 @@ class RoomData(lighting_tools.CoreData):
         self.Size = None
 
     def __str__(self):
-        l_ret = '** Room:{0:} \t Size:{1:} \t Corner:{2:}\n'.format(self.get_name(), self.get_size(), self.get_corner())
+        l_ret = ' Room:: Name:{0:} \t Size:{1:} \t Corner:{2:}\n'.format(self.get_name(), self.get_size(), self.get_corner())
         return l_ret
 
     def get_active(self):
@@ -188,33 +191,33 @@ class HouseAPI(lighting_tools.CoreAPI):
     """
     """
 
-    def load_xml_house(self):
+    def load_xml_houses(self):
         """Load all the xml house info.
         """
         global House_Data, Location_Data, Room_Data
         if g_debug > 1:
-            print "house.load_xml_house() 1 ", Location_Data, Room_Data
+            print "house.load_xml_houses() 1 ", Location_Data, Room_Data
         House_Data = configure.config_xml.ReadConfig().read_houses()
         if g_debug > 1:
-            print "house.load_xml_house() 2 ", Location_Data, Room_Data
+            print "house.load_xml_houses() 2 ", Location_Data, Room_Data
 
     def save_xml_house(self):
         pass
 
     def dump_house(self):
-        if g_debug > 0:
+        if g_debug > 8:
             print "*** House ****"
             for l_obj in House_Data.itervalues():
                 self.dump_device(l_obj, 'House')
 
-    def dump_location(self):
+    def XXdump_location(self):
         if g_debug > 8:
             print "***** All House Locations ***", Location_Data
             for l_key, l_obj in Location_Data.iteritems():
                 self.dump_device(l_obj, 'Location', l_key)
             print
 
-    def dump_rooms(self):
+    def XXdump_rooms(self):
         if g_debug > 8:
             print "***** All House Rooms *****", Room_Data
             for l_key, l_obj in Room_Data.iteritems():
@@ -226,28 +229,41 @@ class API(HouseAPI):
     """
     """
 
+    m_schedules = []
+    m_active_houses = 0
+
     def __init__(self):
-        if g_debug > 0:
-            print "house.Init()"
         global g_logger
         g_logger = logging.getLogger('PyHouse.House')
-        g_logger.info("Initializing.")
+        g_logger.info("Initializing all houses.")
+        config_xml.read_config()
+        if g_debug > 0:
+            print "house.__init__() all houses.", House_Data
         #
-        schedule.schedule.Init()
+        for l_obj in House_Data.itervalues():
+            if g_debug > 1:
+                print "house.__init__() House:{0:}, Active:{1:}".format(l_obj.Name, l_obj.Active)
+            if l_obj.Active != True:
+                continue
+            self.m_schedules.append(schedule.API(l_obj))
+            self.m_active_houses += 1
+        #
         internet.Init()
         weather.Init()
         g_logger.info("Initialized.")
+        if g_debug > 0:
+            print "house.__init__() all houses initialized now."
 
     def Start(self):
         if g_debug > 0:
             print "house.Start()"
         g_logger.info("Starting.")
-        self.load_xml_house()
+        self.load_xml_houses()
         self.dump_house()
-        self.dump_location()
-        self.dump_rooms()
         #
-        schedule.schedule.Start()
+        for l_ix in self.m_schedules:
+            self.m_schedules[l_ix].Start()
+        #
         internet.Start()
         weather.Start()
         g_logger.info("Started.")
@@ -259,7 +275,7 @@ class API(HouseAPI):
         g_logger.info("Stopping.")
         self.save_xml_house()
         #
-        schedule.schedule.Stop()
+        self.m_sched.Stop()
         internet.Stop()
         weather.Stop()
         g_logger.info("Stopped.")

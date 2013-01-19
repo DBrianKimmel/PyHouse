@@ -55,11 +55,5 @@ Modules desired are:
 __version_info__ = (1, 1, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
-import house
-import internet
-import log
-import PyHouse
-import tools
-import weather
 
 # ## END

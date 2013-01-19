@@ -47,7 +47,6 @@ BUTTON = 'post_btn'
 Entertainment = {}
 Lights = {}
 XLight_Data = {}
-XLight_Status = {}
 
 # Only to move the eclipse error flags to one small spot
 T_p = Tag.p
@@ -66,7 +65,7 @@ T_script = Tag.script
 U_R_child = url.root.child
 U_H_child = url.here.child
 
-class WebLightingData(lighting.LightingData): pass
+class WebLightData(lighting.LightData): pass
 class WebLightingAPI(lighting.LightingAPI): pass
 class WebLightingStatusData(lighting.LightingStatusData): pass
 class WebLightingStatusAPI(lighting.LightingStatusAPI): pass
@@ -375,7 +374,7 @@ class HousePage(rend.Page):
         print "form_post_house (HousePage)", kwargs
         return HousePage(self.name)
 
-class LightingPage(rend.Page, WebLightingData, WebLightingAPI, WebLightingStatusData, WebLightingStatusAPI):
+class LightingPage(rend.Page, WebLightData, WebLightingAPI, WebLightingStatusData, WebLightingStatusAPI):
     """Define the page layout of the lighting selection web page.
     """
     addSlash = True

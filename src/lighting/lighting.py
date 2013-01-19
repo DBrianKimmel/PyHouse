@@ -42,7 +42,7 @@ Light_Status = lighting_status.Light_Status
 Scene_Data = lighting_scenes.Scene_Data
 Singletons = {}
 
-g_debug = 1
+g_debug = 3
 g_reactor = None
 g_logger = None
 g_family_module = []
@@ -67,7 +67,14 @@ class ControllerData(lighting_controllers.ControllerData): pass
 class ControllerAPI(lighting_controllers.ControllersAPI): pass
 
 
-class LightingData(lighting_lights.LightsData): pass
+class LightData(lighting_lights.LightData):
+
+    def __init__(self):
+        super(LightData, self).__init__()
+
+    def __str__(self):
+        return super(LightData, self).__str__()
+
 
 class LightingAPI(lighting_lights.LightsAPI): pass
 
@@ -102,7 +109,7 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, LightingStatusAPI):
             l_module.Init()
 
     def load_lighting_xml(self):
-        configure.config_xml.ReadConfig().read_lights()
+        configure.config_xml.ReadConfig().read_houses()
         self._load_all_lighting_families()
 
     def _dump_all_lighting_families(self):
@@ -121,16 +128,22 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, LightingStatusAPI):
         for l_module in g_family_module:
             l_module.Stop()
 
-    def change_light_setting(self, p_obj, p_level):
+    def change_light_setting(self, p_obj, p_key, p_level):
         """
         Turn a light to a given level (0-100) off/dimmed/on.
+
+        @param p_obj: is a house object
+        @param p_key: is the index of the Light object within the House object.
+        @param p_level: is the level to set
+        TODO: This is patched to use light info from a house - needs fixing !!!
         """
-        print "lighting.change_light_settings() obj=", p_obj
+        if g_debug > 1:
+            print "lighting.change_light_settings() obj=", p_obj, p_key
         g_logger.info("Turn Light {0:} to level {1:}.".format(p_obj.Name, p_level))
         for l_module in g_family_module:
             if g_debug > 1:
                 print " Processing Module ", l_module
-            l_module.LightingAPI().change_light_setting(p_obj, p_level)
+            l_module.LightingAPI().change_light_setting(p_obj.Lights[p_key], p_level)
 
     def update_all_lighting_families(self):
         """ *!*  API
@@ -169,34 +182,35 @@ def GetLightRef(p_house, p_light):
     return None
 
 
-def Init():
-    if g_debug > 0:
-        print "lighting.Init()"
-    global g_logger
-    g_logger = logging.getLogger('PyHouse.Lighting')
-    g_logger.info("Initializing.")
-    l_api = LightingUtility()
-    l_api.load_lighting_xml()
-    # SceneAPI().load_all_scenes(configure_mh.Configure_Data['Scenes'])
-    g_logger.info("Initialized.")
-    return l_api
+class API(LightingUtility):
 
-def Start():
-    """Allow loading of sub modules and drivers.
-    """
-    if g_debug > 0:
-        print "lighting.Start()"
-    g_logger.info("Starting.")
-    LightingUtility()._start_all_lighting_families()
-    g_logger.info("Started.")
+    def __init__(self):
+        if g_debug > 0:
+            print "lighting.Init()"
+        global g_logger
+        g_logger = logging.getLogger('PyHouse.Lighting')
+        g_logger.info("Initializing.")
+        l_api = LightingUtility()
+        l_api.load_lighting_xml()
+        # SceneAPI().load_all_scenes(configure_mh.Configure_Data['Scenes'])
+        g_logger.info("Initialized.")
 
-def Stop():
-    """Allow cleanup of all drivers.
-    """
-    if g_debug > 0:
-        print "lighting.Stop()"
-    g_logger.info("Stopping all lighting families.")
-    LightingUtility()._stop_all_lighting_families()
-    g_logger.info("Stopped.")
+    def Start(self):
+        """Allow loading of sub modules and drivers.
+        """
+        if g_debug > 0:
+            print "lighting.Start()"
+        g_logger.info("Starting.")
+        LightingUtility()._start_all_lighting_families()
+        g_logger.info("Started.")
+
+    def Stop(self):
+        """Allow cleanup of all drivers.
+        """
+        if g_debug > 0:
+            print "lighting.Stop()"
+        g_logger.info("Stopping all lighting families.")
+        LightingUtility()._stop_all_lighting_families()
+        g_logger.info("Stopped.")
 
 # ## END
