@@ -9,10 +9,11 @@ Read the /etc/pyhouse.conf file and use the contents to get the fully qualified 
 name of the real/runtime XML config file.
 '''
 
+# Import system type stuff
 import sys
 
 
-g_debug = 0
+g_debug = 1
 
 
 class API(object):
@@ -31,7 +32,7 @@ class API(object):
         """
         if g_debug > 0:
             print "config_etc.find_etc_config_file()"
-        l_file_name = '/etc/pyhouse.conf'
+        l_file_name = 'C:/etc/pyhouse.conf'
         try:
             l_file = open(l_file_name, mode = 'r')
         except IOError:

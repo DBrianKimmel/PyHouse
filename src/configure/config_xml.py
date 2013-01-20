@@ -12,20 +12,22 @@ import xml.etree.ElementTree as ET
 # Import PyMh files
 import main.log as Log
 import xml_tools
-import main.house as House
+#import main.house as House
 from lighting import lighting
 from schedule import schedule
-from web import web_server
+from web.web_server import Web_Data
+
+#from main.house import HouseData, House_Data, LocationData, RoomData
 
 # Various data stores.
-House_Data = House.House_Data
+#House_Data = House.House_Data
 Log_Data = Log.Log_Data
-Web_Data = web_server.Web_Data
+#Web_Data = web_server.Web_Data
 
 # Various data definitions
-HouseData = House.HouseData
-LocationData = House.LocationData
-RoomData = House.RoomData
+#HouseData = House.HouseData
+#LocationData = House.LocationData
+#RoomData = House.RoomData
 LightData = lighting.LightData
 ButtonData = lighting.ButtonData
 ControllerData = lighting.ControllerData
@@ -369,7 +371,7 @@ class ReadConfig(ConfigTools):
         except:
             l_sect = ET.SubElement(self.m_root, 'Web')
             ET.SubElement(l_sect, 'WebPort').text = 'None'
-        l_obj = web_server.WebData()
+        l_obj = WebData()
         l_obj.WebPort = l_sect.findtext('WebPort')
         Web_Data[0] = l_obj
 

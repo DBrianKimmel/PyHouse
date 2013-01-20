@@ -25,18 +25,8 @@ from nevow import util
 from nevow.rend import _CARRYOVER
 from formless import iformless
 
-# Import PyMh files
-import entertainment.entertainment as entertainment
-import main.house as house
-import lighting.lighting as lighting
-import schedule.schedule as schedule
+from lighting import lighting
 
-
-Light_Data = lighting.Light_Data
-Location_Data = house.Location_Data
-Room_Data = house.Room_Data
-Schedule_Data = schedule.Schedule_Data
-Web_Data = {}
 
 g_port = 8080
 g_logger = None
@@ -774,5 +764,18 @@ def Start():
 
 def Stop():
     pass
+
+# Import PyMh files
+from entertainment import entertainment
+#from main.house import Location_Data
+from schedule import schedule
+
+Light_Data = lighting.Light_Data
+#Location_Data = house.Location_Data
+#Room_Data = house.Room_Data
+Schedule_Data = schedule.Schedule_Data
+Web_Data = {}
+
+
 
 # ## END

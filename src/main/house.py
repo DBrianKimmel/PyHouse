@@ -18,7 +18,7 @@ import logging
 
 # Import PyMh files
 from schedule import schedule
-# from configure import config_xml
+from configure import config_xml
 from lighting import lighting_tools
 import internet
 import weather

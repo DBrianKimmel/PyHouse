@@ -29,8 +29,8 @@ from configure import config_etc
 from configure import config_xml
 from configure import gui
 import log
-import house
-import web.web_server as web_server
+from main import house
+from web import web_server
 
 __version_info__ = (1, 1, 0)
 __version__ = '.'.join(map(str, __version_info__))
