@@ -5,7 +5,7 @@
 
 
 # Import system type stuff
-#import inspect
+# import inspect
 from inspect import getmembers
 import pprint
 
@@ -67,9 +67,13 @@ class CoreData(LightingTools):
 
     def __init__(self):
         self.Active = None
+        self.Command = None
+        self.Command1 = None
+        self.Command2 = None
         self.Comment = None
         self.Coords = None
         self.Dimmable = None
+        self.Driver = None
         self.HouseName = None
         self.Key = 0
         self.Family = None
@@ -161,7 +165,7 @@ class CoreAPI(LightingTools):
         l_dev.Name = self.getText(p_dict, 'Name')
         l_dev.RoomName = self.getText(p_dict, 'Room')
         l_dev.Type = self.getText(p_dict, 'Type')
-        #print " - lighting_tools CoreAPI load device - {0:}".format(l_dev.Name)
+        # print " - lighting_tools CoreAPI load device - {0:}".format(l_dev.Name)
         return l_dev
 
     def dump_device(self, p_obj, p_type = '', p_name = ''):
@@ -171,4 +175,4 @@ class CoreAPI(LightingTools):
         pprint.pprint(vars(p_obj))
         print "--------------------"
 
-### END
+# ## END

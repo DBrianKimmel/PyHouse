@@ -18,19 +18,14 @@ import logging
 
 # Import PyMh files
 from lighting import lighting
-from main import house
+from house import house
 
 
 House_Data = house.House_Data
-Button_Data = lighting.Button_Data
-Controller_Data = lighting.Controller_Data
-Light_Data = lighting.Light_Data
-Light_Status = lighting.Light_Status
 
-g_debug = 1
+g_debug = 0
 g_logger = None
 g_InsteonLink = None
-g_PLM = None
 
 
 class CoreData (object):
@@ -140,15 +135,6 @@ class ButtonData(lighting.ButtonData, CoreData):
 
 class ButtonAPI(lighting.ButtonAPI, CoreAPI):
 
-    def load_all_buttons(self, p_dict):
-        """
-        @param p_dict: outer layer of all buttons in a dict.
-        """
-        for l_dict in p_dict.itervalues():
-            l_button = ButtonData()
-            l_button = self.load_insteon_button(l_dict, l_button)
-            Button_Data[l_button.Key] = l_button
-
     def load_insteon_button(self, p_dict, p_button):
         l_button = p_button
         l_button = super(ButtonAPI, self).load_button(p_dict, l_button)
@@ -168,12 +154,6 @@ class ControllerData(lighting.ControllerData, CoreData):
 
 
 class ControllerAPI(lighting.ControllerAPI, CoreAPI):
-
-    def XXload_all_controllers(self, p_dict):
-        for l_dict in p_dict.itervalues():
-            l_ctlr = ControllerData()
-            l_ctlr = self.load_insteon_controller(l_dict, l_ctlr)
-            Controller_Data[l_ctlr.Key] = l_ctlr
 
     def load_insteon_controller(self, p_dict, p_controller):
         l_ctlr = p_controller
@@ -201,12 +181,6 @@ class LightingAPI(lighting.LightingAPI, CoreAPI):
     """Interface to the lights of this module.
     """
 
-    def load_all_lights(self, p_dict):
-        for l_dict in p_dict.itervalues():
-            l_light = LightData()
-            l_light = self.load_insteon_light(l_dict, l_light)
-            Light_Data[l_light.Key] = l_light
-
     def load_insteon_light(self, p_dict, p_light):
         l_light = p_light
         l_light = super(LightingAPI, self).load_light(p_dict, l_light)
@@ -214,21 +188,13 @@ class LightingAPI(lighting.LightingAPI, CoreAPI):
         return l_light
 
     def change_light_setting(self, p_obj, p_level):
-        g_PLM.LightingAPI().change_light_setting(p_obj, p_level)
-
-    def update_all_lights(self):
-        self.write_insteon_lights(lighting.Light_Data)
-
-
-class LightingStatusData(lighting.LightingStatusData):
-    pass
+        if g_debug > 1:
+            print "Device_Insteon.change_light_setting()", p_level, p_obj
+        if p_obj.Family == 'Insteon':
+            g_PLM.change_light_setting(p_obj, p_level)
 
 
-class LightingStatusAPI(lighting.LightingStatusAPI, LightingStatusData):
-    pass
-
-
-class LoadSaveInsteonData(LightingAPI, ControllerAPI, ButtonAPI, LightingStatusAPI):
+class LoadSaveInsteonData(LightingAPI, ControllerAPI, ButtonAPI):
 
     def write_insteon_lights(self, p_lights,):
         """
@@ -261,36 +227,40 @@ class InsteonDeviceUtility(LoadSaveInsteonData):
     def scan_all_lights(self, _p_lights):
         if g_debug > 0:
             print "insteon_Device.scan_insteon_devices "
-        Insteon_PLM.LightingAPI().scan_all_lights(lighting.Light_Data)
+        Insteon_PLM.LightingAPI().scan_all_lights(House_Data)
 
 import Insteon_Link
 import Insteon_PLM
 
 
-def Init():
-    if g_debug > 0:
-        print "Device_Insteon.Init()"
-    global g_logger, g_InsteonLink, g_PLM
-    g_logger = logging.getLogger('PyHouse.Device_Insteon')
-    g_logger.info('Initializing.')
-    g_InsteonLink = Insteon_Link.InsteonLinkMain()
-    Insteon_PLM.Init()
-    # Insteon_PLM.Start()
-    g_PLM = Insteon_PLM
-    g_logger.info('Initialized.')
+
+class API(LightingAPI):
+
+    m_plm = None
+
+    def __init__(self):
+        if g_debug > 0:
+            print "Device_Insteon.__init__()"
+        global g_logger, g_InsteonLink, g_PLM
+        g_logger = logging.getLogger('PyHouse.Device_Insteon')
+        g_logger.info('Initializing.')
+        g_InsteonLink = Insteon_Link.InsteonLinkMain()
+        # Insteon_PLM.Start()
+        g_PLM = self.m_plm = Insteon_PLM.API()
+        g_logger.info('Initialized.')
 
 
-def Start():
-    if g_debug > 0:
-        print "Device_Insteon.Start()"
-    g_logger.info('Starting.')
-    Insteon_PLM.Start()
-    g_logger.info('Started.')
+    def Start(self, p_house_obj):
+        if g_debug > 0:
+            print "Device_Insteon.Start()", p_house_obj
+        g_logger.info('Starting.')
+        self.m_plm.Start(p_house_obj)
+        g_logger.info('Started.')
 
 
-def Stop():
-    if g_debug > 0:
-        print "Device_Insteon.Stop()"
-    Insteon_PLM.Stop()
+    def Stop(self):
+        if g_debug > 0:
+            print "Device_Insteon.Stop()"
+        self.m_plm.Stop()
 
 # ## END

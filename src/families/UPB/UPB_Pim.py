@@ -9,10 +9,16 @@ import Queue
 from twisted.internet import reactor
 
 # Import PyMh files
-# import configure_mh
 import Device_UPB
 from tools import PrintBytes
 
+g_debug = 0
+
+g_driver = []
+g_logger = None
+g_queue = None
+g_pim = {}
+g_obj = None
 
 callLater = reactor.callLater
 
@@ -30,12 +36,6 @@ ACK_MSG = 0x40
 SEND_TIMEOUT = 0.8
 RECEIVE_TIMEOUT = 0.3  # this is for fetching data in the rx buffer
 
-g_debug = 0
-g_driver = []
-g_logger = None
-g_queue = None
-g_pim = {}
-
 
 pim_commands = {
 'start_setup_mode'          : 0x03,
@@ -50,7 +50,7 @@ pim_commands = {
 }
 
 
-Controller_Data = Device_UPB.Controller_Data
+# Controller_Data = Device_UPB.Controller_Data
 
 
 class PimData(object):
@@ -71,7 +71,7 @@ class UpbPimUtility(object):
     def _get_id_from_name(self, p_name):
         if g_debug > 5:
             print "UPB_Pim._get_id_from_name() ", p_name
-        for l_obj in Device_UPB.Light_Data.itervalues():
+        for l_obj in g_obj.Lights.itervalues():
             if l_obj.Family != 'UPB':
                 continue
             if l_obj.Active != True:
@@ -79,7 +79,7 @@ class UpbPimUtility(object):
             if l_obj.Name == p_name:
                 l_unit_id = int(l_obj.UnitID)
                 return l_unit_id
-        for l_obj in Device_UPB.Controller_Data.itervalues():
+        for l_obj in g_obj.Controllers.itervalues():
             if l_obj.Family != 'UPB':
                 continue
             if l_obj.Active != True:
@@ -386,7 +386,7 @@ class CreateCommands(UpbPimUtility, PimDriverInterface):
 class LightingAPI(Device_UPB.LightingAPI, CreateCommands):
 
     def change_light_setting(self, p_obj, p_level):
-        for l_obj in Device_UPB.Light_Data.itervalues():
+        for l_obj in g_obj.Lights.itervalues():
             if l_obj.get_family() != 'UPB':
                 continue
             if l_obj.get_active() == False:
@@ -404,14 +404,11 @@ class LightingAPI(Device_UPB.LightingAPI, CreateCommands):
         pass
 
 
-class LightHandlerAPI(LightingAPI):
-    """This is the API for light control.
-    """
+class UpbPimAPI(LightingAPI):
 
-
-class UpbPimAPI(CreateCommands):
-
-    def _find_all_upb_controllers(self):
+    def start_all_controllers(self, p_obj):
+        """Find and initialize all UPB PIM type controllers.
+        """
         """Iterate thru all controllers and skip all NON UPB controllers.
         Also skip controllers that are not active.
 
@@ -420,9 +417,10 @@ class UpbPimAPI(CreateCommands):
             Initialize the controller
             Initialize any interface special requirements.
         """
-        global g_pim
+        if g_debug > 1:
+            print "UPB_Pim.start_all_controlers()"
         l_count = 0
-        for l_obj in Device_UPB.Controller_Data.itervalues():
+        for l_obj in p_obj.Controllers.itervalues():
             if l_obj.Family.lower() != 'upb':
                 continue
             if l_obj.Active != True:
@@ -438,18 +436,18 @@ class UpbPimAPI(CreateCommands):
             if g_debug > 0:
                 print "UPB_Pim._find_all_upb_controllers() - Name:", l_pim.Name
             if l_obj.Interface.lower() == 'serial':
-                import drivers.Driver_Serial
-                l_driver = drivers.Driver_Serial.Init()
-                l_driver = drivers.Driver_Serial.Start(l_obj)
+                from drivers import Driver_Serial
+                l_driver = Driver_Serial.API()
+                l_driver.Start(l_obj)
             elif l_obj.Interface.lower() == 'ethernet':
-                import drivers.Driver_Ethernet
-                l_driver = drivers.Driver_Ethernet.Init()
-                l_driver = drivers.Driver_Ethernet.Start(l_obj)
+                from drivers import Driver_Ethernet
+                l_driver = Driver_Ethernet.Start()
+                l_driver = Driver_Ethernet.Start(l_obj)
             elif l_obj.Interface.lower() == 'usb':
                 # TODO: Detect any other controllers here and load them
-                import drivers.Driver_USB_17DD_5500
-                l_driver = drivers.Driver_USB_17DD_5500.Init()
-                l_driver = drivers.Driver_USB_17DD_5500.Start(l_obj)
+                from drivers import Driver_USB_17DD_5500
+                l_driver = Driver_USB_17DD_5500.API()
+                l_driver.Start(l_obj)
             else:
                 g_logger.error("UPB PIM has no known interface type! {0}, {1:}".format(l_pim.Name, l_pim.Interface))
                 l_driver = None
@@ -459,15 +457,6 @@ class UpbPimAPI(CreateCommands):
             l_count += 1
             return l_count
 
-
-    def initialize_all_controllers(self):
-        """Find and initialize all UPB PIM type controllers.
-        """
-        if g_debug > 1:
-            print "UPB_Pim.initialize_all_controlers()"
-        l_count = self._find_all_upb_controllers()
-        g_logger.info("Loaded {0:} UPB_PIM controllers".format(l_count))
-
     def initialize_one_controller(self, _p_driver, p_obj):
         """Do whatever it takes to set the controller up for working on the UPB network.
         Send a write register 70 to set PIM mode
@@ -476,17 +465,6 @@ class UpbPimAPI(CreateCommands):
         if g_debug > 1:
             print "UPB_Pim.initialize_one_controller() - Name: {0:}".format(p_obj.Name)
         self.set_register_value(p_obj.get_name(), 0x70, [0x03])
-
-    def XXXsend_pim_command_get_response(self, p_command):
-        print " & PIM.send_pim_command_get_response ", p_command
-        g_logger.info('Sending command {0:}'.format(PrintBytes(p_command)))
-        g_pim[0].write_device(g_pim[0], p_command)
-        _l_ret = None
-        # Pim should always get a PA for getting the message to send.
-        _l_ret = self.get_response()
-        # if the remote light device got a good message we should get an ack next.
-        l_ret = self.get_response()
-        return l_ret
 
     def get_response(self):
         pass
@@ -546,28 +524,31 @@ class UpbPimAPI(CreateCommands):
 class PimTesting(UpbPimAPI): pass
 
 
-def Init():
-    if g_debug > 0:
-        print "UPB_Pim.Init()"
-    global g_logger, g_queue
-    g_logger = logging.getLogger('PyHouse.UPB_PIM')
-    g_logger.info('Initializing.')
-    g_queue = Queue.Queue(300)
-    l_api = UpbPimAPI()
-    l_api.initialize_all_controllers()
-    l_api.driver_loop_start()
-    g_logger.info('Initialized.')
-    return l_api
+class API(UpbPimAPI):
 
-def Start():
-    if g_debug > 0:
-        print "UPB_Pim.Start()"
-    g_logger.info('Starting.')
+    def __init__(self):
+        if g_debug > 0:
+            print "UPB_Pim.Init()"
+        global g_logger, g_queue
+        g_logger = logging.getLogger('PyHouse.UPB_PIM')
+        g_logger.info('Initializing.')
+        g_queue = Queue.Queue(300)
+        g_logger.info('Initialized.')
 
-def Stop():
-    if g_debug > 0:
-        print "UPB_Pim.Stop()"
-    pass
+    def Start(self, p_obj):
+        if g_debug > 0:
+            print "UPB_Pim.Start() - Name{0:}".format(p_obj.Name)
+        g_logger.info('Starting.')
+        global g_obj
+        g_obj = p_obj
+        self.start_all_controllers(p_obj)
+        self.driver_loop_start()
+
+    def Stop(self):
+        if g_debug > 0:
+            print "UPB_Pim.Stop()"
+        pass
+
 
 
 

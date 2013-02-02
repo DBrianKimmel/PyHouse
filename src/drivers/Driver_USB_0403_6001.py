@@ -6,13 +6,14 @@ Created on Dec 20, 2012
 Created to handle the Insteon PLM:
 
 '''
-
 import sys
 from twisted.internet import reactor
 import usb
+# Use USB package that was written by Wander Lairson Costa
+# PYUSB_DEBUG_LEVEL=debug
+# export PYUSB_DEBUG_LEVEL
+
 import Driver_USB
-
-
 
 callLater = reactor.callLater
 
@@ -55,19 +56,25 @@ class UsbDriverAPI(Driver_USB.UsbDriverAPI):
             print "Driver_USB_0403_6001.read_device() - exit"
 
 
-def Init():
-    """
-    """
-    if g_debug > 0:
-        print "Driver_USB_0403_6001.Init() "
-    l_ret = Driver_USB.Init()
-    return l_ret
+class API(UsbDriverAPI):
 
-def Start(p_obj):
-    if g_debug > 0:
-        print "Driver_USB_0403_6001.Start() ", p_obj.Name
-    l_self = UsbDriverAPI()
-    l_ret = Driver_USB.Start(p_obj, l_self)
-    return l_ret
+    m_driver = None
+
+    def __init__(self):
+        """
+        """
+        if g_debug > 0:
+            print "Driver_USB_0403_6001.__init__() "
+        self.m_driver = Driver_USB.API()
+
+    def Start(self, p_obj):
+        if g_debug > 0:
+            print "Driver_USB_0403_6001.Start() - Name:{0:}".format(p_obj.Name)
+        self.m_driver.Start(p_obj, self)
+
+    def Stop(self):
+        if g_debug > 0:
+            print "Driver_USB_0403_6001.Stop() "
+        self.m_driver.Stop()
 
 # ## END

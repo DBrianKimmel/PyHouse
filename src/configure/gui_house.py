@@ -4,19 +4,19 @@ from Tkinter import Frame, Toplevel, Button, IntVar, StringVar, DoubleVar, W, DI
 
 import gui
 import gui_tools
-import main.house as house
 import config_xml
 from operator import attrgetter
-
-HouseData = house.HouseData
-House_Data = house.House_Data
-LocationData = house.LocationData
-XLocation_Data = house.Location_Data
-RoomData = house.RoomData
-XRoom_Data = house.Room_Data
-
+from main import houses
+from house import house
 
 g_debug = 3
+
+House_Data = house.House_Data
+Houses_Data = houses.Houses_Data
+
+HouseData = house.HouseData
+LocationData = house.LocationData
+
 FG = 'red'
 
 class HouseUtils(object):
@@ -46,13 +46,17 @@ class HouseWindow(gui_tools.GuiTools):
     """Displays all defined houses and handles house add/change/delete.
     """
 
-    def __init__(self, p_root):
-        self.m_frame = Frame(p_root)
+    def __init__(self, p_root, p_main_window):
+        if g_debug > 0:
+            print "gui_house - Show select house window"
+        self.m_root = p_root
+        self.m_main_frame = p_main_window
+        self.m_house_frame = Frame(p_root)
         self.m_ix = 0
-        self.m_frame.grid()
+        self.m_house_frame.grid()
         self.show_all_houses()
-        Button(self.m_frame, text = "ADD New House", fg = FG, bg = gui_tools.BG_BOTTOM, command = self.add_house).grid(row = self.m_ix, column = 0)
-        Button(self.m_frame, text = "Back", fg = FG, bg = gui_tools.BG_BOTTOM, command = self.main_screen).grid(row = self.m_ix, column = 1)
+        Button(self.m_house_frame, text = "ADD New House", fg = FG, bg = gui_tools.BG_BOTTOM, command = self.add_house).grid(row = self.m_ix, column = 0)
+        Button(self.m_house_frame, text = "Back", fg = FG, bg = gui_tools.BG_BOTTOM, command = self.main_screen).grid(row = self.m_ix, column = 1)
 
     def show_all_houses(self):
         l_house = []
@@ -64,7 +68,7 @@ class HouseWindow(gui_tools.GuiTools):
             if l_obj.Active: l_relief = RAISED
             if g_debug > 0:
                 print l_obj.Name, l_obj.Key
-            h = Button(self.m_frame, text = l_obj.Name, bg = gui_tools.BG_TOP, relief = l_relief, command = lambda x = l_obj.Key: self.edit_house(x))
+            h = Button(self.m_house_frame, text = l_obj.Name, bg = gui_tools.BG_TOP, relief = l_relief, command = lambda x = l_obj.Key: self.edit_house(x))
             l_house.append(h)
             l_house[self.m_ix].grid(row = self.m_ix, sticky = W)
             self.m_ix += 1
@@ -73,20 +77,20 @@ class HouseWindow(gui_tools.GuiTools):
     def add_house(self):
         if g_debug > 2:
             print "gui_house.add_house() # ", self.m_ix
-        HouseDialog(self.m_frame, self.m_ix, "Adding House")
+        HouseDialog(self.m_root, self.m_house_frame, self.m_ix, "Adding House")
 
     def add_room(self):
         if g_debug > 2:
             print "gui_house.add_room() # ", self.m_ix
-        RoomDialog(self.m_frame, self.m_ix, "Adding Room")
+        RoomDialog(self.m_root, self.m_house_frame, self.m_ix, "Adding Room")
 
     def edit_house(self, p_key):
         if g_debug > 2:
             print "gui_house.edit_house() # ", p_key
-        HouseDialog(self.m_frame, p_key, "Editing House")
+        HouseDialog(self.m_root, self.m_house_frame, p_key, "Editing House")
 
     def main_screen(self):
-        self.frame_delete(self.m_frame)
+        self.frame_delete(self.m_house_frame)
         gui.MainWindow()
 
 
@@ -102,7 +106,7 @@ class HouseDialog(gui_tools.GuiTools, HouseUtils):
 
     m_obj = None  # the house object
 
-    def __init__(self, p_parent, p_key, p_title = None):
+    def __init__(self, p_root, p_parent, p_key, p_title = None):
         self.m_top = Toplevel(p_parent)
         if p_title:
             self.m_top.title(p_title)
@@ -156,7 +160,7 @@ class HouseDialog(gui_tools.GuiTools, HouseUtils):
     def add_save_house(self):
         """Merge the location(in vars) into the house
         """
-        l_obj = self.get_vars()
+        l_obj = self.save_vars()
         House_Data[l_obj.Key] = l_obj
         if g_debug > 1:
             print "gui_house.add_save_house() - Name:{0:}, Key:{1:}".format(l_obj.Name, l_obj.Key)
@@ -220,7 +224,7 @@ class HouseDialog(gui_tools.GuiTools, HouseUtils):
         self.Latitude.set(l_obj.Latitude)
         self.Longitude.set(l_obj.Longitude)
 
-    def get_vars(self):
+    def save_vars(self):
         """Get the on screen vars and save them in the original house object.
         This will preserve the rest of the information.
         """
@@ -248,7 +252,7 @@ class RoomDialog(gui_tools.GuiTools, HouseUtils):
     TODO: Fix this section to preserve the lights and schedule data within a house.
     """
 
-    def __init__(self, p_parent, p_key, p_house_name, p_title = None):
+    def __init__(self, p_root, p_parent, p_key, p_house_name, p_title = None):
         """
 
         @param p_parent: is the parent frame that this dialog comes from.
@@ -289,7 +293,7 @@ class RoomDialog(gui_tools.GuiTools, HouseUtils):
     def add_save_room(self):
         """store the new or edited room.
         """
-        l_obj = self.get_vars()
+        l_obj = self.save_vars()
         Room_Data[l_obj.Key] = l_obj
         config_xml.WriteConfig().write_houses()
         self.quit_room()
@@ -316,7 +320,7 @@ class RoomDialog(gui_tools.GuiTools, HouseUtils):
         self.Name.set(l_obj.Name)
         self.Size.set(l_obj.Size)
 
-    def get_vars(self):
+    def save_vars(self):
         l_obj = house.RoomData()
         l_obj.Active = self.Active.get()
         l_obj.Comment = self.Comment.get()

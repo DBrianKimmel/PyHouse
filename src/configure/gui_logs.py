@@ -7,13 +7,17 @@ import gui_tools
 import config_xml
 import main.log as log
 
+g_debug = 0
+
 Log_Data = log.Log_Data
 
 class LogsWindow(gui_tools.GuiTools):
     """Display a log location window.
     """
 
-    def __init__(self, p_root):
+    def __init__(self, p_root, p_main_window):
+        if g_debug > 0:
+            print "gui_logs - Show select house window"
         self.m_root = p_root
         self.m_frame = Frame(p_root)
         self.m_frame.grid(padx = 5, pady = 5)

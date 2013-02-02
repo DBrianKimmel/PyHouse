@@ -6,14 +6,21 @@ The main core of PyHouse.
 The core modules start as root and become user pyhouse and group pyhouse.
 Be sure that user pyhouse is also in group dialout so we can access the controllers.
 
+The main group of python modules start the entire PyHouse suite and provide
+a core of tools and modules that are always present.
+
+Houses is a core module that will instantiates 'house' for every house defined
+to operate via PyHouse.  That is in the configuration XML file.
 
 During development this is run by hand.
 It is, however, planned to be a daemon that is kicked off on system start-up.
 It is intended to run on everything from a small, low power bare bones system
 to a server running multiple houses in several, widespread locations.
 
-The system is controlled via a browser connecting to a web server that will
+The system is controlled in several ways.
+One is via a browser connecting to a web server that will
 be either integrated or separate from PyHouse.
+Another is via an integrated GUI.
 
 The highest level is the House/Location.  Every house has a location and
 contains a number of rooms.

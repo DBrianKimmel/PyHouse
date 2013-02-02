@@ -24,29 +24,25 @@ import logging
 import importlib
 
 # Import PyMh files
-import configure
 import lighting_buttons
 import lighting_controllers
 import lighting_lights
 import lighting_scenes
 import lighting_status
 
-# from tools import Lister
+g_debug = 0
 
-
-# These globals in the lighting singleton hold the operating data loaded at startup.
-Button_Data = lighting_buttons.Button_Data
-Controller_Data = lighting_controllers.Controller_Data
-Light_Data = lighting_lights.Light_Data
-Light_Status = lighting_status.Light_Status
-Scene_Data = lighting_scenes.Scene_Data
-Singletons = {}
-
-g_debug = 3
 g_reactor = None
 g_logger = None
 g_family_module = []
 g_Device_family = []
+
+FamilyCount = 0
+Family_Data = {}
+
+# These globals in the lighting singleton hold the operating data loaded at startup.
+Light_Data = lighting_lights.Light_Data
+Singletons = {}
 
 ' *!* Modules and pointers to the modules'
 from families import VALID_FAMILIES
@@ -55,6 +51,17 @@ VALID_INTERFACES = ['Serial', 'USB', 'Ethernet']
 m_InsteonDevice = None
 m_X10Device = None
 m_UpbDevice = None
+
+class FamilyData(object):
+
+    def __init__(self):
+        global ScheduleCount
+        self.Active = False
+        self.Family = None
+        self.Import = None
+        self.Key = 0
+        self.Name = None
+        self.Package = None
 
 
 class ButtonData(lighting_buttons.ButtonsData): pass
@@ -93,53 +100,56 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, LightingStatusAPI):
     """
     """
 
-    def _load_all_lighting_families(self):
+    m_module = []
+
+    def load_lighting_families(self):
         """
         Get all the config information for all types of lights and scenes.
         """
+        if g_debug > 1:
+            print "lighting.load_lighting_families()"
         g_logger.info("Loading all lighting families.")
         for l_family in VALID_FAMILIES:
-            l_package = 'families.' + l_family
-            l_import = '.Device_' + l_family
+            l_family_obj = FamilyData()
+            l_family_obj.Name = l_family
+            l_family_obj.Package = 'families.' + l_family
+            l_family_obj.Import = 'Device_' + l_family
             if g_debug > 1:
-                print "lighting.load_all_lighting_families - Package: {0:}, Import: {1:}".format(l_package, l_import)
-            l_module = importlib.import_module(l_package + l_import, l_package)
+                print "lighting.load_all_lighting_families - Package: {0:}, Import: {1:}".format(l_family_obj.Package, l_family_obj.Import)
+                print "  from {0:} import {1:}".format(l_family_obj.Package, l_family_obj.Import)
+            l_module = importlib.import_module(l_family_obj.Package + '.' + l_family_obj.Import, l_family_obj.Package)
             g_family_module.append(l_module)
-            g_Device_family.append(l_import)
-            l_module.Init()
+            g_Device_family.append(l_family_obj.Import)
+            l_api = l_module.API()
+            self.m_module.append(l_api)
+            if g_debug > 1:
+                print "lighting.load_lighting_families() - Added {0:} to m_modules".format(l_family_obj.Import), l_family_obj
 
-    def load_lighting_xml(self):
-        configure.config_xml.ReadConfig().read_houses()
-        self._load_all_lighting_families()
 
-    def _dump_all_lighting_families(self):
-        self.dump_all_buttons()
-        self.dump_all_controllers()
-        self.dump_all_lights()
-
-    def _start_all_lighting_families(self):
+    def start_lighting_families(self, p_obj):
         if g_debug > 1:
-            print "lighting start all lighting"
-        g_logger.info("Starting all lighting families.")
-        for l_module in g_family_module:
-            l_module.Start()
+            print "lighting.start_lighting_families()", p_obj
+        g_logger.info("Starting lighting families.")
+        for l_mod in self.m_module:
+            l_mod.Start(p_obj)
 
-    def _stop_all_lighting_families(self):
-        for l_module in g_family_module:
-            l_module.Stop()
+    def stop_lighting_families(self):
+        if g_debug > 1:
+            print "lighting.stop_lighting_families()"
+        for l_mod in self.m_module:
+            l_mod.Stop()
 
     def change_light_setting(self, p_obj, p_key, p_level):
         """
         Turn a light to a given level (0-100) off/dimmed/on.
 
         @param p_obj: is a house object
-        @param p_key: is the index of the Light object within the House object.
+        @param p_key: is the index (Key) of the Light to be changed within the House object.
         @param p_level: is the level to set
-        TODO: This is patched to use light info from a house - needs fixing !!!
         """
         if g_debug > 1:
-            print "lighting.change_light_settings() obj=", p_obj, p_key
-        g_logger.info("Turn Light {0:} to level {1:}.".format(p_obj.Name, p_level))
+            print "lighting.change_light_settings() House={0:}, Light={1:}({2:}), Level={3:}".format(p_obj.Name, p_obj.Lights[p_key].Name, p_key, p_level)
+        g_logger.info("Turn Light {0:} to level {1:}.".format(p_obj.Lights[p_key].Name, p_level))
         for l_module in g_family_module:
             if g_debug > 1:
                 print " Processing Module ", l_module
@@ -186,22 +196,19 @@ class API(LightingUtility):
 
     def __init__(self):
         if g_debug > 0:
-            print "lighting.Init()"
+            print "lighting.__init__()"
         global g_logger
         g_logger = logging.getLogger('PyHouse.Lighting')
-        g_logger.info("Initializing.")
-        l_api = LightingUtility()
-        l_api.load_lighting_xml()
-        # SceneAPI().load_all_scenes(configure_mh.Configure_Data['Scenes'])
         g_logger.info("Initialized.")
 
-    def Start(self):
+    def Start(self, p_obj):
         """Allow loading of sub modules and drivers.
         """
         if g_debug > 0:
-            print "lighting.Start()"
+            print "lighting.Start() - House:{0:}".format(p_obj.Name)
         g_logger.info("Starting.")
-        LightingUtility()._start_all_lighting_families()
+        self.load_lighting_families()
+        self.start_lighting_families(p_obj)
         g_logger.info("Started.")
 
     def Stop(self):
@@ -210,7 +217,7 @@ class API(LightingUtility):
         if g_debug > 0:
             print "lighting.Stop()"
         g_logger.info("Stopping all lighting families.")
-        LightingUtility()._stop_all_lighting_families()
+        LightingUtility().stop_lighting_families()
         g_logger.info("Stopped.")
 
 # ## END

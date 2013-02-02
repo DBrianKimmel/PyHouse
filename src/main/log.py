@@ -57,14 +57,14 @@ class LoggingMain(LoggingUtility):
         if g_debug > 0:
             print "log.LoggingMain()"
         Log_Data[0] = LogData()
-        configure.config_xml.ReadConfig().read_log_web()
+        # configure.config_xml.ReadConfig().read_log_web()
         try:
             l_debug_name = Log_Data[0].Debug
         except:
             l_debug_name = '/var/log/pyhouse/debug'
             Log_Data[0].Debug = l_debug_name
         if l_debug_name == None:
-             l_debug_name = '/var/log/pyhouse/debug'
+            l_debug_name = '/var/log/pyhouse/debug'
         if g_debug > 4:
             print "log.LoggingMain() debug name ", l_debug_name
         try:

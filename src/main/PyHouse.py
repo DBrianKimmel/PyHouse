@@ -25,19 +25,13 @@ import sys
 from twisted.internet import reactor
 
 # Import PyMh files and modules.
-from configure import config_etc
-from configure import config_xml
 from configure import gui
-import log
-from main import house
+from main import log
+from main import houses
 from web import web_server
 
-__version_info__ = (1, 1, 0)
-__version__ = '.'.join(map(str, __version_info__))
-
-g_debug = 1
+g_debug = 0
 g_logger = None
-
 
 callWhenRunning = reactor.callWhenRunning
 reactorrun = reactor.run
@@ -93,8 +87,8 @@ def setConfigFile():
     return os.path.join(findConfigDir(), '.PyHouse/PyHouse.xml')
 
 
-def parse_command_line():
-    parser = OptionParser('%prog [options]', version = "Coherence version: %s" % __version__)
+def XXparse_command_line():
+    parser = OptionParser('%prog [options]')
     parser.add_option('-d', '--daemon', action = 'store_true', help = 'daemonize')
     parser.add_option('--noconfig', action = 'store_false', dest = 'configfile', help = 'ignore any configfile found')
     parser.add_option('-c', '--configfile', default = setConfigFile(), help = 'configfile to use, default: %default')
@@ -139,7 +133,7 @@ class API(object):
     """
 
     m_gui = None
-    m_house = None
+    m_houses = None
 
     def __init__(self):
         """This is the startup of the entire system.
@@ -150,31 +144,19 @@ class API(object):
         call never returns.
         """
         if g_debug > 0:
-            print "\nPyHouse.Init()"
-        self._setup_core()
-        #
+            print "\nPyHouse.Init() - very beginning..."
+        handle_signals()
+        log.LoggingMain()
+        global g_logger
+        g_logger = logging.getLogger('PyHouse')
         g_logger.info("Initializing.\n")
-        self.m_house = house.API()
+        self.m_houses = houses.API()
         web_server.Init()
         self.m_gui = gui.API(self)
-        #
+        callWhenRunning(self.Start)
         g_logger.info("Initialized.\n")
         # reactor never returns so must be last - Event loop will now run
         reactorrun()
-
-    def _setup_core(self):
-        if g_debug > 1:
-            print "PyHouse._setup_core()"
-        handle_signals()
-        parse_command_line()
-        l_etc = config_etc.API()
-        l_file = l_etc.find_etc_config_file()
-        config_xml.API(l_file)
-        log.LoggingMain()
-        # Now the logging will be set up and work properly
-        global g_logger
-        g_logger = logging.getLogger('PyHouse')
-        callWhenRunning(self.Start)
 
     def Start(self):
         """New.  This will start all non-core services.
@@ -184,9 +166,8 @@ class API(object):
         if g_debug > 0:
             print "\nPyHouse.Start()"
         g_logger.info("Starting.")
-        self.m_house.Start()
+        self.m_houses.Start()
         web_server.Start()
-        # configure.gui.Start()
         g_logger.info("Started.\n")
         if g_debug > 0:
             print "PyHouse all is started and running now.\n"
@@ -194,12 +175,13 @@ class API(object):
     def Stop(self):
         """Stop various modules to prepare for restarting them.
         """
-        print "\nPyHouse.Stop()"
+        if g_debug > 0:
+            print "\nPyHouse.Stop()"
         global g_logger
         g_logger = logging.getLogger('PyHouse')
         g_logger.info("Stopping has begun.\n")
-        config_xml.write_config()
-        self.m_house.Stop()
+        # config_xml.write_config()
+        self.m_houses.Stop()
         web_server.Stop()
         try:
             g_logger.info("Stopped.\n")
@@ -209,13 +191,12 @@ class API(object):
     def Quit(self):
         """Prepare to exit all of pyhouse
         """
-        print "\nPyHouse.Quit()"
-        # g_logger.info("Terminate Logging.\n")
+        if g_debug > 0:
+            print "\nPyHouse.Quit()"
         self.Stop()
         log.LoggingMain().stop()
         reactorstop()
         raise SystemExit, "PyHouse says Bye Now."
-
 
 
 if __name__ == "__main__":

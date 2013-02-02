@@ -62,7 +62,7 @@ class LightsAPI(lighting_tools.CoreAPI):
         l_light.CurLevel = 0
         return l_light
 
-    def dump_all_lights(self):
+    def XXdump_all_lights(self):
         print "***** All Lights ***** lighting_lights"
         for l_key, l_obj in Light_Data.iteritems():
             self.dump_device(l_obj, 'Light', l_key)

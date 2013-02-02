@@ -19,7 +19,7 @@ class WebWindow(gui_tools.GuiTools):
     """Display a log location window.
     """
 
-    def __init__(self, p_root):
+    def __init__(self, p_root, p_main_window):
         self.m_root = p_root
         self.m_frame = Frame(p_root)
         self.m_frame.grid(padx = 5, pady = 5)

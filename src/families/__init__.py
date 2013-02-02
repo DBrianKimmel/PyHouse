@@ -8,6 +8,7 @@ upb
 x-10
 zigbee
 z-wave
+lutron
 and others
 
 To add a family named 'NewFamily', do the following:
@@ -25,13 +26,16 @@ __version__ = '.'.join(map(str, __version_info__))
 VALID_FAMILIES = ['Insteon', 'UPB', 'X10']
 
 import importlib
-try:
-    for l_family in VALID_FAMILIES:
-        l_name = 'Device_' + l_family
-        l_package = 'families.' + l_family
-        # print "families.__init__.py - Family:{0:}, Name:{1}, Package:{2:}".format(l_family, l_name, l_package)
-        l_module = importlib.import_module(l_package, l_family)
-except ImportError:
-    print "Error - Package missing from families."
+
+for l_family in VALID_FAMILIES:
+    l_package = 'families.' + l_family
+    l_import = 'Device_' + l_family
+    l_module = l_package + '.' + l_import
+    # print "families() from {0:} import {1:} -- Module:{2:}".format(l_package, l_import, l_module)
+    try:
+        l_module = importlib.import_module(l_module, l_package)
+    except ImportError:
+        # print "\nfamilies.__init__() - ImportError: Family:'{0:}', Name:'{1:}', Package:'{2:}'.\n".format(l_family, l_import, l_package)
+        pass
 
 # ## END

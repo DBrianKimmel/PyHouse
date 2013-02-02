@@ -19,11 +19,12 @@ from coherence.upnp.core import DIDLLite
 from coherence.upnp.devices.dimmable_light_client import DimmableLightClient
 
 
-Entertainment_Data = {}
-g_debug = 1
+g_debug = 0
+
 g_logger = None
 g_upnp = None
 
+Entertainment_Data = {}
 
 callLater = reactor.callLater
 callWhenRunning = reactor.callWhenRunning
@@ -269,7 +270,7 @@ def Start():
     if g_debug > 0:
         print "entertainment.Start()"
     global g_upnp
-    g_upnp = UPnPControlPoint()
+    # g_upnp = UPnPControlPoint()
 
 def Stop():
     if g_debug > 0:

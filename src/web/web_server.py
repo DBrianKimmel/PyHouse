@@ -28,6 +28,7 @@ from formless import iformless
 from lighting import lighting
 
 
+g_debug = 0
 g_port = 8080
 g_logger = None
 
@@ -330,7 +331,7 @@ class HousePage(rend.Page):
 
     def data_houselist(self, _context, _data):
         l_house = {}
-        for l_key, l_obj in Location_Data.iteritems():
+        for l_key, l_obj in House_Data.iteritems():
             l_house[l_key] = l_obj
         return l_house
 
@@ -767,13 +768,13 @@ def Stop():
 
 # Import PyMh files
 from entertainment import entertainment
-#from main.house import Location_Data
+# from main.house import Location_Data
 from schedule import schedule
 
 Light_Data = lighting.Light_Data
-#Location_Data = house.Location_Data
-#Room_Data = house.Room_Data
-Schedule_Data = schedule.Schedule_Data
+# Location_Data = house.Location_Data
+# Room_Data = house.Room_Data
+# Schedule_Data = schedule.Schedule_Data
 Web_Data = {}
 
 

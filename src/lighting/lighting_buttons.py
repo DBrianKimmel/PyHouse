@@ -4,9 +4,9 @@
 """
 
 import lighting_tools
-#import pprint
+# import pprint
 
-Button_Data = {}
+XButton_Data = {}
 ButtonCount = 0
 
 
@@ -40,8 +40,8 @@ class ButtonsAPI(lighting_tools.CoreAPI):
 
     def dump_all_buttons(self):
         print "***** All Buttons *****"
-        for l_key, l_obj in Button_Data.iteritems():
-            self.dump_device(l_obj, 'Button', l_key)
-        print
+        # for l_key, l_obj in Button_Data.iteritems():
+        #    self.dump_device(l_obj, 'Button', l_key)
+        # print
 
-### END
+# ## END

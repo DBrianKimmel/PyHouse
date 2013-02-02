@@ -18,6 +18,9 @@ from math import pi
 import main
 # import main.house as house
 
+g_debug = 0
+g_logger = None
+
 RAD2DEG = 180.0 / pi
 DEG2RAD = pi / 180.0
 JDATE2000_9 = 2451545.0009  # convert Julian Date to Epoch 2000 (J2000)
@@ -25,8 +28,6 @@ JDATE2000 = 2451545  # convert Julian Date to Epoch 2000 (J2000)
 
 Earth_Data = {}
 Solar_Data = {}
-g_debug = 0
-g_logger = None
 
 
 class EarthParameters(object):
@@ -216,7 +217,7 @@ class SunCalcs(SSUtility, EarthParameters, SolarParameters):
         """Calculate the mean anomaly.
         """
         l_ma = self._revolution(357.5291 + (0.98560028 * (p_jstar2K))) * DEG2RAD
-        if g_debug > 2:
+        if g_debug > 5:
             print("M           Calculating solar Mean Anomaly {0:}".format(l_ma * RAD2DEG))
         return l_ma
 
@@ -224,7 +225,7 @@ class SunCalcs(SSUtility, EarthParameters, SolarParameters):
         """Calc equation of center 'C'.
         """
         l_ec = (1.9148 * math.sin(p_ma) + 0.02000 * math.sin(2.0 * p_ma) + 0.0003 * math.sin(3.0 * p_ma)) * DEG2RAD
-        if g_debug > 2:
+        if g_debug > 5:
             print("C           Calculating solar Equation of Center {0:}".format(l_ec * RAD2DEG))
         return l_ec
 
@@ -232,7 +233,7 @@ class SunCalcs(SSUtility, EarthParameters, SolarParameters):
         """Calc ecliptic longitude 'lambda'.
         """
         l_lambda = self._revolution((p_ma * RAD2DEG) + 102.9372 + (p_ec * RAD2DEG) + 180.0) * DEG2RAD
-        if g_debug > 2:
+        if g_debug > 5:
             print("lambda      Calculating solar Ecliptic Longitude {0:}".format(l_lambda * RAD2DEG))
         return l_lambda
 
@@ -242,7 +243,7 @@ class SunCalcs(SSUtility, EarthParameters, SolarParameters):
         l_transit = p_jstar + (0.0053 * math.sin(p_ma)) - (0.0069 * math.sin(2.0 * p_lambda))
         if g_debug > 6:
             print "J* {0:}, 1:{1:}, 2:{2:}".format(p_jstar, 0.0053 * math.sin(p_ma), 0.0069 * math.sin(2.0 * p_lambda))
-        if g_debug > 2:
+        if g_debug > 5:
             print("J_transit   Calculating solar transit {0:}  {1:} ".format(l_transit, self._convert_julian_to_time(l_transit, True)))
         return l_transit
 
@@ -250,7 +251,7 @@ class SunCalcs(SSUtility, EarthParameters, SolarParameters):
         """Calc Declination of the Sun - delta
         """
         l_delta = math.asin(math.sin(p_lambda) * math.sin(23.45 * DEG2RAD))
-        if g_debug > 2:
+        if g_debug > 5:
             print "delta       Calculating solar declination {0:}".format(l_delta * RAD2DEG)
         return l_delta
 
@@ -259,7 +260,7 @@ class SunCalcs(SSUtility, EarthParameters, SolarParameters):
         """
         l_x = (math.sin(-0.83 * DEG2RAD) - (math.sin(p_lat) * math.sin(p_delta))) / (math.cos(p_lat) * math.cos(p_delta))
         l_ha = math.acos(l_x)
-        if g_debug > 2:
+        if g_debug > 5:
             print "H           Calculating solar hour angle {0:}".format(l_ha * RAD2DEG)
         return l_ha
 
@@ -296,9 +297,9 @@ class SunCalcs(SSUtility, EarthParameters, SolarParameters):
         l_nstar = p_earth.JulianDayNumber - JDATE2000_9 + (p_earth.Longitude / 360.0)
         p_earth.N = l_n = math.floor(l_nstar + 0.5)
         p_earth.JulianCycle = math.floor(p_earth.JulianDate - JDATE2000_9 + (p_earth.Longitude / 360.0) + 0.5)
-        if g_debug > 2:
+        if g_debug > 5:
             print("            Calculating julian date:{0:}, JulianDayNumber:{1:}".format(p_earth.JulianDate, p_earth.JulianDayNumber))
-        if g_debug > 2:
+        if g_debug > 5:
             print("n* n-round  Calculating 2000 epoch dates     {0:} {1:} ".format(l_nstar, l_n))
 
     def _calcSolarNoonParams(self, p_earth, p_sun):
@@ -313,11 +314,11 @@ class SunCalcs(SSUtility, EarthParameters, SolarParameters):
         p_earth.DayOfLocalMeanSolarNoon = l_domsn
         l_j_star = JDATE2000_9 - (l_e_long / 360.0) + p_earth.JulianCycle
         l_j_star2k = l_j_star - JDATE2000
-        if g_debug > 2:
+        if g_debug > 5:
             print("n*          Calculating the JDN(2000) of Local Mean Solar Noon {0:} at Longitude {1:}".format(l_domsn, l_e_long))
-        if g_debug > 2:
+        if g_debug > 5:
             print("n           Calculating the JulianCycle(2000) of Local Mean Solar Noon {0:}".format(p_earth.JulianCycle))
-        if g_debug > 2:
+        if g_debug > 5:
             print("J* J*2K     Calculating Approximate solar noon {0:} ({1:}) - {2:}".format(l_j_star, l_j_star2k, self._convert_julian_to_time(l_j_star2k, True)))
         l_ma = self._calc_mean_anomaly(l_j_star2k)
         l_ec = self._calc_equation_of_center(l_ma)
@@ -346,7 +347,7 @@ class SunCalcs(SSUtility, EarthParameters, SolarParameters):
         l_rise = l_transit - (l_set - l_transit)
         p_earth.Sunrise = l_rise
         p_earth.Sunset = l_set
-        if g_debug > 2:
+        if g_debug > 5:
             print("J**         Calculating using hour angle {0:}".format(l_j_starstar))
         if g_debug > 0:
             print(" Sunrise {0:}  {1:}".format(l_rise, self._convert_julian_to_time(l_rise, True)))
@@ -372,45 +373,56 @@ class SSAPI(SunCalcs):
     def get_sunrise(self):
         """Returns a sunrise time as a datetime.time object.
         """
+        if g_debug > 1:
+            print "sunrisesunset.get_sunrise()"
         return self._convert_julian_to_time(Earth_Data[0].Sunrise, True)
 
     def get_sunset(self):
         """Returns a sunset time as a datetime.time object.
         """
+        if g_debug > 1:
+            print "sunrisesunset.get_sunrise()"
         return self._convert_julian_to_time(Earth_Data[0].Sunset, True)
 
-    def load_location(self):
-        """Extract from houde information"""
+    def load_location(self, p_obj):
+        """Extract from house information"""
+        if g_debug > 0:
+            print "sunrise.sunset.load_location() ", p_obj.Name, p_obj.Location[0].Latitude
         l_date = datetime.date.today()
         Earth_Data[0] = EarthParameters()
         Solar_Data[0] = SolarParameters()
-        for l_obj in main.house.Location_Data.itervalues():
-            if l_obj.Active != True:
-                continue
-            Earth_Data[0].Latitude = l_obj.Latitude
-            Earth_Data[0].Longitude = l_obj.Longitude
-            Earth_Data[0].TimeZone = l_obj.TimeZone
-            Earth_Data[0].Name = l_obj.Name
-            Earth_Data[0].Date = l_date
-            if g_debug > 3:
-                print "Load location data for {0:}".format(l_obj.Name)
-            if g_debug > 3:
-                print "Load location data: Lat:{0:}, Lon:{1:}".format(l_obj.Latitude, l_obj.Longitude)
-            if g_debug > 3:
-                print "Load location data: Date:{0:}, TimeZone:{1:}".format(l_date, l_obj.TimeZone)
+        Earth_Data[0].Latitude = p_obj.Location[0].Latitude
+        Earth_Data[0].Longitude = p_obj.Location[0].Longitude
+        Earth_Data[0].TimeZone = p_obj.Location[0].TimeZone
+        Earth_Data[0].Name = p_obj.Name
+        Earth_Data[0].Date = l_date
+        if g_debug > 1:
+            print "Load location data for {0:}".format(Earth_Data[0].Name)
+        if g_debug > 2:
+            print "Load location data: Lat:{0:}, Lon:{1:}".format(Earth_Data[0].Latitude, Earth_Data[0].Longitude)
+        if g_debug > 2:
+            print "Load location data: Date:{0:}, TimeZone:{1:}".format(l_date, Earth_Data[0].TimeZone)
 
 
-def Init():
-    global g_logger
-    g_logger = logging.getLogger('PyHouse.SunriseSunset')
-    # g_logger.info("Initializing.")
-    SSAPI().load_location()
-    Earth_Data[0].Date = datetime.date.today()
-    SSAPI().calc_sunrise_sunset()
-    g_logger.info("Initialized.")
+class API(SSAPI):
 
-def Start(p_date = datetime.date.today()):
-    Earth_Data[0].Date = p_date
-    SSAPI().calc_sunrise_sunset()
+    def __init__(self):
+        if g_debug > 0:
+            print "sunrisesunset.__init__()"
+        global g_logger
+        g_logger = logging.getLogger('PyHouse.SunriseSunset')
+        g_logger.info("Initialized.")
+
+    def Start(self, p_obj, p_date = datetime.date.today()):
+        if g_debug > 0:
+            print "sunrisesunset.Start() - Date is ", p_date, p_obj
+        SSAPI().load_location(p_obj)
+        Earth_Data[0].Date = p_date
+        SSAPI().calc_sunrise_sunset()
+
+    def Stop(self):
+        if g_debug > 0:
+            print "sunrisesunset.Stop()"
+        pass
 
 # ## END

@@ -1,14 +1,14 @@
 #!/usr/bin/python
 
-"""Handle the house information.
+"""Handle all the house(s) information.
 
 main/house.py
 
 There is location information for the house.  This is for calculating the
-time of sunrise and sunset.  Additional calculations ma be added such as
+time of sunrise and sunset.  Additional calculations may be added such as
 moonrise, tides, etc.
 
-There is one instance of this for each house configured.
+There is one instance of this (Singleton).
 
 Rooms and lights and HVAC are associated with a particular house.
 """
@@ -18,22 +18,24 @@ import logging
 
 # Import PyMh files
 from schedule import schedule
-from configure import config_xml
 from lighting import lighting_tools
-import internet
-import weather
+from lighting import lighting
+# from configure.config_xml import g_xmltree
 
-g_debug = 2
-g_logger = None
-g_api = None
+g_debug = 0
+m_logger = None
 
+Singletons = {}
 House_Data = {}
-Location_Data = {}
-Room_Data = {}
-
 HouseCount = 0
 LocationCount = 0
 RoomCount = 0
+
+# object definitions
+ButtonData = lighting.ButtonData
+LightData = lighting.LightData
+ControllerData = lighting.ControllerData
+ScheduleData = schedule.ScheduleData
 
 
 class HouseData(object):
@@ -56,12 +58,12 @@ class HouseData(object):
         return l_ret
 
 
-class LocationData(lighting_tools.CoreData):
+class LocationData(lighting_tools.CoreData, HouseData):
 
     def __init__(self):
         global LocationCount
         LocationCount += 1
-        self.Active = False
+        self.Active = True
         self.City = None
         self.Key = 0
         self.Latitude = 0.0
@@ -137,7 +139,7 @@ class LocationData(lighting_tools.CoreData):
     ZipCode = property(get_zip_code, set_zip_code, None, None)
 
 
-class RoomData(lighting_tools.CoreData):
+class RoomData(LocationData):
 
     def __init__(self):
         global RoomCount
@@ -187,45 +189,7 @@ class RoomData(lighting_tools.CoreData):
     Size = property(get_size, set_size, None, None)
 
 
-class HouseAPI(lighting_tools.CoreAPI):
-    """
-    """
-
-    def load_xml_houses(self):
-        """Load all the xml house info.
-        """
-        global House_Data, Location_Data, Room_Data
-        if g_debug > 1:
-            print "house.load_xml_houses() 1 ", Location_Data, Room_Data
-        House_Data = configure.config_xml.ReadConfig().read_houses()
-        if g_debug > 1:
-            print "house.load_xml_houses() 2 ", Location_Data, Room_Data
-
-    def save_xml_house(self):
-        pass
-
-    def dump_house(self):
-        if g_debug > 8:
-            print "*** House ****"
-            for l_obj in House_Data.itervalues():
-                self.dump_device(l_obj, 'House')
-
-    def XXdump_location(self):
-        if g_debug > 8:
-            print "***** All House Locations ***", Location_Data
-            for l_key, l_obj in Location_Data.iteritems():
-                self.dump_device(l_obj, 'Location', l_key)
-            print
-
-    def XXdump_rooms(self):
-        if g_debug > 8:
-            print "***** All House Rooms *****", Room_Data
-            for l_key, l_obj in Room_Data.iteritems():
-                self.dump_device(l_obj, 'Room', l_key)
-            print
-
-
-class API(HouseAPI):
+class API(RoomData):
     """
     """
 
@@ -233,51 +197,43 @@ class API(HouseAPI):
     m_active_houses = 0
 
     def __init__(self):
-        global g_logger
-        g_logger = logging.getLogger('PyHouse.House')
-        g_logger.info("Initializing all houses.")
-        config_xml.read_config()
         if g_debug > 0:
-            print "house.__init__() all houses.", House_Data
-        #
-        for l_obj in House_Data.itervalues():
-            if g_debug > 1:
-                print "house.__init__() House:{0:}, Active:{1:}".format(l_obj.Name, l_obj.Active)
-            if l_obj.Active != True:
-                continue
-            self.m_schedules.append(schedule.API(l_obj))
-            self.m_active_houses += 1
-        #
-        internet.Init()
-        weather.Init()
-        g_logger.info("Initialized.")
-        if g_debug > 0:
-            print "house.__init__() all houses initialized now."
+            print "house.__init__()"
+        self.m_logger = logging.getLogger('PyHouse.House')
+        self.m_logger.info("Initializing all houses.")
+        # self.read_houses()
+        self.m_logger.info("Initialized.")
 
-    def Start(self):
+    def Start(self, p_house_obj):
+        """Start processing for all things house.
+        May be stopped and then started anew to force reloading info.
+        Invoked once no matter how many houses defined.
+        """
         if g_debug > 0:
-            print "house.Start()"
-        g_logger.info("Starting.")
-        self.load_xml_houses()
-        self.dump_house()
-        #
-        for l_ix in self.m_schedules:
-            self.m_schedules[l_ix].Start()
-        #
-        internet.Start()
-        weather.Start()
-        g_logger.info("Started.")
+            print "house.Start() House:{0:}, Active:{1:}".format(p_house_obj.Name, p_house_obj.Active)
+        self.m_logger.info("Starting.")
+        if p_house_obj.Active != True:
+            return
+        l_sch = schedule.API()
+        self.m_schedules.append(l_sch)
+        l_sch.Start(p_house_obj)
+        self.m_active_houses += 1
+        self.m_logger.info("Started.")
 
 
     def Stop(self):
         if g_debug > 0:
             print "house.Stop()"
-        g_logger.info("Stopping.")
-        self.save_xml_house()
+        self.m_logger.info("Stopping.")
+        self.save_all_houses()
         #
-        self.m_sched.Stop()
-        internet.Stop()
-        weather.Stop()
-        g_logger.info("Stopped.")
+        for l_sch in self.m_schedules:
+            l_sch.Stop()
+        self.m_logger.info("Stopped.")
+
+    def XXsave_all_houses(self):
+        if g_debug > 0:
+            print "house.save_all_houses() "
+        self._save_all_houses()
 
 # ##  END

@@ -7,11 +7,9 @@
 import logging
 
 # Import PyMh files
-# import configure_mh
 from lighting import lighting
 
-
-# Configure_Data = configure_mh.Configure_Data
+g_debug = 0
 
 
 class X10LightingData(lighting.LightData):
@@ -49,19 +47,27 @@ class LightingAPI(lighting.LightingAPI):
         pass
 
 
-def Init():
-    """Constructor for the PLM.
-    """
-    global g_logger
-    g_logger = logging.getLogger('PyHouse.Device_X10')
-    # LightingAPI().load_all_lights(Configure_Data['X10Lights'])
-    g_logger.info('Initialized.')
+class API(object):
 
-def Start():
-    g_logger.info('Starting.')
-    g_logger.info('Started.')
+    def __init__(self):
+        """Constructor for the PLM.
+        """
+        if g_debug > 0:
+            print "Device_X10.__init__()"
+        global g_logger
+        g_logger = logging.getLogger('PyHouse.Device_X10')
+        # LightingAPI().load_all_lights(Configure_Data['X10Lights'])
+        g_logger.info('Initialized.')
 
-def Stop():
-    pass
+    def Start(self, p_obj):
+        if g_debug > 0:
+            print "Device_X10.Start()"
+        g_logger.info('Starting.')
+        g_logger.info('Started.')
+
+    def Stop(self):
+        if g_debug > 0:
+            print "Device_X10.Stop()"
+        pass
 
 # ## END

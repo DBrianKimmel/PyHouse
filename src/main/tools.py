@@ -35,5 +35,21 @@ class Lister():
                 l_ret = l_ret + "\tName: {0:}={1:}\n".format(attr, self.__dict__ [attr])
         return l_ret
 
+def get_light_object(p_house, name = None, key = None):
+    """return the light object for a given house using the given value.
 
-### END
+    @param p_house: is the house object that contains the lights
+    @return: the Light object found or None.
+    """
+    l_lights = p_house.Lights
+    if name != None:
+        for l_obj in l_lights.itervalues():
+            if l_obj.Name == name:
+                return l_obj
+    elif key != None:
+        for l_obj in l_lights.itervalues():
+            if l_obj.Key == key:
+                return l_obj
+        return None
+
+# ## END

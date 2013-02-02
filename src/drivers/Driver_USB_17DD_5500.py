@@ -21,20 +21,16 @@ Device Descriptor:
   iProduct                2 USB to Serial
   iSerial                 0
   bNumConfigurations      1
-
 '''
 import array
 import sys
-import time
 from twisted.internet import reactor
+import usb
 # Use USB package that was written by Wander Lairson Costa
 # PYUSB_DEBUG_LEVEL=debug
 # export PYUSB_DEBUG_LEVEL
-import usb.core
-import usb.util
 
 import Driver_USB
-
 
 callLater = reactor.callLater
 
@@ -95,26 +91,29 @@ class UsbDriverAPI(Driver_USB.UsbDriverAPI):
                 print " -- Error in Driver_USB_17DD_5500.read_device() ", sys.exc_info(), e
                 l_len = 0
                 break
-            # time.sleep(0.1)
         if g_debug > 5:
             print "Driver_USB_17DD_5500.read_device() - exit"
 
 
-def Init():
-    """
-    @param p_obj: is the Controller_Data object we are using.
-    """
-    if g_debug > 0:
-        print "Driver_USB_17DD_5500.Init()"
-    l_ret = Driver_USB.Init()
-    return l_ret
+class API(UsbDriverAPI):
 
-def Start(p_obj):
-    if g_debug > 0:
-        print "Driver_USB_17DD_5500.Start()", p_obj.Name
-    return Driver_USB.Start(p_obj, UsbDriverAPI())
+    m_driver = None
 
+    def __init__(self):
+        """
+        """
+        if g_debug > 0:
+            print "Driver_USB_17DD_5500.__init__() "
+        self.m_driver = Driver_USB.API()
 
+    def Start(self, p_obj):
+        if g_debug > 0:
+            print "Driver_USB_17DD_5500.Start() - Name:{0:}".format(p_obj.Name)
+        self.m_driver.Start(p_obj, self)
 
+    def Stop(self, p_obj):
+        if g_debug > 0:
+            print "Driver_USB_17DD_5500.Start()", p_obj.Name
+        self.m_driver.Start(p_obj)
 
 # ## END

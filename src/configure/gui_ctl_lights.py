@@ -10,13 +10,14 @@ import lighting.lighting as lighting
 import gui
 import gui_tools
 from configure.gui_tools import GuiTools
-import main.house as house
+from main import houses
+from house import house
 
-
-XLight_Data = lighting.Light_Data
-House_Data = house.House_Data
 
 g_debug = 5
+
+House_Data = house.House_Data
+Houses_Data = houses.Houses_Data
 
 FG = 'red'
 BG_LIGHT = '#C0C090'
@@ -26,58 +27,45 @@ class CtlLightsWindow(GuiTools):
     ''' Display a window showing all lights.
     '''
 
-    def __init__(self, p_root, p_main_frame = None):
+    def __init__(self, p_root, p_main_window):
         """Initialize then bring up the 'select house' menu.
         """
+        if g_debug > 0:
+            print "gui_ctl_lights - Show select house window"
         self.m_root = p_root
-        self.m_main_frame = p_main_frame
-        self.m_house_frame = Frame(p_root)
-        self.m_house_frame.grid(padx = 5, pady = 5)
-        self.m_ix = 0
-        self.show_all_houses()
-        Button(self.m_house_frame, text = "Back", fg = FG, bg = gui_tools.BG_BOTTOM, command = self.main_screen).grid(row = self.m_ix, column = 1)
+        self.main_window = p_main_window
+        self.m_house_select_window = self.show_house_select_window(p_root, p_main_window)
 
-    def show_all_houses(self):
-        """Place a button for each house in the select house menu.
-        """
-        l_house = []
-        for l_obj in House_Data.itervalues():
-            l_relief = SUNKEN
-            if l_obj.Active: l_relief = RAISED
-            l_row, l_col = self.get_grid(self.m_ix)
-            l = Button(self.m_house_frame, text = l_obj.Name,
-                      relief = l_relief,
-                      command = lambda x = l_obj: self.show_one_house(x))
-            l_house.append(l)
-            l_house[self.m_ix].grid(row = l_row, column = l_col, padx = 5, sticky = W)
-            self.m_ix += 1
-
-    def show_one_house(self, p_obj):
+    def show_buttons_for_one_house(self, p_ix, p_house_obj):
         """Display the light selection window with the lights for the selected house.
 
         @param p_obj: is one House_Data object (see house.py).
         """
-        self.frame_delete(self.m_house_frame)
+        if g_debug > 1:
+            print "gui_ctl_lights.show_buttons_for_one_house() - Ix:{0:}".format(p_ix), p_house_obj
+        self.frame_delete(self.m_house_select_window)
         self.m_lights_frame = Frame(self.m_root)
         self.m_lights_frame.grid(padx = 5, pady = 5)
         self.m_ix = 0
-        self.show_all_lights_for_house(p_obj)
-        Button(self.m_lights_frame, text = "Back", fg = "red", bg = gui_tools.BG_BOTTOM, command = self.main_screen).grid(row = self.m_ix, column = 1)
+        self.show_control_button(p_ix, p_house_obj)
+        Button(self.m_lights_frame, text = "Back", fg = "red", bg = gui_tools.BG_BOTTOM,
+               command = self.main_screen).grid(row = self.m_ix, column = 1)
 
-    def show_all_lights_for_house(self, p_obj):
+    def show_control_button(self, p_ix, p_house_obj):
         """ Show all the lights for the selected house.
 
         @param p_obj: is one House_Data object (see house.py).
         """
         l_light = []
         self.m_max_light = 0
-        for l_obj in p_obj.Lights.itervalues():
+        for l_obj in p_house_obj.Lights.itervalues():
             if l_obj.Key > self.m_max_light: self.m_max_light = l_obj.Key
             l_relief = SUNKEN
             if l_obj.Active: l_relief = RAISED
-            l_long = l_obj.HouseName + '-' + l_obj.RoomName + '-' + l_obj.Name
-            l = Button(self.m_lights_frame, text = l_long, bg = BG_LIGHT, relief = l_relief,
-                       command = lambda x = p_obj, y = self.m_ix: self.ctl_lights(x, y))
+            l_long = l_obj.RoomName + '-' + l_obj.Name
+            l_bg, l_fg = self.color_button(int(l_obj.CurLevel))
+            l = Button(self.m_lights_frame, text = l_long, bg = l_bg, fg = l_fg, relief = l_relief,
+                       command = lambda x = p_house_obj, y = self.m_ix: self.ctl_lights(x, y))
             l_light.append(l)
             l_row, l_col = self.columnize(self.m_ix, 4)
             l_light[self.m_ix].grid(row = l_row, column = l_col, padx = 5, sticky = W)
@@ -95,11 +83,6 @@ class CtlLightsWindow(GuiTools):
     def main_screen(self):
         self.frame_delete(self.m_lights_frame)
         gui.MainWindow()
-
-    def get_grid(self, p_count):
-            l_row = p_count // 4
-            l_col = p_count % 4
-            return l_row, l_col
 
 
 class LightingDialog(gui_tools.GuiTools):

@@ -9,14 +9,11 @@ import logging
 # Import PyMh files
 from lighting import lighting
 
-
-Button_Data = lighting.Button_Data
-Controller_Data = lighting.Controller_Data
-Light_Data = lighting.Light_Data
-
 g_debug = 0
+
 g_logger = None
-g_pim = None
+g_PIM = None
+g_obj = None
 
 
 class CoreData(object):
@@ -68,10 +65,12 @@ class ButtonAPI(lighting.ButtonAPI, CoreAPI):
         """
         @param p_dict: outer layer of all buttons in a dict.
         """
+        if g_debug > 1:
+            print "Device_UPB.load_all_buttons()"
         for l_dict in p_dict.itervalues():
             l_button = ButtonData()
             l_button = self.load_upb_button(l_dict, l_button)
-            Button_Data[l_button.Key] = l_button
+            g_obj.Buttons[l_button.Key] = l_button
 
     def load_upb_button(self, p_dict, p_button):
         l_button = p_button
@@ -92,10 +91,12 @@ class ControllerData(lighting.ControllerData, CoreData):
 class ControllerAPI(lighting.ControllerAPI, CoreAPI):
 
     def load_all_controllers(self, p_dict):
+        if g_debug > 1:
+            print "Device_UPB.load_all_controllers()"
         for l_dict in p_dict.itervalues():
             l_ctlr = ControllerData()
             l_ctlr = self.load_upb_controller(l_dict, l_ctlr)
-            Controller_Data[l_ctlr.Key] = l_ctlr
+            g_obj.Controllers[l_ctlr.Key] = l_ctlr
 
     def load_upb_controller(self, p_dict, p_controller):
         l_ctlr = p_controller
@@ -118,55 +119,63 @@ class LightingAPI(lighting.LightingAPI, CoreAPI):
     """
 
     def load_all_lights(self, p_dict):
+        if g_debug > 1:
+            print "Device_UPB.load_all_lights()", p_dict
         for l_dict in p_dict.itervalues():
             l_light = LightData()
             l_light = self.load_upb_light(l_dict, l_light)
-            Light_Data[l_light.Key] = l_light
+            g_obj.Lights[l_light.Key] = l_light
 
     def load_upb_light(self, p_dict, p_light):
+        if g_debug > 1:
+            print "Device_UPB.load_upb_light()"
         l_light = p_light
         l_light = super(LightingAPI, self).load_light(p_dict, l_light)
         l_light = self.load_device(p_dict, l_light)
         return l_light
 
     def change_light_setting(self, p_obj, p_level):
-        g_pim.LightingAPI().change_light_setting(p_obj, p_level)
+        if g_debug > 1:
+            print "Device_UPB.change_light_setting()"
+        if p_obj.Family == 'UPB':
+            g_PIM.change_light_setting(p_obj, p_level)
 
     def update_all_lights(self):
-        pass
+        if g_debug > 1:
+            print "Device_UPB.update_all_lights()"
 
 
-class LightingStatusData(lighting.LightingStatusData): pass
-class LightingStatusAPI(lighting.LightingStatusAPI, LightingStatusData): pass
-
-class LoadSaveInsteonData(LightingAPI, ControllerAPI, ButtonAPI, LightingStatusAPI): pass
+class LoadSaveInsteonData(LightingAPI, ControllerAPI, ButtonAPI): pass
 
 
 import UPB_Pim
 
 
-def Init():
-    """Constructor for the UPB .
-    """
-    if g_debug > 0:
-        print "Device_UPB.Init()"
-    global g_logger, g_pim
-    g_logger = logging.getLogger('PyHouse.Device_UPB')
-    g_logger.info('Initializing.')
-    UPB_Pim.Init()
-    g_logger.info('Initialized.')
-    g_pim = UPB_Pim
+class API(LightingAPI):
 
-def Start():
-    if g_debug > 0:
-        print "Device_UPB.Start()"
-    g_logger.info('Starting.')
-    UPB_Pim.Start()
-    g_logger.info('Started.')
+    def __init__(self):
+        """Constructor for the UPB .
+        """
+        if g_debug > 0:
+            print "Device_UPB.__init__()"
+        global g_logger, g_PIM
+        g_logger = logging.getLogger('PyHouse.Device_UPB')
+        g_logger.info('Initializing.')
+        g_PIM = self.m_pim = UPB_Pim.API()
+        g_logger.info('Initialized.')
 
-def Stop():
-    if g_debug > 0:
-        print "Device_UPB.Stop()"
-    UPB_Pim.Stop()
+    def Start(self, p_obj):
+        if g_debug > 0:
+            print "Device_UPB.Start()"
+        global g_obj
+        g_obj = p_obj
+        g_logger.info('Starting.')
+        self.m_pim.Start(p_obj)
+        g_logger.info('Started.')
+
+    def Stop(self):
+        if g_debug > 0:
+            print "Device_UPB.Stop()"
+        self.m_pim.Stop()
 
 # ## END

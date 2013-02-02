@@ -41,7 +41,7 @@ class ControllerData(lighting_tools.CoreData):
         self.Vendor = None
 
     def __str__(self):
-        l_ret = "Lighting Controller Name:{0:}, Family:{1:}, Interface:{2:}, Port:{3:}, Type:{4:}, ".format(
+        l_ret = "LightingController:: Name:{0:}, Family:{1:}, Interface:{2:}, Port:{3:}, Type:{4:}, ".format(
                 self.Name, self.Family, self.Interface, self.Port, self.Type)
         l_ret += "Baud:{0:}, ByteSize:{1:}, Parity:{2:}, StopBits:{3:} ".format(self.BaudRate, self.ByteSize, self.Parity, self.StopBits)
         return l_ret
