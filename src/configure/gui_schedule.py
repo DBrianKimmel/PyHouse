@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from operator import attrgetter
 from Tkinter import Frame, Toplevel, Button, IntVar, StringVar, W, DISABLED, SUNKEN, RAISED
 
 import gui_tools
@@ -63,7 +64,7 @@ class ScheduleWindow(gui_tools.GuiTools):
         if g_debug > 0:
             print "gui_schedule.show_schedule_button() - Show select schedule window  House_ix:{0:}".format(p_ix), p_house_obj
         l_sched = []
-        for l_sched_obj in p_house_obj.Schedule.itervalues():
+        for l_sched_obj in sorted(p_house_obj.Schedule.itervalues(), key = attrgetter('Name')):
             if l_sched_obj.HouseName != p_house_obj.Name:
                 continue
             l_relief = SUNKEN
@@ -71,7 +72,7 @@ class ScheduleWindow(gui_tools.GuiTools):
                 l_relief = RAISED
             l_bg, l_fg = self.color_button(int(l_sched_obj.Level))
             l_row, l_col = self.get_grid(self.m_ix)
-            l_caption = str(l_sched_obj.RoomName) + ' ' + str(l_sched_obj.LightName) + ' ' + l_sched_obj.Name
+            l_caption = str(l_sched_obj.Name) + ' ' + str(l_sched_obj.RoomName) + ' ' + str(l_sched_obj.LightName)
             l = Button(self.m_schedule_select_window, text = l_caption, bg = l_bg, fg = l_fg, relief = l_relief,
                        command = lambda x = l_sched_obj.Key, y = p_house_obj: self.edit_schedule(x, y))
             l_sched.append(l)

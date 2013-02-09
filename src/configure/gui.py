@@ -12,6 +12,9 @@ import gui_schedule
 import gui_web
 import config_xml
 
+# For the testing function
+from families.Insteon import Insteon_PLM
+
 g_debug = 0
 
 g_root = None  # TkInter root window.
@@ -48,6 +51,7 @@ class MainWindow(object):
 #
         Button(self.m_main_window, text = "Scenes", bg = gui_tools.BG_UNDONE, command = self.scene_screen).grid(row = 1, column = 0)
         Button(self.m_main_window, text = "Ctl Lights", bg = gui_tools.BG_TOP, command = self.ctl_lights_screen).grid(row = 1, column = 1)
+        Button(self.m_main_window, text = "Test", bg = gui_tools.BG_TOP, command = self.test_screen).grid(row = 1, column = 2)
 #
         Button(self.m_main_window, text = "QUIT", fg = "red", bg = gui_tools.BG_BOTTOM, command = self.main_quit).grid(row = 91, column = 1)
         Button(self.m_main_window, text = "Restart", fg = "red", bg = gui_tools.BG_BOTTOM, command = self.main_restart).grid(row = 91, column = 2)
@@ -93,6 +97,13 @@ class MainWindow(object):
             print "gui.schedule_screen() ", g_root, self.m_main_window
         self.m_main_window.grid_forget()  # Main Window
         gui_schedule.ScheduleWindow(g_root, self.m_main_window)
+
+    def test_screen(self):
+        if g_debug > 1:
+            print "gui.test_screen() ", g_root, self.m_main_window
+        Insteon_PLM.API().Test()
+        # self.m_main_window.grid_forget()  # Main Window
+        # gui_schedule.ScheduleWindow(g_root, self.m_main_window)
 
     def upnp_screen(self):
         if g_debug > 1:

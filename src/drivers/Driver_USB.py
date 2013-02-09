@@ -56,7 +56,7 @@ from tools import PrintBytes
 
 callLater = reactor.callLater
 
-g_debug = 9
+g_debug = 0
 
 g_logger = None
 g_usb = None
@@ -86,6 +86,7 @@ class UsbDeviceData(object):
         self.ep_in = None
         self.epi_addr = 0
         self.epi_type = 0
+        self.epi_packet_size = 0
         self.ep_out = None
         self.epo_addr = 0
         self.hid_device = False
@@ -286,14 +287,14 @@ class UsbDriverAPI(UsbDeviceData):
         """
         """
         if g_debug > 7:
-            print "Driver_USB.read_device() - usb.Device:", p_usb.Device
+            print "Driver_USB.read_device() - Name:{0:}".format(p_usb.Name)
         p_usb.Parent.read_device(p_usb)
 
     def fetch_read_data(self):
-        if g_debug > 5:
-            print "Driver_USB.fetch_read_data()"
         l_ret = (len(g_usb.message), g_usb.message)
         g_usb.message = bytearray()
+        if g_debug > 5:
+            print "Driver_USB.fetch_read_data() - Msg:{0:}".format(PrintBytes(l_ret))
         return (l_ret)
 
     def write_device(self, p_message):
@@ -320,7 +321,7 @@ class UsbDriverAPI(UsbDeviceData):
         try:
             l_len = g_usb.Device.write(g_usb.epo_addr, l_message)
         except Exception, e:
-            print " -- Error in writing to USB device ", sys.exc_info()[0], e
+            print "Driver_USB._write_bis_device() - Error in writing to USB device ", sys.exc_info()[0], e
             l_len = 0
         return l_len
 

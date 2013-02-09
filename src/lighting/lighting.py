@@ -14,7 +14,8 @@ Each family consists of four major areas:
     Scenes - have one or more lights that are controlled together
     Buttons - extra buttons with no light directly attached (key-pad-link)
 
-This is a Main Module - always present.
+This is called from 'schedule' which is called from 'house' so there is one instance of this
+for every house.
 
     *!* - These are the places to add new lighting family information
 """
@@ -105,6 +106,10 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, LightingStatusAPI):
     def load_lighting_families(self):
         """
         Get all the config information for all types of lights and scenes.
+
+        TODO: Change this so there is a Device_<family> for each controller in the house.
+                Unused family will not have a Device_*** loaded.
+                There will be a Device per controller.
         """
         if g_debug > 1:
             print "lighting.load_lighting_families()"

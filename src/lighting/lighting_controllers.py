@@ -7,11 +7,12 @@ Handle the controller component of the lighting system.
 """
 
 import lighting_tools
+from main.tools import PrintBytes
 
 Controller_Data = {}
 ControllerCount = 0
 
-g_debug = 9
+g_debug = 0
 
 
 class ControllerData(lighting_tools.CoreData):
@@ -23,7 +24,9 @@ class ControllerData(lighting_tools.CoreData):
         super(ControllerData, self).__init__()
         self.Type = 'Controller'
         # All controllers (Common)
+        self.Command = None
         self.Interface = None
+        self.Message = ''
         self.Port = None
         # Serial Controllers interface
         self.BaudRate = None
@@ -41,8 +44,8 @@ class ControllerData(lighting_tools.CoreData):
         self.Vendor = None
 
     def __str__(self):
-        l_ret = "LightingController:: Name:{0:}, Family:{1:}, Interface:{2:}, Port:{3:}, Type:{4:}, ".format(
-                self.Name, self.Family, self.Interface, self.Port, self.Type)
+        l_ret = "LightingController:: Name:{0:}, Family:{1:}, Interface:{2:}, Port:{3:}, Type:{4:}, Message:{5:}, ".format(
+                self.Name, self.Family, self.Interface, self.Port, self.Type, PrintBytes(self.Message))
         l_ret += "Baud:{0:}, ByteSize:{1:}, Parity:{2:}, StopBits:{3:} ".format(self.BaudRate, self.ByteSize, self.Parity, self.StopBits)
         return l_ret
 

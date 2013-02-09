@@ -132,7 +132,7 @@ class ScheduleExecution(ScheduleData):
             l_light_obj = tools.get_light_object(g_house_obj, name = l_sched_obj.LightName)
             if g_debug > 2:
                 print "schedule.execute_schedules() ", l_sched_obj
-                print "                          ", l_light_obj
+            g_logger.info("Executing schedule Name:{0:} for Light:{1:} to Level:{2:}".format(l_sched_obj.Name, l_sched_obj.LightName, l_sched_obj.Level))
             g_lighting.change_light_setting(g_house_obj, l_sched_obj.LightNumber, l_sched_obj.Level)
         callLater(2, self.get_next_sched)
 

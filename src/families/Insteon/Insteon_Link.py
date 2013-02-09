@@ -9,7 +9,9 @@ Handle the all-link database(s) in insteon devices.
 import logging
 
 # Import PyMh files
-#import configure_mh
+# import configure_mh
+
+g_debug = 9
 
 Link_Data = {}
 
@@ -49,17 +51,21 @@ class InsteonLinkAPI(LinkData):
     def delete_link_responder(self):
         pass
 
-    def get_all_links_controller(self):
-        pass
+    def get_all_links_controller(self, p_lighting_obj):
+        if g_debug > 1:
+            print "Insteon_Link.get_all_links_controller()"
 
     def get_all_links_responder(self):
         pass
 
 
-class InsteonLinkMain(InsteonLinkAPI):
+class API(InsteonLinkAPI):
 
     def __init__(self):
         self.m_logger = logging.getLogger('PyMh.Insteon_Link')
         self.m_logger.info('Initialized.')
 
-### END
+    def Start(self, p_house_obj):
+        self.m_house_obj = p_house_obj
+
+# ## END

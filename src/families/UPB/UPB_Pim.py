@@ -12,13 +12,13 @@ from twisted.internet import reactor
 import Device_UPB
 from tools import PrintBytes
 
-g_debug = 0
+g_debug = 3
 
 g_driver = []
 g_logger = None
 g_queue = None
 g_pim = {}
-g_obj = None
+g_house_obj = None
 
 callLater = reactor.callLater
 
@@ -71,7 +71,7 @@ class UpbPimUtility(object):
     def _get_id_from_name(self, p_name):
         if g_debug > 5:
             print "UPB_Pim._get_id_from_name() ", p_name
-        for l_obj in g_obj.Lights.itervalues():
+        for l_obj in g_house_obj.Lights.itervalues():
             if l_obj.Family != 'UPB':
                 continue
             if l_obj.Active != True:
@@ -79,7 +79,7 @@ class UpbPimUtility(object):
             if l_obj.Name == p_name:
                 l_unit_id = int(l_obj.UnitID)
                 return l_unit_id
-        for l_obj in g_obj.Controllers.itervalues():
+        for l_obj in g_house_obj.Controllers.itervalues():
             if l_obj.Family != 'UPB':
                 continue
             if l_obj.Active != True:
@@ -333,32 +333,37 @@ class PimDriverInterface(DecodeResponses):
             l_command = g_queue.get(False)
         except  Queue.Empty:
             return
-        l_send = self._convert_pim(l_command)
-        if g_debug > 0:
-            print "UPB_Pim.dequeue_and_send()", l_send
-        try:
-            g_pim[0].write_device(l_send)
-        except IOError:
-            pass
-        except IndexError:  # No controller defined so [0] will be invalid
-            pass
-        except:
-            pass
+        for l_controller_obj in g_house_obj.Controllers.itervalues():
+            if l_controller_obj.Family.lower() != 'upb':
+                continue
+            if l_controller_obj.Active != True:
+                continue
+            if l_controller_obj.Driver != None:
+                l_send = self._convert_pim(l_command)
+                l_controller_obj.Driver.write_device(l_send)
+                if g_debug > 1:
+                    print "UPB_PIM.dequeue_and_send() to {0:}, Message: {1:}".format(l_controller_obj.Name, PrintBytes(l_command))
+                if g_debug > 0:
+                    g_logger.debug("Send to controller:{0:}, Message:{1:}".format(l_controller_obj.Name, PrintBytes(l_command)))
 
     def receive_loop(self):
         callLater(RECEIVE_TIMEOUT, self.receive_loop)
-        try:
-            (l_bytes, l_msg) = g_pim[0].fetch_read_data()
-        except IndexError:
-            (l_bytes, l_msg) = (0, '')
-        except:
-            (l_bytes, l_msg) = (0, '')
-            pass
+        l_bytes = 0
+        for l_controller_obj in g_house_obj.Controllers.itervalues():
+            if g_debug > 7:
+                print "UPB_Pim.receive_loop() for Controller:{0:}".format(l_controller_obj.Name)
+            if l_controller_obj.Family.lower() != 'upb':
+                continue
+            if l_controller_obj.Active != True:
+                continue
+            if l_controller_obj.Driver != None:
+                (l_bytes, l_msg) = l_controller_obj.Driver.fetch_read_data()
+                if g_debug > 6:
+                    print "UPB_PIM.receive_loop() from {0:}, Message: {1:}".format(l_controller_obj.Name, PrintBytes(l_msg))
         if l_bytes == 0:
             return False
-            # pass
-        if g_debug > 8:
-            print "UPB_Pim.receive_loop() - {0:}".format(PrintBytes(l_msg))
+        if g_debug > 5:
+            print "UPB_Pim.receive_loop() - {0:}".format(PrintBytes(l_msg)), l_bytes
         l_ret = self.decode_response(l_msg, l_bytes)
         return l_ret
 
@@ -377,7 +382,7 @@ class CreateCommands(UpbPimUtility, PimDriverInterface):
 
     def set_pim_mode(self):
         # Send a write register 70 to set PIM mode
-        # Command is <17>70 03 8D <0D>
+        # Command is <17> 70 03 8D <0D>
         l_val = bytearray(1)
         l_val[0] = 0x03
         self.set_register_value(0xFF, 0x70, l_val)
@@ -385,13 +390,13 @@ class CreateCommands(UpbPimUtility, PimDriverInterface):
 
 class LightingAPI(Device_UPB.LightingAPI, CreateCommands):
 
-    def change_light_setting(self, p_obj, p_level):
-        for l_obj in g_obj.Lights.itervalues():
+    def change_light_setting(self, p_lighting_obj, p_level):
+        for l_obj in g_house_obj.Lights.itervalues():
             if l_obj.get_family() != 'UPB':
                 continue
             if l_obj.get_active() == False:
                 continue
-            l_name = p_obj.Name
+            l_name = p_lighting_obj.Name
             if l_obj.get_name() == l_name:
                 l_id = self._get_id_from_name(l_name)
                 print "UPB_Pim.change_light_settings() for {0:} to Level {1:}".format(l_name, p_level)
@@ -406,7 +411,7 @@ class LightingAPI(Device_UPB.LightingAPI, CreateCommands):
 
 class UpbPimAPI(LightingAPI):
 
-    def start_all_controllers(self, p_obj):
+    def start_all_controllers(self, p_house_obj):
         """Find and initialize all UPB PIM type controllers.
         """
         """Iterate thru all controllers and skip all NON UPB controllers.
@@ -417,54 +422,54 @@ class UpbPimAPI(LightingAPI):
             Initialize the controller
             Initialize any interface special requirements.
         """
-        if g_debug > 1:
+        if g_debug > 0:
             print "UPB_Pim.start_all_controlers()"
         l_count = 0
-        for l_obj in p_obj.Controllers.itervalues():
-            if l_obj.Family.lower() != 'upb':
+        for l_key, l_controller_obj in p_house_obj.Controllers.iteritems():
+            if g_debug > 4:
+                print "UPB_PIM.start_all_controllers() - Iterating for ", l_controller_obj.Name
+            if l_controller_obj.Family.lower() != 'upb':
                 continue
-            if l_obj.Active != True:
+            if l_controller_obj.Active != True:
                 continue
+            if g_debug > 1:
+                print "UPB_PIM.start_all_controllers() - Family:{0:}, Interface:{1:}, Active:{2:}".format(l_controller_obj.Family, l_controller_obj.Interface, l_controller_obj.Active)
             l_pim = PimData()
-            l_pim.Interface = l_obj.Interface
-            l_pim.Name = l_obj.Name
-            l_pim.NetworkID = int(l_obj.NetworkID, 0)
-            l_pim.Password = l_obj.Password
-            l_pim.UnitID = int(l_obj.UnitID, 0)
+            l_pim.Interface = l_controller_obj.Interface
+            l_pim.Name = l_controller_obj.Name
+            l_pim.NetworkID = int(l_controller_obj.NetworkID, 0)
+            l_pim.Password = l_controller_obj.Password
+            l_pim.UnitID = int(l_controller_obj.UnitID, 0)
 
             g_logger.info('Found UPB PIM named: {0:}, Type={1:}'.format(l_pim.Name, l_pim.Interface))
             if g_debug > 0:
                 print "UPB_Pim._find_all_upb_controllers() - Name:", l_pim.Name
-            if l_obj.Interface.lower() == 'serial':
+            if l_controller_obj.Interface.lower() == 'serial':
                 from drivers import Driver_Serial
                 l_driver = Driver_Serial.API()
-                l_driver.Start(l_obj)
-            elif l_obj.Interface.lower() == 'ethernet':
+            elif l_controller_obj.Interface.lower() == 'ethernet':
                 from drivers import Driver_Ethernet
-                l_driver = Driver_Ethernet.Start()
-                l_driver = Driver_Ethernet.Start(l_obj)
-            elif l_obj.Interface.lower() == 'usb':
-                # TODO: Detect any other controllers here and load them
+                l_driver = Driver_Ethernet.API()
+            elif l_controller_obj.Interface.lower() == 'usb':
                 from drivers import Driver_USB_17DD_5500
                 l_driver = Driver_USB_17DD_5500.API()
-                l_driver.Start(l_obj)
-            else:
-                g_logger.error("UPB PIM has no known interface type! {0}, {1:}".format(l_pim.Name, l_pim.Interface))
-                l_driver = None
+            # TODO: Detect any other controllers here and load them
+            l_driver.Start(l_controller_obj)
+            p_house_obj.Controllers[l_key].Driver = l_driver
             l_pim.Driver = l_driver
             g_pim[l_count] = l_pim
-            self.initialize_one_controller(l_driver, l_obj)
+            self.initialize_one_controller(l_driver, l_controller_obj)
             l_count += 1
             return l_count
 
-    def initialize_one_controller(self, _p_driver, p_obj):
+    def initialize_one_controller(self, _p_driver, p_controller_obj):
         """Do whatever it takes to set the controller up for working on the UPB network.
         Send a write register 70 to set PIM mode
         Command is <17>70 03 8D <0D>
         """
         if g_debug > 1:
-            print "UPB_Pim.initialize_one_controller() - Name: {0:}".format(p_obj.Name)
-        self.set_register_value(p_obj.get_name(), 0x70, [0x03])
+            print "UPB_Pim.initialize_one_controller() - Name: {0:}".format(p_controller_obj.Name)
+        self.set_register_value(p_controller_obj.get_name(), 0x70, [0x03])
 
     def get_response(self):
         pass
@@ -528,21 +533,23 @@ class API(UpbPimAPI):
 
     def __init__(self):
         if g_debug > 0:
-            print "UPB_Pim.Init()"
+            print "UPB_Pim.__init__()"
         global g_logger, g_queue
         g_logger = logging.getLogger('PyHouse.UPB_PIM')
         g_logger.info('Initializing.')
         g_queue = Queue.Queue(300)
         g_logger.info('Initialized.')
 
-    def Start(self, p_obj):
+    def Start(self, p_house_obj):
         if g_debug > 0:
-            print "UPB_Pim.Start() - Name{0:}".format(p_obj.Name)
+            print "UPB_Pim.Start() - HouseName:{0:}".format(p_house_obj.Name)
         g_logger.info('Starting.')
-        global g_obj
-        g_obj = p_obj
-        self.start_all_controllers(p_obj)
+        global g_house_obj
+        g_house_obj = p_house_obj
+        self.start_all_controllers(p_house_obj)
         self.driver_loop_start()
+        if g_debug > 1:
+            print "UPB_Pim.Start() has completed."
 
     def Stop(self):
         if g_debug > 0:

@@ -106,10 +106,10 @@ class API(UsbDriverAPI):
             print "Driver_USB_17DD_5500.__init__() "
         self.m_driver = Driver_USB.API()
 
-    def Start(self, p_obj):
+    def Start(self, p_controler_obj):
         if g_debug > 0:
-            print "Driver_USB_17DD_5500.Start() - Name:{0:}".format(p_obj.Name)
-        self.m_driver.Start(p_obj, self)
+            print "Driver_USB_17DD_5500.Start() - Name:{0:}".format(p_controler_obj.Name)
+        self.m_driver.Start(p_controler_obj, self)
 
     def Stop(self, p_obj):
         if g_debug > 0:

@@ -244,8 +244,7 @@ class API(LightingAPI):
         global g_logger, g_InsteonLink, g_PLM
         g_logger = logging.getLogger('PyHouse.Device_Insteon')
         g_logger.info('Initializing.')
-        g_InsteonLink = Insteon_Link.InsteonLinkMain()
-        # Insteon_PLM.Start()
+        g_InsteonLink = Insteon_Link.API()
         g_PLM = self.m_plm = Insteon_PLM.API()
         g_logger.info('Initialized.')
 
@@ -255,8 +254,8 @@ class API(LightingAPI):
             print "Device_Insteon.Start()", p_house_obj
         g_logger.info('Starting.')
         self.m_plm.Start(p_house_obj)
+        g_InsteonLink.Start(p_house_obj)
         g_logger.info('Started.')
-
 
     def Stop(self):
         if g_debug > 0:

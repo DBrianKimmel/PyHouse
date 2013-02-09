@@ -13,7 +13,7 @@ g_debug = 0
 
 g_logger = None
 g_PIM = None
-g_obj = None
+g_house_obj = None
 
 
 class CoreData(object):
@@ -70,7 +70,7 @@ class ButtonAPI(lighting.ButtonAPI, CoreAPI):
         for l_dict in p_dict.itervalues():
             l_button = ButtonData()
             l_button = self.load_upb_button(l_dict, l_button)
-            g_obj.Buttons[l_button.Key] = l_button
+            g_house_obj.Buttons[l_button.Key] = l_button
 
     def load_upb_button(self, p_dict, p_button):
         l_button = p_button
@@ -96,7 +96,7 @@ class ControllerAPI(lighting.ControllerAPI, CoreAPI):
         for l_dict in p_dict.itervalues():
             l_ctlr = ControllerData()
             l_ctlr = self.load_upb_controller(l_dict, l_ctlr)
-            g_obj.Controllers[l_ctlr.Key] = l_ctlr
+            g_house_obj.Controllers[l_ctlr.Key] = l_ctlr
 
     def load_upb_controller(self, p_dict, p_controller):
         l_ctlr = p_controller
@@ -124,7 +124,7 @@ class LightingAPI(lighting.LightingAPI, CoreAPI):
         for l_dict in p_dict.itervalues():
             l_light = LightData()
             l_light = self.load_upb_light(l_dict, l_light)
-            g_obj.Lights[l_light.Key] = l_light
+            g_house_obj.Lights[l_light.Key] = l_light
 
     def load_upb_light(self, p_dict, p_light):
         if g_debug > 1:
@@ -164,13 +164,13 @@ class API(LightingAPI):
         g_PIM = self.m_pim = UPB_Pim.API()
         g_logger.info('Initialized.')
 
-    def Start(self, p_obj):
+    def Start(self, p_house_obj):
         if g_debug > 0:
             print "Device_UPB.Start()"
-        global g_obj
-        g_obj = p_obj
+        global g_house_obj
+        g_house_obj = p_house_obj
         g_logger.info('Starting.')
-        self.m_pim.Start(p_obj)
+        self.m_pim.Start(p_house_obj)
         g_logger.info('Started.')
 
     def Stop(self):

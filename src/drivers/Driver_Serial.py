@@ -26,7 +26,7 @@ from main.tools import PrintBytes
 g_debug = 0
 
 g_logger = None
-g_message = bytearray()
+g_controller_obj = None
 
 callLater = reactor.callLater
 
@@ -71,6 +71,7 @@ class SerialAPI(SerialDriverUtility):
     """Contains all external commands.
     """
     m_bytes = 0
+    m_serial = None
 
     def open_device(self, p_controler_obj):
         """will open and initialize the serial port.
@@ -150,11 +151,10 @@ class API(SerialAPI):
         """
         if g_debug > 0:
             print "Driver_Serial.__init__()"
-        global g_logger, g_message
+        global g_logger
         g_logger = logging.getLogger('PyHouse.SerialDriver')
         g_logger.debug("Initializing.")
         self.parse_dmesg()
-        g_message = bytearray()
         g_logger.debug("Initializied.")
 
     def Start(self, p_controler_obj):
@@ -163,7 +163,8 @@ class API(SerialAPI):
         """
         if g_debug > 0:
             print "Driver_Serial.Start() - Name:{0:}".format(p_controler_obj.Name)
-        global g_api
+        global g_controller_obj
+        g_controller_obj = p_controler_obj
         g_logger.debug("Starting.")
         self.open_device(p_controler_obj)
         self.read_device()

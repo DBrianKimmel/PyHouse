@@ -68,9 +68,11 @@ class LightingWindow(gui_tools.GuiTools):
         l_light = []
         self.m_max_light = 0
         for l_obj in sorted(p_house_obj.Lights.itervalues(), key = attrgetter('Name')):
-            if l_obj.Key > self.m_max_light: self.m_max_light = l_obj.Key
+            if l_obj.Key > self.m_max_light:
+                self.m_max_light = l_obj.Key
             l_relief = SUNKEN
-            if l_obj.Active: l_relief = RAISED
+            if l_obj.Active:
+                l_relief = RAISED
             l = Button(self.m_lighting_select_window, text = l_obj.Name, bg = BG_LIGHT, relief = l_relief,
                        command = lambda x = l_obj.Key, y = 1, z = p_house_obj: self.edit_lights(x, y, z))
             l_light.append(l)
@@ -80,9 +82,11 @@ class LightingWindow(gui_tools.GuiTools):
             self.m_ix += 1
         self.m_max_controller = 0
         for l_obj in p_house_obj.Controllers.itervalues():
-            if l_obj.Key > self.m_max_controller: self.m_max_controller = l_obj.Key
+            if l_obj.Key > self.m_max_controller:
+                self.m_max_controller = l_obj.Key
             l_relief = SUNKEN
-            if l_obj.Active: l_relief = RAISED
+            if l_obj.Active:
+                l_relief = RAISED
             c = Button(self.m_lighting_select_window, fg = "red", text = l_obj.Name, bg = BG_CTLR, relief = l_relief,
                        command = lambda x = l_obj.Key, y = 2, z = p_house_obj: self.edit_controllers(x, y, z))
             l_light.append(c)
@@ -92,9 +96,11 @@ class LightingWindow(gui_tools.GuiTools):
             self.m_ix += 1
         self.m_max_button = 0
         for l_obj in p_house_obj.Buttons.itervalues():
-            if l_obj.Key > self.m_max_button: self.m_max_button = l_obj.Key
+            if l_obj.Key > self.m_max_button:
+                self.m_max_button = l_obj.Key
             l_relief = SUNKEN
-            if l_obj.Active: l_relief = RAISED
+            if l_obj.Active:
+                l_relief = RAISED
             b = Button(self.m_lighting_select_window, fg = "blue", text = l_obj.Name, bg = BG_BUTTN, relief = l_relief,
                        command = lambda x = l_obj.Key, y = 3, z = p_house_obj: self.edit_buttons(x, y, z))
             l_light.append(b)
@@ -122,17 +128,17 @@ class LightingWindow(gui_tools.GuiTools):
     def add_light(self, p_house_obj):
         if g_debug > 0:
             print "Adding lights"
-        LightingDialog(self.m_lighting_select_window, self.m_max_light, 4, p_house_obj, "Adding Light", self.m_house_module)
+        LightingDialog(self.m_lighting_select_window, self.m_max_light + 1, 4, p_house_obj, "Adding Light", self.m_house_module)
 
     def add_controller(self, p_house_obj):
         if g_debug > 0:
             print "Adding controller"
-        LightingDialog(self.m_lighting_select_window, self.m_max_controller, 5, p_house_obj, "Adding Controller", self.m_house_module)
+        LightingDialog(self.m_lighting_select_window, self.m_max_controller + 1, 5, p_house_obj, "Adding Controller", self.m_house_module)
 
     def add_button(self, p_house_obj):
         if g_debug > 0:
             print "Adding button"
-        LightingDialog(self.m_lighting_select_window, self.m_max_button, 6, p_house_obj, "Adding Button", self.m_house_module)
+        LightingDialog(self.m_lighting_select_window, self.m_max_button + 1, 6, p_house_obj, "Adding Button", self.m_house_module)
 
     def save_lighting_and_exit(self):
         """
@@ -264,7 +270,7 @@ class LightingDialog(gui_tools.GuiTools):
         self.Timeout = DoubleVar()
         # Family - UPB
         self.NetworkID = IntVar()
-        self.Password = IntVar()
+        self.Password = StringVar()
         self.UnitID = IntVar()
         # Family - Insteon
         self.Address = StringVar()
@@ -350,7 +356,7 @@ class LightingDialog(gui_tools.GuiTools):
             self.Responder.set(self.get_bool(l_obj.Responder))
         elif l_family == 'UPB':
             self.NetworkID.set(l_obj.NetworkID)
-            self.Password.set(l_obj.Password)
+            self.Password.set(self.put_hex(int(str(l_obj.Password), 0)))
             self.UnitID.set(l_obj.UnitID)
         return l_type, l_family, l_interface
 
@@ -381,7 +387,7 @@ class LightingDialog(gui_tools.GuiTools):
             l_obj.Responder = int(self.Responder.get())
         elif l_family == 'UPB':
             l_obj.NetworkID = int(self.NetworkID.get())
-            l_obj.Password = int(self.Password.get())
+            l_obj.Password = self.Password.get()
             l_obj.UnitID = int(self.UnitID.get())
         #
         if l_interface == 'USB':
