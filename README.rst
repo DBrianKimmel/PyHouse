@@ -29,13 +29,19 @@ to control the house's heating and air conditioning.
 UPnP
 ----
 UPnP is being developed and added as a separate control mechanism for the
-lighting system.  
+lighting system as well as entertainment
 
 
 Entertainment
 -------------
 The entertainment component is to allow the control of the house TV, Radio
 and other similar devices via UPnP.
+
+
+Communication
+-------------
+The communication component will include telephone, cell phone, fax, email etc.
+
 
 
 ### END

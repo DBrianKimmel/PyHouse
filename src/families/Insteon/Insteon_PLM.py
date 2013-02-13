@@ -19,6 +19,7 @@ from twisted.internet import reactor
 
 # Import PyMh files
 import Device_Insteon
+import Insteon_Link
 from main.tools import PrintBytes
 from house import house
 
@@ -79,6 +80,7 @@ plm_commands = {
 'plm_set_config': 0x6B,
 'plm_led_on': 0x6D,
 'plm_led_off': 0x6E,
+'manage_all_link_record': 0x6F,
 'insteon_nak': 0x70,
 'insteon_ack': 0x71,
 'rf_sleep': 0x72,
@@ -382,10 +384,26 @@ class CreateCommands(PlmDriverInterface, InsteonPlmUtility):
         """
         pass
 
-    def queue_6F_command(self, p_obj):
+    def queue_6F_command(self, p_light_obj, p_code, p_flag, p_group, p_data):
         """Manage All-Link Record (11 bytes)
         """
-        pass
+        if g_debug > 0:
+            g_logger.debug("Queue command to manage all-link record")
+        l_addr = self._str_to_addr_list(p_light_obj.Address)
+        l_command = bytearray(11)
+        l_command[0] = STX
+        l_command[1] = plm_commands['manage_all_link_record']  # 0x6F
+        l_command[2] = p_code
+        l_command[3] = p_flag
+        l_command[4] = p_group
+        l_command[5] = l_addr[0]
+        l_command[6] = l_addr[1]
+        l_command[7] = l_addr[2]
+        l_command[8] = p_data[0]
+        l_command[9] = p_data[1]
+        l_command[10] = p_data[2]
+        return self.queue_plm_command(l_command)
+
 
     def queue_70_command(self, p_obj):
         """
@@ -485,9 +503,18 @@ class InsteonAllLinks(InsteonPlmCommands):
         """Add an all link record.
         """
 
-    def delete_link(self, p_link):
+    def delete_link(self, _p_link):
         """Delete an all link record.
         """
+        p_light_obj = Device_Insteon.LightData()
+        p_light_obj.Address = '1C.A3.1A'
+        p_group = 1
+        # p_code = 0x00  # Find First
+        p_code = 0x80  # Delete First Found record
+        p_flag = 0xE2
+        p_data = bytearray(3)
+        l_ret = self.queue_6F_command(p_light_obj, p_code, p_flag, p_group, p_data)
+        return l_ret
 
 
 class DecodeResponses(InsteonAllLinks):
@@ -604,9 +631,11 @@ class DecodeResponses(InsteonAllLinks):
         elif l_cmd == 0x6A: l_ret = self._decode_6A_record(p_controller_obj)
         elif l_cmd == 0x6B: l_ret = self._decode_6B_record(p_controller_obj)
         elif l_cmd == 0x6C: print "   insteon_PLM._decode got msg type 6C"
+        elif l_cmd == 0x6F: l_ret = self._decode_6F_record(p_controller_obj)
         elif l_cmd == 0x73: l_ret = self._decode_73_record(p_controller_obj)
         else:
-            g_logger.error("Unknown message >>".format(PrintBytes(p_controller_obj)))
+            g_logger.error("Unknown message {0:}, Cmd:{1:}".format(PrintBytes(p_controller_obj.Message), l_cmd))
+            self._check_for_more_decoding(p_controller_obj, 1, l_ret)
         return l_ret
 
     def _get_devcat(self, p_message, p_light_obj):
@@ -770,12 +799,13 @@ class DecodeResponses(InsteonAllLinks):
         See p 264 of developers guide.
         """
         l_message = p_controller_obj.Message
-        l_flags = l_message[2]
+        l_link_obj = Insteon_Link.LinkData()
+        l_link_obj.Flag = l_flags = l_message[2]
+        l_link_obj.Group = l_group = l_message[3]
+        l_link_obj.Addess = l_address = self._get_addr_from_message(l_message, 4)
+        l_link_obj.Data = l_data = [l_message[7], l_message[8], l_message[9]]
+        l_obj = self._get_obj_using_addr(l_address)
         l_flag_control = l_flags & 0x40
-        l_group = l_message[3]
-        l_id = self._get_addr_from_message(l_message, 4)
-        l_data = [l_message[7], l_message[8], l_message[9]]
-        l_obj = self._get_obj_using_addr(l_id)
         l_type = 'Responder'
         if l_flag_control != 0:
             l_type = 'Controller'
@@ -917,6 +947,28 @@ class DecodeResponses(InsteonAllLinks):
             print "Insteon_PLM.decode_6B_record() got PLM flag:{0:}".format(l_flag)
         return self._check_for_more_decoding(p_controller_obj, 4, l_ret)
 
+    def _decode_6F_record(self, p_controller_obj):
+        """All-Link manage Record Response (12 bytes).
+        See p 267 of developers guide.
+        """
+        l_message = p_controller_obj.Message
+        l_code = l_message[2]
+        l_flags = l_message[3]
+        l_flag_control = l_flags & 0x40
+        l_group = l_message[4]
+        l_id = self._get_addr_from_message(l_message, 5)
+        l_data = [l_message[8], l_message[9], l_message[10]]
+        l_ack = l_message[11]
+        l_obj = self._get_obj_using_addr(l_id)
+        l_type = 'Responder'
+        if l_flag_control != 0:
+            l_type = 'Controller'
+        g_logger.info("== 6F All-Link response Group={0:#02X}, Name={1:}, Flags={2:#02x}, Data={3:}, Code:{4:#02X}  {5:}".format(l_group, l_obj.Name, l_flags, l_data, l_code, l_type))
+        l_ret = True
+        if g_debug > 4:
+            print "Insteon_PLM.decode_6F_record() - Group:{0:}, Name:{1:}, Flags:{2:#02x}, Control:{3:#-2x}, Data:{4:}, Ack:{5:}".format(l_group, l_obj.Name, l_flags, l_code, l_data, l_ack)
+        return self._check_for_more_decoding(p_controller_obj, 12, l_ret)
+
     def _decode_73_record(self, p_controller_obj):
         """Get the PLM response of 'get config' (6 bytes).
         See p 270 of developers guide.
@@ -975,7 +1027,7 @@ class InsteonPlmAPI(DecodeResponses):
         """
         return self.queue_60_command()
 
-    def get_link_records(self, p_house_obj):
+    def get_link_records(self, _p_house_obj):
         self.get_all_allinks()
 
 
@@ -1106,6 +1158,7 @@ class API(LightHandlerAPI):
 
     def Test(self):
         print "Insteon_PLM.Test() ", g_house_obj
+        self.delete_link(1)
         self.get_link_records(g_house_obj)
 
 # ## END

@@ -25,7 +25,6 @@ House_Data = house.House_Data
 
 g_debug = 0
 g_logger = None
-g_InsteonLink = None
 
 
 class CoreData (object):
@@ -229,7 +228,6 @@ class InsteonDeviceUtility(LoadSaveInsteonData):
             print "insteon_Device.scan_insteon_devices "
         Insteon_PLM.LightingAPI().scan_all_lights(House_Data)
 
-import Insteon_Link
 import Insteon_PLM
 
 
@@ -241,10 +239,9 @@ class API(LightingAPI):
     def __init__(self):
         if g_debug > 0:
             print "Device_Insteon.__init__()"
-        global g_logger, g_InsteonLink, g_PLM
+        global g_logger, g_PLM
         g_logger = logging.getLogger('PyHouse.Device_Insteon')
         g_logger.info('Initializing.')
-        g_InsteonLink = Insteon_Link.API()
         g_PLM = self.m_plm = Insteon_PLM.API()
         g_logger.info('Initialized.')
 
@@ -253,8 +250,10 @@ class API(LightingAPI):
         if g_debug > 0:
             print "Device_Insteon.Start()", p_house_obj
         g_logger.info('Starting.')
+        # TODO: for each active Insteon controller, start a PLM for that controller only.
+        for l_controller_obj in p_house_obj.Controllers.itervalues():
+            pass
         self.m_plm.Start(p_house_obj)
-        g_InsteonLink.Start(p_house_obj)
         g_logger.info('Started.')
 
     def Stop(self):

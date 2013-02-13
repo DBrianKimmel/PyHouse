@@ -43,7 +43,7 @@ class LightingWindow(gui_tools.GuiTools):
         @param p_house_obj: is one House_Data object (see house.py).
         """
         if g_debug > 1:
-            print "gui_lighting() - Ix:{0:}".format(p_ix), p_house_obj
+            print "gui_lighting.show_buttons_for_one_house() - Ix:{0:}".format(p_ix), p_house_obj
         self.m_ix = p_ix
         self.frame_delete(self.m_house_select_window)
         self.m_lighting_select_window = Frame(self.m_root)
@@ -127,7 +127,7 @@ class LightingWindow(gui_tools.GuiTools):
 
     def add_light(self, p_house_obj):
         if g_debug > 0:
-            print "Adding lights"
+            print "gui_lighting.add_light() ", p_house_obj
         LightingDialog(self.m_lighting_select_window, self.m_max_light + 1, 4, p_house_obj, "Adding Light", self.m_house_module)
 
     def add_controller(self, p_house_obj):
@@ -159,12 +159,12 @@ class LightingDialog(gui_tools.GuiTools):
     def __init__(self, p_parent, p_key, p_kind, p_house_obj, p_title, p_module):
         """
         @param p_root: is ?
-        @param p_parent: is ?
+        @param p_parent: is the TkInter ID of the parent window (.12345678)
         @param p_key: is the schedule id we are about to edit.
         @param p_house_obj: is the house object that we are editing.
         """
         if g_debug > 1:
-            print "LightingDialog.__init__()", p_parent, p_key, p_kind, p_title
+            print "LightingDialog.__init__() - LightKey:{0:}".format(p_key), p_kind, p_title
         self.m_parent = p_parent
         self.m_house_module = p_module
         self.m_top = Toplevel(self.m_parent)
@@ -287,6 +287,7 @@ class LightingDialog(gui_tools.GuiTools):
         """
         # print "LoadVars key, Kind = {0:} - {1:}".format(p_key, p_kind)
         l_interface = None
+        l_housename = p_house_obj.Name
         try:
             if p_kind == 1 or p_kind == 4:
                 l_type = "Light"
@@ -326,7 +327,7 @@ class LightingDialog(gui_tools.GuiTools):
         self.Key.set(l_obj.Key)
         self.Name.set(l_obj.Name)
         self.RoomName.set(l_obj.RoomName)
-        self.HouseName.set(l_obj.HouseName)
+        self.HouseName.set(l_housename)
         self.Type.set(l_type)
         if l_type == 'Controller':
             if g_debug > 0:
@@ -346,18 +347,33 @@ class LightingDialog(gui_tools.GuiTools):
                 self.Timeout.set(l_obj.Timeout)
         # TODO: Change to access family modules to fill in these things.
         if l_family == 'Insteon':
-            self.Address.set(l_obj.Address)
-            self.Controller.set(self.get_bool(l_obj.Controller))
-            self.DevCat.set(self.put_hex(int(str(l_obj.DevCat), 0)))  # Displays hex
-            self.GroupList.set(l_obj.GroupList)
-            self.GroupNumber.set(l_obj.GroupNumber)
-            self.Master.set(self.get_bool(l_obj.Master))
-            self.ProductKey.set(l_obj.ProductKey)
-            self.Responder.set(self.get_bool(l_obj.Responder))
+            try:
+                self.Address.set(l_obj.Address)
+                self.Controller.set(self.get_bool(l_obj.Controller))
+                self.DevCat.set(self.put_hex(int(str(l_obj.DevCat), 0)))  # Displays hex
+                self.GroupList.set(l_obj.GroupList)
+                self.GroupNumber.set(l_obj.GroupNumber)
+                self.Master.set(self.get_bool(l_obj.Master))
+                self.ProductKey.set(l_obj.ProductKey)
+                self.Responder.set(self.get_bool(l_obj.Responder))
+            except AttributeError:
+                self.Address.set('11.22.33')
+                self.Controller.set(False)
+                self.DevCat.set(0)
+                self.GroupList.set('')
+                self.GroupNumber.set(0)
+                self.Master.set(False)
+                self.ProductKey.set('00.00.00')
+                self.Responder.set(False)
         elif l_family == 'UPB':
-            self.NetworkID.set(l_obj.NetworkID)
-            self.Password.set(self.put_hex(int(str(l_obj.Password), 0)))
-            self.UnitID.set(l_obj.UnitID)
+            try:
+                self.NetworkID.set(l_obj.NetworkID)
+                self.Password.set(self.put_hex(int(str(l_obj.Password), 0)))
+                self.UnitID.set(l_obj.UnitID)
+            except AttributeError:
+                self.NetworkID.set(0)
+                self.Password.set(self.put_hex(0))
+                self.UnitID.set(0)
         return l_type, l_family, l_interface
 
     def save_vars(self, p_light_obj):

@@ -4,6 +4,10 @@
 
 main/house.py
 
+There is one instance of this module for each house being controlled.
+
+
+
 There is location information for the house.  This is for calculating the
 time of sunrise and sunset.  Additional calculations may be added such as
 moonrise, tides, etc.

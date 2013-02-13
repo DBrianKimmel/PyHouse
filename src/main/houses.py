@@ -4,11 +4,10 @@
 
 main/houses.py
 
-There is location information for the house.  This is for calculating the
-time of sunrise and sunset.  Additional calculations may be added such as
-moonrise, tides, etc.
+This module is a singleton called from PyHouse.
+Its main purpose is to initiate the configuration system and then call
+the other packages and set up the whole system based on the config read in.
 
-There is one instance of this (Singleton).
 
 Rooms and lights and HVAC are associated with a particular house.
 """
