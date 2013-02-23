@@ -12,7 +12,7 @@ from twisted.internet import reactor
 import Device_UPB
 from tools import PrintBytes
 
-g_debug = 3
+g_debug = 0
 
 g_driver = []
 g_logger = None

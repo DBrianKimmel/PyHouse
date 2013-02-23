@@ -11,6 +11,7 @@ import datetime
 import logging
 import os
 import random
+import xml.etree.ElementTree as ET
 import twisted.python.components as tpc
 from twisted.internet import reactor
 from nevow import appserver
@@ -25,6 +26,7 @@ from nevow import util
 from nevow.rend import _CARRYOVER
 from formless import iformless
 
+from configure import xml_tools
 from lighting import lighting
 
 
@@ -58,8 +60,8 @@ U_H_child = url.here.child
 
 class WebLightData(lighting.LightData): pass
 class WebLightingAPI(lighting.LightingAPI): pass
-class WebLightingStatusData(lighting.LightingStatusData): pass
-class WebLightingStatusAPI(lighting.LightingStatusAPI): pass
+# class WebLightingStatusData(lighting.LightingStatusData): pass
+# class WebLightingStatusAPI(lighting.LightingStatusAPI): pass
 
 class WebSceneData(lighting.SceneData): pass
 class WebSceneAPI(lighting.SceneAPI): pass
@@ -78,6 +80,28 @@ class WebData(object):
 class WebUtilities(WebData):
     """
     """
+
+    def read_web(self, p_web_obj, p_web_xml):
+        if g_debug > 8:
+            print "web_server.read_web()"
+            print xml_tools.prettify(self.m_root)
+        try:
+            l_sect = self.m_root.find('Web')
+            l_sect.find('WebPort')
+        except:
+            l_sect = ET.SubElement(self.m_root, 'Web')
+            ET.SubElement(l_sect, 'WebPort').text = 'None'
+        l_obj = WebData()
+        l_obj.WebPort = l_sect.findtext('WebPort')
+        Web_Data[0] = l_obj
+
+    def write_web(self, p_parent, p_web_obj):
+        if g_debug > 1:
+            print "web_server.write_web()"
+        l_sect = self.write_create_empty('Web')
+        l_obj = Web_Data[0]
+        ET.SubElement(l_sect, 'WebPort').text = str(Web_Data[0].WebPort)
+        self.write_file()
 
     def build_child_tree(self):
         """Build a tree of pages for nevow.
@@ -365,7 +389,7 @@ class HousePage(rend.Page):
         print "form_post_house (HousePage)", kwargs
         return HousePage(self.name)
 
-class LightingPage(rend.Page, WebLightData, WebLightingAPI, WebLightingStatusData, WebLightingStatusAPI):
+class LightingPage(rend.Page, WebLightData, WebLightingAPI):
     """Define the page layout of the lighting selection web page.
     """
     addSlash = True
@@ -745,16 +769,18 @@ class RootPage(ManualFormMixin, EntertainmentPage, HousePage, LightingPage, Loca
 
 
 def Init():
+    if g_debug > 0:
+        print "web_server.__init__()"
     return
     global g_logger
     Web_Data[0] = WebData()
     Web_Data[0].WebPort = 8080
     g_logger = logging.getLogger('PyHouse.WebServer')
-    entertainment.Init()
-    # config_xml.ReadConfig().read_log_web()
     g_logger.info("Initialized - Start the web server on port {0:}".format(g_port))
 
 def Start():
+    if g_debug > 0:
+        print "web_server.Start()"
     return
     g_site_dir = os.path.split(os.path.abspath(__file__))[0]
     print "Webserver path = ", g_site_dir
@@ -764,10 +790,10 @@ def Start():
     g_logger.info("Started.")
 
 def Stop():
-    pass
+    if g_debug > 0:
+        print "web_server.Stop()"
 
-# Import PyMh files
-from entertainment import entertainment
+
 # from main.house import Location_Data
 from schedule import schedule
 

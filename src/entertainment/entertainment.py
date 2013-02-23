@@ -11,6 +11,7 @@ Can act as a UPnP Control point
 import logging
 # from twisted.web import xmlrpc, client
 from twisted.internet import reactor
+import xml.etree.ElementTree as ET
 
 # Import coherence files
 from coherence.base import Coherence
@@ -19,7 +20,7 @@ from coherence.upnp.core import DIDLLite
 from coherence.upnp.devices.dimmable_light_client import DimmableLightClient
 
 
-g_debug = 0
+g_debug = 5
 
 g_logger = None
 g_upnp = None
@@ -258,23 +259,25 @@ Will set a dimmable lite with device number <ID> to level <LEVEL>
         control_point.connect(self.igd_removed, 'Coherence.UPnP.ControlPoint.InternetGatewayDevice.removed')
         # 'Coherence.UPnP.EmbeddedDeviceClient.detection_completed
 
-def Init():
-    if g_debug > 0:
-        print "entertainment.Init()"
-    global g_logger
-    g_logger = logging.getLogger('PyMh.Entertainment')
-    g_logger.info("Initializing.")
-    g_logger.info("Initialized.")
 
-def Start():
-    if g_debug > 0:
-        print "entertainment.Start()"
-    global g_upnp
-    # g_upnp = UPnPControlPoint()
+class API(UPnPControlPoint):
+    def __init__(self):
+        if g_debug > 0:
+            print "entertainment.Init()"
+        global g_logger
+        g_logger = logging.getLogger('PyMh.Entertainment')
+        g_logger.info("Initializing.")
+        g_logger.info("Initialized.")
 
-def Stop():
-    if g_debug > 0:
-        print "entertainment.Stop()"
-    pass
+    def Start(self, p_house_obj, p_house_xml):
+        if g_debug > 0:
+            print "entertainment.Start()"
+
+    def Stop(self, p_xml):
+        if g_debug > 0:
+            print "entertainment.Stop()"
+        l_entertain_xml = ET.Element('Entertainment')
+        p_xml.append(l_entertain_xml)
+        return p_xml
 
 # ## END

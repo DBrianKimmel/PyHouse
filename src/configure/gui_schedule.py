@@ -42,7 +42,7 @@ class ScheduleWindow(gui_tools.GuiTools):
         @param p_house_obj: is one House_Data object (see house.py).
         """
         if g_debug > 1:
-            print "gui_schedule.show_buttons_for_one_house() - Ix:{0:}".format(p_ix), p_house_obj
+            print "gui_schedule.show_buttons_for_one_house() - Ix:{0:}".format(p_ix)
         self.m_ix = p_ix
         self.frame_delete(self.m_house_select_window)
         self.m_schedule_select_window = Frame(self.m_root)
@@ -62,7 +62,7 @@ class ScheduleWindow(gui_tools.GuiTools):
         @param p_house_obj: is one House_Data object (see house.py).
         """
         if g_debug > 0:
-            print "gui_schedule.show_schedule_button() - Show select schedule window  House_ix:{0:}".format(p_ix), p_house_obj
+            print "gui_schedule.show_schedule_button() - Show select schedule window  House_ix:{0:}".format(p_ix)
         l_sched = []
         for l_sched_obj in sorted(p_house_obj.Schedule.itervalues(), key = attrgetter('Name')):
             if l_sched_obj.HouseName != p_house_obj.Name:
@@ -188,7 +188,7 @@ class ScheduleDialog(ScheduleWindow):
         @param p_house_obj: is the house object that we are editing.
         """
         if g_debug > 1:
-            print "gui_schedule.load_vars() - Key:{0:}".format(p_key), p_house_obj
+            print "gui_schedule.load_vars() - Key:{0:}".format(p_key)
         l_obj = p_house_obj.Schedule[int(p_key)]
         self.Active.set(self.get_bool(l_obj.Active))
         self.HouseName.set(l_obj.HouseName)
@@ -207,7 +207,7 @@ class ScheduleDialog(ScheduleWindow):
         @param p_house_obj: is the house object that we are editing.
         """
         if g_debug > 1:
-            print "gui_schedule.save_vars() ", p_house_obj  # , self.m_house_module
+            print "gui_schedule.save_vars() "
         l_obj = schedule.ScheduleData()
         l_obj.Active = self.Active.get()
         l_obj.HouseName = self.HouseName.get()

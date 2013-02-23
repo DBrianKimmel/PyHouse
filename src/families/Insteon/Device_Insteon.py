@@ -23,7 +23,7 @@ from house import house
 
 House_Data = house.House_Data
 
-g_debug = 0
+g_debug = 3
 g_logger = None
 
 
@@ -50,49 +50,34 @@ class CoreData (object):
 
     def get_address(self):
         return self.__Address
-
     def set_address(self, value):
         self.__Address = value
-
     def get_controller(self):
         return self.__Controller
-
     def set_controller(self, value):
         self.__Controller = value
-
     def get_dev_cat(self):
         return self.__DevCat
-
     def set_dev_cat(self, value):
         self.__DevCat = value
-
     def get_group_list(self):
         return self.__GroupList
-
     def set_group_list(self, value):
         self.__GroupList = value
-
     def get_group_number(self):
         return self.__GroupNumber
-
     def set_group_number(self, value):
         self.__GroupNumber = value
-
     def get_master(self):
         return self.__Master
-
     def set_master(self, value):
         self.__Master = value
-
     def get_product_key(self):
         return self.__ProductKey
-
     def set_product_key(self, value):
         self.__ProductKey = value
-
     def get_responder(self):
         return self.__Responder
-
     def set_responder(self, value):
         self.__Responder = value
 
@@ -108,7 +93,7 @@ class CoreData (object):
 
 class CoreAPI(object):
 
-    def load_device(self, p_dict, p_dev):
+    def XXload_device(self, p_dict, p_dev):
         p_dev.Family = 'Insteon'
         p_dev.Address = self.getText(p_dict, 'Address')
         p_dev.Controller = self.getBool(p_dict, 'Controller')
@@ -132,13 +117,7 @@ class ButtonData(lighting.ButtonData, CoreData):
         return l_str
 
 
-class ButtonAPI(lighting.ButtonAPI, CoreAPI):
-
-    def load_insteon_button(self, p_dict, p_button):
-        l_button = p_button
-        l_button = super(ButtonAPI, self).load_button(p_dict, l_button)
-        l_button = self.load_device(p_dict, l_button)
-        return l_button
+class ButtonAPI(lighting.ButtonAPI, CoreAPI): pass
 
 
 class ControllerData(lighting.ControllerData, CoreData):
@@ -152,13 +131,7 @@ class ControllerData(lighting.ControllerData, CoreData):
         return l_str
 
 
-class ControllerAPI(lighting.ControllerAPI, CoreAPI):
-
-    def load_insteon_controller(self, p_dict, p_controller):
-        l_ctlr = p_controller
-        l_ctlr = super(ControllerAPI, self).load_controller(p_dict, l_ctlr)
-        l_ctlr = self.load_device(p_dict, l_ctlr)
-        return l_ctlr
+class ControllerAPI(lighting.ControllerAPI, CoreAPI): pass
 
 
 class LightData(lighting.LightData, CoreData):
@@ -175,62 +148,26 @@ class LightData(lighting.LightData, CoreData):
         l_str += " Address:{0:}".format(self.get_address())
         return l_str
 
+# TODO: Add read write xml for insteon specific data
+
 
 class LightingAPI(lighting.LightingAPI, CoreAPI):
     """Interface to the lights of this module.
     """
 
-    def load_insteon_light(self, p_dict, p_light):
-        l_light = p_light
-        l_light = super(LightingAPI, self).load_light(p_dict, l_light)
-        l_light = self.load_device(p_dict, l_light)
-        return l_light
-
-    def change_light_setting(self, p_obj, p_level):
+    def change_light_setting(self, p_light_obj, p_level):
         if g_debug > 1:
-            print "Device_Insteon.change_light_setting()", p_level, p_obj
-        if p_obj.Family == 'Insteon':
-            g_PLM.change_light_setting(p_obj, p_level)
+            print "Device_Insteon.change_light_setting()", p_level, p_light_obj
+        if p_light_obj.Family == 'Insteon':
+            self.m_plm.change_light_setting(p_light_obj, p_level)
 
-
-class LoadSaveInsteonData(LightingAPI, ControllerAPI, ButtonAPI):
-
-    def write_insteon_lights(self, p_lights,):
-        """
-        """
-        l_cfg = {}
-        if g_debug > 0:
-            print "  Device_Insteon.write_insteon_lights()"
-        for l_name, l_obj in p_lights.iteritems():
-            if l_obj.get_Family() != 'Insteon':
-                continue
-            l_cfg[l_name] = {}
-            l_cfg[l_name]['Name'] = l_obj.get_Name()
-            l_cfg[l_name]['Family'] = l_obj.get_Family()
-            l_cfg[l_name]['Address'] = l_obj.get_Address()
-            l_cfg[l_name]['Type'] = l_obj.get_Type()
-            l_cfg[l_name]['Comment'] = l_obj.get_Comment()
-            l_cfg[l_name]['Room'] = l_obj.get_Room()
-            l_cfg[l_name]['Coords'] = l_obj.get_Coords()
-            l_cfg[l_name]['GroupList'] = l_obj.get_GroupList()
-            l_cfg[l_name]['GroupNumber'] = l_obj.get_GroupNumber()
-            l_cfg[l_name]['Controller'] = l_obj.get_Controller()
-            l_cfg[l_name]['Responder'] = l_obj.get_Responder()
-            l_cfg[l_name]['Dimmable'] = l_obj.get_Dimmable()
-            l_cfg[l_name]['DevCat'] = l_obj.get_DevCat()
-            l_cfg[l_name]['Master'] = l_obj.get_Master()
-
-
-class InsteonDeviceUtility(LoadSaveInsteonData):
 
     def scan_all_lights(self, _p_lights):
         if g_debug > 0:
             print "insteon_Device.scan_insteon_devices "
-        Insteon_PLM.LightingAPI().scan_all_lights(House_Data)
+        self.m_plm.scan_all_lights(House_Data)
 
 import Insteon_PLM
-
-
 
 class API(LightingAPI):
 
@@ -239,21 +176,25 @@ class API(LightingAPI):
     def __init__(self):
         if g_debug > 0:
             print "Device_Insteon.__init__()"
-        global g_logger, g_PLM
+        global g_logger
         g_logger = logging.getLogger('PyHouse.Device_Insteon')
         g_logger.info('Initializing.')
-        g_PLM = self.m_plm = Insteon_PLM.API()
+        self.m_plm = Insteon_PLM.API()
         g_logger.info('Initialized.')
 
 
     def Start(self, p_house_obj):
         if g_debug > 0:
-            print "Device_Insteon.Start()", p_house_obj
+            print "Device_Insteon.Start()"
         g_logger.info('Starting.')
         # TODO: for each active Insteon controller, start a PLM for that controller only.
         for l_controller_obj in p_house_obj.Controllers.itervalues():
-            pass
-        self.m_plm.Start(p_house_obj)
+            # pass
+            if l_controller_obj.Family != 'Insteon':
+                continue
+            if l_controller_obj.Active != True:
+                continue
+            self.m_plm.Start(p_house_obj, l_controller_obj)
         g_logger.info('Started.')
 
     def Stop(self):

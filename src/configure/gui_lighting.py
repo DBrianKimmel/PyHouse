@@ -43,7 +43,7 @@ class LightingWindow(gui_tools.GuiTools):
         @param p_house_obj: is one House_Data object (see house.py).
         """
         if g_debug > 1:
-            print "gui_lighting.show_buttons_for_one_house() - Ix:{0:}".format(p_ix), p_house_obj
+            print "gui_lighting.show_buttons_for_one_house() - Ix:{0:}".format(p_ix)
         self.m_ix = p_ix
         self.frame_delete(self.m_house_select_window)
         self.m_lighting_select_window = Frame(self.m_root)
@@ -64,7 +64,7 @@ class LightingWindow(gui_tools.GuiTools):
         """
         """
         if g_debug > 0:
-            print "gui_lighting.show_device_button() - House_ix:{0:}".format(p_ix), p_house_obj
+            print "gui_lighting.show_device_button() - House_ix:{0:}".format(p_ix)
         l_light = []
         self.m_max_light = 0
         for l_obj in sorted(p_house_obj.Lights.itervalues(), key = attrgetter('Name')):

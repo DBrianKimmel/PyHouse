@@ -23,12 +23,11 @@ import Insteon_Link
 from main.tools import PrintBytes
 from house import house
 
-g_debug = 0
+g_debug = 3
 
 g_driver = []
 g_logger = None
 g_queue = None
-g_house_obj = None
 
 House_Data = house.House_Data
 
@@ -204,8 +203,7 @@ class PlmDriverInterface(object):
     def driver_loop_start(self, _p_house_obj):
         if g_debug > 1:
             print "Insteon_PLM.driver_loop_start()"
-        global g_queue
-        g_queue = Queue.Queue(300)
+        self.m_queue = Queue.Queue(300)
         callLater(SEND_TIMEOUT, self.dequeue_and_send)
         callLater(RECEIVE_TIMEOUT, self.receive_loop)
 
@@ -215,9 +213,9 @@ class PlmDriverInterface(object):
         pass
 
     def queue_plm_command(self, p_command):
-        if g_debug > 5:
-            print "Insteon_PLM.queue_plm_command() - {0:}".format(PrintBytes(p_command))
-        g_queue.put(p_command)
+        self.m_queue.put(p_command)
+        if g_debug > 2:
+            print "Insteon_PLM.queue_plm_command() - Q-Size:{0:}, Command:{1:}".format(self.m_queue.qsize(), PrintBytes(p_command))
 
     def dequeue_and_send(self):
         """Check the sending queue every SEND_TIMEOUT seconds and send if
@@ -226,11 +224,12 @@ class PlmDriverInterface(object):
         Uses twisted to get a callback when the timer expires.
         """
         callLater(SEND_TIMEOUT, self.dequeue_and_send)
+        # print "Insteon_PLM.dequeue_and_send() - Size:{0:}".format(self.m_queue.qsize())
         try:
-            l_command = g_queue.get(False)
+            l_command = self.m_queue.get(False)
         except Queue.Empty:
             return
-        for l_controller_obj in g_house_obj.Controllers.itervalues():
+        for l_controller_obj in self.m_house_obj.Controllers.itervalues():
             if l_controller_obj.Family.lower() != 'insteon':
                 continue
             if l_controller_obj.Active != True:
@@ -246,7 +245,7 @@ class PlmDriverInterface(object):
         """Check the driver to see if the controller returned any messages.
         """
         callLater(RECEIVE_TIMEOUT, self.receive_loop)
-        for l_controller_obj in g_house_obj.Controllers.itervalues():
+        for l_controller_obj in self.m_house_obj.Controllers.itervalues():
             l_bytes = 0
             if g_debug > 6:
                 print "Insteon_PLM.receive_loop()", l_controller_obj.Name
@@ -290,7 +289,7 @@ class CreateCommands(PlmDriverInterface, InsteonPlmUtility):
         @return: the response from queue_plm_command
         """
         if g_debug > 1:
-            print "Insteon_PLM.queue_62_command() ", p_light_obj, p_cmd1, p_cmd2
+            print "Insteon_PLM.queue_62_command() ", p_light_obj.Name, p_cmd1, p_cmd2
         l_addr = self._str_to_addr_list(p_light_obj.Address)
         l_command = bytearray(8)
         l_command[0] = STX
@@ -352,6 +351,7 @@ class CreateCommands(PlmDriverInterface, InsteonPlmUtility):
         """
         if g_debug > 0:
             g_logger.debug("Queue command to get Next all-link record.")
+            print "Insteon_PLM.queue_6A_command() get Next all-link record."
         l_command = bytearray(2)
         l_command[0] = STX
         l_command[1] = plm_commands['plm_next_all_link']
@@ -363,6 +363,7 @@ class CreateCommands(PlmDriverInterface, InsteonPlmUtility):
         """
         if g_debug > 0:
             g_logger.debug("Queue command to set PLM config flag to {0:#X}".format(p_flags))
+            print "Insteon_PLM.queue_6B_command() to set PLM config flag"
         l_command = bytearray(3)
         l_command[0] = STX
         l_command[1] = plm_commands['plm_set_config']
@@ -389,6 +390,7 @@ class CreateCommands(PlmDriverInterface, InsteonPlmUtility):
         """
         if g_debug > 0:
             g_logger.debug("Queue command to manage all-link record")
+            print "Insteon_PLM.queue_6F_command() to manage all-link record"
         l_addr = self._str_to_addr_list(p_light_obj.Address)
         l_command = bytearray(11)
         l_command[0] = STX
@@ -433,16 +435,16 @@ class CreateCommands(PlmDriverInterface, InsteonPlmUtility):
 
 class LightingAPI(Device_Insteon.LightingAPI, CreateCommands):
 
-    def change_light_setting(self, p_obj, p_level):
+    def change_light_setting(self, p_light_obj, p_level):
         if g_debug > 0:
-            print "Insteon_PLM.change_light_settings()  {0:} to {1:}".format(p_obj.Name, p_level)
+            print "Insteon_PLM.change_light_settings()  {0:} to {1:}".format(p_light_obj.Name, p_level)
         if int(p_level) == 0:
-            self.queue_62_command(p_obj, message_types['off'], 0)
+            self.queue_62_command(p_light_obj, message_types['off'], 0)
         elif int(p_level) == 100:
-            self.queue_62_command(p_obj, message_types['on'], 255)
+            self.queue_62_command(p_light_obj, message_types['on'], 255)
         else:
             l_level = int(p_level) * 255 / 100
-            self.queue_62_command(p_obj, message_types['on'], l_level)
+            self.queue_62_command(p_light_obj, message_types['on'], l_level)
 
     def scan_all_lights(self, p_lights):
         """Exported command - used by other modules.
@@ -480,9 +482,10 @@ class InsteonPlmCommands(LightingAPI):
 class InsteonAllLinks(InsteonPlmCommands):
     # TODO: implement
 
-    def get_all_allinks(self):
+    def get_all_allinks(self, p_controller_obj):
         """A command to fetch the all-link database from the PLM
         """
+        g_logger.debug("Get all All-Links from controller {0:}.".format(p_controller_obj.Name))
         l_ret = self._get_first_allink()
         while l_ret:
             l_ret = self._get_next_allink()
@@ -540,11 +543,11 @@ class DecodeResponses(InsteonAllLinks):
         """
         if g_debug > 7:
             print "Insteon_PLM._get_obj_using_addr(4) - Address:{0:}".format(p_addr)
-        l_ret = self._find_addr(g_house_obj.Lights, p_addr)
+        l_ret = self._find_addr(self.m_house_obj.Lights, p_addr)
         if l_ret == None:
-            l_ret = self._find_addr(g_house_obj.Controllers, p_addr)
+            l_ret = self._find_addr(self.m_house_obj.Controllers, p_addr)
         if l_ret == None:
-            l_ret = self._find_addr(g_house_obj.Buttons, p_addr)
+            l_ret = self._find_addr(self.m_house_obj.Buttons, p_addr)
         if l_ret == None:
             l_ret = Device_Insteon.LightData()  # an empty new object
             l_ret.Name = '**' + str(p_addr) + '**'
@@ -1035,49 +1038,36 @@ class LightHandlerAPI(InsteonPlmAPI):
     """This is the API for light control.
     """
 
-    def start_all_controllers(self, p_house_obj):
-        l_count = 0
+    def start_controller(self, p_controller_obj):
         if g_debug > 0:
-            print "Insteon_PLM.start_all_controllers() - House:{0:}".format(p_house_obj.Name)
-        for l_key, l_controller_obj in p_house_obj.Controllers.iteritems():
-            if g_debug > 2:
-                print "Insteon_PLM.start_all_controllers() - Controller:{0:}, Family:{1:}, Active:{2:}".format(l_controller_obj.Name, l_controller_obj.Family, l_controller_obj.Active)
-            if l_controller_obj.Active != True:
-                continue
-            if l_controller_obj.Family != 'Insteon':
-                continue
-            if g_debug > 1:
-                print "Insteon_PLM.start_all_controllers() - Family:{0:}, Interface:{1:}, Active:{2:}".format(l_controller_obj.Family, l_controller_obj.Interface, l_controller_obj.Active)
-            if l_controller_obj.Interface.lower() == 'serial':
-                from drivers import Driver_Serial
-                l_driver = Driver_Serial.API()
-            elif l_controller_obj.Interface.lower() == 'ethernet':
-                from drivers import Driver_Ethernet
-                l_driver = Driver_Ethernet.API()
-            elif l_controller_obj.Interface.lower() == 'usb':
-                from drivers import Driver_USB_0403_6001
-                l_driver = Driver_USB_0403_6001.API()
-            # TODO: Detect any other controllers here and load them
-            p_house_obj.Controllers[l_key].Driver = l_driver
-            l_driver.Start(l_controller_obj)
-            if g_debug > 2:
-                print "Insteon_PLM has just started a driver.  Name: {0:}".format(l_controller_obj.Name)
-            l_count += 1
+            print "Insteon_PLM.start_controller() - Name:{0:}".format(p_controller_obj.Name)
         if g_debug > 1:
-            print "Insteon_PLM.start_all_controllers() has completed.  Found {0:} active controllers, configured and initialized {1:} of them.".format(l_count, len(g_driver))
+            print "Insteon_PLM.start_controller() - Family:{0:}, Interface:{1:}, Active:{2:}".format(p_controller_obj.Family, p_controller_obj.Interface, p_controller_obj.Active)
+        if p_controller_obj.Interface.lower() == 'serial':
+            from drivers import Driver_Serial
+            l_driver = Driver_Serial.API()
+        elif p_controller_obj.Interface.lower() == 'ethernet':
+            from drivers import Driver_Ethernet
+            l_driver = Driver_Ethernet.API()
+        elif p_controller_obj.Interface.lower() == 'usb':
+            from drivers import Driver_USB_0403_6001
+            l_driver = Driver_USB_0403_6001.API()
+        # TODO: Detect any other controllers here and load them
+        p_controller_obj.Driver = l_driver
+        l_driver.Start(p_controller_obj)
+        if g_debug > 2:
+            print "  Insteon_PLM has just started a driver.  Name: {0:}".format(p_controller_obj.Name)
 
-    def stop_all_controllers(self, p_house_obj):
+    def stop_controller(self, p_controller_obj):
         if g_debug > 0:
-            print "Insteon_PLM.stop_all_controllers()"
-        for l_controller_obj in p_house_obj.Controllers.itervalues():
-            if g_debug > 1:
-                print "Insteon_PLM.stop_all_controllers() - Driver:{0:}".format(l_controller_obj.Name)
-            if l_controller_obj.Driver != None:
-                l_controller_obj.Driver.Stop()
+            print "Insteon_PLM.stop__controller()"
+        if p_controller_obj.Driver != None:
+            p_controller_obj.Driver.Stop()
 
-    def set_plm_mode(self):
+    def set_plm_mode(self, p_controller_obj):
         """Set the PLM to a mode
         """
+        g_logger.info('Setting mode of Insteon controller {0:}.'.format(p_controller_obj.Name))
         if g_debug > 5:
             print "Insteon_PLM.set_plm_mode() - Sending mode command to Insteon PLM"
         self.queue_6B_command(MODE_MONITOR)
@@ -1133,16 +1123,15 @@ class API(LightHandlerAPI):
         g_queue = Queue.Queue(300)
         g_logger.info('Initialized.')
 
-    def Start(self, p_house_obj):
+    def Start(self, p_house_obj, p_controller_obj):
         if g_debug > 0:
             print "Insteon_PLM.Start() - HouseName:{0:}".format(p_house_obj.Name)
         g_logger.info('Starting.')
         self.m_house_obj = p_house_obj
-        global g_house_obj
-        g_house_obj = p_house_obj
-        self.start_all_controllers(p_house_obj)
+        self.m_controller_obj = p_controller_obj
+        self.start_controller(p_controller_obj)
         self.driver_loop_start(p_house_obj)
-        self.set_plm_mode()
+        self.set_plm_mode(p_controller_obj)
         self.get_all_lights_status()
         g_logger.info('Started.')
         if g_debug > 1:
@@ -1153,12 +1142,12 @@ class API(LightHandlerAPI):
             print "Insteon_PLM.Stop()"
         g_logger.info('Stopping.')
         self.driver_loop_stop()
-        self.stop_all_controllers(g_house_obj)
+        self.stop_controller(self.m_controller_obj)
         g_logger.info('Stopped.')
 
     def Test(self):
-        print "Insteon_PLM.Test() ", g_house_obj
+        print "Insteon_PLM.Test() ", self.m_controller_obj.Name
         self.delete_link(1)
-        self.get_link_records(g_house_obj)
+        self.get_all_allinks(self.m_controller_obj)
 
 # ## END

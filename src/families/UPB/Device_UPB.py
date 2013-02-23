@@ -134,11 +134,11 @@ class LightingAPI(lighting.LightingAPI, CoreAPI):
         l_light = self.load_device(p_dict, l_light)
         return l_light
 
-    def change_light_setting(self, p_obj, p_level):
+    def change_light_setting(self, p_light_obj, p_level):
         if g_debug > 1:
             print "Device_UPB.change_light_setting()"
-        if p_obj.Family == 'UPB':
-            g_PIM.change_light_setting(p_obj, p_level)
+        if p_light_obj.Family == 'UPB':
+            g_PIM.change_light_setting(p_light_obj, p_level)
 
     def update_all_lights(self):
         if g_debug > 1:

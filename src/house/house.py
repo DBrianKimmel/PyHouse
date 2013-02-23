@@ -19,14 +19,15 @@ Rooms and lights and HVAC are associated with a particular house.
 
 # Import system type stuff
 import logging
+import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from schedule import schedule
 from lighting import lighting_tools
 from lighting import lighting
-# from configure.config_xml import g_xmltree
+from configure import xml_tools
 
-g_debug = 0
+g_debug = 3
 m_logger = None
 
 Singletons = {}
@@ -52,13 +53,15 @@ class HouseData(object):
         self.Name = None
         self.Buttons = {}
         self.Controllers = {}
+        self.LightingAPI = None
         self.Lights = {}
         self.Location = {}
         self.Rooms = {}
         self.Schedule = {}
+        self.ScheduleAPI = None
 
     def __str__(self):
-        l_ret = ' House:: Name :{0:}, Active:{1:}, Key:{2:}'.format(self.Name, self.Active, self.Key)
+        l_ret = ' House:: Name :{0:}, Active:{1:}, Key:{2:}, LightingAPI:{3:}'.format(self.Name, self.Active, self.Key, self.LightingAPI)
         return l_ret
 
 
@@ -193,51 +196,198 @@ class RoomData(LocationData):
     Size = property(get_size, set_size, None, None)
 
 
-class API(RoomData):
+class HouseReadConfig(xml_tools.ConfigTools):
+
+    def read_location(self, p_entry, p_name = ''):
+        if g_debug > 7:
+            print "house.read_location()"
+        l_dict = {}
+        l_count = 0
+        l_obj = LocationData()
+        if g_debug > 4:
+            print "house.read_location() - Active=", l_obj.Active, l_obj.Name
+        # Now read the location subsection
+        l_entry = p_entry.find('Location')
+        l_obj.Street = self.get_text(l_entry, 'Street')
+        l_obj.City = self.get_text(l_entry, 'City')
+        l_obj.State = self.get_text(l_entry, 'State')
+        l_obj.ZipCode = self.get_text(l_entry, 'ZipCode')
+        l_obj.Phone = self.get_text(l_entry, 'Phone')
+        l_obj.Latitude = self.get_float(l_entry, 'Latitude')
+        l_obj.Longitude = self.get_float(l_entry, 'Longitude')
+        l_obj.TimeZone = self.get_float(l_entry, 'TimeZone')
+        l_obj.SavingTime = self.get_float(l_entry, 'SavingTime')
+        l_dict[l_count] = l_obj
+        l_count += 1
+        if g_debug > 4:
+            print "house.read_location()  loaded {0:} locations for {1:}".format(l_count, p_name)
+        return l_dict
+
+    def read_rooms(self, p_entry, p_house):
+        if g_debug > 7:
+            print "house.read_rooms()"
+        l_dict = {}
+        l_count = 0
+        l_rooms = p_entry.find('Rooms')
+        l_list = l_rooms.iterfind('Room')
+        for l_entry in l_list:
+            l_obj = RoomData()
+            self.read_common(l_obj, l_entry)
+            l_obj.Key = l_count
+            l_obj.HouseName = p_house
+            l_obj.Comment = self.get_text(l_entry, 'Comment')
+            l_obj.Corner = l_entry.findtext('Corner')
+            l_obj.HouseName = l_entry.findtext('HouseName')
+            l_obj.Size = l_entry.findtext('Size')
+            l_dict[l_count] = l_obj
+            l_count += 1
+            if g_debug > 4:
+                print "house.read_rooms()   Name:{0:}, Active:{1:}, Key:{2:}".format(l_obj.Name, l_obj.Active, l_obj.Key)
+        if g_debug > 4:
+            print "house.read_rooms()  loaded {0:} rooms".format(l_count)
+        return l_dict
+
+    def read_house(self, p_house_obj, p_house_xml):
+        """Read house information, location and rooms.
+
+        The main data is House_Data.
+        """
+        l_count = 0
+        l_obj = p_house_obj
+        self.read_common(l_obj, p_house_xml)
+        l_name = l_obj.Name
+        # l_obj.Key = l_count
+        if g_debug > 1:
+            print "house.read_house() - Loading XML data for House:{0:}".format(l_obj.Name), l_obj
+        l_obj.Location = self.read_location(p_house_xml, l_name)
+        l_obj.Rooms = self.read_rooms(p_house_xml, l_name)
+        House_Data[l_count] = l_obj
+        l_count += 1
+        if g_debug > 2:
+            print "house.read_house() loaded {0:} houses.".format(l_count), l_obj
+        return House_Data
+
+
+class HouseWriteConfig(xml_tools.ConfigTools):
+    """Use the internal data to write an updated config file.
+
+    This is called from the web interface or the GUI when the data has been changed.
+    """
+
+    m_filename = None
+    m_root = None
+
+    def __init__(self):
+        global g_xmltree
+        self.m_filename = xml_tools.open_config()
+        try:
+            g_xmltree = ET.parse(self.m_filename)
+        except SyntaxError:
+            xml_tools.ConfigFile().create_empty_config_file(self.m_filename)
+            g_xmltree = ET.parse(self.m_filename)
+        self.m_root = g_xmltree.getroot()
+
+    def write_location(self, p_parent, p_dict):
+        """Replace the data in the 'House/Location' section with the current data.
+        """
+        l_count = 0
+        for l_obj in p_dict.itervalues():
+            l_entry = ET.SubElement(p_parent, 'Location')
+            ET.SubElement(l_entry, 'Street').text = l_obj.Street
+            ET.SubElement(l_entry, 'City').text = l_obj.City
+            ET.SubElement(l_entry, 'State').text = l_obj.State
+            ET.SubElement(l_entry, 'ZipCode').text = l_obj.ZipCode
+            ET.SubElement(l_entry, 'Phone').text = l_obj.Phone
+            ET.SubElement(l_entry, 'Latitude').text = str(l_obj.Latitude)
+            ET.SubElement(l_entry, 'Longitude').text = str(l_obj.Longitude)
+            ET.SubElement(l_entry, 'TimeZone').text = str(l_obj.TimeZone)
+            ET.SubElement(l_entry, 'SavingTime').text = str(l_obj.SavingTime)
+            l_count += 1
+        if g_debug > 2:
+            print "house.write_location() - Wrote {0:} locations".format(l_count)
+
+    def write_rooms(self, p_parent, p_dict):
+        l_count = 0
+        l_sect = ET.SubElement(p_parent, 'Rooms')
+        for l_obj in p_dict.itervalues():
+            l_entry = self.build_common(l_sect, 'Room', l_obj)
+            ET.SubElement(l_entry, 'Comment').text = l_obj.Comment
+            ET.SubElement(l_entry, 'Corner').text = l_obj.Corner
+            ET.SubElement(l_entry, 'HouseName').text = l_obj.HouseName
+            ET.SubElement(l_entry, 'Size').text = l_obj.Size
+            l_count += 1
+        if g_debug > 2:
+            print "house.write_rooms() - Wrote {0:} rooms".format(l_count)
+
+    def write_house(self, p_parent, p_house_obj):
+        """Replace the data in the 'Houses' section with the current data.
+        """
+        p_parent.set('Name', p_house_obj.Name)
+        p_parent.set('Key', str(p_house_obj.Key))
+        p_parent.set('Active', self.put_bool(p_house_obj.Active))
+        self.write_location(p_parent, p_house_obj.Location)
+        self.write_rooms(p_parent, p_house_obj.Rooms)
+        if g_debug > 2:
+            print "house.write_house() - Name:{0:}, Key:{1:}".format(p_house_obj.Name, p_house_obj.Key)
+        return p_parent
+
+
+class LoadSaveAPI(RoomData, HouseReadConfig, HouseWriteConfig):
     """
     """
 
-    m_schedules = []
-    m_active_houses = 0
+
+class API(LoadSaveAPI):
+    """
+    """
+
+    m_schedule = None
+    m_house_obj = None
 
     def __init__(self):
         if g_debug > 0:
             print "house.__init__()"
         self.m_logger = logging.getLogger('PyHouse.House')
-        self.m_logger.info("Initializing all houses.")
-        # self.read_houses()
-        self.m_logger.info("Initialized.")
 
-    def Start(self, p_house_obj):
+    def Start(self, p_houses_obj, p_house_xml):
         """Start processing for all things house.
         May be stopped and then started anew to force reloading info.
-        Invoked once no matter how many houses defined.
         """
         if g_debug > 0:
-            print "house.Start() House:{0:}, Active:{1:}".format(p_house_obj.Name, p_house_obj.Active)
-        self.m_logger.info("Starting.")
-        if p_house_obj.Active != True:
-            return
-        l_sch = schedule.API()
-        self.m_schedules.append(l_sch)
-        l_sch.Start(p_house_obj)
-        self.m_active_houses += 1
+            print "house.API.Start() 1"
+        self.m_house_obj = HouseData()
+        self.m_house_obj.ScheduleAPI = schedule.API()
+        self.read_house(self.m_house_obj, p_house_xml)
+        if g_debug > 0:
+            print "house.API.Start() - House:{0:}, Active:{1:}".format(self.m_house_obj.Name, self.m_house_obj.Active)
+        self.m_logger.info("Starting House {0:}.".format(self.m_house_obj.Name))
+        self.m_house_obj.ScheduleAPI.Start(self.m_house_obj, p_house_xml)
+        if g_debug > 0:
+            print "house.API.Start() - Rooms:{0:}, Schedule:{1:}, Lights:{2:}, Controllers:{3:}".format(
+                    len(self.m_house_obj.Rooms), len(self.m_house_obj.Schedule), len(self.m_house_obj.Lights), len(self.m_house_obj.Controllers))
         self.m_logger.info("Started.")
+        return self.m_house_obj
 
 
-    def Stop(self):
+    def Stop(self, p_xml):
+        """Stop active houses - not active have never been started.
+        Return a filled in XML for the house.
+        """
         if g_debug > 0:
-            print "house.Stop()"
-        self.m_logger.info("Stopping.")
-        self.save_all_houses()
-        #
-        for l_sch in self.m_schedules:
-            l_sch.Stop()
+            print "\nhouse.Stop() - House:{0:}".format(self.m_house_obj.Name)
+        l_house_xml = ET.Element('House')
+        self.write_house(l_house_xml, self.m_house_obj)
+        self.m_logger.info("Stopping house {0:}.".format(self.m_house_obj.Name))
+        try:
+            l_xml = self.m_house_obj.ScheduleAPI.Stop(l_house_xml)
+            # l_house_xml.extend(l_xml)
+        except:
+            print "house.Stop() - ERROR occurred on house {0:}.".format(self.m_house_obj.Name)
+        print "  done with Schedule."
+        p_xml.append(l_house_xml)
         self.m_logger.info("Stopped.")
-
-    def XXsave_all_houses(self):
         if g_debug > 0:
-            print "house.save_all_houses() "
-        self._save_all_houses()
+            print "house.Stop() - appended schedulwe _ sub-modules"
+        return p_xml
 
 # ##  END

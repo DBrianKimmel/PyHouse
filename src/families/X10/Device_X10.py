@@ -24,7 +24,7 @@ class LightingAPI(lighting.LightingAPI):
     """Overload the base methods with specific ones here.
     """
 
-    def change_light_setting(self, p_obj, p_level):
+    def change_light_setting(self, p_light_obj, p_level):
         pass
 
     def update_all_lights(self):

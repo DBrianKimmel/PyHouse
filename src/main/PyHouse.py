@@ -30,7 +30,7 @@ from main import log
 from main import houses
 from web import web_server
 
-g_debug = 0
+g_debug = 3
 g_logger = None
 
 callWhenRunning = reactor.callWhenRunning
@@ -127,6 +127,8 @@ def SigIntHandler(signum, _stackframe):
     API().Stop()
     exit
 
+import xml.etree.ElementTree as ET
+from configure import xml_tools
 
 class API(object):
     """
@@ -150,6 +152,7 @@ class API(object):
         global g_logger
         g_logger = logging.getLogger('PyHouse')
         g_logger.info("Initializing.\n")
+
         self.m_houses = houses.API()
         web_server.Init()
         self.m_gui = gui.API(self)
@@ -166,6 +169,10 @@ class API(object):
         if g_debug > 0:
             print "\nPyHouse.Start()"
         g_logger.info("Starting.")
+
+        # self.m_xml_file_name = xml_tools.open_config()
+        # self.xml_tree = None
+
         self.m_houses.Start()
         web_server.Start()
         g_logger.info("Started.\n")

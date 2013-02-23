@@ -150,7 +150,6 @@ class ControllerData(lighting_tools.CoreData):
 class ControllersAPI(lighting_tools.CoreAPI):
 
     def __init__(self):
-        # print " C lighting_controller.ControllerAPI.__init__()"
         super(ControllersAPI, self).__init__()
 
     def get_ControllerCount(self):

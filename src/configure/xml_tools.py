@@ -10,7 +10,8 @@ from xml.etree import ElementTree as ET
 from xml.dom import minidom
 
 
-g_debug = 0
+g_debug = 1
+g_xmltree = None
 
 
 class XmlFileTools(object):
@@ -30,13 +31,9 @@ class XmlFileTools(object):
         self.m_root = g_xmltree.getroot()
 
 
-class ConfigTools(XmlFileTools):
-
-    def get_bool(self, p_arg):
-        l_ret = False
-        if p_arg == 'True' or p_arg == True:
-            l_ret = True
-        return l_ret
+class PutGetXML(XmlFileTools):
+    """Protected put / get routines
+    """
 
     def get_float(self, p_obj, p_name):
         l_var = p_obj.findtext(p_name)
@@ -63,17 +60,27 @@ class ConfigTools(XmlFileTools):
         return l_var
 
 
-    def put_bool(self, p_arg):
-        l_text = 'False'
-        if p_arg != False: l_text = 'True'
-        return l_text
-
     def put_str(self, p_obj):
         try:
             l_var = str(p_obj)
         except AttributeError:
             l_var = 'no str value'
         return l_var
+
+
+    def get_bool(self, p_arg):
+        l_ret = False
+        if p_arg == 'True' or p_arg == True:
+            l_ret = True
+        return l_ret
+
+    def put_bool(self, p_arg):
+        l_text = 'False'
+        if p_arg != False: l_text = 'True'
+        return l_text
+
+
+class ConfigTools(PutGetXML):
 
     def build_common(self, p_parent, p_title, p_obj):
         """Build a common entry.
@@ -82,6 +89,8 @@ class ConfigTools(XmlFileTools):
             <p_title Name=p_obj.Name Key=p_obj.Key Active=o_obj.Active>
             </p_title>
         """
+        if g_debug > 1:
+            print "xml_tools.build_common() - Title:{0:}, Name:{1:} ".format(p_title, p_obj.Name)
         l_ret = ET.SubElement(p_parent, p_title)
         l_ret.set('Name', p_obj.Name)
         l_ret.set('Key', str(p_obj.Key))
@@ -95,7 +104,7 @@ class ConfigTools(XmlFileTools):
         @param p_entry: is the XML subtree that we are extracting the information from.
         """
         if g_debug > 1:
-            print "xml_tools.read_common()", p_entry
+            print "xml_tools.read_common()", p_entry.items()
         p_obj.Name = p_entry.get('Name')
         try:
             p_obj.Key = int(p_entry.get('Key'))
@@ -103,13 +112,8 @@ class ConfigTools(XmlFileTools):
             p_obj.Key = 0
         p_obj.Active = self.get_bool(p_entry.get('Active'))
 
-    def write_file(self, p_xmltree, p_filename = ''):
-        if g_debug > 0:
-            print "xml_tools.write_file() Filename:{0:}".format(p_filename), p_xmltree
-        p_xmltree.write(p_filename, xml_declaration = True)
 
-
-class ConfigEtc(object):
+class ConfigEtc(ConfigTools):
     '''
     classdocs
     '''
@@ -207,6 +211,11 @@ class ConfigFile(ConfigEtc):
         print l_nice
         ET.ElementTree(l_top).write(p_name)
 
+    def write_file(self, p_xmltree, p_filename = ''):
+        if g_debug > 0:
+            print "xml_tools.write_file() Filename:{0:}".format(p_filename), p_xmltree
+        p_xmltree.write(p_filename, xml_declaration = True)
+
 
 def prettify(elem):
     """Return a pretty-printed XML string for the Element.
@@ -214,6 +223,8 @@ def prettify(elem):
     @param elem: an element to format as a readable xml tree.
     @return: a string formatted with indeentation and newlines.
     """
+    if g_debug > 3:
+        print "xml_tools.pretify()"
     rough_string = ET.tostring(elem, 'utf-8')
     reparsed = minidom.parseString(rough_string)
     return reparsed.toprettyxml(indent = "  ")
@@ -230,14 +241,14 @@ def open_config():
     """
     l_cf = ConfigFile()
     l_dir = l_cf.create_find_config_dir()
-    l_file = l_cf.find_config_file(l_dir)
+    l_file_name = l_cf.find_config_file(l_dir)
     try:
-        open(l_file, mode = 'r')
+        open(l_file_name, mode = 'r')
     except Exception, e:  # IOError:
         print " -- Error in open_config ", sys.exc_info(), e
-        l_file = '~/.PyHouse/PyHouse.xml'
-        l_file = os.path.expanduser(l_file)
-        ConfigFile().create_empty_config_file(l_file)
-    return l_file
+        l_file_name = '~/.PyHouse/PyHouse.xml'
+        l_file_name = os.path.expanduser(l_file_name)
+        ConfigFile().create_empty_config_file(l_file_name)
+    return l_file_name
 
 # ## END
