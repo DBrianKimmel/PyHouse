@@ -173,9 +173,10 @@ class API(LightingAPI):
         self.m_pim.Start(p_house_obj)
         g_logger.info('Started.')
 
-    def Stop(self):
+    def Stop(self, p_xml):
         if g_debug > 0:
             print "Device_UPB.Stop()"
         self.m_pim.Stop()
+        return p_xml
 
 # ## END

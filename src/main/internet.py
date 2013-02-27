@@ -11,20 +11,22 @@ g_debug = 0
 g_logger = None
 
 
-def Init():
-    if g_debug > 0:
-        print "internet.Init()"
-    global g_logger
-    g_logger = logging.getLogger('PyHouse.Internet')
-    g_logger.info("Initializing.")
-    g_logger.info("Initialized.")
+class API(object):
+    def __init__(self):
+        if g_debug > 0:
+            print "internet.Init()"
+        global g_logger
+        g_logger = logging.getLogger('PyHouse.Internet')
+        g_logger.info("Initializing.")
+        g_logger.info("Initialized.")
 
-def Start():
-    if g_debug > 0:
-        print "internet.Start()"
+    def Start(self):
+        if g_debug > 0:
+            print "internet.Start()"
 
-def Stop():
-    if g_debug > 0:
-        print "internet.Stop()"
+    def Stop(self, p_xml):
+        if g_debug > 0:
+            print "internet.Stop()"
+        return p_xml
 
 # ## END

@@ -12,10 +12,10 @@ It configures 'PyHouse' in the logging standard library module.
 
 # Import system type stuff
 import logging.handlers
+import xml.etree.ElementTree as ET
 
 # Import PyMh files
-import configure
-import configure.config_xml
+from configure import xml_tools
 
 
 g_debug = 0
@@ -28,6 +28,39 @@ class LogData(object):
 
 
 class LoggingUtility(object):
+
+    def read_log(self):
+        if g_debug > 8:
+            print "Debug - reading log_web"
+            print xml_tools.prettify(self.m_root)
+        try:
+            l_sect = self.m_root.find('Logs')
+            l_sect.find('Debug')
+        except:
+            print "Warning - Logs section is missing - Adding empty values now."
+            l_sect = ET.SubElement(self.m_root, 'Logs')
+            ET.SubElement(l_sect, 'Debug').text = 'None'
+            ET.SubElement(l_sect, 'Error').text = 'None'
+        l_obj = LogData()
+        l_obj.Debug = l_sect.findtext('Debug')
+        l_obj.Error = l_sect.findtext('Error')
+        Log_Data[0] = l_obj
+        try:
+            l_sect = self.m_root.find('Web')
+            l_sect.find('WebPort')
+        except:
+            l_sect = ET.SubElement(self.m_root, 'Web')
+            ET.SubElement(l_sect, 'WebPort').text = 'None'
+
+    def write_log(self):
+        if g_debug > 1:
+            print "Write log_web", Log_Data[0], vars(Log_Data[0])
+        l_sect = self.write_create_empty('Logs')
+        l_obj = Log_Data[0]
+        # l_entry = self.build_common(l_sect, 'Log', l_obj)
+        ET.SubElement(l_sect, 'Debug').text = str(l_obj.Debug)
+        ET.SubElement(l_sect, 'Error').text = str(Log_Data[0].Error)
+        l_sect = self.write_create_empty('Web')
 
     def setup_debug_log (self, p_filename):
         """Debug and more severe goes to the base logger

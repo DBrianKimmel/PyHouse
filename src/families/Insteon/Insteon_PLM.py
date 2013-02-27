@@ -1137,12 +1137,12 @@ class API(LightHandlerAPI):
         if g_debug > 1:
             print "Insteon_PLM.Start() has completed."
 
-    def Stop(self):
+    def Stop(self, p_controller_obj):
         if g_debug > 0:
             print "Insteon_PLM.Stop()"
         g_logger.info('Stopping.')
         self.driver_loop_stop()
-        self.stop_controller(self.m_controller_obj)
+        self.stop_controller(p_controller_obj)
         g_logger.info('Stopped.')
 
     def Test(self):

@@ -211,9 +211,23 @@ class ConfigFile(ConfigEtc):
         print l_nice
         ET.ElementTree(l_top).write(p_name)
 
-    def write_file(self, p_xmltree, p_filename = ''):
+    def create_empty_xml_section(self, p_tree_root, p_section_name):
+        """Create an empty XML section to be filled in.
+
+        @param p_section_name: is the name of the xml section to be written.
+        @return: the e-tree section to be used.
+        """
+        l_sect = p_tree_root.find(p_section_name)
+        try:
+            l_sect.clear()
+        except AttributeError:
+            print "Creating a new sub-element named {0:}".format(p_section_name)
+            l_sect = ET.SubElement(p_tree_root, p_section_name)
+        return l_sect
+
+    def write_xml_file(self, p_xmltree, p_filename = ''):
         if g_debug > 0:
-            print "xml_tools.write_file() Filename:{0:}".format(p_filename), p_xmltree
+            print "xml_tools.write_xml_file() Filename:{0:}".format(p_filename)
         p_xmltree.write(p_filename, xml_declaration = True)
 
 

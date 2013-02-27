@@ -23,8 +23,10 @@ from lighting import lighting
 from configure import xml_tools
 from main import tools
 import sunrisesunset
+from main import internet
+from main import weather
 
-g_debug = 5
+g_debug = 3
 g_logger = None
 
 ScheduleCount = 0
@@ -201,19 +203,19 @@ class ScheduleUtility(ScheduleExecution):
         self.m_sunrisesunset.Start(self.m_house_obj)
         self.m_sunset = self.m_sunrisesunset.get_sunset()
         self.m_sunrise = self.m_sunrisesunset.get_sunrise()
-        if g_debug > 3:
+        if g_debug > 5:
             print "schedule.get_next_sched() - sunrise/sunset = ", self.m_sunrise, self.m_sunset
         g_logger.info("Sunrise:{0:}, Sunset:{1:}".format(self.m_sunrise, self.m_sunset))
         l_time_scheduled = l_now
         l_next = 100000.0
         l_list = []
         for l_key, l_obj in self.m_house_obj.Schedule.iteritems():
-            if g_debug > 4:
+            if g_debug > 5:
                 print "schedule.get_next_sched() sched=", l_obj
             # if not l_obj.Active:
             #    continue
             l_time_sch = self._extract_time(l_obj.Time)
-            if g_debug > 4:
+            if g_debug > 5:
                 print "schedule.get_next_sched() - Schedule  SlotName: {0:}, Light: {1:}, Level: {2:}, Time: {3:}".format(l_obj.Name, l_obj.LightName, l_obj.Level, l_time_sch)
             # now see if this is 1) part of a chain -or- 2) an earlier schedule
             l_diff = self._make_delta(l_time_sch).total_seconds() - self._make_delta(l_time_now).total_seconds()
@@ -278,15 +280,10 @@ class API(ScheduleUtility, ScheduleXML):
         g_logger.info("Stopping house {0:}.".format(self.m_house_obj.Name))
         l_schedules_xml = ET.Element('Schedules')
         self.write_schedules(l_schedules_xml, self.m_house_obj.Schedule)
-        print "  append schedule."
         p_xml.append(l_schedules_xml)
-        print '  stopping lighting'
         l_lighting_xml = self.m_lighting.Stop(p_xml)
-        print '  appending lighting'
-        p_xml.append(l_lighting_xml)
-        print '  stopping entertainment'
         l_entertainment_xml = self.m_entertainment.Stop(p_xml)
-        print '  appending entertainment'
+        # p_xml.append(l_lighting_xml)
         # p_xml.append(l_entertainment_xml)
         if g_debug > 0:
             print "schedule.API.Stop() - 2 "

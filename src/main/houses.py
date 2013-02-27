@@ -19,11 +19,8 @@ import xml.etree.ElementTree as ET
 # Import PyMh files
 from house import house
 from configure import xml_tools
-from main import internet
-from main import weather
 
 g_debug = 3
-m_logger = None
 
 Singletons = {}
 Houses_Data = {}
@@ -44,7 +41,7 @@ class HousesData(object):
         return "Houses:: Name:{0:} ".format(self.Name)
 
 
-class HouseReadWriteConfig(xml_tools.ConfigFile, HousesData):
+class HouseReadWriteConfig(xml_tools.ConfigFile):
 
     m_filename = None
     m_root = None
@@ -69,31 +66,14 @@ class HouseReadWriteConfig(xml_tools.ConfigFile, HousesData):
     def get_root(self):
         return self.m_root
 
-    def write_create_empty(self, p_name):
-        """Create an empty XML section to be filled in.
-
-        @param p_name: is the name of the xml section to be written.
-        @return: the e-tree section to be used.
-        """
-        l_sect = self.m_root.find(p_name)
-        try:
-            l_sect.clear()
-        except AttributeError:
-            print "Creating a new sub-element named ", p_name
-            l_sect = ET.SubElement(self.m_root, p_name)
-        return l_sect
-
-    def write_houses(self):
+    def write_houses(self, p_xml):
         """Replace the data in the 'Houses' section with the current data.
         """
         if g_debug > 2:
-            print "houses.write_house() - Writing xml file to:{0:}".format(self.m_filename)
+            print "houses.write_houses() - Writing xml file to:{0:}".format(self.m_filename)
         self.m_root = self.m_xmltree.getroot()
-        print " tree ", self.m_root
-        # for l_elem in self.m_xmltree.iter():
-        #    print "  tree "
-        # print " ", xml_tools.prettify(self.m_root)
-        self.write_file(self.m_xmltree, self.m_filename)
+        self.m_root = p_xml
+        self.write_xml_file(self.m_xmltree, self.m_filename)
 
 
 class LoadSaveAPI(HouseReadWriteConfig):
@@ -108,10 +88,10 @@ class LoadSaveAPI(HouseReadWriteConfig):
         self.l_rwc = HouseReadWriteConfig()
         return self.l_rwc.get_root(), self.l_rwc.get_tree()
 
-    def save_all_houses(self):
+    def save_all_houses(self, p_xml):
         if g_debug > 1:
-            print "houses.save_all_houses()"
-        self.l_rwc.write_houses()
+            print "\nhouses.save_all_houses()"
+        self.l_rwc.write_houses(p_xml)
 
 
 class API(LoadSaveAPI):
@@ -134,8 +114,6 @@ class API(LoadSaveAPI):
         #
         self.m_logger = logging.getLogger('PyHouse.Houses')
         self.m_logger.info("Initializing all houses.")
-        internet.Init()
-        weather.Init()
         self.m_logger.info("Initialized.")
         if g_debug > 0:
             print "houses.__new__() all houses initialized now."
@@ -177,8 +155,6 @@ class API(LoadSaveAPI):
             l_count += 1
         if g_debug > 0:
             print "houses.API.Start() - {0:} houses all started.".format(l_count)
-        internet.Start()
-        weather.Start()
         self.m_logger.info("Started.")
 
 
@@ -189,20 +165,10 @@ class API(LoadSaveAPI):
         if g_debug > 0:
             print "houses.API.Stop()"
         self.m_logger.info("Stopping.")
-        l_houses_xml = self.m_root.find('Houses')
-        try:
-            l_houses_xml.clear()
-        except AttributeError:
-            print "Creating a new sub-element named 'Houses'"
-            l_houses_xml = ET.SubElement(self.m_root, 'Houses')
+        l_houses_xml = self.create_empty_xml_section(self.m_root, 'Houses')
         for l_house in Houses_Data.itervalues():
-            if g_debug > 1:
-                print "houses.API.Stop() - Working on house:{0:}".format(l_house.Name)
-            l_xml = l_house.HouseAPI.Stop(l_houses_xml)
-            print "  Done with house..."
-        internet.Stop()
-        weather.Stop()
-        self.save_all_houses()
+            l_house.HouseAPI.Stop(l_houses_xml)
+        self.save_all_houses(l_houses_xml)
         self.m_logger.info("Stopped.")
 
 # ##  END

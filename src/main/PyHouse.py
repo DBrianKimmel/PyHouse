@@ -160,6 +160,7 @@ class API(object):
         g_logger.info("Initialized.\n")
         # reactor never returns so must be last - Event loop will now run
         reactorrun()
+        raise SystemExit, "PyHouse says Bye Now."
 
     def Start(self):
         """New.  This will start all non-core services.
@@ -169,10 +170,6 @@ class API(object):
         if g_debug > 0:
             print "\nPyHouse.Start()"
         g_logger.info("Starting.")
-
-        # self.m_xml_file_name = xml_tools.open_config()
-        # self.xml_tree = None
-
         self.m_houses.Start()
         web_server.Start()
         g_logger.info("Started.\n")
@@ -187,7 +184,6 @@ class API(object):
         global g_logger
         g_logger = logging.getLogger('PyHouse')
         g_logger.info("Stopping has begun.\n")
-        # config_xml.write_config()
         self.m_houses.Stop()
         web_server.Stop()
         try:
@@ -203,7 +199,7 @@ class API(object):
         self.Stop()
         log.LoggingMain().stop()
         reactorstop()
-        raise SystemExit, "PyHouse says Bye Now."
+        raise SystemExit, "PyHouse says Bye Now (2)."
 
 
 if __name__ == "__main__":

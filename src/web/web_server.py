@@ -101,7 +101,7 @@ class WebUtilities(WebData):
         l_sect = self.write_create_empty('Web')
         l_obj = Web_Data[0]
         ET.SubElement(l_sect, 'WebPort').text = str(Web_Data[0].WebPort)
-        self.write_file()
+        # self.write_file()
 
     def build_child_tree(self):
         """Build a tree of pages for nevow.

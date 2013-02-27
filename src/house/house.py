@@ -23,7 +23,6 @@ import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from schedule import schedule
-from lighting import lighting_tools
 from lighting import lighting
 from configure import xml_tools
 
@@ -65,7 +64,7 @@ class HouseData(object):
         return l_ret
 
 
-class LocationData(lighting_tools.CoreData, HouseData):
+class LocationData(HouseData):
 
     def __init__(self):
         global LocationCount
@@ -196,28 +195,32 @@ class RoomData(LocationData):
     Size = property(get_size, set_size, None, None)
 
 
-class HouseReadConfig(xml_tools.ConfigTools):
+class HouseReadWriteConfig(xml_tools.ConfigTools):
+    """Use the internal data to read / write an updated config file.
+
+    This is called from the web interface or the GUI when the data has been changed.
+    """
 
     def read_location(self, p_entry, p_name = ''):
         if g_debug > 7:
             print "house.read_location()"
         l_dict = {}
         l_count = 0
-        l_obj = LocationData()
+        l_location_obj = LocationData()
         if g_debug > 4:
-            print "house.read_location() - Active=", l_obj.Active, l_obj.Name
+            print "house.read_location() - Active=", l_location_obj.Active, l_location_obj.Name
         # Now read the location subsection
         l_entry = p_entry.find('Location')
-        l_obj.Street = self.get_text(l_entry, 'Street')
-        l_obj.City = self.get_text(l_entry, 'City')
-        l_obj.State = self.get_text(l_entry, 'State')
-        l_obj.ZipCode = self.get_text(l_entry, 'ZipCode')
-        l_obj.Phone = self.get_text(l_entry, 'Phone')
-        l_obj.Latitude = self.get_float(l_entry, 'Latitude')
-        l_obj.Longitude = self.get_float(l_entry, 'Longitude')
-        l_obj.TimeZone = self.get_float(l_entry, 'TimeZone')
-        l_obj.SavingTime = self.get_float(l_entry, 'SavingTime')
-        l_dict[l_count] = l_obj
+        l_location_obj.Street = self.get_text(l_entry, 'Street')
+        l_location_obj.City = self.get_text(l_entry, 'City')
+        l_location_obj.State = self.get_text(l_entry, 'State')
+        l_location_obj.ZipCode = self.get_text(l_entry, 'ZipCode')
+        l_location_obj.Phone = self.get_text(l_entry, 'Phone')
+        l_location_obj.Latitude = self.get_float(l_entry, 'Latitude')
+        l_location_obj.Longitude = self.get_float(l_entry, 'Longitude')
+        l_location_obj.TimeZone = self.get_float(l_entry, 'TimeZone')
+        l_location_obj.SavingTime = self.get_float(l_entry, 'SavingTime')
+        l_dict[l_count] = l_location_obj
         l_count += 1
         if g_debug > 4:
             print "house.read_location()  loaded {0:} locations for {1:}".format(l_count, p_name)
@@ -267,72 +270,52 @@ class HouseReadConfig(xml_tools.ConfigTools):
             print "house.read_house() loaded {0:} houses.".format(l_count), l_obj
         return House_Data
 
-
-class HouseWriteConfig(xml_tools.ConfigTools):
-    """Use the internal data to write an updated config file.
-
-    This is called from the web interface or the GUI when the data has been changed.
-    """
-
-    m_filename = None
-    m_root = None
-
-    def __init__(self):
-        global g_xmltree
-        self.m_filename = xml_tools.open_config()
-        try:
-            g_xmltree = ET.parse(self.m_filename)
-        except SyntaxError:
-            xml_tools.ConfigFile().create_empty_config_file(self.m_filename)
-            g_xmltree = ET.parse(self.m_filename)
-        self.m_root = g_xmltree.getroot()
-
-    def write_location(self, p_parent, p_dict):
+    def write_location(self, p_parent_xml, p_dict):
         """Replace the data in the 'House/Location' section with the current data.
         """
         l_count = 0
-        for l_obj in p_dict.itervalues():
-            l_entry = ET.SubElement(p_parent, 'Location')
-            ET.SubElement(l_entry, 'Street').text = l_obj.Street
-            ET.SubElement(l_entry, 'City').text = l_obj.City
-            ET.SubElement(l_entry, 'State').text = l_obj.State
-            ET.SubElement(l_entry, 'ZipCode').text = l_obj.ZipCode
-            ET.SubElement(l_entry, 'Phone').text = l_obj.Phone
-            ET.SubElement(l_entry, 'Latitude').text = str(l_obj.Latitude)
-            ET.SubElement(l_entry, 'Longitude').text = str(l_obj.Longitude)
-            ET.SubElement(l_entry, 'TimeZone').text = str(l_obj.TimeZone)
-            ET.SubElement(l_entry, 'SavingTime').text = str(l_obj.SavingTime)
+        for l_location_obj in p_dict.itervalues():
+            l_entry = ET.SubElement(p_parent_xml, 'Location')
+            ET.SubElement(l_entry, 'Street').text = l_location_obj.Street
+            ET.SubElement(l_entry, 'City').text = l_location_obj.City
+            ET.SubElement(l_entry, 'State').text = l_location_obj.State
+            ET.SubElement(l_entry, 'ZipCode').text = l_location_obj.ZipCode
+            ET.SubElement(l_entry, 'Phone').text = l_location_obj.Phone
+            ET.SubElement(l_entry, 'Latitude').text = str(l_location_obj.Latitude)
+            ET.SubElement(l_entry, 'Longitude').text = str(l_location_obj.Longitude)
+            ET.SubElement(l_entry, 'TimeZone').text = str(l_location_obj.TimeZone)
+            ET.SubElement(l_entry, 'SavingTime').text = str(l_location_obj.SavingTime)
             l_count += 1
         if g_debug > 2:
             print "house.write_location() - Wrote {0:} locations".format(l_count)
 
-    def write_rooms(self, p_parent, p_dict):
+    def write_rooms(self, p_parent_xml, p_dict):
         l_count = 0
-        l_sect = ET.SubElement(p_parent, 'Rooms')
-        for l_obj in p_dict.itervalues():
-            l_entry = self.build_common(l_sect, 'Room', l_obj)
-            ET.SubElement(l_entry, 'Comment').text = l_obj.Comment
-            ET.SubElement(l_entry, 'Corner').text = l_obj.Corner
-            ET.SubElement(l_entry, 'HouseName').text = l_obj.HouseName
-            ET.SubElement(l_entry, 'Size').text = l_obj.Size
+        l_sect = ET.SubElement(p_parent_xml, 'Rooms')
+        for l_room_obj in p_dict.itervalues():
+            l_entry = self.build_common(l_sect, 'Room', l_room_obj)
+            ET.SubElement(l_entry, 'Comment').text = l_room_obj.Comment
+            ET.SubElement(l_entry, 'Corner').text = l_room_obj.Corner
+            ET.SubElement(l_entry, 'HouseName').text = l_room_obj.HouseName
+            ET.SubElement(l_entry, 'Size').text = l_room_obj.Size
             l_count += 1
         if g_debug > 2:
             print "house.write_rooms() - Wrote {0:} rooms".format(l_count)
 
-    def write_house(self, p_parent, p_house_obj):
+    def write_house(self, p_parent_xml, p_house_obj):
         """Replace the data in the 'Houses' section with the current data.
         """
-        p_parent.set('Name', p_house_obj.Name)
-        p_parent.set('Key', str(p_house_obj.Key))
-        p_parent.set('Active', self.put_bool(p_house_obj.Active))
-        self.write_location(p_parent, p_house_obj.Location)
-        self.write_rooms(p_parent, p_house_obj.Rooms)
+        p_parent_xml.set('Name', p_house_obj.Name)
+        p_parent_xml.set('Key', str(p_house_obj.Key))
+        p_parent_xml.set('Active', self.put_bool(p_house_obj.Active))
+        self.write_location(p_parent_xml, p_house_obj.Location)
+        self.write_rooms(p_parent_xml, p_house_obj.Rooms)
         if g_debug > 2:
             print "house.write_house() - Name:{0:}, Key:{1:}".format(p_house_obj.Name, p_house_obj.Key)
-        return p_parent
+        return p_parent_xml
 
 
-class LoadSaveAPI(RoomData, HouseReadConfig, HouseWriteConfig):
+class LoadSaveAPI(RoomData, HouseReadWriteConfig):
     """
     """
 
@@ -378,12 +361,7 @@ class API(LoadSaveAPI):
         l_house_xml = ET.Element('House')
         self.write_house(l_house_xml, self.m_house_obj)
         self.m_logger.info("Stopping house {0:}.".format(self.m_house_obj.Name))
-        try:
-            l_xml = self.m_house_obj.ScheduleAPI.Stop(l_house_xml)
-            # l_house_xml.extend(l_xml)
-        except:
-            print "house.Stop() - ERROR occurred on house {0:}.".format(self.m_house_obj.Name)
-        print "  done with Schedule."
+        l_xml = self.m_house_obj.ScheduleAPI.Stop(l_house_xml)
         p_xml.append(l_house_xml)
         self.m_logger.info("Stopped.")
         if g_debug > 0:

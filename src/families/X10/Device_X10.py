@@ -59,15 +59,15 @@ class API(object):
         # LightingAPI().load_all_lights(Configure_Data['X10Lights'])
         g_logger.info('Initialized.')
 
-    def Start(self, p_obj):
+    def Start(self, p_house_obj):
         if g_debug > 0:
             print "Device_X10.Start()"
         g_logger.info('Starting.')
         g_logger.info('Started.')
 
-    def Stop(self):
+    def Stop(self, p_xml):
         if g_debug > 0:
             print "Device_X10.Stop()"
-        pass
+        return p_xml
 
 # ## END

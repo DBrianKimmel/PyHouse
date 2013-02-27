@@ -318,11 +318,11 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, FamilyData):
         if g_debug > 1:
             print "lighting.start_lighting_families() ", self.m_family_data
 
-    def stop_lighting_families(self):
+    def stop_lighting_families(self, p_xml):
         if g_debug > 1:
             print "lighting.stop_lighting_families()"
         for l_obj in self.m_family_data.itervalues():
-            l_obj.Api.Stop()
+            l_obj.Api.Stop(p_xml)
 
     def change_light_setting(self, p_house_obj, p_key, p_level):
         """
@@ -413,7 +413,7 @@ class API(LightingUtility):
         l_controller_xml = ET.Element('Controllers')
         self.write_controllers(l_controller_xml, self.m_house_obj.Controllers)
         p_xml.append(l_controller_xml)
-        self.stop_lighting_families()
+        self.stop_lighting_families(p_xml)
         g_logger.info("Stopped.")
         if g_debug > 0:
             print "lighting.API.Stop()"

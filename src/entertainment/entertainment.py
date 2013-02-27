@@ -20,7 +20,7 @@ from coherence.upnp.core import DIDLLite
 from coherence.upnp.devices.dimmable_light_client import DimmableLightClient
 
 
-g_debug = 5
+g_debug = 3
 
 g_logger = None
 g_upnp = None
