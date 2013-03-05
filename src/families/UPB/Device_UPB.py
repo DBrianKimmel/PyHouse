@@ -5,6 +5,7 @@
 
 # Import system type stuff
 import logging
+import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from lighting import lighting
@@ -117,6 +118,25 @@ class LightData(lighting.LightData, CoreData):
 class LightingAPI(lighting.LightingAPI, CoreAPI):
     """Interface to the lights of this module.
     """
+
+    def extract_device_xml(self, p_entry_xml, p_device_obj):
+        """
+        @param p_entry_xml: is the e-tree XML house object
+        @param p_house: is the text name of the House.
+        @return: a dict of the entry to be attached to a house object.
+        """
+        p_device_obj.NetworkID = p_entry_xml.findtext('NetworkID')
+        p_device_obj.Password = p_entry_xml.findtext('Password')
+        p_device_obj.UnitID = p_entry_xml.findtext('UnitID')
+        return p_device_obj
+
+    def insert_device_xml(self, p_entry_xml, p_device_obj):
+        try:
+            ET.SubElement(p_entry_xml, 'NetworkID').text = self.put_str(p_device_obj.NetworkID)
+            ET.SubElement(p_entry_xml, 'Password').text = str(p_device_obj.Password)
+            ET.SubElement(p_entry_xml, 'UnitID').text = str(p_device_obj.UnitID)
+        except AttributeError:
+            pass
 
     def load_all_lights(self, p_dict):
         if g_debug > 1:

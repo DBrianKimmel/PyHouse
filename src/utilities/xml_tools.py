@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""This module only used by config_xml to access or create an empty config file.1
+"""This module used to access or create an empty config file.1
 0
 """
 
@@ -22,37 +22,37 @@ class XmlFileTools(object):
         If the file is missing, an empty minimal skeleton is created.
         """
         global g_xmltree
-        self.m_filename = open_config()
+        self.m_xml_filename = open_config_file()
         try:
-            g_xmltree = ET.parse(self.m_filename)
+            g_xmltree = ET.parse(self.m_xml_filename)
         except SyntaxError:
-            ConfigFile().create_empty_config_file(self.m_filename)
-            g_xmltree = ET.parse(self.m_filename)
-        self.m_root = g_xmltree.getroot()
+            ConfigFile().create_empty_config_file(self.m_xml_filename)
+            g_xmltree = ET.parse(self.m_xml_filename)
+        self.m_xmltree_root = g_xmltree.getroot()
 
 
 class PutGetXML(XmlFileTools):
     """Protected put / get routines
     """
 
-    def get_float(self, p_obj, p_name):
-        l_var = p_obj.findtext(p_name)
+    def get_float(self, p_xml_tree, p_name):
+        l_var = p_xml_tree.findtext(p_name)
         try:
             l_var = float(l_var)
         except (ValueError, TypeError):
             l_var = 0.0
         return l_var
 
-    def get_int(self, p_obj, p_name):
-        l_var = p_obj.findtext(p_name)
+    def get_int(self, p_xml_tree, p_name):
+        l_var = p_xml_tree.findtext(p_name)
         try:
             l_var = int(l_var)
         except (ValueError, TypeError):
             l_var = 0
         return l_var
 
-    def get_text(self, p_obj, p_name):
-        l_var = p_obj.findtext(p_name)
+    def get_text(self, p_xml_tree, p_name):
+        l_var = p_xml_tree.findtext(p_name)
         try:
             l_var = str(l_var)
         except (ValueError, TypeError):
@@ -243,7 +243,7 @@ def prettify(elem):
     reparsed = minidom.parseString(rough_string)
     return reparsed.toprettyxml(indent = "  ")
 
-def open_config():
+def open_config_file():
     """Open the PyHouse config xml file.
 
     If the file is not found, create a skeleton xml file to be populated by the user via the GUI.
@@ -253,13 +253,15 @@ def open_config():
 
     @return: the open file name
     """
+    if g_debug > 0:
+        print "xml_tools.open_config_file()"
     l_cf = ConfigFile()
     l_dir = l_cf.create_find_config_dir()
     l_file_name = l_cf.find_config_file(l_dir)
     try:
         open(l_file_name, mode = 'r')
     except Exception, e:  # IOError:
-        print " -- Error in open_config ", sys.exc_info(), e
+        print " -- Error in open_config_file ", sys.exc_info(), e
         l_file_name = '~/.PyHouse/PyHouse.xml'
         l_file_name = os.path.expanduser(l_file_name)
         ConfigFile().create_empty_config_file(l_file_name)

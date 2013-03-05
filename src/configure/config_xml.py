@@ -29,7 +29,7 @@ class ReadConfig(object):
         If the file is missing, an empty minimal skeleton is created.
         """
         global g_xmltree
-        self.m_filename = xml_tools.open_config()
+        self.m_filename = xml_tools.open_config_file()
         try:
             g_xmltree = ET.parse(self.m_filename)
         except SyntaxError:
@@ -49,7 +49,7 @@ class WriteConfig(object):
 
     def __init__(self):
         global g_xmltree
-        self.m_filename = xml_tools.open_config()
+        self.m_filename = xml_tools.open_config_file()
         try:
             g_xmltree = ET.parse(self.m_filename)
         except SyntaxError:

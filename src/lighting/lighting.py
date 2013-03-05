@@ -26,15 +26,13 @@ import importlib
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
-from configure import xml_tools
+from utilities import xml_tools
 import lighting_buttons
 import lighting_controllers
 import lighting_lights
 import lighting_scenes
-# import lighting_status
 
 g_debug = 3
-
 g_logger = None
 
 # These globals in the lighting singleton hold the operating data loaded at startup.
@@ -43,7 +41,8 @@ Singletons = {}
 
 ' *!* Modules and pointers to the modules'
 from families import VALID_FAMILIES
-VALID_INTERFACES = ['Serial', 'USB', 'Ethernet']
+from drivers import VALID_INTERFACES
+# VALID_INTERFACES = ['Serial', 'USB', 'Ethernet']
 
 m_InsteonDevice = None
 m_X10Device = None
@@ -70,36 +69,24 @@ class FamilyData(object):
 
 class CommonInfo(object):
 
-    def read_light_common(self, p_entry, p_obj):
+    def read_light_common(self, p_entry_xml, p_obj):
         """
-        @param p_entry: is the e-tree XML house object
+        @param p_entry_xml: is the e-tree XML house object
         @param p_house: is the text name of the House.
         @return: a dict of the entry to be attached to a house object.
         TODO: move some of lights to lighting or lighting_xxx and family stuff to Device_<family> called from lighting.
         """
-        self.read_common(p_obj, p_entry)
-        p_obj.Comment = self.get_text(p_entry, 'Comment')
-        p_obj.Coords = self.get_text(p_entry, 'Coords')
-        p_obj.Dimmable = self.get_bool(p_entry.findtext('Dimmable'))
-        p_obj.Family = l_fam = self.get_text(p_entry, 'Family')
-        p_obj.RoomName = p_entry.findtext('Room')
-        p_obj.HouseName = p_entry.findtext('House')
-        p_obj.Type = p_entry.findtext('Type')
-        if l_fam == 'UPB':
-            p_obj.NetworkID = l_fam = p_entry.findtext('NetworkID')
-            p_obj.Password = p_entry.findtext('Password')
-            p_obj.UnitID = p_entry.findtext('UnitID')
-        elif l_fam == 'Insteon':
-            p_obj.Address = p_entry.findtext('Address')
-            p_obj.Controller = p_entry.findtext('Controller')
-            p_obj.DevCat = p_entry.findtext('DevCat')
-            p_obj.GroupList = p_entry.findtext('GroupList')
-            p_obj.GroupNumber = p_entry.findtext('GroupNumber')
-            p_obj.Master = p_entry.findtext('Master')
-            p_obj.ProductKey = p_entry.findtext('ProductKey')
-            p_obj.Responder = p_entry.findtext('Responder')
-        if g_debug > 5:
-            print "yyy-common ", p_obj
+        self.read_common(p_obj, p_entry_xml)
+        p_obj.Comment = self.get_text(p_entry_xml, 'Comment')
+        p_obj.Coords = self.get_text(p_entry_xml, 'Coords')
+        p_obj.Dimmable = self.get_bool(p_entry_xml.findtext('Dimmable'))
+        p_obj.Family = l_fam = self.get_text(p_entry_xml, 'Family')
+        p_obj.RoomName = p_entry_xml.findtext('Room')
+        p_obj.HouseName = p_entry_xml.findtext('House')
+        p_obj.Type = p_entry_xml.findtext('Type')
+        for l_family_obj in self.m_family_data.itervalues():
+            if l_family_obj.Name == l_fam:
+                l_family_obj.Api.extract_device_xml(p_entry_xml, p_obj)
         return p_obj
 
     def write_light_common(self, p_entry, p_obj):
@@ -112,26 +99,9 @@ class CommonInfo(object):
         ET.SubElement(p_entry, 'House').text = p_obj.HouseName
         ET.SubElement(p_entry, 'Room').text = p_obj.RoomName
         ET.SubElement(p_entry, 'Type').text = p_obj.Type
-        if p_obj.Family == 'Insteon':
-            if g_debug > 4:
-                print "WriteLightCommon Insteon=", p_obj
-            ET.SubElement(p_entry, 'Address').text = p_obj.Address
-            ET.SubElement(p_entry, 'Controller').text = self.put_bool(p_obj.Controller)
-            ET.SubElement(p_entry, 'DevCat').text = str(p_obj.DevCat)
-            ET.SubElement(p_entry, 'GroupList').text = str(p_obj.GroupList)
-            ET.SubElement(p_entry, 'GroupNumber').text = str(p_obj.GroupNumber)
-            ET.SubElement(p_entry, 'Master').text = str(p_obj.Master)
-            ET.SubElement(p_entry, 'ProductKey').text = str(p_obj.ProductKey)
-            ET.SubElement(p_entry, 'Responder').text = self.put_bool(p_obj.Responder)
-        elif p_obj.Family == 'UPB':
-            if g_debug > 4:
-                print "WriteLightCommon UPB=", p_obj
-            try:
-                ET.SubElement(p_entry, 'NetworkID').text = self.put_str(p_obj.NetworkID)
-                ET.SubElement(p_entry, 'Password').text = str(p_obj.Password)
-                ET.SubElement(p_entry, 'UnitID').text = str(p_obj.UnitID)
-            except AttributeError:
-                pass
+        for l_family_obj in self.m_family_data.itervalues():
+            if l_family_obj.Name == p_obj.Family:
+                l_family_obj.Api.insert_device_xml(p_entry, p_obj)
 
 
 class ButtonData(lighting_buttons.ButtonsData): pass
@@ -288,14 +258,9 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, FamilyData):
 
     m_family_data = None
 
-    def start_lighting_families(self, p_house_obj):
-        """Load and start the family if there is a controller in the house for the family.
-        """
-        if g_debug > 1:
-            print "lighting.start_lighting_families()"
-        l_count = 0
+    def build_lighting_info(self, _p_house_obj):
         self.m_family_data = {}
-        g_logger.info("Starting lighting families.")
+        l_count = 0
         for l_family in VALID_FAMILIES:
             l_family_obj = FamilyData()
             l_family_obj.Active = False
@@ -303,77 +268,48 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, FamilyData):
             l_family_obj.Key = l_count
             l_family_obj.Name = l_family
             l_family_obj.Package = 'families.' + l_family
-            if g_debug > 1:
-                print "lighting.start_lighting_families - Package: {0:}, Import: {1:}".format(l_family_obj.Package, l_family_obj.Import)
-                print "  from {0:} import {1:}".format(l_family_obj.Package, l_family_obj.Import)
             l_module = importlib.import_module(l_family_obj.Package + '.' + l_family_obj.Import, l_family_obj.Package)
             l_family_obj.Module = l_module
-            l_family_obj.Api = l_api = l_module.API()
-            if g_debug > 1:
-                print "lighting.start_lighting_families() - Added {0:} to m_modules Key:{1:} -".format(l_family_obj.Import, l_count), l_family_obj
-            l_api.Start(p_house_obj)
+            l_family_obj.Api = l_module.API()
             self.m_family_data[l_count] = l_family_obj
+            if g_debug > 1:
+                print "lighting.build_lighting_info - Package: {0:}, Import: {1:}".format(l_family_obj.Package, l_family_obj.Import)
+                print "   from {0:} import {1:}".format(l_family_obj.Package, l_family_obj.Import)
+                print "   Added {0:} to m_modules Key:{1:} -".format(l_family_obj.Import, l_count), l_family_obj
             l_count += 1
-            g_logger.info("Started lighting family {0:}.".format(l_family))
+
+    def start_lighting_families(self, p_house_obj):
+        """Load and start the family if there is a controller in the house for the family.
+        """
         if g_debug > 1:
-            print "lighting.start_lighting_families() ", self.m_family_data
+            print "lighting.start_lighting_families()"
+        g_logger.info("Starting lighting families.")
+        for l_family_obj in self.m_family_data.itervalues():
+            l_family_obj.Api.Start(p_house_obj)
+            g_logger.info("Started lighting family {0:}.".format(l_family_obj.Name))
 
     def stop_lighting_families(self, p_xml):
         if g_debug > 1:
             print "lighting.stop_lighting_families()"
-        for l_obj in self.m_family_data.itervalues():
-            l_obj.Api.Stop(p_xml)
+        for l_family_obj in self.m_family_data.itervalues():
+            l_family_obj.Api.Stop(p_xml)
 
-    def change_light_setting(self, p_house_obj, p_key, p_level):
-        """
+    def change_light_setting(self, p_house_obj, p_light_obj, p_level, p_rate = 0):
+        """Called from several places (schedle, Gui, Web etc.) to change a light level.
         Turn a light to a given level (0-100) off/dimmed/on.
 
         @param p_house_obj: is a house object
-        @param p_key: is the index (Key) of the Light to be changed within the House object.
+        @param p_light_obj: is the index (Key) of the Light to be changed within the House object.
         @param p_level: is the level to set
+        TODO: add rate to family routines and pass along.
         """
-        l_light_obj = p_house_obj.Lights[p_key]
         if g_debug > 1:
-            print "lighting.change_light_setting() House={0:}, Light={1:}, Level={2:}".format(p_house_obj.Name, l_light_obj.Name, p_level)
-            # print "   Family_Data ", self.m_family_data
-        g_logger.info("Turn Light {0:} to level {1:}.".format(p_house_obj.Lights[p_key].Name, p_level))
+            print "lighting.change_light_setting() House={0:}, Light={1:}, Level={2:}, Rate:{3:}".format(p_house_obj.Name, p_light_obj.Name, p_level, p_rate)
+        g_logger.info("Turn Light {0:} to level {1:} at rate {2:}.".format(p_light_obj.Name, p_level, p_rate))
         for l_family_obj in self.m_family_data.itervalues():
-            l_module = l_family_obj.Module
-            if l_family_obj.Name != l_light_obj.Family:
-                if g_debug > 1:
-                    print "   Skipping Module ", l_family_obj.Name, l_family_obj.Family
+            if l_family_obj.Name != p_light_obj.Family:
                 continue
-            if g_debug > 1:
-                print "   Processing Module ", l_family_obj.Name
-            l_family_obj.Api.change_light_setting(l_light_obj, p_level)
-
-    def update_all_lighting_families(self):
-        """ *!*  API
-        Update the light configs in the appropriate module.
-        """
-        g_logger.info("Updating all lighting families.")
-        for l_obj in self.m_family_data.itervalues():
-            l_obj.Module.LightingAPI().update_all_lights()
-
-    def scan_all_lighting(self, p_lights):
-        """ *!*
-        """
-        return
-        if self.m_InsteonDevice != None:
-            self.m_InsteonDevice.scan_all_lights(p_lights)
-        if self.m_UpbDevice != None:
-            self.m_UpbDevice.scan_all_lights(p_lights)
-        if self.m_X10Device != None:
-            self.m_X10Device.scan_all_lights(p_lights)
-
-    def get_light_ref(self, p_house, p_light):
-        """Return a light object reference for the given light in a house.
-        """
-        for l_obj in Light_Data.itervalues():
-            print "get_light_ref()", l_obj.HouseName, l_obj.Name
-            if l_obj.HouseName == p_house and l_obj.Name == p_light:
-                return l_obj
-        return None
+            l_family_obj.Api.change_light_setting(p_light_obj, p_level)
 
 
 class API(LightingUtility):
@@ -392,6 +328,7 @@ class API(LightingUtility):
         if g_debug > 0:
             print "lighting.API.Start() - House:{0:}".format(self.m_house_obj.Name)
         g_logger.info("Starting.")
+        self.build_lighting_info(p_house_obj)
         self.read_buttons(self.m_house_obj, p_house_xml)
         self.read_controllers(self.m_house_obj, p_house_xml)
         self.read_lights(self.m_house_obj, p_house_xml)
@@ -418,14 +355,5 @@ class API(LightingUtility):
         if g_debug > 0:
             print "lighting.API.Stop()"
         return p_xml
-
-
-def GetLightRef(p_house, p_light):
-    """Return a light object reference for the given light in a house.
-    """
-    for l_obj in Light_Data.itervalues():
-        if l_obj.HouseName == p_house and l_obj.Name == p_light:
-            return l_obj
-    return None
 
 # ## END

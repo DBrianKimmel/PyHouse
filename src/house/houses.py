@@ -20,11 +20,9 @@ import xml.etree.ElementTree as ET
 from house import house
 from configure import xml_tools
 
-g_debug = 3
+g_debug = 0
 
 Singletons = {}
-Houses_Data = {}
-HouseCount = 0
 
 
 class HousesData(object):
@@ -43,37 +41,45 @@ class HousesData(object):
 
 class HouseReadWriteConfig(xml_tools.ConfigFile):
 
-    m_filename = None
-    m_root = None
+    m_xml_filename = None
+    m_xmltree_root = None
     m_xmltree = None
+    m_houses_data = {}
 
     def __init__(self):
         """Open the xml config file.
 
         If the file is missing, an empty minimal skeleton is created.
         """
-        self.m_filename = xml_tools.open_config()
+        if g_debug > 0:
+            print "houses.HouseReadWriteConfig()"
+        self.read_config_file()
         try:
-            self.m_xmltree = ET.parse(self.m_filename)
+            self.m_xmltree = ET.parse(self.m_xml_filename)
         except SyntaxError:
-            xml_tools.ConfigFile().create_empty_config_file(self.m_filename)
-            self.m_xmltree = ET.parse(self.m_filename)
-        self.m_root = self.m_xmltree.getroot()
+            self.create_empty_config_file(self.m_xml_filename)
+            self.m_xmltree = ET.parse(self.m_xml_filename)
+        self.m_xmltree_root = self.m_xmltree.getroot()
 
-    def get_tree(self):
+    def read_config_file(self):
+        if g_debug > 0:
+            print "houses.read_config_file()"
+        self.m_xml_filename = xml_tools.open_config_file()
+
+    def get_xml_tree(self):
         return self.m_xmltree
 
-    def get_root(self):
-        return self.m_root
+    def get_xml_root(self):
+        return self.m_xmltree_root
 
-    def write_houses(self, p_xml):
+    def write_config_file(self, p_xml):
         """Replace the data in the 'Houses' section with the current data.
         """
         if g_debug > 2:
-            print "houses.write_houses() - Writing xml file to:{0:}".format(self.m_filename)
-        self.m_root = self.m_xmltree.getroot()
-        self.m_root = p_xml
-        self.write_xml_file(self.m_xmltree, self.m_filename)
+            print "houses.write_config_file() - Writing xml file to:{0:}".format(self.m_xml_filename)
+        self.m_xmltree_root = self.m_xmltree.getroot()
+        self.m_xmltree_root = p_xml
+        self.write_xml_file(self.m_xmltree, self.m_xml_filename)
 
 
 class LoadSaveAPI(HouseReadWriteConfig):
@@ -86,12 +92,35 @@ class LoadSaveAPI(HouseReadWriteConfig):
         if g_debug > 1:
             print "houses.load_all_houses()"
         self.l_rwc = HouseReadWriteConfig()
-        return self.l_rwc.get_root(), self.l_rwc.get_tree()
+        return self.l_rwc.get_xml_root(), self.l_rwc.get_xml_tree()
 
     def save_all_houses(self, p_xml):
         if g_debug > 1:
             print "\nhouses.save_all_houses()"
-        self.l_rwc.write_houses(p_xml)
+        self.l_rwc.write_config_file(p_xml)
+
+    def get_house_info(self, p_house_xml, p_count):
+        """Build up one entry for m_houses_data
+        """
+        print "\nCreating a new house named:{0:}".format(p_house_xml.get('Name'))
+        l_houses_obj = HousesData()
+        l_houses_obj.HouseAPI = house.API()
+        l_houses_obj.Key = p_count
+        l_houses_obj.Object = l_houses_obj.HouseAPI.Start(l_houses_obj, p_house_xml)
+        l_houses_obj.Name = l_houses_obj.Object.Name
+        return l_houses_obj
+
+    def get_houses_xml(self):
+        self.m_xmltree_root, _l_tree = self.load_all_houses()
+        #
+        try:
+            l_sect = self.m_xmltree_root.find('Houses')
+            l_list = l_sect.iterfind('House')  # use l_sect to force error if it is missing
+        except AttributeError:
+            print "Warning - in read_house - Adding 'Houses' section"
+            l_sect = ET.SubElement(self.m_xmltree_root, 'Houses')
+            l_list = l_sect.iterfind('House')
+        return l_list
 
 
 class API(LoadSaveAPI):
@@ -134,24 +163,8 @@ class API(LoadSaveAPI):
             print "houses.API.Start() - Singleton"
         self.m_logger.info("Starting.")
         l_count = 0
-        self.m_root, _l_tree = self.load_all_houses()
-        #
-        try:
-            l_sect = self.m_root.find('Houses')
-            l_list = l_sect.iterfind('House')  # use l_sect to force error if it is missing
-        except AttributeError:
-            print "Warning - in read_house - Adding 'Houses' section"
-            l_sect = ET.SubElement(self.m_root, 'Houses')
-            l_list = l_sect.iterfind('House')
-        for l_house_xml in l_list:
-            print "\nCreating a new house named:{0:}".format(l_house_xml.get('Name'))
-            l_houses_obj = HousesData()
-            l_houses_obj.HouseAPI = house.API()
-            l_houses_obj.Key = l_count
-            l_house_obj = l_houses_obj.HouseAPI.Start(l_houses_obj, l_house_xml)
-            l_houses_obj.Object = l_house_obj
-            l_houses_obj.Name = l_house_obj.Name
-            Houses_Data[l_count] = l_houses_obj
+        for l_house_xml in self.get_houses_xml():
+            self.m_houses_data[l_count] = self.get_house_info(l_house_xml, l_count)
             l_count += 1
         if g_debug > 0:
             print "houses.API.Start() - {0:} houses all started.".format(l_count)
@@ -165,10 +178,13 @@ class API(LoadSaveAPI):
         if g_debug > 0:
             print "houses.API.Stop()"
         self.m_logger.info("Stopping.")
-        l_houses_xml = self.create_empty_xml_section(self.m_root, 'Houses')
-        for l_house in Houses_Data.itervalues():
+        l_houses_xml = self.create_empty_xml_section(self.m_xmltree_root, 'Houses')
+        for l_house in self.m_houses_data.itervalues():
             l_house.HouseAPI.Stop(l_houses_xml)
         self.save_all_houses(l_houses_xml)
         self.m_logger.info("Stopped.")
+
+    def get_houses_obj(self):
+        return self.m_houses_data
 
 # ##  END

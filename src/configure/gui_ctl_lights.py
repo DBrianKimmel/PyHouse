@@ -10,14 +10,9 @@ import lighting.lighting as lighting
 import gui
 import gui_tools
 from configure.gui_tools import GuiTools
-from main import houses
-from house import house
 
 
 g_debug = 5
-
-House_Data = house.House_Data
-Houses_Data = houses.Houses_Data
 
 FG = 'red'
 BG_LIGHT = '#C0C090'
@@ -27,14 +22,15 @@ class CtlLightsWindow(GuiTools):
     ''' Display a window showing all lights.
     '''
 
-    def __init__(self, p_root, p_main_window):
+    def __init__(self, p_root_window, p_main_window, p_houses_obj):
         """Initialize then bring up the 'select house' menu.
         """
         if g_debug > 0:
             print "gui_ctl_lights - Show select house window"
-        self.m_root = p_root
+        self.m_xmltree_root = p_root_window
         self.main_window = p_main_window
-        self.m_house_select_window = self.show_house_select_window(p_root, p_main_window)
+        self.m_houses_obj = p_houses_obj
+        self.m_house_select_window = self.show_house_select_window(p_root_window, p_main_window, p_houses_obj)
 
     def show_buttons_for_one_house(self, p_ix, p_house_obj):
         """Display the light selection window with the lights for the selected house.
@@ -44,7 +40,7 @@ class CtlLightsWindow(GuiTools):
         if g_debug > 1:
             print "gui_ctl_lights.show_buttons_for_one_house() - Ix:{0:}".format(p_ix)
         self.frame_delete(self.m_house_select_window)
-        self.m_lights_frame = Frame(self.m_root)
+        self.m_lights_frame = Frame(self.m_xmltree_root)
         self.m_lights_frame.grid(padx = 5, pady = 5)
         self.m_ix = 0
         self.show_control_button(p_ix, p_house_obj)
@@ -61,9 +57,12 @@ class CtlLightsWindow(GuiTools):
         for l_light_obj in p_house_obj.Lights.itervalues():
             if l_light_obj.Key > self.m_max_light: self.m_max_light = l_light_obj.Key
             l_relief = SUNKEN
-            if l_light_obj.Active: l_relief = RAISED
+            l_bg = gui_tools.BG_INACTIVE
+            l_fg = gui_tools.FG_INACTIVE
+            if l_light_obj.Active:
+                l_relief = RAISED
+                l_bg, l_fg = self.color_button(int(l_light_obj.CurLevel))
             l_long = l_light_obj.RoomName + '-' + l_light_obj.Name
-            l_bg, l_fg = self.color_button(int(l_light_obj.CurLevel))
             l = Button(self.m_lights_frame, text = l_long, bg = l_bg, fg = l_fg, relief = l_relief,
                        command = lambda x = p_house_obj, y = self.m_ix: self.ctl_lights(x, y))
             l_light.append(l)
@@ -82,7 +81,7 @@ class CtlLightsWindow(GuiTools):
 
     def main_screen(self):
         self.frame_delete(self.m_lights_frame)
-        gui.MainWindow()
+        self.show_main_menu()
 
 
 class LightingDialog(gui_tools.GuiTools):
@@ -93,14 +92,14 @@ class LightingDialog(gui_tools.GuiTools):
     @param p_key: is the index of the light to control
     @param p_title:
     """
-    def __init__(self, p_parent, p_house_obj, p_key, p_title = None):
-        self.m_top = Toplevel(p_parent)
+    def __init__(self, p_parent_frame, p_house_obj, p_houses_key, p_title = None):
+        self.m_top = Toplevel(p_parent_frame)
         if p_title:
             self.m_top.title(p_title)
-        self.m_parent = p_parent
+        self.m_parent = p_parent_frame
         self.l_result = None
-        self.create_vars()
-        l_light_obj = self.load_vars(p_house_obj, p_key)
+        self.create_room_vars()
+        l_light_obj = self.load_house_vars(p_house_obj, p_houses_key)
         l_res = 100
         if self.Dimmable.get() == 1: l_res = 1
         self.m_frame = Frame(self.m_top)
@@ -115,12 +114,12 @@ class LightingDialog(gui_tools.GuiTools):
         self.level = Scale(self.m_frame, from_ = 0, to = 100, orient = HORIZONTAL, resolution = l_res)
         self.level.grid(row = 11, column = 1, sticky = W)
         self.level.set(l_light_obj.CurLevel)
-        Button(self.m_frame, text = 'Change', fg = "blue", bg = gui_tools.BG_BOTTOM, command = lambda x = p_house_obj, y = p_key: self.change_light(x, y)).grid(row = 91, column = 0)
+        Button(self.m_frame, text = 'Change', fg = "blue", bg = gui_tools.BG_BOTTOM, command = lambda x = p_house_obj, y = p_houses_key: self.change_light(x, y)).grid(row = 91, column = 0)
         Button(self.m_frame, text = "Cancel", fg = "red", bg = gui_tools.BG_BOTTOM, command = self.quit_dialog).grid(row = 91, column = 2)
         if g_debug > 0:
             print "Resolution: {0:}, CurLevel: {1:}".format(l_res, l_light_obj.CurLevel)
 
-    def create_vars(self):
+    def create_room_vars(self):
         """Create everything - used or not.
         """
         # Common / Lights, Buttons
@@ -160,13 +159,13 @@ class LightingDialog(gui_tools.GuiTools):
         self.ProductKey = IntVar()
         self.Responder = IntVar()
 
-    def load_vars(self, p_house_obj, p_key):
+    def load_house_vars(self, p_house_obj, p_key):
         """
         @param p_house_obj: is the house object.
         @param p_key: is the index of the light to control
         """
         if g_debug > 0:
-            print "gui_ctl_lights.load_vars() "
+            print "gui_ctl_lights.load_house_vars() "
         l_light_obj = p_house_obj.Lights[p_key]
         l_light_obj.Key = p_key
         l_family = l_light_obj.Family
@@ -199,7 +198,7 @@ class LightingDialog(gui_tools.GuiTools):
         l_light_obj = p_house_obj.Lights[l_key]
         if g_debug > 0:
             print "gui_ctl_lights.change_light() - Name:{0:}, Level:{1}, Key:{2:} ".format(l_light, l_level, p_key)
-        p_house_obj.LightingAPI.change_light_setting(p_house_obj, p_key, l_level)
+        p_house_obj.LightingAPI.change_light_setting(p_house_obj, l_light_obj, l_level)
 
     def quit_dialog(self):
         self.m_top.destroy()

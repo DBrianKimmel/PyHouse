@@ -3,16 +3,18 @@
 from Tkinter import *
 import Pmw
 
-from main import houses
+from house import houses
 
 g_debug = 1
-
-Houses_Data = houses.Houses_Data
-
 
 BG_BOTTOM = '#C0C090'
 BG_TOP = '#E0F0E0'
 BG_UNDONE = '#F0C0C0'
+BG_INACTIVE = "#E04040"
+BG_ACTIVE = '#808080'
+
+FG_INACTIVE = "#000000"
+FG_ACTIVE = '#FFFFFF'
 
 ComboBox = Pmw.ComboBox
 
@@ -100,11 +102,6 @@ class GuiUtils(object):
         l_ret = hex(p_arg)
         return l_ret
 
-    def get_grid(self, p_count):
-            l_row = p_count // 4
-            l_col = p_count % 4
-            return l_row, l_col
-
     def color_button(self, p_level):
         """Select the colors for a light button based on passed in level.
         """
@@ -135,6 +132,7 @@ class GuiUtils(object):
         else:
             l_bg = '#FFFFD0'  # Very Light yellow - full on
         return l_bg, l_fg
+
     def build_names(self, p_dict):
         if g_debug > 1:
             print "gui_tools.build_names() ", p_dict
@@ -184,26 +182,32 @@ class HouseSelect(GuiUtils):
 
     m_house_select_window = None
 
-    def show_house_select_window(self, p_root, p_main_window):
+    def show_house_select_window(self, p_root, p_main_window, p_houses_obj):
         """This will show a house select window for various modules.
         @param p_root: is the Tk() root instance.
         @return: the house object for the house selected.
+        In addition, returns the house index and house object as parameters for the callback
         """
         if g_debug > 0:
             print "gui_tools.show_house_select_window()  - Root=", p_root
         self.m_main_window = p_main_window
         self.m_house_select_window = Frame(p_root)
         p_root.title('Select House')
-        self.m_root = p_root
+        self.m_xmltree_root = p_root
         self.m_house_select_window.grid(padx = 5, pady = 5)
         l_ix = 0
         l_house = []
-        for l_obj in Houses_Data.itervalues():
+        for l_obj in p_houses_obj.itervalues():
             l_relief = SUNKEN
-            if l_obj.Object.Active: l_relief = RAISED
-            l_row, l_col = self.get_grid(l_ix)
+            l_bg = BG_INACTIVE
+            l_fg = FG_INACTIVE
+            if l_obj.Object.Active:
+                l_relief = RAISED
+                l_bg = BG_ACTIVE
+                l_fg = FG_ACTIVE
+            l_row, l_col = self.columnize(l_ix, 4)
             l = Button(self.m_house_select_window, text = l_obj.Object.Name,
-                      relief = l_relief,
+                      relief = l_relief, bg = l_bg, fg = l_fg,
                       command = lambda x = l_ix, y = l_obj.Object: self.show_buttons_for_one_house(x, y))
             l_house.append(l)
             l_house[l_ix].grid(row = l_row, column = l_col, padx = 5, sticky = W)

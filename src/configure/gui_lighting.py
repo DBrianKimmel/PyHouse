@@ -15,9 +15,6 @@ from house import house
 
 g_debug = 5
 
-House_Data = house.House_Data
-Houses_Data = houses.Houses_Data
-
 VAL_FAM = lighting.VALID_FAMILIES
 VAL_INTER = lighting.VALID_INTERFACES
 BG_LIGHT = '#C0C090'
@@ -28,14 +25,15 @@ class LightingWindow(gui_tools.GuiTools):
 
     m_house_module = None
 
-    def __init__(self, p_root, p_main_window):
+    def __init__(self, p_root_window, p_main_window, p_houses_api):
         """Initialize then bring up the 'select house' menu.
         """
         if g_debug > 0:
             print "gui_lighting - Show select house window"
-        self.m_root = p_root
-        self.m_main_frame = p_main_window
-        self.m_house_select_window = self.show_house_select_window(p_root, p_main_window)
+        self.m_xmltree_root = p_root_window
+        self.m_main_window = p_main_window
+        self.m_houses_api = p_houses_api
+        self.m_house_select_window = self.show_house_select_window(p_root_window, p_main_window, p_houses_api)
 
     def show_buttons_for_one_house(self, p_ix, p_house_obj):
         """Display the lighting menu with the lights for the selected house.
@@ -46,8 +44,8 @@ class LightingWindow(gui_tools.GuiTools):
             print "gui_lighting.show_buttons_for_one_house() - Ix:{0:}".format(p_ix)
         self.m_ix = p_ix
         self.frame_delete(self.m_house_select_window)
-        self.m_lighting_select_window = Frame(self.m_root)
-        self.m_root.title('Add / Edit Lighting Device')
+        self.m_lighting_select_window = Frame(self.m_xmltree_root)
+        self.m_xmltree_root.title('Add / Edit Lighting Device')
         self.m_lighting_select_window.grid(padx = 5, pady = 5)
         self.m_ix = 0
         self.show_device_button(p_ix, p_house_obj)
@@ -76,8 +74,7 @@ class LightingWindow(gui_tools.GuiTools):
             l = Button(self.m_lighting_select_window, text = l_obj.Name, bg = BG_LIGHT, relief = l_relief,
                        command = lambda x = l_obj.Key, y = 1, z = p_house_obj: self.edit_lights(x, y, z))
             l_light.append(l)
-            l_row = self.m_ix // 4
-            l_col = self.m_ix % 4
+            l_row, l_col = self.columnize(self.m_ix, 4)
             l_light[self.m_ix].grid(row = l_row, column = l_col, padx = 5, sticky = W)
             self.m_ix += 1
         self.m_max_controller = 0
@@ -90,8 +87,7 @@ class LightingWindow(gui_tools.GuiTools):
             c = Button(self.m_lighting_select_window, fg = "red", text = l_obj.Name, bg = BG_CTLR, relief = l_relief,
                        command = lambda x = l_obj.Key, y = 2, z = p_house_obj: self.edit_controllers(x, y, z))
             l_light.append(c)
-            l_row = self.m_ix // 4
-            l_col = self.m_ix % 4
+            l_row, l_col = self.columnize(self.m_ix, 4)
             l_light[self.m_ix].grid(row = l_row, column = l_col, padx = 5, sticky = W)
             self.m_ix += 1
         self.m_max_button = 0
@@ -104,8 +100,7 @@ class LightingWindow(gui_tools.GuiTools):
             b = Button(self.m_lighting_select_window, fg = "blue", text = l_obj.Name, bg = BG_BUTTN, relief = l_relief,
                        command = lambda x = l_obj.Key, y = 3, z = p_house_obj: self.edit_buttons(x, y, z))
             l_light.append(b)
-            l_row = self.m_ix // 4
-            l_col = self.m_ix % 4
+            l_row, l_col = self.columnize(self.m_ix, 4)
             l_light[self.m_ix].grid(row = l_row, column = l_col, padx = 5, sticky = W)
             self.m_ix += 1
         self.m_ix += 2
@@ -145,7 +140,7 @@ class LightingWindow(gui_tools.GuiTools):
         """
         if g_debug > 1:
             print "gui_schedule.save_schedules_and_exit() "
-        houses.API().save_all_houses()
+        # houses.API().save_all_houses()
         self.frame_delete(self.m_lighting_select_window)
         self.show_main_menu()
 
@@ -156,23 +151,23 @@ class LightingDialog(gui_tools.GuiTools):
 
     m_house_module = None
 
-    def __init__(self, p_parent, p_key, p_kind, p_house_obj, p_title, p_module):
+    def __init__(self, p_parent_frame, p_houses_key, p_kind, p_house_obj, p_title, p_module):
         """
-        @param p_root: is ?
-        @param p_parent: is the TkInter ID of the parent window (.12345678)
-        @param p_key: is the schedule id we are about to edit.
+        @param p_root_window: is ?
+        @param p_parent_frame: is the TkInter ID of the parent window (.12345678)
+        @param p_houses_key: is the schedule id we are about to edit.
         @param p_house_obj: is the house object that we are editing.
         """
         if g_debug > 1:
-            print "LightingDialog.__init__() - LightKey:{0:}".format(p_key), p_kind, p_title
-        self.m_parent = p_parent
+            print "LightingDialog.__init__() - LightKey:{0:}".format(p_houses_key), p_kind, p_title
+        self.m_parent = p_parent_frame
         self.m_house_module = p_module
         self.m_top = Toplevel(self.m_parent)
         if p_title:
             self.m_top.title(p_title)
         self.l_result = None
-        self.create_vars()
-        l_type, l_family, l_interface = self.load_vars(p_key, p_kind, p_house_obj)
+        self.create_room_vars()
+        l_type, l_family, l_interface = self.load_house_vars(p_houses_key, p_kind, p_house_obj)
         self.m_frame = Frame(self.m_top)
         self.m_frame.grid_columnconfigure(0, minsize = 130)
         self.m_frame.grid_columnconfigure(1, minsize = 300)
@@ -227,7 +222,7 @@ class LightingDialog(gui_tools.GuiTools):
         if p_title.startswith("Edit"):
             l_text = "Save"
             self.get_entry_btn(self.m_frame, 91, 1, 'Delete', lambda x = p_house_obj: self.delete_entry(x), bg = gui_tools.BG_BOTTOM)
-        self.get_entry_btn(self.m_frame, 91, 0, l_text, lambda x = p_house_obj: self.save_vars(x), fg = "blue", bg = gui_tools.BG_BOTTOM)
+        self.get_entry_btn(self.m_frame, 91, 0, l_text, lambda x = p_house_obj: self.save_house_vars(x), fg = "blue", bg = gui_tools.BG_BOTTOM)
         self.get_entry_btn(self.m_frame, 91, 3, "Cancel", self.quit_dialog, fg = "blue", bg = gui_tools.BG_BOTTOM)
 
     def delete_entry(self, p_house_obj):
@@ -242,7 +237,7 @@ class LightingDialog(gui_tools.GuiTools):
         config_xml.WriteConfig().write_file()
         self.quit_dialog()
 
-    def create_vars(self):
+    def create_room_vars(self):
         """Create everything - used or not.
         """
         # Common / Lights, Buttons
@@ -282,7 +277,7 @@ class LightingDialog(gui_tools.GuiTools):
         self.ProductKey = StringVar()
         self.Responder = IntVar()
 
-    def load_vars(self, p_key, p_kind, p_house_obj):
+    def load_house_vars(self, p_key, p_kind, p_house_obj):
         """put the values in the boxes
         """
         # print "LoadVars key, Kind = {0:} - {1:}".format(p_key, p_kind)
@@ -376,7 +371,7 @@ class LightingDialog(gui_tools.GuiTools):
                 self.UnitID.set(0)
         return l_type, l_family, l_interface
 
-    def save_vars(self, p_light_obj):
+    def save_house_vars(self, p_light_obj):
         l_type = self.Type.get()
         l_key = self.Key.get()
         l_family = self.Family.get()
@@ -427,7 +422,7 @@ class LightingDialog(gui_tools.GuiTools):
         else:
             p_light_obj.Buttons[l_key] = l_obj
         if g_debug > 1:
-            print "gui_schedule.save_vars() Saving lighting data ", l_obj
+            print "gui_schedule.save_house_vars() Saving lighting data ", l_obj
         self.quit_dialog()
 
     def quit_dialog(self):

@@ -90,7 +90,6 @@ class LoggingMain(LoggingUtility):
         if g_debug > 0:
             print "log.LoggingMain()"
         Log_Data[0] = LogData()
-        # configure.config_xml.ReadConfig().read_log_web()
         try:
             l_debug_name = Log_Data[0].Debug
         except:

@@ -21,12 +21,18 @@ g_root = None  # TkInter root window.
 g_parent = None
 
 class MainWindow(object):
+
+    m_houses_api = None
+
     """
     A dispatch (menu button) window.
+    @param p_houses_api: access to the singleton instance of houses.
     """
-    def __init__(self):
+    def __init__(self, p_houses_api):
         if g_debug > 0:
             print "gui.MainWindow.__init__() - Display PyHouse Main Menu window."
+        self.m_houses_api = p_houses_api
+        self.m_houses_obj = p_houses_api.get_houses_obj()
         self.m_main_window = Frame(g_root)
         g_root.title('PyHouse Main Menu')
         self.m_main_window.grid(padx = 5, pady = 5)
@@ -60,62 +66,62 @@ class MainWindow(object):
         if g_debug > 1:
             print "gui.ctl_lights_screen() ", g_root, self.m_main_window
         self.m_main_window.grid_forget()  # Main Window
-        gui_ctl_lights.CtlLightsWindow(g_root, self.m_main_window)
+        gui_ctl_lights.CtlLightsWindow(g_root, self.m_main_window, self.m_houses_obj)
 
     def house_screen(self):
         if g_debug > 1:
             print "gui.house_screen() ", g_root
         self.m_main_window.grid_forget()  # Main Window
-        gui_house.HouseWindow(g_root, self.m_main_window)
+        gui_house.HouseWindow(g_root, self.m_main_window, self.m_houses_obj)
 
     def internet_screen(self):
         if g_debug > 1:
             print "gui.internet_screen() ", g_root
         self.m_main_window.grid_forget()  # Main Window
-        DummyWindow(g_root, self.m_main_window)
+        DummyWindow(g_root, self.m_main_window, self.m_houses_obj)
 
     def lighting_screen(self):
         if g_debug > 1:
             print "gui.lighting_screen() ", g_root
         self.m_main_window.grid_forget()  # Main Window
-        gui_lighting.LightingWindow(g_root, self.m_main_window)
+        gui_lighting.LightingWindow(g_root, self.m_main_window, self.m_houses_obj)
 
     def logging_screen(self):
         if g_debug > 1:
             print "gui.logging_screen() ", g_root
         self.m_main_window.grid_forget()  # Main Window
-        gui_logs.LogsWindow(g_root, self.m_main_window)
+        gui_logs.LogsWindow(g_root, self.m_main_window, self.m_houses_obj)
 
     def scene_screen(self):
         if g_debug > 1:
             print "gui.scene_screen() ", g_root
         self.m_main_window.grid_forget()  # Main Window
-        DummyWindow(g_root, self.m_main_window)
+        DummyWindow(g_root, self.m_main_window, self.m_houses_obj)
 
     def schedule_screen(self):
         if g_debug > 1:
             print "gui.schedule_screen() ", g_root, self.m_main_window
         self.m_main_window.grid_forget()  # Main Window
-        gui_schedule.ScheduleWindow(g_root, self.m_main_window)
+        gui_schedule.ScheduleWindow(g_root, self.m_main_window, self.m_houses_obj)
 
     def test_screen(self):
         if g_debug > 1:
             print "gui.test_screen() ", g_root, self.m_main_window
         Insteon_PLM.API().Test()
         # self.m_main_window.grid_forget()  # Main Window
-        # gui_schedule.ScheduleWindow(g_root, self.m_main_window)
+        # gui_schedule.ScheduleWindow(g_root, self.m_main_window, self.m_houses_obj)
 
     def upnp_screen(self):
         if g_debug > 1:
             print "gui.upnp_screen() ", g_root
         self.m_main_window.grid_forget()  # Main Window
-        DummyWindow(g_root, self.m_main_window)
+        DummyWindow(g_root, self.m_main_window, self.m_houses_obj)
 
     def weather_screen(self):
         if g_debug > 1:
             print "gui.weather_screen() ", g_root
         self.m_main_window.grid_forget()  # Main Window
-        DummyWindow(g_root, self.m_main_window)
+        DummyWindow(g_root, self.m_main_window, self.m_houses_obj)
 
     def webserv_screen(self):
         if g_debug > 1:
@@ -143,10 +149,10 @@ class MainWindow(object):
 
 
 class DummyWindow(gui_tools.GuiTools):
-    def __init__(self, p_root):
+    def __init__(self, p_root_window):
         if g_debug > 1:
             print "DummyWindow.__init__"
-        self.m_frame = Frame(p_root)
+        self.m_frame = Frame(p_root_window)
         self.m_frame.grid(padx = 5, pady = 5)
         self.button = Button(self.m_frame, text = "Back", fg = "red", command = self.main_screen)
         self.button.grid(row = 0, column = 0)
@@ -160,7 +166,7 @@ class API(MainWindow):
     """
     """
 
-    def __init__(self, p_parent):
+    def __init__(self, p_parent, p_houses_api):
         """
         @param p_parent: is self from where called ( PyHouse.API() )
         """
@@ -170,6 +176,6 @@ class API(MainWindow):
         g_root = Tk()
         g_parent = p_parent
         tksupport.install(g_root)
-        MainWindow()
+        MainWindow(p_houses_api)
 
 # ## END

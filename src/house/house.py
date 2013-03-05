@@ -6,15 +6,12 @@ main/house.py
 
 There is one instance of this module for each house being controlled.
 
-
+House.py knows everything about a single house.
 
 There is location information for the house.  This is for calculating the
 time of sunrise and sunset.  Additional calculations may be added such as
 moonrise, tides, etc.
 
-There is one instance of this (Singleton).
-
-Rooms and lights and HVAC are associated with a particular house.
 """
 
 # Import system type stuff
@@ -23,52 +20,19 @@ import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from schedule import schedule
-from lighting import lighting
+from main import internet
 from configure import xml_tools
 
-g_debug = 3
+g_debug = 0
 m_logger = None
 
 Singletons = {}
 House_Data = {}
-HouseCount = 0
-LocationCount = 0
-RoomCount = 0
-
-# object definitions
-ButtonData = lighting.ButtonData
-LightData = lighting.LightData
-ControllerData = lighting.ControllerData
-ScheduleData = schedule.ScheduleData
 
 
-class HouseData(object):
+class LocationData(object):
 
     def __init__(self):
-        global HouseCount
-        HouseCount += 1
-        self.Active = False
-        self.Key = 0
-        self.Name = None
-        self.Buttons = {}
-        self.Controllers = {}
-        self.LightingAPI = None
-        self.Lights = {}
-        self.Location = {}
-        self.Rooms = {}
-        self.Schedule = {}
-        self.ScheduleAPI = None
-
-    def __str__(self):
-        l_ret = ' House:: Name :{0:}, Active:{1:}, Key:{2:}, LightingAPI:{3:}'.format(self.Name, self.Active, self.Key, self.LightingAPI)
-        return l_ret
-
-
-class LocationData(HouseData):
-
-    def __init__(self):
-        global LocationCount
-        LocationCount += 1
         self.Active = True
         self.City = None
         self.Key = 0
@@ -145,11 +109,9 @@ class LocationData(HouseData):
     ZipCode = property(get_zip_code, set_zip_code, None, None)
 
 
-class RoomData(LocationData):
+class RoomData(object):
 
     def __init__(self):
-        global RoomCount
-        RoomCount += 1
         self.Active = False
         self.Comment = None
         self.Corner = None
@@ -195,99 +157,105 @@ class RoomData(LocationData):
     Size = property(get_size, set_size, None, None)
 
 
-class HouseReadWriteConfig(xml_tools.ConfigTools):
+class HouseData(LocationData, RoomData):
+
+    def __init__(self):
+        self.Active = False
+        self.Key = 0
+        self.Name = None
+        self.MasterHouseNumber = 0
+        self.InternetAPI = None
+        self.LightingAPI = None
+        self.ScheduleAPI = None
+        self.Buttons = {}
+        self.Controllers = {}
+        self.Lights = {}
+        self.Location = LocationData()
+        self.Rooms = {}
+        self.Schedule = {}
+
+    def __str__(self):
+        l_ret = ' House:: Name :{0:}, Active:{1:}, Key:{2:}'.format(self.Name, self.Active, self.Key)
+        return l_ret
+
+
+class HouseReadWriteConfig(xml_tools.ConfigTools, HouseData):
     """Use the internal data to read / write an updated config file.
 
     This is called from the web interface or the GUI when the data has been changed.
     """
 
-    def read_location(self, p_entry, p_name = ''):
+    def read_location(self, p_house_obj, p_house_xml):
         if g_debug > 7:
             print "house.read_location()"
-        l_dict = {}
-        l_count = 0
         l_location_obj = LocationData()
         if g_debug > 4:
             print "house.read_location() - Active=", l_location_obj.Active, l_location_obj.Name
-        # Now read the location subsection
-        l_entry = p_entry.find('Location')
-        l_location_obj.Street = self.get_text(l_entry, 'Street')
-        l_location_obj.City = self.get_text(l_entry, 'City')
-        l_location_obj.State = self.get_text(l_entry, 'State')
-        l_location_obj.ZipCode = self.get_text(l_entry, 'ZipCode')
-        l_location_obj.Phone = self.get_text(l_entry, 'Phone')
-        l_location_obj.Latitude = self.get_float(l_entry, 'Latitude')
-        l_location_obj.Longitude = self.get_float(l_entry, 'Longitude')
-        l_location_obj.TimeZone = self.get_float(l_entry, 'TimeZone')
-        l_location_obj.SavingTime = self.get_float(l_entry, 'SavingTime')
-        l_dict[l_count] = l_location_obj
-        l_count += 1
+        l_location_xml = p_house_xml.find('Location')
+        l_location_obj.Street = self.get_text(l_location_xml, 'Street')
+        l_location_obj.City = self.get_text(l_location_xml, 'City')
+        l_location_obj.State = self.get_text(l_location_xml, 'State')
+        l_location_obj.ZipCode = self.get_text(l_location_xml, 'ZipCode')
+        l_location_obj.Phone = self.get_text(l_location_xml, 'Phone')
+        l_location_obj.Latitude = self.get_float(l_location_xml, 'Latitude')
+        l_location_obj.Longitude = self.get_float(l_location_xml, 'Longitude')
+        l_location_obj.TimeZone = self.get_float(l_location_xml, 'TimeZone')
+        l_location_obj.SavingTime = self.get_float(l_location_xml, 'SavingTime')
+        p_house_obj.Location = l_location_obj
         if g_debug > 4:
-            print "house.read_location()  loaded {0:} locations for {1:}".format(l_count, p_name)
-        return l_dict
+            print "house.read_location()  loaded location for {0:}".format(p_house_obj.Name)
 
-    def read_rooms(self, p_entry, p_house):
+    def read_rooms(self, p_house_obj, p_house_xml):
         if g_debug > 7:
             print "house.read_rooms()"
-        l_dict = {}
         l_count = 0
-        l_rooms = p_entry.find('Rooms')
+        l_rooms = p_house_xml.find('Rooms')
         l_list = l_rooms.iterfind('Room')
-        for l_entry in l_list:
-            l_obj = RoomData()
-            self.read_common(l_obj, l_entry)
-            l_obj.Key = l_count
-            l_obj.HouseName = p_house
-            l_obj.Comment = self.get_text(l_entry, 'Comment')
-            l_obj.Corner = l_entry.findtext('Corner')
-            l_obj.HouseName = l_entry.findtext('HouseName')
-            l_obj.Size = l_entry.findtext('Size')
-            l_dict[l_count] = l_obj
+        for l_room_xml in l_list:
+            l_room_obj = RoomData()
+            self.read_common(l_room_obj, l_room_xml)
+            l_room_obj.Key = l_count
+            l_room_obj.HouseName = p_house_obj.Name
+            l_room_obj.Comment = self.get_text(l_room_xml, 'Comment')
+            l_room_obj.Corner = l_room_xml.findtext('Corner')
+            l_room_obj.HouseName = l_room_xml.findtext('HouseName')
+            l_room_obj.Size = l_room_xml.findtext('Size')
+            p_house_obj.Rooms[l_count] = l_room_obj
             l_count += 1
-            if g_debug > 4:
-                print "house.read_rooms()   Name:{0:}, Active:{1:}, Key:{2:}".format(l_obj.Name, l_obj.Active, l_obj.Key)
+            if g_debug > 6:
+                print "house.read_rooms()   Name:{0:}, Active:{1:}, Key:{2:}".format(l_room_obj.Name, l_room_obj.Active, l_room_obj.Key)
         if g_debug > 4:
             print "house.read_rooms()  loaded {0:} rooms".format(l_count)
-        return l_dict
 
     def read_house(self, p_house_obj, p_house_xml):
         """Read house information, location and rooms.
 
         The main data is House_Data.
         """
-        l_count = 0
-        l_obj = p_house_obj
-        self.read_common(l_obj, p_house_xml)
-        l_name = l_obj.Name
-        # l_obj.Key = l_count
+        self.read_common(p_house_obj, p_house_xml)
+        self.get_int(p_house_xml, 'MasterHouseNumber')
+        self.read_location(p_house_obj, p_house_xml)
+        self.read_rooms(p_house_obj, p_house_xml)
+        House_Data[0] = p_house_obj
         if g_debug > 1:
-            print "house.read_house() - Loading XML data for House:{0:}".format(l_obj.Name), l_obj
-        l_obj.Location = self.read_location(p_house_xml, l_name)
-        l_obj.Rooms = self.read_rooms(p_house_xml, l_name)
-        House_Data[l_count] = l_obj
-        l_count += 1
-        if g_debug > 2:
-            print "house.read_house() loaded {0:} houses.".format(l_count), l_obj
+            print "house.read_house() - Loading XML data for House:{0:}".format(p_house_obj.Name)
         return House_Data
 
-    def write_location(self, p_parent_xml, p_dict):
+    def write_location(self, p_parent_xml, p_location_obj):
         """Replace the data in the 'House/Location' section with the current data.
         """
-        l_count = 0
-        for l_location_obj in p_dict.itervalues():
-            l_entry = ET.SubElement(p_parent_xml, 'Location')
-            ET.SubElement(l_entry, 'Street').text = l_location_obj.Street
-            ET.SubElement(l_entry, 'City').text = l_location_obj.City
-            ET.SubElement(l_entry, 'State').text = l_location_obj.State
-            ET.SubElement(l_entry, 'ZipCode').text = l_location_obj.ZipCode
-            ET.SubElement(l_entry, 'Phone').text = l_location_obj.Phone
-            ET.SubElement(l_entry, 'Latitude').text = str(l_location_obj.Latitude)
-            ET.SubElement(l_entry, 'Longitude').text = str(l_location_obj.Longitude)
-            ET.SubElement(l_entry, 'TimeZone').text = str(l_location_obj.TimeZone)
-            ET.SubElement(l_entry, 'SavingTime').text = str(l_location_obj.SavingTime)
-            l_count += 1
+        l_entry = ET.SubElement(p_parent_xml, 'Location')
+        ET.SubElement(l_entry, 'Street').text = p_location_obj.Street
+        ET.SubElement(l_entry, 'City').text = p_location_obj.City
+        ET.SubElement(l_entry, 'State').text = p_location_obj.State
+        ET.SubElement(l_entry, 'ZipCode').text = p_location_obj.ZipCode
+        ET.SubElement(l_entry, 'Phone').text = p_location_obj.Phone
+        ET.SubElement(l_entry, 'Latitude').text = str(p_location_obj.Latitude)
+        ET.SubElement(l_entry, 'Longitude').text = str(p_location_obj.Longitude)
+        ET.SubElement(l_entry, 'TimeZone').text = str(p_location_obj.TimeZone)
+        ET.SubElement(l_entry, 'SavingTime').text = str(p_location_obj.SavingTime)
         if g_debug > 2:
-            print "house.write_location() - Wrote {0:} locations".format(l_count)
+            print "house.write_location()"
 
     def write_rooms(self, p_parent_xml, p_dict):
         l_count = 0
@@ -308,6 +276,7 @@ class HouseReadWriteConfig(xml_tools.ConfigTools):
         p_parent_xml.set('Name', p_house_obj.Name)
         p_parent_xml.set('Key', str(p_house_obj.Key))
         p_parent_xml.set('Active', self.put_bool(p_house_obj.Active))
+        ET.SubElement(p_parent_xml, 'MasterHouseNumber').text = p_house_obj.MasterHouseNumber
         self.write_location(p_parent_xml, p_house_obj.Location)
         self.write_rooms(p_parent_xml, p_house_obj.Rooms)
         if g_debug > 2:
@@ -315,17 +284,19 @@ class HouseReadWriteConfig(xml_tools.ConfigTools):
         return p_parent_xml
 
 
-class LoadSaveAPI(RoomData, HouseReadWriteConfig):
+class LoadSaveAPI(HouseReadWriteConfig):
     """
     """
+
+    def get_house_obj(self):
+        return self.m_house_obj
 
 
 class API(LoadSaveAPI):
     """
     """
 
-    m_schedule = None
-    m_house_obj = None
+    m_house_obj = HouseData()
 
     def __init__(self):
         if g_debug > 0:
@@ -340,6 +311,7 @@ class API(LoadSaveAPI):
             print "house.API.Start() 1"
         self.m_house_obj = HouseData()
         self.m_house_obj.ScheduleAPI = schedule.API()
+        self.m_house_obj.InternetAPI = internet.API()
         self.read_house(self.m_house_obj, p_house_xml)
         if g_debug > 0:
             print "house.API.Start() - House:{0:}, Active:{1:}".format(self.m_house_obj.Name, self.m_house_obj.Active)

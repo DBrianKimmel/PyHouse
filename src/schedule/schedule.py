@@ -9,6 +9,22 @@ Read/reread the schedule file at:
     1. Start up
     2. Midnight
     3. After each set of scheduled events.
+
+
+Controls:
+  Lighting
+  HVAC
+  Security
+  Entertainment
+
+Operation:
+
+  Iterate thru the schedule tree and create a list of schedule events.
+  Create a twisted timer that goes off when the scheduled time arrives.
+  We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
+  TODO: create a group of timers and cancel the changed ones when the schedules object is changed.
+  Select the next event(s) from now, there may be more than one event scheduled for the same time.
+
 """
 
 # Import system type stuff
@@ -23,8 +39,6 @@ from lighting import lighting
 from configure import xml_tools
 from main import tools
 import sunrisesunset
-from main import internet
-from main import weather
 
 g_debug = 3
 g_logger = None
@@ -33,6 +47,7 @@ ScheduleCount = 0
 
 callLater = reactor.callLater
 
+# A list of valid schedule types.
 VALID_TYPES = ['Device', 'Scene']
 
 class ScheduleData(object):
@@ -62,6 +77,23 @@ class ScheduleData(object):
 
 class ScheduleXML(xml_tools.ConfigTools):
 
+    def extract_schedule_xml(self, p_entry_xml, p_schedule_obj):
+        """Extract schedule information from a schedule xml element.
+        """
+        self.read_common(p_schedule_obj, p_entry_xml)
+        p_schedule_obj.HouseName = self.m_house_obj.Name
+        p_schedule_obj.Level = self.get_int(p_entry_xml, 'Level')
+        p_schedule_obj.LightName = self.get_text(p_entry_xml, 'LightName')
+        p_schedule_obj.LightNumber = self.get_int(p_entry_xml, 'LightNumber')
+        p_schedule_obj.Rate = self.get_int(p_entry_xml, 'Rate')
+        p_schedule_obj.RoomName = self.get_text(p_entry_xml, 'RoomName')
+        p_schedule_obj.Time = self.get_text(p_entry_xml, 'Time')
+        p_schedule_obj.Type = self.get_text(p_entry_xml, 'Type')
+        if g_debug > 5:
+            print "schedule.extract_schedule_xml()   Name:{0:}, Active:{1:}, Key:{2:}, Light:{3:}".format(
+                    p_schedule_obj.Name, p_schedule_obj.Active, p_schedule_obj.Key, p_schedule_obj.LightName)
+        return p_schedule_obj
+
     def read_schedules(self, p_house_obj, p_house_xml):
         """
         @param p_house_obj: is the text name of the House.
@@ -76,20 +108,9 @@ class ScheduleXML(xml_tools.ConfigTools):
         l_list = l_sect.iterfind('Schedule')
         for l_entry in l_list:
             l_obj = ScheduleData()
-            self.read_common(l_obj, l_entry)
-            l_obj.HouseName = p_house_obj.Name
-            l_obj.Level = self.get_int(l_entry, 'Level')
-            l_obj.LightName = self.get_text(l_entry, 'LightName')
-            l_obj.LightNumber = self.get_int(l_entry, 'LightNumber')
-            l_obj.Rate = self.get_int(l_entry, 'Rate')
-            l_obj.RoomName = self.get_text(l_entry, 'RoomName')
-            l_obj.Time = self.get_text(l_entry, 'Time')
-            l_obj.Type = self.get_text(l_entry, 'Type')
+            self.extract_schedule_xml(l_entry, l_obj)
             l_dict[l_count] = l_obj
             l_count += 1
-            if g_debug > 5:
-                print "schedule.read_schedules()   Name:{0:}, Active:{1:}, Key:{2:}, Light:{3:}".format(l_obj.Name, l_obj.Active, l_obj.Key, l_obj.LightName)
-                # print "     ", l_obj
         p_house_obj.Schedule = l_dict
         if g_debug > 4:
             print "schedule.read_schedule()  loaded {0:} schedules for {1:}".format(l_count, p_house_obj.Name)
@@ -123,19 +144,24 @@ class ScheduleExecution(ScheduleData):
         """
         For each SlotName in the passed in list, execute the scheduled event for the house..
         Delay before generating the next schedule to avoid a race condition
-        that duplicates an event if it completes before the clock goes to the next second.
+         that duplicates an event if it completes before the clock goes to the next second.
 
         @param p_slot_list: a list of Slots in the next time schedule
         """
         if g_debug > 0:
-            print "schedule.execute_schedules()  p_slot_list {0:}".format(p_slot_list), self.m_house_obj.Name
+            print "schedule.execute_schedules()  p_slot_list {0:}, House:{1:}".format(p_slot_list, self.m_house_obj.Name)
         for ix in range(len(p_slot_list)):
             l_sched_obj = self.m_house_obj.Schedule[p_slot_list[ix]]
+            if l_sched_obj.Type == 'Device':
+                pass
+            elif l_sched_obj.Type == 'Scene':
+                pass
             l_light_obj = tools.get_light_object(self.m_house_obj, name = l_sched_obj.LightName)
             if g_debug > 2:
                 print "schedule.execute_schedules() ", l_sched_obj
+                print "   on light", l_light_obj
             g_logger.info("Executing schedule Name:{0:}, Light:{1:}, Level:{2:}".format(l_sched_obj.Name, l_sched_obj.LightName, l_sched_obj.Level))
-            self.m_lighting.change_light_setting(self.m_house_obj, l_sched_obj.LightNumber, l_sched_obj.Level)
+            self.m_lighting.change_light_setting(self.m_house_obj, l_light_obj, l_sched_obj.Level)
         callLater(2, self.get_next_sched)
 
     def create_timer(self, p_seconds, p_list):
@@ -281,8 +307,8 @@ class API(ScheduleUtility, ScheduleXML):
         l_schedules_xml = ET.Element('Schedules')
         self.write_schedules(l_schedules_xml, self.m_house_obj.Schedule)
         p_xml.append(l_schedules_xml)
-        l_lighting_xml = self.m_lighting.Stop(p_xml)
-        l_entertainment_xml = self.m_entertainment.Stop(p_xml)
+        _l_lighting_xml = self.m_lighting.Stop(p_xml)
+        _l_entertainment_xml = self.m_entertainment.Stop(p_xml)
         # p_xml.append(l_lighting_xml)
         # p_xml.append(l_entertainment_xml)
         if g_debug > 0:

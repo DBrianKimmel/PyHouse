@@ -1,57 +1,33 @@
 #!/usr/bin/env python
 
+from operator import attrgetter
 from Tkinter import Frame, Toplevel, Button, IntVar, StringVar, DoubleVar, W, DISABLED, SUNKEN, RAISED
 
 import gui
 import gui_tools
-import config_xml
-from operator import attrgetter
 from main import houses
 from house import house
 
 g_debug = 3
 
 House_Data = house.House_Data
-Houses_Data = houses.Houses_Data
 
 HouseData = house.HouseData
-LocationData = house.LocationData
+# LocationData = house.LocationData
 
 FG = 'red'
 
-class HouseUtils(object):
-    """
-    """
-
-    def get_house_object(self, p_key):
-        """Load the object for a given house.
-
-        @param p_key: is the key of the house in House_Data.
-        """
-        try:
-            l_obj = House_Data[p_key]
-        except:
-            l_obj = HouseData()
-            l_obj.Key = p_key
-            l_obj.Buttons = {}
-            l_obj.Controllers = {}
-            l_obj.Lights = {}
-            l_obj.Location = {}
-            l_obj.Rooms = {}
-            l_obj.Schedule = {}
-        return l_obj
-
-
 class HouseWindow(gui_tools.GuiTools):
-    """Displays all defined houses and handles house add/change/delete.
+    """Displays all defined houses and handles house add/change.
     """
 
-    def __init__(self, p_root, p_main_window):
+    def __init__(self, p_root_window, p_main_window, p_houses_obj):
         if g_debug > 0:
-            print "gui_house - Show select house window"
-        self.m_root = p_root
-        self.m_main_frame = p_main_window
-        self.m_house_frame = Frame(p_root)
+            print "gui_house.HouseWindow() - Show select house window"
+        self.m_xmltree_root = p_root_window
+        self.m_main_window = p_main_window
+        self.m_houses_obj = p_houses_obj
+        self.m_house_frame = Frame(p_root_window)
         self.m_ix = 0
         self.m_house_frame.grid()
         self.show_all_houses()
@@ -60,43 +36,40 @@ class HouseWindow(gui_tools.GuiTools):
 
     def show_all_houses(self):
         l_house = []
-        self.m_max = 0
-        for l_obj in sorted(House_Data.itervalues(), key = attrgetter('Name')):
-            if l_obj.Key > self.m_max:
-                self.m_max = l_obj.Key
+        self.m_max_house_ix = 0
+        for l_houses_obj in sorted(self.m_houses_obj.itervalues(), key = attrgetter('Name')):
+            l_house_obj = l_houses_obj.Object
+            if l_house_obj.Key > self.m_max_house_ix:
+                self.m_max_house_ix = l_house_obj.Key
             l_relief = SUNKEN
-            if l_obj.Active: l_relief = RAISED
+            if l_house_obj.Active: l_relief = RAISED
             if g_debug > 0:
-                print l_obj.Name, l_obj.Key
-            h = Button(self.m_house_frame, text = l_obj.Name, bg = gui_tools.BG_TOP, relief = l_relief, command = lambda x = l_obj.Key: self.edit_house(x))
+                print l_house_obj.Name, l_house_obj.Key
+            h = Button(self.m_house_frame, text = l_house_obj.Name, bg = gui_tools.BG_TOP, relief = l_relief,
+                       command = lambda x = l_houses_obj.Key: self.edit_house(x))
             l_house.append(h)
             l_house[self.m_ix].grid(row = self.m_ix, sticky = W)
             self.m_ix += 1
-        self.m_ix += 1
 
     def add_house(self):
         if g_debug > 2:
             print "gui_house.add_house() # ", self.m_ix
-        HouseDialog(self.m_root, self.m_house_frame, self.m_ix, "Adding House")
-
-    def add_room(self):
-        if g_debug > 2:
-            print "gui_house.add_room() # ", self.m_ix
-        RoomDialog(self.m_root, self.m_house_frame, self.m_ix, "Adding Room")
+        HouseDialog(self.m_house_frame, self.m_ix, self.m_houses_obj, "Adding House")
 
     def edit_house(self, p_key):
         if g_debug > 2:
             print "gui_house.edit_house() # ", p_key
-        HouseDialog(self.m_root, self.m_house_frame, p_key, "Editing House")
+        HouseDialog(self.m_house_frame, p_key, self.m_houses_obj, "Editing House")
 
     def main_screen(self):
         self.frame_delete(self.m_house_frame)
         gui.MainWindow()
 
 
+class HouseDialog(gui_tools.GuiTools):
+    """We are working on a single house in this section.
+    Display a hhouse dialog with room buttons.
 
-class HouseDialog(gui_tools.GuiTools, HouseUtils):
-    """
     Add / edit / delete dialog window for a house.
 
     @param p_parent: is the parent frame for the new dialog frame.
@@ -104,19 +77,20 @@ class HouseDialog(gui_tools.GuiTools, HouseUtils):
     @param p_title: is the title to display on the dialog frame.
     """
 
-    m_obj = None  # the house object
+    m_house_obj = None  # the house object
 
-    def __init__(self, p_root, p_parent, p_key, p_title = None):
-        self.m_top = Toplevel(p_parent)
+    def __init__(self, p_parent_frame, p_houses_key, p_houses_obj, p_title = None):
+        self.m_top = Toplevel(p_parent_frame)
+        self.m_houses_obj = p_houses_obj
         if p_title:
             self.m_top.title(p_title)
         _l_adding = "normal"
         if p_title.startswith("Edit"):
             _l_adding = 'disabled'
-        self.m_parent = p_parent
-        self.create_vars()
-        self.m_obj = self.get_house_object(p_key)
-        self.load_vars(self.m_obj)
+        self.m_parent = p_parent_frame
+        self.create_house_vars()
+        self.m_house_obj = self.get_house_object(p_houses_key)
+        self.load_house_vars(self.m_house_obj)
         self.m_frame = Frame(self.m_top)
         self.m_frame.grid(padx = 5, pady = 5)
         self.get_entry_str(self.m_frame, 1, 'Key', self.Key, state = DISABLED)
@@ -131,64 +105,98 @@ class HouseDialog(gui_tools.GuiTools, HouseUtils):
         self.get_entry_str(self.m_frame, 10, 'Phone', self.Phone)
         self.get_entry_str(self.m_frame, 11, 'Latitude', self.Latitude)
         self.get_entry_str(self.m_frame, 12, 'Longitude', self.Longitude)
-        self.show_all_rooms(self.m_obj)
-        l_text = "Add"
+        self.show_all_rooms(self.m_house_obj)
         if p_title.startswith("Edit"):
-            l_text = "Save"
-            Button(self.m_frame, text = 'Delete', bg = gui_tools.BG_BOTTOM, command = self.delete_house).grid(row = 91, column = 1)
-        Button(self.m_frame, text = l_text, fg = "blue", bg = gui_tools.BG_BOTTOM, command = self.add_save_house).grid(row = 91, column = 0)
-        Button(self.m_frame, text = 'Add Room', bg = gui_tools.BG_BOTTOM, command = self.add_room).grid(row = 91, column = 2)
-        Button(self.m_frame, text = "Cancel", fg = "red", bg = gui_tools.BG_BOTTOM, command = self.quit_house).grid(row = 91, column = 3)
+            Button(self.m_frame, text = 'Delete House', bg = gui_tools.BG_BOTTOM,
+                   command = self.delete_house).grid(row = 91, column = 1)
+            Button(self.m_frame, text = 'Update House', fg = "blue", bg = gui_tools.BG_BOTTOM,
+                   command = self.save_house).grid(row = 91, column = 0)
+        else:
+            Button(self.m_frame, text = 'Add House', fg = "blue", bg = gui_tools.BG_BOTTOM,
+                   command = self.add_house).grid(row = 91, column = 0)
+            pass
+        Button(self.m_frame, text = 'Add Room', bg = gui_tools.BG_BOTTOM,
+               command = self.add_room).grid(row = 91, column = 2)
+        Button(self.m_frame, text = "Cancel", fg = "red", bg = gui_tools.BG_BOTTOM,
+               command = self.quit_house).grid(row = 91, column = 3)
 
-    def show_all_rooms(self, p_obj):
+    def get_house_object(self, p_houses_key):
+        try:
+            l_obj = self.m_houses_obj[p_houses_key].Object
+        except:
+            l_obj = HouseData()
+            l_obj.Key = p_houses_key
+            l_obj.Buttons = {}
+            l_obj.Controllers = {}
+            l_obj.Lights = {}
+            l_obj.Location = {}
+            l_obj.Rooms = {}
+            l_obj.Schedule = {}
+        return l_obj
+
+    def show_all_rooms(self, p_house_obj):
         """Display all the rooms in a house on the dialog so they may be edited.
 
-        @param p_obj: is the house object with rooms lights schedules ...
+        @param p_house_obj: is the house object with rooms lights schedules ...
         """
         l_name = self.Name.get()
         l_frame = Frame(self.m_frame)
         l_ix = 0
-        self.m_room_count = 0
-        for l_obj in sorted(p_obj.Rooms.itervalues(), key = attrgetter('Name')):
-            self.m_room_count += 1
-            if l_obj.HouseName != l_name: continue
+        self.m_max_room_ix = 0
+        for l_room_obj in sorted(p_house_obj.Rooms.itervalues(), key = attrgetter('Name')):
+            if l_room_obj.Key > self.m_max_room_ix:
+                self.m_max_room_ix = l_room_obj.Key
+            if l_room_obj.HouseName != l_name:
+                continue
             l_row, l_col = self.columnize(l_ix, 5)
-            Button(l_frame, text = l_obj.Name, bg = gui_tools.BG_TOP, command = lambda x = l_obj.Key: self.edit_room(x)).grid(row = l_row, column = l_col)
+            Button(l_frame, text = l_room_obj.Name, bg = gui_tools.BG_TOP, command = lambda x = l_room_obj.Key: self.edit_room(x)).grid(row = l_row, column = l_col)
             l_ix += 1
         l_frame.grid(row = 31, column = 0, columnspan = 3)
 
-    def add_save_house(self):
+    def add_house(self):
+        """Merge the location(in vars) into the house
+        Create new entry in houses and instantiate a new house instance
+        TODO: add a house
+        """
+        l_house_obj = self.save_house_vars()
+        House_Data[l_house_obj.Key] = l_house_obj
+        if g_debug > 1:
+            print "gui_house.add_house() - Name:{0:}, Key:{1:}".format(l_house_obj.Name, l_house_obj.Key)
+        config_xml.WriteConfig().write_config_file()
+        self.quit_house()
+
+    def save_house(self):
         """Merge the location(in vars) into the house
         """
-        l_obj = self.save_vars()
-        House_Data[l_obj.Key] = l_obj
+        l_house_obj = self.save_house_vars()
+        House_Data[l_house_obj.Key] = l_house_obj
         if g_debug > 1:
-            print "gui_house.add_save_house() - Name:{0:}, Key:{1:}".format(l_obj.Name, l_obj.Key)
-        config_xml.WriteConfig().write_houses()
+            print "gui_house.save_house() - Name:{0:}, Key:{1:}".format(l_house_obj.Name, l_house_obj.Key)
+        config_xml.WriteConfig().write_config_file()
         self.quit_house()
 
     def add_room(self):
         if g_debug > 2:
-            print "gui_house.add_room() # ", self.m_room_count + 1
-        RoomDialog(self.m_frame, self.m_room_count + 1, self.HouseName, "Adding Room")
+            print "gui_house.add_room() # ", self.m_max_room_ix + 1
+        RoomDialog(self.m_max_room_ix + 1, self.HouseName, "Adding Room")
 
     def edit_room(self, p_key):
         if g_debug > 2:
             print "gui_house.edit_room() # ", p_key
-        RoomDialog(self.m_frame, p_key, self.HouseName, "Editing Room")
+        RoomDialog(p_key, self.HouseName, "Editing Room")
 
     def delete_house(self):
         l_key = self.Key.get()
         if g_debug > 2:
-            print "gui_house.delete_house() # ", l_key
+            print "gui_house.delete_house() #", l_key
         del House_Data[l_key]
-        config_xml.WriteConfig().write_houses()
+        # config_xml.WriteConfig().write_config_file()
         self.quit_house()
 
     def quit_house(self):
         self.m_top.destroy()
 
-    def create_vars(self):
+    def create_house_vars(self):
         self.Active = IntVar()
         self.Key = IntVar()
         self.Name = StringVar()
@@ -203,56 +211,70 @@ class HouseDialog(gui_tools.GuiTools, HouseUtils):
         self.Latitude = DoubleVar()
         self.Longitude = DoubleVar()
 
-    def load_vars(self, p_obj):
+    def get_obj_str(self, p_obj, p_str):
+        try:
+            l_ret = p_obj[p_str]
+        except KeyError:
+            l_ret = ''
+        return l_ret
+
+    def get_obj_float(self, p_obj, p_str):
+        try:
+            l_ret = p_obj[p_str]
+        except KeyError:
+            l_ret = 0.0
+        return l_ret
+
+    def load_house_vars(self, p_house_obj):
         """Load the variables for a given house.
 
-        @param p_obj: is the house object in House_Data.
+        @param p_house_obj: is the house object in House_Data.
         """
-        self.Active.set(self.get_bool(p_obj.Active))
-        self.Key.set(p_obj.Key)
-        self.HouseName = p_obj.Name
-        self.Name.set(p_obj.Name)
+        self.Active.set(self.get_bool(p_house_obj.Active))
+        self.Key.set(p_house_obj.Key)
+        self.HouseName = p_house_obj.Name
+        self.Name.set(p_house_obj.Name)
         #
-        l_obj = p_obj.Location[0]
-        self.Street.set(l_obj.Street)
-        self.City.set(l_obj.City)
-        self.State.set(l_obj.State)
-        self.Zip.set(l_obj.ZipCode)
-        self.Timezone.set(l_obj.TimeZone)
-        self.SavingTime.set(l_obj.SavingTime)
-        self.Phone.set(l_obj.Phone)
-        self.Latitude.set(l_obj.Latitude)
-        self.Longitude.set(l_obj.Longitude)
+        l_location_obj = p_house_obj.Location
+        self.Street.set(self.get_obj_str(l_location_obj, 'Street'))
+        self.City.set(self.get_obj_str(l_location_obj, 'City'))
+        self.State.set(self.get_obj_str(l_location_obj, 'State'))
+        self.Zip.set(self.get_obj_str(l_location_obj, 'ZipCode'))
+        self.Timezone.set(self.get_obj_str(l_location_obj, 'TimeZone'))
+        self.SavingTime.set(self.get_obj_str(l_location_obj, 'SavingTime'))
+        self.Phone.set(self.get_obj_str(l_location_obj, 'Phone'))
+        self.Latitude.set(self.get_obj_float(l_location_obj, 'Latitude'))
+        self.Longitude.set(self.get_obj_float(l_location_obj, 'Longitude'))
 
-    def save_vars(self):
+    def save_house_vars(self):
         """Get the on screen vars and save them in the original house object.
         This will preserve the rest of the information.
         """
-        l_obj = self.m_obj
-        l_obj.Active = self.Active.get()
-        l_obj.Key = self.Key.get()
-        l_obj.Name = self.Name.get()
+        l_house_obj = self.m_house_obj
+        l_house_obj.Active = self.Active.get()
+        l_house_obj.Key = self.Key.get()
+        l_house_obj.Name = self.Name.get()
         #
-        l_obj.Location[0] = LocationData()
-        l_obj.Location[0].Street = self.Street.get()
-        l_obj.Location[0].City = self.City.get()
-        l_obj.Location[0].State = self.State.get()
-        l_obj.Location[0].ZipCode = self.Zip.get()
-        l_obj.Location[0].TimeZone = self.Timezone.get()
-        l_obj.Location[0].SavingTime = self.SavingTime.get()
-        l_obj.Location[0].Phone = self.Phone.get()
-        l_obj.Location[0].Latitude = self.Latitude.get()
-        l_obj.Location[0].Longitude = self.Longitude.get()
-        return l_obj
+        l_house_obj.Location = house.LocationData()
+        l_house_obj.Location.Street = self.Street.get()
+        l_house_obj.Location.City = self.City.get()
+        l_house_obj.Location.State = self.State.get()
+        l_house_obj.Location.ZipCode = self.Zip.get()
+        l_house_obj.Location.TimeZone = self.Timezone.get()
+        l_house_obj.Location.SavingTime = self.SavingTime.get()
+        l_house_obj.Location.Phone = self.Phone.get()
+        l_house_obj.Location.Latitude = self.Latitude.get()
+        l_house_obj.Location.Longitude = self.Longitude.get()
+        return l_house_obj
 
-class RoomDialog(gui_tools.GuiTools, HouseUtils):
+class RoomDialog(gui_tools.GuiTools):
     """
     Add / edit / delete dialog window for a room.
 
     TODO: Fix this section to preserve the lights and schedule data within a house.
     """
 
-    def __init__(self, p_root, p_parent, p_key, p_house_name, p_title = None):
+    def __init__(self, p_parent, p_key, p_house_name, p_title = None):
         """
 
         @param p_parent: is the parent frame that this dialog comes from.
@@ -265,9 +287,9 @@ class RoomDialog(gui_tools.GuiTools, HouseUtils):
             self.m_top.title(p_title)
         self.m_parent = p_parent
         self.l_result = None
-        self.create_vars()
-        l_obj = self.get_house_object(p_key)
-        self.load_vars(l_obj, p_house_name)
+        self.create_room_vars()
+        l_house_obj = self.get_house_object(p_key)
+        self.load_room_vars(l_house_obj, p_house_name)
         self.m_frame = Frame(self.m_top)
         self.m_frame.grid(padx = 5, pady = 5)
         self.get_entry_str(self.m_frame, 1, 'Key', self.Key, state = DISABLED)
@@ -287,21 +309,21 @@ class RoomDialog(gui_tools.GuiTools, HouseUtils):
     def delete_room(self):
         l_key = self.Key.get()
         del Room_Data[l_key]
-        config_xml.WriteConfig().write_houses()
+        # config_xml.WriteConfig().write_config_file()
         self.quit_room()
 
     def add_save_room(self):
         """store the new or edited room.
         """
-        l_obj = self.save_vars()
+        l_obj = self.save_room_vars()
         Room_Data[l_obj.Key] = l_obj
-        config_xml.WriteConfig().write_houses()
+        # config_xml.WriteConfig().write_config_file()
         self.quit_room()
 
     def quit_room(self):
         self.m_top.destroy()
 
-    def create_vars(self):
+    def create_room_vars(self):
         self.Active = IntVar()
         self.Comment = StringVar()
         self.Corner = StringVar()
@@ -310,7 +332,7 @@ class RoomDialog(gui_tools.GuiTools, HouseUtils):
         self.Name = StringVar()
         self.Size = StringVar()
 
-    def load_vars(self, p_obj):
+    def load_room_vars(self, p_obj):
         l_obj = p_obj.Rooms
         self.Active.set(l_obj.Active)
         self.Comment.set(l_obj.Comment)
@@ -320,7 +342,7 @@ class RoomDialog(gui_tools.GuiTools, HouseUtils):
         self.Name.set(l_obj.Name)
         self.Size.set(l_obj.Size)
 
-    def save_vars(self):
+    def save_room_vars(self):
         l_obj = house.RoomData()
         l_obj.Active = self.Active.get()
         l_obj.Comment = self.Comment.get()

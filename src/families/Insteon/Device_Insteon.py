@@ -15,13 +15,11 @@ serial_port
 
 # Import system type stuff
 import logging
+import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from lighting import lighting
 from house import house
-
-
-House_Data = house.House_Data
 
 g_debug = 3
 g_logger = None
@@ -93,18 +91,31 @@ class CoreData (object):
 
 class CoreAPI(object):
 
-    def XXload_device(self, p_dict, p_dev):
-        p_dev.Family = 'Insteon'
-        p_dev.Address = self.getText(p_dict, 'Address')
-        p_dev.Controller = self.getBool(p_dict, 'Controller')
-        p_dev.DevCat = self.getInt(p_dict, 'DevCat')
-        p_dev.GroupList = self.getText(p_dict, 'GroupList')
-        p_dev.GroupNumber = self.getInt(p_dict, 'GroupNumber')
-        p_dev.Master = self.getBool(p_dict, 'Master')
-        p_dev.ProductKey = self.getInt(p_dict, 'ProductKey')
-        p_dev.Responder = self.getBool(p_dict, 'Responder')
-        return p_dev
+    def extract_device_xml(self, p_entry_xml, p_device_obj):
+        """
+        @param p_entry_xml: is the e-tree XML house object
+        @param p_house: is the text name of the House.
+        @return: a dict of the entry to be attached to a house object.
+        """
+        p_device_obj.Address = p_entry_xml.findtext('Address')
+        p_device_obj.Controller = p_entry_xml.findtext('Controller')
+        p_device_obj.DevCat = p_entry_xml.findtext('DevCat')
+        p_device_obj.GroupList = p_entry_xml.findtext('GroupList')
+        p_device_obj.GroupNumber = p_entry_xml.findtext('GroupNumber')
+        p_device_obj.Master = p_entry_xml.findtext('Master')
+        p_device_obj.ProductKey = p_entry_xml.findtext('ProductKey')
+        p_device_obj.Responder = p_entry_xml.findtext('Responder')
+        return p_device_obj
 
+    def insert_device_xml(self, p_entry_xml, p_device_obj):
+        ET.SubElement(p_entry_xml, 'Address').text = p_device_obj.Address
+        ET.SubElement(p_entry_xml, 'Controller').text = self.put_bool(p_device_obj.Controller)
+        ET.SubElement(p_entry_xml, 'DevCat').text = str(p_device_obj.DevCat)
+        ET.SubElement(p_entry_xml, 'GroupList').text = str(p_device_obj.GroupList)
+        ET.SubElement(p_entry_xml, 'GroupNumber').text = str(p_device_obj.GroupNumber)
+        ET.SubElement(p_entry_xml, 'Master').text = str(p_device_obj.Master)
+        ET.SubElement(p_entry_xml, 'ProductKey').text = str(p_device_obj.ProductKey)
+        ET.SubElement(p_entry_xml, 'Responder').text = self.put_bool(p_device_obj.Responder)
 
 class ButtonData(lighting.ButtonData, CoreData):
 
@@ -161,11 +172,6 @@ class LightingAPI(lighting.LightingAPI, CoreAPI):
         if p_light_obj.Family == 'Insteon':
             self.m_plm.change_light_setting(p_light_obj, p_level)
 
-
-    def scan_all_lights(self, _p_lights):
-        if g_debug > 0:
-            print "insteon_Device.scan_insteon_devices "
-        self.m_plm.scan_all_lights(House_Data)
 
 import Insteon_PLM
 

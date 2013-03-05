@@ -29,8 +29,6 @@ g_driver = []
 g_logger = None
 g_queue = None
 
-House_Data = house.House_Data
-
 callLater = reactor.callLater
 
 
@@ -300,6 +298,7 @@ class CreateCommands(PlmDriverInterface, InsteonPlmUtility):
         l_command[5] = FLAG_MAX_HOPS + FLAG_HOPS_LEFT  # 0x0F
         l_command[6] = p_light_obj.Command1 = p_cmd1
         l_command[7] = p_light_obj.Command2 = p_cmd2
+        l_message = "Send command to Insteon device {0:}".format(p_light_obj.Name)
         g_logger.debug("Queue62 command to device: {2:}, Command: {0:#X},{1:#X}, Address: ({3:x}.{4:x}.{5:x})".format(p_cmd1, p_cmd2, p_light_obj.Name, l_command[2], l_command[3], l_command[4]))
         return self.queue_plm_command(l_command)
 
@@ -573,30 +572,30 @@ class DecodeResponses(InsteonAllLinks):
             if len(p_controller_obj.Message) == 0:
                 l_done = True
                 return
-            if g_debug > 2:
+            if g_debug > 5:
                 print "Insteon_PLM._decode_message() - {0:}".format(PrintBytes(l_message))
             l_stx = p_controller_obj.Message[0]
             # If we have a leading NAK, drop it and try again if we have more message
             if l_stx == 0x15:
                 if g_debug > 1:
-                    print "== Found a leading NAK - Retrying. - {0:}".format(PrintBytes(l_message))
+                    print "Insteon_PLM._decode_message() - Found a leading NAK - Retrying. - {0:}".format(PrintBytes(l_message))
                 p_controller_obj.Message = p_controller_obj.Message[1:]
                 continue
             # If we have a leading ACK, drop it and try again if we have more message
             elif l_stx == 0x06:
                 if g_debug > 1:
-                    print "== Found a leading ACK - Ignoring - {0:}".format(PrintBytes(l_message))
+                    print "Insteon_PLM._decode_message() - Found a leading ACK - Ignoring - {0:}".format(PrintBytes(l_message))
                 p_controller_obj.Message = p_controller_obj.Message[1:]
                 continue
             # We have a good message start.
             elif l_stx == 0x02:
-                if g_debug > 1:
-                    print "== Found a message - {0:}".format(PrintBytes(l_message))
+                if g_debug > 5:
+                    print "Insteon_PLM._decode_message() - Found a message - {0:}".format(PrintBytes(l_message))
                 self._decode_dispatch(p_controller_obj)
             # We have garbage.
             else:
                 if g_debug > 1:
-                    print "== Found a mistake - {0:}".format(PrintBytes(l_message))
+                    print "Insteon_PLM._decode_message() - Found a mistake - {0:}".format(PrintBytes(l_message))
                 g_logger.error("Rx Message started with {0:#x} not STX, Message={1:}".format(l_stx, PrintBytes(l_message)))
 
     def _decode_dispatch(self, p_controller_obj):

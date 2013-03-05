@@ -26,8 +26,8 @@ from twisted.internet import reactor
 
 # Import PyMh files and modules.
 from configure import gui
-from main import log
-from main import houses
+from utilities import log
+from house import houses
 from web import web_server
 
 g_debug = 3
@@ -127,15 +127,13 @@ def SigIntHandler(signum, _stackframe):
     API().Stop()
     exit
 
-import xml.etree.ElementTree as ET
-from configure import xml_tools
 
 class API(object):
     """
     """
 
     m_gui = None
-    m_houses = None
+    m_houses_api = None
 
     def __init__(self):
         """This is the startup of the entire system.
@@ -153,9 +151,9 @@ class API(object):
         g_logger = logging.getLogger('PyHouse')
         g_logger.info("Initializing.\n")
 
-        self.m_houses = houses.API()
+        self.m_houses_api = houses.API()
         web_server.Init()
-        self.m_gui = gui.API(self)
+        self.m_gui = gui.API(self, self.m_houses_api)
         callWhenRunning(self.Start)
         g_logger.info("Initialized.\n")
         # reactor never returns so must be last - Event loop will now run
@@ -170,7 +168,7 @@ class API(object):
         if g_debug > 0:
             print "\nPyHouse.Start()"
         g_logger.info("Starting.")
-        self.m_houses.Start()
+        self.m_houses_api.Start()
         web_server.Start()
         g_logger.info("Started.\n")
         if g_debug > 0:
@@ -184,7 +182,7 @@ class API(object):
         global g_logger
         g_logger = logging.getLogger('PyHouse')
         g_logger.info("Stopping has begun.\n")
-        self.m_houses.Stop()
+        self.m_houses_api.Stop()
         web_server.Stop()
         try:
             g_logger.info("Stopped.\n")
@@ -199,11 +197,11 @@ class API(object):
         self.Stop()
         log.LoggingMain().stop()
         reactorstop()
-        raise SystemExit, "PyHouse says Bye Now (2)."
 
 
 if __name__ == "__main__":
-    # print "MAIN"
+    if g_debug > 0:
+        print "MAIN"
     API()
 
 # ## END
