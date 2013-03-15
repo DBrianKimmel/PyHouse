@@ -10,7 +10,7 @@ from xml.etree import ElementTree as ET
 from xml.dom import minidom
 
 
-g_debug = 1
+g_debug = 0
 g_xmltree = None
 
 

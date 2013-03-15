@@ -19,9 +19,9 @@ import logging
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
-from schedule import schedule
-from main import internet
-from configure import xml_tools
+from scheduling import schedule
+from housing import internet
+from utils import xml_tools
 
 g_debug = 0
 m_logger = None
@@ -47,7 +47,9 @@ class LocationData(object):
         self.ZipCode = None
 
     def __str__(self):
-        l_ret = ' Location:: Lat:{0:}, Lon:{1:}'.format(self.Latitude, self.Longitude)
+        l_ret = ' Location:: '
+        l_ret += 'Addr:{0:} {1:} {2:} {3:}, '.format(self.Street, self.City, self.State, self.ZipCode)
+        l_ret += 'Lat:{0:}, Lon:{1:}'.format(self.Latitude, self.Longitude)
         return l_ret
 
     def get_active(self):
@@ -337,7 +339,12 @@ class API(LoadSaveAPI):
         p_xml.append(l_house_xml)
         self.m_logger.info("Stopped.")
         if g_debug > 0:
-            print "house.Stop() - appended schedulwe _ sub-modules"
+            print "house.Stop() - appended schedule _ sub-modules"
         return p_xml
+
+    def SpecialTest(self):
+        if g_debug > 0:
+            print "house.API.SpecialTest()"
+        self.m_house_obj.ScheduleAPI.SpecialTest()
 
 # ##  END

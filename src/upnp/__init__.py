@@ -16,8 +16,5 @@ We should respond to other control points in turning on or off lights.
 __version_info__ = (1, 0, 2)
 __version__ = '.' . join(map(str, __version_info__))
 
-import build_lights
-import lighting_control
-import xml_constants
 
-### END
+# ## END

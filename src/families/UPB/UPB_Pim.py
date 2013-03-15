@@ -10,7 +10,7 @@ from twisted.internet import reactor
 
 # Import PyMh files
 import Device_UPB
-from tools import PrintBytes
+from utils.tools import PrintBytes
 
 g_debug = 0
 

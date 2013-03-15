@@ -20,8 +20,8 @@ from subprocess import Popen, PIPE
 import re
 
 # Import PyMh files
-import lighting
-from main.tools import PrintBytes
+from lights import lighting
+from utils.tools import PrintBytes
 
 g_debug = 0
 
@@ -32,7 +32,7 @@ callLater = reactor.callLater
 
 RECEIVE_TIMEOUT = 1.0  # this is for polling the device for data to be added to the rx buffer
 
-class SerialDeviceData(lighting.lighting.ControllerData):
+class SerialDeviceData(lighting.ControllerData):
 
     SerialPort = {}
     m_serial = None

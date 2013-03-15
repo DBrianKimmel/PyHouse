@@ -26,8 +26,8 @@ from nevow import util
 from nevow.rend import _CARRYOVER
 from formless import iformless
 
-from configure import xml_tools
-from lighting import lighting
+from utils import xml_tools
+from lights import lighting
 
 
 g_debug = 0
@@ -794,8 +794,7 @@ def Stop():
         print "web_server.Stop()"
 
 
-# from main.house import Location_Data
-from schedule import schedule
+from scheduling import schedule
 
 Light_Data = lighting.Light_Data
 # Location_Data = house.Location_Data

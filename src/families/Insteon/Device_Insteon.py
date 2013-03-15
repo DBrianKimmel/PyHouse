@@ -18,10 +18,9 @@ import logging
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
-from lighting import lighting
-from house import house
+from lights import lighting
 
-g_debug = 3
+g_debug = 0
 g_logger = None
 
 
@@ -214,5 +213,10 @@ class API(LightingAPI):
                 continue
             self.m_plm.Stop(l_controller_obj)
         return p_xml
+
+    def SpecialTest(self):
+        if g_debug > 0:
+            print "Device_Insteon.API.SpecialTest()"
+        self.m_plm.SpecialTest()
 
 # ## END

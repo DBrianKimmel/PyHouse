@@ -8,7 +8,7 @@ import logging
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
-from lighting import lighting
+from lights import lighting
 
 g_debug = 0
 
@@ -100,5 +100,9 @@ class API(object):
         if g_debug > 0:
             print "Device_X10.Stop()"
         return p_xml
+
+    def SpecialTest(self):
+        if g_debug > 0:
+            print "Device_X10.API.SpecialTest()"
 
 # ## END

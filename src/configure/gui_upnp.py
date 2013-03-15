@@ -8,9 +8,9 @@ Created on Sep 28, 2012
 
 from Tkinter import Frame, Label, Entry, Button, IntVar, E, W
 
+from configure.gui_tools import GuiTools, GuiData, BG_TOP, BG_BOTTOM, BG_UNDONE
 import gui
 import gui_tools
-import config_xml
 
 g_debug = 5
 
@@ -34,10 +34,6 @@ class UPnPWindow(gui_tools.GuiTools):
         Button(self.m_frame, text = "Back", fg = "red", bg = gui_tools.BG_BOTTOM, command = self.main_screen).grid(row = 91, column = 1)
 
     def update_logs(self):
-        l_obj = web.web_server.WebData
-        l_obj.WebPort = self.Port.get()
-        web.Web_Data[0] = l_obj
-        config_xml.WriteConfig().write_log_web()
         self.main_screen()
 
     def main_screen(self):

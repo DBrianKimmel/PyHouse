@@ -7,7 +7,7 @@ Handle the controller component of the lighting system.
 """
 
 import lighting_tools
-from main.tools import PrintBytes
+from utils.tools import PrintBytes
 
 Controller_Data = {}
 ControllerCount = 0

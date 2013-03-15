@@ -9,19 +9,19 @@ Created on Sep 22, 2012
 from Tkinter import Frame, Label, Entry, Button, IntVar, E, W
 
 import gui
-import gui_tools
-import config_xml
-import web.web_server as web_server
+from configure.gui_tools import GuiTools, BG_BOTTOM
+from utils import config_xml
+from web import web_server
 
 Web_Data = web_server.Web_Data
 
-class WebWindow(gui_tools.GuiTools):
+class WebWindow(GuiTools):
     """Display a log location window.
     """
 
-    def __init__(self, p_root, p_main_window):
-        self.m_root = p_root
-        self.m_frame = Frame(p_root)
+    def __init__(self, p_gui_obj, p_houses_obj):
+        self.m_gui_obj = p_gui_obj
+        self.show_house_select_window(p_gui_obj, p_houses_obj)
         self.m_frame.grid(padx = 5, pady = 5)
         self.m_frame.grid_columnconfigure(0, minsize = 120)
         self.m_frame.grid_columnconfigure(1, minsize = 300)
@@ -29,8 +29,8 @@ class WebWindow(gui_tools.GuiTools):
         self.Port.set(Web_Data[0].WebPort)
         Label(self.m_frame, text = "Web Server Port").grid(row = 1, column = 0, sticky = E)
         Entry(self.m_frame, textvar = self.Port).grid(row = 1, column = 1, sticky = W)
-        Button(self.m_frame, text = "Update", bg = gui_tools.BG_BOTTOM, command = self.update_logs).grid(row = 91, column = 0)
-        Button(self.m_frame, text = "Back", fg = "red", bg = gui_tools.BG_BOTTOM, command = self.main_screen).grid(row = 91, column = 1)
+        Button(self.m_frame, text = "Update", bg = BG_BOTTOM, command = self.update_logs).grid(row = 91, column = 0)
+        Button(self.m_frame, text = "Back", fg = "red", bg = BG_BOTTOM, command = self.main_screen).grid(row = 91, column = 1)
 
     def update_logs(self):
         l_obj = web_server.WebData

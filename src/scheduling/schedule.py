@@ -34,13 +34,21 @@ import xml.etree.ElementTree as ET
 from twisted.internet import reactor
 
 # Import PyMh files
-from entertainment import entertainment
-from lighting import lighting
-from configure import xml_tools
-from main import tools
+from entertain import entertainment
+from lights import lighting
+from utils import xml_tools
+from utils import tools
 import sunrisesunset
 
-g_debug = 3
+g_debug = 0
+# 0 = off
+# 1 = major routine entry
+# 2 = schedule execution
+# 3 =
+# 4 =
+# 5 = diagnostics
+# 6
+
 g_logger = None
 
 ScheduleCount = 0
@@ -89,7 +97,7 @@ class ScheduleXML(xml_tools.ConfigTools):
         p_schedule_obj.RoomName = self.get_text(p_entry_xml, 'RoomName')
         p_schedule_obj.Time = self.get_text(p_entry_xml, 'Time')
         p_schedule_obj.Type = self.get_text(p_entry_xml, 'Type')
-        if g_debug > 5:
+        if g_debug >= 6:
             print "schedule.extract_schedule_xml()   Name:{0:}, Active:{1:}, Key:{2:}, Light:{3:}".format(
                     p_schedule_obj.Name, p_schedule_obj.Active, p_schedule_obj.Key, p_schedule_obj.LightName)
         return p_schedule_obj
@@ -100,41 +108,41 @@ class ScheduleXML(xml_tools.ConfigTools):
         @param p_house_xml: is the e-tree XML house object
         @return: a dict of the entry to be attached to a house object.
         """
-        if g_debug > 3:
+        if g_debug >= 4:
             print "schedule.read_schedules()"
         l_count = 0
         l_dict = {}
         l_sect = p_house_xml.find('Schedules')
         l_list = l_sect.iterfind('Schedule')
         for l_entry in l_list:
-            l_obj = ScheduleData()
-            self.extract_schedule_xml(l_entry, l_obj)
-            l_dict[l_count] = l_obj
+            l_schedule_obj = ScheduleData()
+            self.extract_schedule_xml(l_entry, l_schedule_obj)
+            l_dict[l_count] = l_schedule_obj
             l_count += 1
         p_house_obj.Schedule = l_dict
-        if g_debug > 4:
+        if g_debug >= 5:
             print "schedule.read_schedule()  loaded {0:} schedules for {1:}".format(l_count, p_house_obj.Name)
         return l_dict
 
-    def write_schedules(self, p_parent, p_schedule_obj):
+    def write_schedules(self, p_parent, p_schedules_obj):
         """Replace all the data in the 'Schedules' section with the current data.
         @param p_parent: is the 'schedules' element
         """
-        if g_debug > 3:
+        if g_debug >= 4:
             print "schedule.write_schedules()"
         l_count = 0
-        for l_obj in p_schedule_obj.itervalues():
-            l_entry = self.build_common(p_parent, 'Schedule', l_obj)
-            ET.SubElement(l_entry, 'HouseName').text = str(l_obj.HouseName)
-            ET.SubElement(l_entry, 'Level').text = str(l_obj.Level)
-            ET.SubElement(l_entry, 'LightName').text = l_obj.LightName
-            ET.SubElement(l_entry, 'LightNumber').text = str(l_obj.LightNumber)
-            ET.SubElement(l_entry, 'Rate').text = str(l_obj.Rate)
-            ET.SubElement(l_entry, 'RoomName').text = str(l_obj.RoomName)
-            ET.SubElement(l_entry, 'Time').text = l_obj.Time
-            ET.SubElement(l_entry, 'Type').text = l_obj.Type
+        for l_schedule_obj in p_schedules_obj.itervalues():
+            l_entry = self.build_common(p_parent, 'Schedule', l_schedule_obj)
+            ET.SubElement(l_entry, 'HouseName').text = str(l_schedule_obj.HouseName)
+            ET.SubElement(l_entry, 'Level').text = str(l_schedule_obj.Level)
+            ET.SubElement(l_entry, 'LightName').text = l_schedule_obj.LightName
+            ET.SubElement(l_entry, 'LightNumber').text = str(l_schedule_obj.LightNumber)
+            ET.SubElement(l_entry, 'Rate').text = str(l_schedule_obj.Rate)
+            ET.SubElement(l_entry, 'RoomName').text = str(l_schedule_obj.RoomName)
+            ET.SubElement(l_entry, 'Time').text = l_schedule_obj.Time
+            ET.SubElement(l_entry, 'Type').text = l_schedule_obj.Type
             l_count += 1
-        if g_debug > 4:
+        if g_debug >= 5:
             print "schedule.write_schedules() - Wrote {0:} schedules".format(l_count)
 
 
@@ -146,18 +154,20 @@ class ScheduleExecution(ScheduleData):
         Delay before generating the next schedule to avoid a race condition
          that duplicates an event if it completes before the clock goes to the next second.
 
-        @param p_slot_list: a list of Slots in the next time schedule
+        @param p_slot_list: a list of Slots in the next time schedule to be executed.
         """
-        if g_debug > 0:
+        if g_debug >= 1:
             print "schedule.execute_schedules()  p_slot_list {0:}, House:{1:}".format(p_slot_list, self.m_house_obj.Name)
+        g_logger.info("About to execute slots:{0:}".format(p_slot_list))
         for ix in range(len(p_slot_list)):
             l_sched_obj = self.m_house_obj.Schedule[p_slot_list[ix]]
+            # TODO: We need a small dispatch for the various schedule types (hvac, security, entertainment, lights, ...)
             if l_sched_obj.Type == 'Device':
                 pass
             elif l_sched_obj.Type == 'Scene':
                 pass
             l_light_obj = tools.get_light_object(self.m_house_obj, name = l_sched_obj.LightName)
-            if g_debug > 2:
+            if g_debug >= 2:
                 print "schedule.execute_schedules() ", l_sched_obj
                 print "   on light", l_light_obj
             g_logger.info("Executing schedule Name:{0:}, Light:{1:}, Level:{2:}".format(l_sched_obj.Name, l_sched_obj.LightName, l_sched_obj.Level))
@@ -165,18 +175,71 @@ class ScheduleExecution(ScheduleData):
         callLater(2, self.get_next_sched)
 
     def create_timer(self, p_seconds, p_list):
-        """Create a timer that will go off when the next Name time comes up on the clock.
+        """Create a timer that will go off when the next schedule time comes up on the clock.
         """
         callLater(p_seconds, self.execute_schedule, p_list)
 
 
 class ScheduleUtility(ScheduleExecution):
 
-    def _find_numbers(self, p_field):
-        pass
+    def _substitute(self, p_timefield):
+        """Substitute for names in timefield.
+        Supported fields are: 'sunset'. 'sunrise'
+        Return the string timefield.
+        """
+        if 'sunset' in p_timefield:
+            l_timefield = self.m_sunset.strftime('%H:%M')
+            p_timefield = p_timefield.replace('sunset', l_timefield)
+            if g_debug >= 6:
+                print"schedule._substitute() found sunset -  '{0:}'".format(p_timefield)
+        elif 'sunrise' in p_timefield:
+            l_timefield = self.m_sunrise.strftime('%H:%M')
+            p_timefield = p_timefield.replace('sunrise', l_timefield)
+            if g_debug >= 6:
+                print"schedule._substitute() found sunrise - '{0:}'".format(p_timefield)
+        return p_timefield
+
+    def _extract_field(self, p_timefield):
+        """Extract a time of HH:MM[:ss]
+        @return: A datetime.time of the extracted time
+        clears the timestring from p_timefield to allow for offset type timestrings
+        returns 0 of no such field.
+        """
+        try:
+            while p_timefield[0] == ' ':
+                p_timefield = p_timefield[1:]
+        except:
+            pass
+        if ':' in p_timefield:
+            try :
+                l_ret = datetime.datetime.strptime(p_timefield[0:8], '%H:%M:%S')
+                p_timefield = p_timefield[8:]
+            except ValueError:
+                if g_debug >= 6:
+                    print "schedule._extract_field() not HH:MM:SS - try shorter"
+                try:
+                    l_ret = datetime.datetime.strptime(p_timefield[0:5], '%H:%M')
+                    p_timefield = p_timefield[5:]
+                except ValueError:
+                    if g_debug >= 5:
+                        print "schedule._extract_field() ERROR not HH:MM - using 00:00:00"
+                    l_ret = datetime.time(0, 0, 0)
+            try:
+                while p_timefield[0] == ' ':
+                    p_timefield = p_timefield[1:]
+            except:
+                pass
+            if g_debug >= 5:
+                print "schedule._extract_field() Exit - {0:}, '{1:}'".format(l_ret, p_timefield)
+        else:
+            l_ret = datetime.time(0, 0, 0)
+            if g_debug >= 5:
+                print "schedule._extract_field() No ':' - Exit - {0:}, '{1:}'".format(l_ret, p_timefield)
+        return l_ret, p_timefield
 
     def _extract_time(self, p_timefield):
-        """Convert the schedule time to an actual time of day.
+        """parse the schedules timefield.
+        Convert the schedule time to an actual time of day.
         Sunset and sunrise are converted.
         Arithmetic is performed.
         seconds are forced to 00.
@@ -184,31 +247,27 @@ class ScheduleUtility(ScheduleExecution):
         @param p_timefield: a text field containing time information.
         @return: datetime.time of the time information.  Be careful of date wrapping!
         """
-        l_ptime = p_timefield
-        l_timefield = datetime.time(0, 0, 0)
-        if 'sunset' in p_timefield:
-            l_timefield = self.m_sunset
-            l_ptime = l_ptime[6:]
-        elif 'sunrise' in p_timefield:
-            l_timefield = self.m_sunrise
-            l_ptime = l_ptime[7:]
-        #
-        if ':' in p_timefield:
-            try:
-                h, m = map(int, p_timefield.split(':'))
-                l_ret = datetime.time(h, m, 0)
-            except ValueError:
-                h, m = map(int, l_ptime.split(':'))
-                l_ret = datetime.time(h, m, 0)
-        else:
-            l_ret = datetime.time(0, 0, 0)
-        #
-        if '-' in p_timefield:
-            l_td = datetime.timedelta(hours = l_timefield.hour, minutes = l_timefield.minute) - datetime.timedelta(hours = l_ret.hour, minutes = l_ret.minute)
-        else:
-            l_td = datetime.timedelta(hours = l_timefield.hour, minutes = l_timefield.minute) + datetime.timedelta(hours = l_ret.hour, minutes = l_ret.minute)
-        l_timefield = datetime.time(hour = int(l_td.seconds / 3600), minute = int((l_td.seconds % 3600) / 60))
         if g_debug > 5:
+            print "\nschedule._extract_time() - {0:}".format(p_timefield)
+        l_sub = False
+        p_timefield += ' '
+        if '-' in p_timefield:
+            l_sub = True
+            p_timefield = p_timefield.replace('-', ' ')
+        elif '+' in p_timefield:
+            p_timefield = p_timefield.replace('+', ' ')
+
+        p_timefield = self._substitute(p_timefield)
+        l_maintime, p_timefield = self._extract_field(p_timefield)
+        l_offsettime, p_timefield = self._extract_field(p_timefield)
+        #
+        if l_sub:
+            l_td = datetime.timedelta(hours = l_maintime.hour, minutes = l_maintime.minute) - datetime.timedelta(hours = l_offsettime.hour, minutes = l_offsettime.minute)
+        else:
+            l_td = datetime.timedelta(hours = l_maintime.hour, minutes = l_maintime.minute) + datetime.timedelta(hours = l_offsettime.hour, minutes = l_offsettime.minute)
+        #
+        l_timefield = datetime.time(hour = int(l_td.seconds / 3600), minute = int((l_td.seconds % 3600) / 60))
+        if g_debug >= 5:
             print "schedule._extract_time({0:}) = {1:}".format(p_timefield, l_timefield)
         return l_timefield
 
@@ -222,27 +281,27 @@ class ScheduleUtility(ScheduleExecution):
         Be sure to get the next in a chain of things happening at the same time.
         Establish a list of Names that have equal schedule times
         """
-        if g_debug > 1:
+        if g_debug >= 2:
             print "schedule.get_next_sched() "
         l_now = datetime.datetime.now()
         l_time_now = datetime.time(l_now.hour, l_now.minute, l_now.second)
         self.m_sunrisesunset.Start(self.m_house_obj)
         self.m_sunset = self.m_sunrisesunset.get_sunset()
         self.m_sunrise = self.m_sunrisesunset.get_sunrise()
-        if g_debug > 5:
+        if g_debug >= 6:
             print "schedule.get_next_sched() - sunrise/sunset = ", self.m_sunrise, self.m_sunset
         g_logger.info("Sunrise:{0:}, Sunset:{1:}".format(self.m_sunrise, self.m_sunset))
         l_time_scheduled = l_now
         l_next = 100000.0
         l_list = []
-        for l_key, l_obj in self.m_house_obj.Schedule.iteritems():
-            if g_debug > 5:
-                print "schedule.get_next_sched() sched=", l_obj
-            # if not l_obj.Active:
+        for l_key, l_schedule_obj in self.m_house_obj.Schedule.iteritems():
+            if g_debug >= 6:
+                print "schedule.get_next_sched() sched=", l_schedule_obj
+            # if not l_schedule_obj.Active:
             #    continue
-            l_time_sch = self._extract_time(l_obj.Time)
-            if g_debug > 5:
-                print "schedule.get_next_sched() - Schedule  SlotName: {0:}, Light: {1:}, Level: {2:}, Time: {3:}".format(l_obj.Name, l_obj.LightName, l_obj.Level, l_time_sch)
+            l_time_sch = self._extract_time(l_schedule_obj.Time)
+            if g_debug >= 6:
+                print "schedule.get_next_sched() - Schedule  SlotName: {0:}, Light: {1:}, Level: {2:}, Time: {3:}".format(l_schedule_obj.Name, l_schedule_obj.LightName, l_schedule_obj.Level, l_time_sch)
             # now see if this is 1) part of a chain -or- 2) an earlier schedule
             l_diff = self._make_delta(l_time_sch).total_seconds() - self._make_delta(l_time_now).total_seconds()
             if l_diff < 0:
@@ -255,9 +314,10 @@ class ScheduleUtility(ScheduleExecution):
             # add to a chain
             if l_diff == l_next:
                 l_list.append(l_key)
-        g_logger.info("Get_next_schedule complete. Delaying {0:} seconds until {1:}, Namelist = {2:}".format(l_next, l_time_scheduled, l_list))
-        if g_debug > 1:
-            print "schedule.get_next_sched() - Complete. delaying {0:} seconds until {1:}".format(l_next, l_time_scheduled)
+        l_debug_msg = "Schedule delaying {0:} seconds until {1:} for list {2:}".format(l_next, l_time_scheduled, l_list)
+        g_logger.info("Get_next_schedule complete. {0:}".format(l_debug_msg))
+        if g_debug >= 2:
+            print "schedule.get_next_sched()  {0:}".format(l_debug_msg)
         self.create_timer(l_next, l_list)
 
 
@@ -269,7 +329,7 @@ class API(ScheduleUtility, ScheduleXML):
     def __init__(self):
         """
         """
-        if g_debug > 0:
+        if g_debug >= 1:
             print "schedule.__init__()"
         global g_logger
         g_logger = logging.getLogger('PyHouse.Schedule')
@@ -277,12 +337,14 @@ class API(ScheduleUtility, ScheduleXML):
         g_logger.info("Initialized.")
 
     def Start(self, p_house_obj, p_house_xml):
-        """Called once for each active house.
+        """Called once for each house.
+        Extracts all from xml so an update will write correct info back out to the xml file.
+        Does not schedule a next entry for inactive houses.
 
         @param p_house_obj: is a House object for the house being scheduled
         """
         self.m_house_obj = p_house_obj
-        if g_debug > 0:
+        if g_debug >= 1:
             print "schedule.API.Start() for House:{0:}".format(p_house_obj.Name)
         g_logger.info("Starting House {0:}.".format(self.m_house_obj.Name))
         self.read_schedules(self.m_house_obj, p_house_xml)
@@ -295,13 +357,14 @@ class API(ScheduleUtility, ScheduleXML):
         self.m_lighting.Start(self.m_house_obj, p_house_xml)
         self.m_entertainment.Start(self.m_house_obj, p_house_xml)
 
-        self.get_next_sched()
+        if p_house_obj.Active:
+            self.get_next_sched()
         g_logger.info("Started.")
 
     def Stop(self, p_xml):
         """Stop everything under me and build xml to be appended to a house xml.
         """
-        if g_debug > 0:
+        if g_debug >= 1:
             print "schedule.API.Stop() - House:{0:}".format(self.m_house_obj.Name)
         g_logger.info("Stopping house {0:}.".format(self.m_house_obj.Name))
         l_schedules_xml = ET.Element('Schedules')
@@ -311,7 +374,7 @@ class API(ScheduleUtility, ScheduleXML):
         _l_entertainment_xml = self.m_entertainment.Stop(p_xml)
         # p_xml.append(l_lighting_xml)
         # p_xml.append(l_entertainment_xml)
-        if g_debug > 0:
+        if g_debug >= 1:
             print "schedule.API.Stop() - 2 "
         g_logger.info("Stopped.\n\n\n")
         return p_xml
@@ -319,8 +382,13 @@ class API(ScheduleUtility, ScheduleXML):
     def update_schedule(self, p_schedule):
         """Update the schedule as updated by the web server.
         """
-        if g_debug > 5:
+        if g_debug >= 6:
             print 'schedule.scheduleAPI.update_schedule({0:}'.format(p_schedule)
         pass
+
+    def SpecialTest(self):
+        if g_debug >= 1:
+            print "schedule.API.SpecialTest()"
+        self.m_lighting.SpecialTest()
 
 # ## END

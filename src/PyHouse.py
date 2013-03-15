@@ -26,11 +26,11 @@ from twisted.internet import reactor
 
 # Import PyMh files and modules.
 from configure import gui
-from utilities import log
-from house import houses
+from utils import log
+from housing import houses
 from web import web_server
 
-g_debug = 3
+g_debug = 0
 g_logger = None
 
 callWhenRunning = reactor.callWhenRunning
@@ -200,6 +200,7 @@ class API(object):
 
 
 if __name__ == "__main__":
+
     if g_debug > 0:
         print "MAIN"
     API()

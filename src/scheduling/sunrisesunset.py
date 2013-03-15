@@ -18,7 +18,7 @@ from math import pi
 import main
 # import main.house as house
 
-g_debug = 5
+g_debug = 0
 g_logger = None
 
 RAD2DEG = 180.0 / pi
@@ -205,7 +205,7 @@ class SSUtility(object):
         """
         l_time = ((p_julian - 0.5) % 1.0) * 24.0
         if p_timezone:
-            l_time += -5.0
+            l_time += -4.0
         return self._convert_to_time(l_time)
 
 class SunCalcs(SSUtility, EarthParameters, SolarParameters):

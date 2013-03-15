@@ -3,28 +3,24 @@
 from operator import attrgetter
 from Tkinter import Frame, Toplevel, Button, IntVar, StringVar, W, DISABLED, SUNKEN, RAISED
 
-import gui_tools
-from schedule import schedule
-from house import house
-from main import tools
+from configure.gui_tools import GuiTools, BG_BOTTOM, BG_INACTIVE, FG_INACTIVE
+from scheduling import schedule
+from housing import house
+from utils import tools
 
-g_debug = 5
+g_debug = 0
 
 House_Data = house.House_Data
 
 VAL_TYPES = schedule.VALID_TYPES
 
 
-class ScheduleWindow(gui_tools.GuiTools):
+class ScheduleWindow(GuiTools):
 
-    m_houses_obj = None
-    m_root_window = None
-    m_main_window = None
-    m_house_select_window = None
-    m_schedule_select_window = None
+    m_gui_obj = None
     m_ix = 0
 
-    def __init__(self, p_root_window, p_main_window, p_houses_obj):
+    def __init__(self, p_gui_obj, p_houses_obj):
         """Initialize then bring up the 'select house' menu.
 
         @param p_root_window: is the parent TkInter Frame.
@@ -32,34 +28,32 @@ class ScheduleWindow(gui_tools.GuiTools):
         """
         if g_debug > 0:
             print "gui_schedule - Show select house window"
-        self.m_root_window = p_root_window
-        self.m_main_window = p_main_window
-        self.m_houses_obj = p_houses_obj
-        self.m_house_select_window = self.show_house_select_window(p_root_window, p_main_window, p_houses_obj)
+        self.m_gui_obj = p_gui_obj
+        self.show_house_select_window(p_gui_obj, p_houses_obj)
 
-    def show_buttons_for_one_house(self, p_ix, p_house_obj):
+    def show_buttons_for_one_house(self, p_gui_obj, p_house_obj):
         """Display the schedule menu with the schedule buttons for the selected house.
 
         This is a callback from gui_tools house select window
 
-        @param p_ix: is the index of the house in houses
         @param p_house_obj: is the house object of the selected house.
         """
+        self.m_gui_obj = p_gui_obj
         if g_debug > 1:
-            print "gui_schedule.show_buttons_for_one_house() - Ix:{0:}".format(p_ix)
-        self.m_ix = p_ix
-        self.frame_delete(self.m_house_select_window)
-        self.m_schedule_select_window = Frame(self.m_root_window)
-        self.m_root_window.title('Add / Edit Schedule')
-        self.m_schedule_select_window.grid(padx = 5, pady = 5)
+            print "gui_schedule.show_buttons_for_one_house() - House:{0:}".format(p_house_obj.Name)
+        self.frame_delete(p_gui_obj.HouseSelectFrame)
+        self.frame_delete(p_gui_obj.ModuleMenuFrame)
+        p_gui_obj.ModuleMenuFrame = Frame(self.m_gui_obj.RootWindow)
+        p_gui_obj.ModuleMenuFrame.grid(padx = 5, pady = 5)
+        p_gui_obj.RootWindow.title('Add / Edit Schedule')
         self.m_ix = 0
-        self.show_schedule_buttons(p_house_obj)
-        Button(self.m_schedule_select_window, text = "ADD Schedule", bg = gui_tools.BG_BOTTOM,
-               command = lambda x = p_house_obj: self.add_schedule(x)).grid(row = self.m_ix, column = 0)
-        Button(self.m_schedule_select_window, text = "Back", fg = "red", bg = gui_tools.BG_BOTTOM,
-               command = self.save_schedules_and_exit).grid(row = self.m_ix, column = 1)
+        l_max = self.show_schedule_buttons(p_gui_obj, p_house_obj)
+        Button(p_gui_obj.ModuleMenuFrame, text = "ADD Schedule", bg = BG_BOTTOM,
+               command = lambda x = p_gui_obj, y = p_house_obj, z = l_max + 1: self.add_schedule(x, y, z)).grid(row = self.m_ix, column = 0)
+        Button(p_gui_obj.ModuleMenuFrame, text = "Back", fg = "red", bg = BG_BOTTOM,
+               command = lambda x = p_gui_obj: self.save_schedules_and_exit(x)).grid(row = self.m_ix, column = 1)
 
-    def show_schedule_buttons(self, p_house_obj):
+    def show_schedule_buttons(self, p_gui_obj, p_house_obj):
         """Display one button for each schedule of the selected house.
         Buttons are sorted by 3 variables
 
@@ -73,22 +67,26 @@ class ScheduleWindow(gui_tools.GuiTools):
         l_lights = sorted(p_house_obj.Schedule.values(), key = attrgetter('LightName'))  # last sort
         l_rooms = sorted(l_lights, key = attrgetter('RoomName'))  # moddle sort
         l_scheds = sorted(l_rooms, key = attrgetter('Name'))  # first sort
+        l_max = 0
         for l_sched_obj in l_scheds:
+            if l_sched_obj.Key > l_max:
+                l_max = l_sched_obj.Key
             l_relief = SUNKEN
-            l_bg = gui_tools.BG_INACTIVE
-            l_fg = gui_tools.FG_INACTIVE
+            l_bg = BG_INACTIVE
+            l_fg = FG_INACTIVE
             if l_sched_obj.Active:
                 l_relief = RAISED
                 l_bg, l_fg = self.color_button(int(l_sched_obj.Level))
             l_row, l_col = self.columnize(self.m_ix, 4)
             l_caption = str(l_sched_obj.Name) + ' ' + str(l_sched_obj.RoomName) + ' ' + str(l_sched_obj.LightName)
-            l = Button(self.m_schedule_select_window, text = l_caption, bg = l_bg, fg = l_fg, relief = l_relief,
-                       command = lambda x = p_house_obj, y = l_sched_obj.Key: self.edit_schedule(x, y))
+            l = Button(p_gui_obj.ModuleMenuFrame, text = l_caption, bg = l_bg, fg = l_fg, relief = l_relief,
+                       command = lambda x = p_gui_obj, y = p_house_obj, z = l_sched_obj.Key: self.edit_schedule(x, y, z))
             l_sched.append(l)
             l_sched[self.m_ix].grid(row = l_row, column = l_col, padx = 5, sticky = W)
             self.m_ix += 1
+        return l_max
 
-    def edit_schedule(self, p_house_obj, p_schedule_key):
+    def edit_schedule(self, p_gui_obj, p_house_obj, p_schedule_key):
         """
         Callback from clicking on a schedule button.
         @param p_house_obj: is the house object that we are editing.
@@ -96,23 +94,22 @@ class ScheduleWindow(gui_tools.GuiTools):
         """
         if g_debug > 1:
             print "gui_schedule.edit_schedule()  House:{0:}, SchedKey:{1:}".format(p_house_obj.Name, p_schedule_key)
-        ScheduleDialog(self.m_root_window, self.m_schedule_select_window, int(p_schedule_key), p_house_obj, "Editing Schedule", p_house_obj.Key)
+        ScheduleDialog(p_gui_obj, p_house_obj, int(p_schedule_key), "Editing Schedule")
 
-    def add_schedule(self, p_house_obj):
+    def add_schedule(self, p_gui_obj, p_house_obj, p_ix):
         """
         """
         if g_debug > 1:
             print "gui_schedule.add_schedule() ", p_house_obj
-        ScheduleDialog(self.m_root_window, self.m_schedule_select_window, self.m_ix, p_house_obj, "Adding Schedule", self.m_ix)
+        ScheduleDialog(p_gui_obj, p_house_obj, p_ix, "Adding Schedule")
 
-    def save_schedules_and_exit(self):
+    def save_schedules_and_exit(self, p_gui_obj):
         """callback to 'Back' button
         """
         if g_debug > 1:
             print "gui_schedule.save_schedules_and_exit() "
-        # houses.API().save_all_houses()
-        self.frame_delete(self.m_schedule_select_window)
-        self.show_main_menu()
+        self.frame_delete(p_gui_obj.ModuleMenuFrame)
+        self.show_main_menu(p_gui_obj.MainMenuFrame)
 
 
 class ScheduleDialog(ScheduleWindow):
@@ -121,53 +118,47 @@ class ScheduleDialog(ScheduleWindow):
     Allow add of new schedule or change or delete of existing schedule.
     """
 
-    m_sched_window = None
-    m_dialog_window = None
-
-    def __init__(self, p_root_window, p_parent_window, p_schedule_key, p_house_obj, p_title, p_ix):
+    def __init__(self, p_gui_obj, p_house_obj, p_schedule_key, p_title):
         """
         @param p_root_window: is ?
         @param p_parent_window: is the frame holding the schedule buttons
         @param p_schedule_key: is the schedule id we are about to edit.
         @param p_house_obj: is the house object that we are editing.
         """
+        p_gui_obj.DialogWindow = Toplevel(p_gui_obj.RootWindow)
         if g_debug > 0:
-            print "gui_schedule.ScheduleDialog.__init__() - Show add/edit schedule window  House{0:}, SchedKey:{1:}, House_ix:{2:}".format(p_house_obj.Name, p_schedule_key, p_ix)
-        self.m_root_window = p_root_window
-        self.m_dialog_window = Toplevel()
-        if p_title:
-            self.m_dialog_window.title(p_title)
-        self.m_parent_window = p_parent_window
+            print "gui_schedule.ScheduleDialog.__init__() - Show add/edit schedule window  House{0:}, SchedKey:{1:}".format(p_house_obj.Name, p_schedule_key)
+        p_gui_obj.DialogWindow.title(p_title)
         self.l_result = None
         self.create_schedule_vars()
         self.load_schedule_vars(p_schedule_key, p_house_obj)
         #
-        self.m_sched_window = Frame(self.m_dialog_window)
-        self.m_sched_window.grid_columnconfigure(0, minsize = 120)
-        self.m_sched_window.grid_columnconfigure(1, minsize = 300)
-        self.m_sched_window.grid(padx = 5, pady = 5)
+        p_gui_obj.ModuleDialogFrame = Frame(p_gui_obj.DialogWindow)
+        p_gui_obj.ModuleDialogFrame.grid_columnconfigure(0, minsize = 120)
+        p_gui_obj.ModuleDialogFrame.grid_columnconfigure(1, minsize = 300)
+        p_gui_obj.ModuleDialogFrame.grid(padx = 5, pady = 5)
         #
-        self.get_entry_str(self.m_sched_window, 1, 'Key', self.Key, state = DISABLED)
-        self.get_entry_bol(self.m_sched_window, 2, 'Active', self.Active)
-        self.get_entry_str(self.m_sched_window, 3, 'Name', self.Name)
-        self.get_entry_str(self.m_sched_window, 4, 'House Name', self.HouseName, state = DISABLED)
-        self.get_entry_pdb(self.m_sched_window, 5, 'Room Name', self.RoomName, self.build_names(p_house_obj.Rooms), self.RoomName, self.get_roomname)
-        self.get_entry_str(self.m_sched_window, 6, 'Time', self.Time)
-        self.get_entry_str(self.m_sched_window, 7, 'Level', self.Level)
-        self.get_entry_str(self.m_sched_window, 8, 'Rate', self.Rate)
-        self.get_entry_pdb(self.m_sched_window, 9, 'Type', self.Type, VAL_TYPES, self.Type, self.get_type)
-        self.get_entry_pdb(self.m_sched_window, 10, 'Light Name', self.LightName, self.build_names(p_house_obj.Lights), self.LightName, self.get_lightname)
+        self.get_entry_str(p_gui_obj.ModuleDialogFrame, 1, 'Key', self.Key, state = DISABLED)
+        self.get_entry_bol(p_gui_obj.ModuleDialogFrame, 2, 'Active', self.Active)
+        self.get_entry_str(p_gui_obj.ModuleDialogFrame, 3, 'Name', self.Name)
+        self.get_entry_str(p_gui_obj.ModuleDialogFrame, 4, 'House Name', self.HouseName, state = DISABLED)
+        self.get_entry_pdb(p_gui_obj.ModuleDialogFrame, 5, 'Room Name', self.RoomName, self.build_names(p_house_obj.Rooms), self.RoomName, self.get_roomname)
+        self.get_entry_str(p_gui_obj.ModuleDialogFrame, 6, 'Time', self.Time)
+        self.get_entry_str(p_gui_obj.ModuleDialogFrame, 7, 'Level', self.Level)
+        self.get_entry_str(p_gui_obj.ModuleDialogFrame, 8, 'Rate', self.Rate)
+        self.get_entry_pdb(p_gui_obj.ModuleDialogFrame, 9, 'Type', self.Type, VAL_TYPES, self.Type, self.get_type)
+        self.get_entry_pdb(p_gui_obj.ModuleDialogFrame, 10, 'Light Name', self.LightName, self.build_names(p_house_obj.Lights), self.LightName, self.get_lightname)
         l_text = "Add"
         if p_title.startswith("Edit"):
             l_text = "Save"
-            Button(self.m_sched_window, text = 'Delete', bg = gui_tools.BG_BOTTOM,
-                   command = lambda x = p_house_obj, y = p_schedule_key: self.delete_schedule(x, y)).grid(row = 91, column = 1)
-        l_as = Button(self.m_sched_window, text = l_text, fg = "blue", bg = gui_tools.BG_BOTTOM,
-                      command = lambda x = p_house_obj: self.save_schedule_vars(x))
+            Button(p_gui_obj.ModuleDialogFrame, text = 'Delete', bg = BG_BOTTOM,
+                   command = lambda x = p_gui_obj, y = p_house_obj, z = p_schedule_key: self.delete_schedule(x, y, z)).grid(row = 91, column = 1)
+        l_as = Button(p_gui_obj.ModuleDialogFrame, text = l_text, fg = "blue", bg = BG_BOTTOM,
+                      command = lambda x = p_gui_obj, y = p_house_obj: self.save_schedule_vars(x, y))
         l_as.grid(row = 91, column = 0)
         l_as.focus_set()
-        Button(self.m_sched_window, text = "Cancel", fg = "red", bg = gui_tools.BG_BOTTOM,
-               command = lambda x = p_house_obj: self.quit_dialog(x)).grid(row = 91, column = 2)
+        Button(p_gui_obj.ModuleDialogFrame, text = "Cancel", fg = "red", bg = BG_BOTTOM,
+               command = lambda x = p_gui_obj, y = p_house_obj: self.quit_dialog(x, y)).grid(row = 91, column = 2)
 
     def create_schedule_vars(self):
         """Create all the TkInter variables for a single schedule.
@@ -177,7 +168,6 @@ class ScheduleDialog(ScheduleWindow):
         self.Key = IntVar()
         self.Level = IntVar()
         self.LightName = StringVar()
-        # self.LightNumber = IntVar()
         self.Name = StringVar()
         self.Rate = IntVar()
         self.RoomName = StringVar()
@@ -204,7 +194,7 @@ class ScheduleDialog(ScheduleWindow):
         self.Time.set(l_obj.Time)
         self.Type.set(l_obj.Type)
 
-    def save_schedule_vars(self, p_house_obj):
+    def save_schedule_vars(self, p_gui_obj, p_house_obj):
         """Called on either Add or Save.
 
         @param p_house_obj: is the house object that we are editing.
@@ -227,23 +217,22 @@ class ScheduleDialog(ScheduleWindow):
         p_house_obj.Schedule[l_obj.Key] = l_obj  # update schedule entry within a house
         if g_debug > 1:
             print "gui_schedule.save_schedule_vars() Saving schedule data ", l_obj
-        self.quit_dialog(p_house_obj)
+        self.quit_dialog(p_gui_obj, p_house_obj)
 
-    def delete_schedule(self, p_house_obj, p_schedule_key):
+    def delete_schedule(self, p_gui_obj, p_house_obj, p_schedule_key):
         """
-        TODO: Implement this
         """
         del p_house_obj.Schedules[p_schedule_key]
-        self.quit_dialog(p_house_obj)
+        self.quit_dialog(p_gui_obj, p_house_obj)
 
-    def quit_dialog(self, p_house_obj):
+    def quit_dialog(self, p_gui_obj, p_house_obj):
         """Remove the dialog box and return to the schedule window.
         """
         if g_debug > 0:
-            print "gui_schedule.quit_dialog()"
-        self.m_dialog_window.destroy()
-        self.m_parent_window.destroy()
-        self.show_buttons_for_one_house(p_house_obj.Key, p_house_obj)
+            print "gui_schedule.quit_dialog()", p_gui_obj
+        p_gui_obj.DialogWindow.destroy()
+        p_gui_obj.ModuleDialogFrame.destroy()
+        self.show_buttons_for_one_house(p_gui_obj, p_house_obj)
 
     def get_housename(self, p_val):
         self.HouseName.set(p_val)

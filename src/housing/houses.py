@@ -17,8 +17,8 @@ import logging
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
-from house import house
-from configure import xml_tools
+from housing import house
+from utils import xml_tools
 
 g_debug = 0
 
@@ -36,7 +36,7 @@ class HousesData(object):
         self.Object = {}
 
     def __str__(self):
-        return "Houses:: Name:{0:} ".format(self.Name)
+        return "Houses:: Name:{0:}, Key:{1:}".format(self.Name, self.Key)
 
 
 class HouseReadWriteConfig(xml_tools.ConfigFile):
@@ -102,7 +102,8 @@ class LoadSaveAPI(HouseReadWriteConfig):
     def get_house_info(self, p_house_xml, p_count):
         """Build up one entry for m_houses_data
         """
-        print "\nCreating a new house named:{0:}".format(p_house_xml.get('Name'))
+        if g_debug > 1:
+            print "\nCreating a new house named:{0:}".format(p_house_xml.get('Name'))
         l_houses_obj = HousesData()
         l_houses_obj.HouseAPI = house.API()
         l_houses_obj.Key = p_count

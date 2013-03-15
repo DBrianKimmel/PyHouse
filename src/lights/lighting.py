@@ -26,13 +26,13 @@ import importlib
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
-from utilities import xml_tools
+from utils import xml_tools
 import lighting_buttons
 import lighting_controllers
 import lighting_lights
 import lighting_scenes
 
-g_debug = 3
+g_debug = 0
 g_logger = None
 
 # These globals in the lighting singleton hold the operating data loaded at startup.
@@ -294,6 +294,12 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, FamilyData):
         for l_family_obj in self.m_family_data.itervalues():
             l_family_obj.Api.Stop(p_xml)
 
+    def test_lighting_families(self):
+        if g_debug > 1:
+            print "lighting.test_lighting_families()"
+        for l_family_obj in self.m_family_data.itervalues():
+            l_family_obj.Api.SpecialTest()
+
     def change_light_setting(self, p_house_obj, p_light_obj, p_level, p_rate = 0):
         """Called from several places (schedle, Gui, Web etc.) to change a light level.
         Turn a light to a given level (0-100) off/dimmed/on.
@@ -355,5 +361,10 @@ class API(LightingUtility):
         if g_debug > 0:
             print "lighting.API.Stop()"
         return p_xml
+
+    def SpecialTest(self):
+        if g_debug > 0:
+            print "lighting.API.SpecialTest()"
+        self.test_lighting_families()
 
 # ## END

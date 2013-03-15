@@ -15,7 +15,7 @@ import logging.handlers
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
-from configure import xml_tools
+from utils import xml_tools
 
 
 g_debug = 0

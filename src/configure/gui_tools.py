@@ -3,20 +3,39 @@
 from Tkinter import *
 import Pmw
 
-from house import houses
+from housing import houses
 
-g_debug = 1
+g_debug = 0
 
 BG_BOTTOM = '#C0C090'
 BG_TOP = '#E0F0E0'
 BG_UNDONE = '#F0C0C0'
-BG_INACTIVE = "#E04040"
-BG_ACTIVE = '#808080'
+
+FG_ACTIVE = '#000000'
+BG_ACTIVE = '#F0C0C0'
 
 FG_INACTIVE = "#000000"
-FG_ACTIVE = '#FFFFFF'
+BG_INACTIVE = "#E04040"
 
 ComboBox = Pmw.ComboBox
+
+
+class GuiData(object):
+
+    def __init__(self):
+        self.RootWindow = None
+        self.HouseSelectFrame = None  # Frame of RootWindow
+        self.MainMenuFrame = None  # Frame of RootWindow
+        self.ModuleMenuFrame = None  # Frame of RootWindow
+        self.DialogWindow = None
+        self.ModuleDialogFrame = None  # Frame of DialogWindow
+        self.SecondDialogWindow = None
+        self.SecondDialogFrame = None
+
+    def __str__(self):
+        l_ret = "GuiData:: RootWindow:{0:}, MainMenuFrame:{1:}, HouseSelectFrame:{2:}".format(self.RootWindow, self.MainMenuFrame, self.HouseSelectFrame)
+        l_ret += ", ModuleMenuFrame:{0:}, DialogWindow:{1:}".format(self.ModuleMenuFrame, self.DialogWindow)
+        return l_ret
 
 
 class GuiUtils(object):
@@ -180,48 +199,46 @@ class GuiUtils(object):
 
 class HouseSelect(GuiUtils):
 
-    m_house_select_window = None
+    m_house_select_frame = None
 
-    def show_house_select_window(self, p_root, p_main_window, p_houses_obj):
+    def show_house_select_window(self, p_gui_obj, p_houses_obj):
         """This will show a house select window for various modules.
-        @param p_root: is the Tk() root instance.
+        @param p_gui_obj: is
         @return: the house object for the house selected.
         In addition, returns the house index and house object as parameters for the callback
         """
         if g_debug > 0:
-            print "gui_tools.show_house_select_window()  - Root=", p_root
-        self.m_main_window = p_main_window
-        self.m_house_select_window = Frame(p_root)
-        p_root.title('Select House')
-        self.m_xmltree_root = p_root
-        self.m_house_select_window.grid(padx = 5, pady = 5)
+            print "gui_tools.show_house_select_window() - {0:}".format(p_gui_obj)
+        p_gui_obj.HouseSelectFrame = Frame(p_gui_obj.RootWindow)
+        p_gui_obj.RootWindow.title('Select House')
+        p_gui_obj.HouseSelectFrame.grid(padx = 5, pady = 5)
         l_ix = 0
         l_house = []
-        for l_obj in p_houses_obj.itervalues():
+        for l_house_obj in p_houses_obj.itervalues():
             l_relief = SUNKEN
             l_bg = BG_INACTIVE
             l_fg = FG_INACTIVE
-            if l_obj.Object.Active:
+            if l_house_obj.Object.Active:
                 l_relief = RAISED
                 l_bg = BG_ACTIVE
                 l_fg = FG_ACTIVE
             l_row, l_col = self.columnize(l_ix, 4)
-            l = Button(self.m_house_select_window, text = l_obj.Object.Name,
+            l = Button(p_gui_obj.HouseSelectFrame, text = l_house_obj.Object.Name,
                       relief = l_relief, bg = l_bg, fg = l_fg,
-                      command = lambda x = l_ix, y = l_obj.Object: self.show_buttons_for_one_house(x, y))
+                      command = lambda x = p_gui_obj, y = l_house_obj.Object: self.show_buttons_for_one_house(x, y))
             l_house.append(l)
             l_house[l_ix].grid(row = l_row, column = l_col, padx = 5, sticky = W)
             l_ix += 1
-        Button(self.m_house_select_window, text = "Back", fg = "red", bg = BG_BOTTOM, command = self.show_main_menu).grid(row = l_ix, column = 1)
-        return self.m_house_select_window
+        Button(p_gui_obj.HouseSelectFrame, text = "Back", fg = "red", bg = BG_BOTTOM,
+               command = lambda x = p_gui_obj: self.show_main_menu(x)).grid(row = l_ix, column = 1)
 
-    def show_main_menu(self):
+    def show_main_menu(self, p_main_menu_frame):
         """Exit the schedule screen.
         """
         if g_debug > 0:
-            print "gui_tools.show_main_menu()"
-        self.frame_delete(self.m_house_select_window)
-        self.m_main_window.grid()
+            print "gui_tools.show_main_menu() - main_menu_frame:{0:}".format(p_main_menu_frame)
+        self.frame_delete(self.m_house_select_frame)
+        p_main_menu_frame.grid()
 
 
 class GuiTools(HouseSelect):
