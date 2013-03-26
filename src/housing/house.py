@@ -34,17 +34,17 @@ class LocationData(object):
 
     def __init__(self):
         self.Active = True
-        self.City = None
+        self.City = ''
         self.Key = 0
         self.Latitude = 0.0
         self.Longitude = 0.0
-        self.Name = None
-        self.Phone = None
+        self.Name = ''
+        self.Phone = ''
         self.SavingTime = 0.0
-        self.State = None
-        self.Street = None
+        self.State = ''
+        self.Street = ''
         self.TimeZone = 0.0
-        self.ZipCode = None
+        self.ZipCode = ''
 
     def __str__(self):
         l_ret = ' Location:: '
@@ -115,12 +115,12 @@ class RoomData(object):
 
     def __init__(self):
         self.Active = False
-        self.Comment = None
-        self.Corner = None
-        self.HouseName = None
+        self.Comment = ''
+        self.Corner = ''
+        self.HouseName = ''
         self.Key = 0
-        self.Name = None
-        self.Size = None
+        self.Name = ''
+        self.Size = ''
 
     def __str__(self):
         l_ret = ' Room:: Name:{0:} \t Size:{1:} \t Corner:{2:}\n'.format(self.get_name(), self.get_size(), self.get_corner())
@@ -164,13 +164,14 @@ class HouseData(LocationData, RoomData):
     def __init__(self):
         self.Active = False
         self.Key = 0
-        self.Name = None
+        self.Name = ''
         self.MasterHouseNumber = 0
         self.InternetAPI = None
         self.LightingAPI = None
         self.ScheduleAPI = None
         self.Buttons = {}
         self.Controllers = {}
+        self.Internet = {}
         self.Lights = {}
         self.Location = LocationData()
         self.Rooms = {}
@@ -243,10 +244,10 @@ class HouseReadWriteConfig(xml_tools.ConfigTools, HouseData):
             print "house.read_house() - Loading XML data for House:{0:}".format(p_house_obj.Name)
         return House_Data
 
-    def write_location(self, p_parent_xml, p_location_obj):
+    def write_location(self, p_location_obj):
         """Replace the data in the 'House/Location' section with the current data.
         """
-        l_entry = ET.SubElement(p_parent_xml, 'Location')
+        l_entry = ET.Element('Location')
         ET.SubElement(l_entry, 'Street').text = p_location_obj.Street
         ET.SubElement(l_entry, 'City').text = p_location_obj.City
         ET.SubElement(l_entry, 'State').text = p_location_obj.State
@@ -258,32 +259,33 @@ class HouseReadWriteConfig(xml_tools.ConfigTools, HouseData):
         ET.SubElement(l_entry, 'SavingTime').text = str(p_location_obj.SavingTime)
         if g_debug > 2:
             print "house.write_location()"
+        return l_entry
 
-    def write_rooms(self, p_parent_xml, p_dict):
+    def write_rooms(self, p_dict):
         l_count = 0
-        l_sect = ET.SubElement(p_parent_xml, 'Rooms')
+        l_rooms_xml = ET.Element('Rooms')
         for l_room_obj in p_dict.itervalues():
-            l_entry = self.build_common(l_sect, 'Room', l_room_obj)
+            l_entry = self.xml_create_common_element('Room', l_room_obj)
             ET.SubElement(l_entry, 'Comment').text = l_room_obj.Comment
             ET.SubElement(l_entry, 'Corner').text = l_room_obj.Corner
             ET.SubElement(l_entry, 'HouseName').text = l_room_obj.HouseName
             ET.SubElement(l_entry, 'Size').text = l_room_obj.Size
+            l_rooms_xml.append(l_entry)
             l_count += 1
         if g_debug > 2:
             print "house.write_rooms() - Wrote {0:} rooms".format(l_count)
+        return l_rooms_xml
 
-    def write_house(self, p_parent_xml, p_house_obj):
+    def write_house(self, p_house_obj):
         """Replace the data in the 'Houses' section with the current data.
         """
-        p_parent_xml.set('Name', p_house_obj.Name)
-        p_parent_xml.set('Key', str(p_house_obj.Key))
-        p_parent_xml.set('Active', self.put_bool(p_house_obj.Active))
-        ET.SubElement(p_parent_xml, 'MasterHouseNumber').text = p_house_obj.MasterHouseNumber
-        self.write_location(p_parent_xml, p_house_obj.Location)
-        self.write_rooms(p_parent_xml, p_house_obj.Rooms)
+        l_house_xml = self.xml_create_common_element('House', p_house_obj)
+        # ET.SubElement(l_house_xml, 'MasterHouseNumber').text = p_house_obj.MasterHouseNumber
+        l_house_xml.append(self.write_location(p_house_obj.Location))
+        l_house_xml.append(self.write_rooms(p_house_obj.Rooms))
         if g_debug > 2:
             print "house.write_house() - Name:{0:}, Key:{1:}".format(p_house_obj.Name, p_house_obj.Key)
-        return p_parent_xml
+        return l_house_xml
 
 
 class LoadSaveAPI(HouseReadWriteConfig):
@@ -301,26 +303,27 @@ class API(LoadSaveAPI):
     m_house_obj = HouseData()
 
     def __init__(self):
-        if g_debug > 0:
-            print "house.__init__()"
+        """Create a house object for when we add a new house.
+        """
+        if g_debug >= 1:
+            print "house.API.__init__()"
         self.m_logger = logging.getLogger('PyHouse.House')
+        self.m_house_obj = HouseData()
+        self.m_house_obj.ScheduleAPI = schedule.API(self.m_house_obj)
+        self.m_house_obj.InternetAPI = internet.API(self.m_house_obj)
 
-    def Start(self, p_houses_obj, p_house_xml):
+    def Start(self, _p_houses_obj, p_house_xml):
         """Start processing for all things house.
         May be stopped and then started anew to force reloading info.
         """
-        if g_debug > 0:
-            print "house.API.Start() 1"
-        self.m_house_obj = HouseData()
-        self.m_house_obj.ScheduleAPI = schedule.API()
-        self.m_house_obj.InternetAPI = internet.API()
         self.read_house(self.m_house_obj, p_house_xml)
-        if g_debug > 0:
+        if g_debug >= 1:
             print "house.API.Start() - House:{0:}, Active:{1:}".format(self.m_house_obj.Name, self.m_house_obj.Active)
         self.m_logger.info("Starting House {0:}.".format(self.m_house_obj.Name))
         self.m_house_obj.ScheduleAPI.Start(self.m_house_obj, p_house_xml)
-        if g_debug > 0:
-            print "house.API.Start() - Rooms:{0:}, Schedule:{1:}, Lights:{2:}, Controllers:{3:}".format(
+        self.m_house_obj.InternetAPI.Start(self.m_house_obj, p_house_xml)
+        if g_debug >= 1:
+            print "house.API.Start() has found -  Rooms:{0:}, Schedule:{1:}, Lights:{2:}, Controllers:{3:}".format(
                     len(self.m_house_obj.Rooms), len(self.m_house_obj.Schedule), len(self.m_house_obj.Lights), len(self.m_house_obj.Controllers))
         self.m_logger.info("Started.")
         return self.m_house_obj
@@ -330,17 +333,16 @@ class API(LoadSaveAPI):
         """Stop active houses - not active have never been started.
         Return a filled in XML for the house.
         """
-        if g_debug > 0:
+        if g_debug >= 1:
             print "\nhouse.Stop() - House:{0:}".format(self.m_house_obj.Name)
-        l_house_xml = ET.Element('House')
-        self.write_house(l_house_xml, self.m_house_obj)
-        self.m_logger.info("Stopping house {0:}.".format(self.m_house_obj.Name))
-        l_xml = self.m_house_obj.ScheduleAPI.Stop(l_house_xml)
-        p_xml.append(l_house_xml)
+        self.m_logger.info("Stopping House:{0:}.".format(self.m_house_obj.Name))
+        l_house_xml = self.write_house(self.m_house_obj)
+        l_house_xml.extend(self.m_house_obj.ScheduleAPI.Stop(l_house_xml))
+        l_house_xml.append(self.m_house_obj.InternetAPI.Stop())
         self.m_logger.info("Stopped.")
-        if g_debug > 0:
-            print "house.Stop() - appended schedule _ sub-modules"
-        return p_xml
+        if g_debug >= 1:
+            print "house.Stop() - Name:{0:}, Count:{1:}".format(self.m_house_obj.Name, len(l_house_xml))
+        return l_house_xml
 
     def SpecialTest(self):
         if g_debug > 0:

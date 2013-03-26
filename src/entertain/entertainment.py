@@ -273,11 +273,10 @@ class API(UPnPControlPoint):
         if g_debug > 0:
             print "entertainment.Start()"
 
-    def Stop(self, p_xml):
+    def Stop(self):
         if g_debug > 0:
             print "entertainment.Stop()"
         l_entertain_xml = ET.Element('Entertainment')
-        p_xml.append(l_entertain_xml)
-        return p_xml
+        return l_entertain_xml
 
 # ## END

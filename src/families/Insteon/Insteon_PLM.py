@@ -628,9 +628,10 @@ class DecodeResponses(InsteonAllLinks):
                 self._decode_dispatch(p_controller_obj)
             # We have garbage.
             else:
-                if g_debug >= 1:
+                if g_debug >= 0:
                     print "Insteon_PLM._decode_message() - Found a mistake - {0:}".format(PrintBytes(l_message))
                 g_logger.error("Rx Message started with {0:#x} not STX, Message={1:}".format(l_stx, PrintBytes(l_message)))
+                p_controller_obj.Message = p_controller_obj.Message[1:]
 
     def _decode_dispatch(self, p_controller_obj):
         """Decode a message that was ACKed / NAked.

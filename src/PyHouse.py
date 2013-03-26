@@ -12,6 +12,17 @@ to a server running multiple houses in several, widespread locations.
 The system is controlled via a browser connecting to a web server that will
 be either integrated or separate from PyHouse.
 
+TODO:
+        Find proper ports for controllers
+        set proper permissions on controller devices
+        Add routines to update dynamic dns
+        Add DynDns to gui for house
+        Add interfaces, move interface code out of controllers
+        Enter key save in gui
+        Set focus in each gui
+        Setup to allow house add rooms lights etc seem ok
+        Save house info for 'new' house
+
 """
 
 # Import system type stuff
@@ -144,7 +155,7 @@ class API(object):
         call never returns.
         """
         if g_debug > 0:
-            print "\nPyHouse.Init() - very beginning..."
+            print "\nPyHouse.API.__init__() - very beginning..."
         handle_signals()
         log.LoggingMain()
         global g_logger

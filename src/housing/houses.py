@@ -21,6 +21,10 @@ from housing import house
 from utils import xml_tools
 
 g_debug = 0
+# 0 = off
+# 1 = major routine entry
+# 2 = get/put xml config info
+# 3 = Access housing info
 
 Singletons = {}
 
@@ -48,11 +52,10 @@ class HouseReadWriteConfig(xml_tools.ConfigFile):
 
     def __init__(self):
         """Open the xml config file.
-
         If the file is missing, an empty minimal skeleton is created.
         """
-        if g_debug > 0:
-            print "houses.HouseReadWriteConfig()"
+        if g_debug >= 2:
+            print "houses.HouseReadWriteConfig.__init__()"
         self.read_config_file()
         try:
             self.m_xmltree = ET.parse(self.m_xml_filename)
@@ -62,7 +65,7 @@ class HouseReadWriteConfig(xml_tools.ConfigFile):
         self.m_xmltree_root = self.m_xmltree.getroot()
 
     def read_config_file(self):
-        if g_debug > 0:
+        if g_debug >= 2:
             print "houses.read_config_file()"
         self.m_xml_filename = xml_tools.open_config_file()
 
@@ -75,7 +78,7 @@ class HouseReadWriteConfig(xml_tools.ConfigFile):
     def write_config_file(self, p_xml):
         """Replace the data in the 'Houses' section with the current data.
         """
-        if g_debug > 2:
+        if g_debug >= 2:
             print "houses.write_config_file() - Writing xml file to:{0:}".format(self.m_xml_filename)
         self.m_xmltree_root = self.m_xmltree.getroot()
         self.m_xmltree_root = p_xml
@@ -89,29 +92,34 @@ class LoadSaveAPI(HouseReadWriteConfig):
     def load_all_houses(self):
         """Load all the house info.
         """
-        if g_debug > 1:
+        if g_debug >= 3:
             print "houses.load_all_houses()"
         self.l_rwc = HouseReadWriteConfig()
         return self.l_rwc.get_xml_root(), self.l_rwc.get_xml_tree()
 
     def save_all_houses(self, p_xml):
-        if g_debug > 1:
+        if g_debug >= 3:
             print "\nhouses.save_all_houses()"
         self.l_rwc.write_config_file(p_xml)
 
     def get_house_info(self, p_house_xml, p_count):
         """Build up one entry for m_houses_data
         """
-        if g_debug > 1:
-            print "\nCreating a new house named:{0:}".format(p_house_xml.get('Name'))
+        if g_debug >= 3:
+            print "\nhouses.get_house_info() - Creating a new house named:{0:}".format(p_house_xml.get('Name'))
         l_houses_obj = HousesData()
-        l_houses_obj.HouseAPI = house.API()
         l_houses_obj.Key = p_count
+        l_houses_obj.HouseAPI = house.API()
         l_houses_obj.Object = l_houses_obj.HouseAPI.Start(l_houses_obj, p_house_xml)
         l_houses_obj.Name = l_houses_obj.Object.Name
         return l_houses_obj
 
     def get_houses_xml(self):
+        """
+        @return: iterable list of all houses defined.
+        """
+        if g_debug >= 3:
+            print "houses.get_houses_xml()"
         self.m_xmltree_root, _l_tree = self.load_all_houses()
         #
         try:
@@ -136,38 +144,33 @@ class API(LoadSaveAPI):
         """
         if cls in Singletons:
             return Singletons[cls]
-        if g_debug > 0:
+        if g_debug >= 1:
             print "houses.__new__()"
         self = object.__new__(cls)
         cls.__init__(self, *args, **kwargs)
         Singletons[cls] = self
-        #
         self.m_logger = logging.getLogger('PyHouse.Houses')
         self.m_logger.info("Initializing all houses.")
         self.m_logger.info("Initialized.")
-        if g_debug > 0:
-            print "houses.__new__() all houses initialized now."
-        #
         return self
 
     def __init__(self):
-        if g_debug > 0:
+        if g_debug >= 1:
             print "houses.__init__()"
-            print
 
     def Start(self):
         """Start processing for all things house.
         May be stopped and then started anew to force reloading info.
         Invoked once no matter how many houses defined.
         """
-        if g_debug > 0:
+        if g_debug >= 1:
             print "houses.API.Start() - Singleton"
         self.m_logger.info("Starting.")
         l_count = 0
         for l_house_xml in self.get_houses_xml():
             self.m_houses_data[l_count] = self.get_house_info(l_house_xml, l_count)
             l_count += 1
-        if g_debug > 0:
+        if g_debug >= 1:
             print "houses.API.Start() - {0:} houses all started.".format(l_count)
         self.m_logger.info("Started.")
 
@@ -176,12 +179,12 @@ class API(LoadSaveAPI):
         """Close down everything we started.
         Each stopped instance returns an up-to-date XML subtree to be written out.
         """
-        if g_debug > 0:
+        if g_debug >= 1:
             print "houses.API.Stop()"
         self.m_logger.info("Stopping.")
         l_houses_xml = self.create_empty_xml_section(self.m_xmltree_root, 'Houses')
         for l_house in self.m_houses_data.itervalues():
-            l_house.HouseAPI.Stop(l_houses_xml)
+            l_houses_xml.append(l_house.HouseAPI.Stop(l_houses_xml))  # append to the xml tree
         self.save_all_houses(l_houses_xml)
         self.m_logger.info("Stopped.")
 

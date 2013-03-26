@@ -27,9 +27,6 @@ import gui_schedule
 import gui_web
 from utils import config_xml
 
-# For the testing function
-from families.Insteon import Insteon_PLM
-
 g_debug = 0
 
 g_root_window = None  # TkInter root window.
@@ -94,6 +91,12 @@ class MainWindow(object):
         Button(p_gui_obj.MainMenuFrame, text = "Restart", fg = "red", bg = BG_BOTTOM,
                command = self.main_restart).grid(row = 91, column = 2)
 
+#============================
+#
+# Menu Button Handlers
+#
+#============================
+
     def ctl_lights_screen(self, p_gui_obj):
         if g_debug > 1:
             print "gui.ctl_lights_screen() "
@@ -110,7 +113,7 @@ class MainWindow(object):
         if g_debug > 1:
             print "gui.internet_screen() "
         p_gui_obj.MainMenuFrame.grid_forget()  # Main Window
-        DummyWindow(p_gui_obj, self.m_houses_obj)
+        DummyWindow(p_gui_obj, self.m_houses_obj, self.m_houses_api)
 
     def lighting_screen(self, p_gui_obj):
         if g_debug > 1:
@@ -128,7 +131,7 @@ class MainWindow(object):
         if g_debug > 1:
             print "gui.scene_screen() "
         p_gui_obj.MainMenuFrame.grid_forget()  # Main Window
-        DummyWindow(p_gui_obj, self.m_houses_obj)
+        DummyWindow(p_gui_obj, self.m_houses_obj, self.m_houses_api)
 
     def schedule_screen(self, p_gui_obj):
         if g_debug > 1:
@@ -136,7 +139,7 @@ class MainWindow(object):
         p_gui_obj.MainMenuFrame.grid_forget()  # Main Window
         gui_schedule.ScheduleWindow(p_gui_obj, self.m_houses_obj)
 
-    def test_screen(self, p_gui_obj):
+    def test_screen(self, _p_gui_obj):
         if g_debug > 1:
             print "gui.test_screen() "
         self.m_houses_obj[0].HouseAPI.SpecialTest()
@@ -145,13 +148,13 @@ class MainWindow(object):
         if g_debug > 1:
             print "gui.upnp_screen() "
         p_gui_obj.MainMenuFrame.grid_forget()  # Main Window
-        DummyWindow(p_gui_obj, self.m_houses_obj)
+        DummyWindow(p_gui_obj, self.m_houses_obj, self.m_houses_api)
 
     def weather_screen(self, p_gui_obj):
         if g_debug > 1:
             print "gui.weather_screen() "
         p_gui_obj.MainMenuFrame.grid_forget()  # Main Window
-        DummyWindow(p_gui_obj, self.m_houses_obj)
+        DummyWindow(p_gui_obj, self.m_houses_obj, self.m_houses_api)
 
     def webserv_screen(self, p_gui_obj):
         if g_debug > 1:
@@ -179,17 +182,17 @@ class MainWindow(object):
 
 
 class DummyWindow(GuiTools):
-    def __init__(self, p_gui_obj, _p_houses_obj):
+    def __init__(self, p_gui_obj, _p_houses_obj, p_houses_api):
         if g_debug > 1:
             print "DummyWindow.__init__"
         self.m_frame = Frame(p_gui_obj.RootWindow)
         self.m_frame.grid(padx = 5, pady = 5)
-        self.button = Button(self.m_frame, text = "Back", fg = "red", command = self.main_screen)
-        self.button.grid(row = 0, column = 0)
+        Button(self.m_frame, text = "Back", fg = "red",
+               command = lambda x = p_gui_obj, y = p_houses_api:self.main_screen(x, y)).grid(row = 0, column = 0)
 
-    def main_screen(self):
+    def main_screen(self, p_gui_obj, p_houses_api):
         self.frame_delete(self.m_frame)
-        MainWindow()
+        MainWindow(p_houses_api, p_gui_obj)
 
 
 class API(MainWindow):

@@ -30,15 +30,15 @@ class CoreData (object):
     """
 
     def __init__(self):
-        self.Address = None
-        self.Controller = None
-        self.DevCat = None
+        self.Address = ''
+        self.Controller = False
+        self.DevCat = 0
         self.Family = 'Insteon'
-        self.GroupList = None
-        self.GroupNumber = None
-        self.Master = None
-        self.ProductKey = None
-        self.Responder = None
+        self.GroupList = ''
+        self.GroupNumber = 0
+        self.Master = False
+        self.ProductKey = ''
+        self.Responder = False
 
     def __repr__(self):
         l_str = lighting.ControllerData.__repr__(self)
@@ -206,12 +206,15 @@ class API(LightingAPI):
     def Stop(self, p_xml):
         if g_debug > 0:
             print "Device_Insteon.Stop()"
-        for l_controller_obj in self.m_house_obj.Controllers.itervalues():
-            if l_controller_obj.Family != 'Insteon':
-                continue
-            if l_controller_obj.Active != True:
-                continue
-            self.m_plm.Stop(l_controller_obj)
+        try:
+            for l_controller_obj in self.m_house_obj.Controllers.itervalues():
+                if l_controller_obj.Family != 'Insteon':
+                    continue
+                if l_controller_obj.Active != True:
+                    continue
+                self.m_plm.Stop(l_controller_obj)
+        except AttributeError:
+            pass  # no controllers for house(House is being added)
         return p_xml
 
     def SpecialTest(self):

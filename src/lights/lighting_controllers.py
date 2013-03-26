@@ -25,23 +25,23 @@ class ControllerData(lighting_tools.CoreData):
         self.Type = 'Controller'
         # All controllers (Common)
         self.Command = None
-        self.Interface = None
+        self.Interface = ''
         self.Message = ''
-        self.Port = None
+        self.Port = ''
         # Serial Controllers interface
-        self.BaudRate = None
+        self.BaudRate = 9600
         self.ByteSize = 8
-        self.DsrDtr = None
-        self.InterCharTimeout = None
-        self.Parity = None
-        self.RtsCts = None
-        self.StopBits = None
+        self.DsrDtr = False
+        self.InterCharTimeout = 0
+        self.Parity = 'N'
+        self.RtsCts = False
+        self.StopBits = 1.0
         self.Timeout = None
         self.WriteTimeout = None
-        self.XonXoff = None
+        self.XonXoff = False
         # USB Controllers interface
-        self.Product = None
-        self.Vendor = None
+        self.Product = 0
+        self.Vendor = 0
 
     def __str__(self):
         l_ret = "LightingController:: Name:{0:}, Family:{1:}, Interface:{2:}, Port:{3:}, Type:{4:}, Message:{5:}, ".format(

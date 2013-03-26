@@ -66,20 +66,20 @@ class LightingTools(object):
 class CoreData(LightingTools):
 
     def __init__(self):
-        self.Active = None
-        self.Command = None
-        self.Command1 = None
-        self.Command2 = None
-        self.Comment = None
-        self.Coords = None
-        self.Dimmable = None
+        self.Active = False
+        self.Command = 0
+        self.Command1 = 0
+        self.Command2 = 0
+        self.Comment = ''
+        self.Coords = ''
+        self.Dimmable = False
         self.Driver = None
-        self.HouseName = None
+        self.HouseName = ''
         self.Key = 0
-        self.Family = None
-        self.Name = None
-        self.RoomName = None
-        self.Type = None
+        self.Family = ''
+        self.Name = ''
+        self.RoomName = ''
+        self.Type = ''
 
     def __str__(self):
         l_str = "Light:: Name:{0:}, Family:{1:}, Type:{2:}, Comment:{3:}, " \

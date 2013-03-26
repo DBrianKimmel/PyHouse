@@ -106,6 +106,12 @@ class LightingWindow(gui_tools.GuiTools):
             self.m_ix += 1
         self.m_ix += 2
 
+#============================
+#
+# House dialog Button Handlers
+#
+#============================
+
     def edit_lights(self, p_gui_obj, p_arg, p_kind, p_house_obj):
         if g_debug > 0:
             print "Edit lights", p_arg, p_kind
@@ -140,7 +146,7 @@ class LightingWindow(gui_tools.GuiTools):
         """
         """
         if g_debug > 1:
-            print "gui_schedule.save_schedules_and_exit() "
+            print "gui_lighting.save_lighting_and_exit() "
         self.frame_delete(p_gui_obj.ModuleMenuFrame)
         self.show_main_menu(p_gui_obj.MainMenuFrame)
 
@@ -158,7 +164,7 @@ class LightingDialog(LightingWindow):
         @param p_title is the title to put at the top of the window:
         """
         if g_debug > 1:
-            print "LightingDialog.__init__() - LightKey:{0:}".format(p_device_key), p_kind, p_title, p_house_obj
+            print "gui_lighting.LightingDialog.__init__() - LightKey:{0:}".format(p_device_key), p_kind, p_title, p_house_obj
         p_gui_obj.DialogWindow = Toplevel(p_gui_obj.RootWindow)
         p_gui_obj.DialogWindow.title(p_title)
         self.l_result = None

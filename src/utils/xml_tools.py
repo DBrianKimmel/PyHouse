@@ -82,20 +82,16 @@ class PutGetXML(XmlFileTools):
 
 class ConfigTools(PutGetXML):
 
-    def build_common(self, p_parent, p_title, p_obj):
+    def xml_create_common_element(self, p_title, p_obj):
         """Build a common entry.
-
-        <p_parent>
-            <p_title Name=p_obj.Name Key=p_obj.Key Active=o_obj.Active>
-            </p_title>
         """
         if g_debug > 1:
-            print "xml_tools.build_common() - Title:{0:}, Name:{1:} ".format(p_title, p_obj.Name)
-        l_ret = ET.SubElement(p_parent, p_title)
-        l_ret.set('Name', p_obj.Name)
-        l_ret.set('Key', str(p_obj.Key))
-        l_ret.set('Active', self.put_bool(p_obj.Active))
-        return l_ret
+            print "xml_tools.xml_create_common_element() - Title:{0:}, Name:{1:} ".format(p_title, p_obj.Name)
+        l_elem = ET.Element(p_title)
+        l_elem.set('Name', p_obj.Name)
+        l_elem.set('Key', str(p_obj.Key))
+        l_elem.set('Active', self.put_bool(p_obj.Active))
+        return l_elem
 
     def read_common(self, p_obj, p_entry):
         """Get the common (Name, Key, Active) information from an XML sub-tree.

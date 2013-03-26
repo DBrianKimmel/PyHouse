@@ -56,12 +56,12 @@ class FamilyData(object):
         global ScheduleCount
         self.Active = False
         self.Api = None
-        self.Family = None
-        self.Import = None
+        self.Family = ''
+        self.Import = ''
         self.Key = 0
-        self.Module = None
-        self.Name = None
-        self.Package = None
+        self.Module = ''
+        self.Name = ''
+        self.Package = ''
 
     def __str__(self):
         return "FamilyData:: Name:{0:}".format(self.Name)
@@ -128,16 +128,19 @@ class ButtonAPI(lighting_buttons.ButtonsAPI, CommonInfo):
             print "lighting.read_buttons()  loaded {0:} buttons for house {1:}".format(l_count, p_house_obj.Name)
         return l_dict
 
-    def write_buttons(self, p_parent, p_dict):
+    def write_buttons(self, p_dict):
         if g_debug > 4:
             print "lighting.write_buttons()"
         l_count = 0
+        l_buttons_xml = ET.Element('Buttons')
         for l_obj in p_dict.itervalues():
-            l_entry = self.build_common(p_parent, 'Button', l_obj)
+            l_entry = self.xml_create_common_element('Button', l_obj)
             self.write_light_common(l_entry, l_obj)
+            l_buttons_xml.append(l_entry)
             l_count += 1
         if g_debug > 5:
             print "lighting.write_buttons() - Wrote {0:} buttons".format(l_count)
+        return l_buttons_xml
 
 
 class ControllerData(lighting_controllers.ControllerData): pass
@@ -182,12 +185,13 @@ class ControllerAPI(lighting_controllers.ControllersAPI, CommonInfo):
             print "lighting.read_controllers()  loaded {0:} controllers for house {1:}".format(l_count, p_house_obj.Name)
         return l_dict
 
-    def write_controllers(self, p_parent, p_dict):
+    def write_controllers(self, p_dict):
         if g_debug > 4:
             print "lighting.write_controllers()"
         l_count = 0
+        l_controllers_xml = ET.Element('Controllers')
         for l_obj in p_dict.itervalues():
-            l_entry = self.build_common(p_parent, 'Controller', l_obj)
+            l_entry = self.xml_create_common_element('Controller', l_obj)
             self.write_light_common(l_entry, l_obj)
             ET.SubElement(l_entry, 'Interface').text = l_obj.Interface
             if l_obj.Interface == 'Serial':
@@ -202,9 +206,11 @@ class ControllerAPI(lighting_controllers.ControllersAPI, CommonInfo):
                 ET.SubElement(l_entry, 'Product').text = str(l_obj.Product)
             elif l_obj.Interface == 'Ethernet':
                 pass
+            l_controllers_xml.append(l_entry)
             l_count += 1
         if g_debug > 4:
             print "lighting.write_controllers() - Wrote {0:} controllers".format(l_count)
+        return l_controllers_xml
 
 
 class LightData(lighting_lights.LightData):
@@ -235,16 +241,17 @@ class LightingAPI(xml_tools.ConfigTools, lighting_lights.LightsAPI, CommonInfo):
             print "lighting.read_lights()  loaded {0:} lights for house {1:}".format(l_count, p_house_obj.Name)
         return l_dict
 
-    def write_lights(self, p_parent, p_dict):
+    def write_lights(self, p_dict):
         if g_debug > 4:
             print "lighting.write_lights()"
+        l_lighting_xml = ET.Element('Lights')
         l_count = 0
         for l_obj in p_dict.itervalues():
-            l_entry = self.build_common(p_parent, 'Light', l_obj)
+            l_entry = self.xml_create_common_element('Light', l_obj)
             self.write_light_common(l_entry, l_obj)
+            l_lighting_xml.append(l_entry)
             l_count += 1
-        if g_debug > 5:
-            print "lighting.write_lights() - Wrote {0:} lights".format(l_count)
+        return l_lighting_xml
 
 
 class SceneData(lighting_scenes.ScenesData): pass
@@ -320,11 +327,13 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, FamilyData):
 
 class API(LightingUtility):
 
-    def __init__(self):
+    def __init__(self, p_house_obj):
         if g_debug > 0:
             print "lighting.__init__()"
         global g_logger
         g_logger = logging.getLogger('PyHouse.Lighting')
+        self.m_house_obj = p_house_obj
+        self.build_lighting_info(p_house_obj)
         g_logger.info("Initialized.")
 
     def Start(self, p_house_obj, p_house_xml):
@@ -334,7 +343,6 @@ class API(LightingUtility):
         if g_debug > 0:
             print "lighting.API.Start() - House:{0:}".format(self.m_house_obj.Name)
         g_logger.info("Starting.")
-        self.build_lighting_info(p_house_obj)
         self.read_buttons(self.m_house_obj, p_house_xml)
         self.read_controllers(self.m_house_obj, p_house_xml)
         self.read_lights(self.m_house_obj, p_house_xml)
@@ -347,20 +355,14 @@ class API(LightingUtility):
         if g_debug > 0:
             print "lighting.API.Stop() - House:{0:} Count:{1:}".format(self.m_house_obj.Name, len(self.m_house_obj.Lights))
         g_logger.info("Stopping all lighting families.")
-        l_lighting_xml = ET.Element('Lights')
-        self.write_lights(l_lighting_xml, self.m_house_obj.Lights)
-        p_xml.append(l_lighting_xml)
-        l_button_xml = ET.Element('Buttons')
-        self.write_buttons(l_button_xml, self.m_house_obj.Buttons)
-        p_xml.append(l_button_xml)
-        l_controller_xml = ET.Element('Controllers')
-        self.write_controllers(l_controller_xml, self.m_house_obj.Controllers)
-        p_xml.append(l_controller_xml)
+        l_lighting_xml = self.write_lights(self.m_house_obj.Lights)
+        l_buttons_xml = self.write_buttons(self.m_house_obj.Buttons)
+        l_controllers_xml = self.write_controllers(self.m_house_obj.Controllers)
         self.stop_lighting_families(p_xml)
         g_logger.info("Stopped.")
         if g_debug > 0:
-            print "lighting.API.Stop()"
-        return p_xml
+            print "lighting.API.Stop() - House:{0:}, Lights:{1:}, Controllers:{2:}, Buttons:{3:}".format(self.m_house_obj.Name, len(l_lighting_xml), len(l_controllers_xml), len(l_buttons_xml))
+        return l_lighting_xml, l_controllers_xml, l_buttons_xml
 
     def SpecialTest(self):
         if g_debug > 0:
