@@ -15,7 +15,6 @@ be either integrated or separate from PyHouse.
 TODO:
         Find proper ports for controllers
         set proper permissions on controller devices
-        Add routines to update dynamic dns
         Add DynDns to gui for house
         Add interfaces, move interface code out of controllers
         Enter key save in gui
@@ -63,7 +62,7 @@ class OptionParser(optparse.OptionParser):
 def daemonize():
     """Taken from twisted.scripts._twistd_unix.py
     """
-    if g_debug > 0:
+    if g_debug >= 1:
         print "PyHouse is making itself into a daemon !!"
     if os.fork():  # launch child and...
         os._exit(0)  # kill off parent
@@ -127,13 +126,13 @@ def handle_signals():
 
 
 def SigHupHandler(signum, _stackframe):
-    if g_debug > 0:
+    if g_debug >= 1:
         print 'Hup Signal handler called with signal', signum
     API().Stop()
     API().Start()
 
 def SigIntHandler(signum, _stackframe):
-    if g_debug > 0:
+    if g_debug >= 1:
         print 'Signal handler called with signal', signum
     API().Stop()
     exit
@@ -154,7 +153,7 @@ class API(object):
         Notice that the reactor starts here as the very last step and that
         call never returns.
         """
-        if g_debug > 0:
+        if g_debug >= 1:
             print "\nPyHouse.API.__init__() - very beginning..."
         handle_signals()
         log.LoggingMain()
@@ -174,21 +173,21 @@ class API(object):
     def Start(self):
         """New.  This will start all non-core services.
         This may be called multiple times along with stop to rerun various modules
-        it is automatically invoked when the reactor starts from Init.
+        it is automatically invoked when the reactor starts from API().
         """
-        if g_debug > 0:
+        if g_debug >= 1:
             print "\nPyHouse.Start()"
         g_logger.info("Starting.")
         self.m_houses_api.Start()
         web_server.Start()
         g_logger.info("Started.\n")
-        if g_debug > 0:
+        if g_debug >= 1:
             print "PyHouse all is started and running now.\n"
 
     def Stop(self):
         """Stop various modules to prepare for restarting them.
         """
-        if g_debug > 0:
+        if g_debug >= 1:
             print "\nPyHouse.Stop()"
         global g_logger
         g_logger = logging.getLogger('PyHouse')
@@ -196,14 +195,14 @@ class API(object):
         self.m_houses_api.Stop()
         web_server.Stop()
         try:
-            g_logger.info("Stopped.\n")
+            g_logger.info("Stopped.\n\n\n")
         except AttributeError, emsg:
             print "Got attribute error while trying to log 'Stopped' from PyHouse. ", emsg
 
     def Quit(self):
         """Prepare to exit all of pyhouse
         """
-        if g_debug > 0:
+        if g_debug >= 1:
             print "\nPyHouse.Quit()"
         self.Stop()
         log.LoggingMain().stop()
@@ -212,7 +211,7 @@ class API(object):
 
 if __name__ == "__main__":
 
-    if g_debug > 0:
+    if g_debug >= 1:
         print "MAIN"
     API()
 

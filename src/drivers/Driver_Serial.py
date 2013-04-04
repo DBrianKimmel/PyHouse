@@ -14,134 +14,102 @@ Since most serial devices are now via USB connections, we can try to use USB and
 
 # Import system type stuff
 import logging
-import serial
 from twisted.internet import reactor
-from subprocess import Popen, PIPE
-import re
+from twisted.internet.protocol import Protocol
+from twisted.internet.serialport import SerialPort, PARITY_NONE, EIGHTBITS, STOPBITS_ONE
 
 # Import PyMh files
 from lights import lighting
 from utils.tools import PrintBytes
 
-g_debug = 0
+g_debug = 1
+# 0 = off
+# 1 = major routine entry
+# 2 =
+# 3 =
 
 g_logger = None
-g_controller_obj = None
-
-callLater = reactor.callLater
 
 RECEIVE_TIMEOUT = 1.0  # this is for polling the device for data to be added to the rx buffer
 
 class SerialDeviceData(lighting.ControllerData):
 
-    SerialPort = {}
     m_serial = None
     m_message = bytearray()
 
     def __init__(self):
-        self.BaudRate = 0
         self.Port = None
+        self.BaudRate = 9600
+        self.ByteSize = EIGHTBITS
+        self.DsrDtr = False
+        self.InterCharTimeout = 0
+        self.Parity = PARITY_NONE
+        self.RtsCts = False
+        self.StopBits = STOPBITS_ONE
+        self.Timeout = None
+        self.WriteTimeout = None
+        self.XonXoff = False
 
 
-class SerialDriverUtility(SerialDeviceData):
+class SerialProtocol(Protocol):
 
-    def parse_dmesg(self):
-        """If this is a linux box, parse dmesg and try extracting out the connection.
-        """
-        p1 = Popen(["dmesg"], stdout = PIPE)
-        p2 = Popen(["grep", "usb"], stdin = p1.stdout, stdout = PIPE)
-        p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
-        output = p2.communicate()[0]
-        # print output
-        l_lines = re.split(r'\n+', output)
-        # print l_lines
-        l_list = [re.search(r'(\[\S+\]\s+usb.*)', l_entry) for l_entry in l_lines]
-        # print l_list
-        l_usb = []
-        for l_ix in l_list:
-            if l_ix == None:
-                continue
-            l_x = l_ix.group()
-            l_usb += l_x
-            if g_debug > 8:
-                print l_x
+    m_data = None
+
+    def __init__(self, p_data):
+        self.m_data = p_data
+
+    def connectionFailed(self):
+        print "Driver_Serial.connectionFailed() - ", self
+
+    def connectionMade(self):
+        if g_debug >= 3:
+            print 'Driver_Serial.connectionMade() - Connected to Serial Device', dir(self), vars(self)
+
+    def dataReceived(self, p_data):
+        if g_debug >= 3:
+            print "Driver_Serial.dataReceived() - {0:}".format(PrintBytes(p_data))
+        self.m_data.m_message += p_data
 
 
-class SerialAPI(SerialDriverUtility):
+class SerialAPI(object):
     """Contains all external commands.
     """
     m_bytes = 0
     m_serial = None
+    m_message = ''
 
-    def open_device(self, p_controler_obj):
-        """will open and initialize the serial port.
-        """
-        if g_debug > 0:
-            print "Driver_Serial.open_device() - Name:{0:}, Port:{1:}".format(p_controler_obj.Name, p_controler_obj.Port)
-        self.m_bytes = 0
-        p_controler_obj.BaudRate = 19200
-        p_controler_obj.ByteSize = 8
-        p_controler_obj.StopBits = 1.0
-        p_controler_obj.Parity = serial.PARITY_NONE
-        p_controler_obj.Timeout = 1
-        try:
-            self.m_serial = serial.Serial(p_controler_obj.Port)
-            if g_debug > 0:
-                print "Driver_Serial opened port 1"
-        except serial.SerialException, erm:
-            print "Error - Serial port {0:} has an error in opening port {1:}.".format(p_controler_obj.Name, p_controler_obj.Port), erm
-            g_logger.warn("Error - Serial port problem opening {0:} - {1:}".format(p_controler_obj.Name, p_controler_obj.Port))
-            return None
-        self.m_serial.baudrate = p_controler_obj.BaudRate
-        self.m_serial.bytesize = int(p_controler_obj.ByteSize)
-        if p_controler_obj.Parity == 'None':
-            self.m_serial.parity = serial.PARITY_NONE
-        if float(p_controler_obj.StopBits) == 1.0:
-            self.m_serial.stopbits = serial.STOPBITS_ONE
-        self.m_serial.timeout = float(p_controler_obj.Timeout)
-        g_logger.info("Initialized serial port {0:} - {1:} @ {2:} Baud".format(p_controler_obj.Name, p_controler_obj.Port, p_controler_obj.BaudRate))
-        return self.m_serial
+    def twisted_open_device(self, p_controler_obj):
+        if g_debug >= 3:
+            print "Driver_Serial.twisted_open_device() - Name:{0:}, Port:{1:}".format(p_controler_obj.Name, p_controler_obj.Port)
+        self.m_serial = SerialPort(SerialProtocol(self), p_controler_obj.Port, reactor, baudrate = p_controler_obj.BaudRate)
+        if g_debug >= 3:
+            print 'Driver_Serial.twisted_open_device() - Serial Device', dir(self.m_serial)
 
     def close_device(self):
         """Flush all pending output and close the serial port.
         """
         self.m_serial.close()
 
-    def read_device(self):
-        """Read the serial device and add to a buffer to be fetched asynchronously.
-        """
-        callLater(RECEIVE_TIMEOUT, self.read_device)
-        l_buffer = bytearray(256)
-        try:
-            l_bytes = self.m_serial.readinto(l_buffer)
-            self.m_bytes += l_bytes
-            self.m_message += l_buffer[:l_bytes]
-        except (IOError, AttributeError):
-            pass
-        except:
-            pass
-        if self.m_bytes > 0:
-            pass
-
     def fetch_read_data(self):
-        l_ret = (self.m_bytes, self.m_message)
-        if self.m_bytes > 0:
-            # self.m_logger.debug("fetch_read_data() - {0:} {1:}".format(self.m_bytes, PrintBytes(self.m_message)))
+        l_ret = self.m_message
+        if len(self.m_message) > 0:
             if g_debug > 5:
                 print "Driver_Serial.fetch_read_data() - {0:} {1:}".format(self.m_bytes, PrintBytes(self.m_message))
-        self.m_bytes = 0
-        self.m_message = ''
-        return (l_ret)
+        self.m_message = bytearray()
+        return l_ret
 
     def write_device(self, p_message):
         """Send the command to the PLM and wait a very short time to be sure we sent it.
         """
         if g_debug > 5:
             print "Driver_Serial.write_device() {0:}".format(PrintBytes(p_message))
+        self.m_serial.writeSomeData(p_message)
+        return
+
         try:
             self.m_serial.write(p_message)
         except:
-            pass
+            print "Driver_Serial_write_device() ERROR "
 
 
 class API(SerialAPI):
@@ -153,8 +121,6 @@ class API(SerialAPI):
             print "Driver_Serial.__init__()"
         global g_logger
         g_logger = logging.getLogger('PyHouse.SerialDriver')
-        g_logger.debug("Initializing.")
-        self.parse_dmesg()
         g_logger.debug("Initializied.")
 
     def Start(self, p_controler_obj):
@@ -163,11 +129,8 @@ class API(SerialAPI):
         """
         if g_debug > 0:
             print "Driver_Serial.Start() - Name:{0:}".format(p_controler_obj.Name)
-        global g_controller_obj
-        g_controller_obj = p_controler_obj
         g_logger.debug("Starting.")
-        self.open_device(p_controler_obj)
-        self.read_device()
+        self.twisted_open_device(p_controler_obj)
         g_logger.debug("Started.")
 
     def Stop(self):

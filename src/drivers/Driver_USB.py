@@ -291,11 +291,11 @@ class UsbDriverAPI(UsbDeviceData):
         p_usb.Parent.read_device(p_usb)
 
     def fetch_read_data(self):
-        l_ret = (len(g_usb.message), g_usb.message)
+        l_ret = g_usb.message
         g_usb.message = bytearray()
         if g_debug > 5:
             print "Driver_USB.fetch_read_data() - Msg:{0:}".format(PrintBytes(l_ret))
-        return (l_ret)
+        return l_ret
 
     def write_device(self, p_message):
         """Send message to the USB device.

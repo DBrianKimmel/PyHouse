@@ -232,13 +232,13 @@ class HouseSelect(GuiUtils):
         Button(p_gui_obj.HouseSelectFrame, text = "Back", fg = "red", bg = BG_BOTTOM,
                command = lambda x = p_gui_obj: self.show_main_menu(x)).grid(row = l_ix, column = 1)
 
-    def show_main_menu(self, p_main_menu_frame):
+    def show_main_menu(self, p_gui_obj):
         """Exit the schedule screen.
         """
         if g_debug > 0:
-            print "gui_tools.show_main_menu() - main_menu_frame:{0:}".format(p_main_menu_frame)
-        self.frame_delete(self.m_house_select_frame)
-        p_main_menu_frame.grid()
+            print "gui_tools.show_main_menu() - main_menu_frame:{0:}".format(p_gui_obj)
+        self.frame_delete(p_gui_obj.HouseSelectFrame)
+        p_gui_obj.MainMenuFrame.grid()
 
 
 class GuiTools(HouseSelect):

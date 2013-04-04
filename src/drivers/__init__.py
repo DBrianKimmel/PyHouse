@@ -36,6 +36,8 @@ Serial - going away but it still exists.  Serial commands thru a USB dongle work
 
 USB - the new standard.
 
+HID - Human Interface Device class of USB devices.
+
 Ethernet - not too much of this is used yet.
 
 """

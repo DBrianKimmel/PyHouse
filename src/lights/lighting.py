@@ -76,7 +76,7 @@ class CommonInfo(object):
         @return: a dict of the entry to be attached to a house object.
         TODO: move some of lights to lighting or lighting_xxx and family stuff to Device_<family> called from lighting.
         """
-        self.read_common(p_obj, p_entry_xml)
+        self.xml_read_common_info(p_obj, p_entry_xml)
         p_obj.Comment = self.get_text(p_entry_xml, 'Comment')
         p_obj.Coords = self.get_text(p_entry_xml, 'Coords')
         p_obj.Dimmable = self.get_bool(p_entry_xml.findtext('Dimmable'))

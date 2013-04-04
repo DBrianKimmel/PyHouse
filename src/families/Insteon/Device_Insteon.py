@@ -193,7 +193,6 @@ class API(LightingAPI):
             print "Device_Insteon.Start()"
         g_logger.info('Starting.')
         self.m_house_obj = p_house_obj
-        # TODO: for each active Insteon controller, start a PLM for that controller only.
         for l_controller_obj in p_house_obj.Controllers.itervalues():
             # pass
             if l_controller_obj.Family != 'Insteon':

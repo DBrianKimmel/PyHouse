@@ -22,7 +22,7 @@ import Device_Insteon
 import Insteon_Link
 from utils.tools import PrintBytes
 
-g_debug = 0
+g_debug = 1
 # 0 = off
 # 1 = major routine entry
 # 2 = sent commands high level
@@ -196,7 +196,7 @@ class InsteonPlmUtility(object):
         return l_ret
 
 
-class PlmDriverInterface(object):
+class PlmDriverProtocol(object):
     """
     Check the command queue and send the 1st command if available.
     check the plm for received data
@@ -205,12 +205,16 @@ class PlmDriverInterface(object):
     """
     m_queue = None
 
-    def driver_loop_start(self, _p_house_obj):
+    def __init__(self, p_house_obj):
         if g_debug >= 1:
-            print "Insteon_PLM.driver_loop_start()"
+            print "Insteon_PLM.PlmDriverProtocol.__init__()"
+        self.driver_loop_start(p_house_obj)
+
+    def driver_loop_start(self, p_house_obj):
+        self.m_house_obj = p_house_obj
         self.m_queue = Queue.Queue(300)
-        callLater(SEND_TIMEOUT, self.dequeue_and_send)
-        callLater(RECEIVE_TIMEOUT, self.receive_loop)
+        self.dequeue_and_send()
+        self.receive_loop()
 
     def driver_loop_stop(self):
         if g_debug >= 1:
@@ -218,6 +222,8 @@ class PlmDriverInterface(object):
         pass
 
     def queue_plm_command(self, p_command):
+        if g_debug >= 6:
+            print "Insteon_PLM.queue_plm_command() - ", vars()
         self.m_queue.put(p_command)
         if g_debug >= 5:
             print "Insteon_PLM.queue_plm_command() - Q-Size:{0:}, Command:{1:}".format(self.m_queue.qsize(), PrintBytes(p_command))
@@ -251,19 +257,18 @@ class PlmDriverInterface(object):
         """
         callLater(RECEIVE_TIMEOUT, self.receive_loop)
         for l_controller_obj in self.m_house_obj.Controllers.itervalues():
-            l_bytes = 0
             if g_debug >= 7:
                 print "Insteon_PLM.receive_loop()", l_controller_obj.Name
             if l_controller_obj.Driver != None:
-                (l_bytes, l_msg) = l_controller_obj.Driver.fetch_read_data()
-                if l_bytes == 0:
+                l_msg = l_controller_obj.Driver.fetch_read_data()
+                if len(l_msg) == 0:
                     continue
                 l_controller_obj.Message = l_msg
                 self._decode_message(l_controller_obj)
 
 
 
-class CreateCommands(PlmDriverInterface, InsteonPlmUtility):
+class CreateCommands(PlmDriverProtocol, InsteonPlmUtility):
     """Send various commands to the PLM.
     """
 
@@ -562,11 +567,9 @@ class DecodeResponses(InsteonAllLinks):
             if l_obj.Family != 'Insteon':
                 continue
             if l_obj.Address == p_addr:
-                if g_debug >= 7:
-                    print "Insteon_PLM._get_obj_using_addr(1) - Address:{0:}, found:{1:}".format(p_addr, l_obj.Name)
                 return l_obj
         if g_debug >= 7:
-            print "Insteon_PLM._get_obj_using_addr(2) - not found ", p_addr, p_class
+            print "Insteon_PLM._get_obj_using_addr - not found ", p_addr, p_class
         return None
 
     def _get_obj_using_addr(self, p_addr):
@@ -574,8 +577,6 @@ class DecodeResponses(InsteonAllLinks):
         @param p_addr: String 'aa.bb.cc' is the address
         @return: the entire Lighting Device object
         """
-        if g_debug >= 7:
-            print "Insteon_PLM._get_obj_using_addr(4) - Address:{0:}".format(p_addr)
         l_ret = self._find_addr(self.m_house_obj.Lights, p_addr)
         if l_ret == None:
             l_ret = self._find_addr(self.m_house_obj.Controllers, p_addr)
@@ -1177,6 +1178,7 @@ class API(LightHandlerAPI):
         self.m_house_obj = p_house_obj
         self.m_controller_obj = p_controller_obj
         self.start_controller(p_controller_obj)
+        # self.m_protocol = PlmDriverProtocol(p_house_obj)
         self.driver_loop_start(p_house_obj)
         self.set_plm_mode(p_controller_obj)
         self.get_all_lights_status()
@@ -1188,7 +1190,7 @@ class API(LightHandlerAPI):
         if g_debug >= 1:
             print "Insteon_PLM.Stop()"
         g_logger.info('Stopping.')
-        self.driver_loop_stop()
+        self.m_protocol.driver_loop_stop()
         self.stop_controller(p_controller_obj)
         g_logger.info('Stopped.')
 

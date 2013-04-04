@@ -89,7 +89,7 @@ class ScheduleXML(xml_tools.ConfigTools):
     def extract_schedule_xml(self, p_entry_xml, p_schedule_obj):
         """Extract schedule information from a schedule xml element.
         """
-        self.read_common(p_schedule_obj, p_entry_xml)
+        self.xml_read_common_info(p_schedule_obj, p_entry_xml)
         p_schedule_obj.HouseName = self.m_house_obj.Name
         p_schedule_obj.Level = self.get_int(p_entry_xml, 'Level')
         p_schedule_obj.LightName = self.get_text(p_entry_xml, 'LightName')
@@ -382,7 +382,7 @@ class API(ScheduleUtility, ScheduleXML):
         l_entertainment_xml = self.m_entertainment.Stop()
         if g_debug >= 1:
             print "schedule.API.Stop() - House:{0:}, {1:}".format(self.m_house_obj.Name, len(p_xml))
-        g_logger.info("Stopped.\n\n\n")
+        g_logger.info("Stopped.\n")
         return l_schedules_xml, l_lighting_xml, l_buttons_xml, l_controllers_xml, l_entertainment_xml
 
     def update_schedule(self, p_schedule):

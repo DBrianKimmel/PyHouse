@@ -216,7 +216,7 @@ class HouseReadWriteConfig(xml_tools.ConfigTools, HouseData):
         l_list = l_rooms.iterfind('Room')
         for l_room_xml in l_list:
             l_room_obj = RoomData()
-            self.read_common(l_room_obj, l_room_xml)
+            self.xml_read_common_info(l_room_obj, l_room_xml)
             l_room_obj.Key = l_count
             l_room_obj.HouseName = p_house_obj.Name
             l_room_obj.Comment = self.get_text(l_room_xml, 'Comment')
@@ -235,7 +235,7 @@ class HouseReadWriteConfig(xml_tools.ConfigTools, HouseData):
 
         The main data is House_Data.
         """
-        self.read_common(p_house_obj, p_house_xml)
+        self.xml_read_common_info(p_house_obj, p_house_xml)
         self.get_int(p_house_xml, 'MasterHouseNumber')
         self.read_location(p_house_obj, p_house_xml)
         self.read_rooms(p_house_obj, p_house_xml)
@@ -310,7 +310,7 @@ class API(LoadSaveAPI):
         self.m_logger = logging.getLogger('PyHouse.House')
         self.m_house_obj = HouseData()
         self.m_house_obj.ScheduleAPI = schedule.API(self.m_house_obj)
-        self.m_house_obj.InternetAPI = internet.API(self.m_house_obj)
+        # self.m_house_obj.InternetAPI = internet.API(self.m_house_obj)
 
     def Start(self, _p_houses_obj, p_house_xml):
         """Start processing for all things house.
@@ -320,8 +320,9 @@ class API(LoadSaveAPI):
         if g_debug >= 1:
             print "house.API.Start() - House:{0:}, Active:{1:}".format(self.m_house_obj.Name, self.m_house_obj.Active)
         self.m_logger.info("Starting House {0:}.".format(self.m_house_obj.Name))
+        self.m_house_obj.InternetAPI = internet.API(self.m_house_obj, p_house_xml)
         self.m_house_obj.ScheduleAPI.Start(self.m_house_obj, p_house_xml)
-        self.m_house_obj.InternetAPI.Start(self.m_house_obj, p_house_xml)
+        self.m_house_obj.InternetAPI.Start()
         if g_debug >= 1:
             print "house.API.Start() has found -  Rooms:{0:}, Schedule:{1:}, Lights:{2:}, Controllers:{3:}".format(
                     len(self.m_house_obj.Rooms), len(self.m_house_obj.Schedule), len(self.m_house_obj.Lights), len(self.m_house_obj.Controllers))
@@ -330,7 +331,7 @@ class API(LoadSaveAPI):
 
 
     def Stop(self, p_xml):
-        """Stop active houses - not active have never been started.
+        """Stop all houses.
         Return a filled in XML for the house.
         """
         if g_debug >= 1:

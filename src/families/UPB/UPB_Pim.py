@@ -159,14 +159,14 @@ class DecodeResponses(object):
         if g_debug > 5:
             print
 
-    def decode_response(self, p_message, p_bytes):
+    def decode_response(self, p_message):
         """A message starts with a 'P' (0x50) and ends with a '\r' (0x0D).
         """
-        if p_bytes < 1:
-            return
         # All pIM response messages begin with 'P' which is 0x50
         self.l_message = p_message
-        self.l_bytes = p_bytes
+        self.l_bytes = len(p_message)
+        if self.l_bytes < 1:
+            return
         while self.l_bytes > 0:
             if g_debug > 5:
                 print "UPB_Pim.decode_response() - {0:} {1}".format(self.l_bytes, PrintBytes(self.l_message))
@@ -348,7 +348,6 @@ class PimDriverInterface(DecodeResponses):
 
     def receive_loop(self):
         callLater(RECEIVE_TIMEOUT, self.receive_loop)
-        l_bytes = 0
         for l_controller_obj in g_house_obj.Controllers.itervalues():
             if g_debug > 7:
                 print "UPB_Pim.receive_loop() for Controller:{0:}".format(l_controller_obj.Name)
@@ -357,15 +356,10 @@ class PimDriverInterface(DecodeResponses):
             if l_controller_obj.Active != True:
                 continue
             if l_controller_obj.Driver != None:
-                (l_bytes, l_msg) = l_controller_obj.Driver.fetch_read_data()
+                l_msg = l_controller_obj.Driver.fetch_read_data()
                 if g_debug > 6:
                     print "UPB_PIM.receive_loop() from {0:}, Message: {1:}".format(l_controller_obj.Name, PrintBytes(l_msg))
-        if l_bytes == 0:
-            return False
-        if g_debug > 5:
-            print "UPB_Pim.receive_loop() - {0:}".format(PrintBytes(l_msg)), l_bytes
-        l_ret = self.decode_response(l_msg, l_bytes)
-        return l_ret
+                self.decode_response(l_msg)
 
 
 class CreateCommands(UpbPimUtility, PimDriverInterface):

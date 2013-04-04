@@ -93,14 +93,14 @@ class ConfigTools(PutGetXML):
         l_elem.set('Active', self.put_bool(p_obj.Active))
         return l_elem
 
-    def read_common(self, p_obj, p_entry):
+    def xml_read_common_info(self, p_obj, p_entry):
         """Get the common (Name, Key, Active) information from an XML sub-tree.
 
         @param p_obj: is the object we are updating the common information for.
         @param p_entry: is the XML subtree that we are extracting the information from.
         """
         if g_debug > 1:
-            print "xml_tools.read_common()", p_entry.items()
+            print "xml_tools.xml_read_common_info()", p_entry.items()
         p_obj.Name = p_entry.get('Name')
         try:
             p_obj.Key = int(p_entry.get('Key'))
