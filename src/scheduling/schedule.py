@@ -346,7 +346,7 @@ class API(ScheduleUtility, ScheduleXML):
         g_logger = logging.getLogger('PyHouse.Schedule')
         g_logger.info("Initializing house")
         self.m_house_obj = p_house_obj
-        self.m_sunrisesunset = sunrisesunset.API()
+        self.m_sunrisesunset = sunrisesunset.API(p_house_obj)
         self.m_lighting = lighting.API(p_house_obj)
         self.m_entertainment = entertainment.API()
         p_house_obj.LightingAPI = self.m_lighting

@@ -404,20 +404,21 @@ class SSAPI(SunCalcs):
 
 class API(SSAPI):
 
-    def __init__(self):
-        if g_debug > 0:
+    def __init__(self, p_house_obj):
+        self.m_house_obj = p_house_obj
+        if g_debug >= 1:
             print "sunrisesunset.__init__()"
         global g_logger
         g_logger = logging.getLogger('PyHouse.SunriseSunset')
         self.earth_data = EarthParameters()
         self.solar_data = SolarParameters()
-        if g_debug > 1:
+        if g_debug >= 2:
             print "sunrisesunset.API.__init__() "
             print "    ", self.earth_data
         g_logger.info("Initialized.")
 
     def Start(self, p_house_obj, p_date = datetime.date.today()):
-        if g_debug > 0:
+        if g_debug >= 1:
             print "sunrisesunset.Start() - Date is ", p_date, p_house_obj
             print "    ", self.earth_data
         SSAPI().load_location(p_house_obj, self.earth_data, self.solar_data)
@@ -425,7 +426,7 @@ class API(SSAPI):
         SSAPI().calc_sunrise_sunset(self.earth_data, self.solar_data)
 
     def Stop(self):
-        if g_debug > 0:
+        if g_debug >= 1:
             print "sunrisesunset.Stop()"
         pass
 

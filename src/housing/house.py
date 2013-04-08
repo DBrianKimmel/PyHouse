@@ -310,7 +310,6 @@ class API(LoadSaveAPI):
         self.m_logger = logging.getLogger('PyHouse.House')
         self.m_house_obj = HouseData()
         self.m_house_obj.ScheduleAPI = schedule.API(self.m_house_obj)
-        # self.m_house_obj.InternetAPI = internet.API(self.m_house_obj)
 
     def Start(self, _p_houses_obj, p_house_xml):
         """Start processing for all things house.

@@ -13,7 +13,9 @@ import os
 import random
 import xml.etree.ElementTree as ET
 import twisted.python.components as tpc
+from twisted.internet import protocol
 from twisted.internet import reactor
+from twisted.protocols import basic
 from nevow import appserver
 from nevow import flat
 from nevow import inevow
@@ -768,30 +770,38 @@ class RootPage(ManualFormMixin, EntertainmentPage, HousePage, LightingPage, Loca
         return RootPage('Root')
 
 
-def Init():
-    if g_debug > 0:
-        print "web_server.__init__()"
-    return
-    global g_logger
-    Web_Data[0] = WebData()
-    Web_Data[0].WebPort = 8080
-    g_logger = logging.getLogger('PyHouse.WebServer')
-    g_logger.info("Initialized - Start the web server on port {0:}".format(g_port))
+class MyFactory(protocol.Factory):
+    protocol = MyProtocol
 
-def Start():
-    if g_debug > 0:
-        print "web_server.Start()"
-    return
-    g_site_dir = os.path.split(os.path.abspath(__file__))[0]
-    print "Webserver path = ", g_site_dir
-    l_site = appserver.NevowSite(RootPage('/'))
-    WebUtilities().build_child_tree()
-    reactor.listenTCP(g_port, l_site)
-    g_logger.info("Started.")
 
-def Stop():
-    if g_debug > 0:
-        print "web_server.Stop()"
+class MyProtocol(basic.LineReceiver):
+
+
+class API(object):
+
+    def __init__(self):
+        if g_debug > 0:
+            print "web_server.__init__()"
+        global g_logger
+        g_logger = logging.getLogger('PyHouse.WebServer')
+        Web_Data[0] = WebData()
+        Web_Data[0].WebPort = 8080
+        g_logger.info("Initialized - Start the web server on port {0:}".format(g_port))
+
+    def Start(self):
+        if g_debug > 0:
+            print "web_server.Start()"
+        return
+        g_site_dir = os.path.split(os.path.abspath(__file__))[0]
+        print "Webserver path = ", g_site_dir
+        l_site = appserver.NevowSite(RootPage('/'))
+        WebUtilities().build_child_tree()
+        reactor.listenTCP(g_port, l_site)
+        g_logger.info("Started.")
+
+    def Stop(self):
+        if g_debug > 0:
+            print "web_server.Stop()"
 
 
 from scheduling import schedule
@@ -801,7 +811,5 @@ Light_Data = lighting.Light_Data
 # Room_Data = house.Room_Data
 # Schedule_Data = schedule.Schedule_Data
 Web_Data = {}
-
-
 
 # ## END
