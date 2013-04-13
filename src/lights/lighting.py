@@ -27,6 +27,7 @@ import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from utils import xml_tools
+from drivers import interface
 import lighting_buttons
 import lighting_controllers
 import lighting_lights
@@ -69,39 +70,41 @@ class FamilyData(object):
 
 class CommonInfo(object):
 
-    def read_light_common(self, p_entry_xml, p_obj):
+    def read_light_common(self, p_entry_xml, p_device_obj):
         """
         @param p_entry_xml: is the e-tree XML house object
         @param p_house: is the text name of the House.
         @return: a dict of the entry to be attached to a house object.
         TODO: move some of lights to lighting or lighting_xxx and family stuff to Device_<family> called from lighting.
         """
-        self.xml_read_common_info(p_obj, p_entry_xml)
-        p_obj.Comment = self.get_text(p_entry_xml, 'Comment')
-        p_obj.Coords = self.get_text(p_entry_xml, 'Coords')
-        p_obj.Dimmable = self.get_bool(p_entry_xml.findtext('Dimmable'))
-        p_obj.Family = l_fam = self.get_text(p_entry_xml, 'Family')
-        p_obj.RoomName = p_entry_xml.findtext('Room')
-        p_obj.HouseName = p_entry_xml.findtext('House')
-        p_obj.Type = p_entry_xml.findtext('Type')
+        if g_debug >= 5:
+            print "lighting.read_lights_common() - ", p_device_obj
+        self.xml_read_common_info(p_device_obj, p_entry_xml)
+        p_device_obj.Comment = self.get_text_element(p_entry_xml, 'Comment')
+        p_device_obj.Coords = self.get_text_element(p_entry_xml, 'Coords')
+        p_device_obj.Dimmable = self.get_bool(p_entry_xml.findtext('Dimmable'))
+        p_device_obj.Family = l_fam = self.get_text_element(p_entry_xml, 'Family')
+        p_device_obj.RoomName = p_entry_xml.findtext('Room')
+        p_device_obj.HouseName = p_entry_xml.findtext('House')
+        p_device_obj.Type = p_entry_xml.findtext('Type')
         for l_family_obj in self.m_family_data.itervalues():
             if l_family_obj.Name == l_fam:
-                l_family_obj.Api.extract_device_xml(p_entry_xml, p_obj)
-        return p_obj
+                l_family_obj.Api.extract_device_xml(p_entry_xml, p_device_obj)
+        return p_device_obj
 
-    def write_light_common(self, p_entry, p_obj):
+    def write_light_common(self, p_entry, p_device_obj):
         if g_debug > 4:
             print "lighting.write_light_common()"
-        ET.SubElement(p_entry, 'Comment').text = str(p_obj.Comment)
-        ET.SubElement(p_entry, 'Coords').text = str(p_obj.Coords)
-        ET.SubElement(p_entry, 'Dimmable').text = self.put_bool(p_obj.Dimmable)
-        ET.SubElement(p_entry, 'Family').text = p_obj.Family
-        ET.SubElement(p_entry, 'House').text = p_obj.HouseName
-        ET.SubElement(p_entry, 'Room').text = p_obj.RoomName
-        ET.SubElement(p_entry, 'Type').text = p_obj.Type
+        ET.SubElement(p_entry, 'Comment').text = str(p_device_obj.Comment)
+        ET.SubElement(p_entry, 'Coords').text = str(p_device_obj.Coords)
+        ET.SubElement(p_entry, 'Dimmable').text = self.put_bool(p_device_obj.Dimmable)
+        ET.SubElement(p_entry, 'Family').text = p_device_obj.Family
+        ET.SubElement(p_entry, 'House').text = p_device_obj.HouseName
+        ET.SubElement(p_entry, 'Room').text = p_device_obj.RoomName
+        ET.SubElement(p_entry, 'Type').text = p_device_obj.Type
         for l_family_obj in self.m_family_data.itervalues():
-            if l_family_obj.Name == p_obj.Family:
-                l_family_obj.Api.insert_device_xml(p_entry, p_obj)
+            if l_family_obj.Name == p_device_obj.Family:
+                l_family_obj.Api.insert_device_xml(p_entry, p_device_obj)
 
 
 class ButtonData(lighting_buttons.ButtonsData): pass
@@ -112,7 +115,7 @@ class ButtonAPI(lighting_buttons.ButtonsAPI, CommonInfo):
         """
         """
         if g_debug > 4:
-            print "lighting.read_buttons()"
+            print "lighting.read_buttons() - House:{0:}".format(p_house_obj.Name)
         l_count = 0
         l_dict = {}
         l_sect = p_house_xml.find('Buttons')
@@ -149,36 +152,24 @@ class ControllerAPI(lighting_controllers.ControllersAPI, CommonInfo):
 
     def read_controllers(self, p_house_obj, p_house_xml):
         if g_debug > 4:
-            print "lighting.read_controllers()"
+            print "lighting.read_controllers()", p_house_obj
         l_count = 0
         l_dict = {}
         l_sect = p_house_xml.find('Controllers')
         l_list = l_sect.iterfind('Controller')
-        for l_entry in l_list:
-            l_obj = ControllerData()
-            l_obj = self.read_light_common(l_entry, l_obj)
-            l_obj.Interface = l_if = self.get_text(l_entry, 'Interface')
-            l_obj.Port = self.get_text(l_entry, 'Port')
+        for l_controller_xml in l_list:
+            l_controller_obj = ControllerData()
+            l_controller_obj = self.read_light_common(l_controller_xml, l_controller_obj)
+            l_controller_obj.Interface = l_if = self.get_text_element(l_controller_xml, 'Interface')
+            l_controller_obj.Port = self.get_text_element(l_controller_xml, 'Port')
             if l_if == 'Serial':
-                l_obj.BaudRate = self.get_int(l_entry, 'BaudRate')
-                l_obj.ByteSize = self.get_int(l_entry, 'ByteSize')
-                l_obj.DtsDtr = self.get_text(l_entry, 'DtsDtr')
-                l_obj.InterCharTimeout = self.get_float(l_entry, 'InterCharTimeout')
-                l_obj.Parity = self.get_text(l_entry, 'Parity')
-                l_obj.RtsCts = self.get_text(l_entry, 'RtsCts')
-                l_obj.StopBits = self.get_float(l_entry, 'StopBits')
-                l_obj.Timeout = self.get_float(l_entry, 'Timeout')
-                l_obj.WriteTimeout = self.get_float(l_entry, 'WriteTimeout')
-                l_obj.XonXoff = self.get_text(l_entry, 'XonXoff')
-                l_obj.Product = self.get_int(l_entry, 'Product')
-                l_obj.Vendor = self.get_int(l_entry, 'Vendor')
+                interface.ReadWriteConfig().extract_serial_xml(l_controller_obj, l_controller_xml)
             elif l_if == 'USB':
-                l_obj.Product = self.get_int(l_entry, 'Product')
-                l_obj.Vendor = self.get_int(l_entry, 'Vendor')
+                interface.ReadWriteConfig().extract_usb_xml(l_controller_obj, l_controller_xml)
             elif l_if == 'Ethernet':
                 pass
-            # l_obj.Key = l_count
-            l_dict[l_count] = l_obj
+            # l_controller_obj.Key = l_count
+            l_dict[l_count] = l_controller_obj
             l_count += 1
         p_house_obj.Controllers = l_dict
         if g_debug > 5:

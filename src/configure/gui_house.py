@@ -8,7 +8,10 @@ from Tkinter import Frame, Toplevel, Button, IntVar, StringVar, DoubleVar, W, DI
 
 from configure.gui_tools import GuiTools, BG_BOTTOM, BG_TOP, BG_INACTIVE, FG_INACTIVE, FG_ACTIVE
 from housing import house
+from housing import location
+from housing import rooms
 from housing import houses
+
 
 g_debug = 6
 
@@ -317,7 +320,7 @@ class HouseDialog(HouseWindow):
         p_house_obj.Active = self.Active.get()
         p_house_obj.Key = self.Key.get()
         p_house_obj.Name = self.Name.get()
-        p_house_obj.Location = house.LocationData()
+        p_house_obj.Location = location.LocationData()
         p_house_obj.Location.Street = self.Street.get()
         p_house_obj.Location.City = self.City.get()
         p_house_obj.Location.State = self.State.get()
@@ -380,7 +383,7 @@ class RoomDialog(HouseDialog):
         try:
             l_room_obj = p_house_obj.Rooms[p_room_key]
         except KeyError:
-            l_room_obj = house.RoomData()
+            l_room_obj = rooms.RoomData()
             l_room_obj.Key = p_room_key
             l_room_obj.HouseName = p_house_obj.Name
         return l_room_obj
@@ -405,7 +408,7 @@ class RoomDialog(HouseDialog):
         self.Size.set(l_room_obj.Size)
 
     def save_room_vars(self):
-        l_obj = house.RoomData()
+        l_obj = rooms.RoomData()
         l_obj.Active = self.Active.get()
         l_obj.Comment = self.Comment.get()
         l_obj.Corner = self.Corner.get()

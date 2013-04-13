@@ -20,7 +20,7 @@ class Test(unittest.TestCase):
 
     def test_singleton(self):
         self.api2 = houses.API()
-        self.assertEqual(self.api, self.api2)
+        self.assertEqual(self.api, self.api2, 'Not a singleton.')
 
     def test_start(self):
         self.api.Start()

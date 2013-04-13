@@ -35,7 +35,7 @@ class RoomData(object):
         return l_ret
 
 
-class HouseReadWriteConfig(xml_tools.ConfigTools):
+class ReadWriteConfig(xml_tools.ConfigTools):
 
     def read_rooms(self, p_house_obj, p_house_xml):
         l_count = 0
@@ -46,7 +46,7 @@ class HouseReadWriteConfig(xml_tools.ConfigTools):
             self.xml_read_common_info(l_room_obj, l_room_xml)
             l_room_obj.Key = l_count
             l_room_obj.HouseName = p_house_obj.Name
-            l_room_obj.Comment = self.get_text(l_room_xml, 'Comment')
+            l_room_obj.Comment = self.get_text_element(l_room_xml, 'Comment')
             l_room_obj.Corner = l_room_xml.findtext('Corner')
             l_room_obj.HouseName = l_room_xml.findtext('HouseName')
             l_room_obj.Size = l_room_xml.findtext('Size')

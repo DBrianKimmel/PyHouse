@@ -770,11 +770,12 @@ class RootPage(ManualFormMixin, EntertainmentPage, HousePage, LightingPage, Loca
         return RootPage('Root')
 
 
-class MyFactory(protocol.Factory):
-    protocol = MyProtocol
+#class MyFactory(protocol.Factory):
+#    protocol = MyProtocol
 
 
-class MyProtocol(basic.LineReceiver):
+#class MyProtocol(basic.LineReceiver):
+#    pass
 
 
 class API(object):

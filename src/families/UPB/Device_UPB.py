@@ -89,21 +89,7 @@ class ControllerData(lighting.ControllerData, CoreData):
         l_str = super(ControllerData, self).__str__()
         return l_str
 
-class ControllerAPI(lighting.ControllerAPI, CoreAPI):
-
-    def load_all_controllers(self, p_dict):
-        if g_debug > 1:
-            print "Device_UPB.load_all_controllers()"
-        for l_dict in p_dict.itervalues():
-            l_ctlr = ControllerData()
-            l_ctlr = self.load_upb_controller(l_dict, l_ctlr)
-            g_house_obj.Controllers[l_ctlr.Key] = l_ctlr
-
-    def load_upb_controller(self, p_dict, p_controller):
-        l_ctlr = p_controller
-        l_ctlr = super(ControllerAPI, self).load_controller(p_dict, l_ctlr)
-        l_ctlr = self.load_device(p_dict, l_ctlr)
-        return l_ctlr
+class ControllerAPI(lighting.ControllerAPI, CoreAPI): pass
 
 
 class LightData(lighting.LightData, CoreData):

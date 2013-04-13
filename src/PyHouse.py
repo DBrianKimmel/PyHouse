@@ -162,7 +162,7 @@ class API(object):
         g_logger.info("Initializing.\n")
 
         self.m_houses_api = houses.API()
-        web_server.Init()
+        self.webapi = web_server.API()
         self.m_gui = gui.API(self, self.m_houses_api)
         callWhenRunning(self.Start)
         g_logger.info("Initialized.\n")
@@ -179,7 +179,7 @@ class API(object):
             print "\nPyHouse.Start()"
         g_logger.info("Starting.")
         self.m_houses_api.Start()
-        web_server.Start()
+        self.webapi.Start()
         g_logger.info("Started.\n")
         if g_debug >= 1:
             print "PyHouse all is started and running now.\n"
@@ -193,7 +193,7 @@ class API(object):
         g_logger = logging.getLogger('PyHouse')
         g_logger.info("Stopping has begun.\n")
         self.m_houses_api.Stop()
-        web_server.Stop()
+        self.webapi.Stop()
         try:
             g_logger.info("Stopped.\n\n\n")
         except AttributeError, emsg:

@@ -69,7 +69,6 @@ class CoreData(LightingTools):
         self.Active = False
         self.Command = 0
         self.Command1 = 0
-        self.Command2 = 0
         self.Comment = ''
         self.Coords = ''
         self.Dimmable = False

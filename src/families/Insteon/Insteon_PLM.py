@@ -309,7 +309,6 @@ class CreateCommands(PlmDriverProtocol, InsteonPlmUtility):
         l_command[4] = l_addr[2]
         l_command[5] = FLAG_MAX_HOPS + FLAG_HOPS_LEFT  # 0x0F
         l_command[6] = p_light_obj.Command1 = p_cmd1
-        l_command[7] = p_light_obj.Command2 = p_cmd2
         if g_debug >= 4:
             print "Insteon_PLM.queue_62_command() ", p_light_obj.Name, p_cmd1, p_cmd2
             g_logger.debug("Queue62 command to device: {2:}, Command: {0:#X},{1:#X}, Address: ({3:x}.{4:x}.{5:x})".format(p_cmd1, p_cmd2, p_light_obj.Name, l_command[2], l_command[3], l_command[4]))

@@ -19,12 +19,9 @@ m_logger = None
 class LocationData(object):
 
     def __init__(self):
-        self.Active = True
         self.City = ''
-        self.Key = 0
         self.Latitude = 0.0
         self.Longitude = 0.0
-        self.Name = ''
         self.Phone = ''
         self.SavingTime = 0.0
         self.State = ''
@@ -38,21 +35,8 @@ class LocationData(object):
         l_ret += 'Lat:{0:}, Lon:{1:}'.format(self.Latitude, self.Longitude)
         return l_ret
 
-    def get_active(self):
-        return self.__Active
-    def get_name(self):
-        return self.__Name
 
-    def set_active(self, value):
-        self.__Active = value
-    def set_name(self, value):
-        self.__Name = value
-
-    Active = property(get_active, set_active, None, None)
-    Name = property(get_name, set_name, None, None)
-
-
-class HouseReadWriteConfig(xml_tools.ConfigTools):
+class ReadWriteConfig(xml_tools.ConfigTools):
     """Use the internal data to read / write an updated config file.
 
     This is called from the web interface or the GUI when the data has been changed.
@@ -61,17 +45,17 @@ class HouseReadWriteConfig(xml_tools.ConfigTools):
     def read_location(self, p_house_obj, p_house_xml):
         l_location_obj = LocationData()
         if g_debug > 4:
-            print "house.read_location() - Active=", l_location_obj.Active, l_location_obj.Name
+            print "house.read_location() - Active=", p_house_obj.Active, p_house_obj.Name
         l_location_xml = p_house_xml.find('Location')
-        l_location_obj.Street = self.get_text(l_location_xml, 'Street')
-        l_location_obj.City = self.get_text(l_location_xml, 'City')
-        l_location_obj.State = self.get_text(l_location_xml, 'State')
-        l_location_obj.ZipCode = self.get_text(l_location_xml, 'ZipCode')
-        l_location_obj.Phone = self.get_text(l_location_xml, 'Phone')
-        l_location_obj.Latitude = self.get_float(l_location_xml, 'Latitude')
-        l_location_obj.Longitude = self.get_float(l_location_xml, 'Longitude')
-        l_location_obj.TimeZone = self.get_float(l_location_xml, 'TimeZone')
-        l_location_obj.SavingTime = self.get_float(l_location_xml, 'SavingTime')
+        l_location_obj.Street = self.get_text_element(l_location_xml, 'Street')
+        l_location_obj.City = self.get_text_element(l_location_xml, 'City')
+        l_location_obj.State = self.get_text_element(l_location_xml, 'State')
+        l_location_obj.ZipCode = self.get_text_element(l_location_xml, 'ZipCode')
+        l_location_obj.Phone = self.get_text_element(l_location_xml, 'Phone')
+        l_location_obj.Latitude = self.get_float_element(l_location_xml, 'Latitude')
+        l_location_obj.Longitude = self.get_float_element(l_location_xml, 'Longitude')
+        l_location_obj.TimeZone = self.get_float_element(l_location_xml, 'TimeZone')
+        l_location_obj.SavingTime = self.get_float_element(l_location_xml, 'SavingTime')
         p_house_obj.Location = l_location_obj
         if g_debug > 4:
             print "house.read_location()  loaded location for {0:}".format(p_house_obj.Name)

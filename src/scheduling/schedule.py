@@ -91,13 +91,13 @@ class ScheduleXML(xml_tools.ConfigTools):
         """
         self.xml_read_common_info(p_schedule_obj, p_entry_xml)
         p_schedule_obj.HouseName = self.m_house_obj.Name
-        p_schedule_obj.Level = self.get_int(p_entry_xml, 'Level')
-        p_schedule_obj.LightName = self.get_text(p_entry_xml, 'LightName')
-        p_schedule_obj.LightNumber = self.get_int(p_entry_xml, 'LightNumber')
-        p_schedule_obj.Rate = self.get_int(p_entry_xml, 'Rate')
-        p_schedule_obj.RoomName = self.get_text(p_entry_xml, 'RoomName')
-        p_schedule_obj.Time = self.get_text(p_entry_xml, 'Time')
-        p_schedule_obj.Type = self.get_text(p_entry_xml, 'Type')
+        p_schedule_obj.Level = self.get_int_element(p_entry_xml, 'Level')
+        p_schedule_obj.LightName = self.get_text_element(p_entry_xml, 'LightName')
+        p_schedule_obj.LightNumber = self.get_int_element(p_entry_xml, 'LightNumber')
+        p_schedule_obj.Rate = self.get_int_element(p_entry_xml, 'Rate')
+        p_schedule_obj.RoomName = self.get_text_element(p_entry_xml, 'RoomName')
+        p_schedule_obj.Time = self.get_text_element(p_entry_xml, 'Time')
+        p_schedule_obj.Type = self.get_text_element(p_entry_xml, 'Type')
         if g_debug >= 7:
             print "schedule.extract_schedule_xml()   Name:{0:}, Active:{1:}, Key:{2:}, Light:{3:}".format(
                     p_schedule_obj.Name, p_schedule_obj.Active, p_schedule_obj.Key, p_schedule_obj.LightName)

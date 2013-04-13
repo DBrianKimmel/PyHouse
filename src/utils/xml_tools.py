@@ -35,7 +35,11 @@ class PutGetXML(XmlFileTools):
     """Protected put / get routines
     """
 
-    def get_float(self, p_xml_tree, p_name):
+    def get_bool_element(self, p_xml_tree, p_name):
+        l_var = p_xml_tree.findtext(p_name)
+        return self.get_bool(l_var)
+
+    def get_float_element(self, p_xml_tree, p_name):
         l_var = p_xml_tree.findtext(p_name)
         try:
             l_var = float(l_var)
@@ -43,7 +47,7 @@ class PutGetXML(XmlFileTools):
             l_var = 0.0
         return l_var
 
-    def get_int(self, p_xml_tree, p_name):
+    def get_int_element(self, p_xml_tree, p_name):
         l_var = p_xml_tree.findtext(p_name)
         try:
             l_var = int(l_var)
@@ -51,7 +55,7 @@ class PutGetXML(XmlFileTools):
             l_var = 0
         return l_var
 
-    def get_text(self, p_xml_tree, p_name):
+    def get_text_element(self, p_xml_tree, p_name):
         l_var = p_xml_tree.findtext(p_name)
         try:
             l_var = str(l_var)
@@ -249,7 +253,7 @@ def open_config_file():
 
     @return: the open file name
     """
-    if g_debug > 0:
+    if g_debug >= 1:
         print "xml_tools.open_config_file()"
     l_cf = ConfigFile()
     l_dir = l_cf.create_find_config_dir()
