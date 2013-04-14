@@ -3,7 +3,9 @@ Created on Apr 10, 2013
 
 @author: briank
 
-Haandle the location information for a house.
+There is location information for the house.  This is for calculating the
+time of sunrise and sunset.  Additional calculations may be added such as
+moon rise, tides, etc.
 """
 
 # Import system type stuff
@@ -37,9 +39,7 @@ class LocationData(object):
 
 
 class ReadWriteConfig(xml_tools.ConfigTools):
-    """Use the internal data to read / write an updated config file.
-
-    This is called from the web interface or the GUI when the data has been changed.
+    """Use the internal data to read / write an updated XML config file.
     """
 
     def read_location(self, p_house_obj, p_house_xml):
@@ -59,6 +59,7 @@ class ReadWriteConfig(xml_tools.ConfigTools):
         p_house_obj.Location = l_location_obj
         if g_debug > 4:
             print "house.read_location()  loaded location for {0:}".format(p_house_obj.Name)
+        return l_location_obj
 
     def write_location(self, p_location_obj):
         """Replace the data in the 'House/Location' section with the current data.

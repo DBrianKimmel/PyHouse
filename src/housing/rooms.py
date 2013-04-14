@@ -39,8 +39,8 @@ class ReadWriteConfig(xml_tools.ConfigTools):
 
     def read_rooms(self, p_house_obj, p_house_xml):
         l_count = 0
-        l_rooms = p_house_xml.find('Rooms')
-        l_list = l_rooms.iterfind('Room')
+        l_rooms_xml = p_house_xml.find('Rooms')
+        l_list = l_rooms_xml.iterfind('Room')
         for l_room_xml in l_list:
             l_room_obj = RoomData()
             self.xml_read_common_info(l_room_obj, l_room_xml)
@@ -57,10 +57,10 @@ class ReadWriteConfig(xml_tools.ConfigTools):
         if g_debug > 4:
             print "house.read_rooms()  loaded {0:} rooms".format(l_count)
 
-    def write_rooms(self, p_dict):
+    def write_rooms(self, p_rooms_obj):
         l_count = 0
         l_rooms_xml = ET.Element('Rooms')
-        for l_room_obj in p_dict.itervalues():
+        for l_room_obj in p_rooms_obj.itervalues():
             l_entry = self.xml_create_common_element('Room', l_room_obj)
             ET.SubElement(l_entry, 'Comment').text = l_room_obj.Comment
             ET.SubElement(l_entry, 'Corner').text = l_room_obj.Corner

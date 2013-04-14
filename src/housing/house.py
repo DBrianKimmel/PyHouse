@@ -16,7 +16,7 @@ moonrise, tides, etc.
 
 # Import system type stuff
 import logging
-import xml.etree.ElementTree as ET
+#import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from scheduling import schedule
@@ -53,7 +53,7 @@ class HouseData(object):
         return l_ret
 
 
-class HouseReadWriteConfig(HouseData, location.ReadWriteConfig, rooms.ReadWriteConfig):
+class HouseReadWriteConfig(location.ReadWriteConfig, rooms.ReadWriteConfig):
     """Use the internal data to read / write an updated config file.
 
     This is called from the web interface or the GUI when the data has been changed.
@@ -65,7 +65,7 @@ class HouseReadWriteConfig(HouseData, location.ReadWriteConfig, rooms.ReadWriteC
         The main data is House_Data.
         """
         self.xml_read_common_info(p_house_obj, p_house_xml)
-        self.read_location(p_house_obj, p_house_xml)
+        p_house_obj.Location = self.read_location(p_house_obj, p_house_xml)
         self.read_rooms(p_house_obj, p_house_xml)
         House_Data[0] = p_house_obj
         if g_debug > 1:
@@ -76,8 +76,6 @@ class HouseReadWriteConfig(HouseData, location.ReadWriteConfig, rooms.ReadWriteC
         """Replace the data in the 'Houses' section with the current data.
         """
         l_house_xml = self.xml_create_common_element('House', p_house_obj)
-        l_house_xml.append(self.write_location(p_house_obj.Location))
-        l_house_xml.append(self.write_rooms(p_house_obj.Rooms))
         if g_debug > 2:
             print "house.write_house() - Name:{0:}, Key:{1:}".format(p_house_obj.Name, p_house_obj.Key)
         return l_house_xml
@@ -103,7 +101,6 @@ class API(LoadSaveAPI):
         if g_debug >= 1:
             print "house.API.__init__()"
         self.m_logger = logging.getLogger('PyHouse.House')
-        self.m_house_obj = HouseData()
         self.m_house_obj.ScheduleAPI = schedule.API(self.m_house_obj)
 
     def Start(self, _p_houses_obj, p_house_xml):
@@ -132,6 +129,8 @@ class API(LoadSaveAPI):
             print "\nhouse.Stop() - House:{0:}".format(self.m_house_obj.Name)
         self.m_logger.info("Stopping House:{0:}.".format(self.m_house_obj.Name))
         l_house_xml = self.write_house(self.m_house_obj)
+        l_house_xml.append(self.write_location(self.m_house_obj.Location))
+        l_house_xml.append(self.write_rooms(self.m_house_obj.Rooms))
         l_house_xml.extend(self.m_house_obj.ScheduleAPI.Stop(l_house_xml))
         l_house_xml.append(self.m_house_obj.InternetAPI.Stop())
         self.m_logger.info("Stopped.")
