@@ -10,6 +10,10 @@ TODO: Work toward getting one instance per controller.
 This module carries state information about the controller.
 This is necessary since the responses may follow a command at any interval.
 Responses do not all have to follow the command that caused them.
+
+
+TODO: implement all-links
+
 """
 
 # Import system type stuff
@@ -22,7 +26,7 @@ import Device_Insteon
 import Insteon_Link
 from utils.tools import PrintBytes
 
-g_debug = 1
+g_debug = 0
 # 0 = off
 # 1 = major routine entry
 # 2 = sent commands high level
@@ -309,6 +313,7 @@ class CreateCommands(PlmDriverProtocol, InsteonPlmUtility):
         l_command[4] = l_addr[2]
         l_command[5] = FLAG_MAX_HOPS + FLAG_HOPS_LEFT  # 0x0F
         l_command[6] = p_light_obj.Command1 = p_cmd1
+        l_command[7] = p_light_obj.Command2 = p_cmd2
         if g_debug >= 4:
             print "Insteon_PLM.queue_62_command() ", p_light_obj.Name, p_cmd1, p_cmd2
             g_logger.debug("Queue62 command to device: {2:}, Command: {0:#X},{1:#X}, Address: ({3:x}.{4:x}.{5:x})".format(p_cmd1, p_cmd2, p_light_obj.Name, l_command[2], l_command[3], l_command[4]))
@@ -503,7 +508,6 @@ class InsteonPlmCommands(LightingAPI):
 
 
 class InsteonAllLinks(InsteonPlmCommands):
-    # TODO: implement
 
     def get_all_allinks(self, p_controller_obj):
         """A command to fetch the all-link database from the PLM
@@ -907,7 +911,7 @@ class DecodeResponses(InsteonAllLinks):
         """
         l_message = p_controller_obj.Message
         l_id = self._get_addr_from_message(l_message, 2)
-        l_msgflags = self._decode_message_flag(l_message[5])
+        _l_msgflags = self._decode_message_flag(l_message[5])
         l_ack = self._get_ack_nak(l_message[8])
         l_obj = self._get_obj_using_addr(l_id)
         l_debug_msg = "Device:{0:}, {1:}".format(l_obj.Name, l_ack)
@@ -1099,7 +1103,6 @@ class LightHandlerAPI(InsteonPlmAPI):
         elif p_controller_obj.Interface.lower() == 'usb':
             from drivers import Driver_USB_0403_6001
             l_driver = Driver_USB_0403_6001.API()
-        # TODO: Detect any other controllers here and load them
         p_controller_obj.Driver = l_driver
         l_driver.Start(p_controller_obj)
         if g_debug >= 1:
@@ -1164,7 +1167,7 @@ class API(LightHandlerAPI):
         if g_debug >= 1:
             print "Insteon_PLM.__init__()"
         global g_logger, g_driver, g_queue
-        g_logger = logging.getLogger('PyHouse.Insteon_PLM')
+        g_logger = logging.getLogger('PyHouse.Inst_PLM')
         g_logger.info('Initializing.')
         g_driver = []
         g_queue = Queue.Queue(300)

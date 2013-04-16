@@ -20,7 +20,7 @@ import xml.etree.ElementTree as ET
 from housing import house
 from utils import xml_tools
 
-g_debug = 9
+g_debug = 0
 # 0 = off
 # 1 = major routine entry
 # 2 = get/put xml config info
@@ -47,6 +47,8 @@ class HouseReadWriteConfig(xml_tools.ConfigFile):
 
     m_xml_filename = None
     m_xmltree_root = None
+    m_xmltree = None
+    m_houses_data = {}
 
     def __init__(self):
         """Open the xml config file.
@@ -54,12 +56,7 @@ class HouseReadWriteConfig(xml_tools.ConfigFile):
         """
         if g_debug >= 2:
             print "houses.HouseReadWriteConfig.__init__()"
-        self.m_xml_filename = self.find_config_file_name()
-        self.parse_xml()
-
-    def parse_xml(self):
-        if g_debug >= 2:
-            print "houses.parse_xml()"
+        self.read_config_file()
         try:
             self.m_xmltree = ET.parse(self.m_xml_filename)
         except SyntaxError:
@@ -67,11 +64,13 @@ class HouseReadWriteConfig(xml_tools.ConfigFile):
             self.m_xmltree = ET.parse(self.m_xml_filename)
         self.m_xmltree_root = self.m_xmltree.getroot()
 
-    def find_config_file_name(self):
+    def read_config_file(self):
         if g_debug >= 2:
-            print "houses.find_config_file_name()"
-        l_xml_filename = xml_tools.open_config_file()
-        return l_xml_filename
+            print "houses.read_config_file()"
+        self.m_xml_filename = xml_tools.open_config_file()
+
+    def get_xml_tree(self):
+        return self.m_xmltree
 
     def get_xml_root(self):
         return self.m_xmltree_root
@@ -96,7 +95,7 @@ class LoadSaveAPI(HouseReadWriteConfig):
         if g_debug >= 3:
             print "houses.load_all_houses()"
         self.l_rwc = HouseReadWriteConfig()
-        return self.l_rwc.get_xml_root()
+        return self.l_rwc.get_xml_root(), self.l_rwc.get_xml_tree()
 
     def save_all_houses(self, p_xml):
         if g_debug >= 3:
@@ -121,7 +120,7 @@ class LoadSaveAPI(HouseReadWriteConfig):
         """
         if g_debug >= 3:
             print "houses.get_houses_xml()"
-        self.m_xmltree_root = self.load_all_houses()
+        self.m_xmltree_root, _l_tree = self.load_all_houses()
         #
         try:
             l_sect = self.m_xmltree_root.find('Houses')
@@ -138,7 +137,6 @@ class API(LoadSaveAPI):
     """
 
     m_schedules = []
-    m_houses_data = {}
 
     def __new__(cls, *args, **kwargs):
         """This is for all houses.
@@ -151,7 +149,7 @@ class API(LoadSaveAPI):
         self = object.__new__(cls)
         cls.__init__(self, *args, **kwargs)
         Singletons[cls] = self
-        self.m_logger = logging.getLogger('PyHouse.Houses')
+        self.m_logger = logging.getLogger('PyHouse.Houses  ')
         self.m_logger.info("Initializing all houses.")
         self.m_logger.info("Initialized.")
         return self
