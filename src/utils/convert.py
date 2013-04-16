@@ -55,38 +55,4 @@ class ConvertInsteon(object):
             l_ix = l_ix / 256
         return '.'.join(l_hex)
 
-
-class TestConvertions(unittest.TestCase):
-    """
-    """
-
-    def setUp(self):
-        self.eth = ConvertEthernet()
-        self.inst = ConvertInsteon()
-
-    def test_ethernet(self):
-        t_dq = '192.168.1.65'
-        t_long = 3232235841L
-        l_long = self.eth.dotted_quad2long(t_dq)
-        l_dq = self.eth.long2dotted_quad(t_long)
-        self.assertEqual(t_long, l_long)
-        self.assertEqual(t_dq, l_dq)
-        # print l_long, l_dq
-
-    def test_insteon(self):
-        t_addr = 'A1.B2.C3'
-        t_long = 10597059L
-        l_long = self.inst.dotted_hex2long(t_addr)
-        l_addr = self.inst.long2dotted_hex(t_long)
-        self.assertEqual(t_long, l_long)
-        self.assertEqual(t_addr, l_addr)
-        # print l_long, l_addr
-
-
-if __name__ == "__main__":
-    print "running unittest.main()"
-    unittest.main()
-    # print "running TestConversions()"
-    # TestConvertions()
-
 # ## END

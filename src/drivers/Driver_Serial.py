@@ -120,7 +120,7 @@ class API(SerialAPI):
         if g_debug > 0:
             print "Driver_Serial.__init__()"
         global g_logger
-        g_logger = logging.getLogger('PyHouse.SerialDriver')
+        g_logger = logging.getLogger('PyHouse.DrvrSerl')
         g_logger.debug("Initializied.")
 
     def Start(self, p_controler_obj):
