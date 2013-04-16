@@ -89,7 +89,7 @@ class GuiUtils(object):
     def frame_delete(self, p_frame):
         try:
             p_frame.grid_forget()
-        except:
+        except AttributeError:
             pass
 
     def get_bool(self, p_arg):

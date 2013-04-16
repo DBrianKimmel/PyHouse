@@ -36,7 +36,7 @@ class LoggingUtility(object):
         try:
             l_sect = self.m_root.find('Logs')
             l_sect.find('Debug')
-        except:
+        except AttributeError:
             print "Warning - Logs section is missing - Adding empty values now."
             l_sect = ET.SubElement(self.m_root, 'Logs')
             ET.SubElement(l_sect, 'Debug').text = 'None'
@@ -48,7 +48,7 @@ class LoggingUtility(object):
         try:
             l_sect = self.m_root.find('Web')
             l_sect.find('WebPort')
-        except:
+        except AttributeError:
             l_sect = ET.SubElement(self.m_root, 'Web')
             ET.SubElement(l_sect, 'WebPort').text = 'None'
 
@@ -92,7 +92,7 @@ class LoggingMain(LoggingUtility):
         Log_Data[0] = LogData()
         try:
             l_debug_name = Log_Data[0].Debug
-        except:
+        except AttributeError:
             l_debug_name = '/var/log/pyhouse/debug'
             Log_Data[0].Debug = l_debug_name
         if l_debug_name == None:
@@ -101,7 +101,7 @@ class LoggingMain(LoggingUtility):
             print "log.LoggingMain() debug name ", l_debug_name
         try:
             self.m_error_name = Log_Data[0].Error
-        except:
+        except AttributeError:
             self.m_error_name = '/var/log/pyhouse/error'
         self.m_formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s - %(message)s')
         self.setup_debug_log(l_debug_name)

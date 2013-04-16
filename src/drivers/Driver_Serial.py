@@ -108,7 +108,7 @@ class SerialAPI(object):
 
         try:
             self.m_serial.write(p_message)
-        except:
+        except AttributeError:
             print "Driver_Serial_write_device() ERROR "
 
 

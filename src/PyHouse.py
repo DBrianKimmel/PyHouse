@@ -82,7 +82,7 @@ def daemonize():
 def __opt_option(_option, _opt, value, parser):
     try:
         key, val = value.split(':', 1)
-    except:
+    except KeyError:
         key = value
         val = ''
     parser.values.options[key] = val
@@ -91,7 +91,7 @@ def setConfigFile():
     def findConfigDir():
         try:
             configDir = os.path.expanduser('~')
-        except:
+        except TypeError:
             configDir = os.getcwd()
         return configDir
     return os.path.join(findConfigDir(), '.PyHouse/PyHouse.xml')
@@ -113,7 +113,7 @@ def XXparse_command_line():
     if options.daemon:
         try:
             daemonize()
-        except:
+        except ValueError:
             print "*** ERROR - Unable to daemonize!"
     config = {}
     config['logging'] = {}

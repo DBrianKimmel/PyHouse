@@ -133,7 +133,7 @@ class UsbDriverAPI(UsbDeviceData):
             print "Driver_USB._setup_find_device() - Name: {0:},   Vendor: {1:#x}, Product: {2:#x}".format(p_usb.Name, p_usb.Vendor, p_usb.Product)
         try:
             l_device = usb.core.find(idVendor = p_usb.Vendor, idProduct = p_usb.Product)
-        except:
+        except usb.USBError:
             print "ERROR no such USB device"
             return None
         if l_device == None:
@@ -155,7 +155,7 @@ class UsbDriverAPI(UsbDeviceData):
         try:
             if not p_usb.Device.is_kernel_driver_active(0):
                 return
-        except:
+        except usb.USBError:
             pass
         if g_debug > 1:
             print "Driver_USB._setup_detach_kernel()"

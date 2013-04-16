@@ -249,7 +249,7 @@ class HouseDialog(HouseWindow):
             print "gui_house.get_house_object() - Key:{0:}".format(p_house_key)
         try:
             l_obj = p_houses_obj.Object
-        except:
+        except AttributeError:
             l_obj = HouseData()
             l_obj.Key = p_house_key
             if g_debug >= 1:

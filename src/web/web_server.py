@@ -90,7 +90,7 @@ class WebUtilities(WebData):
         try:
             l_sect = self.m_root.find('Web')
             l_sect.find('WebPort')
-        except:
+        except AttributeError:
             l_sect = ET.SubElement(self.m_root, 'Web')
             ET.SubElement(l_sect, 'WebPort').text = 'None'
         l_obj = WebData()

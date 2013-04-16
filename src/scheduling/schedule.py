@@ -121,7 +121,7 @@ class ScheduleXML(xml_tools.ConfigTools):
                 self.extract_schedule_xml(l_entry, l_schedule_obj)
                 l_dict[l_count] = l_schedule_obj
                 l_count += 1
-        except:
+        except AttributeError:
             pass
         p_house_obj.Schedule = l_dict
         if g_debug >= 5:
@@ -215,7 +215,7 @@ class ScheduleUtility(ScheduleExecution):
         try:
             while p_timefield[0] == ' ':
                 p_timefield = p_timefield[1:]
-        except:
+        except IndexError:
             pass
         if ':' in p_timefield:
             try :
@@ -234,7 +234,7 @@ class ScheduleUtility(ScheduleExecution):
             try:
                 while p_timefield[0] == ' ':
                     p_timefield = p_timefield[1:]
-            except:
+            except IndexError:
                 pass
             if g_debug >= 7:
                 print "schedule._extract_field() Exit - {0:}, '{1:}'".format(l_ret, p_timefield)
