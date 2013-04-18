@@ -81,8 +81,8 @@ class ReadWriteXML(xml_tools.ConfigTools):
     def extract_dyn_dns(self, p_internet_xml):
         l_dyndns_obj = DynDnsData()
         self.xml_read_common_info(l_dyndns_obj, p_internet_xml)
-        l_dyndns_obj.Interval = self.get_int(p_internet_xml, 'Interval')
-        l_dyndns_obj.Url = self.get_text(p_internet_xml, 'Url')
+        l_dyndns_obj.Interval = self.get_int_element(p_internet_xml, 'Interval')
+        l_dyndns_obj.Url = self.get_text_element(p_internet_xml, 'Url')
         if g_debug >= 4:
             print "internet.extract_dyn_dns() - Name:{0:}, Interval:{1:}, Url:{2:};".format(l_dyndns_obj.Name, l_dyndns_obj.Interval, l_dyndns_obj.Url)
         return l_dyndns_obj
@@ -96,9 +96,9 @@ class ReadWriteXML(xml_tools.ConfigTools):
         p_house_obj.Internet = InternetData()
         l_sect = p_house_xml.find('Internet')
         try:
-            self.m_external_ip = self.get_text(l_sect, 'ExternalIP')
-            self.m_external_url = self.get_text(l_sect, 'UrlExternalIP')
-            self.m_external_delay = self.get_int(l_sect, 'ExternalDelay')
+            self.m_external_ip = self.get_text_element(l_sect, 'ExternalIP')
+            self.m_external_url = self.get_text_element(l_sect, 'UrlExternalIP')
+            self.m_external_delay = self.get_int_element(l_sect, 'ExternalDelay')
         except AttributeError:
             self.m_external_ip = None
             self.m_external_url = None

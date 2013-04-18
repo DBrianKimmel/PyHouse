@@ -33,7 +33,7 @@ import lighting_controllers
 import lighting_lights
 import lighting_scenes
 
-g_debug = 9
+g_debug = 0
 g_logger = None
 
 # These globals in the lighting singleton hold the operating data loaded at startup.
@@ -175,8 +175,8 @@ class ControllerAPI(lighting_controllers.ControllersAPI, CommonInfo):
         p_house_obj.Controllers = l_dict
         if g_debug > 5:
             print "lighting.read_controllers()  loaded {0:} controllers for house {1:}".format(l_count, p_house_obj.Name)
-            #print p_house_obj
-            #print vars(p_house_obj)
+            # print p_house_obj
+            # print vars(p_house_obj)
         return l_dict
 
     def write_controllers(self, p_dict):

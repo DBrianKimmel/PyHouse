@@ -78,4 +78,4 @@ class ReadWriteConfig(xml_tools.ConfigTools):
             print "house.write_location()"
         return l_entry
 
-### END
+# ## END

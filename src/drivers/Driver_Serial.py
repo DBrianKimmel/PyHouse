@@ -22,7 +22,7 @@ from twisted.internet.serialport import SerialPort, PARITY_NONE, EIGHTBITS, STOP
 from lights import lighting
 from utils.tools import PrintBytes
 
-g_debug = 1
+g_debug = 0
 # 0 = off
 # 1 = major routine entry
 # 2 =

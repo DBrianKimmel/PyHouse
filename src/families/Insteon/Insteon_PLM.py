@@ -143,6 +143,39 @@ message_types = {
 'thermostat_setpoint_heat': 0x6d
 }
 
+# This is the length of the response from the PLM.
+# Wait till we get the proper number of bytes before decoding the response.
+# we sometimes only have a partial response when reading async.
+MESSAGE_LENGTH = {
+        0x50: 11,
+        0x51: 25,
+        0x52: 4,
+        0x53: 10,
+        0x54: 3,
+        0x55: 2,
+        0x56: 7,
+        0x57: 10,
+        0x58: 3,
+
+        0x60: 9,
+        0x61: 6,
+        0x62: 9,
+        0x63: 5,
+        0x64: 5,
+        0x67: 3,
+        0x68: 4,
+        0x69: 3,
+        0x6A: 3,
+        0x6B: 4,
+        0x6C: 3,
+        0x6D: 3,
+        0x6E: 3,
+        0x6F: 12,
+        0x70: 4,
+        0x71: 5,
+        0x72: 3,
+        0x73: 6}
+
 
 class InsteonPlmUtility(object):
 
@@ -267,8 +300,11 @@ class PlmDriverProtocol(object):
                 l_msg = l_controller_obj.Driver.fetch_read_data()
                 if len(l_msg) == 0:
                     continue
-                l_controller_obj.Message = l_msg
-                self._decode_message(l_controller_obj)
+                l_controller_obj.Message += l_msg
+                if len(l_controller_obj.Message) < 2:
+                    continue
+                if len(l_controller_obj.Message) >= MESSAGE_LENGTH[l_controller_obj.Message[1]]:
+                    self._decode_message(l_controller_obj)
 
 
 
@@ -1046,8 +1082,9 @@ class DecodeResponses(InsteonAllLinks):
 
         l_ret = p_ret
         l_length = len(p_controller_obj.Message)
-        if l_length >= p_chop:
-            p_controller_obj.Message = p_controller_obj.Message[p_chop:]
+        l_chop = MESSAGE_LENGTH[p_controller_obj.Message[1]]
+        if l_length >= l_chop:
+            p_controller_obj.Message = p_controller_obj.Message[l_chop:]
             l_ret = self._decode_message(p_controller_obj)
         return l_ret
 

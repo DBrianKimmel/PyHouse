@@ -151,7 +151,7 @@ class API(object):
         These core routines are an integral part of the daemon process.
 
         Notice that the reactor starts here as the very last step and that
-        call never returns.
+        call never returns until the reactor is stopped (permanent stoppage).
         """
         if g_debug >= 1:
             print "\nPyHouse.API.__init__() - very beginning..."

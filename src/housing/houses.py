@@ -20,7 +20,7 @@ import xml.etree.ElementTree as ET
 from housing import house
 from utils import xml_tools
 
-g_debug = 9
+g_debug = 0
 # 0 = off
 # 1 = major routine entry
 # 2 = get/put xml config info
@@ -40,7 +40,7 @@ class HousesData(object):
         self.Object = {}
 
     def __str__(self):
-        return "Houses:: Name:{0:}, Key:{1:}".format(self.Name, self.Key)
+        return "Houses:: Name:{0:}, Key:{1:}, Object:{2:}, API:{3:}".format(self.Name, self.Key, self.Object, self.HouseAPI)
 
 
 class HouseReadWriteConfig(xml_tools.ConfigFile):
@@ -112,6 +112,8 @@ class LoadSaveAPI(HouseReadWriteConfig):
         l_houses_obj.HouseAPI = house.API()
         l_houses_obj.Object = l_houses_obj.HouseAPI.Start(l_houses_obj, p_house_xml)
         l_houses_obj.Name = l_houses_obj.Object.Name
+        if g_debug >= 6:
+            print "houses.get_house_info()", l_houses_obj
         return l_houses_obj
 
     def get_houses_xml(self):
@@ -160,7 +162,8 @@ class API(LoadSaveAPI):
             print "houses.__init__()"
 
     def Start(self):
-        """Start processing for all things house.
+        """Start processing for all things houses
+        .
         May be stopped and then started anew to force reloading info.
         Invoked once no matter how many houses defined.
         """
@@ -169,10 +172,15 @@ class API(LoadSaveAPI):
         self.m_logger.info("Starting.")
         l_count = 0
         for l_house_xml in self.get_houses_xml():
+            if g_debug >= 5:
+                print "houses.API.Start() - ", l_house_xml
             self.m_houses_data[l_count] = self.get_house_info(l_house_xml, l_count)
             l_count += 1
         if g_debug >= 1:
-            print "houses.API.Start() - {0:} houses all started.".format(l_count)
+            print "houses.API.Start() - {0:} houses loaded.".format(l_count)
+        if g_debug >= 5:
+            for l_entry in self.m_houses_data.itervalues():
+                print "   ", l_entry
         self.m_logger.info("Started.")
 
 
@@ -181,10 +189,12 @@ class API(LoadSaveAPI):
         Each stopped instance returns an up-to-date XML subtree to be written out.
         """
         if g_debug >= 1:
-            print "houses.API.Stop()"
+            print "\nhouses.API.Stop() - Count:{0:}".format(len(self.m_houses_data))
         self.m_logger.info("Stopping.")
         l_houses_xml = self.create_empty_xml_section(self.m_xmltree_root, 'Houses')
         for l_house in self.m_houses_data.itervalues():
+            if g_debug >= 5:
+                print "houses.Stop() - House:{0:}, Key:{1:}".format(l_house.Name, l_house.Key), l_house.HouseAPI
             l_houses_xml.append(l_house.HouseAPI.Stop(l_houses_xml))  # append to the xml tree
         self.save_all_houses(l_houses_xml)
         self.m_logger.info("Stopped.")

@@ -11,10 +11,10 @@ __version__ = '.' . join(map(str, __version_info__))
 # Import PyMh files
 from utils import xml_tools
 
-g_debug = 9
+g_debug = 0
 
 VALID_INTERFACES = ['Serial', 'USB', 'Ethernet']
-#SERIAL_ATTRS = {'BaudRate': self.get_text_element,
+# SERIAL_ATTRS = {'BaudRate': self.get_text_element,
 #                'ByteSize': get_int_element,
 #                'DsrDtr': get_bool_element,
 #                'Parity': get_text_element,
@@ -66,8 +66,8 @@ class ReadWriteConfig(xml_tools.ConfigTools):
 
     def extract_serial_xml(self, p_controller_obj, p_controller_xml):
         if g_debug >= 2:
-            print "extract_serial_xml() "
-        #for l_attr, l_method in SERIAL_ATTRS:
+            print "drivers.interface.extract_serial_xml() - Name:{0:}".format(p_controller_obj.Name)
+        # for l_attr, l_method in SERIAL_ATTRS:
         #    setattr(p_controller_obj, l_attr, l_method(p_controller_xml, l_attr))
         l_serial = SerialData()
         l_xml = p_controller_xml
@@ -85,7 +85,7 @@ class ReadWriteConfig(xml_tools.ConfigTools):
 
     def extract_usb_xml(self, p_controller_obj, p_controller_xml):
         if g_debug >= 2:
-            print "extract_usb_xml() "
+            print "drivers.interface.extract_usb_xml() - Name:{0:}".format(p_controller_obj.Name)
         l_usb = USBData()
         l_xml = p_controller_xml
         l_usb.NetworkID = self.get_int_element(l_xml, 'Network')

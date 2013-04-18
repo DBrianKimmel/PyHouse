@@ -16,7 +16,7 @@ moonrise, tides, etc.
 
 # Import system type stuff
 import logging
-import xml.etree.ElementTree as ET
+# import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from scheduling import schedule
@@ -49,7 +49,10 @@ class HouseData(object):
         self.Schedule = {}
 
     def __str__(self):
-        l_ret = ' House:: Name:{0:}, Active:{1:}, Key:{2:}'.format(self.Name, self.Active, self.Key)
+        l_ret = ' House:: Name:{0:}, Active:{1:}, Key:{2:}, Lights:{3:}'.format(
+                self.Name, self.Active, self.Key, len(self.Lights))
+        l_ret += ', Controllers:{0:}, Buttons:{1:}, Rooms:{2:}, Schedules:{3:}'.format(
+                len(self.Controllers), len(self.Buttons), len(self.Rooms), len(self.Schedule))
         return l_ret
 
 
@@ -93,14 +96,13 @@ class API(LoadSaveAPI):
     """
     """
 
-    m_house_obj = HouseData()
-
     def __init__(self):
         """Create a house object for when we add a new house.
         """
         if g_debug >= 1:
             print "house.API.__init__()"
         self.m_logger = logging.getLogger('PyHouse.House')
+        self.m_house_obj = HouseData()
         self.m_house_obj.ScheduleAPI = schedule.API(self.m_house_obj)
 
     def Start(self, _p_houses_obj, p_house_xml):
@@ -109,7 +111,7 @@ class API(LoadSaveAPI):
         """
         self.read_house(self.m_house_obj, p_house_xml)
         if g_debug >= 1:
-            print "house.API.Start() - House:{0:}, Active:{1:}".format(self.m_house_obj.Name, self.m_house_obj.Active)
+            print "house.API.Start() - House:{0:}, Active:{1:}, Key:{2:}".format(self.m_house_obj.Name, self.m_house_obj.Active, self.m_house_obj.Key)
         self.m_logger.info("Starting House {0:}.".format(self.m_house_obj.Name))
         self.m_house_obj.InternetAPI = internet.API(self.m_house_obj, p_house_xml)
         self.m_house_obj.ScheduleAPI.Start(self.m_house_obj, p_house_xml)
