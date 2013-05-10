@@ -32,7 +32,7 @@ class GuiData(object):
         self.SecondDialogWindow = None
         self.SecondDialogFrame = None
 
-    def __str__(self):
+    def __repr__(self):
         l_ret = "GuiData:: RootWindow:{0:}, MainMenuFrame:{1:}, HouseSelectFrame:{2:}".format(self.RootWindow, self.MainMenuFrame, self.HouseSelectFrame)
         l_ret += ", ModuleMenuFrame:{0:}, DialogWindow:{1:}".format(self.ModuleMenuFrame, self.DialogWindow)
         return l_ret
@@ -237,7 +237,10 @@ class HouseSelect(GuiUtils):
         """
         if g_debug > 0:
             print "gui_tools.show_main_menu() - main_menu_frame:{0:}".format(p_gui_obj)
-        self.frame_delete(p_gui_obj.HouseSelectFrame)
+        try:
+            self.frame_delete(p_gui_obj.HouseSelectFrame)
+        except AttributeError:
+            pass
         p_gui_obj.MainMenuFrame.grid()
 
 

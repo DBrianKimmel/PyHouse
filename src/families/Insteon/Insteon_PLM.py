@@ -25,6 +25,8 @@ from twisted.internet import reactor
 import Device_Insteon
 import Insteon_Link
 from utils.tools import PrintBytes
+from Insteon_constants import *
+from Insteon_utils import ConvertInsteon
 
 g_debug = 0
 # 0 = off
@@ -33,19 +35,10 @@ g_debug = 0
 # 3 = decode response
 # 4 = sent command detail (number)
 # 5 = diagnostics
-# 6
 
-
-g_driver = []
 g_logger = None
-g_queue = None
 
 callLater = reactor.callLater
-
-
-STX = 0x02
-ACK = 0x06
-NAK = 0x15
 
 # Timeouts for send/receive delays
 SEND_TIMEOUT = 0.8
@@ -66,132 +59,36 @@ FLAG_HOPS_LEFT = 0x0C
 FLAG_MAX_HOPS = 0x03
 
 
-# PLM Serial Commands
-plm_commands = {
-'insteon_received': 0x50,
-'insteon_ext_received': 0x51,
-'x10_received': 0x52,
-'all_link_complete': 0x53,
-'plm_button_event': 0x54,
-'user_user_reset': 0x55,
-'all_link_clean_failed': 0x56,
-'all_link_record': 0x57,
-'all_link_clean_status': 0x58,
-'plm_info': 0x60,
-'all_link_send': 0x61,
-'insteon_send': 0x62,
-'x10_send': 0x63,
-'all_link_start': 0x64,
-'plm_reset': 0x67,
-'plm_first_all_link': 0x69,
-'plm_next_all_link': 0x6A,
-'plm_set_config': 0x6B,
-'plm_led_on': 0x6D,
-'plm_led_off': 0x6E,
-'manage_all_link_record': 0x6F,
-'insteon_nak': 0x70,
-'insteon_ack': 0x71,
-'rf_sleep': 0x72,
-'plm_get_config': 0x73,
-}
-message_types = {
-'assign_to_group': 0x01,
-'delete_from_group': 0x02,
-'product_data_request': 0x03,
-'linking_mode': 0x09,
-'unlinking_mode': 0x0A,
-'engine_version': 0x0D,
-'ping': 0x0F,
-'id_request': 0x10,
-'on': 0x11,
-'on_fast': 0x12,
-'off': 0x13,
-'off_fast': 0x14,
-'bright': 0x15,
-'dim': 0x16,
-'start_manual_change': 0x17,
-'stop_manual_change': 0x18,
-'status_request': 0x19,
-'get_operating_flags': 0x1f,
-'set_operating_flags': 0x20,
-'do_read_ee': 0x24,
-'remote_set_button_tap': 0x25,
-'set_led_status': 0x27,
-'set_address_msb': 0x28,
-'poke': 0x29,
-'poke_extended': 0x2a,
-'peek': 0x2b,
-'peek_internal': 0x2c,
-'poke_internal': 0x2d,
-'on_at_ramp_rate': 0x2e,
-'off_at_ramp_rate': 0x2f,
-#                        sprinkler_valve_on => 0x40,
-#                        sprinkler_valve_off => 0x41,
-#                        sprinkler_program_on => 0x42,
-#                        sprinkler_program_off => 0x43,
-#                        sprinkler_control => 0x44,
-#                        sprinkler_timers_request => 0x45,
-'thermostat_temp_up': 0x68,
-'thermostat_temp_down': 0x69,
-'thermostat_get_zone_temp': 0x6a,
-'thermostat_get_zone_setpoint': 0x6a,
-'thermostat_get_zone_humidity': 0x6a,
-'thermostat_control': 0x6b,
-'thermostat_get_mode': 0x6b,
-'thermostat_get_temp': 0x6b,
-'thermostat_setpoint_cool': 0x6c,
-'thermostat_setpoint_heat': 0x6d
-}
+class InsteonPlmUtility(ConvertInsteon):
 
-# This is the length of the response from the PLM.
-# Wait till we get the proper number of bytes before decoding the response.
-# we sometimes only have a partial response when reading async.
-MESSAGE_LENGTH = {
-        0x50: 11,
-        0x51: 25,
-        0x52: 4,
-        0x53: 10,
-        0x54: 3,
-        0x55: 2,
-        0x56: 7,
-        0x57: 10,
-        0x58: 3,
+    def _get_message_length(self, p_message_id):
+        """Get the documented length that the message is supposed to be.
 
-        0x60: 9,
-        0x61: 6,
-        0x62: 9,
-        0x63: 5,
-        0x64: 5,
-        0x67: 3,
-        0x68: 4,
-        0x69: 3,
-        0x6A: 3,
-        0x6B: 4,
-        0x6C: 3,
-        0x6D: 3,
-        0x6E: 3,
-        0x6F: 12,
-        0x70: 4,
-        0x71: 5,
-        0x72: 3,
-        0x73: 6}
+        Use the message type byte to find out how long the response from the PLM
+        is supposed to be.
+        With asynchronous routines, we want to wait till the entire message is
+        received before proceeding with its decoding.
+        """
+        try:
+            l_message_length = MESSAGE_LENGTH[p_message_id]
+        except KeyError:
+            l_message_length = 1
+        return l_message_length
 
+    def _extract_bytes_from_message(self, p_message, p_offset, p_length):
+        l_ret = p_message[p_offset:p_offset + p_length - 1]
+        return l_ret
 
-class InsteonPlmUtility(object):
 
     def _get_addr_from_message(self, p_message, p_index):
-        l_id = "{0:0X}.{1:0X}.{2:0X}".format(p_message[p_index], p_message[p_index + 1], p_message[p_index + 2]).upper()
-        return l_id
+        """Extract the address from a message.
 
-    def _str_to_addr_list(self, p_str):
-        l_ret = [0, 0, 0]
-        try:
-            l_ret[0] = int(p_str[0:2], 16)
-            l_ret[1] = int(p_str[3:5], 16)
-            l_ret[2] = int(p_str[6:8], 16)
-        except ValueError:
-            pass
-        return l_ret
+        The message is a byte array returned from the PLM.
+        The address is 3 consecutive bytes starting at p_index.
+        Return a string 'A1.B2.C3' (upper case) that is the address.
+        """
+        l_id = self.message2int(p_message, p_index)
+        return l_id
 
     def _get_ack_nak(self, p_byte):
         if p_byte == 0x06:
@@ -233,7 +130,7 @@ class InsteonPlmUtility(object):
         return l_ret
 
 
-class PlmDriverProtocol(object):
+class PlmDriverProtocol(InsteonPlmUtility):
     """
     Check the command queue and send the 1st command if available.
     check the plm for received data
@@ -294,32 +191,38 @@ class PlmDriverProtocol(object):
         """
         callLater(RECEIVE_TIMEOUT, self.receive_loop)
         for l_controller_obj in self.m_house_obj.Controllers.itervalues():
-            if g_debug >= 7:
-                print "Insteon_PLM.receive_loop()", l_controller_obj.Name
             if l_controller_obj.Driver != None:
+                if g_debug >= 9:
+                    print "Insteon_PLM.receive_loop()", l_controller_obj.Name
                 l_msg = l_controller_obj.Driver.fetch_read_data()
-                if len(l_msg) == 0:
-                    continue
                 l_controller_obj.Message += l_msg
                 if len(l_controller_obj.Message) < 2:
                     continue
-                if len(l_controller_obj.Message) >= MESSAGE_LENGTH[l_controller_obj.Message[1]]:
+                if g_debug >= 6:
+                    print "Insteon_PLM.receive_loop() - Controller:{0:}".format(l_controller_obj.Name), PrintBytes(l_controller_obj.Message)
+                l_response_len = self._get_message_length(l_controller_obj.Message[1])
+                if len(l_controller_obj.Message) >= l_response_len:
                     self._decode_message(l_controller_obj)
 
 
 
-class CreateCommands(PlmDriverProtocol, InsteonPlmUtility):
+class CreateCommands(PlmDriverProtocol):
     """Send various commands to the PLM.
     """
+
+    def _queue_command(self, p_command):
+        l_cmd = PLM_COMMANDS[p_command]
+        l_command_bytes = bytearray(COMMAND_LENGTH[l_cmd])
+        l_command_bytes[0] = STX
+        l_command_bytes[1] = l_cmd
+        return l_command_bytes
 
     def queue_60_command(self):
         """Insteon - get IM info (2 bytes).
         See p 273 of developers guide.
         PLM will respond with a 0x60 response.
         """
-        l_command = bytearray(2)
-        l_command[0] = STX
-        l_command[1] = plm_commands['plm_info']
+        l_command = self._queue_command('plm_info')
         if g_debug >= 4:
             print "Insteon_PLM.queue_60_command() - get IM info."
             g_logger.debug("Queue command to get IM info")
@@ -340,16 +243,11 @@ class CreateCommands(PlmDriverProtocol, InsteonPlmUtility):
         @param p_cmd2: is the second command byte
         @return: the response from queue_plm_command
         """
-        l_addr = self._str_to_addr_list(p_light_obj.Address)
-        l_command = bytearray(8)
-        l_command[0] = STX
-        l_command[1] = p_light_obj.Command = plm_commands['insteon_send']
-        l_command[2] = l_addr[0]
-        l_command[3] = l_addr[1]
-        l_command[4] = l_addr[2]
+        l_command = self._queue_command('insteon_send')
+        self.int2message(p_light_obj.InsteonAddress, l_command, 2)
         l_command[5] = FLAG_MAX_HOPS + FLAG_HOPS_LEFT  # 0x0F
-        l_command[6] = p_light_obj.Command1 = p_cmd1
-        l_command[7] = p_light_obj.Command2 = p_cmd2
+        l_command[6] = p_light_obj.Command = p_cmd1
+        l_command[7] = p_light_obj.Command1 = p_cmd2
         if g_debug >= 4:
             print "Insteon_PLM.queue_62_command() ", p_light_obj.Name, p_cmd1, p_cmd2
             g_logger.debug("Queue62 command to device: {2:}, Command: {0:#X},{1:#X}, Address: ({3:x}.{4:x}.{5:x})".format(p_cmd1, p_cmd2, p_light_obj.Name, l_command[2], l_command[3], l_command[4]))
@@ -382,9 +280,7 @@ class CreateCommands(PlmDriverProtocol, InsteonPlmUtility):
         if g_debug >= 4:
             print "Insteon_PLM.queue_67_command() - Reset the PLM."
             g_logger.debug("Queue command to reset the PLM.")
-        l_command = bytearray(2)
-        l_command[0] = STX
-        l_command[1] = plm_commands['plm_reset']
+        l_command = self._queue_command('plm_reset')
         return self.queue_plm_command(l_command)
 
     def queue_68_command(self, p_obj):
@@ -399,9 +295,7 @@ class CreateCommands(PlmDriverProtocol, InsteonPlmUtility):
         if g_debug >= 4:
             print "Insteon_PLM.queue_69_command() - Get first all-link record."
             g_logger.debug("Queue command to get First all-link record.")
-        l_command = bytearray(2)
-        l_command[0] = STX
-        l_command[1] = plm_commands['plm_first_all_link']
+        l_command = self._queue_command('plm_first_all_link')
         return self.queue_plm_command(l_command)
 
     def queue_6A_command(self):
@@ -412,9 +306,7 @@ class CreateCommands(PlmDriverProtocol, InsteonPlmUtility):
         if g_debug >= 4:
             print "Insteon_PLM.queue_6A_command() get Next all-link record."
             g_logger.debug("Queue command to get Next all-link record.")
-        l_command = bytearray(2)
-        l_command[0] = STX
-        l_command[1] = plm_commands['plm_next_all_link']
+        l_command = self._queue_command('plm_next_all_link')
         return self.queue_plm_command(l_command)
 
     def queue_6B_command(self, p_flags):
@@ -424,9 +316,7 @@ class CreateCommands(PlmDriverProtocol, InsteonPlmUtility):
         if g_debug >= 4:
             print "Insteon_PLM.queue_6B_command() to set PLM config flag"
             g_logger.debug("Queue command to set PLM config flag to {0:#X}".format(p_flags))
-        l_command = bytearray(3)
-        l_command[0] = STX
-        l_command[1] = plm_commands['plm_set_config']
+        l_command = self._queue_command('plm_set_config')
         l_command[2] = p_flags
         return self.queue_plm_command(l_command)
 
@@ -451,19 +341,12 @@ class CreateCommands(PlmDriverProtocol, InsteonPlmUtility):
         if g_debug >= 4:
             print "Insteon_PLM.queue_6F_command() to manage all-link record"
             g_logger.debug("Queue command to manage all-link record")
-        l_addr = self._str_to_addr_list(p_light_obj.Address)
-        l_command = bytearray(11)
-        l_command[0] = STX
-        l_command[1] = plm_commands['manage_all_link_record']  # 0x6F
+        l_command = self._queue_command('manage_all_link_record')
         l_command[2] = p_code
         l_command[3] = p_flag
         l_command[4] = p_light_obj.GroupNumber
-        l_command[5] = l_addr[0]
-        l_command[6] = l_addr[1]
-        l_command[7] = l_addr[2]
-        l_command[8] = p_data[0]
-        l_command[9] = p_data[1]
-        l_command[10] = p_data[2]
+        self.int2message(p_light_obj.InsteonAddress, l_command, 5)
+        l_command[8:11] = p_data
         return self.queue_plm_command(l_command)
 
 
@@ -489,9 +372,8 @@ class CreateCommands(PlmDriverProtocol, InsteonPlmUtility):
         if g_debug >= 5:
             print "Insteon_PLM.queue_73_command() to get plm config."
             g_logger.debug("Queue command to get PLM config.")
-        l_command = bytearray(8)
-        l_command[0] = STX
-        l_command[1] = p_light_obj.Command = plm_commands['plm_get_config']
+        p_light_obj.Command = PLM_COMMANDS['plm_get_config']
+        l_command = self._queue_command('plm_get_config')
         return self.queue_plm_command(l_command)
 
 
@@ -503,12 +385,12 @@ class LightingAPI(Device_Insteon.LightingAPI, CreateCommands):
             print "Insteon_PLM.change_light_settings()  {0:}".format(l_debug_msg)
             g_logger.debug("Change light setting. {0:}".format(l_debug_msg))
         if int(p_level) == 0:
-            self.queue_62_command(p_light_obj, message_types['off'], 0)
+            self.queue_62_command(p_light_obj, MESSAGE_TYPES['off'], 0)
         elif int(p_level) == 100:
-            self.queue_62_command(p_light_obj, message_types['on'], 255)
+            self.queue_62_command(p_light_obj, MESSAGE_TYPES['on'], 255)
         else:
             l_level = int(p_level) * 255 / 100
-            self.queue_62_command(p_light_obj, message_types['on'], l_level)
+            self.queue_62_command(p_light_obj, MESSAGE_TYPES['on'], l_level)
 
     def scan_all_lights(self, p_lights):
         """Exported command - used by other modules.
@@ -516,7 +398,7 @@ class LightingAPI(Device_Insteon.LightingAPI, CreateCommands):
         if g_debug >= 2:
             print "insteon_PLM.scan_all_lights"
         for l_obj in p_lights.itervalues():
-            if Device_Insteon.LightData.get_family(l_obj) != 'Insteon':
+            if Device_Insteon.LightData.Family(l_obj) != 'Insteon':
                 continue
             if l_obj.get_Type == 'Light':
                 self.scan_one_light(l_obj.Name)
@@ -536,7 +418,7 @@ class InsteonPlmCommands(LightingAPI):
 
         @param p_name: is the key for the entry in Light_Data
         """
-        self.queue_62_command(p_name, message_types['product_data_request'], 0x00)
+        self.queue_62_command(p_name, MESSAGE_TYPES['product_data_request'], 0x00)
 
     def update_object(self, p_obj):
         # TODO: implement
@@ -577,13 +459,13 @@ class InsteonAllLinks(InsteonPlmCommands):
         if g_debug >= 2:
             print "Insteon_PLM.delete_link() - Address:{0}, Group:{1:#02X}".format(p_address, p_group)
         p_light_obj = Device_Insteon.LightData()
-        p_light_obj.Address = p_address
+        p_light_obj.InsteonAddress = self.dotted_hex2int(p_address)
         p_light_obj.GroupNumber = p_group
         # p_code = 0x00  # Find First
         p_code = 0x00  # Delete First Found record
         # p_flag = 0xE2
-        p_data = bytearray(3)
-        g_logger.info("Delete All-link record - Address:{0:}, Group:{1:#02X}".format(p_light_obj.Address, p_group))
+        p_data = bytearray(b'\x00\x00\x00')
+        g_logger.info("Delete All-link record - Address:{0:}, Group:{1:#02X}".format(p_light_obj.InsteonAddress, p_group))
         l_ret = self.queue_6F_command(p_light_obj, p_code, p_flag, p_data)
         return l_ret
 
@@ -605,28 +487,35 @@ class DecodeResponses(InsteonAllLinks):
         for l_obj in p_class.itervalues():
             if l_obj.Family != 'Insteon':
                 continue
-            if l_obj.Address == p_addr:
+            if l_obj.InsteonAddress == p_addr:
                 return l_obj
         if g_debug >= 7:
-            print "Insteon_PLM._get_obj_using_addr - not found ", p_addr, p_class
+            print "Insteon_PLM._find_addr - not found {0:}({1:})".format(self.int2dotted_hex(p_addr), p_addr)
         return None
 
-    def _get_obj_using_addr(self, p_addr):
-        """
-        @param p_addr: String 'aa.bb.cc' is the address
-        @return: the entire Lighting Device object
-        """
-        l_ret = self._find_addr(self.m_house_obj.Lights, p_addr)
+    def get_obj_from_message(self, p_message, p_index):
+        l_id = self.message2int(p_message, p_index)
+        l_ret = self._find_addr(self.m_house_obj.Lights, l_id)
         if l_ret == None:
-            l_ret = self._find_addr(self.m_house_obj.Controllers, p_addr)
+            l_ret = self._find_addr(self.m_house_obj.Controllers, l_id)
         if l_ret == None:
-            l_ret = self._find_addr(self.m_house_obj.Buttons, p_addr)
+            l_ret = self._find_addr(self.m_house_obj.Buttons, l_id)
         if l_ret == None:
             l_ret = Device_Insteon.LightData()  # an empty new object
-            l_ret.Name = '**' + str(p_addr) + '**'
+            l_ret.Name = '**' + str(l_id) + '**'
         if g_debug >= 6:
-            print "Insteon_PLM._get_obj_using_addr(5) - Address:{0:}, found:{1:}".format(p_addr, l_ret.Name)
+            print "Insteon_PLM.get_obj_from_message - Address:{0:}({1:}), found:{2:}".format(self.int2dotted_hex(l_id), l_id, l_ret.Name)
         return l_ret
+
+    def _drop_first_byte(self, p_controller_obj):
+        if g_debug >= 1:
+            l_msg = "Insteon_PLM._drop_first_byte() - Found a leading char {0:} - Rest. - {1:}".format(p_controller_obj.Message[0], PrintBytes(p_controller_obj.Message))
+            print l_msg
+            g_logger.error(l_msg)
+        try:
+            p_controller_obj.Message = p_controller_obj.Message[1:]
+        except IndexError:
+            pass
 
     def _decode_message(self, p_controller_obj):
         """Decode a message that was ACKed / NAked.
@@ -639,39 +528,26 @@ class DecodeResponses(InsteonAllLinks):
 
         @return: a flag that is True for ACK and False for NAK/Invalid response.
         """
-        l_message = p_controller_obj.Message
         l_done = False
         while not l_done:
             # Are we out of message?
-            if len(p_controller_obj.Message) == 0:
+            if len(p_controller_obj.Message) < 2:
                 l_done = True
                 return
-            if g_debug >= 5:
-                print "Insteon_PLM._decode_message() - {0:}".format(PrintBytes(l_message))
+
             l_stx = p_controller_obj.Message[0]
-            # If we have a leading NAK, drop it and try again if we have more message
-            if l_stx == 0x15:
-                if g_debug >= 1:
-                    print "Insteon_PLM._decode_message() - Found a leading NAK - Retrying. - {0:}".format(PrintBytes(l_message))
-                p_controller_obj.Message = p_controller_obj.Message[1:]
+            if g_debug >= 5:
+                print "Insteon_PLM._decode_message() - {0:}".format(PrintBytes(p_controller_obj.Message))
+            if l_stx == NAK:
+                self._drop_first_byte(p_controller_obj)
                 continue
-            # If we have a leading ACK, drop it and try again if we have more message
-            elif l_stx == 0x06:
-                if g_debug >= 1:
-                    print "Insteon_PLM._decode_message() - Found a leading ACK - Ignoring - {0:}".format(PrintBytes(l_message))
-                p_controller_obj.Message = p_controller_obj.Message[1:]
+            elif l_stx == ACK:
+                self._drop_first_byte(p_controller_obj)
                 continue
-            # We have a good message start.
-            elif l_stx == 0x02:
-                if g_debug >= 5:
-                    print "Insteon_PLM._decode_message() - Found a message - {0:}".format(PrintBytes(l_message))
+            elif l_stx == STX:
                 self._decode_dispatch(p_controller_obj)
-            # We have garbage.
             else:
-                if g_debug >= 0:
-                    print "Insteon_PLM._decode_message() - Found a mistake - {0:}".format(PrintBytes(l_message))
-                g_logger.error("Rx Message started with {0:#x} not STX, Message={1:}".format(l_stx, PrintBytes(l_message)))
-                p_controller_obj.Message = p_controller_obj.Message[1:]
+                self._drop_first_byte(p_controller_obj)
 
     def _decode_dispatch(self, p_controller_obj):
         """Decode a message that was ACKed / NAked.
@@ -711,7 +587,7 @@ class DecodeResponses(InsteonAllLinks):
         elif l_cmd == 0x73: l_ret = self._decode_73_record(p_controller_obj)
         else:
             g_logger.error("Unknown message {0:}, Cmd:{1:}".format(PrintBytes(p_controller_obj.Message), l_cmd))
-            self._check_for_more_decoding(p_controller_obj, 1, l_ret)
+            self.check_for_more_decoding(p_controller_obj, l_ret)
         return l_ret
 
     def _get_devcat(self, p_message, p_light_obj):
@@ -720,7 +596,7 @@ class DecodeResponses(InsteonAllLinks):
         self.update_object(p_light_obj)
         l_debug_msg = "DevCat From={0:}, DevCat={1:#x}, flags={2:}".format(p_light_obj.Name, l_devcat, self._decode_message_flag(p_message[8]))
         if g_debug >= 1:
-            print "Insteon_PLM._decode_50_record() - Got devcat type  From={0:}, DevCat={1:#x}, flags={2:}".format(
+            print "Insteon_PLM._get_devcat() - Got devcat type  From={0:}, DevCat={1:#x}, flags={2:}".format(
                             p_light_obj.Name, l_devcat, self._decode_message_flag(p_message[8]))
         g_logger.info("Got DevCat from light:{0:}, DevCat:{1:}".format(p_light_obj.Name, l_devcat))
         return l_debug_msg
@@ -732,10 +608,10 @@ class DecodeResponses(InsteonAllLinks):
         See p 246 of developers guide.
         """
         l_message = p_controller_obj.Message
-        l_obj_from = self._get_obj_using_addr(self._get_addr_from_message(l_message, 2))
+        l_obj_from = self.get_obj_from_message(l_message, 2)
         l_name_from = l_obj_from.Name
         l_flags = self._decode_message_flag(l_message[8])
-        l_obj_to = self._get_obj_using_addr(self._get_addr_from_message(l_message, 5))
+        l_obj_to = self.get_obj_from_message(l_message, 5)
         l_name_to = l_obj_to.Name
         l_data = [l_message[9], l_message[10]]
         l_debug_msg = 'Standard Message; '
@@ -759,47 +635,45 @@ class DecodeResponses(InsteonAllLinks):
         elif l_message[8] & 0xE0 == 0xE0:  # (111) NAK of Direct message type
             l_debug_msg += "NAK of direct message(2) from {0:}; ".format(l_name_from)
         #
-        if l_obj_from.Command1 == message_types['product_data_request']:  # 0x03
+        if l_obj_from.Command == MESSAGE_TYPES['product_data_request']:  # 0x03
             l_debug_msg += " product data request. - Should never happen - S/B 51 response"
-        elif l_obj_from.Command1 == message_types['engine_version']:  # 0x0D
+        elif l_obj_from.Command == MESSAGE_TYPES['engine_version']:  # 0x0D
             l_engine_id = l_message[10]
             l_debug_msg += "Engine version From:{0:}, Sent to:{1:}, Id:{2:}; ".format(l_name_from, l_name_to, l_engine_id)
             g_logger.info("Got engine version from light:{0:}, To:{1:}, EngineID:{2:}".format(l_name_from, l_name_to, l_engine_id))
-        elif l_obj_from.Command1 == message_types['id_request']:  # 0x10
+        elif l_obj_from.Command == MESSAGE_TYPES['id_request']:  # 0x10
             l_debug_msg += "Request ID From:{0:}; ".format(l_name_from)
             g_logger.info("Got an ID request. Light:{0:}".format(l_name_from,))
-        elif l_obj_from.Command1 == message_types['on']:  # 0x11
+        elif l_obj_from.Command == MESSAGE_TYPES['on']:  # 0x11
             l_obj_from.CurLevel = 100
             l_debug_msg += "Light:{0:} turned Full ON; ".format(l_name_from)
             self.update_object(l_obj_from)
-        elif l_obj_from.Command1 == message_types['off']:  # 0x13
+        elif l_obj_from.Command == MESSAGE_TYPES['off']:  # 0x13
             l_obj_from.CurLevel = 0
             l_debug_msg += "Light:{0:} turned Full OFF; ".format(l_name_from)
             self.update_object(l_obj_from)
-        elif l_obj_from.Command1 == message_types['status_request']:  # 0x19
+        elif l_obj_from.Command == MESSAGE_TYPES['status_request']:  # 0x19
             l_level = int(((l_message[10] + 2) * 100) / 256)
             l_obj_from.CurLevel = l_level
             l_debug_msg += "Status of light:{0:} is level:{1:}; ".format(l_name_from, l_level)
             g_logger.info("PLM:{0:} Got Light Status From:{1:}, Level is:{2:}".format(p_controller_obj.Name, l_name_from, l_level))
             self.update_object(l_obj_from)
         else:
-            l_debug_msg += "Insteon_PLM._decode_50_record() unknown type - last command was {0:#x} - {1:}; ".format(l_obj_from.Command1, PrintBytes(l_message))
+            l_debug_msg += "Insteon_PLM._decode_50_record() unknown type - last command was {0:#x} - {1:}; ".format(l_obj_from.Command, PrintBytes(l_message))
         l_ret = True
 
         if g_debug >= 3:
             print "Insteon_PLM._decode_50_record() {0:}".format(l_debug_msg)
             g_logger.debug(l_debug_msg)
-        return self._check_for_more_decoding(p_controller_obj, 11, l_ret)
+        return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_51_record(self, p_controller_obj):
         """ Insteon Extended Message Received (25 bytes).
         See p 247 of developers guide.
         """
         l_message = p_controller_obj.Message
-        l_id_from = self._get_addr_from_message(l_message, 2)
-        l_obj_from = self._get_obj_using_addr(l_id_from)
-        l_id_to = self._get_addr_from_message(l_message, 5)
-        l_obj_to = self._get_obj_using_addr(l_id_to)
+        l_obj_from = self.get_obj_from_message(l_message, 2)
+        l_obj_to = self.get_obj_from_message(l_message, 5)
         l_flags = l_message[8]
         l_data = [l_message[9], l_message[10]]
         l_extended = "{0:X}.{1:X}.{2:X}.{3:X}.{4:X}.{5:X}.{6:X}.{7:X}.{8:X}.{9:X}.{10:X}.{11:X}.{12:X}.{13:X}".format(
@@ -814,7 +688,7 @@ class DecodeResponses(InsteonAllLinks):
         l_obj_from.ProductKey = l_product_key
         l_obj_from.DevCat = l_devcat
         l_ret = True
-        return self._check_for_more_decoding(p_controller_obj, 25, l_ret)
+        return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_52_record(self, p_controller_obj):
         """Insteon X-10 message received (4 bytes).
@@ -824,7 +698,7 @@ class DecodeResponses(InsteonAllLinks):
         l_ret = False
         if g_debug >= 3:
             print "Insteon_PLM.decode_52_record()"
-        return self._check_for_more_decoding(p_controller_obj, 4, l_ret)
+        return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_53_record(self, p_controller_obj):
         """Insteon All-Linking completed (10 bytes).
@@ -834,7 +708,7 @@ class DecodeResponses(InsteonAllLinks):
         l_ret = False
         if g_debug >= 3:
             print "Insteon_PLM.decode_53_record()"
-        return self._check_for_more_decoding(p_controller_obj, 10, l_ret)
+        return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_54_record(self, p_controller_obj):
         """Insteon Button Press event (3 bytes).
@@ -844,7 +718,7 @@ class DecodeResponses(InsteonAllLinks):
         l_ret = False
         if g_debug >= 3:
             print "Insteon_PLM.decode_54_record()"
-        return self._check_for_more_decoding(p_controller_obj, 2, l_ret)
+        return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_55_record(self, p_controller_obj):
         """Insteon User Reset detected (2 bytes).
@@ -855,7 +729,7 @@ class DecodeResponses(InsteonAllLinks):
         g_logger.info("".format(l_debug_msg))
         if g_debug >= 3:
             print "Insteon_PLM.decode_55_record() {0:}".format(l_debug_msg)
-        return self._check_for_more_decoding(p_controller_obj, 2, l_ret)
+        return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_56_record(self, p_controller_obj):
         """Insteon All-Link cleanup failure report (7 bytes).
@@ -865,19 +739,19 @@ class DecodeResponses(InsteonAllLinks):
         l_ret = False
         if g_debug >= 3:
             print "Insteon_PLM.decode_56_record()"
-        return self._check_for_more_decoding(p_controller_obj, 7, l_ret)
+        return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_57_record(self, p_controller_obj):
         """All-Link Record Response (10 bytes).
         See p 264 of developers guide.
         """
         l_message = p_controller_obj.Message
+        l_obj = self.get_obj_from_message(l_message, 4)
         l_link_obj = Insteon_Link.LinkData()
         l_link_obj.Flag = l_flags = l_message[2]
         l_link_obj.Group = l_group = l_message[3]
-        l_link_obj.Addess = l_address = self._get_addr_from_message(l_message, 4)
+        l_link_obj.InsteonAddess = l_obj.InsteonAddress
         l_link_obj.Data = l_data = [l_message[7], l_message[8], l_message[9]]
-        l_obj = self._get_obj_using_addr(l_address)
         l_flag_control = l_flags & 0x40
         l_type = 'Responder'
         if l_flag_control != 0:
@@ -886,7 +760,7 @@ class DecodeResponses(InsteonAllLinks):
         l_ret = True
         if g_debug >= 3:
             print "Insteon_PLM.decode_57_record() - Group:{0:#02X}, Name:{1:}, Flags:{2:#0x}, Data:{3:}".format(l_group, l_obj.Name, l_flags, l_data)
-        return self._check_for_more_decoding(p_controller_obj, 10, l_ret)
+        return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_58_record(self, p_controller_obj):
         """Insteon All-Link cleanup status report (3 bytes).
@@ -896,18 +770,17 @@ class DecodeResponses(InsteonAllLinks):
         l_ret = False
         if g_debug >= 3:
             print "Insteon_PLM.decode_58_record()"
-        return self._check_for_more_decoding(p_controller_obj, 3, l_ret)
+        return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_60_record(self, p_controller_obj):
         """Get Insteon Modem Info (9 bytes).
         See p 273 of developers guide.
         """
         l_message = p_controller_obj.Message
-        l_id = self._get_addr_from_message(l_message, 2)
+        l_obj = self.get_obj_from_message(l_message, 2)
         l_devcat = l_message[5]
         l_devsubcat = l_message[6]
         l_firmver = l_message[7]
-        l_obj = self._get_obj_using_addr(l_id)
         g_logger.info("== 60 - Insteon Modem Info - DevCat={0:}, DevSubCat={1:}, Firmware={2:} - Name={3:}".format(l_devcat, l_devsubcat, l_firmver, l_obj.Name))
         if l_message[8] == ACK:
             l_ret = True
@@ -916,7 +789,7 @@ class DecodeResponses(InsteonAllLinks):
             l_ret = False
         if g_debug >= 3:
             print "Insteon_PLM.decode_60_record()"
-        return self._check_for_more_decoding(p_controller_obj, 9, l_ret)
+        return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_61_record(self, p_controller_obj):
         """Get Insteon Modem Info (6 bytes).
@@ -935,7 +808,7 @@ class DecodeResponses(InsteonAllLinks):
             l_ret = False
         if g_debug >= 3:
             print "Insteon_PLM.decode_61_record()"
-        return self._check_for_more_decoding(p_controller_obj, 6, l_ret)
+        return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_62_record(self, p_controller_obj):
         """Get response to Send Insteon standard-length message (9 bytes).
@@ -946,15 +819,14 @@ class DecodeResponses(InsteonAllLinks):
         A 50 response MAY immediately follow this response with any data requested.
         """
         l_message = p_controller_obj.Message
-        l_id = self._get_addr_from_message(l_message, 2)
+        l_obj = self.get_obj_from_message(l_message, 2)
         _l_msgflags = self._decode_message_flag(l_message[5])
         l_ack = self._get_ack_nak(l_message[8])
-        l_obj = self._get_obj_using_addr(l_id)
         l_debug_msg = "Device:{0:}, {1:}".format(l_obj.Name, l_ack)
         if g_debug >= 3:
             print "Insteon_PLM.decode_62_record() {0:}".format(l_debug_msg)
             g_logger.debug("Got ACK(62) {0:}".format(l_debug_msg))
-        return self._check_for_more_decoding(p_controller_obj, 9)
+        return self.check_for_more_decoding(p_controller_obj)
 
     def _decode_64_record(self, p_controller_obj):
         """Start All-Link ACK response (5 bytes).
@@ -972,7 +844,7 @@ class DecodeResponses(InsteonAllLinks):
             l_ret = False
         if g_debug >= 3:
             print "Insteon_PLM.decode_64_record()"
-        return self._check_for_more_decoding(p_controller_obj, 5, l_ret)
+        return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_67_record(self, p_controller_obj):
         """Reset IM ACK response (3 bytes).
@@ -984,7 +856,7 @@ class DecodeResponses(InsteonAllLinks):
         g_logger.info("{0:}".format(l_debug_msg))
         if g_debug >= 3:
             print "Insteon_PLM.decode_64_record() {0:}".format(l_debug_msg)
-        return self._check_for_more_decoding(p_controller_obj, 3)
+        return self.check_for_more_decoding(p_controller_obj)
 
     def _decode_69_record(self, p_controller_obj):
         """Get first All-Link record response (3 bytes).
@@ -999,7 +871,7 @@ class DecodeResponses(InsteonAllLinks):
             l_ret = False
         if g_debug >= 3:
             print "Insteon_PLM.decode_69_record() - {0:}".format(self._get_ack_nak(l_message[2]))
-        return self._check_for_more_decoding(p_controller_obj, 3, l_ret)
+        return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_6A_record(self, p_controller_obj):
         """Get next All-Link (3 bytes).
@@ -1014,7 +886,7 @@ class DecodeResponses(InsteonAllLinks):
             l_ret = False
         if g_debug >= 3:
             print "Insteon_PLM.decode_6A_record() - {0:}".format(self._get_ack_nak(l_message[2]))
-        return self._check_for_more_decoding(p_controller_obj, 3, l_ret)
+        return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_6B_record(self, p_controller_obj):
         """Get set IM configuration (4 bytes).
@@ -1032,7 +904,7 @@ class DecodeResponses(InsteonAllLinks):
             l_ret = False
         if g_debug >= 3:
             print "Insteon_PLM.decode_6B_record() - {0:}".format(l_debug_msg)
-        return self._check_for_more_decoding(p_controller_obj, 4, l_ret)
+        return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_6F_record(self, p_controller_obj):
         """All-Link manage Record Response (12 bytes).
@@ -1043,10 +915,9 @@ class DecodeResponses(InsteonAllLinks):
         l_flags = l_message[3]
         l_flag_control = l_flags & 0x40
         l_group = l_message[4]
-        l_id = self._get_addr_from_message(l_message, 5)
+        l_obj = self.get_obj_from_message(l_message, 5)
         l_data = [l_message[8], l_message[9], l_message[10]]
         l_ack = self._get_ack_nak(l_message[11])
-        l_obj = self._get_obj_using_addr(l_id)
         l_type = 'Responder'
         if l_flag_control != 0:
             l_type = 'Controller'
@@ -1057,7 +928,7 @@ class DecodeResponses(InsteonAllLinks):
         l_ret = True
         if g_debug >= 3:
             print "Insteon_PLM.decode_6F_record() - {0:}".format(l_message)
-        return self._check_for_more_decoding(p_controller_obj, 12, l_ret)
+        return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_73_record(self, p_controller_obj):
         """Get the PLM response of 'get config' (6 bytes).
@@ -1071,9 +942,9 @@ class DecodeResponses(InsteonAllLinks):
         if g_debug >= 3:
             print "Insteon_PLM.decode_73_record() - got plm config response."
         g_logger.info("== 73 Get IM configuration Flags={0#x:}, Spare 1={1:#x}, Spare 2={2:#x} {3:} ".format(l_flags, l_spare1, l_spare2, l_ack))
-        return self._check_for_more_decoding(p_controller_obj, 6)
+        return self.check_for_more_decoding(p_controller_obj)
 
-    def _check_for_more_decoding(self, p_controller_obj, p_chop, p_ret = True):
+    def check_for_more_decoding(self, p_controller_obj, p_ret = True):
         """
         @param l_message: is the possibly compound message.
         @param p_chop: is the number of characters to chop off the beginning of the message.
@@ -1082,7 +953,7 @@ class DecodeResponses(InsteonAllLinks):
 
         l_ret = p_ret
         l_length = len(p_controller_obj.Message)
-        l_chop = MESSAGE_LENGTH[p_controller_obj.Message[1]]
+        l_chop = self._get_message_length(p_controller_obj.Message[1])
         if l_length >= l_chop:
             p_controller_obj.Message = p_controller_obj.Message[l_chop:]
             l_ret = self._decode_message(p_controller_obj)
@@ -1105,13 +976,13 @@ class InsteonPlmAPI(DecodeResponses):
             i2cs = 2012 add checksums + new commands.
         """
         g_logger.debug('Request Insteon Engine version from device: {0:}'.format(p_obj.Name))
-        self.queue_62_command(p_obj.Name, message_types['engine_version'], 0)  # 0x0D
+        self.queue_62_command(p_obj.Name, MESSAGE_TYPES['engine_version'], 0)  # 0x0D
 
     def get_id_request(self, p_obj):
         """Get the device DevCat
         """
         g_logger.debug('Request Insteon ID(devCat) from device: {0:}'.format(p_obj.Name))
-        self.queue_62_command(p_obj.Name, message_types['id_request'], 0)  # 0x10
+        self.queue_62_command(p_obj.Name, MESSAGE_TYPES['id_request'], 0)  # 0x10
 
     def ping_plm(self):
         """Send a command to the plm and get its response.
@@ -1178,7 +1049,7 @@ class LightHandlerAPI(InsteonPlmAPI):
         """
         if g_debug >= 6:
             print "Insteon_PLM._get_one_light_status() {0:}".format(p_light_obj.Name)
-        self.queue_62_command(p_light_obj, message_types['status_request'], 0)  # 0x19
+        self.queue_62_command(p_light_obj, MESSAGE_TYPES['status_request'], 0)  # 0x19
 
 
 class PlmTesting(object):
@@ -1203,11 +1074,8 @@ class API(LightHandlerAPI):
         """
         if g_debug >= 1:
             print "Insteon_PLM.__init__()"
-        global g_logger, g_driver, g_queue
+        global g_logger
         g_logger = logging.getLogger('PyHouse.Inst_PLM')
-        g_logger.info('Initializing.')
-        g_driver = []
-        g_queue = Queue.Queue(300)
         g_logger.info('Initialized.')
 
     def Start(self, p_house_obj, p_controller_obj):

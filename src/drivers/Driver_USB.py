@@ -52,7 +52,7 @@ import usb.util
 from twisted.internet import reactor
 
 # Import PyHouse modules
-from tools import PrintBytes
+from utils.tools import PrintBytes
 
 callLater = reactor.callLater
 
@@ -64,13 +64,6 @@ g_usb = None
 
 # Timeouts for send/receive delays
 RECEIVE_TIMEOUT = 0.3
-
-HID_GET_REPORT = 0x01
-HID_GET_IDLE = 0x02
-HID_GET_PROTOCOL = 0x03
-HID_SET_REPORT = 0x09
-HID_SET_IDLE = 0x0A
-HID_SET_PROTOCOL = 0x0B
 
 
 class UsbDeviceData(object):
@@ -117,7 +110,7 @@ class UsbDeviceData(object):
     Product = property(get_product, set_product, None, "The device's assigned Product (idProduct).")
     Vendor = property(get_vendor, set_vendor, None, "The devices assigned Vendor number (idVendor).")
 
-    def __str__(self):
+    def __repr__(self):
         l_ret = "Driver_USB.UsbDeviceData: Name: {0:}, Vendor: {1:#04x}, Product: {2:#04x}, Device: {3:}, Port: {4:}".format(self.Name, self.Vendor, self.Product, self.Device, self.Port)
         return l_ret
 

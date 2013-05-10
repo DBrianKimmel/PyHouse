@@ -19,6 +19,7 @@ import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from lights import lighting
+from Insteon_utils import ConvertInsteon
 
 g_debug = 0
 g_logger = None
@@ -30,7 +31,7 @@ class CoreData (object):
     """
 
     def __init__(self):
-        self.Address = ''
+        self.InsteonAddress = 0
         self.Controller = False
         self.DevCat = 0
         self.Family = 'Insteon'
@@ -39,56 +40,16 @@ class CoreData (object):
         self.Master = False
         self.ProductKey = ''
         self.Responder = False
+        self.Command = 0
+        self.Command1 = 0
 
     def __repr__(self):
         l_str = lighting.ControllerData.__repr__(self)
-        l_str += " Address: {0:} Controller: {1:}".format(self.get_address(), self.Controller)
+        l_str += " Address:{0:} Controller:{1:}".format(self.InsteonAddress, self.Controller)
         return l_str
 
-    def get_address(self):
-        return self.__Address
-    def set_address(self, value):
-        self.__Address = value
-    def get_controller(self):
-        return self.__Controller
-    def set_controller(self, value):
-        self.__Controller = value
-    def get_dev_cat(self):
-        return self.__DevCat
-    def set_dev_cat(self, value):
-        self.__DevCat = value
-    def get_group_list(self):
-        return self.__GroupList
-    def set_group_list(self, value):
-        self.__GroupList = value
-    def get_group_number(self):
-        return self.__GroupNumber
-    def set_group_number(self, value):
-        self.__GroupNumber = value
-    def get_master(self):
-        return self.__Master
-    def set_master(self, value):
-        self.__Master = value
-    def get_product_key(self):
-        return self.__ProductKey
-    def set_product_key(self, value):
-        self.__ProductKey = value
-    def get_responder(self):
-        return self.__Responder
-    def set_responder(self, value):
-        self.__Responder = value
 
-    Address = property(get_address, set_address, None, "'Str' Device Address as 'aa.bb.cc'.")
-    Controller = property(get_controller, set_controller, None, "Bool Device can act as a controller of others.")
-    DevCat = property(get_dev_cat, set_dev_cat, None, "Int16' Device Category and SubCategory as 0x0123.")
-    GroupList = property(get_group_list, set_group_list, None, None)
-    GroupNumber = property(get_group_number, set_group_number, None, None)
-    Master = property(get_master, set_master, None, "'Bool' ???")
-    ProductKey = property(get_product_key, set_product_key, None, "New - Replacing devcat someday perhaps.")
-    Responder = property(get_responder, set_responder, None, "'Bool' Device can act as responder from a controller.")
-
-
-class CoreAPI(object):
+class CoreAPI(ConvertInsteon):
 
     def extract_device_xml(self, p_entry_xml, p_device_obj):
         """
@@ -96,7 +57,7 @@ class CoreAPI(object):
         @param p_house: is the text name of the House.
         @return: a dict of the entry to be attached to a house object.
         """
-        p_device_obj.Address = p_entry_xml.findtext('Address')
+        p_device_obj.InsteonAddress = self.dotted_hex2int(p_entry_xml.findtext('Address'))
         p_device_obj.Controller = p_entry_xml.findtext('Controller')
         p_device_obj.DevCat = p_entry_xml.findtext('DevCat')
         p_device_obj.GroupList = p_entry_xml.findtext('GroupList')
@@ -107,7 +68,7 @@ class CoreAPI(object):
         return p_device_obj
 
     def insert_device_xml(self, p_entry_xml, p_device_obj):
-        ET.SubElement(p_entry_xml, 'Address').text = p_device_obj.Address
+        ET.SubElement(p_entry_xml, 'Address').text = self.int2dotted_hex(p_device_obj.InsteonAddress)
         ET.SubElement(p_entry_xml, 'Controller').text = self.put_bool(p_device_obj.Controller)
         ET.SubElement(p_entry_xml, 'DevCat').text = str(p_device_obj.DevCat)
         ET.SubElement(p_entry_xml, 'GroupList').text = str(p_device_obj.GroupList)
@@ -121,8 +82,8 @@ class ButtonData(lighting.ButtonData, CoreData):
     def __init__(self):
         super(ButtonData, self).__init__()
 
-    def __str__(self):
-        l_str = super(ButtonData, self).__str__()
+    def __repr__(self):
+        l_str = super(ButtonData, self).__repr__()
         l_str += " Address:{0:}".format(self.get_address())
         return l_str
 
@@ -135,8 +96,8 @@ class ControllerData(lighting.ControllerData, CoreData):
     def __init__(self):
         super(ControllerData, self).__init__()
 
-    def __str__(self):
-        l_str = super(ControllerData, self).__str__()
+    def __repr__(self):
+        l_str = super(ControllerData, self).__repr__()
         l_str += " Address:{0:}".format(self.get_address())
         return l_str
 
@@ -153,8 +114,8 @@ class LightData(lighting.LightData, CoreData):
     def __init__(self):
         super(LightData, self).__init__()
 
-    def __str__(self):
-        l_str = super(LightData, self).__str__()
+    def __repr__(self):
+        l_str = super(LightData, self).__repr__()
         l_str += " Address:{0:}".format(self.get_address())
         return l_str
 
@@ -182,7 +143,7 @@ class API(LightingAPI):
         if g_debug > 0:
             print "Device_Insteon.__init__()"
         global g_logger
-        g_logger = logging.getLogger('PyHouse.Device_Insteon')
+        g_logger = logging.getLogger('PyHouse.Dev_Inst')
         g_logger.info('Initializing.')
         self.m_plm = Insteon_PLM.API()
         g_logger.info('Initialized.')

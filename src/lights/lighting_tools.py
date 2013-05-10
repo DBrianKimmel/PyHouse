@@ -67,8 +67,8 @@ class CoreData(LightingTools):
 
     def __init__(self):
         self.Active = False
-        self.Command = 0
-        self.Command1 = 0
+        # self.Command = 0
+        # self.Command1 = 0
         self.Comment = ''
         self.Coords = ''
         self.Dimmable = False
@@ -80,67 +80,14 @@ class CoreData(LightingTools):
         self.RoomName = ''
         self.Type = ''
 
-    def __str__(self):
+    def __repr__(self):
         l_str = "Light:: Name:{0:}, Family:{1:}, Type:{2:}, Comment:{3:}, " \
                 "Room:{4:}, Coords:{5:}, Active:{6:}, Dimmable:{7:}, House:{8:} ".format(
-                self.get_name(), self.get_family(),
-                self.get_type(), self.get_comment(),
-                self.get_room_name(), self.get_coords(),
-                self.get_active(), self.get_dimmable(),
-                self.get_house_name())
+                self.Name, self.Family, self.Type, self.Comment,
+                self.RoomName, self.Coords,
+                self.Active, self.Dimmable,
+                self.HouseName)
         return l_str
-
-    def get_active(self):
-        return self.__Active
-    def set_active(self, value):
-        self.__Active = value
-    def get_comment(self):
-        return self.__Comment
-    def set_comment(self, value):
-        self.__Comment = value
-    def get_coords(self):
-        return self.__Coords
-    def set_coords(self, value):
-        self.__Coords = value
-    def get_dimmable(self):
-        return self.__Dimmable
-    def set_dimmable(self, value):
-        self.__Dimmable = value
-    def get_family(self):
-        return self.__Family
-    def set_family(self, value):
-        self.__Family = value
-    def get_house_name(self):
-        return self.__HouseName
-    def set_house_name(self, value):
-        self.__HouseName = value
-    def get_key(self):
-        return self.__Key
-    def set_key(self, value):
-        self.__Key = value
-    def get_name(self):
-        return self.__Name
-    def set_name(self, value):
-        self.__Name = value
-    def get_room_name(self):
-        return self.__RoomName
-    def set_room_name(self, value):
-        self.__RoomName = value
-    def get_type(self):
-        return self.__Type
-    def set_type(self, value):
-        self.__Type = value
-
-    Active = property(get_active, set_active, None, "Bool - Active device or not.")
-    Comment = property(get_comment, set_comment, None, "A general comment about the device.")
-    Coords = property(get_coords, set_coords, None, None)
-    Dimmable = property(get_dimmable, set_dimmable, None, None)
-    Family = property(get_family, set_family, None, "The Family - Insteon, UPB, X10, etc.")
-    HouseName = property(get_house_name, set_house_name, None, "HouseName's docstring")
-    Key = property(get_key, set_key, None, "Number 1..x that will be the dict key for this device.")
-    Name = property(get_name, set_name, None, "The Name of the device.")
-    RoomName = property(get_room_name, set_room_name, None, "The room where the device is located.")
-    Type = property(get_type, set_type, None, "The device Type - Light, Controller, Button, Scene, ...")
 
 
 class CoreAPI(LightingTools):

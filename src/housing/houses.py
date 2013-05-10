@@ -39,7 +39,7 @@ class HousesData(object):
         self.HouseAPI = None
         self.Object = {}
 
-    def __str__(self):
+    def __repr__(self):
         return "Houses:: Name:{0:}, Key:{1:}, Object:{2:}, API:{3:}".format(self.Name, self.Key, self.Object, self.HouseAPI)
 
 
@@ -152,7 +152,7 @@ class API(LoadSaveAPI):
         self = object.__new__(cls)
         cls.__init__(self, *args, **kwargs)
         Singletons[cls] = self
-        self.m_logger = logging.getLogger('PyHouse.Houses')
+        self.m_logger = logging.getLogger('PyHouse.Houses  ')
         self.m_logger.info("Initializing all houses.")
         self.m_logger.info("Initialized.")
         return self

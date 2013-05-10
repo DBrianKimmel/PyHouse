@@ -24,6 +24,7 @@ class CoreData(object):
         self.NetworkID = None
         self.Password = None
         self.UnitID = None
+        self.Command = 0
 
     def get_network_id(self):
         return self.__NetworkID
@@ -56,8 +57,8 @@ class ButtonData(lighting.ButtonData, CoreData):
     def __init__(self):
         super(ButtonData, self).__init__()
 
-    def __str__(self):
-        l_str = super(ButtonData, self).__str__()
+    def __repr__(self):
+        l_str = super(ButtonData, self).__repr__()
         return l_str
 
 class ButtonAPI(lighting.ButtonAPI, CoreAPI):
@@ -85,8 +86,8 @@ class ControllerData(lighting.ControllerData, CoreData):
     def __init__(self):
         super(ControllerData, self).__init__()
 
-    def __str__(self):
-        l_str = super(ControllerData, self).__str__()
+    def __repr__(self):
+        l_str = super(ControllerData, self).__repr__()
         return l_str
 
 class ControllerAPI(lighting.ControllerAPI, CoreAPI): pass
@@ -97,8 +98,8 @@ class LightData(lighting.LightData, CoreData):
     def __init__(self):
         super(LightData, self).__init__()
 
-    def __str__(self):
-        l_str = super(LightData, self).__str__()
+    def __repr__(self):
+        l_str = super(LightData, self).__repr__()
         return l_str
 
 class LightingAPI(lighting.LightingAPI, CoreAPI):
@@ -165,7 +166,7 @@ class API(LightingAPI):
         if g_debug > 0:
             print "Device_UPB.__init__()"
         global g_logger, g_PIM
-        g_logger = logging.getLogger('PyHouse.Device_UPB')
+        g_logger = logging.getLogger('PyHouse.Dev_UPB ')
         g_logger.info('Initializing.')
         g_PIM = self.m_pim = UPB_Pim.API()
         g_logger.info('Initialized.')

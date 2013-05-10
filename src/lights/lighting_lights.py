@@ -13,7 +13,6 @@
 
 import lighting_tools
 
-Light_Data = {}
 LightCount = 0
 g_debug = 1
 
@@ -29,8 +28,8 @@ class LightData(lighting_tools.CoreData):
         self.Type = 'Light'
         self.CurLevel = 0
 
-    def __str__(self):
-        l_str = super(LightData, self).__str__()
+    def __repr__(self):
+        l_str = super(LightData, self).__repr__()
         l_str = l_str + " Key:{0} ".format(self.get_key())
         return l_str
 
@@ -61,12 +60,6 @@ class LightsAPI(lighting_tools.CoreAPI):
         l_light = super(LightsAPI, self).load_core_device(p_dict, self._get_LightCount())
         l_light.CurLevel = 0
         return l_light
-
-    def XXdump_all_lights(self):
-        print "***** All Lights ***** lighting_lights"
-        for l_key, l_obj in Light_Data.iteritems():
-            self.dump_device(l_obj, 'Light', l_key)
-        print
 
     def update_all_devices(self):
         assert 0, "update all devices must be subclassed."

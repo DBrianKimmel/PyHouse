@@ -86,7 +86,7 @@ class API(object):
         if g_debug > 0:
             print "Device_X10.__init__()"
         global g_logger
-        g_logger = logging.getLogger('PyHouse.Device_X10')
+        g_logger = logging.getLogger('PyHouse.Dev_X10 ')
         # LightingAPI().load_all_lights(Configure_Data['X10Lights'])
         g_logger.info('Initialized.')
 

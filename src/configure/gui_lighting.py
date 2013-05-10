@@ -8,12 +8,13 @@ from operator import attrgetter
 import gui_tools
 from lights import lighting
 from utils import config_xml
+from drivers import VALID_INTERFACES
 
 
 g_debug = 5
 
 VAL_FAM = lighting.VALID_FAMILIES
-VAL_INTER = lighting.VALID_INTERFACES
+VAL_INTER = VALID_INTERFACES
 BG_LIGHT = '#C0C090'
 BG_CTLR = '#90C090'
 BG_BUTTN = '#C09090'
@@ -206,7 +207,7 @@ class LightingDialog(LightingWindow):
                 pass
         # Now for interfaces add the following:
         if l_family == 'Insteon':
-            self.get_entry_str(p_gui_obj.ModuleDialogFrame, 61, 'Address', self.Address)
+            self.get_entry_str(p_gui_obj.ModuleDialogFrame, 61, 'Address', self.InsteonAddress)
             self.get_entry_bol(p_gui_obj.ModuleDialogFrame, 62, 'Controller', self.Controller)
             self.get_entry_str(p_gui_obj.ModuleDialogFrame, 63, 'DevCat', self.DevCat)
             self.get_entry_str(p_gui_obj.ModuleDialogFrame, 64, 'Group Number', self.GroupNumber)
@@ -272,7 +273,7 @@ class LightingDialog(LightingWindow):
         self.Password = StringVar()
         self.UnitID = IntVar()
         # Family - Insteon
-        self.Address = StringVar()
+        self.InsteonAddress = StringVar()
         self.Controller = IntVar()
         self.DevCat = StringVar()
         self.GroupList = StringVar()
@@ -296,7 +297,7 @@ class LightingDialog(LightingWindow):
                     l_obj = lighting.LightData()
                     l_obj.Key = p_key
                     l_obj.Family = 'Insteon'
-                    l_obj.Address = ''
+                    l_obj.InsteonAddress = ''
             elif p_kind == 2 or p_kind == 5:
                 l_type = "Controller"
                 try:
@@ -347,7 +348,7 @@ class LightingDialog(LightingWindow):
         # TODO: Change to access family modules to fill in these things.
         if l_family == 'Insteon':
             try:
-                self.Address.set(l_obj.Address)
+                self.InsteonAddress.set(l_obj.InsteonAddress)
                 self.Controller.set(self.get_bool(l_obj.Controller))
                 self.DevCat.set(self.put_hex(int(str(l_obj.DevCat), 0)))  # Displays hex
                 self.GroupList.set(l_obj.GroupList)
@@ -356,7 +357,7 @@ class LightingDialog(LightingWindow):
                 self.ProductKey.set(l_obj.ProductKey)
                 self.Responder.set(self.get_bool(l_obj.Responder))
             except AttributeError:
-                self.Address.set('11.22.33')
+                self.InsteonAddress.set('11.22.33')
                 self.Controller.set(False)
                 self.DevCat.set(0)
                 self.GroupList.set('')
@@ -392,7 +393,7 @@ class LightingDialog(LightingWindow):
         l_obj.HouseName = self.HouseName.get()
         l_obj.Type = l_type
         if l_family == 'Insteon':
-            l_obj.Address = self.Address.get()
+            l_obj.InsteonAddress = self.InsteonAddress.get()
             l_obj.Controller = int(self.Controller.get())
             l_obj.DevCat = self.DevCat.get()
             l_obj.GroupList = self.GroupList.get()

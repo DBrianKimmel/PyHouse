@@ -409,7 +409,7 @@ class API(SSAPI):
         if g_debug >= 1:
             print "sunrisesunset.__init__()"
         global g_logger
-        g_logger = logging.getLogger('PyHouse.SunriseSunset')
+        g_logger = logging.getLogger('PyHouse.Sunrise ')
         self.earth_data = EarthParameters()
         self.solar_data = SolarParameters()
         if g_debug >= 2:

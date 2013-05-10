@@ -770,11 +770,11 @@ class RootPage(ManualFormMixin, EntertainmentPage, HousePage, LightingPage, Loca
         return RootPage('Root')
 
 
-#class MyFactory(protocol.Factory):
+# class MyFactory(protocol.Factory):
 #    protocol = MyProtocol
 
 
-#class MyProtocol(basic.LineReceiver):
+# class MyProtocol(basic.LineReceiver):
 #    pass
 
 
@@ -784,7 +784,7 @@ class API(object):
         if g_debug > 0:
             print "web_server.__init__()"
         global g_logger
-        g_logger = logging.getLogger('PyHouse.WebServer')
+        g_logger = logging.getLogger('PyHouse.WebServ ')
         Web_Data[0] = WebData()
         Web_Data[0].WebPort = 8080
         g_logger.info("Initialized - Start the web server on port {0:}".format(g_port))
@@ -807,7 +807,7 @@ class API(object):
 
 from scheduling import schedule
 
-Light_Data = lighting.Light_Data
+# Light_Data = lighting.Light_Data
 # Location_Data = house.Location_Data
 # Room_Data = house.Room_Data
 # Schedule_Data = schedule.Schedule_Data

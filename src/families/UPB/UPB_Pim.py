@@ -386,7 +386,7 @@ class LightingAPI(Device_UPB.LightingAPI, CreateCommands):
 
     def change_light_setting(self, p_lighting_obj, p_level):
         for l_obj in g_house_obj.Lights.itervalues():
-            if l_obj.get_family() != 'UPB':
+            if l_obj.Family != 'UPB':
                 continue
             if l_obj.get_active() == False:
                 continue
@@ -529,7 +529,7 @@ class API(UpbPimAPI):
         if g_debug > 0:
             print "UPB_Pim.__init__()"
         global g_logger, g_queue
-        g_logger = logging.getLogger('PyHouse.UPB_PIM')
+        g_logger = logging.getLogger('PyHouse.UPB_PIM ')
         g_logger.info('Initializing.')
         g_queue = Queue.Queue(300)
         g_logger.info('Initialized.')

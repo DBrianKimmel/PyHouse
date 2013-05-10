@@ -10,7 +10,7 @@ import gui_tools
 from configure.gui_tools import GuiTools
 
 
-g_debug = 5
+g_debug = 0
 
 FG = 'red'
 BG_LIGHT = '#C0C090'

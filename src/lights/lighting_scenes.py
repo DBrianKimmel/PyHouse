@@ -43,7 +43,7 @@ class ScenesData(object):
     def set_rate(self, value):
         self.__Rate = value
 
-    def __str__(self):
+    def __repr__(self):
         l_ret = "Scene Name:{0:} - Light:{1:}".format(self.Name, self.Light)
         return l_ret
     Active = property(get_active, set_active, None, None)
@@ -60,7 +60,7 @@ class ScenesAPI(ScenesData):
 
     def load_all_scenes(self, p_dict):
         return
-        #for l_value in p_dict.itervalues():
+        # for l_value in p_dict.itervalues():
         #    self.load_scene(l_value)
 
     def load_scene(self, p_dict):
@@ -79,4 +79,4 @@ class ScenesAPI(ScenesData):
 
 
 
-### END
+# ## END

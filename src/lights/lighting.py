@@ -2,22 +2,9 @@
 
 """Handle the home lighting system automation.
 
-There are a number of lighting 'Family' types handled here.
-The Insteon family is now functional.
-The UPB family is work in progress
-The X-10 family is mostly just a stub at present (2012)
-New lighting families are added to this module.
-
-Each family consists of four major areas:
-    Lights / Lighting Devices
-    Controllers - connected to the computer
-    Scenes - have one or more lights that are controlled together
-    Buttons - extra buttons with no light directly attached (key-pad-link)
-
 This is called from 'schedule' which is called from 'house' so there is one instance of this
 for every house.
 
-    *!* - These are the places to add new lighting family information
 """
 
 # Import system type stuff
@@ -25,25 +12,24 @@ import logging
 import importlib
 import xml.etree.ElementTree as ET
 
-# Import PyMh files
+# Import PyHouse files
 from utils import xml_tools
-from drivers import interface
 import lighting_buttons
 import lighting_controllers
 import lighting_lights
 import lighting_scenes
 
 g_debug = 0
+# 0 = off
+# 1 = major routine entry
+
 g_logger = None
 
 # These globals in the lighting singleton hold the operating data loaded at startup.
-Light_Data = lighting_lights.Light_Data
 Singletons = {}
 
 ' *!* Modules and pointers to the modules'
 from families import VALID_FAMILIES
-from drivers import VALID_INTERFACES
-# VALID_INTERFACES = ['Serial', 'USB', 'Ethernet']
 
 m_InsteonDevice = None
 m_X10Device = None
@@ -64,7 +50,7 @@ class FamilyData(object):
         self.Name = ''
         self.Package = ''
 
-    def __str__(self):
+    def __repr__(self):
         return "FamilyData:: Name:{0:}".format(self.Name)
 
 
@@ -148,63 +134,8 @@ class ButtonAPI(lighting_buttons.ButtonsAPI, CommonInfo):
 
 class ControllerData(lighting_controllers.ControllerData): pass
 
-class ControllerAPI(lighting_controllers.ControllersAPI, CommonInfo):
-
-    def read_controllers(self, p_house_obj, p_house_xml):
-        if g_debug > 4:
-            print "lighting.read_controllers()", p_house_obj
-        l_count = 0
-        l_dict = {}
-        l_sect = p_house_xml.find('Controllers')
-        l_list = l_sect.iterfind('Controller')
-        for l_controller_xml in l_list:
-            l_controller_obj = ControllerData()
-            l_controller_obj = self.read_light_common(l_controller_xml, l_controller_obj)
-            l_controller_obj.Interface = l_if = self.get_text_element(l_controller_xml, 'Interface')
-            l_controller_obj.Port = self.get_text_element(l_controller_xml, 'Port')
-            if l_if == 'Serial':
-                interface.ReadWriteConfig().extract_serial_xml(l_controller_obj, l_controller_xml)
-            elif l_if == 'USB':
-                interface.ReadWriteConfig().extract_usb_xml(l_controller_obj, l_controller_xml)
-            elif l_if == 'Ethernet':
-                pass
-            # l_controller_obj.Key = l_count
-            l_dict[l_count] = l_controller_obj
-
-            l_count += 1
-        p_house_obj.Controllers = l_dict
-        if g_debug > 5:
-            print "lighting.read_controllers()  loaded {0:} controllers for house {1:}".format(l_count, p_house_obj.Name)
-            # print p_house_obj
-            # print vars(p_house_obj)
-        return l_dict
-
-    def write_controllers(self, p_dict):
-        if g_debug > 4:
-            print "lighting.write_controllers()"
-        l_count = 0
-        l_controllers_xml = ET.Element('Controllers')
-        for l_obj in p_dict.itervalues():
-            l_entry = self.xml_create_common_element('Controller', l_obj)
-            self.write_light_common(l_entry, l_obj)
-            ET.SubElement(l_entry, 'Interface').text = l_obj.Interface
-            if l_obj.Interface == 'Serial':
-                ET.SubElement(l_entry, 'Port').text = l_obj.Port
-                ET.SubElement(l_entry, 'BaudRate').text = str(l_obj.BaudRate)
-                ET.SubElement(l_entry, 'Parity').text = str(l_obj.Parity)
-                ET.SubElement(l_entry, 'ByteSize').text = str(l_obj.ByteSize)
-                ET.SubElement(l_entry, 'StopBits').text = str(l_obj.StopBits)
-                ET.SubElement(l_entry, 'Timeout').text = str(l_obj.Timeout)
-            elif l_obj.Interface == 'USB':
-                ET.SubElement(l_entry, 'Vendor').text = str(l_obj.Vendor)
-                ET.SubElement(l_entry, 'Product').text = str(l_obj.Product)
-            elif l_obj.Interface == 'Ethernet':
-                pass
-            l_controllers_xml.append(l_entry)
-            l_count += 1
-        if g_debug > 4:
-            print "lighting.write_controllers() - Wrote {0:} controllers".format(l_count)
-        return l_controllers_xml
+class ControllerAPI(lighting_controllers.ControllersAPI):
+    pass
 
 
 class LightData(lighting_lights.LightData):
@@ -212,8 +143,8 @@ class LightData(lighting_lights.LightData):
     def __init__(self):
         super(LightData, self).__init__()
 
-    def __str__(self):
-        return super(LightData, self).__str__()
+    def __repr__(self):
+        return super(LightData, self).__repr__()
 
 
 class LightingAPI(xml_tools.ConfigTools, lighting_lights.LightsAPI, CommonInfo):

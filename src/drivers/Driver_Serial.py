@@ -16,40 +16,27 @@ Since most serial devices are now via USB connections, we can try to use USB and
 import logging
 from twisted.internet import reactor
 from twisted.internet.protocol import Protocol
-from twisted.internet.serialport import SerialPort, PARITY_NONE, EIGHTBITS, STOPBITS_ONE
+from twisted.internet.serialport import SerialPort
 
 # Import PyMh files
-from lights import lighting
 from utils.tools import PrintBytes
+from utils import xml_tools
+
 
 g_debug = 0
 # 0 = off
 # 1 = major routine entry
-# 2 =
-# 3 =
+# 2 = Startup Details
+# 3 = Read / write details
 
 g_logger = None
 
 RECEIVE_TIMEOUT = 1.0  # this is for polling the device for data to be added to the rx buffer
 
-class SerialDeviceData(lighting.ControllerData):
+class ReadWriteConfig(xml_tools.ConfigTools):
 
-    m_serial = None
-    m_message = bytearray()
-
-    def __init__(self):
-        self.Port = None
-        self.BaudRate = 9600
-        self.ByteSize = EIGHTBITS
-        self.DsrDtr = False
-        self.InterCharTimeout = 0
-        self.Parity = PARITY_NONE
-        self.RtsCts = False
-        self.StopBits = STOPBITS_ONE
-        self.Timeout = None
-        self.WriteTimeout = None
-        self.XonXoff = False
-
+    def extract_serial_xml(self, p_controller_obj, p_controller_xml):
+        pass
 
 class SerialProtocol(Protocol):
 
@@ -62,7 +49,7 @@ class SerialProtocol(Protocol):
         print "Driver_Serial.connectionFailed() - ", self
 
     def connectionMade(self):
-        if g_debug >= 3:
+        if g_debug >= 2:
             print 'Driver_Serial.connectionMade() - Connected to Serial Device', dir(self), vars(self)
 
     def dataReceived(self, p_data):
@@ -79,10 +66,11 @@ class SerialAPI(object):
     m_message = ''
 
     def twisted_open_device(self, p_controler_obj):
-        if g_debug >= 3:
+        if g_debug >= 2:
             print "Driver_Serial.twisted_open_device() - Name:{0:}, Port:{1:}".format(p_controler_obj.Name, p_controler_obj.Port)
+            print "   ", vars(p_controler_obj)
         self.m_serial = SerialPort(SerialProtocol(self), p_controler_obj.Port, reactor, baudrate = p_controler_obj.BaudRate)
-        if g_debug >= 3:
+        if g_debug >= 2:
             print 'Driver_Serial.twisted_open_device() - Serial Device', dir(self.m_serial)
 
     def close_device(self):
@@ -93,7 +81,7 @@ class SerialAPI(object):
     def fetch_read_data(self):
         l_ret = self.m_message
         if len(self.m_message) > 0:
-            if g_debug > 5:
+            if g_debug >= 3:
                 print "Driver_Serial.fetch_read_data() - {0:} {1:}".format(self.m_bytes, PrintBytes(self.m_message))
         self.m_message = bytearray()
         return l_ret
@@ -101,7 +89,7 @@ class SerialAPI(object):
     def write_device(self, p_message):
         """Send the command to the PLM and wait a very short time to be sure we sent it.
         """
-        if g_debug > 5:
+        if g_debug >= 3:
             print "Driver_Serial.write_device() {0:}".format(PrintBytes(p_message))
         self.m_serial.writeSomeData(p_message)
         return

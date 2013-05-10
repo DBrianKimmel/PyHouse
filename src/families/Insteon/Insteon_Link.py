@@ -10,7 +10,7 @@ class LinkData(object):
     """
 
     def __init__(self):
-        self.Addess = '11.22.33'
+        self.InsteonAddess = 12345
         self.Data = '00.00.00'
         self.Flag = 0xC2
         self.Group = 0

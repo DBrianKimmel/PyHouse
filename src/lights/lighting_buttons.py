@@ -18,8 +18,8 @@ class ButtonsData(lighting_tools.CoreData):
         ButtonCount += 1
         self.Type = 'Button'
 
-    def __str__(self):
-        l_str = super(ButtonsData, self).__str__()
+    def __repr__(self):
+        l_str = super(ButtonsData, self).__repr__()
         return l_str
 
 class ButtonsAPI(lighting_tools.CoreAPI):

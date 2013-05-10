@@ -31,7 +31,7 @@ class LocationData(object):
         self.TimeZone = 0.0
         self.ZipCode = ''
 
-    def __str__(self):
+    def __repr__(self):
         l_ret = ' Location:: '
         l_ret += 'Addr:{0:} {1:} {2:} {3:}, '.format(self.Street, self.City, self.State, self.ZipCode)
         l_ret += 'Lat:{0:}, Lon:{1:}'.format(self.Latitude, self.Longitude)

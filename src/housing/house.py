@@ -48,7 +48,7 @@ class HouseData(object):
         self.Rooms = {}
         self.Schedule = {}
 
-    def __str__(self):
+    def __repr__(self):
         l_ret = ' House:: Name:{0:}, Active:{1:}, Key:{2:}, Lights:{3:}'.format(
                 self.Name, self.Active, self.Key, len(self.Lights))
         l_ret += ', Controllers:{0:}, Buttons:{1:}, Rooms:{2:}, Schedules:{3:}'.format(
@@ -101,7 +101,7 @@ class API(LoadSaveAPI):
         """
         if g_debug >= 1:
             print "house.API.__init__()"
-        self.m_logger = logging.getLogger('PyHouse.House')
+        self.m_logger = logging.getLogger('PyHouse.House   ')
         self.m_house_obj = HouseData()
         self.m_house_obj.ScheduleAPI = schedule.API(self.m_house_obj)
 
