@@ -15,7 +15,7 @@ This should also allow control of many different houses.
 __author__ = 'D. Brian Kimmel'
 
 # Import system type stuff
-import array
+# import array
 import logging
 import sys
 # Use USB package that was written by Wander Lairson Costa
@@ -30,7 +30,11 @@ from utils.tools import PrintBytes
 
 callLater = reactor.callLater
 
-g_debug = 0
+g_debug = 3
+# 0 = off
+# 1 = major routine entry
+# 2 = Startup Details
+# 3 = Read / write details
 
 g_logger = None
 g_usb = None
@@ -66,31 +70,6 @@ class UsbDeviceData(object):
         self.epo_addr = 0
         self.hid_device = False
         self.message = ''
-    def get_device(self):
-        return self.__Device
-    def set_device(self, value):
-        self.__Device = value
-    def get_name(self):
-        return self.__Name
-    def set_name(self, value):
-        self.__Name = value
-    def get_port(self):
-        return self.__Port
-    def set_port(self, value):
-        self.__Port = value
-    def get_product(self):
-        return self.__Product
-    def set_product(self, value):
-        self.__Product = value
-    def get_vendor(self):
-        return self.__Vendor
-    def set_vendor(self, value):
-        self.__Vendor = value
-    Device = property(get_device, set_device, None, "The USB device object returned by libusb find.")
-    Name = property(get_name, set_name, None, "The configuration name for the device.")
-    Port = property(get_port, set_port, None, "The name of the USB port to which the device is attached.")
-    Product = property(get_product, set_product, None, "The device's assigned Product (idProduct).")
-    Vendor = property(get_vendor, set_vendor, None, "The devices assigned Vendor number (idVendor).")
 
     def __repr__(self):
         l_ret = "Driver_USB.UsbDeviceData: Name: {0:}, Vendor: {1:#04x}, Product: {2:#04x}, Device: {3:}, Port: {4:}".format(self.Name, self.Vendor, self.Product, self.Device, self.Port)
@@ -240,7 +219,6 @@ class UsbDriverAPI(UsbDeviceData):
         p_usb.Port = p_controller_obj.Port
         p_usb.Product = p_controller_obj.Product
         p_usb.Vendor = p_controller_obj.Vendor
-        p_usb.msg_len = 0
         p_usb.message = bytearray()
         g_logger.info(" Initializing USB port - {0:#04X}:{1:#04X} - {2:} on port {3:}".format(
             p_usb.Vendor, p_usb.Product, p_usb.Name, p_usb.Port))
@@ -265,7 +243,7 @@ class UsbDriverAPI(UsbDeviceData):
             print "Driver_USB.read_device() - Name:{0:}".format(p_usb.Name)
         p_usb.Parent.read_device(p_usb)
 
-    def fetch_read_data(self):
+    def fetch_read_data(self, p_controller_obj):
         l_ret = g_usb.message
         g_usb.message = bytearray()
         if g_debug > 5:
@@ -290,7 +268,7 @@ class UsbDriverAPI(UsbDeviceData):
     def _write_bis_device(self, p_message):
         """Bulk, Interrupt, isoSynchronous
         """
-        l_message = array.array('B', p_message)
+        l_message = p_message
         if g_debug > 3:
             print "Driver_USB._write_bis_device() - Ep_out: {0:#04X}, - {1:}".format(g_usb.epo_addr, PrintBytes(l_message))
         try:
@@ -316,17 +294,17 @@ class API(UsbDriverAPI):
         global g_logger
         g_logger = logging.getLogger('PyHouse.USBDriver')
 
-    def Start(self, p_controler_obj, p_parent):
+    def Start(self, p_controller_obj, p_parent):
         """
         @param p_controller_obj: is the Controller_Data object we are starting.
         @param p_parent: is the address of the caller USB device driver
         """
         if g_debug > 0:
-            print "Driver_USB.Start() - Name:{0:}".format(p_controler_obj.Name)
+            print "Driver_USB.Start() - Name:{0:}".format(p_controller_obj.Name)
         global g_usb
         g_usb = UsbDeviceData()
         g_usb.Parent = p_parent
-        if self.open_device(p_controler_obj, g_usb) != None:
+        if self.open_device(p_controller_obj, g_usb) != None:
             callLater(RECEIVE_TIMEOUT, lambda x = g_usb: self.read_device(x))
 
     def Stop(self):

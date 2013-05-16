@@ -3,7 +3,7 @@
 """Handle the light status component of the lighting system.
 
     Status is the light level - 0 100%
-    
+
     Future additions include button led status etc.
 """
 
@@ -20,17 +20,6 @@ class LightingStatusData(object):
         self.Name = None
         self.Family = None
 
-    def get_cur_level(self):
-        return self.__CurLevel
-    def set_cur_level(self, value):
-        self.__CurLevel = value
-    def get_name(self):
-        return self.__Name
-    def set_name(self, value):
-        self.__Name = value
-
-    CurLevel = property(get_cur_level, set_cur_level, None, None)
-    Name = property(get_name, set_name, None, None)
 
 class LightingStatusAPI(LightingStatusData):
 
@@ -54,8 +43,8 @@ class LightingStatusAPI(LightingStatusData):
             if l_obj.Family != p_family: continue
             l_obj.CurLevel = p_level
             Light_Status[l_key] = l_obj
-            #print " && Updated light status for {0:} {1:} to {2:}".format(p_family, p_name, p_level)
+            # print " && Updated light status for {0:} {1:} to {2:}".format(p_family, p_name, p_level)
             return True
         return False
 
-### END
+# ## END

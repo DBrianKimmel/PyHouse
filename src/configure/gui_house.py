@@ -110,7 +110,7 @@ class HouseWindow(GuiTools):
         if g_debug > 1:
             print "gui_house.save_houses_and_exit() "
         self.frame_delete(p_gui_obj.ModuleMenuFrame)
-        self.show_main_menu(p_gui_obj.MainMenuFrame)
+        self.show_main_menu(p_gui_obj)
 
 
 class HouseDialog(HouseWindow):

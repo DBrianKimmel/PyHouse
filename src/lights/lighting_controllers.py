@@ -34,6 +34,8 @@ class ControllerData(lighting_tools.CoreData):
         super(ControllerData, self).__init__()  # The core data
         self.Type = 'Controller'
         self.Command = None
+        self.Data = None  # Interface specific data
+        self.HandlerAPI = None  # PLM, PIM, etc (family controller device handler) API() address
         self.Interface = ''
         self.Message = ''
         self.Port = ''

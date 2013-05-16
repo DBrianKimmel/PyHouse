@@ -356,7 +356,7 @@ class PimDriverInterface(DecodeResponses):
             if l_controller_obj.Active != True:
                 continue
             if l_controller_obj.Driver != None:
-                l_msg = l_controller_obj.Driver.fetch_read_data()
+                l_msg = l_controller_obj.Driver.fetch_read_data(l_controller_obj)
                 if g_debug > 6:
                     print "UPB_PIM.receive_loop() from {0:}, Message: {1:}".format(l_controller_obj.Name, PrintBytes(l_msg))
                 self.decode_response(l_msg)
@@ -388,10 +388,10 @@ class LightingAPI(Device_UPB.LightingAPI, CreateCommands):
         for l_obj in g_house_obj.Lights.itervalues():
             if l_obj.Family != 'UPB':
                 continue
-            if l_obj.get_active() == False:
+            if l_obj.Active == False:
                 continue
             l_name = p_lighting_obj.Name
-            if l_obj.get_name() == l_name:
+            if l_obj.Name == l_name:
                 l_id = self._get_id_from_name(l_name)
                 print "UPB_Pim.change_light_settings() for {0:} to Level {1:}".format(l_name, p_level)
                 g_logger.info('change_light_setting()')
@@ -417,7 +417,7 @@ class UpbPimAPI(LightingAPI):
             Initialize any interface special requirements.
         """
         if g_debug > 0:
-            print "UPB_Pim.start_all_controlers()"
+            print "UPB_Pim.start_all_controllers()"
         l_count = 0
         for l_key, l_controller_obj in p_house_obj.Controllers.iteritems():
             if g_debug > 4:
@@ -463,7 +463,7 @@ class UpbPimAPI(LightingAPI):
         """
         if g_debug > 1:
             print "UPB_Pim.initialize_one_controller() - Name: {0:}".format(p_controller_obj.Name)
-        self.set_register_value(p_controller_obj.get_name(), 0x70, [0x03])
+        self.set_register_value(p_controller_obj.Name, 0x70, [0x03])
 
     def get_response(self):
         pass
@@ -534,7 +534,7 @@ class API(UpbPimAPI):
         g_queue = Queue.Queue(300)
         g_logger.info('Initialized.')
 
-    def Start(self, p_house_obj):
+    def Start(self, p_house_obj, p_controller_obj):
         if g_debug > 0:
             print "UPB_Pim.Start() - HouseName:{0:}".format(p_house_obj.Name)
         g_logger.info('Starting.')

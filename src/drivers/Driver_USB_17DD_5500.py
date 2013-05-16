@@ -22,7 +22,7 @@ Device Descriptor:
   iSerial                 0
   bNumConfigurations      1
 '''
-import array
+# import array
 import sys
 from twisted.internet import reactor
 import usb
@@ -48,7 +48,7 @@ class UsbDriverAPI(Driver_USB.UsbDriverAPI):
 
         Much of this was determined empirically for a smarthome UPB PIM
         """
-        l_report = array.array('B', "12345")
+        l_report = bytearray(b'12345')
         l_report[0] = 0xc0
         l_report[1] = 0x12
         l_report[2] = 0x00
@@ -80,7 +80,6 @@ class UsbDriverAPI(Driver_USB.UsbDriverAPI):
                 if l_len > 0:
                     if g_debug > 1:
                         print "Driver_USB.read_device() {0:} - {1:}".format(l_len, l_msg)
-                    p_usb.msg_len += l_len
                     for l_x in range(l_len):
                         p_usb.message.append(l_msg[l_x + 1])
             except usb.USBError, e:
@@ -106,10 +105,10 @@ class API(UsbDriverAPI):
             print "Driver_USB_17DD_5500.__init__() "
         self.m_driver = Driver_USB.API()
 
-    def Start(self, p_controler_obj):
+    def Start(self, p_controller_obj):
         if g_debug > 0:
-            print "Driver_USB_17DD_5500.Start() - Name:{0:}".format(p_controler_obj.Name)
-        self.m_driver.Start(p_controler_obj, self)
+            print "Driver_USB_17DD_5500.Start() - Name:{0:}".format(p_controller_obj.Name)
+        self.m_driver.Start(p_controller_obj, self)
 
     def Stop(self, p_obj):
         if g_debug > 0:

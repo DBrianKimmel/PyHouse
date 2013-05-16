@@ -22,9 +22,9 @@ except ImportError, exc:
                      "Please install them.\n")
     raise
 
-#print "families.insteon.__init__.py ", twisted_version
+# print "families.insteon.__init__.py ", twisted_version
 
-import Device_Insteon
-import Insteon_PLM
+# import Device_Insteon
+# import Insteon_PLM
 
-### END#
+# ## END#

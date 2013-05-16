@@ -26,22 +26,6 @@ class CoreData(object):
         self.UnitID = None
         self.Command = 0
 
-    def get_network_id(self):
-        return self.__NetworkID
-    def set_network_id(self, value):
-        self.__NetworkID = value
-    def get_password(self):
-        return self.__Password
-    def set_password(self, value):
-        self.__Password = value
-    def get_unit_id(self):
-        return self.__UnitID
-    def set_unit_id(self, value):
-        self.__UnitID = value
-
-    NetworkID = property(get_network_id, set_network_id, None, None)
-    Password = property(get_password, set_password, None, None)
-    UnitID = property(get_unit_id, set_unit_id, None, None)
 
 class CoreAPI(object):
 
@@ -160,13 +144,14 @@ import UPB_Pim
 
 class API(LightingAPI):
 
-    def __init__(self):
+    def __init__(self, p_house_obj):
         """Constructor for the UPB .
         """
-        if g_debug > 0:
-            print "Device_UPB.__init__()"
         global g_logger, g_PIM
         g_logger = logging.getLogger('PyHouse.Dev_UPB ')
+        self.m_house_obj = p_house_obj
+        if g_debug > 0:
+            print "Device_UPB.__init__()"
         g_logger.info('Initializing.')
         g_PIM = self.m_pim = UPB_Pim.API()
         g_logger.info('Initialized.')
@@ -177,7 +162,14 @@ class API(LightingAPI):
         global g_house_obj
         g_house_obj = p_house_obj
         g_logger.info('Starting.')
-        self.m_pim.Start(p_house_obj)
+        # self.m_pim.Start(p_house_obj)
+        for l_controller_obj in p_house_obj.Controllers.itervalues():
+            if l_controller_obj.Family != 'UPB':
+                continue
+            if l_controller_obj.Active != True:
+                continue
+            l_controller_obj.HandlerAPI = UPB_Pim.API()
+            l_controller_obj.HandlerAPI.Start(p_house_obj, l_controller_obj)
         g_logger.info('Started.')
 
     def Stop(self, p_xml):

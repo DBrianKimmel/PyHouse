@@ -11,7 +11,10 @@ from utils import config_xml
 from drivers import VALID_INTERFACES
 
 
-g_debug = 5
+g_debug = 9
+# 0 = off
+# 1 = major routine entry
+
 
 VAL_FAM = lighting.VALID_FAMILIES
 VAL_INTER = VALID_INTERFACES
@@ -114,13 +117,13 @@ class LightingWindow(gui_tools.GuiTools):
 #============================
 
     def edit_lights(self, p_gui_obj, p_arg, p_kind, p_house_obj):
-        if g_debug > 0:
+        if g_debug >= 1:
             print "Edit lights", p_arg, p_kind
         LightingDialog(p_gui_obj, p_arg, p_kind, p_house_obj, "Editing Light")
 
     def edit_controllers(self, p_gui_obj, p_arg, p_kind, p_house_obj):
         if g_debug > 0:
-            print "Edit Controllers", p_arg, p_kind
+            print "gui_lighting.edit_controllers()", p_arg, p_kind
         LightingDialog(p_gui_obj, p_arg, p_kind, p_house_obj, "Editing Controller")
 
     def edit_buttons(self, p_gui_obj, p_arg, p_kind, p_house_obj):
@@ -149,7 +152,7 @@ class LightingWindow(gui_tools.GuiTools):
         if g_debug > 1:
             print "gui_lighting.save_lighting_and_exit() "
         self.frame_delete(p_gui_obj.ModuleMenuFrame)
-        self.show_main_menu(p_gui_obj.MainMenuFrame)
+        self.show_main_menu(p_gui_obj)
 
 
 class LightingDialog(LightingWindow):
@@ -164,7 +167,7 @@ class LightingDialog(LightingWindow):
         @param p_house_obj: is the house object that we are editing.
         @param p_title is the title to put at the top of the window:
         """
-        if g_debug > 1:
+        if g_debug >= 2:
             print "gui_lighting.LightingDialog.__init__() - LightKey:{0:}".format(p_device_key), p_kind, p_title, p_house_obj
         p_gui_obj.DialogWindow = Toplevel(p_gui_obj.RootWindow)
         p_gui_obj.DialogWindow.title(p_title)
@@ -285,7 +288,8 @@ class LightingDialog(LightingWindow):
     def load_device_vars(self, p_key, p_kind, p_house_obj):
         """put the values in the boxes
         """
-        # print "LoadVars key, Kind = {0:} - {1:}".format(p_key, p_kind)
+        if g_debug >= 2:
+            print "gui_lighting.load_device_vars() - key, Kind = {0:} - {1:}".format(p_key, p_kind)
         l_interface = None
         l_housename = p_house_obj.Name
         try:
@@ -330,12 +334,12 @@ class LightingDialog(LightingWindow):
         self.HouseName.set(l_housename)
         self.Type.set(l_type)
         if l_type == 'Controller':
-            if g_debug > 0:
-                print "gui_lighting() - Interface =", l_obj.Interface
+            if g_debug >= 1:
+                print "gui_lighting.load_device_vars() - Controller."
             self.Interface.set(l_obj.Interface)
             self.Port.set(l_obj.Port)
-            self.Vendor.set(self.put_hex(int(str(l_obj.Vendor), 0)))  # Displays hex
-            self.Product.set(self.put_hex(int(str(l_obj.Product), 0)))  # Displays hex
+            # self.Vendor.set(self.put_hex(int(str(l_obj.Vendor), 0)))  # Displays hex
+            # self.Product.set(self.put_hex(int(str(l_obj.Product), 0)))  # Displays hex
             if l_obj.Interface == 'USB':
                 self.Vendor.set(l_obj.Vendor)
                 self.Product.set(l_obj.Product)

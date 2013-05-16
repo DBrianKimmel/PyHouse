@@ -64,11 +64,11 @@ class LightingTools(object):
 
 
 class CoreData(LightingTools):
+    """Information
+    """
 
     def __init__(self):
         self.Active = False
-        # self.Command = 0
-        # self.Command1 = 0
         self.Comment = ''
         self.Coords = ''
         self.Dimmable = False

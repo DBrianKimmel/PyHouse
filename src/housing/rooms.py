@@ -31,7 +31,7 @@ class RoomData(object):
         self.Size = ''
 
     def __repr__(self):
-        l_ret = ' Room:: Name:{0:} \t Size:{1:} \t Corner:{2:}\n'.format(self.get_name(), self.get_size(), self.get_corner())
+        l_ret = ' Room:: Name:{0:} \t Size:{1:} \t Corner:{2:}\n'.format(self.Name, self.Size, self.Corner)
         return l_ret
 
 

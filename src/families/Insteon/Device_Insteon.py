@@ -19,9 +19,15 @@ import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from lights import lighting
-from Insteon_utils import ConvertInsteon
+from families.Insteon.Insteon_utils import ConvertInsteon
+from families.Insteon import Insteon_PLM
+
 
 g_debug = 0
+# 0 = off
+# 1 = major routine entry
+# 2 = Startup Details
+
 g_logger = None
 
 
@@ -45,7 +51,8 @@ class CoreData (object):
 
     def __repr__(self):
         l_str = lighting.ControllerData.__repr__(self)
-        l_str += " Address:{0:} Controller:{1:}".format(self.InsteonAddress, self.Controller)
+        l_str += " Address:{0:}({1:}),".format(self.int2dotted_hex(self.InsteonAddress), self.InsteonAddress)
+        l_str += " Controller:{0:}".format(self.Controller)
         return l_str
 
 
@@ -68,6 +75,8 @@ class CoreAPI(ConvertInsteon):
         return p_device_obj
 
     def insert_device_xml(self, p_entry_xml, p_device_obj):
+        if g_debug >= 3:
+            print "Device_Insteon.insert_device_xml()", p_device_obj
         ET.SubElement(p_entry_xml, 'Address').text = self.int2dotted_hex(p_device_obj.InsteonAddress)
         ET.SubElement(p_entry_xml, 'Controller').text = self.put_bool(p_device_obj.Controller)
         ET.SubElement(p_entry_xml, 'DevCat').text = str(p_device_obj.DevCat)
@@ -84,7 +93,7 @@ class ButtonData(lighting.ButtonData, CoreData):
 
     def __repr__(self):
         l_str = super(ButtonData, self).__repr__()
-        l_str += " Address:{0:}".format(self.get_address())
+        l_str += " Address:{0:}".format(self.Address)
         return l_str
 
 
@@ -98,7 +107,7 @@ class ControllerData(lighting.ControllerData, CoreData):
 
     def __repr__(self):
         l_str = super(ControllerData, self).__repr__()
-        l_str += " Address:{0:}".format(self.get_address())
+        l_str += " Address:{0:}".format(self.Address)
         return l_str
 
 
@@ -116,7 +125,7 @@ class LightData(lighting.LightData, CoreData):
 
     def __repr__(self):
         l_str = super(LightData, self).__repr__()
-        l_str += " Address:{0:}".format(self.get_address())
+        l_str += " Address:{0:}".format(self.Address)
         return l_str
 
 # TODO: Add read write xml for insteon specific data
@@ -133,38 +142,43 @@ class LightingAPI(lighting.LightingAPI, CoreAPI):
             self.m_plm.change_light_setting(p_light_obj, p_level)
 
 
-import Insteon_PLM
-
 class API(LightingAPI):
+    """Called from lighting.
 
-    m_plm = None
+    """
 
-    def __init__(self):
-        if g_debug > 0:
-            print "Device_Insteon.__init__()"
+    def __init__(self, p_house_obj):
         global g_logger
         g_logger = logging.getLogger('PyHouse.Dev_Inst')
-        g_logger.info('Initializing.')
-        self.m_plm = Insteon_PLM.API()
+        if g_debug >= 1:
+            print "Device_Insteon.__init__()"
+        self.m_house_obj = p_house_obj
         g_logger.info('Initialized.')
 
 
     def Start(self, p_house_obj):
-        if g_debug > 0:
+        """For the given house, this will start all the controllers for family = Insteon in that house.
+        """
+        if g_debug >= 1:
             print "Device_Insteon.Start()"
         g_logger.info('Starting.')
-        self.m_house_obj = p_house_obj
+        l_count = 0
         for l_controller_obj in p_house_obj.Controllers.itervalues():
-            # pass
             if l_controller_obj.Family != 'Insteon':
                 continue
             if l_controller_obj.Active != True:
                 continue
-            self.m_plm.Start(p_house_obj, l_controller_obj)
+            # Only one controller may be active at a time (for now).
+            # But all controllers need to be processed so they may be written back to XML.
+            if l_count > 0:
+                l_controller_obj.Active = False
+            else:
+                l_controller_obj.HandlerAPI = Insteon_PLM.API(p_house_obj)
+                l_controller_obj.HandlerAPI.Start(l_controller_obj)
         g_logger.info('Started.')
 
     def Stop(self, p_xml):
-        if g_debug > 0:
+        if g_debug >= 1:
             print "Device_Insteon.Stop()"
         try:
             for l_controller_obj in self.m_house_obj.Controllers.itervalues():
@@ -172,13 +186,13 @@ class API(LightingAPI):
                     continue
                 if l_controller_obj.Active != True:
                     continue
-                self.m_plm.Stop(l_controller_obj)
+                l_controller_obj.HandlerAPI.Stop(l_controller_obj)
         except AttributeError:
             pass  # no controllers for house(House is being added)
         return p_xml
 
     def SpecialTest(self):
-        if g_debug > 0:
+        if g_debug >= 1:
             print "Device_Insteon.API.SpecialTest()"
         self.m_plm.SpecialTest()
 

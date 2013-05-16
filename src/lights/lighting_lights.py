@@ -25,12 +25,13 @@ class LightData(lighting_tools.CoreData):
         if g_debug > 1:
             print "lighting_lights.LightsData.__init__()"
         super(LightData, self).__init__()
+        self.Controller = None
         self.Type = 'Light'
         self.CurLevel = 0
 
     def __repr__(self):
         l_str = super(LightData, self).__repr__()
-        l_str = l_str + " Key:{0} ".format(self.get_key())
+        l_str = l_str + " Key:{0} ".format(self.Key)
         return l_str
 
     def get_cur_level(self):

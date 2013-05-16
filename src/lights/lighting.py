@@ -132,7 +132,8 @@ class ButtonAPI(lighting_buttons.ButtonsAPI, CommonInfo):
         return l_buttons_xml
 
 
-class ControllerData(lighting_controllers.ControllerData): pass
+class ControllerData(lighting_controllers.ControllerData):
+    pass
 
 class ControllerAPI(lighting_controllers.ControllersAPI):
     pass
@@ -190,7 +191,7 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, FamilyData):
 
     m_family_data = None
 
-    def build_lighting_info(self, _p_house_obj):
+    def build_lighting_family_info(self, p_house_obj):
         self.m_family_data = {}
         l_count = 0
         for l_family in VALID_FAMILIES:
@@ -200,24 +201,31 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, FamilyData):
             l_family_obj.Key = l_count
             l_family_obj.Name = l_family
             l_family_obj.Package = 'families.' + l_family
-            l_module = importlib.import_module(l_family_obj.Package + '.' + l_family_obj.Import, l_family_obj.Package)
+            try:
+                l_module = importlib.import_module(l_family_obj.Package + '.' + l_family_obj.Import, l_family_obj.Package)
+            except ImportError:
+                l_module = None
             l_family_obj.Module = l_module
-            l_family_obj.Api = l_module.API()
+            try:
+                l_family_obj.Api = l_module.API(p_house_obj)
+            except AttributeError:
+                l_family_obj.Api = None
             self.m_family_data[l_count] = l_family_obj
-            if g_debug > 1:
-                print "lighting.build_lighting_info - Package: {0:}, Import: {1:}".format(l_family_obj.Package, l_family_obj.Import)
+            if g_debug >= 2:
+                print "lighting.build_lighting_family_info - Package: {0:}, Import: {1:}".format(l_family_obj.Package, l_family_obj.Import)
                 print "   from {0:} import {1:}".format(l_family_obj.Package, l_family_obj.Import)
                 print "   Added {0:} to m_modules Key:{1:} -".format(l_family_obj.Import, l_count), l_family_obj
             l_count += 1
 
     def start_lighting_families(self, p_house_obj):
         """Load and start the family if there is a controller in the house for the family.
+        Runs Device_<family>.API.Start()
         """
         if g_debug > 1:
             print "lighting.start_lighting_families()"
         g_logger.info("Starting lighting families.")
         for l_family_obj in self.m_family_data.itervalues():
-            l_family_obj.Api.Start(p_house_obj)
+            l_family_obj.Api.Start(p_house_obj)  # will run Device_<family>.API.Start()
             g_logger.info("Started lighting family {0:}.".format(l_family_obj.Name))
 
     def stop_lighting_families(self, p_xml):
@@ -258,7 +266,7 @@ class API(LightingUtility):
         global g_logger
         g_logger = logging.getLogger('PyHouse.Lighting')
         self.m_house_obj = p_house_obj
-        self.build_lighting_info(p_house_obj)
+        self.build_lighting_family_info(p_house_obj)
         g_logger.info("Initialized.")
 
     def Start(self, p_house_obj, p_house_xml):

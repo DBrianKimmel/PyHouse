@@ -12,9 +12,9 @@ from lights import lighting_controllers
 class Test(unittest.TestCase):
 
     def setUp(self):
-        self.m_controler_obj = lighting_controllers.ControllerData()
-        self.m_controler_obj.Name = 'Test Name'
-        self.m_controler_obj.Port = '/dev/ttyUSB0'
+        self.m_controller_obj = lighting_controllers.ControllerData()
+        self.m_controller_obj.Name = 'Test Name'
+        self.m_controller_obj.Port = '/dev/ttyUSB0'
         print 'Set up controller_obj'
 
     def tearDown(self):
@@ -25,8 +25,8 @@ class Test(unittest.TestCase):
         self.assertNotEqual(l_api, None)
 
     def test_002_API_Start(self):
-        self.m_controler_obj.Driver = Driver_Serial.API()
-        self.m_controler_obj.Driver.Start(self.m_controler_obj)
-        print self.m_controler_obj
+        self.m_controller_obj.Driver = Driver_Serial.API()
+        self.m_controller_obj.Driver.Start(self.m_controller_obj)
+        print self.m_controller_obj
 
 # ## END

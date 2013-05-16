@@ -45,6 +45,15 @@ Python modules used:
     ConfigObj
     Pmw
 
+
+for a raspberry-pi with wheezy:
+debian (apt-get):
+    python-twisted
+    python-pmw
+    python coherence
+
+
+
 also install:
     libusb
 

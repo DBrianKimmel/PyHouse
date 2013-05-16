@@ -80,13 +80,14 @@ class LightingAPI(lighting.LightingAPI):
 
 class API(object):
 
-    def __init__(self):
+    def __init__(self, p_house_obj):
         """Constructor for the PLM.
         """
-        if g_debug > 0:
-            print "Device_X10.__init__()"
         global g_logger
         g_logger = logging.getLogger('PyHouse.Dev_X10 ')
+        self.m_house_obj = p_house_obj
+        if g_debug > 0:
+            print "Device_X10.__init__()"
         # LightingAPI().load_all_lights(Configure_Data['X10Lights'])
         g_logger.info('Initialized.')
 

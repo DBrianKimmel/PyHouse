@@ -10,7 +10,12 @@ import gui_tools
 from configure.gui_tools import GuiTools
 
 
-g_debug = 0
+g_debug = 4
+# 0 = off
+# 1 = major routine entry
+# 2 = Startup Details
+# 3 = setting details
+# 4 =
 
 FG = 'red'
 BG_LIGHT = '#C0C090'
@@ -26,7 +31,7 @@ class CtlLightsWindow(GuiTools):
     def __init__(self, p_gui_obj, p_houses_obj):
         """Initialize then bring up the 'select house' menu.
         """
-        if g_debug > 0:
+        if g_debug >= 1:
             print "gui_ctl_lights - Show select house window - {0:}".format(p_gui_obj)
         self.m_gui_obj = p_gui_obj
         self.show_house_select_window(p_gui_obj, p_houses_obj)
@@ -39,9 +44,10 @@ class CtlLightsWindow(GuiTools):
 
         @param p_house_obj: is the house object of the selected house.
         """
+        self.m_house_obj = p_house_obj
         self.m_gui_obj = p_gui_obj
-        if g_debug > 1:
-            print "gui_ctl_lights.show_buttons_for_one_house() - House:{0:}, Gui:{1:}".format(p_house_obj.Name, p_gui_obj)
+        if g_debug >= 2:
+            print "gui_ctl_lights.show_buttons_for_one_house() - House:{0:}".format(p_house_obj.Name)
         self.frame_delete(p_gui_obj.HouseSelectFrame)
         self.frame_delete(p_gui_obj.ModuleMenuFrame)
         p_gui_obj.ModuleMenuFrame = Frame(self.m_gui_obj.RootWindow)
@@ -81,8 +87,8 @@ class CtlLightsWindow(GuiTools):
         @param p_house_obj: is the house object
         @param p_light_key: the key to look up the light info.
         """
-        if g_debug > 7:
-            print "gui_ctl_lights.ctl_lights()", p_house_obj.Name
+        if g_debug >= 4:
+            print "gui_ctl_lights.ctl_lights() - House:{0:}".format(p_house_obj.Name)
         CtlLightsDialog(self.m_gui_obj, p_house_obj, p_light_key, "Editing Light")
 
     def main_screen(self):
@@ -126,7 +132,7 @@ class CtlLightsDialog(CtlLightsWindow):
                command = lambda x = p_house_obj, y = p_lights_key: self.change_light(x, y)).grid(row = 91, column = 0)
         Button(p_gui_obj.ModuleDialogFrame, text = "Cancel", fg = "red", bg = gui_tools.BG_BOTTOM,
                command = lambda x = p_gui_obj, y = p_house_obj: self.quit_dialog(x, y)).grid(row = 91, column = 2)
-        if g_debug > 7:
+        if g_debug >= 4:
             print "gui_ctl_lights.CtlLightsDialog.__init__() - Resolution: {0:}, CurLevel: {1:}".format(l_res, l_light_obj.CurLevel)
 
     def create_room_vars(self):
@@ -146,7 +152,7 @@ class CtlLightsDialog(CtlLightsWindow):
         @param p_house_obj: is the house object.
         @param p_light_key: is the index of the light to control
         """
-        if g_debug > 0:
+        if g_debug >= 1:
             print "gui_ctl_lights.load_house_vars() "
         l_light_obj = p_house_obj.Lights[p_light_key]
         l_light_obj.Key = p_light_key
@@ -159,7 +165,7 @@ class CtlLightsDialog(CtlLightsWindow):
         self.HouseName.set(l_light_obj.HouseName)
         self.RoomName.set(l_light_obj.RoomName)
         self.Type.set(l_type)
-        if g_debug > 7:
+        if g_debug >= 8:
             print "gui_ctl_lights.load_house_vars() - Dim ", l_light_obj.Dimmable, self.Dimmable.get()
         return l_light_obj
 
@@ -175,12 +181,13 @@ class CtlLightsDialog(CtlLightsWindow):
         l_level = self.level.get()
         l_key = self.Key.get()
         l_light_obj = p_house_obj.Lights[l_key]
-        if g_debug > 0:
-            print "gui_ctl_lights.change_light() - Name:{0:}, Level:{1}, Key:{2:} ".format(l_light, l_level, p_light_key)
+        if g_debug >= 3:
+            print "gui_ctl_lights.change_light() - House:{0:}".format(p_house_obj.Name), p_house_obj
+            print "                              - Name:{0:}, Level:{1}, Key:{2:} ".format(l_light, l_level, p_light_key)
         p_house_obj.LightingAPI.change_light_setting(p_house_obj, l_light_obj, l_level)
 
     def quit_dialog(self, p_gui_obj, p_house_obj):
-        if g_debug > 1:
+        if g_debug >= 2:
             print "gui_ctl_lights.quit_dialog()"
         p_gui_obj.DialogWindow.destroy()
         p_gui_obj.ModuleDialogFrame.destroy()
