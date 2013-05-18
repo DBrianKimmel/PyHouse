@@ -7,6 +7,8 @@ import sys
 __version_info__ = (0, 1, 8)
 __version__ = '.'.join(map(str, __version_info__))
 
+#print "Running families.UPB now."
+
 try:
     from twisted import version as twisted_version
 except ImportError, exc:
@@ -16,4 +18,4 @@ except ImportError, exc:
 
 #print twisted_version
 
-### END
+### END DBK

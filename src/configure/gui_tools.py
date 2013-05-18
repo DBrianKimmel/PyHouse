@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 
+# Import system type stuff
 from Tkinter import *
 import Pmw
 
-from housing import houses
+# Import PyMh files
+from src.housing import houses
 
 g_debug = 0
 

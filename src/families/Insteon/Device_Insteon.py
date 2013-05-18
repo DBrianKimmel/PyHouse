@@ -18,10 +18,9 @@ import logging
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
-from lights import lighting
-from families.Insteon.Insteon_utils import ConvertInsteon
-from families.Insteon import Insteon_PLM
-
+from src.lights import lighting
+from src.families.Insteon import Insteon_PLM
+from src.families.Insteon import Insteon_utils
 
 g_debug = 0
 # 0 = off
@@ -56,7 +55,7 @@ class CoreData (object):
         return l_str
 
 
-class CoreAPI(ConvertInsteon):
+class CoreAPI(Insteon_utils.ConvertInsteon):
 
     def extract_device_xml(self, p_entry_xml, p_device_obj):
         """
@@ -151,7 +150,7 @@ class API(LightingAPI):
         global g_logger
         g_logger = logging.getLogger('PyHouse.Dev_Inst')
         if g_debug >= 1:
-            print "Device_Insteon.__init__()"
+            print "Device_Insteon.API.__init__()"
         self.m_house_obj = p_house_obj
         g_logger.info('Initialized.')
 
@@ -196,4 +195,4 @@ class API(LightingAPI):
             print "Device_Insteon.API.SpecialTest()"
         self.m_plm.SpecialTest()
 
-# ## END
+# ## END DBK

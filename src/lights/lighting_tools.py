@@ -73,7 +73,6 @@ class CoreData(LightingTools):
         self.Coords = ''
         self.Dimmable = False
         self.Driver = None
-        self.HouseName = ''
         self.Key = 0
         self.Family = ''
         self.Name = ''
@@ -81,12 +80,15 @@ class CoreData(LightingTools):
         self.Type = ''
 
     def __repr__(self):
-        l_str = "Light:: Name:{0:}, Family:{1:}, Type:{2:}, Comment:{3:}, " \
-                "Room:{4:}, Coords:{5:}, Active:{6:}, Dimmable:{7:}, House:{8:} ".format(
-                self.Name, self.Family, self.Type, self.Comment,
-                self.RoomName, self.Coords,
-                self.Active, self.Dimmable,
-                self.HouseName)
+        l_str = "Light:: "
+        l_str += "Name:{0:}, ".format(self.Name)
+        l_str += "Family:{0:}, ".format(self.Family)
+        l_str += "Type:{0:}, ".format(self.Type)
+        l_str += "Comment:{0:}, ".format(self.Comment)
+        l_str += "Room:{0:}, ".format(self.RoomName)
+        l_str += "Coords:{0:}, ".format(self.Coords)
+        l_str += "Active:{0:}, ".format(self.Active)
+        l_str += "Dimmable:{0:}".format(self.Dimmable)
         return l_str
 
 
@@ -106,7 +108,6 @@ class CoreAPI(LightingTools):
         l_dev.Coords = self.getText(p_dict, 'Coords')
         l_dev.Dimmable = self.getBool(p_dict, 'Dimmable')
         l_dev.Family = self.getText(p_dict, 'Family')
-        l_dev.HouseName = self.getText(p_dict, 'House')
         l_dev.Key = p_key
         l_dev.Name = self.getText(p_dict, 'Name')
         l_dev.RoomName = self.getText(p_dict, 'Room')

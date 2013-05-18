@@ -10,9 +10,9 @@ in the network.  It will also allow control points to set any of the lights to a
 Also, scenes can be invoked from the control point.
 """
 
-from lighting import lighting
+#from lights import lighting
 
-Light_Data = lighting.Light_Data
+#Light_Data = lighting.Light_Data
 
 class XmlFile(object):
     pass
@@ -30,9 +30,9 @@ class BuildLights(object):
         pass
 
     def create_xml(self):
-        for l_obj in Light_Data.itervalues():
-            l_file = XmlFile()
-            pass
+        #for l_obj in Light_Data.itervalues():
+        #    l_file = XmlFile()
+        pass
 
 
 ### END

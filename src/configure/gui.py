@@ -15,17 +15,19 @@ When this is complete, the dialog window is deleted and the selection menu will 
 be populated with the new information.
 """
 
+# Import system type stuff
 from Tkinter import Tk, Frame, Button
 from twisted.internet import tksupport
 
-from configure.gui_tools import GuiTools, GuiData, BG_TOP, BG_BOTTOM, BG_UNDONE
-import gui_ctl_lights
-import gui_house
-import gui_lighting
-import gui_logs
-import gui_schedule
-import gui_web
-from utils import config_xml
+# Import PyMh files
+from src.configure.gui_tools import GuiTools, GuiData, BG_TOP, BG_BOTTOM, BG_UNDONE
+from src.configure import gui_ctl_lights
+from src.configure import gui_house
+from src.configure import gui_lighting
+from src.configure import gui_logs
+from src.configure import gui_schedule
+from src.configure import gui_web
+from src.utils import config_xml
 
 g_debug = 0
 
@@ -48,7 +50,7 @@ class MainWindow(object):
         self.m_houses_api = p_houses_api
         self.m_houses_obj = p_houses_api.get_houses_obj()
         p_gui_obj.MainMenuFrame = Frame(p_gui_obj.RootWindow)
-        if g_debug > 0:
+        if g_debug >= 1:
             print "gui.MainWindow.__init__() - Display PyHouse Main Menu window. -  main_menu_frame :{0:}".format(p_gui_obj.MainMenuFrame)
         g_root_window.title('PyHouse Main Menu')
         p_gui_obj.MainMenuFrame.grid(padx = 5, pady = 5)
@@ -98,7 +100,7 @@ class MainWindow(object):
 #============================
 
     def ctl_lights_screen(self, p_gui_obj):
-        if g_debug > 1:
+        if g_debug >= 2:
             print "gui.ctl_lights_screen() "
         p_gui_obj.MainMenuFrame.grid_forget()  # Main Window
         gui_ctl_lights.CtlLightsWindow(p_gui_obj, self.m_houses_obj)
@@ -203,7 +205,7 @@ class API(MainWindow):
         """
         @param p_parent: is self from where called ( PyHouse.API() )
         """
-        if g_debug > 0:
+        if g_debug >= 1:
             print "gui.API.__init__() - Parent = ", p_parent
         global g_root_window, g_parent
         l_gui_obj = GuiData()
@@ -212,4 +214,4 @@ class API(MainWindow):
         tksupport.install(l_gui_obj.RootWindow)
         MainWindow(p_houses_api, l_gui_obj)
 
-# ## END
+# ## END DBK

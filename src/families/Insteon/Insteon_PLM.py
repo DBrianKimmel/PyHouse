@@ -22,11 +22,11 @@ import Queue
 from twisted.internet import reactor
 
 # Import PyMh files
-import Device_Insteon
-import Insteon_Link
-from utils.tools import PrintBytes
-from Insteon_constants import *
-from Insteon_utils import ConvertInsteon
+from src.lights.lighting import LightData
+from src.families.Insteon import Insteon_Link
+from src.utils.tools import PrintBytes
+from src.families.Insteon.Insteon_constants import *
+from src.families.Insteon.Insteon_utils import ConvertInsteon
 
 g_debug = 6
 # 0 = off
@@ -153,7 +153,7 @@ class DecodeResponses(InsteonPlmUtility):
         if l_ret == None:
             l_ret = self._find_addr(self.m_house_obj.Buttons, l_id)
         if l_ret == None:
-            l_ret = Device_Insteon.LightData()  # an empty new object
+            l_ret = LightData()  # an empty new object
             l_ret.Name = '**' + str(l_id) + '**'
         if g_debug >= 6:
             print "Insteon_PLM.get_obj_from_message - Address:{0:}({1:}), found:{2:}".format(self.int2dotted_hex(l_id), l_id, l_ret.Name)
@@ -863,7 +863,7 @@ class CreateCommands(PlmDriverProtocol):
         return self.queue_plm_command(l_command)
 
 
-class LightingAPI(Device_Insteon.LightingAPI, CreateCommands):
+class LightingAPI(CreateCommands):
 
     def change_light_setting(self, p_light_obj, p_level):
         l_debug_msg = "Change light:{0:} to level:{1:}".format(p_light_obj.Name, p_level)
@@ -884,7 +884,7 @@ class LightingAPI(Device_Insteon.LightingAPI, CreateCommands):
         if g_debug >= 2:
             print "insteon_PLM.scan_all_lights"
         for l_obj in p_lights.itervalues():
-            if Device_Insteon.LightData.Family(l_obj) != 'Insteon':
+            if LightData.Family(l_obj) != 'Insteon':
                 continue
             if l_obj.Type == 'Light':
                 self.scan_one_light(l_obj.Name)
@@ -940,7 +940,7 @@ class InsteonAllLinks(InsteonPlmCommands):
         """
         if g_debug >= 2:
             print "Insteon_PLM.delete_link() - Address:{0}, Group:{1:#02X}".format(p_address, p_group)
-        p_light_obj = Device_Insteon.LightData()
+        p_light_obj = LightData()
         p_light_obj.InsteonAddress = self.dotted_hex2int(p_address)
         p_light_obj.GroupNumber = p_group
         # p_code = 0x00  # Find First
@@ -1101,4 +1101,4 @@ class API(LightHandlerAPI):
         self.delete_link('1D.2A.CE', 0, 0xA2)
         self.get_all_allinks(self.m_controller_obj)
 
-# ## END
+# ## END DBK

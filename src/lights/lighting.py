@@ -9,49 +9,21 @@ for every house.
 
 # Import system type stuff
 import logging
-import importlib
 import xml.etree.ElementTree as ET
 
 # Import PyHouse files
-from utils import xml_tools
-import lighting_buttons
-import lighting_controllers
-import lighting_lights
-import lighting_scenes
+from src.utils import xml_tools
+from src.lights import lighting_buttons
+from src.lights import lighting_controllers
+from src.lights import lighting_lights
+from src.lights import lighting_scenes
+from src.families import family
 
 g_debug = 0
 # 0 = off
 # 1 = major routine entry
 
 g_logger = None
-
-# These globals in the lighting singleton hold the operating data loaded at startup.
-Singletons = {}
-
-' *!* Modules and pointers to the modules'
-from families import VALID_FAMILIES
-
-m_InsteonDevice = None
-m_X10Device = None
-m_UpbDevice = None
-
-class FamilyData(object):
-    """A container for every family that has been defined.
-    """
-
-    def __init__(self):
-        global ScheduleCount
-        self.Active = False
-        self.Api = None
-        self.Family = ''
-        self.Import = ''
-        self.Key = 0
-        self.Module = ''
-        self.Name = ''
-        self.Package = ''
-
-    def __repr__(self):
-        return "FamilyData:: Name:{0:}".format(self.Name)
 
 
 class CommonInfo(object):
@@ -61,7 +33,6 @@ class CommonInfo(object):
         @param p_entry_xml: is the e-tree XML house object
         @param p_house: is the text name of the House.
         @return: a dict of the entry to be attached to a house object.
-        TODO: move some of lights to lighting or lighting_xxx and family stuff to Device_<family> called from lighting.
         """
         if g_debug >= 5:
             print "lighting.read_lights_common() - ", p_device_obj
@@ -71,24 +42,22 @@ class CommonInfo(object):
         p_device_obj.Dimmable = self.get_bool(p_entry_xml.findtext('Dimmable'))
         p_device_obj.Family = l_fam = self.get_text_element(p_entry_xml, 'Family')
         p_device_obj.RoomName = p_entry_xml.findtext('Room')
-        p_device_obj.HouseName = p_entry_xml.findtext('House')
         p_device_obj.Type = p_entry_xml.findtext('Type')
-        for l_family_obj in self.m_family_data.itervalues():
+        for l_family_obj in family.g_family_data.itervalues():
             if l_family_obj.Name == l_fam:
                 l_family_obj.Api.extract_device_xml(p_entry_xml, p_device_obj)
         return p_device_obj
 
     def write_light_common(self, p_entry, p_device_obj):
-        if g_debug > 4:
+        if g_debug >= 5:
             print "lighting.write_light_common()"
         ET.SubElement(p_entry, 'Comment').text = str(p_device_obj.Comment)
         ET.SubElement(p_entry, 'Coords').text = str(p_device_obj.Coords)
         ET.SubElement(p_entry, 'Dimmable').text = self.put_bool(p_device_obj.Dimmable)
         ET.SubElement(p_entry, 'Family').text = p_device_obj.Family
-        ET.SubElement(p_entry, 'House').text = p_device_obj.HouseName
         ET.SubElement(p_entry, 'Room').text = p_device_obj.RoomName
         ET.SubElement(p_entry, 'Type').text = p_device_obj.Type
-        for l_family_obj in self.m_family_data.itervalues():
+        for l_family_obj in family.g_family_data.itervalues():
             if l_family_obj.Name == p_device_obj.Family:
                 l_family_obj.Api.insert_device_xml(p_entry, p_device_obj)
 
@@ -100,34 +69,34 @@ class ButtonAPI(lighting_buttons.ButtonsAPI, CommonInfo):
     def read_buttons(self, p_house_obj, p_house_xml):
         """
         """
-        if g_debug > 4:
+        if g_debug >= 5:
             print "lighting.read_buttons() - House:{0:}".format(p_house_obj.Name)
         l_count = 0
         l_dict = {}
         l_sect = p_house_xml.find('Buttons')
         l_list = l_sect.iterfind('Button')
         for l_entry in l_list:
-            l_obj = ButtonData()
-            l_obj = self.read_light_common(l_entry, l_obj)
-            # l_obj.Key = l_count
-            l_dict[l_count] = l_obj
+            l_button_obj = ButtonData()
+            l_button_obj = self.read_light_common(l_entry, l_button_obj)
+            # l_button_obj.Key = l_count
+            l_dict[l_count] = l_button_obj
             l_count += 1
         p_house_obj.Buttons = l_dict
-        if g_debug > 5:
+        if g_debug >= 6:
             print "lighting.read_buttons()  loaded {0:} buttons for house {1:}".format(l_count, p_house_obj.Name)
         return l_dict
 
     def write_buttons(self, p_dict):
-        if g_debug > 4:
+        if g_debug >= 5:
             print "lighting.write_buttons()"
         l_count = 0
         l_buttons_xml = ET.Element('Buttons')
-        for l_obj in p_dict.itervalues():
-            l_entry = self.xml_create_common_element('Button', l_obj)
-            self.write_light_common(l_entry, l_obj)
+        for l_button_obj in p_dict.itervalues():
+            l_entry = self.xml_create_common_element('Button', l_button_obj)
+            self.write_light_common(l_entry, l_button_obj)
             l_buttons_xml.append(l_entry)
             l_count += 1
-        if g_debug > 5:
+        if g_debug >= 6:
             print "lighting.write_buttons() - Wrote {0:} buttons".format(l_count)
         return l_buttons_xml
 
@@ -151,30 +120,30 @@ class LightData(lighting_lights.LightData):
 class LightingAPI(xml_tools.ConfigTools, lighting_lights.LightsAPI, CommonInfo):
 
     def read_lights(self, p_house_obj, p_house_xml):
-        if g_debug > 4:
+        if g_debug >= 5:
             print "lighting.read_lights()"
         l_count = 0
         l_dict = {}
         l_sect = p_house_xml.find('Lights')
         l_list = l_sect.iterfind('Light')
         for l_entry in l_list:
-            l_obj = LightData()
-            l_obj = self.read_light_common(l_entry, l_obj)
-            l_dict[l_count] = l_obj
+            l_light_obj = LightData()
+            l_light_obj = self.read_light_common(l_entry, l_light_obj)
+            l_dict[l_count] = l_light_obj
             l_count += 1
         p_house_obj.Lights = l_dict
-        if g_debug > 5:
+        if g_debug >= 6:
             print "lighting.read_lights()  loaded {0:} lights for house {1:}".format(l_count, p_house_obj.Name)
         return l_dict
 
     def write_lights(self, p_dict):
-        if g_debug > 4:
+        if g_debug >= 5:
             print "lighting.write_lights()"
         l_lighting_xml = ET.Element('Lights')
         l_count = 0
-        for l_obj in p_dict.itervalues():
-            l_entry = self.xml_create_common_element('Light', l_obj)
-            self.write_light_common(l_entry, l_obj)
+        for l_light_obj in p_dict.itervalues():
+            l_entry = self.xml_create_common_element('Light', l_light_obj)
+            self.write_light_common(l_entry, l_light_obj)
             l_lighting_xml.append(l_entry)
             l_count += 1
         return l_lighting_xml
@@ -185,54 +154,11 @@ class SceneData(lighting_scenes.ScenesData): pass
 class SceneAPI(lighting_scenes.ScenesAPI): pass
 
 
-class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI, FamilyData):
+class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI):
     """
     """
 
     m_family_data = None
-
-    def build_lighting_family_info(self, p_house_obj):
-        self.m_family_data = {}
-        l_count = 0
-        for l_family in VALID_FAMILIES:
-            l_family_obj = FamilyData()
-            l_family_obj.Active = False
-            l_family_obj.Import = 'Device_' + l_family
-            l_family_obj.Key = l_count
-            l_family_obj.Name = l_family
-            l_family_obj.Package = 'families.' + l_family
-            try:
-                l_module = importlib.import_module(l_family_obj.Package + '.' + l_family_obj.Import, l_family_obj.Package)
-            except ImportError:
-                l_module = None
-            l_family_obj.Module = l_module
-            try:
-                l_family_obj.Api = l_module.API(p_house_obj)
-            except AttributeError:
-                l_family_obj.Api = None
-            self.m_family_data[l_count] = l_family_obj
-            if g_debug >= 2:
-                print "lighting.build_lighting_family_info - Package: {0:}, Import: {1:}".format(l_family_obj.Package, l_family_obj.Import)
-                print "   from {0:} import {1:}".format(l_family_obj.Package, l_family_obj.Import)
-                print "   Added {0:} to m_modules Key:{1:} -".format(l_family_obj.Import, l_count), l_family_obj
-            l_count += 1
-
-    def start_lighting_families(self, p_house_obj):
-        """Load and start the family if there is a controller in the house for the family.
-        Runs Device_<family>.API.Start()
-        """
-        if g_debug > 1:
-            print "lighting.start_lighting_families()"
-        g_logger.info("Starting lighting families.")
-        for l_family_obj in self.m_family_data.itervalues():
-            l_family_obj.Api.Start(p_house_obj)  # will run Device_<family>.API.Start()
-            g_logger.info("Started lighting family {0:}.".format(l_family_obj.Name))
-
-    def stop_lighting_families(self, p_xml):
-        if g_debug > 1:
-            print "lighting.stop_lighting_families()"
-        for l_family_obj in self.m_family_data.itervalues():
-            l_family_obj.Api.Stop(p_xml)
 
     def test_lighting_families(self):
         if g_debug > 1:
@@ -266,7 +192,8 @@ class API(LightingUtility):
         global g_logger
         g_logger = logging.getLogger('PyHouse.Lighting')
         self.m_house_obj = p_house_obj
-        self.build_lighting_family_info(p_house_obj)
+        self.m_family = family.LightingUtility()
+        self.m_family.build_lighting_family_info(p_house_obj)
         g_logger.info("Initialized.")
 
     def Start(self, p_house_obj, p_house_xml):
@@ -279,7 +206,7 @@ class API(LightingUtility):
         self.read_buttons(self.m_house_obj, p_house_xml)
         self.read_controllers(self.m_house_obj, p_house_xml)
         self.read_lights(self.m_house_obj, p_house_xml)
-        self.start_lighting_families(self.m_house_obj)
+        self.m_family.start_lighting_families(self.m_house_obj)
         g_logger.info("Started.")
 
     def Stop(self, p_xml):
@@ -291,7 +218,7 @@ class API(LightingUtility):
         l_lighting_xml = self.write_lights(self.m_house_obj.Lights)
         l_buttons_xml = self.write_buttons(self.m_house_obj.Buttons)
         l_controllers_xml = self.write_controllers(self.m_house_obj.Controllers)
-        self.stop_lighting_families(p_xml)
+        self.m_family.stop_lighting_families(p_xml)
         g_logger.info("Stopped.")
         if g_debug > 0:
             print "lighting.API.Stop() - House:{0:}, Lights:{1:}, Controllers:{2:}, Buttons:{3:}".format(self.m_house_obj.Name, len(l_lighting_xml), len(l_controllers_xml), len(l_buttons_xml))
@@ -302,4 +229,4 @@ class API(LightingUtility):
             print "lighting.API.SpecialTest()"
         self.test_lighting_families()
 
-# ## END
+# ## END DBK

@@ -65,7 +65,7 @@ class ScheduleData(object):
         global ScheduleCount
         ScheduleCount += 1
         self.Active = None
-        self.HouseName = None
+        #self.HouseName = None
         self.Key = 0
         self.Level = 0
         self.LightName = None
@@ -78,8 +78,16 @@ class ScheduleData(object):
         self.Type = 'Device'
 
     def __repr__(self):
-        l_ret = "Schedule:: SlotName:{0:}, LightName:{1:}, Time:{2:}, Level:{3:}, Rate:{4:}, Type:{5:}, HouseName:{6:}, Key:{7:}, Active:{8:}, RoomName:{9:}".format(
-                self.Name, self.LightName, self.Time, self.Level, self.Rate, self.Type, self.HouseName, self.Key, self.Active, self.RoomName)
+        l_ret = "Schedule:: "
+        l_ret += "Name:{0:}, ".format(self.Name)
+        l_ret += "LightName:{0:}, ".format(self.LightName)
+        l_ret += "Time:{0:}, ".format(self.Time)
+        l_ret += "Level:{0:}, ".format(self.Level)
+        l_ret += "Rate:{0:}, ".format(self.Rate)
+        l_ret += "Type:{0:}, ".format(self.Type)
+        l_ret += "Key:{0:}, ".format(self.Key)
+        l_ret += "Active:{0:}, ".format(self.Active)
+        l_ret += "Room:{0:} ".format(self.RoomName)
         l_ret += "<<  "
         return l_ret
 
@@ -90,7 +98,7 @@ class ScheduleXML(xml_tools.ConfigTools):
         """Extract schedule information from a schedule xml element.
         """
         self.xml_read_common_info(p_schedule_obj, p_entry_xml)
-        p_schedule_obj.HouseName = self.m_house_obj.Name
+        #p_schedule_obj.HouseName = self.m_house_obj.Name
         p_schedule_obj.Level = self.get_int_element(p_entry_xml, 'Level')
         p_schedule_obj.LightName = self.get_text_element(p_entry_xml, 'LightName')
         p_schedule_obj.LightNumber = self.get_int_element(p_entry_xml, 'LightNumber')
@@ -138,7 +146,7 @@ class ScheduleXML(xml_tools.ConfigTools):
         l_schedules_xml = ET.Element('Schedules')
         for l_schedule_obj in p_schedules_obj.itervalues():
             l_entry = self.xml_create_common_element('Schedule', l_schedule_obj)
-            ET.SubElement(l_entry, 'HouseName').text = str(l_schedule_obj.HouseName)
+            #ET.SubElement(l_entry, 'HouseName').text = str(l_schedule_obj.HouseName)
             ET.SubElement(l_entry, 'Level').text = str(l_schedule_obj.Level)
             ET.SubElement(l_entry, 'LightName').text = l_schedule_obj.LightName
             ET.SubElement(l_entry, 'LightNumber').text = str(l_schedule_obj.LightNumber)

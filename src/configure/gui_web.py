@@ -6,14 +6,13 @@ Created on Sep 22, 2012
 @author: briank
 '''
 
-from Tkinter import Frame, Label, Entry, Button, IntVar, E, W
+# Import system type stuff
+from Tkinter import Label, Entry, Button, IntVar, E, W
 
-import gui
-from configure.gui_tools import GuiTools, BG_BOTTOM
-from utils import config_xml
-# from web import web_server
+# Import PyMh files
+from src.configure.gui_tools import GuiTools, BG_BOTTOM
+from src.utils import config_xml
 
-# Web_Data = web_server.Web_Data
 
 class WebWindow(GuiTools):
     """Display a log location window.
@@ -45,4 +44,4 @@ class WebWindow(GuiTools):
         self.frame_delete(self.m_frame)
         gui.MainWindow()
 
-# ## END
+# ## END DBK

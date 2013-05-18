@@ -36,17 +36,23 @@ __version__ = '.'.join(map(str, __version_info__))
 
 VALID_FAMILIES = ['Insteon', 'UPB', 'X10']
 
-import importlib
+#print "Running families now."
+#
+#import importlib
+#
+#for l_family in VALID_FAMILIES:
+#    l_fqn = 'families.' + l_family + '.Device_' + l_family
+#    l_pkg = 'src.families.' + l_family
+#    l_mod = '.Device_' + l_family
+#    try:
+#        #l_module = importlib.import_module(l_fqn)
+#        pass
+#    except ImportError, l_err:
+#        print "families() 1 - ImportError: :'{0:}', {1:}\n".format(l_fqn, l_err)
+#    try:
+#        l_module = importlib.import_module(l_mod, l_pkg)
+#        pass
+#    except ImportError, l_err:
+#        print "families() 2 - ImportError: :'{0:}', {1:}, {2:}\n".format(l_mod, l_pkg, l_err)
 
-for l_family in VALID_FAMILIES:
-    l_package = 'families.' + l_family
-    l_import = 'Device_' + l_family
-    l_module = l_package + '.' + l_import
-    # print "families() from {0:} import {1:} -- Module:{2:}".format(l_package, l_import, l_module)
-    try:
-        l_module = importlib.import_module(l_module, l_package)
-    except ImportError:
-        # print "\nfamilies.__init__() - ImportError: Family:'{0:}', Name:'{1:}', Package:'{2:}'.\n".format(l_family, l_import, l_package)
-        pass
-
-# ## END
+# ## END DBK

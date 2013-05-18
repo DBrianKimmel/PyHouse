@@ -141,7 +141,7 @@ class ScheduleDialog(ScheduleWindow):
         self.get_entry_str(p_gui_obj.ModuleDialogFrame, 1, 'Key', self.Key, state = DISABLED)
         self.get_entry_bol(p_gui_obj.ModuleDialogFrame, 2, 'Active', self.Active)
         self.get_entry_str(p_gui_obj.ModuleDialogFrame, 3, 'Name', self.Name)
-        self.get_entry_str(p_gui_obj.ModuleDialogFrame, 4, 'House Name', self.HouseName, state = DISABLED)
+        #self.get_entry_str(p_gui_obj.ModuleDialogFrame, 4, 'House Name', self.HouseName, state = DISABLED)
         self.get_entry_pdb(p_gui_obj.ModuleDialogFrame, 5, 'Room Name', self.RoomName, self.build_names(p_house_obj.Rooms), self.RoomName, self.get_roomname)
         self.get_entry_str(p_gui_obj.ModuleDialogFrame, 6, 'Time', self.Time)
         self.get_entry_str(p_gui_obj.ModuleDialogFrame, 7, 'Level', self.Level)

@@ -7,7 +7,6 @@ Note! This is designed for 'from Insteon_constants import *'
 
 '''
 
-
 STX = 0x02
 ACK = 0x06
 NAK = 0x15
@@ -146,4 +145,4 @@ COMMAND_LENGTH = {
     0x73: 2
     }
 
-# ## END
+# ## END DBK

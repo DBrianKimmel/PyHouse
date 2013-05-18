@@ -28,15 +28,16 @@ Example of XML file
 
 """
 
-import sys
-
 __version_info__ = (0, 1, 4)
 __version__ = '.'.join(map(str, __version_info__))
+
+#print "Running configure now."
 
 try:
     from Tkinter import TkVersion as tk_version
 except ImportError, exc:
+    import sys
     sys.stderr.write("Tkinter is required.  Please install it.\n")
     raise
 
-# ## END
+# ## END DBK

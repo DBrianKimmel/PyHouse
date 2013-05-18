@@ -1,14 +1,16 @@
 #!/usr/bin/env python
 
+# Import system type stuff
 from Tkinter import Frame, Toplevel, Button, IntVar, DoubleVar, StringVar, W, DISABLED, SUNKEN, RAISED
-
 import sys
 from operator import attrgetter
 
-import gui_tools
-from lights import lighting
-from utils import config_xml
-from drivers import VALID_INTERFACES
+# Import PyMh files
+from src.configure import gui_tools
+from src.lights import lighting
+from src.utils import config_xml
+from src.drivers import VALID_INTERFACES
+from src.families import VALID_FAMILIES
 
 
 g_debug = 9
@@ -16,7 +18,7 @@ g_debug = 9
 # 1 = major routine entry
 
 
-VAL_FAM = lighting.VALID_FAMILIES
+VAL_FAM = VALID_FAMILIES
 VAL_INTER = VALID_INTERFACES
 BG_LIGHT = '#C0C090'
 BG_CTLR = '#90C090'
@@ -257,7 +259,7 @@ class LightingDialog(LightingWindow):
         self.Key = IntVar()
         self.Name = StringVar()
         self.RoomName = StringVar()
-        self.HouseName = StringVar()
+        #self.HouseName = StringVar()
         self.Type = StringVar()
         # Controllers
         self.Interface = StringVar()
@@ -291,7 +293,7 @@ class LightingDialog(LightingWindow):
         if g_debug >= 2:
             print "gui_lighting.load_device_vars() - key, Kind = {0:} - {1:}".format(p_key, p_kind)
         l_interface = None
-        l_housename = p_house_obj.Name
+        #l_housename = p_house_obj.Name
         try:
             if p_kind == 1 or p_kind == 4:
                 l_type = "Light"
@@ -331,7 +333,7 @@ class LightingDialog(LightingWindow):
         self.Key.set(l_obj.Key)
         self.Name.set(l_obj.Name)
         self.RoomName.set(l_obj.RoomName)
-        self.HouseName.set(l_housename)
+        #self.HouseName.set(l_housename)
         self.Type.set(l_type)
         if l_type == 'Controller':
             if g_debug >= 1:
@@ -394,7 +396,7 @@ class LightingDialog(LightingWindow):
         l_obj.Key = l_key
         l_obj.Name = self.Name.get()
         l_obj.RoomName = self.RoomName.get()
-        l_obj.HouseName = self.HouseName.get()
+        #l_obj.HouseName = self.HouseName.get()
         l_obj.Type = l_type
         if l_family == 'Insteon':
             l_obj.InsteonAddress = self.InsteonAddress.get()
@@ -445,11 +447,6 @@ class LightingDialog(LightingWindow):
         self.Family.set(p_val)
         if g_debug > 0:
             print "get family - ", p_val
-
-    def get_housename(self, p_val):
-        self.HouseName.set(p_val)
-        if g_debug > 0:
-            print "get house name - ", p_val
 
     def get_interface(self, p_val):
         self.Interface.set(p_val)

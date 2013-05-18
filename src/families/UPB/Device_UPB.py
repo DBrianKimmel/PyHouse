@@ -8,7 +8,7 @@ import logging
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
-from lights import lighting
+from src.lights import lighting
 
 g_debug = 0
 

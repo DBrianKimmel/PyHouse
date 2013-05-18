@@ -45,7 +45,8 @@ Ethernet - not too much of this is used yet.
 __version_info__ = (1, 1, 0)
 __version__ = '.' . join(map(str, __version_info__))
 
-VALID_INTERFACES = ['Serial', 'USB', 'Ethernet']
+VALID_INTERFACES = ['Serial', 'USB', 'HidUSB', 'Ethernet']
 
+#print "Running drivers now."
 
-# ## END
+# ## END DBK
