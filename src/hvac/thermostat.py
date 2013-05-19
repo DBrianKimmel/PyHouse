@@ -4,11 +4,12 @@ Created on Mar 27, 2013
 @author: briank
 '''
 
+# Import system type stuff
 import logging
 import xml.etree.ElementTree as ET
 
-from utils import xml_tools
-
+# Import PyMh files
+from src.utils import xml_tools
 
 g_debug = 9
 g_logger = None

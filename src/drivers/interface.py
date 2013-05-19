@@ -4,15 +4,11 @@ Created on Mar 21, 2013
 @author: briank
 '''
 
-__version_info__ = (1, 1, 0)
-__version__ = '.' . join(map(str, __version_info__))
-
-
 # Import system type stuff
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
-from utils import xml_tools
+from src.utils import xml_tools
 
 g_debug = 0
 
@@ -156,4 +152,4 @@ class ReadWriteConfig(xml_tools.ConfigTools):
         if g_debug >= 2:
             print "drivers.interface.write_ethernet_xml() - Wrote ethernet controller"
 
-# ## END
+# ## END DBK

@@ -6,11 +6,12 @@ Created on Sep 28, 2012
 @author: briank
 '''
 
+# Import system type stuff
 from Tkinter import Frame, Label, Entry, Button, IntVar, E, W
 
-from configure.gui_tools import GuiTools, GuiData, BG_TOP, BG_BOTTOM, BG_UNDONE
-import gui
-import gui_tools
+# Import PyMh files
+from src.configure import gui_tools
+#from src.configure.gui_tools import GuiTools, GuiData, BG_TOP, BG_BOTTOM, BG_UNDONE
 
 g_debug = 5
 
@@ -43,4 +44,4 @@ class UPnPWindow(gui_tools.GuiTools):
         gui.MainWindow()
 
 
-# ## END
+# ## END DBK

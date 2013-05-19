@@ -41,7 +41,6 @@ This should also allow control of many different houses.
 __author__ = 'D. Brian Kimmel'
 
 # Import system type stuff
-# import array
 import logging
 import sys
 # Use USB package that was written by Wander Lairson Costa
@@ -52,7 +51,7 @@ import usb.util
 from twisted.internet import reactor
 
 # Import PyHouse modules
-from utils.tools import PrintBytes
+from src.utils.tools import PrintBytes
 
 callLater = reactor.callLater
 
@@ -334,4 +333,4 @@ class API(UsbDriverAPI):
             print "Driver_USB.Stop()"
         self.close_device(self.m_controller_obj)
 
-# ## END
+# ## END DBK

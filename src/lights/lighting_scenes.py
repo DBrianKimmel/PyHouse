@@ -46,6 +46,4 @@ class ScenesAPI(ScenesData):
             print "     ", l_obj
         print
 
-
-
-# ## END
+# ## END DBK

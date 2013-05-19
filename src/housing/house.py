@@ -16,18 +16,16 @@ moonrise, tides, etc.
 
 # Import system type stuff
 import logging
-# import xml.etree.ElementTree as ET
 
 # Import PyMh files
-from scheduling import schedule
-from housing import internet
-from housing import location
-from housing import rooms
+from src.scheduling import schedule
+from src.housing import internet
+from src.housing import location
+from src.housing import rooms
 
 g_debug = 0
 m_logger = None
 
-Singletons = {}
 House_Data = {}
 
 
@@ -49,10 +47,15 @@ class HouseData(object):
         self.Schedule = {}
 
     def __repr__(self):
-        l_ret = ' House:: Name:{0:}, Active:{1:}, Key:{2:}, Lights:{3:}'.format(
-                self.Name, self.Active, self.Key, len(self.Lights))
-        l_ret += ', Controllers:{0:}, Buttons:{1:}, Rooms:{2:}, Schedules:{3:}'.format(
-                len(self.Controllers), len(self.Buttons), len(self.Rooms), len(self.Schedule))
+        l_ret = ' House:: '
+        l_ret += 'Name:{0:}, '.format(self.Name)
+        l_ret += "Active:{0:}, ".format(self.Active)
+        l_ret += "Key:{0:}, ".format(self.Key)
+        l_ret += "Lights:{0:}, ".format(len(self.Lights))
+        l_ret += "Controllers:{0:}, ".format(len(self.Controllers))
+        l_ret += "Buttons:{0:}, ".format(len(self.Buttons))
+        l_ret += "Rooms:{0:}, ".format(len(self.Rooms))
+        l_ret += "Schedules:{0:}".format(len(self.Schedule))
         return l_ret
 
 
@@ -145,4 +148,4 @@ class API(LoadSaveAPI):
             print "house.API.SpecialTest()"
         self.m_house_obj.ScheduleAPI.SpecialTest()
 
-# ##  END
+# ##  END DBK

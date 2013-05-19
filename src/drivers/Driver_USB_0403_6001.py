@@ -6,14 +6,14 @@ Created on Dec 20, 2012
 Created to handle the Insteon PLM controller:
 
 '''
+
+# Import system type stuff
 import sys
 from twisted.internet import reactor
 import usb
-# Use USB package that was written by Wander Lairson Costa
-# PYUSB_DEBUG_LEVEL=debug
-# export PYUSB_DEBUG_LEVEL
 
-import Driver_USB
+# Import PyMh files
+from src.drivers import Driver_USB
 
 callLater = reactor.callLater
 
@@ -75,4 +75,4 @@ class API(UsbDriverAPI):
             print "Driver_USB_0403_6001.Stop() "
         self.m_driver.Stop()
 
-# ## END
+# ## END DBK

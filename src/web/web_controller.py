@@ -9,7 +9,7 @@ from nevow import rend
 from nevow import tags as Tag
 from nevow import url
 
-from lights import lighting
+from src.lights import lighting
 
 BUTTON = 'post_btn'
 

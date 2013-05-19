@@ -9,11 +9,10 @@ moon rise, tides, etc.
 """
 
 # Import system type stuff
-import logging
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
-from utils import xml_tools
+from src.utils import xml_tools
 
 g_debug = 0
 m_logger = None
@@ -78,4 +77,4 @@ class ReadWriteConfig(xml_tools.ConfigTools):
             print "house.write_location()"
         return l_entry
 
-# ## END
+# ## END DBK

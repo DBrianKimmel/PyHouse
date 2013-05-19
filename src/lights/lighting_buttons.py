@@ -3,10 +3,9 @@
 """Handle the controller component of the lighting system.
 """
 
-import lighting_tools
-# import pprint
+# Import PyHouse files
+from src.lights import lighting_tools
 
-XButton_Data = {}
 ButtonCount = 0
 
 
@@ -38,10 +37,4 @@ class ButtonsAPI(lighting_tools.CoreAPI):
         l_button = super(ButtonsAPI, self).load_core_device(p_dict, self.get_ButtonCount())
         return l_button
 
-    def dump_all_buttons(self):
-        print "***** All Buttons *****"
-        # for l_key, l_obj in Button_Data.iteritems():
-        #    self.dump_device(l_obj, 'Button', l_key)
-        # print
-
-# ## END
+# ## END DBK

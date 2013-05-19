@@ -5,10 +5,13 @@ Created on Oct 7, 2012
 
 @author: briank
 '''
-from Tkinter import Frame, Scale, Toplevel, Button, IntVar, StringVar, W, DISABLED, SUNKEN, RAISED, HORIZONTAL
-import gui_tools
-from configure.gui_tools import GuiTools
 
+# Import system type stuff
+from Tkinter import Frame, Scale, Toplevel, Button, IntVar, StringVar, W, DISABLED, SUNKEN, RAISED, HORIZONTAL
+
+# Import PyMh files and modules.
+from src.configure import gui_tools
+from src.configure.gui_tools import GuiTools
 
 g_debug = 4
 # 0 = off
@@ -193,4 +196,4 @@ class CtlLightsDialog(CtlLightsWindow):
         p_gui_obj.ModuleDialogFrame.destroy()
         self.show_buttons_for_one_house(p_gui_obj, p_house_obj)
 
-# ## END
+# ## END DBK

@@ -10,7 +10,7 @@ All errors are printed out.
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
-import xml_tools
+from src.utils import xml_tools
 
 
 g_debug = 9
@@ -64,4 +64,4 @@ class API(ReadConfig, WriteConfig):
     def __init__(self, p_file):
         pass
 
-# ## END
+# ## END DBK

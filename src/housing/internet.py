@@ -15,9 +15,8 @@ from twisted.internet.defer import Deferred
 from twisted.web.client import Agent
 from twisted.web.http_headers import Headers
 
-from utils import xml_tools
-from utils import convert
-
+from src.utils import xml_tools
+from src.utils import convert
 
 g_debug = 0
 # 0 = off
@@ -383,4 +382,4 @@ class API(ReadWriteXML):
     </Internet>
     ...
 """
-# ## END
+# ## END DBK

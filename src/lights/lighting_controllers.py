@@ -7,10 +7,10 @@
 # Import system type stuff
 import xml.etree.ElementTree as ET
 
-# Import PyHouse files
-import lighting_tools
-from utils.tools import PrintBytes
-from drivers import interface
+# Import PyMh files and modules.
+from src.lights import lighting_tools
+from src.utils.tools import PrintBytes
+from src.drivers import interface
 
 g_debug = 0
 # 0 = off
@@ -18,7 +18,6 @@ g_debug = 0
 # 2 = controller summary information
 # 3 = controller detail information
 
-Controller_Data = {}
 ControllerCount = 0
 
 
@@ -88,4 +87,4 @@ class ControllersAPI(lighting_tools.CoreAPI):
             print "lighting_controller.write_controllers() - Wrote {0:} controllers".format(l_count)
         return l_controllers_xml
 
-# ## END
+# ## END DBK

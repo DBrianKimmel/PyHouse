@@ -17,8 +17,8 @@ import logging
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
-from housing import house
-from utils import xml_tools
+from src.housing import house
+from src.utils import xml_tools
 
 g_debug = 0
 # 0 = off
@@ -202,4 +202,4 @@ class API(LoadSaveAPI):
     def get_houses_obj(self):
         return self.m_houses_data
 
-# ##  END
+# ##  END DBK

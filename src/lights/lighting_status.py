@@ -47,4 +47,4 @@ class LightingStatusAPI(LightingStatusData):
             return True
         return False
 
-# ## END
+# ## END DBK

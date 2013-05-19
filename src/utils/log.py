@@ -15,7 +15,7 @@ import logging.handlers
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
-from utils import xml_tools
+from src.utils import xml_tools
 
 
 g_debug = 0
@@ -109,4 +109,4 @@ class LoggingMain(LoggingUtility):
     def stop(self):
         logging.shutdown()
 
-# ## END
+# ## END DBK

@@ -34,11 +34,11 @@ import xml.etree.ElementTree as ET
 from twisted.internet import reactor
 
 # Import PyMh files
-from entertain import entertainment
-from lights import lighting
-from utils import xml_tools
-from utils import tools
-import sunrisesunset
+from src.entertain import entertainment
+from src.lights import lighting
+from src.utils import xml_tools
+from src.utils import tools
+from src.scheduling import sunrisesunset
 
 g_debug = 0
 # 0 = off

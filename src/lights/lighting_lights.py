@@ -11,7 +11,8 @@
     The real work of controlling the devices is delegated to the modules for that family of devices.
 """
 
-import lighting_tools
+# Import PyHouse files
+from src.lights import lighting_tools
 
 LightCount = 0
 g_debug = 1
@@ -68,4 +69,4 @@ class LightsAPI(lighting_tools.CoreAPI):
     def update_all_statuses(self):
         assert 0, "dump all statuses must be subclassed."
 
-# ## END
+# ## END DBK

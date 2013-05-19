@@ -3,9 +3,7 @@
 """Tools for use in all lighting component files.
 """
 
-
 # Import system type stuff
-# import inspect
 from inspect import getmembers
 import pprint
 
@@ -122,4 +120,4 @@ class CoreAPI(LightingTools):
         pprint.pprint(vars(p_obj))
         print "--------------------"
 
-# ## END
+# ## END DBK

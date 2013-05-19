@@ -457,4 +457,4 @@ class LightingDialog(LightingWindow):
         if g_debug > 0:
             print "get room name - ", p_val
 
-# ## END
+# ## END DBK

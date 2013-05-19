@@ -20,8 +20,8 @@ from twisted.internet.serialport import SerialPort
 import serial
 
 # Import PyMh files
-from utils.tools import PrintBytes
-from utils import xml_tools
+from src.utils.tools import PrintBytes
+from src.utils import xml_tools
 
 
 g_debug = 0
@@ -140,4 +140,4 @@ class API(SerialAPI):
         self.close_device(self.m_controller_obj)
         g_logger.info("Stopped.")
 
-# ## END
+# ## END DBK

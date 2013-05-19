@@ -4,7 +4,6 @@
 from Tkinter import Frame, Label, Entry, Button, StringVar, E, W
 
 # Import PyMh files
-#from src.configure import gui
 from src.configure.gui_tools import GuiTools, BG_BOTTOM
 from src.utils import config_xml
 from src.utils import log

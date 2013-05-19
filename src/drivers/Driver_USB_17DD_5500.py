@@ -30,6 +30,7 @@ import usb
 # PYUSB_DEBUG_LEVEL=debug
 # export PYUSB_DEBUG_LEVEL
 
+# Import PyMh files
 import Driver_USB
 
 callLater = reactor.callLater
@@ -115,4 +116,4 @@ class API(UsbDriverAPI):
             print "Driver_USB_17DD_5500.Start()", p_obj.Name
         self.m_driver.Start(p_obj)
 
-# ## END
+# ## END DBK

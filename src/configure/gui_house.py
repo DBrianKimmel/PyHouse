@@ -3,14 +3,16 @@
 """If a house is added, the entire PyHouse must be restarted to activate the house !
 """
 
+# Import system type stuff
 from operator import attrgetter
 from Tkinter import Frame, Toplevel, Button, IntVar, StringVar, DoubleVar, W, DISABLED, SUNKEN, RAISED
 
-from configure.gui_tools import GuiTools, BG_BOTTOM, BG_TOP, BG_INACTIVE, FG_INACTIVE, FG_ACTIVE
-from housing import house
-from housing import location
-from housing import rooms
-from housing import houses
+# Import PyMh files and modules.
+from src.configure.gui_tools import GuiTools, BG_BOTTOM, BG_TOP, BG_INACTIVE, FG_INACTIVE, FG_ACTIVE
+from src.housing import house
+from src.housing import location
+from src.housing import rooms
+from src.housing import houses
 
 
 g_debug = 6
@@ -461,4 +463,4 @@ class InternetDialog(GuiTools):
     def __init__(self, p_gui_obj, p_house_obj, p_houses_dict, p_title = None):
         pass
 
-# ## END
+# ## END DBK

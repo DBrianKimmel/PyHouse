@@ -1,19 +1,20 @@
 #!/usr/bin/env python
 
+# Import system type stuff
 from operator import attrgetter
 from Tkinter import Frame, Toplevel, Button, IntVar, StringVar, W, DISABLED, SUNKEN, RAISED
 
-from configure.gui_tools import GuiTools, BG_BOTTOM, BG_INACTIVE, FG_INACTIVE
-from scheduling import schedule
-from housing import house
-from utils import tools
+# Import PyMh files
+from src.configure.gui_tools import GuiTools, BG_BOTTOM, BG_INACTIVE, FG_INACTIVE
+from src.scheduling import schedule
+from src.housing import house
+from src.utils import tools
 
 g_debug = 0
 
 House_Data = house.House_Data
 
 VAL_TYPES = schedule.VALID_TYPES
-
 
 class ScheduleWindow(GuiTools):
 
@@ -260,4 +261,4 @@ class ScheduleDialog(ScheduleWindow):
         if g_debug > 0:
             print "gui_schedule.gettype() - ", p_val
 
-# ## END
+# ## END DBK

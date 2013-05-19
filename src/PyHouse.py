@@ -35,10 +35,10 @@ import sys
 from twisted.internet import reactor
 
 # Import PyMh files and modules.
-from configure import gui
-from utils import log
-from housing import houses
-from web import web_server
+from src.configure import gui
+from src.utils import log
+from src.housing import houses
+from src.web import web_server
 
 g_debug = 0
 g_logger = None

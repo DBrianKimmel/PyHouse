@@ -15,8 +15,6 @@ import math
 from math import pi
 
 # Import PyMh files
-import main
-# import main.house as house
 
 g_debug = 0
 g_logger = None

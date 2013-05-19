@@ -7,8 +7,6 @@ Utility routines to convert external readable numbers to integers for
 ease in comparing.
 '''
 
-import unittest
-
 
 class ConvertEthernet(object):
     '''
@@ -34,4 +32,4 @@ class ConvertEthernet(object):
             d = d / 256
         return '.'.join(q)
 
-# ## END
+# ## END DBK

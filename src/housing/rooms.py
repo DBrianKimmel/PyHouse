@@ -10,13 +10,10 @@ Handle the rooms information for a house.
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
-from utils import xml_tools
+from src.utils import xml_tools
 
 g_debug = 0
 m_logger = None
-
-Singletons = {}
-House_Data = {}
 
 
 class RoomData(object):
@@ -31,7 +28,10 @@ class RoomData(object):
         self.Size = ''
 
     def __repr__(self):
-        l_ret = ' Room:: Name:{0:} \t Size:{1:} \t Corner:{2:}\n'.format(self.Name, self.Size, self.Corner)
+        l_ret = ' Room:: '
+        l_ret += 'Name:{0:} \t '.format(self.Name)
+        l_ret += "Size:{0:} \t ".format(self.Size)
+        l_ret += "Corner:{0:}\n".format(self.Corner)
         return l_ret
 
 
@@ -72,4 +72,4 @@ class ReadWriteConfig(xml_tools.ConfigTools):
             print "house.write_rooms() - Wrote {0:} rooms".format(l_count)
         return l_rooms_xml
 
-# ## END
+# ## END DBK

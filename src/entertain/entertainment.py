@@ -9,7 +9,6 @@ Can act as a UPnP Control point
 
 # Import system type stuff
 import logging
-# from twisted.web import xmlrpc, client
 from twisted.internet import reactor
 import xml.etree.ElementTree as ET
 
@@ -279,4 +278,4 @@ class API(UPnPControlPoint):
         l_entertain_xml = ET.Element('Entertainment')
         return l_entertain_xml
 
-# ## END
+# ## END DBK
