@@ -290,31 +290,31 @@ class DecodeResponses(InsteonPlmUtility):
         elif l_message[8] & 0xE0 == 0xE0:  # (111) NAK of Direct message type
             l_debug_msg += "NAK of direct message(2) from {0:}; ".format(l_name_from)
         #
-        if l_obj_from.Command == MESSAGE_TYPES['product_data_request']:  # 0x03
+        if l_obj_from.Command1 == MESSAGE_TYPES['product_data_request']:  # 0x03
             l_debug_msg += " product data request. - Should never happen - S/B 51 response"
-        elif l_obj_from.Command == MESSAGE_TYPES['engine_version']:  # 0x0D
+        elif l_obj_from.Command1 == MESSAGE_TYPES['engine_version']:  # 0x0D
             l_engine_id = l_message[10]
             l_debug_msg += "Engine version From:{0:}, Sent to:{1:}, Id:{2:}; ".format(l_name_from, l_name_to, l_engine_id)
             g_logger.info("Got engine version from light:{0:}, To:{1:}, EngineID:{2:}".format(l_name_from, l_name_to, l_engine_id))
-        elif l_obj_from.Command == MESSAGE_TYPES['id_request']:  # 0x10
+        elif l_obj_from.Command1 == MESSAGE_TYPES['id_request']:  # 0x10
             l_debug_msg += "Request ID From:{0:}; ".format(l_name_from)
             g_logger.info("Got an ID request. Light:{0:}".format(l_name_from,))
-        elif l_obj_from.Command == MESSAGE_TYPES['on']:  # 0x11
+        elif l_obj_from.Command1 == MESSAGE_TYPES['on']:  # 0x11
             l_obj_from.CurLevel = 100
             l_debug_msg += "Light:{0:} turned Full ON; ".format(l_name_from)
             self.update_object(l_obj_from)
-        elif l_obj_from.Command == MESSAGE_TYPES['off']:  # 0x13
+        elif l_obj_from.Command1 == MESSAGE_TYPES['off']:  # 0x13
             l_obj_from.CurLevel = 0
             l_debug_msg += "Light:{0:} turned Full OFF; ".format(l_name_from)
             self.update_object(l_obj_from)
-        elif l_obj_from.Command == MESSAGE_TYPES['status_request']:  # 0x19
+        elif l_obj_from.Command1 == MESSAGE_TYPES['status_request']:  # 0x19
             l_level = int(((l_message[10] + 2) * 100) / 256)
             l_obj_from.CurLevel = l_level
             l_debug_msg += "Status of light:{0:} is level:{1:}; ".format(l_name_from, l_level)
             g_logger.info("PLM:{0:} Got Light Status From:{1:}, Level is:{2:}".format(p_controller_obj.Name, l_name_from, l_level))
             self.update_object(l_obj_from)
         else:
-            l_debug_msg += "Insteon_PLM._decode_50_record() unknown type - last command was {0:#x} - {1:}; ".format(l_obj_from.Command, PrintBytes(l_message))
+            l_debug_msg += "Insteon_PLM._decode_50_record() unknown type - last command was {0:#x} - {1:}; ".format(l_obj_from.Command1, PrintBytes(l_message))
         l_ret = True
 
         if g_debug >= 3:
@@ -668,7 +668,7 @@ class PlmDriverProtocol(DecodeResponses):
             if l_controller_obj.Active != True:
                 continue
             if l_controller_obj.Driver != None:
-                l_controller_obj.Command = l_command
+                l_controller_obj.Command1 = l_command
                 l_controller_obj.Driver.write_device(l_command)
                 if g_debug >= 5:
                     print "Insteon_PLM.dequeue_and_send() to {0:}, Message: {1:}".format(l_controller_obj.Name, PrintBytes(l_command))
@@ -732,8 +732,8 @@ class CreateCommands(PlmDriverProtocol):
         l_command = self._queue_command('insteon_send')
         self.int2message(p_light_obj.InsteonAddress, l_command, 2)
         l_command[5] = FLAG_MAX_HOPS + FLAG_HOPS_LEFT  # 0x0F
-        l_command[6] = p_light_obj.Command = p_cmd1
-        l_command[7] = p_light_obj.Command1 = p_cmd2
+        l_command[6] = p_light_obj.Command1 = p_cmd1
+        l_command[7] = p_light_obj.Command2 = p_cmd2
         if g_debug >= 4:
             print "Insteon_PLM.queue_62_command() ", p_light_obj.Name, p_cmd1, p_cmd2
             g_logger.debug("Queue62 command to device: {2:}, Command: {0:#X},{1:#X}, Address: ({3:x}.{4:x}.{5:x})".format(p_cmd1, p_cmd2, p_light_obj.Name, l_command[2], l_command[3], l_command[4]))
@@ -858,7 +858,7 @@ class CreateCommands(PlmDriverProtocol):
         if g_debug >= 5:
             print "Insteon_PLM.queue_73_command() to get plm config."
             g_logger.debug("Queue command to get PLM config.")
-        p_light_obj.Command = PLM_COMMANDS['plm_get_config']
+        p_light_obj.Command1 = PLM_COMMANDS['plm_get_config']
         l_command = self._queue_command('plm_get_config')
         return self.queue_plm_command(l_command)
 

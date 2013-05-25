@@ -45,8 +45,8 @@ class CoreData (object):
         self.Master = False
         self.ProductKey = ''
         self.Responder = False
-        self.Command = 0
         self.Command1 = 0
+        self.Command2 = 0
 
     def __repr__(self):
         l_str = lighting.ControllerData.__repr__(self)

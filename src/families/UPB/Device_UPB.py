@@ -11,6 +11,9 @@ import xml.etree.ElementTree as ET
 from src.lights import lighting
 
 g_debug = 0
+# 0 = off
+# 1 = major routine entry
+# 2 = Startup Details
 
 g_logger = None
 g_PIM = None
@@ -24,7 +27,7 @@ class CoreData(object):
         self.NetworkID = None
         self.Password = None
         self.UnitID = None
-        self.Command = 0
+        self.Command1 = 0
 
 
 class CoreAPI(object):
@@ -46,23 +49,7 @@ class ButtonData(lighting.ButtonData, CoreData):
         return l_str
 
 class ButtonAPI(lighting.ButtonAPI, CoreAPI):
-
-    def load_all_buttons(self, p_dict):
-        """
-        @param p_dict: outer layer of all buttons in a dict.
-        """
-        if g_debug > 1:
-            print "Device_UPB.load_all_buttons()"
-        for l_dict in p_dict.itervalues():
-            l_button = ButtonData()
-            l_button = self.load_upb_button(l_dict, l_button)
-            g_house_obj.Buttons[l_button.Key] = l_button
-
-    def load_upb_button(self, p_dict, p_button):
-        l_button = p_button
-        l_button = super(ButtonAPI, self).load_button(p_dict, l_button)
-        l_button = self.load_device(p_dict, l_button)
-        return l_button
+    pass
 
 
 class ControllerData(lighting.ControllerData, CoreData):

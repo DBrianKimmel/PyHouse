@@ -12,13 +12,11 @@ from src.lights import lighting_tools
 from src.utils.tools import PrintBytes
 from src.drivers import interface
 
-g_debug = 0
+g_debug = 9
 # 0 = off
 # 1 = major routine entry
 # 2 = controller summary information
 # 3 = controller detail information
-
-ControllerCount = 0
 
 
 class ControllerData(lighting_tools.CoreData):
@@ -28,8 +26,6 @@ class ControllerData(lighting_tools.CoreData):
     """
 
     def __init__(self):
-        global ControllerCount
-        ControllerCount += 1
         super(ControllerData, self).__init__()  # The core data
         self.Type = 'Controller'
         self.Command = None
@@ -40,8 +36,13 @@ class ControllerData(lighting_tools.CoreData):
         self.Port = ''
 
     def __repr__(self):
-        l_ret = "LightingController:: Name:{0:}, Family:{1:}, Interface:{2:}, Port:{3:}, Type:{4:}, Message:{5:}, ".format(
-                self.Name, self.Family, self.Interface, self.Port, self.Type, PrintBytes(self.Message))
+        l_ret = "LightingController:: "
+        l_ret += "Name:{0:}, ".format(self.Name)
+        l_ret += "Family:{0:}, ".format(self.Family)
+        l_ret += "Interface:{0:}, ".format(self.Interface)
+        l_ret += "Port:{0:}, ".format(self.Port)
+        l_ret += "Type:{0:}, ".format(self.Type)
+        l_ret += "Message:{0:} ".format(PrintBytes(self.Message))
         return l_ret
 
 
@@ -50,9 +51,9 @@ class ControllersAPI(lighting_tools.CoreAPI):
     def __init__(self):
         super(ControllersAPI, self).__init__()
 
-    def read_controllers(self, p_house_obj, p_house_xml):
+    def read_controller_xml(self, p_house_obj, p_house_xml):
         if g_debug >= 1:
-            print "lighting_controller.read_controllers()", p_house_obj
+            print "lighting_controller.read_controller_xml()", p_house_obj
         l_count = 0
         l_dict = {}
         l_sect = p_house_xml.find('Controllers')
@@ -67,12 +68,12 @@ class ControllersAPI(lighting_tools.CoreAPI):
             l_count += 1
         p_house_obj.Controllers = l_dict
         if g_debug >= 2:
-            print "lighting_controller.read_controllers()  loaded {0:} controllers for house {1:}".format(l_count, p_house_obj.Name)
+            print "lighting_controller.read_controller_xml()  loaded {0:} controllers for house {1:}".format(l_count, p_house_obj.Name)
         return l_dict
 
-    def write_controllers(self, p_dict):
+    def write_controller_xml(self, p_dict):
         if g_debug >= 1:
-            print "lighting_controller.write_controllers()"
+            print "lighting_controller.write_controller_xml()"
         l_count = 0
         l_controllers_xml = ET.Element('Controllers')
         for l_controller_obj in p_dict.itervalues():
@@ -84,7 +85,7 @@ class ControllersAPI(lighting_tools.CoreAPI):
             l_controllers_xml.append(l_entry)
             l_count += 1
         if g_debug >= 2:
-            print "lighting_controller.write_controllers() - Wrote {0:} controllers".format(l_count)
+            print "lighting_controller.write_controller_xml() - Wrote {0:} controllers".format(l_count)
         return l_controllers_xml
 
 # ## END DBK

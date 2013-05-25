@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 
-"""Superclass
-
-    Handle the lights component of the lighting system.
-    This is the base data for all sub-classed lighting data
+"""Handle the lights component of the lighting system.
 
     Each entry should contain enough information to allow functionality of various family of
     lighting controllers.  Insteon is the first type coded and UPB is to follow.
@@ -14,16 +11,12 @@
 # Import PyHouse files
 from src.lights import lighting_tools
 
-LightCount = 0
-g_debug = 1
-
+g_debug = 9
 
 class LightData(lighting_tools.CoreData):
 
     def __init__(self):
-        global LightCount
-        LightCount += 1
-        if g_debug > 1:
+        if g_debug >= 2:
             print "lighting_lights.LightsData.__init__()"
         super(LightData, self).__init__()
         self.Controller = None
@@ -34,39 +27,5 @@ class LightData(lighting_tools.CoreData):
         l_str = super(LightData, self).__repr__()
         l_str = l_str + " Key:{0} ".format(self.Key)
         return l_str
-
-    def get_cur_level(self):
-        return self.__CurLevel
-    def set_cur_level(self, value):
-        self.__CurLevel = value
-
-    CurLevel = property(get_cur_level, set_cur_level, None, "Device light level - 0=Off, 100=Full On")
-
-
-class LightsAPI(lighting_tools.CoreAPI):
-
-    def __init__(self):
-        if g_debug > 1:
-            print "lighting_lights.lightsAPI.__init__()"
-        super(LightsAPI, self).__init__()
-
-    def _get_LightCount(self):
-        global LightCount
-        return LightCount
-
-    def load_light(self, p_dict, p_light):
-        """Load the light information.
-        """
-        if g_debug > 1:
-            print "lighting_lights.LightsAPI.load_light() - {0:}".format(p_light.Name)
-        l_light = super(LightsAPI, self).load_core_device(p_dict, self._get_LightCount())
-        l_light.CurLevel = 0
-        return l_light
-
-    def update_all_devices(self):
-        assert 0, "update all devices must be subclassed."
-
-    def update_all_statuses(self):
-        assert 0, "dump all statuses must be subclassed."
 
 # ## END DBK

@@ -7,6 +7,12 @@
 from inspect import getmembers
 import pprint
 
+g_debug = 9
+# 0 = off
+# 1 = major routine entry
+# 2 = 
+# 3 =
+
 
 class LightingTools(object):
 
@@ -50,16 +56,6 @@ class LightingTools(object):
         if l_field == 'None': l_field = None
         return l_field
 
-    def convert_to_dict(self, p_obj):
-        l_dict = {}
-        l_list = getmembers(p_obj)
-        for l_pair in l_list:
-            l_ix = l_list[0].find('__')
-            if l_ix > 0:
-                l_pair[0] = l_pair[0][(l_ix + 2):]
-            l_dict[l_pair[0]] = l_pair[1]
-        return l_dict
-
 
 class CoreData(LightingTools):
     """Information
@@ -82,6 +78,7 @@ class CoreData(LightingTools):
         l_str += "Name:{0:}, ".format(self.Name)
         l_str += "Family:{0:}, ".format(self.Family)
         l_str += "Type:{0:}, ".format(self.Type)
+        l_str += "Active:{0:}, ".format(self.Active)
         l_str += "Comment:{0:}, ".format(self.Comment)
         l_str += "Room:{0:}, ".format(self.RoomName)
         l_str += "Coords:{0:}, ".format(self.Coords)
@@ -94,12 +91,13 @@ class CoreAPI(LightingTools):
     """
     """
 
-    def load_core_device(self, p_dict, p_key = 0):
-        """Load the device (light/button/controller/... information into a new CoreData object.
+    def XXload_core_device(self, p_dict, p_key = 0):
+        """Load the device (light/button/controller/...) information into a new CoreData object.
 
         @param p_dict: The dict of config items for this one device.
         @return: a CoreData object filled in
         """
+        print "lighting_toold.load_core_device() - "
         l_dev = CoreData()
         l_dev.Active = self.getBool(p_dict, 'Active', False)
         l_dev.Comment = self.getText(p_dict, 'Comment')
@@ -110,14 +108,9 @@ class CoreAPI(LightingTools):
         l_dev.Name = self.getText(p_dict, 'Name')
         l_dev.RoomName = self.getText(p_dict, 'Room')
         l_dev.Type = self.getText(p_dict, 'Type')
-        # print " - lighting_tools CoreAPI load device - {0:}".format(l_dev.Name)
+        if g_debug >= 3:
+            print " - lighting_tools.load_core_device() - Name:{0:}".format(l_dev.Name)
+            print "   ", p_dict
         return l_dev
-
-    def dump_device(self, p_obj, p_type = '', p_name = ''):
-        print "~~~ {0:}: {1:}".format(p_type, p_name)
-        print "     ", p_obj
-        print
-        pprint.pprint(vars(p_obj))
-        print "--------------------"
 
 # ## END DBK

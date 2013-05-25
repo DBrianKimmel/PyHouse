@@ -13,6 +13,9 @@ import Device_UPB
 from utils.tools import PrintBytes
 
 g_debug = 0
+# 0 = off
+# 1 = major routine entry
+# 2 = Startup Details
 
 g_driver = []
 g_logger = None
@@ -397,10 +400,6 @@ class LightingAPI(Device_UPB.LightingAPI, CreateCommands):
                 g_logger.info('change_light_setting()')
                 self._compose_command(pim_commands['goto'], l_id, p_level, 0x01)
                 return
-
-    def update_all_devices(self):
-        # Device_Insteon.InsteonLightingAPI.update_all_devices(Device_Insteon.InsteonLightingAPI())
-        pass
 
 
 class UpbPimAPI(LightingAPI):
