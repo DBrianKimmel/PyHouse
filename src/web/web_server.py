@@ -28,11 +28,14 @@ from nevow import util
 from nevow.rend import _CARRYOVER
 from formless import iformless
 
-from utils import xml_tools
-from lights import lighting
+# Import PyMh files and modules.
+from src.utils import xml_tools
+from src.lights import lighting
+from src.scheduling import schedule
 
 
-g_debug = 0
+g_debug = 5
+
 g_port = 8080
 g_logger = None
 
@@ -84,7 +87,7 @@ class WebUtilities(WebData):
     """
 
     def read_web(self, p_web_obj, p_web_xml):
-        if g_debug > 8:
+        if g_debug >= 9:
             print "web_server.read_web()"
             print xml_tools.prettify(self.m_root)
         try:
@@ -98,7 +101,7 @@ class WebUtilities(WebData):
         Web_Data[0] = l_obj
 
     def write_web(self, p_parent, p_web_obj):
-        if g_debug > 1:
+        if g_debug >= 2:
             print "web_server.write_web()"
         l_sect = self.write_create_empty('Web')
         l_obj = Web_Data[0]
@@ -212,7 +215,7 @@ xxx queued 0
                 name = name_prefix + '_' + bindingName.split()[0].lower()
             # print "locateChild - name:", name
             method = getattr(self, 'form_' + name, None)
-            print "locateChild - method:", method
+            #print "locateChild - method:", method
             if method is not None:
                 return self.onManualPost(context, method, bindingName, kwargs)
             else:
@@ -227,7 +230,8 @@ xxx queued 0
         def redirectAfterPost(aspects):
             """See: nevow.rend.Page.WebFormPost
             """
-            print " -- Start - ctx:", ctx, ", method:", method, ", bindingName:", bindingName, ", kwargs", kwargs
+            if g_debug >= 9:
+                print " -- Start - ctx:", ctx, ", method:", method, ", bindingName:", bindingName, ", kwargs", kwargs
             l_handler = aspects.get(inevow.IHand)
             refpath = None
             ref = None
@@ -781,18 +785,17 @@ class RootPage(ManualFormMixin, EntertainmentPage, HousePage, LightingPage, Loca
 class API(object):
 
     def __init__(self):
-        if g_debug > 0:
-            print "web_server.__init__()"
         global g_logger
         g_logger = logging.getLogger('PyHouse.WebServ ')
+        if g_debug >= 1:
+            print "web_server.__init__()"
         Web_Data[0] = WebData()
         Web_Data[0].WebPort = 8080
         g_logger.info("Initialized - Start the web server on port {0:}".format(g_port))
 
     def Start(self):
-        if g_debug > 0:
+        if g_debug >= 1:
             print "web_server.Start()"
-        return
         g_site_dir = os.path.split(os.path.abspath(__file__))[0]
         print "Webserver path = ", g_site_dir
         l_site = appserver.NevowSite(RootPage('/'))
@@ -801,11 +804,9 @@ class API(object):
         g_logger.info("Started.")
 
     def Stop(self):
-        if g_debug > 0:
+        if g_debug >= 1:
             print "web_server.Stop()"
 
-
-from scheduling import schedule
 
 # Light_Data = lighting.Light_Data
 # Location_Data = house.Location_Data
@@ -813,4 +814,4 @@ from scheduling import schedule
 # Schedule_Data = schedule.Schedule_Data
 Web_Data = {}
 
-# ## END
+# ## END DBK

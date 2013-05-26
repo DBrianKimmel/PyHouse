@@ -18,7 +18,7 @@ from src.lights import lighting_lights
 from src.lights import lighting_scenes
 from src.utils import xml_tools
 
-g_debug = 9
+g_debug = 0
 # 0 = off
 # 1 = major routine entry
 # 2 = xml read / write

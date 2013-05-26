@@ -12,7 +12,7 @@ from src.lights import lighting_tools
 from src.utils.tools import PrintBytes
 from src.drivers import interface
 
-g_debug = 9
+g_debug = 0
 # 0 = off
 # 1 = major routine entry
 # 2 = controller summary information
@@ -53,7 +53,7 @@ class ControllersAPI(lighting_tools.CoreAPI):
 
     def read_controller_xml(self, p_house_obj, p_house_xml):
         if g_debug >= 1:
-            print "lighting_controller.read_controller_xml()", p_house_obj
+            print "lighting_controllers.read_controller_xml()", p_house_obj
         l_count = 0
         l_dict = {}
         l_sect = p_house_xml.find('Controllers')
@@ -68,12 +68,12 @@ class ControllersAPI(lighting_tools.CoreAPI):
             l_count += 1
         p_house_obj.Controllers = l_dict
         if g_debug >= 2:
-            print "lighting_controller.read_controller_xml()  loaded {0:} controllers for house {1:}".format(l_count, p_house_obj.Name)
+            print "lighting_controllers.read_controller_xml()  loaded {0:} controllers for house {1:}".format(l_count, p_house_obj.Name)
         return l_dict
 
     def write_controller_xml(self, p_dict):
         if g_debug >= 1:
-            print "lighting_controller.write_controller_xml()"
+            print "lighting_controllers.write_controller_xml()"
         l_count = 0
         l_controllers_xml = ET.Element('Controllers')
         for l_controller_obj in p_dict.itervalues():
@@ -85,7 +85,7 @@ class ControllersAPI(lighting_tools.CoreAPI):
             l_controllers_xml.append(l_entry)
             l_count += 1
         if g_debug >= 2:
-            print "lighting_controller.write_controller_xml() - Wrote {0:} controllers".format(l_count)
+            print "lighting_controllers.write_controller_xml() - Wrote {0:} controllers".format(l_count)
         return l_controllers_xml
 
 # ## END DBK
