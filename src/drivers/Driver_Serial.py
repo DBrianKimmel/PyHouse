@@ -45,8 +45,9 @@ class SerialProtocol(Protocol):
 
     m_data = None
 
-    def __init__(self, p_data):
+    def __init__(self, p_data, p_controller_obj):
         self.m_data = p_data
+        self.m_controller_obj = p_controller_obj
 
     def connectionFailed(self):
         print "Driver_Serial.connectionFailed() - ", self
@@ -58,7 +59,7 @@ class SerialProtocol(Protocol):
     def dataReceived(self, p_data):
         if g_debug >= 4:
             print "Driver_Serial.dataReceived() - {0:}".format(PrintBytes(p_data))
-        self.m_data.m_message += p_data
+        self.m_controller_obj.Message += p_data
 
 
 class SerialAPI(object):
@@ -66,20 +67,23 @@ class SerialAPI(object):
     """
     m_bytes = 0
     m_serial = None
-    m_message = ''
 
     def twisted_open_device(self, p_controller_obj):
         if g_debug >= 2:
             print "Driver_Serial.twisted_open_device() - Name:{0:}, Port:{1:}".format(p_controller_obj.Name, p_controller_obj.Port)
             print "   ", vars(p_controller_obj)
         try:
-            self.m_serial = SerialPort(SerialProtocol(self), p_controller_obj.Port, reactor, baudrate = p_controller_obj.BaudRate)
+            self.m_serial = SerialPort(SerialProtocol(self, p_controller_obj), p_controller_obj.Port, reactor, baudrate = p_controller_obj.BaudRate)
         except serial.serialutil.SerialException:
-            g_logger.error("Open failed for Device:{0:}, Port:{1:}".format(p_controller_obj.Name, p_controller_obj.Port))
-            return
-        g_logger.info("Opened Device:{0:}, Port:{1:}".format(p_controller_obj.Name))
+            l_msg = "Open failed for Device:{0:}, Port:{1:}".format(p_controller_obj.Name, p_controller_obj.Port)
+            g_logger.error(l_msg)
+            if g_debug >= 1:
+                print l_msg
+            return False
+        g_logger.info("Opened Device:{0:}, Port:{1:}".format(p_controller_obj.Name, p_controller_obj.Port))
         if g_debug >= 2:
             print 'Driver_Serial.twisted_open_device() - Serial Device opened.'
+        return True
 
     def close_device(self, p_controller_obj):
         """Flush all pending output and close the serial port.
@@ -90,13 +94,14 @@ class SerialAPI(object):
         self.m_serial.close()
 
     def fetch_read_data(self, p_controller_obj):
-        l_ret = self.m_message
-        if len(self.m_message) > 0:
+        self.m_controller_obj = p_controller_obj
+        l_msg = self.m_controller_obj.Message
+        if len(l_msg) > 0:
             if g_debug >= 3:
-                print "Driver_Serial.fetch_read_data() - {0:} {1:}".format(self.m_bytes, PrintBytes(self.m_message))
-                g_logger.debug("Fetch Read Data {0:}".format(PrintBytes(self.m_message)))
-        self.m_message = bytearray()
-        return l_ret
+                print "Driver_Serial.fetch_read_data() - {0:} {1:}".format(self.m_bytes, PrintBytes(l_msg))
+                g_logger.debug("Fetch Read Data {0:}".format(PrintBytes(l_msg)))
+        p_controller_obj.Message = bytearray()
+        return l_msg
 
     def write_device(self, p_message):
         """Send the command to the PLM and wait a very short time to be sure we sent it.
@@ -128,11 +133,12 @@ class API(SerialAPI):
         """
         @param p_controller_obj:is the Controller_Data object for a serial device to open.
         """
-        self.m_controller_obj = p_controller_obj
         if g_debug >= 1:
             print "Driver_Serial.Start() - Name:{0:}".format(p_controller_obj.Name)
+        self.m_controller_obj = p_controller_obj
         self.twisted_open_device(p_controller_obj)
         g_logger.info("Started.")
+        return True
 
     def Stop(self):
         if g_debug >= 1:

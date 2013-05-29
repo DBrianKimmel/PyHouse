@@ -20,11 +20,15 @@ import xml.etree.ElementTree as ET
 from src.housing import house
 from src.utils import xml_tools
 
+
 g_debug = 0
 # 0 = off
 # 1 = major routine entry
 # 2 = get/put xml config info
 # 3 = Access housing info
+# 4 =
+
+g_logger = logging.getLogger('PyHouse.Houses  ')
 
 Singletons = {}
 
@@ -152,9 +156,7 @@ class API(LoadSaveAPI):
         self = object.__new__(cls)
         cls.__init__(self, *args, **kwargs)
         Singletons[cls] = self
-        self.m_logger = logging.getLogger('PyHouse.Houses  ')
-        self.m_logger.info("Initializing all houses.")
-        self.m_logger.info("Initialized.")
+        g_logger.info("Initialized all houses.")
         return self
 
     def __init__(self):
@@ -169,7 +171,7 @@ class API(LoadSaveAPI):
         """
         if g_debug >= 1:
             print "houses.API.Start() - Singleton"
-        self.m_logger.info("Starting.")
+        g_logger.info("Starting.")
         l_count = 0
         for l_house_xml in self.get_houses_xml():
             if g_debug >= 5:
@@ -181,7 +183,7 @@ class API(LoadSaveAPI):
         if g_debug >= 5:
             for l_entry in self.m_houses_data.itervalues():
                 print "   ", l_entry
-        self.m_logger.info("Started.")
+        g_logger.info("Started.")
 
 
     def Stop(self):
@@ -190,14 +192,14 @@ class API(LoadSaveAPI):
         """
         if g_debug >= 1:
             print "\nhouses.API.Stop() - Count:{0:}".format(len(self.m_houses_data))
-        self.m_logger.info("Stopping.")
+        g_logger.info("Stopping.")
         l_houses_xml = self.create_empty_xml_section(self.m_xmltree_root, 'Houses')
         for l_house in self.m_houses_data.itervalues():
             if g_debug >= 5:
                 print "houses.Stop() - House:{0:}, Key:{1:}".format(l_house.Name, l_house.Key), l_house.HouseAPI
             l_houses_xml.append(l_house.HouseAPI.Stop(l_houses_xml))  # append to the xml tree
         self.save_all_houses(l_houses_xml)
-        self.m_logger.info("Stopped.")
+        g_logger.info("Stopped.")
 
     def get_houses_obj(self):
         return self.m_houses_data

@@ -23,8 +23,11 @@ from src.housing import internet
 from src.housing import location
 from src.housing import rooms
 
+
 g_debug = 0
-m_logger = None
+# 0 = off
+
+g_logger = None
 
 House_Data = {}
 
@@ -102,9 +105,10 @@ class API(LoadSaveAPI):
     def __init__(self):
         """Create a house object for when we add a new house.
         """
+        global g_logger
+        g_logger = logging.getLogger('PyHouse.House   ')
         if g_debug >= 1:
             print "house.API.__init__()"
-        self.m_logger = logging.getLogger('PyHouse.House   ')
         self.m_house_obj = HouseData()
         self.m_house_obj.ScheduleAPI = schedule.API(self.m_house_obj)
 
@@ -115,14 +119,14 @@ class API(LoadSaveAPI):
         self.read_house(self.m_house_obj, p_house_xml)
         if g_debug >= 1:
             print "house.API.Start() - House:{0:}, Active:{1:}, Key:{2:}".format(self.m_house_obj.Name, self.m_house_obj.Active, self.m_house_obj.Key)
-        self.m_logger.info("Starting House {0:}.".format(self.m_house_obj.Name))
+        g_logger.info("Starting House {0:}.".format(self.m_house_obj.Name))
         self.m_house_obj.InternetAPI = internet.API(self.m_house_obj, p_house_xml)
         self.m_house_obj.ScheduleAPI.Start(self.m_house_obj, p_house_xml)
         self.m_house_obj.InternetAPI.Start()
         if g_debug >= 1:
             print "house.API.Start() has found -  Rooms:{0:}, Schedule:{1:}, Lights:{2:}, Controllers:{3:}".format(
                     len(self.m_house_obj.Rooms), len(self.m_house_obj.Schedule), len(self.m_house_obj.Lights), len(self.m_house_obj.Controllers))
-        self.m_logger.info("Started.")
+        g_logger.info("Started.")
         return self.m_house_obj
 
 
@@ -132,13 +136,13 @@ class API(LoadSaveAPI):
         """
         if g_debug >= 1:
             print "\nhouse.Stop() - House:{0:}".format(self.m_house_obj.Name)
-        self.m_logger.info("Stopping House:{0:}.".format(self.m_house_obj.Name))
+        g_logger.info("Stopping House:{0:}.".format(self.m_house_obj.Name))
         l_house_xml = self.write_house(self.m_house_obj)
         l_house_xml.append(self.write_location(self.m_house_obj.Location))
         l_house_xml.append(self.write_rooms(self.m_house_obj.Rooms))
         l_house_xml.extend(self.m_house_obj.ScheduleAPI.Stop(l_house_xml))
         l_house_xml.append(self.m_house_obj.InternetAPI.Stop())
-        self.m_logger.info("Stopped.")
+        g_logger.info("Stopped.")
         if g_debug >= 1:
             print "house.Stop() - Name:{0:}, Count:{1:}".format(self.m_house_obj.Name, len(l_house_xml))
         return l_house_xml

@@ -22,6 +22,7 @@ from src.lights import lighting
 from src.families.Insteon import Insteon_PLM
 from src.families.Insteon import Insteon_utils
 
+
 g_debug = 0
 # 0 = off
 # 1 = major routine entry
@@ -159,22 +160,43 @@ class API(LightingAPI):
         """For the given house, this will start all the controllers for family = Insteon in that house.
         """
         if g_debug >= 1:
-            print "Device_Insteon.Start()"
+            print "Device_Insteon.Start() - House:{0:}".format(p_house_obj.Name)
         g_logger.info('Starting.')
         l_count = 0
         for l_controller_obj in p_house_obj.Controllers.itervalues():
+            if g_debug >= 2:
+                print "Device_Insteon.Start() - House:{0:}, Controller:{1:}".format(p_house_obj.Name, l_controller_obj.Name)
             if l_controller_obj.Family != 'Insteon':
+                if g_debug >= 1:
+                    print "Device_Insteon.Start() - Skipping, Family:{0:}".format(l_controller_obj.Family)
                 continue
             if l_controller_obj.Active != True:
+                if g_debug >= 1:
+                    print "Device_Insteon.Start() - Skipping, Active:{0:}".format(l_controller_obj.Active)
                 continue
+            if g_debug >= 5:
+                print "Device_Insteon.Start() - trying."
             # Only one controller may be active at a time (for now).
             # But all controllers need to be processed so they may be written back to XML.
             if l_count > 0:
+                if g_debug >= 5:
+                    print "Device_Insteon.Start() - Skipping - another controller is already active."
                 l_controller_obj.Active = False
+                continue
             else:
                 l_controller_obj.HandlerAPI = Insteon_PLM.API(p_house_obj)
-                l_controller_obj.HandlerAPI.Start(l_controller_obj)
-        g_logger.info('Started.')
+                if l_controller_obj.HandlerAPI.Start(l_controller_obj):
+                    l_count += 1
+                    if g_debug >= 1:
+                        print "Device_Insteon.Start() - Started - House:{0:}, Controller:{1:}".format(p_house_obj.Name, l_controller_obj.Name)
+                else:
+                    if g_debug >= 1:
+                        print "Device_Insteon.Start() - Did NOT start- House:{0:}, Controller:{1:}".format(p_house_obj.Name, l_controller_obj.Name)
+                    l_controller_obj.Active = False
+        l_msg = 'Started {0:} Controllers, House:{1:}.'.format(l_count, p_house_obj.Name)
+        if g_debug >= 2:
+            print "Device_Insteon.Start() - {0:}".format(l_msg)
+        g_logger.info(l_msg)
 
     def Stop(self, p_xml):
         if g_debug >= 1:

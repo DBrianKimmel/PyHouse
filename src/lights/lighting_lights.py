@@ -11,7 +11,10 @@
 # Import PyHouse files
 from src.lights import lighting_tools
 
+
 g_debug = 0
+# 0 = off
+
 
 class LightData(lighting_tools.CoreData):
 

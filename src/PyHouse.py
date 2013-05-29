@@ -40,9 +40,13 @@ from src.utils import log
 from src.housing import houses
 from src.web import web_server
 
-g_debug = 1
+
+g_debug = 0
+# 0 = off
+# 1 = major routine entry
 
 g_logger = None
+
 
 callWhenRunning = reactor.callWhenRunning
 reactorrun = reactor.run

@@ -12,6 +12,7 @@ from src.lights import lighting_tools
 from src.utils.tools import PrintBytes
 from src.drivers import interface
 
+
 g_debug = 0
 # 0 = off
 # 1 = major routine entry
@@ -33,6 +34,7 @@ class ControllerData(lighting_tools.CoreData):
         self.HandlerAPI = None  # PLM, PIM, etc (family controller device handler) API() address
         self.Interface = ''
         self.Message = ''
+        self.Queue = None
         self.Port = ''
 
     def __repr__(self):

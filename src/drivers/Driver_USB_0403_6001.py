@@ -17,6 +17,7 @@ from src.drivers import Driver_USB
 
 callLater = reactor.callLater
 
+
 g_debug = Driver_USB.g_debug
 
 # Timeouts for send/receive delays

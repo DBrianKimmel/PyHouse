@@ -11,6 +11,7 @@ import importlib
 # Import PyHouse files
 from src.families import VALID_FAMILIES
 
+
 g_debug = 0
 # 0 = off
 # 1 = major routine entry
@@ -76,7 +77,7 @@ class LightingUtility(FamilyData):
                 l_family_obj.Api = None
             g_family_data[l_count] = l_family_obj
             if g_debug >= 2:
-                #print "family.build_lighting_family_info - PackageName: {0:}, ModuleName: {1:}".format(l_family_obj.PackageName, l_family_obj.ModuleName)
+                # print "family.build_lighting_family_info - PackageName: {0:}, ModuleName: {1:}".format(l_family_obj.PackageName, l_family_obj.ModuleName)
                 print "   from {0:} import {1:}".format(l_family_obj.PackageName, l_family_obj.ModuleName)
                 print "   g_family_data  Key:{0:} -".format(l_count), l_family_obj
             l_count += 1
@@ -100,5 +101,5 @@ class LightingUtility(FamilyData):
         for l_family_obj in g_family_data.itervalues():
             l_family_obj.Api.Stop(p_xml)
 
-### END DBK
+# ## END DBK
 

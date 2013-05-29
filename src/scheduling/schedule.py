@@ -40,6 +40,7 @@ from src.utils import xml_tools
 from src.utils import tools
 from src.scheduling import sunrisesunset
 
+
 g_debug = 0
 # 0 = off
 # 1 = major routine entry
@@ -54,6 +55,7 @@ g_logger = None
 
 ScheduleCount = 0
 
+
 callLater = reactor.callLater
 
 # A list of valid schedule types.
@@ -65,7 +67,7 @@ class ScheduleData(object):
         global ScheduleCount
         ScheduleCount += 1
         self.Active = None
-        #self.HouseName = None
+        # self.HouseName = None
         self.Key = 0
         self.Level = 0
         self.LightName = None
@@ -98,7 +100,7 @@ class ScheduleXML(xml_tools.ConfigTools):
         """Extract schedule information from a schedule xml element.
         """
         self.xml_read_common_info(p_schedule_obj, p_entry_xml)
-        #p_schedule_obj.HouseName = self.m_house_obj.Name
+        # p_schedule_obj.HouseName = self.m_house_obj.Name
         p_schedule_obj.Level = self.get_int_element(p_entry_xml, 'Level')
         p_schedule_obj.LightName = self.get_text_element(p_entry_xml, 'LightName')
         p_schedule_obj.LightNumber = self.get_int_element(p_entry_xml, 'LightNumber')
@@ -146,7 +148,7 @@ class ScheduleXML(xml_tools.ConfigTools):
         l_schedules_xml = ET.Element('Schedules')
         for l_schedule_obj in p_schedules_obj.itervalues():
             l_entry = self.xml_create_common_element('Schedule', l_schedule_obj)
-            #ET.SubElement(l_entry, 'HouseName').text = str(l_schedule_obj.HouseName)
+            # ET.SubElement(l_entry, 'HouseName').text = str(l_schedule_obj.HouseName)
             ET.SubElement(l_entry, 'Level').text = str(l_schedule_obj.Level)
             ET.SubElement(l_entry, 'LightName').text = l_schedule_obj.LightName
             ET.SubElement(l_entry, 'LightNumber').text = str(l_schedule_obj.LightNumber)
@@ -405,4 +407,4 @@ class API(ScheduleUtility, ScheduleXML):
             print "schedule.API.SpecialTest()"
         self.m_lighting.SpecialTest()
 
-# ## END
+# ## END DBK
