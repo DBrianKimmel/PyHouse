@@ -28,7 +28,7 @@ from src.utils.tools import PrintBytes
 from src.families.Insteon.Insteon_constants import *
 from src.families.Insteon.Insteon_utils import ConvertInsteon
 
-g_debug = 5
+g_debug = 0
 # 0 = off
 # 1 = major routine entry
 # 2 = Minor routine entry

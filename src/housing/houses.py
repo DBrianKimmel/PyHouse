@@ -184,6 +184,7 @@ class API(LoadSaveAPI):
             for l_entry in self.m_houses_data.itervalues():
                 print "   ", l_entry
         g_logger.info("Started.")
+        return self.m_houses_data, self.m_xmltree_root
 
 
     def Stop(self):

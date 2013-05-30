@@ -167,8 +167,8 @@ class API(object):
         g_logger.info("Initializing.\n")
 
         self.m_houses_api = houses.API()
-        self.web_api = web_server.API()
-        self.m_gui = gui.API(self, self.m_houses_api)
+        self.web_api = web_server.API(self, self.m_houses_api)
+        # self.m_gui = gui.API(self, self.m_houses_api)
         callWhenRunning(self.Start)
         g_logger.info("Initialized.\n")
         # reactor never returns so must be last - Event loop will now run
@@ -183,8 +183,8 @@ class API(object):
         if g_debug >= 1:
             print "\nPyHouse.Start()"
         g_logger.info("Starting.")
-        self.m_houses_api.Start()
-        self.web_api.Start()
+        self.m_houses_obj, self.m_xmlroot = self.m_houses_api.Start()
+        self.web_api.Start(self.m_houses_obj)
         g_logger.info("Started.\n")
         if g_debug >= 1:
             print "PyHouse all is started and running now.\n"
