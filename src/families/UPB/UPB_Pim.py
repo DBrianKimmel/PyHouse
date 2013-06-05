@@ -535,7 +535,7 @@ class API(UpbPimAPI):
 
     def Start(self, p_house_obj, p_controller_obj):
         if g_debug > 0:
-            print "UPB_Pim.Start() - HouseName:{0:}".format(p_house_obj.Name)
+            print "UPB_Pim.Start() - Name:{0:}".format(p_house_obj.Name)
         g_logger.info('Starting.')
         global g_house_obj
         g_house_obj = p_house_obj

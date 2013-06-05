@@ -41,7 +41,7 @@ from src.utils import tools
 from src.scheduling import sunrisesunset
 
 
-g_debug = 0
+g_debug = 6
 # 0 = off
 # 1 = major routine entry
 # 2 = schedule execution
@@ -67,7 +67,6 @@ class ScheduleData(object):
         global ScheduleCount
         ScheduleCount += 1
         self.Active = None
-        # self.HouseName = None
         self.Key = 0
         self.Level = 0
         self.LightName = None
@@ -100,7 +99,6 @@ class ScheduleXML(xml_tools.ConfigTools):
         """Extract schedule information from a schedule xml element.
         """
         self.xml_read_common_info(p_schedule_obj, p_entry_xml)
-        # p_schedule_obj.HouseName = self.m_house_obj.Name
         p_schedule_obj.Level = self.get_int_element(p_entry_xml, 'Level')
         p_schedule_obj.LightName = self.get_text_element(p_entry_xml, 'LightName')
         p_schedule_obj.LightNumber = self.get_int_element(p_entry_xml, 'LightNumber')
@@ -133,7 +131,7 @@ class ScheduleXML(xml_tools.ConfigTools):
                 l_count += 1
         except AttributeError:
             pass
-        p_house_obj.Schedule = l_dict
+        p_house_obj.Schedules = l_dict
         if g_debug >= 5:
             print "schedule.read_schedule()  loaded {0:} schedules for {1:}".format(l_count, p_house_obj.Name)
         return l_dict
@@ -148,7 +146,6 @@ class ScheduleXML(xml_tools.ConfigTools):
         l_schedules_xml = ET.Element('Schedules')
         for l_schedule_obj in p_schedules_obj.itervalues():
             l_entry = self.xml_create_common_element('Schedule', l_schedule_obj)
-            # ET.SubElement(l_entry, 'HouseName').text = str(l_schedule_obj.HouseName)
             ET.SubElement(l_entry, 'Level').text = str(l_schedule_obj.Level)
             ET.SubElement(l_entry, 'LightName').text = l_schedule_obj.LightName
             ET.SubElement(l_entry, 'LightNumber').text = str(l_schedule_obj.LightNumber)
@@ -177,7 +174,7 @@ class ScheduleExecution(ScheduleData):
             print "schedule.execute_schedules()  p_slot_list {0:}, House:{1:}".format(p_slot_list, self.m_house_obj.Name)
         g_logger.info("About to execute slots:{0:}".format(p_slot_list))
         for ix in range(len(p_slot_list)):
-            l_sched_obj = self.m_house_obj.Schedule[p_slot_list[ix]]
+            l_sched_obj = self.m_house_obj.Schedules[p_slot_list[ix]]
             # TODO: We need a small dispatch for the various schedule types (hvac, security, entertainment, lights, ...)
             if l_sched_obj.Type == 'Device':
                 pass
@@ -311,7 +308,7 @@ class ScheduleUtility(ScheduleExecution):
         l_time_scheduled = l_now
         l_next = 100000.0
         l_list = []
-        for l_key, l_schedule_obj in self.m_house_obj.Schedule.iteritems():
+        for l_key, l_schedule_obj in self.m_house_obj.Schedules.iteritems():
             if g_debug >= 7:
                 print "schedule.get_next_sched() sched=", l_schedule_obj
             # if not l_schedule_obj.Active:
@@ -387,7 +384,7 @@ class API(ScheduleUtility, ScheduleXML):
         if g_debug >= 1:
             print "schedule.API.Stop() - House:{0:}".format(self.m_house_obj.Name)
         g_logger.info("Stopping schedule for house:{0:}.".format(self.m_house_obj.Name))
-        l_schedules_xml = self.write_schedules(self.m_house_obj.Schedule)
+        l_schedules_xml = self.write_schedules(self.m_house_obj.Schedules)
         l_lighting_xml, l_controllers_xml, l_buttons_xml = self.m_lighting.Stop(p_xml)
         l_entertainment_xml = self.m_entertainment.Stop()
         if g_debug >= 1:

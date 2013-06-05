@@ -125,7 +125,6 @@ class CtlLightsDialog(CtlLightsWindow):
         p_gui_obj.ModuleDialogFrame.grid(padx = 5, pady = 5)
         #
         self.get_entry_str(p_gui_obj.ModuleDialogFrame, 1, 'Key', self.Key, state = DISABLED)
-        self.get_entry_str(p_gui_obj.ModuleDialogFrame, 2, 'House Name', self.HouseName, state = DISABLED)
         self.get_entry_str(p_gui_obj.ModuleDialogFrame, 3, 'Room Name', self.RoomName, state = DISABLED)
         self.get_entry_str(p_gui_obj.ModuleDialogFrame, 4, 'Light Name', self.Name, state = DISABLED)
         self.level = Scale(p_gui_obj.ModuleDialogFrame, from_ = 0, to = 100, orient = HORIZONTAL, resolution = l_res)
@@ -146,7 +145,6 @@ class CtlLightsDialog(CtlLightsWindow):
         self.Family = StringVar()
         self.Key = IntVar()
         self.Name = StringVar()
-        self.HouseName = StringVar()
         self.RoomName = StringVar()
         self.Type = StringVar()
 
@@ -165,7 +163,6 @@ class CtlLightsDialog(CtlLightsWindow):
         self.Family.set(l_family)
         self.Key.set(l_light_obj.Key)
         self.Name.set(l_light_obj.Name)
-        self.HouseName.set(l_light_obj.HouseName)
         self.RoomName.set(l_light_obj.RoomName)
         self.Type.set(l_type)
         if g_debug >= 8:

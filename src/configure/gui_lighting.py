@@ -188,7 +188,6 @@ class LightingDialog(LightingWindow):
         self.get_entry_pdb(p_gui_obj.ModuleDialogFrame, 5, 'Family', self.Family, VAL_FAM, self.Family, self.get_family)
         self.get_entry_str(p_gui_obj.ModuleDialogFrame, 6, 'Comment', self.Comment, width = 50)
         self.get_entry_str(p_gui_obj.ModuleDialogFrame, 7, 'Coords', self.Coords)
-        self.get_entry_str(p_gui_obj.ModuleDialogFrame, 8, 'House Name', self.HouseName, state = DISABLED)
         self.get_entry_pdb(p_gui_obj.ModuleDialogFrame, 9, 'Room Name', self.RoomName, self.build_names(p_house_obj.Rooms), self.RoomName, self.get_roomname)
         self.get_entry_bol(p_gui_obj.ModuleDialogFrame, 10, 'Dimmable', self.Dimmable)
         # nothing extra for buttons yet.
@@ -259,7 +258,6 @@ class LightingDialog(LightingWindow):
         self.Key = IntVar()
         self.Name = StringVar()
         self.RoomName = StringVar()
-        #self.HouseName = StringVar()
         self.Type = StringVar()
         # Controllers
         self.Interface = StringVar()
@@ -293,7 +291,7 @@ class LightingDialog(LightingWindow):
         if g_debug >= 2:
             print "gui_lighting.load_device_vars() - key, Kind = {0:} - {1:}".format(p_key, p_kind)
         l_interface = None
-        #l_housename = p_house_obj.Name
+        # l_housename = p_house_obj.Name
         try:
             if p_kind == 1 or p_kind == 4:
                 l_type = "Light"
@@ -333,7 +331,6 @@ class LightingDialog(LightingWindow):
         self.Key.set(l_obj.Key)
         self.Name.set(l_obj.Name)
         self.RoomName.set(l_obj.RoomName)
-        #self.HouseName.set(l_housename)
         self.Type.set(l_type)
         if l_type == 'Controller':
             if g_debug >= 1:
@@ -396,7 +393,6 @@ class LightingDialog(LightingWindow):
         l_obj.Key = l_key
         l_obj.Name = self.Name.get()
         l_obj.RoomName = self.RoomName.get()
-        #l_obj.HouseName = self.HouseName.get()
         l_obj.Type = l_type
         if l_family == 'Insteon':
             l_obj.InsteonAddress = self.InsteonAddress.get()

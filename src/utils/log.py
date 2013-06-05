@@ -19,7 +19,10 @@ from src.utils import xml_tools
 
 
 g_debug = 0
-Log_Data = {}
+# 0 = off
+# 1 = major routine entry
+# 2 = config files
+
 
 class LogData(object):
     def __init__(self):
@@ -29,31 +32,22 @@ class LogData(object):
 
 class LoggingUtility(object):
 
-    def read_log(self):
-        if g_debug > 8:
-            print "Debug - reading log_web"
-            print xml_tools.prettify(self.m_root)
+    def read_xml_config_logfiles(self, p_log_obj, p_xml_root):
         try:
-            l_sect = self.m_root.find('Logs')
+            l_sect = p_xml_root.find('Logs')
             l_sect.find('Debug')
         except AttributeError:
-            print "Warning - Logs section is missing - Adding empty values now."
-            l_sect = ET.SubElement(self.m_root, 'Logs')
+            print "log.read_xml_config_logfiles() - Warning - Logs section is missing - Adding empty values now."
+            l_sect = ET.SubElement(p_xml_root, 'Logs')
             ET.SubElement(l_sect, 'Debug').text = 'None'
             ET.SubElement(l_sect, 'Error').text = 'None'
-        l_obj = LogData()
-        l_obj.Debug = l_sect.findtext('Debug')
-        l_obj.Error = l_sect.findtext('Error')
-        Log_Data[0] = l_obj
-        try:
-            l_sect = self.m_root.find('Web')
-            l_sect.find('WebPort')
-        except AttributeError:
-            l_sect = ET.SubElement(self.m_root, 'Web')
-            ET.SubElement(l_sect, 'WebPort').text = 'None'
+        p_log_obj.Debug = l_sect.findtext('Debug')
+        p_log_obj.Error = l_sect.findtext('Error')
+        if g_debug >= 2:
+            print "log.read_xml_config_logfiles() - Debug:{0:}, Error:{1:}".format(p_log_obj.Debug, p_log_obj.Error)
 
     def write_log(self):
-        if g_debug > 1:
+        if g_debug >= 2:
             print "Write log_web", Log_Data[0], vars(Log_Data[0])
         l_sect = self.write_create_empty('Logs')
         l_obj = Log_Data[0]
@@ -65,8 +59,8 @@ class LoggingUtility(object):
     def setup_debug_log (self, p_filename):
         """Debug and more severe goes to the base logger
         """
-        if g_debug > 0:
-            print "log.setup_debug_log() - Name: {0:}".format(p_filename)
+        if g_debug >= 1:
+            print "log.setup_debug_log() - FileName:{0:}".format(p_filename)
         l_debug = logging.getLogger('PyHouse')
         l_formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s - %(message)s')
         l_debug.setLevel(logging.DEBUG)
@@ -84,29 +78,24 @@ class LoggingUtility(object):
         self.m_logger_error.addHandler(l_handler)
 
 
-class LoggingMain(LoggingUtility):
+class API(LoggingUtility):
 
     def __init__(self):
-        if g_debug > 0:
-            print "log.LoggingMain()"
-        Log_Data[0] = LogData()
-        try:
-            l_debug_name = Log_Data[0].Debug
-        except AttributeError:
-            l_debug_name = '/var/log/pyhouse/debug'
-            Log_Data[0].Debug = l_debug_name
-        if l_debug_name == None:
-            l_debug_name = '/var/log/pyhouse/debug'
-        if g_debug > 4:
-            print "log.LoggingMain() debug name ", l_debug_name
-        try:
-            self.m_error_name = Log_Data[0].Error
-        except AttributeError:
-            self.m_error_name = '/var/log/pyhouse/error'
-        self.m_formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s - %(message)s')
-        self.setup_debug_log(l_debug_name)
+        if g_debug >= 1:
+            print "log.API.__init__()"
+        self.m_log_data = LogData()
 
-    def stop(self):
+    def Start(self, p_pyhouse_obj):
+        if g_debug >= 1:
+            print "log.API.Start()"
+        self.read_xml_config_logfiles(self.m_log_data, p_pyhouse_obj.XmlRoot)
+        # self.m_formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s - %(message)s')
+        self.setup_debug_log(self.m_log_data.Debug)
+        return self.m_log_data
+
+    def Stop(self):
+        if g_debug >= 1:
+            print "log.API.Stop()"
         logging.shutdown()
 
 # ## END DBK

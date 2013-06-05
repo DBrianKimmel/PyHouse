@@ -47,7 +47,7 @@ class HouseData(object):
         self.Internet = {}
         self.Lights = {}
         self.Rooms = {}
-        self.Schedule = {}
+        self.Schedules = {}
 
     def __repr__(self):
         l_ret = ' House:: '
@@ -58,7 +58,7 @@ class HouseData(object):
         l_ret += "Controllers:{0:}, ".format(len(self.Controllers))
         l_ret += "Buttons:{0:}, ".format(len(self.Buttons))
         l_ret += "Rooms:{0:}, ".format(len(self.Rooms))
-        l_ret += "Schedules:{0:}".format(len(self.Schedule))
+        l_ret += "Schedules:{0:}".format(len(self.Schedules))
         return l_ret
 
 
@@ -125,7 +125,7 @@ class API(LoadSaveAPI):
         self.m_house_obj.InternetAPI.Start()
         if g_debug >= 1:
             print "house.API.Start() has found -  Rooms:{0:}, Schedule:{1:}, Lights:{2:}, Controllers:{3:}".format(
-                    len(self.m_house_obj.Rooms), len(self.m_house_obj.Schedule), len(self.m_house_obj.Lights), len(self.m_house_obj.Controllers))
+                    len(self.m_house_obj.Rooms), len(self.m_house_obj.Schedules), len(self.m_house_obj.Lights), len(self.m_house_obj.Controllers))
         g_logger.info("Started.")
         return self.m_house_obj
 

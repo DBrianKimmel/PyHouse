@@ -194,7 +194,6 @@ class HouseDialog(HouseWindow):
                 print "gui_house.add_all_rooms() - {0:}".format(l_room_obj.Name)
             if l_room_obj.Key > l_max_room_ix:
                 l_max_room_ix = l_room_obj.Key
-            if l_room_obj.HouseName != l_name:
                 continue
             l_row, l_col = self.columnize(l_ix, 5)
             Button(l_frame, text = l_room_obj.Name, bg = BG_TOP,
@@ -299,7 +298,6 @@ class HouseDialog(HouseWindow):
         """
         self.Active.set(self.get_bool(p_house_obj.Active))
         self.Key.set(p_house_obj.Key)
-        self.HouseName = p_house_obj.Name
         self.Name.set(p_house_obj.Name)
         #
         l_location_obj = p_house_obj.Location
@@ -366,7 +364,6 @@ class RoomDialog(HouseDialog):
         self.get_entry_str(p_gui_obj.SecondDialogFrame, 4, 'Comment', self.Comment, width = 50)
         self.get_entry_str(p_gui_obj.SecondDialogFrame, 5, 'Size', self.Size)
         self.get_entry_str(p_gui_obj.SecondDialogFrame, 6, 'Corner', self.Corner)
-        self.get_entry_str(p_gui_obj.SecondDialogFrame, 7, 'House Name', self.HouseName, state = DISABLED)
         l_text = "Save"
         if self.m_room_add_flag:
             l_text = "Add"
@@ -387,14 +384,12 @@ class RoomDialog(HouseDialog):
         except KeyError:
             l_room_obj = rooms.RoomData()
             l_room_obj.Key = p_room_key
-            l_room_obj.HouseName = p_house_obj.Name
         return l_room_obj
 
     def create_room_vars(self):
         self.Active = IntVar()
         self.Comment = StringVar()
         self.Corner = StringVar()
-        self.HouseName = StringVar()
         self.Key = IntVar()
         self.Name = StringVar()
         self.Size = StringVar()
@@ -404,7 +399,6 @@ class RoomDialog(HouseDialog):
         self.Active.set(l_room_obj.Active)
         self.Comment.set(l_room_obj.Comment)
         self.Corner.set(l_room_obj.Corner)
-        self.HouseName.set(p_house_obj.Name)
         self.Key.set(l_room_obj.Key)
         self.Name.set(l_room_obj.Name)
         self.Size.set(l_room_obj.Size)
@@ -414,7 +408,6 @@ class RoomDialog(HouseDialog):
         l_obj.Active = self.Active.get()
         l_obj.Comment = self.Comment.get()
         l_obj.Corner = self.Corner.get()
-        l_obj.HouseName = self.HouseName.get()
         l_obj.Key = self.Key.get()
         l_obj.Name = self.Name.get()
         l_obj.Size = self.Size.get()

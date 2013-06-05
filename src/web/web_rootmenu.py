@@ -10,44 +10,34 @@ from nevow import rend
 from nevow import static
 
 # Import PyMh files and modules.
-from src.web.web_tagdefs import *
-from src.web.web_server import ManualFormMixin
-from src.web.web_server import SelectHousePage
-from src.web.web_server import LogsPage
-from src.web.web_server import WebServerPage
 from src.utils import config_xml
+from src.web.web_tagdefs import *
+from src.web import web_utils
+from src.web import web_selecthouse
+from src.web import web_webserver
+from src.web import web_logs
 
 
 g_debug = 8
+# 0 = off
+# 1 = major routine entry
+# 2 = Basic data
 
-SUBMIT = '_submit'
-BUTTON = 'post_btn'
 
-
-class RootPage(ManualFormMixin):
+class RootPage(web_utils.ManualFormMixin):
     """The main page of the web server.
     """
-    setattr(self, 'child_mainpage.css', static.File('web/css/mainpage.css'))
-    setattr(self, 'child_ajax.js', static.File('web/js/ajax.js'))
-    setattr(self, 'child_floating_window.js', static.File('web/js/floating-window.js'))
-    setattr(self, 'child_housepage.js', static.File('web/js/housepage.js'))
-    setattr(self, 'child_mainpage.js', static.File('web/js/mainpage.js'))
-    #------------------------------------
-    setattr(self, 'child_bottomRight.gif', static.File('web/images/bottom_right.gif'))
-    setattr(self, 'child_close.gif', static.File('web/images/close.gif'))
-    setattr(self, 'child_minimize.gif', static.File('web/images/minimize.gif'))
-    setattr(self, 'child_topCenter.gif', static.File('web/images/top_center.gif'))
-    setattr(self, 'child_topLeft.gif', static.File('web/images/top_left.gif'))
-    setattr(self, 'child_topRight.gif', static.File('web/images/top_right.gif'))
-    setattr(self, 'child_handle.horizontal.png', static.File('web/images/handle.horizontal.png'))
-
     addSlash = True
     docFactory = loaders.stan(
         T_html(xmlns = 'http://www.w3.org/1999/xhtml', lang = 'en')[
             T_head[
                 T_title['PyHouse - Main Page'],
                 T_link(rel = 'stylesheet', type = 'text/css', href = U_R_child('mainpage.css')),
-                T_script(type = 'text/javascript', src = 'mainpage.js'),
+                T_script(type = 'text/javascript', src = 'ajax.js')["\n"],
+                T_script(type = 'text/javascript', src = 'floating_window.js')["\n"],
+                T_script(type = 'text/javascript', src = 'addhouse.js'),
+                T_script(type = 'text/javascript', src = 'webserver.js'),
+                T_script(type = 'text/javascript', src = 'logs.js'),
                 ],
             T_body[
                 T_h1['PyHouse'],
@@ -59,8 +49,9 @@ class RootPage(ManualFormMixin):
                     T_table(style = 'width: 100%;', border = 0)[
                         T_tr[
                             T_td[ T_input(type = 'submit', value = 'Select House', name = BUTTON), ],
-                            T_td[ T_input(type = 'submit', value = 'Web Server', name = BUTTON), ],
-                            T_td[ T_input(type = 'submit', value = 'Logs', name = BUTTON), ],
+                            T_td[ T_input(type = 'button', onclick = "createNewHouseWindow('NewName')", value = 'Add House') ],
+                            T_td[ T_input(type = 'button', onclick = "createChangeWebServerWindow('8580')", value = 'Web Server') ],
+                            T_td[ T_input(type = 'button', onclick = "createChangeLogsWindow('/debug', '/error')", value = 'Logs') ],
                             ],
                          T_tr[
                             T_td[ T_input(type = 'submit', value = 'Quit', name = BUTTON) ],
@@ -72,43 +63,81 @@ class RootPage(ManualFormMixin):
             ]  # html
         )  # stan
 
-    def __init__(self, name):
+    def __init__(self, name, p_pyhouses_obj):
+        if g_debug >= 1:
+            print "web_rootmenu.RootPage.__init__()"
         rend.Page.__init__(self)
         self.name = name
+        self.m_pyhouses_obj = p_pyhouses_obj
+
+        """Build a tree of pages for nevow.
+        """
+        # These are real files on disk
+        setattr(RootPage, 'child_mainpage.css', static.File('web/css/mainpage.css'))
+        setattr(RootPage, 'child_ajax.js', static.File('web/js/ajax.js'))
+        setattr(RootPage, 'child_floating_window.js', static.File('web/js/floating-window.js'))
+        setattr(RootPage, 'child_addhouse.js', static.File('web/js/addhouse.js'))
+        setattr(RootPage, 'child_webserver.js', static.File('web/js/webserver.js'))
+        setattr(RootPage, 'child_logs.js', static.File('web/js/logs.js'))
+        #------------------------------------
+        setattr(RootPage, 'child_bottomRight.gif', static.File('web/images/bottom_right.gif'))
+        setattr(RootPage, 'child_close.gif', static.File('web/images/close.gif'))
+        setattr(RootPage, 'child_minimize.gif', static.File('web/images/minimize.gif'))
+        setattr(RootPage, 'child_topCenter.gif', static.File('web/images/top_center.gif'))
+        setattr(RootPage, 'child_topLeft.gif', static.File('web/images/top_left.gif'))
+        setattr(RootPage, 'child_topRight.gif', static.File('web/images/top_right.gif'))
+        setattr(RootPage, 'child_handle.horizontal.png', static.File('web/images/handle.horizontal.png'))
+
 
     def form_post_select(self, **kwargs):
-        print "form_post_select (RootPage)", kwargs
-        return SelectHousePage('House')
+        """Select House button post processing.
+        """
+        if g_debug >= 2:
+            print "web_rootmenu.form_post_select()", kwargs
+        return web_selecthouse.SelectHousePage('House', self.m_pyhouses_obj)
 
-    def form_post_web(self, **kwargs):
-        print "form_post_web (RootPage)", kwargs
-        return WebServerPage('House')
+    def form_post_add(self, **kwargs):
+        """Add House button post processing.
+        """
+        if g_debug >= 2:
+            print "web_rootmenu.form_post_add()", kwargs
+        return web_selecthouse.AddHousePage('House', self.m_pyhouses_obj)
 
-    def form_post_logs(self, **kwargs):
-        print "form_post_logs (RootPage)", kwargs
-        return LogsPage('House')
+    def form_post_change_web(self, **kwargs):
+        """Web server button post processing.
+        """
+        if g_debug >= 2:
+            print "web_rootmenu.form_post_change_web()", kwargs
+        return RootPage('House', self.m_pyhouses_obj)
+
+    def form_post_change_logs(self, **kwargs):
+        """Log change form.
+        """
+        if g_debug >= 2:
+            print "web_rootmenu.form_post_change_logs()", kwargs
+        return RootPage('House', self.m_pyhouses_obj)
 
     def form_post_quit(self, *args, **kwargs):
         if g_debug >= 2:
-            print "web_server.form_post_quit() - args={0:}, kwargs={1:}".format(args, kwargs)
+            print "web_rootmenu.form_post_quit() - args={0:}, kwargs={1:}".format(args, kwargs)
         self.main_quit()
 
     def form_post_reload(self, *args, **kwargs):
-        print " - form_post_reload - args={0:}, kwargs={1:}".format(args, kwargs)
-        return RootPage('Root')
+        print "web_rootmenu.form_post_reload() - args={0:}, kwargs={1:}".format(args, kwargs)
+        return RootPage('Root', self.m_pyhouses_obj)
 
     def form_post(self, *args, **kwargs):
-        print " - form_post - args={0:}, kwargs={1:}".format(args, kwargs)
-        return RootPage('Root')
+        print "web_rootmenu.form_post() - args={0:}, kwargs={1:}".format(args, kwargs)
+        return RootPage('Root', self.m_pyhouses_obj)
 
     def main_quit(self):
         """Quit the GUI - this also means quitting all of PyHouse !!
         """
         if g_debug >= 1:
-            print "web_server.RootPage.main_quit() "
+            print "web_rootmenu.RootPage.main_quit() "
         config_xml.WriteConfig()
         if g_debug >= 1:
-            print "web_server.RootPage.main_quit - Quit"
-        # g_parent.Quit()
+            print "web_rootmenu.RootPage.main_quit - Quit"
+        self.m_pyhouse_obj.Api.Quit()
 
 # ## END DBK

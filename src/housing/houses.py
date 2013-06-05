@@ -120,20 +120,21 @@ class LoadSaveAPI(HouseReadWriteConfig):
             print "houses.get_house_info()", l_houses_obj
         return l_houses_obj
 
-    def get_houses_xml(self):
+    def read_xml_config_houses(self, p_pyhouse_obj):
         """
         @return: iterable list of all houses defined.
         """
+        l_xml_root = p_pyhouse_obj.XmlRoot
         if g_debug >= 3:
-            print "houses.get_houses_xml()"
+            print "houses.read_xml_config_houses()"
         self.m_xmltree_root = self.load_all_houses()
         #
         try:
-            l_sect = self.m_xmltree_root.find('Houses')
+            l_sect = l_xml_root.find('Houses')
             l_list = l_sect.iterfind('House')  # use l_sect to force error if it is missing
         except AttributeError:
             print "Warning - in read_house - Adding 'Houses' section"
-            l_sect = ET.SubElement(self.m_xmltree_root, 'Houses')
+            l_sect = ET.SubElement(l_xml_root, 'Houses')
             l_list = l_sect.iterfind('House')
         return l_list
 
@@ -163,7 +164,7 @@ class API(LoadSaveAPI):
         if g_debug >= 1:
             print "houses.__init__()"
 
-    def Start(self):
+    def Start(self, p_xml_root):
         """Start processing for all things houses
         .
         May be stopped and then started anew to force reloading info.
@@ -173,7 +174,7 @@ class API(LoadSaveAPI):
             print "houses.API.Start() - Singleton"
         g_logger.info("Starting.")
         l_count = 0
-        for l_house_xml in self.get_houses_xml():
+        for l_house_xml in self.read_xml_config_houses(p_xml_root):
             if g_debug >= 5:
                 print "houses.API.Start() - ", l_house_xml
             self.m_houses_data[l_count] = self.get_house_info(l_house_xml, l_count)
@@ -184,7 +185,7 @@ class API(LoadSaveAPI):
             for l_entry in self.m_houses_data.itervalues():
                 print "   ", l_entry
         g_logger.info("Started.")
-        return self.m_houses_data, self.m_xmltree_root
+        return self.m_houses_data
 
 
     def Stop(self):

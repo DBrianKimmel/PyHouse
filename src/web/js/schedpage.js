@@ -64,7 +64,7 @@ function fillNewSchedule(p_id, p_slot, p1, p2, p3, p4, p5) {
 function fillChangeScheduleWindow(p_divid, p_slot, p_type, p_name, p_time, p_level, p_rate) {
 	//alert('Fill Schedule Window (change)');
 	// TODO check the correct radio button
-	ret = 		'Slot: ' + p_slot + "<br />\n";
+	ret = 		'Schedule: ' + p_slot + "<br />\n";
 	ret = ret + '<form method="post" action="_submit!!post" enctype="multipart/form-data">\n';
 	ret = ret + '  Type:' +
 				'    <input type = "radio" name = "Type" value = "Device /> Device &nbsp;' +

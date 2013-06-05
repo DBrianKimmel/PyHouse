@@ -9,6 +9,9 @@ from nevow import tags as _Tag
 from nevow import url as _Url
 
 
+SUBMIT = '_submit'
+BUTTON = 'post_btn'
+
 T_p = _Tag.p
 T_h1 = _Tag.h1
 T_td = _Tag.td
@@ -28,6 +31,10 @@ T_directive = _Tag.directive
 
 U_R_child = _Url.root.child
 U_H_child = _Url.here.child
+
+class WebException(Exception):
+    """Raised when there is a web error of some sort.
+    """
 
 # ## END DBK
 

@@ -33,10 +33,12 @@ import platform
 import signal
 import sys
 from twisted.internet import reactor
+import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
-from src.configure import gui
+# from src.configure import gui
 from src.utils import log
+from src.utils import xml_tools
 from src.housing import houses
 from src.web import web_server
 
@@ -44,6 +46,7 @@ from src.web import web_server
 g_debug = 0
 # 0 = off
 # 1 = major routine entry
+# 2 - Config file handling
 
 g_logger = None
 
@@ -51,6 +54,21 @@ g_logger = None
 callWhenRunning = reactor.callWhenRunning
 reactorrun = reactor.run
 reactorstop = reactor.stop
+
+
+class PyHouseData(object):
+    """The master object, contains all other 'configuration' objects.
+    """
+
+    def __init__(self):
+        self.Api = None
+        self.WebData = None
+        self.WebApi = None
+        self.LogsData = None
+        self.LogsApi = None
+        self.HousesData = None9
+        self.HousesApi = None
+        self.XmlRoot = None
 
 
 class OptionParser(optparse.OptionParser):
@@ -62,6 +80,50 @@ class OptionParser(optparse.OptionParser):
         sys.argv = sys.argv[:1]
         optparse.OptionParser.print_help(self, p_file)
 
+
+class ConfigFileHandler(xml_tools.ConfigFile):
+    """Initial read and final write of the config file.
+    """
+
+    m_xml_filename = None
+    m_xmltree_root = None
+
+    def __init__(self):
+        """Open the xml config file.
+
+        If the file is missing, an empty minimal skeleton is created.
+        """
+        if g_debug >= 2:
+            print "PyHouse.ConfigFileHandler.__init__()"
+        self._find_config_file_name()
+
+    def _find_config_file_name(self):
+        if g_debug >= 2:
+            print "PyHouse._find_config_file_name()"
+        self.m_xml_filename = xml_tools.open_config_file()
+
+    def parse_xml(self):
+        if g_debug >= 2:
+            print "PyHouse._parse_xml()"
+        try:
+            self.m_xmltree = ET.parse(self.m_xml_filename)
+        except SyntaxError:
+            self.create_empty_config_file(self.m_xml_filename)
+            self.m_xmltree = ET.parse(self.m_xml_filename)
+        self.m_xmltree_root = self.m_xmltree.getroot()
+        return self.m_xmltree_root
+
+    def read_xml_config_file(self):
+        pass
+
+    def write_xml_config_file(self, p_xml):
+        """Replace the data in the 'Houses' section with the current data.
+        """
+        if g_debug >= 2:
+            print "houses.write_xml_config_file() - Writing xml file to:{0:}".format(self.m_xml_filename)
+        self.m_xmltree_root = self.m_xmltree.getroot()
+        self.m_xmltree_root = p_xml
+        self.write_xml_file(self.m_xmltree, self.m_xml_filename)
 
 
 def daemonize():
@@ -101,34 +163,10 @@ def setConfigFile():
         return configDir
     return os.path.join(findConfigDir(), '.PyHouse/PyHouse.xml')
 
-
-def XXparse_command_line():
-    parser = OptionParser('%prog [options]')
-    parser.add_option('-d', '--daemon', action = 'store_true', help = 'daemonize')
-    parser.add_option('--noconfig', action = 'store_false', dest = 'configfile', help = 'ignore any configfile found')
-    parser.add_option('-c', '--configfile', default = setConfigFile(), help = 'configfile to use, default: %default')
-    parser.add_option('-l', '--logfile', help = 'logfile to use')
-    parser.add_option('-o', '--option', action = 'callback', dest = 'options', metavar = 'NAME:VALUE', default = {}, callback = __opt_option, type = 'string',
-                      help = "activate option (name and value separated by a colon (`:`), may be given multiple times)")
-    parser.add_option('-p', '--plugins', action = 'append',
-                      help = 'activate plugins (may be given multiple times) Example: --plugin=backend:FSStore,name:MyCoherence')
-    options, args = parser.parse_args()
-    if args:
-        parser.error('takes no arguments')
-    if options.daemon:
-        try:
-            daemonize()
-        except ValueError:
-            print "*** ERROR - Unable to daemonize!"
-    config = {}
-    config['logging'] = {}
-
-
 def handle_signals():
     if platform.uname()[0] != 'Windows':
         signal.signal(signal.SIGHUP, SigHupHandler)
     signal.signal(signal.SIGINT, SigIntHandler)
-
 
 def SigHupHandler(signum, _stackframe):
     if g_debug >= 1:
@@ -147,9 +185,6 @@ class API(object):
     """
     """
 
-    m_gui = None
-    m_houses_api = None
-
     def __init__(self):
         """This is the startup of the entire system.
         All permanent services are started here.
@@ -161,14 +196,19 @@ class API(object):
         if g_debug >= 1:
             print "\nPyHouse.API.__init__() - very beginning..."
         handle_signals()
-        log.LoggingMain()
+        self.m_pyhouses_obj = PyHouseData()
+        self.m_pyhouses_obj.Api = self
+        l_cfg = ConfigFileHandler()
+        self.m_pyhouses_obj.XmlRoot = l_cfg.parse_xml()
+        self.m_pyhouses_obj.LogsApi = log.API()
+        self.m_pyhouses_obj.LogsData = self.m_pyhouses_obj.LogsApi.Start(self.m_pyhouses_obj)
+
         global g_logger
         g_logger = logging.getLogger('PyHouse         ')
         g_logger.info("Initializing.\n")
 
-        self.m_houses_api = houses.API()
-        self.web_api = web_server.API(self, self.m_houses_api)
-        # self.m_gui = gui.API(self, self.m_houses_api)
+        self.m_pyhouses_obj.HousesApi = houses.API()
+        self.m_pyhouses_obj.WebApi = web_server.API(self)
         callWhenRunning(self.Start)
         g_logger.info("Initialized.\n")
         # reactor never returns so must be last - Event loop will now run
@@ -183,8 +223,8 @@ class API(object):
         if g_debug >= 1:
             print "\nPyHouse.Start()"
         g_logger.info("Starting.")
-        self.m_houses_obj, self.m_xmlroot = self.m_houses_api.Start()
-        self.web_api.Start(self.m_houses_obj)
+        self.m_pyhouses_obj.HousesData = self.m_pyhouses_obj.HousesApi.Start(self.m_pyhouses_obj)
+        self.m_pyhouses_obj.WebData = self.m_pyhouses_obj.WebApi.Start(self.m_pyhouses_obj)
         g_logger.info("Started.\n")
         if g_debug >= 1:
             print "PyHouse all is started and running now.\n"
@@ -197,8 +237,8 @@ class API(object):
         global g_logger
         g_logger = logging.getLogger('PyHouse')
         g_logger.info("Stopping has begun.\n")
-        self.m_houses_api.Stop()
-        self.web_api.Stop()
+        self.m_pyhouses_obj.HousesApi.Stop()
+        self.m_pyhouses_obj.WebApi.Stop()
         try:
             g_logger.info("Stopped.\n\n\n")
         except AttributeError, emsg:
@@ -210,7 +250,7 @@ class API(object):
         if g_debug >= 1:
             print "\nPyHouse.Quit()"
         self.Stop()
-        log.LoggingMain().stop()
+        self.m_pyhouses_obj.LogsApi.Stop()
         reactorstop()
 
 

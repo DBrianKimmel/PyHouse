@@ -22,7 +22,6 @@ class RoomData(object):
         self.Active = False
         self.Comment = ''
         self.Corner = ''
-        self.HouseName = ''
         self.Key = 0
         self.Name = ''
         self.Size = ''
@@ -45,10 +44,8 @@ class ReadWriteConfig(xml_tools.ConfigTools):
             l_room_obj = RoomData()
             self.xml_read_common_info(l_room_obj, l_room_xml)
             l_room_obj.Key = l_count
-            l_room_obj.HouseName = p_house_obj.Name
             l_room_obj.Comment = self.get_text_element(l_room_xml, 'Comment')
             l_room_obj.Corner = l_room_xml.findtext('Corner')
-            l_room_obj.HouseName = l_room_xml.findtext('HouseName')
             l_room_obj.Size = l_room_xml.findtext('Size')
             p_house_obj.Rooms[l_count] = l_room_obj
             l_count += 1
@@ -64,7 +61,6 @@ class ReadWriteConfig(xml_tools.ConfigTools):
             l_entry = self.xml_create_common_element('Room', l_room_obj)
             ET.SubElement(l_entry, 'Comment').text = l_room_obj.Comment
             ET.SubElement(l_entry, 'Corner').text = l_room_obj.Corner
-            ET.SubElement(l_entry, 'HouseName').text = l_room_obj.HouseName
             ET.SubElement(l_entry, 'Size').text = l_room_obj.Size
             l_rooms_xml.append(l_entry)
             l_count += 1

@@ -62,10 +62,10 @@ class ScheduleWindow(GuiTools):
         """
         if g_debug > 0:
             print "gui_schedule.show_schedule_buttons() - Show select schedule window buttons"
-            print "   Sched = ", p_house_obj.Schedule
+            print "   Sched = ", p_house_obj.Schedules
         self.m_house_obj = p_house_obj
         l_sched = []
-        l_lights = sorted(p_house_obj.Schedule.values(), key = attrgetter('LightName'))  # last sort
+        l_lights = sorted(p_house_obj.Schedules.values(), key = attrgetter('LightName'))  # last sort
         l_rooms = sorted(l_lights, key = attrgetter('RoomName'))  # moddle sort
         l_scheds = sorted(l_rooms, key = attrgetter('Name'))  # first sort
         l_max = 0
@@ -142,7 +142,6 @@ class ScheduleDialog(ScheduleWindow):
         self.get_entry_str(p_gui_obj.ModuleDialogFrame, 1, 'Key', self.Key, state = DISABLED)
         self.get_entry_bol(p_gui_obj.ModuleDialogFrame, 2, 'Active', self.Active)
         self.get_entry_str(p_gui_obj.ModuleDialogFrame, 3, 'Name', self.Name)
-        #self.get_entry_str(p_gui_obj.ModuleDialogFrame, 4, 'House Name', self.HouseName, state = DISABLED)
         self.get_entry_pdb(p_gui_obj.ModuleDialogFrame, 5, 'Room Name', self.RoomName, self.build_names(p_house_obj.Rooms), self.RoomName, self.get_roomname)
         self.get_entry_str(p_gui_obj.ModuleDialogFrame, 6, 'Time', self.Time)
         self.get_entry_str(p_gui_obj.ModuleDialogFrame, 7, 'Level', self.Level)
@@ -165,7 +164,6 @@ class ScheduleDialog(ScheduleWindow):
         """Create all the TkInter variables for a single schedule.
         """
         self.Active = IntVar()
-        self.HouseName = StringVar()
         self.Key = IntVar()
         self.Level = IntVar()
         self.LightName = StringVar()
@@ -183,9 +181,8 @@ class ScheduleDialog(ScheduleWindow):
         """
         if g_debug > 1:
             print "gui_schedule.load_schedule_vars() - Key:{0:}".format(p_schedule_key)
-        l_obj = p_house_obj.Schedule[int(p_schedule_key)]
+        l_obj = p_house_obj.Schedules[int(p_schedule_key)]
         self.Active.set(self.get_bool(l_obj.Active))
-        self.HouseName.set(l_obj.HouseName)
         self.Key.set(l_obj.Key)
         self.Level.set(l_obj.Level)
         self.LightName.set(l_obj.LightName)
@@ -204,7 +201,6 @@ class ScheduleDialog(ScheduleWindow):
             print "gui_schedule.save_schedule_vars() "
         l_obj = schedule.ScheduleData()
         l_obj.Active = self.Active.get()
-        l_obj.HouseName = self.HouseName.get()
         l_obj.Key = self.Key.get()
         l_obj.Level = self.Level.get()
         l_obj.LightName = self.LightName.get()
@@ -215,7 +211,7 @@ class ScheduleDialog(ScheduleWindow):
         l_obj.RoomName = self.RoomName.get()
         l_obj.Time = self.Time.get()
         l_obj.Type = self.Type.get()
-        p_house_obj.Schedule[l_obj.Key] = l_obj  # update schedule entry within a house
+        p_house_obj.Schedules[l_obj.Key] = l_obj  # update schedule entry within a house
         if g_debug > 1:
             print "gui_schedule.save_schedule_vars() Saving schedule data ", l_obj
         self.quit_dialog(p_gui_obj, p_house_obj)
@@ -236,7 +232,6 @@ class ScheduleDialog(ScheduleWindow):
         self.show_buttons_for_one_house(p_gui_obj, p_house_obj)
 
     def get_housename(self, p_val):
-        self.HouseName.set(p_val)
         if g_debug > 0:
             print "gui_schedule.get_housename() - ", p_val
             for l_obj in House_Data.itervalues():

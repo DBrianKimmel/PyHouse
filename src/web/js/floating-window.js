@@ -58,7 +58,7 @@ var MSIEWIN = (navigator.userAgent.indexOf('MSIE') >= 0 && navigator.userAgent.i
 var ajaxObjects = new Array();
 
 /*
-These cookie functions are downloaded from 
+These cookie functions were downloaded from 
 http://www.mach5.com/support/analyzer/manual/html/General/CookiesJavaScript.htm
 */	
 function Get_Cookie(name) { 
