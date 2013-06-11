@@ -179,7 +179,6 @@ function startResizeWindow() {
 		}
 	}
 
-
 /*
  * ???
  */

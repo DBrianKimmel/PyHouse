@@ -27,7 +27,7 @@ def PrintBytes(p_message):
 class Lister():
 
     def __repr__(self):
-        return ("<Instance of {0:}, Address {1:}:\n{2:}>\n".format(self.__class__.__name__, id(self), self.attrnames()))
+        return ("Lister:: <Instance of {0:}, Address {1:}:\n{2:}>\n".format(self.__class__.__name__, id(self), self.attrnames()))
 
     def attrnames(self):
         l_ret = ''

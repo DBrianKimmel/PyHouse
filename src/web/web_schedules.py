@@ -8,15 +8,14 @@ Created on Jun 3, 2013
 from nevow import loaders
 from nevow import rend
 from nevow import static
-from nevow import tags as Tag
+import json
 
 # Import PyMh files and modules.
 from src.web.web_tagdefs import *
 from src.web import web_utils
-from src.scheduling import schedule
 
 
-g_debug = 8
+g_debug = 2
 # 0 = off
 # 1 = major routine entry
 # 2 = Basic data
@@ -25,9 +24,10 @@ g_debug = 8
 class SchedulesPage(web_utils.ManualFormMixin):
     addSlash = True
     docFactory = loaders.stan(
-        T_html[
-            T_head[
+        T_html["\n",
+            T_head["\n",
                 T_title['PyHouse - Schedule Page'],
+                T_link(rel = 'stylesheet', type = 'text/css', href = U_H_child('lightpage.css'))["\n"],
                 T_link(rel = 'stylesheet', type = 'text/css', href = U_R_child('mainpage.css'))["\n"],
                 T_script(type = 'text/javascript', src = 'ajax.js')["\n"],
                 T_script(type = 'text/javascript', src = 'floating_window.js')["\n"],
@@ -37,21 +37,22 @@ class SchedulesPage(web_utils.ManualFormMixin):
                 T_h1['PyHouse Schedule'],
                 T_p['Select the schedule:'],
                 T_table(style = 'width: 100%;', border = 0)["\n",
-                    Tag.invisible(data = Tag.directive('schedlist'), render = Tag.directive('schedlist'))
+                    T_invisible(data = T_directive('schedlist'), render = T_directive('schedlist'))
                     ],
-                T_input(type = "button", onclick = "createNewSchedule('1234')", value = "Add Slot")
+                T_input(type = "button", onclick = "createNewSchedule('1234')", value = "Add Schedule")
                 ]
             ]
         )
 
     def __init__(self, name, p_pyhouse_obj):
         self.name = name
-        self.m_pyhouse_obj = p_pyhouse_obj.Object
+        self.m_pyhouse_obj = p_pyhouse_obj
         if g_debug >= 1:
             print "web_schedule.SchedulePage.__init__()"
-        if g_debug >= 5:
-            print self.m_pyhouse_obj
+        if g_debug >= 2:
+            print "    ", self.m_pyhouse_obj
         rend.Page.__init__(self)
+        setattr(SchedulesPage, 'child_lightpage.css', static.File('web/css/lightpage.css'))
         setattr(SchedulesPage, 'child_mainpage.css', static.File('web/css/mainpage.css'))
         setattr(SchedulesPage, 'child_ajax.js', static.File('web/js/ajax.js'))
         setattr(SchedulesPage, 'child_floating_window.js', static.File('web/js/floating-window.js'))
@@ -78,40 +79,41 @@ class SchedulesPage(web_utils.ManualFormMixin):
 
     def render_schedlist(self, _context, links):
         """
-        @param: _context is ...
-        @param: links are ...
-        @return: the list to be added into the stan.dom
         """
-        global l_ret
         l_ret = []
         l_cnt = 0
         for l_key, l_obj in sorted(links.iteritems()):
-            l_level = l_obj.Level
-            l_name = l_obj.Name
-            l_light = l_obj.LightName
-            l_room = l_obj.RoomName
-            l_rate = l_obj.Rate
-            l_time = l_obj.Time
-            l_type = l_obj.Type
+            l_json = json.dumps(repr(l_obj))
+            if g_debug >= 4:
+                print "    json = ", l_json
             if l_cnt % 2 == 0:
                 l_ret.append(T_tr)
             l_ret.append(T_td)
-            l_ret.append(T_input(type = 'submit', value = l_key, name = BUTTON, onclick = "createChangeScheduleWindow(\'{0:}\', \'{1:}\', \'{2:}\', \'{3:}\', \'{4:}\', \'{5:}\')".format(
-                                                    l_key, l_type, l_name, l_time, l_level, l_rate))
-                         [ l_name, '_', l_room, '_', l_light, "_'", l_time, "'_", l_level, '_', "\n" ])
+            l_ret.append(T_input(type = 'submit', value = l_key, name = BUTTON,
+                    onclick = "createChangeScheduleWindow('{0:}')".format(l_json))
+                    [ l_obj.Name, '_', l_obj.RoomName, '_', l_obj.LightName, "_'",
+                     l_obj.Time, "'_", l_obj.Level, '_', "\n" ])
             l_cnt += 1
         return l_ret
 
     def _store_schedule(self, **kwargs):
+        """Save the info we got back.
+
+        TODO: restart the scheduler to use the changed info we just got!
+        """
         if g_debug >= 1:
             print "web_schedule.SchedulePage._store_schedule() - ", kwargs
-        l_slot = kwargs['Slot']
-        # schedule.Schedule_Data[l_slot] = {}
-        # schedule.Schedule_Data[l_slot]['Name'] = kwargs['Name']
-        # schedule.Schedule_Data[l_slot]['Type'] = kwargs['Type']
-        # schedule.Schedule_Data[l_slot]['Time'] = kwargs['Time']
-        # schedule.Schedule_Data[l_slot]['Level'] = kwargs['Level']
-        # schedule.Schedule_Data[l_slot]['Rate'] = kwargs['Rate']
+            print self.m_pyhouse_obj.Schedules
+        l_key = int(kwargs['Key'])
+        self.m_pyhouse_obj.Schedules[l_key].Name = kwargs['Name']
+        self.m_pyhouse_obj.Schedules[l_key].Key = l_key
+        self.m_pyhouse_obj.Schedules[l_key].Active = (kwargs['Active'] == 'True')
+        self.m_pyhouse_obj.Schedules[l_key].LightName = kwargs['LightName']
+        self.m_pyhouse_obj.Schedules[l_key].RoomName = kwargs['RoomName']
+        self.m_pyhouse_obj.Schedules[l_key].Time = kwargs['Time']
+        self.m_pyhouse_obj.Schedules[l_key].Level = int(kwargs['Level'])
+        self.m_pyhouse_obj.Schedules[l_key].Rate = int(kwargs['Rate'])
+        self.m_pyhouse_obj.Schedules[l_key].Type = kwargs['Type']
 
     def form_post_changesched(self, **kwargs):
         """Browser user changed a schedule
@@ -123,18 +125,18 @@ class SchedulesPage(web_utils.ManualFormMixin):
     def form_post_addslot(self, **kwargs):
         print "web_schedule.SchedulePage.form_post_addslot - kwargs=", kwargs
         self._store_schedule(**kwargs)
-        return SchedulesPage(self.name)
+        return SchedulesPage(self.name, self.m_pyhouse_obj)
 
     def form_post_changeschedule(self, **kwargs):
         print "web_schedule.SchedulePage.form_post_changeschedule (add) - kwargs=", kwargs
         self._store_schedule(**kwargs)
-        schedule.ScheduleAPI().update_schedule(schedule.Schedule_Data)
-        return SchedulesPage(self.name)
+        # schedule.ScheduleAPI().update_schedule(schedule.Schedule_Data)
+        return SchedulesPage(self.name, self.m_pyhouse_obj)
 
     def form_post_deleteschedule(self, **kwargs):
         print "web_schedule.SchedulePage.form_post_deleteschedule() - kwargs=", kwargs
-        del schedule.Schedule_Data[kwargs['Slot']]
-        schedule.ScheduleAPI().update_schedule(schedule.Schedule_Data)
-        return SchedulesPage(self.name)
+        del self.m_pyhouse_obj.Schedules['Key']
+        # schedule.ScheduleAPI().update_schedule(schedule.Schedule_Data)
+        return SchedulesPage(self.name, self.m_pyhouse_obj)
 
 # ## END DBK

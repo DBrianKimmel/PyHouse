@@ -44,7 +44,7 @@ class InternetData(object):
         self.ExternalDelay = 0
         self.DynDns = {}
 
-    def __repr__(self):
+    def __str__(self):
         return "Internet:: IP:{0:}, Url:{1:}, Delay:{2:}, DynDns:{3:}".format(self.ExternalIP, self.UrlExternalIP, self.ExternalDelay, self.DynDns)
 
 
@@ -57,7 +57,7 @@ class DynDnsData(object):
         self.Name = ''
         self.Url = None
 
-    def __repr__(self):
+    def __str__(self):
         return "DynDns:: Name:{0:}, Key:{1:}, Active:{2:}, Interval:{3:}, Url:{4:};".format(self.Name, self.Key, self.Active, self.Interval, self.Url)
 
 
@@ -364,22 +364,23 @@ class API(ReadWriteXML):
         g_logger.info("Stopping for house:{0:}.".format(self.m_house_obj.Name))
         if self.m_house_obj.Active:
             self.dyndns.stop_dyndns_process()
+        l_internet_xml = self.Reload()
+        return l_internet_xml
+
+    def Reload(self):
+        """
+             <Internet>
+                <ExternalIP>11.22.33.44</ExternalIP>
+                <DynamicDns Name='afraid' Key='1' Active='True'>
+                    <Interval>900</Interval>
+                    <Url>http://freedns.afraid.org/dynamic/update.php?VDZtSkE2MzFVMVVBQVd5QXg2MDo5MjU1MzYw</Url>
+                </DynamicDns>
+                <DynamicDns Name='abcdef' Key='1' Active='True'>
+                    ...
+                </DynamicDns>
+            </Internet>
+        """
         l_internet_xml = self.write_internet(self.m_house_obj)
         return l_internet_xml
 
-"""
-<House Name='PinkPoppy' Key='0' Active='True'>
-    ...
-    <Internet>
-        <ExternalIP>11.22.33.44</ExternalIP>
-        <DynamicDns Name='afraid' Key='1' Active='True'>
-            <Interval>900</Interval>
-            <Url>http://freedns.afraid.org/dynamic/update.php?VDZtSkE2MzFVMVVBQVd5QXg2MDo5MjU1MzYw</Url>
-        </DynamicDns>
-        <DynamicDns Name='abcdef' Key='1' Active='True'>
-            ...
-        </DynamicDns>
-    </Internet>
-    ...
-"""
 # ## END DBK

@@ -8,6 +8,7 @@ Created on Apr 8, 2013
 from nevow import loaders
 from nevow import rend
 from nevow import static
+import json
 
 # Import PyMh files and modules.
 from src.web.web_tagdefs import *
@@ -35,62 +36,64 @@ class ControllersPage(web_utils.ManualFormMixin):
                 T_script(type = 'text/javascript', src = 'lightpage.js')["\n"],
                 ],
             T_body[
-                T_h1['PyHouse Lighting'],
-                T_p['\n'],
-                T_p['Select the light to control:'],
+                T_h1['PyHouse Controllers'],
+                T_p['Select the controller:'],
                 T_table(style = 'width: 100%;', border = 0)["\n",
-                    T_invisible(data = T_directive('lightlist'), render = T_directive('lightlist'))
+                    T_invisible(data = T_directive('controllerlist'), render = T_directive('controllerlist'))
                     ],
                 T_form(action = U_H_child('_submit!!post'),
                        enctype = "multipart/form-data",
                        method = 'post'
                       )["\n",
-                    T_input(type = 'button', onclick = "createNewLightWindow('1234')", value = 'Add Light'),
-                    T_input(type = 'submit', value = 'Scan Lights', name = BUTTON)
-                    ]
-                ]
-            ]
-        )
+                    T_input(type = 'button', onclick = "createNewLightWindow('1234')", value = 'Add Controller')
+                    ]  # form
+                ]  # body
+            ]  # html
+        )  # stan
 
-    def __init__(self, name):
-        rend.Page.__init__(self)
+    def __init__(self, name, p_house_obj):
         self.name = name
+        self.m_house_obj = p_house_obj
+        rend.Page.__init__(self)
+        setattr(ControllersPage, 'child_lightpage.css', static.File('web/css/lightpage.css'))
+        setattr(ControllersPage, 'child_mainpage.css', static.File('web/css/mainpage.css'))
+        setattr(ControllersPage, 'child_ajax.js', static.File('web/js/ajax.js'))
+        setattr(ControllersPage, 'child_floating_window.js', static.File('web/js/floating-window.js'))
+        setattr(ControllersPage, 'child_lightpage.js', static.File('web/js/lightpage.js'))
+        #------------------------------------
+        setattr(ControllersPage, 'child_bottomRight.gif', static.File('web/images/bottom_right.gif'))
+        setattr(ControllersPage, 'child_close.gif', static.File('web/images/close.gif'))
+        setattr(ControllersPage, 'child_minimize.gif', static.File('web/images/minimize.gif'))
+        setattr(ControllersPage, 'child_topCenter.gif', static.File('web/images/top_center.gif'))
+        setattr(ControllersPage, 'child_topLeft.gif', static.File('web/images/top_left.gif'))
+        setattr(ControllersPage, 'child_topRight.gif', static.File('web/images/top_right.gif'))
+        setattr(ControllersPage, 'child_handle.horizontal.png', static.File('web/images/handle.horizontal.png'))
 
-    def data_lightlist(self, _context, _data):
-        """Build up a list of lights.
-        Omit controllers and buttons (scenes???)
+    def data_controllerlist(self, _context, _data):
+        """Build up a list of controllers.
         """
-        l_light = {}
-        for l_key, l_obj in lighting.Light_Data.iteritems():
-            if l_obj.Family != 'Insteon': continue
-            if l_obj.Type != 'Light': continue
-            # l_obj.CurLevel = lighting.Light_Data[l_key].CurLevel
-            # if l_obj.Type == 'Light':
-            l_light[l_key] = l_obj
-        return l_light
+        l_controller = {}
+        for l_key, l_obj in self.m_house_obj.Controllers.iteritems():
+            l_controller[l_key] = l_obj
+        return l_controller
 
-    def render_lightlist(self, _context, links):
+    def render_controllerlist(self, _context, links):
         """Place buttons for each light on the page.
         """
-        global l_ret
         l_ret = []
         l_cnt = 0
-        for l_key, l_value in sorted(links.iteritems()):
-            l_cur_lev = l_value.CurLevel
-            l_family = l_value.Family
-            l_type = l_value.Type
-            l_name = l_value.Name
+        for l_key, l_obj in sorted(links.iteritems()):
+            l_json = json.dumps(repr(l_obj))
+            if g_debug >= 4:
+                print "    json = ", l_json
             if l_cnt % 2 == 0:
                 l_ret.append(T_tr)
             l_ret.append(T_td)
-            l_ret.append(T_input(type = 'submit', value = l_key, name = BUTTON, onclick = "createChangeLightWindow(\'{0:}\',\'{1:}\',\'{2:}\')".format(l_key, l_cur_lev, l_family))
-                         [ l_family, '-', l_type, ':', l_name, ' ', l_cur_lev])
+            l_ret.append(T_input(type = 'submit', value = l_key, name = BUTTON,
+                    onclick = "createChangeLightWindow('{0:}')".format(l_json))
+                         [ l_obj.Name])
             l_cnt += 1
         return l_ret
-
-    def load_all_light_info(self):
-        global Light_Data
-        pass
 
     def _store_light(self, **kwargs):
         """Send the updated lighting info back to the lighting module.
@@ -106,35 +109,34 @@ class ControllersPage(web_utils.ManualFormMixin):
         Lights[l_name]['Dimmable'] = kwargs['Dimmable']
         Lights[l_name]['Coords'] = kwargs['Coords']
         Lights[l_name]['Master'] = kwargs['Master']
-        lighting.LightingUtility().update_all_lighting_families()
+        # lighting.LightingUtility().update_all_lighting_families()
 
     def form_post_addlight(self, **kwargs):
         print " - form_post_addlight - ", kwargs
         self._store_light(**kwargs)
-        return LightingPage(self.name)
+        return ControllersPage(self.name, self.m_house_obj)
 
     def form_post_changelight(self, **kwargs):
         """Browser user changed a light (on/off/dim)
         Now send the change to the light.
         """
         print " - form_post_changelight - kwargs=", kwargs
-        return LightingPage(self.name)
+        return ControllersPage(self.name, self.m_house_obj)
 
     def form_post_deletelight(self, **kwargs):
         print " - form_post_delete - ", kwargs
-        global Lights
         del Lights[kwargs['Name']]
-        lighting.LightingUtility().update_all_lighting_families()
-        return LightingPage(self.name)
+        # lighting.LightingUtility().update_all_lighting_families()
+        return ControllersPage(self.name, self.m_house_obj)
 
     def form_post_scan(self, **kwargs):
         """Trigger a scan of all lights and then update light info.
         """
         print " - form_post_scan- ", kwargs
-        return LightingPage(self.name)
+        return ControllersPage(self.name, self.m_house_obj)
 
     def form_post_lighting(self, **kwargs):
         print " - form_post_lighting - ", kwargs
-        return LightingPage(self.name)
+        return ControllersPage(self.name, self.m_house_obj)
 
 # ## END DBK

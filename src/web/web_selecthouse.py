@@ -50,10 +50,12 @@ class SelectHousePage(web_utils.ManualFormMixin):
         )  # stan
 
     def __init__(self, name, p_pyhouses_obj):
-        if g_debug >= 1:
-            print "web_selecthouse.SelectHousePage.__init__()"
         self.name = name
         self.m_pyhouses_obj = p_pyhouses_obj
+        if g_debug >= 1:
+            print "web_selecthouse.SelectHousePage()"
+        if g_debug >= 2:
+            print "    ", p_pyhouses_obj
         rend.Page.__init__(self)
         setattr(SelectHousePage, 'child_mainpage.css', static.File('web/css/mainpage.css'))
 

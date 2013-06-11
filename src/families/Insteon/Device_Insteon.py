@@ -27,6 +27,7 @@ g_debug = 0
 # 0 = off
 # 1 = major routine entry
 # 2 = Startup Details
+# 3 = Minor routines
 
 g_logger = None
 
@@ -49,8 +50,8 @@ class CoreData (object):
         self.Command1 = 0
         self.Command2 = 0
 
-    def __repr__(self):
-        l_str = lighting.ControllerData.__repr__(self)
+    def __str__(self):
+        l_str = lighting.ControllerData.__str__(self)
         l_str += " Address:{0:}({1:}),".format(self.int2dotted_hex(self.InsteonAddress), self.InsteonAddress)
         l_str += " Controller:{0:}".format(self.Controller)
         return l_str
@@ -91,8 +92,8 @@ class ButtonData(lighting.ButtonData, CoreData):
     def __init__(self):
         super(ButtonData, self).__init__()
 
-    def __repr__(self):
-        l_str = super(ButtonData, self).__repr__()
+    def __str__(self):
+        l_str = super(ButtonData, self).__str__()
         l_str += " Address:{0:}".format(self.Address)
         return l_str
 
@@ -105,8 +106,8 @@ class ControllerData(lighting.ControllerData, CoreData):
     def __init__(self):
         super(ControllerData, self).__init__()
 
-    def __repr__(self):
-        l_str = super(ControllerData, self).__repr__()
+    def __str__(self):
+        l_str = super(ControllerData, self).__str__()
         l_str += " Address:{0:}".format(self.Address)
         return l_str
 
@@ -123,23 +124,31 @@ class LightData(lighting.LightData, CoreData):
     def __init__(self):
         super(LightData, self).__init__()
 
-    def __repr__(self):
-        l_str = super(LightData, self).__repr__()
+    def __str__(self):
+        l_str = super(LightData, self).__str__()
         l_str += " Address:{0:}".format(self.Address)
         return l_str
-
-# TODO: Add read write xml for insteon specific data
 
 
 class LightingAPI(lighting.LightingAPI, CoreAPI):
     """Interface to the lights of this module.
     """
 
-    def change_light_setting(self, p_light_obj, p_level):
-        if g_debug > 1:
-            print "Device_Insteon.change_light_setting()", p_level, p_light_obj
+    def change_light_setting(self, p_light_obj, p_level, p_house_obj):
+        if g_debug >= 2:
+            print "Device_Insteon.change_light_setting()", p_level,
+            print "    Light:", p_light_obj
+            print "    House:", p_house_obj
         if p_light_obj.Family == 'Insteon':
-            self.m_plm.change_light_setting(p_light_obj, p_level)
+            try:
+                for l_controller_obj in self.m_house_obj.Controllers.itervalues():
+                    if l_controller_obj.Family != 'Insteon':
+                        continue
+                    if l_controller_obj.Active != True:
+                        continue
+                    l_controller_obj.HandlerAPI.change_light_setting(p_light_obj, p_level)
+            except AttributeError:
+                pass  # no controllers for house(House is being added)
 
 
 class API(LightingAPI):
@@ -151,7 +160,7 @@ class API(LightingAPI):
         global g_logger
         g_logger = logging.getLogger('PyHouse.Dev_Inst')
         if g_debug >= 1:
-            print "Device_Insteon.API.__init__()"
+            print "Device_Insteon.API()"
         self.m_house_obj = p_house_obj
         g_logger.info('Initialized.')
 
@@ -160,7 +169,7 @@ class API(LightingAPI):
         """For the given house, this will start all the controllers for family = Insteon in that house.
         """
         if g_debug >= 1:
-            print "Device_Insteon.Start() - House:{0:}".format(p_house_obj.Name)
+            print "Device_Insteon.API.Start() - House:{0:}".format(p_house_obj.Name)
         g_logger.info('Starting.')
         l_count = 0
         for l_controller_obj in p_house_obj.Controllers.itervalues():
@@ -185,6 +194,7 @@ class API(LightingAPI):
                 continue
             else:
                 l_controller_obj.HandlerAPI = Insteon_PLM.API(p_house_obj)
+                self.m_
                 if l_controller_obj.HandlerAPI.Start(l_controller_obj):
                     l_count += 1
                     if g_debug >= 1:
@@ -200,7 +210,7 @@ class API(LightingAPI):
 
     def Stop(self, p_xml):
         if g_debug >= 1:
-            print "Device_Insteon.Stop()"
+            print "Device_Insteon.API.Stop()"
         try:
             for l_controller_obj in self.m_house_obj.Controllers.itervalues():
                 if l_controller_obj.Family != 'Insteon':

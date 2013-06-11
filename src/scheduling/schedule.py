@@ -41,20 +41,17 @@ from src.utils import tools
 from src.scheduling import sunrisesunset
 
 
-g_debug = 6
+g_debug = 2
 # 0 = off
 # 1 = major routine entry
 # 2 = schedule execution
-# 3 =
+# 3 = Minor routines
 # 4 =
 # 5 = diagnostics
 # 6
-# 7 = extract time
+# 7 = extract time details
 
 g_logger = None
-
-ScheduleCount = 0
-
 
 callLater = reactor.callLater
 
@@ -64,21 +61,19 @@ VALID_TYPES = ['Device', 'Scene']
 class ScheduleData(object):
 
     def __init__(self):
-        global ScheduleCount
-        ScheduleCount += 1
         self.Active = None
         self.Key = 0
         self.Level = 0
         self.LightName = None
-        self.LightNumber = 0
+        self.LightNumber = 0  # Depricated methinks
         self.Name = 0
         self.Object = None  # a light (perhaps other) object
         self.Rate = 0
         self.RoomName = None
         self.Time = None
-        self.Type = 'Device'
+        self.Type = 'Device'  # For future expansion into scenes, entertainment etc.
 
-    def __repr__(self):
+    def __str__(self):
         l_ret = "Schedule:: "
         l_ret += "Name:{0:}, ".format(self.Name)
         l_ret += "LightName:{0:}, ".format(self.LightName)
@@ -89,7 +84,23 @@ class ScheduleData(object):
         l_ret += "Key:{0:}, ".format(self.Key)
         l_ret += "Active:{0:}, ".format(self.Active)
         l_ret += "Room:{0:} ".format(self.RoomName)
-        l_ret += "<<  "
+        l_ret += "; "
+        return l_ret
+
+    def __repr__(self):
+        """A dict of the schedule object
+        """
+        l_ret = "{"
+        l_ret += "'Name':'{0:}', ".format(self.Name)
+        l_ret += "'Key':'{0:}', ".format(self.Key)
+        l_ret += "'Active':'{0:}', ".format(self.Active)
+        l_ret += "'Type':'{0:}', ".format(self.Type)
+        l_ret += "'LightName':'{0:}', ".format(self.LightName)
+        l_ret += "'RoomName':'{0:}', ".format(self.RoomName)
+        l_ret += "'Level':'{0:}', ".format(self.Level)
+        l_ret += "'Rate':'{0:}', ".format(self.Rate)
+        l_ret += "'Time':'{0:}'".format(self.Time)
+        l_ret += "}"
         return l_ret
 
 
@@ -117,7 +128,7 @@ class ScheduleXML(xml_tools.ConfigTools):
         @param p_house_xml: is the e-tree XML house object
         @return: a dict of the entry to be attached to a house object.
         """
-        if g_debug >= 4:
+        if g_debug >= 3:
             print "schedule.read_schedules()"
         l_count = 0
         l_dict = {}
@@ -140,7 +151,7 @@ class ScheduleXML(xml_tools.ConfigTools):
         """Replace all the data in the 'Schedules' section with the current data.
         @param p_parent: is the 'schedules' element
         """
-        if g_debug >= 4:
+        if g_debug >= 3:
             print "schedule.write_schedules()"
         l_count = 0
         l_schedules_xml = ET.Element('Schedules')
@@ -171,8 +182,8 @@ class ScheduleExecution(ScheduleData):
         @param p_slot_list: a list of Slots in the next time schedule to be executed.
         """
         if g_debug >= 1:
-            print "schedule.execute_schedules()  p_slot_list {0:}, House:{1:}".format(p_slot_list, self.m_house_obj.Name)
-        g_logger.info("About to execute slots:{0:}".format(p_slot_list))
+            print "schedule.execute_schedules()  p_schedule_list {0:}, House:{1:}".format(p_slot_list, self.m_house_obj.Name)
+        g_logger.info("About to execute - House:{0:}, Schedule:{1:}".format(self.m_house_obj.Name, p_slot_list))
         for ix in range(len(p_slot_list)):
             l_sched_obj = self.m_house_obj.Schedules[p_slot_list[ix]]
             # TODO: We need a small dispatch for the various schedule types (hvac, security, entertainment, lights, ...)
@@ -185,7 +196,7 @@ class ScheduleExecution(ScheduleData):
                 print "schedule.execute_schedules() ", l_sched_obj
                 print "   on light", l_light_obj
             g_logger.info("Executing schedule Name:{0:}, Light:{1:}, Level:{2:}".format(l_sched_obj.Name, l_sched_obj.LightName, l_sched_obj.Level))
-            self.m_lighting.change_light_setting(self.m_house_obj, l_light_obj, l_sched_obj.Level)
+            self.m_house_obj.LightingAPI.change_light_setting(self.m_house_obj, l_light_obj, l_sched_obj.Level)
         callLater(2, self.get_next_sched)
 
     def create_timer(self, p_seconds, p_list):
@@ -328,7 +339,7 @@ class ScheduleUtility(ScheduleExecution):
             # add to a chain
             if l_diff == l_next:
                 l_list.append(l_key)
-        l_debug_msg = "Schedule delaying {0:} seconds until {1:} for list {2:}".format(l_next, l_time_scheduled, l_list)
+        l_debug_msg = "Schedule - House:{0:}, delaying {1:} seconds until {2:} for list {3:}".format(self.m_house_obj.Name, l_next, l_time_scheduled, l_list)
         g_logger.info("Get_next_schedule complete. {0:}".format(l_debug_msg))
         if g_debug >= 2:
             print "schedule.get_next_sched()  {0:}".format(l_debug_msg)
@@ -341,22 +352,20 @@ class API(ScheduleUtility, ScheduleXML):
 
     m_house_obj = None
     m_sunrisesunset = None
-    m_lighting = None
     m_entertainment = None
 
     def __init__(self, p_house_obj):
         """
         """
-        if g_debug >= 1:
-            print "schedule.__init__()"
         global g_logger
         g_logger = logging.getLogger('PyHouse.Schedule')
-        g_logger.info("Initializing house")
+        if g_debug >= 1:
+            print "schedule.API() - House:{0:}".format(p_house_obj.Name)
+        g_logger.info("Initializing House:{0:}".format(p_house_obj.Name))
         self.m_house_obj = p_house_obj
         self.m_sunrisesunset = sunrisesunset.API(p_house_obj)
-        self.m_lighting = lighting.API(p_house_obj)
+        self.m_house_obj.LightingAPI = lighting.API(p_house_obj)
         self.m_entertainment = entertainment.API()
-        p_house_obj.LightingAPI = self.m_lighting
         g_logger.info("Initialized.")
 
     def Start(self, p_house_obj, p_house_xml):
@@ -372,36 +381,42 @@ class API(ScheduleUtility, ScheduleXML):
         g_logger.info("Starting House {0:}.".format(self.m_house_obj.Name))
         self.m_sunrisesunset.Start(p_house_obj)
         self.read_schedules(p_house_obj, p_house_xml)
-        self.m_lighting.Start(p_house_obj, p_house_xml)
+        self.m_house_obj.LightingAPI.Start(p_house_obj, p_house_xml)
         self.m_entertainment.Start(p_house_obj, p_house_xml)
         if p_house_obj.Active:
             self.get_next_sched()
         g_logger.info("Started.")
 
-    def Stop(self, p_xml):
+    def Stop(self, p_xml, p_house_obj):
         """Stop everything under me and build xml to be appended to a house xml.
         """
         if g_debug >= 1:
             print "schedule.API.Stop() - House:{0:}".format(self.m_house_obj.Name)
         g_logger.info("Stopping schedule for house:{0:}.".format(self.m_house_obj.Name))
         l_schedules_xml = self.write_schedules(self.m_house_obj.Schedules)
-        l_lighting_xml, l_controllers_xml, l_buttons_xml = self.m_lighting.Stop(p_xml)
+        l_lighting_xml, l_controllers_xml, l_buttons_xml = self.m_house_obj.LightingAPI.Stop(p_xml, p_house_obj)
         l_entertainment_xml = self.m_entertainment.Stop()
         if g_debug >= 1:
             print "schedule.API.Stop() - House:{0:}, {1:}".format(self.m_house_obj.Name, len(p_xml))
         g_logger.info("Stopped.\n")
         return l_schedules_xml, l_lighting_xml, l_buttons_xml, l_controllers_xml, l_entertainment_xml
 
+    def Reload(self):
+        if g_debug >= 1:
+            print "schedule.API.Reload() - House:{0:}".format(self.m_house_obj.Name)
+        l_schedules_xml = self.write_schedules(self.m_house_obj.Schedules)
+        return l_schedules_xml
+
     def update_schedule(self, p_schedule):
         """Update the schedule as updated by the web server.
         """
         if g_debug >= 6:
-            print 'schedule.scheduleAPI.update_schedule({0:}'.format(p_schedule)
+            print 'schedule.API.update_schedule({0:}'.format(p_schedule)
         pass
 
     def SpecialTest(self):
         if g_debug >= 1:
             print "schedule.API.SpecialTest()"
-        self.m_lighting.SpecialTest()
+        self.m_house_obj.LightingAPI.SpecialTest()
 
 # ## END DBK

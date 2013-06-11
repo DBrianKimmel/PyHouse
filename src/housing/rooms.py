@@ -19,18 +19,29 @@ m_logger = None
 class RoomData(object):
 
     def __init__(self):
+        self.Name = ''
+        self.Key = 0
         self.Active = False
         self.Comment = ''
         self.Corner = ''
-        self.Key = 0
-        self.Name = ''
         self.Size = ''
 
-    def __repr__(self):
+    def __str__(self):
         l_ret = ' Room:: '
         l_ret += 'Name:{0:} \t '.format(self.Name)
         l_ret += "Size:{0:} \t ".format(self.Size)
         l_ret += "Corner:{0:}\n".format(self.Corner)
+        return l_ret
+
+    def __repr__(self):
+        l_ret = "{"
+        l_ret += "'Name':'{0:}', ".format(self.Name)
+        l_ret += "'Key':'{0:}', ".format(self.Key)
+        l_ret += "'Active':'{0:}', ".format(self.Active)
+        l_ret += "'Size':'{0:}', ".format(self.Size)
+        l_ret += "'Corner':'{0:}', ".format(self.Corner)
+        l_ret += "'Comment':'{0:}'".format(self.Comment)
+        l_ret += "}"
         return l_ret
 
 

@@ -11,6 +11,7 @@ from nevow import static
 # Import PyMh files and modules.
 from src.web.web_tagdefs import *
 from src.web import web_utils
+# from src.web import web_housemenu
 from src.housing import rooms
 
 
@@ -38,7 +39,7 @@ class RoomsPage(web_utils.ManualFormMixin):
                     T_invisible(data = T_directive('roomlist'), render = T_directive('roomlist'))
                     ],  # body
                 T_input(type = "button", onclick = "createNewRoomWindow('-1', )", value = "Add Room"),
-                # T_input(type = "submit", value = "Back", name = BUTTON),)
+                T_input(type = "submit", value = "Back", name = BUTTON),
                 ]
             ]  # html
         )  # stan
@@ -131,5 +132,10 @@ class RoomsPage(web_utils.ManualFormMixin):
         del self.m_house_obj.Rooms[kwargs['Key']]
         # TODO: we should write out the updated info.
         return RoomsPage(self.name, self.m_house_obj)
+
+    def form_post_back(self, **kwargs):
+        if g_debug >= 2:
+            print "web_rooms.form_post_back()", kwargs
+        return web_housemenu.HouseMenuPage(self.name, self.m_houses_obj.Object)
 
 # ## END DBK

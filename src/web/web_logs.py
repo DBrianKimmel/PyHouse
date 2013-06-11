@@ -35,7 +35,7 @@ class LogsPage(web_utils.ManualFormMixin):
                 T_p['\n'],
                 T_p['abc'],
                 T_table(style = 'width: 100%;', border = 0)["\n",
-                    T_invisible(data = T_directive('houselist'), render = T_directive('houselist'))
+                    T_invisible(data = T_directive('logslist'), render = T_directive('logslist'))
                     ],
                 T_form(action = U_H_child('_submit!!post'),
                        enctype = "multipart/form-data",
@@ -48,9 +48,21 @@ class LogsPage(web_utils.ManualFormMixin):
         )
 
     def __init__(self, name, p_pyhouse_obj):
+        self.name = name
+        self.m_pyhouse_obj = p_pyhouse_obj
         if g_debug >= 1:
             print "web_logs.LogsPage.__init__()"
         rend.Page.__init__(self)
-        self.name = name
+
+    def data_logslist(self, _context, _data):
+        """Build up a list of schedule slots.
+        @param _context: is a tag that we are building an object to render
+        @param _data: is the page object we are extracting for.
+        @return: an object to render.
+        """
+        l_sched = {}
+        for l_key, l_obj in self.m_pyhouse_obj.Schedules.iteritems():
+            l_sched[l_key] = l_obj
+        return l_sched
 
 # ## END DBK

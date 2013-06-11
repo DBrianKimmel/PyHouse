@@ -21,7 +21,7 @@ from src.housing import house
 from src.utils import xml_tools
 
 
-g_debug = 0
+g_debug = 2
 # 0 = off
 # 1 = major routine entry
 # 2 = get/put xml config info
@@ -38,13 +38,24 @@ class HousesData(object):
     """
 
     def __init__(self):
-        self.Key = 0
         self.Name = None
+        self.Key = 0
+        self.Active = False
         self.HouseAPI = None
         self.Object = {}
 
-    def __repr__(self):
+    def __str__(self):
         return "Houses:: Name:{0:}, Key:{1:}, Object:{2:}, API:{3:}".format(self.Name, self.Key, self.Object, self.HouseAPI)
+
+    def __repr__(self):
+        l_ret = "{"
+        l_ret += "'Name':'{0:}', ".format(self.Name)
+        l_ret += "'Key':'{0:}', ".format(self.Key)
+        l_ret += "'Active':'{0:}', ".format(self.Active)
+        l_ret += "'HouseAPI':'{0:}', ".format(self.HouseAPI)
+        l_ret += "'Object':'{0:}'".format(self.Object)
+        l_ret += "}"
+        return l_ret
 
 
 class HouseReadWriteConfig(xml_tools.ConfigFile):
@@ -187,7 +198,6 @@ class API(LoadSaveAPI):
         g_logger.info("Started.")
         return self.m_houses_data
 
-
     def Stop(self):
         """Close down everything we started.
         Each stopped instance returns an up-to-date XML subtree to be written out.
@@ -199,9 +209,18 @@ class API(LoadSaveAPI):
         for l_house in self.m_houses_data.itervalues():
             if g_debug >= 5:
                 print "houses.Stop() - House:{0:}, Key:{1:}".format(l_house.Name, l_house.Key), l_house.HouseAPI
-            l_houses_xml.append(l_house.HouseAPI.Stop(l_houses_xml))  # append to the xml tree
+            l_houses_xml.append(l_house.HouseAPI.Stop(l_houses_xml, l_house.Object))  # append to the xml tree
         self.save_all_houses(l_houses_xml)
         g_logger.info("Stopped.")
+
+    def Reload(self, p_pyhouses_obj):
+        if g_debug >= 1:
+            print "houses.API.Reload()"
+        l_houses_xml = self.create_empty_xml_section(self.m_xmltree_root, 'Houses')
+        for l_house in self.m_houses_data.itervalues():
+            l_houses_xml.append(l_house.HouseAPI.Reload(l_house.Object))  # append to the xml tree
+        self.save_all_houses(l_houses_xml)
+        return l_houses_xml
 
     def get_houses_obj(self):
         return self.m_houses_data

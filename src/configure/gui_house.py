@@ -243,20 +243,6 @@ class HouseDialog(HouseWindow):
             print "gui_house.save_house() - Name:{0:}, Key:{1:}".format(l_house_obj.Name, l_house_obj.Key)
         self.quit_house_dialog(p_gui_obj)
 
-    def XXget_house_object(self, p_houses_obj, p_house_key):
-        """In case of add - defines the internal house object.
-        """
-        if g_debug > 3:
-            print "gui_house.get_house_object() - Key:{0:}".format(p_house_key)
-        try:
-            l_obj = p_houses_obj.Object
-        except AttributeError:
-            l_obj = HouseData()
-            l_obj.Key = p_house_key
-            if g_debug >= 1:
-                print "gui_house.get_house_object() - Created object ", l_obj
-        return l_obj
-
     def add_room(self, p_gui_obj, p_house_obj, p_room_key):
         self.m_room_add_flag = True
         if g_debug >= 2:

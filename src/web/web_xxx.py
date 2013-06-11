@@ -307,8 +307,6 @@ class LightingPage(rend.Page, WebLightData, WebLightingAPI):
         print " - form_post_lighting - ", kwargs
         return LightingPage(self.name)
 
-class LocationPage(rend.Page): pass
-
 class ScenesPage(rend.Page):
     addSlash = True
     docFactory = loaders.stan(

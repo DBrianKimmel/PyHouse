@@ -19,7 +19,7 @@ from src.web import web_rootmenu
 
 
 
-g_debug = 8
+g_debug = 5
 # 0 = off
 # 1 = major routine entry
 # 2 = Basic data
@@ -43,32 +43,35 @@ class WebData(object):
 
 class API(object):
 
-    def __init__(self, p_parent):
+    def __init__(self):
         global g_logger
         g_logger = logging.getLogger('PyHouse.WebServ ')
-        global g_parent
-        g_parent = p_parent
         self.web_data = WebData()
         if g_debug >= 1:
-            print "web_server.API.__init__()"
+            print "web_server.API()"
         g_logger.info("Initialized")
 
     def Start(self, p_pyhouses_obj):
+        if g_debug >= 1:
+            print "web_server.API.Start()"
+        if g_debug >= 2:
+            print "    ", p_pyhouses_obj
         self.m_pyhouses_obj = p_pyhouses_obj
         web_utils.WebUtilities().read_xml_config_web(self.web_data, p_pyhouses_obj.XmlRoot)
-        if g_debug >= 1:
-            print "web_server.Start() - Port:{0:}".format(self.web_data.WebPort)
         l_site_dir = os.path.split(os.path.abspath(__file__))[0]
-        if g_debug >= 2:
-            print "web_server.Start() = Webserver path:{0:}".format(l_site_dir)
-        l_site = appserver.NevowSite(web_rootmenu.RootPage('/', self.m_pyhouses_obj))
-        # web_utils.WebUtilities().build_child_tree()
+        l_site = appserver.NevowSite(web_rootmenu.RootPage('/', p_pyhouses_obj))
         listenTCP(self.web_data.WebPort, l_site)
+        if g_debug >= 2:
+            print "web_server.Start() - Port:{0:}, Path:{1:}".format(self.web_data.WebPort, l_site_dir)
         g_logger.info("Started.")
         return self.web_data
 
     def Stop(self):
         if g_debug >= 1:
-            print "web_server.Stop()"
+            print "web_server.API.Stop()"
+
+    def Reload(self, p_pyhouses_obj):
+        if g_debug >= 1:
+            print "web_server.API.Reload()"
 
 # ## END DBK

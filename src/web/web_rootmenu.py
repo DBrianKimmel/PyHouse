@@ -8,17 +8,17 @@ Created on May 30, 2013
 from nevow import loaders
 from nevow import rend
 from nevow import static
+import json
 
 # Import PyMh files and modules.
 from src.utils import config_xml
 from src.web.web_tagdefs import *
 from src.web import web_utils
 from src.web import web_selecthouse
-from src.web import web_webserver
-from src.web import web_logs
+from src.utils import log
 
 
-g_debug = 8
+g_debug = 5
 # 0 = off
 # 1 = major routine entry
 # 2 = Basic data
@@ -47,11 +47,12 @@ class RootPage(web_utils.ManualFormMixin):
                     method = 'post')
                     [
                     T_table(style = 'width: 100%;', border = 0)[
+                        # T_invisible(data = T_directive('logslist'), render = T_directive('logslist')),
                         T_tr[
                             T_td[ T_input(type = 'submit', value = 'Select House', name = BUTTON), ],
                             T_td[ T_input(type = 'button', onclick = "createNewHouseWindow('NewName')", value = 'Add House') ],
-                            T_td[ T_input(type = 'button', onclick = "createChangeWebServerWindow('8580')", value = 'Web Server') ],
-                            T_td[ T_input(type = 'button', onclick = "createChangeLogsWindow('/debug', '/error')", value = 'Logs') ],
+                            T_td[ T_input(type = 'button', onclick = "createChangeWebServerWindow('" + '' + "')", value = 'Web Server') ],
+                            T_td[ T_input(type = 'button', onclick = "createChangeLogsWindow(" + json.dumps('x') + ")", value = 'Logs') ],
                             ],
                          T_tr[
                             T_td[ T_input(type = 'submit', value = 'Quit', name = BUTTON) ],
@@ -64,11 +65,13 @@ class RootPage(web_utils.ManualFormMixin):
         )  # stan
 
     def __init__(self, name, p_pyhouses_obj):
-        if g_debug >= 1:
-            print "web_rootmenu.RootPage.__init__()"
-        rend.Page.__init__(self)
         self.name = name
         self.m_pyhouses_obj = p_pyhouses_obj
+        if g_debug >= 1:
+            print "web_rootmenu.RootPage()"
+        if g_debug >= 2:
+            print "    ", p_pyhouses_obj
+        rend.Page.__init__(self)
 
         """Build a tree of pages for nevow.
         """
@@ -101,13 +104,15 @@ class RootPage(web_utils.ManualFormMixin):
         """
         if g_debug >= 2:
             print "web_rootmenu.form_post_add()", kwargs
-        return web_selecthouse.AddHousePage('House', self.m_pyhouses_obj)
+        # TODO: validate and create a new house.
+        return RootPage('House', self.m_pyhouses_obj)
 
     def form_post_change_web(self, **kwargs):
         """Web server button post processing.
         """
         if g_debug >= 2:
             print "web_rootmenu.form_post_change_web()", kwargs
+        self.m_pyhouses_obj.WebData.WebPort = kwargs['WebPort']
         return RootPage('House', self.m_pyhouses_obj)
 
     def form_post_change_logs(self, **kwargs):
@@ -117,27 +122,22 @@ class RootPage(web_utils.ManualFormMixin):
             print "web_rootmenu.form_post_change_logs()", kwargs
         return RootPage('House', self.m_pyhouses_obj)
 
-    def form_post_quit(self, *args, **kwargs):
-        if g_debug >= 2:
-            print "web_rootmenu.form_post_quit() - args={0:}, kwargs={1:}".format(args, kwargs)
-        self.main_quit()
-
-    def form_post_reload(self, *args, **kwargs):
-        print "web_rootmenu.form_post_reload() - args={0:}, kwargs={1:}".format(args, kwargs)
-        return RootPage('Root', self.m_pyhouses_obj)
-
     def form_post(self, *args, **kwargs):
         print "web_rootmenu.form_post() - args={0:}, kwargs={1:}".format(args, kwargs)
         return RootPage('Root', self.m_pyhouses_obj)
 
-    def main_quit(self):
+    def form_post_quit(self, *args, **kwargs):
+        if g_debug >= 2:
+            print "web_rootmenu.form_post_quit() - args={0:}, kwargs={1:}".format(args, kwargs)
         """Quit the GUI - this also means quitting all of PyHouse !!
         """
-        if g_debug >= 1:
-            print "web_rootmenu.RootPage.main_quit() "
         config_xml.WriteConfig()
-        if g_debug >= 1:
-            print "web_rootmenu.RootPage.main_quit - Quit"
-        self.m_pyhouse_obj.Api.Quit()
+        self.m_pyhouses_obj.Api.Quit()
+
+    def form_post_reload(self, *args, **kwargs):
+        if g_debug >= 2:
+            print "web_rootmenu.form_post_reload() - args={0:}, kwargs={1:}".format(args, kwargs)
+        self.m_pyhouses_obj.Api.Reload(self.m_pyhouses_obj)
+        return RootPage('Root', self.m_pyhouses_obj)
 
 # ## END DBK

@@ -17,7 +17,6 @@ g_debug = 0
 # 1 = major routine entry
 
 g_logger = logging.getLogger('PyHouse.Family  ')
-g_family_data = {}
 
 
 class FamilyData(object):
@@ -25,7 +24,6 @@ class FamilyData(object):
     """
 
     def __init__(self):
-        global ScheduleCount
         self.Active = False
         self.Api = None
         self.ModuleName = ''
@@ -34,7 +32,7 @@ class FamilyData(object):
         self.Name = ''
         self.PackageName = ''
 
-    def __repr__(self):
+    def __str__(self):
         l_ret = "FamilyData:: "
         l_ret += "Name:{0:}, ".format(self.Name)
         l_ret += "Key:{0:}, ".format(self.Key)
@@ -51,11 +49,11 @@ class LightingUtility(FamilyData):
     """
 
     def build_lighting_family_info(self, p_house_obj):
-        global g_family_data
+        l_family_data = {}
         l_count = 0
         for l_family in VALID_FAMILIES:
             if g_debug >= 2:
-                print "family.build_lighting_family_info - Name: {0:}".format(l_family)
+                print "family.build_lighting_family_info() - House:{0:}, Name:{1:}".format(p_house_obj.Name, l_family)
             l_family_obj = FamilyData()
             l_family_obj.Active = False
             l_family_obj.Name = l_family
@@ -75,12 +73,12 @@ class LightingUtility(FamilyData):
                 if g_debug >= 1:
                     print "    family.build_lighting_family_info() - ERROR - NO API"
                 l_family_obj.Api = None
-            g_family_data[l_count] = l_family_obj
             if g_debug >= 2:
-                # print "family.build_lighting_family_info - PackageName: {0:}, ModuleName: {1:}".format(l_family_obj.PackageName, l_family_obj.ModuleName)
                 print "   from {0:} import {1:}".format(l_family_obj.PackageName, l_family_obj.ModuleName)
-                print "   g_family_data  Key:{0:} -".format(l_count), l_family_obj
+                print "   l_family_data  Key:{0:} -".format(l_count), l_family_obj
+            l_family_data[l_count] = l_family_obj
             l_count += 1
+        return l_family_data
 
     def start_lighting_families(self, p_house_obj):
         """Load and start the family if there is a controller in the house for the family.
@@ -89,16 +87,16 @@ class LightingUtility(FamilyData):
         if g_debug >= 2:
             print "family.start_lighting_families()"
         g_logger.info("Starting lighting families.")
-        for l_family_obj in g_family_data.itervalues():
+        for l_family_obj in p_house_obj.FamilyData.itervalues():
             if g_debug >= 3:
                 print "family.start_lighting_families() - Starting {0:}".format(l_family_obj.Name), l_family_obj
             l_family_obj.Api.Start(p_house_obj)  # will run Device_<family>.API.Start()
             g_logger.info("Started lighting family {0:}.".format(l_family_obj.Name))
 
-    def stop_lighting_families(self, p_xml):
-        if g_debug > 1:
+    def stop_lighting_families(self, p_xml, p_house_obj):
+        if g_debug >= 2:
             print "family.stop_lighting_families()"
-        for l_family_obj in g_family_data.itervalues():
+        for l_family_obj in p_house_obj.FamilyData.itervalues():
             l_family_obj.Api.Stop(p_xml)
 
 # ## END DBK

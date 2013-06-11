@@ -10,7 +10,14 @@ import xml.etree.ElementTree as ET
 # Import PyMh files
 from src.lights import lighting
 
+
 g_debug = 0
+# 0 = off
+# 1 = major routine entry
+# 2 = Startup Details
+# 3 = Minor routines
+
+g_logger = None
 
 
 class X10LightingData(lighting.LightData):
@@ -55,7 +62,7 @@ class LightingAPI(lighting.LightingAPI):
             except AttributeError:
                 pass
 
-    def change_light_setting(self, p_light_obj, p_level):
+    def change_light_setting(self, p_light_obj, p_level, p_house_obj):
         pass
 
     def update_all_lights(self):
@@ -69,10 +76,6 @@ class LightingAPI(lighting.LightingAPI):
 
     def turn_light_dim(self, p_name, p_level):
         print "Turning X10 light {0:} to level {1:}".format(p_name, p_level)
-
-    def load_all_lights(self, p_dict):
-        pass
-        # lighting.LightingAPI.load_all_lights(self, p_dict)
 
     def scan_all_lights(self, p_lights):
         pass
@@ -88,7 +91,6 @@ class API(object):
         self.m_house_obj = p_house_obj
         if g_debug > 0:
             print "Device_X10.__init__()"
-        # LightingAPI().load_all_lights(Configure_Data['X10Lights'])
         g_logger.info('Initialized.')
 
     def Start(self, _p_house_obj):

@@ -11,7 +11,6 @@ from nevow import static
 # Import PyMh files and modules.
 from src.web.web_tagdefs import *
 from src.web import web_utils
-from src.web import web_schedule
 from src.web import web_rooms
 
 

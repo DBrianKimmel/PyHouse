@@ -61,7 +61,6 @@ class PimData(object):
     """
 
     def __init__(self):
-        self.Driver = None
         self.Interface = None
         self.Name = None
         self.NetworkID = 0
@@ -341,9 +340,9 @@ class PimDriverInterface(DecodeResponses):
                 continue
             if l_controller_obj.Active != True:
                 continue
-            if l_controller_obj.Driver != None:
+            if l_controller_obj.DriverAPI != None:
                 l_send = self._convert_pim(l_command)
-                l_controller_obj.Driver.write_device(l_send)
+                l_controller_obj.DriverAPI.write_device(l_send)
                 if g_debug > 1:
                     print "UPB_PIM.dequeue_and_send() to {0:}, Message: {1:}".format(l_controller_obj.Name, PrintBytes(l_command))
                 if g_debug > 0:
@@ -358,8 +357,8 @@ class PimDriverInterface(DecodeResponses):
                 continue
             if l_controller_obj.Active != True:
                 continue
-            if l_controller_obj.Driver != None:
-                l_msg = l_controller_obj.Driver.fetch_read_data(l_controller_obj)
+            if l_controller_obj.DriverAPI != None:
+                l_msg = l_controller_obj.DriverAPI.fetch_read_data(l_controller_obj)
                 if g_debug > 6:
                     print "UPB_PIM.receive_loop() from {0:}, Message: {1:}".format(l_controller_obj.Name, PrintBytes(l_msg))
                 self.decode_response(l_msg)
@@ -448,8 +447,8 @@ class UpbPimAPI(LightingAPI):
                 l_driver = Driver_USB_17DD_5500.API()
             # TODO: Detect any other controllers here and load them
             l_driver.Start(l_controller_obj)
-            p_house_obj.Controllers[l_key].Driver = l_driver
-            l_pim.Driver = l_driver
+            p_house_obj.Controllers[l_key].DriverAPI = l_driver
+            l_pim.DriverAPI = l_driver
             g_pim[l_count] = l_pim
             self.initialize_one_controller(l_driver, l_controller_obj)
             l_count += 1
@@ -525,11 +524,11 @@ class PimTesting(UpbPimAPI): pass
 class API(UpbPimAPI):
 
     def __init__(self):
-        if g_debug > 0:
-            print "UPB_Pim.__init__()"
-        global g_logger, g_queue
+        global g_logger
         g_logger = logging.getLogger('PyHouse.UPB_PIM ')
-        g_logger.info('Initializing.')
+        if g_debug > 0:
+            print "UPB_Pim.API()"
+        global g_queue
         g_queue = Queue.Queue(300)
         g_logger.info('Initialized.')
 

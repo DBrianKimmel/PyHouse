@@ -37,7 +37,7 @@ class SerialData(object):
         self.Timeout = None
         self.XonXoff = False
 
-    def __repr__(self):
+    def __str__(self):
         l_ret = "Serial:: Baud:{0:}, ByteSize:{1:}, Parity:{2:}, StopBits:{3:}; ".format(self.BaudRate, self.ByteSize, self.Parity, self.StopBits)
         return l_ret
 
@@ -48,7 +48,7 @@ class USBData(object):
         self.Product = 0
         self.Vendor = 0
 
-    def __repr__(self):
+    def __str__(self):
         l_ret = "USB:: Vendor:{0:#04X}, Product:{1:#04X}; ".format(self.Vendor, self.Product)
         return l_ret
 
@@ -59,7 +59,7 @@ class  EthernetData(object):
         self.PortNumber = 0
         self.Protocol = 'TCP'
 
-    def __repr__(self):
+    def __str__(self):
         l_ret = "Ethernet:: port:{0:}, Protocol:{1:#04X}; ".format(self.PortNumber, self.Protocol)
         return l_ret
 

@@ -25,8 +25,8 @@ class Test(unittest.TestCase):
         self.assertNotEqual(l_api, None)
 
     def test_002_API_Start(self):
-        self.m_controller_obj.Driver = Driver_Serial.API()
-        self.m_controller_obj.Driver.Start(self.m_controller_obj)
+        self.m_controller_obj.DriverAPI = Driver_Serial.API()
+        self.m_controller_obj.DriverAPI.Start(self.m_controller_obj)
         print self.m_controller_obj
 
 # ## END

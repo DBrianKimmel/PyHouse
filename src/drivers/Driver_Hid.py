@@ -70,7 +70,7 @@ class UsbDeviceData(object):
         self.hid_device = False
         self.message = ''
 
-    def __repr__(self):
+    def __str__(self):
         l_ret = "Driver_USB.UsbDeviceData: Name: {0:}, Vendor: {1:#04x}, Product: {2:#04x}, Device: {3:}, Port: {4:}".format(self.Name, self.Vendor, self.Product, self.Device, self.Port)
         return l_ret
 

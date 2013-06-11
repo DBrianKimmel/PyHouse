@@ -39,6 +39,11 @@ class GuiData(object):
         l_ret += ", ModuleMenuFrame:{0:}, DialogWindow:{1:}".format(self.ModuleMenuFrame, self.DialogWindow)
         return l_ret
 
+    def __str__(self):
+        l_ret = "GuiData:: RootWindow:{0:}, MainMenuFrame:{1:}, HouseSelectFrame:{2:}".format(self.RootWindow, self.MainMenuFrame, self.HouseSelectFrame)
+        l_ret += ", ModuleMenuFrame:{0:}, DialogWindow:{1:}".format(self.ModuleMenuFrame, self.DialogWindow)
+        return l_ret
+
 
 class GuiUtils(object):
 

@@ -666,9 +666,9 @@ class PlmDriverProtocol(DecodeResponses):
             l_command = self.m_controller_obj.Queue.get(False)
         except Queue.Empty:
             return
-        if self.m_controller_obj.Driver != None:
+        if self.m_controller_obj.DriverAPI != None:
             self.m_controller_obj.Command1 = l_command
-            self.m_controller_obj.Driver.write_device(l_command)
+            self.m_controller_obj.DriverAPI.write_device(l_command)
             if g_debug >= 5:
                 print "Insteon_PLM.dequeue_and_send() to {0:}, Message: {1:}".format(self.m_controller_obj.Name, PrintBytes(l_command))
                 g_logger.debug("Send to controller:{0:}, Message:{1:}".format(self.m_controller_obj.Name, PrintBytes(l_command)))
@@ -677,10 +677,10 @@ class PlmDriverProtocol(DecodeResponses):
         """Check the driver to see if the controller returned any messages.
         """
         callLater(RECEIVE_TIMEOUT, self.receive_loop)
-        if self.m_controller_obj.Driver != None:
+        if self.m_controller_obj.DriverAPI != None:
             if g_debug >= 9:
                 print "Insteon_PLM.receive_loop()", self.m_controller_obj.Name
-            l_msg = self.m_controller_obj.Driver.fetch_read_data(self.m_controller_obj)
+            l_msg = self.m_controller_obj.DriverAPI.fetch_read_data(self.m_controller_obj)
             self.m_controller_obj.Message += l_msg
             if len(self.m_controller_obj.Message) < 2:
                 return
@@ -1015,7 +1015,7 @@ class LightHandlerAPI(InsteonPlmAPI):
             # l_driver = Driver_USB_0403_6001.API()
             from drivers import Driver_USB
             l_driver = Driver_USB.API()
-        p_controller_obj.Driver = l_driver
+        p_controller_obj.DriverAPI = l_driver
         l_ret = l_driver.Start(p_controller_obj)
         if g_debug >= 2:
             print "Insteon_PLM.start_controller_driver() - Just started a driver.  Name: {0:}".format(p_controller_obj.Name), l_ret
@@ -1024,8 +1024,8 @@ class LightHandlerAPI(InsteonPlmAPI):
     def stop_controller_driver(self, p_controller_obj):
         if g_debug >= 2:
             print "Insteon_PLM.stop__controller()"
-        if p_controller_obj.Driver != None:
-            p_controller_obj.Driver.Stop()
+        if p_controller_obj.DriverAPI != None:
+            p_controller_obj.DriverAPI.Stop()
 
     def set_plm_mode(self, p_controller_obj):
         """Set the PLM to a mode

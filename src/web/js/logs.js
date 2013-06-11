@@ -9,9 +9,9 @@
 /* 
  * Create a new custom window with existing data for changing a slot.
  */
-function createChangeLogsWindow(p_debug, p_error) {    
-	var divId = createNewWindow('Logs', 250, 300, 200, 250);  // width, height, start x, start y
-	var content = fillChangeLogsWindow(divId, p_debug, p_error);
+function createChangeLogsWindow(p_json) {    
+	var divId = createNewWindow('Logs', 350, 300, 200, 250);  // width, height, start x, start y
+	var content = fillChangeLogsWindow(divId, p_json);
 	document.getElementById('good_windowContent' + divId).innerHTML = content;
 }
 
@@ -19,12 +19,13 @@ function createChangeLogsWindow(p_debug, p_error) {
  * Populate a window to allow changes to be made.
  * Slider for level of light to set 0-100
  */
-function fillChangeLogsWindow(p_divid, p_debug, p_error) {
-	// TODO check the correct radio button
+function fillChangeLogsWindow(p_divid, p_json) {
+	alert('Update Logs ' + p_json)
+	var l_obj = JSON.parse(p_json);
 	ret = 		'<br />\n';
 	ret = ret + '<form method="post" action="_submit!!post" enctype="multipart/form-data">\n';
 	ret = ret +	'  Debug:';
-	ret = ret +	'    <input type = "text" name = "Debug" value = "' + p_debug + '" /><br />\n';
+	ret = ret +	'    <input type = "text" name = "Debug" value = "' + l_obj.Debug + '" /><br />\n';
 	ret = ret +	'  Error:';
 	ret = ret +	'    <input type = "text" name = "Error" value = "' + p_error + '" /><br />\n';
 	ret = ret +	'  <br />\n';

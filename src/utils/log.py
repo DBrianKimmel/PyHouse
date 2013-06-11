@@ -25,9 +25,23 @@ g_debug = 0
 
 
 class LogData(object):
+
     def __init__(self):
         self.Debug = None
         self.Error = None
+
+    def __str__(self):
+        l_ret = "Logs:: "
+        l_ret += "Debug:{0:}, ".format(self.Debug)
+        l_ret += "Error:{0:}, ".format(self.Error)
+        return l_ret
+
+    def __repr__(self):
+        l_ret = "{"
+        l_ret += "'Debug':'{0:}', ".format(self.Debug)
+        l_ret += "'Error':'{0:}'".format(self.Error)
+        l_ret += "}"
+        return l_ret
 
 
 class LoggingUtility(object):
@@ -89,7 +103,6 @@ class API(LoggingUtility):
         if g_debug >= 1:
             print "log.API.Start()"
         self.read_xml_config_logfiles(self.m_log_data, p_pyhouse_obj.XmlRoot)
-        # self.m_formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s - %(message)s')
         self.setup_debug_log(self.m_log_data.Debug)
         return self.m_log_data
 

@@ -8,11 +8,11 @@ Created on Jun 3, 2013
 from nevow import loaders
 from nevow import rend
 from nevow import static
+import json
 
 # Import PyMh files and modules.
 from src.web.web_tagdefs import *
 from src.web import web_utils
-from src.web import web_schedule
 from src.web import web_rooms
 
 
@@ -23,14 +23,14 @@ g_debug = 4
 
 g_logger = None
 
-class InternetPage(web_utils.ManualFormMixin):
+class LightsPage(web_utils.ManualFormMixin):
     """
     """
     addSlash = True
     docFactory = loaders.stan(
         T_html["\n",
             T_head["\n",
-                T_title['PyHouse - House Page'],
+                T_title['PyHouse - Lights Page'],
                 T_link(rel = 'stylesheet', type = 'text/css', href = U_R_child('mainpage.css'))["\n"],
                 T_script(type = 'text/javascript', src = 'ajax.js')["\n"],
                 T_script(type = 'text/javascript', src = 'floating_window.js'),
@@ -62,42 +62,36 @@ class InternetPage(web_utils.ManualFormMixin):
             ]  # html
         )  # stan
 
-    def __init__(self, name, p_pyhouses_obj, p_index):
+    def __init__(self, name, p_house_obj):
         self.name = name
-        self.m_pyhouse_obj = p_pyhouses_obj.HousesData[p_index]
-        self.m_index = p_index
+        self.m_house_obj = p_house_obj
         if g_debug >= 1:
             print "web_housemenu.HouseMenuPage.__init__()"
         if g_debug >= 5:
-            print self.m_pyhouse_obj
+            print self.m_house_obj
         rend.Page.__init__(self)
 
-        setattr(HouseMenuPage, 'child_mainpage.css', static.File('web/css/mainpage.css'))
-
-    def form_post_location(self, **kwargs):
-        if g_debug >= 2:
-            print "form_post_location()", kwargs
-        return LocationPage(self.name, self.m_pyhouse_obj)
+        setattr(LightsPage, 'child_mainpage.css', static.File('web/css/mainpage.css'))
 
     def form_post_rooms(self, **kwargs):
         if g_debug >= 2:
             print "form_post_rooms()", kwargs
-        return web_rooms.RoomsPage(self.name, self.m_pyhouse_obj)
+        return web_rooms.RoomsPage(self.name, self.m_house_obj)
 
     def form_post_lights(self, **kwargs):
         if g_debug >= 2:
             print "form_post_lights", kwargs
-        return HouseMenuPage(self.name, self.m_pyhouse_obj)
+        return HouseMenuPage(self.name, self.m_house_obj)
 
     def form_post_schedules(self, **kwargs):
         if g_debug >= 2:
             print "form_post_schedules()", kwargs
-        return web_schedule.SchedulePage(self.name, self.m_pyhouse_obj)
+        return web_schedule.SchedulePage(self.name, self.m_house_obj)
 
 
     def form_post_house(self, **kwargs):
         if g_debug >= 2:
             print "form_post_house (HousePage)", kwargs
-        return HouseMenuPage(self.name, self.m_pyhouse_obj)
+        return HouseMenuPage(self.name, self.m_house_obj)
 
 # ## END DBK
