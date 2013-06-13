@@ -6,6 +6,9 @@ PyHouse is a home automation tool.
 
 It is written to become a daemon on a Linux computer.
 
+It is now (2008-06-06) running in a raspberry pi model B.  It has been turning
+lights on and off reliably for several weeks on this new platform.
+
 
 Lighting
 --------
