@@ -10,7 +10,7 @@
  * This function creates a new floating window dynamically (Add).
  */
 function createNewSceneWindow() {    
-	var divId = createNewWindow('', 300, 250, 1200, 50);
+	var divId = createNewWindow(137, 300, 250, 1200, 50);
 	var content = fillNewSceneWindow(divId);
 	document.getElementById('good_windowContent' + divId).innerHTML = content;
 	}
@@ -19,7 +19,7 @@ function createNewSceneWindow() {
  * This function creates a new floating window dynamically (Change).
  */
 function createChangeSceneWindow(p_name, p_level, p_rate) {    
-	var divId = createNewWindow(p_name, 250, 120, 1200, 50);
+	var divId = createNewWindow(137, 250, 120, 1200, 50);
 	var content = fillChangeSceneWindow(divId, p_name, p_level, p_rate);
 	document.getElementById('good_windowContent' + divId).innerHTML = content;
 	}

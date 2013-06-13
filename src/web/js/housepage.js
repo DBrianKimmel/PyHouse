@@ -11,7 +11,7 @@
  * This function creates a new floating window dynamically (Add).
  */
 function createNewHouseWindow(p_name) {    
-	var divId = createNewWindow(name, 400, 350, 1200, 50); // width, height, start x, start y
+	var divId = createNewWindow(131, 400, 350, 1200, 50); // width, height, start x, start y
 	var content = fillNewHouseWindow(divId, p_name);
 	document.getElementById('good_windowContent' + divId).innerHTML = content;
 	}
@@ -20,7 +20,7 @@ function createNewHouseWindow(p_name) {
  * This function creates a new floating window dynamically (Change).
  */
 function createChangeHouseWindow(p_name, p_active, p_street, p_city, p_state, p_zip, p_latitude, p_longitude, p_timezone, p_dst) {    
-	var divId = createNewWindow(p_name, 400, 350, 1200, 50);
+	var divId = createNewWindow(131, 400, 350, 1200, 50);
 	var content = fillChangeHouseWindow(divId, p_name, p_active, p_street, p_city, p_state, p_zip, p_latitude, p_longitude, p_timezone, p_dst);
 	document.getElementById('good_windowContent' + divId).innerHTML = content;
 	}

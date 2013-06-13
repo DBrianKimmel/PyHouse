@@ -11,7 +11,7 @@
  * This function creates a new floating window dynamically (Add).
  */
 function createNewWebWindow(p_name) {    
-	var divId = createNewWindow(name, 400, 350, 1200, 50); // width, height, start x, start y
+	var divId = createNewWindow(144, 400, 350, 1200, 50); // width, height, start x, start y
 	var content = fillNewWebWindow(divId, p_name);
 	document.getElementById('good_windowContent' + divId).innerHTML = content;
 	}
@@ -20,7 +20,7 @@ function createNewWebWindow(p_name) {
  * This function creates a new floating window dynamically (Change).
  */
 function createChangeWebWindow(p_name, p_port) {    
-	var divId = createNewWindow(p_name, 400, 350, 1200, 50);
+	var divId = createNewWindow(144, 400, 350, 1200, 50);
 	var content = fillChangeWebWindow(divId, p_port);
 	document.getElementById('good_windowContent' + divId).innerHTML = content;
 	}

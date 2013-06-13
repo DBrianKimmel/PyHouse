@@ -132,12 +132,12 @@ class RootPage(web_utils.ManualFormMixin):
         """Quit the GUI - this also means quitting all of PyHouse !!
         """
         config_xml.WriteConfig()
-        self.m_pyhouses_obj.Api.Quit()
+        self.m_pyhouses_obj.API.Quit()
 
     def form_post_reload(self, *args, **kwargs):
         if g_debug >= 2:
             print "web_rootmenu.form_post_reload() - args={0:}, kwargs={1:}".format(args, kwargs)
-        self.m_pyhouses_obj.Api.Reload(self.m_pyhouses_obj)
+        self.m_pyhouses_obj.API.Reload(self.m_pyhouses_obj)
         return RootPage('Root', self.m_pyhouses_obj)
 
 # ## END DBK

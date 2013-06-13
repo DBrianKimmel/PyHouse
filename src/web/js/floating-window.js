@@ -463,7 +463,7 @@ function addContentFromUrl(url,windowId) {
 
 /* This function illustrates how you can create a new custom window dynamically */
 function XXXcustomFunctionCreateWindow(urlToExternalFile, width, height, left, top) {		
-	var divId = createNewWindow(width, height, left, top);
+	var divId = createNewWindow(111, width, height, left, top);
 	document.getElementById('good_windowContent' + divId).innerHTML = 'Content of new window';
 	if (urlToExternalFile)
 		addContentFromUrl(urlToExternalFile, divId);	// Add content from external file

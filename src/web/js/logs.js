@@ -10,7 +10,7 @@
  * Create a new custom window with existing data for changing a slot.
  */
 function createChangeLogsWindow(p_json) {    
-	var divId = createNewWindow('Logs', 350, 300, 200, 250);  // width, height, start x, start y
+	var divId = createNewWindow(155, 350, 300, 200, 250);  // width, height, start x, start y
 	var content = fillChangeLogsWindow(divId, p_json);
 	document.getElementById('good_windowContent' + divId).innerHTML = content;
 }

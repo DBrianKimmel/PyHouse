@@ -10,7 +10,7 @@
  * Create a new window with all data blank for adding a slot
  */
 function createNewRoomWindow(p_name, p_key) {
-	var divId = createNewWindow(127, 250, 300, 1200, 50);
+	var divId = createNewWindow(133, 250, 300, 1200, 50);
 	var content = fillNewRoomWindow(divId, p_name, p_key, 2,3,4,5);
 	document.getElementById('good_windowContent' + divId).innerHTML = content;	
 }
@@ -19,7 +19,7 @@ function createNewRoomWindow(p_name, p_key) {
  * Create a new custom window with existing data for changing a slot.
  */
 function createChangeRoomWindow(p_name, p_key, p_active, p_size, p_corner, p_comment) {    
-	var divId = createNewWindow(p_key, 250, 300, 1200, 50);
+	var divId = createNewWindow(133, 250, 300, 1200, 50);
 	var content = fillChangeRoomWindow(divId, p_name, p_key, p_active, p_size, p_corner, p_comment);
 	document.getElementById('good_windowContent' + divId).innerHTML = content;
 }

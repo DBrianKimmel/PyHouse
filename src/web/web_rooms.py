@@ -48,7 +48,7 @@ class RoomsPage(web_utils.ManualFormMixin):
         self.name = name
         self.m_house_obj = p_house_obj
         if g_debug >= 1:
-            print "web_rooms.RoomsPage.__init__()"
+            print "web_rooms.RoomsPage()"
         if g_debug >= 5:
             print "web_rooms.RoomsPage()", self.m_house_obj
         rend.Page.__init__(self)

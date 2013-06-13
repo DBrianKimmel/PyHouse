@@ -10,7 +10,7 @@
  * This function creates a new floating window dynamically (Add).
  */
 function createNewHouseWindow(p_name) {    
-	var divId = createNewWindow(name, 400, 350, 200, 50);  // width, height, start x, start y
+	var divId = createNewWindow(159, 400, 350, 200, 50);  // width, height, start x, start y
 	var content = fillNewHouseWindow(divId, p_name);
 	document.getElementById('good_windowContent' + divId).innerHTML = content;
 	}

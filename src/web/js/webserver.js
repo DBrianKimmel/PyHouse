@@ -10,7 +10,7 @@
  * Create a new custom window with existing data for changing a slot.
  */
 function createChangeWebServerWindow(p_port) {    
-	var divId = createNewWindow('WebServer', 250, 300, 200, 250);  // width, height, start x, start y
+	var divId = createNewWindow(143, 250, 300, 200, 250);  // width, height, start x, start y
 	var content = fillChangeWebServerWindow(divId, p_port);
 	document.getElementById('good_windowContent' + divId).innerHTML = content;
 }

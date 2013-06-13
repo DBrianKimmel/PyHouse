@@ -15,11 +15,10 @@ from src.web.web_tagdefs import *
 from src.web import web_utils
 
 
-g_debug = 4
+g_debug = 8
 # 0 = off
 # 1 = major routine entry
 # 2 = Basic data
-
 
 
 class ControllersPage(web_utils.ManualFormMixin):
@@ -33,19 +32,19 @@ class ControllersPage(web_utils.ManualFormMixin):
                 T_link(rel = 'stylesheet', type = 'text/css', href = U_R_child('mainpage.css'))["\n"],
                 T_script(type = 'text/javascript', src = 'ajax.js')["\n"],
                 T_script(type = 'text/javascript', src = 'floating_window.js'),
-                T_script(type = 'text/javascript', src = 'lightpage.js')["\n"],
+                T_script(type = 'text/javascript', src = 'controllerspage.js')["\n"],
                 ],
             T_body[
                 T_h1['PyHouse Controllers'],
                 T_p['Select the controller:'],
                 T_table(style = 'width: 100%;', border = 0)["\n",
-                    T_invisible(data = T_directive('controllerlist'), render = T_directive('controllerlist'))
+                    T_invisible(data = T_directive('controllerslist'), render = T_directive('controllerslist'))
                     ],
                 T_form(action = U_H_child('_submit!!post'),
                        enctype = "multipart/form-data",
                        method = 'post'
                       )["\n",
-                    T_input(type = 'button', onclick = "createNewLightWindow('1234')", value = 'Add Controller')
+                    T_input(type = 'button', onclick = "createNewControllerWindow('1234')", value = 'Add Controller')
                     ]  # form
                 ]  # body
             ]  # html
@@ -54,12 +53,14 @@ class ControllersPage(web_utils.ManualFormMixin):
     def __init__(self, name, p_house_obj):
         self.name = name
         self.m_house_obj = p_house_obj
+        if g_debug >= 1:
+            print "web_controllers.ControllersPage()"
         rend.Page.__init__(self)
         setattr(ControllersPage, 'child_lightpage.css', static.File('web/css/lightpage.css'))
         setattr(ControllersPage, 'child_mainpage.css', static.File('web/css/mainpage.css'))
         setattr(ControllersPage, 'child_ajax.js', static.File('web/js/ajax.js'))
         setattr(ControllersPage, 'child_floating_window.js', static.File('web/js/floating-window.js'))
-        setattr(ControllersPage, 'child_lightpage.js', static.File('web/js/lightpage.js'))
+        setattr(ControllersPage, 'child_controllerspage.js', static.File('web/js/controllerspage.js'))
         #------------------------------------
         setattr(ControllersPage, 'child_bottomRight.gif', static.File('web/images/bottom_right.gif'))
         setattr(ControllersPage, 'child_close.gif', static.File('web/images/close.gif'))
@@ -69,33 +70,38 @@ class ControllersPage(web_utils.ManualFormMixin):
         setattr(ControllersPage, 'child_topRight.gif', static.File('web/images/top_right.gif'))
         setattr(ControllersPage, 'child_handle.horizontal.png', static.File('web/images/handle.horizontal.png'))
 
-    def data_controllerlist(self, _context, _data):
+    def data_controllerslist(self, _context, _data):
         """Build up a list of controllers.
         """
+        if g_debug >= 1:
+            print "web_controllers.data_controllerslist()"
         l_controller = {}
         for l_key, l_obj in self.m_house_obj.Controllers.iteritems():
             l_controller[l_key] = l_obj
         return l_controller
 
-    def render_controllerlist(self, _context, links):
+    def render_controllerslist(self, _context, links):
         """Place buttons for each light on the page.
         """
+        if g_debug >= 1:
+            print "web_controllers.render_controllerslist()"
         l_ret = []
         l_cnt = 0
         for l_key, l_obj in sorted(links.iteritems()):
             l_json = json.dumps(repr(l_obj))
             if g_debug >= 4:
                 print "    json = ", l_json
+                print "    vars = ", vars(l_obj)
             if l_cnt % 2 == 0:
                 l_ret.append(T_tr)
             l_ret.append(T_td)
             l_ret.append(T_input(type = 'submit', value = l_key, name = BUTTON,
-                    onclick = "createChangeLightWindow('{0:}')".format(l_json))
+                    onclick = "createChangeControllerWindow({0:})".format(l_json))
                          [ l_obj.Name])
             l_cnt += 1
         return l_ret
 
-    def _store_light(self, **kwargs):
+    def _store_controller(self, **kwargs):
         """Send the updated lighting info back to the lighting module.
         Update the lighting page with the new information.
         """
