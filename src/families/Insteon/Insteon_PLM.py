@@ -26,7 +26,6 @@ from src.lights.lighting import LightData
 from src.families.Insteon import Insteon_Link
 from src.utils.tools import PrintBytes
 from src.families.Insteon.Insteon_constants import *
-from src.families.Insteon.Insteon_utils import ConvertInsteon
 
 g_debug = 0
 # 0 = off
@@ -60,7 +59,7 @@ FLAG_HOPS_LEFT = 0x0C
 FLAG_MAX_HOPS = 0x03
 
 
-class InsteonPlmUtility(ConvertInsteon):
+class InsteonPlmUtility(object):
 
     def _get_message_length(self, p_message):
         """Get the documented length that the message is supposed to be.

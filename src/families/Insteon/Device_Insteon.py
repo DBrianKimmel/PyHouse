@@ -32,19 +32,19 @@ g_debug = 0
 g_logger = None
 
 
-class CoreData (object):
+class InsteonData (object):
     """This class contains the Insteon specific information about the various devices
     controlled by PyHouse.
     """
 
     def __init__(self):
-        self.InsteonAddress = 0
+        self.InsteonAddress = 0  # 3 bytes
         self.Controller = False
-        self.DevCat = 0
+        self.DevCat = 0  # DevCat and SubCat (2 bytes)
         self.Family = 'Insteon'
         self.GroupList = ''
         self.GroupNumber = 0
-        self.Master = False
+        self.Master = False  # False is Slave
         self.ProductKey = ''
         self.Responder = False
         self.Command1 = 0
@@ -56,8 +56,21 @@ class CoreData (object):
         l_str += " Controller:{0:}".format(self.Controller)
         return l_str
 
+    def __repr__(self):
+        l_ret = "{"
+        l_ret += ', '
+        l_ret += '"Interface":"{0:}", '.format(str(self.Interface))
+        l_ret += '"Port":"{0:}"'.format(self.Port)
+        l_ret += '"InsteonAddress":"{0:}"'.format(self.InsteonAddress)
+        l_ret += '"DevCat":"{0:}"'.format(self.DevCat)
+        l_ret += '"ProductKey":"{0:}"'.format(self.ProductKey)
+        l_ret += '"GroupList":"{0:}"'.format(self.GroupList)
+        l_ret += '"GroupNumber":"{0:}"'.format(self.GroupNumber)
+        l_ret += "}"
+        return l_ret
 
-class CoreAPI(Insteon_utils.ConvertInsteon):
+
+class CoreAPI(object):
 
     def extract_device_xml(self, p_entry_xml, p_device_obj):
         """
@@ -65,7 +78,7 @@ class CoreAPI(Insteon_utils.ConvertInsteon):
         @param p_house: is the text name of the House.
         @return: a dict of the entry to be attached to a house object.
         """
-        p_device_obj.InsteonAddress = self.dotted_hex2int(p_entry_xml.findtext('Address'))
+        p_device_obj.InsteonAddress = Insteon_utils.dotted_hex2int(p_entry_xml.findtext('Address'))
         p_device_obj.Controller = p_entry_xml.findtext('Controller')
         p_device_obj.DevCat = p_entry_xml.findtext('DevCat')
         p_device_obj.GroupList = p_entry_xml.findtext('GroupList')
@@ -78,7 +91,7 @@ class CoreAPI(Insteon_utils.ConvertInsteon):
     def insert_device_xml(self, p_entry_xml, p_device_obj):
         if g_debug >= 3:
             print "Device_Insteon.insert_device_xml()", p_device_obj
-        ET.SubElement(p_entry_xml, 'Address').text = self.int2dotted_hex(p_device_obj.InsteonAddress)
+        ET.SubElement(p_entry_xml, 'Address').text = Insteon_utils.int2dotted_hex(p_device_obj.InsteonAddress)
         ET.SubElement(p_entry_xml, 'Controller').text = self.put_bool(p_device_obj.Controller)
         ET.SubElement(p_entry_xml, 'DevCat').text = str(p_device_obj.DevCat)
         ET.SubElement(p_entry_xml, 'GroupList').text = str(p_device_obj.GroupList)
@@ -87,7 +100,7 @@ class CoreAPI(Insteon_utils.ConvertInsteon):
         ET.SubElement(p_entry_xml, 'ProductKey').text = str(p_device_obj.ProductKey)
         ET.SubElement(p_entry_xml, 'Responder').text = self.put_bool(p_device_obj.Responder)
 
-class ButtonData(lighting.ButtonData, CoreData):
+class ButtonData(lighting.ButtonData):
 
     def __init__(self):
         super(ButtonData, self).__init__()
@@ -98,10 +111,10 @@ class ButtonData(lighting.ButtonData, CoreData):
         return l_str
 
 
-class ButtonAPI(lighting.ButtonAPI, CoreAPI): pass
+class ButtonAPI(lighting.ButtonAPI): pass
 
 
-class ControllerData(lighting.ControllerData, CoreData):
+class ControllerData(lighting.ControllerData):
 
     def __init__(self):
         super(ControllerData, self).__init__()
@@ -112,10 +125,10 @@ class ControllerData(lighting.ControllerData, CoreData):
         return l_str
 
 
-class ControllerAPI(lighting.ControllerAPI, CoreAPI): pass
+class ControllerAPI(lighting.ControllerAPI): pass
 
 
-class LightData(lighting.LightData, CoreData):
+class LightData(lighting.LightData):
     """Insteon specific data we wish to export.  Extends the LightData class
     Create a dict of devices.
     Each device will contain a dict of attributes and vales

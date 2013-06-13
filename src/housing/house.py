@@ -82,22 +82,22 @@ class HouseReadWriteConfig(location.ReadWriteConfig, rooms.ReadWriteConfig):
     This is called from the web interface or the GUI when the data has been changed.
     """
 
-    def read_house(self, p_house_obj, p_house_xml):
+    def read_house_xml(self, p_house_obj, p_house_xml):
         """Read house information, location and rooms.
         """
         self.xml_read_common_info(p_house_obj, p_house_xml)
         p_house_obj.Location = self.read_location(p_house_obj, p_house_xml)
         self.read_rooms(p_house_obj, p_house_xml)
         if g_debug >= 2:
-            print "house.read_house() - Loading XML data for House:{0:}".format(p_house_obj.Name)
+            print "house.read_house_xml() - Loading XML data for House:{0:}".format(p_house_obj.Name)
         return p_house_obj
 
-    def write_house(self, p_house_obj):
+    def write_house_xml(self, p_house_obj):
         """Replace the data in the 'Houses' section with the current data.
         """
         l_house_xml = self.xml_create_common_element('House', p_house_obj)
         if g_debug >= 2:
-            print "house.write_house() - Name:{0:}, Key:{1:}".format(p_house_obj.Name, p_house_obj.Key)
+            print "house.write_house_xml() - Name:{0:}, Key:{1:}".format(p_house_obj.Name, p_house_obj.Key)
         return l_house_xml
 
 
@@ -118,7 +118,7 @@ class API(HouseReadWriteConfig):
         """Start processing for all things house.
         May be stopped and then started anew to force reloading info.
         """
-        self.read_house(self.m_house_obj, p_house_xml)
+        self.read_house_xml(self.m_house_obj, p_house_xml)
         if g_debug >= 1:
             print "house.API.Start() - House:{0:}, Active:{1:}, Key:{2:}".format(self.m_house_obj.Name, self.m_house_obj.Active, self.m_house_obj.Key)
         g_logger.info("Starting House {0:}.".format(self.m_house_obj.Name))
@@ -149,7 +149,7 @@ class API(HouseReadWriteConfig):
     def Reload(self, p_house_obj):
         if g_debug >= 1:
             print "house.API.Reload()"
-        l_house_xml = self.write_house(p_house_obj)
+        l_house_xml = self.write_house_xml(p_house_obj)
         l_house_xml.append(self.write_location(p_house_obj.Location))
         l_house_xml.append(self.write_rooms(p_house_obj.Rooms))
         l_house_xml.extend(self.m_house_obj.ScheduleAPI.Stop(l_house_xml, p_house_obj))

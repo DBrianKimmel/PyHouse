@@ -91,15 +91,15 @@ class ScheduleData(object):
         """A dict of the schedule object
         """
         l_ret = "{"
-        l_ret += "'Name':'{0:}', ".format(self.Name)
-        l_ret += "'Key':'{0:}', ".format(self.Key)
-        l_ret += "'Active':'{0:}', ".format(self.Active)
-        l_ret += "'Type':'{0:}', ".format(self.Type)
-        l_ret += "'LightName':'{0:}', ".format(self.LightName)
-        l_ret += "'RoomName':'{0:}', ".format(self.RoomName)
-        l_ret += "'Level':'{0:}', ".format(self.Level)
-        l_ret += "'Rate':'{0:}', ".format(self.Rate)
-        l_ret += "'Time':'{0:}'".format(self.Time)
+        l_ret += '"Name":"{0:}", '.format(self.Name)
+        l_ret += '"Key":"{0:}", '.format(self.Key)
+        l_ret += '"Active":"{0:}", '.format(self.Active)
+        l_ret += '"Type":"{0:}", '.format(self.Type)
+        l_ret += '"LightName":"{0:}", '.format(self.LightName)
+        l_ret += '"RoomName":"{0:}", '.format(self.RoomName)
+        l_ret += '"Level":"{0:}", '.format(self.Level)
+        l_ret += '"Rate":"{0:}", '.format(self.Rate)
+        l_ret += '"Time":"{0:}"'.format(self.Time)
         l_ret += "}"
         return l_ret
 
@@ -377,7 +377,7 @@ class API(ScheduleUtility, ScheduleXML):
         """
         self.m_house_obj = p_house_obj
         if g_debug >= 1:
-            print "schedule.API.Start() for House:{0:}".format(p_house_obj.Name)
+            print "schedule.API.Start() - House:{0:}".format(p_house_obj.Name)
         g_logger.info("Starting House {0:}.".format(self.m_house_obj.Name))
         self.m_sunrisesunset.Start(p_house_obj)
         self.read_schedules(p_house_obj, p_house_xml)

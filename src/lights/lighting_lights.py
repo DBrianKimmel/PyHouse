@@ -12,7 +12,7 @@
 import xml.etree.ElementTree as ET
 
 # Import PyHouse files
-from src.lights import lighting_tools
+from src.lights import lighting_core
 from src.utils import xml_tools
 
 
@@ -20,7 +20,7 @@ g_debug = 0
 # 0 = off
 
 
-class LightData(lighting_tools.CoreData):
+class LightData(lighting_core.CoreData):
 
     def __init__(self):
         if g_debug >= 2:
@@ -36,7 +36,7 @@ class LightData(lighting_tools.CoreData):
         return l_str
 
 
-class LightingAPI(lighting_tools.CoreAPI):
+class LightingAPI(lighting_core.CoreAPI):
 
     def read_light_xml(self, p_house_obj, p_house_xml):
         if g_debug >= 2:

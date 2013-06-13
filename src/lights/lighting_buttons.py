@@ -7,7 +7,7 @@
 import xml.etree.ElementTree as ET
 
 # Import PyHouse files
-from src.lights import lighting_tools
+from src.lights import lighting_core
 
 
 g_debug = 0
@@ -16,7 +16,7 @@ g_debug = 0
 # 2 = xml read / write
 
 
-class ButtonData(lighting_tools.CoreData):
+class ButtonData(lighting_core.CoreData):
 
     def __init__(self):
         super(ButtonData, self).__init__()
@@ -26,7 +26,7 @@ class ButtonData(lighting_tools.CoreData):
         l_str = super(ButtonData, self).__str__()
         return l_str
 
-class ButtonsAPI(lighting_tools.CoreAPI):
+class ButtonsAPI(lighting_core.CoreAPI):
     """
     """
 
@@ -45,7 +45,6 @@ class ButtonsAPI(lighting_tools.CoreAPI):
         for l_entry in l_list:
             l_button_obj = ButtonData()
             l_button_obj = self.read_light_common(l_entry, l_button_obj, p_house_obj)
-            # l_button_obj.Key = l_count
             l_dict[l_count] = l_button_obj
             l_count += 1
         p_house_obj.Buttons = l_dict

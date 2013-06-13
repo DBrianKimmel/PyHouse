@@ -8,19 +8,19 @@
 import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
-from src.lights import lighting_tools
+from src.lights import lighting_core
 from src.utils.tools import PrintBytes
 from src.drivers import interface
 
 
-g_debug = 0
+g_debug = 2
 # 0 = off
 # 1 = major routine entry
 # 2 = controller summary information
 # 3 = controller detail information
 
 
-class ControllerData(lighting_tools.CoreData):
+class ControllerData(lighting_core.CoreData):
     """This data is common to all controllers.
 
     There is also interface information that controllers need.
@@ -48,8 +48,17 @@ class ControllerData(lighting_tools.CoreData):
         l_ret += "Message:{0:} ".format(PrintBytes(self.Message))
         return l_ret
 
+    def __repr__(self):
+        l_ret = "{"
+        l_ret += super(ControllerData, self).__repr__()  # The core data
+        l_ret += ', '
+        l_ret += '"Interface":"{0:}", '.format(str(self.Interface))
+        l_ret += '"Port":"{0:}"'.format(self.Port)
+        l_ret += "}"
+        return l_ret
 
-class ControllersAPI(lighting_tools.CoreAPI):
+
+class ControllersAPI(lighting_core.CoreAPI):
 
     def __init__(self):
         super(ControllersAPI, self).__init__()

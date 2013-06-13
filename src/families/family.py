@@ -12,7 +12,7 @@ import importlib
 from src.families import VALID_FAMILIES
 
 
-g_debug = 0
+g_debug = 3
 # 0 = off
 # 1 = major routine entry
 
@@ -25,7 +25,7 @@ class FamilyData(object):
 
     def __init__(self):
         self.Active = False
-        self.Api = None
+        self.API = None
         self.ModuleName = ''
         self.Key = 0
         self.ModuleRef = ''
@@ -37,10 +37,10 @@ class FamilyData(object):
         l_ret += "Name:{0:}, ".format(self.Name)
         l_ret += "Key:{0:}, ".format(self.Key)
         l_ret += "Active:{0:}, ".format(self.Active)
-        l_ret += "Package:{0:}, ".format(self.PackageName)
-        l_ret += "Module:{0:}, ".format(self.ModuleName)
-        l_ret += "Ref:{0:}, ".format(self.ModuleRef)
-        l_ret += "API:{0:}".format(self.Api)
+        l_ret += "PackageName:{0:}, ".format(self.PackageName)
+        l_ret += "ModuleName:{0:}, ".format(self.ModuleName)
+        l_ret += "ModuleRef:{0:}, ".format(self.ModuleRef)
+        l_ret += "API:{0:}".format(self.API)
         return l_ret
 
 
@@ -49,13 +49,16 @@ class LightingUtility(FamilyData):
     """
 
     def build_lighting_family_info(self, p_house_obj):
+        """NOTE!
+        Any errors in the imported modules (or sub-modules) will cause the import to FAIL!
+        """
         l_family_data = {}
         l_count = 0
         for l_family in VALID_FAMILIES:
             if g_debug >= 2:
                 print "family.build_lighting_family_info() - House:{0:}, Name:{1:}".format(p_house_obj.Name, l_family)
             l_family_obj = FamilyData()
-            l_family_obj.Active = False
+            l_family_obj.Active = True
             l_family_obj.Name = l_family
             l_family_obj.Key = l_count
             l_family_obj.PackageName = 'src.families.' + l_family
@@ -66,13 +69,15 @@ class LightingUtility(FamilyData):
                 if g_debug >= 1:
                     print "    family.build_lighting_family_info() - ERROR - Cannot import module {0:}".format(l_family_obj.ModuleName)
                 l_module = None
+                g_logger.error("Cannot import - Module:{0:}, Package:{1:}.".format(l_family_obj.ModuleName, l_family_obj.PackageName))
             l_family_obj.ModuleRef = l_module
             try:
-                l_family_obj.Api = l_module.API(p_house_obj)
+                l_family_obj.API = l_module.API(p_house_obj)
             except AttributeError:
                 if g_debug >= 1:
                     print "    family.build_lighting_family_info() - ERROR - NO API"
-                l_family_obj.Api = None
+                l_family_obj.API = None
+                g_logger.error("Cannot get API - Module:{0:}, House:{1:}.".format(l_module, p_house_obj.Name))
             if g_debug >= 2:
                 print "   from {0:} import {1:}".format(l_family_obj.PackageName, l_family_obj.ModuleName)
                 print "   l_family_data  Key:{0:} -".format(l_count), l_family_obj
@@ -85,19 +90,19 @@ class LightingUtility(FamilyData):
         Runs Device_<family>.API.Start()
         """
         if g_debug >= 2:
-            print "family.start_lighting_families()"
+            print "family.start_lighting_families()", p_house_obj.FamilyData
         g_logger.info("Starting lighting families.")
         for l_family_obj in p_house_obj.FamilyData.itervalues():
             if g_debug >= 3:
                 print "family.start_lighting_families() - Starting {0:}".format(l_family_obj.Name), l_family_obj
-            l_family_obj.Api.Start(p_house_obj)  # will run Device_<family>.API.Start()
+            l_family_obj.API.Start(p_house_obj)  # will run Device_<family>.API.Start()
             g_logger.info("Started lighting family {0:}.".format(l_family_obj.Name))
 
     def stop_lighting_families(self, p_xml, p_house_obj):
         if g_debug >= 2:
             print "family.stop_lighting_families()"
         for l_family_obj in p_house_obj.FamilyData.itervalues():
-            l_family_obj.Api.Stop(p_xml)
+            l_family_obj.API.Stop(p_xml)
 
 # ## END DBK
 

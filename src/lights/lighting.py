@@ -46,7 +46,7 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI):
         if g_debug >= 2:
             print "lighting.test_lighting_families()"
         for l_family_obj in self.m_family_data.itervalues():
-            l_family_obj.Api.SpecialTest()
+            l_family_obj.API.SpecialTest()
 
     def change_light_setting(self, p_house_obj, p_light_obj, p_level, p_rate = 0):
         """Called from several places (schedle, Gui, Web etc.) to change a light level.
@@ -69,7 +69,7 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI):
         for l_family_obj in p_house_obj.FamilyData.itervalues():
             if l_family_obj.Name != p_light_obj.Family:
                 continue
-            l_family_obj.Api.change_light_setting(p_light_obj, p_level, p_house_obj)
+            l_family_obj.API.change_light_setting(p_light_obj, p_level, p_house_obj)
 
 
 class API(LightingUtility):

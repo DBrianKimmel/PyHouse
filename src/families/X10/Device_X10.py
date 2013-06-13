@@ -25,7 +25,7 @@ class X10LightingData(lighting.LightData):
     def __init__(self):
         lighting.LightData.__init__(self)
         self.set_family("X10")
-        self.Address = 'asdf'
+        self.Address = 'ab'
 
 
 class LightingAPI(lighting.LightingAPI):
@@ -63,9 +63,6 @@ class LightingAPI(lighting.LightingAPI):
                 pass
 
     def change_light_setting(self, p_light_obj, p_level, p_house_obj):
-        pass
-
-    def update_all_lights(self):
         pass
 
     def turn_light_off(self, p_name):

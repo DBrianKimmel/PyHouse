@@ -61,13 +61,13 @@ class PyHouseData(object):
     """
 
     def __init__(self):
-        self.Api = None
+        self.API = None
         self.WebData = None
-        self.WebApi = None
+        self.WebAPI = None
         self.LogsData = None
-        self.LogsApi = None
+        self.LogsAPI = None
         self.HousesData = None
-        self.HousesApi = None
+        self.HousesAPI = None
         self.XmlRoot = None
         self.XmlFileName = ''
 
@@ -204,8 +204,8 @@ class Utils(object):
     def init_log(self):
         self.m_cfg = ConfigFileHandler(self.m_pyhouses_obj)
         self.m_pyhouses_obj.XmlRoot = self.m_cfg.parse_xml()
-        self.m_pyhouses_obj.LogsApi = log.API()
-        self.m_pyhouses_obj.LogsData = self.m_pyhouses_obj.LogsApi.Start(self.m_pyhouses_obj)
+        self.m_pyhouses_obj.LogsAPI = log.API()
+        self.m_pyhouses_obj.LogsData = self.m_pyhouses_obj.LogsAPI.Start(self.m_pyhouses_obj)
 
 
 class API(Utils):
@@ -224,13 +224,13 @@ class API(Utils):
             print "\nPyHouse.API()"
         handle_signals()
         self.m_pyhouses_obj = PyHouseData()
-        self.m_pyhouses_obj.Api = self
+        self.m_pyhouses_obj.API = self
         self.init_log()
         global g_logger
         g_logger = logging.getLogger('PyHouse         ')
         g_logger.info("Initializing.\n")
-        self.m_pyhouses_obj.HousesApi = houses.API()
-        self.m_pyhouses_obj.WebApi = web_server.API()
+        self.m_pyhouses_obj.HousesAPI = houses.API()
+        self.m_pyhouses_obj.WebAPI = web_server.API()
         callWhenRunning(self.Start)
         g_logger.info("Initialized.\n")
         # reactor never returns so must be last - Event loop will now run
@@ -242,8 +242,8 @@ class API(Utils):
         """
         if g_debug >= 1:
             print "PyHouse.API.Start()"
-        self.m_pyhouses_obj.HousesData = self.m_pyhouses_obj.HousesApi.Start(self.m_pyhouses_obj)
-        self.m_pyhouses_obj.WebData = self.m_pyhouses_obj.WebApi.Start(self.m_pyhouses_obj)
+        self.m_pyhouses_obj.HousesData = self.m_pyhouses_obj.HousesAPI.Start(self.m_pyhouses_obj)
+        self.m_pyhouses_obj.WebData = self.m_pyhouses_obj.WebAPI.Start(self.m_pyhouses_obj)
         g_logger.info("Started.\n")
         if g_debug >= 1:
             print "PyHouse all is started and running now.\n"
@@ -253,8 +253,8 @@ class API(Utils):
         """
         if g_debug >= 1:
             print "PyHouse.API.Stop()"
-        self.m_pyhouses_obj.HousesApi.Stop()
-        self.m_pyhouses_obj.WebApi.Stop()
+        self.m_pyhouses_obj.HousesAPI.Stop()
+        self.m_pyhouses_obj.WebAPI.Stop()
         g_logger.info("Stopped.\n\n\n")
 
     def Reload(self, p_pyhouses_obj):
@@ -263,8 +263,8 @@ class API(Utils):
         if g_debug >= 1:
             print "PyHouse.API.Reload()"
         l_root_xml = ET.Element("PyHouse")
-        p_pyhouses_obj.HousesApi.Reload(p_pyhouses_obj)
-        p_pyhouses_obj.WebApi.Reload(p_pyhouses_obj)
+        p_pyhouses_obj.HousesAPI.Reload(p_pyhouses_obj)
+        p_pyhouses_obj.WebAPI.Reload(p_pyhouses_obj)
         self.m_cfg.write_xml_config_file(p_pyhouses_obj)
 
     def Quit(self):
