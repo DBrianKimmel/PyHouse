@@ -41,6 +41,7 @@ class SchedulesPage(web_utils.ManualFormMixin):
                 T_table(style = 'width: 100%;', border = 0)["\n",
                     T_invisible(data = T_directive('schedlist'), render = T_directive('schedlist')),
                     T_invisible(data = T_directive('lightlist'), render = T_directive('lightlist')),
+                    T_invisible(data = T_directive('roomlist'), render = T_directive('roomlist')),
                     ],  # table
                 T_input(type = "button", onclick = "createNewSchedule('1234')", value = "Add Schedule")
                 ]  # body
