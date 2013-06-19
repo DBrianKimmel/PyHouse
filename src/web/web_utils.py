@@ -43,9 +43,9 @@ class WebUtilities(xml_tools.ConfigFile):
     """
     """
 
-    def read_xml_config_web(self, p_web_obj, p_root_xml):
+    def read_web_xml(self, p_web_obj, p_root_xml):
         if g_debug >= 1:
-            print "web_utils.WebUtilities().read_xml_config_web()"
+            print "web_utils.WebUtilities().read_web_xml()"
         if g_debug >= 9:
             print xml_tools.prettify(p_root_xml)
         try:
@@ -53,16 +53,16 @@ class WebUtilities(xml_tools.ConfigFile):
             l_sect.find('WebPort')
         except AttributeError:
             if g_debug >= 1:
-                print "web_utils.read_xml_config_web() - ERROR in finding Web/WebPort, Creating entry", l_sect
+                print "web_utils.read_web_xml() - ERROR in finding Web/WebPort, Creating entry", l_sect
             l_sect = ET.SubElement(p_root_xml, 'Web')
             ET.SubElement(l_sect, 'WebPort').text = '8580'
         p_web_obj.WebPort = self.get_int_element(l_sect, 'WebPort')
         if g_debug >= 4:
-            print "web_utils.read_xml_config_web() - Port:{0:}".format(p_web_obj.WebPort)
+            print "web_utils.read_web_xml() - Port:{0:}".format(p_web_obj.WebPort)
 
-    def write_web(self, p_parent, p_web_obj):
+    def write_web_xml(self, p_parent, p_web_obj):
         if g_debug >= 2:
-            print "web_server.write_web()"
+            print "web_server.write_web_xml()"
         l_sect = self.write_create_empty('Web')
         # l_obj = Web_Data[0]
         ET.SubElement(l_sect, 'WebPort').text = str(WebData.WebPort)

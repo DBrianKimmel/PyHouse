@@ -12,7 +12,7 @@ import importlib
 from src.families import VALID_FAMILIES
 
 
-g_debug = 3
+g_debug = 0
 # 0 = off
 # 1 = major routine entry
 

@@ -21,7 +21,7 @@ function createNewSchedule(p_schedule) {
  */
 function createChangeScheduleWindow(p_json) {    
 	//alert('Create Schedule Window (change)', p_rooms);
-	var divId = createNewWindow(139, 350, 300, 200, 250);  // width, height, start x, start y
+	var divId = createNewWindow(139, 400, 350, 200, 250);  // id, width, height, start x, start y
 	var content = fillChangeScheduleWindow(divId, p_json);
 	document.getElementById('good_windowContent' + divId).innerHTML = content;
 }
@@ -68,7 +68,7 @@ function fillChangeScheduleWindow(p_divid, p_json) {
 	//alert('Fill Schedule Window (change) JSON = ' + p_json);
 	var l_obj = JSON.parse(p_json);
 	// TODO check the correct radio button
-	ret = 		'               Schedule E<br />\n';
+	ret = 		'               Schedule A<br />\n';
 	ret = ret + '<form method="post" action="_submit!!post" enctype="multipart/form-data">\n';
     ret = ret + '  <table width = "100%" >\n';
     ret = ret + '    <tr>\n';
@@ -141,7 +141,7 @@ function showListOptions(p_list, p_index){
 	var l_len = Object.keys(p_list).length;
 	var l_selected = '';
 	Object.keys(p_list);
-	alert('Show list options - list=' + p_list + '\n index=' + p_index + '\n Length = ' + l_len )
+	//alert('Show list options - list=' + p_list + '\n index=' + p_index + '\n Length = ' + l_len )
 	Object.keys(p_list).forEach(function (key) {
 		var l_key = key;
 		var l_text = p_list[key];

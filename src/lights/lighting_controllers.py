@@ -13,7 +13,7 @@ from src.utils.tools import PrintBytes
 from src.drivers import interface
 
 
-g_debug = 2
+g_debug = 0
 # 0 = off
 # 1 = major routine entry
 # 2 = controller summary information

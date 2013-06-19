@@ -41,12 +41,12 @@ from src.utils import tools
 from src.scheduling import sunrisesunset
 
 
-g_debug = 2
+g_debug = 3
 # 0 = off
-# 1 = major routine entry
-# 2 = schedule execution
-# 3 = Minor routines
-# 4 =
+# 1 = log extra info
+# 2 = major routine entry
+# 3 - Config file handling
+# 4 = schedule execution
 # 5 = diagnostics
 # 6
 # 7 = extract time details
@@ -122,14 +122,14 @@ class ScheduleXML(xml_tools.ConfigTools):
                     p_schedule_obj.Name, p_schedule_obj.Active, p_schedule_obj.Key, p_schedule_obj.LightName)
         return p_schedule_obj
 
-    def read_schedules(self, p_house_obj, p_house_xml):
+    def read_schedules_xml(self, p_house_obj, p_house_xml):
         """
         @param p_house_obj: is the text name of the House.
         @param p_house_xml: is the e-tree XML house object
         @return: a dict of the entry to be attached to a house object.
         """
         if g_debug >= 3:
-            print "schedule.read_schedules()"
+            print "schedule.read_schedules_xml()"
         l_count = 0
         l_dict = {}
         l_sect = p_house_xml.find('Schedules')
@@ -143,16 +143,16 @@ class ScheduleXML(xml_tools.ConfigTools):
         except AttributeError:
             pass
         p_house_obj.Schedules = l_dict
-        if g_debug >= 5:
+        if g_debug >= 3:
             print "schedule.read_schedule()  loaded {0:} schedules for {1:}".format(l_count, p_house_obj.Name)
         return l_dict
 
-    def write_schedules(self, p_schedules_obj):
+    def write_schedules_xml(self, p_schedules_obj):
         """Replace all the data in the 'Schedules' section with the current data.
         @param p_parent: is the 'schedules' element
         """
         if g_debug >= 3:
-            print "schedule.write_schedules()"
+            print "schedule.write_schedules_xml()"
         l_count = 0
         l_schedules_xml = ET.Element('Schedules')
         for l_schedule_obj in p_schedules_obj.itervalues():
@@ -166,8 +166,8 @@ class ScheduleXML(xml_tools.ConfigTools):
             ET.SubElement(l_entry, 'Type').text = l_schedule_obj.Type
             l_count += 1
             l_schedules_xml.append(l_entry)
-        if g_debug >= 5:
-            print "schedule.write_schedules() - Wrote {0:} schedules".format(len(l_schedules_xml))
+        if g_debug >= 3:
+            print "schedule.write_schedules_xml() - Wrote {0:} schedules".format(len(l_schedules_xml))
         return l_schedules_xml
 
 
@@ -181,7 +181,7 @@ class ScheduleExecution(ScheduleData):
 
         @param p_slot_list: a list of Slots in the next time schedule to be executed.
         """
-        if g_debug >= 1:
+        if g_debug >= 2:
             print "schedule.execute_schedules()  p_schedule_list {0:}, House:{1:}".format(p_slot_list, self.m_house_obj.Name)
         g_logger.info("About to execute - House:{0:}, Schedule:{1:}".format(self.m_house_obj.Name, p_slot_list))
         for ix in range(len(p_slot_list)):
@@ -192,7 +192,7 @@ class ScheduleExecution(ScheduleData):
             elif l_sched_obj.Type == 'Scene':
                 pass
             l_light_obj = tools.get_light_object(self.m_house_obj, name = l_sched_obj.LightName)
-            if g_debug >= 2:
+            if g_debug >= 4:
                 print "schedule.execute_schedules() ", l_sched_obj
                 print "   on light", l_light_obj
             g_logger.info("Executing schedule Name:{0:}, Light:{1:}, Level:{2:}".format(l_sched_obj.Name, l_sched_obj.LightName, l_sched_obj.Level))
@@ -263,7 +263,8 @@ class ScheduleUtility(ScheduleExecution):
         return l_ret, p_timefield
 
     def _extract_time(self, p_timefield):
-        """parse the schedules timefield.
+        """Parse the schedule's time field.
+
         Convert the schedule time to an actual time of day.
         Sunset and sunrise are converted.
         Arithmetic is performed.
@@ -273,7 +274,7 @@ class ScheduleUtility(ScheduleExecution):
         @return: datetime.time of the time information.  Be careful of date wrapping!
         """
         if g_debug >= 7:
-            print "\nschedule._extract_time() - {0:}".format(p_timefield)
+            print "schedule._extract_time() - {0:}".format(p_timefield)
         l_sub = False
         p_timefield += ' '
         if '-' in p_timefield:
@@ -281,16 +282,13 @@ class ScheduleUtility(ScheduleExecution):
             p_timefield = p_timefield.replace('-', ' ')
         elif '+' in p_timefield:
             p_timefield = p_timefield.replace('+', ' ')
-
         p_timefield = self._substitute(p_timefield)
         l_maintime, p_timefield = self._extract_field(p_timefield)
         l_offsettime, p_timefield = self._extract_field(p_timefield)
-        #
         if l_sub:
             l_td = datetime.timedelta(hours = l_maintime.hour, minutes = l_maintime.minute) - datetime.timedelta(hours = l_offsettime.hour, minutes = l_offsettime.minute)
         else:
             l_td = datetime.timedelta(hours = l_maintime.hour, minutes = l_maintime.minute) + datetime.timedelta(hours = l_offsettime.hour, minutes = l_offsettime.minute)
-        #
         l_timefield = datetime.time(hour = int(l_td.seconds / 3600), minute = int((l_td.seconds % 3600) / 60))
         if g_debug >= 7:
             print "schedule._extract_time({0:}) = {1:}".format(p_timefield, l_timefield)
@@ -306,7 +304,7 @@ class ScheduleUtility(ScheduleExecution):
         Be sure to get the next in a chain of things happening at the same time.
         Establish a list of Names that have equal schedule times
         """
-        if g_debug >= 2:
+        if g_debug >= 4:
             print "schedule.get_next_sched() "
         l_now = datetime.datetime.now()
         l_time_now = datetime.time(l_now.hour, l_now.minute, l_now.second)
@@ -341,7 +339,7 @@ class ScheduleUtility(ScheduleExecution):
                 l_list.append(l_key)
         l_debug_msg = "Schedule - House:{0:}, delaying {1:} seconds until {2:} for list {3:}".format(self.m_house_obj.Name, l_next, l_time_scheduled, l_list)
         g_logger.info("Get_next_schedule complete. {0:}".format(l_debug_msg))
-        if g_debug >= 2:
+        if g_debug >= 4:
             print "schedule.get_next_sched()  {0:}".format(l_debug_msg)
         self.create_timer(l_next, l_list)
 
@@ -359,7 +357,7 @@ class API(ScheduleUtility, ScheduleXML):
         """
         global g_logger
         g_logger = logging.getLogger('PyHouse.Schedule')
-        if g_debug >= 1:
+        if g_debug >= 2:
             print "schedule.API() - House:{0:}".format(p_house_obj.Name)
         g_logger.info("Initializing House:{0:}".format(p_house_obj.Name))
         self.m_house_obj = p_house_obj
@@ -376,11 +374,11 @@ class API(ScheduleUtility, ScheduleXML):
         @param p_house_obj: is a House object for the house being scheduled
         """
         self.m_house_obj = p_house_obj
-        if g_debug >= 1:
+        if g_debug >= 2:
             print "schedule.API.Start() - House:{0:}".format(p_house_obj.Name)
         g_logger.info("Starting House {0:}.".format(self.m_house_obj.Name))
         self.m_sunrisesunset.Start(p_house_obj)
-        self.read_schedules(p_house_obj, p_house_xml)
+        self.read_schedules_xml(p_house_obj, p_house_xml)
         self.m_house_obj.LightingAPI.Start(p_house_obj, p_house_xml)
         self.m_entertainment.Start(p_house_obj, p_house_xml)
         if p_house_obj.Active:
@@ -390,21 +388,21 @@ class API(ScheduleUtility, ScheduleXML):
     def Stop(self, p_xml, p_house_obj):
         """Stop everything under me and build xml to be appended to a house xml.
         """
-        if g_debug >= 1:
+        if g_debug >= 2:
             print "schedule.API.Stop() - House:{0:}".format(self.m_house_obj.Name)
         g_logger.info("Stopping schedule for house:{0:}.".format(self.m_house_obj.Name))
-        l_schedules_xml = self.write_schedules(self.m_house_obj.Schedules)
+        l_schedules_xml = self.write_schedules_xml(self.m_house_obj.Schedules)
         l_lighting_xml, l_controllers_xml, l_buttons_xml = self.m_house_obj.LightingAPI.Stop(p_xml, p_house_obj)
         l_entertainment_xml = self.m_entertainment.Stop()
-        if g_debug >= 1:
+        if g_debug >= 2:
             print "schedule.API.Stop() - House:{0:}, {1:}".format(self.m_house_obj.Name, len(p_xml))
         g_logger.info("Stopped.\n")
         return l_schedules_xml, l_lighting_xml, l_buttons_xml, l_controllers_xml, l_entertainment_xml
 
     def Reload(self):
-        if g_debug >= 1:
+        if g_debug >= 2:
             print "schedule.API.Reload() - House:{0:}".format(self.m_house_obj.Name)
-        l_schedules_xml = self.write_schedules(self.m_house_obj.Schedules)
+        l_schedules_xml = self.write_schedules_xml(self.m_house_obj.Schedules)
         return l_schedules_xml
 
     def update_schedule(self, p_schedule):
@@ -415,7 +413,7 @@ class API(ScheduleUtility, ScheduleXML):
         pass
 
     def SpecialTest(self):
-        if g_debug >= 1:
+        if g_debug >= 2:
             print "schedule.API.SpecialTest()"
         self.m_house_obj.LightingAPI.SpecialTest()
 

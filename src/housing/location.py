@@ -41,10 +41,10 @@ class ReadWriteConfig(xml_tools.ConfigTools):
     """Use the internal data to read / write an updated XML config file.
     """
 
-    def read_location(self, p_house_obj, p_house_xml):
+    def read_location_xml(self, p_house_obj, p_house_xml):
         l_location_obj = LocationData()
         if g_debug > 4:
-            print "house.read_location() - Active=", p_house_obj.Active, p_house_obj.Name
+            print "house.read_location_xml() - Active=", p_house_obj.Active, p_house_obj.Name
         l_location_xml = p_house_xml.find('Location')
         l_location_obj.Street = self.get_text_element(l_location_xml, 'Street')
         l_location_obj.City = self.get_text_element(l_location_xml, 'City')
@@ -57,10 +57,10 @@ class ReadWriteConfig(xml_tools.ConfigTools):
         l_location_obj.SavingTime = self.get_float_element(l_location_xml, 'SavingTime')
         p_house_obj.Location = l_location_obj
         if g_debug > 4:
-            print "house.read_location()  loaded location for {0:}".format(p_house_obj.Name)
+            print "house.read_location_xml()  loaded location for {0:}".format(p_house_obj.Name)
         return l_location_obj
 
-    def write_location(self, p_location_obj):
+    def write_location_xml(self, p_location_obj):
         """Replace the data in the 'House/Location' section with the current data.
         """
         l_entry = ET.Element('Location')
@@ -74,7 +74,7 @@ class ReadWriteConfig(xml_tools.ConfigTools):
         ET.SubElement(l_entry, 'TimeZone').text = str(p_location_obj.TimeZone)
         ET.SubElement(l_entry, 'SavingTime').text = str(p_location_obj.SavingTime)
         if g_debug > 2:
-            print "house.write_location()"
+            print "house.write_location_xml()"
         return l_entry
 
 # ## END DBK

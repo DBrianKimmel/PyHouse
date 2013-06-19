@@ -12,7 +12,7 @@ import xml.etree.ElementTree as ET
 # Import PyMh files
 from src.utils import xml_tools
 
-g_debug = 0
+g_debug = 3
 m_logger = None
 
 
@@ -47,7 +47,7 @@ class RoomData(object):
 
 class ReadWriteConfig(xml_tools.ConfigTools):
 
-    def read_rooms(self, p_house_obj, p_house_xml):
+    def read_rooms_xml(self, p_house_obj, p_house_xml):
         l_count = 0
         l_rooms_xml = p_house_xml.find('Rooms')
         l_list = l_rooms_xml.iterfind('Room')
@@ -61,14 +61,17 @@ class ReadWriteConfig(xml_tools.ConfigTools):
             p_house_obj.Rooms[l_count] = l_room_obj
             l_count += 1
             if g_debug > 6:
-                print "house.read_rooms()   Name:{0:}, Active:{1:}, Key:{2:}".format(l_room_obj.Name, l_room_obj.Active, l_room_obj.Key)
+                print "house.read_rooms_xml()   Name:{0:}, Active:{1:}, Key:{2:}".format(l_room_obj.Name, l_room_obj.Active, l_room_obj.Key)
         if g_debug > 4:
-            print "house.read_rooms()  loaded {0:} rooms".format(l_count)
+            print "house.read_rooms_xml()  loaded {0:} rooms".format(l_count)
+        return p_house_obj.Rooms
 
-    def write_rooms(self, p_rooms_obj):
+    def write_rooms_xml(self, p_house_obj):
         l_count = 0
         l_rooms_xml = ET.Element('Rooms')
-        for l_room_obj in p_rooms_obj.itervalues():
+        if g_debug >= 2:
+            print "rooms.write_rooms_xml()", p_house_obj.Rooms
+        for l_room_obj in p_house_obj.Rooms.itervalues():
             l_entry = self.xml_create_common_element('Room', l_room_obj)
             ET.SubElement(l_entry, 'Comment').text = l_room_obj.Comment
             ET.SubElement(l_entry, 'Corner').text = l_room_obj.Corner
@@ -76,7 +79,7 @@ class ReadWriteConfig(xml_tools.ConfigTools):
             l_rooms_xml.append(l_entry)
             l_count += 1
         if g_debug > 2:
-            print "house.write_rooms() - Wrote {0:} rooms".format(l_count)
+            print "house.write_rooms_xml() - Wrote {0:} rooms".format(l_count)
         return l_rooms_xml
 
 # ## END DBK

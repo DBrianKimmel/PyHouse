@@ -26,12 +26,11 @@ from src.web import web_rootmenu
 
 g_debug = 5
 # 0 = off
-# 1 = major routine entry
-# 2 = Basic data
+# 1 = Additional logging
+# 2 = major routine entry
+# 3 = Basic data
 
-g_port = 8580
 g_logger = None
-g_houses_obj = None
 
 SUBMIT = '_submit'
 BUTTON = 'post_btn'
@@ -105,17 +104,17 @@ class API(object):
         global g_logger
         g_logger = logging.getLogger('PyHouse.WebServ ')
         self.web_data = WebData()
-        if g_debug >= 1:
+        if g_debug >= 2:
             print "web_server.API()"
         g_logger.info("Initialized")
 
     def Start(self, p_pyhouses_obj):
-        if g_debug >= 1:
-            print "web_server.API.Start()"
         if g_debug >= 2:
+            print "web_server.API.Start()"
+        if g_debug >= 3:
             print "    ", p_pyhouses_obj
         self.m_pyhouses_obj = p_pyhouses_obj
-        web_utils.WebUtilities().read_xml_config_web(self.web_data, p_pyhouses_obj.XmlRoot)
+        web_utils.WebUtilities().read_web_xml(self.web_data, p_pyhouses_obj.XmlRoot)
         l_site_dir = os.path.split(os.path.abspath(__file__))[0]
         l_site = appserver.NevowSite(web_rootmenu.RootPage('/', p_pyhouses_obj))
         listenTCP(self.web_data.WebPort, l_site)
@@ -125,11 +124,11 @@ class API(object):
         return self.web_data
 
     def Stop(self):
-        if g_debug >= 1:
+        if g_debug >= 2:
             print "web_server.API.Stop()"
 
     def Reload(self, p_pyhouses_obj):
-        if g_debug >= 1:
+        if g_debug >= 2:
             print "web_server.API.Reload()"
 
 # ## END DBK

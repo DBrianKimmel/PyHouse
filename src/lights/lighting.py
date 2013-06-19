@@ -18,7 +18,7 @@ from src.lights import lighting_scenes
 from gdata.tlslite.mathtls import P_hash
 
 
-g_debug = 5
+g_debug = 0
 # 0 = off
 # 1 = major routine entry
 # 2 = xml read / write

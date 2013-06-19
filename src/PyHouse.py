@@ -43,10 +43,11 @@ from src.housing import houses
 from src.web import web_server
 
 
-g_debug = 2
+g_debug = 3
 # 0 = off
-# 1 = major routine entry
-# 2 - Config file handling
+# 1 = log extra info
+# 2 = major routine entry
+# 3 - Config file handling
 
 g_logger = None
 
@@ -108,20 +109,20 @@ class ConfigFileHandler(xml_tools.ConfigFile):
 
         If the file is missing, an empty minimal skeleton is created.
         """
-        if g_debug >= 2:
+        if g_debug >= 3:
             print "PyHouse.ConfigFileHandler()"
         self.m_pyhouses_obj = p_pyhouses_obj
         self.m_pyhouses_obj.XmlFileName = self._find_config_file_name()
 
     def _find_config_file_name(self):
-        if g_debug >= 2:
+        if g_debug >= 3:
             print "PyHouse._find_config_file_name()"
         l_filename = xml_tools.open_config_file()
         return l_filename
 
     def parse_xml(self):
-        if g_debug >= 2:
-            print "PyHouse._parse_xml()"
+        if g_debug >= 3:
+            print "PyHouse.parse_xml()"
         try:
             self.m_xmltree = ET.parse(self.m_pyhouses_obj.XmlFileName)
         except SyntaxError:
@@ -136,7 +137,7 @@ class ConfigFileHandler(xml_tools.ConfigFile):
     def write_xml_config_file(self, p_pyhouses_obj):
         """Replace the data in the 'Houses' section with the current data.
         """
-        if g_debug >= 2:
+        if g_debug >= 3:
             print "houses.write_xml_config_file() - Writing xml file to:{0:}".format(p_pyhouses_obj.XmlFileName)
         self.m_xmltree_root = p_pyhouses_obj.XmlRoot
         self.write_xml_file(self.m_xmltree, p_pyhouses_obj.XmlFileName)
@@ -145,7 +146,7 @@ class ConfigFileHandler(xml_tools.ConfigFile):
 def daemonize():
     """Taken from twisted.scripts._twistd_unix.py
     """
-    if g_debug >= 1:
+    if g_debug >= 2:
         print "PyHouse is making itself into a daemon !!"
     if os.fork():  # launch child and...
         os._exit(0)  # kill off parent
@@ -185,13 +186,13 @@ def handle_signals():
     signal.signal(signal.SIGINT, SigIntHandler)
 
 def SigHupHandler(signum, _stackframe):
-    if g_debug >= 1:
+    if g_debug >= 3:
         print 'Hup Signal handler called with signal', signum
     API().Stop()
     API().Start()
 
 def SigIntHandler(signum, _stackframe):
-    if g_debug >= 1:
+    if g_debug >= 3:
         print 'Signal handler called with signal', signum
     API().Stop()
     exit
@@ -220,7 +221,7 @@ class API(Utils):
         Notice that the reactor starts here as the very last step and that
         call never returns until the reactor is stopped (permanent stoppage).
         """
-        if g_debug >= 1:
+        if g_debug >= 2:
             print "\nPyHouse.API()"
         handle_signals()
         self.m_pyhouses_obj = PyHouseData()
@@ -229,10 +230,14 @@ class API(Utils):
         global g_logger
         g_logger = logging.getLogger('PyHouse         ')
         g_logger.info("Initializing.\n")
+        if g_debug >= 1:
+            g_logger.info("Logging level is {0:}".format(g_debug))
         self.m_pyhouses_obj.HousesAPI = houses.API()
         self.m_pyhouses_obj.WebAPI = web_server.API()
         callWhenRunning(self.Start)
         g_logger.info("Initialized.\n")
+        if g_debug >= 1:
+            g_logger.info("PyHouseData:{0:}\n".format(self.m_pyhouses_obj))
         # reactor never returns so must be last - Event loop will now run
         reactorrun()
         raise SystemExit, "PyHouse says Bye Now."
@@ -240,18 +245,18 @@ class API(Utils):
     def Start(self):
         """This is automatically invoked when the reactor starts from API().
         """
-        if g_debug >= 1:
+        if g_debug >= 2:
             print "PyHouse.API.Start()"
         self.m_pyhouses_obj.HousesData = self.m_pyhouses_obj.HousesAPI.Start(self.m_pyhouses_obj)
         self.m_pyhouses_obj.WebData = self.m_pyhouses_obj.WebAPI.Start(self.m_pyhouses_obj)
         g_logger.info("Started.\n")
-        if g_debug >= 1:
+        if g_debug >= 2:
             print "PyHouse all is started and running now.\n"
 
     def Stop(self):
         """Stop various modules to prepare for restarting them.
         """
-        if g_debug >= 1:
+        if g_debug >= 2:
             print "PyHouse.API.Stop()"
         self.m_pyhouses_obj.HousesAPI.Stop()
         self.m_pyhouses_obj.WebAPI.Stop()
@@ -260,26 +265,23 @@ class API(Utils):
     def Reload(self, p_pyhouses_obj):
         """Update XML file with current info.
         """
-        if g_debug >= 1:
+        if g_debug >= 2:
             print "PyHouse.API.Reload()"
         l_root_xml = ET.Element("PyHouse")
-        p_pyhouses_obj.HousesAPI.Reload(p_pyhouses_obj)
+        l_root_xml.append(p_pyhouses_obj.HousesAPI.Reload(p_pyhouses_obj))
         p_pyhouses_obj.WebAPI.Reload(p_pyhouses_obj)
         self.m_cfg.write_xml_config_file(p_pyhouses_obj)
 
     def Quit(self):
         """Prepare to exit all of pyhouse
         """
-        if g_debug >= 1:
+        if g_debug >= 2:
             print "\nPyHouse.Quit()"
         self.Stop()
         reactorstop()
 
 
 if __name__ == "__main__":
-
-    if g_debug >= 1:
-        print "MAIN"
     API()
 
 # ## END DBK

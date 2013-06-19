@@ -14,7 +14,11 @@ from xml.dom import minidom
 # Import PyMh files
 
 
-g_debug = 0
+g_debug = 3
+# 0 = off
+# 1 = log extra info
+# 2 = major routine entry
+# 3 - Config file handling
 g_xmltree = None
 
 
@@ -93,7 +97,7 @@ class ConfigTools(PutGetXML):
     def xml_create_common_element(self, p_title, p_obj):
         """Build a common entry.
         """
-        if g_debug > 1:
+        if g_debug >= 3:
             print "xml_tools.xml_create_common_element() - Title:{0:}, Name:{1:} ".format(p_title, p_obj.Name)
         l_elem = ET.Element(p_title)
         l_elem.set('Name', p_obj.Name)
@@ -101,20 +105,17 @@ class ConfigTools(PutGetXML):
         l_elem.set('Active', self.put_bool(p_obj.Active))
         return l_elem
 
-    def xml_read_common_info(self, p_obj, p_entry):
+    def xml_read_common_info(self, p_obj, p_entry_xml):
         """Get the common (Name, Key, Active) information from an XML sub-tree.
 
         @param p_obj: is the object we are updating the common information for.
-        @param p_entry: is the XML subtree that we are extracting the information from.
+        @param p_entry_xml: is the XML subtree that we are extracting the information from.
         """
-        if g_debug > 1:
-            print "xml_tools.xml_read_common_info()", p_entry.items()
-        p_obj.Name = p_entry.get('Name')
-        try:
-            p_obj.Key = int(p_entry.get('Key'))
-        except (AttributeError, TypeError):
-            p_obj.Key = 0
-        p_obj.Active = self.get_bool(p_entry.get('Active'))
+        if g_debug >= 3:
+            print "xml_tools.xml_read_common_info()", p_entry_xml.items()
+        p_obj.Name = self.get_text_element(p_entry_xml, 'Name')
+        p_obj.Key = self.get_int_element(p_entry_xml, 'Key')
+        p_obj.Active = self.get_bool_element(p_entry_xml, 'Active')
 
 
 class ConfigEtc(ConfigTools):
@@ -131,7 +132,7 @@ class ConfigEtc(ConfigTools):
 
         @return: the filename we found.
         """
-        if g_debug > 0:
+        if g_debug >= 2:
             print "config_etc.find_etc_config_file()"
         l_file_name = 'C:/etc/pyhouse.conf'
         try:
@@ -146,7 +147,7 @@ class ConfigEtc(ConfigTools):
                 continue
             else:
                 l_ret = l_line
-                if g_debug > 1:
+                if g_debug >= 3:
                     print "config_etc.find_etc_config_file() found", l_ret
                 return l_ret
         return None
@@ -170,23 +171,17 @@ class ConfigFile(ConfigEtc):
 
         @return: the path we created or found
         """
-        # print "Create_config_dir()"
         for l_dir in self.m_std_path:
-            # print "1. Processing dir ", l_dir
             l_dir = os.path.expanduser(l_dir)
             if os.path.exists(l_dir):
-                # print "Found directory path ", l_dir
                 return l_dir
         print "No directory found, try creating one."
         for l_dir in self.m_std_path:
-            # print "2, Processing dir ", l_dir
             l_dir = os.path.expanduser(l_dir)
             try:
                 os.mkdir(l_dir)
-                # print "Directory created - ", l_dir
                 return l_dir
             except OSError:
-                # print "Could not make a directory -", l_dir
                 pass
         print "Could not create any of the following ", self.m_std_path
         sys.exit(1)
@@ -215,22 +210,8 @@ class ConfigFile(ConfigEtc):
         print l_nice
         ET.ElementTree(l_top).write(p_name)
 
-    def create_empty_xml_section(self, p_tree_root, p_section_name):
-        """Create an empty XML section to be filled in.
-
-        @param p_section_name: is the name of the xml section to be written.
-        @return: the e-tree section to be used.
-        """
-        l_sect = p_tree_root.find(p_section_name)
-        try:
-            l_sect.clear()
-        except AttributeError:
-            print "Creating a new sub-element named {0:}".format(p_section_name)
-            l_sect = ET.SubElement(p_tree_root, p_section_name)
-        return l_sect
-
     def write_xml_file(self, p_xmltree, p_filename = ''):
-        if g_debug > 0:
+        if g_debug >= 2:
             print "xml_tools.write_xml_file() Filename:{0:}".format(p_filename)
         p_xmltree.write(p_filename, xml_declaration = True)
 
@@ -241,7 +222,7 @@ def prettify(elem):
     @param elem: an element to format as a readable xml tree.
     @return: a string formatted with indeentation and newlines.
     """
-    if g_debug > 3:
+    if g_debug >= 3:
         print "xml_tools.pretify()"
     rough_string = ET.tostring(elem, 'utf-8')
     reparsed = minidom.parseString(rough_string)

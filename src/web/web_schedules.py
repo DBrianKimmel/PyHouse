@@ -34,15 +34,15 @@ class SchedulesPage(web_utils.ManualFormMixin):
                 T_script(type = 'text/javascript', src = 'slider.js')["\n"],
                 T_script(type = 'text/javascript', src = 'range.js')["\n"],
                 T_script(type = 'text/javascript', src = 'schedpage.js'),
-                ],  # head
+                ], # head
             T_body[
                 T_h1['PyHouse Schedule'],
                 T_p['Select the schedule:'],
                 T_table(style = 'width: 100%;', border = 0)["\n",
                     T_invisible(data = T_directive('schedlist'), render = T_directive('schedlist')),
                     T_invisible(data = T_directive('lightlist'), render = T_directive('lightlist')),
-                    T_invisible(data = T_directive('roomlist'), render = T_directive('roomlist')),
-                    ],  # table
+#                    T_invisible(data = T_directive('roomlist'), render = T_directive('roomlist')),
+                    ], # table
                 T_input(type = "button", onclick = "createNewSchedule('1234')", value = "Add Schedule")
                 ]  # body
             ]  # html
@@ -103,7 +103,7 @@ class SchedulesPage(web_utils.ManualFormMixin):
             l_ret.append(T_input(type = 'submit', value = l_key, name = BUTTON,
                     onclick = "createChangeScheduleWindow({0:})".format(l_json))
                     [ l_obj.Name, '_', l_obj.RoomName, '_', l_obj.LightName, "_'",
-                     l_obj.Time, "'_", l_obj.Level, '_', "\n" ])
+                     l_obj.Time, "'_", l_obj.Level, '_', l_obj.Key, "\n" ])
             l_cnt += 1
         return l_ret
 
