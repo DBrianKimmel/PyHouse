@@ -18,14 +18,14 @@ from twisted.web.http_headers import Headers
 from src.utils import xml_tools
 from src.utils import convert
 
-g_debug = 0
+g_debug = 5
 # 0 = off
-# 1 = major routine entry
-# 2 = DynDns execution
-# 3 = External IP execution
-# 4 = XML read / write
+# 1 = log extra info
+# 2 = major routine entry
+# 3 = Config XML read / write file handling
+# 4 = External IP execution
 # 5 = Dump Objects
-
+# + = NOT USED HERE
 g_logger = None
 
 callLater = reactor.callLater
@@ -45,7 +45,12 @@ class InternetData(object):
         self.DynDns = {}
 
     def __str__(self):
-        return "Internet:: IP:{0:}, Url:{1:}, Delay:{2:}, DynDns:{3:}".format(self.ExternalIP, self.UrlExternalIP, self.ExternalDelay, self.DynDns)
+        l_ret = "Internet:: "
+        l_ret += "IP:{0:}, ".format(self.ExternalIP)
+        l_ret += "Url:{0:}, ".format(self.UrlExternalIP)
+        l_ret += "Delay:{0:}, ".format(self.ExternalDelay)
+        l_ret += "DynDns:{0:}".format(self.DynDns)
+        return l_ret
 
 
 class DynDnsData(object):
@@ -58,7 +63,13 @@ class DynDnsData(object):
         self.Url = None
 
     def __str__(self):
-        return "DynDns:: Name:{0:}, Key:{1:}, Active:{2:}, Interval:{3:}, Url:{4:};".format(self.Name, self.Key, self.Active, self.Interval, self.Url)
+        l_ret = "DynDns:: "
+        l_ret += "Name:{0:}, ".format(self.Name)
+        l_ret += "Key:{0:}, ".format(self.Key)
+        l_ret += "Active:{0:}, ".format(self.Active)
+        l_ret += "Interval:{0:}, ".format(self.Interval)
+        l_ret += "Url:{0:};".format(self.Url)
+        return l_ret
 
 
 #======================================
@@ -80,9 +91,9 @@ class ReadWriteXML(xml_tools.ConfigTools):
     def extract_dyn_dns(self, p_internet_xml):
         l_dyndns_obj = DynDnsData()
         self.xml_read_common_info(l_dyndns_obj, p_internet_xml)
-        l_dyndns_obj.Interval = self.get_int_element(p_internet_xml, 'Interval')
-        l_dyndns_obj.Url = self.get_text_element(p_internet_xml, 'Url')
-        if g_debug >= 4:
+        l_dyndns_obj.Interval = self.get_int_from_xml(p_internet_xml, 'Interval')
+        l_dyndns_obj.Url = self.get_text_from_xml(p_internet_xml, 'Url')
+        if g_debug >= 3:
             print "internet.extract_dyn_dns() - Name:{0:}, Interval:{1:}, Url:{2:};".format(l_dyndns_obj.Name, l_dyndns_obj.Interval, l_dyndns_obj.Url)
         return l_dyndns_obj
 
@@ -94,16 +105,22 @@ class ReadWriteXML(xml_tools.ConfigTools):
         """
         p_house_obj.Internet = InternetData()
         l_sect = p_house_xml.find('Internet')
+        if g_debug >= 3:
+            print "\ninternet.read_internet_xml() - House:{0:}".format(p_house_obj.Name)
+            print "    HouseXML:{0:}, Items:{1:}".format(p_house_xml, p_house_xml.items()), p_house_xml.attrib
+            print "    InternetXML:{0:}, Items:{1:}".format(l_sect, l_sect.items()), l_sect.attrib
         try:
-            self.m_external_ip = self.get_text_element(l_sect, 'ExternalIP')
-            self.m_external_url = self.get_text_element(l_sect, 'UrlExternalIP')
-            self.m_external_delay = self.get_int_element(l_sect, 'ExternalDelay')
+            self.m_external_ip = self.get_text_from_xml(p_house_xml, 'ExternalIP')
+            self.m_external_url = self.get_text_from_xml(l_sect, 'UrlExternalIP')
+            self.m_external_delay = self.get_int_from_xml(l_sect, 'ExternalDelay')
         except AttributeError:
+            if g_debug >= 1:
+                print "internet - ERROR internet section missing - using defaults."
             self.m_external_ip = None
             self.m_external_url = None
             self.m_external_delay = 0
-        if g_debug >= 4:
-            print "internet.read_internet_xml() - External IP House:{0}, IP:{1:}, Delay:{2:}, Url:{3:}".format(p_house_obj.Name, self.m_external_ip, self.m_external_delay, self.m_external_url)
+        if g_debug >= 3:
+            print "internet.read_internet_xml() - External IP - House:{0}, IP:{1:}, Delay:{2:}, Url:{3:}".format(p_house_obj.Name, self.m_external_ip, self.m_external_delay, self.m_external_url)
         p_house_obj.Internet.ExternalIP = self.m_external_ip
         p_house_obj.Internet.UrlExternalIP = self.m_external_url
         p_house_obj.Internet.ExternalDelay = self.m_external_delay
@@ -124,17 +141,17 @@ class ReadWriteXML(xml_tools.ConfigTools):
         """Create a sub tree for 'Internet' - the sub elements do not have to be present.
         @return: a sub tree ready to be appended to "something"
         """
-        if g_debug >= 4:
+        if g_debug >= 3:
             print "internet.write_internet()", p_house_obj.Internet
         l_internet_xml = ET.Element('Internet')
-        ET.SubElement(l_internet_xml, 'ExternalIP').text = str(p_house_obj.Internet.ExternalIP)
-        ET.SubElement(l_internet_xml, 'ExternalDelay').text = str(p_house_obj.Internet.ExternalDelay)
-        ET.SubElement(l_internet_xml, 'UrlExternalIP').text = str(p_house_obj.Internet.UrlExternalIP)
+        self.put_text_attribute(l_internet_xml, 'ExternalIP', p_house_obj.Internet.ExternalIP)
+        self.put_int_attribute(l_internet_xml, 'ExternalDelay', p_house_obj.Internet.ExternalDelay)
+        self.put_text_attribute(l_internet_xml, 'UrlExternalIP', p_house_obj.Internet.UrlExternalIP)
         try:
             for l_dyndns_obj in p_house_obj.Internet.DynDns.itervalues():
                 l_entry = self.xml_create_common_element('DynamicDNS', l_dyndns_obj)
-                ET.SubElement(l_entry, 'Interval').text = str(l_dyndns_obj.Interval)
-                ET.SubElement(l_entry, 'Url').text = str(l_dyndns_obj.Url)
+                self.put_int_element(l_entry, 'Interval', l_dyndns_obj.Interval)
+                self.put_text_element(l_entry, 'Url', l_dyndns_obj.Url)
                 l_internet_xml.append(l_entry)
         except AttributeError:
             pass
@@ -226,7 +243,7 @@ class FindExternalIpAddress(object):
     m_url = None
 
     def __init__(self, p_house_obj):
-        if g_debug >= 3:
+        if g_debug >= 4:
             print "internet.FindExternalIpAddress() - House:{0:}".format(p_house_obj.Name)
         self.m_house_obj = p_house_obj
         if p_house_obj.Active:
@@ -239,7 +256,7 @@ class FindExternalIpAddress(object):
         self.m_url = self.m_house_obj.Internet.UrlExternalIP
         if self.m_url == None:
             return
-        if g_debug >= 3:
+        if g_debug >= 4:
             print "internet.get_public_ip() - House:{0:}".format(self.m_house_obj.Name)
         l_ip_page = getPage(self.m_url)
         l_ip_page.addCallbacks(self.cb_parse_page, self.eb_no_page)
@@ -256,14 +273,17 @@ class FindExternalIpAddress(object):
         self.m_house_obj.Internet.ExternalIP = l_quad
         l_addr = convert.ConvertEthernet().dotted_quad2long(l_quad)
         g_logger.info("Got External IP page for House:{0:}, Page:{1:}".format(self.m_house_obj.Name, p_ip_page))
-        if g_debug >= 3:
+        if g_debug >= 4:
             print "internet.cb_parse_page()", p_ip_page, l_addr, self.m_house_obj
         return l_addr
 
     def eb_no_page(self, p_reason):
-        if g_debug >= 3:
+        if g_debug >= 4:
             print "internet.eb_no_page()", p_reason
         g_logger.error("Failed to Get External IP page for House:{0:}, {1:}".format(self.m_house_obj.Name, p_reason))
+
+        import time
+        time.sleep(10)
 
 
 class DynDnsAPI(object):
@@ -277,17 +297,17 @@ class DynDnsAPI(object):
 
     def __init__(self, p_house_obj):
         self.m_house_obj = p_house_obj
-        if g_debug >= 2:
+        if g_debug >= 3:
             print "internet.DynDnsAPI() - House:{0:}".format(self.m_house_obj.Name)
 
     def start_dyndns_process(self):
-        if g_debug >= 2:
+        if g_debug >= 3:
             print "internet.start_dyndns_process() - House:{0:}".format(self.m_house_obj.Name)
         # Wait a bit to avoid all the starting chaos
         callLater(3 * 60, self.update_start)
 
     def stop_dyndns_process(self):
-        if g_debug >= 2:
+        if g_debug >= 3:
             print "internet.stop_dyndns_process() - House:{0:}".format(self.m_house_obj.Name)
         pass
 
@@ -295,14 +315,14 @@ class DynDnsAPI(object):
         """After waiting for the initial startup activities to die down, this is invoked
         to start up a loop for each dynamic service being updated.
         """
-        if g_debug >= 2:
+        if g_debug >= 3:
             print "internet.update_start() - House:{0:}".format(self.m_house_obj.Name)
         for l_dyn_obj in self.m_house_obj.Internet.DynDns.itervalues():
             l_cmd = lambda x = l_dyn_obj.Interval, y = l_dyn_obj: self.update_loop(x, y)
             callLater(l_dyn_obj.Interval, l_cmd)
 
     def update_loop(self, p_interval, p_dyn_obj):
-        if g_debug >= 2:
+        if g_debug >= 3:
             print "internet.update_loop() - House:{0:}".format(self.m_house_obj.Name), p_interval, p_dyn_obj.Url
         g_logger.info("Update DynDns for House:{0:}, {1:}, {2:}".format(self.m_house_obj.Name, p_dyn_obj.Name, p_dyn_obj.Url))
         self.m_dyn_obj = p_dyn_obj
@@ -313,18 +333,18 @@ class DynDnsAPI(object):
     def cb_parse_dyndns(self, p_response):
         """Update the external web site with our external IP address.
         """
-        if g_debug >= 2:
+        if g_debug >= 3:
             print "internet.cb_put_dyndns() ", p_response, self.m_dyn_obj
         # elf.update_dyn_dns_service(self.m_house_obj, p_response)
         return
 
     def eb_parse_dyndns(self, p_response):
-        if g_debug >= 2:
+        if g_debug >= 3:
             print "internet.eb_put_dyndns() ", p_response, self.m_dyn_obj
         return
 
     def cb_do_delay(self, p_response):
-        if g_debug >= 2:
+        if g_debug >= 3:
             print "internet.cb_do_delay() ", p_response, self.m_dyn_obj
         l_cmd = lambda x = self.m_dyn_obj.Interval, y = self.m_dyn_obj: self.update_loop(x, y)
         callLater(self.m_dyn_obj.Interval, l_cmd)
@@ -334,32 +354,31 @@ class API(ReadWriteXML):
 
     m_house_obj = None
 
-    def __init__(self, p_house_obj, p_house_xml):
+    def __init__(self):
         global g_logger
         g_logger = logging.getLogger('PyHouse.Internet')
-        if g_debug >= 1:
-            print "internet.API.__init__()"
-        g_logger.info("Initializing for house:{0:}.".format(p_house_obj.Name))
-        self.m_house_obj = p_house_obj
+        if g_debug >= 2:
+            print "internet.API()"
+        g_logger.info("Initialized.")
+
+    def Start(self, p_house_obj, p_house_xml):
+        """Start async operation of the internet module.
+        """
+        if g_debug >= 2:
+            print "internet.API.Start() for house:{0:}".format(p_house_obj.Name)
+        g_logger.info("Starting for house:{0:}.".format(p_house_obj.Name))
         self.read_internet_xml(p_house_obj, p_house_xml)
+        self.m_house_obj = p_house_obj
         if p_house_obj.Active:
             FindExternalIpAddress(p_house_obj)
             self.dyndns = DynDnsAPI(p_house_obj)
-
-    def Start(self):
-        """Start async operation of the internet module.
-        """
-        if g_debug >= 1:
-            print "internet.API.Start() for house:{0:}".format(self.m_house_obj.Name)
-        g_logger.info("Starting for house:{0:}.".format(self.m_house_obj.Name))
-        if self.m_house_obj.Active:
             self.dyndns.start_dyndns_process()
 
     def Stop(self):
         """Stop async operations
         write out the XML file.
         """
-        if g_debug >= 1:
+        if g_debug >= 2:
             print "internet.API.Stop()"
         g_logger.info("Stopping for house:{0:}.".format(self.m_house_obj.Name))
         if self.m_house_obj.Active:

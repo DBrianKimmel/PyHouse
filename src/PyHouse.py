@@ -24,19 +24,22 @@ TODO:
 
 """
 
+__author__ = "D. Brian Kimmel"
+__copyright__ = "2010-2013 by D. Brian Kimmel"
+__version_info__ = (1, 0, 0)
+__version__ = '.'.join(map(str, __version_info__))
+
+
 # Import system type stuff
 import errno
 import logging
-import optparse
 import os
 import platform
 import signal
-import sys
 from twisted.internet import reactor
 import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
-# from src.configure import gui
 from src.utils import log
 from src.utils import xml_tools
 from src.housing import houses
@@ -47,8 +50,8 @@ g_debug = 3
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
-# 3 - Config file handling
-
+# 3 = Config file handling
+# + = NOT USED HERE
 g_logger = None
 
 
@@ -73,8 +76,15 @@ class PyHouseData(object):
         self.XmlFileName = ''
 
     def __str__(self):
-        l_ret = "PyHouseData(str):: "
+        l_ret = "PyHouseData:: "
         l_ret += "WebData:{0:}".format(self.WebData)
+        l_ret += "WebAPI:{0:}".format(self.WebAPI)
+        l_ret += "LogsData:{0:}".format(self.LogsData)
+        l_ret += "LogsAPI:{0:}".format(self.LogsAPI)
+        l_ret += "HousesData:{0:}".format(self.HousesData)
+        l_ret += "HousesAPI:{0:}".format(self.HousesAPI)
+        l_ret += "XmlRoot:{0:}".format(self.XmlRoot)
+        l_ret += "XmlFileName:{0:}".format(self.XmlFileName)
         return l_ret
 
     def __repr__(self):
@@ -85,62 +95,6 @@ class PyHouseData(object):
         l_ret += "'XmlFileName':'{0:}'".format(self.XmlFileName)
         l_ret += "}"
         return l_ret
-
-
-class OptionParser(optparse.OptionParser):
-    """
-    Simple wrapper to add list of available plugins to help
-    message, but only if help message is really printed
-    """
-    def print_help(self, p_file = None):
-        sys.argv = sys.argv[:1]
-        optparse.OptionParser.print_help(self, p_file)
-
-
-class ConfigFileHandler(xml_tools.ConfigFile):
-    """Initial read and final write of the config file.
-    """
-
-    m_xml_filename = None
-    m_xmltree_root = None
-
-    def __init__(self, p_pyhouses_obj):
-        """Open the xml config file.
-
-        If the file is missing, an empty minimal skeleton is created.
-        """
-        if g_debug >= 3:
-            print "PyHouse.ConfigFileHandler()"
-        self.m_pyhouses_obj = p_pyhouses_obj
-        self.m_pyhouses_obj.XmlFileName = self._find_config_file_name()
-
-    def _find_config_file_name(self):
-        if g_debug >= 3:
-            print "PyHouse._find_config_file_name()"
-        l_filename = xml_tools.open_config_file()
-        return l_filename
-
-    def parse_xml(self):
-        if g_debug >= 3:
-            print "PyHouse.parse_xml()"
-        try:
-            self.m_xmltree = ET.parse(self.m_pyhouses_obj.XmlFileName)
-        except SyntaxError:
-            self.create_empty_config_file(self.m_pyhouses_obj.XmlFileName)
-            self.m_xmltree = ET.parse(self.m_pyhouses_obj.XmlFileName)
-        self.m_xmltree_root = self.m_xmltree.getroot()
-        return self.m_xmltree_root
-
-    def read_xml_config_file(self):
-        pass
-
-    def write_xml_config_file(self, p_pyhouses_obj):
-        """Replace the data in the 'Houses' section with the current data.
-        """
-        if g_debug >= 3:
-            print "houses.write_xml_config_file() - Writing xml file to:{0:}".format(p_pyhouses_obj.XmlFileName)
-        self.m_xmltree_root = p_pyhouses_obj.XmlRoot
-        self.write_xml_file(self.m_xmltree, p_pyhouses_obj.XmlFileName)
 
 
 def daemonize():
@@ -163,23 +117,6 @@ def daemonize():
                 raise
     os.close(null)
 
-def __opt_option(_option, _opt, value, parser):
-    try:
-        key, val = value.split(':', 1)
-    except KeyError:
-        key = value
-        val = ''
-    parser.values.options[key] = val
-
-def setConfigFile():
-    def findConfigDir():
-        try:
-            configDir = os.path.expanduser('~')
-        except TypeError:
-            configDir = os.getcwd()
-        return configDir
-    return os.path.join(findConfigDir(), '.PyHouse/PyHouse.xml')
-
 def handle_signals():
     if platform.uname()[0] != 'Windows':
         signal.signal(signal.SIGHUP, SigHupHandler)
@@ -198,18 +135,35 @@ def SigIntHandler(signum, _stackframe):
     exit
 
 
-class Utils(object):
+class Utilities(object):
     """
     """
 
-    def init_log(self):
-        self.m_cfg = ConfigFileHandler(self.m_pyhouses_obj)
-        self.m_pyhouses_obj.XmlRoot = self.m_cfg.parse_xml()
-        self.m_pyhouses_obj.LogsAPI = log.API()
-        self.m_pyhouses_obj.LogsData = self.m_pyhouses_obj.LogsAPI.Start(self.m_pyhouses_obj)
+    def import_config_info(self, p_pyhouses_obj):
+        if g_debug >= 3:
+            print "PyHouse.Utilities.import_config_info()"
+        p_pyhouses_obj.XmlFileName = xml_tools.open_config_file()
+        try:
+            l_xmltree = ET.parse(p_pyhouses_obj.XmlFileName)
+        except SyntaxError:
+            self.create_empty_config_file(p_pyhouses_obj.XmlFileName)
+            l_xmltree = ET.parse(p_pyhouses_obj.XmlFileName)
+        p_pyhouses_obj.XmlRoot = l_xmltree.getroot()
+
+    def export_config_info(self, p_pyhouses_obj):
+        """Replace the data in the xml file with the current data.
+        """
+        if g_debug >= 3:
+            print "PyHouse.export_config_info() - Writing XML file to:{0:}".format(p_pyhouses_obj.XmlFileName)
+        self.m_xmltree_root = p_pyhouses_obj.XmlRoot
+        self.write_xml_file(self.m_xmltree, p_pyhouses_obj.XmlFileName)
+
+    def init_logs(self, p_pyhouses_obj):
+        p_pyhouses_obj.LogsAPI = log.API()
+        p_pyhouses_obj.LogsData = p_pyhouses_obj.LogsAPI.Start(p_pyhouses_obj)
 
 
-class API(Utils):
+class API(Utilities):
     """
     """
 
@@ -226,10 +180,11 @@ class API(Utils):
         handle_signals()
         self.m_pyhouses_obj = PyHouseData()
         self.m_pyhouses_obj.API = self
-        self.init_log()
+        self.import_config_info(self.m_pyhouses_obj)
+        self.init_logs(self.m_pyhouses_obj)
         global g_logger
         g_logger = logging.getLogger('PyHouse         ')
-        g_logger.info("Initializing.\n")
+        g_logger.info("Initializing PyHouse.\n")
         if g_debug >= 1:
             g_logger.info("Logging level is {0:}".format(g_debug))
         self.m_pyhouses_obj.HousesAPI = houses.API()
@@ -246,7 +201,7 @@ class API(Utils):
         """This is automatically invoked when the reactor starts from API().
         """
         if g_debug >= 2:
-            print "PyHouse.API.Start()"
+            print "PyHouse.API.Start() - Starting"
         self.m_pyhouses_obj.HousesData = self.m_pyhouses_obj.HousesAPI.Start(self.m_pyhouses_obj)
         self.m_pyhouses_obj.WebData = self.m_pyhouses_obj.WebAPI.Start(self.m_pyhouses_obj)
         g_logger.info("Started.\n")
@@ -257,7 +212,7 @@ class API(Utils):
         """Stop various modules to prepare for restarting them.
         """
         if g_debug >= 2:
-            print "PyHouse.API.Stop()"
+            print "PyHouse.API.Stop() - Stopping."
         self.m_pyhouses_obj.HousesAPI.Stop()
         self.m_pyhouses_obj.WebAPI.Stop()
         g_logger.info("Stopped.\n\n\n")
@@ -266,18 +221,20 @@ class API(Utils):
         """Update XML file with current info.
         """
         if g_debug >= 2:
-            print "PyHouse.API.Reload()"
+            print "PyHouse.API.Reload() - Reloading"
         l_root_xml = ET.Element("PyHouse")
         l_root_xml.append(p_pyhouses_obj.HousesAPI.Reload(p_pyhouses_obj))
         p_pyhouses_obj.WebAPI.Reload(p_pyhouses_obj)
-        self.m_cfg.write_xml_config_file(p_pyhouses_obj)
+        self.export_config_info(p_pyhouses_obj)
+        g_logger.info("Reloaded.\n\n\n")
 
     def Quit(self):
         """Prepare to exit all of pyhouse
         """
         if g_debug >= 2:
-            print "\nPyHouse.Quit()"
+            print "\nPyHouse.Quit() - Quitting"
         self.Stop()
+        g_logger.info("Quit.\n\n\n")
         reactorstop()
 
 

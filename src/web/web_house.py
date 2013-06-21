@@ -82,7 +82,7 @@ class InternetPage(web_utils.ManualFormMixin):
     def form_post_rooms(self, **kwargs):
         if g_debug >= 2:
             print "form_post_rooms()", kwargs
-        return web_rooms.RoomsPage(self.name, self.m_pyhouse_obj)
+        return web_rooms.RoomsPage(self, self.name, self.m_pyhouse_obj)
 
     def form_post_lights(self, **kwargs):
         if g_debug >= 2:

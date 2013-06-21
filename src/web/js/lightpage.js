@@ -5,14 +5,6 @@
  * D. Brian Kimmel
  */
 
-function jsButtonClicked() {
-	alert("You just clicked a JS button");
-}
-
-function buttonClicked() {
-	document.getElementById("brian").innerHTML=Date();
-}
-
 /* 
  * This function creates a new floating window dynamically (Add).
  */
@@ -38,8 +30,8 @@ function fillNewLightWindow(p_id, p_name) {
 	alert('fill new lightpage (add)');
 	var ret =	'';
 	ret = ret + '<form method="post" action="_submit!!post" enctype="multipart/form-data">\n';
-	ret = ret + '  Name: <input type="text" name="Name" value="test_light2" />\n' +
-				'    <br />\n';
+	ret = ret + '  Name: <input type="text" name="Name" value="test_light2" />\n';
+	ret = ret + '    <br />\n';
 	ret = ret + '  Address: <input type="text" name="Address" value="CC:11:22" /><br />\n';
 	ret = ret + '  Family: <input type="text" name="Family" value="Insteon" /><br />\n';
 	ret = ret + '  Type: <input type="text" name="Type" value="WSLD" /><br />\n';

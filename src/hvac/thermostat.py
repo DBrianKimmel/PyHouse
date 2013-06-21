@@ -59,9 +59,9 @@ class API(object):
 
     def __init__(self, p_house_obj):
         global g_logger
-        g_logger = logging.getLogger('PyHouse.Internet')
+        g_logger = logging.getLogger('PyHouse.Thermostat')
         if g_debug >= 1:
-            print "internet.API.__init__()"
+            print "thermostat.API()"
         g_logger.info("Initializing for house:{0:}.".format(p_house_obj.Name))
         self.m_house_obj = p_house_obj
         g_logger.info("Initialized.")
@@ -69,18 +69,18 @@ class API(object):
     def Start(self, p_house_obj, p_house_xml):
         self.m_house_obj = p_house_obj
         if g_debug >= 1:
-            print "internet.API.Start() for house:{0:}".format(p_house_obj.Name)
+            print "themostat.API.Start() for house:{0:}".format(p_house_obj.Name)
         g_logger.info("Starting for house:{0:}.".format(self.m_house_obj.Name))
         self.read_internet(self.m_house_obj, p_house_xml)
         g_logger.info("Started.")
 
     def Stop(self):
         if g_debug >= 1:
-            print "internet.API.Stop() - 1"
+            print "thermostat.API.Stop() - 1"
         g_logger.info("Stopping for house:{0:}.".format(self.m_house_obj.Name))
         l_internet_xml = self.write_internet(self.m_house_obj.Internet)
         if g_debug >= 1:
-            print "internet.API.Stop() - 2 "
+            print "thermostat.API.Stop() - 2 "
         g_logger.info("Stopped.")
         return l_internet_xml
 

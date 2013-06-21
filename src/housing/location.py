@@ -46,15 +46,15 @@ class ReadWriteConfig(xml_tools.ConfigTools):
         if g_debug > 4:
             print "house.read_location_xml() - Active=", p_house_obj.Active, p_house_obj.Name
         l_location_xml = p_house_xml.find('Location')
-        l_location_obj.Street = self.get_text_element(l_location_xml, 'Street')
-        l_location_obj.City = self.get_text_element(l_location_xml, 'City')
-        l_location_obj.State = self.get_text_element(l_location_xml, 'State')
-        l_location_obj.ZipCode = self.get_text_element(l_location_xml, 'ZipCode')
-        l_location_obj.Phone = self.get_text_element(l_location_xml, 'Phone')
-        l_location_obj.Latitude = self.get_float_element(l_location_xml, 'Latitude')
-        l_location_obj.Longitude = self.get_float_element(l_location_xml, 'Longitude')
-        l_location_obj.TimeZone = self.get_float_element(l_location_xml, 'TimeZone')
-        l_location_obj.SavingTime = self.get_float_element(l_location_xml, 'SavingTime')
+        l_location_obj.Street = self.get_text_from_xml(l_location_xml, 'Street')
+        l_location_obj.City = self.get_text_from_xml(l_location_xml, 'City')
+        l_location_obj.State = self.get_text_from_xml(l_location_xml, 'State')
+        l_location_obj.ZipCode = self.get_text_from_xml(l_location_xml, 'ZipCode')
+        l_location_obj.Phone = self.get_text_from_xml(l_location_xml, 'Phone')
+        l_location_obj.Latitude = self.get_float_from_xml(l_location_xml, 'Latitude')
+        l_location_obj.Longitude = self.get_float_from_xml(l_location_xml, 'Longitude')
+        l_location_obj.TimeZone = self.get_float_from_xml(l_location_xml, 'TimeZone')
+        l_location_obj.SavingTime = self.get_float_from_xml(l_location_xml, 'SavingTime')
         p_house_obj.Location = l_location_obj
         if g_debug > 4:
             print "house.read_location_xml()  loaded location for {0:}".format(p_house_obj.Name)
@@ -64,15 +64,15 @@ class ReadWriteConfig(xml_tools.ConfigTools):
         """Replace the data in the 'House/Location' section with the current data.
         """
         l_entry = ET.Element('Location')
-        ET.SubElement(l_entry, 'Street').text = p_location_obj.Street
-        ET.SubElement(l_entry, 'City').text = p_location_obj.City
-        ET.SubElement(l_entry, 'State').text = p_location_obj.State
-        ET.SubElement(l_entry, 'ZipCode').text = p_location_obj.ZipCode
-        ET.SubElement(l_entry, 'Phone').text = p_location_obj.Phone
-        ET.SubElement(l_entry, 'Latitude').text = str(p_location_obj.Latitude)
-        ET.SubElement(l_entry, 'Longitude').text = str(p_location_obj.Longitude)
-        ET.SubElement(l_entry, 'TimeZone').text = str(p_location_obj.TimeZone)
-        ET.SubElement(l_entry, 'SavingTime').text = str(p_location_obj.SavingTime)
+        self.put_text_element(l_entry, 'Street', p_location_obj.Street)
+        self.put_text_element(l_entry, 'City', p_location_obj.City)
+        self.put_text_element(l_entry, 'State', p_location_obj.State)
+        self.put_text_element(l_entry, 'ZipCode', p_location_obj.ZipCode)
+        self.put_text_element(l_entry, 'Phone', p_location_obj.Phone)
+        self.put_float_element(l_entry, 'Latitude', p_location_obj.Latitude)
+        self.put_float_element(l_entry, 'Longitude', p_location_obj.Longitude)
+        self.put_float_element(l_entry, 'TimeZone', p_location_obj.TimeZone)
+        self.put_float_element(l_entry, 'SavingTime', p_location_obj.SavingTime)
         if g_debug > 2:
             print "house.write_location_xml()"
         return l_entry

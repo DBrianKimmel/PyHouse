@@ -50,14 +50,13 @@ class ReadWriteConfig(xml_tools.ConfigTools):
     def read_rooms_xml(self, p_house_obj, p_house_xml):
         l_count = 0
         l_rooms_xml = p_house_xml.find('Rooms')
-        l_list = l_rooms_xml.iterfind('Room')
-        for l_room_xml in l_list:
+        for l_room_xml in l_rooms_xml.iterfind('Room'):
             l_room_obj = RoomData()
             self.xml_read_common_info(l_room_obj, l_room_xml)
             l_room_obj.Key = l_count
-            l_room_obj.Comment = self.get_text_element(l_room_xml, 'Comment')
-            l_room_obj.Corner = l_room_xml.findtext('Corner')
-            l_room_obj.Size = l_room_xml.findtext('Size')
+            l_room_obj.Comment = self.get_text_from_xml(l_room_xml, 'Comment')
+            l_room_obj.Corner = self.get_text_from_xml(l_room_xml, 'Corner')
+            l_room_obj.Size = self.get_text_from_xml(l_room_xml, 'Size')
             p_house_obj.Rooms[l_count] = l_room_obj
             l_count += 1
             if g_debug > 6:
@@ -73,9 +72,9 @@ class ReadWriteConfig(xml_tools.ConfigTools):
             print "rooms.write_rooms_xml()", p_house_obj.Rooms
         for l_room_obj in p_house_obj.Rooms.itervalues():
             l_entry = self.xml_create_common_element('Room', l_room_obj)
-            ET.SubElement(l_entry, 'Comment').text = l_room_obj.Comment
-            ET.SubElement(l_entry, 'Corner').text = l_room_obj.Corner
-            ET.SubElement(l_entry, 'Size').text = l_room_obj.Size
+            self.put_text_element(l_entry, 'Comment', l_room_obj.Comment)
+            self.put_text_element(l_entry, 'Corner', l_room_obj.Corner)
+            self.put_text_element(l_entry, 'Size', l_room_obj.Size)
             l_rooms_xml.append(l_entry)
             l_count += 1
         if g_debug > 2:

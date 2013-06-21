@@ -62,8 +62,9 @@ class InternetPage(web_utils.ManualFormMixin):
             ]  # html
         )  # stan
 
-    def __init__(self, name, p_house_obj):
-        self.name = name
+    def __init__(self, p_parent, p_name, p_house_obj):
+        self.m_name = p_name
+        self.m_parent = p_parent
         self.m_house_obj = p_house_obj
         if g_debug >= 1:
             print "web_housemenu.HouseMenuPage.__init__()"
@@ -76,22 +77,22 @@ class InternetPage(web_utils.ManualFormMixin):
     def form_post_rooms(self, **kwargs):
         if g_debug >= 2:
             print "form_post_rooms()", kwargs
-        return web_rooms.RoomsPage(self.name, self.m_house_obj)
+        return web_rooms.RoomsPage(self, self.m_name, self.m_house_obj)
 
     def form_post_lights(self, **kwargs):
         if g_debug >= 2:
             print "form_post_lights", kwargs
-        return InternetPage(self.name, self.m_house_obj)
+        return InternetPage(self.m_name, self.m_house_obj)
 
     def form_post_schedules(self, **kwargs):
         if g_debug >= 2:
             print "form_post_schedules()", kwargs
-        return InternetPage(self.name, self.m_house_obj)
+        return InternetPage(self.m_name, self.m_house_obj)
 
 
     def form_post_house(self, **kwargs):
         if g_debug >= 2:
             print "form_post_house (HousePage)", kwargs
-        return InternetPage(self.name, self.m_house_obj)
+        return InternetPage(self.m_name, self.m_house_obj)
 
 # ## END DBK

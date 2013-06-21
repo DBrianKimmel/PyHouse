@@ -34,7 +34,7 @@ class SchedulesPage(web_utils.ManualFormMixin):
                 T_script(type = 'text/javascript', src = 'slider.js')["\n"],
                 T_script(type = 'text/javascript', src = 'range.js')["\n"],
                 T_script(type = 'text/javascript', src = 'schedpage.js'),
-                ], # head
+                ],  # head
             T_body[
                 T_h1['PyHouse Schedule'],
                 T_p['Select the schedule:'],
@@ -42,14 +42,15 @@ class SchedulesPage(web_utils.ManualFormMixin):
                     T_invisible(data = T_directive('schedlist'), render = T_directive('schedlist')),
                     T_invisible(data = T_directive('lightlist'), render = T_directive('lightlist')),
 #                    T_invisible(data = T_directive('roomlist'), render = T_directive('roomlist')),
-                    ], # table
+                    ],  # table
                 T_input(type = "button", onclick = "createNewSchedule('1234')", value = "Add Schedule")
                 ]  # body
             ]  # html
         )  # stan
 
-    def __init__(self, name, p_pyhouse_obj):
-        self.name = name
+    def __init__(self, p_parent, p_name, p_pyhouse_obj):
+        self.m_name = p_name
+        self.m_parent = p_parent
         self.m_pyhouse_obj = p_pyhouse_obj
         if g_debug >= 1:
             print "web_schedule.SchedulePage.__init__()"
@@ -95,8 +96,6 @@ class SchedulesPage(web_utils.ManualFormMixin):
         l_cnt = 0
         for l_key, l_obj in sorted(links.iteritems()):
             l_json = json.dumps(repr(l_obj))
-        #    if g_debug >= 4:
-        #        print "    json = ", l_json
             if l_cnt % 2 == 0:
                 l_ret.append(T_tr)
             l_ret.append(T_td)
@@ -156,18 +155,18 @@ class SchedulesPage(web_utils.ManualFormMixin):
     def form_post_addslot(self, **kwargs):
         print "web_schedule.SchedulePage.form_post_addslot - kwargs=", kwargs
         self._store_schedule(**kwargs)
-        return SchedulesPage(self.name, self.m_pyhouse_obj)
+        return SchedulesPage(self.m_name, self.m_pyhouse_obj)
 
     def form_post_changeschedule(self, **kwargs):
         print "web_schedule.SchedulePage.form_post_changeschedule - kwargs=", kwargs
         self._store_schedule(**kwargs)
         # schedule.ScheduleAPI().update_schedule(schedule.Schedule_Data)
-        return SchedulesPage(self.name, self.m_pyhouse_obj)
+        return SchedulesPage(self.m_name, self.m_pyhouse_obj)
 
     def form_post_deleteschedule(self, **kwargs):
         print "web_schedule.SchedulePage.form_post_deleteschedule() - kwargs=", kwargs
         del self.m_pyhouse_obj.Schedules['Key']
         # schedule.ScheduleAPI().update_schedule(schedule.Schedule_Data)
-        return SchedulesPage(self.name, self.m_pyhouse_obj)
+        return SchedulesPage(self.m_name, self.m_pyhouse_obj)
 
 # ## END DBK

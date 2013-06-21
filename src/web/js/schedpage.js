@@ -60,6 +60,7 @@ function fillNewSchedule(p_id, p_key, p1, p2, p3, p4, p5) {
 	ret = ret + '</form>\n';
 	return ret;
 }
+
 /*
  * Populate a window to allow changes to be made.
  * Slider for level of light to set 0-100

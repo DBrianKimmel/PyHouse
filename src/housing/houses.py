@@ -27,7 +27,7 @@ g_debug = 4
 # 2 = major routine entry
 # 3 - Config file handling
 # 4 = Access housing info
-
+# + = NOT USED HERE
 g_logger = logging.getLogger('PyHouse.Houses  ')
 
 Singletons = {}
@@ -73,7 +73,7 @@ class HouseReadWriteConfig(xml_tools.ConfigFile):
     def get_xml_root(self):
         return self.m_xmltree_root
 
-    def write_config_file(self, p_xml):
+    def XXwrite_config_file(self, p_xml):
         """Replace the data in the 'Houses' section with the current data.
         """
         if g_debug >= 3:
@@ -95,7 +95,7 @@ class LoadSaveAPI(HouseReadWriteConfig):
         self.l_rwc = HouseReadWriteConfig()
         return self.l_rwc.get_xml_root()
 
-    def save_all_houses(self, p_xml):
+    def XXsave_all_houses(self, p_xml):
         if g_debug >= 4:
             print "\nhouses.save_all_houses()"
         self.l_rwc.write_config_file(p_xml)
@@ -192,16 +192,18 @@ class API(LoadSaveAPI):
             if g_debug >= 4:
                 print "houses.Stop() - House:{0:}, Key:{1:}".format(l_house.Name, l_house.Key), l_house.HouseAPI
             l_houses_xml.append(l_house.HouseAPI.Stop(l_houses_xml, l_house.Object))  # append to the xml tree
-        self.save_all_houses(l_houses_xml)
+        # self.save_all_houses(l_houses_xml)
         g_logger.info("Stopped.")
+        return l_houses_xml
 
     def Reload(self, p_pyhouses_obj):
         if g_debug >= 2:
             print "houses.API.Reload()"
+        g_logger.info("Reloading.")
         l_houses_xml = ET.Element('Houses')
         for l_house in self.m_houses_data.itervalues():
             l_houses_xml.append(l_house.HouseAPI.Reload(l_house.Object))  # append to the xml tree
-        self.save_all_houses(l_houses_xml)
+        # self.save_all_houses(l_houses_xml)
         return l_houses_xml
 
     def get_houses_obj(self):

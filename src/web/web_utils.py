@@ -9,10 +9,8 @@ import datetime
 import random
 import twisted.python.components as tpc
 import xml.etree.ElementTree as ET
-# from nevow import appserver
 from nevow import flat
 from nevow import inevow
-# from nevow import loaders
 from nevow import rend
 from nevow import static
 from nevow import url
@@ -50,23 +48,20 @@ class WebUtilities(xml_tools.ConfigFile):
             print xml_tools.prettify(p_root_xml)
         try:
             l_sect = p_root_xml.find('Web')
-            l_sect.find('WebPort')
         except AttributeError:
             if g_debug >= 1:
                 print "web_utils.read_web_xml() - ERROR in finding Web/WebPort, Creating entry", l_sect
             l_sect = ET.SubElement(p_root_xml, 'Web')
-            ET.SubElement(l_sect, 'WebPort').text = '8580'
-        p_web_obj.WebPort = self.get_int_element(l_sect, 'WebPort')
+        p_web_obj.WebPort = self.get_int_from_xml(l_sect, 'WebPort')
         if g_debug >= 4:
             print "web_utils.read_web_xml() - Port:{0:}".format(p_web_obj.WebPort)
 
-    def write_web_xml(self, p_parent, p_web_obj):
+    def write_web_xml(self):
         if g_debug >= 2:
             print "web_server.write_web_xml()"
-        l_sect = self.write_create_empty('Web')
-        # l_obj = Web_Data[0]
-        ET.SubElement(l_sect, 'WebPort').text = str(WebData.WebPort)
-        # self.write_file()
+        l_xml = ET.Element("Web")
+        self.put_int_attribute(l_xml, 'WebPort', WebData.WebPort)
+        return l_xml
 
 
 
@@ -97,9 +92,7 @@ class ManualFormMixin(rend.Page):
                 name = name_prefix
             else:
                 name = name_prefix + '_' + bindingName.split()[0].lower()
-            # print "locateChild - name:", name
             method = getattr(self, 'form_' + name, None)
-            # print "locateChild - method:", method
             if method is not None:
                 return self.onManualPost(context, method, bindingName, kwargs)
             else:

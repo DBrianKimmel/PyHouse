@@ -14,11 +14,13 @@ from xml.dom import minidom
 # Import PyMh files
 
 
-g_debug = 3
+g_debug = 4
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
 # 3 - Config file handling
+# 4 = Debug od get_xxx_element
+# + = NOT USED HERE
 g_xmltree = None
 
 
@@ -41,36 +43,123 @@ class XmlFileTools(object):
 
 class PutGetXML(XmlFileTools):
     """Protected put / get routines
+
+    Try to be safe if a user edits the XML file.
     """
+#-----
+# Bool
+#-----
+    def get_bool_from_xml(self, p_xml, p_name):
+        l_xml = p_xml.find(p_name)
+        if l_xml == None:
+            l_xml = p_xml.get(p_name)
+        else:
+            l_xml = l_xml.text
+        l_ret = False
+        if l_xml == 'True' or l_xml == True:
+            l_ret = True
+        return l_ret
 
-    def get_bool_element(self, p_xml_tree, p_name):
-        l_var = p_xml_tree.findtext(p_name)
-        return self.get_bool(l_var)
+    def put_bool_attribute(self, p_xml_element, p_bool = 'False'):
+        l_bool = 'False'
+        if p_bool == True or p_bool == 'True':
+            l_bool = 'True'
+        p_xml_element.put(l_bool)
 
-    def get_float_element(self, p_xml_tree, p_name):
-        l_var = p_xml_tree.findtext(p_name)
+    def put_bool_element(self, p_parent_xml, p_name, p_bool = 'False'):
+        l_bool = 'False'
+        if p_bool == True or p_bool == 'True':
+            l_bool = 'True'
+        ET.SubElement(p_parent_xml, p_name).text = l_bool
+
+#-----
+# float
+#-----
+    def get_float_from_xml(self, p_xml, p_name):
+        l_xml = p_xml.find(p_name)
+        if l_xml == None:
+            l_xml = p_xml.get(p_name)
+        else:
+            l_xml = l_xml.text
         try:
-            l_var = float(l_var)
+            l_var = float(l_xml)
         except (ValueError, TypeError):
             l_var = 0.0
         return l_var
 
-    def get_int_element(self, p_xml_tree, p_name):
-        l_var = p_xml_tree.findtext(p_name)
+    def put_float_attribute(self, p_xml_element, p_name, p_float):
         try:
-            l_var = int(l_var)
+            l_var = str(p_float)
+        except (ValueError, TypeError):
+            l_var = '0.0'
+        p_xml_element.set(p_name, l_var)
+
+    def put_float_element(self, p_parent_element, p_name, p_float):
+        try:
+            l_var = str(p_float)
+        except (ValueError, TypeError):
+            l_var = '0.0'
+        ET.SubElement(p_parent_element, p_name).text = l_var
+
+#-----
+# int
+#-----
+    def get_int_from_xml(self, p_xml, p_name):
+        l_xml = p_xml.find(p_name)
+        if l_xml == None:
+            l_xml = p_xml.get(p_name)
+        else:
+            l_xml = l_xml.text
+        try:
+            l_var = int(l_xml)
         except (ValueError, TypeError):
             l_var = 0
+        if g_debug >= 4:
+            print "xml_tools.get_int_from_xml() Int:'{0:}'".format(l_var)
         return l_var
 
-    def get_text_element(self, p_xml_tree, p_name):
-        l_var = p_xml_tree.findtext(p_name)
+    def put_int_attribute(self, p_xml_element, p_name, p_int):
         try:
-            l_var = str(l_var)
+            l_var = str(p_int)
+        except (ValueError, TypeError):
+            l_var = '0'
+        p_xml_element.set(p_name, l_var)
+
+    def put_int_element(self, p_parent_element, p_name, p_int):
+        try:
+            l_var = str(p_int)
+        except (ValueError, TypeError):
+            l_var = '0'
+        ET.SubElement(p_parent_element, p_name).text = l_var
+
+#-----
+# text
+#-----
+    def get_text_from_xml(self, p_xml, p_name):
+        l_xml = p_xml.find(p_name)
+        if l_xml == None:
+            l_xml = p_xml.get(p_name)
+        else:
+            l_xml = l_xml.text
+        if g_debug >= 4:
+            print "xml_tools.get_text_from_xml() Text:'{0:}'".format(l_xml)
+        return str(l_xml)
+
+    def put_text_attribute(self, p_element, p_name, p_text):
+        try:
+            l_var = str(p_text)
         except (ValueError, TypeError):
             l_var = ''
-        return l_var
+        p_element.set(p_name, l_var)
 
+    def put_text_element(self, p_parent_element, p_name, p_text):
+        try:
+            l_var = str(p_text)
+        except (ValueError, TypeError):
+            l_var = ''
+        ET.SubElement(p_parent_element, p_name).text = l_var
+
+#-----
 
     def put_str(self, p_obj):
         try:
@@ -79,12 +168,6 @@ class PutGetXML(XmlFileTools):
             l_var = 'no str value'
         return l_var
 
-
-    def get_bool(self, p_arg):
-        l_ret = False
-        if p_arg == 'True' or p_arg == True:
-            l_ret = True
-        return l_ret
 
     def put_bool(self, p_arg):
         l_text = 'False'
@@ -112,10 +195,12 @@ class ConfigTools(PutGetXML):
         @param p_entry_xml: is the XML subtree that we are extracting the information from.
         """
         if g_debug >= 3:
-            print "xml_tools.xml_read_common_info()", p_entry_xml.items()
-        p_obj.Name = self.get_text_element(p_entry_xml, 'Name')
-        p_obj.Key = self.get_int_element(p_entry_xml, 'Key')
-        p_obj.Active = self.get_bool_element(p_entry_xml, 'Active')
+            print "xml_tools.xml_read_common_info()", p_entry_xml, p_entry_xml.items()
+        p_obj.Name = self.get_text_from_xml(p_entry_xml, 'Name')
+        p_obj.Key = self.get_int_from_xml(p_entry_xml, 'Key')
+        p_obj.Active = self.get_bool_from_xml(p_entry_xml, 'Active')
+        if g_debug >= 3:
+            print "    Name:{0:}, Key:{1:}, Active:{2:}".format(p_obj.Name, p_obj.Key, p_obj.Active)
 
 
 class ConfigEtc(ConfigTools):
@@ -171,6 +256,8 @@ class ConfigFile(ConfigEtc):
 
         @return: the path we created or found
         """
+        if g_debug >= 3:
+            print "xml_tools create_find_config_dir"
         for l_dir in self.m_std_path:
             l_dir = os.path.expanduser(l_dir)
             if os.path.exists(l_dir):
@@ -189,6 +276,8 @@ class ConfigFile(ConfigEtc):
     def find_config_file(self, p_dir):
         """Add a file name to the passed in dir to get the config file.
         """
+        if g_debug >= 3:
+            print "xml_tools find_config_file"
         l_file_name = os.path.join(p_dir, self.m_std_name)
         try:
             open(l_file_name, mode = 'r')
@@ -201,7 +290,8 @@ class ConfigFile(ConfigEtc):
 
         @param p_name: the complete path and filename to create.
         """
-        print "xml_tools create_empty_config_file"
+        if g_debug >= 3:
+            print "xml_tools create_empty_config_file"
         l_top = ET.Element('PyHouse')
         l_comment = ET.Comment('Generated by PyHouse {0:}'.format(datetime.datetime.now()))
         l_top.append(l_comment)

@@ -15,7 +15,7 @@ from src.web import web_utils
 from src.web import web_housemenu
 
 
-g_debug = 2
+g_debug = 4
 # 0 = off
 # 1 = major routine entry
 # 2 = Basic data
@@ -49,8 +49,8 @@ class SelectHousePage(web_utils.ManualFormMixin):
             ]  # html
         )  # stan
 
-    def __init__(self, name, p_pyhouses_obj):
-        self.name = name
+    def __init__(self, p_name, p_pyhouses_obj):
+        self.m_name = p_name
         self.m_pyhouses_obj = p_pyhouses_obj
         if g_debug >= 1:
             print "web_selecthouse.SelectHousePage()"
@@ -81,33 +81,43 @@ class SelectHousePage(web_utils.ManualFormMixin):
     def form_post_add(self, **kwargs):
         if g_debug >= 2:
             print "web_selecthouse.form_post_add() (HousePage)", kwargs
-        return SelectHousePage(self.name, self.m_pyhouses_obj)
+        return SelectHousePage(self.m_name, self.m_pyhouses_obj)
 
     def form_post_0(self, **kwargs):
         if g_debug >= 2:
-            print "web_selecthouse.form_post_0() (SelectHousePage)", kwargs
+            print "web_selecthouse.form_post_0()", kwargs
         if g_debug >= 5:
             print vars(self.m_pyhouses_obj)
-        return web_housemenu.HouseMenuPage(self.name, self.m_pyhouses_obj, 0)
+        return web_housemenu.HouseMenuPage(self.m_name, self.m_pyhouses_obj, 0)
 
     def form_post_1(self, **kwargs):
         if g_debug >= 2:
-            print "web_selecthouse.form_post_1() (SelectHousePage)", kwargs
-        return web_housemenu.HouseMenuPage(self.name, self.m_pyhouses_obj, 1)
+            print "web_selecthouse.form_post_1()", kwargs
+        return web_housemenu.HouseMenuPage(self.m_name, self.m_pyhouses_obj, 1)
+
+    def form_post_2(self, **kwargs):
+        if g_debug >= 2:
+            print "web_selecthouse.form_post_2()", kwargs
+        return web_housemenu.HouseMenuPage(self.m_name, self.m_pyhouses_obj, 2)
+
+    def form_post_3(self, **kwargs):
+        if g_debug >= 2:
+            print "web_selecthouse.form_post_3()", kwargs
+        return web_housemenu.HouseMenuPage(self.m_name, self.m_pyhouses_obj, 3)
 
     def form_post_change_house(self, **kwargs):
         if g_debug >= 2:
             print "web_selecthouse.form_post_change_house() (HousePage)", kwargs
-        return SelectHousePage(self.name, self.m_pyhouses_obj)
+        return SelectHousePage(self.m_name, self.m_pyhouses_obj)
 
     def form_post_deletehouse(self, **kwargs):
         if g_debug >= 2:
             print "web_selecthouse.form_post_deletehouse() (HousePage)", kwargs
-        return SelectHousePage(self.name, self.m_pyhouses_obj)
+        return SelectHousePage(self.m_name, self.m_pyhouses_obj)
 
     def form_post_house(self, **kwargs):
         if g_debug >= 2:
             print "web_selecthouse.form_post_house() (HousePage)", kwargs
-        return SelectHousePage(self.name, self.m_pyhouses_obj)
+        return SelectHousePage(self.m_name, self.m_pyhouses_obj)
 
 # ## END DBK

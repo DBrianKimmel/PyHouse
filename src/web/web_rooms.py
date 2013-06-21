@@ -11,14 +11,16 @@ from nevow import static
 # Import PyMh files and modules.
 from src.web.web_tagdefs import *
 from src.web import web_utils
-# from src.web import web_housemenu
 from src.housing import rooms
 
 
-g_debug = 8
+g_debug = 4
 # 0 = off
-# 1 = major routine entry
-# 2 = Basic data
+# 1 = log extra info
+# 2 = major routine entry
+# 3 = basic Data
+# 4 = detail data
+# + = NOT USED HERE
 
 
 class RoomsPage(web_utils.ManualFormMixin):
@@ -35,22 +37,31 @@ class RoomsPage(web_utils.ManualFormMixin):
             T_body[
                 T_h1['PyHouse Schedule'],
                 T_p['Select the schedule:'],
-                T_table(style = 'width: 100%;', border = 0)["\n",
-                    T_invisible(data = T_directive('roomlist'), render = T_directive('roomlist'))
-                    ],  # body
-                T_input(type = "button", onclick = "createNewRoomWindow('-1', )", value = "Add Room"),
-                T_input(type = "submit", value = "Back", name = BUTTON),
-                ]
+                T_form(name = 'mainmenuofbuttons',
+                       action = U_H_child('_submit!!post'),
+                       enctype = "multipart/form-data",
+                       method = 'post') [
+                    T_table(style = 'width: 100%;', border = 0)["\n",
+                        T_tr[
+                            T_td[ T_input(type = 'submit', value = 'Back', name = BUTTON), ],
+                            ],  # tr
+                            T_invisible(data = T_directive('roomlist'), render = T_directive('roomlist')),
+                            T_input(type = "button", onclick = "createNewRoomWindow('-1', )", value = "Add Room"),
+                            T_input(type = "submit", value = "Back", name = BUTTON),
+                        ],  # table
+                   ]  # form
+                ]  # body
             ]  # html
         )  # stan
 
-    def __init__(self, name, p_house_obj):
-        self.name = name
+    def __init__(self, p_parent, p_name, p_house_obj):
+        self.m_name = p_name
+        self.m_parent = p_parent
         self.m_house_obj = p_house_obj
-        if g_debug >= 1:
+        if g_debug >= 2:
             print "web_rooms.RoomsPage()"
-        if g_debug >= 5:
-            print "web_rooms.RoomsPage()", self.m_house_obj
+        if g_debug >= 4:
+            print "    ", p_house_obj
         rend.Page.__init__(self)
         setattr(RoomsPage, 'child_mainpage.css', static.File('web/css/mainpage.css'))
         setattr(RoomsPage, 'child_ajax.js', static.File('web/js/ajax.js'))
@@ -71,7 +82,7 @@ class RoomsPage(web_utils.ManualFormMixin):
         @param _data: is the page object we are extracting for.
         @return: an object to render.
         """
-        if g_debug >= 5:
+        if g_debug >= 4:
             print "web_rooms.data_roomlist() ", self.m_house_obj
         l_rooms = {}
         for l_key, l_obj in self.m_house_obj.Rooms.iteritems():
@@ -99,43 +110,46 @@ class RoomsPage(web_utils.ManualFormMixin):
         return l_ret
 
     def _store_rooms(self, **kwargs):
-        if g_debug >= 1:
+        if g_debug >= 3:
             print "web_rooms.RoomsPage._store_rooms() - ", kwargs
         l_obj = rooms.RoomData()
         for l_key, l_val in kwargs.iteritems():
             try:
                 l_obj.l_key = l_val
             except KeyError:
-                if g_debug >= 1:
+                if g_debug >= 2:
                     print "web_rooms._store_rooms() - Error - bad key -", l_key, "=", l_val
 
     def form_post_add(self, **kwargs):
         """Add a new room to the house we selected earlier.
         """
-        print "web_rooms.RoomsPage.form_post_add() - kwargs=", kwargs
+        if g_debug >= 3:
+            print "web_rooms.RoomsPage.form_post_add() - kwargs=", kwargs
         self._store_rooms(**kwargs)
         # TODO: we should write out the updated info.
-        return RoomsPage(self.name, self.m_house_obj)
+        return RoomsPage(self.m_name, self.m_house_obj)
 
     def form_post_change(self, **kwargs):
         """Change a room in the house we selected earlier.
         """
-        print "web_rooms.RoomsPage.form_post_change() - kwargs=", kwargs
+        if g_debug >= 3:
+            print "web_rooms.RoomsPage.form_post_change() - kwargs=", kwargs
         self._store_rooms(**kwargs)
         # TODO: we should write out the updated info.
-        return RoomsPage(self.name, self.m_house_obj)
+        return RoomsPage(self.m_name, self.m_house_obj)
 
     def form_post_delete(self, **kwargs):
         """Delete a room from the house we selected earlier.
         """
-        print "web_rooms.RoomsPage.form_post_delete() - kwargs=", kwargs
+        if g_debug >= 3:
+            print "web_rooms.RoomsPage.form_post_delete() - kwargs=", kwargs
         del self.m_house_obj.Rooms[kwargs['Key']]
         # TODO: we should write out the updated info.
-        return RoomsPage(self.name, self.m_house_obj)
+        return RoomsPage(self.m_name, self.m_house_obj)
 
     def form_post_back(self, **kwargs):
-        if g_debug >= 2:
+        if g_debug >= 3:
             print "web_rooms.form_post_back()", kwargs
-        return web_housemenu.HouseMenuPage(self.name, self.m_houses_obj.Object)
+        return self.m_parent(self.m_name, self.m_houses_obj.Object)
 
 # ## END DBK

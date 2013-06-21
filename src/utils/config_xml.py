@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-"""
+""" config_xml
+
 Notice that there  is no logging in this module.
 The logging file location is read in as a part of the configuration.
 All errors are printed out.
@@ -62,6 +63,6 @@ class WriteConfig(object):
 class API(ReadConfig, WriteConfig):
 
     def __init__(self, p_file):
-        pass
+        print "ERROR config_xml.API() should not be used"
 
 # ## END DBK

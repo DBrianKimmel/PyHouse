@@ -64,8 +64,8 @@ class RootPage(web_utils.ManualFormMixin):
             ]  # html
         )  # stan
 
-    def __init__(self, name, p_pyhouses_obj):
-        self.name = name
+    def __init__(self, p_name, p_pyhouses_obj):
+        self.m_name = p_name
         self.m_pyhouses_obj = p_pyhouses_obj
         if g_debug >= 1:
             print "web_rootmenu.RootPage()"
@@ -123,15 +123,16 @@ class RootPage(web_utils.ManualFormMixin):
         return RootPage('House', self.m_pyhouses_obj)
 
     def form_post(self, *args, **kwargs):
-        print "web_rootmenu.form_post() - args={0:}, kwargs={1:}".format(args, kwargs)
+        if g_debug >= 2:
+            print "web_rootmenu.form_post() - args={0:}, kwargs={1:}".format(args, kwargs)
         return RootPage('Root', self.m_pyhouses_obj)
 
     def form_post_quit(self, *args, **kwargs):
-        if g_debug >= 2:
-            print "web_rootmenu.form_post_quit() - args={0:}, kwargs={1:}".format(args, kwargs)
         """Quit the GUI - this also means quitting all of PyHouse !!
         """
-        config_xml.WriteConfig()
+        if g_debug >= 2:
+            print "web_rootmenu.form_post_quit() - args={0:}, kwargs={1:}".format(args, kwargs)
+        # TODO: config_xml.WriteConfig()
         self.m_pyhouses_obj.API.Quit()
 
     def form_post_reload(self, *args, **kwargs):

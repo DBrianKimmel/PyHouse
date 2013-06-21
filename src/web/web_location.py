@@ -60,42 +60,36 @@ class LocationPage(web_utils.ManualFormMixin):
             ]  # html
         )  # stan
 
-    def __init__(self, name, p_pyhouses_obj, p_index):
-        self.name = name
-        self.m_pyhouse_obj = p_pyhouses_obj.HousesData[p_index]
-        self.m_index = p_index
+    def __init__(self, p_parent, p_name, p_house_obj):
+        self.m_name = p_name
+        self.m_parent = p_parent
+        self.m_house_obj = p_house_obj
         if g_debug >= 1:
-            print "web_housemenu.HouseMenuPage.__init__()"
-        if g_debug >= 5:
-            print self.m_pyhouse_obj
+            print "web_location.LocationPage()"
+        if g_debug >= 4:
+            print p_house_obj
         rend.Page.__init__(self)
 
-        setattr(HouseMenuPage, 'child_mainpage.css', static.File('web/css/mainpage.css'))
+        setattr(LocationPage, 'child_mainpage.css', static.File('web/css/mainpage.css'))
 
     def form_post_location(self, **kwargs):
         if g_debug >= 2:
             print "form_post_location()", kwargs
-        return LocationPage(self.name, self.m_pyhouse_obj)
+        return LocationPage(self.m_name, self.m_pyhouse_obj)
 
     def form_post_rooms(self, **kwargs):
         if g_debug >= 2:
             print "form_post_rooms()", kwargs
-        return web_rooms.RoomsPage(self.name, self.m_pyhouse_obj)
+        return web_rooms.RoomsPage(self, self.m_name, self.m_pyhouse_obj)
 
     def form_post_lights(self, **kwargs):
         if g_debug >= 2:
             print "form_post_lights", kwargs
-        return HouseMenuPage(self.name, self.m_pyhouse_obj)
-
-    def form_post_schedules(self, **kwargs):
-        if g_debug >= 2:
-            print "form_post_schedules()", kwargs
-        return web_schedule.SchedulePage(self.name, self.m_pyhouse_obj)
-
+        return LocationPage(self.m_name, self.m_pyhouse_obj)
 
     def form_post_house(self, **kwargs):
         if g_debug >= 2:
-            print "form_post_house (HousePage)", kwargs
-        return HouseMenuPage(self.name, self.m_pyhouse_obj)
+            print "form_post_house", kwargs
+        return LocationPage(self.m_name, self.m_pyhouse_obj)
 
 # ## END DBK

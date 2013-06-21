@@ -110,13 +110,13 @@ class ScheduleXML(xml_tools.ConfigTools):
         """Extract schedule information from a schedule xml element.
         """
         self.xml_read_common_info(p_schedule_obj, p_entry_xml)
-        p_schedule_obj.Level = self.get_int_element(p_entry_xml, 'Level')
-        p_schedule_obj.LightName = self.get_text_element(p_entry_xml, 'LightName')
-        p_schedule_obj.LightNumber = self.get_int_element(p_entry_xml, 'LightNumber')
-        p_schedule_obj.Rate = self.get_int_element(p_entry_xml, 'Rate')
-        p_schedule_obj.RoomName = self.get_text_element(p_entry_xml, 'RoomName')
-        p_schedule_obj.Time = self.get_text_element(p_entry_xml, 'Time')
-        p_schedule_obj.Type = self.get_text_element(p_entry_xml, 'Type')
+        p_schedule_obj.Level = self.get_int_from_xml(p_entry_xml, 'Level')
+        p_schedule_obj.LightName = self.get_text_from_xml(p_entry_xml, 'LightName')
+        p_schedule_obj.LightNumber = self.get_int_from_xml(p_entry_xml, 'LightNumber')
+        p_schedule_obj.Rate = self.get_int_from_xml(p_entry_xml, 'Rate')
+        p_schedule_obj.RoomName = self.get_text_from_xml(p_entry_xml, 'RoomName')
+        p_schedule_obj.Time = self.get_text_from_xml(p_entry_xml, 'Time')
+        p_schedule_obj.Type = self.get_text_from_xml(p_entry_xml, 'Type')
         if g_debug >= 7:
             print "schedule.extract_schedule_xml()   Name:{0:}, Active:{1:}, Key:{2:}, Light:{3:}".format(
                     p_schedule_obj.Name, p_schedule_obj.Active, p_schedule_obj.Key, p_schedule_obj.LightName)
@@ -157,13 +157,13 @@ class ScheduleXML(xml_tools.ConfigTools):
         l_schedules_xml = ET.Element('Schedules')
         for l_schedule_obj in p_schedules_obj.itervalues():
             l_entry = self.xml_create_common_element('Schedule', l_schedule_obj)
-            ET.SubElement(l_entry, 'Level').text = str(l_schedule_obj.Level)
-            ET.SubElement(l_entry, 'LightName').text = l_schedule_obj.LightName
-            ET.SubElement(l_entry, 'LightNumber').text = str(l_schedule_obj.LightNumber)
-            ET.SubElement(l_entry, 'Rate').text = str(l_schedule_obj.Rate)
-            ET.SubElement(l_entry, 'RoomName').text = str(l_schedule_obj.RoomName)
-            ET.SubElement(l_entry, 'Time').text = l_schedule_obj.Time
-            ET.SubElement(l_entry, 'Type').text = l_schedule_obj.Type
+            self.put_int_element(l_entry, 'Level', l_schedule_obj.Level)
+            self.put_text_element(l_entry, 'LightName', l_schedule_obj.LightName)
+            self.put_int_element(l_entry, 'LightNumber', l_schedule_obj.LightNumber)
+            self.put_int_element(l_entry, 'Rate', l_schedule_obj.Rate)
+            self.put_text_element(l_entry, 'RoomName', l_schedule_obj.RoomName)
+            self.put_text_element(l_entry, 'Time', l_schedule_obj.Time)
+            self.put_text_element(l_entry, 'Type', l_schedule_obj.Type)
             l_count += 1
             l_schedules_xml.append(l_entry)
         if g_debug >= 3:

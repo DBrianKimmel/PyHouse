@@ -13,14 +13,14 @@ from src.utils import xml_tools
 g_debug = 0
 
 VALID_INTERFACES = ['Serial', 'USB', 'Ethernet']
-# SERIAL_ATTRS = {'BaudRate': self.get_text_element,
-#                'ByteSize': get_int_element,
-#                'DsrDtr': get_bool_element,
-#                'Parity': get_text_element,
-#                'RtsCts': get_bool_element,
-#                'StopBits': get_float_element,
-#                'Timeout':get_float_element,
-#                'XonXoff': get_bool_element}
+# SERIAL_ATTRS = {'BaudRate': self.get_text_from_xml,
+#                'ByteSize': get_int_from_xml,
+#                'DsrDtr': get_bool_from_xml,
+#                'Parity': get_text_from_xml,
+#                'RtsCts': get_bool_from_xml,
+#                'StopBits': get_float_from_xml,
+#                'Timeout':get_float_from_xml,
+#                'XonXoff': get_bool_from_xml}
 
 
 class SerialData(object):
@@ -95,15 +95,14 @@ class ReadWriteConfig(xml_tools.ConfigTools):
             print "drivers.interface.extract_serial_xml() - Name:{0:}".format(p_controller_obj.Name)
         l_serial = SerialData()
         l_xml = p_controller_xml
-        l_serial.BaudRate = self.get_text_element(l_xml, 'BaudRate')
-        l_serial.ByteSize = self.get_int_element(l_xml, 'ByteSize')
-        l_serial.Parity = self.get_text_element(l_xml, 'Parity')
-        l_serial.StopBits = self.get_float_element(l_xml, 'StopBits')
-        l_serial.Timeout = self.get_float_element(l_xml, 'Timeout')
-        #
-        l_serial.DsrDtr = self.get_bool_element(l_xml, 'DsrDtr')
-        l_serial.RtsCts = self.get_bool_element(l_xml, 'RtsCts')
-        l_serial.XonXoff = self.get_bool_element(l_xml, 'XonXoff')
+        l_serial.BaudRate = self.get_text_from_xml(l_xml, 'BaudRate')
+        l_serial.ByteSize = self.get_int_from_xml(l_xml, 'ByteSize')
+        l_serial.Parity = self.get_text_from_xml(l_xml, 'Parity')
+        l_serial.StopBits = self.get_float_from_xml(l_xml, 'StopBits')
+        l_serial.Timeout = self.get_float_from_xml(l_xml, 'Timeout')
+        l_serial.DsrDtr = self.get_bool_from_xml(l_xml, 'DsrDtr')
+        l_serial.RtsCts = self.get_bool_from_xml(l_xml, 'RtsCts')
+        l_serial.XonXoff = self.get_bool_from_xml(l_xml, 'XonXoff')
         # Put the serial information into the controller object
         self._shove_attrs(p_controller_obj, l_serial)
 
@@ -123,8 +122,8 @@ class ReadWriteConfig(xml_tools.ConfigTools):
             print "drivers.interface.extract_usb_xml() - Name:{0:}".format(p_controller_obj.Name)
         l_usb = USBData()
         l_xml = p_controller_xml
-        l_usb.Product = self.get_int_element(l_xml, 'Product')
-        l_usb.Vendor = self.get_int_element(l_xml, 'Vendor')
+        l_usb.Product = self.get_int_from_xml(l_xml, 'Product')
+        l_usb.Vendor = self.get_int_from_xml(l_xml, 'Vendor')
         self._shove_attrs(p_controller_obj, l_usb)
 
     def _write_usb_xml(self, p_xml, p_controller_obj):
@@ -140,8 +139,8 @@ class ReadWriteConfig(xml_tools.ConfigTools):
             print "drivers.interface.extract_ethernet_xml() - Name:{0:}".format(p_controller_obj.Name)
         l_ethernet = EthernetData()
         l_xml = p_controller_xml
-        l_ethernet.PortNumber = self.get_int_element(l_xml, 'PortNumber')
-        l_ethernet.Protocol = self.get_int_element(l_xml, 'Protocol')
+        l_ethernet.PortNumber = self.get_int_from_xml(l_xml, 'PortNumber')
+        l_ethernet.Protocol = self.get_int_from_xml(l_xml, 'Protocol')
         self._shove_attrs(p_controller_obj, l_ethernet)
 
     def _write_ethernet_xml(self, p_xml, p_controller_obj):

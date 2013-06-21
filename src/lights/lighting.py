@@ -15,7 +15,6 @@ from src.lights import lighting_buttons
 from src.lights import lighting_controllers
 from src.lights import lighting_lights
 from src.lights import lighting_scenes
-from gdata.tlslite.mathtls import P_hash
 
 
 g_debug = 0

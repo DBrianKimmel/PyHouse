@@ -29,7 +29,7 @@ g_debug = 3
 # 1 = log extra info
 # 2 = major routine entry
 # 3 = get/put xml config info
-
+# + = NOT USED HERE
 g_logger = None
 
 
@@ -124,13 +124,13 @@ class API(HouseReadWriteConfig):
         g_logger.info("Starting House {0:}.".format(self.m_house_obj.Name))
         self.read_house_xml(self.m_house_obj, p_house_xml)
         self.m_house_obj.ScheduleAPI = schedule.API(self.m_house_obj)
-        self.m_house_obj.InternetAPI = internet.API(self.m_house_obj, p_house_xml)
+        self.m_house_obj.InternetAPI = internet.API()
         self.m_house_obj.ScheduleAPI.Start(self.m_house_obj, p_house_xml)
-        self.m_house_obj.InternetAPI.Start()
+        self.m_house_obj.InternetAPI.Start(self.m_house_obj, p_house_xml)
         if g_debug >= 2:
             print "house.API.Start() has found -  Rooms:{0:}, Schedule:{1:}, Lights:{2:}, Controllers:{3:}".format(
                     len(self.m_house_obj.Rooms), len(self.m_house_obj.Schedules), len(self.m_house_obj.Lights), len(self.m_house_obj.Controllers))
-        g_logger.info("Started.")
+        g_logger.info("Started. - House:{0:}".format(self.m_house_obj.Name))
         return self.m_house_obj
 
 
@@ -142,19 +142,21 @@ class API(HouseReadWriteConfig):
             print "\nhouse.API.Stop() - House:{0:}".format(self.m_house_obj.Name)
         g_logger.info("Stopping House:{0:}.".format(self.m_house_obj.Name))
         l_house_xml = self.Reload(p_house_obj)
-        g_logger.info("Stopped.")
         if g_debug >= 2:
             print "house.Stop() - Name:{0:}, Count:{1:}".format(self.m_house_obj.Name, len(l_house_xml))
+        g_logger.info("Stopped.")
         return l_house_xml
 
     def Reload(self, p_house_obj):
         if g_debug >= 2:
             print "house.API.Reload()", p_house_obj
+        g_logger.info("Reloading.")
         l_house_xml = self.write_house_xml(p_house_obj)
         l_house_xml.append(self.write_location_xml(p_house_obj.Location))
         l_house_xml.append(self.write_rooms_xml(p_house_obj))
         l_house_xml.extend(self.m_house_obj.ScheduleAPI.Stop(l_house_xml, p_house_obj))
         l_house_xml.append(self.m_house_obj.InternetAPI.Reload())
+        g_logger.info("Reloaded.")
         return l_house_xml
 
     def SpecialTest(self):
