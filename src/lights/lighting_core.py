@@ -43,10 +43,10 @@ class CoreData(object):
         l_str += "Comment:{0:}, ".format(self.Comment)
         l_str += "Coords:{0:}, ".format(self.Coords)
         l_str += "CurLevel:{0:}, ".format(self.CurLevel)
-        l_str += "Dimmable:{0:}".format(self.Dimmable)
+        l_str += "Dimmable:{0:}, ".format(self.Dimmable)
         l_str += "Family:{0:}, ".format(self.Family)
         l_str += "RoomName:{0:}, ".format(self.RoomName)
-        l_str += "Type:{0:}, ".format(self.Type)
+        l_str += "Type:{0:};".format(self.Type)
         return l_str
 
     def __repr__(self):

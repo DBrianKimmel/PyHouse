@@ -18,7 +18,7 @@ from twisted.web.http_headers import Headers
 from src.utils import xml_tools
 from src.utils import convert
 
-g_debug = 5
+g_debug = 0
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry

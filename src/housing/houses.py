@@ -21,7 +21,7 @@ from src.housing import house
 from src.utils import xml_tools
 
 
-g_debug = 4
+g_debug = 0
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
@@ -42,10 +42,16 @@ class HousesData(object):
         self.Key = 0
         self.Active = False
         self.HouseAPI = None
-        self.Object = {}
+        self.HouseObject = {}
 
     def __str__(self):
-        return "Houses:: Name:{0:}, Key:{1:}, Object:{2:}, API:{3:}".format(self.Name, self.Key, self.Object, self.HouseAPI)
+        l_ret = "Houses:: "
+        l_ret += "Name:{0:}, ".format(self.Name)
+        l_ret += "Key:{0:}, ".format(self.Key)
+        l_ret += "Active:{0:}, ".format(self.Active)
+        l_ret += "HouseAPI:{0:}, ".format(self.HouseAPI)
+        l_ret += "HouseObject:{0:};".format(self.HouseObject)
+        return l_ret
 
     def __repr__(self):
         l_ret = "{"
@@ -53,7 +59,7 @@ class HousesData(object):
         l_ret += "'Key':'{0:}', ".format(self.Key)
         l_ret += "'Active':'{0:}', ".format(self.Active)
         l_ret += "'HouseAPI':'{0:}', ".format(self.HouseAPI)
-        l_ret += "'Object':'{0:}'".format(self.Object)
+        l_ret += "'HouseObject':'{0:}'".format(self.HouseObject)
         l_ret += "}"
         return l_ret
 
@@ -108,8 +114,8 @@ class LoadSaveAPI(HouseReadWriteConfig):
         l_houses_obj = HousesData()
         l_houses_obj.Key = p_count
         l_houses_obj.HouseAPI = house.API()
-        l_houses_obj.Object = l_houses_obj.HouseAPI.Start(l_houses_obj, p_house_xml)
-        l_houses_obj.Name = l_houses_obj.Object.Name
+        l_houses_obj.HouseObject = l_houses_obj.HouseAPI.Start(p_house_xml)
+        l_houses_obj.Name = l_houses_obj.HouseObject.Name
         if g_debug >= 4:
             print "houses.get_house_info()", l_houses_obj
         return l_houses_obj
@@ -169,7 +175,7 @@ class API(LoadSaveAPI):
         l_count = 0
         for l_house_xml in self.read_xml_config_houses(p_pyhouses_obj):
             if g_debug >= 4:
-                print "houses.API.Start() - ", l_house_xml
+                print "houses.API.Start() - Index:{0:}".format(l_count)
             self.m_houses_data[l_count] = self.get_house_info(l_house_xml, l_count)
             l_count += 1
         if g_debug >= 2:
@@ -191,7 +197,7 @@ class API(LoadSaveAPI):
         for l_house in self.m_houses_data.itervalues():
             if g_debug >= 4:
                 print "houses.Stop() - House:{0:}, Key:{1:}".format(l_house.Name, l_house.Key), l_house.HouseAPI
-            l_houses_xml.append(l_house.HouseAPI.Stop(l_houses_xml, l_house.Object))  # append to the xml tree
+            l_houses_xml.append(l_house.HouseAPI.Stop(l_houses_xml, l_house.HouseObject))  # append to the xml tree
         # self.save_all_houses(l_houses_xml)
         g_logger.info("Stopped.")
         return l_houses_xml
@@ -202,7 +208,7 @@ class API(LoadSaveAPI):
         g_logger.info("Reloading.")
         l_houses_xml = ET.Element('Houses')
         for l_house in self.m_houses_data.itervalues():
-            l_houses_xml.append(l_house.HouseAPI.Reload(l_house.Object))  # append to the xml tree
+            l_houses_xml.append(l_house.HouseAPI.Reload(l_house.HouseObject))  # append to the xml tree
         # self.save_all_houses(l_houses_xml)
         return l_houses_xml
 

@@ -14,7 +14,7 @@ from xml.dom import minidom
 # Import PyMh files
 
 
-g_debug = 4
+g_debug = 0
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
@@ -341,5 +341,12 @@ def open_config_file():
         l_file_name = os.path.expanduser(l_file_name)
         ConfigFile().create_empty_config_file(l_file_name)
     return l_file_name
+
+def write_xml_file(p_xmltree, p_filename):
+    if g_debug >= 1:
+        print "xml_tools.write_xml_file() Filename:{0:}".format(p_filename)
+        l_tree = ET.ElementTree()
+        l_tree._setroot(p_xmltree)
+        l_tree.write(p_filename, xml_declaration = True)
 
 # ## END

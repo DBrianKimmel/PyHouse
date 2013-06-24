@@ -25,9 +25,11 @@ from src.families.Insteon import Insteon_utils
 
 g_debug = 0
 # 0 = off
-# 1 = major routine entry
-# 2 = Startup Details
-# 3 = Minor routines
+# 1 = log extra info
+# 2 = major routine entry
+# 3 = Config file handling
+# 4 = Minor routines
+# + = NOT USED HERE
 
 g_logger = None
 
@@ -148,7 +150,7 @@ class LightingAPI(lighting.LightingAPI, CoreAPI):
     """
 
     def change_light_setting(self, p_light_obj, p_level, p_house_obj):
-        if g_debug >= 2:
+        if g_debug >= 3:
             print "Device_Insteon.change_light_setting()", p_level,
             print "    Light:", p_light_obj
             print "    House:", p_house_obj
@@ -172,8 +174,8 @@ class API(LightingAPI):
     def __init__(self, p_house_obj):
         global g_logger
         g_logger = logging.getLogger('PyHouse.Dev_Inst')
-        if g_debug >= 1:
-            print "Device_Insteon.API()"
+        if g_debug >= 2:
+            print "Device_Insteon.API()", p_house_obj
         self.m_house_obj = p_house_obj
         g_logger.info('Initialized.')
 
@@ -181,39 +183,38 @@ class API(LightingAPI):
     def Start(self, p_house_obj):
         """For the given house, this will start all the controllers for family = Insteon in that house.
         """
-        if g_debug >= 1:
-            print "Device_Insteon.API.Start() - House:{0:}".format(p_house_obj.Name)
+        if g_debug >= 2:
+            print "Device_Insteon.API.Start() - House:{0:}".format(p_house_obj.Name), p_house_obj
         g_logger.info('Starting.')
         l_count = 0
         for l_controller_obj in p_house_obj.Controllers.itervalues():
-            if g_debug >= 2:
+            if g_debug >= 3:
                 print "Device_Insteon.Start() - House:{0:}, Controller:{1:}".format(p_house_obj.Name, l_controller_obj.Name)
             if l_controller_obj.Family != 'Insteon':
-                if g_debug >= 1:
+                if g_debug >= 3:
                     print "Device_Insteon.Start() - Skipping, Family:{0:}".format(l_controller_obj.Family)
                 continue
             if l_controller_obj.Active != True:
-                if g_debug >= 1:
+                if g_debug >= 2:
                     print "Device_Insteon.Start() - Skipping, Active:{0:}".format(l_controller_obj.Active)
                 continue
-            if g_debug >= 5:
+            if g_debug >= 4:
                 print "Device_Insteon.Start() - trying."
             # Only one controller may be active at a time (for now).
             # But all controllers need to be processed so they may be written back to XML.
             if l_count > 0:
-                if g_debug >= 5:
+                if g_debug >= 4:
                     print "Device_Insteon.Start() - Skipping - another controller is already active."
                 l_controller_obj.Active = False
                 continue
             else:
                 l_controller_obj.HandlerAPI = Insteon_PLM.API(p_house_obj)
-                self.m_
                 if l_controller_obj.HandlerAPI.Start(l_controller_obj):
                     l_count += 1
-                    if g_debug >= 1:
+                    if g_debug >= 2:
                         print "Device_Insteon.Start() - Started - House:{0:}, Controller:{1:}".format(p_house_obj.Name, l_controller_obj.Name)
                 else:
-                    if g_debug >= 1:
+                    if g_debug >= 2:
                         print "Device_Insteon.Start() - Did NOT start- House:{0:}, Controller:{1:}".format(p_house_obj.Name, l_controller_obj.Name)
                     l_controller_obj.Active = False
         l_msg = 'Started {0:} Controllers, House:{1:}.'.format(l_count, p_house_obj.Name)
@@ -222,7 +223,7 @@ class API(LightingAPI):
         g_logger.info(l_msg)
 
     def Stop(self, p_xml):
-        if g_debug >= 1:
+        if g_debug >= 2:
             print "Device_Insteon.API.Stop()"
         try:
             for l_controller_obj in self.m_house_obj.Controllers.itervalues():
@@ -236,7 +237,7 @@ class API(LightingAPI):
         return p_xml
 
     def SpecialTest(self):
-        if g_debug >= 1:
+        if g_debug >= 2:
             print "Device_Insteon.API.SpecialTest()"
         self.m_plm.SpecialTest()
 

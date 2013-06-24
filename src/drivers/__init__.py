@@ -47,6 +47,4 @@ __version__ = '.' . join(map(str, __version_info__))
 
 VALID_INTERFACES = ['Serial', 'USB', 'HidUSB', 'Ethernet']
 
-#print "Running drivers now."
-
 # ## END DBK

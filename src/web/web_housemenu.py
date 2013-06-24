@@ -23,7 +23,7 @@ from src.web import web_control
 from src.web import web_internet
 
 
-g_debug = 5
+g_debug = 0
 # 0 = off
 # 1 = major routine entry
 # 2 = Basic data
@@ -82,47 +82,47 @@ class HouseMenuPage(web_utils.ManualFormMixin):
     def form_post_buttons(self, **kwargs):
         if g_debug >= 2:
             print "web_housemenu.HouseMenuPage.form_post_buttons", kwargs
-        return web_buttons.ButtonsPage(self, self.m_name, self.m_house_obj.Object)
+        return web_buttons.ButtonsPage(self, self.m_name, self.m_house_obj.HouseObject)
 
     def form_post_control(self, **kwargs):
         if g_debug >= 2:
             print "web_housemenu.HouseMenuPage.form_post_control()", kwargs
-        return web_control.ControlPage(self, self.m_name, self.m_house_obj.Object)
+        return web_control.ControlPage(self, self.m_name, self.m_house_obj.HouseObject)
 
     def form_post_controllers(self, **kwargs):
         if g_debug >= 2:
             print "web_housemenu.HouseMenuPage.form_post_controllers", kwargs
-        return web_controllers.ControllersPage(self, self.m_name, self.m_house_obj.Object)
+        return web_controllers.ControllersPage(self, self.m_name, self.m_house_obj.HouseObject)
 
     def form_post_lights(self, **kwargs):
         if g_debug >= 2:
             print "web_housemenu.HouseMenuPage.form_post_lights", kwargs
-        return web_lights.LightsPage(self, self.m_name, self.m_house_obj.Object)
+        return web_lights.LightsPage(self, self.m_name, self.m_house_obj.HouseObject)
 
     def form_post_internet(self, **kwargs):
         if g_debug >= 2:
             print "web_housemenu.HouseMenuPage.form_post_internet()", kwargs
-        return web_internet.InternetPage(self, self.m_name, self.m_house_obj.Object)
+        return web_internet.InternetPage(self, self.m_name, self.m_house_obj.HouseObject)
 
     def form_post_location(self, **kwargs):
         if g_debug >= 2:
             print "web_housemenu.HouseMenuPage.form_post_location()", kwargs
-        return web_location.LocationPage(self, self.m_name, self.m_house_obj.Object)
+        return web_location.LocationPage(self, self.m_name, self.m_house_obj.HouseObject)
 
     def form_post_rooms(self, **kwargs):
         if g_debug >= 2:
             print "web_housemenu.HouseMenuPage.form_post_rooms()", kwargs
-        return web_rooms.RoomsPage(self, self.m_name, self.m_house_obj.Object)
+        return web_rooms.RoomsPage(self, self.m_name, self.m_house_obj.HouseObject)
 
     def form_post_schedules(self, **kwargs):
         if g_debug >= 2:
             print "web_housemenu.HouseMenuPage.form_post_schedules()", kwargs
-        return web_schedules.SchedulesPage(self, self.m_name, self.m_house_obj.Object)
+        return web_schedules.SchedulesPage(self, self.m_name, self.m_house_obj.HouseObject)
 
 
     def form_post_house(self, **kwargs):
         if g_debug >= 2:
             print "web_housemenu.HouseMenuPage.form_post_house (HousePage)", kwargs
-        return HouseMenuPage(self, self.m_name, self.m_house_obj.Object)
+        return HouseMenuPage(self, self.m_name, self.m_house_obj.HouseObject)
 
 # ## END DBK

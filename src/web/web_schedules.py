@@ -15,7 +15,7 @@ from src.web.web_tagdefs import *
 from src.web import web_utils
 
 
-g_debug = 5
+g_debug = 0
 # 0 = off
 # 1 = major routine entry
 # 2 = Basic data

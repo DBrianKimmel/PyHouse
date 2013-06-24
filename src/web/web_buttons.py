@@ -16,7 +16,7 @@ from src.web import web_utils
 from src.web import web_rooms
 
 
-g_debug = 4
+g_debug = 0
 # 0 = off
 # 1 = major routine entry
 # 2 = Basic data
@@ -34,7 +34,7 @@ class ButtonsPage(web_utils.ManualFormMixin):
                 T_link(rel = 'stylesheet', type = 'text/css', href = U_R_child('mainpage.css'))["\n"],
                 T_script(type = 'text/javascript', src = 'ajax.js')["\n"],
                 T_script(type = 'text/javascript', src = 'floating_window.js'),
-                T_script(type = 'text/javascript', src = 'housepage.js')["\n"],
+                T_script(type = 'text/javascript', src = 'buttonspage.js')["\n"],
                 ],  # head
             T_body[
                 T_h1['PyHouse Houses'],
@@ -71,6 +71,19 @@ class ButtonsPage(web_utils.ManualFormMixin):
         if g_debug >= 5:
             print self.m_house_obj
         rend.Page.__init__(self)
+        setattr(ButtonsPage, 'child_lightpage.css', static.File('web/css/lightpage.css'))
+        setattr(ButtonsPage, 'child_mainpage.css', static.File('web/css/mainpage.css'))
+        setattr(ButtonsPage, 'child_ajax.js', static.File('web/js/ajax.js'))
+        setattr(ButtonsPage, 'child_floating_window.js', static.File('web/js/floating-window.js'))
+        setattr(ButtonsPage, 'child_controllerspage.js', static.File('web/js/controllerspage.js'))
+        #------------------------------------
+        setattr(ButtonsPage, 'child_bottomRight.gif', static.File('web/images/bottom_right.gif'))
+        setattr(ButtonsPage, 'child_close.gif', static.File('web/images/close.gif'))
+        setattr(ButtonsPage, 'child_minimize.gif', static.File('web/images/minimize.gif'))
+        setattr(ButtonsPage, 'child_topCenter.gif', static.File('web/images/top_center.gif'))
+        setattr(ButtonsPage, 'child_topLeft.gif', static.File('web/images/top_left.gif'))
+        setattr(ButtonsPage, 'child_topRight.gif', static.File('web/images/top_right.gif'))
+        setattr(ButtonsPage, 'child_handle.horizontal.png', static.File('web/images/handle.horizontal.png'))
 
         setattr(ButtonsPage, 'child_mainpage.css', static.File('web/css/mainpage.css'))
 

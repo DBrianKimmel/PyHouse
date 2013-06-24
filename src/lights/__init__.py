@@ -11,9 +11,7 @@ When adding a family of lighting devices:
 
 import sys
 
-__version_info__ = (0, 1, 4)
+__version_info__ = (1, 1, 0)
 __version__ = '.'.join(map(str, __version_info__))
-
-#print "Running lights now."
 
 # ## END DBK

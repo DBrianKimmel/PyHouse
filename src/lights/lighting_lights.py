@@ -30,7 +30,7 @@ class LightData(lighting_core.CoreData):
         self.Type = 'Light'
         self.CurLevel = 0
 
-    def __str__(self):
+    def XX__str__(self):
         l_str = super(LightData, self).__str__()
         l_str = l_str + " Key:{0} ".format(self.Key)
         return l_str

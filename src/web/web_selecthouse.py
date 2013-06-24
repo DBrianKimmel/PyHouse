@@ -15,7 +15,7 @@ from src.web import web_utils
 from src.web import web_housemenu
 
 
-g_debug = 4
+g_debug = 0
 # 0 = off
 # 1 = major routine entry
 # 2 = Basic data
@@ -62,7 +62,7 @@ class SelectHousePage(web_utils.ManualFormMixin):
     def data_houselist(self, _context, _data):
         l_house = {}
         for l_key, l_houses_obj in self.m_pyhouses_obj.HousesData.iteritems():
-            l_house[l_key] = l_houses_obj.Object
+            l_house[l_key] = l_houses_obj.HouseObject
         return l_house
 
     def render_houselist(self, _context, links):

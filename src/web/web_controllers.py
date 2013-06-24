@@ -15,10 +15,13 @@ from src.web.web_tagdefs import *
 from src.web import web_utils
 
 
-g_debug = 8
+g_debug = 0
 # 0 = off
-# 1 = major routine entry
-# 2 = Basic data
+# 1 = log extra info
+# 2 = major routine entry
+# 3 = Config file handling
+# 4 = Dump JSON
+# + = NOT USED HERE
 
 
 class ControllersPage(web_utils.ManualFormMixin):
@@ -50,30 +53,31 @@ class ControllersPage(web_utils.ManualFormMixin):
             ]  # html
         )  # stan
 
-    def __init__(self, name, p_house_obj):
-        self.name = name
+    def __init__(self, p_parent, p_name, p_house_obj):
+        self.m_name = p_name
+        self.m_parent = p_parent
         self.m_house_obj = p_house_obj
-        if g_debug >= 1:
+        if g_debug >= 2:
             print "web_controllers.ControllersPage()"
         rend.Page.__init__(self)
         setattr(ControllersPage, 'child_lightpage.css', static.File('web/css/lightpage.css'))
-        setattr(ControllersPage, 'child_mainpage.css', static.File('web/css/mainpage.css'))
-        setattr(ControllersPage, 'child_ajax.js', static.File('web/js/ajax.js'))
-        setattr(ControllersPage, 'child_floating_window.js', static.File('web/js/floating-window.js'))
-        setattr(ControllersPage, 'child_controllerspage.js', static.File('web/js/controllerspage.js'))
+        setattr(ButtonsPage, 'child_mainpage.css', static.File('web/css/mainpage.css'))
+        setattr(ButtonsPage, 'child_ajax.js', static.File('web/js/ajax.js'))
+        setattr(ButtonsPage, 'child_floating_window.js', static.File('web/js/floating-window.js'))
+        setattr(ButtonsPage, 'child_controllerspage.js', static.File('web/js/controllerspage.js'))
         #------------------------------------
-        setattr(ControllersPage, 'child_bottomRight.gif', static.File('web/images/bottom_right.gif'))
-        setattr(ControllersPage, 'child_close.gif', static.File('web/images/close.gif'))
-        setattr(ControllersPage, 'child_minimize.gif', static.File('web/images/minimize.gif'))
-        setattr(ControllersPage, 'child_topCenter.gif', static.File('web/images/top_center.gif'))
+        setattr(ButtonsPage, 'child_bottomRight.gif', static.File('web/images/bottom_right.gif'))
+        setattr(ButtonsPage, 'child_close.gif', static.File('web/images/close.gif'))
+        setattr(ButtonsPage, 'child_minimize.gif', static.File('web/images/minimize.gif'))
+        setattr(ButtonsPage, 'child_topCenter.gif', static.File('web/images/top_center.gif'))
         setattr(ControllersPage, 'child_topLeft.gif', static.File('web/images/top_left.gif'))
         setattr(ControllersPage, 'child_topRight.gif', static.File('web/images/top_right.gif'))
-        setattr(ControllersPage, 'child_handle.horizontal.png', static.File('web/images/handle.horizontal.png'))
+        setattr(ButtonsPage, 'child_handle.horizontal.png', static.File('web/images/handle.horizontal.png'))
 
     def data_controllerslist(self, _context, _data):
         """Build up a list of controllers.
         """
-        if g_debug >= 1:
+        if g_debug >= 2:
             print "web_controllers.data_controllerslist()"
         l_controller = {}
         for l_key, l_obj in self.m_house_obj.Controllers.iteritems():
@@ -83,7 +87,7 @@ class ControllersPage(web_utils.ManualFormMixin):
     def render_controllerslist(self, _context, links):
         """Place buttons for each light on the page.
         """
-        if g_debug >= 1:
+        if g_debug >= 2:
             print "web_controllers.render_controllerslist()"
         l_ret = []
         l_cnt = 0
@@ -120,29 +124,29 @@ class ControllersPage(web_utils.ManualFormMixin):
     def form_post_addlight(self, **kwargs):
         print " - form_post_addlight - ", kwargs
         self._store_light(**kwargs)
-        return ControllersPage(self.name, self.m_house_obj)
+        return ButtonsPage(self.m_name, self.m_house_obj)
 
     def form_post_changelight(self, **kwargs):
         """Browser user changed a light (on/off/dim)
         Now send the change to the light.
         """
         print " - form_post_changelight - kwargs=", kwargs
-        return ControllersPage(self.name, self.m_house_obj)
+        return ButtonsPage(self.m_name, self.m_house_obj)
 
     def form_post_deletelight(self, **kwargs):
         print " - form_post_delete - ", kwargs
         del Lights[kwargs['Name']]
         # lighting.LightingUtility().update_all_lighting_families()
-        return ControllersPage(self.name, self.m_house_obj)
+        return ButtonsPage(self.m_name, self.m_house_obj)
 
     def form_post_scan(self, **kwargs):
         """Trigger a scan of all lights and then update light info.
         """
         print " - form_post_scan- ", kwargs
-        return ControllersPage(self.name, self.m_house_obj)
+        return ButtonsPage(self.m_name, self.m_house_obj)
 
     def form_post_lighting(self, **kwargs):
         print " - form_post_lighting - ", kwargs
-        return ControllersPage(self.name, self.m_house_obj)
+        return ControllersPage(self.m_name, self.m_house_obj)
 
 # ## END DBK

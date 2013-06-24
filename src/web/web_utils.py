@@ -25,9 +25,12 @@ from src.web.web_tagdefs import *
 
 g_debug = 0
 # 0 = off
-# 1 = major routine entry
-# 4 = display XML parse fields
-# 9 = dump
+# 1 = log extra info
+# 2 = major routine entry
+# 3 = Config file handling
+# 4 = dump
+# + = NOT USED HERE
+
 
 
 class WebData(object):
@@ -42,9 +45,9 @@ class WebUtilities(xml_tools.ConfigFile):
     """
 
     def read_web_xml(self, p_web_obj, p_root_xml):
-        if g_debug >= 1:
+        if g_debug >= 3:
             print "web_utils.WebUtilities().read_web_xml()"
-        if g_debug >= 9:
+        if g_debug >= 4:
             print xml_tools.prettify(p_root_xml)
         try:
             l_sect = p_root_xml.find('Web')
@@ -55,12 +58,13 @@ class WebUtilities(xml_tools.ConfigFile):
         p_web_obj.WebPort = self.get_int_from_xml(l_sect, 'WebPort')
         if g_debug >= 4:
             print "web_utils.read_web_xml() - Port:{0:}".format(p_web_obj.WebPort)
+        return p_web_obj
 
-    def write_web_xml(self):
-        if g_debug >= 2:
+    def write_web_xml(self, p_web_data):
+        if g_debug >= 3:
             print "web_server.write_web_xml()"
         l_xml = ET.Element("Web")
-        self.put_int_attribute(l_xml, 'WebPort', WebData.WebPort)
+        self.put_int_attribute(l_xml, 'WebPort', p_web_data.WebPort)
         return l_xml
 
 
@@ -107,7 +111,7 @@ class ManualFormMixin(rend.Page):
         def redirectAfterPost(aspects):
             """See: nevow.rend.Page.WebFormPost
             """
-            if g_debug >= 7:
+            if g_debug >= 4:
                 print "web_utils.ManualFormMixin.onManualPost.redirectAfterPost() -1- Start - ctx:", ctx, ", method:", method, ", bindingName:", bindingName, ", kwargs", kwargs
             l_handler = aspects.get(inevow.IHand)
             refpath = None
@@ -119,7 +123,7 @@ class ManualFormMixin(rend.Page):
                         refpath = refpath.child('freeform_hand')
                 if isinstance(l_handler, (url.URL, url.URLOverlay)):
                     refpath, l_handler = l_handler, None
-            if g_debug >= 7:
+            if g_debug >= 4:
                 print "web_utils.ManualFormMixin.onManualPost.redirectAfterPost() -2- refpath:", refpath
             if refpath is None:
                 redirectAfterPost = request.getComponent(iformless.IRedirectAfterPost, None)
@@ -134,7 +138,7 @@ class ManualFormMixin(rend.Page):
                     # # Use the redirectAfterPost url
                     ref = str(redirectAfterPost)
                     refpath = url.URL.fromString(ref)
-            if g_debug >= 7:
+            if g_debug >= 4:
                 print "web_utils.ManualFormMixin.onManualPost.redirectAfterPost() -3- refpath:", refpath
             if l_handler is not None or aspects.get(iformless.IFormErrors) is not None:
                 magicCookie = '%s%s%s' % (datetime.datetime.now(), request.getClientIP(), random.random())
@@ -144,12 +148,12 @@ class ManualFormMixin(rend.Page):
                     C.setComponent(k, v)
             destination = flat.flatten(refpath, ctx)
             request.redirect(destination)
-            if g_debug >= 1:
+            if g_debug >= 2:
                 print "web_utils.ManualFormMixin.onManualPost.redirectAfterPost() -4- Posted a form to >", bindingName, "<"
             return static.Data('You posted a form to %s' % bindingName, 'text/plain'), ()
 
         request = inevow.IRequest(ctx)
-        if g_debug >= 1:
+        if g_debug >= 2:
             print "web_utils.ManualFormMixin.onManualPost.redirectAfterPost() -5- defer ", kwargs
         return util.maybeDeferred(method, **kwargs
             ).addCallback(self.onPostSuccess, request, ctx, bindingName, redirectAfterPost

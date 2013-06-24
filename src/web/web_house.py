@@ -16,7 +16,7 @@ from src.web import web_schedules
 from src.web import web_rooms
 
 
-g_debug = 4
+g_debug = 0
 # 0 = off
 # 1 = major routine entry
 # 2 = Basic data

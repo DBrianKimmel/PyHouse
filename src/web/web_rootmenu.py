@@ -18,7 +18,7 @@ from src.web import web_selecthouse
 from src.utils import log
 
 
-g_debug = 5
+g_debug = 0
 # 0 = off
 # 1 = major routine entry
 # 2 = Basic data

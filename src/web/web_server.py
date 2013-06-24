@@ -24,7 +24,7 @@ from src.web import web_rootmenu
 
 
 
-g_debug = 5
+g_debug = 0
 # 0 = off
 # 1 = Additional logging
 # 2 = major routine entry
@@ -114,7 +114,7 @@ class API(object):
         if g_debug >= 3:
             print "    ", p_pyhouses_obj
         self.m_pyhouses_obj = p_pyhouses_obj
-        web_utils.WebUtilities().read_web_xml(self.web_data, p_pyhouses_obj.XmlRoot)
+        self.web_data = web_utils.WebUtilities().read_web_xml(self.web_data, p_pyhouses_obj.XmlRoot)
         l_site_dir = os.path.split(os.path.abspath(__file__))[0]
         l_site = appserver.NevowSite(web_rootmenu.RootPage('/', p_pyhouses_obj))
         listenTCP(self.web_data.WebPort, l_site)
@@ -127,13 +127,13 @@ class API(object):
     def Stop(self):
         if g_debug >= 2:
             print "web_server.API.Stop()"
-        l_xml = web_utils.WebUtilities().write_web_xml()
+        l_xml = web_utils.WebUtilities().write_web_xml(self.web_data)
         return l_xml
 
     def Reload(self, p_pyhouses_obj):
         if g_debug >= 2:
             print "web_server.API.Reload()"
-        l_xml = web_utils.WebUtilities().write_web_xml()
+        l_xml = web_utils.WebUtilities().write_web_xml(self.web_data)
         return l_xml
 
 # ## END DBK

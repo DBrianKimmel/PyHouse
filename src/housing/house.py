@@ -24,7 +24,7 @@ from src.housing import location
 from src.housing import rooms
 
 
-g_debug = 3
+g_debug = 0
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
@@ -115,12 +115,12 @@ class API(HouseReadWriteConfig):
             print "house.API()"
         self.m_house_obj = HouseData()
 
-    def Start(self, _p_houses_obj, p_house_xml):
+    def Start(self, p_house_xml):
         """Start processing for all things house.
         May be stopped and then started anew to force reloading info.
         """
         if g_debug >= 2:
-            print "house.API.Start() - House:{0:}".format(self.m_house_obj.Name), _p_houses_obj
+            print "house.API.Start() - House:{0:}".format(self.m_house_obj.Name)
         g_logger.info("Starting House {0:}.".format(self.m_house_obj.Name))
         self.read_house_xml(self.m_house_obj, p_house_xml)
         self.m_house_obj.ScheduleAPI = schedule.API(self.m_house_obj)
@@ -143,7 +143,7 @@ class API(HouseReadWriteConfig):
         g_logger.info("Stopping House:{0:}.".format(self.m_house_obj.Name))
         l_house_xml = self.Reload(p_house_obj)
         if g_debug >= 2:
-            print "house.Stop() - Name:{0:}, Count:{1:}".format(self.m_house_obj.Name, len(l_house_xml))
+            print "house.API.Stop() - Name:{0:}, Count:{1:}".format(self.m_house_obj.Name, len(l_house_xml))
         g_logger.info("Stopped.")
         return l_house_xml
 

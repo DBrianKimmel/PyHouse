@@ -14,7 +14,7 @@ from src.web import web_utils
 from src.housing import rooms
 
 
-g_debug = 4
+g_debug = 0
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
@@ -43,11 +43,12 @@ class RoomsPage(web_utils.ManualFormMixin):
                        method = 'post') [
                     T_table(style = 'width: 100%;', border = 0)["\n",
                         T_tr[
-                            T_td[ T_input(type = 'submit', value = 'Back', name = BUTTON), ],
-                            ],  # tr
                             T_invisible(data = T_directive('roomlist'), render = T_directive('roomlist')),
-                            T_input(type = "button", onclick = "createNewRoomWindow('-1', )", value = "Add Room"),
-                            T_input(type = "submit", value = "Back", name = BUTTON),
+                            ],  # tr
+                        T_tr[
+                            T_input(type = "button", onclick = "createNewRoomWindow('-1', )", value = "Add Room")["\n"],
+                            T_input(type = "submit", value = "Back", name = BUTTON)["\n"],
+                            ],  # tr
                         ],  # table
                    ]  # form
                 ]  # body

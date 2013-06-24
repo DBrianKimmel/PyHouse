@@ -14,7 +14,7 @@ from src.web import web_utils
 from src.web import web_rooms
 
 
-g_debug = 4
+g_debug = 0
 # 0 = off
 # 1 = major routine entry
 # 2 = Basic data
@@ -71,6 +71,19 @@ class LocationPage(web_utils.ManualFormMixin):
         rend.Page.__init__(self)
 
         setattr(LocationPage, 'child_mainpage.css', static.File('web/css/mainpage.css'))
+        setattr(LocationPage, 'child_lightpage.css', static.File('web/css/lightpage.css'))
+        setattr(LocationPage, 'child_mainpage.css', static.File('web/css/mainpage.css'))
+        setattr(LocationPage, 'child_ajax.js', static.File('web/js/ajax.js'))
+        setattr(LocationPage, 'child_floating_window.js', static.File('web/js/floating-window.js'))
+        setattr(LocationPage, 'child_controllerspage.js', static.File('web/js/controllerspage.js'))
+        #------------------------------------
+        setattr(LocationPage, 'child_bottomRight.gif', static.File('web/images/bottom_right.gif'))
+        setattr(LocationPage, 'child_close.gif', static.File('web/images/close.gif'))
+        setattr(LocationPage, 'child_minimize.gif', static.File('web/images/minimize.gif'))
+        setattr(LocationPage, 'child_topCenter.gif', static.File('web/images/top_center.gif'))
+        setattr(LocationPage, 'child_topLeft.gif', static.File('web/images/top_left.gif'))
+        setattr(LocationPage, 'child_topRight.gif', static.File('web/images/top_right.gif'))
+        setattr(LocationPage, 'child_handle.horizontal.png', static.File('web/images/handle.horizontal.png'))
 
     def form_post_location(self, **kwargs):
         if g_debug >= 2:

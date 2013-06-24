@@ -4,7 +4,7 @@ Created on Apr 27, 2013
 @author: briank
 '''
 
-def message2int(self, p_message, p_index):
+def message2int(p_message, p_index):
     """Extract the address from a message.
 
     The message is a byte array returned from the PLM.
@@ -13,7 +13,7 @@ def message2int(self, p_message, p_index):
     l_int = p_message[p_index] * 256 * 256 + p_message[p_index + 1] * 256 + p_message[p_index + 2]
     return l_int
 
-def int2message(self, p_int, p_message, p_index):
+def int2message(p_int, p_message, p_index):
     l_ix = 256 * 256
     while l_ix > 0:
         p_message[p_index], p_int = divmod(p_int, l_ix)

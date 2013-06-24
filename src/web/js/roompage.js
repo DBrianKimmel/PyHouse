@@ -1,6 +1,5 @@
-// roompage.js
 /*
- * RoomPage.js
+ * roompage.js
  * 
  * version 1.00
  * 

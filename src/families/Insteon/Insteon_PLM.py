@@ -26,6 +26,7 @@ from src.lights.lighting import LightData
 from src.families.Insteon import Insteon_Link
 from src.utils.tools import PrintBytes
 from src.families.Insteon.Insteon_constants import *
+from src.families.Insteon import Insteon_utils
 
 g_debug = 0
 # 0 = off
@@ -88,7 +89,7 @@ class InsteonPlmUtility(object):
         The address is 3 consecutive bytes starting at p_index.
         Return a string 'A1.B2.C3' (upper case) that is the address.
         """
-        l_id = self.message2int(p_message, p_index)
+        l_id = Insteon_utils.message2int(p_message, p_index)
         return l_id
 
     def _get_ack_nak(self, p_byte):
@@ -142,11 +143,11 @@ class DecodeResponses(InsteonPlmUtility):
             if l_obj.InsteonAddress == p_addr:
                 return l_obj
         if g_debug >= 6:
-            print "Insteon_PLM._find_addr - not found {0:}({1:})".format(self.int2dotted_hex(p_addr), p_addr)
+            print "Insteon_PLM._find_addr - not found {0:}({1:})".format(Insteon_utils.int2dotted_hex(p_addr), p_addr)
         return None
 
     def get_obj_from_message(self, p_message, p_index):
-        l_id = self.message2int(p_message, p_index)
+        l_id = Insteon_utils.message2int(p_message, p_index)
         l_ret = self._find_addr(self.m_house_obj.Lights, l_id)
         if l_ret == None:
             l_ret = self._find_addr(self.m_house_obj.Controllers, l_id)
@@ -156,7 +157,7 @@ class DecodeResponses(InsteonPlmUtility):
             l_ret = LightData()  # an empty new object
             l_ret.Name = '**' + str(l_id) + '**'
         if g_debug >= 6:
-            print "Insteon_PLM.get_obj_from_message - Address:{0:}({1:}), found:{2:}".format(self.int2dotted_hex(l_id), l_id, l_ret.Name)
+            print "Insteon_PLM.get_obj_from_message - Address:{0:}({1:}), found:{2:}".format(Insteon_utils.int2dotted_hex(l_id), l_id, l_ret.Name)
         return l_ret
 
     def _drop_first_byte(self, p_controller_obj):
@@ -728,7 +729,7 @@ class CreateCommands(PlmDriverProtocol):
         @return: the response from queue_plm_command
         """
         l_command = self._queue_command('insteon_send')
-        self.int2message(p_light_obj.InsteonAddress, l_command, 2)
+        Insteon_utils.int2message(p_light_obj.InsteonAddress, l_command, 2)
         l_command[5] = FLAG_MAX_HOPS + FLAG_HOPS_LEFT  # 0x0F
         l_command[6] = p_light_obj.Command1 = p_cmd1
         l_command[7] = p_light_obj.Command2 = p_cmd2
@@ -829,7 +830,7 @@ class CreateCommands(PlmDriverProtocol):
         l_command[2] = p_code
         l_command[3] = p_flag
         l_command[4] = p_light_obj.GroupNumber
-        self.int2message(p_light_obj.InsteonAddress, l_command, 5)
+        Insteon_utils.int2message(p_light_obj.InsteonAddress, l_command, 5)
         l_command[8:11] = p_data
         return self.queue_plm_command(l_command)
 
@@ -1065,13 +1066,13 @@ class API(LightHandlerAPI):
         g_logger = logging.getLogger('PyHouse.Inst_PLM')
         self.m_house_obj = p_house_obj
         if g_debug >= 1:
-            print "Insteon_PLM.__init__()"
+            print "Insteon_PLM.API()"
         g_logger.info('Initialized for house {0:}.'.format(p_house_obj.Name))
 
     def Start(self, p_controller_obj):
         self.m_controller_obj = p_controller_obj
         if g_debug >= 1:
-            print "Insteon_PLM.Start() - House:{0:}, Controller:{1:}".format(self.m_house_obj.Name, p_controller_obj.Name)
+            print "Insteon_PLM.API.Start() - House:{0:}, Controller:{1:}".format(self.m_house_obj.Name, p_controller_obj.Name)
         g_logger.info('Starting Controller:{0:}'.format(p_controller_obj.Name))
         if self.start_controller_driver(p_controller_obj, self.m_house_obj):
             self.m_protocol = PlmDriverProtocol(self.m_controller_obj, self.m_house_obj)
@@ -1080,13 +1081,13 @@ class API(LightHandlerAPI):
             self.get_all_lights_status()
             g_logger.info('Started.')
             if g_debug >= 1:
-                print "Insteon_PLM.Start() has completed for PLM:{0:}.".format(p_controller_obj.Name)
+                print "Insteon_PLM.API.Start() has completed for PLM:{0:}.".format(p_controller_obj.Name)
             return True
         return False
 
     def Stop(self, p_controller_obj):
         if g_debug >= 1:
-            print "Insteon_PLM.Stop()"
+            print "Insteon_PLM.API.Stop()"
         g_logger.info('Stopping.')
         self.m_protocol.driver_loop_stop()
         self.stop_controller_driver(p_controller_obj)

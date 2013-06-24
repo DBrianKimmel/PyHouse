@@ -27,7 +27,7 @@ g_debug
 2 = print 'API' traces to console, add debug info t
 """
 
-__version_info__ = (1, 0, 0)
+__version_info__ = (1, 1, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 # ## END DBK

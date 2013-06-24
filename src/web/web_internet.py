@@ -16,7 +16,7 @@ from src.web import web_utils
 from src.web import web_rooms
 
 
-g_debug = 4
+g_debug = 0
 # 0 = off
 # 1 = major routine entry
 # 2 = Basic data
@@ -71,7 +71,6 @@ class InternetPage(web_utils.ManualFormMixin):
         if g_debug >= 5:
             print self.m_house_obj
         rend.Page.__init__(self)
-
         setattr(InternetPage, 'child_mainpage.css', static.File('web/css/mainpage.css'))
 
     def form_post_rooms(self, **kwargs):

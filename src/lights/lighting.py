@@ -19,8 +19,9 @@ from src.lights import lighting_scenes
 
 g_debug = 0
 # 0 = off
-# 1 = major routine entry
-# 2 = xml read / write
+# 1 = log extra info
+# 2 = major routine entry
+# + = NOT USED HERE
 
 g_logger = None
 
@@ -35,7 +36,7 @@ class SceneData(lighting_scenes.ScenesData): pass
 class SceneAPI(lighting_scenes.ScenesAPI): pass
 
 
-class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI):
+class Utility(ButtonAPI, ControllerAPI, LightingAPI):
     """Commands we can run from high places.
     """
 
@@ -71,12 +72,12 @@ class LightingUtility(ButtonAPI, ControllerAPI, LightingAPI):
             l_family_obj.API.change_light_setting(p_light_obj, p_level, p_house_obj)
 
 
-class API(LightingUtility):
+class API(Utility):
 
     def __init__(self, p_house_obj):
         global g_logger
         g_logger = logging.getLogger('PyHouse.Lighting')
-        if g_debug >= 1:
+        if g_debug >= 2:
             print "lighting.API() - House:{0:}".format(p_house_obj.Name)
         self.m_family = family.LightingUtility()
         g_logger.info("Initialized.")
@@ -85,20 +86,20 @@ class API(LightingUtility):
         """Allow loading of sub modules and drivers.
         """
         self.m_house_obj = p_house_obj
-        if g_debug >= 1:
+        if g_debug >= 2:
             print "lighting.API.Start() - House:{0:}".format(self.m_house_obj.Name)
         g_logger.info("Starting - House:{0:}.".format(self.m_house_obj.Name))
         self.m_house_obj.FamilyData = self.m_family.build_lighting_family_info(p_house_obj)
-        self.m_family.start_lighting_families(self.m_house_obj)
         self.read_button_xml(self.m_house_obj, p_house_xml)
         self.read_controller_xml(self.m_house_obj, p_house_xml)
         self.read_light_xml(self.m_house_obj, p_house_xml)
+        self.m_family.start_lighting_families(self.m_house_obj)
         g_logger.info("Started.")
 
     def Stop(self, p_xml, p_house_obj):
         """Allow cleanup of all drivers.
         """
-        if g_debug >= 1:
+        if g_debug >= 2:
             print "lighting.API.Stop() - House:{0:} Count:{1:}".format(self.m_house_obj.Name, len(self.m_house_obj.Lights))
         g_logger.info("Stopping all lighting families.")
         l_lighting_xml = self.write_light_xml(self.m_house_obj)
@@ -106,12 +107,12 @@ class API(LightingUtility):
         l_controllers_xml = self.write_controller_xml(self.m_house_obj)
         self.m_family.stop_lighting_families(p_xml, p_house_obj)
         g_logger.info("Stopped.")
-        if g_debug >= 1:
+        if g_debug >= 2:
             print "lighting.API.Stop() - House:{0:}, Lights:{1:}, Controllers:{2:}, Buttons:{3:}".format(self.m_house_obj.Name, len(l_lighting_xml), len(l_controllers_xml), len(l_buttons_xml))
         return l_lighting_xml, l_controllers_xml, l_buttons_xml
 
     def SpecialTest(self):
-        if g_debug >= 1:
+        if g_debug >= 2:
             print "lighting.API.SpecialTest()"
         self.test_lighting_families()
 

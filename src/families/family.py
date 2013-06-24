@@ -24,12 +24,12 @@ class FamilyData(object):
     """
 
     def __init__(self):
+        self.Name = ''
+        self.Key = 0
         self.Active = False
         self.API = None
         self.ModuleName = ''
-        self.Key = 0
         self.ModuleRef = ''
-        self.Name = ''
         self.PackageName = ''
 
     def __str__(self):
@@ -37,10 +37,10 @@ class FamilyData(object):
         l_ret += "Name:{0:}, ".format(self.Name)
         l_ret += "Key:{0:}, ".format(self.Key)
         l_ret += "Active:{0:}, ".format(self.Active)
-        l_ret += "PackageName:{0:}, ".format(self.PackageName)
+        l_ret += "API:{0:}, ".format(self.API)
         l_ret += "ModuleName:{0:}, ".format(self.ModuleName)
         l_ret += "ModuleRef:{0:}, ".format(self.ModuleRef)
-        l_ret += "API:{0:}".format(self.API)
+        l_ret += "PackageName:{0:};".format(self.PackageName)
         return l_ret
 
 

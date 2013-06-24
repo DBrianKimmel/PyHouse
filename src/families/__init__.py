@@ -31,28 +31,9 @@ Each family consists of four major areas:
 
 """
 
-__version_info__ = (1, 0, 0)
+__version_info__ = (1, 1, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 VALID_FAMILIES = ['Insteon', 'UPB', 'X10']
-
-#print "Running families now."
-#
-#import importlib
-#
-#for l_family in VALID_FAMILIES:
-#    l_fqn = 'families.' + l_family + '.Device_' + l_family
-#    l_pkg = 'src.families.' + l_family
-#    l_mod = '.Device_' + l_family
-#    try:
-#        #l_module = importlib.import_module(l_fqn)
-#        pass
-#    except ImportError, l_err:
-#        print "families() 1 - ImportError: :'{0:}', {1:}\n".format(l_fqn, l_err)
-#    try:
-#        l_module = importlib.import_module(l_mod, l_pkg)
-#        pass
-#    except ImportError, l_err:
-#        print "families() 2 - ImportError: :'{0:}', {1:}, {2:}\n".format(l_mod, l_pkg, l_err)
 
 # ## END DBK

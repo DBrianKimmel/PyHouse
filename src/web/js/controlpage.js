@@ -33,11 +33,16 @@ function fillChangeControlWindow(p_divid, p_json) {
     ret = ret + '    </tr>\n';
     ret = ret + '    <tr>\n';
     ret = ret + '      <td>Level:</td>\n';
-	ret = ret +	'      <td><input  type = "range" name = "Level" min="0" max="100" value="' + l_obj.CurLevel + '" onchange="showLightValue(this.value)" />\n';
-	ret = ret +	'             <span name = slid_02  id="range">' + l_obj.CurLevel + '</span>\n</td>\n';
+	ret = ret +	'      <td>';
+	//ret = ret +	'        <div class="slider" id="slider-1" tabIndex="1" ';
+	ret = ret +	'          <input type="range" name = "Level" min="0" max="100" value="' + l_obj.CurLevel + '" onchange="showLightValue(this.value)" />\n';
+	ret = ret +	'          <span name=slid_02  id="range">' + l_obj.CurLevel + '</span>\n';
+    //ret = ret + '        </div>\n';
+    ret = ret + '      </td>\n';
     ret = ret + '    </tr>\n';
     ret = ret + '  </table>\n';
 	ret = ret + '           <input  type="hidden"  name = "slider_no" value = "' + p_divid + '" />\n';
+	ret = ret + '           <input  type="hidden"  name = "LightKey" value = "' + l_obj.Key + '" />\n';
 	ret = ret +	'  <br />\n';
 	ret = ret + '           <input  type="submit"  name = "post_btn"  value = "ChangeLight" />\n';
 	ret = ret + '</form>\n';

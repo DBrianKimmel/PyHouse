@@ -41,7 +41,7 @@ from src.utils import tools
 from src.scheduling import sunrisesunset
 
 
-g_debug = 3
+g_debug = 0
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry

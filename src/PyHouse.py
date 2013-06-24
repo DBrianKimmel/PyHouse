@@ -46,7 +46,7 @@ from src.housing import houses
 from src.web import web_server
 
 
-g_debug = 3
+g_debug = 0
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
@@ -156,7 +156,7 @@ class Utilities(object):
         if g_debug >= 3:
             print "PyHouse.export_config_info() - Writing XML file to:{0:}".format(p_pyhouses_obj.XmlFileName)
         self.m_xmltree_root = p_pyhouses_obj.XmlRoot
-        self.write_xml_file(self.m_xmltree, p_pyhouses_obj.XmlFileName)
+        xml_tools.write_xml_file(p_pyhouses_obj.XmlRoot, p_pyhouses_obj.XmlFileName)
 
     def init_logs(self, p_pyhouses_obj):
         p_pyhouses_obj.LogsAPI = log.API()
@@ -201,27 +201,28 @@ class API(Utilities):
         """This is automatically invoked when the reactor starts from API().
         """
         if g_debug >= 2:
-            print "PyHouse.API.Start() - Starting"
+            print "\nPyHouse.API.Start() - Starting"
         self.m_pyhouses_obj.HousesData = self.m_pyhouses_obj.HousesAPI.Start(self.m_pyhouses_obj)
         self.m_pyhouses_obj.WebData = self.m_pyhouses_obj.WebAPI.Start(self.m_pyhouses_obj)
         g_logger.info("Started.\n")
         if g_debug >= 2:
-            print "PyHouse all is started and running now.\n"
+            print "    PyHouse all is started and running now.\n"
 
     def Stop(self):
         """Stop various modules to prepare for restarting them.
         """
         if g_debug >= 2:
-            print "PyHouse.API.Stop() - Stopping."
+            print "\nPyHouse.API.Stop() - Stopping."
         self.m_pyhouses_obj.HousesAPI.Stop()
         self.m_pyhouses_obj.WebAPI.Stop()
+        self.export_config_info(self.m_pyhouses_obj)
         g_logger.info("Stopped.\n\n\n")
 
     def Reload(self, p_pyhouses_obj):
         """Update XML file with current info.
         """
         if g_debug >= 2:
-            print "PyHouse.API.Reload() - Reloading"
+            print "\nPyHouse.API.Reload() - Reloading"
         l_root_xml = ET.Element("PyHouse")
         l_root_xml.append(p_pyhouses_obj.HousesAPI.Reload(p_pyhouses_obj))
         p_pyhouses_obj.WebAPI.Reload(p_pyhouses_obj)
@@ -232,7 +233,7 @@ class API(Utilities):
         """Prepare to exit all of pyhouse
         """
         if g_debug >= 2:
-            print "\nPyHouse.Quit() - Quitting"
+            print "\nPyHouse.API.Quit() - Quitting"
         self.Stop()
         g_logger.info("Quit.\n\n\n")
         reactorstop()

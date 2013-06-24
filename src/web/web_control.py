@@ -18,10 +18,13 @@ from src.web import web_utils
 from src.web import web_rooms
 
 
-g_debug = 4
+g_debug = 0
 # 0 = off
-# 1 = major routine entry
-# 2 = Basic data
+# 1 = log extra info
+# 2 = major routine entry
+# 3 = Config file handling
+# 4 = Dump JSON
+# + = NOT USED HERE
 
 g_logger = None
 
@@ -35,11 +38,14 @@ class ControlPage(web_utils.ManualFormMixin):
                 T_title['PyHouse - House Page'],
                 T_link(rel = 'stylesheet', type = 'text/css', href = U_H_child('lightpage.css'))["\n"],
                 T_link(rel = 'stylesheet', type = 'text/css', href = U_R_child('mainpage.css'))["\n"],
+                T_script(type = 'text/javascript', src = 'controlpage.js')["\n"],
+                # ---
                 T_script(type = 'text/javascript', src = 'ajax.js')["\n"],
                 T_script(type = 'text/javascript', src = 'floating_window.js'),
-                T_script(type = 'text/javascript', src = 'slider.js'),
+                # --- Slider
                 T_script(type = 'text/javascript', src = 'range.js'),
-                T_script(type = 'text/javascript', src = 'controlpage.js')["\n"],
+                T_script(type = 'text/javascript', src = 'slider.js'),
+                T_script(type = 'text/javascript', src = 'timer.js'),
                 ],  # head
             T_body[
                 T_h1['PyHouse Houses'],
@@ -55,19 +61,22 @@ class ControlPage(web_utils.ManualFormMixin):
         self.m_name = p_name
         self.m_parent = p_parent
         self.m_house_obj = p_house_obj
-        if g_debug >= 1:
+        if g_debug >= 2:
             print "web_control.ControllPage()"
-        if g_debug >= 5:
+        if g_debug >= 4:
             print self.m_house_obj
         rend.Page.__init__(self)
 
         setattr(ControlPage, 'child_lightpage.css', static.File('web/css/lightpage.css'))
         setattr(ControlPage, 'child_mainpage.css', static.File('web/css/mainpage.css'))
         setattr(ControlPage, 'child_controlpage.js', static.File('web/js/controlpage.js'))
+        # ---
         setattr(ControlPage, 'child_ajax.js', static.File('web/js/ajax.js'))
         setattr(ControlPage, 'child_floating_window.js', static.File('web/js/floating-window.js'))
-        setattr(ControlPage, 'child_slider.js', static.File('web/js/slider.js'))
+        #------------------- Slider stuff
         setattr(ControlPage, 'child_range.js', static.File('web/js/range.js'))
+        setattr(ControlPage, 'child_slider.js', static.File('web/js/slider.js'))
+        setattr(ControlPage, 'child_timer.js', static.File('web/js/timer.js'))
         #------------------------------------
         setattr(ControlPage, 'child_bottomRight.gif', static.File('web/images/bottom_right.gif'))
         setattr(ControlPage, 'child_close.gif', static.File('web/images/close.gif'))
@@ -107,8 +116,11 @@ class ControlPage(web_utils.ManualFormMixin):
         return l_ret
 
     def form_post_changelight(self, **kwargs):
-        if g_debug >= 2:
+        if g_debug >= 3:
             print "form_post_changelight()", kwargs
-        return web_rooms.RoomsPage(self, self.m_name, self.m_house_obj)
+        l_key = int(kwargs['LightKey'])
+        l_light_obj = self.m_house_obj.Lights[l_key]
+        self.m_house_obj.LightingAPI.change_light_setting(self.m_house_obj, l_light_obj, int(kwargs['Level']))
+        return ControlPage(self, self.m_name, self.m_house_obj)
 
 # ## END DBK
