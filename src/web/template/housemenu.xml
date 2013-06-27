@@ -1,0 +1,36 @@
+<html xmlns:nevow = "http://nevow.com/ns/nevow/0.1"
+		xmlns = 'http://www.w3.org/1999/xhtml'
+		lang = 'en'>
+	<head>
+		<title>PyHouse Main Page</title>
+		<link rel = 'stylesheet' type = 'text/css' href = 'mainpage.css' />
+		<script type = 'text/javascript' src = 'ajax.js' />
+	<script type = 'text/javascript' src = 'floating_window.js' />
+    </head>
+    <body>
+    	<h1>PyHouse</h1>
+    	<form name = 'menuofbuttons' enctype = 'multipart/form-data' method = 'post' >
+    				<nevow:attr name = "action"><nevow:invisible nevow:render = 'action' /></nevow:attr>
+    		<table style = 'width: 60%;' border = '0'>
+    			<tr>
+    				<td><input type = 'submit' value = 'Select_House' name = 'post_btn' /></td>
+    			</tr><tr>
+    				<td><input type = 'submit' value = 'Quit' name = 'post_btn' /></td>
+    				<td><input type = 'submit' value = 'Reload' name = 'post_btn' /></td>
+    			</tr>
+    		</table>
+    	</form>
+        <div xmlns:nevow = "http://nevow.com/ns/nevow/0.1"
+        	xmlns:athena = "http://divmod.org/ns/athena/0.7"
+        	nevow:render = "liveElement">
+        <h2>Echo Element</h2>
+        <form name = "echoElement">
+            <athena:handler event = "onsubmit" handler = "doSay" />
+            <div name = "scrollArea">
+            </div>
+            <input name = "message" />
+            <input type = "submit" value = "Send" />
+        	</form>
+    	</div>
+    </body>
+</html>
