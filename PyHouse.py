@@ -22,6 +22,29 @@ TODO:
         Setup to allow house add rooms lights etc seem ok
         Save house info for 'new' house
 
+
+MIT License
+
+Copyright (c) 2010-2013 by D. Brian Kimmel
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
 """
 
 __author__ = "D. Brian Kimmel"
@@ -46,7 +69,7 @@ from src.housing import houses
 from src.web import web_server
 
 
-g_debug = 0
+g_debug = 3
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
@@ -118,20 +141,32 @@ def daemonize():
     os.close(null)
 
 def handle_signals():
+    """
+    typing the interrupt character (probably Ctrl-C) causes SIGINT to be sent
+    typing the quit character (probably Ctrl-\) sends SIGQUIT.
+    hanging up the phone (modem) sends SIGHUP
+    typing the stop character (probably Ctrl-Z) sends SIGSTOP.
+    """
     if platform.uname()[0] != 'Windows':
         signal.signal(signal.SIGHUP, SigHupHandler)
     signal.signal(signal.SIGINT, SigIntHandler)
 
 def SigHupHandler(signum, _stackframe):
+    """
+    """
     if g_debug >= 3:
         print 'Hup Signal handler called with signal', signum
     API().Stop()
     API().Start()
 
 def SigIntHandler(signum, _stackframe):
+    """interrupt character (probably Ctrl-C)
+    """
     if g_debug >= 3:
-        print 'Signal handler called with signal', signum
-    API().Stop()
+        print 'SigInt - Signal handler called with signal', signum
+    g_logger.info("Interrupted.\n\n\n")
+    reactorstop()
+    print "Interrupted."
     exit
 
 
