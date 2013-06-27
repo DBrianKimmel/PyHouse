@@ -10,9 +10,9 @@ from twisted.internet import reactor
 
 # Import PyMh files
 import Device_UPB
-from utils.tools import PrintBytes
+from src.utils.tools import PrintBytes
 
-g_debug = 9
+g_debug = 0
 # 0 = off
 # 1 = major routine entry
 # 2 = Startup Details

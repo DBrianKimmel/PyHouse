@@ -27,7 +27,7 @@ function fillChangeLogsWindow(p_divid, p_json) {
 	ret = ret +	'  Debug:';
 	ret = ret +	'    <input type = "text" name = "Debug" value = "' + l_obj.Debug + '" /><br />\n';
 	ret = ret +	'  Error:';
-	ret = ret +	'    <input type = "text" name = "Error" value = "' + p_error + '" /><br />\n';
+	ret = ret +	'    <input type = "text" name = "Error" value = "' + l_obj.Error + '" /><br />\n';
 	ret = ret +	'  <br />\n';
 	ret = ret + '  <input type="submit" name="post_btn" value="Change_Logs" />\n';
 	ret = ret + '</form>\n';

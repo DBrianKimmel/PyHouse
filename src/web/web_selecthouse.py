@@ -25,39 +25,18 @@ class SelectHousePage(web_utils.ManualFormMixin):
     """
     """
     addSlash = True
-    docFactory = loaders.stan(
-        T_html["\n",
-            T_head["\n",
-                T_title['PyHouse - House Select Page'],
-                T_link(rel = 'stylesheet', type = 'text/css', href = U_R_child('mainpage.css'))["\n"],
-                # T_script(type = 'text/javascript', src = 'mainpage.js'),
-                ],
-            T_body[
-                T_h1['PyHouse House Selection'],
-                T_p['\n'],
-                T_p['Select the house:'],
-                T_form(name = 'mainmenuofbuttons',
-                    action = U_H_child('_submit!!post'),
-                    enctype = "multipart/form-data",
-                    method = 'post')
-                    [
-                    T_table(style = 'width: 100%;', border = 0)["\n",
-                        T_invisible(data = T_directive('houselist'), render = T_directive('houselist'))
-                        ],  # table
-                    ]  # form
-                ]  # body
-            ]  # html
-        )  # stan
+    docFactory = loaders.xmlfile('selecthouse.xml', templateDir = 'src/web/template')
 
     def __init__(self, p_name, p_pyhouses_obj):
         self.m_name = p_name
         self.m_pyhouses_obj = p_pyhouses_obj
         if g_debug >= 1:
             print "web_selecthouse.SelectHousePage()"
-        if g_debug >= 2:
-            print "    ", p_pyhouses_obj
         rend.Page.__init__(self)
-        setattr(SelectHousePage, 'child_mainpage.css', static.File('web/css/mainpage.css'))
+        setattr(SelectHousePage, 'child_mainpage.css', static.File('src/web/css/mainpage.css'))
+
+    def render_action(self, ctx, data):
+        return web_utils.action_url()
 
     def data_houselist(self, _context, _data):
         l_house = {}
@@ -70,7 +49,7 @@ class SelectHousePage(web_utils.ManualFormMixin):
         l_cnt = 0
         for l_key, l_value in sorted(links.iteritems()):
             l_name = l_value.Name
-            if l_cnt % 2 == 0:
+            if l_cnt > 0 and l_cnt % 4 == 0:
                 l_ret.append(T_tr)
             l_ret.append(T_td)
             l_ret.append(T_input(type = 'submit', value = l_key, name = BUTTON)

@@ -86,6 +86,7 @@ class CoreAPI(xml_tools.ConfigTools):
         p_device_obj.Type = p_entry_xml.findtext('Type')
         for l_family_obj in p_house_obj.FamilyData.itervalues():
             if l_family_obj.Name == l_fam:
+                # print "  --  ", l_fam
                 l_family_obj.API.extract_device_xml(p_entry_xml, p_device_obj)
         if g_debug >= 3:
             print "lighting_tools.read_light_common() - ", p_device_obj

@@ -14,8 +14,10 @@ from src.families import VALID_FAMILIES
 
 g_debug = 0
 # 0 = off
-# 1 = major routine entry
-
+# 1 = log extra info
+# 2 = major routine entry
+# 3 = Config file handling
+# + = NOT USED HERE
 g_logger = logging.getLogger('PyHouse.Family  ')
 
 
@@ -55,7 +57,7 @@ class LightingUtility(FamilyData):
         l_family_data = {}
         l_count = 0
         for l_family in VALID_FAMILIES:
-            if g_debug >= 2:
+            if g_debug >= 3:
                 print "family.build_lighting_family_info() - House:{0:}, Name:{1:}".format(p_house_obj.Name, l_family)
             l_family_obj = FamilyData()
             l_family_obj.Active = True
@@ -65,20 +67,20 @@ class LightingUtility(FamilyData):
             l_family_obj.ModuleName = 'Device_' + l_family
             try:
                 l_module = importlib.import_module(l_family_obj.PackageName + '.' + l_family_obj.ModuleName, l_family_obj.PackageName)
-            except ImportError:
-                if g_debug >= 1:
-                    print "    family.build_lighting_family_info() - ERROR - Cannot import module {0:}".format(l_family_obj.ModuleName)
+            except ImportError, e:
+                if g_debug >= 2:
+                    print "    family.build_lighting_family_info() - ERROR - Cannot import module {0:}".format(l_family_obj.ModuleName), e
                 l_module = None
                 g_logger.error("Cannot import - Module:{0:}, Package:{1:}.".format(l_family_obj.ModuleName, l_family_obj.PackageName))
             l_family_obj.ModuleRef = l_module
             try:
                 l_family_obj.API = l_module.API(p_house_obj)
             except AttributeError:
-                if g_debug >= 1:
+                if g_debug >= 2:
                     print "    family.build_lighting_family_info() - ERROR - NO API"
                 l_family_obj.API = None
                 g_logger.error("Cannot get API - Module:{0:}, House:{1:}.".format(l_module, p_house_obj.Name))
-            if g_debug >= 2:
+            if g_debug >= 3:
                 print "   from {0:} import {1:}".format(l_family_obj.PackageName, l_family_obj.ModuleName)
                 print "   l_family_data  Key:{0:} -".format(l_count), l_family_obj
             l_family_data[l_count] = l_family_obj

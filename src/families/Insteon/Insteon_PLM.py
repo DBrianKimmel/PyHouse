@@ -1005,15 +1005,15 @@ class LightHandlerAPI(InsteonPlmAPI):
                     p_controller_obj.Family, p_controller_obj.Interface, p_controller_obj.Active)
             print l_msg
         if p_controller_obj.Interface.lower() == 'serial':
-            from drivers import Driver_Serial
+            from src.drivers import Driver_Serial
             l_driver = Driver_Serial.API()
         elif p_controller_obj.Interface.lower() == 'ethernet':
-            from drivers import Driver_Ethernet
+            from src.drivers import Driver_Ethernet
             l_driver = Driver_Ethernet.API()
         elif p_controller_obj.Interface.lower() == 'usb':
             # from drivers import Driver_USB_0403_6001
             # l_driver = Driver_USB_0403_6001.API()
-            from drivers import Driver_USB
+            from src.drivers import Driver_USB
             l_driver = Driver_USB.API()
         p_controller_obj.DriverAPI = l_driver
         l_ret = l_driver.Start(p_controller_obj)

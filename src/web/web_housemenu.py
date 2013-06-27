@@ -59,7 +59,7 @@ class HouseMenuPage(web_utils.ManualFormMixin):
                             T_td[ T_input(type = 'submit', value = 'Buttons', name = BUTTON), ],
                             T_td[ T_input(type = 'submit', value = 'Controllers', name = BUTTON), ],
                             T_td[ T_input(type = 'submit', value = 'Schedules', name = BUTTON), ],
-                            T_td[ T_input(type = 'submit', value = 'Control Lights', name = BUTTON), ],
+                            T_td[ T_input(type = 'submit', value = 'Control_Lights', name = BUTTON), ],
                             T_td[ T_input(type = 'submit', value = 'Internet', name = BUTTON), ],
                             ]
                         ]  # table
@@ -84,7 +84,7 @@ class HouseMenuPage(web_utils.ManualFormMixin):
             print "web_housemenu.HouseMenuPage.form_post_buttons", kwargs
         return web_buttons.ButtonsPage(self, self.m_name, self.m_house_obj.HouseObject)
 
-    def form_post_control(self, **kwargs):
+    def form_post_control_lights(self, **kwargs):
         if g_debug >= 2:
             print "web_housemenu.HouseMenuPage.form_post_control()", kwargs
         return web_control.ControlPage(self, self.m_name, self.m_house_obj.HouseObject)
@@ -118,11 +118,5 @@ class HouseMenuPage(web_utils.ManualFormMixin):
         if g_debug >= 2:
             print "web_housemenu.HouseMenuPage.form_post_schedules()", kwargs
         return web_schedules.SchedulesPage(self, self.m_name, self.m_house_obj.HouseObject)
-
-
-    def form_post_house(self, **kwargs):
-        if g_debug >= 2:
-            print "web_housemenu.HouseMenuPage.form_post_house (HousePage)", kwargs
-        return HouseMenuPage(self, self.m_name, self.m_house_obj.HouseObject)
 
 # ## END DBK

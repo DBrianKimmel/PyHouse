@@ -64,18 +64,18 @@ class RoomsPage(web_utils.ManualFormMixin):
         if g_debug >= 4:
             print "    ", p_house_obj
         rend.Page.__init__(self)
-        setattr(RoomsPage, 'child_mainpage.css', static.File('web/css/mainpage.css'))
-        setattr(RoomsPage, 'child_ajax.js', static.File('web/js/ajax.js'))
-        setattr(RoomsPage, 'child_floating_window.js', static.File('web/js/floating-window.js'))
-        setattr(RoomsPage, 'child_roompage.js', static.File('web/js/roompage.js'))
+        setattr(RoomsPage, 'child_mainpage.css', static.File('src/web/css/mainpage.css'))
+        setattr(RoomsPage, 'child_ajax.js', static.File('src/web/js/ajax.js'))
+        setattr(RoomsPage, 'child_floating_window.js', static.File('src/web/js/floating-window.js'))
+        setattr(RoomsPage, 'child_roompage.js', static.File('src/web/js/roompage.js'))
         #------------------------------------
-        setattr(RoomsPage, 'child_bottomRight.gif', static.File('web/images/bottom_right.gif'))
-        setattr(RoomsPage, 'child_close.gif', static.File('web/images/close.gif'))
-        setattr(RoomsPage, 'child_minimize.gif', static.File('web/images/minimize.gif'))
-        setattr(RoomsPage, 'child_topCenter.gif', static.File('web/images/top_center.gif'))
-        setattr(RoomsPage, 'child_topLeft.gif', static.File('web/images/top_left.gif'))
-        setattr(RoomsPage, 'child_topRight.gif', static.File('web/images/top_right.gif'))
-        setattr(RoomsPage, 'child_handle.horizontal.png', static.File('web/images/handle.horizontal.png'))
+        setattr(RoomsPage, 'child_bottomRight.gif', static.File('src/web/images/bottom_right.gif'))
+        setattr(RoomsPage, 'child_close.gif', static.File('src/web/images/close.gif'))
+        setattr(RoomsPage, 'child_minimize.gif', static.File('src/web/images/minimize.gif'))
+        setattr(RoomsPage, 'child_topCenter.gif', static.File('src/web/images/top_center.gif'))
+        setattr(RoomsPage, 'child_topLeft.gif', static.File('src/web/images/top_left.gif'))
+        setattr(RoomsPage, 'child_topRight.gif', static.File('src/web/images/top_right.gif'))
+        setattr(RoomsPage, 'child_handle.horizontal.png', static.File('src/web/images/handle.horizontal.png'))
 
     def data_roomlist(self, _context, _data):
         """Build up a list of schedule slots.

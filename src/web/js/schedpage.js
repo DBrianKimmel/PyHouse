@@ -180,5 +180,8 @@ function showListBox(p_caption, p_name, p_list, p_index){
     return ret;	
 }
 
+function getRooms(p_house){
+	callRemote(getRoomList, p_house);
+}
 
 // ### END DBK

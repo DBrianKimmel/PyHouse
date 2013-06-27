@@ -10,18 +10,14 @@ TODO: format doc strings to Epydoc standards.
 import logging
 import os
 from twisted.internet import reactor
-from twisted.python import util
 from nevow import appserver
-from nevow import athena
 from twisted.python.util import sibpath
 from nevow.loaders import xmlfile
 from nevow.athena import LiveElement, expose
 
 # Import PyMh files and modules.
-from src.web.web_tagdefs import *
 from src.web import web_utils
 from src.web import web_rootmenu
-
 
 
 g_debug = 0
@@ -29,40 +25,14 @@ g_debug = 0
 # 1 = Additional logging
 # 2 = major routine entry
 # 3 = Basic data
-
+# 4 = ajax data
+# + = NOT USED HERE
 g_logger = None
 
-SUBMIT = '_submit'
-BUTTON = 'post_btn'
 
 # Only to move the eclipse error flags to one small spot
 listenTCP = reactor.listenTCP
 
-
-"""
-
-<div xmlns:nevow="http://nevow.com/ns/nevow/0.1"
-    xmlns:athena="http://divmod.org/ns/athena/0.7"
-    nevow:render="liveElement">
-    <h2>Chatter Element</h2>
-    <form name="chatBox">
-        <athena:handler event="onsubmit" handler="doSay" />
-        <div name="scrollArea"
-             style="border: 1px solid gray; padding: 5; margin: 5">
-        </div>
-        <div name="sendLine" style="display: none">
-      <input name="userMessage" /><input type="submit" value="Send" />
-    </div>
-    </form>
-    <form name="chooseBox">
-        <athena:handler event="onsubmit" handler="doSetUsername" />
-        Choose your username: <input name="username" />
-        <input type="submit" name="GO" value="Enter"/>
-    </form>
-    <div name="loggedInAs" style="display:none"><span>Logged in as </span></div>
-</div>
-
-"""
 
 class WebData(object):
     """
@@ -71,10 +41,10 @@ class WebData(object):
         self.WebPort = 8580
 
 
-class ChatterElement(LiveElement):
+class AjaxClass(LiveElement):
 
     docFactory = xmlfile(sibpath(__file__, 'template.html'))
-    jsClass = u'ChatThing.ChatterWidget'
+    jsClass = u'ChatThing.AjaxClass'
 
     def __init__(self, room):
         self.room = room
@@ -96,6 +66,12 @@ class ChatterElement(LiveElement):
 
     def hear(self, username, what):
         self.callRemote('displayUserMessage', username, what)
+
+    def getRoomList(self, p_house):
+        if g_debug >= 4:
+            print "web_server.AjaxClass.getRoomList() - House:{0:}".format(p_house)
+
+    getRoomList = expose(getRoomList)
 
 
 class API(object):
@@ -130,7 +106,7 @@ class API(object):
         l_xml = web_utils.WebUtilities().write_web_xml(self.web_data)
         return l_xml
 
-    def Reload(self, p_pyhouses_obj):
+    def Reload(self, _p_pyhouses_obj):
         if g_debug >= 2:
             print "web_server.API.Reload()"
         l_xml = web_utils.WebUtilities().write_web_xml(self.web_data)

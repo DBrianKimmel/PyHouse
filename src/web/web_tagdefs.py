@@ -14,8 +14,10 @@ BUTTON = 'post_btn'
 
 T_p = _Tag.p
 T_h1 = _Tag.h1
+T_h2 = _Tag.h2
 T_td = _Tag.td
 T_tr = _Tag.tr
+T_div = _Tag.div
 T_html = _Tag.html
 T_head = _Tag.head
 T_body = _Tag.body
@@ -25,7 +27,6 @@ T_table = _Tag.table
 T_title = _Tag.title
 T_input = _Tag.input
 T_script = _Tag.script
-
 T_invisible = _Tag.invisible
 T_directive = _Tag.directive
 
