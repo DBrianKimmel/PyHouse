@@ -9,7 +9,9 @@
 		<script type = 'text/javascript' src = 'addhouse.js' />
 		<script type = 'text/javascript' src = 'webserver.js' />
 		<script type = 'text/javascript' src = 'logs.js' />
+		<!--
 		<script type = 'text/javascript' src = 'rootmenu.js' />
+		-->
     </head>
     <body>
     	<h1>PyHouse</h1>

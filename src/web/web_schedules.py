@@ -57,22 +57,22 @@ class SchedulesPage(web_utils.ManualFormMixin):
         if g_debug >= 2:
             print "    ", self.m_pyhouse_obj
         rend.Page.__init__(self)
-        setattr(SchedulesPage, 'child_lightpage.css', static.File('web/css/lightpage.css'))
-        setattr(SchedulesPage, 'child_mainpage.css', static.File('web/css/mainpage.css'))
+        setattr(SchedulesPage, 'child_lightpage.css', static.File('src/web/css/lightpage.css'))
+        setattr(SchedulesPage, 'child_mainpage.css', static.File('src/web/css/mainpage.css'))
 
-        setattr(SchedulesPage, 'child_ajax.js', static.File('web/js/ajax.js'))
-        setattr(SchedulesPage, 'child_floating_window.js', static.File('web/js/floating-window.js'))
-        setattr(SchedulesPage, 'child_slider.js', static.File('web/js/slider.js'))
-        setattr(SchedulesPage, 'child_range.js', static.File('web/js/range.js'))
-        setattr(SchedulesPage, 'child_schedpage.js', static.File('web/js/schedpage.js'))
+        setattr(SchedulesPage, 'child_ajax.js', static.File('src/web/js/ajax.js'))
+        setattr(SchedulesPage, 'child_floating_window.js', static.File('src/web/js/floating-window.js'))
+        setattr(SchedulesPage, 'child_slider.js', static.File('src/web/js/slider.js'))
+        setattr(SchedulesPage, 'child_range.js', static.File('src/web/js/range.js'))
+        setattr(SchedulesPage, 'child_schedpage.js', static.File('src/web/js/schedpage.js'))
         #------------------------------------
-        setattr(SchedulesPage, 'child_bottomRight.gif', static.File('web/images/bottom_right.gif'))
-        setattr(SchedulesPage, 'child_close.gif', static.File('web/images/close.gif'))
-        setattr(SchedulesPage, 'child_minimize.gif', static.File('web/images/minimize.gif'))
-        setattr(SchedulesPage, 'child_topCenter.gif', static.File('web/images/top_center.gif'))
-        setattr(SchedulesPage, 'child_topLeft.gif', static.File('web/images/top_left.gif'))
-        setattr(SchedulesPage, 'child_topRight.gif', static.File('web/images/top_right.gif'))
-        setattr(SchedulesPage, 'child_handle.horizontal.png', static.File('web/images/handle.horizontal.png'))
+        setattr(SchedulesPage, 'child_bottomRight.gif', static.File('src/web/images/bottom_right.gif'))
+        setattr(SchedulesPage, 'child_close.gif', static.File('src/web/images/close.gif'))
+        setattr(SchedulesPage, 'child_minimize.gif', static.File('src/web/images/minimize.gif'))
+        setattr(SchedulesPage, 'child_topCenter.gif', static.File('src/web/images/top_center.gif'))
+        setattr(SchedulesPage, 'child_topLeft.gif', static.File(src / 'web/images/top_left.gif'))
+        setattr(SchedulesPage, 'child_topRight.gif', static.File('src/web/images/top_right.gif'))
+        setattr(SchedulesPage, 'child_handle.horizontal.png', static.File('src/web/images/handle.horizontal.png'))
 
     def data_schedlist(self, _context, _data):
         """Build up a list of schedule slots.

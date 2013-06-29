@@ -77,7 +77,9 @@ class HouseMenuPage(web_utils.ManualFormMixin):
         if g_debug >= 2:
             print "    ", self.m_house_obj
         rend.Page.__init__(self)
-        setattr(HouseMenuPage, 'child_mainpage.css', static.File('web/css/mainpage.css'))
+        setattr(HouseMenuPage, 'child_mainpage.css', static.File('src/web/css/mainpage.css'))
+        setattr(HouseMenuPage, 'child_ajax.js', static.File('src/web/js/ajax.js'))
+        setattr(HouseMenuPage, 'child_floating_window.js', static.File('src/web/js/floating-window.js'))
 
     def form_post_buttons(self, **kwargs):
         if g_debug >= 2:

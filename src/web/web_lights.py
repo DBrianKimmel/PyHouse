@@ -66,18 +66,18 @@ class LightsPage(web_utils.ManualFormMixin):
         if g_debug >= 5:
             print self.m_house_obj
         rend.Page.__init__(self)
-        setattr(LightsPage, 'child_mainpage.css', static.File('web/css/mainpage.css'))
-        setattr(LightsPage, 'child_ajax.js', static.File('web/js/ajax.js'))
-        setattr(LightsPage, 'child_floating_window.js', static.File('web/js/floating-window.js'))
-        setattr(LightsPage, 'child_lightpage.js', static.File('web/js/lightpage.js'))
+        setattr(LightsPage, 'child_mainpage.css', static.File('src/web/css/mainpage.css'))
+        setattr(LightsPage, 'child_ajax.js', static.File('src/web/js/ajax.js'))
+        setattr(LightsPage, 'child_floating_window.js', static.File('src/web/js/floating-window.js'))
+        setattr(LightsPage, 'child_lightpage.js', static.File('src/web/js/lightpage.js'))
         #------------------------------------
-        setattr(LightsPage, 'child_bottomRight.gif', static.File('web/images/bottom_right.gif'))
-        setattr(LightsPage, 'child_close.gif', static.File('web/images/close.gif'))
-        setattr(LightsPage, 'child_minimize.gif', static.File('web/images/minimize.gif'))
-        setattr(LightsPage, 'child_topCenter.gif', static.File('web/images/top_center.gif'))
-        setattr(LightsPage, 'child_topLeft.gif', static.File('web/images/top_left.gif'))
-        setattr(LightsPage, 'child_topRight.gif', static.File('web/images/top_right.gif'))
-        setattr(LightsPage, 'child_handle.horizontal.png', static.File('web/images/handle.horizontal.png'))
+        setattr(LightsPage, 'child_bottomRight.gif', static.File('src/web/images/bottom_right.gif'))
+        setattr(LightsPage, 'child_close.gif', static.File('src/web/images/close.gif'))
+        setattr(LightsPage, 'child_minimize.gif', static.File('src/web/images/minimize.gif'))
+        setattr(LightsPage, 'child_topCenter.gif', static.File('src/web/images/top_center.gif'))
+        setattr(LightsPage, 'child_topLeft.gif', static.File('src/web/images/top_left.gif'))
+        setattr(LightsPage, 'child_topRight.gif', static.File('src/web/images/top_right.gif'))
+        setattr(LightsPage, 'child_handle.horizontal.png', static.File('src/web/images/handle.horizontal.png'))
 
     def data_lightslist(self, _context, _data):
         """Build up a list of lights.

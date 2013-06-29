@@ -71,7 +71,7 @@ class InternetPage(web_utils.ManualFormMixin):
         if g_debug >= 5:
             print self.m_house_obj
         rend.Page.__init__(self)
-        setattr(InternetPage, 'child_mainpage.css', static.File('web/css/mainpage.css'))
+        setattr(InternetPage, 'child_mainpage.css', static.File('src/web/css/mainpage.css'))
 
     def form_post_rooms(self, **kwargs):
         if g_debug >= 2:

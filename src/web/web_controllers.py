@@ -60,19 +60,19 @@ class ControllersPage(web_utils.ManualFormMixin):
         if g_debug >= 2:
             print "web_controllers.ControllersPage()"
         rend.Page.__init__(self)
-        setattr(ControllersPage, 'child_lightpage.css', static.File('web/css/lightpage.css'))
-        setattr(ButtonsPage, 'child_mainpage.css', static.File('web/css/mainpage.css'))
-        setattr(ButtonsPage, 'child_ajax.js', static.File('web/js/ajax.js'))
-        setattr(ButtonsPage, 'child_floating_window.js', static.File('web/js/floating-window.js'))
-        setattr(ButtonsPage, 'child_controllerspage.js', static.File('web/js/controllerspage.js'))
+        setattr(ControllersPage, 'child_lightpage.css', static.File('src/web/css/lightpage.css'))
+        setattr(ButtonsPage, 'child_mainpage.css', static.File('src/web/css/mainpage.css'))
+        setattr(ButtonsPage, 'child_ajax.js', static.File('src/web/js/ajax.js'))
+        setattr(ButtonsPage, 'child_floating_window.js', static.File('src/web/js/floating-window.js'))
+        setattr(ButtonsPage, 'child_controllerspage.js', static.File('src/web/js/controllerspage.js'))
         #------------------------------------
-        setattr(ButtonsPage, 'child_bottomRight.gif', static.File('web/images/bottom_right.gif'))
-        setattr(ButtonsPage, 'child_close.gif', static.File('web/images/close.gif'))
-        setattr(ButtonsPage, 'child_minimize.gif', static.File('web/images/minimize.gif'))
-        setattr(ButtonsPage, 'child_topCenter.gif', static.File('web/images/top_center.gif'))
-        setattr(ControllersPage, 'child_topLeft.gif', static.File('web/images/top_left.gif'))
-        setattr(ControllersPage, 'child_topRight.gif', static.File('web/images/top_right.gif'))
-        setattr(ButtonsPage, 'child_handle.horizontal.png', static.File('web/images/handle.horizontal.png'))
+        setattr(ButtonsPage, 'child_bottomRight.gif', static.File('src/web/images/bottom_right.gif'))
+        setattr(ButtonsPage, 'child_close.gif', static.File('src/web/images/close.gif'))
+        setattr(ButtonsPage, 'child_minimize.gif', static.File('src/web/images/minimize.gif'))
+        setattr(ButtonsPage, 'child_topCenter.gif', static.File('src/web/images/top_center.gif'))
+        setattr(ControllersPage, 'child_topLeft.gif', static.File('src/web/images/top_left.gif'))
+        setattr(ControllersPage, 'child_topRight.gif', static.File('src/web/images/top_right.gif'))
+        setattr(ButtonsPage, 'child_handle.horizontal.png', static.File('src/web/images/handle.horizontal.png'))
 
     def data_controllerslist(self, _context, _data):
         """Build up a list of controllers.

@@ -67,24 +67,24 @@ class ControlPage(web_utils.ManualFormMixin):
             print self.m_house_obj
         rend.Page.__init__(self)
 
-        setattr(ControlPage, 'child_lightpage.css', static.File('web/css/lightpage.css'))
-        setattr(ControlPage, 'child_mainpage.css', static.File('web/css/mainpage.css'))
-        setattr(ControlPage, 'child_controlpage.js', static.File('web/js/controlpage.js'))
+        setattr(ControlPage, 'child_lightpage.css', static.File('src/web/css/lightpage.css'))
+        setattr(ControlPage, 'child_mainpage.css', static.File('src/web/css/mainpage.css'))
+        setattr(ControlPage, 'child_controlpage.js', static.File('src/web/js/controlpage.js'))
         # ---
-        setattr(ControlPage, 'child_ajax.js', static.File('web/js/ajax.js'))
-        setattr(ControlPage, 'child_floating_window.js', static.File('web/js/floating-window.js'))
+        setattr(ControlPage, 'child_ajax.js', static.File('src/web/js/ajax.js'))
+        setattr(ControlPage, 'child_floating_window.js', static.File('src/web/js/floating-window.js'))
         #------------------- Slider stuff
-        setattr(ControlPage, 'child_range.js', static.File('web/js/range.js'))
-        setattr(ControlPage, 'child_slider.js', static.File('web/js/slider.js'))
-        setattr(ControlPage, 'child_timer.js', static.File('web/js/timer.js'))
+        setattr(ControlPage, 'child_range.js', static.File('src/web/js/range.js'))
+        setattr(ControlPage, 'child_slider.js', static.File('src/web/js/slider.js'))
+        setattr(ControlPage, 'child_timer.js', static.File('src/web/js/timer.js'))
         #------------------------------------
-        setattr(ControlPage, 'child_bottomRight.gif', static.File('web/images/bottom_right.gif'))
-        setattr(ControlPage, 'child_close.gif', static.File('web/images/close.gif'))
-        setattr(ControlPage, 'child_minimize.gif', static.File('web/images/minimize.gif'))
-        setattr(ControlPage, 'child_topCenter.gif', static.File('web/images/top_center.gif'))
-        setattr(ControlPage, 'child_topLeft.gif', static.File('web/images/top_left.gif'))
-        setattr(ControlPage, 'child_topRight.gif', static.File('web/images/top_right.gif'))
-        setattr(ControlPage, 'child_handle.horizontal.png', static.File('web/images/handle.horizontal.png'))
+        setattr(ControlPage, 'child_bottomRight.gif', static.File('src/web/images/bottom_right.gif'))
+        setattr(ControlPage, 'child_close.gif', static.File('src/web/images/close.gif'))
+        setattr(ControlPage, 'child_minimize.gif', static.File('src/web/images/minimize.gif'))
+        setattr(ControlPage, 'child_topCenter.gif', static.File('src/web/images/top_center.gif'))
+        setattr(ControlPage, 'child_topLeft.gif', static.File('src/web/images/top_left.gif'))
+        setattr(ControlPage, 'child_topRight.gif', static.File('src/web/images/top_right.gif'))
+        setattr(ControlPage, 'child_handle.horizontal.png', static.File('src/web/images/handle.horizontal.png'))
 
     def data_controllist(self, _context, _data):
         """Build up a list of lights.

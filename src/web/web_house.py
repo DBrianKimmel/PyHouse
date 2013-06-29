@@ -72,7 +72,7 @@ class InternetPage(web_utils.ManualFormMixin):
             print self.m_pyhouse_obj
         rend.Page.__init__(self)
 
-        setattr(HouseMenuPage, 'child_mainpage.css', static.File('web/css/mainpage.css'))
+        setattr(HouseMenuPage, 'child_mainpage.css', static.File('src/web/css/mainpage.css'))
 
     def form_post_location(self, **kwargs):
         if g_debug >= 2:
