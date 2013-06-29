@@ -9,13 +9,13 @@ from nevow import loaders
 from nevow import rend
 from nevow import static
 from nevow import url as Url
-# import json
+from nevow import athena
+from nevow import tags as T
 
 # Import PyMh files and modules.
-# from src.web.web_tagdefs import *
+from src.web.web_tagdefs import *
 from src.web import web_utils
 from src.web import web_selecthouse
-# from src.utils import log
 
 
 g_debug = 0
@@ -27,7 +27,36 @@ g_debug = 0
 # + = NOT USED HERE
 
 
-class RootPage(web_utils.ManualFormMixin):
+class MyElement(athena.LiveElement):
+    docFactory = loaders.stan(T.div(render = T.directive('liveElement')))
+
+
+class AjaxPage(athena.LivePage):
+    docFactory = loaders.stan(T.html[
+        T.head(render = T.directive('liveglue')),
+        T.body(render = T.directive('myElement'))])
+    jsModuleRoot = None
+    cssModuleRoot = None
+    transportRoot = None
+    _cssDepsMemo = None
+    _jsDepsMemo = None
+    _includedModules = None
+
+    def __init__(self, p_name, p_pyhouses_obj):
+        self.m_name = p_name
+        self.m_pyhouses_obj = p_pyhouses_obj
+        # setattr(AjaxPage, 'child_jsModuleRoot', static.File('src/web/plugins.js'))
+
+    def render_myElement(self, ctx, _data):
+        f = MyElement()
+        f.setFragmentParent(self)
+        return ctx.tag[f]
+
+    def child_(self, _ctx):
+        return AjaxPage('Root', self.m_pyhouses_obj)
+
+
+class RootPage(athena.LiveElement, web_utils.ManualFormMixin):
     """The main page of the web server.
     """
     addSlash = True
@@ -47,6 +76,8 @@ class RootPage(web_utils.ManualFormMixin):
         setattr(RootPage, 'child_addhouse.js', static.File('src/web/js/addhouse.js'))
         setattr(RootPage, 'child_webserver.js', static.File('src/web/js/webserver.js'))
         setattr(RootPage, 'child_logs.js', static.File('src/web/js/logs.js'))
+        #
+        setattr(RootPage, 'child_rootmenu.js', static.File('src/web/js/rootmenu.js'))
         #------------------------------------
         setattr(RootPage, 'child_bottomRight.gif', static.File('src/web/images/bottom_right.gif'))
         setattr(RootPage, 'child_close.gif', static.File('src/web/images/close.gif'))

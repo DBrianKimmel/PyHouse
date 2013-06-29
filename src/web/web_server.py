@@ -92,7 +92,10 @@ class API(object):
         self.m_pyhouses_obj = p_pyhouses_obj
         self.web_data = web_utils.WebUtilities().read_web_xml(self.web_data, p_pyhouses_obj.XmlRoot)
         l_site_dir = os.path.split(os.path.abspath(__file__))[0]
-        l_site = appserver.NevowSite(web_rootmenu.RootPage('/', p_pyhouses_obj))
+
+        # l_site = appserver.NevowSite(web_rootmenu.RootPage('/', p_pyhouses_obj))
+        l_site = appserver.NevowSite(web_rootmenu.AjaxPage('/', p_pyhouses_obj))
+
         listenTCP(self.web_data.WebPort, l_site)
         l_msg = "Port:{0:}, Path:{1:}".format(self.web_data.WebPort, l_site_dir)
         if g_debug >= 2:

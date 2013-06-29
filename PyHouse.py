@@ -69,7 +69,7 @@ from src.housing import houses
 from src.web import web_server
 
 
-g_debug = 3
+g_debug = 0
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
@@ -212,6 +212,9 @@ class API(Utilities):
         """
         if g_debug >= 2:
             print "\nPyHouse.API()"
+            import sys
+            print "  SYS.Path =", sys.path
+            print "---\n\n"
         handle_signals()
         self.m_pyhouses_obj = PyHouseData()
         self.m_pyhouses_obj.API = self
