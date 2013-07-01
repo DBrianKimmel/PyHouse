@@ -1,0 +1,30 @@
+<!-- controllers.xml -->
+<html   xmlns:nevow = "http://nevow.com/ns/nevow/0.1"
+		xmlns = 'http://www.w3.org/1999/xhtml'
+		lang = 'en'>
+	<head>
+		<title>PyHouse House Controllers Page</title>
+		<link rel = 'stylesheet' type = 'text/css' href = 'mainPage.css' />
+		<link rel = 'stylesheet' type = 'text/css' href = 'lightPage.css' />
+		<script type = 'text/javascript' src = 'ajax.js' />
+		<script type = 'text/javascript' src = 'floatingWindow.js' />
+		<script type = 'text/javascript' src = 'controllersPage.js' />
+    </head>
+    <body>
+    	<h1>PyHouse Controller Selection</h1>
+    	<p></p>
+    	<p>Select the controller to edit:</p>
+    	<form name = 'menuofbuttons' enctype = 'multipart/form-data' method = 'post' >
+    				<nevow:attr name = "action"><nevow:invisible nevow:render = 'action' /></nevow:attr>
+    		<table style = 'Width: 100%' border = '0'>
+    			<tr>
+    				<div nevow:data="controllerslist" nevow:render="controllerslist" />
+    			</tr>
+    		</table>
+     		<input type = 'submit' value = 'Add' name = 'post_btn' />
+    		<input type = 'submit' value = 'Cancel' name = 'post_btn' />
+    		<input type = 'submit' value = 'Back' name = 'post_btn' />
+    	</form> 
+    </body>
+</html>
+

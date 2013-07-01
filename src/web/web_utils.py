@@ -186,11 +186,27 @@ class ManualFormMixin(rend.Page):
             ).addCallback(self.onPostSuccess, request, ctx, bindingName, redirectAfterPost
             ).addErrback(self.onPostFailure, request, ctx, bindingName, redirectAfterPost)
 
-def add_attr_list(cls, p_list):
-    """setattr(RootPage, 'child_mainpage.css', static.File('src/web/css/mainpage.css'))
+def add_attr_list(p_class, p_list):
     """
+    setattr(RootPage, 'child_mainpage.css', static.File('src/web/css/mainpage.css'))
+    """
+    if g_debug >= 2:
+        print "web_utils.add_attr_list() - class:{0:}".format(p_class)
     for l_item in p_list:
-        pass
+        l_name = 'child_' + l_item.split('/')[-1]
+        if g_debug >= 2:
+            print "    Item:{0:} - Name:{1:}".format(l_item, l_name)
+        setattr(p_class, l_name, static.File(l_item))
+    if g_debug >= 3:
+        print "    Dir=", dir(p_class)
+        print "    Vars=", vars(p_class)
+
+def add_float_page_attrs(p_class):
+    l_list = ['src/web/images/bottomRight.gif', 'src/web/images/close.gif',
+              'src/web/images/minimize.gif', 'src/web/images/topCenter.gif',
+              'src/web/images/topLeft.gif', 'src/web/images/topRight.gif',
+              'src/web/images/handle.horizontal.png']
+    add_attr_list(p_class, l_list)
 
 def action_url():
         return url.here.child('_submit!!post')

@@ -28,30 +28,7 @@ class ControllersPage(web_utils.ManualFormMixin):
     """Define the page layout of the lighting selection web page.
     """
     addSlash = True
-    docFactory = loaders.stan(
-        T_html["\n",
-            T_head["\n",
-                T_title['PyHouse - Lighting Page'],
-                T_link(rel = 'stylesheet', type = 'text/css', href = U_R_child('mainpage.css'))["\n"],
-                T_script(type = 'text/javascript', src = 'ajax.js')["\n"],
-                T_script(type = 'text/javascript', src = 'floating_window.js'),
-                T_script(type = 'text/javascript', src = 'controllerspage.js')["\n"],
-                ],
-            T_body[
-                T_h1['PyHouse Controllers'],
-                T_p['Select the controller:'],
-                T_table(style = 'width: 100%;', border = 0)["\n",
-                    T_invisible(data = T_directive('controllerslist'), render = T_directive('controllerslist'))
-                    ],
-                T_form(action = U_H_child('_submit!!post'),
-                       enctype = "multipart/form-data",
-                       method = 'post'
-                      )["\n",
-                    T_input(type = 'button', onclick = "createNewControllerWindow('1234')", value = 'Add Controller')
-                    ]  # form
-                ]  # body
-            ]  # html
-        )  # stan
+    docFactory = loaders.xmlfile('controllers.xml', templateDir = 'src/web/template')
 
     def __init__(self, p_parent, p_name, p_house_obj):
         self.m_name = p_name
@@ -60,19 +37,12 @@ class ControllersPage(web_utils.ManualFormMixin):
         if g_debug >= 2:
             print "web_controllers.ControllersPage()"
         rend.Page.__init__(self)
-        setattr(ControllersPage, 'child_lightpage.css', static.File('src/web/css/lightpage.css'))
-        setattr(ButtonsPage, 'child_mainpage.css', static.File('src/web/css/mainpage.css'))
-        setattr(ButtonsPage, 'child_ajax.js', static.File('src/web/js/ajax.js'))
-        setattr(ButtonsPage, 'child_floating_window.js', static.File('src/web/js/floating-window.js'))
-        setattr(ButtonsPage, 'child_controllerspage.js', static.File('src/web/js/controllerspage.js'))
-        #------------------------------------
-        setattr(ButtonsPage, 'child_bottomRight.gif', static.File('src/web/images/bottom_right.gif'))
-        setattr(ButtonsPage, 'child_close.gif', static.File('src/web/images/close.gif'))
-        setattr(ButtonsPage, 'child_minimize.gif', static.File('src/web/images/minimize.gif'))
-        setattr(ButtonsPage, 'child_topCenter.gif', static.File('src/web/images/top_center.gif'))
-        setattr(ControllersPage, 'child_topLeft.gif', static.File('src/web/images/top_left.gif'))
-        setattr(ControllersPage, 'child_topRight.gif', static.File('src/web/images/top_right.gif'))
-        setattr(ButtonsPage, 'child_handle.horizontal.png', static.File('src/web/images/handle.horizontal.png'))
+        l_css = ['src/web/css/lightPage.css', 'src/web/css/mainPage.css']
+        l_js = ['src/web/js/ajax.js', 'src/web/js/floatingWindow.js',
+                'src/web/js/controllersPage.js']
+        web_utils.add_attr_list(ControllersPage, l_css)
+        web_utils.add_attr_list(ControllersPage, l_js)
+        web_utils.add_float_page_attrs(ControllersPage)
 
     def data_controllerslist(self, _context, _data):
         """Build up a list of controllers.
@@ -83,6 +53,9 @@ class ControllersPage(web_utils.ManualFormMixin):
         for l_key, l_obj in self.m_house_obj.Controllers.iteritems():
             l_controller[l_key] = l_obj
         return l_controller
+
+    def render_action(self, _ctx, _data):
+        return web_utils.action_url()
 
     def render_controllerslist(self, _context, links):
         """Place buttons for each light on the page.
@@ -99,7 +72,7 @@ class ControllersPage(web_utils.ManualFormMixin):
             if l_cnt % 2 == 0:
                 l_ret.append(T_tr)
             l_ret.append(T_td)
-            l_ret.append(T_input(type = 'submit', value = l_key, name = BUTTON,
+            l_ret.append(T_input(type = 'button', value = l_key, name = BUTTON,
                     onclick = "createChangeControllerWindow({0:})".format(l_json))
                          [ l_obj.Name])
             l_cnt += 1
@@ -121,32 +94,24 @@ class ControllersPage(web_utils.ManualFormMixin):
         Lights[l_name]['Master'] = kwargs['Master']
         # lighting.LightingUtility().update_all_lighting_families()
 
-    def form_post_addlight(self, **kwargs):
-        print " - form_post_addlight - ", kwargs
+    def form_post(self, **kwargs):
+        print " - form_post - ", kwargs
         self._store_light(**kwargs)
-        return ButtonsPage(self.m_name, self.m_house_obj)
+        return ControllersPage(self.m_name, self.m_house_obj)
 
-    def form_post_changelight(self, **kwargs):
-        """Browser user changed a light (on/off/dim)
-        Now send the change to the light.
-        """
-        print " - form_post_changelight - kwargs=", kwargs
-        return ButtonsPage(self.m_name, self.m_house_obj)
+    def form_post_add(self, **kwargs):
+        print " - form_post_add - ", kwargs
+        self._store_light(**kwargs)
+        return ControllersPage(self.m_name, self.m_house_obj)
 
-    def form_post_deletelight(self, **kwargs):
-        print " - form_post_delete - ", kwargs
-        del Lights[kwargs['Name']]
-        # lighting.LightingUtility().update_all_lighting_families()
-        return ButtonsPage(self.m_name, self.m_house_obj)
+    def form_post_back(self, **kwargs):
+        print " - form_post_back - ", kwargs
+        self._store_light(**kwargs)
+        return ControllersPage(self.m_name, self.m_house_obj)
 
-    def form_post_scan(self, **kwargs):
-        """Trigger a scan of all lights and then update light info.
-        """
-        print " - form_post_scan- ", kwargs
-        return ButtonsPage(self.m_name, self.m_house_obj)
-
-    def form_post_lighting(self, **kwargs):
-        print " - form_post_lighting - ", kwargs
+    def form_post_cancel(self, **kwargs):
+        print " - form_post_cancel - ", kwargs
+        self._store_light(**kwargs)
         return ControllersPage(self.m_name, self.m_house_obj)
 
 # ## END DBK

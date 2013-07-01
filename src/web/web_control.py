@@ -32,30 +32,7 @@ class ControlPage(web_utils.ManualFormMixin):
     """
     """
     addSlash = True
-    docFactory = loaders.stan(
-        T_html["\n",
-            T_head["\n",
-                T_title['PyHouse - House Page'],
-                T_link(rel = 'stylesheet', type = 'text/css', href = U_H_child('lightpage.css'))["\n"],
-                T_link(rel = 'stylesheet', type = 'text/css', href = U_R_child('mainpage.css'))["\n"],
-                T_script(type = 'text/javascript', src = 'controlpage.js')["\n"],
-                # ---
-                T_script(type = 'text/javascript', src = 'ajax.js')["\n"],
-                T_script(type = 'text/javascript', src = 'floating_window.js'),
-                # --- Slider
-                T_script(type = 'text/javascript', src = 'range.js'),
-                T_script(type = 'text/javascript', src = 'slider.js'),
-                T_script(type = 'text/javascript', src = 'timer.js'),
-                ],  # head
-            T_body[
-                T_h1['PyHouse Houses'],
-                T_p['Select Light:'],
-                T_table(style = 'width: 100%;', border = 0)["\n",
-                    T_invisible(data = T_directive('controllist'), render = T_directive('controllist'))
-                    ]  # table
-                ]  # body
-            ]  # html
-        )  # stan
+    docFactory = loaders.xmlfile('control.xml', templateDir = 'src/web/template')
 
     def __init__(self, p_parent, p_name, p_house_obj):
         self.m_name = p_name
@@ -67,24 +44,10 @@ class ControlPage(web_utils.ManualFormMixin):
             print self.m_house_obj
         rend.Page.__init__(self)
 
-        setattr(ControlPage, 'child_lightpage.css', static.File('src/web/css/lightpage.css'))
-        setattr(ControlPage, 'child_mainpage.css', static.File('src/web/css/mainpage.css'))
-        setattr(ControlPage, 'child_controlpage.js', static.File('src/web/js/controlpage.js'))
-        # ---
-        setattr(ControlPage, 'child_ajax.js', static.File('src/web/js/ajax.js'))
-        setattr(ControlPage, 'child_floating_window.js', static.File('src/web/js/floating-window.js'))
-        #------------------- Slider stuff
-        setattr(ControlPage, 'child_range.js', static.File('src/web/js/range.js'))
-        setattr(ControlPage, 'child_slider.js', static.File('src/web/js/slider.js'))
-        setattr(ControlPage, 'child_timer.js', static.File('src/web/js/timer.js'))
-        #------------------------------------
-        setattr(ControlPage, 'child_bottomRight.gif', static.File('src/web/images/bottom_right.gif'))
-        setattr(ControlPage, 'child_close.gif', static.File('src/web/images/close.gif'))
-        setattr(ControlPage, 'child_minimize.gif', static.File('src/web/images/minimize.gif'))
-        setattr(ControlPage, 'child_topCenter.gif', static.File('src/web/images/top_center.gif'))
-        setattr(ControlPage, 'child_topLeft.gif', static.File('src/web/images/top_left.gif'))
-        setattr(ControlPage, 'child_topRight.gif', static.File('src/web/images/top_right.gif'))
-        setattr(ControlPage, 'child_handle.horizontal.png', static.File('src/web/images/handle.horizontal.png'))
+        web_utils.add_attr_list(ControlPage, ['src/web/css/lightpage.css', 'src/web/css/mainpage.css',
+                                              'src/web/js/controlpage.js'])
+        web_utils.add_attr_list(ControlPage, ['src/web/js/ajax.js', 'src/web/js/floating-window.js'])
+        web_utils.add_float_page_attrs(ControlPage)
 
     def data_controllist(self, _context, _data):
         """Build up a list of lights.
@@ -96,6 +59,9 @@ class ControlPage(web_utils.ManualFormMixin):
         for l_key, l_obj in self.m_house_obj.Lights.iteritems():
             l_lights[l_key] = l_obj
         return l_lights
+
+    def render_action(self, _ctx, _data):
+        return web_utils.action_url()
 
     def render_controllist(self, _context, links):
         """
