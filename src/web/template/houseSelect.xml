@@ -1,4 +1,7 @@
-<html xmlns:nevow = "http://nevow.com/ns/nevow/0.1" xmlns = 'http://www.w3.org/1999/xhtml' lang = 'en'>
+<!-- houseSelect.xml -->
+<html 	xmlns:nevow = "http://nevow.com/ns/nevow/0.1"
+		xmlns = 'http://www.w3.org/1999/xhtml'
+		lang = 'en'>
 	<head>
 		<title>PyHouse House Select Page</title>
 		<link rel = 'stylesheet' type = 'text/css' href = 'mainpage.css' />

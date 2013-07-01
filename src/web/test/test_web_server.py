@@ -7,10 +7,9 @@ Created on Apr 8, 2013
 from twisted.trial import unittest
 from twisted.test import proto_helpers
 
-from web import web_server
+from src.web import web_server
 
 class Test(unittest.TestCase):
-
 
     def setUp(self):
         self.web_server = web_server.API()
@@ -19,10 +18,8 @@ class Test(unittest.TestCase):
         self.tr = proto_helpers.StringTransport()
         self.proto.makeConnection(self.tr)
 
-
     def tearDown(self):
         pass
-
 
     def test_start(self):
         self.web_server.Start()
@@ -30,7 +27,4 @@ class Test(unittest.TestCase):
     def test_root_page(self):
         pass
 
-
-if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.testName']
-    unittest.main()
+# ## END DBK

@@ -1,0 +1,69 @@
+<!--  houseMenu.xml -->
+<html 	xmlns:nevow = "http://nevow.com/ns/nevow/0.1"
+		xmlns = 'http://www.w3.org/1999/xhtml'
+		lang = 'en'>
+	<head>
+		<title>PyHouse Main Page</title>
+		<link rel = 'stylesheet' type = 'text/css' href = 'mainPage.css' />
+		<script type = 'text/javascript' src = 'ajax.js' />
+	<script type = 'text/javascript' src = 'floatingWindow.js' />
+    </head>
+    <body>
+    	<h1>PyHouse</h1>
+    	<form name = 'menuofbuttons' enctype = 'multipart/form-data' method = 'post' >
+    				<nevow:attr name = "action"><nevow:invisible nevow:render = 'action' /></nevow:attr>
+    		<table style = 'width: 60%;' border = '0'>
+    			<tr>
+    				<td><input type = 'submit' value = 'Location' name = 'post_btn' /></td>
+    				<td><input type = 'submit' value = 'Rooms' name = 'post_btn' /></td>
+    				<td><input type = 'submit' value = 'Lights' name = 'post_btn' /></td>
+    				<td><input type = 'submit' value = 'Buttons' name = 'post_btn' /></td>
+    				<td><input type = 'submit' value = 'Controllers' name = 'post_btn' /></td>
+    				<td><input type = 'submit' value = 'Schedules' name = 'post_btn' /></td>
+    				<td><input type = 'submit' value = 'Control_Lights' name = 'post_btn' /></td>
+    				<td><input type = 'submit' value = 'Internet' name = 'post_btn' /></td>
+    			</tr><tr>
+    				<td><input type = 'submit' value = 'Back' name = 'post_btn' /></td>
+    				<td><input type = 'submit' value = 'Quit' name = 'post_btn' /></td>
+    				<td><input type = 'submit' value = 'Reload' name = 'post_btn' /></td>
+    			</tr>
+    		</table>
+    	</form>
+    </body>
+</html>
+
+<!-- 
+    docFactory = loaders.stan(
+        T_html["\n",
+            T_head["\n",
+                T_title['PyHouse - House Page'],
+                T_link(rel = 'stylesheet', type = 'text/css', href = U_R_child('mainpage.css'))["\n"],
+                T_script(type = 'text/javascript', src = 'ajax.js')["\n"],
+                T_script(type = 'text/javascript', src = 'floating_window.js'),
+                ],  # head
+            T_body[
+                T_h1['PyHouse Houses'],
+                T_p['\n'],
+                T_p['Select house option:'],
+                T_form(name = 'mainmenuofbuttons',
+                    action = U_H_child('_submit!!post'),
+                    enctype = "multipart/form-data",
+                    method = 'post')
+                    [
+                    T_table(style = 'width: 100%;', border = 0)["\n",
+                        T_tr[
+                            T_td[ T_input(type = 'submit', value = 'Location', name = BUTTON), ],
+                            T_td[ T_input(type = 'submit', value = 'Rooms', name = BUTTON), ],
+                            T_td[ T_input(type = 'submit', value = 'Lights', name = BUTTON), ],
+                            T_td[ T_input(type = 'submit', value = 'Buttons', name = BUTTON), ],
+                            T_td[ T_input(type = 'submit', value = 'Controllers', name = BUTTON), ],
+                            T_td[ T_input(type = 'submit', value = 'Schedules', name = BUTTON), ],
+                            T_td[ T_input(type = 'submit', value = 'Control_Lights', name = BUTTON), ],
+                            T_td[ T_input(type = 'submit', value = 'Internet', name = BUTTON), ],
+                            ]
+                        ]  # table
+                    ]  # form
+                ]  # body
+            ]  # html
+        )  # stan
+-->

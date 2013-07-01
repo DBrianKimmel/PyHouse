@@ -1,11 +1,18 @@
-<html xmlns:nevow = "http://nevow.com/ns/nevow/0.1"
+<!-- rootMenu.xml -->
+<html 	xmlns:nevow = "http://nevow.com/ns/nevow/0.1"
 		xmlns = 'http://www.w3.org/1999/xhtml'
 		lang = 'en'>
 	<head>
 		<title>PyHouse Main Page</title>
-		<link rel = 'stylesheet' type = 'text/css' href = 'mainpage.css' />
+		<link rel = 'stylesheet' type = 'text/css' href = 'mainPage.css' />
 		<script type = 'text/javascript' src = 'ajax.js' />
-	<script type = 'text/javascript' src = 'floating_window.js' />
+		<script type = 'text/javascript' src = 'floatingWindow.js' />
+		<script type = 'text/javascript' src = 'addHouse.js' />
+		<script type = 'text/javascript' src = 'webServer.js' />
+		<script type = 'text/javascript' src = 'logs.js' />
+		<!--
+		<script type = 'text/javascript' src = 'rootMenu.js' />
+		-->
     </head>
     <body>
     	<h1>PyHouse</h1>
@@ -14,6 +21,9 @@
     		<table style = 'width: 60%;' border = '0'>
     			<tr>
     				<td><input type = 'submit' value = 'Select_House' name = 'post_btn' /></td>
+    				<td><input type = 'button' value = 'Add House' onclick = "createNewHouseWindow('New Name')" /></td>
+    				<td><input type = 'button' value = 'Web Server' onclick = "createChangeWebServerWindow('New Name')" /></td>
+    				<td><input type = 'button' value = 'Logs' onclick = "createChangeLogsWindow('New Name')" /></td>
     			</tr><tr>
     				<td><input type = 'submit' value = 'Quit' name = 'post_btn' /></td>
     				<td><input type = 'submit' value = 'Reload' name = 'post_btn' /></td>
