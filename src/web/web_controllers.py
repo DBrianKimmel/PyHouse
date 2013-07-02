@@ -95,22 +95,26 @@ class ControllersPage(web_utils.ManualFormMixin):
         # lighting.LightingUtility().update_all_lighting_families()
 
     def form_post(self, **kwargs):
-        print " - form_post - ", kwargs
+        if g_debug >= 2:
+            print " - form_post - ", kwargs
         self._store_light(**kwargs)
         return ControllersPage(self.m_name, self.m_house_obj)
 
     def form_post_add(self, **kwargs):
-        print " - form_post_add - ", kwargs
+        if g_debug >= 2:
+            print " - form_post_add - ", kwargs
         self._store_light(**kwargs)
         return ControllersPage(self.m_name, self.m_house_obj)
 
     def form_post_back(self, **kwargs):
-        print " - form_post_back - ", kwargs
+        if g_debug >= 2:
+            print " - form_post_back - ", kwargs
         self._store_light(**kwargs)
         return ControllersPage(self.m_name, self.m_house_obj)
 
     def form_post_cancel(self, **kwargs):
-        print " - form_post_cancel - ", kwargs
+        if g_debug >= 2:
+            print " - form_post_cancel - ", kwargs
         self._store_light(**kwargs)
         return ControllersPage(self.m_name, self.m_house_obj)
 

@@ -18,49 +18,18 @@ from src.web import web_rooms
 
 g_debug = 0
 # 0 = off
-# 1 = major routine entry
-# 2 = Basic data
+# 1 = log extra info
+# 2 = major routine entry
+# 3 = Config file handling
+# 4 = Dump JSON
+# + = NOT USED HERE
 
-g_logger = None
 
 class ButtonsPage(web_utils.ManualFormMixin):
     """
     """
     addSlash = True
-    docFactory = loaders.stan(
-        T_html["\n",
-            T_head["\n",
-                T_title['PyHouse - House Page'],
-                T_link(rel = 'stylesheet', type = 'text/css', href = U_R_child('mainpage.css'))["\n"],
-                T_script(type = 'text/javascript', src = 'ajax.js')["\n"],
-                T_script(type = 'text/javascript', src = 'floating_window.js'),
-                T_script(type = 'text/javascript', src = 'buttonspage.js')["\n"],
-                ],  # head
-            T_body[
-                T_h1['PyHouse Houses'],
-                T_p['\n'],
-                T_p['Select house option:'],
-                T_form(name = 'mainmenuofbuttons',
-                    action = U_H_child('_submit!!post'),
-                    enctype = "multipart/form-data",
-                    method = 'post')
-                    [
-                    T_table(style = 'width: 100%;', border = 0)["\n",
-                        T_tr[
-                            T_td[ T_input(type = 'submit', value = 'Location', name = BUTTON), ],
-                            T_td[ T_input(type = 'submit', value = 'Rooms', name = BUTTON), ],
-                            T_td[ T_input(type = 'submit', value = 'Lights', name = BUTTON), ],
-                            T_td[ T_input(type = 'submit', value = 'Buttons', name = BUTTON), ],
-                            T_td[ T_input(type = 'submit', value = 'Controllers', name = BUTTON), ],
-                            T_td[ T_input(type = 'submit', value = 'Schedule', name = BUTTON), ],
-                            T_td[ T_input(type = 'submit', value = 'Control Lights', name = BUTTON), ],
-                            T_td[ T_input(type = 'submit', value = 'Internet', name = BUTTON), ],
-                            ]
-                        ]  # table
-                    ]  # form
-                ]  # body
-            ]  # html
-        )  # stan
+    docFactory = loaders.xmlfile('buttons.xml', templateDir = 'src/web/template')
 
     def __init__(self, p_parent, p_name, p_house_obj):
         self.m_name = p_name
@@ -70,22 +39,16 @@ class ButtonsPage(web_utils.ManualFormMixin):
             print "web_buttons.ButtonPage()"
         if g_debug >= 5:
             print self.m_house_obj
+        l_css = ['src/web/css/mainPage.css']
+        l_js = ['src/web/js/ajax.js', 'src/web/js/floatingWindow.js',
+                'src/web/js/buttonPage.js']
+        web_utils.add_attr_list(ButtonsPage, l_css)
+        web_utils.add_attr_list(ButtonsPage, l_js)
+        web_utils.add_float_page_attrs(ButtonsPage)
         rend.Page.__init__(self)
-        setattr(ButtonsPage, 'child_lightpage.css', static.File('src/web/css/lightpage.css'))
-        setattr(ButtonsPage, 'child_mainpage.css', static.File('src/web/css/mainpage.css'))
-        setattr(ButtonsPage, 'child_ajax.js', static.File('src/web/js/ajax.js'))
-        setattr(ButtonsPage, 'child_floating_window.js', static.File('src/web/js/floating-window.js'))
-        setattr(ButtonsPage, 'child_controllerspage.js', static.File('src/web/js/controllerspage.js'))
-        #------------------------------------
-        setattr(ButtonsPage, 'child_bottomRight.gif', static.File('src/web/images/bottom_right.gif'))
-        setattr(ButtonsPage, 'child_close.gif', static.File('src/web/images/close.gif'))
-        setattr(ButtonsPage, 'child_minimize.gif', static.File('src/web/images/minimize.gif'))
-        setattr(ButtonsPage, 'child_topCenter.gif', static.File('src/web/images/top_center.gif'))
-        setattr(ButtonsPage, 'child_topLeft.gif', static.File('src/web/images/top_left.gif'))
-        setattr(ButtonsPage, 'child_topRight.gif', static.File('src/web/images/top_right.gif'))
-        setattr(ButtonsPage, 'child_handle.horizontal.png', static.File('src/web/images/handle.horizontal.png'))
 
-        setattr(ButtonsPage, 'child_mainpage.css', static.File('src/web/css/mainpage.css'))
+    def render_action(self, _ctx, _data):
+        return web_utils.action_url()
 
     def form_post_rooms(self, **kwargs):
         if g_debug >= 2:

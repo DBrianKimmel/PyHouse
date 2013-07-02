@@ -10,7 +10,11 @@ Handle the rooms information for a house.
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
+# import src
+# import utils
+# from src.utils import xml_tools
 from src.utils import xml_tools
+
 
 
 g_debug = 0

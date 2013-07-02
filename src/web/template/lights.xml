@@ -1,23 +1,23 @@
-<!-- controllers.xml -->
+<!-- lights.xml -->
 <html   xmlns:nevow = "http://nevow.com/ns/nevow/0.1"
 		xmlns = 'http://www.w3.org/1999/xhtml'
 		lang = 'en'>
 	<head>
-		<title>PyHouse House Controllers Page</title>
+		<title>PyHouse House Lights Page</title>
 		<link rel = 'stylesheet' type = 'text/css' href = 'mainPage.css' />
 		<script type = 'text/javascript' src = 'ajax.js' />
 		<script type = 'text/javascript' src = 'floatingWindow.js' />
-		
-		<script type = 'text/javascript' src = 'controllerPage.js' />
+		<script type = 'text/javascript' src = 'lightPage.js' />
     </head>
     <body>
-    	<h1>PyHouse Controller Selection</h1>
-    	<h2>Select the controller to modify:</h2>
+    	<h1>PyHouse Lights Selection</h1>
+    	<h2>Select the Light to modify:</h2>
     	<form name = 'menuofbuttons' enctype = 'multipart/form-data' method = 'post' >
     				<nevow:attr name = "action"><nevow:invisible nevow:render = 'action' /></nevow:attr>
-    		<table style = 'Width: 100%' border = '0'>
-    			<tr>
-    				<div nevow:data="controllerslist" nevow:render="controllerslist" />
+    		<table style = 'Width: 100%' border = '2'>
+    			<tr><td>abc</td>
+    			</tr><tr>
+   					<span nevow:data="lightslist" nevow:render="lightslist" />
     			</tr>
     		</table>
      		<input type = 'submit' value = 'Add' name = 'post_btn' />

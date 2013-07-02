@@ -3,16 +3,15 @@
 		xmlns = 'http://www.w3.org/1999/xhtml'
 		lang = 'en'>
 	<head>
-		<title>PyHouse House Select Page</title>
+		<title>PyHouse Controllers Page</title>
 		<link rel = 'stylesheet' type = 'text/css' href = 'mainpage.css' />
 		<link rel = 'stylesheet' type = 'text/css' href = 'lightpage.css' />
 		<script type = 'text/javascript' src = 'ajax.js' />
 		<script type = 'text/javascript' src = 'floating_window.js' />
     </head>
     <body>
-    	<h1>PyHouse House Selection</h1>
-    	<p></p>
-    	<p>Select the light to control:</p>
+    	<h1>PyHouse Controller Selection</h1>
+    	<h2>Select the controller to modify:</h2>
     	<form name = 'menuofbuttons' enctype = 'multipart/form-data' method = 'post' >
     				<nevow:attr name = "action"><nevow:invisible nevow:render = 'action' /></nevow:attr>
     		<table style = 'Width: 100%' border = '0'>
@@ -28,28 +27,3 @@
     </body>
 </html>
 
-<!-- 
-    docFactory = loaders.stan(
-        T_html["\n",
-            T_head["\n",
-                T_title['PyHouse - House Page'],
-                T_link(rel = 'stylesheet', type = 'text/css', href = U_H_child('lightpage.css'))["\n"],
-                T_link(rel = 'stylesheet', type = 'text/css', href = U_R_child('mainpage.css'))["\n"],
-                T_script(type = 'text/javascript', src = 'controlpage.js')["\n"],
-                T_script(type = 'text/javascript', src = 'ajax.js')["\n"],
-                T_script(type = 'text/javascript', src = 'floating_window.js'),
-                T_script(type = 'text/javascript', src = 'range.js'),
-                T_script(type = 'text/javascript', src = 'slider.js'),
-                T_script(type = 'text/javascript', src = 'timer.js'),
-                ],  # head
-            T_body[
-                T_h1['PyHouse Houses'],
-                T_p['Select Light:'],
-                T_table(style = 'width: 100%;', border = 0)["\n",
-                    T_invisible(data = T_directive('controllist'), render = T_directive('controllist'))
-                    ]  # table
-                ]  # body
-            ]  # html
-        )  # stan
-
- -->

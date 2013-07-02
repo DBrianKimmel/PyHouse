@@ -25,35 +25,7 @@ g_debug = 0
 
 class RoomsPage(web_utils.ManualFormMixin):
     addSlash = True
-    docFactory = loaders.stan(
-        T_html[
-            T_head[
-                T_title['PyHouse - Schedule Page'],
-                T_link(rel = 'stylesheet', type = 'text/css', href = U_R_child('mainpage.css'))["\n"],
-                T_script(type = 'text/javascript', src = 'ajax.js')["\n"],
-                T_script(type = 'text/javascript', src = 'floating_window.js')["\n"],
-                T_script(type = 'text/javascript', src = 'roompage.js'),
-                ],  # # head
-            T_body[
-                T_h1['PyHouse Schedule'],
-                T_p['Select the schedule:'],
-                T_form(name = 'mainmenuofbuttons',
-                       action = U_H_child('_submit!!post'),
-                       enctype = "multipart/form-data",
-                       method = 'post') [
-                    T_table(style = 'width: 100%;', border = 0)["\n",
-                        T_tr[
-                            T_invisible(data = T_directive('roomlist'), render = T_directive('roomlist')),
-                            ],  # tr
-                        T_tr[
-                            T_input(type = "button", onclick = "createNewRoomWindow('-1', )", value = "Add Room")["\n"],
-                            T_input(type = "submit", value = "Back", name = BUTTON)["\n"],
-                            ],  # tr
-                        ],  # table
-                   ]  # form
-                ]  # body
-            ]  # html
-        )  # stan
+    docFactory = loaders.xmlfile('rooms.xml', templateDir = 'src/web/template')
 
     def __init__(self, p_parent, p_name, p_house_obj):
         self.m_name = p_name
@@ -63,21 +35,15 @@ class RoomsPage(web_utils.ManualFormMixin):
             print "web_rooms.RoomsPage()"
         if g_debug >= 4:
             print "    ", p_house_obj
+        l_css = ['src/web/css/mainPage.css']
+        l_js = ['src/web/js/ajax.js', 'src/web/js/floatingWindow.js',
+                'src/web/js/roomPage.js']
+        web_utils.add_attr_list(RoomsPage, l_css)
+        web_utils.add_attr_list(RoomsPage, l_js)
+        web_utils.add_float_page_attrs(RoomsPage)
         rend.Page.__init__(self)
-        setattr(RoomsPage, 'child_mainpage.css', static.File('src/web/css/mainpage.css'))
-        setattr(RoomsPage, 'child_ajax.js', static.File('src/web/js/ajax.js'))
-        setattr(RoomsPage, 'child_floating_window.js', static.File('src/web/js/floating-window.js'))
-        setattr(RoomsPage, 'child_roompage.js', static.File('src/web/js/roompage.js'))
-        #------------------------------------
-        setattr(RoomsPage, 'child_bottomRight.gif', static.File('src/web/images/bottom_right.gif'))
-        setattr(RoomsPage, 'child_close.gif', static.File('src/web/images/close.gif'))
-        setattr(RoomsPage, 'child_minimize.gif', static.File('src/web/images/minimize.gif'))
-        setattr(RoomsPage, 'child_topCenter.gif', static.File('src/web/images/top_center.gif'))
-        setattr(RoomsPage, 'child_topLeft.gif', static.File('src/web/images/top_left.gif'))
-        setattr(RoomsPage, 'child_topRight.gif', static.File('src/web/images/top_right.gif'))
-        setattr(RoomsPage, 'child_handle.horizontal.png', static.File('src/web/images/handle.horizontal.png'))
 
-    def data_roomlist(self, _context, _data):
+    def data_roomslist(self, _context, _data):
         """Build up a list of schedule slots.
         @param _context: is a tag that we are building an object to render
         @param _data: is the page object we are extracting for.
@@ -90,7 +56,10 @@ class RoomsPage(web_utils.ManualFormMixin):
             l_rooms[l_key] = l_obj
         return l_rooms
 
-    def render_roomlist(self, _context, links):
+    def render_action(self, _ctx, _data):
+        return web_utils.action_url()
+
+    def render_roomslist(self, _context, links):
         """
         @param: _context is ...
         @param: links are ...
@@ -103,7 +72,7 @@ class RoomsPage(web_utils.ManualFormMixin):
             if l_cnt % 2 == 0:
                 l_ret.append(T_tr)
             l_ret.append(T_td)
-            l_ret.append(T_input(type = 'submit', value = l_obj.Key, name = BUTTON,
+            l_ret.append(T_input(type = 'button', value = l_obj.Key, name = BUTTON,
                     onclick = "createChangeRoomWindow('{0:}', \'{1:}\', \'{2:}\', \'{3:}\', \'{4:}\', \'{5:}\')".format(
                                                     l_obj.Name, l_obj.Key, l_obj.Active, l_obj.Size, l_obj.Corner, l_obj.Comment))
                          [ l_obj.Name, "\n" ])
@@ -128,7 +97,7 @@ class RoomsPage(web_utils.ManualFormMixin):
             print "web_rooms.RoomsPage.form_post_add() - kwargs=", kwargs
         self._store_rooms(**kwargs)
         # TODO: we should write out the updated info.
-        return RoomsPage(self.m_name, self.m_house_obj)
+        return RoomsPage(self, self.m_name, self.m_house_obj)
 
     def form_post_change(self, **kwargs):
         """Change a room in the house we selected earlier.
@@ -137,7 +106,7 @@ class RoomsPage(web_utils.ManualFormMixin):
             print "web_rooms.RoomsPage.form_post_change() - kwargs=", kwargs
         self._store_rooms(**kwargs)
         # TODO: we should write out the updated info.
-        return RoomsPage(self.m_name, self.m_house_obj)
+        return RoomsPage(self, self.m_name, self.m_house_obj)
 
     def form_post_delete(self, **kwargs):
         """Delete a room from the house we selected earlier.
@@ -146,11 +115,11 @@ class RoomsPage(web_utils.ManualFormMixin):
             print "web_rooms.RoomsPage.form_post_delete() - kwargs=", kwargs
         del self.m_house_obj.Rooms[kwargs['Key']]
         # TODO: we should write out the updated info.
-        return RoomsPage(self.m_name, self.m_house_obj)
+        return RoomsPage(self, self.m_name, self.m_house_obj)
 
     def form_post_back(self, **kwargs):
         if g_debug >= 3:
             print "web_rooms.form_post_back()", kwargs
-        return self.m_parent(self.m_name, self.m_houses_obj.Object)
+        return self.m_parent(self, self.m_name, self.m_houses_obj.Object)
 
 # ## END DBK
