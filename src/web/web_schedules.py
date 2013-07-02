@@ -17,36 +17,16 @@ from src.web import web_utils
 
 g_debug = 0
 # 0 = off
-# 1 = major routine entry
-# 2 = Basic data
+# 1 = log extra info
+# 2 = major routine entry
+# 3 = Config file handling
+# 4 = Dump JSON
+# + = NOT USED HERE
 
 
 class SchedulesPage(web_utils.ManualFormMixin):
     addSlash = True
-    docFactory = loaders.stan(
-        T_html["\n",
-            T_head["\n",
-                T_title['PyHouse - Schedule Page'],
-                T_link(rel = 'stylesheet', type = 'text/css', href = U_H_child('lightpage.css'))["\n"],
-                T_link(rel = 'stylesheet', type = 'text/css', href = U_R_child('mainpage.css'))["\n"],
-                T_script(type = 'text/javascript', src = 'ajax.js')["\n"],
-                T_script(type = 'text/javascript', src = 'floating_window.js')["\n"],
-                T_script(type = 'text/javascript', src = 'slider.js')["\n"],
-                T_script(type = 'text/javascript', src = 'range.js')["\n"],
-                T_script(type = 'text/javascript', src = 'schedpage.js'),
-                ],  # head
-            T_body[
-                T_h1['PyHouse Schedule'],
-                T_p['Select the schedule:'],
-                T_table(style = 'width: 100%;', border = 0)["\n",
-                    T_invisible(data = T_directive('schedlist'), render = T_directive('schedlist')),
-                    T_invisible(data = T_directive('lightlist'), render = T_directive('lightlist')),
-#                    T_invisible(data = T_directive('roomlist'), render = T_directive('roomlist')),
-                    ],  # table
-                T_input(type = "button", onclick = "createNewSchedule('1234')", value = "Add Schedule")
-                ]  # body
-            ]  # html
-        )  # stan
+    docFactory = loaders.xmlfile('buttons.xml', templateDir = 'src/web/template')
 
     def __init__(self, p_parent, p_name, p_pyhouse_obj):
         self.m_name = p_name
@@ -56,23 +36,13 @@ class SchedulesPage(web_utils.ManualFormMixin):
             print "web_schedule.SchedulePage.__init__()"
         if g_debug >= 2:
             print "    ", self.m_pyhouse_obj
+        l_css = ['src/web/css/mainPage.css']
+        l_js = ['src/web/js/ajax.js', 'src/web/js/floatingWindow.js',
+                'src/web/js/schedulePage.js']
+        web_utils.add_attr_list(SchedulesPage, l_css)
+        web_utils.add_attr_list(SchedulesPage, l_js)
+        web_utils.add_float_page_attrs(SchedulesPage)
         rend.Page.__init__(self)
-        setattr(SchedulesPage, 'child_lightpage.css', static.File('src/web/css/lightpage.css'))
-        setattr(SchedulesPage, 'child_mainpage.css', static.File('src/web/css/mainpage.css'))
-
-        setattr(SchedulesPage, 'child_ajax.js', static.File('src/web/js/ajax.js'))
-        setattr(SchedulesPage, 'child_floating_window.js', static.File('src/web/js/floating-window.js'))
-        setattr(SchedulesPage, 'child_slider.js', static.File('src/web/js/slider.js'))
-        setattr(SchedulesPage, 'child_range.js', static.File('src/web/js/range.js'))
-        setattr(SchedulesPage, 'child_schedpage.js', static.File('src/web/js/schedpage.js'))
-        #------------------------------------
-        setattr(SchedulesPage, 'child_bottomRight.gif', static.File('src/web/images/bottom_right.gif'))
-        setattr(SchedulesPage, 'child_close.gif', static.File('src/web/images/close.gif'))
-        setattr(SchedulesPage, 'child_minimize.gif', static.File('src/web/images/minimize.gif'))
-        setattr(SchedulesPage, 'child_topCenter.gif', static.File('src/web/images/top_center.gif'))
-        setattr(SchedulesPage, 'child_topLeft.gif', static.File(src / 'web/images/top_left.gif'))
-        setattr(SchedulesPage, 'child_topRight.gif', static.File('src/web/images/top_right.gif'))
-        setattr(SchedulesPage, 'child_handle.horizontal.png', static.File('src/web/images/handle.horizontal.png'))
 
     def data_schedlist(self, _context, _data):
         """Build up a list of schedule slots.
@@ -86,6 +56,9 @@ class SchedulesPage(web_utils.ManualFormMixin):
         for l_key, l_obj in self.m_pyhouse_obj.Schedules.iteritems():
             l_sched[l_key] = l_obj
         return l_sched
+
+    def render_action(self, _ctx, _data):
+        return web_utils.action_url()
 
     def render_schedlist(self, _context, links):
         """
@@ -112,7 +85,7 @@ class SchedulesPage(web_utils.ManualFormMixin):
             l_lights[l_key] = l_obj.Name
         return l_lights
 
-    def render_lightlist(self, _context, links):
+    def render_lightlist(self, _context, _links):
         l_ret = []
         return l_ret
 
@@ -122,7 +95,7 @@ class SchedulesPage(web_utils.ManualFormMixin):
             l_rooms[l_key] = l_obj.Name
         return l_rooms
 
-    def render_roomlist(self, _context, links):
+    def render_roomlist(self, _context, _links):
         l_ret = []
         return l_ret
 

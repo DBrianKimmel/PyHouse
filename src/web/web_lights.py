@@ -16,68 +16,34 @@ from src.web import web_utils
 from src.web import web_rooms
 
 
-g_debug = 0
+g_debug = 3
 # 0 = off
-# 1 = major routine entry
-# 2 = Basic data
+# 1 = log extra info
+# 2 = major routine entry
+# 3 = Config file handling
+# 4 = Dump JSON
+# + = NOT USED HERE
 
-g_logger = None
 
 class LightsPage(web_utils.ManualFormMixin):
     """
     """
     addSlash = True
-    docFactory = loaders.stan(
-        T_html["\n",
-            T_head["\n",
-                T_title['PyHouse - Lights Page'],
-                T_link(rel = 'stylesheet', type = 'text/css', href = U_R_child('mainpage.css'))["\n"],
-                T_script(type = 'text/javascript', src = 'ajax.js')["\n"],
-                T_script(type = 'text/javascript', src = 'floating_window.js'),
-                T_script(type = 'text/javascript', src = 'housepage.js')["\n"],
-                ],  # head
-            T_body[
-                T_h1['PyHouse Schedule'],
-                T_p['Select the schedule:'],
-                T_form(name = 'mainmenuofbuttons',
-                       action = U_H_child('_submit!!post'),
-                       enctype = "multipart/form-data",
-                       method = 'post') [
-                    T_table(style = 'width: 100%;', border = 0)["\n",
-                        T_invisible(data = T_directive('lightslist'), render = T_directive('lightslist')),
-                        T_tr[
-                            T_td[
-                            T_input(type = "button", onclick = "createNewLightWindow('-1', )", value = "Add Light"),
-                            T_input(type = "submit", value = "Back", name = BUTTON),
-                                ],  # td
-                            ],  # tr
-                        ],  # table
-                   ]  # form
-                ]  # body
-            ]  # html
-        )  # stan
+    docFactory = loaders.xmlfile('lights.xml', templateDir = 'src/web/template')
 
     def __init__(self, p_parent, p_name, p_house_obj):
         self.m_name = p_name
         self.m_parent = p_parent
         self.m_house_obj = p_house_obj
-        if g_debug >= 1:
+        if g_debug >= 2:
             print "web_lights.LightsPage()"
-        if g_debug >= 5:
-            print self.m_house_obj
+        l_css = ['src/web/css/lightPage.css', 'src/web/css/mainPage.css']
+        l_js = ['src/web/js/ajax.js', 'src/web/js/floatingWindow.js',
+                'src/web/js/lightPage.js']
+        web_utils.add_attr_list(LightsPage, l_css)
+        web_utils.add_attr_list(LightsPage, l_js)
+        web_utils.add_float_page_attrs(LightsPage)
         rend.Page.__init__(self)
-        setattr(LightsPage, 'child_mainpage.css', static.File('src/web/css/mainpage.css'))
-        setattr(LightsPage, 'child_ajax.js', static.File('src/web/js/ajax.js'))
-        setattr(LightsPage, 'child_floating_window.js', static.File('src/web/js/floating-window.js'))
-        setattr(LightsPage, 'child_lightpage.js', static.File('src/web/js/lightpage.js'))
-        #------------------------------------
-        setattr(LightsPage, 'child_bottomRight.gif', static.File('src/web/images/bottom_right.gif'))
-        setattr(LightsPage, 'child_close.gif', static.File('src/web/images/close.gif'))
-        setattr(LightsPage, 'child_minimize.gif', static.File('src/web/images/minimize.gif'))
-        setattr(LightsPage, 'child_topCenter.gif', static.File('src/web/images/top_center.gif'))
-        setattr(LightsPage, 'child_topLeft.gif', static.File('src/web/images/top_left.gif'))
-        setattr(LightsPage, 'child_topRight.gif', static.File('src/web/images/top_right.gif'))
-        setattr(LightsPage, 'child_handle.horizontal.png', static.File('src/web/images/handle.horizontal.png'))
 
     def data_lightslist(self, _context, _data):
         """Build up a list of lights.
@@ -85,35 +51,40 @@ class LightsPage(web_utils.ManualFormMixin):
         @param _data: is the page object we are extracting for.
         @return: an object to render.
         """
-        if g_debug >= 4:
+        if g_debug >= 2:
             print "web_lights.data_lightslist() ", self.m_house_obj
         l_lights = {}
         for l_key, l_obj in self.m_house_obj.Lights.iteritems():
             l_lights[l_key] = l_obj
         return l_lights
 
-    def render_lightslist(self, _context, links):
+    def render_action(self, _ctx, _data):
+        return web_utils.action_url()
+
+    def render_lightslist(self, context, links):
         """
         @param: _context is ...
         @param: links are ...
         @return: the list to be added into the stan.dom
         """
-        if g_debug >= 1:
+        if g_debug >= 2:
             print "web_lights.render_lightslist()"
-        l_ret = []
+        l_ret = "<tr>\n"
         l_cnt = 0
         for l_key, l_obj in sorted(links.iteritems()):
             l_json = json.dumps(repr(l_obj))
-            if l_cnt % 2 == 0:
-                l_ret.append(T_tr)
-            l_ret.append(T_td)
-            l_ret.append(T_input(type = 'submit', value = l_key, name = BUTTON,
-                    onclick = "createChangeLightWindow({0:})".format(l_json))
-                         [ l_obj.Name, "\n" ])
+            if l_cnt > 0 and l_cnt % 3 == 0:
+                l_ret += "</tr><tr>\n"
+            # l_ret += "<td><button onclick='createChangeLightWindow({0:})'>".format(l_json)
+            # l_ret += "{0:}</button></td>\n".format(l_key)
+            l_ret += "<td>..."
+            l_ret += "</td>\n"
             l_cnt += 1
+        l_ret += '</tr>\n'
+        l_ret = context.tag()
+        if g_debug >= 2:
+            print "    ", l_ret
         return l_ret
-
-
 
     def form_post_rooms(self, **kwargs):
         if g_debug >= 2:
@@ -129,7 +100,6 @@ class LightsPage(web_utils.ManualFormMixin):
         if g_debug >= 2:
             print "form_post_schedules()", kwargs
         return LightsPage(self.m_name, self.m_house_obj)
-
 
     def form_post_house(self, **kwargs):
         if g_debug >= 2:
