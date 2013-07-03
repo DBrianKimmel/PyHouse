@@ -10,7 +10,10 @@ def message2int(p_message, p_index):
     The message is a byte array returned from the PLM.
     Return an int that is the address.
     """
-    l_int = p_message[p_index] * 256 * 256 + p_message[p_index + 1] * 256 + p_message[p_index + 2]
+    try:
+        l_int = p_message[p_index] * 256 * 256 + p_message[p_index + 1] * 256 + p_message[p_index + 2]
+    except IndexError:
+        l_int = 0
     return l_int
 
 def int2message(p_int, p_message, p_index):
