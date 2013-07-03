@@ -22,11 +22,11 @@ import Queue
 from twisted.internet import reactor
 
 # Import PyMh files
-from src.lights.lighting import LightData
-from src.families.Insteon import Insteon_Link
-from src.utils.tools import PrintBytes
-from src.families.Insteon.Insteon_constants import *
-from src.families.Insteon import Insteon_utils
+from lights.lighting import LightData
+from families.Insteon import Insteon_Link
+from utils.tools import PrintBytes
+from families.Insteon.Insteon_constants import *
+from families.Insteon import Insteon_utils
 
 g_debug = 0
 # 0 = off
@@ -270,10 +270,14 @@ class DecodeResponses(InsteonPlmUtility):
         l_message = p_controller_obj.Message
         l_obj_from = self.get_obj_from_message(l_message, 2)
         l_name_from = l_obj_from.Name
-        l_flags = self._decode_message_flag(l_message[8])
         l_obj_to = self.get_obj_from_message(l_message, 5)
         l_name_to = l_obj_to.Name
-        l_data = [l_message[9], l_message[10]]
+        try:
+            l_flags = self._decode_message_flag(l_message[8])
+            l_data = [l_message[9], l_message[10]]
+        except IndexError:
+            l_flags = self._decode_message_flag(0)
+            l_data = 0
         l_debug_msg = 'Standard Message; '
         # Break down bits 7, 6, 5 into message type
         if l_message[8] & 0xE0 == 0x00:  # (000) Direct message type
