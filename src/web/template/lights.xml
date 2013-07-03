@@ -13,7 +13,7 @@
     	<h1>PyHouse Lights Selection</h1>
     	<h2>Select the Light to modify:</h2>
     	<form name = 'menuofbuttons' enctype = 'multipart/form-data' method = 'post' >
-    				<nevow:attr name = "action"><nevow:invisible nevow:render = 'action' /></nevow:attr>
+    		<nevow:attr name = "action"><nevow:invisible nevow:render = 'action' /></nevow:attr>
     		<table style = 'Width: 100%' border = '2'>
     			<tr><td>abc</td>
     			</tr><tr>
