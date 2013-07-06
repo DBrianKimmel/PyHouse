@@ -68,7 +68,7 @@ class LightingUtility(FamilyData):
             try:
                 l_module = importlib.import_module(l_family_obj.PackageName + '.' + l_family_obj.ModuleName, l_family_obj.PackageName)
             except ImportError, e:
-                if g_debug >= 2:
+                if g_debug >= 0:
                     print "    family.build_lighting_family_info() - ERROR - Cannot import module {0:}".format(l_family_obj.ModuleName), e
                 l_module = None
                 g_logger.error("Cannot import - Module:{0:}, Package:{1:}.".format(l_family_obj.ModuleName, l_family_obj.PackageName))
@@ -76,7 +76,7 @@ class LightingUtility(FamilyData):
             try:
                 l_family_obj.API = l_module.API(p_house_obj)
             except AttributeError:
-                if g_debug >= 2:
+                if g_debug >= 0:
                     print "    family.build_lighting_family_info() - ERROR - NO API"
                 l_family_obj.API = None
                 g_logger.error("Cannot get API - Module:{0:}, House:{1:}.".format(l_module, p_house_obj.Name))

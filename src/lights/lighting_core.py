@@ -5,7 +5,6 @@ Created on Jun 13, 2013
 '''
 
 # Import system type stuff
-import xml.etree.ElementTree as ET
 
 # Import PyHouse files
 from src.utils import xml_tools
@@ -16,6 +15,7 @@ g_debug = 0
 # 1 = log extra info
 # 2 = major routine entry
 # 3 = Config file handling
+# 4 = Print family info
 # + = NOT USED HERE
 
 
@@ -85,8 +85,9 @@ class CoreAPI(xml_tools.ConfigTools):
         p_device_obj.RoomName = p_entry_xml.findtext('Room')
         p_device_obj.Type = p_entry_xml.findtext('Type')
         for l_family_obj in p_house_obj.FamilyData.itervalues():
+            if g_debug >= 4:
+                print "    {0:}, {1:}".format(l_family_obj.Name, l_fam)
             if l_family_obj.Name == l_fam:
-                # print "  --  ", l_fam
                 l_family_obj.API.extract_device_xml(p_entry_xml, p_device_obj)
         if g_debug >= 3:
             print "lighting_tools.read_light_common() - ", p_device_obj
@@ -102,6 +103,8 @@ class CoreAPI(xml_tools.ConfigTools):
         self.put_text_element(p_entry, 'Room', p_device_obj.RoomName)
         self.put_text_element(p_entry, 'Type', p_device_obj.Type)
         for l_family_obj in p_house_obj.FamilyData.itervalues():
+            if g_debug >= 4:
+                print "    {0:}, {1:}".format(l_family_obj.Name, p_device_obj.Family)
             if l_family_obj.Name == p_device_obj.Family:
                 l_family_obj.API.insert_device_xml(p_entry, p_device_obj)
 

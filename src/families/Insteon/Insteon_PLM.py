@@ -22,11 +22,11 @@ import Queue
 from twisted.internet import reactor
 
 # Import PyMh files
-from lights.lighting import LightData
-from families.Insteon import Insteon_Link
-from utils.tools import PrintBytes
-from families.Insteon.Insteon_constants import *
-from families.Insteon import Insteon_utils
+from src.lights.lighting import LightData
+from src.families.Insteon import Insteon_Link
+from src.utils.tools import PrintBytes
+from src.families.Insteon.Insteon_constants import *
+from src.families.Insteon import Insteon_utils
 
 g_debug = 0
 # 0 = off
