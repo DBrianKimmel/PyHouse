@@ -273,36 +273,48 @@ class DecodeResponses(InsteonPlmUtility):
         l_obj_to = self.get_obj_from_message(l_message, 5)
         l_name_to = l_obj_to.Name
         try:
-            l_flags = self._decode_message_flag(l_message[8])
-            l_data = [l_message[9], l_message[10]]
+            l_7 = l_message[7]
         except IndexError:
-            l_flags = self._decode_message_flag(0)
-            l_data = 0
+            l_7 = 0
+        try:
+            l_8 = l_message[8]
+        except IndexError:
+            l_8 = 0
+        try:
+            l_9 = l_message[9]
+        except IndexError:
+            l_9 = 0
+        try:
+            l_10 = l_message[10]
+        except IndexError:
+            l_10 = 0
+        l_data = [l_9, l_10]
         l_debug_msg = 'Standard Message; '
+        l_flags = self._decode_message_flag(l_8)
         # Break down bits 7, 6, 5 into message type
-        if l_message[8] & 0xE0 == 0x00:  # (000) Direct message type
+        if l_8 & 0xE0 == 0x00:  # (000) Direct message type
             l_debug_msg += "DirectMessage from {0:}; ".format(l_name_from)
-        elif l_message[8] & 0xE0 == 0x20:  # (001) ACK of Direct message type
+        elif l_8 & 0xE0 == 0x20:  # (001) ACK of Direct message type
             l_debug_msg += "AckDirectMessage from {0:}; ".format(l_name_from)
-        elif l_message[8] & 0xE0 == 0x40:  # (010) All-Link Broadcast Clean-Up message type
+        elif l_8 & 0xE0 == 0x40:  # (010) All-Link Broadcast Clean-Up message type
             l_debug_msg += "All-Link Broadcast clean up from {0:}; ".format(l_name_from)
-        elif l_message[8] & 0xE0 == 0x60:  # (011) All-Link Clean-Up ACK response message type
+        elif l_8 & 0xE0 == 0x60:  # (011) All-Link Clean-Up ACK response message type
             l_debug_msg += "All-Link Clean up ACK from {0:}; ".format(l_name_from)
-        elif l_message[8] & 0xE0 == 0x80:  # Broadcast Message (100)
+        elif l_8 & 0xE0 == 0x80:  # Broadcast Message (100)
             l_debug_msg += self._get_devcat(l_message, l_obj_from)
-        elif l_message[8] & 0xE0 == 0xA0:  # (101) NAK of Direct message type
+        elif l_8 & 0xE0 == 0xA0:  # (101) NAK of Direct message type
             l_debug_msg += "NAK of direct message(1) from {0:}; ".format(l_name_from)
-        elif l_message[8] & 0xE0 == 0xC0:  # (110) all link broadcast of group is
-            l_group = l_message[7]
+        elif l_8 & 0xE0 == 0xC0:  # (110) all link broadcast of group is
+            l_group = l_7
             l_debug_msg += "All-Link broadcast From:{0:}, Group:{1:}, Flags:{2:}, Data:{3:}; ".format(l_name_from, l_group, l_flags, l_data)
             g_logger.info("== 50B All-link Broadcast From:{0:}, Group:{1:}, Flags:{2:}, Data:{3:} ==".format(l_name_from, l_group, l_flags, l_data))
-        elif l_message[8] & 0xE0 == 0xE0:  # (111) NAK of Direct message type
+        elif l_8 & 0xE0 == 0xE0:  # (111) NAK of Direct message type
             l_debug_msg += "NAK of direct message(2) from {0:}; ".format(l_name_from)
         #
         if l_obj_from.Command1 == MESSAGE_TYPES['product_data_request']:  # 0x03
             l_debug_msg += " product data request. - Should never happen - S/B 51 response"
         elif l_obj_from.Command1 == MESSAGE_TYPES['engine_version']:  # 0x0D
-            l_engine_id = l_message[10]
+            l_engine_id = l_10
             l_debug_msg += "Engine version From:{0:}, Sent to:{1:}, Id:{2:}; ".format(l_name_from, l_name_to, l_engine_id)
             g_logger.info("Got engine version from light:{0:}, To:{1:}, EngineID:{2:}".format(l_name_from, l_name_to, l_engine_id))
         elif l_obj_from.Command1 == MESSAGE_TYPES['id_request']:  # 0x10
@@ -317,7 +329,7 @@ class DecodeResponses(InsteonPlmUtility):
             l_debug_msg += "Light:{0:} turned Full OFF; ".format(l_name_from)
             self.update_object(l_obj_from)
         elif l_obj_from.Command1 == MESSAGE_TYPES['status_request']:  # 0x19
-            l_level = int(((l_message[10] + 2) * 100) / 256)
+            l_level = int(((l_10 + 2) * 100) / 256)
             l_obj_from.CurLevel = l_level
             l_debug_msg += "Status of light:{0:} is level:{1:}; ".format(l_name_from, l_level)
             g_logger.info("PLM:{0:} Got Light Status From:{1:}, Level is:{2:}".format(p_controller_obj.Name, l_name_from, l_level))
