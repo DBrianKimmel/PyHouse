@@ -7,7 +7,7 @@ Created on May 30, 2013
 # Import system type stuff
 from nevow import loaders
 from nevow import rend
-# from nevow import athena
+from nevow import athena
 
 # Import PyMh files and modules.
 from src.web.web_tagdefs import *
@@ -15,7 +15,10 @@ from src.web import web_utils
 from src.web import web_houseSelect
 
 
-g_debug = 0
+
+# import echothing
+
+g_debug = 4
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
@@ -24,33 +27,68 @@ g_debug = 0
 # + = NOT USED HERE
 
 
-# class MyElement(athena.LiveElement):
-#    docFactory = loaders.stan(T.div(render = T.directive('liveElement')))
+class ChatRoom(object):
+
+    def __init__(self):
+        self.chatters = []
+
+    def wall(self, message):
+        for chatter in self.chatters:
+            chatter.wall(message)
+
+    def tellEverybody(self, who, what):
+        for chatter in self.chatters:
+            chatter.hear(who.username, what)
+
+    def makeChatter(self):
+        elem = MyElement(self)
+        self.chatters.append(elem)
+        return elem
+
+# element to be run with twistd
+chat = ChatRoom().makeChatter
 
 
-# class AjaxPage(athena.LivePage):
-#    docFactory = loaders.stan(T.html[
-#        T.head(render = T.directive('liveglue')),
-#        T.body(render = T.directive('myElement'))])
-#    jsModuleRoot = None
-#    cssModuleRoot = None
-#    transportRoot = None
-#    _cssDepsMemo = None
-#    _jsDepsMemo = None
-#    _includedModules = None
+class MyElement(athena.LiveElement):
+    docFactory = loaders.xmlfile('rootMenu.xml', templateDir = 'src/web/template')
+    jsClass = u'rootMenu.ChatterBox'
 
-#    def __init__(self, p_name, p_pyhouses_obj):
-#        self.m_name = p_name
-#        self.m_pyhouses_obj = p_pyhouses_obj
-#        # setattr(AjaxPage, 'child_jsModuleRoot', static.File('src/web/plugins.js'))
+def say(self, text):
+    # for chatter in chatRoom:
+    #    chatter.youHeardSomething(text)
+    pass
 
-#    def render_myElement(self, ctx, _data):
-#        f = MyElement()
-#        f.setFragmentParent(self)
-#        return ctx.tag[f]
+say = athena.expose(say)
 
-#    def child_(self, _ctx):
-#        return AjaxPage('Root', self.m_pyhouses_obj)
+def hear(self, sayer, text):
+    self.callRemote("hear", sayer, text)
+
+
+class AjaxPage(athena.LivePage):
+    docFactory = loaders.xmlfile('rootMenu.xml', templateDir = 'src/web/template')
+
+    def __init__(self, p_name, p_pyhouses_obj, *args, **kwargs):
+        self.m_name = p_name
+        self.m_pyhouses_obj = p_pyhouses_obj
+        super(AjaxPage, self).__init__(*args, **kwargs)
+        if g_debug >= 2:
+            print "web_rootMenu.AjaxPage()"
+        l_css = ['src/web/css/mainPage.css']
+        l_js = ['src/web/js/ajax.js', 'src/web/js/floatingWindow.js',
+                'src/web/js/addHouse.js', 'src/web/js/webServer.js',
+                'src/web/js/logs.js',
+                'src/web/js/rootMenu.js']
+        web_utils.add_attr_list(AjaxPage, l_css)
+        web_utils.add_attr_list(AjaxPage, l_js)
+        web_utils.add_float_page_attrs(AjaxPage)
+
+    def render_myElement(self, ctx, _data):
+        f = MyElement()
+        f.setFragmentParent(self)
+        return ctx.tag[f]
+
+    def child_(self, _ctx):
+        return AjaxPage('Root', self.m_pyhouses_obj)
 
 
 class RootPage(web_utils.ManualFormMixin):

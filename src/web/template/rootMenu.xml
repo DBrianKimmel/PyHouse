@@ -12,6 +12,7 @@
 		<script type = 'text/javascript' src = 'addHouse.js' />
 		<script type = 'text/javascript' src = 'webServer.js' />
 		<script type = 'text/javascript' src = 'logs.js' />
+		<script type = 'text/javascript' src = 'rootMenu.js' />
     </head>
     <body>
     	<h1>PyHouse</h1>
@@ -33,14 +34,50 @@
         <div xmlns:nevow = "http://nevow.com/ns/nevow/0.1"
         	 xmlns:athena = "http://divmod.org/ns/athena/0.7"
         	 nevow:render = "liveElement">
-        <h2>Echo Element</h2>
-        <form name = "echoElement">
-            <athena:handler event = "onsubmit" handler = "doSay" />
-            <div name = "scrollArea">
-            </div>
-            <input name = "message" />
-            <input type = "submit" value = "Send" />
+	        <h2>Chatter Element</h2>
+	        <form name = "chatBox">
+	            <athena:handler event = "onsubmit" handler = "doSay" />
+	            <div name = "scrollArea" style="border: 1px solid gray; padding: 5; margin: 5">
+	            </div>
+		        <div name="sendLine" style="display: none">
+			  		<input name="userMessage" />
+			  		<input type="submit" value="Send" />
+				</div>
         	</form>
+		    <form name="chooseBox">
+		        <athena:handler event="onsubmit" handler="doSetUsername" />
+		        Choose your username: <input name="username" />
+		        <input type="submit" name="GO" value="Enter"/>
+		    </form>
+		    <div name="loggedInAs" style="display:none">
+		    	<span>Logged in as </span>
+		    </div>
     	</div>
     </body>
 </html>
+<!-- 
+
+<div xmlns:nevow="http://nevow.com/ns/nevow/0.1"
+     xmlns:athena="http://divmod.org/ns/athena/0.7"
+     nevow:render="liveElement">
+    <h2>Chatter Element</h2>
+    <form name="chatBox">
+        <athena:handler event="onsubmit" handler="doSay" />
+        <div name="scrollArea" 
+             style="border: 1px solid gray; padding: 5; margin: 5">
+        </div>
+        <div name="sendLine" style="display: none">
+	  		<input name="userMessage" /><input type="submit" value="Send" />
+		</div>
+    </form>
+    <form name="chooseBox">
+        <athena:handler event="onsubmit" handler="doSetUsername" />
+        Choose your username: <input name="username" />
+        <input type="submit" name="GO" value="Enter"/>
+    </form>
+    <div name="loggedInAs" style="display:none">
+    	<span>Logged in as </span>
+    </div>
+</div>
+
+ -->
