@@ -17,10 +17,9 @@ function createChangeLogsWindow(p_json) {
 
 /*
  * Populate a window to allow changes to be made.
- * Slider for level of light to set 0-100
  */
 function fillChangeLogsWindow(p_divid, p_json) {
-	alert('Update Logs ' + p_json)
+	//alert('Update Logs ' + p_json)
 	var l_obj = JSON.parse(p_json);
 	ret = 		'<br />\n';
 	ret = ret + '<form method="post" action="_submit!!post" enctype="multipart/form-data">\n';
