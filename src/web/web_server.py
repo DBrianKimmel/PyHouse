@@ -94,8 +94,8 @@ class API(object):
         l_site_dir = os.path.split(os.path.abspath(__file__))[0]
 
         l_site = appserver.NevowSite(web_rootMenu.AjaxPage('/', p_pyhouses_obj))
-
         listenTCP(self.web_data.WebPort, l_site)
+
         l_msg = "Port:{0:}, Path:{1:}".format(self.web_data.WebPort, l_site_dir)
         if g_debug >= 2:
             print "web_server.Start() - {0:}".format(l_msg)
