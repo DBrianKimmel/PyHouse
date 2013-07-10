@@ -1,0 +1,26 @@
+<!-- rootMenuElement.xml -->
+<div xmlns:nevow = "http://nevow.com/ns/nevow/0.1"
+     xmlns:athena = "http://divmod.org/ns/athena/0.7"
+     nevow:render = "liveElement">
+	<p>Start of rootMenuElement</p>
+	<p>an element paragraph</p>
+	<br></br>
+   	<form name = "echoElement">
+       	<athena:handler event = "onsubmit" handler = "doSay" />
+       	<div name = "scrollArea" />
+       	<input name = "message" />
+       	<input type = "submit" value = "Push me once" onclick = 'Nevow.Athena.Widget.get(this).clicked()' />
+   	</form>
+   	<p>End of rootMenuElement</p>
+</div>
+<!-- 
+    docFactory = loaders.stan(
+        T.div(render = T.directive('liveElement'))[
+            'DBK-01',
+            T.input(type = 'submit', value = 'Push me',
+                    onclick = 'Nevow.Athena.Widget.get(this).clicked()'
+            )  # input
+        ]  # div
+    )  # stan
+ -->
+ 

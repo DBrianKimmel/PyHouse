@@ -1,20 +1,21 @@
 <!-- rootMenu.xml -->
-<html 	xmlns:nevow = "http://nevow.com/ns/nevow/0.1"
-		xmlns:athena = "http://divmod.org/ns/athena/0.7"
-		xmlns = 'http://www.w3.org/1999/xhtml'
-		lang = 'en'>
-	<head>
+<html 	xmlns:nevow  = 'http://nevow.com/ns/nevow/0.1'
+		xmlns:athena = 'http://divmod.org/ns/athena/0.7'
+		xmlns        = 'http://www.w3.org/1999/xhtml'
+		lang         = 'en'>
+	<head nevow:render = 'liveglue'>
 		<title>PyHouse Main Page</title>
 		<link rel = 'stylesheet' type = 'text/css' href = 'mainPage.css' />
-		<script type = 'text/javascript' src = 'ajax.js' />
-		<script type = 'text/javascript' src = 'floatingWindow.js' />
-		
-		<script type = 'text/javascript' src = 'addHouse.js' />
-		<script type = 'text/javascript' src = 'webServer.js' />
-		<script type = 'text/javascript' src = 'logs.js' />
 		<script type = 'text/javascript' src = 'rootMenu.js' />
+		<script type = 'text/javascript' src = 'floatingWindow.js' />
+		<script type = 'text/javascript' src = 'addHouse.js' />
+		<script type = 'text/javascript' src = 'logs.js' />
+		<script type = 'text/javascript' src = 'webServer.js' />
+		<!-- 
+		<script type = 'text/javascript' src = 'ajax.js' />
+		-->
     </head>
-    <body>
+    <body nevow:render='myElement'>
     	<h1>PyHouse</h1>
     	<h2>Select the menu Function:</h2>
     	<form name = 'menuofbuttons' enctype = 'multipart/form-data' method = 'post' >
@@ -31,10 +32,22 @@
     			</tr>
     		</table>
     	</form>
+    	<p>end for form in rootMenu</p>
+
         <div xmlns:nevow = "http://nevow.com/ns/nevow/0.1"
         	 xmlns:athena = "http://divmod.org/ns/athena/0.7"
         	 nevow:render = "liveElement">
-	        <h2>Chatter Element</h2>
+	        <h2>Ajax Stuff Element</h2>
+	        <div name="sendToServer" style="display: none">
+		  		<input name="sendMessage" />
+		  		<input type="submit" value="Send" />
+			</div>
+    	</div>
+    </body>
+</html>
+<!-- 
+
+
 	        <form name = "chatBox">
 	            <athena:handler event = "onsubmit" handler = "doSay" />
 	            <div name = "scrollArea" style="border: 1px solid gray; padding: 5; margin: 5">
@@ -52,10 +65,9 @@
 		    <div name="loggedInAs" style="display:none">
 		    	<span>Logged in as </span>
 		    </div>
-    	</div>
-    </body>
-</html>
-<!-- 
+
+
+
 
 <div xmlns:nevow="http://nevow.com/ns/nevow/0.1"
      xmlns:athena="http://divmod.org/ns/athena/0.7"

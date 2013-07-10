@@ -6,11 +6,12 @@ Created on May 30, 2013
 
 # Import system type stuff
 from nevow import loaders
-from nevow import rend
+# from nevow import rend
 from nevow import athena
-
+# from nevow import appserver
+# from nevow import tags as T
 # Import PyMh files and modules.
-from src.web.web_tagdefs import *
+# from src.web.web_tagdefs import *
 from src.web import web_utils
 from src.web import web_houseSelect
 
@@ -30,98 +31,130 @@ g_debug = 4
 class ChatRoom(object):
 
     def __init__(self):
+        if g_debug >= 3:
+            print "web_rootMenu.ChatRoom() "
         self.chatters = []
 
-    def wall(self, message):
+    def wall(self, p_message):
+        if g_debug >= 3:
+            print "web_rootMenu.ChatRoom.wall() ", p_message
         for chatter in self.chatters:
-            chatter.wall(message)
+            chatter.wall(p_message)
 
-    def tellEverybody(self, who, what):
+    def tellEverybody(self, p_who, p_what):
+        if g_debug >= 3:
+            print "web_rootMenu.ChatRoom.tellEverybody() ", p_who, p_what
         for chatter in self.chatters:
-            chatter.hear(who.username, what)
+            chatter.hear(p_who.username, p_what)
 
     def makeChatter(self):
+        if g_debug >= 3:
+            print "web_rootMenu.ChatRoom.makeChatter() "
         elem = MyElement(self)
         self.chatters.append(elem)
         return elem
 
 # element to be run with twistd
-chat = ChatRoom().makeChatter
+# chat = ChatRoom().makeChatter
 
 
 class MyElement(athena.LiveElement):
-    docFactory = loaders.xmlfile('rootMenu.xml', templateDir = 'src/web/template')
-    jsClass = u'rootMenu.ChatterBox'
+    docFactory = loaders.xmlfile('rootMenuElement.xml', templateDir = 'src/web/template')
+    # jsClass = u'web_rootMenu.ChatRoom'
 
-def say(self, text):
-    # for chatter in chatRoom:
-    #    chatter.youHeardSomething(text)
-    pass
+    def say(self, text):
+        # for chatter in chatRoom:
+        #    chatter.youHeardSomething(text)
+        if g_debug >= 3:
+            print "web_rootMenu.MyElement.say() - ", text
+        pass
 
-say = athena.expose(say)
+    say = athena.expose(say)
 
-def hear(self, sayer, text):
-    self.callRemote("hear", sayer, text)
+    def hear(self, sayer, text):
+        if g_debug >= 3:
+            print "web_rootMenu.MyElement.hear() ", sayer, text
+        self.callRemote("hear", sayer, text)
 
 
-class AjaxPage(athena.LivePage):
+class AjaxPage(athena.LivePage, web_utils.ManualFormMixin):
     docFactory = loaders.xmlfile('rootMenu.xml', templateDir = 'src/web/template')
 
     def __init__(self, p_name, p_pyhouses_obj, *args, **kwargs):
         self.m_name = p_name
         self.m_pyhouses_obj = p_pyhouses_obj
-        super(AjaxPage, self).__init__(*args, **kwargs)
+        # kwargs['cssModuleRoot'] = 'src/web/css/'
+        # kwargs['cssModules'] = 'mainPage.css'
+        # kwargs['jsModuleRoot'] = '/home/briank/workspace/PyHouse/src/web/js/'
+        # kwargs['jsModules'] = [
+        #        'floatingWindow.js',
+        #        'addHouse.js',
+        #        'webServer.js',
+        #        'logs.js',
+        #        'rootMenu.js'
+        # ]
         if g_debug >= 2:
             print "web_rootMenu.AjaxPage()"
+            print "    Name =", p_name
+        #    print "    PyHouses_org =", p_pyhouses_obj
+        #    print "    Args =", args
+        #    print "    KwArgs =", kwargs
+        super(AjaxPage, self).__init__(*args, **kwargs)
         l_css = ['src/web/css/mainPage.css']
-        l_js = ['src/web/js/ajax.js', 'src/web/js/floatingWindow.js',
-                'src/web/js/addHouse.js', 'src/web/js/webServer.js',
+        l_js = [
+                'src/web/js/floatingWindow.js',
+                'src/web/js/addHouse.js',
+                'src/web/js/webServer.js',
                 'src/web/js/logs.js',
-                'src/web/js/rootMenu.js']
+                'src/web/js/rootMenu.js'
+                ]
         web_utils.add_attr_list(AjaxPage, l_css)
         web_utils.add_attr_list(AjaxPage, l_js)
         web_utils.add_float_page_attrs(AjaxPage)
 
-    def render_myElement(self, ctx, _data):
-        f = MyElement()
-        f.setFragmentParent(self)
-        return ctx.tag[f]
+    def child_(self, p_context):
+        if g_debug >= 3:
+            print "web_rootMenu.AjaxPage.child_() "
+            print "    Context =", p_context
+        return AjaxPage('RootAjax', self.m_pyhouses_obj)
 
-    def child_(self, _ctx):
-        return AjaxPage('Root', self.m_pyhouses_obj)
+    def data_liveElement(self, p_context, p_data):
+        if g_debug >= 3:
+            print "web_rootMenu.AjaxPage.data_liveElement() "
+            print "    Context =", p_context
+            print "    Data =", p_data
 
-
-class RootPage(web_utils.ManualFormMixin):
-    """The main page of the web server.
-    """
-    addSlash = True
-    docFactory = loaders.xmlfile('rootMenu.xml', templateDir = 'src/web/template')
-
-    def __init__(self, p_name, p_pyhouses_obj):
-        self.m_name = p_name
-        self.m_pyhouses_obj = p_pyhouses_obj
-        if g_debug >= 2:
-            print "web_rootMenu.RootPage()"
-        if g_debug >= 4:
-            print "    ", p_pyhouses_obj
-        l_css = ['src/web/css/mainPage.css']
-        l_js = ['src/web/js/ajax.js', 'src/web/js/floatingWindow.js',
-                'src/web/js/addHouse.js', 'src/web/js/webServer.js',
-                'src/web/js/logs.js']
-        web_utils.add_attr_list(RootPage, l_css)
-        web_utils.add_attr_list(RootPage, l_js)
-        web_utils.add_float_page_attrs(RootPage)
-        rend.Page.__init__(self)
-        if g_debug > -0:
-            print "    Vars=", vars(RootPage)
+    def data_myElement(self, p_context, p_data):
+        if g_debug >= 3:
+            print "web_rootMenu.AjaxPage.data_myElement() "
+            print "    Context =", p_context
+            print "    Data =", p_data
 
     def render_action(self, _ctx, _data):
         return web_utils.action_url()
 
+    def render_liveElement(self, p_context, p_data):
+        if g_debug >= 3:
+            print "web_rootMenu.AjaxPage.render_liveElement() "
+            print "    Context =", p_context
+            print "    Data =", p_data
+        l_elem = MyElement()
+        l_elem.setFragmentParent(self)
+        return p_context.tag[l_elem]
+
+    def render_myElement(self, p_context, p_data):
+        if g_debug >= 3:
+            print "web_rootMenu.AjaxPage.render_myElement() "
+            print "    Context =", p_context
+            print "    Data =", p_data
+        f = MyElement()
+        f.setFragmentParent(self)
+        return p_context.tag[f]
+
     def form_post(self, *args, **kwargs):
         if g_debug >= 2:
             print "web_rootMenu.form_post() - args={0:}, kwargs={1:}".format(args, kwargs)
-        return RootPage('Root', self.m_pyhouses_obj)
+        return AjaxPage('Root', self.m_pyhouses_obj)
 
     def form_post_add(self, **kwargs):
         """Add House button post processing.
@@ -129,14 +162,14 @@ class RootPage(web_utils.ManualFormMixin):
         if g_debug >= 2:
             print "web_rootMenu.form_post_add()", kwargs
         # TODO: validate and create a new house.
-        return RootPage('House', self.m_pyhouses_obj)
+        return AjaxPage('House', self.m_pyhouses_obj)
 
     def form_post_change_logs(self, **kwargs):
         """Log change form.
         """
         if g_debug >= 2:
             print "web_rootMenu.form_post_change_logs()", kwargs
-        return RootPage('House', self.m_pyhouses_obj)
+        return AjaxPage('House', self.m_pyhouses_obj)
 
     def form_post_change_web(self, **kwargs):
         """Web server button post processing.
@@ -144,7 +177,7 @@ class RootPage(web_utils.ManualFormMixin):
         if g_debug >= 2:
             print "web_rootMenu.form_post_change_web()", kwargs
         self.m_pyhouses_obj.WebData.WebPort = kwargs['WebPort']
-        return RootPage('House', self.m_pyhouses_obj)
+        return AjaxPage('House', self.m_pyhouses_obj)
 
     def form_post_quit(self, *args, **kwargs):
         """Quit the GUI - this also means quitting all of PyHouse !!
@@ -158,7 +191,7 @@ class RootPage(web_utils.ManualFormMixin):
         if g_debug >= 2:
             print "web_rootMenu.form_post_reload() - args={0:}, kwargs={1:}".format(args, kwargs)
         self.m_pyhouses_obj.API.Reload(self.m_pyhouses_obj)
-        return RootPage('Root', self.m_pyhouses_obj)
+        return AjaxPage('Root', self.m_pyhouses_obj)
 
     def form_post_select(self, **kwargs):
         """Select House button post processing.
@@ -173,5 +206,6 @@ class RootPage(web_utils.ManualFormMixin):
         if g_debug >= 2:
             print "web_rootMenu.form_post_select_house()", kwargs
         return web_houseSelect.SelectHousePage('House', self.m_pyhouses_obj)
+
 
 # ## END DBK

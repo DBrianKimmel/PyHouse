@@ -1,9 +1,9 @@
 
 // import Nevow.Athena
 
-// MyModule.MyWidget = Nevow.Athena.Widget.subclass('MyModule.MyWidget');
-
 /*
+
+// MyModule.MyWidget = Nevow.Athena.Widget.subclass('MyModule.MyWidget');
 
 
 MyModule.MyWidget = Nevow.Athena.Widget.subclass('MyModule.MyWidget');
@@ -40,8 +40,9 @@ Nevow.Athena.Widget.subclass(EchoThing, 'EchoWidget').methods(
 	}
 */
 	
+ChatRoom.MyWidget = Nevow.Athena.Widget.subclass('web_rootMenu.ChatRoom');
 	
-Nevow.Athena.Widget.subclass(ChatThing, 'ChatterWidget').methods(
+Nevow.Athena.Widget.subclass(ChatRoom, 'ChatterBox').methods(
 
     function __init__(self, node) {
         ChatThing.ChatterWidget.upcall(self, "__init__", node);
@@ -82,3 +83,13 @@ Nevow.Athena.Widget.subclass(ChatThing, 'ChatterWidget').methods(
         var msg = avatarName+': '+text;
         self.displayMessage(msg);
     });
+
+
+// Create the "Class" 
+var ChatRoom = {
+	    type: "macintosh",
+	    color: "red",
+	    getInfo: function () {
+	        return this.color + ' ' + this.type + ' apple';
+	    }
+	}
