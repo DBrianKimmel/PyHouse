@@ -6,9 +6,13 @@ from twisted.application import service, internet
 
 class MyElement(athena.LiveElement):
     docFactory = loaders.stan(
-    	T.div(render=T.directive('liveElement'))[ 'DBK-01',
-        T.input(type='submit', value='Push me',
-            onclick='Nevow.Athena.Widget.get(this).clicked()')])
+    	T.div(render=T.directive('liveElement'))[
+    		'DBK-01',
+        	T.input(type='submit', value='Push me',
+            		onclick='Nevow.Athena.Widget.get(this).clicked()'
+            )  # input
+		]  # div
+	)  # stan
 
 
 class WhateverElement(athena.LiveElement):
@@ -21,8 +25,13 @@ class WhateverElement(athena.LiveElement):
 
 
 class MyPage(athena.LivePage):
-    #docFactory = loaders.xmlfile('/home/briank/workspace/PyHouse/src/web/experimental/page_01.xml')
-    docFactory = loaders.stan(T.html[T.head(render = T.directive('liveglue')),T.body(render = T.directive('myElement'))])
+    docFactory = loaders.xmlfile('/home/briank/workspace/PyHouse/src/web/experimental/page_01.xml')
+#    docFactory = loaders.stan(
+#    	T.html[
+#    		T.head(render = T.directive('liveglue')),
+#    		T.body(render = T.directive('myElement'))
+#    	]  # html
+#    )  # stan
 
     def render_myElement(self, ctx, data):
         f = MyElement()
