@@ -111,13 +111,13 @@ class SerialAPI(object):
         if g_debug >= 4:
             print "Driver_Serial.write_device() {0:}".format(PrintBytes(p_message))
             g_logger.debug("Writing {0:}".format(PrintBytes(p_message)))
-        self.m_serial.writeSomeData(p_message)
-        return
-
         try:
-            self.m_serial.write(p_message)
-        except AttributeError:
-            print "Driver_Serial_write_device() ERROR "
+            self.m_serial.writeSomeData(p_message)
+        except (AttributeError, TypeError):
+            g_logger.warn("Bad serial write - {0:}".format(PrintBytes(p_message)))
+            if g_debug >= 1:
+                print "Driver_Serial_write_device() ERROR "
+        return
 
 
 class API(SerialAPI):
