@@ -1,7 +1,8 @@
 <!--  houseMenu.xml -->
-<html 	xmlns:nevow = "http://nevow.com/ns/nevow/0.1"
-		xmlns = 'http://www.w3.org/1999/xhtml'
-		lang = 'en'>
+<html 	xmlns:nevow  = "http://nevow.com/ns/nevow/0.1"
+        xmlns:athena = 'http://divmod.org/ns/athena/0.7'
+		xmlns        = 'http://www.w3.org/1999/xhtml'
+		lang         = 'en'>
 	<head>
 		<title>PyHouse Main Page</title>
 		<link rel = 'stylesheet' type = 'text/css' href = 'mainPage.css' />

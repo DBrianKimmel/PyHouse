@@ -1,14 +1,12 @@
 <!-- rooms.xml -->
-
-<html   xmlns:nevow = "http://nevow.com/ns/nevow/0.1"
-		xmlns = 'http://www.w3.org/1999/xhtml'
-		lang = 'en'>
-	<head>
-		<title>PyHouse House Rooms Page</title>
+<html   xmlns:nevow  = "http://nevow.com/ns/nevow/0.1"
+        xmlns:athena = 'http://divmod.org/ns/athena/0.7'
+    	xmlns        = 'http://www.w3.org/1999/xhtml'
+		lang         = 'en'>
+	<head nevow:render = 'liveglue'>
+		<title>PyHouse Rooms Page</title>
 		<link rel = 'stylesheet' type = 'text/css' href = 'mainPage.css' />
-		<script type = 'text/javascript' src = 'ajax.js' />
-		<script type = 'text/javascript' src = 'floatingWindow.js' />
-		
+		<script type = 'text/javascript' src = 'floatingWindow.js' />	
 		<script type = 'text/javascript' src = 'roomPage.js' />
     </head>
     <body>
@@ -22,9 +20,9 @@
     			</tr>
     		</table>
      		<input type = 'submit' value = 'Add' name = 'post_btn' />
-    		<input type = 'submit' value = 'Cancel' name = 'post_btn' />
     		<input type = 'submit' value = 'Back' name = 'post_btn' />
     	</form> 
     </body>
 </html>
-
+<!-- 
+END DBK  -->
