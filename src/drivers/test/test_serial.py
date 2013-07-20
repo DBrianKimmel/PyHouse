@@ -14,13 +14,15 @@ class Test(unittest.TestCase):
     def setUp(self):
         self.m_controller_obj = lighting_controllers.ControllerData()
         self.m_controller_obj.Name = 'Test Name'
-        self.m_controller_obj.Port = '/dev/ttyUSB0'
+        #self.m_controller_obj.Port = '/dev/ttyUSB0'
+        self.m_controller_obj.Port = 'COMM6'
+        self.m_controller_obj.BaudRate = 9600
         print 'Set up controller_obj'
 
     def tearDown(self):
         pass
 
-    def zest_001_API_init(self):
+    def test_001_API_init(self):
         l_api = Driver_Serial.API()
         self.assertNotEqual(l_api, None)
 

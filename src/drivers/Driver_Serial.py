@@ -21,7 +21,6 @@ import serial
 
 # Import PyMh files
 from src.utils.tools import PrintBytes
-from src.utils import xml_tools
 
 
 g_debug = 0
@@ -33,15 +32,8 @@ g_debug = 0
 # 5 = Read / write details
 # 6 = Details of device on start
 # + = NOT USED HERE
-
 g_logger = None
 
-RECEIVE_TIMEOUT = 1.0  # this is for polling the device for data to be added to the rx buffer
-
-class ReadWriteConfig(xml_tools.ConfigTools):
-
-    def extract_serial_xml(self, p_controller_obj, p_controller_xml):
-        pass
 
 class SerialProtocol(Protocol):
 
@@ -76,8 +68,8 @@ class SerialAPI(object):
             print "   ", vars(p_controller_obj)
         try:
             self.m_serial = SerialPort(SerialProtocol(self, p_controller_obj), p_controller_obj.Port, reactor, baudrate = p_controller_obj.BaudRate)
-        except serial.serialutil.SerialException:
-            l_msg = "Open failed for Device:{0:}, Port:{1:}".format(p_controller_obj.Name, p_controller_obj.Port)
+        except serial.serialutil.SerialException, e:
+            l_msg = "Open failed for Device:{0:}, Port:{1:}".format(p_controller_obj.Name, p_controller_obj.Port), e
             g_logger.error(l_msg)
             if g_debug >= 1:
                 print l_msg
