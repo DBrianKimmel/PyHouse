@@ -34,7 +34,7 @@ import xml.etree.ElementTree as ET
 from twisted.internet import reactor
 
 # Import PyMh files
-from src.entertain import entertainment
+#from src.entertain import entertainment
 from src.lights import lighting
 from src.utils import xml_tools
 from src.utils import tools
@@ -350,7 +350,7 @@ class API(ScheduleUtility, ScheduleXML):
 
     m_house_obj = None
     m_sunrisesunset = None
-    m_entertainment = None
+    #m_entertainment = None
 
     def __init__(self, p_house_obj):
         """
@@ -363,7 +363,7 @@ class API(ScheduleUtility, ScheduleXML):
         self.m_house_obj = p_house_obj
         self.m_sunrisesunset = sunrisesunset.API(p_house_obj)
         self.m_house_obj.LightingAPI = lighting.API(p_house_obj)
-        self.m_entertainment = entertainment.API()
+        #self.m_entertainment = entertainment.API()
         g_logger.info("Initialized.")
 
     def Start(self, p_house_obj, p_house_xml):
@@ -380,7 +380,7 @@ class API(ScheduleUtility, ScheduleXML):
         self.m_sunrisesunset.Start(p_house_obj)
         self.read_schedules_xml(p_house_obj, p_house_xml)
         self.m_house_obj.LightingAPI.Start(p_house_obj, p_house_xml)
-        self.m_entertainment.Start(p_house_obj, p_house_xml)
+        #self.m_entertainment.Start(p_house_obj, p_house_xml)
         if p_house_obj.Active:
             self.get_next_sched()
         g_logger.info("Started.")
@@ -393,11 +393,11 @@ class API(ScheduleUtility, ScheduleXML):
         g_logger.info("Stopping schedule for house:{0:}.".format(self.m_house_obj.Name))
         l_schedules_xml = self.write_schedules_xml(self.m_house_obj.Schedules)
         l_lighting_xml, l_controllers_xml, l_buttons_xml = self.m_house_obj.LightingAPI.Stop(p_xml, p_house_obj)
-        l_entertainment_xml = self.m_entertainment.Stop()
+        #l_entertainment_xml = self.m_entertainment.Stop()
         if g_debug >= 2:
             print "schedule.API.Stop() - House:{0:}, {1:}".format(self.m_house_obj.Name, len(p_xml))
         g_logger.info("Stopped.\n")
-        return l_schedules_xml, l_lighting_xml, l_buttons_xml, l_controllers_xml, l_entertainment_xml
+        return l_schedules_xml, l_lighting_xml, l_buttons_xml, l_controllers_xml  #, l_entertainment_xml
 
     def Reload(self):
         if g_debug >= 2:

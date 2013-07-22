@@ -37,7 +37,7 @@ be unique within a single house.  Therefore you may not have 3 bedrooms named
 
 Python modules used:
     Core python 2.7
-    Twisted
+    Twisted            (apt-get install python-twisted)
     zope.interface
     nevow
     PySerial
