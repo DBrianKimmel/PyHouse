@@ -39,7 +39,7 @@ Python modules used:
     Core python 2.7
     Twisted            (apt-get install python-twisted)
     zope.interface
-    nevow
+    nevow              (apt-get install python-nevow)
     PySerial
     PyUsb
     ConfigObj
