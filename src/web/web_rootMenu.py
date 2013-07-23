@@ -28,7 +28,11 @@ g_debug = 0
 # + = NOT USED HERE
 
 
+<<<<<<< HEAD
 class ChatRoom(object):
+=======
+class ABCChatRoom(object):
+>>>>>>> origin/ajax
 
     def __init__(self):
         if g_debug >= 3:
@@ -40,6 +44,7 @@ class ChatRoom(object):
             print "web_rootMenu.ChatRoom.wall() ", p_message
         for chatter in self.chatters:
             chatter.wall(p_message)
+<<<<<<< HEAD
 
     def tellEverybody(self, p_who, p_what):
         if g_debug >= 3:
@@ -61,10 +66,35 @@ class ChatRoom(object):
 class MyElement(athena.LiveElement):
     docFactory = loaders.xmlfile('rootMenuElement.xml', templateDir = 'src/web/template')
     # jsClass = u'web_rootMenu.ChatRoom'
+=======
+
+    def tellEverybody(self, p_who, p_what):
+        if g_debug >= 3:
+            print "web_rootMenu.ChatRoom.tellEverybody() ", p_who, p_what
+        for chatter in self.chatters:
+            chatter.hear(p_who.username, p_what)
+
+    def makeChatter(self):
+        if g_debug >= 3:
+            print "web_rootMenu.ChatRoom.makeChatter() "
+        elem = MyElement(self)
+        self.chatters.append(elem)
+        return elem
+
+# element to be run with twistd
+# chat = ChatRoom().makeChatter
+
+
+class MyElement(athena.LiveElement):
+    """Subclass nevow.athena.LiveElement and provide a docFactory which uses the liveElement renderer.
+            docFactory = loaders.stan(T.div(render=T.directive('liveElement')))
+    """
+
+    docFactory = loaders.xmlfile('rootMenuElement.xml', templateDir = 'src/web/template')
+
+    # jsClass = u'web_rootMenu.ChatRoom'
 
     def say(self, text):
-        # for chatter in chatRoom:
-        #    chatter.youHeardSomething(text)
         if g_debug >= 3:
             print "web_rootMenu.MyElement.say() - ", text
         pass
@@ -75,9 +105,39 @@ class MyElement(athena.LiveElement):
         if g_debug >= 3:
             print "web_rootMenu.MyElement.hear() ", sayer, text
         self.callRemote("hear", sayer, text)
+>>>>>>> origin/ajax
+
+    def say(self, text):
+        # for chatter in chatRoom:
+        #    chatter.youHeardSomething(text)
+        if g_debug >= 3:
+            print "web_rootMenu.MyElement.say() - ", text
+        pass
+
+<<<<<<< HEAD
+    say = athena.expose(say)
+
+    def hear(self, sayer, text):
+        if g_debug >= 3:
+            print "web_rootMenu.MyElement.hear() ", sayer, text
+        self.callRemote("hear", sayer, text)
 
 
 class AjaxPage(athena.LivePage, web_utils.ManualFormMixin):
+=======
+class MyLiveAjaxPage(athena.LivePage):
+    """
+    """
+
+    def handle_log_request(self, p_context, p_data):
+        pass
+
+
+class AjaxPage(athena.LivePage, web_utils.ManualFormMixin):
+    """Put the result liveElemebt onto a nevow.athena.LivePage.
+        Be sure to have the liveElement render method.
+    """
+>>>>>>> origin/ajax
     docFactory = loaders.xmlfile('rootMenu.xml', templateDir = 'src/web/template')
 
     def __init__(self, p_name, p_pyhouses_obj, *args, **kwargs):
@@ -138,18 +198,30 @@ class AjaxPage(athena.LivePage, web_utils.ManualFormMixin):
             print "web_rootMenu.AjaxPage.render_liveElement() "
             print "    Context =", p_context
             print "    Data =", p_data
+<<<<<<< HEAD
         l_elem = MyElement()
         l_elem.setFragmentParent(self)
         return p_context.tag[l_elem]
+=======
+        l_element = MyElement()
+        l_element.setFragmentParent(self)
+        return p_context.tag[l_element]
+>>>>>>> origin/ajax
 
     def render_myElement(self, p_context, p_data):
         if g_debug >= 3:
             print "web_rootMenu.AjaxPage.render_myElement() "
             print "    Context =", p_context
             print "    Data =", p_data
+<<<<<<< HEAD
         f = MyElement()
         f.setFragmentParent(self)
         return p_context.tag[f]
+=======
+        l_element = MyElement()
+        l_element.setFragmentParent(self)
+        return p_context.tag[l_element]
+>>>>>>> origin/ajax
 
     def form_post(self, *args, **kwargs):
         if g_debug >= 2:

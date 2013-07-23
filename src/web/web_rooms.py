@@ -6,7 +6,6 @@ Created on Jun 3, 2013
 # Import system type stuff
 from nevow import loaders
 from nevow import rend
-from nevow import static
 
 # Import PyMh files and modules.
 from src.web.web_tagdefs import *
