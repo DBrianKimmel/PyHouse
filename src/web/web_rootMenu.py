@@ -19,7 +19,7 @@ from src.web import web_houseSelect
 
 # import echothing
 
-g_debug = 4
+g_debug = 0
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry

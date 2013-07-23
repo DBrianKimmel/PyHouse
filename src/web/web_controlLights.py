@@ -9,7 +9,6 @@ Web interface to control lights for the selected house.
 # Import system type stuff
 from nevow import loaders
 from nevow import rend
-from nevow import static
 import json
 
 # Import PyMh files and modules.
@@ -26,28 +25,31 @@ g_debug = 0
 # 4 = Dump JSON
 # + = NOT USED HERE
 
-g_logger = None
 
-class ControlPage(web_utils.ManualFormMixin):
+class ControlLightsPage(web_utils.ManualFormMixin):
     """
     """
     addSlash = True
-    docFactory = loaders.xmlfile('control.xml', templateDir = 'src/web/template')
+    docFactory = loaders.xmlfile('controlLights.xml', templateDir = 'src/web/template')
 
     def __init__(self, p_parent, p_name, p_house_obj):
         self.m_name = p_name
         self.m_parent = p_parent
         self.m_house_obj = p_house_obj
         if g_debug >= 2:
-            print "web_control.ControllPage()"
+            print "web_controlLights.ControllPage()"
         if g_debug >= 4:
             print self.m_house_obj
+        l_css = ['src/web/css/mainPage.css',
+                 'src/web/lightPage.css'
+                 ]
+        l_js = ['src/web/js/lightControlPage.js',
+                'src/web/js/floatingWindow.js'
+                ]
+        web_utils.add_attr_list(ControlLightsPage, l_css)
+        web_utils.add_attr_list(ControlLightsPage, l_js)
+        web_utils.add_float_page_attrs(ControlLightsPage)
         rend.Page.__init__(self)
-
-        web_utils.add_attr_list(ControlPage, ['src/web/css/lightpage.css', 'src/web/css/mainpage.css',
-                                              'src/web/js/controlpage.js'])
-        web_utils.add_attr_list(ControlPage, ['src/web/js/ajax.js', 'src/web/js/floating-window.js'])
-        web_utils.add_float_page_attrs(ControlPage)
 
     def data_controllist(self, _context, _data):
         """Build up a list of lights.
@@ -87,6 +89,6 @@ class ControlPage(web_utils.ManualFormMixin):
         l_key = int(kwargs['LightKey'])
         l_light_obj = self.m_house_obj.Lights[l_key]
         self.m_house_obj.LightingAPI.change_light_setting(self.m_house_obj, l_light_obj, int(kwargs['Level']))
-        return ControlPage(self, self.m_name, self.m_house_obj)
+        return ControlLightsPage(self, self.m_name, self.m_house_obj)
 
 # ## END DBK

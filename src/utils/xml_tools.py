@@ -19,7 +19,7 @@ g_debug = 0
 # 1 = log extra info
 # 2 = major routine entry
 # 3 - Config file handling
-# 4 = Debug od get_xxx_element
+# 4 = Debug do get_xxx_element
 # + = NOT USED HERE
 g_xmltree = None
 
@@ -31,6 +31,8 @@ class XmlFileTools(object):
 
         If the file is missing, an empty minimal skeleton is created.
         """
+        if g_debug >= 2:
+            print "xml_tools.XmlFileTools()"
         global g_xmltree
         self.m_xml_filename = open_config_file()
         try:
@@ -261,12 +263,16 @@ class ConfigFile(ConfigEtc):
         for l_dir in self.m_std_path:
             l_dir = os.path.expanduser(l_dir)
             if os.path.exists(l_dir):
+                if g_debug >= 3:
+                    print "xml_tools.create_find_config_dir() - Found:{0:}".format(l_dir)
                 return l_dir
         print "No directory found, try creating one."
         for l_dir in self.m_std_path:
             l_dir = os.path.expanduser(l_dir)
             try:
                 os.mkdir(l_dir)
+                if g_debug >= 3:
+                    print "xml_tools.create_find_config_dir() - Created:{0:}".format(l_dir)
                 return l_dir
             except OSError:
                 pass
@@ -277,7 +283,7 @@ class ConfigFile(ConfigEtc):
         """Add a file name to the passed in dir to get the config file.
         """
         if g_debug >= 3:
-            print "xml_tools find_config_file"
+            print "xml_tools find_config_file()"
         l_file_name = os.path.join(p_dir, self.m_std_name)
         try:
             open(l_file_name, mode = 'r')
