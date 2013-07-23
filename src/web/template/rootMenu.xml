@@ -1,8 +1,9 @@
 <!-- rootMenu.xml -->
-<html 	xmlns:nevow  = 'http://nevow.com/ns/nevow/0.1'
-		xmlns:athena = 'http://divmod.org/ns/athena/0.7'
-		xmlns        = 'http://www.w3.org/1999/xhtml'
-		lang         = 'en'>
+<html
+	xmlns:nevow  = 'http://nevow.com/ns/nevow/0.1'
+	xmlns:athena = 'http://divmod.org/ns/athena/0.7'
+	xmlns        = 'http://www.w3.org/1999/xhtml'
+	lang         = 'en'>
 	<head nevow:render = 'liveglue'>
 		<title>PyHouse Main Page</title>
 		<link rel = 'stylesheet' type = 'text/css' href = 'mainPage.css' />
@@ -15,7 +16,7 @@
 		<script type = 'text/javascript' src = 'ajax.js' />
 		-->
     </head>
-    <body nevow:render='myElement'>
+    <body nevow:render = 'myElement'>
     	<h1>PyHouse</h1>
     	<h2>Select the menu Function:</h2>
     	<form name = 'menuofbuttons' enctype = 'multipart/form-data' method = 'post' >
@@ -34,6 +35,10 @@
     	</form>
     	<p>end for form in rootMenu</p>
 
+    </body>
+</html>
+<!-- 
+
         <div xmlns:nevow = "http://nevow.com/ns/nevow/0.1"
         	 xmlns:athena = "http://divmod.org/ns/athena/0.7"
         	 nevow:render = "liveElement">
@@ -43,10 +48,6 @@
 		  		<input type="submit" value="Send" />
 			</div>
     	</div>
-    </body>
-</html>
-<!-- 
-
 
 	        <form name = "chatBox">
 	            <athena:handler event = "onsubmit" handler = "doSay" />

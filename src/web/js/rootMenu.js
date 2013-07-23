@@ -1,10 +1,28 @@
-
+/* 
+ * Add a Twisted plugin which maps your module name onto your JavaScript source file:
+ *
+ * from nevow import athena
+ *
+ * myPackage = athena.JSPackage({
+ *    'MyModule': '/absolute/path/to/mymodule.js',
+ *     })
+ *     
+ *     
+ * In the JavaScript source file (in this case, mymodule.js), import Nevow.Athena:
+ */
 // import Nevow.Athena
 
+
 /*
+ * Next, subclass the JavaScript Nevow.Athena.Widget class (notice the module name that was defined in the plugin file):
+ * 
+ * MyModule.MyWidget = Nevow.Athena.Widget.subclass('MyModule.MyWidget');
+ */
 
-// MyModule.MyWidget = Nevow.Athena.Widget.subclass('MyModule.MyWidget');
+MyModule.MyWidget = Nevow.Athena.Widget.subclass('MyModule.MyWidget');
 
+
+/*
 
 MyModule.MyWidget = Nevow.Athena.Widget.subclass('MyModule.MyWidget');
 
@@ -39,10 +57,11 @@ Nevow.Athena.Widget.subclass(EchoThing, 'EchoWidget').methods(
 	    // Here, you'd show the user some text.
 	}
 */
+
+rootMenu.MyWidget = Nevow.Athena.Widget.subclass('rootMenu.MyWidget');
+
 	
-ChatRoom.MyWidget = Nevow.Athena.Widget.subclass('web_rootMenu.ChatRoom');
-	
-Nevow.Athena.Widget.subclass(ChatRoom, 'ChatterBox').methods(
+Nevow.Athena.Widget.subclass(DBKChatRoom, 'ChatterBox').methods(
 
     function __init__(self, node) {
         ChatThing.ChatterWidget.upcall(self, "__init__", node);
@@ -84,12 +103,17 @@ Nevow.Athena.Widget.subclass(ChatRoom, 'ChatterBox').methods(
         self.displayMessage(msg);
     });
 
+DBKChatRoom.getColorXX = Nevow.Athena.Widget.subclass('web_rootMenu.DBKChatRoom');
 
 // Create the "Class" 
-var ChatRoom = {
+var DBKChatRoom = {
 	    type: "macintosh",
 	    color: "red",
 	    getInfo: function () {
 	        return this.color + ' ' + this.type + ' apple';
-	    }
-	}
+	    },
+
+		getColor: function () {
+			return this.color;
+		}
+	};
