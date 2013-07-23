@@ -17,7 +17,7 @@ from src.web import web_location
 from src.web import web_lights
 from src.web import web_buttons
 from src.web import web_controllers
-from src.web import web_control
+from src.web import web_controlLights
 from src.web import web_internet
 from src.web import web_rooms
 
@@ -60,7 +60,7 @@ class HouseMenuPage(web_utils.ManualFormMixin):
     def form_post_control_lights(self, **kwargs):
         if g_debug >= 2:
             print "web_houseMenu.HouseMenuPage.form_post_control()", kwargs
-        return web_control.ControlPage(self, self.m_name, self.m_house_obj.HouseObject)
+        return web_controlLights.ControlLightsPage(self, self.m_name, self.m_house_obj.HouseObject)
 
     def form_post_controllers(self, **kwargs):
         if g_debug >= 2:
