@@ -28,7 +28,7 @@ g_debug = 0
 # + = NOT USED HERE
 
 
-class ChatRoom(object):
+class ABCChatRoom(object):
 
     def __init__(self):
         if g_debug >= 3:
@@ -59,12 +59,15 @@ class ChatRoom(object):
 
 
 class MyElement(athena.LiveElement):
+    """Subclass nevow.athena.LiveElement and provide a docFactory which uses the liveElement renderer.
+            docFactory = loaders.stan(T.div(render=T.directive('liveElement')))
+    """
+
     docFactory = loaders.xmlfile('rootMenuElement.xml', templateDir = 'src/web/template')
+
     # jsClass = u'web_rootMenu.ChatRoom'
 
     def say(self, text):
-        # for chatter in chatRoom:
-        #    chatter.youHeardSomething(text)
         if g_debug >= 3:
             print "web_rootMenu.MyElement.say() - ", text
         pass
@@ -77,7 +80,18 @@ class MyElement(athena.LiveElement):
         self.callRemote("hear", sayer, text)
 
 
+class MyLiveAjaxPage(athena.LivePage):
+    """
+    """
+
+    def handle_log_request(self, p_context, p_data):
+        pass
+
+
 class AjaxPage(athena.LivePage, web_utils.ManualFormMixin):
+    """Put the result liveElemebt onto a nevow.athena.LivePage.
+        Be sure to have the liveElement render method.
+    """
     docFactory = loaders.xmlfile('rootMenu.xml', templateDir = 'src/web/template')
 
     def __init__(self, p_name, p_pyhouses_obj, *args, **kwargs):
@@ -138,18 +152,18 @@ class AjaxPage(athena.LivePage, web_utils.ManualFormMixin):
             print "web_rootMenu.AjaxPage.render_liveElement() "
             print "    Context =", p_context
             print "    Data =", p_data
-        l_elem = MyElement()
-        l_elem.setFragmentParent(self)
-        return p_context.tag[l_elem]
+        l_element = MyElement()
+        l_element.setFragmentParent(self)
+        return p_context.tag[l_element]
 
     def render_myElement(self, p_context, p_data):
         if g_debug >= 3:
             print "web_rootMenu.AjaxPage.render_myElement() "
             print "    Context =", p_context
             print "    Data =", p_data
-        f = MyElement()
-        f.setFragmentParent(self)
-        return p_context.tag[f]
+        l_element = MyElement()
+        l_element.setFragmentParent(self)
+        return p_context.tag[l_element]
 
     def form_post(self, *args, **kwargs):
         if g_debug >= 2:
