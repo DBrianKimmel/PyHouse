@@ -1,10 +1,5 @@
-<<<<<<< HEAD
-<!-- rootMenuElement.xml -->
-<div xmlns:nevow = "http://nevow.com/ns/nevow/0.1"
-     xmlns:athena = "http://divmod.org/ns/athena/0.7"
-     nevow:render = "liveElement">
-=======
 <!-- rootMenuElement.xml
+
 	xmlns:nevow  = 'http://nevow.com/ns/nevow/0.1'
 	xmlns:athena = 'http://divmod.org/ns/athena/0.7'
  -->
@@ -12,7 +7,6 @@
 	xmlns:athena = 'http://divmod.org/ns/athena/0.7'
 	xmlns:nevow  = 'http://nevow.com/ns/nevow/0.1'
     nevow:render = 'liveElement'>
->>>>>>> origin/ajax
 	<p>Start of rootMenuElement</p>
 	<p>an element paragraph</p>
 	<br></br>

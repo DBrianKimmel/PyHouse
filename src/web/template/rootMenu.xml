@@ -1,16 +1,10 @@
-<!-- rootMenu.xml -->
-<<<<<<< HEAD
-<html 	xmlns:nevow  = 'http://nevow.com/ns/nevow/0.1'
-		xmlns:athena = 'http://divmod.org/ns/athena/0.7'
-		xmlns        = 'http://www.w3.org/1999/xhtml'
-		lang         = 'en'>
-=======
+<!-- rootMenu.xml
+    xmlns        = 'http://www.w3.org/1999/xhtml'
+ -->
 <html
 	xmlns:nevow  = 'http://nevow.com/ns/nevow/0.1'
 	xmlns:athena = 'http://divmod.org/ns/athena/0.7'
-	xmlns        = 'http://www.w3.org/1999/xhtml'
 	lang         = 'en'>
->>>>>>> origin/ajax
 	<head nevow:render = 'liveglue'>
 		<title>PyHouse Main Page</title>
 		<link rel = 'stylesheet' type = 'text/css' href = 'mainPage.css' />
@@ -19,15 +13,8 @@
 		<script type = 'text/javascript' src = 'addHouse.js' />
 		<script type = 'text/javascript' src = 'logs.js' />
 		<script type = 'text/javascript' src = 'webServer.js' />
-		<!-- 
-		<script type = 'text/javascript' src = 'ajax.js' />
-		-->
     </head>
-<<<<<<< HEAD
-    <body nevow:render='myElement'>
-=======
     <body nevow:render = 'myElement'>
->>>>>>> origin/ajax
     	<h1>PyHouse</h1>
     	<h2>Select the menu Function:</h2>
     	<form name = 'menuofbuttons' enctype = 'multipart/form-data' method = 'post' >
@@ -45,73 +32,7 @@
     		</table>
     	</form>
     	<p>end for form in rootMenu</p>
-
-<<<<<<< HEAD
-=======
     </body>
 </html>
-<!-- 
-
->>>>>>> origin/ajax
-        <div xmlns:nevow = "http://nevow.com/ns/nevow/0.1"
-        	 xmlns:athena = "http://divmod.org/ns/athena/0.7"
-        	 nevow:render = "liveElement">
-	        <h2>Ajax Stuff Element</h2>
-	        <div name="sendToServer" style="display: none">
-		  		<input name="sendMessage" />
-		  		<input type="submit" value="Send" />
-			</div>
-    	</div>
-<<<<<<< HEAD
-    </body>
-</html>
-<!-- 
-
-=======
->>>>>>> origin/ajax
-
-	        <form name = "chatBox">
-	            <athena:handler event = "onsubmit" handler = "doSay" />
-	            <div name = "scrollArea" style="border: 1px solid gray; padding: 5; margin: 5">
-	            </div>
-		        <div name="sendLine" style="display: none">
-			  		<input name="userMessage" />
-			  		<input type="submit" value="Send" />
-				</div>
-        	</form>
-		    <form name="chooseBox">
-		        <athena:handler event="onsubmit" handler="doSetUsername" />
-		        Choose your username: <input name="username" />
-		        <input type="submit" name="GO" value="Enter"/>
-		    </form>
-		    <div name="loggedInAs" style="display:none">
-		    	<span>Logged in as </span>
-		    </div>
-
-
-
-
-<div xmlns:nevow="http://nevow.com/ns/nevow/0.1"
-     xmlns:athena="http://divmod.org/ns/athena/0.7"
-     nevow:render="liveElement">
-    <h2>Chatter Element</h2>
-    <form name="chatBox">
-        <athena:handler event="onsubmit" handler="doSay" />
-        <div name="scrollArea" 
-             style="border: 1px solid gray; padding: 5; margin: 5">
-        </div>
-        <div name="sendLine" style="display: none">
-	  		<input name="userMessage" /><input type="submit" value="Send" />
-		</div>
-    </form>
-    <form name="chooseBox">
-        <athena:handler event="onsubmit" handler="doSetUsername" />
-        Choose your username: <input name="username" />
-        <input type="submit" name="GO" value="Enter"/>
-    </form>
-    <div name="loggedInAs" style="display:none">
-    	<span>Logged in as </span>
-    </div>
-</div>
-
- -->
+<!--
+### EBD DBK -->
