@@ -223,5 +223,4 @@ class AjaxPage(athena.LivePage, web_utils.ManualFormMixin):
             print "web_rootMenu.form_post_select_house()", kwargs
         return web_houseSelect.SelectHousePage('House', self.m_pyhouses_obj)
 
-
 # ## END DBK

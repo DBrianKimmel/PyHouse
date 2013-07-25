@@ -18,6 +18,7 @@ function createNewLightWindow(p_name) {
  * This function creates a new floating window dynamically (Change).
  */
 function createChangeLightWindow(p_name, p_json) {    
+	alert('changeChangeLightWindow (change) ' + p_json);
 	var divId = createNewWindow(135, 250, 120, 200, 250);  // width, height, start x, start y
 	var content = fillChangeLightWindow(divId, p_json);
 	document.getElementById('good_windowContent' + divId).innerHTML = content;

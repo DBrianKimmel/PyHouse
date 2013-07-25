@@ -15,8 +15,6 @@ from nevow import rend
 from nevow import static
 from nevow import url
 from nevow import util
-from nevow import athena
-from nevow.athena import LiveElement
 from nevow.rend import _CARRYOVER
 from formless import iformless
 

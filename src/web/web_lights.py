@@ -7,13 +7,11 @@ Created on Jun 3, 2013
 # Import system type stuff
 from nevow import loaders
 from nevow import rend
-from nevow import static
 import json
 
 # Import PyMh files and modules.
 from src.web.web_tagdefs import *
 from src.web import web_utils
-from src.web import web_rooms
 
 
 g_debug = 3
@@ -37,8 +35,9 @@ class LightsPage(web_utils.ManualFormMixin):
         self.m_house_obj = p_house_obj
         if g_debug >= 2:
             print "web_lights.LightsPage()"
-        l_css = ['src/web/css/lightPage.css', 'src/web/css/mainPage.css']
-        l_js = ['src/web/js/ajax.js', 'src/web/js/floatingWindow.js',
+        l_css = ['src/web/css/lightPage.css',
+                 'src/web/css/mainPage.css']
+        l_js = ['src/web/js/floatingWindow.js',
                 'src/web/js/lightPage.js']
         web_utils.add_attr_list(LightsPage, l_css)
         web_utils.add_attr_list(LightsPage, l_js)
@@ -69,6 +68,7 @@ class LightsPage(web_utils.ManualFormMixin):
         """
         if g_debug >= 2:
             print "web_lights.render_lightslist()"
+            print "    context=", context
         l_ret = "<tr>\n"
         l_cnt = 0
         for l_key, l_obj in sorted(links.iteritems()):

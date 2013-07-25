@@ -30,7 +30,7 @@ class WebServerPage(web_utils.ManualFormMixin):
             T_body[
                 T_h1['PyHouse Web Server'],
                 T_p['\n'],
-                T_p['abc'],
+                T_p['abc_webserver'],
                 T_table(style = 'width: 100%;', border = 0)["\n",
                     T_invisible(data = T_directive('houselist'), render = T_directive('houselist'))
                     ],

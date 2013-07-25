@@ -33,7 +33,7 @@ class LogsPage(web_utils.ManualFormMixin):
             T_body[
                 T_h1['PyHouse Logs'],
                 T_p['\n'],
-                T_p['abc'],
+                T_p['abc_web_logs'],
                 T_table(style = 'width: 100%;', border = 0)["\n",
                     T_invisible(data = T_directive('logslist'), render = T_directive('logslist'))
                     ],
