@@ -1,0 +1,18 @@
+<!-- loginElement.xml
+
+    xmlns:nevow  = 'http://nevow.com/ns/nevow/0.1'
+    xmlns:athena = 'http://divmod.org/ns/athena/0.7'
+ -->
+<div 
+    xmlns:athena = 'http://divmod.org/ns/athena/0.7'
+    xmlns:nevow  = 'http://nevow.com/ns/nevow/0.1'
+    nevow:render = 'liveElement'>
+    <form name = "loginForm">
+        <athena:handler event = "onsubmit" handler = "doLogin" />
+        <input name = "loginName" />
+        <input type = "submit" name = 'GO' value = "Login" />
+    </form>
+</div>
+<!-- 
+### END DBK  -->
+ 

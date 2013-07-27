@@ -1,20 +1,10 @@
-/* 
- * Add a Twisted plugin which maps your module name onto your JavaScript source file:
- *
- * from nevow import athena
- *
- * myPackage = athena.JSPackage({
- *    'MyModule': '/absolute/path/to/mymodule.js',
- *     })
- *     
- *     
- * In the JavaScript source file (in this case, mymodule.js), import Nevow.Athena:
+/* There is a Nevow plugin (pyhouse_location.py) which maps our module name
+ *  onto our JavaScript source file (rootMenu.js).
  */
 
 // import Nevow.Athena
 
-/*
- * Next, subclass the JavaScript Nevow.Athena.Widget class (notice the module name that was defined in the plugin file):
+/* Next, subclass the JavaScript Nevow.Athena.Widget class (notice the module name that was defined in the plugin file):
  * 
  * MyModule.MyWidget = Nevow.Athena.Widget.subclass('MyModule.MyWidget');
  */

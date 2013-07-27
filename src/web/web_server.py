@@ -2,8 +2,6 @@
 
 """Web server module.
 This is a Main Module - always present.
-
-TODO: format doc strings to Epydoc standards.
 """
 
 # Import system type stuff
@@ -11,13 +9,10 @@ import logging
 import os
 from twisted.internet import reactor
 from nevow import appserver
-from twisted.python.util import sibpath
-from nevow.loaders import xmlfile
-from nevow.athena import LiveElement, expose
 
 # Import PyMh files and modules.
 from src.web import web_utils
-from src.web import web_rootMenu
+from src.web import web_login
 
 
 g_debug = 0
@@ -41,39 +36,6 @@ class WebData(object):
         self.WebPort = 8580
 
 
-class AjaxClass(LiveElement):
-
-    docFactory = xmlfile(sibpath(__file__, 'template.html'))
-    jsClass = u'ChatThing.AjaxClass'
-
-    def __init__(self, room):
-        self.room = room
-
-    def setUsername(self, username):
-        self.username = username
-        message = ' * user ' + username + ' has joined the room'
-        self.room.wall(message)
-
-    setUsername = expose(setUsername)
-
-    def say(self, message):
-        self.room.tellEverybody(self, message)
-
-    say = expose(say)
-
-    def wall(self, message):
-        self.callRemote('displayMessage', message)
-
-    def hear(self, username, what):
-        self.callRemote('displayUserMessage', username, what)
-
-    def getRoomList(self, p_house):
-        if g_debug >= 4:
-            print "web_server.AjaxClass.getRoomList() - House:{0:}".format(p_house)
-
-    getRoomList = expose(getRoomList)
-
-
 class API(object):
 
     def __init__(self):
@@ -92,10 +54,8 @@ class API(object):
         self.m_pyhouses_obj = p_pyhouses_obj
         self.web_data = web_utils.WebUtilities().read_web_xml(self.web_data, p_pyhouses_obj.XmlRoot)
         l_site_dir = os.path.split(os.path.abspath(__file__))[0]
-
-        l_site = appserver.NevowSite(web_rootMenu.AjaxPage('/', p_pyhouses_obj))
+        l_site = appserver.NevowSite(web_login.LoginPage('/', p_pyhouses_obj))
         listenTCP(self.web_data.WebPort, l_site)
-
         l_msg = "Port:{0:}, Path:{1:}".format(self.web_data.WebPort, l_site_dir)
         if g_debug >= 2:
             print "web_server.Start() - {0:}".format(l_msg)
