@@ -1,15 +1,13 @@
-/**
+/** login.js
  * 
  */
 
 // import Nevow.Athena
 
-//    rootMenu.MyWidget = Nevow.Athena.Widget.subclass('rootMenu.MyWidget');
-
-Nevow.Athena.Widget.subclass(pyhousePackage, 'LoginClass').methods(
+Nevow.Athena.Widget.subclass(login, 'LoginElement').methods(
 
     function __init__(self, node) {
-        ChatThing.ChatterWidget.upcall(self, "__init__", node);
+        login.LoginElement.upcall(self, "__init__", node);
         self.loginForm = self.nodeByAttribute('name', 'loginForm');
         self.loginNameField = self.nodeByAttribute('name', 'loginName');
     },

@@ -1,25 +1,26 @@
 <!-- login.xml
-    xmlns        = 'http://www.w3.org/1999/xhtml'
- -->
-<html
     xmlns:nevow  = 'http://nevow.com/ns/nevow/0.1'
     xmlns:athena = 'http://divmod.org/ns/athena/0.7'
-    lang         = 'en'>
-    <head nevow:render = 'liveglue'>
+ -->
+<html
+    xmlns        = 'http://www.w3.org/1999/xhtml'
+    lang         = 'en'
+    >
+    <head>
         <title>PyHouse Login Page</title>
         <link rel = 'stylesheet' type = 'text/css' href = 'mainPage.css' />
         <script type = 'text/javascript' src = 'login.js' />
     </head>
-    <body nevow:render = 'loginElement'>
+    <body>
         <h1>PyHouse</h1>
         <h2>Enter login name:</h2>
+        <p>end for form in login</p>
+    </body>
+</html>
+<!--
         <form name = 'menuofbuttons' enctype = 'multipart/form-data' method = 'post' >
             <nevow:attr name = "action"><nevow:invisible nevow:render = 'action' /></nevow:attr>
             <input type = 'submit' value = 'Quit' name = 'post_btn' />
             <input type = 'submit' value = 'Reload' name = 'post_btn' />
         </form>
-        <p>end for form in login</p>
-    </body>
-</html>
-<!--
 ### END DBK -->

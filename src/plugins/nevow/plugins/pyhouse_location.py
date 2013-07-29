@@ -5,28 +5,20 @@ Created on Jun 27, 2013
 
 This must be installed under newow/plugins - see PyHouse/install/install_files for location
 
-for win 7:
-    cd /c/Users/briank/Documents/GitHub/PyHouse/src/plugins/nevow/plugins
-    cp pyhouse_location.py ~/../../Python27/lib/site-packages/nevow/plugins/pyhouse_location.py
+for Linux:
+    cp ~/workspace/PyHouse/src/plugins/nevow/plugins/pyhouse_location.py   /usr/local/lib/python2.7/site-packages/nevow/plugins/pyhouse_location.py
 
+for win 7:
+    cp ~/Documents/GitHub/PyHouse/src/plugins/nevow/plugins/pyhouse_location.py   /c/Python27/lib/site-packages/nevow/plugins/pyhouse_location.py
 
 """
 from twisted.python import util
 from nevow import athena
-
-
-myPackage = athena.JSPackage({
-    'MyModule': '/home/briank/PyHouse/src/web/js/rootmenu.js',
-    })
-
-
 import PyHouse
-pyhousePackage = athena.AutoJSPackage(
-    util.sibpath(PyHouse.__file__, 'js')
-    )
+#import PyHouse.src
 
-
-from src.web.experimental import chatthing2
-chatthingPkg = athena.AutoJSPackage(util.sibpath(chatthing2.__file__, 'js'))
+pyhouseJsPackage = athena.AutoJSPackage(util.sibpath(PyHouse.__file__, 'src/web/js'))
+pyhouseCssPackage = athena.AutoCSSPackage(util.sibpath(PyHouse.__file__, 'src/web/css'))
+print "Plugin loaded..."
 
 # ## END DBK

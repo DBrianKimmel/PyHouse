@@ -10,7 +10,7 @@ from nevow import athena
 from src.web import web_utils
 
 
-g_debug = 0
+g_debug = 4
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
@@ -19,54 +19,25 @@ g_debug = 0
 # + = NOT USED HERE
 
 
-class ChatRoom(object):
-
-    def __init__(self):
-        if g_debug >= 3:
-            print "web_login.ChatRoom() "
-        self.chatters = []
-
-    def wall(self, p_message):
-        if g_debug >= 3:
-            print "web_login.ChatRoom.wall() ", p_message
-        for chatter in self.chatters:
-            chatter.wall(p_message)
-
-    def tellEverybody(self, p_who, p_what):
-        if g_debug >= 3:
-            print "web_login.ChatRoom.tellEverybody() ", p_who, p_what
-        for chatter in self.chatters:
-            chatter.hear(p_who.username, p_what)
-
-    def makeChatter(self):
-        if g_debug >= 3:
-            print "web_login.ChatRoom.makeChatter() "
-        elem = MyElement(self)
-        self.chatters.append(elem)
-        return elem
-
-# element to be run with twistd
-# chat = ChatRoom().makeChatter
-
-
 class LoginElement(athena.LiveElement):
     """Subclass nevow.athena.LiveElement and provide a docFactory which uses the liveElement renderer.
             docFactory = loaders.stan(T.div(render=T.directive('liveElement')))
     """
 
     docFactory = loaders.xmlfile('loginElement.xml', templateDir = 'src/web/template')
-    jsClass = u'loginElement.LoginClass'
+    jsClass = u'login.LoginElement'
+    cssModules = u'mainPage'
 
     def say(self, text):
         if g_debug >= 3:
-            print "web_login.MyElement.say() - ", text
+            print "web_login.LoginElement.say() - ", text
         pass
 
     say = athena.expose(say)
 
     def hear(self, sayer, text):
         if g_debug >= 3:
-            print "web_login.MyElement.hear() ", sayer, text
+            print "web_login.LoginElement.hear() ", sayer, text
         self.callRemote("hear", sayer, text)
 
     say = athena.expose(say)
@@ -80,11 +51,13 @@ class MyLiveLoginPage(athena.LivePage):
         pass
 
 
-class LoginPage(athena.LivePage, web_utils.ManualFormMixin):
+class LoginPage(athena.LivePage): # , web_utils.ManualFormMixin):
     """Put the result liveElemebt onto a nevow.athena.LivePage.
         Be sure to have the liveElement render method.
     """
     docFactory = loaders.xmlfile('login.xml', templateDir = 'src/web/template')
+    jsClass = u'login.LoginElement'
+    #cssModules = u'mainPage.css'
 
     def __init__(self, p_name, p_pyhouses_obj, *args, **kwargs):
         self.m_name = p_name
@@ -93,11 +66,11 @@ class LoginPage(athena.LivePage, web_utils.ManualFormMixin):
             print "web_login.LoginPage()"
             print "    Name =", p_name
         super(LoginPage, self).__init__(*args, **kwargs)
-        l_css = ['src/web/css/mainPage.css']
-        l_js = ['src/web/js/login.js']
-        web_utils.add_attr_list(LoginPage, l_css)
-        web_utils.add_attr_list(LoginPage, l_js)
-        web_utils.add_float_page_attrs(LoginPage)
+#        l_css = ['src/web/css/mainPage.css']
+#        l_js = ['src/web/js/login.js']
+#        web_utils.add_attr_list(LoginPage, l_css)
+#        web_utils.add_attr_list(LoginPage, l_js)
+#        web_utils.add_float_page_attrs(LoginPage)
 
     def child_(self, p_context):
         if g_debug >= 3:
@@ -120,12 +93,12 @@ class LoginPage(athena.LivePage, web_utils.ManualFormMixin):
     def render_action(self, _ctx, _data):
         return web_utils.action_url()
 
-    def XXrender_liveElement(self, p_context, p_data):
+    def render_liveElement(self, p_context, p_data):
         if g_debug >= 3:
             print "web_login.LoginPage.render_liveElement() "
             print "    Context =", p_context
             print "    Data =", p_data
-        l_element = MyElement()
+        l_element = LoginElement()
         l_element.setFragmentParent(self)
         return p_context.tag[l_element]
 

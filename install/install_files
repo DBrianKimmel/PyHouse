@@ -2,11 +2,6 @@
 # these files need installed somewhere else in the system.
 #
 
-# Linux:    src/web/ipyhouse.pi  ==>  /usr/local/lib/python2.7/site-packages/nevow/plugins/pyhouse.py
-# Win7:     C:/site-packages/nevow/plugins/pyhouse.py
-
-
-cp ~/Documents/GitHub/PyHouse/Src/plugins/pyhouse_location.py ~/../../Python27/Lib/site-packages/nevow/plugins/pyhouse_location.py
-
+src/plugins/nevow/plugins/pyhouse_location.py
 
 ### END DBK
