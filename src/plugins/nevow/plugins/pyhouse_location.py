@@ -19,6 +19,5 @@ import PyHouse
 
 pyhouseJsPackage = athena.AutoJSPackage(util.sibpath(PyHouse.__file__, 'src/web/js'))
 pyhouseCssPackage = athena.AutoCSSPackage(util.sibpath(PyHouse.__file__, 'src/web/css'))
-print "Plugin loaded..."
 
 # ## END DBK

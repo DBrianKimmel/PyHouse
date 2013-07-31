@@ -1,0 +1,27 @@
+Finding child resources.
+
+First, the glue modules under PyHouse/src/plugins/nevow/plugins/ must be copied
+to the nevow/plugin directory for the given os/distribution.  These glue modules
+allow athena to find the various .css and .js files needed to operate.
+Nevow uses a different mechanism to locate these files.
+
+
+Templates.
+I have chosen to use XHTML instead of stan.
+
+the xml (xhtml) file starts out with:
+
+<html
+    xmlns        = 'http://www.w3.org/1999/xhtml'
+    xmlns:nevow  = 'http://nevow.com/ns/nevow/0.1'
+    xmlns:athena = 'http://divmod.org/ns/athena/0.7'
+    lang         = 'en'
+    >
+    
+
+In order to auto load the athena JS files add:
+    <head nevow:render = 'liveglue'>
+
+
+    
+    

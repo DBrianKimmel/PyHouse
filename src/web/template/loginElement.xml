@@ -5,11 +5,13 @@
     xmlns:nevow  = 'http://nevow.com/ns/nevow/0.1'
     nevow:render = 'liveElement'
     >
-    <form name = "loginElement">
-        <athena:handler event = "onsubmit" handler = "doLogin" />
-        <input name = "loginName" />
-        <input type = "submit" name = 'GO' value = "Login" />
-    </form>
+    <div name = 'LoginElement'>
+	    <form name = "LoginForm">
+	        <athena:handler event = "onsubmit" handler = "doLogin" />
+	        <input name = "LoginName" />
+	        <input type = "submit" name = 'LoginSubmit' value = "Login" />
+	    </form>
+    </div>
 </div>
 <!-- 
 ### END DBK  -->

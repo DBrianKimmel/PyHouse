@@ -19,7 +19,7 @@ from src.web import web_houseSelect
 
 # import echothing
 
-g_debug = 0
+g_debug = 4
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
@@ -90,7 +90,7 @@ class MyLiveAjaxPage(athena.LivePage):
         pass
 
 
-class AjaxPage(athena.LivePage, web_utils.ManualFormMixin):
+class RootMenuPage(athena.LivePage, web_utils.ManualFormMixin):
     """Put the result liveElemebt onto a nevow.athena.LivePage.
         Be sure to have the liveElement render method.
     """
@@ -110,12 +110,12 @@ class AjaxPage(athena.LivePage, web_utils.ManualFormMixin):
         #        'rootMenu.js'
         # ]
         if g_debug >= 2:
-            print "web_rootMenu.AjaxPage()"
+            print "web_rootMenu.RootMenuPage()"
             print "    Name =", p_name
         #    print "    PyHouses_org =", p_pyhouses_obj
         #    print "    Args =", args
         #    print "    KwArgs =", kwargs
-        super(AjaxPage, self).__init__(*args, **kwargs)
+        super(RootMenuPage, self).__init__(*args, **kwargs)
         l_css = ['src/web/css/mainPage.css']
         l_js = [
                 'src/web/js/floatingWindow.js',
@@ -124,25 +124,25 @@ class AjaxPage(athena.LivePage, web_utils.ManualFormMixin):
                 'src/web/js/logs.js',
                 'src/web/js/rootMenu.js'
                 ]
-        web_utils.add_attr_list(AjaxPage, l_css)
-        web_utils.add_attr_list(AjaxPage, l_js)
-        web_utils.add_float_page_attrs(AjaxPage)
+        web_utils.add_attr_list(RootMenuPage, l_css)
+        web_utils.add_attr_list(RootMenuPage, l_js)
+        web_utils.add_float_page_attrs(RootMenuPage)
 
     def child_(self, p_context):
         if g_debug >= 3:
-            print "web_rootMenu.AjaxPage.child_() "
+            print "web_rootMenu.RootMenuPage.child_() "
             print "    Context =", p_context
-        return AjaxPage('RootAjax', self.m_pyhouses_obj)
+        return RootMenuPage('RootAjax', self.m_pyhouses_obj)
 
     def data_liveElement(self, p_context, p_data):
         if g_debug >= 3:
-            print "web_rootMenu.AjaxPage.data_liveElement() "
+            print "web_rootMenu.RootMenuPage.data_liveElement() "
             print "    Context =", p_context
             print "    Data =", p_data
 
     def data_myElement(self, p_context, p_data):
         if g_debug >= 3:
-            print "web_rootMenu.AjaxPage.data_myElement() "
+            print "web_rootMenu.RootMenuPage.data_myElement() "
             print "    Context =", p_context
             print "    Data =", p_data
 
@@ -151,7 +151,7 @@ class AjaxPage(athena.LivePage, web_utils.ManualFormMixin):
 
     def render_liveElement(self, p_context, p_data):
         if g_debug >= 3:
-            print "web_rootMenu.AjaxPage.render_liveElement() "
+            print "web_rootMenu.RootMenuPage.render_liveElement() "
             print "    Context =", p_context
             print "    Data =", p_data
         l_element = MyElement()
@@ -160,7 +160,7 @@ class AjaxPage(athena.LivePage, web_utils.ManualFormMixin):
 
     def render_myElement(self, p_context, p_data):
         if g_debug >= 3:
-            print "web_rootMenu.AjaxPage.render_myElement() "
+            print "web_rootMenu.RootMenuPage.render_myElement() "
             print "    Context =", p_context
             print "    Data =", p_data
         l_element = MyElement()
@@ -170,7 +170,7 @@ class AjaxPage(athena.LivePage, web_utils.ManualFormMixin):
     def form_post(self, *args, **kwargs):
         if g_debug >= 2:
             print "web_rootMenu.form_post() - args={0:}, kwargs={1:}".format(args, kwargs)
-        return AjaxPage('Root', self.m_pyhouses_obj)
+        return RootMenuPage('Root', self.m_pyhouses_obj)
 
     def form_post_add(self, **kwargs):
         """Add House button post processing.
@@ -178,14 +178,14 @@ class AjaxPage(athena.LivePage, web_utils.ManualFormMixin):
         if g_debug >= 2:
             print "web_rootMenu.form_post_add()", kwargs
         # TODO: validate and create a new house.
-        return AjaxPage('House', self.m_pyhouses_obj)
+        return RootMenuPage('House', self.m_pyhouses_obj)
 
     def form_post_change_logs(self, **kwargs):
         """Log change form.
         """
         if g_debug >= 2:
             print "web_rootMenu.form_post_change_logs()", kwargs
-        return AjaxPage('House', self.m_pyhouses_obj)
+        return RootMenuPage('House', self.m_pyhouses_obj)
 
     def form_post_change_web(self, **kwargs):
         """Web server button post processing.
@@ -193,7 +193,7 @@ class AjaxPage(athena.LivePage, web_utils.ManualFormMixin):
         if g_debug >= 2:
             print "web_rootMenu.form_post_change_web()", kwargs
         self.m_pyhouses_obj.WebData.WebPort = kwargs['WebPort']
-        return AjaxPage('House', self.m_pyhouses_obj)
+        return RootMenuPage('House', self.m_pyhouses_obj)
 
     def form_post_quit(self, *args, **kwargs):
         """Quit the GUI - this also means quitting all of PyHouse !!
@@ -207,7 +207,7 @@ class AjaxPage(athena.LivePage, web_utils.ManualFormMixin):
         if g_debug >= 2:
             print "web_rootMenu.form_post_reload() - args={0:}, kwargs={1:}".format(args, kwargs)
         self.m_pyhouses_obj.API.Reload(self.m_pyhouses_obj)
-        return AjaxPage('Root', self.m_pyhouses_obj)
+        return RootMenuPage('Root', self.m_pyhouses_obj)
 
     def form_post_select(self, **kwargs):
         """Select House button post processing.
