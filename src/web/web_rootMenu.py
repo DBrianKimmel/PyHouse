@@ -16,9 +16,6 @@ from src.web import web_utils
 from src.web import web_houseSelect
 
 
-
-# import echothing
-
 g_debug = 4
 # 0 = off
 # 1 = log extra info
@@ -28,70 +25,19 @@ g_debug = 4
 # + = NOT USED HERE
 
 
-class ChatRoom(object):
-
-    def __init__(self):
-        if g_debug >= 3:
-            print "web_rootMenu.ChatRoom() "
-        self.chatters = []
-
-    def wall(self, p_message):
-        if g_debug >= 3:
-            print "web_rootMenu.ChatRoom.wall() ", p_message
-        for chatter in self.chatters:
-            chatter.wall(p_message)
-
-    def tellEverybody(self, p_who, p_what):
-        if g_debug >= 3:
-            print "web_rootMenu.ChatRoom.tellEverybody() ", p_who, p_what
-        for chatter in self.chatters:
-            chatter.hear(p_who.username, p_what)
-
-    def makeChatter(self):
-        if g_debug >= 3:
-            print "web_rootMenu.ChatRoom.makeChatter() "
-        elem = MyElement(self)
-        self.chatters.append(elem)
-        return elem
-
-# element to be run with twistd
-# chat = ChatRoom().makeChatter
-
-
-class MyElement(athena.LiveElement):
-    """Subclass nevow.athena.LiveElement and provide a docFactory which uses the liveElement renderer.
-            docFactory = loaders.stan(T.div(render=T.directive('liveElement')))
+class Username(object):
+    """
     """
 
+
+class RootMenuElement(athena.LiveElement):
+    """
+    """
     docFactory = loaders.xmlfile('rootMenuElement.xml', templateDir = 'src/web/template')
 
-    # jsClass = u'web_rootMenu.ChatRoom'
 
-    def say(self, text):
-        if g_debug >= 3:
-            print "web_rootMenu.MyElement.say() - ", text
-        pass
-
-    say = athena.expose(say)
-
-    def hear(self, sayer, text):
-        if g_debug >= 3:
-            print "web_rootMenu.MyElement.hear() ", sayer, text
-        self.callRemote("hear", sayer, text)
-
-    say = athena.expose(say)
-
-
-class MyLiveAjaxPage(athena.LivePage):
-    """
-    """
-
-    def handle_log_request(self, p_context, p_data):
-        pass
-
-
-class RootMenuPage(athena.LivePage, web_utils.ManualFormMixin):
-    """Put the result liveElemebt onto a nevow.athena.LivePage.
+class RootMenuPage(athena.LivePage):
+    """Put the result liveElement onto a nevow.athena.LivePage.
         Be sure to have the liveElement render method.
     """
     docFactory = loaders.xmlfile('rootMenu.xml', templateDir = 'src/web/template')
@@ -99,73 +45,39 @@ class RootMenuPage(athena.LivePage, web_utils.ManualFormMixin):
     def __init__(self, p_name, p_pyhouses_obj, *args, **kwargs):
         self.m_name = p_name
         self.m_pyhouses_obj = p_pyhouses_obj
-        # kwargs['cssModuleRoot'] = 'src/web/css/'
-        # kwargs['cssModules'] = 'mainPage.css'
-        # kwargs['jsModuleRoot'] = '/home/briank/workspace/PyHouse/src/web/js/'
-        # kwargs['jsModules'] = [
-        #        'floatingWindow.js',
-        #        'addHouse.js',
-        #        'webServer.js',
-        #        'logs.js',
-        #        'rootMenu.js'
-        # ]
         if g_debug >= 2:
-            print "web_rootMenu.RootMenuPage()"
-            print "    Name =", p_name
-        #    print "    PyHouses_org =", p_pyhouses_obj
-        #    print "    Args =", args
-        #    print "    KwArgs =", kwargs
+            print "web_rootMenu.RootMenuPage() - Name =", p_name
+            print "    PyHouses = {0:}".format(p_pyhouses_obj)
         super(RootMenuPage, self).__init__(*args, **kwargs)
-        l_css = ['src/web/css/mainPage.css']
-        l_js = [
-                'src/web/js/floatingWindow.js',
-                'src/web/js/addHouse.js',
-                'src/web/js/webServer.js',
-                'src/web/js/logs.js',
-                'src/web/js/rootMenu.js'
-                ]
-        web_utils.add_attr_list(RootMenuPage, l_css)
-        web_utils.add_attr_list(RootMenuPage, l_js)
-        web_utils.add_float_page_attrs(RootMenuPage)
 
     def child_(self, p_context):
         if g_debug >= 3:
             print "web_rootMenu.RootMenuPage.child_() "
             print "    Context =", p_context
-        return RootMenuPage('RootAjax', self.m_pyhouses_obj)
+        return RootMenuPage('Root_Menu_2', self.m_pyhouses_obj)
 
-    def data_liveElement(self, p_context, p_data):
+    def render_livePage(self, p_context, p_data):
         if g_debug >= 3:
-            print "web_rootMenu.RootMenuPage.data_liveElement() "
+            print "web_rootMenu.render_livePage() "
             print "    Context =", p_context
             print "    Data =", p_data
+        l_element = RootMenuElement(self.m_pyhouses_obj)
+        l_element.setFragmentParent(self)
+        return p_context.tag[l_element]
 
-    def data_myElement(self, p_context, p_data):
+    def render_username(self, p_context, p_data):
+        """
+        Replace the tag with a new L{RootMenuElement}.
+        """
         if g_debug >= 3:
-            print "web_rootMenu.RootMenuPage.data_myElement() "
-            print "    Context =", p_context
-            print "    Data =", p_data
+            print "web_rootMenu.render_username() "
+        l_div = RootMenuElement(Username())
+        l_div.setFragmentParent(self)
+        return l_div
+
 
     def render_action(self, _ctx, _data):
         return web_utils.action_url()
-
-    def render_liveElement(self, p_context, p_data):
-        if g_debug >= 3:
-            print "web_rootMenu.RootMenuPage.render_liveElement() "
-            print "    Context =", p_context
-            print "    Data =", p_data
-        l_element = MyElement()
-        l_element.setFragmentParent(self)
-        return p_context.tag[l_element]
-
-    def render_myElement(self, p_context, p_data):
-        if g_debug >= 3:
-            print "web_rootMenu.RootMenuPage.render_myElement() "
-            print "    Context =", p_context
-            print "    Data =", p_data
-        l_element = MyElement()
-        l_element.setFragmentParent(self)
-        return p_context.tag[l_element]
 
     def form_post(self, *args, **kwargs):
         if g_debug >= 2:

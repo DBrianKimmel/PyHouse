@@ -1,22 +1,17 @@
 <!-- rootMenu.xml
-    xmlns        = 'http://www.w3.org/1999/xhtml'
  -->
 <html
 	xmlns:nevow  = 'http://nevow.com/ns/nevow/0.1'
 	xmlns:athena = 'http://divmod.org/ns/athena/0.7'
-	lang         = 'en'>
+	lang         = 'en'
+	>
 	<head nevow:render = 'liveglue'>
 		<title>PyHouse Main Page</title>
-		<link rel = 'stylesheet' type = 'text/css' href = 'mainPage.css' />
-		<script type = 'text/javascript' src = 'rootMenu.js' />
-		<script type = 'text/javascript' src = 'floatingWindow.js' />
-		<script type = 'text/javascript' src = 'addHouse.js' />
-		<script type = 'text/javascript' src = 'logs.js' />
-		<script type = 'text/javascript' src = 'webServer.js' />
     </head>
-    <body nevow:render = 'myElement'>
+    <body nevow:render = 'livePage'>
     	<h1>PyHouse</h1>
     	<h2>Select the menu Function:</h2>
+    	<div nevow:render = 'username'>Username element goes here.</div>
     	<form name = 'menuofbuttons' enctype = 'multipart/form-data' method = 'post' >
     				<nevow:attr name = "action"><nevow:invisible nevow:render = 'action' /></nevow:attr>
     		<table style = 'width: 60%;' border = '0'>

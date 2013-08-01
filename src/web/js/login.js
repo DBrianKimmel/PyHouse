@@ -1,44 +1,35 @@
 /** login.js
  * 
  */
-
 // import Nevow.Athena
 
 login.LoginElement = Nevow.Athena.Widget.subclass('login.LoginElement');
 login.LoginElement.methods(
 
     function __init__(self, node) {
-    	//alert('LoginElement.__init__()')
+    	//alert('LoginElement.__init__() ' + node)
         login.LoginElement.upcall(self, "__init__", node);
         self.loginElement = self.nodeByAttribute('name', 'LoginElement');
         self.loginForm = self.nodeByAttribute('name', 'LoginForm');
         self.loginNameField = self.nodeByAttribute('name', 'LoginName');
+        self.loginPassword = self.nodeByAttribute('name', 'LoginPassword')
     },
 
     function doLogin(self, node) {
     	//DivMod.debug('doLogin', "Startup")
-    	alert('doLogin')
     	var symbol = node.value
-        self.callRemote("login", self.loginNameField.value);
+    	var l_name = self.loginNameField.value
+    	var l_pass = self.loginPassword.value
+        var l_logData = {
+        		name : l_name,
+        		passwd : l_pass
+        }
+    	var l_json = JSON.stringify(l_logData)
+        self.callRemote("login", l_json);
     	//DivMod.debug('login', "Finished")
+    	//alert('doLogin ' + l_json)
         return false;
     }
     );
-
-Nevow.Athena.Widget.subclass(login, 'LoginPage').methods(
-
-	    function __init__(self, node) {
-	    	alert('LoginPage')
-	        login.LoginPage.upcall(self, "__init__", node);
-	        self.loginForm = self.nodeByAttribute('name', 'loginForm');
-	        self.loginNameField = self.nodeByAttribute('name', 'loginName');
-	    },
-
-	    function do_LoginPage(self) {
-	        self.callRemote("say", self.loginNameField.value);
-	        //self.nodeByAttribute('name', 'userMessage').value = "";
-	        return false;
-	    }
-	    );
 
 //### END DBK

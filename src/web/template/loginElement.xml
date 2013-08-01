@@ -8,7 +8,8 @@
     <div name = 'LoginElement'>
 	    <form name = "LoginForm">
 	        <athena:handler event = "onsubmit" handler = "doLogin" />
-	        <input name = "LoginName" />
+	        User Name: <input name = "LoginName" /><br></br>
+	        Password : <input name = "LoginPassword" type = 'password' /><br></br>
 	        <input type = "submit" name = 'LoginSubmit' value = "Login" />
 	    </form>
     </div>

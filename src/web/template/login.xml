@@ -11,8 +11,8 @@
     <body nevow:render = 'livePage'>
         <h1>PyHouse</h1>
         <h2>Enter login name:</h2>
-        <div nevow:render = 'debug' />
     </body>
 </html>
 <!--
+        <div nevow:render = 'debug' />
 ### END DBK -->

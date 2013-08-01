@@ -50,7 +50,7 @@ class HousesData(object):
         l_ret += "Key:{0:}, ".format(self.Key)
         l_ret += "Active:{0:}, ".format(self.Active)
         l_ret += "HouseAPI:{0:}, ".format(self.HouseAPI)
-        l_ret += "HouseObject:{0:};".format(self.HouseObject)
+        l_ret += "HouseObject:{0:};\n".format(self.HouseObject)
         return l_ret
 
     def __repr__(self):

@@ -1,7 +1,21 @@
 #!/usr/bin/python
 
 """Web server module.
+
 This is a Main Module - always present.
+
+Open a port (8580 default) that will allow web browsers to control the
+PyHouse system.  This will be an AJAX/COMET system using nevow athena.
+
+On initial startup allow a house to be created
+    then rooms
+    then light controllers
+        and lights
+        and buttons
+        and scenes
+    then schedules
+
+Do not require reloads, auto change PyHouse on the fly.
 """
 
 # Import system type stuff
@@ -34,6 +48,18 @@ class WebData(object):
     """
     def __init__(self):
         self.WebPort = 8580
+        self.Logins = {} # a dict of login_names as keys and encrypted passwords as values - see web_login for details.
+
+    def __str__(self):
+        l_ret = "WebData:: "
+        l_ret += "WebPort:{0:}\n".format(self.WebPort)
+        return l_ret
+
+    def __repr__(self):
+        l_ret = "{"
+        l_ret += "'WebPort':'{0:}'".format(self.WebPort)
+        l_ret += "}"
+        return l_ret
 
 
 class API(object):

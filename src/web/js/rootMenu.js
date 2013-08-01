@@ -1,54 +1,12 @@
-/* There is a Nevow plugin (pyhouse_location.py) which maps our module name
- *  onto our JavaScript source file (rootMenu.js).
+/** rootMenu.js
+ * 
  */
-
 // import Nevow.Athena
 
-/* Next, subclass the JavaScript Nevow.Athena.Widget class (notice the module name that was defined in the plugin file):
- * 
- * MyModule.MyWidget = Nevow.Athena.Widget.subclass('MyModule.MyWidget');
- */
-
-MyModule.MyWidget = Nevow.Athena.Widget.subclass('MyModule.MyWidget');
-
-
-/*
-MyModule.MyWidget = Nevow.Athena.Widget.subclass('MyModule.MyWidget');
-Nevow.Athena.Widget.subclass(EchoThing, 'EchoWidget').methods(
-	function __XXinit__(self, node) {
-        EchoThing.EchoWidget.upcall(self, "__init__", node);
-        self.echoWidget = self.nodeByAttribute('name', 'echoElement');
-        self.scrollArea = self.nodeByAttribute('name', 'scrollArea');
-        self.message = self.nodeByAttribute('name', 'message');
-    },  
-    function XXdoSay(self) {
-        self.callRemote("say", self.message.value);
-        self.message.value = ""; 
-        return false;
-    },
-    function XXaddText(self, text) {
-        var newNode = document.createElement('div');
-        newNode.appendChild(document.createTextNode(text));
-        self.scrollArea.appendChild(newNode);
-        document.body.scrollTop = document.body.scrollHeight;
-    });
-	function XXsay(self, msg) {
-	    self.callRemote("say", msg);
-	    // Now show the text to the user somehow...
-	}
-	function XXhear(self, avatarName, text) {
-	    // Here, you'd show the user some text.
-	}
-*/
-	
-ChatRoom.MyWidget = Nevow.Athena.Widget.subclass('web_rootMenu.ChatRoom');
-	
-rootMenu.MyWidget = Nevow.Athena.Widget.subclass('rootMenu.MyWidget');
-
-Nevow.Athena.Widget.subclass(DBKChatRoom, 'ChatterBox').methods(
+Nevow.Athena.Widget.subclass(rootMenu, 'ChatterBox').methods(
 
     function __init__(self, node) {
-        ChatThing.ChatterWidget.upcall(self, "__init__", node);
+        rootMenu.ChatterBox.upcall(self, "__init__", node);
         self.chooseBox = self.nodeByAttribute('name', 'chooseBox');
         self.scrollArea = self.nodeByAttribute('name', 'scrollArea');
         self.sendLine = self.nodeByAttribute('name', 'sendLine');
@@ -87,16 +45,4 @@ Nevow.Athena.Widget.subclass(DBKChatRoom, 'ChatterBox').methods(
         self.displayMessage(msg);
     });
 
-// Create the "Class" 
-var DBKChatRoom = {
-	    type: "macintosh",
-	    color: "red",
-	    getInfo: function () {
-	        return this.color + ' ' + this.type + ' apple';
-	    },
-
-		getColor: function () {
-			return this.color;
-		}
-	};
 //### END DBK

@@ -7,6 +7,8 @@ Web interface to control lights for the selected house.
 """
 
 # Import system type stuff
+from twisted.python.filepath import FilePath
+from nevow import athena
 from nevow import loaders
 from nevow import rend
 import json
@@ -16,6 +18,8 @@ from src.web.web_tagdefs import *
 from src.web import web_utils
 from src.web import web_rooms
 
+# Handy helper for finding external resources nearby.
+sibling = FilePath(__file__).sibling
 
 g_debug = 0
 # 0 = off
@@ -90,5 +94,38 @@ class ControlLightsPage(web_utils.ManualFormMixin):
         l_light_obj = self.m_house_obj.Lights[l_key]
         self.m_house_obj.LightingAPI.change_light_setting(self.m_house_obj, l_light_obj, int(kwargs['Level']))
         return ControlLightsPage(self, self.m_name, self.m_house_obj)
+
+
+class LightController(object):
+    """
+    An actual light controller object.
+    """
+
+    def changelight(self, **kwargs):
+        if g_debug >= 3:
+            print "changelight()", kwargs
+        l_key = int(kwargs['LightKey'])
+        l_light_obj = self.m_house_obj.Lights[l_key]
+        self.m_house_obj.LightingAPI.change_light_setting(self.m_house_obj, l_light_obj, int(kwargs['Level']))
+        return ControlLightsPage(self, self.m_name, self.m_house_obj)
+
+
+class ControlLightsElement(athena.LiveElement):
+    """
+    A "live" Light Controller.
+
+    Moving the slider will send messages from the browser to the server.
+    The server then will make the change and send the light current level(status) back to the client.
+    """
+
+
+class ControlLightsParentPage(athena.LivePage):
+    """
+    A "live" container page for L{ControlLightElement}.
+
+    This will display all the lights able to be controlled for this house.
+    Selecting a light will display the control for that single light.
+    """
+    #docFactory = loaders.xmlfile(sibling('template/controllights.xml').path)
 
 # ## END DBK

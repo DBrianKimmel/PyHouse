@@ -100,14 +100,14 @@ class PyHouseData(object):
 
     def __str__(self):
         l_ret = "PyHouseData:: "
-        l_ret += "WebData:{0:}".format(self.WebData)
-        l_ret += "WebAPI:{0:}".format(self.WebAPI)
-        l_ret += "LogsData:{0:}".format(self.LogsData)
-        l_ret += "LogsAPI:{0:}".format(self.LogsAPI)
-        l_ret += "HousesData:{0:}".format(self.HousesData)
-        l_ret += "HousesAPI:{0:}".format(self.HousesAPI)
-        l_ret += "XmlRoot:{0:}".format(self.XmlRoot)
-        l_ret += "XmlFileName:{0:}".format(self.XmlFileName)
+        l_ret += "WebData:{0:}, ".format(self.WebData)
+        l_ret += "WebAPI:{0:}, ".format(self.WebAPI)
+        l_ret += "LogsData:{0:}, ".format(self.LogsData)
+        l_ret += "LogsAPI:{0:}, ".format(self.LogsAPI)
+        l_ret += "HousesData:{0:}, ".format(self.HousesData)
+        l_ret += "HousesAPI:{0:}, ".format(self.HousesAPI)
+        l_ret += "XmlRoot:{0:}, ".format(self.XmlRoot)
+        l_ret += "XmlFileName:{0:};".format(self.XmlFileName)
         return l_ret
 
     def __repr__(self):

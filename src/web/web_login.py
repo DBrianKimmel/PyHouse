@@ -5,11 +5,17 @@ Created on Jul 27, 2013
 """
 
 # Import system type stuff
+from twisted.python.filepath import FilePath
 from nevow import loaders
 from nevow import athena
-from src.web import web_utils
-from src.web import web_rootMenu
+import json
 
+# Import PyMh files and modules.
+from src.web import web_rootMenu
+from src import web
+
+# Handy helper for finding external resources nearby.
+webdir = FilePath(web.__file__).parent().preauthChild
 
 g_debug = 4
 # 0 = off
@@ -20,33 +26,55 @@ g_debug = 4
 # + = NOT USED HERE
 
 
+class LoginData(object):
+    """ Allowed logins
+
+    Stage 1 - Username only.
+    Stage 2 - Username and password (stored password will be encrypted)
+    Stage 3 - Username and some sort of common login identifier from some secure external site.
+    """
+
+
+class Login(object):
+    """Actual login procedures.
+    """
+
+    def validate_user(self, p_login, p_pyhouses_obj):
+        self.m_pyhouses_obj = p_pyhouses_obj
+        #TODO: validate user - add password for security 
+        l_json = json.loads(p_login)
+        if g_debug >= 2:
+            print "web_login.validate_user() ", l_json
+        self.load_rootMenu_page()
+
+    def load_rootMenu_page(self):
+        if g_debug >= 2:
+            print "web_login.load_rootMenu_page()"
+        web_rootMenu.RootMenuPage('Root_Menu_1', self.m_pyhouses_obj)
+
+
 class LoginElement(athena.LiveElement):
+    """ a 'live' login element containing a username and password.
     """
-    """
-    docFactory = loaders.xmlfile('loginElement.xml', templateDir = 'src/web/template')
+    docFactory = loaders.xmlfile(webdir('template/loginElement.xml').path)
     jsClass = u'login.LoginElement'
 
-    def __init__(self):
-        if g_debug > +2:
+    def __init__(self, p_pyhouses_obj):
+        self.m_pyhouses_obj = p_pyhouses_obj
+        if g_debug >= 2:
             print "web_login.LoginElement()"
-        pass
 
-    def login(self, text):
+    def login(self, p_login):
+        """ A JS receiver for login information from the client.
+        """
         if g_debug >= 3:
-            print "web_login.LoginElement.login() - ", text
-        pass
+            print "web_login.LoginElement.login() - ", p_login
+        Login().validate_user(p_login, self.m_pyhouses_obj)
     login = athena.expose(login)
 
-    def hear(self, sayer, text):
-        if g_debug >= 3:
-            print "web_login.LoginElement.hear() ", sayer, text
-        self.callRemote("hear", sayer, text)
-    hear = athena.expose(hear)
 
-
-class LoginPage(athena.LivePage): # , web_utils.ManualFormMixin):
-    """Put the result liveElement onto a nevow.athena.LivePage.
-        Be sure to have the liveElement render method.
+class LoginPage(athena.LivePage):
+    """
     """
     docFactory = loaders.xmlfile('login.xml', templateDir = 'src/web/template')
 
@@ -54,33 +82,23 @@ class LoginPage(athena.LivePage): # , web_utils.ManualFormMixin):
         self.m_name = p_name
         self.m_pyhouses_obj = p_pyhouses_obj
         if g_debug >= 2:
-            print "web_login.LoginPage()"
-            print "    Name =", p_name
+            print "web_login.LoginPage() - Name =", p_name
         super(LoginPage, self).__init__(*args, **kwargs)
-#
+
     def child_(self, p_context):
         if g_debug >= 3:
             print "web_login.LoginPage.child_() "
             print "    Context =", p_context
         return LoginPage('LoginPage 2', self.m_pyhouses_obj)
-        #return web_rootMenu.RootMenuPage('RootMenuPage_2', self.m_pyhouses_obj)
 
-    def data_liveElement(self, p_context, p_data):
+    def render_livePage(self, p_context, p_data):
         if g_debug >= 3:
-            print "web_login.LoginPage.data_liveElement() "
+            print "web_login.LoginPage.render_livePage() "
             print "    Context =", p_context
             print "    Data =", p_data
-
-    def data_myElement(self, p_context, p_data):
-        if g_debug >= 3:
-            print "web_login.LoginPage.data_myElement() "
-            print "    Context =", p_context
-            print "    Data =", p_data
-
-    def render_action(self, _ctx, _data):
-        if g_debug >= 3:
-            print "web_login.LoginPage.render_action() "
-        return web_utils.action_url()
+        l_element = LoginElement(self.m_pyhouses_obj)
+        l_element.setFragmentParent(self)
+        return p_context.tag[l_element]
 
     def render_debug(self, p_context, p_data):
         if g_debug >= 3:
@@ -90,44 +108,5 @@ class LoginPage(athena.LivePage): # , web_utils.ManualFormMixin):
         l_fragment = athena.IntrospectionFragment()
         l_fragment.setFragmentParent(self)
         return p_context.tag[l_fragment]
-
-    def render_liveElement(self, p_context, p_data):
-        if g_debug >= 3:
-            print "web_login.LoginPage.render_liveElement() "
-            print "    Context =", p_context
-            print "    Data =", p_data
-        l_element = LoginElement()
-        l_element.setFragmentParent(self)
-        return p_context.tag[l_element]
-
-    def render_livePage(self, p_context, p_data):
-        if g_debug >= 3:
-            print "web_login.LoginPage.render_livePage() "
-            print "    Context =", p_context
-            print "    Data =", p_data
-        l_element = LoginElement()
-        l_element.setFragmentParent(self)
-        return p_context.tag[l_element]
-
-    def render_loginElement(self, p_context, p_data):
-        if g_debug >= 3:
-            print "web_login.LoginPage.render_loginElement() "
-            print "    Context =", p_context
-            print "    Data =", p_data
-        l_element = LoginElement()
-        l_element.setFragmentParent(self)
-        return p_context.tag[l_element]
-
-    def form_post(self, *args, **kwargs):
-        if g_debug >= 2:
-            print "web_login.form_post() - args={0:}, kwargs={1:}".format(args, kwargs)
-        return web_rootMenu.RootMenuPage('RootMenu', self.m_pyhouses_obj)
-
-    def form_post_quit(self, *args, **kwargs):
-        """Quit the GUI - this also means quitting all of PyHouse !!
-        """
-        if g_debug >= 2:
-            print "web_login.form_post_quit() - args={0:}, kwargs={1:}".format(args, kwargs)
-        self.m_pyhouses_obj.API.Quit()
 
 # ## END DBK
