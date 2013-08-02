@@ -164,11 +164,12 @@ class DecodeResponses(InsteonPlmUtility):
     def _drop_first_byte(self, p_controller_obj):
         """The first byte is not legal, drop it and try again.
         """
-        l_msg = "Insteon_PLM._drop_first_byte() Found a leading char {0:} - Rest. - {1:}".format(
+        l_msg = "Insteon_PLM._drop_first_byte() Found a leading char {0:#x} - Rest. - {1:}".format(
                 p_controller_obj.Message[0], PrintBytes(p_controller_obj.Message))
         if g_debug >= 2:
             print l_msg
-        g_logger.error(l_msg)
+        if p_controller_obj.Message[0] != NAK:
+            g_logger.error(l_msg)
         try:
             p_controller_obj.Message = p_controller_obj.Message[1:]
         except IndexError:
