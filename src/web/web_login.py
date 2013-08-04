@@ -64,13 +64,13 @@ class LoginElement(athena.LiveElement):
         if g_debug >= 2:
             print "web_login.LoginElement()"
 
+    @athena.expose
     def login(self, p_login):
         """ A JS receiver for login information from the client.
         """
         if g_debug >= 3:
             print "web_login.LoginElement.login() - ", p_login
         Login().validate_user(p_login, self.m_pyhouses_obj)
-    login = athena.expose(login)
 
 
 class LoginPage(athena.LivePage):

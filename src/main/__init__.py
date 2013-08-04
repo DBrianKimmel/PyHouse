@@ -40,10 +40,10 @@ Python modules used:
     Twisted            (apt-get install python-twisted)
     zope.interface
     nevow              (apt-get install python-nevow)
-    PySerial
+    PySerial           ??? still needed?
     PyUsb
-    ConfigObj
-    Pmw
+    ConfigObj          No longer used
+    Pmw                No longer used!
 
 
 for a raspberry-pi with wheezy:

@@ -1,0 +1,40 @@
+<!-- login.xml
+ -->
+<html
+    xmlns        = 'http://www.w3.org/1999/xhtml'
+    xmlns:nevow  = 'http://nevow.com/ns/nevow/0.1'
+    lang         = 'en'
+    >
+    <head nevow:render = 'liveglue'>
+        <title>PyHouse Login Page</title>
+        <style type="text/css">
+            html {
+                height: 100%;
+	        }
+	        body {
+	            min-height: 100%;
+	            background-color: #d0e4fe;
+	        }
+	        * html body {
+	            height: 100%;
+	        }
+			h1 {
+			    color: blue;
+			    text-align: center;
+			}
+			h2 {
+			    color: blue;
+			    test-align: left;
+			}
+        </style>
+    </head>
+        <h1>PyHouse</h1>
+        <body style="margin: 0px; padding: 0px; overflow: hidden; height: 100%; width: 100%;">
+            <nevow:invisible nevow:render="playground" />
+        </body>
+</html>
+<!--
+    <body nevow:render = 'livePage'>
+        <h1>PyHouse</h1>
+    </body>
+### END DBK -->

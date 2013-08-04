@@ -1,2 +1,5 @@
 eclipse.preferences.version=1
 encoding//src/upnp/et.py=utf-8
+encoding//src/web/web_mainpage.py=iso-8859-1
+encoding//src/web/web_server.py=iso-8859-1
+encoding/setup.py=iso-8859-1
