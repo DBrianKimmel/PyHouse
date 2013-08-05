@@ -1,4 +1,11 @@
 eclipse.preferences.version=1
+encoding//minimal/minimal/py/minimal/common/helpers.py=iso-8859-1
+encoding//minimal/minimal/py/minimal/common/i18n.py=utf-8
+encoding//minimal/minimal/py/minimal/web/__init__.py=iso-8859-1
+encoding//minimal/minimal/py/minimal/web/clock.py=iso-8859-1
+encoding//minimal/minimal/py/minimal/web/mainpage.py=iso-8859-1
+encoding//minimal/minimal/py/minimal/web/playground.py=iso-8859-1
+encoding//minimal/minimal/runminimal.py=iso-8859-1
 encoding//src/upnp/et.py=utf-8
 encoding//src/web/web_mainpage.py=iso-8859-1
 encoding//src/web/web_server.py=iso-8859-1

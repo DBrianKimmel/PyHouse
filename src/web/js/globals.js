@@ -1,11 +1,8 @@
 //globals.js - the global hook where we hang our coat and everything else
-//
-//author   : Werner Thie, wth
-//last edit: wth, 20.01.2011
-//modhistory:
-//  20.01.2011 - wth, pruned for minimal
 
 // import Divmod.Runtime
+
+// import helpers
 
 //a not so impressive way to get dynamic modules loading properly when inserting
 //fragments at some later time into the webapp. The most promising way is to preload

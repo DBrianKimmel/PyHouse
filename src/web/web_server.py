@@ -23,11 +23,20 @@ Do not require reloads, auto change PyHouse on the fly.
 import logging
 import os
 from twisted.internet import reactor
+from twisted.python.filepath import FilePath
 from nevow import appserver
 
 # Import PyMh files and modules.
+from src import web
 from src.web import web_utils
 from src.web import web_mainpage
+
+# Handy helper for finding external resources nearby.
+webdir = FilePath(web.__file__).parent().preauthChild
+# Some absolute paths to resources
+imagepath = webdir('images').path
+jspath = webdir('js').path
+templatepath = webdir('template').path
 
 
 g_debug = 0

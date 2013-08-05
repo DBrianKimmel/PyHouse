@@ -88,6 +88,7 @@ class FileNoListDir(static.File):
     def directoryListing(self):
         return error.ForbiddenResource()
 
+
 class TheRoot(rend.Page):
     def __init__(self, staticpath, *args, **kw):
         super(TheRoot, self).__init__(*args, **kw)
@@ -167,25 +168,23 @@ class MainPage(athena.LivePage):
         self.m_name = p_name
         self.m_pyhouses_obj = p_pyhouses_obj
         if g_debug >= 2:
-            print "web_login.MainPage() - Name =", p_name
+            print "web_mainpage.MainPage() - Name =", p_name
         super(MainPage, self).__init__(*args, **kwargs)
 
     def child_(self, p_context):
         if g_debug >= 3:
-            print "web_login.MainPage.child_() "
+            print "web_mainpage.MainPage.child_() "
             print "    Context =", p_context
         return MainPage('MainPage 2', self.m_pyhouses_obj)
 
     def render_livePage(self, p_context, p_data):
         if g_debug >= 3:
-            print "web_login.MainPage.render_livePage() "
+            print "web_mainpage.MainPage.render_livePage() "
             print "    Context =", p_context
             print "    Data =", p_data
         l_element = Playground(self.m_pyhouses_obj)
         l_element.setFragmentParent(self)
         return p_context.tag[l_element]
-
-
 
     def child_jsmodule(self, ctx):
         return MappingCompressedResource(self.jsModules.mapping)
@@ -193,27 +192,29 @@ class MainPage(athena.LivePage):
     def data_title(self, ctx, data):
         return self.pageTitle
 
-    #if you need a place where to keep things during the LifePage being up, please
-    #do it here and only here. Storing states someplace deeper in the hierarchy makes
-    #it extremely difficult to release memory properly due to circular object refs 
+    # If you need a place where to keep things during the LivePage being up, please do it here and only here.
+    # Storing states someplace deeper in the hierarchy makes it extremely difficult to release memory properly due to circular object refs 
     def beforeRender(self, ctx):
-        self.page.lang = 0
+        if g_debug >= 3:
+            print "web_mainpage.MainPage.beforeRender() "
         self.uid = None
         self.username = ''
-        self.pageTitle = 'WelcomeTitle'
+        self.pageTitle = 'Welcome to PyHouse'
         d = self.notifyOnDisconnect()
-        d.addErrback(self.disconn)
+        d.addErrback(self.eb_disconnect)
 
     def render_playground(self, ctx, data):
+        if g_debug >= 3:
+            print "web_mainpage.MainPage.render_playground() "
         f = Playground(self.uid)
         f.setFragmentParent(self)
         return ctx.tag[f]
 
-    def disconn(self, reason):
+    def eb_disconnect(self, reason):
+        """ We will be called back when the client disconnects, clean up whatever needs cleaning serverside.
         """
-        we will be called back when the client disconnects, clean up whatever needs
-        cleaning serverside
-        """
+        if g_debug >= 3:
+            print "web_mainpage.MainPage.eb_disconnect() "
         pass
 
 # ## END DBK
@@ -560,7 +561,6 @@ def getObjects(oname):
                 l_obj_list.append(o)
     return l_obj_list
 
-dumpObject = dumpobj.dumpObj
 
 
 
