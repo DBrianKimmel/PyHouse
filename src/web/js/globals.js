@@ -218,8 +218,8 @@ function waitfor(flags, timeout) {
 	var checkStep = function() {
 		if (stepcount > (timeout * steprate)) {
 			self.timer = null;
-			waitDeferred.errback(minimal.common.globals
-					.TimeoutError('timeout...'));
+			// waitDeferred.errback(minimal.common.globals.TimeoutError('timeout...'));
+			waitDeferred.errback(globals.TimeoutError('timeout...'));
 		} else if (flagstrue()) {
 			waitDeferred.callback();
 		} else {
@@ -283,7 +283,8 @@ function loadImages(uris) {
 	var checkStep = function() {
 		if ((stepcount > 120)) {
 			self.timer = null;
-			readyDeferred.errback(new minimal.common.globals.ImageLoadingError(
+			// readyDeferred.errback(new minimal.common.globals.ImageLoadingError(
+			readyDeferred.errback(new globals.ImageLoadingError(
 					'could not load all images: ' + imgsNotloaded()));
 		} else if (imgsloaded()) {
 			readyDeferred.callback();

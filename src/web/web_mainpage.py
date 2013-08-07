@@ -36,16 +36,18 @@ from nevow import guard
 from nevow.compression import parseAcceptEncoding
 from nevow.inevow import IRequest
 from nevow.useragent import UserAgent
-
-#import minimal
-#from minimal.common.i18n    import _TStr
-#from minimal.web.playground import Playground
+from twisted.internet import defer
 
 # Import PyMh files and modules.
 from src import web
+from src.web import web_login
+
 
 # Handy helper for finding external resources nearby.
 webdir = FilePath(web.__file__).parent().preauthChild
+imagepath = webdir('images').path
+jspath = webdir('js').path
+templatepath = webdir('template').path
 
 g_debug = 4
 # 0 = off
@@ -85,17 +87,34 @@ prev = {}
 
 
 class FileNoListDir(static.File):
+
     def directoryListing(self):
         return error.ForbiddenResource()
 
 
+class fourOfour(athena.LiveElement):
+    jsClass = u'mainPage.fourOfour'
+    docFactory = loaders.xmlstr("""
+        <div xmlns:nevow="http://nevow.com/ns/nevow/0.1" nevow:render="liveElement">
+        </div>
+    """)
+
+
 class TheRoot(rend.Page):
-    def __init__(self, staticpath, *args, **kw):
+    """This is the root - given to the app server!
+    """
+
+    def __init__(self, p_pyhouses_obj, staticpath, *args, **kw):
+        if staticpath == None:
+            l_jspath = util.sibpath(jspath, 'js')
+            staticpath = os.path.join(l_jspath, '', 'resource')
+        if g_debug >= 3:
+            print "web_mainpage.TheRoot() - ", jspath, imagepath
         super(TheRoot, self).__init__(*args, **kw)
         self.children = {
           'resource'          : FileNoListDir(os.path.join(staticpath)),
-          'favicon.ico'       : FileNoListDir(os.path.join(staticpath, 'images', 'favicon.ico')),
-          'waitroller.gif'    : FileNoListDir(os.path.join(staticpath, 'images', 'waitroller.gif'))
+          'favicon.ico'       : FileNoListDir(os.path.join(imagepath, 'favicon.ico')),
+          'waitroller.gif'    : FileNoListDir(os.path.join(imagepath, 'waitroller.gif'))
         }
         print #separate package hinting from logging
 
@@ -104,13 +123,6 @@ class TheRoot(rend.Page):
         if rsrc == None:
             rsrc, segs = super(TheRoot, self).locateChild(ctx, segments)
         return rsrc, segs
-
-class fourOfour(athena.LiveElement):
-    jsClass = u'mainPage.fourOfour'
-    docFactory = loaders.xmlstr("""
-    <div xmlns:nevow="http://nevow.com/ns/nevow/0.1" nevow:render="liveElement">
-    </div>
-    """)
 
 
 class mainPageFactory:
@@ -125,6 +137,8 @@ class mainPageFactory:
         my mappings didn't connect with the mappings collected by other mechanisms. The final trick was
         to update the module global mapping in jsDeps with my collection, the lonely line below does the trick
         """
+        if g_debug >= 3:
+            print "web_mainpage.mainPageFactory()"
         modulepath = os.path.join(os.path.split(__file__)[0], '..')
         l_jspath = util.sibpath(modulepath, 'js')
         l_siteJSPackage = athena.AutoJSPackage(l_jspath)
@@ -133,12 +147,14 @@ class mainPageFactory:
     def addClient(self, client):
         clientID = self._newClientID()
         self.clients[clientID] = client
-        if g_debug >= 4:
-            print "web_mainpage.addClient() - Rendered new mainPage %r: %r" % (client, clientID)
+        if g_debug >= 3:
+            print "web_mainpage.mainPageFactory.addClient() - Rendered new mainPage %r: %r" % (client, clientID)
             print "    Number of active pages currently: %d" % len(self.clients)
         return clientID
 
     def getClient(self, clientID):
+        if g_debug >= 3:
+            print "web_mainpage.mainPageFactory.getClient()  %r" % (self.clients[clientID])
         return self.clients[clientID]
 
     def removeClient(self, clientID):
@@ -187,6 +203,8 @@ class MainPage(athena.LivePage):
         return p_context.tag[l_element]
 
     def child_jsmodule(self, ctx):
+        if g_debug >= 3:
+            print "web_mainpage.MainPage.child_jsmodule() ", MappingCompressedResource(self.jsModules.mapping)
         return MappingCompressedResource(self.jsModules.mapping)
 
     def data_title(self, ctx, data):
@@ -217,12 +235,11 @@ class MainPage(athena.LivePage):
             print "web_mainpage.MainPage.eb_disconnect() "
         pass
 
-# ## END DBK
 
 
 """
 mainpage.py - this is the place where everything is happening, the user will never
-              ever see a page change during the whole visit. Everything the user iw
+              ever see a page change during the whole visit. Everything the user is
               shown is injected as a LiveElement into the page and deleted after it
               has served its purpose.
 
@@ -260,12 +277,16 @@ class MappingCompressedResource(athena.MappingResource):
 
     def __init__(self, mapping):
         self.mapping = mapping
+        if g_debug >= 3:
+            print "web_mainpage.MappingCompressedResources() ", self.mapping
 
     def canCompress(self, req):
         """
         Check whether the client has negotiated a content encoding we support.
         """
         value = req.getHeader('accept-encoding')
+        if g_debug >= 3:
+            print "web_mainpage.MappingCompressedResources.canCompress() ", value
         if value is not None:
             encodings = parseAcceptEncoding(value)
             return encodings.get('gzip', 0.0) > 0.0
@@ -298,7 +319,6 @@ class MainPage2(athena.LivePage):
     addSlash = True
     factory = _mainPageFactory
     jsClass = u'mainPage.Mainpage'
-
     docFactory = loaders.xmlstr("""
         <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
         <html xmlns="http://www.w3.org/1999/xhtml" xmlns:nevow="http://nevow.com/ns/nevow/0.1">
@@ -325,43 +345,42 @@ class MainPage2(athena.LivePage):
         """)
 
     def child_jsmodule(self, ctx):
+        if g_debug >= 3:
+            print "web_mainpage.MainPage2.child_jsmodule", ctx, MappingCompressedResource(self.jsModules.mapping)
         return MappingCompressedResource(self.jsModules.mapping)
 
     def data_title(self, ctx, data):
         return self.pageTitle
 
-    #if you need a place where to keep things during the LifePage being up, please
-    #do it here and only here. Storing states someplace deeper in the hierarchy makes
-    #it extremely difficult to release memory properly due to circular object refs 
+    # If you need a place where to keep things during the LifePage being up, please do it here and only here.
+    # Storing states someplace deeper in the hierarchy makes it extremely difficult to release memory properly due to circular object refs.
     def beforeRender(self, ctx):
+        if g_debug >= 3:
+            print "web_mainpage.MainPage2.beforeRender()", ctx
         self.page.lang = 0
         self.uid = None
         self.username = ''
-        self.pageTitle = 'WelcomeTitle'
+        self.pageTitle = 'Welcome to PyHouse'
         d = self.notifyOnDisconnect()
-        d.addErrback(self.disconn)
+        d.addErrback(self.eb_disconnect)
 
     def render_playground(self, ctx, data):
+        if g_debug >= 3:
+            print "web_mainpage.MainPage2.render_playground()", ctx, data
         f = Playground(self.uid)
         f.setFragmentParent(self)
         return ctx.tag[f]
 
-    def disconn(self, reason):
+    def eb_disconnect(self, reason):
         """
         we will be called back when the client disconnects, clean up whatever needs
         cleaning serverside
         """
+        if g_debug >= 3:
+            print "web_mainpage.MainPage2.eb_disconnect()"
         pass
 
 
-
-
-
-from twisted.internet import defer
-
-#from minimal.common.i18n    import _TStr
-#from minimal.common.helpers import uc
-#from minimal.web.clock      import Clock
 
 REQ_404 = -1
 REQ_ROOT = 0
@@ -370,12 +389,18 @@ REQ_WITHID = 2
 class Playground(athena.LiveElement):
     jsClass = u'mainPage.Playground'
     docFactory = loaders.xmlstr("""
-    <div xmlns:nevow="http://nevow.com/ns/nevow/0.1" nevow:render="liveElement"
-      class="playground" name="playground"
-      style="width: 100%; height: 100%; min-height: 100%; position: absolute; left: 0px; top: 0px; background-color: #c2c2c2;">
-      <img id="waitroller" src="images/waitroller.gif" style="width: 100px; height: 100px; top: 50%; left: 50%; position: absolute; margin-left: -50px; margin-top: -50px;"/>
-    </div>
-  """)
+        <div
+            xmlns:nevow = "http://nevow.com/ns/nevow/0.1"
+            nevow:render = "liveElement"
+            class = "playground" name = "playground"
+            style = "width: 100%; height: 100%; min-height: 100%; position: absolute; left: 0px; top: 0px; background-color: #c2c2c2;"
+            >
+            <h1>PyHouse</h1>
+            <img id = "waitroller" src = "images/waitroller.gif"
+                style = "width: 100px; height: 100px; top: 50%; left: 50%; position: absolute; margin-left: -50px; margin-top: -50px;"/>
+
+        </div>
+        """)
 
     PG_UNKNOWN = -1
     PG_INITED = 0
@@ -389,10 +414,14 @@ class Playground(athena.LiveElement):
 
     def detached(self):
         #clean up whatever needs cleaning...
+        if g_debug >= 3:
+            print "web_mainpage.Playground.detached()"
         log.msg('playground object was detached cleanly')
 
     @athena.expose
     def inject_404(self):
+        if g_debug >= 3:
+            print "web_mainpage.Playground.inject_404() - called from browser"
         f = fourOfourMsg()
         f.setFragmentParent(self)
         return f
@@ -447,10 +476,20 @@ class Playground(athena.LiveElement):
             d.addCallback(rootmatch)
         return d
 
+class Clock(athena.LiveElement):
+    jsClass = u'mainPage.Clock'
+    docFactory = loaders.xmlstr("""
+        <div xmlns:nevow="http://nevow.com/ns/nevow/0.1" nevow:render="liveElement"
+          class="clock" name="clock"
+          style="background-color:#000000; color:#ffffff; font-size:600%; width: 350px; height: 100px; top: 50%; left: 50%; position: absolute; margin-left: -175px; margin-top: -50px;">
+        </div>
+        """)
 
-
-
-
+    @athena.expose
+    def getTimeOfDay(self):
+        if g_debug > -3:
+            print "web_mainpage.Clock.getTimeOfDay() - called from browser"
+        return uc(time.strftime("%I:%M:%S", time.localtime(time.time())))
 
 
 def isMobileClient(request):
@@ -466,31 +505,39 @@ def isMobileClient(request):
     return False
 
 def factory(ctx, segments):
+    """ If segments contains a liveID (len = 32) the page stored in self.clients will be returned.
+    Status of the given page is stored in the page object itself and nowhere else.
     """
-    If segments contains a liveID the page stored in self.clients will be returned. Status
-    of the given page is stored in the page object itself and nowhere else.
-    """
+    if g_debug >= 3:
+        print "web_mainpage.factory(1) ", segments
     seg0 = segments[0]
     if seg0 == '':
+        # Starting page - no segments yet
         if isMobileClient(inevow.IRequest(ctx)):
+            if g_debug >= 3:
+                print "web_mainpage.factory(2) - mobilePage: ", segments[1:]
             return mobilePage(), segments[1:]
         else:
+            if g_debug >= 3:
+                print "web_mainpage.factory(3) - MainPage2: ", MainPage2(), segments[1:]
             return MainPage2(), segments[1:]
     elif _mainPageFactory.clients.has_key(seg0):
+        # xxx
+        if g_debug >= 3:
+            print "web_mainpage.factory(4) - has_key: ", _mainPageFactory.clients[seg0], segments[1:]
         return _mainPageFactory.clients[seg0], segments[1:]
     elif len(seg0) == 32:
+        # We have a liveID 
         IRequest(ctx).addCookie(COOKIEKEY, seg0, http.datetimeToString(time.time() + 30.0))
+        if g_debug >= 3:
+            print "web_mainpage.factory(5) - liveID: ", url.URL.fromString('/'), ()
         return url.URL.fromString('/'), ()
     else:
+        #
+        if g_debug >= 3:
+            print "web_mainpage.factory(6) - None: ", None, segments
         return None, segments
 
-
-
-
-
-
-#! /usr/bin/env python
-#-*- coding: iso-8859-1 -*-
 
 """
 helper funcs and classes
@@ -561,11 +608,4 @@ def getObjects(oname):
                 l_obj_list.append(o)
     return l_obj_list
 
-
-
-
-
-
-
-
-
+### END DBK
