@@ -2,93 +2,101 @@
 
 // import Nevow.Athena
 
-Nevow.Athena.Widget.subclass(helpers, "Widget").methods(
+/*
+ * This basic widget can attach subwidgets and provides some other basic functionality.
+ * Special attention should be paid to the function ready which should be overridden in almost every case,
+ *  working with the widgetready function in a closure.
+ * widgetready could of call another method func in the class but practice shows, that the point of being informed that
+ *  we're setup properly for action is way to important to delegate it into superclass.
+ * Think of ready as a stub, which is more like a template to start work on your own widgets implementation.
+ */
+
+Nevow.Athena.Widget.subclass(helpers, 'Widget').methods(
 		
-	function __init__(_1, _2) {
-		helpers.Widget.upcall(_1, "__init__", _2);
+	function __init__(self, node) {
+		helpers.Widget.upcall(self, '__init__', node);
 	},
 
-	function ready(_3) {
-		function widgetready(_4) {
-		}
-		var _5 = collectIMG_src(_3.node, null);
-		var d = loadImages(_5);
-		d.addCallback(widgetready);
-		return d;
-	},
+	function ready(self) {
 
-	function loaded(_7) {
-		_7.isloaded = true;
-	},
-
-	function show(_8) {
-		_8.node.style.visibility = "visible";
-	},
-
-	function hide(_9) {
-		_9.node.style.visibility = "hidden";
-	},
-
-	function genericErrback(_a, _b) {
-		alert("widget injection failed - " + _b);
-	},
-
-	function attachWidget(self, p_name, p_params, p_readyfunc) {
-		var d1 = _c.callRemote(p_name, p_params);
-		
-		d1.addCallback(function liveElementReceived(le) {
-			var d2 = self.addChildWidgetFromWidgetInfo(le);
-			
-			d2.addCallback(function childAdded(_13) {
-				self.node.appendChild(_13.node);
-				var d3 = _13.ready();
-				
-				function isready() {
-					_13.show();
-				}
-				
-				if (!p_readyfunc) {
-					p_readyfunc = isready;
-				}
-				d3.addCallback(p_readyfunc);
-				
-				d3.addErrback(function(res) {
-					self.genericErrback(res);
-				});
-			});
-			
-			d2.addErrback(function(res) {
-				self.genericErrback(res);
-			});
-		});
-		
-		d1.addErrback(function(res) {
-			self.genericErrback(res);
-		});
-	},
-
-	function detached(_18) {
-		Divmod.debug("---", _18.node.className
-			+ " object was detached cleanly");
-	_18.node.parentNode.removeChild(_18.node);
-	common.helpers.Widget.upcall(_18, "detached");
-	});
-
-
-helpers.Widget.subclass(helpers, "FourOfour").methods(
-	function ready(_19) {
-		
 		function widgetready(res) {
+		  //do whatever init needs here
 		}
-		
-		var _1b = collectIMG_src(_19.node, null);
-		var d = loadImages(_1b);
-		d.addCallback(widgetready);
-		return d;
-	},
 
-	function show(_1d) {
-		alert("this is a fourOfour Message");
-	});
+		//pre action tasks needing time, getting things from the server like texts
+		//should be done here. There is nothing worse as a widget which has stuff
+		//percolating in at random.
+		    var uris = collectIMG_src(self.node, null);
+		    var d = loadImages(uris);
+		    d.addCallback(widgetready);
+		    return d;
+		  },
+
+	  function loaded(self) { //this func called by the athena setup
+	    self.isloaded = true;
+	  },
+
+  function show(self) {
+    self.node.style.visibility = 'visible';
+  },
+
+  function hide(self) {
+    self.node.style.visibility = 'hidden';
+  },
+
+  function genericErrback(self, res) {
+	    alert('widget injection failed - ' + res);
+	  },
+	  
+	  function attachWidget(self, name, params, readyfunc) {
+	    var d1 = self.callRemote(name, params);
+	    d1.addCallback(function liveElementReceived(le) {
+	      var d2 = self.addChildWidgetFromWidgetInfo(le);
+	      d2.addCallback(function childAdded(widget) {
+	        self.node.appendChild(widget.node);
+	        var d3 = widget.ready();
+	        function isready() {
+	          widget.show();
+	        }
+	        if (!readyfunc)
+	          readyfunc = isready;
+	        d3.addCallback(readyfunc);
+	        d3.addErrback(function(res) {
+	          self.genericErrback(res);
+	        });
+	      });
+	      d2.addErrback(function(res) {
+	        self.genericErrback(res);
+	      });
+	    });
+	    d1.addErrback(function(res) {
+	      self.genericErrback(res);
+	    });
+	  },
+	  
+	  function detached(self) {
+	    Divmod.debug('---', self.node.className + ' object was detached cleanly');
+	    self.node.parentNode.removeChild(self.node);
+	    common.helpers.Widget.upcall(self, 'detached');
+	  }
+	);
+
+
+helpers.Widget.subclass(helpers, 'FourOfour').methods(
+		  function ready(self) {
+		    function widgetready(res) {
+		      //do whatever init needs here
+		    }
+
+		    var uris = collectIMG_src(self.node, null);
+		    var d = loadImages(uris);
+		    d.addCallback(widgetready);
+		    return d;
+		  },
+
+		  function show(self) {
+		    alert('this is a fourOfour Message');
+		  }
+		);
 
 // END DBK

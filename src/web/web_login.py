@@ -65,7 +65,7 @@ class LoginElement(athena.LiveElement):
             print "web_login.LoginElement()"
 
     @athena.expose
-    def login(self, p_login):
+    def loginUser(self, p_login):
         """ A JS receiver for login information from the client.
         """
         if g_debug >= 3:

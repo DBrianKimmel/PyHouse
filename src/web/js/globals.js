@@ -34,7 +34,6 @@ globals = {
 
 	__init__ : function() {
 		globals.appLoaded = false;
-
 		globals.center = {
 			x : 400,
 			y : 280
@@ -43,15 +42,15 @@ globals = {
 			w : 800,
 			h : 655
 		};
-	}
-};
+	}  // __init__
+};  // globals
 
 function int2str(i) {
 	if (i < 10)
 		return '0' + String(i);
 	else
 		return String(i);
-}
+}  // int2str
 
 function getCardSizefromCSS() {
 	var s;
@@ -60,12 +59,10 @@ function getCardSizefromCSS() {
 	var h = 0;
 	var n = 0;
 	var done = false;
-
 	while (!done) {
 		var rules = getCSSrules(n);
 		if (rules === null)
 			break;
-
 		for ( var i = 0; i < rules.length; i++) {
 			if (/\.cardsize/.test(rules[i].selectorText)) {
 				size = rules[i].style.width;
@@ -94,7 +91,7 @@ function getCardSizefromCSS() {
 		w : w,
 		h : h
 	};
-}
+}  // getCardSizefromCSS
 
 function collectClasses(node) {
 	var classnames = [];
@@ -106,7 +103,8 @@ function collectClasses(node) {
 		}
 	}
 	return classnames;
-}
+}  // collectClasses
+
 
 // collects all the URIs present in img tags in within this node. If the imgs
 // array
@@ -118,16 +116,13 @@ function collectIMG_src(node, imgs) {
 	if (imgs != typeof ([])) {
 		imgs = [];
 	}
-
-	var nodes = Divmod.Runtime.theRuntime.getElementsByTagNameShallow(node,
-			'img');
+	var nodes = Divmod.Runtime.theRuntime.getElementsByTagNameShallow(node, 'img');
 	for ( var i = 0; i < nodes.length; i++) {
 		var src = nodes[i].src;
 		imgs.push(src);
 	}
-
 	return imgs;
-}
+}  // CollectIMG_src
 
 function getCSSrules(n) {
 	if (n < document.styleSheets.length) {
@@ -138,14 +133,14 @@ function getCSSrules(n) {
 		}
 	}
 	return null;
-}
+}  // getCSSrules
 
 /*
- * Collects all URIs in the present CSS which refer to images, thus allowing for
- * the loadImages function to check for all images present in a browser neutral
- * way. If passed null the function creates an empty array of URIs and starts
- * collecting them. This allows for having an images array beforehand and adding
- * other images (from offsite URIs) to the array manually.
+ * Collects all URIs in the present CSS which refer to images, thus allowing for the loadImages
+ *  function to check for all images present in a browser neutral way.
+ * 
+ * If passed null the function creates an empty array of URIs and starts collecting them.
+ * This allows for having an images array beforehand and adding other images (from offsite URIs) to the array manually.
  */
 function collectCSS_backgroundImages(imgs, selectors) {
 	if (imgs === null) {
@@ -158,7 +153,7 @@ function collectCSS_backgroundImages(imgs, selectors) {
 				return;
 		}
 		imgs.push(uri);
-	}
+	}  // addURI
 
 	function matchSelectors(sel, sels) {
 		if (sels === null)
@@ -169,22 +164,20 @@ function collectCSS_backgroundImages(imgs, selectors) {
 				return true;
 		}
 		return false;
-	}
+	}  // matchSelectors
 
 	var n = 0;
 	while (true) {
 		var rules = getCSSrules(n);
 		if (rules === null)
 			break;
-
 		for ( var i = 0; i < rules.length; i++) {
 			if (matchSelectors(rules[i].selectorText, selectors)) {
 				var uri = rules[i].style.backgroundImage;
 				if ((uri != 'none') && (uri.length > 0)) {
 					var u = /^url\((.*)\)$/.exec(uri);
 					if (u) {
-						addURI(u[1]); // Safari has rather strange ideas of
-										// URIs in CSS
+						addURI(u[1]); // Safari has rather strange ideas of URIs in CSS
 					}
 				}
 			}
@@ -192,15 +185,15 @@ function collectCSS_backgroundImages(imgs, selectors) {
 		n++;
 	}
 	return imgs;
-}
+}  // collectCSS_backgroundImages
 
-globals.TimeoutError = Divmod.Error
-		.subclass('globals.TimeoutError');
 
-// given a bunch of flags this function will sit and wait until all flags go to
-// true.
-// If this happens callback is called, if not after some time the errback will
-// be triggered
+globals.TimeoutError = Divmod.Error.subclass('globals.TimeoutError');
+
+/*
+ * Given a bunch of flags this function will sit and wait until all flags go to true.
+ * If this happens callback is called, if not after some time the errback will be triggered.
+ */
 
 function waitfor(flags, timeout) {
 	function flagstrue() {
@@ -208,7 +201,6 @@ function waitfor(flags, timeout) {
 			if (!flags[i])
 				return false;
 		}
-
 		return true;
 	}
 
@@ -226,14 +218,14 @@ function waitfor(flags, timeout) {
 			stepcount++;
 			self.timer = setTimeout(checkStep, 1000 / steprate);
 		}
-	};
+	};  // checkStep
 
 	self.timer = setTimeout(checkStep, 1000 / steprate);
 	return waitDeferred;
-}
+}  // waitfor
 
-globals.ImageLoadingError = Divmod.Error
-		.subclass('globals.ImageLoadingError');
+
+globals.ImageLoadingError = Divmod.Error.subclass('globals.ImageLoadingError');
 
 function loadImages(uris) {
 	var imgs = [];
@@ -248,21 +240,19 @@ function loadImages(uris) {
 		if (!img.complete) {
 			return false;
 		}
-
 		if (typeof img.naturalWidth != "undefined" && img.naturalWidth === 0) {
 			return false;
 		}
 		return true;
-	}
+	}  // isImageOK
 
 	function imgsloaded() {
 		for ( var i = 0; i < imgs.length; i++) {
 			if (!isImageOk(imgs[i]))
 				return false;
 		}
-
 		return true;
-	}
+	}  // imgsloaded
 
 	function imgsNotloaded() {
 		var estr = '';
@@ -270,16 +260,16 @@ function loadImages(uris) {
 			if (!isImageOk(imgs[i])) {
 				if (estr.length > 0)
 					estr += '; ';
-
 				estr = estr + imgs[i].src;
 			}
 		}
 		return estr;
-	}
+	}  // imgsNotloaded
 
 	var stepcount = 0;
 	var steprate = 2; // checks per second
 	var readyDeferred = Divmod.Defer.Deferred();
+
 	var checkStep = function() {
 		if ((stepcount > 120)) {
 			self.timer = null;
@@ -292,14 +282,17 @@ function loadImages(uris) {
 			stepcount++;
 			self.timer = setTimeout(checkStep, 1000 / steprate);
 		}
-	};
+	};  // checkStep
 
 	self.timer = setTimeout(checkStep, 1000 / steprate);
 	return readyDeferred;
-}
+}  // loadImages
 
-Divmod.Runtime.theRuntime.addLoadEvent(function appStartup() {
-	globals.playground.appStartup();
-});
+Divmod.Runtime.theRuntime.addLoadEvent(
+	function appStartup() {
+		//alert("appStartup 1 ")
+		globals.playground.appStartup();
+	}
+);
 
 // END DBK

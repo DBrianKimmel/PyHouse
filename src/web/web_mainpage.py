@@ -4,9 +4,30 @@
 Created on Jul 27, 2013
 
 @author: briank
+
+Note - A big hunk of the core was derived from code kindly sent to me by Werner Thie.
+This portion involves the creation of a mainpage and within it a playground.
+All the rest of the web page are segments that appear when needed and are deleted
+when finished.
+
+Here is Werner's opening comment:
+mainpage.py - this is the place where everything is happening, the user will never
+              ever see a page change during the whole visit. Everything the user iw
+              shown is injected as a LiveElement into the page and deleted after it
+              has served its purpose.
+
+              The main element which resides in this page and handles all aspects of
+              user interaction is the playground. It has a first go at the arguments
+              and then injects whatever is needed.
+
+              Due to the fact that webapps are highly user driven, the main interaction
+              points are usually triggered from the client, whereas things such as status
+              updates or realtime data delivery is handled by the server at its own pace
+
 """
 
 # Import system type stuff
+import logging
 import gc
 import os
 import time
@@ -14,13 +35,6 @@ from twisted.python.filepath import FilePath
 from twisted.python import util
 from nevow import loaders
 from nevow import athena
-
-try:
-    import hashlib
-    md5_constructor = hashlib.md5
-except ImportError:
-    import md5
-    md5_constructor = md5.md5
 
 try:
     from twisted.web import http
@@ -35,7 +49,6 @@ from nevow import inevow
 from nevow import guard
 from nevow.compression import parseAcceptEncoding
 from nevow.inevow import IRequest
-from nevow.useragent import UserAgent
 from twisted.internet import defer
 
 # Import PyMh files and modules.
@@ -55,45 +68,20 @@ g_debug = 4
 # 2 = major routine entry
 # 3 = Config file handling
 # 4 = Basic data
+# 5 = Detail Data
 # + = NOT USED HERE
-
-
-mobileClients = {}
-exc = [
-    "function",
-    "type",
-    "list",
-    "dict",
-    "tuple",
-    "wrapper_descriptor",
-    "module",
-    "method_descriptor",
-    "member_descriptor",
-    "instancemethod",
-    "builtin_function_or_method",
-    "frame",
-    "classmethod",
-    "classmethod_descriptor",
-    "_Environ",
-    "MemoryError",
-    "_Printer",
-    "_Helper",
-    "getset_descriptor",
-    "weakreaf"
-]
-inc = [
-]
-prev = {}
+g_logger = logging.getLogger('PyHouse.webMain ')
 
 
 class FileNoListDir(static.File):
 
     def directoryListing(self):
-        return error.ForbiddenResource()
+        print "ERROR - web_mainpage.directoryListing() - Forbidden resource"
+        #return error.ForbiddenResource()
 
 
-class fourOfour(athena.LiveElement):
-    jsClass = u'mainPage.fourOfour'
+class FourOfour(athena.LiveElement):
+    jsClass = u'mainPage.FourOfour'
     docFactory = loaders.xmlstr("""
         <div xmlns:nevow="http://nevow.com/ns/nevow/0.1" nevow:render="liveElement">
         </div>
@@ -118,11 +106,11 @@ class TheRoot(rend.Page):
         }
         print #separate package hinting from logging
 
-    def locateChild(self, ctx, segments):
-        rsrc, segs = factory(ctx, segments)
-        if rsrc == None:
-            rsrc, segs = super(TheRoot, self).locateChild(ctx, segments)
-        return rsrc, segs
+    def locateChild(self, p_context, p_segments):
+        l_resource, l_segments = factory(p_context, p_segments)
+        if l_resource == None:
+            l_resource, l_segments = super(TheRoot, self).locateChild(p_context, p_segments)
+        return l_resource, l_segments
 
 
 class mainPageFactory:
@@ -211,7 +199,7 @@ class MainPage(athena.LivePage):
         return self.pageTitle
 
     # If you need a place where to keep things during the LivePage being up, please do it here and only here.
-    # Storing states someplace deeper in the hierarchy makes it extremely difficult to release memory properly due to circular object refs 
+    # Storing states someplace deeper in the hierarchy makes it extremely difficult to release memory properly due to circular object references.
     def beforeRender(self, ctx):
         if g_debug >= 3:
             print "web_mainpage.MainPage.beforeRender() "
@@ -278,7 +266,7 @@ class MappingCompressedResource(athena.MappingResource):
     def __init__(self, mapping):
         self.mapping = mapping
         if g_debug >= 3:
-            print "web_mainpage.MappingCompressedResources() ", self.mapping
+            print "web_mainpage.MappingCompressedResources() ", self.mapping.keys
 
     def canCompress(self, req):
         """
@@ -346,7 +334,7 @@ class MainPage2(athena.LivePage):
 
     def child_jsmodule(self, ctx):
         if g_debug >= 3:
-            print "web_mainpage.MainPage2.child_jsmodule", ctx, MappingCompressedResource(self.jsModules.mapping)
+            print "web_mainpage.MainPage2.child_jsmodule"
         return MappingCompressedResource(self.jsModules.mapping)
 
     def data_title(self, ctx, data):
@@ -356,7 +344,7 @@ class MainPage2(athena.LivePage):
     # Storing states someplace deeper in the hierarchy makes it extremely difficult to release memory properly due to circular object refs.
     def beforeRender(self, ctx):
         if g_debug >= 3:
-            print "web_mainpage.MainPage2.beforeRender()", ctx
+            print "web_mainpage.MainPage2.beforeRender()"
         self.page.lang = 0
         self.uid = None
         self.username = ''
@@ -387,7 +375,7 @@ REQ_ROOT = 0
 REQ_WITHID = 2
 
 class Playground(athena.LiveElement):
-    jsClass = u'mainPage.Playground'
+    jsClass = u'playground.Playground'
     docFactory = loaders.xmlstr("""
         <div
             xmlns:nevow = "http://nevow.com/ns/nevow/0.1"
@@ -416,32 +404,43 @@ class Playground(athena.LiveElement):
         #clean up whatever needs cleaning...
         if g_debug >= 3:
             print "web_mainpage.Playground.detached()"
-        log.msg('playground object was detached cleanly')
+        #log.msg('playground object was detached cleanly')
 
     @athena.expose
     def inject_404(self):
         if g_debug >= 3:
             print "web_mainpage.Playground.inject_404() - called from browser"
-        f = fourOfourMsg()
+        f = FourOfour()
         f.setFragmentParent(self)
         return f
 
     @athena.expose
     def clock(self, params):
-        if g_debug > -3:
+        if g_debug >= 3:
             print "web_mainpage.Playground.clock() - called from browser"
         f = Clock()
         f.setFragmentParent(self)
         return f
 
     @athena.expose
+    def login(self, p_params):
+        if g_debug >= 3:
+            print "web+mainpage.Playground.login() - called from browser."
+        l_element = web_login.LoginElement()
+        l_element.setFragmentParent(self)
+        return l_element
+
+    @athena.expose
     def guiready(self):
         if g_debug > -3:
             print "web_mainpage.Playground.guiready() - called from browser ", self.uid
 
-        def usermatch(user):  #select usually returns a list, knowing that we have unique results
+        def cb_usermatch(user):  #select usually returns a list, knowing that we have unique results
             reqtype = REQ_404   #the result is unpacked already and a single item returned
             udata = {}
+            if g_debug >= 3:
+                print "web_mainpage.Playground.cb_usermatch() <callback> res:{0:}".format(res)
+                #print "    page=", self.page
             if len(user) > 0:
                 self.page.userid = user['id']
                 reqtype = REQ_WITHID
@@ -452,13 +451,13 @@ class Playground(athena.LiveElement):
                         udata[uc(k)] = user[k]
             return reqtype, udata
 
-        def rootmatch(res):    #select usually returns a list, knowing that we have unique results
+        def cb_rootmatch(res):    #select usually returns a list, knowing that we have unique results
             reqtype = REQ_ROOT   #the result is unpacked already and a single item returned
             udata = {}
             user = {}
             if g_debug >= 3:
-                print "web_mainpage.Playground.rootmatch() <callback> res:{0:}".format(res)
-                print "    page=", self.page
+                print "web_mainpage.Playground.cb_rootmatch() <callback> res:{0:}".format(res)
+                #print "    page=", self.page
             user['id'] = self.page.username
             for k in user.keys():
                 if type(user[k]) == type(''):
@@ -467,17 +466,20 @@ class Playground(athena.LiveElement):
                     udata[uc(k)] = user[k]
             return reqtype, udata
 
+        def eb_nomatch():
+            print "ERROR - No Match"
+
         if self.uid and len(self.uid) == 32:
             d = self.page.userstore.getUserWithUID(self.uid)
-            d.addCallback(usermatch)
-            d.addErrback(nomatch)
+            d.addCallback(cb_usermatch)
+            d.addErrback(eb_nomatch)
         else:
             d = defer.succeed(0)
-            d.addCallback(rootmatch)
+            d.addCallback(cb_rootmatch)
         return d
 
 class Clock(athena.LiveElement):
-    jsClass = u'mainPage.Clock'
+    jsClass = u'clock.Clock'
     docFactory = loaders.xmlstr("""
         <div xmlns:nevow="http://nevow.com/ns/nevow/0.1" nevow:render="liveElement"
           class="clock" name="clock"
@@ -492,49 +494,32 @@ class Clock(athena.LiveElement):
         return uc(time.strftime("%I:%M:%S", time.localtime(time.time())))
 
 
-def isMobileClient(request):
-    agentString = request.getHeader("user-agent")
-    if agentString is None:
-        return False
-    agent = UserAgent.fromHeaderValue(agentString)
-    if agent is None:
-        return False
-    requiredVersion = mobileClients.get(agent.browser, None)
-    if requiredVersion is not None:
-        return agent.version >= requiredVersion
-    return False
-
 def factory(ctx, segments):
     """ If segments contains a liveID (len = 32) the page stored in self.clients will be returned.
     Status of the given page is stored in the page object itself and nowhere else.
     """
-    if g_debug >= 3:
+    if g_debug >= 5:
         print "web_mainpage.factory(1) ", segments
     seg0 = segments[0]
     if seg0 == '':
         # Starting page - no segments yet
-        if isMobileClient(inevow.IRequest(ctx)):
-            if g_debug >= 3:
-                print "web_mainpage.factory(2) - mobilePage: ", segments[1:]
-            return mobilePage(), segments[1:]
-        else:
-            if g_debug >= 3:
-                print "web_mainpage.factory(3) - MainPage2: ", MainPage2(), segments[1:]
-            return MainPage2(), segments[1:]
+        if g_debug >= 5:
+            print "web_mainpage.factory(3) - MainPage2: ", MainPage2(), segments[1:]
+        return MainPage2(), segments[1:]
     elif _mainPageFactory.clients.has_key(seg0):
         # xxx
-        if g_debug >= 3:
+        if g_debug >= 5:
             print "web_mainpage.factory(4) - has_key: ", _mainPageFactory.clients[seg0], segments[1:]
         return _mainPageFactory.clients[seg0], segments[1:]
     elif len(seg0) == 32:
         # We have a liveID 
         IRequest(ctx).addCookie(COOKIEKEY, seg0, http.datetimeToString(time.time() + 30.0))
-        if g_debug >= 3:
+        if g_debug >= 5:
             print "web_mainpage.factory(5) - liveID: ", url.URL.fromString('/'), ()
         return url.URL.fromString('/'), ()
     else:
         #
-        if g_debug >= 3:
+        if g_debug >= 5:
             print "web_mainpage.factory(6) - None: ", None, segments
         return None, segments
 
@@ -560,7 +545,7 @@ def dc(msg):
     else:
         return msg.encode('iso-8859-1')
 
-def dumpObjects(delta = True, limit = 0, include = inc, exclude = []):
+def dumpObjects(delta = True, limit = 0, include = [], exclude = []):
     global prev
     if include != [] and exclude != []:
         print 'cannot use include and exclude at the same time'
