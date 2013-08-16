@@ -1,5 +1,7 @@
-//clock.js - displays the server time, polling from the client via nevows RPC
-//
+/* clock.js
+ * 
+ * Displays the server time, polling from the client via nevows RPC
+ */
 
 // import Nevow.Athena
 // import globals
@@ -12,26 +14,28 @@ helpers.Widget.subclass(clock, 'Clock').methods(
 	},
 
 	function ready(self) {
-		function widgetready(res) {
-			self.getAndShowTime(); // do whatever init needs here, show for the widget is handled in superclass
+		
+		function cb_widgetready(res) {
+			// do whatever init needs here, show for the widget is handled in superclass
+			self.getAndShowTime();
 		}
 	
 		var uris = collectIMG_src(self.node, null);
 		var d = loadImages(uris);
-		d.addCallback(widgetready);
+		d.addCallback(cb_widgetready);
 		return d;
 	},
 
 	function getAndShowTime(self) {
 
-		function showTime(time) {
-			self.node.innerHTML = time;
+		function cb_showTime(p_time) {
+			self.node.innerHTML = p_time;
 			self.callLater(1.0, function() {
 				self.getAndShowTime();
 			});
 		}
 	
 		var d = self.callRemote('getTimeOfDay');
-		d.addCallback(showTime);
+		d.addCallback(cb_showTime);
 	}
 );

@@ -1,20 +1,21 @@
-<!-- rootMenuElement.xml
+<!-- rootMenuElement.html
  -->
+ 
 <div
     xmlns:athena='http://divmod.org/ns/athena/0.7'
     xmlns:nevow='http://nevow.com/ns/nevow/0.1'
 	nevow:render='liveElement'
 	>
-	<div name='LoginElement'>
-		<form name="echoElement">
-			<athena:handler event="onsubmit" handler="doSay" />
+	<div name=RootMenuDiv'>
+		<form name="RootMenuForm">
+			<athena:handler event="onsubmit" handler="doRootMenu" />
 			<div name="scrollArea" />
 			<input name="message" />
-			<input type="submit" value="Push me once"
-				onclick='Nevow.Athena.Widget.get(this).clicked()' />
+			<input type="submit" name = "RootMenuSubmit" value="Push me once" />
 		</form>
 	</div>
 </div>
+
 <!--
 ### END DBK -->
  

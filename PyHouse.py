@@ -2,7 +2,9 @@
 
 """ PyHouse.py - Run the python version house automation.
 
-see main.__init__.py for core documentation.
+Uses I{epytext} markup for documentation.
+
+see C{main.__init__.py} for core documentation.
 
 During development this is run by hand.
 It is, however, planned to be a daemon that is kicked off on system start-up.
@@ -100,14 +102,14 @@ class PyHouseData(object):
 
     def __str__(self):
         l_ret = "PyHouseData:: "
-        l_ret += "\n\tWebData:{0:}, ".format(self.WebData)
         l_ret += "\n\tWebAPI:{0:}, ".format(self.WebAPI)
-        l_ret += "\n\tLogsData:{0:}, ".format(self.LogsData)
+        l_ret += "\n\tWebData:{0:}, ".format(self.WebData)
         l_ret += "\n\tLogsAPI:{0:}, ".format(self.LogsAPI)
-        l_ret += "\n\tHousesData:{0:}, ".format(self.HousesData)
-        l_ret += "\n\tHousesAPI:{0:}, ".format(self.HousesAPI)
+        l_ret += "\n\tLogsData:{0:}, ".format(self.LogsData)
         l_ret += "\n\tXmlRoot:{0:}, ".format(self.XmlRoot)
-        l_ret += "\n\tXmlFileName:{0:};".format(self.XmlFileName)
+        l_ret += "\n\tXmlFileName:{0:}, ".format(self.XmlFileName)
+        l_ret += "\n\tHousesAPI:{0:}, ".format(self.HousesAPI)
+        l_ret += "\n\tHousesData:{0:};".format(self.HousesData)
         return l_ret
 
     def __repr__(self):

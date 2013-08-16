@@ -106,12 +106,11 @@ function collectClasses(node) {
 }  // collectClasses
 
 
-// collects all the URIs present in img tags in within this node. If the imgs
-// array
-// is passed into the function all found URIs are appended to the array, which
-// can
-// be passed later on to the loadImages function, which preloads all those
-// images
+/*
+ * Collects all the URIs present in img tags in within this node.
+ * If the imgs array is passed into the function all found URIs are appended to the array, which can
+ *  be passed later on to the loadImages function, which preloads all those images.
+ */
 function collectIMG_src(node, imgs) {
 	if (imgs != typeof ([])) {
 		imgs = [];
@@ -188,12 +187,12 @@ function collectCSS_backgroundImages(imgs, selectors) {
 }  // collectCSS_backgroundImages
 
 
-globals.TimeoutError = Divmod.Error.subclass('globals.TimeoutError');
-
-/*
+/* DBK - unused so far.
+ * 
  * Given a bunch of flags this function will sit and wait until all flags go to true.
  * If this happens callback is called, if not after some time the errback will be triggered.
  */
+globals.TimeoutError = Divmod.Error.subclass('globals.TimeoutError');
 
 function waitfor(flags, timeout) {
 	function flagstrue() {
@@ -225,6 +224,9 @@ function waitfor(flags, timeout) {
 }  // waitfor
 
 
+/*
+ * 
+ */
 globals.ImageLoadingError = Divmod.Error.subclass('globals.ImageLoadingError');
 
 function loadImages(uris) {
@@ -288,6 +290,10 @@ function loadImages(uris) {
 	return readyDeferred;
 }  // loadImages
 
+
+/*
+ * 
+ */
 Divmod.Runtime.theRuntime.addLoadEvent(
 	function appStartup() {
 		//alert("appStartup 1 ")

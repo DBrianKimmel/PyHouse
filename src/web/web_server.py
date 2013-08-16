@@ -83,11 +83,11 @@ class API(object):
         g_logger.info("Initialized")
 
     def Start(self, p_pyhouses_obj):
+        self.m_pyhouses_obj = p_pyhouses_obj
         if g_debug >= 2:
             print "web_server.API.Start()"
         if g_debug >= 3:
             print "    ", p_pyhouses_obj
-        self.m_pyhouses_obj = p_pyhouses_obj
         self.web_data = web_utils.WebUtilities().read_web_xml(self.web_data, p_pyhouses_obj.XmlRoot)
         #l_site_dir = os.path.split(os.path.abspath(__file__))[0]
         l_site_dir = None
@@ -95,7 +95,7 @@ class API(object):
         listenTCP(self.web_data.WebPort, l_site)
         l_msg = "Port:{0:}, Path:{1:}".format(self.web_data.WebPort, l_site_dir)
         if g_debug >= 2:
-            print "web_server.Start() - {0:}".format(l_msg)
+            print "web_server.API.Start() - Started - {0:}".format(l_msg)
         g_logger.info("Started - {0:}".format(l_msg))
         return self.web_data
 

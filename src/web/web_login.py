@@ -34,6 +34,30 @@ class LoginData(object):
     Stage 3 - Username and some sort of common login identifier from some secure external site.
     """
 
+    def __init__(self):
+        Username = ''
+        Password = ''
+
+
+class LoginElement(athena.LiveElement):
+    """ a 'live' login element containing a username and password.
+    """
+    docFactory = loaders.xmlfile(webdir('template/loginElement.html').path)
+    jsClass = u'login.LoginWidget'
+
+    def __init__(self, p_playground_obj):
+        self.m_pyhouses_obj = p_playground_obj
+        if g_debug >= 2:
+            print "web_login.LoginElement() - Playground:{0:}".format(p_playground_obj)
+
+    @athena.expose
+    def login(self, p_json):
+        """ A JS receiver for login information from the client.
+        """
+        if g_debug >= 3:
+            print "web_login.LoginElement.login() - Json:{0:}".format(p_json)
+        Login().validate_user(p_json, self.m_pyhouses_obj)
+
 
 class Login(object):
     """Actual login procedures.
@@ -50,63 +74,7 @@ class Login(object):
     def load_rootMenu_page(self):
         if g_debug >= 2:
             print "web_login.load_rootMenu_page()"
-        web_rootMenu.RootMenuPage('Root_Menu_1', self.m_pyhouses_obj)
+        #web_rootMenu.RootMenuPage('Root_Menu_1', self.m_pyhouses_obj)
 
-
-class LoginElement(athena.LiveElement):
-    """ a 'live' login element containing a username and password.
-    """
-    docFactory = loaders.xmlfile(webdir('template/loginElement.xml').path)
-    jsClass = u'login.LoginElement'
-
-    def __init__(self, p_pyhouses_obj):
-        self.m_pyhouses_obj = p_pyhouses_obj
-        if g_debug >= 2:
-            print "web_login.LoginElement()"
-
-    @athena.expose
-    def loginUser(self, p_login):
-        """ A JS receiver for login information from the client.
-        """
-        if g_debug >= 3:
-            print "web_login.LoginElement.login() - ", p_login
-        Login().validate_user(p_login, self.m_pyhouses_obj)
-
-
-class LoginPage(athena.LivePage):
-    """
-    """
-    docFactory = loaders.xmlfile('login.xml', templateDir = 'src/web/template')
-
-    def __init__(self, p_name, p_pyhouses_obj, *args, **kwargs):
-        self.m_name = p_name
-        self.m_pyhouses_obj = p_pyhouses_obj
-        if g_debug >= 2:
-            print "web_login.LoginPage() - Name =", p_name
-        super(LoginPage, self).__init__(*args, **kwargs)
-
-    def child_(self, p_context):
-        if g_debug >= 3:
-            print "web_login.LoginPage.child_() "
-            print "    Context =", p_context
-        return LoginPage('LoginPage 2', self.m_pyhouses_obj)
-
-    def render_livePage(self, p_context, p_data):
-        if g_debug >= 3:
-            print "web_login.LoginPage.render_livePage() "
-            print "    Context =", p_context
-            print "    Data =", p_data
-        l_element = LoginElement(self.m_pyhouses_obj)
-        l_element.setFragmentParent(self)
-        return p_context.tag[l_element]
-
-    def render_debug(self, p_context, p_data):
-        if g_debug >= 3:
-            print "web_login.LoginPage.render_debug() "
-            print "    Context =", p_context
-            print "    Data =", p_data
-        l_fragment = athena.IntrospectionFragment()
-        l_fragment.setFragmentParent(self)
-        return p_context.tag[l_fragment]
 
 # ## END DBK

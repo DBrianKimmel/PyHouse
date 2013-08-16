@@ -54,6 +54,8 @@ from twisted.internet import defer
 # Import PyMh files and modules.
 from src import web
 from src.web import web_login
+from src.web import web_rootMenu
+from src.web import web_houseSelect
 
 
 # Handy helper for finding external resources nearby.
@@ -62,7 +64,7 @@ imagepath = webdir('images').path
 jspath = webdir('js').path
 templatepath = webdir('template').path
 
-g_debug = 4
+g_debug = 5
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
@@ -82,17 +84,15 @@ class FileNoListDir(static.File):
 
 class FourOfour(athena.LiveElement):
     jsClass = u'mainPage.FourOfour'
-    docFactory = loaders.xmlstr("""
-        <div xmlns:nevow="http://nevow.com/ns/nevow/0.1" nevow:render="liveElement">
-        </div>
-    """)
+    docFactory = loaders.xmlfile(webdir('template/404Element.html').path)
 
 
 class TheRoot(rend.Page):
     """This is the root - given to the app server!
     """
 
-    def __init__(self, p_pyhouses_obj, staticpath, *args, **kw):
+    def __init__(self, p_name, staticpath, p_pyhouses_obj, *args, **kw):
+        self.m_pyhouses_obj = p_pyhouses_obj
         if staticpath == None:
             l_jspath = util.sibpath(jspath, 'js')
             staticpath = os.path.join(l_jspath, '', 'resource')
@@ -104,10 +104,11 @@ class TheRoot(rend.Page):
           'favicon.ico'       : FileNoListDir(os.path.join(imagepath, 'favicon.ico')),
           'waitroller.gif'    : FileNoListDir(os.path.join(imagepath, 'waitroller.gif'))
         }
-        print #separate package hinting from logging
+        if g_debug >= 1:
+            print #separate package hinting from logging
 
     def locateChild(self, p_context, p_segments):
-        l_resource, l_segments = factory(p_context, p_segments)
+        l_resource, l_segments = factory(p_context, p_segments, self.m_pyhouses_obj)
         if l_resource == None:
             l_resource, l_segments = super(TheRoot, self).locateChild(p_context, p_segments)
         return l_resource, l_segments
@@ -122,15 +123,19 @@ class mainPageFactory:
         Was one hell of an expensive line, the basic underlying plugin mechanism does not work in
         vhost situation where everything sits in the same basic namespace, clashes are preprogrammed.
         I decided to fiddle with the package mappings and arrived at a clean version of my packages but,
-        my mappings didn't connect with the mappings collected by other mechanisms. The final trick was
-        to update the module global mapping in jsDeps with my collection, the lonely line below does the trick
+        my mappings didn't connect with the mappings collected by other mechanisms.
+        The final trick was to update the module global mapping in jsDeps with my collection, the lonely line below does the trick
         """
-        if g_debug >= 3:
-            print "web_mainpage.mainPageFactory()"
-        modulepath = os.path.join(os.path.split(__file__)[0], '..')
-        l_jspath = util.sibpath(modulepath, 'js')
+        l_modulepath = os.path.join(os.path.split(__file__)[0], '..')
+        l_jspath = util.sibpath(l_modulepath + 'web', 'js')
         l_siteJSPackage = athena.AutoJSPackage(l_jspath)
         athena.jsDeps.mapping.update(l_siteJSPackage.mapping)
+        if g_debug >= 3:
+            print "web_mainpage.mainPageFactory() "
+        if g_debug >= 4:
+            print "    l_modulepath:{0:}".format(l_modulepath)
+            print "    l_jspath:{0:}".format(l_jspath)
+            print "    l_siteJSPackage:{0:}".format(vars(l_siteJSPackage))
 
     def addClient(self, client):
         clientID = self._newClientID()
@@ -158,70 +163,8 @@ class mainPageFactory:
         return guard._sessionCookie()
 
 _mainPageFactory = mainPageFactory()
-_mainPageFactory.noisy = False
+#_mainPageFactory.noisy = False
 
-
-class MainPage(athena.LivePage):
-    """DBK
-    """
-    addSlash = True
-    factory = _mainPageFactory
-    docFactory = loaders.xmlfile('mainpage.xml', templateDir = 'src/web/template')
-
-    def __init__(self, p_name, p_pyhouses_obj, *args, **kwargs):
-        self.m_name = p_name
-        self.m_pyhouses_obj = p_pyhouses_obj
-        if g_debug >= 2:
-            print "web_mainpage.MainPage() - Name =", p_name
-        super(MainPage, self).__init__(*args, **kwargs)
-
-    def child_(self, p_context):
-        if g_debug >= 3:
-            print "web_mainpage.MainPage.child_() "
-            print "    Context =", p_context
-        return MainPage('MainPage 2', self.m_pyhouses_obj)
-
-    def render_livePage(self, p_context, p_data):
-        if g_debug >= 3:
-            print "web_mainpage.MainPage.render_livePage() "
-            print "    Context =", p_context
-            print "    Data =", p_data
-        l_element = Playground(self.m_pyhouses_obj)
-        l_element.setFragmentParent(self)
-        return p_context.tag[l_element]
-
-    def child_jsmodule(self, ctx):
-        if g_debug >= 3:
-            print "web_mainpage.MainPage.child_jsmodule() ", MappingCompressedResource(self.jsModules.mapping)
-        return MappingCompressedResource(self.jsModules.mapping)
-
-    def data_title(self, ctx, data):
-        return self.pageTitle
-
-    # If you need a place where to keep things during the LivePage being up, please do it here and only here.
-    # Storing states someplace deeper in the hierarchy makes it extremely difficult to release memory properly due to circular object references.
-    def beforeRender(self, ctx):
-        if g_debug >= 3:
-            print "web_mainpage.MainPage.beforeRender() "
-        self.uid = None
-        self.username = ''
-        self.pageTitle = 'Welcome to PyHouse'
-        d = self.notifyOnDisconnect()
-        d.addErrback(self.eb_disconnect)
-
-    def render_playground(self, ctx, data):
-        if g_debug >= 3:
-            print "web_mainpage.MainPage.render_playground() "
-        f = Playground(self.uid)
-        f.setFragmentParent(self)
-        return ctx.tag[f]
-
-    def eb_disconnect(self, reason):
-        """ We will be called back when the client disconnects, clean up whatever needs cleaning serverside.
-        """
-        if g_debug >= 3:
-            print "web_mainpage.MainPage.eb_disconnect() "
-        pass
 
 
 
@@ -265,7 +208,7 @@ class MappingCompressedResource(athena.MappingResource):
 
     def __init__(self, mapping):
         self.mapping = mapping
-        if g_debug >= 3:
+        if g_debug >= 5:
             print "web_mainpage.MappingCompressedResources() ", self.mapping.keys
 
     def canCompress(self, req):
@@ -273,7 +216,7 @@ class MappingCompressedResource(athena.MappingResource):
         Check whether the client has negotiated a content encoding we support.
         """
         value = req.getHeader('accept-encoding')
-        if g_debug >= 3:
+        if g_debug >= 5:
             print "web_mainpage.MappingCompressedResources.canCompress() ", value
         if value is not None:
             encodings = parseAcceptEncoding(value)
@@ -303,59 +246,43 @@ class MappingCompressedResource(athena.MappingResource):
         return self.resourceFactory(impl), []
 
 
-class MainPage2(athena.LivePage):
+class MainPage(athena.LivePage):
     addSlash = True
     factory = _mainPageFactory
-    jsClass = u'mainPage.Mainpage'
-    docFactory = loaders.xmlstr("""
-        <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-        <html xmlns="http://www.w3.org/1999/xhtml" xmlns:nevow="http://nevow.com/ns/nevow/0.1">
-            <head>
-                <title nevow:data="title" nevow:render="data">Page Title</title>
-                <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
-                <nevow:invisible nevow:render="liveglue" />
-                <style type="text/css">
-            html {
-              height: 100%;
-            }
-            body {
-              min-height: 100%;
-            }
-            * html body {
-              height: 100%;
-            }
-                </style>
-            </head>
-            <body style="margin: 0px; padding: 0px; overflow: hidden; height: 100%; width: 100%;">
-                <nevow:invisible nevow:render="playground" />
-            </body>
-        </html>
-        """)
+    jsClass = u'mainPage.mainPage'
+    docFactory = loaders.xmlfile(webdir('template/mainpage.html').path)
+
+    def __init__(self, p_pyhouses_obj):
+        self.m_pyhouses_obj = p_pyhouses_obj
+        super(MainPage, self).__init__()
+        if g_debug >= 3:
+            print "web_mainpage.MainPage() "
 
     def child_jsmodule(self, ctx):
-        if g_debug >= 3:
-            print "web_mainpage.MainPage2.child_jsmodule"
+        if g_debug >= 5:
+            print "web_mainpage.MainPage.child_jsmodule()"
         return MappingCompressedResource(self.jsModules.mapping)
 
     def data_title(self, ctx, data):
         return self.pageTitle
 
-    # If you need a place where to keep things during the LifePage being up, please do it here and only here.
-    # Storing states someplace deeper in the hierarchy makes it extremely difficult to release memory properly due to circular object refs.
     def beforeRender(self, ctx):
+        """If you need a place where to keep things during the livePage being up, please do it here and only here.
+        Storing states someplace deeper in the hierarchy makes it extremely difficult to release memory properly due to circular object references.
+        """
         if g_debug >= 3:
-            print "web_mainpage.MainPage2.beforeRender()"
+            print "web_mainpage.MainPage.beforeRender()"
         self.page.lang = 0
         self.uid = None
         self.username = ''
-        self.pageTitle = 'Welcome to PyHouse'
+        self.pageTitle = 'PyHouse Access'
         d = self.notifyOnDisconnect()
         d.addErrback(self.eb_disconnect)
 
     def render_playground(self, ctx, data):
         if g_debug >= 3:
-            print "web_mainpage.MainPage2.render_playground()", ctx, data
-        f = Playground(self.uid)
+            print "web_mainpage.MainPage.render_playground()"
+        f = Playground(self.m_pyhouses_obj, self.uid)
         f.setFragmentParent(self)
         return ctx.tag[f]
 
@@ -365,7 +292,7 @@ class MainPage2(athena.LivePage):
         cleaning serverside
         """
         if g_debug >= 3:
-            print "web_mainpage.MainPage2.eb_disconnect()"
+            print "web_mainpage.MainPage.eb_disconnect()"
         pass
 
 
@@ -375,27 +302,17 @@ REQ_ROOT = 0
 REQ_WITHID = 2
 
 class Playground(athena.LiveElement):
+    """WARNING.
+        the names of the athena.expose methods seem to have to match the js file name.
+    """
     jsClass = u'playground.Playground'
-    docFactory = loaders.xmlstr("""
-        <div
-            xmlns:nevow = "http://nevow.com/ns/nevow/0.1"
-            nevow:render = "liveElement"
-            class = "playground" name = "playground"
-            style = "width: 100%; height: 100%; min-height: 100%; position: absolute; left: 0px; top: 0px; background-color: #c2c2c2;"
-            >
-            <h1>PyHouse</h1>
-            <img id = "waitroller" src = "images/waitroller.gif"
-                style = "width: 100px; height: 100px; top: 50%; left: 50%; position: absolute; margin-left: -50px; margin-top: -50px;"/>
-
-        </div>
-        """)
-
+    docFactory = loaders.xmlfile(webdir('template/playgroundElement.html').path)
     PG_UNKNOWN = -1
     PG_INITED = 0
 
     def __init__(self, p_pyhouses_obj, uid = None):
         if g_debug >= 3:
-            print "web_mainpage.Playground()"
+            print "web_mainpage.Playground()", p_pyhouses_obj, uid
         super(Playground, self).__init__()
         self.state = self.PG_INITED
         self.uid = uid
@@ -415,40 +332,48 @@ class Playground(athena.LiveElement):
         return f
 
     @athena.expose
-    def clock(self, params):
+    def clock(self, p_params):
         if g_debug >= 3:
-            print "web_mainpage.Playground.clock() - called from browser"
-        f = Clock()
-        f.setFragmentParent(self)
-        return f
+            print "web_mainpage.Playground.clock() - called from browser ", self
+        l_element = Clock()
+        l_element.setFragmentParent(self)
+        return l_element
 
     @athena.expose
     def login(self, p_params):
         if g_debug >= 3:
-            print "web+mainpage.Playground.login() - called from browser."
-        l_element = web_login.LoginElement()
+            print "web+mainpage.Playground.login() - called from browser ", self
+        l_element = web_login.LoginElement(self)
+        l_element.setFragmentParent(self)
+        return l_element
+
+    @athena.expose
+    def rootootMenu(self, p_params):
+        if g_debug >= 3:
+            print "web+mainpage.Playground.rootMenu() - called from browser ", self
+        l_element = web_rootMenu.RootMenuElement(self)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def guiready(self):
-        if g_debug > -3:
-            print "web_mainpage.Playground.guiready() - called from browser ", self.uid
+        if g_debug >= 3:
+            print "web_mainpage.Playground.guiready() - called from browser - UID:{0:}".format(self.uid)
 
-        def cb_usermatch(user):  #select usually returns a list, knowing that we have unique results
+        def cb_usermatch(p_user):  #select usually returns a list, knowing that we have unique results
             reqtype = REQ_404   #the result is unpacked already and a single item returned
             udata = {}
             if g_debug >= 3:
-                print "web_mainpage.Playground.cb_usermatch() <callback> res:{0:}".format(res)
+                print "web_mainpage.Playground.cb_usermatch() <callback> user:{0:}".format(p_user)
                 #print "    page=", self.page
-            if len(user) > 0:
-                self.page.userid = user['id']
+            if len(p_user) > 0:
+                self.page.userid = p_user['id']
                 reqtype = REQ_WITHID
-                for k in user.keys():
-                    if type(user[k]) == type(''):
-                        udata[uc(k)] = uc(user[k])
+                for k in p_user.keys():
+                    if type(p_user[k]) == type(''):
+                        udata[uc(k)] = uc(p_user[k])
                     else:
-                        udata[uc(k)] = user[k]
+                        udata[uc(k)] = p_user[k]
             return reqtype, udata
 
         def cb_rootmatch(res):    #select usually returns a list, knowing that we have unique results
@@ -467,7 +392,8 @@ class Playground(athena.LiveElement):
             return reqtype, udata
 
         def eb_nomatch():
-            print "ERROR - No Match"
+            if g_debug >= 3:
+                print "web_mainpage.Playground,eb_nomatch() - ERROR - No Match"
 
         if self.uid and len(self.uid) == 32:
             d = self.page.userstore.getUserWithUID(self.uid)
@@ -476,36 +402,32 @@ class Playground(athena.LiveElement):
         else:
             d = defer.succeed(0)
             d.addCallback(cb_rootmatch)
+            d.addErrback(eb_nomatch)
         return d
 
 class Clock(athena.LiveElement):
     jsClass = u'clock.Clock'
-    docFactory = loaders.xmlstr("""
-        <div xmlns:nevow="http://nevow.com/ns/nevow/0.1" nevow:render="liveElement"
-          class="clock" name="clock"
-          style="background-color:#000000; color:#ffffff; font-size:600%; width: 350px; height: 100px; top: 50%; left: 50%; position: absolute; margin-left: -175px; margin-top: -50px;">
-        </div>
-        """)
+    docFactory = loaders.xmlfile(webdir('template/clockElement.html').path)
 
     @athena.expose
     def getTimeOfDay(self):
-        if g_debug > -3:
+        if g_debug >= 5:
             print "web_mainpage.Clock.getTimeOfDay() - called from browser"
         return uc(time.strftime("%I:%M:%S", time.localtime(time.time())))
 
 
-def factory(ctx, segments):
+def factory(ctx, segments, p_pyhouses_obj):
     """ If segments contains a liveID (len = 32) the page stored in self.clients will be returned.
     Status of the given page is stored in the page object itself and nowhere else.
     """
-    if g_debug >= 5:
-        print "web_mainpage.factory(1) ", segments
+    if g_debug >= 3:
+        print "web_mainpage.factory(1) - Segments:{0:}".format(segments)
     seg0 = segments[0]
     if seg0 == '':
         # Starting page - no segments yet
         if g_debug >= 5:
-            print "web_mainpage.factory(3) - MainPage2: ", MainPage2(), segments[1:]
-        return MainPage2(), segments[1:]
+            print "web_mainpage.factory(3) - Starting with MainPage"
+        return MainPage(p_pyhouses_obj), segments[1:]
     elif _mainPageFactory.clients.has_key(seg0):
         # xxx
         if g_debug >= 5:

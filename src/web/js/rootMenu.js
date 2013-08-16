@@ -3,46 +3,44 @@
  */
 // import Nevow.Athena
 
-Nevow.Athena.Widget.subclass(rootMenu, 'ChatterBox').methods(
+helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 
     function __init__(self, node) {
-        rootMenu.ChatterBox.upcall(self, "__init__", node);
-        self.chooseBox = self.nodeByAttribute('name', 'chooseBox');
-        self.scrollArea = self.nodeByAttribute('name', 'scrollArea');
-        self.sendLine = self.nodeByAttribute('name', 'sendLine');
-        self.usernameField = self.nodeByAttribute('name', 'username');
-        self.userMessage = self.nodeByAttribute('name', 'userMessage');
-        self.loggedInAs = self.nodeByAttribute('name', 'loggedInAs');
+        rootMenu.RootMenuWidget.upcall(self, "__init__", node);
+        alert('rootMenu 1');
     },
 
-	function doSetUsername(self) {
-        var username = self.usernameField.value;
-        self.callRemote("setUsername", username).addCallback(
-            function (result) {
-                self.chooseBox.style.display = "none";
-                self.sendLine.style.display = "block";
-                self.loggedInAs.appendChild(document.createTextNode(username));
-                self.loggedInAs.style.display = "block";
-            });
-        return false;
-    },
+	function ready(self) {
+		
+		function cb_widgetready(res) {
+	        alert('rootMenu 2');
+			self.showRoot();
+			// do whatever init needs here, show for the widget is handled in superclass
+	        alert('rootMenu 1\3');
+		}
+	
+        alert('rootMenu 4');
+		var uris = collectIMG_src(self.node, null);
+		var d = loadImages(uris);
+		d.addCallback(cb_widgetready);
+		return d;
+	},
 
-    function doSay(self) {
-        self.callRemote("say", self.userMessage.value);
-        self.nodeByAttribute('name', 'userMessage').value = "";
-        return false;
-    },
+	function showRoot(self) {
 
-    function displayMessage(self, message) {
-        var newNode = document.createElement('div');
-        newNode.appendChild(document.createTextNode(message));
-        self.scrollArea.appendChild(newNode);
-        document.body.scrollTop = document.body.scrollHeight;
-    },
+		function cb_showRoot() {
+	        alert('rootMenu 5');
+			self.node.innerHTML = 'abc';
+			//self.callLater(1.0, function() {
+			//	self.getAndShowTime();
+			});
+		}
+	
+    	alert('rootMenu 6');
+		var d = self.callRemote('rootMenu');
+		d.addCallback(cb_showRoot);
+	}
 
-    function displayUserMessage(self, avatarName, text) {
-        var msg = avatarName+': '+text;
-        self.displayMessage(msg);
-    });
+    );
 
 //### END DBK

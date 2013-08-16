@@ -1,67 +1,68 @@
 /* login.js
  * 
+ * Displays the login 
  */
 
 // import Nevow.Athena
 // import globals
 // import helpers
 
-helpers.Widget.subclass(login, 'LoginElement').methods(
-
+helpers.Widget.subclass(login, 'LoginWidget').methods(
 
     function __init__(self, node) {
-    	//alert('LoginElement.__init__() ' + node)
-        login.LoginElement.upcall(self, "__init__", node);
-
-        self.loginElement = self.nodeByAttribute('name', 'LoginElement');
-        self.loginForm = self.nodeByAttribute('name', 'LoginForm');
-        self.loginNameField = self.nodeByAttribute('name', 'LoginName');
-        self.loginPassword = self.nodeByAttribute('name', 'LoginPassword')
+        login.LoginWidget.upcall(self, "__init__", node);
     },
 
 	function ready(self) {
 
-		function widgetready(res) {
+		function cb_widgetready(res) {
 			// do whatever init needs here, show for the widget is handled in superclass
-			self.doLogin();
+			self.getAndShowLogin();
 		}
 	
 		var uris = collectIMG_src(self.node, null);
 		var d = loadImages(uris);
-		d.addCallback(widgetready);
+		d.addCallback(cb_widgetready);
 		return d;
-	},
+	},  // ready
 
-	function getAndShowTime(self) {
+	function getAndShowLogin(self) {
 
-		function cb_showTime(time) {
-			self.node.innerHTML = time;
-			self.callLater(1.0, function() {
-				self.getAndShowTime();
-			});
-		}
+		function cb_showLogin(p_user) {
+			self.node.innerHTML = p_user;
+			//self.callLater(1.0, function() {
+			//	self.getAndShowLogin();
+			//});
+			}
 	
-		var d = self.callRemote('getTimeOfDay');
-		d.addCallback(cb_showTime);
-	},
-
-    function doLogin(self, node) {
-		
-		function cb_showLogin() {
-			self.node.innerHTML = l_name
-		}
-    	var symbol = node.value
-    	var l_name = self.loginNameField.value
-    	var l_pass = self.loginPassword.value
+		//alert("DBK - Login ");
+    	var l_name = self.loginNameField.value;
+    	var l_pass = '123'; // self.loginPassword.value;
         var l_logData = {
         		name : l_name,
         		passwd : l_pass
-        }
-    	var l_json = JSON.stringify(l_logData)
-        var d = self.callRemote("loginUser", l_json);
+        };
+    	var l_json = JSON.stringify(l_logData);
+        var d = self.callRemote("login", l_json);
 		d.addCallback(cb_showLogin);
         return false;
-    }
+	},  // getAndShowLogin
+	
+	function doLogin(self) {
+		//alert("login.js doLogin()");
+		var loginNameField = self.nodeById('LoginName');
+    	var l_name = loginNameField.value;
+    	var l_pass = '123'; // self.loginPassword.value;
+        var l_logData = {
+        		name : l_name,
+        		passwd : l_pass
+        };
+    	var l_json = JSON.stringify(l_logData);
+		Divmod.debug('---', ' doLogin was called. json:' + l_json);
+        var d = self.callRemote("login", l_json);
+		d.addCallback(cb_showLogin);
+        return false;
+	}
 
 );
 

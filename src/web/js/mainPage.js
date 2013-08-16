@@ -5,7 +5,7 @@
 
 
 // note this is 'PageWidget'
-Nevow.Athena.PageWidget.subclass(mainPage, 'Mainpage').methods(
+Nevow.Athena.PageWidget.subclass(mainPage, 'mainPage').methods(
 
 	function showDisconnectDialog(self) {
 		Divmod.msg("Connection lost, dialog or status display implementation pending");
