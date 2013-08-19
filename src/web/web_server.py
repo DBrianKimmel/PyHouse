@@ -46,7 +46,7 @@ g_debug = 0
 # 3 = Basic data
 # 4 = ajax data
 # + = NOT USED HERE
-g_logger = None
+g_logger = logging.getLogger('PyHouse.WebServ ')
 
 
 # Only to move the eclipse error flags to one small spot
@@ -76,7 +76,6 @@ class API(object):
 
     def __init__(self):
         global g_logger
-        g_logger = logging.getLogger('PyHouse.WebServ ')
         self.web_data = WebData()
         if g_debug >= 2:
             print "web_server.API()"

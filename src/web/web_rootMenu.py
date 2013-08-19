@@ -43,11 +43,16 @@ class RootMenuElement(athena.LiveElement):
         pass
 
     @athena.expose
-    def rootMenu(self, p_json):
+    def rootMenu(self, p_params):
+        if g_debug >= 3:
+            print "web_rootMenue.RootMenuElement.rootMenu() - called from browser ", self
+
+    @athena.expose
+    def doRootMenu(self, p_json):
         """ A JS receiver for root menu information from the client.
         """
         if g_debug >= 3:
-            print "web_rootMenu.RootMenuElement.rootMenu() - Json:{0:}".format(p_json)
+            print "web_rootMenu.RootMenuElement.doRootMenu() - Json:{0:}".format(p_json)
 
 
 

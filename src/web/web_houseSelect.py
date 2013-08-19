@@ -5,98 +5,51 @@ Created on Jun 1, 2013
 '''
 
 # Import system type stuff
+from twisted.python.filepath import FilePath
 from nevow import loaders
-from nevow import rend
+from nevow import athena
+#from nevow import rend
 
 # Import PyMh files and modules.
-from src.web.web_tagdefs import *
-from src.web import web_utils
-from src.web import web_houseMenu
+from src import web
+#from src.web.web_tagdefs import *
+#from src.web import web_utils
+#from src.web import web_houseMenu
 
+# Handy helper for finding external resources nearby.
+webdir = FilePath(web.__file__).parent().preauthChild
 
 g_debug = 0
 # 0 = off
-# 1 = major routine entry
-# 2 = Basic data
+# 1 = log extra info
+# 2 = major routine entry
+# 3 = Config file handling
+# 4 = Basic data
+# + = NOT USED HERE
 
 
-class SelectHousePage(web_utils.ManualFormMixin):
+class HouseSelectElement(athena.LiveElement):
     """
     """
-    addSlash = True
-    docFactory = loaders.xmlfile('houseSelect.xml', templateDir = 'src/web/template')
+    docFactory = loaders.xmlfile(webdir('template/houseSelectElement.html').path)
+    jsClass = u'houseSelect.HouseSelectWidget'
 
-    def __init__(self, p_name, p_pyhouses_obj):
-        self.m_name = p_name
-        self.m_pyhouses_obj = p_pyhouses_obj
-        if g_debug >= 1:
-            print "web_houseSelect.SelectHousePage()"
-        l_css = ['src/web/css/mainPage.css']
-        web_utils.add_attr_list(SelectHousePage, l_css)
-        rend.Page.__init__(self)
-
-    def data_houselist(self, _context, _data):
-        l_house = {}
-        for l_key, l_houses_obj in self.m_pyhouses_obj.HousesData.iteritems():
-            l_house[l_key] = l_houses_obj.HouseObject
-        return l_house
-
-    def render_action(self, _ctx, _data):
-        return web_utils.action_url()
-
-    def render_houselist(self, _context, links):
-        l_ret = []
-        l_cnt = 0
-        for l_key, l_value in sorted(links.iteritems()):
-            l_name = l_value.Name
-            if l_cnt > 0 and l_cnt % 4 == 0:
-                l_ret.append(T_tr)
-            l_ret.append(T_td)
-            l_ret.append(T_input(type = 'submit', value = l_key, name = BUTTON)
-                         [ l_name])
-            l_cnt += 1
-        return l_ret
-
-    def form_post_add(self, **kwargs):
+    def __init__(self, p_workspace_obj):
+        self.m_pyhouses_obj = p_workspace_obj
         if g_debug >= 2:
-            print "web_selecthouse.form_post_add() (HousePage)", kwargs
-        return SelectHousePage(self.m_name, self.m_pyhouses_obj)
+            print "web_houseSelect.houseSelectElement() - Workspace:{0:}".format(p_workspace_obj)
 
-    def form_post_0(self, **kwargs):
-        if g_debug >= 2:
-            print "web_selecthouse.form_post_0()", kwargs
-        if g_debug >= 5:
-            print vars(self.m_pyhouses_obj)
-        return web_houseMenu.HouseMenuPage(self.m_name, self.m_pyhouses_obj, 0)
+    @athena.expose
+    def houseSelect(self, p_params):
+        if g_debug >= 3:
+            print "web_houseSelect.HouseSelectElement.houseSelect() - called from browser ", self, p_params
 
-    def form_post_1(self, **kwargs):
-        if g_debug >= 2:
-            print "web_selecthouse.form_post_1()", kwargs
-        return web_houseMenu.HouseMenuPage(self.m_name, self.m_pyhouses_obj, 1)
-
-    def form_post_2(self, **kwargs):
-        if g_debug >= 2:
-            print "web_selecthouse.form_post_2()", kwargs
-        return web_houseMenu.HouseMenuPage(self.m_name, self.m_pyhouses_obj, 2)
-
-    def form_post_3(self, **kwargs):
-        if g_debug >= 2:
-            print "web_selecthouse.form_post_3()", kwargs
-        return web_houseMenu.HouseMenuPage(self.m_name, self.m_pyhouses_obj, 3)
-
-    def form_post_change_house(self, **kwargs):
-        if g_debug >= 2:
-            print "web_selecthouse.form_post_change_house() (HousePage)", kwargs
-        return SelectHousePage(self.m_name, self.m_pyhouses_obj)
-
-    def form_post_deletehouse(self, **kwargs):
-        if g_debug >= 2:
-            print "web_selecthouse.form_post_deletehouse() (HousePage)", kwargs
-        return SelectHousePage(self.m_name, self.m_pyhouses_obj)
-
-    def form_post_house(self, **kwargs):
-        if g_debug >= 2:
-            print "web_selecthouse.form_post_house() (HousePage)", kwargs
-        return SelectHousePage(self.m_name, self.m_pyhouses_obj)
+    @athena.expose
+    def doSelect(self, p_json):
+        """ A JS receiver for houseSelect information from the client.
+        """
+        if g_debug >= 3:
+            print "web_login.HouseSelectElement.doSelect() - Json:{0:}".format(p_json)
+        pass
 
 # ## END DBK

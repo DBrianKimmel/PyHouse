@@ -1,46 +1,42 @@
 /** rootMenu.js
  * 
+ * Displays the Root Menu section
  */
+
 // import Nevow.Athena
+// import globals
+// import helpers
 
 helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 
     function __init__(self, node) {
         rootMenu.RootMenuWidget.upcall(self, "__init__", node);
-        alert('rootMenu 1');
     },
 
 	function ready(self) {
 		
 		function cb_widgetready(res) {
-	        alert('rootMenu 2');
-			self.showRoot();
 			// do whatever init needs here, show for the widget is handled in superclass
-	        alert('rootMenu 1\3');
-		}
+			//self.displayRoot();
+		}  // cb_widgetready
 	
-        alert('rootMenu 4');
 		var uris = collectIMG_src(self.node, null);
 		var d = loadImages(uris);
 		d.addCallback(cb_widgetready);
 		return d;
-	},
+	},  // ready
 
-	function showRoot(self) {
+	function displayRoot(self) {
 
-		function cb_showRoot() {
-	        alert('rootMenu 5');
-			self.node.innerHTML = 'abc';
-			//self.callLater(1.0, function() {
-			//	self.getAndShowTime();
-			});
+		function cb_showRootMenu() {
+			self.node.innerHTML = 'Show Root Menu';
 		}
-	
-    	alert('rootMenu 6');
-		var d = self.callRemote('rootMenu');
-		d.addCallback(cb_showRoot);
-	}
 
-    );
+		Divmod.debug('---', 'rootMenu.displayRoot() was called.');
+		var d = self.callRemote('rootMenu', 'dummy');
+		d.addCallback(cb_showRootMenu);
+		return false;
+	}  //  displayRoot
+);
 
 //### END DBK

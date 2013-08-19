@@ -4,16 +4,18 @@
     xmlns:athena = 'http://divmod.org/ns/athena/0.7'
     xmlns:nevow  = 'http://nevow.com/ns/nevow/0.1'
     nevow:render = 'liveElement'
-    >
-    <div name = 'LoginDiv' style = "background-color: #c2f2c2;">
-	    <form name = "LoginForm">
-	        <athena:handler event = "onsubmit" handler = "doLogin" />
-            <h2>Enter login name:</h2>
-	        User Name: <input name = "LoginName" /><br></br>
-	        Password : <input name = "LoginPassword" type = 'password' /><br></br>
-	        <input type = "submit" name = 'LoginSubmit' value = "Login" />
-	    </form>
-    </div>
+    name = 'LoginDiv'
+    id = 'LoginDiv'
+    style = "background-color: #c2f2c2;">
+
+    <form name = "LoginForm" id = 'LoginForm'>
+        <athena:handler event = "onsubmit" handler = "doLogin" />
+        <h2>Enter login name:</h2>
+        User Name: <input name = "LoginName" id = 'LoginName' /><br></br>
+        Password : <input name = "LoginPassword" id = 'LoginPassword' type = 'password' /><br></br>
+        <input type = "submit" name = 'LoginSubmit' value = "Login" />
+    </form>
+
 </div>
 <!-- 
 ### END DBK  -->

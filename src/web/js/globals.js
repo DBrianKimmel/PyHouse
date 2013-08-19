@@ -30,7 +30,7 @@ var REQ_WITHID = 2;
 
 globals = {
 	fonts : [ 'Verdana', 'Arial', 'Helvetica', 'sans-serif' ],
-	playground : null,
+	workspace : null,
 
 	__init__ : function() {
 		globals.appLoaded = false;
@@ -95,7 +95,7 @@ function getCardSizefromCSS() {
 
 function collectClasses(node) {
 	var classnames = [];
-	var nodes = getElementsByTagAndClassName('div', null, node);
+	var nodes = getElementsByTagAndClassName('div', null, node);  // (tagname, classname, parent)
 
 	for ( var i = 0; i < nodes.length; i++) {
 		if (nodes[i].className !== null) {
@@ -134,7 +134,7 @@ function getCSSrules(n) {
 	return null;
 }  // getCSSrules
 
-/*
+/**
  * Collects all URIs in the present CSS which refer to images, thus allowing for the loadImages
  *  function to check for all images present in a browser neutral way.
  * 
@@ -224,20 +224,27 @@ function waitfor(flags, timeout) {
 }  // waitfor
 
 
-/*
- * 
+/**
+ * Load image URIs
  */
 globals.ImageLoadingError = Divmod.Error.subclass('globals.ImageLoadingError');
 
+/**
+ * Load
+ */
 function loadImages(uris) {
 	var imgs = [];
-
 	for ( var i = 0; i < uris.length; i++) {
 		var img = new Image();
 		img.src = uris[i];
 		imgs.push(img);
-	}
+	}  // for loop
 
+	/**
+	 * 
+	 * @param img
+	 * @returns {Boolean}
+	 */
 	function isImageOk(img) {
 		if (!img.complete) {
 			return false;
@@ -248,6 +255,10 @@ function loadImages(uris) {
 		return true;
 	}  // isImageOK
 
+	/**
+	 * 
+	 * @returns {Boolean} true if all images are loaded
+	 */
 	function imgsloaded() {
 		for ( var i = 0; i < imgs.length; i++) {
 			if (!isImageOk(imgs[i]))
@@ -256,6 +267,11 @@ function loadImages(uris) {
 		return true;
 	}  // imgsloaded
 
+	/**
+	 * List the images that have not loaded.
+	 * 
+	 * @returns {String}
+	 */
 	function imgsNotloaded() {
 		var estr = '';
 		for ( var i = 0; i < imgs.length; i++) {
@@ -297,7 +313,7 @@ function loadImages(uris) {
 Divmod.Runtime.theRuntime.addLoadEvent(
 	function appStartup() {
 		//alert("appStartup 1 ")
-		globals.playground.appStartup();
+		globals.workspace.appStartup();
 	}
 );
 
