@@ -4,6 +4,7 @@
     xmlns:athena = 'http://divmod.org/ns/athena/0.7'
     xmlns:nevow  = 'http://nevow.com/ns/nevow/0.1'
     nevow:render = 'liveElement'
+    class = "login"
     name = 'LoginDiv'
     id = 'LoginDiv'
     style = "background-color: #c2f2c2;">
@@ -15,6 +16,10 @@
         Password : <input name = "LoginPassword" id = 'LoginPassword' type = 'password' /><br></br>
         <input type = "submit" name = 'LoginSubmit' value = "Login" />
     </form>
+    
+    <div id = "LoggedInDiv" style = "display: none;">
+        Logged In:<input id = "LoginFullName" />
+    </div>
 
 </div>
 <!-- 

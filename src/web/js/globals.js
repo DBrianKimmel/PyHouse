@@ -1,28 +1,32 @@
-//globals.js - the global hook where we hang our coat and everything else
+/**
+ * globals.js - the global hook where we hang our coat and everything else
+ * 
+ * A not so impressive way to get dynamic modules loading properly when inserting fragments at some later time into the webapp.
+ * The most promising way is to preload although this could lead to quite some code clutter,
+ *  but knowing that the clients do not unload JS means at least preloading does no harm.
+ *  
+ *  modulesWaiting = {};
+ *  
+ *  function moduleLoaded(module) {
+ *      modulesWaiting[module] = null;
+ *      Divmod.debug("moduleLoaded", "loaded module: " + module);
+ *  }
+ *  
+ *  function waitForModules(module, f) {
+ *      modulesWaiting[module] = f;
+ *      for (var m in modulesWaiting) {
+ *          if (modulesWaiting[m])
+ *              modulesWaiting[m]();
+ *      }
+ *  }
+ *
+ */
+
 
 // import Divmod.Runtime
 
 // import helpers
 
-//a not so impressive way to get dynamic modules loading properly when inserting
-//fragments at some later time into the webapp. The most promising way is to preload
-//although this could lead to quite some code clutter, but knowing that the clients
-//do not unload JS means at least preloading does no harm
-
-//modulesWaiting = {};
-//
-//function moduleLoaded(module) {
-//  modulesWaiting[module] = null;
-//  Divmod.debug("moduleLoaded", "loaded module: " + module);
-//}
-//
-//function waitForModules(module, f) {
-//  modulesWaiting[module] = f;
-//  for (var m in modulesWaiting) {
-//    if (modulesWaiting[m])
-//      modulesWaiting[m]();
-//  }
-//}
 
 var REQ_404 = -1;
 var REQ_ROOT = 0;

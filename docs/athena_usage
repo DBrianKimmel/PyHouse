@@ -5,9 +5,13 @@ to the nevow/plugin directory for the given os/distribution.  These glue modules
 allow athena to find the various .css and .js files needed to operate.
 Nevow uses a different mechanism to locate these files.
 
+It is possible (thanks to Wenrner Thie) to do our own finding og resources and avoid the plugins.
+This seems a lot smarter to me since it handles different platforms a lot better.
+
+
 
 Templates.
-I have chosen to use XHTML instead of stan.
+I have chosen to use HTML instead of stan.
 
 the xml (xhtml) file starts out with:
 
@@ -23,5 +27,21 @@ In order to auto load the athena JS files add:
     <head nevow:render = 'liveglue'>
 
 
-    
+
+To add a new element / widget:
+==============================
+
+xxxElement.html must be added to define the element / widget.
+
+web_xxx.py must be added to handle the server side of the new widget.
+
+xxx.js must be added to handle the client side of the widget.
+
+web_mainpage must import the web_xxx module and provide a callback with the name (xxx) of the xxx.js file to render the element/widget.
+
+workspace.js must add an attachWidget call to load the xxx element.
+
+
+
+
     

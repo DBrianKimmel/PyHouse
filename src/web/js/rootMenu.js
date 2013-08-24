@@ -17,8 +17,8 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 		
 		function cb_widgetready(res) {
 			// do whatever init needs here, show for the widget is handled in superclass
-			//self.displayRoot();
-		}  // cb_widgetready
+			//self.displayRootMenu();
+		}
 	
 		var uris = collectIMG_src(self.node, null);
 		var d = loadImages(uris);
@@ -26,17 +26,23 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 		return d;
 	},  // ready
 
-	function displayRoot(self) {
+	function displayRootMenu(self) {
 
 		function cb_showRootMenu() {
-			self.node.innerHTML = 'Show Root Menu';
+			Divmod.debug('---', 'rootMenu.js - cb_showRootMenu was called. ');
+			//self.node.innerHTML = 'Show Root Menu';
 		}
 
 		Divmod.debug('---', 'rootMenu.displayRoot() was called.');
 		var d = self.callRemote('rootMenu', 'dummy');
 		d.addCallback(cb_showRootMenu);
 		return false;
-	}  //  displayRoot
+	},  //  displayRoot
+	
+	function showRootMenuStuff(self, text) {
+		Divmod.debug('---', 'rootMenu.showRootMenuStuff() was pushed from server. ' + text);
+		
+	}
 );
 
 //### END DBK

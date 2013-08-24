@@ -1,0 +1,26 @@
+<!-- lightsElement.html
+ -->
+<div 
+    xmlns:athena = 'http://divmod.org/ns/athena/0.7'
+    xmlns:nevow  = 'http://nevow.com/ns/nevow/0.1'
+    nevow:render = 'liveElement'
+    class = "lights"
+    name = 'LightsDiv'
+    id = 'LightsDiv'
+    style = "background-color: #c2f2f2;">
+
+    <h2>Lights</h2>
+	<form name = 'LightsForm' id = 'LightsForm'>
+        <athena:handler event = "onsubmit" handler = "doLights" />
+	    <table style = 'Width: 100%' border = '2'>
+	        <tr><td>abc</td>
+	        </tr><tr>
+	            <span nevow:data = "lightslist" nevow:render = "lightslist" /> 
+	        </tr>
+	    </table>
+	</form>
+
+</div>
+<!-- 
+### END DBK  -->
+ 

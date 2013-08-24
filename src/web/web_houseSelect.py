@@ -19,7 +19,7 @@ from src import web
 # Handy helper for finding external resources nearby.
 webdir = FilePath(web.__file__).parent().preauthChild
 
-g_debug = 0
+g_debug = 4
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
@@ -37,7 +37,7 @@ class HouseSelectElement(athena.LiveElement):
     def __init__(self, p_workspace_obj):
         self.m_pyhouses_obj = p_workspace_obj
         if g_debug >= 2:
-            print "web_houseSelect.houseSelectElement() - Workspace:{0:}".format(p_workspace_obj)
+            print "web_houseSelect.houseSelectElement()"
 
     @athena.expose
     def houseSelect(self, p_params):

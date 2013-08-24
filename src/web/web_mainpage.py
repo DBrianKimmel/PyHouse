@@ -5,8 +5,7 @@ Created on Jul 27, 2013
 
 @author: briank
 
-When a user wants to connect to PyHouse to monitor or control the system, they open a browser to
-the configured port (default is 8580).
+When a user wants to connect to PyHouse to monitor or control the system, they open a browser to the configured port (default is 8580).
 Since internet access is possible, a login screen is presented first and authentication takes place.
 Then a menu is presented that allows non house things to be selected or a the user may select to work with a house,
 the house select screen also allows for a house to be added so starting with no houses is possible.
@@ -27,7 +26,7 @@ when finished.
 
 Here is Werner's opening comment:
 mainpage.py - this is the place where everything is happening, the user will never
-              ever see a page change during the whole visit. Everything the user iw
+              ever see a page change during the whole visit. Everything the user is
               shown is injected as a LiveElement into the page and deleted after it
               has served its purpose.
 
@@ -46,7 +45,6 @@ import logging
 import gc
 import os
 import time
-from twisted.python.filepath import FilePath
 from twisted.python import util
 from nevow import loaders
 from nevow import athena
@@ -70,6 +68,7 @@ from twisted.internet import defer
 from src.web import web_login
 from src.web import web_rootMenu
 from src.web import web_houseSelect
+from src.web import web_lights
 
 
 # Handy helper for finding external resources nearby.
@@ -113,7 +112,7 @@ class TheRoot(rend.Page):
             l_jspath = util.sibpath(jspath, 'js')
             staticpath = os.path.join(l_jspath, '', 'resource')
         if g_debug >= 3:
-            print "web_mainpage.TheRoot() - ", jspath, imagepath
+            print "web_mainpage.TheRoot() - "  #, staticpath, imagepath
         super(TheRoot, self).__init__(*args, **kw)
         self.children = {
           'resource'          : FileNoListDir(os.path.join(staticpath)),
@@ -123,10 +122,10 @@ class TheRoot(rend.Page):
         if g_debug >= 1:
             print #separate package hinting from logging
 
-    def locateChild(self, p_context, p_segments):
-        l_resource, l_segments = factory(p_context, p_segments, self.m_pyhouses_obj)
+    def locateChild(self, ctx, segments):
+        l_resource, l_segments = factory(ctx, segments, self.m_pyhouses_obj)
         if l_resource == None:
-            l_resource, l_segments = super(TheRoot, self).locateChild(p_context, p_segments)
+            l_resource, l_segments = super(TheRoot, self).locateChild(ctx, segments)
         return l_resource, l_segments
 
 #==============================================================================
@@ -146,19 +145,19 @@ class mainPageFactory:
         athena.jsDeps.mapping.update(l_siteJSPackage.mapping)
         if g_debug >= 3:
             print "web_mainpage.mainPageFactory() "
-        if g_debug >= 4:
+        if g_debug >= 6:
             print "    modulepath: {0:}".format(modulepath)
             print "    jspath: {0:}".format(jspath)
             print "    csspath: {0:}".format(csspath)
             print "    l_siteJSPackage: {0:}".format(vars(l_siteJSPackage))
             print "    l_siteCSSPackage: {0:}".format(vars(l_siteCSSPackage))
 
-    def addClient(self, p_client):
+    def addClient(self, client):
         l_clientID = self._newClientID()
+        self.Clients[l_clientID] = client
         if g_debug >= 3:
-            print "web_mainpage.mainPageFactory.addClient() - Rendered new mainPage {0:}: {1:}".format(p_client, l_clientID)
+            print "web_mainpage.mainPageFactory.addClient() - Rendered new mainPage {0:}: {1:}".format(client, l_clientID)
             print "    Number of active pages currently: %d" % len(self.Clients)
-        self.Clients[l_clientID] = p_client
         return l_clientID
 
     def getClient(self, p_clientID):
@@ -281,7 +280,7 @@ class MainPage(athena.LivePage):
         self.m_pyhouses_obj = p_pyhouses_obj
         super(MainPage, self).__init__()
         if g_debug >= 3:
-            print "web_mainpage.MainPage() "
+            print "web_mainpage.MainPage() "  #, p_pyhouses_obj
 
     def child_jsmodule(self, ctx):
         if g_debug >= 5:
@@ -296,7 +295,7 @@ class MainPage(athena.LivePage):
         Storing states someplace deeper in the hierarchy makes it extremely difficult to release memory properly due to circular object references.
         """
         if g_debug >= 3:
-            print "web_mainpage.MainPage.beforeRender()"
+            print "web_mainpage.MainPage.beforeRender()", self.page
         self.page.lang = 0
         self.uid = None
         self.username = ''
@@ -328,8 +327,9 @@ REQ_ROOT = 0
 REQ_WITHID = 2
 
 class Workspace(athena.LiveElement):
-    """WARNING.
-        the names of the athena.expose methods seem to have to match the js file name.
+    """WARNING:
+        The names of the @athena.expose methods seem to have to match the js file name.
+        They are called from browser when elements are attached to the workspace.
     """
     jsClass = u'workspace.Workspace'
     docFactory = loaders.xmlfile(os.path.join(templatepath, 'workspaceElement.html'))
@@ -340,6 +340,7 @@ class Workspace(athena.LiveElement):
         if g_debug >= 3:
             print "web_mainpage.Workspace()"
         super(Workspace, self).__init__()
+        g_logger.info('web_mainpage Workspace initialized.')
         self.state = self.PG_INITED
         self.uid = uid
 
@@ -347,7 +348,7 @@ class Workspace(athena.LiveElement):
         #clean up whatever needs cleaning...
         if g_debug >= 3:
             print "web_mainpage.Workspace.detached()"
-        #log.msg('workspace object was detached cleanly')
+        g_logger.info('workspace object was detached cleanly')
 
     @athena.expose
     def inject_404(self):
@@ -360,8 +361,26 @@ class Workspace(athena.LiveElement):
     @athena.expose
     def clock(self, p_params):
         if g_debug >= 3:
-            print "web_mainpage.Workspace.clock() - called from browser ", self
+            print "web_mainpage.Workspace.clock() - called from browser to load clockElement"
+        g_logger.info("clock called")
         l_element = Clock()
+        l_element.setFragmentParent(self)
+        return l_element
+
+    @athena.expose
+    def houseSelect(self, p_params):
+        if g_debug >= 3:
+            print "web_mainpage.Workspace.houseSelect() - called from browser to load houseSelectElement"
+        g_logger.info("houseSelect called from browser")
+        l_element = web_houseSelect.HouseSelectElement(self)
+        l_element.setFragmentParent(self)
+        return l_element
+
+    @athena.expose
+    def lights(self, p_params):
+        if g_debug >= 3:
+            print "web_mainpage.Workspace.lights() - called from browser to load LightsElement."
+        l_element = web_lights.LightsElement(self)
         l_element.setFragmentParent(self)
         return l_element
 
@@ -370,36 +389,19 @@ class Workspace(athena.LiveElement):
         """ Place and display the login widget.
         """
         if g_debug >= 3:
-            print "web_mainpage.Workspace.login() - called from browser ", self
+            print "web_mainpage.Workspace.login() - called from browser to load LoginElement."
+        g_logger.info("login called - params = {0:}".format(p_params))
         l_element = web_login.LoginElement(self)
         l_element.setFragmentParent(self)
-        g_logger.info("login called")
+        print "     self=", self, self.page
         return l_element
-
-    @athena.expose
-    def doLogin(self, p_params):
-        """ Place and display the login widget.
-        """
-        if g_debug >= 3:
-            print "web_mainpage.Workspace.doLogin() - called from browser ", self
-        #l_element = web_login.LoginElement(self)
-        #l_element.setFragmentParent(self)
-        g_logger.info("login called")
-        #return l_element
 
     @athena.expose
     def rootMenu(self, p_params):
         if g_debug >= 3:
-            print "web_mainpage.Workspace.rootMenu() - called from browser ", self
+            print "web_mainpage.Workspace.rootMenu() - called from browser to load rootMenuElement"
+        g_logger.info("rootMenu called")
         l_element = web_rootMenu.RootMenuElement(self)
-        l_element.setFragmentParent(self)
-        return l_element
-
-    @athena.expose
-    def houseSelect(self, p_params):
-        if g_debug >= 3:
-            print "web_mainpage.Workspace.houseSelect() - called from browser ", self, p_params
-        l_element = web_houseSelect.HouseSelectElement(self)
         l_element.setFragmentParent(self)
         return l_element
 
@@ -413,7 +415,7 @@ class Workspace(athena.LiveElement):
             udata = {}
             if g_debug >= 3:
                 print "web_mainpage.Workspace.cb_usermatch() <callback> user:{0:}".format(p_user)
-                #print "    page=", self.page
+                print "    self, page=", self, self.page
             if len(p_user) > 0:
                 self.page.userid = p_user['id']
                 reqtype = REQ_WITHID
@@ -428,15 +430,17 @@ class Workspace(athena.LiveElement):
             reqtype = REQ_ROOT   #the result is unpacked already and a single item returned
             udata = {}
             user = {}
-            if g_debug >= 3:
-                print "web_mainpage.Workspace.cb_rootmatch() <callback> res:{0:}".format(res)
-                #print "    page=", self.page
             user['id'] = self.page.username
             for k in user.keys():
                 if type(user[k]) == type(''):
                     udata[uc(k)] = uc(user[k])
                 else:
                     udata[uc(k)] = user[k]
+            if g_debug >= 3:
+                print "web_mainpage.Workspace.cb_rootmatch() <callback> res:{0:}".format(res)
+                print "    self, page=", self, self.page
+                print "    reqtype:", reqtype
+                print "    udata:", udata
             return reqtype, udata
 
         def eb_nomatch():
@@ -472,7 +476,7 @@ def factory(ctx, segments, p_pyhouses_obj):
     """ If segments contains a liveID (len = 32) the page stored in self.Clients will be returned.
     Status of the given page is stored in the page object itself and nowhere else.
     """
-    if g_debug >= 5:
+    if g_debug >= 6:
         print "web_mainpage.factory(1) - Segments:{0:}".format(segments)
     seg0 = segments[0]
     if seg0 == '':
@@ -488,7 +492,7 @@ def factory(ctx, segments, p_pyhouses_obj):
     elif len(seg0) == 32:
         # We have a liveID 
         IRequest(ctx).addCookie(COOKIEKEY, seg0, http.datetimeToString(time.time() + 30.0))
-        if g_debug >= 5:
+        if g_debug >= 4:
             print "web_mainpage.factory(5) - liveID: ", url.URL.fromString('/'), ()
         return url.URL.fromString('/'), ()
     else:

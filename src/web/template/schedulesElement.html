@@ -1,0 +1,29 @@
+<!-- schedulesElement.xml
+ -->
+<div 
+    xmlns:athena = 'http://divmod.org/ns/athena/0.7'
+    xmlns:nevow  = 'http://nevow.com/ns/nevow/0.1'
+    nevow:render = 'liveElement'
+    class = "schedules"
+    name = 'schedulesDiv'
+    id = 'schedulesDiv'
+    style = "background-color: #c2f2c2;">
+
+    <h2>Select the Light to control:</h2>
+    <form name = 'schedulesForm' >
+        <nevow:attr name = "action">
+           <nevow:invisible nevow:render = 'action' />
+        </nevow:attr>
+        <table style = 'Width: 100%' border = '0'>
+            <tr>
+                <div nevow:data="controllist" nevow:render="controllist" />
+            </tr>
+            <tr>
+                <input type = 'submit' value = 'Cancel' name = 'post_btn' />
+                <input type = 'submit' value = 'Back' name = 'post_btn' />
+            </tr>
+        </table>
+    </form>
+</div>
+<!--
+### END DBK -->

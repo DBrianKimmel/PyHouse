@@ -1,35 +1,22 @@
 <!-- rootMenuElement.html
-
-<div
- xmlns:athena="http://divmod.org/ns/athena/0.7"
- class="rootMenu.RootMenuWidget"
- id="athena:4" 
- name="RootMenuDiv" 
- class="rootmenu" 
- style="visibility: visible;">
- Show Root Menu
- </div>
- -->
- 
+-->
 <div
     xmlns:athena='http://divmod.org/ns/athena/0.7'
     xmlns:nevow='http://nevow.com/ns/nevow/0.1'
 	nevow:render='liveElement'
-	class = 'rootmenu'
+	class = 'rootMenu'
 	name = 'RootMenuDiv'
     id = 'RootMenuDiv'
-	>
-	<p>Global selections for PyHouse:</p>
+    style = "background-color: #f0f0c0;" >
+
+    <h2>Root Menu</h2>
+    
+    <div name = "root_menu_div1">
+        Root Menu
+    </div>
+    
 </div>
 
 <!--
-    <div name = 'RootMenuDiv'>
-       RootMenu
-        <form name="RootMenuForm">
-            <athena:handler event="onsubmit" handler="doRootMenu" />
-            Message: <input name="message" />
-            <input type="submit" name = "RootMenuSubmit" value="Push me once" />
-        </form>
-    </div>
 ### END DBK -->
  

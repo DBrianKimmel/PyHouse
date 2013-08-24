@@ -5,16 +5,17 @@ Created on May 30, 2013
 """
 
 # Import system type stuff
+import logging
+import os
 from nevow import loaders
 from nevow import athena
-from twisted.python.filepath import FilePath
 
 # Import PyMh files and modules.
-from src import web
 
 
 # Handy helper for finding external resources nearby.
-webdir = FilePath(web.__file__).parent().preauthChild
+webpath = os.path.join(os.path.split(__file__)[0])
+templatepath = os.path.join(webpath, 'template')
 
 g_debug = 4
 # 0 = off
@@ -23,29 +24,18 @@ g_debug = 4
 # 3 = Config file handling
 # 4 = Basic data
 # + = NOT USED HERE
-
-
-class Username(object):
-    """
-    """
+g_logger = logging.getLogger('PyHouse.webRMenu')
 
 
 class RootMenuElement(athena.LiveElement):
     """
     """
-    docFactory = loaders.xmlfile(webdir('template/rootMenuElement.html').path)
+    docFactory = loaders.xmlfile(os.path.join(templatepath, 'rootMenuElement.html'))
     jsClass = u'rootMenu.RootMenuWidget'
 
-    def __init__(self, p_pyhouses_obj):
-        self.m_pyhouses_obj = p_pyhouses_obj
+    def __init__(self, p_workspace):
         if g_debug >= 2:
-            print "web_rootMenu.RootMenuElement() ", p_pyhouses_obj
-        pass
-
-    @athena.expose
-    def rootMenu(self, p_params):
-        if g_debug >= 3:
-            print "web_rootMenue.RootMenuElement.rootMenu() - called from browser ", self
+            print "web_rootMenu.RootMenuElement()"
 
     @athena.expose
     def doRootMenu(self, p_json):
@@ -53,6 +43,7 @@ class RootMenuElement(athena.LiveElement):
         """
         if g_debug >= 3:
             print "web_rootMenu.RootMenuElement.doRootMenu() - Json:{0:}".format(p_json)
+        g_logger.info("doRootMenu called {0:} {1:}".format(self, p_json))
 
 
 

@@ -5,22 +5,79 @@ Created on Jun 3, 2013
 '''
 
 # Import system type stuff
+import logging
+import os
 from nevow import loaders
 from nevow import rend
+from nevow import athena
 import json
 
 # Import PyMh files and modules.
-from src.web.web_tagdefs import *
 from src.web import web_utils
 
+# Handy helper for finding external resources nearby.
+webpath = os.path.join(os.path.split(__file__)[0])
+templatepath = os.path.join(webpath, 'template')
 
-g_debug = 3
+
+g_debug = 4
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
 # 3 = Config file handling
 # 4 = Dump JSON
 # + = NOT USED HERE
+g_logger = logging.getLogger('PyHouse.webLight')
+
+
+class LightsElement(athena.LiveElement):
+    """ a 'live' lights element.
+    """
+    docFactory = loaders.xmlfile(os.path.join(templatepath, 'lightsElement.html'))
+    jsClass = u'lights.LightsWidget'
+
+    def __init__(self, p_workspace_obj):
+        self.m_pyhouses_obj = p_workspace_obj
+        if g_debug >= 2:
+            print "web_lights.LightsElement()"
+
+    def data_lightslist(self, _context, _data):
+        """Build up a list of lights.
+        """
+        if g_debug >= 2:
+            print "web_lights.data_lightslist() ", self.m_house_obj
+        l_lights = {}
+        for l_key, l_obj in self.m_house_obj.Lights.iteritems():
+            l_lights[l_key] = l_obj
+        return l_lights
+
+    def render_lightslist(self, context, links):
+        """
+        """
+        if g_debug >= 2:
+            print "web_lights.render_lightslist()"
+        l_ret = "<tr>\n"
+        l_cnt = 0
+        for l_key, l_obj in sorted(links.iteritems()):
+            #l_json = json.dumps(repr(l_obj))
+            if l_cnt > 0 and l_cnt % 3 == 0:
+                l_ret += "</tr><tr>\n"
+            l_ret += "<td>..."
+            l_ret += "</td>\n"
+            l_cnt += 1
+        l_ret += '</tr>\n'
+        l_ret = context.tag()
+        if g_debug >= 2:
+            print "    ", l_ret
+        return l_ret
+
+    @athena.expose
+    def doLights(self, p_json):
+        """ A JS receiver for lights information from the client.
+        """
+        if g_debug >= 3:
+            print "web_lights.LightsElement.doLights() - Json:{0:}".format(p_json)
+        g_logger.info("doLights called {0:} {1:}".format(self, p_json))
 
 
 class LightsPage(web_utils.ManualFormMixin):
@@ -46,9 +103,6 @@ class LightsPage(web_utils.ManualFormMixin):
 
     def data_lightslist(self, _context, _data):
         """Build up a list of lights.
-        @param _context: is a tag that we are building an object to render
-        @param _data: is the page object we are extracting for.
-        @return: an object to render.
         """
         if g_debug >= 2:
             print "web_lights.data_lightslist() ", self.m_house_obj
@@ -62,21 +116,15 @@ class LightsPage(web_utils.ManualFormMixin):
 
     def render_lightslist(self, context, links):
         """
-        @param: _context is ...
-        @param: links are ...
-        @return: the list to be added into the stan.dom
         """
         if g_debug >= 2:
             print "web_lights.render_lightslist()"
-            print "    context=", context
         l_ret = "<tr>\n"
         l_cnt = 0
         for l_key, l_obj in sorted(links.iteritems()):
             l_json = json.dumps(repr(l_obj))
             if l_cnt > 0 and l_cnt % 3 == 0:
                 l_ret += "</tr><tr>\n"
-            # l_ret += "<td><button onclick='createChangeLightWindow({0:})'>".format(l_json)
-            # l_ret += "{0:}</button></td>\n".format(l_key)
             l_ret += "<td>..."
             l_ret += "</td>\n"
             l_cnt += 1

@@ -43,8 +43,16 @@ helpers.Widget.subclass(workspace, 'Workspace').methods(
 		waitroller.style.visibility = 'hidden';
 	},
 	
-	// Hide all our elements - show just what we want as the user selects things.
+	/** add new method.
+	 * 
+	 * Hide all our elements - show just what we want as the user selects things.
+	 * 
+	 * @param self
+	 */
 	function hideAll(self) {
+		Divmod.debug('---', 'workspace.hideAll() - Lights' + self );
+		var lightsWidget = self.nodeById('LightsDiv');
+		lightsWidget.style.visibility = 'hidden';
 		Divmod.debug('---', 'workspace.hideAll() - Login' + self );
 		//var loginWidget = self.nodeById('LoginDiv');
 		//loginWidget.style.visibility = 'hidden';
@@ -61,11 +69,6 @@ helpers.Widget.subclass(workspace, 'Workspace').methods(
 	 * mainpage.py/.js   - the LivePage with the task of keeping up the nevow/athena RPC system
 	 * workspace.py/.js - the mother of all widgets which gets the startup call in the beginning then attaching
 	 *  whatever you please to attach to it.
-	 * 
-	 * A perfectly working version with qooxdoo is available as well as some trials with processing for mobile webapps.
-	 * 
-	 * This would also be the place to decide on platform specific issues, like delivering qooxdoo to the
-	 *  desktop vs processing to the mobile client using HTML5 to its full extent
 	 */
 	
 	function appStartup(self) {
@@ -81,8 +84,9 @@ helpers.Widget.subclass(workspace, 'Workspace').methods(
 				self.hideWaitRoller();
 				self.attachWidget('clock', 'dummy'); // dummy params - passed down to the server
 				self.attachWidget('login', 'dummy');
-				//self.attachWidget('rootMenu', 'dummy');
-				//self.attachWidget('houseSelect', 'dummy');
+				self.attachWidget('rootMenu', 'dummy');
+				self.attachWidget('houseSelect', 'dummy');
+				//self.attachWidget('lights', 'dummy');
 				//self.hideAll();
 			});  // addCallback
 
