@@ -19,11 +19,11 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 
 		function cb_widgetready(res) {
 			// do whatever init needs here, show for the widget is handled in superclass
-			Divmod.debug('---', 'login.js - cb_widgready was called. res = ' + res);
+			Divmod.debug('---', 'login.cb_widgready() was called. res = ' + res);
 			//self.getAndShowLogin();
 		}  // cb_widgetready
 	
-		Divmod.debug('---', 'login.js - ready was called.  self =' + self);
+		Divmod.debug('---', 'login.ready() was called.  self =' + self);
 		var uris = collectIMG_src(self.node, null);
 		var d = loadImages(uris);
 		d.addCallback(cb_widgetready);
@@ -56,7 +56,7 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 	function doLogin(self) {  // from html handler onSubmit
 		
 		function cb_doLogin(p_json) {
-			Divmod.debug('---', 'login.js cb_doLogin() was called.');
+			Divmod.debug('---', 'login.cb_doLogin(1) was called.');
 		}
 		
 		var loginNameField = self.nodeById('LoginName');
@@ -68,7 +68,7 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
         		Password : l_pass
         };
     	var l_json = JSON.stringify(l_logData);
-		Divmod.debug('---', 'login.js doLogin was called. json:' + l_json);
+		Divmod.debug('---', 'login.doLogin(2) was called. json:' + l_json);
         var d = self.callRemote("doLogin", l_json);  // @ web_login
 		d.addCallback(cb_doLogin);
         return false;
@@ -80,7 +80,8 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 		
 	},
 	
-	function displayLoggedIn(self, p_json) {
+	function displayLoggedIn(self) {
+		Divmod.debug('---', ' login.js displayLoggedIn was called.');
 		Divmod.debug('---', ' login.js displayLoggedIn was called. json:' + p_json + ' ' + node);
 		var formNode = self.nodeById('LoginForm');
 		var loggedInDiv = self.nodeById('LoggedInDiv');

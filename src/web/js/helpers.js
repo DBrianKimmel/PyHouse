@@ -69,13 +69,13 @@ Nevow.Athena.Widget.subclass(helpers, 'Widget').methods(
 		Divmod.debug('---', 'attachWidget - ' + p_name + ' is being attached to:' + self.node.className + ', with params:'+ p_params + ', ready_function:' + p_readyfunc );
 		var d1 = self.callRemote(p_name, p_params);
 		d1.addCallback(function liveElementReceived(le) {
-			//Divmod.debug('---', 'attachWidget - Object d1 - callRemote ' + p_name + ' 2' );
+			Divmod.debug('---', 'attachWidget - ' + p_name + ' d1 - callRemote' );
 			var d2 = self.addChildWidgetFromWidgetInfo(le);
 			d2.addCallback(function childAdded(widget) {
-				Divmod.debug('---', 'attachWidget - Object d2 - addChildWidgetFromWidgetInfo :' + p_name + ' 3 ' + widget);
+				Divmod.debug('---', 'attachWidget - ' + p_name + ' d2 - addChildWidgetFromWidgetInfo : ' + widget);
 				self.node.appendChild(widget.node);
 				var d3 = widget.ready();
-				Divmod.debug('---', 'attachWidget - Object d3 widget.ready :' + p_name + ' 4' );
+				Divmod.debug('---', 'attachWidget - ' + p_name + ' d3 widget.ready :' );
 
 				function isready() {
 					widget.show();

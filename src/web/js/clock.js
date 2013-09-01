@@ -22,10 +22,11 @@ helpers.Widget.subclass(clock, 'ClockWidget').methods(
 		
 		function cb_widgetready(res) {
 			// do whatever initialization needs here, show for the widget is handled in superclass
+			Divmod.debug('---', 'clock.cb_widgready() was called. res = ' + res);
 			self.getAndShowTime();
 		}
 	
-		Divmod.debug('---', 'ckock.ready() was called. ' + self);
+		Divmod.debug('---', 'clock.ready() was called. ' + self);
 		var uris = collectIMG_src(self.node, null);
 		var d = loadImages(uris);
 		d.addCallback(cb_widgetready);

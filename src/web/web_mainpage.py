@@ -337,6 +337,7 @@ class Workspace(athena.LiveElement):
     PG_INITED = 0
 
     def __init__(self, p_pyhouses_obj, uid = None):
+        self.m_pyhouses_obj = p_pyhouses_obj
         if g_debug >= 3:
             print "web_mainpage.Workspace()"
         super(Workspace, self).__init__()
@@ -390,10 +391,14 @@ class Workspace(athena.LiveElement):
         """
         if g_debug >= 3:
             print "web_mainpage.Workspace.login() - called from browser to load LoginElement."
+            print "    self=", self
+            print "    page=", self.page
+            print "    params=", p_params
+            print "    PyHouse=", self.m_pyhouses_obj
+        p_params = self.m_pyhouses_obj
         g_logger.info("login called - params = {0:}".format(p_params))
         l_element = web_login.LoginElement(self)
         l_element.setFragmentParent(self)
-        print "     self=", self, self.page
         return l_element
 
     @athena.expose

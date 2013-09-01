@@ -17,9 +17,11 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 
 		function cb_widgetready(res) {
 			// do whatever init needs here, show for the widget is handled in superclass
+			Divmod.debug('---', 'houseSelect.cb_widgready() was called. res = ' + res);
 			//self.displaySelect();
 		}  // cb_widgetready
 	
+		Divmod.debug('---', 'houseSelect.ready() was called.  self =' + self);
 		var uris = collectIMG_src(self.node, null);
 		var d = loadImages(uris);
 		d.addCallback(cb_widgetready);

@@ -97,9 +97,12 @@ class LoginElement(athena.LiveElement):
     jsClass = u'login.LoginWidget'
 
     def __init__(self, p_workspace_obj):
-        self.m_pyhouses_obj = p_workspace_obj
+        self.m_workspace_obj = p_workspace_obj
+        self.m_pyhouses_obj = p_workspace_obj.m_pyhouses_obj
         if g_debug >= 2:
-            print "web_login.LoginElement()", self.fragmentParent
+            print "web_login.LoginElement()"
+            print "    self = ", vars(self)
+            print "    workspace_obj = ", vars(p_workspace_obj)
 
     @athena.expose
     def doLogin(self, p_json):
@@ -108,27 +111,35 @@ class LoginElement(athena.LiveElement):
         if g_debug >= 3:
             print "web_login.LoginElement.doLogin() - Json:{0:}".format(p_json)
         g_logger.info("doLogin called {0:} {1:}".format(self, p_json))
-        Login(self, p_json, self.m_pyhouses_obj)
+        Login(p_json, self.m_workspace_obj, self.m_pyhouses_obj)
 
-    def display_fullname(self, p_login_obj):
+    def display_fullname(self, p_login, p_work):
         """The login was sucessful - un-display login and display logged in part.
         """
         if g_debug >= 3:
-            print "web_login.LoginElement.display_fullname() - ", self, p_login_obj, self.page
-        self.callRemote('displayLoggedIn', p_login_obj)
+            print "web_login.LoginElement.display_fullname() - "
+            #print "    self = ", self, vars(self)
+            print "    work = ", p_work, vars(p_work)
+            print "    p_login=", p_login, vars(p_login)
+        #p_work.callRemote('displayLoggedIn', p_login)
+        #p_work.callRemote('displayLoggedIn', u'[u"Username":u"briank"]') #==>  workspase has no method displayLoggedIn
+        p_work.fragmentParent.callRemote('displayLoggedIn', u'[u"Username":u"briank"]') #==> TypeError: Cannot call method 'apply' of undefined
+        # self.callRemote('displayLoggedIn', u'[u"Username":u"briank"]') #==> NonrType has no attribute callRemote
 
 
 class Login(LoginElement):
     """Actual login procedures.
     """
 
-    def __init__(self, p_work, p_json, p_pyhouses_obj):
+    def __init__(self, p_json, p_work, p_pyhouses_obj):
         if g_debug >= 3:
-            print "web_login.Login() - Json:{0:}".format(p_json), p_work
+            print "web_login.Login() - Json:{0:}".format(p_json)
+            print "    p_work = ", p_work, vars(p_work)
+            #print "    p_pyhouses =", p_pyhouses_obj  # Ok
         l_obj = self.validate_user(p_json, p_pyhouses_obj)
         if l_obj.LoggedIn:
-            self.display_fullname(l_obj)
-            self.load_rootMenu(p_work, l_obj)
+            self.display_fullname(l_obj, p_work)
+            #self.load_rootMenu(p_work, l_obj)
         else:  # login failed
             pass
 
@@ -146,10 +157,10 @@ class Login(LoginElement):
         """
         """
         if g_debug >= 3:
-            print "web_login.load_rootMenu() ", p_login_obj
+            print "web_login.load_rootMenu(1) ", vars(p_login_obj)
         if p_login_obj.LoggedIn:
-            l_json = json.dumps(repr(p_login_obj))
-            print '>>>', l_json
+            #l_json = json.dumps(repr(p_login_obj))
+            #print 'web_login.load_rootMenu(2) - json = ', l_json
             p_work.callRemote('loggedInStatus', u'zz')
             #p_work.callRemote('showRootMenuStuff', u'')
 

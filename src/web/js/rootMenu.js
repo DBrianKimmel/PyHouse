@@ -17,9 +17,11 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 		
 		function cb_widgetready(res) {
 			// do whatever init needs here, show for the widget is handled in superclass
+			Divmod.debug('---', 'rootMenu.cb_widgready() was called. res = ' + res);
 			//self.displayRootMenu();
 		}
 	
+		Divmod.debug('---', 'rootMenu.ready() was called.  self =' + self);
 		var uris = collectIMG_src(self.node, null);
 		var d = loadImages(uris);
 		d.addCallback(cb_widgetready);
