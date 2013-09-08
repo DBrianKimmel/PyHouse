@@ -18,5 +18,36 @@
 </div>
 
 <!--
+
+<html
+    xmlns:nevow  = 'http://nevow.com/ns/nevow/0.1'
+    xmlns:athena = 'http://divmod.org/ns/athena/0.7'
+    lang         = 'en'
+    >
+    <head nevow:render = 'liveglue'>
+        <title>PyHouse Main Page</title>
+    </head>
+    <body nevow:render = 'livePage'>
+        <h1>PyHouse</h1>
+        <h2>Select the menu Function:</h2>
+        <div nevow:render = 'username'>Username element goes here.</div>
+        <form name = 'menuofbuttons' enctype = 'multipart/form-data' method = 'post' >
+                    <nevow:attr name = "action"><nevow:invisible nevow:render = 'action' /></nevow:attr>
+            <table style = 'width: 60%;' border = '0'>
+                <tr>
+                    <td><input type = 'submit' value = 'Select_House' name = 'post_btn' /></td>
+                    <td><input type = 'button' value = 'Add House' onclick = "createNewHouseWindow('New Name')" /></td>
+                    <td><input type = 'button' value = 'Web Server' onclick = "createChangeWebServerWindow('New Name')" /></td>
+                    <td><input type = 'button' value = 'Logs' onclick = "createChangeLogsWindow('New Name')" /></td>
+                </tr><tr>
+                    <td><input type = 'submit' value = 'Quit' name = 'post_btn' /></td>
+                    <td><input type = 'submit' value = 'Reload' name = 'post_btn' /></td>
+                </tr>
+            </table>
+        </form>
+        <p>end for form in rootMenu</p>
+    </body>
+</html>
+
 ### END DBK -->
  

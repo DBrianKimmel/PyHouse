@@ -17,28 +17,26 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 
 		function cb_widgetready(res) {
 			// do whatever init needs here, show for the widget is handled in superclass
-			Divmod.debug('---', 'houseSelect.cb_widgready() was called. res = ' + res);
-			//self.displaySelect();
-		}  // cb_widgetready
+			//Divmod.debug('---', 'houseSelect.cb_widgready() was called. self = ' + self);
+			self.hideSelect();
+		}
 	
-		Divmod.debug('---', 'houseSelect.ready() was called.  self =' + self);
+		//Divmod.debug('---', 'houseSelect.ready() was called. self = ' + self);
 		var uris = collectIMG_src(self.node, null);
 		var d = loadImages(uris);
 		d.addCallback(cb_widgetready);
 		return d;
-	},  // ready
+	},
 
-	function displaySelect(self) {
-
-		function cb_showSelect() {
-			self.node.innerHTML = 'Show House Select';
-		}
+	function hideSelect(self) {
+		//Divmod.debug('---', 'houseSelect.hideSelect() was called. self = ' + self);
+		self.node.style.display = 'none';
+	},
 	
-		Divmod.debug('---', 'houseSelect.displaySelect() was called.');
-        var d = self.callRemote("houseSelect", 'dumb');
-		d.addCallback(cb_showSelect);
-        return false;
-	}  // displaySelect
+	function showSelect(self) {
+		//Divmod.debug('---', 'houseSelect.showSelect() was called. self = ' + self);
+		self.node.style.display = 'block';
+	}
 );
 
 //### END DBK

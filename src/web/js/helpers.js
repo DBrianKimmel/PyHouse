@@ -1,4 +1,7 @@
-// helpers.js
+/** helpers.js
+ * 
+ * This script is the live element functionality.
+ */
 
 // import Nevow.Athena
 
@@ -10,8 +13,9 @@ Nevow.Athena.Widget.subclass(helpers, 'Widget').methods(
 		
 	function __init__(self, node) {
 		helpers.Widget.upcall(self, '__init__', node);
-	},  // __init__
+	},
 
+	
 	/**
 	 *  Special attention should be paid to the function C{ready} which should be overridden in almost every case,
 	 *  working with the C{widgetready} function in a closure.
@@ -20,6 +24,9 @@ Nevow.Athena.Widget.subclass(helpers, 'Widget').methods(
 	 *  we're setup properly for action is way too important to delegate it into superclass.
 	 *  
 	 * Think of C{ready} as a stub, which is more like a template to start work on your own widgets implementation.
+	 * 
+	 * @param self = 
+	 * @returns a deferred that completes async
 	 */
 	function ready(self) {
 
@@ -32,11 +39,12 @@ Nevow.Athena.Widget.subclass(helpers, 'Widget').methods(
 		 * There is nothing worse than a widget which has stuff percolating in at random.
 		 */
 		var uris = collectIMG_src(self.node, null);
-		var d = loadImages(uris);
-		d.addCallback(cb_widgetready);
-		return d;
+		var l_defer = loadImages(uris);
+		l_defer.addCallback(cb_widgetready);
+		return l_defer;
 	},  // ready
 
+	
 	function loaded(self) {
 		// This function is called by the Athena setup.
 		self.isloaded = true;
@@ -50,32 +58,30 @@ Nevow.Athena.Widget.subclass(helpers, 'Widget').methods(
 		self.node.style.visibility = 'hidden';
 	},  // hide
 
-	/**
+	/** Generic ErrorBack 
 	 * 
-	 * @param self is an istannce of workspace.Workspace
+	 * @param self is an instance of workspace.Workspace
 	 * @param res(string) is an error message.
 	 */
 	function eb_genericErrback(self, res) {
 		var l_node = self.node;
 		var l_nodeName = l_node.nodeName;
-		var l_obj = l_node.attributes.item(0);
-		var l_keys = self.node.attributes.item(0);
-		var l_name = Object.keys(l_keys);
-		var l_info = l_node;
-		Divmod.debug('---', 'helpers.Widget() - widget injection failed - ' + res + '  ' + l_nodeName + '  ' + self);
-	},  // eb_genericErrback
+		var l_obj = l_node.attributes;
+		Divmod.debug('---', 'helpers.js - ERROR - attachWidget failed - Node:' + l_nodeName + '  Err:' + res);
+		console.log("GenericErrBck - %O", l_node);
+	},
 	  
 	function attachWidget(self, p_name, p_params, p_readyfunc) {
-		Divmod.debug('---', 'attachWidget - ' + p_name + ' is being attached to:' + self.node.className + ', with params:'+ p_params + ', ready_function:' + p_readyfunc );
-		var d1 = self.callRemote(p_name, p_params);
-		d1.addCallback(function liveElementReceived(le) {
-			Divmod.debug('---', 'attachWidget - ' + p_name + ' d1 - callRemote' );
+		//Divmod.debug('---', 'attachWidget - ' + p_name + ' is being attached to:' + self.node.className + ', with params:'+ p_params + ', ready_function:' + p_readyfunc);
+		var l_defer_1 = self.callRemote(p_name, p_params);
+		l_defer_1.addCallback(function liveElementReceived(le) {
+			//Divmod.debug('---', 'attachWidget - ' + p_name + ' callRemote' );
 			var d2 = self.addChildWidgetFromWidgetInfo(le);
 			d2.addCallback(function childAdded(widget) {
-				Divmod.debug('---', 'attachWidget - ' + p_name + ' d2 - addChildWidgetFromWidgetInfo : ' + widget);
+				//Divmod.debug('---', 'attachWidget - ' + p_name + ' addChildWidgetFromWidgetInfo');
 				self.node.appendChild(widget.node);
 				var d3 = widget.ready();
-				Divmod.debug('---', 'attachWidget - ' + p_name + ' d3 widget.ready :' );
+				//Divmod.debug('---', 'attachWidget - ' + p_name + ' widget.ready' );
 
 				function isready() {
 					widget.show();
@@ -85,19 +91,19 @@ Nevow.Athena.Widget.subclass(helpers, 'Widget').methods(
 					p_readyfunc = isready;
 				d3.addCallback(p_readyfunc);
 				d3.addErrback(function(res) {  // widget.ready failed
-					self.eb_genericErrback(res + ' d3 ' + widget );
+					self.eb_genericErrback(res + ' widget.reay failed for: ' + p_name );
 				}
 				);
 			}  // childAdded
 			);
 			d2.addErrback(function(res) {  // addChildWidgetFromWidgetInfo failed
-				self.eb_genericErrback(res + ' d2 failed ');
+				self.eb_genericErrback(res + ' addChildWidgetFromWidgetInfo failed for: ' + p_name);
 				}
 			);
 		}  // liveElementReceived
 		);
-		d1.addErrback(function(res) {  // callRemote failed
-			self.eb_genericErrback(res + ' d1 (callRemote failed ');
+		l_defer_1.addErrback(function(res) {  // callRemote failed
+			self.eb_genericErrback(res + ' callRemote failed for: ' + p_name);
 		}
 		);
 	  },  // attatchWidget
@@ -109,6 +115,10 @@ Nevow.Athena.Widget.subclass(helpers, 'Widget').methods(
 	  }  // detached
 );
 
+
+/**
+ * Page not found widget
+ */
 
 helpers.Widget.subclass(helpers, 'FourOfour').methods(
 
@@ -122,11 +132,11 @@ helpers.Widget.subclass(helpers, 'FourOfour').methods(
 		var d = loadImages(uris);
 		d.addCallback(widgetready);
 		return d;
-	},  // ready
+	},
 
 	function show(self) {
 		alert('this is a fourOfour Message');
-	}  // show
+	}
 );
 
 // END DBK

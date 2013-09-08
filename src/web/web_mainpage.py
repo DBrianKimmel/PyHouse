@@ -1,5 +1,3 @@
-#! /usr/bin/env python
-#-*- coding: iso-8859-1 -*-
 """
 Created on Jul 27, 2013
 
@@ -65,10 +63,16 @@ from nevow.inevow import IRequest
 from twisted.internet import defer
 
 # Import PyMh files and modules.
+from src.web import web_clock
 from src.web import web_login
 from src.web import web_rootMenu
 from src.web import web_houseSelect
 from src.web import web_lights
+from src.web import web_controllers
+from src.web import web_buttons
+from src.web import web_rooms
+from src.web import web_schedules
+from src.web import web_controlLights
 
 
 # Handy helper for finding external resources nearby.
@@ -300,8 +304,8 @@ class MainPage(athena.LivePage):
         self.uid = None
         self.username = ''
         self.pageTitle = 'PyHouse Access'
-        d = self.notifyOnDisconnect()
-        d.addErrback(self.eb_disconnect)
+        l_defer = self.notifyOnDisconnect()
+        l_defer.addErrback(self.eb_disconnect)
 
     def render_workspace(self, ctx, data):
         if g_debug >= 3:
@@ -312,11 +316,11 @@ class MainPage(athena.LivePage):
 
     def eb_disconnect(self, reason):
         """
-        we will be called back when the client disconnects, clean up whatever needs
-        cleaning serverside
+        We will be called back when the client disconnects.
+        Clean up whatever needs cleaning serverside.
         """
         if g_debug >= 3:
-            print "web_mainpage.MainPage.eb_disconnect()"
+            print "web_mainpage.MainPage.eb_disconnect() - we were notified of a web page disconnect somehow."
         pass
 
 
@@ -351,6 +355,10 @@ class Workspace(athena.LiveElement):
             print "web_mainpage.Workspace.detached()"
         g_logger.info('workspace object was detached cleanly')
 
+
+#-----------------
+# Calls from browser JS to load an element (fragment)
+
     @athena.expose
     def inject_404(self):
         if g_debug >= 3:
@@ -360,11 +368,38 @@ class Workspace(athena.LiveElement):
         return f
 
     @athena.expose
+    def buttons(self, p_params):
+        if g_debug >= 3:
+            print "web_mainpage.Workspace.buttons() - called from browser to load clockElement"
+        g_logger.info("buttons called")
+        l_element = web_buttons.ButtonsElement(self)
+        l_element.setFragmentParent(self)
+        return l_element
+
+    @athena.expose
     def clock(self, p_params):
         if g_debug >= 3:
             print "web_mainpage.Workspace.clock() - called from browser to load clockElement"
         g_logger.info("clock called")
-        l_element = Clock()
+        l_element = web_clock.ClockElement()
+        l_element.setFragmentParent(self)
+        return l_element
+
+    @athena.expose
+    def controllers(self, p_params):
+        if g_debug >= 3:
+            print "web_mainpage.Workspace.controllers() - called from browser to load controllersElement"
+        g_logger.info("controllers called")
+        l_element = web_controllers.ControllersElement(self)
+        l_element.setFragmentParent(self)
+        return l_element
+
+    @athena.expose
+    def controlLights(self, p_params):
+        if g_debug >= 3:
+            print "web_mainpage.Workspace.controlLights() - called from browser to load controlLightsElement"
+        g_logger.info("controlLights called")
+        l_element = web_controlLights.ControlLightsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
@@ -391,13 +426,22 @@ class Workspace(athena.LiveElement):
         """
         if g_debug >= 3:
             print "web_mainpage.Workspace.login() - called from browser to load LoginElement."
-            print "    self=", self
-            print "    page=", self.page
-            print "    params=", p_params
-            print "    PyHouse=", self.m_pyhouses_obj
+            #print "    self=", self  # Prints Workspace obk
+            #print "    page=", self.page  # Prints MainPage obj
+            #print "    params=", p_params  # Prints dummy
+            #print "    PyHouse=", self.m_pyhouses_obj  # Prints OK
         p_params = self.m_pyhouses_obj
         g_logger.info("login called - params = {0:}".format(p_params))
         l_element = web_login.LoginElement(self)
+        l_element.setFragmentParent(self)
+        return l_element
+
+    @athena.expose
+    def rooms(self, p_params):
+        if g_debug >= 3:
+            print "web_mainpage.Workspace.rooms() - called from browser to load roomsElement"
+        g_logger.info("rooms called")
+        l_element = web_rooms.RoomsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
@@ -409,6 +453,17 @@ class Workspace(athena.LiveElement):
         l_element = web_rootMenu.RootMenuElement(self)
         l_element.setFragmentParent(self)
         return l_element
+
+    @athena.expose
+    def schedules(self, p_params):
+        if g_debug >= 3:
+            print "web_mainpage.Workspace.schedules() - called from browser to load schedulesElement"
+        g_logger.info("schedules called")
+        l_element = web_schedules.SchedulesElement(self, p_params)
+        l_element.setFragmentParent(self)
+        return l_element
+
+#-----------------
 
     @athena.expose
     def guiready(self):
@@ -461,19 +516,6 @@ class Workspace(athena.LiveElement):
             d.addCallback(cb_rootmatch)
             d.addErrback(eb_nomatch)
         return d
-
-#==============================================================================
-
-class Clock(athena.LiveElement):
-    jsClass = u'clock.ClockWidget'
-    docFactory = loaders.xmlfile(os.path.join(templatepath, 'clockElement.html'))
-
-    @athena.expose
-    def getTimeOfDay(self):
-        if g_debug >= 6:
-            print "web_mainpage.Clock.getTimeOfDay() - called from browser"
-        return uc(time.strftime("%I:%M:%S", time.localtime(time.time())))
-
 
 #==============================================================================
 

@@ -5,7 +5,7 @@ to the nevow/plugin directory for the given os/distribution.  These glue modules
 allow athena to find the various .css and .js files needed to operate.
 Nevow uses a different mechanism to locate these files.
 
-It is possible (thanks to Wenrner Thie) to do our own finding og resources and avoid the plugins.
+It is possible (thanks to Wenrner Thie) to do our own finding of resources and avoid the plugins.
 This seems a lot smarter to me since it handles different platforms a lot better.
 
 
@@ -40,6 +40,7 @@ xxx.js must be added to handle the client side of the widget.
 web_mainpage must import the web_xxx module and provide a callback with the name (xxx) of the xxx.js file to render the element/widget.
 
 workspace.js must add an attachWidget call to load the xxx element.
+
 
 
 

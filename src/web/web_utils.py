@@ -17,6 +17,8 @@ from nevow import url
 from nevow import util
 from nevow.rend import _CARRYOVER
 from formless import iformless
+import json
+
 
 # Import PyMh files and modules.
 from src.utils import xml_tools
@@ -70,6 +72,54 @@ class WebUtilities(xml_tools.ConfigFile):
         self.put_int_attribute(l_xml, 'WebPort', p_web_data.WebPort)
         return l_xml
 
+
+class JsonUnicode(object):
+    """Utilities for handling unicode and json
+    """
+
+    def convert_from_unicode(self, p_input):
+        """Convert unicode strings to python 2 strings.
+        """
+        if isinstance(p_input, dict):
+            return {self.convert_from_unicode(key): self.convert_from_unicode(value) for key, value in p_input.iteritems()}
+        elif isinstance(p_input, list):
+            return [self.convert_from_unicode(element) for element in p_input]
+        elif isinstance(p_input, unicode):
+            return p_input.encode('ascii')
+        else:
+            return p_input
+
+    def convert_to_unicode(self, p_input):
+        if isinstance(p_input, dict):
+            return {self.convert_to_unicode(key): self.convert_to_unicode(value) for key, value in p_input.iteritems()}
+        elif isinstance(p_input, list):
+            return [self.convert_to_unicode(element) for element in p_input]
+        elif isinstance(p_input, unicode):
+            return p_input
+        else:
+            return unicode(p_input)
+
+    def decode_json(self, p_json):
+        """Convert a json object to a python object
+        """
+        x = self.convert_from_unicode(p_json)
+        try:
+            l_obj = json.loads(x)
+        except (TypeError, ValueError), e:
+            print "decode json error ", e
+            l_obj = None
+        return l_obj
+
+    def encode_json(self, p_obj):
+        """Convert a python object to a valid json object.
+        """
+        x = self.convert_from_unicode(p_obj)
+        try:
+            l_json = json.dumps(x)
+        except (TypeError, ValueError), e:
+            print "encode json error ", e
+            l_json = None
+        return l_json
 
 
 class ManualFormMixin(rend.Page):

@@ -34,33 +34,17 @@ helpers.Widget.subclass(workspace, 'Workspace').methods(
 	},
 
 	function showWaitRoller(self) {
+		Divmod.debug('---', 'workspace.Workspace.showWaitRoller - ' + self );
 		var waitroller = self.nodeById('waitroller');
 		waitroller.style.visibility = 'visible';
 	},
 
 	function hideWaitRoller(self) {
+		Divmod.debug('---', 'workspace.Workspace.hideWaitRoller - ' + self );
 		var waitroller = self.nodeById('waitroller');
 		waitroller.style.visibility = 'hidden';
 	},
 	
-	/** add new method.
-	 * 
-	 * Hide all our elements - show just what we want as the user selects things.
-	 * 
-	 * @param self
-	 */
-	function hideAll(self) {
-		Divmod.debug('---', 'workspace.hideAll() - Lights' + self );
-		var lightsWidget = self.nodeById('LightsDiv');
-		lightsWidget.style.visibility = 'hidden';
-		Divmod.debug('---', 'workspace.hideAll() - Login' + self );
-		//var loginWidget = self.nodeById('LoginDiv');
-		//loginWidget.style.visibility = 'hidden';
-		Divmod.debug('---', 'workspace.hideAll() - Clock' + self );
-		//var clockWidget = self.nodeById('ClockDiv');
-		//clockWidget.style.visibility = 'visible';
-	},
-
 	/**
 	 * Do whatever needs to be started up, checking for images loading and other stuff.
 	 * This function is called by the C{Divmod.Runtime} code as startup event, see C{globals.js}
@@ -74,23 +58,30 @@ helpers.Widget.subclass(workspace, 'Workspace').methods(
 	function appStartup(self) {
 
 		function ready() { // we're now ready for action
-			var d1 = self.callRemote('guiready');
+			Divmod.debug('---', 'workspace.Workspace.appStartup - ' + self );
+			var l_defer = self.callRemote('guiready');
 
-			d1.addCallback(function(res) {
+			l_defer.addCallback(function(res) {
+				Divmod.debug('---', 'workspace.Workspace.addCallback - ' + res );
 				globals.__init__();
 				globals.reqType = res[0];
 				globals.user = res[1];
 				// seems we're done, hide the visual amusements for now
-				self.hideWaitRoller();
+				//self.hideWaitRoller();
 				self.attachWidget('clock', 'dummy'); // dummy params - passed down to the server
 				self.attachWidget('login', 'dummy');
 				self.attachWidget('rootMenu', 'dummy');
 				self.attachWidget('houseSelect', 'dummy');
-				//self.attachWidget('lights', 'dummy');
-				//self.hideAll();
+				self.attachWidget('lights', 'dummy');
+				self.attachWidget('controllers', 'dummy');
+				self.attachWidget('buttons', 'dummy');
+				self.attachWidget('rooms', 'dummy');
+				self.attachWidget('schedules', 'dummy');
+				self.attachWidget('controlLights', 'dummy');
+				self.hideWaitRoller();
 			});  // addCallback
 
-			d1.addErrback(function(res) {
+			l_defer.addErrback(function(res) {
 				Divmod.debug('---', 'ERROR - workspace.guiready.errback() - ' + res );
 				self.node.appendChild(document.createTextNode('Error: ' + res.error.message));
 			});  // addErrback

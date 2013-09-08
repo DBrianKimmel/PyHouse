@@ -122,7 +122,7 @@ class LightsPage(web_utils.ManualFormMixin):
         l_ret = "<tr>\n"
         l_cnt = 0
         for l_key, l_obj in sorted(links.iteritems()):
-            l_json = json.dumps(repr(l_obj))
+            l_json = web_utils.JsonUnicode().encode_json(l_obj)
             if l_cnt > 0 and l_cnt % 3 == 0:
                 l_ret += "</tr><tr>\n"
             l_ret += "<td>..."

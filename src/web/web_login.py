@@ -16,16 +16,13 @@ After the user is authenticated, this element is converted to a "loged in as" en
 # Import system type stuff
 import logging
 import os
-from twisted.python.filepath import FilePath
 from nevow import loaders
 from nevow import athena
-import json
 
 # Import PyMh files and modules.
-from src import web
+from src.web import web_utils
 
 # Handy helper for finding external resources nearby.
-webdir = FilePath(web.__file__).parent().preauthChild
 webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
 
@@ -51,13 +48,17 @@ class LoginData(object):
     def __init__(self):
         """Login Data
         """
-        self.Userame = ''
+        self.Username = ''
         self.Password = ''
         self.Fullname = 'Not logged in'
         self.LoggedIn = False
 
     def __str__(self):
         l_ret = "LoginData:: "
+        l_ret += "Username:{0:}, ".format(self.Username)
+        l_ret += "Password:{0:}, ".format(self.Password)
+        l_ret += "Fullname:{0:}, ".format(self.Fullname)
+        l_ret += "LoggedIn:{0:}".format(self.LoggedIn)
         return l_ret
 
     def __repr__(self):
@@ -72,7 +73,7 @@ class LoginData(object):
         return l_ret
 
     def decode_login_json(self, p_json):
-        l_obj = convert(json.loads(p_json))
+        l_obj = web_utils.JsonUnicode().decode_json(p_json)
         if l_obj['Username'] == 'briank':
             self.Username = l_obj['Username']
             self.Fullname = 'D. Brian Kimmel'
@@ -86,13 +87,13 @@ class LoginData(object):
         return self
 
     def encode_login_json(self, p_login):
-        return json.dumps(p_login)
+        l_json = web_utils.JsonUnicode().encode_json(p_login)
+        return l_json
 
 
 class LoginElement(athena.LiveElement):
     """ a 'live' login element containing a username and password.
     """
-    #docFactory = loaders.xmlfile(webdir('template/loginElement.html').path)
     docFactory = loaders.xmlfile(os.path.join(templatepath, 'loginElement.html'))
     jsClass = u'login.LoginWidget'
 
@@ -101,8 +102,8 @@ class LoginElement(athena.LiveElement):
         self.m_pyhouses_obj = p_workspace_obj.m_pyhouses_obj
         if g_debug >= 2:
             print "web_login.LoginElement()"
-            print "    self = ", vars(self)
-            print "    workspace_obj = ", vars(p_workspace_obj)
+            print "    self = ", self  #, vars(self)
+            print "    workspace_obj = ", p_workspace_obj  #, vars(p_workspace_obj)
 
     @athena.expose
     def doLogin(self, p_json):
@@ -118,13 +119,15 @@ class LoginElement(athena.LiveElement):
         """
         if g_debug >= 3:
             print "web_login.LoginElement.display_fullname() - "
-            #print "    self = ", self, vars(self)
-            print "    work = ", p_work, vars(p_work)
-            print "    p_login=", p_login, vars(p_login)
+            print "    self = ", self # , vars(self)
+            print "    work = ", p_work #, vars(p_work)  # Prints Workspace obj
+            print "    p_login=", p_login # , vars(p_login)  # Prints json data with string keys and unicode data
         #p_work.callRemote('displayLoggedIn', p_login)
         #p_work.callRemote('displayLoggedIn', u'[u"Username":u"briank"]') #==>  workspase has no method displayLoggedIn
-        p_work.fragmentParent.callRemote('displayLoggedIn', u'[u"Username":u"briank"]') #==> TypeError: Cannot call method 'apply' of undefined
+        #p_work.fragmentParent.callRemote('displayLoggedIn', u'[u"Username":u"briank"]') #==> TypeError: Cannot call method 'apply' of undefined
         # self.callRemote('displayLoggedIn', u'[u"Username":u"briank"]') #==> NonrType has no attribute callRemote
+        #self.callRemote('displayLoggedIn', u'[u"Username":u"briank"]') #==> exceptions.AttributeError: 'NoneType' object has no attribute 'callRemote'
+        athena.LiveElement().callRemote('displayLoggedIn', u'[u"Username":u"briank"]') #==> 
 
 
 class Login(LoginElement):
@@ -133,13 +136,13 @@ class Login(LoginElement):
 
     def __init__(self, p_json, p_work, p_pyhouses_obj):
         if g_debug >= 3:
-            print "web_login.Login() - Json:{0:}".format(p_json)
-            print "    p_work = ", p_work, vars(p_work)
-            #print "    p_pyhouses =", p_pyhouses_obj  # Ok
+            print "web_login.Login()"
+            print "    p_json ", p_json
+            #print "    p_work = ", p_work # , vars(p_work)
+            #print "    p_pyhouses =", p_pyhouses_obj  # Prints Ok
         l_obj = self.validate_user(p_json, p_pyhouses_obj)
         if l_obj.LoggedIn:
             self.display_fullname(l_obj, p_work)
-            #self.load_rootMenu(p_work, l_obj)
         else:  # login failed
             pass
 
@@ -147,32 +150,11 @@ class Login(LoginElement):
         """Validate the user and put all results into the LoginData object.
         """
         self.m_pyhouses_obj = p_pyhouses_obj
-        if g_debug >= 3:
-            print "web_login.validate_user() ", p_json
         #TODO: validate user - add password for security 
         l_obj = LoginData().decode_login_json(p_json)
-        return l_obj
-
-    def load_rootMenu(self, p_work, p_login_obj):
-        """
-        """
         if g_debug >= 3:
-            print "web_login.load_rootMenu(1) ", vars(p_login_obj)
-        if p_login_obj.LoggedIn:
-            #l_json = json.dumps(repr(p_login_obj))
-            #print 'web_login.load_rootMenu(2) - json = ', l_json
-            p_work.callRemote('loggedInStatus', u'zz')
-            #p_work.callRemote('showRootMenuStuff', u'')
-
-
-def convert(p_input):
-    if isinstance(p_input, dict):
-        return {convert(key): convert(value) for key, value in p_input.iteritems()}
-    elif isinstance(p_input, list):
-        return [convert(element) for element in p_input]
-    elif isinstance(p_input, unicode):
-        return p_input.encode('utf-8')
-    else:
-        return p_input
+            print "web_login.validate_user() ", p_json
+            print "      obj:", l_obj
+        return l_obj
 
 # ## END DBK

@@ -1,5 +1,24 @@
-<!--  houseMenu.xml
+<!--  houseMenuElement.xml
  -->
+ 
+ <div 
+    xmlns:athena = 'http://divmod.org/ns/athena/0.7'
+    xmlns:nevow  = 'http://nevow.com/ns/nevow/0.1'
+    nevow:render = 'liveElement'
+    class = "houseMenu"
+    name = 'HouseMenuDiv'
+    id = 'HouseMenuDiv'
+    style = "background-color: #c2f2c2;">
+
+    <form name = "HouseMenuForm" id = 'HouseMenuForm'>
+        <athena:handler event = "onsubmit" handler = "doHouseMenu" />
+        <h2>HouseMenu</h2>
+        <input type = "submit" name = 'HouseMenuSubmit' value = "HouseMenu" />
+    </form>
+</div>
+ 
+<!--
+
 <html
     xmlns:nevow  = "http://nevow.com/ns/nevow/0.1"
     xmlns:athena = 'http://divmod.org/ns/athena/0.7'
@@ -36,5 +55,5 @@
     	</form>
     </body>
 </html>
-<!--
+
 ### EBD DBK -->
