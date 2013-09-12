@@ -27,12 +27,13 @@ webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
 
 
-g_debug = 4
+g_debug = 3
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
 # 3 = Config file handling
 # 4 = Basic data
+# 5 = Detailed Data
 # + = NOT USED HERE
 g_logger = logging.getLogger('PyHouse.webLogin')
 
@@ -52,43 +53,28 @@ class LoginData(object):
         self.Password = ''
         self.Fullname = 'Not logged in'
         self.LoggedIn = False
+        self.ServerState = web_utils.WS_IDLE
 
     def __str__(self):
         l_ret = "LoginData:: "
         l_ret += "Username:{0:}, ".format(self.Username)
         l_ret += "Password:{0:}, ".format(self.Password)
         l_ret += "Fullname:{0:}, ".format(self.Fullname)
-        l_ret += "LoggedIn:{0:}".format(self.LoggedIn)
+        l_ret += "LoggedIn:{0:}, ".format(self.LoggedIn)
+        l_ret += "ServerState:{0:}".format(self.ServerState)
         return l_ret
 
     def __repr__(self):
         """JSON representation of the data - encoding
         """
-        l_ret = '{'
-        l_ret += "'Username':'{0:}', ".format(self.Username)
-        l_ret += "'Password':'{0:}', ".format(self.Password)
-        l_ret += "'Fullname':'{0:}', ".format(self.Fullname)
-        l_ret += "'LoggedIn':'{0:}'".format(self.LoggedIn)
-        l_ret += "}"
+        l_ret = u'{'
+        l_ret += u'"Username": "{0:}", '.format(self.Username)
+        l_ret += u'"Password": "{0:}", '.format(self.Password)
+        l_ret += u'"Fullname": "{0:}", '.format(self.Fullname)
+        l_ret += u'"LoggedIn": "{0:}", '.format(self.LoggedIn)
+        l_ret += u'"ServerState": "{0:}"'.format(self.ServerState)
+        l_ret += u'}'
         return l_ret
-
-    def decode_login_json(self, p_json):
-        l_obj = web_utils.JsonUnicode().decode_json(p_json)
-        if l_obj['Username'] == 'briank':
-            self.Username = l_obj['Username']
-            self.Fullname = 'D. Brian Kimmel'
-            self.Password = l_obj['Password']
-            self.LoggedIn = True
-        else:
-            self.Username = l_obj['Username']
-            self.Fullname = 'Invalid Login'
-            self.Password = l_obj['Password']
-            self.LoggedIn = False
-        return self
-
-    def encode_login_json(self, p_login):
-        l_json = web_utils.JsonUnicode().encode_json(p_login)
-        return l_json
 
 
 class LoginElement(athena.LiveElement):
@@ -100,61 +86,55 @@ class LoginElement(athena.LiveElement):
     def __init__(self, p_workspace_obj):
         self.m_workspace_obj = p_workspace_obj
         self.m_pyhouses_obj = p_workspace_obj.m_pyhouses_obj
-        if g_debug >= 2:
+        self.m_login_data = LoginData()
+        if g_debug >= 3:
             print "web_login.LoginElement()"
+        if g_debug >= 5:
             print "    self = ", self  #, vars(self)
             print "    workspace_obj = ", p_workspace_obj  #, vars(p_workspace_obj)
 
     @athena.expose
     def doLogin(self, p_json):
-        """ A JS receiver for login information from the client.
+        """ This will receive json of username, password when the user clicks on the login button in the browser.
+
+            First, we validate the user
+            If valid, display the user and then the root menu.
+            If not - allow the user to retry the login.
+
+            @param p_json: is the username and password passed back by the client.
         """
-        if g_debug >= 3:
-            print "web_login.LoginElement.doLogin() - Json:{0:}".format(p_json)
-        g_logger.info("doLogin called {0:} {1:}".format(self, p_json))
-        Login(p_json, self.m_workspace_obj, self.m_pyhouses_obj)
-
-    def display_fullname(self, p_login, p_work):
-        """The login was sucessful - un-display login and display logged in part.
-        """
-        if g_debug >= 3:
-            print "web_login.LoginElement.display_fullname() - "
-            print "    self = ", self # , vars(self)
-            print "    work = ", p_work #, vars(p_work)  # Prints Workspace obj
-            print "    p_login=", p_login # , vars(p_login)  # Prints json data with string keys and unicode data
-        #p_work.callRemote('displayLoggedIn', p_login)
-        #p_work.callRemote('displayLoggedIn', u'[u"Username":u"briank"]') #==>  workspase has no method displayLoggedIn
-        #p_work.fragmentParent.callRemote('displayLoggedIn', u'[u"Username":u"briank"]') #==> TypeError: Cannot call method 'apply' of undefined
-        # self.callRemote('displayLoggedIn', u'[u"Username":u"briank"]') #==> NonrType has no attribute callRemote
-        #self.callRemote('displayLoggedIn', u'[u"Username":u"briank"]') #==> exceptions.AttributeError: 'NoneType' object has no attribute 'callRemote'
-        athena.LiveElement().callRemote('displayLoggedIn', u'[u"Username":u"briank"]') #==> 
-
-
-class Login(LoginElement):
-    """Actual login procedures.
-    """
-
-    def __init__(self, p_json, p_work, p_pyhouses_obj):
-        if g_debug >= 3:
-            print "web_login.Login()"
-            print "    p_json ", p_json
-            #print "    p_work = ", p_work # , vars(p_work)
-            #print "    p_pyhouses =", p_pyhouses_obj  # Prints Ok
-        l_obj = self.validate_user(p_json, p_pyhouses_obj)
-        if l_obj.LoggedIn:
-            self.display_fullname(l_obj, p_work)
+        g_logger.info("doLogin called {0:}.".format(p_json))
+        self.validate_user(p_json)
+        if g_debug >= 5:
+            print "web_login.LoginElement.doLogin()"
+            print "    json-in", p_json
+        if self.m_login_data.LoggedIn:
+            l_json = unicode(repr(self.m_login_data))
+            self.display_fullname(l_json)
         else:  # login failed
             pass
 
-    def validate_user(self, p_json, p_pyhouses_obj):
+    def validate_user(self, p_json):
         """Validate the user and put all results into the LoginData object.
+
+        TODO: validate user - add password check for security
         """
-        self.m_pyhouses_obj = p_pyhouses_obj
-        #TODO: validate user - add password for security 
-        l_obj = LoginData().decode_login_json(p_json)
-        if g_debug >= 3:
-            print "web_login.validate_user() ", p_json
-            print "      obj:", l_obj
-        return l_obj
+        l_obj = web_utils.JsonUnicode().decode_json(p_json)
+        self.m_login_data.Username = l_obj['Username']
+        self.m_login_data.Password = l_obj['Password']
+        if self.m_login_data.Username == 'briank':
+            self.m_login_data.Fullname = 'D. Brian Kimmel'
+            self.m_login_data.LoggedIn = True
+            self.m_login_data.ServerState = web_utils.WS_LOGGED_IN
+        if g_debug >= 5:
+            print "web_login.validate_user() ", self.m_login_data
+
+    def display_fullname(self, p_login):
+        """The login was sucessful - un-display login and display logged in part.
+        """
+        if g_debug >= 5:
+            print "web_login.LoginElement.display_fullname() - "
+            print "    p_login=", p_login
+        self.callRemote('displayFullname', p_login)
 
 # ## END DBK

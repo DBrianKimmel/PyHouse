@@ -11,6 +11,7 @@ from nevow import loaders
 from nevow import athena
 
 # Import PyMh files and modules.
+from src.web import web_utils
 
 
 # Handy helper for finding external resources nearby.
@@ -45,6 +46,8 @@ class RootMenuElement(athena.LiveElement):
             print "web_rootMenu.RootMenuElement.doRootMenu() - Json:{0:}".format(p_json)
         g_logger.info("doRootMenu called {0:} {1:}".format(self, p_json))
 
-
+    def cb_logged_in(self):
+        if g_debug >= 3:
+            print "web_rootMenu.RootMenuElement.cb_loggedIn()".format
 
 # ## END DBK

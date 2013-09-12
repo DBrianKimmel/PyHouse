@@ -23,20 +23,17 @@ Do not require reloads, auto change PyHouse on the fly.
 import logging
 import os
 from twisted.internet import reactor
-from twisted.python.filepath import FilePath
 from nevow import appserver
 
 # Import PyMh files and modules.
-from src import web
 from src.web import web_utils
 from src.web import web_mainpage
 
 # Handy helper for finding external resources nearby.
-webdir = FilePath(web.__file__).parent().preauthChild
-# Some absolute paths to resources
-imagepath = webdir('images').path
-jspath = webdir('js').path
-templatepath = webdir('template').path
+webpath = os.path.join(os.path.split(__file__)[0])
+templatepath = os.path.join(webpath, 'template')
+imagepath = os.path.join(webpath, 'images')
+jspath = os.path.join(webpath, 'js')
 
 
 g_debug = 0
@@ -77,6 +74,7 @@ class API(object):
     def __init__(self):
         global g_logger
         self.web_data = WebData()
+        self.State = web_utils.WS_IDLE
         if g_debug >= 2:
             print "web_server.API()"
         g_logger.info("Initialized")
@@ -88,7 +86,6 @@ class API(object):
         if g_debug >= 3:
             print "    ", p_pyhouses_obj
         self.web_data = web_utils.WebUtilities().read_web_xml(self.web_data, p_pyhouses_obj.XmlRoot)
-        #l_site_dir = os.path.split(os.path.abspath(__file__))[0]
         l_site_dir = None
         l_site = appserver.NevowSite(web_mainpage.TheRoot('/', l_site_dir, p_pyhouses_obj))
         listenTCP(self.web_data.WebPort, l_site)

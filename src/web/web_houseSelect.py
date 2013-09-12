@@ -19,7 +19,7 @@ from src import web
 # Handy helper for finding external resources nearby.
 webdir = FilePath(web.__file__).parent().preauthChild
 
-g_debug = 4
+g_debug = 0
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry

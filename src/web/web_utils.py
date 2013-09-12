@@ -35,14 +35,27 @@ g_debug = 0
 # + = NOT USED HERE
 
 
+# Web States defined
+WS_IDLE = 0  # Starting state
+WS_LOGGED_IN = 1  # Successful login completed
+WS_HOUSE_SELECTED = 2
+
 SUBMIT = '_submit'
 BUTTON = 'post_btn'
+
 
 class WebData(object):
     """
     """
     def __init__(self):
         self.WebPort = 8580
+
+
+class State(object):
+    """The state of the web server
+    """
+    def __init__(self):
+        self.State = WS_IDLE
 
 
 class WebUtilities(xml_tools.ConfigFile):
@@ -117,7 +130,9 @@ class JsonUnicode(object):
         try:
             l_json = json.dumps(x)
         except (TypeError, ValueError), e:
-            print "encode json error ", e
+            print "ERROR - WEB-utils.encode_json() ", e
+            print "    p_obj:", p_obj
+            print "    x:", x
             l_json = None
         return l_json
 

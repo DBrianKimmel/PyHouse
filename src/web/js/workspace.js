@@ -34,13 +34,13 @@ helpers.Widget.subclass(workspace, 'Workspace').methods(
 	},
 
 	function showWaitRoller(self) {
-		Divmod.debug('---', 'workspace.Workspace.showWaitRoller - ' + self );
+		//Divmod.debug('---', 'workspace.Workspace.showWaitRoller - ' + self );
 		var waitroller = self.nodeById('waitroller');
 		waitroller.style.visibility = 'visible';
 	},
 
 	function hideWaitRoller(self) {
-		Divmod.debug('---', 'workspace.Workspace.hideWaitRoller - ' + self );
+		//Divmod.debug('---', 'workspace.Workspace.hideWaitRoller - ' + self );
 		var waitroller = self.nodeById('waitroller');
 		waitroller.style.visibility = 'hidden';
 	},

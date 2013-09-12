@@ -8,6 +8,7 @@
 // import Nevow.Athena
 // import globals
 // import helpers
+// import server
 
 
 /**
@@ -83,13 +84,9 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 			Divmod.debug('---', 'login.eb_doLogin(2) was called. res=' + res);
 		}
 
-		var loginNameField = self.nodeById('LoginName');
-		var loginPasswordField = self.nodeById('LoginPassword');
-    	var l_name = loginNameField.value;
-    	var l_pass = loginPasswordField.value;
         var l_logData = {
-        		Username : l_name,
-        		Password : l_pass
+        		Username : self.nodeById('LoginName').value,
+        		Password : self.nodeById('LoginPassword').value
         };
     	var l_json = JSON.stringify(l_logData);
 		Divmod.debug('---', 'login.doLogin(1) was called. json:' + l_json);
@@ -100,18 +97,27 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
         return false;
 	},
 	
-	function loggedInStatus(self, p_json) {
-		//var node = self.nodeById('rootMenuDiv');
-		Divmod.debug('---', ' login.js loggedInStatus was called. json:' + p_json + ' ' + node);
+	function hideLoggingInDiv(self) {
+		//var loggingInDiv = self.nodeById('LoggingInDiv');
+		//loggingInDiv.style.display = "none";		
+		self.nodeById('LoggingInDiv').style.display = "none";		
+		Divmod.debug('---', 'login.hideLoggingInDiv was called.');
 	},
 	
-	function displayLoggedIn(self) {
-		Divmod.debug('---', ' login.js displayLoggedIn was called.');
-		Divmod.debug('---', ' login.js displayLoggedIn was called. json:' + p_json + ' ' + node);
-		var formNode = self.nodeById('LoginForm');
+	function showLoggedInDiv(self) {
+		Divmod.debug('---', 'login.showLoggedInDiv was called.');
 		var loggedInDiv = self.nodeById('LoggedInDiv');
-		formNode.style.display = "none";
-		loggedInDiv.style.display = "visible";
+		loggedInDiv.style.display = "block";		
+	},
+	
+	function displayFullname(self, p_json) {
+		var l_obj = JSON.parse(p_json);
+		Divmod.debug('---', 'login.displayFullname was called. json:' + p_json);
+		this.hideLoggingInDiv(self);
+		this.showLoggedInDiv(self);
+		self.nodeById('LoggedInDiv').innerHTML = 'Logged in: ' + l_obj.Fullname;
+		var l_defer = serverState(22);
+		l_defer.addCallback(cb_showRootMenu);
 	}
 );
 

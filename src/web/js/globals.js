@@ -110,7 +110,7 @@ function collectClasses(node) {
 }  // collectClasses
 
 
-/*
+/**
  * Collects all the URIs present in img tags in within this node.
  * If the imgs array is passed into the function all found URIs are appended to the array, which can
  *  be passed later on to the loadImages function, which preloads all those images.
@@ -234,7 +234,7 @@ function waitfor(flags, timeout) {
 globals.ImageLoadingError = Divmod.Error.subclass('globals.ImageLoadingError');
 
 /**
- * Load
+ * Load Images
  */
 function loadImages(uris) {
 	var imgs = [];
@@ -311,12 +311,11 @@ function loadImages(uris) {
 }  // loadImages
 
 
-/*
+/**
  * 
  */
 Divmod.Runtime.theRuntime.addLoadEvent(
 	function appStartup() {
-		//alert("appStartup 1 ")
 		globals.workspace.appStartup();
 	}
 );

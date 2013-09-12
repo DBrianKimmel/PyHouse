@@ -8,10 +8,7 @@
     name = 'LoginDiv'
     id = 'LoginDiv'
     style = "background-color: #c2f2c2;">
-
-    <div
-        name = 'LoggingInDiv'
-        >
+    <div id = 'LoggingInDiv'>
         <form id = "LoginForm" name = 'LoginForm'>
 	        <athena:handler event = "onsubmit" handler = "doLogin" />
 	        <h2>Enter login name:</h2>
@@ -20,12 +17,7 @@
 	        <input type = 'submit' value = 'Login' name = 'aaa' />
 	    </form>
     </div>
-    
-    
-    <div id = "LoggedInDiv" style = "display: none;">
-        Logged In:<input id = "LoginFullName" />
-    </div>
-
+    <div id = "LoggedInDiv" />
 </div>
 <!-- 
 ### END DBK  -->

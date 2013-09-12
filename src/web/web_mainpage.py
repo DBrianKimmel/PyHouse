@@ -149,7 +149,7 @@ class mainPageFactory:
         athena.jsDeps.mapping.update(l_siteJSPackage.mapping)
         if g_debug >= 3:
             print "web_mainpage.mainPageFactory() "
-        if g_debug >= 6:
+        if g_debug >= 5:
             print "    modulepath: {0:}".format(modulepath)
             print "    jspath: {0:}".format(jspath)
             print "    csspath: {0:}".format(csspath)
@@ -159,13 +159,13 @@ class mainPageFactory:
     def addClient(self, client):
         l_clientID = self._newClientID()
         self.Clients[l_clientID] = client
-        if g_debug >= 3:
+        if g_debug >= 5:
             print "web_mainpage.mainPageFactory.addClient() - Rendered new mainPage {0:}: {1:}".format(client, l_clientID)
             print "    Number of active pages currently: %d" % len(self.Clients)
         return l_clientID
 
     def getClient(self, p_clientID):
-        if g_debug >= 3:
+        if g_debug >= 5:
             print "web_mainpage.mainPageFactory.getClient()  {0:}".format(self.Clients[p_clientID])
         return self.Clients[p_clientID]
 
@@ -298,7 +298,7 @@ class MainPage(athena.LivePage):
         """If you need a place where to keep things during the livePage being up, please do it here and only here.
         Storing states someplace deeper in the hierarchy makes it extremely difficult to release memory properly due to circular object references.
         """
-        if g_debug >= 3:
+        if g_debug >= 5:
             print "web_mainpage.MainPage.beforeRender()", self.page
         self.page.lang = 0
         self.uid = None
@@ -308,7 +308,7 @@ class MainPage(athena.LivePage):
         l_defer.addErrback(self.eb_disconnect)
 
     def render_workspace(self, ctx, data):
-        if g_debug >= 3:
+        if g_debug >= 5:
             print "web_mainpage.MainPage.render_workspace()"
         f = Workspace(self.m_pyhouses_obj, self.uid)
         f.setFragmentParent(self)
@@ -361,7 +361,7 @@ class Workspace(athena.LiveElement):
 
     @athena.expose
     def inject_404(self):
-        if g_debug >= 3:
+        if g_debug >= 5:
             print "web_mainpage.Workspace.inject_404() - called from browser"
         f = FourOfour()
         f.setFragmentParent(self)
@@ -369,7 +369,7 @@ class Workspace(athena.LiveElement):
 
     @athena.expose
     def buttons(self, p_params):
-        if g_debug >= 3:
+        if g_debug >= 5:
             print "web_mainpage.Workspace.buttons() - called from browser to load clockElement"
         g_logger.info("buttons called")
         l_element = web_buttons.ButtonsElement(self)
@@ -378,7 +378,7 @@ class Workspace(athena.LiveElement):
 
     @athena.expose
     def clock(self, p_params):
-        if g_debug >= 3:
+        if g_debug >= 5:
             print "web_mainpage.Workspace.clock() - called from browser to load clockElement"
         g_logger.info("clock called")
         l_element = web_clock.ClockElement()
@@ -387,7 +387,7 @@ class Workspace(athena.LiveElement):
 
     @athena.expose
     def controllers(self, p_params):
-        if g_debug >= 3:
+        if g_debug >= 5:
             print "web_mainpage.Workspace.controllers() - called from browser to load controllersElement"
         g_logger.info("controllers called")
         l_element = web_controllers.ControllersElement(self)
@@ -396,7 +396,7 @@ class Workspace(athena.LiveElement):
 
     @athena.expose
     def controlLights(self, p_params):
-        if g_debug >= 3:
+        if g_debug >= 5:
             print "web_mainpage.Workspace.controlLights() - called from browser to load controlLightsElement"
         g_logger.info("controlLights called")
         l_element = web_controlLights.ControlLightsElement(self, p_params)
@@ -405,7 +405,7 @@ class Workspace(athena.LiveElement):
 
     @athena.expose
     def houseSelect(self, p_params):
-        if g_debug >= 3:
+        if g_debug >= 5:
             print "web_mainpage.Workspace.houseSelect() - called from browser to load houseSelectElement"
         g_logger.info("houseSelect called from browser")
         l_element = web_houseSelect.HouseSelectElement(self)
@@ -414,7 +414,7 @@ class Workspace(athena.LiveElement):
 
     @athena.expose
     def lights(self, p_params):
-        if g_debug >= 3:
+        if g_debug >= 5:
             print "web_mainpage.Workspace.lights() - called from browser to load LightsElement."
         l_element = web_lights.LightsElement(self)
         l_element.setFragmentParent(self)
@@ -424,12 +424,11 @@ class Workspace(athena.LiveElement):
     def login(self, p_params):
         """ Place and display the login widget.
         """
-        if g_debug >= 3:
+        if g_debug >= 5:
             print "web_mainpage.Workspace.login() - called from browser to load LoginElement."
-            #print "    self=", self  # Prints Workspace obk
-            #print "    page=", self.page  # Prints MainPage obj
-            #print "    params=", p_params  # Prints dummy
-            #print "    PyHouse=", self.m_pyhouses_obj  # Prints OK
+            print "    self=", self  # Prints Workspace obk
+            print "    params=", p_params  # Prints dummy
+            print "    PyHouse=", self.m_pyhouses_obj  # Prints OK
         p_params = self.m_pyhouses_obj
         g_logger.info("login called - params = {0:}".format(p_params))
         l_element = web_login.LoginElement(self)
@@ -438,7 +437,7 @@ class Workspace(athena.LiveElement):
 
     @athena.expose
     def rooms(self, p_params):
-        if g_debug >= 3:
+        if g_debug >= 5:
             print "web_mainpage.Workspace.rooms() - called from browser to load roomsElement"
         g_logger.info("rooms called")
         l_element = web_rooms.RoomsElement(self, p_params)
@@ -447,7 +446,7 @@ class Workspace(athena.LiveElement):
 
     @athena.expose
     def rootMenu(self, p_params):
-        if g_debug >= 3:
+        if g_debug >= 5:
             print "web_mainpage.Workspace.rootMenu() - called from browser to load rootMenuElement"
         g_logger.info("rootMenu called")
         l_element = web_rootMenu.RootMenuElement(self)
@@ -456,7 +455,7 @@ class Workspace(athena.LiveElement):
 
     @athena.expose
     def schedules(self, p_params):
-        if g_debug >= 3:
+        if g_debug >= 5:
             print "web_mainpage.Workspace.schedules() - called from browser to load schedulesElement"
         g_logger.info("schedules called")
         l_element = web_schedules.SchedulesElement(self, p_params)
@@ -467,13 +466,13 @@ class Workspace(athena.LiveElement):
 
     @athena.expose
     def guiready(self):
-        if g_debug >= 3:
+        if g_debug >= 5:
             print "web_mainpage.Workspace.guiready() - called from browser - UID:{0:}".format(self.uid)
 
         def cb_usermatch(p_user):  #select usually returns a list, knowing that we have unique results
             reqtype = REQ_404   #the result is unpacked already and a single item returned
             udata = {}
-            if g_debug >= 3:
+            if g_debug >= 5:
                 print "web_mainpage.Workspace.cb_usermatch() <callback> user:{0:}".format(p_user)
                 print "    self, page=", self, self.page
             if len(p_user) > 0:
@@ -496,7 +495,7 @@ class Workspace(athena.LiveElement):
                     udata[uc(k)] = uc(user[k])
                 else:
                     udata[uc(k)] = user[k]
-            if g_debug >= 3:
+            if g_debug >= 5:
                 print "web_mainpage.Workspace.cb_rootmatch() <callback> res:{0:}".format(res)
                 print "    self, page=", self, self.page
                 print "    reqtype:", reqtype
@@ -504,18 +503,18 @@ class Workspace(athena.LiveElement):
             return reqtype, udata
 
         def eb_nomatch():
-            if g_debug >= 3:
+            if g_debug >= 5:
                 print "web_mainpage.Workspace,eb_nomatch() - ERROR - No Match"
 
         if self.uid and len(self.uid) == 32:
-            d = self.page.userstore.getUserWithUID(self.uid)
-            d.addCallback(cb_usermatch)
-            d.addErrback(eb_nomatch)
+            l_defer = self.page.userstore.getUserWithUID(self.uid)
+            l_defer.addCallback(cb_usermatch)
+            l_defer.addErrback(eb_nomatch)
         else:
-            d = defer.succeed(0)
-            d.addCallback(cb_rootmatch)
-            d.addErrback(eb_nomatch)
-        return d
+            l_defer = defer.succeed(0)
+            l_defer.addCallback(cb_rootmatch)
+            l_defer.addErrback(eb_nomatch)
+        return l_defer
 
 #==============================================================================
 
@@ -523,7 +522,7 @@ def factory(ctx, segments, p_pyhouses_obj):
     """ If segments contains a liveID (len = 32) the page stored in self.Clients will be returned.
     Status of the given page is stored in the page object itself and nowhere else.
     """
-    if g_debug >= 6:
+    if g_debug >= 5:
         print "web_mainpage.factory(1) - Segments:{0:}".format(segments)
     seg0 = segments[0]
     if seg0 == '':
@@ -533,13 +532,13 @@ def factory(ctx, segments, p_pyhouses_obj):
         return MainPage(p_pyhouses_obj), segments[1:]
     elif _mainPageFactory.Clients.has_key(seg0):
         # xxx
-        if g_debug >= 6:
+        if g_debug >= 5:
             print "web_mainpage.factory(4) - has_key: ", _mainPageFactory.Clients[seg0], segments[1:]
         return _mainPageFactory.Clients[seg0], segments[1:]
     elif len(seg0) == 32:
         # We have a liveID 
         IRequest(ctx).addCookie(COOKIEKEY, seg0, http.datetimeToString(time.time() + 30.0))
-        if g_debug >= 4:
+        if g_debug >= 5:
             print "web_mainpage.factory(5) - liveID: ", url.URL.fromString('/'), ()
         return url.URL.fromString('/'), ()
     else:

@@ -23,15 +23,21 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 	
 		//Divmod.debug('---', 'rootMenu.ready() was called.  self =' + self);
 		var uris = collectIMG_src(self.node, null);
-		var d = loadImages(uris);
-		d.addCallback(cb_widgetready);
-		return d;
+		var l_defer = loadImages(uris);
+		l_defer.addCallback(cb_widgetready);
+		return l_defer;
 	},
 
 	function hideRootMenu(self) {
-		//Divmod.debug('---', 'rootMenu.hideRootMenu was called.');
+		Divmod.debug('---', 'rootMenu.hideRootMenu was called.');
 		self.node.style.display = 'none';
+	},
+	
+	function showRootMenu(self) {
+		Divmod.debug('---', 'rootMenu.showRootMenu was called.');
+		self.node.style.display = 'block';
 	}
+
 );
 
 //### END DBK
