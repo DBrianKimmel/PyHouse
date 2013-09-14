@@ -4,20 +4,27 @@
     xmlns:athena='http://divmod.org/ns/athena/0.7'
     xmlns:nevow='http://nevow.com/ns/nevow/0.1'
 	nevow:render='liveElement'
-	class = 'rootMenu'
+	class = 'RootMenu'
 	name = 'RootMenuDiv'
     id = 'RootMenuDiv'
     style = "background-color: #f0f0c0;" >
-
-    <h2>Root Menu</h2>
-    
-    <div name = "root_menu_div1">
-        Root Menu
-    </div>
-    
+    <h2>Select the menu function.</h2>
+            <athena:handler event = "onclick" handler = "doRootMenuButton" />
+            <athena:handler event = "onsubmit" handler = "doRootMenuSubmit" />
+            <table style = 'width: 60%;' border = '0'>
+                <tr>
+                    <td><input type = 'submit' id = 'Select' value = 'Select_House' name = 'post_btn1' /></td>
+                    <td><input type = 'button' id = 'House'  value = 'Add House'  onclick = 'doAddHouse()' /></td>
+                    <td><input type = 'button' value = 'Web Server' /></td>
+                    <td><input type = 'button' value = 'Logs'  /></td>
+                </tr><tr>
+                    <td><input type = 'button' value = 'Quit' name = 'post_btn2' /></td>
+                    <td><input type = 'button' value = 'Reload' name = 'post_btn3' /></td>
+                </tr>
+            </table>
 </div>
-
 <!--
+            <athena:handler event = "onclick" handler = "doRootMenuButton" />
 
 <html
     xmlns:nevow  = 'http://nevow.com/ns/nevow/0.1'

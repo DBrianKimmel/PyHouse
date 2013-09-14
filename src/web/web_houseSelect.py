@@ -5,37 +5,38 @@ Created on Jun 1, 2013
 '''
 
 # Import system type stuff
-from twisted.python.filepath import FilePath
+import logging
+import os
 from nevow import loaders
 from nevow import athena
-#from nevow import rend
 
 # Import PyMh files and modules.
-from src import web
-#from src.web.web_tagdefs import *
 #from src.web import web_utils
-#from src.web import web_houseMenu
 
 # Handy helper for finding external resources nearby.
-webdir = FilePath(web.__file__).parent().preauthChild
+webpath = os.path.join(os.path.split(__file__)[0])
+templatepath = os.path.join(webpath, 'template')
 
-g_debug = 0
+g_debug = 5
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
 # 3 = Config file handling
 # 4 = Basic data
+# 5 = Detailed Data
 # + = NOT USED HERE
+g_logger = logging.getLogger('PyHouse.webHSel ')
 
 
 class HouseSelectElement(athena.LiveElement):
     """
     """
-    docFactory = loaders.xmlfile(webdir('template/houseSelectElement.html').path)
+    docFactory = loaders.xmlfile(os.path.join(templatepath, 'houseSelectElement.html'))
     jsClass = u'houseSelect.HouseSelectWidget'
 
     def __init__(self, p_workspace_obj):
-        self.m_pyhouses_obj = p_workspace_obj
+        self.m_workspace_obj = p_workspace_obj
+        self.m_pyhouses_obj = p_workspace_obj.m_pyhouses_obj
         if g_debug >= 2:
             print "web_houseSelect.houseSelectElement()"
 
@@ -50,6 +51,14 @@ class HouseSelectElement(athena.LiveElement):
         """
         if g_debug >= 3:
             print "web_login.HouseSelectElement.doSelect() - Json:{0:}".format(p_json)
+        pass
+
+    @athena.expose
+    def getHousesToSelect(self, p_dummy):
+        l_houses = self.m_pyhouses_obj.HousesData
+        if g_debug >= 3:
+            print "web_login.HouseSelectElement.getHousesToSelect()"
+            print "    ", l_houses
         pass
 
 # ## END DBK

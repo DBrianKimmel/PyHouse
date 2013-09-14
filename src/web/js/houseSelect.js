@@ -33,9 +33,27 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 		self.node.style.display = 'none';
 	},
 	
+	function cb_getHousesInfo(self, p1, p2) {
+		Divmod.debug('---', 'houseSelect.cb_getHousesInfo() was called. self = ' + self);
+		
+	},
+	
+	function eb_getHousesInfo(self, p1, p2) {
+		Divmod.debug('---', 'houseSelect.eb_getHousesInfo() was called. self = ' + self);
+	},
+
+	/**
+	 * Show the house select screen and ask the server for a json list of houses to show.
+	 * Use a callback to get the information to display.
+	 */
 	function showSelect(self) {
 		//Divmod.debug('---', 'houseSelect.showSelect() was called. self = ' + self);
 		self.node.style.display = 'block';
+        var l_defer = self.callRemote("getHousesToSelect", '');  // @ web_login
+		l_defer.addCallback(cb_getHousesInfo);
+		l_defer.addErrback(eb_getHousesInfo);
+		// return false stops the resetting of the server.
+        return false;
 	}
 );
 

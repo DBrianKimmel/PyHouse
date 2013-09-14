@@ -49,12 +49,14 @@ globals = {
 	}  // __init__
 };  // globals
 
+
 function int2str(i) {
 	if (i < 10)
 		return '0' + String(i);
 	else
 		return String(i);
-}  // int2str
+}
+
 
 function getCardSizefromCSS() {
 	var s;
@@ -97,17 +99,17 @@ function getCardSizefromCSS() {
 	};
 }  // getCardSizefromCSS
 
+
 function collectClasses(node) {
 	var classnames = [];
 	var nodes = getElementsByTagAndClassName('div', null, node);  // (tagname, classname, parent)
-
 	for ( var i = 0; i < nodes.length; i++) {
 		if (nodes[i].className !== null) {
 			classnames.push('.' + nodes[i].className);
 		}
 	}
 	return classnames;
-}  // collectClasses
+}
 
 
 /**
@@ -125,7 +127,8 @@ function collectIMG_src(node, imgs) {
 		imgs.push(src);
 	}
 	return imgs;
-}  // CollectIMG_src
+}
+
 
 function getCSSrules(n) {
 	if (n < document.styleSheets.length) {
@@ -136,7 +139,8 @@ function getCSSrules(n) {
 		}
 	}
 	return null;
-}  // getCSSrules
+}
+
 
 /**
  * Collects all URIs in the present CSS which refer to images, thus allowing for the loadImages
@@ -234,7 +238,11 @@ function waitfor(flags, timeout) {
 globals.ImageLoadingError = Divmod.Error.subclass('globals.ImageLoadingError');
 
 /**
- * Load Images
+ * Load Images deferred.
+ * 
+ * allow 60 seconds for all images to load.
+ * trigger callback if all loaded in time
+ * trigger errback if time expired before they all were loaded.
  */
 function loadImages(uris) {
 	var imgs = [];
@@ -245,6 +253,8 @@ function loadImages(uris) {
 	}  // for loop
 
 	/**
+	 * Test to see if image is read into DOM yet.
+	 * Will be false if default placeholder has not been filled (I think).
 	 * 
 	 * @param img
 	 * @returns {Boolean}
@@ -260,6 +270,7 @@ function loadImages(uris) {
 	}  // isImageOK
 
 	/**
+	 * Test if *ALL* images have been loaded yet.
 	 * 
 	 * @returns {Boolean} true if all images are loaded
 	 */
@@ -310,6 +321,22 @@ function loadImages(uris) {
 	return readyDeferred;
 }  // loadImages
 
+
+/**
+ * Find a widget in the workspace using 'class' of the widget.
+ */
+function findWidget(self, p_name) {
+	Divmod.debug('---', 'globals.findWidget - self:' + self + ' ' + p_name);
+	// find top level workdpace (may need to iterate up some)
+	l_workspace = self.widgetParent
+	for (var ix=0; ix < l_workspace.childWidgets.length; ix++) {
+		l_widget = l_workspace.childWidgets[ix];
+		if (l_widget.node.className.toLowerCase() == p_name.toLowerCase()) {
+			return l_widget;
+		}
+	}
+	return undefined;
+}
 
 /**
  * 

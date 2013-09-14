@@ -38,7 +38,20 @@ g_debug = 0
 # Web States defined
 WS_IDLE = 0  # Starting state
 WS_LOGGED_IN = 1  # Successful login completed
-WS_HOUSE_SELECTED = 2
+WS_ROOTMENU = 2
+WS_HOUSE_SELECTED = 3
+# global things
+WS_SERVER = 101
+WS_LOGS = 102
+# House things
+WS_HOUSE = 201
+WS_LOCATION = 202
+WS_ROOMS = 203
+WS_INTERNET = 204
+# Light things
+WS_BUTTONS = 501
+WS_CONTROLLERS = 502
+WS_LIGHTS = 503
 
 SUBMIT = '_submit'
 BUTTON = 'post_btn'

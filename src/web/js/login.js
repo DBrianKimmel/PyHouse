@@ -8,7 +8,7 @@
 // import Nevow.Athena
 // import globals
 // import helpers
-// import server
+// import w_server
 
 
 /**
@@ -45,37 +45,13 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 		return l_defer;
 	},
 	
-	function showLoginSection(self) {
-		Divmod.debug('---', 'login.showLoginSection() was called.');
-		self.node.style.display = 'block';
-		var l_full = self.nodeById('LoggedInDiv');
-		l_full.style.display = 'none';
-	},
-
-	function getAndShowLogin(self) {
-
-		function cb_showLogin(p_user) {
-			Divmod.debug('---', 'login.js - cb_showLogin was called. user = ' + p_user);
-			self.node.innerHTML = 'Show Login';
-		}
-	
-        var l_logData = {
-        		name : 'silly',
-        		passwd : '123'
-        };
-    	var l_json = JSON.stringify(l_logData);
-		Divmod.debug('---', 'login.js getAndShowLogin() was called.');
-    	var l_defer = self.callRemote("login", l_json);  // @ web_mainpage
-		l_defer.addCallback(cb_showLogin);
-        return false;
-	},
-	
 	/**
+	 * This is an event handler from the submit key in the login form.
 	 * 
 	 * @param self
-	 * @returns {Boolean}
+	 * @returns {Boolean} False to stop the processing cycle.
 	 */
-	function doLogin(self) {  // from html handler onSubmit
+	function doLoginSubmit(self) {  // from html handler onSubmit
 		
 		function cb_doLogin(p_json) {
 			Divmod.debug('---', 'login.cb_doLogin(2) was called.');
@@ -83,10 +59,9 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 		function eb_doLogin(res){
 			Divmod.debug('---', 'login.eb_doLogin(2) was called. res=' + res);
 		}
-
         var l_logData = {
-        		Username : self.nodeById('LoginName').value,
-        		Password : self.nodeById('LoginPassword').value
+        	Username : self.nodeById('LoginName').value,
+        	Password : self.nodeById('LoginPassword').value
         };
     	var l_json = JSON.stringify(l_logData);
 		Divmod.debug('---', 'login.doLogin(1) was called. json:' + l_json);
@@ -97,6 +72,13 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
         return false;
 	},
 	
+	function showLoginSection(self) {
+		Divmod.debug('---', 'login.showLoginSection() was called.');
+		self.node.style.display = 'block';
+		var l_full = self.nodeById('LoggedInDiv');
+		l_full.style.display = 'none';
+	},
+
 	function hideLoggingInDiv(self) {
 		//var loggingInDiv = self.nodeById('LoggingInDiv');
 		//loggingInDiv.style.display = "none";		
@@ -111,6 +93,12 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 	},
 	
 	function displayFullname(self, p_json) {
+		
+		function cb_showRootMenu(res) {
+			Divmod.debug('---', 'login.cb_showRootMenu was called. self:' + self);
+			var l_node = findWidget(self, 'RootMenu');
+			l_node.showRootMenu(self);
+		}
 		var l_obj = JSON.parse(p_json);
 		Divmod.debug('---', 'login.displayFullname was called. json:' + p_json);
 		this.hideLoggingInDiv(self);
