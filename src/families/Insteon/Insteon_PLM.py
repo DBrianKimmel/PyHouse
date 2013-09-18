@@ -306,31 +306,34 @@ class DecodeResponses(InsteonPlmUtility):
         elif l_8 & 0xE0 == 0xE0:  # (111) NAK of Direct message type
             l_debug_msg += "NAK of direct message(2) from {0:}; ".format(l_name_from)
         #
-        if l_obj_from.Command1 == MESSAGE_TYPES['product_data_request']:  # 0x03
-            l_debug_msg += " product data request. - Should never happen - S/B 51 response"
-        elif l_obj_from.Command1 == MESSAGE_TYPES['engine_version']:  # 0x0D
-            l_engine_id = l_10
-            l_debug_msg += "Engine version From:{0:}, Sent to:{1:}, Id:{2:}; ".format(l_name_from, l_name_to, l_engine_id)
-            g_logger.info("Got engine version from light:{0:}, To:{1:}, EngineID:{2:}".format(l_name_from, l_name_to, l_engine_id))
-        elif l_obj_from.Command1 == MESSAGE_TYPES['id_request']:  # 0x10
-            l_debug_msg += "Request ID From:{0:}; ".format(l_name_from)
-            g_logger.info("Got an ID request. Light:{0:}".format(l_name_from,))
-        elif l_obj_from.Command1 == MESSAGE_TYPES['on']:  # 0x11
-            l_obj_from.CurLevel = 100
-            l_debug_msg += "Light:{0:} turned Full ON; ".format(l_name_from)
-            self.update_object(l_obj_from)
-        elif l_obj_from.Command1 == MESSAGE_TYPES['off']:  # 0x13
-            l_obj_from.CurLevel = 0
-            l_debug_msg += "Light:{0:} turned Full OFF; ".format(l_name_from)
-            self.update_object(l_obj_from)
-        elif l_obj_from.Command1 == MESSAGE_TYPES['status_request']:  # 0x19
-            l_level = int(((l_10 + 2) * 100) / 256)
-            l_obj_from.CurLevel = l_level
-            l_debug_msg += "Status of light:{0:} is level:{1:}; ".format(l_name_from, l_level)
-            g_logger.info("PLM:{0:} Got Light Status From:{1:}, Level is:{2:}".format(p_controller_obj.Name, l_name_from, l_level))
-            self.update_object(l_obj_from)
-        else:
-            l_debug_msg += "Insteon_PLM._decode_50_record() unknown type - last command was {0:#x} - {1:}; ".format(l_obj_from.Command1, PrintBytes(l_message))
+        try:
+            if l_obj_from.Command1 == MESSAGE_TYPES['product_data_request']:  # 0x03
+                l_debug_msg += " product data request. - Should never happen - S/B 51 response"
+            elif l_obj_from.Command1 == MESSAGE_TYPES['engine_version']:  # 0x0D
+                l_engine_id = l_10
+                l_debug_msg += "Engine version From:{0:}, Sent to:{1:}, Id:{2:}; ".format(l_name_from, l_name_to, l_engine_id)
+                g_logger.info("Got engine version from light:{0:}, To:{1:}, EngineID:{2:}".format(l_name_from, l_name_to, l_engine_id))
+            elif l_obj_from.Command1 == MESSAGE_TYPES['id_request']:  # 0x10
+                l_debug_msg += "Request ID From:{0:}; ".format(l_name_from)
+                g_logger.info("Got an ID request. Light:{0:}".format(l_name_from,))
+            elif l_obj_from.Command1 == MESSAGE_TYPES['on']:  # 0x11
+                l_obj_from.CurLevel = 100
+                l_debug_msg += "Light:{0:} turned Full ON; ".format(l_name_from)
+                self.update_object(l_obj_from)
+            elif l_obj_from.Command1 == MESSAGE_TYPES['off']:  # 0x13
+                l_obj_from.CurLevel = 0
+                l_debug_msg += "Light:{0:} turned Full OFF; ".format(l_name_from)
+                self.update_object(l_obj_from)
+            elif l_obj_from.Command1 == MESSAGE_TYPES['status_request']:  # 0x19
+                l_level = int(((l_10 + 2) * 100) / 256)
+                l_obj_from.CurLevel = l_level
+                l_debug_msg += "Status of light:{0:} is level:{1:}; ".format(l_name_from, l_level)
+                g_logger.info("PLM:{0:} Got Light Status From:{1:}, Level is:{2:}".format(p_controller_obj.Name, l_name_from, l_level))
+                self.update_object(l_obj_from)
+            else:
+                l_debug_msg += "Insteon_PLM._decode_50_record() unknown type - last command was {0:#x} - {1:}; ".format(l_obj_from.Command1, PrintBytes(l_message))
+        except AttributeError:
+            pass
         l_ret = True
 
         if g_debug >= 4:
