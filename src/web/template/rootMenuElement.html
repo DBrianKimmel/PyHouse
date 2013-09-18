@@ -7,54 +7,26 @@
 	class = 'RootMenu'
 	name = 'RootMenuDiv'
     id = 'RootMenuDiv'
-    style = "background-color: #f0f0c0;" >
+    style = "background-color: #d2f2d2;" >
     <h2>Select the menu function.</h2>
-            <athena:handler event = "onclick" handler = "doRootMenuButton" />
-            <athena:handler event = "onsubmit" handler = "doRootMenuSubmit" />
-            <table style = 'width: 60%;' border = '0'>
-                <tr>
-                    <td><input type = 'submit' id = 'Select' value = 'Select_House' name = 'post_btn1' /></td>
-                    <td><input type = 'button' id = 'House'  value = 'Add House'  onclick = 'doAddHouse()' /></td>
-                    <td><input type = 'button' value = 'Web Server' /></td>
-                    <td><input type = 'button' value = 'Logs'  /></td>
-                </tr><tr>
-                    <td><input type = 'button' value = 'Quit' name = 'post_btn2' /></td>
-                    <td><input type = 'button' value = 'Reload' name = 'post_btn3' /></td>
-                </tr>
-            </table>
+	<table style = 'width: 60%;' border = '0'>
+		<tr>
+			<td><button type = 'button' value = 'Select_House' name = 'Select'>Select House
+                <athena:handler event = 'onclick' handler = 'doRootMenuButton' /></button></td>
+			<td><button type = 'button' value = 'Add House' name = 'House'>Add House
+                <athena:handler event = 'onclick' handler = 'doRootMenuButton' /></button></td>
+			<td><button type = 'button' value = 'Web Server' name = 'Web'>Web Server
+                <athena:handler event = 'onclick' handler = 'doRootMenuButton' /></button></td>
+			<td><button type = 'button' value = 'Logs' name = 'Logs'>Logs
+                <athena:handler event = 'onclick' handler = 'doRootMenuButton' /></button></td>
+		</tr><tr>
+			<td><button type = 'button' value = 'Quit'   name = 'Quit'>Quit
+                <athena:handler event = 'onclick' handler = 'doRootMenuButton' /></button></td>
+			<td><button type = 'button' value = 'Reload' name = 'Reload'>Reload
+                <athena:handler event = 'onclick' handler = 'doRootMenuButton' /></button></td>
+		</tr>
+	</table>
 </div>
 <!--
-            <athena:handler event = "onclick" handler = "doRootMenuButton" />
-
-<html
-    xmlns:nevow  = 'http://nevow.com/ns/nevow/0.1'
-    xmlns:athena = 'http://divmod.org/ns/athena/0.7'
-    lang         = 'en'
-    >
-    <head nevow:render = 'liveglue'>
-        <title>PyHouse Main Page</title>
-    </head>
-    <body nevow:render = 'livePage'>
-        <h1>PyHouse</h1>
-        <h2>Select the menu Function:</h2>
-        <div nevow:render = 'username'>Username element goes here.</div>
-        <form name = 'menuofbuttons' enctype = 'multipart/form-data' method = 'post' >
-                    <nevow:attr name = "action"><nevow:invisible nevow:render = 'action' /></nevow:attr>
-            <table style = 'width: 60%;' border = '0'>
-                <tr>
-                    <td><input type = 'submit' value = 'Select_House' name = 'post_btn' /></td>
-                    <td><input type = 'button' value = 'Add House' onclick = "createNewHouseWindow('New Name')" /></td>
-                    <td><input type = 'button' value = 'Web Server' onclick = "createChangeWebServerWindow('New Name')" /></td>
-                    <td><input type = 'button' value = 'Logs' onclick = "createChangeLogsWindow('New Name')" /></td>
-                </tr><tr>
-                    <td><input type = 'submit' value = 'Quit' name = 'post_btn' /></td>
-                    <td><input type = 'submit' value = 'Reload' name = 'post_btn' /></td>
-                </tr>
-            </table>
-        </form>
-        <p>end for form in rootMenu</p>
-    </body>
-</html>
-
 ### END DBK -->
  

@@ -195,7 +195,7 @@ function collectCSS_backgroundImages(imgs, selectors) {
 }  // collectCSS_backgroundImages
 
 
-/* DBK - unused so far.
+/** DBK - unused so far.
  * 
  * Given a bunch of flags this function will sit and wait until all flags go to true.
  * If this happens callback is called, if not after some time the errback will be triggered.
@@ -326,7 +326,7 @@ function loadImages(uris) {
  * Find a widget in the workspace using 'class' of the widget.
  */
 function findWidget(self, p_name) {
-	Divmod.debug('---', 'globals.findWidget - self:' + self + ' ' + p_name);
+	//Divmod.debug('---', 'globals.findWidget - self:' + self + ' ' + p_name);
 	// find top level workdpace (may need to iterate up some)
 	l_workspace = self.widgetParent
 	for (var ix=0; ix < l_workspace.childWidgets.length; ix++) {
@@ -335,11 +335,67 @@ function findWidget(self, p_name) {
 			return l_widget;
 		}
 	}
+	Divmod.debug('---', 'ERROR - findWidget failed for ' + p_name + ' starting with ' + self);
 	return undefined;
 }
 
+
 /**
+ * A seried of routines to build HTML for insertion into widgets.
+ */
+
+/**
+ * Build an 'onclick' handler phrase to insert.
  * 
+ * @param p_funct is a string that is the name if the function to be called.
+ */
+function buildHandler(self, p_funct) {
+	var l_html = "<athena:handler event='onclick' handler='" + p_funct + "' />";
+	return l_html;
+}
+
+function buildButton(self, p_obj, p_funct) {
+	var l_html = "<button type='button' value='" + p_obj['Name'] + "' name = '" + p_obj['Key'] + "'>" + p_obj['Name'];
+	if (p_funct !== undefined) {
+		l_html += buildHandler(self, p_funct);
+	}
+	l_html += "</button>";
+	return l_html;
+}
+
+/**
+ * Build a table of buttons in the current widget space.
+ * Use the names to build callbacks for the buttons being clicked on
+ * Used for things like selectingf a light or house to work on.
+ * 
+ * @param self = a widget
+ * 
+ * @param p_obj = a dict of item dicts to build from
+ * 
+ * @returns = innerHTML of a table filled in with buttons
+ */
+function buildTable(self, p_obj, p_funct) {
+	if (p_funct && (typeof p_funct == "function")) {
+		//p_funct();
+	} else {
+		Divmod.debug('---', 'globals.buildTable() - bad 3rd arg - not a function call.');
+	}
+
+	//var l_len = Object.keys(p_obj).length;
+	var l_count = 0;
+	var l_html = "<table border='2' ><tr>\n";
+	for (var l_item in p_obj) {
+		l_html += '<td>';
+		l_html += buildButton(self, p_obj[l_item], p_funct);
+		l_html += '</td>';
+	}
+	l_html += "</tr></table>\n";
+	return l_html;
+}
+
+
+/**
+ * Startup
  */
 Divmod.Runtime.theRuntime.addLoadEvent(
 	function appStartup() {

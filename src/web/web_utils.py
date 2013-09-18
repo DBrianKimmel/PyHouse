@@ -22,7 +22,7 @@ import json
 
 # Import PyMh files and modules.
 from src.utils import xml_tools
-from src.web.web_tagdefs import *
+#from src.web.web_tagdefs import *
 
 
 g_debug = 0
@@ -99,6 +99,21 @@ class WebUtilities(xml_tools.ConfigFile):
         return l_xml
 
 
+class ComplexHandler(json.JSONEncoder):
+    """
+    """
+    def default(self, obj):
+        if hasattr(obj, 'reprJSON'):
+            return obj.reprJSON()
+        else:
+            try:
+                l_ret = json.JSONEncoder.default(self, obj)
+            except TypeError, e:
+                print "ERROR web_utils.ComplexHandler.default() TypeError ", e
+                l_ret = 'ERROR'
+            return l_ret
+
+
 class JsonUnicode(object):
     """Utilities for handling unicode and json
     """
@@ -120,32 +135,28 @@ class JsonUnicode(object):
             return {self.convert_to_unicode(key): self.convert_to_unicode(value) for key, value in p_input.iteritems()}
         elif isinstance(p_input, list):
             return [self.convert_to_unicode(element) for element in p_input]
+        elif isinstance(p_input, (int, bool)):
+            return unicode(str(p_input), 'iso-8859-1')
         elif isinstance(p_input, unicode):
             return p_input
         else:
-            return unicode(p_input)
+            return unicode(p_input, 'iso-8859-1')
 
     def decode_json(self, p_json):
         """Convert a json object to a python object
         """
-        x = self.convert_from_unicode(p_json)
         try:
-            l_obj = json.loads(x)
-        except (TypeError, ValueError), e:
-            print "decode json error ", e
+            l_obj = json.loads(self.convert_from_unicode(p_json))
+        except (TypeError, ValueError):
             l_obj = None
         return l_obj
 
     def encode_json(self, p_obj):
         """Convert a python object to a valid json object.
         """
-        x = self.convert_from_unicode(p_obj)
         try:
-            l_json = json.dumps(x)
-        except (TypeError, ValueError), e:
-            print "ERROR - WEB-utils.encode_json() ", e
-            print "    p_obj:", p_obj
-            print "    x:", x
+            l_json = json.dumps(p_obj, cls = ComplexHandler)
+        except (TypeError, ValueError):
             l_json = None
         return l_json
 

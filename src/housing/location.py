@@ -36,6 +36,12 @@ class LocationData(object):
         l_ret += 'Lat:{0:}, Lon:{1:}'.format(self.Latitude, self.Longitude)
         return l_ret
 
+    def reprJSON(self):
+        return dict(City = self.City, Latitude = self.Latitude, Longitude = self.Longitude, Phone = self.Phone,
+                    SavingsTime = self.SavingTime, State = self.State, Street = self.Street, TimeZone = self.TimeZone,
+                    ZipCode = self.ZipCode)
+
+
 
 class ReadWriteConfig(xml_tools.ConfigTools):
     """Use the internal data to read / write an updated XML config file.

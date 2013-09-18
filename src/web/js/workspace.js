@@ -58,11 +58,11 @@ helpers.Widget.subclass(workspace, 'Workspace').methods(
 	function appStartup(self) {
 
 		function ready() { // we're now ready for action
-			Divmod.debug('---', 'workspace.Workspace.appStartup - ' + self );
+			//Divmod.debug('---', 'workspace.Workspace.appStartup - ' + self );
 			var l_defer = self.callRemote('guiready');
 
 			l_defer.addCallback(function(res) {
-				Divmod.debug('---', 'workspace.Workspace.addCallback - ' + res );
+				//Divmod.debug('---', 'workspace.Workspace.addCallback - ' + res );
 				globals.__init__();
 				globals.reqType = res[0];
 				globals.user = res[1];
@@ -82,7 +82,7 @@ helpers.Widget.subclass(workspace, 'Workspace').methods(
 			});  // addCallback
 
 			l_defer.addErrback(function(res) {
-				Divmod.debug('---', 'ERROR - workspace.guiready.errback() - ' + res );
+				//Divmod.debug('---', 'ERROR - workspace.guiready.errback() - ' + res );
 				self.node.appendChild(document.createTextNode('Error: ' + res.error.message));
 			});  // addErrback
 		} // ready

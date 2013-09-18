@@ -1,31 +1,17 @@
 <!-- houseSelectElement.xml
  -->
-<div
-    xmlns:nevow = "http://nevow.com/ns/nevow/0.1"
-    nevow:render = "liveElement"
-    name = "HouseSelectDiv"
-    id = 'HouseSelectDiv'
-    class = "HouseSelect"
-    style = "background-color:#709090; color:#ffffff;">
-    <h2>Select a house:</h2>
-    <div name = "select">
-    </div>
-    
+<div xmlns:nevow = "http://nevow.com/ns/nevow/0.1"
+	xmlns:athena = 'http://divmod.org/ns/athena/0.7'
+	nevow:render = "liveElement"
+	class = "HouseSelect"
+	id = 'HouseSelectDiv'
+	style = "background-color:#d2f2d2;">
+	<div id = 'HouseSelectingDiv'>
+		<h2>Select a house</h2>
+		<div id = 'HSTableDiv' class="xyz">
+		</div>
+	</div>
+	<div id = "HouseSelectedDiv">Working on house:</div>
 </div>
 <!--
-
-<h1>PyHouse House Selection</h1>
-<h2>Select the House:</h2>
-<form name = 'menuofbuttons' enctype = 'multipart/form-data' method = 'post' >
-    <nevow:attr name = "action">
-        <nevow:invisible nevow:render = 'action' />
-    </nevow:attr>
-    <table style = 'Width: 100%' border = '0'>
-        <tr>
-            <div nevow:data="houselist" nevow:render="houselist" />
-        </tr>
-    </table>
-    <input type = 'submit' value = 'Cancel' name = 'post_btn' />
-</form>
-
 ### END DBK -->

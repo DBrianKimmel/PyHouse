@@ -60,7 +60,7 @@ class HouseData(object):
         l_ret += "Controllers:{0:}, ".format(len(self.Controllers))
         l_ret += "Buttons:{0:}, ".format(len(self.Buttons))
         l_ret += "Rooms:{0:}, ".format(len(self.Rooms))
-        l_ret += "Schedules:{0:}\n".format(len(self.Schedules))
+        l_ret += "Schedules:{0:};\n".format(len(self.Schedules))
         return l_ret
 
     def __repr__(self):
@@ -75,6 +75,9 @@ class HouseData(object):
         l_ret += "'Internet':'{0:}', ".format(len(self.Internet))
         l_ret += "'Schedules':'{0:}'".format(len(self.Schedules))
         return l_ret
+
+    def reprJSON(self):
+        return dict(Active = self.Active, Key = self.Key, Name = self.Name, Location = self.Location)
 
 
 class HouseReadWriteConfig(location.ReadWriteConfig, rooms.ReadWriteConfig):

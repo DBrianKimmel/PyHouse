@@ -13,15 +13,17 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
         rootMenu.RootMenuWidget.upcall(self, "__init__", node);
     },
 
+    
+    /**
+     * Place the widget in the workspace.
+     * 
+     * Override the ready function in C{ helpers.Widget.ready() }
+     */
 	function ready(self) {
-		
 		function cb_widgetready(res) {
 			// do whatever init needs here, show for the widget is handled in superclass
-			//Divmod.debug('---', 'rootMenu.cb_widgready() was called.');
 			self.hideRootMenu();
 		}
-	
-		//Divmod.debug('---', 'rootMenu.ready() was called.  self =' + self);
 		var uris = collectIMG_src(self.node, null);
 		var l_defer = loadImages(uris);
 		l_defer.addCallback(cb_widgetready);
@@ -29,22 +31,45 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 	},
 
 	function hideRootMenu(self) {
-		Divmod.debug('---', 'rootMenu.hideRootMenu was called.');
 		self.node.style.display = 'none';
 	},
 	
+
 	function showRootMenu(self) {
-		Divmod.debug('---', 'rootMenu.showRootMenu was called.');
+		//Divmod.debug('---', 'rootMenu.showRootMenu was called.');
 		self.node.style.display = 'block';
 	},
 
-	function doRootMenuButton(self, p1, p2) {  // from html handler onSubmit
-		console.log("rmb %O", self);
-		console.log("rmb p1 %O", p1);
-		console.log("rmb p2 %O", p2);
-		this.hideRootMenu(self);
-		var l_node = findWidget(self, 'HouseSelect');
-		l_node.showSelect(self);
+	function doRootMenuButton(self, p_node) {  // from html handler onSubmit
+		console.log("rmb    %O", self);
+		console.log("rmb p_node", p_node);
+		var l_key = p_node.name;
+		Divmod.debug('---', 'rootMenu.doRootMenuButton was called. ' + l_key);
+		switch (l_key) {
+		case 'Select':
+			Divmod.debug('---', 'rootMenu.doRootMenuButton was called for HouseSelect.');
+			var l_node = findWidget(self, 'HouseSelect');
+			l_node.showSelect(self);
+			this.hideRootMenu(self);
+			break;
+		case 'House':
+			Divmod.debug('---', 'rootMenu.doRootMenuButton was called for House.');
+			var l_node = findWidget(self, 'House');
+			break;
+		case 'Web':
+			var l_node = findWidget(self, 'Webt');
+			break;
+		case 'Logs':
+			var l_node = findWidget(self, 'Logs');
+			break;
+		case 'Quit':
+			break;
+		case 'Reload':
+			break;
+		default:
+			break;
+		}
+		//this.hideRootMenu(self);
 	},
 	
 	function doRootMenuSubmit(self, p1, p2) {  // from html handler onSubmit
@@ -56,17 +81,18 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 		l_node.showSelect(self);
 	},
 	
-	function doSelectHouse(self, p1, p2) {
-		console.log("rsh %O", self);
-		console.log("rsh p1 %O", p1);
-		console.log("rsh p2 %O", p2);
+	function doRootQuit(self, p1, p2) {
+		console.log("rm_rq %O", self);
+		console.log("rm_rq p1 %O", p1);
+		console.log("rm_rq p2 %O", p2);
 	},
 
-	function doAddHouse(self, p1, p2) {
-		console.log("rsa %O", self);
-		console.log("rsa p1 %O", p1);
-		console.log("rsa p2 %O", p2);
+	function doRootReload(self, p1, p2) {
+		console.log("rm_rr %O", self);
+		console.log("rm_rr p1 %O", p1);
+		console.log("rm_rr p2 %O", p2);
 	}
+
 );
 
 //### END DBK
