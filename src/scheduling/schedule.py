@@ -103,6 +103,11 @@ class ScheduleData(object):
         l_ret += "}"
         return l_ret
 
+    def reprJSON(self):
+        return dict(Name = self.Name, Active = self.Active, Key = self.Key, Level = self.Level,
+                    LightName = self.LightName, LightNumber = self.LightNumber, Rate = self.Rate,
+                    Roomname = self.RoomName, Time = self.Time, Type = self.Type)
+
 
 class ScheduleXML(xml_tools.ConfigTools):
 

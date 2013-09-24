@@ -72,6 +72,7 @@ helpers.Widget.subclass(workspace, 'Workspace').methods(
 				self.attachWidget('login', 'dummy');
 				self.attachWidget('rootMenu', 'dummy');
 				self.attachWidget('houseSelect', 'dummy');
+				self.attachWidget('houseMenu', 'dummy');
 				self.attachWidget('lights', 'dummy');
 				self.attachWidget('controllers', 'dummy');
 				self.attachWidget('buttons', 'dummy');

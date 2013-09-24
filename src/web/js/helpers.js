@@ -106,13 +106,25 @@ Nevow.Athena.Widget.subclass(helpers, 'Widget').methods(
 			self.eb_genericErrback(res + ' callRemote failed for: ' + p_name);
 		}
 		);
-	  },  // attatchWidget
+	},
 	  
-	  function detached(self) {
-		  Divmod.debug('---', self.node.className + ' object was detached cleanly.');
-		  self.node.parentNode.removeChild(self.node);
-		  helpers.Widget.upcall(self, 'detached');
-	  }  // detached
+	function detached(self) {
+		Divmod.debug('---', self.node.className + ' object was detached cleanly.');
+		self.node.parentNode.removeChild(self.node);
+		helpers.Widget.upcall(self, 'detached');
+	},
+	  
+	  // DBK Added all widget functions below this line
+	  
+	function showWidget(self) {
+		Divmod.debug('---', 'helpers.js - Widget is now visible. ' + self.node.className);
+		self.node.style.display = 'block';
+	},
+	  
+	function hideWidget(self) {
+		Divmod.debug('---', 'helpers.js - Widget is now hidden. ' + self.node.className);
+		self.node.style.display = 'none';
+	}
 );
 
 

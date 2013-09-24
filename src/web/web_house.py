@@ -35,7 +35,7 @@ class InternetPage(web_utils.ManualFormMixin):
                 T_script(type = 'text/javascript', src = 'ajax.js')["\n"],
                 T_script(type = 'text/javascript', src = 'floating_window.js'),
                 T_script(type = 'text/javascript', src = 'housepage.js')["\n"],
-                ],  # head
+                ], # head
             T_body[
                 T_h1['PyHouse Houses'],
                 T_p['\n'],
@@ -67,7 +67,7 @@ class InternetPage(web_utils.ManualFormMixin):
         self.m_pyhouse_obj = p_pyhouses_obj.HousesData[p_index]
         self.m_index = p_index
         if g_debug >= 1:
-            print "web_housemenu.HouseMenuPage.__init__()"
+            print "web_houseMenu.HouseMenuPage.__init__()"
         if g_debug >= 5:
             print self.m_pyhouse_obj
         rend.Page.__init__(self)

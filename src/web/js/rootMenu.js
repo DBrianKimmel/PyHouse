@@ -7,6 +7,12 @@
 // import globals
 // import helpers
 
+/**
+ * The root menu widget.
+ * 
+ *  This displays house select and other buttons to edit non house related features.
+ */
+
 helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 
     function __init__(self, node) {
@@ -22,7 +28,7 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 	function ready(self) {
 		function cb_widgetready(res) {
 			// do whatever init needs here, show for the widget is handled in superclass
-			self.hideRootMenu();
+			self.hideWidget();
 		}
 		var uris = collectIMG_src(self.node, null);
 		var l_defer = loadImages(uris);
@@ -30,30 +36,20 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 		return l_defer;
 	},
 
-	function hideRootMenu(self) {
-		self.node.style.display = 'none';
-	},
-	
-
-	function showRootMenu(self) {
-		//Divmod.debug('---', 'rootMenu.showRootMenu was called.');
-		self.node.style.display = 'block';
-	},
-
-	function doRootMenuButton(self, p_node) {  // from html handler onSubmit
-		console.log("rmb    %O", self);
-		console.log("rmb p_node", p_node);
+	function doHandleOnClick(self, p_node) {  // from html handler onSubmit
+		//console.log("rmb    %O", self);
+		//console.log("rmb p_node", p_node);
 		var l_key = p_node.name;
-		Divmod.debug('---', 'rootMenu.doRootMenuButton was called. ' + l_key);
+		//Divmod.debug('---', 'rootMenu.doHandleOnClick was called. ' + l_key);
 		switch (l_key) {
 		case 'Select':
-			Divmod.debug('---', 'rootMenu.doRootMenuButton was called for HouseSelect.');
+			//Divmod.debug('---', 'rootMenu.doHandleOnClick was called for HouseSelect.');
 			var l_node = findWidget(self, 'HouseSelect');
 			l_node.showSelect(self);
-			this.hideRootMenu(self);
+			self.hideWidget(self);
 			break;
 		case 'House':
-			Divmod.debug('---', 'rootMenu.doRootMenuButton was called for House.');
+			//Divmod.debug('---', 'rootMenu.doHandleOnClick was called for House.');
 			var l_node = findWidget(self, 'House');
 			break;
 		case 'Web':
@@ -92,7 +88,6 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 		console.log("rm_rr p1 %O", p1);
 		console.log("rm_rr p2 %O", p2);
 	}
-
 );
 
 //### END DBK

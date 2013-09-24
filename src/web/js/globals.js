@@ -35,6 +35,10 @@ var REQ_WITHID = 2;
 globals = {
 	fonts : [ 'Verdana', 'Arial', 'Helvetica', 'sans-serif' ],
 	workspace : null,
+	userID : null,
+	userFullname : null,
+	selectedHouse : -1,
+	selectedHouseName : null,
 
 	__init__ : function() {
 		globals.appLoaded = false;
@@ -47,7 +51,7 @@ globals = {
 			h : 655
 		};
 	}  // __init__
-};  // globals
+};
 
 
 function int2str(i) {
@@ -326,12 +330,13 @@ function loadImages(uris) {
  * Find a widget in the workspace using 'class' of the widget.
  */
 function findWidget(self, p_name) {
-	//Divmod.debug('---', 'globals.findWidget - self:' + self + ' ' + p_name);
+	//Divmod.debug('---', 'globals.findWidget(1) - self:' + self + ' ' + p_name);
 	// find top level workdpace (may need to iterate up some)
 	l_workspace = self.widgetParent
 	for (var ix=0; ix < l_workspace.childWidgets.length; ix++) {
 		l_widget = l_workspace.childWidgets[ix];
 		if (l_widget.node.className.toLowerCase() == p_name.toLowerCase()) {
+			//Divmod.debug('---', 'globals.findWidget(2) - Name: ' + p_name);
 			return l_widget;
 		}
 	}
@@ -340,25 +345,19 @@ function findWidget(self, p_name) {
 }
 
 
+
 /**
  * A seried of routines to build HTML for insertion into widgets.
  */
-
-/**
- * Build an 'onclick' handler phrase to insert.
- * 
- * @param p_funct is a string that is the name if the function to be called.
- */
-function buildHandler(self, p_funct) {
-	var l_html = "<athena:handler event='onclick' handler='" + p_funct + "' />";
-	return l_html;
-}
-
-function buildButton(self, p_obj, p_funct) {
-	var l_html = "<button type='button' value='" + p_obj['Name'] + "' name = '" + p_obj['Key'] + "'>" + p_obj['Name'];
-	if (p_funct !== undefined) {
-		l_html += buildHandler(self, p_funct);
-	}
+function buildButton(self, p_obj) {
+	//Divmod.debug('---', 'globals.buildButton() - self:' + self);
+	var l_html = '';
+	l_html = "<button type='button'";
+	l_html += " value='" + p_obj['Name'] + "'";
+	l_html += " name ='" + p_obj['Key'] + "'";
+	l_html += " onclick = 'return Nevow.Athena.Widget.handleEvent(this, \"onclick\", \"doHandleOnClick\");'";
+	l_html += ">";
+	l_html += p_obj['Name'];
 	l_html += "</button>";
 	return l_html;
 }
@@ -369,27 +368,19 @@ function buildButton(self, p_obj, p_funct) {
  * Used for things like selectingf a light or house to work on.
  * 
  * @param self = a widget
- * 
  * @param p_obj = a dict of item dicts to build from
- * 
  * @returns = innerHTML of a table filled in with buttons
  */
-function buildTable(self, p_obj, p_funct) {
-	if (p_funct && (typeof p_funct == "function")) {
-		//p_funct();
-	} else {
-		Divmod.debug('---', 'globals.buildTable() - bad 3rd arg - not a function call.');
-	}
-
-	//var l_len = Object.keys(p_obj).length;
+function buildTable(self, p_obj) {
+	//Divmod.debug('---', 'globals.buildTable() called. ' + Object.keys(p_obj).length);
 	var l_count = 0;
-	var l_html = "<table border='2' ><tr>\n";
+	var l_html = "<tr>\n";
 	for (var l_item in p_obj) {
 		l_html += '<td>';
-		l_html += buildButton(self, p_obj[l_item], p_funct);
+		l_html += buildButton(self, p_obj[l_item]);
 		l_html += '</td>';
 	}
-	l_html += "</tr></table>\n";
+	l_html += "</tr>\n";
 	return l_html;
 }
 

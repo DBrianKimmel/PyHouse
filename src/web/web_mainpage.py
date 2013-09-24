@@ -67,6 +67,7 @@ from src.web import web_clock
 from src.web import web_login
 from src.web import web_rootMenu
 from src.web import web_houseSelect
+from src.web import web_houseMenu
 from src.web import web_lights
 from src.web import web_controllers
 from src.web import web_buttons
@@ -304,6 +305,7 @@ class MainPage(athena.LivePage):
         self.uid = None
         self.username = ''
         self.pageTitle = 'PyHouse Access'
+        self.selectedHouse = -1
         l_defer = self.notifyOnDisconnect()
         l_defer.addErrback(self.eb_disconnect)
 
@@ -400,6 +402,15 @@ class Workspace(athena.LiveElement):
             print "web_mainpage.Workspace.controlLights() - called from browser to load controlLightsElement"
         g_logger.info("controlLights called")
         l_element = web_controlLights.ControlLightsElement(self, p_params)
+        l_element.setFragmentParent(self)
+        return l_element
+
+    @athena.expose
+    def houseMenu(self, p_params):
+        if g_debug >= 5:
+            print "web_mainpage.Workspace.houseMenu() - called from browser to load houseSelectElement"
+        g_logger.info("houseMenu called from browser")
+        l_element = web_houseMenu.HouseMenuElement(self)
         l_element.setFragmentParent(self)
         return l_element
 

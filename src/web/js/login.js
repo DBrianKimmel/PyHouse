@@ -14,6 +14,8 @@
  * This displays a login DIV at first and when C{LoggedIn} is false.
  * When properly authenticated, C{Fullname} becomes defined and C{LoggedIn} is set to true,
  *  the widget hides the login screen and shows a DIV that shows who is logged in.
+ *  
+ *  After successful login, the rootMenu is displayed.
  */
 helpers.Widget.subclass(login, 'LoginWidget').methods(
 
@@ -88,10 +90,14 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 	function displayFullname(self, p_json) {
 		
 		function cb_showRootMenu(res) {
+			Divmod.debug('---', 'login.cb_showRootMenu() was called. ');
 			var l_node = findWidget(self, 'RootMenu');
-			l_node.showRootMenu(self);
+			l_node.showWidget(self);
 		}
+		Divmod.debug('---', 'login.displayFullname() was called. ');
 		var l_obj = JSON.parse(p_json);
+		globals.userFullname = l_obj.Fullname;
+		globals.userID = l_obj.Username;
 		this.hideLoggingInDiv(self);
 		this.showLoggedInDiv(self);
 		self.nodeById('LoggedInDiv').innerHTML = 'Logged in: ' + l_obj.Fullname;

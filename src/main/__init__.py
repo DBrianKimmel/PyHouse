@@ -12,7 +12,7 @@ a core of tools and modules that are always present.
 Houses is a core module that will instantiates 'house' for every house defined
 to operate via PyHouse.  That is in the configuration XML file.
 
-During development this is run by hand.
+During development PyHouse is run by hand.
 It is, however, planned to be a daemon that is kicked off on system start-up.
 It is intended to run on everything from a small, low power bare bones system
 to a server running multiple houses in several, widespread locations.

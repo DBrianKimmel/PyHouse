@@ -59,7 +59,7 @@ class HouseSelectElement(athena.LiveElement):
         """ A JS receiver for houseSelect information from the client.
         """
         if g_debug >= 3:
-            print "web_login.HouseSelectElement.doSelect() - Json:{0:}".format(p_json)
+            print "web_houseSelect.HouseSelectElement.doSelect() - Json:{0:}".format(p_json)
         pass
 
     @athena.expose
@@ -70,7 +70,7 @@ class HouseSelectElement(athena.LiveElement):
         """
         l_houses = self.m_pyhouses_obj.HousesData
         if g_debug >= 3:
-            print "web_login.HouseSelectElement.getHousesToSelect()"
+            print "web_houseSelect.HouseSelectElement.getHousesToSelect()"
         l_obj = {}
         for l_key, l_val in l_houses.iteritems():
             l_obj[l_key] = {}
@@ -78,6 +78,6 @@ class HouseSelectElement(athena.LiveElement):
             l_obj[l_key]['Key'] = l_key
             l_obj[l_key]['Active'] = l_val.HouseObject.Active
         l_json = web_utils.JsonUnicode().encode_json(l_obj)
-        self.callRemote('displayHousesToSelect', unicode(l_json))  # call client @ houdeSelect.js
+        self.callRemote('displayHousesToSelect', unicode(l_json))  # call client @ houseSelect.js
 
 # ## END DBK

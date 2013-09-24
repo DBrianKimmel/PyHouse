@@ -9,7 +9,7 @@ see C{main.__init__.py} for core documentation.
 During development this is run by hand.
 It is, however, planned to be a daemon that is kicked off on system start-up.
 It is intended to run on everything from a small, low power bare bones system to a server running multiple houses in several, widespread locations.
-
+4
 The system is controlled via a browser connecting to a web server that will be integrated into PyHouse.
 
 TODO:

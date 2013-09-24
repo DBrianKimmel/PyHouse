@@ -7,6 +7,27 @@
 // import globals
 // import helpers
 
+/**
+ * 	ret = ret + '<form method="post" action="_submit!!post" enctype="multipart/form-data">\n';
+	ret = ret + '  <input type="text" name="Key" value="" />\n';
+	ret = ret + '    <br />\n';
+	ret = ret +	'  Name:';
+	ret = ret +	'    <input type = "text"  name = "Name" value = "" /><br />\n';
+	ret = ret +	'  Key:';
+	ret = ret +	'    <input type = "text" name = "Key" value = "' + p_key + '" /><br />\n';
+	ret = ret +	'  Level:';
+	ret = ret +	'    <input type = "range" name = "Level" min="0" max="100" value="0" onchange="showLightValue(this.value)" />\n';
+	ret = ret +	'    <span name = slid_02  id="range">0</span>\n';
+	ret = ret + '    <br />\n';
+	ret = ret + '    <br />\n';
+	ret = ret +	'  Rate:';
+	ret = ret +	'    <input type = "text" name = "Rate" value = "0" /><br />\n';
+	ret = ret + '  <input type="hidden" value="' + p_id + '" name="slider_no" />\n';
+	ret = ret +			'<br />\n';
+	ret = ret + '  <input type="submit" value="AddSlot" name="post_btn" />\n';
+	ret = ret + '</form>\n';
+
+ */
 
 helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 
