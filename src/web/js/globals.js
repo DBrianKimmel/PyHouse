@@ -35,10 +35,10 @@ var REQ_WITHID = 2;
 globals = {
 	fonts : [ 'Verdana', 'Arial', 'Helvetica', 'sans-serif' ],
 	workspace : null,
-	userID : null,
-	userFullname : null,
-	selectedHouse : -1,
-	selectedHouseName : null,
+
+	Schedules : {},
+	SelectedHouse : {},
+	User : {},
 
 	__init__ : function() {
 		globals.appLoaded = false;
@@ -332,9 +332,9 @@ function loadImages(uris) {
 function findWidget(self, p_name) {
 	//Divmod.debug('---', 'globals.findWidget(1) - self:' + self + ' ' + p_name);
 	// find top level workdpace (may need to iterate up some)
-	l_workspace = self.widgetParent
+	var l_workspace = self.widgetParent
 	for (var ix=0; ix < l_workspace.childWidgets.length; ix++) {
-		l_widget = l_workspace.childWidgets[ix];
+		var l_widget = l_workspace.childWidgets[ix];
 		if (l_widget.node.className.toLowerCase() == p_name.toLowerCase()) {
 			//Divmod.debug('---', 'globals.findWidget(2) - Name: ' + p_name);
 			return l_widget;
@@ -349,17 +349,32 @@ function findWidget(self, p_name) {
 /**
  * A seried of routines to build HTML for insertion into widgets.
  */
-function buildButton(self, p_obj) {
-	//Divmod.debug('---', 'globals.buildButton() - self:' + self);
-	var l_html = '';
-	l_html = "<button type='button'";
+function buildButton(self, p_obj, /* optional */ nameFunction) {
+	//Divmod.debug('---', 'globals.buildButton(1)');
+	//console.log('globals.buildButton() Obj: %O', p_obj);
+	var l_html = '<td>';
+	l_html += "<button type='button'";
 	l_html += " value='" + p_obj['Name'] + "'";
 	l_html += " name ='" + p_obj['Key'] + "'";
 	l_html += " onclick = 'return Nevow.Athena.Widget.handleEvent(this, \"onclick\", \"doHandleOnClick\");'";
 	l_html += ">";
-	l_html += p_obj['Name'];
-	l_html += "</button>";
+	if (typeof nameFunction === 'function') {
+		//Divmod.debug('---', 'globals.buildButton(2) using custom name build');
+		l_html += nameFunction(p_obj);
+	} else {
+		l_html += p_obj['Name'];
+	}
+	l_html += "</button></td>\n";
 	return l_html;
+}
+
+function buildAddButton(self) {
+	var l_html = buildButton(self, {'Name' : 'Add', 'Key' : 10001});
+	return l_html;
+}
+function buildBackButton(self) {
+	var l_html = buildButton(self, {'Name' : 'Back', 'Key' : 10002});
+	return l_html;	
 }
 
 /**
@@ -369,18 +384,38 @@ function buildButton(self, p_obj) {
  * 
  * @param self = a widget
  * @param p_obj = a dict of item dicts to build from
+ * @param nameFunction is the name of a function used to build a more complex caption for the buttons
  * @returns = innerHTML of a table filled in with buttons
  */
-function buildTable(self, p_obj) {
-	//Divmod.debug('---', 'globals.buildTable() called. ' + Object.keys(p_obj).length);
-	var l_count = 0;
-	var l_html = "<tr>\n";
-	for (var l_item in p_obj) {
-		l_html += '<td>';
-		l_html += buildButton(self, p_obj[l_item]);
-		l_html += '</td>';
+function buildTable(self, p_obj, /* optional */ nameFunction, noOptions) {
+	var l_function = nameFunction;
+	var l_options = noOptions;
+	if (typeof nameFunction !== 'function') {
+		l_options = l_function;
+		l_function = null;
 	}
-	l_html += "</tr>\n";
+	var l_cols = 5;
+	var l_count = 0;
+	Divmod.debug('---', 'globals.buildTable(1) called. ' + Object.keys(p_obj).length);
+	var l_html = "<table><tr>\n";
+	for (var l_item in p_obj) {
+		l_html += buildButton(self, p_obj[l_item], l_function);
+		l_count++;
+		if ((l_count > 0) & (l_count % l_cols == 0)){
+			l_html += '</tr><tr>\n';
+		}
+	}
+	l_html += "</tr><tr>\n";
+	if (l_options.toLowerCase().indexOf('add') < 0) {
+		//Divmod.debug('---', 'globals.buildTable(2) called - "add" button. ');
+		l_html += buildAddButton(self);
+	}
+	if (l_options.toLowerCase().indexOf('back') < 0) {
+		//Divmod.debug('---', 'globals.buildTable(3) called - "back" button. ');
+		l_html += buildBackButton(self);
+	}
+	l_html += "</tr></table>\n";
+	//console.log('Table of buttons %O', l_html);
 	return l_html;
 }
 

@@ -117,12 +117,12 @@ Nevow.Athena.Widget.subclass(helpers, 'Widget').methods(
 	  // DBK Added all widget functions below this line
 	  
 	function showWidget(self) {
-		Divmod.debug('---', 'helpers.js - Widget is now visible. ' + self.node.className);
+		//Divmod.debug('---', 'helpers.js - Widget is now visible. ' + self.node.className);
 		self.node.style.display = 'block';
 	},
 	  
 	function hideWidget(self) {
-		Divmod.debug('---', 'helpers.js - Widget is now hidden. ' + self.node.className);
+		//Divmod.debug('---', 'helpers.js - Widget is now hidden. ' + self.node.className);
 		self.node.style.display = 'none';
 	}
 );

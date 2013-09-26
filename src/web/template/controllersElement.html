@@ -4,17 +4,52 @@
     xmlns:athena = 'http://divmod.org/ns/athena/0.7'
     xmlns:nevow  = 'http://nevow.com/ns/nevow/0.1'
     nevow:render = 'liveElement'
-    class = 'controllers'
+    class = 'Controllers'
     name = 'ControllersDiv'
     id = 'ControllersDiv'
-    style = 'background-color: #a2a2f2;'
-    >
-
-    <h2>Controllers:</h2>
-        <table style = 'Width: 100%' border = '2'>
-            <tr>
-            </tr>
-        </table>
+    style = 'background-color: #c2f2c2;'>
+    <div id='ControllerButtonsDiv'>
+       <h2>Select a Controller (or Add):</h2>
+       <div id='ControllerTableDiv'>
+       </div>
+    </div>
+    <div id='ControllerEntryDiv'>
+       <h2>Enter data (or Delete)</h2>
+        <form action="post">
+            <athena:handler event = "onsubmit" handler = "doHandleSubmit" />
+            <table style = 'Width: 100%;' border="">
+                <!-- Basic -->
+                <tr>
+                    <td>Name</td><td><input type='text' id='Name' /></td>
+                </tr><tr>
+                    <td>Key</td><td><input type='text' id='Key' disabled='disabled' /></td>
+                </tr><tr>
+                    <td>Active</td><td><input type='text' id='Active' /></td>
+                </tr><tr>
+                    <td>Type</td><td><input type='text' id='Type' /></td>
+                </tr><tr>
+                    <td>Family</td><td><input type='text' id='Family' /></td>
+                </tr><tr>
+                    <td>Dimmable</td><td><input type='text' id='Dimmable' /></td>
+                </tr><tr>
+                    <td>Room</td><td><input type='text' id='RoomName' /></td>
+                </tr><tr>
+                    <td>Coords</td><td><input type='text' id='Coords' /></td>
+                </tr><tr>
+                    <td>Comment</td><td><input type='text' id='Comment' /></td>
+                </tr>
+                <!-- Controller -->
+                <tr>
+                    <td>Interface</td><td><input type='text' id='Interface' /></td>
+                </tr><tr>
+                    <td>Port</td><td><input type='text' id='Port' /></td>
+                </tr>
+            </table>
+            <input type="submit" name='Change' value='Change' />
+            <input type="submit" name='Delete' value='Delete' />
+            <input type="submit" name='Back' value='Back' />
+        </form>
+    </div>
 </div>
 <!--
     ret = ret + '<form method="post" action="_submit!!post" enctype="multipart/form-data">\n';

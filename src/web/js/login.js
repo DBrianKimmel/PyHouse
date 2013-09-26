@@ -90,14 +90,14 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 	function displayFullname(self, p_json) {
 		
 		function cb_showRootMenu(res) {
-			Divmod.debug('---', 'login.cb_showRootMenu() was called. ');
+			//Divmod.debug('---', 'login.cb_showRootMenu() was called. ');
 			var l_node = findWidget(self, 'RootMenu');
 			l_node.showWidget(self);
 		}
-		Divmod.debug('---', 'login.displayFullname() was called. ');
+		//Divmod.debug('---', 'login.displayFullname() was called. ');
 		var l_obj = JSON.parse(p_json);
-		globals.userFullname = l_obj.Fullname;
-		globals.userID = l_obj.Username;
+		globals.User.Fullname = l_obj.Fullname;
+		globals.User.ID = l_obj.Username;
 		this.hideLoggingInDiv(self);
 		this.showLoggedInDiv(self);
 		self.nodeById('LoggedInDiv').innerHTML = 'Logged in: ' + l_obj.Fullname;

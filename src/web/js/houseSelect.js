@@ -50,15 +50,15 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 	 */
 	function showSelect(self, p1) {
 		function cb_getHousesInfo(self, p1, p2) {
-			Divmod.debug('---', 'houseSelect.showSelect.cb_getHousesInfo() was called.');
+			//Divmod.debug('---', 'houseSelect.showSelect.cb_getHousesInfo() was called.');
 			//console.log("ss.cb self %O", self);
 			//console.log("ss.cb   p1 %O", p1);
 			//console.log("ss.cb   p2 %O", p2);
 		}
 		function eb_getHousesInfo(self, p1, p2) {
-			Divmod.debug('---', 'houseSelect.eb_getHousesInfo() was called. self = ' + self);
+			//Divmod.debug('---', 'houseSelect.eb_getHousesInfo() was called. self = ' + self);
 		}
-		Divmod.debug('---', 'houseSelect.showSelect() was called.');
+		//Divmod.debug('---', 'houseSelect.showSelect() was called.');
 		//console.log("ss self %O", self);
 		//console.log("ss   p1 %O", p1);
 		self.node.style.display = 'block'; 
@@ -69,20 +69,20 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 	},
 	
 	function showSelected(self) {
-		Divmod.debug('---', 'houseSelect.showSelected() was called. ');
+		//Divmod.debug('---', 'houseSelect.showSelected() was called. ');
 		self.nodeById('HouseSelectingDiv').style.display = 'none';		
 		self.nodeById('HouseSelectedDiv').style.display = 'block';		
-		self.nodeById('HouseSelectedDiv').innerHTML = 'Working on house: ' + globals.selectedHouseName;		
+		self.nodeById('HouseSelectedDiv').innerHTML = 'Working on house: ' + globals.SelectedHouse.Name;		
 	},
 	
 	function doHandleOnClick(self, p_node) {
 		//console.log("houseSelect.doHandleOnClick - self %O", self);
-		console.log("houseSelect.doHandleOnClick() - node %O", p_node);
+		//console.log("houseSelect.doHandleOnClick() - node %O", p_node);
 		var l_key = p_node.name;
 		var l_name = p_node.value;
-		globals.selectedHouse = l_key;
-		globals.selectedHouseName = l_name;
-		Divmod.debug('---', 'houseSelect.doHandleOnClick(1) was called. ' + l_key + ' ' + l_name);
+		globals.SelectedHouse.Ix = l_key;
+		globals.SelectedHouse.Name = l_name;
+		//Divmod.debug('---', 'houseSelect.doHandleOnClick(1) was called. ' + l_key + ' ' + l_name);
 		this.showSelected(self);
 		var l_node = findWidget(self, 'HouseMenu');
 		l_node.showWidget(self);
@@ -94,7 +94,7 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 	 * @param p_funct is a string that is the name if the function to be called.
 	 */
 	function buildHandlOnClick(self) {
-		Divmod.debug('---', 'houseSelect.buildHandlOnClick() was called.');
+		//Divmod.debug('---', 'houseSelect.buildHandlOnClick() was called.');
 		var l_html = '';
 		//l_html += "<athena:handler event='onclick' handler='" + doHandleOnClick + "' />";
 		return l_html;
@@ -104,9 +104,9 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 	 * Pushed from the server
 	 */
 	function displayHousesToSelect(self, p_json) {
-		Divmod.debug('---', 'houseSelect.displayHousesToSelect(1) was called. ');
+		Divmod.debug('---', 'houseSelect.displayHousesToSelect(1) was called. JSON=' + p_json);
 		var l_obj = JSON.parse(p_json);
-		l_tab = buildTable(self, l_obj);
+		var l_tab = buildTable(self, l_obj, 'noAdd, noBack');
 		self.nodeById('HSTableDiv').innerHTML = l_tab;
 	}
 );

@@ -51,12 +51,18 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 		case 'House':
 			//Divmod.debug('---', 'rootMenu.doHandleOnClick was called for House.');
 			var l_node = findWidget(self, 'House');
+			l_node.showSelect(self);
+			self.hideWidget(self);
 			break;
 		case 'Web':
 			var l_node = findWidget(self, 'Webt');
+			l_node.showSelect(self);
+			self.hideWidget(self);
 			break;
 		case 'Logs':
 			var l_node = findWidget(self, 'Logs');
+			l_node.showSelect(self);
+			self.hideWidget(self);
 			break;
 		case 'Quit':
 			break;

@@ -39,12 +39,14 @@ class SchedulesElement(athena.LiveElement):
         self.m_pyhouses_obj = p_workspace_obj.m_pyhouses_obj
         if g_debug >= 2:
             print "web_schedules.SchedulesElement()"
-            #print "    self = ", self  #, vars(self)
-            #print "    workspace_obj = ", p_workspace_obj  #, vars(p_workspace_obj)
 
     @athena.expose
     def getScheduleEntries(self, p_index):
-        """ A JS receiver for controllers information from the client.
+        """ A JS client has requested all the schedule information for a given house.
+
+        Return the information via a remote call to the client.
+
+        @param p_index: is the house index number.
         """
         if g_debug >= 3:
             print "web_schedules.SchedulesElement.getScheduleEntries() - HouseIndex:", p_index
@@ -53,13 +55,17 @@ class SchedulesElement(athena.LiveElement):
         l_obj = {}
         for l_key, l_val in l_schedules.iteritems():
             l_obj[l_key] = l_val
-            #l_obj[l_key] = {}
-            #l_obj[l_key]['Name'] = l_val.Name
-            #l_obj[l_key]['Key'] = l_key
-            #l_obj[l_key]['Active'] = l_val.Active
         l_json = web_utils.JsonUnicode().encode_json(l_obj)
         if g_debug >= 3:
-            print "web_schedules.SchedulesElement.getScheduleEntries() - json:", l_json
-        self.callRemote('ShowButtons', unicode(l_json))  # call client @ schedules.js
+            print "web_schedules.SchedulesElement.getScheduleEntries() - JSON:", l_json
+        self.callRemote('displayScheduleButtons', unicode(l_json))  # call client @ schedules.js
+        return unicode(l_json)
+
+    @athena.expose
+    def doScheduleSubmit(self, p_json):
+        """A new/changed schedule is returned.  Process it and update the internal data via schedule.py
+        """
+        if g_debug >= 3:
+            print "web_schedules.SchedulesElement.doScheduleSubmit() - JSON:", p_json
 
 # ## END DBK

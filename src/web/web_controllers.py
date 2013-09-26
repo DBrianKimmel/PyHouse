@@ -11,7 +11,7 @@ from nevow import loaders
 from nevow import athena
 
 # Import PyMh files and modules.
-#from src.web import web_utils
+from src.web import web_utils
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -49,5 +49,27 @@ class ControllersElement(athena.LiveElement):
             print "web_controllers.ControllersElement.doControllers()"
         g_logger.info("doControllers called {0:} {1:}".format(self, p_json))
 
+    @athena.expose
+    def getControllerEntries(self, p_index):
+        """ A JS receiver for controllers information from the client.
+        """
+        if g_debug >= 3:
+            print "web_controllers.ControllersElement.getControllerEntries() - HouseIndex:", p_index
+        g_logger.info("getControllers called {0:}".format(self))
+        l_controllers = self.m_pyhouses_obj.HousesData[int(p_index)].HouseObject.Controllers
+        l_obj = {}
+        for l_key, l_val in l_controllers.iteritems():
+            l_obj[l_key] = l_val
+        l_json = web_utils.JsonUnicode().encode_json(l_obj)
+        if g_debug >= 3:
+            print "web_controllers.ControllersElement.getControllerEntries() - JSON:", l_json
+        self.callRemote('displayControllerButtons', unicode(l_json))  # call client @ controllers.js
+
+    @athena.expose
+    def doControllerSubmit(self, p_json):
+        """A new/changed controller is returned.  Process it and update the internal data via controller.py
+        """
+        if g_debug >= 3:
+            print "web_controllers.ControllersElement.doControllerSubmit() - JSON:", p_json
 
 # ## END DBK

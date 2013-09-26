@@ -57,6 +57,13 @@ class ControllerData(lighting_core.CoreData):
         l_ret += "}"
         return l_ret
 
+    def reprJSON(self):
+        l_ret = super(ControllerData, self).reprJSON()  # The core data
+        l_ret.update(dict(Name = self.Name, Active = self.Active, Key = self.Key, Comment = self.Comment,
+                    Coords = self.Coords, CurLevel = self.CurLevel, Dimmable = self.Dimmable, Family = self.Family,
+                    RoomName = self.RoomName, Type = self.Type))
+        return l_ret
+
 
 class ControllersAPI(lighting_core.CoreAPI):
 
