@@ -74,6 +74,8 @@ from src.web import web_buttons
 from src.web import web_rooms
 from src.web import web_schedules
 from src.web import web_controlLights
+from src.web import web_logs
+from src.web import web_webs
 
 
 # Handy helper for finding external resources nearby.
@@ -84,7 +86,7 @@ imagepath = os.path.join(webpath, 'images')
 jspath = os.path.join(webpath, 'js')
 templatepath = os.path.join(webpath, 'template')
 
-g_debug = 4
+g_debug = 0
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
@@ -374,7 +376,7 @@ class Workspace(athena.LiveElement):
         if g_debug >= 5:
             print "web_mainpage.Workspace.buttons() - called from browser to load clockElement"
         g_logger.info("buttons called")
-        l_element = web_buttons.ButtonsElement(self)
+        l_element = web_buttons.ButtonsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
@@ -392,7 +394,7 @@ class Workspace(athena.LiveElement):
         if g_debug >= 5:
             print "web_mainpage.Workspace.controllers() - called from browser to load controllersElement"
         g_logger.info("controllers called")
-        l_element = web_controllers.ControllersElement(self)
+        l_element = web_controllers.ControllersElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
@@ -427,7 +429,7 @@ class Workspace(athena.LiveElement):
     def lights(self, p_params):
         if g_debug >= 5:
             print "web_mainpage.Workspace.lights() - called from browser to load LightsElement."
-        l_element = web_lights.LightsElement(self)
+        l_element = web_lights.LightsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
@@ -443,6 +445,14 @@ class Workspace(athena.LiveElement):
         p_params = self.m_pyhouses_obj
         g_logger.info("login called - params = {0:}".format(p_params))
         l_element = web_login.LoginElement(self)
+        l_element.setFragmentParent(self)
+        return l_element
+
+    @athena.expose
+    def logs(self, p_params):
+        if g_debug >= 5:
+            print "web_mainpage.Workspace.logts() - called from browser to load LogssElement."
+        l_element = web_logs.LogsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
@@ -470,6 +480,14 @@ class Workspace(athena.LiveElement):
             print "web_mainpage.Workspace.schedules() - called from browser to load schedulesElement"
         g_logger.info("schedules called")
         l_element = web_schedules.SchedulesElement(self, p_params)
+        l_element.setFragmentParent(self)
+        return l_element
+
+    @athena.expose
+    def webs(self, p_params):
+        if g_debug >= 5:
+            print "web_mainpage.Workspace.logts() - called from browser to load LogssElement."
+        l_element = web_webs.WebsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 

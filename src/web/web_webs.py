@@ -1,4 +1,9 @@
 '''
+Created on Sep 27, 2013
+
+@author: briank
+'''
+'''
 Created on Jun 1, 2013
 
 @author: briank
@@ -22,19 +27,20 @@ g_debug = 0
 # 0 = off
 # 1 = major routine entry
 # 2 = Basic data
-g_logger = logging.getLogger('PyHouse.webLogs')
+g_logger = logging.getLogger('PyHouse.webWebs')
 
 
-class LogsElement(athena.LiveElement):
-    """ a 'live' schedules element.
+class WebsElement(athena.LiveElement):
+    """ a 'live' webs element.
     """
-    docFactory = loaders.xmlfile(os.path.join(templatepath, 'logsElement.html'))
-    jsClass = u'logs.LogsWidget'
+    docFactory = loaders.xmlfile(os.path.join(templatepath, 'websElement.html'))
+    jsClass = u'webs.WebsWidget'
 
     def __init__(self, p_workspace_obj, p_params):
         self.m_workspace_obj = p_workspace_obj
         self.m_pyhouses_obj = p_workspace_obj.m_pyhouses_obj
         if g_debug >= 2:
-            print "web_logs.LogsElement()"
+            print "web_webs.WebsElement()"
+
 
 # ## END DBK

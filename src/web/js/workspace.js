@@ -66,8 +66,6 @@ helpers.Widget.subclass(workspace, 'Workspace').methods(
 				globals.__init__();
 				globals.reqType = res[0];
 				globals.user = res[1];
-				// seems we're done, hide the visual amusements for now
-				//self.hideWaitRoller();
 				self.attachWidget('clock', 'dummy'); // dummy params - passed down to the server
 				self.attachWidget('login', 'dummy');
 				self.attachWidget('rootMenu', 'dummy');
@@ -79,6 +77,8 @@ helpers.Widget.subclass(workspace, 'Workspace').methods(
 				self.attachWidget('rooms', 'dummy');
 				self.attachWidget('schedules', 'dummy');
 				self.attachWidget('controlLights', 'dummy');
+				self.attachWidget('webs', 'dummy');
+				self.attachWidget('logs', 'dummy');
 				self.hideWaitRoller();
 			});  // addCallback
 

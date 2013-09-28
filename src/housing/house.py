@@ -72,7 +72,10 @@ class HouseData(object):
         l_ret += "'Controllers':'{0:}', ".format(len(self.Controllers))
         l_ret += "'Buttons':'{0:}', ".format(len(self.Buttons))
         l_ret += "'Rooms':'{0:}', ".format(len(self.Rooms))
-        l_ret += "'Internet':'{0:}', ".format(len(self.Internet))
+        try:
+            l_ret += "'Internet':'{0:}', ".format(len(self.Internet))
+        except:
+            l_ret += "'Internet':'0', "
         l_ret += "'Schedules':'{0:}'".format(len(self.Schedules))
         return l_ret
 

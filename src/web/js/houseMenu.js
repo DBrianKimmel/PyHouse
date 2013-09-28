@@ -6,7 +6,6 @@
 // import Nevow.Athena
 // import globals
 // import helpers
-// import w_server
 
 /**
  * The house menu widget.

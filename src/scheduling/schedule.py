@@ -34,7 +34,6 @@ import xml.etree.ElementTree as ET
 from twisted.internet import reactor
 
 # Import PyMh files
-#from src.entertain import entertainment
 from src.lights import lighting
 from src.utils import xml_tools
 from src.utils import tools
@@ -50,7 +49,6 @@ g_debug = 0
 # 5 = diagnostics
 # 6
 # 7 = extract time details
-
 g_logger = None
 
 callLater = reactor.callLater
@@ -410,16 +408,30 @@ class API(ScheduleUtility, ScheduleXML):
         l_schedules_xml = self.write_schedules_xml(self.m_house_obj.Schedules)
         return l_schedules_xml
 
-    def update_schedule(self, p_schedule):
-        """Update the schedule as updated by the web server.
-        """
-        if g_debug >= 6:
-            print 'schedule.API.update_schedule({0:}'.format(p_schedule)
-        pass
-
     def SpecialTest(self):
         if g_debug >= 2:
             print "schedule.API.SpecialTest()"
         self.m_house_obj.LightingAPI.SpecialTest()
+
+    def Schedule_update_schedule(self, p_entry):
+        """Update the schedule as updated by the web server.
+        Take one schedule entry and insert it into the Schedules data.
+        """
+        if g_debug >= 3:
+            print 'schedule.API.update_schedule({0:}'.format(p_entry)
+        l_obj = ScheduleData()
+        l_obj.Name = p_entry.Name
+        l_obj.Active = p_entry.Active
+        l_obj.Key = p_entry.Key
+        l_obj.Level = p_entry.Level
+        l_obj.LightName = p_entry.LightName
+        #l_obj.LightNumber = tools.get_light_object(p_house_obj, name = l_obj.LightName).Key
+        l_obj.Name = p_entry.Name
+        l_obj.Object = {}
+        l_obj.Rate = p_entry.Rate
+        l_obj.RoomName = p_entry.RoomName
+        l_obj.Time = p_entry.Time
+        l_obj.Type = p_entry.Type
+        self.m_house_obj.Schedules[l_obj.Key] = l_obj  # update schedule entry within a house
 
 # ## END DBK

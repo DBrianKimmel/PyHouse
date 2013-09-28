@@ -6,7 +6,6 @@
 // import Nevow.Athena
 // import globals
 // import helpers
-// import w_server
 
 /**
  * The login widget.
@@ -86,6 +85,9 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 	
 	/**
 	 * Pushed from the server
+	 * 
+	 * @param self   is <"Instance" of undefined.login.LoginWidget>
+	 * @param p_json is 
 	 */
 	function displayFullname(self, p_json) {
 		
@@ -94,10 +96,12 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 			var l_node = findWidget(self, 'RootMenu');
 			l_node.showWidget(self);
 		}
-		//Divmod.debug('---', 'login.displayFullname() was called. ');
+		Divmod.debug('---', 'login.displayFullname() was called. ' + self + ' ' + p_json);
 		var l_obj = JSON.parse(p_json);
-		globals.User.Fullname = l_obj.Fullname;
 		globals.User.ID = l_obj.Username;
+		globals.User.Password = l_obj.Password;
+		globals.User.Fullname = l_obj.Fullname;
+		globals.User.LoggedIn = true;
 		this.hideLoggingInDiv(self);
 		this.showLoggedInDiv(self);
 		self.nodeById('LoggedInDiv').innerHTML = 'Logged in: ' + l_obj.Fullname;

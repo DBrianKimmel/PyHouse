@@ -36,7 +36,7 @@ class LightsElement(athena.LiveElement):
     docFactory = loaders.xmlfile(os.path.join(templatepath, 'lightsElement.html'))
     jsClass = u'lights.LightsWidget'
 
-    def __init__(self, p_workspace_obj):
+    def __init__(self, p_workspace_obj, p_params):
         self.m_pyhouses_obj = p_workspace_obj
         if g_debug >= 2:
             print "web_lights.LightsElement()"

@@ -33,7 +33,7 @@ class ControllersElement(athena.LiveElement):
     docFactory = loaders.xmlfile(os.path.join(templatepath, 'controllersElement.html'))
     jsClass = u'controllers.ControllersWidget'
 
-    def __init__(self, p_workspace_obj):
+    def __init__(self, p_workspace_obj, p_params):
         self.m_workspace_obj = p_workspace_obj
         self.m_pyhouses_obj = p_workspace_obj.m_pyhouses_obj
         if g_debug >= 2:

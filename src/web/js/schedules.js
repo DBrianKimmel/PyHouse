@@ -126,7 +126,8 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 			Level : self.nodeById('Level').value,
 			Rate : self.nodeById('Rate').value,
 			RoomName : self.nodeById('RoomName').value,
-			LightName : self.nodeById('LightName').value
+			LightName : self.nodeById('LightName').value,
+			HouseIx : globals.SelectedHouse.Ix
             }
 		return l_scheduleData;
 	},

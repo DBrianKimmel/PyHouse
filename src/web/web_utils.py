@@ -146,7 +146,7 @@ class JsonUnicode(object):
         """Convert a json object to a python object
         """
         try:
-            l_obj = json.loads(self.convert_from_unicode(p_json))
+            l_obj = self.convert_from_unicode(json.loads(p_json))
         except (TypeError, ValueError):
             l_obj = None
         return l_obj
