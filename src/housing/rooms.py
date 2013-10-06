@@ -54,6 +54,11 @@ class RoomData(object):
         l_ret += "}"
         return l_ret
 
+    def reprJSON(self):
+        return dict(Name = self.Name, Active = self.Active, Key = self.Key,
+                    Comment = self.Comment, Corner = self.Corner, Size = self.Size
+                    )
+
 
 class ReadWriteConfig(xml_tools.ConfigTools):
 

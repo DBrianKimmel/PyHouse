@@ -65,9 +65,9 @@ class CoreData(object):
         return l_str
 
     def reprJSON(self):
-        return dict(Name = self.Name, Active = self.Active, Key = self.Key, Comment = self.Comment,
-                    Coords = self.Coords, CurLevel = self.CurLevel, Dimmable = self.Dimmable, Family = self.Family,
-                    RoomName = self.RoomName, Type = self.Type)
+        return dict(Name = self.Name, Active = self.Active, Key = self.Key,
+                    Comment = self.Comment, Coords = self.Coords, CurLevel = self.CurLevel, Dimmable = self.Dimmable,
+                    Family = self.Family, RoomName = self.RoomName, Type = self.Type)
 
 
 class CoreAPI(xml_tools.ConfigTools):

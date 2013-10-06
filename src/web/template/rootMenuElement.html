@@ -5,17 +5,14 @@
     xmlns:nevow='http://nevow.com/ns/nevow/0.1'
 	nevow:render='liveElement'
 	class = 'RootMenu'
-	name = 'RootMenuDiv'
     id = 'RootMenuDiv'
     style = "background-color: #d2f2d2;" >
     <h2>Select the menu function.</h2>
 	<table style = 'width: 60%;' border = '0'>
 		<tr>
-			<td><button type = 'button' value = 'Select_House' name = 'Select'>Select House
+			<td><button type = 'button' value = 'Select_House' name = 'Select'>Select/Add House
                 <athena:handler event = 'onclick' handler = 'doHandleOnClick' />
                 </button></td>
-			<td><button type = 'button' value = 'Add House' name = 'House'>Add House
-                <athena:handler event = 'onclick' handler = 'doHandleOnClick' /></button></td>
 			<td><button type = 'button' value = 'Web Server' name = 'Web'>Web Server
                 <athena:handler event = 'onclick' handler = 'doHandleOnClick' /></button></td>
 			<td><button type = 'button' value = 'Logs' name = 'Logs'>Logs

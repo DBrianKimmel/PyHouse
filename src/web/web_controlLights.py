@@ -13,6 +13,7 @@ from nevow import athena
 from nevow import loaders
 
 # Import PyMh files and modules.
+from src.web import web_utils
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -37,17 +38,51 @@ class ControlLightsElement(athena.LiveElement):
         self.m_workspace_obj = p_workspace_obj
         self.m_pyhouses_obj = p_workspace_obj.m_pyhouses_obj
         if g_debug >= 2:
-            print "web_controlLights.SchedulesElement()"
-            print "    self = ", self  #, vars(self)
-            print "    workspace_obj = ", p_workspace_obj  #, vars(p_workspace_obj)
+            print "web_controlLights.ControlLightsElement()"
 
     @athena.expose
-    def getControlLights(self):
-        """ A JS receiver for controlling lights from the client.
+    def getControlLightEntries(self, p_index):
+        """ A JS client has requested all the lights information for a given house.
+
+        Return the information via a remote call to the client.
+
+        @param p_index: is the house index number.
         """
         if g_debug >= 3:
-            print "web_controlLights.ControlLightsElement.doSchedules()"
-        g_logger.info("doControlLights called {0:}".format(self))
+            print "web_controlLights.ControlLightsElement.getControlLightEntries() - HouseIndex:", p_index
+        l_lights = self.m_pyhouses_obj.HousesData[int(p_index)].HouseObject.Lights
+        l_obj = {}
+        for l_key, l_val in l_lights.iteritems():
+            l_obj[l_key] = l_val
+        l_json = unicode(web_utils.JsonUnicode().encode_json(l_obj))
+        if g_debug >= 3:
+            print "web_controlLights.ControlLightsElement.getControlLightsEntries() - JSON:", l_json
+        self.callRemote('displayControlLightButtons', unicode(l_json))  # call client @ lights.js
+        return l_json
 
+    @athena.expose
+    def doControlLightSubmit(self, p_json):
+        """A changed Light is returned.  Process it and update the light level
+        """
+        l_json = web_utils.JsonUnicode().decode_json(p_json)
+        l_ix = int(l_json['HouseIx'])
+        if g_debug >= 4:
+            print "web_controlLights.ControlLightsElement.doControlLightSubmit() - JSON:", l_json
+            #print "    ", type(l_json)
+            #print "  1 ", str(self.m_pyhouses_obj.HousesData)
+            #print "  2 ", str(self.m_pyhouses_obj.HousesData[l_ix])
+            #print "  3 ", str(self.m_pyhouses_obj.HousesData[l_ix].HouseObject)
+            #print "  4 ", dir(self.m_pyhouses_obj.HousesData[l_ix].HouseObject)
+        l_obj = lighting_lights.LightData()
+        l_obj.Name = l_json['Name']
+        l_obj.Active = l_json['Active']
+        l_obj.Key = l_json['Key']
+        l_obj.Level = l_json['Level']
+        l_obj.LightName = l_json['LightName']
+        l_obj.Rate = l_json['Rate']
+        l_obj.RoomName = l_json['RoomName']
+        l_obj.Time = l_json['Time']
+        l_obj.Type = l_json['Type']
+        self.m_pyhouses_obj.HousesData[l_ix].HouseObject.LightingAPI.update_data(l_obj)
 
 # ## END DBK

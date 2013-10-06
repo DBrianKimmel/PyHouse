@@ -41,7 +41,7 @@ class SchedulesElement(athena.LiveElement):
             print "web_schedules.SchedulesElement()"
 
     @athena.expose
-    def getScheduleEntries(self, p_index):
+    def getScheduleData(self, p_index):
         """ A JS client has requested all the schedule information for a given house.
 
         Return the information via a remote call to the client.
@@ -49,31 +49,25 @@ class SchedulesElement(athena.LiveElement):
         @param p_index: is the house index number.
         """
         if g_debug >= 3:
-            print "web_schedules.SchedulesElement.getScheduleEntries() - HouseIndex:", p_index
-        g_logger.info("getSchedules called {0:}".format(self))
+            print "web_schedules.SchedulesElement.getScheduleData() - HouseIndex:", p_index
+        g_logger.info("getSchedulesEntry called {0:}".format(self))
         l_schedules = self.m_pyhouses_obj.HousesData[int(p_index)].HouseObject.Schedules
         l_obj = {}
         for l_key, l_val in l_schedules.iteritems():
             l_obj[l_key] = l_val
         l_json = web_utils.JsonUnicode().encode_json(l_obj)
-        if g_debug >= 3:
-            print "web_schedules.SchedulesElement.getScheduleEntries() - JSON:", l_json
-        self.callRemote('displayScheduleButtons', unicode(l_json))  # call client @ schedules.js
+        if g_debug >= 4:
+            print "web_schedules.SchedulesElement.getScheduleData() - JSON:", l_json
         return unicode(l_json)
 
     @athena.expose
-    def doScheduleSubmit(self, p_json):
+    def saveScheduleData(self, p_json):
         """A new/changed schedule is returned.  Process it and update the internal data via schedule.py
         """
         l_json = web_utils.JsonUnicode().decode_json(p_json)
         l_ix = int(l_json['HouseIx'])
         if g_debug >= 4:
-            print "web_schedules.SchedulesElement.doScheduleSubmit() - JSON:", l_json
-            #print "    ", type(l_json)
-            #print "  1 ", str(self.m_pyhouses_obj.HousesData)
-            #print "  2 ", str(self.m_pyhouses_obj.HousesData[l_ix])
-            #print "  3 ", str(self.m_pyhouses_obj.HousesData[l_ix].HouseObject)
-            #print "  4 ", dir(self.m_pyhouses_obj.HousesData[l_ix].HouseObject)
+            print "web_schedules.SchedulesElement.saveScheduleData() - JSON:", l_json
         l_obj = schedule.ScheduleData()
         l_obj.Name = l_json['Name']
         l_obj.Active = l_json['Active']
@@ -84,6 +78,6 @@ class SchedulesElement(athena.LiveElement):
         l_obj.RoomName = l_json['RoomName']
         l_obj.Time = l_json['Time']
         l_obj.Type = l_json['Type']
-        self.m_pyhouses_obj.HousesData[l_ix].HouseObject.ScheduleAPI.Schedule_update_schedule(l_obj)
+        self.m_pyhouses_obj.HousesData[l_ix].HouseObject.ScheduleAPI.update_data(l_obj)
 
 # ## END DBK

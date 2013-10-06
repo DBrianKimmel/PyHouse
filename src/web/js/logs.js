@@ -55,7 +55,6 @@ helpers.Widget.subclass(logs, 'LogsWidget').methods(
 	function showWidget(self) {
 		Divmod.debug('---', 'logs.showWidget() was called.');
 		self.node.style.display = 'block';
-		//self.fetchScheduleData(self, globals.SelectedHouse.Ix);
 	}
 );
 /* ### END */

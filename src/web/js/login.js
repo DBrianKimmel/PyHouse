@@ -93,10 +93,10 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 		
 		function cb_showRootMenu(res) {
 			//Divmod.debug('---', 'login.cb_showRootMenu() was called. ');
-			var l_node = findWidget(self, 'RootMenu');
+			var l_node = findWidgetByClass('RootMenu');
 			l_node.showWidget(self);
 		}
-		Divmod.debug('---', 'login.displayFullname() was called. ' + self + ' ' + p_json);
+		//Divmod.debug('---', 'login.displayFullname() was called. ' + self + ' ' + p_json);
 		var l_obj = JSON.parse(p_json);
 		globals.User.ID = l_obj.Username;
 		globals.User.Password = l_obj.Password;

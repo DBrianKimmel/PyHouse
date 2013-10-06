@@ -36,6 +36,11 @@ globals = {
 	fonts : [ 'Verdana', 'Arial', 'Helvetica', 'sans-serif' ],
 	workspace : null,
 
+	Buttons : {},
+	Controllers : {},
+	House : {},
+	Lights : {},
+	Rooms : {},
 	Schedules : {},
 	SelectedHouse : {},
 	User : {},
@@ -362,22 +367,17 @@ function serverState(p_state) {
 }
 
 
-
 /**
  * Find a widget in the workspace using 'class' of the widget.
  */
-function findWidget(self, p_name) {
-	//Divmod.debug('---', 'globals.findWidget(1) - self:' + self + ' ' + p_name);
-	// find top level workdpace (may need to iterate up some)
-	var l_workspace = self.widgetParent
-	for (var ix=0; ix < l_workspace.childWidgets.length; ix++) {
-		var l_widget = l_workspace.childWidgets[ix];
-		if (l_widget.node.className.toLowerCase() == p_name.toLowerCase()) {
-			//Divmod.debug('---', 'globals.findWidget(2) - Name: ' + p_name);
+function findWidgetByClass(p_name) {
+	//Divmod.debug('---', 'globals.findWidgetByClass(1) - Name:' + p_name);
+	for (var ix=0; ix < globals.workspace.childWidgets.length; ix++) {
+		var l_widget = globals.workspace.childWidgets[ix];
+		if (l_widget.node.className.toLowerCase() == p_name.toLowerCase())
 			return l_widget;
-		}
 	}
-	Divmod.debug('---', 'ERROR - findWidget failed for ' + p_name + ' starting with ' + self);
+	Divmod.debug('---', 'ERROR - findWidgetByClass failed for ' + p_name);
 	return undefined;
 }
 
@@ -385,32 +385,33 @@ function findWidget(self, p_name) {
 /**
  * A seried of routines to build HTML for insertion into widgets.
  */
-function buildButton(self, p_obj, /* optional */ nameFunction) {
+function buildButton(p_obj, p_handler, /* optional */ nameFunction) {
 	//Divmod.debug('---', 'globals.buildButton(1)');
 	//console.log('globals.buildButton() Obj: %O', p_obj);
 	var l_html = '<td>';
-	l_html += "<button type='button'";
-	l_html += " value='" + p_obj['Name'] + "'";
-	l_html += " name ='" + p_obj['Key'] + "'";
-	l_html += " onclick = 'return Nevow.Athena.Widget.handleEvent(this, \"onclick\", \"doHandleOnClick\");'";
-	l_html += ">";
-	if (typeof nameFunction === 'function') {
-		//Divmod.debug('---', 'globals.buildButton(2) using custom name build');
+	l_html += "<button type='button' ";
+	l_html += "value='" + p_obj['Name'] + "' ";
+	l_html += "name ='" + p_obj['Key'] + "' ";
+	l_html += "onclick = 'return Nevow.Athena.Widget.handleEvent(this, \"onclick\", \""  + p_handler + "\" ";
+	l_html += ");' >\n";
+	if (typeof nameFunction === 'function')
 		l_html += nameFunction(p_obj);
-	} else {
+	else
 		l_html += p_obj['Name'];
-	}
 	l_html += "</button></td>\n";
 	return l_html;
 }
-
-function buildAddButton(self) {
-	var l_html = buildButton(self, {'Name' : 'Add', 'Key' : 10001});
-	return l_html;
+function buildAddButton(p_handler) {
+	return buildButton({'Name' : 'Add', 'Key' : 10001}, p_handler);
 }
-function buildBackButton(self) {
-	var l_html = buildButton(self, {'Name' : 'Back', 'Key' : 10002});
-	return l_html;	
+function buildBackButton(p_handler) {
+	return buildButton({'Name' : 'Back', 'Key' : 10002}, p_handler);
+}
+function buildChangeButton(p_handler) {
+	return buildButton({'Name' : 'Change', 'Key' : 10003}, p_handler);
+}
+function buildDeleteButton(p_handler) {
+	return buildButton({'Name' : 'Delete', 'Key' : 10004}, p_handler);
 }
 
 /**
@@ -418,12 +419,11 @@ function buildBackButton(self) {
  * Use the names to build callbacks for the buttons being clicked on
  * Used for things like selectingf a light or house to work on.
  * 
- * @param self = a widget
  * @param p_obj = a dict of item dicts to build from
  * @param nameFunction is the name of a function used to build a more complex caption for the buttons
  * @returns = innerHTML of a table filled in with buttons
  */
-function buildTable(self, p_obj, /* optional */ nameFunction, noOptions) {
+function buildTable(self, p_obj, p_handler, /* optional */ nameFunction, noOptions) {
 	var l_function = nameFunction;
 	var l_options = noOptions;
 	if (typeof nameFunction !== 'function') {
@@ -432,29 +432,120 @@ function buildTable(self, p_obj, /* optional */ nameFunction, noOptions) {
 	}
 	var l_cols = 5;
 	var l_count = 0;
-	Divmod.debug('---', 'globals.buildTable(1) called. ' + Object.keys(p_obj).length);
+	//Divmod.debug('---', 'globals.buildTable(1) called. ' + Object.keys(p_obj).length);
 	var l_html = "<table><tr>\n";
 	for (var l_item in p_obj) {
-		l_html += buildButton(self, p_obj[l_item], l_function);
+		l_html += buildButton(p_obj[l_item], p_handler, l_function);
 		l_count++;
-		if ((l_count > 0) & (l_count % l_cols == 0)){
+		if ((l_count > 0) & (l_count % l_cols == 0))
 			l_html += '</tr><tr>\n';
-		}
 	}
 	l_html += "</tr><tr>\n";
-	if (l_options.toLowerCase().indexOf('add') < 0) {
-		//Divmod.debug('---', 'globals.buildTable(2) called - "add" button. ');
-		l_html += buildAddButton(self);
-	}
-	if (l_options.toLowerCase().indexOf('back') < 0) {
-		//Divmod.debug('---', 'globals.buildTable(3) called - "back" button. ');
-		l_html += buildBackButton(self);
-	}
+	if (l_options.toLowerCase().indexOf('add') < 0)
+		l_html += buildAddButton(p_handler);
+	if (l_options.toLowerCase().indexOf('back') < 0)
+		l_html += buildBackButton(p_handler);
 	l_html += "</tr></table>\n";
-	//console.log('Table of buttons %O', l_html);
+	return l_html;
+}
+function buildEntryButtons() {
+	var l_html;
 	return l_html;
 }
 
+/**
+ * Radio button set widget
+ * 
+ * @param p_name   is the name of the radio button set ('Active' e.g.) also used as a label.
+ * @param p_value  is bool showing the current value .
+ */
+function buildRadioButtonWidget(p_name, p_label, p_value) {
+	//Divmod.debug('---', 'globals.buildRadioButtonWidget() called.  Name=' + p_name + '  Value=' + p_value);
+	var l_html = "&nbsp;<input type='radio' ";
+	l_html += "name='" + p_name + "' ";
+	l_html += "value='" + p_value + "' ";
+	if (p_value)
+		l_html += "checked='checked'";
+	l_html += "/>" + p_label + '&nbsp;\n';
+	return l_html;
+}
+function buildActiveWidget(p_value) {
+	//Divmod.debug('---', 'globals.buildActiveWidget() called.  p_value=' + p_value);
+	var l_html = "<span id='ActiveButtons'>";
+	l_html += buildRadioButtonWidget('Active', 'True',  p_value);
+	l_html += buildRadioButtonWidget('Active', 'False', ! p_value);
+	l_html += '</span>\n';
+	return l_html;
+}
+function fetchActive(p_name) {
+	var l_active = document.getElementsByName(p_name);
+	var l_ret = false;
+	for (var ix = 0; ix < l_active.length; ix++) {
+		if (l_active[ix].checked && l_active[ix].value === 'true') {
+			l_ret = true
+			break;
+		}
+	}
+	return l_ret;
+}
+
+/**
+ * Build a select widget
+ */
+function buildSelectWidget(p_name, p_list, p_checked) {
+	//Divmod.debug('---', 'globals.buildSelectWidget() called.  p_list=' + p_list + '  p_checked=' + p_checked);
+	var l_html = "<select name='" + p_name + "' >\n";
+	for (var ix = 0; ix < p_list.length; ix++) {
+		var l_name = p_list[ix];
+		l_html += "<option value='" + ix + "' ";
+		if (l_name == p_checked)
+			l_html += 'selected ';
+		l_html += ">" + l_name + "</option>\n";
+	}
+	l_html += "</select>\n";
+	return l_html;
+}
+function fetchSelectWidget(p_name) {
+	var l_fields = document.getElementsByName(p_name);
+	var l_name = l_fields[0].value;
+	return l_name;
+}
+function buildRoomSelectWidget(p_checked) {
+	//Divmod.debug('---', 'globals.buildRoomSelectWidget() was called. Self=' + self + '  Checked=' + p_checked);
+	var l_obj = globals.House.Selected.HouseObj.Rooms
+	var l_list = [];
+	for (var ix = 0; ix < Object.keys(l_obj).length; ix++)
+		l_list[ix] = l_obj[ix].Name;
+	return buildSelectWidget('RoomName', l_list, p_checked);
+}
+function buildLightSelectWidget(p_checked) {
+	//Divmod.debug('---', 'globals.buildLightSelectWidget() was called. Self=' + self + '  Checked=' + p_checked);
+	var l_list = [];
+	for (var ix = 0; ix < Object.keys(globals.House.Selected.HouseObj.Lights).length; ix++)
+		l_list[ix] = globals.House.Selected.HouseObj.Lights[ix].Name;
+	return buildSelectWidget('LightName', l_list, p_checked);
+}
+
+/**
+ * Build a slider widget
+ */
+function buildSliderWidget(p_name, p_value) {
+	//Divmod.debug('---', 'globals.buildSliderWidget() called.  Value=' + p_value);
+	var l_html = "<input type='range' min='0' max='100' name='" + p_name + "' id='slider' ";
+	l_html += "value='" + p_value + "' ";
+	l_html += ">\n";
+	return l_html;
+}
+function buildLevelSlider(p_level) {
+	//Divmod.debug('---', 'globals.buildLevelSlider() called.  Level=' + p_level);
+	var l_html = buildSliderWidget('Level', p_level);
+	return l_html;
+}
+function fetchLevel(p_name) {
+	var l_fields = document.getElementsByName(p_name);
+	l_level = l_fields[0].value;
+	return l_level;
+}
 
 /**
  * Startup

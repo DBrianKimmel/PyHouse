@@ -4,56 +4,33 @@
     xmlns:athena = 'http://divmod.org/ns/athena/0.7'
     xmlns:nevow  = 'http://nevow.com/ns/nevow/0.1'
     nevow:render = 'liveElement'
-    class = "lights"
+    class = "Lights"
     id = 'LightsDiv'
-    >
-
-    <div
-        name = "LightsDiv" 
-        style = "background-color: #c2a2f2;">
-
-	    <h2>Lights</h2>
-	    <form name = 'LightsForm' id = 'LightsForm'>
-	        <athena:handler event = "onsubmit" handler = "doLights" />
-	        <table style = 'Width: 100%' border = '2'>
-	            <tr>
-	            </tr>
-	        </table>
-	    </form>
+    style = 'background-color: #c2f2c2;'>
+    <div id='LightButtonsDiv'>
+       <h2>Select a Light (or Add):</h2>
+       <div id='LightTableDiv'>
+       </div>
     </div>
-
-</div>
-<!--
-
-                <span nevow:data = "lightslist" nevow:render = "lightslist" /> 
-<html
-    xmlns:nevow = "http://nevow.com/ns/nevow/0.1"
-    xmlns = 'http://www.w3.org/1999/xhtml'
-    lang = 'en'
-    >
-    <head nevow:render = 'liveglue'>
-        <title>PyHouse House Lights Page</title>
-        <link rel = 'stylesheet' type = 'text/css' href = 'mainPage.css' />
-        <script type = 'text/javascript' src = 'floatingWindow.js' />
-        <script type = 'text/javascript' src = 'lightPage.js' />
-    </head>
-    <body>
-        <h1>PyHouse Lights Selection</h1>
-        <h2>Select the light to modify or click the add button:</h2>
-        <form name = 'menuofbuttons' enctype = 'multipart/form-data' method = 'post' >
-            <nevow:attr name = "action"><nevow:invisible nevow:render = 'action' /></nevow:attr>
-            <table style = 'Width: 100%' border = '2'>
-                <tr><td>abc</td>
+    <div id='LightEntryDiv'>
+       <h2>Enter data (or Delete)</h2>
+        <form action="post">
+            <athena:handler event = "onsubmit" handler = "doHandleSubmit" />
+            <table style = 'Width: 100%;' border="">
+                <tr>
+                    <td>Name</td><td><input type='text' id='Name' /></td>
                 </tr><tr>
-                    <span nevow:data="lightslist" nevow:render="lightslist" />
+                    <td>Key</td><td><input type='text' id='Key' /></td>
+                </tr><tr>
+                    <td>Active</td><td><input type='text' id='Active' /></td>
                 </tr>
             </table>
-            <input type = 'submit' value = 'Add New Light' name = 'post_btn' />
-            <input type = 'submit' value = 'Cancel' name = 'post_btn' />
-            <input type = 'submit' value = 'Back' name = 'post_btn' />
-        </form> 
-    </body>
-</html>
-
+            <input type="submit" name='Change' value='Change' />
+            <input type="submit" name='Delete' value='Delete' />
+            <input type="submit" name='Back' value='Back' />
+        </form>
+    </div>
+</div>
+<!--
 ### END DBK  -->
  

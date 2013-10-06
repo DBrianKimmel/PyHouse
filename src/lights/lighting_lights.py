@@ -35,6 +35,11 @@ class LightData(lighting_core.CoreData):
         l_str = l_str + " Key:{0} ".format(self.Key)
         return l_str
 
+    def reprJSON(self):
+        l_ret = super(LightData, self).reprJSON()  # The core data
+        l_ret.update(dict(CurLevel = self.CurLevel))
+        return l_ret
+
 
 class LightingAPI(lighting_core.CoreAPI):
 

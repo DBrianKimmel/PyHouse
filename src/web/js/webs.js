@@ -51,7 +51,6 @@ helpers.Widget.subclass(webs, 'WebsWidget').methods(
 	function showWidget(self) {
 		Divmod.debug('---', 'webs.showWidget() was called.');
 		self.node.style.display = 'block';
-		//self.fetchScheduleData(self, globals.SelectedHouse.Ix);
 	}
 );
 // ### END DBK

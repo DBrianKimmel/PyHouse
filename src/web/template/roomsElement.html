@@ -1,18 +1,47 @@
 <!-- roomsElement.xml
 -->
 <div
-    xmlns:nevow = "http://nevow.com/ns/nevow/0.1"
+    xmlns:athena = 'http://divmod.org/ns/athena/0.7'
+    xmlns:nevow  = "http://nevow.com/ns/nevow/0.1"
     nevow:render = "liveElement"
-    class = "rooms"
-    name = "RoomsDiv"
+    class = "Rooms"
     id = 'RoomsDiv'
-    style = "background-color: #f2a2a2;"
-    >
-    <h2>Rooms:</h2>
-        <table name = 'RoomsTable' id = 'RoomsTable' style = 'Width: 100%' border = '2'>
-            <tr>
-            </tr>
-        </table>
+    style = "background-color: #c2f2c2;">
+    <div id='RoomButtonsDiv'>
+       <h2>Select a Room (or Add):</h2>
+       <div id='RoomTableDiv'>
+       </div>
+    </div>
+    <div id='RoomEntryDiv'>
+        <h2>Enter data (or Delete)</h2>
+		<table style = 'Width: 100%;' border="">
+			<tr>
+                <td>Name</td><td><input type='text' id='Name' /></td>
+			</tr><tr>
+                <td>Key</td><td><input type='text' id='Key' disabled='disabled' /></td>
+			</tr><tr>
+                <td>Active</td><td><div id='Active' /></td>
+			</tr><tr>
+                <td>Comment</td><td><input type='text' id='Comment' /></td>
+			</tr><tr>
+                <td>Corner</td><td><input type='text' id='Corner' /></td>
+			</tr><tr>
+                <td>Size</td><td><input type='text' id='Size' /></td>
+			</tr>
+		</table>
+		<div>
+			<input type="button" id='RoomEntryChange' name='Change' value='Change' />
+			<input type="button" id='RoomEntryDelete' name='Delete' value='Delete' />
+			<input type="button" id='RoomEntryBack'   name='Back'   value='Back' />
+		</div>
+    </div>
 </div>
 <!-- 
+            <athena:handler event = "onclick" handler = "doHandleSubmit" />
+        <form action="post" id='RoomEntryForm'>
+            <athena:handler event = "onsubmit" handler = "doHandleSubmit" />
+            <input type="submit" id='RoomEntryChange' name='Change' value='Change' />
+            <input type="submit" id='RoomEntryDelete' name='Delete' value='Delete' />
+            <input type="submit" id='RoomEntryBack'   name='Back'   value='Back' />
+        </form>
 END DBK  -->

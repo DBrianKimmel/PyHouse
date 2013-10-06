@@ -43,7 +43,8 @@ class HouseData(object):
         self.LightingAPI = None
         self.ScheduleAPI = None
         self.FamilyData = None
-        self.Location = location.LocationData()
+        self.Location = location.LocationData()  # one location per house.
+        # a dict of zero or more of the following.
         self.Buttons = {}
         self.Controllers = {}
         self.Internet = {}
@@ -80,7 +81,10 @@ class HouseData(object):
         return l_ret
 
     def reprJSON(self):
-        return dict(Active = self.Active, Key = self.Key, Name = self.Name, Location = self.Location)
+        return dict(Active = self.Active, Key = self.Key, Name = self.Name,
+                    Location = self.Location, Buttons = self.Buttons, Controllers = self.Controllers,
+                    Internet = self.Internet, Lights = self.Lights, Rooms = self.Rooms,
+                    Schedules = self.Schedules)
 
 
 class HouseReadWriteConfig(location.ReadWriteConfig, rooms.ReadWriteConfig):
@@ -123,6 +127,7 @@ class API(HouseReadWriteConfig):
 
     def Start(self, p_house_xml):
         """Start processing for all things house.
+        Read in the XML file and update the internal data.
         May be stopped and then started anew to force reloading info.
         """
         if g_debug >= 2:

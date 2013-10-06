@@ -4,16 +4,32 @@
     xmlns:athena = 'http://divmod.org/ns/athena/0.7'
     xmlns:nevow  = 'http://nevow.com/ns/nevow/0.1'
     nevow:render = 'liveElement'
-    class = "buttons"
-    name = 'ButtonsDiv'
+    class = "Buttons"
     id = 'ButtonsDiv'
     style = "background-color: #a2f2f2;">
-
-    <h2>Buttons:</h2>
-        <table style = 'Width: 100%' border = '0'>
-            <tr>
-            </tr>
-        </table>
+    <div id='ButtonButtonsDiv'>
+       <h2>Select a Button (or Add):</h2>
+       <div id='ButtonTableDiv'>
+       </div>
+    </div>
+    <div id='ButtonEntryDiv'>
+       <h2>Enter data (or Delete)</h2>
+        <form action="post">
+            <athena:handler event = "onsubmit" handler = "doHandleSubmit" />
+            <table style = 'Width: 100%;' border="">
+                <tr>
+                    <td>Name</td><td><input type='text' id='Name' /></td>
+                </tr><tr>
+                    <td>Key</td><td><input type='text' id='Key' /></td>
+                </tr><tr>
+                    <td>Active</td><td><input type='text' id='Active' /></td>
+                </tr>
+            </table>
+            <input type="submit" name='Change' value='Change' />
+            <input type="submit" name='Delete' value='Delete' />
+            <input type="submit" name='Back' value='Back' />
+        </form>
+    </div>
 </div>
 <!--
 ### EBD DBK -->

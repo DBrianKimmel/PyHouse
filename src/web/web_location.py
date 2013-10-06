@@ -14,7 +14,7 @@ from src.web import web_utils
 from src.web import web_rooms
 
 
-g_debug = 0
+g_debug = 9
 # 0 = off
 # 1 = major routine entry
 # 2 = Basic data
@@ -33,7 +33,7 @@ class LocationPage(web_utils.ManualFormMixin):
                 T_script(type = 'text/javascript', src = 'ajax.js')["\n"],
                 T_script(type = 'text/javascript', src = 'floating_window.js'),
                 T_script(type = 'text/javascript', src = 'housepage.js')["\n"],
-                ],  # head
+                ], # head
             T_body[
                 T_h1['PyHouse Houses'],
                 T_p['\n'],

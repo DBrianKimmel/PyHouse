@@ -4,20 +4,43 @@
     xmlns:athena = 'http://divmod.org/ns/athena/0.7'
     xmlns:nevow  = 'http://nevow.com/ns/nevow/0.1'
     nevow:render = 'liveElement'
-    class = "controlLights"
-    name = 'controlLightsDiv'
-    id = 'controlLightsDiv'
+    class = "ControlLights"
+    id = 'ControlLightsDiv'
     style = "background-color: #c2f2c2;">
-
-	<h2>Select the Light to control:</h2>
-	<form name = 'controlLightsForm' >
-	    <table style = 'Width: 100%' border = '0'>
-	        <tr>
-	            <input type = 'submit' value = 'Cancel' name = 'post_btn' />
-	            <input type = 'submit' value = 'Back' name = 'post_btn' />
-	        </tr>
-	    </table>
-	</form>
+    <div id='ControlLightButtonsDiv'>
+       <h2>Select a light to control:</h2>
+       <div id='ControlLightsTableDiv'>
+       </div>
+    </div>
+    <div id='ControlLightEntryDiv'>
+       <h2>Enter data (or Delete)</h2>
+        <form action="post">
+            <athena:handler event = "onsubmit" handler = "doHandleSubmit" />
+            <table style = 'Width: 100%;' border="">
+                <tr>
+                    <td>Name</td><td><input type='text' id='Name' /></td>
+                </tr><tr>
+                    <td>Key</td><td><input type='text' id='Key' /></td>
+                </tr><tr>
+                    <td>Active</td><td><input type='text' id='Active' /></td>
+                </tr><tr>
+                    <td>Type</td><td><input type='text' id='Type' /></td>
+                </tr><tr>
+                    <td>Time</td><td><input type='text' id='Time' /></td>
+                </tr><tr>
+                    <td>Level</td><td><input type='text' id='Level' /></td>
+                </tr><tr>
+                    <td>Rate</td><td><input type='text' id='Rate' /></td>
+                </tr><tr>
+                    <td>Room</td><td><input type='text' id='RoomName' /></td>
+                </tr><tr>
+                    <td>Light</td><td><input type='text' id='LightName' /></td>
+                </tr>
+            </table>
+            <input type="submit" name='Change' value='Change' />
+            <input type="submit" name='Back' value='Back' />
+        </form>
+    </div>
 </div>
 <!--
 ### END DBK -->

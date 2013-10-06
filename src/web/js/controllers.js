@@ -21,6 +21,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
         
     function __init__(self, node) {
         controllers.ControllersWidget.upcall(self, '__init__', node);
+		globals.Controllers.Selected = {};
     },
 
     /**
@@ -81,7 +82,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
         function eb_fetchControllerData(self, p1, p2) {
             Divmod.debug('---', 'controllers.eb_fetchControllerData() was called. ' + p1 + ' ' + p2);
         }
-        var l_defer = self.callRemote("getControllerEntries", globals.SelectedHouse.Ix);  // call server @ web_controllers.py
+        var l_defer = self.callRemote("getControllerData", globals.SelectedHouse.Ix);  // call server @ web_controllers.py
         l_defer.addCallback(cb_fetchControllerData);
         l_defer.addErrback(eb_fetchControllerData);
         return false;
@@ -180,7 +181,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
         } else if (l_ix == 10002) {
             // back key
             self.hideWidget();
-            var l_node = findWidget(self, 'HouseMenu');
+            var l_node = findWidgetByClass('HouseMenu');
             l_node.showWidget(self);
         }
     },

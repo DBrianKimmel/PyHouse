@@ -413,7 +413,7 @@ class API(ScheduleUtility, ScheduleXML):
             print "schedule.API.SpecialTest()"
         self.m_house_obj.LightingAPI.SpecialTest()
 
-    def Schedule_update_schedule(self, p_entry):
+    def update_data(self, p_entry):
         """Update the schedule as updated by the web server.
         Take one schedule entry and insert it into the Schedules data.
         """
@@ -425,7 +425,6 @@ class API(ScheduleUtility, ScheduleXML):
         l_obj.Key = p_entry.Key
         l_obj.Level = p_entry.Level
         l_obj.LightName = p_entry.LightName
-        #l_obj.LightNumber = tools.get_light_object(p_house_obj, name = l_obj.LightName).Key
         l_obj.Name = p_entry.Name
         l_obj.Object = {}
         l_obj.Rate = p_entry.Rate

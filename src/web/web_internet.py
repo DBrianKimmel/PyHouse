@@ -16,7 +16,7 @@ from src.web import web_utils
 from src.web import web_rooms
 
 
-g_debug = 0
+g_debug = 9
 # 0 = off
 # 1 = major routine entry
 # 2 = Basic data

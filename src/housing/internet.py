@@ -39,6 +39,10 @@ callLater = reactor.callLater
 class InternetData(object):
 
     def __init__(self):
+        self.Name = ''
+        self.Active = False
+        self.Key = 0
+        self.ExternalDelay = 0
         self.ExternalIP = None
         self.UrlExternalIP = None
         self.ExternalDelay = 0
@@ -51,6 +55,12 @@ class InternetData(object):
         l_ret += "Delay:{0:}, ".format(self.ExternalDelay)
         l_ret += "DynDns:{0:}".format(self.DynDns)
         return l_ret
+
+    def reprJSON(self):
+        return dict(Name = self.Name, Active = self.Active, Key = self.Key,
+                    ExternalDelay = self.ExternalDelay, ExternalIP = self.ExternalIP, UrlExternalIP = self.UrlExternalIP,
+                    DynDns = self.DynDns
+                    )
 
 
 class DynDnsData(object):
@@ -70,6 +80,11 @@ class DynDnsData(object):
         l_ret += "Interval:{0:}, ".format(self.Interval)
         l_ret += "Url:{0:};".format(self.Url)
         return l_ret
+
+    def reprJSON(self):
+        return dict(Name = self.Name, Active = self.Active, Key = self.Key,
+                    Interval = self.Interval, Url = self.Url
+                    )
 
 
 #======================================

@@ -38,31 +38,23 @@ class ControllersElement(athena.LiveElement):
         self.m_pyhouses_obj = p_workspace_obj.m_pyhouses_obj
         if g_debug >= 2:
             print "web_controllers.ControllersElement()"
-            print "    self = ", self  #, vars(self)
-            print "    workspace_obj = ", p_workspace_obj  #, vars(p_workspace_obj)
+            #print "    self = ", self  #, vars(self)
+            #print "    workspace_obj = ", p_workspace_obj  #, vars(p_workspace_obj)
 
     @athena.expose
-    def doControllers(self, p_json):
+    def getControllerData(self, p_index):
         """ A JS receiver for controllers information from the client.
         """
         if g_debug >= 3:
-            print "web_controllers.ControllersElement.doControllers()"
-        g_logger.info("doControllers called {0:} {1:}".format(self, p_json))
-
-    @athena.expose
-    def getControllerEntries(self, p_index):
-        """ A JS receiver for controllers information from the client.
-        """
-        if g_debug >= 3:
-            print "web_controllers.ControllersElement.getControllerEntries() - HouseIndex:", p_index
-        g_logger.info("getControllers called {0:}".format(self))
+            print "web_controllers.ControllersElement.getControllerData() - HouseIndex:", p_index
+        g_logger.info("getControllerData called {0:}".format(self))
         l_controllers = self.m_pyhouses_obj.HousesData[int(p_index)].HouseObject.Controllers
         l_obj = {}
         for l_key, l_val in l_controllers.iteritems():
             l_obj[l_key] = l_val
         l_json = web_utils.JsonUnicode().encode_json(l_obj)
         if g_debug >= 3:
-            print "web_controllers.ControllersElement.getControllerEntries() - JSON:", l_json
+            print "web_controllers.ControllersElement.getControllerData() - JSON:", l_json
         self.callRemote('displayControllerButtons', unicode(l_json))  # call client @ controllers.js
 
     @athena.expose
