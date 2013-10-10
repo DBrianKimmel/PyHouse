@@ -77,12 +77,12 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 			break;
 		case 'Quit':
 			// Quit the browser by logging out
-			//Divmod.debug('---', 'rootMenu.doHandleOnClick was called for Quit.');
+			Divmod.debug('---', 'rootMenu.doHandleOnClick was called for Quit.');
 			self.doRootQuit(self, p_node);
 			break;
 		case 'Reload':
 			// Force a save and reload of all XML data
-			//Divmod.debug('---', 'rootMenu.doHandleOnClick was called for Reload.');
+			Divmod.debug('---', 'rootMenu.doHandleOnClick was called for Reload.');
 			self.callRemote("doRootMenuReload", '');
 			break;
 		default:

@@ -14,7 +14,7 @@ from xml.dom import minidom
 # Import PyMh files
 
 
-g_debug = 0
+g_debug = 2
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry

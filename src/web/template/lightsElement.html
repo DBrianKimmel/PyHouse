@@ -13,22 +13,19 @@
        </div>
     </div>
     <div id='LightEntryDiv'>
-       <h2>Enter data (or Delete)</h2>
-        <form action="post">
-            <athena:handler event = "onsubmit" handler = "doHandleSubmit" />
-            <table style = 'Width: 100%;' border="">
-                <tr>
-                    <td>Name</td><td><input type='text' id='Name' /></td>
-                </tr><tr>
-                    <td>Key</td><td><input type='text' id='Key' /></td>
-                </tr><tr>
-                    <td>Active</td><td><input type='text' id='Active' /></td>
-                </tr>
-            </table>
-            <input type="submit" name='Change' value='Change' />
-            <input type="submit" name='Delete' value='Delete' />
-            <input type="submit" name='Back' value='Back' />
-        </form>
+        <h2>Enter data (or Delete)</h2>
+		<table style = 'Width: 100%;' border="">
+		    <tr>
+		        <td>Name</td><td><input type='text' id='Name' /></td>
+		    </tr><tr>
+		        <td>Key</td><td><input type='text' id='Key' disabled='disabled' /></td>
+                <td><input type="text" id='UUID' size='48' disabled="disabled" /></td>
+		    </tr><tr>
+		        <td>Active</td><td><div id='Active' /></td>
+		    </tr>
+		</table>
+        <div id='LightEntryButtonsDiv'>
+        </div>
     </div>
 </div>
 <!--

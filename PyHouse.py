@@ -66,7 +66,7 @@ from src.housing import houses
 from src.web import web_server
 
 
-g_debug = 0
+g_debug = 2
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
@@ -185,7 +185,7 @@ class Utilities(object):
     def export_config_info(self, p_pyhouses_obj):
         """Replace the data in the xml file with the current data.
         """
-        if g_debug >= 3:
+        if g_debug >= 2:
             print "PyHouse.export_config_info() - Writing XML file to:{0:}".format(p_pyhouses_obj.XmlFileName)
         self.m_xmltree_root = p_pyhouses_obj.XmlRoot
         xml_tools.write_xml_file(p_pyhouses_obj.XmlRoot, p_pyhouses_obj.XmlFileName)
@@ -209,6 +209,7 @@ class API(Utilities):
         """
         if g_debug >= 2:
             print "\nPyHouse.API()"
+        if g_debug >= 4:
             import sys
             print "  SYS.Path =", sys.path
             print "---\n\n"

@@ -21,7 +21,7 @@ from src.housing import house
 from src.utils import xml_tools
 
 
-g_debug = 0
+g_debug = 9
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
@@ -53,15 +53,8 @@ class HousesData(object):
         l_ret += "\nHouseObject:{0:};\n".format(self.HouseObject)
         return l_ret
 
-    def __repr__(self):
-        l_ret = "{"
-        l_ret += "'Name':'{0:}', ".format(self.Name)
-        l_ret += "'Key':'{0:}', ".format(self.Key)
-        l_ret += "'Active':'{0:}', ".format(self.Active)
-        l_ret += "'HouseAPI':'{0:}', ".format(self.HouseAPI)
-        l_ret += "'HouseObject':'{0:}'".format(self.HouseObject)
-        l_ret += "}"
-        return l_ret
+    def reprJSON(self):
+        return dict(Active = self.Active, Key = self.Key, Name = self.Name)
 
 
 class HouseReadWriteConfig(xml_tools.ConfigFile):
@@ -79,15 +72,6 @@ class HouseReadWriteConfig(xml_tools.ConfigFile):
     def get_xml_root(self):
         return self.m_xmltree_root
 
-    def XXwrite_config_file(self, p_xml):
-        """Replace the data in the 'Houses' section with the current data.
-        """
-        if g_debug >= 3:
-            print "houses.write_config_file() - Writing xml file to:{0:}".format(self.m_xml_filename)
-        self.m_xmltree_root = self.m_xmltree.getroot()
-        self.m_xmltree_root = p_xml
-        self.write_xml_file(self.m_xmltree, self.m_xml_filename)
-
 
 class LoadSaveAPI(HouseReadWriteConfig):
     """
@@ -100,11 +84,6 @@ class LoadSaveAPI(HouseReadWriteConfig):
             print "houses.load_all_houses()"
         self.l_rwc = HouseReadWriteConfig()
         return self.l_rwc.get_xml_root()
-
-    def XXsave_all_houses(self, p_xml):
-        if g_debug >= 4:
-            print "\nhouses.save_all_houses()"
-        self.l_rwc.write_config_file(p_xml)
 
     def get_house_info(self, p_house_xml, p_count):
         """Build up one entry for m_houses_data
@@ -198,7 +177,6 @@ class API(LoadSaveAPI):
             if g_debug >= 4:
                 print "houses.Stop() - House:{0:}, Key:{1:}".format(l_house.Name, l_house.Key), l_house.HouseAPI
             l_houses_xml.append(l_house.HouseAPI.Stop(l_houses_xml, l_house.HouseObject))  # append to the xml tree
-        # self.save_all_houses(l_houses_xml)
         g_logger.info("Stopped.")
         return l_houses_xml
 

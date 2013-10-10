@@ -5,6 +5,7 @@ Created on Jun 13, 2013
 '''
 
 # Import system type stuff
+import uuid
 
 # Import PyHouse files
 from src.utils import xml_tools
@@ -34,6 +35,7 @@ class CoreData(object):
         self.Family = ''
         self.RoomName = ''
         self.Type = ''
+        self.UUID = None
 
     def __str__(self):
         l_str = "Light:: "
@@ -46,28 +48,14 @@ class CoreData(object):
         l_str += "Dimmable:{0:}, ".format(self.Dimmable)
         l_str += "Family:{0:}, ".format(self.Family)
         l_str += "RoomName:{0:}, ".format(self.RoomName)
-        l_str += "Type:{0:};".format(self.Type)
-        return l_str
-
-    def __repr__(self):
-        l_str = "{"
-        l_str += '"Name":"{0:}", '.format(self.Name)
-        l_str += '"Key":"{0:}", '.format(self.Key)
-        l_str += '"Active":"{0:}", '.format(self.Active)
-        l_str += '"Comment":"{0:}", '.format(self.Comment)
-        l_str += '"Coords":"{0:}", '.format(self.Coords)
-        l_str += '"CurLevel":"{0:}", '.format(self.CurLevel)
-        l_str += '"Dimmable":"{0:}", '.format(self.Dimmable)
-        l_str += '"Family":"{0:}", '.format(self.Family)
-        l_str += '"RoomName":"{0:}", '.format(self.RoomName)
-        l_str += '"Type":"{0:}"'.format(self.Type)
-        l_str += "}"
+        l_str += "Type:{0:}, ".format(self.Type)
+        l_str += "UUID:{0:};".format(self.UUID)
         return l_str
 
     def reprJSON(self):
         return dict(Name = self.Name, Active = self.Active, Key = self.Key,
                     Comment = self.Comment, Coords = self.Coords, CurLevel = self.CurLevel, Dimmable = self.Dimmable,
-                    Family = self.Family, RoomName = self.RoomName, Type = self.Type)
+                    Family = self.Family, RoomName = self.RoomName, Type = self.Type, UUID = self.UUID)
 
 
 class CoreAPI(xml_tools.ConfigTools):
@@ -89,6 +77,9 @@ class CoreAPI(xml_tools.ConfigTools):
         p_device_obj.Family = l_fam = self.get_text_from_xml(p_entry_xml, 'Family')
         p_device_obj.RoomName = p_entry_xml.findtext('Room')
         p_device_obj.Type = p_entry_xml.findtext('Type')
+        p_device_obj.UUID = self.get_text_from_xml(p_entry_xml, 'UUID')
+        if len(p_device_obj.UUID) < 8:
+            p_device_obj.UUID = str(uuid.uuid1())
         for l_family_obj in p_house_obj.FamilyData.itervalues():
             if g_debug >= 4:
                 print "    {0:}, {1:}".format(l_family_obj.Name, l_fam)
@@ -107,6 +98,7 @@ class CoreAPI(xml_tools.ConfigTools):
         self.put_text_element(p_entry, 'Family', p_device_obj.Family)
         self.put_text_element(p_entry, 'Room', p_device_obj.RoomName)
         self.put_text_element(p_entry, 'Type', p_device_obj.Type)
+        self.put_text_element(p_entry, 'UUID', p_device_obj.UUID)
         for l_family_obj in p_house_obj.FamilyData.itervalues():
             if g_debug >= 4:
                 print "    {0:}, {1:}".format(l_family_obj.Name, p_device_obj.Family)

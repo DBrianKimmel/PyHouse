@@ -43,17 +43,6 @@ class RoomData(object):
         l_ret += "Corner:{0:}\n".format(self.Corner)
         return l_ret
 
-    def __repr__(self):
-        l_ret = "{"
-        l_ret += "'Name':'{0:}', ".format(self.Name)
-        l_ret += "'Key':'{0:}', ".format(self.Key)
-        l_ret += "'Active':'{0:}', ".format(self.Active)
-        l_ret += "'Size':'{0:}', ".format(self.Size)
-        l_ret += "'Corner':'{0:}', ".format(self.Corner)
-        l_ret += "'Comment':'{0:}'".format(self.Comment)
-        l_ret += "}"
-        return l_ret
-
     def reprJSON(self):
         return dict(Name = self.Name, Active = self.Active, Key = self.Key,
                     Comment = self.Comment, Corner = self.Corner, Size = self.Size

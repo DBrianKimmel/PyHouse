@@ -1,5 +1,7 @@
 /**
- *  lights.js
+ * lights.js
+ * 
+ * The lights widget.
  */
 
 // import Nevow.Athena

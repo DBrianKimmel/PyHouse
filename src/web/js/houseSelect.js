@@ -51,7 +51,7 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 			//Divmod.debug('---', 'houseSelect.showSelect.cb_getHousesInfo() was called.');
 			//console.log("ss.cb   p1 %O", p_json);
 			var l_obj = JSON.parse(p_json);
-			var l_tab = buildTable(self, l_obj, 'handleMenuOnClick', '');
+			var l_tab = buildTable(l_obj, 'handleMenuOnClick');
 			self.nodeById('HouseSelectTableDiv').innerHTML = l_tab;
 		}
 		function eb_getHousesInfo(res) {

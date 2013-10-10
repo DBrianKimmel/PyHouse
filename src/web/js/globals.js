@@ -338,7 +338,6 @@ function loadImages(uris) {
  * 
  * The main purpose is to control the display of the various sections of the PyHouse web page.
  */
-
 globals.ServerStateError = Divmod.Error.subclass('globals.ServerStateError');
 
 function serverState(p_state) {
@@ -383,7 +382,38 @@ function findWidgetByClass(p_name) {
 
 
 /**
- * A seried of routines to build HTML for insertion into widgets.
+ * Get PyHouse data from server.
+ */
+function getPyHouseData() {
+	Divmod.debug('---', 'globals.getPyHouseData() was called. ');
+	var steprate = 2; // checks per second
+	var maxsteps = steprate * 60 * 60 * 24;
+	var stepcount = 0;
+	var stateDeferred = Divmod.Defer.Deferred();
+	var checkStep = function() {
+		if ((stepcount > maxsteps)) {
+			self.timer = null;
+			stateDeferred.errback(new globals.ServerStateError('Invalid Server State: ' + m_state));
+		} else if ((m_state < 999)) {
+			stateDeferred.callback();
+		} else {
+			stepcount++;
+			self.timer = setTimeout(checkStep, 1000 / steprate);
+		}
+	};
+	self.timer = setTimeout(checkStep, 1000 / steprate);
+	return stateDeferred;
+}
+/**
+ * Update PyHouse data back to server.
+ */
+function updatePyHouseData() {
+	Divmod.debug('---', 'globals.updatePyHouseData() was called. ');
+}
+
+
+/**
+ * A series of routines to build HTML for insertion into widgets.
  */
 function buildButton(p_obj, p_handler, /* optional */ nameFunction) {
 	//Divmod.debug('---', 'globals.buildButton(1)');
@@ -423,13 +453,16 @@ function buildDeleteButton(p_handler) {
  * @param nameFunction is the name of a function used to build a more complex caption for the buttons
  * @returns = innerHTML of a table filled in with buttons
  */
-function buildTable(self, p_obj, p_handler, /* optional */ nameFunction, noOptions) {
+function buildTable(p_obj, p_handler, /* optional */ nameFunction, noOptions) {
+	//Divmod.debug('---', 'globals.buildTable() called. ' + p_obj + ' ' + p_handler + ' ' + nameFunction + ' ' + noOptions);
 	var l_function = nameFunction;
 	var l_options = noOptions;
 	if (typeof nameFunction !== 'function') {
 		l_options = l_function;
 		l_function = null;
 	}
+	if (l_options === undefined)
+		l_options = '';
 	var l_cols = 5;
 	var l_count = 0;
 	//Divmod.debug('---', 'globals.buildTable(1) called. ' + Object.keys(p_obj).length);
@@ -448,8 +481,11 @@ function buildTable(self, p_obj, p_handler, /* optional */ nameFunction, noOptio
 	l_html += "</tr></table>\n";
 	return l_html;
 }
-function buildEntryButtons() {
-	var l_html;
+function buildEntryButtons(p_handler) {
+	//Divmod.debug('---', 'globals.buildEntryButtons() called.  Handler=' + p_handler);
+	var l_html = buildChangeButton(p_handler);
+	l_html += buildDeleteButton(p_handler);
+	l_html += buildBackButton(p_handler);
 	return l_html;
 }
 
@@ -555,5 +591,4 @@ Divmod.Runtime.theRuntime.addLoadEvent(
 		globals.workspace.appStartup();
 	}
 );
-
 // END DBK

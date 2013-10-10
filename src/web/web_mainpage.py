@@ -86,7 +86,7 @@ imagepath = os.path.join(webpath, 'images')
 jspath = os.path.join(webpath, 'js')
 templatepath = os.path.join(webpath, 'template')
 
-g_debug = 0
+g_debug = 4
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
@@ -151,7 +151,7 @@ class mainPageFactory:
         l_siteCSSPackage = athena.AutoCSSPackage(csspath)
         athena.jsDeps.mapping.update(l_siteJSPackage.mapping)
         if g_debug >= 3:
-            print "web_mainpage.mainPageFactory() "
+            print "web_mainpage.mainPageFactory() instantiated - singleton. "
         if g_debug >= 5:
             print "    modulepath: {0:}".format(modulepath)
             print "    jspath: {0:}".format(jspath)
@@ -287,7 +287,8 @@ class MainPage(athena.LivePage):
         self.m_pyhouses_obj = p_pyhouses_obj
         super(MainPage, self).__init__()
         if g_debug >= 3:
-            print "web_mainpage.MainPage() "  #, p_pyhouses_obj
+            print "web_mainpage.MainPage() - new client connection established."
+            #print "    ", p_pyhouses_obj
 
     def child_jsmodule(self, ctx):
         if g_debug >= 5:

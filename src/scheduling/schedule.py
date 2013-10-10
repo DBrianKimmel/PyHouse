@@ -30,6 +30,7 @@ Operation:
 # Import system type stuff
 import datetime
 import logging
+import uuid
 import xml.etree.ElementTree as ET
 from twisted.internet import reactor
 
@@ -39,8 +40,7 @@ from src.utils import xml_tools
 from src.utils import tools
 from src.scheduling import sunrisesunset
 
-
-g_debug = 0
+g_debug = 3
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
@@ -70,6 +70,7 @@ class ScheduleData(object):
         self.RoomName = None
         self.Time = None
         self.Type = 'Device'  # For future expansion into scenes, entertainment etc.
+        self.UUID = None
 
     def __str__(self):
         l_ret = "Schedule:: "
@@ -81,30 +82,15 @@ class ScheduleData(object):
         l_ret += "Type:{0:}, ".format(self.Type)
         l_ret += "Key:{0:}, ".format(self.Key)
         l_ret += "Active:{0:}, ".format(self.Active)
-        l_ret += "Room:{0:} ".format(self.RoomName)
+        l_ret += "Room:{0:}, ".format(self.RoomName)
+        l_ret += "UUID:{0:}".format(self.UUID)
         l_ret += "; "
-        return l_ret
-
-    def __repr__(self):
-        """A dict of the schedule object
-        """
-        l_ret = "{"
-        l_ret += '"Name":"{0:}", '.format(self.Name)
-        l_ret += '"Key":"{0:}", '.format(self.Key)
-        l_ret += '"Active":"{0:}", '.format(self.Active)
-        l_ret += '"Type":"{0:}", '.format(self.Type)
-        l_ret += '"LightName":"{0:}", '.format(self.LightName)
-        l_ret += '"RoomName":"{0:}", '.format(self.RoomName)
-        l_ret += '"Level":"{0:}", '.format(self.Level)
-        l_ret += '"Rate":"{0:}", '.format(self.Rate)
-        l_ret += '"Time":"{0:}"'.format(self.Time)
-        l_ret += "}"
         return l_ret
 
     def reprJSON(self):
         return dict(Name = self.Name, Active = self.Active, Key = self.Key, Level = self.Level,
                     LightName = self.LightName, LightNumber = self.LightNumber, Rate = self.Rate,
-                    RoomName = self.RoomName, Time = self.Time, Type = self.Type)
+                    RoomName = self.RoomName, Time = self.Time, Type = self.Type, UUID = self.UUID)
 
 
 class ScheduleXML(xml_tools.ConfigTools):
@@ -120,9 +106,13 @@ class ScheduleXML(xml_tools.ConfigTools):
         p_schedule_obj.RoomName = self.get_text_from_xml(p_entry_xml, 'RoomName')
         p_schedule_obj.Time = self.get_text_from_xml(p_entry_xml, 'Time')
         p_schedule_obj.Type = self.get_text_from_xml(p_entry_xml, 'Type')
+        p_schedule_obj.UUID = self.get_text_from_xml(p_entry_xml, 'UUID')
+        if len(p_schedule_obj.UUID) < 8:
+            p_schedule_obj.UUID = str(uuid.uuid1())
         if g_debug >= 7:
             print "schedule.extract_schedule_xml()   Name:{0:}, Active:{1:}, Key:{2:}, Light:{3:}".format(
                     p_schedule_obj.Name, p_schedule_obj.Active, p_schedule_obj.Key, p_schedule_obj.LightName)
+            print '    UUID:{0:}'.format(p_schedule_obj.UUID)
         return p_schedule_obj
 
     def read_schedules_xml(self, p_house_obj, p_house_xml):
@@ -167,6 +157,7 @@ class ScheduleXML(xml_tools.ConfigTools):
             self.put_text_element(l_entry, 'RoomName', l_schedule_obj.RoomName)
             self.put_text_element(l_entry, 'Time', l_schedule_obj.Time)
             self.put_text_element(l_entry, 'Type', l_schedule_obj.Type)
+            self.put_text_element(l_entry, 'UUID', l_schedule_obj.UUID)
             l_count += 1
             l_schedules_xml.append(l_entry)
         if g_debug >= 3:
@@ -413,12 +404,12 @@ class API(ScheduleUtility, ScheduleXML):
             print "schedule.API.SpecialTest()"
         self.m_house_obj.LightingAPI.SpecialTest()
 
-    def update_data(self, p_entry):
+    def Update(self, p_entry):
         """Update the schedule as updated by the web server.
         Take one schedule entry and insert it into the Schedules data.
         """
         if g_debug >= 3:
-            print 'schedule.API.update_schedule({0:}'.format(p_entry)
+            print 'schedule.API.Update({0:}'.format(p_entry)
         l_obj = ScheduleData()
         l_obj.Name = p_entry.Name
         l_obj.Active = p_entry.Active
@@ -431,6 +422,7 @@ class API(ScheduleUtility, ScheduleXML):
         l_obj.RoomName = p_entry.RoomName
         l_obj.Time = p_entry.Time
         l_obj.Type = p_entry.Type
+        l_obj.UUID = p_entry.UUID
         self.m_house_obj.Schedules[l_obj.Key] = l_obj  # update schedule entry within a house
 
 # ## END DBK

@@ -18,7 +18,7 @@ from src.web import web_utils
 webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
 
-g_debug = 0
+g_debug = 9
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry

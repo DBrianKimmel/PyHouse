@@ -65,7 +65,8 @@ class SchedulesElement(athena.LiveElement):
         """A new/changed schedule is returned.  Process it and update the internal data via schedule.py
         """
         l_json = web_utils.JsonUnicode().decode_json(p_json)
-        l_ix = int(l_json['HouseIx'])
+        l_del = l_json['Delete']
+        l_house_ix = int(l_json['HouseIx'])
         if g_debug >= 4:
             print "web_schedules.SchedulesElement.saveScheduleData() - JSON:", l_json
         l_obj = schedule.ScheduleData()
@@ -78,6 +79,7 @@ class SchedulesElement(athena.LiveElement):
         l_obj.RoomName = l_json['RoomName']
         l_obj.Time = l_json['Time']
         l_obj.Type = l_json['Type']
-        self.m_pyhouses_obj.HousesData[l_ix].HouseObject.ScheduleAPI.update_data(l_obj)
+        l_obj.UUID = l_json['UUID']
+        self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.ScheduleAPI.Update(l_obj)
 
 # ## END DBK

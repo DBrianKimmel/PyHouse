@@ -36,9 +36,9 @@ except ImportError:
 utf8_escape = re.compile(eval(r'u"[&<>\"]+"'))
 escape = re.compile(eval(r'u"[&<>\"\u0080-\uffff]+"'))
 
-def encode_entity(text, pattern=escape):
+def encode_entity(text, pattern = escape):
     # map reserved and non-ascii characters to numerical entities
-    def escape_entities(m, map=elementtree.ElementTree._escape_map):
+    def escape_entities(m, map = elementtree.ElementTree._escape_map):
         out = []
         append = out.append
         for char in m.group():
@@ -52,9 +52,9 @@ def encode_entity(text, pattern=escape):
     except TypeError:
         elementtree.ElementTree._raise_serialization_error(text)
 
-def new_encode_entity(text, pattern=utf8_escape):
+def new_encode_entity(text, pattern = utf8_escape):
     # map reserved and non-ascii characters to numerical entities
-    def escape_entities(m, map=elementtree.ElementTree._escape_map):
+    def escape_entities(m, map = elementtree.ElementTree._escape_map):
         out = []
         append = out.append
         for char in m.group():
@@ -84,7 +84,7 @@ elementtree.ElementTree._encode_entity = new_encode_entity
 # if XMLParser isn't available.
 
 if not hasattr(ET, 'XMLParser'):
-    def XMLParser(encoding='utf-8'):
+    def XMLParser(encoding = 'utf-8'):
         return ET.XMLTreeBuilder()
 
     ET.XMLParser = XMLParser
@@ -100,16 +100,16 @@ def namespace_map_update(namespaces):
 class ElementInterface(elementtree.ElementTree._ElementInterface):
     """ helper class """
 
-def indent(elem, level=0):
+def indent(elem, level = 0):
     """ generate pretty looking XML, based upon:
         http://effbot.org/zone/element-lib.htm#prettyprint
     """
-    i = "\n" + level*"  "
+    i = "\n" + level * "  "
     if len(elem):
         if not elem.text or not elem.text.strip():
             elem.text = i + "  "
         for elem in elem:
-            indent(elem, level+1)
+            indent(elem, level + 1)
             if not elem.tail or not elem.tail.strip():
                 elem.tail = i
         if not elem.tail or not elem.tail.strip():
@@ -118,8 +118,8 @@ def indent(elem, level=0):
         if level and (not elem.tail or not elem.tail.strip()):
             elem.tail = i
 
-def parse_xml(data, encoding="utf-8"):
-    p = ET.XMLParser(encoding=encoding)
+def parse_xml(data, encoding = "utf-8"):
+    p = ET.XMLParser(encoding = encoding)
 
     # my version of twisted.web returns page_infos as a dictionary in
     # the second item of the data list
@@ -136,12 +136,12 @@ def parse_xml(data, encoding="utf-8"):
         traceback.print_exc()
 
     # Guess from who we're getting this?
-    data = data.replace('\x00','')
+    data = data.replace('\x00', '')
     try:
         p.feed(data)
     except Exception, error:
         print "parse_xml feed Exception", error
-        print error, repr(data)
+        print error #, repr(data)
         return None
     else:
         return ET.ElementTree(p.close())

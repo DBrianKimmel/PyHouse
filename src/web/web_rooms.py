@@ -18,7 +18,7 @@ from src.housing import rooms
 webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
 
-g_debug = 9
+g_debug = 0
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
@@ -53,13 +53,13 @@ class RoomsElement(athena.LiveElement):
         for l_key, l_val in l_rooms.iteritems():
             l_obj[l_key] = l_val
         l_json = web_utils.JsonUnicode().encode_json(l_obj)
-        if g_debug >= 3:
+        if g_debug >= 4:
             print "web_rooms.RoomsElement.getRoomData(2) - JSON:", l_json
         return unicode(l_json)
 
     @athena.expose
     def saveRoomData(self, p_json):
-        """A new/changed schedule is returned.  Process it and update the internal data via schedule.py
+        """A new/changed/deleted room is returned.  Process it and update the internal data via ???
         """
         l_json = web_utils.JsonUnicode().decode_json(p_json)
         l_ix = int(l_json['HouseIx'])

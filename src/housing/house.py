@@ -16,6 +16,7 @@ moonrise, tides, etc.
 
 # Import system type stuff
 import logging
+import uuid
 
 # Import PyMh files
 from src.scheduling import schedule
@@ -24,7 +25,7 @@ from src.housing import location
 from src.housing import rooms
 
 
-g_debug = 0
+g_debug = 3
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
@@ -39,6 +40,7 @@ class HouseData(object):
         self.Active = False
         self.Key = 0
         self.Name = ''
+        self.UUID = None
         self.InternetAPI = None
         self.LightingAPI = None
         self.ScheduleAPI = None
@@ -61,30 +63,15 @@ class HouseData(object):
         l_ret += "Controllers:{0:}, ".format(len(self.Controllers))
         l_ret += "Buttons:{0:}, ".format(len(self.Buttons))
         l_ret += "Rooms:{0:}, ".format(len(self.Rooms))
-        l_ret += "Schedules:{0:};\n".format(len(self.Schedules))
-        return l_ret
-
-    def __repr__(self):
-        l_ret = "{"
-        l_ret += "'Name':'{0:}', ".format(self.Name)
-        l_ret += "'Key':'{0:}', ".format(self.Key)
-        l_ret += "'Active':'{0:}', ".format(self.Active)
-        l_ret += "'Lights':'{0:}', ".format(len(self.Lights))
-        l_ret += "'Controllers':'{0:}', ".format(len(self.Controllers))
-        l_ret += "'Buttons':'{0:}', ".format(len(self.Buttons))
-        l_ret += "'Rooms':'{0:}', ".format(len(self.Rooms))
-        try:
-            l_ret += "'Internet':'{0:}', ".format(len(self.Internet))
-        except:
-            l_ret += "'Internet':'0', "
-        l_ret += "'Schedules':'{0:}'".format(len(self.Schedules))
+        l_ret += "Schedules:{0:}, ".format(len(self.Schedules))
+        l_ret += 'UUID:{0:};\n'.format(self.UUID)
         return l_ret
 
     def reprJSON(self):
         return dict(Active = self.Active, Key = self.Key, Name = self.Name,
                     Location = self.Location, Buttons = self.Buttons, Controllers = self.Controllers,
                     Internet = self.Internet, Lights = self.Lights, Rooms = self.Rooms,
-                    Schedules = self.Schedules)
+                    Schedules = self.Schedules, UUID = self.UUID)
 
 
 class HouseReadWriteConfig(location.ReadWriteConfig, rooms.ReadWriteConfig):
@@ -97,6 +84,9 @@ class HouseReadWriteConfig(location.ReadWriteConfig, rooms.ReadWriteConfig):
         """Read house information, location and rooms.
         """
         self.xml_read_common_info(p_house_obj, p_house_xml)
+        p_house_obj.UUID = self.get_text_from_xml(p_house_xml, 'UUID')
+        if len(p_house_obj.UUID) < 8:
+            p_house_obj.UUID = str(uuid.uuid1())
         p_house_obj.Location = self.read_location_xml(p_house_obj, p_house_xml)
         p_house_obj.Rooms = self.read_rooms_xml(p_house_obj, p_house_xml)
         if g_debug >= 3:
