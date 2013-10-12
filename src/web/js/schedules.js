@@ -145,12 +145,12 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 	function handleMenuOnClick(self, p_node) {
 		var l_ix = p_node.name;
 		var l_name = p_node.value;
-		globals.Schedules.Selected.Ix = l_ix;
-		globals.Schedules.Selected.Name = l_name;
+		globals.Schedules.Ix = l_ix;
+		globals.Schedules.Name = l_name;
 		if (l_ix <= 1000) {
 			// One of the schedule buttons.
 			var l_obj = globals.Schedules.Obj[l_ix];
-			globals.Schedules.Selected.ScheduleObj = l_obj;
+			globals.Schedules.ScheduleObj = l_obj;
 			//Divmod.debug('---', 'schedules.doHandleOnClick(1) was called. ' + l_ix + ' ' + l_name);
 			//console.log("schedules.doHandleOnClick() - l_obj = %O", l_obj);
 			self.showEntry(self);

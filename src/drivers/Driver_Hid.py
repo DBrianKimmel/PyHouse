@@ -29,7 +29,7 @@ from src.utils.tools import PrintBytes
 
 callLater = reactor.callLater
 
-g_debug = 3
+g_debug = 0
 # 0 = off
 # 1 = major routine entry
 # 2 = Startup Details

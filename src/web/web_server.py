@@ -24,10 +24,12 @@ import logging
 import os
 from twisted.internet import reactor
 from nevow import appserver
+import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
 from src.web import web_utils
 from src.web import web_mainpage
+from src.utils import xml_tools
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -36,7 +38,7 @@ imagepath = os.path.join(webpath, 'images')
 jspath = os.path.join(webpath, 'js')
 
 
-g_debug = 0
+g_debug = 3
 # 0 = off
 # 1 = Additional logging
 # 2 = major routine entry
@@ -69,7 +71,34 @@ class WebData(object):
         return l_ret
 
 
-class API(object):
+class WebUtility(xml_tools.ConfigFile):
+
+    def read_web_xml(self, p_web_obj, p_root_xml):
+        if g_debug >= 3:
+            print "web_server.WebUtilities().read_web_xml()"
+        if g_debug >= 5:
+            print xml_tools.prettify(p_root_xml)
+        try:
+            l_sect = p_root_xml.find('Web')
+        except AttributeError:
+            if g_debug >= 1:
+                print "web_server.read_web_xml() - ERROR in finding Web/WebPort, Creating entry", l_sect
+            l_sect = ET.SubElement(p_root_xml, 'Web')
+        p_web_obj.WebPort = self.get_int_from_xml(l_sect, 'WebPort')
+        if g_debug >= 4:
+            print "web_server.read_web_xml() - Port:{0:}".format(p_web_obj.WebPort)
+        return p_web_obj
+
+    def write_web_xml(self, p_web_data):
+        l_web_xml = ET.Element("Web")
+        self.put_int_attribute(l_web_xml, 'WebPort', p_web_data.WebPort)
+        if g_debug >= 3:
+            print "web_server.write_web_xml()", p_web_data, l_web_xml
+            print xml_tools.prettify(l_web_xml)
+        return l_web_xml
+
+
+class API(WebUtility):
 
     def __init__(self):
         global g_logger
@@ -78,6 +107,7 @@ class API(object):
         if g_debug >= 2:
             print "web_server.API()"
         g_logger.info("Initialized")
+        self.web_running = False
 
     def Start(self, p_pyhouses_obj):
         self.m_pyhouses_obj = p_pyhouses_obj
@@ -85,10 +115,12 @@ class API(object):
             print "web_server.API.Start()"
         if g_debug >= 3:
             print "    ", p_pyhouses_obj
-        self.web_data = web_utils.WebUtilities().read_web_xml(self.web_data, p_pyhouses_obj.XmlRoot)
+        self.web_data = self.read_web_xml(self.web_data, p_pyhouses_obj.XmlRoot)
         l_site_dir = None
         l_site = appserver.NevowSite(web_mainpage.TheRoot('/', l_site_dir, p_pyhouses_obj))
-        listenTCP(self.web_data.WebPort, l_site)
+        if not self.web_running:
+            listenTCP(self.web_data.WebPort, l_site)
+        self.web_running = True
         l_msg = "Port:{0:}, Path:{1:}".format(self.web_data.WebPort, l_site_dir)
         if g_debug >= 2:
             print "web_server.API.Start() - Started - {0:}".format(l_msg)
@@ -98,13 +130,7 @@ class API(object):
     def Stop(self):
         if g_debug >= 2:
             print "web_server.API.Stop()"
-        l_xml = web_utils.WebUtilities().write_web_xml(self.web_data)
-        return l_xml
-
-    def Reload(self, _p_pyhouses_obj):
-        if g_debug >= 2:
-            print "web_server.API.Reload()"
-        l_xml = web_utils.WebUtilities().write_web_xml(self.web_data)
+        l_xml = self.write_web_xml(self.web_data)
         return l_xml
 
 # ## END DBK

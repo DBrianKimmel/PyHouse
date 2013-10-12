@@ -25,7 +25,7 @@ from src.housing import location
 from src.housing import rooms
 
 
-g_debug = 3
+g_debug = 0
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
@@ -64,7 +64,7 @@ class HouseData(object):
         l_ret += "Buttons:{0:}, ".format(len(self.Buttons))
         l_ret += "Rooms:{0:}, ".format(len(self.Rooms))
         l_ret += "Schedules:{0:}, ".format(len(self.Schedules))
-        l_ret += 'UUID:{0:};\n'.format(self.UUID)
+        l_ret += 'UUID:{0:};'.format(self.UUID)
         return l_ret
 
     def reprJSON(self):
@@ -97,6 +97,7 @@ class HouseReadWriteConfig(location.ReadWriteConfig, rooms.ReadWriteConfig):
         """Replace the data in the 'Houses' section with the current data.
         """
         l_house_xml = self.xml_create_common_element('House', p_house_obj)
+        self.put_text_element(l_house_xml, 'UUID', p_house_obj.UUID)
         if g_debug >= 3:
             print "house.write_house_xml() - Name:{0:}, Key:{1:}".format(p_house_obj.Name, p_house_obj.Key)
         return l_house_xml
@@ -142,22 +143,14 @@ class API(HouseReadWriteConfig):
         if g_debug >= 2:
             print "\nhouse.API.Stop() - House:{0:}".format(self.m_house_obj.Name)
         g_logger.info("Stopping House:{0:}.".format(self.m_house_obj.Name))
-        l_house_xml = self.Reload(p_house_obj)
-        if g_debug >= 2:
-            print "house.API.Stop() - Name:{0:}, Count:{1:}".format(self.m_house_obj.Name, len(l_house_xml))
-        g_logger.info("Stopped.")
-        return l_house_xml
-
-    def Reload(self, p_house_obj):
-        if g_debug >= 2:
-            print "house.API.Reload()", p_house_obj
-        g_logger.info("Reloading.")
         l_house_xml = self.write_house_xml(p_house_obj)
         l_house_xml.append(self.write_location_xml(p_house_obj.Location))
         l_house_xml.append(self.write_rooms_xml(p_house_obj))
         l_house_xml.extend(self.m_house_obj.ScheduleAPI.Stop(l_house_xml, p_house_obj))
-        l_house_xml.append(self.m_house_obj.InternetAPI.Reload())
-        g_logger.info("Reloaded.")
+        l_house_xml.append(self.m_house_obj.InternetAPI.Stop())
+        if g_debug >= 2:
+            print "house.API.Stop() - Name:{0:}, Count:{1:}".format(self.m_house_obj.Name, len(l_house_xml))
+        g_logger.info("Stopped.")
         return l_house_xml
 
     def SpecialTest(self):

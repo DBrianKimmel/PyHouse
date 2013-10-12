@@ -398,22 +398,6 @@ class API(ReadWriteXML):
         g_logger.info("Stopping for house:{0:}.".format(self.m_house_obj.Name))
         if self.m_house_obj.Active:
             self.dyndns.stop_dyndns_process()
-        l_internet_xml = self.Reload()
-        return l_internet_xml
-
-    def Reload(self):
-        """
-             <Internet>
-                <ExternalIP>11.22.33.44</ExternalIP>
-                <DynamicDns Name='afraid' Key='1' Active='True'>
-                    <Interval>900</Interval>
-                    <Url>http://freedns.afraid.org/dynamic/update.php?VDZtSkE2MzFVMVVBQVd5QXg2MDo5MjU1MzYw</Url>
-                </DynamicDns>
-                <DynamicDns Name='abcdef' Key='1' Active='True'>
-                    ...
-                </DynamicDns>
-            </Internet>
-        """
         l_internet_xml = self.write_internet(self.m_house_obj)
         return l_internet_xml
 

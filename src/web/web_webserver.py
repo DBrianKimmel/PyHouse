@@ -13,7 +13,7 @@ from src.web.web_tagdefs import *
 from src.web import web_utils
 
 
-g_debug = 8
+g_debug = 0
 
 
 class WebServerPage(web_utils.ManualFormMixin):

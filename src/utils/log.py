@@ -18,10 +18,12 @@ import xml.etree.ElementTree as ET
 from src.utils import xml_tools
 
 
-g_debug = 0
+g_debug = 3
 # 0 = off
-# 1 = major routine entry
-# 2 = config files
+# 1 = log extra info
+# 2 = major routine entry
+# 3 - Config file handling
+# + = NOT USED HERE
 
 
 class LogData(object):
@@ -33,18 +35,11 @@ class LogData(object):
     def __str__(self):
         l_ret = "Logs:: "
         l_ret += "Debug:{0:}, ".format(self.Debug)
-        l_ret += "Error:{0:}, ".format(self.Error)
-        return l_ret
-
-    def __repr__(self):
-        l_ret = "{"
-        l_ret += "'Debug':'{0:}', ".format(self.Debug)
-        l_ret += "'Error':'{0:}'".format(self.Error)
-        l_ret += "}"
+        l_ret += "Error:{0:};".format(self.Error)
         return l_ret
 
 
-class LoggingUtility(object):
+class LoggingUtility(xml_tools.ConfigFile):
 
     def read_xml_config_logfiles(self, p_log_obj, p_xml_root):
         try:
@@ -57,23 +52,22 @@ class LoggingUtility(object):
             ET.SubElement(l_sect, 'Error').text = 'None'
         p_log_obj.Debug = l_sect.findtext('Debug')
         p_log_obj.Error = l_sect.findtext('Error')
-        if g_debug >= 2:
+        if g_debug >= 3:
             print "log.read_xml_config_logfiles() - Debug:{0:}, Error:{1:}".format(p_log_obj.Debug, p_log_obj.Error)
 
-    def write_log(self):
-        if g_debug >= 2:
-            print "Write log_web", Log_Data[0], vars(Log_Data[0])
-        l_sect = self.write_create_empty('Logs')
-        l_obj = Log_Data[0]
-        # l_entry = self.build_common(l_sect, 'Log', l_obj)
-        ET.SubElement(l_sect, 'Debug').text = str(l_obj.Debug)
-        ET.SubElement(l_sect, 'Error').text = str(Log_Data[0].Error)
-        l_sect = self.write_create_empty('Web')
+    def write_log_xml(self, p_log_data):
+        l_log_xml = ET.Element("Logs")
+        self.put_text_element(l_log_xml, 'Debug', p_log_data.Debug)
+        self.put_text_element(l_log_xml, 'Error', p_log_data.Error)
+        if g_debug >= 3:
+            print "Write log_web", p_log_data, l_log_xml
+            print xml_tools.prettify(l_log_xml)
+        return l_log_xml
 
     def setup_debug_log (self, p_filename):
         """Debug and more severe goes to the base logger
         """
-        if g_debug >= 1:
+        if g_debug >= 2:
             print "log.setup_debug_log() - FileName:{0:}".format(p_filename)
         l_debug = logging.getLogger('PyHouse')
         l_formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s - %(message)s')
@@ -95,20 +89,22 @@ class LoggingUtility(object):
 class API(LoggingUtility):
 
     def __init__(self):
-        if g_debug >= 1:
+        if g_debug >= 2:
             print "log.API.__init__()"
         self.m_log_data = LogData()
 
     def Start(self, p_pyhouse_obj):
-        if g_debug >= 1:
+        if g_debug >= 2:
             print "log.API.Start()"
         self.read_xml_config_logfiles(self.m_log_data, p_pyhouse_obj.XmlRoot)
         self.setup_debug_log(self.m_log_data.Debug)
         return self.m_log_data
 
     def Stop(self):
-        if g_debug >= 1:
+        if g_debug >= 2:
             print "log.API.Stop()"
-        logging.shutdown()
+        l_xml = self.write_log_xml(self.m_log_data)
+        return l_xml
+        #logging.shutdown()
 
 # ## END DBK

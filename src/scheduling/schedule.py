@@ -40,7 +40,7 @@ from src.utils import xml_tools
 from src.utils import tools
 from src.scheduling import sunrisesunset
 
-g_debug = 3
+g_debug = 0
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
@@ -392,12 +392,6 @@ class API(ScheduleUtility, ScheduleXML):
             print "schedule.API.Stop() - House:{0:}, {1:}".format(self.m_house_obj.Name, len(p_xml))
         g_logger.info("Stopped.\n")
         return l_schedules_xml, l_lighting_xml, l_buttons_xml, l_controllers_xml  #, l_entertainment_xml
-
-    def Reload(self):
-        if g_debug >= 2:
-            print "schedule.API.Reload() - House:{0:}".format(self.m_house_obj.Name)
-        l_schedules_xml = self.write_schedules_xml(self.m_house_obj.Schedules)
-        return l_schedules_xml
 
     def SpecialTest(self):
         if g_debug >= 2:

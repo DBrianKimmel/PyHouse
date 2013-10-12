@@ -21,7 +21,7 @@ from src.housing import house
 from src.utils import xml_tools
 
 
-g_debug = 9
+g_debug = 0
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
@@ -50,7 +50,7 @@ class HousesData(object):
         l_ret += "Key:{0:}, ".format(self.Key)
         l_ret += "Active:{0:}, ".format(self.Active)
         l_ret += "HouseAPI:{0:}, ".format(self.HouseAPI)
-        l_ret += "\nHouseObject:{0:};\n".format(self.HouseObject)
+        l_ret += "\nHouseObject:{0:}".format(self.HouseObject)
         return l_ret
 
     def reprJSON(self):
@@ -96,7 +96,8 @@ class LoadSaveAPI(HouseReadWriteConfig):
         l_houses_obj.HouseObject = l_houses_obj.HouseAPI.Start(p_house_xml)
         l_houses_obj.Name = l_houses_obj.HouseObject.Name
         if g_debug >= 4:
-            print "houses.get_house_info()", l_houses_obj
+            print "houses.get_house_info()"
+            print "    ", l_houses_obj
         return l_houses_obj
 
     def read_xml_config_houses(self, p_pyhouses_obj):
@@ -178,16 +179,6 @@ class API(LoadSaveAPI):
                 print "houses.Stop() - House:{0:}, Key:{1:}".format(l_house.Name, l_house.Key), l_house.HouseAPI
             l_houses_xml.append(l_house.HouseAPI.Stop(l_houses_xml, l_house.HouseObject))  # append to the xml tree
         g_logger.info("Stopped.")
-        return l_houses_xml
-
-    def Reload(self, p_pyhouses_obj):
-        if g_debug >= 2:
-            print "houses.API.Reload()"
-        g_logger.info("Reloading.")
-        l_houses_xml = ET.Element('Houses')
-        for l_house in self.m_houses_data.itervalues():
-            l_houses_xml.append(l_house.HouseAPI.Reload(l_house.HouseObject))  # append to the xml tree
-        # self.save_all_houses(l_houses_xml)
         return l_houses_xml
 
     def get_houses_obj(self):

@@ -11,7 +11,7 @@ import xml.etree.ElementTree as ET
 # Import PyMh files
 from src.utils import xml_tools
 
-g_debug = 9
+g_debug = 0
 g_logger = None
 
 

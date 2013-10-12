@@ -66,11 +66,12 @@ from src.housing import houses
 from src.web import web_server
 
 
-g_debug = 2
+g_debug = 0
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
 # 3 = Config file handling
+# 4 = XML write details
 # + = NOT USED HERE
 g_logger = None
 
@@ -86,34 +87,25 @@ class PyHouseData(object):
 
     def __init__(self):
         self.API = None
-        self.WebData = None
-        self.WebAPI = None
-        self.LogsData = None
-        self.LogsAPI = None
-        self.HousesData = None
         self.HousesAPI = None
+        self.LogsAPI = None
+        self.WebAPI = None
+        self.WebData = None
+        self.LogsData = None
+        self.HousesData = None
         self.XmlRoot = None
         self.XmlFileName = ''
 
     def __str__(self):
         l_ret = "PyHouseData:: "
+        l_ret += "\n\tHousesAPI:{0:}, ".format(self.HousesAPI)
+        l_ret += "\n\tLogsAPI:{0:}, ".format(self.LogsAPI)
         l_ret += "\n\tWebAPI:{0:}, ".format(self.WebAPI)
         l_ret += "\n\tWebData:{0:}, ".format(self.WebData)
-        l_ret += "\n\tLogsAPI:{0:}, ".format(self.LogsAPI)
         l_ret += "\n\tLogsData:{0:}, ".format(self.LogsData)
+        l_ret += "\n\tHousesData:{0:};".format(self.HousesData)
         l_ret += "\n\tXmlRoot:{0:}, ".format(self.XmlRoot)
         l_ret += "\n\tXmlFileName:{0:}, ".format(self.XmlFileName)
-        l_ret += "\n\tHousesAPI:{0:}, ".format(self.HousesAPI)
-        l_ret += "\n\tHousesData:{0:};".format(self.HousesData)
-        return l_ret
-
-    def __repr__(self):
-        l_ret = "{"
-        l_ret += "'WebData':'{0:}', ".format(self.WebData)
-        l_ret += "'LogsData':'{0:}', ".format(self.LogsData)
-        l_ret += "'HousesData':'{0:}', ".format(self.HousesData)
-        l_ret += "'XmlFileName':'{0:}'".format(self.XmlFileName)
-        l_ret += "}"
         return l_ret
 
 
@@ -151,7 +143,7 @@ def handle_signals():
 def SigHupHandler(signum, _stackframe):
     """
     """
-    if g_debug >= 3:
+    if g_debug >= 1:
         print 'Hup Signal handler called with signal', signum
     API().Stop()
     API().Start()
@@ -159,7 +151,7 @@ def SigHupHandler(signum, _stackframe):
 def SigIntHandler(signum, _stackframe):
     """interrupt character (probably Ctrl-C)
     """
-    if g_debug >= 3:
+    if g_debug >= 1:
         print 'SigInt - Signal handler called with signal', signum
     g_logger.info("Interrupted.\n\n\n")
     reactorstop()
@@ -185,14 +177,12 @@ class Utilities(object):
     def export_config_info(self, p_pyhouses_obj):
         """Replace the data in the xml file with the current data.
         """
-        if g_debug >= 2:
+        if g_debug >= 3:
             print "PyHouse.export_config_info() - Writing XML file to:{0:}".format(p_pyhouses_obj.XmlFileName)
-        self.m_xmltree_root = p_pyhouses_obj.XmlRoot
+        if g_debug >= 4:
+            print '    XmlRoot:', p_pyhouses_obj.XmlRoot
+            print xml_tools.prettify(p_pyhouses_obj.XmlRoot)
         xml_tools.write_xml_file(p_pyhouses_obj.XmlRoot, p_pyhouses_obj.XmlFileName)
-
-    def init_logs(self, p_pyhouses_obj):
-        p_pyhouses_obj.LogsAPI = log.API()
-        p_pyhouses_obj.LogsData = p_pyhouses_obj.LogsAPI.Start(p_pyhouses_obj)
 
 
 class API(Utilities):
@@ -209,7 +199,7 @@ class API(Utilities):
         """
         if g_debug >= 2:
             print "\nPyHouse.API()"
-        if g_debug >= 4:
+        if g_debug >= 5:
             import sys
             print "  SYS.Path =", sys.path
             print "---\n\n"
@@ -217,7 +207,8 @@ class API(Utilities):
         self.m_pyhouses_obj = PyHouseData()
         self.m_pyhouses_obj.API = self
         self.import_config_info(self.m_pyhouses_obj)
-        self.init_logs(self.m_pyhouses_obj)
+        self.m_pyhouses_obj.LogsAPI = log.API()
+        self.m_pyhouses_obj.LogsData = self.m_pyhouses_obj.LogsAPI.Start(self.m_pyhouses_obj)
         global g_logger
         g_logger = logging.getLogger('PyHouse         ')
         g_logger.info("Initializing PyHouse.\n")
@@ -249,8 +240,13 @@ class API(Utilities):
         """
         if g_debug >= 2:
             print "\nPyHouse.API.Stop() - Stopping."
-        self.m_pyhouses_obj.HousesAPI.Stop()
-        self.m_pyhouses_obj.WebAPI.Stop()
+        l_house_xml = self.m_pyhouses_obj.HousesAPI.Stop()
+        l_web_xml = self.m_pyhouses_obj.WebAPI.Stop()
+        l_logs_xml = self.m_pyhouses_obj.LogsAPI.Stop()
+        self.m_pyhouses_obj.XmlRoot = ET.Element("PyHouse")
+        self.m_pyhouses_obj.XmlRoot.append(l_web_xml)
+        self.m_pyhouses_obj.XmlRoot.append(l_logs_xml)
+        self.m_pyhouses_obj.XmlRoot.append(l_house_xml)
         self.export_config_info(self.m_pyhouses_obj)
         g_logger.info("Stopped.\n\n\n")
 
@@ -259,10 +255,8 @@ class API(Utilities):
         """
         if g_debug >= 2:
             print "\nPyHouse.API.Reload() - Reloading"
-        l_root_xml = ET.Element("PyHouse")
-        l_root_xml.append(p_pyhouses_obj.HousesAPI.Reload(p_pyhouses_obj))
-        p_pyhouses_obj.WebAPI.Reload(p_pyhouses_obj)
-        self.export_config_info(p_pyhouses_obj)
+        self.Stop()
+        self.Start()
         g_logger.info("Reloaded.\n\n\n")
 
     def Quit(self):

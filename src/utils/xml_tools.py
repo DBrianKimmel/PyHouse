@@ -14,7 +14,7 @@ from xml.dom import minidom
 # Import PyMh files
 
 
-g_debug = 2
+g_debug = 0
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
@@ -312,17 +312,17 @@ class ConfigFile(ConfigEtc):
         p_xmltree.write(p_filename, xml_declaration = True)
 
 
-def prettify(elem):
+def prettify(p_element):
     """Return a pretty-printed XML string for the Element.
 
-    @param elem: an element to format as a readable xml tree.
-    @return: a string formatted with indeentation and newlines.
+    @param p_element: an element to format as a readable XML tree.
+    @return: a string formatted with indentation and newlines.
     """
     if g_debug >= 3:
         print "xml_tools.pretify()"
-    rough_string = ET.tostring(elem, 'utf-8')
+    rough_string = ET.tostring(p_element, 'utf-8')
     reparsed = minidom.parseString(rough_string)
-    return reparsed.toprettyxml(indent = "  ")
+    return reparsed.toprettyxml(indent = "    ")
 
 def open_config_file():
     """Open the PyHouse config xml file.
@@ -349,7 +349,7 @@ def open_config_file():
     return l_file_name
 
 def write_xml_file(p_xmltree, p_filename):
-    if g_debug >= 1:
+    if g_debug >= 0:
         print "xml_tools.write_xml_file() Filename:{0:}".format(p_filename)
         l_tree = ET.ElementTree()
         l_tree._setroot(p_xmltree)

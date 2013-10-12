@@ -14,7 +14,7 @@ import xml.etree.ElementTree as ET
 from src.utils import xml_tools
 
 
-g_debug = 9
+g_debug = 0
 g_xmltree = ''
 g_logger = None
 

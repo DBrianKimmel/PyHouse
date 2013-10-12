@@ -75,29 +75,6 @@ class WebUtilities(xml_tools.ConfigFile):
     """
     """
 
-    def read_web_xml(self, p_web_obj, p_root_xml):
-        if g_debug >= 3:
-            print "web_utils.WebUtilities().read_web_xml()"
-        if g_debug >= 5:
-            print xml_tools.prettify(p_root_xml)
-        try:
-            l_sect = p_root_xml.find('Web')
-        except AttributeError:
-            if g_debug >= 1:
-                print "web_utils.read_web_xml() - ERROR in finding Web/WebPort, Creating entry", l_sect
-            l_sect = ET.SubElement(p_root_xml, 'Web')
-        p_web_obj.WebPort = self.get_int_from_xml(l_sect, 'WebPort')
-        if g_debug >= 4:
-            print "web_utils.read_web_xml() - Port:{0:}".format(p_web_obj.WebPort)
-        return p_web_obj
-
-    def write_web_xml(self, p_web_data):
-        if g_debug >= 3:
-            print "web_server.write_web_xml()"
-        l_xml = ET.Element("Web")
-        self.put_int_attribute(l_xml, 'WebPort', p_web_data.WebPort)
-        return l_xml
-
 
 class ComplexHandler(json.JSONEncoder):
     """

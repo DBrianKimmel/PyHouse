@@ -13,7 +13,7 @@ from Tkinter import Frame, Label, Entry, Button, IntVar, E, W
 from src.configure import gui_tools
 #from src.configure.gui_tools import GuiTools, GuiData, BG_TOP, BG_BOTTOM, BG_UNDONE
 
-g_debug = 5
+g_debug = 0
 
 
 class UPnPWindow(gui_tools.GuiTools):

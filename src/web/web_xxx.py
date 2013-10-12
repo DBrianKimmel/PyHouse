@@ -46,7 +46,7 @@ from src.scheduling import schedule
 from src.utils import config_xml
 
 
-g_debug = 8
+g_debug = 0
 
 g_port = 8580
 g_logger = None

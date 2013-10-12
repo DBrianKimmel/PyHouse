@@ -16,7 +16,7 @@ import logging
 # Import PyHouse modules
 
 
-g_debug = 1
+g_debug = 0
 g_logger = None
 
 class API(object):

@@ -86,7 +86,7 @@ imagepath = os.path.join(webpath, 'images')
 jspath = os.path.join(webpath, 'js')
 templatepath = os.path.join(webpath, 'template')
 
-g_debug = 4
+g_debug = 0
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
@@ -452,7 +452,7 @@ class Workspace(athena.LiveElement):
     @athena.expose
     def logs(self, p_params):
         if g_debug >= 5:
-            print "web_mainpage.Workspace.logts() - called from browser to load LogssElement."
+            print "web_mainpage.Workspace.logts() - called from browser to load LogsElement."
         l_element = web_logs.LogsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
@@ -487,7 +487,7 @@ class Workspace(athena.LiveElement):
     @athena.expose
     def webs(self, p_params):
         if g_debug >= 5:
-            print "web_mainpage.Workspace.logts() - called from browser to load LogssElement."
+            print "web_mainpage.Workspace.logts() - called from browser to load LogsElement."
         l_element = web_webs.WebsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
