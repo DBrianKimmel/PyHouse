@@ -6,7 +6,7 @@
     nevow:render = 'liveElement'
     class = "Lights"
     id = 'LightsDiv'
-    style = 'background-color: #c2f2c2;'>
+    style = 'background-color: #d2f2d2;'>
     <div id='LightButtonsDiv'>
        <h2>Select a Light (or Add):</h2>
        <div id='LightTableDiv'>
@@ -21,7 +21,19 @@
 		        <td>Key</td><td><input type='text' id='Key' disabled='disabled' /></td>
                 <td><input type="text" id='UUID' size='48' disabled="disabled" /></td>
 		    </tr><tr>
-		        <td>Active</td><td><div id='Active' /></td>
+		        <td>Active</td><td><div id='ActiveDiv' /></td>
+            </tr><tr>
+                <td>Comment</td><td><input type='text' id='Comment' /></td>
+            </tr><tr>
+                <td>Coords</td><td><input type='text' id='Coords' /></td>
+            </tr><tr>
+                <td>Dimmable</td><td><div id='Dimmable' /></td>
+            </tr><tr>
+                <td>Family</td><td><input type='text' id='Family' /></td>
+            </tr><tr>
+                <td>Type</td><td><input type='text' id='Type' /></td>
+            </tr><tr>
+                <td>Room</td><td><div id='RoomNameDiv' /></td>
 		    </tr>
 		</table>
         <div id='LightEntryButtonsDiv'>

@@ -101,8 +101,4 @@ class API(object):
             print "Device_X10.Stop()"
         return p_xml
 
-    def SpecialTest(self):
-        if g_debug > 0:
-            print "Device_X10.API.SpecialTest()"
-
 # ## END

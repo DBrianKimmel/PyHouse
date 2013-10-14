@@ -21,7 +21,6 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
         
     function __init__(self, node) {
         controllers.ControllersWidget.upcall(self, '__init__', node);
-		globals.Controllers.Selected = {};
     },
 
     /**
@@ -49,7 +48,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
         self.node.style.display = 'block';
         self.showButtons(self);
         self.hideEntry(self);
-        self.fetchControllerData(self, globals.SelectedHouse.Ix);
+        self.fetchControllerData(self, globals.House.HouseIx);
     },
     function hideButtons(self) {
         Divmod.debug('---', 'controllers.hideButtons() was called. ');
@@ -82,7 +81,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
         function eb_fetchControllerData(self, p1, p2) {
             Divmod.debug('---', 'controllers.eb_fetchControllerData() was called. ' + p1 + ' ' + p2);
         }
-        var l_defer = self.callRemote("getControllerData", globals.SelectedHouse.Ix);  // call server @ web_controllers.py
+        var l_defer = self.callRemote("getControllerData", globals.House.HouseIx);  // call server @ web_controllers.py
         l_defer.addCallback(cb_fetchControllerData);
         l_defer.addErrback(eb_fetchControllerData);
         return false;

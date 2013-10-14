@@ -18,7 +18,7 @@ from src.housing import rooms
 webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
 
-g_debug = 0
+g_debug = 4
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
@@ -72,6 +72,7 @@ class RoomsElement(athena.LiveElement):
         l_obj.Comment = l_json['Comment']
         l_obj.Corner = l_json['Corner']
         l_obj.Size = l_json['Size']
-        #self.m_pyhouses_obj.HousesData[l_ix].HouseObject.HouseAPI.update_data(l_obj)
+        l_obj.Type = 'Room'
+        self.m_pyhouses_obj.HousesData[l_ix].HouseAPI.Update(l_obj)
 
 # ## END DBK

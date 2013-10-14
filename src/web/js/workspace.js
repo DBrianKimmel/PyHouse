@@ -66,10 +66,10 @@ helpers.Widget.subclass(workspace, 'Workspace').methods(
 				globals.__init__();
 				globals.reqType = res[0];
 				globals.user = res[1];
-				self.attachWidget('clock', 'dummy'); // dummy params - passed down to the server
+				self.attachWidget('clock', 'dummy');
 				self.attachWidget('login', 'dummy');
-				self.attachWidget('rootMenu', 'dummy');
 				self.attachWidget('houseSelect', 'dummy');
+				self.attachWidget('rootMenu', 'dummy');
 				self.attachWidget('houseMenu', 'dummy');
 				self.attachWidget('lights', 'dummy');
 				self.attachWidget('controllers', 'dummy');

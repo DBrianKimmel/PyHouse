@@ -72,14 +72,16 @@ class SchedulesElement(athena.LiveElement):
         l_obj = schedule.ScheduleData()
         l_obj.Name = l_json['Name']
         l_obj.Active = l_json['Active']
-        l_obj.Key = l_json['Key']
-        l_obj.Level = l_json['Level']
+        l_obj.Key = int(l_json['Key'])
+        l_obj.Level = int(l_json['Level'])
         l_obj.LightName = l_json['LightName']
         l_obj.Rate = l_json['Rate']
         l_obj.RoomName = l_json['RoomName']
         l_obj.Time = l_json['Time']
         l_obj.Type = l_json['Type']
         l_obj.UUID = l_json['UUID']
+        l_obj.DeleteFlag = l_json['Delete']
+        l_obj.HouseIx = l_house_ix
         self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.ScheduleAPI.Update(l_obj)
 
 # ## END DBK

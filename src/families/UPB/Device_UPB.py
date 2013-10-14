@@ -158,8 +158,4 @@ class API(LightingAPI):
             pass  # no controllers for house(House is being added)
         return p_xml
 
-    def SpecialTest(self):
-        if g_debug > 0:
-            print "Device_UPB.API.SpecialTest()"
-
 # ## END

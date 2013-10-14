@@ -7,26 +7,10 @@
 // import globals
 // import helpers
 
-
-/**
- * 	ret = ret + '<form method="post" action="_submit!!post" enctype="multipart/form-data">\n';
-	ret = ret + '  Name: <input type="text" name="Name" value="test_light2" />\n';
-	ret = ret + '  Address: <input type="text" name="Address" value="CC:11:22" /><br />\n';
-	ret = ret + '  Family: <input type="text" name="Family" value="Insteon" /><br />\n';
-	ret = ret + '  Type: <input type="text" name="Type" value="WSLD" /><br />\n';
-	ret = ret + '  <input type="hidden" name="Controller" value="False" />\n';
-	ret = ret + '  <input type="hidden" name="Dimmable" value="False" />\n';
-	ret = ret + '  <input type="hidden" name="Coords" value="0,0" />\n';
-	ret = ret + '  <input type="hidden" name="Master" value="False" />\n';
-	ret = ret + '  <input type="hidden" name="CurLevel" value="0" />\n';
-	ret = ret + '  <input type="submit" name="post_btn" value="AddLight" />\n';
-
- */
 helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 
 	function __init__(self, node) {
 		buttons.ButtonsWidget.upcall(self, '__init__', node);
-		globals.Buttons.Selected = {};
 	},
 
 	/**
@@ -57,7 +41,7 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 		self.node.style.display = 'block';
 		self.showButtons(self);
 		self.hideEntry(self);
-		self.fetchButtonData(self, globals.SelectedHouse.Ix);
+		self.fetchButtonData(self, globals.House.HouseIx);
 	},
 	function hideButtons(self) {
 		//Divmod.debug('---', 'buttons.hideButtons() was called. ');
@@ -90,7 +74,7 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 		function eb_fetchButtonData(self, p1, p2) {
 			//Divmod.debug('---', 'buttons.eb_fetchButtonData() was called. ' + p1 + ' ' + p2);
 		}
-        var l_defer = self.callRemote("getButtonData", globals.SelectedHouse.Ix);  // call server @ web_buttons.py
+        var l_defer = self.callRemote("getButtonData", globals.House.HouseIx);  // call server @ web_buttons.py
 		l_defer.addCallback(cb_fetchButtonData);
 		l_defer.addErrback(eb_fetchButtonData);
         return false;
@@ -101,7 +85,7 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 	 * Fill in the button entry screen with all of the data for this button.
 	 */
 	function fillEntry(self, p_entry) {
-		var sched = arguments[2];
+		var sched = arguments[1];
 		//Divmod.debug('---', 'buttons.fillEntry() was called. ' + sched);
 		self.nodeById('Name').value = sched.Name;
 		self.nodeById('Key').value = sched.Key;
@@ -125,7 +109,7 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 			Rate : self.nodeById('Rate').value,
 			RoomName : self.nodeById('RoomName').value,
 			LightName : self.nodeById('LightName').value,
-			HouseIx : globals.SelectedHouse.Ix
+			HouseIx : globals.House.HouseIx
             }
 		return l_buttonData;
 	},
@@ -141,26 +125,25 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 	function doHandleOnClick(self, p_node) {
 		var l_ix = p_node.name;
 		var l_name = p_node.value;
-		globals.Buttons.Selected.Ix = l_ix;
-		globals.Buttons.Selected.Name = l_name;
+		globals.House.ButtonIx = l_ix;
+		globals.House.ButtonName = l_name;
 		if (l_ix <= 1000) {
 			// One of the button buttons.
-			var l_obj = globals.Buttons.Obj[l_ix];
-			globals.Buttons.Selected.ButtonObj = l_obj;
+			var l_obj = globals.House.HouseObj.Buttons[l_ix];
 			//Divmod.debug('---', 'buttons.doHandleOnClick(1) was called. ' + l_ix + ' ' + l_name);
 			console.log("buttons.doHandleOnClick() - l_obj = %O", l_obj);
-			self.showEntry(self);
-			self.hideButtons(self);
-			self.fillEntry(self, l_obj);
+			self.showEntry();
+			self.hideButtons();
+			self.fillEntry(l_obj);
 		} else if (l_ix == 10001) {
 			// The "Add" button
-			self.showEntry(self);
-			self.hideButtons(self);
+			self.showEntry();
+			self.hideButtons();
 		} else if (l_ix == 10002) {
 			// The "Back" button
 			self.hideWidget();
 			var l_node = findWidgetByClass('HouseMenu');
-			l_node.showWidget(self);
+			l_node.showWidget();
 		}
 	},
 	
@@ -195,8 +178,8 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 	 */
 	function displayButtonButtons(self, p_json) {
 		//Divmod.debug('---', 'buttons.displayButtonButtons(1) was called. ');
-		globals.Buttons.Obj = JSON.parse(p_json);
-		var l_tab = buildTable(self, globals.Buttons.Obj, '');
+		globals.House.HouseObj.Buttons = JSON.parse(p_json);
+		var l_tab = buildTable(self, globals.House.HouseObj.Buttons, '');
 		self.nodeById('ButtonTableDiv').innerHTML = l_tab;
 	}
 );

@@ -18,7 +18,7 @@ import xml.etree.ElementTree as ET
 from src.utils import xml_tools
 
 
-g_debug = 3
+g_debug = 0
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry

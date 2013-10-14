@@ -1121,17 +1121,4 @@ class API(LightHandlerAPI):
         self.stop_controller_driver(p_controller_obj)
         g_logger.info('Stopped.')
 
-    def SpecialTest(self):
-        if g_debug >= 2:
-            print "Insteon_PLM.SpecialTest() ", self.m_controller_obj.Name
-        self.delete_link('1C.A3.1A', 1, 0xA2)
-        self.delete_link('1C.A3.1A', 1, 0xE2)
-        self.delete_link('1C.98.EF', 1, 0XA2)
-        self.delete_link('1C.98.EF', 0, 0XA2)
-        self.delete_link('1D.3F.AD', 1, 0xA2)
-        self.delete_link('1D.3F.AD', 0, 0xA2)
-        self.delete_link('1D.2A.CE', 1, 0x00)
-        self.delete_link('1D.2A.CE', 0, 0xA2)
-        self.get_all_allinks(self.m_controller_obj)
-
 # ## END DBK

@@ -36,13 +36,7 @@ globals = {
 	fonts : [ 'Verdana', 'Arial', 'Helvetica', 'sans-serif' ],
 	workspace : null,
 
-	Buttons : {},
-	Controllers : {},
 	House : {},
-	Lights : {},
-	Rooms : {},
-	Schedules : {},
-	SelectedHouse : {},
 	User : {},
 
 	__init__ : function() {
@@ -490,33 +484,36 @@ function buildEntryButtons(p_handler) {
 }
 
 /**
- * Radio button set widget
+ * Radio button set widget.
  * 
- * @param p_name   is the name of the radio button set ('Active' e.g.) also used as a label.
+ * @param p_name   is the name of the radio button set ('SchedActive' e.g.) also used as a label.
+ *   suggested values are like 'SchedActive', 'RoomActive'
  * @param p_value  is bool showing the current value .
  */
-function buildRadioButtonWidget(p_name, p_label, p_value) {
-	//Divmod.debug('---', 'globals.buildRadioButtonWidget() called.  Name=' + p_name + '  Value=' + p_value);
+function buildRadioButtonWidget(p_name, p_label, p_value, p_checkVal) {
+	//Divmod.debug('---', 'globals.buildRadioButtonWidget() called.  Name=' + p_name + '  Value=' + p_value + '  Check:' + p_checkVal);
 	var l_html = "&nbsp;<input type='radio' ";
 	l_html += "name='" + p_name + "' ";
 	l_html += "value='" + p_value + "' ";
-	if (p_value)
+	if (p_value === p_checkVal)
 		l_html += "checked='checked'";
 	l_html += "/>" + p_label + '&nbsp;\n';
 	return l_html;
 }
-function buildActiveWidget(p_value) {
-	//Divmod.debug('---', 'globals.buildActiveWidget() called.  p_value=' + p_value);
-	var l_html = "<span id='ActiveButtons'>";
-	l_html += buildRadioButtonWidget('Active', 'True',  p_value);
-	l_html += buildRadioButtonWidget('Active', 'False', ! p_value);
+function buildTrueFalseWidget(p_name, p_value) {
+	//Divmod.debug('---', 'globals.buildTrueFalseWidget() called.  Name=' + p_name);
+	var l_html = "<span id='" + p_name + "Buttons'>";
+	l_html += buildRadioButtonWidget(p_name, 'True',  true, p_value);
+	l_html += buildRadioButtonWidget(p_name, 'False', false, p_value);
 	l_html += '</span>\n';
 	return l_html;
 }
-function fetchActive(p_name) {
+function fetchTrueFalse(p_name) {
 	var l_active = document.getElementsByName(p_name);
 	var l_ret = false;
+	//Divmod.debug('---', 'globals.fetchTrueFalse() called.  Name=' + p_name + '  Len:' + l_active.length);
 	for (var ix = 0; ix < l_active.length; ix++) {
+		//Divmod.debug('---', 'globals.fetchTrueFalse() called.  Name=' + p_name + '  Checked:' + l_active[ix].checked + '  Val:' + l_active[ix].value);
 		if (l_active[ix].checked && l_active[ix].value === 'true') {
 			l_ret = true
 			break;
@@ -528,9 +525,9 @@ function fetchActive(p_name) {
 /**
  * Build a select widget
  */
-function buildSelectWidget(p_name, p_list, p_checked) {
+function buildSelectWidget(p_id, p_list, p_checked) {
 	//Divmod.debug('---', 'globals.buildSelectWidget() called.  p_list=' + p_list + '  p_checked=' + p_checked);
-	var l_html = "<select name='" + p_name + "' >\n";
+	var l_html = "<select id='" + p_id + "' >\n";
 	for (var ix = 0; ix < p_list.length; ix++) {
 		var l_name = p_list[ix];
 		l_html += "<option value='" + ix + "' ";
@@ -541,25 +538,28 @@ function buildSelectWidget(p_name, p_list, p_checked) {
 	l_html += "</select>\n";
 	return l_html;
 }
-function fetchSelectWidget(p_name) {
-	var l_fields = document.getElementsByName(p_name);
-	var l_name = l_fields[0].value;
+function fetchSelectWidget(p_id) {
+	//Divmod.debug('---', 'globals.fetchSelectWidget() was called. Self=' + self + '  Id=' + p_id);
+	var l_field = document.getElementById(p_id);
+	var l_ix = l_field.value;
+	var l_name = l_field.options[l_field.selectedIndex].text;
 	return l_name;
 }
-function buildRoomSelectWidget(p_checked) {
-	//Divmod.debug('---', 'globals.buildRoomSelectWidget() was called. Self=' + self + '  Checked=' + p_checked);
-	var l_obj = globals.House.Selected.HouseObj.Rooms
+function buildRoomSelectWidget(p_id, p_checked) {
+	//Divmod.debug('---', 'globals.buildRoomSelectWidget() was called. Id=' + p_id + '  Checked=' + p_checked);
+	var l_obj = globals.House.HouseObj.Rooms
 	var l_list = [];
 	for (var ix = 0; ix < Object.keys(l_obj).length; ix++)
 		l_list[ix] = l_obj[ix].Name;
-	return buildSelectWidget('RoomName', l_list, p_checked);
+	return buildSelectWidget(p_id, l_list, p_checked);
 }
-function buildLightSelectWidget(p_checked) {
-	//Divmod.debug('---', 'globals.buildLightSelectWidget() was called. Self=' + self + '  Checked=' + p_checked);
+function buildLightSelectWidget(p_id, p_checked) {
+	//Divmod.debug('---', 'globals.buildLightSelectWidget() was called. Id=' + p_id + '  Checked=' + p_checked);
+	var l_obj = globals.House.HouseObj.Lights
 	var l_list = [];
-	for (var ix = 0; ix < Object.keys(globals.House.Selected.HouseObj.Lights).length; ix++)
-		l_list[ix] = globals.House.Selected.HouseObj.Lights[ix].Name;
-	return buildSelectWidget('LightName', l_list, p_checked);
+	for (var ix = 0; ix < Object.keys(l_obj).length; ix++)
+		l_list[ix] = l_obj[ix].Name;
+	return buildSelectWidget(p_id, l_list, p_checked);
 }
 
 /**
@@ -578,6 +578,7 @@ function buildLevelSlider(p_level) {
 	return l_html;
 }
 function fetchLevel(p_name) {
+	//Divmod.debug('---', 'globals.fetchLevel() called.  Name=' + p_name);
 	var l_fields = document.getElementsByName(p_name);
 	l_level = l_fields[0].value;
 	return l_level;

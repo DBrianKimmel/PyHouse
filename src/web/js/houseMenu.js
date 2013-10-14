@@ -94,8 +94,14 @@ helpers.Widget.subclass(houseMenu, 'HouseMenuWidget').methods(
 			l_node.showWidget(self);
 			self.hideWidget(self);
 			break;
+		case 'Back':
+			//Divmod.debug('---', 'houseMenu.doHandleOnClick(RootMenu) was called.');
+			var l_node = findWidgetByClass('RootMenu');
+			l_node.showWidget(self);
+			self.hideWidget(self);
+			break;
 		default:
-			//Divmod.debug('---', 'houseMenu.doHandleOnClick(Default) was called.');
+			Divmod.debug('---', 'houseMenu.doHandleOnClick(Default) was called.');
 			break;
 		}
 	}

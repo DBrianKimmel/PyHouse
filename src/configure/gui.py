@@ -144,7 +144,6 @@ class MainWindow(object):
     def test_screen(self, _p_gui_obj):
         if g_debug > 1:
             print "gui.test_screen() "
-        self.m_houses_obj[0].HouseAPI.SpecialTest()
 
     def upnp_screen(self, p_gui_obj):
         if g_debug > 1:

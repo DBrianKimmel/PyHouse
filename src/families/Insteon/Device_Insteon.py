@@ -236,9 +236,4 @@ class API(LightingAPI):
             pass  # no controllers for house(House is being added)
         return p_xml
 
-    def SpecialTest(self):
-        if g_debug >= 2:
-            print "Device_Insteon.API.SpecialTest()"
-        self.m_plm.SpecialTest()
-
 # ## END DBK

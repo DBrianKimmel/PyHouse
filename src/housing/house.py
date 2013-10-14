@@ -153,9 +153,23 @@ class API(HouseReadWriteConfig):
         g_logger.info("Stopped.")
         return l_house_xml
 
-    def SpecialTest(self):
-        if g_debug >= 2:
-            print "house.API.SpecialTest()"
-        self.m_house_obj.ScheduleAPI.SpecialTest()
+    def Update(self, p_entry):
+        """
+        """
+        if g_debug >= 0:
+            print "house.API.Update() - House:{0:}".format(self.m_house_obj.Name)
+            print '    ', p_entry
+        l_type = p_entry.Type
+        if l_type == 'Room':
+            l_obj = rooms.RoomData()
+            l_obj.Name = p_entry.Name
+            l_obj.Active = p_entry.Active
+            l_obj.Key = p_entry.Key
+            l_obj.Comment = p_entry.Comment
+            l_obj.Corner = p_entry.Corner
+            l_obj.Size = p_entry.Size
+            l_obj.Type = p_entry.Type
+            l_obj.UUID = p_entry.UUID
+            self.m_house_obj.Rooms[l_obj.Key] = l_obj  # update room entry within a house
 
 # ##  END DBK

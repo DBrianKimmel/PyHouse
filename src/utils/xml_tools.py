@@ -349,10 +349,10 @@ def open_config_file():
     return l_file_name
 
 def write_xml_file(p_xmltree, p_filename):
-    if g_debug >= 0:
+    if g_debug >= 2:
         print "xml_tools.write_xml_file() Filename:{0:}".format(p_filename)
-        l_tree = ET.ElementTree()
-        l_tree._setroot(p_xmltree)
-        l_tree.write(p_filename, xml_declaration = True)
+    l_tree = ET.ElementTree()
+    l_tree._setroot(p_xmltree)
+    l_tree.write(p_filename, xml_declaration = True)
 
 # ## END

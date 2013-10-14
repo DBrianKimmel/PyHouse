@@ -38,7 +38,7 @@ imagepath = os.path.join(webpath, 'images')
 jspath = os.path.join(webpath, 'js')
 
 
-g_debug = 3
+g_debug = 0
 # 0 = off
 # 1 = Additional logging
 # 2 = major routine entry

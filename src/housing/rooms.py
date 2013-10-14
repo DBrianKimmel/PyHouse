@@ -8,6 +8,7 @@ Handle the rooms information for a house.
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
+import uuid
 
 # Import PyMh files
 # import src
@@ -35,18 +36,21 @@ class RoomData(object):
         self.Comment = ''
         self.Corner = ''
         self.Size = ''
+        self.Type = 'Room'
+        self.UUID = None
 
     def __str__(self):
         l_ret = ' Room:: '
-        l_ret += 'Name:{0:} \t '.format(self.Name)
-        l_ret += "Size:{0:} \t ".format(self.Size)
-        l_ret += "Corner:{0:}\n".format(self.Corner)
+        l_ret += 'Name:{0:}, \t '.format(self.Name)
+        l_ret += "Size:{0:}, \t ".format(self.Size)
+        l_ret += "Corner:{0:}, \t".format(self.Corner)
+        l_ret += "UUID:{0:}\n".format(self.UUID)
         return l_ret
 
     def reprJSON(self):
         return dict(Name = self.Name, Active = self.Active, Key = self.Key,
-                    Comment = self.Comment, Corner = self.Corner, Size = self.Size
-                    )
+                    Comment = self.Comment, Corner = self.Corner, Size = self.Size,
+                    Type = self.Type, UUID = self.UUID)
 
 
 class ReadWriteConfig(xml_tools.ConfigTools):
@@ -57,6 +61,9 @@ class ReadWriteConfig(xml_tools.ConfigTools):
         for l_room_xml in l_rooms_xml.iterfind('Room'):
             l_room_obj = RoomData()
             self.xml_read_common_info(l_room_obj, l_room_xml)
+            l_room_obj.UUID = self.get_text_from_xml(l_room_xml, 'UUID')
+            if len(l_room_obj.UUID) < 8:
+                l_room_obj.UUID = str(uuid.uuid1())
             l_room_obj.Key = l_count  # renumber
             l_room_obj.Comment = self.get_text_from_xml(l_room_xml, 'Comment')
             l_room_obj.Corner = self.get_text_from_xml(l_room_xml, 'Corner')
@@ -76,6 +83,7 @@ class ReadWriteConfig(xml_tools.ConfigTools):
             print "rooms.write_rooms_xml()", p_house_obj.Rooms
         for l_room_obj in p_house_obj.Rooms.itervalues():
             l_entry = self.xml_create_common_element('Room', l_room_obj)
+            self.put_text_element(l_entry, 'UUID', l_room_obj.UUID)
             self.put_text_element(l_entry, 'Comment', l_room_obj.Comment)
             self.put_text_element(l_entry, 'Corner', l_room_obj.Corner)
             self.put_text_element(l_entry, 'Size', l_room_obj.Size)

@@ -71,6 +71,9 @@ class ScheduleData(object):
         self.Time = None
         self.Type = 'Device'  # For future expansion into scenes, entertainment etc.
         self.UUID = None
+        # for use by web browser - not saved in xml
+        self.HouseIx = None
+        self.DeleteFlag = False
 
     def __str__(self):
         l_ret = "Schedule:: "
@@ -149,6 +152,7 @@ class ScheduleXML(xml_tools.ConfigTools):
         l_count = 0
         l_schedules_xml = ET.Element('Schedules')
         for l_schedule_obj in p_schedules_obj.itervalues():
+            #print "-=-", vars(l_schedule_obj)
             l_entry = self.xml_create_common_element('Schedule', l_schedule_obj)
             self.put_int_element(l_entry, 'Level', l_schedule_obj.Level)
             self.put_text_element(l_entry, 'LightName', l_schedule_obj.LightName)
@@ -392,11 +396,6 @@ class API(ScheduleUtility, ScheduleXML):
             print "schedule.API.Stop() - House:{0:}, {1:}".format(self.m_house_obj.Name, len(p_xml))
         g_logger.info("Stopped.\n")
         return l_schedules_xml, l_lighting_xml, l_buttons_xml, l_controllers_xml  #, l_entertainment_xml
-
-    def SpecialTest(self):
-        if g_debug >= 2:
-            print "schedule.API.SpecialTest()"
-        self.m_house_obj.LightingAPI.SpecialTest()
 
     def Update(self, p_entry):
         """Update the schedule as updated by the web server.

@@ -12,7 +12,6 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	function __init__(self, node) {
 		//Divmod.debug('---', 'rooms.__init__() was called. - self=' + self + "  node=" + node);
 		rooms.RoomsWidget.upcall(self, '__init__', node);
-		globals.Rooms.Selected = {};
 	},
 
 	/**
@@ -42,7 +41,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		self.node.style.display = 'block';
 		self.showButtons(self);
 		self.hideEntry(self);
-		self.fetchRoomData(self, globals.SelectedHouse.Ix);
+		self.fetchRoomData(self, globals.House.HouseIx);
 	},
 	function showButtons(self) {
 		//Divmod.debug('---', 'rooms.showButtons() was called. ');
@@ -70,15 +69,15 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	function fetchRoomData(self, p_houseIndex) {
 		function cb_fetchData(p_json) {
 			//Divmod.debug('---', 'room.cb_fetchData() was called. ');
-			globals.Rooms.Obj = JSON.parse(p_json);
-			var l_tab = buildTable(globals.Rooms.Obj, 'handleMenuOnClick');
+			globals.House.HouseObj.Rooms = JSON.parse(p_json);
+			var l_tab = buildTable(globals.House.HouseObj.Rooms, 'handleMenuOnClick');
 			self.nodeById('RoomTableDiv').innerHTML = l_tab;
 		}
 		function eb_fetchData(res) {
 			Divmod.debug('---', 'rooms.eb_fetchData() was called. ERROR = ' + res);
 		}
 		//Divmod.debug('---', 'rooms.fetchRoomData() was called.');
-        var l_defer = self.callRemote("getRoomData", globals.SelectedHouse.Ix);  // call server @ web_rooms.py
+        var l_defer = self.callRemote("getRoomData", globals.House.HouseIx);  // call server @ web_rooms.py
 		l_defer.addCallback(cb_fetchData);
 		l_defer.addErrback(eb_fetchData);
         return false;
@@ -95,26 +94,28 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	function handleMenuOnClick(self, p_node) {
 		var l_ix = p_node.name;
 		var l_name = p_node.value;
-		globals.Rooms.Selected.Ix = l_ix;
-		globals.Rooms.Selected.Name = l_name;
+		globals.House.RoomIx = l_ix;
+		globals.House.RoomName = l_name;
 		if (l_ix <= 1000) {
 			// One of the rooms buttons.
-			var l_obj = globals.Rooms.Obj[l_ix];
-			globals.Rooms.Selected.RoomObj = l_obj;
+			var l_obj = globals.House.HouseObj.Rooms[l_ix];
+			globals.House.RoomObj = l_obj;
 			//Divmod.debug('---', 'rooms.handleMenuOnClick(1) was called. ' + l_ix + ' ' + l_name);
 			//console.log("rooms.handleMenuOnClick() - l_obj = %O", l_obj);
-			self.showEntry(self);
-			self.hideButtons(self);
-			self.fillEntry(self, l_obj);
+			self.showEntry();
+			self.hideButtons();
+			self.fillEntry(l_obj);
 		} else if (l_ix == 10001) {
 			// The "Add" button
-			self.showEntry(self);
-			self.hideButtons(self);
+			self.showEntry();
+			self.hideButtons();
+			var l_ent = self.createEntry(globals.House.HouseIx);
+			self.fillEntry(l_ent);
 		} else if (l_ix == 10002) {
 			// The "Back" button
 			self.hideWidget();
 			var l_node = findWidgetByClass('HouseMenu');
-			l_node.showWidget(self);
+			l_node.showWidget();
 		}
 	},
 	
@@ -122,28 +123,44 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	 * Fill in the schedule entry screen with all of the data for this room.
 	 */
 	function fillEntry(self, p_entry) {
-		var sched = arguments[2];
+		var sched = arguments[1];
 		//Divmod.debug('---', 'rooms.fillEntry() was called. ' + sched);
 		self.nodeById('Name').value = sched.Name;
 		self.nodeById('Key').value = sched.Key;
-		self.nodeById('Active').innerHTML = buildActiveWidget(sched.Active);
+		self.nodeById('ActiveDiv').innerHTML = buildTrueFalseWidget('RoomActive', sched.Active);
 		self.nodeById('Comment').value = sched.Comment;
 		self.nodeById('Corner').value = sched.Corner;
 		self.nodeById('Size').value = sched.Size;
 		self.nodeById('RoomEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick');
 	},
+	function createEntry(self, p_ix) {
+    	//Divmod.debug('---', 'rooms.fetchEntry() was called. ' + self);
+        var l_data = {
+			Name : 'Change Me',
+			Key : Object.keys(globals.House.HouseObj.Rooms).length,
+			Active : false,
+			Comment : '',
+			Corner : '',
+			Size : '',
+			HouseIx : p_ix,
+			Delete : false
+		}
+		return l_data;
+	},
 	function fetchEntry(self) {
     	//Divmod.debug('---', 'rooms.fetchEntry() was called. ' + self);
-        var l_roomData = {
+        var l_data = {
 			Name : self.nodeById('Name').value,
 			Key : self.nodeById('Key').value,
-			Active : fetchActive('Active'),
+			Active : fetchTrueFalse('RoomActive'),
 			Comment : self.nodeById('Comment').value,
 			Corner : self.nodeById('Corner').value,
+			Type : 'Room',
 			Size : self.nodeById('Size').value,
-			HouseIx : globals.SelectedHouse.Ix
-            }
-		return l_roomData;
+			HouseIx : globals.House.HouseIx,
+			Delete : false
+		}
+		return l_data;
 	},
 
 	/**
@@ -156,7 +173,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	function handleDataOnClick(self, p_node) {
 		function cb_doHandleSubmit(p_json) {
 			//Divmod.debug('---', 'rooms.cb_handleDataOnClick() was called.');
-			self.showWidget(self);
+			self.showWidget();
 		}
 		function eb_doHandleSubmit(res){
 			Divmod.debug('---', 'rooms.eb_handleDataOnClick() was called. ERROR =' + res);
@@ -164,7 +181,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		var l_ix = p_node.name;
 		switch(l_ix) {
 		case '10003':  // Change Button
-	    	var l_json = JSON.stringify(self.fetchEntry(self));
+	    	var l_json = JSON.stringify(self.fetchEntry());
 			Divmod.debug('---', 'rooms.handleDataOnClick(Change) was called. JSON:' + l_json);
 	        var l_defer = self.callRemote("saveRoomData", l_json);  // @ web_schedule
 			l_defer.addCallback(cb_doHandleSubmit);
@@ -172,11 +189,11 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 			break;
 		case '10002':  // Back button
 			Divmod.debug('---', 'rooms.handleDataOnClick(Back) was called.  ');
-			self.hideEntry(self);
-			self.showButtons(self);
+			self.hideEntry();
+			self.showButtons();
 			break;
 		case '10004':  // Delete button
-			var l_obj = self.fetchEntry(self);
+			var l_obj = self.fetchEntry();
 			l_obj['Delete'] = true;
 	    	var l_json = JSON.stringify(l_obj);
 			Divmod.debug('---', 'rooms.handleDataOnClick(Delete) was called. JSON:' + l_json);
@@ -186,7 +203,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 			break;
 		default:
 			Divmod.debug('---', 'rooms.handleDataOnClick(Default) was called. l_ix:' + l_ix);
-		break;			
+			break;			
 		}
 		// return false stops the resetting of the server.
         return false;

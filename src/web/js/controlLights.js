@@ -42,7 +42,7 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 		self.node.style.display = 'block';
 		self.showButtons(self);
 		self.hideEntry(self);
-		self.fetchLightData(self, globals.SelectedHouse.Ix);
+		self.fetchLightData(self, globals.House.HouseIx);
 	},
 	function hideButtons(self) {
 		Divmod.debug('---', 'controlLights.hideButtons() was called. ');
@@ -75,7 +75,7 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 		function eb_fetchLightData(self, p1, p2) {
 			Divmod.debug('---', 'controlLights.eb_fetchLightData() was called. ' + p1 + ' ' + p2);
 		}
-        var l_defer = self.callRemote("getControlLightEntries", globals.SelectedHouse.Ix);  // call server @ web_controlLights.py
+        var l_defer = self.callRemote("getControlLightEntries", globals.House.HouseIx);  // call server @ web_controlLights.py
 		l_defer.addCallback(cb_fetchLightData);
 		l_defer.addErrback(eb_fetchLightData);
         return false;
@@ -85,7 +85,7 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 	 * Fill in the schedule entry screen with all of the data for this schedule.
 	 */
 	function fillEntry(self, p_entry) {
-		var sched = arguments[2];
+		var sched = arguments[1];
 		Divmod.debug('---', 'controlLights.fillEntry() was called. ' + sched);
 		self.nodeById('Name').value = sched.Name;
 		self.nodeById('Key').value = sched.Key;
@@ -109,7 +109,7 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 			Rate : self.nodeById('Rate').value,
 			RoomName : self.nodeById('RoomName').value,
 			LightName : self.nodeById('LightName').value,
-			HouseIx : globals.SelectedHouse.Ix
+			HouseIx : globals.House.HouseIx
             }
 		return l_scheduleData;
 	},
@@ -125,22 +125,22 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 	function doHandleOnClick(self, p_node) {
 		var l_ix = p_node.name;
 		var l_name = p_node.value;
-		globals.Lights.Selected.Ix = l_ix;
-		globals.Lights.Selected.Name = l_name;
+		globals.House.LightIx = l_ix;
+		globals.House.LightName = l_name;
 		if (l_ix <= 1000) {
 			// One of the schedule buttons.
-			var l_obj = globals.Lights.Obj[l_ix];
-			globals.Lights.Selected.LightsObj = l_obj;
+			var l_obj = globals.House.HouseObj.Lights[l_ix];
+			globals.House.LightsObj = l_obj;
 			Divmod.debug('---', 'controlLights.doHandleOnClick(1) was called. ' + l_ix + ' ' + l_name);
 			console.log("controlLights.doHandleOnClick() - l_obj = %O", l_obj);
-			self.showEntry(self);
-			self.hideButtons(self);
-			self.fillEntry(self, l_obj);
+			self.showEntry();
+			self.hideButtons();
+			self.fillEntry(l_obj);
 		} else if (l_ix == 10002) {
 			// The "Back" button
 			self.hideWidget();
 			var l_node = findWidgetByClass('HouseMenu');
-			l_node.showWidget(self);
+			l_node.showWidget();
 		}
 	},
 	
@@ -175,8 +175,8 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 	 */
 	function displayControlLightButtons(self, p_json) {
 		Divmod.debug('---', 'controlLights.displayControlLightsButtons(1) was called. ');
-		globals.Lights.Obj = JSON.parse(p_json);
-		var l_tab = buildTable(self, globals.Lights.Obj, '');
+		globals.House.HouseObj.Lights = JSON.parse(p_json);
+		var l_tab = buildTable(self, globals.House.HouseObj.Lights, '');
 		self.nodeById('ControlLightsTableDiv').innerHTML = l_tab;
 	}
 );

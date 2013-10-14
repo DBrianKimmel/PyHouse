@@ -27,7 +27,6 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 	 */
 	function ready(self) {
 		function cb_widgetready(res) {
-			// do whatever initialization needs here, 'show' for the widget is handled in superclass
 			//Divmod.debug('---', 'schedules.cb_widgready() was called. - res='  + res);
 			self.hideWidget();
 		}
@@ -44,33 +43,33 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 	function showWidget(self) {
 		//Divmod.debug('---', 'schedules.showWidget() was called.');
 		self.node.style.display = 'block';
-		self.showButtons(self);
-		self.hideEntry(self);
-		self.fetchScheduleData(self, globals.SelectedHouse.Ix);
+		self.showButtons();
+		self.hideEntry();
+		self.fetchScheduleData(globals.House.HouseIx);
 	},
 	function hideButtons(self) {
-		//Divmod.debug('---', 'schedules.hideButtons() was called. ');
+		Divmod.debug('---', 'schedules.hideButtons() was called. ');
 		self.nodeById('ScheduleButtonsDiv').style.display = 'none';		
 	},
 	function showButtons(self) {
-		//Divmod.debug('---', 'schedules.showButtons() was called. ');
+		Divmod.debug('---', 'schedules.showButtons() was called. ');
 		self.nodeById('ScheduleButtonsDiv').style.display = 'block';	
 	},
 	function hideEntry(self) {
-		//Divmod.debug('---', 'schedules.hideEntry() was called. ');
+		Divmod.debug('---', 'schedules.hideEntry() was called. ');
 		self.nodeById('ScheduleEntryDiv').style.display = 'none';		
 	},
 	function showEntry(self) {
-		//Divmod.debug('---', 'schedules.showEntry() was called. ');
+		Divmod.debug('---', 'schedules.showEntry() was called. ');
 		self.nodeById('ScheduleEntryDiv').style.display = 'block';		
 	},
 
 	function buildButtonName(self, p_obj) {
 		//Divmod.debug('---', 'schedules.buildButtonName(1) was called. ');
-		var l_html = p_obj['Name']
-		l_html += '<br>' + p_obj['RoomName']
-		l_html += '<br>' + p_obj['LightName']
-		l_html += '<br>' + p_obj['Level'] + '% '
+		var l_html = p_obj['Name'];
+		l_html += '<br>' + p_obj['RoomName'];
+		l_html += '<br>' + p_obj['LightName'];
+		l_html += '<br>' + p_obj['Level'] + '% ';
 		return l_html;
 	},
 
@@ -82,16 +81,16 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 	 */
 	function fetchScheduleData(self, p_houseIndex) {
 		function cb_fetchScheduleData(p_json) {
-			//Divmod.debug('---', 'schedules.cb_fetchScheduleData() was called. ');
-			globals.Schedules.Obj = JSON.parse(p_json);
-			var l_tab = buildTable(globals.Schedules.Obj, 'handleMenuOnClick', self.buildButtonName);
+			Divmod.debug('---', 'schedules.cb_fetchScheduleData() was called. ');
+			globals.House.HouseObj.Schedules = JSON.parse(p_json);
+			var l_tab = buildTable(globals.House.HouseObj.Schedules, 'handleMenuOnClick', self.buildButtonName);
 			self.nodeById('ScheduleTableDiv').innerHTML = l_tab;
 		}
 		function eb_fetchScheduleData(res) {
-			//Divmod.debug('---', 'schedules.eb_fetchScheduleData() was called. ' + res);
+			Divmod.debug('---', 'schedules.eb_fetchScheduleData() was called.  ERROR: ' + res);
 		}
-		//Divmod.debug('---', 'schedules.fetchScheduleData() was called. ');
-        var l_defer = self.callRemote("getScheduleData", globals.SelectedHouse.Ix);  // call server @ web_schedules.py
+		Divmod.debug('---', 'schedules.fetchScheduleData() was called. Ix: ' + p_houseIndex);
+        var l_defer = self.callRemote("getScheduleData", globals.House.HouseIx);  // call server @ web_schedules.py
 		l_defer.addCallback(cb_fetchScheduleData);
 		l_defer.addErrback(eb_fetchScheduleData);
         return false;
@@ -101,37 +100,56 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 	 * Fill in the schedule entry screen with all of the data for this schedule.
 	 */
 	function fillEntry(self, p_entry) {
-		var sched = arguments[2];
-		//Divmod.debug('---', 'schedules.fillEntry() was called. ' + sched);
+		var sched = arguments[1];
+		Divmod.debug('---', 'schedules.fillEntry() was called. ' + sched);
 		self.nodeById('Name').value = sched.Name;
 		self.nodeById('Key').value = sched.Key;
-		self.nodeById('Active').innerHTML = buildActiveWidget(sched.Active);
+		self.nodeById('ActiveDiv').innerHTML = buildTrueFalseWidget('SchedActive', sched.Active);
 		self.nodeById('Type').value = sched.Type;  // s/b select box of valid types
 		self.nodeById('Time').value = sched.Time;
-		self.nodeById('Level').innerHTML = buildLevelSlider(sched.Level);
+		self.nodeById('LevelDiv').innerHTML = buildLevelSlider(sched.Level);
 		self.nodeById('Rate').value = sched.Rate;
-		self.nodeById('RoomName').innerHTML = buildRoomSelectWidget(sched.RoomName);
-		self.nodeById('LightName').innerHTML = buildLightSelectWidget(sched.LightName);
+		self.nodeById('RoomNameDiv').innerHTML = buildRoomSelectWidget('SchedRoomName', sched.RoomName);
+		self.nodeById('LightNameDiv').innerHTML = buildLightSelectWidget('SchedLightName', sched.LightName);
 		self.nodeById('UUID').value = sched.UUID;
 		self.nodeById('ScheduleEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick');
 	},
 	
 	function fetchEntry(self) {
-        var l_scheduleData = {
+		Divmod.debug('---', 'schedules.fetchEntry() was called. ');
+        var l_data = {
 			Name : self.nodeById('Name').value,
 			Key : self.nodeById('Key').value,
-			Active : fetchActive('Active'),
+			Active : fetchTrueFalse('SchedActive'),
 			Type : self.nodeById('Type').value,
 			Time : self.nodeById('Time').value,
 			Level : fetchLevel('Level'),
 			Rate : self.nodeById('Rate').value,
-			RoomName : fetchSelectWidget('RoomName'),
-			LightName : fetchSelectWidget('LightName'),
+			RoomName : fetchSelectWidget('SchedRoomName'),
+			LightName : fetchSelectWidget('SchedLightName'),
 			UUID : self.nodeById('UUID').value,
-			HouseIx : globals.SelectedHouse.Ix,
+			HouseIx : globals.House.HouseIx,
 			Delete : false
-            }
-		return l_scheduleData;
+        }
+		return l_data;
+	},
+	function createEntry(self, p_ix) {
+		Divmod.debug('---', 'schedules.createEntry() was called.  Ix: ' + p_ix);
+        var l_data = {
+			Name : 'Change Me',
+			Key : Object.keys(globals.House.HouseObj.Schedules).length,
+			Active : false,
+			Type : '',
+			Time : '',
+			Level : 0,
+			Rate : 0,
+			RoomName : '',
+			LightName : '',
+			UUID : '',
+			HouseIx : p_ix,
+			Delete : false
+        }
+		return l_data;
 	},
 
 	/**
@@ -145,26 +163,31 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 	function handleMenuOnClick(self, p_node) {
 		var l_ix = p_node.name;
 		var l_name = p_node.value;
-		globals.Schedules.Ix = l_ix;
-		globals.Schedules.Name = l_name;
+		Divmod.debug('---', 'schedules.handleMenuOnClick() was called. ' + l_ix + ' ' + l_name);
+		globals.House.ScheduleIx = l_ix;
+		globals.House.ScheduleName = l_name;
 		if (l_ix <= 1000) {
 			// One of the schedule buttons.
-			var l_obj = globals.Schedules.Obj[l_ix];
-			globals.Schedules.ScheduleObj = l_obj;
-			//Divmod.debug('---', 'schedules.doHandleOnClick(1) was called. ' + l_ix + ' ' + l_name);
+			var l_obj = globals.House.HouseObj.Schedules[l_ix];
+			globals.House.ScheduleObj = l_obj;
+			Divmod.debug('---', 'schedules.handleMenuOnClick("Schedule" Button) was called. ' + l_ix + ' ' + l_name);
 			//console.log("schedules.doHandleOnClick() - l_obj = %O", l_obj);
-			self.showEntry(self);
-			self.hideButtons(self);
-			self.fillEntry(self, l_obj);
+			self.showEntry();
+			self.hideButtons();
+			self.fillEntry(l_obj);
 		} else if (l_ix == 10001) {
 			// The "Add" button
-			self.showEntry(self);
-			self.hideButtons(self);
+			Divmod.debug('---', 'schedules.handleMenuOnClick(Add Button) was called. ' + l_ix + ' ' + l_name);
+			self.showEntry();
+			self.hideButtons();
+			var l_ent = self.createEntry(globals.House.HouseIx);
+			self.fillEntry(l_ent);
 		} else if (l_ix == 10002) {
 			// The "Back" button
+			Divmod.debug('---', 'schedules.handleMenuOnClick(Back Button) was called. ' + l_ix + ' ' + l_name);
 			self.hideWidget();
 			var l_node = findWidgetByClass('HouseMenu');
-			l_node.showWidget(self);
+			l_node.showWidget();
 		}
 	},
 	
@@ -174,16 +197,17 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 	 */
 	function handleDataOnClick(self, p_node) {
 		function cb_doHandleSubmit(p_json) {
-			//Divmod.debug('---', 'schedule.cb_handleDataOnClick() was called.');
-			self.showWidget(self);
+			//Divmod.debug('---', 'schedules.cb_handleDataOnClick() was called.');
+			self.showWidget();
 		}
 		function eb_doHandleSubmit(res){
-			Divmod.debug('---', 'schedule.eb_handleDataOnClick() was called. ERROR =' + res);
+			Divmod.debug('---', 'schedules.eb_handleDataOnClick() was called. ERROR =' + res);
 		}
 		var l_ix = p_node.name;
+		Divmod.debug('---', 'schedules.handleDataOnClick() was called. Node:' + l_ix);
 		switch(l_ix) {
 		case '10003':  // Change Button
-	    	var l_json = JSON.stringify(self.fetchEntry(self));
+	    	var l_json = JSON.stringify(self.fetchEntry());
 			Divmod.debug('---', 'schedules.handleDataOnClick(Change) was called. JSON:' + l_json);
 	        var l_defer = self.callRemote("saveScheduleData", l_json);  // @ web_schedule
 			l_defer.addCallback(cb_doHandleSubmit);
@@ -191,11 +215,11 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 			break;
 		case '10002':  // Back button
 			Divmod.debug('---', 'schedules.handleDataOnClick(Back) was called.  ');
-			self.hideEntry(self);
-			self.showButtons(self);
+			self.hideEntry();
+			self.showButtons();
 			break;
 		case '10004':  // Delete button
-			var l_obj = self.fetchEntry(self);
+			var l_obj = self.fetchEntry();
 			l_obj['Delete'] = true;
 	    	var l_json = JSON.stringify(l_obj);
 			Divmod.debug('---', 'schedules.handleDataOnClick(Delete) was called. JSON:' + l_json);
@@ -205,7 +229,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 			break;
 		default:
 			Divmod.debug('---', 'schedules.handleDataOnClick(Default) was called. l_ix:' + l_ix);
-		break;			
+			break;			
 		}
 		// return false stops the resetting of the server.
         return false;

@@ -18,7 +18,6 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 
     function __init__(self, node) {
         houseSelect.HouseSelectWidget.upcall(self, "__init__", node);
-		globals.House.Selected = {};
     },
 
     /**
@@ -37,6 +36,23 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 		return l_defer;
 	},
 
+	function hideSelectButtons(self) {
+		//Divmod.debug('---', 'houseSelect.hideSelectButtons() was called.');
+		self.nodeById('HouseSelectButtonsDiv').style.display = 'none';	
+	},
+	function showSelectButtons(self) {
+		//Divmod.debug('---', 'houseSelect.showSelectButtons() was called.');
+		self.nodeById('HouseSelectButtonsDiv').style.display = 'block';	
+	},
+	function hideSelectedHouse(self) {
+		//Divmod.debug('---', 'houseSelect.hideSelectedHouse() was called.');
+		self.nodeById('HouseSelectedDiv').style.display = 'none';	
+	},
+	function showSelectedHouse(self) {
+		//Divmod.debug('---', 'houseSelect.showSelectedHouse() was called.');
+		self.nodeById('HouseSelectedDiv').style.display = 'block';	
+	},
+	
 	/**
 	 * Called from the root menu screen when the house select button was clicked.
 	 * 
@@ -52,15 +68,17 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 			//console.log("ss.cb   p1 %O", p_json);
 			var l_obj = JSON.parse(p_json);
 			var l_tab = buildTable(l_obj, 'handleMenuOnClick');
+			self.showSelectButtons();
+			self.hideSelectedHouse();
 			self.nodeById('HouseSelectTableDiv').innerHTML = l_tab;
 		}
 		function eb_getHousesInfo(res) {
 			Divmod.debug('---', 'houseSelect.eb_getHousesInfo() was called. ERROR = ' + res);
 		}
-		Divmod.debug('---', 'houseSelect.showSelect() was called.');
+		//Divmod.debug('---', 'houseSelect.showSelect() was called.');
 		//console.log("showSelect self %O", self);
 		//console.log("showSelect   p1 %O", p1);
-		self.node.style.display = 'block'; 
+		self.showWidget()
         var l_defer = self.callRemote("getHousesToSelect", '');  // call server @ web_houseSelect.py
 		l_defer.addCallback(cb_getHousesInfo);
 		l_defer.addErrback(eb_getHousesInfo);
@@ -71,19 +89,23 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 	 * A house was selected.
 	 * Show the house and then load the information for the selected house.
 	 */
-	function showSelected(self) {
+	function getSelectedHouseData(self) {
 		function cb_getSelectedHouseData(p_json) {
-			//ivmod.debug('---', 'houseSelect.showSelected.cb_getSelectedHouseData() was called.');
+			//ivmod.debug('---', 'houseSelect.getSelectedHouseData.cb_getSelectedHouseData() was called.');
 			//console.log("ss.cb   p1 %O", p_json);
 			var l_obj = JSON.parse(p_json);
-			globals.House.Selected.HouseObj = l_obj;
+			globals.House.HouseObj = l_obj;
 		}
-		//Divmod.debug('---', 'houseSelect.showSelected() was called. ');
-		self.nodeById('HouseSelectButtonsDiv').style.display = 'none';		
-		self.nodeById('HouseSelectedDiv').style.display = 'block';		
-		self.nodeById('HouseSelectedDiv').innerHTML = 'Working on house: ' + globals.SelectedHouse.Name;		
-        var l_defer = self.callRemote("getSelectedHouseData", globals.SelectedHouse.Ix);  // call server @ web_houseSelect.py
+		function eb_getSelectedHouseData(res) {
+			Divmod.debug('---', 'houseSelect.eb_getSelectedHouseData() was called. ERROR = ' + res);			
+		}
+		//Divmod.debug('---', 'houseSelect.getSelectedHouseData() was called. ');
+		self.hideSelectButtons();		
+		self.showSelectedHouse();		
+		self.nodeById('HouseSelectedDiv').innerHTML = 'Working on house: ' + globals.House.HouseName;		
+        var l_defer = self.callRemote("getSelectedHouseData", globals.House.HouseIx);  // call server @ web_houseSelect.py
 		l_defer.addCallback(cb_getSelectedHouseData);
+		l_defer.addErrback(eb_getSelectedHouseData);
         return false;
 	},
 
@@ -94,26 +116,30 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 	 * @param p_node is the node of the house button.
 	 */
 	function handleMenuOnClick(self, p_node) {
-		//console.log("houseSelect.handleMenuOnClick - self %O", self);
+		//Divmod.debug('---', 'houseSelect.handleMenuOnClick() was called.  Node: ' + p_node.value);
 		//console.log("houseSelect.handleMenuOnClick() - node %O", p_node);
 		var l_ix = p_node.name;
 		var l_name = p_node.value;
 		if (l_ix <= 1000) {
-			globals.SelectedHouse.Ix = l_ix;
-			globals.SelectedHouse.Name = l_name;
-			//Divmod.debug('---', 'houseSelect.handleMenuOnClick(1) was called. ' + l_key + ' ' + l_name);
-			self.showSelected(self);
+			globals.House.HouseIx = l_ix;
+			globals.House.HouseName = l_name;
+			//Divmod.debug('---', 'houseSelect.handleMenuOnClick("house" Button) was called.  Ix: ' + l_ix + '  Name: ' + l_name);
+			self.getSelectedHouseData(l_ix)
+			self.hideSelectButtons();
+			self.showSelectedHouse();
 			var l_node = findWidgetByClass('HouseMenu');
-			l_node.showWidget(self);
+			l_node.showWidget();
 		} else if (l_ix == 10001) {
 			// The "Add" button
-			self.showEntry(self);
-			self.hideButtons(self);
+			//Divmod.debug('---', 'houseSelect.handleMenuOnClick(Add Button) was called.  Ix: ' + l_ix);
+			self.showEntry();
+			self.hideButtons();
 		} else if (l_ix == 10002) {
 			// The "Back" button
+			//Divmod.debug('---', 'houseSelect.handleMenuOnClick(Back Button) was called.  Ix: ' + l_ix);
 			self.hideWidget();
 			var l_node = findWidgetByClass('RootMenu');
-			l_node.showWidget(self);
+			l_node.showWidget();
 		}
 	}
 );
