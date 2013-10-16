@@ -171,24 +171,24 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	 * @param p_node is the button node that was clicked on
 	 */
 	function handleDataOnClick(self, p_node) {
-		function cb_doHandleSubmit(p_json) {
+		function cb_handleDataOnClick(p_json) {
 			//Divmod.debug('---', 'rooms.cb_handleDataOnClick() was called.');
 			self.showWidget();
 		}
-		function eb_doHandleSubmit(res){
+		function eb_handleDataOnClick(res){
 			Divmod.debug('---', 'rooms.eb_handleDataOnClick() was called. ERROR =' + res);
 		}
 		var l_ix = p_node.name;
 		switch(l_ix) {
 		case '10003':  // Change Button
 	    	var l_json = JSON.stringify(self.fetchEntry());
-			Divmod.debug('---', 'rooms.handleDataOnClick(Change) was called. JSON:' + l_json);
+			//Divmod.debug('---', 'rooms.handleDataOnClick(Change) was called. JSON:' + l_json);
 	        var l_defer = self.callRemote("saveRoomData", l_json);  // @ web_schedule
-			l_defer.addCallback(cb_doHandleSubmit);
-			l_defer.addErrback(eb_doHandleSubmit);
+			l_defer.addCallback(cb_handleDataOnClick);
+			l_defer.addErrback(eb_handleDataOnClick);
 			break;
 		case '10002':  // Back button
-			Divmod.debug('---', 'rooms.handleDataOnClick(Back) was called.  ');
+			//Divmod.debug('---', 'rooms.handleDataOnClick(Back) was called.  ');
 			self.hideEntry();
 			self.showButtons();
 			break;
@@ -196,10 +196,10 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 			var l_obj = self.fetchEntry();
 			l_obj['Delete'] = true;
 	    	var l_json = JSON.stringify(l_obj);
-			Divmod.debug('---', 'rooms.handleDataOnClick(Delete) was called. JSON:' + l_json);
+			//Divmod.debug('---', 'rooms.handleDataOnClick(Delete) was called. JSON:' + l_json);
 	        var l_defer = self.callRemote("saveRoomData", l_json);  // @ web_rooms
-			l_defer.addCallback(cb_doHandleSubmit);
-			l_defer.addErrback(eb_doHandleSubmit);
+			l_defer.addCallback(cb_handleDataOnClick);
+			l_defer.addErrback(eb_handleDataOnClick);
 			break;
 		default:
 			Divmod.debug('---', 'rooms.handleDataOnClick(Default) was called. l_ix:' + l_ix);

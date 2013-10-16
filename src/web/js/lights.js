@@ -44,22 +44,18 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		self.node.style.display = 'block';
 		self.showButtons();
 		self.hideEntry();
-		self.fetchLightData(self, globals.House.HouseIx);
+		self.fetchLightData();
 	},
 	function hideButtons(self) {
-		//Divmod.debug('---', 'lights.hideButtons() was called. ');
 		self.nodeById('LightButtonsDiv').style.display = 'none';		
 	},
 	function showButtons(self) {
-		//Divmod.debug('---', 'lights.showButtons() was called. ');
 		self.nodeById('LightButtonsDiv').style.display = 'block';	
 	},
 	function hideEntry(self) {
-		//Divmod.debug('---', 'lights.hideEntry() was called. ');
 		self.nodeById('LightEntryDiv').style.display = 'none';		
 	},
 	function showEntry(self) {
-		//Divmod.debug('---', 'lights.showEntry() was called. ');
 		self.nodeById('LightEntryDiv').style.display = 'block';		
 	},
 
@@ -90,23 +86,22 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 	 * 
 	 */
 	function fillEntry(self, p_obj) {
-		Divmod.debug('---', 'lights.fillEntry(1) was called.  Self:' + self);
+		//Divmod.debug('---', 'lights.fillEntry(1) was called.  Self:' + self);
 		console.log("lights.fillEntry() - Obj = %O", p_obj);
-		var light = arguments[1];
-		self.nodeById('Name').value = light.Name;
-		self.nodeById('Key').value = light.Key;
-		self.nodeById('ActiveDiv').innerHTML = buildTrueFalseWidget('LightsActive', light.Active);
-		self.nodeById('Comment').value = light.Comment;
-		self.nodeById('Coords').value = light.Coords;
-		self.nodeById('Dimmable').innerHTML = buildTrueFalseWidget('LightDimmable', light.Dimmable);
-		self.nodeById('Family').value = light.Family;
-		self.nodeById('RoomNameDiv').innerHTML = buildRoomSelectWidget('LightRoomName', light.RoomName);
-		self.nodeById('Type').value = light.Type;
-		self.nodeById('UUID').value = light.UUID;
+		self.nodeById('Name').value = p_obj.Name;
+		self.nodeById('Key').value = p_obj.Key;
+		self.nodeById('ActiveDiv').innerHTML = buildTrueFalseWidget('LightsActive', p_obj.Active);
+		self.nodeById('Comment').value = p_obj.Comment;
+		self.nodeById('Coords').value = p_obj.Coords;
+		self.nodeById('Dimmable').innerHTML = buildTrueFalseWidget('LightDimmable', p_obj.Dimmable);
+		self.nodeById('Family').value = p_obj.Family;
+		self.nodeById('RoomNameDiv').innerHTML = buildRoomSelectWidget('LightRoomName', p_obj.RoomName);
+		self.nodeById('Type').value = p_obj.Type;
+		self.nodeById('UUID').value = p_obj.UUID;
 		self.nodeById('LightEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick');
 	},
 	function fetchEntry(self) {
-		Divmod.debug('---', 'lights.fetchEntry() was called. ');
+		//Divmod.debug('---', 'lights.fetchEntry() was called. ');
         var l_scheduleData = {
 			Name : self.nodeById('Name').value,
 			Key : self.nodeById('Key').value,
@@ -124,7 +119,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		return l_scheduleData;
 	},
 	function createEntry(self, p_ix) {
-		Divmod.debug('---', 'lights.createEntry() was called.  Ix: ' + p_ix);
+		//Divmod.debug('---', 'lights.createEntry() was called.  Ix: ' + p_ix);
         var l_Data = {
     			Name : 'Change Me',
     			Key : Object.keys(globals.House.HouseObj.Lights).length,
@@ -159,21 +154,21 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 			// One of the Light buttons.
 			var l_obj = globals.House.HouseObj.Lights[l_ix];
 			globals.House.LightObj = l_obj;
-			Divmod.debug('---', 'lights.handleMenuOnClick("Light" Button) was called. ' + l_ix + ' ' + l_name);
+			//Divmod.debug('---', 'lights.handleMenuOnClick("Light" Button) was called. ' + l_ix + ' ' + l_name);
 			//console.log("lights.handleMenuOnClick() - l_obj = %O", l_obj);
 			self.showEntry();
 			self.hideButtons();
 			self.fillEntry(l_obj);
 		} else if (l_ix == 10001) {
 			// The "Add" button
-			Divmod.debug('---', 'lights.handleMenuOnClick(Add Button) was called. ' + l_ix + ' ' + l_name);
+			//Divmod.debug('---', 'lights.handleMenuOnClick(Add Button) was called. ' + l_ix + ' ' + l_name);
 			self.showEntry();
 			self.hideButtons();
 			var l_ent = self.createEntry(globals.House.HouseIx);
 			self.fillEntry(l_ent);
 		} else if (l_ix == 10002) {
 			// The "Back" button
-			Divmod.debug('---', 'lights.handleMenuOnClick(Back Button) was called. ' + l_ix + ' ' + l_name);
+			//Divmod.debug('---', 'lights.handleMenuOnClick(Back Button) was called. ' + l_ix + ' ' + l_name);
 			self.hideWidget();
 			var l_node = findWidgetByClass('HouseMenu');
 			l_node.showWidget();
@@ -185,25 +180,25 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 	 * Get the possibly changed data and send it to the server.
 	 */
 	function handleDataOnClick(self, p_node) {
-		function cb_doHandleSubmit(p_json) {
+		function cb_handleDataOnClick(p_json) {
 			//Divmod.debug('---', 'lights.cb_handleDataOnClick() was called.');
 			self.showWidget();
 		}
-		function eb_doHandleSubmit(res){
+		function eb_handleDataOnClick(res){
 			Divmod.debug('---', 'lights.eb_handleDataOnClick() was called. ERROR =' + res);
 		}
 		var l_ix = p_node.name;
-		Divmod.debug('---', 'lights.handleDataOnClick() was called. Node:' + l_ix);
+		//Divmod.debug('---', 'lights.handleDataOnClick() was called. Node:' + l_ix);
 		switch(l_ix) {
 		case '10003':  // Change Button
 	    	var l_json = JSON.stringify(self.fetchEntry());
-			Divmod.debug('---', 'lights.handleDataOnClick(Change) was called. JSON:' + l_json);
+			//Divmod.debug('---', 'lights.handleDataOnClick(Change) was called. JSON:' + l_json);
 	        var l_defer = self.callRemote("saveLightData", l_json);  // @ web_lights
-			l_defer.addCallback(cb_doHandleSubmit);
-			l_defer.addErrback(eb_doHandleSubmit);
+			l_defer.addCallback(cb_handleDataOnClick);
+			l_defer.addErrback(eb_handleDataOnClick);
 			break;
 		case '10002':  // Back button
-			Divmod.debug('---', 'lights.handleDataOnClick(Back) was called.  ');
+			//Divmod.debug('---', 'lights.handleDataOnClick(Back) was called.  ');
 			self.hideEntry();
 			self.showButtons();
 			break;
@@ -211,10 +206,10 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 			var l_obj = self.fetchEntry();
 			l_obj['Delete'] = true;
 	    	var l_json = JSON.stringify(l_obj);
-			Divmod.debug('---', 'lights.handleDataOnClick(Delete) was called. JSON:' + l_json);
+			//Divmod.debug('---', 'lights.handleDataOnClick(Delete) was called. JSON:' + l_json);
 	        var l_defer = self.callRemote("saveLightData", l_json);  // @ web_rooms
-			l_defer.addCallback(cb_doHandleSubmit);
-			l_defer.addErrback(eb_doHandleSubmit);
+			l_defer.addCallback(cb_handleDataOnClick);
+			l_defer.addErrback(eb_handleDataOnClick);
 			break;
 		default:
 			Divmod.debug('---', 'lights.handleDataOnClick(Default) was called. l_ix:' + l_ix);

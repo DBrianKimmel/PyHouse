@@ -53,6 +53,7 @@ class LightingAPI(lighting_core.CoreAPI):
         for l_entry in l_list:
             l_light_obj = LightData()
             l_light_obj = self.read_light_common(l_entry, l_light_obj, p_house_obj)
+            l_light_obj.Key = l_count  # Renumber
             l_dict[l_count] = l_light_obj
             l_count += 1
         p_house_obj.Lights = l_dict

@@ -110,7 +110,7 @@ class API(Utility):
         return l_lighting_xml, l_controllers_xml, l_buttons_xml
 
     def Update(self, p_entry):
-        """Update the schedule as updated by the web server.
+        """Update the  as updated by the web server.
         Take one schedule entry and insert it into the Schedules data.
         """
         if g_debug >= 0:

@@ -18,7 +18,7 @@ from src.housing import rooms
 webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
 
-g_debug = 4
+g_debug = 0
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
@@ -46,7 +46,7 @@ class RoomsElement(athena.LiveElement):
         @param p_index: is the house index number.
         """
         if g_debug >= 3:
-            print "web_rooms.EoomsElement.getRoomData(1) - HouseIndex:", p_index
+            print "web_rooms.RoomsElement.getRoomData(1) - HouseIndex:", p_index
         g_logger.info("getRoomData called {0:}".format(self))
         l_rooms = self.m_pyhouses_obj.HousesData[int(p_index)].HouseObject.Rooms
         l_obj = {}

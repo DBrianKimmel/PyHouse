@@ -335,14 +335,12 @@ function loadImages(uris) {
 globals.ServerStateError = Divmod.Error.subclass('globals.ServerStateError');
 
 function serverState(p_state) {
-	Divmod.debug('---', 'globals.serverState was called. state:' + p_state);
+	//Divmod.debug('---', 'globals.serverState was called. state:' + p_state);
 	var m_state = p_state;
-	
 	var steprate = 2; // checks per second
 	var maxsteps = steprate * 60 * 60 * 24;
 	var stepcount = 0;
 	var stateDeferred = Divmod.Defer.Deferred();
-
 	var checkStep = function() {
 		if ((stepcount > maxsteps)) {
 			self.timer = null;
@@ -354,7 +352,6 @@ function serverState(p_state) {
 			self.timer = setTimeout(checkStep, 1000 / steprate);
 		}
 	};
-
 	self.timer = setTimeout(checkStep, 1000 / steprate);
 	return stateDeferred;
 }
@@ -468,18 +465,25 @@ function buildTable(p_obj, p_handler, /* optional */ nameFunction, noOptions) {
 			l_html += '</tr><tr>\n';
 	}
 	l_html += "</tr><tr>\n";
-	if (l_options.toLowerCase().indexOf('add') < 0)
+	if (l_options.toLowerCase().indexOf('add') === -1)
 		l_html += buildAddButton(p_handler);
-	if (l_options.toLowerCase().indexOf('back') < 0)
+	if (l_options.toLowerCase().indexOf('back') === -1)
 		l_html += buildBackButton(p_handler);
 	l_html += "</tr></table>\n";
 	return l_html;
 }
-function buildEntryButtons(p_handler) {
-	//Divmod.debug('---', 'globals.buildEntryButtons() called.  Handler=' + p_handler);
-	var l_html = buildChangeButton(p_handler);
-	l_html += buildDeleteButton(p_handler);
-	l_html += buildBackButton(p_handler);
+function buildEntryButtons(p_handler, /* optional */ noOptions) {
+	//Divmod.debug('---', 'globals.buildEntryButtons() called.  Handler=' + p_handler + '  ' + noOptions);
+	var l_options = noOptions;
+	if (l_options === undefined)
+		l_options = '';
+	var l_html = '';
+	if (l_options.toLowerCase().indexOf('change') === -1)
+		l_html = buildChangeButton(p_handler);
+	if (l_options.toLowerCase().indexOf('delete') === -1)
+		l_html += buildDeleteButton(p_handler);
+	if (l_options.toLowerCase().indexOf('back') === -1)
+		l_html += buildBackButton(p_handler);
 	return l_html;
 }
 
@@ -582,6 +586,29 @@ function fetchLevel(p_name) {
 	var l_fields = document.getElementsByName(p_name);
 	l_level = l_fields[0].value;
 	return l_level;
+}
+
+/**
+ * Build a text widget
+ */
+function buildTextWidget(p_id, p_value) {
+	var l_html = '';
+	l_html += "<input type='text' id='" + p_id + "' >";
+	return l_html;
+}
+function fetchText(p_id) {
+	var l_data = document.getElementById(p_id).value;
+	return l_data;
+}
+
+/**
+ * Build an entire row to put in the table
+ */
+function buildTextRowWidget(p_id, p_name, p_value, /* optional */ hidden) {
+	Divmod.debug('---', 'globals.buildTextRowWidget() was called.  Name' + p_name + '  Value=' + p_value);
+	var l_html = '';
+	l_html += "<tr><td>" + p_name + "</td><td><input type='text' id='" + p_name + "' value='" + p_value + "' /></td></tr>\n";
+	return l_html;
 }
 
 /**

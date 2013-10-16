@@ -50,6 +50,7 @@ class ButtonsAPI(lighting_core.CoreAPI):
         for l_entry in l_list:
             l_button_obj = ButtonData()
             l_button_obj = self.read_light_common(l_entry, l_button_obj, p_house_obj)
+            l_button_obj.Key = l_count  # Renumber
             l_dict[l_count] = l_button_obj
             l_count += 1
         p_house_obj.Buttons = l_dict

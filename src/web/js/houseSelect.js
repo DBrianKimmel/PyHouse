@@ -27,7 +27,6 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
      */
 	function ready(self) {
 		function cb_widgetready(res) {
-			// do whatever init needs here, show for the widget is handled in superclass
 			self.hideWidget();
 		}
 		var uris = collectIMG_src(self.node, null);
@@ -37,19 +36,15 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 	},
 
 	function hideSelectButtons(self) {
-		//Divmod.debug('---', 'houseSelect.hideSelectButtons() was called.');
 		self.nodeById('HouseSelectButtonsDiv').style.display = 'none';	
 	},
 	function showSelectButtons(self) {
-		//Divmod.debug('---', 'houseSelect.showSelectButtons() was called.');
 		self.nodeById('HouseSelectButtonsDiv').style.display = 'block';	
 	},
 	function hideSelectedHouse(self) {
-		//Divmod.debug('---', 'houseSelect.hideSelectedHouse() was called.');
 		self.nodeById('HouseSelectedDiv').style.display = 'none';	
 	},
 	function showSelectedHouse(self) {
-		//Divmod.debug('---', 'houseSelect.showSelectedHouse() was called.');
 		self.nodeById('HouseSelectedDiv').style.display = 'block';	
 	},
 	

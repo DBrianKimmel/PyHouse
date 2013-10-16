@@ -64,11 +64,17 @@ class WebData(object):
         l_ret += "WebPort:{0:}\n".format(self.WebPort)
         return l_ret
 
-    def __repr__(self):
-        l_ret = "{"
-        l_ret += "'WebPort':'{0:}'".format(self.WebPort)
-        l_ret += "}"
-        return l_ret
+
+class ClientConnections(object):
+    """This class keeps track of all the connected browsers.
+    We can update the browser via COMET when a controlled device changes.
+    (Light On/Off, Pool water low, Garage Door open/Close ...)
+    """
+    def __init__(self):
+        self.ConnectedBrowsers = []
+
+    def add_browser(self, p_login):
+        self.ConnectedBrowsers.append(p_login)
 
 
 class WebUtility(xml_tools.ConfigFile):

@@ -146,6 +146,7 @@ class ReadWriteXML(xml_tools.ConfigTools):
         l_count = 0
         for l_entry in l_list:
             l_dyndns = self.extract_dyn_dns(l_entry)
+            l_dyndns.Key = l_count  # Renumber
             p_house_obj.Internet.DynDns[l_count] = l_dyndns
             l_count += 1
         if g_debug >= 5:

@@ -45,23 +45,18 @@ class ControllersElement(athena.LiveElement):
     def getControllerData(self, p_index):
         """ A JS receiver for controllers information from the client.
         """
-        if g_debug >= 3:
-            print "web_controllers.ControllersElement.getControllerData() - HouseIndex:", p_index
-        g_logger.info("getControllerData called {0:}".format(self))
-        l_controllers = self.m_pyhouses_obj.HousesData[int(p_index)].HouseObject.Controllers
-        l_obj = {}
-        for l_key, l_val in l_controllers.iteritems():
-            l_obj[l_key] = l_val
-        l_json = web_utils.JsonUnicode().encode_json(l_obj)
+        l_ix = int(p_index)
+        l_house = self.m_pyhouses_obj.HousesData[l_ix].HouseObject
+        l_json = web_utils.JsonUnicode().encode_json(l_house)
         if g_debug >= 3:
             print "web_controllers.ControllersElement.getControllerData() - JSON:", l_json
-        self.callRemote('displayControllerButtons', unicode(l_json))  # call client @ controllers.js
+        return unicode(l_json)
 
     @athena.expose
-    def doControllerSubmit(self, p_json):
+    def saveControllerData(self, p_json):
         """A new/changed controller is returned.  Process it and update the internal data via controller.py
         """
         if g_debug >= 3:
-            print "web_controllers.ControllersElement.doControllerSubmit() - JSON:", p_json
+            print "web_controllers.ControllersElement.saveControllerData() - JSON:", p_json
 
 # ## END DBK

@@ -64,18 +64,6 @@ class LoginData(object):
         l_ret += "ServerState:{0:}".format(self.ServerState)
         return l_ret
 
-    def __repr__(self):
-        """JSON representation of the data - encoding
-        """
-        l_ret = u'{'
-        l_ret += u'"Username": "{0:}", '.format(self.Username)
-        l_ret += u'"Password": "{0:}", '.format(self.Password)
-        l_ret += u'"Fullname": "{0:}", '.format(self.Fullname)
-        l_ret += u'"LoggedIn": "{0:}", '.format(self.LoggedIn)
-        l_ret += u'"ServerState": "{0:}"'.format(self.ServerState)
-        l_ret += u'}'
-        return l_ret
-
     def reprJSON(self):
         return dict(Username = self.Username, Password = self.Password, Fullname = self.Fullname,
                     LoggedIn = self.LoggedIn, ServerState = self.ServerState)
@@ -108,19 +96,16 @@ class LoginElement(athena.LiveElement):
             @param p_json: is the username and password passed back by the client.
         """
         if g_debug >= 5:
-            print "web_login.LoginElement.doLogin(1)"
+            print "web_login.LoginElement.doLogin()"
             print "    p_json", p_json
         g_logger.info("doLogin called {0:}.".format(p_json))
         l_obj = web_utils.JsonUnicode().decode_json(p_json)
-        self.validate_user(l_obj)
+        l_login_obj = self.validate_user(l_obj)
+        l_json = web_utils.JsonUnicode().encode_json(l_login_obj)
         if g_debug >= 5:
             print "web_login.LoginElement.doLogin(2)"
             print "    m_login_obj", self.m_login_obj
-        if self.m_login_obj.LoggedIn:
-            l_json = web_utils.JsonUnicode().encode_json(self.m_login_obj.reprJSON())
-            self.display_fullname(l_json)
-        else:  # login failed
-            pass
+        return unicode(l_json)
 
     def validate_user(self, p_obj):
         """Validate the user and put all results into the LoginData object.
@@ -133,16 +118,12 @@ class LoginElement(athena.LiveElement):
             self.m_login_obj.Fullname = 'D. Brian Kimmel'
             self.m_login_obj.LoggedIn = True
             self.m_login_obj.ServerState = web_utils.WS_LOGGED_IN
+        else:
+            self.m_login_obj.LoggedIn = False
+            self.m_login_obj.Fullname = 'Not logged In'
         if g_debug >= 5:
             print "web_login.validate_user() "
             print "    m_login_obj", self.m_login_obj
-
-    def display_fullname(self, p_json):
-        """The login was successful - un-display login and display logged in part.
-        """
-        if g_debug >= 5:
-            print "web_login.LoginElement.display_fullname()"
-            print "    p_json=", p_json
-        self.callRemote('displayFullname', unicode(p_json))
+        return self.m_login_obj
 
 # ## END DBK

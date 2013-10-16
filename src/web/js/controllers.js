@@ -44,26 +44,21 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
     },
     
     function showWidget(self) {
-        Divmod.debug('---', 'controllers.showWidget() was called.');
         self.node.style.display = 'block';
         self.showButtons(self);
         self.hideEntry(self);
-        self.fetchControllerData(self, globals.House.HouseIx);
+        self.fetchControllerData();
     },
     function hideButtons(self) {
-        Divmod.debug('---', 'controllers.hideButtons() was called. ');
         self.nodeById('ControllerButtonsDiv').style.display = 'none';        
     },
     function showButtons(self) {
-        Divmod.debug('---', 'controllers.showButtons() was called. ');
         self.nodeById('ControllerButtonsDiv').style.display = 'block';    
     },
     function hideEntry(self) {
-        //Divmod.debug('---', 'controllers.hideEntry() was called. ');
         self.nodeById('ControllerEntryDiv').style.display = 'none';        
     },
     function showEntry(self) {
-        //Divmod.debug('---', 'controllers.showEntry() was called. ');
         self.nodeById('ControllerEntryDiv').style.display = 'block';        
     },
 
@@ -71,15 +66,15 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
     /**
      * This triggers getting the controller data from the server.
      * The server calls displayControllerButtons with the controllers info.
-     * 
-     * @param p_houseIndex is the house index that was selected
      */
-    function fetchControllerData(self, p_houseIndex) {
-        function cb_fetchControllerData(self, p_json, p2) {
-            Divmod.debug('---', 'controllers.cb_fetchControllerData() was called.');
+    function fetchControllerData(self) {
+        function cb_fetchControllerData(p_json) {
+			globals.House.HouseObj = JSON.parse(p_json);
+			var l_tab = buildTable(globals.House.HouseObj.Controllers, 'handleMenuOnClick');
+			self.nodeById('ControllerTableDiv').innerHTML = l_tab;
         }
-        function eb_fetchControllerData(self, p1, p2) {
-            Divmod.debug('---', 'controllers.eb_fetchControllerData() was called. ' + p1 + ' ' + p2);
+        function eb_fetchControllerData(res) {
+            Divmod.debug('---', 'controllers.eb_fetchControllerData() was called.  ERROR - ' + res);
         }
         var l_defer = self.callRemote("getControllerData", globals.House.HouseIx);  // call server @ web_controllers.py
         l_defer.addCallback(cb_fetchControllerData);
@@ -128,32 +123,53 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
      -  self.Command1 = 0
 
      */
-    function fillEntry(self, p_entry) {
-        Divmod.debug('---', 'controllers.fillEntry() was called. ' + self + ' ' + p_entry);
-        self.nodeById('Name').value = selectedControllerObj.Name;
-        self.nodeById('Key').value = selectedControllerObj.Key;
-        self.nodeById('Active').value = selectedControllerObj.Active;
-        self.nodeById('Type').value = selectedControllerObj.Type;
-        self.nodeById('Time').value = selectedControllerObj.Time;
-        self.nodeById('Level').value = selectedControllerObj.Level;
-        self.nodeById('Rate').value = selectedControllerObj.Rate;
-        self.nodeById('RoomName').value = selectedControllerObj.RoomName;
-        self.nodeById('LightName').value = selectedControllerObj.LightName;
+    function fillEntry(self, p_obj) {
+        //Divmod.debug('---', 'controllers.fillEntry() was called. ' + p_obj);
+        self.nodeById('Name').value = p_obj.Name;
+        self.nodeById('Key').value = p_obj.Key;
+		self.nodeById('ActiveDiv').innerHTML = buildTrueFalseWidget('LightsActive', p_obj.Active);
+		self.nodeById('Comment').value = p_obj.Comment;
+		self.nodeById('Coords').value = p_obj.Coords;
+		self.nodeById('Dimmable').innerHTML = buildTrueFalseWidget('LightDimmable', p_obj.Dimmable);
+		self.nodeById('Family').value = p_obj.Family;
+		self.nodeById('RoomNameDiv').innerHTML = buildRoomSelectWidget('LightRoomName', p_obj.RoomName);
+		self.nodeById('Type').value = p_obj.Type;
+		self.nodeById('UUID').value = p_obj.UUID;
+		self.nodeById('ControllerEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick');
     },
-    
     function fetchEntry(self) {
-        var l_controllerData = {
+        var l_data = {
             Name : self.nodeById('Name').value,
             Key : self.nodeById('Key').value,
-            Active : self.nodeById('Active').value,
-            Type : self.nodeById('Type').value,
-            Time : self.nodeById('Time').value,
-            Level : self.nodeById('Level').value,
-            Rate : self.nodeById('Rate').value,
-            RoomName : self.nodeById('RoomName').value,
-            LightName : self.nodeById('LightName').value
+			Active : fetchTrueFalse('SchedActive'),
+			Comment : self.nodeById('Comment'),
+			Coords : self.nodeById('Coords'),
+			Dimmable : fetchTrueFalse('LightDimmable'),
+			Family : self.nodeById('Family'),
+			RoomName : fetchSelectWidget('LightRoomName'),
+			Type : self.nodeById('Type').value,
+			UUID : self.nodeById('UUID').value,
+			HouseIx : globals.House.HouseIx,
+			Delete : false
             }
-        return l_controllerData;
+        return l_data;
+    },
+    function createEntry(self, p_ix) {
+        var l_data = {
+            Name : 'Change Me',
+            Key : Object.keys(globals.House.HouseObj.Controllers).length,
+            Active : false,
+			Comment : '',
+			Coords : '',
+			Dimmable : false,
+			Family : '',
+			RoomName : '',
+            Type : 'Controller',
+			UUID : '',
+			HouseIx : p_ix,
+			Delete : false
+            }
+        return l_data;
     },
 
     /**
@@ -162,26 +178,27 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
      * @param self is    <"Instance" of undefined.controllers.ControllersWidget>
      * @param p_node is  the node of the button that was clicked.
      */
-    function doHandleOnClick(self, p_node) {
+    function handleMenuOnClick(self, p_node) {
         var l_ix = p_node.name;
         var l_name = p_node.value;
+		globals.House.ControllerIx = l_ix;
+		globals.House.ControllerName = l_name;
         if (l_ix <= 1000) {
-            selectedControllerIx = p_node.name;
-            selectedControllerObj = controllersObj[selectedControllerIx];
-            Divmod.debug('---', 'controllers.doHandleOnClick(1) was called. ' + selectedControllerIx + ' ' + l_name);
-            console.log("controllers.doHandleOnClick() - controllers %O", controllersObj);
-            self.showEntry(self);
-            self.hideButtons(self);
-            self.fillEntry(self, selectedControllerObj);
+        	// One of the controller buttons
+			var l_obj = globals.House.HouseObj.Controllers[l_ix];
+            //Divmod.debug('---', 'controllers.handleMenuOnClick(1) was called. ' + l_ix + ' ' + l_name);
+            self.showEntry();
+            self.hideButtons();
+            self.fillEntry(l_obj);
         } else if (l_ix == 10001) {
             // add key
-            self.showEntry(self);
-            self.hideButtons(self);
+            self.showEntry();
+            self.hideButtons();
         } else if (l_ix == 10002) {
             // back key
             self.hideWidget();
             var l_node = findWidgetByClass('HouseMenu');
-            l_node.showWidget(self);
+            l_node.showWidget();
         }
     },
     
@@ -189,37 +206,46 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
      * Event handler for submit buttons at bottom of entry portion of this widget.
      * Get the possibly changed data and send it to the server.
      */
-    function doHandleSubmit(self, p_node) {
-        Divmod.debug('---', 'controllers.doHandleSubmit() was called. ');
-        console.log("controllers.doHandleSubmit() - self %O", self);
-        console.log("controllers.doHandleSubmit() - node %O", p_node);
-        
-        function cb_doHandleSubmit(p_json) {
-            Divmod.debug('---', 'controller.cb_doHandleSubmit() was called.');
+    function handleDataOnClick(self, p_node) {
+        //Divmod.debug('---', 'controllers.handleDataOnClick() was called. ');
+        //console.log("controllers.handleDataOnClick() - node %O", p_node); 
+        function cb_handleDataOnClick(p_json) {
+            //Divmod.debug('---', 'controller.cb_handleDataOnClick() was called.');
             self.showWidget(self);
         }
-        function eb_doHandleSubmit(res){
-            Divmod.debug('---', 'login.eb_doHandleSubmit() was called. res=' + res);
+        function eb_handleDataOnClick(res){
+            Divmod.debug('---', 'login.eb_handleDataOnClick() was called.  ERROR = ' + res);
         }
-        var l_json = JSON.stringify(self.fetchEntry(self));
-        Divmod.debug('---', 'login.doHandleSubmit(1) was called. json:' + l_json);
-        var l_defer = self.callRemote("doControllerSubmit", l_json);  // @ web_controller
-        l_defer.addCallback(cb_doHandleSubmit);
-        l_defer.addErrback(eb_doHandleSubmit);
+		var l_ix = p_node.name;
+		switch(l_ix) {
+		case '10003':  // Change Button
+			var l_json = JSON.stringify(self.fetchEntry(self));
+	        Divmod.debug('---', 'controllers.handleDataOnClick(1) was called. json:' + l_json);
+	        var l_defer = self.callRemote("saveControllerData", l_json);  // @ web_controller
+	        l_defer.addCallback(cb_handleDataOnClick);
+	        l_defer.addErrback(eb_handleDataOnClick);
+			break;
+		case '10002':  // Back button
+			Divmod.debug('---', 'controllers.handleDataOnClick(Back) was called.  ');
+			self.hideEntry();
+			self.showButtons();
+			break;
+		case '10004':  // Delete button
+			var l_obj = self.fetchEntry();
+			l_obj['Delete'] = true;
+	    	var l_json = JSON.stringify(l_obj);
+			Divmod.debug('---', 'controllers.handleDataOnClick(Delete) was called. JSON:' + l_json);
+	        var l_defer = self.callRemote("saveControllerData", l_json);  // @ web_rooms
+			l_defer.addCallback(cb_handleDataOnClick);
+			l_defer.addErrback(eb_handleDataOnClick);
+			break;
+		default:
+			Divmod.debug('---', 'controllers.handleDataOnClick(Default) was called. l_ix:' + l_ix);
+			break;			
+		}
+
         // return false stops the resetting of the server.
         return false;
-    },
-
-    // ============================================================================
-    /**
-     * Pushed from the server. fill in the table and wait for an event to happen (doHandleOnClick).
-     */
-    function displayControllerButtons(self, p_json) {
-        Divmod.debug('---', 'controllers.displayControllerButtons() was called. ');
-        controllersObj = JSON.parse(p_json);
-        var l_tab = buildTable(self, controllersObj, '');
-        self.nodeById('ControllerTableDiv').innerHTML = l_tab;
     }
 );
-
 //### END DBK

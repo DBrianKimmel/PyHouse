@@ -13,54 +13,25 @@
        </div>
     </div>
     <div id='ControllerEntryDiv'>
-       <h2>Enter data (or Delete)</h2>
-        <form action="post">
-            <athena:handler event = "onsubmit" handler = "doHandleSubmit" />
-            <table style = 'Width: 100%;' border="">
-                <!-- Basic -->
-                <tr>
-                    <td>Name</td><td><input type='text' id='Name' /></td>
-                </tr><tr>
-                    <td>Key</td><td><input type='text' id='Key' disabled='disabled' /></td>
-                </tr><tr>
-                    <td>Active</td><td><input type='text' id='Active' /></td>
-                </tr><tr>
-                    <td>Type</td><td><input type='text' id='Type' /></td>
-                </tr><tr>
-                    <td>Family</td><td><input type='text' id='Family' /></td>
-                </tr><tr>
-                    <td>Dimmable</td><td><input type='text' id='Dimmable' /></td>
-                </tr><tr>
-                    <td>Room</td><td><input type='text' id='RoomName' /></td>
-                </tr><tr>
-                    <td>Coords</td><td><input type='text' id='Coords' /></td>
-                </tr><tr>
-                    <td>Comment</td><td><input type='text' id='Comment' /></td>
-                </tr>
-                <!-- Controller -->
-                <tr>
-                    <td>Interface</td><td><input type='text' id='Interface' /></td>
-                </tr><tr>
-                    <td>Port</td><td><input type='text' id='Port' /></td>
-                </tr>
-            </table>
-            <input type="submit" name='Change' value='Change' />
-            <input type="submit" name='Delete' value='Delete' />
-            <input type="submit" name='Back' value='Back' />
-        </form>
+        <h2>Enter data (or Delete)</h2>
+		<table id='ControllerEntryTable' style = 'Width: 100%;'>
+		    <tr><td>Name</td><td><input type='text' id='Name' /></td></tr>
+		    <tr><td>Key</td><td><input type='text' id='Key' disabled='disabled' /></td>
+                <td><input type="text" id='UUID' size='48' disabled="disabled" /></td></tr>
+		    <tr id='ActiveRow'><td>Active</td><td><div id='ActiveDiv' /></td></tr>
+		    <tr><td>Type</td><td><input type='text' id='Type' /></td></tr>
+		    <tr><td>Family</td><td><input type='text' id='Family' /></td></tr>
+		    <tr id='DimmableRow'><td>Dimmable</td><td><input type='text' id='Dimmable' /></td></tr>
+		    <tr id='RoomNameRow'><td>Room</td><td><div id='RoomNameDiv' /></td></tr>
+		    <tr><td>Coords</td><td><input type='text' id='Coords' /></td></tr>
+		    <tr><td>Comment</td><td><input type='text' id='Comment' /></td></tr>
+            <tr id='InterfaceRow'><td>Interface</td><td><input type='text' id='Interface' /></td></tr>
+            <tr id='PortRow'><td>Port</td><td><input type='text' id='Port' /></td></tr>
+            <tr id='InsteonAddressRow'><td>InsteonAddress</td><td><input type='text' id='InsteonAddress' /></td></tr>
+		</table>
+        <div id='ControllerEntryButtonsDiv'>
+        </div>
     </div>
 </div>
 <!--
-    ret = ret + '<form method="post" action="_submit!!post" enctype="multipart/form-data">\n';
-    ret = ret + '  Name: <input type="text" name="Name" value="test_light2" />\n';
-    ret = ret + '  Address: <input type="text" name="Address" value="CC:11:22" /><br />\n';
-    ret = ret + '  Family: <input type="text" name="Family" value="Insteon" /><br />\n';
-    ret = ret + '  Type: <input type="text" name="Type" value="WSLD" /><br />\n';
-    ret = ret + '  <input type="hidden" name="Controller" value="False" />\n';
-    ret = ret + '  <input type="hidden" name="Dimmable" value="False" />\n';
-    ret = ret + '  <input type="hidden" name="Coords" value="0,0" />\n';
-    ret = ret + '  <input type="hidden" name="Master" value="False" />\n';
-    ret = ret + '  <input type="hidden" name="CurLevel" value="0" />\n';
-    ret = ret + '  <input type="submit" name="post_btn" value="AddLight" />\n';
-    ret = ret + '</form>\n';
 ### END DBK -->

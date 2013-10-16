@@ -87,14 +87,13 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 			break;
 		default:
 			// We should never get here
-			//Divmod.debug('---', 'rootMenu.doHandleOnClick was called for default.');
+			Divmod.debug('---', 'rootMenu.doHandleOnClick was called for default.');
 			break;
 		}
-		//this.hideRootMenu(self);
 	},
 	
 	function doRootQuit(self, p1, p2) {
-		//Divmod.debug('---', 'rootMenu.doRootQuit was called. ');
+		Divmod.debug('---', 'rootMenu.doRootQuit was called. ');
 		console.log("rm_rq %O", self);
 		console.log("rm_rq p1 %O", p1);
 		console.log("rm_rq p2 %O", p2);

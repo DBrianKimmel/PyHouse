@@ -134,6 +134,7 @@ class ScheduleXML(xml_tools.ConfigTools):
             for l_entry in l_list:
                 l_schedule_obj = ScheduleData()
                 self.extract_schedule_xml(l_entry, l_schedule_obj)
+                l_schedule_obj.Key = l_count  # Renumber
                 l_dict[l_count] = l_schedule_obj
                 l_count += 1
         except AttributeError:
@@ -322,7 +323,8 @@ class ScheduleUtility(ScheduleExecution):
             #    continue
             l_time_sch = self._extract_time(l_schedule_obj.Time)
             if g_debug >= 7:
-                print "schedule.get_next_sched() - Schedule  SlotName: {0:}, Light: {1:}, Level: {2:}, Time: {3:}".format(l_schedule_obj.Name, l_schedule_obj.LightName, l_schedule_obj.Level, l_time_sch)
+                print "schedule.get_next_sched() - Schedule  SlotName: {0:}, Light: {1:}, Level: {2:}, Time: {3:}".format(l_schedule_obj.Name, l_schedule_obj.LightName,
+                                                                                                                           l_schedule_obj.Level, l_time_sch)
             # now see if this is 1) part of a chain -or- 2) an earlier schedule
             l_diff = self._make_delta(l_time_sch).total_seconds() - self._make_delta(l_time_now).total_seconds()
             if l_diff < 0:
@@ -401,8 +403,10 @@ class API(ScheduleUtility, ScheduleXML):
         """Update the schedule as updated by the web server.
         Take one schedule entry and insert it into the Schedules data.
         """
-        if g_debug >= 3:
+        if g_debug >= 0:
             print 'schedule.API.Update({0:}'.format(p_entry)
+        l_type = p_entry.Type
+        l_delete = p_entry.DeleteFlag
         l_obj = ScheduleData()
         l_obj.Name = p_entry.Name
         l_obj.Active = p_entry.Active
@@ -414,8 +418,11 @@ class API(ScheduleUtility, ScheduleXML):
         l_obj.Rate = p_entry.Rate
         l_obj.RoomName = p_entry.RoomName
         l_obj.Time = p_entry.Time
-        l_obj.Type = p_entry.Type
+        l_obj.Type = l_type
         l_obj.UUID = p_entry.UUID
-        self.m_house_obj.Schedules[l_obj.Key] = l_obj  # update schedule entry within a house
+        if l_delete:
+            del self.m_house_obj.Schedules[l_obj.Key]  # update Schedule entry within a house
+        else:
+            self.m_house_obj.Schedules[l_obj.Key] = l_obj  # update schedule entry within a house
 
 # ## END DBK

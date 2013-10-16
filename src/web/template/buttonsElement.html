@@ -6,29 +6,27 @@
     nevow:render = 'liveElement'
     class = "Buttons"
     id = 'ButtonsDiv'
-    style = "background-color: #a2f2f2;">
+    style = "background-color: #d2f2d2;">
     <div id='ButtonButtonsDiv'>
        <h2>Select a Button (or Add):</h2>
        <div id='ButtonTableDiv'>
        </div>
     </div>
     <div id='ButtonEntryDiv'>
-       <h2>Enter data (or Delete)</h2>
-        <form action="post">
-            <athena:handler event = "onsubmit" handler = "doHandleSubmit" />
-            <table style = 'Width: 100%;' border="">
-                <tr>
-                    <td>Name</td><td><input type='text' id='Name' /></td>
-                </tr><tr>
-                    <td>Key</td><td><input type='text' id='Key' /></td>
-                </tr><tr>
-                    <td>Active</td><td><input type='text' id='Active' /></td>
-                </tr>
-            </table>
-            <input type="submit" name='Change' value='Change' />
-            <input type="submit" name='Delete' value='Delete' />
-            <input type="submit" name='Back' value='Back' />
-        </form>
+        <h2>Enter data (or Delete)</h2>
+		<table  id='ButtonEntryTable' style = 'Width: 100%;'>
+            <tr><td>Name</td><td><input type='text' id='Name' /></td></tr>
+            <tr><td>Key</td><td><input type='text' id='Key' disabled='disabled' /></td>
+                <td><input type="text" id='UUID' size='48' disabled="disabled" /></td></tr>
+            <tr id='ActiveRow'><td>Active</td><td><div id='ActiveDiv' /></td></tr>
+            <tr><td>Type</td><td><input type='text' id='Type' /></td></tr>
+            <tr><td>Family</td><td><input type='text' id='Family' /></td></tr>
+            <tr id='RoomNameRow'><td>Room</td><td><div id='RoomNameDiv' /></td></tr>
+            <tr><td>Coords</td><td><input type='text' id='Coords' /></td></tr>
+            <tr><td>Comment</td><td><input type='text' id='Comment' /></td></tr>
+		</table>
+        <div id='ButtonEntryButtonsDiv'>
+        </div>
     </div>
 </div>
 <!--

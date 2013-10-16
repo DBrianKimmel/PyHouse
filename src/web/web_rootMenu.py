@@ -11,8 +11,6 @@ from nevow import loaders
 from nevow import athena
 
 # Import PyMh files and modules.
-from src.web import web_utils
-
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
