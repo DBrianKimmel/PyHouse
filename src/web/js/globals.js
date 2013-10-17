@@ -37,7 +37,9 @@ globals = {
 	workspace : null,
 
 	House : {},
+	Interface : {},
 	User : {},
+	Valid : {},
 
 	__init__ : function() {
 		globals.appLoaded = false;
@@ -565,6 +567,19 @@ function buildLightSelectWidget(p_id, p_checked) {
 		l_list[ix] = l_obj[ix].Name;
 	return buildSelectWidget(p_id, l_list, p_checked);
 }
+function buildFamilySelectWidget(p_id, p_checked) {
+	return buildSelectWidget(p_id, globals.Valid.Families, p_checked)
+}
+/**
+ * Build a valid select widget
+ */
+function buildValidSelectWidget(p_id, p_list, p_checked) {
+	l_list = globals.Valid[p_list];
+	Divmod.debug('---', 'globals.buildValidSelectWidget() was called. Id=' + p_id + '  Checked=' + p_checked + '  List=' + l_list);
+	var l_html = '';
+	l_html += buildSelectWidget(p_id, l_list, p_checked)
+	return l_html;
+}
 
 /**
  * Build a slider widget
@@ -591,12 +606,18 @@ function fetchLevel(p_name) {
 /**
  * Build a text widget
  */
-function buildTextWidget(p_id, p_value) {
+function buildTextWidget(p_id, p_value, /* optional */ p_options) {
 	var l_html = '';
-	l_html += "<input type='text' id='" + p_id + "' >";
+	var l_options = p_options;
+	if (l_options === undefined)
+		l_options = '';
+	l_html += "<input type='text' id='" + p_id + "' size='40' value='" + p_value + "' ";
+	if (l_options.toLowerCase().indexOf('disabled') === -1)
+		l_html += "disabled='disabled' ";
+	l_html += " >\n"
 	return l_html;
 }
-function fetchText(p_id) {
+function fetchTextWidget(p_id) {
 	var l_data = document.getElementById(p_id).value;
 	return l_data;
 }

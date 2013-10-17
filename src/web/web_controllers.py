@@ -12,6 +12,7 @@ from nevow import athena
 
 # Import PyMh files and modules.
 from src.web import web_utils
+from src.drivers import interface
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -50,6 +51,19 @@ class ControllersElement(athena.LiveElement):
         l_json = web_utils.JsonUnicode().encode_json(l_house)
         if g_debug >= 3:
             print "web_controllers.ControllersElement.getControllerData() - JSON:", l_json
+        return unicode(l_json)
+
+    @athena.expose
+    def getInterfaceData(self):
+        """ A JS request for interface information has been received from the client.
+        """
+        l_interfaces = interface.VALID_INTERFACES
+        l_obj = {}
+        for l_int in l_interfaces:
+            l_name = l_int + 'Data'
+        l_json = web_utils.JsonUnicode().encode_json(l_obj)
+        if g_debug >= 3:
+            print "web_controllers.ControllersElement.getInterfaceData() - JSON:", l_json
         return unicode(l_json)
 
     @athena.expose

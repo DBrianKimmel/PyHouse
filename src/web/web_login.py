@@ -21,6 +21,10 @@ from nevow import athena
 
 # Import PyMh files and modules.
 from src.web import web_utils
+from src.families import VALID_FAMILIES
+from src.drivers import VALID_INTERFACES
+from src.scheduling import VALID_SCHEDULING_TYPES
+from src.lights import VALID_LIGHTS_TYPE
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -125,5 +129,18 @@ class LoginElement(athena.LiveElement):
             print "web_login.validate_user() "
             print "    m_login_obj", self.m_login_obj
         return self.m_login_obj
+
+    @athena.expose
+    def getValidLists(self):
+        """ A JS request for interface information has been received from the client.
+        """
+        l_interfaces = VALID_INTERFACES
+        l_obj = dict(Drivers = l_interfaces, Families = VALID_FAMILIES,
+                     Lights = VALID_LIGHTS_TYPE, Scheduling = VALID_SCHEDULING_TYPES)
+        l_json = web_utils.JsonUnicode().encode_json(l_obj)
+        if g_debug >= 4:
+            print "web_login.getValidLists() - JSON:", l_json
+        return unicode(l_json)
+
 
 # ## END DBK

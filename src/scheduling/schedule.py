@@ -39,6 +39,7 @@ from src.lights import lighting
 from src.utils import xml_tools
 from src.utils import tools
 from src.scheduling import sunrisesunset
+from src.scheduling import VALID_SCHEDULING_TYPES
 
 g_debug = 0
 # 0 = off
@@ -52,9 +53,6 @@ g_debug = 0
 g_logger = None
 
 callLater = reactor.callLater
-
-# A list of valid schedule types.
-VALID_TYPES = ['Device', 'Scene']
 
 class ScheduleData(object):
 

@@ -22,7 +22,7 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
         login.LoginWidget.upcall(self, "__init__", node);
     },
 
-    
+    // ============================================================================
     /**
      * Place the widget in the workspace.
      * 
@@ -30,8 +30,8 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
      */
 	function ready(self) {
 		function cb_widgetready(res) {
-			// do whatever init needs here, 'show' for the widget is handled in superclass
-			self.showLoginSection();
+			self.showLoggingInDiv();
+			self.fetchValidLists();
 		}
 		//Divmod.debug('---', 'login.ready() was called. ');
 		var uris = collectIMG_src(self.node, null);
@@ -39,8 +39,36 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 		l_defer.addCallback(cb_widgetready);
 		return l_defer;
 	},
+	function hideLoggingInDiv(self) {
+		self.nodeById('LoggingInDiv').style.display = "none";
+	},
+	function showLoggingInDiv(self) {
+		//Divmod.debug('---', 'login.showLoggingInDiv() was called. ');
+		self.nodeById('LoggingInDiv').style.display = 'block';
+		self.nodeById('LoggedInDiv').style.display = 'none';
+	},
+	function hideLoggedInDiv(self) {
+		self.nodeById('LoggedInDiv').style.display = "none";
+	},
+	function showLoggedInDiv(self) {
+		self.nodeById('LoggedInDiv').style.display = "block";
+	},
 
-
+    // ============================================================================
+	/**
+	 * Fetch various valid things from server.
+	 */
+	function fetchValidLists(self) {
+		function cb_fetchValidLists(p_json) {
+    		globals.Valid = JSON.parse(p_json);
+			//Divmod.debug('---', 'login.cb+fetchValidLists() was called. JSON = ' + p_json);
+		}
+		//Divmod.debug('---', 'login.fetchValidLists() was called. ');
+        var l_defer = self.callRemote("getValidLists");  // @ web_login
+		l_defer.addCallback(cb_fetchValidLists);
+	},
+	
+	// ============================================================================
 	/**
 	 * This is an event handler from the LogIn key in the login form.
 	 * 
@@ -78,20 +106,7 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
         var l_defer = self.callRemote("doLogin", l_json);  // @ web_login
 		l_defer.addCallback(cb_doLoginSubmit);
 		l_defer.addErrback(eb_doLoginSubmit);
-		// return false stops the resetting of the server.
-        return false;
-	},
-
-	function showLoginSection(self) {
-		self.node.style.display = 'block';
-		self.nodeById('LoggedInDiv').style.display = 'none';
-	},
-	function hideLoggingInDiv(self) {
-		self.nodeById('LoggingInDiv').style.display = "none";
-	},
-	function showLoggedInDiv(self) {
-		self.nodeById('LoggedInDiv').style.display = "block";
+        return false;  // Stops the resetting of the server.
 	}
 );
-
 //### END DBK

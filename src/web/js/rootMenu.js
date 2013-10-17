@@ -20,7 +20,7 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
         rootMenu.RootMenuWidget.upcall(self, "__init__", node);
     },
 
-    
+	// ============================================================================
     /**
      * Place the widget in the workspace.
      * 
@@ -28,7 +28,6 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
      */
 	function ready(self) {
 		function cb_widgetready(res) {
-			// do whatever init needs here, show for the widget is handled in superclass
 			//Divmod.debug('---', 'rootMenu.cb_widgetready() was called. - res=' + res);
 			self.hideWidget();
 		}
@@ -39,6 +38,7 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 		return l_defer;
 	},
 
+	// ============================================================================
 	/**
 	 * Event handler for the root menu buttons.
 	 * 
@@ -46,43 +46,42 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 	 * @param p_node is  the node of the button that was clicked.
 	 */
 	function doHandleOnClick(self, p_node) {  // from html handler onSubmit
-		//console.log("rmb    %O", self);
-		//console.log("rmb p_node", p_node);
 		var l_key = p_node.name;
 		//Divmod.debug('---', 'rootMenu.doHandleOnClick was called. ' + l_key);
+		//console.log("rmb p_node", p_node);
 		switch (l_key) {
 		case 'Select':
-			//Divmod.debug('---', 'rootMenu.doHandleOnClick was called for HouseSelect.');
+			Divmod.debug('---', 'rootMenu.doHandleOnClick(Select) was called.');
+			self.hideWidget();
 			var l_node = findWidgetByClass('HouseSelect');
-			l_node.showSelect(self);
-			self.hideWidget(self);
+			l_node.startWidget();
 			break;
 		case 'House':
 			//Divmod.debug('---', 'rootMenu.doHandleOnClick was called for House.');
 			var l_node = findWidgetByClass('House');
-			l_node.showSelect(self);
-			self.hideWidget(self);
+			l_node.showWidget();
+			self.hideWidget();
 			break;
 		case 'Web':
 			//Divmod.debug('---', 'rootMenu.doHandleOnClick was called for Web.');
 			var l_node = findWidgetByClass('Web');
-			l_node.showSelect(self);
-			self.hideWidget(self);
+			l_node.showWidget();
+			self.hideWidget();
 			break;
 		case 'Logs':
 			//Divmod.debug('---', 'rootMenu.doHandleOnClick was called for Logs.');
 			var l_node = findWidgetByClass('Logs');
-			l_node.showSelect(self);
-			self.hideWidget(self);
+			l_node.showWidget();
+			self.hideWidget();
 			break;
 		case 'Quit':
 			// Quit the browser by logging out
-			Divmod.debug('---', 'rootMenu.doHandleOnClick was called for Quit.');
-			self.doRootQuit(self, p_node);
+			//Divmod.debug('---', 'rootMenu.doHandleOnClick was called for Quit.');
+			self.doRootQuit(p_node);
 			break;
 		case 'Reload':
 			// Force a save and reload of all XML data
-			Divmod.debug('---', 'rootMenu.doHandleOnClick was called for Reload.');
+			//Divmod.debug('---', 'rootMenu.doHandleOnClick was called for Reload.');
 			self.callRemote("doRootMenuReload", '');
 			break;
 		default:
@@ -92,27 +91,18 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 		}
 	},
 	
-	function doRootQuit(self, p1, p2) {
+	function doRootQuit(self, p_node) {
 		Divmod.debug('---', 'rootMenu.doRootQuit was called. ');
-		console.log("rm_rq %O", self);
-		console.log("rm_rq p1 %O", p1);
-		console.log("rm_rq p2 %O", p2);
+		//console.log("rm_rq Node %O", p_node);
 		self.callRemote("doRootMenuQuit", '');
 		globals.User.Fullname = 'Nobody';
 		globals.User.ID = null;
 		globals.User.LoggedIn = false;
 		globals.User.Password = null;
+		self.hideWidget();
 		var l_node = findWidgetByClass('Login');
-		l_node.showSelect(self);
-	},
-
-	function doRootReload(self, p1, p2) {
-		//Divmod.debug('---', 'rootMenu.doRootReload was called. ');
-		console.log("rm_rr %O", self);
-		console.log("rm_rr p1 %O", p1);
-		console.log("rm_rr p2 %O", p2);
-		self.callRemote("doRootMenuReload");
+		l_node.showWidget();
+		l_node.showLoggingInDiv();
 	}
 );
-
 //### END DBK

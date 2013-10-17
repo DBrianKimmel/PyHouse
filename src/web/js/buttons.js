@@ -78,25 +78,32 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 	/**
 	 * Fill in the button entry screen with all of the data for this button.
 	 */
-	function fillEntry(self, p_entry) {
-		var sched = arguments[1];
-		//Divmod.debug('---', 'buttons.fillEntry() was called. ' + sched);
-		self.nodeById('Name').value = sched.Name;
-		self.nodeById('Key').value = sched.Key;
-		self.nodeById('ActiveDiv').innerHTML = buildTrueFalseWidget('LightsActive', p_obj.Active);
-		self.nodeById('Type').value = sched.Type;  // s/b select box of valid types
-		self.nodeById('RoomNameDiv').innerHTML = buildRoomSelectWidget('LightRoomName', p_obj.RoomName);
-		self.nodeById('UUID').value = p_obj.UUID;
+	function fillEntry(self, p_obj) {
+		//Divmod.debug('---', 'buttons.fillEntry() was called. ' + p_obj);
+		self.nodeById('NameDiv').innerHTML = buildTextWidget('ButtonName', p_obj.Name);
+		self.nodeById('KeyDiv').innerHTML = buildTextWidget('ButtonKey', p_obj.Key, 'disabled');
+		self.nodeById('ActiveDiv').innerHTML = buildTrueFalseWidget('ButtonActive', p_obj.Active);
+		self.nodeById('CommentDiv').innerHTML = buildTextWidget('ButtonComment', p_obj.Comment);
+		self.nodeById('CoordsDiv').innerHTML = buildTextWidget('ButtonCoords', p_obj.Coords);
+		self.nodeById('FamilyDiv').innerHTML = buildTextWidget('ButtonFamily', p_obj.Family);
+		self.nodeById('RoomNameDiv').innerHTML = buildRoomSelectWidget('ButtonRoomName', p_obj.RoomName);
+		self.nodeById('TypeDiv').innerHTML = buildTextWidget('ButtonType', p_obj.Type);  // s/b select box of valid types
+		self.nodeById('UUIDDiv').innerHTML = buildTextWidget('ButtonUUID', p_obj.UUID, 'disabled');
 		self.nodeById('ButtonEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick');
 	},
 	function fetchEntry(self) {
         var l_data = {
-			Name : self.nodeById('Name').value,
-			Key : self.nodeById('Key').value,
-			Active : self.nodeById('Active').value,
-			Type : self.nodeById('Type').value,
-			RoomName : self.nodeById('RoomName').value,
-			HouseIx : globals.House.HouseIx
+			Name : fetchTextWidget('ButtonName'),
+			Key : fetchTextWidget('ButtonKey'),
+			Active : fetchTrueFalse('ButtonActive'),
+			Comment : fetchTextWidget('ButtonComment'),
+			Coords : fetchTextWidget('ButtonCoords'),
+			Family : fetchTextWidget('ButtonFamily'),
+			RoomName : fetchSelectWidget('ButtonRoomName'),
+			Type : fetchTextWidget('ButtonType'),
+			UUID : fetchTextWidget('ButtonUUID'),
+			HouseIx : globals.House.HouseIx,
+			Delete : false
             }
 		return l_data;
 	},
@@ -118,7 +125,7 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 			// One of the button buttons.
 			var l_obj = globals.House.HouseObj.Buttons[l_ix];
 			//Divmod.debug('---', 'buttons.handleMenuOnClick(1) was called. ' + l_ix + ' ' + l_name);
-			console.log("buttons.handleMenuOnClick() - l_obj = %O", l_obj);
+			//console.log("buttons.handleMenuOnClick() - l_obj = %O", l_obj);
 			self.showEntry();
 			self.hideButtons();
 			self.fillEntry(l_obj);
@@ -150,12 +157,33 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 		function eb_handleDataOnClick(res){
 			//Divmod.debug('---', 'button.eb_handleDataOnClick() was called. res=' + res);
 		}
-    	var l_json = JSON.stringify(self.fetchEntry(self));
-		//Divmod.debug('---', 'scedule.handleDataOnClick(1) was called. json:' + l_json);
-        var l_defer = self.callRemote("doButtonSubmit", l_json);  // @ web_button
-		l_defer.addCallback(cb_handleDataOnClick);
-		l_defer.addErrback(eb_handleDataOnClick);
-		// return false stops the resetting of the server.
-        return false;
+		var l_ix = p_node.name;
+		switch(l_ix) {
+		case '10003':  // Change Button
+	    	var l_json = JSON.stringify(self.fetchEntry(self));
+			//Divmod.debug('---', 'buttons.handleDataOnClick(1) was called. json:' + l_json);
+	        var l_defer = self.callRemote("saveButtonData", l_json);  // @ web_button
+			l_defer.addCallback(cb_handleDataOnClick);
+			l_defer.addErrback(eb_handleDataOnClick);
+			break;
+		case '10002':  // Back button
+			//Divmod.debug('---', 'buttonss.handleDataOnClick(Back) was called.  ');
+			self.hideEntry();
+			self.showButtons();
+			break;
+		case '10004':  // Delete button
+			var l_obj = self.fetchEntry();
+			l_obj['Delete'] = true;
+	    	var l_json = JSON.stringify(l_obj);
+			//Divmod.debug('---', 'buttons.handleDataOnClick(Delete) was called. JSON:' + l_json);
+	        var l_defer = self.callRemote("saveButtonData", l_json);  // @ web_rooms
+			l_defer.addCallback(cb_handleDataOnClick);
+			l_defer.addErrback(eb_handleDataOnClick);
+			break;
+		default:
+			Divmod.debug('---', 'buttons.handleDataOnClick(Default) was called. l_ix:' + l_ix);
+			break;			
+		}
+        return false;  // false stops the chain.
 	}
 );

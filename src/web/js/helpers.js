@@ -91,7 +91,7 @@ Nevow.Athena.Widget.subclass(helpers, 'Widget').methods(
 					p_readyfunc = isready;
 				d3.addCallback(p_readyfunc);
 				d3.addErrback(function(res) {  // widget.ready failed
-					self.eb_genericErrback(res + ' widget.reay failed for: ' + p_name );
+					self.eb_genericErrback(res + ' widget.ready failed for: ' + p_name );
 				}
 				);
 			}  // childAdded

@@ -20,6 +20,7 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
         houseSelect.HouseSelectWidget.upcall(self, "__init__", node);
     },
 
+	// ============================================================================
     /**
      * Place the widget in the workspace.
      * 
@@ -34,7 +35,6 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 		l_defer.addCallback(cb_widgetready);
 		return l_defer;
 	},
-
 	function hideSelectButtons(self) {
 		self.nodeById('HouseSelectButtonsDiv').style.display = 'none';	
 	},
@@ -48,6 +48,7 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 		self.nodeById('HouseSelectedDiv').style.display = 'block';	
 	},
 	
+	// ============================================================================
 	/**
 	 * Called from the root menu screen when the house select button was clicked.
 	 * 
@@ -57,10 +58,10 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 	 * @param self is the house select widget
 	 * @param p1 is the parent widget (rootmenuWidget)
 	 */
-	function showSelect(self, p1) {
+	function startWidget(self) {
 		function cb_getHousesInfo(p_json) {
-			//Divmod.debug('---', 'houseSelect.showSelect.cb_getHousesInfo() was called.');
-			//console.log("ss.cb   p1 %O", p_json);
+			//Divmod.debug('---', 'houseSelect.startWidget.cb_getHousesInfo() was called.');
+			//console.log("startWidget.cb   p1 %O", p_json);
 			var l_obj = JSON.parse(p_json);
 			var l_tab = buildTable(l_obj, 'handleMenuOnClick');
 			self.showSelectButtons();
@@ -70,9 +71,7 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 		function eb_getHousesInfo(res) {
 			Divmod.debug('---', 'houseSelect.eb_getHousesInfo() was called. ERROR = ' + res);
 		}
-		//Divmod.debug('---', 'houseSelect.showSelect() was called.');
-		//console.log("showSelect self %O", self);
-		//console.log("showSelect   p1 %O", p1);
+		//Divmod.debug('---', 'houseSelect.startWidget() was called.');
 		self.showWidget()
         var l_defer = self.callRemote("getHousesToSelect", '');  // call server @ web_houseSelect.py
 		l_defer.addCallback(cb_getHousesInfo);

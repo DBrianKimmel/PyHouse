@@ -12,15 +12,12 @@ from src.utils import xml_tools
 
 g_debug = 0
 
+"""Note:
+There must be a 'Data' class for each valid interface.
+The class name must be the interface name + 'Data'.
+Be careful since the name will be generated and is case sensitive.
+"""
 VALID_INTERFACES = ['Serial', 'USB', 'Ethernet']
-# SERIAL_ATTRS = {'BaudRate': self.get_text_from_xml,
-#                'ByteSize': get_int_from_xml,
-#                'DsrDtr': get_bool_from_xml,
-#                'Parity': get_text_from_xml,
-#                'RtsCts': get_bool_from_xml,
-#                'StopBits': get_float_from_xml,
-#                'Timeout':get_float_from_xml,
-#                'XonXoff': get_bool_from_xml}
 
 
 class SerialData(object):

@@ -87,32 +87,32 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 	 */
 	function fillEntry(self, p_obj) {
 		//Divmod.debug('---', 'lights.fillEntry(1) was called.  Self:' + self);
-		console.log("lights.fillEntry() - Obj = %O", p_obj);
-		self.nodeById('Name').value = p_obj.Name;
-		self.nodeById('Key').value = p_obj.Key;
-		self.nodeById('ActiveDiv').innerHTML = buildTrueFalseWidget('LightsActive', p_obj.Active);
-		self.nodeById('Comment').value = p_obj.Comment;
-		self.nodeById('Coords').value = p_obj.Coords;
-		self.nodeById('Dimmable').innerHTML = buildTrueFalseWidget('LightDimmable', p_obj.Dimmable);
-		self.nodeById('Family').value = p_obj.Family;
+		//console.log("lights.fillEntry() - Obj = %O", p_obj);
+        self.nodeById('NameDiv').innerHTML = buildTextWidget('LightName', p_obj.Name);
+        self.nodeById('KeyDiv').innerHTML = buildTextWidget('LightKey', p_obj.Key, 'disabled');
+		self.nodeById('ActiveDiv').innerHTML = buildTrueFalseWidget('LightActive', p_obj.Active);
+		self.nodeById('CommentDiv').innerHTML = buildTextWidget('LightComment', p_obj.Comment);
+		self.nodeById('CoordsDiv').innerHTML = buildTextWidget('LightCoords', p_obj.Coords);
+		self.nodeById('DimmableDiv').innerHTML = buildTrueFalseWidget('LightDimmable', p_obj.Dimmable);
+		self.nodeById('FamilyDiv').innerHTML = buildFamilySelectWidget('LightFamily', 'Families', p_obj.Family);
 		self.nodeById('RoomNameDiv').innerHTML = buildRoomSelectWidget('LightRoomName', p_obj.RoomName);
-		self.nodeById('Type').value = p_obj.Type;
-		self.nodeById('UUID').value = p_obj.UUID;
+		self.nodeById('TypeDiv').innerHTML = buildTextWidget('LightType', p_obj.Type, 'disabled');
+		self.nodeById('UUIDDiv').innerHTML = buildTextWidget('LightUUID', p_obj.UUID, 'disabled');
 		self.nodeById('LightEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick');
 	},
 	function fetchEntry(self) {
 		//Divmod.debug('---', 'lights.fetchEntry() was called. ');
         var l_scheduleData = {
-			Name : self.nodeById('Name').value,
-			Key : self.nodeById('Key').value,
-			Active : fetchTrueFalse('SchedActive'),
-			Comment : self.nodeById('Comment'),
-			Coords : self.nodeById('Coords'),
+            Name : fetchTextWidget('LightName'),
+            Key : fetchTextWidget('LightKey'),
+			Active : fetchTrueFalse('LightActive'),
+			Comment : fetchTextWidget('LightComment'),
+			Coords : fetchTextWidget('LightCoords'),
 			Dimmable : fetchTrueFalse('LightDimmable'),
-			Family : self.nodeById('Family'),
+			Family : fetchTextWidget('LightFamily'),
 			RoomName : fetchSelectWidget('LightRoomName'),
-			Type : self.nodeById('Type').value,
-			UUID : self.nodeById('UUID').value,
+			Type : fetchTextWidget('LightType'),
+			UUID : fetchTextWidget('LightUUID'),
 			HouseIx : globals.House.HouseIx,
 			Delete : false
             }
@@ -215,8 +215,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 			Divmod.debug('---', 'lights.handleDataOnClick(Default) was called. l_ix:' + l_ix);
 			break;			
 		}
-		// return false stops the resetting of the server.
-        return false;
+        return false;  // false stops the chain.
 	}
 );
 //### END DBK

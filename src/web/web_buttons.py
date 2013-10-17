@@ -64,7 +64,7 @@ class ButtonsElement(athena.LiveElement):
         l_json = web_utils.JsonUnicode().decode_json(p_json)
         l_ix = int(l_json['HouseIx'])
         if g_debug >= 4:
-            print "web_buttons.ButtonsElement.doButtonSubmit() - JSON:", l_json
+            print "web_buttons.ButtonsElement.saveButtonData() - JSON:", l_json
         l_obj = lighting_buttons.ButtonData()
         l_obj.Name = l_json['Name']
         l_obj.Active = l_json['Active']

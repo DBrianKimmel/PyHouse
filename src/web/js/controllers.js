@@ -35,6 +35,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
             // do whatever initialization needs here, 'show' for the widget is handled in superclass
             //Divmod.debug('---', 'controllers.cb_widgready() was called.');
             self.hideWidget();
+            self.fetchInterfaceData();
         }
         //Divmod.debug('---', 'controllers.ready() was called. ' + self);
         var uris = collectIMG_src(self.node, null);
@@ -42,7 +43,6 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
         l_defer.addCallback(cb_widgetready);
         return l_defer;
     },
-    
     function showWidget(self) {
         self.node.style.display = 'block';
         self.showButtons(self);
@@ -60,6 +60,20 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
     },
     function showEntry(self) {
         self.nodeById('ControllerEntryDiv').style.display = 'block';        
+    },
+    
+    // ============================================================================
+    /**
+     * Get interface info from the server.  This data can never change during a server run.
+     */
+    function fetchInterfaceData(self) {
+    	function cb_fetchInterfaceData(p_json) {
+    		globals.Interface.Obj = JSON.parse(p_json);
+            //Divmod.debug('---', 'controllers.cb_fetchInterfaceData() was called.  JSON = ' + p_json);
+    	}
+        var l_defer = self.callRemote("getInterfaceData");  // call server @ web_controllers.py
+        l_defer.addCallback(cb_fetchInterfaceData);
+		return false;
     },
 
     // ============================================================================
@@ -125,30 +139,30 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
      */
     function fillEntry(self, p_obj) {
         //Divmod.debug('---', 'controllers.fillEntry() was called. ' + p_obj);
-        self.nodeById('Name').value = p_obj.Name;
-        self.nodeById('Key').value = p_obj.Key;
-		self.nodeById('ActiveDiv').innerHTML = buildTrueFalseWidget('LightsActive', p_obj.Active);
-		self.nodeById('Comment').value = p_obj.Comment;
-		self.nodeById('Coords').value = p_obj.Coords;
-		self.nodeById('Dimmable').innerHTML = buildTrueFalseWidget('LightDimmable', p_obj.Dimmable);
-		self.nodeById('Family').value = p_obj.Family;
-		self.nodeById('RoomNameDiv').innerHTML = buildRoomSelectWidget('LightRoomName', p_obj.RoomName);
-		self.nodeById('Type').value = p_obj.Type;
-		self.nodeById('UUID').value = p_obj.UUID;
+        self.nodeById('NameDiv').innerHTML = buildTextWidget('ControllerName', p_obj.Name);
+        self.nodeById('KeyDiv').innerHTML = buildTextWidget('ControllerKey', p_obj.Key, 'disabled');
+		self.nodeById('ActiveDiv').innerHTML = buildTrueFalseWidget('ControllerActive', p_obj.Active);
+		self.nodeById('CommentDiv').innerHTML = buildTextWidget('ControllerComment', p_obj.Comment);
+		self.nodeById('CoordsDiv').innerHTML = buildTextWidget('ControllerCoords', p_obj.Coords);
+		self.nodeById('DimmableDiv').innerHTML = buildTrueFalseWidget('ControllerDimmable', p_obj.Dimmable);
+		self.nodeById('FamilyDiv').innerHTML = buildTextWidget('ControllerFamily', p_obj.Family);
+		self.nodeById('RoomNameDiv').innerHTML = buildRoomSelectWidget('ControllerRoomName', p_obj.RoomName);
+		self.nodeById('TypeDiv').innerHTML = buildTextWidget('ControllerType', p_obj.Type, 'disabled');
+		self.nodeById('UUIDDiv').innerHTML = buildTextWidget('ControllerUUID', p_obj.UUID, 'disabled');
 		self.nodeById('ControllerEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick');
     },
     function fetchEntry(self) {
         var l_data = {
-            Name : self.nodeById('Name').value,
-            Key : self.nodeById('Key').value,
-			Active : fetchTrueFalse('SchedActive'),
-			Comment : self.nodeById('Comment'),
-			Coords : self.nodeById('Coords'),
-			Dimmable : fetchTrueFalse('LightDimmable'),
-			Family : self.nodeById('Family'),
-			RoomName : fetchSelectWidget('LightRoomName'),
-			Type : self.nodeById('Type').value,
-			UUID : self.nodeById('UUID').value,
+            Name : fetchTextWidget('ControllerName'),
+            Key : fetchTextWidget('ControllerKey'),
+			Active : fetchTrueFalse('ControllerActive'),
+			Comment : fetchTextWidget('ControllerComment'),
+			Coords : fetchTextWidget('ControllerCoords'),
+			Dimmable : fetchTrueFalse('ControllerDimmable'),
+			Family : fetchTextWidget('ControllerFamily'),
+			RoomName : fetchSelectWidget('ControllerRoomName'),
+			Type : fetchTextWidget('ControllerType'),
+			UUID : fetchTextWidget('ControllerUUID'),
 			HouseIx : globals.House.HouseIx,
 			Delete : false
             }
@@ -207,11 +221,9 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
      * Get the possibly changed data and send it to the server.
      */
     function handleDataOnClick(self, p_node) {
-        //Divmod.debug('---', 'controllers.handleDataOnClick() was called. ');
-        //console.log("controllers.handleDataOnClick() - node %O", p_node); 
         function cb_handleDataOnClick(p_json) {
             //Divmod.debug('---', 'controller.cb_handleDataOnClick() was called.');
-            self.showWidget(self);
+            self.showWidget();
         }
         function eb_handleDataOnClick(res){
             Divmod.debug('---', 'login.eb_handleDataOnClick() was called.  ERROR = ' + res);
@@ -220,13 +232,13 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 		switch(l_ix) {
 		case '10003':  // Change Button
 			var l_json = JSON.stringify(self.fetchEntry(self));
-	        Divmod.debug('---', 'controllers.handleDataOnClick(1) was called. json:' + l_json);
+	        //Divmod.debug('---', 'controllers.handleDataOnClick(1) was called. json:' + l_json);
 	        var l_defer = self.callRemote("saveControllerData", l_json);  // @ web_controller
 	        l_defer.addCallback(cb_handleDataOnClick);
 	        l_defer.addErrback(eb_handleDataOnClick);
 			break;
 		case '10002':  // Back button
-			Divmod.debug('---', 'controllers.handleDataOnClick(Back) was called.  ');
+			//Divmod.debug('---', 'controllers.handleDataOnClick(Back) was called.  ');
 			self.hideEntry();
 			self.showButtons();
 			break;
@@ -234,7 +246,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 			var l_obj = self.fetchEntry();
 			l_obj['Delete'] = true;
 	    	var l_json = JSON.stringify(l_obj);
-			Divmod.debug('---', 'controllers.handleDataOnClick(Delete) was called. JSON:' + l_json);
+			//Divmod.debug('---', 'controllers.handleDataOnClick(Delete) was called. JSON:' + l_json);
 	        var l_defer = self.callRemote("saveControllerData", l_json);  // @ web_rooms
 			l_defer.addCallback(cb_handleDataOnClick);
 			l_defer.addErrback(eb_handleDataOnClick);
@@ -243,9 +255,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 			Divmod.debug('---', 'controllers.handleDataOnClick(Default) was called. l_ix:' + l_ix);
 			break;			
 		}
-
-        // return false stops the resetting of the server.
-        return false;
+        return false;  // false stops the chain.
     }
 );
 //### END DBK
