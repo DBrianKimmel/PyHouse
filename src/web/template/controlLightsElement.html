@@ -15,23 +15,12 @@
     <div id='ControlLightEntryDiv'>
         <h2>Select the light level:</h2>
 		<table style = 'Width: 100%;' border="">
-		    <tr>
-		        <td>Name</td><td><input type='text' id='Name' disabled='disabled' /></td>
-            </tr><tr>
-                <td>Key</td><td><input type='text' id='Key' disabled='disabled' /></td>
-                <td><input type="text" id='UUID' size='48' disabled="disabled" /></td>
-		    </tr><tr>
-		        <td>Room</td><td><input type='text' id='RoomName' disabled='disabled' /></td>
-            </tr><tr>
-                <td>Level</td><td><div id='LevelDiv' /></td>
-		    </tr>
+            <tr id='NameRow'><td>Name</td><td><div id='NameDiv'></div></td></tr>
+            <tr id='KeyRow'><td>Key</td><td><div id='KeyDiv'></div></td>
+                <td><div id='UUIDDiv'></div></td></tr>
+		    <tr id='RoomNameRow'><td>Room</td><td><div id='RoomNameDiv' /></td></tr>
+            <tr id='LevelRow'><td>Level</td><td><div id='LevelDiv' /></td></tr>
 		</table>
-        <input type='hidden' id='Active' />
-        <input type='hidden' id='Comment' />
-        <input type='hidden' id='Coords' />
-        <input type='hidden' id='Dimmable' />
-        <input type='hidden' id='Family' />
-        <input type='hidden' id='Type' />
         <div id='ControlLightEntryButtonsDiv'>
         </div>
     </div>

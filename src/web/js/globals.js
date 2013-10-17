@@ -584,23 +584,21 @@ function buildValidSelectWidget(p_id, p_list, p_checked) {
 /**
  * Build a slider widget
  */
-function buildSliderWidget(p_name, p_value) {
+function buildSliderWidget(p_id, p_value) {
 	//Divmod.debug('---', 'globals.buildSliderWidget() called.  Value=' + p_value);
-	var l_html = "<input type='range' min='0' max='100' name='" + p_name + "' id='slider' ";
+	var l_html = "<input type='range' min='0' max='100' id='" + p_id + "' name='slider' ";
 	l_html += "value='" + p_value + "' ";
 	l_html += ">\n";
 	return l_html;
 }
-function buildLevelSlider(p_level) {
+function buildLevelSlider(p_name, p_level) {
 	//Divmod.debug('---', 'globals.buildLevelSlider() called.  Level=' + p_level);
-	var l_html = buildSliderWidget('Level', p_level);
+	var l_html = buildSliderWidget(p_name, p_level);
 	return l_html;
 }
-function fetchLevel(p_name) {
+function fetchLevel(p_id) {
 	//Divmod.debug('---', 'globals.fetchLevel() called.  Name=' + p_name);
-	var l_fields = document.getElementsByName(p_name);
-	l_level = l_fields[0].value;
-	return l_level;
+	return document.getElementById(p_id).value;
 }
 
 /**
@@ -609,10 +607,10 @@ function fetchLevel(p_name) {
 function buildTextWidget(p_id, p_value, /* optional */ p_options) {
 	var l_html = '';
 	var l_options = p_options;
-	if (l_options === undefined)
+	if (p_options === undefined)
 		l_options = '';
 	l_html += "<input type='text' id='" + p_id + "' size='40' value='" + p_value + "' ";
-	if (l_options.toLowerCase().indexOf('disabled') === -1)
+	if (l_options.toLowerCase().indexOf('disable') > -1)
 		l_html += "disabled='disabled' ";
 	l_html += " >\n"
 	return l_html;

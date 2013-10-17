@@ -401,7 +401,7 @@ class API(ScheduleUtility, ScheduleXML):
         """Update the schedule as updated by the web server.
         Take one schedule entry and insert it into the Schedules data.
         """
-        if g_debug >= 0:
+        if g_debug >= 4:
             print 'schedule.API.Update({0:}'.format(p_entry)
         l_type = p_entry.Type
         l_delete = p_entry.DeleteFlag

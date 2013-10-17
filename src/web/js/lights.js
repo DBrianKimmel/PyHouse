@@ -102,7 +102,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 	},
 	function fetchEntry(self) {
 		//Divmod.debug('---', 'lights.fetchEntry() was called. ');
-        var l_scheduleData = {
+        var l_data = {
             Name : fetchTextWidget('LightName'),
             Key : fetchTextWidget('LightKey'),
 			Active : fetchTrueFalse('LightActive'),
@@ -116,7 +116,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 			HouseIx : globals.House.HouseIx,
 			Delete : false
             }
-		return l_scheduleData;
+		return l_data;
 	},
 	function createEntry(self, p_ix) {
 		//Divmod.debug('---', 'lights.createEntry() was called.  Ix: ' + p_ix);
@@ -137,6 +137,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		return l_Data;
 	},
 
+	// ============================================================================
 	/**
 	 * Event handler for light selection buttons.
 	 * 
@@ -175,8 +176,9 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		}
 	},
 	
+	// ============================================================================
 	/**
-	 * Event handler for submit buttons at bottom of entry portion of this widget.
+	 * Event handler for buttons at bottom of the data entry portion of this widget.
 	 * Get the possibly changed data and send it to the server.
 	 */
 	function handleDataOnClick(self, p_node) {

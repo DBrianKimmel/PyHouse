@@ -79,6 +79,8 @@ helpers.Widget.subclass(workspace, 'Workspace').methods(
 				self.attachWidget('controlLights', 'dummy');
 				self.attachWidget('webs', 'dummy');
 				self.attachWidget('logs', 'dummy');
+				//self.attachWidget('house', 'dummy');
+				//self.attachWidget('internet', 'dummy');
 				self.hideWaitRoller();
 			});  // addCallback
 

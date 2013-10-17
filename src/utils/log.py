@@ -38,6 +38,9 @@ class LogData(object):
         l_ret += "Error:{0:};".format(self.Error)
         return l_ret
 
+    def reprJSON(self):
+        return dict(Debug = self.Debug, Error = self.Error)
+
 
 class LoggingUtility(xml_tools.ConfigFile):
 
@@ -106,5 +109,13 @@ class API(LoggingUtility):
         l_xml = self.write_log_xml(self.m_log_data)
         return l_xml
         #logging.shutdown()
+
+    def Update(self, p_entry):
+        if g_debug >= 0:
+            print 'log.API.Update({0:}'.format(p_entry)
+        l_obj = LogData()
+        l_obj.Debug = p_entry.Debug
+        l_obj.Error = p_entry.Error
+        self.m_house_obj.LogData = l_obj  # update schedule entry within a house
 
 # ## END DBK

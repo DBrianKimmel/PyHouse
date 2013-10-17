@@ -21,6 +21,7 @@ from nevow import athena
 
 # Import PyMh files and modules.
 from src.web import web_utils
+#from src.web import web_server
 from src.families import VALID_FAMILIES
 from src.drivers import VALID_INTERFACES
 from src.scheduling import VALID_SCHEDULING_TYPES
@@ -122,6 +123,7 @@ class LoginElement(athena.LiveElement):
             self.m_login_obj.Fullname = 'D. Brian Kimmel'
             self.m_login_obj.LoggedIn = True
             self.m_login_obj.ServerState = web_utils.WS_LOGGED_IN
+            #web_server.API().add_browser(self.m_login_obj)
         else:
             self.m_login_obj.LoggedIn = False
             self.m_login_obj.Fullname = 'Not logged In'
@@ -132,7 +134,13 @@ class LoginElement(athena.LiveElement):
 
     @athena.expose
     def getValidLists(self):
-        """ A JS request for interface information has been received from the client.
+        """ A JS request for various validating information has been received from the client.
+
+        Return via JSON:
+            VALID_INTERFACES
+            VALID_FAMILIES
+            VALID_LIGHTS_TYPES
+            VALID_SCHEDULING_TYPES
         """
         l_interfaces = VALID_INTERFACES
         l_obj = dict(Drivers = l_interfaces, Families = VALID_FAMILIES,

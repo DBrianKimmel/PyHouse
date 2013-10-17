@@ -64,6 +64,9 @@ class WebData(object):
         l_ret += "WebPort:{0:}\n".format(self.WebPort)
         return l_ret
 
+    def reprJSON(self):
+        return dict(Port = self.WebPort)
+
 
 class ClientConnections(object):
     """This class keeps track of all the connected browsers.
@@ -104,7 +107,7 @@ class WebUtility(xml_tools.ConfigFile):
         return l_web_xml
 
 
-class API(WebUtility):
+class API(WebUtility, ClientConnections):
 
     def __init__(self):
         global g_logger
@@ -138,5 +141,12 @@ class API(WebUtility):
             print "web_server.API.Stop()"
         l_xml = self.write_web_xml(self.web_data)
         return l_xml
+
+    def Update(self, p_entry):
+        if g_debug >= 0:
+            print 'web_server.API.Update({0:}'.format(p_entry)
+        l_obj = WebData()
+        l_obj.Port = p_entry.Port
+        self.m_house_obj.WebData = l_obj  # update schedule entry within a house
 
 # ## END DBK

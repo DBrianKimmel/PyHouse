@@ -37,6 +37,10 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 		l_defer.addCallback(cb_widgetready);
 		return l_defer;
 	},
+	function startWidget(self) {
+		//Divmod.debug('---', 'rootMenu.startWidget() was called. ');
+		self.showWidget();
+	},
 
 	// ============================================================================
 	/**
@@ -51,28 +55,28 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 		//console.log("rmb p_node", p_node);
 		switch (l_key) {
 		case 'Select':
-			Divmod.debug('---', 'rootMenu.doHandleOnClick(Select) was called.');
+			//Divmod.debug('---', 'rootMenu.doHandleOnClick(Select) was called.');
 			self.hideWidget();
 			var l_node = findWidgetByClass('HouseSelect');
 			l_node.startWidget();
 			break;
 		case 'House':
 			//Divmod.debug('---', 'rootMenu.doHandleOnClick was called for House.');
-			var l_node = findWidgetByClass('House');
-			l_node.showWidget();
 			self.hideWidget();
+			var l_node = findWidgetByClass('House');
+			l_node.startWidget();
 			break;
 		case 'Web':
 			//Divmod.debug('---', 'rootMenu.doHandleOnClick was called for Web.');
-			var l_node = findWidgetByClass('Web');
-			l_node.showWidget();
 			self.hideWidget();
+			var l_node = findWidgetByClass('Webs');
+			l_node.startWidget();
 			break;
 		case 'Logs':
 			//Divmod.debug('---', 'rootMenu.doHandleOnClick was called for Logs.');
-			var l_node = findWidgetByClass('Logs');
-			l_node.showWidget();
 			self.hideWidget();
+			var l_node = findWidgetByClass('Logs');
+			l_node.startWidget();
 			break;
 		case 'Quit':
 			// Quit the browser by logging out
@@ -92,7 +96,7 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 	},
 	
 	function doRootQuit(self, p_node) {
-		Divmod.debug('---', 'rootMenu.doRootQuit was called. ');
+		//Divmod.debug('---', 'rootMenu.doRootQuit was called. ');
 		//console.log("rm_rq Node %O", p_node);
 		self.callRemote("doRootMenuQuit", '');
 		globals.User.Fullname = 'Nobody';

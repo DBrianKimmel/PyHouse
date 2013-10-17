@@ -143,4 +143,12 @@ class API(Utility):
             elif l_type == 'Controller':
                 self.m_house_obj.Controllers[l_obj.Key] = l_obj  # update Controllers entry within a house
 
+    def ChangeLight(self, p_entry):
+        if g_debug >= 0:
+            print 'lighting.API.ChangeLight({0:}'.format(p_entry)
+            l_key = p_entry.Key
+            l_level = p_entry.CurLevel
+            l_obj = self.m_house_obj.Lights[l_key]
+            self.change_light_setting(self.m_house_obj, l_obj, l_level)
+
 # ## END DBK

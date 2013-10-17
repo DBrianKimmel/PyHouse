@@ -56,7 +56,7 @@ class ControlLightsElement(athena.LiveElement):
         for l_key, l_val in l_lights.iteritems():
             l_obj[l_key] = l_val
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_obj))
-        if g_debug >= 3:
+        if g_debug >= 4:
             print "web_controlLights.ControlLightsElement.getControlLightsEntries() - JSON:", l_json
         return unicode(l_json)
 
@@ -67,21 +67,13 @@ class ControlLightsElement(athena.LiveElement):
         l_json = web_utils.JsonUnicode().decode_json(p_json)
         l_house_ix = int(l_json['HouseIx'])
         if g_debug >= 4:
-            print "web_controlLights.ControlLightsElement.doControlLightSubmit() - JSON:", l_json
+            print "web_controlLights.saveControlLightData() - JSON:", l_json
         l_obj = lighting_lights.LightData()
         l_obj.Name = l_json['Name']
-        l_obj.Active = l_json['Active']
         l_obj.Key = int(l_json['Key'])
-        l_obj.Comment = l_json['Comment']
-        l_obj.Coords = l_json['Coords']
-        l_obj.Dimmable = l_json['Dimmable']
-        l_obj.Family = l_json['Family']
-        l_obj.Level = l_json['Level']
-        l_obj.RoomName = l_json['RoomName']
-        l_obj.Type = l_json['Type']
+        l_obj.CurLevel = l_json['Level']
         l_obj.UUID = l_json['UUID']
-        l_obj.DeleteFlag = l_json['Delete']
         l_obj.HouseIx = l_house_ix
-        self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.LightingAPI.Update(l_obj)
+        self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.LightingAPI.ChangeLight(l_obj)
 
 # ## END DBK

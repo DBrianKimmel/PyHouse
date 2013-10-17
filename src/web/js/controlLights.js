@@ -13,6 +13,7 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 		controlLights.ControlLightsWidget.upcall(self, '__init__', node);
 	},
 
+	// ============================================================================
 	/**
      * Place the widget in the workspace.
 	 *
@@ -30,10 +31,6 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 		l_defer.addCallback(cb_widgetready);
 		return l_defer;
 	},
-
-	/**
-	 * routines for showing and hiding parts of the screen.
-	 */
 	function showWidget(self) {
 		//Divmod.debug('---', 'controlLights.showWidget() was called.');
 		self.node.style.display = 'block';
@@ -67,7 +64,7 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 	 */
 	function fetchLightData(self) {
 		function cb_fetchLightData(p_json) {
-			//Divmod.debug('---', 'controlLights.cb_fetchLightData() was called. ' + p_json);
+			//Divmod.debug('---', 'controlLights.cb_fetchLightData() was called.  JSON: ' + p_json);
 			globals.House.HouseObj.Lights = JSON.parse(p_json);
 			var l_tab = buildTable(globals.House.HouseObj.Lights, 'handleMenuOnClick');
 			self.nodeById('ControlLightTableDiv').innerHTML = l_tab;
@@ -82,44 +79,7 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
         return false;
 	},
 
-	/**
-	 * Fill in the schedule entry screen with all of the data for this schedule.
-	 */
-	function fillEntry(self, p_obj) {
-		//Divmod.debug('---', 'controlLights.fillEntry() was called. ' + p_obj);
-		self.nodeById('Name').value = p_obj.Name;
-		self.nodeById('Key').value = p_obj.Key;
-		self.nodeById('Active').value = p_obj.Active;
-		self.nodeById('Comment').value = p_obj.Comment;
-		self.nodeById('Coords').value = p_obj.Coords;
-		self.nodeById('Dimmable').innerHTML = buildTrueFalseWidget('LightDimmable', p_obj.Dimmable);
-		self.nodeById('Family').value = p_obj.Family;
-		self.nodeById('RoomName').value = p_obj.RoomName;
-		self.nodeById('Type').value = p_obj.Type;
-		self.nodeById('UUID').value = p_obj.UUID;
-		self.nodeById('LevelDiv').innerHTML = buildLevelSlider(p_obj.Level);
-		self.nodeById('ControlLightEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick', 'NoDelete');
-	},
-	
-	function fetchEntry(self) {
-        var l_data = {
-			Name : self.nodeById('Name').value,
-			Key : self.nodeById('Key').value,
-			Active : self.nodeById('Active'),
-			Comment : self.nodeById('Comment'),
-			Coords : self.nodeById('Coords'),
-			Dimmable : self.nodeById('Dimmable'),
-			Family : self.nodeById('Family'),
-			RoomName : self.nodeById('RoomName').value,
-			Type : self.nodeById('Type'),
-			UUID : self.nodeById('UUID').value,
-			Level : fetchLevel('Level'),
-			HouseIx : globals.House.HouseIx,
-			Delete : false
-            }
-		return l_data;
-	},
-
+	// ============================================================================
 	/**
 	 * Event handler for light selection buttons.
 	 * 
@@ -149,16 +109,36 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 			l_node.showWidget();
 		}
 	},
-	
+	function fillEntry(self, p_obj) {
+		//Divmod.debug('---', 'controlLights.fillEntry() was called. ');
+		//console.log("controlLights.fillEntry() - Obj %O", p_obj);
+        self.nodeById('NameDiv').innerHTML = buildTextWidget('CtlLightName', p_obj.Name, 'disabled');
+        self.nodeById('KeyDiv').innerHTML = buildTextWidget('CtlLightKey', p_obj.Key, 'disabled');
+		self.nodeById('UUIDDiv').innerHTML = buildTextWidget('CtlLightUUID', p_obj.UUID, 'disabled');
+		self.nodeById('RoomNameDiv').innerHTML = buildRoomSelectWidget('CtlLightRoomName', p_obj.RoomName, 'disabled');
+		self.nodeById('LevelDiv').innerHTML = buildLevelSlider('CtlLightLevel', p_obj.CurLevel);
+		self.nodeById('ControlLightEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick', 'NoDelete');
+	},
+	function fetchEntry(self) {
+		//Divmod.debug('---', 'controlLights.fetchEntry() was called. ');
+        var l_data = {
+            Name : fetchTextWidget('CtlLightName'),
+            Key : fetchTextWidget('CtlLightKey'),
+			UUID : fetchTextWidget('CtlLightUUID'),
+			RoomName : fetchSelectWidget('CtlLightRoomName'),
+			Level : fetchLevel('CtlLightLevel'),
+			HouseIx : globals.House.HouseIx,
+            }
+		//console.log("controlLights.fetchEntry() - data %O", l_data);
+		return l_data;
+	},
+
+	// ============================================================================
 	/**
 	 * Event handler for submit buttons at bottom of entry portion of this widget.
 	 * Get the possibly changed data and send it to the server.
 	 */
 	function handleDataOnClick(self, p_node) {
-		//Divmod.debug('---', 'controlLights.handleDataOnClick() was called. ');
-		//console.log("controlLights.handleDataOnClick() - self %O", self);
-		//console.log("controlLights.handleDataOnClick() - node %O", p_node);
-		
 		function cb_handleDataOnClick(p_json) {
 			//Divmod.debug('---', 'controlLights.cb_handleDataOnClick() was called.');
 			self.showWidget(self);
@@ -168,7 +148,7 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 		}
     	var l_json = JSON.stringify(self.fetchEntry(self));
 		//Divmod.debug('---', 'controlLights.handleDataOnClick() was called. json:' + l_json);
-        var l_defer = self.callRemote("saveControlLightData", l_json);  // @ web_lights
+        var l_defer = self.callRemote("saveControlLightData", l_json);  // @ web_controlLights
 		l_defer.addCallback(cb_handleDataOnClick);
 		l_defer.addErrback(eb_handleDataOnClick);
 		// return false stops the resetting of the server.
