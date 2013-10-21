@@ -18,7 +18,7 @@ g_debug = 0
 # 2 = Startup Details
 
 g_driver = []
-g_logger = None
+g_logger = logging.getLogger('PyHouse.UPB_PIM ')
 g_queue = None
 g_pim = {}
 g_house_obj = None
@@ -524,8 +524,6 @@ class PimTesting(UpbPimAPI): pass
 class API(UpbPimAPI):
 
     def __init__(self):
-        global g_logger
-        g_logger = logging.getLogger('PyHouse.UPB_PIM ')
         if g_debug > 0:
             print "UPB_Pim.API()"
         global g_queue

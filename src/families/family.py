@@ -28,10 +28,10 @@ class FamilyData(object):
     def __init__(self):
         self.Name = ''
         self.Key = 0
-        self.Active = False
+        self.Active = True
         self.API = None
         self.ModuleName = ''
-        self.ModuleRef = ''
+        self.ModuleRef = None
         self.PackageName = ''
 
     def __str__(self):
@@ -43,6 +43,13 @@ class FamilyData(object):
         l_ret += "ModuleName:{0:}, ".format(self.ModuleName)
         l_ret += "ModuleRef:{0:}, ".format(self.ModuleRef)
         l_ret += "PackageName:{0:};".format(self.PackageName)
+        return l_ret
+
+    def reprJSON(self):
+        #print "family.reprJSON() - {0:}".format(self.Name)
+        l_ret = dict(Name = self.Name, Key = self.Key, Active = self.Active,
+                    ModuleName = self.ModuleName, PackageName = self.PackageName
+                    )
         return l_ret
 
 
@@ -57,10 +64,8 @@ class LightingUtility(FamilyData):
         l_family_data = {}
         l_count = 0
         for l_family in VALID_FAMILIES:
-            if g_debug >= 3:
-                print "family.build_lighting_family_info() - House:{0:}, Name:{1:}".format(p_house_obj.Name, l_family)
+            g_logger.info("Adding lighting Family:{0:} for House:{1:}".format(l_family, p_house_obj.Name))
             l_family_obj = FamilyData()
-            l_family_obj.Active = True
             l_family_obj.Name = l_family
             l_family_obj.Key = l_count
             l_family_obj.PackageName = 'src.families.' + l_family
@@ -68,16 +73,14 @@ class LightingUtility(FamilyData):
             try:
                 l_module = importlib.import_module(l_family_obj.PackageName + '.' + l_family_obj.ModuleName, l_family_obj.PackageName)
             except ImportError, e:
-                if g_debug >= 0:
-                    print "    family.build_lighting_family_info() - ERROR - Cannot import module {0:}".format(l_family_obj.ModuleName), e
+                print "    family.build_lighting_family_info() - ERROR - Cannot import module {0:}".format(l_family_obj.ModuleName), e
                 l_module = None
                 g_logger.error("Cannot import - Module:{0:}, Package:{1:}.".format(l_family_obj.ModuleName, l_family_obj.PackageName))
             l_family_obj.ModuleRef = l_module
             try:
                 l_family_obj.API = l_module.API(p_house_obj)
             except AttributeError:
-                if g_debug >= 0:
-                    print "    family.build_lighting_family_info() - ERROR - NO API"
+                print "    family.build_lighting_family_info() - ERROR - NO API"
                 l_family_obj.API = None
                 g_logger.error("Cannot get API - Module:{0:}, House:{1:}.".format(l_module, p_house_obj.Name))
             if g_debug >= 3:

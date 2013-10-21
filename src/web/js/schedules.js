@@ -45,7 +45,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 		self.node.style.display = 'block';
 		self.showButtons();
 		self.hideEntry();
-		self.fetchScheduleData(globals.House.HouseIx);
+		self.fetchHouseData();
 	},
 	function hideButtons(self) {
 		//Divmod.debug('---', 'schedules.hideButtons() was called. ');
@@ -76,23 +76,21 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 	// ============================================================================
 	/**
 	 * This triggers getting the schedule data from the server.
-	 * 
-	 * @param p_houseIndex is the house index that was selected
 	 */
-	function fetchScheduleData(self, p_houseIndex) {
-		function cb_fetchScheduleData(p_json) {
-			//Divmod.debug('---', 'schedules.cb_fetchScheduleData() was called. ');
-			globals.House.HouseObj.Schedules = JSON.parse(p_json);
+	function fetchHouseData(self) {
+		function cb_fetchHouseData(p_json) {
+			//Divmod.debug('---', 'schedules.cb_fetchHouseData() was called. ');
+			globals.House.HouseObj = JSON.parse(p_json);
 			var l_tab = buildTable(globals.House.HouseObj.Schedules, 'handleMenuOnClick', self.buildButtonName);
 			self.nodeById('ScheduleTableDiv').innerHTML = l_tab;
 		}
-		function eb_fetchScheduleData(res) {
-			Divmod.debug('---', 'schedules.eb_fetchScheduleData() was called.  ERROR: ' + res);
+		function eb_fetchHouseData(res) {
+			Divmod.debug('---', 'schedules.eb_fetchHouseData() was called.  ERROR: ' + res);
 		}
-		//Divmod.debug('---', 'schedules.fetchScheduleData() was called. Ix: ' + p_houseIndex);
-        var l_defer = self.callRemote("getScheduleData", globals.House.HouseIx);  // call server @ web_schedules.py
-		l_defer.addCallback(cb_fetchScheduleData);
-		l_defer.addErrback(eb_fetchScheduleData);
+		//Divmod.debug('---', 'schedules.fetchHouseData() was called. Ix: ' + p_houseIndex);
+        var l_defer = self.callRemote("getHouseData", globals.House.HouseIx);  // call server @ web_schedules.py
+		l_defer.addCallback(cb_fetchHouseData);
+		l_defer.addErrback(eb_fetchHouseData);
         return false;
 	},
 
@@ -119,7 +117,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
         var l_data = {
 			Name : self.nodeById('Name').value,
 			Key : self.nodeById('Key').value,
-			Active : fetchTrueFalse('SchedActive'),
+			Active : fetchTrueFalseWIdget('SchedActive'),
 			Type : self.nodeById('Type').value,
 			Time : self.nodeById('Time').value,
 			Level : fetchLevel('Level'),

@@ -23,7 +23,7 @@ g_debug = 0
 # 2 = major routine entry
 # + = NOT USED HERE
 
-g_logger = None
+g_logger = logging.getLogger('PyHouse.Lighting')
 
 
 class ButtonData(lighting_buttons.ButtonData): pass
@@ -73,8 +73,6 @@ class Utility(ButtonAPI, ControllerAPI, LightingAPI):
 class API(Utility):
 
     def __init__(self, p_house_obj):
-        global g_logger
-        g_logger = logging.getLogger('PyHouse.Lighting')
         if g_debug >= 2:
             print "lighting.API() - House:{0:}".format(p_house_obj.Name)
         self.m_family = family.LightingUtility()

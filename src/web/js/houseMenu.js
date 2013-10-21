@@ -41,64 +41,52 @@ helpers.Widget.subclass(houseMenu, 'HouseMenuWidget').methods(
 	 * @param p_node is node <button> of the button clicked
 	 */
 	function doHandleOnClick(self, p_node) {
-		//console.log("houseMenu.doHandleOnClick - self %O", self);
-		//console.log("houseMenu.doHandleOnClick - node %O", p_node);
 		var l_key = p_node.name;
-		//Divmod.debug('---', 'houseMenu.doHandleOnClick(1) was called. ' + l_key);
 		switch (l_key) {
 		case 'Location':
-			//Divmod.debug('---', 'houseMenu.doHandleOnClick(Location) was called.');
-			var l_node = findWidgetByClass('Location');
-			l_node.showWidget(self);
-			self.hideWidget(self);
+			self.hideWidget();
+			var l_node = findWidgetByClass('House');
+			l_node.showWidget();
 			break;
 		case 'Rooms':
-			//Divmod.debug('---', 'houseMenu.doHandleOnClick(Rooms) was called.');
+			self.hideWidget();
 			var l_node = findWidgetByClass('Rooms');
-			l_node.showWidget(self);
-			self.hideWidget(self);
+			l_node.showWidget();
 			break;
 		case 'Lights':
-			//Divmod.debug('---', 'houseMenu.doHandleOnClick(Lights) was called.');
+			self.hideWidget();
 			var l_node = findWidgetByClass('Lights');
-			l_node.showWidget(self);
-			self.hideWidget(self);
+			l_node.showWidget();
 			break;
 		case 'Buttons':
-			//Divmod.debug('---', 'houseMenu.doHandleOnClick(Buttons) was called.');
+			self.hideWidget();
 			var l_node = findWidgetByClass('Buttons');
-			l_node.showWidget(self);
-			self.hideWidget(self);
+			l_node.showWidget();
 			break;
 		case 'Controllers':
-			//Divmod.debug('---', 'houseMenu.doHandleOnClick(Controllers) was called.');
+			self.hideWidget();
 			var l_node = findWidgetByClass('Controllers');
-			l_node.showWidget(self);
-			self.hideWidget(self);
+			l_node.showWidget();
 			break;
 		case 'Schedules':
-			//Divmod.debug('---', 'houseMenu.doHandleOnClick(Schedules) was called.');
+			self.hideWidget();
 			var l_node = findWidgetByClass('Schedules');
-			l_node.showWidget(self);
-			self.hideWidget(self);
+			l_node.showWidget();
 			break;
 		case 'Levels':
-			//Divmod.debug('---', 'houseMenu.doHandleOnClick(Levels) was called.');
+			self.hideWidget();
 			var l_node = findWidgetByClass('ControlLights');
-			l_node.showWidget(self);
-			self.hideWidget(self);
+			l_node.showWidget();
 			break;
 		case 'Internet':
-			//Divmod.debug('---', 'houseMenu.doHandleOnClick(Internet) was called.');
+			self.hideWidget();
 			var l_node = findWidgetByClass('Internet');
-			l_node.showWidget(self);
-			self.hideWidget(self);
+			l_node.showWidget();
 			break;
 		case 'Back':
-			//Divmod.debug('---', 'houseMenu.doHandleOnClick(RootMenu) was called.');
+			self.hideWidget();
 			var l_node = findWidgetByClass('RootMenu');
-			l_node.showWidget(self);
-			self.hideWidget(self);
+			l_node.showWidget();
 			break;
 		default:
 			Divmod.debug('---', 'houseMenu.doHandleOnClick(Default) was called.');

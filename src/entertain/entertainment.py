@@ -21,7 +21,7 @@ from coherence.upnp.devices.dimmable_light_client import DimmableLightClient
 
 g_debug = 0
 
-g_logger = None
+g_logger = logging.getLogger('PyMh.Entertainment')
 g_upnp = None
 
 Entertainment_Data = {}
@@ -263,8 +263,6 @@ class API(UPnPControlPoint):
     def __init__(self):
         if g_debug > 0:
             print "entertainment.Init()"
-        global g_logger
-        g_logger = logging.getLogger('PyMh.Entertainment')
         g_logger.info("Initializing.")
         g_logger.info("Initialized.")
 

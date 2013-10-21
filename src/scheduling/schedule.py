@@ -50,19 +50,20 @@ g_debug = 0
 # 5 = diagnostics
 # 6
 # 7 = extract time details
-g_logger = None
+g_logger = logging.getLogger('PyHouse.Schedule')
 
 callLater = reactor.callLater
+
 
 class ScheduleData(object):
 
     def __init__(self):
-        self.Active = None
+        self.Name = ''
         self.Key = 0
+        self.Active = False
         self.Level = 0
         self.LightName = None
         self.LightNumber = 0  # Depricated methinks
-        self.Name = 0
         self.Object = None  # a light (perhaps other) object
         self.Rate = 0
         self.RoomName = None
@@ -89,9 +90,12 @@ class ScheduleData(object):
         return l_ret
 
     def reprJSON(self):
-        return dict(Name = self.Name, Active = self.Active, Key = self.Key, Level = self.Level,
+        l_ret = dict(Name = self.Name, Key = self.Key, Active = self.Active,
+                    Level = self.Level,
                     LightName = self.LightName, LightNumber = self.LightNumber, Rate = self.Rate,
-                    RoomName = self.RoomName, Time = self.Time, Type = self.Type, UUID = self.UUID)
+                    RoomName = self.RoomName, Time = self.Time, Type = self.Type,
+                    UUID = self.UUID)
+        return l_ret
 
 
 class ScheduleXML(xml_tools.ConfigTools):
@@ -353,8 +357,6 @@ class API(ScheduleUtility, ScheduleXML):
     def __init__(self, p_house_obj):
         """
         """
-        global g_logger
-        g_logger = logging.getLogger('PyHouse.Schedule')
         if g_debug >= 2:
             print "schedule.API() - House:{0:}".format(p_house_obj.Name)
         g_logger.info("Initializing House:{0:}".format(p_house_obj.Name))

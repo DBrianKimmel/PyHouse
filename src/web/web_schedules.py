@@ -41,23 +41,16 @@ class SchedulesElement(athena.LiveElement):
             print "web_schedules.SchedulesElement()"
 
     @athena.expose
-    def getScheduleData(self, p_index):
-        """ A JS client has requested all the schedule information for a given house.
-
-        Return the information via a remote call to the client.
+    def getHouseData(self, p_index):
+        """ A JS client has requested all the information for a given house.
 
         @param p_index: is the house index number.
         """
+        l_ix = int(p_index)
+        l_house = self.m_pyhouses_obj.HousesData[l_ix].HouseObject
         if g_debug >= 3:
-            print "web_schedules.SchedulesElement.getScheduleData() - HouseIndex:", p_index
-        g_logger.info("getSchedulesEntry called {0:}".format(self))
-        l_schedules = self.m_pyhouses_obj.HousesData[int(p_index)].HouseObject.Schedules
-        l_obj = {}
-        for l_key, l_val in l_schedules.iteritems():
-            l_obj[l_key] = l_val
-        l_json = web_utils.JsonUnicode().encode_json(l_obj)
-        if g_debug >= 4:
-            print "web_schedules.SchedulesElement.getScheduleData() - JSON:", l_json
+            print "web_schedules.getHouseData() - HouseIndex:", p_index
+        l_json = web_utils.JsonUnicode().encode_json(l_house)
         return unicode(l_json)
 
     @athena.expose

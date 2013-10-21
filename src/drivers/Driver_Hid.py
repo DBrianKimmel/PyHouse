@@ -35,7 +35,7 @@ g_debug = 0
 # 2 = Startup Details
 # 3 = Read / write details
 
-g_logger = None
+g_logger = logging.getLogger('PyHouse.USBDriver')
 g_usb = None
 
 
@@ -290,8 +290,6 @@ class API(UsbDriverAPI):
         """
         if g_debug > 0:
             print "Driver_USB.__init__()"
-        global g_logger
-        g_logger = logging.getLogger('PyHouse.USBDriver')
 
     def Start(self, p_controller_obj, p_parent):
         """

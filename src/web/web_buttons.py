@@ -43,8 +43,8 @@ class ButtonsElement(athena.LiveElement):
             #print "    workspace_obj = ", vars(p_workspace_obj)
 
     @athena.expose
-    def getButtonData(self, p_index):
-        """ A JS client has requested all the button information for a given house.
+    def getHouseData(self, p_index):
+        """ A JS client has requested all the House information for a given house.
 
         Return the information via a remote call to the client.
 
@@ -54,7 +54,7 @@ class ButtonsElement(athena.LiveElement):
         l_house = self.m_pyhouses_obj.HousesData[l_ix].HouseObject
         l_json = web_utils.JsonUnicode().encode_json(l_house)
         if g_debug >= 3:
-            print "web_buttons.ButtonsElement.getHouseData() - JSON:", l_json
+            print "web_buttons.getHouseData() - JSON:", l_json
         return unicode(l_json)
 
     @athena.expose

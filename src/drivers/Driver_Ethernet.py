@@ -17,7 +17,7 @@ import logging
 
 
 g_debug = 0
-g_logger = None
+g_logger = logging.getLogger('PyHouse.USBDriver')
 
 class API(object):
 
@@ -27,8 +27,6 @@ class API(object):
         """
         if g_debug > 0:
             print "Driver_Ethernet.Init()"
-        global g_logger
-        g_logger = logging.getLogger('PyHouse.USBDriver')
         g_logger.info(" Initializing Ethernet port.")
         return None
 

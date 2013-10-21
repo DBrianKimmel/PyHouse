@@ -63,18 +63,20 @@ from nevow.inevow import IRequest
 from twisted.internet import defer
 
 # Import PyMh files and modules.
-from src.web import web_clock
-from src.web import web_login
-from src.web import web_rootMenu
-from src.web import web_houseSelect
-from src.web import web_houseMenu
-from src.web import web_lights
-from src.web import web_controllers
 from src.web import web_buttons
-from src.web import web_rooms
-from src.web import web_schedules
+from src.web import web_clock
+from src.web import web_controllers
 from src.web import web_controlLights
+from src.web import web_house
+from src.web import web_houseMenu
+from src.web import web_houseSelect
+from src.web import web_internet
+from src.web import web_lights
+from src.web import web_login
 from src.web import web_logs
+from src.web import web_rooms
+from src.web import web_rootMenu
+from src.web import web_schedules
 from src.web import web_webs
 
 
@@ -409,6 +411,15 @@ class Workspace(athena.LiveElement):
         return l_element
 
     @athena.expose
+    def house(self, p_params):
+        if g_debug >= 5:
+            print "web_mainpage.Workspace.house() - called from browser to load houseElement"
+        g_logger.info("house called from browser")
+        l_element = web_house.HouseElement(self)
+        l_element.setFragmentParent(self)
+        return l_element
+
+    @athena.expose
     def houseMenu(self, p_params):
         if g_debug >= 5:
             print "web_mainpage.Workspace.houseMenu() - called from browser to load houseSelectElement"
@@ -423,6 +434,15 @@ class Workspace(athena.LiveElement):
             print "web_mainpage.Workspace.houseSelect() - called from browser to load houseSelectElement"
         g_logger.info("houseSelect called from browser")
         l_element = web_houseSelect.HouseSelectElement(self)
+        l_element.setFragmentParent(self)
+        return l_element
+
+    @athena.expose
+    def internet(self, p_params):
+        if g_debug >= 5:
+            print "web_mainpage.Workspace.internet() - called from browser to load internrtElement"
+        g_logger.info("internet called from browser")
+        l_element = web_internet.InternetElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 

@@ -514,7 +514,7 @@ function buildTrueFalseWidget(p_name, p_value) {
 	l_html += '</span>\n';
 	return l_html;
 }
-function fetchTrueFalse(p_name) {
+function fetchTrueFalseWidget(p_name) {
 	var l_active = document.getElementsByName(p_name);
 	var l_ret = false;
 	//Divmod.debug('---', 'globals.fetchTrueFalse() called.  Name=' + p_name + '  Len:' + l_active.length);

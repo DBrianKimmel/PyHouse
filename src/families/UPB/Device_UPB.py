@@ -16,7 +16,7 @@ g_debug = 0
 # 1 = major routine entry
 # 2 = Startup Details
 
-g_logger = None
+g_logger = logging.getLogger('PyHouse.Dev_UPB ')
 
 
 class CoreData(object):
@@ -27,6 +27,13 @@ class CoreData(object):
         self.Password = None
         self.UnitID = None
         self.Command1 = 0
+
+    def reprJSON(self):
+        l_ret = super(CoreData, self).reprJSON()  # The core data
+        l_ret.update(dict(
+                    Address = self.UnitID, Password = self.Password, NetworkId = self.NetworkID
+                    ))
+        return l_ret
 
 
 class CoreAPI(object):
@@ -123,8 +130,6 @@ class API(LightingAPI):
     def __init__(self, p_house_obj):
         """Constructor for the UPB .
         """
-        global g_logger
-        g_logger = logging.getLogger('PyHouse.Dev_UPB ')
         self.m_house_obj = p_house_obj
         if g_debug > 0:
             print "Device_UPB.API()"

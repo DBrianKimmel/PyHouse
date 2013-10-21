@@ -44,7 +44,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		self.node.style.display = 'block';
 		self.showButtons();
 		self.hideEntry();
-		self.fetchLightData();
+		self.fetchHouseData();
 	},
 	function hideButtons(self) {
 		self.nodeById('LightButtonsDiv').style.display = 'none';		
@@ -64,20 +64,20 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 	 * This triggers getting the lights data from the server.
 	 * The server calls displayLightsButtons with the lights info.
 	 */
-	function fetchLightData(self) {
-		function cb_fetchLightData(p_json) {
-			//Divmod.debug('---', 'lights.cb_fetchLightData() was called. ' + p_json);
-			globals.House.HouseObj.Lights = JSON.parse(p_json);
+	function fetchHouseData(self) {
+		function cb_fetchHouseData(p_json) {
+			//Divmod.debug('---', 'lights.cb_fetchHouseData() was called. ' + p_json);
+			globals.House.HouseObj = JSON.parse(p_json);
 			var l_tab = buildTable(globals.House.HouseObj.Lights, 'handleMenuOnClick');
 			self.nodeById('LightTableDiv').innerHTML = l_tab;
 		}
-		function eb_fetchLightData(res) {
-			Divmod.debug('---', 'lights.eb_fetchLightData() was called. ERROR: ' + res);
+		function eb_fetchHouseData(res) {
+			Divmod.debug('---', 'lights.eb_fetchHouseData() was called. ERROR: ' + res);
 		}
-		//Divmod.debug('---', 'lights.fetchLightData() was called. ');
-        var l_defer = self.callRemote("getLightData", globals.House.HouseIx);  // call server @ web_lights.py
-		l_defer.addCallback(cb_fetchLightData);
-		l_defer.addErrback(eb_fetchLightData);
+		//Divmod.debug('---', 'lights.fetchHouseData() was called. ');
+        var l_defer = self.callRemote("getHouseData", globals.House.HouseIx);  // call server @ web_lights.py
+		l_defer.addCallback(cb_fetchHouseData);
+		l_defer.addErrback(eb_fetchHouseData);
         return false;
 	},
 
@@ -105,10 +105,10 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
         var l_data = {
             Name : fetchTextWidget('LightName'),
             Key : fetchTextWidget('LightKey'),
-			Active : fetchTrueFalse('LightActive'),
+			Active : fetchTrueFalseWidget('LightActive'),
 			Comment : fetchTextWidget('LightComment'),
 			Coords : fetchTextWidget('LightCoords'),
-			Dimmable : fetchTrueFalse('LightDimmable'),
+			Dimmable : fetchTrueFalseWidget('LightDimmable'),
 			Family : fetchTextWidget('LightFamily'),
 			RoomName : fetchSelectWidget('LightRoomName'),
 			Type : fetchTextWidget('LightType'),

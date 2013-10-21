@@ -13,10 +13,9 @@ import xml.etree.ElementTree as ET
 # Import PyMh files
 from src.utils import xml_tools
 
-
 g_debug = 0
 g_xmltree = ''
-g_logger = None
+
 
 class ReadConfig(object):
     """
@@ -57,7 +56,6 @@ class WriteConfig(object):
             xml_tools.ConfigFile().create_empty_config_file(self.m_filename)
             g_xmltree = ET.parse(self.m_filename)
         self.m_root = g_xmltree.getroot()
-
 
 
 class API(ReadConfig, WriteConfig):

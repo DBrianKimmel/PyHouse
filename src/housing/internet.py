@@ -2,6 +2,11 @@
 
 """Get the internet address and make reports available for web interface.
 
+Since PyHouse is always running (as a daemon) this module will get the IP-v4 address that is
+assigned to our router by the ISP.
+It will then take that IP address and update our Dynamic DNS provider so we may browse to that
+address from some external device and check on the status of the house.
+
 This module will try to be fully twisted like and totally async (except for read/write of xml).
 """
 
@@ -26,7 +31,7 @@ g_debug = 0
 # 4 = External IP execution
 # 5 = Dump Objects
 # + = NOT USED HERE
-g_logger = None
+g_logger = logging.getLogger('PyHouse.Internet')
 
 callLater = reactor.callLater
 
@@ -37,15 +42,16 @@ callLater = reactor.callLater
 #======================================
 
 class InternetData(object):
+    """Check our external IP-v4 address
+    """
 
     def __init__(self):
         self.Name = ''
-        self.Active = False
         self.Key = 0
+        self.Active = False
         self.ExternalDelay = 0
-        self.ExternalIP = None
+        self.ExternalIP = None # returned from url to check our external IP address
         self.UrlExternalIP = None
-        self.ExternalDelay = 0
         self.DynDns = {}
 
     def __str__(self):
@@ -57,8 +63,10 @@ class InternetData(object):
         return l_ret
 
     def reprJSON(self):
-        return dict(Name = self.Name, Active = self.Active, Key = self.Key,
-                    ExternalDelay = self.ExternalDelay, ExternalIP = self.ExternalIP, UrlExternalIP = self.UrlExternalIP,
+        #print "internet.InternetData()"
+        return dict(Name = self.Name, Key = self.Key, Active = self.Active,
+                    ExternalDelay = self.ExternalDelay,
+                    ExternalIP = self.ExternalIP, UrlExternalIP = self.UrlExternalIP,
                     DynDns = self.DynDns
                     )
 
@@ -66,10 +74,10 @@ class InternetData(object):
 class DynDnsData(object):
 
     def __init__(self):
+        self.Name = ''
+        self.Key = 0
         self.Active = False
         self.Interval = 0
-        self.Key = 0
-        self.Name = ''
         self.Url = None
 
     def __str__(self):
@@ -82,7 +90,8 @@ class DynDnsData(object):
         return l_ret
 
     def reprJSON(self):
-        return dict(Name = self.Name, Active = self.Active, Key = self.Key,
+        #print "internet.DynDnsData()"
+        return dict(Name = self.Name, Key = self.Key, Active = self.Active,
                     Interval = self.Interval, Url = self.Url
                     )
 
@@ -371,8 +380,6 @@ class API(ReadWriteXML):
     m_house_obj = None
 
     def __init__(self):
-        global g_logger
-        g_logger = logging.getLogger('PyHouse.Internet')
         if g_debug >= 2:
             print "internet.API()"
         g_logger.info("Initialized.")

@@ -5,93 +5,78 @@ Created on Jun 3, 2013
 '''
 
 # Import system type stuff
+import logging
+import os
+from nevow import athena
 from nevow import loaders
-from nevow import rend
-from nevow import static
-import json
 
 # Import PyMh files and modules.
-from src.web.web_tagdefs import *
 from src.web import web_utils
-from src.web import web_rooms
+from src.housing import internet
 
+# Handy helper for finding external resources nearby.
+webpath = os.path.join(os.path.split(__file__)[0])
+templatepath = os.path.join(webpath, 'template')
 
 g_debug = 0
 # 0 = off
-# 1 = major routine entry
-# 2 = Basic data
+# 1 = log extra info
+# 2 = major routine entry
+# 3 = Config file handling
+# 4 = Dump JSON
+# + = NOT USED HERE
+g_logger = logging.getLogger('PyHouse.webClLgt')
 
-g_logger = None
-
-class InternetPage(web_utils.ManualFormMixin):
+class InternetElement(athena.LiveElement):
+    """ a 'live' internet element.
     """
-    """
-    addSlash = True
-    docFactory = loaders.stan(
-        T_html["\n",
-            T_head["\n",
-                T_title['PyHouse - House Page'],
-                T_link(rel = 'stylesheet', type = 'text/css', href = U_R_child('mainpage.css'))["\n"],
-                T_script(type = 'text/javascript', src = 'ajax.js')["\n"],
-                T_script(type = 'text/javascript', src = 'floating_window.js'),
-                T_script(type = 'text/javascript', src = 'housepage.js')["\n"],
-                ], # head
-            T_body[
-                T_h1['PyHouse Houses'],
-                T_p['\n'],
-                T_p['Select house option:'],
-                T_form(name = 'mainmenuofbuttons',
-                    action = U_H_child('_submit!!post'),
-                    enctype = "multipart/form-data",
-                    method = 'post')
-                    [
-                    T_table(style = 'width: 100%;', border = 0)["\n",
-                        T_tr[
-                            T_td[ T_input(type = 'submit', value = 'Location', name = BUTTON), ],
-                            T_td[ T_input(type = 'submit', value = 'Rooms', name = BUTTON), ],
-                            T_td[ T_input(type = 'submit', value = 'Lights', name = BUTTON), ],
-                            T_td[ T_input(type = 'submit', value = 'Buttons', name = BUTTON), ],
-                            T_td[ T_input(type = 'submit', value = 'Controllers', name = BUTTON), ],
-                            T_td[ T_input(type = 'submit', value = 'Schedule', name = BUTTON), ],
-                            T_td[ T_input(type = 'submit', value = 'Control Lights', name = BUTTON), ],
-                            T_td[ T_input(type = 'submit', value = 'Internet', name = BUTTON), ],
-                            ]
-                        ]  # table
-                    ]  # form
-                ]  # body
-            ]  # html
-        )  # stan
+    docFactory = loaders.xmlfile(os.path.join(templatepath, 'internetElement.html'))
+    jsClass = u'internet.InternetWidget'
 
-    def __init__(self, p_parent, p_name, p_house_obj):
-        self.m_name = p_name
-        self.m_parent = p_parent
-        self.m_house_obj = p_house_obj
-        if g_debug >= 1:
-            print "web_houseMenu.HouseMenuPage.__init__()"
-        if g_debug >= 5:
-            print self.m_house_obj
-        rend.Page.__init__(self)
-        setattr(InternetPage, 'child_mainpage.css', static.File('src/web/css/mainpage.css'))
-
-    def form_post_rooms(self, **kwargs):
+    def __init__(self, p_workspace_obj, p_params):
+        self.m_workspace_obj = p_workspace_obj
+        self.m_pyhouses_obj = p_workspace_obj.m_pyhouses_obj
         if g_debug >= 2:
-            print "form_post_rooms()", kwargs
-        return web_rooms.RoomsPage(self, self.m_name, self.m_house_obj)
+            print "web_internet.InternetElement()"
 
-    def form_post_lights(self, **kwargs):
-        if g_debug >= 2:
-            print "form_post_lights", kwargs
-        return InternetPage(self.m_name, self.m_house_obj)
+    @athena.expose
+    def getHouseData(self, p_index):
+        """ A JS client has requested all the information for a given house.
 
-    def form_post_schedules(self, **kwargs):
-        if g_debug >= 2:
-            print "form_post_schedules()", kwargs
-        return InternetPage(self.m_name, self.m_house_obj)
+        @param p_index: is the house index number.
+        """
+        l_ix = int(p_index)
+        l_house = self.m_pyhouses_obj.HousesData[l_ix].HouseObject
+        if g_debug >= 3:
+            print "web_internet.getHouseData() - HouseIndex:", p_index
+        l_json = unicode(web_utils.JsonUnicode().encode_json(l_house))
+        return l_json
 
-
-    def form_post_house(self, **kwargs):
-        if g_debug >= 2:
-            print "form_post_house (HousePage)", kwargs
-        return InternetPage(self.m_name, self.m_house_obj)
+    @athena.expose
+    def saveInternetData(self, p_json):
+        """Internet data is returned, so update the house info.
+        """
+        l_json = web_utils.JsonUnicode().decode_json(p_json)
+        l_house_ix = int(l_json['HouseIx'])
+        l_dyndns_ix = int(l_json['Key'])
+        if g_debug >= 0:
+            print "web_internet.saveInternetData() - JSON:", l_json
+        try:
+            l_obj = self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Internet
+        except KeyError:
+            l_obj = internet.InternetData()
+            l_obj.DynDns = {}
+        l_obj.Name = l_json['Name']
+        l_obj.Key = l_dyndns_ix
+        l_obj.Active = l_json['Active']
+        l_obj.ExternalDelay = 0
+        l_obj.ExternalIP = None # returned from url to check our external IP address
+        l_obj.UrlExternalIP = None
+        l_obj.DynDns[l_dyndns_ix].Name = 'No Name'
+        l_obj.DynDns[l_dyndns_ix].Key = l_dyndns_ix
+        l_obj.DynDns[l_dyndns_ix].Active = True
+        l_obj.DynDns[l_dyndns_ix].Interval = l_json['Interval']
+        l_obj.DynDns[l_dyndns_ix].Url = l_json['Url']
+        self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Internet = l_obj
 
 # ## END DBK

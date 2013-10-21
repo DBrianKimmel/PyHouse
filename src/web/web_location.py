@@ -19,7 +19,6 @@ g_debug = 0
 # 1 = major routine entry
 # 2 = Basic data
 
-g_logger = None
 
 class LocationPage(web_utils.ManualFormMixin):
     """

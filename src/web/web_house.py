@@ -5,99 +5,78 @@ Created on Jun 3, 2013
 '''
 
 # Import system type stuff
+import logging
+import os
+from nevow import athena
 from nevow import loaders
-from nevow import rend
-from nevow import static
 
 # Import PyMh files and modules.
-from src.web.web_tagdefs import *
 from src.web import web_utils
-from src.web import web_schedules
-from src.web import web_rooms
+from src.housing import house
 
+# Handy helper for finding external resources nearby.
+webpath = os.path.join(os.path.split(__file__)[0])
+templatepath = os.path.join(webpath, 'template')
 
-g_debug = 9
+g_debug = 0
 # 0 = off
-# 1 = major routine entry
-# 2 = Basic data
+# 1 = log extra info
+# 2 = major routine entry
+# 3 = Config file handling
+# 4 = Dump JSON
+# + = NOT USED HERE
+g_logger = logging.getLogger('PyHouse.webHouse')
 
-g_logger = None
-
-class InternetPage(web_utils.ManualFormMixin):
+class HouseElement(athena.LiveElement):
+    """ a 'live' house element.
     """
-    """
-    addSlash = True
-    docFactory = loaders.stan(
-        T_html["\n",
-            T_head["\n",
-                T_title['PyHouse - House Page'],
-                T_link(rel = 'stylesheet', type = 'text/css', href = U_R_child('mainpage.css'))["\n"],
-                T_script(type = 'text/javascript', src = 'ajax.js')["\n"],
-                T_script(type = 'text/javascript', src = 'floating_window.js'),
-                T_script(type = 'text/javascript', src = 'housepage.js')["\n"],
-                ], # head
-            T_body[
-                T_h1['PyHouse Houses'],
-                T_p['\n'],
-                T_p['Select house option:'],
-                T_form(name = 'mainmenuofbuttons',
-                    action = U_H_child('_submit!!post'),
-                    enctype = "multipart/form-data",
-                    method = 'post')
-                    [
-                    T_table(style = 'width: 100%;', border = 0)["\n",
-                        T_tr[
-                            T_td[ T_input(type = 'submit', value = 'Location', name = BUTTON), ],
-                            T_td[ T_input(type = 'submit', value = 'Rooms', name = BUTTON), ],
-                            T_td[ T_input(type = 'submit', value = 'Lights', name = BUTTON), ],
-                            T_td[ T_input(type = 'submit', value = 'Buttons', name = BUTTON), ],
-                            T_td[ T_input(type = 'submit', value = 'Controllers', name = BUTTON), ],
-                            T_td[ T_input(type = 'submit', value = 'Schedule', name = BUTTON), ],
-                            T_td[ T_input(type = 'submit', value = 'Control Lights', name = BUTTON), ],
-                            T_td[ T_input(type = 'submit', value = 'Internet', name = BUTTON), ],
-                            ]
-                        ]  # table
-                    ]  # form
-                ]  # body
-            ]  # html
-        )  # stan
+    docFactory = loaders.xmlfile(os.path.join(templatepath, 'houseElement.html'))
+    jsClass = u'house.HouseWidget'
 
-    def __init__(self, name, p_pyhouses_obj, p_index):
-        self.name = name
-        self.m_pyhouse_obj = p_pyhouses_obj.HousesData[p_index]
-        self.m_index = p_index
-        if g_debug >= 1:
-            print "web_houseMenu.HouseMenuPage.__init__()"
-        if g_debug >= 5:
-            print self.m_pyhouse_obj
-        rend.Page.__init__(self)
-
-        setattr(HouseMenuPage, 'child_mainpage.css', static.File('src/web/css/mainpage.css'))
-
-    def form_post_location(self, **kwargs):
+    def __init__(self, p_workspace_obj):
+        self.m_workspace_obj = p_workspace_obj
+        self.m_pyhouses_obj = p_workspace_obj.m_pyhouses_obj
         if g_debug >= 2:
-            print "form_post_location()", kwargs
-        return LocationPage(self.name, self.m_pyhouse_obj)
+            print "web_house.HouseElement()"
 
-    def form_post_rooms(self, **kwargs):
-        if g_debug >= 2:
-            print "form_post_rooms()", kwargs
-        return web_rooms.RoomsPage(self, self.name, self.m_pyhouse_obj)
+    @athena.expose
+    def getHouseData(self, p_index):
+        """ A JS client has requested all the information for a given house.
 
-    def form_post_lights(self, **kwargs):
-        if g_debug >= 2:
-            print "form_post_lights", kwargs
-        return HouseMenuPage(self.name, self.m_pyhouse_obj)
+        @param p_index: is the house index number.
+        """
+        l_ix = int(p_index)
+        l_house = self.m_pyhouses_obj.HousesData[l_ix].HouseObject
+        if g_debug >= 3:
+            print "web_house.getHouseData() - HouseIndex:", p_index
+        l_json = unicode(web_utils.JsonUnicode().encode_json(l_house))
+        return l_json
 
-    def form_post_schedules(self, **kwargs):
-        if g_debug >= 2:
-            print "form_post_schedules()", kwargs
-        return web_schedule.SchedulePage(self.name, self.m_pyhouse_obj)
-
-
-    def form_post_house(self, **kwargs):
-        if g_debug >= 2:
-            print "form_post_house (HousePage)", kwargs
-        return HouseMenuPage(self.name, self.m_pyhouse_obj)
+    @athena.expose
+    def saveHouseData(self, p_json):
+        """House data is returned, so update the house info.
+        """
+        l_json = web_utils.JsonUnicode().decode_json(p_json)
+        l_house_ix = int(l_json['HouseIx'])
+        if g_debug >= 4:
+            print "web_house.saveHouseData() - JSON:", l_json
+        try:
+            l_obj = self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject
+        except KeyError:
+            l_obj = house.HouseData()
+        print "House ", l_obj
+        l_obj.Name = l_json['Name']
+        l_obj.Key = int(l_json['Key'])
+        l_obj.HouseIx = l_house_ix
+        l_obj.Location.Street = l_json['Street']
+        l_obj.Location.City = l_json['City']
+        l_obj.Location.State = l_json['State']
+        l_obj.Location.ZipCode = l_json['ZipCode']
+        l_obj.Location.Phone = l_json['Phone']
+        l_obj.Location.Latitude = l_json['Latitude']
+        l_obj.Location.Longitude = l_json['Longitude']
+        l_obj.Location.TimeZone = l_json['TimeZone']
+        l_obj.Location.SavingsTime = l_json['SavingsTime']
+        self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject = l_obj
 
 # ## END DBK

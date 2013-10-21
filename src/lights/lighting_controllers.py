@@ -11,6 +11,7 @@ import xml.etree.ElementTree as ET
 from src.lights import lighting_core
 from src.utils.tools import PrintBytes
 from src.drivers import interface
+from src.families import family
 
 
 g_debug = 0
@@ -48,20 +49,17 @@ class ControllerData(lighting_core.CoreData):
         l_ret += "Message:{0:} ".format(PrintBytes(self.Message))
         return l_ret
 
-    def __repr__(self):
-        l_ret = "{"
-        l_ret += super(ControllerData, self).__repr__()  # The core data
-        l_ret += ', '
-        l_ret += '"Interface":"{0:}", '.format(str(self.Interface))
-        l_ret += '"Port":"{0:}"'.format(self.Port)
-        l_ret += "}"
-        return l_ret
-
     def reprJSON(self):
-        l_ret = super(ControllerData, self).reprJSON()  # The core data
-        l_ret.update(dict(Name = self.Name, Active = self.Active, Key = self.Key, Comment = self.Comment,
-                    Coords = self.Coords, CurLevel = self.CurLevel, Dimmable = self.Dimmable, Family = self.Family,
-                    RoomName = self.RoomName, Type = self.Type))
+        #print "lighting_controller.reprJSON() {0:}".format(self.Name)
+        l_ret = super(ControllerData, self).reprJSON()  # lighting_core data
+        l_ret.update(dict(Name = self.Name, Key = self.Key, Active = self.Active,
+                    Comment = self.Comment,
+                    Coords = self.Coords, Dimmable = self.Dimmable, Family = self.Family,
+                    RoomName = self.RoomName,
+                    InsteonAddress = 1,
+                    Type = self.Type))
+        #if self.Family == 'Insteon':
+        #    l_ret += Device_Insteon.InsteonData().reprJSON()
         return l_ret
 
 

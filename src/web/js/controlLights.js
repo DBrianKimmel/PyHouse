@@ -36,7 +36,7 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 		self.node.style.display = 'block';
 		self.showButtons(self);
 		self.hideEntry(self);
-		self.fetchLightData(self, globals.House.HouseIx);
+		self.fetchHouseData();
 	},
 	function hideButtons(self) {
 		//Divmod.debug('---', 'controlLights.hideButtons() was called. ');
@@ -59,23 +59,21 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 	/**
 	 * This triggers getting the lights data from the server.
 	 * The server calls displayLightsButtons with the lights info.
-	 * 
-	 * @param p_houseIndex is the house index that was selected
 	 */
-	function fetchLightData(self) {
-		function cb_fetchLightData(p_json) {
-			//Divmod.debug('---', 'controlLights.cb_fetchLightData() was called.  JSON: ' + p_json);
-			globals.House.HouseObj.Lights = JSON.parse(p_json);
+	function fetchHouseData(self) {
+		function cb_fetchHouseData(p_json) {
+			//Divmod.debug('---', 'controlLights.cb_fetchHouseData() was called.  JSON: ' + p_json);
+			globals.House.HouseObj = JSON.parse(p_json);
 			var l_tab = buildTable(globals.House.HouseObj.Lights, 'handleMenuOnClick');
 			self.nodeById('ControlLightTableDiv').innerHTML = l_tab;
 		}
-		function eb_fetchLightData(res) {
-			Divmod.debug('---', 'controlLights.eb_fetchLightData() was called.  ERROR ' + res);
+		function eb_fetchHouseData(res) {
+			Divmod.debug('---', 'controlLights.eb_fetchHouseData() was called.  ERROR ' + res);
 		}
-		//Divmod.debug('---', 'controlLights.fetchLightData() was called. ');
-        var l_defer = self.callRemote("getControlLightData", globals.House.HouseIx);  // call server @ web_controlLights.py
-		l_defer.addCallback(cb_fetchLightData);
-		l_defer.addErrback(eb_fetchLightData);
+		//Divmod.debug('---', 'controlLights.fetchHouseData() was called. ');
+        var l_defer = self.callRemote("getHouseData", globals.House.HouseIx);  // call server @ web_controlLights.py
+		l_defer.addCallback(cb_fetchHouseData);
+		l_defer.addErrback(eb_fetchHouseData);
         return false;
 	},
 

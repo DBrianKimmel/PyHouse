@@ -60,7 +60,7 @@ g_debug = 0
 # 2 = Startup Details
 # 3 = Read / write details
 
-g_logger = None
+g_logger = logging.getLogger('PyHouse.USBDriver')
 
 callLater = reactor.callLater
 
@@ -304,8 +304,6 @@ class API(UsbDriverAPI):
     def __init__(self):
         """
         """
-        global g_logger
-        g_logger = logging.getLogger('PyHouse.USBDriver')
         if g_debug >= 1:
             print "Driver_USB.API.__init__()"
 

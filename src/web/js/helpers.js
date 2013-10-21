@@ -107,21 +107,18 @@ Nevow.Athena.Widget.subclass(helpers, 'Widget').methods(
 		}
 		);
 	},
-	  
+
 	function detached(self) {
 		Divmod.debug('---', self.node.className + ' object was detached cleanly.');
 		self.node.parentNode.removeChild(self.node);
 		helpers.Widget.upcall(self, 'detached');
 	},
-	  
+
 	// DBK Added all widget functions below this line
-	// Divmod.debug('---', 'helpers.showWidget() was called. ' + self.node.className);
 	function showWidget(self) {
-		//Divmod.debug('---', 'helpers.showWidget() was called. ' + self.node.className);
 		self.node.style.display = 'block';
 	},
 	function hideWidget(self) {
-		//Divmod.debug('---', 'helpers.hideWidget() was called. ' + self.node.className);
 		self.node.style.display = 'none';
 	}
 );

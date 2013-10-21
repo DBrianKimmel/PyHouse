@@ -9,6 +9,8 @@ import uuid
 
 # Import PyHouse files
 from src.utils import xml_tools
+#from src.families import family
+#from src.families.Insteon import Device_Insteon
 
 
 g_debug = 0
@@ -30,7 +32,7 @@ class CoreData(object):
         self.Active = False
         self.Comment = ''
         self.Coords = ''
-        self.CurLevel = 0
+        #self.CurLevel = 0
         self.Dimmable = False
         self.Family = ''
         self.RoomName = ''
@@ -44,7 +46,7 @@ class CoreData(object):
         l_str += "Active:{0:}, ".format(self.Active)
         l_str += "Comment:{0:}, ".format(self.Comment)
         l_str += "Coords:{0:}, ".format(self.Coords)
-        l_str += "CurLevel:{0:}, ".format(self.CurLevel)
+        #l_str += "CurLevel:{0:}, ".format(self.CurLevel)
         l_str += "Dimmable:{0:}, ".format(self.Dimmable)
         l_str += "Family:{0:}, ".format(self.Family)
         l_str += "RoomName:{0:}, ".format(self.RoomName)
@@ -53,9 +55,11 @@ class CoreData(object):
         return l_str
 
     def reprJSON(self):
-        return dict(Name = self.Name, Active = self.Active, Key = self.Key,
-                    Comment = self.Comment, Coords = self.Coords, CurLevel = self.CurLevel, Dimmable = self.Dimmable,
+        #print "lighting_core.reprJSON() - Name:{0:}, Family:{1:}".format(self.Name, self.Family)
+        l_ret = dict(Name = self.Name, Active = self.Active, Key = self.Key,
+                    Comment = self.Comment, Coords = self.Coords, Dimmable = self.Dimmable,
                     Family = self.Family, RoomName = self.RoomName, Type = self.Type, UUID = self.UUID)
+        return l_ret
 
 
 class CoreAPI(xml_tools.ConfigTools):
@@ -68,6 +72,7 @@ class CoreAPI(xml_tools.ConfigTools):
         @param p_house: is the text name of the House.
         @return: a dict of the entry to be attached to a house object.
         """
+        self.m_house_obj = p_house_obj
         if g_debug >= 3:
             print "lighting_core.read_light_common() XML={0:}".format(p_entry_xml)
         self.xml_read_common_info(p_device_obj, p_entry_xml)
@@ -104,5 +109,12 @@ class CoreAPI(xml_tools.ConfigTools):
                 print "    {0:}, {1:}".format(l_family_obj.Name, p_device_obj.Family)
             if l_family_obj.Name == p_device_obj.Family:
                 l_family_obj.API.insert_device_xml(p_entry, p_device_obj)
+
+    def addJSON(self):
+        print "lighting_core.addJSON() - {0:}".format(self.Name)
+        l_ret = dict()
+        for l_family_obj in self.m_house_obj.FamilyData.itervalues():
+            pass
+        return l_ret
 
 # ## END DBK

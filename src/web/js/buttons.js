@@ -36,7 +36,7 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 		self.node.style.display = 'block';
 		self.showButtons(self);
 		self.hideEntry(self);
-		self.fetchButtonData(self, globals.House.HouseIx);
+		self.fetchHouseData(self, globals.House.HouseIx);
 	},
 	function hideButtons(self) {
 		self.nodeById('ButtonButtonsDiv').style.display = 'none';		
@@ -55,22 +55,20 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 	/**
 	 * This triggers getting the button data from the server.
 	 * The server calls displayButtonButtons with the buttons info.
-	 * 
-	 * @param p_houseIndex is the house index that was selected
 	 */
-	function fetchButtonData(self, p_houseIndex) {
-		function cb_fetchButtonData(p_json) {
-			//Divmod.debug('---', 'buttons.cb_fetchButtonData() was called. ' + p_json);
+	function fetchHouseData(self) {
+		function cb_fetchHouseData(p_json) {
+			//Divmod.debug('---', 'buttons.cb_fetchHouseData() was called. ' + p_json);
 			globals.House.HouseObj = JSON.parse(p_json);
 			var l_tab = buildTable(globals.House.HouseObj.Buttons, 'handleMenuOnClick');
 			self.nodeById('ButtonTableDiv').innerHTML = l_tab;
 		}
-		function eb_fetchButtonData(res) {
-			Divmod.debug('---', 'buttons.eb_fetchButtonData() was called.  ERROR - ' + res);
+		function eb_fetchHouseData(res) {
+			Divmod.debug('---', 'buttons.eb_fetchHouseData() was called.  ERROR - ' + res);
 		}
-        var l_defer = self.callRemote("getButtonData", globals.House.HouseIx);  // call server @ web_buttons.py
-		l_defer.addCallback(cb_fetchButtonData);
-		l_defer.addErrback(eb_fetchButtonData);
+        var l_defer = self.callRemote("getHouseData", globals.House.HouseIx);  // call server @ web_buttons.py
+		l_defer.addCallback(cb_fetchHouseData);
+		l_defer.addErrback(eb_fetchHouseData);
         return false;
 	},
 
@@ -95,7 +93,7 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
         var l_data = {
 			Name : fetchTextWidget('ButtonName'),
 			Key : fetchTextWidget('ButtonKey'),
-			Active : fetchTrueFalse('ButtonActive'),
+			Active : fetchTrueFalseWidget('ButtonActive'),
 			Comment : fetchTextWidget('ButtonComment'),
 			Coords : fetchTextWidget('ButtonCoords'),
 			Family : fetchTextWidget('ButtonFamily'),

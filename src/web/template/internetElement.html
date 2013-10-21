@@ -1,30 +1,32 @@
-<!-- houseElement.html
+<!-- internetElement.html
 -->
 <div
     xmlns:athena='http://divmod.org/ns/athena/0.7'
     xmlns:nevow='http://nevow.com/ns/nevow/0.1'
     nevow:render='liveElement'
-    class = 'House'
-    id = 'HouseDiv'
+    class = 'Internet'
+    id = 'InternetDiv'
     style = "background-color: #d2f2d2;" >
-    <div id='HouseEntryDiv'>
-        <h2>Enter House data (or Delete)</h2>
+    <div id='InternetButtonsDiv'>
+        <h2>Select a Button (or Add):</h2>
         <table style = 'Width: 60%;'>
-            <tr id='NameRow'><td>Name</td><td><div id='NameDiv'></div></td></tr>
-            <tr id='KeyRow'><td>Key</td><td><div id='KeyDiv'></div></td>
-                <td><div id='UUIDDiv'></div></td></tr>
-            <tr id='ActiveRow'><td>Active</td><td><div id='ActiveDiv'></div></td></tr>
-            <tr id='StreetRow'><td>Street</td><td><div id='StreetDiv'></div></td></tr>
-            <tr id='CityRow'><td>City</td><td><div id='CityDiv'></div></td></tr>
-            <tr id='StateRow'><td>State</td><td><div id='StateDiv'></div></td></tr>
-            <tr id='ZipCodeRow'><td>Zip Code</td><td><div id='ZipCodeDiv'></div></td></tr>
-            <tr id='PhoneRow'><td>Phone</td><td><div id='PhoneDiv'></div></td></tr>
-            <tr id='LatitudeRow'><td>Latitude</td><td><div id='LatitudeDiv'></div></td></tr>
-            <tr id='LongitudeRow'><td>Longitude</td><td><div id='LongitudeDiv'></div></td></tr>
-            <tr id='TimeZoneRow'><td>Time Zone</td><td><div id='TimeZoneDiv'></div></td></tr>
-            <tr id='SavingsTimeRow'><td>Savings Time</td><td><div id='SavingsTimeDiv'></div></td></tr>
+            <tr id='UrlRow'><td>IP Discovery URL</td><td><div id='UrlDiv'></div></td></tr>
+            <tr id='ExtDelayRow'><td>IP Discovery Delay</td><td><div id='ExtDelayDiv'></div></td></tr>
+            <tr id='ExtIpRow'><td>External IP</td><td><div id='ExtIpDiv'></div></td></tr>
         </table>
-        <div id='HouseEntryButtonsDiv'>
+		<div id='InternetTableDiv'>
+		</div>
+    </div>
+    <div id='InternetEntryDiv'>
+        <h2>Enter Internet data (or Delete)</h2>
+        <table style = 'Width: 60%;'>
+            <tr id='NameRow'><td>Name</td><td><div id='DynDnsNameDiv'></div></td></tr>
+            <tr id='KeyRow'><td>Key</td><td><div id='DynDnsKeyDiv'></div></td></tr>
+            <tr id='ActiveRow'><td>Active</td><td><div id='DynDnsActiveDiv'></div></td></tr>
+            <tr id='DynDnsUrlRow'><td>DynDns URL</td><td><div id='DynDnsUrlDiv'></div></td></tr>
+            <tr id='DynDnsIntervalRow'><td>DynDns Update Interval</td><td><div id='DynDnsIntervalDiv'></div></td></tr>
+        </table>
+        <div id='InternetEntryButtonsDiv'>
         </div>
     </div>
 </div>

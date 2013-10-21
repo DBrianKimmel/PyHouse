@@ -17,6 +17,7 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
         house.HouseWidget.upcall(self, "__init__", node);
     },
 
+	// ============================================================================
 	/**
      * Place the widget in the workspace.
 	 * 
@@ -34,22 +35,10 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 		l_defer.addCallback(cb_widgetready);
 		return l_defer;
 	},
-
-	/**
-	 * routines for showing and hiding parts of the screen.
-	 */
 	function showWidget(self) {
-		//Divmod.debug('---', 'house.showWidget() was called.');
 		self.node.style.display = 'block';
-		self.showButtons();
-		self.hideEntry();
+		self.showEntry();
 		self.fetchHouseData();
-	},
-	function hideButtons(self) {
-		self.nodeById('HouseButtonsDiv').style.display = 'none';		
-	},
-	function showButtons(self) {
-		self.nodeById('HouseButtonsDiv').style.display = 'block';	
 	},
 	function hideEntry(self) {
 		self.nodeById('HouseEntryDiv').style.display = 'none';		
@@ -67,8 +56,10 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 		function cb_fetchHouseData(p_json) {
 			//Divmod.debug('---', 'house.cb_fetchHouseData() was called. ' + p_json);
 			globals.House.HouseObj.House = JSON.parse(p_json);
-			var l_tab = buildTable(globals.House.HouseObj.House, 'handleMenuOnClick');
-			self.nodeById('HouseTableDiv').innerHTML = l_tab;
+			//var l_tab = buildTable(globals.House.HouseObj.House, 'handleMenuOnClick');
+			//self.nodeById('HouseTableDiv').innerHTML = l_tab;
+			var l_obj = globals.House.HouseObj;
+			self.fillEntry(l_obj);
 		}
 		function eb_fetchHouseData(res) {
 			Divmod.debug('---', 'house.eb_fetchHouseData() was called. ERROR: ' + res);
@@ -90,50 +81,38 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
         self.nodeById('NameDiv').innerHTML = buildTextWidget('HouseName', p_obj.Name);
         self.nodeById('KeyDiv').innerHTML = buildTextWidget('HouseKey', p_obj.Key, 'disabled');
 		self.nodeById('ActiveDiv').innerHTML = buildTrueFalseWidget('HouseActive', p_obj.Active);
-		self.nodeById('CommentDiv').innerHTML = buildTextWidget('HouseComment', p_obj.Comment);
-		self.nodeById('CoordsDiv').innerHTML = buildTextWidget('HouseCoords', p_obj.Coords);
-		self.nodeById('DimmableDiv').innerHTML = buildTrueFalseWidget('HouseDimmable', p_obj.Dimmable);
-		self.nodeById('FamilyDiv').innerHTML = buildFamilySelectWidget('HouseFamily', 'Families', p_obj.Family);
-		self.nodeById('RoomNameDiv').innerHTML = buildRoomSelectWidget('HouseRoomName', p_obj.RoomName);
-		self.nodeById('TypeDiv').innerHTML = buildTextWidget('HouseType', p_obj.Type, 'disabled');
+		self.nodeById('StreetDiv').innerHTML = buildTextWidget('HouseStreet', p_obj.Location.Street);
+		self.nodeById('CityDiv').innerHTML = buildTextWidget('HouseCity', p_obj.Location.City);
+		self.nodeById('StateDiv').innerHTML = buildTextWidget('HouseState', p_obj.Location.State);
+		self.nodeById('ZipCodeDiv').innerHTML = buildTextWidget('HouseZipCode', p_obj.Location.ZipCode);
+		self.nodeById('PhoneDiv').innerHTML = buildTextWidget('HousePhone', p_obj.Location.Phone);
+		self.nodeById('LatitudeDiv').innerHTML = buildTextWidget('HouseLatitude', p_obj.Location.Latitude);
+		self.nodeById('LongitudeDiv').innerHTML = buildTextWidget('HouseLongitude', p_obj.Location.Longitude);
+		self.nodeById('TimeZoneDiv').innerHTML = buildTextWidget('HouseTimeZone', p_obj.Location.TimeZone);
+		self.nodeById('SavingsTimeDiv').innerHTML = buildTextWidget('HouseSavingsTime', p_obj.Location.SavingsTime);
 		self.nodeById('UUIDDiv').innerHTML = buildTextWidget('HouseUUID', p_obj.UUID, 'disabled');
-		self.nodeById('HouseEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick');
+		self.nodeById('HouseEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick', 'NoDelete');
 	},
 	function fetchEntry(self) {
 		//Divmod.debug('---', 'house.fetchEntry() was called. ');
         var l_data = {
             Name : fetchTextWidget('HouseName'),
             Key : fetchTextWidget('HouseKey'),
-			Active : fetchTrueFalse('HouseActive'),
-			Comment : fetchTextWidget('HouseComment'),
-			Coords : fetchTextWidget('HouseCoords'),
-			Dimmable : fetchTrueFalse('HouseDimmable'),
-			Family : fetchTextWidget('HouseFamily'),
-			RoomName : fetchSelectWidget('HouseRoomName'),
-			Type : fetchTextWidget('HouseType'),
+			Active : fetchTrueFalseWidget('HouseActive'),
+			Street : fetchTextWidget('HouseStreet'),
+			City : fetchTextWidget('HouseCity'),
+			State : fetchTextWidget('HouseState'),
+			ZipCode : fetchTextWidget('HouseZipCode'),
+			Phone : fetchTextWidget('HousePhone'),
+			Latitude : fetchTextWidget('HouseLatitude'),
+			Longitude : fetchTextWidget('HouseLongitude'),
+			TimeZone : fetchTextWidget('HouseTimeZone'),
+			SavingsTime : fetchTextWidget('HouseSavingsTime'),
 			UUID : fetchTextWidget('HouseUUID'),
 			HouseIx : globals.House.HouseIx,
 			Delete : false
             }
 		return l_data;
-	},
-	function createEntry(self, p_ix) {
-		//Divmod.debug('---', 'house.createEntry() was called.  Ix: ' + p_ix);
-        var l_Data = {
-    			Name : 'Change Me',
-    			Key : Object.keys(globals.House.HouseObj.House).length,
-    			Active : false,
-    			Comment : '',
-    			Coords : '',
-    			Dimmable : false,
-    			Family : '',
-    			RoomName : '',
-    			Type : 'House',
-    			UUID : '',
-    			HouseIx : p_ix,
-    			Delete : false
-                }
-		return l_Data;
 	},
 
 	// ============================================================================
@@ -157,13 +136,11 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 			//Divmod.debug('---', 'house.handleMenuOnClick("House" Button) was called. ' + l_ix + ' ' + l_name);
 			//console.log("house.handleMenuOnClick() - l_obj = %O", l_obj);
 			self.showEntry();
-			self.hideButtons();
 			self.fillEntry(l_obj);
 		} else if (l_ix == 10001) {
 			// The "Add" button
 			//Divmod.debug('---', 'house.handleMenuOnClick(Add Button) was called. ' + l_ix + ' ' + l_name);
 			self.showEntry();
-			self.hideButtons();
 			var l_ent = self.createEntry(globals.House.HouseIx);
 			self.fillEntry(l_ent);
 		} else if (l_ix == 10002) {
@@ -201,16 +178,6 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 		case '10002':  // Back button
 			//Divmod.debug('---', 'house.handleDataOnClick(Back) was called.  ');
 			self.hideEntry();
-			self.showButtons();
-			break;
-		case '10004':  // Delete button
-			var l_obj = self.fetchEntry();
-			l_obj['Delete'] = true;
-	    	var l_json = JSON.stringify(l_obj);
-			//Divmod.debug('---', 'house.handleDataOnClick(Delete) was called. JSON:' + l_json);
-	        var l_defer = self.callRemote("saveHouseData", l_json);  // @ web_rooms
-			l_defer.addCallback(cb_handleDataOnClick);
-			l_defer.addErrback(eb_handleDataOnClick);
 			break;
 		default:
 			Divmod.debug('---', 'house.handleDataOnClick(Default) was called. l_ix:' + l_ix);

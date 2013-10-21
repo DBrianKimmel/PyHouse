@@ -21,7 +21,6 @@ from nevow import athena
 
 # Import PyMh files and modules.
 from src.web import web_utils
-#from src.web import web_server
 from src.families import VALID_FAMILIES
 from src.drivers import VALID_INTERFACES
 from src.scheduling import VALID_SCHEDULING_TYPES
@@ -143,7 +142,7 @@ class LoginElement(athena.LiveElement):
             VALID_SCHEDULING_TYPES
         """
         l_interfaces = VALID_INTERFACES
-        l_obj = dict(Drivers = l_interfaces, Families = VALID_FAMILIES,
+        l_obj = dict(Drivers = VALID_INTERFACES, Families = VALID_FAMILIES,
                      Lights = VALID_LIGHTS_TYPE, Scheduling = VALID_SCHEDULING_TYPES)
         l_json = web_utils.JsonUnicode().encode_json(l_obj)
         if g_debug >= 4:

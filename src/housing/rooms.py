@@ -11,9 +11,6 @@ import xml.etree.ElementTree as ET
 import uuid
 
 # Import PyMh files
-# import src
-# import utils
-# from src.utils import xml_tools
 from src.utils import xml_tools
 
 
@@ -48,9 +45,10 @@ class RoomData(object):
         return l_ret
 
     def reprJSON(self):
-        return dict(Name = self.Name, Active = self.Active, Key = self.Key,
+        l_ret = dict(Name = self.Name, Key = self.Key, Active = self.Active,
                     Comment = self.Comment, Corner = self.Corner, Size = self.Size,
                     Type = self.Type, UUID = self.UUID)
+        return l_ret
 
 
 class ReadWriteConfig(xml_tools.ConfigTools):

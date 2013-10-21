@@ -46,22 +46,18 @@ class LightsElement(athena.LiveElement):
             print "web_lights.LightsElement()"
 
     @athena.expose
-    def getLightData(self, p_index):
+    def getHouseData(self, p_index):
         """ A JS client has requested all the lights information for a given house.
 
         Return the information via callback to the client.
 
         @param p_index: is the house index number.
         """
+        l_ix = int(p_index)
+        l_house = self.m_pyhouses_obj.HousesData[l_ix].HouseObject
         if g_debug >= 3:
-            print "web_lights.LightsElement.getLightData() - HouseIndex:", p_index
-        l_lights = self.m_pyhouses_obj.HousesData[int(p_index)].HouseObject.Lights
-        l_obj = {}
-        for l_key, l_val in l_lights.iteritems():
-            l_obj[l_key] = l_val
-        l_json = unicode(web_utils.JsonUnicode().encode_json(l_obj))
-        if g_debug >= 4:
-            print "web_lights.LightsElement.getLightsEntries() - JSON:", l_json
+            print "web_lights.getHouseData() - HouseIndex:", p_index
+        l_json = unicode(web_utils.JsonUnicode().encode_json(l_house))
         return l_json
 
     @athena.expose

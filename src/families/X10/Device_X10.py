@@ -17,7 +17,7 @@ g_debug = 0
 # 2 = Startup Details
 # 3 = Minor routines
 
-g_logger = None
+g_logger = logging.getLogger('PyHouse.Dev_X10 ')
 
 
 class X10LightingData(lighting.LightData):
@@ -83,8 +83,6 @@ class API(object):
     def __init__(self, p_house_obj):
         """Constructor for the PLM.
         """
-        global g_logger
-        g_logger = logging.getLogger('PyHouse.Dev_X10 ')
         self.m_house_obj = p_house_obj
         if g_debug > 0:
             print "Device_X10.__init__()"

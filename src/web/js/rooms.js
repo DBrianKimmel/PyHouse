@@ -10,7 +10,6 @@
 helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 
 	function __init__(self, node) {
-		//Divmod.debug('---', 'rooms.__init__() was called. - self=' + self + "  node=" + node);
 		rooms.RoomsWidget.upcall(self, '__init__', node);
 	},
 
@@ -39,9 +38,9 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	function showWidget(self) {
 		//Divmod.debug('---', 'rooms.showWidget() was called.');
 		self.node.style.display = 'block';
-		self.showButtons(self);
-		self.hideEntry(self);
-		self.fetchRoomData(self, globals.House.HouseIx);
+		self.showButtons();
+		self.hideEntry();
+		self.fetchHouseData();
 	},
 	function showButtons(self) {
 		//Divmod.debug('---', 'rooms.showButtons() was called. ');
@@ -63,23 +62,21 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	// ============================================================================
 	/**
 	 * This triggers getting the room data from the server.
-	 * 
-	 * @param p_houseIndex is the house index that was selected
 	 */
-	function fetchRoomData(self, p_houseIndex) {
-		function cb_fetchData(p_json) {
-			//Divmod.debug('---', 'room.cb_fetchData() was called. ');
-			globals.House.HouseObj.Rooms = JSON.parse(p_json);
+	function fetchHouseData(self) {
+		function cb_fetchHouseData(p_json) {
+			//Divmod.debug('---', 'room.cb_fetchHouseData() was called. ');
+			globals.House.HouseObj = JSON.parse(p_json);
 			var l_tab = buildTable(globals.House.HouseObj.Rooms, 'handleMenuOnClick');
 			self.nodeById('RoomTableDiv').innerHTML = l_tab;
 		}
-		function eb_fetchData(res) {
-			Divmod.debug('---', 'rooms.eb_fetchData() was called. ERROR = ' + res);
+		function eb_fetchHouseData(res) {
+			Divmod.debug('---', 'rooms.eb_fetchHouseData() was called. ERROR = ' + res);
 		}
-		//Divmod.debug('---', 'rooms.fetchRoomData() was called.');
-        var l_defer = self.callRemote("getRoomData", globals.House.HouseIx);  // call server @ web_rooms.py
-		l_defer.addCallback(cb_fetchData);
-		l_defer.addErrback(eb_fetchData);
+		//Divmod.debug('---', 'rooms.fetchHouseData() was called.');
+        var l_defer = self.callRemote("getHouseData", globals.House.HouseIx);  // call server @ web_rooms.py
+		l_defer.addCallback(cb_fetchHouseData);
+		l_defer.addErrback(eb_fetchHouseData);
         return false;
 	},
 
@@ -152,7 +149,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
         var l_data = {
 			Name : self.nodeById('Name').value,
 			Key : self.nodeById('Key').value,
-			Active : fetchTrueFalse('RoomActive'),
+			Active : fetchTrueFalseWidget('RoomActive'),
 			Comment : self.nodeById('Comment').value,
 			Corner : self.nodeById('Corner').value,
 			Type : 'Room',

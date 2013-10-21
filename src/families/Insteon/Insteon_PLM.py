@@ -38,7 +38,7 @@ g_debug = 0
 # 6 = sent command detail (number)
 # 7 = diagnostics
 # + = NOT USED HERE
-g_logger = None
+g_logger = logging.getLogger('PyHouse.Inst_PLM')
 
 callLater = reactor.callLater
 
@@ -1090,8 +1090,6 @@ class API(LightHandlerAPI):
     def __init__(self, p_house_obj):
         """Constructor for the PLM.
         """
-        global g_logger
-        g_logger = logging.getLogger('PyHouse.Inst_PLM')
         self.m_house_obj = p_house_obj
         if g_debug >= 2:
             print "Insteon_PLM.API()"

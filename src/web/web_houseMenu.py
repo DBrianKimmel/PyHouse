@@ -12,7 +12,6 @@ from nevow import loaders
 from nevow import athena
 
 # Import PyMh files and modules.
-from src.web import web_utils
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -27,8 +26,6 @@ g_debug = 0
 # 5 = Detailed Data
 # + = NOT USED HERE
 g_logger = logging.getLogger('PyHouse.webHMenu')
-
-g_logger = None
 
 
 class HouseMenuElement(athena.LiveElement):

@@ -32,7 +32,7 @@ g_debug = 0
 # 5 = Read / write details
 # 6 = Details of device on start
 # + = NOT USED HERE
-g_logger = None
+g_logger = logging.getLogger('PyHouse.DrvrSerl')
 
 
 class SerialProtocol(Protocol):
@@ -117,8 +117,6 @@ class API(SerialAPI):
     def __init__(self):
         """
         """
-        global g_logger
-        g_logger = logging.getLogger('PyHouse.DrvrSerl')
         if g_debug >= 2:
             print "Driver_Serial.API()"
             g_logger.debug("Initializing.")

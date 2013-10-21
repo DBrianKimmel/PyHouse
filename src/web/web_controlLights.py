@@ -19,7 +19,6 @@ from src.lights import lighting_lights
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
-g_logger = logging.getLogger('PyHouse.webClLgt')
 
 g_debug = 0
 # 0 = off
@@ -28,9 +27,10 @@ g_debug = 0
 # 3 = Config file handling
 # 4 = Dump JSON
 # + = NOT USED HERE
+g_logger = logging.getLogger('PyHouse.webClLgt')
 
 class ControlLightsElement(athena.LiveElement):
-    """ a 'live' schedules element.
+    """ a 'live' controlLights element.
     """
     docFactory = loaders.xmlfile(os.path.join(templatepath, 'controlLightsElement.html'))
     jsClass = u'controlLights.ControlLightsWidget'
@@ -42,23 +42,17 @@ class ControlLightsElement(athena.LiveElement):
             print "web_controlLights.ControlLightsElement()"
 
     @athena.expose
-    def getControlLightData(self, p_index):
-        """ A JS client has requested all the lights information for a given house.
-
-        Return the information via a remote call to the client.
+    def getHouseData(self, p_index):
+        """ A JS client has requested all the information for a given house.
 
         @param p_index: is the house index number.
         """
+        l_ix = int(p_index)
+        l_house = self.m_pyhouses_obj.HousesData[l_ix].HouseObject
         if g_debug >= 3:
-            print "web_controlLights.ControlLightsElement.getControlLightEntries() - HouseIndex:", p_index
-        l_lights = self.m_pyhouses_obj.HousesData[int(p_index)].HouseObject.Lights
-        l_obj = {}
-        for l_key, l_val in l_lights.iteritems():
-            l_obj[l_key] = l_val
-        l_json = unicode(web_utils.JsonUnicode().encode_json(l_obj))
-        if g_debug >= 4:
-            print "web_controlLights.ControlLightsElement.getControlLightsEntries() - JSON:", l_json
-        return unicode(l_json)
+            print "web_controlLights.getHouseData() - HouseIndex:", p_index
+        l_json = unicode(web_utils.JsonUnicode().encode_json(l_house))
+        return l_json
 
     @athena.expose
     def saveControlLightData(self, p_json):

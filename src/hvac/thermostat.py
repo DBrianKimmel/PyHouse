@@ -12,7 +12,7 @@ import xml.etree.ElementTree as ET
 from src.utils import xml_tools
 
 g_debug = 0
-g_logger = None
+g_logger = logging.getLogger('PyHouse.Thermostat')
 
 
 class ReadWriteXML(xml_tools.ConfigTools):
@@ -58,8 +58,6 @@ class API(object):
     m_house_obj = None
 
     def __init__(self, p_house_obj):
-        global g_logger
-        g_logger = logging.getLogger('PyHouse.Thermostat')
         if g_debug >= 1:
             print "thermostat.API()"
         g_logger.info("Initializing for house:{0:}.".format(p_house_obj.Name))

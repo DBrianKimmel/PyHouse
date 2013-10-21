@@ -23,6 +23,7 @@ from src.scheduling import schedule
 from src.housing import internet
 from src.housing import location
 from src.housing import rooms
+from src.families import family
 
 
 g_debug = 0
@@ -31,24 +32,24 @@ g_debug = 0
 # 2 = major routine entry
 # 3 = get/put xml config info
 # + = NOT USED HERE
-g_logger = None
+g_logger = logging.getLogger('PyHouse.House   ')
 
 
 class HouseData(object):
 
     def __init__(self):
-        self.Active = False
-        self.Key = 0
         self.Name = ''
+        self.Key = 0
+        self.Active = False
         self.UUID = None
         self.InternetAPI = None
         self.LightingAPI = None
         self.ScheduleAPI = None
-        self.FamilyData = None
         self.Location = location.LocationData()  # one location per house.
         # a dict of zero or more of the following.
         self.Buttons = {}
         self.Controllers = {}
+        self.FamilyData = {}
         self.Internet = {}
         self.Lights = {}
         self.Rooms = {}
@@ -68,10 +69,15 @@ class HouseData(object):
         return l_ret
 
     def reprJSON(self):
-        return dict(Active = self.Active, Key = self.Key, Name = self.Name,
-                    Location = self.Location, Buttons = self.Buttons, Controllers = self.Controllers,
-                    Internet = self.Internet, Lights = self.Lights, Rooms = self.Rooms,
-                    Schedules = self.Schedules, UUID = self.UUID)
+        l_ret = dict(Name = self.Name, Key = self.Key, Active = self.Active,
+                    Buttons = self.Buttons, Controllers = self.Controllers, Lights = self.Lights,
+                    Location = self.Location,
+                    Internet = self.Internet,
+                    Family = self.FamilyData,
+                    Rooms = self.Rooms,
+                    Schedules = self.Schedules,
+                    UUID = self.UUID)
+        return l_ret
 
 
 class HouseReadWriteConfig(location.ReadWriteConfig, rooms.ReadWriteConfig):
@@ -110,8 +116,6 @@ class API(HouseReadWriteConfig):
     def __init__(self):
         """Create a house object for when we add a new house.
         """
-        global g_logger
-        g_logger = logging.getLogger('PyHouse.House   ')
         if g_debug >= 1:
             print "house.API()"
         self.m_house_obj = HouseData()
@@ -160,16 +164,5 @@ class API(HouseReadWriteConfig):
             print "house.API.Update() - House:{0:}".format(self.m_house_obj.Name)
             print '    ', p_entry
         l_type = p_entry.Type
-        if l_type == 'Room':
-            l_obj = rooms.RoomData()
-            l_obj.Name = p_entry.Name
-            l_obj.Active = p_entry.Active
-            l_obj.Key = p_entry.Key
-            l_obj.Comment = p_entry.Comment
-            l_obj.Corner = p_entry.Corner
-            l_obj.Size = p_entry.Size
-            l_obj.Type = p_entry.Type
-            l_obj.UUID = p_entry.UUID
-            self.m_house_obj.Rooms[l_obj.Key] = l_obj  # update room entry within a house
 
 # ##  END DBK

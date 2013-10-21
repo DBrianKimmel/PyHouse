@@ -18,7 +18,7 @@ import logging
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
-from src.lights import lighting
+#from src.lights import lighting
 from src.families.Insteon import Insteon_PLM
 from src.families.Insteon import Insteon_utils
 
@@ -30,8 +30,7 @@ g_debug = 0
 # 3 = Config file handling
 # 4 = Minor routines
 # + = NOT USED HERE
-
-g_logger = None
+g_logger = logging.getLogger('PyHouse.Dev_Inst')
 
 
 class InsteonData (object):
@@ -52,23 +51,19 @@ class InsteonData (object):
         self.Command1 = 0
         self.Command2 = 0
 
-    def __str__(self):
-        l_str = lighting.ControllerData.__str__(self)
-        l_str += " Address:{0:}({1:}),".format(self.int2dotted_hex(self.InsteonAddress), self.InsteonAddress)
-        l_str += " Controller:{0:}".format(self.Controller)
-        return l_str
-
-    def __repr__(self):
-        l_ret = "{"
-        l_ret += ', '
-        l_ret += '"Interface":"{0:}", '.format(str(self.Interface))
-        l_ret += '"Port":"{0:}"'.format(self.Port)
-        l_ret += '"InsteonAddress":"{0:}"'.format(self.InsteonAddress)
-        l_ret += '"DevCat":"{0:}"'.format(self.DevCat)
-        l_ret += '"ProductKey":"{0:}"'.format(self.ProductKey)
-        l_ret += '"GroupList":"{0:}"'.format(self.GroupList)
-        l_ret += '"GroupNumber":"{0:}"'.format(self.GroupNumber)
-        l_ret += "}"
+    def reprJSON(self):
+        print "Device_Insteon.reprJSON() {0:}".format(self.InsteonAddress)
+        l_ret = super(InsteonData, self).reprJSON()  # The core data
+        l_ret.update(dict(
+                    InsteonAddress = self.InsteonAddress,
+                    Controller = self.Controller,
+                    DevCat = self.DevCat,
+                    GroupList = self.GroupList,
+                    GroupNumber = self.GroupNumber,
+                    Master = self.Master,
+                    Responder = self.Responder,
+                    ProductKey = self.ProductKey
+                    ))
         return l_ret
 
 
@@ -80,7 +75,12 @@ class CoreAPI(object):
         @param p_house: is the text name of the House.
         @return: a dict of the entry to be attached to a house object.
         """
-        p_device_obj.InsteonAddress = Insteon_utils.dotted_hex2int(p_entry_xml.findtext('Address'))
+        if g_debug >= 3:
+            print "Device_Insteon.extract_device_xml()", p_device_obj
+        try:
+            p_device_obj.InsteonAddress = Insteon_utils.dotted_hex2int(p_entry_xml.findtext('Address'))
+        except AttributeError:
+            p_device_obj.InsteonAddress = '11.22.33'
         p_device_obj.Controller = p_entry_xml.findtext('Controller')
         p_device_obj.DevCat = p_entry_xml.findtext('DevCat')
         p_device_obj.GroupList = p_entry_xml.findtext('GroupList')
@@ -102,50 +102,8 @@ class CoreAPI(object):
         ET.SubElement(p_entry_xml, 'ProductKey').text = str(p_device_obj.ProductKey)
         ET.SubElement(p_entry_xml, 'Responder').text = self.put_bool(p_device_obj.Responder)
 
-class ButtonData(lighting.ButtonData):
 
-    def __init__(self):
-        super(ButtonData, self).__init__()
-
-    def __str__(self):
-        l_str = super(ButtonData, self).__str__()
-        l_str += " Address:{0:}".format(self.Address)
-        return l_str
-
-
-class ButtonAPI(lighting.ButtonAPI): pass
-
-
-class ControllerData(lighting.ControllerData):
-
-    def __init__(self):
-        super(ControllerData, self).__init__()
-
-    def __str__(self):
-        l_str = super(ControllerData, self).__str__()
-        l_str += " Address:{0:}".format(self.Address)
-        return l_str
-
-
-class ControllerAPI(lighting.ControllerAPI): pass
-
-
-class LightData(lighting.LightData):
-    """Insteon specific data we wish to export.  Extends the LightData class
-    Create a dict of devices.
-    Each device will contain a dict of attributes and vales
-    """
-
-    def __init__(self):
-        super(LightData, self).__init__()
-
-    def __str__(self):
-        l_str = super(LightData, self).__str__()
-        l_str += " Address:{0:}".format(self.Address)
-        return l_str
-
-
-class LightingAPI(lighting.LightingAPI, CoreAPI):
+class LightingAPI(CoreAPI):
     """Interface to the lights of this module.
     """
 
@@ -167,13 +125,10 @@ class LightingAPI(lighting.LightingAPI, CoreAPI):
 
 
 class API(LightingAPI):
-    """Called from lighting.
-
+    """
     """
 
     def __init__(self, p_house_obj):
-        global g_logger
-        g_logger = logging.getLogger('PyHouse.Dev_Inst')
         if g_debug >= 2:
             print "Device_Insteon.API()", p_house_obj
         self.m_house_obj = p_house_obj

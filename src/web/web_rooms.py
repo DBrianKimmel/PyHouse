@@ -40,21 +40,16 @@ class RoomsElement(athena.LiveElement):
             print "web_rooms.RoomsElement()"
 
     @athena.expose
-    def getRoomData(self, p_index):
+    def getHouseData(self, p_index):
         """ A JS client has requested all the room information for a given house.
 
         @param p_index: is the house index number.
         """
+        l_ix = int(p_index)
+        l_house = self.m_pyhouses_obj.HousesData[l_ix].HouseObject
         if g_debug >= 3:
             print "web_rooms.RoomsElement.getRoomData(1) - HouseIndex:", p_index
-        g_logger.info("getRoomData called {0:}".format(self))
-        l_rooms = self.m_pyhouses_obj.HousesData[int(p_index)].HouseObject.Rooms
-        l_obj = {}
-        for l_key, l_val in l_rooms.iteritems():
-            l_obj[l_key] = l_val
-        l_json = web_utils.JsonUnicode().encode_json(l_obj)
-        if g_debug >= 4:
-            print "web_rooms.RoomsElement.getRoomData(2) - JSON:", l_json
+        l_json = web_utils.JsonUnicode().encode_json(l_house)
         return unicode(l_json)
 
     @athena.expose
@@ -62,17 +57,28 @@ class RoomsElement(athena.LiveElement):
         """A new/changed/deleted room is returned.  Process it and update the internal data via ???
         """
         l_json = web_utils.JsonUnicode().decode_json(p_json)
-        l_ix = int(l_json['HouseIx'])
+        l_house_ix = int(l_json['HouseIx'])
+        l_room_ix = int(l_json['Key'])
+        l_delete = l_json['Delete']
         if g_debug >= 4:
             print "web_rooms.RoomsElement.saveRoomData() - JSON:", l_json
-        l_obj = rooms.RoomData()
+        if l_delete:
+            try:
+                del self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Rooms[l_room_ix]
+            except AttributeError:
+                print "web_rooms - Failed to delete - JSON: ", l_json
+            return
+        try:
+            l_obj = self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Rooms[l_room_ix]
+        except KeyError:
+            l_obj = rooms.RoomData()
         l_obj.Name = l_json['Name']
         l_obj.Active = l_json['Active']
-        l_obj.Key = l_json['Key']
+        l_obj.Key = l_room_ix
         l_obj.Comment = l_json['Comment']
         l_obj.Corner = l_json['Corner']
         l_obj.Size = l_json['Size']
         l_obj.Type = 'Room'
-        self.m_pyhouses_obj.HousesData[l_ix].HouseAPI.Update(l_obj)
+        self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Rooms[l_room_ix] = l_obj
 
 # ## END DBK

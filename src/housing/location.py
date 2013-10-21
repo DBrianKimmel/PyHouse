@@ -37,10 +37,10 @@ class LocationData(object):
         return l_ret
 
     def reprJSON(self):
-        return dict(City = self.City, Latitude = self.Latitude, Longitude = self.Longitude, Phone = self.Phone,
+        l_ret = dict(City = self.City, Latitude = self.Latitude, Longitude = self.Longitude, Phone = self.Phone,
                     SavingsTime = self.SavingTime, State = self.State, Street = self.Street, TimeZone = self.TimeZone,
                     ZipCode = self.ZipCode)
-
+        return l_ret
 
 
 class ReadWriteConfig(xml_tools.ConfigTools):
