@@ -18,9 +18,10 @@ import logging
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
-#from src.lights import lighting
-from src.families.Insteon import Insteon_PLM
+from src.lights import lighting
+#from src.families.Insteon import Insteon_PLM
 from src.families.Insteon import Insteon_utils
+from src.utils import xml_tools
 
 
 g_debug = 0
@@ -33,7 +34,7 @@ g_debug = 0
 g_logger = logging.getLogger('PyHouse.Dev_Inst')
 
 
-class InsteonData (object):
+class InsteonData (lighting.LightData):
     """This class contains the Insteon specific information about the various devices
     controlled by PyHouse.
     """
@@ -48,8 +49,8 @@ class InsteonData (object):
         self.Master = False  # False is Slave
         self.ProductKey = ''
         self.Responder = False
-        self.Command1 = 0
-        self.Command2 = 0
+        #self.Command1 = 0
+        #self.Command2 = 0
 
     def reprJSON(self):
         print "Device_Insteon.reprJSON() {0:}".format(self.InsteonAddress)
@@ -67,7 +68,7 @@ class InsteonData (object):
         return l_ret
 
 
-class CoreAPI(object):
+class CoreAPI(xml_tools.ConfigTools):
 
     def extract_device_xml(self, p_entry_xml, p_device_obj):
         """
@@ -80,7 +81,7 @@ class CoreAPI(object):
         try:
             p_device_obj.InsteonAddress = Insteon_utils.dotted_hex2int(p_entry_xml.findtext('Address'))
         except AttributeError:
-            p_device_obj.InsteonAddress = '11.22.33'
+            p_device_obj.InsteonAddress = 0
         p_device_obj.Controller = p_entry_xml.findtext('Controller')
         p_device_obj.DevCat = p_entry_xml.findtext('DevCat')
         p_device_obj.GroupList = p_entry_xml.findtext('GroupList')
@@ -129,8 +130,6 @@ class API(LightingAPI):
     """
 
     def __init__(self, p_house_obj):
-        if g_debug >= 2:
-            print "Device_Insteon.API()", p_house_obj
         self.m_house_obj = p_house_obj
         g_logger.info('Initialized.')
 
@@ -140,21 +139,18 @@ class API(LightingAPI):
         """
         if g_debug >= 2:
             print "Device_Insteon.API.Start() - House:{0:}".format(p_house_obj.Name), p_house_obj
-        g_logger.info('Starting.')
+        g_logger.info('Starting for house:{0:}'.format(p_house_obj.Name))
         l_count = 0
         for l_controller_obj in p_house_obj.Controllers.itervalues():
             if g_debug >= 3:
                 print "Device_Insteon.Start() - House:{0:}, Controller:{1:}".format(p_house_obj.Name, l_controller_obj.Name)
             if l_controller_obj.Family != 'Insteon':
-                if g_debug >= 3:
-                    print "Device_Insteon.Start() - Skipping, Family:{0:}".format(l_controller_obj.Family)
                 continue
             if l_controller_obj.Active != True:
-                if g_debug >= 2:
-                    print "Device_Insteon.Start() - Skipping, Active:{0:}".format(l_controller_obj.Active)
                 continue
             if g_debug >= 4:
                 print "Device_Insteon.Start() - trying."
+            """
             # Only one controller may be active at a time (for now).
             # But all controllers need to be processed so they may be written back to XML.
             if l_count > 0:
@@ -172,6 +168,7 @@ class API(LightingAPI):
                     if g_debug >= 2:
                         print "Device_Insteon.Start() - Did NOT start- House:{0:}, Controller:{1:}".format(p_house_obj.Name, l_controller_obj.Name)
                     l_controller_obj.Active = False
+            """
         l_msg = 'Started {0:} Controllers, House:{1:}.'.format(l_count, p_house_obj.Name)
         if g_debug >= 2:
             print "Device_Insteon.Start() - {0:}".format(l_msg)

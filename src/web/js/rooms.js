@@ -131,7 +131,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		self.nodeById('RoomEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick');
 	},
 	function createEntry(self, p_ix) {
-    	//Divmod.debug('---', 'rooms.fetchEntry() was called. ' + self);
+    	//Divmod.debug('---', 'rooms.createEntry() was called. ');
         var l_data = {
 			Name : 'Change Me',
 			Key : Object.keys(globals.House.HouseObj.Rooms).length,

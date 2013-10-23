@@ -170,7 +170,7 @@ class Utilities(object):
         try:
             l_xmltree = ET.parse(p_pyhouses_obj.XmlFileName)
         except SyntaxError:
-            self.create_empty_config_file(p_pyhouses_obj.XmlFileName)
+            xml_tools.ConfigFile().create_empty_config_file(p_pyhouses_obj.XmlFileName)
             l_xmltree = ET.parse(p_pyhouses_obj.XmlFileName)
         p_pyhouses_obj.XmlRoot = l_xmltree.getroot()
 

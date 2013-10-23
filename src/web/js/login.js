@@ -76,23 +76,10 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 	 * @returns {Boolean} False to stop the processing cycle.
 	 */
 	function doLoginSubmit(self) {  // from html handler onSubmit
-		function cb_showRootMenu(res) {
-			//Divmod.debug('---', 'login.cb_showRootMenu() was called. ');
-			var l_node = findWidgetByClass('RootMenu');
-			l_node.showWidget(self);
-		}
 		function cb_doLoginSubmit(p_json) {
 			//Divmod.debug('---', 'login.cb_doLoginSubmit() was called.  JSON: ' + p_json);
 			var l_obj = JSON.parse(p_json);
-			globals.User.ID = l_obj.Username;
-			globals.User.Password = l_obj.Password;
-			globals.User.Fullname = l_obj.Fullname;
-			globals.User.LoggedIn = true;
-			self.hideLoggingInDiv(self);
-			self.showLoggedInDiv(self);
-			self.nodeById('LoggedInDiv').innerHTML = 'Logged in: ' + l_obj.Fullname;
-			var l_defer = serverState(22);
-			l_defer.addCallback(cb_showRootMenu);
+			self.showNextScreen(l_obj);
 		}
 		function eb_doLoginSubmit(res){
 			Divmod.debug('---', 'login.eb_doLoginSubmit() was called.  ERROR = ' + res);
@@ -107,6 +94,32 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 		l_defer.addCallback(cb_doLoginSubmit);
 		l_defer.addErrback(eb_doLoginSubmit);
         return false;  // Stops the resetting of the server.
+	},
+	
+	// ============================================================================
+	/**
+	 * Based on the login success - show the next screen.
+	 */
+	function showNextScreen(self, p_obj) {
+		function cb_showNextScreen(res) {
+			var l_node = findWidgetByClass('RootMenu');
+			l_node.showWidget(self);
+		}
+		if (p_obj.LoggedIn === true) {
+			globals.User.ID = p_obj.Username;
+			globals.User.Password = p_obj.Password;
+			globals.User.Fullname = p_obj.Fullname;
+			globals.User.LoggedIn = true;
+			self.hideLoggingInDiv(self);
+			self.showLoggedInDiv(self);
+			self.nodeById('LoggedInDiv').innerHTML = 'Logged in: ' + p_obj.Fullname;
+			var l_defer = serverState(22);
+			l_defer.addCallback(cb_showNextScreen);
+		} else {
+			self.showLoggingInDiv(self);
+			self.hideLoggedInDiv(self);
+        	self.nodeById('LoginPassword').value = '';
+		}
 	}
 );
 //### END DBK

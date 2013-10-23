@@ -23,7 +23,7 @@ from src.scheduling import schedule
 from src.housing import internet
 from src.housing import location
 from src.housing import rooms
-from src.families import family
+#from src.families import family
 
 
 g_debug = 0

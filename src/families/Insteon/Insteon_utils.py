@@ -8,7 +8,7 @@ def message2int(p_message, p_index):
     """Extract the address from a message.
 
     The message is a byte array returned from the PLM.
-    Return an int that is the address.
+    Return a 34 bit int that is the address.
     """
     try:
         l_int = p_message[p_index] * 256 * 256 + p_message[p_index + 1] * 256 + p_message[p_index + 2]
@@ -17,6 +17,8 @@ def message2int(p_message, p_index):
     return l_int
 
 def int2message(p_int, p_message, p_index):
+    """Place an insteon address (int internlly) into a message at offset.
+    """
     l_ix = 256 * 256
     while l_ix > 0:
         p_message[p_index], p_int = divmod(p_int, l_ix)

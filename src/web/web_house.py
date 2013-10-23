@@ -12,13 +12,14 @@ from nevow import loaders
 
 # Import PyMh files and modules.
 from src.web import web_utils
+from src.housing import houses
 from src.housing import house
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
 
-g_debug = 0
+g_debug = 3
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
@@ -58,12 +59,19 @@ class HouseElement(athena.LiveElement):
         """
         l_json = web_utils.JsonUnicode().decode_json(p_json)
         l_house_ix = int(l_json['HouseIx'])
+        if l_house_ix == -1:
+            l_house_ix = len(self.m_pyhouses_obj.HousesData)
         if g_debug >= 4:
             print "web_house.saveHouseData() - JSON:", l_json
         try:
             l_obj = self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject
         except KeyError:
             l_obj = house.HouseData()
+            try:
+                self.m_pyhouses_obj.HousesData[l_house_ix] = house.HouseData()
+            except AttributeError:
+                self.m_pyhouses_obj.HousesData = houses.HousesData()
+                self.m_pyhouses_obj.HousesData[0] = house.HouseData()
         print "House ", l_obj
         l_obj.Name = l_json['Name']
         l_obj.Key = int(l_json['Key'])
@@ -78,5 +86,6 @@ class HouseElement(athena.LiveElement):
         l_obj.Location.TimeZone = l_json['TimeZone']
         l_obj.Location.SavingsTime = l_json['SavingsTime']
         self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject = l_obj
+        self.m_pyhouses_obj.API.Reload(self.m_pyhouses_obj)
 
 # ## END DBK

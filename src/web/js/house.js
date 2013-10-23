@@ -54,17 +54,22 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 	 */
 	function fetchHouseData(self) {
 		function cb_fetchHouseData(p_json) {
-			//Divmod.debug('---', 'house.cb_fetchHouseData() was called. ' + p_json);
+			Divmod.debug('---', 'house.cb_fetchHouseData() was called. ' + p_json);
 			globals.House.HouseObj.House = JSON.parse(p_json);
-			//var l_tab = buildTable(globals.House.HouseObj.House, 'handleMenuOnClick');
-			//self.nodeById('HouseTableDiv').innerHTML = l_tab;
 			var l_obj = globals.House.HouseObj;
 			self.fillEntry(l_obj);
 		}
 		function eb_fetchHouseData(res) {
 			Divmod.debug('---', 'house.eb_fetchHouseData() was called. ERROR: ' + res);
 		}
-		//Divmod.debug('---', 'house.fetchHouseData() was called. ');
+		Divmod.debug('---', 'house.fetchHouseData() was called. ');
+		if (globals.House.HouseIx == -1) {
+			globals.House.HouseObj = {};
+			globals.House.HouseObj.House = self.createEntry(0);
+			var l_obj = globals.House.HouseObj.House;
+			self.fillEntry(l_obj);
+			return false;
+		}
         var l_defer = self.callRemote("getHouseData", globals.House.HouseIx);  // call server @ web_house.py
 		l_defer.addCallback(cb_fetchHouseData);
 		l_defer.addErrback(eb_fetchHouseData);
@@ -76,8 +81,8 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 	 * 
 	 */
 	function fillEntry(self, p_obj) {
-		//Divmod.debug('---', 'house.fillEntry(1) was called.  Self:' + self);
-		//console.log("house.fillEntry() - Obj = %O", p_obj);
+		Divmod.debug('---', 'house.fillEntry(1) was called. ');
+		console.log("house.fillEntry() - Obj = %O", p_obj);
         self.nodeById('NameDiv').innerHTML = buildTextWidget('HouseName', p_obj.Name);
         self.nodeById('KeyDiv').innerHTML = buildTextWidget('HouseKey', p_obj.Key, 'disabled');
 		self.nodeById('ActiveDiv').innerHTML = buildTrueFalseWidget('HouseActive', p_obj.Active);
@@ -93,8 +98,32 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 		self.nodeById('UUIDDiv').innerHTML = buildTextWidget('HouseUUID', p_obj.UUID, 'disabled');
 		self.nodeById('HouseEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick', 'NoDelete');
 	},
+	function createEntry(self, p_ix) {
+    	Divmod.debug('---', 'house.createEntry() was called. ' + p_ix);
+        var l_loc = {
+				Street : '',
+				City : '',
+				State : '',
+				ZipCode : '',
+				Phone : '',
+				Latitude : '',
+				Longitude : '',
+				TimeZone : '',
+				SavingsTime : ''
+    		}
+        var l_data = {
+    			Name : 'Change Me',
+    			Key : 0,
+    			Active : false,
+    			Location : l_loc,
+    			HouseIx : p_ix,
+    			Delete : false
+    		}
+        //console.log("create House %O", l_data);
+        return l_data;
+	},
 	function fetchEntry(self) {
-		//Divmod.debug('---', 'house.fetchEntry() was called. ');
+		Divmod.debug('---', 'house.fetchEntry() was called. ');
         var l_data = {
             Name : fetchTextWidget('HouseName'),
             Key : fetchTextWidget('HouseKey'),
@@ -170,13 +199,12 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 		switch(l_ix) {
 		case '10003':  // Change Button
 	    	var l_json = JSON.stringify(self.fetchEntry());
-			//Divmod.debug('---', 'house.handleDataOnClick(Change) was called. JSON:' + l_json);
+			Divmod.debug('---', 'house.handleDataOnClick(Change) was called. JSON:' + l_json);
 	        var l_defer = self.callRemote("saveHouseData", l_json);  // @ web_house
 			l_defer.addCallback(cb_handleDataOnClick);
 			l_defer.addErrback(eb_handleDataOnClick);
 			break;
 		case '10002':  // Back button
-			//Divmod.debug('---', 'house.handleDataOnClick(Back) was called.  ');
 			self.hideEntry();
 			break;
 		default:

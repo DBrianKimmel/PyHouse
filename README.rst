@@ -4,13 +4,42 @@ PyHouse
 
 PyHouse is a home automation tool.
 
-It is written to become a daemon on a Linux computer.
+See __init__ module for developer documentation.
+
+
+What is PyHouse?
+----------------
+PyHouse is one or more nodes, running PyHouse software, and co-operating with
+other nodes either in the same domain or in in affiliated domains.
+
+Nodes
+-----
+Each node is a separate computer that will self boot, start the PyHouse software
+and begin the operations configured for that node.  Nodes can communicate with
+each other using IP-v6 over some common media such as Ethernet or Wi-Fi.
 
 It is now (2013-06-06) running in a raspberry pi model B.  It has been turning
 lights on and off reliably for several weeks on this new platform.
 
-See __init__ module for developer documentation.
+Domains
+-------
+Domains are a group of nodes that are able to communicate with each other and
+have been given authentication tokens to allow them to share information.
+This will allow two condominiums to be independent of each other and two houses
+separated by many miles to cooperate with each other.
 
+Configuration
+-------------
+Each node is initially self configured via its own web server.  The configuration
+is stored as xml in a file somewhere in the file system of the node.  This
+configuration also has current status stored in the file.  This allows the
+node to have a reboot and continue operations.  Some status information may be
+lost as there is no attempt to be a real-time node.
+
+
+=======
+Modules
+=======
 
 Lighting
 --------

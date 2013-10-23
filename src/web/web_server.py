@@ -89,14 +89,27 @@ class WebUtility(xml_tools.ConfigFile):
             print xml_tools.prettify(p_root_xml)
         try:
             l_sect = p_root_xml.find('Web')
+            l_sect.find('WebPort')
         except AttributeError:
-            if g_debug >= 1:
+            if g_debug >= 0:
                 print "web_server.read_web_xml() - ERROR in finding Web/WebPort, Creating entry", l_sect
             l_sect = ET.SubElement(p_root_xml, 'Web')
-        p_web_obj.WebPort = self.get_int_from_xml(l_sect, 'WebPort')
+            ET.SubElement(l_sect, 'Port').text = '8580'
+            self.put_int_attribute(l_sect, 'WebPort', 8580)
+            p_web_obj.WebPort = 8580
+            l_logs = ET.SubElement(l_sect, 'Logins')
+            l_login = ET.SubElement(l_logs, 'Login')
+            l_login.set('Name', 'admin')
+            l_login.set('Key', '0')
+            l_login.set('Active', True)
+            ET.SubElement(l_login, 'Password').text = '12admin34'
+            return
+        p_web_obj.WebPort = l_sect.findtext('WebPort')
+        p_web_obj.WebPort = 8580
+        #p_web_obj.WebPort = self.get_int_from_xml(l_sect, 'WebPort')
         if g_debug >= 4:
             print "web_server.read_web_xml() - Port:{0:}".format(p_web_obj.WebPort)
-        return p_web_obj
+        return
 
     def write_web_xml(self, p_web_data):
         l_web_xml = ET.Element("Web")
@@ -110,21 +123,16 @@ class WebUtility(xml_tools.ConfigFile):
 class API(WebUtility, ClientConnections):
 
     def __init__(self):
-        global g_logger
-        self.web_data = WebData()
         self.State = web_utils.WS_IDLE
-        if g_debug >= 2:
-            print "web_server.API()"
         g_logger.info("Initialized")
         self.web_running = False
 
     def Start(self, p_pyhouses_obj):
         self.m_pyhouses_obj = p_pyhouses_obj
+        self.web_data = WebData()
         if g_debug >= 2:
             print "web_server.API.Start()"
-        if g_debug >= 3:
-            print "    ", p_pyhouses_obj
-        self.web_data = self.read_web_xml(self.web_data, p_pyhouses_obj.XmlRoot)
+        self.read_web_xml(self.web_data, p_pyhouses_obj.XmlRoot)
         l_site_dir = None
         l_site = appserver.NevowSite(web_mainpage.TheRoot('/', l_site_dir, p_pyhouses_obj))
         if not self.web_running:

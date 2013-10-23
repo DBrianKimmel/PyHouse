@@ -59,15 +59,6 @@ class LoginData(object):
         self.LoggedIn = False
         self.ServerState = web_utils.WS_IDLE
 
-    def __str__(self):
-        l_ret = "LoginData:: "
-        l_ret += "Username:{0:}, ".format(self.Username)
-        l_ret += "Password:{0:}, ".format(self.Password)
-        l_ret += "Fullname:{0:}, ".format(self.Fullname)
-        l_ret += "LoggedIn:{0:}, ".format(self.LoggedIn)
-        l_ret += "ServerState:{0:}".format(self.ServerState)
-        return l_ret
-
     def reprJSON(self):
         return dict(Username = self.Username, Password = self.Password, Fullname = self.Fullname,
                     LoggedIn = self.LoggedIn, ServerState = self.ServerState)
@@ -82,12 +73,6 @@ class LoginElement(athena.LiveElement):
     def __init__(self, p_workspace_obj):
         self.m_workspace_obj = p_workspace_obj
         self.m_pyhouses_obj = p_workspace_obj.m_pyhouses_obj
-        self.m_login_obj = LoginData()
-        if g_debug >= 3:
-            print "web_login.LoginElement()"
-        if g_debug >= 5:
-            print "    self = ", self  #, vars(self)
-            print "    workspace_obj = ", p_workspace_obj  #, vars(p_workspace_obj)
 
     @athena.expose
     def doLogin(self, p_json):
@@ -99,37 +84,12 @@ class LoginElement(athena.LiveElement):
 
             @param p_json: is the username and password passed back by the client.
         """
-        if g_debug >= 5:
-            print "web_login.LoginElement.doLogin()"
-            print "    p_json", p_json
         g_logger.info("doLogin called {0:}.".format(p_json))
         l_obj = web_utils.JsonUnicode().decode_json(p_json)
-        l_login_obj = self.validate_user(l_obj)
+        self.m_login_obj = LoginData()
+        l_login_obj = self.validate_user(l_obj, self.m_login_obj)
         l_json = web_utils.JsonUnicode().encode_json(l_login_obj)
-        if g_debug >= 5:
-            print "web_login.LoginElement.doLogin(2)"
-            print "    m_login_obj", self.m_login_obj
         return unicode(l_json)
-
-    def validate_user(self, p_obj):
-        """Validate the user and put all results into the LoginData object.
-
-        TODO: validate user - add password check for security
-        """
-        self.m_login_obj.Username = p_obj['Username']
-        self.m_login_obj.Password = p_obj['Password']
-        if self.m_login_obj.Username == 'briank':
-            self.m_login_obj.Fullname = 'D. Brian Kimmel'
-            self.m_login_obj.LoggedIn = True
-            self.m_login_obj.ServerState = web_utils.WS_LOGGED_IN
-            #web_server.API().add_browser(self.m_login_obj)
-        else:
-            self.m_login_obj.LoggedIn = False
-            self.m_login_obj.Fullname = 'Not logged In'
-        if g_debug >= 5:
-            print "web_login.validate_user() "
-            print "    m_login_obj", self.m_login_obj
-        return self.m_login_obj
 
     @athena.expose
     def getValidLists(self):
@@ -141,13 +101,28 @@ class LoginElement(athena.LiveElement):
             VALID_LIGHTS_TYPES
             VALID_SCHEDULING_TYPES
         """
-        l_interfaces = VALID_INTERFACES
         l_obj = dict(Drivers = VALID_INTERFACES, Families = VALID_FAMILIES,
                      Lights = VALID_LIGHTS_TYPE, Scheduling = VALID_SCHEDULING_TYPES)
         l_json = web_utils.JsonUnicode().encode_json(l_obj)
-        if g_debug >= 4:
-            print "web_login.getValidLists() - JSON:", l_json
         return unicode(l_json)
+
+    def validate_user(self, p_obj, p_login_obj):
+        """Validate the user and put all results into the LoginData object.
+
+        TODO: validate user - add password check for security
+        """
+        p_login_obj.Username = p_obj['Username']
+        p_login_obj.Password = p_obj['Password']
+        #if p_login_obj.Username == 'briank' and p_login_obj.Password == 'nitt4agmtc':
+        if p_login_obj.Username == 'briank' and p_login_obj.Password == 'd':
+            p_login_obj.Fullname = 'D. Brian Kimmel'
+            p_login_obj.LoggedIn = True
+            p_login_obj.ServerState = web_utils.WS_LOGGED_IN
+            #web_server.API().add_browser(p_login_obj)
+        else:
+            p_login_obj.LoggedIn = False
+            p_login_obj.Fullname = 'Not logged In'
+        return p_login_obj
 
 
 # ## END DBK

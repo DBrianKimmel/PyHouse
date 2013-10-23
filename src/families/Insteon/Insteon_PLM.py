@@ -22,11 +22,12 @@ import Queue
 from twisted.internet import reactor
 
 # Import PyMh files
-from src.lights.lighting import LightData
-from src.families.Insteon import Insteon_Link
+#from src.lights.lighting import LightData
 from src.utils.tools import PrintBytes
 from src.families.Insteon.Insteon_constants import *
 from src.families.Insteon import Insteon_utils
+from src.families.Insteon import Insteon_Link
+from src.families.Insteon import Device_Insteon
 
 g_debug = 0
 # 0 = off
@@ -61,7 +62,30 @@ FLAG_HOPS_LEFT = 0x0C
 FLAG_MAX_HOPS = 0x03
 
 
-class InsteonPlmUtility(object):
+class ControllerData(Device_Insteon.InsteonData):
+    """Holds statefull information about a single Insteon controller device.
+
+    There are several different control devices - this is 2412x and 2413x
+    where x is 'S' for serial interface and 'U' for a USB interface.
+
+    The USB controller that I have actually uses the Serial protocol so the serial driver
+    is used.
+
+    Although there is a manual for Insteon controllers, much of the development was
+    empirically derived.  For this reason, there is a whole lot of debugging code and
+    output.
+    """
+
+    def __init__(self):
+        super(ControllerData, self).__init__()
+        self.Command1 = 0
+        self.Command2 = 0
+
+    def reprJSON(self):
+        return super(ControllerData, self).reprJSON()
+
+
+class InsteonPlmUtility(ControllerData):
 
     def _get_message_length(self, p_message):
         """Get the documented length that the message is supposed to be.
@@ -155,7 +179,8 @@ class DecodeResponses(InsteonPlmUtility):
         if l_ret == None:
             l_ret = self._find_addr(self.m_house_obj.Buttons, l_id)
         if l_ret == None:
-            l_ret = LightData()  # an empty new object
+            #l_ret = LightData()  # an empty new object
+            l_ret = Device_Insteon.InsteonData()  # an empty new object
             l_ret.Name = '**' + str(l_id) + '**'
         if g_debug >= 7:
             print "Insteon_PLM.get_obj_from_message - Address:{0:}({1:}), found:{2:}".format(Insteon_utils.int2dotted_hex(l_id), l_id, l_ret.Name)
@@ -905,18 +930,6 @@ class LightingAPI(CreateCommands):
             l_level = int(p_level) * 255 / 100
             self.queue_62_command(p_light_obj, MESSAGE_TYPES['on'], l_level)
 
-    def scan_all_lights(self, p_lights):
-        """Exported command - used by other modules.
-        """
-        if g_debug >= 4:
-            print "insteon_PLM.scan_all_lights"
-        for l_obj in p_lights.itervalues():
-            if LightData.Family(l_obj) != 'Insteon':
-                continue
-            if l_obj.Type == 'Light':
-                self.scan_one_light(l_obj.Name)
-                pass
-
 
 class InsteonPlmCommands(LightingAPI):
 
@@ -967,7 +980,8 @@ class InsteonAllLinks(InsteonPlmCommands):
         """
         if g_debug >= 4:
             print "Insteon_PLM.delete_link() - Address:{0}, Group:{1:#02X}".format(p_address, p_group)
-        p_light_obj = LightData()
+        #p_light_obj = LightData()
+        p_light_obj = Device_Insteon.InsteonData()
         p_light_obj.InsteonAddress = self.dotted_hex2int(p_address)
         p_light_obj.GroupNumber = p_group
         # p_code = 0x00  # Find First
@@ -1091,15 +1105,13 @@ class API(LightHandlerAPI):
         """Constructor for the PLM.
         """
         self.m_house_obj = p_house_obj
-        if g_debug >= 2:
-            print "Insteon_PLM.API()"
         g_logger.info('Initialized for house {0:}.'.format(p_house_obj.Name))
 
     def Start(self, p_controller_obj):
         self.m_controller_obj = p_controller_obj
         if g_debug >= 2:
             print "Insteon_PLM.API.Start() - House:{0:}, Controller:{1:}".format(self.m_house_obj.Name, p_controller_obj.Name)
-        g_logger.info('Starting Controller:{0:}'.format(p_controller_obj.Name))
+        g_logger.info('Starting Controller:{0:} for house:{1:}'.format(p_controller_obj.Name, self.m_house_obj.Name))
         if self.start_controller_driver(p_controller_obj, self.m_house_obj):
             self.m_protocol = PlmDriverProtocol(self.m_controller_obj, self.m_house_obj)
             # self.m_protocol.driver_loop_start(self.m_house_obj)
@@ -1112,9 +1124,6 @@ class API(LightHandlerAPI):
         return False
 
     def Stop(self, p_controller_obj):
-        if g_debug >= 2:
-            print "Insteon_PLM.API.Stop()"
-        g_logger.info('Stopping.')
         self.m_protocol.driver_loop_stop()
         self.stop_controller_driver(p_controller_obj)
         g_logger.info('Stopped.')

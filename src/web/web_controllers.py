@@ -51,7 +51,7 @@ class ControllersElement(athena.LiveElement):
         l_ix = int(p_index)
         l_house = self.m_pyhouses_obj.HousesData[l_ix].HouseObject
         l_json = web_utils.JsonUnicode().encode_json(l_house)
-        if g_debug >= 0:
+        if g_debug >= 3:
             print "web_controllers.getHouseData() - JSON:", l_json
         return unicode(l_json)
 
@@ -64,7 +64,7 @@ class ControllersElement(athena.LiveElement):
         for l_int in l_interfaces:
             l_name = l_int + 'Data'
         l_json = web_utils.JsonUnicode().encode_json(l_obj)
-        if g_debug >= 0:
+        if g_debug >= 3:
             print "web_controllers.ControllersElement.getInterfaceData() - JSON:", l_json
         return unicode(l_json)
 

@@ -54,14 +54,11 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 	 * 
 	 * Show the house select screen and ask the server for a JSON list of houses to show.
 	 * Use a callback to get the information to display.
-	 * 
-	 * @param self is the house select widget
-	 * @param p1 is the parent widget (rootmenuWidget)
 	 */
 	function startWidget(self) {
 		function cb_getHousesInfo(p_json) {
 			//Divmod.debug('---', 'houseSelect.startWidget.cb_getHousesInfo() was called.');
-			//console.log("startWidget.cb   p1 %O", p_json);
+			//console.log("houseSelect.startWidget.cb   JSON = %O", p_json);
 			var l_obj = JSON.parse(p_json);
 			var l_tab = buildTable(l_obj, 'handleMenuOnClick');
 			self.showSelectButtons();
@@ -126,8 +123,10 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 		} else if (l_ix == 10001) {
 			// The "Add" button
 			//Divmod.debug('---', 'houseSelect.handleMenuOnClick(Add Button) was called.  Ix: ' + l_ix);
-			self.showEntry();
-			self.hideButtons();
+			globals.House.HouseIx = -1;
+			self.hideSelectButtons();
+			var l_node = findWidgetByClass('House');
+			l_node.showWidget();
 		} else if (l_ix == 10002) {
 			// The "Back" button
 			//Divmod.debug('---', 'houseSelect.handleMenuOnClick(Back Button) was called.  Ix: ' + l_ix);
