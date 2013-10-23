@@ -54,7 +54,7 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 	 */
 	function fetchHouseData(self) {
 		function cb_fetchHouseData(p_json) {
-			Divmod.debug('---', 'house.cb_fetchHouseData() was called. ' + p_json);
+			//Divmod.debug('---', 'house.cb_fetchHouseData() was called. ' + p_json);
 			globals.House.HouseObj.House = JSON.parse(p_json);
 			var l_obj = globals.House.HouseObj;
 			self.fillEntry(l_obj);
@@ -62,7 +62,7 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 		function eb_fetchHouseData(res) {
 			Divmod.debug('---', 'house.eb_fetchHouseData() was called. ERROR: ' + res);
 		}
-		Divmod.debug('---', 'house.fetchHouseData() was called. ');
+		//Divmod.debug('---', 'house.fetchHouseData() was called. ');
 		if (globals.House.HouseIx == -1) {
 			globals.House.HouseObj = {};
 			globals.House.HouseObj.House = self.createEntry(0);
@@ -81,8 +81,8 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 	 * 
 	 */
 	function fillEntry(self, p_obj) {
-		Divmod.debug('---', 'house.fillEntry(1) was called. ');
-		console.log("house.fillEntry() - Obj = %O", p_obj);
+		//Divmod.debug('---', 'house.fillEntry(1) was called. ');
+		//console.log("house.fillEntry() - Obj = %O", p_obj);
         self.nodeById('NameDiv').innerHTML = buildTextWidget('HouseName', p_obj.Name);
         self.nodeById('KeyDiv').innerHTML = buildTextWidget('HouseKey', p_obj.Key, 'disabled');
 		self.nodeById('ActiveDiv').innerHTML = buildTrueFalseWidget('HouseActive', p_obj.Active);
@@ -99,7 +99,7 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 		self.nodeById('HouseEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick', 'NoDelete');
 	},
 	function createEntry(self, p_ix) {
-    	Divmod.debug('---', 'house.createEntry() was called. ' + p_ix);
+    	//Divmod.debug('---', 'house.createEntry() was called. ' + p_ix);
         var l_loc = {
 				Street : '',
 				City : '',
@@ -198,7 +198,9 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 		//Divmod.debug('---', 'house.handleDataOnClick() was called. Node:' + l_ix);
 		switch(l_ix) {
 		case '10003':  // Change Button
-	    	var l_json = JSON.stringify(self.fetchEntry());
+	    	var l_entry = self.fetchEntry();
+			globals.House.HouseObj.House = l_entry;
+	    	var l_json = JSON.stringify(l_entry);
 			Divmod.debug('---', 'house.handleDataOnClick(Change) was called. JSON:' + l_json);
 	        var l_defer = self.callRemote("saveHouseData", l_json);  // @ web_house
 			l_defer.addCallback(cb_handleDataOnClick);
@@ -206,6 +208,8 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 			break;
 		case '10002':  // Back button
 			self.hideEntry();
+			var l_node = findWidgetByClass('HouseMenu');
+			l_node.showWidget();
 			break;
 		default:
 			Divmod.debug('---', 'house.handleDataOnClick(Default) was called. l_ix:' + l_ix);

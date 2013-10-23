@@ -46,13 +46,16 @@ class ButtonsAPI(lighting_core.CoreAPI):
         l_count = 0
         l_dict = {}
         l_sect = p_house_xml.find('Buttons')
-        l_list = l_sect.iterfind('Button')
-        for l_entry in l_list:
-            l_button_obj = ButtonData()
-            l_button_obj = self.read_light_common(l_entry, l_button_obj, p_house_obj)
-            l_button_obj.Key = l_count  # Renumber
-            l_dict[l_count] = l_button_obj
-            l_count += 1
+        try:
+            l_list = l_sect.iterfind('Button')
+            for l_entry in l_list:
+                l_button_obj = ButtonData()
+                l_button_obj = self.read_light_common(l_entry, l_button_obj, p_house_obj)
+                l_button_obj.Key = l_count  # Renumber
+                l_dict[l_count] = l_button_obj
+                l_count += 1
+        except AttributeError:  # No Buttons section
+            l_dict = {}
         p_house_obj.Buttons = l_dict
         if g_debug >= 6:
             print "lighting_buttons.read_button_xml()  loaded {0:} buttons for house {1:}".format(l_count, p_house_obj.Name)

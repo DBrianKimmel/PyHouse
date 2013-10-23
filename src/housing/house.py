@@ -150,8 +150,11 @@ class API(HouseReadWriteConfig):
         l_house_xml = self.write_house_xml(p_house_obj)
         l_house_xml.append(self.write_location_xml(p_house_obj.Location))
         l_house_xml.append(self.write_rooms_xml(p_house_obj))
-        l_house_xml.extend(self.m_house_obj.ScheduleAPI.Stop(l_house_xml, p_house_obj))
-        l_house_xml.append(self.m_house_obj.InternetAPI.Stop())
+        try:
+            l_house_xml.extend(self.m_house_obj.ScheduleAPI.Stop(l_house_xml, p_house_obj))
+            l_house_xml.append(self.m_house_obj.InternetAPI.Stop())
+        except AttributeError:  # New house has  no schedule or internet
+            pass
         if g_debug >= 2:
             print "house.API.Stop() - Name:{0:}, Count:{1:}".format(self.m_house_obj.Name, len(l_house_xml))
         g_logger.info("Stopped.")

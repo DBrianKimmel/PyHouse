@@ -74,16 +74,19 @@ class ControllersAPI(lighting_core.CoreAPI):
         l_count = 0
         l_dict = {}
         l_sect = p_house_xml.find('Controllers')
-        l_list = l_sect.iterfind('Controller')
-        for l_controller_xml in l_list:
-            l_controller_obj = ControllerData()
-            l_controller_obj = self.read_light_common(l_controller_xml, l_controller_obj, p_house_obj)
-            l_controller_obj.Key = l_count  # Renumber
-            l_controller_obj.Interface = self.get_text_from_xml(l_controller_xml, 'Interface')
-            l_controller_obj.Port = self.get_text_from_xml(l_controller_xml, 'Port')
-            interface.ReadWriteConfig().extract_xml(l_controller_obj, l_controller_xml)
-            l_dict[l_count] = l_controller_obj
-            l_count += 1
+        try:
+            l_list = l_sect.iterfind('Controller')
+            for l_controller_xml in l_list:
+                l_controller_obj = ControllerData()
+                l_controller_obj = self.read_light_common(l_controller_xml, l_controller_obj, p_house_obj)
+                l_controller_obj.Key = l_count  # Renumber
+                l_controller_obj.Interface = self.get_text_from_xml(l_controller_xml, 'Interface')
+                l_controller_obj.Port = self.get_text_from_xml(l_controller_xml, 'Port')
+                interface.ReadWriteConfig().extract_xml(l_controller_obj, l_controller_xml)
+                l_dict[l_count] = l_controller_obj
+                l_count += 1
+        except AttributeError:  # No Buttons section
+            l_dict = {}
         p_house_obj.Controllers = l_dict
         if g_debug >= 2:
             print "lighting_controllers.read_controller_xml()  loaded {0:} controllers for house {1:}".format(l_count, p_house_obj.Name)

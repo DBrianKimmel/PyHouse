@@ -747,3 +747,545 @@
 2013-10-23 13:42:42,332 PyHouse.webMain  INFO - internet called from browser
 2013-10-23 13:42:49,176 PyHouse.webLogin INFO - doLogin called {"Username":"briank","Password":"d"}.
 2013-10-23 13:43:02,519 PyHouse.Houses   INFO - Stopping.
+2013-10-23 15:50:05,951 PyHouse.Houses   INFO - Initialized all houses.
+2013-10-23 15:50:05,951 PyHouse.WebServ  INFO - Initialized
+2013-10-23 15:50:05,951 PyHouse.Houses   INFO - Starting.
+2013-10-23 15:50:05,951 PyHouse.Houses   INFO - Started.
+2013-10-23 15:50:05,953 PyHouse.WebServ  INFO - Started - Port:8580, Path:None
+2013-10-23 15:50:14,763 PyHouse.webMain  INFO - web_mainpage Workspace initialized.
+2013-10-23 15:50:15,796 PyHouse.webMain  INFO - clock called
+2013-10-23 15:50:15,798 PyHouse.webMain  INFO - login called - params = PyHouseData:: 
+	HousesAPI:<src.housing.houses.API object at 0x0000000003C34E48>, 
+	LogsAPI:<src.utils.log.API object at 0x0000000003C06A90>, 
+	WebAPI:<src.web.web_server.API object at 0x0000000003C34E80>, 
+	WebData:WebData:: WebPort:8580
+, 
+	LogsData:Logs:: Debug:None, Error:None;, 
+	HousesData:{};
+	XmlRoot:<Element 'PyHouse' at 0x3c34b38>, 
+	XmlFileName:C:\Users\briank/.PyHouse/PyHouse.xml, 
+2013-10-23 15:50:15,798 PyHouse.webMain  INFO - houseSelect called from browser
+2013-10-23 15:50:15,798 PyHouse.webMain  INFO - rootMenu called
+2013-10-23 15:50:15,798 PyHouse.webMain  INFO - houseMenu called from browser
+2013-10-23 15:50:15,798 PyHouse.webMain  INFO - controllers called
+2013-10-23 15:50:15,799 PyHouse.webMain  INFO - buttons called
+2013-10-23 15:50:15,799 PyHouse.webMain  INFO - rooms called
+2013-10-23 15:50:15,799 PyHouse.webMain  INFO - schedules called
+2013-10-23 15:50:15,799 PyHouse.webMain  INFO - controlLights called
+2013-10-23 15:50:15,799 PyHouse.webMain  INFO - house called from browser
+2013-10-23 15:50:15,799 PyHouse.webMain  INFO - internet called from browser
+2013-10-23 15:50:22,773 PyHouse.webLogin INFO - doLogin called {"Username":"briank","Password":"d"}.
+2013-10-23 15:50:28,346 PyHouse.Houses   INFO - Stopping.
+2013-10-23 15:50:28,346 PyHouse.House    INFO - Stopping House:.
+2013-10-23 15:53:02,351 PyHouse.Houses   INFO - Initialized all houses.
+2013-10-23 15:53:02,351 PyHouse.WebServ  INFO - Initialized
+2013-10-23 15:53:02,352 PyHouse.Houses   INFO - Starting.
+2013-10-23 15:53:02,352 PyHouse.Houses   INFO - Started.
+2013-10-23 15:53:02,354 PyHouse.WebServ  INFO - Started - Port:8580, Path:None
+2013-10-23 15:53:02,615 PyHouse.webMain  INFO - web_mainpage Workspace initialized.
+2013-10-23 15:53:02,625 PyHouse.webMain  INFO - web_mainpage Workspace initialized.
+2013-10-23 15:53:06,118 PyHouse.webMain  INFO - web_mainpage Workspace initialized.
+2013-10-23 15:53:06,901 PyHouse.webMain  INFO - clock called
+2013-10-23 15:53:06,901 PyHouse.webMain  INFO - login called - params = PyHouseData:: 
+	HousesAPI:<src.housing.houses.API object at 0x0000000003C24E10>, 
+	LogsAPI:<src.utils.log.API object at 0x0000000003BF6A58>, 
+	WebAPI:<src.web.web_server.API object at 0x0000000003C24E48>, 
+	WebData:WebData:: WebPort:8580
+, 
+	LogsData:Logs:: Debug:None, Error:None;, 
+	HousesData:{};
+	XmlRoot:<Element 'PyHouse' at 0x3c24b00>, 
+	XmlFileName:C:\Users\briank/.PyHouse/PyHouse.xml, 
+2013-10-23 15:53:06,901 PyHouse.webMain  INFO - houseSelect called from browser
+2013-10-23 15:53:06,901 PyHouse.webMain  INFO - rootMenu called
+2013-10-23 15:53:06,901 PyHouse.webMain  INFO - houseMenu called from browser
+2013-10-23 15:53:06,903 PyHouse.webMain  INFO - controllers called
+2013-10-23 15:53:06,903 PyHouse.webMain  INFO - buttons called
+2013-10-23 15:53:06,903 PyHouse.webMain  INFO - rooms called
+2013-10-23 15:53:06,903 PyHouse.webMain  INFO - schedules called
+2013-10-23 15:53:06,903 PyHouse.webMain  INFO - controlLights called
+2013-10-23 15:53:06,903 PyHouse.webMain  INFO - house called from browser
+2013-10-23 15:53:06,904 PyHouse.webMain  INFO - internet called from browser
+2013-10-23 15:53:14,549 PyHouse.webLogin INFO - doLogin called {"Username":"briank","Password":"d"}.
+2013-10-23 15:53:20,071 PyHouse.Houses   INFO - Stopping.
+2013-10-23 15:53:20,071 PyHouse.House    INFO - Stopping House:.
+2013-10-23 15:53:20,072 PyHouse.House    INFO - Stopped.
+2013-10-23 15:53:20,072 PyHouse.Houses   INFO - Stopped.
+2013-10-23 15:53:20,075 PyHouse.Houses   INFO - Starting.
+2013-10-23 15:53:20,075 PyHouse.House    INFO - Starting House .
+2013-10-23 15:53:20,098 PyHouse.Schedule INFO - Initializing House:Change Me
+2013-10-23 15:53:20,098 PyHouse.Sunrise  INFO - Initialized.
+2013-10-23 15:53:20,098 PyHouse.Lighting INFO - Initialized.
+2013-10-23 15:53:20,098 PyHouse.Schedule INFO - Initialized.
+2013-10-23 15:53:20,098 PyHouse.Internet INFO - Initialized.
+2013-10-23 15:53:20,098 PyHouse.Schedule INFO - Starting House Change Me.
+2013-10-23 15:53:20,099 PyHouse.Lighting INFO - Starting - House:Change Me.
+2013-10-23 15:53:20,099 PyHouse.Family   INFO - Adding lighting Family:Insteon for House:Change Me
+2013-10-23 15:53:20,099 PyHouse.Dev_Inst INFO - Initialized.
+2013-10-23 15:53:20,099 PyHouse.Family   INFO - Adding lighting Family:UPB for House:Change Me
+2013-10-23 15:53:20,105 PyHouse.Dev_UPB  INFO - Initialized.
+2013-10-23 15:53:20,105 PyHouse.Family   INFO - Adding lighting Family:X10 for House:Change Me
+2013-10-23 15:53:20,108 PyHouse.Dev_X10  INFO - Initialized.
+2013-10-23 16:01:10,542 PyHouse.Houses   INFO - Initialized all houses.
+2013-10-23 16:01:10,542 PyHouse.WebServ  INFO - Initialized
+2013-10-23 16:01:10,542 PyHouse.Houses   INFO - Starting.
+2013-10-23 16:01:10,542 PyHouse.House    INFO - Starting House .
+2013-10-23 16:01:10,543 PyHouse.Schedule INFO - Initializing House:Change Me
+2013-10-23 16:01:10,543 PyHouse.Sunrise  INFO - Initialized.
+2013-10-23 16:01:10,543 PyHouse.Lighting INFO - Initialized.
+2013-10-23 16:01:10,543 PyHouse.Schedule INFO - Initialized.
+2013-10-23 16:01:10,543 PyHouse.Internet INFO - Initialized.
+2013-10-23 16:01:10,545 PyHouse.Schedule INFO - Starting House Change Me.
+2013-10-23 16:01:10,545 PyHouse.Lighting INFO - Starting - House:Change Me.
+2013-10-23 16:01:10,545 PyHouse.Family   INFO - Adding lighting Family:Insteon for House:Change Me
+2013-10-23 16:01:10,545 PyHouse.Dev_Inst INFO - Initialized.
+2013-10-23 16:01:10,545 PyHouse.Family   INFO - Adding lighting Family:UPB for House:Change Me
+2013-10-23 16:01:10,548 PyHouse.Dev_UPB  INFO - Initialized.
+2013-10-23 16:01:10,548 PyHouse.Family   INFO - Adding lighting Family:X10 for House:Change Me
+2013-10-23 16:01:10,549 PyHouse.Dev_X10  INFO - Initialized.
+2013-10-23 16:02:13,888 PyHouse.Houses   INFO - Initialized all houses.
+2013-10-23 16:02:13,888 PyHouse.WebServ  INFO - Initialized
+2013-10-23 16:02:13,888 PyHouse.Houses   INFO - Starting.
+2013-10-23 16:02:13,888 PyHouse.House    INFO - Starting House .
+2013-10-23 16:02:13,890 PyHouse.Schedule INFO - Initializing House:Change Me
+2013-10-23 16:02:13,890 PyHouse.Sunrise  INFO - Initialized.
+2013-10-23 16:02:13,890 PyHouse.Lighting INFO - Initialized.
+2013-10-23 16:02:13,890 PyHouse.Schedule INFO - Initialized.
+2013-10-23 16:02:13,890 PyHouse.Internet INFO - Initialized.
+2013-10-23 16:02:13,890 PyHouse.Schedule INFO - Starting House Change Me.
+2013-10-23 16:02:13,891 PyHouse.Lighting INFO - Starting - House:Change Me.
+2013-10-23 16:02:13,891 PyHouse.Family   INFO - Adding lighting Family:Insteon for House:Change Me
+2013-10-23 16:02:13,891 PyHouse.Dev_Inst INFO - Initialized.
+2013-10-23 16:02:13,891 PyHouse.Family   INFO - Adding lighting Family:UPB for House:Change Me
+2013-10-23 16:02:13,894 PyHouse.Dev_UPB  INFO - Initialized.
+2013-10-23 16:02:13,894 PyHouse.Family   INFO - Adding lighting Family:X10 for House:Change Me
+2013-10-23 16:02:13,895 PyHouse.Dev_X10  INFO - Initialized.
+2013-10-23 16:03:03,075 PyHouse.Houses   INFO - Initialized all houses.
+2013-10-23 16:03:03,075 PyHouse.WebServ  INFO - Initialized
+2013-10-23 16:03:03,076 PyHouse.Houses   INFO - Starting.
+2013-10-23 16:03:03,076 PyHouse.House    INFO - Starting House .
+2013-10-23 16:03:03,078 PyHouse.Schedule INFO - Initializing House:Change Me
+2013-10-23 16:03:03,078 PyHouse.Sunrise  INFO - Initialized.
+2013-10-23 16:03:03,078 PyHouse.Lighting INFO - Initialized.
+2013-10-23 16:03:03,078 PyHouse.Schedule INFO - Initialized.
+2013-10-23 16:03:03,078 PyHouse.Internet INFO - Initialized.
+2013-10-23 16:03:03,078 PyHouse.Schedule INFO - Starting House Change Me.
+2013-10-23 16:03:03,078 PyHouse.Lighting INFO - Starting - House:Change Me.
+2013-10-23 16:03:03,078 PyHouse.Family   INFO - Adding lighting Family:Insteon for House:Change Me
+2013-10-23 16:03:03,078 PyHouse.Dev_Inst INFO - Initialized.
+2013-10-23 16:03:03,078 PyHouse.Family   INFO - Adding lighting Family:UPB for House:Change Me
+2013-10-23 16:03:03,082 PyHouse.Dev_UPB  INFO - Initialized.
+2013-10-23 16:03:03,082 PyHouse.Family   INFO - Adding lighting Family:X10 for House:Change Me
+2013-10-23 16:03:03,082 PyHouse.Dev_X10  INFO - Initialized.
+2013-10-23 16:03:03,084 PyHouse.Family   INFO - Starting lighting families.
+2013-10-23 16:03:03,084 PyHouse.Dev_Inst INFO - Starting for house:Change Me
+2013-10-23 16:03:03,084 PyHouse.Dev_Inst INFO - Started 0 Controllers, House:Change Me.
+2013-10-23 16:03:03,084 PyHouse.Family   INFO - Started lighting family Insteon.
+2013-10-23 16:03:03,084 PyHouse.Dev_UPB  INFO - Starting.
+2013-10-23 16:03:03,084 PyHouse.Dev_UPB  INFO - Started.
+2013-10-23 16:03:03,084 PyHouse.Family   INFO - Started lighting family UPB.
+2013-10-23 16:03:03,084 PyHouse.Dev_X10  INFO - Starting.
+2013-10-23 16:03:03,084 PyHouse.Dev_X10  INFO - Started.
+2013-10-23 16:03:03,085 PyHouse.Family   INFO - Started lighting family X10.
+2013-10-23 16:03:03,085 PyHouse.Lighting INFO - Started.
+2013-10-23 16:03:03,085 PyHouse.Schedule INFO - Started.
+2013-10-23 16:03:03,085 PyHouse.Internet INFO - Starting for house:Change Me.
+2013-10-23 16:03:03,085 PyHouse.House    INFO - Started. - House:Change Me
+2013-10-23 16:03:03,085 PyHouse.Houses   INFO - Started.
+2013-10-23 16:03:03,085 PyHouse.WebServ  INFO - Started - Port:8580, Path:None
+2013-10-23 16:09:17,085 PyHouse.webMain  INFO - web_mainpage Workspace initialized.
+2013-10-23 16:09:17,956 PyHouse.webMain  INFO - clock called
+2013-10-23 16:09:17,969 PyHouse.webMain  INFO - login called - params = PyHouseData:: 
+	HousesAPI:<src.housing.houses.API object at 0x00000000026141D0>, 
+	LogsAPI:<src.utils.log.API object at 0x0000000003B07A90>, 
+	WebAPI:<src.web.web_server.API object at 0x0000000002614208>, 
+	WebData:WebData:: WebPort:8580
+, 
+	LogsData:Logs:: Debug:None, Error:None;, 
+	HousesData:{0: <src.housing.houses.HousesData object at 0x0000000002614320>};
+	XmlRoot:<Element 'PyHouse' at 0x3b35b38>, 
+	XmlFileName:C:\Users\briank/.PyHouse/PyHouse.xml, 
+2013-10-23 16:09:17,970 PyHouse.webMain  INFO - houseSelect called from browser
+2013-10-23 16:09:17,970 PyHouse.webMain  INFO - rootMenu called
+2013-10-23 16:09:17,970 PyHouse.webMain  INFO - houseMenu called from browser
+2013-10-23 16:09:17,970 PyHouse.webMain  INFO - controllers called
+2013-10-23 16:09:17,970 PyHouse.webMain  INFO - buttons called
+2013-10-23 16:09:17,970 PyHouse.webMain  INFO - rooms called
+2013-10-23 16:09:17,970 PyHouse.webMain  INFO - schedules called
+2013-10-23 16:09:17,970 PyHouse.webMain  INFO - controlLights called
+2013-10-23 16:09:17,970 PyHouse.webMain  INFO - house called from browser
+2013-10-23 16:09:17,970 PyHouse.webMain  INFO - internet called from browser
+2013-10-23 16:09:42,286 PyHouse.webLogin INFO - doLogin called {"Username":"briank","Password":"d"}.
+2013-10-23 16:10:15,040 PyHouse.Houses   INFO - Stopping.
+2013-10-23 16:10:15,042 PyHouse.House    INFO - Stopping House:Change Me.
+2013-10-23 16:10:15,042 PyHouse.Schedule INFO - Stopping schedule for house:Change Me.
+2013-10-23 16:10:15,042 PyHouse.Lighting INFO - Stopping all lighting families.
+2013-10-23 16:10:15,042 PyHouse.Lighting INFO - Stopped.
+2013-10-23 16:10:15,042 PyHouse.Schedule INFO - Stopped.
+
+2013-10-23 16:10:15,043 PyHouse.Internet INFO - Stopping for house:Change Me.
+2013-10-23 16:10:15,043 PyHouse.House    INFO - Stopped.
+2013-10-23 16:10:15,043 PyHouse.Houses   INFO - Stopped.
+2013-10-23 16:10:15,046 PyHouse.Houses   INFO - Starting.
+2013-10-23 16:10:15,046 PyHouse.House    INFO - Starting House .
+2013-10-23 16:10:15,046 PyHouse.Schedule INFO - Initializing House:Change Me
+2013-10-23 16:10:15,046 PyHouse.Sunrise  INFO - Initialized.
+2013-10-23 16:10:15,046 PyHouse.Lighting INFO - Initialized.
+2013-10-23 16:10:15,046 PyHouse.Schedule INFO - Initialized.
+2013-10-23 16:10:15,046 PyHouse.Internet INFO - Initialized.
+2013-10-23 16:10:15,046 PyHouse.Schedule INFO - Starting House Change Me.
+2013-10-23 16:10:15,048 PyHouse.Lighting INFO - Starting - House:Change Me.
+2013-10-23 16:10:15,048 PyHouse.Family   INFO - Adding lighting Family:Insteon for House:Change Me
+2013-10-23 16:10:15,048 PyHouse.Dev_Inst INFO - Initialized.
+2013-10-23 16:10:15,048 PyHouse.Family   INFO - Adding lighting Family:UPB for House:Change Me
+2013-10-23 16:10:15,048 PyHouse.Dev_UPB  INFO - Initialized.
+2013-10-23 16:10:15,048 PyHouse.Family   INFO - Adding lighting Family:X10 for House:Change Me
+2013-10-23 16:10:15,048 PyHouse.Dev_X10  INFO - Initialized.
+2013-10-23 16:10:15,049 PyHouse.Family   INFO - Starting lighting families.
+2013-10-23 16:10:15,049 PyHouse.Dev_Inst INFO - Starting for house:Change Me
+2013-10-23 16:10:15,049 PyHouse.Dev_Inst INFO - Started 0 Controllers, House:Change Me.
+2013-10-23 16:10:15,049 PyHouse.Family   INFO - Started lighting family Insteon.
+2013-10-23 16:10:15,049 PyHouse.Dev_UPB  INFO - Starting.
+2013-10-23 16:10:15,049 PyHouse.Dev_UPB  INFO - Started.
+2013-10-23 16:10:15,049 PyHouse.Family   INFO - Started lighting family UPB.
+2013-10-23 16:10:15,049 PyHouse.Dev_X10  INFO - Starting.
+2013-10-23 16:10:15,049 PyHouse.Dev_X10  INFO - Started.
+2013-10-23 16:10:15,049 PyHouse.Family   INFO - Started lighting family X10.
+2013-10-23 16:10:15,049 PyHouse.Lighting INFO - Started.
+2013-10-23 16:10:15,049 PyHouse.Schedule INFO - Started.
+2013-10-23 16:10:15,049 PyHouse.Internet INFO - Starting for house:Change Me.
+2013-10-23 16:10:15,049 PyHouse.House    INFO - Started. - House:Change Me
+2013-10-23 16:10:15,049 PyHouse.Houses   INFO - Started.
+2013-10-23 16:10:15,051 PyHouse.WebServ  INFO - Started - Port:8580, Path:None
+2013-10-23 16:16:08,394 PyHouse.Houses   INFO - Initialized all houses.
+2013-10-23 16:16:08,394 PyHouse.WebServ  INFO - Initialized
+2013-10-23 16:16:08,394 PyHouse.Houses   INFO - Starting.
+2013-10-23 16:16:08,394 PyHouse.House    INFO - Starting House .
+2013-10-23 16:16:08,395 PyHouse.Schedule INFO - Initializing House:Change Me
+2013-10-23 16:16:08,395 PyHouse.Sunrise  INFO - Initialized.
+2013-10-23 16:16:08,395 PyHouse.Lighting INFO - Initialized.
+2013-10-23 16:16:08,395 PyHouse.Schedule INFO - Initialized.
+2013-10-23 16:16:08,395 PyHouse.Internet INFO - Initialized.
+2013-10-23 16:16:08,395 PyHouse.Schedule INFO - Starting House Change Me.
+2013-10-23 16:16:08,395 PyHouse.Lighting INFO - Starting - House:Change Me.
+2013-10-23 16:16:08,397 PyHouse.Family   INFO - Adding lighting Family:Insteon for House:Change Me
+2013-10-23 16:16:08,397 PyHouse.Dev_Inst INFO - Initialized.
+2013-10-23 16:16:08,397 PyHouse.Family   INFO - Adding lighting Family:UPB for House:Change Me
+2013-10-23 16:16:08,400 PyHouse.Dev_UPB  INFO - Initialized.
+2013-10-23 16:16:08,400 PyHouse.Family   INFO - Adding lighting Family:X10 for House:Change Me
+2013-10-23 16:16:08,401 PyHouse.Dev_X10  INFO - Initialized.
+2013-10-23 16:16:08,401 PyHouse.Family   INFO - Starting lighting families.
+2013-10-23 16:16:08,401 PyHouse.Dev_Inst INFO - Starting for house:Change Me
+2013-10-23 16:16:08,401 PyHouse.Dev_Inst INFO - Started 0 Controllers, House:Change Me.
+2013-10-23 16:16:08,401 PyHouse.Family   INFO - Started lighting family Insteon.
+2013-10-23 16:16:08,401 PyHouse.Dev_UPB  INFO - Starting.
+2013-10-23 16:16:08,401 PyHouse.Dev_UPB  INFO - Started.
+2013-10-23 16:16:08,401 PyHouse.Family   INFO - Started lighting family UPB.
+2013-10-23 16:16:08,401 PyHouse.Dev_X10  INFO - Starting.
+2013-10-23 16:16:08,403 PyHouse.Dev_X10  INFO - Started.
+2013-10-23 16:16:08,403 PyHouse.Family   INFO - Started lighting family X10.
+2013-10-23 16:16:08,403 PyHouse.Lighting INFO - Started.
+2013-10-23 16:16:08,403 PyHouse.Schedule INFO - Started.
+2013-10-23 16:16:08,403 PyHouse.Internet INFO - Starting for house:Change Me.
+2013-10-23 16:16:08,403 PyHouse.House    INFO - Started. - House:Change Me
+2013-10-23 16:16:08,403 PyHouse.Houses   INFO - Started.
+2013-10-23 16:16:08,404 PyHouse.WebServ  INFO - Started - Port:8580, Path:None
+2013-10-23 16:18:42,351 PyHouse.webMain  INFO - web_mainpage Workspace initialized.
+2013-10-23 16:18:43,325 PyHouse.webMain  INFO - clock called
+2013-10-23 16:18:43,325 PyHouse.webMain  INFO - login called - params = PyHouseData:: 
+	HousesAPI:<src.housing.houses.API object at 0x0000000002639320>, 
+	LogsAPI:<src.utils.log.API object at 0x0000000003A71A58>, 
+	WebAPI:<src.web.web_server.API object at 0x0000000002639358>, 
+	WebData:WebData:: WebPort:8580
+, 
+	LogsData:Logs:: Debug:None, Error:None;, 
+	HousesData:{0: <src.housing.houses.HousesData object at 0x0000000002639470>};
+	XmlRoot:<Element 'PyHouse' at 0x3aa4b38>, 
+	XmlFileName:C:\Users\briank/.PyHouse/PyHouse.xml, 
+2013-10-23 16:18:43,325 PyHouse.webMain  INFO - houseSelect called from browser
+2013-10-23 16:18:43,325 PyHouse.webMain  INFO - rootMenu called
+2013-10-23 16:18:43,326 PyHouse.webMain  INFO - houseMenu called from browser
+2013-10-23 16:18:43,326 PyHouse.webMain  INFO - controllers called
+2013-10-23 16:18:43,326 PyHouse.webMain  INFO - buttons called
+2013-10-23 16:18:43,326 PyHouse.webMain  INFO - rooms called
+2013-10-23 16:18:43,326 PyHouse.webMain  INFO - schedules called
+2013-10-23 16:18:43,326 PyHouse.webMain  INFO - controlLights called
+2013-10-23 16:18:43,328 PyHouse.webMain  INFO - house called from browser
+2013-10-23 16:18:43,328 PyHouse.webMain  INFO - internet called from browser
+2013-10-23 16:18:51,631 PyHouse.webLogin INFO - doLogin called {"Username":"briank","Password":"d"}.
+2013-10-23 16:19:54,778 PyHouse.Houses   INFO - Stopping.
+2013-10-23 16:19:54,779 PyHouse.House    INFO - Stopping House:Change Me.
+2013-10-23 16:19:54,779 PyHouse.Schedule INFO - Stopping schedule for house:Change Me.
+2013-10-23 16:19:54,779 PyHouse.Lighting INFO - Stopping all lighting families.
+2013-10-23 16:19:54,779 PyHouse.Lighting INFO - Stopped.
+2013-10-23 16:19:54,779 PyHouse.Schedule INFO - Stopped.
+
+2013-10-23 16:19:54,779 PyHouse.Internet INFO - Stopping for house:Change Me.
+2013-10-23 16:19:54,779 PyHouse.House    INFO - Stopped.
+2013-10-23 16:19:54,779 PyHouse.Houses   INFO - Stopped.
+2013-10-23 16:19:54,780 PyHouse.Houses   INFO - Starting.
+2013-10-23 16:19:54,780 PyHouse.House    INFO - Starting House .
+2013-10-23 16:19:54,782 PyHouse.Schedule INFO - Initializing House:Change Me
+2013-10-23 16:19:54,782 PyHouse.Sunrise  INFO - Initialized.
+2013-10-23 16:19:54,782 PyHouse.Lighting INFO - Initialized.
+2013-10-23 16:19:54,782 PyHouse.Schedule INFO - Initialized.
+2013-10-23 16:19:54,782 PyHouse.Internet INFO - Initialized.
+2013-10-23 16:19:54,782 PyHouse.Schedule INFO - Starting House Change Me.
+2013-10-23 16:19:54,782 PyHouse.Lighting INFO - Starting - House:Change Me.
+2013-10-23 16:19:54,782 PyHouse.Family   INFO - Adding lighting Family:Insteon for House:Change Me
+2013-10-23 16:19:54,782 PyHouse.Dev_Inst INFO - Initialized.
+2013-10-23 16:19:54,782 PyHouse.Family   INFO - Adding lighting Family:UPB for House:Change Me
+2013-10-23 16:19:54,782 PyHouse.Dev_UPB  INFO - Initialized.
+2013-10-23 16:19:54,782 PyHouse.Family   INFO - Adding lighting Family:X10 for House:Change Me
+2013-10-23 16:19:54,782 PyHouse.Dev_X10  INFO - Initialized.
+2013-10-23 16:19:54,782 PyHouse.Family   INFO - Starting lighting families.
+2013-10-23 16:19:54,782 PyHouse.Dev_Inst INFO - Starting for house:Change Me
+2013-10-23 16:19:54,782 PyHouse.Dev_Inst INFO - Started 0 Controllers, House:Change Me.
+2013-10-23 16:19:54,782 PyHouse.Family   INFO - Started lighting family Insteon.
+2013-10-23 16:19:54,782 PyHouse.Dev_UPB  INFO - Starting.
+2013-10-23 16:19:54,782 PyHouse.Dev_UPB  INFO - Started.
+2013-10-23 16:19:54,783 PyHouse.Family   INFO - Started lighting family UPB.
+2013-10-23 16:19:54,783 PyHouse.Dev_X10  INFO - Starting.
+2013-10-23 16:19:54,783 PyHouse.Dev_X10  INFO - Started.
+2013-10-23 16:19:54,783 PyHouse.Family   INFO - Started lighting family X10.
+2013-10-23 16:19:54,783 PyHouse.Lighting INFO - Started.
+2013-10-23 16:19:54,783 PyHouse.Schedule INFO - Started.
+2013-10-23 16:19:54,783 PyHouse.Internet INFO - Starting for house:Change Me.
+2013-10-23 16:19:54,783 PyHouse.House    INFO - Started. - House:Change Me
+2013-10-23 16:19:54,783 PyHouse.Houses   INFO - Started.
+2013-10-23 16:19:54,785 PyHouse.WebServ  INFO - Started - Port:8580, Path:None
+2013-10-23 16:34:49,733 PyHouse.Houses   INFO - Initialized all houses.
+2013-10-23 16:34:49,734 PyHouse.WebServ  INFO - Initialized
+2013-10-23 16:34:49,734 PyHouse.Houses   INFO - Starting.
+2013-10-23 16:34:49,734 PyHouse.House    INFO - Starting House .
+2013-10-23 16:34:49,736 PyHouse.Schedule INFO - Initializing House:Change Me
+2013-10-23 16:34:49,736 PyHouse.Sunrise  INFO - Initialized.
+2013-10-23 16:34:49,736 PyHouse.Lighting INFO - Initialized.
+2013-10-23 16:34:49,736 PyHouse.Schedule INFO - Initialized.
+2013-10-23 16:34:49,736 PyHouse.Internet INFO - Initialized.
+2013-10-23 16:34:49,736 PyHouse.Schedule INFO - Starting House Change Me.
+2013-10-23 16:34:49,736 PyHouse.Lighting INFO - Starting - House:Change Me.
+2013-10-23 16:34:49,736 PyHouse.Family   INFO - Adding lighting Family:Insteon for House:Change Me
+2013-10-23 16:34:49,736 PyHouse.Dev_Inst INFO - Initialized.
+2013-10-23 16:34:49,736 PyHouse.Family   INFO - Adding lighting Family:UPB for House:Change Me
+2013-10-23 16:34:49,740 PyHouse.Dev_UPB  INFO - Initialized.
+2013-10-23 16:34:49,740 PyHouse.Family   INFO - Adding lighting Family:X10 for House:Change Me
+2013-10-23 16:34:49,742 PyHouse.Dev_X10  INFO - Initialized.
+2013-10-23 16:34:49,742 PyHouse.Family   INFO - Starting lighting families.
+2013-10-23 16:34:49,742 PyHouse.Dev_Inst INFO - Starting for house:Change Me
+2013-10-23 16:34:49,742 PyHouse.Dev_Inst INFO - Started 0 Controllers, House:Change Me.
+2013-10-23 16:34:49,743 PyHouse.Family   INFO - Started lighting family Insteon.
+2013-10-23 16:34:49,743 PyHouse.Dev_UPB  INFO - Starting.
+2013-10-23 16:34:49,743 PyHouse.Dev_UPB  INFO - Started.
+2013-10-23 16:34:49,743 PyHouse.Family   INFO - Started lighting family UPB.
+2013-10-23 16:34:49,743 PyHouse.Dev_X10  INFO - Starting.
+2013-10-23 16:34:49,743 PyHouse.Dev_X10  INFO - Started.
+2013-10-23 16:34:49,743 PyHouse.Family   INFO - Started lighting family X10.
+2013-10-23 16:34:49,743 PyHouse.Lighting INFO - Started.
+2013-10-23 16:34:49,743 PyHouse.Schedule INFO - Started.
+2013-10-23 16:34:49,743 PyHouse.Internet INFO - Starting for house:Change Me.
+2013-10-23 16:34:49,743 PyHouse.House    INFO - Started. - House:Change Me
+2013-10-23 16:34:49,743 PyHouse.Houses   INFO - Started.
+2013-10-23 16:34:49,744 PyHouse.WebServ  INFO - Started - Port:8580, Path:None
+2013-10-23 16:34:54,765 PyHouse.webMain  INFO - web_mainpage Workspace initialized.
+2013-10-23 16:34:55,802 PyHouse.webMain  INFO - clock called
+2013-10-23 16:34:55,802 PyHouse.webMain  INFO - login called - params = PyHouseData:: 
+	HousesAPI:<src.housing.houses.API object at 0x00000000026C82E8>, 
+	LogsAPI:<src.utils.log.API object at 0x0000000003A91A58>, 
+	WebAPI:<src.web.web_server.API object at 0x00000000026C8320>, 
+	WebData:WebData:: WebPort:8580
+, 
+	LogsData:Logs:: Debug:None, Error:None;, 
+	HousesData:{0: <src.housing.houses.HousesData object at 0x00000000026C8438>};
+	XmlRoot:<Element 'PyHouse' at 0x3abfb00>, 
+	XmlFileName:C:\Users\briank/.PyHouse/PyHouse.xml, 
+2013-10-23 16:34:55,802 PyHouse.webMain  INFO - houseSelect called from browser
+2013-10-23 16:34:55,802 PyHouse.webMain  INFO - rootMenu called
+2013-10-23 16:34:55,802 PyHouse.webMain  INFO - houseMenu called from browser
+2013-10-23 16:34:55,803 PyHouse.webMain  INFO - controllers called
+2013-10-23 16:34:55,803 PyHouse.webMain  INFO - buttons called
+2013-10-23 16:34:55,803 PyHouse.webMain  INFO - rooms called
+2013-10-23 16:34:55,803 PyHouse.webMain  INFO - schedules called
+2013-10-23 16:34:55,803 PyHouse.webMain  INFO - controlLights called
+2013-10-23 16:34:55,803 PyHouse.webMain  INFO - house called from browser
+2013-10-23 16:34:55,805 PyHouse.webMain  INFO - internet called from browser
+2013-10-23 16:35:02,819 PyHouse.webLogin INFO - doLogin called {"Username":"briank","Password":"d"}.
+2013-10-23 16:35:28,451 PyHouse.Houses   INFO - Stopping.
+2013-10-23 16:35:28,451 PyHouse.House    INFO - Stopping House:Cannon Trail.
+2013-10-23 16:35:28,453 PyHouse.Schedule INFO - Stopping schedule for house:Cannon Trail.
+2013-10-23 16:35:28,453 PyHouse.Lighting INFO - Stopping all lighting families.
+2013-10-23 16:35:28,453 PyHouse.Lighting INFO - Stopped.
+2013-10-23 16:35:28,453 PyHouse.Schedule INFO - Stopped.
+
+2013-10-23 16:35:28,453 PyHouse.Internet INFO - Stopping for house:Cannon Trail.
+2013-10-23 16:35:28,453 PyHouse.House    INFO - Stopped.
+2013-10-23 16:35:28,453 PyHouse.Houses   INFO - Stopped.
+2013-10-23 16:35:28,454 PyHouse.Houses   INFO - Starting.
+2013-10-23 16:35:28,454 PyHouse.House    INFO - Starting House .
+2013-10-23 16:35:28,456 PyHouse.Schedule INFO - Initializing House:Cannon Trail
+2013-10-23 16:35:28,456 PyHouse.Sunrise  INFO - Initialized.
+2013-10-23 16:35:28,456 PyHouse.Lighting INFO - Initialized.
+2013-10-23 16:35:28,456 PyHouse.Schedule INFO - Initialized.
+2013-10-23 16:35:28,456 PyHouse.Internet INFO - Initialized.
+2013-10-23 16:35:28,457 PyHouse.Schedule INFO - Starting House Cannon Trail.
+2013-10-23 16:35:28,457 PyHouse.Lighting INFO - Starting - House:Cannon Trail.
+2013-10-23 16:35:28,457 PyHouse.Family   INFO - Adding lighting Family:Insteon for House:Cannon Trail
+2013-10-23 16:35:28,457 PyHouse.Dev_Inst INFO - Initialized.
+2013-10-23 16:35:28,457 PyHouse.Family   INFO - Adding lighting Family:UPB for House:Cannon Trail
+2013-10-23 16:35:28,457 PyHouse.Dev_UPB  INFO - Initialized.
+2013-10-23 16:35:28,457 PyHouse.Family   INFO - Adding lighting Family:X10 for House:Cannon Trail
+2013-10-23 16:35:28,457 PyHouse.Dev_X10  INFO - Initialized.
+2013-10-23 16:35:28,457 PyHouse.Family   INFO - Starting lighting families.
+2013-10-23 16:35:28,457 PyHouse.Dev_Inst INFO - Starting for house:Cannon Trail
+2013-10-23 16:35:28,457 PyHouse.Dev_Inst INFO - Started 0 Controllers, House:Cannon Trail.
+2013-10-23 16:35:28,457 PyHouse.Family   INFO - Started lighting family Insteon.
+2013-10-23 16:35:28,457 PyHouse.Dev_UPB  INFO - Starting.
+2013-10-23 16:35:28,457 PyHouse.Dev_UPB  INFO - Started.
+2013-10-23 16:35:28,457 PyHouse.Family   INFO - Started lighting family UPB.
+2013-10-23 16:35:28,459 PyHouse.Dev_X10  INFO - Starting.
+2013-10-23 16:35:28,459 PyHouse.Dev_X10  INFO - Started.
+2013-10-23 16:35:28,459 PyHouse.Family   INFO - Started lighting family X10.
+2013-10-23 16:35:28,459 PyHouse.Lighting INFO - Started.
+2013-10-23 16:35:28,459 PyHouse.Schedule INFO - Started.
+2013-10-23 16:35:28,459 PyHouse.Internet INFO - Starting for house:Cannon Trail.
+2013-10-23 16:35:28,459 PyHouse.House    INFO - Started. - House:Cannon Trail
+2013-10-23 16:35:28,459 PyHouse.Houses   INFO - Started.
+2013-10-23 16:35:28,460 PyHouse.WebServ  INFO - Started - Port:8580, Path:None
+2013-10-23 16:35:50,805 PyHouse.Houses   INFO - Stopping.
+2013-10-23 16:35:50,805 PyHouse.House    INFO - Stopping House:Cannon.
+2013-10-23 16:35:50,805 PyHouse.Schedule INFO - Stopping schedule for house:Cannon.
+2013-10-23 16:35:50,806 PyHouse.Lighting INFO - Stopping all lighting families.
+2013-10-23 16:35:50,806 PyHouse.Lighting INFO - Stopped.
+2013-10-23 16:35:50,806 PyHouse.Schedule INFO - Stopped.
+
+2013-10-23 16:35:50,806 PyHouse.Internet INFO - Stopping for house:Cannon.
+2013-10-23 16:35:50,806 PyHouse.House    INFO - Stopped.
+2013-10-23 16:35:50,806 PyHouse.Houses   INFO - Stopped.
+2013-10-23 16:35:50,809 PyHouse.Houses   INFO - Starting.
+2013-10-23 16:35:50,809 PyHouse.House    INFO - Starting House .
+2013-10-23 16:35:50,809 PyHouse.Schedule INFO - Initializing House:Cannon
+2013-10-23 16:35:50,809 PyHouse.Sunrise  INFO - Initialized.
+2013-10-23 16:35:50,809 PyHouse.Lighting INFO - Initialized.
+2013-10-23 16:35:50,809 PyHouse.Schedule INFO - Initialized.
+2013-10-23 16:35:50,809 PyHouse.Internet INFO - Initialized.
+2013-10-23 16:35:50,809 PyHouse.Schedule INFO - Starting House Cannon.
+2013-10-23 16:35:50,809 PyHouse.Lighting INFO - Starting - House:Cannon.
+2013-10-23 16:35:50,809 PyHouse.Family   INFO - Adding lighting Family:Insteon for House:Cannon
+2013-10-23 16:35:50,809 PyHouse.Dev_Inst INFO - Initialized.
+2013-10-23 16:35:50,809 PyHouse.Family   INFO - Adding lighting Family:UPB for House:Cannon
+2013-10-23 16:35:50,811 PyHouse.Dev_UPB  INFO - Initialized.
+2013-10-23 16:35:50,811 PyHouse.Family   INFO - Adding lighting Family:X10 for House:Cannon
+2013-10-23 16:35:50,811 PyHouse.Dev_X10  INFO - Initialized.
+2013-10-23 16:35:50,811 PyHouse.Family   INFO - Starting lighting families.
+2013-10-23 16:35:50,811 PyHouse.Dev_Inst INFO - Starting for house:Cannon
+2013-10-23 16:35:50,811 PyHouse.Dev_Inst INFO - Started 0 Controllers, House:Cannon.
+2013-10-23 16:35:50,811 PyHouse.Family   INFO - Started lighting family Insteon.
+2013-10-23 16:35:50,811 PyHouse.Dev_UPB  INFO - Starting.
+2013-10-23 16:35:50,811 PyHouse.Dev_UPB  INFO - Started.
+2013-10-23 16:35:50,812 PyHouse.Family   INFO - Started lighting family UPB.
+2013-10-23 16:35:50,812 PyHouse.Dev_X10  INFO - Starting.
+2013-10-23 16:35:50,812 PyHouse.Dev_X10  INFO - Started.
+2013-10-23 16:35:50,812 PyHouse.Family   INFO - Started lighting family X10.
+2013-10-23 16:35:50,812 PyHouse.Lighting INFO - Started.
+2013-10-23 16:35:50,812 PyHouse.Schedule INFO - Started.
+2013-10-23 16:35:50,812 PyHouse.Internet INFO - Starting for house:Cannon.
+2013-10-23 16:35:50,812 PyHouse.House    INFO - Started. - House:Cannon
+2013-10-23 16:35:50,812 PyHouse.Houses   INFO - Started.
+2013-10-23 16:35:50,812 PyHouse.WebServ  INFO - Started - Port:8580, Path:None
+2013-10-23 16:38:22,306 PyHouse.Houses   INFO - Initialized all houses.
+2013-10-23 16:38:22,308 PyHouse.WebServ  INFO - Initialized
+2013-10-23 16:38:22,308 PyHouse.Houses   INFO - Starting.
+2013-10-23 16:38:22,308 PyHouse.House    INFO - Starting House .
+2013-10-23 16:38:22,309 PyHouse.Schedule INFO - Initializing House:Cannon
+2013-10-23 16:38:22,309 PyHouse.Sunrise  INFO - Initialized.
+2013-10-23 16:38:22,309 PyHouse.Lighting INFO - Initialized.
+2013-10-23 16:38:22,309 PyHouse.Schedule INFO - Initialized.
+2013-10-23 16:38:22,309 PyHouse.Internet INFO - Initialized.
+2013-10-23 16:38:22,309 PyHouse.Schedule INFO - Starting House Cannon.
+2013-10-23 16:38:22,309 PyHouse.Lighting INFO - Starting - House:Cannon.
+2013-10-23 16:38:22,309 PyHouse.Family   INFO - Adding lighting Family:Insteon for House:Cannon
+2013-10-23 16:38:22,309 PyHouse.Dev_Inst INFO - Initialized.
+2013-10-23 16:38:22,309 PyHouse.Family   INFO - Adding lighting Family:UPB for House:Cannon
+2013-10-23 16:38:22,312 PyHouse.Dev_UPB  INFO - Initialized.
+2013-10-23 16:38:22,312 PyHouse.Family   INFO - Adding lighting Family:X10 for House:Cannon
+2013-10-23 16:38:22,313 PyHouse.Dev_X10  INFO - Initialized.
+2013-10-23 16:38:22,315 PyHouse.Family   INFO - Starting lighting families.
+2013-10-23 16:38:22,315 PyHouse.Dev_Inst INFO - Starting for house:Cannon
+2013-10-23 16:38:22,315 PyHouse.Dev_Inst INFO - Started 0 Controllers, House:Cannon.
+2013-10-23 16:38:22,315 PyHouse.Family   INFO - Started lighting family Insteon.
+2013-10-23 16:38:22,315 PyHouse.Dev_UPB  INFO - Starting.
+2013-10-23 16:38:22,315 PyHouse.Dev_UPB  INFO - Started.
+2013-10-23 16:38:22,315 PyHouse.Family   INFO - Started lighting family UPB.
+2013-10-23 16:38:22,315 PyHouse.Dev_X10  INFO - Starting.
+2013-10-23 16:38:22,315 PyHouse.Dev_X10  INFO - Started.
+2013-10-23 16:38:22,315 PyHouse.Family   INFO - Started lighting family X10.
+2013-10-23 16:38:22,315 PyHouse.Lighting INFO - Started.
+2013-10-23 16:38:22,315 PyHouse.Schedule INFO - Started.
+2013-10-23 16:38:22,315 PyHouse.Internet INFO - Starting for house:Cannon.
+2013-10-23 16:38:22,315 PyHouse.House    INFO - Started. - House:Cannon
+2013-10-23 16:38:22,315 PyHouse.Houses   INFO - Started.
+2013-10-23 16:38:22,316 PyHouse.WebServ  INFO - Started - Port:8580, Path:None
+2013-10-23 16:38:29,135 PyHouse.webMain  INFO - web_mainpage Workspace initialized.
+2013-10-23 16:38:29,842 PyHouse.webMain  INFO - clock called
+2013-10-23 16:38:29,842 PyHouse.webMain  INFO - login called - params = PyHouseData:: 
+	HousesAPI:<src.housing.houses.API object at 0x00000000026882E8>, 
+	LogsAPI:<src.utils.log.API object at 0x0000000003C31A58>, 
+	WebAPI:<src.web.web_server.API object at 0x0000000002688320>, 
+	WebData:WebData:: WebPort:8580
+, 
+	LogsData:Logs:: Debug:None, Error:None;, 
+	HousesData:{0: <src.housing.houses.HousesData object at 0x0000000002688438>};
+	XmlRoot:<Element 'PyHouse' at 0x3c5fb00>, 
+	XmlFileName:C:\Users\briank/.PyHouse/PyHouse.xml, 
+2013-10-23 16:38:29,842 PyHouse.webMain  INFO - houseSelect called from browser
+2013-10-23 16:38:29,844 PyHouse.webMain  INFO - rootMenu called
+2013-10-23 16:38:29,844 PyHouse.webMain  INFO - houseMenu called from browser
+2013-10-23 16:38:29,844 PyHouse.webMain  INFO - controllers called
+2013-10-23 16:38:29,844 PyHouse.webMain  INFO - buttons called
+2013-10-23 16:38:29,844 PyHouse.webMain  INFO - rooms called
+2013-10-23 16:38:29,844 PyHouse.webMain  INFO - schedules called
+2013-10-23 16:38:29,845 PyHouse.webMain  INFO - controlLights called
+2013-10-23 16:38:29,845 PyHouse.webMain  INFO - house called from browser
+2013-10-23 16:38:29,845 PyHouse.webMain  INFO - internet called from browser
+2013-10-23 16:38:36,865 PyHouse.webLogin INFO - doLogin called {"Username":"briank","Password":"d"}.
+2013-10-23 16:38:48,638 PyHouse.Houses   INFO - Stopping.
+2013-10-23 16:38:48,638 PyHouse.House    INFO - Stopping House:Cannon Trail.
+2013-10-23 16:38:48,638 PyHouse.Schedule INFO - Stopping schedule for house:Cannon Trail.
+2013-10-23 16:38:48,638 PyHouse.Lighting INFO - Stopping all lighting families.
+2013-10-23 16:38:48,638 PyHouse.Lighting INFO - Stopped.
+2013-10-23 16:38:48,638 PyHouse.Schedule INFO - Stopped.
+
+2013-10-23 16:38:48,638 PyHouse.Internet INFO - Stopping for house:Cannon Trail.
+2013-10-23 16:38:48,638 PyHouse.House    INFO - Stopped.
+2013-10-23 16:38:48,638 PyHouse.Houses   INFO - Stopped.
+2013-10-23 16:38:48,641 PyHouse.Houses   INFO - Starting.
+2013-10-23 16:38:48,641 PyHouse.House    INFO - Starting House .
+2013-10-23 16:38:48,641 PyHouse.Schedule INFO - Initializing House:Cannon Trail
+2013-10-23 16:38:48,641 PyHouse.Sunrise  INFO - Initialized.
+2013-10-23 16:38:48,641 PyHouse.Lighting INFO - Initialized.
+2013-10-23 16:38:48,641 PyHouse.Schedule INFO - Initialized.
+2013-10-23 16:38:48,641 PyHouse.Internet INFO - Initialized.
+2013-10-23 16:38:48,641 PyHouse.Schedule INFO - Starting House Cannon Trail.
+2013-10-23 16:38:48,641 PyHouse.Lighting INFO - Starting - House:Cannon Trail.
+2013-10-23 16:38:48,641 PyHouse.Family   INFO - Adding lighting Family:Insteon for House:Cannon Trail
+2013-10-23 16:38:48,642 PyHouse.Dev_Inst INFO - Initialized.
+2013-10-23 16:38:48,642 PyHouse.Family   INFO - Adding lighting Family:UPB for House:Cannon Trail
+2013-10-23 16:38:48,642 PyHouse.Dev_UPB  INFO - Initialized.
+2013-10-23 16:38:48,642 PyHouse.Family   INFO - Adding lighting Family:X10 for House:Cannon Trail
+2013-10-23 16:38:48,642 PyHouse.Dev_X10  INFO - Initialized.
+2013-10-23 16:38:48,642 PyHouse.Family   INFO - Starting lighting families.
+2013-10-23 16:38:48,642 PyHouse.Dev_Inst INFO - Starting for house:Cannon Trail
+2013-10-23 16:38:48,642 PyHouse.Dev_Inst INFO - Started 0 Controllers, House:Cannon Trail.
+2013-10-23 16:38:48,644 PyHouse.Family   INFO - Started lighting family Insteon.
+2013-10-23 16:38:48,644 PyHouse.Dev_UPB  INFO - Starting.
+2013-10-23 16:38:48,644 PyHouse.Dev_UPB  INFO - Started.
+2013-10-23 16:38:48,644 PyHouse.Family   INFO - Started lighting family UPB.
+2013-10-23 16:38:48,644 PyHouse.Dev_X10  INFO - Starting.
+2013-10-23 16:38:48,644 PyHouse.Dev_X10  INFO - Started.
+2013-10-23 16:38:48,644 PyHouse.Family   INFO - Started lighting family X10.
+2013-10-23 16:38:48,644 PyHouse.Lighting INFO - Started.
+2013-10-23 16:38:48,644 PyHouse.Schedule INFO - Started.
+2013-10-23 16:38:48,644 PyHouse.Internet INFO - Starting for house:Cannon Trail.
+2013-10-23 16:38:48,644 PyHouse.House    INFO - Started. - House:Cannon Trail
+2013-10-23 16:38:48,644 PyHouse.Houses   INFO - Started.
+2013-10-23 16:38:48,644 PyHouse.WebServ  INFO - Started - Port:8580, Path:None

@@ -177,7 +177,11 @@ class API(LoadSaveAPI):
         for l_house in self.m_houses_data.itervalues():
             if g_debug >= 4:
                 print "houses.Stop() - House:{0:}, Key:{1:}".format(l_house.Name, l_house.Key), l_house.HouseAPI
-            l_houses_xml.append(l_house.HouseAPI.Stop(l_houses_xml, l_house.HouseObject))  # append to the xml tree
+            try:
+                l_xml = l_house.HouseAPI.Stop(l_houses_xml, l_house.HouseObject)
+            except AttributeError:  # New house being added has ho existing API
+                l_xml = house.API().Stop(l_houses_xml, l_house.HouseObject)
+            l_houses_xml.append(l_xml)  # append to the xml tree
         g_logger.info("Stopped.")
         return l_houses_xml
 

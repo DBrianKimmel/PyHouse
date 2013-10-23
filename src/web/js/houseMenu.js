@@ -18,6 +18,7 @@ helpers.Widget.subclass(houseMenu, 'HouseMenuWidget').methods(
     },
 
     
+	// ============================================================================
     /**
      * Place the widget in the workspace.
      * 
@@ -35,7 +36,11 @@ helpers.Widget.subclass(houseMenu, 'HouseMenuWidget').methods(
 		l_defer.addCallback(cb_widgetready);
 		return l_defer;
 	},
+	function showWidget(self) {
+		self.node.style.display = 'block';
+	},
 
+	// ============================================================================
 	/**
 	 * @param self is <"Instance" of undefined.houseMenu.HouseMenuWidget> 
 	 * @param p_node is node <button> of the button clicked
