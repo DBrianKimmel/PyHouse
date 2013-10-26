@@ -110,6 +110,10 @@ class API(LoggingUtility):
         return l_xml
         #logging.shutdown()
 
+    def UpdateXml(self, p_xml):
+        p_xml.append(self.write_log_xml(self.m_log_data))
+        return p_xml
+
     def Update(self, p_entry):
         if g_debug >= 0:
             print 'log.API.Update({0:}'.format(p_entry)

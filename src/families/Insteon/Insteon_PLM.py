@@ -27,7 +27,7 @@ from src.utils.tools import PrintBytes
 from src.families.Insteon.Insteon_constants import *
 from src.families.Insteon import Insteon_utils
 from src.families.Insteon import Insteon_Link
-from src.families.Insteon import Device_Insteon
+from src.families.Insteon.Device_Insteon import InsteonData
 
 g_debug = 0
 # 0 = off
@@ -39,7 +39,7 @@ g_debug = 0
 # 6 = sent command detail (number)
 # 7 = diagnostics
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.Inst_PLM')
+g_logger = logging.getLogger('PyHouse.Insteon_PLM ')
 
 callLater = reactor.callLater
 
@@ -62,7 +62,7 @@ FLAG_HOPS_LEFT = 0x0C
 FLAG_MAX_HOPS = 0x03
 
 
-class ControllerData(Device_Insteon.InsteonData):
+class ControllerData(InsteonData):
     """Holds statefull information about a single Insteon controller device.
 
     There are several different control devices - this is 2412x and 2413x
@@ -180,7 +180,7 @@ class DecodeResponses(InsteonPlmUtility):
             l_ret = self._find_addr(self.m_house_obj.Buttons, l_id)
         if l_ret == None:
             #l_ret = LightData()  # an empty new object
-            l_ret = Device_Insteon.InsteonData()  # an empty new object
+            l_ret = InsteonData()  # an empty new object
             l_ret.Name = '**' + str(l_id) + '**'
         if g_debug >= 7:
             print "Insteon_PLM.get_obj_from_message - Address:{0:}({1:}), found:{2:}".format(Insteon_utils.int2dotted_hex(l_id), l_id, l_ret.Name)
@@ -981,7 +981,7 @@ class InsteonAllLinks(InsteonPlmCommands):
         if g_debug >= 4:
             print "Insteon_PLM.delete_link() - Address:{0}, Group:{1:#02X}".format(p_address, p_group)
         #p_light_obj = LightData()
-        p_light_obj = Device_Insteon.InsteonData()
+        p_light_obj = InsteonData()
         p_light_obj.InsteonAddress = self.dotted_hex2int(p_address)
         p_light_obj.GroupNumber = p_group
         # p_code = 0x00  # Find First

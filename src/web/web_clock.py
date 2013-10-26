@@ -22,7 +22,7 @@ g_debug = 0
 # 1 = log extra info
 # 2 = major routine entry
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.webClock')
+g_logger = logging.getLogger('PyHouse.webClock    ')
 
 #==============================================================================
 

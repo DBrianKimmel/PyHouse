@@ -23,7 +23,7 @@ g_debug = 0
 # 0 = off
 # 1 = major routine entry
 # 2 = Basic data
-g_logger = logging.getLogger('PyHouse.webLogs')
+g_logger = logging.getLogger('PyHouse.webLogs    ')
 
 
 class LogsElement(athena.LiveElement):

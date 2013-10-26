@@ -25,7 +25,7 @@ g_debug = 0
 # 3 = Config file handling
 # 4 = Dump JSON
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.webSched')
+g_logger = logging.getLogger('PyHouse.webSchedule ')
 
 
 class SchedulesElement(athena.LiveElement):
@@ -58,11 +58,21 @@ class SchedulesElement(athena.LiveElement):
         """A new/changed schedule is returned.  Process it and update the internal data via schedule.py
         """
         l_json = web_utils.JsonUnicode().decode_json(p_json)
-        l_del = l_json['Delete']
+        l_delete = l_json['Delete']
         l_house_ix = int(l_json['HouseIx'])
+        l_schedule_ix = int(l_json['Key'])
         if g_debug >= 4:
             print "web_schedules.SchedulesElement.saveScheduleData() - JSON:", l_json
-        l_obj = schedule.ScheduleData()
+        if l_delete:
+            try:
+                del self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Schedules[l_schedule_ix]
+            except AttributeError:
+                print "web_schedules - Failed to delete - JSON: ", l_json
+            return
+        try:
+            l_obj = self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Schedules[l_schedule_ix]
+        except KeyError:
+            l_obj = schedule.ScheduleData()
         l_obj.Name = l_json['Name']
         l_obj.Active = l_json['Active']
         l_obj.Key = int(l_json['Key'])
@@ -75,6 +85,6 @@ class SchedulesElement(athena.LiveElement):
         l_obj.UUID = l_json['UUID']
         l_obj.DeleteFlag = l_json['Delete']
         l_obj.HouseIx = l_house_ix
-        self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.ScheduleAPI.Update(l_obj)
+        self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Schedules[l_schedule_ix] = l_obj
 
 # ## END DBK

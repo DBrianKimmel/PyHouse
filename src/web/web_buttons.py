@@ -25,7 +25,7 @@ g_debug = 0
 # 3 = Config file handling
 # 4 = Dump JSON
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.webButtn')
+g_logger = logging.getLogger('PyHouse.webButton   ')
 
 
 class ButtonsElement(athena.LiveElement):

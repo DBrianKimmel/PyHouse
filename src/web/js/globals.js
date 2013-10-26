@@ -498,9 +498,7 @@ function buildEntryButtons(p_handler, /* optional */ noOptions) {
  */
 function buildRadioButtonWidget(p_name, p_label, p_value, p_checkVal) {
 	//Divmod.debug('---', 'globals.buildRadioButtonWidget() called.  Name=' + p_name + '  Value=' + p_value + '  Check:' + p_checkVal);
-	var l_html = "&nbsp;<input type='radio' ";
-	l_html += "name='" + p_name + "' ";
-	l_html += "value='" + p_value + "' ";
+	var l_html = "&nbsp;<input type='radio' name='" + p_name + "' value='" + p_value + "' ";
 	if (p_value === p_checkVal)
 		l_html += "checked='checked'";
 	l_html += "/>" + p_label + '&nbsp;\n';
@@ -517,7 +515,7 @@ function buildTrueFalseWidget(p_name, p_value) {
 function fetchTrueFalseWidget(p_name) {
 	var l_active = document.getElementsByName(p_name);
 	var l_ret = false;
-	//Divmod.debug('---', 'globals.fetchTrueFalse() called.  Name=' + p_name + '  Len:' + l_active.length);
+	Divmod.debug('---', 'globals.fetchTrueFalse() called.  Name=' + p_name + '  Len:' + l_active.length);
 	for (var ix = 0; ix < l_active.length; ix++) {
 		//Divmod.debug('---', 'globals.fetchTrueFalse() called.  Name=' + p_name + '  Checked:' + l_active[ix].checked + '  Val:' + l_active[ix].value);
 		if (l_active[ix].checked && l_active[ix].value === 'true') {
@@ -545,10 +543,11 @@ function buildSelectWidget(p_id, p_list, p_checked) {
 	return l_html;
 }
 function fetchSelectWidget(p_id) {
-	//Divmod.debug('---', 'globals.fetchSelectWidget() was called. Self=' + self + '  Id=' + p_id);
 	var l_field = document.getElementById(p_id);
 	var l_ix = l_field.value;
 	var l_name = l_field.options[l_field.selectedIndex].text;
+	Divmod.debug('---', 'globals.fetchSelectWidget(1) was called. Id=' + p_id);
+	console.log("    %O", l_field)
 	return l_name;
 }
 function buildRoomSelectWidget(p_id, p_checked) {
@@ -568,6 +567,7 @@ function buildLightSelectWidget(p_id, p_checked) {
 	return buildSelectWidget(p_id, l_list, p_checked);
 }
 function buildFamilySelectWidget(p_id, p_checked) {
+	Divmod.debug('---', 'globals.buildFamilySelectWidget() was called. Id=' + p_id + '  Checked=' + p_checked);
 	return buildSelectWidget(p_id, globals.Valid.Families, p_checked)
 }
 /**

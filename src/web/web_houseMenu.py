@@ -25,7 +25,7 @@ g_debug = 0
 # 4 = Basic data
 # 5 = Detailed Data
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.webHMenu')
+g_logger = logging.getLogger('PyHouse.webHMenu    ')
 
 
 class HouseMenuElement(athena.LiveElement):

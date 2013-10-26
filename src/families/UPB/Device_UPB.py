@@ -16,7 +16,7 @@ g_debug = 0
 # 1 = major routine entry
 # 2 = Startup Details
 
-g_logger = logging.getLogger('PyHouse.Dev_UPB ')
+g_logger = logging.getLogger('PyHouse.Dev_UPB     ')
 
 
 class CoreData(object):
@@ -131,15 +131,9 @@ class API(LightingAPI):
         """Constructor for the UPB .
         """
         self.m_house_obj = p_house_obj
-        if g_debug > 0:
-            print "Device_UPB.API()"
-        g_logger.info('Initialized.')
 
     def Start(self, p_house_obj):
-        if g_debug > 0:
-            print "Device_UPB.Start()"
         self.m_house_obj = p_house_obj
-        g_logger.info('Starting.')
         for l_controller_obj in p_house_obj.Controllers.itervalues():
             if l_controller_obj.Family != 'UPB':
                 continue

@@ -60,7 +60,7 @@ g_debug = 0
 # 2 = Startup Details
 # 3 = Read / write details
 
-g_logger = logging.getLogger('PyHouse.USBDriver')
+g_logger = logging.getLogger('PyHouse.USBDriver    ')
 
 callLater = reactor.callLater
 

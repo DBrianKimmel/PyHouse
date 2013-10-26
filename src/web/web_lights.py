@@ -7,6 +7,7 @@ Created on Jun 3, 2013
 # Import system type stuff
 import logging
 import os
+import uuid
 from nevow import loaders
 from nevow import athena
 
@@ -26,7 +27,7 @@ g_debug = 0
 # 3 = Config file handling
 # 4 = Dump JSON
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.webLight')
+g_logger = logging.getLogger('PyHouse.webLight    ')
 
 
 class LightsElement(athena.LiveElement):
@@ -55,7 +56,7 @@ class LightsElement(athena.LiveElement):
         """
         l_ix = int(p_index)
         l_house = self.m_pyhouses_obj.HousesData[l_ix].HouseObject
-        if g_debug >= 3:
+        if g_debug >= 0:
             print "web_lights.getHouseData() - HouseIndex:", p_index
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_house))
         return l_json
@@ -65,10 +66,21 @@ class LightsElement(athena.LiveElement):
         """A new/changed light is returned.  Process it and update the internal data via light_xxxx.py
         """
         l_json = web_utils.JsonUnicode().decode_json(p_json)
-        l_del = l_json['Delete']
+        l_delete = l_json['Delete']
         l_house_ix = int(l_json['HouseIx'])
+        l_light_ix = int(l_json['Key'])
         if g_debug >= 4:
             print "web_lights.LightsElement.saveLightData() - JSON:", l_json
+        if l_delete:
+            try:
+                del self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Lights[l_light_ix]
+            except AttributeError:
+                print "web_lights - Failed to delete - JSON: ", l_json
+            return
+        try:
+            l_obj = self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Lights[l_light_ix]
+        except KeyError:
+            l_obj = lighting_lights.LightData()
         l_obj = lighting_lights.LightData()
         l_obj.Name = l_json['Name']
         l_obj.Active = l_json['Active']
@@ -80,8 +92,11 @@ class LightsElement(athena.LiveElement):
         l_obj.RoomName = l_json['RoomName']
         l_obj.Type = l_json['Type']
         l_obj.UUID = l_json['UUID']
+        if len(l_obj.UUID) < 8:
+            l_obj.UUID = str(uuid.uuid1())
         l_obj.DeleteFlag = l_json['Delete']
         l_obj.HouseIx = l_house_ix
-        self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.LightingAPI.Update(l_obj)
+        self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Lights[l_light_ix] = l_obj
+        self.m_pyhouses_obj.API.UpdateXml()
 
 # ## END DBK

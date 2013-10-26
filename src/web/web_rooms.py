@@ -25,7 +25,7 @@ g_debug = 0
 # 3 = Config file handling
 # 4 = Dump JSON
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.webRooms')
+g_logger = logging.getLogger('PyHouse.webRooms    ')
 
 #==============================================================================
 
@@ -54,7 +54,7 @@ class RoomsElement(athena.LiveElement):
 
     @athena.expose
     def saveRoomData(self, p_json):
-        """A new/changed/deleted room is returned.  Process it and update the internal data via ???
+        """A new/changed/deleted room is returned.  Process it and update the internal data.
         """
         l_json = web_utils.JsonUnicode().decode_json(p_json)
         l_house_ix = int(l_json['HouseIx'])

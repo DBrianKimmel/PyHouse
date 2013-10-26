@@ -23,7 +23,7 @@ g_debug = 0
 # 3 = Config file handling
 # 4 = Basic data
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.webRMenu')
+g_logger = logging.getLogger('PyHouse.webRMenu    ')
 
 
 class RootMenuElement(athena.LiveElement):

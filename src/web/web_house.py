@@ -26,7 +26,7 @@ g_debug = 0
 # 3 = Config file handling
 # 4 = Dump JSON
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.webHouse')
+g_logger = logging.getLogger('PyHouse.webHouse    ')
 
 class HouseElement(athena.LiveElement):
     """ a 'live' house element.

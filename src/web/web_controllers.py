@@ -27,7 +27,7 @@ g_debug = 0
 # 3 = Config file handling
 # 4 = Dump JSON
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.webCntlr')
+g_logger = logging.getLogger('PyHouse.webCntlr    ')
 
 
 class ControllersElement(athena.LiveElement):
@@ -76,7 +76,7 @@ class ControllersElement(athena.LiveElement):
         l_house_ix = int(l_json['HouseIx'])
         l_controller_ix = int(l_json['Key'])
         l_delete = l_json['Delete']
-        if g_debug >= 0:
+        if g_debug >= 4:
             print "web_controllers.ControllersElement.saveControllerData() - JSON:", p_json
         if l_delete:
             try:
@@ -101,5 +101,6 @@ class ControllersElement(athena.LiveElement):
         l_obj.Interface = l_json['Interface']
         l_obj.Port = l_json['Port']
         l_obj.InsteonAddress = l_json['InsteonAddress']
+        self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Controllers[l_controller_ix] = l_obj
 
 # ## END DBK

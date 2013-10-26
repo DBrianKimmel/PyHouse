@@ -12,6 +12,8 @@ from src.lights import lighting_core
 from src.utils.tools import PrintBytes
 from src.drivers import interface
 from src.families import family
+#
+from src.utils.tools import PrintObject
 
 
 g_debug = 0
@@ -30,14 +32,16 @@ class ControllerData(lighting_core.CoreData):
     def __init__(self):
         super(ControllerData, self).__init__()  # The core data
         self.Type = 'Controller'
-        self.Command = None
-        self.Data = None  # Interface specific data
+        self.Interface = ''
+        self.Port = ''
+        #
         self.DriverAPI = None
         self.HandlerAPI = None  # PLM, PIM, etc (family controller device handler) API() address
-        self.Interface = ''
+        #
+        self.Command = None
+        self.Data = None  # Interface specific data
         self.Message = ''
         self.Queue = None
-        self.Port = ''
 
     def __str__(self):
         l_ret = "LightingController:: "
@@ -46,7 +50,6 @@ class ControllerData(lighting_core.CoreData):
         l_ret += "Interface:{0:}, ".format(self.Interface)
         l_ret += "Port:{0:}, ".format(self.Port)
         l_ret += "Type:{0:}, ".format(self.Type)
-        l_ret += "Message:{0:} ".format(PrintBytes(self.Message))
         return l_ret
 
     def reprJSON(self):
@@ -80,12 +83,14 @@ class ControllersAPI(lighting_core.CoreAPI):
                 l_controller_obj = ControllerData()
                 l_controller_obj = self.read_light_common(l_controller_xml, l_controller_obj, p_house_obj)
                 l_controller_obj.Key = l_count  # Renumber
+                #print "---lighting_controllers.read_controller_xml()---", l_controller_obj.Name, ', ', l_controller_obj.Key
                 l_controller_obj.Interface = self.get_text_from_xml(l_controller_xml, 'Interface')
                 l_controller_obj.Port = self.get_text_from_xml(l_controller_xml, 'Port')
                 interface.ReadWriteConfig().extract_xml(l_controller_obj, l_controller_xml)
+                #PrintObject('Lighting_controllers.read_controller_xml(1) ', l_controller_obj)
                 l_dict[l_count] = l_controller_obj
                 l_count += 1
-        except AttributeError:  # No Buttons section
+        except AttributeError:  # No Controller section
             l_dict = {}
         p_house_obj.Controllers = l_dict
         if g_debug >= 2:

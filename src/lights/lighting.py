@@ -22,8 +22,7 @@ g_debug = 0
 # 1 = log extra info
 # 2 = major routine entry
 # + = NOT USED HERE
-
-g_logger = logging.getLogger('PyHouse.Lighting')
+g_logger = logging.getLogger('PyHouse.Lighting    ')
 
 
 class ButtonData(lighting_buttons.ButtonData): pass
@@ -107,39 +106,11 @@ class API(Utility):
             print "lighting.API.Stop() - House:{0:}, Lights:{1:}, Controllers:{2:}, Buttons:{3:}".format(self.m_house_obj.Name, len(l_lighting_xml), len(l_controllers_xml), len(l_buttons_xml))
         return l_lighting_xml, l_controllers_xml, l_buttons_xml
 
-    def Update(self, p_entry):
-        """Update the  as updated by the web server.
-        Take one schedule entry and insert it into the Schedules data.
-        """
-        if g_debug >= 0:
-            print 'lighting.API.Update({0:}'.format(p_entry)
-        l_type = p_entry.Type
-        l_delete = p_entry.DeleteFlag
-        l_obj = LightData()
-        l_obj.Name = p_entry.Name
-        l_obj.Active = p_entry.Active
-        l_obj.Key = p_entry.Key
-        l_obj.Comment = p_entry.Comment
-        l_obj.Coords = p_entry.Coords
-        l_obj.Dimmable = p_entry.Dimmable
-        l_obj.Family = p_entry.Family
-        l_obj.RoomName = p_entry.RoomName
-        l_obj.Type = l_type
-        l_obj.UUID = p_entry.UUID
-        if l_delete:
-            if l_type == 'Light':
-                del self.m_house_obj.Lights[l_obj.Key]  # update Lights entry within a house
-            elif l_type == 'Button':
-                del self.m_house_obj.Buttons[l_obj.Key]  # update Buttons entry within a house
-            elif l_type == 'Controller':
-                del self.m_house_obj.Controllers[l_obj.Key]  # update Controllers entry within a house
-        else:  # Add/Change
-            if l_type == 'Light':
-                self.m_house_obj.Lights[l_obj.Key] = l_obj  # update Lights entry within a house
-            elif l_type == 'Button':
-                self.m_house_obj.Buttons[l_obj.Key] = l_obj  # update Buttons entry within a house
-            elif l_type == 'Controller':
-                self.m_house_obj.Controllers[l_obj.Key] = l_obj  # update Controllers entry within a house
+    def UpdateXml(self, p_xml):
+        p_xml.append(self.write_light_xml(self.m_house_obj))
+        p_xml.append(self.write_button_xml(self.m_house_obj))
+        p_xml.append(self.write_controller_xml(self.m_house_obj))
+        return p_xml
 
     def ChangeLight(self, p_entry):
         if g_debug >= 0:

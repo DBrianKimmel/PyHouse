@@ -45,7 +45,7 @@ g_debug = 0
 # 3 = Basic data
 # 4 = ajax data
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.WebServ ')
+g_logger = logging.getLogger('PyHouse.WebServer   ')
 
 
 # Only to move the eclipse error flags to one small spot
@@ -149,6 +149,10 @@ class API(WebUtility, ClientConnections):
             print "web_server.API.Stop()"
         l_xml = self.write_web_xml(self.web_data)
         return l_xml
+
+    def UpdateXml(self, p_xml):
+        p_xml.append(self.write_web_xml(self.web_data))
+        return p_xml
 
     def Update(self, p_entry):
         if g_debug >= 0:

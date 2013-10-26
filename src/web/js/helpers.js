@@ -67,7 +67,7 @@ Nevow.Athena.Widget.subclass(helpers, 'Widget').methods(
 		var l_node = self.node;
 		var l_nodeName = l_node.nodeName;
 		var l_obj = l_node.attributes;
-		Divmod.debug('---', 'helpers.js - ERROR - attachWidget failed - Node:' + l_nodeName + '  Err:' + res);
+		Divmod.debug('---', 'helpers.js - ERROR - attachWidget failed - Node:' + l_nodeName + '  ERROR = ' + res);
 		console.log("GenericErrBck - %O", l_node);
 	},
 	  

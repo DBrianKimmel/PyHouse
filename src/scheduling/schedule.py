@@ -50,7 +50,7 @@ g_debug = 0
 # 5 = diagnostics
 # 6
 # 7 = extract time details
-g_logger = logging.getLogger('PyHouse.Schedule')
+g_logger = logging.getLogger('PyHouse.Schedule    ')
 
 callLater = reactor.callLater
 
@@ -111,9 +111,7 @@ class ScheduleXML(xml_tools.ConfigTools):
         p_schedule_obj.RoomName = self.get_text_from_xml(p_entry_xml, 'RoomName')
         p_schedule_obj.Time = self.get_text_from_xml(p_entry_xml, 'Time')
         p_schedule_obj.Type = self.get_text_from_xml(p_entry_xml, 'Type')
-        p_schedule_obj.UUID = self.get_text_from_xml(p_entry_xml, 'UUID')
-        if len(p_schedule_obj.UUID) < 8:
-            p_schedule_obj.UUID = str(uuid.uuid1())
+        p_schedule_obj.UUID = self.get_uuid_from_xml(p_entry_xml, 'UUID')
         if g_debug >= 7:
             print "schedule.extract_schedule_xml()   Name:{0:}, Active:{1:}, Key:{2:}, Light:{3:}".format(
                     p_schedule_obj.Name, p_schedule_obj.Active, p_schedule_obj.Key, p_schedule_obj.LightName)
@@ -126,8 +124,6 @@ class ScheduleXML(xml_tools.ConfigTools):
         @param p_house_xml: is the e-tree XML house object
         @return: a dict of the entry to be attached to a house object.
         """
-        if g_debug >= 3:
-            print "schedule.read_schedules_xml()"
         l_count = 0
         l_dict = {}
         l_sect = p_house_xml.find('Schedules')
@@ -142,8 +138,7 @@ class ScheduleXML(xml_tools.ConfigTools):
         except AttributeError:
             pass
         p_house_obj.Schedules = l_dict
-        if g_debug >= 3:
-            print "schedule.read_schedule()  loaded {0:} schedules for {1:}".format(l_count, p_house_obj.Name)
+        g_logger.info("Loaded {0:} schedules for house:{1:}.".format(l_count, self.m_house_obj.Name))
         return l_dict
 
     def write_schedules_xml(self, p_schedules_obj):
@@ -355,16 +350,10 @@ class API(ScheduleUtility, ScheduleXML):
     #m_entertainment = None
 
     def __init__(self, p_house_obj):
-        """
-        """
-        if g_debug >= 2:
-            print "schedule.API() - House:{0:}".format(p_house_obj.Name)
-        g_logger.info("Initializing House:{0:}".format(p_house_obj.Name))
         self.m_house_obj = p_house_obj
         self.m_sunrisesunset = sunrisesunset.API(p_house_obj)
         self.m_house_obj.LightingAPI = lighting.API(p_house_obj)
         #self.m_entertainment = entertainment.API()
-        g_logger.info("Initialized.")
 
     def Start(self, p_house_obj, p_house_xml):
         """Called once for each house.
@@ -399,30 +388,8 @@ class API(ScheduleUtility, ScheduleXML):
         g_logger.info("Stopped.\n")
         return l_schedules_xml, l_lighting_xml, l_buttons_xml, l_controllers_xml  #, l_entertainment_xml
 
-    def Update(self, p_entry):
-        """Update the schedule as updated by the web server.
-        Take one schedule entry and insert it into the Schedules data.
-        """
-        if g_debug >= 4:
-            print 'schedule.API.Update({0:}'.format(p_entry)
-        l_type = p_entry.Type
-        l_delete = p_entry.DeleteFlag
-        l_obj = ScheduleData()
-        l_obj.Name = p_entry.Name
-        l_obj.Active = p_entry.Active
-        l_obj.Key = p_entry.Key
-        l_obj.Level = p_entry.Level
-        l_obj.LightName = p_entry.LightName
-        l_obj.Name = p_entry.Name
-        l_obj.Object = {}
-        l_obj.Rate = p_entry.Rate
-        l_obj.RoomName = p_entry.RoomName
-        l_obj.Time = p_entry.Time
-        l_obj.Type = l_type
-        l_obj.UUID = p_entry.UUID
-        if l_delete:
-            del self.m_house_obj.Schedules[l_obj.Key]  # update Schedule entry within a house
-        else:
-            self.m_house_obj.Schedules[l_obj.Key] = l_obj  # update schedule entry within a house
+    def UpdateXml (self, p_xml):
+        p_xml.append(self.write_schedules_xml(self.m_house_obj.Schedules))
+        p_xml.append(self.m_house_obj.LightingAPI.UpdateXml(p_xml))
 
 # ## END DBK

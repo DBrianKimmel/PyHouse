@@ -26,7 +26,7 @@ g_debug = 0
 # 4 = Basic data
 # 5 = Detailed Data
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.webHSel ')
+g_logger = logging.getLogger('PyHouse.webHSel     ')
 
 
 class WebHouseData(object):

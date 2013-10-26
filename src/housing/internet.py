@@ -31,7 +31,7 @@ g_debug = 0
 # 4 = External IP execution
 # 5 = Dump Objects
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.Internet')
+g_logger = logging.getLogger('PyHouse.Internet    ')
 
 callLater = reactor.callLater
 
@@ -166,8 +166,6 @@ class ReadWriteXML(xml_tools.ConfigTools):
         """Create a sub tree for 'Internet' - the sub elements do not have to be present.
         @return: a sub tree ready to be appended to "something"
         """
-        if g_debug >= 3:
-            print "internet.write_internet()", p_house_obj.Internet
         l_internet_xml = ET.Element('Internet')
         self.put_text_attribute(l_internet_xml, 'ExternalIP', p_house_obj.Internet.ExternalIP)
         self.put_int_attribute(l_internet_xml, 'ExternalDelay', p_house_obj.Internet.ExternalDelay)
@@ -277,7 +275,12 @@ class FindExternalIpAddress(object):
     def get_public_ip(self):
         """Get the public IP address for the house.
         """
-        callLater(self.m_house_obj.Internet.ExternalDelay, self.get_public_ip)
+        l_delay = self.m_house_obj.Internet.ExternalDelay
+        if l_delay < 600:
+            l_delay = 600
+            self.m_house_obj.Internet.ExternalDelay = l_delay
+        callLater(l_delay, self.get_public_ip)
+        #
         self.m_url = self.m_house_obj.Internet.UrlExternalIP
         if self.m_url == None:
             return
@@ -293,7 +296,7 @@ class FindExternalIpAddress(object):
         dotted quad IPs are converted to 4 byte addresses
         IP V-6 is not handled yet.
         """
-        # This is for Shawn Powers page
+        # This is for Shawn Powers page - http://snar.co/ip
         l_quad = p_ip_page
         self.m_house_obj.Internet.ExternalIP = l_quad
         l_addr = convert.ConvertEthernet().dotted_quad2long(l_quad)
@@ -380,15 +383,11 @@ class API(ReadWriteXML):
     m_house_obj = None
 
     def __init__(self):
-        if g_debug >= 2:
-            print "internet.API()"
-        g_logger.info("Initialized.")
+        pass
 
     def Start(self, p_house_obj, p_house_xml):
         """Start async operation of the internet module.
         """
-        if g_debug >= 2:
-            print "internet.API.Start() for house:{0:}".format(p_house_obj.Name)
         g_logger.info("Starting for house:{0:}.".format(p_house_obj.Name))
         self.read_internet_xml(p_house_obj, p_house_xml)
         self.m_house_obj = p_house_obj
@@ -406,7 +405,12 @@ class API(ReadWriteXML):
         g_logger.info("Stopping for house:{0:}.".format(self.m_house_obj.Name))
         if self.m_house_obj.Active:
             self.dyndns.stop_dyndns_process()
-        l_internet_xml = self.write_internet(self.m_house_obj)
+        l_internet_xml = self.UpdateXml()
         return l_internet_xml
+
+    def UpdateXml(self):
+        l_xml = self.write_internet(self.m_house_obj)
+        return l_xml
+
 
 # ## END DBK

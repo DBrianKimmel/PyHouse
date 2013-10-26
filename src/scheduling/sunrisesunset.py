@@ -17,7 +17,7 @@ from math import pi
 # Import PyMh files
 
 g_debug = 0
-g_logger = logging.getLogger('PyHouse.Sunrise ')
+g_logger = logging.getLogger('PyHouse.Sunrise     ')
 
 RAD2DEG = 180.0 / pi
 DEG2RAD = pi / 180.0
@@ -404,14 +404,8 @@ class API(SSAPI):
 
     def __init__(self, p_house_obj):
         self.m_house_obj = p_house_obj
-        if g_debug >= 1:
-            print "sunrisesunset.__init__()"
         self.earth_data = EarthParameters()
         self.solar_data = SolarParameters()
-        if g_debug >= 2:
-            print "sunrisesunset.API.__init__() "
-            print "    ", self.earth_data
-        g_logger.info("Initialized.")
 
     def Start(self, p_house_obj, p_date = datetime.date.today()):
         if g_debug >= 1:

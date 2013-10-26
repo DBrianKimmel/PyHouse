@@ -8,6 +8,7 @@
 import datetime
 import os
 import sys
+import uuid
 from xml.etree import ElementTree as ET
 from xml.dom import minidom
 
@@ -143,8 +144,6 @@ class PutGetXML(XmlFileTools):
             l_xml = p_xml.get(p_name)
         else:
             l_xml = l_xml.text
-        if g_debug >= 4:
-            print "xml_tools.get_text_from_xml() Text:'{0:}'".format(l_xml)
         return str(l_xml)
 
     def put_text_attribute(self, p_element, p_name, p_text):
@@ -160,6 +159,21 @@ class PutGetXML(XmlFileTools):
         except (ValueError, TypeError):
             l_var = ''
         ET.SubElement(p_parent_element, p_name).text = l_var
+
+#-----
+# UUID
+#-----
+    def get_uuid_from_xml(self, p_xml, p_name):
+        """Always return an UUID - generate one if it is missing.
+        """
+        l_xml = p_xml.find(p_name)
+        if l_xml == None:
+            l_xml = str(p_xml.get(p_name))
+        else:
+            l_xml = str(l_xml.text)
+        if len(l_xml) < 8:
+            l_xml = str(uuid.uuid1())
+        return l_xml
 
 #-----
 

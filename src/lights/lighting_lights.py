@@ -30,14 +30,16 @@ class LightData(lighting_core.CoreData):
         self.Type = 'Light'
         self.CurLevel = 0
 
-    def XX__str__(self):
-        l_str = super(LightData, self).__str__()
-        l_str = l_str + " Key:{0} ".format(self.Key)
-        return l_str
+    def __str__(self):
+        l_ret = "LightingLight:: "
+        l_ret += "Name:{0:}, ".format(self.Name)
+        l_ret += "Family:{0:}, ".format(self.Family)
+        l_ret += "CurLevel:{0:} ".format(self.CurLevel)
+        return l_ret
 
     def reprJSON(self):
         l_ret = super(LightData, self).reprJSON()  # lighting_core data
-        l_ret.update(dict(CurLevel = self.CurLevel))
+        #l_ret.update(dict(CurLevel = self.CurLevel))
         return l_ret
 
 

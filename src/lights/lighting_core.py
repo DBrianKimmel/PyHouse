@@ -5,12 +5,10 @@ Created on Jun 13, 2013
 '''
 
 # Import system type stuff
-import uuid
 
 # Import PyHouse files
 from src.utils import xml_tools
-#from src.families import family
-#from src.families.Insteon import Device_Insteon
+from src.utils.tools import PrintObject
 
 
 g_debug = 0
@@ -39,7 +37,7 @@ class CoreData(object):
         self.Type = ''
         self.UUID = None
 
-    def __str__(self):
+    def XX__str__(self):
         l_str = "Light:: "
         l_str += "Name:{0:}, ".format(self.Name)
         l_str += "Key:{0:}, ".format(self.Key)
@@ -55,10 +53,12 @@ class CoreData(object):
         return l_str
 
     def reprJSON(self):
-        #print "lighting_core.reprJSON() - Name:{0:}, Family:{1:}".format(self.Name, self.Family)
-        l_ret = dict(Name = self.Name, Active = self.Active, Key = self.Key,
-                    Comment = self.Comment, Coords = self.Coords, Dimmable = self.Dimmable,
-                    Family = self.Family, RoomName = self.RoomName, Type = self.Type, UUID = self.UUID)
+        print "lighting_core.reprJSON()", self
+        l_ret = dict(
+                     Name = self.Name, Key = self.Key, Active = self.Active,
+                     Comment = self.Comment, Coords = self.Coords, Dimmable = self.Dimmable,
+                     Family = self.Family, RoomName = self.RoomName, Type = self.Type, UUID = self.UUID
+                     )
         return l_ret
 
 
@@ -74,7 +74,7 @@ class CoreAPI(xml_tools.ConfigTools):
         """
         self.m_house_obj = p_house_obj
         if g_debug >= 3:
-            print "lighting_core.read_light_common() XML={0:}".format(p_entry_xml)
+            print "lighting_core.read_light_common(1) XML={0:}".format(p_entry_xml)
         self.xml_read_common_info(p_device_obj, p_entry_xml)
         p_device_obj.Comment = self.get_text_from_xml(p_entry_xml, 'Comment')
         p_device_obj.Coords = self.get_text_from_xml(p_entry_xml, 'Coords')
@@ -82,16 +82,15 @@ class CoreAPI(xml_tools.ConfigTools):
         p_device_obj.Family = l_fam = self.get_text_from_xml(p_entry_xml, 'Family')
         p_device_obj.RoomName = p_entry_xml.findtext('Room')
         p_device_obj.Type = p_entry_xml.findtext('Type')
-        p_device_obj.UUID = self.get_text_from_xml(p_entry_xml, 'UUID')
-        if len(p_device_obj.UUID) < 8:
-            p_device_obj.UUID = str(uuid.uuid1())
+        p_device_obj.UUID = self.get_uuid_from_xml(p_entry_xml, 'UUID')
         for l_family_obj in p_house_obj.FamilyData.itervalues():
             if g_debug >= 4:
-                print "    {0:}, {1:}".format(l_family_obj.Name, l_fam)
+                print "lighting_core.read_light_common(2) - {0:}, {1:}".format(l_family_obj.Name, l_fam)
             if l_family_obj.Name == l_fam:
                 l_family_obj.API.extract_device_xml(p_entry_xml, p_device_obj)
-        if g_debug >= 3:
-            print "lighting_tools.read_light_common() - ", p_device_obj
+        if g_debug >= 4:
+            print "lighting_core.read_light_common(3) - ", p_device_obj
+            #PrintObject('lighting_core.read_light_common(1) ', p_device_obj)
         return p_device_obj
 
     def write_light_common(self, p_entry, p_device_obj, p_house_obj):

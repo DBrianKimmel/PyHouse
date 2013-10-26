@@ -8,7 +8,7 @@ import logging
 
 
 g_debug = 0
-g_logger = logging.getLogger('PyHouse.Weather')
+g_logger = logging.getLogger('PyHouse.Weather    ')
 
 
 class API(object):

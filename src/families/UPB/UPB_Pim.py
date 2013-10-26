@@ -18,7 +18,7 @@ g_debug = 0
 # 2 = Startup Details
 
 g_driver = []
-g_logger = logging.getLogger('PyHouse.UPB_PIM ')
+g_logger = logging.getLogger('PyHouse.UPB_PIM     ')
 g_queue = None
 g_pim = {}
 g_house_obj = None

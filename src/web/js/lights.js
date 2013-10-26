@@ -58,6 +58,9 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 	function showEntry(self) {
 		self.nodeById('LightEntryDiv').style.display = 'block';		
 	},
+	function buildButtonName(self, p_obj) {
+		return l_html = p_obj['Name'] + '<br>' + p_obj['RoomName'];
+	},
 
 	// ============================================================================
 	/**
@@ -66,9 +69,9 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 	 */
 	function fetchHouseData(self) {
 		function cb_fetchHouseData(p_json) {
-			//Divmod.debug('---', 'lights.cb_fetchHouseData() was called. ' + p_json);
+			Divmod.debug('---', 'lights.cb_fetchHouseData() was called. ' + p_json);
 			globals.House.HouseObj = JSON.parse(p_json);
-			var l_tab = buildTable(globals.House.HouseObj.Lights, 'handleMenuOnClick');
+			var l_tab = buildTable(globals.House.HouseObj.Lights, 'handleMenuOnClick', self.buildButtonName);
 			self.nodeById('LightTableDiv').innerHTML = l_tab;
 		}
 		function eb_fetchHouseData(res) {
@@ -86,53 +89,53 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 	 * 
 	 */
 	function fillEntry(self, p_obj) {
-		//Divmod.debug('---', 'lights.fillEntry(1) was called.  Self:' + self);
-		//console.log("lights.fillEntry() - Obj = %O", p_obj);
-        self.nodeById('NameDiv').innerHTML = buildTextWidget('LightName', p_obj.Name);
-        self.nodeById('KeyDiv').innerHTML = buildTextWidget('LightKey', p_obj.Key, 'disabled');
-		self.nodeById('ActiveDiv').innerHTML = buildTrueFalseWidget('LightActive', p_obj.Active);
-		self.nodeById('CommentDiv').innerHTML = buildTextWidget('LightComment', p_obj.Comment);
-		self.nodeById('CoordsDiv').innerHTML = buildTextWidget('LightCoords', p_obj.Coords);
+		Divmod.debug('---', 'lights.fillEntry(1) was called.  Self:' + self);
+		console.log("lights.fillEntry() - Obj = %O", p_obj);
+        self.nodeById('NameDiv').innerHTML     = buildTextWidget('LightName', p_obj.Name);
+        self.nodeById('KeyDiv').innerHTML      = buildTextWidget('LightKey', p_obj.Key, 'disabled');
+		self.nodeById('ActiveDiv').innerHTML   = buildTrueFalseWidget('LightActive', p_obj.Active);
+		self.nodeById('CommentDiv').innerHTML  = buildTextWidget('LightComment', p_obj.Comment);
+		self.nodeById('CoordsDiv').innerHTML   = buildTextWidget('LightCoords', p_obj.Coords);
 		self.nodeById('DimmableDiv').innerHTML = buildTrueFalseWidget('LightDimmable', p_obj.Dimmable);
-		self.nodeById('FamilyDiv').innerHTML = buildFamilySelectWidget('LightFamily', 'Families', p_obj.Family);
+		self.nodeById('FamilyDiv').innerHTML   = buildFamilySelectWidget('LightFamily', 'Families', p_obj.Family);
 		self.nodeById('RoomNameDiv').innerHTML = buildRoomSelectWidget('LightRoomName', p_obj.RoomName);
-		self.nodeById('TypeDiv').innerHTML = buildTextWidget('LightType', p_obj.Type, 'disabled');
-		self.nodeById('UUIDDiv').innerHTML = buildTextWidget('LightUUID', p_obj.UUID, 'disabled');
+		self.nodeById('TypeDiv').innerHTML     = buildTextWidget('LightType', p_obj.Type, 'disabled');
+		self.nodeById('UUIDDiv').innerHTML     = buildTextWidget('LightUUID', p_obj.UUID, 'disabled');
 		self.nodeById('LightEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick');
 	},
 	function fetchEntry(self) {
 		//Divmod.debug('---', 'lights.fetchEntry() was called. ');
         var l_data = {
-            Name : fetchTextWidget('LightName'),
-            Key : fetchTextWidget('LightKey'),
-			Active : fetchTrueFalseWidget('LightActive'),
-			Comment : fetchTextWidget('LightComment'),
-			Coords : fetchTextWidget('LightCoords'),
+            Name     : fetchTextWidget('LightName'),
+            Key      : fetchTextWidget('LightKey'),
+			Active   : fetchTrueFalseWidget('LightActive'),
+			Comment  : fetchTextWidget('LightComment'),
+			Coords   : fetchTextWidget('LightCoords'),
 			Dimmable : fetchTrueFalseWidget('LightDimmable'),
-			Family : fetchTextWidget('LightFamily'),
+			Family   : fetchSelectWidget('LightFamily'),
 			RoomName : fetchSelectWidget('LightRoomName'),
-			Type : fetchTextWidget('LightType'),
-			UUID : fetchTextWidget('LightUUID'),
-			HouseIx : globals.House.HouseIx,
-			Delete : false
+			Type     : fetchTextWidget('LightType'),
+			UUID     : fetchTextWidget('LightUUID'),
+			HouseIx  : globals.House.HouseIx,
+			Delete   : false
             }
 		return l_data;
 	},
 	function createEntry(self, p_ix) {
 		//Divmod.debug('---', 'lights.createEntry() was called.  Ix: ' + p_ix);
         var l_Data = {
-    			Name : 'Change Me',
-    			Key : Object.keys(globals.House.HouseObj.Lights).length,
-    			Active : false,
-    			Comment : '',
-    			Coords : '',
+    			Name     : 'Change Me',
+    			Key      : Object.keys(globals.House.HouseObj.Lights).length,
+    			Active   : false,
+    			Comment  : '',
+    			Coords   : '',
     			Dimmable : false,
-    			Family : '',
+    			Family   : 'Insteon',
     			RoomName : '',
-    			Type : 'Light',
-    			UUID : '',
-    			HouseIx : p_ix,
-    			Delete : false
+    			Type     : 'Light',
+    			UUID     : '',
+    			HouseIx  : p_ix,
+    			Delete   : false
                 }
 		return l_Data;
 	},

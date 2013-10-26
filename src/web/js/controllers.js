@@ -162,36 +162,36 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
     function fillEntry(self, p_obj) {
         Divmod.debug('---', 'controllers.fillEntry() was called. ');
 		console.log("controllers.fillEntry - Obj %O", p_obj);
-        self.nodeById('NameDiv').innerHTML = buildTextWidget('ControllerName', p_obj.Name);
-        self.nodeById('KeyDiv').innerHTML = buildTextWidget('ControllerKey', p_obj.Key, 'disabled');
-		self.nodeById('ActiveDiv').innerHTML = buildTrueFalseWidget('ControllerActive', p_obj.Active);
-		self.nodeById('CommentDiv').innerHTML = buildTextWidget('ControllerComment', p_obj.Comment);
-		self.nodeById('CoordsDiv').innerHTML = buildTextWidget('ControllerCoords', p_obj.Coords);
-		self.nodeById('DimmableDiv').innerHTML = buildTrueFalseWidget('ControllerDimmable', p_obj.Dimmable);
-		self.nodeById('FamilyDiv').innerHTML = buildTextWidget('ControllerFamily', p_obj.Family);
-		self.nodeById('RoomNameDiv').innerHTML = buildRoomSelectWidget('ControllerRoomName', p_obj.RoomName);
-		self.nodeById('TypeDiv').innerHTML = buildTextWidget('ControllerType', p_obj.Type, 'disabled');
-		self.nodeById('UUIDDiv').innerHTML = buildTextWidget('ControllerUUID', p_obj.UUID, 'disabled');
-		self.nodeById('InterfaceDiv').innerHTML = buildTextWidget('ControllerInterface', p_obj.Interface);
-		self.nodeById('PortDiv').innerHTML = buildTextWidget('ControllerPort', p_obj.Port, 'disabled');
+        self.nodeById('NameDiv').innerHTML           = buildTextWidget('ControllerName', p_obj.Name);
+        self.nodeById('KeyDiv').innerHTML            = buildTextWidget('ControllerKey', p_obj.Key, 'disabled');
+		self.nodeById('ActiveDiv').innerHTML         = buildTrueFalseWidget('ControllerActive', p_obj.Active);
+		self.nodeById('CommentDiv').innerHTML        = buildTextWidget('ControllerComment', p_obj.Comment);
+		self.nodeById('CoordsDiv').innerHTML         = buildTextWidget('ControllerCoords', p_obj.Coords);
+		self.nodeById('DimmableDiv').innerHTML       = buildTrueFalseWidget('ControllerDimmable', p_obj.Dimmable);
+		self.nodeById('FamilyDiv').innerHTML         = buildTextWidget('ControllerFamily', p_obj.Family);
+		self.nodeById('RoomNameDiv').innerHTML       = buildRoomSelectWidget('ControllerRoomName', p_obj.RoomName);
+		self.nodeById('TypeDiv').innerHTML           = buildTextWidget('ControllerType', p_obj.Type, 'disabled');
+		self.nodeById('UUIDDiv').innerHTML           = buildTextWidget('ControllerUUID', p_obj.UUID, 'disabled');
+		self.nodeById('InterfaceDiv').innerHTML      = buildTextWidget('ControllerInterface', p_obj.Interface);
+		self.nodeById('PortDiv').innerHTML           = buildTextWidget('ControllerPort', p_obj.Port, 'disabled');
 		self.nodeById('InsteonAddressDiv').innerHTML = buildTextWidget('ControllerInsteonAddress', p_obj.InsteonAddress);
 		self.nodeById('ControllerEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick');
     },
     function fetchEntry(self) {
-        Divmod.debug('---', 'controllers.frtchEntry() was called. ');
+        Divmod.debug('---', 'controllers.fetchEntry() was called. ');
         var l_data = {
-            Name : fetchTextWidget('ControllerName'),
-            Key : fetchTextWidget('ControllerKey'),
-			Active : fetchTrueFalseWidget('ControllerActive'),
-			Comment : fetchTextWidget('ControllerComment'),
-			Coords : fetchTextWidget('ControllerCoords'),
-			Dimmable : fetchTrueFalseWidget('ControllerDimmable'),
-			Family : fetchTextWidget('ControllerFamily'),
-			RoomName : fetchSelectWidget('ControllerRoomName'),
-			Type : fetchTextWidget('ControllerType'),
-			UUID : fetchTextWidget('ControllerUUID'),
-			Interface : fetchTextWidget('ControllerInterface'),
-			Port : fetchTextWidget('ControllerPort'),
+            Name :           fetchTextWidget('ControllerName'),
+            Key :            fetchTextWidget('ControllerKey'),
+			Active :         fetchTrueFalseWidget('ControllerActive'),
+			Comment :        fetchTextWidget('ControllerComment'),
+			Coords :         fetchTextWidget('ControllerCoords'),
+			Dimmable :       fetchTrueFalseWidget('ControllerDimmable'),
+			Family :         fetchTextWidget('ControllerFamily'),
+			RoomName :       fetchSelectWidget('ControllerRoomName'),
+			Type :           fetchTextWidget('ControllerType'),
+			UUID :           fetchTextWidget('ControllerUUID'),
+			Interface :      fetchTextWidget('ControllerInterface'),
+			Port :           fetchTextWidget('ControllerPort'),
 			InsteonAddress : fetchTextWidget('ControllerInsteonAddress'),
 			HouseIx : globals.House.HouseIx,
 			Delete : false

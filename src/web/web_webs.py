@@ -30,7 +30,7 @@ g_debug = 0
 # 3 = Detail data
 # 4 = Dump JSON
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.webWebs')
+g_logger = logging.getLogger('PyHouse.webWebs    ')
 
 
 class WebsElement(athena.LiveElement):

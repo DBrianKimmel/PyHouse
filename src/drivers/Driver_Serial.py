@@ -32,7 +32,7 @@ g_debug = 0
 # 5 = Read / write details
 # 6 = Details of device on start
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.DrvrSerl')
+g_logger = logging.getLogger('PyHouse.DrvrSerial  ')
 
 
 class SerialProtocol(Protocol):

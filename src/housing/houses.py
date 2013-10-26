@@ -28,7 +28,7 @@ g_debug = 0
 # 3 - Config file handling
 # 4 = Access housing info
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.Houses  ')
+g_logger = logging.getLogger('PyHouse.Houses      ')
 
 Singletons = {}
 
@@ -175,8 +175,6 @@ class API(LoadSaveAPI):
         g_logger.info("Stopping.")
         l_houses_xml = ET.Element('Houses')
         for l_house in self.m_houses_data.itervalues():
-            if g_debug >= 4:
-                print "houses.Stop() - House:{0:}, Key:{1:}".format(l_house.Name, l_house.Key), l_house.HouseAPI
             try:
                 l_xml = l_house.HouseAPI.Stop(l_houses_xml, l_house.HouseObject)
             except AttributeError:  # New house being added has ho existing API
@@ -184,6 +182,12 @@ class API(LoadSaveAPI):
             l_houses_xml.append(l_xml)  # append to the xml tree
         g_logger.info("Stopped.")
         return l_houses_xml
+
+    def UpdateXml(self, p_xml):
+        l_xml = ET.Element('Houses')
+        for l_house in self.m_houses_data.itervalues():
+            l_house.HouseAPI.UpdateXml(l_xml)
+        p_xml.append(l_xml)
 
     def get_houses_obj(self):
         return self.m_houses_data

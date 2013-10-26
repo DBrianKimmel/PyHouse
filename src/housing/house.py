@@ -32,7 +32,7 @@ g_debug = 0
 # 2 = major routine entry
 # 3 = get/put xml config info
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.House   ')
+g_logger = logging.getLogger('PyHouse.House       ')
 
 
 class HouseData(object):
@@ -90,9 +90,7 @@ class HouseReadWriteConfig(location.ReadWriteConfig, rooms.ReadWriteConfig):
         """Read house information, location and rooms.
         """
         self.xml_read_common_info(p_house_obj, p_house_xml)
-        p_house_obj.UUID = self.get_text_from_xml(p_house_xml, 'UUID')
-        if len(p_house_obj.UUID) < 8:
-            p_house_obj.UUID = str(uuid.uuid1())
+        p_house_obj.UUID = self.get_uuid_from_xml(p_house_xml, 'UUID')
         p_house_obj.Location = self.read_location_xml(p_house_obj, p_house_xml)
         p_house_obj.Rooms = self.read_rooms_xml(p_house_obj, p_house_xml)
         if g_debug >= 3:
@@ -104,8 +102,6 @@ class HouseReadWriteConfig(location.ReadWriteConfig, rooms.ReadWriteConfig):
         """
         l_house_xml = self.xml_create_common_element('House', p_house_obj)
         self.put_text_element(l_house_xml, 'UUID', p_house_obj.UUID)
-        if g_debug >= 3:
-            print "house.write_house_xml() - Name:{0:}, Key:{1:}".format(p_house_obj.Name, p_house_obj.Key)
         return l_house_xml
 
 
@@ -125,18 +121,19 @@ class API(HouseReadWriteConfig):
         Read in the XML file and update the internal data.
         May be stopped and then started anew to force reloading info.
         """
-        if g_debug >= 2:
-            print "house.API.Start() - House:{0:}".format(self.m_house_obj.Name)
-        g_logger.info("Starting House {0:}.".format(self.m_house_obj.Name))
         self.read_house_xml(self.m_house_obj, p_house_xml)
+        g_logger.info("Starting House {0:}, Active:{1:}".format(self.m_house_obj.Name, self.m_house_obj.Active))
         self.m_house_obj.ScheduleAPI = schedule.API(self.m_house_obj)
         self.m_house_obj.InternetAPI = internet.API()
         self.m_house_obj.ScheduleAPI.Start(self.m_house_obj, p_house_xml)
         self.m_house_obj.InternetAPI.Start(self.m_house_obj, p_house_xml)
+        l_msg = "For house: {0:} ".format(self.m_house_obj.Name)
+        l_msg += "- found -  Rooms:{0:}, Schedule:{1:}, Lights:{2:}, Controllers:{3:}".format(
+                    len(self.m_house_obj.Rooms), len(self.m_house_obj.Schedules),
+                    len(self.m_house_obj.Lights), len(self.m_house_obj.Controllers))
         if g_debug >= 2:
-            print "house.API.Start() has found -  Rooms:{0:}, Schedule:{1:}, Lights:{2:}, Controllers:{3:}".format(
-                    len(self.m_house_obj.Rooms), len(self.m_house_obj.Schedules), len(self.m_house_obj.Lights), len(self.m_house_obj.Controllers))
-        g_logger.info("Started. - House:{0:}".format(self.m_house_obj.Name))
+            print "house.API.Start() ", l_msg
+        g_logger.info("Started. - {0:}\n".format(l_msg))
         return self.m_house_obj
 
 
@@ -159,6 +156,14 @@ class API(HouseReadWriteConfig):
             print "house.API.Stop() - Name:{0:}, Count:{1:}".format(self.m_house_obj.Name, len(l_house_xml))
         g_logger.info("Stopped.")
         return l_house_xml
+
+    def UpdateXml(self, p_xml):
+        l_xml = self.write_house_xml(self.m_house_obj)
+        l_xml.append(self.write_location_xml(self.m_house_obj.Location))
+        l_xml.append(self.write_rooms_xml(self.m_house_obj))
+        l_xml.extend(self.m_house_obj.ScheduleAPI.UpdateXml(l_xml))
+        l_xml.append(self.m_house_obj.InternetAPI.UpdateXml())
+        p_xml.append(l_xml)
 
     def Update(self, p_entry):
         """

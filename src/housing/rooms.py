@@ -59,9 +59,7 @@ class ReadWriteConfig(xml_tools.ConfigTools):
         for l_room_xml in l_rooms_xml.iterfind('Room'):
             l_room_obj = RoomData()
             self.xml_read_common_info(l_room_obj, l_room_xml)
-            l_room_obj.UUID = self.get_text_from_xml(l_room_xml, 'UUID')
-            if len(l_room_obj.UUID) < 8:
-                l_room_obj.UUID = str(uuid.uuid1())
+            l_room_obj.UUID = self.get_uuid_from_xml(l_room_xml, 'UUID')
             l_room_obj.Key = l_count  # Renumber
             l_room_obj.Comment = self.get_text_from_xml(l_room_xml, 'Comment')
             l_room_obj.Corner = self.get_text_from_xml(l_room_xml, 'Corner')

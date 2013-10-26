@@ -96,7 +96,7 @@ g_debug = 0
 # 4 = Basic data
 # 5 = Detail Data
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.webMain ')
+g_logger = logging.getLogger('PyHouse.webMain     ')
 
 
 class FileNoListDir(static.File):

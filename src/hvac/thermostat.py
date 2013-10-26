@@ -12,7 +12,7 @@ import xml.etree.ElementTree as ET
 from src.utils import xml_tools
 
 g_debug = 0
-g_logger = logging.getLogger('PyHouse.Thermostat')
+g_logger = logging.getLogger('PyHouse.Thermostat    ')
 
 
 class ReadWriteXML(xml_tools.ConfigTools):

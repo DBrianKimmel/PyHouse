@@ -18,7 +18,7 @@ g_debug = 0
 # 2 = major routine entry
 # 3 = Config file handling
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.Family  ')
+g_logger = logging.getLogger('PyHouse.Family      ')
 
 
 class FamilyData(object):

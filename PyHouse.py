@@ -240,15 +240,18 @@ class API(Utilities):
         """
         if g_debug >= 2:
             print "\nPyHouse.API.Stop() - Stopping."
-        l_house_xml = self.m_pyhouses_obj.HousesAPI.Stop()
-        l_web_xml = self.m_pyhouses_obj.WebAPI.Stop()
-        l_logs_xml = self.m_pyhouses_obj.LogsAPI.Stop()
-        self.m_pyhouses_obj.XmlRoot = ET.Element("PyHouse")
-        self.m_pyhouses_obj.XmlRoot.append(l_web_xml)
-        self.m_pyhouses_obj.XmlRoot.append(l_logs_xml)
-        self.m_pyhouses_obj.XmlRoot.append(l_house_xml)
-        self.export_config_info(self.m_pyhouses_obj)
+        self.UpdateXml()
         g_logger.info("Stopped.\n\n\n")
+
+    def UpdateXml(self):
+        """Write the xml file (sort of a checkpoint) and continue operations.
+        """
+        l_xml = ET.Element("PyHouse")
+        self.m_pyhouses_obj.WebAPI.UpdateXml(l_xml)
+        self.m_pyhouses_obj.LogsAPI.UpdateXml(l_xml)
+        self.m_pyhouses_obj.HousesAPI.UpdateXml(l_xml)
+        print xml_tools.prettify(l_xml)
+        self.export_config_info(self.m_pyhouses_obj)
 
     def Reload(self, p_pyhouses_obj):
         """Update XML file with current info.
