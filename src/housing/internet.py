@@ -408,9 +408,8 @@ class API(ReadWriteXML):
         l_internet_xml = self.UpdateXml()
         return l_internet_xml
 
-    def UpdateXml(self):
+    def UpdateXml(self, p_xml):
         l_xml = self.write_internet(self.m_house_obj)
-        return l_xml
-
+        p_xml.append(l_xml)
 
 # ## END DBK

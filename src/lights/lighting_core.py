@@ -53,7 +53,7 @@ class CoreData(object):
         return l_str
 
     def reprJSON(self):
-        print "lighting_core.reprJSON()", self
+        #print "lighting_core.reprJSON()", self
         l_ret = dict(
                      Name = self.Name, Key = self.Key, Active = self.Active,
                      Comment = self.Comment, Coords = self.Coords, Dimmable = self.Dimmable,
@@ -94,7 +94,7 @@ class CoreAPI(xml_tools.ConfigTools):
         return p_device_obj
 
     def write_light_common(self, p_entry, p_device_obj, p_house_obj):
-        if g_debug >= 3:
+        if g_debug >= 0:
             print "lighting_tools.write_light_common()"
         self.put_text_element(p_entry, 'Comment', p_device_obj.Comment)
         self.put_text_element(p_entry, 'Coords', p_device_obj.Coords)
@@ -104,8 +104,6 @@ class CoreAPI(xml_tools.ConfigTools):
         self.put_text_element(p_entry, 'Type', p_device_obj.Type)
         self.put_text_element(p_entry, 'UUID', p_device_obj.UUID)
         for l_family_obj in p_house_obj.FamilyData.itervalues():
-            if g_debug >= 4:
-                print "    {0:}, {1:}".format(l_family_obj.Name, p_device_obj.Family)
             if l_family_obj.Name == p_device_obj.Family:
                 l_family_obj.API.insert_device_xml(p_entry, p_device_obj)
 

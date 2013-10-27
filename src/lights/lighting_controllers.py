@@ -43,7 +43,7 @@ class ControllerData(lighting_core.CoreData):
         self.Message = ''
         self.Queue = None
 
-    def __str__(self):
+    def XX__str__(self):
         l_ret = "LightingController:: "
         l_ret += "Name:{0:}, ".format(self.Name)
         l_ret += "Family:{0:}, ".format(self.Family)
@@ -98,7 +98,7 @@ class ControllersAPI(lighting_core.CoreAPI):
         return l_dict
 
     def write_controller_xml(self, p_house_obj):
-        if g_debug >= 1:
+        if g_debug >= 0:
             print "lighting_controllers.write_controller_xml()"
         l_count = 0
         l_controllers_xml = ET.Element('Controllers')
@@ -110,7 +110,7 @@ class ControllersAPI(lighting_core.CoreAPI):
             interface.ReadWriteConfig().write_xml(l_entry, l_controller_obj)
             l_controllers_xml.append(l_entry)
             l_count += 1
-        if g_debug >= 2:
+        if g_debug >= 0:
             print "lighting_controllers.write_controller_xml() - Wrote {0:} controllers".format(l_count)
         return l_controllers_xml
 

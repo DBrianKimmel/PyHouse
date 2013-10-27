@@ -73,7 +73,7 @@ g_debug = 0
 # 3 = Config file handling
 # 4 = XML write details
 # + = NOT USED HERE
-g_logger = None
+g_logger = logging.getLogger('PyHouse         ')
 
 
 callWhenRunning = reactor.callWhenRunning
@@ -174,16 +174,6 @@ class Utilities(object):
             l_xmltree = ET.parse(p_pyhouses_obj.XmlFileName)
         p_pyhouses_obj.XmlRoot = l_xmltree.getroot()
 
-    def export_config_info(self, p_pyhouses_obj):
-        """Replace the data in the xml file with the current data.
-        """
-        if g_debug >= 3:
-            print "PyHouse.export_config_info() - Writing XML file to:{0:}".format(p_pyhouses_obj.XmlFileName)
-        if g_debug >= 4:
-            print '    XmlRoot:', p_pyhouses_obj.XmlRoot
-            print xml_tools.prettify(p_pyhouses_obj.XmlRoot)
-        xml_tools.write_xml_file(p_pyhouses_obj.XmlRoot, p_pyhouses_obj.XmlFileName)
-
 
 class API(Utilities):
     """
@@ -194,41 +184,26 @@ class API(Utilities):
         All permanent services are started here.
         These core routines are an integral part of the daemon process.
 
-        Notice that the reactor starts here as the very last step and that
+        Notice that the reactor starts here as the very last step here and that
         call never returns until the reactor is stopped (permanent stoppage).
         """
-        if g_debug >= 2:
-            print "\nPyHouse.API()"
-        if g_debug >= 5:
-            import sys
-            print "  SYS.Path =", sys.path
-            print "---\n\n"
         handle_signals()
         self.m_pyhouses_obj = PyHouseData()
         self.m_pyhouses_obj.API = self
         self.import_config_info(self.m_pyhouses_obj)
         self.m_pyhouses_obj.LogsAPI = log.API()
         self.m_pyhouses_obj.LogsData = self.m_pyhouses_obj.LogsAPI.Start(self.m_pyhouses_obj)
-        global g_logger
-        g_logger = logging.getLogger('PyHouse         ')
         g_logger.info("Initializing PyHouse.\n")
-        if g_debug >= 1:
-            g_logger.info("Logging level is {0:}".format(g_debug))
         self.m_pyhouses_obj.HousesAPI = houses.API()
         self.m_pyhouses_obj.WebAPI = web_server.API()
         callWhenRunning(self.Start)
         g_logger.info("Initialized.\n")
-        if g_debug >= 1:
-            g_logger.info("PyHouseData:{0:}\n".format(self.m_pyhouses_obj))
-        # reactor never returns so must be last - Event loop will now run
-        reactorrun()
+        reactorrun()  # reactor never returns so must be last - Event loop will now run
         raise SystemExit, "PyHouse says Bye Now."
 
     def Start(self):
         """This is automatically invoked when the reactor starts from API().
         """
-        if g_debug >= 2:
-            print "\nPyHouse.API.Start() - Starting"
         self.m_pyhouses_obj.HousesData = self.m_pyhouses_obj.HousesAPI.Start(self.m_pyhouses_obj)
         self.m_pyhouses_obj.WebData = self.m_pyhouses_obj.WebAPI.Start(self.m_pyhouses_obj)
         g_logger.info("Started.\n")
@@ -238,10 +213,8 @@ class API(Utilities):
     def Stop(self):
         """Stop various modules to prepare for restarting them.
         """
-        if g_debug >= 2:
-            print "\nPyHouse.API.Stop() - Stopping."
         self.UpdateXml()
-        g_logger.info("Stopped.\n\n\n")
+        g_logger.info("Stopped.\n\n")
 
     def UpdateXml(self):
         """Write the xml file (sort of a checkpoint) and continue operations.
@@ -250,8 +223,8 @@ class API(Utilities):
         self.m_pyhouses_obj.WebAPI.UpdateXml(l_xml)
         self.m_pyhouses_obj.LogsAPI.UpdateXml(l_xml)
         self.m_pyhouses_obj.HousesAPI.UpdateXml(l_xml)
-        print xml_tools.prettify(l_xml)
-        self.export_config_info(self.m_pyhouses_obj)
+        #print 'PyHouse.UpdateXml()\n', xml_tools.prettify(l_xml)
+        xml_tools.write_xml_file(l_xml, self.m_pyhouses_obj.XmlFileName)
 
     def Reload(self, p_pyhouses_obj):
         """Update XML file with current info.

@@ -112,8 +112,6 @@ class API(HouseReadWriteConfig):
     def __init__(self):
         """Create a house object for when we add a new house.
         """
-        if g_debug >= 1:
-            print "house.API()"
         self.m_house_obj = HouseData()
 
     def Start(self, p_house_xml):
@@ -161,8 +159,9 @@ class API(HouseReadWriteConfig):
         l_xml = self.write_house_xml(self.m_house_obj)
         l_xml.append(self.write_location_xml(self.m_house_obj.Location))
         l_xml.append(self.write_rooms_xml(self.m_house_obj))
-        l_xml.extend(self.m_house_obj.ScheduleAPI.UpdateXml(l_xml))
-        l_xml.append(self.m_house_obj.InternetAPI.UpdateXml())
+        ###l_xml.extend(self.m_house_obj.ScheduleAPI.UpdateXml(l_xml))
+        self.m_house_obj.ScheduleAPI.UpdateXml(l_xml)
+        self.m_house_obj.InternetAPI.UpdateXml(l_xml)
         p_xml.append(l_xml)
 
     def Update(self, p_entry):

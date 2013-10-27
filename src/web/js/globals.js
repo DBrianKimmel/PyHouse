@@ -515,7 +515,7 @@ function buildTrueFalseWidget(p_name, p_value) {
 function fetchTrueFalseWidget(p_name) {
 	var l_active = document.getElementsByName(p_name);
 	var l_ret = false;
-	Divmod.debug('---', 'globals.fetchTrueFalse() called.  Name=' + p_name + '  Len:' + l_active.length);
+	//Divmod.debug('---', 'globals.fetchTrueFalse() called.  Name=' + p_name + '  Len:' + l_active.length);
 	for (var ix = 0; ix < l_active.length; ix++) {
 		//Divmod.debug('---', 'globals.fetchTrueFalse() called.  Name=' + p_name + '  Checked:' + l_active[ix].checked + '  Val:' + l_active[ix].value);
 		if (l_active[ix].checked && l_active[ix].value === 'true') {

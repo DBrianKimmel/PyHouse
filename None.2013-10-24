@@ -1,0 +1,127 @@
+2013-10-24 00:00:09,677 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:00:19,684 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:00:29,687 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:00:39,690 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:00:49,693 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:00:59,696 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:01:09,697 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:01:19,700 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:01:29,703 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:01:39,707 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:01:49,709 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:01:59,711 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:02:09,714 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:02:19,716 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:02:51,459 PyHouse.Houses   INFO - Initialized all houses.
+2013-10-24 00:02:51,459 PyHouse.WebServ  INFO - Initialized
+2013-10-24 00:02:51,460 PyHouse.Houses   INFO - Starting.
+2013-10-24 00:02:51,460 PyHouse.House    INFO - Starting House .
+2013-10-24 00:02:51,460 PyHouse.Schedule INFO - Initializing House:Cannon Trail
+2013-10-24 00:02:51,460 PyHouse.Sunrise  INFO - Initialized.
+2013-10-24 00:02:51,460 PyHouse.Lighting INFO - Initialized.
+2013-10-24 00:02:51,460 PyHouse.Schedule INFO - Initialized.
+2013-10-24 00:02:51,460 PyHouse.Internet INFO - Initialized.
+2013-10-24 00:02:51,460 PyHouse.Schedule INFO - Starting House Cannon Trail.
+2013-10-24 00:02:51,461 PyHouse.Lighting INFO - Starting - House:Cannon Trail.
+2013-10-24 00:02:51,461 PyHouse.Family   INFO - Adding lighting Family:Insteon for House:Cannon Trail
+2013-10-24 00:02:51,461 PyHouse.Dev_Inst INFO - Initialized.
+2013-10-24 00:02:51,461 PyHouse.Family   INFO - Adding lighting Family:UPB for House:Cannon Trail
+2013-10-24 00:02:51,464 PyHouse.Dev_UPB  INFO - Initialized.
+2013-10-24 00:02:51,464 PyHouse.Family   INFO - Adding lighting Family:X10 for House:Cannon Trail
+2013-10-24 00:02:51,466 PyHouse.Dev_X10  INFO - Initialized.
+2013-10-24 00:02:51,467 PyHouse.Family   INFO - Starting lighting families.
+2013-10-24 00:02:51,467 PyHouse.Dev_Inst INFO - Starting for house:Cannon Trail
+2013-10-24 00:02:51,467 PyHouse.Dev_Inst INFO - Started 0 Controllers, House:Cannon Trail.
+2013-10-24 00:02:51,467 PyHouse.Family   INFO - Started lighting family Insteon.
+2013-10-24 00:02:51,467 PyHouse.Dev_UPB  INFO - Starting.
+2013-10-24 00:02:51,467 PyHouse.Dev_UPB  INFO - Started.
+2013-10-24 00:02:51,467 PyHouse.Family   INFO - Started lighting family UPB.
+2013-10-24 00:02:51,467 PyHouse.Dev_X10  INFO - Starting.
+2013-10-24 00:02:51,467 PyHouse.Dev_X10  INFO - Started.
+2013-10-24 00:02:51,467 PyHouse.Family   INFO - Started lighting family X10.
+2013-10-24 00:02:51,467 PyHouse.Lighting INFO - Started.
+2013-10-24 00:02:51,467 PyHouse.Schedule INFO - Sunrise:01:41:57, Sunset:13:48:44
+2013-10-24 00:02:51,467 PyHouse.Schedule INFO - Get_next_schedule complete. Schedule - House:Cannon Trail, delaying 100000.0 seconds until 2013-10-24 00:02:51.468000 for list []
+2013-10-24 00:02:51,467 PyHouse.Schedule INFO - Started.
+2013-10-24 00:02:51,467 PyHouse.Internet INFO - Starting for house:Cannon Trail.
+2013-10-24 00:02:51,469 PyHouse.House    INFO - Started. - House:Cannon Trail
+2013-10-24 00:02:51,469 PyHouse.Houses   INFO - Started.
+2013-10-24 00:02:51,470 PyHouse.WebServ  INFO - Started - Port:8580, Path:None
+2013-10-24 00:02:51,470 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:03:01,476 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:03:11,536 PyHouse.webMain  INFO - web_mainpage Workspace initialized.
+2013-10-24 00:03:11,542 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:03:21,548 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:03:31,553 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:03:41,562 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:03:51,575 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:04:01,585 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:04:11,598 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:04:21,604 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:04:31,608 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:04:41,618 PyHouse.webMain  INFO - web_mainpage Workspace initialized.
+2013-10-24 00:04:41,625 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:04:51,631 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:05:01,644 PyHouse.webMain  INFO - web_mainpage Workspace initialized.
+2013-10-24 00:05:01,651 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:05:11,657 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:05:21,670 PyHouse.webMain  INFO - web_mainpage Workspace initialized.
+2013-10-24 00:05:21,677 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:05:31,680 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:05:41,694 PyHouse.webMain  INFO - web_mainpage Workspace initialized.
+2013-10-24 00:05:41,701 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:05:51,706 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:06:01,719 PyHouse.webMain  INFO - web_mainpage Workspace initialized.
+2013-10-24 00:06:01,726 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:06:11,730 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:06:21,737 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:06:31,742 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:06:41,744 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:06:51,750 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:07:01,752 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:07:11,756 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:07:21,756 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]
+2013-10-24 00:07:31,759 PyHouse.Internet ERROR - Failed to Get External IP page for House:Cannon Trail, [Failure instance: Traceback (failure with no frames): <class 'twisted.internet.error.ConnectError'>: An error occurred while connecting: 10049: The requested address is not valid in its context..
+]

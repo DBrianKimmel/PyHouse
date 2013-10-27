@@ -101,6 +101,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		self.nodeById('RoomNameDiv').innerHTML = buildRoomSelectWidget('LightRoomName', p_obj.RoomName);
 		self.nodeById('TypeDiv').innerHTML     = buildTextWidget('LightType', p_obj.Type, 'disabled');
 		self.nodeById('UUIDDiv').innerHTML     = buildTextWidget('LightUUID', p_obj.UUID, 'disabled');
+		self.nodeById('AddressDiv').innerHTML  = buildTextWidget('LightAddress', p_obj.Address);
 		self.nodeById('LightEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick');
 	},
 	function fetchEntry(self) {
@@ -116,6 +117,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 			RoomName : fetchSelectWidget('LightRoomName'),
 			Type     : fetchTextWidget('LightType'),
 			UUID     : fetchTextWidget('LightUUID'),
+			Address  : fetchTextWidget('LightAddress'),
 			HouseIx  : globals.House.HouseIx,
 			Delete   : false
             }
@@ -134,6 +136,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
     			RoomName : '',
     			Type     : 'Light',
     			UUID     : '',
+    			Address  : '',
     			HouseIx  : p_ix,
     			Delete   : false
                 }

@@ -145,12 +145,10 @@ class ScheduleXML(xml_tools.ConfigTools):
         """Replace all the data in the 'Schedules' section with the current data.
         @param p_parent: is the 'schedules' element
         """
-        if g_debug >= 3:
-            print "schedule.write_schedules_xml()"
         l_count = 0
         l_schedules_xml = ET.Element('Schedules')
         for l_schedule_obj in p_schedules_obj.itervalues():
-            #print "-=-", vars(l_schedule_obj)
+            l_schedule_obj.Key = l_count
             l_entry = self.xml_create_common_element('Schedule', l_schedule_obj)
             self.put_int_element(l_entry, 'Level', l_schedule_obj.Level)
             self.put_text_element(l_entry, 'LightName', l_schedule_obj.LightName)
@@ -363,8 +361,6 @@ class API(ScheduleUtility, ScheduleXML):
         @param p_house_obj: is a House object for the house being scheduled
         """
         self.m_house_obj = p_house_obj
-        if g_debug >= 2:
-            print "schedule.API.Start() - House:{0:}".format(p_house_obj.Name)
         g_logger.info("Starting House {0:}.".format(self.m_house_obj.Name))
         self.m_sunrisesunset.Start(p_house_obj)
         self.read_schedules_xml(p_house_obj, p_house_xml)
@@ -377,19 +373,16 @@ class API(ScheduleUtility, ScheduleXML):
     def Stop(self, p_xml, p_house_obj):
         """Stop everything under me and build xml to be appended to a house xml.
         """
-        if g_debug >= 2:
-            print "schedule.API.Stop() - House:{0:}".format(self.m_house_obj.Name)
         g_logger.info("Stopping schedule for house:{0:}.".format(self.m_house_obj.Name))
-        l_schedules_xml = self.write_schedules_xml(self.m_house_obj.Schedules)
-        l_lighting_xml, l_controllers_xml, l_buttons_xml = self.m_house_obj.LightingAPI.Stop(p_xml, p_house_obj)
+        self.m_house_obj.LightingAPI.Stop(p_xml, p_house_obj)
         #l_entertainment_xml = self.m_entertainment.Stop()
         if g_debug >= 2:
             print "schedule.API.Stop() - House:{0:}, {1:}".format(self.m_house_obj.Name, len(p_xml))
         g_logger.info("Stopped.\n")
-        return l_schedules_xml, l_lighting_xml, l_buttons_xml, l_controllers_xml  #, l_entertainment_xml
+        #return l_schedules_xml, l_lighting_xml, l_buttons_xml, l_controllers_xml  #, l_entertainment_xml
 
     def UpdateXml (self, p_xml):
         p_xml.append(self.write_schedules_xml(self.m_house_obj.Schedules))
-        p_xml.append(self.m_house_obj.LightingAPI.UpdateXml(p_xml))
+        self.m_house_obj.LightingAPI.UpdateXml(p_xml)
 
 # ## END DBK

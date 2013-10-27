@@ -97,20 +97,16 @@ class API(Utility):
         if g_debug >= 2:
             print "lighting.API.Stop() - House:{0:} Count:{1:}".format(self.m_house_obj.Name, len(self.m_house_obj.Lights))
         g_logger.info("Stopping all lighting families.")
-        l_lighting_xml = self.write_light_xml(self.m_house_obj)
-        l_buttons_xml = self.write_button_xml(self.m_house_obj)
-        l_controllers_xml = self.write_controller_xml(self.m_house_obj)
+        #l_lighting_xml = self.write_light_xml(self.m_house_obj)
+        #l_buttons_xml = self.write_button_xml(self.m_house_obj)
+        #l_controllers_xml = self.write_controller_xml(self.m_house_obj)
         self.m_family.stop_lighting_families(p_xml, p_house_obj)
         g_logger.info("Stopped.")
-        if g_debug >= 2:
-            print "lighting.API.Stop() - House:{0:}, Lights:{1:}, Controllers:{2:}, Buttons:{3:}".format(self.m_house_obj.Name, len(l_lighting_xml), len(l_controllers_xml), len(l_buttons_xml))
-        return l_lighting_xml, l_controllers_xml, l_buttons_xml
 
     def UpdateXml(self, p_xml):
         p_xml.append(self.write_light_xml(self.m_house_obj))
         p_xml.append(self.write_button_xml(self.m_house_obj))
         p_xml.append(self.write_controller_xml(self.m_house_obj))
-        return p_xml
 
     def ChangeLight(self, p_entry):
         if g_debug >= 0:

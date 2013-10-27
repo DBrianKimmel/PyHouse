@@ -786,7 +786,7 @@ class CreateCommands(PlmDriverProtocol):
         l_command[5] = FLAG_MAX_HOPS + FLAG_HOPS_LEFT  # 0x0F
         l_command[6] = p_light_obj.Command1 = p_cmd1
         l_command[7] = p_light_obj.Command2 = p_cmd2
-        if g_debug >= 6:
+        if g_debug >= 4:
             print "Insteon_PLM.queue_62_command() ", p_light_obj.Name, p_cmd1, p_cmd2
             g_logger.debug("Queue62 command to device: {2:}, Command: {0:#X},{1:#X}, Address: ({3:x}.{4:x}.{5:x})".format(p_cmd1, p_cmd2, p_light_obj.Name, l_command[2], l_command[3], l_command[4]))
         return self.queue_plm_command(l_command)
@@ -1080,7 +1080,7 @@ class LightHandlerAPI(InsteonPlmAPI):
     def get_all_lights_status(self):
         """Get the status (current level) of all lights.
         """
-        if g_debug >= 4:
+        if g_debug >= 3:
             print "Insteon_PLM.get_all_lights_status() for House:{0:}".format(self.m_house_obj.Name)
         g_logger.info('Getting light levels of all Insteon lights')
         for l_light_obj in self.m_house_obj.Lights.itervalues():
@@ -1094,7 +1094,7 @@ class LightHandlerAPI(InsteonPlmAPI):
         """Get the status of a light.
         We will (apparently) get back a 62-ACK followed by a 50 with the level in the response.
         """
-        if g_debug >= 4:
+        if g_debug >= 3:
             print "Insteon_PLM._get_one_light_status() {0:}".format(p_light_obj.Name)
         self.queue_62_command(p_light_obj, MESSAGE_TYPES['status_request'], 0)  # 0x19
 

@@ -62,8 +62,6 @@ class ButtonsAPI(lighting_core.CoreAPI):
         return l_dict
 
     def write_button_xml(self, p_house_obj):
-        if g_debug >= 2:
-            print "lighting_buttons.write_button+xml()"
         l_count = 0
         l_buttons_xml = ET.Element('Buttons')
         for l_button_obj in p_house_obj.Buttons.itervalues():

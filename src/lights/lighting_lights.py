@@ -30,7 +30,7 @@ class LightData(lighting_core.CoreData):
         self.Type = 'Light'
         self.CurLevel = 0
 
-    def __str__(self):
+    def XX__str__(self):
         l_ret = "LightingLight:: "
         l_ret += "Name:{0:}, ".format(self.Name)
         l_ret += "Family:{0:}, ".format(self.Family)
@@ -46,8 +46,6 @@ class LightData(lighting_core.CoreData):
 class LightingAPI(lighting_core.CoreAPI):
 
     def read_light_xml(self, p_house_obj, p_house_xml):
-        if g_debug >= 2:
-            print "lighting_lights.read_light_xml()"
         l_count = 0
         l_dict = {}
         l_sect = p_house_xml.find('Lights')

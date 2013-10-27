@@ -140,8 +140,7 @@ class API(LoadSaveAPI):
         return self
 
     def __init__(self):
-        if g_debug >= 2:
-            print "houses.__init__()"
+        pass
 
     def Start(self, p_pyhouses_obj):
         """Start processing for all things houses
@@ -179,7 +178,7 @@ class API(LoadSaveAPI):
                 l_xml = l_house.HouseAPI.Stop(l_houses_xml, l_house.HouseObject)
             except AttributeError:  # New house being added has ho existing API
                 l_xml = house.API().Stop(l_houses_xml, l_house.HouseObject)
-            l_houses_xml.append(l_xml)  # append to the xml tree
+            #l_houses_xml.append(l_xml)  # append to the xml tree
         g_logger.info("Stopped.")
         return l_houses_xml
 
