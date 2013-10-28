@@ -167,8 +167,7 @@ class DecodeResponses(InsteonPlmUtility):
                 continue
             if l_obj.InsteonAddress == p_addr:
                 return l_obj
-        if g_debug >= 7:
-            print "Insteon_PLM._find_addr - not found {0:}({1:})".format(Insteon_utils.int2dotted_hex(p_addr), p_addr)
+        g_logger.warning("Address {0:} NOT found".format(Insteon_utils.int2dotted_hex(p_addr)))
         return None
 
     def get_obj_from_message(self, p_message, p_index):
@@ -216,8 +215,7 @@ class DecodeResponses(InsteonPlmUtility):
             print "Insteon_PLM._decode_message()"
         while len(p_controller_obj.Message) >= 2:
             l_stx = p_controller_obj.Message[0]
-            if g_debug >= 6:
-                print "Insteon_PLM._decode_message() - {0:}".format(PrintBytes(p_controller_obj.Message))
+            g_logger.debug("decode_message() - {0:}".format(PrintBytes(p_controller_obj.Message)))
             if l_stx == STX:
                 l_need_len = self._get_message_length(p_controller_obj.Message)
                 l_cur_len = len(p_controller_obj.Message)
@@ -1109,17 +1107,13 @@ class API(LightHandlerAPI):
 
     def Start(self, p_controller_obj):
         self.m_controller_obj = p_controller_obj
-        if g_debug >= 2:
-            print "Insteon_PLM.API.Start() - House:{0:}, Controller:{1:}".format(self.m_house_obj.Name, p_controller_obj.Name)
         g_logger.info('Starting Controller:{0:} for house:{1:}'.format(p_controller_obj.Name, self.m_house_obj.Name))
         if self.start_controller_driver(p_controller_obj, self.m_house_obj):
             self.m_protocol = PlmDriverProtocol(self.m_controller_obj, self.m_house_obj)
-            # self.m_protocol.driver_loop_start(self.m_house_obj)
             self.set_plm_mode(self.m_controller_obj)
-            self.get_all_lights_status()
+            #self.get_all_lights_status()
+            self.get_link_records(self.m_house_obj)
             g_logger.info('Started.')
-            if g_debug >= 2:
-                print "Insteon_PLM.API.Start() has completed for PLM:{0:}.".format(p_controller_obj.Name)
             return True
         return False
 

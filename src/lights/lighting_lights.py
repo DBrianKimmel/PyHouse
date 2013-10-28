@@ -23,8 +23,6 @@ g_debug = 0
 class LightData(lighting_core.CoreData):
 
     def __init__(self):
-        if g_debug >= 2:
-            print "lighting_lights.LightsData.__init__()"
         super(LightData, self).__init__()
         self.Controller = None
         self.Type = 'Light'
@@ -57,16 +55,12 @@ class LightingAPI(lighting_core.CoreAPI):
                 l_light_obj.Key = l_count  # Renumber
                 l_dict[l_count] = l_light_obj
                 l_count += 1
-        except AttributeError:  # No Buttons section
+        except AttributeError:  # No Lights section
             l_dict = {}
         p_house_obj.Lights = l_dict
-        if g_debug >= 4:
-            print "lighting.read_light_xml()  loaded {0:} lights for house {1:}".format(l_count, p_house_obj.Name)
         return l_dict
 
     def write_light_xml(self, p_house_obj):
-        if g_debug >= 2:
-            print "lighting_lights.write_light_xml()"
         l_lighting_xml = ET.Element('Lights')
         l_count = 0
         for l_light_obj in p_house_obj.Lights.itervalues():

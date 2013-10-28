@@ -72,8 +72,6 @@ class ControllersAPI(lighting_core.CoreAPI):
         super(ControllersAPI, self).__init__()
 
     def read_controller_xml(self, p_house_obj, p_house_xml):
-        if g_debug >= 1:
-            print "lighting_controllers.read_controller_xml()", p_house_obj
         l_count = 0
         l_dict = {}
         l_sect = p_house_xml.find('Controllers')
@@ -83,23 +81,17 @@ class ControllersAPI(lighting_core.CoreAPI):
                 l_controller_obj = ControllerData()
                 l_controller_obj = self.read_light_common(l_controller_xml, l_controller_obj, p_house_obj)
                 l_controller_obj.Key = l_count  # Renumber
-                #print "---lighting_controllers.read_controller_xml()---", l_controller_obj.Name, ', ', l_controller_obj.Key
                 l_controller_obj.Interface = self.get_text_from_xml(l_controller_xml, 'Interface')
                 l_controller_obj.Port = self.get_text_from_xml(l_controller_xml, 'Port')
                 interface.ReadWriteConfig().extract_xml(l_controller_obj, l_controller_xml)
-                #PrintObject('Lighting_controllers.read_controller_xml(1) ', l_controller_obj)
                 l_dict[l_count] = l_controller_obj
                 l_count += 1
         except AttributeError:  # No Controller section
             l_dict = {}
         p_house_obj.Controllers = l_dict
-        if g_debug >= 2:
-            print "lighting_controllers.read_controller_xml()  loaded {0:} controllers for house {1:}".format(l_count, p_house_obj.Name)
         return l_dict
 
     def write_controller_xml(self, p_house_obj):
-        if g_debug >= 0:
-            print "lighting_controllers.write_controller_xml()"
         l_count = 0
         l_controllers_xml = ET.Element('Controllers')
         for l_controller_obj in p_house_obj.Controllers.itervalues():
@@ -110,8 +102,6 @@ class ControllersAPI(lighting_core.CoreAPI):
             interface.ReadWriteConfig().write_xml(l_entry, l_controller_obj)
             l_controllers_xml.append(l_entry)
             l_count += 1
-        if g_debug >= 0:
-            print "lighting_controllers.write_controller_xml() - Wrote {0:} controllers".format(l_count)
         return l_controllers_xml
 
 # ## END DBK

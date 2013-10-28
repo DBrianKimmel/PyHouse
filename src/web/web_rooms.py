@@ -80,5 +80,6 @@ class RoomsElement(athena.LiveElement):
         l_obj.Size = l_json['Size']
         l_obj.Type = 'Room'
         self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Rooms[l_room_ix] = l_obj
+        self.m_pyhouses_obj.API.UpdateXml()
 
 # ## END DBK

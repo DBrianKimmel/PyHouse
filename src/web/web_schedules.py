@@ -86,5 +86,6 @@ class SchedulesElement(athena.LiveElement):
         l_obj.DeleteFlag = l_json['Delete']
         l_obj.HouseIx = l_house_ix
         self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Schedules[l_schedule_ix] = l_obj
+        self.m_pyhouses_obj.API.UpdateXml()
 
 # ## END DBK

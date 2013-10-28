@@ -30,7 +30,6 @@ class CoreData(object):
         self.Active = False
         self.Comment = ''
         self.Coords = ''
-        #self.CurLevel = 0
         self.Dimmable = False
         self.Family = ''
         self.RoomName = ''
@@ -44,7 +43,6 @@ class CoreData(object):
         l_str += "Active:{0:}, ".format(self.Active)
         l_str += "Comment:{0:}, ".format(self.Comment)
         l_str += "Coords:{0:}, ".format(self.Coords)
-        #l_str += "CurLevel:{0:}, ".format(self.CurLevel)
         l_str += "Dimmable:{0:}, ".format(self.Dimmable)
         l_str += "Family:{0:}, ".format(self.Family)
         l_str += "RoomName:{0:}, ".format(self.RoomName)
@@ -53,18 +51,15 @@ class CoreData(object):
         return l_str
 
     def reprJSON(self):
-        #print "lighting_core.reprJSON()", self
         l_ret = dict(
-                     Name = self.Name, Key = self.Key, Active = self.Active,
-                     Comment = self.Comment, Coords = self.Coords, Dimmable = self.Dimmable,
-                     Family = self.Family, RoomName = self.RoomName, Type = self.Type, UUID = self.UUID
-                     )
+            Name = self.Name, Key = self.Key, Active = self.Active,
+            Comment = self.Comment, Coords = self.Coords, Dimmable = self.Dimmable,
+            Family = self.Family, RoomName = self.RoomName, Type = self.Type, UUID = self.UUID
+            )
         return l_ret
 
 
 class CoreAPI(xml_tools.ConfigTools):
-    """
-    """
 
     def read_light_common(self, p_entry_xml, p_device_obj, p_house_obj):
         """
@@ -73,8 +68,6 @@ class CoreAPI(xml_tools.ConfigTools):
         @return: a dict of the entry to be attached to a house object.
         """
         self.m_house_obj = p_house_obj
-        if g_debug >= 3:
-            print "lighting_core.read_light_common(1) XML={0:}".format(p_entry_xml)
         self.xml_read_common_info(p_device_obj, p_entry_xml)
         p_device_obj.Comment = self.get_text_from_xml(p_entry_xml, 'Comment')
         p_device_obj.Coords = self.get_text_from_xml(p_entry_xml, 'Coords')
@@ -84,18 +77,11 @@ class CoreAPI(xml_tools.ConfigTools):
         p_device_obj.Type = p_entry_xml.findtext('Type')
         p_device_obj.UUID = self.get_uuid_from_xml(p_entry_xml, 'UUID')
         for l_family_obj in p_house_obj.FamilyData.itervalues():
-            if g_debug >= 4:
-                print "lighting_core.read_light_common(2) - {0:}, {1:}".format(l_family_obj.Name, l_fam)
             if l_family_obj.Name == l_fam:
                 l_family_obj.API.extract_device_xml(p_entry_xml, p_device_obj)
-        if g_debug >= 4:
-            print "lighting_core.read_light_common(3) - ", p_device_obj
-            #PrintObject('lighting_core.read_light_common(1) ', p_device_obj)
         return p_device_obj
 
     def write_light_common(self, p_entry, p_device_obj, p_house_obj):
-        if g_debug >= 0:
-            print "lighting_tools.write_light_common()"
         self.put_text_element(p_entry, 'Comment', p_device_obj.Comment)
         self.put_text_element(p_entry, 'Coords', p_device_obj.Coords)
         self.put_bool_element(p_entry, 'Dimmable', p_device_obj.Dimmable)

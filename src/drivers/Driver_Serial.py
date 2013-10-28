@@ -22,8 +22,7 @@ import serial
 # Import PyMh files
 from src.utils.tools import PrintBytes
 
-
-g_debug = 0
+g_debug = 1
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
@@ -32,7 +31,7 @@ g_debug = 0
 # 5 = Read / write details
 # 6 = Details of device on start
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.DrvrSerial  ')
+g_logger = logging.getLogger('PyHouse.DriverSerial')
 
 
 class SerialProtocol(Protocol):
@@ -91,9 +90,10 @@ class SerialAPI(object):
         self.m_controller_obj = p_controller_obj
         l_msg = self.m_controller_obj.Message
         if len(l_msg) > 0:
+            if g_debug >= 1:
+                g_logger.debug("Fetch Read Data {0:}".format(PrintBytes(l_msg)))
             if g_debug >= 4:
                 print "Driver_Serial.fetch_read_data() - {0:} {1:}".format(self.m_bytes, PrintBytes(l_msg))
-                g_logger.debug("Fetch Read Data {0:}".format(PrintBytes(l_msg)))
         p_controller_obj.Message = bytearray()
         return l_msg
 
@@ -102,12 +102,13 @@ class SerialAPI(object):
         """
         if g_debug >= 4:
             print "Driver_Serial.write_device() {0:}".format(PrintBytes(p_message))
+        if g_debug >= 1:
             g_logger.debug("Writing {0:}".format(PrintBytes(p_message)))
         try:
             self.m_serial.writeSomeData(p_message)
         except (AttributeError, TypeError):
             g_logger.warn("Bad serial write - {0:}".format(PrintBytes(p_message)))
-            if g_debug >= 1:
+            if g_debug >= 2:
                 print "Driver_Serial_write_device() ERROR "
         return
 
@@ -115,8 +116,6 @@ class SerialAPI(object):
 class API(SerialAPI):
 
     def __init__(self):
-        """
-        """
         if g_debug >= 2:
             print "Driver_Serial.API()"
             g_logger.debug("Initializing.")
@@ -125,17 +124,13 @@ class API(SerialAPI):
         """
         @param p_controller_obj:is the Controller_Data object for a serial device to open.
         """
-        if g_debug >= 2:
-            print "Driver_Serial.API.Start() - Name:{0:}".format(p_controller_obj.Name)
         self.m_controller_obj = p_controller_obj
-        self.twisted_open_device(p_controller_obj)
-        g_logger.info("Started.")
+        self.twisted_open_device(self.m_controller_obj)
+        g_logger.info("Started controller {0:}".format(self.m_controller_obj.Name))
         return True
 
     def Stop(self):
-        if g_debug >= 2:
-            print "Driver_Serial.API.Stop()"
         self.close_device(self.m_controller_obj)
-        g_logger.info("Stopped.")
+        g_logger.info("Stopped controller {0:}".format(self.m_controller_obj.Name))
 
 # ## END DBK

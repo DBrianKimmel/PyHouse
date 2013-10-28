@@ -12,8 +12,6 @@ from src.lights import lighting_core
 
 g_debug = 0
 # 0 = off
-# 1 = major routine entry
-# 2 = xml read / write
 
 
 class ButtonData(lighting_core.CoreData):
@@ -32,17 +30,11 @@ class ButtonData(lighting_core.CoreData):
 
 
 class ButtonsAPI(lighting_core.CoreAPI):
-    """
-    """
 
     def __init__(self):
         super(ButtonsAPI, self).__init__()
 
     def read_button_xml(self, p_house_obj, p_house_xml):
-        """
-        """
-        if g_debug >= 2:
-            print "lighting_buttons.read_button_xml() - House:{0:}".format(p_house_obj.Name)
         l_count = 0
         l_dict = {}
         l_sect = p_house_xml.find('Buttons')
@@ -57,8 +49,6 @@ class ButtonsAPI(lighting_core.CoreAPI):
         except AttributeError:  # No Buttons section
             l_dict = {}
         p_house_obj.Buttons = l_dict
-        if g_debug >= 6:
-            print "lighting_buttons.read_button_xml()  loaded {0:} buttons for house {1:}".format(l_count, p_house_obj.Name)
         return l_dict
 
     def write_button_xml(self, p_house_obj):
@@ -69,8 +59,6 @@ class ButtonsAPI(lighting_core.CoreAPI):
             self.write_light_common(l_entry, l_button_obj, p_house_obj)
             l_buttons_xml.append(l_entry)
             l_count += 1
-        if g_debug >= 6:
-            print "lighting_buttons.write_button_xml() - Wrote {0:} buttons".format(l_count)
         return l_buttons_xml
 
 

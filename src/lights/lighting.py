@@ -72,8 +72,6 @@ class Utility(ButtonAPI, ControllerAPI, LightingAPI):
 class API(Utility):
 
     def __init__(self, p_house_obj):
-        if g_debug >= 2:
-            print "lighting.API() - House:{0:}".format(p_house_obj.Name)
         self.m_family = family.LightingUtility()
         g_logger.info("Initialized.")
 
@@ -81,8 +79,6 @@ class API(Utility):
         """Allow loading of sub modules and drivers.
         """
         self.m_house_obj = p_house_obj
-        if g_debug >= 2:
-            print "lighting.API.Start() - House:{0:}".format(self.m_house_obj.Name)
         g_logger.info("Starting - House:{0:}.".format(self.m_house_obj.Name))
         self.m_house_obj.FamilyData = self.m_family.build_lighting_family_info(p_house_obj)
         self.read_button_xml(self.m_house_obj, p_house_xml)
@@ -94,12 +90,7 @@ class API(Utility):
     def Stop(self, p_xml, p_house_obj):
         """Allow cleanup of all drivers.
         """
-        if g_debug >= 2:
-            print "lighting.API.Stop() - House:{0:} Count:{1:}".format(self.m_house_obj.Name, len(self.m_house_obj.Lights))
         g_logger.info("Stopping all lighting families.")
-        #l_lighting_xml = self.write_light_xml(self.m_house_obj)
-        #l_buttons_xml = self.write_button_xml(self.m_house_obj)
-        #l_controllers_xml = self.write_controller_xml(self.m_house_obj)
         self.m_family.stop_lighting_families(p_xml, p_house_obj)
         g_logger.info("Stopped.")
 
@@ -111,9 +102,9 @@ class API(Utility):
     def ChangeLight(self, p_entry):
         if g_debug >= 0:
             print 'lighting.API.ChangeLight({0:}'.format(p_entry)
-            l_key = p_entry.Key
-            l_level = p_entry.CurLevel
-            l_obj = self.m_house_obj.Lights[l_key]
-            self.change_light_setting(self.m_house_obj, l_obj, l_level)
+        l_key = p_entry.Key
+        l_level = p_entry.CurLevel
+        l_obj = self.m_house_obj.Lights[l_key]
+        self.change_light_setting(self.m_house_obj, l_obj, l_level)
 
 # ## END DBK

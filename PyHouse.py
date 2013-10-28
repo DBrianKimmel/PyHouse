@@ -220,6 +220,7 @@ class API(Utilities):
         """Write the xml file (sort of a checkpoint) and continue operations.
         """
         l_xml = ET.Element("PyHouse")
+        g_logger.info("Saving all data to XML file.")
         self.m_pyhouses_obj.WebAPI.UpdateXml(l_xml)
         self.m_pyhouses_obj.LogsAPI.UpdateXml(l_xml)
         self.m_pyhouses_obj.HousesAPI.UpdateXml(l_xml)

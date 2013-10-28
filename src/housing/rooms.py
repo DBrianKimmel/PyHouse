@@ -14,7 +14,6 @@ import uuid
 from src.utils import xml_tools
 
 
-
 g_debug = 0
 # 0 = off
 # 1 = log extra info
@@ -66,17 +65,11 @@ class ReadWriteConfig(xml_tools.ConfigTools):
             l_room_obj.Size = self.get_text_from_xml(l_room_xml, 'Size')
             p_house_obj.Rooms[l_count] = l_room_obj
             l_count += 1
-            if g_debug >= 3:
-                print "rooms.read_rooms_xml() -  Name:{0:}, Active:{1:}, Key:{2:}".format(l_room_obj.Name, l_room_obj.Active, l_room_obj.Key)
-        if g_debug >= 3:
-            print "rooms.read_rooms_xml() - House:{0:} - loaded {1:} rooms".format(p_house_obj.Name, l_count)
         return p_house_obj.Rooms
 
     def write_rooms_xml(self, p_house_obj):
         l_count = 0
         l_rooms_xml = ET.Element('Rooms')
-        if g_debug >= 3:
-            print "rooms.write_rooms_xml()", p_house_obj.Rooms
         for l_room_obj in p_house_obj.Rooms.itervalues():
             l_entry = self.xml_create_common_element('Room', l_room_obj)
             self.put_text_element(l_entry, 'UUID', l_room_obj.UUID)
@@ -85,8 +78,6 @@ class ReadWriteConfig(xml_tools.ConfigTools):
             self.put_text_element(l_entry, 'Size', l_room_obj.Size)
             l_rooms_xml.append(l_entry)
             l_count += 1
-        if g_debug >= 3:
-            print "rooms.write_rooms_xml() - House:{0:} - Wrote {1:} rooms".format(p_house_obj.Name, l_count)
         return l_rooms_xml
 
 # ## END DBK

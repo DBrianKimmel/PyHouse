@@ -37,9 +37,11 @@ class LocationData(object):
         return l_ret
 
     def reprJSON(self):
-        l_ret = dict(City = self.City, Latitude = self.Latitude, Longitude = self.Longitude, Phone = self.Phone,
-                    SavingsTime = self.SavingTime, State = self.State, Street = self.Street, TimeZone = self.TimeZone,
-                    ZipCode = self.ZipCode)
+        l_ret = dict(
+            City = self.City, Latitude = self.Latitude, Longitude = self.Longitude, Phone = self.Phone,
+            SavingsTime = self.SavingTime, State = self.State, Street = self.Street, TimeZone = self.TimeZone,
+            ZipCode = self.ZipCode
+            )
         return l_ret
 
 
@@ -49,8 +51,6 @@ class ReadWriteConfig(xml_tools.ConfigTools):
 
     def read_location_xml(self, p_house_obj, p_house_xml):
         l_location_obj = LocationData()
-        if g_debug > 4:
-            print "house.read_location_xml() - Active=", p_house_obj.Active, p_house_obj.Name
         l_location_xml = p_house_xml.find('Location')
         l_location_obj.Street = self.get_text_from_xml(l_location_xml, 'Street')
         l_location_obj.City = self.get_text_from_xml(l_location_xml, 'City')
@@ -62,8 +62,6 @@ class ReadWriteConfig(xml_tools.ConfigTools):
         l_location_obj.TimeZone = self.get_float_from_xml(l_location_xml, 'TimeZone')
         l_location_obj.SavingTime = self.get_float_from_xml(l_location_xml, 'SavingTime')
         p_house_obj.Location = l_location_obj
-        if g_debug > 4:
-            print "house.read_location_xml()  loaded location for {0:}".format(p_house_obj.Name)
         return l_location_obj
 
     def write_location_xml(self, p_location_obj):
@@ -79,8 +77,6 @@ class ReadWriteConfig(xml_tools.ConfigTools):
         self.put_float_element(l_entry, 'Longitude', p_location_obj.Longitude)
         self.put_float_element(l_entry, 'TimeZone', p_location_obj.TimeZone)
         self.put_float_element(l_entry, 'SavingTime', p_location_obj.SavingTime)
-        if g_debug > 2:
-            print "house.write_location_xml()"
         return l_entry
 
 # ## END DBK
