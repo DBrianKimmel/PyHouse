@@ -25,7 +25,7 @@ from src.utils import xml_tools
 from src.utils.tools import PrintObject
 
 
-g_debug = 0
+g_debug = 1
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry

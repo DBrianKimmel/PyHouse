@@ -6,7 +6,7 @@ Created on Apr 27, 2013
 
 from twisted.trial import unittest
 
-from families.Insteon.Insteon_utils import ConvertInsteon
+from src.families.Insteon import Insteon_utils
 
 ADDR_DR_SLAVE_MSG = bytearray(b'\x16\xc9\xd0')
 ADDR_DR_SLAVE_DOT = '16.C9.D0'
@@ -24,14 +24,15 @@ class Test(unittest.TestCase):
 
 
     def setUp(self):
-        self.inst = ConvertInsteon()
+        self.inst = Insteon_utils
+        pass
 
     def tearDown(self):
         pass
 
-    def _test(self, oper, a, r):
-        result = oper(a)
-        self.assertEqual(result, r)
+    def _test(self, oper, p_args, r):
+        l_result = oper(p_args)
+        self.assertEqual(l_result, r)
 
     def test_001_int2dotted(self):
         self._test(self.inst.int2dotted_hex, 10597059, 'A1.B2.C3')

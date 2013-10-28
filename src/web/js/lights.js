@@ -69,7 +69,8 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 	 */
 	function fetchHouseData(self) {
 		function cb_fetchHouseData(p_json) {
-			Divmod.debug('---', 'lights.cb_fetchHouseData() was called. ' + p_json);
+			//Divmod.debug('---', 'lights.cb_fetchHouseData() was called. ' + p_json);
+			console.log("lights.fetchHouseData() JSON %O", p_json)
 			globals.House.HouseObj = JSON.parse(p_json);
 			var l_tab = buildTable(globals.House.HouseObj.Lights, 'handleMenuOnClick', self.buildButtonName);
 			self.nodeById('LightTableDiv').innerHTML = l_tab;

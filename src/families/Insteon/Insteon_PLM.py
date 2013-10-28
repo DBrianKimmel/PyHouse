@@ -29,7 +29,7 @@ from src.families.Insteon import Insteon_utils
 from src.families.Insteon import Insteon_Link
 from src.families.Insteon.Device_Insteon import InsteonData
 
-g_debug = 0
+g_debug = 1
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
@@ -359,8 +359,7 @@ class DecodeResponses(InsteonPlmUtility):
             pass
         l_ret = True
 
-        if g_debug >= 4:
-            print "Insteon_PLM._decode_50_record() {0:}".format(l_debug_msg)
+        if g_debug >= 1:
             g_logger.debug(l_debug_msg)
         return self.check_for_more_decoding(p_controller_obj, l_ret)
 

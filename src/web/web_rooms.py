@@ -65,6 +65,7 @@ class RoomsElement(athena.LiveElement):
         if l_delete:
             try:
                 del self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Rooms[l_room_ix]
+                self.m_pyhouses_obj.API.UpdateXml()
             except AttributeError:
                 print "web_rooms - Failed to delete - JSON: ", l_json
             return

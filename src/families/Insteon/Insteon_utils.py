@@ -8,7 +8,7 @@ def message2int(p_message, p_index):
     """Extract the address from a message.
 
     The message is a byte array returned from the PLM.
-    Return a 34 bit int that is the address.
+    Return a 24 bit int that is the address.
     """
     try:
         l_int = p_message[p_index] * 256 * 256 + p_message[p_index + 1] * 256 + p_message[p_index + 2]
@@ -37,9 +37,8 @@ def int2dotted_hex(p_int):
     """
     l_ix = 256 * 256
     l_hex = []
-    l_int = int(p_int)
     while l_ix > 0:
-        l_byte, p_int = divmod(l_int, l_ix)
+        l_byte, p_int = divmod(p_int, l_ix)
         l_hex.append("{0:02X}".format(l_byte))
         l_ix = l_ix / 256
     return '.'.join(l_hex)

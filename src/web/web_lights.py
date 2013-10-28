@@ -56,8 +56,6 @@ class LightsElement(athena.LiveElement):
         """
         l_ix = int(p_index)
         l_house = self.m_pyhouses_obj.HousesData[l_ix].HouseObject
-        if g_debug >= 0:
-            print "web_lights.getHouseData() - HouseIndex:", p_index
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_house))
         return l_json
 
@@ -69,8 +67,6 @@ class LightsElement(athena.LiveElement):
         l_delete = l_json['Delete']
         l_house_ix = int(l_json['HouseIx'])
         l_light_ix = int(l_json['Key'])
-        if g_debug >= 4:
-            print "web_lights.LightsElement.saveLightData() - JSON:", l_json
         if l_delete:
             try:
                 del self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Lights[l_light_ix]
@@ -81,7 +77,7 @@ class LightsElement(athena.LiveElement):
             l_obj = self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Lights[l_light_ix]
         except KeyError:
             l_obj = lighting_lights.LightData()
-        l_obj = lighting_lights.LightData()
+        print "web_lights.saveLightData() ", l_json
         l_obj.Name = l_json['Name']
         l_obj.Active = l_json['Active']
         l_obj.Key = int(l_json['Key'])

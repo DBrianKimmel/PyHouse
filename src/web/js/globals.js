@@ -546,8 +546,8 @@ function fetchSelectWidget(p_id) {
 	var l_field = document.getElementById(p_id);
 	var l_ix = l_field.value;
 	var l_name = l_field.options[l_field.selectedIndex].text;
-	Divmod.debug('---', 'globals.fetchSelectWidget(1) was called. Id=' + p_id);
-	console.log("    %O", l_field)
+	//Divmod.debug('---', 'globals.fetchSelectWidget(1) was called. Id=' + p_id);
+	//console.log("    %O", l_field)
 	return l_name;
 }
 function buildRoomSelectWidget(p_id, p_checked) {
@@ -567,7 +567,7 @@ function buildLightSelectWidget(p_id, p_checked) {
 	return buildSelectWidget(p_id, l_list, p_checked);
 }
 function buildFamilySelectWidget(p_id, p_checked) {
-	Divmod.debug('---', 'globals.buildFamilySelectWidget() was called. Id=' + p_id + '  Checked=' + p_checked);
+	//Divmod.debug('---', 'globals.buildFamilySelectWidget() was called. Id=' + p_id + '  Checked=' + p_checked);
 	return buildSelectWidget(p_id, globals.Valid.Families, p_checked)
 }
 /**
