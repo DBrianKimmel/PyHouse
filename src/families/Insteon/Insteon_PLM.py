@@ -22,7 +22,7 @@ import Queue
 from twisted.internet import reactor
 
 # Import PyMh files
-#from src.lights.lighting import LightData
+# from src.lights.lighting import LightData
 from src.utils.tools import PrintBytes
 from src.families.Insteon.Insteon_constants import *
 from src.families.Insteon import Insteon_utils
@@ -178,7 +178,7 @@ class DecodeResponses(InsteonPlmUtility):
         if l_ret == None:
             l_ret = self._find_addr(self.m_house_obj.Buttons, l_id)
         if l_ret == None:
-            #l_ret = LightData()  # an empty new object
+            # l_ret = LightData()  # an empty new object
             l_ret = InsteonData()  # an empty new object
             l_ret.Name = '**' + str(l_id) + '**'
         if g_debug >= 7:
@@ -978,7 +978,7 @@ class InsteonAllLinks(InsteonPlmCommands):
         """
         if g_debug >= 4:
             print "Insteon_PLM.delete_link() - Address:{0}, Group:{1:#02X}".format(p_address, p_group)
-        #p_light_obj = LightData()
+        # p_light_obj = LightData()
         p_light_obj = InsteonData()
         p_light_obj.InsteonAddress = self.dotted_hex2int(p_address)
         p_light_obj.GroupNumber = p_group
@@ -1029,8 +1029,8 @@ class InsteonPlmAPI(InsteonAllLinks):
         """
         return self.queue_60_command()
 
-    def get_link_records(self, _p_house_obj):
-        self.get_all_allinks()
+    def get_link_records(self, _p_house_obj, p_controller_obj):
+        self.get_all_allinks(p_controller_obj)
 
 
 class LightHandlerAPI(InsteonPlmAPI):
@@ -1111,8 +1111,8 @@ class API(LightHandlerAPI):
         if self.start_controller_driver(p_controller_obj, self.m_house_obj):
             self.m_protocol = PlmDriverProtocol(self.m_controller_obj, self.m_house_obj)
             self.set_plm_mode(self.m_controller_obj)
-            #self.get_all_lights_status()
-            self.get_link_records(self.m_house_obj)
+            # self.get_all_lights_status()
+            self.get_link_records(self.m_house_obj, self.m_controller_obj)
             g_logger.info('Started.')
             return True
         return False
