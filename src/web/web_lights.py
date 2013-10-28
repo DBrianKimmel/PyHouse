@@ -73,10 +73,14 @@ class LightsElement(athena.LiveElement):
             except AttributeError:
                 print "web_lights - Failed to delete - JSON: ", l_json
             return
+        #
+        # Note - we don't want a plain light here - we want a family light
+        #
         try:
             l_obj = self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Lights[l_light_ix]
         except KeyError:
             l_obj = lighting_lights.LightData()
+        #
         print "web_lights.saveLightData() ", l_json
         l_obj.Name = l_json['Name']
         l_obj.Active = l_json['Active']

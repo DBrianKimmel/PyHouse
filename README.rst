@@ -4,7 +4,7 @@ PyHouse
 
 PyHouse is a home automation tool.
 
-See __init__ module for developer documentation.
+See main.__init__ module for developer documentation.
 
 
 What is PyHouse?
@@ -52,6 +52,27 @@ The system was developed around the Insteon lighting controls.  There is also
 the beginnings of a UPB system included along with X-10 beginnings.  Some of
 the controllers used for development are serial connections with the computer
 while the newer controllers are USB connections.
+
+There are currently four pieces of the lighting system.  The first of these is
+the Controller.
+
+The controller is the computer interface into the lighting system,  It talks to
+the computer via one of the drivers.  Most seem to use a serial interface.  The
+controllers then communicate with the rest of the lighting system.
+
+The second component is the light itself.  These are either a replacement switch
+that is installed in the wall and replaces the standard light switch, or a 
+module that plugs into an electrical outlet and controls a device plugged into
+the module.
+
+The third component is a switch.  This is a module with one or more buttons that
+is not directly connected to a light.  The buttons send signals to the controller
+and other lights to turn lights off and on.
+
+The fourth component is a scene.  Scenes are logical rather than physical.  A
+scene can control several lights at once and are usually associated with an
+action.  A scene could be 'All lights On' for an emergency or 'In Bed' for
+night time sleeping.
 
 
 HVAC
