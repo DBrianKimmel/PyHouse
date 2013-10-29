@@ -27,7 +27,10 @@ def PrintDict(p_dict, p_format = "%-25s %s"):
     for (key, val) in p_dict.iteritems():
         print p_format % (str(key) + ':', val)
 
-def PrintObject(p_title, p_obj, suppressdoc = True, maxlen = 180, lindent = 24, maxspew = 900):
+def PrettyPrint(p_title, p_str, maxlen = 150):
+    print 'Title: {0:}\n'.format(p_title), '\n'.join(prettyPrint(p_str, maxlen))
+
+def PrintObject(p_title, p_obj, suppressdoc = True, maxlen = 180, lindent = 24, maxspew = 2000):
     """Print a nicely formatted overview of an object.
 
     The output lines will be wrapped at maxlen, with lindent of space
@@ -111,7 +114,7 @@ def PrintObject(p_title, p_obj, suppressdoc = True, maxlen = 180, lindent = 24, 
     if objclass == '':
         objclass = type(p_obj).__name__
     intro = "\nInstance of class '{0:}' as defined in module {1:} with id {2:}".format(objclass, objmodule, id(p_obj))
-    print '\n', p_title, '\n'.join(prettyPrint(intro, maxlen))
+    print '\nTitle:  ', p_title, '\n'.join(prettyPrint(intro, maxlen))
     # Object's Docstring
     if not suppressdoc:
         if objdoc is None:
@@ -149,6 +152,7 @@ def PrintObject(p_title, p_obj, suppressdoc = True, maxlen = 180, lindent = 24, 
         print 'Attributes:'
     for (attr, val) in attrs:
         print prettyPrintCols(('', attr, truncstring(str(val), maxspew)), tabbedwidths, ' ')
+    print '====================\n'
 
 def prettyPrintCols(strings, widths, split = ' '):
     """Pretty prints text in colums, with each string breaking at
@@ -168,7 +172,7 @@ def prettyPrintCols(strings, widths, split = ' '):
     # generate the formatted text
     return '\n'.join(map(formatline, *cols))
 
-def prettyPrint(string, maxlen = 75, split = ' '):
+def prettyPrint(string, maxlen = 175, split = ' '):
     """Pretty prints the given string to break at an occurrence of
     split where necessary to avoid lines longer than maxlen.
 

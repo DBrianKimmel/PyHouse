@@ -37,7 +37,7 @@ class LightData(lighting_core.CoreData):
 
     def reprJSON(self):
         l_ret = super(LightData, self).reprJSON()  # lighting_core data
-        #l_ret.update(dict(CurLevel = self.CurLevel))
+        l_ret.update(dict(CurLevel = self.CurLevel))
         return l_ret
 
 

@@ -26,12 +26,8 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
     // ============================================================================
     /**
      * Place the widget in the workspace.
-     * 
-     * @param self is    <"Instance" of undefined.controllers.ControllersWidget>
-     * @returns a deferred
      */
     function ready(self) {
-        
         function cb_widgetready(res) {
             // do whatever initialization needs here, 'show' for the widget is handled in superclass
             //Divmod.debug('---', 'controllers.cb_widgready() was called.');
@@ -96,72 +92,34 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
         return false;
     },
 
-    
-    /**
-     * Fill in the controller entry screen with all of the data for this controller.
-     * 
-     *  self.Name = ''
-     *  self.Key = 0
-     *  self.Active = False
-     *  self.Comment = ''
-     *  self.Coords = ''
-     *  self.Dimmable = False
-     *  self.Family = ''
-     *  self.RoomName = ''
-     *  self.Type = ''
-        
-     -  self.DriverAPI = None
-     -  self.HandlerAPI = None  # PLM, PIM, etc (family controller device handler) API() address
-     *  self.Interface = ''
-     *  self.Port = ''
-        
-        self.DevCat = 0  # DevCat and SubCat (2 bytes)
-     =  self.Family = 'Insteon'
-     -  self.GroupList = ''
-     -  self.GroupNumber = 0
-        self.Master = False  # False is Slave
-        self.Responder = False
-
-     =  self.Family = 'UPB'
-        self.NetworkID = None
-        self.Password = None
-        self.UnitID = None
-
-     */
-
     // ============================================================================
     /**
      * Event handler for controller selection buttons.
-     * 
-     * @param self is    <"Instance" of undefined.controllers.ControllersWidget>
-     * @param p_node is  the node of the button that was clicked.
      */
     function handleMenuOnClick(self, p_node) {
         var l_ix = p_node.name;
         var l_name = p_node.value;
 		globals.House.ControllerIx = l_ix;
 		globals.House.ControllerName = l_name;
-        if (l_ix <= 1000) {
-        	// One of the controller buttons
+        if (l_ix <= 1000) {  // One of the controller buttons
 			var l_obj = globals.House.HouseObj.Controllers[l_ix];
-            //Divmod.debug('---', 'controllers.handleMenuOnClick(1) was called. ' + l_ix + ' ' + l_name);
             self.showEntry();
             self.hideButtons();
             self.fillEntry(l_obj);
-        } else if (l_ix == 10001) {
-            // add key
-            self.showEntry();
+        } else if (l_ix == 10001) {  // The 'Add' button
             self.hideButtons();
-        } else if (l_ix == 10002) {
-            // back key
+            self.showEntry();
+			var l_ent = self.createEntry(globals.House.HouseIx);
+			self.fillEntry(l_ent);
+        } else if (l_ix == 10002) {  // The 'Back' button
             self.hideWidget();
             var l_node = findWidgetByClass('HouseMenu');
             l_node.showWidget();
         }
     },
     function fillEntry(self, p_obj) {
-        Divmod.debug('---', 'controllers.fillEntry() was called. ');
-		console.log("controllers.fillEntry - Obj %O", p_obj);
+        //Divmod.debug('---', 'controllers.fillEntry() was called. ');
+		//console.log("controllers.fillEntry - Obj %O", p_obj);
         self.nodeById('NameDiv').innerHTML           = buildTextWidget('ControllerName', p_obj.Name);
         self.nodeById('KeyDiv').innerHTML            = buildTextWidget('ControllerKey', p_obj.Key, 'disabled');
 		self.nodeById('ActiveDiv').innerHTML         = buildTrueFalseWidget('ControllerActive', p_obj.Active);
@@ -172,13 +130,13 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 		self.nodeById('RoomNameDiv').innerHTML       = buildRoomSelectWidget('ControllerRoomName', p_obj.RoomName);
 		self.nodeById('TypeDiv').innerHTML           = buildTextWidget('ControllerType', p_obj.Type, 'disabled');
 		self.nodeById('UUIDDiv').innerHTML           = buildTextWidget('ControllerUUID', p_obj.UUID, 'disabled');
-		self.nodeById('InterfaceDiv').innerHTML      = buildTextWidget('ControllerInterface', p_obj.Interface);
-		self.nodeById('PortDiv').innerHTML           = buildTextWidget('ControllerPort', p_obj.Port, 'disabled');
+		self.nodeById('InterfaceDiv').innerHTML      = buildInterfaceSelectWidget('ControllerInterface', p_obj.Interface);
+		self.nodeById('PortDiv').innerHTML           = buildTextWidget('ControllerPort', p_obj.Port);
 		self.nodeById('InsteonAddressDiv').innerHTML = buildTextWidget('ControllerInsteonAddress', p_obj.InsteonAddress);
 		self.nodeById('ControllerEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick');
     },
     function fetchEntry(self) {
-        Divmod.debug('---', 'controllers.fetchEntry() was called. ');
+        //Divmod.debug('---', 'controllers.fetchEntry() was called. ');
         var l_data = {
             Name :           fetchTextWidget('ControllerName'),
             Key :            fetchTextWidget('ControllerKey'),
@@ -190,13 +148,13 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 			RoomName :       fetchSelectWidget('ControllerRoomName'),
 			Type :           fetchTextWidget('ControllerType'),
 			UUID :           fetchTextWidget('ControllerUUID'),
-			Interface :      fetchTextWidget('ControllerInterface'),
+			Interface :      fetchSelectWidget('ControllerInterface'),
 			Port :           fetchTextWidget('ControllerPort'),
 			InsteonAddress : fetchTextWidget('ControllerInsteonAddress'),
 			HouseIx : globals.House.HouseIx,
 			Delete : false
             }
-		console.log("controllers.fetchEntry - Data %O", l_data);
+		//console.log("controllers.fetchEntry - Data %O", l_data);
         return l_data;
     },
     function createEntry(self, p_ix) {
@@ -232,19 +190,19 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
         }
 		var l_ix = p_node.name;
 		switch(l_ix) {
-		case '10003':  // Change Button
+		case '10003':  // The 'Change' Button
 			var l_json = JSON.stringify(self.fetchEntry(self));
 	        //Divmod.debug('---', 'controllers.handleDataOnClick(1) was called. json:' + l_json);
 	        var l_defer = self.callRemote("saveControllerData", l_json);  // @ web_controller
 	        l_defer.addCallback(cb_handleDataOnClick);
 	        l_defer.addErrback(eb_handleDataOnClick);
 			break;
-		case '10002':  // Back button
+		case '10002':  // The 'Back' button
 			//Divmod.debug('---', 'controllers.handleDataOnClick(Back) was called.  ');
 			self.hideEntry();
 			self.showButtons();
 			break;
-		case '10004':  // Delete button
+		case '10004':  // The 'Delete' button
 			var l_obj = self.fetchEntry();
 			l_obj['Delete'] = true;
 	    	var l_json = JSON.stringify(l_obj);

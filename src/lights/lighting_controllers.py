@@ -14,6 +14,7 @@ from src.drivers import interface
 from src.families import family
 #
 from src.utils.tools import PrintObject
+from src.families.Insteon import Insteon_utils
 
 
 g_debug = 0
@@ -53,16 +54,16 @@ class ControllerData(lighting_core.CoreData):
         return l_ret
 
     def reprJSON(self):
-        #print "lighting_controller.reprJSON() {0:}".format(self.Name)
         l_ret = super(ControllerData, self).reprJSON()  # lighting_core data
-        l_ret.update(dict(Name = self.Name, Key = self.Key, Active = self.Active,
-                    Comment = self.Comment,
-                    Coords = self.Coords, Dimmable = self.Dimmable, Family = self.Family,
-                    RoomName = self.RoomName,
-                    InsteonAddress = 1,
-                    Type = self.Type))
-        #if self.Family == 'Insteon':
-        #    l_ret += Device_Insteon.InsteonData().reprJSON()
+        l_ret.update(dict(
+            Interface = self.Interface, Port = self.Port
+        ))
+        if self.Family == 'Insteon':
+            from src.families.Insteon import Insteon_utils
+            l_ret.update(dict(
+                InsteonAddress = Insteon_utils.int2dotted_hex(self.InsteonAddress),
+                DevCat = self.DevCat
+            ))
         return l_ret
 
 

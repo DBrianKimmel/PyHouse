@@ -104,15 +104,18 @@ class ReadWriteConfig(xml_tools.ConfigTools):
         self._shove_attrs(p_controller_obj, l_serial)
 
     def _write_serial_xml(self, p_xml, p_controller_obj):
-        if g_debug >= 1:
-            print "drivers.interface.write_serial_xml()"
-        ET.SubElement(p_xml, 'BaudRate').text = str(p_controller_obj.BaudRate)
-        ET.SubElement(p_xml, 'ByteSize').text = str(p_controller_obj.ByteSize)
-        ET.SubElement(p_xml, 'Parity').text = str(p_controller_obj.Parity)
-        ET.SubElement(p_xml, 'StopBits').text = str(p_controller_obj.StopBits)
-        ET.SubElement(p_xml, 'Timeout').text = str(p_controller_obj.Timeout)
-        if g_debug >= 2:
-            print "drivers.interface.write_serial_xml() - Wrote serial controller"
+        try:
+            ET.SubElement(p_xml, 'BaudRate').text = str(p_controller_obj.BaudRate)
+            ET.SubElement(p_xml, 'ByteSize').text = str(p_controller_obj.ByteSize)
+            ET.SubElement(p_xml, 'Parity').text = str(p_controller_obj.Parity)
+            ET.SubElement(p_xml, 'StopBits').text = str(p_controller_obj.StopBits)
+            ET.SubElement(p_xml, 'Timeout').text = str(p_controller_obj.Timeout)
+        except AttributeError:
+            ET.SubElement(p_xml, 'BaudRate').text = '19200'
+            ET.SubElement(p_xml, 'ByteSize').text = '8'
+            ET.SubElement(p_xml, 'Parity').text = 'N'
+            ET.SubElement(p_xml, 'StopBits').text = '1.0'
+            ET.SubElement(p_xml, 'Timeout').text = '1.0'
 
     def _extract_usb_xml(self, p_controller_obj, p_controller_xml):
         if g_debug >= 2:

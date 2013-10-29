@@ -81,7 +81,7 @@ class LightsElement(athena.LiveElement):
         except KeyError:
             l_obj = lighting_lights.LightData()
         #
-        print "web_lights.saveLightData() ", l_json
+        #print "web_lights.saveLightData() ", l_json
         l_obj.Name = l_json['Name']
         l_obj.Active = l_json['Active']
         l_obj.Key = int(l_json['Key'])

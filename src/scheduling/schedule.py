@@ -74,7 +74,7 @@ class ScheduleData(object):
         self.HouseIx = None
         self.DeleteFlag = False
 
-    def __str__(self):
+    def XX__str__(self):
         l_ret = "Schedule:: "
         l_ret += "Name:{0:}, ".format(self.Name)
         l_ret += "LightName:{0:}, ".format(self.LightName)

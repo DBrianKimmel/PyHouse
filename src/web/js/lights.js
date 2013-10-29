@@ -70,7 +70,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 	function fetchHouseData(self) {
 		function cb_fetchHouseData(p_json) {
 			//Divmod.debug('---', 'lights.cb_fetchHouseData() was called. ' + p_json);
-			console.log("lights.fetchHouseData() JSON %O", p_json)
+			//console.log("lights.fetchHouseData() JSON %O", p_json)
 			globals.House.HouseObj = JSON.parse(p_json);
 			var l_tab = buildTable(globals.House.HouseObj.Lights, 'handleMenuOnClick', self.buildButtonName);
 			self.nodeById('LightTableDiv').innerHTML = l_tab;
@@ -90,8 +90,8 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 	 * 
 	 */
 	function fillEntry(self, p_obj) {
-		Divmod.debug('---', 'lights.fillEntry(1) was called.  Self:' + self);
-		console.log("lights.fillEntry() - Obj = %O", p_obj);
+		//Divmod.debug('---', 'lights.fillEntry(1) was called.  Self:' + self);
+		//console.log("lights.fillEntry() - Obj = %O", p_obj);
         self.nodeById('NameDiv').innerHTML     = buildTextWidget('LightName', p_obj.Name);
         self.nodeById('KeyDiv').innerHTML      = buildTextWidget('LightKey', p_obj.Key, 'disabled');
 		self.nodeById('ActiveDiv').innerHTML   = buildTrueFalseWidget('LightActive', p_obj.Active);
@@ -158,25 +158,18 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		var l_name = p_node.value;
 		globals.House.LightIx = l_ix;
 		globals.House.LightName = l_name;
-		if (l_ix <= 1000) {
-			// One of the Light buttons.
+		if (l_ix <= 1000) {  // One of the Light buttons.
 			var l_obj = globals.House.HouseObj.Lights[l_ix];
 			globals.House.LightObj = l_obj;
-			//Divmod.debug('---', 'lights.handleMenuOnClick("Light" Button) was called. ' + l_ix + ' ' + l_name);
-			//console.log("lights.handleMenuOnClick() - l_obj = %O", l_obj);
 			self.showEntry();
 			self.hideButtons();
 			self.fillEntry(l_obj);
-		} else if (l_ix == 10001) {
-			// The "Add" button
-			//Divmod.debug('---', 'lights.handleMenuOnClick(Add Button) was called. ' + l_ix + ' ' + l_name);
+		} else if (l_ix == 10001) {  // The "Add" button
 			self.showEntry();
 			self.hideButtons();
 			var l_ent = self.createEntry(globals.House.HouseIx);
 			self.fillEntry(l_ent);
-		} else if (l_ix == 10002) {
-			// The "Back" button
-			//Divmod.debug('---', 'lights.handleMenuOnClick(Back Button) was called. ' + l_ix + ' ' + l_name);
+		} else if (l_ix == 10002) {  // The "Back" button
 			self.hideWidget();
 			var l_node = findWidgetByClass('HouseMenu');
 			l_node.showWidget();

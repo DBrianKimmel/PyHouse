@@ -14,7 +14,11 @@ from nevow import athena
 from src.web import web_utils
 from src.drivers import interface
 from src.lights import lighting_controllers
-from src.families.Insteon import Device_Insteon
+from src.families.Insteon import Insteon_utils
+#
+from src.utils.tools import PrintObject
+from src.utils.tools import PrettyPrint
+
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -51,8 +55,8 @@ class ControllersElement(athena.LiveElement):
         l_ix = int(p_index)
         l_house = self.m_pyhouses_obj.HousesData[l_ix].HouseObject
         l_json = web_utils.JsonUnicode().encode_json(l_house)
-        if g_debug >= 3:
-            print "web_controllers.getHouseData() - JSON:", l_json
+        #PrintObject("web_controllers.getHouseData(1) - House", l_house.Controllers[0])
+        #PrettyPrint("web_controllers.getHouseData(2) - JSON: ", l_json)
         return unicode(l_json)
 
     @athena.expose
@@ -100,7 +104,11 @@ class ControllersElement(athena.LiveElement):
         l_obj.UUID = l_json['UUID']
         l_obj.Interface = l_json['Interface']
         l_obj.Port = l_json['Port']
-        l_obj.InsteonAddress = l_json['InsteonAddress']
+        try:
+            l_obj.InsteonAddress = Insteon_utils.dotted_hex2int(l_json['InsteonAddress'])
+        except ValueError:
+            l_obj.InsteonAddress = 0
         self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Controllers[l_controller_ix] = l_obj
+        self.m_pyhouses_obj.API.UpdateXml()
 
 # ## END DBK

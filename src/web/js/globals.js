@@ -547,12 +547,12 @@ function fetchSelectWidget(p_id) {
 	var l_ix = l_field.value;
 	var l_name = l_field.options[l_field.selectedIndex].text;
 	//Divmod.debug('---', 'globals.fetchSelectWidget(1) was called. Id=' + p_id);
-	//console.log("    %O", l_field)
+	//console.log("    %O", l_field);
 	return l_name;
 }
 function buildRoomSelectWidget(p_id, p_checked) {
 	//Divmod.debug('---', 'globals.buildRoomSelectWidget() was called. Id=' + p_id + '  Checked=' + p_checked);
-	var l_obj = globals.House.HouseObj.Rooms
+	var l_obj = globals.House.HouseObj.Rooms;
 	var l_list = [];
 	for (var ix = 0; ix < Object.keys(l_obj).length; ix++)
 		l_list[ix] = l_obj[ix].Name;
@@ -560,7 +560,7 @@ function buildRoomSelectWidget(p_id, p_checked) {
 }
 function buildLightSelectWidget(p_id, p_checked) {
 	//Divmod.debug('---', 'globals.buildLightSelectWidget() was called. Id=' + p_id + '  Checked=' + p_checked);
-	var l_obj = globals.House.HouseObj.Lights
+	var l_obj = globals.House.HouseObj.Lights;
 	var l_list = [];
 	for (var ix = 0; ix < Object.keys(l_obj).length; ix++)
 		l_list[ix] = l_obj[ix].Name;
@@ -568,7 +568,10 @@ function buildLightSelectWidget(p_id, p_checked) {
 }
 function buildFamilySelectWidget(p_id, p_checked) {
 	//Divmod.debug('---', 'globals.buildFamilySelectWidget() was called. Id=' + p_id + '  Checked=' + p_checked);
-	return buildSelectWidget(p_id, globals.Valid.Families, p_checked)
+	return buildSelectWidget(p_id, globals.Valid.Families, p_checked);
+}
+function buildInterfaceSelectWidget(p_id, p_checked) {
+	return buildSelectWidget(p_id, globals.Valid.Drivers, p_checked);
 }
 /**
  * Build a valid select widget

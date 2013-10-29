@@ -123,7 +123,7 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
         return l_data;
 	},
 	function fetchEntry(self) {
-		Divmod.debug('---', 'house.fetchEntry() was called. ');
+		//Divmod.debug('---', 'house.fetchEntry() was called. ');
         var l_data = {
             Name : fetchTextWidget('HouseName'),
             Key : fetchTextWidget('HouseKey'),
@@ -201,7 +201,7 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 	    	var l_entry = self.fetchEntry();
 			globals.House.HouseObj.House = l_entry;
 	    	var l_json = JSON.stringify(l_entry);
-			Divmod.debug('---', 'house.handleDataOnClick(Change) was called. JSON:' + l_json);
+			//Divmod.debug('---', 'house.handleDataOnClick(Change) was called. JSON:' + l_json);
 	        var l_defer = self.callRemote("saveHouseData", l_json);  // @ web_house
 			l_defer.addCallback(cb_handleDataOnClick);
 			l_defer.addErrback(eb_handleDataOnClick);

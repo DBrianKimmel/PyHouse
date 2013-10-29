@@ -72,7 +72,7 @@ class HouseElement(athena.LiveElement):
             except AttributeError:
                 self.m_pyhouses_obj.HousesData = houses.HousesData()
                 self.m_pyhouses_obj.HousesData[0] = house.HouseData()
-        print "House ", l_obj
+        #print "House ", l_obj
         l_obj.Name = l_json['Name']
         l_obj.Key = int(l_json['Key'])
         l_obj.HouseIx = l_house_ix
