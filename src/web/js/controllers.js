@@ -2,6 +2,8 @@
  * 
  * Displays the controllers.
  * Browser side code.
+ * 
+ * Note that a controller contains common light info, controller info, family info and interface info.
 */
 
 // import Nevow.Athena
@@ -29,12 +31,10 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
      */
     function ready(self) {
         function cb_widgetready(res) {
-            // do whatever initialization needs here, 'show' for the widget is handled in superclass
             //Divmod.debug('---', 'controllers.cb_widgready() was called.');
             self.hideWidget();
             //self.fetchInterfaceData();
         }
-        //Divmod.debug('---', 'controllers.ready() was called. ' + self);
         var uris = collectIMG_src(self.node, null);
         var l_defer = loadImages(uris);
         l_defer.addCallback(cb_widgetready);
@@ -102,9 +102,10 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 		globals.House.ControllerIx = l_ix;
 		globals.House.ControllerName = l_name;
         if (l_ix <= 1000) {  // One of the controller buttons
-			var l_obj = globals.House.HouseObj.Controllers[l_ix];
-            self.showEntry();
+            //Divmod.debug('---', 'controllers.hndleMenuOnClick(Controller) was called. ');
             self.hideButtons();
+            self.showEntry();
+			var l_obj = globals.House.HouseObj.Controllers[l_ix];
             self.fillEntry(l_obj);
         } else if (l_ix == 10001) {  // The 'Add' button
             self.hideButtons();

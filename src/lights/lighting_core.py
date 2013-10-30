@@ -51,6 +51,7 @@ class CoreData(object):
         return l_str
 
     def reprJSON(self):
+        print "lighting_code.CoreData.reprJSON() - Self: ", self
         l_ret = dict(
             Name = self.Name, Key = self.Key, Active = self.Active,
             Comment = self.Comment, Coords = self.Coords, Dimmable = self.Dimmable,

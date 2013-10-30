@@ -55,7 +55,6 @@ class Utility(ButtonAPI, ControllerAPI, LightingAPI):
         TODO: add rate to family routines and pass along.
         """
         if g_debug >= 2:
-            # print "lighting.change_light_setting() House={0:}, Light={1:}, Level={2:}, Rate:{3:}".format(p_house_obj.Name, p_light_obj.Name, p_level, p_rate)
             print "lighting.change_light_setting()"
             print "    House:", p_house_obj
             print "    Light:", p_light_obj

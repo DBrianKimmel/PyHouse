@@ -30,7 +30,6 @@ Operation:
 # Import system type stuff
 import datetime
 import logging
-import uuid
 import xml.etree.ElementTree as ET
 from twisted.internet import reactor
 
@@ -175,8 +174,6 @@ class ScheduleExecution(ScheduleData):
 
         @param p_slot_list: a list of Slots in the next time schedule to be executed.
         """
-        if g_debug >= 2:
-            print "schedule.execute_schedules()  p_schedule_list {0:}, House:{1:}".format(p_slot_list, self.m_house_obj.Name)
         g_logger.info("About to execute - House:{0:}, Schedule:{1:}".format(self.m_house_obj.Name, p_slot_list))
         for ix in range(len(p_slot_list)):
             l_sched_obj = self.m_house_obj.Schedules[p_slot_list[ix]]
@@ -186,9 +183,6 @@ class ScheduleExecution(ScheduleData):
             elif l_sched_obj.Type == 'Scene':
                 pass
             l_light_obj = tools.get_light_object(self.m_house_obj, name = l_sched_obj.LightName)
-            if g_debug >= 4:
-                print "schedule.execute_schedules() ", l_sched_obj
-                print "   on light", l_light_obj
             g_logger.info("Executing schedule Name:{0:}, Light:{1:}, Level:{2:}".format(l_sched_obj.Name, l_sched_obj.LightName, l_sched_obj.Level))
             self.m_house_obj.LightingAPI.change_light_setting(self.m_house_obj, l_light_obj, l_sched_obj.Level)
         callLater(2, self.get_next_sched)

@@ -1,8 +1,11 @@
-'''
+"""
 Created on Mar 21, 2013
 
 @author: briank
-'''
+
+Controllers, which are attached to the server, communicate with the server via an interface.
+There are three different interfaces at this point (2013-10-29).
+"""
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -17,7 +20,8 @@ There must be a 'Data' class for each valid interface.
 The class name must be the interface name + 'Data'.
 Be careful since the name will be generated and is case sensitive.
 """
-VALID_INTERFACES = ['Serial', 'USB', 'Ethernet']
+from src.drivers import VALID_INTERFACES
+from src.drivers import VALID_PROTOCOLS
 
 
 class SerialData(object):
@@ -34,8 +38,18 @@ class SerialData(object):
         self.Timeout = None
         self.XonXoff = False
 
-    def __str__(self):
+    def XX__str__(self):
         l_ret = "Serial:: Baud:{0:}, ByteSize:{1:}, Parity:{2:}, StopBits:{3:}; ".format(self.BaudRate, self.ByteSize, self.Parity, self.StopBits)
+        return l_ret
+
+    def XreprJSON(self):
+        print "interface.SerialData.reprJSON() Self: ", self
+        l_ret = super(SerialData, self).reprJSON()  # lighting_core data
+        l_ret.update(dict(
+            BaudRate = self.BaudRate, ByteSize = self.ByteSize, DsrDtr = self.DsrDtr,
+            Parity = self.Parity, RtsCts = self.RtsCts, StopBits = self.StopBits,
+            Timeout = self.Timeout, XonXoff = self.XonXoff
+        ))
         return l_ret
 
 
@@ -45,8 +59,14 @@ class USBData(object):
         self.Product = 0
         self.Vendor = 0
 
-    def __str__(self):
+    def XX__str__(self):
         l_ret = "USB:: Vendor:{0:#04X}, Product:{1:#04X}; ".format(self.Vendor, self.Product)
+        return l_ret
+
+    def reprJSON(self):
+        l_ret = dict(
+            Product = self.Product, Vendor = self.Vendor
+        )
         return l_ret
 
 
@@ -56,8 +76,14 @@ class  EthernetData(object):
         self.PortNumber = 0
         self.Protocol = 'TCP'
 
-    def __str__(self):
+    def XX__str__(self):
         l_ret = "Ethernet:: port:{0:}, Protocol:{1:#04X}; ".format(self.PortNumber, self.Protocol)
+        return l_ret
+
+    def reprJSON(self):
+        l_ret = dict(
+            PortNumber = self.PortNumber, Protocol = self.Protocol
+        )
         return l_ret
 
 

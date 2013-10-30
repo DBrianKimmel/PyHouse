@@ -23,16 +23,17 @@ g_logger = logging.getLogger('PyHouse.Family      ')
 
 class FamilyData(object):
     """A container for every family that has been defined.
+    Usually called 'l_family_obj'
+    Since they contain API instances, each house has it's own collection of Family Dicts.
     """
 
     def __init__(self):
         self.Name = ''
         self.Key = 0
         self.Active = True
-        self.API = None
-        self.ModuleName = ''
-        self.ModuleRef = None
-        self.PackageName = ''
+        self.API = None  # Device_Insteon.API()
+        self.ModuleName = ''  # Device_Insteon
+        self.PackageName = ''  # src.families.Insteon
 
     def __str__(self):
         l_ret = "FamilyData:: "
@@ -41,7 +42,6 @@ class FamilyData(object):
         l_ret += "Active:{0:}, ".format(self.Active)
         l_ret += "API:{0:}, ".format(self.API)
         l_ret += "ModuleName:{0:}, ".format(self.ModuleName)
-        l_ret += "ModuleRef:{0:}, ".format(self.ModuleRef)
         l_ret += "PackageName:{0:};".format(self.PackageName)
         return l_ret
 
@@ -76,7 +76,6 @@ class LightingUtility(FamilyData):
                 print "    family.build_lighting_family_info() - ERROR - Cannot import module {0:}".format(l_family_obj.ModuleName), e
                 l_module = None
                 g_logger.error("Cannot import - Module:{0:}, Package:{1:}.".format(l_family_obj.ModuleName, l_family_obj.PackageName))
-            l_family_obj.ModuleRef = l_module
             try:
                 l_family_obj.API = l_module.API(p_house_obj)
             except AttributeError:

@@ -54,7 +54,7 @@ class InsteonData (lighting.LightData):
 
     def reprJSON(self):
         l_ret = super(InsteonData, self).reprJSON()  # The core data
-        print "Device_Insteon.reprJSON(1) {0:}".format(l_ret), self
+        print "Device_Insteon.reprJSON(1) {0:} - Self: ".format(l_ret), self
         l_ret.update(dict(
                     InsteonAddress = self.InsteonAddress,
                     Controller = self.Controller,

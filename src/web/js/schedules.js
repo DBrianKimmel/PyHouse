@@ -41,26 +41,21 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 	 * routines for showing and hiding parts of the screen.
 	 */
 	function showWidget(self) {
-		//Divmod.debug('---', 'schedules.showWidget() was called.');
 		self.node.style.display = 'block';
 		self.showButtons();
 		self.hideEntry();
 		self.fetchHouseData();
 	},
 	function hideButtons(self) {
-		//Divmod.debug('---', 'schedules.hideButtons() was called. ');
 		self.nodeById('ScheduleButtonsDiv').style.display = 'none';		
 	},
 	function showButtons(self) {
-		//Divmod.debug('---', 'schedules.showButtons() was called. ');
 		self.nodeById('ScheduleButtonsDiv').style.display = 'block';	
 	},
 	function hideEntry(self) {
-		//Divmod.debug('---', 'schedules.hideEntry() was called. ');
 		self.nodeById('ScheduleEntryDiv').style.display = 'none';		
 	},
 	function showEntry(self) {
-		//Divmod.debug('---', 'schedules.showEntry() was called. ');
 		self.nodeById('ScheduleEntryDiv').style.display = 'block';		
 	},
 
@@ -117,7 +112,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
         var l_data = {
 			Name : self.nodeById('Name').value,
 			Key : self.nodeById('Key').value,
-			Active : fetchTrueFalseWIdget('SchedActive'),
+			Active : fetchTrueFalseWidget('SchedActive'),
 			Type : self.nodeById('Type').value,
 			Time : self.nodeById('Time').value,
 			Level : fetchLevel('Level'),
@@ -201,17 +196,17 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 			Divmod.debug('---', 'schedules.eb_handleDataOnClick() was called. ERROR =' + res);
 		}
 		var l_ix = p_node.name;
-		Divmod.debug('---', 'schedules.handleDataOnClick() was called. Node:' + l_ix);
+		//Divmod.debug('---', 'schedules.handleDataOnClick() was called. Node:' + l_ix);
 		switch(l_ix) {
 		case '10003':  // Change Button
 	    	var l_json = JSON.stringify(self.fetchEntry());
-			Divmod.debug('---', 'schedules.handleDataOnClick(Change) was called. JSON:' + l_json);
+			//Divmod.debug('---', 'schedules.handleDataOnClick(Change) was called. JSON:' + l_json);
 	        var l_defer = self.callRemote("saveScheduleData", l_json);  // @ web_schedule
 			l_defer.addCallback(cb_handleDataOnClick);
 			l_defer.addErrback(eb_handleDataOnClick);
 			break;
 		case '10002':  // Back button
-			Divmod.debug('---', 'schedules.handleDataOnClick(Back) was called.  ');
+			//Divmod.debug('---', 'schedules.handleDataOnClick(Back) was called.  ');
 			self.hideEntry();
 			self.showButtons();
 			break;
@@ -219,7 +214,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 			var l_obj = self.fetchEntry();
 			l_obj['Delete'] = true;
 	    	var l_json = JSON.stringify(l_obj);
-			Divmod.debug('---', 'schedules.handleDataOnClick(Delete) was called. JSON:' + l_json);
+			//Divmod.debug('---', 'schedules.handleDataOnClick(Delete) was called. JSON:' + l_json);
 	        var l_defer = self.callRemote("saveScheduleData", l_json);  // @ web_rooms
 			l_defer.addCallback(cb_handleDataOnClick);
 			l_defer.addErrback(eb_handleDataOnClick);

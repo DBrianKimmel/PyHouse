@@ -2,6 +2,8 @@
 
 """Handle the controller component of the lighting system.
 
+Note that controllers have common light info and also have controller info,
+family info, and interface info.
 """
 
 # Import system type stuff
@@ -9,19 +11,15 @@ import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
 from src.lights import lighting_core
-from src.utils.tools import PrintBytes
 from src.drivers import interface
-from src.families import family
+#from src.families import family
 #
-from src.utils.tools import PrintObject
-from src.families.Insteon import Insteon_utils
+#from src.utils.tools import PrintBytes
+#from src.utils.tools import PrintObject
 
 
 g_debug = 0
 # 0 = off
-# 1 = major routine entry
-# 2 = controller summary information
-# 3 = controller detail information
 
 
 class ControllerData(lighting_core.CoreData):
@@ -32,14 +30,13 @@ class ControllerData(lighting_core.CoreData):
 
     def __init__(self):
         super(ControllerData, self).__init__()  # The core data
-        self.Type = 'Controller'
+        self.Type = 'Controller'  # Override the core definition
         self.Interface = ''
         self.Port = ''
         #
-        self.DriverAPI = None
+        self.DriverAPI = None  # Interface API() - Serial, USB etc.
         self.HandlerAPI = None  # PLM, PIM, etc (family controller device handler) API() address
         #
-        self.Command = None
         self.Data = None  # Interface specific data
         self.Message = ''
         self.Queue = None
@@ -54,6 +51,7 @@ class ControllerData(lighting_core.CoreData):
         return l_ret
 
     def reprJSON(self):
+        print "lighting_controllers.ControllerData.reprJSON() - Self: ", self
         l_ret = super(ControllerData, self).reprJSON()  # lighting_core data
         l_ret.update(dict(
             Interface = self.Interface, Port = self.Port

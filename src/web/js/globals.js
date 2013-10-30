@@ -447,7 +447,7 @@ function buildDeleteButton(p_handler) {
  * @returns = innerHTML of a table filled in with buttons
  */
 function buildTable(p_obj, p_handler, /* optional */ nameFunction, noOptions) {
-	//Divmod.debug('---', 'globals.buildTable() called. ' + p_obj + ' ' + p_handler + ' ' + nameFunction + ' ' + noOptions);
+	//Divmod.debug('---', 'globals.buildTable(1) called. ' + p_obj + ' ' + p_handler + ' ' + nameFunction + ' ' + noOptions);
 	var l_function = nameFunction;
 	var l_options = noOptions;
 	if (typeof nameFunction !== 'function') {
@@ -458,7 +458,7 @@ function buildTable(p_obj, p_handler, /* optional */ nameFunction, noOptions) {
 		l_options = '';
 	var l_cols = 5;
 	var l_count = 0;
-	//Divmod.debug('---', 'globals.buildTable(1) called. ' + Object.keys(p_obj).length);
+	//Divmod.debug('---', 'globals.buildTable(2) called. ' + Object.keys(p_obj).length);
 	var l_html = "<table><tr>\n";
 	for (var l_item in p_obj) {
 		l_html += buildButton(p_obj[l_item], p_handler, l_function);
@@ -571,7 +571,7 @@ function buildFamilySelectWidget(p_id, p_checked) {
 	return buildSelectWidget(p_id, globals.Valid.Families, p_checked);
 }
 function buildInterfaceSelectWidget(p_id, p_checked) {
-	return buildSelectWidget(p_id, globals.Valid.Drivers, p_checked);
+	return buildSelectWidget(p_id, globals.Valid.Interfaces, p_checked);
 }
 /**
  * Build a valid select widget

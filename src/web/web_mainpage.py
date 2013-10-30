@@ -96,7 +96,7 @@ g_debug = 0
 # 4 = Basic data
 # 5 = Detail Data
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.webMain     ')
+g_logger = logging.getLogger('PyHouse.webMainpage ')
 
 
 class FileNoListDir(static.File):
@@ -464,7 +464,7 @@ class Workspace(athena.LiveElement):
             print "    params=", p_params  # Prints dummy
             print "    PyHouse=", self.m_pyhouses_obj  # Prints OK
         p_params = self.m_pyhouses_obj
-        g_logger.info("login called - params = {0:}".format(p_params))
+        g_logger.info("login called from browser")
         l_element = web_login.LoginElement(self)
         l_element.setFragmentParent(self)
         return l_element

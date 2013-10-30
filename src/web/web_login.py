@@ -23,6 +23,7 @@ from nevow import athena
 from src.web import web_utils
 from src.families import VALID_FAMILIES
 from src.drivers import VALID_INTERFACES
+from src.drivers import VALID_PROTOCOLS
 from src.scheduling import VALID_SCHEDULING_TYPES
 from src.lights import VALID_LIGHTS_TYPE
 
@@ -101,7 +102,7 @@ class LoginElement(athena.LiveElement):
             VALID_LIGHTS_TYPES
             VALID_SCHEDULING_TYPES
         """
-        l_obj = dict(Drivers = VALID_INTERFACES, Families = VALID_FAMILIES,
+        l_obj = dict(Interfaces = VALID_INTERFACES, Protocols = VALID_PROTOCOLS, Families = VALID_FAMILIES,
                      Lights = VALID_LIGHTS_TYPE, Scheduling = VALID_SCHEDULING_TYPES)
         l_json = web_utils.JsonUnicode().encode_json(l_obj)
         return unicode(l_json)

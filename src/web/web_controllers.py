@@ -55,8 +55,8 @@ class ControllersElement(athena.LiveElement):
         l_ix = int(p_index)
         l_house = self.m_pyhouses_obj.HousesData[l_ix].HouseObject
         l_json = web_utils.JsonUnicode().encode_json(l_house)
-        #PrintObject("web_controllers.getHouseData(1) - House", l_house.Controllers[0])
-        #PrettyPrint("web_controllers.getHouseData(2) - JSON: ", l_json)
+        PrintObject("web_controllers.getHouseData(1) - House", l_house.Controllers[0])
+        PrettyPrint("web_controllers.getHouseData(2) - JSON: ", l_json)
         return unicode(l_json)
 
     @athena.expose
@@ -85,9 +85,13 @@ class ControllersElement(athena.LiveElement):
         if l_delete:
             try:
                 del self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Controllers[l_controller_ix]
+                self.m_pyhouses_obj.API.UpdateXml()
             except AttributeError:
                 print "web_controllers - Failed to delete - JSON: ", l_json
             return
+        #
+        # Note - we don't want a plain controller here - we want a family controller with the proper interface.
+        #
         try:
             l_obj = self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Controllers[l_controller_ix]
         except KeyError:
