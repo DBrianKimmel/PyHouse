@@ -62,27 +62,18 @@ class SerialAPI(object):
     m_serial = None
 
     def twisted_open_device(self, p_controller_obj):
-        if g_debug >= 3:
-            print "Driver_Serial.twisted_open_device() - Name:{0:}, Port:{1:}".format(p_controller_obj.Name, p_controller_obj.Port)
-            print "   ", vars(p_controller_obj)
         try:
             self.m_serial = SerialPort(SerialProtocol(self, p_controller_obj), p_controller_obj.Port, reactor, baudrate = p_controller_obj.BaudRate)
         except serial.serialutil.SerialException, e:
             l_msg = "Open failed for Device:{0:}, Port:{1:}".format(p_controller_obj.Name, p_controller_obj.Port), e
             g_logger.error(l_msg)
-            if g_debug >= 1:
-                print l_msg
             return False
         g_logger.info("Opened Device:{0:}, Port:{1:}".format(p_controller_obj.Name, p_controller_obj.Port))
-        if g_debug >= 3:
-            print 'Driver_Serial.twisted_open_device() - Serial Device opened.'
         return True
 
     def close_device(self, p_controller_obj):
         """Flush all pending output and close the serial port.
         """
-        if g_debug >= 3:
-            print "Driver_Serial.close_device() - Name:{0:}, Port:{1:}".format(p_controller_obj.Name, p_controller_obj.Port)
         g_logger.info("Close Device {0:}".format(p_controller_obj.Name))
         self.m_serial.close()
 
@@ -92,24 +83,18 @@ class SerialAPI(object):
         if len(l_msg) > 0:
             if g_debug >= 1:
                 g_logger.debug("Fetch Read Data {0:}".format(PrintBytes(l_msg)))
-            if g_debug >= 4:
-                print "Driver_Serial.fetch_read_data() - {0:} {1:}".format(self.m_bytes, PrintBytes(l_msg))
         p_controller_obj.Message = bytearray()
         return l_msg
 
     def write_device(self, p_message):
         """Send the command to the PLM and wait a very short time to be sure we sent it.
         """
-        if g_debug >= 4:
-            print "Driver_Serial.write_device() {0:}".format(PrintBytes(p_message))
         if g_debug >= 1:
             g_logger.debug("Writing {0:}".format(PrintBytes(p_message)))
         try:
             self.m_serial.writeSomeData(p_message)
         except (AttributeError, TypeError):
             g_logger.warn("Bad serial write - {0:}".format(PrintBytes(p_message)))
-            if g_debug >= 2:
-                print "Driver_Serial_write_device() ERROR "
         return
 
 
@@ -119,6 +104,7 @@ class API(SerialAPI):
         if g_debug >= 2:
             print "Driver_Serial.API()"
             g_logger.debug("Initializing.")
+        pass
 
     def Start(self, p_controller_obj):
         """

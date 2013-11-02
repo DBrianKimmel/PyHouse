@@ -23,7 +23,7 @@ from twisted.web.http_headers import Headers
 from src.utils import xml_tools
 from src.utils import convert
 
-g_debug = 0
+g_debug = 1
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
@@ -50,7 +50,7 @@ class InternetData(object):
         self.Key = 0
         self.Active = False
         self.ExternalDelay = 0
-        self.ExternalIP = None # returned from url to check our external IP address
+        self.ExternalIP = None  # returned from url to check our external IP address
         self.UrlExternalIP = None
         self.DynDns = {}
 
@@ -63,7 +63,7 @@ class InternetData(object):
         return l_ret
 
     def reprJSON(self):
-        #print "internet.InternetData()"
+        # print "internet.InternetData()"
         return dict(Name = self.Name, Key = self.Key, Active = self.Active,
                     ExternalDelay = self.ExternalDelay,
                     ExternalIP = self.ExternalIP, UrlExternalIP = self.UrlExternalIP,
@@ -90,7 +90,7 @@ class DynDnsData(object):
         return l_ret
 
     def reprJSON(self):
-        #print "internet.DynDnsData()"
+        # print "internet.DynDnsData()"
         return dict(Name = self.Name, Key = self.Key, Active = self.Active,
                     Interval = self.Interval, Url = self.Url
                     )
@@ -111,14 +111,15 @@ class ReadWriteXML(xml_tools.ConfigTools):
 
     m_external_ip = None
     m_external_url = None
+    m_external_delay = None
 
     def extract_dyn_dns(self, p_internet_xml):
         l_dyndns_obj = DynDnsData()
         self.xml_read_common_info(l_dyndns_obj, p_internet_xml)
         l_dyndns_obj.Interval = self.get_int_from_xml(p_internet_xml, 'Interval')
         l_dyndns_obj.Url = self.get_text_from_xml(p_internet_xml, 'Url')
-        if g_debug >= 3:
-            print "internet.extract_dyn_dns() - Name:{0:}, Interval:{1:}, Url:{2:};".format(l_dyndns_obj.Name, l_dyndns_obj.Interval, l_dyndns_obj.Url)
+        if g_debug >= 1:
+            g_logger.debug("internet.extract_dyn_dns() - Name:{0:}, Interval:{1:}, Url:{2:};".format(l_dyndns_obj.Name, l_dyndns_obj.Interval, l_dyndns_obj.Url))
         return l_dyndns_obj
 
     def insert_dyn_dns(self):
@@ -138,13 +139,10 @@ class ReadWriteXML(xml_tools.ConfigTools):
             self.m_external_url = self.get_text_from_xml(l_sect, 'UrlExternalIP')
             self.m_external_delay = self.get_int_from_xml(l_sect, 'ExternalDelay')
         except AttributeError:
-            if g_debug >= 1:
-                print "internet - ERROR internet section missing - using defaults."
+            g_logger.error('internet section missing - using defaults.')
             self.m_external_ip = None
             self.m_external_url = None
-            self.m_external_delay = 0
-        if g_debug >= 3:
-            print "internet.read_internet_xml() - External IP - House:{0}, IP:{1:}, Delay:{2:}, Url:{3:}".format(p_house_obj.Name, self.m_external_ip, self.m_external_delay, self.m_external_url)
+            self.m_external_delay = 600
         p_house_obj.Internet.ExternalIP = self.m_external_ip
         p_house_obj.Internet.UrlExternalIP = self.m_external_url
         p_house_obj.Internet.ExternalDelay = self.m_external_delay
@@ -158,8 +156,7 @@ class ReadWriteXML(xml_tools.ConfigTools):
             l_dyndns.Key = l_count  # Renumber
             p_house_obj.Internet.DynDns[l_count] = l_dyndns
             l_count += 1
-        if g_debug >= 5:
-            print "internet.read_internet_xml() -", p_house_obj.Internet
+        g_logger.info('Loaded Url:{0:}, delay:{1:}'.format(self.m_external_url, self.m_external_delay))
         return p_house_obj.Internet
 
     def write_internet(self, p_house_obj):

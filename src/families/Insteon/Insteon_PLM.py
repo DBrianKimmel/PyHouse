@@ -106,7 +106,6 @@ class InsteonPlmUtility(ControllerData):
         l_ret = p_message[p_offset:p_offset + p_length - 1]
         return l_ret
 
-
     def _get_addr_from_message(self, p_message, p_index):
         """Extract the address from a message.
 
@@ -157,7 +156,148 @@ class InsteonPlmUtility(ControllerData):
         return l_ret
 
 
-class DecodeResponses(InsteonPlmUtility):
+class CreateCommands(InsteonPlmUtility):
+    """Send various commands to the PLM.
+    """
+
+    def _queue_command(self, p_command):
+        l_cmd = PLM_COMMANDS[p_command]
+        l_command_bytes = bytearray(COMMAND_LENGTH[l_cmd])
+        l_command_bytes[0] = STX
+        l_command_bytes[1] = l_cmd
+        return l_command_bytes
+
+    def queue_60_command(self):
+        """Insteon - get IM info (2 bytes).
+        See p 273 of developers guide.
+        PLM will respond with a 0x60 response.
+        """
+        l_command = self._queue_command('plm_info')
+        if g_debug >= 1:
+            g_logger.debug("Queue command to get IM info")
+        return self.queue_plm_command(l_command)
+
+    def queue_61_command(self, p_obj):
+        """Send ALL-Link Command (5 bytes)
+        See p 254 of developers guide.
+        """
+        pass
+
+    def queue_62_command(self, p_light_obj, p_cmd1, p_cmd2):
+        """Send Insteon Standard Length Message (8 bytes).
+        See page 243 of Insteon Developers Guide.
+
+        @param p_light_obj: is the Light object of the device
+        @param p_cmd1: is the first command byte
+        @param p_cmd2: is the second command byte
+        @return: the response from queue_plm_command
+        """
+        l_command = self._queue_command('insteon_send')
+        Insteon_utils.int2message(p_light_obj.InsteonAddress, l_command, 2)
+        l_command[5] = FLAG_MAX_HOPS + FLAG_HOPS_LEFT  # 0x0F
+        l_command[6] = p_light_obj.Command1 = p_cmd1
+        l_command[7] = p_light_obj.Command2 = p_cmd2
+        if g_debug >= 1:
+            g_logger.debug("Queue62 command to device: {2:}, Command: {0:#X},{1:#X}, Address: ({3:x}.{4:x}.{5:x})".format(p_cmd1, p_cmd2, p_light_obj.Name, l_command[2], l_command[3], l_command[4]))
+        return self.queue_plm_command(l_command)
+
+    def queue_63_command(self, p_obj):
+        pass
+
+    def queue_64_command(self, p_obj):
+        pass
+
+    def queue_65_command(self, p_obj):
+        pass
+
+    def queue_66_command(self, p_obj):
+        pass
+
+    def queue_67_command(self):
+        """Reset the PLM
+        See p 268 of developers guide.
+        """
+        if g_debug >= 1:
+            g_logger.debug("Queue command to reset the PLM.")
+        l_command = self._queue_command('plm_reset')
+        return self.queue_plm_command(l_command)
+
+    def queue_68_command(self, p_obj):
+        pass
+
+    def queue_69_command(self):
+        """Get the first all-link record from the plm (2 bytes).
+        See p 261 of developers guide.
+        """
+        if g_debug >= 1:
+            g_logger.debug("Queue command to get First all-link record.")
+        l_command = self._queue_command('plm_first_all_link')
+        return self.queue_plm_command(l_command)
+
+    def queue_6A_command(self):
+        """Get the next record - will get a nak if no more (2 bytes).
+        See p 262 of developers guide.
+        Returns True if more - False if no more.
+        """
+        if g_debug >= 1:
+            g_logger.debug("Queue command to get Next all-link record.")
+        l_command = self._queue_command('plm_next_all_link')
+        return self.queue_plm_command(l_command)
+
+    def queue_6B_command(self, p_flags):
+        """Set IM configuration flags (3 bytes).
+        See page 271  of Insteon Developers Guide.
+        """
+        if g_debug >= 1:
+            g_logger.debug("Queue command to set PLM config flag to {0:#X}".format(p_flags))
+        l_command = self._queue_command('plm_set_config')
+        l_command[2] = p_flags
+        return self.queue_plm_command(l_command)
+
+    def queue_6C_command(self, p_obj):
+        pass
+
+    def queue_6D_command(self, p_obj):
+        pass
+
+    def queue_6E_command(self, p_obj):
+        pass
+
+    def queue_6F_command(self, p_light_obj, p_code, p_flag, p_data):
+        """Manage All-Link Record (11 bytes)
+        """
+        if g_debug >= 1:
+            g_logger.debug("Queue command to manage all-link record")
+        l_command = self._queue_command('manage_all_link_record')
+        l_command[2] = p_code
+        l_command[3] = p_flag
+        l_command[4] = p_light_obj.GroupNumber
+        Insteon_utils.int2message(p_light_obj.InsteonAddress, l_command, 5)
+        l_command[8:11] = p_data
+        return self.queue_plm_command(l_command)
+
+    def queue_70_command(self, p_obj):
+        pass
+
+    def queue_71_command(self, p_obj):
+        pass
+
+    def queue_72_command(self, p_obj):
+        """RF Sleep
+        """
+        pass
+
+    def queue_73_command(self, _p_obj):
+        """Send request for PLM configuration (2 bytes).
+        See page 270 of Insteon Developers Guide.
+        """
+        if g_debug >= 1:
+            g_logger.debug("Queue command to get PLM config.")
+        l_command = self._queue_command('plm_get_config')
+        return self.queue_plm_command(l_command)
+
+
+class DecodeResponses(CreateCommands):
 
     m_house_obj = None
 
@@ -682,8 +822,8 @@ class PlmDriverProtocol(DecodeResponses):
 
     def __init__(self, p_controller_obj, p_house_obj):
         self.m_house_obj = p_house_obj
-        if g_debug >= 3:
-            print "Insteon_PLM.PlmDriverProtocol.__init__()"
+        if g_debug >= 1:
+            g_logger.debug("Insteon_PLM.PlmDriverProtocol.__init__()")
         p_controller_obj.Queue = Queue.Queue(300)
         self.m_controller_obj = p_controller_obj
         self.dequeue_and_send()
@@ -739,177 +879,6 @@ class PlmDriverProtocol(DecodeResponses):
             l_response_len = self._get_message_length(self.m_controller_obj.Message)
             if l_cur_len >= l_response_len:
                 self._decode_message(self.m_controller_obj, self.m_house_obj)
-
-
-class CreateCommands(PlmDriverProtocol):
-    """Send various commands to the PLM.
-    """
-
-    def _queue_command(self, p_command):
-        l_cmd = PLM_COMMANDS[p_command]
-        l_command_bytes = bytearray(COMMAND_LENGTH[l_cmd])
-        l_command_bytes[0] = STX
-        l_command_bytes[1] = l_cmd
-        return l_command_bytes
-
-    def queue_60_command(self):
-        """Insteon - get IM info (2 bytes).
-        See p 273 of developers guide.
-        PLM will respond with a 0x60 response.
-        """
-        l_command = self._queue_command('plm_info')
-        if g_debug >= 6:
-            print "Insteon_PLM.queue_60_command() - get IM info."
-            g_logger.debug("Queue command to get IM info")
-        return self.queue_plm_command(l_command)
-
-    def queue_61_command(self, p_obj):
-        """Send ALL-Link Command (5 bytes)
-        See p 254 of developers guide.
-        """
-        pass
-
-    def queue_62_command(self, p_light_obj, p_cmd1, p_cmd2):
-        """Send Insteon Standard Length Message (8 bytes).
-        See page 243 of Insteon Developers Guide.
-
-        @param p_light_obj: is the Light object of the device
-        @param p_cmd1: is the first command byte
-        @param p_cmd2: is the second command byte
-        @return: the response from queue_plm_command
-        """
-        l_command = self._queue_command('insteon_send')
-        Insteon_utils.int2message(p_light_obj.InsteonAddress, l_command, 2)
-        l_command[5] = FLAG_MAX_HOPS + FLAG_HOPS_LEFT  # 0x0F
-        l_command[6] = p_light_obj.Command1 = p_cmd1
-        l_command[7] = p_light_obj.Command2 = p_cmd2
-        if g_debug >= 4:
-            print "Insteon_PLM.queue_62_command() ", p_light_obj.Name, p_cmd1, p_cmd2
-            g_logger.debug("Queue62 command to device: {2:}, Command: {0:#X},{1:#X}, Address: ({3:x}.{4:x}.{5:x})".format(p_cmd1, p_cmd2, p_light_obj.Name, l_command[2], l_command[3], l_command[4]))
-        return self.queue_plm_command(l_command)
-
-    def queue_63_command(self, p_obj):
-        """
-        """
-        pass
-
-    def queue_64_command(self, p_obj):
-        """
-        """
-        pass
-
-    def queue_65_command(self, p_obj):
-        """
-        """
-        pass
-
-    def queue_66_command(self, p_obj):
-        """
-        """
-        pass
-
-    def queue_67_command(self):
-        """Reset the PLM
-        See p 268 of developers guide.
-        """
-        if g_debug >= 6:
-            print "Insteon_PLM.queue_67_command() - Reset the PLM."
-            g_logger.debug("Queue command to reset the PLM.")
-        l_command = self._queue_command('plm_reset')
-        return self.queue_plm_command(l_command)
-
-    def queue_68_command(self, p_obj):
-        """
-        """
-        pass
-
-    def queue_69_command(self):
-        """Get the first all-link record from the plm (2 bytes).
-        See p 261 of developers guide.
-        """
-        if g_debug >= 6:
-            print "Insteon_PLM.queue_69_command() - Get first all-link record."
-            g_logger.debug("Queue command to get First all-link record.")
-        l_command = self._queue_command('plm_first_all_link')
-        return self.queue_plm_command(l_command)
-
-    def queue_6A_command(self):
-        """Get the next record - will get a nak if no more (2 bytes).
-        See p 262 of developers guide.
-        Returns True if more - False if no more.
-        """
-        if g_debug >= 6:
-            print "Insteon_PLM.queue_6A_command() get Next all-link record."
-            g_logger.debug("Queue command to get Next all-link record.")
-        l_command = self._queue_command('plm_next_all_link')
-        return self.queue_plm_command(l_command)
-
-    def queue_6B_command(self, p_flags):
-        """Set IM configuration flags (3 bytes).
-        See page 271  of Insteon Developers Guide.
-        """
-        if g_debug >= 6:
-            print "Insteon_PLM.queue_6B_command() to set PLM config flag"
-            g_logger.debug("Queue command to set PLM config flag to {0:#X}".format(p_flags))
-        l_command = self._queue_command('plm_set_config')
-        l_command[2] = p_flags
-        return self.queue_plm_command(l_command)
-
-    def queue_6C_command(self, p_obj):
-        """
-        """
-        pass
-
-    def queue_6D_command(self, p_obj):
-        """
-        """
-        pass
-
-    def queue_6E_command(self, p_obj):
-        """
-        """
-        pass
-
-    def queue_6F_command(self, p_light_obj, p_code, p_flag, p_data):
-        """Manage All-Link Record (11 bytes)
-        """
-        if g_debug >= 6:
-            print "Insteon_PLM.queue_6F_command() to manage all-link record"
-            g_logger.debug("Queue command to manage all-link record")
-        l_command = self._queue_command('manage_all_link_record')
-        l_command[2] = p_code
-        l_command[3] = p_flag
-        l_command[4] = p_light_obj.GroupNumber
-        Insteon_utils.int2message(p_light_obj.InsteonAddress, l_command, 5)
-        l_command[8:11] = p_data
-        return self.queue_plm_command(l_command)
-
-
-    def queue_70_command(self, p_obj):
-        """
-        """
-        pass
-
-    def queue_71_command(self, p_obj):
-        """
-        """
-        pass
-
-    def queue_72_command(self, p_obj):
-        """RF Sleep
-        """
-        pass
-
-    def queue_73_command(self, p_light_obj):
-        """Send request for PLM configuration (2 bytes).
-        See page 270 of Insteon Developers Guide.
-        """
-        if g_debug >= 6:
-            print "Insteon_PLM.queue_73_command() to get plm config."
-            g_logger.debug("Queue command to get PLM config.")
-        p_light_obj.Command1 = PLM_COMMANDS['plm_get_config']
-        l_command = self._queue_command('plm_get_config')
-        return self.queue_plm_command(l_command)
 
 
 class LightingAPI(CreateCommands):

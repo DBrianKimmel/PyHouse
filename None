@@ -1,5 +1,0 @@
-2013-10-26 14:38:22,312 PyHouse.Houses       INFO - Initialized all houses.
-2013-10-26 14:38:22,315 PyHouse.WebServer    INFO - Initialized
-2013-10-26 14:38:22,315 PyHouse.Houses       INFO - Starting.
-2013-10-26 14:38:22,315 PyHouse.Houses       INFO - Started.
-2013-10-26 14:38:22,316 PyHouse.WebServer    INFO - Started - Port:8580, Path:None

@@ -52,7 +52,7 @@ class PutGetXML(XmlFileTools):
 #-----
 # Bool
 #-----
-    def get_bool_from_xml(self, p_xml, p_name):
+    def get_bool_from_xml(self, p_xml, p_name, p_default = False):
         l_xml = p_xml.find(p_name)
         if l_xml == None:
             l_xml = p_xml.get(p_name)
@@ -78,7 +78,7 @@ class PutGetXML(XmlFileTools):
 #-----
 # float
 #-----
-    def get_float_from_xml(self, p_xml, p_name):
+    def get_float_from_xml(self, p_xml, p_name, p_default = 0.0):
         l_xml = p_xml.find(p_name)
         if l_xml == None:
             l_xml = p_xml.get(p_name)
@@ -87,7 +87,7 @@ class PutGetXML(XmlFileTools):
         try:
             l_var = float(l_xml)
         except (ValueError, TypeError):
-            l_var = 0.0
+            l_var = p_default
         return l_var
 
     def put_float_attribute(self, p_xml_element, p_name, p_float):
@@ -107,7 +107,7 @@ class PutGetXML(XmlFileTools):
 #-----
 # int
 #-----
-    def get_int_from_xml(self, p_xml, p_name):
+    def get_int_from_xml(self, p_xml, p_name, p_default = 0):
         l_xml = p_xml.find(p_name)
         if l_xml == None:
             l_xml = p_xml.get(p_name)
@@ -116,9 +116,7 @@ class PutGetXML(XmlFileTools):
         try:
             l_var = int(l_xml)
         except (ValueError, TypeError):
-            l_var = 0
-        if g_debug >= 4:
-            print "xml_tools.get_int_from_xml() Int:'{0:}'".format(l_var)
+            l_var = p_default
         return l_var
 
     def put_int_attribute(self, p_xml_element, p_name, p_int):
@@ -368,6 +366,6 @@ def write_xml_file(p_xmltree, p_filename):
     l_tree = ET.ElementTree()
     l_tree._setroot(p_xmltree)
     l_tree.write(p_filename, xml_declaration = True)
-    #print "xml_tools.write_xml_file() ", p_filename,
+    # print "xml_tools.write_xml_file() ", p_filename,
 
 # ## END
