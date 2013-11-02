@@ -160,6 +160,11 @@ class CreateCommands(InsteonPlmUtility):
     """Send various commands to the PLM.
     """
 
+    def queue_plm_command(self, p_command):
+        self.m_controller_obj.Queue.put(p_command)
+        if g_debug >= 1:
+            g_logger.debug("Insteon_PLM.queue_plm_command() - Q-Size:{0:}, Command:{1:}".format(self.m_controller_obj.Queue.qsize(), PrintBytes(p_command)))
+
     def _queue_command(self, p_command):
         l_cmd = PLM_COMMANDS[p_command]
         l_command_bytes = bytearray(COMMAND_LENGTH[l_cmd])
@@ -833,13 +838,6 @@ class PlmDriverProtocol(DecodeResponses):
         if g_debug >= 3:
             print "Insteon_PLM.driver_loop_stop()"
         pass
-
-    def queue_plm_command(self, p_command):
-        if g_debug >= 7:
-            print "Insteon_PLM.queue_plm_command() - ", vars()
-        self.m_controller_obj.Queue.put(p_command)
-        if g_debug >= 6:
-            print "Insteon_PLM.queue_plm_command() - Q-Size:{0:}, Command:{1:}".format(self.m_controller_obj.Queue.qsize(), PrintBytes(p_command))
 
     def dequeue_and_send(self):
         """Check the sending queue every SEND_TIMEOUT seconds and send if

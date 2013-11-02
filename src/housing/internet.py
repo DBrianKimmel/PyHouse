@@ -51,13 +51,13 @@ class InternetData(object):
         self.Active = False
         self.ExternalDelay = 0
         self.ExternalIP = None  # returned from url to check our external IP address
-        self.UrlExternalIP = None
+        self.ExternalUrl = None
         self.DynDns = {}
 
     def __str__(self):
         l_ret = "Internet:: "
         l_ret += "IP:{0:}, ".format(self.ExternalIP)
-        l_ret += "Url:{0:}, ".format(self.UrlExternalIP)
+        l_ret += "Url:{0:}, ".format(self.ExternalUrl)
         l_ret += "Delay:{0:}, ".format(self.ExternalDelay)
         l_ret += "DynDns:{0:}".format(self.DynDns)
         return l_ret
@@ -66,7 +66,7 @@ class InternetData(object):
         # print "internet.InternetData()"
         return dict(Name = self.Name, Key = self.Key, Active = self.Active,
                     ExternalDelay = self.ExternalDelay,
-                    ExternalIP = self.ExternalIP, UrlExternalIP = self.UrlExternalIP,
+                    ExternalIP = self.ExternalIP, ExternalUrl = self.ExternalUrl,
                     DynDns = self.DynDns
                     )
 
@@ -130,21 +130,21 @@ class ReadWriteXML(xml_tools.ConfigTools):
         """
         p_house_obj.Internet = InternetData()
         l_sect = p_house_xml.find('Internet')
-        if g_debug >= 3:
-            print "\ninternet.read_internet_xml() - House:{0:}".format(p_house_obj.Name)
-            print "    HouseXML:{0:}, Items:{1:}".format(p_house_xml, p_house_xml.items()), p_house_xml.attrib
-            print "    InternetXML:{0:}, Items:{1:}".format(l_sect, l_sect.items()), l_sect.attrib
         try:
             self.m_external_ip = self.get_text_from_xml(p_house_xml, 'ExternalIP')
-            self.m_external_url = self.get_text_from_xml(l_sect, 'UrlExternalIP')
             self.m_external_delay = self.get_int_from_xml(l_sect, 'ExternalDelay')
         except AttributeError:
             g_logger.error('internet section missing - using defaults.')
             self.m_external_ip = None
             self.m_external_url = None
             self.m_external_delay = 600
+        try:
+            self.m_external_url = self.get_text_from_xml(l_sect, 'ExternalUrl')
+        except:
+            self.m_external_url = self.get_text_from_xml(l_sect, 'UrlExternalIP')
+
         p_house_obj.Internet.ExternalIP = self.m_external_ip
-        p_house_obj.Internet.UrlExternalIP = self.m_external_url
+        p_house_obj.Internet.ExternalUrl = self.m_external_url
         p_house_obj.Internet.ExternalDelay = self.m_external_delay
         try:
             l_list = l_sect.iterfind('DynamicDNS')
@@ -156,7 +156,7 @@ class ReadWriteXML(xml_tools.ConfigTools):
             l_dyndns.Key = l_count  # Renumber
             p_house_obj.Internet.DynDns[l_count] = l_dyndns
             l_count += 1
-        g_logger.info('Loaded Url:{0:}, delay:{1:}'.format(self.m_external_url, self.m_external_delay))
+        g_logger.info('Loaded Url:{0:}, Delay:{1:}'.format(self.m_external_url, self.m_external_delay))
         return p_house_obj.Internet
 
     def write_internet(self, p_house_obj):
@@ -166,7 +166,7 @@ class ReadWriteXML(xml_tools.ConfigTools):
         l_internet_xml = ET.Element('Internet')
         self.put_text_attribute(l_internet_xml, 'ExternalIP', p_house_obj.Internet.ExternalIP)
         self.put_int_attribute(l_internet_xml, 'ExternalDelay', p_house_obj.Internet.ExternalDelay)
-        self.put_text_attribute(l_internet_xml, 'UrlExternalIP', p_house_obj.Internet.UrlExternalIP)
+        self.put_text_attribute(l_internet_xml, 'ExternalUrl', p_house_obj.Internet.ExternalUrl)
         try:
             for l_dyndns_obj in p_house_obj.Internet.DynDns.itervalues():
                 l_entry = self.xml_create_common_element('DynamicDNS', l_dyndns_obj)
@@ -278,7 +278,7 @@ class FindExternalIpAddress(object):
             self.m_house_obj.Internet.ExternalDelay = l_delay
         callLater(l_delay, self.get_public_ip)
         #
-        self.m_url = self.m_house_obj.Internet.UrlExternalIP
+        self.m_url = self.m_house_obj.Internet.ExternalUrl
         if self.m_url == None:
             return
         if g_debug >= 4:
