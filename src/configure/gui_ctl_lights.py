@@ -184,7 +184,6 @@ class CtlLightsDialog(CtlLightsWindow):
         if g_debug >= 3:
             print "gui_ctl_lights.change_light() - House:{0:}".format(p_house_obj.Name), p_house_obj
             print "                              - Name:{0:}, Level:{1}, Key:{2:} ".format(l_light, l_level, p_light_key)
-        p_house_obj.LightingAPI.change_light_setting(p_house_obj, l_light_obj, l_level)
 
     def quit_dialog(self, p_gui_obj, p_house_obj):
         if g_debug >= 2:

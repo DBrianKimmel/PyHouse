@@ -184,7 +184,8 @@ class ScheduleExecution(ScheduleData):
                 pass
             l_light_obj = tools.get_light_object(self.m_house_obj, name = l_sched_obj.LightName)
             g_logger.info("Executing schedule Name:{0:}, Light:{1:}, Level:{2:}".format(l_sched_obj.Name, l_sched_obj.LightName, l_sched_obj.Level))
-            self.m_house_obj.LightingAPI.change_light_setting(self.m_house_obj, l_light_obj, l_sched_obj.Level)
+            # self.m_house_obj.LightingAPI.change_light_setting(self.m_house_obj, l_light_obj, l_sched_obj.Level)
+            self.m_house_obj.LightingAPI.ChangeLight(l_light_obj, l_sched_obj.Level)
         callLater(2, self.get_next_sched)
 
     def create_timer(self, p_seconds, p_list):
@@ -339,13 +340,13 @@ class API(ScheduleUtility, ScheduleXML):
 
     m_house_obj = None
     m_sunrisesunset = None
-    #m_entertainment = None
+    # m_entertainment = None
 
     def __init__(self, p_house_obj):
         self.m_house_obj = p_house_obj
         self.m_sunrisesunset = sunrisesunset.API(p_house_obj)
         self.m_house_obj.LightingAPI = lighting.API(p_house_obj)
-        #self.m_entertainment = entertainment.API()
+        # self.m_entertainment = entertainment.API()
 
     def Start(self, p_house_obj, p_house_xml):
         """Called once for each house.
@@ -359,7 +360,7 @@ class API(ScheduleUtility, ScheduleXML):
         self.m_sunrisesunset.Start(p_house_obj)
         self.read_schedules_xml(p_house_obj, p_house_xml)
         self.m_house_obj.LightingAPI.Start(p_house_obj, p_house_xml)
-        #self.m_entertainment.Start(p_house_obj, p_house_xml)
+        # self.m_entertainment.Start(p_house_obj, p_house_xml)
         if p_house_obj.Active:
             self.get_next_sched()
         g_logger.info("Started.")
@@ -369,11 +370,11 @@ class API(ScheduleUtility, ScheduleXML):
         """
         g_logger.info("Stopping schedule for house:{0:}.".format(self.m_house_obj.Name))
         self.m_house_obj.LightingAPI.Stop(p_xml, p_house_obj)
-        #l_entertainment_xml = self.m_entertainment.Stop()
+        # l_entertainment_xml = self.m_entertainment.Stop()
         if g_debug >= 2:
             print "schedule.API.Stop() - House:{0:}, {1:}".format(self.m_house_obj.Name, len(p_xml))
         g_logger.info("Stopped.\n")
-        #return l_schedules_xml, l_lighting_xml, l_buttons_xml, l_controllers_xml  #, l_entertainment_xml
+        # return l_schedules_xml, l_lighting_xml, l_buttons_xml, l_controllers_xml  #, l_entertainment_xml
 
     def UpdateXml (self, p_xml):
         p_xml.append(self.write_schedules_xml(self.m_house_obj.Schedules))

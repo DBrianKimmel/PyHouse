@@ -12,10 +12,10 @@ import xml.etree.ElementTree as ET
 # Import PyMh files and modules.
 from src.lights import lighting_core
 from src.drivers import interface
-#from src.families import family
+# from src.families import family
 #
-#from src.utils.tools import PrintBytes
-#from src.utils.tools import PrintObject
+# from src.utils.tools import PrintBytes
+# from src.utils.tools import PrintObject
 
 
 g_debug = 0
@@ -51,17 +51,17 @@ class ControllerData(lighting_core.CoreData):
         return l_ret
 
     def reprJSON(self):
-        print "lighting_controllers.ControllerData.reprJSON() - Self: ", self
+        '''lighting_controllers.
+        '''
+        # print "lighting_controllers.ControllerData.reprJSON() - Self: ", self
         l_ret = super(ControllerData, self).reprJSON()  # lighting_core data
         l_ret.update(dict(
             Interface = self.Interface, Port = self.Port
         ))
         if self.Family == 'Insteon':
-            from src.families.Insteon import Insteon_utils
-            l_ret.update(dict(
-                InsteonAddress = Insteon_utils.int2dotted_hex(self.InsteonAddress),
-                DevCat = self.DevCat
-            ))
+            from src.families.Insteon import Device_Insteon
+            l_ret = Device_Insteon.InsteonData.reprJSON(l_ret)
+        print "lighting_controllers.reprJSON(2) {0:}".format(l_ret)
         return l_ret
 
 

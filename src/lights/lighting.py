@@ -45,28 +45,6 @@ class Utility(ButtonAPI, ControllerAPI, LightingAPI):
         if g_debug >= 2:
             print "lighting.test_lighting_families()"
 
-    def change_light_setting(self, p_house_obj, p_light_obj, p_level, p_rate = 0):
-        """Called from several places (schedle, Gui, Web etc.) to change a light level.
-        Turn a light to a given level (0-100) off/dimmed/on.
-
-        @param p_house_obj: is a house object
-        @param p_light_obj: is the index (Key) of the Light to be changed within the House object.
-        @param p_level: is the level to set
-        TODO: add rate to family routines and pass along.
-        """
-        if g_debug >= 2:
-            print "lighting.change_light_setting()"
-            print "    House:", p_house_obj
-            print "    Light:", p_light_obj
-            print "    Level:", p_level
-            print "    Rate:", p_rate
-            print "    Family:", p_house_obj.FamilyData
-        g_logger.info("Turn Light {0:} to level {1:} at rate {2:}.".format(p_light_obj.Name, p_level, p_rate))
-        for l_family_obj in p_house_obj.FamilyData.itervalues():
-            if l_family_obj.Name != p_light_obj.Family:
-                continue
-            l_family_obj.API.change_light_setting(p_light_obj, p_level, p_house_obj)
-
 
 class API(Utility):
 
@@ -98,12 +76,13 @@ class API(Utility):
         p_xml.append(self.write_button_xml(self.m_house_obj))
         p_xml.append(self.write_controller_xml(self.m_house_obj))
 
-    def ChangeLight(self, p_entry):
-        if g_debug >= 0:
-            print 'lighting.API.ChangeLight({0:}'.format(p_entry)
-        l_key = p_entry.Key
-        l_level = p_entry.CurLevel
+    def ChangeLight(self, p_light_obj, p_level):
+        l_key = p_light_obj.Key
         l_obj = self.m_house_obj.Lights[l_key]
-        self.change_light_setting(self.m_house_obj, l_obj, l_level)
+        g_logger.info("Turn Light {0:} to level {1:}.".format(p_light_obj.Name, p_level))
+        for l_family_obj in self.m_house_obj.FamilyData.itervalues():
+            if l_family_obj.Name != p_light_obj.Family:
+                continue
+            l_family_obj.API.ChangeLight(p_light_obj, p_level, 0)
 
 # ## END DBK

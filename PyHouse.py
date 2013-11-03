@@ -1,4 +1,4 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python
 
 """ PyHouse.py - Run the python version house automation.
 
@@ -86,6 +86,8 @@ class PyHouseData(object):
     """
 
     def __init__(self):
+        """PyHouse.
+        """
         self.API = None
         self.HousesAPI = None
         self.LogsAPI = None
@@ -106,6 +108,16 @@ class PyHouseData(object):
         l_ret += "\n\tHousesData:{0:};".format(self.HousesData)
         l_ret += "\n\tXmlRoot:{0:}, ".format(self.XmlRoot)
         l_ret += "\n\tXmlFileName:{0:}, ".format(self.XmlFileName)
+        return l_ret
+
+    def reprJSON(self):
+        """PyHouse.
+        """
+        l_ret = dict(
+            XmlFileName = self.XmlFileName,
+            HousesData = self.HousesData
+            )
+        print "lighting_core.reprJSON(2) {0:}".format(l_ret)
         return l_ret
 
 
@@ -224,7 +236,7 @@ class API(Utilities):
         self.m_pyhouses_obj.WebAPI.UpdateXml(l_xml)
         self.m_pyhouses_obj.LogsAPI.UpdateXml(l_xml)
         self.m_pyhouses_obj.HousesAPI.UpdateXml(l_xml)
-        #print 'PyHouse.UpdateXml()\n', xml_tools.prettify(l_xml)
+        # print 'PyHouse.UpdateXml()\n', xml_tools.prettify(l_xml)
         xml_tools.write_xml_file(l_xml, self.m_pyhouses_obj.XmlFileName)
 
     def Reload(self, p_pyhouses_obj):

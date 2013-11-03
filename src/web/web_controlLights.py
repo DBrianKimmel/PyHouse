@@ -62,12 +62,12 @@ class ControlLightsElement(athena.LiveElement):
         l_house_ix = int(l_json['HouseIx'])
         if g_debug >= 4:
             print "web_controlLights.saveControlLightData() - JSON:", l_json
-        l_obj = lighting_lights.LightData()
-        l_obj.Name = l_json['Name']
-        l_obj.Key = int(l_json['Key'])
-        l_obj.CurLevel = l_json['Level']
-        l_obj.UUID = l_json['UUID']
-        l_obj.HouseIx = l_house_ix
-        self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.LightingAPI.ChangeLight(l_obj)
+        l_light_obj = lighting_lights.LightData()
+        l_light_obj.Name = l_json['Name']
+        l_light_obj.Key = int(l_json['Key'])
+        l_light_obj.CurLevel = l_level = l_json['Level']
+        l_light_obj.UUID = l_json['UUID']
+        l_light_obj.HouseIx = l_house_ix
+        self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.LightingAPI.ChangeLight(l_light_obj, l_level)
 
 # ## END DBK

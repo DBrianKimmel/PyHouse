@@ -385,20 +385,7 @@ class CreateCommands(UpbPimUtility, PimDriverInterface):
 
 
 class LightingAPI(Device_UPB.LightingAPI, CreateCommands):
-
-    def change_light_setting(self, p_lighting_obj, p_level):
-        for l_obj in g_house_obj.Lights.itervalues():
-            if l_obj.Family != 'UPB':
-                continue
-            if l_obj.Active == False:
-                continue
-            l_name = p_lighting_obj.Name
-            if l_obj.Name == l_name:
-                l_id = self._get_id_from_name(l_name)
-                print "UPB_Pim.change_light_settings() for {0:} to Level {1:}".format(l_name, p_level)
-                g_logger.info('change_light_setting()')
-                self._compose_command(pim_commands['goto'], l_id, p_level, 0x01)
-                return
+    pass
 
 
 class UpbPimAPI(LightingAPI):
@@ -546,6 +533,21 @@ class API(UpbPimAPI):
             print "UPB_Pim.Stop()"
         pass
 
+    def ChangeLight(self, p_light_obj, p_level, p_rate = 0):
+        if g_debug >= 1:
+            g_logger.debug("Change light:{0:} to level:{1:} at rate:{2:}".format(p_light_obj.Name, p_level, p_rate))
+        for l_obj in g_house_obj.Lights.itervalues():
+            if l_obj.Family != 'UPB':
+                continue
+            if l_obj.Active == False:
+                continue
+            l_name = p_light_obj.Name
+            if l_obj.Name == l_name:
+                l_id = self._get_id_from_name(l_name)
+                print "UPB_Pim.change_light_settings() for {0:} to Level {1:}".format(l_name, p_level)
+                g_logger.info('change_light_setting()')
+                self._compose_command(pim_commands['goto'], l_id, p_level, 0x01)
+                return
 
 
 

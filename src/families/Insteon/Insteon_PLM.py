@@ -880,19 +880,7 @@ class PlmDriverProtocol(DecodeResponses):
 
 
 class LightingAPI(CreateCommands):
-
-    def change_light_setting(self, p_light_obj, p_level):
-        l_debug_msg = "Change light:{0:} to level:{1:}".format(p_light_obj.Name, p_level)
-        if g_debug >= 4:
-            print "Insteon_PLM.change_light_settings()  {0:}".format(l_debug_msg)
-            g_logger.debug("Change light setting. {0:}".format(l_debug_msg))
-        if int(p_level) == 0:
-            self.queue_62_command(p_light_obj, MESSAGE_TYPES['off'], 0)
-        elif int(p_level) == 100:
-            self.queue_62_command(p_light_obj, MESSAGE_TYPES['on'], 255)
-        else:
-            l_level = int(p_level) * 255 / 100
-            self.queue_62_command(p_light_obj, MESSAGE_TYPES['on'], l_level)
+    pass
 
 
 class InsteonPlmCommands(LightingAPI):
@@ -1087,5 +1075,16 @@ class API(LightHandlerAPI):
         self.m_protocol.driver_loop_stop()
         self.stop_controller_driver(p_controller_obj)
         g_logger.info('Stopped.')
+
+    def ChangeLight(self, p_light_obj, p_level, p_rate = 0):
+        if g_debug >= 1:
+            g_logger.debug("Change light:{0:} to level:{1:} at rate:{2:}".format(p_light_obj.Name, p_level, p_rate))
+        if int(p_level) == 0:
+            self.queue_62_command(p_light_obj, MESSAGE_TYPES['off'], 0)
+        elif int(p_level) == 100:
+            self.queue_62_command(p_light_obj, MESSAGE_TYPES['on'], 255)
+        else:
+            l_level = int(p_level) * 255 / 100
+            self.queue_62_command(p_light_obj, MESSAGE_TYPES['on'], l_level)
 
 # ## END DBK

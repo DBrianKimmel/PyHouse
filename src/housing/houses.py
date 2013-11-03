@@ -38,6 +38,8 @@ class HousesData(object):
     """
 
     def __init__(self):
+        """Houses.
+        """
         self.Name = None
         self.Key = 0
         self.Active = False
@@ -54,6 +56,8 @@ class HousesData(object):
         return l_ret
 
     def reprJSON(self):
+        """Houses.
+        """
         return dict(Active = self.Active, Key = self.Key, Name = self.Name)
 
 
@@ -178,7 +182,7 @@ class API(LoadSaveAPI):
                 l_xml = l_house.HouseAPI.Stop(l_houses_xml, l_house.HouseObject)
             except AttributeError:  # New house being added has ho existing API
                 l_xml = house.API().Stop(l_houses_xml, l_house.HouseObject)
-            #l_houses_xml.append(l_xml)  # append to the xml tree
+            # l_houses_xml.append(l_xml)  # append to the xml tree
         g_logger.info("Stopped.")
         return l_houses_xml
 

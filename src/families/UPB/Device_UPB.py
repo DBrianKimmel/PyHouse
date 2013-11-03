@@ -102,22 +102,6 @@ class LightingAPI(lighting.LightingAPI, CoreAPI):
         except AttributeError:
             pass
 
-    def change_light_setting(self, p_light_obj, p_level, p_house_obj):
-        if g_debug >= 2:
-            print "Device_UPB.change_light_setting()", p_level,
-            print "    Light:", p_light_obj
-            print "    House:", p_house_obj
-        if p_light_obj.Family == 'UPB':
-            try:
-                for l_controller_obj in self.m_house_obj.Controllers.itervalues():
-                    if l_controller_obj.Family != 'UPB':
-                        continue
-                    if l_controller_obj.Active != True:
-                        continue
-                    l_controller_obj.HandlerAPI.change_light_setting(p_light_obj, p_level)
-            except AttributeError:
-                pass  # no controllers for house(House is being added)
-
 
 class LoadSaveInsteonData(LightingAPI, ControllerAPI, ButtonAPI): pass
 
@@ -156,5 +140,18 @@ class API(LightingAPI):
         except AttributeError:
             pass  # no controllers for house(House is being added)
         return p_xml
+
+    def ChangeLight(self, p_light_obj, p_level, p_rate = 0):
+        if p_light_obj.Family == 'UPB':
+            try:
+                for l_controller_obj in self.m_house_obj.Controllers.itervalues():
+                    if l_controller_obj.Family != 'UPB':
+                        continue
+                    if l_controller_obj.Active != True:
+                        continue
+                    l_controller_obj.HandlerAPI.change_light_setting(p_light_obj, p_level)
+            except AttributeError:
+                pass  # no controllers for house(House is being added)
+
 
 # ## END

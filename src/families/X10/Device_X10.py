@@ -62,9 +62,6 @@ class LightingAPI(lighting.LightingAPI):
             except AttributeError:
                 pass
 
-    def change_light_setting(self, p_light_obj, p_level, p_house_obj):
-        pass
-
     def turn_light_off(self, p_name):
         print "Turning off X10 light {0:}".format(p_name)
 
@@ -93,5 +90,8 @@ class API(object):
         if g_debug > 0:
             print "Device_X10.Stop()"
         return p_xml
+
+    def ChangeLight(self, p_light_obj, p_level, p_rate = 0):
+        pass
 
 # ## END

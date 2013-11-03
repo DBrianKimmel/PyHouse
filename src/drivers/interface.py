@@ -42,14 +42,16 @@ class SerialData(object):
         l_ret = "Serial:: Baud:{0:}, ByteSize:{1:}, Parity:{2:}, StopBits:{3:}; ".format(self.BaudRate, self.ByteSize, self.Parity, self.StopBits)
         return l_ret
 
-    def XreprJSON(self):
+    def reprJSON(self):
+        """interface().
+        """
         print "interface.SerialData.reprJSON() Self: ", self
-        l_ret = super(SerialData, self).reprJSON()  # lighting_core data
-        l_ret.update(dict(
+        l_ret = dict(
             BaudRate = self.BaudRate, ByteSize = self.ByteSize, DsrDtr = self.DsrDtr,
             Parity = self.Parity, RtsCts = self.RtsCts, StopBits = self.StopBits,
             Timeout = self.Timeout, XonXoff = self.XonXoff
-        ))
+        )
+        print "interface.reprJSON(2) {0:}".format(l_ret)
         return l_ret
 
 

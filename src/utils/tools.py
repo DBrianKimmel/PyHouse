@@ -28,7 +28,7 @@ def PrintDict(p_dict, p_format = "%-25s %s"):
         print p_format % (str(key) + ':', val)
 
 def PrettyPrint(p_title, p_str, maxlen = 150):
-    print 'Title: {0:}\n'.format(p_title), '\n'.join(prettyPrint(p_str, maxlen))
+    print 'Title: {0:}\n'.format(p_title), '\n'.join(prettyPrint(str(p_str), maxlen, ' '))
 
 def PrintObject(p_title, p_obj, suppressdoc = True, maxlen = 180, lindent = 24, maxspew = 2000):
     """Print a nicely formatted overview of an object.
@@ -67,7 +67,7 @@ def PrintObject(p_title, p_obj, suppressdoc = True, maxlen = 180, lindent = 24, 
 
     import types
     # Formatting parameters.
-    ltab = 2    # initial tab in front of level 2 text
+    ltab = 2  # initial tab in front of level 2 text
     # There seem to be a couple of other types; gather templates of them
     MethodWrapperType = type(object().__hash__)
     #
