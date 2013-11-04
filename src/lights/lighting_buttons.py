@@ -25,6 +25,7 @@ class ButtonData(lighting_core.CoreData):
         return l_str
 
     def reprJSON(self):
+        print "buttons.reprJSON(1)"
         l_ret = super(ButtonData, self).reprJSON()  # The core data
         return l_ret
 

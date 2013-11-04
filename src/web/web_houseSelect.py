@@ -34,6 +34,7 @@ class WebHouseData(object):
         self.House = house.HouseData()
 
     def reprJSON(self):
+        print "web_house.reprJSON(1)"
         return dict(House = self.House)
 
 
@@ -75,7 +76,7 @@ class HouseSelectElement(athena.LiveElement):
         """
         l_ix = int(p_index)
         l_house = self.m_pyhouses_obj.HousesData[l_ix].HouseObject
-        if g_debug >= 3:
+        if g_debug >= 0:
             print "web_houseSelect.HouseSelectElement.getSelectedHouseData()", l_ix, l_house
         l_json = web_utils.JsonUnicode().encode_json(l_house)
         return unicode(l_json)

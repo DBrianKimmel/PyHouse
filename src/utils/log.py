@@ -27,10 +27,10 @@ g_debug = 0
 
 #  Select ONE of the following
 LEVEL = logging.DEBUG
-#LEVEL = logging.INFO
-#LEVEL = logging.WARNING
-#LEVEL = logging.ERROR
-#LEVEL = logging.CRITICAL
+# LEVEL = logging.INFO
+# LEVEL = logging.WARNING
+# LEVEL = logging.ERROR
+# LEVEL = logging.CRITICAL
 
 
 class LogData(object):
@@ -46,6 +46,7 @@ class LogData(object):
         return l_ret
 
     def reprJSON(self):
+        print "log.reprJSON(1)"
         return dict(Debug = self.Debug, Error = self.Error)
 
 

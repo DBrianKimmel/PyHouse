@@ -38,6 +38,7 @@ class LightData(lighting_core.CoreData):
     def reprJSON(self):
         """lighting_lights.
         """
+        print "lighting_lights.reprJSON(1)"
         l_ret = super(LightData, self).reprJSON()  # lighting_core data
         l_ret.update(dict(CurLevel = self.CurLevel))
         if self.Family == 'Insteon':
@@ -46,6 +47,7 @@ class LightData(lighting_core.CoreData):
                 InsteonAddress = Insteon_utils.int2dotted_hex(self.InsteonAddress),
                 DevCat = self.DevCat
             ))
+        print "lighting_lights.reprJSON(2) {0:}".format(l_ret)
 
         return l_ret
 

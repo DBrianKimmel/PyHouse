@@ -29,9 +29,9 @@ class ControllerData(lighting_core.CoreData):
     """
 
     def __init__(self):
-        super(ControllerData, self).__init__()  # The core data
+        # super(ControllerData, self).__init__()  # The core data
         self.Type = 'Controller'  # Override the core definition
-        self.Interface = ''
+        # self.Interface = ''
         self.Port = ''
         #
         self.DriverAPI = None  # Interface API() - Serial, USB etc.
@@ -41,26 +41,14 @@ class ControllerData(lighting_core.CoreData):
         self.Message = ''
         self.Queue = None
 
-    def XX__str__(self):
-        l_ret = "LightingController:: "
-        l_ret += "Name:{0:}, ".format(self.Name)
-        l_ret += "Family:{0:}, ".format(self.Family)
-        l_ret += "Interface:{0:}, ".format(self.Interface)
-        l_ret += "Port:{0:}, ".format(self.Port)
-        l_ret += "Type:{0:}, ".format(self.Type)
-        return l_ret
-
     def reprJSON(self):
         '''lighting_controllers.
         '''
-        # print "lighting_controllers.ControllerData.reprJSON() - Self: ", self
-        l_ret = super(ControllerData, self).reprJSON()  # lighting_core data
-        l_ret.update(dict(
-            Interface = self.Interface, Port = self.Port
-        ))
-        if self.Family == 'Insteon':
-            from src.families.Insteon import Device_Insteon
-            l_ret = Device_Insteon.InsteonData.reprJSON(l_ret)
+        print "lighting_controllers.reprJSON(1)"
+        l_ret = dict(
+            # Interface = self.Interface,
+            Port = self.Port
+            )
         print "lighting_controllers.reprJSON(2) {0:}".format(l_ret)
         return l_ret
 

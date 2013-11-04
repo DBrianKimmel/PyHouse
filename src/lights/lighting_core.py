@@ -53,12 +53,13 @@ class CoreData(object):
     def reprJSON(self):
         """lighting_core.
         """
-        # print "lighting_core.CoreData.reprJSON() - Self: ", self
+        print "lighting_core.reprJSON(1)"
         l_ret = dict(
             Name = self.Name, Key = self.Key, Active = self.Active,
             Comment = self.Comment, Coords = self.Coords, Dimmable = self.Dimmable,
             Family = self.Family, RoomName = self.RoomName, Type = self.Type, UUID = self.UUID
             )
+        # if self.Type == 'Controller':
         print "lighting_core.reprJSON(2) {0:}".format(l_ret)
         return l_ret
 

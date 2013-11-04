@@ -29,6 +29,7 @@ class CoreData(object):
         self.Command1 = 0
 
     def reprJSON(self):
+        print "Device_UPB.reprJSON(1)"
         l_ret = super(CoreData, self).reprJSON()  # The core data
         l_ret.update(dict(
                     Address = self.UnitID, Password = self.Password, NetworkId = self.NetworkID

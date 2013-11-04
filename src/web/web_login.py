@@ -61,6 +61,7 @@ class LoginData(object):
         self.ServerState = web_utils.WS_IDLE
 
     def reprJSON(self):
+        # print "web_login.reprJSON(1)"
         return dict(Username = self.Username, Password = self.Password, Fullname = self.Fullname,
                     LoggedIn = self.LoggedIn, ServerState = self.ServerState)
 
@@ -114,12 +115,12 @@ class LoginElement(athena.LiveElement):
         """
         p_login_obj.Username = p_obj['Username']
         p_login_obj.Password = p_obj['Password']
-        #if p_login_obj.Username == 'briank' and p_login_obj.Password == 'nitt4agmtc':
+        # if p_login_obj.Username == 'briank' and p_login_obj.Password == 'nitt4agmtc':
         if p_login_obj.Username == 'briank' and p_login_obj.Password == 'd':
             p_login_obj.Fullname = 'D. Brian Kimmel'
             p_login_obj.LoggedIn = True
             p_login_obj.ServerState = web_utils.WS_LOGGED_IN
-            #web_server.API().add_browser(p_login_obj)
+            # web_server.API().add_browser(p_login_obj)
         else:
             p_login_obj.LoggedIn = False
             p_login_obj.Fullname = 'Not logged In'

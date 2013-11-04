@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-#-*- coding: iso-8859-1 -*-
+# -*- coding: iso-8859-1 -*-
 
 """Web server module.
 
@@ -57,7 +57,7 @@ class WebData(object):
     """
     def __init__(self):
         self.WebPort = 8580
-        self.Logins = {} # a dict of login_names as keys and encrypted passwords as values - see web_login for details.
+        self.Logins = {}  # a dict of login_names as keys and encrypted passwords as values - see web_login for details.
 
     def __str__(self):
         l_ret = "WebData:: "
@@ -65,6 +65,7 @@ class WebData(object):
         return l_ret
 
     def reprJSON(self):
+        print "web_server.reprJSON(1)"
         return dict(Port = self.WebPort)
 
 
@@ -106,7 +107,7 @@ class WebUtility(xml_tools.ConfigFile):
             return
         p_web_obj.WebPort = l_sect.findtext('WebPort')
         p_web_obj.WebPort = 8580
-        #p_web_obj.WebPort = self.get_int_from_xml(l_sect, 'WebPort')
+        # p_web_obj.WebPort = self.get_int_from_xml(l_sect, 'WebPort')
         if g_debug >= 4:
             print "web_server.read_web_xml() - Port:{0:}".format(p_web_obj.WebPort)
         return

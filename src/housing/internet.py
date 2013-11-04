@@ -63,7 +63,7 @@ class InternetData(object):
         return l_ret
 
     def reprJSON(self):
-        # print "internet.InternetData()"
+        print "internet.InternetData.preprJSON(1)"
         return dict(Name = self.Name, Key = self.Key, Active = self.Active,
                     ExternalDelay = self.ExternalDelay,
                     ExternalIP = self.ExternalIP, ExternalUrl = self.ExternalUrl,
@@ -90,7 +90,7 @@ class DynDnsData(object):
         return l_ret
 
     def reprJSON(self):
-        # print "internet.DynDnsData()"
+        print "internet.DynDnsData.reprJSON(1)"
         return dict(Name = self.Name, Key = self.Key, Active = self.Active,
                     Interval = self.Interval, Url = self.Url
                     )

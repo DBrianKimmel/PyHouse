@@ -29,6 +29,7 @@ class SerialData(object):
     """
 
     def __init__(self):
+        self.InterfaceType = 'Serial'
         self.BaudRate = 9600
         self.ByteSize = 8
         self.DsrDtr = False
@@ -38,20 +39,22 @@ class SerialData(object):
         self.Timeout = None
         self.XonXoff = False
 
-    def XX__str__(self):
-        l_ret = "Serial:: Baud:{0:}, ByteSize:{1:}, Parity:{2:}, StopBits:{3:}; ".format(self.BaudRate, self.ByteSize, self.Parity, self.StopBits)
-        return l_ret
-
     def reprJSON(self):
         """interface().
         """
-        print "interface.SerialData.reprJSON() Self: ", self
+        print "interface.SerialData.reprJSON(1)"
         l_ret = dict(
-            BaudRate = self.BaudRate, ByteSize = self.ByteSize, DsrDtr = self.DsrDtr,
-            Parity = self.Parity, RtsCts = self.RtsCts, StopBits = self.StopBits,
-            Timeout = self.Timeout, XonXoff = self.XonXoff
+            InterfaceType = self.InterfaceType,
+            BaudRate = self.BaudRate,
+            ByteSize = self.ByteSize,
+            DsrDtr = self.DsrDtr,
+            Parity = self.Parity,
+            RtsCts = self.RtsCts,
+            StopBits = self.StopBits,
+            Timeout = self.Timeout,
+            XonXoff = self.XonXoff
         )
-        print "interface.reprJSON(2) {0:}".format(l_ret)
+        print "interface.SerialData.reprJSON(2) {0:}".format(l_ret)
         return l_ret
 
 
@@ -66,9 +69,11 @@ class USBData(object):
         return l_ret
 
     def reprJSON(self):
+        print "interface.USBData.reprJSON(1)"
         l_ret = dict(
             Product = self.Product, Vendor = self.Vendor
         )
+        print "interface.USBData.reprJSON(2) {0:}".format(l_ret)
         return l_ret
 
 
@@ -83,9 +88,11 @@ class  EthernetData(object):
         return l_ret
 
     def reprJSON(self):
+        print "interface.EthernetData.reprJSON(1)"
         l_ret = dict(
             PortNumber = self.PortNumber, Protocol = self.Protocol
         )
+        print "interface.EthernetData.reprJSON(2) {0:}".format(l_ret)
         return l_ret
 
 

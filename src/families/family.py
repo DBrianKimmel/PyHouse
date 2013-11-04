@@ -46,7 +46,7 @@ class FamilyData(object):
         return l_ret
 
     def reprJSON(self):
-        #print "family.reprJSON() - {0:}".format(self.Name)
+        print "family.reprJSON(1)"
         l_ret = dict(Name = self.Name, Key = self.Key, Active = self.Active,
                     ModuleName = self.ModuleName, PackageName = self.PackageName
                     )

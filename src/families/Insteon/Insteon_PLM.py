@@ -82,6 +82,7 @@ class ControllerData(InsteonData):
         self.Command2 = 0
 
     def reprJSON(self):
+        print "Insteon_PLM.reprJSON(1)"
         return super(ControllerData, self).reprJSON()
 
 

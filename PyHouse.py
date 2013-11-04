@@ -113,11 +113,12 @@ class PyHouseData(object):
     def reprJSON(self):
         """PyHouse.
         """
+        print "PyHouse.reprJSON(1)"
         l_ret = dict(
             XmlFileName = self.XmlFileName,
             HousesData = self.HousesData
             )
-        print "lighting_core.reprJSON(2) {0:}".format(l_ret)
+        print "PyHouse.reprJSON(2) {0:}".format(l_ret)
         return l_ret
 
 

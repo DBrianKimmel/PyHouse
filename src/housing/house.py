@@ -57,7 +57,7 @@ class HouseData(object):
         self.Rooms = {}
         self.Schedules = {}
 
-    def __str__(self):
+    def XX__str__(self):
         l_ret = ' House:: '
         l_ret += 'Name:{0:}, '.format(self.Name)
         l_ret += "Active:{0:}, ".format(self.Active)
@@ -73,14 +73,20 @@ class HouseData(object):
     def reprJSON(self):
         """House.
         """
-        l_ret = dict(Name = self.Name, Key = self.Key, Active = self.Active,
-                    Buttons = self.Buttons, Controllers = self.Controllers, Lights = self.Lights,
-                    Location = self.Location,
-                    Internet = self.Internet,
-                    Family = self.FamilyData,
-                    Rooms = self.Rooms,
-                    Schedules = self.Schedules,
-                    UUID = self.UUID)
+        print "house.reprJSON(1)"
+        l_ret = dict(
+            Name = self.Name, Key = self.Key, Active = self.Active,
+            # Buttons = self.Buttons,
+            Controllers = self.Controllers,
+            # Lights = self.Lights,
+            # ocation = self.Location,
+            # Internet = self.Internet,
+            # Family = self.FamilyData,
+            # Rooms = self.Rooms,
+            # Schedules = self.Schedules,
+            UUID = self.UUID
+            )
+        print "house.reprJSON(2) {0:}".format(l_ret)
         return l_ret
 
 
@@ -97,8 +103,6 @@ class HouseReadWriteConfig(location.ReadWriteConfig, rooms.ReadWriteConfig):
         p_house_obj.UUID = self.get_uuid_from_xml(p_house_xml, 'UUID')
         p_house_obj.Location = self.read_location_xml(p_house_obj, p_house_xml)
         p_house_obj.Rooms = self.read_rooms_xml(p_house_obj, p_house_xml)
-        if g_debug >= 3:
-            print "house.read_house_xml() - Loading XML data for House:{0:}".format(p_house_obj.Name)
         return p_house_obj
 
     def write_house_xml(self, p_house_obj):
@@ -143,8 +147,6 @@ class API(HouseReadWriteConfig):
         """Stop all houses.
         Return a filled in XML for the house.
         """
-        if g_debug >= 2:
-            print "\nhouse.API.Stop() - House:{0:}".format(self.m_house_obj.Name)
         g_logger.info("Stopping House:{0:}.".format(self.m_house_obj.Name))
         l_house_xml = self.write_house_xml(p_house_obj)
         l_house_xml.append(self.write_location_xml(p_house_obj.Location))
@@ -167,13 +169,5 @@ class API(HouseReadWriteConfig):
         self.m_house_obj.ScheduleAPI.UpdateXml(l_xml)
         self.m_house_obj.InternetAPI.UpdateXml(l_xml)
         p_xml.append(l_xml)
-
-    def Update(self, p_entry):
-        """
-        """
-        if g_debug >= 0:
-            print "house.API.Update() - House:{0:}".format(self.m_house_obj.Name)
-            print '    ', p_entry
-        l_type = p_entry.Type
 
 # ##  END DBK

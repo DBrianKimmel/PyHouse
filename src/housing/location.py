@@ -37,11 +37,13 @@ class LocationData(object):
         return l_ret
 
     def reprJSON(self):
+        print "location.reprJSON(1)"
         l_ret = dict(
             City = self.City, Latitude = self.Latitude, Longitude = self.Longitude, Phone = self.Phone,
             SavingsTime = self.SavingTime, State = self.State, Street = self.Street, TimeZone = self.TimeZone,
             ZipCode = self.ZipCode
             )
+        print "location.reprJSON(2) {0:}".format(l_ret)
         return l_ret
 
 

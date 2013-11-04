@@ -89,6 +89,7 @@ class ScheduleData(object):
         return l_ret
 
     def reprJSON(self):
+        print "schedule.reprJSON(1)"
         l_ret = dict(Name = self.Name, Key = self.Key, Active = self.Active,
                     Level = self.Level,
                     LightName = self.LightName, LightNumber = self.LightNumber, Rate = self.Rate,

@@ -58,7 +58,9 @@ class HousesData(object):
     def reprJSON(self):
         """Houses.
         """
-        return dict(Active = self.Active, Key = self.Key, Name = self.Name)
+        return dict(
+            Active = self.Active, Key = self.Key, Name = self.Name
+            )
 
 
 class HouseReadWriteConfig(xml_tools.ConfigFile):

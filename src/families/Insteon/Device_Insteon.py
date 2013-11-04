@@ -56,7 +56,7 @@ class InsteonData (lighting.LightData):
         """Device_Insteon.
         """
         # l_ret = super(InsteonData, self).reprJSON()  # The core data
-        print "Device_Insteon.reprJSON(1) {0:} - Self: ".format(p_ret), self
+        print "Device_Insteon.reprJSON(1)"
         p_ret.update(dict(
                 InsteonAddress = Insteon_utils.int2dotted_hex(self.InsteonAddress),
                 Controller = self.Controller,
