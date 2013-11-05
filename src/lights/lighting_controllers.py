@@ -29,9 +29,9 @@ class ControllerData(lighting_core.CoreData):
     """
 
     def __init__(self):
-        # super(ControllerData, self).__init__()  # The core data
+        super(ControllerData, self).__init__()  # The core data
         self.Type = 'Controller'  # Override the core definition
-        # self.Interface = ''
+        self.Interface = ''
         self.Port = ''
         #
         self.DriverAPI = None  # Interface API() - Serial, USB etc.
@@ -44,12 +44,13 @@ class ControllerData(lighting_core.CoreData):
     def reprJSON(self):
         '''lighting_controllers.
         '''
-        print "lighting_controllers.reprJSON(1)"
-        l_ret = dict(
-            # Interface = self.Interface,
+        # print "lighting_controllers.reprJSON(1)"
+        l_ret = super(ControllerData, self).reprJSON()  # lighting_core data
+        l_ret.update(dict(
+            Interface = self.Interface,
             Port = self.Port
-            )
-        print "lighting_controllers.reprJSON(2) {0:}".format(l_ret)
+            ))
+        # print "lighting_controllers.reprJSON(2) {0:}".format(l_ret)
         return l_ret
 
 

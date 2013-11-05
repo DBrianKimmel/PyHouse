@@ -30,20 +30,14 @@ class LocationData(object):
         self.TimeZone = 0.0
         self.ZipCode = ''
 
-    def __str__(self):
-        l_ret = ' Location:: '
-        l_ret += 'Addr:{0:} {1:} {2:} {3:}, '.format(self.Street, self.City, self.State, self.ZipCode)
-        l_ret += 'Lat:{0:}, Lon:{1:}'.format(self.Latitude, self.Longitude)
-        return l_ret
-
     def reprJSON(self):
-        print "location.reprJSON(1)"
+        # print "location.reprJSON(1)"
         l_ret = dict(
             City = self.City, Latitude = self.Latitude, Longitude = self.Longitude, Phone = self.Phone,
             SavingsTime = self.SavingTime, State = self.State, Street = self.Street, TimeZone = self.TimeZone,
             ZipCode = self.ZipCode
             )
-        print "location.reprJSON(2) {0:}".format(l_ret)
+        # print "location.reprJSON(2) {0:}".format(l_ret)
         return l_ret
 
 

@@ -324,6 +324,15 @@ class ConfigFile(ConfigEtc):
         p_xmltree.write(p_filename, xml_declaration = True)
 
 
+def stuff_new_attrs(p_target, p_data):
+    """Put the NEW information from the data object into the target object.
+    Preserve any attributes already in the target object.
+    """
+    l_attrs = filter(lambda aname: not aname.startswith('__'), dir(p_data))
+    for l_attr in l_attrs:
+        if not hasattr(p_target, l_attr):
+            setattr(p_target, l_attr, getattr(p_data, l_attr))
+
 def prettify(p_element):
     """Return a pretty-printed XML string for the Element.
 

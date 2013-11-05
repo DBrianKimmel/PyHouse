@@ -28,17 +28,10 @@ class LightData(lighting_core.CoreData):
         self.Type = 'Light'
         self.CurLevel = 0
 
-    def XX__str__(self):
-        l_ret = "LightingLight:: "
-        l_ret += "Name:{0:}, ".format(self.Name)
-        l_ret += "Family:{0:}, ".format(self.Family)
-        l_ret += "CurLevel:{0:} ".format(self.CurLevel)
-        return l_ret
-
     def reprJSON(self):
         """lighting_lights.
         """
-        print "lighting_lights.reprJSON(1)"
+        # print "lighting_lights.reprJSON(1)"
         l_ret = super(LightData, self).reprJSON()  # lighting_core data
         l_ret.update(dict(CurLevel = self.CurLevel))
         if self.Family == 'Insteon':
@@ -47,8 +40,7 @@ class LightData(lighting_core.CoreData):
                 InsteonAddress = Insteon_utils.int2dotted_hex(self.InsteonAddress),
                 DevCat = self.DevCat
             ))
-        print "lighting_lights.reprJSON(2) {0:}".format(l_ret)
-
+        # print "lighting_lights.reprJSON(2) {0:}".format(l_ret)
         return l_ret
 
 

@@ -36,31 +36,17 @@ class CoreData(object):
         self.Type = ''
         self.UUID = None
 
-    def XX__str__(self):
-        l_str = "Light:: "
-        l_str += "Name:{0:}, ".format(self.Name)
-        l_str += "Key:{0:}, ".format(self.Key)
-        l_str += "Active:{0:}, ".format(self.Active)
-        l_str += "Comment:{0:}, ".format(self.Comment)
-        l_str += "Coords:{0:}, ".format(self.Coords)
-        l_str += "Dimmable:{0:}, ".format(self.Dimmable)
-        l_str += "Family:{0:}, ".format(self.Family)
-        l_str += "RoomName:{0:}, ".format(self.RoomName)
-        l_str += "Type:{0:}, ".format(self.Type)
-        l_str += "UUID:{0:};".format(self.UUID)
-        return l_str
-
     def reprJSON(self):
         """lighting_core.
         """
-        print "lighting_core.reprJSON(1)"
+        # print "lighting_core.reprJSON(1)"
         l_ret = dict(
             Name = self.Name, Key = self.Key, Active = self.Active,
             Comment = self.Comment, Coords = self.Coords, Dimmable = self.Dimmable,
             Family = self.Family, RoomName = self.RoomName, Type = self.Type, UUID = self.UUID
             )
         # if self.Type == 'Controller':
-        print "lighting_core.reprJSON(2) {0:}".format(l_ret)
+        # print "lighting_core.reprJSON(2) {0:}".format(l_ret)
         return l_ret
 
 

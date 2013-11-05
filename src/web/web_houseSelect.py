@@ -34,7 +34,7 @@ class WebHouseData(object):
         self.House = house.HouseData()
 
     def reprJSON(self):
-        print "web_house.reprJSON(1)"
+        # print "web_house.reprJSON(1)"
         return dict(House = self.House)
 
 

@@ -12,6 +12,7 @@ import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from src.utils import xml_tools
+from src.utils.tools import PrintObject
 
 g_debug = 0
 
@@ -29,6 +30,8 @@ class SerialData(object):
     """
 
     def __init__(self):
+        from src.lights import lighting_controllers
+        lighting_controllers.ControllerData().__init__()
         self.InterfaceType = 'Serial'
         self.BaudRate = 9600
         self.ByteSize = 8
@@ -42,8 +45,11 @@ class SerialData(object):
     def reprJSON(self):
         """interface().
         """
-        print "interface.SerialData.reprJSON(1)"
-        l_ret = dict(
+        # PrintObject('interface.reprJSON(1) ', self)
+        # print "interface.SerialData.reprJSON(1)"
+        from src.lights import lighting_controllers
+        l_ret = lighting_controllers.ControllerData().reprJSON()
+        l_ret.update(dict(
             InterfaceType = self.InterfaceType,
             BaudRate = self.BaudRate,
             ByteSize = self.ByteSize,
@@ -53,25 +59,24 @@ class SerialData(object):
             StopBits = self.StopBits,
             Timeout = self.Timeout,
             XonXoff = self.XonXoff
-        )
-        print "interface.SerialData.reprJSON(2) {0:}".format(l_ret)
+        ))
+        # print "interface.SerialData.reprJSON(2) {0:}".format(l_ret)
         return l_ret
 
 
 class USBData(object):
 
     def __init__(self):
+        self.InterfaceType = 'USB'
         self.Product = 0
         self.Vendor = 0
-
-    def XX__str__(self):
-        l_ret = "USB:: Vendor:{0:#04X}, Product:{1:#04X}; ".format(self.Vendor, self.Product)
-        return l_ret
 
     def reprJSON(self):
         print "interface.USBData.reprJSON(1)"
         l_ret = dict(
-            Product = self.Product, Vendor = self.Vendor
+            InterfaceType = self.InterfaceType,
+            Product = self.Product,
+            Vendor = self.Vendor
         )
         print "interface.USBData.reprJSON(2) {0:}".format(l_ret)
         return l_ret
@@ -80,30 +85,22 @@ class USBData(object):
 class  EthernetData(object):
 
     def __init__(self):
+        self.InterfaceType = 'Ethernet'
         self.PortNumber = 0
         self.Protocol = 'TCP'
-
-    def XX__str__(self):
-        l_ret = "Ethernet:: port:{0:}, Protocol:{1:#04X}; ".format(self.PortNumber, self.Protocol)
-        return l_ret
 
     def reprJSON(self):
         print "interface.EthernetData.reprJSON(1)"
         l_ret = dict(
-            PortNumber = self.PortNumber, Protocol = self.Protocol
+            InterfaceType = self.InterfaceType,
+            PortNumber = self.PortNumber,
+            Protocol = self.Protocol
         )
         print "interface.EthernetData.reprJSON(2) {0:}".format(l_ret)
         return l_ret
 
 
 class ReadWriteConfig(xml_tools.ConfigTools):
-
-    def _shove_attrs(self, p_controller_obj, p_data):
-        """Put the information from the data object into the controller object
-        """
-        l_attrs = filter(lambda aname: not aname.startswith('__'), dir(p_data))
-        for l_attr in l_attrs:
-            setattr(p_controller_obj, l_attr, getattr(p_data, l_attr))
 
     def extract_xml(self, p_controller_obj, p_controller_xml):
         l_if = (p_controller_obj.Interface)
@@ -136,7 +133,7 @@ class ReadWriteConfig(xml_tools.ConfigTools):
         l_serial.RtsCts = self.get_bool_from_xml(l_xml, 'RtsCts')
         l_serial.XonXoff = self.get_bool_from_xml(l_xml, 'XonXoff')
         # Put the serial information into the controller object
-        self._shove_attrs(p_controller_obj, l_serial)
+        xml_tools.stuff_new_attrs(p_controller_obj, l_serial)
 
     def _write_serial_xml(self, p_xml, p_controller_obj):
         try:
@@ -159,7 +156,7 @@ class ReadWriteConfig(xml_tools.ConfigTools):
         l_xml = p_controller_xml
         l_usb.Product = self.get_int_from_xml(l_xml, 'Product')
         l_usb.Vendor = self.get_int_from_xml(l_xml, 'Vendor')
-        self._shove_attrs(p_controller_obj, l_usb)
+        xml_tools.stuff_new_attrs(p_controller_obj, l_usb)
 
     def _write_usb_xml(self, p_xml, p_controller_obj):
         if g_debug >= 1:
@@ -176,7 +173,7 @@ class ReadWriteConfig(xml_tools.ConfigTools):
         l_xml = p_controller_xml
         l_ethernet.PortNumber = self.get_int_from_xml(l_xml, 'PortNumber')
         l_ethernet.Protocol = self.get_int_from_xml(l_xml, 'Protocol')
-        self._shove_attrs(p_controller_obj, l_ethernet)
+        xml_tools.stuff_new_attrs(p_controller_obj, l_ethernet)
 
     def _write_ethernet_xml(self, p_xml, p_controller_obj):
         if g_debug >= 1:

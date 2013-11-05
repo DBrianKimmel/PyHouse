@@ -57,36 +57,23 @@ class HouseData(object):
         self.Rooms = {}
         self.Schedules = {}
 
-    def XX__str__(self):
-        l_ret = ' House:: '
-        l_ret += 'Name:{0:}, '.format(self.Name)
-        l_ret += "Active:{0:}, ".format(self.Active)
-        l_ret += "Key:{0:}, ".format(self.Key)
-        l_ret += "Lights:{0:}, ".format(len(self.Lights))
-        l_ret += "Controllers:{0:}, ".format(len(self.Controllers))
-        l_ret += "Buttons:{0:}, ".format(len(self.Buttons))
-        l_ret += "Rooms:{0:}, ".format(len(self.Rooms))
-        l_ret += "Schedules:{0:}, ".format(len(self.Schedules))
-        l_ret += 'UUID:{0:};'.format(self.UUID)
-        return l_ret
-
     def reprJSON(self):
         """House.
         """
-        print "house.reprJSON(1)"
+        # print "house.reprJSON(1)"
         l_ret = dict(
             Name = self.Name, Key = self.Key, Active = self.Active,
-            # Buttons = self.Buttons,
+            Buttons = self.Buttons,
             Controllers = self.Controllers,
-            # Lights = self.Lights,
-            # ocation = self.Location,
-            # Internet = self.Internet,
-            # Family = self.FamilyData,
-            # Rooms = self.Rooms,
-            # Schedules = self.Schedules,
+            Lights = self.Lights,
+            Location = self.Location,
+            Internet = self.Internet,
+            Family = self.FamilyData,
+            Rooms = self.Rooms,
+            Schedules = self.Schedules,
             UUID = self.UUID
             )
-        print "house.reprJSON(2) {0:}".format(l_ret)
+        # print "house.reprJSON(2) {0:}".format(l_ret)
         return l_ret
 
 

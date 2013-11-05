@@ -35,16 +35,8 @@ class RoomData(object):
         self.Type = 'Room'
         self.UUID = None
 
-    def __str__(self):
-        l_ret = ' Room:: '
-        l_ret += 'Name:{0:}, \t '.format(self.Name)
-        l_ret += "Size:{0:}, \t ".format(self.Size)
-        l_ret += "Corner:{0:}, \t".format(self.Corner)
-        l_ret += "UUID:{0:}\n".format(self.UUID)
-        return l_ret
-
     def reprJSON(self):
-        print "rooms.reprJSON(1)"
+        # print "rooms.reprJSON(1)"
         l_ret = dict(Name = self.Name, Key = self.Key, Active = self.Active,
                     Comment = self.Comment, Corner = self.Corner, Size = self.Size,
                     Type = self.Type, UUID = self.UUID)

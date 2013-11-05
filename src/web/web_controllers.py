@@ -45,8 +45,8 @@ class ControllersElement(athena.LiveElement):
         self.m_pyhouses_obj = p_workspace_obj.m_pyhouses_obj
         if g_debug >= 2:
             print "web_controllers.ControllersElement()"
-            #print "    self = ", self  #, vars(self)
-            #print "    workspace_obj = ", p_workspace_obj  #, vars(p_workspace_obj)
+            # print "    self = ", self  #, vars(self)
+            # print "    workspace_obj = ", p_workspace_obj  #, vars(p_workspace_obj)
 
     @athena.expose
     def getHouseData(self, p_index):
@@ -55,8 +55,8 @@ class ControllersElement(athena.LiveElement):
         l_ix = int(p_index)
         l_house = self.m_pyhouses_obj.HousesData[l_ix].HouseObject
         l_json = web_utils.JsonUnicode().encode_json(l_house)
-        PrintObject("web_controllers.getHouseData(1) - House", l_house.Controllers[0])
-        PrettyPrint("web_controllers.getHouseData(2) - JSON: ", l_json)
+        # PrintObject("web_controllers.getHouseData(1) - House", l_house.Controllers[0])
+        # PrettyPrint("web_controllers.getHouseData(2) - JSON: ", l_json)
         return unicode(l_json)
 
     @athena.expose

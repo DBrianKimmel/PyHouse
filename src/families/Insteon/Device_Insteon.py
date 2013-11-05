@@ -56,7 +56,7 @@ class InsteonData (lighting.LightData):
         """Device_Insteon.
         """
         # l_ret = super(InsteonData, self).reprJSON()  # The core data
-        print "Device_Insteon.reprJSON(1)"
+        # print "Device_Insteon.reprJSON(1)"
         p_ret.update(dict(
                 InsteonAddress = Insteon_utils.int2dotted_hex(self.InsteonAddress),
                 Controller = self.Controller,
@@ -67,19 +67,11 @@ class InsteonData (lighting.LightData):
                 Responder = self.Responder,
                 ProductKey = self.ProductKey
                 ))
-        print "Device_Insteon.reprJSON(2) {0:}".format(p_ret)
+        # print "Device_Insteon.reprJSON(2) {0:}".format(p_ret)
         return p_ret
 
 
 class CoreAPI(xml_tools.ConfigTools):
-
-    def _stuff_new_attrs(self, p_target, p_data):
-        """Put the NEW information from the data object into the target object
-        """
-        l_attrs = filter(lambda aname: not aname.startswith('__'), dir(p_data))
-        for l_attr in l_attrs:
-            if not hasattr(p_target, l_attr):
-                setattr(p_target, l_attr, getattr(p_data, l_attr))
 
     def extract_device_xml(self, p_entry_xml, p_device_obj):
         """
@@ -99,7 +91,7 @@ class CoreAPI(xml_tools.ConfigTools):
         l_insteon_obj.Master = p_entry_xml.findtext('Master')
         l_insteon_obj.ProductKey = p_entry_xml.findtext('ProductKey')
         l_insteon_obj.Responder = p_entry_xml.findtext('Responder')
-        self._stuff_new_attrs(p_device_obj, l_insteon_obj)
+        xml_tools.stuff_new_attrs(p_device_obj, l_insteon_obj)
         # if p_device_obj.Type == 'Controller':
         #    PrintObject('Device_Insteon.extract_device_xml(2) ', p_device_obj)
         return l_insteon_obj

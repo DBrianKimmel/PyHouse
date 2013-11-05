@@ -73,23 +73,8 @@ class ScheduleData(object):
         self.HouseIx = None
         self.DeleteFlag = False
 
-    def XX__str__(self):
-        l_ret = "Schedule:: "
-        l_ret += "Name:{0:}, ".format(self.Name)
-        l_ret += "LightName:{0:}, ".format(self.LightName)
-        l_ret += "Time:{0:}, ".format(self.Time)
-        l_ret += "Level:{0:}, ".format(self.Level)
-        l_ret += "Rate:{0:}, ".format(self.Rate)
-        l_ret += "Type:{0:}, ".format(self.Type)
-        l_ret += "Key:{0:}, ".format(self.Key)
-        l_ret += "Active:{0:}, ".format(self.Active)
-        l_ret += "Room:{0:}, ".format(self.RoomName)
-        l_ret += "UUID:{0:}".format(self.UUID)
-        l_ret += "; "
-        return l_ret
-
     def reprJSON(self):
-        print "schedule.reprJSON(1)"
+        # print "schedule.reprJSON(1)"
         l_ret = dict(Name = self.Name, Key = self.Key, Active = self.Active,
                     Level = self.Level,
                     LightName = self.LightName, LightNumber = self.LightNumber, Rate = self.Rate,

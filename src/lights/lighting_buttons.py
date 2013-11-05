@@ -20,12 +20,8 @@ class ButtonData(lighting_core.CoreData):
         super(ButtonData, self).__init__()
         self.Type = 'Button'
 
-    def __str__(self):
-        l_str = super(ButtonData, self).__str__()
-        return l_str
-
     def reprJSON(self):
-        print "buttons.reprJSON(1)"
+        # print "buttons.reprJSON(1)"
         l_ret = super(ButtonData, self).reprJSON()  # The core data
         return l_ret
 

@@ -35,21 +35,12 @@ class FamilyData(object):
         self.ModuleName = ''  # Device_Insteon
         self.PackageName = ''  # src.families.Insteon
 
-    def __str__(self):
-        l_ret = "FamilyData:: "
-        l_ret += "Name:{0:}, ".format(self.Name)
-        l_ret += "Key:{0:}, ".format(self.Key)
-        l_ret += "Active:{0:}, ".format(self.Active)
-        l_ret += "API:{0:}, ".format(self.API)
-        l_ret += "ModuleName:{0:}, ".format(self.ModuleName)
-        l_ret += "PackageName:{0:};".format(self.PackageName)
-        return l_ret
-
     def reprJSON(self):
-        print "family.reprJSON(1)"
+        # print "family.reprJSON(1)"
         l_ret = dict(Name = self.Name, Key = self.Key, Active = self.Active,
-                    ModuleName = self.ModuleName, PackageName = self.PackageName
-                    )
+            ModuleName = self.ModuleName,
+            PackageName = self.PackageName
+            )
         return l_ret
 
 

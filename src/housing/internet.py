@@ -54,16 +54,8 @@ class InternetData(object):
         self.ExternalUrl = None
         self.DynDns = {}
 
-    def __str__(self):
-        l_ret = "Internet:: "
-        l_ret += "IP:{0:}, ".format(self.ExternalIP)
-        l_ret += "Url:{0:}, ".format(self.ExternalUrl)
-        l_ret += "Delay:{0:}, ".format(self.ExternalDelay)
-        l_ret += "DynDns:{0:}".format(self.DynDns)
-        return l_ret
-
     def reprJSON(self):
-        print "internet.InternetData.preprJSON(1)"
+        # print "internet.InternetData.preprJSON(1)"
         return dict(Name = self.Name, Key = self.Key, Active = self.Active,
                     ExternalDelay = self.ExternalDelay,
                     ExternalIP = self.ExternalIP, ExternalUrl = self.ExternalUrl,
@@ -80,17 +72,8 @@ class DynDnsData(object):
         self.Interval = 0
         self.Url = None
 
-    def __str__(self):
-        l_ret = "DynDns:: "
-        l_ret += "Name:{0:}, ".format(self.Name)
-        l_ret += "Key:{0:}, ".format(self.Key)
-        l_ret += "Active:{0:}, ".format(self.Active)
-        l_ret += "Interval:{0:}, ".format(self.Interval)
-        l_ret += "Url:{0:};".format(self.Url)
-        return l_ret
-
     def reprJSON(self):
-        print "internet.DynDnsData.reprJSON(1)"
+        # print "internet.DynDnsData.reprJSON(1)"
         return dict(Name = self.Name, Key = self.Key, Active = self.Active,
                     Interval = self.Interval, Url = self.Url
                     )
