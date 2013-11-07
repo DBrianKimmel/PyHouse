@@ -18,6 +18,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
         lights.LightsWidget.upcall(self, "__init__", node);
     },
 
+	// ============================================================================
 	/**
      * Place the widget in the workspace.
 	 * 
@@ -35,10 +36,6 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		l_defer.addCallback(cb_widgetready);
 		return l_defer;
 	},
-
-	/**
-	 * routines for showing and hiding parts of the screen.
-	 */
 	function showWidget(self) {
 		//Divmod.debug('---', 'lights.showWidget() was called.');
 		self.node.style.display = 'block';
@@ -64,8 +61,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 
 	// ============================================================================
 	/**
-	 * This triggers getting the lights data from the server.
-	 * The server calls displayLightsButtons with the lights info.
+	 * This triggers getting the house/lights data from the server.
 	 */
 	function fetchHouseData(self) {
 		function cb_fetchHouseData(p_json) {
@@ -85,10 +81,37 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
         return false;
 	},
 
+	// ============================================================================
 	/**
-	 * Fill in the schedule entry screen with all of the data for this schedule.
+	 * Event handler for light selection buttons.
 	 * 
+	 * The user can click on a light button, the "Add" button or the "Back" button.
+	 * 
+	 * @param self is    <"Instance" of undefined.lights.LightsWidget>
+	 * @param p_node is  the node of the button that was clicked.
 	 */
+	function handleMenuOnClick(self, p_node) {
+		var l_ix = p_node.name;
+		var l_name = p_node.value;
+		globals.House.LightIx = l_ix;
+		globals.House.LightName = l_name;
+		if (l_ix <= 1000) {  // One of the Light buttons.
+			var l_obj = globals.House.HouseObj.Lights[l_ix];
+			globals.House.LightObj = l_obj;
+			self.showEntry();
+			self.hideButtons();
+			self.fillEntry(l_obj);
+		} else if (l_ix == 10001) {  // The "Add" button
+			self.showEntry();
+			self.hideButtons();
+			var l_ent = self.createEntry(globals.House.HouseIx);
+			self.fillEntry(l_ent);
+		} else if (l_ix == 10002) {  // The "Back" button
+			self.hideWidget();
+			var l_node = findWidgetByClass('HouseMenu');
+			l_node.showWidget();
+		}
+	},
 	function fillEntry(self, p_obj) {
 		//Divmod.debug('---', 'lights.fillEntry(1) was called.  Self:' + self);
 		console.log("lights.fillEntry() - Obj = %O", p_obj);
@@ -110,7 +133,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 	function fillInsteonEntry(self, p_obj) {
 		console.log("lights.fillInsteonEntry() - Obj = %O", p_obj);
 		self.nodeById('Row_i01').style.display = 'block';	
-		self.nodeById('Row_i02').style.display = 'block';	
+		self.nodeById('Row_i02').style.display = 'inline';	
 		self.nodeById('Row_i03').style.display = 'block';	
 		self.nodeById('Row_i04').style.display = 'block';	
 		self.nodeById('Row_i05').style.display = 'block';	
@@ -160,38 +183,6 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
     			Delete   : false
                 }
 		return l_Data;
-	},
-
-	// ============================================================================
-	/**
-	 * Event handler for light selection buttons.
-	 * 
-	 * The user can click on a light button, the "Add" button or the "Back" button.
-	 * 
-	 * @param self is    <"Instance" of undefined.lights.LightsWidget>
-	 * @param p_node is  the node of the button that was clicked.
-	 */
-	function handleMenuOnClick(self, p_node) {
-		var l_ix = p_node.name;
-		var l_name = p_node.value;
-		globals.House.LightIx = l_ix;
-		globals.House.LightName = l_name;
-		if (l_ix <= 1000) {  // One of the Light buttons.
-			var l_obj = globals.House.HouseObj.Lights[l_ix];
-			globals.House.LightObj = l_obj;
-			self.showEntry();
-			self.hideButtons();
-			self.fillEntry(l_obj);
-		} else if (l_ix == 10001) {  // The "Add" button
-			self.showEntry();
-			self.hideButtons();
-			var l_ent = self.createEntry(globals.House.HouseIx);
-			self.fillEntry(l_ent);
-		} else if (l_ix == 10002) {  // The "Back" button
-			self.hideWidget();
-			var l_node = findWidgetByClass('HouseMenu');
-			l_node.showWidget();
-		}
 	},
 	
 	// ============================================================================
