@@ -124,8 +124,8 @@ class API(LightingAPI):
                 continue
             if l_controller_obj.Active != True:
                 continue
-            l_controller_obj.HandlerAPI = UPB_Pim.API()
-            l_controller_obj.HandlerAPI.Start(p_house_obj, l_controller_obj)
+            l_controller_obj._HandlerAPI = UPB_Pim.API()
+            l_controller_obj._HandlerAPI.Start(p_house_obj, l_controller_obj)
         g_logger.info('Started.')
 
     def Stop(self, p_xml):
@@ -137,7 +137,7 @@ class API(LightingAPI):
                     continue
                 if l_controller_obj.Active != True:
                     continue
-                l_controller_obj.HandlerAPI.Stop(l_controller_obj)
+                l_controller_obj._HandlerAPI.Stop(l_controller_obj)
         except AttributeError:
             pass  # no controllers for house(House is being added)
         return p_xml
@@ -150,7 +150,7 @@ class API(LightingAPI):
                         continue
                     if l_controller_obj.Active != True:
                         continue
-                    l_controller_obj.HandlerAPI.change_light_setting(p_light_obj, p_level)
+                    l_controller_obj._HandlerAPI.change_light_setting(p_light_obj, p_level)
             except AttributeError:
                 pass  # no controllers for house(House is being added)
 

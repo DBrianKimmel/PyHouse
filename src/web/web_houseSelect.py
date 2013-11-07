@@ -76,7 +76,7 @@ class HouseSelectElement(athena.LiveElement):
         """
         l_ix = int(p_index)
         l_house = self.m_pyhouses_obj.HousesData[l_ix].HouseObject
-        if g_debug >= 0:
+        if g_debug >= 3:
             print "web_houseSelect.HouseSelectElement.getSelectedHouseData()", l_ix, l_house
         l_json = web_utils.JsonUnicode().encode_json(l_house)
         return unicode(l_json)

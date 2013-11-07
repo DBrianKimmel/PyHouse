@@ -29,7 +29,7 @@ class CoreData(object):
         self.Key = 0
         self.Active = False
         self.Comment = ''
-        self.Coords = ''
+        self.Coords = ''  # Room relative coords of the light switch
         self.Dimmable = False
         self.Family = ''
         self.RoomName = ''
@@ -39,12 +39,20 @@ class CoreData(object):
     def reprJSON(self):
         """lighting_core.
         """
-        # print "lighting_core.reprJSON(1)"
+        # print "lighting_core.reprJSON(1) ", self
         l_ret = dict(
-            Name = self.Name, Key = self.Key, Active = self.Active,
-            Comment = self.Comment, Coords = self.Coords, Dimmable = self.Dimmable,
-            Family = self.Family, RoomName = self.RoomName, Type = self.Type, UUID = self.UUID
-            )
+           Name = self.Name, Key = self.Key, Active = self.Active,
+           Comment = self.Comment, Coords = self.Coords, Dimmable = self.Dimmable,
+           Family = self.Family, RoomName = self.RoomName, Type = self.Type, UUID = self.UUID
+           )
+        l_attrs = filter(lambda aname: not aname.startswith('__'), dir(self))
+        for l_attr in l_attrs:
+            if not hasattr(l_ret, l_attr):
+                l_val = getattr(self, l_attr)
+                if not l_attr.startswith('_'):
+                    # setattr(l_ret, l_attr, l_val)
+                    l_ret[l_attr] = str(l_val)
+
         # if self.Type == 'Controller':
         # print "lighting_core.reprJSON(2) {0:}".format(l_ret)
         return l_ret

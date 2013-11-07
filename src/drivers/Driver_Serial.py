@@ -52,7 +52,7 @@ class SerialProtocol(Protocol):
     def dataReceived(self, p_data):
         if g_debug >= 5:
             print "Driver_Serial.dataReceived() - {0:}".format(PrintBytes(p_data))
-        self.m_controller_obj.Message += p_data
+        self.m_controller_obj._Message += p_data
 
 
 class SerialAPI(object):
@@ -79,11 +79,11 @@ class SerialAPI(object):
 
     def fetch_read_data(self, p_controller_obj):
         self.m_controller_obj = p_controller_obj
-        l_msg = self.m_controller_obj.Message
+        l_msg = self.m_controller_obj._Message
         if len(l_msg) > 0:
             if g_debug >= 1:
                 g_logger.debug("Fetch Read Data {0:}".format(PrintBytes(l_msg)))
-        p_controller_obj.Message = bytearray()
+        p_controller_obj._Message = bytearray()
         return l_msg
 
     def write_device(self, p_message):

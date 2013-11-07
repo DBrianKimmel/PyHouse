@@ -50,7 +50,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		self.nodeById('LightButtonsDiv').style.display = 'none';		
 	},
 	function showButtons(self) {
-		self.nodeById('LightButtonsDiv').style.display = 'block';	
+		self.nodeById('LightButtonsDiv')	
 	},
 	function hideEntry(self) {
 		self.nodeById('LightEntryDiv').style.display = 'none';		
@@ -91,7 +91,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 	 */
 	function fillEntry(self, p_obj) {
 		//Divmod.debug('---', 'lights.fillEntry(1) was called.  Self:' + self);
-		//console.log("lights.fillEntry() - Obj = %O", p_obj);
+		console.log("lights.fillEntry() - Obj = %O", p_obj);
         self.nodeById('NameDiv').innerHTML     = buildTextWidget('LightName', p_obj.Name);
         self.nodeById('KeyDiv').innerHTML      = buildTextWidget('LightKey', p_obj.Key, 'disabled');
 		self.nodeById('ActiveDiv').innerHTML   = buildTrueFalseWidget('LightActive', p_obj.Active);
@@ -102,8 +102,26 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		self.nodeById('RoomNameDiv').innerHTML = buildRoomSelectWidget('LightRoomName', p_obj.RoomName);
 		self.nodeById('TypeDiv').innerHTML     = buildTextWidget('LightType', p_obj.Type, 'disabled');
 		self.nodeById('UUIDDiv').innerHTML     = buildTextWidget('LightUUID', p_obj.UUID, 'disabled');
-		self.nodeById('AddressDiv').innerHTML  = buildTextWidget('LightAddress', p_obj.Address);
+		// Insteon info
+		self.fillInsteonEntry(p_obj);
+		//self.nodeById('AddressDiv').innerHTML  = buildTextWidget('LightAddress', p_obj.Address);
 		self.nodeById('LightEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick');
+	},
+	function fillInsteonEntry(self, p_obj) {
+		console.log("lights.fillInsteonEntry() - Obj = %O", p_obj);
+		self.nodeById('Row_i01').style.display = 'block';	
+		self.nodeById('Row_i02').style.display = 'block';	
+		self.nodeById('Row_i03').style.display = 'block';	
+		self.nodeById('Row_i04').style.display = 'block';	
+		self.nodeById('Row_i05').style.display = 'block';	
+		self.nodeById('Row_i06').style.display = 'block';	
+		self.nodeById('Row_i07').style.display = 'block';	
+		self.nodeById('i01Div').innerHTML  = buildTextWidget('LightAddress', p_obj.Address);
+	},
+	function fillUpbEntry(self, p_obj) {
+		self.nodeById('i01Div').innerHTML  = buildTextWidget('LightAddress', p_obj.Address);
+		self.nodeById('i02Div').innerHTML  = buildTextWidget('LightDevCat', p_obj.DevCat);
+		self.nodeById('i03Div').innerHTML  = buildTextWidget('LightGroupNumber', p_obj.GroupNumber);
 	},
 	function fetchEntry(self) {
 		//Divmod.debug('---', 'lights.fetchEntry() was called. ');

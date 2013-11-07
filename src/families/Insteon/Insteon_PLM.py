@@ -162,9 +162,9 @@ class CreateCommands(InsteonPlmUtility):
     """
 
     def queue_plm_command(self, p_command):
-        self.m_controller_obj.Queue.put(p_command)
+        self.m_controller_obj._Queue.put(p_command)
         if g_debug >= 1:
-            g_logger.debug("Insteon_PLM.queue_plm_command() - Q-Size:{0:}, Command:{1:}".format(self.m_controller_obj.Queue.qsize(), PrintBytes(p_command)))
+            g_logger.debug("Insteon_PLM.queue_plm_command() - Q-Size:{0:}, Command:{1:}".format(self.m_controller_obj._Queue.qsize(), PrintBytes(p_command)))
 
     def _queue_command(self, p_command):
         l_cmd = PLM_COMMANDS[p_command]
@@ -335,13 +335,13 @@ class DecodeResponses(CreateCommands):
         """The first byte is not legal, drop it and try again.
         """
         l_msg = "Insteon_PLM._drop_first_byte() Found a leading char {0:#x} - Rest. - {1:}".format(
-                p_controller_obj.Message[0], PrintBytes(p_controller_obj.Message))
+                p_controller_obj._Message[0], PrintBytes(p_controller_obj._Message))
         if g_debug >= 2:
             print l_msg
-        if p_controller_obj.Message[0] != NAK:
+        if p_controller_obj._Message[0] != NAK:
             g_logger.error(l_msg)
         try:
-            p_controller_obj.Message = p_controller_obj.Message[1:]
+            p_controller_obj._Message = p_controller_obj._Message[1:]
         except IndexError:
             pass
 
@@ -359,12 +359,12 @@ class DecodeResponses(CreateCommands):
         self.m_house_obj = p_house_obj
         if g_debug >= 5:
             print "Insteon_PLM._decode_message()"
-        while len(p_controller_obj.Message) >= 2:
-            l_stx = p_controller_obj.Message[0]
-            g_logger.debug("decode_message() - {0:}".format(PrintBytes(p_controller_obj.Message)))
+        while len(p_controller_obj._Message) >= 2:
+            l_stx = p_controller_obj._Message[0]
+            g_logger.debug("decode_message() - {0:}".format(PrintBytes(p_controller_obj._Message)))
             if l_stx == STX:
-                l_need_len = self._get_message_length(p_controller_obj.Message)
-                l_cur_len = len(p_controller_obj.Message)
+                l_need_len = self._get_message_length(p_controller_obj._Message)
+                l_cur_len = len(p_controller_obj._Message)
                 if l_cur_len >= l_need_len:
                     self._decode_dispatch(p_controller_obj)
                 else:
@@ -378,9 +378,9 @@ class DecodeResponses(CreateCommands):
 
         @return: a flag that is True for ACK and False for NAK/Invalid response.
         """
-        l_message = p_controller_obj.Message
+        l_message = p_controller_obj._Message
         l_ret = False
-        l_cmd = p_controller_obj.Message[1]
+        l_cmd = p_controller_obj._Message[1]
         if l_cmd == 0:
             g_logger.warning("Found a '0' record ->{0:}.".format(PrintBytes(l_message)))
             return l_ret
@@ -409,7 +409,7 @@ class DecodeResponses(CreateCommands):
         elif l_cmd == 0x6F: l_ret = self._decode_6F_record(p_controller_obj)
         elif l_cmd == 0x73: l_ret = self._decode_73_record(p_controller_obj)
         else:
-            g_logger.error("Unknown message {0:}, Cmd:{1:}".format(PrintBytes(p_controller_obj.Message), l_cmd))
+            g_logger.error("Unknown message {0:}, Cmd:{1:}".format(PrintBytes(p_controller_obj._Message), l_cmd))
             self.check_for_more_decoding(p_controller_obj, l_ret)
         return l_ret
 
@@ -430,7 +430,7 @@ class DecodeResponses(CreateCommands):
 
         See p 246 of developers guide.
         """
-        l_message = p_controller_obj.Message
+        l_message = p_controller_obj._Message
         l_obj_from = self.get_obj_from_message(l_message, 2)
         l_name_from = l_obj_from.Name
         l_obj_to = self.get_obj_from_message(l_message, 5)
@@ -513,7 +513,7 @@ class DecodeResponses(CreateCommands):
         """ Insteon Extended Message Received (25 bytes).
         See p 247 of developers guide.
         """
-        l_message = p_controller_obj.Message
+        l_message = p_controller_obj._Message
         l_obj_from = self.get_obj_from_message(l_message, 2)
         l_obj_to = self.get_obj_from_message(l_message, 5)
         l_flags = l_message[8]
@@ -587,7 +587,7 @@ class DecodeResponses(CreateCommands):
         """All-Link Record Response (10 bytes).
         See p 264 of developers guide.
         """
-        l_message = p_controller_obj.Message
+        l_message = p_controller_obj._Message
         l_obj = self.get_obj_from_message(l_message, 4)
         l_link_obj = Insteon_Link.LinkData()
         l_link_obj.Flag = l_flags = l_message[2]
@@ -618,7 +618,7 @@ class DecodeResponses(CreateCommands):
         """Get Insteon Modem Info (9 bytes).
         See p 273 of developers guide.
         """
-        l_message = p_controller_obj.Message
+        l_message = p_controller_obj._Message
         l_obj = self.get_obj_from_message(l_message, 2)
         l_devcat = l_message[5]
         l_devsubcat = l_message[6]
@@ -637,7 +637,7 @@ class DecodeResponses(CreateCommands):
         """Get Insteon Modem Info (6 bytes).
         See p 254 of developers guide.
         """
-        l_message = p_controller_obj.Message
+        l_message = p_controller_obj._Message
         l_grp = l_message[2]
         l_cmd1 = l_message[3]
         l_cmd2 = l_message[4]
@@ -660,7 +660,7 @@ class DecodeResponses(CreateCommands):
         This is an ack/nak of the command and generally is not very interesting.
         Another response MAY follow this message with further data.
         """
-        l_message = p_controller_obj.Message
+        l_message = p_controller_obj._Message
         l_obj = self.get_obj_from_message(l_message, 2)
         _l_msgflags = self._decode_message_flag(l_message[5])
         try:
@@ -679,7 +679,7 @@ class DecodeResponses(CreateCommands):
         """Start All-Link ACK response (5 bytes).
         See p 258 of developers guide.
         """
-        l_message = p_controller_obj.Message
+        l_message = p_controller_obj._Message
         l_grp = l_message[2]
         l_cmd1 = l_message[3]
         l_ack = l_message[4]
@@ -697,7 +697,7 @@ class DecodeResponses(CreateCommands):
         """Reset IM ACK response (3 bytes).
         See p 258 of developers guide.
         """
-        l_message = p_controller_obj.Message
+        l_message = p_controller_obj._Message
         l_ack = self._get_ack_nak(l_message[2])
         l_debug_msg = "Reset IM(PLM) {0:}".format(l_ack)
         g_logger.info("{0:}".format(l_debug_msg))
@@ -709,7 +709,7 @@ class DecodeResponses(CreateCommands):
         """Get first All-Link record response (3 bytes).
         See p 261 of developers guide.
         """
-        l_message = p_controller_obj.Message
+        l_message = p_controller_obj._Message
         if l_message[2] == ACK:
             l_ret = True
             self.queue_6A_command()
@@ -724,7 +724,7 @@ class DecodeResponses(CreateCommands):
         """Get next All-Link (3 bytes).
         See p 262 of developers guide.
         """
-        l_message = p_controller_obj.Message
+        l_message = p_controller_obj._Message
         if l_message[2] == ACK:
             l_ret = True
             self.queue_6A_command()
@@ -739,7 +739,7 @@ class DecodeResponses(CreateCommands):
         """Get set IM configuration (4 bytes).
         See p 271 of developers guide.
         """
-        l_message = p_controller_obj.Message
+        l_message = p_controller_obj._Message
         l_flag = l_message[2]
         l_ack = self._get_ack_nak(l_message[3])
         l_debug_msg = "from PLM:{0:} - ConfigFlag:{1:#02X}, {2:}".format(p_controller_obj.Name, l_flag, l_ack)
@@ -757,7 +757,7 @@ class DecodeResponses(CreateCommands):
         """All-Link manage Record Response (12 bytes).
         See p 267 of developers guide.
         """
-        l_message = p_controller_obj.Message
+        l_message = p_controller_obj._Message
         l_code = l_message[2]
         l_flags = l_message[3]
         l_flag_control = l_flags & 0x40
@@ -781,7 +781,7 @@ class DecodeResponses(CreateCommands):
         """Get the PLM response of 'get config' (6 bytes).
         See p 270 of developers guide.
         """
-        l_message = p_controller_obj.Message
+        l_message = p_controller_obj._Message
         try:
             l_5 = l_message[5]
         except IndexError:
@@ -802,14 +802,14 @@ class DecodeResponses(CreateCommands):
         @param p_ret: is the result to return.
         """
         l_ret = p_ret
-        l_cur_len = len(p_controller_obj.Message)
-        l_chop = self._get_message_length(p_controller_obj.Message)
+        l_cur_len = len(p_controller_obj._Message)
+        l_chop = self._get_message_length(p_controller_obj._Message)
         if l_cur_len >= l_chop:
-            p_controller_obj.Message = p_controller_obj.Message[l_chop:]
+            p_controller_obj._Message = p_controller_obj._Message[l_chop:]
             l_ret = self._decode_message(p_controller_obj, self.m_house_obj)
         else:
             l_msg = "check_for_more_decoding() trying to chop an incomplete message - {0:}".format(
-                    PrintBytes(p_controller_obj.Message))
+                    PrintBytes(p_controller_obj._Message))
             g_logger.error(l_msg)
         return l_ret
 
@@ -830,7 +830,7 @@ class PlmDriverProtocol(DecodeResponses):
         self.m_house_obj = p_house_obj
         if g_debug >= 1:
             g_logger.debug("Insteon_PLM.PlmDriverProtocol.__init__()")
-        p_controller_obj.Queue = Queue.Queue(300)
+        p_controller_obj._Queue = Queue.Queue(300)
         self.m_controller_obj = p_controller_obj
         self.dequeue_and_send()
         self.receive_loop()
@@ -848,12 +848,12 @@ class PlmDriverProtocol(DecodeResponses):
         """
         callLater(SEND_TIMEOUT, self.dequeue_and_send)
         try:
-            l_command = self.m_controller_obj.Queue.get(False)
+            l_command = self.m_controller_obj._Queue.get(False)
         except Queue.Empty:
             return
-        if self.m_controller_obj.DriverAPI != None:
+        if self.m_controller_obj._DriverAPI != None:
             self.m_controller_obj.Command1 = l_command
-            self.m_controller_obj.DriverAPI.write_device(l_command)
+            self.m_controller_obj._DriverAPI.write_device(l_command)
             if g_debug >= 6:
                 print "Insteon_PLM.dequeue_and_send() to {0:}, Message: {1:}".format(self.m_controller_obj.Name, PrintBytes(l_command))
                 g_logger.debug("Send to controller:{0:}, Message:{1:}".format(self.m_controller_obj.Name, PrintBytes(l_command)))
@@ -867,15 +867,15 @@ class PlmDriverProtocol(DecodeResponses):
         TODO: instead of fixed time, callback to here from driver when bytes are rx'ed.
         """
         callLater(RECEIVE_TIMEOUT, self.receive_loop)
-        if self.m_controller_obj.DriverAPI != None:
-            l_msg = self.m_controller_obj.DriverAPI.fetch_read_data(self.m_controller_obj)
-            self.m_controller_obj.Message += l_msg
-            if len(self.m_controller_obj.Message) < 2:
+        if self.m_controller_obj._DriverAPI != None:
+            l_msg = self.m_controller_obj._DriverAPI.fetch_read_data(self.m_controller_obj)
+            self.m_controller_obj._Message += l_msg
+            if len(self.m_controller_obj._Message) < 2:
                 return
             if g_debug >= 7:
-                print "Insteon_PLM.receive_loop() - Controller:{0:}".format(self.m_controller_obj.Name), PrintBytes(self.m_controller_obj.Message)
-            l_cur_len = len(self.m_controller_obj.Message)
-            l_response_len = self._get_message_length(self.m_controller_obj.Message)
+                print "Insteon_PLM.receive_loop() - Controller:{0:}".format(self.m_controller_obj.Name), PrintBytes(self.m_controller_obj._Message)
+            l_cur_len = len(self.m_controller_obj._Message)
+            l_response_len = self._get_message_length(self.m_controller_obj._Message)
             if l_cur_len >= l_response_len:
                 self._decode_message(self.m_controller_obj, self.m_house_obj)
 
@@ -1010,7 +1010,7 @@ class LightHandlerAPI(InsteonPlmAPI):
             # l_driver = Driver_USB_0403_6001.API()
             from src.drivers import Driver_USB
             l_driver = Driver_USB.API()
-        p_controller_obj.DriverAPI = l_driver
+        p_controller_obj._DriverAPI = l_driver
         l_ret = l_driver.Start(p_controller_obj)
         if g_debug >= 3:
             print "Insteon_PLM.start_controller_driver() - Just started a driver.  Name: {0:}".format(p_controller_obj.Name), l_ret
@@ -1019,8 +1019,8 @@ class LightHandlerAPI(InsteonPlmAPI):
     def stop_controller_driver(self, p_controller_obj):
         if g_debug >= 3:
             print "Insteon_PLM.stop__controller()"
-        if p_controller_obj.DriverAPI != None:
-            p_controller_obj.DriverAPI.Stop()
+        if p_controller_obj._DriverAPI != None:
+            p_controller_obj._DriverAPI.Stop()
 
     def set_plm_mode(self, p_controller_obj):
         """Set the PLM to a mode

@@ -58,15 +58,15 @@ class InsteonData (lighting.LightData):
         # l_ret = super(InsteonData, self).reprJSON()  # The core data
         # print "Device_Insteon.reprJSON(1)"
         p_ret.update(dict(
-                InsteonAddress = Insteon_utils.int2dotted_hex(self.InsteonAddress),
-                Controller = self.Controller,
-                DevCat = self.DevCat,
-                GroupList = self.GroupList,
-                GroupNumber = self.GroupNumber,
-                Master = self.Master,
-                Responder = self.Responder,
-                ProductKey = self.ProductKey
-                ))
+            InsteonAddress = Insteon_utils.int2dotted_hex(self.InsteonAddress),
+            Controller = self.Controller,
+            DevCat = self.DevCat,
+            GroupList = self.GroupList,
+            GroupNumber = self.GroupNumber,
+            Master = self.Master,
+            Responder = self.Responder,
+            ProductKey = self.ProductKey
+            ))
         # print "Device_Insteon.reprJSON(2) {0:}".format(p_ret)
         return p_ret
 
@@ -124,7 +124,7 @@ class LightingAPI(CoreAPI):
                         continue
                     if l_controller_obj.Active != True:
                         continue
-                    l_controller_obj.HandlerAPI.change_light_setting(p_light_obj, p_level)
+                    l_controller_obj._HandlerAPI.change_light_setting(p_light_obj, p_level)
             except AttributeError:
                 pass  # no controllers for house(House is being added)
 
@@ -163,8 +163,8 @@ class API(LightingAPI):
                 continue
             else:
                 from src.families.Insteon import Insteon_PLM
-                l_controller_obj.HandlerAPI = Insteon_PLM.API(p_house_obj)
-                if l_controller_obj.HandlerAPI.Start(l_controller_obj):
+                l_controller_obj._HandlerAPI = Insteon_PLM.API(p_house_obj)
+                if l_controller_obj._HandlerAPI.Start(l_controller_obj):
                     l_count += 1
                     # g_logger('Controller {0:} started.'.format(l_controller_obj.Name))
                 else:
@@ -186,7 +186,7 @@ class API(LightingAPI):
                     continue
                 if l_controller_obj.Active != True:
                     continue
-                l_controller_obj.HandlerAPI.Stop(l_controller_obj)
+                l_controller_obj._HandlerAPI.Stop(l_controller_obj)
         except AttributeError:
             pass  # no controllers for house(House is being added)
         return p_xml

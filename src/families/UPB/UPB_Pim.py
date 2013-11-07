@@ -340,9 +340,9 @@ class PimDriverInterface(DecodeResponses):
                 continue
             if l_controller_obj.Active != True:
                 continue
-            if l_controller_obj.DriverAPI != None:
+            if l_controller_obj._DriverAPI != None:
                 l_send = self._convert_pim(l_command)
-                l_controller_obj.DriverAPI.write_device(l_send)
+                l_controller_obj._DriverAPI.write_device(l_send)
                 if g_debug > 1:
                     print "UPB_PIM.dequeue_and_send() to {0:}, Message: {1:}".format(l_controller_obj.Name, PrintBytes(l_command))
                 if g_debug > 0:
@@ -357,8 +357,8 @@ class PimDriverInterface(DecodeResponses):
                 continue
             if l_controller_obj.Active != True:
                 continue
-            if l_controller_obj.DriverAPI != None:
-                l_msg = l_controller_obj.DriverAPI.fetch_read_data(l_controller_obj)
+            if l_controller_obj._DriverAPI != None:
+                l_msg = l_controller_obj._DriverAPI.fetch_read_data(l_controller_obj)
                 if g_debug > 6:
                     print "UPB_PIM.receive_loop() from {0:}, Message: {1:}".format(l_controller_obj.Name, PrintBytes(l_msg))
                 self.decode_response(l_msg)
@@ -434,8 +434,8 @@ class UpbPimAPI(LightingAPI):
                 l_driver = Driver_USB_17DD_5500.API()
             # TODO: Detect any other controllers here and load them
             l_driver.Start(l_controller_obj)
-            p_house_obj.Controllers[l_key].DriverAPI = l_driver
-            l_pim.DriverAPI = l_driver
+            p_house_obj.Controllers[l_key]._DriverAPI = l_driver
+            l_pim._DriverAPI = l_driver
             g_pim[l_count] = l_pim
             self.initialize_one_controller(l_driver, l_controller_obj)
             l_count += 1

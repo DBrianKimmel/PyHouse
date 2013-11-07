@@ -115,11 +115,11 @@ class UsbDriverAPI(UsbDeviceData):
             return None
         if g_debug >= 8:
             print "  Device =", l_device.__dict__
-        p_controller_obj.Data.Device = l_device
-        p_controller_obj.Data.num_configs = l_device.bNumConfigurations
-        if p_controller_obj.Data.Device.bDeviceClass == 3:
-            p_controller_obj.Data.hid_device = True
-        p_controller_obj.Data.configs = {}
+        p_controller_obj._Data.Device = l_device
+        p_controller_obj._Data.num_configs = l_device.bNumConfigurations
+        if p_controller_obj._Data.Device.bDeviceClass == 3:
+            p_controller_obj._Data.hid_device = True
+        p_controller_obj._Data.configs = {}
         return l_device
 
     def _setup_detach_kernel(self, p_controller_obj):
@@ -127,14 +127,14 @@ class UsbDriverAPI(UsbDeviceData):
         On a restart of PyHouse we expect no such kernel driver to exist.
         """
         try:
-            if not p_controller_obj.Data.Device.is_kernel_driver_active(0):
+            if not p_controller_obj._Data.Device.is_kernel_driver_active(0):
                 return
         except usb.USBError:
             pass
         if g_debug >= 2:
             print "Driver_USB._setup_detach_kernel()"
         try:
-            p_controller_obj.Data.Device.detach_kernel_driver(0)
+            p_controller_obj._Data.Device.detach_kernel_driver(0)
         except Exception, e:
             print "Driver_USB - Error in detaching_kernel_driver ", sys.exc_info()[0], e
 
@@ -148,45 +148,45 @@ class UsbDriverAPI(UsbDeviceData):
         """
         # TODO don't do if not needed
         if g_debug >= 2:
-            print "Driver_USB._setup_configurations() - Name: {0:},   configuration count: {1:}".format(p_controller_obj.Name, p_controller_obj.Data.num_configs)
-        for l_ix in range(p_controller_obj.Data.Device.bNumConfigurations):
+            print "Driver_USB._setup_configurations() - Name: {0:},   configuration count: {1:}".format(p_controller_obj.Name, p_controller_obj._Data.num_configs)
+        for l_ix in range(p_controller_obj._Data.Device.bNumConfigurations):
             if g_debug >= 2:
                 print " -- get config #", l_ix
             # p_usb.configs[l_ix] = p_usb.Device.Configuration(l_ix)
             pass
-        p_controller_obj.Data.Device.set_configuration()
-        p_controller_obj.Data.configs = p_controller_obj.Data.Device.get_active_configuration()
+        p_controller_obj._Data.Device.set_configuration()
+        p_controller_obj._Data.configs = p_controller_obj.Data.Device.get_active_configuration()
         if g_debug >= 8:
-            print "  Config:", p_controller_obj.Data.configs.__dict__
-        p_controller_obj.Data.num_interfaces = p_controller_obj.Data.configs.bNumInterfaces
-        p_controller_obj.Data.interfaces = {}
+            print "  Config:", p_controller_obj._Data.configs.__dict__
+        p_controller_obj.Data.num_interfaces = p_controller_obj._Data.configs.bNumInterfaces
+        p_controller_obj._Data.interfaces = {}
 
     def _setup_interfaces(self, p_controller_obj):
         """
         """
         if g_debug >= 2:
-            print "Driver_USB._setup_interfaces() - Name: {0:},   interface count: {1:}".format(p_controller_obj.Name, p_controller_obj.Data.num_interfaces)
-        l_interface_number = p_controller_obj.Data.configs[(0, 0)].bInterfaceNumber
-        l_interface_class = p_controller_obj.Data.configs[(0, 0)].bInterfaceClass
+            print "Driver_USB._setup_interfaces() - Name: {0:},   interface count: {1:}".format(p_controller_obj.Name, p_controller_obj._Data.num_interfaces)
+        l_interface_number = p_controller_obj._Data.configs[(0, 0)].bInterfaceNumber
+        l_interface_class = p_controller_obj._Data.configs[(0, 0)].bInterfaceClass
         if l_interface_class == 3:
-            p_controller_obj.Data.hid_device = True
+            p_controller_obj._Data.hid_device = True
         if g_debug >= 6:
             print "  Interface_number: {0:}, Class: {1:}".format(l_interface_number, l_interface_class)
         try:
-            l_alternate_setting = usb.control.get_interface(p_controller_obj.Data.Device, l_interface_number)
+            l_alternate_setting = usb.control.get_interface(p_controller_obj._Data.Device, l_interface_number)
             if g_debug >= 6:
                 print "  Alternate_setting:", l_alternate_setting
         except Exception, e:
             print "   -- Error in alt setting ", sys.exc_info()[0], e
             l_alternate_setting = 0
         l_interface = usb.util.find_descriptor(
-            p_controller_obj.Data.configs, bInterfaceNumber = l_interface_number,
+            p_controller_obj._Data.configs, bInterfaceNumber = l_interface_number,
             bAlternateSetting = l_alternate_setting)
         if g_debug >= 8:
             print "  Interface:", l_interface.__dict__
-        p_controller_obj.Data.num_endpoints = l_interface.bNumEndpoints
-        p_controller_obj.Data.interface_num = l_interface.bInterfaceNumber
-        p_controller_obj.Data.interface = l_interface
+        p_controller_obj._Data.num_endpoints = l_interface.bNumEndpoints
+        p_controller_obj._Data.interface_num = l_interface.bInterfaceNumber
+        p_controller_obj._Data.interface = l_interface
         # return l_interface
 
     def _setup_endpoints(self, p_controller_obj):
@@ -194,33 +194,33 @@ class UsbDriverAPI(UsbDeviceData):
         No use in be too general if no device exists that is more complex.
         """
         if g_debug >= 2:
-            print "Driver_USB._setup_endpoints() - Name: {0:},  endpoint count: {1:}".format(p_controller_obj.Name, p_controller_obj.Data.num_endpoints)
-        p_controller_obj.Data.ep_out = usb.util.find_descriptor(
-            p_controller_obj.Data.interface, custom_match = lambda e: usb.util.endpoint_direction(e.bEndpointAddress) == usb.util.ENDPOINT_OUT
+            print "Driver_USB._setup_endpoints() - Name: {0:},  endpoint count: {1:}".format(p_controller_obj.Name, p_controller_obj._Data.num_endpoints)
+        p_controller_obj._Data.ep_out = usb.util.find_descriptor(
+            p_controller_obj._Data.interface, custom_match = lambda e: usb.util.endpoint_direction(e.bEndpointAddress) == usb.util.ENDPOINT_OUT
         )
         if g_debug >= 8:
-            print "  Ep_Out:", p_controller_obj.Data.ep_out.__dict__
-        p_controller_obj.Data.epo_addr = p_controller_obj.Data.ep_out.bEndpointAddress
-        p_controller_obj.Data.epo_type = p_controller_obj.Data.ep_out.bmAttributes & 0x03
-        p_controller_obj.Data.epo_packet_size = p_controller_obj.Data.ep_out.wMaxPacketSize
+            print "  Ep_Out:", p_controller_obj._Data.ep_out.__dict__
+        p_controller_obj._Data.epo_addr = p_controller_obj._Data.ep_out.bEndpointAddress
+        p_controller_obj._Data.epo_type = p_controller_obj._Data.ep_out.bmAttributes & 0x03
+        p_controller_obj._Data.epo_packet_size = p_controller_obj._Data.ep_out.wMaxPacketSize
 
-        p_controller_obj.Data.ep_in = usb.util.find_descriptor(
-            p_controller_obj.Data.interface, custom_match = lambda e: usb.util.endpoint_direction(e.bEndpointAddress) == usb.util.ENDPOINT_IN
+        p_controller_obj._Data.ep_in = usb.util.find_descriptor(
+            p_controller_obj._Data.interface, custom_match = lambda e: usb.util.endpoint_direction(e.bEndpointAddress) == usb.util.ENDPOINT_IN
         )
         if g_debug >= 8:
-            print "  Ep_In: ", p_controller_obj.Data.ep_in.__dict__
-        p_controller_obj.Data.epi_addr = p_controller_obj.Data.ep_in.bEndpointAddress
-        p_controller_obj.Data.epi_type = p_controller_obj.Data.ep_in.bmAttributes & 0x03
-        p_controller_obj.Data.epi_packet_size = p_controller_obj.Data.ep_in.wMaxPacketSize
+            print "  Ep_In: ", p_controller_obj._Data.ep_in.__dict__
+        p_controller_obj._Data.epi_addr = p_controller_obj._Data.ep_in.bEndpointAddress
+        p_controller_obj._Data.epi_type = p_controller_obj._Data.ep_in.bmAttributes & 0x03
+        p_controller_obj._Data.epi_packet_size = p_controller_obj._Data.ep_in.wMaxPacketSize
 
     def open_device(self, p_controller_obj):
         if g_debug >= 2:
             print "Driver_USB.open_device() - Name:{0:}".format(p_controller_obj.Name)
-        p_controller_obj.Message = bytearray()
+        p_controller_obj._Message = bytearray()
         g_logger.info(" Initializing USB port - {0:#04X}:{1:#04X} - {2:} on port {3:}".format(
             p_controller_obj.Vendor, p_controller_obj.Product, p_controller_obj.Name, p_controller_obj.Port))
-        p_controller_obj.Data.Device = self._setup_find_device(p_controller_obj)
-        if p_controller_obj.Data.Device == None:
+        p_controller_obj._Data.Device = self._setup_find_device(p_controller_obj)
+        if p_controller_obj._Data.Device == None:
             return None
         self._setup_detach_kernel(p_controller_obj)
         self._setup_configurations(p_controller_obj)
@@ -229,22 +229,22 @@ class UsbDriverAPI(UsbDeviceData):
         return p_controller_obj.Active
 
     def close_device(self, p_controller_obj):
-        p_controller_obj.Data.Device.reset()
+        p_controller_obj._Data.Device.reset()
 
     def read_device(self, p_controller_obj):
         """
         """
         callLater(RECEIVE_TIMEOUT, lambda x = p_controller_obj: self.read_device(x))
         if g_debug >= 6:
-            print "Driver_USB.read_device_1() A - Name:{0:}, Endpoint:{1:#02x}, Size:{2:}".format(p_controller_obj.Name, p_controller_obj.Data.epi_addr, p_controller_obj.Data.epi_packet_size)
+            print "Driver_USB.read_device_1() A - Name:{0:}, Endpoint:{1:#02x}, Size:{2:}".format(p_controller_obj.Name, p_controller_obj._Data.epi_addr, p_controller_obj._Data.epi_packet_size)
         try:
-            l_msg = p_controller_obj.Data.Device.read(p_controller_obj.Data.epi_addr, p_controller_obj.Data.epi_packet_size, timeout = 100)
+            l_msg = p_controller_obj._Data.Device.read(p_controller_obj._Data.epi_addr, p_controller_obj._Data.epi_packet_size, timeout = 100)
             l_len = len(l_msg)
             if l_len > 0:
                 if g_debug >= 5:
                     print "Driver_USB.read_device_1() B - Len:{0:}, Msg:{1:}".format(l_len, PrintBytes(l_msg))
                 for l_x in range(l_len):
-                    p_controller_obj.Message.append(l_msg[l_x])
+                    p_controller_obj._Message.append(l_msg[l_x])
             elif g_debug >= 6:
                 print "Driver_USB.read_device_1() C - len was 0 ", l_msg
         except usb.USBError, e:
@@ -256,11 +256,11 @@ class UsbDriverAPI(UsbDeviceData):
             l_len = 0
             # break
         if g_debug >= 6:
-            print "Driver_USB.read_device_1() - exit Message:{0:}".format(PrintBytes(p_controller_obj.Message))
+            print "Driver_USB.read_device_1() - exit Message:{0:}".format(PrintBytes(p_controller_obj._Message))
 
     def fetch_read_data(self, p_controller_obj):
-        l_ret = p_controller_obj.Message
-        p_controller_obj.Message = bytearray()
+        l_ret = p_controller_obj._Message
+        p_controller_obj._Message = bytearray()
         if g_debug >= 3:
             print "Driver_USB.fetch_read_data() - Msg:{0:}".format(PrintBytes(l_ret))
         return l_ret
@@ -274,8 +274,8 @@ class UsbDriverAPI(UsbDeviceData):
         @return: the number of bytes written
         """
         if g_debug >= 4:
-            print "Driver_USB.write_device() - {0:}".format(PrintBytes(p_message)), self.m_controller_obj.Data.epi_type
-        if self.m_controller_obj.Data.epi_type == 0:
+            print "Driver_USB.write_device() - {0:}".format(PrintBytes(p_message)), self.m_controller_obj._Data.epi_type
+        if self.m_controller_obj._Data.epi_type == 0:
             self._write_control_device(p_message)
         else:
             self._write_bis_device(p_message)
@@ -285,9 +285,9 @@ class UsbDriverAPI(UsbDeviceData):
         """
         l_message = p_message
         if g_debug >= 4:
-            print "Driver_USB._write_bis_device() - Ep_out: {0:#04X}, - {1:}".format(self.m_controller_obj.Data.epo_addr, PrintBytes(l_message))
+            print "Driver_USB._write_bis_device() - Ep_out: {0:#04X}, - {1:}".format(self.m_controller_obj._Data.epo_addr, PrintBytes(l_message))
         try:
-            l_len = self.m_controller_obj.Data.Device.write(self.m_controller_obj.Data.epo_addr, l_message)
+            l_len = self.m_controller_obj._Data.Device.write(self.m_controller_obj._Data.epo_addr, l_message)
         except Exception, e:
             print "Driver_USB._write_bis_device() - Error in writing to USB device ", sys.exc_info()[0], e
             l_len = 0
@@ -295,8 +295,8 @@ class UsbDriverAPI(UsbDeviceData):
 
     def _write_control_device(self, p_message):
         if g_debug >= 4:
-            print "Driver_USB._write_control_device() ", self.m_controller_obj.Data.Device
-        l_len = self.m_controller_obj.Data.Device.write(0, p_message, timeout = 100)
+            print "Driver_USB._write_control_device() ", self.m_controller_obj._Data.Device
+        l_len = self.m_controller_obj._Data.Device.write(0, p_message, timeout = 100)
         return l_len
 
 class API(UsbDriverAPI):
@@ -315,7 +315,7 @@ class API(UsbDriverAPI):
         self.m_controller_obj = p_controller_obj
         if g_debug >= 1:
             print "Driver_USB.Start() - Name:{0:}".format(p_controller_obj.Name)
-        p_controller_obj.Data = self.m_usb = UsbDeviceData()
+        p_controller_obj._Data = self.m_usb = UsbDeviceData()
         if self.open_device(p_controller_obj) == True:
             self.read_device(p_controller_obj)
             if g_debug >= 1:

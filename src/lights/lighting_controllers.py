@@ -34,14 +34,14 @@ class ControllerData(lighting_core.CoreData):
         self.Interface = ''
         self.Port = ''
         #
-        self.DriverAPI = None  # Interface API() - Serial, USB etc.
-        self.HandlerAPI = None  # PLM, PIM, etc (family controller device handler) API() address
+        self._DriverAPI = None  # Interface API() - Serial, USB etc.
+        self._HandlerAPI = None  # PLM, PIM, etc (family controller device handler) API() address
         #
-        self.Data = None  # Interface specific data
-        self.Message = ''
-        self.Queue = None
+        self._Data = None  # Interface specific data
+        self._Message = ''
+        self._Queue = None
 
-    def reprJSON(self):
+    def XreprJSON(self):
         '''lighting_controllers.
         '''
         # print "lighting_controllers.reprJSON(1)"
