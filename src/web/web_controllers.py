@@ -14,10 +14,10 @@ from nevow import athena
 from src.web import web_utils
 from src.drivers import interface
 from src.lights import lighting_controllers
-from src.families.Insteon import Insteon_utils
+# from src.families.Insteon import Insteon_utils
 #
-from src.utils.tools import PrintObject
-from src.utils.tools import PrettyPrint
+# from src.utils.tools import PrintObject
+# from src.utils.tools import PrettyPrint
 
 
 # Handy helper for finding external resources nearby.
@@ -40,7 +40,7 @@ class ControllersElement(athena.LiveElement):
     docFactory = loaders.xmlfile(os.path.join(templatepath, 'controllersElement.html'))
     jsClass = u'controllers.ControllersWidget'
 
-    def __init__(self, p_workspace_obj, p_params):
+    def __init__(self, p_workspace_obj, _p_params):
         self.m_workspace_obj = p_workspace_obj
         self.m_pyhouses_obj = p_workspace_obj.m_pyhouses_obj
         if g_debug >= 2:
@@ -55,8 +55,6 @@ class ControllersElement(athena.LiveElement):
         l_ix = int(p_index)
         l_house = self.m_pyhouses_obj.HousesData[l_ix].HouseObject
         l_json = web_utils.JsonUnicode().encode_json(l_house)
-        # PrintObject("web_controllers.getHouseData(1) - House", l_house.Controllers[0])
-        # PrettyPrint("web_controllers.getHouseData(2) - JSON: ", l_json)
         return unicode(l_json)
 
     @athena.expose
@@ -65,8 +63,8 @@ class ControllersElement(athena.LiveElement):
         """
         l_interfaces = interface.VALID_INTERFACES
         l_obj = {}
-        for l_int in l_interfaces:
-            l_name = l_int + 'Data'
+        for l_interface in l_interfaces:
+            l_name = l_interface + 'Data'
         l_json = web_utils.JsonUnicode().encode_json(l_obj)
         if g_debug >= 3:
             print "web_controllers.ControllersElement.getInterfaceData() - JSON:", l_json
@@ -108,10 +106,14 @@ class ControllersElement(athena.LiveElement):
         l_obj.UUID = l_json['UUID']
         l_obj.Interface = l_json['Interface']
         l_obj.Port = l_json['Port']
-        try:
-            l_obj.InsteonAddress = Insteon_utils.dotted_hex2int(l_json['InsteonAddress'])
-        except ValueError:
-            l_obj.InsteonAddress = 0
+        if l_obj.Family == 'Insteon':
+            l_obj.InsteonAddress = web_utils.dotted_hex2int(l_json['InsteonAddress'])
+            l_obj.DevCat = l_json['DevCat']
+            l_obj.GroupNumber = l_json['GroupNumber']
+            l_obj.GroupList = l_json['GroupList']
+            l_obj.Master = l_json['Master']
+            l_obj.Responder = l_json['Responder']
+            l_obj.ProductKey = l_json['ProductKey']
         self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Controllers[l_controller_ix] = l_obj
         self.m_pyhouses_obj.API.UpdateXml()
 

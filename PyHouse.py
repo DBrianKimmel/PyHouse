@@ -206,12 +206,13 @@ class API(Utilities):
         self.import_config_info(self.m_pyhouses_obj)
         self.m_pyhouses_obj.LogsAPI = log.API()
         self.m_pyhouses_obj.LogsData = self.m_pyhouses_obj.LogsAPI.Start(self.m_pyhouses_obj)
-        g_logger.info("Initializing PyHouse.\n")
+        g_logger.info("Initializing PyHouse.\n\n")
         self.m_pyhouses_obj.HousesAPI = houses.API()
         self.m_pyhouses_obj.WebAPI = web_server.API()
         callWhenRunning(self.Start)
         g_logger.info("Initialized.\n")
         reactorrun()  # reactor never returns so must be last - Event loop will now run
+        g_logger.info("PyHouse says Bye Now.\n")
         raise SystemExit, "PyHouse says Bye Now."
 
     def Start(self):
@@ -220,8 +221,6 @@ class API(Utilities):
         self.m_pyhouses_obj.HousesData = self.m_pyhouses_obj.HousesAPI.Start(self.m_pyhouses_obj)
         self.m_pyhouses_obj.WebData = self.m_pyhouses_obj.WebAPI.Start(self.m_pyhouses_obj)
         g_logger.info("Started.\n")
-        if g_debug >= 2:
-            print "    PyHouse all is started and running now.\n"
 
     def Stop(self):
         """Stop various modules to prepare for restarting them.

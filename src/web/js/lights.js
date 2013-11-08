@@ -126,19 +126,20 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		self.nodeById('RoomNameDiv').innerHTML = buildRoomSelectWidget('LightRoomName', p_obj.RoomName);
 		self.nodeById('TypeDiv').innerHTML     = buildTextWidget('LightType', p_obj.Type, 'disabled');
 		self.nodeById('UUIDDiv').innerHTML     = buildTextWidget('LightUUID', p_obj.UUID, 'disabled');
-		// Insteon info
-		self.fillInsteonEntry(p_obj);
+        if (p_obj['Family'] == 'Insteon') {  // Insteon info
+			self.fillInsteonEntry(p_obj);
+        }
 		self.nodeById('LightEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick');
 	},
 	function fillInsteonEntry(self, p_obj) {
 		//console.log("lights.fillInsteonEntry() - Obj = %O", p_obj);
-		self.nodeById('Row_i01').style.display = 'inline';	
-		self.nodeById('Row_i02').style.display = 'block';	
-		self.nodeById('Row_i03').style.display = 'inline';	
-		self.nodeById('Row_i04').style.display = 'block';	
-		self.nodeById('Row_i05').style.display = 'block';	
-		self.nodeById('Row_i06').style.display = 'block';	
-		self.nodeById('Row_i07').style.display = 'block';	
+		//self.nodeById('Row_i01').style.display = 'inline';	
+		//self.nodeById('Row_i02').style.display = 'block';	
+		//self.nodeById('Row_i03').style.display = 'inline';	
+		//self.nodeById('Row_i04').style.display = 'block';	
+		//self.nodeById('Row_i05').style.display = 'block';	
+		//self.nodeById('Row_i06').style.display = 'block';	
+		//self.nodeById('Row_i07').style.display = 'block';	
 		self.nodeById('i01Div').innerHTML  = buildTextWidget('LightAddress', p_obj.InsteonAddress);
 		self.nodeById('i02Div').innerHTML  = buildTextWidget('LightDevCat', p_obj.DevCat);
 		self.nodeById('i03Div').innerHTML  = buildTextWidget('LightGroupNumber', p_obj.GroupNumber);
@@ -151,7 +152,6 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		self.nodeById('i01Div').innerHTML  = buildTextWidget('LightAddress', p_obj.Address);
 	},
 	function fetchEntry(self) {
-		//Divmod.debug('---', 'lights.fetchEntry() was called. ');
         var l_data = {
             Name     : fetchTextWidget('LightName'),
             Key      : fetchTextWidget('LightKey'),

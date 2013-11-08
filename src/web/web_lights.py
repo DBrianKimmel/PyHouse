@@ -83,7 +83,7 @@ class LightsElement(athena.LiveElement):
             g_logger.warning('Creating a new light for house {0:} and light {1:}'.format(l_house_ix, l_light_ix))
             l_obj = lighting_lights.LightData()
         #
-        print "web_lights.saveLightData(1) ", l_json
+        # print "web_lights.saveLightData(1) ", l_json
         l_obj.Name = l_json['Name']
         l_obj.Active = l_json['Active']
         l_obj.Key = int(l_json['Key'])
@@ -97,8 +97,8 @@ class LightsElement(athena.LiveElement):
         if len(l_obj.UUID) < 8:
             l_obj.UUID = str(uuid.uuid1())
         if l_obj.Family == 'Insteon':
-            print "saving insteon light..", l_json
-            l_obj.InsteonAddress = l_json['InsteonAddress']
+            # print "saving insteon light..", l_json
+            l_obj.InsteonAddress = web_utils.dotted_hex2int(l_json['InsteonAddress'])
             l_obj.DevCat = l_json['DevCat']
             l_obj.GroupNumber = l_json['GroupNumber']
             l_obj.GroupList = l_json['GroupList']

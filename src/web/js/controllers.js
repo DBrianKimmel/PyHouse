@@ -119,8 +119,6 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
         }
     },
     function fillEntry(self, p_obj) {
-        //Divmod.debug('---', 'controllers.fillEntry() was called. ');
-		//console.log("controllers.fillEntry - Obj %O", p_obj);
         self.nodeById('NameDiv').innerHTML           = buildTextWidget('ControllerName', p_obj.Name);
         self.nodeById('KeyDiv').innerHTML            = buildTextWidget('ControllerKey', p_obj.Key, 'disabled');
 		self.nodeById('ActiveDiv').innerHTML         = buildTrueFalseWidget('ControllerActive', p_obj.Active);
@@ -133,11 +131,21 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 		self.nodeById('UUIDDiv').innerHTML           = buildTextWidget('ControllerUUID', p_obj.UUID, 'disabled');
 		self.nodeById('InterfaceDiv').innerHTML      = buildInterfaceSelectWidget('ControllerInterface', p_obj.Interface);
 		self.nodeById('PortDiv').innerHTML           = buildTextWidget('ControllerPort', p_obj.Port);
-		self.nodeById('InsteonAddressDiv').innerHTML = buildTextWidget('ControllerInsteonAddress', p_obj.InsteonAddress);
+        if (p_obj['Family'] == 'Insteon') {  // Insteon info
+			self.fillInsteonEntry(p_obj);
+        }
 		self.nodeById('ControllerEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick');
     },
+	function fillInsteonEntry(self, p_obj) {
+		self.nodeById('i01Div').innerHTML  = buildTextWidget('LightAddress', p_obj.InsteonAddress);
+		self.nodeById('i02Div').innerHTML  = buildTextWidget('LightDevCat', p_obj.DevCat);
+		self.nodeById('i03Div').innerHTML  = buildTextWidget('LightGroupNumber', p_obj.GroupNumber);
+		self.nodeById('i04Div').innerHTML  = buildTextWidget('LightGroupList', p_obj.GroupList);
+		self.nodeById('i05Div').innerHTML  = buildTrueFalseWidget('LightMaster', p_obj.Master);
+		self.nodeById('i06Div').innerHTML  = buildTrueFalseWidget('LightResponder', p_obj.Responder);
+		self.nodeById('i07Div').innerHTML  = buildTextWidget('LightProductKey', p_obj.ProductKey);
+	},
     function fetchEntry(self) {
-        //Divmod.debug('---', 'controllers.fetchEntry() was called. ');
         var l_data = {
             Name :           fetchTextWidget('ControllerName'),
             Key :            fetchTextWidget('ControllerKey'),
@@ -151,13 +159,24 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 			UUID :           fetchTextWidget('ControllerUUID'),
 			Interface :      fetchSelectWidget('ControllerInterface'),
 			Port :           fetchTextWidget('ControllerPort'),
-			InsteonAddress : fetchTextWidget('ControllerInsteonAddress'),
 			HouseIx : globals.House.HouseIx,
 			Delete : false
             }
-		//console.log("controllers.fetchEntry - Data %O", l_data);
+        if (l_data['Family'] == 'Insteon') {
+        	l_data = self.fetchInsteonEntry(l_data);
+        }
         return l_data;
     },
+	function fetchInsteonEntry(self, p_data) {
+        p_data['InsteonAddress'] = fetchTextWidget('LightAddress');
+        p_data['DevCat'] = fetchTextWidget('LightDevCat');
+        p_data['GroupNumber'] = fetchTextWidget('LightGroupNumber');
+        p_data['GroupList'] = fetchTextWidget('LightGroupList');
+        p_data['Master'] = fetchTrueFalseWidget('LightMaster');
+        p_data['Responder'] = fetchTrueFalseWidget('LightResponder');
+        p_data['ProductKey'] = fetchTextWidget('LightProductKey');
+		return p_data;
+	},
     function createEntry(self, p_ix) {
         var l_data = {
             Name : 'Change Me',

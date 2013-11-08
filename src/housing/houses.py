@@ -193,6 +193,7 @@ class API(LoadSaveAPI):
         for l_house in self.m_houses_data.itervalues():
             l_house.HouseAPI.UpdateXml(l_xml)
         p_xml.append(l_xml)
+        g_logger.info("Saved all houses to XML file.")
 
     def get_houses_obj(self):
         return self.m_houses_data

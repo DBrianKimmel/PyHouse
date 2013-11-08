@@ -8,7 +8,8 @@ Created on Jun 13, 2013
 
 # Import PyHouse files
 from src.utils import xml_tools
-from src.utils.tools import PrintObject
+# from src.utils.tools import PrintObject
+from src.web import web_utils
 
 
 g_debug = 0
@@ -39,7 +40,6 @@ class CoreData(object):
     def reprJSON(self):
         """lighting_core.
         """
-        # print "lighting_core.reprJSON(1) ", self
         l_ret = dict(
            Name = self.Name, Key = self.Key, Active = self.Active,
            Comment = self.Comment, Coords = self.Coords, Dimmable = self.Dimmable,
@@ -52,10 +52,7 @@ class CoreData(object):
                 if not l_attr.startswith('_'):
                     l_ret[l_attr] = str(l_val)
                     if l_attr == 'InsteonAddress':
-                        pass
-
-        # if self.Type == 'Controller':
-        # print "lighting_core.reprJSON(2) {0:}".format(l_ret)
+                        l_ret[l_attr] = web_utils.int2dotted_hex(l_val)
         return l_ret
 
 

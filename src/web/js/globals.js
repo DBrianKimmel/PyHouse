@@ -497,15 +497,13 @@ function buildEntryButtons(p_handler, /* optional */ noOptions) {
  * @param p_value  is bool showing the current value .
  */
 function buildRadioButtonWidget(p_name, p_label, p_value, p_checkVal) {
-	//Divmod.debug('---', 'globals.buildRadioButtonWidget() called.  Name=' + p_name + '  Value=' + p_value + '  Check:' + p_checkVal);
 	var l_html = "&nbsp;<input type='radio' name='" + p_name + "' value='" + p_value + "' ";
-	if (p_value === p_checkVal)
+	if (p_value == p_checkVal)
 		l_html += "checked='checked'";
 	l_html += "/>" + p_label + '&nbsp;\n';
 	return l_html;
 }
 function buildTrueFalseWidget(p_name, p_value) {
-	//Divmod.debug('---', 'globals.buildTrueFalseWidget() called.  Name=' + p_name);
 	var l_html = "<span id='" + p_name + "Buttons'>";
 	l_html += buildRadioButtonWidget(p_name, 'True',  true, p_value);
 	l_html += buildRadioButtonWidget(p_name, 'False', false, p_value);

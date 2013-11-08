@@ -158,16 +158,16 @@ class API(LightingAPI):
                 if g_debug >= 3:
                     print "Device_Insteon.Start() - Skipping - another controller is already active."
                 l_controller_obj.Active = False
-                g_logger('Controller {0:} skipped - another one is active.'.format(l_controller_obj.Name))
+                g_logger.warning('Controller {0:} skipped - another one is active.'.format(l_controller_obj.Name))
                 continue
             else:
                 from src.families.Insteon import Insteon_PLM
                 l_controller_obj._HandlerAPI = Insteon_PLM.API(p_house_obj)
                 if l_controller_obj._HandlerAPI.Start(l_controller_obj):
                     l_count += 1
-                    # g_logger('Controller {0:} started.'.format(l_controller_obj.Name))
+                    # g_logger.debug('Controller {0:} started.'.format(l_controller_obj.Name))
                 else:
-                    g_logger('Controller {0:} failed to start.'.format(l_controller_obj.Name))
+                    g_logger.error('Controller {0:} failed to start.'.format(l_controller_obj.Name))
                     if g_debug >= 3:
                         print "Device_Insteon.Start() - Did NOT start- House:{0:}, Controller:{1:}".format(p_house_obj.Name, l_controller_obj.Name)
                     l_controller_obj.Active = False
