@@ -50,8 +50,9 @@ class CoreData(object):
             if not hasattr(l_ret, l_attr):
                 l_val = getattr(self, l_attr)
                 if not l_attr.startswith('_'):
-                    # setattr(l_ret, l_attr, l_val)
                     l_ret[l_attr] = str(l_val)
+                    if l_attr == 'InsteonAddress':
+                        pass
 
         # if self.Type == 'Controller':
         # print "lighting_core.reprJSON(2) {0:}".format(l_ret)
@@ -66,7 +67,6 @@ class CoreAPI(xml_tools.ConfigTools):
         @param p_house: is the text name of the House.
         @return: a dict of the entry to be attached to a house object.
         """
-        self.m_house_obj = p_house_obj
         self.xml_read_common_info(p_device_obj, p_entry_xml)
         p_device_obj.Comment = self.get_text_from_xml(p_entry_xml, 'Comment')
         p_device_obj.Coords = self.get_text_from_xml(p_entry_xml, 'Coords')
@@ -91,12 +91,5 @@ class CoreAPI(xml_tools.ConfigTools):
         for l_family_obj in p_house_obj.FamilyData.itervalues():
             if l_family_obj.Name == p_device_obj.Family:
                 l_family_obj.API.insert_device_xml(p_entry, p_device_obj)
-
-    def addJSON(self):
-        print "lighting_core.addJSON() - {0:}".format(self.Name)
-        l_ret = dict()
-        for l_family_obj in self.m_house_obj.FamilyData.itervalues():
-            pass
-        return l_ret
 
 # ## END DBK

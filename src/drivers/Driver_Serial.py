@@ -22,7 +22,7 @@ import serial
 # Import PyMh files
 from src.utils.tools import PrintBytes
 
-g_debug = 1
+g_debug = 0
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry

@@ -63,6 +63,7 @@ class LightsElement(athena.LiveElement):
     def saveLightData(self, p_json):
         """A new/changed light is returned.  Process it and update the internal data via light_xxxx.py
         """
+        # print "saveLightData ", p_json
         l_json = web_utils.JsonUnicode().decode_json(p_json)
         l_delete = l_json['Delete']
         l_house_ix = int(l_json['HouseIx'])
@@ -79,9 +80,10 @@ class LightsElement(athena.LiveElement):
         try:
             l_obj = self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Lights[l_light_ix]
         except KeyError:
+            g_logger.warning('Creating a new light for house {0:} and light {1:}'.format(l_house_ix, l_light_ix))
             l_obj = lighting_lights.LightData()
         #
-        #print "web_lights.saveLightData() ", l_json
+        print "web_lights.saveLightData(1) ", l_json
         l_obj.Name = l_json['Name']
         l_obj.Active = l_json['Active']
         l_obj.Key = int(l_json['Key'])
@@ -94,8 +96,15 @@ class LightsElement(athena.LiveElement):
         l_obj.UUID = l_json['UUID']
         if len(l_obj.UUID) < 8:
             l_obj.UUID = str(uuid.uuid1())
-        l_obj.DeleteFlag = l_json['Delete']
-        l_obj.HouseIx = l_house_ix
+        if l_obj.Family == 'Insteon':
+            print "saving insteon light..", l_json
+            l_obj.InsteonAddress = l_json['InsteonAddress']
+            l_obj.DevCat = l_json['DevCat']
+            l_obj.GroupNumber = l_json['GroupNumber']
+            l_obj.GroupList = l_json['GroupList']
+            l_obj.Master = l_json['Master']
+            l_obj.Responder = l_json['Responder']
+            l_obj.ProductKey = l_json['ProductKey']
         self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Lights[l_light_ix] = l_obj
         self.m_pyhouses_obj.API.UpdateXml()
 

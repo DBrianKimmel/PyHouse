@@ -47,7 +47,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		self.nodeById('LightButtonsDiv').style.display = 'none';		
 	},
 	function showButtons(self) {
-		self.nodeById('LightButtonsDiv')	
+		self.nodeById('LightButtonsDiv').style.display = 'block';
 	},
 	function hideEntry(self) {
 		self.nodeById('LightEntryDiv').style.display = 'none';		
@@ -61,7 +61,8 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 
 	// ============================================================================
 	/**
-	 * This triggers getting the house/lights data from the server.
+	 * This triggers getting the lights data from the server.
+	 * The server calls displayLightsButtons with the lights info.
 	 */
 	function fetchHouseData(self) {
 		function cb_fetchHouseData(p_json) {
@@ -114,7 +115,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 	},
 	function fillEntry(self, p_obj) {
 		//Divmod.debug('---', 'lights.fillEntry(1) was called.  Self:' + self);
-		console.log("lights.fillEntry() - Obj = %O", p_obj);
+		//console.log("lights.fillEntry() - Obj = %O", p_obj);
         self.nodeById('NameDiv').innerHTML     = buildTextWidget('LightName', p_obj.Name);
         self.nodeById('KeyDiv').innerHTML      = buildTextWidget('LightKey', p_obj.Key, 'disabled');
 		self.nodeById('ActiveDiv').innerHTML   = buildTrueFalseWidget('LightActive', p_obj.Active);
@@ -127,24 +128,27 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		self.nodeById('UUIDDiv').innerHTML     = buildTextWidget('LightUUID', p_obj.UUID, 'disabled');
 		// Insteon info
 		self.fillInsteonEntry(p_obj);
-		//self.nodeById('AddressDiv').innerHTML  = buildTextWidget('LightAddress', p_obj.Address);
 		self.nodeById('LightEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick');
 	},
 	function fillInsteonEntry(self, p_obj) {
-		console.log("lights.fillInsteonEntry() - Obj = %O", p_obj);
-		self.nodeById('Row_i01').style.display = 'block';	
-		self.nodeById('Row_i02').style.display = 'inline';	
-		self.nodeById('Row_i03').style.display = 'block';	
+		//console.log("lights.fillInsteonEntry() - Obj = %O", p_obj);
+		self.nodeById('Row_i01').style.display = 'inline';	
+		self.nodeById('Row_i02').style.display = 'block';	
+		self.nodeById('Row_i03').style.display = 'inline';	
 		self.nodeById('Row_i04').style.display = 'block';	
 		self.nodeById('Row_i05').style.display = 'block';	
 		self.nodeById('Row_i06').style.display = 'block';	
 		self.nodeById('Row_i07').style.display = 'block';	
-		self.nodeById('i01Div').innerHTML  = buildTextWidget('LightAddress', p_obj.Address);
+		self.nodeById('i01Div').innerHTML  = buildTextWidget('LightAddress', p_obj.InsteonAddress);
+		self.nodeById('i02Div').innerHTML  = buildTextWidget('LightDevCat', p_obj.DevCat);
+		self.nodeById('i03Div').innerHTML  = buildTextWidget('LightGroupNumber', p_obj.GroupNumber);
+		self.nodeById('i04Div').innerHTML  = buildTextWidget('LightGroupList', p_obj.GroupList);
+		self.nodeById('i05Div').innerHTML  = buildTrueFalseWidget('LightMaster', p_obj.Master);
+		self.nodeById('i06Div').innerHTML  = buildTrueFalseWidget('LightResponder', p_obj.Responder);
+		self.nodeById('i07Div').innerHTML  = buildTextWidget('LightProductKey', p_obj.ProductKey);
 	},
 	function fillUpbEntry(self, p_obj) {
 		self.nodeById('i01Div').innerHTML  = buildTextWidget('LightAddress', p_obj.Address);
-		self.nodeById('i02Div').innerHTML  = buildTextWidget('LightDevCat', p_obj.DevCat);
-		self.nodeById('i03Div').innerHTML  = buildTextWidget('LightGroupNumber', p_obj.GroupNumber);
 	},
 	function fetchEntry(self) {
 		//Divmod.debug('---', 'lights.fetchEntry() was called. ');
@@ -159,11 +163,26 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 			RoomName : fetchSelectWidget('LightRoomName'),
 			Type     : fetchTextWidget('LightType'),
 			UUID     : fetchTextWidget('LightUUID'),
-			Address  : fetchTextWidget('LightAddress'),
 			HouseIx  : globals.House.HouseIx,
 			Delete   : false
             }
+        if (l_data['Family'] == 'Insteon') {
+        	l_data = self.fetchInsteonEntry(l_data);
+        }
 		return l_data;
+	},
+	function fetchInsteonEntry(self, p_data) {
+		//Divmod.debug('---', 'lights.fetchInsteonEntry(1) was called. ' + p_data);
+        p_data['InsteonAddress'] = fetchTextWidget('LightAddress');
+        p_data['DevCat'] = fetchTextWidget('LightDevCat');
+        p_data['GroupNumber'] = fetchTextWidget('LightGroupNumber');
+        p_data['GroupList'] = fetchTextWidget('LightGroupList');
+        p_data['Master'] = fetchTrueFalseWidget('LightMaster');
+        p_data['Responder'] = fetchTrueFalseWidget('LightResponder');
+        p_data['ProductKey'] = fetchTextWidget('LightProductKey');
+		//Divmod.debug('---', 'lights.fetchInsteonEntry(2) was called. ' + p_data);
+        //console.log("lights.fetchInsteonEntry(3)  %O", p_data)
+		return p_data;
 	},
 	function createEntry(self, p_ix) {
 		//Divmod.debug('---', 'lights.createEntry() was called.  Ix: ' + p_ix);
@@ -178,7 +197,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
     			RoomName : '',
     			Type     : 'Light',
     			UUID     : '',
-    			Address  : '',
+    			InsteonAddress  : '',
     			HouseIx  : p_ix,
     			Delete   : false
                 }
@@ -203,6 +222,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		switch(l_ix) {
 		case '10003':  // Change Button
 	    	var l_json = JSON.stringify(self.fetchEntry());
+	        //console.log("lights.handleDataOnClick()  json  %O", l_json)
 			//Divmod.debug('---', 'lights.handleDataOnClick(Change) was called. JSON:' + l_json);
 	        var l_defer = self.callRemote("saveLightData", l_json);  // @ web_lights
 			l_defer.addCallback(cb_handleDataOnClick);

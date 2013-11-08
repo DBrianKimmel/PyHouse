@@ -22,7 +22,7 @@ import json
 
 # Import PyMh files and modules.
 from src.utils import xml_tools
-#from src.web.web_tagdefs import *
+# from src.web.web_tagdefs import *
 
 
 g_debug = 0
@@ -274,5 +274,22 @@ def add_float_page_attrs(p_class):
 
 def action_url():
         return url.here.child('_submit!!post')
+
+def dotted_hex2int(p_addr):
+    """Convert A1.B2.C3 to int
+    """
+    l_hexn = ''.join(["%02X" % int(l_ix, 16) for l_ix in p_addr.split('.')])
+    return int(l_hexn, 16)
+
+def int2dotted_hex(p_int):
+    """Convert 24 bit int to Dotted hex Insteon Address
+    """
+    l_ix = 256 * 256
+    l_hex = []
+    while l_ix > 0:
+        l_byte, p_int = divmod(p_int, l_ix)
+        l_hex.append("{0:02X}".format(l_byte))
+        l_ix = l_ix / 256
+    return '.'.join(l_hex)
 
 # ## END DBK

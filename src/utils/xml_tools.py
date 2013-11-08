@@ -194,8 +194,6 @@ class ConfigTools(PutGetXML):
     def xml_create_common_element(self, p_title, p_obj):
         """Build a common entry.
         """
-        if g_debug >= 3:
-            print "xml_tools.xml_create_common_element() - Title:{0:}, Name:{1:} ".format(p_title, p_obj.Name)
         l_elem = ET.Element(p_title)
         l_elem.set('Name', p_obj.Name)
         l_elem.set('Key', str(p_obj.Key))
@@ -208,13 +206,9 @@ class ConfigTools(PutGetXML):
         @param p_obj: is the object we are updating the common information for.
         @param p_entry_xml: is the XML subtree that we are extracting the information from.
         """
-        if g_debug >= 3:
-            print "xml_tools.xml_read_common_info()", p_entry_xml, p_entry_xml.items()
         p_obj.Name = self.get_text_from_xml(p_entry_xml, 'Name')
         p_obj.Key = self.get_int_from_xml(p_entry_xml, 'Key')
         p_obj.Active = self.get_bool_from_xml(p_entry_xml, 'Active')
-        if g_debug >= 3:
-            print "    Name:{0:}, Key:{1:}, Active:{2:}".format(p_obj.Name, p_obj.Key, p_obj.Active)
 
 
 class ConfigEtc(ConfigTools):

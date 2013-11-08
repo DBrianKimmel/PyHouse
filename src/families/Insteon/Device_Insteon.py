@@ -97,8 +97,7 @@ class CoreAPI(xml_tools.ConfigTools):
         return l_insteon_obj
 
     def insert_device_xml(self, p_entry_xml, p_device_obj):
-        return
-        ET.SubElement(p_entry_xml, 'Address').text = Insteon_utils.int2dotted_hex(p_device_obj.InsteonAddress)
+        ET.SubElement(p_entry_xml, 'Address').text = Insteon_utils.int2dotted_hex(int(p_device_obj.InsteonAddress))
         ET.SubElement(p_entry_xml, 'Controller').text = self.put_bool(p_device_obj.Controller)
         ET.SubElement(p_entry_xml, 'DevCat').text = str(p_device_obj.DevCat)
         ET.SubElement(p_entry_xml, 'GroupList').text = str(p_device_obj.GroupList)
