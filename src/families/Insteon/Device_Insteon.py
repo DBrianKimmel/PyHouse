@@ -22,7 +22,7 @@ from src.lights import lighting
 from src.families.Insteon import Insteon_utils
 from src.utils import xml_tools
 #
-from src.utils.tools import PrintObject
+# from src.utils.tools import PrintObject
 
 
 g_debug = 1
@@ -111,7 +111,7 @@ class LightingAPI(CoreAPI):
     """Interface to the lights of this module.
     """
 
-    def change_light_setting(self, p_light_obj, p_level, p_house_obj):
+    def XXchange_light_setting(self, p_light_obj, p_level, p_house_obj):
         if g_debug >= 3:
             print "Device_Insteon.change_light_setting()", p_level,
             print "    Light:", p_light_obj
@@ -177,8 +177,6 @@ class API(LightingAPI):
         g_logger.info(l_msg)
 
     def Stop(self, p_xml):
-        if g_debug >= 2:
-            print "Device_Insteon.API.Stop()"
         try:
             for l_controller_obj in self.m_house_obj.Controllers.itervalues():
                 if l_controller_obj.Family != 'Insteon':
@@ -190,7 +188,19 @@ class API(LightingAPI):
             pass  # no controllers for house(House is being added)
         return p_xml
 
-    def ChangeLight(self, p_light_obj, p_level, p_rate = 0):
-        pass
+    def ChangeLight(self, p_light_obj, p_level, _p_rate = 0):
+        if g_debug >= 1:
+            g_logger.debug('Change light Name:{0:}, Family:{1:}'.format(p_light_obj.Name, p_light_obj.Family))
+        if p_light_obj.Family == 'Insteon':
+            try:
+                for l_controller_obj in self.m_house_obj.Controllers.itervalues():
+                    print l_controller_obj.Name
+                    if l_controller_obj.Family != 'Insteon':
+                        continue
+                    if l_controller_obj.Active != True:
+                        continue
+                    l_controller_obj._HandlerAPI.ChangeLight(p_light_obj, p_level)
+            except AttributeError, e:  # no controllers for house. (House is being added).
+                g_logger.warning('Could not change light setting {0:}'.format(e))
 
 # ## END DBK

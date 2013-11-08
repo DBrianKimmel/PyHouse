@@ -48,7 +48,7 @@ class Utility(ButtonAPI, ControllerAPI, LightingAPI):
 
 class API(Utility):
 
-    def __init__(self, p_house_obj):
+    def __init__(self, _p_house_obj):
         self.m_family = family.LightingUtility()
         g_logger.info("Initialized.")
 
@@ -78,11 +78,11 @@ class API(Utility):
 
     def ChangeLight(self, p_light_obj, p_level):
         l_key = p_light_obj.Key
-        l_obj = self.m_house_obj.Lights[l_key]
-        g_logger.info("Turn Light {0:} to level {1:}.".format(p_light_obj.Name, p_level))
+        l_light_obj = self.m_house_obj.Lights[l_key]
+        g_logger.info("Turn Light {0:} to level {1:}, Family:{2:}".format(l_light_obj.Name, p_level, l_light_obj.Family))
         for l_family_obj in self.m_house_obj.FamilyData.itervalues():
-            if l_family_obj.Name != p_light_obj.Family:
+            if l_family_obj.Name != l_light_obj.Family:
                 continue
-            l_family_obj.API.ChangeLight(p_light_obj, p_level, 0)
+            l_family_obj.API.ChangeLight(l_light_obj, p_level, 0)
 
 # ## END DBK

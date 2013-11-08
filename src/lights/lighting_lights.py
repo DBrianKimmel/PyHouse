@@ -67,5 +67,4 @@ class LightingAPI(lighting_core.CoreAPI):
             l_count += 1
         return l_lighting_xml
 
-
 # ## END DBK

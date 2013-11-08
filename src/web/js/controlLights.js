@@ -118,16 +118,14 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 		self.nodeById('ControlLightEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick', 'NoDelete');
 	},
 	function fetchEntry(self) {
-		//Divmod.debug('---', 'controlLights.fetchEntry() was called. ');
         var l_data = {
             Name : fetchTextWidget('CtlLightName'),
             Key : fetchTextWidget('CtlLightKey'),
 			UUID : fetchTextWidget('CtlLightUUID'),
-			RoomName : fetchSelectWidget('CtlLightRoomName'),
+			//RoomName : fetchSelectWidget('CtlLightRoomName'),
 			Level : fetchLevel('CtlLightLevel'),
 			HouseIx : globals.House.HouseIx,
             }
-		//console.log("controlLights.fetchEntry() - data %O", l_data);
 		return l_data;
 	},
 

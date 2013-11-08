@@ -49,8 +49,6 @@ class ControlLightsElement(athena.LiveElement):
         """
         l_ix = int(p_index)
         l_house = self.m_pyhouses_obj.HousesData[l_ix].HouseObject
-        if g_debug >= 3:
-            print "web_controlLights.getHouseData() - HouseIndex:", p_index
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_house))
         return l_json
 
@@ -60,11 +58,10 @@ class ControlLightsElement(athena.LiveElement):
         """
         l_json = web_utils.JsonUnicode().decode_json(p_json)
         l_house_ix = int(l_json['HouseIx'])
-        if g_debug >= 4:
-            print "web_controlLights.saveControlLightData() - JSON:", l_json
+        l_light_ix = int(l_json['Key'])
         l_light_obj = lighting_lights.LightData()
         l_light_obj.Name = l_json['Name']
-        l_light_obj.Key = int(l_json['Key'])
+        l_light_obj.Key = l_light_ix
         l_light_obj.CurLevel = l_level = l_json['Level']
         l_light_obj.UUID = l_json['UUID']
         l_light_obj.HouseIx = l_house_ix
