@@ -45,7 +45,7 @@ Ethernet - not too much of this is used yet.
 __version_info__ = (1, 1, 0)
 __version__ = '.' . join(map(str, __version_info__))
 
-VALID_INTERFACES = ['Serial', 'USB', 'HidUSB', 'Ethernet']
+VALID_INTERFACES = ['Serial', 'USB', 'Hid', 'Ethernet']
 VALID_PROTOCOLS = ['TCP', 'UDP', 'Both']
 
 # ## END DBK

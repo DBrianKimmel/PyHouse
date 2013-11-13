@@ -1066,8 +1066,8 @@ class API(LightHandlerAPI):
         if self.start_controller_driver(p_controller_obj, self.m_house_obj):
             self.m_protocol = PlmDriverProtocol(self.m_controller_obj, self.m_house_obj)
             self.set_plm_mode(self.m_controller_obj)
-            # self.get_all_lights_status()
-            self.get_link_records(self.m_house_obj, self.m_controller_obj)
+            self.get_all_lights_status()
+            # self.get_link_records(self.m_house_obj, self.m_controller_obj)
             g_logger.info('Started.')
             return True
         return False

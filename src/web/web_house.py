@@ -59,20 +59,24 @@ class HouseElement(athena.LiveElement):
         """
         l_json = web_utils.JsonUnicode().decode_json(p_json)
         l_house_ix = int(l_json['HouseIx'])
-        if l_house_ix == -1:
+        l_delete = l_json['Delete']
+        if l_delete:
+            try:
+                del self.m_pyhouses_obj.HousesData[l_house_ix]
+            except AttributeError:
+                print "web_lights - Failed to delete - JSON: ", l_json
+            return
+        if l_house_ix == -1:  # adding a new house
             l_house_ix = len(self.m_pyhouses_obj.HousesData)
-        if g_debug >= 4:
-            print "web_house.saveHouseData() - JSON:", l_json
         try:
             l_obj = self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject
         except KeyError:
             l_obj = house.HouseData()
-            try:
-                self.m_pyhouses_obj.HousesData[l_house_ix] = house.HouseData()
-            except AttributeError:
-                self.m_pyhouses_obj.HousesData = houses.HousesData()
-                self.m_pyhouses_obj.HousesData[0] = house.HouseData()
-        #print "House ", l_obj
+        try:
+            self.m_pyhouses_obj.HousesData[l_house_ix] = l_obj
+        except AttributeError:
+            self.m_pyhouses_obj.HousesData = houses.HousesData()
+            self.m_pyhouses_obj.HousesData[0] = l_obj
         l_obj.Name = l_json['Name']
         l_obj.Key = int(l_json['Key'])
         l_obj.HouseIx = l_house_ix

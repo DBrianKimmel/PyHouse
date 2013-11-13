@@ -16,17 +16,17 @@ g_debug = 0
 # 1 = major routine entry
 # 2 = Startup Details
 
-g_logger = logging.getLogger('PyHouse.Dev_UPB     ')
+g_logger = logging.getLogger('PyHouse.Device_UPB  ')
 
 
 class CoreData(object):
 
     def __init__(self):
+        super(CoreData, self).__init__()
         self.Family = 'UPB'
         self.NetworkID = None
         self.Password = None
         self.UnitID = None
-        self.Command1 = 0
 
     def reprJSON(self):
         print "Device_UPB.reprJSON(1)"
@@ -106,26 +106,26 @@ class LightingAPI(lighting.LightingAPI, CoreAPI):
 
 class LoadSaveInsteonData(LightingAPI, ControllerAPI, ButtonAPI): pass
 
-
 import UPB_Pim
 
 
 class API(LightingAPI):
 
     def __init__(self, p_house_obj):
-        """Constructor for the UPB .
+        """Constructor for the UPB.
         """
         self.m_house_obj = p_house_obj
 
     def Start(self, p_house_obj):
         self.m_house_obj = p_house_obj
-        for l_controller_obj in p_house_obj.Controllers.itervalues():
+        for l_controller_obj in self.m_house_obj.Controllers.itervalues():
             if l_controller_obj.Family != 'UPB':
                 continue
             if l_controller_obj.Active != True:
                 continue
+            g_logger.info('Starting UPB family')
             l_controller_obj._HandlerAPI = UPB_Pim.API()
-            l_controller_obj._HandlerAPI.Start(p_house_obj, l_controller_obj)
+            l_controller_obj._HandlerAPI.Start(self.m_house_obj, l_controller_obj)
         g_logger.info('Started.')
 
     def Stop(self, p_xml):
@@ -142,17 +142,12 @@ class API(LightingAPI):
             pass  # no controllers for house(House is being added)
         return p_xml
 
-    def ChangeLight(self, p_light_obj, p_level, p_rate = 0):
-        if p_light_obj.Family == 'UPB':
-            try:
-                for l_controller_obj in self.m_house_obj.Controllers.itervalues():
-                    if l_controller_obj.Family != 'UPB':
-                        continue
-                    if l_controller_obj.Active != True:
-                        continue
-                    l_controller_obj._HandlerAPI.change_light_setting(p_light_obj, p_level)
-            except AttributeError:
-                pass  # no controllers for house(House is being added)
-
+    def ChangeLight(self, p_light_obj, p_level, _p_rate = 0):
+        try:
+            for l_controller_obj in self.m_house_obj.Controllers.itervalues():
+                if (l_controller_obj.Family == 'UPB') and (l_controller_obj.Active == True):
+                    l_controller_obj._HandlerAPI.ChangeLight(p_light_obj, p_level)
+        except AttributeError:
+            pass  # no controllers for house(House is being added)
 
 # ## END

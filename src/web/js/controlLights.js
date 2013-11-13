@@ -123,7 +123,7 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
             Key : fetchTextWidget('CtlLightKey'),
 			UUID : fetchTextWidget('CtlLightUUID'),
 			//RoomName : fetchSelectWidget('CtlLightRoomName'),
-			Level : fetchLevel('CtlLightLevel'),
+			Level : fetchLevelWidget('CtlLightLevel'),
 			HouseIx : globals.House.HouseIx,
             }
 		return l_data;

@@ -134,8 +134,6 @@ class API(LightingAPI):
 
     def __init__(self, p_house_obj):
         self.m_house_obj = p_house_obj
-        g_logger.info('Initialized.')
-
 
     def Start(self, p_house_obj):
         """For the given house, this will start all the controllers for family = Insteon in that house.
@@ -194,7 +192,7 @@ class API(LightingAPI):
         if p_light_obj.Family == 'Insteon':
             try:
                 for l_controller_obj in self.m_house_obj.Controllers.itervalues():
-                    print l_controller_obj.Name
+                    # print l_controller_obj.Name
                     if l_controller_obj.Family != 'Insteon':
                         continue
                     if l_controller_obj.Active != True:

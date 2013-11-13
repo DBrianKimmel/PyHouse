@@ -505,8 +505,9 @@ function buildRadioButtonWidget(p_name, p_label, p_value, p_checkVal) {
 }
 function buildTrueFalseWidget(p_name, p_value) {
 	var l_html = "<span id='" + p_name + "Buttons'>";
-	l_html += buildRadioButtonWidget(p_name, 'True',  true, p_value);
-	l_html += buildRadioButtonWidget(p_name, 'False', false, p_value);
+	var l_value = p_value != false;  // force to be a bool
+	l_html += buildRadioButtonWidget(p_name, 'True',  true, l_value);
+	l_html += buildRadioButtonWidget(p_name, 'False', false, l_value);
 	l_html += '</span>\n';
 	return l_html;
 }
@@ -597,8 +598,8 @@ function buildLevelSlider(p_name, p_level) {
 	var l_html = buildSliderWidget(p_name, p_level);
 	return l_html;
 }
-function fetchLevel(p_id) {
-	//Divmod.debug('---', 'globals.fetchLevel() called.  Name=' + p_name);
+function fetchLevelWidget(p_id) {
+	//Divmod.debug('---', 'globals.fetchLevelWidget() called.  Name=' + p_name);
 	return document.getElementById(p_id).value;
 }
 

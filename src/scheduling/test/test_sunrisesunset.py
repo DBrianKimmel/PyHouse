@@ -15,7 +15,8 @@ class LocationObj():
     def __init__(self):
         self.Latitude = 29.0
         self.Longitude = -74.0
-        self.TimeZone = 300
+        self.TimeZone = '-5:00'
+        self.SavingTime = '-4:00'
 
 
 class HouseObj(object):
@@ -54,4 +55,4 @@ class Test(unittest.TestCase):
         result = self.api.get_sunset()
         self.assertEqual(result, self.sunset)
 
-### END
+# ## END

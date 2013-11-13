@@ -84,18 +84,12 @@ class LightingUtility(FamilyData):
         """Load and start the family if there is a controller in the house for the family.
         Runs Device_<family>.API.Start()
         """
-        if g_debug >= 2:
-            print "family.start_lighting_families()", p_house_obj.FamilyData
-        g_logger.info("Starting lighting families.")
+        g_logger.info("Starting lighting families for house {0:}.".format(p_house_obj.Name))
         for l_family_obj in p_house_obj.FamilyData.itervalues():
-            if g_debug >= 3:
-                print "family.start_lighting_families() - Starting {0:}".format(l_family_obj.Name), l_family_obj
             l_family_obj.API.Start(p_house_obj)  # will run Device_<family>.API.Start()
             g_logger.info("Started lighting family {0:}.".format(l_family_obj.Name))
 
     def stop_lighting_families(self, p_xml, p_house_obj):
-        if g_debug >= 2:
-            print "family.stop_lighting_families()"
         for l_family_obj in p_house_obj.FamilyData.itervalues():
             l_family_obj.API.Stop(p_xml)
 

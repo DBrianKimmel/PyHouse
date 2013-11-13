@@ -195,13 +195,11 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 			Divmod.debug('---', 'house.eb_handleDataOnClick() was called. ERROR =' + res);
 		}
 		var l_ix = p_node.name;
-		//Divmod.debug('---', 'house.handleDataOnClick() was called. Node:' + l_ix);
 		switch(l_ix) {
 		case '10003':  // Change Button
 	    	var l_entry = self.fetchEntry();
 			globals.House.HouseObj.House = l_entry;
 	    	var l_json = JSON.stringify(l_entry);
-			//Divmod.debug('---', 'house.handleDataOnClick(Change) was called. JSON:' + l_json);
 	        var l_defer = self.callRemote("saveHouseData", l_json);  // @ web_house
 			l_defer.addCallback(cb_handleDataOnClick);
 			l_defer.addErrback(eb_handleDataOnClick);
@@ -210,6 +208,15 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 			self.hideEntry();
 			var l_node = findWidgetByClass('HouseMenu');
 			l_node.showWidget();
+			break;
+		case '10004':  // Delete button
+			var l_entry = self.fetchEntry();
+			l_entry['Delete'] = true;
+	    	var l_json = JSON.stringify(l_entry);
+			//Divmod.debug('---', 'house.handleDataOnClick(Delete) was called. JSON:' + l_json);
+	        var l_defer = self.callRemote("saveHouseData", l_json);  // @ web_rooms
+			l_defer.addCallback(cb_handleDataOnClick);
+			l_defer.addErrback(eb_handleDataOnClick);
 			break;
 		default:
 			Divmod.debug('---', 'house.handleDataOnClick(Default) was called. l_ix:' + l_ix);

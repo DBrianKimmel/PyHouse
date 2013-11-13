@@ -94,32 +94,33 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 	 */
 	function fillEntry(self, p_obj) {
 		//Divmod.debug('---', 'schedules.fillEntry() was called. ' + p_obj);
-		self.nodeById('Name').value = p_obj.Name;
-		self.nodeById('Key').value = p_obj.Key;
-		self.nodeById('ActiveDiv').innerHTML = buildTrueFalseWidget('SchedActive', p_obj.Active);
-		self.nodeById('Type').value = p_obj.Type;  // s/b select box of valid types
-		self.nodeById('Time').value = p_obj.Time;
-		self.nodeById('LevelDiv').innerHTML = buildLevelSlider(p_obj.Level);
-		self.nodeById('Rate').value = p_obj.Rate;
-		self.nodeById('RoomNameDiv').innerHTML = buildRoomSelectWidget('SchedRoomName', p_obj.RoomName);
-		self.nodeById('LightNameDiv').innerHTML = buildLightSelectWidget('SchedLightName', p_obj.LightName);
-		self.nodeById('UUID').value = p_obj.UUID;
+        self.nodeById('NameDiv').innerHTML     = buildTextWidget('ScheduleName', p_obj.Name);
+        self.nodeById('KeyDiv').innerHTML      = buildTextWidget('ScheduleKey', p_obj.Key, 'disabled');
+		self.nodeById('ActiveDiv').innerHTML   = buildTrueFalseWidget('ScheduleActive', p_obj.Active);
+		self.nodeById('UUIDDiv').innerHTML     = buildTextWidget('ScheduleUUID', p_obj.UUID, 'disabled');
+		self.nodeById('TypeDiv').innerHTML     = buildTextWidget('ScheduleType', p_obj.Type);  // s/b select box of valid types
+		self.nodeById('TimeDiv').innerHTML     = buildTextWidget('ScheduleTime', p_obj.Time);
+		self.nodeById('LevelDiv').innerHTML    = buildLevelSliderWidget('ScheduleLevel', p_obj.Level);
+		self.nodeById('RateDiv').innerHTML     = buildTextWidget('ScheduleRate', p_obj.Rate, 'disabled');
+		self.nodeById('RoomNameDiv').innerHTML = buildRoomSelectWidget('ScheduleRoomName', p_obj.RoomName);
+		self.nodeById('LightNameDiv').innerHTML = buildLightSelectWidget('ScheduleLightName', p_obj.LightName);
 		self.nodeById('ScheduleEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick');
 	},
 	
 	function fetchEntry(self) {
 		//Divmod.debug('---', 'schedules.fetchEntry() was called. ');
         var l_data = {
-			Name : self.nodeById('Name').value,
-			Key : self.nodeById('Key').value,
-			Active : fetchTrueFalseWidget('SchedActive'),
-			Type : self.nodeById('Type').value,
-			Time : self.nodeById('Time').value,
-			Level : fetchLevel('Level'),
-			Rate : self.nodeById('Rate').value,
-			RoomName : fetchSelectWidget('SchedRoomName'),
-			LightName : fetchSelectWidget('SchedLightName'),
-			UUID : self.nodeById('UUID').value,
+            Name      : fetchTextWidget('ScheduleName'),
+            Key       : fetchTextWidget('ScheduleKey'),
+			Active    : fetchTrueFalseWidget('ScheduleActive'),
+			RoomName  : fetchSelectWidget('ScheduleRoomName'),
+			Type      : fetchTextWidget('ScheduleType'),
+			UUID      : fetchTextWidget('ScheduleUUID'),
+			Time      : fetchTextWidget('ScheduleTime'),
+			Level     : fetchLevelWidget('ScheduleLevel'),
+			Rate      : fetchTextWidget('ScheduleRate'),
+			RoomName  : fetchSelectWidget('ScheduleRoomName'),
+			LightName : fetchSelectWidget('ScheduleLightName'),
 			HouseIx : globals.House.HouseIx,
 			Delete : false
         }

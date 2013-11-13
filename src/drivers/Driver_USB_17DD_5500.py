@@ -64,7 +64,7 @@ class UsbDriverAPI(Driver_USB.UsbDriverAPI):
                 l_value,
                 l_index,
                 l_report)
-        if g_debug > 1:
+        if g_debug >= 0:
             print "Driver_USB_17DD_5500._setup_hid_device() ", l_ret
         return l_ret
 
@@ -109,7 +109,7 @@ class API(UsbDriverAPI):
     def Start(self, p_controller_obj):
         if g_debug > 0:
             print "Driver_USB_17DD_5500.Start() - Name:{0:}".format(p_controller_obj.Name)
-        self.m_driver.Start(p_controller_obj, self)
+        self.m_driver.Start(p_controller_obj)
 
     def Stop(self, p_obj):
         if g_debug > 0:
