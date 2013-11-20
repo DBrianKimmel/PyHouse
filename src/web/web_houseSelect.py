@@ -18,7 +18,7 @@ from src.housing import house
 webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
 
-g_debug = 0
+g_debug = 1
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
@@ -26,7 +26,7 @@ g_debug = 0
 # 4 = Basic data
 # 5 = Detailed Data
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.webHSel     ')
+g_logger = logging.getLogger('PyHouse.webHouseSel ')
 
 
 class WebHouseData(object):
@@ -51,7 +51,7 @@ class HouseSelectElement(athena.LiveElement):
             print "web_houseSelect.houseSelectElement()"
 
     @athena.expose
-    def getHousesToSelect(self, p_dummy):
+    def getHousesToSelect(self, _p_dummy):
         """This is called from the client when the widget is activated by selecting the select house button on the root menu.
 
         Gather the top level data for houses and send it back to the client for building a house select page.
@@ -76,9 +76,9 @@ class HouseSelectElement(athena.LiveElement):
         """
         l_ix = int(p_index)
         l_house = self.m_pyhouses_obj.HousesData[l_ix].HouseObject
-        if g_debug >= 3:
-            print "web_houseSelect.HouseSelectElement.getSelectedHouseData()", l_ix, l_house
         l_json = web_utils.JsonUnicode().encode_json(l_house)
+        if g_debug >= 1:
+            g_logger.debug("HouseIx:{0:}, JSON{1:}".format(l_ix, l_json))
         return unicode(l_json)
 
 # ## END DBK
