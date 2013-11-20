@@ -37,20 +37,13 @@ be unique within a single house.  Therefore you may not have 3 bedrooms named
 
 Python modules used:
     Core python 2.7
-    Twisted            (apt-get install python-twisted)
-    zope.interface
-    nevow              (apt-get install python-nevow)
-    PySerial           ??? still needed?
-    PyUsb
-    ConfigObj          No longer used
-    Pmw                No longer used!
+    Twisted            (sudo apt-get -y install --fix-missing python-twisted)
+    nevow              (sudo apt-get -y install --fix-missing python-nevow)
 
 
 for a raspberry-pi with wheezy:
 debian (apt-get):
     python-twisted
-    python-pmw
-    python coherence
 
 
 
