@@ -203,7 +203,7 @@ class SSUtility(object):
         """
         l_time = ((p_julian - 0.5) % 1.0) * 24.0
         if p_timezone:
-            l_time += -4.0
+            l_time += -5.0
         return self._convert_to_time(l_time)
 
 class SunCalcs(SSUtility, EarthParameters, SolarParameters):
