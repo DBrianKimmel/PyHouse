@@ -20,11 +20,13 @@ Controls:
 Operation:
 
   Iterate thru the schedule tree and create a list of schedule events.
-  Create a twisted timer that goes off when the scheduled time arrives.
-  We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
-  TODO: create a group of timers and cancel the changed ones when the schedules object is changed.
   Select the next event(s) from now, there may be more than one event scheduled for the same time.
 
+  Create a twisted timer that goes off when the scheduled time arrives.
+  We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
+
+  TODO: create a group of timers and cancel the changed ones when the schedules object is changed.
+          Keep all times as UTC - display them as local time for editing.
 """
 
 # Import system type stuff

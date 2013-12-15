@@ -2,24 +2,6 @@
 
 """ PyHouse.py - Run the python version house automation.
 
-Uses I{epytext} markup for documentation.
-
-see C{main.__init__.py} for core documentation.
-
-During development this is run by hand.
-It is, however, planned to be a daemon that is kicked off on system start-up.
-It is intended to run on everything from a small, low power bare bones system to a server running multiple houses in several, widespread locations.
-4
-The system is controlled via a browser connecting to a web server that will be integrated into PyHouse.
-
-TODO:
-        Find proper ports for controllers
-        set proper permissions on controller devices
-        Add interfaces, move interface code out of controllers
-        Setup to allow house add rooms lights etc
-        Save house info for 'new' house
-
-
 MIT License
 
 Copyright (c) 2010-2013 by D. Brian Kimmel
@@ -42,6 +24,23 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
+
+Uses I{epytext} markup for documentation.
+
+see C{main.__init__.py} for core documentation.
+
+During development this is run by hand.
+It is, however, planned to be a daemon that is kicked off on system start-up.
+It is intended to run on everything from a small, low power bare bones system to a server running multiple houses in several, widespread locations.
+4
+The system is controlled via a browser connecting to a web server that will be integrated into PyHouse.
+
+TODO:
+        Find proper ports for controllers
+        set proper permissions on controller devices
+        Add interfaces, move interface code out of controllers
+        Setup to allow house add rooms lights etc
+        Save house info for 'new' house.
 """
 
 __author__ = "D. Brian Kimmel"
@@ -64,6 +63,7 @@ from src.utils import log
 from src.utils import xml_tools
 from src.housing import houses
 from src.web import web_server
+from src.remote import local_master
 
 
 g_debug = 0
@@ -207,6 +207,8 @@ class API(Utilities):
         self.m_pyhouses_obj.LogsAPI = log.API()
         self.m_pyhouses_obj.LogsData = self.m_pyhouses_obj.LogsAPI.Start(self.m_pyhouses_obj)
         g_logger.info("Initializing PyHouse.\n\n")
+        #
+        self.m_remoteAPI = local_master.API()
         self.m_pyhouses_obj.HousesAPI = houses.API()
         self.m_pyhouses_obj.WebAPI = web_server.API()
         callWhenRunning(self.Start)
@@ -218,6 +220,7 @@ class API(Utilities):
     def Start(self):
         """This is automatically invoked when the reactor starts from API().
         """
+        self.m_remoteAPI.Start(self.m_pyhouses_obj)
         self.m_pyhouses_obj.HousesData = self.m_pyhouses_obj.HousesAPI.Start(self.m_pyhouses_obj)
         self.m_pyhouses_obj.WebData = self.m_pyhouses_obj.WebAPI.Start(self.m_pyhouses_obj)
         g_logger.info("Started.\n")
@@ -239,7 +242,7 @@ class API(Utilities):
         # print 'PyHouse.UpdateXml()\n', xml_tools.prettify(l_xml)
         xml_tools.write_xml_file(l_xml, self.m_pyhouses_obj.XmlFileName)
 
-    def Reload(self, p_pyhouses_obj):
+    def Reload(self, _p_pyhouses_obj):
         """Update XML file with current info.
         """
         if g_debug >= 2:

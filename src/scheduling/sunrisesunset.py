@@ -16,7 +16,7 @@ from math import pi
 
 # Import PyMh files
 
-g_debug = 0
+g_debug = 9
 g_logger = logging.getLogger('PyHouse.Sunrise     ')
 
 RAD2DEG = 180.0 / pi
@@ -383,17 +383,14 @@ class SSAPI(SunCalcs):
 
     def load_location(self, p_house_obj, p_earth_data, p_solar_data):
         """Extract from house information"""
-        if g_debug > 0:
-            print "sunrise.sunset.load_location() ", p_house_obj.Name, p_house_obj.Location.Latitude
-            print "    ", p_earth_data
         self.earth_data = p_earth_data
         self.solar_data = p_solar_data
         p_earth_data.Latitude = p_house_obj.Location.Latitude
         p_earth_data.Longitude = p_house_obj.Location.Longitude
         p_earth_data.TimeZone = p_house_obj.Location.TimeZone
         p_earth_data.Name = p_house_obj.Name
-        if g_debug > 1:
-            print "Load location data for {0:}".format(p_earth_data.Name)
+        if g_debug > 2:
+            print "Load location data for House:{0:}".format(p_earth_data.Name)
         if g_debug > 2:
             print "Load location data: Lat:{0:}, Lon:{1:}".format(p_earth_data.Latitude, p_earth_data.Longitude)
         if g_debug > 2:
@@ -408,9 +405,8 @@ class API(SSAPI):
         self.solar_data = SolarParameters()
 
     def Start(self, p_house_obj, p_date = datetime.date.today()):
-        if g_debug >= 1:
-            print "sunrisesunset.Start() - Date is ", p_date, p_house_obj
-            print "    ", self.earth_data
+        if g_debug >= 2:
+            print "Calculating Sunrise for Date:", p_date
         SSAPI().load_location(p_house_obj, self.earth_data, self.solar_data)
         self.earth_data.Date = p_date
         SSAPI().calc_sunrise_sunset(self.earth_data, self.solar_data)
