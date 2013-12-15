@@ -57,7 +57,7 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 	 */
 	function startWidget(self) {
 		function cb_getHousesInfo(p_json) {
-			//Divmod.debug('---', 'houseSelect.startWidget.cb_getHousesInfo() was called.');
+			Divmod.debug('---', 'houseSelect.startWidget.cb_getHousesInfo() was called.');
 			//console.log("houseSelect.startWidget.cb   JSON = %O", p_json);
 			var l_obj = JSON.parse(p_json);
 			var l_tab = buildTable(l_obj, 'handleMenuOnClick');

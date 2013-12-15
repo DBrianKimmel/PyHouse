@@ -57,12 +57,11 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 
 	// ============================================================================
 	/**
-	 * This triggers getting the lights data from the server.
-	 * The server calls displayLightsButtons with the lights info.
+	 * This triggers getting the house data from the server.
 	 */
 	function fetchHouseData(self) {
 		function cb_fetchHouseData(p_json) {
-			//Divmod.debug('---', 'controlLights.cb_fetchHouseData() was called.  JSON: ' + p_json);
+			Divmod.debug('---', 'controlLights.cb_fetchHouseData() was called.  JSON: ' + p_json);
 			globals.House.HouseObj = JSON.parse(p_json);
 			var l_tab = buildTable(globals.House.HouseObj.Lights, 'handleMenuOnClick');
 			self.nodeById('ControlLightTableDiv').innerHTML = l_tab;
