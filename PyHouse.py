@@ -206,6 +206,8 @@ class API(Utilities):
         self.import_config_info(self.m_pyhouses_obj)
         self.m_pyhouses_obj.LogsAPI = log.API()
         self.m_pyhouses_obj.LogsData = self.m_pyhouses_obj.LogsAPI.Start(self.m_pyhouses_obj)
+        global g_logger
+        g_logger = logging.getLogger('PyHouse         ')
         g_logger.info("Initializing PyHouse.\n\n")
         #
         self.m_remoteAPI = local_master.API()

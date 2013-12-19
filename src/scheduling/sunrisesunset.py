@@ -16,7 +16,7 @@ from math import pi
 
 # Import PyMh files
 
-g_debug = 9
+g_debug = 1
 g_logger = logging.getLogger('PyHouse.Sunrise     ')
 
 RAD2DEG = 180.0 / pi
@@ -345,13 +345,13 @@ class SunCalcs(SSUtility, EarthParameters, SolarParameters):
         l_rise = l_transit - (l_set - l_transit)
         p_earth.Sunrise = l_rise
         p_earth.Sunset = l_set
-        if g_debug > 5:
+        if g_debug >= 5:
             print("J**         Calculating using hour angle {0:}".format(l_j_starstar))
-        if g_debug > 0:
+        if g_debug >= 2:
             print(" Sunrise {0:}  {1:}".format(l_rise, self._convert_julian_to_time(l_rise, True)))
-        if g_debug > 0:
+        if g_debug >= 2:
             print(" Transit {0:}  {1:}".format(l_transit, self._convert_julian_to_time(l_transit, True)))
-        if g_debug > 0:
+        if g_debug >= 2:
             print(" Sunset  {0:}  {1:}".format(l_set, self._convert_julian_to_time(l_set, True)))
 
     def calc_sunrise_sunset(self, p_earth_data, p_solar_data):

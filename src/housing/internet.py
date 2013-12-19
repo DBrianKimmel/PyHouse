@@ -246,11 +246,8 @@ class FindExternalIpAddress(object):
     m_url = None
 
     def __init__(self, p_house_obj):
-        if g_debug >= 4:
-            print "internet.FindExternalIpAddress() - House:{0:}".format(p_house_obj.Name)
         self.m_house_obj = p_house_obj
-        if p_house_obj.Active:
-            self.get_public_ip()
+        self.get_public_ip()
 
     def get_public_ip(self):
         """Get the public IP address for the house.
@@ -260,38 +257,31 @@ class FindExternalIpAddress(object):
             l_delay = 600
             self.m_house_obj.Internet.ExternalDelay = l_delay
         callLater(l_delay, self.get_public_ip)
-        #
         self.m_url = self.m_house_obj.Internet.ExternalUrl
         if self.m_url == None:
             return
-        if g_debug >= 4:
-            print "internet.get_public_ip() - House:{0:}".format(self.m_house_obj.Name)
-        l_ip_page = getPage(self.m_url)
-        l_ip_page.addCallbacks(self.cb_parse_page, self.eb_no_page)
-
+        l_ip_page_defer = getPage(self.m_url)
+        l_ip_page_defer.addCallbacks(self.cb_parse_page, self.eb_no_page)
 
     def cb_parse_page(self, p_ip_page):
         """This gets the page with the IP in it and returns it.
         Different sites will need different page scraping to get the IP address.
         dotted quad IPs are converted to 4 byte addresses
         IP V-6 is not handled yet.
+
+        @param p_ip_page: is the web page as a string
         """
         # This is for Shawn Powers page - http://snar.co/ip
         l_quad = p_ip_page
         self.m_house_obj.Internet.ExternalIP = l_quad
         l_addr = convert.ConvertEthernet().dotted_quad2long(l_quad)
         g_logger.info("Got External IP page for House:{0:}, Page:{1:}".format(self.m_house_obj.Name, p_ip_page))
-        if g_debug >= 4:
-            print "internet.cb_parse_page()", p_ip_page, l_addr, self.m_house_obj
+        callLater(self.m_house_obj.Internet.ExternalDelay, self.get_public_ip)
         return l_addr
 
     def eb_no_page(self, p_reason):
-        if g_debug >= 4:
-            print "internet.eb_no_page()", p_reason
         g_logger.error("Failed to Get External IP page for House:{0:}, {1:}".format(self.m_house_obj.Name, p_reason))
-
-        import time
-        time.sleep(10)
+        callLater(self.m_house_obj.Internet.ExternalDelay, self.get_public_ip)
 
 
 class DynDnsAPI(object):
@@ -305,55 +295,47 @@ class DynDnsAPI(object):
 
     def __init__(self, p_house_obj):
         self.m_house_obj = p_house_obj
-        if g_debug >= 3:
-            print "internet.DynDnsAPI() - House:{0:}".format(self.m_house_obj.Name)
-
-    def start_dyndns_process(self):
-        if g_debug >= 3:
-            print "internet.start_dyndns_process() - House:{0:}".format(self.m_house_obj.Name)
         # Wait a bit to avoid all the starting chaos
-        callLater(3 * 60, self.update_start)
+        callLater(3 * 60, self.update_start_process)
 
-    def stop_dyndns_process(self):
-        if g_debug >= 3:
-            print "internet.stop_dyndns_process() - House:{0:}".format(self.m_house_obj.Name)
-        pass
-
-    def update_start(self):
+    def update_start_process(self):
         """After waiting for the initial startup activities to die down, this is invoked
         to start up a loop for each dynamic service being updated.
         """
-        if g_debug >= 3:
-            print "internet.update_start() - House:{0:}".format(self.m_house_obj.Name)
+        self.m_running = True
         for l_dyn_obj in self.m_house_obj.Internet.DynDns.itervalues():
             l_cmd = lambda x = l_dyn_obj.Interval, y = l_dyn_obj: self.update_loop(x, y)
             callLater(l_dyn_obj.Interval, l_cmd)
 
-    def update_loop(self, p_interval, p_dyn_obj):
-        if g_debug >= 3:
-            print "internet.update_loop() - House:{0:}".format(self.m_house_obj.Name), p_interval, p_dyn_obj.Url
+    def stop_dyndns_process(self):
+        self.m_running = False
+
+    def update_loop(self, _p_interval, p_dyn_obj):
+        """Fetching the page from afraid.org using this url will update the IP address
+        using this computers PUBLIC ip address.
+        Other methods may be required if using some other dyn dns servicee.
+        """
+        if not self.m_running:
+            return
         g_logger.info("Update DynDns for House:{0:}, {1:}, {2:}".format(self.m_house_obj.Name, p_dyn_obj.Name, p_dyn_obj.Url))
         self.m_dyn_obj = p_dyn_obj
         self.m_deferred = getPage(p_dyn_obj.Url)
-        self.m_deferred.addCallbacks(self.cb_parse_dyndns, self.eb_parse_dyndns)
+        self.m_deferred.addCallback(self.cb_parse_dyndns)
+        self.m_deferred.addErrback(self.eb_parse_dyndns)
         self.m_deferred.addBoth(self.cb_do_delay)
 
-    def cb_parse_dyndns(self, p_response):
+    def cb_parse_dyndns(self, _p_response):
         """Update the external web site with our external IP address.
+        In the case of afraid.org, nothing needs to be done to respond to the web page fetched.
         """
-        if g_debug >= 3:
-            print "internet.cb_put_dyndns() ", p_response, self.m_dyn_obj
-        # elf.update_dyn_dns_service(self.m_house_obj, p_response)
         return
 
     def eb_parse_dyndns(self, p_response):
-        if g_debug >= 3:
-            print "internet.eb_put_dyndns() ", p_response, self.m_dyn_obj
-        return
+        """Afraid.org has no errors except no response in which case we can do nothing anyhow.
+        """
+        g_logger.warning("Update DynDns for House:{0:} failed ERROR - {1:}.".format(self.m_house_obj.Name, p_response))
 
-    def cb_do_delay(self, p_response):
-        if g_debug >= 3:
-            print "internet.cb_do_delay() ", p_response, self.m_dyn_obj
+    def cb_do_delay(self, _p_response):
         l_cmd = lambda x = self.m_dyn_obj.Interval, y = self.m_dyn_obj: self.update_loop(x, y)
         callLater(self.m_dyn_obj.Interval, l_cmd)
 
@@ -368,22 +350,19 @@ class API(ReadWriteXML):
     def Start(self, p_house_obj, p_house_xml):
         """Start async operation of the internet module.
         """
-        g_logger.info("Starting for house:{0:}.".format(p_house_obj.Name))
         self.read_internet_xml(p_house_obj, p_house_xml)
         self.m_house_obj = p_house_obj
         if p_house_obj.Active:
+            g_logger.info("Starting for house:{0:}.".format(p_house_obj.Name))
             FindExternalIpAddress(p_house_obj)
-            self.dyndns = DynDnsAPI(p_house_obj)
-            self.dyndns.start_dyndns_process()
+            self.m_dyn_loop = DynDnsAPI(p_house_obj)
 
     def Stop(self):
         """Stop async operations
         write out the XML file.
         """
-        if g_debug >= 2:
-            print "internet.API.Stop()"
-        g_logger.info("Stopping for house:{0:}.".format(self.m_house_obj.Name))
         if self.m_house_obj.Active:
+            g_logger.info("Stopping for house:{0:}.".format(self.m_house_obj.Name))
             self.dyndns.stop_dyndns_process()
         l_internet_xml = self.UpdateXml()
         return l_internet_xml
