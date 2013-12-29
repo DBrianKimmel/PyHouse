@@ -82,7 +82,7 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 	 */
 	function getSelectedHouseData(self) {
 		function cb_getSelectedHouseData(p_json) {
-			//ivmod.debug('---', 'houseSelect.getSelectedHouseData.cb_getSelectedHouseData() was called.');
+			//Divmod.debug('---', 'houseSelect.getSelectedHouseData.cb_getSelectedHouseData() was called.');
 			//console.log("ss.cb   p1 %O", p_json);
 			var l_obj = JSON.parse(p_json);
 			globals.House.HouseObj = l_obj;

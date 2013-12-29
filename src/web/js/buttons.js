@@ -36,7 +36,7 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 		self.node.style.display = 'block';
 		self.showButtons(self);
 		self.hideEntry(self);
-		self.fetchHouseData(self, globals.House.HouseIx);
+		self.fetchHouseData(globals.House.HouseIx);
 	},
 	function hideButtons(self) {
 		self.nodeById('ButtonButtonsDiv').style.display = 'none';		

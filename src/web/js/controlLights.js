@@ -61,7 +61,8 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 	 */
 	function fetchHouseData(self) {
 		function cb_fetchHouseData(p_json) {
-			Divmod.debug('---', 'controlLights.cb_fetchHouseData() was called.  JSON: ' + p_json);
+			Divmod.debug('---', 'controlLights.cb_fetchHouseData() was called. ');
+			//console.log("houseSelect.startWidget.cb   JSON = %O", p_json);
 			globals.House.HouseObj = JSON.parse(p_json);
 			var l_tab = buildTable(globals.House.HouseObj.Lights, 'handleMenuOnClick');
 			self.nodeById('ControlLightTableDiv').innerHTML = l_tab;
