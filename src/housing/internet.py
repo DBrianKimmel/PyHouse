@@ -247,7 +247,7 @@ class FindExternalIpAddress(object):
 
     def __init__(self, p_house_obj):
         self.m_house_obj = p_house_obj
-        self.get_public_ip()
+        callLater(3 * 60, self.get_public_ip)
 
     def get_public_ip(self):
         """Get the public IP address for the house.
@@ -259,7 +259,9 @@ class FindExternalIpAddress(object):
         callLater(l_delay, self.get_public_ip)
         self.m_url = self.m_house_obj.Internet.ExternalUrl
         if self.m_url == None:
+            g_logger.error("URL is missing for House:{0:}".format(self.m_house_obj.Name))
             return
+        g_logger.debug("About to get URL:{0:}".format(self.m_url))
         l_ip_page_defer = getPage(self.m_url)
         l_ip_page_defer.addCallbacks(self.cb_parse_page, self.eb_no_page)
 
