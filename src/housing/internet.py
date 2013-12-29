@@ -121,14 +121,15 @@ class ReadWriteXML(xml_tools.ConfigTools):
             self.m_external_ip = None
             self.m_external_url = None
             self.m_external_delay = 600
+        # Design change - one of these two should work
         try:
             self.m_external_url = self.get_text_from_xml(l_sect, 'ExternalUrl')
         except:
             self.m_external_url = self.get_text_from_xml(l_sect, 'UrlExternalIP')
-
         p_house_obj.Internet.ExternalIP = self.m_external_ip
         p_house_obj.Internet.ExternalUrl = self.m_external_url
         p_house_obj.Internet.ExternalDelay = self.m_external_delay
+        g_logger.debug("Got external IP params.  URL:{0:}, Delay:{1:}".format(self.m_external_url, self.m_external_delay))
         try:
             l_list = l_sect.iterfind('DynamicDNS')
         except AttributeError:
