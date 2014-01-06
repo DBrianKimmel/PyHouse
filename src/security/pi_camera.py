@@ -3,7 +3,7 @@ Created on Nov 18, 2013
 
 @author: briank
 
-if this node is a raspberry pi and it has a camera attached, this will provide surveilance
+if this node is a raspberry pi and it has a camera attached, this will provide surveillance
 videos and alerts.
 
 If motion above a threshold is detected, it will trigger an alert and create a time lapse video
