@@ -36,16 +36,16 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 		return l_defer;
 	},
 	function hideSelectButtons(self) {
-		self.nodeById('HouseSelectButtonsDiv').style.display = 'none';	
+		self.nodeById('HouseSelectButtonsDiv').style.display = 'none';
 	},
 	function showSelectButtons(self) {
-		self.nodeById('HouseSelectButtonsDiv').style.display = 'block';	
+		self.nodeById('HouseSelectButtonsDiv').style.display = 'block';
 	},
 	function hideSelectedHouse(self) {
-		self.nodeById('HouseSelectedDiv').style.display = 'none';	
+		self.nodeById('HouseSelectedDiv').style.display = 'none';
 	},
 	function showSelectedHouse(self) {
-		self.nodeById('HouseSelectedDiv').style.display = 'block';	
+		self.nodeById('HouseSelectedDiv').style.display = 'block';
 	},
 	
 	// ============================================================================
@@ -88,12 +88,12 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 			globals.House.HouseObj = l_obj;
 		}
 		function eb_getSelectedHouseData(res) {
-			Divmod.debug('---', 'houseSelect.eb_getSelectedHouseData() was called. ERROR = ' + res);			
+			Divmod.debug('---', 'houseSelect.eb_getSelectedHouseData() was called. ERROR = ' + res);
 		}
 		//Divmod.debug('---', 'houseSelect.getSelectedHouseData() was called. ');
 		self.hideSelectButtons();		
 		self.showSelectedHouse();		
-		self.nodeById('HouseSelectedDiv').innerHTML = 'Working on house: ' + globals.House.HouseName;		
+		self.nodeById('HouseSelectedDiv').innerHTML = 'Working on house: ' + globals.House.HouseName;
         var l_defer = self.callRemote("getSelectedHouseData", globals.House.HouseIx);  // call server @ web_houseSelect.py
 		l_defer.addCallback(cb_getSelectedHouseData);
 		l_defer.addErrback(eb_getSelectedHouseData);

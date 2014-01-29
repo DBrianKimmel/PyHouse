@@ -13,7 +13,7 @@
 // import helpers
 
 helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
-		
+
 	function __init__(self, node) {
 		//Divmod.debug('---', 'schedules.__init__() was called. - self=' + self + "  node=" + node);
 		schedules.SchedulesWidget.upcall(self, '__init__', node);
@@ -36,7 +36,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 		l_defer.addCallback(cb_widgetready);
 		return l_defer;
 	},
-	
+
 	/**
 	 * routines for showing and hiding parts of the screen.
 	 */
@@ -47,16 +47,16 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 		self.fetchHouseData();
 	},
 	function hideButtons(self) {
-		self.nodeById('ScheduleButtonsDiv').style.display = 'none';		
+		self.nodeById('ScheduleButtonsDiv').style.display = 'none';
 	},
 	function showButtons(self) {
-		self.nodeById('ScheduleButtonsDiv').style.display = 'block';	
+		self.nodeById('ScheduleButtonsDiv').style.display = 'block';
 	},
 	function hideEntry(self) {
-		self.nodeById('ScheduleEntryDiv').style.display = 'none';		
+		self.nodeById('ScheduleEntryDiv').style.display = 'none';
 	},
 	function showEntry(self) {
-		self.nodeById('ScheduleEntryDiv').style.display = 'block';		
+		self.nodeById('ScheduleEntryDiv').style.display = 'block';
 	},
 
 	function buildButtonName(self, p_obj) {
@@ -99,11 +99,11 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 		self.nodeById('ActiveDiv').innerHTML   = buildTrueFalseWidget('ScheduleActive', p_obj.Active);
 		self.nodeById('UUIDDiv').innerHTML     = buildTextWidget('ScheduleUUID', p_obj.UUID, 'disabled');
 		self.nodeById('TypeDiv').innerHTML     = buildTextWidget('ScheduleType', p_obj.Type);  // s/b select box of valid types
+		self.nodeById('RoomNameDiv').innerHTML = buildRoomSelectWidget('ScheduleRoomName', p_obj.RoomName);
+		self.nodeById('LightNameDiv').innerHTML = buildLightSelectWidget('ScheduleLightName', p_obj.LightName);
 		self.nodeById('TimeDiv').innerHTML     = buildTextWidget('ScheduleTime', p_obj.Time);
 		self.nodeById('LevelDiv').innerHTML    = buildLevelSliderWidget('ScheduleLevel', p_obj.Level);
 		self.nodeById('RateDiv').innerHTML     = buildTextWidget('ScheduleRate', p_obj.Rate, 'disabled');
-		self.nodeById('RoomNameDiv').innerHTML = buildRoomSelectWidget('ScheduleRoomName', p_obj.RoomName);
-		self.nodeById('LightNameDiv').innerHTML = buildLightSelectWidget('ScheduleLightName', p_obj.LightName);
 		self.nodeById('ScheduleEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick');
 	},
 	
@@ -222,9 +222,10 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 			break;
 		default:
 			Divmod.debug('---', 'schedules.handleDataOnClick(Default) was called. l_ix:' + l_ix);
-			break;			
+			break;
 		}
 		// return false stops the resetting of the server.
         return false;
 	}
 );
+// ### END DBK

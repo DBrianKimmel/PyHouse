@@ -593,8 +593,8 @@ function buildSliderWidget(p_id, p_value) {
 	l_html += ">\n";
 	return l_html;
 }
-function buildLevelSlider(p_name, p_level) {
-	//Divmod.debug('---', 'globals.buildLevelSlider() called.  Level=' + p_level);
+function buildLevelSliderWidget(p_name, p_level) {
+	//Divmod.debug('---', 'globals.buildLevelSliderWidget() called.  Level=' + p_level);
 	var l_html = buildSliderWidget(p_name, p_level);
 	return l_html;
 }

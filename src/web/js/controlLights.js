@@ -114,7 +114,7 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
         self.nodeById('KeyDiv').innerHTML = buildTextWidget('CtlLightKey', p_obj.Key, 'disabled');
 		self.nodeById('UUIDDiv').innerHTML = buildTextWidget('CtlLightUUID', p_obj.UUID, 'disabled');
 		self.nodeById('RoomNameDiv').innerHTML = buildRoomSelectWidget('CtlLightRoomName', p_obj.RoomName, 'disabled');
-		self.nodeById('LevelDiv').innerHTML = buildLevelSlider('CtlLightLevel', p_obj.CurLevel);
+		self.nodeById('LevelDiv').innerHTML = buildLevelSliderWidget('CtlLightLevel', p_obj.CurLevel);
 		self.nodeById('ControlLightEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick', 'NoDelete');
 	},
 	function fetchEntry(self) {
