@@ -64,7 +64,7 @@ class SerialAPI(object):
     def twisted_open_device(self, p_controller_obj):
         try:
             self.m_serial = SerialPort(SerialProtocol(self, p_controller_obj), p_controller_obj.Port, reactor, baudrate = p_controller_obj.BaudRate)
-        except serial.serialutil.SerialException, e:
+        except serial.serialutil.SerialException as e:
             l_msg = "Open failed for Device:{0:}, Port:{1:}".format(p_controller_obj.Name, p_controller_obj.Port), e
             g_logger.error(l_msg)
             return False
@@ -93,8 +93,8 @@ class SerialAPI(object):
             g_logger.debug("Writing {0:}".format(PrintBytes(p_message)))
         try:
             self.m_serial.writeSomeData(p_message)
-        except (AttributeError, TypeError):
-            g_logger.warn("Bad serial write - {0:}".format(PrintBytes(p_message)))
+        except (AttributeError, TypeError) as e:
+            g_logger.warn("Bad serial write - {0:} {1:}".format(e, PrintBytes(p_message)))
         return
 
 
