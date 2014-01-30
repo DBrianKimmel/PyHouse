@@ -31,6 +31,12 @@
 var REQ_404 = -1;
 var REQ_ROOT = 0;
 var REQ_WITHID = 2;
+var BUTTON_INACTIVE = '#d0f0c0';
+var BUTTON_ACTIVE   = '#d0d0ff';
+var BUTTON_ADD      = '#ffd0d0';
+var BUTTON_BACK     = '#ffd0d0';
+var BUTTON_CHANGE   = '#ffd0d0';
+var BUTTON_DELETE   = '#ffd0d0';
 
 globals = {
 	fonts : [ 'Verdana', 'Arial', 'Helvetica', 'sans-serif' ],
@@ -408,13 +414,12 @@ function updatePyHouseData() {
 /**
  * A series of routines to build HTML for insertion into widgets.
  */
-function buildButton(p_obj, p_handler, /* optional */ nameFunction) {
-	//Divmod.debug('---', 'globals.buildButton(1)');
-	//console.log('globals.buildButton() Obj: %O', p_obj);
+function buildButton(p_obj, p_handler, p_background_color, /* optional */ nameFunction) {
 	var l_html = '<td>';
 	l_html += "<button type='button' ";
 	l_html += "value='" + p_obj['Name'] + "' ";
 	l_html += "name ='" + p_obj['Key'] + "' ";
+	l_html += "style = 'background-color: " + p_background_color + "' ";
 	l_html += "onclick = 'return Nevow.Athena.Widget.handleEvent(this, \"onclick\", \""  + p_handler + "\" ";
 	l_html += ");' >\n";
 	if (typeof nameFunction === 'function')
@@ -425,16 +430,16 @@ function buildButton(p_obj, p_handler, /* optional */ nameFunction) {
 	return l_html;
 }
 function buildAddButton(p_handler) {
-	return buildButton({'Name' : 'Add', 'Key' : 10001}, p_handler);
+	return buildButton({'Name' : 'Add', 'Key' : 10001}, p_handler, BUTTON_ADD);
 }
 function buildBackButton(p_handler) {
-	return buildButton({'Name' : 'Back', 'Key' : 10002}, p_handler);
+	return buildButton({'Name' : 'Back', 'Key' : 10002}, p_handler, BUTTON_BACK);
 }
 function buildChangeButton(p_handler) {
-	return buildButton({'Name' : 'Change', 'Key' : 10003}, p_handler);
+	return buildButton({'Name' : 'Change', 'Key' : 10003}, p_handler, BUTTON_CHANGE);
 }
 function buildDeleteButton(p_handler) {
-	return buildButton({'Name' : 'Delete', 'Key' : 10004}, p_handler);
+	return buildButton({'Name' : 'Delete', 'Key' : 10004}, p_handler, BUTTON_DELETE);
 }
 
 /**
@@ -461,7 +466,10 @@ function buildTable(p_obj, p_handler, /* optional */ nameFunction, noOptions) {
 	//Divmod.debug('---', 'globals.buildTable(2) called. ' + Object.keys(p_obj).length);
 	var l_html = "<table><tr>\n";
 	for (var l_item in p_obj) {
-		l_html += buildButton(p_obj[l_item], p_handler, l_function);
+		var l_background = BUTTON_ACTIVE;
+		if (p_obj[l_item]['Active'] != true)
+			l_background = BUTTON_INACTIVE
+		l_html += buildButton(p_obj[l_item], p_handler, l_background, l_function);
 		l_count++;
 		if ((l_count > 0) & (l_count % l_cols == 0))
 			l_html += '</tr><tr>\n';
