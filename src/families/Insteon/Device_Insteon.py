@@ -198,7 +198,7 @@ class API(LightingAPI):
                     if l_controller_obj.Active != True:
                         continue
                     l_controller_obj._HandlerAPI.ChangeLight(p_light_obj, p_level)
-            except AttributeError, e:  # no controllers for house. (House is being added).
+            except AttributeError as e:  # no controllers for house. (House is being added).
                 g_logger.warning('Could not change light setting {0:}'.format(e))
 
 # ## END DBK

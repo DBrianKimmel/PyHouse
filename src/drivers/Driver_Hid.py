@@ -114,7 +114,7 @@ class UsbDriverAPI(UsbDeviceData):
             print "Driver_USB._setup_detach_kernel()"
         try:
             p_usb.Device.detach_kernel_driver(0)
-        except Exception, e:
+        except Exception as e:
             print "Driver_USB - Error in detaching_kernel_driver ", sys.exc_info()[0], e
 
     def _setup_configurations(self, p_usb):
@@ -155,7 +155,7 @@ class UsbDriverAPI(UsbDeviceData):
             l_alternate_setting = usb.control.get_interface(p_usb.Device, l_interface_number)
             if g_debug > 5:
                 print "  Alternate_setting:", l_alternate_setting
-        except Exception, e:
+        except Exception as e:
             print "   -- Error in alt setting ", sys.exc_info()[0], e
             l_alternate_setting = 0
         l_interface = usb.util.find_descriptor(
@@ -272,7 +272,7 @@ class UsbDriverAPI(UsbDeviceData):
             print "Driver_USB._write_bis_device() - Ep_out: {0:#04X}, - {1:}".format(g_usb.epo_addr, PrintBytes(l_message))
         try:
             l_len = g_usb.Device.write(g_usb.epo_addr, l_message)
-        except Exception, e:
+        except Exception as e:
             print "Driver_USB._write_bis_device() - Error in writing to USB device ", sys.exc_info()[0], e
             l_len = 0
         return l_len

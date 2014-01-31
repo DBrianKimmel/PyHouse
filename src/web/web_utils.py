@@ -85,7 +85,7 @@ class ComplexHandler(json.JSONEncoder):
         else:
             try:
                 l_ret = json.JSONEncoder.default(self, obj)
-            except TypeError, e:
+            except TypeError as e:
                 print "ERROR web_utils.ComplexHandler.default() TypeError ", e
                 l_ret = 'ERROR'
             return l_ret

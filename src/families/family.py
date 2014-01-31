@@ -63,7 +63,7 @@ class LightingUtility(FamilyData):
             l_family_obj.ModuleName = 'Device_' + l_family
             try:
                 l_module = importlib.import_module(l_family_obj.PackageName + '.' + l_family_obj.ModuleName, l_family_obj.PackageName)
-            except ImportError, e:
+            except ImportError as e:
                 print "    family.build_lighting_family_info() - ERROR - Cannot import module {0:}".format(l_family_obj.ModuleName), e
                 l_module = None
                 g_logger.error("Cannot import - Module:{0:}, Package:{1:}.".format(l_family_obj.ModuleName, l_family_obj.PackageName))

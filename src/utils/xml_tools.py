@@ -356,7 +356,7 @@ def open_config_file():
     l_file_name = l_cf.find_config_file(l_dir)
     try:
         open(l_file_name, mode = 'r')
-    except Exception, e:  # IOError:
+    except Exception as e:  # IOError:
         print " -- Error in open_config_file ", sys.exc_info(), e
         l_file_name = '~/.PyHouse/PyHouse.xml'
         l_file_name = os.path.expanduser(l_file_name)

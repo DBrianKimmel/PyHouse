@@ -43,11 +43,11 @@ class UsbDriverAPI(Driver_USB.UsbDriverAPI):
                     p_usb.message.append(l_msg[l_x])
             elif g_debug > 5:
                 print "Driver_USB_0403_6001.read_device() C - len was 0 ", l_msg
-        except usb.USBError, e:
+        except usb.USBError as e:
             print "Driver_USB_0403_6001.read_device() got USBError", e
             l_len = 0
             # break
-        except Exception, e:
+        except Exception as e:
             print " -- Error in Driver_USB_0403_6001.read_device() ", sys.exc_info(), e
             l_len = 0
             # break

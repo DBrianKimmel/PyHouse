@@ -83,11 +83,11 @@ class UsbDriverAPI(Driver_USB.UsbDriverAPI):
                         print "Driver_USB.read_device() {0:} - {1:}".format(l_len, l_msg)
                     for l_x in range(l_len):
                         p_usb.message.append(l_msg[l_x + 1])
-            except usb.USBError, e:
+            except usb.USBError as e:
                 # print "Driver_USB_17DD_5500.read_device() got USBError", e
                 l_len = 0
                 break
-            except Exception, e:
+            except Exception as e:
                 print " -- Error in Driver_USB_17DD_5500.read_device() ", sys.exc_info(), e
                 l_len = 0
                 break

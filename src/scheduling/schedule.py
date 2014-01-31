@@ -172,9 +172,8 @@ class ScheduleExecution(ScheduleData):
                 pass
             l_light_obj = tools.get_light_object(self.m_house_obj, name = l_sched_obj.LightName)
             g_logger.info("Executing schedule Name:{0:}, Light:{1:}, Level:{2:}".format(l_sched_obj.Name, l_sched_obj.LightName, l_sched_obj.Level))
-            # self.m_house_obj.LightingAPI.change_light_setting(self.m_house_obj, l_light_obj, l_sched_obj.Level)
             self.m_house_obj.LightingAPI.ChangeLight(l_light_obj, l_sched_obj.Level)
-        callLater(2, self.get_next_sched)
+        callLater(5, self.get_next_sched)
 
     def create_timer(self, p_seconds, p_list):
         """Create a timer that will go off when the next schedule time comes up on the clock.
@@ -297,12 +296,10 @@ class ScheduleUtility(ScheduleExecution):
         for l_key, l_schedule_obj in self.m_house_obj.Schedules.iteritems():
             if g_debug >= 7:
                 print "schedule.get_next_sched() sched=", l_schedule_obj
-            # if not l_schedule_obj.Active:
-            #    continue
             l_time_sch = self._extract_time(l_schedule_obj.Time)
             if g_debug >= 7:
-                print "schedule.get_next_sched() - Schedule  SlotName: {0:}, Light: {1:}, Level: {2:}, Time: {3:}".format(l_schedule_obj.Name, l_schedule_obj.LightName,
-                                                                                                                           l_schedule_obj.Level, l_time_sch)
+                print "schedule.get_next_sched() - Schedule  SlotName: {0:}, Light: {1:}, Level: {2:}, Time: {3:}".format(
+                    l_schedule_obj.Name, l_schedule_obj.LightName, l_schedule_obj.Level, l_time_sch)
             # now see if this is 1) part of a chain -or- 2) an earlier schedule
             l_diff = self._make_delta(l_time_sch).total_seconds() - self._make_delta(l_time_now).total_seconds()
             if l_diff < 0:
