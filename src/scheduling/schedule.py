@@ -280,26 +280,17 @@ class ScheduleUtility(ScheduleExecution):
         Be sure to get the next in a chain of things happening at the same time.
         Establish a list of Names that have equal schedule times
         """
-        if g_debug >= 4:
-            print "schedule.get_next_sched() "
         l_now = datetime.datetime.now()
         l_time_now = datetime.time(l_now.hour, l_now.minute, l_now.second)
         self.m_sunrisesunset.Start(self.m_house_obj)
         self.m_sunset = self.m_sunrisesunset.get_sunset()
         self.m_sunrise = self.m_sunrisesunset.get_sunrise()
-        if g_debug >= 7:
-            print "schedule.get_next_sched() - sunrise/sunset = ", self.m_sunrise, self.m_sunset
-        g_logger.info("Sunrise:{0:}, Sunset:{1:}".format(self.m_sunrise, self.m_sunset))
+        g_logger.info("In get_next_sched - Sunrise:{0:}, Sunset:{1:}".format(self.m_sunrise, self.m_sunset))
         l_time_scheduled = l_now
         l_next = 100000.0
         l_list = []
         for l_key, l_schedule_obj in self.m_house_obj.Schedules.iteritems():
-            if g_debug >= 7:
-                print "schedule.get_next_sched() sched=", l_schedule_obj
             l_time_sch = self._extract_time(l_schedule_obj.Time)
-            if g_debug >= 7:
-                print "schedule.get_next_sched() - Schedule  SlotName: {0:}, Light: {1:}, Level: {2:}, Time: {3:}".format(
-                    l_schedule_obj.Name, l_schedule_obj.LightName, l_schedule_obj.Level, l_time_sch)
             # now see if this is 1) part of a chain -or- 2) an earlier schedule
             l_diff = self._make_delta(l_time_sch).total_seconds() - self._make_delta(l_time_now).total_seconds()
             if l_diff < 0:
@@ -314,8 +305,6 @@ class ScheduleUtility(ScheduleExecution):
                 l_list.append(l_key)
         l_debug_msg = "Schedule - House:{0:}, delaying {1:} seconds until {2:} for list {3:}".format(self.m_house_obj.Name, l_next, l_time_scheduled, l_list)
         g_logger.info("Get_next_schedule complete. {0:}".format(l_debug_msg))
-        if g_debug >= 4:
-            print "schedule.get_next_sched()  {0:}".format(l_debug_msg)
         self.create_timer(l_next, l_list)
 
 
