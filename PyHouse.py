@@ -241,8 +241,8 @@ class API(Utilities):
         self.m_pyhouses_obj.WebAPI.UpdateXml(l_xml)
         self.m_pyhouses_obj.LogsAPI.UpdateXml(l_xml)
         self.m_pyhouses_obj.HousesAPI.UpdateXml(l_xml)
-        # print 'PyHouse.UpdateXml()\n', xml_tools.prettify(l_xml)
         xml_tools.write_xml_file(l_xml, self.m_pyhouses_obj.XmlFileName)
+        g_logger.info("XML file has been updated.")
 
     def Reload(self, _p_pyhouses_obj):
         """Update XML file with current info.

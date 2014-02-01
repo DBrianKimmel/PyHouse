@@ -290,6 +290,8 @@ class ScheduleUtility(ScheduleExecution):
         l_next = 100000.0
         l_list = []
         for l_key, l_schedule_obj in self.m_house_obj.Schedules.iteritems():
+            if l_schedule_obj.Active:
+                continue
             l_time_sch = self._extract_time(l_schedule_obj.Time)
             # now see if this is 1) part of a chain -or- 2) an earlier schedule
             l_diff = self._make_delta(l_time_sch).total_seconds() - self._make_delta(l_time_now).total_seconds()

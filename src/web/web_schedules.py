@@ -61,13 +61,11 @@ class SchedulesElement(athena.LiveElement):
         l_delete = l_json['Delete']
         l_house_ix = int(l_json['HouseIx'])
         l_schedule_ix = int(l_json['Key'])
-        if g_debug >= 4:
-            print "web_schedules.SchedulesElement.saveScheduleData() - JSON:", l_json
         if l_delete:
             try:
                 del self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Schedules[l_schedule_ix]
-            except AttributeError:
-                print "web_schedules - Failed to delete - JSON: ", l_json
+            except AttributeError as e:
+                g_logger.warn('Failed to delete schedule: {0:}, ix:{1:}').format(e, l_schedule_ix)
             return
         try:
             l_obj = self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Schedules[l_schedule_ix]
