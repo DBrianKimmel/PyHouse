@@ -1,8 +1,14 @@
-.buildpath
+# Python
+*.py[cod]
+
+# Project
 .project
 .pydevproject
+.buildpath
 .settings
+
 .SaveConfig/
-*.pyc
-*.pyo
 minimal/
+
+
+### END DBK

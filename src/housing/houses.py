@@ -142,7 +142,7 @@ class API(LoadSaveAPI):
         self = object.__new__(cls)
         cls.__init__(self, *args, **kwargs)
         Singletons[cls] = self
-        g_logger.info("Initialized all houses.")
+        g_logger.info("Initialized all houses.\n\n")
         return self
 
     def __init__(self):
