@@ -25,14 +25,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 
 
-Uses I{epytext} markup for documentation.
+Uses I{Epytext} mark-up for documentation.
 
-see C{main.__init__.py} for core documentation.
+see C{src.__init__.py} for core documentation.
 
 During development this is run by hand.
 It is, however, planned to be a daemon that is kicked off on system start-up.
-It is intended to run on everything from a small, low power bare bones system to a server running multiple houses in several, widespread locations.
-4
+It is intended to run on everything from a small, low power bare bones system to a server running multiple
+ houses in several, widespread locations.
+It now runs on Raspberry Pi so that is the primary target.
+
+
 The system is controlled via a browser connecting to a web server that will be integrated into PyHouse.
 
 TODO:
@@ -44,8 +47,8 @@ TODO:
 """
 
 __author__ = "D. Brian Kimmel"
-__copyright__ = "2010-2013 by D. Brian Kimmel"
-__version_info__ = (1, 0, 0)
+__copyright__ = "2010-2014 by D. Brian Kimmel"
+__version_info__ = (1, 2, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 

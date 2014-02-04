@@ -50,7 +50,7 @@ class InternetData(object):
         self.Key = 0
         self.Active = False
         self.ExternalDelay = 0
-        self.ExternalIP = None  # returned from url to check our external IP address
+        self.ExternalIP = None  # returned from url to check our external IPv4 address
         self.ExternalUrl = None
         self.DynDns = {}
 
@@ -79,6 +79,16 @@ class DynDnsData(object):
                     )
 
 
+class InterfaceIpAddresses(object):
+
+    def __init__(self):
+        self.Name = ''
+        self.Key = 0
+        self.Active = False
+        self.MacAddress = ''
+        self.V4Address = ''
+        self.V6Address = ''
+
 #======================================
 #
 # Synchronous portion
@@ -87,6 +97,13 @@ class DynDnsData(object):
 # Also halt all asynchronous operations and write out the XML when requested.
 #
 #======================================
+
+class FindAllInterfaceData(object):
+    """Loop thru all the interfaces and extract the info
+    """
+    def __init__(self):
+        pass
+
 
 class ReadWriteXML(xml_tools.ConfigTools):
     """
@@ -348,7 +365,7 @@ class API(ReadWriteXML):
     m_house_obj = None
 
     def __init__(self):
-        pass
+        FindAllInterfaceData()
 
     def Start(self, p_house_obj, p_house_xml):
         """Start async operation of the internet module.
