@@ -79,16 +79,27 @@ class WebUtilities(xml_tools.ConfigFile):
 class ComplexHandler(json.JSONEncoder):
     """
     """
-    def default(self, obj):
-        if hasattr(obj, 'reprJSON'):
-            return obj.reprJSON()
+    def default(self, p_obj):
+        if hasattr(p_obj, 'reprJSON'):
+            return p_obj.reprJSON()
         else:
-            try:
-                l_ret = json.JSONEncoder.default(self, obj)
-            except TypeError as e:
-                print "ERROR web_utils.ComplexHandler.default() TypeError ", e
-                l_ret = 'ERROR'
+            l_ret = {}
+            l_attrs = filter(lambda aname: not aname.startswith('__'), dir(p_obj))
+            for l_attr in l_attrs:
+                if not hasattr(l_ret, l_attr):  # Avoid duplicates
+                    l_val = getattr(self, l_attr)
+                    if not l_attr.startswith('_'):  # Avoid private
+                        l_ret[l_attr] = str(l_val)
+                        if l_attr == 'InsteonAddress':
+                            l_ret[l_attr] = self.int2dotted_hex(l_val)
             return l_ret
+#
+#           try:
+#                l_ret = json.JSONEncoder.default(self, obj)
+#            except TypeError as e:
+#                print "ERROR web_utils.ComplexHandler.default() TypeError ", e
+#                l_ret = 'ERROR'
+#            return l_ret
 
 
 class JsonUnicode(object):

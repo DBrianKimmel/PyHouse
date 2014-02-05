@@ -28,14 +28,14 @@ class LightData(lighting_core.CoreData):
         self.Type = 'Light'
         self.CurLevel = 0
 
-    def reprJSON(self):
-        """lighting_lights.
-        """
-        # print "lighting_lights.reprJSON(1)"
-        l_ret = super(LightData, self).reprJSON()  # lighting_core data
-        l_ret.update(dict(CurLevel = self.CurLevel))
-        # print "lighting_lights.reprJSON(2) {0:}".format(l_ret)
-        return l_ret
+#    def reprJSON(self):
+#        """lighting_lights.
+#        """
+#        # print "lighting_lights.reprJSON(1)"
+#        l_ret = super(LightData, self).reprJSON()  # lighting_core data
+#        l_ret.update(dict(CurLevel = self.CurLevel))
+#        # print "lighting_lights.reprJSON(2) {0:}".format(l_ret)
+#        return l_ret
 
 
 class LightingAPI(lighting_core.CoreAPI):
