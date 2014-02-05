@@ -40,19 +40,19 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 	},
 	function hideButtons(self) {
 		//Divmod.debug('---', 'controlLights.hideButtons() was called. ');
-		self.nodeById('ControlLightButtonsDiv').style.display = 'none';		
+		self.nodeById('ControlLightButtonsDiv').style.display = 'none';
 	},
 	function showButtons(self) {
 		//Divmod.debug('---', 'controlLights.showButtons() was called. ');
-		self.nodeById('ControlLightButtonsDiv').style.display = 'block';	
+		self.nodeById('ControlLightButtonsDiv').style.display = 'block';
 	},
 	function hideEntry(self) {
 		//Divmod.debug('---', 'controlLights.hideEntry() was called. ');
-		self.nodeById('ControlLightEntryDiv').style.display = 'none';		
+		self.nodeById('ControlLightEntryDiv').style.display = 'none';
 	},
 	function showEntry(self) {
 		//Divmod.debug('---', 'controlLights.showEntry() was called. ');
-		self.nodeById('ControlLightEntryDiv').style.display = 'block';		
+		self.nodeById('ControlLightEntryDiv').style.display = 'block';
 	},
 
 	// ============================================================================
@@ -61,8 +61,6 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 	 */
 	function fetchHouseData(self) {
 		function cb_fetchHouseData(p_json) {
-			Divmod.debug('---', 'controlLights.cb_fetchHouseData() was called. ');
-			//console.log("houseSelect.startWidget.cb   JSON = %O", p_json);
 			globals.House.HouseObj = JSON.parse(p_json);
 			var l_tab = buildTable(globals.House.HouseObj.Lights, 'handleMenuOnClick');
 			self.nodeById('ControlLightTableDiv').innerHTML = l_tab;
@@ -70,7 +68,6 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 		function eb_fetchHouseData(res) {
 			Divmod.debug('---', 'controlLights.eb_fetchHouseData() was called.  ERROR ' + res);
 		}
-		//Divmod.debug('---', 'controlLights.fetchHouseData() was called. ');
         var l_defer = self.callRemote("getHouseData", globals.House.HouseIx);  // call server @ web_controlLights.py
 		l_defer.addCallback(cb_fetchHouseData);
 		l_defer.addErrback(eb_fetchHouseData);
@@ -95,8 +92,6 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 			// One of the controlLights buttons.
 			var l_obj = globals.House.HouseObj.Lights[l_ix];
 			globals.House.LightObj = l_obj;
-			//Divmod.debug('---', 'controlLights.handleMenuOnClick(1) was called. ' + l_ix + ' ' + l_name);
-			//console.log("controlLights.handleMenuOnClick() - l_obj = %O", l_obj);
 			self.showEntry();
 			self.hideButtons();
 			self.fillEntry(l_obj);

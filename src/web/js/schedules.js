@@ -74,7 +74,6 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 	 */
 	function fetchHouseData(self) {
 		function cb_fetchHouseData(p_json) {
-			//Divmod.debug('---', 'schedules.cb_fetchHouseData() was called. ');
 			globals.House.HouseObj = JSON.parse(p_json);
 			var l_tab = buildTable(globals.House.HouseObj.Schedules, 'handleMenuOnClick', self.buildButtonName);
 			self.nodeById('ScheduleTableDiv').innerHTML = l_tab;
@@ -82,7 +81,6 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 		function eb_fetchHouseData(res) {
 			Divmod.debug('---', 'schedules.eb_fetchHouseData() was called.  ERROR: ' + res);
 		}
-		//Divmod.debug('---', 'schedules.fetchHouseData() was called. Ix: ' + p_houseIndex);
         var l_defer = self.callRemote("getHouseData", globals.House.HouseIx);  // call server @ web_schedules.py
 		l_defer.addCallback(cb_fetchHouseData);
 		l_defer.addErrback(eb_fetchHouseData);
@@ -156,15 +154,12 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 	function handleMenuOnClick(self, p_node) {
 		var l_ix = p_node.name;
 		var l_name = p_node.value;
-		//Divmod.debug('---', 'schedules.handleMenuOnClick() was called. ' + l_ix + ' ' + l_name);
 		globals.House.ScheduleIx = l_ix;
 		globals.House.ScheduleName = l_name;
 		if (l_ix <= 1000) {
 			// One of the schedule buttons.
 			var l_obj = globals.House.HouseObj.Schedules[l_ix];
 			globals.House.ScheduleObj = l_obj;
-			//Divmod.debug('---', 'schedules.handleMenuOnClick("Schedule" Button) was called. ' + l_ix + ' ' + l_name);
-			//console.log("schedules.doHandleOnClick() - l_obj = %O", l_obj);
 			self.showEntry();
 			self.hideButtons();
 			self.fillEntry(l_obj);

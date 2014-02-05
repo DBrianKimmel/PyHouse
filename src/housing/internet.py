@@ -12,6 +12,7 @@ This module will try to be fully twisted like and totally async (except for read
 
 # Import system type stuff
 import logging
+import netifaces
 import xml.etree.ElementTree as ET
 from twisted.internet import reactor
 from twisted.web.client import getPage

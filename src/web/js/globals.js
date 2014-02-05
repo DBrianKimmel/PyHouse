@@ -463,9 +463,10 @@ function buildTable(p_obj, p_handler, /* optional */ nameFunction, noOptions) {
 		l_options = '';
 	var l_cols = 5;
 	var l_count = 0;
-	//Divmod.debug('---', 'globals.buildTable(2) called. ' + Object.keys(p_obj).length);
+	Divmod.debug('---', 'globals.buildTable(2) called. ' + Object.keys(p_obj).length);
 	var l_html = "<table><tr>\n";
 	for (var l_item in p_obj) {
+		Divmod.debug('---', 'globals.buildTable(3) called. ' + l_item + ' ' + p_obj;
 		var l_background = BUTTON_ACTIVE;
 		if (p_obj[l_item]['Active'] != true)
 			l_background = BUTTON_INACTIVE

@@ -52,11 +52,11 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	},
 	function showEntry(self) {
 		//Divmod.debug('---', 'rooms.showEntry() was called. ');
-		self.nodeById('RoomEntryDiv').style.display = 'block';		
+		self.nodeById('RoomEntryDiv').style.display = 'block';
 	},
 	function hideEntry(self) {
 		//Divmod.debug('---', 'rooms.hideEntry() was called. ');
-		self.nodeById('RoomEntryDiv').style.display = 'none';		
+		self.nodeById('RoomEntryDiv').style.display = 'none';
 	},
 
 	// ============================================================================
@@ -65,7 +65,6 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	 */
 	function fetchHouseData(self) {
 		function cb_fetchHouseData(p_json) {
-			//Divmod.debug('---', 'room.cb_fetchHouseData() was called. ');
 			globals.House.HouseObj = JSON.parse(p_json);
 			var l_tab = buildTable(globals.House.HouseObj.Rooms, 'handleMenuOnClick');
 			self.nodeById('RoomTableDiv').innerHTML = l_tab;
@@ -73,7 +72,6 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		function eb_fetchHouseData(res) {
 			Divmod.debug('---', 'rooms.eb_fetchHouseData() was called. ERROR = ' + res);
 		}
-		//Divmod.debug('---', 'rooms.fetchHouseData() was called.');
         var l_defer = self.callRemote("getHouseData", globals.House.HouseIx);  // call server @ web_rooms.py
 		l_defer.addCallback(cb_fetchHouseData);
 		l_defer.addErrback(eb_fetchHouseData);
