@@ -368,7 +368,7 @@ class API(ReadWriteXML):
     m_house_obj = None
 
     def __init__(self):
-        FindAllInterfaceData()
+        pass
 
     def Start(self, p_house_obj, p_house_xml):
         """Start async operation of the internet module.
@@ -377,6 +377,7 @@ class API(ReadWriteXML):
         self.m_house_obj = p_house_obj
         if p_house_obj.Active:
             g_logger.info("Starting for house:{0:}.".format(p_house_obj.Name))
+            FindAllInterfaceData()
             FindExternalIpAddress(p_house_obj)
             self.m_dyn_loop = DynDnsAPI(p_house_obj)
 
