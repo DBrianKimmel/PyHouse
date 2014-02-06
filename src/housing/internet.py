@@ -103,7 +103,8 @@ class FindAllInterfaceData(object):
     """Loop thru all the interfaces and extract the info
     """
     def __init__(self):
-        pass
+        for l_iface in netifaces.interfaces():
+            g_logger.info('Interface:{0:} - {1:}'.format(l_iface.name, l_iface))
 
 
 class ReadWriteXML(xml_tools.ConfigTools):
@@ -120,7 +121,8 @@ class ReadWriteXML(xml_tools.ConfigTools):
         l_dyndns_obj.Interval = self.get_int_from_xml(p_internet_xml, 'Interval')
         l_dyndns_obj.Url = self.get_text_from_xml(p_internet_xml, 'Url')
         if g_debug >= 1:
-            g_logger.debug("internet.extract_dyn_dns() - Name:{0:}, Interval:{1:}, Url:{2:};".format(l_dyndns_obj.Name, l_dyndns_obj.Interval, l_dyndns_obj.Url))
+            g_logger.debug("internet.extract_dyn_dns() - Name:{0:}, Interval:{1:}, Url:{2:};".format(
+                            l_dyndns_obj.Name, l_dyndns_obj.Interval, l_dyndns_obj.Url))
         return l_dyndns_obj
 
     def insert_dyn_dns(self):

@@ -61,9 +61,9 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 	function fetchValidLists(self) {
 		function cb_fetchValidLists(p_json) {
     		globals.Valid = JSON.parse(p_json);
-			//Divmod.debug('---', 'login.cb+fetchValidLists() was called. JSON = ' + p_json);
+			Divmod.debug('---', 'login.cb+fetchValidLists() was called.');
 		}
-		//Divmod.debug('---', 'login.fetchValidLists() was called. ');
+		Divmod.debug('---', 'login.fetchValidLists() was called. ');
         var l_defer = self.callRemote("getValidLists");  // @ web_login
 		l_defer.addCallback(cb_fetchValidLists);
 	},
