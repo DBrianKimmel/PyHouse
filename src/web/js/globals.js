@@ -452,7 +452,7 @@ function buildDeleteButton(p_handler) {
  * @returns = innerHTML of a table filled in with buttons
  */
 function buildTable(p_obj, p_handler, /* optional */ nameFunction, noOptions) {
-	//Divmod.debug('---', 'globals.buildTable(1) called. ' + p_obj + ' ' + p_handler + ' ' + nameFunction + ' ' + noOptions);
+	Divmod.debug('---', 'globals.buildTable(1) called. ' + p_obj + ' ' + p_handler + ' ' + nameFunction + ' ' + noOptions);
 	var l_function = nameFunction;
 	var l_options = noOptions;
 	if (typeof nameFunction !== 'function') {
@@ -484,7 +484,7 @@ function buildTable(p_obj, p_handler, /* optional */ nameFunction, noOptions) {
 	return l_html;
 }
 function buildEntryButtons(p_handler, /* optional */ noOptions) {
-	//Divmod.debug('---', 'globals.buildEntryButtons() called.  Handler=' + p_handler + '  ' + noOptions);
+	Divmod.debug('---', 'globals.buildEntryButtons() called.  Handler=' + p_handler + '  ' + noOptions);
 	var l_options = noOptions;
 	if (l_options === undefined)
 		l_options = '';
