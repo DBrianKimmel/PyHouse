@@ -103,6 +103,7 @@ class FindAllInterfaceData(object):
     """Loop thru all the interfaces and extract the info
     """
     def __init__(self):
+        return
         for l_iface in netifaces.interfaces():
             g_logger.info('Interface:{0:} - {1:}'.format(l_iface.name, l_iface))
 
