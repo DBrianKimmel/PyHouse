@@ -10,22 +10,22 @@
  */
 
 Nevow.Athena.Widget.subclass(helpers, 'Widget').methods(
-		
+
 	function __init__(self, node) {
 		helpers.Widget.upcall(self, '__init__', node);
 	},
 
-	
+
 	/**
 	 *  Special attention should be paid to the function C{ready} which should be overridden in almost every case,
 	 *  working with the C{widgetready} function in a closure.
-	 *  
+	 *
 	 * C{widgetready} could of call another method C{func} in the class but practice shows, that the point of being informed that
 	 *  we're setup properly for action is way too important to delegate it into superclass.
-	 *  
+	 *
 	 * Think of C{ready} as a stub, which is more like a template to start work on your own widgets implementation.
-	 * 
-	 * @param self = 
+	 *
+	 * @param self =
 	 * @returns a deferred that completes async
 	 */
 	function ready(self) {
@@ -44,7 +44,7 @@ Nevow.Athena.Widget.subclass(helpers, 'Widget').methods(
 		return l_defer;
 	},  // ready
 
-	
+
 	function loaded(self) {
 		// This function is called by the Athena setup.
 		self.isloaded = true;
@@ -70,7 +70,7 @@ Nevow.Athena.Widget.subclass(helpers, 'Widget').methods(
 		Divmod.debug('---', 'helpers.js - ERROR - attachWidget failed - Node:' + l_nodeName + '  ERROR = ' + res);
 		console.log("GenericErrBck - %O", l_node);
 	},
-	  
+
 	function attachWidget(self, p_name, p_params, p_readyfunc) {
 		//Divmod.debug('---', 'attachWidget - ' + p_name + ' is being attached to:' + self.node.className + ', with params:'+ p_params + ', ready_function:' + p_readyfunc);
 		var l_defer_1 = self.callRemote(p_name, p_params);

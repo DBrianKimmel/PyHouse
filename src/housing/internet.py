@@ -103,9 +103,11 @@ class FindAllInterfaceData(object):
     """Loop thru all the interfaces and extract the info
     """
     def __init__(self):
-        return
-        for l_iface in netifaces.interfaces():
-            g_logger.info('Interface:{0:} - {1:}'.format(l_iface.name, l_iface))
+        l_interfaces = netifaces.interfaces()
+        for l_interface in l_interfaces:
+            g_logger.info('Interface:{0:}'.format(l_interface))
+            for l_af in l_interfaces(l_interface):
+                pass
 
 
 class ReadWriteXML(xml_tools.ConfigTools):
