@@ -12,7 +12,7 @@ from twisted.internet import reactor
 import Device_UPB
 from src.utils.tools import PrintBytes
 
-g_debug = 9
+g_debug = 4
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry

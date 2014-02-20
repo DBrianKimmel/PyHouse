@@ -54,11 +54,12 @@ from twisted.internet import reactor
 from src.utils.tools import PrintBytes
 
 
-g_debug = 9
+g_debug = 3
 # 0 = off
-# 1 = major routine entry
+# 1 = log extra info
 # 2 = Startup Details
 # 3 = Read / write details
+# + = NOT USED HERE
 
 g_logger = logging.getLogger('PyHouse.USBDriver   ')
 
@@ -117,7 +118,7 @@ class UsbDriverAPI(UsbDeviceData):
                 l_value,
                 l_index,
                 l_report)
-        if g_debug >= 1:
+        if g_debug >= 2:
             print "Driver_USB._setup_hid_device() ", l_ret
         return l_ret
 
@@ -141,7 +142,7 @@ class UsbDriverAPI(UsbDeviceData):
         p_controller_obj._Data.num_configs = l_device.bNumConfigurations
         if p_controller_obj._Data.Device.bDeviceClass == 3:
             p_controller_obj._Data.hid_device = True
-        if g_debug >= 1:
+        if g_debug >= 2:
             g_logger.debug('Found a device - HID"{0:}'.format(p_controller_obj._Data.hid_device))
         p_controller_obj._Data.configs = {}
         return l_device
@@ -200,7 +201,7 @@ class UsbDriverAPI(UsbDeviceData):
         No use in be too general if no device exists that is more complex.
         """
         self.m_controller_obj = p_controller_obj
-        if g_debug >= 2:
+        if g_debug >= 3:
             print "Driver_USB._setup_endpoints() - Name: {0:},  endpoint count: {1:}".format(p_controller_obj.Name, p_controller_obj._Data.num_endpoints)
         p_controller_obj._Data.ep_out = usb.util.find_descriptor(
             p_controller_obj._Data.interface,
@@ -279,14 +280,14 @@ class UsbDriverAPI(UsbDeviceData):
             print "Driver_USB.read_device_1() - exit Message:{0:}".format(PrintBytes(p_controller_obj._Message))
 
     def read_report(self, p_controller_obj):
-        if g_debug >= 0:
+        if g_debug >= 2:
             print "Driver_USB.read_report() - exit Message:{0:}".format(PrintBytes(p_controller_obj._Message))
         pass
 
     def fetch_read_data(self, p_controller_obj):
         l_ret = p_controller_obj._Message
         p_controller_obj._Message = bytearray()
-        if g_debug >= 3:
+        if g_debug >= 5:
             print "Driver_USB.fetch_read_data() - Msg:{0:}".format(PrintBytes(l_ret))
         return l_ret
 

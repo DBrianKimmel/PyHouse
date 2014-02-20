@@ -106,8 +106,9 @@ class FindAllInterfaceData(object):
         l_interfaces = netifaces.interfaces()
         for l_interface in l_interfaces:
             g_logger.info('Interface:{0:}'.format(l_interface))
-            for l_af in l_interfaces(l_interface):
-                pass
+            # for link in ifaddresses(interface)[AF_INET]:
+            # for l_af in l_interfaces(l_interface)[netifaces.AF_INET]:
+            pass
 
 
 class ReadWriteXML(xml_tools.ConfigTools):

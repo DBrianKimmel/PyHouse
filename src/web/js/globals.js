@@ -466,10 +466,10 @@ function buildTable(p_obj, p_handler, /* optional */ nameFunction, noOptions) {
 	Divmod.debug('---', 'globals.buildTable(2) called. ' + Object.keys(p_obj).length);
 	var l_html = "<table><tr>\n";
 	for (var l_item in p_obj) {
-		Divmod.debug('---', 'globals.buildTable(3) called. ' + l_item + ' ' + p_obj;
+		Divmod.debug('---', 'globals.buildTable(3) called. ' + l_item + ' ' + p_obj);
 		var l_background = BUTTON_ACTIVE;
 		if (p_obj[l_item]['Active'] != true)
-			l_background = BUTTON_INACTIVE
+			l_background = BUTTON_INACTIVE;
 		l_html += buildButton(p_obj[l_item], p_handler, l_background, l_function);
 		l_count++;
 		if ((l_count > 0) & (l_count % l_cols == 0))
