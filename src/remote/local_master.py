@@ -26,6 +26,7 @@ NODE_V6ROUTER = 0x0010
 
 # Import system type stuff
 import logging
+import os
 
 
 g_debug = 0
@@ -38,7 +39,17 @@ class NodeRoleData(object):
 
 
 class FindNodeTypes(object):
-    pass
+
+    def __init__(self):
+        l_node = NODE_NOTHING
+        # Test for lights
+        if os.path.exists('/dev/ttyUSB0'):
+            l_node |= NODE_LIGHTS
+        # Test for Pandora
+        # Test for camera
+        # Test for PifaceCAD
+        if os.path.exists('/dev/lirc0'):
+            l_node |= NODE_PIFACECAD
 
 
 class FindRouter(object):
