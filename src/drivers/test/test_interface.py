@@ -8,12 +8,12 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 from drivers import interface
-from housing.house import HouseData
-from lights.lighting_controllers import ControllerData
+from src.lights import lighting_controllers
+from src.utils import xml_tools
 
 
 XML = """
-<House Name='abc' Key='0' Active='True'>
+<House Name='House_1' Key='0' Active='True'>
     <Controllers>
         <Controller Name='Serial_1' Key='0' Active='True'>
             <Interface>Serial</Interface>
@@ -26,67 +26,48 @@ XML = """
             <Timeout>0</Timeout>
             <XonXoff>False</XonXoff>
         </Controller>
+        <Controller Name='USB_1' Key='1' Active='True'>
+            <Interface>USB</Interface>
+            <Vendor>12345</Vendor>
+            <Product>9876</Product>
+        </Controller>
     </Controllers>
 </House>
 """
 
 class Test(unittest.TestCase):
 
-    def _get_xml(self):
-        l_xml = ET.fromstring(XML)
-        return l_xml
-
-    def _get_attrs(self, p_obj):
-        l_attrs = filter(lambda aname: not aname.startswith('__'), dir(p_obj))
-        return l_attrs
-
-    def _create_interface(self):
-        int_obj = interface.SerialData()
-        int_obj.BaudRate = 1234
-        int_obj.ByteSize = 11
-        int_obj.DsrDtr = False
-        int_obj.InterCharTimeout = 0.24
-        int_obj.Parity = 'N'
-        int_obj.RtsCts = False
-        int_obj.StopBits = 1.0
-        int_obj.Timeout = None
-        int_obj.WriteTimeout = None
-        int_obj.XonXoff = False
-        return int_obj
-
-    def _create_controller(self, p_name, p_key):
-        ctl_obj = ControllerData()
-        ctl_obj.Name = p_name
-        ctl_obj.Active = True
-        ctl_obj.Key = p_key
-        ctl_obj.Interface = 'Serial'
-        l_obj = self._create_interface()
-        l_attrs = self._get_attrs(l_obj)
-        for l_attr in l_attrs:
-            setattr(ctl_obj, l_attr, getattr(l_obj, l_attr))
-        return ctl_obj
-
-    def _create_house(self, p_name = 'Test House'):
-        house_obj = HouseData()
-        house_obj.Name = p_name
-        house_obj.Active = True
-        house_obj.Controllers = {}
-        house_obj.Controllers[0] = self._create_controller('Ser 1', 0)
-        return house_obj
-
     def setUp(self):
-        pass
+        self.m_root_element = ET.fromstring(XML)
+        self.m_util = xml_tools.PutGetXML()
+        self.m_intf = interface.ReadWriteConfig()
+        print "setUp ", self.m_root_element
 
     def tearDown(self):
         pass
 
-    def test_001_create_house(self):
-        house_obj = self._create_house()
-        self.assertEqual(house_obj.Name, 'Test House')
+    def test_001_xml_find_house(self):
+        l_name = self.m_root_element.get('Name')
+        self.assertEqual(l_name, 'House_1')
 
-    def test_002_read_xml(self):
-        house_obj = self._create_house()
-        interface.ReadWriteConfig().extract_serial_xml(house_obj, self._get_xml())
-        self.assertEqual(house_obj.Controllers[0].BaudRate, 9600)
+    def test_002_xml_find_controllers(self):
+        l_controllers = self.m_root_element.find('Controllers')
+        l_list = l_controllers.findall('Controller')
+        for l_controller in l_list:
+            print "Controller ", l_controller.get('Name')
 
-### END
+    def test_003_xml_find_serial_1(self):
+        l_controllers = self.m_root_element.find('Controllers')
+        l_first = l_controllers.find('Controller')
+        self.assertEqual(l_first.get('Name'), 'Serial_1')
+        l_interf = l_first.find('Interface')
+        self.assertEqual(l_interf.text, 'Serial')
+        l_baud = l_first.find('BaudRate')
+        self.assertEqual(l_baud.text, '19200')
+
+    def test_004_extracr_serial(self):
+        l_controllers = self.m_root_element.find('Controllers')
+        l_first = l_controllers.find('Controller')
+        pass
+
+# ## END

@@ -5,6 +5,9 @@ Created on Mar 21, 2013
 
 Controllers, which are attached to the server, communicate with the server via an interface.
 There are three different interfaces at this point (2013-10-29).
+    Serial
+    USB - Includes HID variant
+    Ethernet
 """
 
 # Import system type stuff
@@ -12,7 +15,7 @@ import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from src.utils import xml_tools
-from src.utils.tools import PrintObject
+# from src.utils.tools import PrintObject
 
 g_debug = 0
 
@@ -72,13 +75,13 @@ class USBData(object):
         self.Vendor = 0
 
     def reprJSON(self):
-        print "interface.USBData.reprJSON(1)"
+        # print "interface.USBData.reprJSON(1)"
         l_ret = dict(
             InterfaceType = self.InterfaceType,
             Product = self.Product,
             Vendor = self.Vendor
         )
-        print "interface.USBData.reprJSON(2) {0:}".format(l_ret)
+        # print "interface.USBData.reprJSON(2) {0:}".format(l_ret)
         return l_ret
 
 
@@ -90,19 +93,23 @@ class  EthernetData(object):
         self.Protocol = 'TCP'
 
     def reprJSON(self):
-        print "interface.EthernetData.reprJSON(1)"
+        # print "interface.EthernetData.reprJSON(1)"
         l_ret = dict(
             InterfaceType = self.InterfaceType,
             PortNumber = self.PortNumber,
             Protocol = self.Protocol
         )
-        print "interface.EthernetData.reprJSON(2) {0:}".format(l_ret)
+        # print "interface.EthernetData.reprJSON(2) {0:}".format(l_ret)
         return l_ret
 
 
 class ReadWriteConfig(xml_tools.ConfigTools):
+    """Read and write the interface information based in the interface type.
+    """
 
     def extract_xml(self, p_controller_obj, p_controller_xml):
+        """Update the controller object by extracting the passed in XML.
+        """
         l_if = (p_controller_obj.Interface)
         if l_if == 'Serial':
             self._extract_serial_xml(p_controller_obj, p_controller_xml)
@@ -120,8 +127,6 @@ class ReadWriteConfig(xml_tools.ConfigTools):
                 self._write_ethernet_xml(p_entry, p_controller_obj)
 
     def _extract_serial_xml(self, p_controller_obj, p_controller_xml):
-        if g_debug >= 2:
-            print "drivers.interface.extract_serial_xml() - Name:{0:}".format(p_controller_obj.Name)
         l_serial = SerialData()
         l_xml = p_controller_xml
         l_serial.BaudRate = self.get_text_from_xml(l_xml, 'BaudRate')
@@ -138,49 +143,71 @@ class ReadWriteConfig(xml_tools.ConfigTools):
     def _write_serial_xml(self, p_xml, p_controller_obj):
         try:
             ET.SubElement(p_xml, 'BaudRate').text = str(p_controller_obj.BaudRate)
-            ET.SubElement(p_xml, 'ByteSize').text = str(p_controller_obj.ByteSize)
-            ET.SubElement(p_xml, 'Parity').text = str(p_controller_obj.Parity)
-            ET.SubElement(p_xml, 'StopBits').text = str(p_controller_obj.StopBits)
-            ET.SubElement(p_xml, 'Timeout').text = str(p_controller_obj.Timeout)
         except AttributeError:
             ET.SubElement(p_xml, 'BaudRate').text = '19200'
+        try:
+            ET.SubElement(p_xml, 'ByteSize').text = str(p_controller_obj.ByteSize)
+        except AttributeError:
             ET.SubElement(p_xml, 'ByteSize').text = '8'
+        try:
+            ET.SubElement(p_xml, 'Parity').text = str(p_controller_obj.Parity)
+        except AttributeError:
             ET.SubElement(p_xml, 'Parity').text = 'N'
+        try:
+            ET.SubElement(p_xml, 'StopBits').text = str(p_controller_obj.StopBits)
+        except AttributeError:
             ET.SubElement(p_xml, 'StopBits').text = '1.0'
+        try:
+            ET.SubElement(p_xml, 'Timeout').text = str(p_controller_obj.Timeout)
+        except AttributeError:
             ET.SubElement(p_xml, 'Timeout').text = '1.0'
+        try:
+            ET.SubElement(p_xml, 'DsrDtr').text = str(p_controller_obj.DsrDtr)
+        except AttributeError:
+            ET.SubElement(p_xml, 'DsrDtr').text = False
+        try:
+            ET.SubElement(p_xml, 'RtsCts').text = str(p_controller_obj.RtsCts)
+        except AttributeError:
+            ET.SubElement(p_xml, 'RtsCts').text = False
+        try:
+            ET.SubElement(p_xml, 'XonXoff').text = str(p_controller_obj.XonXoff)
+        except AttributeError:
+            ET.SubElement(p_xml, 'XonXoff').text = False
 
     def _extract_usb_xml(self, p_controller_obj, p_controller_xml):
-        if g_debug >= 2:
-            print "drivers.interface.extract_usb_xml() - Name:{0:}".format(p_controller_obj.Name)
         l_usb = USBData()
         l_xml = p_controller_xml
         l_usb.Product = self.get_int_from_xml(l_xml, 'Product')
         l_usb.Vendor = self.get_int_from_xml(l_xml, 'Vendor')
+        # Put the serial information into the controller object
         xml_tools.stuff_new_attrs(p_controller_obj, l_usb)
 
     def _write_usb_xml(self, p_xml, p_controller_obj):
-        if g_debug >= 1:
-            print "drivers.interface.write_usb_xml()"
-        ET.SubElement(p_xml, 'Vendor').text = str(p_controller_obj.Vendor)
-        ET.SubElement(p_xml, 'Product').text = str(p_controller_obj.Product)
-        if g_debug >= 2:
-            print "drivers.interface.write_serial_xml() - Wrote usb controller"
+        try:
+            ET.SubElement(p_xml, 'Vendor').text = str(p_controller_obj.Vendor)
+        except AttributeError:
+            ET.SubElement(p_xml, 'Vendor').text = 0
+        try:
+            ET.SubElement(p_xml, 'Product').text = str(p_controller_obj.Product)
+        except AttributeError:
+            ET.SubElement(p_xml, 'Product').text = 0
 
     def _extract_ethernet_xml(self, p_controller_obj, p_controller_xml):
-        if g_debug >= 2:
-            print "drivers.interface.extract_ethernet_xml() - Name:{0:}".format(p_controller_obj.Name)
         l_ethernet = EthernetData()
         l_xml = p_controller_xml
         l_ethernet.PortNumber = self.get_int_from_xml(l_xml, 'PortNumber')
         l_ethernet.Protocol = self.get_int_from_xml(l_xml, 'Protocol')
+        # Put the serial information into the controller object
         xml_tools.stuff_new_attrs(p_controller_obj, l_ethernet)
 
     def _write_ethernet_xml(self, p_xml, p_controller_obj):
-        if g_debug >= 1:
-            print "drivers.interface.write_usb_xml()"
-        ET.SubElement(p_xml, 'PortNumber').text = str(p_controller_obj.PortNumber)
-        ET.SubElement(p_xml, 'Protocol').text = str(p_controller_obj.Protocol)
-        if g_debug >= 2:
-            print "drivers.interface.write_ethernet_xml() - Wrote ethernet controller"
+        try:
+            ET.SubElement(p_xml, 'PortNumber').text = str(p_controller_obj.PortNumber)
+        except AttributeError:
+            ET.SubElement(p_xml, 'PortNumber').text = 0
+        try:
+            ET.SubElement(p_xml, 'Protocol').text = str(p_controller_obj.Protocol)
+        except AttributeError:
+            ET.SubElement(p_xml, 'Protocol').text = 'TCP'
 
 # ## END DBK

@@ -39,15 +39,34 @@ RECEIVE_TIMEOUT = 0.3  # this is for fetching data in the rx buffer
 
 
 pim_commands = {
+# Core commands
+'null'                      : 0X00,
+'write_enable'              : 0x01,
+'write_protect'             : 0x02,
 'start_setup_mode'          : 0x03,
 'stop_setup_mode'           : 0x04,
+'get_setup_time'            : 0x05,
+'auto_address'              : 0x06,
 'get_device_status'         : 0x07,
+'set_device_status'         : 0x08,
+'add_link'                  : 0x0B,
+'delete_link'               : 0x0C,
+'transmit_message'          : 0x0D,
+'device_reset'              : 0x0E,
+'get_device_signature'      : 0x0F,
 'get_register_value'        : 0x10,
 'set_register_value'        : 0x11,
+# Device Control commands
+'activate_link'             : 0x20,
+'deactivate_link'           : 0x21,
 'goto'                      : 0x22,
 'fade_start'                : 0x23,
 'fade_stop'                 : 0x24,
+'blink'                     : 0x25,
+'indicate'                  : 0x26,
+'toggle'                    : 0x27,
 'report_state'              : 0x30,
+'store_state'               : 0x31
 }
 
 
@@ -76,27 +95,15 @@ class UpbPimUtility(object):
             l_cs = (l_cs + l_byte) % 256
             l_out.append(l_byte)
         l_out.append(int(256 - l_cs))
-        if g_debug > 1:
-            print "UPB_Pim._calculate checksum() - {0:}".format(PrintBytes(l_out))
+        if g_debug >= 1:
+            g_logger.debug("Calculate checksum - {0:}".format(PrintBytes(l_out)))
         return l_out
-
-    def _build_packet_header(self, p_device_id, p_pim, *p_args):
-        """Build a 5 byte packet header.
-        See 3.4 on page 6 of UPB System Description.
-        """
-        l_hdr = bytearray(6 + len(p_args))
-        l_hdr[0] = 7 + len(p_args)  # 'UPBMSG_CONTROL_HIGH'
-        l_hdr[1] = 0x00  # 'UPBMSG_CONTROL_LOW'
-        l_hdr[2] = p_pim.NetworkID  # 'UPBMSG_NETWORK_ID'
-        l_hdr[3] = p_device_id  # 'UPBMSG_DEST_ID'
-        l_hdr[4] = p_pim.UnitID  # 'UPBMSG_SOURCE_ID'
-        return l_hdr
 
     def _compose_command(self, p_controller_obj, p_command, p_device_id, *p_args):
         """Build the command for each controller found.
         """
         l_hdr = bytearray(6 + len(p_args))
-        l_hdr[0] = 7 + len(p_args)  # 'UPBMSG_CONTROL_HIGH'
+        l_hdr[0] = 8 + len(p_args)  # 'UPBMSG_CONTROL_HIGH'
         l_hdr[1] = 0x00  # 'UPBMSG_CONTROL_LOW'
         l_hdr[2] = p_controller_obj.NetworkID  # 'UPBMSG_NETWORK_ID'
         l_hdr[3] = p_device_id  # 'UPBMSG_DEST_ID'
@@ -105,6 +112,9 @@ class UpbPimUtility(object):
         for l_ix in range(len(p_args)):
             l_hdr[6 + l_ix] = p_args[l_ix]
         l_hdr = self._calculate_checksum(l_hdr)
+        l_msg = "Ctl:{0:#02X}, NetID:{1:#02x}, Dest:{2:#02x}, SrcID:{3:#02X}, Cmd:{4:#02X}  ".format(l_hdr[0], l_hdr[2], l_hdr[3], l_hdr[4], l_hdr[5])
+        if g_debug >= 1:
+            g_logger.debug('Compose Command - {0:}'.format(l_msg))
         self.queue_pim_command(p_controller_obj, l_hdr)
 
 
@@ -127,27 +137,30 @@ class DecodeResponses(object):
         return l_rest
 
     def _flushing(self):
-        if g_debug > 5:
-            print "  Flushing ",
+        l_ret = 'Flushed: '
         while self.l_hdr != 0x0d:
-            if self.l_hdr == 0:
-                return
-            if g_debug > 5:
-                print "{0:#2x} ".format(self.l_hdr),
+            l_ret += "{0:#2x} ".format(self.l_hdr)
             self._next_char()
-        if g_debug > 5:
-            print
+        if g_debug >= 1:
+            g_logger.debug(l_ret)
 
     def decode_response(self, p_message):
         """A message starts with a 'P' (0x50) and ends with a '\r' (0x0D).
         """
-        # All pIM response messages begin with 'P' which is 0x50
+        if len(p_message) < 1:
+            return
         self.l_message = p_message
-        self.l_bytes = len(p_message)
+        # Get the length which seems to be x in 0xFx first byte
+        # self.l_bytes = p_message[0] & 0x0F
+        # self._next_char()
+        self.l_hdr = self.l_message[0]
+        self.l_bytes = len(self.l_message)
+        self.l_message = self.l_message[1:]
+        # All PIM response messages begin with 'P' which is 0x50
         if self.l_bytes < 1:
             return
         while self.l_bytes > 0:
-            if g_debug > 5:
+            if g_debug >= 2:
                 print "UPB_Pim.decode_response() - {0:} {1}".format(self.l_bytes, PrintBytes(self.l_message))
             self._next_char()  # Get the starting char - must be 'P' (0x50)
             if self.l_hdr != 0x50:
@@ -157,13 +170,13 @@ class DecodeResponses(object):
             #
             self._next_char()  # drop the 0x50 char
             if self.l_hdr == 0x41:  # 'A'
-                if g_debug > 4:
+                if g_debug >= 2:
                     print "UPB_Pim - Previous command was accepted"
             elif self.l_hdr == 0x42:  # 'B'
-                if g_debug > 4:
+                if g_debug >= 2:
                     print "UPB_Pim - Previous command was rejected because device is busy."
             elif self.l_hdr == 0x45:  # 'E'
-                if g_debug > 4:
+                if g_debug >= 2:
                     print "UPB_Pim - Previous command was rejected with a command error."
             elif self.l_hdr == 0x4B:  # 'K'
                 if g_debug > 4:
@@ -288,11 +301,14 @@ class PimDriverInterface(DecodeResponses):
     def _convert_pim(self, p_array):
         l_string = chr(0x14)
         for l_byte in p_array:
-            l_char = "{0:02X}".format(l_byte)
+            # l_char = "{0:02X}".format(l_byte)
+            l_char = chr(l_byte)
             l_string += l_char
         l_string += chr(0x0D)
-        if g_debug > 8:
-            print "UPB_Pim._convert_pim() - {0:}".format(PrintBytes(l_string))
+        if g_debug >= 1:
+            l_msg = "Convert_pim - {0:}".format(PrintBytes(l_string))
+            print "UPB_Pim._convert_pim ", l_msg
+            g_logger.debug(l_msg)
         return l_string
 
     def driver_loop_start(self, p_controller_obj):
@@ -300,8 +316,10 @@ class PimDriverInterface(DecodeResponses):
         self.receive_loop(p_controller_obj)
 
     def queue_pim_command(self, p_controller_obj, p_command):
-        if g_debug > 1:
-            print "UPB_Pim.queue_pim_command() {0:}".format(PrintBytes(p_command))
+        if g_debug >= 1:
+            l_msg = "Queue_pim_command {0:}".format(PrintBytes(p_command))
+            print "UPB_Pim.", l_msg
+            g_logger.debug(l_msg)
         p_controller_obj._Queue.put(p_command)
 
     def dequeue_and_send(self, p_controller_obj):
@@ -312,16 +330,20 @@ class PimDriverInterface(DecodeResponses):
             return
         if p_controller_obj._DriverAPI != None:
             l_send = self._convert_pim(l_command)
-            p_controller_obj._DriverAPI.write_device(p_controller_obj, l_send)
-            if g_debug > 0:
-                l_msg = 'Send to controller:{0:}, Message: {0:} '.format(p_controller_obj.Name, PrintBytes(l_command))
+            # l_send = l_command
+            p_controller_obj._DriverAPI.Write(l_send)
+            if g_debug >= 1:
+                l_msg = 'Sent to controller:{0:}, Message: {1:} '.format(p_controller_obj.Name, PrintBytes(l_send))
                 g_logger.debug(l_msg)
 
     def receive_loop(self, p_controller_obj):
         callLater(RECEIVE_TIMEOUT, self.receive_loop, p_controller_obj)
         if p_controller_obj._DriverAPI != None:
             l_msg = p_controller_obj._DriverAPI.fetch_read_data(p_controller_obj)
-            if g_debug > 6:
+            if len(l_msg) == 0:
+            # if l_msg[0] == 0xF0:
+                return
+            if g_debug >= 3:
                 print "UPB_PIM.receive_loop() from {0:}, Message: {1:}".format(p_controller_obj.Name, PrintBytes(l_msg))
             self.decode_response(l_msg)
 
@@ -333,6 +355,8 @@ class CreateCommands(UpbPimUtility, PimDriverInterface):
     def set_register_value(self, p_controller_obj, p_register, p_values):
         """Set one of the device's registers.
         """
+        if g_debug >= 1:
+            g_logger.debug("Setting register {0:#0X} to value {1:}".format(p_register, p_values))
         self._compose_command(p_controller_obj, pim_commands['set_register_value'], int(p_controller_obj.UnitID), int(p_register), p_values[0])
         pass
 
@@ -341,6 +365,8 @@ class CreateCommands(UpbPimUtility, PimDriverInterface):
         # Command is <17> 70 03 8D <0D>
         l_val = bytearray(1)
         l_val[0] = 0x03
+        if g_debug >= 1:
+            g_logger.debug("Setting Pim Mode - Register {0:#X} to value {1:}".format(0x70, l_val))
         self.set_register_value(0xFF, 0x70, l_val)
 
 
@@ -366,7 +392,8 @@ class UpbPimAPI(LightingAPI):
             return False
         if self.m_controller_obj.Active != True:
             return False
-        g_logger.debug("UPB_PIM.start_controller() - Family:{0:}, Interface:{1:}, Active:{2:}".format(self.m_controller_obj.Family, self.m_controller_obj.Interface, self.m_controller_obj.Active))
+        if g_debug >= 1:
+            g_logger.debug("UPB_PIM.start_controller() - Family:{0:}, Interface:{1:}, Active:{2:}".format(self.m_controller_obj.Family, self.m_controller_obj.Interface, self.m_controller_obj.Active))
         l_key = self.m_controller_obj.Key
         l_pim = PimData()
         l_pim.Interface = self.m_controller_obj.Interface
@@ -399,15 +426,16 @@ class PimTesting(UpbPimAPI): pass
 
 class API(UpbPimAPI):
 
-    def __init__(self):
+    def __init__(self, p_house_obj):
+        self.m_house_obj = p_house_obj
         g_logger.info('Initialized.')
 
-    def Start(self, p_house_obj, p_controller_obj):
-        self.m_house_obj = p_house_obj
+    def Start(self, p_controller_obj):
         self.m_controller_obj = p_controller_obj
         g_logger.info('Start House:{0:}, Controller:{1:}.'.format(self.m_house_obj.Name, self.m_controller_obj.Name))
         self.start_controller(self.m_house_obj, self.m_controller_obj)
         self.driver_loop_start(p_controller_obj)
+        return True
 
     def Stop(self):
         pass
@@ -422,8 +450,8 @@ class API(UpbPimAPI):
             if l_obj.Name == l_name:
                 l_id = self._get_id_from_name(l_name)
                 print "UPB_Pim.change_light_settings() for {0:} to Level {1:}".format(l_name, p_level)
-                g_logger.info('change_light_setting()')
+                g_logger.info('Change light {0:} to Level {1:}'.format(l_name, p_level))
                 self._compose_command(self.m_controller_obj, pim_commands['goto'], l_id, p_level, 0x01)
                 return
 
-# ## END
+# ## END DBK

@@ -117,20 +117,34 @@ class API(LightingAPI):
         self.m_house_obj = p_house_obj
 
     def Start(self, p_house_obj):
-        self.m_house_obj = p_house_obj
+        """For the given house, this will start all the controllers for family = UPB in that house.
+        """
+        l_count = 0
         for l_controller_obj in self.m_house_obj.Controllers.itervalues():
             if l_controller_obj.Family != 'UPB':
                 continue
             if l_controller_obj.Active != True:
                 continue
-            g_logger.info('Starting UPB family')
-            l_controller_obj._HandlerAPI = UPB_Pim.API()
-            l_controller_obj._HandlerAPI.Start(self.m_house_obj, l_controller_obj)
-        g_logger.info('Started.')
+            # Only one controller may be active at a time (for now).
+            # But all controllers need to be processed so they may be written back to XML.
+            if l_count > 0:
+                l_controller_obj.Active = False
+                g_logger.warning('Controller {0:} skipped - another one is active.'.format(l_controller_obj.Name))
+                continue
+            else:
+                # from src.families.Insteon import Insteon_PLM
+                l_controller_obj._HandlerAPI = UPB_Pim.API(p_house_obj)
+                if l_controller_obj._HandlerAPI.Start(l_controller_obj):
+                    l_count += 1
+                else:
+                    g_logger.error('Controller {0:} failed to start.'.format(l_controller_obj.Name))
+                    if g_debug >= 3:
+                        print "Device_Insteon.Start() - Did NOT start- House:{0:}, Controller:{1:}".format(p_house_obj.Name, l_controller_obj.Name)
+                    l_controller_obj.Active = False
+        l_msg = 'Started {0:} UPB Controllers, House:{1:}.'.format(l_count, p_house_obj.Name)
+        g_logger.info(l_msg)
 
     def Stop(self, p_xml):
-        if g_debug > 0:
-            print "Device_UPB.Stop()"
         try:
             for l_controller_obj in self.m_house_obj.Controllers.itervalues():
                 if l_controller_obj.Family != 'UPB':
@@ -139,7 +153,7 @@ class API(LightingAPI):
                     continue
                 l_controller_obj._HandlerAPI.Stop(l_controller_obj)
         except AttributeError:
-            pass  # no controllers for house(House is being added)
+            pass  # no controllers for house (House is being added)
         return p_xml
 
     def ChangeLight(self, p_light_obj, p_level, _p_rate = 0):
@@ -148,6 +162,6 @@ class API(LightingAPI):
                 if (l_controller_obj.Family == 'UPB') and (l_controller_obj.Active == True):
                     l_controller_obj._HandlerAPI.ChangeLight(p_light_obj, p_level)
         except AttributeError:
-            pass  # no controllers for house(House is being added)
+            pass
 
 # ## END
