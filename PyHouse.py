@@ -62,6 +62,7 @@ from twisted.internet import reactor
 import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
+from src.core import setup
 from src.utils import log
 from src.utils import xml_tools
 from src.housing import houses
@@ -213,6 +214,7 @@ class API(Utilities):
         g_logger = logging.getLogger('PyHouse         ')
         g_logger.info("Initializing PyHouse.\n\n")
         #
+        self.m_coresetup = setup.API()
         self.m_remoteAPI = local_master.API()
         self.m_pyhouses_obj.HousesAPI = houses.API()
         self.m_pyhouses_obj.WebAPI = web_server.API()
@@ -225,6 +227,7 @@ class API(Utilities):
     def Start(self):
         """This is automatically invoked when the reactor starts from API().
         """
+        self.m_coresetup.Start(self.m_pyhouses_obj)
         self.m_remoteAPI.Start(self.m_pyhouses_obj)
         self.m_pyhouses_obj.HousesData = self.m_pyhouses_obj.HousesAPI.Start(self.m_pyhouses_obj)
         self.m_pyhouses_obj.WebData = self.m_pyhouses_obj.WebAPI.Start(self.m_pyhouses_obj)

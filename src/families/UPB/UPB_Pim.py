@@ -409,8 +409,10 @@ class UpbPimAPI(LightingAPI):
             from drivers import Driver_Ethernet
             l_driver = Driver_Ethernet.API()
         elif self.m_controller_obj.Interface.lower() == 'usb':
-            from drivers import Driver_USB_17DD_5500
-            l_driver = Driver_USB_17DD_5500.API()
+            # from drivers import Driver_USB_17DD_5500
+            from drivers import Driver_USB
+            # l_driver = Driver_USB_17DD_5500.API()
+            l_driver = Driver_USB.API()
         l_driver.Start(self.m_controller_obj)
         p_house_obj.Controllers[l_key]._DriverAPI = l_driver
         l_pim._DriverAPI = l_driver
