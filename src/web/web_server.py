@@ -131,8 +131,6 @@ class API(WebUtility, ClientConnections):
     def Start(self, p_pyhouses_obj):
         self.m_pyhouses_obj = p_pyhouses_obj
         self.web_data = WebData()
-        if g_debug >= 2:
-            print "web_server.API.Start()"
         self.read_web_xml(self.web_data, p_pyhouses_obj.XmlRoot)
         l_site_dir = None
         l_site = appserver.NevowSite(web_mainpage.TheRoot('/', l_site_dir, p_pyhouses_obj))

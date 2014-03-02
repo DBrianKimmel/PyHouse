@@ -4,6 +4,8 @@ Created on Mar 1, 2014
 @author: briank
 
 This will set up this node and then find all other nodes in the same cluster (House).
+
+Then start the House and all the sub systems.
 """
 
 
@@ -11,6 +13,8 @@ This will set up this node and then find all other nodes in the same cluster (Ho
 import logging
 import netifaces
 import os
+
+from src.entertain import entertainment
 
 g_debug = 0
 g_logger = logging.getLogger('PyHouse.CoreSetup   ')
@@ -40,6 +44,7 @@ class NodeRoleData(object):
         self.CameraNode = False
         self.LightingNode = False
         self.PifaceCadNode = False
+        self.PandoraNode = False
 
 
 class FindAllInterfaceData(object):
@@ -69,18 +74,32 @@ class FindAllInterfaceData(object):
         pass
 
 
-class FindNodeTypes(object):
+class HandleNodeType(object):
 
     def __init__(self):
-        l_node = NODE_NOTHING
+        self.find_node_type()
+        self.init_node_type()
+
+    def find_node_type(self):
+        self.m_node = NODE_NOTHING
         # Test for lights
         if os.path.exists('/dev/ttyUSB0'):
-            l_node |= NODE_LIGHTS
+            self.m_node |= NODE_LIGHTS
         # Test for Pandora
+        if os.path.exists('/usr/bin/pianobar'):
+            self.m_node |= NODE_PANDORA
         # Test for camera
         # Test for PifaceCAD
         if os.path.exists('/dev/lirc0'):
-            l_node |= NODE_PIFACECAD
+            self.m_node |= NODE_PIFACECAD
+
+    def init_node_type(self):
+        if self.m_node & NODE_PIFACECAD:
+            self.init_ir_control()
+
+    def init_ir_control(self):
+        """This node has an IR receiver so set it up.
+        """
 
 
 class FindRouter(object):
@@ -96,17 +115,31 @@ class LocateLocalNodes(object):
 
 class API(object):
 
+    m_entertainment = None
+    m_node = None
+
     def __init__(self):
+        self.m_node = HandleNodeType()
+        self.m_entertainment = entertainment.API()
         FindAllInterfaceData()
-        FindNodeTypes()
         LocateLocalNodes()
         g_logger.info("Initialized.")
 
-    def Start(self, _p_pyhouses_obj):
-        g_logger.info("Starting.")
+    def Start(self, p_pyhouses_obj):
+        self.m_node.Start(p_pyhouses_obj)
+        # House
+        # SubSystems
+        self.m_entertainment.Start(p_pyhouses_obj)
+        g_logger.info("Started.")
 
     def Stop(self):
-        g_logger.info("Stopping.")
+        # SubSystems
+        _l_entertainment_xml = self.m_entertainment.Stop()
+        # House
+        g_logger.info("Stopped.")
+
+    def _UpdateXml (self, p_xml):
+        pass
 
 
 # ## END DBK
