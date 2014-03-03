@@ -94,11 +94,11 @@ class HandleNodeType(object):
         if os.path.exists('/dev/lirc0'):
             self.m_node |= NODE_PIFACECAD
 
-    def init_node_type(self):
+    def init_node_type(self, p_pyhouses_obj):
         if self.m_node & NODE_PIFACECAD:
-            self.init_ir_control()
+            self._init_ir_control(p_pyhouses_obj)
 
-    def init_ir_control(self, p_pyhouses_obj):
+    def _init_ir_control(self, p_pyhouses_obj):
         """This node has an IR receiver so set it up.
         """
         pass
