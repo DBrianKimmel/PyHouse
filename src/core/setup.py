@@ -77,9 +77,10 @@ class FindAllInterfaceData(object):
 
 class HandleNodeType(object):
 
+    m_node = NODE_NOTHING
+
     def __init__(self):
         self.find_node_type()
-        self.init_node_type()
 
     def find_node_type(self):
         self.m_node = NODE_NOTHING
