@@ -98,7 +98,7 @@ class HandleNodeType(object):
         if self.m_node & NODE_PIFACECAD:
             self.init_ir_control()
 
-    def init_ir_control(self):
+    def init_ir_control(self, p_pyhouses_obj):
         """This node has an IR receiver so set it up.
         """
         pass
@@ -128,7 +128,7 @@ class API(object):
         g_logger.info("Initialized.")
 
     def Start(self, p_pyhouses_obj):
-        self.m_node.Start(p_pyhouses_obj)
+        self.m_node.init_node_type(p_pyhouses_obj)
         # House
         # SubSystems
         self.m_entertainment.Start(p_pyhouses_obj)
