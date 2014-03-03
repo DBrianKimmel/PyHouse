@@ -15,6 +15,7 @@ import netifaces
 import os
 
 from src.entertain import entertainment
+from src.communication import ir_control
 
 g_debug = 0
 g_logger = logging.getLogger('PyHouse.CoreSetup   ')
@@ -100,6 +101,7 @@ class HandleNodeType(object):
     def init_ir_control(self):
         """This node has an IR receiver so set it up.
         """
+        pass
 
 
 class FindRouter(object):

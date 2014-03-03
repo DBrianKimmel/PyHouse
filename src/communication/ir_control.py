@@ -1,6 +1,7 @@
 """
 Created on Jan 26, 2014
 
+Name: ir_control.py
 @author: briank
 
 Lirc connection.
@@ -16,7 +17,7 @@ class API(object):
     def __init__(self):
         pass
 
-    def Start(self):
+    def Start(self, _p_pyhouses_obj):
         pass
 
     def Stop(self):
