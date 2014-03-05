@@ -52,15 +52,16 @@ class InternetData(object):
         self.Key = 0
         self.Active = False
         self.ExternalDelay = 0
-        self.ExternalIP = None  # returned from url to check our external IPv4 address
+        self.ExternalIPv4 = None  # returned from url to check our external IPv4 address
         self.ExternalUrl = None
+        self.IPv6 = None
         self.DynDns = {}
 
     def reprJSON(self):
         # print "internet.InternetData.preprJSON(1)"
         return dict(Name = self.Name, Key = self.Key, Active = self.Active,
                     ExternalDelay = self.ExternalDelay,
-                    ExternalIP = self.ExternalIP, ExternalUrl = self.ExternalUrl,
+                    ExternalIP = self.ExternalIPv4, ExternalUrl = self.ExternalUrl,
                     DynDns = self.DynDns
                     )
 
@@ -165,7 +166,7 @@ class ReadWriteXML(xml_tools.ConfigTools):
             self.m_external_url = self.get_text_from_xml(l_sect, 'ExternalUrl')
         except:
             self.m_external_url = self.get_text_from_xml(l_sect, 'UrlExternalIP')
-        p_house_obj.Internet.ExternalIP = self.m_external_ip
+        p_house_obj.Internet.ExternalIPv4 = self.m_external_ip
         p_house_obj.Internet.ExternalUrl = self.m_external_url
         p_house_obj.Internet.ExternalDelay = self.m_external_delay
         g_logger.debug("Got external IP params.  URL:{0:}, Delay:{1:}".format(self.m_external_url, self.m_external_delay))
@@ -187,7 +188,7 @@ class ReadWriteXML(xml_tools.ConfigTools):
         @return: a sub tree ready to be appended to "something"
         """
         l_internet_xml = ET.Element('Internet')
-        self.put_text_attribute(l_internet_xml, 'ExternalIP', p_house_obj.Internet.ExternalIP)
+        self.put_text_attribute(l_internet_xml, 'ExternalIP', p_house_obj.Internet.ExternalIPv4)
         self.put_int_attribute(l_internet_xml, 'ExternalDelay', p_house_obj.Internet.ExternalDelay)
         self.put_text_attribute(l_internet_xml, 'ExternalUrl', p_house_obj.Internet.ExternalUrl)
         try:
@@ -315,7 +316,7 @@ class FindExternalIpAddress(object):
         """
         # This is for Shawn Powers page - http://snar.co/ip
         l_quad = p_ip_page
-        self.m_house_obj.Internet.ExternalIP = l_quad
+        self.m_house_obj.Internet.ExternalIPv4 = l_quad
         l_addr = convert.ConvertEthernet().dotted_quad2long(l_quad)
         g_logger.info("Got External IP page for House:{0:}, Page:{1:}".format(self.m_house_obj.Name, p_ip_page))
         callLater(self.m_house_obj.Internet.ExternalDelay, self.get_public_ip)
