@@ -57,7 +57,7 @@ class FindAllInterfaceData(object):
         for l_interface in l_interfaces:
             if l_interface == 'lo':
                 continue
-# TODO: this only allows for one address per interface dur to the [0] below
+# TODO: this only allows for one address per interface due to the [0] below
             m_interface = InterfaceData()
             m_interface.Name = l_interface
             m_interface.Key = l_count

@@ -10,7 +10,19 @@ Allow various IR receivers to collect signals from various IR remotes.
 
 """
 
+# Import system type stuff
+import logging
 
+
+g_debug = 0
+g_logger = logging.getLogger('PyHouse.CoreSetup   ')
+
+
+LIRC_SOCKET = 'unix:path=/var/run/lirc/lircd'
+
+class IrDispatch(object):
+    """
+    """
 
 class API(object):
 
