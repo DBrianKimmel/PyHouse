@@ -55,7 +55,7 @@ from twisted.internet.protocol import Protocol
 from src.utils.tools import PrintBytes
 
 
-g_debug = 1
+g_debug = 2
 # 0 = off
 # 1 = log extra info
 # 2 = log empty responses
@@ -141,7 +141,9 @@ class UsbDriverAPI(UsbDeviceData):
                 l_report)
         p_controller_obj._Data.Device.ctrl_transfer(l_requestType, l_request, l_value, l_index, l_report)
         if g_debug >= 2:
-            print "Driver_USB._setup_hid_device() ", l_ret
+            l_msg = "_setup_hid_17DD_5500() ", l_ret
+            g_logger.debug(l_msg)
+            print "Driver_USB ", l_msg
         return l_ret
 
     def _setup_find_device(self, p_controller_obj):
@@ -252,7 +254,7 @@ class UsbDriverAPI(UsbDeviceData):
     def open_device(self, p_controller_obj):
         self.m_controller_obj = p_controller_obj
         p_controller_obj._Message = bytearray()
-        g_logger.info(" Initializing USB port - {0:#04X}:{1:#04X} - {2:} on port {3:}".format(
+        g_logger.info("Opening USB device - {0:#04X}:{1:#04X} - {2:} on port {3:}".format(
             p_controller_obj.Vendor, p_controller_obj.Product, p_controller_obj.Name, p_controller_obj.Port))
         p_controller_obj._Data.Device = self._setup_find_device(p_controller_obj)
         if p_controller_obj._Data.Device == None:
@@ -287,6 +289,8 @@ class UsbDriverAPI(UsbDeviceData):
                     g_logger.debug("read_device() - Len:{0:}, Msg:{1:}".format(l_len, PrintBytes(l_msg)))
                 for l_x in range(l_len):
                     p_controller_obj._Message.append(l_msg[l_x])
+            elif g_debug >= 2:
+                    g_logger.debug("read_device() - Len:{0:}, Msg:{1:}".format(l_len, PrintBytes(l_msg)))
         except usb.USBError as e:
             print "Driver_USB.read_device_1() got USBError", e
             l_len = 0
@@ -337,7 +341,9 @@ class UsbDriverAPI(UsbDeviceData):
         pass
 
     def write_report(self, p_controller_obj, p_message):
-        pass
+        if g_debug >= 1:
+            g_logger.debug("Write Report")
+        self._write_bis_device(p_controller_obj, p_message)
 
     def write_device(self, p_controller_obj, p_message):
         """Send message to the USB device.
@@ -404,6 +410,8 @@ class API(UsbDriverAPI):
         pass
 
     def Write(self, p_message):
+        if g_debug >= 1:
+            g_logger.debug("Write() - {0:}".format(PrintBytes(p_message)))
         self.write_usb(self.m_controller_obj, p_message)
 
 # ## END DBK

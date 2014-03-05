@@ -1,6 +1,68 @@
 #!/usr/bin/env python
 
 """Handle the controller component of the lighting system.
+
+
+/srv/src/home/home1/briank/workspace_save/workspace/SmartHouse/trunk/src/parts/upb/usbhidserial.cpp
+
+Sent to PIM <17>70 03 8D <0D> <2005-09-24 20:58:55 75535.86>
+PA <20:58:55 75535.94>
+
+Sent to PIM <14>07 10 01 03 FF 30 B6 <0D> <2005-09-24 20:58:55 75535.94>
+PA <20:58:56 75536.03>
+PK <20:58:56 75536.24>
+PU080001FF03864629 <20:58:56 75536.47>
+
+Sent to PIM <14>07 10 01 02 FF 30 B7 <0D> <2005-09-24 20:58:57 75537.47>
+PA <20:58:57 75537.51>
+PK <20:58:57 75537.66>
+PU080001FF02860070 <20:58:57 75537.86>
+
+Sent to PIM <14>07 10 01 01 FF 30 B8 <0D> <2005-09-24 20:58:58 75538.86>
+PA <20:58:58 75538.9>
+PK <20:58:59 75539.05>
+PU8904010001860600E5 <20:58:59 75539.29>
+PU8905010001860600E4 <20:58:59 75539.45>
+
+Sent to PIM <14>07 10 01 00 FF 30 B9 <0D> <2005-09-24 20:59:00 75540.45>
+PA <20:59:00 75540.58>
+PK <20:59:00 75540.63>
+PU8905010001860600E4 <20:59:01 75541.04>
+PU080001FF03864629 <20:59:01 75541.26>
+
+Sent to PIM <14>87 10 01 82 FF 20 C7 <0D> <2005-09-24 20:59:21 75561.36>
+PA <20:59:21 75561.48>
+PK <20:59:21 75561.77>
+
+Sent to PIM <14>07 10 01 03 FF 30 B6 <0D> <2005-09-24 20:59:31 75571.77>
+PA <20:59:31 75571.83>
+PK <20:59:32 75572.13>
+PU080001FF0386006F <20:59:32 75572.58>
+
+Sent to PIM <14>87 10 01 81 FF 20 C8 <0D> <2005-09-24 21:00:33 75633.89>
+PA <21:00:33 75633.97>
+PK <21:00:34 75634.27>
+
+Sent to PIM <14>07 10 01 03 FF 30 B6 <0D> <2005-09-24 21:00:44 75644.27>
+PA <21:00:44 75644.36>
+PK <21:00:44 75644.64>
+PU080001FF03864629 <21:00:45 75645>
+
+Sent to PIM <14>87 10 01 83 FF 20 C6 <0D> <2005-09-24 21:00:53 75653.08>
+PA <21:00:53 75653.16>
+PK <21:00:53 75653.47>
+
+Sent to PIM <14>87 10 01 82 FF 20 C7 <0D> <2005-09-24 21:00:53 75653.47>
+PA <21:00:53 75653.58>
+PK <21:00:53 75653.91>
+
+Sent to PIM <14>07 10 01 02 FF 30 B7 <0D> <2005-09-24 21:01:03 75663.47>
+PA <21:01:03 75663.56>
+PK <21:01:03 75663.84>
+PU080001FF02864B25 <21:01:04 75664.25>
+
+
+
 """
 
 # Import system type stuff
@@ -12,12 +74,10 @@ from twisted.internet import reactor
 import Device_UPB
 from src.utils.tools import PrintBytes
 
-g_debug = 4
+g_debug = 2
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
-# 3 = Config file handling
-# 4 = XML write details
 # + = NOT USED HERE
 g_logger = logging.getLogger('PyHouse.UPB_PIM     ')
 
@@ -102,17 +162,12 @@ class UpbPimUtility(object):
     def _compose_command(self, p_controller_obj, p_command, p_device_id, *p_args):
         """Build the command for each controller found.
         """
-        l_hdr = bytearray(6 + len(p_args))
-        l_hdr[0] = 8 + len(p_args)  # 'UPBMSG_CONTROL_HIGH'
-        l_hdr[1] = 0x00  # 'UPBMSG_CONTROL_LOW'
-        l_hdr[2] = p_controller_obj.NetworkID  # 'UPBMSG_NETWORK_ID'
-        l_hdr[3] = p_device_id  # 'UPBMSG_DEST_ID'
-        l_hdr[4] = int(p_controller_obj.UnitID)  # 'UPBMSG_SOURCE_ID'
-        l_hdr[5] = p_command  # 'UPBMSG_MESSAGE_ID'
+        l_hdr = bytearray(0 + len(p_args))
+        # l_hdr[0] = 0x14
         for l_ix in range(len(p_args)):
-            l_hdr[6 + l_ix] = p_args[l_ix]
+            l_hdr[0 + l_ix] = p_args[l_ix]
         l_hdr = self._calculate_checksum(l_hdr)
-        l_msg = "Ctl:{0:#02X}, NetID:{1:#02x}, Dest:{2:#02x}, SrcID:{3:#02X}, Cmd:{4:#02X}  ".format(l_hdr[0], l_hdr[2], l_hdr[3], l_hdr[4], l_hdr[5])
+        l_msg = "Ctl:{0:#02X}  ".format(l_hdr[0])
         if g_debug >= 1:
             g_logger.debug('Compose Command - {0:}'.format(l_msg))
         self.queue_pim_command(p_controller_obj, l_hdr)
@@ -124,10 +179,10 @@ class DecodeResponses(object):
         try:
             self.l_hdr = self.l_message[0]
             self.l_message = self.l_message[1:]
-            self.l_bytes = self.l_bytes - 1
+            self.l_msg_len = self.l_msg_len - 1
         except IndexError:
             self.l_hdr = 0x00
-            self.l_bytes = 0
+            self.l_msg_len = 0
 
     def _get_rest(self):
         l_rest = self.l_hdr
@@ -138,9 +193,10 @@ class DecodeResponses(object):
 
     def _flushing(self):
         l_ret = 'Flushed: '
-        while self.l_hdr != 0x0d:
+        while self.l_hdr != 0x0d and self.l_msg_len > 0:
             l_ret += "{0:#2x} ".format(self.l_hdr)
             self._next_char()
+            print "Flushed {0:#2x} --- ".format(self.l_hdr)
         if g_debug >= 1:
             g_logger.debug(l_ret)
 
@@ -151,20 +207,21 @@ class DecodeResponses(object):
             return
         self.l_message = p_message
         # Get the length which seems to be x in 0xFx first byte
-        # self.l_bytes = p_message[0] & 0x0F
+        # self.l_msg_len = p_message[0] & 0x0F
         # self._next_char()
         self.l_hdr = self.l_message[0]
-        self.l_bytes = len(self.l_message)
+        self.l_msg_len = len(self.l_message)
         self.l_message = self.l_message[1:]
         # All PIM response messages begin with 'P' which is 0x50
-        if self.l_bytes < 1:
+        if self.l_msg_len < 1:
             return
-        while self.l_bytes > 0:
+        while self.l_msg_len > 0:
             if g_debug >= 2:
-                print "UPB_Pim.decode_response() - {0:} {1}".format(self.l_bytes, PrintBytes(self.l_message))
+                print "UPB_Pim.decode_response() - {0:} {1}".format(self.l_msg_len, PrintBytes(self.l_message))
             self._next_char()  # Get the starting char - must be 'P' (0x50)
             if self.l_hdr != 0x50:
-                print "UPB_Pim.decode_response() - Did not find valid message start 'P'(0x50)  - ERROR! char was {0:#x} - Flushing till next 0x0D".format(self.l_hdr)
+                l_msg = "UPB_Pim.decode_response() - Did not find valid message start 'P'(0x50)  - ERROR! char was {0:#x} - Flushing till next 0x0D".format(self.l_hdr)
+                g_logger.warn(l_msg)
                 self._flushing()
                 continue
             #
@@ -179,17 +236,17 @@ class DecodeResponses(object):
                 if g_debug >= 2:
                     print "UPB_Pim - Previous command was rejected with a command error."
             elif self.l_hdr == 0x4B:  # 'K'
-                if g_debug > 4:
+                if g_debug >= 2:
                     print "UPB_Pim.decode_response() found 'K' (0x4b) - ACK pulse also received."
             elif self.l_hdr == 0x4E:  # 'N'
-                if g_debug > 4:
+                if g_debug >= 2:
                     print "UPB_Pim.decode_response() found 'N' (0x4E) - No ACK pulse received from device."
             elif self.l_hdr == 0x52:  # 'R'
-                if g_debug > 4:
+                if g_debug >= 2:
                     print "UPB_Pim.decode_response() found 'R' (0x52) - Register report recieved"
                 self._get_rest()
             elif self.l_hdr == 0x55:  # 'U'
-                if g_debug > 4:
+                if g_debug >= 2:
                     print "UPB_Pim.decode_response() found 'U' (0x55) - Message report received."
                 self._get_rest()
             else:
@@ -343,7 +400,7 @@ class PimDriverInterface(DecodeResponses):
             if len(l_msg) == 0:
             # if l_msg[0] == 0xF0:
                 return
-            if g_debug >= 3:
+            if g_debug >= 2:
                 print "UPB_PIM.receive_loop() from {0:}, Message: {1:}".format(p_controller_obj.Name, PrintBytes(l_msg))
             self.decode_response(l_msg)
 
