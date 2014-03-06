@@ -16,8 +16,8 @@ import logging
 from twisted.application.internet import StreamServerEndpointService
 from twisted.application.service import Application
 from twisted.internet import reactor
-from twisted.internet.protocol import Factory, Protocol
-from twisted.internet.endpoints import TCP4ServerEndpoint, UNIXClientEndpoint
+from twisted.internet.protocol import ClientFactory, Factory, Protocol
+from twisted.internet.endpoints import TCP4ServerEndpoint, UNIXClientEndpoint, clientFromString
 from twisted.protocols.amp import AMP
 
 
@@ -32,7 +32,22 @@ class LircProtocol(Protocol):
     """
 
     def dataReceived(self, p_data):
-        print p_data
+        print 'Lirc data =', p_data
+
+
+class LircClientFactory(ClientFactory):
+    def startedConnecting(self, p_connector):
+        print "Started to connect."
+
+    def buildProtocol(self, addr):
+        print "connected"
+        return LircProtocol()
+
+    def clientConnectionLost(self, connector, p_reason):
+        print 'lost connection ', p_reason
+
+    def clientConnectionFailed(self, connector, p_reason):
+        print 'Connection failed ', p_reason
 
 
 class LircFactory(Factory):
@@ -47,7 +62,8 @@ class IrDispatch(object):
 class API(object):
 
     def __init__(self):
-        l_endpoint = UNIXClientEndpoint(LIRC_SOCKET, reactor)
+        # l_endpoint = UNIXClientEndpoint(LIRC_SOCKET, reactor)
+        client = clientFromString(reactor, LIRC_SOCKET)
 
     def Start(self, _p_pyhouses_obj):
         l_application = Application('IR Control Server')
