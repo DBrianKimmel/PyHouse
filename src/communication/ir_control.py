@@ -27,12 +27,25 @@ g_logger = logging.getLogger('PyHouse.CoreSetup   ')
 
 LIRC_SOCKET = 'unix:path=/var/run/lirc/lircd'
 
+IR_KEYS = [
+           ('KEY_BD', 'pandora', 'stop'),
+           ('KEY_DVD', 'pandora', 'stop'),
+           ('KEY_DVR', 'pandora', 'start'),
+           ('KEY_HDMI', 'pandora', 'stop'),
+           ('KEY_TV', 'pandora', 'stop'),
+           ('KEY_CD', 'pandora', 'stop'),
+
+           ('KEY_VOLUMEUP', 'pandora', 'volup'),
+           ('KEY_VOLUMEDOWN', 'pandora', 'voldown'),
+           ('KEY_MUTE', 'pandora', 'mute'),
+           ]
+
 class LircProtocol(Protocol):
     """
     """
 
     def dataReceived(self, p_data):
-        print 'Lirc data =', p_data
+        IrDispatch(p_data)
 
 
 class LircClientFactory(ClientFactory):
@@ -41,7 +54,7 @@ class LircClientFactory(ClientFactory):
         print "LircClientFactory - Started to connect."
 
     def buildProtocol(self, addr):
-        print "LircClientFactory - connected"
+        # print "LircClientFactory - connected"
         return LircProtocol()
 
     def clientConnectionLost(self, connector, p_reason):
@@ -61,6 +74,21 @@ class LircFactory(Factory):
 class IrDispatch(object):
     """
     """
+    def __init__(self, p_data):
+        print 'Lirc data =', p_data
+        l_fields = p_data.split()
+        l_key = l_fields[2]
+        if l_fields[1] == '00':
+            for tpl in IR_KEYS:
+                l_k = tpl[0]
+                if l_key == tpl[0]:
+                    if tpl[1] == 'pandora':
+                        print "found a pandora key", tpl[0], tpl[2]
+                        self.pandor_ctl(p_data, tpl)
+                    pass
+
+    def pandor_ctl(self, p_data, p_tpl):
+        print "Pandora ctl ", p_data, p_tpl
 
 class API(object):
 
