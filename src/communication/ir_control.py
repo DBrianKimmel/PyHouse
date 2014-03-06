@@ -36,22 +36,25 @@ class LircProtocol(Protocol):
 
 
 class LircClientFactory(ClientFactory):
+
     def startedConnecting(self, p_connector):
-        print "Started to connect."
+        print "LircClientFactory - Started to connect."
 
     def buildProtocol(self, addr):
-        print "connected"
+        print "LircClientFactory - connected"
         return LircProtocol()
 
     def clientConnectionLost(self, connector, p_reason):
-        print 'lost connection ', p_reason
+        print 'LircClientFactory - lost connection ', p_reason
 
     def clientConnectionFailed(self, connector, p_reason):
-        print 'Connection failed ', p_reason
+        print 'LircClientFactory - Connection failed ', p_reason
 
 
 class LircFactory(Factory):
+
     def buildProtocol(self, addr):
+        print "LircFactory - connected"
         return LircProtocol()
 
 
@@ -62,10 +65,13 @@ class IrDispatch(object):
 class API(object):
 
     def __init__(self):
-        # l_endpoint = UNIXClientEndpoint(LIRC_SOCKET, reactor)
-        client = clientFromString(reactor, LIRC_SOCKET)
+        print "ir_control.API()"
+        l_endpoint = clientFromString(reactor, LIRC_SOCKET)
+        l_factory = LircClientFactory()
+        l_endpoint.connect(l_factory)
 
     def Start(self, _p_pyhouses_obj):
+        print 'ir_control.API.Start()'
         l_application = Application('IR Control Server')
         l_endpoint = TCP4ServerEndpoint
         l_factory = Factory()
