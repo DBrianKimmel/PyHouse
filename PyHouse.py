@@ -177,12 +177,14 @@ def SigIntHandler(signum, _stackframe):
 
 
 class Utilities(object):
-    """
-    """
 
-    def import_config_info(self, p_pyhouses_obj):
+    def read_xml_config_info(self, p_pyhouses_obj):
+        """This will read the XML config file(s).
+        There may be a device config file.
+        This puts the XML tree and file name in the pyhouses object for use by various modules.
+        """
         if g_debug >= 3:
-            print "PyHouse.Utilities.import_config_info()"
+            print "PyHouse.Utilities.read_xml_config_info()"
         p_pyhouses_obj.XmlFileName = xml_tools.open_config_file()
         try:
             l_xmltree = ET.parse(p_pyhouses_obj.XmlFileName)
@@ -207,7 +209,7 @@ class API(Utilities):
         handle_signals()
         self.m_pyhouses_obj = PyHouseData()
         self.m_pyhouses_obj.API = self
-        self.import_config_info(self.m_pyhouses_obj)
+        self.read_xml_config_info(self.m_pyhouses_obj)
         self.m_pyhouses_obj.LogsAPI = log.API()
         self.m_pyhouses_obj.LogsData = self.m_pyhouses_obj.LogsAPI.Start(self.m_pyhouses_obj)
         global g_logger

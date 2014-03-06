@@ -102,7 +102,8 @@ class HandleNodeType(object):
     def _init_ir_control(self, p_pyhouses_obj):
         """This node has an IR receiver so set it up.
         """
-        pass
+        l_ir = ir_control.API()
+        l_ir.Start(p_pyhouses_obj)
 
 
 class FindRouter(object):
