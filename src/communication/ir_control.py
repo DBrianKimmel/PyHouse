@@ -15,6 +15,7 @@ import logging
 
 from twisted.application.internet import StreamServerEndpointService
 from twisted.application.service import Application
+from twisted.internet import reactor
 from twisted.internet.protocol import Factory, Protocol
 from twisted.internet.endpoints import TCP4ServerEndpoint, UNIXClientEndpoint
 from twisted.protocols.amp import AMP
@@ -46,7 +47,7 @@ class IrDispatch(object):
 class API(object):
 
     def __init__(self):
-        l_endpoint = UNIXClientEndpoint(LIRC_SOCKET)
+        l_endpoint = UNIXClientEndpoint(LIRC_SOCKET, reactor)
 
     def Start(self, _p_pyhouses_obj):
         l_application = Application('IR Control Server')
