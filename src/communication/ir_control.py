@@ -16,7 +16,7 @@ import logging
 from twisted.application.internet import StreamServerEndpointService
 from twisted.application.service import Application
 from twisted.internet.protocol import Factory, Protocol
-from twisted.internet.endpoints import TCP6ServerEndpoint, UNIXClientEndpoint
+from twisted.internet.endpoints import TCP4ServerEndpoint, UNIXClientEndpoint
 from twisted.protocols.amp import AMP
 
 
@@ -50,7 +50,7 @@ class API(object):
 
     def Start(self, _p_pyhouses_obj):
         l_application = Application('IR Control Server')
-        l_endpoint = TCP6ServerEndpoint
+        l_endpoint = TCP4ServerEndpoint
         l_factory = Factory()
         l_factory.protocol = AMP
         l_service = StreamServerEndpointService(l_endpoint, l_factory)
