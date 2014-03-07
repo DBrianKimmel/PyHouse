@@ -52,8 +52,8 @@ class LircProtocol(Protocol):
     """
 
     def dataReceived(self, p_data):
-        p_data.rstrip('\r\n')
-        IrDispatch(p_data)
+        l_data = p_data.rstrip('\r\n')
+        IrDispatch(l_data)
 
 
 class LircClientFactory(ClientFactory):
@@ -110,7 +110,7 @@ class IrDispatch(object):
 
     def pandor_ctl(self, p_data, p_tpl):
         print "Pandora ctl ", p_data, p_tpl
-        (_l_keyname, _l_pandora, l_command) = p_tpl.split()
+        (_l_keyname, _l_pandora, l_command) = p_tpl
         if l_command == 'start':
             self.m_pandora = pandora.API()
             self.m_pandora.Start(None)
