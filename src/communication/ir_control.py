@@ -1,10 +1,13 @@
 """
+ir_control.py
+
 Created on Jan 26, 2014
 
-Name: ir_control.py
 @author: briank
 
-Lirc connection.
+@copyright: 2014 by D. Brian Kimmel
+
+@summary: Lirc connection.
 
 Allow various IR receivers to collect signals from various IR remotes.
 
@@ -23,6 +26,7 @@ from twisted.internet.protocol import ClientFactory, Factory, Protocol
 from twisted.internet.endpoints import TCP4ServerEndpoint, clientFromString
 from twisted.protocols.amp import AMP
 
+from src.entertain import pandora
 
 g_debug = 1
 g_logger = logging.getLogger('PyHouse.IrControl   ')
@@ -48,8 +52,7 @@ class LircProtocol(Protocol):
     """
 
     def dataReceived(self, p_data):
-        if g_debug >= 1:
-            g_logger.debug("Received {0:}".format(p_data))
+        p_data.rstrip('\r\n')
         IrDispatch(p_data)
 
 
@@ -94,17 +97,26 @@ class IrDispatch(object):
     """
     def __init__(self, p_data):
         (l_keycode, l_repeatcnt, l_keyname, l_remote) = p_data.split()
-        print 'IrDispatch data =', l_keycode, l_repeatcnt, l_keyname, l_remote
+        # print 'IrDispatch data =', l_keycode, l_repeatcnt, l_keyname, l_remote
         if l_repeatcnt == '00':
+            if g_debug >= 1:
+                g_logger.debug("Received {0:}".format(p_data))
             for tpl in IR_KEYS:
                 if l_keyname == tpl[0]:
                     if tpl[1] == 'pandora':
-                        print "found a pandora key", tpl[0], tpl[2]
+                        # print "found a pandora key", tpl[0], tpl[2]
                         self.pandor_ctl(p_data, tpl)
                     pass
 
     def pandor_ctl(self, p_data, p_tpl):
         print "Pandora ctl ", p_data, p_tpl
+        (_l_keyname, _l_pandora, l_command) = p_tpl.split()
+        if l_command == 'start':
+            self.m_pandora = pandora.API()
+            self.m_pandora.Start(None)
+        elif l_command == 'stop':
+            self.m_pandora.Stop()
+
 
 class API(object):
 
@@ -112,7 +124,7 @@ class API(object):
         """Connect to the Lirc procees.
         """
         _x = LircConnection()
-        print "ir_control.API()"
+        # print "ir_control.API()"
 
     def Start(self, _p_pyhouses_obj):
         print 'ir_control.API.Start()'
