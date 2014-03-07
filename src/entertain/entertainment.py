@@ -1,6 +1,14 @@
 #!/usr/bin/python
 
-"""Entertainment component access module.
+"""
+entertainment.py
+
+@author: briank
+
+@copyright: 2010 - 2014 by D. Brian Kimmel
+
+@summary: Entertainment component access module.
+
 This is a Main Module - always present.
 
 Depending on node type, start up entertainment systems.
@@ -12,7 +20,7 @@ Pandora (via pianobar) is one of the systems.
 # Import system type stuff
 import logging
 # import xml.etree.ElementTree as ET
-from src.entertain import pandora
+# from src.entertain import pandora
 
 g_debug = 0
 
@@ -35,15 +43,15 @@ class EntertainmentAPI(object):
 
 class API(object):
     def __init__(self):
-        self.m_pandora = pandora.API()
+        # self.m_pandora = pandora.API()
         g_logger.info("Initialized.")
 
     def Start(self, p_pyhouses_obj):
-        self.m_pandora.Start(p_pyhouses_obj)
+        # self.m_pandora.Start(p_pyhouses_obj)
         g_logger.info("Started.")
 
     def Stop(self):
-        self.m_pandora.Stop()
+        # self.m_pandora.Stop()
         g_logger.info("Stopped.")
 
 # ## END DBK

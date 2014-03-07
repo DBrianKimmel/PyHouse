@@ -3,7 +3,9 @@ Created on Mar 6, 2014
 
 @author: briank
 
-This module if for inter_node communication.
+@copyright: 2014 by D. Brian Kimmel
+
+@summary: This module if for inter_node communication.
 """
 
 

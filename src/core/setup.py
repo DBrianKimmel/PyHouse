@@ -3,7 +3,9 @@ Created on Mar 1, 2014
 
 @author: briank
 
-This will set up this node and then find all other nodes in the same cluster (House).
+@copyright: 2014 by D. Brian Kimmel
+
+@summary: This will set up this node and then find all other nodes in the same cluster (House).
 
 Then start the House and all the sub systems.
 """
