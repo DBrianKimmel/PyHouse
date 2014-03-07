@@ -45,18 +45,19 @@ class BarProcessControl(protocol.ProcessProtocol):
     def connectionMade(self):
         """Write to stdin.
         """
-        self.transport.write('')
-        self.transport.closeStdin()
+        # self.transport.write('')
+        # self.transport.closeStdin()
+        pass
 
     def outReceived(self, p_data):
         """Data received from stdout.
         """
         if p_data.startswith('(i) Control fifo at'):
             pass
-        print 'pandora data = ', p_data
+        print 'pandora stdout data = ', p_data
 
     def errReceived(self, p_data):
-        pass
+        print 'pandora stderr data = ', p_data
 
 
 class API(object):
