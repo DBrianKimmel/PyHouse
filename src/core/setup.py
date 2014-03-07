@@ -21,6 +21,9 @@ g_debug = 0
 g_logger = logging.getLogger('PyHouse.CoreSetup   ')
 
 
+INTER_NODE = 'tcp:port=8581'
+INTRA_NODE = 'unix:path=/var/run/pyhouse/node:lockfile=1'
+
 NODE_NOTHING = 0x0000
 NODE_LIGHTS = 0x0001
 NODE_PANDORA = 0x0002

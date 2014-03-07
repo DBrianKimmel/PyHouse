@@ -1,9 +1,13 @@
 """
+pandora.py
+
 Created on Feb 27, 2014
 
 @author: briank
 
-Controls pandora playback thru pianobar.
+@copyright: 2014 by D. Brian Kimmel
+
+@summary: Controls pandora playback thru pianobar.
 
 When PyHouse starts initially, Pandora is inactive.
 
