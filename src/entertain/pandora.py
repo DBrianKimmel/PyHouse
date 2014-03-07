@@ -53,7 +53,7 @@ class BarProcessControl(protocol.ProcessProtocol):
         """
         if p_data.startswith('(i) Control fifo at'):
             pass
-        pass
+        print 'pandora data = ', p_data
 
     def errReceived(self, p_data):
         pass
