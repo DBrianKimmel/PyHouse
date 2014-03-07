@@ -22,7 +22,7 @@ import logging
 from twisted.application.internet import StreamServerEndpointService
 from twisted.application.service import Application
 from twisted.internet import reactor
-from twisted.internet.protocol import ClientFactory, Factory, Protocol
+from twisted.internet.protocol import Factory, Protocol
 from twisted.internet.endpoints import TCP4ServerEndpoint, clientFromString
 from twisted.protocols.amp import AMP
 
@@ -30,6 +30,8 @@ from src.entertain import pandora
 
 g_debug = 1
 g_logger = logging.getLogger('PyHouse.IrControl   ')
+
+g_pandora = None
 
 
 LIRC_SOCKET = 'unix:path=/var/run/lirc/lircd'
@@ -48,32 +50,12 @@ IR_KEYS = [
            ]
 
 class LircProtocol(Protocol):
-    """
+    """We get one line of data here (lots of repeats)
     """
 
     def dataReceived(self, p_data):
         l_data = p_data.rstrip('\r\n')
         IrDispatch(l_data)
-
-
-class LircClientFactory(ClientFactory):
-
-    def startedConnecting(self, p_connector):
-        print "LircClientFactory - Started to connect."
-
-    def buildProtocol(self, addr):
-        # print "LircClientFactory - connected"
-        return LircProtocol()
-
-
-class LircConnection(object):
-
-    def __init__(self):
-        l_endpoint = clientFromString(reactor, LIRC_SOCKET)
-        l_factory = LircFactory()
-        l_endpoint.connect(l_factory)
-        if g_debug >= 1:
-            g_logger.debug("LircConnection Open")
 
 
 class LircFactory(Factory):
@@ -92,11 +74,21 @@ class LircFactory(Factory):
         print 'LircFactory - Connection failed ', p_reason
 
 
+class LircConnection(object):
+
+    def __init__(self):
+        l_endpoint = clientFromString(reactor, LIRC_SOCKET)
+        l_factory = LircFactory()
+        l_endpoint.connect(l_factory)
+        if g_debug >= 1:
+            g_logger.debug("LircConnection Open")
+
+
 class IrDispatch(object):
     """
     """
     def __init__(self, p_data):
-        (l_keycode, l_repeatcnt, l_keyname, l_remote) = p_data.split()
+        (_l_keycode, l_repeatcnt, l_keyname, _l_remote) = p_data.split()
         # print 'IrDispatch data =', l_keycode, l_repeatcnt, l_keyname, l_remote
         if l_repeatcnt == '00':
             if g_debug >= 1:
@@ -105,17 +97,16 @@ class IrDispatch(object):
                 if l_keyname == tpl[0]:
                     if tpl[1] == 'pandora':
                         # print "found a pandora key", tpl[0], tpl[2]
-                        self.pandor_ctl(p_data, tpl)
+                        self.pandora_ctl(p_data, tpl)
                     pass
 
-    def pandor_ctl(self, p_data, p_tpl):
+    def pandora_ctl(self, p_data, p_tpl):
         print "Pandora ctl ", p_data, p_tpl
         (_l_keyname, _l_pandora, l_command) = p_tpl
         if l_command == 'start':
-            self.m_pandora = pandora.API()
-            self.m_pandora.Start(None)
+            g_pandora.Start(None)
         elif l_command == 'stop':
-            self.m_pandora.Stop()
+            g_pandora.Stop()
 
 
 class API(object):
@@ -123,6 +114,8 @@ class API(object):
     def __init__(self):
         """Connect to the Lirc procees.
         """
+        global g_pandora
+        g_pandora = pandora.API()
         _x = LircConnection()
         # print "ir_control.API()"
 
