@@ -27,6 +27,7 @@ import logging
 
 from twisted.internet import protocol
 from twisted.internet import reactor
+from twisted.internet.defer import Deferred
 
 
 g_debug = 0
@@ -54,10 +55,10 @@ class BarProcessControl(protocol.ProcessProtocol):
         """
         if p_data.startswith('(i) Control fifo at'):
             pass
-        print 'pandora stdout data = ', p_data
+        pass
 
     def errReceived(self, p_data):
-        print 'pandora stderr data = ', p_data
+        pass
 
 
 class API(object):
@@ -69,6 +70,8 @@ class API(object):
         """Start the Pndora player when we receive an IR signal to play music.
         """
         self.m_pianobar = BarProcessControl()
+        self.m_pianobar.deferred = BarProcessControl()
+        l_command = ['pianobar', ]
         reactor.spawnProcess(self.m_pianobar, PB_LOC, [PB_LOC])
         g_logger.info("Started.")
 

@@ -117,20 +117,18 @@ class PyHouseData(object):
     def reprJSON(self):
         """PyHouse.
         """
-        print "PyHouse.reprJSON(1)"
         l_ret = dict(
             XmlFileName = self.XmlFileName,
             HousesData = self.HousesData
             )
-        print "PyHouse.reprJSON(2) {0:}".format(l_ret)
         return l_ret
 
 
 def daemonize():
     """Taken from twisted.scripts._twistd_unix.py
     """
-    if g_debug >= 2:
-        print "PyHouse is making itself into a daemon !!"
+    if g_debug >= 1:
+        g_logger.debug("PyHouse is making itself into a daemon !!")
     if os.fork():  # launch child and...
         os._exit(0)  # kill off parent
     os.setsid()
@@ -161,7 +159,7 @@ def SigHupHandler(signum, _stackframe):
     """
     """
     if g_debug >= 1:
-        print 'Hup Signal handler called with signal', signum
+        g_logger.debug('Hup Signal handler called with signal {0:}'.format(signum))
     API().Stop()
     API().Start()
 
@@ -169,10 +167,9 @@ def SigIntHandler(signum, _stackframe):
     """interrupt character (probably Ctrl-C)
     """
     if g_debug >= 1:
-        print 'SigInt - Signal handler called with signal', signum
+        g_logger.debuf('SigInt - Signal handler called with signal {0:}'.format(signum))
     g_logger.info("Interrupted.\n\n\n")
     reactorstop()
-    print "Interrupted."
     exit
 
 
@@ -183,8 +180,8 @@ class Utilities(object):
         There may be a device config file.
         This puts the XML tree and file name in the pyhouses object for use by various modules.
         """
-        if g_debug >= 3:
-            print "PyHouse.Utilities.read_xml_config_info()"
+        if g_debug >= 1:
+            g_logger.debug("Utilities.read_xml_config_info()")
         p_pyhouses_obj.XmlFileName = xml_tools.open_config_file()
         try:
             l_xmltree = ET.parse(p_pyhouses_obj.XmlFileName)
@@ -255,8 +252,6 @@ class API(Utilities):
     def Reload(self, _p_pyhouses_obj):
         """Update XML file with current info.
         """
-        if g_debug >= 2:
-            print "\nPyHouse.API.Reload() - Reloading"
         self.Stop()
         self.Start()
         g_logger.info("Reloaded.\n\n\n")
@@ -264,8 +259,6 @@ class API(Utilities):
     def Quit(self):
         """Prepare to exit all of pyhouse
         """
-        if g_debug >= 2:
-            print "\nPyHouse.API.Quit() - Quitting"
         self.Stop()
         g_logger.info("Quit.\n\n\n")
         reactorstop()

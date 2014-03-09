@@ -65,7 +65,6 @@ class WebData(object):
         return l_ret
 
     def reprJSON(self):
-        print "web_server.reprJSON(1)"
         return dict(Port = self.WebPort)
 
 
@@ -84,16 +83,12 @@ class ClientConnections(object):
 class WebUtility(xml_tools.ConfigFile):
 
     def read_web_xml(self, p_web_obj, p_root_xml):
-        if g_debug >= 3:
-            print "web_server.WebUtilities().read_web_xml()"
-        if g_debug >= 5:
-            print xml_tools.prettify(p_root_xml)
         try:
             l_sect = p_root_xml.find('Web')
             l_sect.find('WebPort')
         except AttributeError:
             if g_debug >= 0:
-                print "web_server.read_web_xml() - ERROR in finding Web/WebPort, Creating entry", l_sect
+                g_logger.error("web_server.read_web_xml() - ERROR in finding Web/WebPort, Creating entry {0:}".format(l_sect))
             l_sect = ET.SubElement(p_root_xml, 'Web')
             ET.SubElement(l_sect, 'Port').text = '8580'
             self.put_int_attribute(l_sect, 'WebPort', 8580)
@@ -108,16 +103,11 @@ class WebUtility(xml_tools.ConfigFile):
         p_web_obj.WebPort = l_sect.findtext('WebPort')
         p_web_obj.WebPort = 8580
         # p_web_obj.WebPort = self.get_int_from_xml(l_sect, 'WebPort')
-        if g_debug >= 4:
-            print "web_server.read_web_xml() - Port:{0:}".format(p_web_obj.WebPort)
         return
 
     def write_web_xml(self, p_web_data):
         l_web_xml = ET.Element("Web")
         self.put_int_attribute(l_web_xml, 'WebPort', p_web_data.WebPort)
-        if g_debug >= 3:
-            print "web_server.write_web_xml()", p_web_data, l_web_xml
-            print xml_tools.prettify(l_web_xml)
         return l_web_xml
 
 
@@ -138,14 +128,10 @@ class API(WebUtility, ClientConnections):
             listenTCP(self.web_data.WebPort, l_site)
         self.web_running = True
         l_msg = "Port:{0:}, Path:{1:}".format(self.web_data.WebPort, l_site_dir)
-        if g_debug >= 2:
-            print "web_server.API.Start() - Started - {0:}".format(l_msg)
         g_logger.info("Started - {0:}".format(l_msg))
         return self.web_data
 
     def Stop(self):
-        if g_debug >= 2:
-            print "web_server.API.Stop()"
         l_xml = self.write_web_xml(self.web_data)
         return l_xml
 
@@ -154,8 +140,6 @@ class API(WebUtility, ClientConnections):
         return p_xml
 
     def Update(self, p_entry):
-        if g_debug >= 0:
-            print 'web_server.API.Update({0:}'.format(p_entry)
         l_obj = WebData()
         l_obj.Port = p_entry.Port
         self.m_house_obj.WebData = l_obj  # update schedule entry within a house

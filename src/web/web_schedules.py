@@ -37,8 +37,6 @@ class SchedulesElement(athena.LiveElement):
     def __init__(self, p_workspace_obj, p_params):
         self.m_workspace_obj = p_workspace_obj
         self.m_pyhouses_obj = p_workspace_obj.m_pyhouses_obj
-        if g_debug >= 2:
-            print "web_schedules.SchedulesElement()"
 
     @athena.expose
     def getHouseData(self, p_index):
@@ -48,8 +46,6 @@ class SchedulesElement(athena.LiveElement):
         """
         l_ix = int(p_index)
         l_house = self.m_pyhouses_obj.HousesData[l_ix].HouseObject
-        if g_debug >= 3:
-            print "web_schedules.getHouseData() - HouseIndex:", p_index
         l_json = web_utils.JsonUnicode().encode_json(l_house)
         return unicode(l_json)
 

@@ -48,8 +48,6 @@ class SerialData(object):
     def reprJSON(self):
         """interface().
         """
-        # PrintObject('interface.reprJSON(1) ', self)
-        # print "interface.SerialData.reprJSON(1)"
         from src.lights import lighting_controllers
         l_ret = lighting_controllers.ControllerData().reprJSON()
         l_ret.update(dict(
@@ -63,7 +61,6 @@ class SerialData(object):
             Timeout = self.Timeout,
             XonXoff = self.XonXoff
         ))
-        # print "interface.SerialData.reprJSON(2) {0:}".format(l_ret)
         return l_ret
 
 
@@ -75,13 +72,11 @@ class USBData(object):
         self.Vendor = 0
 
     def reprJSON(self):
-        # print "interface.USBData.reprJSON(1)"
         l_ret = dict(
             InterfaceType = self.InterfaceType,
             Product = self.Product,
             Vendor = self.Vendor
         )
-        # print "interface.USBData.reprJSON(2) {0:}".format(l_ret)
         return l_ret
 
 
@@ -93,13 +88,11 @@ class  EthernetData(object):
         self.Protocol = 'TCP'
 
     def reprJSON(self):
-        # print "interface.EthernetData.reprJSON(1)"
         l_ret = dict(
             InterfaceType = self.InterfaceType,
             PortNumber = self.PortNumber,
             Protocol = self.Protocol
         )
-        # print "interface.EthernetData.reprJSON(2) {0:}".format(l_ret)
         return l_ret
 
 

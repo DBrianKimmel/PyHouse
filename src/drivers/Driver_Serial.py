@@ -43,15 +43,12 @@ class SerialProtocol(Protocol):
         self.m_controller_obj = p_controller_obj
 
     def connectionFailed(self):
-        print "Driver_Serial.connectionFailed() - ", self
+        pass
 
     def connectionMade(self):
-        if g_debug >= 2:
-            print 'Driver_Serial.connectionMade() - Connected to Serial Device'  # , dir(self), vars(self)
+        pass
 
     def dataReceived(self, p_data):
-        if g_debug >= 5:
-            print "Driver_Serial.dataReceived() - {0:}".format(PrintBytes(p_data))
         self.m_controller_obj._Message += p_data
 
 
@@ -101,8 +98,7 @@ class SerialAPI(object):
 class API(SerialAPI):
 
     def __init__(self):
-        if g_debug >= 2:
-            print "Driver_Serial.API()"
+        if g_debug >= 1:
             g_logger.debug("Initializing.")
         pass
 

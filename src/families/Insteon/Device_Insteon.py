@@ -55,8 +55,6 @@ class InsteonData (lighting.LightData):
     def reprJSON(self, p_ret):
         """Device_Insteon.
         """
-        # l_ret = super(InsteonData, self).reprJSON()  # The core data
-        # print "Device_Insteon.reprJSON(1)"
         p_ret.update(dict(
             InsteonAddress = Insteon_utils.int2dotted_hex(self.InsteonAddress),
             Controller = self.Controller,
@@ -67,7 +65,6 @@ class InsteonData (lighting.LightData):
             Responder = self.Responder,
             ProductKey = self.ProductKey
             ))
-        # print "Device_Insteon.reprJSON(2) {0:}".format(p_ret)
         return p_ret
 
 
@@ -80,9 +77,6 @@ class CoreAPI(xml_tools.ConfigTools):
         @return: a dict of the entry to be attached to a house object.
         """
         l_insteon_obj = InsteonData()
-        # if p_device_obj.Type == 'Controller':
-        #    PrintObject('Device_Insteon.extract_device_xml(1) ', p_device_obj)
-        #    PrintObject('Device_Insteon.extract_device_xml(1) ', l_insteon_obj)
         l_insteon_obj.InsteonAddress = Insteon_utils.dotted_hex2int(p_entry_xml.findtext('Address', default = 0))
         l_insteon_obj.Controller = p_entry_xml.findtext('Controller')
         l_insteon_obj.DevCat = p_entry_xml.findtext('DevCat')
@@ -92,8 +86,6 @@ class CoreAPI(xml_tools.ConfigTools):
         l_insteon_obj.ProductKey = p_entry_xml.findtext('ProductKey')
         l_insteon_obj.Responder = p_entry_xml.findtext('Responder')
         xml_tools.stuff_new_attrs(p_device_obj, l_insteon_obj)
-        # if p_device_obj.Type == 'Controller':
-        #    PrintObject('Device_Insteon.extract_device_xml(2) ', p_device_obj)
         return l_insteon_obj
 
     def insert_device_xml(self, p_entry_xml, p_device_obj):
@@ -112,10 +104,6 @@ class LightingAPI(CoreAPI):
     """
 
     def XXchange_light_setting(self, p_light_obj, p_level, p_house_obj):
-        if g_debug >= 3:
-            print "Device_Insteon.change_light_setting()", p_level,
-            print "    Light:", p_light_obj
-            print "    House:", p_house_obj
         if p_light_obj.Family == 'Insteon':
             try:
                 for l_controller_obj in self.m_house_obj.Controllers.itervalues():
@@ -157,8 +145,6 @@ class API(LightingAPI):
                     l_count += 1
                 else:
                     g_logger.error('Controller {0:} failed to start.'.format(l_controller_obj.Name))
-                    if g_debug >= 3:
-                        print "Device_Insteon.Start() - Did NOT start- House:{0:}, Controller:{1:}".format(p_house_obj.Name, l_controller_obj.Name)
                     l_controller_obj.Active = False
         l_msg = 'Started {0:} Insteon Controllers, House:{1:}.'.format(l_count, p_house_obj.Name)
         g_logger.info(l_msg)
@@ -181,7 +167,6 @@ class API(LightingAPI):
         if p_light_obj.Family == 'Insteon':
             try:
                 for l_controller_obj in self.m_house_obj.Controllers.itervalues():
-                    # print l_controller_obj.Name
                     if l_controller_obj.Family != 'Insteon':
                         continue
                     if l_controller_obj.Active != True:

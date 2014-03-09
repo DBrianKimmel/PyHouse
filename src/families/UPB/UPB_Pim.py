@@ -216,8 +216,6 @@ class DecodeResponses(object):
         if self.l_msg_len < 1:
             return
         while self.l_msg_len > 0:
-            if g_debug >= 2:
-                print "UPB_Pim.decode_response() - {0:} {1}".format(self.l_msg_len, PrintBytes(self.l_message))
             self._next_char()  # Get the starting char - must be 'P' (0x50)
             if self.l_hdr != 0x50:
                 l_msg = "UPB_Pim.decode_response() - Did not find valid message start 'P'(0x50)  - ERROR! char was {0:#x} - Flushing till next 0x0D".format(self.l_hdr)
@@ -228,29 +226,29 @@ class DecodeResponses(object):
             self._next_char()  # drop the 0x50 char
             if self.l_hdr == 0x41:  # 'A'
                 if g_debug >= 2:
-                    print "UPB_Pim - Previous command was accepted"
+                    g_logger.error("UPB_Pim - Previous command was accepted")
             elif self.l_hdr == 0x42:  # 'B'
                 if g_debug >= 2:
-                    print "UPB_Pim - Previous command was rejected because device is busy."
+                    g_logger.error("UPB_Pim - Previous command was rejected because device is busy.")
             elif self.l_hdr == 0x45:  # 'E'
                 if g_debug >= 2:
-                    print "UPB_Pim - Previous command was rejected with a command error."
+                    g_logger.error("UPB_Pim - Previous command was rejected with a command error.")
             elif self.l_hdr == 0x4B:  # 'K'
                 if g_debug >= 2:
-                    print "UPB_Pim.decode_response() found 'K' (0x4b) - ACK pulse also received."
+                   g_logger.error("UPB_Pim.decode_response() found 'K' (0x4b) - ACK pulse also received.")
             elif self.l_hdr == 0x4E:  # 'N'
                 if g_debug >= 2:
-                    print "UPB_Pim.decode_response() found 'N' (0x4E) - No ACK pulse received from device."
+                    g_logger.error("UPB_Pim.decode_response() found 'N' (0x4E) - No ACK pulse received from device.")
             elif self.l_hdr == 0x52:  # 'R'
                 if g_debug >= 2:
-                    print "UPB_Pim.decode_response() found 'R' (0x52) - Register report recieved"
+                    g_logger.error("UPB_Pim.decode_response() found 'R' (0x52) - Register report recieved")
                 self._get_rest()
             elif self.l_hdr == 0x55:  # 'U'
                 if g_debug >= 2:
-                    print "UPB_Pim.decode_response() found 'U' (0x55) - Message report received."
+                    g_logger.error("UPB_Pim.decode_response() found 'U' (0x55) - Message report received.")
                 self._get_rest()
             else:
-                print "UPB_Pim.decode_response() found unknown code {0:#x} {1:}".format(self.l_hdr, PrintBytes(self.l_message))
+                g_logger.error("UPB_Pim.decode_response() found unknown code {0:#x} {1:}".format(self.l_hdr, PrintBytes(self.l_message)))
             self._next_char()  # Drop the 0x0d char
 
 """ int PIMMain::decodeResponse( QByteArray& k_msg, QByteArray& k_msgRet ) {
@@ -364,7 +362,6 @@ class PimDriverInterface(DecodeResponses):
         l_string += chr(0x0D)
         if g_debug >= 1:
             l_msg = "Convert_pim - {0:}".format(PrintBytes(l_string))
-            print "UPB_Pim._convert_pim ", l_msg
             g_logger.debug(l_msg)
         return l_string
 
@@ -375,7 +372,6 @@ class PimDriverInterface(DecodeResponses):
     def queue_pim_command(self, p_controller_obj, p_command):
         if g_debug >= 1:
             l_msg = "Queue_pim_command {0:}".format(PrintBytes(p_command))
-            print "UPB_Pim.", l_msg
             g_logger.debug(l_msg)
         p_controller_obj._Queue.put(p_command)
 
@@ -400,8 +396,6 @@ class PimDriverInterface(DecodeResponses):
             if len(l_msg) == 0:
             # if l_msg[0] == 0xF0:
                 return
-            if g_debug >= 2:
-                print "UPB_PIM.receive_loop() from {0:}, Message: {1:}".format(p_controller_obj.Name, PrintBytes(l_msg))
             self.decode_response(l_msg)
 
 
@@ -508,7 +502,6 @@ class API(UpbPimAPI):
             l_name = p_light_obj.Name
             if l_obj.Name == l_name:
                 l_id = self._get_id_from_name(l_name)
-                print "UPB_Pim.change_light_settings() for {0:} to Level {1:}".format(l_name, p_level)
                 g_logger.info('Change light {0:} to Level {1:}'.format(l_name, p_level))
                 self._compose_command(self.m_controller_obj, pim_commands['goto'], l_id, p_level, 0x01)
                 return

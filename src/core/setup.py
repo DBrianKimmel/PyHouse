@@ -67,7 +67,6 @@ class FindAllInterfaceData(object):
             m_interface.Name = l_interface
             m_interface.Key = l_count
             for l_af in netifaces.ifaddresses(l_interface):
-                # print "     Link ", l_interface, netifaces.address_families[l_af], netifaces.ifaddresses(l_interface)[l_af]
                 if netifaces.address_families[l_af] == 'AF_PACKET':
                     m_interface.MacAddress = netifaces.ifaddresses(l_interface)[l_af][0]['addr']
                 if netifaces.address_families[l_af] == 'AF_INET':

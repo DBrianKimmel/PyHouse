@@ -29,7 +29,6 @@ class CoreData(object):
         self.UnitID = None
 
     def reprJSON(self):
-        print "Device_UPB.reprJSON(1)"
         l_ret = super(CoreData, self).reprJSON()  # The core data
         l_ret.update(dict(
                     Address = self.UnitID, Password = self.Password, NetworkId = self.NetworkID
@@ -138,8 +137,6 @@ class API(LightingAPI):
                     l_count += 1
                 else:
                     g_logger.error('Controller {0:} failed to start.'.format(l_controller_obj.Name))
-                    if g_debug >= 3:
-                        print "Device_Insteon.Start() - Did NOT start- House:{0:}, Controller:{1:}".format(p_house_obj.Name, l_controller_obj.Name)
                     l_controller_obj.Active = False
         l_msg = 'Started {0:} UPB Controllers, House:{1:}.'.format(l_count, p_house_obj.Name)
         g_logger.info(l_msg)

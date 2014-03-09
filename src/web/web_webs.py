@@ -42,19 +42,13 @@ class WebsElement(athena.LiveElement):
     def __init__(self, p_workspace_obj, p_params):
         self.m_workspace_obj = p_workspace_obj
         self.m_pyhouses_obj = p_workspace_obj.m_pyhouses_obj
-        if g_debug >= 2:
-            print "web_webs.WebsElement()"
 
     @athena.expose
     def getWebsData(self):
         """ A JS client has requested all the webs information.
         """
-        if g_debug >= 2:
-            print "web_webs.getWebsData()"
         l_obj = self.m_pyhouses_obj.WebData
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_obj))
-        if g_debug >= 0:
-            print "web_webs.getWebsEntries() - JSON:", l_json
         return l_json
 
     @athena.expose
@@ -62,7 +56,5 @@ class WebsElement(athena.LiveElement):
         """A new/changed web is returned.  Process it and update the internal data via ???.py
         """
         l_json = web_utils.JsonUnicode().decode_json(p_json)
-        if g_debug >= 4:
-            print "web_webs.saveWebData() - JSON:", l_json
 
 # ## END DBK

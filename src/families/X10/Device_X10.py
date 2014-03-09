@@ -42,8 +42,6 @@ class LightingAPI(lighting.LightingAPI):
 
     def insert_device_xml(self, p_entry_xml, p_device_obj):
         if p_device_obj.Family == 'Insteon':
-            if g_debug > 4:
-                print "WriteLightCommon Insteon=", p_device_obj
             ET.SubElement(p_entry_xml, 'Address').text = p_device_obj.Address
             ET.SubElement(p_entry_xml, 'Controller').text = self.put_bool(p_device_obj.Controller)
             ET.SubElement(p_entry_xml, 'DevCat').text = str(p_device_obj.DevCat)
@@ -53,8 +51,6 @@ class LightingAPI(lighting.LightingAPI):
             ET.SubElement(p_entry_xml, 'ProductKey').text = str(p_device_obj.ProductKey)
             ET.SubElement(p_entry_xml, 'Responder').text = self.put_bool(p_device_obj.Responder)
         elif p_device_obj.Family == 'UPB':
-            if g_debug > 4:
-                print "WriteLightCommon UPB=", p_device_obj
             try:
                 ET.SubElement(p_entry_xml, 'NetworkID').text = self.put_str(p_device_obj.NetworkID)
                 ET.SubElement(p_entry_xml, 'Password').text = str(p_device_obj.Password)
@@ -63,13 +59,13 @@ class LightingAPI(lighting.LightingAPI):
                 pass
 
     def turn_light_off(self, p_name):
-        print "Turning off X10 light {0:}".format(p_name)
+        pass
 
     def turn_light_on(self, p_name):
-        print "Turning on X10 light {0:}".format(p_name)
+        pass
 
     def turn_light_dim(self, p_name, p_level):
-        print "Turning X10 light {0:} to level {1:}".format(p_name, p_level)
+        pass
 
     def scan_all_lights(self, p_lights):
         pass
@@ -82,13 +78,9 @@ class API(object):
         """
         self.m_house_obj = p_house_obj
     def Start(self, _p_house_obj):
-        if g_debug > 0:
-            print "Device_X10.Start()"
         g_logger.info('Started.')
 
     def Stop(self, p_xml):
-        if g_debug > 0:
-            print "Device_X10.Stop()"
         return p_xml
 
     def ChangeLight(self, p_light_obj, p_level, p_rate = 0):

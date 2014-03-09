@@ -93,13 +93,6 @@ class ComplexHandler(json.JSONEncoder):
                         if l_attr == 'InsteonAddress':
                             l_ret[l_attr] = self.int2dotted_hex(l_val)
             return l_ret
-#
-#           try:
-#                l_ret = json.JSONEncoder.default(self, obj)
-#            except TypeError as e:
-#                print "ERROR web_utils.ComplexHandler.default() TypeError ", e
-#                l_ret = 'ERROR'
-#            return l_ret
 
 
 class JsonUnicode(object):
@@ -159,10 +152,6 @@ class ManualFormMixin(rend.Page):
         def form_post_lighting for a submit button valued 'lighting'
         def form_post for the form without a key
         """
-        if g_debug >= 2:
-            print "web_utils.locate_child() - 1",
-            print "    segments: ", segments,
-            print "    Context", context
         if segments[0].startswith(SUBMIT):  # Handle the form post
             # Get a method name from the action in the form plus the first word in the button name,
             #  or simply the form action if no button name is specified
@@ -181,13 +170,6 @@ class ManualFormMixin(rend.Page):
             else:
                 name = name_prefix + '_' + bindingName.split()[0].lower()
             method = getattr(self, 'form_' + name, None)
-            if g_debug >= 3:
-                print "web_utils.locate_child() - 2"
-                print "    Context: ", context
-                print "    bindingName:{0:}, ".format(bindingName)
-                print "    method: ", method
-                print "    args: ", args
-                print "    kwargs: ", kwargs
             if method is not None:
                 return self.onManualPost(context, method, bindingName, kwargs)
             else:
@@ -202,9 +184,6 @@ class ManualFormMixin(rend.Page):
         def redirectAfterPost(aspects):
             """See: nevow.rend.Page.WebFormPost
             """
-            if g_debug >= 3:
-                print "web_utils.ManualFormMixin.onManualPost.redirectAfterPost() ",
-                print "    aspects:{0:};".format(aspects)
             l_handler = aspects.get(inevow.IHand)
             refpath = None
             ref = None
@@ -215,8 +194,6 @@ class ManualFormMixin(rend.Page):
                         refpath = refpath.child('freeform_hand')
                 if isinstance(l_handler, (url.URL, url.URLOverlay)):
                     refpath, l_handler = l_handler, None
-            if g_debug >= 4:
-                print "web_utils.ManualFormMixin.onManualPost.redirectAfterPost() -2- refpath:", refpath
             if refpath is None:
                 redirectAfterPost = request.getComponent(iformless.IRedirectAfterPost, None)
                 if redirectAfterPost is None:
@@ -230,10 +207,6 @@ class ManualFormMixin(rend.Page):
                     # # Use the redirectAfterPost url
                     ref = str(redirectAfterPost)
                     refpath = url.URL.fromString(ref)
-            if g_debug >= 4:
-                print "web_utils.ManualFormMixin.onManualPost.redirectAfterPost() -3"
-                print "    refpath: ", refpath
-                print "    l_handler: ", l_handler
             if l_handler is not None or aspects.get(iformless.IFormErrors) is not None:
                 magicCookie = '%s%s%s' % (datetime.datetime.now(), request.getClientIP(), random.random())
                 refpath = refpath.replace('_nevow_carryover_', magicCookie)
@@ -241,22 +214,10 @@ class ManualFormMixin(rend.Page):
                 for k, v in aspects.iteritems():
                     C.setComponent(k, v)
             destination = flat.flatten(refpath, ctx)
-            if g_debug >= 2:
-                print "web_utils.ManualFormMixin.onManualPost.redirectAfterPost() -4- Posted a form to >{0:}<".format(bindingName)
-                print "    destination: ", destination
-                print "    refpath: ", refpath
-                print "    ctx: ", ctx
             request.redirect(destination)
             return static.Data('You posted a form to %s' % bindingName, 'text/plain'), ()
 
         request = inevow.IRequest(ctx)
-        if g_debug >= 2:
-            print "web_utils.ManualFormMixin.onManualPost()"
-            print "    Context:{0:}, ".format(ctx)
-            print "    Method: ", method
-            print "    BindingName:{0:}, ".format(bindingName)
-            print "    kwargs: ", kwargs
-            print "    request: ", request
         return util.maybeDeferred(method, **kwargs
             ).addCallback(self.onPostSuccess, request, ctx, bindingName, redirectAfterPost
             ).addErrback(self.onPostFailure, request, ctx, bindingName, redirectAfterPost)
@@ -265,16 +226,9 @@ def add_attr_list(p_class, p_list):
     """
     setattr(RootPage, 'child_mainpage.css', static.File('src/web/css/mainpage.css'))
     """
-    if g_debug >= 2:
-        print "web_utils.add_attr_list() - class:{0:}".format(p_class)
     for l_item in p_list:
         l_name = 'child_' + l_item.split('/')[-1]
-        if g_debug >= 2:
-            print "    Item:{0:} - Name:{1:}".format(l_item, l_name)
         setattr(p_class, l_name, static.File(l_item))
-    if g_debug >= 3:
-        print "    Dir=", dir(p_class)
-        print "    Vars=", vars(p_class)
 
 def add_float_page_attrs(p_class):
     l_list = ['src/web/images/bottomRight.gif', 'src/web/images/close.gif',

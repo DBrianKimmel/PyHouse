@@ -40,10 +40,6 @@ class ScenesAPI(ScenesData):
         return l_scene
 
     def dump_all_scenes(self):
-        print "***** All Scenes *****"
-        for l_key, l_obj in Scene_Data.iteritems():
-            print "~~~Scene: {0:}".format(l_key)
-            print "     ", l_obj
-        print
+        pass
 
 # ## END DBK

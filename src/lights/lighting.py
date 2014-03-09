@@ -42,8 +42,7 @@ class Utility(ButtonAPI, ControllerAPI, LightingAPI):
     m_family_data = None
 
     def test_lighting_families(self):
-        if g_debug >= 2:
-            print "lighting.test_lighting_families()"
+        pass
 
 
 class API(Utility):

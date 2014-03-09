@@ -24,7 +24,6 @@ o logs
 g_debug
 0 = no console output, log err, warn & info
 1 = no console output, log extra info messages
-2 = print 'API' traces to console, add debug info t
 """
 
 __version_info__ = (1, 1, 0)

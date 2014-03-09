@@ -36,7 +36,6 @@ class FamilyData(object):
         self.PackageName = ''  # src.families.Insteon
 
     def reprJSON(self):
-        # print "family.reprJSON(1)"
         l_ret = dict(Name = self.Name, Key = self.Key, Active = self.Active,
             ModuleName = self.ModuleName,
             PackageName = self.PackageName
@@ -64,18 +63,13 @@ class LightingUtility(FamilyData):
             try:
                 l_module = importlib.import_module(l_family_obj.PackageName + '.' + l_family_obj.ModuleName, l_family_obj.PackageName)
             except ImportError as e:
-                print "    family.build_lighting_family_info() - ERROR - Cannot import module {0:}".format(l_family_obj.ModuleName), e
                 l_module = None
-                g_logger.error("Cannot import - Module:{0:}, Package:{1:}.".format(l_family_obj.ModuleName, l_family_obj.PackageName))
+                g_logger.error("Cannot import - Module:{0:}, Package:{1:}. {2:}".format(l_family_obj.ModuleName, l_family_obj.PackageName, e))
             try:
                 l_family_obj.API = l_module.API(p_house_obj)
             except AttributeError:
-                print "    family.build_lighting_family_info() - ERROR - NO API"
                 l_family_obj.API = None
                 g_logger.error("Cannot get API - Module:{0:}, House:{1:}.".format(l_module, p_house_obj.Name))
-            if g_debug >= 3:
-                print "   from {0:} import {1:}".format(l_family_obj.PackageName, l_family_obj.ModuleName)
-                print "   l_family_data  Key:{0:} -".format(l_count), l_family_obj
             l_family_data[l_count] = l_family_obj
             l_count += 1
         return l_family_data

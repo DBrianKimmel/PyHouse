@@ -41,18 +41,6 @@ class ControllerData(lighting_core.CoreData):
         self._Message = ''
         self._Queue = None
 
-#    def XreprJSON(self):
-#        '''lighting_controllers.
-#        '''
-#        # print "lighting_controllers.reprJSON(1)"
-#        l_ret = super(ControllerData, self).reprJSON()  # lighting_core data
-#        l_ret.update(dict(
-#            Interface = self.Interface,
-#            Port = self.Port
-#            ))
-#        # print "lighting_controllers.reprJSON(2) {0:}".format(l_ret)
-#        return l_ret
-#
 
 class ControllersAPI(lighting_core.CoreAPI):
 

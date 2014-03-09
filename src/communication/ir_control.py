@@ -61,17 +61,17 @@ class LircProtocol(Protocol):
 class LircFactory(Factory):
 
     def startedConnecting(self, p_connector):
-        print "LircFactory - Started to connect."
+        pass
 
     def buildProtocol(self, addr):
-        print "LircFactory - connected"
+        # "LircFactory - connected"
         return LircProtocol()
 
     def clientConnectionLost(self, connector, p_reason):
-        print 'LircFactory - lost connection ', p_reason
+        g_logger.error('LircFactory - lost connection {0:}'.format(p_reason))
 
     def clientConnectionFailed(self, connector, p_reason):
-        print 'LircFactory - Connection failed ', p_reason
+        g_logger.error('LircFactory - Connection failed {0:}'.format(p_reason))
 
 
 class LircConnection(object):
@@ -89,19 +89,16 @@ class IrDispatch(object):
     """
     def __init__(self, p_data):
         (_l_keycode, l_repeatcnt, l_keyname, _l_remote) = p_data.split()
-        # print 'IrDispatch data =', l_keycode, l_repeatcnt, l_keyname, l_remote
         if l_repeatcnt == '00':
             if g_debug >= 1:
                 g_logger.debug("Received {0:}".format(p_data))
             for tpl in IR_KEYS:
                 if l_keyname == tpl[0]:
                     if tpl[1] == 'pandora':
-                        # print "found a pandora key", tpl[0], tpl[2]
                         self.pandora_ctl(p_data, tpl)
                     pass
 
     def pandora_ctl(self, p_data, p_tpl):
-        print "Pandora ctl ", p_data, p_tpl
         (_l_keyname, _l_pandora, l_command) = p_tpl
         if l_command == 'start':
             g_pandora.Start(None)
@@ -117,10 +114,8 @@ class API(object):
         global g_pandora
         g_pandora = pandora.API()
         _x = LircConnection()
-        # print "ir_control.API()"
 
     def Start(self, _p_pyhouses_obj):
-        print 'ir_control.API.Start()'
         l_application = Application('IR Control Server')
         l_endpoint = TCP4ServerEndpoint
         l_factory = Factory()

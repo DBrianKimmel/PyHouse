@@ -62,7 +62,6 @@ class InternetData(object):
         self.DynDns = {}
 
     def reprJSON(self):
-        # print "internet.InternetData.preprJSON(1)"
         return dict(Name = self.Name, Key = self.Key, Active = self.Active,
                     ExternalDelay = self.ExternalDelay,
                     ExternalIP = self.ExternalIP, ExternalUrl = self.ExternalUrl,
@@ -80,7 +79,6 @@ class DynDnsData(object):
         self.Url = None
 
     def reprJSON(self):
-        # print "internet.DynDnsData.reprJSON(1)"
         return dict(Name = self.Name, Key = self.Key, Active = self.Active,
                     Interval = self.Interval, Url = self.Url
                     )
@@ -222,12 +220,9 @@ class MyProtocol(Protocol):
     def dataReceived(self, p_bytes):
         if self.m_remaining:
             l_display = p_bytes[:self.m_remaining]
-            print 'Some data received:'
-            print l_display
             self.m_remaining -= len(l_display)
 
     def connectionLost(self, p_reason):
-        print 'Finished receiving body:', p_reason.getErrorMessage()
         self.m_finished.callback(None)
 
 
@@ -257,15 +252,11 @@ class MyGet(object):
         pass
 
     def my_getPage(self, p_url):
-        print "Requesting %s" % (p_url,)
         l_d = Agent(reactor).request('GET', p_url, Headers({'User-Agent': ['twisted']}), None)
         l_d.addCallbacks(self.handleResponse, self.handleError)
         return l_d
 
     def handleResponse(self, p_r):
-        print "version=%s\ncode=%s\nphrase='%s'" % (p_r.version, p_r.code, p_r.phrase)
-        for k, v in p_r.headers.getAllRawHeaders():
-            print "%s: %s" % (k, '\n  '.join(v))
         l_whenFinished = Deferred()
         p_r.deliverBody(MyProtocol(l_whenFinished))
         return l_whenFinished

@@ -71,17 +71,16 @@ class NodeClientProtocol(Protocol):
 class NodeClientFactory(Factory):
 
     def startedConnecting(self, p_connector):
-        print "NodeClientFactory - Started to connect."
+        pass
 
     def buildProtocol(self, addr):
-        print "NodeClientFactory - connected"
         return NodeClientProtocol()
 
     def clientConnectionLost(self, connector, p_reason):
-        print 'NodeClientFactory - lost connection ', p_reason
+        g_logger.error('NodeClientFactory - lost connection {0:}'.format(p_reason))
 
     def clientConnectionFailed(self, connector, p_reason):
-        print 'NodeClientFactory - Connection failed ', p_reason
+        g_logger.error('NodeClientFactory - Connection failed {0:}'.format(p_reason))
 
 
 class NodeClient(object):

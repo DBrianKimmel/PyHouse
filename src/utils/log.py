@@ -46,7 +46,6 @@ class LogData(object):
         return l_ret
 
     def reprJSON(self):
-        print "log.reprJSON(1)"
         return dict(Debug = self.Debug, Error = self.Error)
 
 
@@ -57,7 +56,7 @@ class LoggingUtility(xml_tools.ConfigFile):
             l_sect = p_xml_root.find('Logs')
             l_sect.find('Debug')
         except AttributeError:
-            print "log.read_xml_config_logfiles() - Warning - Logs section is missing - Adding empty values now."
+            # g_logger.error("log.read_xml_config_logfiles() - Warning - Logs section is missing - Adding empty values now.")
             l_sect = ET.SubElement(p_xml_root, 'Logs')
             ET.SubElement(l_sect, 'Debug').text = 'None'
             ET.SubElement(l_sect, 'Error').text = 'None'
@@ -73,8 +72,6 @@ class LoggingUtility(xml_tools.ConfigFile):
     def setup_debug_log (self, p_filename):
         """Debug and more severe goes to the base logger
         """
-        if g_debug >= 2:
-            print "log.setup_debug_log() - FileName:{0:}".format(p_filename)
         l_debug = logging.getLogger('PyHouse')
         l_formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s - %(message)s')
         l_debug.setLevel(logging.DEBUG)
@@ -111,8 +108,6 @@ class API(LoggingUtility):
         return p_xml
 
     def Update(self, p_entry):
-        if g_debug >= 0:
-            print 'log.API.Update({0:}'.format(p_entry)
         l_obj = LogData()
         l_obj.Debug = p_entry.Debug
         l_obj.Error = p_entry.Error
