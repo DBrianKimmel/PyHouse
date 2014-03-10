@@ -59,7 +59,7 @@ class BarProcessControl(protocol.ProcessProtocol):
         """Data received from stdout.
         # incremental time
         """
-        l_data = p_data.lstrip()
+        l_data = p_data.lstrip('\r\n\t ')
         self.m_count += 1
         if l_data[0] == '#':
             return

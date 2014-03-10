@@ -40,7 +40,7 @@ from src.lights import lighting
 from src.utils import xml_tools
 from src.utils import tools
 from src.scheduling import sunrisesunset
-from src.scheduling import VALID_SCHEDULING_TYPES
+# from src.scheduling import VALID_SCHEDULING_TYPES
 
 g_debug = 0
 # 0 = off
@@ -76,7 +76,6 @@ class ScheduleData(object):
         self.DeleteFlag = False
 
     def reprJSON(self):
-        # print "schedule.reprJSON(1)"
         l_ret = dict(Name = self.Name, Key = self.Key, Active = self.Active,
                     Level = self.Level,
                     LightName = self.LightName, LightNumber = self.LightNumber, Rate = self.Rate,
@@ -99,10 +98,6 @@ class ScheduleXML(xml_tools.ConfigTools):
         p_schedule_obj.Time = self.get_text_from_xml(p_entry_xml, 'Time')
         p_schedule_obj.Type = self.get_text_from_xml(p_entry_xml, 'Type')
         p_schedule_obj.UUID = self.get_uuid_from_xml(p_entry_xml, 'UUID')
-        if g_debug >= 7:
-            print "schedule.extract_schedule_xml()   Name:{0:}, Active:{1:}, Key:{2:}, Light:{3:}".format(
-                    p_schedule_obj.Name, p_schedule_obj.Active, p_schedule_obj.Key, p_schedule_obj.LightName)
-            print '    UUID:{0:}'.format(p_schedule_obj.UUID)
         return p_schedule_obj
 
     def read_schedules_xml(self, p_house_obj, p_house_xml):
@@ -147,8 +142,6 @@ class ScheduleXML(xml_tools.ConfigTools):
             self.put_text_element(l_entry, 'UUID', l_schedule_obj.UUID)
             l_count += 1
             l_schedules_xml.append(l_entry)
-        if g_debug >= 3:
-            print "schedule.write_schedules_xml() - Wrote {0:} schedules".format(len(l_schedules_xml))
         return l_schedules_xml
 
 
@@ -191,13 +184,9 @@ class ScheduleUtility(ScheduleExecution):
         if 'sunset' in p_timefield:
             l_timefield = self.m_sunset.strftime('%H:%M')
             p_timefield = p_timefield.replace('sunset', l_timefield)
-            if g_debug >= 7:
-                print"schedule._substitute() found sunset -  '{0:}'".format(p_timefield)
         elif 'sunrise' in p_timefield:
             l_timefield = self.m_sunrise.strftime('%H:%M')
             p_timefield = p_timefield.replace('sunrise', l_timefield)
-            if g_debug >= 7:
-                print"schedule._substitute() found sunrise - '{0:}'".format(p_timefield)
         return p_timefield
 
     def _extract_field(self, p_timefield):
