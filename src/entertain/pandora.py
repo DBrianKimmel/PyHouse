@@ -58,11 +58,11 @@ class BarProcessControl(protocol.ProcessProtocol):
         """Data received from stdout.
         # incremental time
         """
-        if p_data[0] == '#':
+        if p_data.lstrip()[0] == '#':
             return
-        if p_data.startswith('(i)'):
-            print("Pianobar Info - {0:}".format(p_data))
-        print("Data {0:}".format(p_data))
+        if p_data.lstrip().startswith('(i)'):
+            print("Pianobar Info = {0:}".format(p_data))
+        print("Data = {0:}".format(p_data))
 
     def errReceived(self, p_data):
         pass
@@ -88,7 +88,7 @@ class API(object):
     def Stop(self):
         """Stop the Pandora player when we receive an IR signal to play some other thing.
         """
+        self.m_transport.loseConnection()
         g_logger.info("Stopped.")
-        self.m_processProtocol.loseConnection()
 
 # ## END DBK
