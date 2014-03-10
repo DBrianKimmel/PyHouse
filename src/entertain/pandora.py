@@ -61,14 +61,18 @@ class BarProcessControl(protocol.ProcessProtocol):
         Note: Strings seem to begin with an ansi sequence  <esc>[xxx
         # incremental time
         """
-        if p_data[0] < ' ' or p_data[0] > 0x7f:
-            print('>>>{0:#x} {1:#x}'.format(ord(p_data[0]), ord(p_data[1])))
-        l_data = p_data.lstrip('\r\n\t0x1B[ ')
         self.m_count += 1
+        l_data = p_data.rstrip('\r\n')
+        if ord(l_data[0]) == 0x1b:
+            l_data = l_data[1:]
+        if l_data[0] < ' ' or l_data[0] > 0x7f:
+            print('>>>{0:#x} {1:#x}'.format(ord(l_data[0]), ord(l_data[1])))
+        l_data = l_data.lstrip('\r\n\t0x1B[ ')
         if l_data[0] == '#':
             return
         if l_data.startswith('(i)'):
             print("Pianobar Info = {0:}, {1:}".format(l_data, self.m_count))
+            return
         print("Data = {0:}, {1:}".format(l_data, self.m_count))
 
     def errReceived(self, p_data):

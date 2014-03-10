@@ -61,7 +61,6 @@ class UPnPPublisher(resource.Resource, log.Loggable):
         response = soap_lite.build_soap_call("{%s}%s" % (ns, methodName), result,
                                                 is_response = True,
                                                 encoding = None)
-        #print "SOAP-lite response", response
         self._sendResponse(request, response)
 
     def _gotError(self, failure, request, methodName, ns):
@@ -94,12 +93,12 @@ class UPnPPublisher(resource.Resource, log.Loggable):
 
         def print_c(e):
             for c in e.getchildren():
-                print c, c.tag
+                print(c, c.tag)
                 print_c(c)
 
         tree = parse_xml(data)
-        #root = tree.getroot()
-        #print_c(root)
+        # root = tree.getroot()
+        # print_c(root)
         body = tree.find('{http://schemas.xmlsoap.org/soap/envelope/}Body')
         method = body.getchildren()[0]
         methodName = method.tag
@@ -111,8 +110,8 @@ class UPnPPublisher(resource.Resource, log.Loggable):
         for child in method.getchildren():
             kwargs[child.tag] = self.decode_result(child)
             args.append(kwargs[child.tag])
-        #p, header, body, attrs = SOAPpy.parseSOAPRPC(data, 1, 1, 1)
-        #methodName, args, kwargs, ns = p._name, p._aslist, p._asdict, p._ns
+        # p, header, body, attrs = SOAPpy.parseSOAPRPC(data, 1, 1, 1)
+        # methodName, args, kwargs, ns = p._name, p._aslist, p._asdict, p._ns
         try:
             headers['content-type'].index('text/xml')
         except:
@@ -120,7 +119,6 @@ class UPnPPublisher(resource.Resource, log.Loggable):
             return server.NOT_DONE_YET
         self.debug('headers: %r' % headers)
         function, _useKeywords = self.lookupFunction(methodName)
-        #print 'function', function, 'keywords', useKeywords, 'args', args, 'kwargs', kwargs
         if not function:
             self._methodNotFound(request, methodName)
             return server.NOT_DONE_YET
@@ -129,7 +127,7 @@ class UPnPPublisher(resource.Resource, log.Loggable):
             if(headers.has_key('user-agent') and
                     headers['user-agent'].find('Xbox/') == 0):
                 keywords['X_UPnPClient'] = 'XBox'
-            #if(headers.has_key('user-agent') and
+            # if(headers.has_key('user-agent') and
             #        headers['user-agent'].startswith("""Mozilla/4.0 (compatible; UPnP/1.0; Windows""")):
             #    keywords['X_UPnPClient'] = 'XBox'
             if(headers.has_key('x-av-client-info') and

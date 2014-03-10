@@ -45,10 +45,10 @@ class Test(unittest.TestCase):
         pass
 
     def test_001_name(self):
-        print '     Name:', self.house_obj.Name
-        print ' Latitude:', self.house_obj.Location.Latitude
-        print 'Longitude:', self.house_obj.Location.Longitude
-        print '     Time:', self.now
+        print('     Name: {0:}'.format(self.house_obj.Name))
+        print(' Latitude: {0:}'.format(self.house_obj.Location.Latitude))
+        print('Longitude: {0:}'.format(self.house_obj.Location.Longitude))
+        print('     Time: {0:}'.format(self.now))
 
     def test_002_start(self):
         self.api.Start(self.house_obj)
@@ -56,7 +56,7 @@ class Test(unittest.TestCase):
     def test_011_sunrise(self):
         self.api.Start(self.house_obj, self.now)
         result = self.api.get_sunrise()
-        print 'result', result, self.sunrise
+        print('result {0:}  {1:}'.format(result, self.sunrise))
         self.assertEqual(result, self.sunrise)
 
     def test_022_sunset(self):

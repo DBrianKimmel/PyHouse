@@ -87,7 +87,7 @@ class Object(object):
 	res = None
 	writeStatus = None
 	content = property(lambda x: x._content)
-	needupdate = None	# do we update before sending? (for res)
+	needupdate = None  # do we update before sending? (for res)
 
 	def __init__(self, cd, p_id, parentID, title, restricted = False,
                         creator = None, **kwargs):
@@ -414,4 +414,4 @@ if __name__ == '__main__':
 	root.addContainer('0\Photo\\', '0\\', 'Photo')
 	root.addContainer('0\OnlineMedia\\', '0\\', 'OnlineMedia')
 
-	print tostring(root)
+	print(tostring(root))
