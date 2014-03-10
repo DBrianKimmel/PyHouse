@@ -57,7 +57,6 @@ class HouseData(object):
     def reprJSON(self):
         """House.
         """
-        # print "house.reprJSON(1)"
         l_ret = dict(
             Name = self.Name, Key = self.Key, Active = self.Active,
             Buttons = self.Buttons,
@@ -70,7 +69,6 @@ class HouseData(object):
             Schedules = self.Schedules,
             UUID = self.UUID
             )
-        # print "house.reprJSON(2) {0:}".format(l_ret)
         return l_ret
 
 
@@ -121,8 +119,6 @@ class API(HouseReadWriteConfig):
         l_msg += "- found -  Rooms:{0:}, Schedule:{1:}, Lights:{2:}, Controllers:{3:}".format(
                     len(self.m_house_obj.Rooms), len(self.m_house_obj.Schedules),
                     len(self.m_house_obj.Lights), len(self.m_house_obj.Controllers))
-        if g_debug >= 2:
-            print "house.API.Start() ", l_msg
         g_logger.info("Started. - {0:}\n".format(l_msg))
         return self.m_house_obj
 
@@ -140,8 +136,6 @@ class API(HouseReadWriteConfig):
             l_house_xml.append(self.m_house_obj.InternetAPI.Stop())
         except AttributeError:  # New house has  no schedule or internet
             pass
-        if g_debug >= 2:
-            print "house.API.Stop() - Name:{0:}, Count:{1:}".format(self.m_house_obj.Name, len(l_house_xml))
         g_logger.info("Stopped.")
         return l_house_xml
 

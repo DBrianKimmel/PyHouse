@@ -36,7 +36,6 @@ class RoomData(object):
         self.UUID = None
 
     def reprJSON(self):
-        # print "rooms.reprJSON(1)"
         l_ret = dict(Name = self.Name, Key = self.Key, Active = self.Active,
                     Comment = self.Comment, Corner = self.Corner, Size = self.Size,
                     Type = self.Type, UUID = self.UUID)

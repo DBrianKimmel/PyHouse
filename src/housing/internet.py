@@ -58,7 +58,6 @@ class InternetData(object):
         self.DynDns = {}
 
     def reprJSON(self):
-        # print "internet.InternetData.preprJSON(1)"
         return dict(Name = self.Name, Key = self.Key, Active = self.Active,
                     ExternalDelay = self.ExternalDelay,
                     ExternalIP = self.ExternalIPv4, ExternalUrl = self.ExternalUrl,
@@ -76,7 +75,6 @@ class DynDnsData(object):
         self.Url = None
 
     def reprJSON(self):
-        # print "internet.DynDnsData.reprJSON(1)"
         return dict(Name = self.Name, Key = self.Key, Active = self.Active,
                     Interval = self.Interval, Url = self.Url
                     )
@@ -115,7 +113,6 @@ class FindAllInterfaceData(object):
             m_interface.Name = l_interface
             m_interface.Key = l_count
             for l_af in netifaces.ifaddresses(l_interface):
-                # print "     Link ", l_interface, netifaces.address_families[l_af], netifaces.ifaddresses(l_interface)[l_af]
                 if netifaces.address_families[l_af] == 'AF_PACKET':
                     m_interface.MacAddress = netifaces.ifaddresses(l_interface)[l_af][0]['addr']
                 if netifaces.address_families[l_af] == 'AF_INET':

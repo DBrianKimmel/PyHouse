@@ -13,18 +13,13 @@ g_logger = logging.getLogger('PyHouse.Weather    ')
 
 class API(object):
     def __init__(self):
-        if g_debug > 0:
-            print "weather.Init()"
         g_logger.info("Initializing.")
         g_logger.info("Initialized.")
 
     def Start(self):
-        if g_debug > 0:
-            print "weather.Start()"
+        pass
 
     def Stop(self, p_xml):
-        if g_debug > 0:
-            print "weather.Stop()"
-            return p_xml
+        return p_xml
 
 # ## END DBK

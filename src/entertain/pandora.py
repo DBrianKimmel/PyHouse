@@ -45,6 +45,7 @@ class PianobarControlProtocol(protocol.Protocol):
 class BarProcessControl(protocol.ProcessProtocol):
 
     def __init__(self):
+        self.m_count = 0
         pass
 
     def connectionMade(self):
@@ -59,14 +60,15 @@ class BarProcessControl(protocol.ProcessProtocol):
         # incremental time
         """
         l_data = p_data.lstrip()
+        self.m_count += 1
         if l_data[0] == '#':
             return
         if l_data.startswith('(i)'):
-            print("Pianobar Info = {0:}".format(l_data))
-        print("Data = {0:}".format(l_data))
+            print("Pianobar Info = {0:}, {1:}".format(l_data, self.m_count))
+        print("Data = {0:}, {1:}".format(l_data, self.m_count))
 
     def errReceived(self, p_data):
-        pass
+        print("Err received - {0:}".format(p_data))
 
 
 class API(object):
