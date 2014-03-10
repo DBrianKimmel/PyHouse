@@ -206,13 +206,13 @@ class ScheduleUtility(ScheduleExecution):
                 p_timefield = p_timefield[8:]
             except ValueError:
                 if g_debug >= 7:
-                    print "schedule._extract_field() not HH:MM:SS - try shorter"
+                    print("schedule._extract_field() not HH:MM:SS - try shorter")
                 try:
                     l_ret = datetime.datetime.strptime(p_timefield[0:5], '%H:%M')
                     p_timefield = p_timefield[5:]
                 except ValueError:
                     if g_debug >= 7:
-                        print "schedule._extract_field() ERROR not HH:MM - using 00:00:00"
+                        print("schedule._extract_field() ERROR not HH:MM - using 00:00:00")
                     l_ret = datetime.time(0, 0, 0)
             try:
                 while p_timefield[0] == ' ':
@@ -220,11 +220,11 @@ class ScheduleUtility(ScheduleExecution):
             except IndexError:
                 pass
             if g_debug >= 7:
-                print "schedule._extract_field() Exit - {0:}, '{1:}'".format(l_ret, p_timefield)
+                print("schedule._extract_field() Exit - {0:}, '{1:}'".format(l_ret, p_timefield))
         else:
             l_ret = datetime.time(0, 0, 0)
             if g_debug >= 7:
-                print "schedule._extract_field() No ':' - Exit - {0:}, '{1:}'".format(l_ret, p_timefield)
+                print("schedule._extract_field() No ':' - Exit - {0:}, '{1:}'".format(l_ret, p_timefield))
         return l_ret, p_timefield
 
     def _extract_time(self, p_timefield):
@@ -239,7 +239,7 @@ class ScheduleUtility(ScheduleExecution):
         @return: datetime.time of the time information.  Be careful of date wrapping!
         """
         if g_debug >= 7:
-            print "schedule._extract_time() - {0:}".format(p_timefield)
+            print("schedule._extract_time() - {0:}".format(p_timefield))
         l_sub = False
         p_timefield += ' '
         if '-' in p_timefield:
@@ -256,7 +256,7 @@ class ScheduleUtility(ScheduleExecution):
             l_td = datetime.timedelta(hours = l_maintime.hour, minutes = l_maintime.minute) + datetime.timedelta(hours = l_offsettime.hour, minutes = l_offsettime.minute)
         l_timefield = datetime.time(hour = int(l_td.seconds / 3600), minute = int((l_td.seconds % 3600) / 60))
         if g_debug >= 7:
-            print "schedule._extract_time({0:}) = {1:}".format(p_timefield, l_timefield)
+            print("schedule._extract_time({0:}) = {1:}".format(p_timefield, l_timefield))
         return l_timefield
 
     def _make_delta(self, p_time):
@@ -337,7 +337,7 @@ class API(ScheduleUtility, ScheduleXML):
         self.m_house_obj.LightingAPI.Stop(p_xml, p_house_obj)
         # l_entertainment_xml = self.m_entertainment.Stop()
         if g_debug >= 2:
-            print "schedule.API.Stop() - House:{0:}, {1:}".format(self.m_house_obj.Name, len(p_xml))
+            print("schedule.API.Stop() - House:{0:}, {1:}".format(self.m_house_obj.Name, len(p_xml)))
         g_logger.info("Stopped.\n")
         # return l_schedules_xml, l_lighting_xml, l_buttons_xml, l_controllers_xml  #, l_entertainment_xml
 
