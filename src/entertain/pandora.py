@@ -38,6 +38,10 @@ PB_LOC = '/usr/bin/pianobar'
 #  (i) Control fifo at /home/briank/.config/pianobar/ctl opened
 
 
+class PianobarControlProtocol(protocol.Protocol):
+    pass
+
+
 class BarProcessControl(protocol.ProcessProtocol):
 
     def __init__(self):
@@ -58,7 +62,7 @@ class BarProcessControl(protocol.ProcessProtocol):
             return
         if p_data.startswith('(i)'):
             print("Pianobar Info - {0:}".format(p_data))
-        pass
+        print("Data {0:}".format(p_data))
 
     def errReceived(self, p_data):
         pass
@@ -85,6 +89,6 @@ class API(object):
         """Stop the Pandora player when we receive an IR signal to play some other thing.
         """
         g_logger.info("Stopped.")
-        self.m_processProtocol.looseConnection()
+        self.m_processProtocol.loseConnection()
 
 # ## END DBK
