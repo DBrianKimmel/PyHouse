@@ -73,7 +73,7 @@ class API(object):
         self.m_processProtocol = BarProcessControl()
         self.m_processProtocol.deferred = BarProcessControl()
         l_executable = '/usr/bin/pianobar'
-        l_args = ('pianobar')
+        l_args = ('pianobar',)
         l_env = None
         self.m_transport = reactor.spawnProcess(self.m_processProtocol, l_executable, l_args, l_env)
         g_logger.info("Started.")
