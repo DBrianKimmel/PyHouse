@@ -52,10 +52,10 @@ class BarProcessControl(protocol.ProcessProtocol):
 
     def outReceived(self, p_data):
         """Data received from stdout.
+        # incremental time
         """
-        print p_data
-        if p_data.startswith('(i) Control fifo at'):
-            pass
+        if p_data.startswith('(i)'):
+            print("Pianobar Info - {0:}".format(p_data))
         pass
 
     def errReceived(self, p_data):
@@ -69,12 +69,13 @@ class API(object):
 
     def Start(self, _p_pyhouses_obj):
         """Start the Pndora player when we receive an IR signal to play music.
+        This will open the socket for control
         """
         self.m_processProtocol = BarProcessControl()
         self.m_processProtocol.deferred = BarProcessControl()
         l_executable = '/usr/bin/pianobar'
         l_args = ('pianobar',)
-        l_env = None
+        l_env = None  # this will pass <os.environ>
         self.m_transport = reactor.spawnProcess(self.m_processProtocol, l_executable, l_args, l_env)
         g_logger.info("Started.")
 

@@ -203,7 +203,7 @@ class SSUtility(object):
         """
         l_time = ((p_julian - 0.5) % 1.0) * 24.0
         if p_timezone:
-            l_time += -5.0
+            l_time += -4.0
         return self._convert_to_time(l_time)
 
 class SunCalcs(SSUtility, EarthParameters, SolarParameters):
@@ -215,42 +215,41 @@ class SunCalcs(SSUtility, EarthParameters, SolarParameters):
         """Calculate the mean anomaly.
         """
         l_ma = self._revolution(357.5291 + (0.98560028 * (p_jstar2K))) * DEG2RAD
-        if g_debug > 5:
-            print("M           Calculating solar Mean Anomaly {0:}".format(l_ma * RAD2DEG))
+        if g_debug >= 1:
+            g_logger.debug("Calculating solar Mean Anomaly {0:}".format(l_ma * RAD2DEG))
         return l_ma
 
     def _calc_equation_of_center(self, p_ma):
         """Calc equation of center 'C'.
         """
         l_ec = (1.9148 * math.sin(p_ma) + 0.02000 * math.sin(2.0 * p_ma) + 0.0003 * math.sin(3.0 * p_ma)) * DEG2RAD
-        if g_debug > 5:
-            print("C           Calculating solar Equation of Center {0:}".format(l_ec * RAD2DEG))
+        if g_debug >= 1:
+            g_logger.debug("C           Calculating solar Equation of Center {0:}".format(l_ec * RAD2DEG))
         return l_ec
 
     def _calc_ecliptic_longitude(self, p_ma, p_ec):
         """Calc ecliptic longitude 'lambda'.
         """
         l_lambda = self._revolution((p_ma * RAD2DEG) + 102.9372 + (p_ec * RAD2DEG) + 180.0) * DEG2RAD
-        if g_debug > 5:
-            print("lambda      Calculating solar Ecliptic Longitude {0:}".format(l_lambda * RAD2DEG))
+        if g_debug >= 1:
+            g_logger.debug("lambda      Calculating solar Ecliptic Longitude {0:}".format(l_lambda * RAD2DEG))
         return l_lambda
 
     def _calc_solar_transit(self, p_jstar, p_ma, p_lambda):
         """Calc solar transit.
         """
         l_transit = p_jstar + (0.0053 * math.sin(p_ma)) - (0.0069 * math.sin(2.0 * p_lambda))
-        if g_debug > 6:
-            print "J* {0:}, 1:{1:}, 2:{2:}".format(p_jstar, 0.0053 * math.sin(p_ma), 0.0069 * math.sin(2.0 * p_lambda))
-        if g_debug > 5:
-            print("J_transit   Calculating solar transit {0:}  {1:} ".format(l_transit, self._convert_julian_to_time(l_transit, True)))
+        if g_debug >= 1:
+            g_logger.debug("J* {0:}, 1:{1:}, 2:{2:}".format(p_jstar, 0.0053 * math.sin(p_ma), 0.0069 * math.sin(2.0 * p_lambda)))
+            g_logger.debug("J_transit   Calculating solar transit {0:}  {1:} ".format(l_transit, self._convert_julian_to_time(l_transit, True)))
         return l_transit
 
     def _calc_declination_of_sun(self, p_lambda):
         """Calc Declination of the Sun - delta
         """
         l_delta = math.asin(math.sin(p_lambda) * math.sin(23.45 * DEG2RAD))
-        if g_debug > 5:
-            print "delta       Calculating solar declination {0:}".format(l_delta * RAD2DEG)
+        if g_debug >= 1:
+            g_logger.debug("delta       Calculating solar declination {0:}".format(l_delta * RAD2DEG))
         return l_delta
 
     def _calc_hour_angle(self, p_lat, p_delta):
@@ -258,8 +257,8 @@ class SunCalcs(SSUtility, EarthParameters, SolarParameters):
         """
         l_x = (math.sin(-0.83 * DEG2RAD) - (math.sin(p_lat) * math.sin(p_delta))) / (math.cos(p_lat) * math.cos(p_delta))
         l_ha = math.acos(l_x)
-        if g_debug > 5:
-            print "H           Calculating solar hour angle {0:}".format(l_ha * RAD2DEG)
+        if g_debug >= 1:
+            g_logger.debug("H           Calculating solar hour angle {0:}".format(l_ha * RAD2DEG))
         return l_ha
 
     def _calc_ecliptic_latitude(self):
@@ -295,10 +294,9 @@ class SunCalcs(SSUtility, EarthParameters, SolarParameters):
         l_nstar = p_earth.JulianDayNumber - JDATE2000_9 + (p_earth.Longitude / 360.0)
         p_earth.N = l_n = math.floor(l_nstar + 0.5)
         p_earth.JulianCycle = math.floor(p_earth.JulianDate - JDATE2000_9 + (p_earth.Longitude / 360.0) + 0.5)
-        if g_debug > 5:
-            print("            Calculating julian date:{0:}, JulianDayNumber:{1:}".format(p_earth.JulianDate, p_earth.JulianDayNumber))
-        if g_debug > 5:
-            print("n* n-round  Calculating 2000 epoch dates     {0:} {1:} ".format(l_nstar, l_n))
+        if g_debug >= 1:
+            g_logger.debug("Calculating julian date:{0:}, JulianDayNumber:{1:}".format(p_earth.JulianDate, p_earth.JulianDayNumber))
+            g_logger.debug("n* n-round  Calculating 2000 epoch dates     {0:} {1:} ".format(l_nstar, l_n))
 
     def _calcSolarNoonParams(self, p_earth, p_sun):
         """
@@ -312,12 +310,10 @@ class SunCalcs(SSUtility, EarthParameters, SolarParameters):
         p_earth.DayOfLocalMeanSolarNoon = l_domsn
         l_j_star = JDATE2000_9 - (l_e_long / 360.0) + p_earth.JulianCycle
         l_j_star2k = l_j_star - JDATE2000
-        if g_debug > 5:
-            print("n*          Calculating the JDN(2000) of Local Mean Solar Noon {0:} at Longitude {1:}".format(l_domsn, l_e_long))
-        if g_debug > 5:
-            print("n           Calculating the JulianCycle(2000) of Local Mean Solar Noon {0:}".format(p_earth.JulianCycle))
-        if g_debug > 5:
-            print("J* J*2K     Calculating Approximate solar noon {0:} ({1:}) - {2:}".format(l_j_star, l_j_star2k, self._convert_julian_to_time(l_j_star2k, True)))
+        if g_debug >= 1:
+            g_logger.debug("n*          Calculating the JDN(2000) of Local Mean Solar Noon {0:} at Longitude {1:}".format(l_domsn, l_e_long))
+            g_logger.debug("n           Calculating the JulianCycle(2000) of Local Mean Solar Noon {0:}".format(p_earth.JulianCycle))
+            g_logger.debug("J* J*2K     Calculating Approximate solar noon {0:} ({1:}) - {2:}".format(l_j_star, l_j_star2k, self._convert_julian_to_time(l_j_star2k, True)))
         l_ma = self._calc_mean_anomaly(l_j_star2k)
         l_ec = self._calc_equation_of_center(l_ma)
         l_lambda = self._calc_ecliptic_longitude(l_ma, l_ec)
@@ -345,14 +341,11 @@ class SunCalcs(SSUtility, EarthParameters, SolarParameters):
         l_rise = l_transit - (l_set - l_transit)
         p_earth.Sunrise = l_rise
         p_earth.Sunset = l_set
-        if g_debug >= 5:
-            print("J**         Calculating using hour angle {0:}".format(l_j_starstar))
-        if g_debug >= 2:
-            print(" Sunrise {0:}  {1:}".format(l_rise, self._convert_julian_to_time(l_rise, True)))
-        if g_debug >= 2:
-            print(" Transit {0:}  {1:}".format(l_transit, self._convert_julian_to_time(l_transit, True)))
-        if g_debug >= 2:
-            print(" Sunset  {0:}  {1:}".format(l_set, self._convert_julian_to_time(l_set, True)))
+        if g_debug >= 1:
+            g_logger.debug("J**         Calculating using hour angle {0:}".format(l_j_starstar))
+            g_logger.debug(" Sunrise {0:}  {1:}".format(l_rise, self._convert_julian_to_time(l_rise, True)))
+            g_logger.debug(" Transit {0:}  {1:}".format(l_transit, self._convert_julian_to_time(l_transit, True)))
+            g_logger.debug(" Sunset  {0:}  {1:}".format(l_set, self._convert_julian_to_time(l_set, True)))
 
     def calc_sunrise_sunset(self, p_earth_data, p_solar_data):
         """Trigger all calculations.
@@ -370,15 +363,11 @@ class SSAPI(SunCalcs):
     def get_sunrise(self):
         """Returns a sunrise time as a datetime.time object.
         """
-        if g_debug > 1:
-            print "sunrisesunset.get_sunrise()"
         return self._convert_julian_to_time(self.earth_data.Sunrise, True)
 
     def get_sunset(self):
         """Returns a sunset time as a datetime.time object.
         """
-        if g_debug > 1:
-            print "sunrisesunset.get_sunrise()"
         return self._convert_julian_to_time(self.earth_data.Sunset, True)
 
     def load_location(self, p_house_obj, p_earth_data, p_solar_data):
@@ -389,12 +378,6 @@ class SSAPI(SunCalcs):
         p_earth_data.Longitude = p_house_obj.Location.Longitude
         p_earth_data.TimeZone = p_house_obj.Location.TimeZone
         p_earth_data.Name = p_house_obj.Name
-        if g_debug > 2:
-            print "Load location data for House:{0:}".format(p_earth_data.Name)
-        if g_debug > 2:
-            print "Load location data: Lat:{0:}, Lon:{1:}".format(p_earth_data.Latitude, p_earth_data.Longitude)
-        if g_debug > 2:
-            print "Load location data: Date:{0:}, TimeZone:{1:}".format(p_earth_data.Date, p_earth_data.TimeZone)
 
 
 class API(SSAPI):
@@ -405,15 +388,11 @@ class API(SSAPI):
         self.solar_data = SolarParameters()
 
     def Start(self, p_house_obj, p_date = datetime.date.today()):
-        if g_debug >= 2:
-            print "Calculating Sunrise for Date:", p_date
         SSAPI().load_location(p_house_obj, self.earth_data, self.solar_data)
         self.earth_data.Date = p_date
         SSAPI().calc_sunrise_sunset(self.earth_data, self.solar_data)
 
     def Stop(self):
-        if g_debug >= 1:
-            print "sunrisesunset.Stop()"
         pass
 
 # ## END
