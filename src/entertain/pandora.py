@@ -61,9 +61,8 @@ class BarProcessControl(protocol.ProcessProtocol):
         Note: Strings seem to begin with an ansi sequence  <esc>[xxx
         # incremental time
         """
-        if p_data[0] == '0x1B':
-            l_data = p_data[1:]
-        l_data = l_data.lstrip('\r\n\t0x1B[ ')
+        print('>>>{0:#x} {1:#x}'.format(p_data[0], p_data[1]))
+        l_data = p_data.lstrip('\r\n\t0x1B[ ')
         self.m_count += 1
         if l_data[0] == '#':
             return
