@@ -110,7 +110,7 @@ class Test(unittest.TestCase):
 
 
     def test_001_load_xml(self):
-        print "Root Element", self.m_root_element
+        print("Root Element {0:}".format(self.m_root_element))
         self.m_api.Start(self.m_house_obj, self.m_controller)
 
 # ## END DBK

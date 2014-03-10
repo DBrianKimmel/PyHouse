@@ -17,7 +17,6 @@ class Test(unittest.TestCase):
         # self.m_controller_obj.Port = '/dev/ttyUSB0'
         self.m_controller_obj.Port = 'COMM6'
         self.m_controller_obj.BaudRate = 9600
-        print 'Set up controller_obj'
 
     def tearDown(self):
         pass
@@ -29,6 +28,6 @@ class Test(unittest.TestCase):
     def test_002_API_Start(self):
         self.m_controller_obj._DriverAPI = Driver_Serial.API()
         self.m_controller_obj._DriverAPI.Start(self.m_controller_obj)
-        print self.m_controller_obj
+        print(self.m_controller_obj)
 
 # ## END

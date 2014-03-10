@@ -57,9 +57,11 @@ class BarProcessControl(protocol.ProcessProtocol):
 
     def outReceived(self, p_data):
         """Data received from stdout.
+
+        Note: Strings seem to begin with an ansi sequence  <esc>[xxx
         # incremental time
         """
-        l_data = p_data.lstrip('\r\n\t ')
+        l_data = p_data.lstrip('\r\n\t0x1B[ ')
         self.m_count += 1
         if l_data[0] == '#':
             return

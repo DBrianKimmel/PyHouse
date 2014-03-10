@@ -41,7 +41,6 @@ class Test(unittest.TestCase):
         self.m_root_element = ET.fromstring(XML)
         self.m_util = xml_tools.PutGetXML()
         self.m_intf = interface.ReadWriteConfig()
-        print "setUp ", self.m_root_element
 
     def tearDown(self):
         pass
@@ -54,7 +53,7 @@ class Test(unittest.TestCase):
         l_controllers = self.m_root_element.find('Controllers')
         l_list = l_controllers.findall('Controller')
         for l_controller in l_list:
-            print "Controller ", l_controller.get('Name')
+            print("Controller {0:}".format(l_controller.get('Name')))
 
     def test_003_xml_find_serial_1(self):
         l_controllers = self.m_root_element.find('Controllers')

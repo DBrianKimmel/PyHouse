@@ -196,7 +196,7 @@ class DecodeResponses(object):
         while self.l_hdr != 0x0d and self.l_msg_len > 0:
             l_ret += "{0:#2x} ".format(self.l_hdr)
             self._next_char()
-            print "Flushed {0:#2x} --- ".format(self.l_hdr)
+            print("Flushed {0:#2x} --- ".format(self.l_hdr))
         if g_debug >= 1:
             g_logger.debug(l_ret)
 
