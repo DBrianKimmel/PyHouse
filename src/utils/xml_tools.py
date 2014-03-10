@@ -240,7 +240,7 @@ class ConfigEtc(ConfigTools):
         return None
 
     def config_abort(self):
-        print "Could not find or read '/etc/pyhouse.conf'.  Please create it and rerun PyHouse!"
+        print("Could not find or read '/etc/pyhouse.conf'.  Please create it and rerun PyHouse!")
         sys.exit(1)
 
 
@@ -269,7 +269,7 @@ class ConfigFile(ConfigEtc):
                 return l_dir
             except OSError:
                 pass
-        print "Could not create any of the following ", self.m_std_path
+        print("Could not create any of the following {0:}".format(self.m_std_path))
         sys.exit(1)
 
     def find_config_file(self, p_dir):
@@ -292,7 +292,7 @@ class ConfigFile(ConfigEtc):
         l_top.append(l_comment)
         open(os.path.expanduser(p_name), 'w')
         l_nice = prettify(l_top)
-        print l_nice
+        print(l_nice)
         ET.ElementTree(l_top).write(p_name)
 
     def write_xml_file(self, p_xmltree, p_filename = ''):

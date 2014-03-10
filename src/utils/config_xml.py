@@ -61,6 +61,6 @@ class WriteConfig(object):
 class API(ReadConfig, WriteConfig):
 
     def __init__(self, p_file):
-        print "ERROR config_xml.API() should not be used"
+        print("ERROR config_xml.API() should not be used")
 
 # ## END DBK
