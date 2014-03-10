@@ -65,13 +65,13 @@ class UsbDriverAPI(Driver_USB.UsbDriverAPI):
                 l_index,
                 l_report)
         if g_debug >= 0:
-            print "Driver_USB_17DD_5500._setup_hid_device() ", l_ret
+            print("Driver_USB_17DD_5500._setup_hid_device() {0:}".format(l_ret))
         return l_ret
 
     def read_device(self, p_usb):
         callLater(RECEIVE_TIMEOUT, lambda x = p_usb: self.read_device(x))
         if g_debug > 5:
-            print "Driver_USB_17DD_5500.read_device() - usb =", p_usb
+            print("Driver_USB_17DD_5500.read_device() - usb ={0:}".format(p_usb))
         l_len = -1
         while l_len != 0:
             try:
@@ -80,19 +80,16 @@ class UsbDriverAPI(Driver_USB.UsbDriverAPI):
                 l_len = l_msg[0] - 240
                 if l_len > 0:
                     if g_debug > 1:
-                        print "Driver_USB.read_device() {0:} - {1:}".format(l_len, l_msg)
+                        print("Driver_USB.read_device() {0:} - {1:}".format(l_len, l_msg))
                     for l_x in range(l_len):
                         p_usb.message.append(l_msg[l_x + 1])
             except usb.USBError as e:
-                # print "Driver_USB_17DD_5500.read_device() got USBError", e
                 l_len = 0
                 break
             except Exception as e:
-                print " -- Error in Driver_USB_17DD_5500.read_device() ", sys.exc_info(), e
+                print(" -- Error in Driver_USB_17DD_5500.read_device() ".format(e))
                 l_len = 0
                 break
-        if g_debug > 5:
-            print "Driver_USB_17DD_5500.read_device() - exit"
 
 
 class API(UsbDriverAPI):
@@ -102,18 +99,12 @@ class API(UsbDriverAPI):
     def __init__(self):
         """
         """
-        if g_debug > 0:
-            print "Driver_USB_17DD_5500.__init__() "
         self.m_driver = Driver_USB.API()
 
     def Start(self, p_controller_obj):
-        if g_debug > 0:
-            print "Driver_USB_17DD_5500.Start() - Name:{0:}".format(p_controller_obj.Name)
         self.m_driver.Start(p_controller_obj)
 
     def Stop(self, p_obj):
-        if g_debug > 0:
-            print "Driver_USB_17DD_5500.Start()", p_obj.Name
         self.m_driver.Start(p_obj)
 
 # ## END DBK

@@ -702,7 +702,7 @@ void getip(char *p, char *device)
         return;
     }
     if ((ifr.ifr_flags & IFF_UP) == 0)  {
-// No longer print message when interface down  (johna 6-28-00)
+// No longer print( message when interface down  (johna 6-28-00)
 //        Msg("Interface %s not active.\n", device);
         close(fd);
         return;
@@ -1027,7 +1027,7 @@ int converse_with_web_server()
         p = buffer;                // point at the first line
         while ((q = strchr(p, '\n'))) {
         *q = 0;
-        fprintf(stderr, "> %s\n", p);    // print the line
+        fprintf(stderr, "> %s\n", p);    // print_ the line
         *q++ = '\n';
         p = q;                // point at next line
         }
@@ -1050,7 +1050,7 @@ int converse_with_web_server()
         p = buffer;                     // point at the first line
         while ((q = strchr(p, '\n'))) {
         *q = 0;
-        fprintf(stderr, "< %s\n", p);    // print the line
+        fprintf(stderr, "< %s\n", p);    // print_ the line
         *q++ = '\n';
         p = q;                // point at next line
         }
