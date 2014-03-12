@@ -1,4 +1,6 @@
 """
+nodes.py
+
 Created on Mar 6, 2014
 
 @author: briank
@@ -14,7 +16,7 @@ import logging
 
 from twisted.internet import reactor
 from twisted.internet.protocol import Factory, Protocol
-from twisted.internet.endpoints import TCP4ServerEndpoint, clientFromString, serverFromString
+from twisted.internet.endpoints import clientFromString, serverFromString
 from twisted.application.service import Application
 from twisted.application.internet import StreamServerEndpointService
 from twisted.protocols.amp import AMP, Integer, Float, String, Unicode, Command

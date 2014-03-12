@@ -101,6 +101,7 @@ class PyHouseData(object):
         self.HousesData = None
         self.XmlRoot = None
         self.XmlFileName = ''
+        self.Reactor = None
 
     def __str__(self):
         l_ret = "PyHouseData:: "
@@ -205,6 +206,7 @@ class API(Utilities):
         """
         handle_signals()
         self.m_pyhouses_obj = PyHouseData()
+        self.m_pyhouses_obj.Reactor = reactor
         self.m_pyhouses_obj.API = self
         self.read_xml_config_info(self.m_pyhouses_obj)
         self.m_pyhouses_obj.LogsAPI = log.API()

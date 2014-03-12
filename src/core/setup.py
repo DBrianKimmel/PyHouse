@@ -1,4 +1,7 @@
+#!/usr/bin/env python
 """
+setup.py
+
 Created on Mar 1, 2014
 
 @author: briank
@@ -16,10 +19,11 @@ import logging
 import netifaces
 import os
 
+from src.core import nodes
 from src.entertain import entertainment
 from src.communication import ir_control
 
-g_debug = 0
+g_debug = 1
 g_logger = logging.getLogger('PyHouse.CoreSetup   ')
 
 
@@ -58,20 +62,26 @@ class FindAllInterfaceData(object):
     """
     def __init__(self):
         l_interfaces = netifaces.interfaces()
+        if g_debug >= 1:
+            g_logger.debug(l_interfaces)
         l_count = 0
         for l_interface in l_interfaces:
             if l_interface == 'lo':
                 continue
-# TODO: this only allows for one address per interface due to the [0] below
             m_interface = InterfaceData()
             m_interface.Name = l_interface
             m_interface.Key = l_count
             for l_af in netifaces.ifaddresses(l_interface):
+                if g_debug >= 1:
+                    g_logger.debug(l_af)
+# TODO: this only allows for one address per interface due to the [0] below
                 if netifaces.address_families[l_af] == 'AF_PACKET':
                     m_interface.MacAddress = netifaces.ifaddresses(l_interface)[l_af][0]['addr']
                 if netifaces.address_families[l_af] == 'AF_INET':
                     m_interface.V4Address = netifaces.ifaddresses(l_interface)[l_af][0]['addr']
                 if netifaces.address_families[l_af] == 'AF_INET6':
+                    if g_debug >= 1:
+                        g_logger.debug(netifaces.ifaddresses(l_interface)[l_af])
                     m_interface.V6Address = netifaces.ifaddresses(l_interface)[l_af][0]['addr']
             g_logger.info("Interface:{0}, Mac:{1:}, V4:{2:}, V6:{3:}".format(m_interface.Name, m_interface.MacAddress, m_interface.V4Address, m_interface.V6Address))
             InterfacesData[l_count] = m_interface
@@ -148,6 +158,10 @@ class API(object):
 
     def _UpdateXml (self, p_xml):
         pass
+
+if __name__ == "__main__":
+    l_id = API()
+    l_id.Start()
 
 
 # ## END DBK
