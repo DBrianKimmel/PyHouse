@@ -66,6 +66,7 @@ class FindAllInterfaceData(object):
         if g_debug >= 1:
             g_logger.debug(l_interfaces)
         l_count = 0
+        global InterfacesData
         for l_interface in l_interfaces:
             if l_interface == 'lo':
                 continue
@@ -86,7 +87,6 @@ class FindAllInterfaceData(object):
             g_logger.info("Interface:{0}, Mac:{1:}, V4:{2:}, V6:{3:}".format(m_interface.Name, m_interface.MacAddress, m_interface.V4Address, m_interface.V6Address))
             InterfacesData[l_count] = m_interface
             l_count += 1
-        return InterfacesData
 
     def _get_list(self, p_list):
         l_list = []
@@ -145,13 +145,13 @@ class API(object):
     def __init__(self):
         self.m_node = HandleNodeType()
         self.m_entertainment = entertainment.API()
-        self.m_interfaces = FindAllInterfaceData()
+        FindAllInterfaceData()
         LocateLocalNodes()
         self.m_nodes = nodes.API()
         g_logger.info("Initialized.")
 
     def Start(self, p_pyhouses_obj):
-        p_pyhouses_obj.Nodes = self.m_interfaces
+        p_pyhouses_obj.Nodes = InterfacesData
         self.m_node.init_node_type(p_pyhouses_obj)
         # House
         # SubSystems
