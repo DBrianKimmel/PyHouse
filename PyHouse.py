@@ -102,6 +102,7 @@ class PyHouseData(object):
         self.XmlRoot = None
         self.XmlFileName = ''
         self.Reactor = None
+        self.Nodes = None
 
     def __str__(self):
         l_ret = "PyHouseData:: "

@@ -106,24 +106,29 @@ class NodeServer(object):
         l_factory.protocol = NodeServerProtocol
         l_service = StreamServerEndpointService(l_endpoint, l_factory)
         l_service.setServiceParent(l_application)
+        g_logger.info("Server started.")
 
 
 class Utility(object):
 
-    def StartServer(self):
+    def StartServer(self, p_pyhouses_obj):
         _l_server = NodeServer.server()
+
+    def StartClient(self, p_pyhouses_obj):
+        g_logger.debug('Node={0:}'.format(p_pyhouses_obj.Nodes))
 
 
 class API(Utility):
 
     def __init__(self):
-        pass
+        g_logger.info("Initialized.")
 
-    def Start(self, _p_pyhouses_obj):
-        self.StartServer()
-        pass
+    def Start(self, p_pyhouses_obj):
+        self.StartServer(p_pyhouses_obj)
+        self.StartClient(p_pyhouses_obj)
+        g_logger.info("Started.")
 
     def Stop(self):
-        pass
+        g_logger.info("Stopped.")
 
 # ## END DBK

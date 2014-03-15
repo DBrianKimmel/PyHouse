@@ -24,7 +24,7 @@ from src.entertain import entertainment
 from src.communication import ir_control
 
 
-g_debug = 1
+g_debug = 0
 g_logger = logging.getLogger('PyHouse.CoreSetup   ')
 
 
@@ -86,7 +86,7 @@ class FindAllInterfaceData(object):
             g_logger.info("Interface:{0}, Mac:{1:}, V4:{2:}, V6:{3:}".format(m_interface.Name, m_interface.MacAddress, m_interface.V4Address, m_interface.V6Address))
             InterfacesData[l_count] = m_interface
             l_count += 1
-        pass
+        return InterfacesData
 
     def _get_list(self, p_list):
         l_list = []
@@ -145,12 +145,13 @@ class API(object):
     def __init__(self):
         self.m_node = HandleNodeType()
         self.m_entertainment = entertainment.API()
-        FindAllInterfaceData()
+        self.m_interfaces = FindAllInterfaceData()
         LocateLocalNodes()
         self.m_nodes = nodes.API()
         g_logger.info("Initialized.")
 
     def Start(self, p_pyhouses_obj):
+        p_pyhouses_obj.Nodes = self.m_interfaces
         self.m_node.init_node_type(p_pyhouses_obj)
         # House
         # SubSystems
