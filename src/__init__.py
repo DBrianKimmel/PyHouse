@@ -8,7 +8,7 @@ Each module will most likely contain an 'API' class.  The constructor for
 this class will give a reference address for the module.
 
 The 'Start' method will read any XML and set up the data for this
-module.  It will also call any other modules that it will need,
+module.  It will also call any other modules that it will need.
 
 The 'Stop' method will write any XML file to update it.  It will also
 close down any thing it no longer needs so they can be cleanly reloaded.

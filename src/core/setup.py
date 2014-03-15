@@ -22,6 +22,7 @@ import os
 from src.core import nodes
 from src.entertain import entertainment
 from src.communication import ir_control
+from core.nodes import NodeServer
 
 g_debug = 1
 g_logger = logging.getLogger('PyHouse.CoreSetup   ')
@@ -43,10 +44,10 @@ class InterfaceData(object):
     def __init__(self):
         self.Name = None
         self.Key = 0
-        self.Active = False
+        self.Active = True
         self.MacAddress = ''
-        self.V4Address = ''
-        self.V6Address = ''
+        self.V4Address = []
+        self.V6Address = []
 
 
 class NodeRoleData(object):
@@ -76,17 +77,24 @@ class FindAllInterfaceData(object):
                     g_logger.debug(l_af)
 # TODO: this only allows for one address per interface due to the [0] below
                 if netifaces.address_families[l_af] == 'AF_PACKET':
-                    m_interface.MacAddress = netifaces.ifaddresses(l_interface)[l_af][0]['addr']
+                    # self._get_list(netifaces.ifaddresses(l_interface[l_af])
+                    m_interface.MacAddress = self._get_list(netifaces.ifaddresses(l_interface)[l_af])
                 if netifaces.address_families[l_af] == 'AF_INET':
-                    m_interface.V4Address = netifaces.ifaddresses(l_interface)[l_af][0]['addr']
+                    m_interface.V4Address = self._get_list(netifaces.ifaddresses(l_interface)[l_af])
                 if netifaces.address_families[l_af] == 'AF_INET6':
                     if g_debug >= 1:
                         g_logger.debug(netifaces.ifaddresses(l_interface)[l_af])
-                    m_interface.V6Address = netifaces.ifaddresses(l_interface)[l_af][0]['addr']
+                    m_interface.V6Address = self._get_list(netifaces.ifaddresses(l_interface)[l_af])
             g_logger.info("Interface:{0}, Mac:{1:}, V4:{2:}, V6:{3:}".format(m_interface.Name, m_interface.MacAddress, m_interface.V4Address, m_interface.V6Address))
             InterfacesData[l_count] = m_interface
             l_count += 1
         pass
+
+    def _get_list(self, p_list):
+        l_list = []
+        for l_ent in p_list:
+            l_list.append(l_ent['addr'])
+        return l_list
 
 
 class HandleNodeType(object):
@@ -141,6 +149,7 @@ class API(object):
         self.m_entertainment = entertainment.API()
         FindAllInterfaceData()
         LocateLocalNodes()
+        self.m_nodes = nodes.API()
         g_logger.info("Initialized.")
 
     def Start(self, p_pyhouses_obj):
