@@ -112,7 +112,7 @@ class NodeServer(object):
 class Utility(object):
 
     def StartServer(self, p_pyhouses_obj):
-        _l_server = NodeServer.server()
+        _l_server = NodeServer().server()
 
     def StartClient(self, p_pyhouses_obj):
         g_logger.debug('Node={0:}'.format(p_pyhouses_obj.Nodes))
