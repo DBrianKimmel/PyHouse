@@ -22,7 +22,7 @@ import os
 from src.core import nodes
 from src.entertain import entertainment
 from src.communication import ir_control
-from core.nodes import NodeServer
+
 
 g_debug = 1
 g_logger = logging.getLogger('PyHouse.CoreSetup   ')
@@ -75,9 +75,7 @@ class FindAllInterfaceData(object):
             for l_af in netifaces.ifaddresses(l_interface):
                 if g_debug >= 1:
                     g_logger.debug(l_af)
-# TODO: this only allows for one address per interface due to the [0] below
                 if netifaces.address_families[l_af] == 'AF_PACKET':
-                    # self._get_list(netifaces.ifaddresses(l_interface[l_af])
                     m_interface.MacAddress = self._get_list(netifaces.ifaddresses(l_interface)[l_af])
                 if netifaces.address_families[l_af] == 'AF_INET':
                     m_interface.V4Address = self._get_list(netifaces.ifaddresses(l_interface)[l_af])
