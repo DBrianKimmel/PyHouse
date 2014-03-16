@@ -306,7 +306,7 @@ class FindExternalIpAddress(object):
     def cb_parse_page(self, p_ip_page):
         """This gets the page with the IP in it and returns it.
         Different sites will need different page scraping to get the IP address.
-        dotted quad IPs are converted to 4 byte addresses
+        dotted quad IPs are converted to 4 byte IPv4 addresses
         IP V-6 is not handled yet.
 
         @param p_ip_page: is the web page as a string
