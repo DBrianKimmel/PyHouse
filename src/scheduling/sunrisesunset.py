@@ -16,7 +16,7 @@ from math import pi
 
 # Import PyMh files
 
-g_debug = 0
+g_debug = 1
 g_logger = logging.getLogger('PyHouse.Sunrise     ')
 
 RAD2DEG = 180.0 / pi

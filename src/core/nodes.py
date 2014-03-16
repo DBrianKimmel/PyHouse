@@ -25,7 +25,7 @@ from twisted.protocols.amp import AMP, Integer, Float, String, Unicode, Command
 g_debug = 0
 g_logger = logging.getLogger('PyHouse.Nodes       ')
 
-NODE_PORT = 'tcp6:port=8581'
+NODE_PORT = 'tcp:port=8581'
 
 
 class NodeUnavailable(Exception):

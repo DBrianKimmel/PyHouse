@@ -13,7 +13,7 @@ This module will try to be fully twisted like and totally async (except for read
 # Import system type stuff
 import logging
 import netifaces
-import socket
+# import socket
 import xml.etree.ElementTree as ET
 from twisted.internet import reactor
 from twisted.web.client import getPage
@@ -215,12 +215,12 @@ class MyProtocol(Protocol):
     def dataReceived(self, p_bytes):
         if self.m_remaining:
             l_display = p_bytes[:self.m_remaining]
-            print('Some data received:')
-            print(l_display)
+            # print('Some data received:')
+            # print(l_display)
             self.m_remaining -= len(l_display)
 
     def connectionLost(self, p_reason):
-        print('Finished receiving body: {0:}'.format(p_reason.getErrorMessage()))
+        # print('Finished receiving body: {0:}'.format(p_reason.getErrorMessage()))
         self.m_finished.callback(None)
 
 
@@ -316,12 +316,12 @@ class FindExternalIpAddress(object):
         self.m_house_obj.Internet.ExternalIPv4 = l_quad
         l_addr = convert.ConvertEthernet().dotted_quad2long(l_quad)
         g_logger.info("Got External IP page for House:{0:}, Page:{1:}".format(self.m_house_obj.Name, p_ip_page))
-        callLater(self.m_house_obj.Internet.ExternalDelay, self.get_public_ip)
+        # callLater(self.m_house_obj.Internet.ExternalDelay, self.get_public_ip)
         return l_addr
 
     def eb_no_page(self, p_reason):
         g_logger.error("Failed to Get External IP page for House:{0:}, {1:}".format(self.m_house_obj.Name, p_reason))
-        callLater(self.m_house_obj.Internet.ExternalDelay, self.get_public_ip)
+        # callLater(self.m_house_obj.Internet.ExternalDelay, self.get_public_ip)
 
 
 class DynDnsAPI(object):
