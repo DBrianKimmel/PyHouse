@@ -49,7 +49,7 @@ class HouseElement(athena.LiveElement):
         l_ix = int(p_index)
         l_house = self.m_pyhouses_obj.HousesData[l_ix].HouseObject
         if g_debug >= 3:
-            print("web_house.getHouseData() - HouseIndex:{0:}".format(p_index)
+            print("web_house.getHouseData() - HouseIndex:{0:}".format(p_index))
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_house))
         return l_json
 
