@@ -42,7 +42,7 @@ class RootMenuElement(athena.LiveElement):
         """ Process a message for a XML save/reload from the browser/client.
         """
         if g_debug >= 3:
-            print("web_rootMenu.RootMenuElement.doRootMenuReload() - Json:{0:}".format(p_json)()
+            print("web_rootMenu.RootMenuElement.doRootMenuReload() - Json:{0:}".format(p_json))
         g_logger.info("doRootMenuReload called {0:} {1:}".format(self, p_json))
         self.m_pyhouses_obj.API.Reload(self.m_pyhouses_obj)
 
