@@ -102,8 +102,8 @@ g_logger = logging.getLogger('PyHouse.webMainpage ')
 class FileNoListDir(static.File):
 
     def directoryListing(self):
-        print "ERROR - web_mainpage.directoryListing() - Forbidden resource"
-        #return error.ForbiddenResource()
+        print("ERROR - web_mainpage.directoryListing() - Forbidden resource")
+        # return error.ForbiddenResource()
 
 
 class FourOfour(athena.LiveElement):
@@ -121,7 +121,7 @@ class TheRoot(rend.Page):
             l_jspath = util.sibpath(jspath, 'js')
             staticpath = os.path.join(l_jspath, '', 'resource')
         if g_debug >= 3:
-            print "web_mainpage.TheRoot() - "  #, staticpath, imagepath
+            print "web_mainpage.TheRoot() - "  # , staticpath, imagepath
         super(TheRoot, self).__init__(*args, **kw)
         self.children = {
           'resource'          : FileNoListDir(os.path.join(staticpath)),
@@ -129,7 +129,7 @@ class TheRoot(rend.Page):
           'waitroller.gif'    : FileNoListDir(os.path.join(imagepath, 'waitroller.gif'))
         }
         if g_debug >= 1:
-            print #separate package hinting from logging
+            print  # separate package hinting from logging
 
     def locateChild(self, ctx, segments):
         l_resource, l_segments = factory(ctx, segments, self.m_pyhouses_obj)
@@ -189,7 +189,7 @@ class mainPageFactory:
         """
         return guard._sessionCookie()
 
-# This instance is built once 
+# This instance is built once
 _mainPageFactory = mainPageFactory()
 
 #==============================================================================
@@ -290,7 +290,7 @@ class MainPage(athena.LivePage):
         super(MainPage, self).__init__()
         if g_debug >= 3:
             print "web_mainpage.MainPage() - new client connection established."
-            #print "    ", p_pyhouses_obj
+            # print "    ", p_pyhouses_obj
 
     def child_jsmodule(self, ctx):
         if g_debug >= 5:
@@ -357,7 +357,7 @@ class Workspace(athena.LiveElement):
         self.uid = uid
 
     def detached(self):
-        #clean up whatever needs cleaning...
+        # clean up whatever needs cleaning...
         if g_debug >= 3:
             print "web_mainpage.Workspace.detached()"
         g_logger.info('workspace object was detached cleanly')
@@ -519,8 +519,8 @@ class Workspace(athena.LiveElement):
         if g_debug >= 5:
             print "web_mainpage.Workspace.guiready() - called from browser - UID:{0:}".format(self.uid)
 
-        def cb_usermatch(p_user):  #select usually returns a list, knowing that we have unique results
-            reqtype = REQ_404   #the result is unpacked already and a single item returned
+        def cb_usermatch(p_user):  # select usually returns a list, knowing that we have unique results
+            reqtype = REQ_404  # the result is unpacked already and a single item returned
             udata = {}
             if g_debug >= 5:
                 print "web_mainpage.Workspace.cb_usermatch() <callback> user:{0:}".format(p_user)
@@ -535,8 +535,8 @@ class Workspace(athena.LiveElement):
                         udata[uc(k)] = p_user[k]
             return reqtype, udata
 
-        def cb_rootmatch(res):    #select usually returns a list, knowing that we have unique results
-            reqtype = REQ_ROOT   #the result is unpacked already and a single item returned
+        def cb_rootmatch(res):  # select usually returns a list, knowing that we have unique results
+            reqtype = REQ_ROOT  # the result is unpacked already and a single item returned
             udata = {}
             user = {}
             user['id'] = self.page.username
@@ -586,7 +586,7 @@ def factory(ctx, segments, p_pyhouses_obj):
             print "web_mainpage.factory(4) - has_key: ", _mainPageFactory.Clients[seg0], segments[1:]
         return _mainPageFactory.Clients[seg0], segments[1:]
     elif len(seg0) == 32:
-        # We have a liveID 
+        # We have a liveID
         IRequest(ctx).addCookie(COOKIEKEY, seg0, http.datetimeToString(time.time() + 30.0))
         if g_debug >= 5:
             print "web_mainpage.factory(5) - liveID: ", url.URL.fromString('/'), ()
@@ -669,4 +669,4 @@ def getObjects(oname):
                 l_obj_list.append(o)
     return l_obj_list
 
-### END DBK
+# ## END DBK

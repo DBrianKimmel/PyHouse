@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-#-*- coding: iso-8859-1 -*-
+# -*- coding: iso-8859-1 -*-
 """
 Created on Aug 3, 2013
 
@@ -47,7 +47,7 @@ def FindOsRunning():
     """
     import platform
     l_platform = platform.platform(True, True)
-    print "Running on platform", l_platform
+    print("Running on platform {0:}".format(l_platform))
 
 
 class TestInstalledSoftware(object):

@@ -39,7 +39,7 @@ class ControlLightsElement(athena.LiveElement):
         self.m_workspace_obj = p_workspace_obj
         self.m_pyhouses_obj = p_workspace_obj.m_pyhouses_obj
         if g_debug >= 2:
-            print "web_controlLights.ControlLightsElement()"
+            print("web_controlLights.ControlLightsElement()")
 
     @athena.expose
     def getHouseData(self, p_index):

@@ -33,7 +33,7 @@ class ClockElement(athena.LiveElement):
     @athena.expose
     def getTimeOfDay(self):
         if g_debug >= 2:
-            print "web_mainpage.Clock.getTimeOfDay() - called from browser"
+            print("web_mainpage.Clock.getTimeOfDay() - called from browser")
         return uc(time.strftime("%I:%M:%S", time.localtime(time.time())))
 
 def uc(msg):
@@ -42,4 +42,4 @@ def uc(msg):
     else:
         return msg
 
-### EBD DBK
+# ## EBD DBK

@@ -10,7 +10,7 @@ import itertools
 import os
 import sets
 import upnp
-#from upnp import FileDIDL
+# from upnp import FileDIDL
 import FileDIDL
 from DIDLLite import Container, StorageFolder, Item, Resource, ResourceList
 from twisted.web import resource, server, static
@@ -118,7 +118,7 @@ class DynamTransfer(protocol.ProcessProtocol):
 
 	def errReceived(self, data):
 		pass
-		#log.msg(data)
+		# log.msg(data)
 
 	def stopProducing(self):
 		if self.request:
@@ -144,7 +144,7 @@ class DynamTransfer(protocol.ProcessProtocol):
 		if mods[0] not in ('xvid', 'mpeg2',):
 			vcodec = 'xvid'
 
-		#mimetype = { 'xvid': 'video/avi', 'mpeg2': 'video/mpeg', }
+		# mimetype = { 'xvid': 'video/avi', 'mpeg2': 'video/mpeg', }
 		mimetype = { 'xvid': 'video/x-msvideo', 'mpeg2': 'video/mpeg', }
 		request.setHeader('content-type', mimetype[vcodec])
 		if request.method == 'HEAD':
@@ -154,15 +154,15 @@ class DynamTransfer(protocol.ProcessProtocol):
 		audiomp2 = [ '-acodec', 'mp2', '-ab', '256', ]
 		optdict = {
 			'xvid':	[ '-vcodec', 'xvid',
-				  #'-mv4', '-gmc', '-g', '240',
+				  # '-mv4', '-gmc', '-g', '240',
 				  '-f', 'avi', ] + audiomp3,
-			'mpeg2': [ '-vcodec', 'mpeg2video', #'-g', '60',
+			'mpeg2': [ '-vcodec', 'mpeg2video',  # '-g', '60',
 				   '-f', 'mpeg', ] + audiomp2,
 			}
 		args = [ 'ffmpeg', '-i', path, '-b', '4000',
-		    #'-sc_threshold', '500000', '-b_strategy', '1', '-max_b_frames', '6',
+		    # '-sc_threshold', '500000', '-b_strategy', '1', '-max_b_frames', '6',
 			] + optdict[vcodec] + [ '-', ]
-		#log.msg(*[`i` for i in args])
+		# log.msg(*[`i` for i in args])
 		self.proc = process.Process(reactor, ffmpeg_path, args,
 		    None, None, self)
 		self.proc.closeStdin()
@@ -178,12 +178,12 @@ class DynamicTrans(resource.Resource):
 		self.notrans = notrans
 
 	def render(self, request):
-		#if request.getHeader('getcontentfeatures.dlna.org'):
-		#	request.setHeader('contentFeatures.dlna.org', 'DLNA.ORG_OP=01;DLNA.ORG_CI=0')
-		#	# we only want the headers
-		#	self.notrans.render(request)
-		#	request.unregisterProducer()  
-		#	return ''
+		# if request.getHeader('getcontentfeatures.dlna.org'):
+		# 	request.setHeader('contentFeatures.dlna.org', 'DLNA.ORG_OP=01;DLNA.ORG_CI=0')
+		# 	# we only want the headers
+		# 	self.notrans.render(request)
+		# 	request.unregisterProducer()
+		# 	return ''
 
 		if request.postpath:
 			# Translation request
@@ -205,7 +205,6 @@ class FSItem(FSObject, Item):
 		self.checkUpdate()
 
 	def doUpdate(self):
-		#print 'FSItem doUpdate:', `self`
 		self.res = ResourceList()
 		r = Resource(self.url, 'http-get:*:%s:*' % self.mimetype)
 		r.size = os.path.getsize(self.FSpath)
@@ -248,23 +247,22 @@ def dofileadd(cd, parent, path, name):
 	for i in itertools.chain((ignoreFiles,), _klassfuns, (defFS,)):
 		try:
 			try:
-				fobj.seek(0)	# incase the call expects a clean file
+				fobj.seek(0)  # incase the call expects a clean file
 			except:
 				pass
 
-			#log.msg('testing:', `i`, `fsname`, `fobj`)
+			# log.msg('testing:', `i`, `fsname`, `fobj`)
 			klass, kwargs = i(fsname, fobj)
 			if klass is not None:
 				break
 		except:
-			#import traceback
-			#traceback.print_exc(file=log.logfile)
+			# import traceback
+			# traceback.print_exc(file=log.logfile)
 			pass
 
 	if klass is None or klass is IgnoreFile:
 		return
 
-	#print 'matched:', os.path.join(path, name), `i`, `klass`
 	return cd.addItem(parent, klass, name, **kwargs)
 
 class FSDirectory(FSObject, StorageFolder):
@@ -284,8 +282,8 @@ class FSDirectory(FSObject, StorageFolder):
 		# changed any.
 		if self.indoUpdate:
 			return
-		#import traceback
-		#traceback.print_stack()
+		# import traceback
+		# traceback.print_stack()
 		self.indoUpdate = True
 		doupdate = False
 		children = sets.Set(os.listdir(self.FSpath))

@@ -44,9 +44,7 @@ class ControllersElement(athena.LiveElement):
         self.m_workspace_obj = p_workspace_obj
         self.m_pyhouses_obj = p_workspace_obj.m_pyhouses_obj
         if g_debug >= 2:
-            print "web_controllers.ControllersElement()"
-            # print "    self = ", self  #, vars(self)
-            # print "    workspace_obj = ", p_workspace_obj  #, vars(p_workspace_obj)
+            print("web_controllers.ControllersElement()")
 
     @athena.expose
     def getHouseData(self, p_index):
@@ -66,8 +64,6 @@ class ControllersElement(athena.LiveElement):
         for l_interface in l_interfaces:
             l_name = l_interface + 'Data'
         l_json = web_utils.JsonUnicode().encode_json(l_obj)
-        if g_debug >= 3:
-            print "web_controllers.ControllersElement.getInterfaceData() - JSON:", l_json
         return unicode(l_json)
 
     @athena.expose
@@ -78,14 +74,12 @@ class ControllersElement(athena.LiveElement):
         l_house_ix = int(l_json['HouseIx'])
         l_controller_ix = int(l_json['Key'])
         l_delete = l_json['Delete']
-        if g_debug >= 4:
-            print "web_controllers.ControllersElement.saveControllerData() - JSON:", p_json
         if l_delete:
             try:
                 del self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Controllers[l_controller_ix]
                 self.m_pyhouses_obj.API.UpdateXml()
             except AttributeError:
-                print "web_controllers - Failed to delete - JSON: ", l_json
+                print("web_controllers - Failed to delete - JSON: {0:}".FORMAT(l_json))
             return
         #
         # Note - we don't want a plain controller here - we want a family controller with the proper interface.

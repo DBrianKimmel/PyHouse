@@ -66,35 +66,38 @@ class BarProcessControl(protocol.ProcessProtocol):
         if ord(l_data[0]) == 0x1b:
             l_data = l_data[1:]
         if l_data[0] < ' ' or l_data[0] > 0x7f:
-            print('>>>{0:#x} {1:#x}'.format(ord(l_data[0]), ord(l_data[1])))
+            if g_debug >= 2:
+                g_logger.debug('>>>{0:#x} {1:#x}'.format(ord(l_data[0]), ord(l_data[1])))
         l_data = l_data.lstrip('\r\n\t0x1B[ ')
         if l_data[0] == '#':
             return
         if l_data.startswith('(i)'):
-            print("Pianobar Info = {0:}, {1:}".format(l_data, self.m_count))
+            g_logger.info("Pianobar Info = {0:}, {1:}".format(l_data, self.m_count))
             return
-        print("Data = {0:}, {1:}".format(l_data, self.m_count))
+        g_logger.debug("Data = {0:}, {1:}".format(l_data, self.m_count))
 
     def errReceived(self, p_data):
-        print("Err received - {0:}".format(p_data))
+        g_logger.warn("StdErr received - {0:}".format(p_data))
 
 
 class API(object):
 
     def __init__(self):
+        self.m_transport = None
         g_logger.info("Initialized.")
 
     def Start(self, _p_pyhouses_obj):
-        """Start the Pndora player when we receive an IR signal to play music.
+        """Start the Pandora player when we receive an IR signal to play music.
         This will open the socket for control
         """
-        self.m_processProtocol = BarProcessControl()
-        self.m_processProtocol.deferred = BarProcessControl()
-        l_executable = '/usr/bin/pianobar'
-        l_args = ('pianobar',)
-        l_env = None  # this will pass <os.environ>
-        self.m_transport = reactor.spawnProcess(self.m_processProtocol, l_executable, l_args, l_env)
-        g_logger.info("Started.")
+        if self.m_transport == None:  # Do not start a second pianobar
+            self.m_processProtocol = BarProcessControl()
+            self.m_processProtocol.deferred = BarProcessControl()
+            l_executable = '/usr/bin/pianobar'
+            l_args = ('pianobar',)
+            l_env = None  # this will pass <os.environ>
+            self.m_transport = reactor.spawnProcess(self.m_processProtocol, l_executable, l_args, l_env)
+            g_logger.info("Started.")
 
     def Stop(self):
         """Stop the Pandora player when we receive an IR signal to play some other thing.

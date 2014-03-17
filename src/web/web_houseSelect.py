@@ -34,7 +34,6 @@ class WebHouseData(object):
         self.House = house.HouseData()
 
     def reprJSON(self):
-        # print "web_house.reprJSON(1)"
         return dict(House = self.House)
 
 
@@ -47,8 +46,6 @@ class HouseSelectElement(athena.LiveElement):
     def __init__(self, p_workspace_obj):
         self.m_workspace_obj = p_workspace_obj
         self.m_pyhouses_obj = p_workspace_obj.m_pyhouses_obj
-        if g_debug >= 2:
-            print "web_houseSelect.houseSelectElement()"
 
     @athena.expose
     def getHousesToSelect(self, _p_dummy):
@@ -58,8 +55,6 @@ class HouseSelectElement(athena.LiveElement):
         """
         l_houses = self.m_pyhouses_obj.HousesData
         l_obj = {}
-        if g_debug >= 3:
-            print "web_houseSelect.getHousesToSelect() "
         for l_key, l_val in l_houses.iteritems():
             l_obj[l_key] = {}
             l_obj[l_key]['Name'] = l_val.HouseObject.Name

@@ -25,10 +25,10 @@ def PrintBytes(p_message):
 
 def PrintDict(p_dict, p_format = "%-25s %s"):
     for (key, val) in p_dict.iteritems():
-        print p_format % (str(key) + ':', val)
+        print(p_format % (str(key) + ':', val))
 
 def PrettyPrint(p_title, p_str, maxlen = 150):
-    print 'Title: {0:}\n'.format(p_title), '\n'.join(prettyPrint(str(p_str), maxlen, ' '))
+    print('Title: {0:}\n'.format(p_title), '\n'.join(prettyPrint(str(p_str), maxlen, ' ')))
 
 def PrintObject(p_title, p_obj, suppressdoc = True, maxlen = 180, lindent = 24, maxspew = 2000):
     """Print a nicely formatted overview of an object.
@@ -114,7 +114,7 @@ def PrintObject(p_title, p_obj, suppressdoc = True, maxlen = 180, lindent = 24, 
     if objclass == '':
         objclass = type(p_obj).__name__
     intro = "\nInstance of class '{0:}' as defined in module {1:} with id {2:}".format(objclass, objmodule, id(p_obj))
-    print '\nTitle:  ', p_title, '\n'.join(prettyPrint(intro, maxlen))
+    print('\nTitle:  ', p_title, '\n'.join(prettyPrint(intro, maxlen)))
     # Object's Docstring
     if not suppressdoc:
         if objdoc is None:
@@ -122,37 +122,37 @@ def PrintObject(p_title, p_obj, suppressdoc = True, maxlen = 180, lindent = 24, 
         else:
             objdoc = ('"""' + objdoc.strip() + '"""')
         print
-        print prettyPrintCols(('Documentation string:', truncstring(objdoc, maxspew)), normalwidths, ' ')
+        print(prettyPrintCols(('Documentation string:', truncstring(objdoc, maxspew)), normalwidths, ' '))
     # Built-in methods
     if builtins:
         bi_str = delchars(str(builtins), "[']") or str(None)
         print
-        print prettyPrintCols(('Built-in Methods:', truncstring(bi_str, maxspew)), normalwidths, ', ')
+        print(prettyPrintCols(('Built-in Methods:', truncstring(bi_str, maxspew)), normalwidths, ', '))
     # Classes
     if classes:
         print
-        print 'Classes:'
+        print('Classes:')
     for (classname, classtype) in classes:
         classdoc = getattr(classtype, '__doc__', None) or '<No documentation>'
         if suppressdoc:
             classdoc = '<No documentation>'
-        print prettyPrintCols(('', classname, truncstring(classdoc, maxspew)), tabbedwidths, ' ')
+        print(prettyPrintCols(('', classname, truncstring(classdoc, maxspew)), tabbedwidths, ' '))
     # User methods
     if methods:
         print
-        print 'Methods:'
+        print('Methods:')
     for (methodname, method) in methods:
         methoddoc = getattr(method, '__doc__', None) or '<No documentation>'
         if suppressdoc:
             methoddoc = '<No documentation>'
-        print prettyPrintCols(('', methodname, truncstring(methoddoc, maxspew)), tabbedwidths, ' ')
+        print(prettyPrintCols(('', methodname, truncstring(methoddoc, maxspew)), tabbedwidths, ' '))
     # Attributes
     if attrs:
         print
-        print 'Attributes:'
+        print('Attributes:')
     for (attr, val) in attrs:
-        print prettyPrintCols(('', attr, truncstring(str(val), maxspew)), tabbedwidths, ' ')
-    print '====================\n'
+        print(prettyPrintCols(('', attr, truncstring(str(val), maxspew)), tabbedwidths, ' '))
+    print('====================\n')
 
 def prettyPrintCols(strings, widths, split = ' '):
     """Pretty prints text in colums, with each string breaking at
@@ -161,7 +161,7 @@ def prettyPrintCols(strings, widths, split = ' '):
     """
     assert len(strings) == len(widths)
     strings = map(nukenewlines, strings)
-    # pretty print each column
+    # pretty Print each column
     cols = [''] * len(strings)
     for i in range(len(strings)):
         cols[i] = prettyPrint(strings[i], widths[i], split)

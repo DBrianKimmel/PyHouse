@@ -38,9 +38,7 @@ class ButtonsElement(athena.LiveElement):
         self.m_workspace_obj = p_workspace_obj
         self.m_pyhouses_obj = p_workspace_obj.m_pyhouses_obj
         if g_debug >= 2:
-            print "web_buttons.ButtonsElement()"
-            #print "    self = ", vars(self)
-            #print "    workspace_obj = ", vars(p_workspace_obj)
+            print("web_buttons.ButtonsElement()")
 
     @athena.expose
     def getHouseData(self, p_index):
@@ -54,7 +52,7 @@ class ButtonsElement(athena.LiveElement):
         l_house = self.m_pyhouses_obj.HousesData[l_ix].HouseObject
         l_json = web_utils.JsonUnicode().encode_json(l_house)
         if g_debug >= 3:
-            print "web_buttons.getHouseData() - JSON:", l_json
+            print("web_buttons.getHouseData() - JSON: {0:}".format(l_json))
         return unicode(l_json)
 
     @athena.expose
@@ -64,7 +62,7 @@ class ButtonsElement(athena.LiveElement):
         l_json = web_utils.JsonUnicode().decode_json(p_json)
         l_ix = int(l_json['HouseIx'])
         if g_debug >= 4:
-            print "web_buttons.ButtonsElement.saveButtonData() - JSON:", l_json
+            print("web_buttons.ButtonsElement.saveButtonData() - JSON:{0:}".format(l_json))
         l_obj = lighting_buttons.ButtonData()
         l_obj.Name = l_json['Name']
         l_obj.Active = l_json['Active']

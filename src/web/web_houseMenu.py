@@ -38,6 +38,6 @@ class HouseMenuElement(athena.LiveElement):
         self.m_workspace_obj = p_workspace_obj
         self.m_pyhouses_obj = p_workspace_obj.m_pyhouses_obj
         if g_debug >= 2:
-            print "web_houseMenu.houseMenuElement()"
+            print("web_houseMenu.houseMenuElement()")
 
 # ## END DBK

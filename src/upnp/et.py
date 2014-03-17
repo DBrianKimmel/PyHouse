@@ -14,12 +14,10 @@ import re
 try:
     import cElementTree as ET
     import elementtree
-    #print "we are on CET"
 except ImportError:
     try:
         from elementtree import ElementTree as ET
         import elementtree
-        #print "simply using ET"
     except ImportError:
         """ this seems to be necessary with the python2.5 on the Maemo platform """
         try:
@@ -30,7 +28,6 @@ except ImportError:
                 from xml.etree import ElementTree as ET
                 from xml import etree as elementtree
             except ImportError:
-                #print "no ElementTree module found, critical error"
                 raise ImportError, "no ElementTree module found, critical error"
 
 utf8_escape = re.compile(eval(r'u"[&<>\"]+"'))
@@ -90,9 +87,9 @@ if not hasattr(ET, 'XMLParser'):
     ET.XMLParser = XMLParser
 
 def namespace_map_update(namespaces):
-    #try:
+    # try:
     #    from xml.etree import ElementTree
-    #except ImportError:
+    # except ImportError:
     #    from elementtree import ElementTree
 
     elementtree.ElementTree._namespace_map.update(namespaces)
@@ -141,7 +138,7 @@ def parse_xml(data, encoding = "utf-8"):
         p.feed(data)
     except Exception, error:
         print "parse_xml feed Exception", error
-        print error #, repr(data)
+        print error  # , repr(data)
         return None
     else:
         return ET.ElementTree(p.close())

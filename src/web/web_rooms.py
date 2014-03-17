@@ -36,8 +36,6 @@ class RoomsElement(athena.LiveElement):
     def __init__(self, p_workspace_obj, p_params):
         self.m_workspace_obj = p_workspace_obj
         self.m_pyhouses_obj = p_workspace_obj.m_pyhouses_obj
-        if g_debug >= 2:
-            print "web_rooms.RoomsElement()"
 
     @athena.expose
     def getHouseData(self, p_index):
@@ -47,8 +45,6 @@ class RoomsElement(athena.LiveElement):
         """
         l_ix = int(p_index)
         l_house = self.m_pyhouses_obj.HousesData[l_ix].HouseObject
-        if g_debug >= 3:
-            print "web_rooms.RoomsElement.getRoomData(1) - HouseIndex:", p_index
         l_json = web_utils.JsonUnicode().encode_json(l_house)
         return unicode(l_json)
 
@@ -60,14 +56,12 @@ class RoomsElement(athena.LiveElement):
         l_house_ix = int(l_json['HouseIx'])
         l_room_ix = int(l_json['Key'])
         l_delete = l_json['Delete']
-        if g_debug >= 4:
-            print "web_rooms.RoomsElement.saveRoomData() - JSON:", l_json
         if l_delete:
             try:
                 del self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Rooms[l_room_ix]
                 self.m_pyhouses_obj.API.UpdateXml()
             except AttributeError:
-                print "web_rooms - Failed to delete - JSON: ", l_json
+                print("web_rooms - Failed to delete - JSON: {0:}".format(l_json))
             return
         try:
             l_obj = self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Rooms[l_room_ix]

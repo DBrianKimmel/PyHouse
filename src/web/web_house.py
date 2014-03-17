@@ -38,7 +38,7 @@ class HouseElement(athena.LiveElement):
         self.m_workspace_obj = p_workspace_obj
         self.m_pyhouses_obj = p_workspace_obj.m_pyhouses_obj
         if g_debug >= 2:
-            print "web_house.HouseElement()"
+            print("web_house.HouseElement()")
 
     @athena.expose
     def getHouseData(self, p_index):
@@ -49,7 +49,7 @@ class HouseElement(athena.LiveElement):
         l_ix = int(p_index)
         l_house = self.m_pyhouses_obj.HousesData[l_ix].HouseObject
         if g_debug >= 3:
-            print "web_house.getHouseData() - HouseIndex:", p_index
+            print("web_house.getHouseData() - HouseIndex:{0:}".format(p_index)
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_house))
         return l_json
 
@@ -64,7 +64,7 @@ class HouseElement(athena.LiveElement):
             try:
                 del self.m_pyhouses_obj.HousesData[l_house_ix]
             except AttributeError:
-                print "web_lights - Failed to delete - JSON: ", l_json
+                print("web_lights - Failed to delete - JSON: {0:}".format(l_json))
             return
         if l_house_ix == -1:  # adding a new house
             l_house_ix = len(self.m_pyhouses_obj.HousesData)

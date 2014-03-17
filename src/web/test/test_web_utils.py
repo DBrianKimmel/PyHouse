@@ -35,16 +35,12 @@ class Test(unittest.TestCase):
     def test_003_json_encode(self):
         x = PY_DATA
         y = web_utils.MyJson().encode_json(x)
-        print x, " to json ", y
 
     def test_004_json_decode(self):
         x = "{'de4' : 'D E F'}"
         y = web_utils.MyJson().decode_json(x)
-        print x, " from json ", y
 
     def Xtest_add_attrs(self):
         web_utils.add_attr_list(self.c_attr, ['abc/aaa', '/ddd/bbb.ext'])
-        print "vars =", vars(self.c_attr)
-        print "dict =", self.c_attr.__dict__
 
 # ## END DBK

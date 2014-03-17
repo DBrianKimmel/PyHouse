@@ -61,7 +61,6 @@ class LoginData(object):
         self.ServerState = web_utils.WS_IDLE
 
     def reprJSON(self):
-        # print "web_login.reprJSON(1)"
         return dict(Username = self.Username, Password = self.Password, Fullname = self.Fullname,
                     LoggedIn = self.LoggedIn, ServerState = self.ServerState)
 
