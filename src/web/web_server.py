@@ -131,9 +131,11 @@ class API(WebUtility, ClientConnections):
         g_logger.info("Started - {0:}".format(l_msg))
         return self.web_data
 
-    def Stop(self):
-        l_xml = self.write_web_xml(self.web_data)
-        return l_xml
+    def Stop(self, p_xml):
+        p_xml.append(self.write_web_xml(self.web_data))
+        return p_xml
+        # l_xml = self.write_web_xml(self.web_data)
+        # return l_xml
 
     def UpdateXml(self, p_xml):
         p_xml.append(self.write_web_xml(self.web_data))

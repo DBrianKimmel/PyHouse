@@ -99,11 +99,7 @@ class API(LoggingUtility):
         self.setup_debug_log(self.m_log_data.Debug)
         return self.m_log_data
 
-    def Stop(self):
-        l_xml = self.write_log_xml(self.m_log_data)
-        return l_xml
-
-    def UpdateXml(self, p_xml):
+    def Stop(self, p_xml):
         p_xml.append(self.write_log_xml(self.m_log_data))
         return p_xml
 

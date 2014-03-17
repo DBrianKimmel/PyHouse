@@ -335,11 +335,9 @@ class API(ScheduleUtility, ScheduleXML):
         """
         g_logger.info("Stopping schedule for house:{0:}.".format(self.m_house_obj.Name))
         self.m_house_obj.LightingAPI.Stop(p_xml, p_house_obj)
-        # l_entertainment_xml = self.m_entertainment.Stop()
         if g_debug >= 2:
             print("schedule.API.Stop() - House:{0:}, {1:}".format(self.m_house_obj.Name, len(p_xml)))
         g_logger.info("Stopped.\n")
-        # return l_schedules_xml, l_lighting_xml, l_buttons_xml, l_controllers_xml  #, l_entertainment_xml
 
     def UpdateXml (self, p_xml):
         p_xml.append(self.write_schedules_xml(self.m_house_obj.Schedules))

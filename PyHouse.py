@@ -171,6 +171,7 @@ def SigIntHandler(signum, _stackframe):
     if g_debug >= 1:
         g_logger.debuf('SigInt - Signal handler called with signal {0:}'.format(signum))
     g_logger.info("Interrupted.\n\n\n")
+    API().Stop()
     reactorstop()
     exit
 
@@ -238,19 +239,14 @@ class API(Utilities):
     def Stop(self):
         """Stop various modules to prepare for restarting them.
         """
-        self.UpdateXml()
-        g_logger.info("Stopped.\n\n")
-
-    def UpdateXml(self):
-        """Write the xml file (sort of a checkpoint) and continue operations.
-        """
-        l_xml = ET.Element("PyHouse")
         g_logger.info("Saving all data to XML file.")
-        self.m_pyhouses_obj.WebAPI.UpdateXml(l_xml)
-        self.m_pyhouses_obj.LogsAPI.UpdateXml(l_xml)
+        l_xml = ET.Element("PyHouse")
+        self.m_pyhouses_obj.WebAPI.Stop(l_xml)
+        self.m_pyhouses_obj.LogsAPI.Stop(l_xml)
         self.m_pyhouses_obj.HousesAPI.UpdateXml(l_xml)
         xml_tools.write_xml_file(l_xml, self.m_pyhouses_obj.XmlFileName)
         g_logger.info("XML file has been updated.")
+        g_logger.info("Stopped.\n\n")
 
     def Reload(self, _p_pyhouses_obj):
         """Update XML file with current info.

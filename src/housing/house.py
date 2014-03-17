@@ -144,7 +144,7 @@ class API(HouseReadWriteConfig):
         l_xml.append(self.write_location_xml(self.m_house_obj.Location))
         l_xml.append(self.write_rooms_xml(self.m_house_obj))
         self.m_house_obj.ScheduleAPI.UpdateXml(l_xml)
-        self.m_house_obj.InternetAPI.UpdateXml(l_xml)
+        # self.m_house_obj.InternetAPI.UpdateXml(l_xml)
         g_logger.info('{0:} house has updated XML'.format(self.m_house_obj.Name))
         p_xml.append(l_xml)
 

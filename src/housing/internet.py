@@ -215,12 +215,9 @@ class MyProtocol(Protocol):
     def dataReceived(self, p_bytes):
         if self.m_remaining:
             l_display = p_bytes[:self.m_remaining]
-            # print('Some data received:')
-            # print(l_display)
             self.m_remaining -= len(l_display)
 
     def connectionLost(self, p_reason):
-        # print('Finished receiving body: {0:}'.format(p_reason.getErrorMessage()))
         self.m_finished.callback(None)
 
 
@@ -250,13 +247,14 @@ class MyGet(object):
         pass
 
     def my_getPage(self, p_url):
-        print("Requesting %s" % (p_url,))
+        if g_debug >= 1:
+            g_logger.debug("Requesting {0:}".format(p_url))
         l_d = Agent(reactor).request('GET', p_url, Headers({'User-Agent': ['twisted']}), None)
         l_d.addCallbacks(self.handleResponse, self.handleError)
         return l_d
 
     def handleResponse(self, p_r):
-        print("version=%s\ncode=%s\nphrase='%s'" % (p_r.version, p_r.code, p_r.phrase))
+        g_logger.debug("version={0:}\ncode={1:}\nphrase='{2:}'".format(p_r.version, p_r.code, p_r.phrase))
         for k, v in p_r.headers.getAllRawHeaders():
             print("%s: %s" % (k, '\n  '.join(v)))
         l_whenFinished = Deferred()
@@ -398,18 +396,15 @@ class API(ReadWriteXML):
             FindExternalIpAddress(p_house_obj)
             self.m_dyn_loop = DynDnsAPI(p_house_obj)
 
-    def Stop(self):
+    def Stop(self, p_xml):
         """Stop async operations
         write out the XML file.
         """
         if self.m_house_obj.Active:
             g_logger.info("Stopping for house:{0:}.".format(self.m_house_obj.Name))
             self.dyndns.stop_dyndns_process()
-        l_internet_xml = self.UpdateXml()
-        return l_internet_xml
-
-    def UpdateXml(self, p_xml):
         l_xml = self.write_internet(self.m_house_obj)
         p_xml.append(l_xml)
+        return l_xml
 
 # ## END DBK

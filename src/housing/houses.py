@@ -109,7 +109,7 @@ class LoadSaveAPI(HouseReadWriteConfig):
             l_sect = l_xml_root.find('Houses')
             l_list = l_sect.iterfind('House')  # use l_sect to force error if it is missing
         except AttributeError:
-            print("Warning - in read_house - Adding 'Houses' section")
+            g_logger.warn("Warning - in read_house XML - Adding 'Houses' section")
             l_sect = ET.SubElement(l_xml_root, 'Houses')
             l_list = l_sect.iterfind('House')
         return l_list
@@ -140,9 +140,8 @@ class API(LoadSaveAPI):
         """Start processing for all things houses
         .
         May be stopped and then started anew to force reloading info.
-        Invoked once no matter how many houses defined.
+        Invoked once no matter how many houses defined in the XML file.
         """
-        g_logger.info("Starting.")
         l_count = 0
         for l_house_xml in self.read_xml_config_houses(p_pyhouses_obj):
             self.m_houses_data[l_count] = self.get_house_info(l_house_xml, l_count)
@@ -159,7 +158,7 @@ class API(LoadSaveAPI):
         for l_house in self.m_houses_data.itervalues():
             try:
                 l_xml = l_house.HouseAPI.Stop(l_houses_xml, l_house.HouseObject)
-            except AttributeError:  # New house being added has ho existing API
+            except AttributeError:  # New house being added has no existing API
                 l_xml = house.API().Stop(l_houses_xml, l_house.HouseObject)
             # l_houses_xml.append(l_xml)  # append to the xml tree
         g_logger.info("Stopped.")

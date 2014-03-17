@@ -18,6 +18,7 @@ Then start the House and all the sub systems.
 import logging
 import netifaces
 import os
+import platform
 
 from src.core import nodes
 from src.entertain import entertainment
@@ -39,6 +40,16 @@ NODE_PIFACECAD = 0x0008
 NODE_V6ROUTER = 0x0010
 
 InterfacesData = {}
+
+
+class NodeData(object):
+    def __init__(self):
+        self.Name = None
+        self.Key = 0
+        self.Active = True
+        self.HostName = ''
+        self.Role = None
+        self.Interfaces = []
 
 class InterfaceData(object):
     def __init__(self):
@@ -137,6 +148,13 @@ class LocateLocalNodes(object):
         pass
 
 
+class GetNodeInfo(object):
+    """Get the information about this node and stick it in NodeData
+    """
+    def __init__(self):
+        NodeData.Name = platform.node()
+
+
 class API(object):
 
     m_entertainment = None
@@ -171,6 +189,5 @@ class API(object):
 if __name__ == "__main__":
     l_id = API()
     l_id.Start()
-
 
 # ## END DBK
