@@ -3,7 +3,7 @@
 """Handle the controller component of the lighting system.
 
 
-/srv/src/home/home1/briank/workspace_save/workspace/SmartHouse/trunk/src/parts/upb/usbhidserial.cpp
+/srv/backup/home/briank/svn/smarthouse/trunk/src/parts/upb/usbhidserial.cpp
 
 Sent to PIM <17>70 03 8D <0D> <2005-09-24 20:58:55 75535.86>
 PA <20:58:55 75535.94>
@@ -159,7 +159,7 @@ class UpbPimUtility(object):
             g_logger.debug("Calculate checksum - {0:}".format(PrintBytes(l_out)))
         return l_out
 
-    def _compose_command(self, p_controller_obj, p_command, p_device_id, *p_args):
+    def _compose_command(self, p_controller_obj, _p_command, _p_device_id, *p_args):
         """Build the command for each controller found.
         """
         l_hdr = bytearray(0 + len(p_args))
@@ -235,7 +235,7 @@ class DecodeResponses(object):
                     g_logger.error("UPB_Pim - Previous command was rejected with a command error.")
             elif self.l_hdr == 0x4B:  # 'K'
                 if g_debug >= 2:
-                   g_logger.error("UPB_Pim.decode_response() found 'K' (0x4b) - ACK pulse also received.")
+                    g_logger.error("UPB_Pim.decode_response() found 'K' (0x4b) - ACK pulse also received.")
             elif self.l_hdr == 0x4E:  # 'N'
                 if g_debug >= 2:
                     g_logger.error("UPB_Pim.decode_response() found 'N' (0x4E) - No ACK pulse received from device.")
@@ -356,8 +356,8 @@ class PimDriverInterface(DecodeResponses):
     def _convert_pim(self, p_array):
         l_string = chr(0x14)
         for l_byte in p_array:
-            # l_char = "{0:02X}".format(l_byte)
-            l_char = chr(l_byte)
+            l_char = "{0:02X}".format(l_byte)
+            # l_char = chr(l_byte)
             l_string += l_char
         l_string += chr(0x0D)
         if g_debug >= 1:

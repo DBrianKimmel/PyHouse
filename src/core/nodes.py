@@ -25,7 +25,8 @@ from twisted.protocols.amp import AMP, Integer, Float, String, Unicode, Command
 g_debug = 0
 g_logger = logging.getLogger('PyHouse.Nodes       ')
 
-NODE_PORT = 'tcp:port=8581'
+NODE_CLIENT = 'tcp:host=pi-01.kimmel.biz:port=8581'
+NODE_SERVER = 'tcp:port=8581'
 
 
 class NodeUnavailable(Exception):
@@ -75,20 +76,20 @@ class NodeClientFactory(Factory):
     def startedConnecting(self, p_connector):
         pass
 
-    def buildProtocol(self, addr):
+    def buildProtocol(self, _addr):
         return NodeClientProtocol()
 
-    def clientConnectionLost(self, connector, p_reason):
+    def clientConnectionLost(self, _connector, p_reason):
         g_logger.error('NodeClientFactory - lost connection {0:}'.format(p_reason))
 
-    def clientConnectionFailed(self, connector, p_reason):
+    def clientConnectionFailed(self, _connector, p_reason):
         g_logger.error('NodeClientFactory - Connection failed {0:}'.format(p_reason))
 
 
 class NodeClient(object):
 
     def connect(self):
-        l_endpoint = clientFromString(reactor, NODE_PORT)
+        l_endpoint = clientFromString(reactor, NODE_CLIENT)
         l_factory = NodeClientFactory()
         l_endpoint.connect(l_factory)
 
@@ -101,7 +102,7 @@ class NodeServer(object):
 
     def server(self):
         l_application = Application('NodeCommunicationService')
-        l_endpoint = serverFromString(reactor, NODE_PORT)
+        l_endpoint = serverFromString(reactor, NODE_SERVER)
         l_factory = Factory()
         l_factory.protocol = NodeServerProtocol
         l_service = StreamServerEndpointService(l_endpoint, l_factory)
@@ -111,10 +112,10 @@ class NodeServer(object):
 
 class Utility(object):
 
-    def StartServer(self, p_pyhouses_obj):
+    def StartServer(self, _p_pyhouses_obj):
         _l_server = NodeServer().server()
 
-    def StartClient(self, p_pyhouses_obj):
+    def StartClient(self, _p_pyhouses_obj):
         _l_client = NodeClient().connect()
 
 

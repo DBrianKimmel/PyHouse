@@ -103,15 +103,15 @@ class SerialProtocol(Protocol):
         self.m_controller_obj = p_controller_obj
 
     def connectionFailed(self):
-        print("Driver_USB.connectionFailed() - {0:}".format(self))
+        g_logger.error("Driver_USB.connectionFailed() - {0:}".format(self))
 
     def connectionMade(self):
         if g_debug >= 2:
-            print('Driver_USB.connectionMade() - Connected to Serial Device')  # , dir(self), vars(self)
+            g_logger.debug('Driver_USB.connectionMade() - Connected to Serial Device')  # , dir(self), vars(self)
 
     def dataReceived(self, p_data):
-        if g_debug >= 5:
-            print("Driver_USB.dataReceived() - {0:}".format(PrintBytes(p_data)))
+        if g_debug >= 2:
+            g_logger.debug("Driver_USB.dataReceived() - {0:}".format(PrintBytes(p_data)))
         self.m_controller_obj._Message += p_data
 
 
@@ -143,7 +143,6 @@ class UsbDriverAPI(UsbDeviceData):
         if g_debug >= 2:
             l_msg = "_setup_hid_17DD_5500() ", l_ret
             g_logger.debug(l_msg)
-            print("Driver_USB {0:}".format(l_msg))
         return l_ret
 
     def _setup_find_device(self, p_controller_obj):
@@ -156,7 +155,6 @@ class UsbDriverAPI(UsbDeviceData):
             l_device = usb.core.find(idVendor = p_controller_obj.Vendor, idProduct = p_controller_obj.Product)
         except usb.USBError:
             l_msg = "ERROR no such USB device for {0:}".format(p_controller_obj.Name)
-            print(l_msg)
             g_logger.error(l_msg)
             return None
         if l_device == None:
@@ -207,7 +205,7 @@ class UsbDriverAPI(UsbDeviceData):
         try:
             l_alternate_setting = usb.control.get_interface(p_controller_obj._Data.Device, l_interface_number)
         except Exception as e:
-            print("   -- Error in alt setting {0:}".format(e))
+            g_logger.error("   -- Error in alt setting {0:}".format(e))
             l_alternate_setting = 0
         l_interface = usb.util.find_descriptor(
             p_controller_obj._Data.configs,
@@ -292,10 +290,10 @@ class UsbDriverAPI(UsbDeviceData):
             elif g_debug >= 2:
                     g_logger.debug("read_device() - Len:{0:}, Msg:{1:}".format(l_len, PrintBytes(l_msg)))
         except usb.USBError as e:
-            print("Driver_USB.read_device_1() got USBError {0:}".format(e))
+            g_logger.error("Driver_USB.read_device_1() got USBError {0:}".format(e))
             l_len = 0
         except Exception as e:
-            print(" -- Error in Driver_USB.read_device_1() {0:}".format(e))
+            g_logger.error(" -- Error in Driver_USB.read_device_1() {0:}".format(e))
             l_len = 0
         return l_len
 
