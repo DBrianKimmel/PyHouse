@@ -34,7 +34,7 @@ class RootMenuElement(athena.LiveElement):
 
     def __init__(self, p_workspace_obj):
         if g_debug >= 2:
-            print "web_rootMenu.RootMenuElement()"
+            print("web_rootMenu.RootMenuElement()")
         self.m_pyhouses_obj = p_workspace_obj.m_pyhouses_obj
 
     @athena.expose
@@ -42,7 +42,7 @@ class RootMenuElement(athena.LiveElement):
         """ Process a message for a XML save/reload from the browser/client.
         """
         if g_debug >= 3:
-            print "web_rootMenu.RootMenuElement.doRootMenuReload() - Json:{0:}".format(p_json)
+            print("web_rootMenu.RootMenuElement.doRootMenuReload() - Json:{0:}".format(p_json)()
         g_logger.info("doRootMenuReload called {0:} {1:}".format(self, p_json))
         self.m_pyhouses_obj.API.Reload(self.m_pyhouses_obj)
 
@@ -51,7 +51,7 @@ class RootMenuElement(athena.LiveElement):
         """ Process a message for a browser logoff and quit that came from the browser/client.
         """
         if g_debug >= 3:
-            print "web_rootMenu.RootMenuElement.doRootMenuQuit() - Json:{0:}".format(p_json)
+            print("web_rootMenu.RootMenuElement.doRootMenuQuit() - Json:{0:}".format(p_json))
         g_logger.info("doRootMenuQuit called {0:} {1:}".format(self, p_json))
 
 # ## END DBK

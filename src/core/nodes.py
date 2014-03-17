@@ -115,7 +115,7 @@ class Utility(object):
         _l_server = NodeServer().server()
 
     def StartClient(self, p_pyhouses_obj):
-        g_logger.debug('Node={0:}'.format(p_pyhouses_obj.Nodes))
+        _l_client = NodeClient().connect()
 
 
 class API(Utility):
@@ -124,6 +124,8 @@ class API(Utility):
         g_logger.info("Initialized.")
 
     def Start(self, p_pyhouses_obj):
+        for l_interface in p_pyhouses_obj.Nodes.itervalues():
+            g_logger.debug('Client Node Interface {0:} {1:} {2:}'.format(l_interface.Name, l_interface.V4Address, l_interface.V6Address))
         self.StartServer(p_pyhouses_obj)
         self.StartClient(p_pyhouses_obj)
         g_logger.info("Started.")
