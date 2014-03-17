@@ -48,7 +48,7 @@ class API(object):
         # self.m_pandora.Start(p_pyhouses_obj)
         g_logger.info("Started.")
 
-    def Stop(self):
+    def Stop(self, p_xml):
         # self.m_pandora.Stop()
         g_logger.info("Stopped.")
 

@@ -311,7 +311,6 @@ class API(ScheduleUtility, ScheduleXML):
         self.m_house_obj = p_house_obj
         self.m_sunrisesunset = sunrisesunset.API(p_house_obj)
         self.m_house_obj.LightingAPI = lighting.API(p_house_obj)
-        # self.m_entertainment = entertainment.API()
 
     def Start(self, p_house_obj, p_house_xml):
         """Called once for each house.
@@ -325,18 +324,16 @@ class API(ScheduleUtility, ScheduleXML):
         self.m_sunrisesunset.Start(p_house_obj)
         self.read_schedules_xml(p_house_obj, p_house_xml)
         self.m_house_obj.LightingAPI.Start(p_house_obj, p_house_xml)
-        # self.m_entertainment.Start(p_house_obj, p_house_xml)
         if p_house_obj.Active:
             self.get_next_sched()
         g_logger.info("Started.")
 
-    def Stop(self, p_xml, p_house_obj):
+    def Stop(self, p_xml):
         """Stop everything under me and build xml to be appended to a house xml.
         """
         g_logger.info("Stopping schedule for house:{0:}.".format(self.m_house_obj.Name))
-        self.m_house_obj.LightingAPI.Stop(p_xml, p_house_obj)
-        if g_debug >= 2:
-            print("schedule.API.Stop() - House:{0:}, {1:}".format(self.m_house_obj.Name, len(p_xml)))
+        p_xml.append(self.write_schedules_xml(self.m_house_obj.Schedules))
+        self.m_house_obj.LightingAPI.Stop(p_xml)
         g_logger.info("Stopped.\n")
 
     def UpdateXml (self, p_xml):

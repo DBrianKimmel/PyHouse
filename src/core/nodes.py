@@ -25,7 +25,7 @@ from twisted.protocols.amp import AMP, Integer, Float, String, Unicode, Command
 g_debug = 0
 g_logger = logging.getLogger('PyHouse.Nodes       ')
 
-NODE_CLIENT = 'tcp:host=pi-01.kimmel.biz:port=8581'
+NODE_CLIENT = 'tcp:host=192.168.1.32:port=8581'
 NODE_SERVER = 'tcp:port=8581'
 
 

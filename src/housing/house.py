@@ -132,14 +132,17 @@ class API(HouseReadWriteConfig):
         l_house_xml.append(self.write_location_xml(p_house_obj.Location))
         l_house_xml.append(self.write_rooms_xml(p_house_obj))
         try:
-            l_house_xml.extend(self.m_house_obj.ScheduleAPI.Stop(l_house_xml, p_house_obj))
-            l_house_xml.append(self.m_house_obj.InternetAPI.Stop())
-        except AttributeError:  # New house has  no schedule or internet
-            pass
+            self.m_house_obj.ScheduleAPI.Stop(l_house_xml)
+        except AttributeError:  # New house has  no schedule
+            g_logger.warn("No schedule XML")
+        try:
+            self.m_house_obj.InternetAPI.Stop(l_house_xml)
+        except AttributeError:  # New house has  no internet
+            g_logger.warn("No internet XML")
+        p_xml.append(l_house_xml)
         g_logger.info("Stopped.")
-        return l_house_xml
 
-    def UpdateXml(self, p_xml):
+    def ZZZUpdateXml(self, p_xml):
         l_xml = self.write_house_xml(self.m_house_obj)
         l_xml.append(self.write_location_xml(self.m_house_obj.Location))
         l_xml.append(self.write_rooms_xml(self.m_house_obj))

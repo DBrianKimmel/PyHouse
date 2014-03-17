@@ -93,9 +93,11 @@ class PyHouseData(object):
         """PyHouse.
         """
         self.API = None
+        self.CoreAPI = None
         self.HousesAPI = None
         self.LogsAPI = None
         self.WebAPI = None
+        #
         self.WebData = None
         self.LogsData = None
         self.HousesData = None
@@ -162,16 +164,16 @@ def SigHupHandler(signum, _stackframe):
     """
     if g_debug >= 1:
         g_logger.debug('Hup Signal handler called with signal {0:}'.format(signum))
-    API().Stop()
-    API().Start()
+    g_API.Stop()
+    g_API.Start()
 
 def SigIntHandler(signum, _stackframe):
     """interrupt character (probably Ctrl-C)
     """
-    if g_debug >= 1:
-        g_logger.debuf('SigInt - Signal handler called with signal {0:}'.format(signum))
+    # if g_debug >= 1:
+    g_logger.debug('SigInt - Signal handler called with signal {0:}'.format(signum))
     g_logger.info("Interrupted.\n\n\n")
-    API().Stop()
+    g_API.Stop()
     reactorstop()
     exit
 
@@ -206,10 +208,12 @@ class API(Utilities):
         Notice that the reactor starts here as the very last step here and that
         call never returns until the reactor is stopped (permanent stoppage).
         """
-        handle_signals()
         self.m_pyhouses_obj = PyHouseData()
         self.m_pyhouses_obj.Reactor = reactor
         self.m_pyhouses_obj.API = self
+        global g_API
+        g_API = self
+        handle_signals()
         self.read_xml_config_info(self.m_pyhouses_obj)
         self.m_pyhouses_obj.LogsAPI = log.API()
         self.m_pyhouses_obj.LogsData = self.m_pyhouses_obj.LogsAPI.Start(self.m_pyhouses_obj)
@@ -217,8 +221,7 @@ class API(Utilities):
         g_logger = logging.getLogger('PyHouse         ')
         g_logger.info("Initializing PyHouse.\n\n")
         #
-        self.m_coresetup = setup.API()
-        self.m_remoteAPI = local_master.API()
+        self.m_pyhouses_obj.CoreAPI = setup.API()
         self.m_pyhouses_obj.HousesAPI = houses.API()
         self.m_pyhouses_obj.WebAPI = web_server.API()
         callWhenRunning(self.Start)
@@ -230,8 +233,7 @@ class API(Utilities):
     def Start(self):
         """This is automatically invoked when the reactor starts from API().
         """
-        self.m_coresetup.Start(self.m_pyhouses_obj)
-        self.m_remoteAPI.Start(self.m_pyhouses_obj)
+        self.m_pyhouses_obj.CoreAPI.Start(self.m_pyhouses_obj)
         self.m_pyhouses_obj.HousesData = self.m_pyhouses_obj.HousesAPI.Start(self.m_pyhouses_obj)
         self.m_pyhouses_obj.WebData = self.m_pyhouses_obj.WebAPI.Start(self.m_pyhouses_obj)
         g_logger.info("Started.\n")
@@ -243,7 +245,8 @@ class API(Utilities):
         l_xml = ET.Element("PyHouse")
         self.m_pyhouses_obj.WebAPI.Stop(l_xml)
         self.m_pyhouses_obj.LogsAPI.Stop(l_xml)
-        self.m_pyhouses_obj.HousesAPI.UpdateXml(l_xml)
+        self.m_pyhouses_obj.HousesAPI.Stop(l_xml)
+        self.m_pyhouses_obj.CoreAPI.Stop(l_xml)
         xml_tools.write_xml_file(l_xml, self.m_pyhouses_obj.XmlFileName)
         g_logger.info("XML file has been updated.")
         g_logger.info("Stopped.\n\n")

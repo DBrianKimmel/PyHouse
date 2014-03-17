@@ -149,7 +149,7 @@ class API(LoadSaveAPI):
         g_logger.info("Started.")
         return self.m_houses_data
 
-    def Stop(self):
+    def Stop(self, p_xml):
         """Close down everything we started.
         Each stopped instance returns an up-to-date XML subtree to be written out.
         """
@@ -161,15 +161,10 @@ class API(LoadSaveAPI):
             except AttributeError:  # New house being added has no existing API
                 l_xml = house.API().Stop(l_houses_xml, l_house.HouseObject)
             # l_houses_xml.append(l_xml)  # append to the xml tree
+        g_logger.info("XML appended.")
+        p_xml.append(l_houses_xml)
         g_logger.info("Stopped.")
-        return l_houses_xml
-
-    def UpdateXml(self, p_xml):
-        l_xml = ET.Element('Houses')
-        for l_house in self.m_houses_data.itervalues():
-            l_house.HouseAPI.UpdateXml(l_xml)
-        p_xml.append(l_xml)
-        g_logger.info("Saved all houses to XML file.")
+        # return p_xml
 
     def get_houses_obj(self):
         return self.m_houses_data

@@ -63,11 +63,14 @@ class API(Utility):
         self.m_family.start_lighting_families(self.m_house_obj)
         g_logger.info("Started.")
 
-    def Stop(self, p_xml, p_house_obj):
+    def Stop(self, p_xml):
         """Allow cleanup of all drivers.
         """
         g_logger.info("Stopping all lighting families.")
-        self.m_family.stop_lighting_families(p_xml, p_house_obj)
+        self.m_family.stop_lighting_families(p_xml, self.m_house_obj)
+        p_xml.append(self.write_light_xml(self.m_house_obj))
+        p_xml.append(self.write_button_xml(self.m_house_obj))
+        p_xml.append(self.write_controller_xml(self.m_house_obj))
         g_logger.info("Stopped.")
 
     def UpdateXml(self, p_xml):

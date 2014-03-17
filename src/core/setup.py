@@ -177,9 +177,9 @@ class API(object):
         self.m_entertainment.Start(p_pyhouses_obj)
         g_logger.info("Started.")
 
-    def Stop(self):
+    def Stop(self, p_xml):
         # SubSystems
-        _l_entertainment_xml = self.m_entertainment.Stop()
+        self.m_entertainment.Stop(p_xml)
         # House
         g_logger.info("Stopped.")
 

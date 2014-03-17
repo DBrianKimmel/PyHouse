@@ -162,7 +162,10 @@ class ReadWriteXML(xml_tools.ConfigTools):
         try:
             self.m_external_url = self.get_text_from_xml(l_sect, 'ExternalUrl')
         except:
-            self.m_external_url = self.get_text_from_xml(l_sect, 'UrlExternalIP')
+            try:
+                self.m_external_url = self.get_text_from_xml(l_sect, 'UrlExternalIP')
+            except:
+                self.m_external_url = None
         p_house_obj.Internet.ExternalIPv4 = self.m_external_ip
         p_house_obj.Internet.ExternalUrl = self.m_external_url
         p_house_obj.Internet.ExternalDelay = self.m_external_delay
@@ -217,7 +220,7 @@ class MyProtocol(Protocol):
             l_display = p_bytes[:self.m_remaining]
             self.m_remaining -= len(l_display)
 
-    def connectionLost(self, p_reason):
+    def connectionLost(self, _p_reason):
         self.m_finished.callback(None)
 
 
@@ -401,10 +404,8 @@ class API(ReadWriteXML):
         write out the XML file.
         """
         if self.m_house_obj.Active:
-            g_logger.info("Stopping for house:{0:}.".format(self.m_house_obj.Name))
-            self.dyndns.stop_dyndns_process()
-        l_xml = self.write_internet(self.m_house_obj)
-        p_xml.append(l_xml)
-        return l_xml
+            g_logger.info("Stopping dyndns for house:{0:}.".format(self.m_house_obj.Name))
+            self.m_dyn_loop.stop_dyndns_process()
+        p_xml.append(self.write_internet(self.m_house_obj))
 
 # ## END DBK

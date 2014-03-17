@@ -133,13 +133,8 @@ class API(WebUtility, ClientConnections):
 
     def Stop(self, p_xml):
         p_xml.append(self.write_web_xml(self.web_data))
-        return p_xml
-        # l_xml = self.write_web_xml(self.web_data)
-        # return l_xml
-
-    def UpdateXml(self, p_xml):
-        p_xml.append(self.write_web_xml(self.web_data))
-        return p_xml
+        g_logger.info("XML appended.")
+        # return p_xml
 
     def Update(self, p_entry):
         l_obj = WebData()
