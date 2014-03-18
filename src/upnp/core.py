@@ -60,7 +60,7 @@ class Utilities(object):
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.connect(("8.8.8.8", 80))
         l_ipaddr = s.getsockname()[0]
-        print "UPNP_core - My IP Address is ", l_ipaddr
+        print("UPNP_core - My IP Address is ", l_ipaddr)
         s.close()
         return l_ipaddr
 
@@ -135,8 +135,7 @@ class CreateServers(object):
         mediapath = os.path.expanduser('~/media')
         # mediapath = os.path.expanduser('~/')
         if not os.path.isdir(mediapath):
-            print >> sys.stderr, \
-                'Sorry, %s is not a directory, no content to serve.' % `mediapath`
+            print >> sys.stderr, 'Sorry, %s is not a directory, no content to serve.' % `mediapath`
             sys.exit(1)
 
         # This sets up the root to be the media dir so we don't have to

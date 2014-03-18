@@ -128,7 +128,7 @@ def parse_xml(data, encoding = "utf-8"):
     except UnicodeDecodeError:
         pass
     except Exception, error:
-        print "parse_xml encode Exception", error
+        print("parse_xml encode Exception", error)
         import traceback
         traceback.print_exc()
 
@@ -137,8 +137,8 @@ def parse_xml(data, encoding = "utf-8"):
     try:
         p.feed(data)
     except Exception, error:
-        print "parse_xml feed Exception", error
-        print error  # , repr(data)
+        print("parse_xml feed Exception", error)
+        print(error)
         return None
     else:
         return ET.ElementTree(p.close())

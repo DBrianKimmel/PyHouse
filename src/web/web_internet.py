@@ -72,6 +72,5 @@ class InternetElement(athena.LiveElement):
         l_obj.DynDns[l_dyndns_ix].Interval = l_json['Interval']
         l_obj.DynDns[l_dyndns_ix].Url = l_json['Url']
         self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Internet = l_obj
-        self.m_pyhouses_obj.API.UpdateXml()
 
 # ## END DBK

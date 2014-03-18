@@ -77,7 +77,6 @@ class ControllersElement(athena.LiveElement):
         if l_delete:
             try:
                 del self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Controllers[l_controller_ix]
-                self.m_pyhouses_obj.API.UpdateXml()
             except AttributeError:
                 print("web_controllers - Failed to delete - JSON: {0:}".FORMAT(l_json))
             return
@@ -109,6 +108,5 @@ class ControllersElement(athena.LiveElement):
             l_obj.Responder = l_json['Responder']
             l_obj.ProductKey = l_json['ProductKey']
         self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Controllers[l_controller_ix] = l_obj
-        self.m_pyhouses_obj.API.UpdateXml()
 
 # ## END DBK

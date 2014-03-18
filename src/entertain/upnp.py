@@ -402,11 +402,5 @@ class API(ReadWriteXML):
         if self.m_house_obj.Active:
             g_logger.info("Stopping for house:{0:}.".format(self.m_house_obj.Name))
             self.dyndns.stop_dyndns_process()
-        l_internet_xml = self.UpdateXml()
-        return l_internet_xml
-
-    def UpdateXml(self, p_xml):
-        l_xml = self.write_internet(self.m_house_obj)
-        p_xml.append(l_xml)
 
 # ## END DBK

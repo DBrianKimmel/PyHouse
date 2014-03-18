@@ -73,11 +73,6 @@ class API(Utility):
         p_xml.append(self.write_controller_xml(self.m_house_obj))
         g_logger.info("Stopped.")
 
-    def UpdateXml(self, p_xml):
-        p_xml.append(self.write_light_xml(self.m_house_obj))
-        p_xml.append(self.write_button_xml(self.m_house_obj))
-        p_xml.append(self.write_controller_xml(self.m_house_obj))
-
     def ChangeLight(self, p_light_obj, p_level):
         l_key = p_light_obj.Key
         l_light_obj = self.m_house_obj.Lights[l_key]

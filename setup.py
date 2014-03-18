@@ -57,42 +57,42 @@ class TestInstalledSoftware(object):
     def test_python_version(self):
         l_version = sys.version_info
         if l_version.major != 2:
-            print "ERROR - Only Python 2.7 is currently supported due to Twisted requirements."
+            print("ERROR - Only Python 2.7 is currently supported due to Twisted requirements.")
             return False
         if l_version.minor < 7:
-            print "ERROR - Python less than version is not tested - Please use 2.7.x"
+            print("ERROR - Python less than version is not tested - Please use 2.7.x")
             return False
-        print "  Python 2.7 ok..."
+        print("  Python 2.7 ok...")
         return True
 
     def test_twisted(self):
         try:
             import twisted
         except ImportError:
-            print "ERROR - Twisted not installed.  apt-get install python-twisted"
+            print("ERROR - Twisted not installed.  apt-get install python-twisted")
             return False
         l_version = twisted.version
         if l_version.major < 12:
-            print "ERROR - Twisted must be at least version 12.  apt-get install python-twisted"
-        print "  Twisted > 12.0 ok..."
+            print("ERROR - Twisted must be at least version 12.  apt-get install python-twisted")
+        print("  Twisted > 12.0 ok...")
         return True
 
     def test_zope_interface(self):
         try:
             import zope.interface
         except ImportError:
-            print "ERROR - Zope.Interface not installed.  apt-get install zope-interface"
+            print("ERROR - Zope.Interface not installed.  apt-get install zope-interface")
             return False
-        print "  Zope.interface ok..."
+        print("  Zope.interface ok...")
         return True
 
     def test_nevow(self):
         try:
             import nevow
         except ImportError:
-            print "ERROR - Nevow not installed.  apt-get install nevow"
+            print("ERROR - Nevow not installed.  apt-get install nevow")
             return False
-        print "  Nevow ok..."
+        print("  Nevow ok...")
         return True
 
 
@@ -102,7 +102,7 @@ class TestAll(object):
 
     def __init__(self):
         global tests_passed
-        print "Testing..."
+        print("Testing...")
         l_inst = TestInstalledSoftware()
         l_ok = l_inst.test_python_version()
         if l_ok:
@@ -120,7 +120,7 @@ class Install(object):
     """
 
     def __init__(self):
-        print "Installing..."
+        print("Installing...")
 
 
 if __name__ == "__main__":
@@ -129,6 +129,6 @@ if __name__ == "__main__":
     if tests_passed:
         Install()
     else:
-        print "Correct the above faults and rerun."
+        print("Correct the above faults and rerun.")
 
 # ## END DBK

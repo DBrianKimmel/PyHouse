@@ -68,6 +68,5 @@ class ButtonsElement(athena.LiveElement):
         l_obj.Active = l_json['Active']
         l_obj.Key = l_json['Key']
         l_obj.Level = l_json['Level']
-        self.m_pyhouses_obj.API.UpdateXml()
 
 # ## END DBK

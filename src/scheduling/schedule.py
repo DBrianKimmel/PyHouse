@@ -336,8 +336,4 @@ class API(ScheduleUtility, ScheduleXML):
         self.m_house_obj.LightingAPI.Stop(p_xml)
         g_logger.info("Stopped.\n")
 
-    def UpdateXml (self, p_xml):
-        p_xml.append(self.write_schedules_xml(self.m_house_obj.Schedules))
-        self.m_house_obj.LightingAPI.UpdateXml(p_xml)
-
 # ## END DBK

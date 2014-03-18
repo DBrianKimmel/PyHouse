@@ -183,8 +183,6 @@ class API(object):
         # House
         g_logger.info("Stopped.")
 
-    def _UpdateXml (self, p_xml):
-        pass
 
 if __name__ == "__main__":
     l_id = API()

@@ -101,6 +101,5 @@ class LightsElement(athena.LiveElement):
             l_obj.Responder = l_json['Responder']
             l_obj.ProductKey = l_json['ProductKey']
         self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Lights[l_light_ix] = l_obj
-        self.m_pyhouses_obj.API.UpdateXml()
 
 # ## END DBK

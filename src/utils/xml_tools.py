@@ -341,8 +341,6 @@ def open_config_file():
     return l_file_name
 
 def write_xml_file(p_xmltree, p_filename):
-    print p_xmltree
-    print "----------------"
     prettify(p_xmltree)
     l_tree = ET.ElementTree()
     l_tree._setroot(p_xmltree)

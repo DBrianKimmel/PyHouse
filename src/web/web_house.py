@@ -90,6 +90,5 @@ class HouseElement(athena.LiveElement):
         l_obj.Location.TimeZone = l_json['TimeZone']
         l_obj.Location.SavingsTime = l_json['SavingsTime']
         self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject = l_obj
-        self.m_pyhouses_obj.API.UpdateXml()
 
 # ## END DBK

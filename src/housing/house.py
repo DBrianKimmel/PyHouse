@@ -142,13 +142,4 @@ class API(HouseReadWriteConfig):
         p_xml.append(l_house_xml)
         g_logger.info("Stopped.")
 
-    def ZZZUpdateXml(self, p_xml):
-        l_xml = self.write_house_xml(self.m_house_obj)
-        l_xml.append(self.write_location_xml(self.m_house_obj.Location))
-        l_xml.append(self.write_rooms_xml(self.m_house_obj))
-        self.m_house_obj.ScheduleAPI.UpdateXml(l_xml)
-        # self.m_house_obj.InternetAPI.UpdateXml(l_xml)
-        g_logger.info('{0:} house has updated XML'.format(self.m_house_obj.Name))
-        p_xml.append(l_xml)
-
 # ##  END DBK
