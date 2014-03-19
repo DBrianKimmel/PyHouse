@@ -400,7 +400,6 @@ class Workspace(athena.LiveElement):
     def login(self, p_params):
         """ Place and display the login widget.
         """
-        p_params = self.m_pyhouses_obj
         g_logger.info("login called from browser")
         l_element = web_login.LoginElement(self)
         l_element.setFragmentParent(self)
@@ -471,6 +470,7 @@ class Workspace(athena.LiveElement):
             return reqtype, udata
 
         def eb_nomatch():
+            pass
 
         if self.uid and len(self.uid) == 32:
             l_defer = self.page.userstore.getUserWithUID(self.uid)
