@@ -102,13 +102,17 @@ class NodeServerProtocol(Protocol):
     def dataReceived(self, p_data):
         g_logger.debug('Server data rxed {0:}'.format(p_data))
 
+    def connectionMade(self):
+        g_logger.debug('Server connection Made')
+
     def connectionLost(self, p_reason):
         g_logger.debug('Server connection lost {0:}'.format(p_reason))
 
 
 class NodeServerFactory(Factory):
 
-    pass
+    def buildProtocol(self, p_addr):
+        return NodeServerProtocol()
 
 
 class NodeServer(object):
@@ -120,6 +124,7 @@ class NodeServer(object):
         l_factory.protocol = NodeServerProtocol
         l_service = StreamServerEndpointService(l_endpoint, l_factory)
         l_service.setServiceParent(l_application)
+        l_endpoint.listen(NodeServerFactory())
         g_logger.info("Server started.")
 
 
