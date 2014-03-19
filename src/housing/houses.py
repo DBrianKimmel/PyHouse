@@ -157,14 +157,12 @@ class API(LoadSaveAPI):
         l_houses_xml = ET.Element('Houses')
         for l_house in self.m_houses_data.itervalues():
             try:
-                l_xml = l_house.HouseAPI.Stop(l_houses_xml, l_house.HouseObject)
+                l_house.HouseAPI.Stop(l_houses_xml, l_house.HouseObject)
             except AttributeError:  # New house being added has no existing API
-                l_xml = house.API().Stop(l_houses_xml, l_house.HouseObject)
-            # l_houses_xml.append(l_xml)  # append to the xml tree
+                house.API().Stop(l_houses_xml, l_house.HouseObject)
         g_logger.info("XML appended.")
         p_xml.append(l_houses_xml)
         g_logger.info("Stopped.")
-        # return p_xml
 
     def get_houses_obj(self):
         return self.m_houses_data

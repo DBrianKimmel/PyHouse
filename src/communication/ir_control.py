@@ -36,32 +36,37 @@ g_pandora = None
 
 LIRC_SOCKET = 'unix:path=/var/run/lirc/lircd'
 
+# KeyName, ModuleName, Action
 IR_KEYS = [
-           ('KEY_BD', 'pandora', 'stop'),
-           ('KEY_DVD', 'pandora', 'stop'),
-           ('KEY_DVR', 'pandora', 'start'),
-           ('KEY_HDMI', 'pandora', 'stop'),
-           ('KEY_TV', 'pandora', 'stop'),
-           ('KEY_CD', 'pandora', 'stop'),
+           ('KEY_BD'        , 'pandora', 'stop'),
+           ('KEY_DVD'       , 'pandora', 'stop'),
+           ('KEY_DVR'       , 'pandora', 'start'),
+           ('KEY_HDMI'      , 'pandora', 'stop'),
+           ('KEY_TV'        , 'pandora', 'stop'),
+           ('KEY_CD'        , 'pandora', 'stop'),
 
-           ('KEY_VOLUMEUP', 'pandora', 'volup'),
+           ('KEY_VOLUMEUP'  , 'pandora', 'volup'),
            ('KEY_VOLUMEDOWN', 'pandora', 'voldown'),
-           ('KEY_MUTE', 'pandora', 'mute'),
+           ('KEY_MUTE'      , 'pandora', 'mute'),
            ]
 
 class LircProtocol(Protocol):
-    """We get one line of data here (lots of repeats)
+    """Protocol for listening to the lirc socket.
+
+    We get one line of data here (lots of repeats) for every key pressed on the remote.
+
+    KeyCode_________ Rp KeyName_______ Remote_________
+    00000000a55ad02f 00 KEY_VOLUMEDOWN pioneer-AXD7595
     """
 
     def dataReceived(self, p_data):
         l_data = p_data.rstrip('\r\n')
-        IrDispatch(l_data)
+        (l_keycode, l_repeatcnt, l_keyname, l_remote) = l_data.split()
+        if l_repeatcnt == '00':
+            IrDispatch(l_keycode, l_keyname, l_remote)
 
 
 class LircFactory(Factory):
-
-    def startedConnecting(self, p_connector):
-        pass
 
     def buildProtocol(self, addr):
         # "LircFactory - connected"
@@ -87,22 +92,25 @@ class LircConnection(object):
 class IrDispatch(object):
     """
     """
-    def __init__(self, p_data):
-        (_l_keycode, l_repeatcnt, l_keyname, _l_remote) = p_data.split()
-        if l_repeatcnt == '00':
-            if g_debug >= 1:
-                g_logger.debug("Received {0:}".format(p_data))
-            for tpl in IR_KEYS:
-                if l_keyname == tpl[0]:
-                    if tpl[1] == 'pandora':
-                        self.pandora_ctl(p_data, tpl)
-                    pass
 
-    def pandora_ctl(self, p_data, p_tpl):
-        (_l_keyname, _l_pandora, l_command) = p_tpl
-        if l_command == 'start':
+    def __init__(self, p_keycode, p_keyname, p_remote):
+        """
+        KeyCode_________ KeyName_______ Remote_________
+        00000000a55ad02f KEY_VOLUMEDOWN pioneer-AXD7595
+        """
+        if g_debug >= 1:
+            g_logger.debug("Received {0:} from {1:}".format(p_keycode, p_remote))
+        for l_dispatch in IR_KEYS:
+            (l_keyname, l_module, l_command) = l_dispatch
+            if p_keyname == l_keyname:
+                if l_module == 'pandora':
+                    self.pandora_ctl(l_command)
+                pass
+
+    def pandora_ctl(self, p_command):
+        if p_command == 'start':
             g_pandora.Start(None)
-        elif l_command == 'stop':
+        elif p_command == 'stop':
             g_pandora.Stop()
 
 

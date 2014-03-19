@@ -70,6 +70,9 @@ class NodeClientProtocol(Protocol):
         # IrDispatch(p_data)
         pass
 
+    def connectionMade(self):
+        g_logger.debug('Client connection made.')
+
 
 class NodeClientFactory(Factory):
 
@@ -95,6 +98,16 @@ class NodeClient(object):
 
 
 class NodeServerProtocol(Protocol):
+
+    def dataReceived(self, p_data):
+        g_logger.debug('Server data rxed {0:}'.format(p_data))
+
+    def connectionLost(self, p_reason):
+        g_logger.debug('Server connection lost {0:}'.format(p_reason))
+
+
+class NodeServerFactory(Factory):
+
     pass
 
 

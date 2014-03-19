@@ -13,7 +13,6 @@ import xml.etree.ElementTree as ET
 
 # Import PyHouse files
 from src.lights import lighting_core
-from src.utils import xml_tools
 
 
 g_debug = 0

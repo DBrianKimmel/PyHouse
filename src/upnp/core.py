@@ -1,31 +1,14 @@
 #!/usr/bin/env python
 
 """
-# Licensed under the MIT license
-# http://opensource.org/licenses/mit-license.php
-# Copyright 2005, Tim Potter <tpot@samba.org>
-# Copyright 2006 John-Mark Gurney <jmg@funkthat.com>
-
-0.  Addressing - Obtain IP address (already done before UPnP starting)
-1.  Discovery - Using SSDP to advertise and discover other UPnP thingies.
-2.  Description - XML queries back and forth to provide details of UPnP workings.
-3.  Control - A UPnP control point controls UPnP devices.
-4.  Eventing - How a device gets notified about happenings in the UPnP network.
-5.  Presentation - How to retrieve content from a UPnP device.
-
-DBK Notes:
-
-1. requires directory 'media' in this source directory.
 """
 
-from upnp import __version__
 import os.path
 import socket
 import sys
 from twisted.python import log
 from twisted.internet import reactor
 from twisted.web import server, resource, static
-import configure
 import debug  # my debugging module
 from uuid_x import UUID
 from FSStorage import FSDirectory

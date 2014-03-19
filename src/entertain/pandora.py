@@ -27,7 +27,6 @@ import logging
 
 from twisted.internet import protocol
 from twisted.internet import reactor
-# from twisted.internet.defer import Deferred
 
 
 g_debug = 0
