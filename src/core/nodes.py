@@ -15,7 +15,7 @@ Created on Mar 6, 2014
 import logging
 
 from twisted.internet import reactor
-from twisted.internet.protocol import Factory, Protocol
+from twisted.internet.protocol import Factory
 from twisted.internet.endpoints import clientFromString, serverFromString
 from twisted.application.service import Application
 from twisted.application.internet import StreamServerEndpointService
@@ -33,29 +33,26 @@ class NodeUnavailable(Exception):
     pass
 
 
-class RegisterNode(Command):
+class RegisterCommand(Command):
     """
     """
-    arguments = [('NodeName', Unicode()),
+    arguments = [('Command', Integer()),
+                 ('NodeName', Unicode()),
+                 ('NodeType', Integer()),
+                 ('IPv4', String()),
                  ('IPv6', String())
                  ]
-    response = [('total', Integer())]
+    response = [('Ack', Integer())]
 
 
-class Sum(Command):
-    """
-    """
-    arguments = [('a', Integer()),
-                 ('b', Integer())
-                 ]
-    response = [('total', Integer())]
+class RegisterNode(AMP):
 
+    def register(self, p_name, p_type, p_v4, p_v6):
+        l_ack = 1
+        return {'Ack': l_ack}
 
-class JustSum(AMP):
-    def sum(self, a, b):
-        total = a + b
-        return {'total': total}
-    Sum.responder(sum)
+    RegisterCommand.responder(register)
+
 
 class Divide(Command):
     arguments = [('numerator', Integer()),
@@ -64,7 +61,7 @@ class Divide(Command):
     errors = {ZeroDivisionError: 'ZERO_DIVISION'}
 
 
-class NodeClientProtocol(Protocol):
+class NodeClientProtocol(AMP):
 
     def dataReceived(self, p_data):
         # IrDispatch(p_data)
@@ -95,9 +92,10 @@ class NodeClient(object):
         l_endpoint = clientFromString(reactor, NODE_CLIENT)
         l_factory = NodeClientFactory()
         l_endpoint.connect(l_factory)
+        g_logger.info("Client started.")
 
 
-class NodeServerProtocol(Protocol):
+class NodeServerProtocol(AMP):
 
     def dataReceived(self, p_data):
         g_logger.debug('Server data rxed {0:}'.format(p_data))
@@ -120,8 +118,8 @@ class NodeServer(object):
     def server(self):
         l_application = Application('NodeCommunicationService')
         l_endpoint = serverFromString(reactor, NODE_SERVER)
-        l_factory = Factory()
-        l_factory.protocol = NodeServerProtocol
+        l_factory = NodeServerFactory()
+        # l_factory.protocol = NodeServerProtocol
         l_service = StreamServerEndpointService(l_endpoint, l_factory)
         l_service.setServiceParent(l_application)
         l_endpoint.listen(NodeServerFactory())
@@ -134,7 +132,12 @@ class Utility(object):
         _l_server = NodeServer().server()
 
     def StartClient(self, _p_pyhouses_obj):
-        _l_client = NodeClient().connect()
+        def eb_err():
+            pass
+        def cb_ok():
+            pass
+        l_defer = NodeClient().connect()
+        l_defer.addErrback(eb_err, "Connection failed.")
 
 
 class API(Utility):

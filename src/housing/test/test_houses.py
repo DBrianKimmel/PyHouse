@@ -11,7 +11,6 @@ from housing import houses
 
 class Test(unittest.TestCase):
 
-
     def setUp(self):
         self.api = houses.API()
 
@@ -25,4 +24,4 @@ class Test(unittest.TestCase):
     def test_start(self):
         self.api.Start()
 
-### END
+# ## END

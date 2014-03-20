@@ -1,4 +1,6 @@
 '''
+
+@Name: src/housing/test/test_location.py
 Created on Apr 10, 2013
 
 @author: briank
@@ -6,7 +8,7 @@ Created on Apr 10, 2013
 
 from twisted.trial import unittest
 
-from housing import location
+from src.housing import location
 
 
 class Test(unittest.TestCase):
@@ -20,4 +22,4 @@ class Test(unittest.TestCase):
     def testName(self):
         pass
 
-### END
+# ## END

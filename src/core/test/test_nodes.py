@@ -1,10 +1,10 @@
 '''
-Created on Mar 2, 2014
+Created on Mar 20, 2014
 
 @author: briank
 '''
 
-from src.core import setup
+from src.core import nodes
 from PyHouse import PyHouseData
 
 from twisted.trial import unittest
@@ -13,7 +13,7 @@ from twisted.trial import unittest
 class Test(unittest.TestCase):
 
     def setUp(self):
-        m_api = setup.API()
+        m_api = nodes.API()
         m_pyhouse_obj = PyHouseData()
         m_api.Start(m_pyhouse_obj)
 

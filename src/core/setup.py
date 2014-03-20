@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-setup.py
+@name: src/core/setup.py
 
 Created on Mar 1, 2014
 
