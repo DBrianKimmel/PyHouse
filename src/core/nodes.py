@@ -90,8 +90,10 @@ class NodeClient(object):
 
     def connect(self):
         l_endpoint = clientFromString(reactor, NODE_CLIENT)
+        print('Endpoint:', l_endpoint)
         l_factory = NodeClientFactory()
         l_endpoint.connect(l_factory)
+        print("Client started.")
         g_logger.info("Client started.")
 
 
@@ -139,6 +141,10 @@ class Utility(object):
         l_defer = NodeClient().connect()
         l_defer.addErrback(eb_err, "Connection failed.")
 
+    def print_interfaces(self, p_pyhouses_obj):
+        for l_interface in p_pyhouses_obj.Nodes.itervalues():
+            g_logger.debug('Client Node Interface {0:} {1:} {2:}'.format(l_interface.Name, l_interface.V4Address, l_interface.V6Address))
+
 
 class API(Utility):
 
@@ -146,8 +152,7 @@ class API(Utility):
         g_logger.info("Initialized.")
 
     def Start(self, p_pyhouses_obj):
-        for l_interface in p_pyhouses_obj.Nodes.itervalues():
-            g_logger.debug('Client Node Interface {0:} {1:} {2:}'.format(l_interface.Name, l_interface.V4Address, l_interface.V6Address))
+        self.print_interfaces(p_pyhouses_obj)
         self.StartServer(p_pyhouses_obj)
         self.StartClient(p_pyhouses_obj)
         g_logger.info("Started.")

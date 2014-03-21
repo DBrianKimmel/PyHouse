@@ -56,12 +56,13 @@ class Test(unittest.TestCase):
     def test_011_sunrise(self):
         self.api.Start(self.house_obj, self.now)
         result = self.api.get_sunrise()
-        print('result {0:}  {1:}'.format(result, self.sunrise))
+        print('  Sunrise: {0:}  {1:}'.format(result, self.sunrise))
         self.assertEqual(result, self.sunrise)
 
     def test_022_sunset(self):
         self.api.Start(self.house_obj, self.now)
         result = self.api.get_sunset()
+        print('   Sunset: {0:}  {1:}'.format(result, self.sunset))
         self.assertEqual(result, self.sunset)
 
 # ## END

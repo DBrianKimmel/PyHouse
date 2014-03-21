@@ -1,11 +1,11 @@
-'''
+"""
 Created on Mar 2, 2014
 
 @author: briank
-'''
+"""
 
 from src.core import setup
-from PyHouse import PyHouseData
+from src.core.pyhouse_data import PyHouseData
 
 from twisted.trial import unittest
 
