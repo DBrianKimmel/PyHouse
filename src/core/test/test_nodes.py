@@ -21,7 +21,7 @@ class Test(unittest.TestCase):
         print("tearDown")
         pass
 
-    def test_001_Init(self):
+    def Xtest_001_Init(self):
         print("Test 001")
         l_api = nodes.API()
         self.assertIsNotNone(l_api)
@@ -32,10 +32,14 @@ class Test(unittest.TestCase):
         l_pyhouse_obj = PyHouseData()
         l_api.StartServer(l_pyhouse_obj)
 
-    def test_003_StartClient(self):
+    def Xtest_003_StartClient(self):
         print("Test 003")
         l_api = nodes.API()
         l_pyhouse_obj = PyHouseData()
         l_api.StartClient(l_pyhouse_obj)
 
-# ## END DBK
+
+# if __name__ == '__main__':
+#    unittest.main(verbosity = 2)
+
+    # ## END DBK

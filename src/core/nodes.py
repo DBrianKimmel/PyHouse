@@ -90,11 +90,12 @@ class NodeClient(object):
 
     def connect(self):
         l_endpoint = clientFromString(reactor, NODE_CLIENT)
-        print('Endpoint:', l_endpoint)
+        print('Nodes.Endpoint:', l_endpoint)
         l_factory = NodeClientFactory()
-        l_endpoint.connect(l_factory)
-        print("Client started.")
+        l_defer = l_endpoint.connect(l_factory)
+        print("Client started.", l_defer)
         g_logger.info("Client started.")
+        return l_defer
 
 
 class NodeServerProtocol(AMP):
@@ -124,8 +125,9 @@ class NodeServer(object):
         # l_factory.protocol = NodeServerProtocol
         l_service = StreamServerEndpointService(l_endpoint, l_factory)
         l_service.setServiceParent(l_application)
-        l_endpoint.listen(NodeServerFactory())
+        l_ret = l_endpoint.listen(NodeServerFactory())
         g_logger.info("Server started.")
+        return l_ret
 
 
 class Utility(object):
