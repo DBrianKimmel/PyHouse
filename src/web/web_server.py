@@ -27,6 +27,7 @@ from nevow import appserver
 import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
+from 
 from src.web import web_utils
 from src.web import web_mainpage
 from src.utils import xml_tools
@@ -37,6 +38,8 @@ templatepath = os.path.join(webpath, 'template')
 imagepath = os.path.join(webpath, 'images')
 jspath = os.path.join(webpath, 'js')
 
+
+ENDPOINT_WEB_SERVER = 'tcp:port=8580'
 
 g_debug = 0
 # 0 = off
@@ -134,7 +137,6 @@ class API(WebUtility, ClientConnections):
     def Stop(self, p_xml):
         p_xml.append(self.write_web_xml(self.web_data))
         g_logger.info("XML appended.")
-        # return p_xml
 
     def Update(self, p_entry):
         l_obj = WebData()
