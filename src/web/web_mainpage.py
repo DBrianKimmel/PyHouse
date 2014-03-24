@@ -115,7 +115,7 @@ class TheRoot(rend.Page):
     """This is the root - given to the app server!
     """
 
-    def __init__(self, p_name, staticpath, p_pyhouses_obj, *args, **kw):
+    def __init__(self, staticpath, p_pyhouses_obj, *args, **kw):
         self.m_pyhouses_obj = p_pyhouses_obj
         if staticpath == None:
             l_jspath = util.sibpath(jspath, 'js')
@@ -146,7 +146,7 @@ class mainPageFactory:
         """
         self.Clients = {}
         l_siteJSPackage = athena.AutoJSPackage(jspath)
-        l_siteCSSPackage = athena.AutoCSSPackage(csspath)
+        _l_siteCSSPackage = athena.AutoCSSPackage(csspath)
         athena.jsDeps.mapping.update(l_siteJSPackage.mapping)
 
     def addClient(self, client):
@@ -266,13 +266,13 @@ class MainPage(athena.LivePage):
         self.m_pyhouses_obj = p_pyhouses_obj
         super(MainPage, self).__init__()
 
-    def child_jsmodule(self, ctx):
+    def child_jsmodule(self, _ctx):
         return MappingCompressedResource(self.jsModules.mapping)
 
-    def data_title(self, ctx, data):
+    def data_title(self, _ctx, _data):
         return self.pageTitle
 
-    def beforeRender(self, ctx):
+    def beforeRender(self, _ctx):
         """If you need a place where to keep things during the livePage being up, please do it here and only here.
         Storing states someplace deeper in the hierarchy makes it extremely difficult to release memory properly due to circular object references.
         """
@@ -284,7 +284,7 @@ class MainPage(athena.LivePage):
         l_defer = self.notifyOnDisconnect()
         l_defer.addErrback(self.eb_disconnect)
 
-    def render_workspace(self, ctx, data):
+    def render_workspace(self, ctx, _data):
         f = Workspace(self.m_pyhouses_obj, self.uid)
         f.setFragmentParent(self)
         return ctx.tag[f]
@@ -342,7 +342,7 @@ class Workspace(athena.LiveElement):
         return l_element
 
     @athena.expose
-    def clock(self, p_params):
+    def clock(self, _p_params):
         g_logger.info("clock called")
         l_element = web_clock.ClockElement()
         l_element.setFragmentParent(self)
@@ -363,21 +363,21 @@ class Workspace(athena.LiveElement):
         return l_element
 
     @athena.expose
-    def house(self, p_params):
+    def house(self, _p_params):
         g_logger.info("house called from browser")
         l_element = web_house.HouseElement(self)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
-    def houseMenu(self, p_params):
+    def houseMenu(self, _p_params):
         g_logger.info("houseMenu called from browser")
         l_element = web_houseMenu.HouseMenuElement(self)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
-    def houseSelect(self, p_params):
+    def houseSelect(self, _p_params):
         g_logger.info("houseSelect called from browser")
         l_element = web_houseSelect.HouseSelectElement(self)
         l_element.setFragmentParent(self)
@@ -397,7 +397,7 @@ class Workspace(athena.LiveElement):
         return l_element
 
     @athena.expose
-    def login(self, p_params):
+    def login(self, _p_params):
         """ Place and display the login widget.
         """
         g_logger.info("login called from browser")
@@ -419,7 +419,7 @@ class Workspace(athena.LiveElement):
         return l_element
 
     @athena.expose
-    def rootMenu(self, p_params):
+    def rootMenu(self, _p_params):
         g_logger.info("rootMenu called")
         l_element = web_rootMenu.RootMenuElement(self)
         l_element.setFragmentParent(self)
@@ -457,7 +457,7 @@ class Workspace(athena.LiveElement):
                         udata[uc(k)] = p_user[k]
             return reqtype, udata
 
-        def cb_rootmatch(res):  # select usually returns a list, knowing that we have unique results
+        def cb_rootmatch(_res):  # select usually returns a list, knowing that we have unique results
             reqtype = REQ_ROOT  # the result is unpacked already and a single item returned
             udata = {}
             user = {}
