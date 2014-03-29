@@ -139,10 +139,10 @@ class MulticastDiscoveryServerProtocol(DatagramProtocol):
         self.transport.joinGroup(PYHOUSE_MULTICAST)
 
     def datagramReceived(self, p_datagram, p_address):
-        _l_msg = "Datagram {0:} received from {1:}".format(repr(p_datagram), repr(p_address))
+        l_msg = "Server Datagram {0:} received from {1:}".format(repr(p_datagram), repr(p_address))
+        g_logger.info(l_msg)
         if p_datagram == "Client: Ping":
-            # Rather than replying to the group multicast address, we send the
-            # reply directly (unicast) to the originating port:
+            # Rather than replying to the group multicast address, we send the reply directly (unicast) to the originating port:
             self.transport.write("Server: Pong", p_address)
 
 
@@ -154,24 +154,19 @@ class MulticastDiscoveryClientProtocol(DatagramProtocol):
         self.transport.write('Client: Ping', (PYHOUSE_MULTICAST, PYHOUSE_PORT))
 
     def datagramReceived(self, datagram, address):
-        _l_msg = "Datagram {0:} received from {1:}".format(repr(datagram), repr(address))
+        l_msg = "Client Datagram {0:} received from {1:}".format(repr(datagram), repr(address))
+        g_logger.info(l_msg)
 
 
 class Utility(object):
 
     def StartServer(self, p_pyhouses_obj):
         # _l_server = NodeServer().server(p_pyhouses_obj)
-
-        # We use listenMultiple=True so that we can run MulticastServer.py and
-        # MulticastClient.py on same machine:
+        # We use listenMultiple=True so that we can run MulticastServer.py and MulticastClient.py on same machine:
         p_pyhouses_obj.Reactor.listenMulticast(PYHOUSE_PORT, MulticastDiscoveryServerProtocol(), listenMultiple = True)
 
     def StartClient(self, p_pyhouses_obj):
         p_pyhouses_obj.Reactor.listenMulticast(PYHOUSE_PORT, MulticastDiscoveryClientProtocol(), listenMultiple = True)
-
-    def print_interfaces(self, p_pyhouses_obj):
-        for l_interface in p_pyhouses_obj.Nodes.itervalues():
-            g_logger.debug('Client Node Interface {0:} {1:} {2:}'.format(l_interface.Name, l_interface.V4Address, l_interface.V6Address))
 
 
 class API(Utility):
@@ -180,7 +175,6 @@ class API(Utility):
         g_logger.info("Initialized.")
 
     def Start(self, p_pyhouses_obj):
-        # self.print_interfaces(p_pyhouses_obj)
         self.StartServer(p_pyhouses_obj)
         self.StartClient(p_pyhouses_obj)
         g_logger.info("Started.")
