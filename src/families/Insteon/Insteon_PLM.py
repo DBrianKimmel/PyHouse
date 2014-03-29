@@ -890,7 +890,7 @@ class InsteonAllLinks(InsteonPlmCommands):
         """
         l_debug_msg = "Resetting PLM - Name:{0:}".format(self.m_controller_obj)
         self.queue_67_command()
-        g_logger.info("Reset PLM")
+        g_logger.info(l_debug_msg)
 
 
 class InsteonPlmAPI(InsteonAllLinks):

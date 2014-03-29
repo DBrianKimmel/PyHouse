@@ -291,11 +291,9 @@ class FindExternalIpAddress(object):
     def get_public_ip(self):
         """Get the public IP address for the house.
         """
-        l_delay = self.m_house_obj.Internet.ExternalDelay
-        if l_delay < 600:
-            l_delay = 600
-            self.m_house_obj.Internet.ExternalDelay = l_delay
-        callLater(l_delay, self.get_public_ip)
+        if self.m_house_obj.Internet.ExternalDelay < 600:
+            self.m_house_obj.Internet.ExternalDelay = 600
+        callLater(self.m_house_obj.Internet.ExternalDelay, self.get_public_ip)
         self.m_url = self.m_house_obj.Internet.ExternalUrl
         if self.m_url == None:
             g_logger.error("URL is missing for House:{0:}".format(self.m_house_obj.Name))
@@ -317,12 +315,10 @@ class FindExternalIpAddress(object):
         self.m_house_obj.Internet.ExternalIPv4 = l_quad
         l_addr = convert.ConvertEthernet().dotted_quad2long(l_quad)
         g_logger.info("Got External IP page for House:{0:}, Page:{1:}".format(self.m_house_obj.Name, p_ip_page))
-        # callLater(self.m_house_obj.Internet.ExternalDelay, self.get_public_ip)
         return l_addr
 
     def eb_no_page(self, p_reason):
         g_logger.error("Failed to Get External IP page for House:{0:}, {1:}".format(self.m_house_obj.Name, p_reason))
-        # callLater(self.m_house_obj.Internet.ExternalDelay, self.get_public_ip)
 
 
 class DynDnsAPI(object):

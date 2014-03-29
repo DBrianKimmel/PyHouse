@@ -2,29 +2,31 @@
 
 """ PyHouse.py - Run the python version house automation.
 
+PyHouse/Pyhouse.py
+
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 
 @Copyright (c) 2010-2014 by D. Brian Kimmel
 
 @license: MIT License
-            Permission is hereby granted, free of charge, to any person obtaining a copy
-            of this software and associated documentation files (the "Software"), to deal
-            in the Software without restriction, including without limitation the rights
-            to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-            copies of the Software, and to permit persons to whom the Software is
-            furnished to do so, subject to the following conditions:
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
 
-            The above copyright notice and this permission notice shall be included in
-            all copies or substantial portions of the Software.
+    The above copyright notice and this permission notice shall be included in
+    all copies or substantial portions of the Software.
 
-            THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-            IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-            FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-            AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-            LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-            OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-            THE SOFTWARE.
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+    THE SOFTWARE.
 
 
 Uses I{Epytext} mark-up for documentation.
@@ -35,7 +37,7 @@ During development this is run by hand.
 It is, however, planned to be a daemon that is kicked off on system start-up.
 It is intended to run on everything from a small, low power bare bones system to a server running multiple
  houses in several, widespread locations.
-It now runs on Raspberry Pi so that is the primary target.
+It now (2013) runs on Raspberry Pi so that is the primary target.
 
 
 The system is controlled via a browser connecting to a web server that will be integrated into PyHouse.
@@ -61,6 +63,7 @@ import os
 import platform
 import signal
 from twisted.internet import reactor
+from twisted.application.service import Application
 import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
@@ -69,7 +72,7 @@ from src.utils import log
 from src.utils import xml_tools
 from src.housing import houses
 from src.web import web_server
-from src.remote import local_master
+# from src.remote import local_master
 
 
 g_debug = 0
@@ -94,6 +97,7 @@ class PyHouseData(object):
     def __init__(self):
         """PyHouse.
         """
+        self.Application = None
         self.API = None
         self.CoreAPI = None
         self.HousesAPI = None
@@ -212,6 +216,7 @@ class API(Utilities):
         """
         self.m_pyhouses_obj = PyHouseData()
         self.m_pyhouses_obj.Reactor = reactor
+        self.m_pyhouses_obj.Application = application = Application('PyHouse')
         self.m_pyhouses_obj.API = self
         global g_API
         g_API = self

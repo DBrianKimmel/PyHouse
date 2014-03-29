@@ -26,7 +26,6 @@ this module goes back to its initial state ready for another session.
 import logging
 
 from twisted.internet import protocol
-from twisted.internet import reactor
 
 
 g_debug = 0
@@ -85,7 +84,7 @@ class API(object):
         self.m_transport = None
         g_logger.info("Initialized.")
 
-    def Start(self, _p_pyhouses_obj):
+    def Start(self, p_pyhouses_obj):
         """Start the Pandora player when we receive an IR signal to play music.
         This will open the socket for control
         """
@@ -95,7 +94,7 @@ class API(object):
             l_executable = '/usr/bin/pianobar'
             l_args = ('pianobar',)
             l_env = None  # this will pass <os.environ>
-            self.m_transport = reactor.spawnProcess(self.m_processProtocol, l_executable, l_args, l_env)
+            self.m_transport = p_pyhouses_obj.Reactor.spawnProcess(self.m_processProtocol, l_executable, l_args, l_env)
             g_logger.info("Started.")
 
     def Stop(self):

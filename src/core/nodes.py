@@ -1,5 +1,5 @@
 """
-nodes.py
+PyHouse/src/core/nodes.py
 
 Created on Mar 6, 2014
 
@@ -7,17 +7,15 @@ Created on Mar 6, 2014
 
 @copyright: 2014 by D. Brian Kimmel
 
-@summary: This module if for inter_node communication.
+@summary: This module is for inter_node communication.
 """
-
 
 # Import system type stuff
 import logging
 
-from twisted.internet import reactor
-from twisted.internet.protocol import Factory
+# from twisted.internet import reactor
+from twisted.internet.protocol import DatagramProtocol, Factory
 from twisted.internet.endpoints import clientFromString, serverFromString
-from twisted.application.service import Application
 from twisted.application.internet import StreamServerEndpointService
 from twisted.protocols.amp import AMP, Integer, Float, String, Unicode, Command
 
@@ -27,6 +25,8 @@ g_logger = logging.getLogger('PyHouse.Nodes       ')
 
 NODE_CLIENT = 'tcp:host=192.168.1.36:port=8581'
 NODE_SERVER = 'tcp:port=8581'
+PYHOUSE_MULTICAST = '234.35.36.37'
+PYHOUSE_PORT = 8581
 
 
 class NodeUnavailable(Exception):
@@ -47,7 +47,7 @@ class RegisterCommand(Command):
 
 class RegisterNode(AMP):
 
-    def register(self, p_name, p_type, p_v4, p_v6):
+    def register(self, _p_name, _p_type, _p_v4, _p_v6):
         l_ack = 1
         return {'Ack': l_ack}
 
@@ -88,8 +88,8 @@ class NodeClientFactory(Factory):
 
 class NodeClient(object):
 
-    def connect(self):
-        l_endpoint = clientFromString(reactor, NODE_CLIENT)
+    def connect(self, p_pyhouses_obj):
+        l_endpoint = clientFromString(p_pyhouses_obj.Reactor, NODE_CLIENT)
         print('Nodes.Endpoint:', l_endpoint)
         l_factory = NodeClientFactory()
         l_defer = l_endpoint.connect(l_factory)
@@ -112,36 +112,62 @@ class NodeServerProtocol(AMP):
 
 class NodeServerFactory(Factory):
 
-    def buildProtocol(self, p_addr):
+    def buildProtocol(self, _p_addr):
         return NodeServerProtocol()
 
 
 class NodeServer(object):
 
-    def server(self):
-        l_application = Application('NodeCommunicationService')
-        l_endpoint = serverFromString(reactor, NODE_SERVER)
+    def server(self, p_pyhouses_obj):
+        l_endpoint = serverFromString(p_pyhouses_obj.Reactor, NODE_SERVER)
         l_factory = NodeServerFactory()
         # l_factory.protocol = NodeServerProtocol
         l_service = StreamServerEndpointService(l_endpoint, l_factory)
-        l_service.setServiceParent(l_application)
+        l_service.setServiceParent(p_pyhouses_obj.Application)
         l_ret = l_endpoint.listen(NodeServerFactory())
         g_logger.info("Server started.")
         return l_ret
 
 
+class MulticastDiscoveryServerProtocol(DatagramProtocol):
+
+    def startProtocol(self):
+        """
+        Called after protocol has started listening.
+        """
+        self.transport.setTTL(2)
+        self.transport.joinGroup(PYHOUSE_MULTICAST)
+
+    def datagramReceived(self, p_datagram, p_address):
+        _l_msg = "Datagram {0:} received from {1:}".format(repr(p_datagram), repr(p_address))
+        if p_datagram == "Client: Ping":
+            # Rather than replying to the group multicast address, we send the
+            # reply directly (unicast) to the originating port:
+            self.transport.write("Server: Pong", p_address)
+
+
+class MulticastDiscoveryClientProtocol(DatagramProtocol):
+
+    def startProtocol(self):
+        self.transport.joinGroup(PYHOUSE_MULTICAST)
+        # all listeners on the multicast address (including us) will receive this message.
+        self.transport.write('Client: Ping', (PYHOUSE_MULTICAST, PYHOUSE_PORT))
+
+    def datagramReceived(self, datagram, address):
+        _l_msg = "Datagram {0:} received from {1:}".format(repr(datagram), repr(address))
+
+
 class Utility(object):
 
-    def StartServer(self, _p_pyhouses_obj):
-        _l_server = NodeServer().server()
+    def StartServer(self, p_pyhouses_obj):
+        # _l_server = NodeServer().server(p_pyhouses_obj)
 
-    def StartClient(self, _p_pyhouses_obj):
-        def eb_err():
-            pass
-        def cb_ok():
-            pass
-        l_defer = NodeClient().connect()
-        l_defer.addErrback(eb_err, "Connection failed.")
+        # We use listenMultiple=True so that we can run MulticastServer.py and
+        # MulticastClient.py on same machine:
+        p_pyhouses_obj.Reactor.listenMulticast(PYHOUSE_PORT, MulticastDiscoveryServerProtocol(), listenMultiple = True)
+
+    def StartClient(self, p_pyhouses_obj):
+        p_pyhouses_obj.Reactor.listenMulticast(PYHOUSE_PORT, MulticastDiscoveryClientProtocol(), listenMultiple = True)
 
     def print_interfaces(self, p_pyhouses_obj):
         for l_interface in p_pyhouses_obj.Nodes.itervalues():
@@ -154,7 +180,7 @@ class API(Utility):
         g_logger.info("Initialized.")
 
     def Start(self, p_pyhouses_obj):
-        self.print_interfaces(p_pyhouses_obj)
+        # self.print_interfaces(p_pyhouses_obj)
         self.StartServer(p_pyhouses_obj)
         self.StartClient(p_pyhouses_obj)
         g_logger.info("Started.")

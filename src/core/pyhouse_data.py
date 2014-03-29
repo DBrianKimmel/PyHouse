@@ -1,9 +1,17 @@
 """
+PyHouse/src/core/pyhouse_data.py
+
 Created on Mar 20, 2014
 
 @author: briank
+
+@copyright: 2014 by D. Brian Kimmel
+
+@summary: This module is used to test a single module.
 """
 
+from twisted.application.service import Application
+from twisted.internet import reactor
 
 
 class PyHouseData(object):
@@ -13,6 +21,9 @@ class PyHouseData(object):
     def __init__(self):
         """PyHouse.
         """
+        self.Application = Application('PyHouse')
+        self.Reactor = reactor
+        #
         self.API = None
         self.CoreAPI = None
         self.HousesAPI = None
@@ -24,7 +35,6 @@ class PyHouseData(object):
         self.HousesData = None
         self.XmlRoot = None
         self.XmlFileName = ''
-        self.Reactor = None
         self.Nodes = None
 
     def __str__(self):

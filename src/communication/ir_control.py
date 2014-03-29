@@ -7,7 +7,7 @@ Created on Jan 26, 2014
 
 @copyright: 2014 by D. Brian Kimmel
 
-@summary: Lirc connection.
+@summary: Provides PyHouse IR service via a Lirc connection.
 
 Allow various IR receivers to collect signals from various IR remotes.
 
@@ -20,8 +20,6 @@ Connect to the PyHouse node cluster port and pass all the IR codes on.
 import logging
 
 from twisted.application.internet import StreamServerEndpointService
-from twisted.application.service import Application
-from twisted.internet import reactor
 from twisted.internet.protocol import Factory, Protocol
 from twisted.internet.endpoints import TCP4ServerEndpoint, clientFromString
 from twisted.protocols.amp import AMP
@@ -68,21 +66,21 @@ class LircProtocol(Protocol):
 
 class LircFactory(Factory):
 
-    def buildProtocol(self, addr):
+    def buildProtocol(self, _addr):
         # "LircFactory - connected"
         return LircProtocol()
 
-    def clientConnectionLost(self, connector, p_reason):
+    def clientConnectionLost(self, _connector, p_reason):
         g_logger.error('LircFactory - lost connection {0:}'.format(p_reason))
 
-    def clientConnectionFailed(self, connector, p_reason):
+    def clientConnectionFailed(self, _connector, p_reason):
         g_logger.error('LircFactory - Connection failed {0:}'.format(p_reason))
 
 
 class LircConnection(object):
 
-    def __init__(self):
-        l_endpoint = clientFromString(reactor, LIRC_SOCKET)
+    def __init__(self, p_pyhouses_obj):
+        l_endpoint = clientFromString(p_pyhouses_obj.Reactor, LIRC_SOCKET)
         l_factory = LircFactory()
         l_endpoint.connect(l_factory)
         if g_debug >= 1:
@@ -121,15 +119,14 @@ class API(object):
         """
         global g_pandora
         g_pandora = pandora.API()
-        _x = LircConnection()
 
-    def Start(self, _p_pyhouses_obj):
-        l_application = Application('IR Control Server')
+    def Start(self, p_pyhouses_obj):
+        _x = LircConnection(p_pyhouses_obj)
         l_endpoint = TCP4ServerEndpoint
         l_factory = Factory()
         l_factory.protocol = AMP
         l_service = StreamServerEndpointService(l_endpoint, l_factory)
-        l_service.setServiceParent(l_application)
+        l_service.setServiceParent(p_pyhouses_obj.Application)
 
     def Stop(self):
         pass

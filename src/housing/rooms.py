@@ -8,7 +8,6 @@ Handle the rooms information for a house.
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
-import uuid
 
 # Import PyMh files
 from src.utils import xml_tools
@@ -17,8 +16,6 @@ from src.utils import xml_tools
 g_debug = 0
 # 0 = off
 # 1 = log extra info
-# 2 = major routine entry
-# 3 = Config file handling
 # + = NOT USED HERE
 m_logger = None
 

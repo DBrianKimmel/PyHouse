@@ -1,6 +1,15 @@
 #!/usr/bin/env python
 
-"""Handle the controller component of the lighting system.
+"""
+src/families/UPB/UPB_Pim.py
+
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com>
+@Copyright (c) 2010-2014 by D. Brian Kimmel
+
+@license: MIT License
+
+@summary: Handle the controller component of the lighting system.
 
 
 /srv/backup/home/briank/svn/smarthouse/trunk/src/parts/upb/usbhidserial.cpp
@@ -472,9 +481,6 @@ class UpbPimAPI(LightingAPI):
 
     def get_response(self):
         pass
-
-
-class PimTesting(UpbPimAPI): pass
 
 
 class API(UpbPimAPI):

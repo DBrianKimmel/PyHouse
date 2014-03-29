@@ -4,7 +4,7 @@ PyHouse
 
 PyHouse is a home automation tool.
 
-See main.__init__ module for developer documentation.
+See src.__init__ module for developer documentation.
 
 
 What is PyHouse?
@@ -16,7 +16,7 @@ Nodes
 -----
 Each node is a separate computer that will self boot, start the PyHouse software
 and begin the operations configured for that node.  Nodes can communicate with
-each other using IP-v6 over some common media such as Ethernet or Wi-Fi.
+each other using IP-V6 over some common media such as Ethernet or Wi-Fi.
 
 It is now (2013-06-06) running in a raspberry pi model B.  It has been turning
 lights on and off reliably for several weeks on this new platform.
@@ -31,19 +31,27 @@ separated by many miles to cooperate with each other.
 Configuration
 -------------
 Each node is initially self configured via its own web server.  The configuration
-is stored as xml in a file somewhere in the file system of the node.  This
+is stored as XML in a file somewhere in the file system of the node.  This
 configuration also has current status stored in the file.  This allows the
 node to have a reboot and continue operations.  Some status information may be
 lost as there is no attempt to be a real-time node.
 
+Organization
+------------
+
+PyHouse is a twisted application.  That is it uses the Twisted-Python framework
+to implement its basic structure.  This allows an event loop to control the various
+services in a totally asynchronous manner, the lighting system is independant of
+the entertainment system and so on.
+
 
 =======
-Modules
+Systems
 =======
 
 Lighting
 --------
-One of the first of the components is a Lighting system.
+One of the first of the components to be programmed is a Lighting system.
 The goal of this component is to automate the daily lighting system.
 There is a schedule associated with the lighting system and its purpose
 is to turn lights on and off at various times of the day and night.
