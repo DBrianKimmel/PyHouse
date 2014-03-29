@@ -130,6 +130,9 @@ class NodeServer(object):
 
 
 class MulticastDiscoveryServerProtocol(DatagramProtocol):
+    """Listen for PyHouse nodes and respond to them.
+    """
+    m_addresses = []
 
     def startProtocol(self):
         """
@@ -141,12 +144,15 @@ class MulticastDiscoveryServerProtocol(DatagramProtocol):
     def datagramReceived(self, p_datagram, p_address):
         l_msg = "Server Datagram {0:} received from {1:}".format(repr(p_datagram), repr(p_address))
         g_logger.info(l_msg)
+        self.m_addresses.append(p_address)
         if p_datagram == "Client: Ping":
             # Rather than replying to the group multicast address, we send the reply directly (unicast) to the originating port:
             self.transport.write("Server: Pong", p_address)
 
 
 class MulticastDiscoveryClientProtocol(DatagramProtocol):
+    """Try to find other PyHouse nodes within range.
+    """
 
     def startProtocol(self):
         self.transport.joinGroup(PYHOUSE_MULTICAST)
