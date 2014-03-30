@@ -8,6 +8,9 @@ from src.core import setup
 from src.core.pyhouse_data import PyHouseData
 
 from twisted.trial import unittest
+from twisted.internet.defer import Deferred, gatherResults, maybeDeferred
+from twisted.internet import protocol, error, defer, udp
+from twisted.python import runtime
 
 
 class Test(unittest.TestCase):
@@ -18,9 +21,15 @@ class Test(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def test_001_Init(self):
+    def _test(self):
+        pass
+
+    def _test_errors(self):
+        pass
+
+    def test_001_errors(self):
         print("Test 001")
-        _m_api = setup.API()
+        self._test_errors()
 
     def test_002_PyHouses(self):
         print("Test 002")

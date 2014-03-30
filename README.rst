@@ -100,6 +100,11 @@ Entertainment
 The entertainment component is to allow the control of the house TV, Radio
 and other similar devices via UPnP.
 
+Also there is a Pandora node.  It uses a Pi with a PiFaceCad card.  The node
+plugs into a receiver/amplifier and plays Pandora radio streams through the
+houses speaker system.  The IR receiver picks up remote signals and starts and
+stops the PianoBar process to stream music.
+
 
 Communication
 -------------

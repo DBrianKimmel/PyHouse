@@ -10,8 +10,8 @@ Created on Mar 20, 2014
 @summary: This module is for testing inter_node communication.
 """
 
-from src.core.pyhouse_data import PyHouseData
 from src.core import nodes
+from src.core.pyhouse_data import PyHouseData
 
 from twisted.trial import unittest
 from twisted.internet.defer import Deferred, gatherResults, maybeDeferred

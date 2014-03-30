@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 """
-@name: src/core/setup.py
+@name: PyHouse/src/core/setup.py
+
+# -*- test-case-name: PyHouse.src.core.test.test_setup -*-
 
 Created on Mar 1, 2014
 

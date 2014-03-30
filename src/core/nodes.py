@@ -1,5 +1,7 @@
 """
-PyHouse/src/core/nodes.py
+@name: PyHouse/src/core/nodes.py
+
+# -*- test-case-name: PyHouse.src.core.test.test_nodes -*-
 
 Created on Mar 6, 2014
 
@@ -26,7 +28,15 @@ g_logger = logging.getLogger('PyHouse.Nodes       ')
 NODE_CLIENT = 'tcp:host=192.168.1.36:port=8581'
 NODE_SERVER = 'tcp:port=8581'
 PYHOUSE_MULTICAST = '234.35.36.37'
-PYHOUSE_PORT = 8581
+PYHOUSE_PORT = 8582
+
+
+class NodeData(object):
+
+    def __init__(self):
+        self.HostName = ''
+        self.Key = 0
+        self.IpV4Addr = None
 
 
 class NodeUnavailable(Exception):
@@ -131,32 +141,44 @@ class NodeServer(object):
 
 class MulticastDiscoveryServerProtocol(DatagramProtocol):
     """Listen for PyHouse nodes and respond to them.
+    We should get a packet from ourself and also packets from other nodes that are running.
     """
     m_addresses = []
+    m_pyhouses_obj = None
+
+    def __init__(self, p_pyhouses_obj):
+        self.m_pyhouses_obj = p_pyhouses_obj
 
     def startProtocol(self):
         """
         Called after protocol has started listening.
         """
         self.transport.setTTL(2)
-        self.transport.joinGroup(PYHOUSE_MULTICAST)
+        _l_defer = self.transport.joinGroup(PYHOUSE_MULTICAST)
 
     def datagramReceived(self, p_datagram, p_address):
+        l_node = NodeData()
+        l_node.IpV4Addr = p_address
         l_msg = "Server Datagram {0:} received from {1:}".format(repr(p_datagram), repr(p_address))
-        g_logger.info(l_msg)
+        g_logger.info("Addr:{0:} - {1:}".format(l_msg, self.m_addresses))
         self.m_addresses.append(p_address)
         if p_datagram == "Client: Ping":
             # Rather than replying to the group multicast address, we send the reply directly (unicast) to the originating port:
             self.transport.write("Server: Pong", p_address)
+        l_count = 0
+        for l_node in self.m_pyhouses_obj.Nodes.itervals():
+            if l_node.IpV4Addr == p_address:
+                return
+        self.m_pyhouses_obj.Nodes[l_count] = l_node
+        l_count += 1
 
 
 class MulticastDiscoveryClientProtocol(DatagramProtocol):
-    """Try to find other PyHouse nodes within range.
-    """
+    """Find other PyHouse nodes within range."""
 
     def startProtocol(self):
-        self.transport.joinGroup(PYHOUSE_MULTICAST)
-        # all listeners on the multicast address (including us) will receive this message.
+        """All listeners on the multicast address (including us) will receive this message."""
+        _l_defer = self.transport.joinGroup(PYHOUSE_MULTICAST)
         self.transport.write('Client: Ping', (PYHOUSE_MULTICAST, PYHOUSE_PORT))
 
     def datagramReceived(self, datagram, address):
@@ -166,10 +188,16 @@ class MulticastDiscoveryClientProtocol(DatagramProtocol):
 
 class Utility(object):
 
+    def _discover_nodes(self, p_pyhouses_obj):
+        """Use UDP multicast to discover the other PyHouse nodes that are local.
+        Fire the client off again once per hour to re-discover any new nodes
+        """
+        self.StartServer(p_pyhouses_obj)
+        self.StartClient(p_pyhouses_obj)
+
     def StartServer(self, p_pyhouses_obj):
-        # _l_server = NodeServer().server(p_pyhouses_obj)
-        # We use listenMultiple=True so that we can run MulticastServer.py and MulticastClient.py on same machine:
-        p_pyhouses_obj.Reactor.listenMulticast(PYHOUSE_PORT, MulticastDiscoveryServerProtocol(), listenMultiple = True)
+        """Use listenMultiple=True so that we can run a server and a client on same node."""
+        p_pyhouses_obj.Reactor.listenMulticast(PYHOUSE_PORT, MulticastDiscoveryServerProtocol(p_pyhouses_obj), listenMultiple = True)
 
     def StartClient(self, p_pyhouses_obj):
         p_pyhouses_obj.Reactor.listenMulticast(PYHOUSE_PORT, MulticastDiscoveryClientProtocol(), listenMultiple = True)
@@ -181,8 +209,7 @@ class API(Utility):
         g_logger.info("Initialized.")
 
     def Start(self, p_pyhouses_obj):
-        self.StartServer(p_pyhouses_obj)
-        self.StartClient(p_pyhouses_obj)
+        self._discover_nodes(p_pyhouses_obj)
         g_logger.info("Started.")
 
     def Stop(self):

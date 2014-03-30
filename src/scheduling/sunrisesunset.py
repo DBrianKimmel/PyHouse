@@ -1,7 +1,15 @@
-#!/usr/bin/env  python
+"""
+PyHouse/src/scheduling/sunrisesunset.py
 
-"""Calculate the suns location at local noon.
-    Then calculate sunrise and sunset for the day.
+# -*- test-case-name: PyHouse.src.scheduling.test.test_sunrisesunset -*-
+
+Created on Mar 6, 2014
+
+@author: briank
+
+@copyright: 2011-2014 by D. Brian Kimmel
+
+@summary: Calculate the suns location at local noon, then calculate sunrise and sunset for the day.
 
     Heliocentric means that the Earth position is calculated with respect to the center of the sun.
     Geocentric means that the sun position is calculated with respect to the Earth center.
@@ -57,7 +65,7 @@ class EarthParameters(object):
         self.__JulianDayNumber = value
 
     def get_j_2000(self):
-        return self.__J2000
+        return self.J2000
 
     def set_j_2000(self, value):
         self.__J2000 = value
