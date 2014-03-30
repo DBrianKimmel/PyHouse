@@ -65,7 +65,7 @@ class EarthParameters(object):
         self.__JulianDayNumber = value
 
     def get_j_2000(self):
-        return self.J2000
+        return self.__J2000
 
     def set_j_2000(self, value):
         self.__J2000 = value
