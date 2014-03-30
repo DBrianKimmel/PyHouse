@@ -171,7 +171,7 @@ class API(object):
         g_logger.info("Initialized.")
 
     def Start(self, p_pyhouses_obj):
-        # p_pyhouses_obj.Nodes = InterfacesData
+        p_pyhouses_obj.Nodes = {}
         self.m_nodes.Start(p_pyhouses_obj)
         self.m_node.init_node_type(p_pyhouses_obj)
         # House
