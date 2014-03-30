@@ -28,7 +28,7 @@ g_logger = logging.getLogger('PyHouse.Nodes       ')
 NODE_CLIENT = 'tcp:host=192.168.1.36:port=8581'
 NODE_SERVER = 'tcp:port=8581'
 PYHOUSE_MULTICAST = '234.35.36.37'
-PYHOUSE_PORT = 8582
+PYHOUSE_DISCOVERY_PORT = 8582
 
 
 class NodeData(object):
@@ -71,71 +71,73 @@ class Divide(Command):
     errors = {ZeroDivisionError: 'ZERO_DIVISION'}
 
 
-class NodeClientProtocol(AMP):
+class AmpClientProtocol(AMP):
 
     def dataReceived(self, p_data):
-        # IrDispatch(p_data)
-        pass
+        l_msg = 'Amp Client Received {0:}'.format(p_data)
+        g_logger.debug(l_msg)
 
     def connectionMade(self):
-        g_logger.debug('Client connection made.')
+        g_logger.debug('Amp Client connection made.')
 
 
-class NodeClientFactory(Factory):
+class AmpClientFactory(Factory):
 
     def startedConnecting(self, p_connector):
         pass
 
     def buildProtocol(self, _addr):
-        return NodeClientProtocol()
+        return AmpClientProtocol()
 
     def clientConnectionLost(self, _connector, p_reason):
-        g_logger.error('NodeClientFactory - lost connection {0:}'.format(p_reason))
+        g_logger.error('AmpClientFactory - lost connection {0:}'.format(p_reason))
 
     def clientConnectionFailed(self, _connector, p_reason):
-        g_logger.error('NodeClientFactory - Connection failed {0:}'.format(p_reason))
+        g_logger.error('AmpClientFactory - Connection failed {0:}'.format(p_reason))
 
 
-class NodeClient(object):
+class AmpClient(object):
 
     def connect(self, p_pyhouses_obj):
         l_endpoint = clientFromString(p_pyhouses_obj.Reactor, NODE_CLIENT)
-        print('Nodes.Endpoint:', l_endpoint)
-        l_factory = NodeClientFactory()
+        # print('Amp Client Nodes.Endpoint:', l_endpoint)
+        l_factory = AmpClientFactory()
         l_defer = l_endpoint.connect(l_factory)
-        print("Client started.", l_defer)
-        g_logger.info("Client started.")
+        # print("Amp Client started.", l_defer)
+        g_logger.info("Amp Client started.")
         return l_defer
 
 
-class NodeServerProtocol(AMP):
+class AmpServerProtocol(AMP):
 
     def dataReceived(self, p_data):
-        g_logger.debug('Server data rxed {0:}'.format(p_data))
+        g_logger.debug('Amp Server data rxed {0:}'.format(p_data))
 
     def connectionMade(self):
-        g_logger.debug('Server connection Made')
+        g_logger.debug('Amp Server connection Made')
 
     def connectionLost(self, p_reason):
-        g_logger.debug('Server connection lost {0:}'.format(p_reason))
+        g_logger.debug('Amp Server connection lost {0:}'.format(p_reason))
 
 
-class NodeServerFactory(Factory):
+class AmpServerFactory(Factory):
 
     def buildProtocol(self, _p_addr):
-        return NodeServerProtocol()
+        return AmpServerProtocol()
 
 
-class NodeServer(object):
+class AmpServer(object):
+    """Sit and listen for amp commands from other nodes.
+    """
 
     def server(self, p_pyhouses_obj):
         l_endpoint = serverFromString(p_pyhouses_obj.Reactor, NODE_SERVER)
-        l_factory = NodeServerFactory()
-        # l_factory.protocol = NodeServerProtocol
+        l_factory = AmpServerFactory()
+        # l_factory.protocol = AmpServerProtocol
         l_service = StreamServerEndpointService(l_endpoint, l_factory)
         l_service.setServiceParent(p_pyhouses_obj.Application)
-        l_ret = l_endpoint.listen(NodeServerFactory())
-        g_logger.info("Server started.")
+        l_ret = l_endpoint.listen(AmpServerFactory())
+        g_logger.info("Amp Server started.")
         return l_ret
 
 
@@ -179,28 +181,33 @@ class MulticastDiscoveryClientProtocol(DatagramProtocol):
     def startProtocol(self):
         """All listeners on the multicast address (including us) will receive this message."""
         _l_defer = self.transport.joinGroup(PYHOUSE_MULTICAST)
-        self.transport.write('Client: Ping', (PYHOUSE_MULTICAST, PYHOUSE_PORT))
+        self.transport.write('Client: Ping', (PYHOUSE_MULTICAST, PYHOUSE_DISCOVERY_PORT))
 
     def datagramReceived(self, datagram, address):
         l_msg = "Client Datagram {0:} received from {1:}".format(repr(datagram), repr(address))
         g_logger.info(l_msg)
 
 
-class Utility(object):
+class Utility(AmpServer, AmpClient):
 
-    def _discover_nodes(self, p_pyhouses_obj):
+    def start_node_discovery(self, p_pyhouses_obj):
         """Use UDP multicast to discover the other PyHouse nodes that are local.
         Fire the client off again once per hour to re-discover any new nodes
         """
-        self.StartServer(p_pyhouses_obj)
-        self.StartClient(p_pyhouses_obj)
+        self._start_discovery_server(p_pyhouses_obj)
+        self._start_discovery_client(p_pyhouses_obj)
 
-    def StartServer(self, p_pyhouses_obj):
+    def _start_discovery_server(self, p_pyhouses_obj):
         """Use listenMultiple=True so that we can run a server and a client on same node."""
-        p_pyhouses_obj.Reactor.listenMulticast(PYHOUSE_PORT, MulticastDiscoveryServerProtocol(p_pyhouses_obj), listenMultiple = True)
+        p_pyhouses_obj.Reactor.listenMulticast(PYHOUSE_DISCOVERY_PORT, MulticastDiscoveryServerProtocol(p_pyhouses_obj), listenMultiple = True)
 
-    def StartClient(self, p_pyhouses_obj):
-        p_pyhouses_obj.Reactor.listenMulticast(PYHOUSE_PORT, MulticastDiscoveryClientProtocol(), listenMultiple = True)
+    def _start_discovery_client(self, p_pyhouses_obj):
+        p_pyhouses_obj.Reactor.listenMulticast(PYHOUSE_DISCOVERY_PORT, MulticastDiscoveryClientProtocol(), listenMultiple = True)
+
+    def start_amp(self, p_pyhouses_obj):
+        self.server(p_pyhouses_obj)
+        self.connect(p_pyhouses_obj)
+        g_logger.debug('Amp server / client started.')
 
 
 class API(Utility):
@@ -211,7 +218,8 @@ class API(Utility):
     def Start(self, p_pyhouses_obj):
         if p_pyhouses_obj == None:
             p_pyhouses_obj.Nodes = {}
-        self._discover_nodes(p_pyhouses_obj)
+        self.start_node_discovery(p_pyhouses_obj)
+        self.start_amp(p_pyhouses_obj)
         g_logger.info("Started.")
 
     def Stop(self):
