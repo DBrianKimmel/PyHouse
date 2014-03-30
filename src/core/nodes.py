@@ -39,11 +39,11 @@ class NodeData(object):
         self.IpV4Addr = None
 
 
-class NodeUnavailable(Exception):
+class RegisterNodeError(Exception):
     pass
 
 
-class RegisterCommand(Command):
+class RegisterNode(Command):
     """
     """
     arguments = [('Command', Integer()),
@@ -53,22 +53,7 @@ class RegisterCommand(Command):
                  ('IPv6', String())
                  ]
     response = [('Ack', Integer())]
-
-
-class RegisterNode(AMP):
-
-    def register(self, _p_name, _p_type, _p_v4, _p_v6):
-        l_ack = 1
-        return {'Ack': l_ack}
-
-    RegisterCommand.responder(register)
-
-
-class Divide(Command):
-    arguments = [('numerator', Integer()),
-                 ('denominator', Integer())]
-    response = [('result', Float())]
-    errors = {ZeroDivisionError: 'ZERO_DIVISION'}
+    errors = {RegisterNodeError: 'Node Information unavailable.'}
 
 
 class AmpClientProtocol(AMP):
@@ -106,6 +91,16 @@ class AmpClient(object):
         # print("Amp Client started.", l_defer)
         g_logger.info("Amp Client started.")
         return l_defer
+
+    def send_register_node(self, p_protocol):
+        p_protocol.callRemote(
+            RegisterNode,
+            Command = 1,
+            NodeName = u'briank',
+            NodeType = None,
+            IPv4 = '1.2.3.4',
+            Ipv6 = 'ff00::'
+            )
 
 
 class AmpServerProtocol(AMP):
@@ -194,6 +189,7 @@ class Utility(AmpServer, AmpClient):
         """Use UDP multicast to discover the other PyHouse nodes that are local.
         Fire the client off again once per hour to re-discover any new nodes
         """
+        self.m_pyhouses_obj = p_pyhouses_obj
         self._start_discovery_server(p_pyhouses_obj)
         self._start_discovery_client(p_pyhouses_obj)
 
@@ -205,9 +201,16 @@ class Utility(AmpServer, AmpClient):
         p_pyhouses_obj.Reactor.listenMulticast(PYHOUSE_DISCOVERY_PORT, MulticastDiscoveryClientProtocol(), listenMultiple = True)
 
     def start_amp(self, p_pyhouses_obj):
+        self.m_pyhouses_obj = p_pyhouses_obj
         self.server(p_pyhouses_obj)
-        self.connect(p_pyhouses_obj)
+        l_defer = self.connect(p_pyhouses_obj)
+        l_defer.addCallback(self.send_node_info)
         g_logger.debug('Amp server / client started.')
+        p_pyhouses_obj.Reactor.callLater(60, self.send_node_info)
+
+    def send_node_info(self):
+        self.m_pyhouses_obj.Reactor.callLater(60 * 60, self.send_node_info)
+        _l_defer = self.send_register_node(AmpClientProtocol)
 
 
 class API(Utility):

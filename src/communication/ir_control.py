@@ -80,11 +80,17 @@ class LircFactory(Factory):
 class LircConnection(object):
 
     def __init__(self, p_pyhouses_obj):
+        def cb_connect(self, p_reason):
+            g_logger.debug("LircConnection good {0:}".format(p_reason))
+
+        def eb_connect(self, p_reason):
+            g_logger.error("LircConnection Error {0:}".format(p_reason))
+
         l_endpoint = clientFromString(p_pyhouses_obj.Reactor, LIRC_SOCKET)
         l_factory = LircFactory()
-        l_endpoint.connect(l_factory)
-        if g_debug >= 1:
-            g_logger.debug("LircConnection Open")
+        l_defer = l_endpoint.connect(l_factory)
+        l_defer.addCallback(self.cb_connect)
+        l_defer.addErrback(self.eb_connect)
 
 
 class IrDispatch(object):
@@ -97,7 +103,7 @@ class IrDispatch(object):
         00000000a55ad02f KEY_VOLUMEDOWN pioneer-AXD7595
         """
         if g_debug >= 1:
-            g_logger.debug("Received {0:} from {1:}".format(p_keycode, p_remote))
+            g_logger.debug("Received {0:} ({1:}) from {2:}".format(p_keycode, p_keyname, p_remote))
         for l_dispatch in IR_KEYS:
             (l_keyname, l_module, l_command) = l_dispatch
             if p_keyname == l_keyname:
@@ -112,7 +118,16 @@ class IrDispatch(object):
             g_pandora.Stop()
 
 
-class API(object):
+class Utility(object):
+
+    def start_AMP(self, p_pyhouses_obj):
+        l_endpoint = TCP4ServerEndpoint
+        l_factory = Factory()
+        l_factory.protocol = AMP
+        l_service = StreamServerEndpointService(l_endpoint, l_factory)
+        l_service.setServiceParent(p_pyhouses_obj.Application)
+
+class API(Utility):
 
     def __init__(self):
         """Connect to the Lirc procees.
@@ -122,11 +137,7 @@ class API(object):
 
     def Start(self, p_pyhouses_obj):
         _x = LircConnection(p_pyhouses_obj)
-        l_endpoint = TCP4ServerEndpoint
-        l_factory = Factory()
-        l_factory.protocol = AMP
-        l_service = StreamServerEndpointService(l_endpoint, l_factory)
-        l_service.setServiceParent(p_pyhouses_obj.Application)
+        self.start_AMP(p_pyhouses_obj)
 
     def Stop(self):
         pass
