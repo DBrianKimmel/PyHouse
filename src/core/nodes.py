@@ -166,10 +166,12 @@ class MulticastDiscoveryServerProtocol(DatagramProtocol):
             # Rather than replying to the group multicast address, we send the reply directly (unicast) to the originating port:
             self.transport.write("Server: Pong", p_address)
         l_count = 0
-        if self.m_pyhouses_obj != None:
+        try:
             for l_node in self.m_pyhouses_obj.Nodes.itervalues():
                 if l_node.IpV4Addr == p_address:
                     return
+        except AttributeError:
+            pass
         self.m_pyhouses_obj.Nodes[l_count] = l_node
         l_count += 1
 
