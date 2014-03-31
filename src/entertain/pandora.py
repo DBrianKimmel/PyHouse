@@ -24,9 +24,9 @@ this module goes back to its initial state ready for another session.
 
 # Import system type stuff
 import logging
-
 from twisted.internet import protocol
 
+from src.utils.tools import PrintBytes
 
 g_debug = 0
 g_logger = logging.getLogger('PyHouse.Pandora     ')
@@ -62,6 +62,7 @@ class BarProcessControl(protocol.ProcessProtocol):
         self.m_count += 1
         l_data = p_data.rstrip('\r\n')
         l_data = l_data.lstrip(' \t')
+        g_logger.debug(PrintBytes(l_data))
         if l_data[0] == 0x1B:
             l_data = l_data[2:]
         if l_data.startswith('2K'):  # <ESC>[2K = erase
