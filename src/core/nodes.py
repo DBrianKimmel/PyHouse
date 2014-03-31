@@ -202,15 +202,20 @@ class Utility(AmpServer, AmpClient):
 
     def start_amp(self, p_pyhouses_obj):
         self.m_pyhouses_obj = p_pyhouses_obj
-        self.server(p_pyhouses_obj)
-        l_defer = self.connect(p_pyhouses_obj)
-        l_defer.addCallback(self.send_node_info)
+        self._start_amp_server()
+        self._start_amp_client()
         g_logger.debug('Amp server / client started.')
-        p_pyhouses_obj.Reactor.callLater(60, self.send_node_info)
 
-    def send_node_info(self):
-        self.m_pyhouses_obj.Reactor.callLater(60 * 60, self.send_node_info)
+    def cb_send_node_info(self, p_data):
+        g_logger.debug('Amp client cb_send_node_info - {0:}.'.format(p_data))
         _l_defer = self.send_register_node(AmpClientProtocol)
+
+    def _start_amp_server(self):
+        _l_defer = self.server(self.m_pyhouses_obj)
+
+    def _start_amp_client(self):
+        l_defer = self.connect(self.m_pyhouses_obj)
+        l_defer.addCallback(self.cb_send_node_info)
 
 
 class API(Utility):
