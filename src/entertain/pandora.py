@@ -73,7 +73,13 @@ class BarProcessControl(protocol.ProcessProtocol):
             # g_logger.info("Pianobar Info = {0:}, {1:}".format(l_data, self.m_count))
             return
         if l_data.startswith('|>'):  # This is selection information
-            # g_logger.info("Pianobar Info = {0:}, {1:}".format(l_data, self.m_count))
+            g_logger.info("Info = {0:}, {1:}".format(l_data, self.m_count))
+            return
+        if l_data.startswith('Welcome to pianobar'):
+            return
+        if l_data.startswith('Press ? for'):
+            return
+        if l_data.startswith('Ok.'):
             return
         g_logger.debug("Data = {0:}, {1:} - Data".format(l_data, self.m_count))
 
