@@ -112,6 +112,7 @@ class IrDispatch(object):
                 pass
 
     def pandora_ctl(self, p_command):
+        g_logger.debug('Pandora_ctl command - {0:}'.format(p_command))
         if p_command == 'start':
             g_pandora.Start(None)
         elif p_command == 'stop':
