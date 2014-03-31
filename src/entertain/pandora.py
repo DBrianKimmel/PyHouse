@@ -61,16 +61,16 @@ class BarProcessControl(protocol.ProcessProtocol):
         """
         self.m_count += 1
         l_data = p_data.rstrip('\r\n')
-        if ord(l_data[0]) == 0x1b:
-            l_data = l_data[1:]
-        if l_data[0] < ' ' or l_data[0] > 0x7f:
-            if g_debug >= 2:
-                g_logger.debug('>>>{0:#x} {1:#x}'.format(ord(l_data[0]), ord(l_data[1])))
         l_data = l_data.lstrip('\r\n\t0x1B[ ')
-        if l_data[0] == '#':
+        if l_data.startswith('2K'):  # <ESC>[2K = erase
+            l_data = l_data[:2]
+        if l_data[0] == '#':  # The line is a timestamp - every second
             return
-        if l_data.startswith('(i)'):
-            g_logger.info("Pianobar Info = {0:}, {1:}".format(l_data, self.m_count))
+        if l_data.startswith('(i)'):  # This is an information message - Login, new playlist, etc.
+            # g_logger.info("Pianobar Info = {0:}, {1:}".format(l_data, self.m_count))
+            return
+        if l_data.startswith('|>'):  # This is selection information
+            # g_logger.info("Pianobar Info = {0:}, {1:}".format(l_data, self.m_count))
             return
         g_logger.debug("Data = {0:}, {1:}".format(l_data, self.m_count))
 
