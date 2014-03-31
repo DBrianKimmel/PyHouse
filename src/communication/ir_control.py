@@ -79,18 +79,19 @@ class LircFactory(Factory):
 
 class LircConnection(object):
 
-    def __init__(self, p_pyhouses_obj):
-        def cb_connect(self, p_reason):
-            g_logger.debug("LircConnection good {0:}".format(p_reason))
-
-        def eb_connect(self, p_reason):
-            g_logger.error("LircConnection Error {0:}".format(p_reason))
-
+    def start_lirc_connect(self, p_pyhouses_obj):
         l_endpoint = clientFromString(p_pyhouses_obj.Reactor, LIRC_SOCKET)
         l_factory = LircFactory()
         l_defer = l_endpoint.connect(l_factory)
         l_defer.addCallback(self.cb_connect)
         l_defer.addErrback(self.eb_connect)
+
+    def cb_connect(self, p_reason):
+        g_logger.debug("LircConnection good {0:}".format(p_reason))
+
+    def eb_connect(self, p_reason):
+        g_logger.error("LircConnection Error {0:}".format(p_reason))
+
 
 
 class IrDispatch(object):
@@ -119,7 +120,7 @@ class IrDispatch(object):
             g_pandora.Stop()
 
 
-class Utility(object):
+class Utility(LircConnection):
 
     def start_AMP(self, p_pyhouses_obj):
         l_endpoint = TCP4ServerEndpoint
@@ -137,7 +138,7 @@ class API(Utility):
         g_pandora = pandora.API()
 
     def Start(self, p_pyhouses_obj):
-        _x = LircConnection(p_pyhouses_obj)
+        self.start_lirc_connect(p_pyhouses_obj)
         self.start_AMP(p_pyhouses_obj)
 
     def Stop(self):
