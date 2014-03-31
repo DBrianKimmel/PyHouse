@@ -26,7 +26,7 @@ this module goes back to its initial state ready for another session.
 import logging
 from twisted.internet import protocol
 
-from src.utils.tools import PrintBytes
+# from src.utils.tools import PrintBytes
 
 g_debug = 0
 g_logger = logging.getLogger('PyHouse.Pandora     ')
@@ -64,8 +64,8 @@ class BarProcessControl(protocol.ProcessProtocol):
         l_data = l_data.lstrip(' \t')
         if l_data[0] == chr(0x1B):
             l_data = l_data[2:]
-        g_logger.debug(PrintBytes(l_data))
-        if l_data.startswith('2K'):  # <ESC>[2K = erase
+        # g_logger.debug("{0:} >>> {1:}".format(PrintBytes(l_data), l_data))
+        if l_data[1] == 'K':  # <ESC>[nK = erase something
             l_data = l_data[2:]
         if l_data[0] == '#':  # The line is a timestamp - every second
             return
