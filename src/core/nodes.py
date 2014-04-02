@@ -64,8 +64,7 @@ class RegisterNode(Command):
     arguments = [('Command', Integer()),
                  ('NodeName', Unicode()),
                  ('NodeType', Integer()),
-                 ('IPv4', String()),
-                 ('IPv6', String())]
+                 ('IPv4', String())]
     response = [('Ack', Integer())]
     errors = {RegisterNodeError: 'Node Information unavailable.'}
 
