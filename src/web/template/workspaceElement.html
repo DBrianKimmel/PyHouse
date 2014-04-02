@@ -1,15 +1,19 @@
-<!-- workspaceElement.html
+<!-- PyHouse/src/web/templates/workspaceElement.html
+
+        style = "width: 100%; height: 100%; min-height: 100%; position: absolute; left: 0px; top: 0px; background-color: #d2f2d2;"
+        style = "width: 100px; height: 100px; top: 50%; left: 50%; position: absolute; margin-left: -50px; margin-top: -50px;"
  -->
-	<div
-	    xmlns:nevow = "http://nevow.com/ns/nevow/0.1"
-	    nevow:render = "liveElement"
-	    class = "workspace"
-	    style = "width: 100%; height: 100%; min-height: 100%; position: absolute; left: 0px; top: 0px; background-color: #d2f2d2;"
-	    >
-	    <h1>PyHouse</h1>
-	    <img id = "waitroller" src = "/waitroller.gif"
-	        style = "width: 100px; height: 100px; top: 50%; left: 50%; position: absolute; margin-left: -50px; margin-top: -50px;"/>
+
+    <div
+	xmlns:nevow = "http://nevow.com/ns/nevow/0.1"
+	nevow:render = "liveElement"
+	class = "workspace"
+	>
+		<div id = "Wrapper">
+		    <h1>PyHouse</h1>
+            <img id = "ulc" alt = 'Line' src="/Line.png"/>
+		    <img class = 'Clock' id = "waitroller" alt = 'wait' src = "/waitroller.gif"/>
+	    </div>
 	</div>
-<!-- 
-### END DBK  -->
-        
+
+<!--  ### END DBK  -->

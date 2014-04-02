@@ -43,7 +43,6 @@ class PianobarControlProtocol(protocol.Protocol):
 class BarProcessControl(protocol.ProcessProtocol):
 
     def __init__(self):
-        self.m_count = 0
         pass
 
     def connectionMade(self):
@@ -59,7 +58,6 @@ class BarProcessControl(protocol.ProcessProtocol):
         Note: Strings seem to begin with an ansi sequence  <esc>[xxx
         # incremental time
         """
-        self.m_count += 1
         l_data = p_data.rstrip('\r\n')
         l_data = l_data.lstrip(' \t')
         if l_data[0] == chr(0x1B):
@@ -70,10 +68,10 @@ class BarProcessControl(protocol.ProcessProtocol):
         if l_data[0] == '#':  # The line is a timestamp - every second
             return
         if l_data.startswith('(i)'):  # This is an information message - Login, new playlist, etc.
-            # g_logger.info("Pianobar Info = {0:}, {1:}".format(l_data, self.m_count))
+            # g_logger.info("Pianobar Info = {0:}".format(l_data))
             return
         if l_data.startswith('|>'):  # This is selection information
-            g_logger.info("Info = {0:}, {1:}".format(l_data, self.m_count))
+            g_logger.info("Info = {0:}".format(l_data))
             return
         if l_data.startswith('Welcome to pianobar'):
             return
@@ -81,7 +79,7 @@ class BarProcessControl(protocol.ProcessProtocol):
             return
         if l_data.startswith('Ok.'):
             return
-        g_logger.debug("Data = {0:}, {1:} - Data".format(l_data, self.m_count))
+        g_logger.debug("Data = {0:}".format(l_data))
 
     def errReceived(self, p_data):
         g_logger.warn("StdErr received - {0:}".format(p_data))

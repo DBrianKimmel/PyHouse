@@ -1,4 +1,4 @@
-<!-- mainpage.html
+<!-- PyHouse/src/web/templates/mainpage.html
  -->
 <!DOCTYPE html>
 <html
@@ -11,25 +11,143 @@
         <style type="text/css">
             html {
                 height: 100%;
+                background-color: #black;
 	        }
 	        body {
-	            min-height: 100%;
-	            background-color: #d2f2d2;
+	            background-color: #black;
+	            color: #DDDDDD;
+                font-family: "Arial Narrow", Sans-serif;
+                font-size: 62.5%;
+                max-height: 100%;
+                margin: 0 4em;
+                padding: 3em;
 	        }
 	        * html body {
 	            height: 100%;
 	        }
 			h1 {
-			    color: blue;
+			    color: #FF9900;
 			    text-align: center;
+			    font-size: 3.2em;
 			}
 			h2 {
-			    color: #402020;
+			    color: #9999CC;
 			    text-align: left;
+			    font-size: 1.6em;
 			}
+			.workspace {
+                width: 100%;
+                height: 100%;
+                min-height: 100%;
+                position: absolute;
+                left: 0px;
+                top: 0px;
+                color: #9999CC;
+                background-color: black;
+			}
+			.Clock {
+                background-color: black;
+                color: #ffffff;
+                font-size: 150%;
+                text-align: center;
+                width: 150px;
+                height: 60px;
+            }
+            .Login {
+                color: #CC99CC;
+            }
+            .Button1 {
+                width: 8em;
+                border: 1em solid black;
+                color: #CC6666;
+                background-color: #FFCC99;
+            }
+            .RR {
+                border-radius: 20px;
+                -moz-border-radius: 20px;
+                -webkit-border-radius: 20px;
+            }
+            .SR {
+                -moz-border-radius-topright: 20px;
+                -moz-border-radius-bottomright: 20px;
+                -webkit-border-top-right-radius: 20px;
+                -webkit-border-bottom-right-radius: 20px;
+            }
+            .RS {
+                -moz-border-radius-topleft: 20px;
+                -moz-border-radius-bottomleft: 20px;
+                -webkit-border-top-left-radius: 20px;
+                -webkit-border-bottom-left-radius: 20px;
+            }
+            .L {
+                width: 100px;
+            }
+            .button{
+                display: block;
+                height: 20px;
+                width: 75px;
+                color: black;
+                padding: 10px;
+                margin: 5px;
+                font-size: 18px;
+                text-decoration: none;
+                text-align: right;
+                overflow: hidden;
+                background-color: #ffcc00;
+                cursor: pointer;
+                border: none;
+            }
+            button {
+                display: block;
+                height: 40px;
+                width: 75px;
+                color: black;
+                font-size: 20px;
+                font-family: lcars_font;
+                text-decoration: none;
+                text-align: right;
+                border: none;
+            }
+            #primaryColor {
+                color: #FF9900;
+            }
+            #primaryAction {
+                color: #CC99CC;
+            }
+            #informational {
+                color: #9999CC;
+            }
+            #buttonsFilled {
+                color: #FF9966;
+            }
+            #buttonsHollow {
+                color: #FFCC99;
+            }
+            #contentAccent {
+                color: #9999FF;
+            }
+            #contentText {
+                color: #CC6666;
+            }
+            #contentsUBTEXT {
+                color: #cc6699;
+            }
+            .B_titleR{
+                color:#FFCC00;
+                font-size:32px;
+                background:#000;
+                display:block;
+                margin-top:-10px;
+                padding:2px;
+                height:40px;
+                float:right;
+                margin-right:10px;
+                margin-left:5px;
+            }
+
         </style>
     </head>
-        <body style="margin: 10px; padding: 10px; overflow: hidden; height: 100%; width: 100%;">
+        <body>
             <h1>PyHouse Controller</h1>
             <nevow:invisible nevow:render="workspace" />
         </body>

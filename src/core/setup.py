@@ -18,10 +18,9 @@ Then start the House and all the sub systems.
 
 # Import system type stuff
 import logging
-import netifaces
 import os
-import platform
 
+from src.core import local_node
 from src.core import nodes
 from src.entertain import entertainment
 from src.communication import ir_control
@@ -44,68 +43,12 @@ NODE_V6ROUTER = 0x0010
 InterfacesData = {}
 
 
-class NodeData(object):
-    def __init__(self):
-        self.Name = None
-        self.Key = 0
-        self.Active = True
-        self.HostName = ''
-        self.Role = None
-        self.Interfaces = []
-
-class InterfaceData(object):
-    def __init__(self):
-        self.Name = None
-        self.Key = 0
-        self.Active = True
-        self.MacAddress = ''
-        self.V4Address = []
-        self.V6Address = []
-
-
 class NodeRoleData(object):
     def __init__(self):
         self.CameraNode = False
         self.LightingNode = False
         self.PifaceCadNode = False
         self.PandoraNode = False
-
-
-class FindAllInterfaceData(object):
-    """Loop thru all the interfaces and extract the info
-    """
-    def __init__(self):
-        l_interfaces = netifaces.interfaces()
-        if g_debug >= 1:
-            g_logger.debug(l_interfaces)
-        l_count = 0
-        global InterfacesData
-        for l_interface in l_interfaces:
-            if l_interface == 'lo':
-                continue
-            m_interface = InterfaceData()
-            m_interface.Name = l_interface
-            m_interface.Key = l_count
-            for l_af in netifaces.ifaddresses(l_interface):
-                if g_debug >= 1:
-                    g_logger.debug(l_af)
-                if netifaces.address_families[l_af] == 'AF_PACKET':
-                    m_interface.MacAddress = self._get_list(netifaces.ifaddresses(l_interface)[l_af])
-                if netifaces.address_families[l_af] == 'AF_INET':
-                    m_interface.V4Address = self._get_list(netifaces.ifaddresses(l_interface)[l_af])
-                if netifaces.address_families[l_af] == 'AF_INET6':
-                    if g_debug >= 1:
-                        g_logger.debug(netifaces.ifaddresses(l_interface)[l_af])
-                    m_interface.V6Address = self._get_list(netifaces.ifaddresses(l_interface)[l_af])
-            g_logger.info("Interface:{0}, Mac:{1:}, V4:{2:}, V6:{3:}".format(m_interface.Name, m_interface.MacAddress, m_interface.V4Address, m_interface.V6Address))
-            InterfacesData[l_count] = m_interface
-            l_count += 1
-
-    def _get_list(self, p_list):
-        l_list = []
-        for l_ent in p_list:
-            l_list.append(l_ent['addr'])
-        return l_list
 
 
 class HandleNodeType(object):
@@ -139,39 +82,21 @@ class HandleNodeType(object):
         l_ir.Start(p_pyhouses_obj)
 
 
-class FindRouter(object):
-    pass
-
-
-class LocateLocalNodes(object):
-    """Find nodes in this house
-    """
-    def __init__(self):
-        pass
-
-
-class GetNodeInfo(object):
-    """Get the information about this node and stick it in NodeData
-    """
-    def __init__(self):
-        NodeData.Name = platform.node()
-
-
 class API(object):
 
     m_entertainment = None
     m_node = None
 
     def __init__(self):
+        g_logger.info("Initializing\n\n.")
         self.m_node = HandleNodeType()
         self.m_entertainment = entertainment.API()
-        FindAllInterfaceData()
-        LocateLocalNodes()
+        self.m_local_node = local_node.API()
         self.m_nodes = nodes.API()
         g_logger.info("Initialized.")
 
     def Start(self, p_pyhouses_obj):
-        p_pyhouses_obj.Nodes = {}
+        self.m_local_node.Start(p_pyhouses_obj)
         self.m_nodes.Start(p_pyhouses_obj)
         self.m_node.init_node_type(p_pyhouses_obj)
         # House

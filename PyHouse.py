@@ -110,7 +110,7 @@ class PyHouseData(object):
         self.XmlRoot = None
         self.XmlFileName = ''
         self.Reactor = None
-        self.Nodes = None
+        self.Nodes = {}
 
     def __str__(self):
         l_ret = "PyHouseData:: "
@@ -216,7 +216,7 @@ class API(Utilities):
         """
         self.m_pyhouses_obj = PyHouseData()
         self.m_pyhouses_obj.Reactor = reactor
-        self.m_pyhouses_obj.Application = application = Application('PyHouse')
+        self.m_pyhouses_obj.Application = Application('PyHouse')
         self.m_pyhouses_obj.API = self
         global g_API
         g_API = self

@@ -12,8 +12,6 @@ This module will try to be fully twisted like and totally async (except for read
 
 # Import system type stuff
 import logging
-import netifaces
-# import socket
 import xml.etree.ElementTree as ET
 from twisted.internet import reactor
 from twisted.web.client import getPage
@@ -98,31 +96,6 @@ class InterfaceIpAddresses(object):
 # Also halt all asynchronous operations and write out the XML when requested.
 #
 #======================================
-
-class FindAllInterfaceData(object):
-    """Loop thru all the interfaces and extract the info
-    """
-    def __init__(self):
-        l_interfaces = netifaces.interfaces()
-        l_count = 0
-        for l_interface in l_interfaces:
-            if l_interface == 'lo':
-                continue
-# TODO: this only allows for one address per interface dur to the [0] below
-            m_interface = InterfaceIpAddresses()
-            m_interface.Name = l_interface
-            m_interface.Key = l_count
-            for l_af in netifaces.ifaddresses(l_interface):
-                if netifaces.address_families[l_af] == 'AF_PACKET':
-                    m_interface.MacAddress = netifaces.ifaddresses(l_interface)[l_af][0]['addr']
-                if netifaces.address_families[l_af] == 'AF_INET':
-                    m_interface.V4Address = netifaces.ifaddresses(l_interface)[l_af][0]['addr']
-                if netifaces.address_families[l_af] == 'AF_INET6':
-                    m_interface.V6Address = netifaces.ifaddresses(l_interface)[l_af][0]['addr']
-            g_logger.info("Interface:{0}, Mac:{1:}, V4:{2:}, V6:{3:}".format(m_interface.Name, m_interface.MacAddress, m_interface.V4Address, m_interface.V6Address))
-            l_count += 1
-        pass
-
 
 class ReadWriteXML(xml_tools.ConfigTools):
     """
@@ -391,7 +364,6 @@ class API(ReadWriteXML):
         self.m_house_obj = p_house_obj
         if p_house_obj.Active:
             g_logger.info("Starting for house:{0:}.".format(p_house_obj.Name))
-            FindAllInterfaceData()
             FindExternalIpAddress(p_house_obj)
             self.m_dyn_loop = DynDnsAPI(p_house_obj)
 
