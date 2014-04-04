@@ -24,6 +24,9 @@ o logs
 g_debug
 0 = no console output, log err, warn & info
 1 = no console output, log extra info messages
+
+PyHouse is a Twisted Python Application - See twisted.application
+It runs a number of "services" within that application (e.g. web service)
 """
 
 __version_info__ = (1, 1, 0)

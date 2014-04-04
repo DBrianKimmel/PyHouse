@@ -41,9 +41,14 @@ Organization
 
 PyHouse is a twisted application.  That is it uses the Twisted-Python framework
 to implement its basic structure.  This allows an event loop to control the various
-services in a totally asynchronous manner, the lighting system is independant of
+services in a totally asynchronous manner, the lighting system is independent of
 the entertainment system and so on.
 
+Requirements
+------------
+
+Python 2.7 (awaiting twisted to work with version 3.x)
+Twisted 13.2.0
 
 =======
 Systems

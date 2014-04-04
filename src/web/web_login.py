@@ -46,8 +46,7 @@ g_logger = logging.getLogger('PyHouse.webLogin    ')
 class LoginData(object):
     """ Allowed logins
 
-    Stage 1 - Username only.
-    Stage 2 - Username and password (stored password will be encrypted)
+    Stage 2 - Username and password (stored password is encrypted)
     Stage 3 - Username and some sort of common login identifier from some secure external site.
     """
 
@@ -55,13 +54,13 @@ class LoginData(object):
         """Login Data
         """
         self.Username = ''
-        self.Password = ''
+        self.EncryptedPassword = ''
         self.Fullname = 'Not logged in'
         self.LoggedIn = False
         self.ServerState = web_utils.WS_IDLE
 
     def reprJSON(self):
-        return dict(Username = self.Username, Password = self.Password, Fullname = self.Fullname,
+        return dict(Username = self.Username, EncryptedPassword = self.EncryptedPassword, Fullname = self.Fullname,
                     LoggedIn = self.LoggedIn, ServerState = self.ServerState)
 
 
@@ -113,9 +112,9 @@ class LoginElement(athena.LiveElement):
         TODO: validate user - add password check for security
         """
         p_login_obj.Username = p_obj['Username']
-        p_login_obj.Password = p_obj['Password']
+        p_login_obj.EncryptedPassword = p_obj['Password']
         # if p_login_obj.Username == 'briank' and p_login_obj.Password == 'nitt4agmtc':
-        if p_login_obj.Username == 'briank' and p_login_obj.Password == 'd':
+        if p_login_obj.Username == 'briank' and p_login_obj.EncryptedPassword == 'd':
             p_login_obj.Fullname = 'D. Brian Kimmel'
             p_login_obj.LoggedIn = True
             p_login_obj.ServerState = web_utils.WS_LOGGED_IN

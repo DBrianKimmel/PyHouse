@@ -25,9 +25,8 @@ This module will establish a domain network and use Twisted's AMP protocol to pa
 # Import system type stuff
 import logging
 
-# from twisted.internet import reactor
 from twisted.internet.protocol import DatagramProtocol, Factory
-from twisted.internet.endpoints import clientFromString, serverFromString, TCP4ClientEndpoint
+from twisted.internet.endpoints import serverFromString, TCP4ClientEndpoint
 from twisted.application.internet import StreamServerEndpointService
 from twisted.protocols.amp import AMP, Integer, String, Unicode, Command
 
@@ -35,7 +34,6 @@ from twisted.protocols.amp import AMP, Integer, String, Unicode, Command
 g_debug = 0
 g_logger = logging.getLogger('PyHouse.Nodes       ')
 
-NODE_CLIENT = 'tcp:host=192.168.1.36:port=8581'
 NODE_SERVER = 'tcp:port=8581'
 PYHOUSE_MULTICAST = '234.35.36.37'
 AMP_PORT = 8581
@@ -64,7 +62,8 @@ class RegisterNode(Command):
     arguments = [('Command', Integer()),
                  ('NodeName', Unicode()),
                  ('NodeType', Integer()),
-                 ('IPv4', String())]
+                 ('IPv4', String()),
+                 ('IPv6', String())]
     response = [('Ack', Integer())]
     errors = {RegisterNodeError: 'Node Information unavailable.'}
 
@@ -81,7 +80,6 @@ class AmpClientProtocol(AMP):
         Ask for their Node info.
         """
         g_logger.debug('Amp Client connection made.')
-
 
 
 class AmpClientFactory(Factory):
@@ -114,7 +112,7 @@ class AmpClient(object):
                 NodeName = u'briank',
                 NodeType = 1,
                 IPv4 = '1.2.3.4',
-                Ipv6 = 'ff00::'
+                IPv6 = 'ff00::'
                 )
         l_defer.addCallback(cb_send_register_node)
         def cb_registered(p_result):
@@ -122,22 +120,11 @@ class AmpClient(object):
         l_defer.addCallback(cb_registered)
         def eb_error(p_error):
             g_logger.debug('Registration error:{0:}'.format(p_error))
-        l_defer.addErrback(eb_error, "Failed to register")
+        l_defer.addErrback(eb_error)
         def cb_done(_ignored):
             g_logger.debug('Registration done')
         l_defer.addCallback(cb_done)
         return l_defer
-
-    def XXsend_register_node(self, p_protocol):
-        g_logger.debug('Sending our local node to a new discovered address')
-        p_protocol.callRemote(
-            RegisterNode,
-            Command = 1,
-            NodeName = u'briank',
-            NodeType = 1,
-            IPv4 = '1.2.3.4',
-            Ipv6 = 'ff00::'
-            )
 
 
 class AmpServerProtocol(AMP):

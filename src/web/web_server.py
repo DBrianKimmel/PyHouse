@@ -21,13 +21,12 @@ Do not require reloads, auto change PyHouse on the fly.
 
 # Import system type stuff
 import logging
-# import os
 from twisted.internet import reactor
+from twisted.application.service import Service
 from nevow import appserver
 import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
-# from src.core import pyhouse_data
 from src.web import web_utils
 from src.web import web_mainpage
 from src.utils import xml_tools
@@ -57,6 +56,7 @@ class WebData(object):
     """
     def __init__(self):
         self.WebPort = 8580
+        self.Service = None
         self.Logins = {}  # a dict of login_names as keys and encrypted passwords as values - see web_login for details.
 
     def __str__(self):
@@ -80,7 +80,7 @@ class ClientConnections(object):
         self.ConnectedBrowsers.append(p_login)
 
 
-class WebUtility(xml_tools.ConfigFile):
+class Utility(xml_tools.ConfigFile):
 
     def read_web_xml(self, p_root_xml):
         l_web_data = WebData()
@@ -112,6 +112,11 @@ class WebUtility(xml_tools.ConfigFile):
         return l_web_xml
 
     def start_webserver(self, p_pyhouses_obj):
+
+        self.setName('Web')
+        self.setServiceParent(p_pyhouses_obj.Application)
+        self.startService()
+        #
         l_site_dir = None
         l_site = appserver.NevowSite(web_mainpage.TheRoot(l_site_dir, p_pyhouses_obj))
         if not self.m_web_running:
@@ -121,7 +126,7 @@ class WebUtility(xml_tools.ConfigFile):
         g_logger.info("Started - {0:}".format(l_msg))
 
 
-class API(WebUtility, ClientConnections):
+class API(Utility, ClientConnections):
 
     def __init__(self):
         self.State = web_utils.WS_IDLE
