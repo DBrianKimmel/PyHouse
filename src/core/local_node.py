@@ -75,15 +75,6 @@ class NodeData(object):
         self.Interfaces = {}
 
 
-class GetNodeInfo(object):
-    """Get the information about this node and stick it in NodeData
-    """
-    def __init__(self, p_node):
-        p_node.Name = platform.node()
-        p_node.Key = 0
-        p_node.Active = True
-
-
 class GetAllInterfaceData(object):
     """Loop thru all the interfaces and extract the info
     """
@@ -127,7 +118,26 @@ class HandleNodeType(object):
     def __init__(self, p_role):
         self.find_node_type(p_role)
 
-    def find_node_type(self, p_role):
+    def init_node_type(self, p_pyhouses_obj):
+        if self.m_node & NODE_PIFACECAD:
+            self._init_ir_control(p_pyhouses_obj)
+
+
+    def _init_ir_control(self, p_pyhouses_obj):
+        """This node has an IR receiver so set it up.
+        """
+        l_ir = ir_control.API()
+        l_ir.Start(p_pyhouses_obj)
+
+
+class Utility(object):
+
+    def get_node_info(self, p_pyhouses_obj):
+        p_pyhouses_obj.CoreData.Nodes[0].Name = platform.node()
+        p_pyhouses_obj.CoreData.Nodes[0].Key = 0
+        p_pyhouses_obj.CoreData.Nodes[0].Active = True
+
+    def find_node_role(self):
         p_role = NODE_NOTHING
         # Test for lights
         if os.path.exists('/dev/ttyUSB0'):
@@ -143,9 +153,10 @@ class HandleNodeType(object):
         if os.path.exists('/dev/lirc0'):
             g_logger.debug('Lirc Node')
             p_role |= NODE_PIFACECAD
+        return p_role
 
     def init_node_type(self, p_pyhouses_obj):
-        if self.m_node & NODE_PIFACECAD:
+        if p_pyhouses_obj.CoreData.Nodes[0].Role & NODE_PIFACECAD:
             self._init_ir_control(p_pyhouses_obj)
 
 
@@ -154,9 +165,6 @@ class HandleNodeType(object):
         """
         l_ir = ir_control.API()
         l_ir.Start(p_pyhouses_obj)
-
-
-class Utility(object):
 
     def insert_node(self, p_node, p_pyhouses_obj):
         return
@@ -182,14 +190,13 @@ class API(Utility):
 
     def __init__(self):
         self.m_node = NodeData()
-        GetNodeInfo(self.m_node)
         GetAllInterfaceData(self.m_node)
-        HandleNodeType(self.m_node.Role)
         g_logger.info('Initialized')
 
     def Start(self, p_pyhouses_obj):
         p_pyhouses_obj.CoreData.Nodes[0] = self.m_node
-        self.insert_node(self.m_node, p_pyhouses_obj)
+        self.get_node_info(p_pyhouses_obj)
+        p_pyhouses_obj.CoreData.Nodes[0].Role = self.find_node_role()
         g_logger.info('Initialized')
 
     def Stop(self):
