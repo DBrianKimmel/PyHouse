@@ -99,7 +99,7 @@ class PyHouseData(object):
         self.LogsAPI = None
         self.WebAPI = None
         #
-        self.WebData = None
+        self.WebData = {}
         self.LogsData = None
         self.HousesData = {}
         self.XmlRoot = None

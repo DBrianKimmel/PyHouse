@@ -77,29 +77,29 @@ class ClientConnections(object):
 
 class Utility(xml_tools.ConfigFile):
 
-    def read_web_xml(self, p_root_xml):
-        l_web_data = WebData()
+    def read_web_xml(self, p_pyhouses_obj):
+        p_pyhouses_obj.WebData = WebData()
         try:
-            l_sect = p_root_xml.find('Web')
+            l_sect = p_pyhouses_obj.XmlRoot.find('Web')
             l_sect.find('WebPort')
         except AttributeError:
             if g_debug >= 0:
                 g_logger.error("web_server.read_web_xml() - ERROR in finding Web/WebPort, Creating entry {0:}".format(l_sect))
-            l_sect = ET.SubElement(p_root_xml, 'Web')
+            l_sect = ET.SubElement(p_pyhouses_obj.XmlRoot, 'Web')
             ET.SubElement(l_sect, 'Port').text = '8580'
             self.put_int_attribute(l_sect, 'WebPort', 8580)
-            l_web_data.WebPort = 8580
+            p_pyhouses_obj.WebData.WebPort = 8580
             l_logs = ET.SubElement(l_sect, 'Logins')
             l_login = ET.SubElement(l_logs, 'Login')
             l_login.set('Name', 'admin')
             l_login.set('Key', '0')
             l_login.set('Active', True)
             ET.SubElement(l_login, 'Password').text = '12admin34'
-            return l_web_data
-        l_web_data.WebPort = l_sect.findtext('WebPort')
-        l_web_data.WebPort = 8580
+            return
+        p_pyhouses_obj.WebData.WebPort = l_sect.findtext('WebPort')
+        p_pyhouses_obj.WebData.WebPort = 8580
         # l_web_data.WebPort = self.get_int_from_xml(l_sect, 'WebPort')
-        return l_web_data
+        return
 
     def write_web_xml(self, p_web_data):
         l_web_xml = ET.Element("Web")
@@ -114,9 +114,9 @@ class Utility(xml_tools.ConfigFile):
         l_site_dir = None
         l_site = appserver.NevowSite(web_mainpage.TheRoot(l_site_dir, p_pyhouses_obj))
         if not p_pyhouses_obj.WebData.Service.running:
-            p_pyhouses_obj.Reactor.listenTCP(self.m_web_data.WebPort, l_site)
+            p_pyhouses_obj.Reactor.listenTCP(p_pyhouses_obj.WebData.WebPort, l_site)
             p_pyhouses_obj.WebData.Service.startService()
-        l_msg = "Port:{0:}, Path:{1:}".format(self.m_web_data.WebPort, l_site_dir)
+        l_msg = "Port:{0:}, Path:{1:}".format(p_pyhouses_obj.WebData.WebPort, l_site_dir)
         g_logger.info("Started - {0:}".format(l_msg))
 
 
@@ -130,9 +130,8 @@ class API(Utility, ClientConnections):
     def Start(self, p_pyhouses_obj):
         p_pyhouses_obj.WebData = WebData()
         self.m_pyhouses_obj = p_pyhouses_obj
-        self.m_web_data = self.read_web_xml(p_pyhouses_obj.XmlRoot)
+        self.read_web_xml(p_pyhouses_obj)
         self.start_webserver(p_pyhouses_obj)
-        p_pyhouses_obj.WebData = self.m_web_data
 
     def Stop(self, p_xml):
         self.m_pyhouses_obj.WebData.Service.stopService()
