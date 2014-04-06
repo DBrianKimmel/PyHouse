@@ -156,6 +156,11 @@ class Utility(object):
         return p_role
 
     def init_node_type(self, p_pyhouses_obj):
+        g_logger.debug("NodeRole {0:}".format(p_pyhouses_obj))
+        g_logger.debug("NodeRole {0:}".format(p_pyhouses_obj.CoreData))
+        g_logger.debug("NodeRole {0:}".format(p_pyhouses_obj.CoreData.Nodes))
+        g_logger.debug("NodeRole {0:}".format(p_pyhouses_obj.CoreData.Nodes[0]))
+        g_logger.debug("NodeRole {0:}".format(p_pyhouses_obj.CoreData.Nodes[0].Role))
         if p_pyhouses_obj.CoreData.Nodes[0].Role & NODE_PIFACECAD:
             self._init_ir_control(p_pyhouses_obj)
 
@@ -197,6 +202,7 @@ class API(Utility):
         p_pyhouses_obj.CoreData.Nodes[0] = self.m_node
         self.get_node_info(p_pyhouses_obj)
         p_pyhouses_obj.CoreData.Nodes[0].Role = self.find_node_role()
+        self.init_node_type(p_pyhouses_obj)
         g_logger.info('Initialized')
 
     def Stop(self):
