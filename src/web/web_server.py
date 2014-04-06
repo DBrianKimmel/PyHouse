@@ -103,7 +103,7 @@ class Utility(xml_tools.ConfigFile):
 
     def write_web_xml(self, p_pyhouses_obj):
         l_web_xml = ET.Element("Web")
-        self.put_int_attribute(l_web_xml, 'WebPort', p_pyhouses_obj.WebPort)
+        self.put_int_attribute(l_web_xml, 'WebPort', p_pyhouses_obj.WebData.WebPort)
         return l_web_xml
 
     def start_webserver(self, p_pyhouses_obj):
