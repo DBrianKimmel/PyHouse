@@ -99,13 +99,13 @@ class PyHouseData(object):
         self.LogsAPI = None
         self.WebAPI = None
         #
+        self.CoreData = {}
         self.WebData = {}
         self.LogsData = None
         self.HousesData = {}
         self.XmlRoot = None
         self.XmlFileName = ''
         self.Reactor = None
-        self.Nodes = {}
 
     def __str__(self):
         l_ret = "PyHouseData:: "

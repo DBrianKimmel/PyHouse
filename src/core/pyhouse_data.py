@@ -81,12 +81,12 @@ class PyHouseData(object):
         self.LogsAPI = None
         self.WebAPI = None
         #
-        self.WebData = None
+        self.CoreData = {}
+        self.WebData = {}
         self.LogsData = None
         self.HousesData = HousesData()
         self.XmlRoot = None
         self.XmlFileName = ''
-        self.Nodes = {}
 
 
 class RoomData(object):

@@ -22,7 +22,6 @@ from twisted.internet.protocol import DatagramProtocol, ConnectedDatagramProtoco
 g_debug = 0
 g_logger = logging.getLogger('PyHouse.NodeDiscovry')
 
-NODE_SERVER = 'tcp:port=8581'
 PYHOUSE_MULTICAST = '234.35.36.37'
 AMP_PORT = 8581
 PYHOUSE_DISCOVERY_PORT = 8582
@@ -81,9 +80,9 @@ class MulticastDiscoveryServerProtocol(DatagramProtocol):
 
     def save_node_info(self):
         l_count = 0
-        for l_node in self.m_pyhouses_obj.Nodes.itervalues():
+        for l_node in self.m_pyhouses_obj.CoreData.Nodes.itervalues():
             l_count += 1
-        self.m_pyhouses_obj.Nodes[l_count] = l_node
+        self.m_pyhouses_obj.CoreData.Nodes[l_count] = l_node
 
 
 class MulticastDiscoveryClientProtocol(ConnectedDatagramProtocol):
@@ -128,8 +127,6 @@ class API(Utility):
         g_logger.info("Initialized.")
 
     def Start(self, p_pyhouses_obj):
-        if p_pyhouses_obj == None:
-            p_pyhouses_obj.Nodes = {}
         self.start_node_discovery(p_pyhouses_obj)
         g_logger.info("Started.")
 

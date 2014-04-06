@@ -13,29 +13,66 @@ Created on Apr 2, 2014
 
 This module:
     Gathers the information about this node and saves it in PyHousesData.
+    Starts services on the local node (i.e. ir_service).
 """
-
 
 # Import system type stuff
 import logging
 import netifaces
+import os
 import platform
 
-from src.core.nodes import NodeData
+# from src.core.nodes import NodeData
+from src.communication import ir_control
 
 
 g_debug = 0
 g_logger = logging.getLogger('PyHouse.LocalNode   ')
 
 
+NODE_NOTHING = 0x0000
+NODE_LIGHTS = 0x0001
+NODE_PANDORA = 0x0002
+NODE_CAMERA = 0x0004
+NODE_PIFACECAD = 0x0008
+NODE_V6ROUTER = 0x0010
+
+
 class InterfaceData(object):
+    """
+    Holds information about each of the interfaces on the local node.
+
+    @param  Type: Ethernet | Wireless | Loop | Tunnel | Other
+    """
     def __init__(self):
         self.Name = None
         self.Key = 0
         self.Active = True
+        self.Type = None
         self.MacAddress = ''
         self.V4Address = []
         self.V6Address = []
+
+
+class NodeRoleData(object):
+
+    def __init__(self):
+        self.CameraNode = False
+        self.LightingNode = False
+        self.PifaceCadNode = False
+        self.PandoraNode = False
+
+
+class NodeData(object):
+
+    def __init__(self):
+        self.Name = None
+        self.Key = 0
+        self.Active = True
+        self.HostName = ''
+        self.ConnectionAddr = None
+        self.Role = 0
+        self.Interfaces = {}
 
 
 class GetNodeInfo(object):
@@ -58,6 +95,7 @@ class GetAllInterfaceData(object):
         global InterfacesData
         for l_ix in l_interfaces:
             l_interface = InterfaceData()
+            l_interface.Type = 'Other'
             l_interface.Name = l_ix
             l_interface.Key = l_count
             for l_af in netifaces.ifaddresses(l_ix):
@@ -80,6 +118,38 @@ class GetAllInterfaceData(object):
         return l_list
 
 
+class HandleNodeType(object):
+
+    m_node = NODE_NOTHING
+
+    def __init__(self):
+        self.find_node_type()
+
+    def find_node_type(self):
+        self.m_node = NODE_NOTHING
+        # Test for lights
+        if os.path.exists('/dev/ttyUSB0'):
+            self.m_node |= NODE_LIGHTS
+        # Test for Pandora
+        if os.path.exists('/usr/bin/pianobar'):
+            self.m_node |= NODE_PANDORA
+        # Test for camera
+        # Test for PifaceCAD
+        if os.path.exists('/dev/lirc0'):
+            self.m_node |= NODE_PIFACECAD
+
+    def init_node_type(self, p_pyhouses_obj):
+        if self.m_node & NODE_PIFACECAD:
+            self._init_ir_control(p_pyhouses_obj)
+
+
+    def _init_ir_control(self, p_pyhouses_obj):
+        """This node has an IR receiver so set it up.
+        """
+        l_ir = ir_control.API()
+        l_ir.Start(p_pyhouses_obj)
+
+
 class Utility(object):
 
     def insert_node(self, p_node, p_pyhouses_obj):
@@ -87,17 +157,16 @@ class Utility(object):
         """
         l_max_key = -1
         try:
-            for l_node in p_pyhouses_obj.Nodes.itervalues():
+            for l_node in p_pyhouses_obj.CoreData.Nodes.itervalues():
                 if l_node.Name == p_node.Name:
-                    p_pyhouses_obj.Nodes[l_node.Key] = p_node
+                    p_pyhouses_obj.CoreData.Nodes[l_node.Key] = p_node
                     return
                 if l_node.Key > l_max_key:
                     l_max_key = l_node.Key
         except AttributeError:
             pass
-        p_pyhouses_obj.Nodes[l_max_key + 1] = p_node
-
-        g_logger.debug('Nodes = {0:}'.format(p_pyhouses_obj.Nodes))
+        p_pyhouses_obj.CoreData.Nodes[l_max_key + 1] = p_node
+        g_logger.debug('Nodes = {0:}'.format(p_pyhouses_obj.CoreData.Nodes))
 
 
 class API(Utility):
@@ -108,6 +177,7 @@ class API(Utility):
         self.m_node = NodeData()
         GetNodeInfo(self.m_node)
         GetAllInterfaceData(self.m_node)
+        self.m_node = HandleNodeType()
 
     def Start(self, p_pyhouses_obj):
         self.insert_node(self.m_node, p_pyhouses_obj)
