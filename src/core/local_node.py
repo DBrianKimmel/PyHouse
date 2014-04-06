@@ -130,12 +130,16 @@ class HandleNodeType(object):
         # Test for lights
         if os.path.exists('/dev/ttyUSB0'):
             self.m_node |= NODE_LIGHTS
+            g_logger.debug('Lighting Node')
         # Test for Pandora
         if os.path.exists('/usr/bin/pianobar'):
             self.m_node |= NODE_PANDORA
+            g_logger.debug('Pandora Node')
         # Test for camera
+
         # Test for PifaceCAD
         if os.path.exists('/dev/lirc0'):
+            g_logger.debug('Lirc Node')
             self.m_node |= NODE_PIFACECAD
 
     def init_node_type(self, p_pyhouses_obj):
@@ -178,9 +182,11 @@ class API(Utility):
         GetNodeInfo(self.m_node)
         GetAllInterfaceData(self.m_node)
         self.m_node = HandleNodeType()
+        g_logger.info('Initialized')
 
     def Start(self, p_pyhouses_obj):
         self.insert_node(self.m_node, p_pyhouses_obj)
+        g_logger.info('Initialized')
 
     def Stop(self):
         pass
