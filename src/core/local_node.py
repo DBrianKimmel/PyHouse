@@ -80,6 +80,8 @@ class GetNodeInfo(object):
     """
     def __init__(self, p_node):
         p_node.Name = platform.node()
+        p_node.Key = 0
+        p_node.Active = True
 
 
 class GetAllInterfaceData(object):
@@ -122,25 +124,25 @@ class HandleNodeType(object):
 
     m_node = NODE_NOTHING
 
-    def __init__(self):
-        self.find_node_type()
+    def __init__(self, p_role):
+        self.find_node_type(p_role)
 
-    def find_node_type(self):
-        self.m_node = NODE_NOTHING
+    def find_node_type(self, p_role):
+        p_role = NODE_NOTHING
         # Test for lights
         if os.path.exists('/dev/ttyUSB0'):
-            self.m_node |= NODE_LIGHTS
+            p_role |= NODE_LIGHTS
             g_logger.debug('Lighting Node')
         # Test for Pandora
         if os.path.exists('/usr/bin/pianobar'):
-            self.m_node |= NODE_PANDORA
+            p_role |= NODE_PANDORA
             g_logger.debug('Pandora Node')
         # Test for camera
 
         # Test for PifaceCAD
         if os.path.exists('/dev/lirc0'):
             g_logger.debug('Lirc Node')
-            self.m_node |= NODE_PIFACECAD
+            p_role |= NODE_PIFACECAD
 
     def init_node_type(self, p_pyhouses_obj):
         if self.m_node & NODE_PIFACECAD:
@@ -157,6 +159,7 @@ class HandleNodeType(object):
 class Utility(object):
 
     def insert_node(self, p_node, p_pyhouses_obj):
+        return
         """The local node should always be node 0 - Do I want to force it ???
         """
         l_max_key = -1
@@ -181,10 +184,11 @@ class API(Utility):
         self.m_node = NodeData()
         GetNodeInfo(self.m_node)
         GetAllInterfaceData(self.m_node)
-        self.m_node = HandleNodeType()
+        HandleNodeType(self.m_node.Role)
         g_logger.info('Initialized')
 
     def Start(self, p_pyhouses_obj):
+        p_pyhouses_obj.CoreData.Nodes[0] = self.m_node
         self.insert_node(self.m_node, p_pyhouses_obj)
         g_logger.info('Initialized')
 

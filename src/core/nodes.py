@@ -47,6 +47,7 @@ class API(object):
         g_logger.info("Initialized.")
 
     def Start(self, p_pyhouses_obj):
+        p_pyhouses_obj.CoreData.Nodes = {}
         self.m_local.Start(p_pyhouses_obj)
         self.m_discovery.Start(p_pyhouses_obj)
         g_logger.info("Started.")
