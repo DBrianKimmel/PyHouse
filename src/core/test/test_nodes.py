@@ -603,9 +603,6 @@ class Test3MulticastTestCase(unittest.TestCase):
             self.client.transport.joinGroup("127.0.0.1"),
             error.MulticastJoinError)
 
-    if runtime.platform.isWindows() and not runtime.platform.isVista():
-        test_305_joinFailure.todo = "Windows' multicast is wonky"
-
     def test_306_multicast(self):
         """
         Test that a multicast group can be joined and messages sent to and received from it.

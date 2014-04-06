@@ -25,19 +25,17 @@ This module will establish a domain network and use Twisted's AMP protocol to pa
 # Import system type stuff
 import logging
 
-from twisted.internet.protocol import DatagramProtocol, Factory
+from twisted.internet.protocol import Factory
 from twisted.internet.endpoints import serverFromString, TCP4ClientEndpoint
 from twisted.application.internet import StreamServerEndpointService
-from twisted.protocols.amp import AMP, Integer, String, Unicode, Command
+from twisted.protocols.amp import AMP, Integer, String, Command
 
 
 g_debug = 0
 g_logger = logging.getLogger('PyHouse.Nodes       ')
 
 NODE_SERVER = 'tcp:port=8581'
-PYHOUSE_MULTICAST = '234.35.36.37'
 AMP_PORT = 8581
-PYHOUSE_DISCOVERY_PORT = 8582
 
 
 class NodeData(object):
@@ -48,7 +46,7 @@ class NodeData(object):
         self.Active = True
         self.HostName = ''
         self.ConnectionAddr = None
-        self.Role = None
+        self.Role = 0
         self.Interfaces = {}
 
 
@@ -60,7 +58,7 @@ class RegisterNode(Command):
     """
     """
     arguments = [('Command', Integer()),
-                 ('NodeName', Unicode()),
+                 ('NodeName', String()),
                  ('NodeType', Integer()),
                  ('IPv4', String()),
                  ('IPv6', String())]
@@ -109,9 +107,9 @@ class AmpClient(object):
             p_protocol.callRemote(
                 RegisterNode,
                 Command = 1,
-                NodeName = u'briank',
-                NodeType = 1,
-                IPv4 = '1.2.3.4',
+                NodeName = p_pyhouses_obj.Nodes[0].Name,
+                NodeType = p_pyhouses_obj.Nodes[0].Role,
+                IPv4 = '3.5.7.9',
                 IPv6 = 'ff00::'
                 )
         l_defer.addCallback(cb_send_register_node)
@@ -161,84 +159,7 @@ class AmpServer(object):
         return l_ret
 
 
-class MulticastDiscoveryServerProtocol(DatagramProtocol):
-    """Listen for PyHouse nodes and respond to them.
-    We should get a packet from ourself and also packets from other nodes that are running.
-    """
-    m_address_list = []
-    m_pyhouses_obj = None
-
-    def __init__(self, p_pyhouses_obj):
-        self.m_pyhouses_obj = p_pyhouses_obj
-
-    def startProtocol(self):
-        """
-        Called after protocol has started listening.
-        """
-        self.transport.setTTL(2)
-        _l_defer = self.transport.joinGroup(PYHOUSE_MULTICAST)
-
-    def datagramReceived(self, p_datagram, p_address):
-        """
-        @type p_datagram: C{str}
-        @param p_datagram: is the contents of the datagram.
-
-        @type p_address: C{tupple) (ipaddr, port)
-        @param p_address: is the (IpAddr, Port) of the sender of this datagram
-        """
-        l_node = NodeData()
-        l_node.ConnectionAddr = p_address
-        l_msg = "Server Datagram {0:} received from {1:}".format(repr(p_datagram), repr(p_address))
-        if p_address[0] not in self.m_address_list:
-            self.m_address_list.append(p_address[0])
-            g_logger.info("{0:} - {1:}".format(l_msg, self.m_address_list))
-            self.send_node(p_address[0])
-        if p_datagram == "Client: Ping":
-            # Rather than replying to the group multicast address, we send the reply directly (unicast) to the originating port:
-            self.transport.write("Server: Pong", p_address)
-        l_count = 0
-        for l_node in self.m_pyhouses_obj.Nodes.itervalues():
-            l_count += 1
-        self.m_pyhouses_obj.Nodes[l_count] = l_node
-
-    def send_node(self, p_address):
-        """
-        @type p_address: C{str)
-        @param p_address: is the IpAddr to send to node info to
-        """
-        AmpClient().connect(self.m_pyhouses_obj, p_address)
-        g_logger.debug('Open AMP client connection to {0:}'.format(p_address))
-
-
-class MulticastDiscoveryClientProtocol(DatagramProtocol):
-    """Find other PyHouse nodes within range."""
-
-    def startProtocol(self):
-        """All listeners on the multicast address (including us) will receive this message."""
-        _l_defer = self.transport.joinGroup(PYHOUSE_MULTICAST)
-        self.transport.write('Client: Ping', (PYHOUSE_MULTICAST, PYHOUSE_DISCOVERY_PORT))
-
-    def datagramReceived(self, datagram, address):
-        l_msg = "Client Datagram {0:} received from {1:}".format(repr(datagram), repr(address))
-        g_logger.info(l_msg)
-
-
 class Utility(AmpServer, AmpClient):
-
-    def start_node_discovery(self, p_pyhouses_obj):
-        """Use UDP multicast to discover the other PyHouse nodes that are local.
-        Fire the client off again once per hour to re-discover any new nodes
-        """
-        self.m_pyhouses_obj = p_pyhouses_obj
-        self._start_discovery_server(p_pyhouses_obj)
-        self._start_discovery_client(p_pyhouses_obj)
-
-    def _start_discovery_server(self, p_pyhouses_obj):
-        """Use listenMultiple=True so that we can run a server and a client on same node."""
-        p_pyhouses_obj.Reactor.listenMulticast(PYHOUSE_DISCOVERY_PORT, MulticastDiscoveryServerProtocol(p_pyhouses_obj), listenMultiple = True)
-
-    def _start_discovery_client(self, p_pyhouses_obj):
-        p_pyhouses_obj.Reactor.listenMulticast(PYHOUSE_DISCOVERY_PORT, MulticastDiscoveryClientProtocol(), listenMultiple = True)
 
     def start_amp(self, p_pyhouses_obj):
         self.m_pyhouses_obj = p_pyhouses_obj
@@ -266,7 +187,6 @@ class API(Utility):
     def Start(self, p_pyhouses_obj):
         if p_pyhouses_obj == None:
             p_pyhouses_obj.Nodes = {}
-        self.start_node_discovery(p_pyhouses_obj)
         self.start_amp(p_pyhouses_obj)
         g_logger.info("Started.")
 

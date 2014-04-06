@@ -85,11 +85,6 @@ g_debug = 0
 g_logger = logging.getLogger('PyHouse         ')
 
 
-callWhenRunning = reactor.callWhenRunning
-reactorrun = reactor.run
-reactorstop = reactor.stop
-
-
 class PyHouseData(object):
     """The master object, contains all other 'configuration' objects.
     """
@@ -106,7 +101,7 @@ class PyHouseData(object):
         #
         self.WebData = None
         self.LogsData = None
-        self.HousesData = None
+        self.HousesData = {}
         self.XmlRoot = None
         self.XmlFileName = ''
         self.Reactor = None
@@ -180,7 +175,7 @@ def SigIntHandler(signum, _stackframe):
     g_logger.debug('SigInt - Signal handler called with signal {0:}'.format(signum))
     g_logger.info("Interrupted.\n\n\n")
     g_API.Stop()
-    reactorstop()
+    g_API.Quit()
     exit
 
 
@@ -231,9 +226,9 @@ class API(Utilities):
         self.m_pyhouses_obj.CoreAPI = setup.API()
         self.m_pyhouses_obj.HousesAPI = houses.API()
         self.m_pyhouses_obj.WebAPI = web_server.API()
-        callWhenRunning(self.Start)
+        self.m_pyhouses_obj.Reactor.callWhenRunning(self.Start)
         g_logger.info("Initialized.\n")
-        reactorrun()  # reactor never returns so must be last - Event loop will now run
+        self.m_pyhouses_obj.Reactor.run()  # reactor never returns so must be last - Event loop will now run
         g_logger.info("PyHouse says Bye Now.\n")
         raise SystemExit, "PyHouse says Bye Now."
 
@@ -241,8 +236,8 @@ class API(Utilities):
         """This is automatically invoked when the reactor starts from API().
         """
         self.m_pyhouses_obj.CoreAPI.Start(self.m_pyhouses_obj)
-        self.m_pyhouses_obj.HousesData = self.m_pyhouses_obj.HousesAPI.Start(self.m_pyhouses_obj)
-        self.m_pyhouses_obj.WebData = self.m_pyhouses_obj.WebAPI.Start(self.m_pyhouses_obj)
+        self.m_pyhouses_obj.HousesAPI.Start(self.m_pyhouses_obj)
+        self.m_pyhouses_obj.WebAPI.Start(self.m_pyhouses_obj)
         g_logger.info("Started.\n")
 
     def Stop(self):
@@ -270,7 +265,7 @@ class API(Utilities):
         """
         self.Stop()
         g_logger.info("Quit.\n\n\n")
-        reactorstop()
+        self.m_pyhouses_obj.Reactor.stop()
 
 
 if __name__ == "__main__":

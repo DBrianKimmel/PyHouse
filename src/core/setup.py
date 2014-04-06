@@ -21,6 +21,7 @@ import logging
 import os
 
 from src.core import local_node
+from src.core import node_discovery
 from src.core import nodes
 from src.entertain import entertainment
 from src.communication import ir_control
@@ -92,11 +93,13 @@ class API(object):
         self.m_node = HandleNodeType()
         self.m_entertainment = entertainment.API()
         self.m_local_node = local_node.API()
+        self.m_node_discovery = node_discovery.API()
         self.m_nodes = nodes.API()
         g_logger.info("Initialized.")
 
     def Start(self, p_pyhouses_obj):
         self.m_local_node.Start(p_pyhouses_obj)
+        self.m_node_discovery.Start(p_pyhouses_obj)
         self.m_nodes.Start(p_pyhouses_obj)
         self.m_node.init_node_type(p_pyhouses_obj)
         # House

@@ -21,8 +21,7 @@ Do not require reloads, auto change PyHouse on the fly.
 
 # Import system type stuff
 import logging
-from twisted.internet import reactor
-from twisted.application.service import Service
+from twisted.application import service
 from nevow import appserver
 import xml.etree.ElementTree as ET
 
@@ -45,10 +44,6 @@ g_debug = 0
 # 1 = Additional logging
 # + = NOT USED HERE
 g_logger = logging.getLogger('PyHouse.WebServer   ')
-
-
-# Only to move the eclipse error flags to one small spot
-listenTCP = reactor.listenTCP
 
 
 class WebData(object):
@@ -112,16 +107,15 @@ class Utility(xml_tools.ConfigFile):
         return l_web_xml
 
     def start_webserver(self, p_pyhouses_obj):
-
-        self.setName('Web')
-        self.setServiceParent(p_pyhouses_obj.Application)
-        self.startService()
+        p_pyhouses_obj.WebData.Service = service.Service()
+        p_pyhouses_obj.WebData.Service.setName('Web')
+        p_pyhouses_obj.WebData.Service.setServiceParent(p_pyhouses_obj.Application)
         #
         l_site_dir = None
         l_site = appserver.NevowSite(web_mainpage.TheRoot(l_site_dir, p_pyhouses_obj))
-        if not self.m_web_running:
-            listenTCP(self.m_web_data.WebPort, l_site)
-            self.m_web_running = True
+        if not p_pyhouses_obj.WebData.Service.running:
+            p_pyhouses_obj.Reactor.listenTCP(self.m_web_data.WebPort, l_site)
+            p_pyhouses_obj.WebData.Service.startService()
         l_msg = "Port:{0:}, Path:{1:}".format(self.m_web_data.WebPort, l_site_dir)
         g_logger.info("Started - {0:}".format(l_msg))
 
@@ -130,16 +124,18 @@ class API(Utility, ClientConnections):
 
     def __init__(self):
         self.State = web_utils.WS_IDLE
-        g_logger.info("Initialized")
+        g_logger.info("Initialized.\n")
         self.m_web_running = False
 
     def Start(self, p_pyhouses_obj):
+        p_pyhouses_obj.WebData = WebData()
         self.m_pyhouses_obj = p_pyhouses_obj
         self.m_web_data = self.read_web_xml(p_pyhouses_obj.XmlRoot)
         self.start_webserver(p_pyhouses_obj)
-        return self.m_web_data
+        p_pyhouses_obj.WebData = self.m_web_data
 
     def Stop(self, p_xml):
+        self.m_pyhouses_obj.WebData.Service.stopService()
         p_xml.append(self.write_web_xml(self.m_web_data))
         g_logger.info("XML appended.")
 

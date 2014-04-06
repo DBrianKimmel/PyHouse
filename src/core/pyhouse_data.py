@@ -86,7 +86,7 @@ class PyHouseData(object):
         self.HousesData = HousesData()
         self.XmlRoot = None
         self.XmlFileName = ''
-        self.Nodes = None
+        self.Nodes = {}
 
 
 class RoomData(object):

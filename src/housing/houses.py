@@ -114,6 +114,13 @@ class LoadSaveAPI(HouseReadWriteConfig):
             l_list = l_sect.iterfind('House')
         return l_list
 
+    def process_houses(self, p_pyhouses_obj):
+        l_count = 0
+        for l_house_xml in self.read_xml_config_houses(p_pyhouses_obj):
+            p_pyhouses_obj.HousesData[l_count] = self.get_house_info(l_house_xml, l_count)
+            l_count += 1
+        return l_count
+
 
 class API(LoadSaveAPI):
     """
@@ -130,7 +137,7 @@ class API(LoadSaveAPI):
         self = object.__new__(cls)
         cls.__init__(self, *args, **kwargs)
         Singletons[cls] = self
-        g_logger.info("Initialized all houses.\n\n")
+        g_logger.info("Initialized all houses.")
         return self
 
     def __init__(self):
@@ -142,12 +149,9 @@ class API(LoadSaveAPI):
         May be stopped and then started anew to force reloading info.
         Invoked once no matter how many houses defined in the XML file.
         """
-        l_count = 0
-        for l_house_xml in self.read_xml_config_houses(p_pyhouses_obj):
-            self.m_houses_data[l_count] = self.get_house_info(l_house_xml, l_count)
-            l_count += 1
-        g_logger.info("Started.")
-        return self.m_houses_data
+        l_count = self.process_houses(p_pyhouses_obj)
+        g_logger.info("Started {0:} house(s).".format(l_count))
+        return p_pyhouses_obj.HousesData
 
     def Stop(self, p_xml):
         """Close down everything we started.
