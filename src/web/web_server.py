@@ -101,9 +101,9 @@ class Utility(xml_tools.ConfigFile):
         # l_web_data.WebPort = self.get_int_from_xml(l_sect, 'WebPort')
         return
 
-    def write_web_xml(self, p_web_data):
+    def write_web_xml(self, p_pyhouses_obj):
         l_web_xml = ET.Element("Web")
-        self.put_int_attribute(l_web_xml, 'WebPort', p_web_data.WebPort)
+        self.put_int_attribute(l_web_xml, 'WebPort', p_pyhouses_obj.WebPort)
         return l_web_xml
 
     def start_webserver(self, p_pyhouses_obj):
@@ -135,7 +135,7 @@ class API(Utility, ClientConnections):
 
     def Stop(self, p_xml):
         self.m_pyhouses_obj.WebData.Service.stopService()
-        p_xml.append(self.write_web_xml(self.m_web_data))
+        p_xml.append(self.write_web_xml(self.m_pyhouses_obj))
         g_logger.info("XML appended.")
 
 # ## END DBK
