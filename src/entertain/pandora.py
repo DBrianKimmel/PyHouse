@@ -86,6 +86,7 @@ class API(object):
         """Start the Pandora player when we receive an IR signal to play music.
         This will open the socket for control
         """
+        g_logger.info("Starting")
         if self.m_transport == None:  # Do not start a second pianobar
             self.m_processProtocol = BarProcessControl()
             self.m_processProtocol.deferred = BarProcessControl()
@@ -93,7 +94,7 @@ class API(object):
             l_args = ('pianobar',)
             l_env = None  # this will pass <os.environ>
             self.m_transport = p_pyhouses_obj.Reactor.spawnProcess(self.m_processProtocol, l_executable, l_args, l_env)
-            g_logger.info("Started.")
+        g_logger.info("Started.")
 
     def Stop(self):
         """Stop the Pandora player when we receive an IR signal to play some other thing.
