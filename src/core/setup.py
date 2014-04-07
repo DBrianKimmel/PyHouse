@@ -41,6 +41,7 @@ class CoreData(object):
 
     def __init__(self):
         self.Nodes = {}
+        self.DomainService = None
 
 
 class HandleNodeType(object):

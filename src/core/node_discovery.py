@@ -67,26 +67,32 @@ class MulticastDiscoveryServerProtocol(DatagramProtocol):
         @param p_address: is the (IpAddr, Port) of the sender of this datagram
         """
         l_node = NodeData()
-        l_node.ConnectionAddr = p_address
+        l_node.ConnectionAddr = p_address[0]
         l_msg = "Server Discovery Datagram {0:} received from {1:}".format(repr(p_datagram), repr(p_address))
         if p_address[0] not in self.m_address_list:
             self.m_address_list.append(p_address[0])
             g_logger.info("{0:} - {1:}".format(l_msg, self.m_address_list))
-            # self.send_node(p_address[0])
+            self.save_node_info(l_node)
         if p_datagram == WHOS_THERE:
             # Rather than replying to the group multicast address, we send the reply directly (unicast) to the originating port:
             self.transport.write(I_AM, p_address)
-            # self.save_node_info()
 
-    def save_node_info(self):
+    def save_node_info(self, p_node):
         l_count = 0
         for l_node in self.m_pyhouses_obj.CoreData.Nodes.itervalues():
             l_count += 1
-        self.m_pyhouses_obj.CoreData.Nodes[l_count] = l_node
+        p_node.Key = l_count
+        self.m_pyhouses_obj.CoreData.Nodes[l_count] = p_node
+        g_logger.debug("Added node {0:}".format(l_count))
 
 
 class MulticastDiscoveryClientProtocol(ConnectedDatagramProtocol):
     """Find other PyHouse nodes within range."""
+    m_pyhouses_obj = None
+
+    def __init__(self, p_pyhouses_obj):
+        self.m_pyhouses_obj = p_pyhouses_obj
+
 
     def startProtocol(self):
         """
@@ -99,6 +105,7 @@ class MulticastDiscoveryClientProtocol(ConnectedDatagramProtocol):
         self.transport.write(WHOS_THERE, (PYHOUSE_MULTICAST, PYHOUSE_DISCOVERY_PORT))
 
     def datagramReceived(self, p_datagram, p_address):
+        self.m_pyhouses_obj.CoreData.Nodes[0].ConnectionAddr = p_address[0]
         l_msg = "Client Discovery Datagram {0:} received from {1:}".format(repr(p_datagram), repr(p_address))
         g_logger.info(l_msg)
 
@@ -118,7 +125,7 @@ class Utility(object):
         p_pyhouses_obj.Reactor.listenMulticast(PYHOUSE_DISCOVERY_PORT, MulticastDiscoveryServerProtocol(p_pyhouses_obj), listenMultiple = True)
 
     def _start_discovery_client(self, p_pyhouses_obj):
-        p_pyhouses_obj.Reactor.listenMulticast(PYHOUSE_DISCOVERY_PORT, MulticastDiscoveryClientProtocol(), listenMultiple = True)
+        p_pyhouses_obj.Reactor.listenMulticast(PYHOUSE_DISCOVERY_PORT, MulticastDiscoveryClientProtocol(p_pyhouses_obj), listenMultiple = True)
 
 
 class API(Utility):

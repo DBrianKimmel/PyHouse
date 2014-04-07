@@ -1,7 +1,7 @@
 """
-@name: PyHouse/src/core/local_node.py
+@name: PyHouse/src/core/node_local.py
 
-# -*- test-case-name: PyHouse.src.core.test.test_local_node -*-
+# -*- test-case-name: PyHouse.src.core.test.test_node_local -*-
 
 Created on Apr 2, 2014
 
@@ -27,7 +27,7 @@ from src.communication import ir_control
 
 
 g_debug = 0
-g_logger = logging.getLogger('PyHouse.LocalNode   ')
+g_logger = logging.getLogger('PyHouse.NodeLocal   ')
 
 
 NODE_NOTHING = 0x0000
@@ -156,11 +156,11 @@ class Utility(object):
         return p_role
 
     def init_node_type(self, p_pyhouses_obj):
-        g_logger.debug("NodeRole {0:}".format(p_pyhouses_obj))
-        g_logger.debug("NodeRole {0:}".format(p_pyhouses_obj.CoreData))
-        g_logger.debug("NodeRole {0:}".format(p_pyhouses_obj.CoreData.Nodes))
-        g_logger.debug("NodeRole {0:}".format(p_pyhouses_obj.CoreData.Nodes[0]))
-        g_logger.debug("NodeRole {0:}".format(p_pyhouses_obj.CoreData.Nodes[0].Role))
+        # g_logger.debug("NodeRole {0:}".format(p_pyhouses_obj))
+        # g_logger.debug("NodeRole {0:}".format(p_pyhouses_obj.CoreData))
+        # g_logger.debug("NodeRole {0:}".format(p_pyhouses_obj.CoreData.Nodes))
+        # g_logger.debug("NodeRole {0:}".format(p_pyhouses_obj.CoreData.Nodes[0]))
+        # g_logger.debug("NodeRole {0:}".format(p_pyhouses_obj.CoreData.Nodes[0].Role))
         if p_pyhouses_obj.CoreData.Nodes[0].Role & NODE_PIFACECAD:
             self._init_ir_control(p_pyhouses_obj)
 

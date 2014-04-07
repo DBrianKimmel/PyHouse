@@ -13,16 +13,17 @@ Created on Apr 3, 2014
 
 # Import system type stuff
 import logging
-from twisted.internet.protocol import Factory
-from twisted.internet.endpoints import serverFromString, TCP4ClientEndpoint
+from twisted.application import service
 from twisted.application.internet import StreamServerEndpointService
+from twisted.internet.endpoints import serverFromString, TCP4ClientEndpoint
+from twisted.internet.protocol import Factory
 from twisted.protocols.amp import AMP, Integer, String, Command
 
 # from src.core.nodes import NodeData
 
 
-g_debug = 0
-g_logger = logging.getLogger('PyHouse.Node_proto  ')
+g_debug = 1
+g_logger = logging.getLogger('PyHouse.NodeDomain  ')
 
 NODE_SERVER = 'tcp:port=8581'
 AMP_PORT = 8581
@@ -120,7 +121,7 @@ class AmpClient(object):
         l_endpoint = TCP4ClientEndpoint(p_pyhouses_obj.Reactor, p_address, AMP_PORT)
         l_factory = AmpClientFactory()
         l_defer = l_endpoint.connect(l_factory)
-        g_logger.info("Amp Client started.")
+        g_logger.info("Domain Client started to address {0:}".format(p_address))
         def cb_send_register_node(p_protocol):
             g_logger.debug('Sending our local node to a new discovered address {0:}'.format(p_address))
             p_protocol.callRemote(
@@ -147,15 +148,16 @@ class AmpClient(object):
 class AmpServerProtocol(AMP):
 
     def dataReceived(self, p_data):
+
         g_logger.debug('Amp Server data rxed {0:}'.format(p_data))
 
     def connectionMade(self):
         """Somebody connected to us...
         """
-        g_logger.debug('Amp Server connection Made')
+        g_logger.debug('Domain Server inbound connection Made')
 
     def connectionLost(self, p_reason):
-        g_logger.debug('Amp Server connection lost {0:}'.format(p_reason))
+        g_logger.debug('Domain Server connection lost {0:}'.format(p_reason))
 
 
 class AmpServerFactory(Factory):
@@ -169,27 +171,45 @@ class AmpServer(object):
     """
 
     def server(self, p_pyhouses_obj):
+        p_pyhouses_obj.CoreData.DomainService = service.Service()
+        p_pyhouses_obj.CoreData.DomainService.setName('Domain')
+        p_pyhouses_obj.CoreData.DomainService.setServiceParent(p_pyhouses_obj.Application)
+        #
         l_endpoint = serverFromString(p_pyhouses_obj.Reactor, NODE_SERVER)
         l_factory = AmpServerFactory()
         l_service = StreamServerEndpointService(l_endpoint, l_factory)
         l_service.setServiceParent(p_pyhouses_obj.Application)
-        l_ret = l_endpoint.listen(AmpServerFactory())
-        g_logger.info("Amp Server started.")
-        return l_ret
+        l_defer = l_endpoint.listen(AmpServerFactory())
+        g_logger.info("Domain Server started.")
+        return l_defer
 
 
 class Utility(AmpServer, AmpClient):
 
     def start_amp(self, p_pyhouses_obj):
         self.m_pyhouses_obj = p_pyhouses_obj
-        self._start_amp_server()
+        p_pyhouses_obj.Reactor.callLater(15, self.start_amp_server)
 
     def cb_send_node_info(self, p_protocol):
-        g_logger.debug('Amp client cb_send_node_info - {0:}.'.format(p_protocol))
+        g_logger.debug('Domain client cb_send_node_info - {0:}.'.format(p_protocol))
         _l_defer = self.send_register_node(AmpClientProtocol)
 
-    def _start_amp_server(self):
-        _l_defer = self.server(self.m_pyhouses_obj)
+    def cb_client_loop(self, _p_protocol):
+        l_nodes = self.m_pyhouses_obj.CoreData.Nodes
+        for l_node in l_nodes.itervalues():
+            if l_node.Key == 0:
+                # g_logger.debug("skip ourself Key:{0:} at addr:{1:}".format(l_node.Key, l_node.ConnectionAddr))
+                continue
+            g_logger.debug("Contacting node {0:}".format(l_node.ConnectionAddr))
+            _l_defer = self.connect(self.m_pyhouses_obj, l_node.ConnectionAddr)
+
+    def start_amp_server(self):
+        """Start the domain server to listen for all incoming requests.
+        For all the nodes we know about, send a message with our info and expect nodes info as a response.
+        If the request times out, mark the node as non active.
+        """
+        l_defer = self.server(self.m_pyhouses_obj)
+        l_defer.addCallback(self.cb_client_loop)
 
     def _start_amp_client(self):
         """We need one of these for every node in the domain.

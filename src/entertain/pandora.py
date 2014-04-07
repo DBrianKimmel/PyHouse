@@ -48,36 +48,27 @@ class BarProcessControl(protocol.ProcessProtocol):
     def connectionMade(self):
         """Write to stdin.
         """
-        # self.transport.write('')
-        # self.transport.closeStdin()
-        pass
+        g_logger.info("Connection Made.")
 
     def outReceived(self, p_data):
         """Data received from stdout.
 
         Note: Strings seem to begin with an ansi sequence  <esc>[xxx
-        # incremental time
+        #        The line is a timestamp - every second
+        (i)      This is an information message - Login, new playlist, etc.
         """
         l_data = p_data.rstrip('\r\n')
         l_data = l_data.lstrip(' \t')
         if l_data[0] == chr(0x1B):
             l_data = l_data[2:]
-        # g_logger.debug("{0:} >>> {1:}".format(PrintBytes(l_data), l_data))
         if l_data[1] == 'K':  # <ESC>[nK = erase something
             l_data = l_data[2:]
-        if l_data[0] == '#':  # The line is a timestamp - every second
+        if l_data[0] == '#'or l_data.startswith('(i)'):
             return
-        if l_data.startswith('(i)'):  # This is an information message - Login, new playlist, etc.
-            # g_logger.info("Pianobar Info = {0:}".format(l_data))
+        if l_data.startswith('Welcome to pianobar') or l_data.startswith('Press ? for') or l_data.startswith('Ok.'):
             return
         if l_data.startswith('|>'):  # This is selection information
             g_logger.info("Info = {0:}".format(l_data))
-            return
-        if l_data.startswith('Welcome to pianobar'):
-            return
-        if l_data.startswith('Press ? for'):
-            return
-        if l_data.startswith('Ok.'):
             return
         g_logger.debug("Data = {0:}".format(l_data))
 
