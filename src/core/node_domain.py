@@ -84,7 +84,9 @@ class RegisterNode(Command):
                  ('NodeType', Integer()),
                  ('IPv4', String()),
                  ('IPv6', String())]
-    response = [('Ack', Integer())]
+    response = [('Hostname', String()),
+                ('Address', String()),
+                ('Role', Integer())]
     errors = {RegisterNodeError: 'Node Information unavailable.'}
 
 
@@ -118,7 +120,6 @@ class AmpClientFactory(Factory):
 
 
 class AmpClient(object):
-
 
     def connect(self, p_pyhouses_obj, p_address):
         def cb_show_result(p_dict):
@@ -168,6 +169,14 @@ class AmpServerProtocol(AMP):
 
     def connectionLost(self, p_reason):
         g_logger.debug('Domain Server connection lost {0:}'.format(p_reason))
+
+    def respond_register_node(self):
+        l_hostname = 'xxxx'
+        l_addr = '44.55.66.77'
+        l_role = 0x1234
+        return {'Hostname': l_hostname, 'Address': l_addr, 'Role': l_role}
+
+    RegisterNode.responder(respond_register_node)
 
 
 class AmpServerFactory(Factory):
