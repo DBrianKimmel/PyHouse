@@ -38,7 +38,7 @@ class NodeInfoError(Exception): pass
 class ReqNodeInfo(Command):
     """Ask a node for its node information.
     """
-
+    requiresAnswer = True
     arguments = [('Command', Integer()),
                  ('Address', String())]
     response = [('Name', String()),
@@ -190,8 +190,15 @@ class AmpServerProtocol(AMP):
         l_addr = '44.55.66.77'
         l_role = 0x1234
         return {'Hostname': l_hostname, 'Address': l_addr, 'Role': l_role}
+    # RegisterNode.responder(respond_register_node)
 
-    RegisterNode.responder(respond_register_node)
+    def do_RegisterNode(self, p_command, p_node, p_type, p_v4, p_v6):
+        l_hostname = 'wxyz'
+        l_addr = '1.22.3.44'
+        l_role = 0xfedc
+        g_logger.debug("do_RegisterNode {0:}, {1:}, {2:}, {3:}, {4:}".format(p_command, p_node, p_type, p_v4, p_v6))
+        return {'Hostname': l_hostname, 'Address': l_addr, 'Role': l_role}
+    RegisterNode.responder(do_RegisterNode)
 
 
 class AmpServerFactory(Factory):
