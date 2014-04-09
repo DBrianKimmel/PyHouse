@@ -1,11 +1,14 @@
 """
+@name: PyHouse/src/core/node_domain.py
+
 Created on Apr 3, 2014
 
-# -*- test-case-name: PyHouse.src.core.test.test_node_proto -*-
+# -*- test-case-name: PyHouse.src.core.test.test_node_domain -*-
 
-@author: briank
-
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
+@license: MIT License
 
 @summary: This module is for AMP request/response protocol
 
@@ -21,7 +24,6 @@ from twisted.protocols.amp import AMP, Integer, String, Command
 
 # from src.core.nodes import NodeData
 from src.utils.tools import PrintBytes
-
 
 g_debug = 1
 g_logger = logging.getLogger('PyHouse.NodeDomain  ')
@@ -48,6 +50,7 @@ class ReqNodeInfo(Command):
 
 class NodeInfoResponse(AMP):
     def NodeInfo(self, p_name, p_active, p_address, p_role):
+        g_logger.debug("NodeInfoResponse")
         Name = p_name
         Active = p_active
         Address = p_address
@@ -122,11 +125,14 @@ class AmpClientFactory(Factory):
 class AmpClient(object):
 
     def connect(self, p_pyhouses_obj, p_address):
+        """Connect to a server.
+
+        @rtype: is a deferred
+        """
         def cb_show_result(p_dict):
             g_logger.debug("Domain Client - Got result {0:}".format(p_dict))
-
         def cb_send_register_node(p_protocol):
-            g_logger.debug('Domain Client - Sending our local node to a new discovered address {0:}'.format(p_address))
+            g_logger.debug('Domain Client - Sending registration to address {0:}'.format(p_address))
             l_defer2 = p_protocol.callRemote(
                 RegisterNode,
                 Command = 1,
@@ -136,20 +142,18 @@ class AmpClient(object):
                 IPv6 = 'ff00::'
                 )
             l_defer2.addCallback(cb_show_result)
-
         def cb_registered(p_result):
             g_logger.debug('Domain Client - Registration result:{0:}'.format(p_result))
-
         def eb_error(p_error):
             g_logger.debug('Domain Client - Registration error:{0:}'.format(p_error))
-
         def cb_done(p_done):
             g_logger.debug('Domain Client - Registration done:{0:}'.format(p_done))
 
         l_endpoint = TCP4ClientEndpoint(p_pyhouses_obj.Reactor, p_address, AMP_PORT)
         l_factory = AmpClientFactory()
         l_defer1 = l_endpoint.connect(l_factory)
-        g_logger.info("Domain Client started to address {0:}".format(p_address))
+        g_logger.info("Domain Client connecting to address {0:}".format(p_address))
+        #
         l_defer1.addCallback(cb_send_register_node)
         l_defer1.addCallback(cb_registered)
         l_defer1.addErrback(eb_error)
@@ -158,12 +162,22 @@ class AmpClient(object):
 
 
 class AmpServerProtocol(AMP):
+    """
+    Implement dataReceived(data) to handle both event-based and synchronous input.
+    output can be sent through the 'transport' attribute.
+    """
 
     def dataReceived(self, p_data):
+        """
+        """
         g_logger.debug('Domain Server data rxed {0:}'.format(PrintBytes(p_data)))
 
     def connectionMade(self):
         """Somebody connected to us...
+        This may be considered the initializer of the protocol, because it is called when the connection is completed.
+        For clients, this is called once the connection to the server has been established;
+        for servers, this is called after an accept() call stops blocking and a socket has been received.
+        If you need to send any greeting or initial message, do it here.
         """
         g_logger.debug('Domain Server inbound connection Made')
 
@@ -171,6 +185,7 @@ class AmpServerProtocol(AMP):
         g_logger.debug('Domain Server connection lost {0:}'.format(p_reason))
 
     def respond_register_node(self):
+        g_logger.debug("respond_register_node")
         l_hostname = 'xxxx'
         l_addr = '44.55.66.77'
         l_role = 0x1234
@@ -182,6 +197,7 @@ class AmpServerProtocol(AMP):
 class AmpServerFactory(Factory):
 
     def buildProtocol(self, _p_addr):
+        g_logger.debug('BuildProtocol')
         return AmpServerProtocol()
 
 
@@ -215,11 +231,11 @@ class Utility(AmpServer, AmpClient):
 
     def cb_client_loop(self, _p_protocol):
         l_nodes = self.m_pyhouses_obj.CoreData.Nodes
-        for l_node in l_nodes.itervalues():
-            if l_node.Key == 0:
-                # g_logger.debug("skip ourself Key:{0:} at addr:{1:}".format(l_node.Key, l_node.ConnectionAddr))
+        for l_key, l_node in l_nodes.iteritems():
+            if l_key == 0:
+                g_logger.debug("skip ourself Key:{0:} at addr:{1:}".format(l_key, l_node.ConnectionAddr))
                 continue
-            g_logger.debug("Contacting node {0:}".format(l_node.ConnectionAddr))
+            g_logger.debug("Client Contacting node {0:} - {1:}".format(l_key, l_node.ConnectionAddr))
             _l_defer = self.connect(self.m_pyhouses_obj, l_node.ConnectionAddr)
 
     def start_amp_server(self):

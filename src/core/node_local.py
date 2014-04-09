@@ -5,9 +5,10 @@
 
 Created on Apr 2, 2014
 
-@author: briank
-
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
+@license: MIT License
 
 @summary: Gather this nodes information.
 
@@ -22,12 +23,18 @@ import netifaces
 import os
 import platform
 
-# from src.core.nodes import NodeData
+# from src.core.nodes import NodeRoleData
 from src.communication import ir_control
-
 
 g_debug = 0
 g_logger = logging.getLogger('PyHouse.NodeLocal   ')
+
+
+__all__ = ['NODE_NOTHING', 'NODE_LIGHTS',
+           'NODE_PANDORA', 'NODE_CAMERA',
+           'NODE_PIFACECAD', 'NODE_V6ROUTER',
+           'API'
+           ]
 
 
 NODE_NOTHING = 0x0000
@@ -52,15 +59,6 @@ class InterfaceData(object):
         self.MacAddress = ''
         self.V4Address = []
         self.V6Address = []
-
-
-class NodeRoleData(object):
-
-    def __init__(self):
-        self.CameraNode = False
-        self.LightingNode = False
-        self.PifaceCadNode = False
-        self.PandoraNode = False
 
 
 class NodeData(object):
@@ -203,7 +201,7 @@ class API(Utility):
         self.get_node_info(p_pyhouses_obj)
         p_pyhouses_obj.CoreData.Nodes[0].Role = self.find_node_role()
         self.init_node_type(p_pyhouses_obj)
-        g_logger.info('Initialized')
+        g_logger.info('Started')
 
     def Stop(self):
         pass

@@ -1,17 +1,43 @@
 """
-PyHouse/src/core/pyhouse_data.py
+@Name: PyHouse/src/core/data_objects.py
 
 Created on Mar 20, 2014
 
-@author: briank
-
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
+@license: MIT License
 
-@summary: This module is used to test a single module.
+@summary: This module is the definition of major data objects.
+
+Specific data is loaded into some attributes for unit testing.
 """
 
 from twisted.application.service import Application
 from twisted.internet import reactor
+
+
+class PyHouseData(object):
+    """The master object, contains all other 'configuration' objects.
+    """
+
+    def __init__(self):
+        self.Application = Application('PyHouse')
+        self.Reactor = reactor
+        #
+        self.API = self
+        self.CoreAPI = None
+        self.HousesAPI = None
+        self.LogsAPI = None
+        self.WebAPI = None
+        #
+        self.CoreData = {}
+        self.WebData = {}
+        self.LogsData = {}
+        self.HousesData = {}
+        #
+        self.XmlRoot = None
+        self.XmlFileName = ''
 
 
 class LocationData(object):
@@ -63,30 +89,6 @@ class HousesData(object):
         self.Active = True
         self.HouseAPI = None
         self.HouseObject = {0: HouseData()}
-
-
-class PyHouseData(object):
-    """The master object, contains all other 'configuration' objects.
-    """
-
-    def __init__(self):
-        """PyHouse.
-        """
-        self.Application = Application('PyHouse')
-        self.Reactor = reactor
-        #
-        self.API = self
-        self.CoreAPI = None
-        self.HousesAPI = None
-        self.LogsAPI = None
-        self.WebAPI = None
-        #
-        self.CoreData = {}
-        self.WebData = {}
-        self.LogsData = None
-        self.HousesData = HousesData()
-        self.XmlRoot = None
-        self.XmlFileName = ''
 
 
 class RoomData(object):

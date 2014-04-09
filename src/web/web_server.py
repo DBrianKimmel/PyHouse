@@ -1,7 +1,14 @@
-#! /usr/bin/env python
-# -*- coding: iso-8859-1 -*-
+"""
+@name: PyHouse/src/web/web_seever.py
 
-"""Web server module.
+# -*- test-case-name: PyHouse.src.web.test.test_web_server -*-
+
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
+@copyright: 2012-2014 by D. Brian Kimmel
+@license: MIT License
+
+@summary: This module provides the web server service of PyHouse.
 
 This is a Main Module - always present.
 

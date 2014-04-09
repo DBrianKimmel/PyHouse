@@ -5,7 +5,7 @@ Created on Mar 2, 2014
 """
 
 from src.core import setup
-from src.core.pyhouse_data import PyHouseData
+from src.core.data_objects import PyHouseData
 
 from twisted.trial import unittest
 from twisted.internet.defer import Deferred, gatherResults, maybeDeferred

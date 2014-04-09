@@ -1,14 +1,13 @@
 #!/usr/bin/env python
 
-""" PyHouse.py - Run the python version house automation.
+"""
+@name: PyHouse/Pyhouse.py
 
-PyHouse/Pyhouse.py
+# -*- test-case-name: test_PyHouse -*-
 
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
-
 @Copyright (c) 2010-2014 by D. Brian Kimmel
-
 @license: MIT License
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -67,12 +66,12 @@ from twisted.application.service import Application
 import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
+from src.core.data_objects import PyHouseData
 from src.core import setup
 from src.utils import log
 from src.utils import xml_tools
 from src.housing import houses
 from src.web import web_server
-# from src.remote import local_master
 
 
 g_debug = 0
@@ -85,7 +84,7 @@ g_debug = 0
 g_logger = logging.getLogger('PyHouse         ')
 
 
-class PyHouseData(object):
+class XXXPyHouseData(object):
     """The master object, contains all other 'configuration' objects.
     """
 
@@ -200,6 +199,7 @@ class Utilities(object):
 class API(Utilities):
     """
     """
+    m_pyhouses_obj = PyHouseData()
 
     def __init__(self):
         """This is the startup of the entire system.

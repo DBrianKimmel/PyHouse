@@ -5,9 +5,10 @@
 
 Created on Mar 6, 2014
 
-@author: briank
-
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
+@license: MIT License
 
 @summary: This module does everything for nodes.
 
@@ -34,9 +35,33 @@ from src.core import node_local
 from src.core import node_discovery
 from src.core import node_domain
 
-
 g_debug = 0
 g_logger = logging.getLogger('PyHouse.Nodes       ')
+
+__all__ = ["NodeRoleData", 'NodeData',
+           "API"]
+
+
+class NodeData(object):
+
+    def __init__(self):
+        self.Name = None
+        self.Key = 0
+        self.Active = True
+        self.HostName = ''
+        self.ConnectionAddr = None
+        self.Role = 0
+        self.Interfaces = {}
+
+
+class NodeRoleData(object):
+
+    def __init__(self):
+        self.CameraNode = False
+        self.LightingNode = False
+        self.PifaceCadNode = False
+        self.PandoraNode = False
+
 
 class API(object):
 
@@ -54,6 +79,7 @@ class API(object):
         g_logger.info("Started.")
 
     def Stop(self):
+        self.m_domain.Stop()
         self.m_discovery.Stop()
         self.m_local.Stop()
         g_logger.info("Stopped.")

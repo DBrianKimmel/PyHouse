@@ -13,8 +13,8 @@ Created on Mar 22, 2014
 
 from twisted.trial import unittest
 
-import src.core.pyhouse_data
-from src.core import pyhouse_data
+import src.core.data_objects
+from src.core import data_objects
 
 class Test(unittest.TestCase):
 
@@ -29,19 +29,19 @@ class Test(unittest.TestCase):
 
     def test_001_Load(self):
         print('Test 001')
-        _l_data = pyhouse_data.PyHouseData()
+        _l_data = data_objects.PyHouseData()
 
     def test_002_houses(self):
-        l_data = pyhouse_data.PyHouseData()
+        l_data = data_objects.PyHouseData()
         _l_houses = l_data.HousesData
 
     def test_003_house(self):
-        l_data = pyhouse_data.PyHouseData()
+        l_data = data_objects.PyHouseData()
         l_houses = l_data.HousesData
         _l_house = l_houses.HouseObject[0]
 
     def test_004_name(self):
-        l_data = pyhouse_data.PyHouseData()
+        l_data = data_objects.PyHouseData()
         l_houses = l_data.HousesData
         l_house = l_houses.HouseObject[0]
         l_name = l_house.Name
@@ -49,7 +49,7 @@ class Test(unittest.TestCase):
         print(l_name)
 
     def test_005_street(self):
-        l_data = pyhouse_data.PyHouseData()
+        l_data = data_objects.PyHouseData()
         l_houses = l_data.HousesData
         l_house = l_houses.HouseObject[0]
         l_location = l_house.Location

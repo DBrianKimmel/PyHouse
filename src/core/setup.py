@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 @name: PyHouse/src/core/setup.py
 
@@ -6,9 +5,10 @@
 
 Created on Mar 1, 2014
 
-@author: briank
-
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
+@license: MIT License
 
 @summary: This module sets up the core part of PyHouse.
 
@@ -17,40 +17,25 @@ This will set up this node and then find all other nodes in the same domain (Hou
 Then start the House and all the sub systems.
 """
 
-
 # Import system type stuff
 import logging
-import os
 
 from src.core import nodes
 from src.entertain import entertainment
-from src.communication import ir_control
-
 
 g_debug = 0
 g_logger = logging.getLogger('PyHouse.CoreSetup   ')
 
-
 INTER_NODE = 'tcp:port=8581'
 INTRA_NODE = 'unix:path=/var/run/pyhouse/node:lockfile=1'
-
-InterfacesData = {}
 
 
 class CoreData(object):
 
     def __init__(self):
         self.Nodes = {}
+        self.DiscoveryService = None
         self.DomainService = None
-
-
-class HandleNodeType(object):
-
-    def _init_ir_control(self, p_pyhouses_obj):
-        """This node has an IR receiver so set it up.
-        """
-        l_ir = ir_control.API()
-        l_ir.Start(p_pyhouses_obj)
 
 
 class API(object):
@@ -79,10 +64,5 @@ class API(object):
         # House
         self.m_nodes.Stop(p_xml)
         g_logger.info("Stopped.")
-
-
-if __name__ == "__main__":
-    l_id = API()
-    l_id.Start()
 
 # ## END DBK

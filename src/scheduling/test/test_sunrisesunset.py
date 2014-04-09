@@ -8,7 +8,7 @@ import datetime
 from twisted.trial import unittest
 
 from src.scheduling import sunrisesunset
-from src.core.pyhouse_data import PyHouseData
+from src.core.data_objects import PyHouseData
 
 
 class LocationObj():

@@ -5,22 +5,26 @@
 
 Created on Apr 5, 2014
 
-@author: briank
-
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
+@license: MIT License
 
 @summary: This module is for discovering all the PyHouse nodes in a domain.
-
 """
 
 # Import system type stuff
 import logging
 
+from twisted.application import service
 from twisted.internet.protocol import DatagramProtocol, ConnectedDatagramProtocol
-
 
 g_debug = 0
 g_logger = logging.getLogger('PyHouse.NodeDiscovry')
+
+
+__all__ = [
+           'API']
 
 PYHOUSE_MULTICAST = '234.35.36.37'
 AMP_PORT = 8581
@@ -71,19 +75,22 @@ class MulticastDiscoveryServerProtocol(DatagramProtocol):
         l_msg = "Server Discovery Datagram {0:} received from {1:}".format(repr(p_datagram), repr(p_address))
         if p_address[0] not in self.m_address_list:
             self.m_address_list.append(p_address[0])
-            g_logger.info("{0:} - {1:}".format(l_msg, self.m_address_list))
-            self.save_node_info(l_node)
+            g_logger.info("{0:}".format(l_msg))
         if p_datagram == WHOS_THERE:
             # Rather than replying to the group multicast address, we send the reply directly (unicast) to the originating port:
             self.transport.write(I_AM, p_address)
+        elif p_datagram == I_AM:
+            self.save_node_info(l_node)
 
     def save_node_info(self, p_node):
         l_count = 0
         for l_node in self.m_pyhouses_obj.CoreData.Nodes.itervalues():
             l_count += 1
+            if p_node.ConnectionAddr == l_node.ConnectionAddr:
+                return
         p_node.Key = l_count
         self.m_pyhouses_obj.CoreData.Nodes[l_count] = p_node
-        g_logger.debug("Added node {0:}".format(l_count))
+        g_logger.debug("Added node {0:} - {1:}".format(l_count, p_node.ConnectionAddr))
 
 
 class MulticastDiscoveryClientProtocol(ConnectedDatagramProtocol):
@@ -116,7 +123,11 @@ class Utility(object):
         """Use UDP multicast to discover the other PyHouse nodes that are local.
         Fire the client off again once per hour to re-discover any new nodes
         """
+        p_pyhouses_obj.CoreData.DiscoveryService = service.Service()
+        p_pyhouses_obj.CoreData.DiscoveryService.setName('NodeDiscovery')
+        p_pyhouses_obj.CoreData.DiscoveryService.setServiceParent(p_pyhouses_obj.Application)
         self.m_pyhouses_obj = p_pyhouses_obj
+        #
         self._start_discovery_server(p_pyhouses_obj)
         self._start_discovery_client(p_pyhouses_obj)
 
