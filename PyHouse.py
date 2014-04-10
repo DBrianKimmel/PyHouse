@@ -54,7 +54,6 @@ __copyright__ = "2010-2014 by D. Brian Kimmel"
 __version_info__ = (1, 2, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
-
 # Import system type stuff
 import errno
 import logging
@@ -70,62 +69,9 @@ from src.core.data_objects import PyHouseData
 from src.core import setup
 from src.utils import log
 from src.utils import xml_tools
-from src.housing import houses
-from src.web import web_server
-
 
 g_debug = 0
-# 0 = off
-# 1 = log extra info
-# 2 = major routine entry
-# 3 = Config file handling
-# 4 = XML write details
-# + = NOT USED HERE
 g_logger = logging.getLogger('PyHouse         ')
-
-
-class XXXPyHouseData(object):
-    """The master object, contains all other 'configuration' objects.
-    """
-
-    def __init__(self):
-        """PyHouse.
-        """
-        self.Application = None
-        self.API = None
-        self.CoreAPI = None
-        self.HousesAPI = None
-        self.LogsAPI = None
-        self.WebAPI = None
-        #
-        self.CoreData = {}
-        self.WebData = {}
-        self.LogsData = None
-        self.HousesData = {}
-        self.XmlRoot = None
-        self.XmlFileName = ''
-        self.Reactor = None
-
-    def __str__(self):
-        l_ret = "PyHouseData:: "
-        l_ret += "\n\tHousesAPI:{0:}, ".format(self.HousesAPI)
-        l_ret += "\n\tLogsAPI:{0:}, ".format(self.LogsAPI)
-        l_ret += "\n\tWebAPI:{0:}, ".format(self.WebAPI)
-        l_ret += "\n\tWebData:{0:}, ".format(self.WebData)
-        l_ret += "\n\tLogsData:{0:}, ".format(self.LogsData)
-        l_ret += "\n\tHousesData:{0:};".format(self.HousesData)
-        l_ret += "\n\tXmlRoot:{0:}, ".format(self.XmlRoot)
-        l_ret += "\n\tXmlFileName:{0:}, ".format(self.XmlFileName)
-        return l_ret
-
-    def reprJSON(self):
-        """PyHouse.
-        """
-        l_ret = dict(
-            XmlFileName = self.XmlFileName,
-            HousesData = self.HousesData
-            )
-        return l_ret
 
 
 def daemonize():
@@ -212,7 +158,7 @@ class API(Utilities):
         self.m_pyhouses_obj = PyHouseData()
         self.m_pyhouses_obj.Reactor = reactor
         self.m_pyhouses_obj.Application = Application('PyHouse')
-        self.m_pyhouses_obj.API = self
+        self.m_pyhouses_obj.API = self  # Only used by web server to reload - Do we need this?
         global g_API
         g_API = self
         handle_signals()
@@ -224,8 +170,6 @@ class API(Utilities):
         g_logger.info("Initializing PyHouse.\n\n")
         #
         self.m_pyhouses_obj.CoreAPI = setup.API()
-        self.m_pyhouses_obj.HousesAPI = houses.API()
-        self.m_pyhouses_obj.WebAPI = web_server.API()
         self.m_pyhouses_obj.Reactor.callWhenRunning(self.Start)
         g_logger.info("Initialized.\n")
         self.m_pyhouses_obj.Reactor.run()  # reactor never returns so must be last - Event loop will now run

@@ -10,20 +10,23 @@ Created on Apr 2, 2014
 @copyright: 2014 by D. Brian Kimmel
 @license: MIT License
 
-@summary: Gather this nodes information.
+@summary: Gather this node's information.
 
 This module:
-    Gathers the information about this node and saves it in PyHousesData.
+    Gathers information about the interfaces (ethernet, wifi etc.) on this node.
+    Gathers information about the devices attached to this node.
+    Gathers information about the specialized PyHouse software installed on this node.
+    Saves all the gathered information in PyHousesData.
     Starts services on the local node (i.e. ir_service).
 """
 
 # Import system type stuff
+import fnmatch
 import logging
 import netifaces
 import os
 import platform
 
-# from src.core.nodes import NodeRoleData
 from src.communication import ir_control
 
 g_debug = 0
@@ -43,6 +46,7 @@ NODE_PANDORA = 0x0002
 NODE_CAMERA = 0x0004
 NODE_PIFACECAD = 0x0008
 NODE_V6ROUTER = 0x0010
+NODE_WINDOWS = 0x0020
 
 
 class InterfaceData(object):
@@ -137,28 +141,27 @@ class Utility(object):
 
     def find_node_role(self):
         p_role = NODE_NOTHING
-        # Test for lights
-        if os.path.exists('/dev/ttyUSB0'):
-            p_role |= NODE_LIGHTS
-            g_logger.debug('Lighting Node')
-        # Test for Pandora
-        if os.path.exists('/usr/bin/pianobar'):
-            p_role |= NODE_PANDORA
-            g_logger.debug('Pandora Node')
-        # Test for camera
-
-        # Test for PifaceCAD
-        if os.path.exists('/dev/lirc0'):
-            g_logger.debug('Lirc Node')
-            p_role |= NODE_PIFACECAD
+        try:
+            for l_file in os.listdir('/dev'):
+                # Test for lights
+                if fnmatch.fnmatch(l_file, 'ttyUSB?'):
+                    p_role |= NODE_LIGHTS
+                    g_logger.debug('Lighting Node')
+                if fnmatch.fnmatch(l_file, 'lirc?'):
+                    p_role |= NODE_PIFACECAD
+                    g_logger.debug('Lirc Node')
+            # Test for Pandora
+            if os.path.exists('/usr/bin/pianobar'):
+                p_role |= NODE_PANDORA
+                g_logger.debug('Pandora Node')
+            # Test for camera
+            #
+        except WindowsError:
+            p_role |= NODE_WINDOWS
+            g_logger.debug('Windows Node')
         return p_role
 
     def init_node_type(self, p_pyhouses_obj):
-        # g_logger.debug("NodeRole {0:}".format(p_pyhouses_obj))
-        # g_logger.debug("NodeRole {0:}".format(p_pyhouses_obj.CoreData))
-        # g_logger.debug("NodeRole {0:}".format(p_pyhouses_obj.CoreData.Nodes))
-        # g_logger.debug("NodeRole {0:}".format(p_pyhouses_obj.CoreData.Nodes[0]))
-        # g_logger.debug("NodeRole {0:}".format(p_pyhouses_obj.CoreData.Nodes[0].Role))
         if p_pyhouses_obj.CoreData.Nodes[0].Role & NODE_PIFACECAD:
             self._init_ir_control(p_pyhouses_obj)
 
@@ -192,11 +195,11 @@ class API(Utility):
     m_node = None
 
     def __init__(self):
-        self.m_node = NodeData()
-        GetAllInterfaceData(self.m_node)
-        g_logger.info('Initialized')
+        pass
 
     def Start(self, p_pyhouses_obj):
+        self.m_node = NodeData()
+        GetAllInterfaceData(self.m_node)
         p_pyhouses_obj.CoreData.Nodes[0] = self.m_node
         self.get_node_info(p_pyhouses_obj)
         p_pyhouses_obj.CoreData.Nodes[0].Role = self.find_node_role()

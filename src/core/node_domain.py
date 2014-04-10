@@ -12,6 +12,8 @@ Created on Apr 3, 2014
 
 @summary: This module is for AMP request/response protocol
 
+This Module is the hub of a domain communication system.
+It starts a server and uses the AMP protocol to communicate with all the known nodes.
 """
 
 # Import system type stuff
@@ -209,7 +211,7 @@ class AmpServerFactory(Factory):
 
 
 class AmpServer(object):
-    """Sit and listen for amp commands from other nodes.
+    """Sit and listen for amp messages from other nodes.
     """
 
     def server(self, p_pyhouses_obj):

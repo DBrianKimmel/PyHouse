@@ -11,6 +11,11 @@ Created on Apr 5, 2014
 @license: MIT License
 
 @summary: This module is for discovering all the PyHouse nodes in a domain.
+
+This Module:
+    Uses IPv4 multicast to discover the other PyHouse nodes in the local network
+    Uses IPv6 multicast to discover nodes and overrides IPv4 contact info.
+    Uses neighbor discovery to find other potential devices that may play a part in home automation.
 """
 
 # Import system type stuff
@@ -30,7 +35,7 @@ PYHOUSE_MULTICAST = '234.35.36.37'
 AMP_PORT = 8581
 PYHOUSE_DISCOVERY_PORT = 8582
 WHOS_THERE = "Who's There?"
-I_AM = "I am."
+I_AM = "I am. "
 
 
 class NodeData(object):
@@ -68,7 +73,7 @@ class MulticastDiscoveryServerProtocol(DatagramProtocol):
         @param p_datagram: is the contents of the datagram.
 
         @type p_address: C{tupple) (ipaddr, port)
-        @param p_address: is the (IpAddr, Port) of the sender of this datagram
+        @param p_address: is the (IpAddr, Port) of the sender of this datagram (reply to address).
         """
         l_node = NodeData()
         l_node.ConnectionAddr = p_address[0]
@@ -77,9 +82,10 @@ class MulticastDiscoveryServerProtocol(DatagramProtocol):
             self.m_address_list.append(p_address[0])
             g_logger.info("{0:}".format(l_msg))
         if p_datagram == WHOS_THERE:
-            # Rather than replying to the group multicast address, we send the reply directly (unicast) to the originating port:
-            self.transport.write(I_AM, p_address)
-        elif p_datagram == I_AM:
+            l_str = I_AM + self.m_pyhouses_obj.CoreData.Nodes[0].Name
+            self.transport.write(l_str, p_address)
+            g_logger.debug("Server replying {0:}".format(l_str))
+        elif p_datagram.startswith(I_AM):
             self.save_node_info(l_node)
 
     def save_node_info(self, p_node):

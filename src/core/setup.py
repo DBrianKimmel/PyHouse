@@ -22,6 +22,8 @@ import logging
 
 from src.core import nodes
 from src.entertain import entertainment
+from src.housing import houses
+from src.web import web_server
 
 g_debug = 0
 g_logger = logging.getLogger('PyHouse.CoreSetup   ')
@@ -41,20 +43,21 @@ class CoreData(object):
 class API(object):
 
     m_entertainment = None
-    m_node = None
+    m_nodes = None
 
     def __init__(self):
-        g_logger.info("\n-----------------------------\nInitializing\n\n")
-        self.m_nodes = nodes.API()
+        g_logger.info("\n------------------------------------------------------------------\n\n")
         self.m_entertainment = entertainment.API()
-        g_logger.info("Initialized.\n\n")
+        self.m_nodes = nodes.API()
 
     def Start(self, p_pyhouses_obj):
         self.m_pyhouses_obj = p_pyhouses_obj
         p_pyhouses_obj.CoreData = CoreData()
         self.m_nodes.Start(p_pyhouses_obj)
         # House
+        self.m_pyhouses_obj.HousesAPI = houses.API()
         # SubSystems
+        self.m_pyhouses_obj.WebAPI = web_server.API()
         self.m_entertainment.Start(p_pyhouses_obj)
         g_logger.info("Started.")
 
