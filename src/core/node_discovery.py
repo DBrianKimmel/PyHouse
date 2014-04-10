@@ -118,10 +118,11 @@ class MulticastDiscoveryClientProtocol(ConnectedDatagramProtocol):
         self.transport.write(WHOS_THERE, (PYHOUSE_MULTICAST, PYHOUSE_DISCOVERY_PORT))
 
     def datagramReceived(self, p_datagram, p_address):
-        self.m_pyhouses_obj.CoreData.Nodes[0].ConnectionAddr = p_address[0]
-        # g_logger.info("Client Discovery Datagram {0:} received from {1:}".format(repr(p_datagram), repr(p_address)))
-        g_logger.debug("Update node 0 address to {0:}, {1:}".format(p_address[0], p_datagram))
-        pass
+        if p_datagram == WHOS_THERE:
+            self.m_pyhouses_obj.CoreData.Nodes[0].ConnectionAddr = p_address[0]
+            # g_logger.info("Client Discovery Datagram {0:} received from {1:}".format(repr(p_datagram), repr(p_address)))
+            g_logger.debug("Update node 0 address to {0:}, {1:}".format(p_address[0], p_datagram))
+            pass
 
 
 class Utility(object):
