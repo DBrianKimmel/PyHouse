@@ -22,7 +22,8 @@ from twisted.application import service
 from twisted.application.internet import StreamServerEndpointService
 from twisted.internet.endpoints import serverFromString, TCP4ClientEndpoint
 from twisted.internet.protocol import Factory
-from twisted.protocols.amp import AMP, Integer, String, Command
+from twisted.protocols.amp import AMP, Integer, String, Command, IBoxReceiver
+from zope.interface import implements
 
 # from src.core.nodes import NodeData
 from src.utils.tools import PrintBytes
@@ -94,6 +95,18 @@ class RegisterNode(Command):
                 ('Role', Integer())]
     errors = {RegisterNodeError: 'Node Information unavailable.'}
 
+
+class BoxReflector(object):
+    implements (IBoxReceiver)
+
+    def startReceivingBoxes(self, p_boxSender):
+        self.boxSender = p_boxSender
+
+    def ampBoxReceived(self, p_box):
+        self.boxSender.sendBox(p_box)
+
+    def stopReceivingBoxes(self, p_reason):
+        self.boxSender = None
 
 class AmpClientProtocol(AMP):
 

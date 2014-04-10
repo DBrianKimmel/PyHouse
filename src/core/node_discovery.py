@@ -35,7 +35,7 @@ PYHOUSE_MULTICAST = '234.35.36.37'
 AMP_PORT = 8581
 PYHOUSE_DISCOVERY_PORT = 8582
 WHOS_THERE = "Who's There?"
-I_AM = "I am. "
+I_AM = "I am."
 
 
 class NodeData(object):
@@ -77,15 +77,15 @@ class MulticastDiscoveryServerProtocol(DatagramProtocol):
         """
         l_node = NodeData()
         l_node.ConnectionAddr = p_address[0]
-        l_msg = "Server Discovery Datagram {0:} received from {1:}".format(repr(p_datagram), repr(p_address))
         if p_address[0] not in self.m_address_list:
             self.m_address_list.append(p_address[0])
-            g_logger.info("{0:}".format(l_msg))
+            # g_logger.info("Server Discovery Datagram {0:} received from {1:}".format(repr(p_datagram), repr(p_address)))
         if p_datagram == WHOS_THERE:
-            l_str = I_AM + self.m_pyhouses_obj.CoreData.Nodes[0].Name
+            l_str = I_AM + ' ' + self.m_pyhouses_obj.CoreData.Nodes[0].Name
             self.transport.write(l_str, p_address)
-            g_logger.debug("Server replying {0:}".format(l_str))
+            # g_logger.debug("Server replying {0:}".format(l_str))
         elif p_datagram.startswith(I_AM):
+            l_node.Name = p_datagram.split(' ')[-1]
             self.save_node_info(l_node)
 
     def save_node_info(self, p_node):
@@ -96,7 +96,7 @@ class MulticastDiscoveryServerProtocol(DatagramProtocol):
                 return
         p_node.Key = l_count
         self.m_pyhouses_obj.CoreData.Nodes[l_count] = p_node
-        g_logger.debug("Added node {0:} - {1:}".format(l_count, p_node.ConnectionAddr))
+        g_logger.debug("Added node {0:} - {1:}, {2:}".format(l_count, p_node.ConnectionAddr, p_node.Name))
 
 
 class MulticastDiscoveryClientProtocol(ConnectedDatagramProtocol):
@@ -117,10 +117,11 @@ class MulticastDiscoveryClientProtocol(ConnectedDatagramProtocol):
         _l_defer = self.transport.joinGroup(PYHOUSE_MULTICAST)
         self.transport.write(WHOS_THERE, (PYHOUSE_MULTICAST, PYHOUSE_DISCOVERY_PORT))
 
-    def datagramReceived(self, p_datagram, p_address):
+    def datagramReceived(self, _p_datagram, p_address):
         self.m_pyhouses_obj.CoreData.Nodes[0].ConnectionAddr = p_address[0]
-        l_msg = "Client Discovery Datagram {0:} received from {1:}".format(repr(p_datagram), repr(p_address))
-        g_logger.info(l_msg)
+        # g_logger.info("Client Discovery Datagram {0:} received from {1:}".format(repr(p_datagram), repr(p_address)))
+        g_logger.debug("Update node 0 address to {0:}".format(p_address[0]))
+        pass
 
 
 class Utility(object):
@@ -148,11 +149,12 @@ class Utility(object):
 class API(Utility):
 
     def __init__(self):
-        g_logger.info("Initialized.")
+        # g_logger.info("Initialized.")
+        pass
 
     def Start(self, p_pyhouses_obj):
         self.start_node_discovery(p_pyhouses_obj)
-        g_logger.info("Started.")
+        # g_logger.info("Started.")
 
     def Stop(self):
         g_logger.info("Stopped.")
