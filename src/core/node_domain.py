@@ -193,7 +193,7 @@ class AmpClient(object):
             return l_defer1
 
         def eb_error(p_reason):
-            g_logger.error('en_error - {0:}'.format(p_reason))
+            g_logger.error('eb_error - {0:}'.format(p_reason))
 
         g_logger.debug('Create Client {0:}'.format(p_address))
         l_defer2 = ClientCreator(p_pyhouses_obj.Reactor, AMP).connectTCP(p_address, AMP_PORT)
@@ -207,7 +207,7 @@ class AmpServerProtocol(AMP):
     output can be sent through the 'transport' attribute.
     """
 
-    def dataReceived(self, p_data):
+    def XdataReceived(self, p_data):
         """
         """
         g_logger.debug('Domain Server data rxed {0:}'.format(PrintBytes(p_data)))
@@ -236,10 +236,11 @@ class AmpServerProtocol(AMP):
 
 
 class AmpServerFactory(Factory):
+    protocol = AmpServerProtocol
 
     def buildProtocol(self, _p_addr):
         g_logger.debug('BuildProtocol')
-        return AmpServerProtocol()
+        return AmpServerProtocol
 
 
 class AmpServer(object):
