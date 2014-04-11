@@ -123,6 +123,7 @@ class TheRoot(rend.Page):
         super(TheRoot, self).__init__(*args, **kw)
         self.children = {
           'resource'          : FileNoListDir(os.path.join(staticpath)),
+          'Line.png'          : FileNoListDir(os.path.join(imagepath, 'Line.png')),
           'favicon.ico'       : FileNoListDir(os.path.join(imagepath, 'favicon.ico')),
           'waitroller.gif'    : FileNoListDir(os.path.join(imagepath, 'waitroller.gif'))
         }

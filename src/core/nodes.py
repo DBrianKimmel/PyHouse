@@ -60,14 +60,14 @@ class API(object):
         self.m_local = node_local.API()
         self.m_discovery = node_discovery.API()
         self.m_domain = node_domain.API()
-        g_logger.info("Initialized.")
+        # g_logger.info("Initialized.")
 
     def Start(self, p_pyhouses_obj):
         p_pyhouses_obj.CoreData.Nodes = {}
         self.m_local.Start(p_pyhouses_obj)
         self.m_discovery.Start(p_pyhouses_obj)
         self.m_domain.Start(p_pyhouses_obj)
-        g_logger.info("Started.")
+        # g_logger.info("Started.")
 
     def Stop(self):
         self.m_domain.Stop()

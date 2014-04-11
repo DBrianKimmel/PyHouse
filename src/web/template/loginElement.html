@@ -1,19 +1,18 @@
-<!-- loginElement.html
-    style = "background-color: black;">
+<!-- PyHouse/src/web/templates/loginElement.html
  -->
 <div
     xmlns:athena = 'http://divmod.org/ns/athena/0.7'
     xmlns:nevow  = 'http://nevow.com/ns/nevow/0.1'
     nevow:render = 'liveElement'
     class = "login"
-    id = 'LoginDiv'>
+    id = 'LoginDiv' >
     <div id = 'LoggingInDiv'>
         <form id = "LoginForm">
 	        <athena:handler event = "onsubmit" handler = "doLoginSubmit" />
 	        <h2>Enter login name:</h2>
 	        User Name: <input class = 'Button1' id = 'LoginName' /><br></br>
 	        Password : <input class = 'Button1' id = 'LoginPassword' type = 'password' /><br></br>
-	        <input class='button' type = 'submit' value = 'Login' />
+	        <input class='Button2' type = 'submit' value = 'Login' />
 	    </form>
     </div>
     <div id = "LoggedInDiv"></div>

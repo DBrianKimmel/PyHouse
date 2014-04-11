@@ -11,19 +11,16 @@
         <style type="text/css">
             html {
                 height: 100%;
-                background-color: #black;
+                background-color: black;
 	        }
 	        body {
-	            background-color: #black;
-	            color: #DDDDDD;
+	            background-color: black;
+	            color: #FF9900;
                 font-family: "Arial Narrow", Sans-serif;
                 font-size: 62.5%;
                 max-height: 100%;
-                margin: 0 4em;
-                padding: 3em;
-	        }
-	        * html body {
-	            height: 100%;
+                margin: 0;
+                padding: 0;
 	        }
 			h1 {
 			    color: #FF9900;
@@ -32,35 +29,54 @@
 			}
 			h2 {
 			    color: #9999CC;
+                background-color: black;
 			    text-align: left;
 			    font-size: 1.6em;
 			}
-			.workspace {
+			.Line {
+                color: #FF9900;
+                background-color: #FF9900;
+			}
+			.workspaceddss {
+                color: #9999CC;
+                background-color: black;
                 width: 100%;
                 height: 100%;
                 min-height: 100%;
                 position: absolute;
                 left: 0px;
                 top: 0px;
-                color: #9999CC;
-                background-color: black;
 			}
 			.Clock {
-                background-color: black;
                 color: #ffffff;
-                font-size: 150%;
+                background-color: black;
+                margin-left:auto;
+                margin-right:auto;
+                font-size: 300%;
                 text-align: center;
-                width: 150px;
-                height: 60px;
+                width: 50%;
+                height: 1em;
+                top: -6em;
             }
             .Login {
                 color: #CC99CC;
             }
             .Button1 {
-                width: 8em;
+                width: 12em;
+                height: 4em;
                 border: 1em solid black;
                 color: #CC6666;
                 background-color: #FFCC99;
+                -webkit-border-radius: 20px;
+            }
+            .Button2 {
+                width: 8em;
+                height: 5em;
+                border: 1em solid black;
+                color: #CC6666;
+                background-color: #FF9966;
+                border-radius: 20px;
+                -webkit-border-radius: 20px;
             }
             .RR {
                 border-radius: 20px;
@@ -82,7 +98,7 @@
             .L {
                 width: 100px;
             }
-            .button{
+            .buttonss{
                 display: block;
                 height: 20px;
                 width: 75px;
@@ -131,18 +147,6 @@
             }
             #contentsUBTEXT {
                 color: #cc6699;
-            }
-            .B_titleR{
-                color:#FFCC00;
-                font-size:32px;
-                background:#000;
-                display:block;
-                margin-top:-10px;
-                padding:2px;
-                height:40px;
-                float:right;
-                margin-right:10px;
-                margin-left:5px;
             }
 
         </style>

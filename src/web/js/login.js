@@ -1,4 +1,4 @@
-/* login.js
+/* PyHouse/src/web/js/login.js
  * 
  * Displays the login 
  */

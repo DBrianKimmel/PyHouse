@@ -40,6 +40,13 @@ class CoreData(object):
         self.DomainService = None
 
 
+class Utility(object):
+
+    def dispatch(self):
+        l_node = self.m_pyhouses_obj.CoreData.Nodes[0]
+        pass
+
+
 class API(object):
 
     m_entertainment = None

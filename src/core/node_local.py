@@ -163,9 +163,13 @@ class Utility(object):
         return p_role
 
     def init_node_type(self, p_pyhouses_obj):
-        if p_pyhouses_obj.CoreData.Nodes[0].Role & NODE_PIFACECAD:
+        l_role = p_pyhouses_obj.CoreData.Nodes[0].Role
+        if l_role & NODE_PIFACECAD:
             self._init_ir_control(p_pyhouses_obj)
-
+        elif l_role & NODE_LIGHTS:
+            pass
+        elif l_role & NODE_CAMERA:
+            pass
 
     def _init_ir_control(self, p_pyhouses_obj):
         """This node has an IR receiver so set it up.
