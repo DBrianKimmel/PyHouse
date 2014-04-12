@@ -58,8 +58,6 @@ class ReqNodeInfo(Command):
                 ('Role2', Integer())
                 ]
     errors = {NodeInfoError: 'Node information unavailable.'}
-
-
 class NodeInfoResponse(AMP):
     def NodeInfo(self, p_name, p_active, p_address, p_role):
         g_logger.debug("NodeInfoResponse")
@@ -71,16 +69,9 @@ class NodeInfoResponse(AMP):
                 'Active': Active,
                 'Address': Address,
                 'Role': Role}
-
     ReqNodeInfo.responder(NodeInfo)
-
-class RegisterNodeError(Exception):
-    pass
-
-
+class RegisterNodeError(Exception): pass
 class RegisterNode(Command):
-    """
-    """
     requiresAnswer = True
     arguments = [('Command', Integer()),
                  ('NodeName', String()),
@@ -91,7 +82,12 @@ class RegisterNode(Command):
                 ('Address', String()),
                 ('Role', Integer())]
     errors = {RegisterNodeError: 'Node Information unavailable.'}
-
+class TestNameError(Exception): pass
+class TestNameOnly(Command):
+    requiresAnswer = True
+    arguments = [('Name1', String())]
+    response = [('Name2', String())]
+    errors = {TestNameError: 'Name error'}
 
 class BoxReflector(object):
     implements (IBoxReceiver)
@@ -184,16 +180,16 @@ class AmpClient(object):
 
     def create_client(self, p_pyhouses_obj, p_address):
         def cb_got_result(p_result):
-            g_logger.debug('cb_got_result {0:}'.format(p_result))
+            g_logger.debug('cb_got_result Client {0:} - {1:}'.format(p_address, p_result))
             pass
         def cb_connected(p_protocol):
-            g_logger.debug('cb_connected')
+            g_logger.debug('cb_connected Client to addr {0:}'.format(p_address))
             l_defer1 = p_protocol.callRemote(ReqNodeInfo, Command1 = 42, Name1 = 'n1', Address1 = 'A1', Role1 = 53)
             l_defer1.addCallback(cb_got_result)
             return l_defer1
 
         def eb_error(p_reason):
-            g_logger.error('eb_error - {0:}'.format(p_reason))
+            g_logger.error('eb_error Client to {0:} - {1:}'.format(p_address, p_reason))
 
         g_logger.debug('Create Client {0:}'.format(p_address))
         l_defer2 = ClientCreator(p_pyhouses_obj.Reactor, AMP).connectTCP(p_address, AMP_PORT)
@@ -207,7 +203,7 @@ class AmpServerProtocol(AMP):
     output can be sent through the 'transport' attribute.
     """
 
-    def XdataReceived(self, p_data):
+    def dataReceived(self, p_data):
         """
         """
         g_logger.debug('Domain Server data rxed {0:}'.format(PrintBytes(p_data)))
@@ -239,7 +235,7 @@ class AmpServerFactory(Factory):
     protocol = AmpServerProtocol
 
     def buildProtocol(self, _p_addr):
-        g_logger.debug('BuildProtocol')
+        g_logger.debug('BuildProtocol Amp Server')
         return AmpServerProtocol
 
 
@@ -247,7 +243,7 @@ class AmpServer(object):
     """Sit and listen for amp messages from other nodes.
     """
 
-    def server(self, p_pyhouses_obj):
+    def create_domain_server(self, p_pyhouses_obj):
         l_endpoint = serverFromString(p_pyhouses_obj.Reactor, NODE_SERVER)
         l_factory = AmpServerFactory()
         l_service = StreamServerEndpointService(l_endpoint, l_factory)
@@ -262,6 +258,7 @@ class AmpServer(object):
 
 
 class Utility(AmpServer, AmpClient):
+    m_pyhouses_obj = None
 
     def start_amp(self, p_pyhouses_obj):
         self.m_pyhouses_obj = p_pyhouses_obj
@@ -271,23 +268,23 @@ class Utility(AmpServer, AmpClient):
         g_logger.debug('Domain client cb_send_node_info - {0:}.'.format(p_protocol))
         _l_defer = self.send_register_node(AmpClientProtocol)
 
-    def cb_client_loop(self, _p_protocol):
-        l_nodes = self.m_pyhouses_obj.CoreData.Nodes
-        for l_key, l_node in l_nodes.iteritems():
-            if l_key == 0:
-                g_logger.debug("cb_client_loop skip ourself Key:{0:} at addr:{1:}".format(l_key, l_node.ConnectionAddr))
-                continue
-            g_logger.debug("Client Contacting node {0:} - {1:}".format(l_key, l_node.ConnectionAddr))
-            # _l_defer = self.connect(self.m_pyhouses_obj, l_node.ConnectionAddr)
-            self.create_client(self.m_pyhouses_obj, l_node.ConnectionAddr)
-
     def start_amp_server(self):
         """Start the domain server to listen for all incoming requests.
         For all the nodes we know about, send a message with our info and expect nodes info as a response.
         If the request times out, mark the node as non active.
         """
-        l_defer = self.server(self.m_pyhouses_obj)
-        l_defer.addCallback(self.cb_client_loop)
+        def cb_client_loop(_p_protocol):
+            l_nodes = self.m_pyhouses_obj.CoreData.Nodes
+            for l_key, l_node in l_nodes.iteritems():
+                if l_key == 0:
+                    g_logger.debug("cb_client_loop skip ourself Key:{0:} at addr:{1:}".format(l_key, l_node.ConnectionAddr))
+                    continue
+                g_logger.debug("Client Contacting node {0:} - {1:}".format(l_key, l_node.ConnectionAddr))
+                # _l_defer = self.connect(self.m_pyhouses_obj, l_node.ConnectionAddr)
+                self.create_client(self.m_pyhouses_obj, l_node.ConnectionAddr)
+
+        l_defer1 = self.create_domain_server(self.m_pyhouses_obj)
+        l_defer1.addCallback(cb_client_loop)
 
     def _start_amp_client(self):
         """We need one of these for every node in the domain.
