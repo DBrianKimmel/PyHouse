@@ -22,7 +22,9 @@ import logging
 from twisted.application.internet import StreamServerEndpointService
 from twisted.internet.endpoints import serverFromString, TCP4ClientEndpoint
 from twisted.internet.protocol import Factory, ClientCreator
-from twisted.protocols.amp import AMP, Integer, String, Command, IBoxReceiver
+from twisted.protocols.amp import AMP, Integer, Unicode, String, Command, IBoxReceiver, CommandLocator
+from twisted.python.dist import twisted_subprojects
+from twisted.python.filepath import FilePath
 from zope.interface import implements
 
 from src.utils.tools import PrintBytes
@@ -58,6 +60,7 @@ class ReqNodeInfo(Command):
                 ('Role2', Integer())
                 ]
     errors = {NodeInfoError: 'Node information unavailable.'}
+
 class NodeInfoResponse(AMP):
     def NodeInfo(self, p_name, p_active, p_address, p_role):
         g_logger.debug("NodeInfoResponse")
@@ -70,7 +73,10 @@ class NodeInfoResponse(AMP):
                 'Address': Address,
                 'Role': Role}
     ReqNodeInfo.responder(NodeInfo)
+
+
 class RegisterNodeError(Exception): pass
+
 class RegisterNode(Command):
     requiresAnswer = True
     arguments = [('Command', Integer()),
@@ -82,24 +88,65 @@ class RegisterNode(Command):
                 ('Address', String()),
                 ('Role', Integer())]
     errors = {RegisterNodeError: 'Node Information unavailable.'}
+
+
 class TestNameError(Exception): pass
+
 class TestNameOnly(Command):
     requiresAnswer = True
-    arguments = [('Name1', String())]
+    arguments = [('name1', String())]
     response = [('Name2', String())]
     errors = {TestNameError: 'Name error'}
+
+
+#-----------------------------------------------------------
+class UsernameUnavailable(Exception): pass
+
+class RegisterUser(Command):
+    arguments = [('username', Unicode()),
+                  ('publickey', String())]
+    response = [('uid', Integer())]
+    errors = {UsernameUnavailable: 'username-unavailable'}
+
+
+class UserRegistration(CommandLocator):
+    uidCounter = 0
+
+    @RegisterUser.responder
+    def register(self, username, publickey):
+        path = FilePath(username)
+        if path.exists():
+            raise UsernameUnavailable()
+        self.uidCounter += 1
+        path.setContent('%d %s\n' % (self.uidCounter, publickey))
+        return self.uidCounter
+
+
+### -----------------------------------------------------------------
+# Boxes
 
 class BoxReflector(object):
     implements (IBoxReceiver)
 
     def startReceivingBoxes(self, p_boxSender):
+        g_logger.debug('Start Receiving boxes')
         self.boxSender = p_boxSender
 
     def ampBoxReceived(self, p_box):
+        g_logger.debug('Receivied box ')
         self.boxSender.sendBox(p_box)
 
     def stopReceivingBoxes(self, _p_reason):
+        g_logger.debug('Stop Receiving boxes')
         self.boxSender = None
+
+
+class LocatorClass(CommandLocator):
+
+    @RegisterUser.responder
+    def UserRegistration(self, userfname, publickey):
+        pass
+
 
 class AmpClientProtocol(AMP):
 
@@ -183,15 +230,14 @@ class AmpClient(object):
             g_logger.debug('cb_got_result Client {0:} - {1:}'.format(p_address, p_result))
             pass
         def cb_connected(p_protocol):
-            g_logger.debug('cb_connected Client to addr {0:}'.format(p_address))
-            l_defer1 = p_protocol.callRemote(ReqNodeInfo, Command1 = 42, Name1 = 'n1', Address1 = 'A1', Role1 = 53)
+            g_logger.debug('cb_connected To Client at addr {0:} - Sending '.format(p_address))
+            l_defer1 = p_protocol.callRemote(TestNameOnly, name1 = 'n1')
             l_defer1.addCallback(cb_got_result)
             return l_defer1
-
         def eb_error(p_reason):
             g_logger.error('eb_error Client to {0:} - {1:}'.format(p_address, p_reason))
 
-        g_logger.debug('Create Client {0:}'.format(p_address))
+        g_logger.debug('Create Client to {0:}'.format(p_address))
         l_defer2 = ClientCreator(p_pyhouses_obj.Reactor, AMP).connectTCP(p_address, AMP_PORT)
         l_defer2.addCallback(cb_connected)
         l_defer2.addErrback(eb_error)
@@ -232,9 +278,9 @@ class AmpServerProtocol(AMP):
 
 
 class AmpServerFactory(Factory):
-    protocol = AmpServerProtocol
+    # protocol = AmpServerProtocol
 
-    def buildProtocol(self, _p_addr):
+    def XXbuildProtocol(self, _p_addr):
         g_logger.debug('BuildProtocol Amp Server')
         return AmpServerProtocol
 
@@ -242,17 +288,10 @@ class AmpServerFactory(Factory):
 class AmpServer(object):
     """Sit and listen for amp messages from other nodes.
     """
-
-    def create_domain_server(self, p_pyhouses_obj):
-        l_endpoint = serverFromString(p_pyhouses_obj.Reactor, NODE_SERVER)
-        l_factory = AmpServerFactory()
-        l_service = StreamServerEndpointService(l_endpoint, l_factory)
-
-        p_pyhouses_obj.CoreData.DomainService = l_service
+    def create_domain_server(self, p_pyhouses_obj, p_endpoint):
         p_pyhouses_obj.CoreData.DomainService.setName('Domain')
         p_pyhouses_obj.CoreData.DomainService.setServiceParent(p_pyhouses_obj.Application)
-        #
-        l_listen_defer = l_endpoint.listen(AmpServerFactory())
+        l_listen_defer = p_endpoint.listen(AmpServerFactory())
         g_logger.info("Domain Server started.")
         return l_listen_defer
 
@@ -263,10 +302,6 @@ class Utility(AmpServer, AmpClient):
     def start_amp(self, p_pyhouses_obj):
         self.m_pyhouses_obj = p_pyhouses_obj
         p_pyhouses_obj.Reactor.callLater(15, self.start_amp_server)
-
-    def cb_send_node_info(self, p_protocol):
-        g_logger.debug('Domain client cb_send_node_info - {0:}.'.format(p_protocol))
-        _l_defer = self.send_register_node(AmpClientProtocol)
 
     def start_amp_server(self):
         """Start the domain server to listen for all incoming requests.
@@ -283,14 +318,24 @@ class Utility(AmpServer, AmpClient):
                 # _l_defer = self.connect(self.m_pyhouses_obj, l_node.ConnectionAddr)
                 self.create_client(self.m_pyhouses_obj, l_node.ConnectionAddr)
 
-        l_defer1 = self.create_domain_server(self.m_pyhouses_obj)
+        g_logger.debug('Domain server is now starting.')
+        l_endpoint = serverFromString(self.m_pyhouses_obj.Reactor, NODE_SERVER)
+        l_factory = Factory()
+        l_factory.protocol = lambda: AMP(boxReceiver = BoxReflector(), locator = UserRegistration())
+        l_service = StreamServerEndpointService(l_endpoint, l_factory)
+        self.m_pyhouses_obj.CoreData.DomainService = l_service
+        l_defer1 = self.create_domain_server(self.m_pyhouses_obj, l_endpoint)
         l_defer1.addCallback(cb_client_loop)
 
-    def _start_amp_client(self):
+    def start_amp_client(self):
         """We need one of these for every node in the domain.
         """
+        def cb_send_node_info(p_protocol):
+            g_logger.debug('Domain client cb_send_node_info - {0:}.'.format(p_protocol))
+            _l_defer = self.send_register_node(AmpClientProtocol)
+
         l_defer = self.connect(self.m_pyhouses_obj)
-        l_defer.addCallback(self.cb_send_node_info)
+        l_defer.addCallback(cb_send_node_info)
 
 
 class API(Utility):
