@@ -61,9 +61,7 @@ class MulticastDiscoveryServerProtocol(DatagramProtocol):
         self.m_pyhouses_obj = p_pyhouses_obj
 
     def startProtocol(self):
-        """
-        Called after protocol has started listening.
-        """
+        """ Called after protocol has started listening."""
         self.transport.setTTL(2)
         _l_defer = self.transport.joinGroup(PYHOUSE_MULTICAST)
 
@@ -79,16 +77,16 @@ class MulticastDiscoveryServerProtocol(DatagramProtocol):
         l_node.ConnectionAddr = p_address[0]
         if p_address[0] not in self.m_address_list:
             self.m_address_list.append(p_address[0])
-            # g_logger.info("Server Discovery Datagram {0:} received from {1:}".format(repr(p_datagram), repr(p_address)))
+            g_logger.info("Server Discovery Datagram {0:} received from {1:}".format(repr(p_datagram), repr(p_address)))
         if p_datagram == WHOS_THERE:
             l_str = I_AM + ' ' + self.m_pyhouses_obj.CoreData.Nodes[0].Name
             self.transport.write(l_str, p_address)
             # g_logger.debug("Server replying {0:}".format(l_str))
         elif p_datagram.startswith(I_AM):
             l_node.Name = p_datagram.split(' ')[-1]
-            self.save_node_info(l_node)
+            self._save_node_info(l_node)
 
-    def save_node_info(self, p_node):
+    def _save_node_info(self, p_node):
         l_count = 0
         for l_node in self.m_pyhouses_obj.CoreData.Nodes.itervalues():
             l_count += 1
@@ -96,7 +94,7 @@ class MulticastDiscoveryServerProtocol(DatagramProtocol):
                 return
         p_node.Key = l_count
         self.m_pyhouses_obj.CoreData.Nodes[l_count] = p_node
-        g_logger.debug("Added node {0:} - {1:}, {2:}".format(l_count, p_node.ConnectionAddr, p_node.Name))
+        g_logger.debug("Added node # {0:} - From Addr: {1:}, Named: {2:}".format(l_count, p_node.ConnectionAddr, p_node.Name))
 
 
 class MulticastDiscoveryClientProtocol(ConnectedDatagramProtocol):
@@ -111,7 +109,7 @@ class MulticastDiscoveryClientProtocol(ConnectedDatagramProtocol):
         """
         Called when the protocol starts up.
 
-        All listeners on the multicast address (including us) will receive this message.
+        All listeners on the multicast address (including us) will receive the "Who's There?" message.
         """
         self.transport.setTTL(2)
         _l_defer = self.transport.joinGroup(PYHOUSE_MULTICAST)
@@ -121,21 +119,18 @@ class MulticastDiscoveryClientProtocol(ConnectedDatagramProtocol):
         if p_datagram == WHOS_THERE and self.m_pyhouses_obj.CoreData.Nodes[0].ConnectionAddr == None:
             self.m_pyhouses_obj.CoreData.Nodes[0].ConnectionAddr = p_address[0]
             # g_logger.info("Client Discovery Datagram {0:} received from {1:}".format(repr(p_datagram), repr(p_address)))
-            g_logger.debug("Update node 0 address to {0:}, {1:}".format(p_address[0], p_datagram))
-            pass
+            g_logger.debug("Update our node (slot 0) address to {0:}, {1:}".format(p_address[0], p_datagram))
 
 
 class Utility(object):
 
     def start_node_discovery(self, p_pyhouses_obj):
         """Use UDP multicast to discover the other PyHouse nodes that are local.
-        Fire the client off again once per hour to re-discover any new nodes
         """
         p_pyhouses_obj.CoreData.DiscoveryService = service.Service()
         p_pyhouses_obj.CoreData.DiscoveryService.setName('NodeDiscovery')
         p_pyhouses_obj.CoreData.DiscoveryService.setServiceParent(p_pyhouses_obj.Application)
         self.m_pyhouses_obj = p_pyhouses_obj
-        #
         self._start_discovery_server(p_pyhouses_obj)
         self._start_discovery_client(p_pyhouses_obj)
 
@@ -150,12 +145,10 @@ class Utility(object):
 class API(Utility):
 
     def __init__(self):
-        # g_logger.info("Initialized.")
         pass
 
     def Start(self, p_pyhouses_obj):
         self.start_node_discovery(p_pyhouses_obj)
-        # g_logger.info("Started.")
 
     def Stop(self):
         g_logger.info("Stopped.")

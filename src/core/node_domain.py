@@ -45,59 +45,20 @@ class NodeInfoError(Exception): pass
 """ ------------------------------------------------------------------
  Commands
 """
-class ReqNodeInfo(Command):
-    """Ask a node for its node information.
-    """
-    requiresAnswer = True
-    arguments = [('Command1', Integer()),
-                 ('Name1', String()),
-                 ('Address1', String()),
-                 ('Role1', Integer())
-                 ]
-    response = [('Name2', String()),
-                ('Active2', String()),
-                ('Address2', String()),
-                ('Role2', Integer())
-                ]
-    errors = {NodeInfoError: 'Node information unavailable.'}
+class TestNameError(Exception):
+    pass
 
-class NodeInfoResponse(AMP):
-    def NodeInfo(self, p_name, p_active, p_address, p_role):
-        g_logger.debug("NodeInfoResponse")
-        Name = p_name
-        Active = p_active
-        Address = p_address
-        Role = p_role
-        return {'Name': Name,
-                'Active': Active,
-                'Address': Address,
-                'Role': Role}
-    ReqNodeInfo.responder(NodeInfo)
-
-
-class RegisterNodeError(Exception): pass
-
-class RegisterNode(Command):
-    requiresAnswer = True
-    arguments = [('Command', Integer()),
-                 ('NodeName', String()),
-                 ('NodeType', Integer()),
-                 ('IPv4', String()),
-                 ('IPv6', String())]
-    response = [('Hostname', String()),
-                ('Address', String()),
-                ('Role', Integer())]
-    errors = {RegisterNodeError: 'Node Information unavailable.'}
-
-
-class TestNameError(Exception): pass
-
-class TestNameOnly(Command):
-    requiresAnswer = True
-    arguments = [('name1', String())]
-    response = [('Name2', String())]
+class TestNameCommand(Command):
+    arguments = [('name', String())]
+    response = [('answer', String())]
     errors = {TestNameError: 'Name error'}
 
+class TestNameResponse(AMP):
+    def NameResponce(self, p_name):
+        g_logger.debug('Test name response {0:}'.format(p_name))
+        l_answer = p_name + '_answer'
+        return {'answer': l_answer}
+    TestNameCommand.responder(NameResponce)
 
 #-----------------------------------------------------------
 class UsernameUnavailable(Exception): pass
@@ -147,6 +108,7 @@ class LocatorClass(CommandLocator):
     def UserRegistration(self, userfname, publickey):
         pass
 
+### -----------------------------------------------------------------
 
 class AmpClientProtocol(AMP):
 
@@ -155,19 +117,7 @@ class AmpClientProtocol(AMP):
         g_logger.debug(l_msg)
 
     def connectionMade(self):
-        """We connected to some server.
-        Send them our node info
-        Ask for their Node info.
-        """
         g_logger.debug('Domain Client - connection made.')
-
-    def do_RegisterNode2(self, p_command, p_node, p_type, p_v4, p_v6):
-        l_hostname = 'wxyz'
-        l_addr = '1.22.3.44'
-        l_role = 0xfedc
-        g_logger.debug("do_RegisterNode {0:}, {1:}, {2:}, {3:}, {4:}".format(p_command, p_node, p_type, p_v4, p_v6))
-        return {'Hostname': l_hostname, 'Address': l_addr, 'Role': l_role}
-    RegisterNode.responder(do_RegisterNode2)
 
 
 class AmpClientFactory(Factory):
@@ -193,54 +143,39 @@ class AmpClient(object):
         @rtype: is a deferred
         """
         self.m_pyhouses_obj = p_pyhouses_obj
-        def cb_show_result(p_dict):
-            g_logger.debug("Domain Client - Got result {0:}".format(p_dict))
-        def cb_send_register_node(p_protocol):
-            g_logger.debug('Domain Client - Sending registration to address {0:}'.format(p_address))
-            l_node = self.m_pyhouses_obj.CoreData.Nodes[0]
-            l_defer2 = p_protocol.callRemote(
-                RegisterNode,
-                Command = 1,
-                NodeName = l_node.Name,
-                NodeType = l_node.Role,
-                IPv4 = l_node.ConnectionAddr,
-                IPv6 = 'ff00::'
-                )
-            l_defer2.addCallback(cb_show_result)
-        def cb_registered(p_result):
-            g_logger.debug('Domain Client - Registration result:{0:}'.format(p_result))
-        def eb_error(p_error):
-            g_logger.debug('Domain Client - Registration error:{0:}'.format(p_error))
-        def cb_done(p_done):
-            g_logger.debug('Domain Client - Registration done:{0:}'.format(p_done))
-
         l_endpoint = TCP4ClientEndpoint(p_pyhouses_obj.Reactor, p_address, AMP_PORT)
         l_factory = AmpClientFactory()
         l_defer1 = l_endpoint.connect(l_factory)
         g_logger.info("Domain Client connecting to address {0:}".format(p_address))
-        #
-        l_defer1.addCallback(cb_send_register_node)
-        l_defer1.addCallback(cb_registered)
-        l_defer1.addErrback(eb_error)
-        l_defer1.addCallback(cb_done)
         return l_defer1
 
     def create_client(self, p_pyhouses_obj, p_address):
-        def cb_got_result(p_result):
-            g_logger.debug('cb_got_result Client {0:} - {1:}'.format(p_address, p_result))
-            pass
         def cb_connected(p_protocol):
+            def cb_got_result(p_result):
+                g_logger.debug('cb_got_result Client {0:} - {1:}'.format(p_address, p_result))
+                pass
+            def eb_err2(p_msg):
+                g_logger.debug('eb_err2 {0:}'.format(p_msg))
             g_logger.debug('cb_connected To Client at addr {0:} - Sending '.format(p_address))
-            l_defer1 = p_protocol.callRemote(TestNameOnly, name1 = 'n1')
+            l_defer1 = p_protocol.callRemote(TestNameCommand, name = 'n1')
+            # g_logger.debug('l_defer1 {0:}'.format(l_defer1))
             l_defer1.addCallback(cb_got_result)
-            return l_defer1
-        def eb_error(p_reason):
-            g_logger.error('eb_error Client to {0:} - {1:}'.format(p_address, p_reason))
-
+            l_defer1.addErrback(eb_err2)
+        def cb_result(p_result):
+            g_logger.debug('cb_result {0:}'.format(p_result))
+        def eb_create(p_result):
+            p_result.trap(TestNameError)
+            g_logger.debug('Got test error {0:}'.format(p_result))
         g_logger.debug('Create Client to {0:}'.format(p_address))
-        l_defer2 = ClientCreator(p_pyhouses_obj.Reactor, AMP).connectTCP(p_address, AMP_PORT)
-        l_defer2.addCallback(cb_connected)
-        l_defer2.addErrback(eb_error)
+        l_defer = ClientCreator(p_pyhouses_obj.Reactor, AMP).connectTCP(p_address, AMP_PORT)
+        # g_logger.debug('l_defer {0:}'.format(l_defer))
+        # l_defer.addCallback(lambda p: p.callRemote(TestNameCommand, name = 'test1'))
+        l_defer.addCallback(cb_connected)
+        g_logger.debug('xx2')
+        # l_defer.addCallback(lambda result: result['answer'])
+        l_defer.addCallback(cb_result)
+        g_logger.debug('xx3')
+        l_defer.addErrback(eb_create)
 
 
 class AmpServerProtocol(AMP):
@@ -265,16 +200,6 @@ class AmpServerProtocol(AMP):
 
     def connectionLost(self, p_reason):
         g_logger.debug('Domain Server connection lost {0:}'.format(p_reason))
-
-    @ReqNodeInfo.responder
-    def do_RegisterNode(self, p_command, p_node, p_type, p_v4, p_v6):
-        l_hostname = 'wxyz'
-        l_active = True
-        l_addr = '1.22.3.44'
-        l_role = 0xfedc
-        g_logger.debug("do_RegisterNode {0:}, {1:}, {2:}, {3:}, {4:}".format(p_command, p_node, p_type, p_v4, p_v6))
-        return {'Name2': l_hostname, 'Active2': l_active, 'Address2': l_addr, 'Role2': l_role}
-    # RegisterNode.responder(do_RegisterNode)
 
 
 class AmpServerFactory(Factory):
@@ -314,7 +239,7 @@ class Utility(AmpServer, AmpClient):
                 if l_key == 0:
                     g_logger.debug("cb_client_loop skip ourself Key:{0:} at addr:{1:}".format(l_key, l_node.ConnectionAddr))
                     continue
-                g_logger.debug("Client Contacting node {0:} - {1:}".format(l_key, l_node.ConnectionAddr))
+                # g_logger.debug("Client Contacting node {0:} - {1:}".format(l_key, l_node.ConnectionAddr))
                 # _l_defer = self.connect(self.m_pyhouses_obj, l_node.ConnectionAddr)
                 self.create_client(self.m_pyhouses_obj, l_node.ConnectionAddr)
 
@@ -333,7 +258,6 @@ class Utility(AmpServer, AmpClient):
         def cb_send_node_info(p_protocol):
             g_logger.debug('Domain client cb_send_node_info - {0:}.'.format(p_protocol))
             _l_defer = self.send_register_node(AmpClientProtocol)
-
         l_defer = self.connect(self.m_pyhouses_obj)
         l_defer.addCallback(cb_send_node_info)
 
