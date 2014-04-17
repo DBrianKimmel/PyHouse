@@ -58,16 +58,19 @@ class TestNameError(Exception):
     pass
 
 class TestNameCommand(Command):
-    arguments = [('name', String())]
+    arguments = [('name', String()),
+                 ('Address', String()),
+                 ('Role', Integer())
+                 ]
     response = [('answer', String())]
     errors = {TestNameError: 'Name error'}
 
 class TestNameResponse(AMP):
-    def NameResponce(self, p_name):
+    def NameResponse(self, p_name):
         g_logger.debug('Test name response {0:}'.format(p_name))
         l_answer = p_name + '_answer'
         return {'answer': l_answer}
-    TestNameCommand.responder(NameResponce)
+    TestNameCommand.responder(NameResponse)
 
 #-----------------------------------------------------------
 class UsernameUnavailable(Exception): pass
@@ -99,23 +102,23 @@ class BoxReflector(object):
     implements (IBoxReceiver)
 
     def startReceivingBoxes(self, p_boxSender):
-        g_logger.debug('Start Receiving boxes')
+        g_logger.debug('Start Receiving boxes - Sender:{0:}'.format(p_boxSender))
         self.boxSender = p_boxSender
 
     def ampBoxReceived(self, p_box):
-        g_logger.debug('Receivied box ')
+        g_logger.debug('Receivied box - Box:{0:}'.format(p_box))
         self.boxSender.sendBox(p_box)
 
-    def stopReceivingBoxes(self, _p_reason):
-        g_logger.debug('Stop Receiving boxes')
+    def stopReceivingBoxes(self, p_reason):
+        g_logger.debug('Stop Receiving boxes - {0:}'.format(p_reason))
         self.boxSender = None
 
 
 class LocatorClass(CommandLocator):
 
     @RegisterUser.responder
-    def UserRegistration(self, userfname, publickey):
-        pass
+    def UserRegistration(self, username, publickey):
+        g_logger.debug('UserRegistration ')
 
 ### -----------------------------------------------------------------
 
@@ -166,7 +169,12 @@ class AmpClient(object):
             def eb_err2(p_ConnectionDone):
                 g_logger.debug('eb_err2 - Addr:{0:} - arg:{1:}'.format(p_address, p_ConnectionDone))
                 # p_ConnectionDone.value
-            l_defer1 = p_protocol.callRemote(TestNameCommand, name = 'n1')
+            l_defer1 = p_protocol.callRemote(
+                    TestNameCommand,
+                    name = p_pyhouses_obj.CoreData.Nodes[0].Name,
+                    Address = p_pyhouses_obj.CoreData.Nodes[0].ConnectionAddr,
+                    Role = p_pyhouses_obj.CoreData.Nodes[0].Role
+                    )
             g_logger.debug('cb_connected To Client at addr {0:} - Sending - {1:}'.format(p_address, l_defer1))
             l_defer1.addCallback(cb_got_result)
             l_defer1.addErrback(eb_err2)
@@ -177,8 +185,7 @@ class AmpClient(object):
             p_result.trap(TestNameError)
             g_logger.debug('Got test error Addr:{0:}, Result:{1:}'.format(p_address, p_result))
         l_defer = ClientCreator(p_pyhouses_obj.Reactor, AMP).connectTCP(p_address, AMP_PORT)
-        g_logger.debug('CreateClient - Addr:{0:} - l_defer {1:}'.format(p_address, l_defer))
-        # l_defer.addCallback(lambda p: p.callRemote(TestNameCommand, name = 'test1'))
+        # g_logger.debug('CreateClient - Addr:{0:} - l_defer {1:}'.format(p_address, l_defer))
         l_defer.addCallback(cb_connected)
         # g_logger.debug('xx2')
         # l_defer.addCallback(lambda result: result['answer'])
@@ -196,7 +203,8 @@ class AmpServerProtocol(AMP):
     locator = UserRegistration
 
     def __init__(self, boxReceiver = None, locator = None):
-        AMP.__init__(self, boxReceiver = boxReceiver, locator = locator)
+        AMP.__init__(self, boxReceiver = BoxReflector(), locator = LocatorClass())
+        g_logger.debug('AmpServerProtocol() initialized..')
 
     def dataReceived(self, p_data):
         """
