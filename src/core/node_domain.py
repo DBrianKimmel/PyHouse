@@ -36,6 +36,15 @@ NODE_SERVER = 'tcp:port=8581'
 AMP_PORT = 8581
 
 
+def PrintBox(p_arg):
+    l_ret = ''
+    l_arg = p_arg
+    while len(l_arg) > 2:
+        l_len = ord(l_arg[0]) * 256 + ord(l_arg[1])
+        l_ret += "({0:}){1:}, ".format(l_len, l_arg[2:l_len + 2])
+        l_arg = l_arg[l_len + 2:]
+    return l_ret
+
 """ ------------------------------------------------------------------
  Command exceptions
 """
@@ -117,7 +126,7 @@ class AmpClientProtocol(AMP):
         g_logger.debug(l_msg)
 
     def connectionMade(self):
-        g_logger.debug('Domain Client - connection made.')
+        g_logger.debug('Domain Client - Outgoing connection made.')
 
 
 class AmpClientFactory(Factory):
@@ -183,11 +192,16 @@ class AmpServerProtocol(AMP):
     Implement dataReceived(data) to handle both event-based and synchronous input.
     output can be sent through the 'transport' attribute.
     """
+    boxReceiver = BoxReflector
+    locator = UserRegistration
+
+    def __init__(self, boxReceiver = None, locator = None):
+        AMP.__init__(self, boxReceiver = boxReceiver, locator = locator)
 
     def dataReceived(self, p_data):
         """
         """
-        g_logger.debug('Domain Server data rxed {0:}'.format(PrintBytes(p_data)))
+        g_logger.debug('Domain Server data rxed {0:}'.format(PrintBox(p_data)))
 
     def connectionMade(self):
         """Somebody connected to us...
@@ -196,18 +210,18 @@ class AmpServerProtocol(AMP):
         for servers, this is called after an accept() call stops blocking and a socket has been received.
         If you need to send any greeting or initial message, do it here.
         """
-        g_logger.debug('Domain Server inbound connection Made')
+        g_logger.debug('Domain Server inbound connection Made.')
 
     def connectionLost(self, p_reason):
         g_logger.debug('Domain Server connection lost {0:}'.format(p_reason))
 
 
 class AmpServerFactory(Factory):
-    # protocol = AmpServerProtocol
+    protocol = AmpServerProtocol()
 
-    def XXbuildProtocol(self, _p_addr):
+    def buildProtocol(self, _p_addr):
         g_logger.debug('BuildProtocol Amp Server')
-        return AmpServerProtocol
+        return AmpServerProtocol()
 
 
 class AmpServer(object):
@@ -237,7 +251,7 @@ class Utility(AmpServer, AmpClient):
             l_nodes = self.m_pyhouses_obj.CoreData.Nodes
             for l_key, l_node in l_nodes.iteritems():
                 if l_key == 0:
-                    g_logger.debug("cb_client_loop skip ourself Key:{0:} at addr:{1:}".format(l_key, l_node.ConnectionAddr))
+                    # g_logger.debug("cb_client_loop skip ourself Key:{0:} at addr:{1:}".format(l_key, l_node.ConnectionAddr))
                     continue
                 # g_logger.debug("Client Contacting node {0:} - {1:}".format(l_key, l_node.ConnectionAddr))
                 # _l_defer = self.connect(self.m_pyhouses_obj, l_node.ConnectionAddr)
@@ -245,8 +259,10 @@ class Utility(AmpServer, AmpClient):
 
         g_logger.debug('Domain server is now starting.')
         l_endpoint = serverFromString(self.m_pyhouses_obj.Reactor, NODE_SERVER)
-        l_factory = Factory()
-        l_factory.protocol = lambda: AMP(boxReceiver = BoxReflector(), locator = UserRegistration())
+        # l_factory = Factory()
+        l_factory = AmpServerFactory()
+        # l_factory.protocol = lambda: AMP(boxReceiver = BoxReflector(), locator = UserRegistration())
+        l_factory.protocol = AmpServerProtocol
         l_service = StreamServerEndpointService(l_endpoint, l_factory)
         self.m_pyhouses_obj.CoreData.DomainService = l_service
         l_defer1 = self.create_domain_server(self.m_pyhouses_obj, l_endpoint)
