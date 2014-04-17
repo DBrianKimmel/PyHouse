@@ -152,29 +152,29 @@ class AmpClient(object):
     def create_client(self, p_pyhouses_obj, p_address):
         def cb_connected(p_protocol):
             def cb_got_result(p_result):
-                g_logger.debug('cb_got_result Client {0:} - {1:}'.format(p_address, p_result))
+                g_logger.debug('cb_got_result Client Addr:{0:} - Result:{1:}'.format(p_address, p_result))
                 pass
-            def eb_err2(p_msg):
-                g_logger.debug('eb_err2 {0:}'.format(p_msg))
-            g_logger.debug('cb_connected To Client at addr {0:} - Sending '.format(p_address))
+            def eb_err2(p_ConnectionDone):
+                g_logger.debug('eb_err2 - Addr:{0:} - arg:{1:}'.format(p_address, p_ConnectionDone))
+                # p_ConnectionDone.value
             l_defer1 = p_protocol.callRemote(TestNameCommand, name = 'n1')
-            # g_logger.debug('l_defer1 {0:}'.format(l_defer1))
+            g_logger.debug('cb_connected To Client at addr {0:} - Sending - {1:}'.format(p_address, l_defer1))
             l_defer1.addCallback(cb_got_result)
             l_defer1.addErrback(eb_err2)
+
         def cb_result(p_result):
-            g_logger.debug('cb_result {0:}'.format(p_result))
+            g_logger.debug('cb_result Addr:{0:}, Result:{1:}'.format(p_address, p_result))
         def eb_create(p_result):
             p_result.trap(TestNameError)
-            g_logger.debug('Got test error {0:}'.format(p_result))
-        g_logger.debug('Create Client to {0:}'.format(p_address))
+            g_logger.debug('Got test error Addr:{0:}, Result:{1:}'.format(p_address, p_result))
         l_defer = ClientCreator(p_pyhouses_obj.Reactor, AMP).connectTCP(p_address, AMP_PORT)
-        # g_logger.debug('l_defer {0:}'.format(l_defer))
+        g_logger.debug('CreateClient - Addr:{0:} - l_defer {1:}'.format(p_address, l_defer))
         # l_defer.addCallback(lambda p: p.callRemote(TestNameCommand, name = 'test1'))
         l_defer.addCallback(cb_connected)
-        g_logger.debug('xx2')
+        # g_logger.debug('xx2')
         # l_defer.addCallback(lambda result: result['answer'])
         l_defer.addCallback(cb_result)
-        g_logger.debug('xx3')
+        # g_logger.debug('xx3')
         l_defer.addErrback(eb_create)
 
 
