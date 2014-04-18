@@ -50,20 +50,42 @@ class NodeData(object):
         self.Interfaces = {}
 
 
-class MulticastDiscoveryServerProtocol(DatagramProtocol):
+class DGramUtil(object):
+    m_address_list = []
+    m_pyhouses_obj = None
+    m_interface = ''
+
+    def setup_protocol(self):
+        self.transport.setTTL(4)
+        self.m_interface = self.transport.getOutgoingInterface()
+        # self.transport.setLoopbackMode(0)
+
+    def _save_node_info(self, p_node):
+        l_count = 0
+        for l_node in self.m_pyhouses_obj.CoreData.Nodes.itervalues():
+            l_count += 1
+            if p_node.ConnectionAddr == l_node.ConnectionAddr:
+                return
+        p_node.Key = l_count
+        self.m_pyhouses_obj.CoreData.Nodes[l_count] = p_node
+        g_logger.info("Added node # {0:} - From Addr: {1:}, Named: {2:}".format(l_count, p_node.ConnectionAddr, p_node.Name))
+
+    def set_node_0_addr(self, p_address):
+        if self.m_pyhouses_obj.CoreData.Nodes[0].ConnectionAddr == None:
+            self.m_pyhouses_obj.CoreData.Nodes[0].ConnectionAddr = p_address[0]
+            g_logger.info("Update our node (slot 0) address to {0:}".format(p_address[0]))
+
+
+class MulticastDiscoveryServerProtocol(DatagramProtocol, DGramUtil):
     """Listen for PyHouse nodes and respond to them.
     We should get a packet from ourself and also packets from other nodes that are running.
     """
-    m_address_list = []
-    m_pyhouses_obj = None
 
     def __init__(self, p_pyhouses_obj):
         self.m_pyhouses_obj = p_pyhouses_obj
 
     def startProtocol(self):
-        self.transport.setTTL(4)
-        self.m_interface = self.transport.getOutgoingInterface()
-        self.transport.setLoopbackMode(0)
+        self.setup_protocol()
         if g_debug >= 1:
             g_logger.debug('Discovery Server Protocol started. {0:}'.format(self.m_interface))
         _l_defer = self.transport.joinGroup(PYHOUSE_MULTICAST_IP_V4)
@@ -83,24 +105,15 @@ class MulticastDiscoveryServerProtocol(DatagramProtocol):
         if p_address[0] not in self.m_address_list:
             self.m_address_list.append(p_address[0])
         if p_datagram.startswith(WHOS_THERE):
+            self.set_node_0_addr(p_address)
             l_str = I_AM + ' ' + self.m_pyhouses_obj.CoreData.Nodes[0].Name
             self.transport.write(l_str, p_address)
         elif p_datagram.startswith(I_AM):
             l_node.Name = p_datagram.split(' ')[-1]
             self._save_node_info(l_node)
 
-    def _save_node_info(self, p_node):
-        l_count = 0
-        for l_node in self.m_pyhouses_obj.CoreData.Nodes.itervalues():
-            l_count += 1
-            if p_node.ConnectionAddr == l_node.ConnectionAddr:
-                return
-        p_node.Key = l_count
-        self.m_pyhouses_obj.CoreData.Nodes[l_count] = p_node
-        g_logger.info("Added node # {0:} - From Addr: {1:}, Named: {2:}".format(l_count, p_node.ConnectionAddr, p_node.Name))
 
-
-class MulticastDiscoveryClientProtocol(ConnectedDatagramProtocol):
+class MulticastDiscoveryClientProtocol(ConnectedDatagramProtocol, DGramUtil):
     """Find other PyHouse nodes within range."""
     m_pyhouses_obj = None
 
@@ -113,20 +126,22 @@ class MulticastDiscoveryClientProtocol(ConnectedDatagramProtocol):
 
         All listeners on the Multicast address (including us) will receive the "Who's There?" message.
         """
-        self.transport.setTTL(4)
-        self.m_interface = self.transport.getOutgoingInterface()
-        self.transport.setLoopbackMode(0)
+        self.setup_protocol()
         if g_debug >= 1:
             g_logger.debug('Discovery Client Protocol started  {0:}.'.format(self.m_interface))
         _l_defer = self.transport.joinGroup(PYHOUSE_MULTICAST_IP_V4)
         self.transport.write(WHOS_THERE, (PYHOUSE_MULTICAST_IP_V4, PYHOUSE_DISCOVERY_PORT))
 
     def datagramReceived(self, p_datagram, p_address):
+        l_node = NodeData()
+        l_node.ConnectionAddr = p_address[0]
         if g_debug >= 1:
             g_logger.debug('Discovery Client rxed:{0:} From:{1:}'.format(p_datagram, p_address[0]))
-        if p_datagram.startswith(WHOS_THERE) and self.m_pyhouses_obj.CoreData.Nodes[0].ConnectionAddr == None:
-            self.m_pyhouses_obj.CoreData.Nodes[0].ConnectionAddr = p_address[0]
-            g_logger.info("Update our node (slot 0) address to {0:}, {1:}".format(p_address[0], p_datagram))
+        if p_datagram.startswith(WHOS_THERE):
+            self.set_node_0_addr(p_address)
+        elif p_datagram.startswith(I_AM):
+            l_node.Name = p_datagram.split(' ')[-1]
+            self._save_node_info(l_node)
 
 
 class Utility(object):
