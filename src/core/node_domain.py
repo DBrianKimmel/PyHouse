@@ -54,23 +54,26 @@ class NodeInfoError(Exception): pass
 """ ------------------------------------------------------------------
  Commands
 """
-class TestNameError(Exception):
-    pass
+class TestNameError(Exception): pass
 
 class TestNameCommand(Command):
-    arguments = [('name', String()),
+    arguments = [('Name', String()),
+                 ('Active', String()),
                  ('Address', String()),
                  ('Role', Integer())
                  ]
-    response = [('answer', String())]
+    response = [('Answer', String())
+                ]
     errors = {TestNameError: 'Name error'}
 
-class TestNameResponse(AMP):
+
+class TestNameResponse(CommandLocator):
+    @TestNameCommand.responder
     def NameResponse(self, p_name):
         g_logger.debug('Test name response {0:}'.format(p_name))
         l_answer = p_name + '_answer'
-        return {'answer': l_answer}
-    TestNameCommand.responder(NameResponse)
+        return {'Answer': l_answer}
+
 
 #-----------------------------------------------------------
 class UsernameUnavailable(Exception): pass
@@ -84,7 +87,6 @@ class RegisterUser(Command):
 
 class UserRegistration(CommandLocator):
     uidCounter = 0
-
     @RegisterUser.responder
     def register(self, username, publickey):
         path = FilePath(username)
@@ -114,15 +116,16 @@ class BoxReflector(object):
         self.boxSender = None
 
 
-class LocatorClass(CommandLocator):
-
-    @RegisterUser.responder
-    def UserRegistration(self, username, publickey):
-        g_logger.debug('UserRegistration ')
+class LocatorClass(UserRegistration, TestNameResponse):
+    pass
 
 ### -----------------------------------------------------------------
 
 class AmpClientProtocol(AMP):
+
+    def __init__(self):
+        AMP.__init__(self, boxReceiver = BoxReflector(), locator = LocatorClass())
+        g_logger.debug('AmpClientProtocol() initialized..')
 
     def dataReceived(self, p_data):
         l_msg = 'Domain Client - Received {0:}'.format(PrintBytes(p_data))
@@ -165,13 +168,14 @@ class AmpClient(object):
         def cb_connected(p_protocol):
             def cb_got_result(p_result):
                 g_logger.debug('cb_got_result Client Addr:{0:} - Result:{1:}'.format(p_address, p_result))
-                pass
+                TestNameResponse().NameResponse('test dbk')
+
             def eb_err2(p_ConnectionDone):
-                g_logger.debug('eb_err2 - Addr:{0:} - arg:{1:}'.format(p_address, p_ConnectionDone))
-                # p_ConnectionDone.value
+                g_logger.error('eb_err2 - Addr:{0:} - arg:{1:}'.format(p_address, p_ConnectionDone))
             l_defer1 = p_protocol.callRemote(
                     TestNameCommand,
-                    name = p_pyhouses_obj.CoreData.Nodes[0].Name,
+                    Name = p_pyhouses_obj.CoreData.Nodes[0].Name,
+                    Active = str(p_pyhouses_obj.CoreData.Nodes[0].Active),
                     Address = p_pyhouses_obj.CoreData.Nodes[0].ConnectionAddr,
                     Role = p_pyhouses_obj.CoreData.Nodes[0].Role
                     )
@@ -183,14 +187,10 @@ class AmpClient(object):
             g_logger.debug('cb_result Addr:{0:}, Result:{1:}'.format(p_address, p_result))
         def eb_create(p_result):
             p_result.trap(TestNameError)
-            g_logger.debug('Got test error Addr:{0:}, Result:{1:}'.format(p_address, p_result))
+            g_logger.error('Got test error Addr:{0:}, Result:{1:}'.format(p_address, p_result))
         l_defer = ClientCreator(p_pyhouses_obj.Reactor, AMP).connectTCP(p_address, AMP_PORT)
-        # g_logger.debug('CreateClient - Addr:{0:} - l_defer {1:}'.format(p_address, l_defer))
         l_defer.addCallback(cb_connected)
-        # g_logger.debug('xx2')
-        # l_defer.addCallback(lambda result: result['answer'])
         l_defer.addCallback(cb_result)
-        # g_logger.debug('xx3')
         l_defer.addErrback(eb_create)
 
 
@@ -199,10 +199,7 @@ class AmpServerProtocol(AMP):
     Implement dataReceived(data) to handle both event-based and synchronous input.
     output can be sent through the 'transport' attribute.
     """
-    boxReceiver = BoxReflector
-    locator = UserRegistration
-
-    def __init__(self, boxReceiver = None, locator = None):
+    def __init__(self):
         AMP.__init__(self, boxReceiver = BoxReflector(), locator = LocatorClass())
         g_logger.debug('AmpServerProtocol() initialized..')
 
@@ -235,6 +232,7 @@ class AmpServerFactory(Factory):
 class AmpServer(object):
     """Sit and listen for amp messages from other nodes.
     """
+
     def create_domain_server(self, p_pyhouses_obj, p_endpoint):
         p_pyhouses_obj.CoreData.DomainService.setName('Domain')
         p_pyhouses_obj.CoreData.DomainService.setServiceParent(p_pyhouses_obj.Application)
@@ -269,7 +267,6 @@ class Utility(AmpServer, AmpClient):
         l_endpoint = serverFromString(self.m_pyhouses_obj.Reactor, NODE_SERVER)
         # l_factory = Factory()
         l_factory = AmpServerFactory()
-        # l_factory.protocol = lambda: AMP(boxReceiver = BoxReflector(), locator = UserRegistration())
         l_factory.protocol = AmpServerProtocol
         l_service = StreamServerEndpointService(l_endpoint, l_factory)
         self.m_pyhouses_obj.CoreData.DomainService = l_service

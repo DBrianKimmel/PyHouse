@@ -61,7 +61,6 @@ class MulticastDiscoveryServerProtocol(DatagramProtocol):
         self.m_pyhouses_obj = p_pyhouses_obj
 
     def startProtocol(self):
-        """ Called after protocol has started listening."""
         self.transport.setTTL(2)
         _l_defer = self.transport.joinGroup(PYHOUSE_MULTICAST)
 
@@ -75,13 +74,12 @@ class MulticastDiscoveryServerProtocol(DatagramProtocol):
         """
         l_node = NodeData()
         l_node.ConnectionAddr = p_address[0]
+        g_logger.debug("Server Discovery Datagram {0:} received from {1:}".format(repr(p_datagram), repr(p_address)))
         if p_address[0] not in self.m_address_list:
             self.m_address_list.append(p_address[0])
-            g_logger.info("Server Discovery Datagram {0:} received from {1:}".format(repr(p_datagram), repr(p_address)))
-        if p_datagram == WHOS_THERE:
+        if p_datagram.startswith(WHOS_THERE):
             l_str = I_AM + ' ' + self.m_pyhouses_obj.CoreData.Nodes[0].Name
             self.transport.write(l_str, p_address)
-            # g_logger.debug("Server replying {0:}".format(l_str))
         elif p_datagram.startswith(I_AM):
             l_node.Name = p_datagram.split(' ')[-1]
             self._save_node_info(l_node)
@@ -94,7 +92,7 @@ class MulticastDiscoveryServerProtocol(DatagramProtocol):
                 return
         p_node.Key = l_count
         self.m_pyhouses_obj.CoreData.Nodes[l_count] = p_node
-        g_logger.debug("Added node # {0:} - From Addr: {1:}, Named: {2:}".format(l_count, p_node.ConnectionAddr, p_node.Name))
+        g_logger.info("Added node # {0:} - From Addr: {1:}, Named: {2:}".format(l_count, p_node.ConnectionAddr, p_node.Name))
 
 
 class MulticastDiscoveryClientProtocol(ConnectedDatagramProtocol):
@@ -103,7 +101,6 @@ class MulticastDiscoveryClientProtocol(ConnectedDatagramProtocol):
 
     def __init__(self, p_pyhouses_obj):
         self.m_pyhouses_obj = p_pyhouses_obj
-
 
     def startProtocol(self):
         """
@@ -116,26 +113,26 @@ class MulticastDiscoveryClientProtocol(ConnectedDatagramProtocol):
         self.transport.write(WHOS_THERE, (PYHOUSE_MULTICAST, PYHOUSE_DISCOVERY_PORT))
 
     def datagramReceived(self, p_datagram, p_address):
-        if p_datagram == WHOS_THERE and self.m_pyhouses_obj.CoreData.Nodes[0].ConnectionAddr == None:
+        if p_datagram.startswith(WHOS_THERE) and self.m_pyhouses_obj.CoreData.Nodes[0].ConnectionAddr == None:
             self.m_pyhouses_obj.CoreData.Nodes[0].ConnectionAddr = p_address[0]
-            # g_logger.info("Client Discovery Datagram {0:} received from {1:}".format(repr(p_datagram), repr(p_address)))
-            g_logger.debug("Update our node (slot 0) address to {0:}, {1:}".format(p_address[0], p_datagram))
+            g_logger.info("Update our node (slot 0) address to {0:}, {1:}".format(p_address[0], p_datagram))
 
 
 class Utility(object):
+    """
+    Use UDP multicast to discover the other PyHouse nodes that are local.
+    Use listenMultiple=True so that we can run a server and a client on same node.
+    """
 
     def start_node_discovery(self, p_pyhouses_obj):
-        """Use UDP multicast to discover the other PyHouse nodes that are local.
-        """
+        self.m_pyhouses_obj = p_pyhouses_obj
         p_pyhouses_obj.CoreData.DiscoveryService = service.Service()
         p_pyhouses_obj.CoreData.DiscoveryService.setName('NodeDiscovery')
         p_pyhouses_obj.CoreData.DiscoveryService.setServiceParent(p_pyhouses_obj.Application)
-        self.m_pyhouses_obj = p_pyhouses_obj
         self._start_discovery_server(p_pyhouses_obj)
         self._start_discovery_client(p_pyhouses_obj)
 
     def _start_discovery_server(self, p_pyhouses_obj):
-        """Use listenMultiple=True so that we can run a server and a client on same node."""
         p_pyhouses_obj.Reactor.listenMulticast(PYHOUSE_DISCOVERY_PORT, MulticastDiscoveryServerProtocol(p_pyhouses_obj), listenMultiple = True)
 
     def _start_discovery_client(self, p_pyhouses_obj):
