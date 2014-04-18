@@ -24,7 +24,7 @@ import logging
 from twisted.application import service
 from twisted.internet.protocol import DatagramProtocol, ConnectedDatagramProtocol
 
-g_debug = 1
+g_debug = 0
 g_logger = logging.getLogger('PyHouse.NodeDiscovry')
 
 
