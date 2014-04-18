@@ -24,14 +24,14 @@ import logging
 from twisted.application import service
 from twisted.internet.protocol import DatagramProtocol, ConnectedDatagramProtocol
 
-g_debug = 0
+g_debug = 1
 g_logger = logging.getLogger('PyHouse.NodeDiscovry')
 
 
 __all__ = [
            'API']
 
-PYHOUSE_MULTICAST = '234.35.36.37'
+PYHOUSE_MULTICAST_IP_V4 = '234.35.36.37'
 AMP_PORT = 8581
 PYHOUSE_DISCOVERY_PORT = 8582
 WHOS_THERE = "Who's There?"
@@ -61,8 +61,10 @@ class MulticastDiscoveryServerProtocol(DatagramProtocol):
         self.m_pyhouses_obj = p_pyhouses_obj
 
     def startProtocol(self):
-        self.transport.setTTL(2)
-        _l_defer = self.transport.joinGroup(PYHOUSE_MULTICAST)
+        if g_debug >= 1:
+            g_logger.debug('Discovery Server Protocol started.')
+        self.transport.setTTL(4)
+        _l_defer = self.transport.joinGroup(PYHOUSE_MULTICAST_IP_V4)
 
     def datagramReceived(self, p_datagram, p_address):
         """
@@ -74,7 +76,8 @@ class MulticastDiscoveryServerProtocol(DatagramProtocol):
         """
         l_node = NodeData()
         l_node.ConnectionAddr = p_address[0]
-        g_logger.debug("Server Discovery Datagram {0:} received from {1:}".format(repr(p_datagram), repr(p_address)))
+        if g_debug >= 1:
+            g_logger.debug("Server Discovery Datagram {0:} received from {1:}".format(repr(p_datagram), repr(p_address)))
         if p_address[0] not in self.m_address_list:
             self.m_address_list.append(p_address[0])
         if p_datagram.startswith(WHOS_THERE):
@@ -106,13 +109,17 @@ class MulticastDiscoveryClientProtocol(ConnectedDatagramProtocol):
         """
         Called when the protocol starts up.
 
-        All listeners on the multicast address (including us) will receive the "Who's There?" message.
+        All listeners on the Multicast address (including us) will receive the "Who's There?" message.
         """
-        self.transport.setTTL(2)
-        _l_defer = self.transport.joinGroup(PYHOUSE_MULTICAST)
-        self.transport.write(WHOS_THERE, (PYHOUSE_MULTICAST, PYHOUSE_DISCOVERY_PORT))
+        if g_debug >= 1:
+            g_logger.debug('Discovery Client Protocol started.')
+        self.transport.setTTL(4)
+        _l_defer = self.transport.joinGroup(PYHOUSE_MULTICAST_IP_V4)
+        self.transport.write(WHOS_THERE, (PYHOUSE_MULTICAST_IP_V4, PYHOUSE_DISCOVERY_PORT))
 
     def datagramReceived(self, p_datagram, p_address):
+        if g_debug >= 1:
+            g_logger.debug('Discovery Client rxed:{0:} From:{1:}'.format(p_datagram, p_address[0]))
         if p_datagram.startswith(WHOS_THERE) and self.m_pyhouses_obj.CoreData.Nodes[0].ConnectionAddr == None:
             self.m_pyhouses_obj.CoreData.Nodes[0].ConnectionAddr = p_address[0]
             g_logger.info("Update our node (slot 0) address to {0:}, {1:}".format(p_address[0], p_datagram))
