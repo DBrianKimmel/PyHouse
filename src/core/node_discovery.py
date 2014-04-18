@@ -61,9 +61,11 @@ class MulticastDiscoveryServerProtocol(DatagramProtocol):
         self.m_pyhouses_obj = p_pyhouses_obj
 
     def startProtocol(self):
-        if g_debug >= 1:
-            g_logger.debug('Discovery Server Protocol started.')
         self.transport.setTTL(4)
+        self.m_interface = self.transport.getOutgoingInterface()
+        self.transport.setLoopbackMode(0)
+        if g_debug >= 1:
+            g_logger.debug('Discovery Server Protocol started. {0:}'.format(self.m_interface))
         _l_defer = self.transport.joinGroup(PYHOUSE_MULTICAST_IP_V4)
 
     def datagramReceived(self, p_datagram, p_address):
@@ -111,9 +113,11 @@ class MulticastDiscoveryClientProtocol(ConnectedDatagramProtocol):
 
         All listeners on the Multicast address (including us) will receive the "Who's There?" message.
         """
-        if g_debug >= 1:
-            g_logger.debug('Discovery Client Protocol started.')
         self.transport.setTTL(4)
+        self.m_interface = self.transport.getOutgoingInterface()
+        self.transport.setLoopbackMode(0)
+        if g_debug >= 1:
+            g_logger.debug('Discovery Client Protocol started  {0:}.'.format(self.m_interface))
         _l_defer = self.transport.joinGroup(PYHOUSE_MULTICAST_IP_V4)
         self.transport.write(WHOS_THERE, (PYHOUSE_MULTICAST_IP_V4, PYHOUSE_DISCOVERY_PORT))
 
