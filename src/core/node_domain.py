@@ -48,15 +48,14 @@ def PrintBox(p_arg):
 """ ------------------------------------------------------------------
  Command exceptions
 """
-class NodeInfoError(Exception): pass
+class NodeInformationError(Exception): pass
+class UsernameUnavailable(Exception): pass
 
 
 """ ------------------------------------------------------------------
  Commands
 """
-class TestNameError(Exception): pass
-
-class TestNameCommand(Command):
+class NodeInformationCommand(Command):
     arguments = [('Name', String()),
                  ('Active', String()),
                  ('Address', String()),
@@ -64,19 +63,8 @@ class TestNameCommand(Command):
                  ]
     response = [('Answer', String())
                 ]
-    errors = {TestNameError: 'Name error'}
+    errors = {NodeInformationError: 'Name error'}
 
-
-class TestNameResponse(CommandLocator):
-    @TestNameCommand.responder
-    def NameResponse(self, p_name):
-        g_logger.debug('Test name response {0:}'.format(p_name))
-        l_answer = p_name + '_answer'
-        return {'Answer': l_answer}
-
-
-#-----------------------------------------------------------
-class UsernameUnavailable(Exception): pass
 
 class RegisterUser(Command):
     arguments = [('username', Unicode()),
@@ -85,7 +73,16 @@ class RegisterUser(Command):
     errors = {UsernameUnavailable: 'username-unavailable'}
 
 
-class UserRegistration(CommandLocator):
+### -----------------------------------------------------------------
+
+class LocatorClass(CommandLocator):
+
+    @NodeInformationCommand.responder
+    def NodeInformationResponse(self, p_name):
+        g_logger.debug('NodeInformationResponse:{0:}'.format(p_name))
+        l_answer = p_name + '_answer'
+        return {'Answer': l_answer}
+
     uidCounter = 0
     @RegisterUser.responder
     def register(self, username, publickey):
@@ -95,7 +92,6 @@ class UserRegistration(CommandLocator):
         self.uidCounter += 1
         path.setContent('%d %s\n' % (self.uidCounter, publickey))
         return self.uidCounter
-
 
 ### -----------------------------------------------------------------
 # Boxes
@@ -115,9 +111,6 @@ class BoxReflector(object):
         g_logger.debug('Stop Receiving boxes - {0:}'.format(p_reason))
         self.boxSender = None
 
-
-class LocatorClass(UserRegistration, TestNameResponse):
-    pass
 
 ### -----------------------------------------------------------------
 
@@ -168,26 +161,29 @@ class AmpClient(object):
         def cb_connected(p_protocol):
             def cb_got_result(p_result):
                 g_logger.debug('cb_got_result Client Addr:{0:} - Result:{1:}'.format(p_address, p_result))
-                TestNameResponse().NameResponse('test dbk')
+                LocatorClass().NodeInformationResponse('test dbk')
 
             def eb_err2(p_ConnectionDone):
                 g_logger.error('eb_err2 - Addr:{0:} - arg:{1:}'.format(p_address, p_ConnectionDone))
+
             l_defer1 = p_protocol.callRemote(
-                    TestNameCommand,
+                    NodeInformationCommand,
                     Name = p_pyhouses_obj.CoreData.Nodes[0].Name,
                     Active = str(p_pyhouses_obj.CoreData.Nodes[0].Active),
                     Address = p_pyhouses_obj.CoreData.Nodes[0].ConnectionAddr,
                     Role = p_pyhouses_obj.CoreData.Nodes[0].Role
                     )
-            g_logger.debug('cb_connected To Client at addr {0:} - Sending - {1:}'.format(p_address, l_defer1))
+            g_logger.debug('cb_connected - Client connected to Server at addr {0:} - Sending Node Information.'.format(p_address))
             l_defer1.addCallback(cb_got_result)
             l_defer1.addErrback(eb_err2)
 
         def cb_result(p_result):
-            g_logger.debug('cb_result Addr:{0:}, Result:{1:}'.format(p_address, p_result))
+            g_logger.debug('cb_result Client got result from Server at Addr:{0:}, Result:{1:}'.format(p_address, p_result))
+            LocatorClass().NodeInformationResponse('test dbk')
         def eb_create(p_result):
-            p_result.trap(TestNameError)
+            p_result.trap(NodeInformationError)
             g_logger.error('Got test error Addr:{0:}, Result:{1:}'.format(p_address, p_result))
+
         l_defer = ClientCreator(p_pyhouses_obj.Reactor, AMP).connectTCP(p_address, AMP_PORT)
         l_defer.addCallback(cb_connected)
         l_defer.addCallback(cb_result)
@@ -204,8 +200,6 @@ class AmpServerProtocol(AMP):
         g_logger.debug('AmpServerProtocol() initialized..')
 
     def dataReceived(self, p_data):
-        """
-        """
         g_logger.debug('Domain Server data rxed {0:}'.format(PrintBox(p_data)))
 
     def connectionMade(self):
