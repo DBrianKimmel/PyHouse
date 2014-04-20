@@ -25,6 +25,7 @@ from twisted.internet.protocol import Factory, ClientCreator
 from twisted.protocols.amp import AMP, Integer, Unicode, String, Command, IBoxReceiver, CommandLocator
 from twisted.python.filepath import FilePath
 from zope.interface import implements
+from twisted.internet.defer import Deferred
 
 g_debug = 1
 g_logger = logging.getLogger('PyHouse.NodeDomain  ')
@@ -41,6 +42,15 @@ def PrintBox(p_arg):
         l_ret += "({0:}){1:}, ".format(l_len, l_arg[2:l_len + 2])
         l_arg = l_arg[l_len + 2:]
     return l_ret
+
+def send_node_info(p_pyhouses_obj, p_protocol):
+    l_defer = p_protocol.callRemote(
+        NodeInformationCommand,
+        Name = p_pyhouses_obj.CoreData.Nodes[0].Name,
+        Active = str(p_pyhouses_obj.CoreData.Nodes[0].Active),
+        Address = p_pyhouses_obj.CoreData.Nodes[0].ConnectionAddr,
+        Role = p_pyhouses_obj.CoreData.Nodes[0].Role)
+    return l_defer
 
 """ ------------------------------------------------------------------
  Command exceptions
@@ -112,9 +122,12 @@ class LocatorClass(CommandLocator):
 class DomainBoxDispatcher(object):
     implements (IBoxReceiver)
 
+    def __init__(self, p_address):
+        self.m_address = p_address
+
     def startReceivingBoxes(self, p_boxSender):
         if g_debug >= 1:
-            g_logger.debug('Start Receiving boxes - Sender:{0:}'.format(p_boxSender))
+            g_logger.debug('Start Receiving boxes - Sender:{0:}  {1:}'.format(p_boxSender, self.m_address))
         self.boxSender = p_boxSender
 
     def ampBoxReceived(self, p_box):
@@ -132,10 +145,12 @@ class DomainBoxDispatcher(object):
 
 class AmpClientProtocol(AMP):
 
-    def __init__(self):
-        AMP.__init__(self, boxReceiver = DomainBoxDispatcher(), locator = LocatorClass())
+    def __init__(self, p_address, p_pyhouses_obj):
+        self.m_address = p_address
+        self.m_pyhouses_obj = p_pyhouses_obj
+        AMP.__init__(self, boxReceiver = DomainBoxDispatcher(p_address), locator = LocatorClass())
         if g_debug >= 1:
-            g_logger.debug('AmpClientProtocol() initialized..')
+            g_logger.debug('AmpClientProtocol() initialized. {0:}'.format(p_address))
         pass
 
     def dataReceived(self, p_data):
@@ -145,18 +160,40 @@ class AmpClientProtocol(AMP):
 
     def connectionMade(self):
         if g_debug >= 1:
-            g_logger.debug('Domain Client - Outgoing connection made.')
-        pass
+            g_logger.debug('Domain Client - Outgoing connection made to {0:}'.format(self.m_address))
+
+        def cb_got_result12(p_result):
+            g_logger.debug('cb_got_result Client Addr:{0:} - Result:{1:}'.format(self.m_address, p_result))
+            LocatorClass().NodeInformationResponse('test dbk')
+
+        def eb_err12(p_ConnectionDone):
+            g_logger.error('eb_err2 - Addr:{0:} - arg:{1:}'.format(self.m_address, p_ConnectionDone))
+
+        # l_defer12 = self.callRemote(
+        #        NodeInformationCommand,
+        #        Name = self.m_pyhouses_obj.CoreData.Nodes[0].Name,
+        #        Active = str(self.m_pyhouses_obj.CoreData.Nodes[0].Active),
+        #        Address = self.m_pyhouses_obj.CoreData.Nodes[0].ConnectionAddr,
+        #        Role = self.m_pyhouses_obj.CoreData.Nodes[0].Role
+        #        )
+        # l_defer12 = send_node_info(self.m_pyhouses_obj, self)
+        l_defer12 = Deferred()
+        l_defer12.addCallback(cb_got_result12)
+        l_defer12.addErrback(eb_err12)
 
 
 class AmpClientFactory(Factory):
+    def __init__(self, p_pyhouses_obj):
+        self.m_pyhouses_obj = p_pyhouses_obj
 
     def startedConnecting(self, p_connector):
         if g_debug >= 1:
             g_logger.info("Domain Client - startedConnecting {0:}".format(p_connector))
 
-    def buildProtocol(self, _addr):
-        return AmpClientProtocol()
+    def buildProtocol(self, p_addr):
+        if g_debug >= 1:
+            g_logger.info("Domain Client Factory - is building protocol {0:}".format(p_addr))
+        return AmpClientProtocol(p_addr, self.m_pyhouses_obj)
 
     def clientConnectionLost(self, _connector, p_reason):
         g_logger.error('DomainClientFactory - lost connection {0:}'.format(p_reason))
@@ -174,7 +211,7 @@ class AmpClient(object):
         """
         self.m_pyhouses_obj = p_pyhouses_obj
         l_endpoint = TCP4ClientEndpoint(p_pyhouses_obj.Reactor, p_address, AMP_PORT)
-        l_factory = AmpClientFactory()
+        l_factory = AmpClientFactory(p_pyhouses_obj)
         l_defer = l_endpoint.connect(l_factory)
         if g_debug >= 1:
             g_logger.debug("Domain Client connecting to address {0:}".format(p_address))
