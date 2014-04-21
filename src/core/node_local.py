@@ -75,7 +75,6 @@ class NodeData(object):
         self.Name = None
         self.Key = 0
         self.Active = True
-        self.HostName = ''
         self.ConnectionAddr = None
         self.Role = 0
         self.Interfaces = {}

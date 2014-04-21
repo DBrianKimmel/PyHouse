@@ -22,7 +22,7 @@ import logging
 from twisted.application.internet import StreamServerEndpointService
 from twisted.internet.endpoints import serverFromString, TCP4ClientEndpoint
 from twisted.internet.protocol import Factory, ClientCreator
-from twisted.protocols.amp import AMP, Integer, Unicode, String, Command, IBoxReceiver, CommandLocator
+from twisted.protocols.amp import AMP, Integer, Unicode, String, Command, IBoxReceiver, CommandLocator, BinaryBoxProtocol, BoxDispatcher
 from twisted.python.filepath import FilePath
 from zope.interface import implements
 from twisted.internet.defer import Deferred
@@ -42,15 +42,6 @@ def PrintBox(p_arg):
         l_ret += "({0:}){1:}, ".format(l_len, l_arg[2:l_len + 2])
         l_arg = l_arg[l_len + 2:]
     return l_ret
-
-def send_node_info(p_pyhouses_obj, p_protocol):
-    l_defer = p_protocol.callRemote(
-        NodeInformationCommand,
-        Name = p_pyhouses_obj.CoreData.Nodes[0].Name,
-        Active = str(p_pyhouses_obj.CoreData.Nodes[0].Active),
-        Address = p_pyhouses_obj.CoreData.Nodes[0].ConnectionAddr,
-        Role = p_pyhouses_obj.CoreData.Nodes[0].Role)
-    return l_defer
 
 """ ------------------------------------------------------------------
  Command exceptions
@@ -143,6 +134,20 @@ class DomainBoxDispatcher(object):
 
 ### -----------------------------------------------------------------
 
+class NodeDomainClass(NodeInformationCommand):
+
+    def XXsend_NodeInformation(self, p_proto, p_node):
+        g_logger.debug('   Self = {0:}'.format(self))
+        g_logger.debug('   Proto = {0:}'.format(p_proto))
+        # g_logger.debug('Node = {0:}'.format(vars(p_node)))
+        return self.callRemote(NodeInformationCommand,
+                Name = p_node.Name,
+                Active = str(p_node.Active),
+                Address = p_node.ConnectionAddr,
+                Role = int(p_node.Role))
+
+### -----------------------------------------------------------------
+
 class AmpClientProtocol(AMP):
 
     def __init__(self, p_address, p_pyhouses_obj):
@@ -176,10 +181,20 @@ class AmpClientProtocol(AMP):
         #        Address = self.m_pyhouses_obj.CoreData.Nodes[0].ConnectionAddr,
         #        Role = self.m_pyhouses_obj.CoreData.Nodes[0].Role
         #        )
-        # l_defer12 = send_node_info(self.m_pyhouses_obj, self)
-        l_defer12 = Deferred()
+        l_defer12 = self.send_NodeInformation(self, self.m_pyhouses_obj.CoreData.Nodes[0])
+        # l_defer12 = Deferred()
         l_defer12.addCallback(cb_got_result12)
         l_defer12.addErrback(eb_err12)
+
+    def send_NodeInformation(self, p_proto, p_node):
+        g_logger.debug('   Self = {0:}'.format(self))
+        g_logger.debug('   Proto = {0:}'.format(p_proto))
+        # g_logger.debug('Node = {0:}'.format(vars(p_node)))
+        return self.callRemote(NodeInformationCommand,
+                Name = p_node.Name,
+                Active = str(p_node.Active),
+                Address = p_node.ConnectionAddr,
+                Role = int(p_node.Role))
 
 
 class AmpClientFactory(Factory):
