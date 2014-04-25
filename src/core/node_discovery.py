@@ -16,6 +16,10 @@ This Module:
     Uses IPv4 multicast to discover the other PyHouse nodes in the local network
     Uses IPv6 multicast to discover nodes and overrides IPv4 contact info.
     Uses neighbor discovery to find other potential devices that may play a part in home automation.
+
+TODO: Delete nodes that have gone away.
+      Check for new nodes periodically.
+      Inform domain module that something happened.
 """
 
 # Import system type stuff
