@@ -117,8 +117,11 @@ class DomainBoxDispatcher(AMP):
         self.m_address = p_address
         self.m_pyhouses_obj = p_pyhouses_obj
         self.m_amp = self
-        if g_debug >= 2:
-            g_logger.debug(' Dispatch - initialized (127)')
+        if g_debug >= 1:
+            g_logger.debug(' Dispatch - initialized - Addr:{0:} (121)'.format(p_address))
+
+    def makeConnection(self, transport):
+        AMP.makeConnection(self, transport)
 
     def startReceivingBoxes(self, p_boxSender):
         if g_debug >= 2:
@@ -137,13 +140,13 @@ class DomainBoxDispatcher(AMP):
 
     def send_NodeInformation(self, p_node, p_client, p_server, p_pump):
         l_call = self
-        if g_debug >= 1:
-            g_logger.debug(' Dispatch - SendNodeInformation  l_call = {0:} (142)'.format(l_call))
+        if g_debug >= 2:
+            g_logger.debug(' Dispatch - send_NodeInformation  l_call = {0:} (142)'.format(l_call))
         try:
             l_defer = l_call.callRemote(NodeInformationCommand,
                     Name = p_node.Name, Active = str(p_node.Active), Address = p_node.ConnectionAddr, Role = int(p_node.Role))
             if g_debug >= 1:
-                g_logger.debug(' Dispatch - send_NodeInformation  - SENT (155)')
+                g_logger.debug(' Dispatch - send_NodeInformation  - SENT to {0:}(146)'.format(self.m_address))
         except AttributeError as l_error:
             g_logger.error(' Dispatch - send_NodeInformation - Attribute error - {0:}'.format(l_error))
             l_defer = Deferred()
@@ -151,21 +154,32 @@ class DomainBoxDispatcher(AMP):
 
     def receive_NodeInformation(self, NodeInformationCommand, Name = None, Active = None, Address = None, Role = None):
         if g_debug >= 1:
-            g_logger.debug(' Dispatch - receive_dNodeInformation  - SENT (155)')
-        l_result = dict(Name = Name, Active = Active, Address = Address, Role = Role)
-        return l_result
+            g_logger.debug(' Dispatch - receive_NodeInformation  - RECEIVED (155)')
+        for l_node in self.m_pyhouses_obj.CoreData.Nodes.itervalues():
+            if l_node.Name == Name:
+                pass
+        _l_result = dict(Name = Name, Active = Active, Address = Address, Role = Role)
+        l_ret = dict(Name = Name, Answer = 'Got it ok')
+        return l_ret
     NodeInformationCommand.responder(receive_NodeInformation)
 
 ### -----------------------------------------------------------------
 
-class AmpClientProtocol(DomainBoxDispatcher):
+class AmpClientProtocol(object):
 
     def __init__(self, p_address, p_pyhouses_obj):
-        AMP.__init__(self, boxReceiver = DomainBoxDispatcher(p_pyhouses_obj, p_address), locator = LocatorClass())
+        # AMP.__init__(self, boxReceiver = DomainBoxDispatcher(p_pyhouses_obj, p_address), locator = LocatorClass())
         self.m_address = p_address
         self.m_pyhouses_obj = p_pyhouses_obj
-        if g_debug >= 2:
+        if g_debug >= 1:
             g_logger.debug('ClientProtocol - initialized. {0:} (161)'.format(p_address))
+        pass
+
+
+    def makeConnection(self, transport):
+        '''placed here to kill strange error messages - twisted swallowing traces AGAIN ???
+        '''
+        g_logger.debug('ClientProtocol - makeConnection - ???? transport:{0:}'.format(transport))
         pass
 
     def dataReceived(self, p_data):
@@ -178,7 +192,7 @@ class AmpClientProtocol(DomainBoxDispatcher):
     def connectionMade(self):
 
         def cb_got_result12(p_result):
-            if g_debug >= 1:
+            if g_debug >= 2:
                 g_logger.debug('ClientProtocol - ConnectionMade - cb_got_result Client Addr:{0:} - Result:{1:}  transport{2:} (179)'.format(self.m_address, p_result, self.transport))
             LocatorClass().NodeInformationResponse('test dbk')
 
@@ -202,7 +216,7 @@ class AmpClientFactory(ClientFactory):
             g_logger.debug('AmpClientFactory() __init__ (202).')
 
     def startedConnecting(self, p_connector):
-        if g_debug >= 1:
+        if g_debug >= 2:
             g_logger.debug("DomainClientFactory - StartedConnecting {0:}".format(p_connector))
 
     def buildProtocol(self, p_address):
@@ -282,10 +296,10 @@ class AmpServerProtocol(DomainBoxDispatcher):
     """
     def __init__(self, p_pyhouses_obj):
         self.m_pyhouses_obj = p_pyhouses_obj
-        AMP.__init__(self)
         l_disp = DomainBoxDispatcher(p_pyhouses_obj, None)
+        AMP.__init__(self, boxReceiver = l_disp)
         l_proto = BinaryBoxProtocol(self)
-        if g_debug >= 1:
+        if g_debug >= 2:
             g_logger.debug('  ServerProtocol() initialized; Proto:{0:}, Dispatch:{1:}'.format(l_proto, l_disp))
         self.locateResponder(NodeInformationCommand)
 
@@ -301,7 +315,7 @@ class AmpServerProtocol(DomainBoxDispatcher):
         If you need to send any greeting or initial message, do it here.
         """
         if g_debug >= 1:
-            g_logger.debug('  ServerProtocol inbound connection Made. (294)')
+            g_logger.debug('  ServerProtocol inbound connection Made. (308)')
         def cb_got_result12(p_result):
             if g_debug >= 1:
                 g_logger.debug('ServerProtocol - ConnectionMade - cb_got_result Client Addr:{0:} - Result:{1:}  transport{2:}'.format(self.m_address, p_result, self.transport))
@@ -311,7 +325,7 @@ class AmpServerProtocol(DomainBoxDispatcher):
             g_logger.error('ServerProtocol - ConnectionMade - eb_err2 - Addr:{0:} - arg:{1:}'.format(self.m_address, p_ConnectionDone))
 
         if g_debug >= 2:
-            g_logger.debug('ServerProtocol - ConnectionMade to:{0:}, transp:{1:} (185)'.format(self.m_address, self.transport))
+            g_logger.debug('ServerProtocol - ConnectionMade to:{0:}, transp:{1:} (318)'.format(self.m_address, self.transport))
         l_defer12 = self.send_NodeInformation(self.m_pyhouses_obj.CoreData.Nodes[0], self, self, self)
         l_defer12.addCallback(cb_got_result12)
         l_defer12.addErrback(eb_err12)
@@ -333,7 +347,7 @@ class AmpServerFactory(ServerFactory):
             g_logger.debug('  ServerFactory() __init__.')
 
     def buildProtocol(self, p_address_tupple):
-        if g_debug >= 1:
+        if g_debug >= 2:
             g_logger.debug('  ServerFactory - BuildProtocol from {0:}'.format(p_address_tupple))
         return AmpServerProtocol(self.m_pyhouses_obj)
 
@@ -344,8 +358,8 @@ class AmpServer(object):
 
     def create_domain_server(self, p_endpoint, p_pyhouses_obj):
         l_listen_defer = p_endpoint.listen(AmpServerFactory(p_pyhouses_obj))
-        if g_debug >= 1:
-            g_logger.info("  Server started (327).")
+        if g_debug >= 2:
+            g_logger.info("  Server started (352).")
         return l_listen_defer
 
 
