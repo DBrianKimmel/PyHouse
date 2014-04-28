@@ -150,7 +150,7 @@ class GetList(amp.Command):
 
 
 class SecuredPing(amp.Command):
-    # TODO: actually make this refuse to send over an insecure connection
+    # TO DO: actually make this refuse to send over an insecure connection
     response = [('pinged', amp.Boolean())]
 
 
@@ -189,32 +189,24 @@ class FactoryNotifier(amp.AMP):
             if hasattr(self.factory, 'onMade'):
                 self.factory.onMade.callback(None)
 
-#    def emitpong(self):
-#        from twisted.internet.interfaces import ISSLTransport
-#        if not ISSLTransport.providedBy(self.transport):
-#            raise DeathThreat("only send secure pings over secure channels")
-#        return {'pinged': True}
-#    SecuredPing.responder(emitpong)
-
 
 class SimpleSymmetricCommandProtocol(FactoryNotifier):
     maybeLater = None
+    greeted = False
+
     def __init__(self, onConnLost = None):
         amp.AMP.__init__(self)
         self.onConnLost = onConnLost
 
-    def sendHello(self, text):
-        print('SimpleSymetricCommandProtocol sendHello')
-        return self.callRemote(Hello, hello = text)
-
     def sendUnicodeHello(self, text, translation):
         return self.callRemote(Hello, hello = text, Print = translation)
 
-    greeted = False
+    def sendHello(self, p_text):
+        # TODO:
+        print('DBK SimpleSymetricCommandProtocol - sendHello')
+        return self.callRemote(Hello, hello = p_text, mixedCase = 'DBK - mixedCase - SimpleSymetricCommandProtocol')
 
     def receive_Hello(self, hello, From, optional = None, Print = None, mixedCase = None, dash_arg = None, underscore_arg = None):
-        """DBK
-        """
         From = From; optional = optional; Print = Print; mixedCase = mixedCase; dash_arg = dash_arg; underscore_arg = underscore_arg
         assert From == self.transport.getPeer()
         if hello == THING_I_DONT_UNDERSTAND:
@@ -223,11 +215,11 @@ class SimpleSymmetricCommandProtocol(FactoryNotifier):
             raise UnfriendlyGreeting("Don't be a dick.")
         if hello == 'die':
             raise DeathThreat("aieeeeeeeee")
-        result = dict(hello = hello)
+        result = dict(hello = hello, mixedCase = mixedCase)
         if Print is not None:
             result.update(dict(Print = Print))
         self.greeted = True
-        print('DBK in receive_Hello')
+        print('DBK SimpleSymetricCommandProtocol - receive_Hello = {0:}'.format(result))
         return result
     Hello.responder(receive_Hello)
 
@@ -1069,18 +1061,18 @@ class Test_05_AMP(unittest.TestCase):
         self.failUnless('hello' in repr(tl))
 
     def test_0512_helloWorldCommand(self):
-        """
+        """ TODO:
         Verify that a simple command can be sent and its response received with the high-level value parsing API.
         """
         l_client, _l_server, l_pump = connectedServerAndClient(ServerClass = SimpleSymmetricCommandProtocol, ClientClass = SimpleSymmetricCommandProtocol)
+        L = []
+        HELLO = '0512 - world'
+        l_client.sendHello(HELLO).addCallback(L.append)
+        l_pump.flush()
         print('0512-A Client:{0:}'.format(l_client))
         print('0512-B Server:{0:}'.format(_l_server))
         print('0512-C Pump:{0:}'.format(l_pump))
-        L = []
-        HELLO = 'world'
-        l_client.sendHello(HELLO).addCallback(L.append)
-        l_pump.flush()
-        print('0512 L[]: {0:}'.format(L))
+        print('0512-D L[]: {0:}'.format(L))
         self.assertEquals(L[0]['hello'], HELLO)
 
     def test_0513_helloErrorHandling(self):
