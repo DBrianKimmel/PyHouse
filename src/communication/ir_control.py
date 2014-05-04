@@ -17,7 +17,6 @@ Connect to the PyHouse node cluster port and pass all the IR codes on.
 """
 
 # Import system type stuff
-import logging
 
 from twisted.application.internet import StreamServerEndpointService
 from twisted.internet.protocol import Factory, Protocol
@@ -25,9 +24,10 @@ from twisted.internet.endpoints import TCP4ServerEndpoint, clientFromString
 from twisted.protocols.amp import AMP
 
 from src.entertain import pandora
+from src.utils import pyh_log
 
 g_debug = 1
-g_logger = logging.getLogger('PyHouse.IrControl   ')
+LOG = pyh_log.getLogger('PyHouse.IrControl   ')
 
 g_pandora = None
 g_pyhouses_obj = None
@@ -72,10 +72,10 @@ class LircFactory(Factory):
         return LircProtocol()
 
     def clientConnectionLost(self, _connector, p_reason):
-        g_logger.error('LircFactory - lost connection {0:}'.format(p_reason))
+        LOG.error('LircFactory - lost connection {0:}'.format(p_reason))
 
     def clientConnectionFailed(self, _connector, p_reason):
-        g_logger.error('LircFactory - Connection failed {0:}'.format(p_reason))
+        LOG.error('LircFactory - Connection failed {0:}'.format(p_reason))
 
 
 class LircConnection(object):
@@ -88,10 +88,10 @@ class LircConnection(object):
         l_defer.addErrback(self.eb_connect)
 
     def cb_connect(self, p_reason):
-        g_logger.debug("LircConnection good {0:}".format(p_reason))
+        LOG.debug("LircConnection good {0:}".format(p_reason))
 
     def eb_connect(self, p_reason):
-        g_logger.error("LircConnection Error {0:}".format(p_reason))
+        LOG.error("LircConnection Error {0:}".format(p_reason))
 
 
 
@@ -105,7 +105,7 @@ class IrDispatch(object):
         00000000a55ad02f KEY_VOLUMEDOWN pioneer-AXD7595
         """
         if g_debug >= 1:
-            g_logger.debug("Received {0:} ({1:}) from {2:}".format(p_keycode, p_keyname, p_remote))
+            LOG.debug("Received {0:} ({1:}) from {2:}".format(p_keycode, p_keyname, p_remote))
         for l_dispatch in IR_KEYS:
             (l_keyname, l_module, l_command) = l_dispatch
             if p_keyname == l_keyname:
@@ -114,7 +114,7 @@ class IrDispatch(object):
                 pass
 
     def pandora_ctl(self, p_command):
-        g_logger.debug('Pandora_ctl command - {0:}'.format(p_command))
+        LOG.debug('Pandora_ctl command - {0:}'.format(p_command))
         if p_command == 'start':
             g_pandora.Start(g_pyhouses_obj)
         elif p_command == 'stop':
@@ -137,16 +137,16 @@ class API(Utility):
         """
         global g_pandora
         g_pandora = pandora.API()
-        g_logger.debug('Initialized')
+        LOG.debug('Initialized')
 
     def Start(self, p_pyhouses_obj):
         global g_pyhouses_obj
         g_pyhouses_obj = p_pyhouses_obj
         self.start_lirc_connect(p_pyhouses_obj)
         self.start_AMP(p_pyhouses_obj)
-        g_logger.debug('Started')
+        LOG.debug('Started')
 
     def Stop(self):
-        g_logger.debug('Stopped')
+        LOG.debug('Stopped')
 
 # ## END DBK

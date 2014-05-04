@@ -5,7 +5,6 @@ Created on Apr 8, 2013
 '''
 
 # Import system type stuff
-import logging
 import os
 from nevow import loaders
 from nevow import athena
@@ -14,10 +13,7 @@ from nevow import athena
 from src.web import web_utils
 from src.drivers import interface
 from src.lights import lighting_controllers
-# from src.families.Insteon import Insteon_utils
-#
-# from src.utils.tools import PrintObject
-# from src.utils.tools import PrettyPrint
+from src.utils import pyh_log
 
 
 # Handy helper for finding external resources nearby.
@@ -31,7 +27,7 @@ g_debug = 0
 # 3 = Config file handling
 # 4 = Dump JSON
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.webCntlr    ')
+LOG = pyh_log.getLogger('PyHouse.webCntlr    ')
 
 
 class ControllersElement(athena.LiveElement):

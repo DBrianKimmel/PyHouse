@@ -5,7 +5,6 @@ Created on Jun 3, 2013
 '''
 
 # Import system type stuff
-import logging
 import os
 import uuid
 from nevow import loaders
@@ -14,20 +13,17 @@ from nevow import athena
 # Import PyMh files and modules.
 from src.web import web_utils
 from src.lights import lighting_lights
+from src.utils import pyh_log
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
 
-
 g_debug = 0
 # 0 = off
 # 1 = log extra info
-# 2 = major routine entry
-# 3 = Config file handling
-# 4 = Dump JSON
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.webLight    ')
+LOG = pyh_log.getLogger('PyHouse.webLight    ')
 
 
 class LightsElement(athena.LiveElement):
@@ -69,7 +65,7 @@ class LightsElement(athena.LiveElement):
             try:
                 del self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Lights[l_light_ix]
             except AttributeError:
-                g_logger.error("web_lights - Failed to delete - JSON: {0:}".format(l_json))
+                LOG.error("web_lights - Failed to delete - JSON: {0:}".format(l_json))
             return
         #
         # Note - we don't want a plain light here - we want a family light
@@ -77,7 +73,7 @@ class LightsElement(athena.LiveElement):
         try:
             l_obj = self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Lights[l_light_ix]
         except KeyError:
-            g_logger.warning('Creating a new light for house {0:} and light {1:}'.format(l_house_ix, l_light_ix))
+            LOG.warning('Creating a new light for house {0:} and light {1:}'.format(l_house_ix, l_light_ix))
             l_obj = lighting_lights.LightData()
         #
         l_obj.Name = l_json['Name']

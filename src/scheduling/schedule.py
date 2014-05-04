@@ -31,7 +31,6 @@ Operation:
 
 # Import system type stuff
 import datetime
-import logging
 import xml.etree.ElementTree as ET
 from twisted.internet import reactor
 
@@ -40,18 +39,13 @@ from src.lights import lighting
 from src.utils import xml_tools
 from src.utils import tools
 from src.scheduling import sunrisesunset
-# from src.scheduling import VALID_SCHEDULING_TYPES
+from src.utils import pyh_log
+
 
 g_debug = 0
 # 0 = off
 # 1 = log extra info
-# 2 = major routine entry
-# 3 - Config file handling
-# 4 = schedule execution
-# 5 = diagnostics
-# 6
-# 7 = extract time details
-g_logger = logging.getLogger('PyHouse.Schedule    ')
+LOG = pyh_log.getLogger('PyHouse.Schedule    ')
 
 callLater = reactor.callLater
 
@@ -120,7 +114,7 @@ class ScheduleXML(xml_tools.ConfigTools):
         except AttributeError:
             pass
         p_house_obj.Schedules = l_dict
-        g_logger.info("Loaded {0:} schedules for house:{1:}.".format(l_count, self.m_house_obj.Name))
+        LOG.info("Loaded {0:} schedules for house:{1:}.".format(l_count, self.m_house_obj.Name))
         return l_dict
 
     def write_schedules_xml(self, p_schedules_obj):
@@ -155,7 +149,7 @@ class ScheduleExecution(ScheduleData):
 
         @param p_slot_list: a list of Slots in the next time schedule to be executed.
         """
-        g_logger.info("About to execute - House:{0:}, Schedule:{1:}".format(self.m_house_obj.Name, p_slot_list))
+        LOG.info("About to execute - House:{0:}, Schedule:{1:}".format(self.m_house_obj.Name, p_slot_list))
         for ix in range(len(p_slot_list)):
             l_sched_obj = self.m_house_obj.Schedules[p_slot_list[ix]]
             # TODO: We need a small dispatch for the various schedule types (hvac, security, entertainment, lights, ...)
@@ -164,7 +158,7 @@ class ScheduleExecution(ScheduleData):
             elif l_sched_obj.Type == 'Scene':
                 pass
             l_light_obj = tools.get_light_object(self.m_house_obj, name = l_sched_obj.LightName)
-            g_logger.info("Executing schedule Name:{0:}, Light:{1:}, Level:{2:}".format(l_sched_obj.Name, l_sched_obj.LightName, l_sched_obj.Level))
+            LOG.info("Executing schedule Name:{0:}, Light:{1:}, Level:{2:}".format(l_sched_obj.Name, l_sched_obj.LightName, l_sched_obj.Level))
             self.m_house_obj.LightingAPI.ChangeLight(l_light_obj, l_sched_obj.Level)
         callLater(5, self.get_next_sched)
 
@@ -274,7 +268,7 @@ class ScheduleUtility(ScheduleExecution):
         self.m_sunrisesunset.Start(self.m_house_obj)
         self.m_sunset = self.m_sunrisesunset.get_sunset()
         self.m_sunrise = self.m_sunrisesunset.get_sunrise()
-        g_logger.info("In get_next_sched - Sunrise:{0:}, Sunset:{1:}".format(self.m_sunrise, self.m_sunset))
+        LOG.info("In get_next_sched - Sunrise:{0:}, Sunset:{1:}".format(self.m_sunrise, self.m_sunset))
         l_time_scheduled = l_now
         l_next = 100000.0
         l_list = []
@@ -295,7 +289,7 @@ class ScheduleUtility(ScheduleExecution):
             if l_diff == l_next:
                 l_list.append(l_key)
         l_debug_msg = "Schedule - House:{0:}, delaying {1:} seconds until {2:} for list {3:}".format(self.m_house_obj.Name, l_next, l_time_scheduled, l_list)
-        g_logger.info("Get_next_schedule complete. {0:}".format(l_debug_msg))
+        LOG.info("Get_next_schedule complete. {0:}".format(l_debug_msg))
         self.create_timer(l_next, l_list)
 
 
@@ -320,20 +314,20 @@ class API(ScheduleUtility, ScheduleXML):
         @param p_house_obj: is a House object for the house being scheduled
         """
         self.m_house_obj = p_house_obj
-        g_logger.info("Starting House {0:}.".format(self.m_house_obj.Name))
+        LOG.info("Starting House {0:}.".format(self.m_house_obj.Name))
         self.m_sunrisesunset.Start(p_house_obj)
         self.read_schedules_xml(p_house_obj, p_house_xml)
         self.m_house_obj.LightingAPI.Start(p_house_obj, p_house_xml)
         if p_house_obj.Active:
             self.get_next_sched()
-        g_logger.info("Started.")
+        LOG.info("Started.")
 
     def Stop(self, p_xml):
         """Stop everything under me and build xml to be appended to a house xml.
         """
-        g_logger.info("Stopping schedule for house:{0:}.".format(self.m_house_obj.Name))
+        LOG.info("Stopping schedule for house:{0:}.".format(self.m_house_obj.Name))
         p_xml.append(self.write_schedules_xml(self.m_house_obj.Schedules))
         self.m_house_obj.LightingAPI.Stop(p_xml)
-        g_logger.info("Stopped.\n")
+        LOG.info("Stopped.\n")
 
 # ## END DBK

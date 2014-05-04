@@ -18,15 +18,15 @@ Then start the House and all the sub systems.
 """
 
 # Import system type stuff
-import logging
 
 from src.core import nodes
 from src.entertain import entertainment
 from src.housing import houses
 from src.web import web_server
+from src.utils import pyh_log
 
 g_debug = 0
-g_logger = logging.getLogger('PyHouse.CoreSetup   ')
+LOG = pyh_log.getLogger('PyHouse.CoreSetup   ')
 
 INTER_NODE = 'tcp:port=8581'
 INTRA_NODE = 'unix:path=/var/run/pyhouse/node:lockfile=1'
@@ -43,7 +43,7 @@ class CoreData(object):
 class Utility(object):
 
     def dispatch(self):
-        l_node = self.m_pyhouses_obj.CoreData.Nodes[0]
+        _l_node = self.m_pyhouses_obj.CoreData.Nodes[0]
         pass
 
 
@@ -53,7 +53,7 @@ class API(object):
     m_nodes = None
 
     def __init__(self):
-        g_logger.info("\n------------------------------------------------------------------\n\n")
+        LOG.info("\n------------------------------------------------------------------\n\n")
         self.m_entertainment = entertainment.API()
         self.m_nodes = nodes.API()
 
@@ -66,13 +66,13 @@ class API(object):
         # SubSystems
         self.m_pyhouses_obj.WebAPI = web_server.API()
         self.m_entertainment.Start(p_pyhouses_obj)
-        g_logger.info("Started.")
+        LOG.info("Started.")
 
     def Stop(self, p_xml):
         # SubSystems
         self.m_entertainment.Stop(p_xml)
         # House
         self.m_nodes.Stop(p_xml)
-        g_logger.info("Stopped.")
+        LOG.info("Stopped.")
 
 # ## END DBK

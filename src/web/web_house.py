@@ -5,7 +5,6 @@ Created on Jun 3, 2013
 '''
 
 # Import system type stuff
-import logging
 import os
 from nevow import athena
 from nevow import loaders
@@ -14,6 +13,7 @@ from nevow import loaders
 from src.web import web_utils
 from src.housing import houses
 from src.housing import house
+from src.utils import pyh_log
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -22,11 +22,8 @@ templatepath = os.path.join(webpath, 'template')
 g_debug = 0
 # 0 = off
 # 1 = log extra info
-# 2 = major routine entry
-# 3 = Config file handling
-# 4 = Dump JSON
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.webHouse    ')
+LOG = pyh_log.getLogger('PyHouse.webHouse    ')
 
 class HouseElement(athena.LiveElement):
     """ a 'live' house element.

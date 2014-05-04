@@ -5,7 +5,6 @@ Created on Jun 3, 2013
 '''
 
 # Import system type stuff
-import logging
 import os
 from nevow import athena
 from nevow import loaders
@@ -13,6 +12,7 @@ from nevow import loaders
 # Import PyMh files and modules.
 from src.web import web_utils
 from src.scheduling import schedule
+from src.utils import pyh_log
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -25,7 +25,7 @@ g_debug = 0
 # 3 = Config file handling
 # 4 = Dump JSON
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.webSchedule ')
+LOG = pyh_log.getLogger('PyHouse.webSchedule ')
 
 
 class SchedulesElement(athena.LiveElement):
@@ -61,7 +61,7 @@ class SchedulesElement(athena.LiveElement):
             try:
                 del self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Schedules[l_schedule_ix]
             except AttributeError as e:
-                g_logger.warn('Failed to delete schedule: {0:}, ix:{1:}').format(e, l_schedule_ix)
+                LOG.warn('Failed to delete schedule: {0:}, ix:{1:}').format(e, l_schedule_ix)
             return
         try:
             l_obj = self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Schedules[l_schedule_ix]

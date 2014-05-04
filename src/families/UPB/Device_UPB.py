@@ -4,11 +4,11 @@
 """
 
 # Import system type stuff
-import logging
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from src.lights import lighting
+from src.utils import pyh_log
 
 
 g_debug = 0
@@ -16,7 +16,7 @@ g_debug = 0
 # 1 = major routine entry
 # 2 = Startup Details
 
-g_logger = logging.getLogger('PyHouse.Device_UPB  ')
+LOG = pyh_log.getLogger('PyHouse.Device_UPB  ')
 
 
 class CoreData(object):
@@ -128,7 +128,7 @@ class API(LightingAPI):
             # But all controllers need to be processed so they may be written back to XML.
             if l_count > 0:
                 l_controller_obj.Active = False
-                g_logger.warning('Controller {0:} skipped - another one is active.'.format(l_controller_obj.Name))
+                LOG.warning('Controller {0:} skipped - another one is active.'.format(l_controller_obj.Name))
                 continue
             else:
                 # from src.families.Insteon import Insteon_PLM
@@ -136,10 +136,10 @@ class API(LightingAPI):
                 if l_controller_obj._HandlerAPI.Start(l_controller_obj):
                     l_count += 1
                 else:
-                    g_logger.error('Controller {0:} failed to start.'.format(l_controller_obj.Name))
+                    LOG.error('Controller {0:} failed to start.'.format(l_controller_obj.Name))
                     l_controller_obj.Active = False
         l_msg = 'Started {0:} UPB Controllers, House:{1:}.'.format(l_count, p_house_obj.Name)
-        g_logger.info(l_msg)
+        LOG.info(l_msg)
 
     def Stop(self, p_xml):
         try:

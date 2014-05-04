@@ -5,41 +5,35 @@ Created on Mar 2, 2014
 """
 
 from src.core import setup
-from src.core.data_objects import PyHouseData
+from src.test import xml_data
+from src.core.data_objects import PyHouseData, CoreData
 
 from twisted.trial import unittest
-from twisted.internet.defer import Deferred, gatherResults, maybeDeferred
-from twisted.internet import protocol, error, defer, udp
-from twisted.python import runtime
+import xml.etree.ElementTree as ET
+
+XML = xml_data.XML
 
 
-class Test(unittest.TestCase):
+class Test_01_XML(unittest.TestCase):
+    """
+    This section will verify the XML in the 'src.text.xml_data' file is correct and what the setup module can read/write.
+    """
 
     def setUp(self):
+        self.m_pyhouses_obj = PyHouseData()
+
+    def test_0101_errors(self):
         pass
 
-    def tearDown(self):
-        pass
+class Test_02_ReadXML(unittest.TestCase):
+    """
+    This section tests the reading and writing of XML used by setup.
+    """
+    def setUp(self):
+        self.m_pyhouses_obj = PyHouseData()
+        self.m_pyhouses_obj.XmlRoot = ET.fromstring(XML)
+        self.m_pyhouses_obj.CoreData = CoreData()
+        self.m_api = setup.API()
 
-    def _test(self):
-        pass
-
-    def _test_errors(self):
-        pass
-
-    def test_001_errors(self):
-        print("Test 001")
-        self._test_errors()
-
-    def test_002_PyHouses(self):
-        print("Test 002")
-        _m_api = setup.API()
-        _m_pyhouse_obj = PyHouseData()
-
-    def test_003_Start(self):
-        print("Test 003")
-        m_api = setup.API()
-        m_pyhouse_obj = PyHouseData()
-        m_api.Start(m_pyhouse_obj)
 
 # ## END DBK

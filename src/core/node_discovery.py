@@ -23,13 +23,14 @@ TODO: Delete nodes that have gone away.
 """
 
 # Import system type stuff
-import logging
 
 from twisted.application import service
 from twisted.internet.protocol import DatagramProtocol, ConnectedDatagramProtocol
 
+from src.utils import pyh_log
+
 g_debug = 0
-g_logger = logging.getLogger('PyHouse.NodeDiscovry')
+LOG = pyh_log.getLogger('PyHouse.NodeDiscovry')
 
 
 __all__ = [
@@ -71,12 +72,12 @@ class DGramUtil(object):
                 return
         p_node.Key = l_count
         self.m_pyhouses_obj.CoreData.Nodes[l_count] = p_node
-        g_logger.info("Added node # {0:} - From Addr: {1:}, Named: {2:}".format(l_count, p_node.ConnectionAddr, p_node.Name))
+        LOG.info("Added node # {0:} - From Addr: {1:}, Named: {2:}".format(l_count, p_node.ConnectionAddr, p_node.Name))
 
     def set_node_0_addr(self, p_address):
         if self.m_pyhouses_obj.CoreData.Nodes[0].ConnectionAddr == None:
             self.m_pyhouses_obj.CoreData.Nodes[0].ConnectionAddr = p_address[0]
-            g_logger.info("Update our node (slot 0) address to {0:}".format(p_address[0]))
+            LOG.info("Update our node (slot 0) address to {0:}".format(p_address[0]))
 
 
 class MulticastDiscoveryServerProtocol(DatagramProtocol, DGramUtil):
@@ -90,7 +91,7 @@ class MulticastDiscoveryServerProtocol(DatagramProtocol, DGramUtil):
     def startProtocol(self):
         self.setup_protocol()
         if g_debug >= 1:
-            g_logger.debug('Discovery Server Protocol started. {0:}'.format(self.m_interface))
+            LOG.debug('Discovery Server Protocol started. {0:}'.format(self.m_interface))
         _l_defer = self.transport.joinGroup(PYHOUSE_MULTICAST_IP_V4)
 
     def datagramReceived(self, p_datagram, p_address):
@@ -104,7 +105,7 @@ class MulticastDiscoveryServerProtocol(DatagramProtocol, DGramUtil):
         l_node = NodeData()
         l_node.ConnectionAddr = p_address[0]
         if g_debug >= 1:
-            g_logger.debug("Server Discovery Datagram {0:} received from {1:}".format(repr(p_datagram), repr(p_address)))
+            LOG.debug("Server Discovery Datagram {0:} received from {1:}".format(repr(p_datagram), repr(p_address)))
         if p_address[0] not in self.m_address_list:
             self.m_address_list.append(p_address[0])
         if p_datagram.startswith(WHOS_THERE):
@@ -131,7 +132,7 @@ class MulticastDiscoveryClientProtocol(ConnectedDatagramProtocol, DGramUtil):
         """
         self.setup_protocol()
         if g_debug >= 1:
-            g_logger.debug('Discovery Client Protocol started  {0:}.'.format(self.m_interface))
+            LOG.debug('Discovery Client Protocol started  {0:}.'.format(self.m_interface))
         _l_defer = self.transport.joinGroup(PYHOUSE_MULTICAST_IP_V4)
         self.transport.write(WHOS_THERE, (PYHOUSE_MULTICAST_IP_V4, PYHOUSE_DISCOVERY_PORT))
 
@@ -139,7 +140,7 @@ class MulticastDiscoveryClientProtocol(ConnectedDatagramProtocol, DGramUtil):
         l_node = NodeData()
         l_node.ConnectionAddr = p_address[0]
         if g_debug >= 1:
-            g_logger.debug('Discovery Client rxed:{0:} From:{1:}'.format(p_datagram, p_address[0]))
+            LOG.debug('Discovery Client rxed:{0:} From:{1:}'.format(p_datagram, p_address[0]))
         if p_datagram.startswith(WHOS_THERE):
             self.set_node_0_addr(p_address)
         elif p_datagram.startswith(I_AM):
@@ -176,7 +177,7 @@ class API(Utility):
     def Start(self, p_pyhouses_obj):
         self.start_node_discovery(p_pyhouses_obj)
 
-    def Stop(self):
-        g_logger.info("Stopped.")
+    def Stop(self, p_xml):
+        LOG.info("Stopped.")
 
 # ## END DBK

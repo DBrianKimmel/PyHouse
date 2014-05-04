@@ -5,14 +5,14 @@ Created on Mar 27, 2013
 '''
 
 # Import system type stuff
-import logging
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from src.utils import xml_tools
+from src.utils import pyh_log
 
 g_debug = 0
-g_logger = logging.getLogger('PyHouse.Thermostat    ')
+LOG = pyh_log.getLogger('PyHouse.Thermostat    ')
 
 
 class ReadWriteXML(xml_tools.ConfigTools):
@@ -54,20 +54,20 @@ class API(object):
     m_house_obj = None
 
     def __init__(self, p_house_obj):
-        g_logger.info("Initializing for house:{0:}.".format(p_house_obj.Name))
+        LOG.info("Initializing for house:{0:}.".format(p_house_obj.Name))
         self.m_house_obj = p_house_obj
-        g_logger.info("Initialized.")
+        LOG.info("Initialized.")
 
     def Start(self, p_house_obj, p_house_xml):
         self.m_house_obj = p_house_obj
-        g_logger.info("Starting for house:{0:}.".format(self.m_house_obj.Name))
+        LOG.info("Starting for house:{0:}.".format(self.m_house_obj.Name))
         self.read_internet(self.m_house_obj, p_house_xml)
-        g_logger.info("Started.")
+        LOG.info("Started.")
 
     def Stop(self):
-        g_logger.info("Stopping for house:{0:}.".format(self.m_house_obj.Name))
+        LOG.info("Stopping for house:{0:}.".format(self.m_house_obj.Name))
         l_internet_xml = self.write_internet(self.m_house_obj.Internet)
-        g_logger.info("Stopped.")
+        LOG.info("Stopped.")
         return l_internet_xml
 
 # ## END

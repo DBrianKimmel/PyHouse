@@ -56,7 +56,6 @@ __version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff
 import errno
-import logging
 import os
 import platform
 import signal
@@ -67,18 +66,18 @@ import xml.etree.ElementTree as ET
 # Import PyMh files and modules.
 from src.core.data_objects import PyHouseData
 from src.core import setup
-from src.utils import log
+from src.utils import pyh_log
 from src.utils import xml_tools
 
 g_debug = 0
-g_logger = logging.getLogger('PyHouse         ')
+LOG = pyh_log.getLogger('PyHouse')
 
 
 def daemonize():
     """Taken from twisted.scripts._twistd_unix.py
     """
     if g_debug >= 1:
-        g_logger.debug("PyHouse is making itself into a daemon !!")
+        LOG.debug("PyHouse is making itself into a daemon !!")
     if os.fork():  # launch child and...
         os._exit(0)  # kill off parent
     os.setsid()
@@ -109,7 +108,7 @@ def SigHupHandler(signum, _stackframe):
     """
     """
     if g_debug >= 1:
-        g_logger.debug('Hup Signal handler called with signal {0:}'.format(signum))
+        LOG.debug('Hup Signal handler called with signal {0:}'.format(signum))
     g_API.Stop()
     g_API.Start()
 
@@ -117,8 +116,8 @@ def SigIntHandler(signum, _stackframe):
     """interrupt character (probably Ctrl-C)
     """
     # if g_debug >= 1:
-    g_logger.debug('SigInt - Signal handler called with signal {0:}'.format(signum))
-    g_logger.info("Interrupted.\n\n\n")
+    LOG.debug('SigInt - Signal handler called with signal {0:}'.format(signum))
+    LOG.info("Interrupted.\n\n\n")
     g_API.Stop()
     g_API.Quit()
     exit
@@ -132,7 +131,7 @@ class Utilities(object):
         This puts the XML tree and file name in the pyhouses object for use by various modules.
         """
         if g_debug >= 1:
-            g_logger.debug("Utilities.read_xml_config_info()")
+            LOG.debug("Utilities.read_xml_config_info()")
         p_pyhouses_obj.XmlFileName = xml_tools.open_config_file()
         try:
             l_xmltree = ET.parse(p_pyhouses_obj.XmlFileName)
@@ -163,17 +162,16 @@ class API(Utilities):
         g_API = self
         handle_signals()
         self.read_xml_config_info(self.m_pyhouses_obj)
-        self.m_pyhouses_obj.LogsAPI = log.API()
-        self.m_pyhouses_obj.LogsData = self.m_pyhouses_obj.LogsAPI.Start(self.m_pyhouses_obj)
-        global g_logger
-        g_logger = logging.getLogger('PyHouse         ')
-        g_logger.info("Initializing PyHouse.\n\n")
+        self.m_pyhouses_obj.LogsAPI = l_logs = pyh_log.API()
+        l_logs.Start(self.m_pyhouses_obj)
+        # global LOG
+        LOG.info("Initializing PyHouse.\n\n")
         #
         self.m_pyhouses_obj.CoreAPI = setup.API()
         self.m_pyhouses_obj.Reactor.callWhenRunning(self.Start)
-        g_logger.info("Initialized.\n")
+        LOG.info("Initialized.\n")
         self.m_pyhouses_obj.Reactor.run()  # reactor never returns so must be last - Event loop will now run
-        g_logger.info("PyHouse says Bye Now.\n")
+        LOG.info("PyHouse says Bye Now.\n")
         raise SystemExit, "PyHouse says Bye Now."
 
     def Start(self):
@@ -182,33 +180,33 @@ class API(Utilities):
         self.m_pyhouses_obj.CoreAPI.Start(self.m_pyhouses_obj)
         self.m_pyhouses_obj.HousesAPI.Start(self.m_pyhouses_obj)
         self.m_pyhouses_obj.WebAPI.Start(self.m_pyhouses_obj)
-        g_logger.info("Started.\n")
+        LOG.info("Started.\n")
 
     def Stop(self):
         """Stop various modules to prepare for restarting them.
         """
-        g_logger.info("Saving all data to XML file.")
+        LOG.info("Saving all data to XML file.")
         l_xml = ET.Element("PyHouse")
         self.m_pyhouses_obj.WebAPI.Stop(l_xml)
         self.m_pyhouses_obj.LogsAPI.Stop(l_xml)
         self.m_pyhouses_obj.HousesAPI.Stop(l_xml)
         self.m_pyhouses_obj.CoreAPI.Stop(l_xml)
         xml_tools.write_xml_file(l_xml, self.m_pyhouses_obj.XmlFileName)
-        g_logger.info("XML file has been updated.")
-        g_logger.info("Stopped.\n\n")
+        LOG.info("XML file has been updated.")
+        LOG.info("Stopped.\n\n")
 
     def Reload(self, _p_pyhouses_obj):
         """Update XML file with current info.
         """
         self.Stop()
         self.Start()
-        g_logger.info("Reloaded.\n\n\n")
+        LOG.info("Reloaded.\n\n\n")
 
     def Quit(self):
         """Prepare to exit all of pyhouse
         """
         self.Stop()
-        g_logger.info("Quit.\n\n\n")
+        LOG.info("Quit.\n\n\n")
         self.m_pyhouses_obj.Reactor.stop()
 
 

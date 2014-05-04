@@ -15,9 +15,6 @@ from src.web import web_utils
 g_debug = 0
 # 0 = off
 # 1 = log extra info
-# 2 = major routine entry
-# 3 = Config file handling
-# 4 = Print family info
 # + = NOT USED HERE
 
 

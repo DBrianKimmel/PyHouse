@@ -4,11 +4,11 @@
 """
 
 # Import system type stuff
-import logging
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from src.lights import lighting
+from src.utils import pyh_log
 
 
 g_debug = 0
@@ -17,7 +17,7 @@ g_debug = 0
 # 2 = Startup Details
 # 3 = Minor routines
 
-g_logger = logging.getLogger('PyHouse.Dev_X10     ')
+LOG = pyh_log.getLogger('PyHouse.Dev_X10     ')
 
 
 class X10LightingData(lighting.LightData):
@@ -78,7 +78,7 @@ class API(object):
         """
         self.m_house_obj = p_house_obj
     def Start(self, _p_house_obj):
-        g_logger.info('Started.')
+        LOG.info('Started.')
 
     def Stop(self, p_xml):
         return p_xml

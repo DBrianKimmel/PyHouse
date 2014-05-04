@@ -14,7 +14,6 @@ After the user is authenticated, this element is converted to a "loged in as" en
 
 
 # Import system type stuff
-import logging
 import os
 from nevow import loaders
 from nevow import athena
@@ -26,6 +25,7 @@ from src.drivers import VALID_INTERFACES
 from src.drivers import VALID_PROTOCOLS
 from src.scheduling import VALID_SCHEDULING_TYPES
 from src.lights import VALID_LIGHTS_TYPE
+from src.utils import pyh_log
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -35,12 +35,8 @@ templatepath = os.path.join(webpath, 'template')
 g_debug = 0
 # 0 = off
 # 1 = log extra info
-# 2 = major routine entry
-# 3 = Config file handling
-# 4 = Basic data
-# 5 = Detailed Data
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.webLogin    ')
+LOG = pyh_log.getLogger('PyHouse.webLogin    ')
 
 
 class LoginData(object):
@@ -84,7 +80,7 @@ class LoginElement(athena.LiveElement):
 
             @param p_json: is the username and password passed back by the client.
         """
-        g_logger.info("doLogin called {0:}.".format(p_json))
+        LOG.info("doLogin called {0:}.".format(p_json))
         l_obj = web_utils.JsonUnicode().decode_json(p_json)
         self.m_login_obj = LoginData()
         l_login_obj = self.validate_user(l_obj, self.m_login_obj)

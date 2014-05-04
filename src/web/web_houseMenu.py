@@ -6,12 +6,12 @@ Created on May 30, 2013
 '''
 
 # Import system type stuff
-import logging
 import os
 from nevow import loaders
 from nevow import athena
 
 # Import PyMh files and modules.
+from src.utils import pyh_log
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -20,12 +20,8 @@ templatepath = os.path.join(webpath, 'template')
 g_debug = 0
 # 0 = off
 # 1 = log extra info
-# 2 = major routine entry
-# 3 = Config file handling
-# 4 = Basic data
-# 5 = Detailed Data
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.webHMenu    ')
+LOG = pyh_log.getLogger('PyHouse.webHMenu    ')
 
 
 class HouseMenuElement(athena.LiveElement):

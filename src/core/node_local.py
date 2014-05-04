@@ -25,15 +25,17 @@ via configuration.  Once overridden the nwe role will "stick" by being written i
 
 # Import system type stuff
 import fnmatch
-import logging
 import netifaces
 import os
 import platform
+import xml.etree.ElementTree as ET
 
 from src.communication import ir_control
+from src.utils.xml_tools import PutGetXML
+from src.utils import pyh_log
 
 g_debug = 0
-g_logger = logging.getLogger('PyHouse.NodeLocal   ')
+LOG = pyh_log.getLogger('PyHouse.NodeLocal   ')
 
 
 __all__ = ['NODE_NOTHING', 'NODE_LIGHTS',
@@ -77,6 +79,7 @@ class NodeData(object):
         self.Active = True
         self.ConnectionAddr = None
         self.Role = 0
+        self.UUID = None
         self.Interfaces = {}
 
 
@@ -105,7 +108,7 @@ class GetAllInterfaceData(object):
                     l_interface.V6Address = self._get_list(netifaces.ifaddresses(l_ix)[l_af])
             if l_interface.V4Address == [] and l_interface.V6Address == []:
                 continue
-            g_logger.info("Interface:{0:}, Mac:{1:}, V4:{2:}, V6:{3:} - {4:}".format(l_interface.Name, l_interface.MacAddress, l_interface.V4Address, l_interface.V6Address, l_count))
+            LOG.info("Interface:{0:}, Mac:{1:}, V4:{2:}, V6:{3:} - {4:}".format(l_interface.Name, l_interface.MacAddress, l_interface.V4Address, l_interface.V6Address, l_count))
             p_node.Interfaces[l_count] = l_interface
             l_count += 1
 
@@ -135,7 +138,37 @@ class HandleNodeType(object):
         l_ir.Start(p_pyhouses_obj)
 
 
-class Utility(object):
+MAIN_ELEMENT = 'Node'
+
+class XML(object):
+
+    m_node = None
+
+    def read_xml(self, p_pyhouses_obj):
+        """
+        Read the existing XML file (if it exists) and get the node info.
+        """
+        self.m_node = p_pyhouses_obj.CoreData.Nodes[0]
+        try:
+            l_sect = p_pyhouses_obj.XmlRoot.find(MAIN_ELEMENT)
+            l_sect.find('UUID')
+        except AttributeError:
+            if g_debug >= 1:
+                LOG.warn('Creating entry')
+            l_sect = ET.SubElement(p_pyhouses_obj.XmlRoot, MAIN_ELEMENT)
+            ET.SubElement(l_sect, 'UUID').text = '8580'
+            self.m_node.UUID = PutGetXML().get_uuid_from_xml(l_sect, 'UUID')
+        pass
+
+    def write_xml(self, p_pyhouses_obj):
+        self.m_node = p_pyhouses_obj.CoreData.Nodes[0]
+        l_xml = self.xml_create_common_element(MAIN_ELEMENT, self.m_node)
+        self.put_text_element(l_xml, 'UUID', self.m_node.UUID)
+        return l_xml
+
+
+
+class Utility(XML):
 
     def get_node_info(self, p_pyhouses_obj):
         p_pyhouses_obj.CoreData.Nodes[0].Name = platform.node()
@@ -149,19 +182,19 @@ class Utility(object):
                 # Test for lights
                 if fnmatch.fnmatch(l_file, 'ttyUSB?'):
                     p_role |= NODE_LIGHTS
-                    g_logger.debug('Lighting Node')
+                    LOG.debug('Lighting Node')
                 if fnmatch.fnmatch(l_file, 'lirc?'):
                     p_role |= NODE_PIFACECAD
-                    g_logger.debug('Lirc Node')
+                    LOG.debug('Lirc Node')
             # Test for Pandora
             if os.path.exists('/usr/bin/pianobar'):
                 p_role |= NODE_PANDORA
-                g_logger.debug('Pandora Node')
+                LOG.debug('Pandora Node')
             # Test for camera
             #
         except WindowsError:
             p_role |= NODE_WINDOWS
-            g_logger.debug('Windows Node')
+            LOG.debug('Windows Node')
         return p_role
 
     def init_node_type(self, p_pyhouses_obj):
@@ -194,7 +227,7 @@ class Utility(object):
         except AttributeError:
             pass
         p_pyhouses_obj.CoreData.Nodes[l_max_key + 1] = p_node
-        g_logger.debug('Nodes = {0:}'.format(p_pyhouses_obj.CoreData.Nodes))
+        LOG.debug('Nodes = {0:}'.format(p_pyhouses_obj.CoreData.Nodes))
 
 
 class API(Utility):
@@ -208,12 +241,14 @@ class API(Utility):
         self.m_node = NodeData()
         GetAllInterfaceData(self.m_node)
         p_pyhouses_obj.CoreData.Nodes[0] = self.m_node
+        self.read_xml(p_pyhouses_obj)
         self.get_node_info(p_pyhouses_obj)
         p_pyhouses_obj.CoreData.Nodes[0].Role = self.find_node_role()
         self.init_node_type(p_pyhouses_obj)
-        g_logger.info('Started')
+        LOG.info('Started')
 
-    def Stop(self):
-        pass
+    def Stop(self, p_xml):
+        p_xml.append(self.write_xml(self.m_pyhouses_obj))
+        LOG.info("XML appended.")
 
 # ## END DBK

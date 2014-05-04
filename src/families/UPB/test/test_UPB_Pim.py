@@ -1,100 +1,31 @@
 """
+@name: PyHouse/src/core/node_local.py
+
+# -*- test-case-name: PyHouse.src.core.test.test_node_local -*-
+
 Created on Apr 8, 2013
 
-@author: briank
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
+@copyright: 2013-2014 by D. Brian Kimmel
+@license: MIT License
+
+@summary: Test the UPB controller.
+
 """
 
+# Import system type stuff
 from twisted.trial import unittest
 import xml.etree.ElementTree as ET
 
+# Import PyMh files and modules.
 from src.families.UPB import UPB_Pim
 from src.lights import lighting_core
+from src.test import xml_data
+from src.core.data_objects import PyHouseData, HouseData, ControllerData
 
+XML = xml_data.XML
 
-"""
-<House Name='House_1' Key='0' Active='True'>
-    <Controllers>
-        <Controller Name='Serial_1' Key='0' Active='True'>
-            <Interface>Serial</Interface>
-            <BaudRate>19200</BaudRate>
-            <ByteSize>8</ByteSize>
-            <DsrDtr>False</DsrDtr>
-            <Parity>N</Parity>
-            <RtsCts>False</RtsCts>
-            <StopBits>1.0</StopBits>
-            <Timeout>0</Timeout>
-            <XonXoff>False</XonXoff>
-        </Controller>
-        <Controller Name='USB_1' Key='1' Active='True'>
-            <Interface>USB</Interface>
-            <Vendor>12345</Vendor>
-            <Product>9876</Product>
-        </Controller>
-    </Controllers>
-</House>
-"""
-XML = """
-<Test>
-</Test>
-"""
-
-class PyHouseData(object):
-    """The master object, contains all other 'configuration' objects.
-    """
-
-    def __init__(self):
-        """PyHouse.
-        """
-        self.API = None
-        self.HousesAPI = None
-        self.LogsAPI = None
-        self.WebAPI = None
-        self.WebData = None
-        self.LogsData = None
-        self.HousesData = None
-        self.XmlRoot = None
-        self.XmlFileName = ''
-
-class HouseData(object):
-
-    def __init__(self):
-        """House.
-        """
-        self.Name = ''
-        self.Key = 0
-        self.Active = False
-        self.UUID = None
-        self.InternetAPI = None
-        self.LightingAPI = None
-        self.ScheduleAPI = None
-        # self.Location = location.LocationData()  # one location per house.
-        # a dict of zero or more of the following.
-        self.Buttons = {}
-        self.Controllers = {}
-        self.FamilyData = {}
-        self.Internet = {}
-        self.Lights = {}
-        self.Rooms = {}
-        self.Schedules = {}
-
-class ControllerData(lighting_core.CoreData):
-    """This data is common to all controllers.
-
-    There is also interface information that controllers need.
-    """
-
-    def __init__(self):
-        super(ControllerData, self).__init__()  # The core data
-        self.Type = 'Controller'  # Override the core definition
-        self.Interface = ''
-        self.Port = ''
-        #
-        self._DriverAPI = None  # Interface API() - Serial, USB etc.
-        self._HandlerAPI = None  # PLM, PIM, etc (family controller device handler) API() address
-        #
-        self._Data = None  # Interface specific data
-        self._Message = ''
-        self._Queue = None
 
 class Test(unittest.TestCase):
 

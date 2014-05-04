@@ -39,7 +39,6 @@ mainpage.py - this is the place where everything is happening, the user will nev
 """
 
 # Import system type stuff
-import logging
 import gc
 import os
 import time
@@ -78,6 +77,7 @@ from src.web import web_rooms
 from src.web import web_rootMenu
 from src.web import web_schedules
 from src.web import web_webs
+from src.utils import pyh_log
 
 
 # Handy helper for finding external resources nearby.
@@ -96,7 +96,7 @@ g_debug = 0
 # 4 = Basic data
 # 5 = Detail Data
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.webMainpage ')
+LOG = pyh_log.getLogger('PyHouse.webMainpage ')
 
 
 class FileNoListDir(static.File):
@@ -317,13 +317,13 @@ class Workspace(athena.LiveElement):
     def __init__(self, p_pyhouses_obj, uid = None):
         self.m_pyhouses_obj = p_pyhouses_obj
         super(Workspace, self).__init__()
-        g_logger.info('web_mainpage Workspace initialized.')
+        LOG.info('web_mainpage Workspace initialized.')
         self.state = self.PG_INITED
         self.uid = uid
 
     def detached(self):
         # clean up whatever needs cleaning...
-        g_logger.info('workspace object was detached cleanly')
+        LOG.info('workspace object was detached cleanly')
 
 
 #-----------------
@@ -337,56 +337,56 @@ class Workspace(athena.LiveElement):
 
     @athena.expose
     def buttons(self, p_params):
-        g_logger.info("buttons called")
+        LOG.info("buttons called")
         l_element = web_buttons.ButtonsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def clock(self, _p_params):
-        g_logger.info("clock called")
+        LOG.info("clock called")
         l_element = web_clock.ClockElement()
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def controllers(self, p_params):
-        g_logger.info("controllers called")
+        LOG.info("controllers called")
         l_element = web_controllers.ControllersElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def controlLights(self, p_params):
-        g_logger.info("controlLights called")
+        LOG.info("controlLights called")
         l_element = web_controlLights.ControlLightsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def house(self, _p_params):
-        g_logger.info("house called from browser")
+        LOG.info("house called from browser")
         l_element = web_house.HouseElement(self)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def houseMenu(self, _p_params):
-        g_logger.info("houseMenu called from browser")
+        LOG.info("houseMenu called from browser")
         l_element = web_houseMenu.HouseMenuElement(self)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def houseSelect(self, _p_params):
-        g_logger.info("houseSelect called from browser")
+        LOG.info("houseSelect called from browser")
         l_element = web_houseSelect.HouseSelectElement(self)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def internet(self, p_params):
-        g_logger.info("internet called from browser")
+        LOG.info("internet called from browser")
         l_element = web_internet.InternetElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
@@ -401,7 +401,7 @@ class Workspace(athena.LiveElement):
     def login(self, _p_params):
         """ Place and display the login widget.
         """
-        g_logger.info("login called from browser")
+        LOG.info("login called from browser")
         l_element = web_login.LoginElement(self)
         l_element.setFragmentParent(self)
         return l_element
@@ -414,21 +414,21 @@ class Workspace(athena.LiveElement):
 
     @athena.expose
     def rooms(self, p_params):
-        g_logger.info("rooms called")
+        LOG.info("rooms called")
         l_element = web_rooms.RoomsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def rootMenu(self, _p_params):
-        g_logger.info("rootMenu called")
+        LOG.info("rootMenu called")
         l_element = web_rootMenu.RootMenuElement(self)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def schedules(self, p_params):
-        g_logger.info("schedules called")
+        LOG.info("schedules called")
         l_element = web_schedules.SchedulesElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element

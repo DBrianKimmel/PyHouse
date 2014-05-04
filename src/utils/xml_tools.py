@@ -25,24 +25,7 @@ g_debug = 0
 g_xmltree = None
 
 
-class XmlFileTools(object):
-
-    def __init__(self):
-        """Open the xml config file.
-
-        If the file is missing, an empty minimal skeleton is created.
-        """
-        global g_xmltree
-        self.m_xml_filename = open_config_file()
-        try:
-            g_xmltree = ET.parse(self.m_xml_filename)
-        except SyntaxError:
-            ConfigFile().create_empty_config_file(self.m_xml_filename)
-            g_xmltree = ET.parse(self.m_xml_filename)
-        self.m_xmltree_root = g_xmltree.getroot()
-
-
-class PutGetXML(XmlFileTools):
+class PutGetXML(object):
     """Protected put / get routines
 
     Try to be safe if a user edits the XML file.
@@ -51,12 +34,12 @@ class PutGetXML(XmlFileTools):
 # Bool
 #-----
     def get_bool_from_xml(self, p_xml, p_name, p_default = False):
-        l_xml = p_xml.find(p_name)
+        l_xml = p_xml.find(p_name)  # Element
         if l_xml == None:
-            l_xml = p_xml.get(p_name)
+            l_xml = p_xml.get(p_name)  # Attribute
         else:
             l_xml = l_xml.text
-        l_ret = False
+        l_ret = p_default
         if l_xml == 'True' or l_xml == True:
             l_ret = True
         return l_ret
@@ -209,42 +192,7 @@ class ConfigTools(PutGetXML):
         p_obj.Active = self.get_bool_from_xml(p_entry_xml, 'Active')
 
 
-class ConfigEtc(ConfigTools):
-    '''
-    classdocs
-    '''
-
-    def __init__(self):
-        pass
-
-    def find_etc_config_file(self):
-        """Check for /etc/pyhouse.conf existence.
-        If not, ABORT and do not become a daemon.
-
-        @return: the filename we found.
-        """
-        l_file_name = 'C:/etc/pyhouse.conf'
-        try:
-            l_file = open(l_file_name, mode = 'r')
-        except IOError:
-            self.config_abort()
-        l_text = l_file.readlines()
-        for l_line in l_text:
-            if l_line == '':
-                continue
-            elif l_line[0] == '#':
-                continue
-            else:
-                l_ret = l_line
-                return l_ret
-        return None
-
-    def config_abort(self):
-        print("Could not find or read '/etc/pyhouse.conf'.  Please create it and rerun PyHouse!")
-        sys.exit(1)
-
-
-class ConfigFile(ConfigEtc):
+class ConfigFile(PutGetXML):
 
     m_std_path = '/etc/pyhouse/', '~/.PyHouse/', '/var/PyHouse/'
     m_std_name = 'PyHouse.xml'

@@ -2467,17 +2467,15 @@ void autoconf()
 
 
 # Import system type stuff
-import logging
+
+from src.utils import pyh_log
+
 
 g_debug = 1
 # 0 = off
 # 1 = log extra info
-# 2 = major routine entry
-# 3 = Config XML read / write file handling
-# 4 = External IP execution
-# 5 = Dump Objects
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.No-Ip       ')
+LOG = pyh_log.getLogger('PyHouse.No-Ip       ')
 
 
 def bencode():
@@ -2570,6 +2568,6 @@ def bdecode(p_in, p_out):
 pass
 
 def Msg(p_msg):
-    g_logger.error('{0:}'.format(p_msg))
+    LOG.error('{0:}'.format(p_msg))
 
 # ## END DBK

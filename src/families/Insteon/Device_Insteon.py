@@ -14,13 +14,13 @@ serial_port
 """
 
 # Import system type stuff
-import logging
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from src.lights import lighting
 from src.families.Insteon import Insteon_utils
 from src.utils import xml_tools
+from src.utils import pyh_log
 #
 # from src.utils.tools import PrintObject
 
@@ -32,7 +32,7 @@ g_debug = 1
 # 3 = Config file handling
 # 4 = Minor routines
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.Dev_Insteon ')
+LOG = pyh_log.getLogger('PyHouse.Dev_Insteon ')
 
 
 class InsteonData (lighting.LightData):
@@ -136,7 +136,7 @@ class API(LightingAPI):
             # But all controllers need to be processed so they may be written back to XML.
             if l_count > 0:
                 l_controller_obj.Active = False
-                g_logger.warning('Controller {0:} skipped - another one is active.'.format(l_controller_obj.Name))
+                LOG.warning('Controller {0:} skipped - another one is active.'.format(l_controller_obj.Name))
                 continue
             else:
                 from src.families.Insteon import Insteon_PLM
@@ -144,10 +144,10 @@ class API(LightingAPI):
                 if l_controller_obj._HandlerAPI.Start(l_controller_obj):
                     l_count += 1
                 else:
-                    g_logger.error('Controller {0:} failed to start.'.format(l_controller_obj.Name))
+                    LOG.error('Controller {0:} failed to start.'.format(l_controller_obj.Name))
                     l_controller_obj.Active = False
         l_msg = 'Started {0:} Insteon Controllers, House:{1:}.'.format(l_count, p_house_obj.Name)
-        g_logger.info(l_msg)
+        LOG.info(l_msg)
 
     def Stop(self, p_xml):
         try:
@@ -163,7 +163,7 @@ class API(LightingAPI):
 
     def ChangeLight(self, p_light_obj, p_level, _p_rate = 0):
         if g_debug >= 1:
-            g_logger.debug('Change light Name:{0:}, Family:{1:}'.format(p_light_obj.Name, p_light_obj.Family))
+            LOG.debug('Change light Name:{0:}, Family:{1:}'.format(p_light_obj.Name, p_light_obj.Family))
         if p_light_obj.Family == 'Insteon':
             try:
                 for l_controller_obj in self.m_house_obj.Controllers.itervalues():
@@ -173,6 +173,6 @@ class API(LightingAPI):
                         continue
                     l_controller_obj._HandlerAPI.ChangeLight(p_light_obj, p_level)
             except AttributeError as e:  # no controllers for house. (House is being added).
-                g_logger.warning('Could not change light setting {0:}'.format(e))
+                LOG.warning('Could not change light setting {0:}'.format(e))
 
 # ## END DBK

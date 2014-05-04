@@ -5,7 +5,6 @@ Created on Jun 1, 2013
 '''
 
 # Import system type stuff
-import logging
 import os
 from nevow import loaders
 from nevow import athena
@@ -13,20 +12,17 @@ from nevow import athena
 # Import PyMh files and modules.
 from src.web import web_utils
 from src.housing import house
+from src.utils import pyh_log
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
 
-g_debug = 1
+g_debug = 0
 # 0 = off
 # 1 = log extra info
-# 2 = major routine entry
-# 3 = Config file handling
-# 4 = Basic data
-# 5 = Detailed Data
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.webHouseSel ')
+LOG = pyh_log.getLogger('PyHouse.webHouseSel ')
 
 
 class WebHouseData(object):
@@ -73,7 +69,7 @@ class HouseSelectElement(athena.LiveElement):
         l_house = self.m_pyhouses_obj.HousesData[l_ix].HouseObject
         l_json = web_utils.JsonUnicode().encode_json(l_house)
         if g_debug >= 1:
-            g_logger.debug("HouseIx:{0:}, JSON{1:}".format(l_ix, l_json))
+            LOG.debug("HouseIx:{0:}, JSON{1:}".format(l_ix, l_json))
         return unicode(l_json)
 
 # ## END DBK

@@ -8,34 +8,12 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 from drivers import interface
-from src.lights import lighting_controllers
 from src.utils import xml_tools
+from src.test import xml_data
 
+XML = xml_data.XML
 
-XML = """
-<House Name='House_1' Key='0' Active='True'>
-    <Controllers>
-        <Controller Name='Serial_1' Key='0' Active='True'>
-            <Interface>Serial</Interface>
-            <BaudRate>19200</BaudRate>
-            <ByteSize>8</ByteSize>
-            <DsrDtr>False</DsrDtr>
-            <Parity>N</Parity>
-            <RtsCts>False</RtsCts>
-            <StopBits>1.0</StopBits>
-            <Timeout>0</Timeout>
-            <XonXoff>False</XonXoff>
-        </Controller>
-        <Controller Name='USB_1' Key='1' Active='True'>
-            <Interface>USB</Interface>
-            <Vendor>12345</Vendor>
-            <Product>9876</Product>
-        </Controller>
-    </Controllers>
-</House>
-"""
-
-class Test(unittest.TestCase):
+class Test_01_XML(unittest.TestCase):
 
     def setUp(self):
         self.m_root_element = ET.fromstring(XML)
@@ -45,9 +23,14 @@ class Test(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def test_001_xml_find_house(self):
-        l_name = self.m_root_element.get('Name')
-        self.assertEqual(l_name, 'House_1')
+    def test_0101_read_xml(self):
+        l_pyhouse = self.m_root_element
+        self.assertEqual(l_pyhouse.tag, 'PyHouse')
+
+    def test_0102_find_node(self):
+        l_node = self.m_root_element.find('Node')
+        print('Node {0:}'.format(l_node))
+        self.assertEqual(l_node.tag, 'Node')
 
     def test_002_xml_find_controllers(self):
         l_controllers = self.m_root_element.find('Controllers')
@@ -55,7 +38,7 @@ class Test(unittest.TestCase):
         for l_controller in l_list:
             print("Controller {0:}".format(l_controller.get('Name')))
 
-    def test_003_xml_find_serial_1(self):
+    def test_0103_xml_find_serial_1(self):
         l_controllers = self.m_root_element.find('Controllers')
         l_first = l_controllers.find('Controller')
         self.assertEqual(l_first.get('Name'), 'Serial_1')
@@ -64,7 +47,7 @@ class Test(unittest.TestCase):
         l_baud = l_first.find('BaudRate')
         self.assertEqual(l_baud.text, '19200')
 
-    def test_004_extracr_serial(self):
+    def test_004_extract_serial(self):
         l_controllers = self.m_root_element.find('Controllers')
         l_first = l_controllers.find('Controller')
         pass

@@ -10,12 +10,12 @@ Created on Jun 1, 2013
 '''
 
 # Import system type stuff
-import logging
 import os
 from nevow import athena
 from nevow import loaders
 
 # Import PyMh files and modules.
+from src.utils import pyh_log
 from src.web import web_utils
 
 # Handy helper for finding external resources nearby.
@@ -30,7 +30,7 @@ g_debug = 0
 # 3 = Detail data
 # 4 = Dump JSON
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.webWebs    ')
+LOG = pyh_log.getLogger('PyHouse.webWebs    ')
 
 
 class WebsElement(athena.LiveElement):

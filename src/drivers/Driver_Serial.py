@@ -13,7 +13,6 @@ Since most serial devices are now via USB connections, we can try to use USB and
 """
 
 # Import system type stuff
-import logging
 from twisted.internet import reactor
 from twisted.internet.protocol import Protocol
 from twisted.internet.serialport import SerialPort
@@ -21,6 +20,7 @@ import serial
 
 # Import PyMh files
 from src.utils.tools import PrintBytes
+from src.utils import pyh_log
 
 g_debug = 0
 # 0 = off
@@ -31,7 +31,7 @@ g_debug = 0
 # 5 = Read / write details
 # 6 = Details of device on start
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.DriverSerial')
+LOG = pyh_log.getLogger('PyHouse.DriverSerial')
 
 
 class SerialProtocol(Protocol):
@@ -63,15 +63,15 @@ class SerialAPI(object):
             self.m_serial = SerialPort(SerialProtocol(self, p_controller_obj), p_controller_obj.Port, reactor, baudrate = p_controller_obj.BaudRate)
         except serial.serialutil.SerialException as e:
             l_msg = "Open failed for Device:{0:}, Port:{1:}".format(p_controller_obj.Name, p_controller_obj.Port), e
-            g_logger.error(l_msg)
+            LOG.error(l_msg)
             return False
-        g_logger.info("Opened Device:{0:}, Port:{1:}".format(p_controller_obj.Name, p_controller_obj.Port))
+        LOG.info("Opened Device:{0:}, Port:{1:}".format(p_controller_obj.Name, p_controller_obj.Port))
         return True
 
     def close_device(self, p_controller_obj):
         """Flush all pending output and close the serial port.
         """
-        g_logger.info("Close Device {0:}".format(p_controller_obj.Name))
+        LOG.info("Close Device {0:}".format(p_controller_obj.Name))
         self.m_serial.close()
 
     def fetch_read_data(self, p_controller_obj):
@@ -79,7 +79,7 @@ class SerialAPI(object):
         l_msg = self.m_controller_obj._Message
         if len(l_msg) > 0:
             if g_debug >= 1:
-                g_logger.debug("Fetch Read Data {0:}".format(PrintBytes(l_msg)))
+                LOG.debug("Fetch Read Data {0:}".format(PrintBytes(l_msg)))
         p_controller_obj._Message = bytearray()
         return l_msg
 
@@ -87,11 +87,11 @@ class SerialAPI(object):
         """Send the command to the PLM and wait a very short time to be sure we sent it.
         """
         if g_debug >= 1:
-            g_logger.debug("Writing {0:}".format(PrintBytes(p_message)))
+            LOG.debug("Writing {0:}".format(PrintBytes(p_message)))
         try:
             self.m_serial.writeSomeData(p_message)
         except (AttributeError, TypeError) as e:
-            g_logger.warn("Bad serial write - {0:} {1:}".format(e, PrintBytes(p_message)))
+            LOG.warn("Bad serial write - {0:} {1:}".format(e, PrintBytes(p_message)))
         return
 
 
@@ -99,7 +99,7 @@ class API(SerialAPI):
 
     def __init__(self):
         if g_debug >= 1:
-            g_logger.debug("Initializing.")
+            LOG.debug("Initializing.")
         pass
 
     def Start(self, p_controller_obj):
@@ -108,12 +108,12 @@ class API(SerialAPI):
         """
         self.m_controller_obj = p_controller_obj
         self.twisted_open_device(self.m_controller_obj)
-        g_logger.info("Started controller {0:}".format(self.m_controller_obj.Name))
+        LOG.info("Started controller {0:}".format(self.m_controller_obj.Name))
         return True
 
     def Stop(self):
         self.close_device(self.m_controller_obj)
-        g_logger.info("Stopped controller {0:}".format(self.m_controller_obj.Name))
+        LOG.info("Stopped controller {0:}".format(self.m_controller_obj.Name))
 
     def Read(self):
         pass

@@ -7,7 +7,6 @@ Web interface to control lights for the selected house.
 """
 
 # Import system type stuff
-import logging
 import os
 from nevow import athena
 from nevow import loaders
@@ -15,6 +14,7 @@ from nevow import loaders
 # Import PyMh files and modules.
 from src.web import web_utils
 from src.lights import lighting_lights
+from src.utils import pyh_log
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -27,7 +27,7 @@ g_debug = 0
 # 3 = Config file handling
 # 4 = Dump JSON
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.webClLgt    ')
+LOG = pyh_log.getLogger('PyHouse.webClLgt    ')
 
 class ControlLightsElement(athena.LiveElement):
     """ a 'live' controlLights element.

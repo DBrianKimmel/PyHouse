@@ -13,22 +13,22 @@ Rooms and lights and HVAC are associated with a particular house.
 """
 
 # Import system type stuff
-import logging
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from src.housing import house
 from src.utils import xml_tools
+from src.utils import pyh_log
 
 
-g_debug = 0
+g_debug = 1
 # 0 = off
 # 1 = log extra info
 # 2 = major routine entry
 # 3 - Config file handling
 # 4 = Access housing info
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.Houses      ')
+LOG = pyh_log.getLogger('PyHouse.Houses      ')
 
 Singletons = {}
 
@@ -45,6 +45,7 @@ class HousesData(object):
         self.Active = False
         self.HouseAPI = None
         self.HouseObject = {}
+
 
     def __str__(self):
         l_ret = "Houses:: "
@@ -109,7 +110,7 @@ class LoadSaveAPI(HouseReadWriteConfig):
             l_sect = l_xml_root.find('Houses')
             l_list = l_sect.iterfind('House')  # use l_sect to force error if it is missing
         except AttributeError:
-            g_logger.warn("Warning - in read_house XML - Adding 'Houses' section")
+            LOG.warn("Warning - in read_house XML - Adding 'Houses' section")
             l_sect = ET.SubElement(l_xml_root, 'Houses')
             l_list = l_sect.iterfind('House')
         return l_list
@@ -137,7 +138,8 @@ class API(LoadSaveAPI):
         self = object.__new__(cls)
         cls.__init__(self, *args, **kwargs)
         Singletons[cls] = self
-        g_logger.info("Initialized all houses.")
+        if g_debug >= 1:
+            LOG.info("Initialized all houses.")
         return self
 
     def __init__(self):
@@ -150,23 +152,26 @@ class API(LoadSaveAPI):
         Invoked once no matter how many houses defined in the XML file.
         """
         l_count = self.process_houses(p_pyhouses_obj)
-        g_logger.info("Started {0:} house(s).".format(l_count))
+        if g_debug >= 1:
+            # LOG.info("Started {0:} house(s).".format(l_count))
+            LOG.info("Started {0:} house(s).".format(l_count))
         return p_pyhouses_obj.HousesData
 
     def Stop(self, p_xml):
         """Close down everything we started.
         Each stopped instance returns an up-to-date XML subtree to be written out.
         """
-        g_logger.info("Stopping.")
+        if g_debug >= 1:
+            LOG.info("Stopping.")
         l_houses_xml = ET.Element('Houses')
         for l_house in self.m_houses_data.itervalues():
             try:
                 l_house.HouseAPI.Stop(l_houses_xml, l_house.HouseObject)
             except AttributeError:  # New house being added has no existing API
                 house.API().Stop(l_houses_xml, l_house.HouseObject)
-        g_logger.info("XML appended.")
+        if g_debug >= 1:
+            LOG.info("XML appended.")
         p_xml.append(l_houses_xml)
-        g_logger.info("Stopped.")
 
     def get_houses_obj(self):
         return self.m_houses_data

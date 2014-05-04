@@ -27,7 +27,6 @@ Do not require reloads, auto change PyHouse on the fly.
 """
 
 # Import system type stuff
-import logging
 from twisted.application import service
 from nevow import appserver
 import xml.etree.ElementTree as ET
@@ -35,6 +34,7 @@ import xml.etree.ElementTree as ET
 # Import PyMh files and modules.
 from src.web import web_utils
 from src.web import web_mainpage
+from src.utils import pyh_log
 from src.utils import xml_tools
 
 # Handy helper for finding external resources nearby.
@@ -48,9 +48,9 @@ ENDPOINT_WEB_SERVER = 'tcp:port=8580'
 
 g_debug = 0
 # 0 = off
-# 1 = Additional logging
+# 1 = log extra info
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.WebServer   ')
+LOG = pyh_log.getLogger('PyHouse.WebServer   ')
 
 
 class WebData(object):
@@ -91,7 +91,7 @@ class Utility(xml_tools.ConfigFile):
             l_sect.find('WebPort')
         except AttributeError:
             if g_debug >= 0:
-                g_logger.error("web_server.read_web_xml() - ERROR in finding Web/WebPort, Creating entry {0:}".format(l_sect))
+                LOG.error("web_server.read_web_xml() - ERROR in finding Web/WebPort, Creating entry {0:}".format(l_sect))
             l_sect = ET.SubElement(p_pyhouses_obj.XmlRoot, 'Web')
             ET.SubElement(l_sect, 'Port').text = '8580'
             self.put_int_attribute(l_sect, 'WebPort', 8580)
@@ -124,14 +124,14 @@ class Utility(xml_tools.ConfigFile):
             p_pyhouses_obj.Reactor.listenTCP(p_pyhouses_obj.WebData.WebPort, l_site)
             p_pyhouses_obj.WebData.Service.startService()
         l_msg = "Port:{0:}, Path:{1:}".format(p_pyhouses_obj.WebData.WebPort, l_site_dir)
-        g_logger.info("Started - {0:}".format(l_msg))
+        LOG.info("Started - {0:}".format(l_msg))
 
 
 class API(Utility, ClientConnections):
 
     def __init__(self):
         self.State = web_utils.WS_IDLE
-        g_logger.info("Initialized.\n")
+        LOG.info("Initialized.\n")
         self.m_web_running = False
 
     def Start(self, p_pyhouses_obj):
@@ -143,6 +143,6 @@ class API(Utility, ClientConnections):
     def Stop(self, p_xml):
         self.m_pyhouses_obj.WebData.Service.stopService()
         p_xml.append(self.write_web_xml(self.m_pyhouses_obj))
-        g_logger.info("XML appended.")
+        LOG.info("XML appended.")
 
 # ## END DBK

@@ -16,13 +16,13 @@ Pandora (via pianobar) is one of the systems.
 """
 
 # Import system type stuff
-import logging
 # import xml.etree.ElementTree as ET
 # from src.entertain import pandora
+from src.utils import pyh_log
 
 g_debug = 0
 
-g_logger = logging.getLogger('PyMh.Entertainment')
+LOG = pyh_log.getLogger('PyMh.Entertainment')
 g_upnp = None
 
 Entertainment_Data = {}
@@ -42,14 +42,14 @@ class EntertainmentAPI(object):
 class API(object):
     def __init__(self):
         # self.m_pandora = pandora.API()
-        g_logger.info("Initialized.")
+        LOG.info("Initialized.")
 
     def Start(self, p_pyhouses_obj):
         # self.m_pandora.Start(p_pyhouses_obj)
-        g_logger.info("Started.")
+        LOG.info("Started.")
 
     def Stop(self, p_xml):
         # self.m_pandora.Stop()
-        g_logger.info("Stopped.")
+        LOG.info("Stopped.")
 
 # ## END DBK

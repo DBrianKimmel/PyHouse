@@ -39,26 +39,13 @@ class PyHouseData(object):
         self.XmlRoot = None
         self.XmlFileName = ''
 
-    def XX__str__(self):
-        l_ret = "PyHouseData:: "
-        l_ret += "\n\tHousesAPI:{0:}, ".format(self.HousesAPI)
-        l_ret += "\n\tLogsAPI:{0:}, ".format(self.LogsAPI)
-        l_ret += "\n\tWebAPI:{0:}, ".format(self.WebAPI)
-        l_ret += "\n\tWebData:{0:}, ".format(self.WebData)
-        l_ret += "\n\tLogsData:{0:}, ".format(self.LogsData)
-        l_ret += "\n\tHousesData:{0:};".format(self.HousesData)
-        l_ret += "\n\tXmlRoot:{0:}, ".format(self.XmlRoot)
-        l_ret += "\n\tXmlFileName:{0:}, ".format(self.XmlFileName)
-        return l_ret
 
-    def XXreprJSON(self):
-        """PyHouse.
-        """
-        l_ret = dict(
-            XmlFileName = self.XmlFileName,
-            HousesData = self.HousesData
-            )
-        return l_ret
+class CoreData(object):
+
+    def __init__(self):
+        self.Nodes = {}
+        self.DiscoveryService = None
+        self.DomainService = None
 
 
 class LocationData(object):
@@ -124,6 +111,75 @@ class RoomData(object):
         self.Type = 'Room'
         self.UUID = None
 
+
+class NodeData(object):
+
+    def __init__(self):
+        self.Name = None
+        self.Key = 0
+        self.Active = True
+        self.ConnectionAddr = None
+        self.Role = 0
+        self.Interfaces = {}
+
+
+class LogData(object):
+
+    def __init__(self):
+        self.Debug = None
+        self.Error = None
+
+
+class BaseLightingData(object):
+    """Information
+    """
+
+    def __init__(self):
+        self.Name = ''
+        self.Key = 0
+        self.Active = False
+        self.Comment = ''
+        self.Coords = ''  # Room relative coords of the light switch
+        self.Dimmable = False
+        self.Family = ''
+        self.RoomName = ''
+        self.Type = ''
+        self.UUID = None
+
+
+class LightData(BaseLightingData):
+
+    def __init__(self):
+        # super(LightData, self).__init__()
+        self.Controller = None
+        self.Type = 'Light'
+        self.CurLevel = 0
+
+
+class ButtonData(BaseLightingData):
+
+    def __init__(self):
+        # super(ButtonData, self).__init__()
+        self.Type = 'Button'
+
+
+class ControllerData(BaseLightingData):
+    """This data is common to all controllers.
+    There is also interface information that controllers need.
+    """
+
+    def __init__(self):
+        # super(ControllerData, self).__init__()  # The core data
+        self.Type = 'Controller'  # Override the core definition
+        self.Interface = ''
+        self.Port = ''
+        #
+        self._DriverAPI = None  # Interface API() - Serial, USB etc.
+        self._HandlerAPI = None  # PLM, PIM, etc (family controller device handler) API() address
+        #
+        self._Data = None  # Interface specific data
+        self._Message = ''
+        self._Queue = None
 
 
 

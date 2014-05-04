@@ -1348,9 +1348,8 @@ class Test_05_AMP(unittest.TestCase):
 
     def test_0531_basicStructuredEmit(self):
         """
-        Verify that a call similar to basicLiteralEmit's is handled properly with
-        high-level quoting and passing to Python methods, and that argument
-        names are correctly handled.
+        Verify that a call similar to basicLiteralEmit's is handled properly with high-level quoting and passing to Python methods,
+         and that argument names are correctly handled.
         """
         L = []
         class StructuredHello(amp.AMP):
@@ -1362,20 +1361,19 @@ class Test_05_AMP(unittest.TestCase):
         l_client.callRemote(Hello, hello = 'hello test', mixedCase = 'mixed case arg test',
                      dash_arg = 'x', underscore_arg = 'y').addCallback(L.append)
         l_pump.flush()
+        print('0531-A L[]:{0:}'.format(L))
         self.assertEquals(len(L), 2)
-        self.assertEquals(L[0],
-                          ((), dict(
+        self.assertEquals(L[0], ((), dict(
                     hello = 'hello test',
                     mixedCase = 'mixed case arg test',
                     dash_arg = 'x',
                     underscore_arg = 'y',
-
                     # XXX - should optional arguments just not be passed?
                     # passing None seems a little odd, looking at the way it
                     # turns out here... -glyph
                     From = ('file', 'file'),
-                    Print = None,
-                    optional = None,
+                    # Print = None,
+                    # optional = None,
                     )))
         self.assertEquals(L[1], dict(Print = None, hello = 'aaa'))
 

@@ -4,17 +4,17 @@
 """
 
 # Import system type stuff
-import logging
 
+from src.utils import pyh_log
 
 g_debug = 0
-g_logger = logging.getLogger('PyHouse.Weather    ')
+LOG = pyh_log.getLogger('PyHouse.Weather    ')
 
 
 class API(object):
     def __init__(self):
-        g_logger.info("Initializing.")
-        g_logger.info("Initialized.")
+        LOG.info("Initializing.")
+        LOG.info("Initialized.")
 
     def Start(self):
         pass

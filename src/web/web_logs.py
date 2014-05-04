@@ -5,14 +5,13 @@ Created on Jun 1, 2013
 '''
 
 # Import system type stuff
-import logging
 import os
 from nevow import athena
 from nevow import loaders
 
 # Import PyMh files and modules.
 from src.web import web_utils
-from src.utils import log
+from src.utils import pyh_log
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -23,7 +22,7 @@ g_debug = 0
 # 0 = off
 # 1 = major routine entry
 # 2 = Basic data
-g_logger = logging.getLogger('PyHouse.webLogs    ')
+LOG = pyh_log.getLogger('PyHouse.webLogs    ')
 
 
 class LogsElement(athena.LiveElement):
@@ -38,7 +37,7 @@ class LogsElement(athena.LiveElement):
 
     @athena.expose
     def getLogData(self):
-        """ A JS client has requested all the log information.
+        """ A JS client has requested all the pyh_log information.
         """
         l_obj = self.m_pyhouses_obj.LogsData
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_obj))
@@ -49,7 +48,7 @@ class LogsElement(athena.LiveElement):
         """A new/changed Log is returned.  Process it and update the internal data via ???.py
         """
         l_json = web_utils.JsonUnicode().decode_json(p_json)
-        l_obj = log.LogData()
+        l_obj = pyh_log.LogData()
         l_obj.Debug = l_json['Debug']
         l_obj.Error = l_json['Error']
         self.m_pyhouses_obj.LogsAPI.Update(l_obj)

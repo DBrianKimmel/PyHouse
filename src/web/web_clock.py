@@ -5,13 +5,13 @@ Created on Sep 5, 2013
 """
 
 # Import system type stuff
-import logging
 import os
 import time
 from nevow import loaders
 from nevow import athena
 
 # Import PyMh files and modules.
+from src.utils import pyh_log
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -22,7 +22,7 @@ g_debug = 0
 # 1 = log extra info
 # 2 = major routine entry
 # + = NOT USED HERE
-g_logger = logging.getLogger('PyHouse.webClock    ')
+LOG = pyh_log.getLogger('PyHouse.webClock    ')
 
 #==============================================================================
 

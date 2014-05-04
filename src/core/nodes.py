@@ -29,14 +29,14 @@ This module will establish a domain network and use Twisted's AMP protocol to pa
 """
 
 # Import system type stuff
-import logging
 
 from src.core import node_local
 from src.core import node_discovery
 from src.core import node_domain
+from src.utils import pyh_log
 
 g_debug = 0
-g_logger = logging.getLogger('PyHouse.Nodes       ')
+LOG = pyh_log.getLogger('PyHouse.Nodes       ')
 
 __all__ = ['NodeData',
            "API"]
@@ -59,19 +59,19 @@ class API(object):
         self.m_local = node_local.API()
         self.m_discovery = node_discovery.API()
         self.m_domain = node_domain.API()
-        # g_logger.info("Initialized.")
+        # LOG.info("Initialized.")
 
     def Start(self, p_pyhouses_obj):
         p_pyhouses_obj.CoreData.Nodes = {}
         self.m_local.Start(p_pyhouses_obj)
         self.m_discovery.Start(p_pyhouses_obj)
         self.m_domain.Start(p_pyhouses_obj)
-        # g_logger.info("Started.")
+        # LOG.info("Started.")
 
-    def Stop(self):
-        self.m_domain.Stop()
-        self.m_discovery.Stop()
-        self.m_local.Stop()
-        g_logger.info("Stopped.")
+    def Stop(self, p_xml):
+        self.m_domain.Stop(p_xml)
+        self.m_discovery.Stop(p_xml)
+        self.m_local.Stop(p_xml)
+        LOG.info("Stopped.")
 
 # ## END DBK

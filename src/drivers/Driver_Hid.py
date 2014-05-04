@@ -15,8 +15,6 @@ This should also allow control of many different houses.
 __author__ = 'D. Brian Kimmel'
 
 # Import system type stuff
-import logging
-import sys
 # Use USB package that was written by Wander Lairson Costa
 # PYUSB_DEBUG_LEVEL=debug
 # export PYUSB_DEBUG_LEVEL
@@ -26,6 +24,7 @@ from twisted.internet import reactor
 
 # Import PyHouse modules
 from src.utils.tools import PrintBytes
+from src.utils import pyh_log
 
 callLater = reactor.callLater
 
@@ -35,7 +34,7 @@ g_debug = 0
 # 2 = Startup Details
 # 3 = Read / write details
 
-g_logger = logging.getLogger('PyHouse.USBHIDDriver ')
+LOG = pyh_log.getLogger('PyHouse.USBHIDDriver ')
 g_usb = None
 
 
@@ -85,10 +84,10 @@ class UsbDriverAPI(UsbDeviceData):
         try:
             l_device = usb.core.find(idVendor = p_usb.Vendor, idProduct = p_usb.Product)
         except usb.USBError:
-            g_logger.error("ERROR no such USB device")
+            LOG.error("ERROR no such USB device")
             return None
         if l_device == None:
-            g_logger.error('USB device not found  {0:X}:{1:X}, {2:}'.format(p_usb.Vendor, p_usb.Product, p_usb.Name))
+            LOG.error('USB device not found  {0:X}:{1:X}, {2:}'.format(p_usb.Vendor, p_usb.Product, p_usb.Name))
             return None
         p_usb.Device = l_device
         p_usb.num_configs = l_device.bNumConfigurations
@@ -109,7 +108,7 @@ class UsbDriverAPI(UsbDeviceData):
         try:
             p_usb.Device.detach_kernel_driver(0)
         except Exception as e:
-            g_logger.error("Driver_USB - Error in detaching_kernel_driver {0:} ".format(e))
+            LOG.error("Driver_USB - Error in detaching_kernel_driver {0:} ".format(e))
 
     def _setup_configurations(self, p_usb):
         """Now we deal with the USB configuration
@@ -134,7 +133,7 @@ class UsbDriverAPI(UsbDeviceData):
         try:
             l_alternate_setting = usb.control.get_interface(p_usb.Device, l_interface_number)
         except Exception as e:
-            g_logger.error("Error in alt setting {0:}".format(e))
+            LOG.error("Error in alt setting {0:}".format(e))
             l_alternate_setting = 0
         l_interface = usb.util.find_descriptor(
             p_usb.configs, bInterfaceNumber = l_interface_number,
@@ -182,7 +181,7 @@ class UsbDriverAPI(UsbDeviceData):
         p_usb.Product = p_controller_obj.Product
         p_usb.Vendor = p_controller_obj.Vendor
         p_usb.message = bytearray()
-        g_logger.info(" Initializing USB port - {0:#04X}:{1:#04X} - {2:} on port {3:}".format(
+        LOG.info(" Initializing USB port - {0:#04X}:{1:#04X} - {2:} on port {3:}".format(
             p_usb.Vendor, p_usb.Product, p_usb.Name, p_usb.Port))
         p_usb.Device = self._setup_find_device(p_usb)
         if p_usb.Device == None:
@@ -228,7 +227,7 @@ class UsbDriverAPI(UsbDeviceData):
         try:
             l_len = g_usb.Device.write(g_usb.epo_addr, l_message)
         except Exception as e:
-            g_logger.error("Driver_USB._write_bis_device() - Error in writing to USB device {0:}".format(e))
+            LOG.error("Driver_USB._write_bis_device() - Error in writing to USB device {0:}".format(e))
             l_len = 0
         return l_len
 
