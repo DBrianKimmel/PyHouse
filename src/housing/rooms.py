@@ -1,9 +1,13 @@
 """
-Created on Apr 10, 2013
+-*- test-case-name: PyHouse.src.housing.test.test_rooms -*-
 
-@author: briank
-
-Handle the rooms information for a house.
+@name: PyHouse/src/housing/rooms.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
+@Copyright (c) 2013-2014 by D. Brian Kimmel
+@license: MIT License
+@note: Created on Apr 10, 2013
+@summary: Handle the rooms information for a house.
 """
 
 # Import system type stuff
@@ -11,6 +15,7 @@ import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from src.utils import xml_tools
+from src.core.data_objects import RoomData
 
 
 g_debug = 0
@@ -20,28 +25,9 @@ g_debug = 0
 m_logger = None
 
 
-class RoomData(object):
-
-    def __init__(self):
-        self.Name = ''
-        self.Key = 0
-        self.Active = False
-        self.Comment = ''
-        self.Corner = ''
-        self.Size = ''
-        self.Type = 'Room'
-        self.UUID = None
-
-    def reprJSON(self):
-        l_ret = dict(Name = self.Name, Key = self.Key, Active = self.Active,
-                    Comment = self.Comment, Corner = self.Corner, Size = self.Size,
-                    Type = self.Type, UUID = self.UUID)
-        return l_ret
-
-
 class ReadWriteConfig(xml_tools.ConfigTools):
 
-    def read_rooms_xml(self, p_house_obj, p_house_xml):
+    def read_xml(self, p_house_obj, p_house_xml):
         l_count = 0
         l_rooms_xml = p_house_xml.find('Rooms')
         for l_room_xml in l_rooms_xml.iterfind('Room'):

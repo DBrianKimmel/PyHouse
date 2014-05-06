@@ -1,23 +1,56 @@
-'''
-Created on Apr 10, 2013
+"""
+@name: PyHouse/src/housing/test/test_rooms.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
+@Copyright (c) 2013-2014 by D. Brian Kimmel
+@license: MIT License
+@note: Created on Apr 10, 2013
+@summary: Test handling the rooms information for a house.
+"""
 
-@author: briank
-'''
-
+# Import system type stuff
+import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
-from housing import rooms
+# Import PyMh files
+from src.housing import rooms
+from src.utils import xml_tools
+from src.test import xml_data
+from src.core.data_objects import PyHouseData, HousesData, HouseData, RoomData
+
+XML = xml_data.XML
 
 
-class Test(unittest.TestCase):
+class Test_02_XML(unittest.TestCase):
+
+    def _pyHouses(self):
+        self.m_pyhouses_obj = PyHouseData()
+        self.m_pyhouses_obj.HousesData[0] = HousesData()
+        self.m_pyhouses_obj.HousesData[0].HouseObject = HouseData()
+        self.m_pyhouses_obj.XmlRoot = self.m_root = ET.fromstring(XML)
+        self.m_houses = self.m_root.find('Houses')
+        self.m_house = self.m_houses.find('House')
+        self.m_house_obj = RoomData()
 
     def setUp(self):
-        pass
+        self._pyHouses()
 
-    def tearDown(self):
-        pass
+    def test_0201_buildObjects(self):
+        """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
+        """
+        self.assertEqual(self.m_pyhouses_obj.HousesData[0].HouseObject.Rooms, {}, 'No Rooms{}')
 
-    def testName(self):
-        pass
+    def test_0202_find_xml(self):
+        """ Be sure that the XML contains the right stuff.
+        """
+        self.assertEqual(self.m_root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
+        self.assertEqual(self.m_houses.tag, 'Houses', 'XML - No Houses section')
+        self.assertEqual(self.m_house.tag, 'House', 'XML - No House section')
 
-### END
+    def test_0203_ReadXml(self):
+        """ Read in the xml file and fill in the rooms dict
+        """
+        self.m_api = rooms.ReadWriteConfig()
+        self.m_api.read_xml(self.m_pyhouses_obj.HousesData[0].HouseObject, self.m_house)
+
+# ## END DBK

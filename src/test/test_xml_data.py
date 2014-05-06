@@ -29,17 +29,25 @@ class Test_01_XML(unittest.TestCase):
     """
 
     def setUp(self):
-        self.m_root_element = ET.fromstring(XML)
+        self.m_root_element = None
 
-    def test_0101_read_xml(self):
+    def test_0101_parse_xml(self):
+        self.m_root_element = ET.fromstring(XML)
         l_pyhouse = self.m_root_element
         self.assertEqual(l_pyhouse.tag, 'PyHouse')
 
-    def test_0102_find_logs(self):
+    def test_0102_read_xml(self):
+        self.m_root_element = ET.fromstring(XML)
+        l_pyhouse = self.m_root_element
+        self.assertEqual(l_pyhouse.tag, 'PyHouse')
+
+    def test_0103_find_logs(self):
+        self.m_root_element = ET.fromstring(XML)
         l_logs = self.m_root_element.find('Logs')
         self.assertEqual(l_logs.tag, 'Logs')
 
-    def test_0103_uuid(self):
+    def test_0104_uuid(self):
+        self.m_root_element = ET.fromstring(XML)
         l_logs = self.m_root_element.find('Logs')
         l_debug = l_logs.find('Debug')
         self.assertEqual(l_debug.text, '/var/log/pyhouse/debug')

@@ -51,29 +51,56 @@ class CoreData(object):
 class LocationData(object):
 
     def __init__(self):
-        self.City = 'Beverly Hills'
+        self.City = ''
         self.Latitude = 28.938448
         self.Longitude = -82.517208
-        self.Phone = '(352) 270-8096'
+        self.Phone = ''
         self.SavingTime = '-4:00'
         self.State = 'FL'
-        self.Street = '5191 N Pink Poppy Dr'
+        self.Street = ''
         self.TimeZone = '-5:00'
-        self.ZipCode = '34465'
+        self.ZipCode = '12345'
 
 
-class HouseData(object):
+class BasePyHouseObject(object):
+
+    def __init__(self):
+        self.Name = ''
+        self.Key = 0
+        self.Active = False
+        self.UUID = None
+
+
+class HousesData(object):
+    """This class holds the data about all houses defined in XML.
+    """
+
+    def __init__(self):
+        self.Name = ""
+        self.Key = 0
+        self.Active = True
+        self.HouseAPI = None
+        self.HouseObject = {}
+
+
+class HouseData(BasePyHouseObject):
 
     def __init__(self):
         """House.
         """
-        self.Name = 'Test House #1'
-        self.Key = 0
-        self.Active = True
-        self.UUID = None
+        self.CommunicationsAPI = None
+        self.EntertainmentAPI = None
+        self.HvacAPI = None
         self.InternetAPI = None
+        self.IrrigationAPI = None
+        self.LocationAPI = None
         self.LightingAPI = None
+        self.PoolAPI = None
+        self.RoomsAPI = None
         self.ScheduleAPI = None
+        self.SecurityAPI = None
+        self.WeatherAPI = None
+        #
         self.Location = LocationData()  # one location per house.
         # a dict of zero or more of the following.
         self.Buttons = {}
@@ -83,41 +110,21 @@ class HouseData(object):
         self.Lights = {}
         self.Rooms = {}
         self.Schedules = {}
+        self.Thermostat = {}
 
 
-class HousesData(object):
-    """This class holds the data about all houses defined in xml.
-    """
-
-    def __init__(self):
-        """Houses.
-        """
-        self.Name = "Test House 1"
-        self.Key = 0
-        self.Active = True
-        self.HouseAPI = None
-        self.HouseObject = {0: HouseData()}
-
-
-class RoomData(object):
+class RoomData(BasePyHouseObject):
 
     def __init__(self):
-        self.Name = ''
-        self.Key = 0
-        self.Active = False
         self.Comment = ''
         self.Corner = ''
         self.Size = ''
         self.Type = 'Room'
-        self.UUID = None
 
 
-class NodeData(object):
+class NodeData(BasePyHouseObject):
 
     def __init__(self):
-        self.Name = None
-        self.Key = 0
-        self.Active = True
         self.ConnectionAddr = None
         self.Role = 0
         self.Interfaces = {}
@@ -130,21 +137,17 @@ class LogData(object):
         self.Error = None
 
 
-class BaseLightingData(object):
+class BaseLightingData(BasePyHouseObject):
     """Information
     """
 
     def __init__(self):
-        self.Name = ''
-        self.Key = 0
-        self.Active = False
         self.Comment = ''
         self.Coords = ''  # Room relative coords of the light switch
         self.Dimmable = False
         self.Family = ''
         self.RoomName = ''
         self.Type = ''
-        self.UUID = None
 
 
 class LightData(BaseLightingData):
@@ -181,6 +184,13 @@ class ControllerData(BaseLightingData):
         self._Message = ''
         self._Queue = None
 
+
+class ThermostatData(BasePyHouseObject):
+
+    def __init__(self):
+        self.ThermostatAPI = None
+        self.CurrentTemperature = 0
+        self.SetTemperature = 0
 
 
 # ## END DBK

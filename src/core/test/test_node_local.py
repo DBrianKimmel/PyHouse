@@ -47,7 +47,7 @@ class Test_01_XML(unittest.TestCase):
         l_nodes = self.m_root_element.find('Nodes')
         l_node = l_nodes.find('Node')
         l_uuid = l_node.find('UUID')
-        self.assertEqual(l_uuid.text, 'ec955bcf-89c9-11e3-b583-082e5f8cdfd2')
+        self.assertEqual(l_uuid.text, 'ec955bcf-89c9-11e3-b583-082e5f899999')
 
 
 class Test_02_ReadXML(unittest.TestCase):

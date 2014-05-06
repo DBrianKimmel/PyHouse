@@ -15,7 +15,7 @@ from twisted.trial import unittest
 from src.housing import houses
 from src.utils import xml_tools
 from src.test import xml_data
-from src.core.data_objects import PyHouseData, CoreData
+from src.core.data_objects import PyHouseData
 
 XML = xml_data.XML
 
@@ -38,17 +38,18 @@ class Test_01_XML(unittest.TestCase):
         self.assertEqual(l_houses.tag, 'Houses')
 
 
-class Test_04_Houses(unittest.TestCase):
+class Test_02_ReadXML(unittest.TestCase):
 
     def setUp(self):
         self.m_pyhouses_obj = PyHouseData()
+        self.m_pyhouses_obj.XmlRoot = ET.fromstring(XML)
         self.api = houses.API()
 
-    def test_0401_singleton(self):
+    def test_0201_singleton(self):
         self.api2 = houses.API()
         self.assertEqual(self.api, self.api2, 'Not a singleton.')
 
-    def test_0402_start(self):
+    def test_0202_start(self):
         self.api.Start(self.m_pyhouses_obj)
 
 # ## END

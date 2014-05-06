@@ -99,14 +99,14 @@ class Test(unittest.TestCase):
         """
         def cb_joined(_ignored):
             l_defer = self.m_server.m_packetReceived = Deferred()
-            self.m_server.transport.write("Test_002 A", (node_discovery.PYHOUSE_MULTICAST, l_addr.port))
+            self.m_server.transport.write("Test_002 A", (node_discovery.PYHOUSE_MULTICAST_IP_V4, l_addr.port))
             return l_defer
 
         def cb_packet(_ignored):
             self.assertEqual(len(self.m_server.m_packets), 1)
             self.m_server.transport.setLoopbackMode(0)
             self.assertEqual(self.m_server.transport.getLoopbackMode(), 0)
-            self.m_server.transport.write("Test_002 B", (node_discovery.PYHOUSE_MULTICAST, l_addr.port))
+            self.m_server.transport.write("Test_002 B", (node_discovery.PYHOUSE_MULTICAST_IP_V4, l_addr.port))
             l_defer = Deferred()
             self.m_pyhouses_obj.Reactor.callLater(0, l_defer.callback, None)
             return l_defer
@@ -116,7 +116,7 @@ class Test(unittest.TestCase):
 
         self.assertEqual(self.m_server.transport.getLoopbackMode(), 1)
         l_addr = self.m_server.transport.getHost()
-        l_joined_defer = self.m_server.transport.joinGroup(node_discovery.PYHOUSE_MULTICAST)
+        l_joined_defer = self.m_server.transport.joinGroup(node_discovery.PYHOUSE_MULTICAST_IP_V4)
         l_joined_defer.addCallback(cb_joined)
         l_joined_defer.addCallback(cb_packet)
         l_joined_defer.addCallback(cb_no_packet)
@@ -143,15 +143,15 @@ class Test(unittest.TestCase):
         Test that a multicast group can be joined and left.
         """
         def cb_clientJoined(_ignored):
-            return self.m_client.transport.leaveGroup(node_discovery.PYHOUSE_MULTICAST)
+            return self.m_client.transport.leaveGroup(node_discovery.PYHOUSE_MULTICAST_IP_V4)
 
         def cb_clientLeft(_ignored):
-            return self.m_server.transport.joinGroup(node_discovery.PYHOUSE_MULTICAST)
+            return self.m_server.transport.joinGroup(node_discovery.PYHOUSE_MULTICAST_IP_V4)
 
         def cb_serverJoined(_ignored):
-            return self.m_server.transport.leaveGroup(node_discovery.PYHOUSE_MULTICAST)
+            return self.m_server.transport.leaveGroup(node_discovery.PYHOUSE_MULTICAST_IP_V4)
 
-        l_defer = self.m_client.transport.joinGroup(node_discovery.PYHOUSE_MULTICAST)
+        l_defer = self.m_client.transport.joinGroup(node_discovery.PYHOUSE_MULTICAST_IP_V4)
         l_defer.addCallback(cb_clientJoined)
         l_defer.addCallback(cb_clientLeft)
         l_defer.addCallback(cb_serverJoined)
@@ -170,7 +170,7 @@ class Test(unittest.TestCase):
         MESSAGE = "Test_006 A"
         def cb_joined(_ignored):
             l_defer = self.m_server.m_packetReceived = Deferred()
-            c.transport.write(MESSAGE, (node_discovery.PYHOUSE_MULTICAST, addr.port))
+            c.transport.write(MESSAGE, (node_discovery.PYHOUSE_MULTICAST_IP_V4, addr.port))
             return l_defer
 
         def cb_packet(_ignored):
@@ -184,7 +184,7 @@ class Test(unittest.TestCase):
         c = Server()
         p = self.m_pyhouses_obj.Reactor.listenMulticast(0, c)
         addr = self.m_server.transport.getHost()
-        joined = self.m_server.transport.joinGroup(node_discovery.PYHOUSE_MULTICAST)
+        joined = self.m_server.transport.joinGroup(node_discovery.PYHOUSE_MULTICAST_IP_V4)
         joined.addCallback(cb_joined)
         joined.addCallback(cb_packet)
         joined.addCallback(cb_cleanup)
@@ -216,7 +216,7 @@ class Test(unittest.TestCase):
         portno = firstPort.getHost().port
         secondClient = Server()
         secondPort = self.m_pyhouses_obj.Reactor.listenMulticast(portno, secondClient, listenMultiple = True)
-        theGroup = node_discovery.PYHOUSE_MULTICAST
+        theGroup = node_discovery.PYHOUSE_MULTICAST_IP_V4
         l_joined_defer = gatherResults([self.m_server.transport.joinGroup(theGroup), firstPort.joinGroup(theGroup), secondPort.joinGroup(theGroup)])
         l_joined_defer.addCallback(cb_serverJoined)
         l_joined_defer.addCallback(cb_gotPackets)
@@ -224,12 +224,12 @@ class Test(unittest.TestCase):
         return l_joined_defer
 
 
-    def test_501_server(self):
+    def Xtest_501_server(self):
         l_server = self.m_api._start_discovery_server(self.m_pyhouses_obj)
         # l_defer = l_server.m_startedDeferred = defer.Deferred()
         return l_server
 
-    def test_502_client(self):
+    def Xtest_502_client(self):
         _l_client = self.m_api._start_discovery_client(self.m_pyhouses_obj)
         # l_defer = l_client.m_startedDeferred = defer.Deferred()
 

@@ -141,7 +141,7 @@ class Test1(unittest.TestCase):
         print("Test 003")
         # l_api = nodes.API()
         # l_pyhouse_obj = PyHouseData()
-        self.m_api._start_discovery_client(self.m_pyhouse_obj)
+        # self.m_api._start_discovery_client(self.m_pyhouse_obj)
 
     def test_101_oldAddress(self):
         """

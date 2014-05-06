@@ -16,12 +16,12 @@ XML = """
     </Logs>
     <Nodes>
         <Node Name='PiNode-1' Key='0' Active='True'>
-            <UUID>ec955bcf-89c9-11e3-b583-082e5f899999</UUID>
+            <UUID>87654321-1001-11e3-b583-082e5f899999</UUID>
         </Node>
     </Nodes>
     <Houses>
         <House Active="True" Key="0" Name="Test House 1">
-            <UUID>ec955bcf-89c9-11e3-b583-082e5f8cdfd2</UUID>
+            <UUID>12345678-1002-11e3-b583-082e5f8cdfd2</UUID>
             <Location>
                 <Street>Test Street 1</Street>
                 <City>Test City 1</City>
@@ -34,13 +34,25 @@ XML = """
                 <SavingTime>60.0</SavingTime>
             </Location>
             <Rooms>
-                <Room Active="True" Key="0" Name="Master Bath">
-                    <UUID>ec955bd0-89c9-11e3-82b3-082e5f8cdfd2</UUID>
+                <Room Active="True" Key="0" Name="Test Living Room">
+                    <UUID>12341234-1003-11e3-82b3-082e5f8cdfd2</UUID>
                     <Comment>None</Comment>
-                    <Corner>0.83, 10.58</Corner>
+                    <Corner>0.50, 10.50</Corner>
                     <Size>14.00, 13.50</Size>
                 </Room>
             </Rooms>
+            <Hvac>
+                <Thermostat>
+                </Thermostat>
+                <Thermostat>
+                </Thermostat>
+            </Hvac>
+            <Pools>
+                <Pool Name="Main Pool" Active="True" Key="0">
+                </Pool>
+                <Pool Name="Hot Tub" Active="True" Key="1">
+                </Pool>
+            </Pools>
         </House>
         <House Active="True" Key="0" Name="Test House 2">
             <UUID>ec955bcf-89c9-11e3-b583-082e5f8cdfd2</UUID>

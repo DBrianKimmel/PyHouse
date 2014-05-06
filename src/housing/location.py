@@ -1,7 +1,13 @@
 """
-Created on Apr 10, 2013
+-*- test-case-name: PyHouse.src.housing.test.test_location -*-
 
-@author: briank
+@name: PyHouse/src/housing/rooms.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
+@Copyright (c) 2013-2014 by D. Brian Kimmel
+@license: MIT License
+@note: Created on Apr 10, 2013
+@summary: Handle the location information for a house.
 
 There is location information for the house.  This is for calculating the
 time of sunrise and sunset.  Additional calculations may be added such as
@@ -13,31 +19,10 @@ import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from src.utils import xml_tools
+from src.core.data_objects import LocationData
 
 g_debug = 0
 m_logger = None
-
-class LocationData(object):
-
-    def __init__(self):
-        self.City = ''
-        self.Latitude = 0.0
-        self.Longitude = 0.0
-        self.Phone = ''
-        self.SavingTime = 0.0
-        self.State = ''
-        self.Street = ''
-        self.TimeZone = 0.0
-        self.ZipCode = ''
-
-    def reprJSON(self):
-        l_ret = dict(
-            City = self.City, Latitude = self.Latitude, Longitude = self.Longitude, Phone = self.Phone,
-            SavingsTime = self.SavingTime, State = self.State, Street = self.Street, TimeZone = self.TimeZone,
-            ZipCode = self.ZipCode
-            )
-        return l_ret
-
 
 class ReadWriteConfig(xml_tools.ConfigTools):
     """Use the internal data to read / write an updated XML config file.

@@ -17,6 +17,7 @@ moonrise, tides, etc.
 # Import system type stuff
 
 # Import PyMh files
+from src.core.data_objects import HouseData
 from src.scheduling import schedule
 from src.housing import internet
 from src.housing import location
@@ -30,44 +31,28 @@ g_debug = 0
 LOG = pyh_log.getLogger('PyHouse.House       ')
 
 
-class HouseData(object):
+class HouseItems(object):
+    """
+    Process all the house based items:
+        Internet (1)
+        Location (1)
+        Rooms (0+)
+        Schedule (0+)
+        Weather (1)
 
-    def __init__(self):
-        """House.
-        """
-        self.Name = ''
-        self.Key = 0
-        self.Active = False
-        self.UUID = None
-        self.InternetAPI = None
-        self.LightingAPI = None
-        self.ScheduleAPI = None
-        self.Location = location.LocationData()  # one location per house.
-        # a dict of zero or more of the following.
-        self.Buttons = {}
-        self.Controllers = {}
-        self.FamilyData = {}
-        self.Internet = {}
-        self.Lights = {}
-        self.Rooms = {}
-        self.Schedules = {}
+        Communication (0+)
+        Entertainment (0+)
+        HVAC (0+)
+        Irrigation (0+)
+        Lighting (0+)
+        Pools (0+)
+        Security (0+)
+    """
 
-    def reprJSON(self):
-        """House.
-        """
-        l_ret = dict(
-            Name = self.Name, Key = self.Key, Active = self.Active,
-            Buttons = self.Buttons,
-            Controllers = self.Controllers,
-            Lights = self.Lights,
-            Location = self.Location,
-            Internet = self.Internet,
-            Family = self.FamilyData,
-            Rooms = self.Rooms,
-            Schedules = self.Schedules,
-            UUID = self.UUID
-            )
-        return l_ret
+    def init_all_components(self):
+        self.m_house_obj.InternetAPI = internet.API()
+        self.m_house_obj.ScheduleAPI = schedule.API(self.m_house_obj)
+        pass
 
 
 class HouseReadWriteConfig(location.ReadWriteConfig, rooms.ReadWriteConfig):
@@ -82,7 +67,7 @@ class HouseReadWriteConfig(location.ReadWriteConfig, rooms.ReadWriteConfig):
         self.xml_read_common_info(p_house_obj, p_house_xml)
         p_house_obj.UUID = self.get_uuid_from_xml(p_house_xml, 'UUID')
         p_house_obj.Location = self.read_location_xml(p_house_obj, p_house_xml)
-        p_house_obj.Rooms = self.read_rooms_xml(p_house_obj, p_house_xml)
+        p_house_obj.Rooms = self.read_xml(p_house_obj, p_house_xml)
         return p_house_obj
 
     def write_xml(self, p_house_obj):

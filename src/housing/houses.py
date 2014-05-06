@@ -1,12 +1,24 @@
-#!/usr/bin/python
+"""
+@name: PyHouse/src/housing/houses.py
 
-"""Handle all the house(s) information.
+-*- test-case-name: PyHouse.src.housing.test.test_houses -*-
+
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
+@Copyright (c) 2010-2014 by D. Brian Kimmel
+@license: MIT License
+
+
+Handle all the house(s) information.
 
 main/houses.py
 
 This module is a singleton called from PyHouse.
-Its main purpose is to initiate the configuration system and then call
-the other packages and set up the whole system based on the config read in.
+It initiates an instance of house for each house defined in XML.
+
+Perhaps it is no longer necessary (with multiple Raspberry Pis) to have more than a single house in the XML file.
+
+Its initiates the configuration system and then calls the other packages and sets up the whole system.
 
 
 Rooms and lights and HVAC are associated with a particular house.
@@ -17,79 +29,32 @@ import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from src.housing import house
-from src.utils import xml_tools
+# from src.utils import xml_tools
 from src.utils import pyh_log
+from src.core.data_objects import HousesData
 
 
 g_debug = 1
 # 0 = off
 # 1 = log extra info
-# 2 = major routine entry
-# 3 - Config file handling
-# 4 = Access housing info
 # + = NOT USED HERE
 LOG = pyh_log.getLogger('PyHouse.Houses      ')
 
 Singletons = {}
 
 
-class HousesData(object):
-    """This class holds the data about all houses defined in xml.
-    """
+class Utilities(object):
 
-    def __init__(self):
-        """Houses.
+    def start_all_houses(self, p_pyhouses_obj):
+        """Find all houses in the XML file and start a house instance for each one.
         """
-        self.Name = None
-        self.Key = 0
-        self.Active = False
-        self.HouseAPI = None
-        self.HouseObject = {}
+        l_count = 0
+        for l_house_xml in self.get_house_list(p_pyhouses_obj):
+            p_pyhouses_obj.HousesData[l_count] = self.start_house_instance(l_house_xml, l_count)
+            l_count += 1
+        return l_count
 
-
-    def __str__(self):
-        l_ret = "Houses:: "
-        l_ret += "Name:{0:}, ".format(self.Name)
-        l_ret += "Key:{0:}, ".format(self.Key)
-        l_ret += "Active:{0:}, ".format(self.Active)
-        l_ret += "HouseAPI:{0:}, ".format(self.HouseAPI)
-        l_ret += "\nHouseObject:{0:}".format(self.HouseObject)
-        return l_ret
-
-    def reprJSON(self):
-        """Houses.
-        """
-        return dict(
-            Active = self.Active, Key = self.Key, Name = self.Name
-            )
-
-
-class HouseReadWriteConfig(xml_tools.ConfigFile):
-
-    m_xml_filename = None
-    m_xmltree_root = None
-
-    def __init__(self):
-        """Open the xml config file.
-        If the file is missing, an empty minimal skeleton is created.
-        """
-        pass
-
-    def get_xml_root(self):
-        return self.m_xmltree_root
-
-
-class LoadSaveAPI(HouseReadWriteConfig):
-    """
-    """
-
-    def load_all_houses(self):
-        """Load all the house info.
-        """
-        self.l_rwc = HouseReadWriteConfig()
-        return self.l_rwc.get_xml_root()
-
-    def get_house_info(self, p_house_xml, p_count):
+    def start_house_instance(self, p_house_xml, p_count):
         """Build up one entry for m_houses_data
         """
         l_houses_obj = HousesData()
@@ -99,31 +64,26 @@ class LoadSaveAPI(HouseReadWriteConfig):
         l_houses_obj.Name = l_houses_obj.HouseObject.Name
         return l_houses_obj
 
-    def read_xml_config_houses(self, p_pyhouses_obj):
+    def get_house_list(self, p_pyhouses_obj):
         """
+        Find all the different houses in the XML configuration file.
+        Each will have a 'house' sub-tree of elements under that house.
+        When we first start configuring, there are nohouses defined - so we need to create an empty house.
+
         @return: iterable list of all houses defined.
         """
         l_xml_root = p_pyhouses_obj.XmlRoot
-        self.m_xmltree_root = self.load_all_houses()
-        #
         try:
             l_sect = l_xml_root.find('Houses')
             l_list = l_sect.iterfind('House')  # use l_sect to force error if it is missing
         except AttributeError:
-            LOG.warn("Warning - in read_house XML - Adding 'Houses' section")
+            LOG.warning("Warning - in read_house XML - Adding 'Houses' section")
             l_sect = ET.SubElement(l_xml_root, 'Houses')
             l_list = l_sect.iterfind('House')
         return l_list
 
-    def process_houses(self, p_pyhouses_obj):
-        l_count = 0
-        for l_house_xml in self.read_xml_config_houses(p_pyhouses_obj):
-            p_pyhouses_obj.HousesData[l_count] = self.get_house_info(l_house_xml, l_count)
-            l_count += 1
-        return l_count
 
-
-class API(LoadSaveAPI):
+class API(Utilities):
     """
     """
 
@@ -151,11 +111,10 @@ class API(LoadSaveAPI):
         May be stopped and then started anew to force reloading info.
         Invoked once no matter how many houses defined in the XML file.
         """
-        l_count = self.process_houses(p_pyhouses_obj)
+        self.m_pyhouses_obj = p_pyhouses_obj
+        l_count = self.start_all_houses(p_pyhouses_obj)
         if g_debug >= 1:
-            # LOG.info("Started {0:} house(s).".format(l_count))
             LOG.info("Started {0:} house(s).".format(l_count))
-        return p_pyhouses_obj.HousesData
 
     def Stop(self, p_xml):
         """Close down everything we started.
