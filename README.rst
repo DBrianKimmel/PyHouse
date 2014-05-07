@@ -7,6 +7,13 @@ PyHouse is a home automation tool.
 See src.__init__ module for developer documentation.
 
 
+This Git repository (PyHouse) is for the software that runs PyHouse,
+There is a companion repository (SysAdmin) that is for the rather complex task of
+setting up Raspberry Pis to run PyHouse.
+
+Both of these repositories are on GitHub under the user DBrianKimmel.
+
+
 What is PyHouse?
 ----------------
 PyHouse is one or more nodes, running PyHouse software, and co-operating with

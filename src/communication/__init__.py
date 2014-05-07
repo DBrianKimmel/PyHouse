@@ -1,4 +1,15 @@
 """
+This package is developing into two different areas.
+
+The first area is for communication from external devices to the PyHouse Node system.
+By this I mean devices such as a IR controller for various household devices and bluetooth receivers.
+
+
+
+The second area is for humans to communicate with humans.
+
+
+
 I now live in two different houses, one for a little more than 6 or 7 months a year and in the other house 5 to 6 months each year.
 Why should we have to give out several phone numbers and the people calling us have to guess which number to call?
 So this communication module was born.
