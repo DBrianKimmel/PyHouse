@@ -12,74 +12,11 @@ from src.utils import pyh_log
 
 
 g_debug = 0
-# 0 = off
-# 1 = major routine entry
-# 2 = Startup Details
 
 LOG = pyh_log.getLogger('PyHouse.Device_UPB  ')
 
 
-class CoreData(object):
-
-    def __init__(self):
-        super(CoreData, self).__init__()
-        self.Family = 'UPB'
-        self.NetworkID = None
-        self.Password = None
-        self.UnitID = None
-
-    def reprJSON(self):
-        l_ret = super(CoreData, self).reprJSON()  # The core data
-        l_ret.update(dict(
-                    Address = self.UnitID, Password = self.Password, NetworkId = self.NetworkID
-                    ))
-        return l_ret
-
-
-class CoreAPI(object):
-
-    def load_device(self, p_dict, p_dev):
-        l_dev = p_dev
-        l_dev.NetworkID = self.getInt(p_dict, 'NetworkID')
-        l_dev.Password = self.getInt(p_dict, 'Password')
-        l_dev.UnitID = self.getInt(p_dict, 'UnitID')
-        return l_dev
-
-class ButtonData(lighting.ButtonData, CoreData):
-
-    def __init__(self):
-        super(ButtonData, self).__init__()
-
-    def __str__(self):
-        l_str = super(ButtonData, self).__str__()
-        return l_str
-
-class ButtonAPI(lighting.ButtonAPI, CoreAPI):
-    pass
-
-
-class ControllerData(lighting.ControllerData, CoreData):
-
-    def __init__(self):
-        super(ControllerData, self).__init__()
-
-    def __str__(self):
-        l_str = super(ControllerData, self).__str__()
-        return l_str
-
-class ControllerAPI(lighting.ControllerAPI, CoreAPI): pass
-
-
-class LightData(lighting.LightData, CoreData):
-
-    def __init__(self):
-        super(LightData, self).__init__()
-
-    def __str__(self):
-        l_str = super(LightData, self).__str__()
-        return l_str
-
-class LightingAPI(lighting.LightingAPI, CoreAPI):
+class LightingAPI(lighting.LightingAPI):
     """Interface to the lights of this module.
     """
 
@@ -103,7 +40,7 @@ class LightingAPI(lighting.LightingAPI, CoreAPI):
             pass
 
 
-class LoadSaveInsteonData(LightingAPI, ControllerAPI, ButtonAPI): pass
+class LoadSaveInsteonData(LightingAPI): pass
 
 import UPB_Pim
 

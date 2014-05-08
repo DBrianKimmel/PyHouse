@@ -13,19 +13,11 @@ import xml.etree.ElementTree as ET
 
 # Import PyHouse files
 from src.lights import lighting_core
+from src.core.data_objects import LightData
 
 
 g_debug = 0
 # 0 = off
-
-
-class LightData(lighting_core.CoreData):
-
-    def __init__(self):
-        super(LightData, self).__init__()
-        self.Controller = None
-        self.Type = 'Light'
-        self.CurLevel = 0
 
 
 class LightingAPI(lighting_core.CoreAPI):

@@ -1,16 +1,13 @@
 """
 @name: PyHouse/src/core/node_local.py
-
-# -*- test-case-name: PyHouse.src.core.test.test_node_local -*-
-
-Created on Apr 2, 2014
-
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
+@note: Created on Apr 2, 2014
 @license: MIT License
-
 @summary: Gather this node's information.
+
+-*- test-case-name: PyHouse.src.core.test.test_node_local -*-
 
 This module:
     Gathers information about the interfaces (ethernet, wifi etc.) on this node.
@@ -148,7 +145,7 @@ class XML(object):
         """
         Read the existing XML file (if it exists) and get the node info.
         """
-        self.m_node = p_pyhouses_obj.CoreData.Nodes[0]
+        self.m_node = p_pyhouses_obj.CoreServicesData.Nodes[0]
         try:
             l_sect = p_pyhouses_obj.XmlRoot.find(MAIN_ELEMENT)
             l_sect.find('UUID')
@@ -161,7 +158,7 @@ class XML(object):
         pass
 
     def write_xml(self, p_pyhouses_obj):
-        self.m_node = p_pyhouses_obj.CoreData.Nodes[0]
+        self.m_node = p_pyhouses_obj.CoreServicesData.Nodes[0]
         l_xml = self.xml_create_common_element(MAIN_ELEMENT, self.m_node)
         self.put_text_element(l_xml, 'UUID', self.m_node.UUID)
         return l_xml
@@ -171,9 +168,9 @@ class XML(object):
 class Utility(XML):
 
     def get_node_info(self, p_pyhouses_obj):
-        p_pyhouses_obj.CoreData.Nodes[0].Name = platform.node()
-        p_pyhouses_obj.CoreData.Nodes[0].Key = 0
-        p_pyhouses_obj.CoreData.Nodes[0].Active = True
+        p_pyhouses_obj.CoreServicesData.Nodes[0].Name = platform.node()
+        p_pyhouses_obj.CoreServicesData.Nodes[0].Key = 0
+        p_pyhouses_obj.CoreServicesData.Nodes[0].Active = True
 
     def find_node_role(self):
         p_role = NODE_NOTHING
@@ -198,7 +195,7 @@ class Utility(XML):
         return p_role
 
     def init_node_type(self, p_pyhouses_obj):
-        l_role = p_pyhouses_obj.CoreData.Nodes[0].Role
+        l_role = p_pyhouses_obj.CoreServicesData.Nodes[0].Role
         if l_role & NODE_PIFACECAD:
             self._init_ir_control(p_pyhouses_obj)
         elif l_role & NODE_LIGHTS:
@@ -218,16 +215,16 @@ class Utility(XML):
         """
         l_max_key = -1
         try:
-            for l_node in p_pyhouses_obj.CoreData.Nodes.itervalues():
+            for l_node in p_pyhouses_obj.CoreServicesData.Nodes.itervalues():
                 if l_node.Name == p_node.Name:
-                    p_pyhouses_obj.CoreData.Nodes[l_node.Key] = p_node
+                    p_pyhouses_obj.CoreServicesData.Nodes[l_node.Key] = p_node
                     return
                 if l_node.Key > l_max_key:
                     l_max_key = l_node.Key
         except AttributeError:
             pass
-        p_pyhouses_obj.CoreData.Nodes[l_max_key + 1] = p_node
-        LOG.debug('Nodes = {0:}'.format(p_pyhouses_obj.CoreData.Nodes))
+        p_pyhouses_obj.CoreServicesData.Nodes[l_max_key + 1] = p_node
+        LOG.debug('Nodes = {0:}'.format(p_pyhouses_obj.CoreServicesData.Nodes))
 
 
 class API(Utility):
@@ -240,10 +237,10 @@ class API(Utility):
     def Start(self, p_pyhouses_obj):
         self.m_node = NodeData()
         GetAllInterfaceData(self.m_node)
-        p_pyhouses_obj.CoreData.Nodes[0] = self.m_node
+        p_pyhouses_obj.CoreServicesData.Nodes[0] = self.m_node
         self.read_xml(p_pyhouses_obj)
         self.get_node_info(p_pyhouses_obj)
-        p_pyhouses_obj.CoreData.Nodes[0].Role = self.find_node_role()
+        p_pyhouses_obj.CoreServicesData.Nodes[0].Role = self.find_node_role()
         self.init_node_type(p_pyhouses_obj)
         LOG.info('Started')
 

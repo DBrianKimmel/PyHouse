@@ -21,7 +21,7 @@ It has been a pain trying to write tests for other modules, hence the switch.
 
 # Import system type stuff
 import logging
-import logging.handlers
+# import logging.handlers
 import xml.etree.ElementTree as ET
 from twisted.python import log as tpLog
 from twisted.python import util
@@ -29,7 +29,7 @@ from twisted.python.logfile import DailyLogFile
 
 # Import PyMh files
 from src.utils import xml_tools
-from src.core.data_objects import PyHouseData, LogData
+from src.core.data_objects import LogData
 
 
 g_debug = 0
@@ -75,9 +75,9 @@ class Utility(xml_tools.ConfigFile):
         # l_debug = getLogger('PyHouse')
         l_formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s - %(message)s')
         # l_debug.setLevel(logging.DEBUG)
-        l_fh = logging.handlers.TimedRotatingFileHandler(l_file, when = 'midnight', backupCount = 31)
-        l_fh.setLevel(LEVEL)
-        l_fh.setFormatter(l_formatter)
+        # l_fh = logging.handlers.TimedRotatingFileHandler(l_file, when = 'midnight', backupCount = 31)
+        # l_fh.setLevel(LEVEL)
+        # l_fh.setFormatter(l_formatter)
         # l_debug.addHandler(l_fh)
 
         # print "l_file ", l_file

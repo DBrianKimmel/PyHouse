@@ -14,6 +14,9 @@ Allow various IR receivers to collect signals from various IR remotes.
 Connect to the LIRC daemon socket and listen to everything coming down that path.
 Connect to the PyHouse node cluster port and pass all the IR codes on.
 
+
+Use irrecord to use
+
 """
 
 # Import system type stuff

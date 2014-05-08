@@ -4,7 +4,12 @@ This package is developing into two different areas.
 The first area is for communication from external devices to the PyHouse Node system.
 By this I mean devices such as a IR controller for various household devices and bluetooth receivers.
 
+Remote controls come in two different flavors although some remotes may incorporate both modes.
+Infra-Red remotes (IR) require a line of sight from the remote to it's receiver.
+Radio Frequency (RF) remotes can control thru walls and other light structures.
 
+IR remotes are setup using LIRC commands.  The remote requires a custom configuration file to translate
+the key presses into a usable code.  irrecord is the LIRC program that creates this file.
 
 The second area is for humans to communicate with humans.
 

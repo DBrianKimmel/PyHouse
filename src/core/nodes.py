@@ -62,7 +62,7 @@ class API(object):
         # LOG.info("Initialized.")
 
     def Start(self, p_pyhouses_obj):
-        p_pyhouses_obj.CoreData.Nodes = {}
+        p_pyhouses_obj.CoreServicesData.Nodes = {}
         self.m_local.Start(p_pyhouses_obj)
         self.m_discovery.Start(p_pyhouses_obj)
         self.m_domain.Start(p_pyhouses_obj)

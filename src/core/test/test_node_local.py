@@ -1,12 +1,10 @@
 """
-PyHouse/src/core/test/test_node_local.py
-
-Created on Apr 29, 2014
-
-@author: briank
-
+@name: PyHouse/src/core/test/test_node_local.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
-
+@note: Created on Apr 29, 2014
+@license: MIT License
 @summary: This module is for testing local node data.
 """
 
@@ -58,8 +56,8 @@ class Test_02_ReadXML(unittest.TestCase):
     def setUp(self):
         self.m_pyhouses_obj = PyHouseData()
         self.m_pyhouses_obj.XmlRoot = ET.fromstring(XML)
-        self.m_pyhouses_obj.CoreData = CoreData()
-        self.m_pyhouses_obj.CoreData.Nodes[0] = NodeData()
+        self.m_pyhouses_obj.CoreServicesData = CoreData()
+        self.m_pyhouses_obj.CoreServicesData.Nodes[0] = NodeData()
         self.m_api = node_local.API()
 
     def test_0201_read_xml(self):

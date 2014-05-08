@@ -17,6 +17,63 @@ from twisted.application.service import Application
 from twisted.internet import reactor
 
 
+class BaseAAPyHouseObject(object):
+
+    def __init__(self):
+        self.Name = ''
+        self.Key = 0
+        self.Active = False
+        self.UUID = None
+
+
+class BaseLightingData(BaseAAPyHouseObject):
+    """Information
+    """
+
+    def __init__(self):
+        self.Comment = ''
+        self.Coords = ''  # Room relative coords of the light switch
+        self.Dimmable = False
+        self.Family = ''
+        self.RoomName = ''
+        self.Type = ''
+
+
+class ButtonData(BaseLightingData):
+
+    def __init__(self):
+        # super(ButtonData, self).__init__()
+        self.Type = 'Button'
+
+
+class ControllerData(BaseLightingData):
+    """This data is common to all controllers.
+    There is also interface information that controllers need.
+    """
+
+    def __init__(self):
+        # super(ControllerData, self).__init__()  # The core data
+        self.Type = 'Controller'  # Override the core definition
+        self.Interface = ''
+        self.Port = ''
+        #
+        self._DriverAPI = None  # Interface API() - Serial, USB etc.
+        self._HandlerAPI = None  # PLM, PIM, etc (family controller device handler) API() address
+        #
+        self._Data = None  # Interface specific data
+        self._Message = ''
+        self._Queue = None
+
+
+class LightData(BaseLightingData):
+
+    def __init__(self):
+        # super(LightData, self).__init__()
+        self.Controller = None
+        self.Type = 'Light'
+        self.CurLevel = 0
+
+
 class PyHouseData(object):
     """The master object, contains all other 'configuration' objects.
     """
@@ -31,7 +88,7 @@ class PyHouseData(object):
         self.LogsAPI = None
         self.WebAPI = None
         #
-        self.CoreData = {}
+        self.CoreServicesData = {}
         self.WebData = {}
         self.LogsData = {}
         self.HousesData = {}
@@ -48,29 +105,6 @@ class CoreData(object):
         self.DomainService = None
 
 
-class LocationData(object):
-
-    def __init__(self):
-        self.City = ''
-        self.Latitude = 28.938448
-        self.Longitude = -82.517208
-        self.Phone = ''
-        self.SavingTime = '-4:00'
-        self.State = 'FL'
-        self.Street = ''
-        self.TimeZone = '-5:00'
-        self.ZipCode = '12345'
-
-
-class BasePyHouseObject(object):
-
-    def __init__(self):
-        self.Name = ''
-        self.Key = 0
-        self.Active = False
-        self.UUID = None
-
-
 class HousesData(object):
     """This class holds the data about all houses defined in XML.
     """
@@ -83,7 +117,7 @@ class HousesData(object):
         self.HouseObject = {}
 
 
-class HouseData(BasePyHouseObject):
+class HouseData(BaseAAPyHouseObject):
 
     def __init__(self):
         """House.
@@ -113,7 +147,21 @@ class HouseData(BasePyHouseObject):
         self.Thermostat = {}
 
 
-class RoomData(BasePyHouseObject):
+class LocationData(object):
+
+    def __init__(self):
+        self.City = ''
+        self.Latitude = 28.938448
+        self.Longitude = -82.517208
+        self.Phone = ''
+        self.SavingTime = '-4:00'
+        self.State = 'FL'
+        self.Street = ''
+        self.TimeZone = '-5:00'
+        self.ZipCode = '12345'
+
+
+class RoomData(BaseAAPyHouseObject):
 
     def __init__(self):
         self.Comment = ''
@@ -122,7 +170,7 @@ class RoomData(BasePyHouseObject):
         self.Type = 'Room'
 
 
-class NodeData(BasePyHouseObject):
+class NodeData(BaseAAPyHouseObject):
 
     def __init__(self):
         self.ConnectionAddr = None
@@ -137,55 +185,7 @@ class LogData(object):
         self.Error = None
 
 
-class BaseLightingData(BasePyHouseObject):
-    """Information
-    """
-
-    def __init__(self):
-        self.Comment = ''
-        self.Coords = ''  # Room relative coords of the light switch
-        self.Dimmable = False
-        self.Family = ''
-        self.RoomName = ''
-        self.Type = ''
-
-
-class LightData(BaseLightingData):
-
-    def __init__(self):
-        # super(LightData, self).__init__()
-        self.Controller = None
-        self.Type = 'Light'
-        self.CurLevel = 0
-
-
-class ButtonData(BaseLightingData):
-
-    def __init__(self):
-        # super(ButtonData, self).__init__()
-        self.Type = 'Button'
-
-
-class ControllerData(BaseLightingData):
-    """This data is common to all controllers.
-    There is also interface information that controllers need.
-    """
-
-    def __init__(self):
-        # super(ControllerData, self).__init__()  # The core data
-        self.Type = 'Controller'  # Override the core definition
-        self.Interface = ''
-        self.Port = ''
-        #
-        self._DriverAPI = None  # Interface API() - Serial, USB etc.
-        self._HandlerAPI = None  # PLM, PIM, etc (family controller device handler) API() address
-        #
-        self._Data = None  # Interface specific data
-        self._Message = ''
-        self._Queue = None
-
-
-class ThermostatData(BasePyHouseObject):
+class ThermostatData(BaseAAPyHouseObject):
 
     def __init__(self):
         self.ThermostatAPI = None

@@ -18,10 +18,6 @@ class Test(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def test_load_device(self):
-        result = self.api.load_device(p_dict, p_dev)
-        self.assertEqual(result, 0)
-
     def test_controllers(self):
         pass
 

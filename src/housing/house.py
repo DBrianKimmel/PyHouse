@@ -67,7 +67,7 @@ class HouseReadWriteConfig(location.ReadWriteConfig, rooms.ReadWriteConfig):
         self.xml_read_common_info(p_house_obj, p_house_xml)
         p_house_obj.UUID = self.get_uuid_from_xml(p_house_xml, 'UUID')
         p_house_obj.Location = self.read_location_xml(p_house_obj, p_house_xml)
-        p_house_obj.Rooms = self.read_xml(p_house_obj, p_house_xml)
+        p_house_obj.Rooms = self.read_rooms_xml(p_house_obj, p_house_xml)
         return p_house_obj
 
     def write_xml(self, p_house_obj):

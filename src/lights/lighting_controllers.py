@@ -12,34 +12,11 @@ import xml.etree.ElementTree as ET
 # Import PyMh files and modules.
 from src.lights import lighting_core
 from src.drivers import interface
-# from src.families import family
-#
-# from src.utils.tools import PrintBytes
-# from src.utils.tools import PrintObject
+from src.core.data_objects import ControllerData
 
 
 g_debug = 0
 # 0 = off
-
-
-class ControllerData(lighting_core.CoreData):
-    """This data is common to all controllers.
-
-    There is also interface information that controllers need.
-    """
-
-    def __init__(self):
-        super(ControllerData, self).__init__()  # The core data
-        self.Type = 'Controller'  # Override the core definition
-        self.Interface = ''
-        self.Port = ''
-        #
-        self._DriverAPI = None  # Interface API() - Serial, USB etc.
-        self._HandlerAPI = None  # PLM, PIM, etc (family controller device handler) API() address
-        #
-        self._Data = None  # Interface specific data
-        self._Message = ''
-        self._Queue = None
 
 
 class ControllersAPI(lighting_core.CoreAPI):

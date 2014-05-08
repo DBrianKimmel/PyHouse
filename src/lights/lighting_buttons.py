@@ -7,18 +7,12 @@
 import xml.etree.ElementTree as ET
 
 # Import PyHouse files
+from src.core.data_objects import ButtonData
 from src.lights import lighting_core
 
 
 g_debug = 0
 # 0 = off
-
-
-class ButtonData(lighting_core.CoreData):
-
-    def __init__(self):
-        super(ButtonData, self).__init__()
-        self.Type = 'Button'
 
 
 class ButtonsAPI(lighting_core.CoreAPI):

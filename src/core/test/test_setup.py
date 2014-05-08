@@ -32,7 +32,7 @@ class Test_02_ReadXML(unittest.TestCase):
     def setUp(self):
         self.m_pyhouses_obj = PyHouseData()
         self.m_pyhouses_obj.XmlRoot = ET.fromstring(XML)
-        self.m_pyhouses_obj.CoreData = CoreData()
+        self.m_pyhouses_obj.CoreServicesData = CoreData()
         self.m_api = setup.API()
 
 

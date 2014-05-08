@@ -173,7 +173,7 @@ class DomainBoxDispatcher(AMP):
     def receive_NodeInformation(self, NodeInformationCommand, Name = None, Active = None, Address = None, Role = None):
         if g_debug >= 1:
             LOG.debug(' Dispatch - receive_NodeInformation  - RECEIVED')
-        for l_node in self.m_pyhouses_obj.CoreData.Nodes.itervalues():
+        for l_node in self.m_pyhouses_obj.CoreServicesData.Nodes.itervalues():
             if l_node.Name == Name:
                 pass
         _l_result = dict(Name = Name, Active = Active, Address = Address, Role = Role)
@@ -225,7 +225,7 @@ class AmpClientProtocol(DomainBoxDispatcher):
 
         if g_debug >= 1:
             LOG.debug('ClientProtocol - ConnectionMade to:{0:}, transp:{1:} (219)'.format(self.m_address, self.transport))
-        l_defer12 = self.send_NodeInformation(self.m_pyhouses_obj.CoreData.Nodes[0], self.protocol)
+        l_defer12 = self.send_NodeInformation(self.m_pyhouses_obj.CoreServicesData.Nodes[0], self.protocol)
         l_defer12.addCallback(cb_got_result12)
         l_defer12.addErrback(eb_err12)
 
@@ -285,7 +285,7 @@ class AmpClient(object):
 
             if g_debug >= 1:
                 LOG.debug('Client - cb_connected_l1 - Protocol:{0:} (279).'.format(p_protocol))
-            l_nodes = self.m_pyhouses_obj.CoreData.Nodes[0]
+            l_nodes = self.m_pyhouses_obj.CoreServicesData.Nodes[0]
             print('281-A'); l_defer12 = self.send_NodeInformation(l_nodes); print('281-B')
             if g_debug >= 1:
                 LOG.debug('Domain Client has connected to Server at addr {0:} - Sending Node Information (282).'.format(p_address))
@@ -296,7 +296,7 @@ class AmpClient(object):
             """
             p_result is always none here.  The next message I get is ClientProtocol - DataReceived
             """
-            l_result = p_pyhouses_obj.CoreData.Nodes[0].Name
+            l_result = p_pyhouses_obj.CoreServicesData.Nodes[0].Name
             if g_debug >= 1:
                 LOG.debug('cb_result_l1 - Client returning result from Server at Addr:{0:}, Result:{1:} (292).'.format(p_address, p_result))
             LocatorClass().NodeInformationResponse(l_result)
@@ -352,7 +352,7 @@ class AmpServerProtocol(DomainBoxDispatcher):
 
         if g_debug >= 1:
             LOG.debug('ServerProtocol - ConnectionMade to:{0:}, transp:{1:} (344)'.format('no address', self.transport))
-        l_defer12 = self.send_NodeInformation(self.m_pyhouses_obj.CoreData.Nodes[0])
+        l_defer12 = self.send_NodeInformation(self.m_pyhouses_obj.CoreServicesData.Nodes[0])
         l_defer12.addCallback(cb_got_result12)
         l_defer12.addErrback(eb_err12)
 
@@ -395,9 +395,9 @@ class Utility(AmpServer, AmpClient):
     m_pyhouses_obj = None
 
     def create_domain_service(self, p_pyhouses_obj, p_service):
-        p_pyhouses_obj.CoreData.DomainService = p_service
-        p_pyhouses_obj.CoreData.DomainService.setName('Domain')
-        p_pyhouses_obj.CoreData.DomainService.setServiceParent(p_pyhouses_obj.Application)
+        p_pyhouses_obj.CoreServicesData.DomainService = p_service
+        p_pyhouses_obj.CoreServicesData.DomainService.setName('Domain')
+        p_pyhouses_obj.CoreServicesData.DomainService.setServiceParent(p_pyhouses_obj.Application)
 
     def start_amp(self, p_pyhouses_obj):
         """
@@ -420,7 +420,7 @@ class Utility(AmpServer, AmpClient):
             @param _ignore: node_domain.AmpServerFactory on 8581
             @type _ignore: class 'twisted.internet.tcp.Port'
             """
-            l_nodes = self.m_pyhouses_obj.CoreData.Nodes
+            l_nodes = self.m_pyhouses_obj.CoreServicesData.Nodes
             for l_key, l_node in l_nodes.iteritems():
                 if l_key > -99:  # Skip ourself
                     self.create_client(self.m_pyhouses_obj, l_node.ConnectionAddr)

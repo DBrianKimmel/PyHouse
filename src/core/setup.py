@@ -43,7 +43,7 @@ class CoreData(object):
 class Utility(object):
 
     def dispatch(self):
-        _l_node = self.m_pyhouses_obj.CoreData.Nodes[0]
+        _l_node = self.m_pyhouses_obj.CoreServicesData.Nodes[0]
         pass
 
 
@@ -59,7 +59,7 @@ class API(object):
 
     def Start(self, p_pyhouses_obj):
         self.m_pyhouses_obj = p_pyhouses_obj
-        p_pyhouses_obj.CoreData = CoreData()
+        p_pyhouses_obj.CoreServicesData = CoreData()
         self.m_nodes.Start(p_pyhouses_obj)
         # House
         self.m_pyhouses_obj.HousesAPI = houses.API()

@@ -18,7 +18,7 @@ g_debug = 0
 # + = NOT USED HERE
 
 
-class CoreData(object):
+class XXXBaseLightingData(object):
     """Information
     """
 

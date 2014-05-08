@@ -27,7 +27,7 @@ m_logger = None
 
 class ReadWriteConfig(xml_tools.ConfigTools):
 
-    def read_xml(self, p_house_obj, p_house_xml):
+    def read_rooms_xml(self, p_house_obj, p_house_xml):
         l_count = 0
         l_rooms_xml = p_house_xml.find('Rooms')
         for l_room_xml in l_rooms_xml.iterfind('Room'):

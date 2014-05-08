@@ -12,10 +12,6 @@ from src.utils import pyh_log
 
 
 g_debug = 0
-# 0 = off
-# 1 = major routine entry
-# 2 = Startup Details
-# 3 = Minor routines
 
 LOG = pyh_log.getLogger('PyHouse.Dev_X10     ')
 
