@@ -27,6 +27,8 @@ import os
 import platform
 import xml.etree.ElementTree as ET
 
+# Import PyMh files and modules.
+from src.core.data_objects import NodeData
 from src.communication import ir_control
 from src.utils.xml_tools import PutGetXML
 from src.utils import pyh_log
@@ -66,18 +68,6 @@ class InterfaceData(object):
         self.MacAddress = ''
         self.V4Address = []
         self.V6Address = []
-
-
-class NodeData(object):
-
-    def __init__(self):
-        self.Name = None
-        self.Key = 0
-        self.Active = True
-        self.ConnectionAddr = None
-        self.Role = 0
-        self.UUID = None
-        self.Interfaces = {}
 
 
 class GetAllInterfaceData(object):

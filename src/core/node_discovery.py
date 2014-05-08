@@ -23,10 +23,11 @@ TODO: Delete nodes that have gone away.
 """
 
 # Import system type stuff
-
 from twisted.application import service
 from twisted.internet.protocol import DatagramProtocol, ConnectedDatagramProtocol
 
+# Import PyMh files and modules.
+from src.core.data_objects import NodeData
 from src.utils import pyh_log
 
 g_debug = 0
@@ -37,32 +38,14 @@ __all__ = [
            'API']
 
 PYHOUSE_MULTICAST_IP_V4 = '234.35.36.37'
-AMP_PORT = 8581
 PYHOUSE_DISCOVERY_PORT = 8582
 WHOS_THERE = "Who's There?"
 I_AM = "I am."
-
-
-class NodeData(object):
-
-    def __init__(self):
-        self.Name = None
-        self.Key = 0
-        self.Active = True
-        self.ConnectionAddr = None
-        self.Role = 0
-        self.Interfaces = {}
-
 
 class DGramUtil(object):
     m_address_list = []
     m_pyhouses_obj = None
     m_interface = ''
-
-    def setup_protocol(self):
-        self.transport.setTTL(4)
-        self.m_interface = self.transport.getOutgoingInterface()
-        # self.transport.setLoopbackMode(0)
 
     def _save_node_info(self, p_node):
         l_count = 0
@@ -89,10 +72,16 @@ class MulticastDiscoveryServerProtocol(DatagramProtocol, DGramUtil):
         self.m_pyhouses_obj = p_pyhouses_obj
 
     def startProtocol(self):
-        self.setup_protocol()
+        """
+        Called after protocol has started listening.
+        Set the TTL>1 so multicast will cross router hops:
+        Join a specific multicast group:
+        """
+        self.transport.setTTL(4)
+        self.transport.joinGroup(PYHOUSE_MULTICAST_IP_V4)
+        self.m_interface = self.transport.getOutgoingInterface()
         if g_debug >= 1:
             LOG.debug('Discovery Server Protocol started. {0:}'.format(self.m_interface))
-        _l_defer = self.transport.joinGroup(PYHOUSE_MULTICAST_IP_V4)
 
     def datagramReceived(self, p_datagram, p_address):
         """
@@ -127,14 +116,14 @@ class MulticastDiscoveryClientProtocol(ConnectedDatagramProtocol, DGramUtil):
     def startProtocol(self):
         """
         Called when the protocol starts up.
-
         All listeners on the Multicast address (including us) will receive the "Who's There?" message.
         """
-        self.setup_protocol()
+        self.transport.setTTL(4)
+        self.transport.joinGroup(PYHOUSE_MULTICAST_IP_V4)
+        self.m_interface = self.transport.getOutgoingInterface()
+        self.transport.write(WHOS_THERE, (PYHOUSE_MULTICAST_IP_V4, PYHOUSE_DISCOVERY_PORT))
         if g_debug >= 1:
             LOG.debug('Discovery Client Protocol started  {0:}.'.format(self.m_interface))
-        _l_defer = self.transport.joinGroup(PYHOUSE_MULTICAST_IP_V4)
-        self.transport.write(WHOS_THERE, (PYHOUSE_MULTICAST_IP_V4, PYHOUSE_DISCOVERY_PORT))
 
     def datagramReceived(self, p_datagram, p_address):
         l_node = NodeData()
@@ -177,7 +166,7 @@ class API(Utility):
     def Start(self, p_pyhouses_obj):
         self.start_node_discovery(p_pyhouses_obj)
 
-    def Stop(self, p_xml):
+    def Stop(self, _p_xml):
         LOG.info("Stopped.")
 
 # ## END DBK

@@ -19,6 +19,7 @@ Then start the House and all the sub systems.
 
 # Import system type stuff
 
+# Import PyMh files and modules.
 from src.core import nodes
 from src.entertain import entertainment
 from src.housing import houses
