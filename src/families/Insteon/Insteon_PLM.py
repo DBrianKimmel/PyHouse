@@ -434,7 +434,7 @@ class DecodeResponses(CreateCommands):
             l_10 = l_message[10]
         except IndexError:
             l_10 = 0
-            LOG.warn("Short 50 message rxed - {p:}".format(PrintBytes(l_message)))
+            LOG.warning("Short 50 message rxed - {p:}".format(PrintBytes(l_message)))
         l_data = [l_9, l_10]
         l_debug_msg = 'Standard Message; '
         l_flags = self._decode_message_flag(l_8)
@@ -630,7 +630,7 @@ class DecodeResponses(CreateCommands):
             l_8 = l_message[8]
         except IndexError:
             l_8 = 0
-            LOG.warn("Short 62 message rxed - {p:}".format(PrintBytes(l_message)))
+            LOG.warning("Short 62 message rxed - {p:}".format(PrintBytes(l_message)))
         l_ack = self._get_ack_nak(l_8)
         l_debug_msg = "Device:{0:}, {1:}".format(l_obj.Name, l_ack)
         if g_debug >= 1:
@@ -736,7 +736,7 @@ class DecodeResponses(CreateCommands):
             l_5 = l_message[5]
         except IndexError:
             l_5 = 0
-            LOG.warn("Short 73 message rxed - {p:}".format(PrintBytes(l_message)))
+            LOG.warning("Short 73 message rxed - {p:}".format(PrintBytes(l_message)))
         l_flags = l_message[2]
         l_spare1 = l_message[3]
         l_spare2 = l_message[4]

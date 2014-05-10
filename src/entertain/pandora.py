@@ -73,7 +73,7 @@ class BarProcessControl(protocol.ProcessProtocol):
         LOG.debug("Data = {0:}".format(l_data))
 
     def errReceived(self, p_data):
-        LOG.warn("StdErr received - {0:}".format(p_data))
+        LOG.warning("StdErr received - {0:}".format(p_data))
 
 
 class API(object):

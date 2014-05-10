@@ -61,7 +61,7 @@ class SchedulesElement(athena.LiveElement):
             try:
                 del self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Schedules[l_schedule_ix]
             except AttributeError as e:
-                LOG.warn('Failed to delete schedule: {0:}, ix:{1:}').format(e, l_schedule_ix)
+                LOG.warning('Failed to delete schedule: {0:}, ix:{1:}').format(e, l_schedule_ix)
             return
         try:
             l_obj = self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Schedules[l_schedule_ix]

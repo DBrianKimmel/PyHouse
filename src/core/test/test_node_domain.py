@@ -1,18 +1,22 @@
 """
-Created on Apr 25, 2014
+@name: PyHouse/src/core/node_domain.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
+@copyright: 2010-2014 by D. Brian Kimmel
+@note: Created on Apr 25, 2014
+@license: MIT License
+@summary: This module is for testing the AMP request/response protocol
 
-@author: briank
+This code was taken of some test for the twisted AMP module but it has been changed almost
+completely to what we need.
 """
-
-# Copyright (c) 2005 Divmod, Inc.
-# Copyright (c) 2007-2008 Twisted Matrix Laboratories.
-# See LICENSE for details.
 
 """
 Tests for L{twisted.protocols.amp}.
 """
 
-from twisted.python import filepath
+# Import system type stuff
+# from twisted.python import filepath
 from twisted.python.failure import Failure
 from twisted.protocols import amp
 from twisted.trial import unittest
@@ -20,6 +24,9 @@ from twisted.internet import protocol, defer, error, reactor  # , interfaces
 from twisted.test import iosim
 from twisted.test.proto_helpers import StringTransport
 
+# Import PyMh files and modules.
+from src.core import node_domain
+from src.core.data_objects import PyHouseData
 
 class TestProtocol(protocol.Protocol):
 
@@ -116,12 +123,6 @@ class FutureHello(amp.Command):
     errors = {UnfriendlyGreeting: 'UNFRIENDLY'}
 
 
-class InvalidCommand(amp.Command):
-    """
-    An example of an invalid command.
-    """
-
-
 class BrokenReturn(amp.Command):
     """ An example of a perfectly good command, but the handler is going to return None...
     """
@@ -205,6 +206,11 @@ class SimpleSymmetricCommandProtocol(FactoryNotifier):
         # TODO:
         print('DBK SimpleSymetricCommandProtocol - sendHello')
         return self.callRemote(Hello, hello = p_text, mixedCase = 'DBK - mixedCase - SimpleSymetricCommandProtocol')
+
+    def sendInfo(self, p_text):
+        print('DBK SimpleSymetricCommandProtocol - sendHello')
+        return self.callRemote(node_domain.NodeInformationCommand,
+                               Name = p_text, Address = '192.168.1.2')
 
     def receive_Hello(self, hello, From, optional = None, Print = None, mixedCase = None, dash_arg = None, underscore_arg = None):
         From = From; optional = optional; Print = Print; mixedCase = mixedCase; dash_arg = dash_arg; underscore_arg = underscore_arg
@@ -323,81 +329,7 @@ class LiteralAmp(amp.AMP):
         return
 
 
-
-"""
-This test section will test to see if data can be encoded and parsed
-"""
-
-class Test_01_Parsing(unittest.TestCase):
-
-    def test_0101_booleanValues(self):
-        """
-        Verify that the Boolean parser parses 'True' and 'False', but nothing else.
-        """
-        b = amp.Boolean()
-        self.assertEquals(b.fromString("True"), True)
-        self.assertEquals(b.fromString("False"), False)
-        self.assertRaises(TypeError, b.fromString, "ninja")
-        self.assertRaises(TypeError, b.fromString, "true")
-        self.assertRaises(TypeError, b.fromString, "TRUE")
-        self.assertEquals(b.toString(True), 'True')
-        self.assertEquals(b.toString(False), 'False')
-
-    def test_0102_pathValueRoundTrip(self):
-        """
-        Verify the 'Path' argument can parse and emit a file path.
-        """
-        fp = filepath.FilePath(self.mktemp())
-        p = amp.Path()
-        s = p.toString(fp)
-        v = p.fromString(s)
-        self.assertNotIdentical(fp, v)  # sanity check
-        self.assertEquals(fp, v)
-
-
-    def test_0103_sillyEmptyThing(self):
-        """
-        Test that empty boxes raise an error; they aren't supposed to be sent on purpose.
-        """
-        a = amp.AMP()
-        return self.assertRaises(amp.NoEmptyBoxes, a.ampBoxReceived, amp.Box())
-
-
-    def test_0104_ParsingRoundTrip(self):
-        """
-        Verify that various kinds of data make it through the encode/parse round-trip unharmed.
-        """
-        l_client, l_server, l_pump = connectedServerAndClient(ClientClass = LiteralAmp, ServerClass = LiteralAmp)
-        SIMPLE = ('simple', 'test')
-        CE = ('ceq', ': ')
-        CR = ('crtest', 'test\r')
-        LF = ('lftest', 'hello\n')
-        NEWLINE = ('newline', 'test\r\none\r\ntwo')
-        NEWLINE2 = ('newline2', 'test\r\none\r\n two')
-#        BLANKLINE = ('newline3', 'test\r\n\r\nblank\r\n\r\nline')
-        BODYTEST = ('body', 'blah\r\n\r\ntesttest')
-
-        testData = [
-            [SIMPLE],
-            [SIMPLE, BODYTEST],
-            [SIMPLE, CE],
-            [SIMPLE, CR],
-            [SIMPLE, CE, CR, LF],
-            [CE, CR, LF],
-            [SIMPLE, NEWLINE, CE, NEWLINE2],
-            [BODYTEST, SIMPLE, NEWLINE]
-            ]
-
-        for test in testData:
-            jb = amp.Box()
-            jb.update(dict(test))
-            jb._sendTo(l_client)
-            l_pump.flush()
-            self.assertEquals(l_server.boxes[-1], jb)
-
-
-
-"""
+"""  ========================================================================================
 This section will test the dispatcher.
 Data will NOT actually be sent.
 """
@@ -511,22 +443,32 @@ class Test_02_CommandDispatch(unittest.TestCase):
         self.assertEquals(len(self.sender.unhandledErrors), 1)
         self.assertEquals(self.sender.unhandledErrors[0].value, err)
 
-    def test_0204_callRemote(self):
+    def Xtest_0204_callRemote(self):
         """
         L{CommandDispatcher.callRemote} should emit a properly formatted '_ask' box to its boxSender and record an outstanding L{Deferred}.
         When a corresponding '_answer' packet is received, the L{Deferred} should be fired,
          and the results translated via the given L{Command}'s response de-serialization.
         """
-        D = self.dispatcher.callRemote(Hello, hello = 'world')
-        self.assertEquals(self.sender.sentBoxes, [amp.AmpBox(_command = "hello", _ask = "1", hello = "world")])
+        l_defer = self.dispatcher.callRemote(Hello, hello = 'world_0204')
+        self.assertEquals(self.sender.sentBoxes, [amp.AmpBox(_command = "hello", _ask = "1", hello = "world_0204")])
         answers = []
-        D.addCallback(answers.append)
+        l_defer.addCallback(answers.append)
         self.assertEquals(answers, [])
         self.dispatcher.ampBoxReceived(amp.AmpBox({'hello': "yay", 'print': "ignored", '_answer': "1"}))
         self.assertEquals(answers, [dict(hello = "yay", Print = u"ignored")])
 
+    def test_0205_DBK_NodeInfo(self):
+        l_defer = self.dispatcher.callRemote(node_domain.NodeInformationCommand, Name = 'DBK - 0205')
+        self.assertEquals(self.sender.sentBoxes, [amp.AmpBox(_command = "NodeInformationCommand", _ask = "1", Name = "DBK - 0205")])
+        answers = []
+        l_defer.addCallback(answers.append)
+        self.assertEquals(answers, [])
+        self.dispatcher.ampBoxReceived(amp.AmpBox({'Answer': "yay-0205", 'Name': "Marcia", '_answer': "1"}))
+        print('Answers {0:}'.format(answers))
+        self.assertEquals(answers, [dict(Answer = "yay-0205", Name = "Marcia")])
 
-"""
+
+"""  ========================================================================================
 This section will test command locators
 
 The CommandLocator should enable users to specify responders to commands as functions that take structured objects, annotated with metadata.
@@ -596,7 +538,7 @@ class Test_03_CommandLocator(unittest.TestCase):
             self.assertEquals(values, amp.AmpBox(cookieplus = '8'))
         return result.addCallback(done)
 
-    def test_0302_lookupFunctionDeprecatedOverride(self):
+    def Xtest_0302_lookupFunctionDeprecatedOverride(self):
         """
         Subclasses which override locateResponder under its old name, lookupFunction, should have the override invoked instead.
         (This tests an AMP subclass, because in the version of the code that could invoke this deprecated code path, there was no L{CommandLocator}.)
@@ -613,7 +555,7 @@ class Test_03_CommandLocator(unittest.TestCase):
             self.assertEquals(values, amp.AmpBox(cookieplus = '8'))
         return result.addCallback(done)
 
-    def test_0303_lookupFunctionDeprecatedInvoke(self):
+    def Xtest_0303_lookupFunctionDeprecatedInvoke(self):
         """
         Invoking locateResponder under its old name, lookupFunction, should emit a deprecation warning, but do the same thing.
         """
@@ -627,7 +569,7 @@ class Test_03_CommandLocator(unittest.TestCase):
 
 
 
-"""
+"""  ========================================================================================
 This section will test binary box protocols
 """
 
@@ -686,7 +628,7 @@ class Test_04_BinaryProtocol(unittest.TestCase):
         protocol.makeConnection(None)
         self.assertIdentical(self._boxSender, protocol)
 
-    def test_0402_sendBoxInStartReceivingBoxes(self):
+    def Xtest_0402_sendBoxInStartReceivingBoxes(self):
         """
         The L{IBoxReceiver} which is started when L{amp.BinaryBoxProtocol} is connected to a transport can call C{sendBox} on the L{IBoxSender}
         passed to it before C{startReceivingBoxes} returns and have that box sent.
@@ -700,7 +642,7 @@ class Test_04_BinaryProtocol(unittest.TestCase):
         protocol.makeConnection(transport)
         self.assertEqual(transport.value(), '\x00\x03foo\x00\x03bar\x00\x00')
 
-    def test_0403_receiveBoxStateMachine(self):
+    def Xtest_0403_receiveBoxStateMachine(self):
         """
         When a binary box protocol receives:
             * a key
@@ -714,7 +656,7 @@ class Test_04_BinaryProtocol(unittest.TestCase):
         a.stringReceived("")
         self.assertEquals(self.boxes, [amp.AmpBox(hello = "world")])
 
-    def test_0404_firstBoxFirstKeyExcessiveLength(self):
+    def Xtest_0404_firstBoxFirstKeyExcessiveLength(self):
         """
         L{amp.BinaryBoxProtocol} drops its connection if the length prefix for the first a key it receives is larger than 255.
         """
@@ -724,7 +666,7 @@ class Test_04_BinaryProtocol(unittest.TestCase):
         protocol.dataReceived('\x01\x00')
         self.assertTrue(transport.disconnecting)
 
-    def test_0405_firstBoxSubsequentKeyExcessiveLength(self):
+    def Xtest_0405_firstBoxSubsequentKeyExcessiveLength(self):
         """
         L{amp.BinaryBoxProtocol} drops its connection if the length prefix for a subsequent key in the first box it receives is larger than 255.
         """
@@ -736,7 +678,7 @@ class Test_04_BinaryProtocol(unittest.TestCase):
         protocol.dataReceived('\x01\x00')
         self.assertTrue(transport.disconnecting)
 
-    def test_0406_subsequentBoxFirstKeyExcessiveLength(self):
+    def Xtest_0406_subsequentBoxFirstKeyExcessiveLength(self):
         """
         L{amp.BinaryBoxProtocol} drops its connection if the length prefix for the first key in a subsequent box it receives is larger than 255.
         """
@@ -748,7 +690,7 @@ class Test_04_BinaryProtocol(unittest.TestCase):
         protocol.dataReceived('\x01\x00')
         self.assertTrue(transport.disconnecting)
 
-    def test_0407_excessiveKeyFailure(self):
+    def Xtest_0407_excessiveKeyFailure(self):
         """
         If L{amp.BinaryBoxProtocol} disconnects because it received a key length prefix which was too large, the L{IBoxReceiver}'s
         C{stopReceivingBoxes} method is called with a L{TooLong} failure.
@@ -807,7 +749,7 @@ class Test_04_BinaryProtocol(unittest.TestCase):
         a.connectionLost(connectionFailure)
         self.assertIdentical(self.stopReason, connectionFailure)
 
-    def test_0412_protocolSwitch(self):
+    def Xtest_0412_protocolSwitch(self):
         """
         L{BinaryBoxProtocol} has the capacity to switch to a different protocol on a box boundary.
         When a protocol is in the process of switching, it cannot receive traffic.
@@ -838,7 +780,7 @@ class Test_04_BinaryProtocol(unittest.TestCase):
         self.assertEquals("".join(otherProto.data), "\x00\x00Hello, world!more data")
         self.assertRaises(amp.ProtocolSwitched, a.sendBox, anyOldBox)
 
-    def test_0413_protocolSwitchInvalidStates(self):
+    def Xtest_0413_protocolSwitchInvalidStates(self):
         """
         In order to make sure the protocol never gets any invalid data sent into the middle of a box, it must be locked for switching before it is switched.
         It can only be unlocked if the switch failed, and attempting to send a box while it is locked should raise an exception.
@@ -856,7 +798,7 @@ class Test_04_BinaryProtocol(unittest.TestCase):
         a._switchTo(otherProto)
         self.assertRaises(amp.ProtocolSwitched, a._unlockFromSwitch)
 
-    def test_0414_protocolSwitchLoseConnection(self):
+    def Xtest_0414_protocolSwitchLoseConnection(self):
         """
         When the protocol is switched, it should notify its nested protocol of disconnection.
         """
@@ -873,7 +815,7 @@ class Test_04_BinaryProtocol(unittest.TestCase):
         a.connectionLost(connectionFailure)
         self.assertEquals(connectionLoser.reason, connectionFailure)
 
-    def test_0415_protocolSwitchLoseClientConnection(self):
+    def Xtest_0415_protocolSwitchLoseClientConnection(self):
         """
         When the protocol is switched, it should notify its nested client protocol factory of disconnection.
         """
@@ -891,28 +833,26 @@ class Test_04_BinaryProtocol(unittest.TestCase):
         a.connectionLost(connectionFailure)
         self.assertEquals(clientLoser.reason, connectionFailure)
 
+    def test_0416_DBK_sendBox(self):
+        """
+        When a binary box protocol sends a box, it should emit the serialized bytes of that box to its transport.
+        """
+        a = amp.BinaryBoxProtocol(self)
+        a.makeConnection(self)
+        aBox = amp.Box({"testKey": "valueTest", "someData": "hello"})
+        a.makeConnection(self)
+        a.sendBox(aBox)
+        self.assertEquals(''.join(self.data), aBox.serialize())
 
 
-"""
+
+"""  ========================================================================================
 This section tests AMP???
 """
 
 class Test_05_AMP(unittest.TestCase):
 
-    def test_0501_interfaceDeclarations(self):
-        """
-        The classes in the amp module ought to implement the interfaces that are declared for their benefit.
-        """
-        for interface, implementation in [(amp.IBoxSender, amp.BinaryBoxProtocol),
-                                          (amp.IBoxReceiver, amp.BoxDispatcher),
-                                          (amp.IResponderLocator, amp.CommandLocator),
-                                          (amp.IResponderLocator, amp.SimpleStringLocator),
-                                          (amp.IBoxSender, amp.AMP),
-                                          (amp.IBoxReceiver, amp.AMP),
-                                          (amp.IResponderLocator, amp.AMP)]:
-            self.failUnless(interface.implementedBy(implementation), "%s does not implements(%s)" % (implementation, interface))
-
-    def test_0502_helloWorld(self):
+    def Xtest_0501_helloWorld(self):
         """
         Verify that a simple command can be sent and its response received with the simple low-level string-based API.
         """
@@ -924,7 +864,7 @@ class Test_05_AMP(unittest.TestCase):
         print('0502 L[]:{0:}'.format(L))
         self.assertEquals(L[0]['hello'], HELLO)
 
-    def test_0503_wireFormatRoundTrip(self):
+    def Xtest_0503_wireFormatRoundTrip(self):
         """
         Verify that mixed-case, underscored and dashed arguments are mapped to their python names properly.
         """
@@ -936,7 +876,7 @@ class Test_05_AMP(unittest.TestCase):
         print('0503 L[]:{0:}'.format(L))
         self.assertEquals(L[0]['hello'], HELLO)
 
-    def test_0504_helloWorldUnicode(self):
+    def Xtest_0504_helloWorldUnicode(self):
         """
         Verify that unicode arguments can be encoded and decoded.
         """
@@ -950,7 +890,7 @@ class Test_05_AMP(unittest.TestCase):
         self.assertEquals(L[0]['hello'], HELLO)
         self.assertEquals(L[0]['Print'], HELLO_UNICODE)
 
-    def test_0505_unknownCommandLow(self):
+    def Xtest_0505_unknownCommandLow(self):
         """
         Verify that unknown commands using low-level APIs will be rejected with an error, but will NOT terminate the connection.
         """
@@ -972,19 +912,21 @@ class Test_05_AMP(unittest.TestCase):
         l_pump.flush()
         self.assertEquals(L[0]['hello'], HELLO)
 
-    def test_0506_unknownCommandHigh(self):
+    def test_0506_DBK_unknownCommandHigh(self):
         """
         Verify that unknown commands using high-level APIs will be rejected with an error, but will NOT terminate the connection.
         """
         l_client, _l_server, l_pump = connectedServerAndClient()
         L = []
-        def clearAndAdd(e):
+        def eb_clearAndAdd(e):
             """
             You can't propagate the error...
             """
             e.trap(amp.UnhandledCommand)
             return "OK"
-        l_client.callRemote(InvalidCommand).addErrback(clearAndAdd).addCallback(L.append)
+        l_defer = l_client.callRemote(node_domain.InvalidCommand)
+        l_defer.addErrback(eb_clearAndAdd)
+        l_defer.addCallback(L.append)
         l_pump.flush()
         print('0506-A L[]:{0:}'.format(L))
         self.assertEquals(L.pop(), "OK")
@@ -1064,7 +1006,8 @@ class Test_05_AMP(unittest.TestCase):
         """ TODO:
         Verify that a simple command can be sent and its response received with the high-level value parsing API.
         """
-        l_client, _l_server, l_pump = connectedServerAndClient(ServerClass = SimpleSymmetricCommandProtocol, ClientClass = SimpleSymmetricCommandProtocol)
+        l_client, _l_server, l_pump = connectedServerAndClient(ServerClass = SimpleSymmetricCommandProtocol,
+                                                               ClientClass = SimpleSymmetricCommandProtocol)
         L = []
         HELLO = '0512 - world'
         l_client.sendHello(HELLO).addCallback(L.append)
@@ -1075,13 +1018,28 @@ class Test_05_AMP(unittest.TestCase):
         print('0512-D L[]: {0:}'.format(L))
         self.assertEquals(L[0]['hello'], HELLO)
 
+    def test_0512A_DBK_InfoCommand(self):
+        """ TODO:
+        Verify that a simple command can be sent and its response received with the high-level value parsing API.
+        """
+        l_client, _l_server, l_pump = connectedServerAndClient(ServerClass = SimpleSymmetricCommandProtocol,
+                                                               ClientClass = SimpleSymmetricCommandProtocol)
+        L = []
+        HELLO = '0512 - world'
+        l_defer = l_client.sendHello(HELLO)
+        l_defer.addCallback(L.append)
+        l_pump.flush()
+        print('0512A-1 L[]: {0:}'.format(L))
+        self.assertEquals(L[0]['hello'], HELLO)
+
     def test_0513_helloErrorHandling(self):
         """
         Verify that if a known error type is raised and handled, it will be properly relayed to the other end of the connection
         and translated into an exception, and no error will be logged.
         """
         L = []
-        l_client, _l_server, l_pump = connectedServerAndClient(ServerClass = SimpleSymmetricCommandProtocol, ClientClass = SimpleSymmetricCommandProtocol)
+        l_client, _l_server, l_pump = connectedServerAndClient(ServerClass = SimpleSymmetricCommandProtocol,
+                                                               ClientClass = SimpleSymmetricCommandProtocol)
         HELLO = 'screw you'
         l_client.sendHello(HELLO).addErrback(L.append)
         l_pump.flush()
@@ -1378,6 +1336,9 @@ class Test_05_AMP(unittest.TestCase):
         # self.assertEquals(L[1], dict(Print = None, hello = 'aaa'))
 
 
+
+"""  ========================================================================================
+"""
 class PretendRemoteCertificateAuthority:
     def checkIsPretendRemote(self):
         return True
@@ -1514,6 +1475,9 @@ class Test_06_TLS(unittest.TestCase):
         self.assertFailure(d, error.PeerVerifyError)
 
 
+
+"""  ========================================================================================
+"""
 class InheritedError(Exception):
     """
     This error is used to check inheritance.
@@ -1620,6 +1584,10 @@ class Test_07_CommandInheritance(unittest.TestCase):
         return self.errorCheck(InheritedError, AddedCommandProtocol, AddErrorsCommand, other = False)
 
 
+
+"""  ========================================================================================
+"""
+
 def _loseAndPass(err, proto):
     # be specific, pass on the error to the client.
     err.trap(error.ConnectionLost, error.ConnectionDone)
@@ -1718,6 +1686,10 @@ class Test_08_LiveFireTLSTestCase(LiveFireBase, unittest.TestCase):
         return self.cli.callRemote(amp.StartTLS, tls_localCertificate = cert, tls_verifyAuthorities = [cert]).addCallback(secured)
 
 
+
+"""  ========================================================================================
+"""
+
 class SlightlySmartTLS(SimpleSymmetricCommandProtocol):
     """
     Specific implementation of server side protocol with different management of TLS.
@@ -1728,6 +1700,7 @@ class SlightlySmartTLS(SimpleSymmetricCommandProtocol):
         """
         return dict(tls_localCertificate = tempcert)
     amp.StartTLS.responder(getTLSVars)
+
 
 
 class Test_09_PlainVanillaLiveFire(LiveFireBase, unittest.TestCase):
@@ -1744,6 +1717,10 @@ class Test_09_PlainVanillaLiveFire(LiveFireBase, unittest.TestCase):
         return self.cli.callRemote(amp.StartTLS).addCallback(secured)
 
 
+
+"""  ========================================================================================
+"""
+
 class Test_10_WithServerTLSVerification(LiveFireBase, unittest.TestCase):
     clientProto = SimpleSymmetricCommandProtocol
     serverProto = SlightlySmartTLS
@@ -1757,6 +1734,9 @@ class Test_10_WithServerTLSVerification(LiveFireBase, unittest.TestCase):
         return self.cli.callRemote(amp.StartTLS, tls_verifyAuthorities = [tempcert]).addCallback(secured)
 
 
+
+"""  ========================================================================================
+"""
 
 class ProtocolIncludingArgument(amp.Argument):
     """
@@ -1933,17 +1913,21 @@ class Test_11_CommandTestCase(unittest.TestCase):
         Making a remote call on a L{amp.Command} subclass which overrides the C{makeArguments} method
         should call that C{makeArguments} method to get the response.
         """
+        def cb_gotResponse(_ignore):
+            self.assertEqual(client.makeArgumentsArguments, ({"weird": argument}, client))
         client = NoNetworkProtocol()
         argument = object()
         response = client.callRemote(MagicSchemaCommand, weird = argument)
-        def gotResponse(_ign):
-            self.assertEqual(client.makeArgumentsArguments, ({"weird": argument}, client))
-        response.addCallback(gotResponse)
+        response.addCallback(cb_gotResponse)
         return response
 
-# if not interfaces.IReactorSSL.providedBy(reactor):
-#    skipMsg = 'This test case requires SSL support in the reactor'
-#    TLSTest.skip = skipMsg
-#    LiveFireTLSTestCase.skip = skipMsg
-#    PlainVanillaLiveFire.skip = skipMsg
-#    WithServerTLSVerification.skip = skipMsg
+    def test_1108_DBK_Info(self):
+        def cb_gotResponse(_ignore):
+            self.assertEqual(l_client.makeArgumentsArguments, ({"Name": 'Test_1108'}, l_client))
+        l_pyhouses_obj = PyHouseData()
+        l_client = node_domain.AmpClientProtocol('192.168.1.1', l_pyhouses_obj)
+        response = l_client.callRemote(node_domain.NodeInformationCommand, Name = 'Test_1108')
+        response.addCallback(cb_gotResponse)
+        return response
+
+# ## END DBK

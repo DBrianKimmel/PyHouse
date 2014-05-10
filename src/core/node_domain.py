@@ -1,15 +1,12 @@
 """
+-*- test-case-name: PyHouse.src.core.test.test_node_domain -*-
+
 @name: PyHouse/src/core/node_domain.py
-
-Created on Apr 3, 2014
-
-# -*- test-case-name: PyHouse.src.core.test.test_node_domain -*-
-
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
-@copyright: 2014 by D. Brian Kimmel
+@copyright: 2010-2014 by D. Brian Kimmel
+@note: Created on Apr 3, 2014
 @license: MIT License
-
 @summary: This module is for AMP request/response protocol
 
 This Module is the hub of a domain communication system.
@@ -23,14 +20,16 @@ There is no central node so each node needs to talk with all other nodes.
 from twisted.application.internet import StreamServerEndpointService
 from twisted.internet.endpoints import serverFromString, TCP4ClientEndpoint
 from twisted.internet.protocol import ClientFactory, ServerFactory
-from twisted.protocols.amp import AMP, Integer, Unicode, String, Command, IBoxReceiver, CommandLocator, BinaryBoxProtocol, BoxDispatcher
+from twisted.protocols.amp import AMP, Integer, Unicode, String, Command, CommandLocator, BinaryBoxProtocol  # , BoxDispatcher
+# from twisted.protocols.amp import IBoxReceiver
 from twisted.python.filepath import FilePath
-from zope.interface import implements
+# from zope.interface import implements
 from twisted.internet.defer import Deferred
 
+# Import PyMh files and modules.
 from src.utils import pyh_log
 
-g_debug = 1
+g_debug = 0
 LOG = pyh_log.getLogger('PyHouse.NodeDomain  ')
 
 NODE_SERVER = 'tcp:port=8581'
@@ -57,7 +56,14 @@ class IrPacketError(Exception): pass
 """ ------------------------------------------------------------------
  Commands
 """
+class InvalidCommand(Command):
+    """
+    An example of an invalid command.  everything is massing.
+    """
+
+
 class NodeInformationCommand(Command):
+    commandName = 'NodeInformationCommand'
     arguments = [('Name', String()),
                  ('Active', String(optional = True)),
                  ('Address', String(optional = True)),
@@ -67,7 +73,7 @@ class NodeInformationCommand(Command):
     response = [('Name', String()),
                 ('Answer', String(optional = True))
                 ]
-    errors = {NodeInformationError: 'Name error'}
+    # errors = {NodeInformationError: 'Name error'}
 
 
 class IrPacketCommand(Command):
@@ -109,7 +115,7 @@ class LocatorClass(CommandLocator):
 # Boxes
 
 class DomainBoxDispatcher(AMP):
-    implements (IBoxReceiver)
+    # implements (IBoxReceiver)
 
     def __init__(self, p_pyhouses_obj):
         """
@@ -119,11 +125,11 @@ class DomainBoxDispatcher(AMP):
         self.m_pyhouses_obj = p_pyhouses_obj
         self.m_amp = self
         if g_debug >= 1:
-            LOG.debug(' Dispatch - initialized. (121)')
+            LOG.debug(' Dispatch - initialized. (127)')
 
     def makeConnection(self, p_transport):
         if g_debug >= 1:
-            LOG.debug(' Dispatch - makeConnection - transport:{0:} (125)'.format(p_transport))
+            LOG.debug(' Dispatch - makeConnection - transport:{0:} (131)'.format(p_transport))
         AMP.makeConnection(self, p_transport)
 
     def connectionMade(self):
@@ -134,46 +140,47 @@ class DomainBoxDispatcher(AMP):
         If you need to send any greeting or initial message, do it here.
         """
         if g_debug >= 1:
-            LOG.debug(' Dispatch - connectionMade (130)')
+            LOG.debug(' Dispatch - connectionMade (142)')
         pass
 
     def startReceivingBoxes(self, p_boxSender):
         if g_debug >= 1:
-            LOG.debug(' Dispatch - Start Receiving boxes - Sender:{0:} (135)'.format(p_boxSender))
+            LOG.debug(' Dispatch - Start Receiving boxes - Sender:{0:} (147)'.format(p_boxSender))
         self.boxSender = p_boxSender
 
     def ampBoxReceived(self, p_box):
         if g_debug >= 1:
-            LOG.debug(' Dispatch - Received box - Box:{0:} (140)'.format(p_box))
+            LOG.debug(' Dispatch - Received box - Box:{0:} (152)'.format(p_box))
         self.boxSender.sendBox(p_box)
 
     def stopReceivingBoxes(self, p_reason):
         if g_debug >= 1:
-            LOG.debug(' Dispatch - Stop Receiving boxes - {0:} (145)'.format(p_reason))
+            LOG.debug(' Dispatch - Stop Receiving boxes - {0:} (157)'.format(p_reason))
         self.boxSender = None
 
     def send_NodeInformation(self, p_node):
         """For some reason, this gives a error 'NoneType' object has no attribute 'sendBox'
         The information is sent somehow.
         """
-        print('152')
-        l_call = self
-        if g_debug >= 0:
-            LOG.debug(' Dispatch - send_NodeInformation  l_call = {0:} (155)'.format(l_call))
+        l_call = self.boxReceiver
+        if g_debug >= 1:
+            LOG.debug(' Dispatch - send_NodeInformation  l_call = {0:} (167)'.format(l_call))
+            LOG.debug('    self = {0:}\n'.format(vars(self)))
         try:
             l_defer = l_call.callRemote(NodeInformationCommand, Name = p_node.Name, Active = str(p_node.Active),
-                    Address = p_node.ConnectionAddr, Role = int(p_node.Role))
+                    Address = p_node.ConnectionAddr_IPv4, Role = int(p_node.Role))
             if g_debug >= 1:
-                LOG.debug(' Dispatch - send_NodeInformation  - SENT to {0:} (160)'.format(self.m_address))
+                # LOG.debug(' Dispatch - send_NodeInformation  - SENT to {0:} (171)'.format(self.m_address))
+                pass
         except AttributeError as l_error:
-            LOG.error(' Dispatch - send_NodeInformation - Attribute error - {0:}'.format(l_error))
+            LOG.error(' Dispatch - send_NodeInformation - Attribute error:"{0:}" (173)'.format(l_error))
             l_defer = Deferred()
         return l_defer
 
     def receive_NodeInformation(self, NodeInformationCommand, Name = None, Active = None, Address = None, Role = None):
         if g_debug >= 1:
-            LOG.debug(' Dispatch - receive_NodeInformation  - RECEIVED')
-        for l_node in self.m_pyhouses_obj.CoreServicesData.Nodes.itervalues():
+            LOG.debug(' Dispatch - receive_NodeInformation  - RECEIVED (179)')
+        for l_node in self.m_pyhouses_obj.Nodes.itervalues():
             if l_node.Name == Name:
                 pass
         _l_result = dict(Name = Name, Active = Active, Address = Address, Role = Role)
@@ -183,7 +190,7 @@ class DomainBoxDispatcher(AMP):
 
     def update_NodeInformation(self, _p_box):
         if g_debug >= 1:
-            LOG.debug(' Dispatch - update_NodeInformation')
+            LOG.debug(' Dispatch - update_NodeInformation (190)')
         pass
 
 ### -----------------------------------------------------------------
@@ -225,7 +232,7 @@ class AmpClientProtocol(DomainBoxDispatcher):
 
         if g_debug >= 1:
             LOG.debug('ClientProtocol - ConnectionMade to:{0:}, transp:{1:} (219)'.format(self.m_address, self.transport))
-        l_defer12 = self.send_NodeInformation(self.m_pyhouses_obj.CoreServicesData.Nodes[0], self.protocol)
+        l_defer12 = self.send_NodeInformation(self.m_pyhouses_obj.Nodes[0], self.protocol)
         l_defer12.addCallback(cb_got_result12)
         l_defer12.addErrback(eb_err12)
 
@@ -260,7 +267,8 @@ class AmpClient(object):
     def client_connect(self, p_pyhouses_obj, p_address):
         """Connect to a server.
 
-        @rtype: is a deferred
+        @return: A deferred fired when the connection is complete.
+        @rtype: deferred
         """
         self.m_pyhouses_obj = p_pyhouses_obj
         l_endpoint = TCP4ClientEndpoint(p_pyhouses_obj.Reactor, p_address, AMP_PORT)
@@ -283,12 +291,17 @@ class AmpClient(object):
             def eb_err_l2(p_ConnectionDone):
                 LOG.error('eb_err_l2 - Addr:{0:} - arg:{1:} (276).'.format(p_address, p_ConnectionDone))
 
+            def eb_timeout(_p_reason):
+                LOG.error('eb_timeout (292)')
+
             if g_debug >= 1:
-                LOG.debug('Client - cb_connected_l1 - Protocol:{0:} (279).'.format(p_protocol))
-            l_nodes = self.m_pyhouses_obj.CoreServicesData.Nodes[0]
-            print('281-A'); l_defer12 = self.send_NodeInformation(l_nodes); print('281-B')
+                LOG.debug('Client - cb_connected_l1 - Protocol:{0:} (296).'.format(p_protocol))
+            l_nodes = self.m_pyhouses_obj.Nodes[0]
+            l_defer12 = self.send_NodeInformation(l_nodes)
+            l_defer12.setTimeout(30, eb_timeout)
+            print('300')
             if g_debug >= 1:
-                LOG.debug('Domain Client has connected to Server at addr {0:} - Sending Node Information (282).'.format(p_address))
+                LOG.debug('Domain Client has connected to Server at addr {0:} - Sending Node Information (302).'.format(p_address))
             l_defer12.addCallback(cb_got_result_l2)
             l_defer12.addErrback(eb_err_l2)
 
@@ -296,7 +309,7 @@ class AmpClient(object):
             """
             p_result is always none here.  The next message I get is ClientProtocol - DataReceived
             """
-            l_result = p_pyhouses_obj.CoreServicesData.Nodes[0].Name
+            l_result = p_pyhouses_obj.Nodes[0].Name
             if g_debug >= 1:
                 LOG.debug('cb_result_l1 - Client returning result from Server at Addr:{0:}, Result:{1:} (292).'.format(p_address, p_result))
             LocatorClass().NodeInformationResponse(l_result)
@@ -305,11 +318,9 @@ class AmpClient(object):
             p_result.trap(NodeInformationError)
             LOG.error('eb_create_l1 - Client got error Addr:{0:}, Result:{1:} (297).'.format(p_address, p_result))
 
-        if g_debug >= 2:
-            LOG.debug('Create_Client to Addr:{0:} (300).'.format(p_address))
         l_defer_l0 = self.client_connect(p_pyhouses_obj, p_address)
-        if g_debug >= 1:
-            LOG.debug('CreateClient - Defer: {0:} (303).'.format(l_defer_l0))
+        if g_debug >= 2:
+            LOG.debug('CreateClient (322).')
         l_defer_l0.addCallback(cb_connected_l1)
         l_defer_l0.addCallback(cb_result_l1)
         l_defer_l0.addErrback(eb_create_l1)
@@ -319,6 +330,9 @@ class AmpServerProtocol(DomainBoxDispatcher):
     """
     Implement dataReceived(data) to handle both event-based and synchronous input.
     output can be sent through the 'transport' attribute.
+
+    When BinaryBoxProtocol is connected to a transport, it calls startReceivingBoxes on its IBoxReceiver with itself
+         as the IBoxSender parameter.
     """
     def __init__(self, p_pyhouses_obj):
         self.m_pyhouses_obj = p_pyhouses_obj
@@ -326,12 +340,14 @@ class AmpServerProtocol(DomainBoxDispatcher):
         AMP.__init__(self, boxReceiver = l_disp)
         l_proto = BinaryBoxProtocol(self)
         if g_debug >= 1:
-            LOG.debug('  ServerProtocol() initialized; Proto:{0:}, Dispatch:{1:} (322)'.format(l_proto, l_disp))
+            LOG.debug('  ServerProtocol() initialized (341)')
+            LOG.debug('      Proto:{0:}'.format(l_disp))
+            LOG.debug('      Dispatch:{0:}'.format(l_disp))
         self.locate_responder(NodeInformationCommand)
 
     def dataReceived(self, p_data):
         if g_debug >= 1:
-            LOG.debug('  ServerProtocol data rxed {0:} (284)'.format(PrintBox(p_data)))
+            LOG.debug('  ServerProtocol data rxed {0:} (348)'.format(PrintBox(p_data)))
 
     def connectionMade(self):
         """Somebody connected to us...
@@ -340,8 +356,6 @@ class AmpServerProtocol(DomainBoxDispatcher):
         For servers, this is called after an accept() call stops blocking and a socket has been received.
         If you need to send any greeting or initial message, do it here.
         """
-        if g_debug >= 2:
-            LOG.debug('  ServerProtocol inbound connection Made. (323)')
         def cb_got_result12(p_result):
             if g_debug >= 1:
                 LOG.debug('ServerProtocol - ConnectionMade - cb_got_result Client Addr:{0:} - Result:{1:}  transport{2:}'.format(self.m_address, p_result, self.transport))
@@ -351,8 +365,9 @@ class AmpServerProtocol(DomainBoxDispatcher):
             LOG.error('ServerProtocol - ConnectionMade - eb_err2 - Addr:{0:} - arg:{1:}'.format(self.m_address, p_ConnectionDone))
 
         if g_debug >= 1:
-            LOG.debug('ServerProtocol - ConnectionMade to:{0:}, transp:{1:} (344)'.format('no address', self.transport))
-        l_defer12 = self.send_NodeInformation(self.m_pyhouses_obj.CoreServicesData.Nodes[0])
+            LOG.debug('ServerProtocol - ConnectionMade (368)')
+            # LOG.debug('    self = {0:}\n'.format(vars(self)))
+        l_defer12 = self.locator.send_NodeInformation(self.m_pyhouses_obj.Nodes[0])
         l_defer12.addCallback(cb_got_result12)
         l_defer12.addErrback(eb_err12)
 
@@ -420,10 +435,10 @@ class Utility(AmpServer, AmpClient):
             @param _ignore: node_domain.AmpServerFactory on 8581
             @type _ignore: class 'twisted.internet.tcp.Port'
             """
-            l_nodes = self.m_pyhouses_obj.CoreServicesData.Nodes
+            l_nodes = self.m_pyhouses_obj.Nodes
             for l_key, l_node in l_nodes.iteritems():
                 if l_key > -99:  # Skip ourself
-                    self.create_client(self.m_pyhouses_obj, l_node.ConnectionAddr)
+                    self.create_client(self.m_pyhouses_obj, l_node.ConnectionAddr_IPv4)
 
         def eb_client_loop(p_reason):
             LOG.error('Creating client - {0:}.'.format(p_reason))
@@ -449,10 +464,10 @@ class API(Utility):
 
     def Start(self, p_pyhouses_obj):
         self.start_amp(p_pyhouses_obj)
-        if g_debug >= 2:
+        if g_debug >= 0:
             LOG.info("Started.")
 
-    def Stop(self, p_xml):
+    def Stop(self, _p_xml):
         if g_debug >= 2:
             LOG.info("Stopped.")
         self.stop_amp()

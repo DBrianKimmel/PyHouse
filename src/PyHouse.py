@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 
 """
-@name: PyHouse/Pyhouse.py
+-*- test-case-name: PyHouse.src.test.test_PyHouse -*-
 
-# -*- test-case-name: test_PyHouse -*-
-
+@name: PyHouse/src/Pyhouse.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @Copyright (c) 2010-2014 by D. Brian Kimmel

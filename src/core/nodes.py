@@ -45,7 +45,6 @@ class API(object):
         self.m_domain = node_domain.API()
 
     def Start(self, p_pyhouses_obj):
-        p_pyhouses_obj.CoreServicesData.Nodes = {}
         self.m_local.Start(p_pyhouses_obj)
         self.m_discovery.Start(p_pyhouses_obj)
         self.m_domain.Start(p_pyhouses_obj)

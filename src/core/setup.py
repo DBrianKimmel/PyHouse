@@ -1,16 +1,14 @@
 """
 @name: PyHouse/src/core/setup.py
-
-# -*- test-case-name: PyHouse.src.core.test.test_setup -*-
-
-Created on Mar 1, 2014
-
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
+@note: Created on Mar 1, 2014
 @license: MIT License
-
 @summary: This module sets up the core part of PyHouse.
+
+-*- test-case-name: PyHouse.src.core.test.test_setup -*-
+
 
 This will set up this node and then find all other nodes in the same domain (House).
 
@@ -20,6 +18,7 @@ Then start the House and all the sub systems.
 # Import system type stuff
 
 # Import PyMh files and modules.
+from src.core.data_objects import ServicesData
 from src.core import nodes
 from src.entertain import entertainment
 from src.housing import houses
@@ -33,18 +32,9 @@ INTER_NODE = 'tcp:port=8581'
 INTRA_NODE = 'unix:path=/var/run/pyhouse/node:lockfile=1'
 
 
-class CoreData(object):
-
-    def __init__(self):
-        self.Nodes = {}
-        self.DiscoveryService = None
-        self.DomainService = None
-
-
 class Utility(object):
 
     def dispatch(self):
-        _l_node = self.m_pyhouses_obj.CoreServicesData.Nodes[0]
         pass
 
 
@@ -60,7 +50,7 @@ class API(object):
 
     def Start(self, p_pyhouses_obj):
         self.m_pyhouses_obj = p_pyhouses_obj
-        p_pyhouses_obj.CoreServicesData = CoreData()
+        p_pyhouses_obj.CoreServicesData = ServicesData()
         self.m_nodes.Start(p_pyhouses_obj)
         # House
         self.m_pyhouses_obj.HousesAPI = houses.API()

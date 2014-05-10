@@ -1,7 +1,11 @@
 """
-Created on Apr 5, 2014
-
-@author: briank
+@name: PyHouse/src/core/test/test_node_discovery.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
+@copyright: 2014 by D. Brian Kimmel
+@note: Created on Apr 5, 2014
+@license: MIT License
+@summary: Test the discovery for the domains nodes.
 """
 
 from twisted.trial import unittest
@@ -10,7 +14,7 @@ from twisted.internet import error
 
 from src.core import node_discovery
 from src.test import xml_data
-from src.core.data_objects import PyHouseData, CoreData, NodeData
+from src.core.data_objects import PyHouseData
 
 XML = xml_data.XML
 

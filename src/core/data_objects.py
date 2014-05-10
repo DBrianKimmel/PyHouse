@@ -17,7 +17,10 @@ from twisted.application.service import Application
 from twisted.internet import reactor
 
 
-class BaseAAPyHouseObject(object):
+class ABaseObject(object):
+    """This data is in almost every other object.
+    Do not use this object, derive objects from it.
+    """
 
     def __init__(self):
         self.Name = ''
@@ -26,15 +29,15 @@ class BaseAAPyHouseObject(object):
         self.UUID = None
 
 
-class BaseLightingData(BaseAAPyHouseObject):
-    """Information
+class BaseLightingData(ABaseObject):
+    """Basic information about some sort of lighting object.
     """
 
     def __init__(self):
         self.Comment = ''
-        self.Coords = ''  # Room relative coords of the light switch
+        self.Coords = ''  # Room relative coords of the device
         self.Dimmable = False
-        self.Family = ''
+        self.Family = None
         self.RoomName = ''
         self.Type = ''
 
@@ -42,7 +45,6 @@ class BaseLightingData(BaseAAPyHouseObject):
 class ButtonData(BaseLightingData):
 
     def __init__(self):
-        # super(ButtonData, self).__init__()
         self.Type = 'Button'
 
 
@@ -52,7 +54,6 @@ class ControllerData(BaseLightingData):
     """
 
     def __init__(self):
-        # super(ControllerData, self).__init__()  # The core data
         self.Type = 'Controller'  # Override the core definition
         self.Interface = ''
         self.Port = ''
@@ -68,7 +69,6 @@ class ControllerData(BaseLightingData):
 class LightData(BaseLightingData):
 
     def __init__(self):
-        # super(LightData, self).__init__()
         self.Controller = None
         self.Type = 'Light'
         self.CurLevel = 0
@@ -92,15 +92,15 @@ class PyHouseData(object):
         self.WebData = {}
         self.LogsData = {}
         self.HousesData = {}
+        self.Nodes = {}
         #
         self.XmlRoot = None
         self.XmlFileName = ''
 
 
-class CoreData(object):
+class ServicesData(object):
 
     def __init__(self):
-        self.Nodes = {}
         self.DiscoveryService = None
         self.DomainService = None
 
@@ -117,10 +117,10 @@ class HousesData(object):
         self.HouseObject = {}
 
 
-class HouseData(BaseAAPyHouseObject):
+class HouseData(ABaseObject):
 
     def __init__(self):
-        """House.
+        """This is about a single House.
         """
         self.CommunicationsAPI = None
         self.EntertainmentAPI = None
@@ -142,6 +142,7 @@ class HouseData(BaseAAPyHouseObject):
         self.FamilyData = {}
         self.Internet = {}
         self.Lights = {}
+        self.Nodes = {}  # All the PyHouse Nodes in the house
         self.Rooms = {}
         self.Schedules = {}
         self.Thermostat = {}
@@ -161,7 +162,7 @@ class LocationData(object):
         self.ZipCode = '12345'
 
 
-class RoomData(BaseAAPyHouseObject):
+class RoomData(ABaseObject):
 
     def __init__(self):
         self.Comment = ''
@@ -170,10 +171,10 @@ class RoomData(BaseAAPyHouseObject):
         self.Type = 'Room'
 
 
-class NodeData(BaseAAPyHouseObject):
+class NodeData(ABaseObject):
 
     def __init__(self):
-        self.ConnectionAddr = None
+        self.ConnectionAddr_IPv4 = None
         self.Role = 0
         self.Interfaces = {}
 
@@ -185,7 +186,7 @@ class LogData(object):
         self.Error = None
 
 
-class ThermostatData(BaseAAPyHouseObject):
+class ThermostatData(ABaseObject):
 
     def __init__(self):
         self.ThermostatAPI = None

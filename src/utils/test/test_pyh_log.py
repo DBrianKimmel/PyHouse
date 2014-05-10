@@ -1,12 +1,10 @@
 """
-PyHouse/src/utils/test/test_log.py
-
-Created on Apr 30, 2014
-
-@author: briank
-
+@name: PyHouse/src/utils/test/test_pyh_log.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
-
+@note: Created on Apr 30, 2014
+@license: MIT License
 @summary: This module is for testing logging.
 """
 

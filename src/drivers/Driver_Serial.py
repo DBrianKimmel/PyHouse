@@ -91,7 +91,7 @@ class SerialAPI(object):
         try:
             self.m_serial.writeSomeData(p_message)
         except (AttributeError, TypeError) as e:
-            LOG.warn("Bad serial write - {0:} {1:}".format(e, PrintBytes(p_message)))
+            LOG.warning("Bad serial write - {0:} {1:}".format(e, PrintBytes(p_message)))
         return
 
 

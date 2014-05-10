@@ -116,11 +116,11 @@ class API(HouseReadWriteConfig):
         try:
             self.m_house_obj.ScheduleAPI.Stop(l_house_xml)
         except AttributeError:  # New house has  no schedule
-            LOG.warn("No schedule XML")
+            LOG.warning("No schedule XML")
         try:
             self.m_house_obj.InternetAPI.Stop(l_house_xml)
         except AttributeError:  # New house has  no internet
-            LOG.warn("No internet XML")
+            LOG.warning("No internet XML")
         p_xml.append(l_house_xml)
         LOG.info("Stopped.")
 

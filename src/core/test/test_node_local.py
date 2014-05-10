@@ -14,7 +14,7 @@ from twisted.trial import unittest
 from src.core import node_local
 from src.utils import xml_tools
 from src.test import xml_data
-from src.core.data_objects import PyHouseData, CoreData, NodeData
+from src.core.data_objects import PyHouseData, ServicesData, NodeData
 
 XML = xml_data.XML
 
@@ -56,8 +56,8 @@ class Test_02_ReadXML(unittest.TestCase):
     def setUp(self):
         self.m_pyhouses_obj = PyHouseData()
         self.m_pyhouses_obj.XmlRoot = ET.fromstring(XML)
-        self.m_pyhouses_obj.CoreServicesData = CoreData()
-        self.m_pyhouses_obj.CoreServicesData.Nodes[0] = NodeData()
+        self.m_pyhouses_obj.CoreServicesData = ServicesData()
+        self.m_pyhouses_obj.Nodes[0] = NodeData()
         self.m_api = node_local.API()
 
     def test_0201_read_xml(self):

@@ -228,7 +228,7 @@ class DecodeResponses(object):
             self._next_char()  # Get the starting char - must be 'P' (0x50)
             if self.l_hdr != 0x50:
                 l_msg = "UPB_Pim.decode_response() - Did not find valid message start 'P'(0x50)  - ERROR! char was {0:#x} - Flushing till next 0x0D".format(self.l_hdr)
-                LOG.warn(l_msg)
+                LOG.warning(l_msg)
                 self._flushing()
                 continue
             #

@@ -49,17 +49,17 @@ class DGramUtil(object):
 
     def _save_node_info(self, p_node):
         l_count = 0
-        for l_node in self.m_pyhouses_obj.CoreServicesData.Nodes.itervalues():
+        for l_node in self.m_pyhouses_obj.Nodes.itervalues():
             l_count += 1
-            if p_node.ConnectionAddr == l_node.ConnectionAddr:
+            if p_node.ConnectionAddr_IPv4 == l_node.ConnectionAddr_IPv4:
                 return
         p_node.Key = l_count
-        self.m_pyhouses_obj.CoreServicesData.Nodes[l_count] = p_node
-        LOG.info("Added node # {0:} - From Addr: {1:}, Named: {2:}".format(l_count, p_node.ConnectionAddr, p_node.Name))
+        self.m_pyhouses_obj.Nodes[l_count] = p_node
+        LOG.info("Added node # {0:} - From Addr: {1:}, Named: {2:}".format(l_count, p_node.ConnectionAddr_IPv4, p_node.Name))
 
     def set_node_0_addr(self, p_address):
-        if self.m_pyhouses_obj.CoreServicesData.Nodes[0].ConnectionAddr == None:
-            self.m_pyhouses_obj.CoreServicesData.Nodes[0].ConnectionAddr = p_address[0]
+        if self.m_pyhouses_obj.Nodes[0].ConnectionAddr_IPv4 == None:
+            self.m_pyhouses_obj.Nodes[0].ConnectionAddr_IPv4 = p_address[0]
             LOG.info("Update our node (slot 0) address to {0:}".format(p_address[0]))
 
 
@@ -92,14 +92,14 @@ class MulticastDiscoveryServerProtocol(DatagramProtocol, DGramUtil):
         @param p_address: is the (IpAddr, Port) of the sender of this datagram (reply to address).
         """
         l_node = NodeData()
-        l_node.ConnectionAddr = p_address[0]
+        l_node.ConnectionAddr_IPv4 = p_address[0]
         if g_debug >= 1:
             LOG.debug("Server Discovery Datagram {0:} received from {1:}".format(repr(p_datagram), repr(p_address)))
         if p_address[0] not in self.m_address_list:
             self.m_address_list.append(p_address[0])
         if p_datagram.startswith(WHOS_THERE):
             self.set_node_0_addr(p_address)
-            l_str = I_AM + ' ' + self.m_pyhouses_obj.CoreServicesData.Nodes[0].Name
+            l_str = I_AM + ' ' + self.m_pyhouses_obj.Nodes[0].Name
             self.transport.write(l_str, p_address)
         elif p_datagram.startswith(I_AM):
             l_node.Name = p_datagram.split(' ')[-1]
@@ -127,7 +127,7 @@ class MulticastDiscoveryClientProtocol(ConnectedDatagramProtocol, DGramUtil):
 
     def datagramReceived(self, p_datagram, p_address):
         l_node = NodeData()
-        l_node.ConnectionAddr = p_address[0]
+        l_node.ConnectionAddr_IPv4 = p_address[0]
         if g_debug >= 1:
             LOG.debug('Discovery Client rxed:{0:} From:{1:}'.format(p_datagram, p_address[0]))
         if p_datagram.startswith(WHOS_THERE):

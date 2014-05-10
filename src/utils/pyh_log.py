@@ -1,12 +1,13 @@
-"""Log module.
+"""
+-*- test-case-name: PyHouse.src.util.test.test_pyh_log -*-
+
 @name: PyHouse/src/utils/pyh_log.py
-
-# -*- test-case-name: PyHouse.src.util.test.test_pyh_log -*-
-
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
-@Copyright (c) 2010-2014 by D. Brian Kimmel
+@copyright: 2010-2014 by D. Brian Kimmel
+@note: Created on Jan 20, 2014
 @license: MIT License
+@summary: Log Module.
 
 This is a Main Module - always present.
 
@@ -33,16 +34,6 @@ from src.core.data_objects import LogData
 
 
 g_debug = 0
-# 0 = off
-# 1 = log extra info
-# + = NOT USED HERE
-
-#  Select ONE of the following
-LEVEL = logging.DEBUG
-# LEVEL = logging.INFO
-# LEVEL = logging.WARNING
-# LEVEL = logging.ERROR
-# LEVEL = logging.CRITICAL
 
 
 class Utility(xml_tools.ConfigFile):
@@ -68,21 +59,13 @@ class Utility(xml_tools.ConfigFile):
         self.put_text_element(l_log_xml, 'Error', p_log_data.Error)
         return l_log_xml
 
-    def setup_debug_log (self):
+    def setup_debug_log (self, p_pyhouse_obj):
         """Debug and more severe goes to the base logger
         """
-        l_file = self.m_pyhouses_obj.LogsData.Debug
-        # l_debug = getLogger('PyHouse')
-        l_formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s - %(message)s')
-        # l_debug.setLevel(logging.DEBUG)
-        # l_fh = logging.handlers.TimedRotatingFileHandler(l_file, when = 'midnight', backupCount = 31)
-        # l_fh.setLevel(LEVEL)
-        # l_fh.setFormatter(l_formatter)
-        # l_debug.addHandler(l_fh)
-
-        # print "l_file ", l_file
+        l_file = p_pyhouse_obj.LogsData.Debug
+        self.m_pyhouses_obj = p_pyhouse_obj
+        # l_formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s - %(message)s')
         l_daily = DailyLogFile.fromFullPath(l_file)
-        # print "l_daily", l_daily
         tpLog.startLogging(l_daily)
         observer = tpLog.PythonLoggingObserver()
         observer.start()
@@ -100,8 +83,7 @@ class API(Utility):
         self.m_pyhouses_obj = p_pyhouse_obj
         p_pyhouse_obj.LogsData = LogData()
         self.read_xml(p_pyhouse_obj)
-        self.setup_debug_log()
-        # return self.m_log_data
+        self.setup_debug_log(p_pyhouse_obj)
 
     def Stop(self, p_xml):
         p_xml.append(self.write_xml(self.m_log_data))
