@@ -299,14 +299,14 @@ class AmpClient(object):
             l_nodes = self.m_pyhouses_obj.Nodes[0]
             try:
                 l_defer12 = self.send_NodeInformation(l_nodes)
+                l_defer12.setTimeout(30, eb_timeout)
+                print('300')
+                if g_debug >= 1:
+                    LOG.debug('Domain Client has connected to Server at addr {0:} - Sending Node Information (302).'.format(p_address))
+                l_defer12.addCallback(cb_got_result_l2)
+                l_defer12.addErrback(eb_err_l2)
             except AttributeError as l_error:
                 print('Error in trying to send node info {0:} - self:{1:}'.format(l_error, vars(self)))
-            l_defer12.setTimeout(30, eb_timeout)
-            print('300')
-            if g_debug >= 1:
-                LOG.debug('Domain Client has connected to Server at addr {0:} - Sending Node Information (302).'.format(p_address))
-            l_defer12.addCallback(cb_got_result_l2)
-            l_defer12.addErrback(eb_err_l2)
 
         def cb_result_l1(p_result):
             """
