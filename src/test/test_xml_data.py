@@ -18,14 +18,14 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from src.test import xml_data
+from test import xml_data
 
 XML = xml_data.XML
 
 
 class Test_01_XML(unittest.TestCase):
     """
-    This section will verify the XML in the 'src.test.xml_data' file is correct and what the log module can read/write.
+    This section will verify the XML in the 'Modules.test.xml_data' file is correct and what the log module can read/write.
     """
 
     def setUp(self):

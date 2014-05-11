@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 """
--*- test-case-name: PyHouse.src.test.test_PyHouse -*-
+-*- test-case-name: PyHouse.Modules.test.test_PyHouse -*-
 
-@name: PyHouse/src/Pyhouse.py
+@name: PyHouse/Modules/Pyhouse.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @Copyright (c) 2010-2014 by D. Brian Kimmel
@@ -29,7 +29,7 @@
 
 Uses I{Epytext} mark-up for documentation.
 
-see C{src.__init__.py} for core documentation.
+see C{Modules.__init__.py} for Core documentation.
 
 During development this is run by hand.
 It is, however, planned to be a daemon that is kicked off on system start-up.
@@ -63,10 +63,11 @@ from twisted.application.service import Application
 import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
-from src.core.data_objects import PyHouseData
-from src.core import setup
-from src.utils import pyh_log
-from src.utils import xml_tools
+from Modules import Core
+from Modules.Core.data_objects import PyHouseData
+from Modules.Core import setup
+from Modules.utils import pyh_log
+from Modules.utils import xml_tools
 
 g_debug = 0
 LOG = pyh_log.getLogger('PyHouse')
@@ -148,7 +149,7 @@ class API(Utilities):
     def __init__(self):
         """This is the startup of the entire system.
         All permanent services are started here.
-        These core routines are an integral part of the daemon process.
+        These Core routines are an integral part of the daemon process.
 
         Notice that the reactor starts here as the very last step here and that
         call never returns until the reactor is stopped (permanent stoppage).
