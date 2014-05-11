@@ -297,7 +297,10 @@ class AmpClient(object):
             if g_debug >= 1:
                 LOG.debug('Client - cb_connected_l1 - Protocol:{0:} (296).'.format(p_protocol))
             l_nodes = self.m_pyhouses_obj.Nodes[0]
-            l_defer12 = self.send_NodeInformation(l_nodes)
+            try:
+                l_defer12 = self.send_NodeInformation(l_nodes)
+            except AttributeError as l_error:
+                print('Error in trying to send node info {0:} - self:{1:}'.format(l_error, vars(self)))
             l_defer12.setTimeout(30, eb_timeout)
             print('300')
             if g_debug >= 1:
