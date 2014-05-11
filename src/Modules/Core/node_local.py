@@ -225,6 +225,7 @@ class API(Utility):
         pass
 
     def Start(self, p_pyhouses_obj):
+        self.m_pyhouses_obj = p_pyhouses_obj
         self.m_node = NodeData()
         GetAllInterfaceData(self.m_node)
         p_pyhouses_obj.Nodes[0] = self.m_node
