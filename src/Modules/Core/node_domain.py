@@ -17,19 +17,17 @@ There is no central node so each node needs to talk with all other nodes.
 """
 
 # Import system type stuff
-from twisted.application.internet import StreamServerEndpointService
+# from twisted.application.internet import StreamServerEndpointService
 from twisted.internet.endpoints import serverFromString, TCP4ClientEndpoint
 from twisted.internet.protocol import ClientFactory, ServerFactory
 from twisted.protocols.amp import AMP, Integer, Unicode, String, Command, CommandLocator, BinaryBoxProtocol  # , BoxDispatcher
-# from twisted.protocols.amp import IBoxReceiver
 from twisted.python.filepath import FilePath
-# from zope.interface import implements
 from twisted.internet.defer import Deferred
 
 # Import PyMh files and modules.
 from Modules.utils import pyh_log
 
-g_debug = 0
+g_debug = 1
 LOG = pyh_log.getLogger('PyHouse.NodeDomain  ')
 
 NODE_SERVER = 'tcp:port=8581'
@@ -56,11 +54,6 @@ class IrPacketError(Exception): pass
 """ ------------------------------------------------------------------
  Commands
 """
-class InvalidCommand(Command):
-    """
-    An example of an invalid command.  everything is massing.
-    """
-
 
 class NodeInformationCommand(Command):
     commandName = 'NodeInformationCommand'
@@ -241,14 +234,16 @@ class AmpClientProtocol(DomainBoxDispatcher):
 
 
 class AmpClientFactory(ClientFactory):
+    m_client_count = 0
+
     def __init__(self, p_pyhouses_obj):
         self.m_pyhouses_obj = p_pyhouses_obj
-        if g_debug >= 3:
-            LOG.debug('AmpClientFactory() __init__ (223).')
+        self.m_client_count += 1
 
     def startedConnecting(self, p_connector):
-        if g_debug >= 2:
+        if g_debug >= 1:
             LOG.debug("DomainClientFactory - StartedConnecting {0:}".format(p_connector))
+            LOG.debug('     Client Number: {0:}'.format(self.m_client_count))
 
     def buildProtocol(self, p_address):
         if g_debug >= 2:
@@ -274,59 +269,69 @@ class AmpClient(object):
         l_endpoint = TCP4ClientEndpoint(p_pyhouses_obj.Reactor, p_address, AMP_PORT)
         l_factory = AmpClientFactory(p_pyhouses_obj)
         l_connect_defer = l_endpoint.connect(l_factory)
-        if g_debug >= 2:
+        if g_debug >= 1:
             LOG.debug("Domain Client connecting to server at address {0:} - Defer:{1:} (253).".format(p_address, l_connect_defer))
         return l_connect_defer
 
-    def create_client(self, p_pyhouses_obj, p_address):
+    def cb_create_client_connected_l1(self, p_protocol):
         """
-        Create a client to talk to other node's servers.
+        We just connected to an amp server instance somewhere.
+        now we should send our node info to it and get a response back.
         """
-        def cb_connected_l1(p_protocol):
 
-            def cb_got_result_l2(p_result):
-                LOG.debug('cb_got_result Client Addr:{0:} - Result:{1:} (272).'.format(p_address, p_result))
-                LocatorClass().NodeInformationResponse('test dbk')
+        def cb_got_result_l2(p_result):
+            LOG.debug('cb_got_result Client - Result:{0:} (291).'.format(p_result))
+            LocatorClass().NodeInformationResponse('test dbk')
 
-            def eb_err_l2(p_ConnectionDone):
-                LOG.error('eb_err_l2 - Addr:{0:} - arg:{1:} (276).'.format(p_address, p_ConnectionDone))
+        def eb_err_l2(p_ConnectionDone):
+            LOG.error('eb_err_l2 - arg:{0:} (295).'.format(p_ConnectionDone))
 
-            def eb_timeout(_p_reason):
-                LOG.error('eb_timeout (292)')
+        def eb_timeout(_p_reason):
+            LOG.error('eb_timeout (298)')
 
+        if g_debug >= 1:
+            LOG.debug('Client - cb_create_client_connected_l1 (302).')
+            LOG.debug('          Protocol: {0:}'.format(p_protocol))
+            LOG.debug('          Address: {0:}.'.format(self.m_address))
+        l_nodes = self.m_pyhouses_obj.Nodes[0]
+        try:
+            l_defer12 = p_protocol.send_NodeInformation(l_nodes)
+            l_defer12.setTimeout(30, eb_timeout)
+            print('300')
             if g_debug >= 1:
-                LOG.debug('Client - cb_connected_l1 - Protocol:{0:} (296).'.format(p_protocol))
-            l_nodes = self.m_pyhouses_obj.Nodes[0]
-            try:
-                l_defer12 = self.send_NodeInformation(l_nodes)
-                l_defer12.setTimeout(30, eb_timeout)
-                print('300')
-                if g_debug >= 1:
-                    LOG.debug('Domain Client has connected to Server at addr {0:} - Sending Node Information (302).'.format(p_address))
-                l_defer12.addCallback(cb_got_result_l2)
-                l_defer12.addErrback(eb_err_l2)
-            except AttributeError as l_error:
-                print('Error in trying to send node info {0:} - self:{1:}'.format(l_error, vars(self)))
+                LOG.debug('Domain Client has connected to Server - Sending Node Information (311).')
+            l_defer12.addCallback(cb_got_result_l2)
+            l_defer12.addErrback(eb_err_l2)
+        except AttributeError as l_error:
+            print('node_domain.cb_connected_l1 = Error in trying to send node info {0:} - p_protocol:{1:} (314)'.format(l_error, vars(p_protocol)))
 
-        def cb_result_l1(p_result):
-            """
-            p_result is always none here.  The next message I get is ClientProtocol - DataReceived
-            """
-            l_result = p_pyhouses_obj.Nodes[0].Name
-            if g_debug >= 1:
-                LOG.debug('cb_result_l1 - Client returning result from Server at Addr:{0:}, Result:{1:} (292).'.format(p_address, p_result))
-            LocatorClass().NodeInformationResponse(l_result)
+    def cb_create_client_result_l1(self, p_result):
+        """
+        p_result is always none here.  The next message I get is ClientProtocol - DataReceived
+        """
+        # l_result = p_pyhouses_obj.Nodes[0].Name
+        if g_debug >= 1:
+            LOG.debug('cb_create_client_result_l1 - Client returning result from Server Result:{0:} (323).'.format(p_result))
+        # LocatorClass().NodeInformationResponse(p_result)
 
-        def eb_create_l1(p_result):
-            p_result.trap(NodeInformationError)
-            LOG.error('eb_create_l1 - Client got error Addr:{0:}, Result:{1:} (297).'.format(p_address, p_result))
+    def eb_create_client_l1(self, p_result):
+        p_result.trap(NodeInformationError)
+        LOG.error('eb_create_client_l1 - Client got error Result:{0:} (328).'.format(p_result))
 
+    def create_one_client(self, p_pyhouses_obj, p_address):
+        """
+        Create a client to talk to some node's servers.
+
+        @param p_address: is the address of the server we are connecting to.
+        """
+        self.m_address = p_address
         l_defer_l0 = self.client_connect(p_pyhouses_obj, p_address)
-        if g_debug >= 2:
-            LOG.debug('CreateClient (322).')
-        l_defer_l0.addCallback(cb_connected_l1)
-        l_defer_l0.addCallback(cb_result_l1)
-        l_defer_l0.addErrback(eb_create_l1)
+        if g_debug >= 1:
+            LOG.debug('create_one_client')
+            LOG.debug('     Server Addr: {0:}'.format(p_address))
+        l_defer_l0.addCallback(self.cb_create_client_connected_l1)
+        l_defer_l0.addCallback(self.cb_create_client_result_l1)  # What is this ???
+        l_defer_l0.addErrback(self.eb_create_client_l1)
 
 
 class AmpServerProtocol(DomainBoxDispatcher):
@@ -341,7 +346,7 @@ class AmpServerProtocol(DomainBoxDispatcher):
         self.m_pyhouses_obj = p_pyhouses_obj
         l_disp = DomainBoxDispatcher(p_pyhouses_obj)
         AMP.__init__(self, boxReceiver = l_disp)
-        l_proto = BinaryBoxProtocol(self)
+        _l_proto = BinaryBoxProtocol(self)
         if g_debug >= 1:
             LOG.debug('  ServerProtocol() initialized (341)')
             LOG.debug('      Proto:{0:}'.format(l_disp))
@@ -379,22 +384,16 @@ class AmpServerProtocol(DomainBoxDispatcher):
             LOG.debug('  ServerProtocol connection lost {0:}'.format(p_reason))
 
     def locate_responder(self, p_name):
-        if g_debug >= 2:
+        if g_debug >= 1:
             LOG.debug('  ServerProtocol locate_responder = {0:} (344)'.format(p_name))
 
 
 class AmpServerFactory(ServerFactory):
-    """
-    """
 
     def __init__(self, p_pyhouses_obj):
         self.m_pyhouses_obj = p_pyhouses_obj
-        if g_debug >= 3:
-            LOG.debug('  ServerFactory() __init__.')
 
-    def buildProtocol(self, p_address_tupple):
-        if g_debug >= 2:
-            LOG.debug('  ServerFactory - BuildProtocol from {0:}'.format(p_address_tupple))
+    def buildProtocol(self, _p_address_tupple):
         return AmpServerProtocol(self.m_pyhouses_obj)
 
 
@@ -404,75 +403,52 @@ class AmpServer(object):
 
     def create_domain_server(self, p_endpoint, p_pyhouses_obj):
         l_listen_defer = p_endpoint.listen(AmpServerFactory(p_pyhouses_obj))
-        if g_debug >= 2:
-            LOG.info("  Server started (352).")
+        if g_debug >= 1:
+            LOG.info("  Server starting (419).")
         return l_listen_defer
 
 
 class Utility(AmpServer, AmpClient):
     m_pyhouses_obj = None
 
-    def create_domain_service(self, p_pyhouses_obj, p_service):
-        p_pyhouses_obj.CoreServicesData.DomainService = p_service
-        p_pyhouses_obj.CoreServicesData.DomainService.setName('Domain')
-        p_pyhouses_obj.CoreServicesData.DomainService.setServiceParent(p_pyhouses_obj.Application)
-
-    def start_amp(self, p_pyhouses_obj):
+    def cb_start_all_clients(self, _ignore):
         """
-        Try to avoid missing events due to congestion when a power outage has all nodes rebooting at nearly the same timer.
-        This delay should help ensure that the nodes are all up and functioning before starting AMP.
+        @param _ignore: node_domain.AmpSe rverFactory on 8581
+        @type _ignore: class 'twisted.internet.tcp.Port'
         """
-        self.m_pyhouses_obj = p_pyhouses_obj
-        p_pyhouses_obj.Reactor.callLater(15, self.start_amp_server)
+        l_nodes = self.m_pyhouses_obj.Nodes
+        for l_key, l_node in l_nodes.iteritems():
+            if l_key > 0:  # Skip ourself
+                self.create_one_client(self.m_pyhouses_obj, l_node.ConnectionAddr_IPv4)
 
-    def stop_amp(self):
-        pass
+    def eb_start_clients_loop(self, p_reason):
+        LOG.error('ERROR Creating client - {0:}.'.format(p_reason))
 
-    def start_amp_server(self):
+    def start_amp_services(self):
         """Start the domain server to listen for all incoming requests.
         For all the nodes we know about, create a client and send a message with our info.
         If the request times out, mark the node as non active.
         """
-        def cb_client_loop(_ignore):
-            """
-            @param _ignore: node_domain.AmpServerFactory on 8581
-            @type _ignore: class 'twisted.internet.tcp.Port'
-            """
-            l_nodes = self.m_pyhouses_obj.Nodes
-            for l_key, l_node in l_nodes.iteritems():
-                if l_key > -99:  # Skip ourself
-                    self.create_client(self.m_pyhouses_obj, l_node.ConnectionAddr_IPv4)
-
-        def eb_client_loop(p_reason):
-            LOG.error('Creating client - {0:}.'.format(p_reason))
-
         l_endpoint = serverFromString(self.m_pyhouses_obj.Reactor, NODE_SERVER)
-        l_factory = AmpServerFactory(self.m_pyhouses_obj)
-        l_service = StreamServerEndpointService(l_endpoint, l_factory)
-        self.create_domain_service(self.m_pyhouses_obj, l_service)
-        #
         l_defer1 = self.create_domain_server(l_endpoint, self.m_pyhouses_obj)
-        l_defer1.addCallback(cb_client_loop)
-        l_defer1.addErrback(eb_client_loop)
-        if g_debug >= 1:
-            LOG.debug('  Server has started. (433)\n')
+        l_defer1.addCallback(self.cb_start_all_clients)
+        l_defer1.addErrback(self.eb_start_clients_loop)
 
 
 class API(Utility):
 
     def __init__(self):
-        if g_debug >= 2:
-            LOG.info("Initialized.")
         pass
 
     def Start(self, p_pyhouses_obj):
-        self.start_amp(p_pyhouses_obj)
-        if g_debug >= 0:
-            LOG.info("Started.")
+        """
+        Try to avoid missing events due to congestion when a power outage has all nodes rebooting at nearly the same timer.
+        This delay should help ensure that the nodes are all up and functioning before starting AMP.
+        """
+        self.m_pyhouses_obj = p_pyhouses_obj
+        p_pyhouses_obj.Reactor.callLater(15, self.start_amp_services)
 
     def Stop(self, _p_xml):
-        if g_debug >= 2:
-            LOG.info("Stopped.")
-        self.stop_amp()
+        pass
 
 # ## END DBK

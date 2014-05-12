@@ -26,7 +26,7 @@ from twisted.test.proto_helpers import StringTransport
 
 # Import PyMh files and modules.
 from Modules.Core import node_domain
-from Modules.Core.data_objects import PyHouseData
+# from Modules.Core.data_objects import PyHouseData
 
 class TestProtocol(protocol.Protocol):
 
@@ -47,18 +47,18 @@ class TestProtocol(protocol.Protocol):
 
 
 
-class SimpleSymmetricProtocol(amp.AMP):
+class XXSimpleSymmetricProtocol(amp.AMP):
 
-    def sendHello(self, text):
+    def XXXsendHello(self, text):
         print('SimpleSymetricProtocol sendHello.')
         return self.callRemoteString(
             "hello",
             hello = text)
 
-    def amp_HELLO(self, box):
+    def XXamp_HELLO(self, box):
         return amp.Box(hello = box['hello'])
 
-    def amp_HOWDOYOUDO(self, _p_box):
+    def XXamp_HOWDOYOUDO(self, _p_box):
         return amp.QuitBox(howdoyoudo = 'world')
 
 
@@ -135,11 +135,6 @@ class Goodbye(amp.Command):
     responseType = amp.QuitBox
 
 
-class Howdoyoudo(amp.Command):
-    commandName = 'howdoyoudo'
-    # responseType = amp.QuitBox
-
-
 class WaitForever(amp.Command):
     commandName = 'wait_forever'
 
@@ -199,9 +194,6 @@ class SimpleSymmetricCommandProtocol(FactoryNotifier):
         amp.AMP.__init__(self)
         self.onConnLost = onConnLost
 
-    def sendUnicodeHello(self, text, translation):
-        return self.callRemote(Hello, hello = text, Print = translation)
-
     def sendHello(self, p_text):
         # TODO:
         print('DBK SimpleSymetricCommandProtocol - sendHello')
@@ -209,8 +201,7 @@ class SimpleSymmetricCommandProtocol(FactoryNotifier):
 
     def sendInfo(self, p_text):
         print('DBK SimpleSymetricCommandProtocol - sendHello')
-        return self.callRemote(node_domain.NodeInformationCommand,
-                               Name = p_text, Address = '192.168.1.2')
+        return self.callRemote(node_domain.NodeInformationCommand, Name = p_text, Address = '192.168.1.2')
 
     def receive_Hello(self, hello, From, optional = None, Print = None, mixedCase = None, dash_arg = None, underscore_arg = None):
         From = From; optional = optional; Print = Print; mixedCase = mixedCase; dash_arg = dash_arg; underscore_arg = underscore_arg
@@ -256,10 +247,6 @@ class SimpleSymmetricCommandProtocol(FactoryNotifier):
         self.waiting = defer.Deferred()
         return self.waiting
     WaitForever.responder(waitforit)
-
-    def howdo(self):
-        return dict(howdoyoudo = 'world')
-    Howdoyoudo.responder(howdo)
 
     def saybye(self):
         return dict(goodbye = "everyone")
@@ -309,7 +296,7 @@ class NoAnswerCommandProtocol(SimpleSymmetricCommandProtocol):
     NoAnswerHello.responder(goodNoAnswerResponder)
 
 
-def connectedServerAndClient(ServerClass = SimpleSymmetricProtocol, ClientClass = SimpleSymmetricProtocol, *args, **kwargs):
+def connectedServerAndClient(ServerClass = SimpleSymmetricCommandProtocol, ClientClass = SimpleSymmetricCommandProtocol, *args, **kwargs):
     """Returns a 3-tuple: (client, server, pump)
     """
     return iosim.connectedServerAndClient(ServerClass, ClientClass, *args, **kwargs)
@@ -852,90 +839,6 @@ This section tests AMP???
 
 class Test_05_AMP(unittest.TestCase):
 
-    def Xtest_0501_helloWorld(self):
-        """
-        Verify that a simple command can be sent and its response received with the simple low-level string-based API.
-        """
-        l_client, _l_server, l_pump = connectedServerAndClient()
-        L = []
-        HELLO = 'world'
-        l_client.sendHello(HELLO).addCallback(L.append)
-        l_pump.flush()
-        print('0502 L[]:{0:}'.format(L))
-        self.assertEquals(L[0]['hello'], HELLO)
-
-    def Xtest_0503_wireFormatRoundTrip(self):
-        """
-        Verify that mixed-case, underscored and dashed arguments are mapped to their python names properly.
-        """
-        l_client, _l_server, l_pump = connectedServerAndClient()
-        L = []
-        HELLO = 'world'
-        l_client.sendHello(HELLO).addCallback(L.append)
-        l_pump.flush()
-        print('0503 L[]:{0:}'.format(L))
-        self.assertEquals(L[0]['hello'], HELLO)
-
-    def Xtest_0504_helloWorldUnicode(self):
-        """
-        Verify that unicode arguments can be encoded and decoded.
-        """
-        l_client, _l_server, l_pump = connectedServerAndClient(ServerClass = SimpleSymmetricCommandProtocol, ClientClass = SimpleSymmetricCommandProtocol)
-        L = []
-        HELLO = 'world'
-        HELLO_UNICODE = 'wor\u1234ld'
-        l_client.sendUnicodeHello(HELLO, HELLO_UNICODE).addCallback(L.append)
-        l_pump.flush()
-        print('0504 L[]:{0:}'.format(L))
-        self.assertEquals(L[0]['hello'], HELLO)
-        self.assertEquals(L[0]['Print'], HELLO_UNICODE)
-
-    def Xtest_0505_unknownCommandLow(self):
-        """
-        Verify that unknown commands using low-level APIs will be rejected with an error, but will NOT terminate the connection.
-        """
-        l_client, _l_server, l_pump = connectedServerAndClient()
-        L = []
-        def clearAndAdd(e):
-            """
-            You can't propagate the error...
-            """
-            e.trap(amp.UnhandledCommand)
-            return "OK"
-        l_client.callRemoteString("InvalidCommand").addErrback(clearAndAdd).addCallback(L.append)
-        l_pump.flush()
-        print('0505-A L[]:{0:}'.format(L))
-        self.assertEquals(L.pop(), "OK")
-        HELLO = 'world'
-        l_client.sendHello(HELLO).addCallback(L.append)
-        print('0505-B L[]:{0:}'.format(L))
-        l_pump.flush()
-        self.assertEquals(L[0]['hello'], HELLO)
-
-    def test_0506_DBK_unknownCommandHigh(self):
-        """
-        Verify that unknown commands using high-level APIs will be rejected with an error, but will NOT terminate the connection.
-        """
-        l_client, _l_server, l_pump = connectedServerAndClient()
-        L = []
-        def eb_clearAndAdd(e):
-            """
-            You can't propagate the error...
-            """
-            e.trap(amp.UnhandledCommand)
-            return "OK"
-        l_defer = l_client.callRemote(node_domain.InvalidCommand)
-        l_defer.addErrback(eb_clearAndAdd)
-        l_defer.addCallback(L.append)
-        l_pump.flush()
-        print('0506-A L[]:{0:}'.format(L))
-        self.assertEquals(L.pop(), "OK")
-        HELLO = 'world'
-        l_client.sendHello(HELLO).addCallback(L.append)
-        l_pump.flush()
-        print('0506-B L[]:{0:}'.format(L))
-        self.assertEquals(L[0]['hello'], HELLO)
-
     def test_0507_brokenReturnValue(self):
         """
         It can be very confusing if you write some code which responds to a command, but gets the return value wrong.
@@ -952,7 +855,7 @@ class Test_05_AMP(unittest.TestCase):
         """
         Verify that unknown arguments are ignored, and not passed to a Python function which can't accept them.
         """
-        l_client, _l_server, l_pump = connectedServerAndClient(ServerClass = SimpleSymmetricCommandProtocol, ClientClass = SimpleSymmetricCommandProtocol)
+        l_client, _l_server, l_pump = connectedServerAndClient()
         L = []
         HELLO = 'world'
         l_client.callRemote(FutureHello, hello = HELLO, bonus = "I'm not in the book!").addCallback(L.append)
@@ -960,54 +863,11 @@ class Test_05_AMP(unittest.TestCase):
         print('0508 L[]:{0:}'.format(L))
         self.assertEquals(L[0]['hello'], HELLO)
 
-    def test_0509_simpleReprs(self):
-        """
-        Verify that the various Box objects repr properly, for debugging.
-        """
-        # self.assertEquals(type(repr(amp._TLSBox())), str)
-        self.assertEquals(type(repr(amp._SwitchBox('a'))), str)
-        self.assertEquals(type(repr(amp.QuitBox())), str)
-        self.assertEquals(type(repr(amp.AmpBox())), str)
-        self.failUnless("AmpBox" in repr(amp.AmpBox()))
-
-    def test_0510_keyTooLong(self):
-        """
-        Verify that a key that is too long will immediately raise a synchronous exception.
-        """
-        l_client, _l_server, _p = connectedServerAndClient()
-        _L = []
-        x = "H" * (0xff + 1)
-        tl = self.assertRaises(amp.TooLong, l_client.callRemoteString, "Hello", **{x: "hi"})
-        self.failUnless(tl.isKey)
-        self.failUnless(tl.isLocal)
-        self.failUnlessIdentical(tl.keyName, None)
-        self.failUnlessIdentical(tl.value, x)
-        self.failUnless(str(len(x)) in repr(tl))
-        self.failUnless("key" in repr(tl))
-
-    def test_0511_valueTooLong(self):
-        """
-        Verify that attempting to send value longer than 64k will immediately raise an exception.
-        """
-        l_client, _l_server, l_pump = connectedServerAndClient()
-        _L = []
-        x = "H" * (0xffff + 1)
-        tl = self.assertRaises(amp.TooLong, l_client.sendHello, x)
-        l_pump.flush()
-        self.failIf(tl.isKey)
-        self.failUnless(tl.isLocal)
-        self.failUnlessIdentical(tl.keyName, 'hello')
-        self.failUnlessIdentical(tl.value, x)
-        self.failUnless(str(len(x)) in repr(tl))
-        self.failUnless("value" in repr(tl))
-        self.failUnless('hello' in repr(tl))
-
     def test_0512_helloWorldCommand(self):
         """ TODO:
         Verify that a simple command can be sent and its response received with the high-level value parsing API.
         """
-        l_client, _l_server, l_pump = connectedServerAndClient(ServerClass = SimpleSymmetricCommandProtocol,
-                                                               ClientClass = SimpleSymmetricCommandProtocol)
+        l_client, _l_server, l_pump = connectedServerAndClient()
         L = []
         HELLO = '0512 - world'
         l_client.sendHello(HELLO).addCallback(L.append)
@@ -1022,8 +882,7 @@ class Test_05_AMP(unittest.TestCase):
         """ TODO:
         Verify that a simple command can be sent and its response received with the high-level value parsing API.
         """
-        l_client, _l_server, l_pump = connectedServerAndClient(ServerClass = SimpleSymmetricCommandProtocol,
-                                                               ClientClass = SimpleSymmetricCommandProtocol)
+        l_client, _l_server, l_pump = connectedServerAndClient()
         L = []
         HELLO = '0512 - world'
         l_defer = l_client.sendHello(HELLO)
@@ -1038,8 +897,7 @@ class Test_05_AMP(unittest.TestCase):
         and translated into an exception, and no error will be logged.
         """
         L = []
-        l_client, _l_server, l_pump = connectedServerAndClient(ServerClass = SimpleSymmetricCommandProtocol,
-                                                               ClientClass = SimpleSymmetricCommandProtocol)
+        l_client, _l_server, l_pump = connectedServerAndClient()
         HELLO = 'screw you'
         l_client.sendHello(HELLO).addErrback(L.append)
         l_pump.flush()
@@ -1052,7 +910,7 @@ class Test_05_AMP(unittest.TestCase):
         into an exception, no error will be logged, and the connection will be terminated.
         """
         L = []
-        l_client, _l_server, l_pump = connectedServerAndClient(ServerClass = SimpleSymmetricCommandProtocol, ClientClass = SimpleSymmetricCommandProtocol)
+        l_client, _l_server, l_pump = connectedServerAndClient()
         HELLO = 'die'
         l_client.sendHello(HELLO).addErrback(L.append)
         l_pump.flush()
@@ -1067,7 +925,7 @@ class Test_05_AMP(unittest.TestCase):
          it will be logged, and then the connection will be dropped.
         """
         L = []
-        l_client, _l_server, l_pump = connectedServerAndClient(ServerClass = SimpleSymmetricCommandProtocol, ClientClass = SimpleSymmetricCommandProtocol)
+        l_client, _l_server, l_pump = connectedServerAndClient()
         HELLO = THING_I_DONT_UNDERSTAND
         l_client.sendHello(HELLO).addErrback(L.append)
         l_pump.flush()
@@ -1083,7 +941,7 @@ class Test_05_AMP(unittest.TestCase):
         """
         Verify that a command that does not get answered until after the connection terminates will not cause any errors.
         """
-        l_client, l_server, l_pump = connectedServerAndClient(ServerClass = SimpleSymmetricCommandProtocol, ClientClass = SimpleSymmetricCommandProtocol)
+        l_client, l_server, l_pump = connectedServerAndClient()
         L = []
         _HELLO = 'world'
         l_client.callRemote(WaitForever).addErrback(L.append)
@@ -1101,7 +959,7 @@ class Test_05_AMP(unittest.TestCase):
         Verify that a command that requires no answer is run.
         """
         _L = []
-        l_client, l_server, l_pump = connectedServerAndClient(ServerClass = SimpleSymmetricCommandProtocol, ClientClass = SimpleSymmetricCommandProtocol)
+        l_client, l_server, l_pump = connectedServerAndClient()
         print('517 Client:{0:}'.format(l_client))
         HELLO = 'world'
         l_client.callRemote(NoAnswerHello, hello = HELLO)
@@ -1113,7 +971,7 @@ class Test_05_AMP(unittest.TestCase):
         Verify that commands sent after a failed no-answer request do not complete.
         """
         L = []
-        l_client, l_server, l_pump = connectedServerAndClient(ServerClass = SimpleSymmetricCommandProtocol, ClientClass = SimpleSymmetricCommandProtocol)
+        l_client, l_server, l_pump = connectedServerAndClient()
         HELLO = 'screw you'
         l_client.callRemote(NoAnswerHello, hello = HELLO)
         l_pump.flush()
@@ -1153,7 +1011,7 @@ class Test_05_AMP(unittest.TestCase):
         """
         Test encoding of an argument that uses the AmpList encoding.
         """
-        l_client, _l_server, l_pump = connectedServerAndClient(ServerClass = SimpleSymmetricCommandProtocol, ClientClass = SimpleSymmetricCommandProtocol)
+        l_client, _l_server, l_pump = connectedServerAndClient()
         L = []
         l_client.callRemote(GetList, length = 10).addCallback(L.append)
         l_pump.flush()
@@ -1272,7 +1130,7 @@ class Test_05_AMP(unittest.TestCase):
         """
         Verify that commands with a responseType of QuitBox will in fact terminate the connection.
         """
-        l_client, _l_server, l_pump = connectedServerAndClient(ServerClass = SimpleSymmetricCommandProtocol, ClientClass = SimpleSymmetricCommandProtocol)
+        l_client, _l_server, l_pump = connectedServerAndClient()
         L = []
         HELLO = 'world'
         GOODBYE = 'everyone'
@@ -1402,9 +1260,7 @@ class Test_06_TLS(unittest.TestCase):
         """
         Verify that starting TLS and succeeding at handshaking sends all the notifications to all the right places.
         """
-        cli, svr, l_pump = connectedServerAndClient(
-            ServerClass = SecurableProto,
-            ClientClass = SecurableProto)
+        cli, svr, l_pump = connectedServerAndClient(ServerClass = SecurableProto, ClientClass = SecurableProto)
 
         okc = OKCert()
         svr.certFactory = lambda : okc
@@ -1460,9 +1316,7 @@ class Test_06_TLS(unittest.TestCase):
         """
         Verify that starting TLS and failing by way of a lost connection notices that it is probably an SSL problem.
         """
-        cli, svr, l_pump = connectedServerAndClient(
-            ServerClass = SecurableProto,
-            ClientClass = SecurableProto)
+        cli, svr, l_pump = connectedServerAndClient(ServerClass = SecurableProto, ClientClass = SecurableProto)
         droppyCert = DroppyCert(svr.transport)
         svr.certFactory = lambda : droppyCert
         _secure = cli.callRemote(amp.StartTLS, tls_localCertificate = droppyCert)
@@ -1918,15 +1772,6 @@ class Test_11_CommandTestCase(unittest.TestCase):
         client = NoNetworkProtocol()
         argument = object()
         response = client.callRemote(MagicSchemaCommand, weird = argument)
-        response.addCallback(cb_gotResponse)
-        return response
-
-    def test_1108_DBK_Info(self):
-        def cb_gotResponse(_ignore):
-            self.assertEqual(l_client.makeArgumentsArguments, ({"Name": 'Test_1108'}, l_client))
-        l_pyhouses_obj = PyHouseData()
-        l_client = node_domain.AmpClientProtocol('192.168.1.1', l_pyhouses_obj)
-        response = l_client.callRemote(node_domain.NodeInformationCommand, Name = 'Test_1108')
         response.addCallback(cb_gotResponse)
         return response
 
