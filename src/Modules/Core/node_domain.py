@@ -246,7 +246,7 @@ class NodeDomainClientProtocol(BoxDispatcher):
 
     def makeConnection(self, p_transport):
         LOG.error('ClientProtocol - MakeConnection (221)')
-        # LOG.error('     Transport: {0:}'.format(p_transport))
+        LOG.error('     Transport: {0:}'.format(p_transport))
 
     def send_NodeInformation(self, p_node):
         """For some reason, this gives a error 'NoneType' object has no attribute 'sendBox'
@@ -278,7 +278,8 @@ class NodeDomainClientFactory(ClientFactory):
 
     def startedConnecting(self, p_connector):
         if g_debug >= 1:
-            LOG.debug("DomainClientFactory - StartedConnecting {0:}".format(p_connector))
+            LOG.debug("DomainClientFactory - StartedConnecting (281)")
+            LOG.debug("     Connector. {0:}".format(p_connector))
             LOG.debug('     Client Number: {0:}'.format(self.m_client_count))
 
     def buildProtocol(self, p_address):
@@ -306,7 +307,8 @@ class AmpClient(object):
         l_factory = NodeDomainClientFactory(p_pyhouses_obj)
         l_connect_defer = l_endpoint.connect(l_factory)
         if g_debug >= 2:
-            LOG.debug("Domain Client connecting to server at address {0:} (253).".format(p_address))
+            LOG.debug("Domain Client connecting to server (310).")
+            LOG.debug("     Address {0:}".format(p_address))
         return l_connect_defer
 
     def cb_create_client_connected_l1(self, p_protocol):
@@ -316,17 +318,17 @@ class AmpClient(object):
         """
 
         def cb_got_result_l2(p_result):
-            LOG.debug('cb_got_result Client - Result:{0:} (291).'.format(p_result))
+            LOG.debug('cb_got_result Client - Result:{0:} (321).'.format(p_result))
             LocatorClass().NodeInformationResponse('test dbk')
 
         def eb_err_l2(p_ConnectionDone):
-            LOG.error('eb_err_l2 - arg:{0:} (295).'.format(p_ConnectionDone))
+            LOG.error('eb_err_l2 - arg:{0:} (325).'.format(p_ConnectionDone))
 
         def eb_timeout(_p_reason):
             LOG.error('eb_timeout (298)')
 
         if g_debug >= 1:
-            LOG.debug('Client - cb_create_client_connected_l1 (301).')
+            LOG.debug('Client - cb_create_client_connected_l1 (331).')
             LOG.debug('          Protocol: {0:}'.format(p_protocol))
             LOG.debug('          Address: {0:}.'.format(self.m_address))
         l_nodes = self.m_pyhouses_obj.Nodes[0]
@@ -334,11 +336,11 @@ class AmpClient(object):
             l_defer12 = p_protocol.send_NodeInformation(l_nodes)
             # l_defer12.setTimeout(30, eb_timeout)
             if g_debug >= 1:
-                LOG.debug('Domain Client has connected to Server - Sending Node Information (310).')
+                LOG.debug('Domain Client has connected to Server - Sending Node Information (339).')
             l_defer12.addCallback(cb_got_result_l2)
             l_defer12.addErrback(eb_err_l2)
         except AttributeError as l_error:
-            print('node_domain.cb_create_client_connected_l1 = Error in trying to send node info (313)')
+            print('node_domain.cb_create_client_connected_l1 = Error in trying to send node info (343)')
             print('     Error: {0:}'.format(l_error))
             print('     p_protocol: {0:}'.format(vars(p_protocol)))
 
@@ -348,12 +350,12 @@ class AmpClient(object):
         """
         # l_result = p_pyhouses_obj.Nodes[0].Name
         if g_debug >= 1:
-            LOG.debug('cb_create_client_result_l1 - Client returning result from Server Result:{0:} (324).'.format(p_result))
+            LOG.debug('cb_create_client_result_l1 - Client returning result from Server Result:{0:} (353).'.format(p_result))
         # LocatorClass().NodeInformationResponse(p_result)
 
     def eb_create_client_l1(self, p_result):
         p_result.trap(NodeInformationError)
-        LOG.error('eb_create_client_l1 - Client got error Result:{0:} (328).'.format(p_result))
+        LOG.error('eb_create_client_l1 - Client got error Result:{0:} (358).'.format(p_result))
 
     def create_one_client(self, p_pyhouses_obj, p_address):
         """
@@ -385,14 +387,15 @@ class NodeDomainServerProtocol(DomainBoxDispatcher):
         AMP.__init__(AMP(), boxReceiver = l_disp)
         _l_proto = BinaryBoxProtocol(self)
         if g_debug >= 1:
-            LOG.debug('  ServerProtocol() initialized (341)')
+            LOG.debug('  ServerProtocol() initialized (390)')
             LOG.debug('      Proto:{0:}'.format(l_disp))
             LOG.debug('      Dispatch:{0:}'.format(l_disp))
         self.locate_responder(NodeInformationCommand)
 
     def dataReceived(self, p_data):
         if g_debug >= 1:
-            LOG.debug('  ServerProtocol data rxed {0:} (348)'.format(PrintBox(p_data)))
+            LOG.debug('  ServerProtocol data rxed (397)')
+            LOG.debug('       Data rxed: {0:}'.format(PrintBox(p_data)))
 
     def connectionMade(self):
         """Somebody connected to us...
@@ -403,14 +406,17 @@ class NodeDomainServerProtocol(DomainBoxDispatcher):
         """
         def cb_got_result12(p_result):
             if g_debug >= 1:
-                LOG.debug('ServerProtocol - ConnectionMade - cb_got_result Client Addr:{0:} - Result:{1:}  transport{2:}'.format(self.m_address, p_result, self.transport))
+                LOG.debug('ServerProtocol - ConnectionMade cb_got_result (409)')
+                LOG.debug('     Client Addr:{0:}'.format(self.m_address))
+                LOG.debug('     Result:{0:}'.format(p_result))
+                LOG.debug('     Transport{0:}'.format(self.transport))
                 ().NodeInformationResponse('test dbk')
 
         def eb_err12(p_ConnectionDone):
             LOG.error('ServerProtocol - ConnectionMade - eb_err2 - Addr:{0:} - arg:{1:}'.format(self.m_address, p_ConnectionDone))
 
         if g_debug >= 1:
-            LOG.debug('ServerProtocol - ConnectionMade (368)')
+            LOG.debug('ServerProtocol - ConnectionMade (419)')
             # LOG.debug('    self = {0:}\n'.format(vars(self)))
         l_defer12 = self.locator.send_NodeInformation(self.m_pyhouses_obj.Nodes[0])
         l_defer12.addCallback(cb_got_result12)
@@ -422,7 +428,7 @@ class NodeDomainServerProtocol(DomainBoxDispatcher):
 
     def locate_responder(self, p_name):
         if g_debug >= 1:
-            LOG.debug('  ServerProtocol locate_responder = {0:} (344)'.format(p_name))
+            LOG.debug('  ServerProtocol locate_responder = {0:} (431)'.format(p_name))
 
 
 class AmpServerFactory(ServerFactory):
