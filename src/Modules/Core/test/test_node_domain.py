@@ -26,7 +26,7 @@ from twisted.test.proto_helpers import StringTransport
 
 # Import PyMh files and modules.
 from Modules.Core import node_domain
-# from Modules.Core.data_objects import PyHouseData
+from Modules.Core.data_objects import PyHouseData
 
 class TestProtocol(protocol.Protocol):
 
@@ -385,6 +385,7 @@ class Test_02_CommandDispatch(unittest.TestCase):
         """
         Create a dispatcher to use.
         """
+        self.m_pyhouses_obj = PyHouseData()
         self.locator = FakeLocator()
         self.sender = FakeSender()
         self.dispatcher = amp.BoxDispatcher(self.locator)
