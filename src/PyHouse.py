@@ -70,7 +70,7 @@ from Modules.utils import pyh_log
 from Modules.utils import xml_tools
 
 g_debug = 0
-LOG = pyh_log.getLogger('PyHouse')
+LOG = pyh_log.getLogger('PyHouse             ')
 
 
 def daemonize():

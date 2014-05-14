@@ -62,6 +62,8 @@ class Utility(xml_tools.ConfigFile):
     def setup_debug_log (self, p_pyhouse_obj):
         """Debug and more severe goes to the base logger
         """
+        import logging
+        logging.basicConfig()
         l_file = p_pyhouse_obj.LogsData.Debug
         self.m_pyhouses_obj = p_pyhouse_obj
         # l_formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s - %(message)s')
