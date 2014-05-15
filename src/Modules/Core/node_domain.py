@@ -429,7 +429,7 @@ class NodeDomainServerProtocol(DomainBoxDispatcher):
         if g_debug >= 1:
             LOG.debug('  ServerProtocol connection lost {0:}'.format(p_reason))
 
-    def XXlocate_responder(self, p_name):
+    def locate_responder(self, p_name):
         if g_debug >= 1:
             LOG.debug('  ServerProtocol locate_responder (434)')
             LOG.debug('        Name: {0:}'.format(p_name))
