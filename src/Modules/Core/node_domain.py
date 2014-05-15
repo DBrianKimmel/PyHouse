@@ -382,15 +382,16 @@ class NodeDomainServerProtocol(DomainBoxDispatcher):
          as the IBoxSender parameter.
     """
     def __init__(self, p_pyhouses_obj):
+        LOG.debug('  NodeDomainServerProtocol()  (385)')
         self.m_pyhouses_obj = p_pyhouses_obj
         l_disp = DomainBoxDispatcher(p_pyhouses_obj)
         AMP.__init__(AMP(), boxReceiver = l_disp)
         _l_proto = BinaryBoxProtocol(self)
         if g_debug >= 1:
-            LOG.debug('  ServerProtocol() initialized (390)')
+            LOG.debug('  ServerProtocol() initialized (391)')
             LOG.debug('      Proto:{0:}'.format(l_disp))
             LOG.debug('      Dispatch:{0:}'.format(l_disp))
-        self.locate_responder(NodeInformationCommand)
+        self.locate_responder('NodeInformationCommand')
 
     def dataReceived(self, p_data):
         if g_debug >= 1:
@@ -423,12 +424,15 @@ class NodeDomainServerProtocol(DomainBoxDispatcher):
         l_defer12.addErrback(eb_err12)
 
     def connectionLost(self, p_reason):
+        """Clean up the connection.
+        """
         if g_debug >= 1:
             LOG.debug('  ServerProtocol connection lost {0:}'.format(p_reason))
 
-    def locate_responder(self, p_name):
+    def XXlocate_responder(self, p_name):
         if g_debug >= 1:
-            LOG.debug('  ServerProtocol locate_responder = {0:} (431)'.format(p_name))
+            LOG.debug('  ServerProtocol locate_responder (434)')
+            LOG.debug('        Name: {0:}'.format(p_name))
 
 
 class AmpServerFactory(ServerFactory):
