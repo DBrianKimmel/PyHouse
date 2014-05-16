@@ -373,7 +373,7 @@ class FakeSender:
             self.unhandledErrors.append(failure)
 
 
-class Test_02_CommandDispatch(unittest.TestCase):
+class Test_02_CmdDsptch(unittest.TestCase):
     """
     The AMP CommandDispatcher class dispatches converts AMP boxes into commands and responses using Command.responder decorator.
 
@@ -509,7 +509,7 @@ class OverrideLocatorAMP(amp.AMP):
     greetingResponder = SimpleGreeting.responder(greetingResponder)
 
 
-class Test_03_CommandLocator(unittest.TestCase):
+class Test_03_CmdLctr(unittest.TestCase):
     """
     The CommandLocator should enable users to specify responders to commands as functions that take structured objects, annotated with metadata.
     """
@@ -564,7 +564,7 @@ This section will test binary box protocols
 SWITCH_CLIENT_DATA = 'Success!'
 SWITCH_SERVER_DATA = 'No, really.  Success.'
 
-class Test_04_BinaryProtocol(unittest.TestCase):
+class Test_04_BinaryProto(unittest.TestCase):
     """
     Tests for L{amp.BinaryBoxProtocol}.
 
@@ -1163,7 +1163,7 @@ class Test_05_AMP(unittest.TestCase):
         L[-1].pop('_ask')
         self.assertEquals(L[-1], {})
 
-    def Xtest_0531_basicStructuredEmit(self):
+    def test_0531_basicStructuredEmit(self):
         """
         Verify that a call similar to basicLiteralEmit's is handled properly with high-level quoting and passing to Python methods,
          and that argument names are correctly handled.
@@ -1180,19 +1180,20 @@ class Test_05_AMP(unittest.TestCase):
         l_pump.flush()
         print('0531-A L[]:{0:}'.format(L))
         self.assertEquals(len(L), 2)
-        self.assertEquals(L[0], ((), dict(
+        l_b = dict(
                     hello = 'hello test',
                     mixedCase = 'mixed case arg test',
                     dash_arg = 'x',
                     underscore_arg = 'y',
-                    # XXX - should optional arguments just not be passed?
-                    # passing None seems a little odd, looking at the way it
-                    # turns out here... -glyph
-                    From = ('file', 'file'),
-                    # Print = None,
+                    # From = ('file', 'file'),
+                    Print = None,
                     # optional = None,
-                    )))
-        # self.assertEquals(L[1], dict(Print = None, hello = 'aaa'))
+                    )
+        print "L[0][1]", L[0][1]
+        print "l_b", l_b
+        for k, _v in l_b.iteritems():
+            self.assertEquals(L[0][1][k], l_b[k])
+        self.assertEquals(L[1], dict(Print = None, hello = 'aaa'))
 
 
 
@@ -1399,7 +1400,7 @@ class AddedCommandProtocol(amp.AMP):
     AddErrorsCommand.responder(resp)
 
 
-class Test_07_CommandInheritance(unittest.TestCase):
+class Test_07_CmdInherit(unittest.TestCase):
     """
     These tests verify that commands inherit error conditions properly.
     """
@@ -1695,7 +1696,7 @@ class ProtocolIncludingCommandWithDifferentCommandType(
     commandType = MyBox
 
 
-class Test_11_CommandTestCase(unittest.TestCase):
+class Test_11_CmdTestCase(unittest.TestCase):
     """
     Tests for L{amp.Command}.
     """
