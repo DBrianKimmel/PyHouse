@@ -208,7 +208,7 @@ class NodeDomainServerProtocol(DomainBoxDispatcher, BinaryBoxProtocol):
     def __init__(self, p_pyhouses_obj):
         LOG.debug('  NodeDomainServerProtocol()  (NDSP-1  209)')
         self.m_pyhouses_obj = p_pyhouses_obj
-        l_disp = DomainBoxDispatcher(p_pyhouses_obj)
+        l_disp = DomainBoxDispatcher()
         AMP.__init__(AMP(), boxReceiver = l_disp)
         super(NodeDomainServerProtocol, self).__init__()
         if g_debug >= 1:
@@ -353,7 +353,7 @@ class NodeDomainClientProtocol(BoxDispatcher):
     def __init__(self, p_address, p_pyhouses_obj):
         # super(NodeDomainClientProtocol, self).__init()
         # AMP.__init__(self, boxReceiver = DomainBoxDispatcher(p_pyhouses_obj, p_address), locator = LocatorClass())
-        # self.m_dispatch = DomainBoxDispatcher(p_pyhouses_obj)
+        # self.m_dispatch = DomainBoxDispatcher()
         self.m_dispatch = BoxDispatcher(None)
         self.m_address = p_address
         self.m_pyhouses_obj = p_pyhouses_obj
