@@ -73,7 +73,8 @@ class DomainBoxDispatcher(BoxDispatcher):
         """
         @param p_address: is a 3-tupple (AddressFamily, IPv4Addr, Port)
         """
-        # super(DomainBoxDispatcher, self).__init__()
+        self.m_locator = LocatorClass()
+        super(DomainBoxDispatcher, self).__init__(self.m_locator)
         self.m_amp = self
         if g_debug >= 1:
             LOG.debug(' Dispatch - initialized. (DBD-1  079)')
