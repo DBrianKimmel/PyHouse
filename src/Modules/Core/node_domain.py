@@ -169,13 +169,13 @@ class NodeDomainServerProtocol(DomainBoxDispatcher, BinaryBoxProtocol):
     with itself as the IBoxSender parameter.
     """
     def __init__(self, p_pyhouses_obj):
-        LOG.debug('  NodeDomainServerProtocol()  (385)')
+        LOG.debug('  NodeDomainServerProtocol()  (NDSP-1  172)')
         self.m_pyhouses_obj = p_pyhouses_obj
         l_disp = DomainBoxDispatcher(p_pyhouses_obj)
         AMP.__init__(AMP(), boxReceiver = l_disp)
-        # _l_proto = BinaryBoxProtocol(self)
+        super(NodeDomainServerProtocol, self).__init__()
         if g_debug >= 1:
-            LOG.debug('  ServerProtocol() initialized (NDSP-1  178)')
+            LOG.debug('  ServerProtocol() initialized (NDSP-1a  178)')
             LOG.debug('      Proto:{0:}'.format(l_disp))
             LOG.debug('      Dispatch:{0:}'.format(l_disp))
         self.locate_responder('NodeInformationCommand')
