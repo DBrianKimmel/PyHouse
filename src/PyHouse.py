@@ -63,7 +63,6 @@ from twisted.application.service import Application
 import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
-from Modules import Core
 from Modules.Core.data_objects import PyHouseData
 from Modules.Core import setup
 from Modules.utils import pyh_log
