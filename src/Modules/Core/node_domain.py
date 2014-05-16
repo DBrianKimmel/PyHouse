@@ -124,7 +124,7 @@ class DomainBoxDispatcher(BoxDispatcher):
         """
         if g_debug >= 1:
             LOG.debug(' Dispatch - send_NodeInformation  (DBD-7  125)')
-        l_call = self.m_dispatch
+        l_call = self
         try:
             l_defer = l_call.callRemote(NodeInformationCommand,
                         Name = p_node.Name, Active = str(p_node.Active), Address = p_node.ConnectionAddr_IPv4,
