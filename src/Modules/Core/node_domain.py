@@ -160,30 +160,41 @@ class AmpServerFactory(ServerFactory):
         return NodeDomainServerProtocol(self.m_pyhouses_obj)
 
 
-class NodeDomainServerProtocol(DomainBoxDispatcher):
+class NodeDomainServerProtocol(DomainBoxDispatcher, BinaryBoxProtocol):
     """
     Implement dataReceived(data) to handle both event-based and synchronous input.
     output can be sent through the 'transport' attribute.
 
-    When BinaryBoxProtocol is connected to a transport, it calls startReceivingBoxes on its IBoxReceiver with itself
-         as the IBoxSender parameter.
+    When BinaryBoxProtocol is connected to a transport, it calls startReceivingBoxes on its IBoxReceiver
+    with itself as the IBoxSender parameter.
     """
     def __init__(self, p_pyhouses_obj):
         LOG.debug('  NodeDomainServerProtocol()  (385)')
         self.m_pyhouses_obj = p_pyhouses_obj
         l_disp = DomainBoxDispatcher(p_pyhouses_obj)
         AMP.__init__(AMP(), boxReceiver = l_disp)
-        _l_proto = BinaryBoxProtocol(self)
+        # _l_proto = BinaryBoxProtocol(self)
         if g_debug >= 1:
-            LOG.debug('  ServerProtocol() initialized (391)')
+            LOG.debug('  ServerProtocol() initialized (NDSP-1  178)')
             LOG.debug('      Proto:{0:}'.format(l_disp))
             LOG.debug('      Dispatch:{0:}'.format(l_disp))
         self.locate_responder('NodeInformationCommand')
 
     def dataReceived(self, p_data):
         if g_debug >= 1:
-            LOG.debug('  ServerProtocol data rxed (397)')
+            LOG.debug('  ServerProtocol data rxed (NDSP-2  185)')
             LOG.debug('       Data rxed: {0:}'.format(PrintBox(p_data)))
+
+    def cb_got_result12(self, p_result):
+        if g_debug >= 1:
+            LOG.debug('ServerProtocol - ConnectionMade cb_got_result (NDSP-3  190)')
+            LOG.debug('     Client Addr:{0:}'.format(self.m_address))
+            LOG.debug('     Result:{0:}'.format(p_result))
+            LOG.debug('     Transport{0:}'.format(self.transport))
+            ().NodeInformationResponse('test dbk')
+
+    def eb_err12(self, p_ConnectionDone):
+        LOG.error('ServerProtocol - ConnectionMade - eb_err2 - Addr:{0:} - arg:{1:}'.format(self.m_address, p_ConnectionDone))
 
     def connectionMade(self):
         """Somebody connected to us...
@@ -192,33 +203,23 @@ class NodeDomainServerProtocol(DomainBoxDispatcher):
         For servers, this is called after an accept() call stops blocking and a socket has been received.
         If you need to send any greeting or initial message, do it here.
         """
-        def cb_got_result12(p_result):
-            if g_debug >= 1:
-                LOG.debug('ServerProtocol - ConnectionMade cb_got_result (409)')
-                LOG.debug('     Client Addr:{0:}'.format(self.m_address))
-                LOG.debug('     Result:{0:}'.format(p_result))
-                LOG.debug('     Transport{0:}'.format(self.transport))
-                ().NodeInformationResponse('test dbk')
-
-        def eb_err12(p_ConnectionDone):
-            LOG.error('ServerProtocol - ConnectionMade - eb_err2 - Addr:{0:} - arg:{1:}'.format(self.m_address, p_ConnectionDone))
-
         if g_debug >= 1:
-            LOG.debug('ServerProtocol - ConnectionMade (419)')
+            LOG.debug('ServerProtocol - ConnectionMade (NDSP-5  207)')
             # LOG.debug('    self = {0:}\n'.format(vars(self)))
         l_defer12 = self.locator.send_NodeInformation(self.m_pyhouses_obj.Nodes[0])
-        l_defer12.addCallback(cb_got_result12)
-        l_defer12.addErrback(eb_err12)
+        l_defer12.addCallback(self.cb_got_result12)
+        l_defer12.addErrback(self.eb_err12)
 
     def connectionLost(self, p_reason):
         """Clean up the connection.
         """
         if g_debug >= 1:
-            LOG.debug('  ServerProtocol connection lost {0:}'.format(p_reason))
+            LOG.debug('  ServerProtocol connection lost (NDSP-6  217)')
+            LOG.debug('       Reason: {0:}'.format(p_reason))
 
     def locate_responder(self, p_name):
         if g_debug >= 1:
-            LOG.debug('  ServerProtocol locate_responder (434)')
+            LOG.debug('  ServerProtocol locate_responder (NDSP-7  222)')
             LOG.debug('        Name: {0:}'.format(p_name))
 
 
