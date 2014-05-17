@@ -121,10 +121,10 @@ class DomainBoxDispatcher(AMP):
         """For some reason, this gives a error 'NoneType' object has no attribute 'sendBox'
         The information is sent somehow.
         """
-        l_protocol = self
+        l_protocol = self.m_amp
         if g_debug >= 1:
             LOG.debug(' Dispatch - send_NodeInformation  (DBD-7  125)')
-            LOG.debug('     Self: {0:}'.format(vars(self)))
+            LOG.debug('     l_protocol: {0:}'.format(vars(l_protocol)))
         try:
             l_defer = l_protocol.callRemote(NodeInformationCommand,
                         Name = p_node.Name, Active = str(p_node.Active), Address = p_node.ConnectionAddr_IPv4,
