@@ -20,7 +20,7 @@ There is no central node so each node needs to talk with all other nodes.
 import pprint
 from twisted.internet.endpoints import serverFromString, TCP4ClientEndpoint
 from twisted.internet.protocol import ClientFactory, ServerFactory
-from twisted.protocols.amp import AMP, Integer, Unicode, String, AmpList, Command, CommandLocator, BinaryBoxProtocol, BoxDispatcher
+from twisted.protocols.amp import AMP, Integer, Unicode, String, AmpList, Command, CommandLocator
 from twisted.python.filepath import FilePath
 from twisted.internet.defer import Deferred
 
@@ -67,15 +67,15 @@ class NodeInformationCommand(Command):
 
 
 
-class DomainBoxDispatcher(BoxDispatcher):
+class DomainBoxDispatcher(AMP):
 
     def __init__(self):
         """
         @param p_address: is a 3-tupple (AddressFamily, IPv4Addr, Port)
         """
         self.m_locator = LocatorClass()
-        super(DomainBoxDispatcher, self).__init__(self.m_locator)
-        self.m_amp = self
+        # super(DomainBoxDispatcher, self).__init__(self.m_locator)
+        # self.m_amp = self
         if g_debug >= 1:
             LOG.debug(' Dispatch - initialized. (DBD-1  079)')
             LOG.debug('      Self: {0:}'.format(vars(self)))
@@ -198,7 +198,7 @@ class AmpServerFactory(ServerFactory):
 
 
 
-class NodeDomainServerProtocol(DomainBoxDispatcher, BinaryBoxProtocol):
+class NodeDomainServerProtocol(DomainBoxDispatcher):
     """
     Implement dataReceived(data) to handle both event-based and synchronous input.
     output can be sent through the 'transport' attribute.
@@ -211,7 +211,7 @@ class NodeDomainServerProtocol(DomainBoxDispatcher, BinaryBoxProtocol):
         self.m_pyhouses_obj = p_pyhouses_obj
         # l_disp = DomainBoxDispatcher()
         # AMP.__init__(AMP(), boxReceiver = l_disp)
-        super(NodeDomainServerProtocol, self).__init__()
+        # super(NodeDomainServerProtocol, self).__init__()
         if g_debug >= 1:
             LOG.debug('  ServerProtocol() initialized (NDSP-1a  215)')
             # LOG.debug('      Proto:{0:}'.format(l_disp))
@@ -349,13 +349,13 @@ class LocatorClass(CommandLocator):
 
 ### -----------------------------------------------------------------
 
-class NodeDomainClientProtocol(BoxDispatcher):
+class NodeDomainClientProtocol(DomainBoxDispatcher):
 
     def __init__(self, p_address, p_pyhouses_obj):
         # super(NodeDomainClientProtocol, self).__init()
         # AMP.__init__(self, boxReceiver = DomainBoxDispatcher(p_pyhouses_obj, p_address), locator = LocatorClass())
         # self.m_dispatch = DomainBoxDispatcher()
-        self.m_dispatch = BoxDispatcher(None)
+        # self.m_dispatch = BoxDispatcher(None)
         self.m_address = p_address
         self.m_pyhouses_obj = p_pyhouses_obj
         if g_debug >= 1:
@@ -405,7 +405,7 @@ class NodeDomainClientProtocol(BoxDispatcher):
         """
         if g_debug >= 1:
             LOG.debug(' Dispatch - send_NodeInformation  (229)')
-        l_call = self.m_dispatch
+        l_call = self
         try:
             l_defer = l_call.callRemote(NodeInformationCommand,
                         Name = p_node.Name, Active = str(p_node.Active), Address = p_node.ConnectionAddr_IPv4,
