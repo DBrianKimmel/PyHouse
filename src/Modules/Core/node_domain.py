@@ -210,7 +210,7 @@ class NodeDomainServerProtocol(DomainBoxDispatcher):
         self.m_pyhouses_obj = p_pyhouses_obj
         # l_disp = DomainBoxDispatcher()
         # AMP.__init__(AMP(), boxReceiver = l_disp)
-        super(NodeDomainServerProtocol, self).__init__()
+        # super(NodeDomainServerProtocol, self).__init__()
         if g_debug >= 1:
             LOG.debug('  ServerProtocol() initialized (NDSP-1a  215)')
             # LOG.debug('      Proto:{0:}'.format(l_disp))
