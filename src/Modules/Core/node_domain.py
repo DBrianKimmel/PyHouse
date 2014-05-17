@@ -121,9 +121,10 @@ class DomainBoxDispatcher(AMP):
         """For some reason, this gives a error 'NoneType' object has no attribute 'sendBox'
         The information is sent somehow.
         """
+        l_protocol = self
         if g_debug >= 1:
             LOG.debug(' Dispatch - send_NodeInformation  (DBD-7  125)')
-        l_protocol = self
+            LOG.debug('     Self: {0:}'.format(vars(self)))
         try:
             l_defer = l_protocol.callRemote(NodeInformationCommand,
                         Name = p_node.Name, Active = str(p_node.Active), Address = p_node.ConnectionAddr_IPv4,
@@ -136,23 +137,22 @@ class DomainBoxDispatcher(AMP):
             l_defer = Deferred()
         return l_defer
 
+
+
+
+
+
     def receive_NodeInformation(self, NodeInformationCommand, Name = None, Active = None, Address = None, Role = None):
         if g_debug >= 1:
-            LOG.debug(' Dispatch - receive_NodeInformation  - RECEIVED (DBD-8  141)')
+            LOG.debug(' Dispatch - receive_NodeInformation  - RECEIVED (DBD-8  147)')
         l_ret = dict(Name = Name, Answer = 'Got it ok')
         return l_ret
     NodeInformationCommand.responder(receive_NodeInformation)
 
     def update_NodeInformation(self, _p_box):
         if g_debug >= 1:
-            LOG.debug(' Dispatch - update_NodeInformation (DBD-9  148)')
+            LOG.debug(' Dispatch - update_NodeInformation (DBD-9  154)')
         pass
-
-
-
-
-
-
 
 
 
@@ -251,7 +251,7 @@ class NodeDomainServerProtocol(DomainBoxDispatcher):
         If you need to send any greeting or initial message, do it here.
         """
         if g_debug >= 1:
-            LOG.debug('ServerProtocol - ConnectionMade (NDSP-5  244)')
+            LOG.debug('ServerProtocol - ConnectionMade (NDSP-5  254)')
             # LOG.debug('    self = {0:}\n'.format(vars(self)))
         l_defer12 = self.send_NodeInformation(self.m_pyhouses_obj.Nodes[0])
         l_defer12.addCallback(self.cb_got_result12)
@@ -261,12 +261,12 @@ class NodeDomainServerProtocol(DomainBoxDispatcher):
         """Clean up the connection.
         """
         if g_debug >= 1:
-            LOG.debug('  ServerProtocol connection lost (NDSP-6  254)')
+            LOG.debug('  ServerProtocol connection lost (NDSP-6  264)')
             LOG.debug('       Reason: {0:}'.format(p_reason))
 
     def locate_responder(self, p_name):
         if g_debug >= 1:
-            LOG.debug('  ServerProtocol locate_responder (NDSP-7  259)')
+            LOG.debug('  ServerProtocol locate_responder (NDSP-7  269)')
             LOG.debug('        Name: {0:}'.format(p_name))
 
 
