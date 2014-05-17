@@ -20,8 +20,7 @@ There is no central node so each node needs to talk with all other nodes.
 import pprint
 from twisted.internet.endpoints import serverFromString, TCP4ClientEndpoint
 from twisted.internet.protocol import ClientFactory, ServerFactory
-from twisted.protocols.amp import AMP, Integer, Unicode, String, AmpList, Command, CommandLocator
-from twisted.python.filepath import FilePath
+from twisted.protocols.amp import AMP, Integer, Unicode, String, AmpList, Command
 from twisted.internet.defer import Deferred
 
 # Import PyMh files and modules.
@@ -74,7 +73,7 @@ class DomainBoxDispatcher(AMP):
         @param p_address: is a 3-tupple (AddressFamily, IPv4Addr, Port)
         """
         self.m_locator = LocatorClass()
-        # super(DomainBoxDispatcher, self).__init__(self.m_locator)
+        super(DomainBoxDispatcher, self).__init__(self.m_locator)
         # self.m_amp = self
         if g_debug >= 1:
             LOG.debug(' Dispatch - initialized. (DBD-1  079)')
@@ -124,9 +123,9 @@ class DomainBoxDispatcher(AMP):
         """
         if g_debug >= 1:
             LOG.debug(' Dispatch - send_NodeInformation  (DBD-7  125)')
-        l_call = self
+        l_protocol = self
         try:
-            l_defer = l_call.callRemote(NodeInformationCommand,
+            l_defer = l_protocol.callRemote(NodeInformationCommand,
                         Name = p_node.Name, Active = str(p_node.Active), Address = p_node.ConnectionAddr_IPv4,
                         Role = int(p_node.Role))
             if g_debug >= 1:
@@ -211,15 +210,14 @@ class NodeDomainServerProtocol(DomainBoxDispatcher):
         self.m_pyhouses_obj = p_pyhouses_obj
         # l_disp = DomainBoxDispatcher()
         # AMP.__init__(AMP(), boxReceiver = l_disp)
-        # super(NodeDomainServerProtocol, self).__init__()
+        super(NodeDomainServerProtocol, self).__init__()
         if g_debug >= 1:
             LOG.debug('  ServerProtocol() initialized (NDSP-1a  215)')
             # LOG.debug('      Proto:{0:}'.format(l_disp))
             # LOG.debug('      Dispatch:{0:}'.format(l_disp))
+            LOG.debug('      Self: {0:}'.format(vars(self)))
         self.locate_responder('NodeInformationCommand')
         self.connectionMade()
-
-
 
 
 
@@ -328,16 +326,12 @@ class RegisterUser(Command):
 
 ### -----------------------------------------------------------------
 
-class LocatorClass(CommandLocator):
+class LocatorClass(DomainBoxDispatcher):
 
     uidCounter = 0
     @RegisterUser.responder
-    def register(self, username, publickey):
-        path = FilePath(username)
-        if path.exists():
-            raise UsernameUnavailable()
-        self.uidCounter += 1
-        path.setContent('%d %s\n' % (self.uidCounter, publickey))
+    def register(self, _username, _publickey):
+        self.uidCounter = 1
         return self.uidCounter
 
     @IrPacketCommand.responder
@@ -349,6 +343,59 @@ class LocatorClass(CommandLocator):
 
 ### -----------------------------------------------------------------
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class NodeDomainClientProtocol(DomainBoxDispatcher):
 
     def __init__(self, p_address, p_pyhouses_obj):
@@ -359,52 +406,80 @@ class NodeDomainClientProtocol(DomainBoxDispatcher):
         self.m_address = p_address
         self.m_pyhouses_obj = p_pyhouses_obj
         if g_debug >= 1:
-            LOG.debug('ClientProtocol - initialized (188).')
-            # LOG.debug('     Addr: {0:}'.format(p_address))
-            # LOG.debug('     Self: {0:}'.format(self))
+            LOG.debug('ClientProtocol - initialized (NDCP-1  410).')
+            LOG.debug('     Addr: {0:}'.format(p_address))
+            LOG.debug('     Self: {0:}'.format(vars(self)))
         pass
+
+
 
     def dataReceived(self, p_data):
         """Somehow, encoded data is arriving here.
         """
         if g_debug >= 1:
-            LOG.debug('ClientProtocol - DataReceived (197)')
+            LOG.debug('ClientProtocol - DataReceived (NDCP-2  421)')
             LOG.debug('     {0:}'.format(PrintBox(p_data)))
         # self.parseResponse()
 
-    def startReceivingBoxes(self, boxSender):
+
+
+
+    def startReceivingBoxes(self, _boxSender):
+        if g_debug >= 1:
+            LOG.debug('ClientProtocol - DataReceived (NDCP-2  430)')
         pass
 
-    def connectionMade(self):
 
-        def cb_got_result12(p_result):
-            if g_debug >= 1:
-                LOG.debug('ClientProtocol - ConnectionMade - cb_got_result Client Addr:{0:} - Result:{1:}  transport{2:} (205)'.format(self.m_address, p_result, self.transport))
-            LocatorClass().NodeInformationResponse('test dbk')
 
-        def eb_err12(p_ConnectionDone):
-            LOG.error('ClientProtocol - ConnectionMade - eb_err2 - Addr:{0:} - arg:{1:}'.format(self.m_address, p_ConnectionDone))
 
+
+    def cb_got_result12(self, p_result):
         if g_debug >= 1:
-            LOG.debug('ClientProtocol - ConnectionMade to:{0:}, transp:{1:} (212)'.format(self.m_address, self.transport))
+            LOG.debug('ClientProtocol - ConnectionMade - cb_got_result  (NDCP-3  439)')
+            LOG.debug('      Client Addr: {0:}'.format(self.m_address))
+            LOG.debug('      Result: {0:}'.format(p_result))
+            LOG.debug('      Transport: {0:}'.format(self.transport))
+        LocatorClass().NodeInformationResponse('test dbk')
+
+
+
+    def eb_err12(self, p_ConnectionDone):
+        LOG.error('ClientProtocol - ConnectionMade - eb_err2 - Addr:{0:} - arg:{1:}'.format(self.m_address, p_ConnectionDone))
+
+
+
+    def connectionMade(self):
+        if g_debug >= 1:
+            LOG.debug('ClientProtocol - ConnectionMade (NDCP-5  454)')
+            LOG.debug('     To Addr: {0:}, transp:{1:}'.format(self.m_address))
+            LOG.debug('     Transport{0:}'.format(self.transport))
         self.startReceivingBoxes()
         l_defer12 = self.send_NodeInformation(self.m_pyhouses_obj.Nodes[0], self.protocol)
-        l_defer12.addCallback(cb_got_result12)
-        l_defer12.addErrback(eb_err12)
+        l_defer12.addCallback(self.cb_got_result12)
+        l_defer12.addErrback(self.eb_err12)
+
+
+
 
     def connectionLost(self, p_reason):
-        LOG.error('ClientProtocol - ConnectionLost {0:} (218)'.format(p_reason))
+        LOG.error('ClientProtocol - ConnectionLost {0:} (466)'.format(p_reason))
+
+
+
 
     def makeConnection(self, p_transport):
-        LOG.error('ClientProtocol - MakeConnection (221)')
+        LOG.error('ClientProtocol - MakeConnection (NDCP-7  472)')
         LOG.error('     Transport: {0:}'.format(p_transport))
+
+
+
 
     def send_NodeInformation(self, p_node):
         """For some reason, this gives a error 'NoneType' object has no attribute 'sendBox'
         The information is sent somehow.
         """
         if g_debug >= 1:
-            LOG.debug(' Dispatch - send_NodeInformation  (229)')
+            LOG.debug(' Dispatch - send_NodeInformation  (NDCP-8  483)')
         l_call = self
         try:
             l_defer = l_call.callRemote(NodeInformationCommand,
@@ -414,9 +489,10 @@ class NodeDomainClientProtocol(DomainBoxDispatcher):
                 # LOG.debug(' Dispatch - send_NodeInformation  - SENT to {0:} (236)'.format(self.m_address))
                 pass
         except AttributeError as l_error:
-            LOG.error(' Dispatch - send_NodeInformation - Attribute error:"{0:}" (239)'.format(l_error))
+            LOG.error(' Dispatch - send_NodeInformation - Attribute error:"{0:}" (493)'.format(l_error))
             l_defer = Deferred()
         return l_defer
+
 
 
 
