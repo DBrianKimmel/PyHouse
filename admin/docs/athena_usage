@@ -11,7 +11,9 @@ This seems a lot smarter to me since it handles different platforms a lot better
 
 
 Templates.
-I have chosen to use HTML instead of stan.
+I have chosen to use HTML instead of Stan.
+While Stan is more Pythonic, I find myself knowing what the html should be to render properly and I
+kept fighting with Stan to achieve the proper HTML.
 
 the xml (xhtml) file starts out with:
 

@@ -20,13 +20,13 @@ There is no central node so each node needs to talk with all other nodes.
 import pprint
 from twisted.internet.endpoints import serverFromString, TCP4ClientEndpoint
 from twisted.internet.protocol import ClientFactory, ServerFactory
-from twisted.protocols.amp import AMP, Integer, Unicode, String, AmpList, Command
+from twisted.protocols.amp import AMP, Integer, Unicode, String, AmpList, Command, CommandLocator
 from twisted.internet.defer import Deferred
 
 # Import PyMh files and modules.
 from Modules.utils import pyh_log
 
-g_debug = 1
+g_debug = 9
 LOG = pyh_log.getLogger('PyHouse.NodeDomain  ')
 PP = pprint.PrettyPrinter
 
@@ -117,23 +117,23 @@ class DomainBoxDispatcher(AMP):
             LOG.debug('      Reason: {0:}'.format(p_reason))
         self.boxSender = None
 
-    def send_NodeInformation(self, p_node):
+    def send_NodeInformation_1(self, p_node):
         """For some reason, this gives a error 'NoneType' object has no attribute 'sendBox'
         The information is sent somehow.
         """
         l_protocol = self.m_amp
         if g_debug >= 1:
-            LOG.debug(' Dispatch - send_NodeInformation  (DBD-7  125)')
+            LOG.debug(' Dispatch - send_NodeInformation_1  (DBD-7  125)')
             LOG.debug('     l_protocol: {0:}'.format(vars(l_protocol)))
         try:
             l_defer = l_protocol.callRemote(NodeInformationCommand,
                         Name = p_node.Name, Active = str(p_node.Active), Address = p_node.ConnectionAddr_IPv4,
                         Role = int(p_node.Role))
             if g_debug >= 1:
-                # LOG.debug(' Dispatch - send_NodeInformation  - SENT to {0:} (236)'.format(self.m_address))
+                # LOG.debug(' Dispatch - send_NodeInformation_1  - SENT to {0:} (236)'.format(self.m_address))
                 pass
         except AttributeError as l_error:
-            LOG.error(' Dispatch - send_NodeInformation - Attribute error:"{0:}"'.format(l_error))
+            LOG.error(' Dispatch - send_NodeInformation_1 - Attribute error:"{0:}"'.format(l_error))
             l_defer = Deferred()
         return l_defer
 
@@ -326,7 +326,7 @@ class RegisterUser(Command):
 
 ### -----------------------------------------------------------------
 
-class LocatorClass(DomainBoxDispatcher):
+class LocatorClass(CommandLocator):
 
     uidCounter = 0
     @RegisterUser.responder
@@ -342,6 +342,7 @@ class LocatorClass(DomainBoxDispatcher):
 # Boxes
 
 ### -----------------------------------------------------------------
+
 
 
 
@@ -473,26 +474,26 @@ class NodeDomainClientProtocol(DomainBoxDispatcher):
 
 
 
-
-    def send_NodeInformation(self, p_node):
+    def send_NodeInformation_2(self, p_node):
         """For some reason, this gives a error 'NoneType' object has no attribute 'sendBox'
         The information is sent somehow.
         """
+        l_protocol = self
         if g_debug >= 1:
-            LOG.debug(' Dispatch - send_NodeInformation  (NDCP-8  483)')
-        l_call = self
+            LOG.debug(' Dispatch - send_NodeInformation_2  (NDCP-8  483)')
+            LOG.debug('      Protocol: {0:}'.format(vars(l_protocol)))
         try:
-            l_defer = l_call.callRemote(NodeInformationCommand,
+            l_defer = l_protocol.callRemote(NodeInformationCommand,
                         Name = p_node.Name, Active = str(p_node.Active), Address = p_node.ConnectionAddr_IPv4,
                         Role = int(p_node.Role))
             if g_debug >= 1:
-                # LOG.debug(' Dispatch - send_NodeInformation  - SENT to {0:} (236)'.format(self.m_address))
+                # LOG.debug(' Dispatch - send_NodeInformation_2  - SENT to {0:} (236)'.format(self.m_address))
                 pass
         except AttributeError as l_error:
-            LOG.error(' Dispatch - send_NodeInformation - Attribute error:"{0:}" (493)'.format(l_error))
+            LOG.error(' Dispatch - send_NodeInformation_2 - Attribute error (493)')
+            LOG.error('      Error:"{0:}"'.format(l_error))
             l_defer = Deferred()
         return l_defer
-
 
 
 
@@ -505,20 +506,45 @@ class NodeDomainClientFactory(ClientFactory):
 
     def startedConnecting(self, p_connector):
         if g_debug >= 1:
-            LOG.debug("DomainClientFactory - StartedConnecting (281)")
+            LOG.debug("ClientFactory - StartedConnecting  (509)")
             LOG.debug("     Connector. {0:}".format(p_connector))
             LOG.debug('     Client Number: {0:}'.format(self.m_client_count))
 
+
     def buildProtocol(self, p_address):
         if g_debug >= 2:
-            LOG.debug("DomainClientFactory - BuildProtocol {0:}".format(p_address))
+            LOG.debug("ClientFactory - BuildProtocol  (515)")
+            LOG.debug("     Address: {0:}".format(p_address))
         return NodeDomainClientProtocol(p_address, self.m_pyhouses_obj)
 
+
     def clientConnectionLost(self, _p_connector, p_reason):
-        LOG.error('DomainClientFactory - Lost connection {0:}'.format(p_reason))
+        LOG.error('ClientFactory - Lost connection  (520)')
+        LOG.error('     Reason: {0:}'.format(p_reason))
+
 
     def clientConnectionFailed(self, _p_connector, p_reason):
-        LOG.error('DomainClientFactory - Connection failed {0:}'.format(p_reason))
+        LOG.error('ClientFactory - Connection failed  (524)')
+        LOG.error('     Reason: {0:}'.format(p_reason))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 class AmpClient(object):
@@ -530,13 +556,16 @@ class AmpClient(object):
         @rtype: deferred
         """
         self.m_pyhouses_obj = p_pyhouses_obj
+        self.m_address = p_address
         l_endpoint = TCP4ClientEndpoint(p_pyhouses_obj.Reactor, p_address, AMP_PORT)
         l_factory = NodeDomainClientFactory(p_pyhouses_obj)
         l_connect_defer = l_endpoint.connect(l_factory)
         if g_debug >= 2:
-            LOG.debug("Domain Client connecting to server (310).")
-            LOG.debug("     Address {0:}".format(p_address))
+            LOG.debug("Client connecting to server (564).")
+            LOG.debug("     Server Address {0:}".format(p_address))
         return l_connect_defer
+
+
 
     def cb_create_client_connected_l1(self, p_protocol):
         """
@@ -545,31 +574,41 @@ class AmpClient(object):
         """
 
         def cb_got_result_l2(p_result):
-            LOG.debug('cb_got_result Client - Result:{0:} (321).'.format(p_result))
+            LOG.debug('cb_got_result Client - Result:{0:} (577).'.format(p_result))
             LocatorClass().NodeInformationResponse('test dbk')
 
+
+
+
         def eb_err_l2(p_ConnectionDone):
-            LOG.error('eb_err_l2 - arg:{0:} (325).'.format(p_ConnectionDone))
+            LOG.error('eb_err_l2 - arg:{0:} (584).'.format(p_ConnectionDone))
+
+
+
 
         def eb_timeout(_p_reason):
-            LOG.error('eb_timeout (298)')
+            LOG.error('eb_timeout (590)')
 
         if g_debug >= 1:
-            LOG.debug('Client - cb_create_client_connected_l1 (331).')
-            LOG.debug('          Protocol: {0:}'.format(p_protocol))
+            LOG.debug('Client - cb_create_client_connected_l1 (593).')
+            LOG.debug('          Protocol: {0:}'.format(vars(p_protocol)))
             LOG.debug('          Address: {0:}.'.format(self.m_address))
         l_nodes = self.m_pyhouses_obj.Nodes[0]
         try:
-            l_defer12 = p_protocol.send_NodeInformation(l_nodes)
+            l_defer12 = p_protocol.send_NodeInformation_2(l_nodes)
             # l_defer12.setTimeout(30, eb_timeout)
             if g_debug >= 1:
-                LOG.debug('Domain Client has connected to Server - Sending Node Information (339).')
+                LOG.debug('Domain Client has connected to Server - Sending Node Information (601).')
             l_defer12.addCallback(cb_got_result_l2)
             l_defer12.addErrback(eb_err_l2)
         except AttributeError as l_error:
-            print('node_domain.cb_create_client_connected_l1 = Error in trying to send node info (343)')
+            print('node_domain.cb_create_client_connected_l1 = Error in trying to send node info (605)')
             print('     Error: {0:}'.format(l_error))
             print('     p_protocol: {0:}'.format(vars(p_protocol)))
+
+
+
+
 
     def cb_create_client_result_l1(self, p_result):
         """
@@ -577,12 +616,18 @@ class AmpClient(object):
         """
         # l_result = p_pyhouses_obj.Nodes[0].Name
         if g_debug >= 1:
-            LOG.debug('cb_create_client_result_l1 - Client returning result from Server Result:{0:} (353).'.format(p_result))
+            LOG.debug('cb_create_client_result_l1 - Client returning result from Server Result:{0:} (619).'.format(p_result))
         # LocatorClass().NodeInformationResponse(p_result)
+
+
+
 
     def eb_create_client_l1(self, p_result):
         p_result.trap(NodeInformationError)
-        LOG.error('eb_create_client_l1 - Client got error Result:{0:} (358).'.format(p_result))
+        LOG.error('eb_create_client_l1 - Client got error Result:{0:} (627).'.format(p_result))
+
+
+
 
     def create_one_client(self, p_pyhouses_obj, p_address):
         """
@@ -591,13 +636,24 @@ class AmpClient(object):
         @param p_address: is the address of the server we are connecting to.
         """
         self.m_address = p_address
-        l_defer_l0 = self.client_connect(p_pyhouses_obj, p_address)
+        l_defer = self.client_connect(p_pyhouses_obj, p_address)
         if g_debug >= 2:
-            LOG.debug('create_one_client')
-            LOG.debug('     Server Addr: {0:}'.format(p_address))
-        l_defer_l0.addCallback(self.cb_create_client_connected_l1)
-        # l_defer_l0.addCallback(self.cb_create_client_result_l1)  # What is this ???
-        l_defer_l0.addErrback(self.eb_create_client_l1)
+            LOG.debug('Client create_one_client  (641)')
+            LOG.debug('     Server Address: {0:}'.format(p_address))
+        l_defer.addCallback(self.cb_create_client_connected_l1)
+        # l_defer.addCallback(self.cb_create_client_result_l1)  # What is this ???
+        l_defer.addErrback(self.eb_create_client_l1)
+
+
+
+
+
+
+
+
+
+
+
 
 
 class Utility(AmpClient):
@@ -625,6 +681,14 @@ class Utility(AmpClient):
         l_defer = l_endpoint.listen(AmpServerFactory(self.m_pyhouses_obj))
         l_defer.addCallback(self.cb_start_all_clients)
         l_defer.addErrback(self.eb_start_clients_loop)
+
+
+
+
+
+
+
+
 
 
 class API(Utility):
