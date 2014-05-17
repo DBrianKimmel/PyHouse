@@ -74,7 +74,7 @@ class DomainBoxDispatcher(AMP):
         """
         self.m_locator = LocatorClass()
         super(DomainBoxDispatcher, self).__init__(self.m_locator)
-        # self.m_amp = self
+        self.m_amp = self
         if g_debug >= 1:
             LOG.debug(' Dispatch - initialized. (DBD-1  079)')
             LOG.debug('      Self: {0:}'.format(vars(self)))
@@ -252,7 +252,7 @@ class NodeDomainServerProtocol(DomainBoxDispatcher):
         """
         if g_debug >= 1:
             LOG.debug('ServerProtocol - ConnectionMade (NDSP-5  254)')
-            # LOG.debug('    self = {0:}\n'.format(vars(self)))
+            LOG.debug('    self = {0:}\n'.format(vars(self)))
         l_defer12 = self.send_NodeInformation(self.m_pyhouses_obj.Nodes[0])
         l_defer12.addCallback(self.cb_got_result12)
         l_defer12.addErrback(self.eb_err12)
