@@ -208,13 +208,13 @@ class NodeDomainServerProtocol(DomainBoxDispatcher):
     def __init__(self, p_pyhouses_obj):
         LOG.debug('NodeDomainServerProtocol()  (NDSP-1  209)')
         self.m_pyhouses_obj = p_pyhouses_obj
-        l_disp = DomainBoxDispatcher()
+        self.m_disp = DomainBoxDispatcher()
         # AMP.__init__(AMP(), boxReceiver = l_disp)
         # super(NodeDomainServerProtocol, self).__init__()
         if g_debug >= 1:
-            LOG.debug('  ServerProtocol() initialized (NDSP-1a  215)')
+            LOG.debug('ServerProtocol() initialized  (NDSP-1a  215)')
             # LOG.debug('      Proto:{0:}'.format(l_disp))
-            # LOG.debug('      Dispatch:{0:}'.format(l_disp))
+            LOG.debug('      Dispatch:{0:}'.format(self.m_disp))
             LOG.debug('      Self: {0:}'.format(vars(self)))
         self.locate_responder('NodeInformationCommand')
         self.connectionMade()
@@ -238,7 +238,7 @@ class NodeDomainServerProtocol(DomainBoxDispatcher):
             LOG.debug('     Client Addr:{0:}'.format(self.m_address))
             LOG.debug('     Result:{0:}'.format(p_result))
             LOG.debug('     Transport{0:}'.format(self.transport))
-            ().NodeInformationResponse('test dbk')
+            LocatorClass().NodeInformationResponse('test dbk')
 
     def eb_err12(self, p_ConnectionDone):
         LOG.error('ServerProtocol - ConnectionMade  (244)'.format(self.m_address, p_ConnectionDone))
@@ -592,7 +592,7 @@ class AmpClient(object):
         if g_debug >= 1:
             LOG.debug('Client - cb_create_client_connected_l1  (593).')
             LOG.debug('          Protocol: {0:}'.format(vars(p_protocol)))
-            LOG.debug('          Address: {0:}.'.format(self.m_address))
+            # LOG.debug('          Address: {0:}.'.format(self.m_address))  # This is some other oddress WHY???
         # l_nodes = self.m_pyhouses_obj.Nodes[0]
         try:
             # l_defer12 = p_protocol.send_NodeInformation_1(l_nodes)
