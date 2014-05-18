@@ -229,19 +229,21 @@ class NodeDomainServerProtocol(DomainBoxDispatcher):
 
     def dataReceived(self, p_data):
         if g_debug >= 1:
-            LOG.debug('  ServerProtocol data rxed (NDSP-2  232)')
+            LOG.debug('ServerProtocol - data rxed  (NDSP-2  232)')
             LOG.debug('       Data rxed: {0:}'.format(PrintBox(p_data)))
 
     def cb_got_result12(self, p_result):
         if g_debug >= 1:
-            LOG.debug('ServerProtocol - ConnectionMade cb_got_result (NDSP-3  237)')
+            LOG.debug('ServerProtocol - ConnectionMade cb_got_result  (NDSP-3  237)')
             LOG.debug('     Client Addr:{0:}'.format(self.m_address))
             LOG.debug('     Result:{0:}'.format(p_result))
             LOG.debug('     Transport{0:}'.format(self.transport))
             ().NodeInformationResponse('test dbk')
 
     def eb_err12(self, p_ConnectionDone):
-        LOG.error('ServerProtocol - ConnectionMade - eb_err2 - Addr:{0:} - arg:{1:}'.format(self.m_address, p_ConnectionDone))
+        LOG.error('ServerProtocol - ConnectionMade  (244)'.format(self.m_address, p_ConnectionDone))
+        LOG.error('     Address: {0:}'.format(self.m_address))
+        LOG.error('     Done: {0:}'.format(p_ConnectionDone))
 
     def connectionMade(self):
         """Somebody connected to us...
@@ -251,7 +253,7 @@ class NodeDomainServerProtocol(DomainBoxDispatcher):
         If you need to send any greeting or initial message, do it here.
         """
         if g_debug >= 1:
-            LOG.debug('ServerProtocol - ConnectionMade (NDSP-5  254)')
+            LOG.debug('ServerProtocol - ConnectionMade  (NDSP-5  256)')
             LOG.debug('    self = {0:}\n'.format(vars(self)))
         l_defer12 = self.send_NodeInformation_1(self.m_pyhouses_obj.Nodes[0])
         l_defer12.addCallback(self.cb_got_result12)
@@ -261,15 +263,13 @@ class NodeDomainServerProtocol(DomainBoxDispatcher):
         """Clean up the connection.
         """
         if g_debug >= 1:
-            LOG.debug('  ServerProtocol connection lost (NDSP-6  264)')
+            LOG.debug('ServerProtocol - connectionLost  (NDSP-6  266)')
             LOG.debug('       Reason: {0:}'.format(p_reason))
 
     def locate_responder(self, p_name):
         if g_debug >= 1:
-            LOG.debug('  ServerProtocol locate_responder (NDSP-7  269)')
+            LOG.debug('ServerProtocol - locate_responder  (NDSP-7  271)')
             LOG.debug('        Name: {0:}'.format(p_name))
-
-
 
 
 
@@ -463,13 +463,13 @@ class NodeDomainClientProtocol(DomainBoxDispatcher):
 
 
     def connectionLost(self, p_reason):
-        LOG.error('ClientProtocol - ConnectionLost {0:} (466)'.format(p_reason))
-
+        LOG.error('ClientProtocol - ConnectionLost  (466)')
+        LOG.error('     ERROR: {0:}'.format(p_reason))
 
 
 
     def makeConnection(self, p_transport):
-        LOG.error('ClientProtocol - MakeConnection (NDCP-7  472)')
+        LOG.error('ClientProtocol - MakeConnection  (NDCP-7  472)')
         LOG.error('     Transport: {0:}'.format(p_transport))
 
 
