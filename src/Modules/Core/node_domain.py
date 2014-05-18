@@ -122,7 +122,7 @@ class DomainBoxDispatcher(AMP):
         """For some reason, this gives a error 'NoneType' object has no attribute 'sendBox'
         The information is sent somehow.
         """
-        l_protocol = self.m_amp
+        l_protocol = self
         if g_debug >= 1:
             LOG.debug('Dispatch - send_NodeInformation_1  (DBD-7  125)')
             LOG.debug('     l_protocol: {0:}'.format(l_protocol))
