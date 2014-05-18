@@ -65,9 +65,9 @@ class NodeInformationCommand(Command):
 
 
 
-
-
 class DomainBoxDispatcher(AMP):
+
+    m_amp = None
 
     def __init__(self):
         """
@@ -77,7 +77,7 @@ class DomainBoxDispatcher(AMP):
         super(DomainBoxDispatcher, self).__init__(self.m_locator)
         self.m_amp = self
         if g_debug >= 1:
-            LOG.debug(' Dispatch - initialized. (DBD-1  079)')
+            LOG.debug('Dispatch DomainBoxDispatcher()  (DBD-1  079)')
             LOG.debug('      Self: {0:}'.format(vars(self)))
 
     def makeConnection(self, p_transport):
@@ -207,7 +207,7 @@ class NodeDomainServerProtocol(DomainBoxDispatcher):
     with itself as the IBoxSender parameter.
     """
     def __init__(self, p_pyhouses_obj):
-        LOG.debug('  NodeDomainServerProtocol()  (NDSP-1  209)')
+        LOG.debug('NodeDomainServerProtocol()  (NDSP-1  209)')
         self.m_pyhouses_obj = p_pyhouses_obj
         l_disp = DomainBoxDispatcher()
         # AMP.__init__(AMP(), boxReceiver = l_disp)
@@ -426,7 +426,7 @@ class NodeDomainClientProtocol(DomainBoxDispatcher):
 
 
 
-    def startReceivingBoxes(self, _boxSender):
+    def XXXstartReceivingBoxes(self, _boxSender):
         if g_debug >= 1:
             LOG.debug('ClientProtocol - DataReceived (NDCP-2  430)')
         pass
@@ -455,7 +455,7 @@ class NodeDomainClientProtocol(DomainBoxDispatcher):
             LOG.debug('ClientProtocol - ConnectionMade (NDCP-5  454)')
             LOG.debug('     To Addr: {0:}, transp:{1:}'.format(self.m_address))
             LOG.debug('     Transport{0:}'.format(self.transport))
-        self.startReceivingBoxes()
+        # self.startReceivingBoxes()
         l_defer12 = self.send_NodeInformation_1(self.m_pyhouses_obj.Nodes[0], self.protocol)
         l_defer12.addCallback(self.cb_got_result12)
         l_defer12.addErrback(self.eb_err12)
