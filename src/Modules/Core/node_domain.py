@@ -124,7 +124,7 @@ class DomainBoxDispatcher(AMP):
         """
         l_protocol = self.m_amp
         if g_debug >= 1:
-            LOG.debug(' Dispatch - send_NodeInformation_1  (DBD-7  125)')
+            LOG.debug('Dispatch - send_NodeInformation_1  (DBD-7  125)')
             LOG.debug('     l_protocol: {0:}'.format(l_protocol))
         try:
             l_defer = l_protocol.callRemote(NodeInformationCommand,
@@ -134,7 +134,7 @@ class DomainBoxDispatcher(AMP):
                 # LOG.debug(' Dispatch - send_NodeInformation_1  - SENT to {0:} (236)'.format(self.m_address))
                 pass
         except AttributeError as l_error:
-            LOG.error(' Dispatch - send_NodeInformation_1 - Attribute error:"{0:}"'.format(l_error))
+            LOG.error('Dispatch - send_NodeInformation_1 - ERROR: {0:}'.format(l_error))
             l_defer = Deferred()
         return l_defer
 
@@ -452,7 +452,7 @@ class NodeDomainClientProtocol(DomainBoxDispatcher):
 
     def connectionMade(self):
         if g_debug >= 1:
-            LOG.debug('ClientProtocol - ConnectionMade (NDCP-5  454)')
+            LOG.debug('ClientProtocol - ConnectionMade  (NDCP-5  454)')
             LOG.debug('     To Addr: {0:}, transp:{1:}'.format(self.m_address))
             LOG.debug('     Transport{0:}'.format(self.transport))
         # self.startReceivingBoxes()
@@ -547,7 +547,6 @@ class NodeDomainClientFactory(ClientFactory):
 
 
 
-
 class AmpClient(object):
 
     def client_connect(self, p_pyhouses_obj, p_address):
@@ -591,7 +590,7 @@ class AmpClient(object):
             LOG.error('eb_timeout (590)')
 
         if g_debug >= 1:
-            LOG.debug('Client - cb_create_client_connected_l1 (593).')
+            LOG.debug('Client - cb_create_client_connected_l1  (593).')
             LOG.debug('          Protocol: {0:}'.format(vars(p_protocol)))
             LOG.debug('          Address: {0:}.'.format(self.m_address))
         l_nodes = self.m_pyhouses_obj.Nodes[0]
@@ -599,11 +598,11 @@ class AmpClient(object):
             l_defer12 = p_protocol.send_NodeInformation_1(l_nodes)
             # l_defer12.setTimeout(30, eb_timeout)
             if g_debug >= 1:
-                LOG.debug('Domain Client has connected to Server - Sending Node Information (601).')
+                LOG.debug('Domain Client has connected to Server - Sending Node Information  (601).')
             l_defer12.addCallback(cb_got_result_l2)
             l_defer12.addErrback(eb_err_l2)
         except AttributeError as l_error:
-            print('node_domain.cb_create_client_connected_l1 = Error in trying to send node info (605)')
+            print('node_domain.cb_create_client_connected_l1 = Error in trying to send node info  (605)')
             print('     Error: {0:}'.format(l_error))
             print('     p_protocol: {0:}'.format(vars(p_protocol)))
 
