@@ -127,14 +127,14 @@ class DomainBoxDispatcher(AMP):
             LOG.debug('Dispatch - send_NodeInformation_1  (DBD-7  125)')
             LOG.debug('     l_protocol: {0:}'.format(l_protocol))
         try:
-            l_defer = l_protocol.callRemote(NodeInformationCommand,
+            l_defer = lambda p: p.callRemote(NodeInformationCommand,
                         Name = p_node.Name, Active = str(p_node.Active), Address = p_node.ConnectionAddr_IPv4,
-                        Role = int(p_node.Role))
+                        Role = int(p_node.Role), UUID = "1122")
             if g_debug >= 1:
                 # LOG.debug(' Dispatch - send_NodeInformation_1  - SENT to {0:} (236)'.format(self.m_address))
                 pass
         except AttributeError as l_error:
-            LOG.error('Dispatch - send_NodeInformation_1  (137')
+            LOG.error('Dispatch - send_NodeInformation_1  (137)')
             LOG.error('     ERROR: {0:}\n'.format(l_error))
             l_defer = Deferred()
         return l_defer
@@ -142,7 +142,7 @@ class DomainBoxDispatcher(AMP):
 
 
 
-    def receive_NodeInformation(self, NodeInformationCommand, Name = None, Active = None, Address = None, Role = None):
+    def receive_NodeInformation(self, Name = None, Active = None, Address = None, Role = None, UUID = None):
         if g_debug >= 1:
             LOG.debug('Dispatch - receive_NodeInformation - RECEIVED  (DBD-8  147)')
         l_ret = dict(Name = Name, Answer = 'Got it ok')
