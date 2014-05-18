@@ -254,7 +254,7 @@ class NodeDomainServerProtocol(DomainBoxDispatcher):
         if g_debug >= 1:
             LOG.debug('ServerProtocol - ConnectionMade (NDSP-5  254)')
             LOG.debug('    self = {0:}\n'.format(vars(self)))
-        l_defer12 = self.send_NodeInformation(self.m_pyhouses_obj.Nodes[0])
+        l_defer12 = self.send_NodeInformation_1(self.m_pyhouses_obj.Nodes[0])
         l_defer12.addCallback(self.cb_got_result12)
         l_defer12.addErrback(self.eb_err12)
 
@@ -456,7 +456,7 @@ class NodeDomainClientProtocol(DomainBoxDispatcher):
             LOG.debug('     To Addr: {0:}, transp:{1:}'.format(self.m_address))
             LOG.debug('     Transport{0:}'.format(self.transport))
         self.startReceivingBoxes()
-        l_defer12 = self.send_NodeInformation(self.m_pyhouses_obj.Nodes[0], self.protocol)
+        l_defer12 = self.send_NodeInformation_1(self.m_pyhouses_obj.Nodes[0], self.protocol)
         l_defer12.addCallback(self.cb_got_result12)
         l_defer12.addErrback(self.eb_err12)
 
@@ -596,7 +596,7 @@ class AmpClient(object):
             LOG.debug('          Address: {0:}.'.format(self.m_address))
         l_nodes = self.m_pyhouses_obj.Nodes[0]
         try:
-            l_defer12 = p_protocol.send_NodeInformation_2(l_nodes)
+            l_defer12 = p_protocol.send_NodeInformation_1(l_nodes)
             # l_defer12.setTimeout(30, eb_timeout)
             if g_debug >= 1:
                 LOG.debug('Domain Client has connected to Server - Sending Node Information (601).')
