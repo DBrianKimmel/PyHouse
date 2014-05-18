@@ -22,6 +22,7 @@ from twisted.internet.endpoints import serverFromString, TCP4ClientEndpoint
 from twisted.internet.protocol import ClientFactory, ServerFactory
 from twisted.protocols.amp import AMP, Integer, Unicode, String, AmpList, Command, CommandLocator
 from twisted.internet.defer import Deferred
+from twisted.application.internet import StreamServerEndpointService
 
 # Import PyMh files and modules.
 from Modules.utils import pyh_log
@@ -168,15 +169,15 @@ class DomainBoxDispatcher(AMP):
 
 
 class AmpServerFactory(ServerFactory):
+    """
+    """
 
     def __init__(self, p_pyhouses_obj):
         self.m_pyhouses_obj = p_pyhouses_obj
 
     def buildProtocol(self, _p_address_tupple):
-        return NodeDomainServerProtocol(self.m_pyhouses_obj)
-
-
-
+        l_protocol = NodeDomainServerProtocol(self.m_pyhouses_obj)
+        return l_protocol
 
 
 
@@ -675,20 +676,14 @@ class Utility(AmpClient):
     def start_amp_services(self):
         """Start the domain server to listen for all incoming requests.
         For all the nodes we know about, create a client and send a message with our info.
-        If the request times out, mark the node as non active.
         """
         l_endpoint = serverFromString(self.m_pyhouses_obj.Reactor, NODE_SERVER)
         l_defer = l_endpoint.listen(AmpServerFactory(self.m_pyhouses_obj))
         l_defer.addCallback(self.cb_start_all_clients)
         l_defer.addErrback(self.eb_start_clients_loop)
-
-
-
-
-
-
-
-
+        l_factory = AmpServerFactory(self.m_pyhouses_obj)
+        self.m_pyhouses_obj.CoreServicesData.DomainService = StreamServerEndpointService(l_endpoint, l_factory)
+        self.m_pyhouses_obj.CoreServicesData.DomainService.setServiceParent(self.m_pyhouses_obj.Application)
 
 
 class API(Utility):

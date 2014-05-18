@@ -6,7 +6,7 @@ Created on Mar 2, 2014
 
 from Modules.Core import setup
 from test import xml_data
-from Modules.Core.data_objects import PyHouseData, ServicesData
+from Modules.Core.data_objects import PyHouseData, CoreServicesData
 
 from twisted.trial import unittest
 import xml.etree.ElementTree as ET
@@ -32,7 +32,7 @@ class Test_02_ReadXML(unittest.TestCase):
     def setUp(self):
         self.m_pyhouses_obj = PyHouseData()
         self.m_pyhouses_obj.XmlRoot = ET.fromstring(XML)
-        self.m_pyhouses_obj.CoreServicesData = ServicesData()
+        self.m_pyhouses_obj.CoreServicesData = CoreServicesData()
         self.m_api = setup.API()
 
 

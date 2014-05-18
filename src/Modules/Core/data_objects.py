@@ -106,17 +106,17 @@ class PyHouseData(object):
         self.LogsAPI = None
         self.WebAPI = None
         #
-        self.CoreServicesData = {}
+        self.CoreServicesData = {}  # CoreServicesData()
         self.WebData = {}
         self.LogsData = {}
-        self.HousesData = {}
+        self.HousesData = {}  # HousesData()
         self.Nodes = {}
         #
         self.XmlRoot = None
         self.XmlFileName = ''
 
 
-class ServicesData(object):
+class CoreServicesData(object):
 
     def __init__(self):
         self.DiscoveryService = None

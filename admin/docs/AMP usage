@@ -1,1 +1,8 @@
 AMP usage
+
+
+Factories:
+Server Factories listen for an incoming connection and are used to create a protocol to communicate with a
+client that started talking to a server.  Use the factory to hold persistent information about the connection.
+
+Client Factories are used to start a protocol to talk to a server.
