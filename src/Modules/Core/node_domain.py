@@ -255,7 +255,7 @@ class NodeDomainServerProtocol(DomainBoxDispatcher):
         if g_debug >= 1:
             LOG.debug('ServerProtocol - ConnectionMade  (NDSP-5  256)')
             LOG.debug('    self = {0:}\n'.format(vars(self)))
-        l_defer12 = self.send_NodeInformation_1(self.m_pyhouses_obj.Nodes[0])
+        l_defer12 = self.m_disp.send_NodeInformation_1(self.m_pyhouses_obj.Nodes[0])
         l_defer12.addCallback(self.cb_got_result12)
         l_defer12.addErrback(self.eb_err12)
 
