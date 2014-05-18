@@ -27,7 +27,7 @@ from twisted.application.internet import StreamServerEndpointService
 # Import PyMh files and modules.
 from Modules.utils import pyh_log
 
-g_debug = 9
+g_debug = 3
 LOG = pyh_log.getLogger('PyHouse.NodeDomain  ')
 PP = pprint.PrettyPrinter
 
@@ -86,7 +86,7 @@ class DomainBoxDispatcher(AMP):
         """
         self.m_transport = p_transport
         if g_debug >= 2:
-            LOG.debug(' Dispatch - makeConnection (DBD-2  088)')
+            LOG.debug('Dispatch - makeConnection  (DBD-2  088)')
             LOG.debug('      Transport:{0:}'.format(p_transport))
 
     def connectionMade(self):
@@ -97,24 +97,24 @@ class DomainBoxDispatcher(AMP):
         If you need to send any greeting or initial message, do it here.
         """
         if g_debug >= 1:
-            LOG.debug(' Dispatch - connectionMade (DBD-3  099)')
+            LOG.debug('Dispatch - connectionMade  (DBD-3  099)')
         pass
 
     def startReceivingBoxes(self, p_boxSender):
         if g_debug >= 1:
-            LOG.debug(' Dispatch - Start Receiving boxes (DBD-4  104)')
+            LOG.debug('Dispatch - Start Receiving boxes  (DBD-4  104)')
             LOG.debug('      Sender:{0:}'.format(p_boxSender))
         self.boxSender = p_boxSender
 
     def ampBoxReceived(self, p_box):
         if g_debug >= 1:
-            LOG.debug(' Dispatch - Received box (DBD-5  110)')
+            LOG.debug(' Dispatch - Received box  (DBD-5  110)')
             LOG.debug('      Box:{0:}'.format(p_box))
         self.boxSender.sendBox(p_box)
 
     def stopReceivingBoxes(self, p_reason):
         if g_debug >= 1:
-            LOG.debug(' Dispatch - Stop Receiving boxes (DBD-6  116)')
+            LOG.debug(' Dispatch - Stop Receiving boxes  (DBD-6  116)')
             LOG.debug('      Reason: {0:}'.format(p_reason))
         self.boxSender = None
 
@@ -134,25 +134,24 @@ class DomainBoxDispatcher(AMP):
                 # LOG.debug(' Dispatch - send_NodeInformation_1  - SENT to {0:} (236)'.format(self.m_address))
                 pass
         except AttributeError as l_error:
-            LOG.error('Dispatch - send_NodeInformation_1 - ERROR: {0:}'.format(l_error))
+            LOG.error('Dispatch - send_NodeInformation_1  (137')
+            LOG.error('     ERROR: {0:}\n'.format(l_error))
             l_defer = Deferred()
         return l_defer
 
 
 
 
-
-
     def receive_NodeInformation(self, NodeInformationCommand, Name = None, Active = None, Address = None, Role = None):
         if g_debug >= 1:
-            LOG.debug(' Dispatch - receive_NodeInformation  - RECEIVED (DBD-8  147)')
+            LOG.debug('Dispatch - receive_NodeInformation - RECEIVED  (DBD-8  147)')
         l_ret = dict(Name = Name, Answer = 'Got it ok')
         return l_ret
     NodeInformationCommand.responder(receive_NodeInformation)
 
     def update_NodeInformation(self, _p_box):
         if g_debug >= 1:
-            LOG.debug(' Dispatch - update_NodeInformation (DBD-9  154)')
+            LOG.debug('Dispatch - update_NodeInformation  (DBD-9  154)')
         pass
 
 
@@ -547,6 +546,7 @@ class NodeDomainClientFactory(ClientFactory):
 
 
 
+
 class AmpClient(object):
 
     def client_connect(self, p_pyhouses_obj, p_address):
@@ -560,8 +560,8 @@ class AmpClient(object):
         l_endpoint = TCP4ClientEndpoint(p_pyhouses_obj.Reactor, p_address, AMP_PORT)
         l_factory = NodeDomainClientFactory(p_pyhouses_obj)
         l_connect_defer = l_endpoint.connect(l_factory)
-        if g_debug >= 2:
-            LOG.debug("Client connecting to server (564).")
+        if g_debug >= 4:
+            LOG.debug("Client connecting to server  (564).")
             LOG.debug("     Server Address {0:}".format(p_address))
         return l_connect_defer
 
@@ -574,7 +574,7 @@ class AmpClient(object):
         """
 
         def cb_got_result_l2(p_result):
-            LOG.debug('cb_got_result Client - Result:{0:} (577).'.format(p_result))
+            LOG.debug('Client - cb_got_result   Result:{0:}  (577).'.format(p_result))
             LocatorClass().NodeInformationResponse('test dbk')
 
 
@@ -637,7 +637,7 @@ class AmpClient(object):
         """
         self.m_address = p_address
         l_defer = self.client_connect(p_pyhouses_obj, p_address)
-        if g_debug >= 2:
+        if g_debug >= 4:
             LOG.debug('Client create_one_client  (641)')
             LOG.debug('     Server Address: {0:}'.format(p_address))
         l_defer.addCallback(self.cb_create_client_connected_l1)
