@@ -20,7 +20,7 @@ There is no central node so each node needs to talk with all other nodes.
 import pprint
 from twisted.internet.endpoints import serverFromString, TCP4ClientEndpoint
 from twisted.internet.protocol import ClientFactory, ServerFactory
-from twisted.protocols.amp import AMP, Integer, Unicode, String, AmpList, Command, CommandLocator
+from twisted.protocols.amp import AMP, Integer, Unicode, String, Boolean, AmpList, Command, CommandLocator
 from twisted.internet.defer import Deferred
 from twisted.application.internet import StreamServerEndpointService
 
@@ -127,7 +127,7 @@ class DomainBoxDispatcher(AMP):
             LOG.debug('Dispatch - send_NodeInformation_1  (DBD-7  125)')
             LOG.debug('     l_protocol: {0:}'.format(l_protocol))
         try:
-            l_defer = lambda p: p.callRemote(NodeInformationCommand,
+            l_defer = self.callRemote(NodeInformationCommand,
                         Name = p_node.Name, Active = str(p_node.Active), Address = p_node.ConnectionAddr_IPv4,
                         Role = int(p_node.Role), UUID = "1122")
             if g_debug >= 1:
@@ -246,7 +246,7 @@ class NodeDomainServerProtocol(DomainBoxDispatcher):
         LOG.error('     Done: {0:}'.format(p_ConnectionDone))
 
     def connectionMade(self):
-        """Somebody connected to us...
+        """Some client connected to this server.
         This may be considered the initializer of the protocol, because it is called when the connection is completed.
         For clients, this is called once the connection to the server has been established.
         For servers, this is called after an accept() call stops blocking and a socket has been received.
@@ -255,7 +255,7 @@ class NodeDomainServerProtocol(DomainBoxDispatcher):
         if g_debug >= 1:
             LOG.debug('ServerProtocol - ConnectionMade  (NDSP-5  256)')
             LOG.debug('    self = {0:}\n'.format(vars(self)))
-        l_defer12 = self.m_disp.send_NodeInformation_1(self.m_pyhouses_obj.Nodes[0])
+        l_defer12 = self.send_NodeInformation_1(self.m_pyhouses_obj.Nodes[0])
         l_defer12.addCallback(self.cb_got_result12)
         l_defer12.addErrback(self.eb_err12)
 
@@ -656,6 +656,112 @@ class AmpClient(object):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ## CLIENT
+
+from twisted.python.log import err
+from twisted.internet.endpoints import TCP4ServerEndpoint
+# from twisted.application.service import Application
+from twisted.internet import reactor
+from twisted.internet.protocol import Factory
+
+
+
+class TMP_Count(Command):
+    arguments = [('n', Integer())]
+    response = [('ok', Boolean())]
+
+class TMP_Counter(AMP):
+    @TMP_Count.responder
+    def count(self, n):
+        print 'received:', n
+        n += 1
+
+        if n < 10:
+            print 'sending:', n
+            self.callRemote(TMP_Count, n = n)
+
+        return {'ok': True}
+
+class TMP(object):
+    def TMP_connect(self):
+        endpoint = TCP4ClientEndpoint(reactor, '127.0.0.1', 8750)
+        factory = Factory()
+        factory.protocol = TMP_Counter
+        return endpoint.connect(factory)
+
+    def TMP_client(self):
+        d = self.TMP_connect()
+        d.addErrback(err, 'connection failed')
+        d.addCallback(lambda p: p.callRemote(TMP_Count, n = 1))
+        d.addErrback(err, 'call failed')
+
+
+# ## SERVER
+# application = Application('test AMP server')
+    def TMP_server(self):
+        endpoint = TCP4ServerEndpoint(reactor, 8750)
+        factory = Factory()
+        factory.protocol = TMP_Counter
+        service = StreamServerEndpointService(endpoint, factory)
+        # service.setServiceParent(application)
+
+
+
 class Utility(AmpClient):
     m_pyhouses_obj = None
 
@@ -666,11 +772,16 @@ class Utility(AmpClient):
         """
         l_nodes = self.m_pyhouses_obj.Nodes
         for l_key, l_node in l_nodes.iteritems():
-            if l_key > 0:  # Skip ourself
+            if l_key > -9:  # Skip ourself
                 self.create_one_client(self.m_pyhouses_obj, l_node.ConnectionAddr_IPv4)
 
     def eb_start_clients_loop(self, p_reason):
         LOG.error('ERROR Creating client - {0:}.'.format(p_reason))
+
+    def ZZZstart_amp_services(self):
+        TMP().TMP_server()
+        TMP().TMP_client()
+        pass
 
     def start_amp_services(self):
         """Start the domain server to listen for all incoming requests.

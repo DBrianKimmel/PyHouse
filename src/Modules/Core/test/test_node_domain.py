@@ -307,6 +307,7 @@ class TotallyDumbProtocol(protocol.Protocol):
     def dataReceived(self, data):
         self.buf += data
 
+
 class LiteralAmp(amp.AMP):
     def __init__(self):
         self.boxes = []
@@ -364,7 +365,7 @@ class FakeSender:
 
     def unhandledError(self, failure):
         """
-        Deal with failures by instantly re-raising them for easier debugging.
+        Deal with unexpected failures by instantly re-raising them for easier debugging.
         """
         self.expectedErrors -= 1
         if self.expectedErrors < 0:
@@ -375,7 +376,8 @@ class FakeSender:
 
 class Test_02_CmdDsptch(unittest.TestCase):
     """
-    The AMP CommandDispatcher class dispatches converts AMP boxes into commands and responses using Command.responder decorator.
+    The AMP CommandDispatcher class dispatches converts AMP boxes into commands and responses
+    using Command.responder decorator.
 
     Note: Originally, AMP's factoring was such that many tests for this functionality are now implemented as full round-trip tests in L{AMPTest}.
     Future tests should be written at this level instead, to ensure API compatibility and to provide more granular, readable units of test coverage.
@@ -386,10 +388,10 @@ class Test_02_CmdDsptch(unittest.TestCase):
         Create a dispatcher to use.
         """
         self.m_pyhouses_obj = PyHouseData()
-        self.locator = FakeLocator()
-        self.sender = FakeSender()
-        self.dispatcher = amp.BoxDispatcher(self.locator)
-        self.dispatcher.startReceivingBoxes(self.sender)
+        self.fake_locator = FakeLocator()
+        self.fake_sender = FakeSender()
+        self.fake_dispatcher = amp.BoxDispatcher(self.fake_locator)
+        self.fake_dispatcher.startReceivingBoxes(self.fake_sender)
 
     def test_0201_receivedAsk(self):
         """
@@ -400,8 +402,8 @@ class Test_02_CmdDsptch(unittest.TestCase):
             received.append(box)
             return amp.Box({"hello": "goodbye"})
         l_input = amp.Box(_command = "hello", _ask = "test-command-id", hello = "world")
-        self.locator.commands['hello'] = thunk
-        self.dispatcher.ampBoxReceived(l_input)
+        self.fake_locator.commands['hello'] = thunk
+        self.fake_dispatcher.ampBoxReceived(l_input)
         self.assertEquals(received, [l_input])
 
     def test_0202_sendUnhandledError(self):
@@ -409,10 +411,10 @@ class Test_02_CmdDsptch(unittest.TestCase):
         L{CommandDispatcher} should relay its unhandled errors in responding to boxes to its boxSender.
         """
         err = RuntimeError("something went wrong, oh no")
-        self.sender.expectError()
-        self.dispatcher.unhandledError(Failure(err))
-        self.assertEqual(len(self.sender.unhandledErrors), 1)
-        self.assertEqual(self.sender.unhandledErrors[0].value, err)
+        self.fake_sender.expectError()
+        self.fake_dispatcher.unhandledError(Failure(err))
+        self.assertEqual(len(self.fake_sender.unhandledErrors), 1)
+        self.assertEqual(self.fake_sender.unhandledErrors[0].value, err)
 
     def test_0203_unhandledSerializationError(self):
         """
@@ -424,12 +426,12 @@ class Test_02_CmdDsptch(unittest.TestCase):
                 def _sendTo(self, proto):
                     raise err
             return BrokenBox()
-        self.locator.commands['hello'] = thunk
+        self.fake_locator.commands['hello'] = thunk
         l_input = amp.Box(_command = "hello", _ask = "test-command-id", hello = "world")
-        self.sender.expectError()
-        self.dispatcher.ampBoxReceived(l_input)
-        self.assertEquals(len(self.sender.unhandledErrors), 1)
-        self.assertEquals(self.sender.unhandledErrors[0].value, err)
+        self.fake_sender.expectError()
+        self.fake_dispatcher.ampBoxReceived(l_input)
+        self.assertEquals(len(self.fake_sender.unhandledErrors), 1)
+        self.assertEquals(self.fake_sender.unhandledErrors[0].value, err)
 
     def Xtest_0204_callRemote(self):
         """
@@ -437,21 +439,21 @@ class Test_02_CmdDsptch(unittest.TestCase):
         When a corresponding '_answer' packet is received, the L{Deferred} should be fired,
          and the results translated via the given L{Command}'s response de-serialization.
         """
-        l_defer = self.dispatcher.callRemote(Hello, hello = 'world_0204')
-        self.assertEquals(self.sender.sentBoxes, [amp.AmpBox(_command = "hello", _ask = "1", hello = "world_0204")])
+        l_defer = self.fake_dispatcher.callRemote(Hello, hello = 'world_0204')
+        self.assertEquals(self.fake_sender.sentBoxes, [amp.AmpBox(_command = "hello", _ask = "1", hello = "world_0204")])
         answers = []
         l_defer.addCallback(answers.append)
         self.assertEquals(answers, [])
-        self.dispatcher.ampBoxReceived(amp.AmpBox({'hello': "yay", 'print': "ignored", '_answer': "1"}))
+        self.fake_dispatcher.ampBoxReceived(amp.AmpBox({'hello': "yay", 'print': "ignored", '_answer': "1"}))
         self.assertEquals(answers, [dict(hello = "yay", Print = u"ignored")])
 
     def test_0205_DBK_NodeInfo(self):
-        l_defer = self.dispatcher.callRemote(node_domain.NodeInformationCommand, Name = 'DBK - 0205')
-        self.assertEquals(self.sender.sentBoxes, [amp.AmpBox(_command = "NodeInformationCommand", _ask = "1", Name = "DBK - 0205")])
+        l_defer = self.fake_dispatcher.callRemote(node_domain.NodeInformationCommand, Name = 'DBK - 0205')
+        self.assertEquals(self.fake_sender.sentBoxes, [amp.AmpBox(_command = "NodeInformationCommand", _ask = "1", Name = "DBK - 0205")])
         answers = []
         l_defer.addCallback(answers.append)
         self.assertEquals(answers, [])
-        self.dispatcher.ampBoxReceived(amp.AmpBox({'Answer': "yay-0205", 'Name': "Marcia", '_answer': "1"}))
+        self.fake_dispatcher.ampBoxReceived(amp.AmpBox({'Answer': "yay-0205", 'Name': "Marcia", '_answer': "1"}))
         print('Answers {0:}'.format(answers))
         self.assertEquals(answers, [dict(Answer = "yay-0205", Name = "Marcia")])
 
