@@ -17,3 +17,9 @@ CommandLocator is ???
 SimpleStringLocator is ???
 
 AMP is a subclass that inherits from the above 4 classes.
+
+
+This code creates a "One Shot' client.  The connection automatically closes after sending one message.
+        l_endpoint = TCP4ClientEndpoint(p_pyhouses_obj.Reactor, p_address, AMP_PORT)
+        l_defer = connectProtocol(l_endpoint, AMP())  # This creates a 'One Shot' client
+
