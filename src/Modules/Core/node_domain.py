@@ -526,9 +526,9 @@ class NodeDomainClientProtocol(DomainBoxDispatcher):
 
 
 
-    def connectionLost(self, p_reason):
+    def connectionLost(self, _p_reason):
         LOG.error('ClientProtocol - ConnectionLost  (530)')
-        # LOG.error('     ERROR: {0:}'.format(p_reason))
+        # LOG.error('     ERROR: {0:}'.format(_p_reason))
         pass
 
 
@@ -616,33 +616,6 @@ class NodeDomainClientFactory(ClientFactory):
 
 class AmpClient(object):
 
-    def cb_sendInfo(self, p_ampProto):
-        l_node = self.m_pyhouses_obj.Nodes[0]
-        l_ret = p_ampProto.callRemote(NodeInformationCommand,
-                        Name = l_node.Name, Active = str(l_node.Active), Address = l_node.ConnectionAddr_IPv4,
-                        Role = int(l_node.Role), UUID = "1122")
-        return l_ret
-
-    def client_connect(self, p_pyhouses_obj, p_address):
-        """Connect to a server.
-
-        @return: A deferred fired when the connection is complete.
-        @rtype: deferred
-        """
-        self.m_pyhouses_obj = p_pyhouses_obj
-        self.m_address = p_address
-        l_endpoint = TCP4ClientEndpoint(p_pyhouses_obj.Reactor, p_address, AMP_PORT)
-        l_defer = connectProtocol(l_endpoint, AMP())
-        l_defer.addCallback(self.cb_sendInfo)
-        # l_factory = NodeDomainClientFactory(p_pyhouses_obj)
-        # l_connect_defer = l_endpoint.connect(l_factory)
-        if g_debug >= 4:
-            LOG.debug("Client connecting to server  (640).")
-            LOG.debug("     Server Address {0:}".format(p_address))
-        # return l_connect_defer
-
-
-
     def cb_create_client_connected_l1(self, p_protocol):
         """
         We just connected to an amp server instance somewhere.
@@ -650,25 +623,25 @@ class AmpClient(object):
         """
 
         def cb_got_result_l2(p_result):
-            LOG.debug('Client - cb_got_result   Result:{0:}  (653).'.format(p_result))
+            LOG.debug('Client - cb_got_result   Result:{0:}  (626).'.format(p_result))
             LocatorClass().NodeInformationResponse('test dbk')
 
 
 
 
         def eb_err_l2(p_ConnectionDone):
-            LOG.error('eb_err_l2 - arg:{0:} (660).'.format(p_ConnectionDone))
+            LOG.error('eb_err_l2 - arg:{0:} (633).'.format(p_ConnectionDone))
 
 
 
 
         def eb_timeout(_p_reason):
-            LOG.error('eb_timeout (666)')
+            LOG.error('eb_timeout (639)')
 
 
 
         if g_debug >= 1:
-            LOG.debug('Client - cb_create_client_connected_l1  (671).')
+            LOG.debug('Client - cb_create_client_connected_l1  (644).')
             LOG.debug('          Protocol: {0:}'.format(vars(p_protocol)))
             # LOG.debug('          Address: {0:}.'.format(self.m_address))  # This is some other oddress WHY???
         # l_nodes = self.m_pyhouses_obj.Nodes[0]
@@ -676,11 +649,11 @@ class AmpClient(object):
             # l_defer12 = p_protocol.send_NodeInformation_1(l_nodes)
             # l_defer12.setTimeout(30, eb_timeout)
             if g_debug >= 1:
-                LOG.debug('Domain Client has connected to Server - Sending Node Information  (679).')
+                LOG.debug('Domain Client has connected to Server - Sending Node Information  (652).')
             # l_defer12.addCallback(cb_got_result_l2)
             # l_defer12.addErrback(eb_err_l2)
         except AttributeError as l_error:
-            print('node_domain.cb_create_client_connected_l1 = Error in trying to send node info  (683)')
+            print('node_domain.cb_create_client_connected_l1 = Error in trying to send node info  (656)')
             print('     ERROR: {0:}'.format(l_error))
             print('     p_protocol: {0:}'.format(vars(p_protocol)))
 
@@ -694,7 +667,7 @@ class AmpClient(object):
         """
         # l_result = p_pyhouses_obj.Nodes[0].Name
         if g_debug >= 1:
-            LOG.debug('cb_create_client_result_l1 - Client returning result from Server Result:{0:} (697).'.format(p_result))
+            LOG.debug('cb_create_client_result_l1 - Client returning result from Server Result:{0:} (670).'.format(p_result))
         # LocatorClass().NodeInformationResponse(p_result)
 
 
@@ -702,8 +675,17 @@ class AmpClient(object):
 
     def eb_create_client_l1(self, p_result):
         p_result.trap(NodeInformationError)
-        LOG.error('eb_create_client_l1 - Client got error Result:{0:} (705).'.format(p_result))
+        LOG.error('eb_create_client_l1 - Client got error Result:{0:} (678).'.format(p_result))
 
+
+
+
+    def cb_sendInfo(self, p_ampProto):
+        l_node = self.m_pyhouses_obj.Nodes[0]
+        l_ret = p_ampProto.callRemote(NodeInformationCommand,
+                        Name = l_node.Name, Active = str(l_node.Active), Address = l_node.ConnectionAddr_IPv4,
+                        Role = int(l_node.Role), UUID = "1122")
+        return l_ret
 
 
 
@@ -713,14 +695,16 @@ class AmpClient(object):
 
         @param p_address: is the address of the server we are connecting to.
         """
+        self.m_pyhouses_obj = p_pyhouses_obj
         self.m_address = p_address
-        l_defer = self.client_connect(p_pyhouses_obj, p_address)
+
+        l_endpoint = TCP4ClientEndpoint(p_pyhouses_obj.Reactor, p_address, AMP_PORT)
+        l_defer = connectProtocol(l_endpoint, AMP())
+        l_defer.addCallback(self.cb_sendInfo)
+
         if g_debug >= 4:
-            LOG.debug('Client create_one_client  (719)')
+            LOG.debug('Client create_one_client  (706)')
             LOG.debug('     Server Address: {0:}'.format(p_address))
-        l_defer.addCallback(self.cb_create_client_connected_l1)
-        # l_defer.addCallback(self.cb_create_client_result_l1)  # What is this ???
-        l_defer.addErrback(self.eb_create_client_l1)
 
 
 
@@ -789,54 +773,6 @@ class AmpClient(object):
 
 
 
-# ## CLIENT
-
-from twisted.python.log import err
-from twisted.internet.endpoints import TCP4ServerEndpoint
-# from twisted.application.service import Application
-from twisted.internet import reactor
-from twisted.internet.protocol import Factory
-
-
-
-class TMP_Count(Command):
-    arguments = [('n', Integer())]
-    response = [('ok', Boolean())]
-
-class TMP_Counter(AMP):
-    @TMP_Count.responder
-    def count(self, n):
-        print 'received:', n
-        n += 1
-
-        if n < 10:
-            print 'sending:', n
-            self.callRemote(TMP_Count, n = n)
-
-        return {'ok': True}
-
-class TMP(object):
-    def TMP_connect(self):
-        endpoint = TCP4ClientEndpoint(reactor, '127.0.0.1', 8750)
-        factory = Factory()
-        factory.protocol = TMP_Counter
-        return endpoint.connect(factory)
-
-    def TMP_client(self):
-        d = self.TMP_connect()
-        d.addErrback(err, 'connection failed')
-        d.addCallback(lambda p: p.callRemote(TMP_Count, n = 1))
-        d.addErrback(err, 'call failed')
-
-
-# ## SERVER
-# application = Application('test AMP server')
-    def TMP_server(self):
-        endpoint = TCP4ServerEndpoint(reactor, 8750)
-        factory = Factory()
-        factory.protocol = TMP_Counter
-        service = StreamServerEndpointService(endpoint, factory)
-        # service.setServiceParent(application)
 
 
 
@@ -855,11 +791,6 @@ class Utility(AmpClient):
 
     def eb_start_clients_loop(self, p_reason):
         LOG.error('ERROR Creating client - {0:}.'.format(p_reason))
-
-    def ZZZstart_amp_services(self):
-        TMP().TMP_server()
-        TMP().TMP_client()
-        pass
 
     def start_amp_services(self):
         """Start the domain server to listen for all incoming requests.
