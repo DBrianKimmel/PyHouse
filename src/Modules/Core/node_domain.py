@@ -27,7 +27,7 @@ What I want to happen on startup:
 # Import system type stuff
 import pprint
 from twisted.internet.endpoints import serverFromString, TCP4ClientEndpoint, connectProtocol
-from twisted.internet.protocol import ServerFactory, Factory
+from twisted.internet.protocol import ServerFactory, ClientFactory
 from twisted.protocols.amp import AMP, Integer, String, AmpList, Command, CommandLocator
 from twisted.internet.defer import Deferred
 from twisted.application.internet import StreamServerEndpointService
@@ -86,7 +86,7 @@ class DomainBoxDispatcher(AMP):
         self.m_amp = self
         if g_debug >= 1:
             LOG.debug('Dispatch DomainBoxDispatcher()  (DBD-1  088)')
-            LOG.debug('      Self: {0:}'.format(vars(self)))
+            # LOG.debug('      Self: {0:}'.format(vars(self)))
 
 
     def makeConnection(self, p_transport):
@@ -203,10 +203,10 @@ class NodeDomainServerProtocol(DomainBoxDispatcher):
         # AMP.__init__(AMP(), boxReceiver = l_disp)
         # super(NodeDomainServerProtocol, self).__init__()
         if g_debug >= 1:
-            LOG.debug('ServerProtocol() initialized  (NDSP-1a  266)')
+            LOG.debug('ServerProtocol() initialized  (NDSP-1a  206)')
             # LOG.debug('      Proto:{0:}'.format(l_disp))
             LOG.debug('      Dispatch:{0:}'.format(self.m_disp))
-            LOG.debug('      Self: {0:}'.format(vars(self)))
+            # LOG.debug('      Self: {0:}'.format(vars(self)))
         self.locate_responder('NodeInformationCommand')
         self.connectionMade()
 
@@ -231,7 +231,7 @@ class NodeDomainServerProtocol(DomainBoxDispatcher):
     def eb_err12(self, p_ConnectionDone):
         LOG.error('ServerProtocol - ConnectionMade  (232)')
         LOG.error('     Address: {0:}'.format(self.m_address))
-        LOG.error('     Done: {0:}'.format(p_ConnectionDone))
+        LOG.error('     ERROR: {0:}\n'.format(p_ConnectionDone))
 
 
     def connectionMade(self):
@@ -243,10 +243,10 @@ class NodeDomainServerProtocol(DomainBoxDispatcher):
         """
         if g_debug >= 1:
             LOG.debug('ServerProtocol - ConnectionMade  (NDSP-5  245)')
-            LOG.debug('    self = {0:}\n'.format(vars(self)))
-        l_defer12 = self.send_NodeInformation_1(self.m_pyhouses_obj.Nodes[0])
-        l_defer12.addCallback(self.cb_got_result12)
-        l_defer12.addErrback(self.eb_err12)
+            # LOG.debug('    self = {0:}\n'.format(vars(self)))
+        # l_defer12 = self.send_NodeInformation_1(self.m_pyhouses_obj.Nodes[0])
+        # l_defer12.addCallback(self.cb_got_result12)
+        # l_defer12.addErrback(self.eb_err12)
 
 
     def connectionLost(self, p_reason):
@@ -314,8 +314,7 @@ class AmpClient(object):
         self.m_pyhouses_obj = p_pyhouses_obj
         self.m_address = p_address
         l_endpoint = TCP4ClientEndpoint(p_pyhouses_obj.Reactor, p_address, AMP_PORT)
-        # l_defer = connectProtocol(l_endpoint, AMP())  # This creates a 'One Shot' client
-        l_defer = l_endpoint.connect(Factory.forProtocol(AMP))
+        l_defer = l_endpoint.connect(ClientFactory.forProtocol(AMP))
         l_defer.addCallback(self.cb_sendInfo)
         if g_debug >= 8:
             LOG.debug('Client create_one_client  (320)')
@@ -339,7 +338,8 @@ class Utility(AmpClient):
                 self.create_one_client(self.m_pyhouses_obj, l_node.ConnectionAddr_IPv4)
 
     def eb_start_clients_loop(self, p_reason):
-        LOG.error('ERROR Creating client - {0:}.'.format(p_reason))
+        LOG.error('Utility.eb_start_clients_loop().  (341)')
+        LOG.error('     ERROR Creating client - {0:}.\n'.format(p_reason))
 
     def start_amp_services(self):
         """
@@ -354,7 +354,6 @@ class Utility(AmpClient):
         l_defer = l_endpoint.listen(AmpServerFactory(self.m_pyhouses_obj))
         l_defer.addCallback(self.cb_start_all_clients)
         l_defer.addErrback(self.eb_start_clients_loop)
-
 
 class API(Utility):
 
