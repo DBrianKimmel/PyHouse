@@ -1,15 +1,12 @@
 """
-@name: PyHouse/Modules/Core/nodes.py
+-*- test-case-name: PyHouse.src.Modules.Core.test.test_nodes -*-
 
-# -*- test-case-name: PyHouse.Modules.Core.test.test_nodes -*-
-
-Created on Mar 6, 2014
-
+@name: PyHouse/src/Modules/Core/nodes.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
 @license: MIT License
-
+@note: Created on Mar 6, 2014
 @summary: This module does everything for nodes.
 
 First, it uses node_local to gather the information about the node on which we are running.
@@ -26,6 +23,7 @@ This design will then need a way for each node to discover all its neighbor node
 communication network so we can pass information between nodes.
 
 This module will establish a domain network and use Twisted's AMP protocol to pass messages around.
+
 """
 
 # Import system type stuff

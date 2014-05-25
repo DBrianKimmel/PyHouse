@@ -3,9 +3,10 @@
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
-@note: Created on Apr 29, 2014
 @license: MIT License
+@note: Created on Apr 29, 2014
 @summary: This module is for testing local node data.
+
 """
 
 # Import system type stuff
@@ -16,9 +17,9 @@ from twisted.trial import unittest
 from Modules.Core.data_objects import PyHouseData, CoreServicesData, NodeData
 from Modules.Core import node_local
 from Modules.utils import xml_tools
-from Modules.test import xml_data
+from test import xml_data
 
-XML = xml_data.XML
+XML = xml_data.XML_LONG
 
 
 class Test_01_XML(unittest.TestCase):
@@ -47,7 +48,7 @@ class Test_01_XML(unittest.TestCase):
         l_nodes = self.m_root_element.find('Nodes')
         l_node = l_nodes.find('Node')
         l_uuid = l_node.find('UUID')
-        self.assertEqual(l_uuid.text, 'ec955bcf-89c9-11e3-b583-082e5f899999')
+        self.assertEqual(l_uuid.text, '87654321-1001-11e3-b583-082e5f899999')
 
 
 class Test_02_ReadXML(unittest.TestCase):

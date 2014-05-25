@@ -57,7 +57,7 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 	 */
 	function startWidget(self) {
 		function cb_getHousesInfo(p_json) {
-			Divmod.debug('---', 'houseSelect.startWidget.cb_getHousesInfo() was called.');
+			//Divmod.debug('---', 'houseSelect.startWidget.cb_getHousesInfo() was called.');
 			//console.log("houseSelect.startWidget.cb   JSON = %O", p_json);
 			var l_obj = JSON.parse(p_json);
 			var l_tab = buildTable(l_obj, 'handleMenuOnClick');
@@ -82,7 +82,7 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 	 */
 	function getSelectedHouseData(self) {
 		function cb_getSelectedHouseData(p_json) {
-			Divmod.debug('---', 'houseSelect.getSelectedHouseData.cb_getSelectedHouseData() was called.');
+			//Divmod.debug('---', 'houseSelect.cb_getSelectedHouseData.cb_getSelectedHouseData() was called.');
 			//console.log("ss.cb   p1 %O", p_json);
 			var l_obj = JSON.parse(p_json);
 			globals.House.HouseObj = l_obj;
@@ -90,7 +90,7 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 		function eb_getSelectedHouseData(res) {
 			Divmod.debug('---', 'houseSelect.eb_getSelectedHouseData() was called. ERROR = ' + res);
 		}
-		Divmod.debug('---', 'houseSelect.getSelectedHouseData() was called. ');
+		//Divmod.debug('---', 'houseSelect.getSelectedHouseData() was called. ');
 		self.hideSelectButtons();
 		self.showSelectedHouse();
 		self.nodeById('HouseSelectedDiv').innerHTML = 'Working on house: ' + globals.House.HouseName;

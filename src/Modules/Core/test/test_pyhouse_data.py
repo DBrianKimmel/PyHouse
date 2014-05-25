@@ -1,19 +1,18 @@
 """
-PyHouse/src/Core/test.test_pyhouse_data.py
-
-Created on Mar 22, 2014
-
-
-@author: briank
-
+@name: PyHouse/src/Modules/Core/test/test_pyhouse_data.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
+@note: Created on Mar 22, 2014
+@license: MIT License
+@summary: test ?.
 
-@summary: This module is used to test a single module.
 """
 
+# Import system type stuff
 from twisted.trial import unittest
 
-# import Modules.Core.data_objects
+# Import PyMh files and modules.
 from Modules.Core import data_objects
 
 class Test(unittest.TestCase):
@@ -22,10 +21,8 @@ class Test(unittest.TestCase):
     def setUp(self):
         print('Setup')
 
-
     def tearDown(self):
         print('Teardown')
-
 
     def test_001_Load(self):
         print('Test 001')

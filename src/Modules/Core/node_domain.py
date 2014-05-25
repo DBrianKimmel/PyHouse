@@ -26,7 +26,7 @@ What I want to happen on startup:
 
 # Import system type stuff
 import pprint
-from twisted.internet.endpoints import serverFromString, TCP4ClientEndpoint, connectProtocol, TCP4ServerEndpoint
+from twisted.internet.endpoints import TCP4ClientEndpoint, TCP4ServerEndpoint
 from twisted.internet.protocol import ServerFactory, ClientFactory
 from twisted.protocols.amp import AMP, Integer, String, AmpList, Command, CommandLocator
 from twisted.internet.defer import Deferred
@@ -235,7 +235,7 @@ class NodeDomainServerProtocol(DomainBoxDispatcher):
             LOG.debug('     Client Addr:{0:}'.format(self.m_address))
             LOG.debug('     Result:{0:}'.format(p_result))
             LOG.debug('     Transport{0:}'.format(self.transport))
-            LocatorClass().NodeInformationResponse('test dbk')
+        # LocatorClass().NodeInformationResponse('test dbk')
 
 
     def eb_err12(self, p_ConnectionDone):
@@ -308,7 +308,7 @@ class AmpClient(object):
         l_node = self.m_pyhouses_obj.Nodes[0]
         if g_debug >= 4:
             LOG.debug('Client - sending info to remote server.  (300)')
-            LOG.debug('      Address: {0:}'.format(l_node.ConnectionAddr_IPv4))
+            # LOG.debug('      Address: {0:}'.format(l_node.ConnectionAddr_IPv4))
         l_ret = p_ampProto.callRemote(NodeInformationCommand,
                         Name = l_node.Name, Active = str(l_node.Active), Address = l_node.ConnectionAddr_IPv4,
                         Role = int(l_node.Role), UUID = "1122")
@@ -344,7 +344,7 @@ class Utility(AmpClient):
         """
         l_nodes = self.m_pyhouses_obj.Nodes
         for l_key, l_node in l_nodes.iteritems():
-            if l_key > -9:  # Skip ourself
+            if l_key > -1:  # Skip ourself
                 self.create_one_client(self.m_pyhouses_obj, l_node.ConnectionAddr_IPv4)
 
     def eb_start_clients_loop(self, p_reason):

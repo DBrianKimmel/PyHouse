@@ -5,7 +5,7 @@
 @copyright: 2014 by D. Brian Kimmel
 @note: Created on Apr 30, 2014
 @license: MIT License
-@summary: This module is for testing logging.
+@summary: This module is for testing logging.\
 """
 
 # Import system type stuff
@@ -17,7 +17,7 @@ from Modules.utils import pyh_log as pyhLog
 from test import xml_data
 from Modules.Core.data_objects import PyHouseData
 
-XML = xml_data.XML
+XML = xml_data.XML_LONG
 
 
 class Test_02_ReadXML(unittest.TestCase):

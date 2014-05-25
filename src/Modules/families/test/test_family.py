@@ -1,5 +1,5 @@
 """
-@name: PyHouse/Modules/families/test/test_family.py
+@name: PyHouse/src/Modules/families/test/test_family.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @copyright: 2013-2014 by D. Brian Kimmel
@@ -13,11 +13,11 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, HousesData, HouseData, RoomData
+from Modules.Core.data_objects import PyHouseData, HousesData, HouseData
 from Modules.families import family
 from test import xml_data
 
-XML = xml_data.XML
+XML = xml_data.XML_LONG
 
 
 class Test_01_Families(unittest.TestCase):
@@ -29,19 +29,47 @@ class Test_01_Families(unittest.TestCase):
         self.m_pyhouses_obj.XmlRoot = self.m_root = ET.fromstring(XML)
         self.m_houses = self.m_root.find('Houses')
         self.m_house = self.m_houses.find('House')
-        self.m_house_obj = RoomData()
+        # self.m_house_obj = RoomData()
         self.m_api = family.API()
 
     def test_0101_ValidFamilies(self):
         self.assertEqual(family.VALID_FAMILIES[0], 'Insteon')
+        self.assertEqual(family.VALID_FAMILIES[1], 'UPB')
+        self.assertEqual(family.VALID_FAMILIES[2], 'X10')
 
     def test_0102_build_one(self):
-        l_ret = self.m_api.build_one_family('Insteon', 1)
-        self.assertEqual(l_ret.Name, 'Insteon')
+        l_family_obj = self.m_api.build_one_family('Insteon')
+        self.assertEqual(l_family_obj.Name, 'Insteon', 'Invalid name')
+        self.assertEqual(l_family_obj.Active, True, 'Invalid Active')
+        self.assertEqual(l_family_obj.ModuleName, 'Device_Insteon', 'Invalid Module Name')
+        self.assertEqual(l_family_obj.PackageName, 'Modules.families.Insteon', 'Invalid Package Name')
 
-    def test_0103_import(self):
-        l_family_obj = self.m_api.build_one_family('Insteon', 1)
+    def test_0103_import_one(self):
+        l_family_obj = self.m_api.import_one_module('Insteon')
+        self.assertNotEqual(l_family_obj.API, None, 'Error importing module Insteon')
+        pass
+
+    def test_0104_import(self):
+        l_family_obj = self.m_api.build_one_family('Insteon')
         l_ret = self.m_api.import_module(l_family_obj)
-        print('Return:{0:}'.format(l_ret))
+        self.assertNotEqual(l_ret, None, 'Error importing module Insteon')
+        pass
+
+    def test_0111_build_family(self):
+        self.m_api.build_lighting_family_info(self.m_house)
+        pass
+
+    def test_0112_start_family(self):
+        l_family_obj = self.m_api.build_lighting_family_info(self.m_house)
+        l_family_obj = self.m_api.build_one_family('Insteon')
+        l_ret = self.m_api.import_module(l_family_obj)
+        self.assertNotEqual(l_ret, None, 'Error importing module Insteon')
+        pass
+
+    def test_0113_stop_family(self):
+        l_family_obj = self.m_api.build_one_family('Insteon')
+        l_ret = self.m_api.import_module(l_family_obj)
+        self.assertNotEqual(l_ret, None, 'Error importing module Insteon')
+        pass
 
 # ## END DBK

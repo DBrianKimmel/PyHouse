@@ -14,6 +14,7 @@ There are three different interfaces at this point (2013-10-29).
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
+from Modules.Core.data_objects import SerialControllerData, USBControllerData, EthernetControllerData
 from Modules.utils import xml_tools
 # from Modules.utils.tools import PrintObject
 
@@ -26,74 +27,6 @@ Be careful since the name will be generated and is case sensitive.
 """
 from Modules.drivers import VALID_INTERFACES
 from Modules.drivers import VALID_PROTOCOLS
-
-
-class SerialData(object):
-    """The additional data needed for serial interfaces.
-    """
-
-    def __init__(self):
-        from Modules.lights import lighting_controllers
-        lighting_controllers.ControllerData().__init__()
-        self.InterfaceType = 'Serial'
-        self.BaudRate = 9600
-        self.ByteSize = 8
-        self.DsrDtr = False
-        self.Parity = 'N'
-        self.RtsCts = False
-        self.StopBits = 1.0
-        self.Timeout = None
-        self.XonXoff = False
-
-    def reprJSON(self):
-        """interface().
-        """
-        from Modules.lights import lighting_controllers
-        l_ret = lighting_controllers.ControllerData().reprJSON()
-        l_ret.update(dict(
-            InterfaceType = self.InterfaceType,
-            BaudRate = self.BaudRate,
-            ByteSize = self.ByteSize,
-            DsrDtr = self.DsrDtr,
-            Parity = self.Parity,
-            RtsCts = self.RtsCts,
-            StopBits = self.StopBits,
-            Timeout = self.Timeout,
-            XonXoff = self.XonXoff
-        ))
-        return l_ret
-
-
-class USBData(object):
-
-    def __init__(self):
-        self.InterfaceType = 'USB'
-        self.Product = 0
-        self.Vendor = 0
-
-    def reprJSON(self):
-        l_ret = dict(
-            InterfaceType = self.InterfaceType,
-            Product = self.Product,
-            Vendor = self.Vendor
-        )
-        return l_ret
-
-
-class  EthernetData(object):
-
-    def __init__(self):
-        self.InterfaceType = 'Ethernet'
-        self.PortNumber = 0
-        self.Protocol = 'TCP'
-
-    def reprJSON(self):
-        l_ret = dict(
-            InterfaceType = self.InterfaceType,
-            PortNumber = self.PortNumber,
-            Protocol = self.Protocol
-        )
-        return l_ret
 
 
 class ReadWriteConfig(xml_tools.ConfigTools):
@@ -120,7 +53,7 @@ class ReadWriteConfig(xml_tools.ConfigTools):
                 self._write_ethernet_xml(p_entry, p_controller_obj)
 
     def _extract_serial_xml(self, p_controller_obj, p_controller_xml):
-        l_serial = SerialData()
+        l_serial = SerialControllerData()
         l_xml = p_controller_xml
         l_serial.BaudRate = self.get_text_from_xml(l_xml, 'BaudRate')
         l_serial.ByteSize = self.get_int_from_xml(l_xml, 'ByteSize')
@@ -168,7 +101,7 @@ class ReadWriteConfig(xml_tools.ConfigTools):
             ET.SubElement(p_xml, 'XonXoff').text = False
 
     def _extract_usb_xml(self, p_controller_obj, p_controller_xml):
-        l_usb = USBData()
+        l_usb = USBControllerData()
         l_xml = p_controller_xml
         l_usb.Product = self.get_int_from_xml(l_xml, 'Product')
         l_usb.Vendor = self.get_int_from_xml(l_xml, 'Vendor')
@@ -186,7 +119,7 @@ class ReadWriteConfig(xml_tools.ConfigTools):
             ET.SubElement(p_xml, 'Product').text = 0
 
     def _extract_ethernet_xml(self, p_controller_obj, p_controller_xml):
-        l_ethernet = EthernetData()
+        l_ethernet = EthernetControllerData()
         l_xml = p_controller_xml
         l_ethernet.PortNumber = self.get_int_from_xml(l_xml, 'PortNumber')
         l_ethernet.Protocol = self.get_int_from_xml(l_xml, 'Protocol')

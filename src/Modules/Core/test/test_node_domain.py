@@ -16,17 +16,17 @@ Tests for L{twisted.protocols.amp}.
 """
 
 # Import system type stuff
-# from twisted.python import filepath
+from twisted.trial import unittest
 from twisted.python.failure import Failure
 from twisted.protocols import amp
-from twisted.trial import unittest
 from twisted.internet import protocol, defer, error, reactor  # , interfaces
 from twisted.test import iosim
 from twisted.test.proto_helpers import StringTransport
 
 # Import PyMh files and modules.
-from Modules.Core import node_domain
 from Modules.Core.data_objects import PyHouseData
+from Modules.Core import node_domain
+
 
 class TestProtocol(protocol.Protocol):
 

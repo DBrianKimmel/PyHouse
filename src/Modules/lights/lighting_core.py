@@ -22,7 +22,7 @@ class XXXBaseLightingData(object):
     """Information
     """
 
-    def __init__(self):
+    def XXX__init__(self):
         self.Name = ''
         self.Key = 0
         self.Active = False
@@ -34,7 +34,7 @@ class XXXBaseLightingData(object):
         self.Type = ''
         self.UUID = None
 
-    def reprJSON(self):
+    def XXXreprJSON(self):
         """lighting_core.
         """
         l_ret = dict(
@@ -55,9 +55,9 @@ class XXXBaseLightingData(object):
 
 class CoreAPI(xml_tools.ConfigTools):
 
-    def read_light_common(self, p_entry_xml, p_device_obj, p_house_obj):
+    def read_base_lighting_xml(self, p_entry_xml, p_device_obj, p_house_obj):
         """
-        @param p_entry_xml: is the e-tree XML house object
+        @param p_entry_xml: is the light XML element
         @param p_house: is the text name of the House.
         @return: a dict of the entry to be attached to a house object.
         """
@@ -71,7 +71,7 @@ class CoreAPI(xml_tools.ConfigTools):
         p_device_obj.UUID = self.get_uuid_from_xml(p_entry_xml, 'UUID')
         for l_family_obj in p_house_obj.FamilyData.itervalues():
             if l_family_obj.Name == l_fam:
-                l_family_obj.API.extract_device_xml(p_entry_xml, p_device_obj)
+                l_family_obj.ModuleAPI.extract_device_xml(p_entry_xml, p_device_obj)
         return p_device_obj
 
     def write_light_common(self, p_entry, p_device_obj, p_house_obj):
@@ -84,6 +84,6 @@ class CoreAPI(xml_tools.ConfigTools):
         self.put_text_element(p_entry, 'UUID', p_device_obj.UUID)
         for l_family_obj in p_house_obj.FamilyData.itervalues():
             if l_family_obj.Name == p_device_obj.Family:
-                l_family_obj.API.insert_device_xml(p_entry, p_device_obj)
+                l_family_obj.ModuleAPI.insert_device_xml(p_entry, p_device_obj)
 
 # ## END DBK

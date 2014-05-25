@@ -1,14 +1,12 @@
 """
-PyHouse/Modules/utils/test/test_xml_tools.py
-
-Created on Apr 11, 2013
-
+@name: PyHouse/src/Modules/utils/test/test_xml_tools.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
-@copyright: 2014 by D. Brian Kimmel
+@copyright: 2013-2014 by D. Brian Kimmel
 @license: MIT License
+@note: Created on Apr 11, 2013
+@summary: This module is for testing xml tools.
 
-@summary: This module is for testing lighting core.
 """
 
 # Import system type stuff
@@ -20,7 +18,7 @@ from Modules.utils import xml_tools
 from test import xml_data
 from Modules.Core.data_objects import PyHouseData, RoomData
 
-XML1 = xml_data.XML
+XML1 = xml_data.XML_LONG
 
 XML = """
 <Test b1='True' f1='3.14158265' i1='371' t1='Test of text' >

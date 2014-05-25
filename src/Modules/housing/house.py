@@ -1,17 +1,19 @@
-#!/usr/bin/python
+"""
+-*- test-case-name: PyHouse.src.Modules.housing.test.test_house -*-
 
-"""Handle all the house(s) information.
-
-main/house.py
+@name: PyHouse/src/Modules/housing/house.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
+@Copyright (c) 2013-2014 by D. Brian Kimmel
+@license: MIT License
+@note: Created on Apr 10, 2013
+@summary: Handle all of the information for a house.
 
 There is one instance of this module for each house being controlled.
 
 House.py knows everything about a single house.
 
-There is location information for the house.  This is for calculating the
-time of sunrise and sunset.  Additional calculations may be added such as
-moonrise, tides, etc.
-
+Rooms and lights and HVAC are associated with a particular house.
 """
 
 # Import system type stuff
@@ -63,11 +65,14 @@ class HouseReadWriteConfig(location.ReadWriteConfig, rooms.ReadWriteConfig):
 
     def read_xml(self, p_house_obj, p_house_xml):
         """Read house information, location and rooms.
+
+        @param p_house_obj: is
+        @param p_house_xml: is
         """
         self.xml_read_common_info(p_house_obj, p_house_xml)
         p_house_obj.UUID = self.get_uuid_from_xml(p_house_xml, 'UUID')
-        p_house_obj.Location = self.read_location_xml(p_house_obj, p_house_xml)
-        p_house_obj.Rooms = self.read_rooms_xml(p_house_obj, p_house_xml)
+        p_house_obj.Location = self.read_location_xml(p_house_xml)
+        p_house_obj.Rooms = self.read_rooms_xml(p_house_xml)
         return p_house_obj
 
     def write_xml(self, p_house_obj):
@@ -112,7 +117,7 @@ class API(HouseReadWriteConfig):
         LOG.info("Stopping House:{0:}.".format(self.m_house_obj.Name))
         l_house_xml = self.write_xml(p_house_obj)
         l_house_xml.append(self.write_location_xml(p_house_obj.Location))
-        l_house_xml.append(self.write_rooms_xml(p_house_obj))
+        l_house_xml.append(self.write_rooms_xml(p_house_obj.Rooms))
         try:
             self.m_house_obj.ScheduleAPI.Stop(l_house_xml)
         except AttributeError:  # New house has  no schedule

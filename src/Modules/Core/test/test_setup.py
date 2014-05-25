@@ -1,17 +1,24 @@
 """
-Created on Mar 2, 2014
+@name: PyHouse/src/Modules/Core/test/test_setup.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
+@copyright: 2014 by D. Brian Kimmel
+@note: Created on Mar 2, 2014
+@license: MIT License
+@summary: This module sets up the Core part of PyHouse.
 
-@author: briank
 """
 
+# Import system type stuff
+from twisted.trial import unittest
+import xml.etree.ElementTree as ET
+
+# Import PyMh files and modules.
 from Modules.Core import setup
 from test import xml_data
 from Modules.Core.data_objects import PyHouseData, CoreServicesData
 
-from twisted.trial import unittest
-import xml.etree.ElementTree as ET
-
-XML = xml_data.XML
+XML = xml_data.XML_LONG
 
 
 class Test_01_XML(unittest.TestCase):
@@ -22,8 +29,15 @@ class Test_01_XML(unittest.TestCase):
     def setUp(self):
         self.m_pyhouses_obj = PyHouseData()
 
-    def test_0101_errors(self):
-        pass
+    def test_0101_ReadEmptyXml(self):
+        self.m_pyhouses_obj.XmlRoot = ET.fromstring(xml_data.XML_EMPTY)
+
+    def test_0102_ReadShortXml(self):
+        self.m_pyhouses_obj.XmlRoot = ET.fromstring(xml_data.XML_SHORT)
+
+    def test_0103_ReadLongXml(self):
+        self.m_pyhouses_obj.XmlRoot = ET.fromstring(xml_data.XML_LONG)
+
 
 class Test_02_ReadXML(unittest.TestCase):
     """

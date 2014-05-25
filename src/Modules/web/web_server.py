@@ -32,6 +32,7 @@ from nevow import appserver
 import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
+from Modules.Core.data_objects import WebData
 from Modules.web import web_utils
 from Modules.web import web_mainpage
 from Modules.utils import pyh_log
@@ -51,23 +52,6 @@ g_debug = 0
 # 1 = log extra info
 # + = NOT USED HERE
 LOG = pyh_log.getLogger('PyHouse.WebServer   ')
-
-
-class WebData(object):
-    """
-    """
-    def __init__(self):
-        self.WebPort = 8580
-        self.Service = None
-        self.Logins = {}  # a dict of login_names as keys and encrypted passwords as values - see web_login for details.
-
-    def __str__(self):
-        l_ret = "WebData:: "
-        l_ret += "WebPort:{0:}\n".format(self.WebPort)
-        return l_ret
-
-    def reprJSON(self):
-        return dict(Port = self.WebPort)
 
 
 class ClientConnections(object):

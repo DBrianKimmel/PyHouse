@@ -35,6 +35,7 @@ import xml.etree.ElementTree as ET
 from twisted.internet import reactor
 
 # Import PyMh files
+from Modules.Core.data_objects import ScheduleData
 from Modules.lights import lighting
 from Modules.utils import xml_tools
 from Modules.utils import tools
@@ -48,34 +49,6 @@ g_debug = 0
 LOG = pyh_log.getLogger('PyHouse.Schedule    ')
 
 callLater = reactor.callLater
-
-
-class ScheduleData(object):
-
-    def __init__(self):
-        self.Name = ''
-        self.Key = 0
-        self.Active = False
-        self.Level = 0
-        self.LightName = None
-        self.LightNumber = 0  # Depricated methinks
-        self.Object = None  # a light (perhaps other) object
-        self.Rate = 0
-        self.RoomName = None
-        self.Time = None
-        self.Type = 'Device'  # For future expansion into scenes, entertainment etc.
-        self.UUID = None
-        # for use by web browser - not saved in xml
-        self.HouseIx = None
-        self.DeleteFlag = False
-
-    def reprJSON(self):
-        l_ret = dict(Name = self.Name, Key = self.Key, Active = self.Active,
-                    Level = self.Level,
-                    LightName = self.LightName, LightNumber = self.LightNumber, Rate = self.Rate,
-                    RoomName = self.RoomName, Time = self.Time, Type = self.Type,
-                    UUID = self.UUID)
-        return l_ret
 
 
 class ScheduleXML(xml_tools.ConfigTools):

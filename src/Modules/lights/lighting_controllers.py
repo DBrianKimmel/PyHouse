@@ -32,7 +32,7 @@ class ControllersAPI(lighting_core.CoreAPI):
             l_list = l_sect.iterfind('Controller')
             for l_controller_xml in l_list:
                 l_controller_obj = ControllerData()
-                l_controller_obj = self.read_light_common(l_controller_xml, l_controller_obj, p_house_obj)
+                l_controller_obj = self.read_base_lighting_xml(l_controller_xml, l_controller_obj, p_house_obj)
                 l_controller_obj.Key = l_count  # Renumber
                 l_controller_obj.Interface = self.get_text_from_xml(l_controller_xml, 'Interface')
                 l_controller_obj.Port = self.get_text_from_xml(l_controller_xml, 'Port')

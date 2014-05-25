@@ -1,7 +1,7 @@
 """
--*- test-case-name: PyHouse.Modules.Core.test.test_node_local -*-
+-*- test-case-name: PyHouse.src.Modules.Core.test.test_node_local -*-
 
-@name: PyHouse/Modules/Core/node_local.py
+@name: PyHouse/src/Modules/Core/node_local.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
@@ -28,7 +28,7 @@ import platform
 import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import NodeData
+from Modules.Core.data_objects import NodeData, InterfaceData
 from Modules.communication import ir_control
 from Modules.utils.xml_tools import PutGetXML
 from Modules.utils import pyh_log
@@ -52,22 +52,6 @@ NODE_PIFACECAD = 0x0008
 NODE_V6ROUTER = 0x0010
 NODE_WINDOWS = 0x0020
 NODE_TUNNEL = 0x0040
-
-
-class InterfaceData(object):
-    """
-    Holds information about each of the interfaces on the local node.
-
-    @param  Type: Ethernet | Wireless | Loop | Tunnel | Other
-    """
-    def __init__(self):
-        self.Name = None
-        self.Key = 0
-        self.Active = True
-        self.Type = None
-        self.MacAddress = ''
-        self.V4Address = []
-        self.V6Address = []
 
 
 class GetAllInterfaceData(object):

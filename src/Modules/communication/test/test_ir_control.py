@@ -13,12 +13,11 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
-from Modules.communication import ir_control
-from Modules.utils import xml_tools
-from Modules.test import xml_data
 from Modules.Core.data_objects import PyHouseData, HousesData, HouseData, RoomData
+from Modules.communication import ir_control
+from test import xml_data
 
-XML = xml_data.XML
+XML = xml_data.XML_LONG
 
 
 class Test_02_XML(unittest.TestCase):

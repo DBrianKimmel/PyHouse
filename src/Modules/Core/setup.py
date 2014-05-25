@@ -1,13 +1,13 @@
 """
-@name: PyHouse/Modules/Core/setup.py
+-*- test-case-name: PyHouse.src.Modules.Core.test.test_setup -*-
+
+@name: PyHouse/src/Modules/Core/setup.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
 @note: Created on Mar 1, 2014
 @license: MIT License
 @summary: This module sets up the Core part of PyHouse.
-
--*- test-case-name: PyHouse.Modules.Core.test.test_setup -*-
 
 
 This will set up this node and then find all other nodes in the same domain (House).

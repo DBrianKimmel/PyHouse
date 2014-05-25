@@ -1,12 +1,13 @@
 """
 @name: PyHouse/Modules/housing/test/test_house.py
-
-Created on Apr 8, 2013
-
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
-@Copyright (c) 2010-2014 by D. Brian Kimmel
+@Copyright (c) 2013-2014 by D. Brian Kimmel
 @license: MIT License
+@note: Created on Apr 8, 2013
+@summary: Test handling the information for a house.
+
+
 """
 
 # Import system type stuff
@@ -14,12 +15,12 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
+from Modules.Core.data_objects import PyHouseData, HousesData, HouseData, LocationData
 from Modules.housing import house
 from Modules.utils import xml_tools
 from test import xml_data
-from Modules.Core.data_objects import PyHouseData, HousesData, HouseData, LocationData
 
-XML = xml_data.XML
+XML = xml_data.XML_LONG
 
 
 class Test_01_XML(unittest.TestCase):

@@ -1,17 +1,14 @@
 """
-@name: PyHouse/Modules/housing/houses.py
+-*- test-case-name: PyHouse.src.Modules.housing.test.test_houses -*-
 
--*- test-case-name: PyHouse.Modules.housing.test.test_houses -*-
-
+@name: PyHouse/src/Modules/housing/houses.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @Copyright (c) 2010-2014 by D. Brian Kimmel
 @license: MIT License
+@note: Created on Jan 20, 2010
+@summary: Handle all of the information for all houses.
 
-
-Handle all the house(s) information.
-
-main/houses.py
 
 This module is a singleton called from PyHouse.
 It initiates an instance of house for each house defined in XML.
@@ -20,24 +17,17 @@ Perhaps it is no longer necessary (with multiple Raspberry Pis) to have more tha
 
 Its initiates the configuration system and then calls the other packages and sets up the whole system.
 
-
-Rooms and lights and HVAC are associated with a particular house.
 """
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
-from Modules.housing import house
-# from Modules.utils import xml_tools
-from Modules.utils import pyh_log
 from Modules.Core.data_objects import HousesData
-
+from Modules.housing import house
+from Modules.utils import pyh_log
 
 g_debug = 1
-# 0 = off
-# 1 = log extra info
-# + = NOT USED HERE
 LOG = pyh_log.getLogger('PyHouse.Houses      ')
 
 Singletons = {}

@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
 """
--*- test-case-name: PyHouse.Modules.test.test_PyHouse -*-
+-*- test-case-name: PyHouse.src.Modules.test.test_PyHouse -*-
 
 @name: PyHouse/Modules/Pyhouse.py
+
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @Copyright (c) 2010-2014 by D. Brian Kimmel

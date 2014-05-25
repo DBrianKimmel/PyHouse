@@ -1,12 +1,10 @@
 """
 @name: PyHouse/test/test_xml_data.py
-
-Created on May 4, 2014
-
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @Copyright (c) 2010-2014 by D. Brian Kimmel
 @license: MIT License
+@note: Created on May 4, 2014
 @summary: Test the XML data for integrity.
 
 This test should always be run as the very first test.
@@ -20,7 +18,7 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from test import xml_data
 
-XML = xml_data.XML
+XML = xml_data.XML_LONG
 
 
 class Test_01_XML(unittest.TestCase):

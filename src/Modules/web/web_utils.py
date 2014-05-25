@@ -8,7 +8,6 @@ Created on May 30, 2013
 import datetime
 import random
 import twisted.python.components as tpc
-import xml.etree.ElementTree as ET
 from nevow import flat
 from nevow import inevow
 from nevow import rend
@@ -19,10 +18,8 @@ from nevow.rend import _CARRYOVER
 from formless import iformless
 import json
 
-
 # Import PyMh files and modules.
 from Modules.utils import xml_tools
-# from Modules.web.web_tagdefs import *
 
 
 g_debug = 0
@@ -55,13 +52,6 @@ WS_LIGHTS = 503
 
 SUBMIT = '_submit'
 BUTTON = 'post_btn'
-
-
-class WebData(object):
-    """
-    """
-    def __init__(self):
-        self.WebPort = 8580
 
 
 class State(object):

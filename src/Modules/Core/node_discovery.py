@@ -1,15 +1,12 @@
 """
-@name: PyHouse/Modules/Core/node_discovery.py
+-*- test-case-name: PyHouse.src.Modules.Core.test.test_node_discovery -*-
 
-# -*- test-case-name: PyHouse.Modules.Core.test.test_node_discovery -*-
-
-Created on Apr 5, 2014
-
+@name: PyHouse/src/Modules/Core/node_discovery.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
 @license: MIT License
-
+@note: Created on Apr 5, 2014
 @summary: This module is for discovering all the PyHouse nodes in a domain.
 
 This Module:

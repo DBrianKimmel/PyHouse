@@ -9,7 +9,7 @@
  *  
  *  function moduleLoaded(module) {
  *      modulesWaiting[module] = null;
- *      Divmod.debug("moduleLoaded", "loaded module: " + module);
+ *      //Divmod.debug("moduleLoaded", "loaded module: " + module);
  *  }
  *  
  *  function waitForModules(module, f) {
@@ -384,7 +384,7 @@ function findWidgetByClass(p_name) {
  * Get PyHouse data from server.
  */
 function getPyHouseData() {
-	Divmod.debug('---', 'globals.getPyHouseData() was called. ');
+	//Divmod.debug('---', 'globals.getPyHouseData() was called. ');
 	var steprate = 2; // checks per second
 	var maxsteps = steprate * 60 * 60 * 24;
 	var stepcount = 0;
@@ -452,7 +452,7 @@ function buildDeleteButton(p_handler) {
  * @returns = innerHTML of a table filled in with buttons
  */
 function buildTable(p_obj, p_handler, /* optional */ nameFunction, noOptions) {
-	Divmod.debug('---', 'globals.buildTable(1) called. ' + p_obj + ' ' + p_handler + ' ' + nameFunction + ' ' + noOptions);
+	//Divmod.debug('---', 'globals.buildTable(1) called. ' + p_obj + ' ' + p_handler + ' ' + nameFunction + ' ' + noOptions);
 	var l_function = nameFunction;
 	var l_options = noOptions;
 	if (typeof nameFunction !== 'function') {
@@ -463,10 +463,10 @@ function buildTable(p_obj, p_handler, /* optional */ nameFunction, noOptions) {
 		l_options = '';
 	var l_cols = 5;
 	var l_count = 0;
-	Divmod.debug('---', 'globals.buildTable(2) called. ' + Object.keys(p_obj).length);
+	//Divmod.debug('---', 'globals.buildTable(2) called. ' + Object.keys(p_obj).length);
 	var l_html = "<table><tr>\n";
 	for (var l_item in p_obj) {
-		Divmod.debug('---', 'globals.buildTable(3) called. ' + l_item + ' ' + p_obj);
+		//Divmod.debug('---', 'globals.buildTable(3) called. ' + l_item + ' ' + p_obj);
 		var l_background = BUTTON_ACTIVE;
 		if (p_obj[l_item]['Active'] != true)
 			l_background = BUTTON_INACTIVE;
@@ -484,7 +484,7 @@ function buildTable(p_obj, p_handler, /* optional */ nameFunction, noOptions) {
 	return l_html;
 }
 function buildEntryButtons(p_handler, /* optional */ noOptions) {
-	Divmod.debug('---', 'globals.buildEntryButtons() called.  Handler=' + p_handler + '  ' + noOptions);
+	//Divmod.debug('---', 'globals.buildEntryButtons() called.  Handler=' + p_handler + '  ' + noOptions);
 	var l_options = noOptions;
 	if (l_options === undefined)
 		l_options = '';
@@ -586,7 +586,7 @@ function buildInterfaceSelectWidget(p_id, p_checked) {
  */
 function buildValidSelectWidget(p_id, p_list, p_checked) {
 	l_list = globals.Valid[p_list];
-	Divmod.debug('---', 'globals.buildValidSelectWidget() was called. Id=' + p_id + '  Checked=' + p_checked + '  List=' + l_list);
+	//Divmod.debug('---', 'globals.buildValidSelectWidget() was called. Id=' + p_id + '  Checked=' + p_checked + '  List=' + l_list);
 	var l_html = '';
 	l_html += buildSelectWidget(p_id, l_list, p_checked)
 	return l_html;
@@ -603,7 +603,7 @@ function buildSliderWidget(p_id, p_value) {
 	return l_html;
 }
 function buildLevelSliderWidget(p_name, p_level) {
-	//Divmod.debug('---', 'globals.buildLevelSliderWidget() called.  Level=' + p_level);
+	//.debug('---', 'globals.buildLevelSliderWidget() called.  Level=' + p_level);
 	var l_html = buildSliderWidget(p_name, p_level);
 	return l_html;
 }
@@ -635,7 +635,7 @@ function fetchTextWidget(p_id) {
  * Build an entire row to put in the table
  */
 function buildTextRowWidget(p_id, p_name, p_value, /* optional */ hidden) {
-	Divmod.debug('---', 'globals.buildTextRowWidget() was called.  Name' + p_name + '  Value=' + p_value);
+	//Divmod.debug('---', 'globals.buildTextRowWidget() was called.  Name' + p_name + '  Value=' + p_value);
 	var l_html = '';
 	l_html += "<tr><td>" + p_name + "</td><td><input type='text' id='" + p_name + "' value='" + p_value + "' /></td></tr>\n";
 	return l_html;

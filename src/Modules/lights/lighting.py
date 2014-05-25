@@ -81,6 +81,6 @@ class API(Utility):
         for l_family_obj in self.m_house_obj.FamilyData.itervalues():
             if l_family_obj.Name != l_light_obj.Family:
                 continue
-            l_family_obj.API.ChangeLight(l_light_obj, p_level, 0)
+            l_family_obj.ModuleAPI.ChangeLight(l_light_obj, p_level, 0)
 
 # ## END DBK

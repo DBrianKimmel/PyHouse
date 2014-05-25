@@ -1,13 +1,25 @@
 """
+@name: PyHouse/src/test/xml_data/__init__.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
+@Copyright (c) 2010-2014 by D. Brian Kimmel
+@license: MIT License
+@note: Created on Jan 20, 2010
+@summary: Handle all of the information for all houses.
+
 XML to define the PyHouse.xml file
 
 used for testing
 """
 
 
+XML_EMPTY = """
+<PyHouse>
+</PyHouse>
+"""
 
 
-XML = """
+XML_LONG = """
 <PyHouse>
     <Web WebPort="8580" />
     <Logs>
@@ -36,15 +48,57 @@ XML = """
             <Rooms>
                 <Room Active="True" Key="0" Name="Test Living Room">
                     <UUID>12341234-1003-11e3-82b3-082e5f8cdfd2</UUID>
-                    <Comment>None</Comment>
+                    <Comment>Test Comment</Comment>
                     <Corner>0.50, 10.50</Corner>
                     <Size>14.00, 13.50</Size>
                 </Room>
+                <Room Active="True" Key="1" Name="Dining Room">
+                    <UUID>12341234-1003-11e3-4444-123455789abc</UUID>
+                    <Comment>This is room 2</Comment>
+                    <Corner>3.50, 13.50</Corner>
+                    <Size>24.00, 23.50</Size>
+                </Room>
             </Rooms>
+            <Lights>
+                <Light Active="True" Key="0" Name="Test LR Overhead">
+                    <Comment>SwitchLink On/Off</Comment>
+                    <Coords>['0', '0']</Coords>
+                    <Dimmable>False</Dimmable>
+                    <Family>Insteon</Family>
+                    <Room>Test Living Room</Room>
+                    <Type>Light</Type>
+                    <UUID>ec9d9930-89c9-11e3-a1ab-082e5f8cdfd2</UUID>
+                    <Address>11.22.33</Address>
+                    <Controller>True</Controller>
+                    <DevCat>3140</DevCat>
+                    <GroupList>All_Lights|Outside|Foyer(0;0)</GroupList>
+                    <GroupNumber>0</GroupNumber>
+                    <Master>0</Master>
+                    <ProductKey>30.1A.35</ProductKey>
+                    <Responder>True</Responder>
+                </Light>
+                <Light Active="True" Key="1" Name="outside_gar">
+                    <Comment>SwitchLink On/Off</Comment>
+                    <Coords>['0', '0']</Coords>
+                    <Dimmable>False</Dimmable>
+                    <Family>Insteon</Family>
+                    <Room>Dining Room</Room>
+                    <Type>Light</Type>
+                    <UUID>ec9d9931-89c9-11e3-8fd7-082e5f8cdfd2</UUID>
+                    <Address>17.47.A1</Address>
+                    <Controller>True</Controller>
+                    <DevCat>0x0</DevCat>
+                    <GroupList>All_Lights|Outside|Garage(0;0)</GroupList>
+                    <GroupNumber>2</GroupNumber>
+                    <Master>True</Master>
+                    <ProductKey>0</ProductKey>
+                    <Responder>True</Responder>
+                </Light>
+            </Lights>
             <Hvac>
-                <Thermostat>
+                <Thermostat Name="Test Thermostat 1" Active="True" Key="0">
                 </Thermostat>
-                <Thermostat>
+                <Thermostat Name="Test 2 Thermostat" Active="True" Key="1">
                 </Thermostat>
             </Hvac>
             <Pools>
@@ -544,7 +598,7 @@ XML = """
 
 
 
-XML1 = """
+XML_SHORT = """
 <PyHouse>
     <Web>
     </Web>

@@ -1,22 +1,22 @@
 """
-PyHouse/Modules/Core/test/test_nodes.py
-
-Created on Mar 20, 2014
-
-@author: briank
-
+@name: PyHouse/src/Modules/Core/nodes.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
+@license: MIT License
+@note: Created on Mar 20, 2014
+@summary: This module does everything for nodes.
 
-@summary: This module is for testing inter_node communication.
 """
 
-from Modules.Core import nodes
-from Modules.Core.data_objects import PyHouseData
-
+# Import system type stuff
 from twisted.trial import unittest
 from twisted.internet.defer import Deferred, gatherResults, maybeDeferred
 from twisted.internet import protocol, error, defer, udp
-from twisted.python import runtime
+
+# Import PyMh files and modules.
+from Modules.Core.data_objects import PyHouseData
+from Modules.Core import nodes
 
 
 class Mixin:

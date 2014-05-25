@@ -17,7 +17,7 @@ from Modules.utils import xml_tools
 from test import xml_data
 from Modules.Core.data_objects import PyHouseData
 
-XML = xml_data.XML
+XML = xml_data.XML_LONG
 
 
 class Test_01_XML(unittest.TestCase):

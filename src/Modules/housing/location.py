@@ -1,7 +1,7 @@
 """
--*- test-case-name: PyHouse.Modules.housing.test.test_location -*-
+-*- test-case-name: PyHouse.src.Modules.housing.test.test_location -*-
 
-@name: PyHouse/Modules/housing/rooms.py
+@name: PyHouse/src/Modules/housing/location.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @Copyright (c) 2013-2014 by D. Brian Kimmel
@@ -28,7 +28,11 @@ class ReadWriteConfig(xml_tools.ConfigTools):
     """Use the internal data to read / write an updated XML config file.
     """
 
-    def read_location_xml(self, p_house_obj, p_house_xml):
+    def read_location_xml(self, p_house_xml):
+        """
+        @param p_house_obj: is p_pyhouses_obj.HousesData[xxx].HouseData
+        @param p_house_xml: is one of 0+ 'House' elements
+        """
         l_location_obj = LocationData()
         l_location_xml = p_house_xml.find('Location')
         l_location_obj.Street = self.get_text_from_xml(l_location_xml, 'Street')
@@ -40,7 +44,6 @@ class ReadWriteConfig(xml_tools.ConfigTools):
         l_location_obj.Longitude = self.get_float_from_xml(l_location_xml, 'Longitude')
         l_location_obj.TimeZone = self.get_float_from_xml(l_location_xml, 'TimeZone')
         l_location_obj.SavingTime = self.get_float_from_xml(l_location_xml, 'SavingTime')
-        p_house_obj.Location = l_location_obj
         return l_location_obj
 
     def write_location_xml(self, p_location_obj):

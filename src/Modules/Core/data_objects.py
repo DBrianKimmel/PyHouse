@@ -1,16 +1,15 @@
 """
-@Name: PyHouse/src/Core/data_objects.py
+-*- test-case-name: PyHouse.src.Modules.Core.test.test_data_objects -*-
 
-Created on Mar 20, 2014
-
+@Name: PyHouse/src/Modules/Core/data_objects.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
 @license: MIT License
-
+@note: Created on Mar 20, 2014
 @summary: This module is the definition of major data objects.
 
-Specific data is loaded into some attributes for unit testing.
+Specific data may be loaded into some attributes for unit testing.
 """
 
 # Import system type stuff
@@ -43,6 +42,24 @@ class BaseLightingData(ABaseObject):
         self.Family = None
         self.RoomName = ''
         self.Type = ''
+
+    def reprJSON(self):
+        """lighting_core.
+        """
+        l_ret = dict(
+           Name = self.Name, Key = self.Key, Active = self.Active,
+           Comment = self.Comment, Coords = self.Coords, Dimmable = self.Dimmable,
+           Family = self.Family, RoomName = self.RoomName, Type = self.Type, UUID = self.UUID
+           )
+        l_attrs = filter(lambda aname: not aname.startswith('__'), dir(self))
+        for l_attr in l_attrs:
+            if not hasattr(l_ret, l_attr):
+                l_val = getattr(self, l_attr)
+                if not l_attr.startswith('_'):
+                    l_ret[l_attr] = str(l_val)
+                    # if l_attr == 'InsteonAddress':
+                    #    l_ret[l_attr] = web_utils.int2dotted_hex(l_val)
+        return l_ret
 
 
 class ButtonData(BaseLightingData):
@@ -87,9 +104,16 @@ class FamilyData(object):
         self.Name = ''
         self.Key = 0
         self.Active = True
-        self.API = None  # Device_Insteon.API()
+        self.ModuleAPI = None  # Device_Insteon.API()
         self.ModuleName = ''  # Device_Insteon
         self.PackageName = ''  # Modules.families.Insteon
+
+    def reprJSON(self):
+        l_ret = dict(Name = self.Name, Key = self.Key, Active = self.Active,
+            ModuleName = self.ModuleName,
+            PackageName = self.PackageName
+            )
+        return l_ret
 
 
 class PyHouseData(object):
@@ -165,6 +189,23 @@ class HouseData(ABaseObject):
         self.Schedules = {}
         self.Thermostat = {}
 
+    def reprJSON(self):
+        """House.
+        """
+        l_ret = dict(
+            Name = self.Name, Key = self.Key, Active = self.Active,
+            Buttons = self.Buttons,
+            Controllers = self.Controllers,
+            Lights = self.Lights,
+            Location = self.Location,
+            Internet = self.Internet,
+            Family = self.FamilyData,
+            Rooms = self.Rooms,
+            Schedules = self.Schedules,
+            UUID = self.UUID
+            )
+        return l_ret
+
 
 class LocationData(object):
 
@@ -179,6 +220,14 @@ class LocationData(object):
         self.TimeZone = '-5:00'
         self.ZipCode = '12345'
 
+    def reprJSON(self):
+        l_ret = dict(
+            City = self.City, Latitude = self.Latitude, Longitude = self.Longitude, Phone = self.Phone,
+            SavingsTime = self.SavingTime, State = self.State, Street = self.Street, TimeZone = self.TimeZone,
+            ZipCode = self.ZipCode
+            )
+        return l_ret
+
 
 class RoomData(ABaseObject):
 
@@ -188,6 +237,12 @@ class RoomData(ABaseObject):
         self.Size = ''
         self.Type = 'Room'
 
+    def reprJSON(self):
+        l_ret = dict(Name = self.Name, Key = self.Key, Active = self.Active,
+                    Comment = self.Comment, Corner = self.Corner, Size = self.Size,
+                    Type = self.Type, UUID = self.UUID)
+        return l_ret
+
 
 class NodeData(ABaseObject):
 
@@ -195,6 +250,22 @@ class NodeData(ABaseObject):
         self.ConnectionAddr_IPv4 = None
         self.Role = 0
         self.Interfaces = {}
+
+
+class InterfaceData(object):
+    """
+    Holds information about each of the interfaces on the local node.
+
+    @param  Type: Ethernet | Wireless | Loop | Tunnel | Other
+    """
+    def __init__(self):
+        self.Name = None
+        self.Key = 0
+        self.Active = True
+        self.Type = None
+        self.MacAddress = ''
+        self.V4Address = []
+        self.V6Address = []
 
 
 class LogData(object):
@@ -210,6 +281,65 @@ class ThermostatData(ABaseObject):
         self.ThermostatAPI = None
         self.CurrentTemperature = 0
         self.SetTemperature = 0
+
+
+class ScheduleData(ABaseObject):
+
+    def __init__(self):
+        self.Level = 0
+        self.LightName = None
+        self.LightNumber = 0  # Depricated methinks
+        self.Object = None  # a light (perhaps other) object
+        self.Rate = 0
+        self.RoomName = None
+        self.Time = None
+        self.Type = 'Device'  # For future expansion into scenes, entertainment etc.
+        # for use by web browser - not saved in xml
+        self.HouseIx = None
+        self.DeleteFlag = False
+
+
+class SerialControllerData(object):
+    """The additional data needed for serial interfaces.
+    """
+
+    def __init__(self):
+        # from Modules.lights import lighting_controllers
+        # lighting_controllers.ControllerData().__init__()
+        self.InterfaceType = 'Serial'
+        self.BaudRate = 9600
+        self.ByteSize = 8
+        self.DsrDtr = False
+        self.Parity = 'N'
+        self.RtsCts = False
+        self.StopBits = 1.0
+        self.Timeout = None
+        self.XonXoff = False
+
+
+class USBControllerData(object):
+
+    def __init__(self):
+        self.InterfaceType = 'USB'
+        self.Product = 0
+        self.Vendor = 0
+
+
+class  EthernetControllerData(object):
+
+    def __init__(self):
+        self.InterfaceType = 'Ethernet'
+        self.PortNumber = 0
+        self.Protocol = 'TCP'
+
+
+class WebData(object):
+    """
+    """
+    def __init__(self):
+        self.WebPort = 8580
+        self.Service = None
+        self.Logins = {}  # a dict of login_names as keys and encrypted passwords as values - see web_login for details.
 
 
 # ## END DBK

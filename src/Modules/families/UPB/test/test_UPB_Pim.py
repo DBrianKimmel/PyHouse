@@ -24,7 +24,7 @@ from Modules.lights import lighting_core
 from test import xml_data
 from Modules.Core.data_objects import PyHouseData, HouseData, ControllerData
 
-XML = xml_data.XML
+XML = xml_data.XML_LONG
 
 
 class Test(unittest.TestCase):

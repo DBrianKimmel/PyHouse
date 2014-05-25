@@ -1,12 +1,12 @@
 """
-ir_control.py
+-*- test-case-name: PyHouse.src.Modules.communication.test.test_ir_control -*-
 
-Created on Jan 26, 2014
-
-@author: briank
-
+@name: PyHouse/src/Modules/communication/ir_control.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
-
+@note: Created on Jan 26, 2014
+@license: MIT License
 @summary: Provides PyHouse IR service via a Lirc connection.
 
 Allow various IR receivers to collect signals from various IR remotes.
@@ -14,20 +14,20 @@ Allow various IR receivers to collect signals from various IR remotes.
 Connect to the LIRC daemon socket and listen to everything coming down that path.
 Connect to the PyHouse node cluster port and pass all the IR codes on.
 
-
 Use irrecord to use
 
 """
 
 # Import system type stuff
-
 from twisted.application.internet import StreamServerEndpointService
 from twisted.internet.protocol import Factory, Protocol
 from twisted.internet.endpoints import TCP4ServerEndpoint, clientFromString
 from twisted.protocols.amp import AMP
 
+# Import PyMh files and modules.
 from Modules.entertain import pandora
 from Modules.utils import pyh_log
+
 
 g_debug = 1
 LOG = pyh_log.getLogger('PyHouse.IrControl   ')

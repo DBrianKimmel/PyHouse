@@ -1,22 +1,25 @@
 """
-@name: PyHouse/Modules/Core/test/test_node_discovery.py
+@name: PyHouse/src/Modules/Core/test/test_node_discovery.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
-@note: Created on Apr 5, 2014
 @license: MIT License
+@note: Created on Apr 5, 2014
 @summary: Test the discovery for the domains nodes.
+
 """
 
+# Import system type stuff
 from twisted.trial import unittest
 from twisted.internet.defer import Deferred, gatherResults, maybeDeferred
 from twisted.internet import error
 
+# Import PyMh files and modules.
 from Modules.Core import node_discovery
 from test import xml_data
 from Modules.Core.data_objects import PyHouseData
 
-XML = xml_data.XML
+XML = xml_data.XML_LONG
 
 class Mixin(object):
     m_started = 0
