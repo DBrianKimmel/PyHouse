@@ -1,7 +1,7 @@
 """
 -*- test-case-name: PyHouse.Modules.util.test.test_pyh_log -*-
 
-@name: PyHouse/Modules/utils/pyh_log.py
+@name: PyHouse/src/Modules/utils/pyh_log.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @copyright: 2010-2014 by D. Brian Kimmel

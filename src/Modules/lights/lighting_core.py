@@ -55,13 +55,14 @@ class XXXBaseLightingData(object):
 
 class CoreAPI(xml_tools.ConfigTools):
 
-    def read_base_lighting_xml(self, p_entry_xml, p_device_obj, p_house_obj):
-        """
+    def read_base_lighting_xml(self, p_device_obj, p_entry_xml):
+        """This will read all the information in a BaseLightingData object
+
+        @param p_device_obj: is the device we are extracting information for.
         @param p_entry_xml: is the light XML element
-        @param p_house: is the text name of the House.
-        @return: a dict of the entry to be attached to a house object.
+        @return: a dict of the entry to be attached to a higher object.
         """
-        self.xml_read_common_info(p_device_obj, p_entry_xml)
+        self.read_base_object_xml(p_device_obj, p_entry_xml)
         p_device_obj.Comment = self.get_text_from_xml(p_entry_xml, 'Comment')
         p_device_obj.Coords = self.get_text_from_xml(p_entry_xml, 'Coords')
         p_device_obj.Dimmable = self.get_bool_from_xml(p_entry_xml, 'Dimmable')
@@ -69,12 +70,12 @@ class CoreAPI(xml_tools.ConfigTools):
         p_device_obj.RoomName = p_entry_xml.findtext('Room')
         p_device_obj.Type = p_entry_xml.findtext('Type')
         p_device_obj.UUID = self.get_uuid_from_xml(p_entry_xml, 'UUID')
-        for l_family_obj in p_house_obj.FamilyData.itervalues():
-            if l_family_obj.Name == l_fam:
-                l_family_obj.ModuleAPI.extract_device_xml(p_entry_xml, p_device_obj)
+        # for l_family_obj in p_house_obj.FamilyData.itervalues():
+        #    if l_family_obj.Name == l_fam:
+        #        l_family_obj.ModuleAPI.extract_device_xml(p_entry_xml, p_device_obj)
         return p_device_obj
 
-    def write_light_common(self, p_entry, p_device_obj, p_house_obj):
+    def write_light_common(self, p_entry, p_device_obj):
         self.put_text_element(p_entry, 'Comment', p_device_obj.Comment)
         self.put_text_element(p_entry, 'Coords', p_device_obj.Coords)
         self.put_bool_element(p_entry, 'Dimmable', p_device_obj.Dimmable)
@@ -82,8 +83,8 @@ class CoreAPI(xml_tools.ConfigTools):
         self.put_text_element(p_entry, 'Room', p_device_obj.RoomName)
         self.put_text_element(p_entry, 'Type', p_device_obj.Type)
         self.put_text_element(p_entry, 'UUID', p_device_obj.UUID)
-        for l_family_obj in p_house_obj.FamilyData.itervalues():
-            if l_family_obj.Name == p_device_obj.Family:
-                l_family_obj.ModuleAPI.insert_device_xml(p_entry, p_device_obj)
+        # for l_family_obj in p_house_obj.FamilyData.itervalues():
+        #    if l_family_obj.Name == p_device_obj.Family:
+        #        l_family_obj.ModuleAPI.insert_device_xml(p_entry, p_device_obj)
 
 # ## END DBK

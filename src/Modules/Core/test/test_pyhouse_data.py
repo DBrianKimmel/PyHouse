@@ -26,19 +26,19 @@ class Test(unittest.TestCase):
 
     def test_001_Load(self):
         print('Test 001')
-        _l_data = data_objects.PyHouseData()
+        _l_data = data_objects.PyHousesData()
 
     def test_002_houses(self):
-        l_data = data_objects.PyHouseData()
+        l_data = data_objects.PyHousesData()
         _l_houses = l_data.HousesData
 
     def Xtest_003_house(self):
-        l_data = data_objects.PyHouseData()
+        l_data = data_objects.PyHousesData()
         l_houses = l_data.HousesData
         _l_house = l_houses.HouseObject[0]
 
     def Xtest_004_name(self):
-        l_data = data_objects.PyHouseData()
+        l_data = data_objects.PyHousesData()
         l_houses = l_data.HousesData
         l_house = l_houses.HouseObject[0]
         l_name = l_house.Name
@@ -46,7 +46,7 @@ class Test(unittest.TestCase):
         print(l_name)
 
     def Xtest_005_street(self):
-        l_data = data_objects.PyHouseData()
+        l_data = data_objects.PyHousesData()
         l_houses = l_data.HousesData
         l_house = l_houses.HouseObject[0]
         l_location = l_house.Location

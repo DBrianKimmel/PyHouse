@@ -1,12 +1,27 @@
-'''
-Created on Apr 27, 2013
+"""
+@name: PyHouse/src/Modules/families/Insteon/test/test_Insteon_utils.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
+@Copyright (c) 2013-2014 by D. Brian Kimmel
+@license: MIT License
+@note: Created on Apr 27, 2013
+@summary: This module is for testing Insteon conversion routines.
 
-@author: briank
-'''
 
+Tests all working OK - DBK 2014-05-22
+"""
+
+# Import system type stuff
+import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
+# Import PyMh files and modules.
+from Modules.Core.data_objects import PyHousesData, HousesData, HouseData, InsteonData, LightData
 from Modules.families.Insteon import Insteon_utils
+from Modules.lights import lighting_lights
+from src.test import xml_data
+
+XML = xml_data.XML_LONG
 
 ADDR_DR_SLAVE_MSG = bytearray(b'\x16\xc9\xd0')
 ADDR_DR_SLAVE_DOT = '16.C9.D0'
@@ -20,14 +35,11 @@ MSG_50 = bytearray(b'\x02\x50\x16\xc9\xd0\x1b\x47\x81\x27\x09\x00')
 MSG_62 = bytearray(b'\x02\x62\x17\xc2\x72\x0f\x19\x00\x06')
 
 
-class Test(unittest.TestCase):
+class Test_01_Conversions(unittest.TestCase):
 
 
     def setUp(self):
         self.inst = Insteon_utils
-        pass
-
-    def tearDown(self):
         pass
 
     def _test(self, oper, p_args, r):

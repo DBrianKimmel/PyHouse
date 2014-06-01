@@ -1,5 +1,5 @@
 """
-@name: PyHouse/Modules/Core/node_domain.py
+@name: PyHouse/src/Modules/Core/node_domain.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @copyright: 2010-2014 by D. Brian Kimmel
@@ -24,7 +24,7 @@ from twisted.test import iosim
 from twisted.test.proto_helpers import StringTransport
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData
+from Modules.Core.data_objects import PyHousesData
 from Modules.Core import node_domain
 
 
@@ -387,7 +387,7 @@ class Test_02_CmdDsptch(unittest.TestCase):
         """
         Create a dispatcher to use.
         """
-        self.m_pyhouses_obj = PyHouseData()
+        self.m_pyhouses_obj = PyHousesData()
         self.fake_locator = FakeLocator()
         self.fake_sender = FakeSender()
         self.fake_dispatcher = amp.BoxDispatcher(self.fake_locator)

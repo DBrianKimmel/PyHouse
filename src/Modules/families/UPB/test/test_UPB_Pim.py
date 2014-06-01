@@ -1,5 +1,5 @@
 """
-@name: PyHouse/Modules/Core/node_local.py
+@name: PyHouse/src/Modules/Core/node_local.py
 
 # -*- test-case-name: PyHouse.Modules.Core.test.test_node_local -*-
 
@@ -21,8 +21,8 @@ import xml.etree.ElementTree as ET
 # Import PyMh files and modules.
 from Modules.families.UPB import UPB_Pim
 from Modules.lights import lighting_core
-from test import xml_data
-from Modules.Core.data_objects import PyHouseData, HouseData, ControllerData
+from src.test import xml_data
+from Modules.Core.data_objects import PyHousesData, HouseData, ControllerData
 
 XML = xml_data.XML_LONG
 

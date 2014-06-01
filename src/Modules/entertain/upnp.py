@@ -137,7 +137,7 @@ class ReadWriteXML(xml_tools.ConfigTools):
 
     def extract_dyn_dns(self, p_internet_xml):
         l_dyndns_obj = DynDnsData()
-        self.xml_read_common_info(l_dyndns_obj, p_internet_xml)
+        self.read_base_object_xml(l_dyndns_obj, p_internet_xml)
         l_dyndns_obj.Interval = self.get_int_from_xml(p_internet_xml, 'Interval')
         l_dyndns_obj.Url = self.get_text_from_xml(p_internet_xml, 'Url')
         if g_debug >= 1:
@@ -193,7 +193,7 @@ class ReadWriteXML(xml_tools.ConfigTools):
         self.put_text_attribute(l_internet_xml, 'ExternalUrl', p_house_obj.Internet.ExternalUrl)
         try:
             for l_dyndns_obj in p_house_obj.Internet.DynDns.itervalues():
-                l_entry = self.xml_create_common_element('DynamicDNS', l_dyndns_obj)
+                l_entry = self.write_base_object_xml('DynamicDNS', l_dyndns_obj)
                 self.put_int_element(l_entry, 'Interval', l_dyndns_obj.Interval)
                 self.put_text_element(l_entry, 'Url', l_dyndns_obj.Url)
                 l_internet_xml.append(l_entry)

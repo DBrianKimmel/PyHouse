@@ -1,6 +1,13 @@
-#!/usr/bin/python
+"""
+-*- test-case-name: PyHouse.src.Modules.families.Insteon.test.test_Device_Insteon -*-
 
-"""Insteon Device module.
+@name: PyHouse/src/Modules/families/Insteon/Device_Insteon.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
+@copyright: 2011-2014 by D. Brian Kimmel
+@note: Created on Apr 3, 2011
+@license: MIT License
+@summary: This module is for Insteon
 
 This is the main module for the Insteon family of devices.
 it provides the single interface into the family.
@@ -17,64 +24,24 @@ serial_port
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
-from Modules.lights import lighting
+from Modules.Core.data_objects import InsteonData
 from Modules.families.Insteon import Insteon_utils
 from Modules.utils import xml_tools
 from Modules.utils import pyh_log
-#
-# from Modules.utils.tools import PrintObject
-
 
 g_debug = 1
-# 0 = off
-# 1 = log extra info
-# 2 = major routine entry
-# 3 = Config file handling
-# 4 = Minor routines
-# + = NOT USED HERE
 LOG = pyh_log.getLogger('PyHouse.Dev_Insteon ')
-
-
-class InsteonData (lighting.LightData):
-    """This class contains the Insteon specific information about the various devices
-    controlled by PyHouse.
-    """
-
-    def __init__(self):
-        super(InsteonData, self).__init__()
-        self.InsteonAddress = 0  # 3 bytes
-        self.Controller = False
-        self.DevCat = 0  # DevCat and SubCat (2 bytes)
-        self.Family = 'Insteon'
-        self.GroupList = ''
-        self.GroupNumber = 0
-        self.Master = False  # False is Slave
-        self.ProductKey = ''
-        self.Responder = False
-
-    def reprJSON(self, p_ret):
-        """Device_Insteon.
-        """
-        p_ret.update(dict(
-            InsteonAddress = Insteon_utils.int2dotted_hex(self.InsteonAddress),
-            Controller = self.Controller,
-            DevCat = self.DevCat,
-            GroupList = self.GroupList,
-            GroupNumber = self.GroupNumber,
-            Master = self.Master,
-            Responder = self.Responder,
-            ProductKey = self.ProductKey
-            ))
-        return p_ret
 
 
 class CoreAPI(xml_tools.ConfigTools):
 
     def extract_device_xml(self, p_entry_xml, p_device_obj):
         """
-        @param p_entry_xml: is the e-tree XML house object
-        @param p_house: is the text name of the House.
-        @return: a dict of the entry to be attached to a house object.
+        A method to extract Insteon specific elements and insert them into a basic device object.
+
+        @param p_entry_xml: is the device's XML element
+        @param p_device_obj : is the Basic Object that will have the extracted elements inserted into.
+        @return: a dict of the extracted Insteon Specific data.
         """
         l_insteon_obj = InsteonData()
         l_insteon_obj.InsteonAddress = Insteon_utils.dotted_hex2int(p_entry_xml.findtext('Address', default = 0))
@@ -120,12 +87,14 @@ class API(LightingAPI):
     """
     """
 
-    def __init__(self, p_house_obj):
-        self.m_house_obj = p_house_obj
+    def __init__(self):
+        # self.m_house_obj = p_house_obj
+        pass
 
     def Start(self, p_house_obj):
         """For the given house, this will start all the controllers for family = Insteon in that house.
         """
+        self.m_house_obj = p_house_obj
         l_count = 0
         for l_controller_obj in p_house_obj.Controllers.itervalues():
             if l_controller_obj.Family != 'Insteon':

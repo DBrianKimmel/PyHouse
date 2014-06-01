@@ -7,6 +7,7 @@
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
+from Modules.Core.data_objects import LightData
 from Modules.lights import lighting
 from Modules.utils import pyh_log
 
@@ -47,14 +48,15 @@ import UPB_Pim
 
 class API(LightingAPI):
 
-    def __init__(self, p_house_obj):
+    def __init__(self):
         """Constructor for the UPB.
         """
-        self.m_house_obj = p_house_obj
+        pass
 
     def Start(self, p_house_obj):
         """For the given house, this will start all the controllers for family = UPB in that house.
         """
+        self.m_house_obj = p_house_obj
         l_count = 0
         for l_controller_obj in self.m_house_obj.Controllers.itervalues():
             if l_controller_obj.Family != 'UPB':

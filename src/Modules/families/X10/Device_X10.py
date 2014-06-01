@@ -7,6 +7,7 @@
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
+from Modules.Core.data_objects import LightData
 from Modules.lights import lighting
 from Modules.utils import pyh_log
 
@@ -16,10 +17,10 @@ g_debug = 0
 LOG = pyh_log.getLogger('PyHouse.Dev_X10     ')
 
 
-class X10LightingData(lighting.LightData):
+class X10LightingData(LightData):
 
     def __init__(self):
-        lighting.LightData.__init__(self)
+        # lighting.LightData.__init__(self)
         self.set_family("X10")
         self.Address = 'ab'
 
@@ -69,11 +70,13 @@ class LightingAPI(lighting.LightingAPI):
 
 class API(object):
 
-    def __init__(self, p_house_obj):
+    def __init__(self):
         """Constructor for the PLM.
         """
+        pass
+
+    def Start(self, p_house_obj):
         self.m_house_obj = p_house_obj
-    def Start(self, _p_house_obj):
         LOG.info('Started.')
 
     def Stop(self, p_xml):

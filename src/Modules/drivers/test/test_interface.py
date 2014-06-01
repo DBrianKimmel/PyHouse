@@ -9,7 +9,7 @@ from twisted.trial import unittest
 
 from Modules.drivers import interface
 from Modules.utils import xml_tools
-from test import xml_data
+from src.test import xml_data
 
 XML = xml_data.XML_LONG
 

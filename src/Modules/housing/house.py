@@ -19,7 +19,7 @@ Rooms and lights and HVAC are associated with a particular house.
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Core.data_objects import HouseData
+from Modules.Core.data_objects import PyHousesData, HouseData
 from Modules.scheduling import schedule
 from Modules.housing import internet
 from Modules.housing import location
@@ -63,23 +63,24 @@ class HouseReadWriteConfig(location.ReadWriteConfig, rooms.ReadWriteConfig):
     This is called from the web interface or the GUI when the data has been changed.
     """
 
-    def read_xml(self, p_house_obj, p_house_xml):
+    def read_house_xml(self, p_house_xml):
         """Read house information, location and rooms.
 
         @param p_house_obj: is
         @param p_house_xml: is
         """
-        self.xml_read_common_info(p_house_obj, p_house_xml)
-        p_house_obj.UUID = self.get_uuid_from_xml(p_house_xml, 'UUID')
-        p_house_obj.Location = self.read_location_xml(p_house_xml)
-        p_house_obj.Rooms = self.read_rooms_xml(p_house_xml)
-        return p_house_obj
+        l_house_obj = HouseData()
+        self.read_base_object_xml(l_house_obj, p_house_xml)
+        l_house_obj.Location = self.read_location_xml(p_house_xml)
+        l_house_obj.Rooms = self.read_rooms_xml(p_house_xml)
+        return l_house_obj
 
-    def write_xml(self, p_house_obj):
+    def write_house_xml(self, p_house_obj):
         """Replace the data in the 'Houses' section with the current data.
         """
-        l_house_xml = self.xml_create_common_element('House', p_house_obj)
-        self.put_text_element(l_house_xml, 'UUID', p_house_obj.UUID)
+        l_house_xml = self.write_base_object_xml('House', p_house_obj)
+        l_house_xml.append(self.write_location_xml(p_house_obj.Location))
+        l_house_xml.append(self.write_rooms_xml(p_house_obj.Rooms))
         return l_house_xml
 
 
@@ -87,22 +88,27 @@ class API(HouseReadWriteConfig):
     """
     """
 
-    def __init__(self):
+    def __init__(self, p_index):
         """Create a house object for when we add a new house.
         """
         self.m_house_obj = HouseData()
+        self.m_index = p_index
 
-    def Start(self, p_house_xml):
+    def Start(self, p_pyhouses_obj, p_house_xml):
         """Start processing for all things house.
         Read in the XML file and update the internal data.
         May be stopped and then started anew to force reloading info.
         """
-        self.read_xml(self.m_house_obj, p_house_xml)
+        self.m_pyhouses_obj = p_pyhouses_obj
+        self.m_pyhouses_obj.HouseIndex = self.m_index
+        self.m_house_obj = self.read_house_xml(p_house_xml)
         LOG.info("Starting House {0:}, Active:{1:}".format(self.m_house_obj.Name, self.m_house_obj.Active))
-        self.m_house_obj.ScheduleAPI = schedule.API(self.m_house_obj)
+        self.m_house_obj.ScheduleAPI = schedule.API()
         self.m_house_obj.InternetAPI = internet.API()
-        self.m_house_obj.ScheduleAPI.Start(self.m_house_obj, p_house_xml)
-        self.m_house_obj.InternetAPI.Start(self.m_house_obj, p_house_xml)
+        self.m_house_obj.ScheduleAPI.Start(self.m_pyhouses_obj, self.m_house_obj, p_house_xml)
+
+        self.m_house_obj.InternetAPI.Start(p_pyhouses_obj, self.m_house_obj, p_house_xml)
+
         l_msg = "For house: {0:} ".format(self.m_house_obj.Name)
         l_msg += "- found -  Rooms:{0:}, Schedule:{1:}, Lights:{2:}, Controllers:{3:}".format(
                     len(self.m_house_obj.Rooms), len(self.m_house_obj.Schedules),
@@ -115,7 +121,7 @@ class API(HouseReadWriteConfig):
         Append the house XML to the passed in xlm tree.
         """
         LOG.info("Stopping House:{0:}.".format(self.m_house_obj.Name))
-        l_house_xml = self.write_xml(p_house_obj)
+        l_house_xml = self.write_house_xml(p_house_obj)
         l_house_xml.append(self.write_location_xml(p_house_obj.Location))
         l_house_xml.append(self.write_rooms_xml(p_house_obj.Rooms))
         try:

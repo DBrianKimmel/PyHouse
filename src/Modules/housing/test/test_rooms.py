@@ -16,9 +16,9 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
-from Modules.Core.data_objects import PyHouseData, HousesData, HouseData, RoomData
+from Modules.Core.data_objects import PyHousesData, HousesData, HouseData, RoomData
 from Modules.housing import rooms
-from test import xml_data
+from src.test import xml_data
 from Modules.web import web_utils
 from Modules.utils.xml_tools import prettify
 
@@ -28,14 +28,14 @@ XML = xml_data.XML_LONG
 class Test_02_XML(unittest.TestCase):
 
     def _pyHouses(self):
-        self.m_pyhouses_obj = PyHouseData()
+        self.m_pyhouses_obj = PyHousesData()
         self.m_pyhouses_obj.HousesData[0] = HousesData()
         self.m_pyhouses_obj.HousesData[0].HouseObject = HouseData()
-        self.m_pyhouses_obj.XmlRoot = self.m_root = ET.fromstring(XML)
-        self.m_houses = self.m_root.find('Houses')
-        self.m_house = self.m_houses.find('House')  # First house
-        self.m_rooms = self.m_house.find('Rooms')
-        self.m_room = self.m_rooms.find('Room')  # First room
+        self.m_pyhouses_obj.XmlRoot = self.m_root_xml = ET.fromstring(XML)
+        self.m_houses_xml = self.m_root_xml.find('Houses')
+        self.m_house_xml = self.m_houses_xml.find('House')  # First house
+        self.m_rooms_xml = self.m_house_xml.find('Rooms')
+        self.m_room_xml = self.m_rooms_xml.find('Room')  # First room
         self.m_house_obj = HouseData()
         self.m_room_obj = RoomData()
         self.m_api = rooms.ReadWriteConfig()
@@ -51,15 +51,15 @@ class Test_02_XML(unittest.TestCase):
     def test_0202_find_xml(self):
         """ Be sure that the XML contains the right stuff.
         """
-        self.assertEqual(self.m_root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
-        self.assertEqual(self.m_houses.tag, 'Houses', 'XML - No Houses section')
-        self.assertEqual(self.m_house.tag, 'House', 'XML - No House section')
-        self.assertEqual(self.m_rooms.tag, 'Rooms', 'XML - No Rooms section')
+        self.assertEqual(self.m_root_xml.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
+        self.assertEqual(self.m_houses_xml.tag, 'Houses', 'XML - No Houses section')
+        self.assertEqual(self.m_house_xml.tag, 'House', 'XML - No House section')
+        self.assertEqual(self.m_rooms_xml.tag, 'Rooms', 'XML - No Rooms section')
 
     def test_0211_ReadOneRoomXml(self):
         """ Read in the xml file and fill in the first room's dict
         """
-        l_room = self.m_api.read_one_room(self.m_room)
+        l_room = self.m_api.read_one_room(self.m_room_xml)
         self.assertEqual(l_room.Name, 'Test Living Room', 'Bad Name')
         self.assertEqual(l_room.Key, 0, 'Bad Key')
         self.assertEqual(l_room.Active, True, 'Bad Active')
@@ -72,13 +72,13 @@ class Test_02_XML(unittest.TestCase):
     def test_0212_ReadAllRoomsXml(self):
         """ Read in the xml file and fill in the rooms dict
         """
-        l_rooms = self.m_api.read_rooms_xml(self.m_house)
+        l_rooms = self.m_api.read_rooms_xml(self.m_house_xml)
         self.assertEqual(l_rooms[0].Name, 'Test Living Room', 'Bad Room')
 
     def test_0221_WriteOneRoomXml(self):
         """ Write out the XML file for the location section
         """
-        l_room = self.m_api.read_one_room(self.m_house)
+        l_room = self.m_api.read_one_room(self.m_house_xml)
         l_xml = self.m_api.write_one_room(l_room)
         print('XML: {0:}'.format(prettify(l_xml)))
 
@@ -86,7 +86,7 @@ class Test_02_XML(unittest.TestCase):
     def test_0222_WriteAllRoomsXml(self):
         """ Write out the XML file for the location section
         """
-        l_rooms = self.m_api.read_rooms_xml(self.m_house)
+        l_rooms = self.m_api.read_rooms_xml(self.m_house_xml)
         l_xml = self.m_api.write_rooms_xml(l_rooms)
         print('XML: {0:}'.format(prettify(l_xml)))
 
@@ -94,7 +94,7 @@ class Test_02_XML(unittest.TestCase):
     def test_0231_CreateJson(self):
         """ Create a JSON object for Rooms.
         """
-        self.m_pyhouses_obj.HousesData[0].HouseObject.Rooms = l_rooms = self.m_api.read_rooms_xml(self.m_house)
+        self.m_pyhouses_obj.HousesData[0].HouseObject.Rooms = l_rooms = self.m_api.read_rooms_xml(self.m_house_xml)
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_rooms))
         print('JSON: {0:}'.format(l_json))
 

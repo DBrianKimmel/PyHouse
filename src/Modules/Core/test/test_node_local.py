@@ -1,5 +1,5 @@
 """
-@name: PyHouse/Modules/Core/test/test_node_local.py
+@name: PyHouse/src/Modules/Core/test/test_node_local.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
@@ -14,10 +14,10 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, CoreServicesData, NodeData
+from Modules.Core.data_objects import PyHousesData, CoreServicesData, NodeData
 from Modules.Core import node_local
 from Modules.utils import xml_tools
-from test import xml_data
+from src.test import xml_data
 
 XML = xml_data.XML_LONG
 
@@ -57,7 +57,7 @@ class Test_02_ReadXML(unittest.TestCase):
     """
 
     def setUp(self):
-        self.m_pyhouses_obj = PyHouseData()
+        self.m_pyhouses_obj = PyHousesData()
         self.m_pyhouses_obj.XmlRoot = ET.fromstring(XML)
         self.m_pyhouses_obj.CoreServicesData = CoreServicesData()
         self.m_pyhouses_obj.Nodes[0] = NodeData()
@@ -66,13 +66,17 @@ class Test_02_ReadXML(unittest.TestCase):
     def test_0201_read_xml(self):
         self.m_api.read_xml(self.m_pyhouses_obj)
 
+    def test_0202_write_xml(self):
+        l_node = self.m_api.read_xml(self.m_pyhouses_obj)
+        self.m_api.write_xml(l_node)
+
 
 class Test_03_ReadXML(unittest.TestCase):
 
     def setUp(self):
         self.m_root_element = ET.fromstring(XML)
         self.m_util = xml_tools.PutGetXML()
-        self.m_pyhouses_obj = PyHouseData()
+        self.m_pyhouses_obj = PyHousesData()
         self.m_api = node_local.API()
 
 # ## END DBK

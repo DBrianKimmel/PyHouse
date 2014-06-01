@@ -40,17 +40,17 @@ class Utilities(object):
         """
         l_count = 0
         for l_house_xml in self.get_house_list(p_pyhouses_obj):
-            p_pyhouses_obj.HousesData[l_count] = self.start_house_instance(l_house_xml, l_count)
+            p_pyhouses_obj.HousesData[l_count] = self.start_house_instance(p_pyhouses_obj, l_house_xml, l_count)
             l_count += 1
         return l_count
 
-    def start_house_instance(self, p_house_xml, p_count):
+    def start_house_instance(self, p_pyhouses_obj, p_house_xml, p_index):
         """Build up one entry for m_houses_data
         """
         l_houses_obj = HousesData()
-        l_houses_obj.Key = p_count
-        l_houses_obj.HouseAPI = house.API()
-        l_houses_obj.HouseObject = l_houses_obj.HouseAPI.Start(p_house_xml)
+        l_houses_obj.Key = p_index
+        l_houses_obj.HouseAPI = house.API(p_index)
+        l_houses_obj.HouseObject = l_houses_obj.HouseAPI.Start(p_pyhouses_obj, p_house_xml)
         l_houses_obj.Name = l_houses_obj.HouseObject.Name
         return l_houses_obj
 
@@ -58,7 +58,7 @@ class Utilities(object):
         """
         Find all the different houses in the XML configuration file.
         Each will have a 'house' sub-tree of elements under that house.
-        When we first start configuring, there are nohouses defined - so we need to create an empty house.
+        When we first start configuring, there are no houses defined - so we need to create an empty house.
 
         @return: iterable list of all houses defined.
         """

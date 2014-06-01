@@ -1,6 +1,18 @@
-#!/usr/bin/python
+"""
+-*- test-case-name: PyHouse.src.Modules.families.Insteon.test.test_Insteon_PLM -*-
 
-"""Insteon PLM module.
+@name: PyHouse/src/Modules/families/Insteon/Insteon_PLM.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
+@copyright: 2010-2014 by D. Brian Kimmel
+@note: Created on Feb 18, 2010
+@license: MIT License
+@summary: This module is for driving serial devices
+
+
+
+
+Insteon PLM module.
 
 Create commands and interpret results from any Insteon controller regardless of interface.
 

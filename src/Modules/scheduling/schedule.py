@@ -1,6 +1,7 @@
-#!/usr/bin/env python
+"""
 
-"""Handle the home automation system schedule for one house.
+
+Handle the home automation system schedule for one house.
 
 The schedule is at the Core of PyHouse.
 Lighting events, entertainment events, etc. for one house are triggered by the schedule and are run by twisted.
@@ -56,7 +57,7 @@ class ScheduleXML(xml_tools.ConfigTools):
     def extract_schedule_xml(self, p_entry_xml, p_schedule_obj):
         """Extract schedule information from a schedule xml element.
         """
-        self.xml_read_common_info(p_schedule_obj, p_entry_xml)
+        self.read_base_object_xml(p_schedule_obj, p_entry_xml)
         p_schedule_obj.Level = self.get_int_from_xml(p_entry_xml, 'Level')
         p_schedule_obj.LightName = self.get_text_from_xml(p_entry_xml, 'LightName')
         p_schedule_obj.LightNumber = self.get_int_from_xml(p_entry_xml, 'LightNumber')
@@ -98,7 +99,7 @@ class ScheduleXML(xml_tools.ConfigTools):
         l_schedules_xml = ET.Element('Schedules')
         for l_schedule_obj in p_schedules_obj.itervalues():
             l_schedule_obj.Key = l_count
-            l_entry = self.xml_create_common_element('Schedule', l_schedule_obj)
+            l_entry = self.write_base_object_xml('Schedule', l_schedule_obj)
             self.put_int_element(l_entry, 'Level', l_schedule_obj.Level)
             self.put_text_element(l_entry, 'LightName', l_schedule_obj.LightName)
             self.put_int_element(l_entry, 'LightNumber', l_schedule_obj.LightNumber)
@@ -272,14 +273,11 @@ class API(ScheduleUtility, ScheduleXML):
 
     m_house_obj = None
     m_sunrisesunset = None
-    # m_entertainment = None
 
-    def __init__(self, p_house_obj):
-        self.m_house_obj = p_house_obj
-        self.m_sunrisesunset = sunrisesunset.API(p_house_obj)
-        self.m_house_obj.LightingAPI = lighting.API(p_house_obj)
+    def __init__(self):
+        self.m_sunrisesunset = sunrisesunset.API()
 
-    def Start(self, p_house_obj, p_house_xml):
+    def Start(self, p_pyhouses_obj, p_house_obj, p_house_xml):
         """Called once for each house.
         Extracts all from xml so an update will write correct info back out to the xml file.
         Does not schedule a next entry for inactive houses.
@@ -287,13 +285,13 @@ class API(ScheduleUtility, ScheduleXML):
         @param p_house_obj: is a House object for the house being scheduled
         """
         self.m_house_obj = p_house_obj
+        self.m_house_obj.LightingAPI = lighting.API()
         LOG.info("Starting House {0:}.".format(self.m_house_obj.Name))
-        self.m_sunrisesunset.Start(p_house_obj)
+        self.m_sunrisesunset.Start(p_pyhouses_obj, p_house_obj)
         self.read_schedules_xml(p_house_obj, p_house_xml)
-        self.m_house_obj.LightingAPI.Start(p_house_obj, p_house_xml)
+        self.m_house_obj.LightingAPI.Start(p_pyhouses_obj, p_house_obj, p_house_xml)
         if p_house_obj.Active:
             self.get_next_sched()
-        LOG.info("Started.")
 
     def Stop(self, p_xml):
         """Stop everything under me and build xml to be appended to a house xml.

@@ -16,8 +16,8 @@ from twisted.internet import error
 
 # Import PyMh files and modules.
 from Modules.Core import node_discovery
-from test import xml_data
-from Modules.Core.data_objects import PyHouseData
+from src.test import xml_data
+from Modules.Core.data_objects import PyHousesData
 
 XML = xml_data.XML_LONG
 
@@ -83,7 +83,7 @@ class Test(unittest.TestCase):
     def setUp(self):
         print("setUp")
         self.m_api = node_discovery.API()
-        self.m_pyhouses_obj = PyHouseData()
+        self.m_pyhouses_obj = PyHousesData()
         self.m_server = Server()
         self.m_client = Client()
         self.m_port1 = self.m_pyhouses_obj.Reactor.listenMulticast(0, self.m_server)

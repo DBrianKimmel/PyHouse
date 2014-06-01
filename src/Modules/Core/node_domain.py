@@ -1,10 +1,10 @@
 """
--*- test-case-name: PyHouse.Modules.Core.test.test_node_domain -*-
+-*- test-case-name: PyHouse.src.Modules.Core.test.test_node_domain -*-
 
-@name: PyHouse/Modules/Core/node_domain.py
+@name: PyHouse/src/Modules/Core/node_domain.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
-@copyright: 2010-2014 by D. Brian Kimmel
+@copyright: 2014 by D. Brian Kimmel
 @note: Created on Apr 3, 2014
 @license: MIT License
 @summary: This module is for AMP request/response protocol
@@ -370,13 +370,13 @@ class API(Utility):
     def __init__(self):
         pass
 
-    def Start(self, p_pyhouses_obj):
+    def Start(self, p_pyhouses_obj, run_delay = 15):
         """
         Try to avoid missing events due to congestion when a power failure has all nodes rebooting at nearly the same time.
         This delay should help ensure that the nodes are all up and functioning before starting AMP.
         """
         self.m_pyhouses_obj = p_pyhouses_obj
-        p_pyhouses_obj.Reactor.callLater(15, self.start_amp_services)
+        p_pyhouses_obj.Reactor.callLater(run_delay, self.start_amp_services)
 
     def Stop(self, _p_xml):
         pass

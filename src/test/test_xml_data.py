@@ -16,7 +16,7 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from test import xml_data
+from src.test import xml_data
 
 XML = xml_data.XML_LONG
 

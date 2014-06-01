@@ -14,86 +14,101 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
-from Modules.Core.data_objects import PyHouseData, HousesData, HouseData, RoomData
+from Modules.Core.data_objects import PyHousesData, HousesData, HouseData, InternetConnectionData, InternetConnectionDynDnsData
 from Modules.housing import internet
-from test import xml_data
 from Modules.web import web_utils
 from Modules.utils.xml_tools import prettify
-
-XML = xml_data.XML_LONG
+from src.test import xml_data
 
 
 class Test_02_XML(unittest.TestCase):
 
-    def _pyHouses(self):
-        self.m_pyhouses_obj = PyHouseData()
+    def setUp(self):
+        self.m_pyhouses_obj = PyHousesData()
         self.m_pyhouses_obj.HousesData[0] = HousesData()
         self.m_pyhouses_obj.HousesData[0].HouseObject = HouseData()
-        self.m_pyhouses_obj.XmlRoot = self.m_root = ET.fromstring(XML)
-        self.m_houses = self.m_root.find('Houses')
-        self.m_house = self.m_houses.find('House')  # First house
-        self.m_rooms = self.m_house.find('Rooms')
-        self.m_room = self.m_rooms.find('Room')  # First room
+        self.m_pyhouses_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
+        self.m_houses_xml = self.m_root_xml.find('Houses')
+        self.m_house_xml = self.m_houses_xml.find('House')  # First house
+        self.m_internet_xml = self.m_house_xml.find('Internet')
+        self.m_dyn_dns_xml = self.m_internet_xml.find('DynamicDNS')
         self.m_house_obj = HouseData()
-        self.m_room_obj = RoomData()
-        self.m_api = rooms.ReadWriteConfig()
-
-    def setUp(self):
-        self._pyHouses()
+        self.m_internet_obj = InternetConnectionData()
+        self.m_dyn_dns_obj = InternetConnectionDynDnsData()
+        self.m_api = internet.API()
 
     def test_0201_buildObjects(self):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
         """
-        self.assertEqual(self.m_pyhouses_obj.HousesData[0].HouseObject.Rooms, {}, 'No Rooms{}')
+        self.assertEqual(self.m_pyhouses_obj.HousesData[0].HouseObject.Internet, {}, 'No Internet{}')
 
     def test_0202_find_xml(self):
         """ Be sure that the XML contains the right stuff.
         """
-        self.assertEqual(self.m_root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
-        self.assertEqual(self.m_houses.tag, 'Houses', 'XML - No Houses section')
-        self.assertEqual(self.m_house.tag, 'House', 'XML - No House section')
-        self.assertEqual(self.m_rooms.tag, 'Rooms', 'XML - No Rooms section')
+        self.assertEqual(self.m_root_xml.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
+        self.assertEqual(self.m_houses_xml.tag, 'Houses', 'XML - No Houses section')
+        self.assertEqual(self.m_house_xml.tag, 'House', 'XML - No House section')
+        self.assertEqual(self.m_internet_xml.tag, 'Internet', 'XML - No Internet section')
+        self.assertEqual(self.m_dyn_dns_xml.tag, 'DynamicDNS', 'XML - No Internet section')
 
-    def test_0211_ReadOneRoomXml(self):
-        """ Read in the xml file and fill in the first room's dict
-        """
-        l_room = self.m_api.read_one_room(self.m_room)
-        self.assertEqual(l_room.Name, 'Test Living Room', 'Bad Name')
-        self.assertEqual(l_room.Key, 0, 'Bad Key')
-        self.assertEqual(l_room.Active, True, 'Bad Active')
-        self.assertEqual(l_room.UUID, '12341234-1003-11e3-82b3-082e5f8cdfd2', 'Bad UUID')
-        self.assertEqual(l_room.Comment, 'Test Comment', 'Bad Comment')
-        self.assertEqual(l_room.Corner, '0.50, 10.50', 'Bad Corner')
-        self.assertEqual(l_room.Size, '14.00, 13.50', 'Bad Size')
-        # print('Room: {0:}'.format(vars(l_room)))
+    def test_0211_read_one_dyn(self):
+        l_dyn_obj = self.m_api.read_one_dyn_dns_xml(self.m_dyn_dns_xml)
+        self.assertEqual(l_dyn_obj.Name, 'Afraid', 'Bad DynDns Name')
 
-    def test_0212_ReadAllRoomsXml(self):
-        """ Read in the xml file and fill in the rooms dict
-        """
-        l_rooms = self.m_api.read_rooms_xml(self.m_house)
-        self.assertEqual(l_rooms[0].Name, 'Test Living Room', 'Bad Room')
+    def test_0212_read_all_dyn(self):
+        l_dyn_obj = self.m_api.read_one_dyn_dns_xml(self.m_dyn_dns_xml)
+        self.assertEqual(l_dyn_obj.Name, 'Afraid', 'Bad DynDns Name')
 
-    def test_0221_WriteOneRoomXml(self):
-        """ Write out the XML file for the location section
+    def test_0213_ReadXML(self):
+        """ Be sure that the XML contains the right stuff.
         """
-        l_room = self.m_api.read_one_room(self.m_house)
-        l_xml = self.m_api.write_one_room(l_room)
+        self.m_api.read_internet_xml(self.m_house_xml)
+        self.assertEqual(self.m_root_xml.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
+        self.assertEqual(self.m_houses_xml.tag, 'Houses', 'XML - No Houses section')
+        self.assertEqual(self.m_house_xml.tag, 'House', 'XML - No House section')
+        self.assertEqual(self.m_internet_xml.tag, 'Internet', 'XML - No Internet section')
+
+    def test_0221_write_one_dyn(self):
+        l_dyn_obj = self.m_api.read_one_dyn_dns_xml(self.m_dyn_dns_xml)
+        l_xml = self.m_api.write_one_dyn_dns_xml(l_dyn_obj)
+        print('XML: {0:}'.format(prettify(l_xml)))
+        self.assertEqual(l_dyn_obj.Name, 'Afraid', 'Bad DynDns Name')
+
+    def test_0222_write_all_dyn(self):
+        l_dyn_obj = self.m_api.read_dyn_dns_xml(self.m_dyn_dns_xml)
+        l_xml = self.m_api.write_dyn_dns_xml(l_dyn_obj)
         print('XML: {0:}'.format(prettify(l_xml)))
 
-
-    def test_0222_WriteAllRoomsXml(self):
+    def test_0223_WriteXml(self):
         """ Write out the XML file for the location section
         """
-        l_rooms = self.m_api.read_rooms_xml(self.m_house)
-        l_xml = self.m_api.write_rooms_xml(l_rooms)
+        l_internet = self.m_api.read_internet_xml(self.m_house_xml)
+        l_xml = self.m_api.write_internet_xml(l_internet)
         print('XML: {0:}'.format(prettify(l_xml)))
-
 
     def test_0231_CreateJson(self):
         """ Create a JSON object for Rooms.
         """
-        self.m_pyhouses_obj.HousesData[0].HouseObject.Rooms = l_rooms = self.m_api.read_rooms_xml(self.m_house)
-        l_json = unicode(web_utils.JsonUnicode().encode_json(l_rooms))
+        l_internet = self.m_api.read_internet_xml(self.m_internet_xml)
+        l_json = unicode(web_utils.JsonUnicode().encode_json(l_internet))
         print('JSON: {0:}'.format(l_json))
+
+
+class Test_03_GetExternalIp(unittest.TestCase):
+
+
+    def setUp(self):
+        self.m_pyhouses_obj = PyHousesData()
+        self.m_pyhouses_obj.HousesData[0] = HousesData()
+        self.m_pyhouses_obj.HousesData[0].HouseObject = HouseData()
+        self.m_pyhouses_obj.XmlRoot = self.m_root = ET.fromstring(xml_data.XML_LONG)
+        self.m_houses_xml = self.m_root.find('Houses')
+        self.m_house_xml = self.m_houses_xml.find('House')  # First house
+        self.m_house_obj = HouseData()
+        self.m_house_obj.Active = True
+        self.m_api = internet.API()
+
+    def test_0301_createClient(self):
+        l_client = self.m_api.Start(self.m_pyhouses_obj, self.m_house_obj, self.m_house_xml)
 
 # ## END DBK

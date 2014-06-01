@@ -28,9 +28,9 @@ import platform
 import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import NodeData, InterfaceData
+from Modules.Core.data_objects import NodeData, NodeInterfaceData
 from Modules.communication import ir_control
-from Modules.utils.xml_tools import PutGetXML
+from Modules.utils.xml_tools import PutGetXML, ConfigTools
 from Modules.utils import pyh_log
 
 g_debug = 0
@@ -66,7 +66,7 @@ class GetAllInterfaceData(object):
         l_count = 0
         global InterfacesData
         for l_ix in l_interfaces:
-            l_interface = InterfaceData()
+            l_interface = NodeInterfaceData()
             l_interface.Type = 'Other'
             l_interface.Name = l_ix
             l_interface.Key = l_count
@@ -119,21 +119,24 @@ class XML(object):
         """
         Read the existing XML file (if it exists) and get the node info.
         """
-        self.m_node = p_pyhouses_obj.Nodes[0]
+        # self.m_node = p_pyhouses_obj.Nodes[0]
+        self.m_node = NodeData()
         try:
             l_sect = p_pyhouses_obj.XmlRoot.find(MAIN_ELEMENT)
+            ConfigTools().read_base_object_xml(self.m_node, l_sect)
             l_sect.find('UUID')
         except AttributeError:
             if g_debug >= 1:
                 LOG.warning('Creating entry')
             l_sect = ET.SubElement(p_pyhouses_obj.XmlRoot, MAIN_ELEMENT)
-            ET.SubElement(l_sect, 'UUID').text = '8580'
+            ET.SubElement(l_sect, 'UUID').text = '1111-22-33-44'
             self.m_node.UUID = PutGetXML().get_uuid_from_xml(l_sect, 'UUID')
-        pass
+        print('  Node: {0:}'.format(vars(self.m_node)))
+        return self.m_node
 
     def write_xml(self, p_pyhouses_obj):
         self.m_node = p_pyhouses_obj.Nodes[0]
-        l_xml = self.xml_create_common_element(MAIN_ELEMENT, self.m_node)
+        l_xml = ConfigTools().write_base_object_xml(MAIN_ELEMENT, self.m_node)
         self.put_text_element(l_xml, 'UUID', self.m_node.UUID)
         return l_xml
 

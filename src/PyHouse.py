@@ -3,7 +3,7 @@
 """
 -*- test-case-name: PyHouse.src.Modules.test.test_PyHouse -*-
 
-@name: PyHouse/Modules/Pyhouse.py
+@name: PyHouse/src/Modules/Pyhouse.py
 
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
@@ -64,7 +64,7 @@ from twisted.application.service import Application
 import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData
+from Modules.Core.data_objects import PyHousesData
 from Modules.Core import setup
 from Modules.utils import pyh_log
 from Modules.utils import xml_tools
@@ -144,7 +144,7 @@ class Utilities(object):
 class API(Utilities):
     """
     """
-    m_pyhouses_obj = PyHouseData()
+    m_pyhouses_obj = PyHousesData()
 
     def __init__(self):
         """This is the startup of the entire system.
@@ -154,7 +154,7 @@ class API(Utilities):
         Notice that the reactor starts here as the very last step here and that
         call never returns until the reactor is stopped (permanent stoppage).
         """
-        self.m_pyhouses_obj = PyHouseData()
+        self.m_pyhouses_obj = PyHousesData()
         self.m_pyhouses_obj.Reactor = reactor
         self.m_pyhouses_obj.Application = Application('PyHouse')
         self.m_pyhouses_obj.API = self  # Only used by web server to reload - Do we need this?

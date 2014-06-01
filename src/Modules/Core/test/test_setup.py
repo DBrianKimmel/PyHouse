@@ -15,8 +15,8 @@ import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
 from Modules.Core import setup
-from test import xml_data
-from Modules.Core.data_objects import PyHouseData, CoreServicesData
+from src.test import xml_data
+from Modules.Core.data_objects import PyHousesData, CoreServicesData
 
 XML = xml_data.XML_LONG
 
@@ -27,7 +27,7 @@ class Test_01_XML(unittest.TestCase):
     """
 
     def setUp(self):
-        self.m_pyhouses_obj = PyHouseData()
+        self.m_pyhouses_obj = PyHousesData()
 
     def test_0101_ReadEmptyXml(self):
         self.m_pyhouses_obj.XmlRoot = ET.fromstring(xml_data.XML_EMPTY)
@@ -44,7 +44,7 @@ class Test_02_ReadXML(unittest.TestCase):
     This section tests the reading and writing of XML used by setup.
     """
     def setUp(self):
-        self.m_pyhouses_obj = PyHouseData()
+        self.m_pyhouses_obj = PyHousesData()
         self.m_pyhouses_obj.XmlRoot = ET.fromstring(XML)
         self.m_pyhouses_obj.CoreServicesData = CoreServicesData()
         self.m_api = setup.API()

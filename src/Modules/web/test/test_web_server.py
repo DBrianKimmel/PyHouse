@@ -1,19 +1,26 @@
 """
-Created on Apr 8, 2013
+@name: PyHouse/src/Modules/web/test/test_web_server.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
+@copyright: 2013-2014 by D. Brian Kimmel
+@note: Created on Apr 8, 2013
+@license: MIT License
+@summary: This module is for AMP request/response protocol
 
-@author: briank
 """
 
+# Import system type stuff
 from twisted.trial import unittest
-from twisted.trial import itrial
+# from twisted.trial import itrial
 from twisted.test import proto_helpers
-from twisted.internet.endpoints import SSL4ServerEndpoint
-
-from Modules.web import web_server
-
+# from twisted.internet.endpoints import SSL4ServerEndpoint
 from twisted.internet.defer import succeed
 from twisted.web import server
 from twisted.web.test.test_web import DummyRequest
+
+# Import PyMh files and modules.
+from Modules.web import web_server
+
 
 class SmartDummyRequest(DummyRequest):
     def __init__(self, method, url, args = None, headers = None):

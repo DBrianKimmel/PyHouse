@@ -1,7 +1,14 @@
-#!/usr/bin/env python
+"""
+-*- test-case-name: PyHouse.src.Modules.util.test.test_xml_tools -*-
 
-"""This module used to access or create an empty config file.1
-0
+@name: PyHouse/src/Modules/utils/xml_tools.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
+@copyright: 20122014 by D. Brian Kimmel
+@note: Created on Jun 2, 2012
+@license: MIT License
+@summary: Various XML functions and utility methods.
+
 """
 
 # Import system type stuff
@@ -28,12 +35,18 @@ g_xmltree = None
 class PutGetXML(object):
     """Protected put / get routines
 
-    Try to be safe if a user edits the XML file.
+    Try to be safe if a user edits (and screws up) the XML file.
     """
 #-----
 # Bool
 #-----
     def get_bool_from_xml(self, p_xml, p_name, p_default = False):
+        """Get a boolean from xml - element or attribute
+
+        @param p_xml: is a parent element containing the item we are interested in.
+        @param p_name: is the name or path of the item to find.
+        @param p_default: is the default value
+        """
         l_xml = p_xml.find(p_name)  # Element
         if l_xml == None:
             l_xml = p_xml.get(p_name)  # Attribute
@@ -42,6 +55,8 @@ class PutGetXML(object):
         l_ret = p_default
         if l_xml == 'True' or l_xml == True:
             l_ret = True
+        if l_xml == "False" or l_xml == False:
+            l_ret = False
         return l_ret
 
     def put_bool_attribute(self, p_xml_element, p_bool = 'False'):
@@ -60,9 +75,9 @@ class PutGetXML(object):
 # float
 #-----
     def get_float_from_xml(self, p_xml, p_name, p_default = 0.0):
-        l_xml = p_xml.find(p_name)
+        l_xml = p_xml.find(p_name)  # Element
         if l_xml == None:
-            l_xml = p_xml.get(p_name)
+            l_xml = p_xml.get(p_name)  # Attribute
         else:
             l_xml = l_xml.text
         try:
@@ -89,9 +104,9 @@ class PutGetXML(object):
 # int
 #-----
     def get_int_from_xml(self, p_xml, p_name, p_default = 0):
-        l_xml = p_xml.find(p_name)
+        l_xml = p_xml.find(p_name)  # Element
         if l_xml == None:
-            l_xml = p_xml.get(p_name)
+            l_xml = p_xml.get(p_name, p_default)  # Attribute
         else:
             l_xml = l_xml.text
         try:
@@ -117,13 +132,18 @@ class PutGetXML(object):
 #-----
 # text
 #-----
-    def get_text_from_xml(self, p_xml, p_name):
-        l_xml = p_xml.find(p_name)
+    def get_text_from_xml(self, p_xml, p_name, p_default = 'No Text'):
+        l_xml = p_xml.find(p_name)  # Element
         if l_xml == None:
-            l_xml = p_xml.get(p_name)
+            l_xml = p_xml.get(p_name, p_default)  # Attribute
         else:
             l_xml = l_xml.text
-        return str(l_xml)
+            # l_xml = p_default
+        try:
+            l_var = str(l_xml)
+        except (ValueError, TypeError):
+            l_var = str(p_default)
+        return l_var
 
     def put_text_attribute(self, p_element, p_name, p_text):
         try:
@@ -133,6 +153,11 @@ class PutGetXML(object):
         p_element.set(p_name, l_var)
 
     def put_text_element(self, p_parent_element, p_name, p_text):
+        """
+        @param p_parent_element: is the parent of this child element.
+        @param p_name: is the name of this element.
+        @param p_text: is the value to set into this element.
+        """
         try:
             l_var = str(p_text)
         except (ValueError, TypeError):
@@ -154,15 +179,12 @@ class PutGetXML(object):
             l_xml = str(uuid.uuid1())
         return l_xml
 
-#-----
-
     def put_str(self, p_obj):
         try:
             l_var = str(p_obj)
         except AttributeError:
             l_var = 'no str value'
         return l_var
-
 
     def put_bool(self, p_arg):
         l_text = 'False'
@@ -172,24 +194,25 @@ class PutGetXML(object):
 
 class ConfigTools(PutGetXML):
 
-    def xml_create_common_element(self, p_title, p_obj):
-        """Build a common entry.
-        """
-        l_elem = ET.Element(p_title)
-        l_elem.set('Name', p_obj.Name)
-        l_elem.set('Key', str(p_obj.Key))
-        l_elem.set('Active', self.put_bool(p_obj.Active))
+    def write_base_object_xml(self, p_element_name, p_object):
+        l_elem = ET.Element(p_element_name)
+        l_elem.set('Active', self.put_bool(p_object.Active))
+        l_elem.set('Name', p_object.Name)
+        l_elem.set('Key', str(p_object.Key))
+        self.put_text_element(l_elem, 'UUID', p_object.UUID)
         return l_elem
 
-    def xml_read_common_info(self, p_obj, p_entry_xml):
-        """Get the common (Name, Key, Active) information from an XML sub-tree.
+    def read_base_object_xml(self, p_base_obj, p_entry_element_xml):
+        """Get the BaseObject entries from the XML element.
+        Note that a UUID will be generated if one does not exist.
 
-        @param p_obj: is the object we are updating the common information for.
-        @param p_entry_xml: is the XML subtree that we are extracting the information from.
+        @param p_base_obj: is the object into which we will put the data.
+        @param p_entry_element_xml: is the element we will extract data from (including children).
         """
-        p_obj.Name = self.get_text_from_xml(p_entry_xml, 'Name')
-        p_obj.Key = self.get_int_from_xml(p_entry_xml, 'Key')
-        p_obj.Active = self.get_bool_from_xml(p_entry_xml, 'Active')
+        p_base_obj.Name = self.get_text_from_xml(p_entry_element_xml, 'Name')
+        p_base_obj.Key = self.get_int_from_xml(p_entry_element_xml, 'Key')
+        p_base_obj.Active = self.get_bool_from_xml(p_entry_element_xml, 'Active')
+        p_base_obj.UUID = self.get_uuid_from_xml(p_entry_element_xml, 'UUID')
 
 
 class ConfigFile(PutGetXML):
@@ -247,14 +270,15 @@ class ConfigFile(PutGetXML):
         p_xmltree.write(p_filename, xml_declaration = True)
 
 
-def stuff_new_attrs(p_target, p_data):
+def stuff_new_attrs(p_target_obj, p_data_obj):
     """Put the NEW information from the data object into the target object.
     Preserve any attributes already in the target object.
+    Skip system '__' and private '_' attributes
     """
-    l_attrs = filter(lambda aname: not aname.startswith('__'), dir(p_data))
+    l_attrs = filter(lambda aname: not aname.startswith('_'), dir(p_data_obj))
     for l_attr in l_attrs:
-        if not hasattr(p_target, l_attr):
-            setattr(p_target, l_attr, getattr(p_data, l_attr))
+        if not hasattr(p_target_obj, l_attr):
+            setattr(p_target_obj, l_attr, getattr(p_data_obj, l_attr))
 
 def prettify(p_element):
     """Return a pretty-printed XML string for the Element.

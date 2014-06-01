@@ -55,7 +55,7 @@ class ReadWriteConfig(xml_tools.ConfigTools):
     def _extract_serial_xml(self, p_controller_obj, p_controller_xml):
         l_serial = SerialControllerData()
         l_xml = p_controller_xml
-        l_serial.BaudRate = self.get_text_from_xml(l_xml, 'BaudRate')
+        l_serial.BaudRate = self.get_int_from_xml(l_xml, 'BaudRate')
         l_serial.ByteSize = self.get_int_from_xml(l_xml, 'ByteSize')
         l_serial.Parity = self.get_text_from_xml(l_xml, 'Parity')
         l_serial.StopBits = self.get_float_from_xml(l_xml, 'StopBits')

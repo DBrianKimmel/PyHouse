@@ -17,34 +17,41 @@ g_debug = 0
 
 class ButtonsAPI(lighting_core.CoreAPI):
 
+    m_count = 0
+
     def __init__(self):
         super(ButtonsAPI, self).__init__()
 
-    def read_button_xml(self, p_house_obj, p_house_xml):
-        l_count = 0
-        l_dict = {}
+    def read_one_button_xml(self, p_button_xml):
+        l_button_obj = ButtonData()
+        l_button_obj = self.read_base_lighting_xml(l_button_obj, p_button_xml)
+        l_button_obj.Key = self.m_count  # Renumber
+        return l_button_obj
+
+    def read_buttons_xml(self, p_house_xml):
+        self.m_count = 0
+        l_button_dict = {}
         l_sect = p_house_xml.find('Buttons')
         try:
-            l_list = l_sect.iterfind('Button')
-            for l_entry in l_list:
-                l_button_obj = ButtonData()
-                l_button_obj = self.read_base_lighting_xml(l_entry, l_button_obj, p_house_obj)
-                l_button_obj.Key = l_count  # Renumber
-                l_dict[l_count] = l_button_obj
-                l_count += 1
+            for l_button_xml in l_sect.iterfind('Button'):
+                l_button_dict[self.m_count] = self.read_one_button_xml(l_button_xml)
+                self.m_count += 1
         except AttributeError:  # No Buttons section
-            l_dict = {}
-        p_house_obj.Buttons = l_dict
-        return l_dict
+            l_button_dict = {}
+        return l_button_dict
 
-    def write_button_xml(self, p_house_obj):
-        l_count = 0
+    def write_one_button_xml(self, p_button_obj):
+        l_button_xml = self.write_base_object_xml('Controller', p_button_obj)
+        self.write_light_common(l_button_xml, p_button_obj)
+        return l_button_xml
+
+    def write_buttons_xml(self, p_buttons_obj):
+        self.m_count = 0
         l_buttons_xml = ET.Element('Buttons')
-        for l_button_obj in p_house_obj.Buttons.itervalues():
-            l_entry = self.xml_create_common_element('Button', l_button_obj)
-            self.write_light_common(l_entry, l_button_obj, p_house_obj)
+        for l_button_obj in p_buttons_obj.itervalues():
+            l_entry = self.write_one_button_xml(l_button_obj)
             l_buttons_xml.append(l_entry)
-            l_count += 1
+            self.m_count += 1
         return l_buttons_xml
 
 

@@ -13,9 +13,9 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, HousesData, HouseData
+from Modules.Core.data_objects import PyHousesData, HousesData, HouseData
 from Modules.families import family
-from test import xml_data
+from src.test import xml_data
 
 XML = xml_data.XML_LONG
 
@@ -23,7 +23,7 @@ XML = xml_data.XML_LONG
 class Test_01_Families(unittest.TestCase):
 
     def setUp(self):
-        self.m_pyhouses_obj = PyHouseData()
+        self.m_pyhouses_obj = PyHousesData()
         self.m_pyhouses_obj.HousesData[0] = HousesData()
         self.m_pyhouses_obj.HousesData[0].HouseObject = HouseData()
         self.m_pyhouses_obj.XmlRoot = self.m_root = ET.fromstring(XML)

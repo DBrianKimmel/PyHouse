@@ -32,7 +32,7 @@ class ConvertEthernet(object):
             d = d / 256
         return '.'.join(q)
 
-def v4_to_int(p_v4):
+def XXXv4_to_int(p_v4):
     l_sum = 0
     l_mul = 1
     for l_part in reversed(p_v4.split(".")):

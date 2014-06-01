@@ -14,12 +14,11 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, HousesData, HouseData
+from Modules.Core.data_objects import PyHousesData, HousesData, HouseData
 from Modules.lights import lighting_lights
-from Modules.utils import xml_tools
 from Modules.web import web_utils
 from Modules.utils.xml_tools import prettify
-from test import xml_data
+from src.test import xml_data
 
 XML = xml_data.XML_LONG
 
@@ -29,14 +28,14 @@ class Test_02_ReadXML(unittest.TestCase):
     """
 
     def _pyHouses(self):
-        self.m_pyhouses_obj = PyHouseData()
+        self.m_pyhouses_obj = PyHousesData()
         self.m_pyhouses_obj.HousesData[0] = HousesData()
         self.m_pyhouses_obj.HousesData[0].HouseObject = HouseData()
         self.m_pyhouses_obj.XmlRoot = self.m_root = ET.fromstring(XML)
-        self.m_houses = self.m_root.find('Houses')
-        self.m_house = self.m_houses.find('House')
-        self.m_lights = self.m_house.find('Lights')
-        self.m_light = self.m_lights.find('Light')
+        self.m_houses_xml = self.m_root.find('Houses')
+        self.m_house_xml = self.m_houses_xml.find('House')
+        self.m_lights_xml = self.m_house_xml.find('Lights')
+        self.m_light_xml = self.m_lights_xml.find('Light')
         self.m_api = lighting_lights.LightingAPI()
 
     def setUp(self):
@@ -46,30 +45,50 @@ class Test_02_ReadXML(unittest.TestCase):
         """ Be sure that the XML contains the right stuff.
         """
         self.assertEqual(self.m_root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
-        self.assertEqual(self.m_houses.tag, 'Houses', 'XML - No Houses section')
-        self.assertEqual(self.m_house.tag, 'House', 'XML - No House section')
-        self.assertEqual(self.m_lights.tag, 'Lights', 'XML - No Lights section')
-        self.assertEqual(self.m_light.tag, 'Light', 'XML - No Light section')
+        self.assertEqual(self.m_houses_xml.tag, 'Houses', 'XML - No Houses section')
+        self.assertEqual(self.m_house_xml.tag, 'House', 'XML - No House section')
+        self.assertEqual(self.m_lights_xml.tag, 'Lights', 'XML - No Lights section')
+        self.assertEqual(self.m_light_xml.tag, 'Light', 'XML - No Light section')
 
-    def test_0202_ReadXml(self):
+    def test_0202_ReadOneLightXml(self):
         """ Read in the xml file and fill in the lights
         """
-        l_light = self.m_api.read_light_xml(self.m_house)
-        self.assertEqual(l_light.City, 'Test City 1', 'Bad city')
+        l_light = self.m_api.read_one_light_xml(self.m_light_xml)
+        self.assertEqual(l_light.Name, 'Test LR Overhead', 'Bad Name')
+        self.assertEqual(l_light.Key, 0, 'Bad Key')
+        self.assertEqual(l_light.Active, True, 'Bad Active')
+        self.assertEqual(l_light.UUID, 'ec9d9930-89c9-11e3-a1ab-082e5f8cdfd2', 'Bad UUID')
+        self.assertEqual(l_light.Comment, 'SwitchLink On/Off', 'Bad comment')
+        self.assertEqual(l_light.Coords, "['0', '0']", 'Bad coords')
+        self.assertEqual(l_light.Dimmable, False, 'Bad dimmable')
+        self.assertEqual(l_light.Family, 'Insteon', 'Bad family')
+        self.assertEqual(l_light.RoomName, 'Test Living Room', 'Bad Room Name')
+        self.assertEqual(l_light.Type, 'Light', 'Bad Type')
 
-    def test_0203_WriteXml(self):
+    def test_0203_ReadLightsXml(self):
+        l_lights = self.m_api.read_lights_xml(self.m_house_xml)
+        # print('Lights {0:}'.format(l_lights))
+        self.assertEqual(len(l_lights), 2)
+
+    def test_0211_WriteOneLightXml(self):
         """ Write out the XML file for the location section
         """
-        l_light = self.m_api.read_light_xml(self.m_house)
-        l_xml = self.m_api.write_location_xml(l_light)
+        l_light = self.m_api.read_one_light_xml(self.m_house_xml)
+        l_xml = self.m_api.write_one_light_xml(l_light)
         print('XML: {0:}'.format(prettify(l_xml)))
 
+    def test_0212_WriteAllLights(self):
+        l_lights_xml = self.m_api.read_lights_xml(self.m_house_xml)
+        l_xml = self.m_api.write_lights_xml(l_lights_xml)
+        print('XML: {0:}'.format(prettify(l_xml)))
 
     def test_0221_CreateJson(self):
         """ Create a JSON object for Location.
         """
-        l_light = self.m_api.read_light_xml(self.m_house)
+        l_light = self.m_api.read_lights_xml(self.m_house_xml)
+        print('Light: {0:}'.format(l_light))
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_light))
         print('JSON: {0:}'.format(l_json))
+        # self.assertEqual(l_json[0] ['Comment'], 'Switch')
 
 # ## END DBK

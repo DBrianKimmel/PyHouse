@@ -41,7 +41,7 @@ class ReadWriteXML(xml_tools.ConfigTools):
         l_internet_xml = ET.Element('xxyyzz')
         try:
             for l_dyndns_obj in p_internet_obj.itervalues():
-                l_entry = self.xml_create_common_element('aabbcc', l_dyndns_obj)
+                l_entry = self.write_base_object_xml('aabbcc', l_dyndns_obj)
                 # ET.SubElement(l_entry, 'Interval').text = str(l_dyndns_obj.Interval)
                 # ET.SubElement(l_entry, 'Url').text = str(l_dyndns_obj.Url)
         except AttributeError:

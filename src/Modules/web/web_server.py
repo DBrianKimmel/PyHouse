@@ -1,13 +1,12 @@
 """
-@name: PyHouse/Modules/web/web_seever.py
+-*- test-case-name: PyHouse.Modules.web.test.test_web_server -*-
 
-# -*- test-case-name: PyHouse.Modules.web.test.test_web_server -*-
-
+@name: PyHouse/src/Modules/web/web_server.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @copyright: 2012-2014 by D. Brian Kimmel
+@note: Created on Apr 3, 2012
 @license: MIT License
-
 @summary: This module provides the web server service of PyHouse.
 
 This is a Main Module - always present.

@@ -1,15 +1,20 @@
-#!/usr/bin/python
+"""
+-*- test-case-name: PyHouse.src.Modules.drivers.test.test_Driver_Serial -*-
 
-"""Driver_Serial.py - Serial Driver module.
+@name: PyHouse/src/Modules/deivers/Driver_Serial.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
+@copyright: 2010-2014 by D. Brian Kimmel
+@note: Created on Feb 18, 2010
+@license: MIT License
+@summary: This module is for driving serial devices
+
 
 This will interface various PyHouse modules to a serial device.
 
 This may be instanced as many times as there are serial devices to control.
+Serial USB Dongles also are controlled by this driver as they emulate a serial port.
 
-This should also allow control of many different houses and using different families.
-
-Since most serial devices are now via USB connections, we can try to use USB and fall back to serial
-(/dev/ttyUSBx) when needed.
 """
 
 # Import system type stuff
@@ -19,18 +24,11 @@ from twisted.internet.serialport import SerialPort
 import serial
 
 # Import PyMh files
+from Modules.Core.data_objects import NodeData, NodeInterfaceData
 from Modules.utils.tools import PrintBytes
 from Modules.utils import pyh_log
 
 g_debug = 0
-# 0 = off
-# 1 = log extra info
-# 2 = major routine entry
-# 3 = Startup Details
-# 4 = Read / write summary
-# 5 = Read / write details
-# 6 = Details of device on start
-# + = NOT USED HERE
 LOG = pyh_log.getLogger('PyHouse.DriverSerial')
 
 
@@ -60,7 +58,8 @@ class SerialAPI(object):
 
     def twisted_open_device(self, p_controller_obj):
         try:
-            self.m_serial = SerialPort(SerialProtocol(self, p_controller_obj), p_controller_obj.Port, reactor, baudrate = p_controller_obj.BaudRate)
+            self.m_serial = SerialPort(SerialProtocol(self, p_controller_obj), p_controller_obj.Port,
+                    reactor, baudrate = p_controller_obj.BaudRate)
         except serial.serialutil.SerialException as e:
             l_msg = "Open failed for Device:{0:}, Port:{1:}".format(p_controller_obj.Name, p_controller_obj.Port), e
             LOG.error(l_msg)
@@ -98,8 +97,6 @@ class SerialAPI(object):
 class API(SerialAPI):
 
     def __init__(self):
-        if g_debug >= 1:
-            LOG.debug("Initializing.")
         pass
 
     def Start(self, p_controller_obj):

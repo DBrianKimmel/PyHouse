@@ -68,22 +68,22 @@ class API(object):
         l_family_data = {}
         self.m_count = 0
         for l_family in VALID_FAMILIES:
-            print('1 - {0:}'.format(l_family))
+            # print('1 - {0:}'.format(l_family))
             l_family_obj = self.build_one_family(l_family)
-            print('2 - {0:}'.format(l_family_obj.ModuleName))
+            # print('2 - {0:}'.format(l_family_obj.ModuleName))
             l_module = self.import_module(l_family_obj)
-            print('3 -')
+            # print('3 -')
             try:
-                l_family_obj.ModuleAPI = l_module.API(p_house_obj)
-                print('4 -')
+                l_family_obj.ModuleAPI = l_module.API()
+                # print('4 -')
             except AttributeError as l_reason:
                 l_family_obj.ModuleAPI = None
                 LOG.error("Cannot get API - Module:{0:}, House:{1:}   Reason: {2:}.".format(l_module, p_house_obj.Name, l_reason))
-            print('5 - {0:}'.format(l_family_obj.ModuleAPI))
+            # print('5 - {0:}'.format(l_family_obj.ModuleAPI))
             l_family_data[self.m_count] = l_family_obj
-            print('6 - {0:}'.format(self.m_count))
+            # print('6 - {0:}'.format(self.m_count))
             self.m_count += 1
-        print('7 - {0:}'.format(l_family_data))
+        # print('7 - {0:}'.format(l_family_data))
         return l_family_data
 
     def start_one_lighting_family(self, p_x):

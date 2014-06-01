@@ -127,7 +127,8 @@ class JsonUnicode(object):
         """
         try:
             l_json = json.dumps(p_obj, cls = ComplexHandler)
-        except (TypeError, ValueError):
+        except (TypeError, ValueError) as l_error:
+            print('web_utils.encode_json ERROR {0:}'.format(l_error))
             l_json = None
         return l_json
 

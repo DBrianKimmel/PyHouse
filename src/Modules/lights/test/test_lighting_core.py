@@ -14,9 +14,9 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, HousesData, HouseData, BaseLightingData
+from Modules.Core.data_objects import PyHousesData, HousesData, HouseData
 from Modules.lights import lighting_core
-from test import xml_data
+from src.test import xml_data
 
 XML = xml_data.XML_LONG
 
@@ -25,31 +25,43 @@ class Test_02_ReadXML(unittest.TestCase):
     """ This section tests the reading and writing of XML used by node_local.
     """
 
-    def _pyHouses(self):
-        self.m_pyhouses_obj = PyHouseData()
+    def setUp(self):
+        self.m_pyhouses_obj = PyHousesData()
         self.m_pyhouses_obj.HousesData[0] = HousesData()
         self.m_pyhouses_obj.HousesData[0].HouseObject = HouseData()
         self.m_pyhouses_obj.XmlRoot = self.m_root = ET.fromstring(XML)
-        self.m_houses = self.m_root.find('Houses')
-        self.m_house = self.m_houses.find('House')
+        self.m_houses_xml = self.m_root.find('Houses')
+        self.m_house_xml = self.m_houses_xml.find('House')  # First house
+        self.m_controllers_xml = self.m_house_xml.find('Controllers')
+        self.m_controller_xml = self.m_controllers_xml.find('Controller')
+        self.m_api = lighting_core.CoreAPI()
 
-    def setUp(self):
-        self._pyHouses()
+    def tXest_0201_list_elements(self):
+        l_list = self.m_house_xml.iter()
+        for l_tag in l_list:
+            print(' Elements: {0:}  Items: {1:}'.format(l_tag.tag, l_tag.items()))
 
-    def test_0201_find_xml(self):
+    def test_0202_FindXml(self):
         """ Be sure that the XML contains the right stuff.
         """
         self.assertEqual(self.m_root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
-        self.assertEqual(self.m_houses.tag, 'Houses', 'XML - No Houses section')
-        self.assertEqual(self.m_house.tag, 'House', 'XML - No House section')
+        self.assertEqual(self.m_houses_xml.tag, 'Houses', 'XML - No Houses section')
+        self.assertEqual(self.m_house_xml.tag, 'House', 'XML - No House section')
 
-    def test_0202_ReadXml(self):
-        """ Read in the xml file and fill in the rooms dict
+    def test_0203_ReadOneControllerXml(self):
+        """ Read in the xml file and fill in the lights
         """
-        l_location = self.m_api.read_location_xml(self.m_house)
-        self.assertEqual(l_location.City, 'Test City 1', 'Bad city')
-
-    def test_0201_read_xml(self):
-        pass
+        l_controller = self.m_api.read_one_controller_xml(self.m_controller_xml)
+        print('Controller: {0:}'.format(vars(l_controller)))
+        self.assertEqual(l_controller.Name, 'PLM_1', 'Bad Name')
+        self.assertEqual(l_controller.Key, 0, 'Bad Key')
+        self.assertEqual(l_controller.Active, False, 'Bad Active')
+        self.assertEqual(l_controller.Comment, 'Dongle using serial converter 067B:2303', 'Bad Comments')
+        self.assertEqual(l_controller.Coords, 'None', 'Bad Coords')
+        self.assertEqual(l_controller.Dimmable, True, 'Bad Dimmable')
+        self.assertEqual(l_controller.Family, 'Insteon', 'Bad Family')
+        self.assertEqual(l_controller.Interface, 'Serial', 'Bad Interface')
+        self.assertEqual(l_controller.RoomName, 'Office', 'Bad Room Name')
+        self.assertEqual(l_controller.Type, 'Controller', 'Bad Type')
 
 # ## END DBK

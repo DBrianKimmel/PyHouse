@@ -1,13 +1,21 @@
-#!/usr/bin/env python
+"""
+-*- test-case-name: PyHouse.src.Modules.housing.test.test_internet -*-
 
-"""Get the internet address and make reports available for web interface.
+@Name: PyHouse/src/Modules/housing/internet.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
+@copyright: 2012-2014 by D. Brian Kimmel
+@license: MIT License
+@note: Created on Mar 20, 2012
+@summary: This module determines the IP address of the ISP connection.
+
+
+Get the internet address and make reports available for web interface.
 
 Since PyHouse is always running (as a daemon) this module will get the IP-v4 address that is
 assigned to our router by the ISP.
 It will then take that IP address and update our Dynamic DNS provider so we may browse to that
 address from some external device and check on the status of the house.
-
-This module will try to be fully twisted like and totally async (except for read/write of xml).
 """
 
 # Import system type stuff
@@ -19,6 +27,8 @@ from twisted.internet.defer import Deferred
 from twisted.web.client import Agent
 from twisted.web.http_headers import Headers
 
+# Import PyMh files and modules.
+from Modules.Core.data_objects import InternetConnectionData, InternetConnectionDynDnsData
 from Modules.utils import xml_tools
 from Modules.utils import convert
 from Modules.utils import pyh_log
@@ -29,50 +39,11 @@ g_debug = 1
 # + = NOT USED HERE
 LOG = pyh_log.getLogger('PyHouse.Internet    ')
 
-callLater = reactor.callLater
-
 #======================================
 #
 # Data classes for this module
 #
 #======================================
-
-class InternetData(object):
-    """Check our external IP-v4 address
-    """
-
-    def __init__(self):
-        self.Name = ''
-        self.Key = 0
-        self.Active = False
-        self.ExternalDelay = 0
-        self.ExternalIPv4 = None  # returned from url to check our external IPv4 address
-        self.ExternalUrl = None
-        self.IPv6 = None
-        self.DynDns = {}
-
-    def reprJSON(self):
-        return dict(Name = self.Name, Key = self.Key, Active = self.Active,
-                    ExternalDelay = self.ExternalDelay,
-                    ExternalIP = self.ExternalIPv4, ExternalUrl = self.ExternalUrl,
-                    DynDns = self.DynDns
-                    )
-
-
-class DynDnsData(object):
-
-    def __init__(self):
-        self.Name = ''
-        self.Key = 0
-        self.Active = False
-        self.Interval = 0
-        self.Url = None
-
-    def reprJSON(self):
-        return dict(Name = self.Name, Key = self.Key, Active = self.Active,
-                    Interval = self.Interval, Url = self.Url
-                    )
-
 
 class InterfaceIpAddresses(object):
 
@@ -97,72 +68,76 @@ class ReadWriteXML(xml_tools.ConfigTools):
     """
     """
 
-    m_external_ip = None
-    m_external_url = None
-    m_external_delay = None
+    m_count = 0
 
-    def extract_dyn_dns(self, p_internet_xml):
-        l_dyndns_obj = DynDnsData()
-        self.xml_read_common_info(l_dyndns_obj, p_internet_xml)
-        l_dyndns_obj.Interval = self.get_int_from_xml(p_internet_xml, 'Interval')
-        l_dyndns_obj.Url = self.get_text_from_xml(p_internet_xml, 'Url')
-        if g_debug >= 1:
-            LOG.debug("internet.extract_dyn_dns() - Name:{0:}, Interval:{1:}, Url:{2:};".format(
-                            l_dyndns_obj.Name, l_dyndns_obj.Interval, l_dyndns_obj.Url))
+    def read_one_dyn_dns_xml(self, p_entry_xml):
+        l_dyndns_obj = InternetConnectionDynDnsData()
+        self.read_base_object_xml(l_dyndns_obj, p_entry_xml)
+        l_dyndns_obj.Interval = self.get_int_from_xml(p_entry_xml, 'Interval')
+        l_dyndns_obj.Url = self.get_text_from_xml(p_entry_xml, 'Url')
         return l_dyndns_obj
 
-    def insert_dyn_dns(self):
-        pass
+    def read_dyn_dns_xml(self, p_internet_xml):
+        self.m_count = 0
+        l_ret = {}
+        for l_entry_xml in p_internet_xml.iterfind('DynamicDNS'):
+            l_dyndns = self.read_one_dyn_dns_xml(l_entry_xml)
+            l_dyndns.Key = self.m_count  # Renumber
+            l_ret[self.m_count] = l_dyndns
+            self.m_count += 1
+        return l_ret
 
-    def read_internet_xml(self, p_house_obj, p_house_xml):
+    def read_internet_xml(self, p_house_xml):
         """
         """
-        p_house_obj.Internet = InternetData()
+        l_internet_obj = InternetConnectionData()
         l_sect = p_house_xml.find('Internet')
         try:
-            self.m_external_ip = self.get_text_from_xml(p_house_xml, 'ExternalIP')
-            self.m_external_delay = self.get_int_from_xml(l_sect, 'ExternalDelay')
+            l_internet_obj.ExternalIPv4 = self.get_text_from_xml(p_house_xml, 'ExternalIP')
+            l_internet_obj.ExternalDelay = self.get_int_from_xml(l_sect, 'ExternalDelay')
+            l_internet_obj.ExternalUrl = self.get_text_from_xml(l_sect, 'ExternalUrl')
         except AttributeError:
             LOG.error('internet section missing - using defaults.')
-            self.m_external_ip = None
-            self.m_external_url = None
-            self.m_external_delay = 600
-        # Design change - one of these two should work
-        try:
-            self.m_external_url = self.get_text_from_xml(l_sect, 'ExternalUrl')
-        except:
-            try:
-                self.m_external_url = self.get_text_from_xml(l_sect, 'UrlExternalIP')
-            except:
-                self.m_external_url = None
-        p_house_obj.Internet.ExternalIPv4 = self.m_external_ip
-        p_house_obj.Internet.ExternalUrl = self.m_external_url
-        p_house_obj.Internet.ExternalDelay = self.m_external_delay
-        LOG.debug("Got external IP params.  URL:{0:}, Delay:{1:}".format(self.m_external_url, self.m_external_delay))
+            l_internet_obj.ExternalDelay = 600
         try:
             l_list = l_sect.iterfind('DynamicDNS')
         except AttributeError:
             l_list = []
         l_count = 0
         for l_entry in l_list:
-            l_dyndns = self.extract_dyn_dns(l_entry)
+            l_dyndns = self.read_one_dyn_dns_xml(l_entry)
             l_dyndns.Key = l_count  # Renumber
-            p_house_obj.Internet.DynDns[l_count] = l_dyndns
+            l_internet_obj.DynDns[l_count] = l_dyndns
             l_count += 1
-        LOG.info('Loaded Url:{0:}, Delay:{1:}'.format(self.m_external_url, self.m_external_delay))
-        return p_house_obj.Internet
+        LOG.info('Loaded Url:{0:}, Delay:{1:}'.format(l_internet_obj.ExternalUrl, l_internet_obj.ExternalDelay))
+        return l_internet_obj
 
-    def write_internet(self, p_house_obj):
+    def write_one_dyn_dns_xml(self, p_entry_obj):
+        l_entry = self.write_base_object_xml('Internet', p_entry_obj)
+        self.put_text_element(l_entry, 'Url', p_entry_obj.Url)
+        self.put_int_element(l_entry, 'Interval', p_entry_obj.Interval)
+        return l_entry
+
+    def write_dyn_dns_xml(self, p_dns_obj):
+        l_dns_xml = ET.Element('DynamicDNS')
+        self.m_count = 0
+        for l_dns in p_dns_obj.itervalues():
+            l_entry = self.write_one_room(l_dns)
+            l_dns_xml.append(l_entry)
+            self.m_count += 1
+        return l_dns_xml
+
+    def write_internet_xml(self, p_internet_obj):
         """Create a sub tree for 'Internet' - the sub elements do not have to be present.
-        @return: a sub tree ready to be appended to "something"
+        @return: a sub tree ready to be appended to house
         """
         l_internet_xml = ET.Element('Internet')
-        self.put_text_attribute(l_internet_xml, 'ExternalIP', p_house_obj.Internet.ExternalIPv4)
-        self.put_int_attribute(l_internet_xml, 'ExternalDelay', p_house_obj.Internet.ExternalDelay)
-        self.put_text_attribute(l_internet_xml, 'ExternalUrl', p_house_obj.Internet.ExternalUrl)
+        self.put_text_attribute(l_internet_xml, 'ExternalIP', p_internet_obj.ExternalIPv4)
+        self.put_int_attribute(l_internet_xml, 'ExternalDelay', p_internet_obj.ExternalDelay)
+        self.put_text_attribute(l_internet_xml, 'ExternalUrl', p_internet_obj.ExternalUrl)
         try:
-            for l_dyndns_obj in p_house_obj.Internet.DynDns.itervalues():
-                l_entry = self.xml_create_common_element('DynamicDNS', l_dyndns_obj)
+            for l_dyndns_obj in p_internet_obj.DynDns.itervalues():
+                l_entry = self.write_base_object_xml('DynamicDNS', l_dyndns_obj)
                 self.put_int_element(l_entry, 'Interval', l_dyndns_obj.Interval)
                 self.put_text_element(l_entry, 'Url', l_dyndns_obj.Url)
                 l_internet_xml.append(l_entry)
@@ -253,16 +228,17 @@ class FindExternalIpAddress(object):
 
     m_url = None
 
-    def __init__(self, p_house_obj):
+    def __init__(self, p_pyhouses_obj, p_house_obj):
+        self.m_pyhouses_obj = p_pyhouses_obj
         self.m_house_obj = p_house_obj
-        callLater(3 * 60, self.get_public_ip)
+        self.m_pyhouses_obj.Reactor.callLater(3 * 60, self.get_public_ip)
 
     def get_public_ip(self):
         """Get the public IP address for the house.
         """
         if self.m_house_obj.Internet.ExternalDelay < 600:
             self.m_house_obj.Internet.ExternalDelay = 600
-        callLater(self.m_house_obj.Internet.ExternalDelay, self.get_public_ip)
+        self.m_pyhouses_obj.Reactor.callLater(self.m_house_obj.Internet.ExternalDelay, self.get_public_ip)
         self.m_url = self.m_house_obj.Internet.ExternalUrl
         if self.m_url == None:
             LOG.error("URL is missing for House:{0:}".format(self.m_house_obj.Name))
@@ -299,10 +275,11 @@ class DynDnsAPI(object):
     Allow for missing responses so as to not break the chain of events.
     """
 
-    def __init__(self, p_house_obj):
+    def __init__(self, p_pyhouses_obj, p_house_obj):
         self.m_house_obj = p_house_obj
+        self.m_pyhouses_obj = p_pyhouses_obj
         # Wait a bit to avoid all the starting chaos
-        callLater(3 * 60, self.update_start_process)
+        self.m_pyhouses_obj.Reactor.callLater(3 * 60, self.update_start_process)
 
     def update_start_process(self):
         """After waiting for the initial startup activities to die down, this is invoked
@@ -311,7 +288,7 @@ class DynDnsAPI(object):
         self.m_running = True
         for l_dyn_obj in self.m_house_obj.Internet.DynDns.itervalues():
             l_cmd = lambda x = l_dyn_obj.Interval, y = l_dyn_obj: self.update_loop(x, y)
-            callLater(l_dyn_obj.Interval, l_cmd)
+            self.m_pyhouses_obj.Reactor.callLater(l_dyn_obj.Interval, l_cmd)
 
     def stop_dyndns_process(self):
         self.m_running = False
@@ -343,7 +320,7 @@ class DynDnsAPI(object):
 
     def cb_do_delay(self, _p_response):
         l_cmd = lambda x = self.m_dyn_obj.Interval, y = self.m_dyn_obj: self.update_loop(x, y)
-        callLater(self.m_dyn_obj.Interval, l_cmd)
+        self.m_pyhouses_obj.Reactor.callLater(self.m_dyn_obj.Interval, l_cmd)
 
 
 class API(ReadWriteXML):
@@ -353,23 +330,22 @@ class API(ReadWriteXML):
     def __init__(self):
         pass
 
-    def Start(self, p_house_obj, p_house_xml):
+    def Start(self, p_pyhouses_obj, p_house_obj, p_house_xml):
         """Start async operation of the internet module.
         """
-        self.read_internet_xml(p_house_obj, p_house_xml)
+        self.m_pyhouses_obj = p_pyhouses_obj
+        self.read_internet_xml(p_house_xml)
         self.m_house_obj = p_house_obj
-        if p_house_obj.Active:
-            LOG.info("Starting for house:{0:}.".format(p_house_obj.Name))
-            FindExternalIpAddress(p_house_obj)
-            self.m_dyn_loop = DynDnsAPI(p_house_obj)
+        LOG.info("Starting for house:{0:}.".format(p_house_obj.Name))
+        FindExternalIpAddress(p_pyhouses_obj, p_house_obj)
+        self.m_dyn_loop = DynDnsAPI(p_pyhouses_obj, p_house_obj)
 
     def Stop(self, p_xml):
         """Stop async operations
         write out the XML file.
         """
-        if self.m_house_obj.Active:
-            LOG.info("Stopping dyndns for house:{0:}.".format(self.m_house_obj.Name))
-            self.m_dyn_loop.stop_dyndns_process()
-        p_xml.append(self.write_internet(self.m_house_obj))
+        LOG.info("Stopping dyndns for house:{0:}.".format(self.m_house_obj.Name))
+        self.m_dyn_loop.stop_dyndns_process()
+        p_xml.append(self.write_internet_xml(self.m_house_obj.Internet))
 
 # ## END DBK

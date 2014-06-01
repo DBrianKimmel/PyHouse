@@ -28,7 +28,7 @@ class ABaseObject(object):
         self.Name = ''
         self.Key = 0
         self.Active = False
-        self.UUID = None
+        self.UUID = None  # The UUID is optional, not all objects use this
 
 
 class BaseLightingData(ABaseObject):
@@ -85,6 +85,18 @@ class ControllerData(BaseLightingData):
         self._Message = ''
         self._Queue = None
 
+    def reprJSON(self):
+        '''lighting_controllers.
+        '''
+        # print "lighting_controllers.reprJSON(1)"
+        l_ret = super(ControllerData, self).reprJSON()  # lighting_core data
+        l_ret.update(dict(
+            Interface = self.Interface,
+            Port = self.Port
+            ))
+        # print "lighting_controllers.reprJSON(2) {0:}".format(l_ret)
+        return l_ret
+
 
 class LightData(BaseLightingData):
 
@@ -94,16 +106,13 @@ class LightData(BaseLightingData):
         self.CurLevel = 0
 
 
-class FamilyData(object):
+class FamilyData(ABaseObject):
     """A container for every family that has been defined.
     Usually called 'l_family_obj'
     Since they contain API instances, each house has it's own collection of Family Dicts.
     """
 
     def __init__(self):
-        self.Name = ''
-        self.Key = 0
-        self.Active = True
         self.ModuleAPI = None  # Device_Insteon.API()
         self.ModuleName = ''  # Device_Insteon
         self.PackageName = ''  # Modules.families.Insteon
@@ -116,45 +125,11 @@ class FamilyData(object):
         return l_ret
 
 
-class PyHouseData(object):
-    """The master object, contains all other 'configuration' objects.
-    """
-
-    def __init__(self):
-        self.Application = Application('PyHouse')
-        self.Reactor = reactor
-        #
-        self.API = None
-        self.CoreAPI = None
-        self.HousesAPI = None
-        self.LogsAPI = None
-        self.WebAPI = None
-        #
-        self.CoreServicesData = {}  # CoreServicesData()
-        self.WebData = {}
-        self.LogsData = {}
-        self.HousesData = {}  # HousesData()
-        self.Nodes = {}
-        #
-        self.XmlRoot = None
-        self.XmlFileName = ''
-
-
-class CoreServicesData(object):
-
-    def __init__(self):
-        self.DiscoveryService = None
-        self.DomainService = None
-
-
-class HousesData(object):
+class HousesData(ABaseObject):
     """This class holds the data about all houses defined in XML.
     """
 
     def __init__(self):
-        self.Name = ""
-        self.Key = 0
-        self.Active = True
         self.HouseAPI = None
         self.HouseObject = {}
 
@@ -187,10 +162,10 @@ class HouseData(ABaseObject):
         self.Nodes = {}  # All the PyHouse Nodes in the house
         self.Rooms = {}
         self.Schedules = {}
-        self.Thermostat = {}
+        self.Thermostats = {}
 
     def reprJSON(self):
-        """House.
+        """HouseData.
         """
         l_ret = dict(
             Name = self.Name, Key = self.Key, Active = self.Active,
@@ -203,28 +178,6 @@ class HouseData(ABaseObject):
             Rooms = self.Rooms,
             Schedules = self.Schedules,
             UUID = self.UUID
-            )
-        return l_ret
-
-
-class LocationData(object):
-
-    def __init__(self):
-        self.City = ''
-        self.Latitude = 28.938448
-        self.Longitude = -82.517208
-        self.Phone = ''
-        self.SavingTime = '-4:00'
-        self.State = 'FL'
-        self.Street = ''
-        self.TimeZone = '-5:00'
-        self.ZipCode = '12345'
-
-    def reprJSON(self):
-        l_ret = dict(
-            City = self.City, Latitude = self.Latitude, Longitude = self.Longitude, Phone = self.Phone,
-            SavingsTime = self.SavingTime, State = self.State, Street = self.Street, TimeZone = self.TimeZone,
-            ZipCode = self.ZipCode
             )
         return l_ret
 
@@ -252,27 +205,17 @@ class NodeData(ABaseObject):
         self.Interfaces = {}
 
 
-class InterfaceData(object):
+class NodeInterfaceData(ABaseObject):
     """
     Holds information about each of the interfaces on the local node.
 
     @param  Type: Ethernet | Wireless | Loop | Tunnel | Other
     """
     def __init__(self):
-        self.Name = None
-        self.Key = 0
-        self.Active = True
         self.Type = None
         self.MacAddress = ''
         self.V4Address = []
         self.V6Address = []
-
-
-class LogData(object):
-
-    def __init__(self):
-        self.Debug = None
-        self.Error = None
 
 
 class ThermostatData(ABaseObject):
@@ -299,6 +242,118 @@ class ScheduleData(ABaseObject):
         self.DeleteFlag = False
 
 
+class InsteonData (LightData):
+    """This class contains the Insteon specific information about the various devices
+    controlled by PyHouse.
+    """
+
+    def __init__(self):
+        super(InsteonData, self).__init__()
+        self.InsteonAddress = 0  # 3 bytes
+        self.Controller = False
+        self.DevCat = 0  # DevCat and SubCat (2 bytes)
+        self.Family = 'Insteon'
+        self.GroupList = ''
+        self.GroupNumber = 0
+        self.Master = False  # False is Slave
+        self.ProductKey = ''
+        self.Responder = False
+
+    def reprJSON(self, p_ret):
+        """Device_Insteon.
+        """
+        p_ret.update(dict(
+            # InsteonAddress = Insteon_utils.int2dotted_hex(self.InsteonAddress),
+            Controller = self.Controller,
+            DevCat = self.DevCat,
+            GroupList = self.GroupList,
+            GroupNumber = self.GroupNumber,
+            Master = self.Master,
+            Responder = self.Responder,
+            ProductKey = self.ProductKey
+            ))
+        return p_ret
+
+
+class InternetConnectionData(ABaseObject):
+    """Check our external IP-v4 address
+    """
+
+    def __init__(self):
+        self.ExternalDelay = 600  # Minimum value
+        self.ExternalIPv4 = None  # returned from url to check our external IPv4 address
+        self.ExternalUrl = None
+        self.IPv6 = None
+        self.DynDns = {}
+
+    def reprJSON(self):
+        return dict(Name = self.Name, Key = self.Key, Active = self.Active,
+                    ExternalDelay = self.ExternalDelay,
+                    ExternalIP = self.ExternalIPv4, ExternalUrl = self.ExternalUrl,
+                    DynDns = self.DynDns
+                    )
+
+
+class InternetConnectionDynDnsData(ABaseObject):
+
+    def __init__(self):
+        self.Interval = 0
+        self.Url = None
+
+    def reprJSON(self):
+        return dict(Name = self.Name, Key = self.Key, Active = self.Active,
+                    Interval = self.Interval, Url = self.Url
+                    )
+
+
+class PyHousesData(object):
+    """The master object, contains all other 'configuration' objects.
+    """
+
+    def __init__(self):
+        # Twisted stuff
+        self.Application = Application('PyHouse')
+        self.Reactor = reactor
+        #
+        self.API = None
+        self.CoreAPI = None
+        self.HousesAPI = None
+        self.LogsAPI = None
+        self.WebAPI = None
+        #
+        self.CoreServicesData = {}  # CoreServicesData()
+        self.WebData = {}
+        self.LogsData = {}
+        self.HousesData = {}  # HousesData()
+        self.Nodes = {}
+        self.HouseIndex = -1
+        #
+        self.XmlRoot = None
+        self.XmlFileName = ''
+
+
+class LocationData(object):
+
+    def __init__(self):
+        self.City = ''
+        self.Latitude = 28.938448
+        self.Longitude = -82.517208
+        self.Phone = ''
+        self.SavingTime = '-4:00'
+        self.State = 'FL'
+        self.Street = ''
+        self.TimeZone = '-5:00'
+        self.ZipCode = '12345'
+
+    def reprJSON(self):
+        l_ret = dict(
+            City = self.City, Latitude = self.Latitude, Longitude = self.Longitude, Phone = self.Phone,
+            SavingsTime = self.SavingTime, State = self.State, Street = self.Street, TimeZone = self.TimeZone,
+            ZipCode = self.ZipCode
+            )
+        return l_ret
+
+
 class SerialControllerData(object):
     """The additional data needed for serial interfaces.
     """
@@ -317,6 +372,13 @@ class SerialControllerData(object):
         self.XonXoff = False
 
 
+class LogData(object):
+
+    def __init__(self):
+        self.Debug = None
+        self.Error = None
+
+
 class USBControllerData(object):
 
     def __init__(self):
@@ -331,6 +393,13 @@ class  EthernetControllerData(object):
         self.InterfaceType = 'Ethernet'
         self.PortNumber = 0
         self.Protocol = 'TCP'
+
+
+class CoreServicesData(object):
+
+    def __init__(self):
+        self.DiscoveryService = None
+        self.DomainService = None
 
 
 class WebData(object):

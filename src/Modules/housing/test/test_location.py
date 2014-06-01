@@ -16,11 +16,11 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, HousesData, HouseData, LocationData
+from Modules.Core.data_objects import PyHousesData, HousesData, HouseData, LocationData
 from Modules.housing import location
 from Modules.web import web_utils
 from Modules.utils.xml_tools import prettify
-from test import xml_data
+from src.test import xml_data
 
 XML = xml_data.XML_LONG
 
@@ -28,7 +28,7 @@ XML = xml_data.XML_LONG
 class Test_02_XML(unittest.TestCase):
 
     def _pyHouses(self):
-        self.m_pyhouses_obj = PyHouseData()
+        self.m_pyhouses_obj = PyHousesData()
         self.m_pyhouses_obj.HousesData[0] = HousesData()
         self.m_pyhouses_obj.HousesData[0].HouseObject = HouseData()
         self.m_pyhouses_obj.XmlRoot = self.m_root = ET.fromstring(XML)
@@ -48,7 +48,7 @@ class Test_02_XML(unittest.TestCase):
         self.assertEqual(self.m_house.tag, 'House', 'XML - No House section')
 
     def test_0202_ReadXml(self):
-        """ Read in the xml file and fill in the rooms dict
+        """ Read in the xml file and fill in the location dict
         """
         l_location = self.m_api.read_location_xml(self.m_house)
         self.assertEqual(l_location.City, 'Test City 1', 'Bad city')

@@ -1,14 +1,12 @@
 """
-PyHouse/Modules/scheduling/sunrisesunset.py
+-*- test-case-name: PyHouse.src.Modules.scheduling.test.test_sunrisesunset -*-
 
-# -*- test-case-name: PyHouse.Modules.scheduling.test.test_sunrisesunset -*-
-
-Created on Mar 6, 2014
-
-@author: briank
-
+@name: PyHouse/src/Modules/scheduling/sunrisesunset.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
 @copyright: 2011-2014 by D. Brian Kimmel
-
+@note: Created on Mar 6, 2011
+@license: MIT License
 @summary: Calculate the suns location at local noon, then calculate sunrise and sunset for the day.
 
     Heliocentric means that the Earth position is calculated with respect to the center of the sun.
@@ -22,6 +20,7 @@ import math
 from math import pi
 
 # Import PyMh files
+from Modules.Core.data_objects import PyHousesData
 from Modules.utils import pyh_log
 
 g_debug = 0
@@ -390,12 +389,13 @@ class SSAPI(SunCalcs):
 
 class API(SSAPI):
 
-    def __init__(self, p_house_obj):
-        self.m_house_obj = p_house_obj
+    def __init__(self):
         self.earth_data = EarthParameters()
         self.solar_data = SolarParameters()
 
-    def Start(self, p_house_obj, p_date = datetime.date.today()):
+    def Start(self, p_pyhouses_obj, p_house_obj, p_date = datetime.date.today()):
+        self.m_pyhouses_obj = p_pyhouses_obj
+        self.m_house_obj = p_house_obj
         SSAPI().load_location(p_house_obj, self.earth_data, self.solar_data)
         self.earth_data.Date = p_date
         SSAPI().calc_sunrise_sunset(self.earth_data, self.solar_data)
