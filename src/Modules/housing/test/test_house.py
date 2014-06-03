@@ -21,6 +21,7 @@ from Modules.housing import house
 from Modules.web import web_utils
 from Modules.utils import xml_tools
 from src.test import xml_data
+from src.Modules.utils.tools import PrettyPrintObject
 
 XML = xml_data.XML_LONG
 
@@ -88,11 +89,12 @@ class Test_02_ReadXML(unittest.TestCase):
         l_house_obj = self.m_api.read_house_xml(self.m_house_xml)
         self.assertEqual(l_house_obj.Name, 'Test House 1', 'Bad Name')
         self.assertEqual(l_house_obj.Location.Street, 'Test Street 1', 'Bad Street')
+        PrettyPrintObject(l_house_obj)
 
     def test_0204_write_house_xml(self):
         l_house_obj = self.m_api.read_house_xml(self.m_house_xml)
         l_xml = self.m_api.write_house_xml(l_house_obj)
-        print('XML: {0:}'.format(xml_tools.prettify(l_xml)))
+        print('XML: {0:}'.format(xml_tools.PrettifyXML(l_xml)))
 
     def test_0221_CreateJson(self):
         """ Create a JSON object for Location.

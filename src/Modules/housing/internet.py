@@ -87,6 +87,21 @@ class ReadWriteXML(xml_tools.ConfigTools):
             self.m_count += 1
         return l_ret
 
+    def write_one_dyn_dns_xml(self, p_entry_obj):
+        l_entry = self.write_base_object_xml('Internet', p_entry_obj)
+        self.put_text_element(l_entry, 'Url', p_entry_obj.Url)
+        self.put_int_element(l_entry, 'Interval', p_entry_obj.Interval)
+        return l_entry
+
+    def write_dyn_dns_xml(self, p_dns_obj):
+        l_dns_xml = ET.Element('DynamicDNS')
+        self.m_count = 0
+        for l_dns in p_dns_obj.itervalues():
+            l_entry = self.write_one_room(l_dns)
+            l_dns_xml.append(l_entry)
+            self.m_count += 1
+        return l_dns_xml
+
     def read_internet_xml(self, p_house_xml):
         """
         """
@@ -111,21 +126,6 @@ class ReadWriteXML(xml_tools.ConfigTools):
             l_count += 1
         LOG.info('Loaded Url:{0:}, Delay:{1:}'.format(l_internet_obj.ExternalUrl, l_internet_obj.ExternalDelay))
         return l_internet_obj
-
-    def write_one_dyn_dns_xml(self, p_entry_obj):
-        l_entry = self.write_base_object_xml('Internet', p_entry_obj)
-        self.put_text_element(l_entry, 'Url', p_entry_obj.Url)
-        self.put_int_element(l_entry, 'Interval', p_entry_obj.Interval)
-        return l_entry
-
-    def write_dyn_dns_xml(self, p_dns_obj):
-        l_dns_xml = ET.Element('DynamicDNS')
-        self.m_count = 0
-        for l_dns in p_dns_obj.itervalues():
-            l_entry = self.write_one_room(l_dns)
-            l_dns_xml.append(l_entry)
-            self.m_count += 1
-        return l_dns_xml
 
     def write_internet_xml(self, p_internet_obj):
         """Create a sub tree for 'Internet' - the sub elements do not have to be present.
@@ -231,7 +231,7 @@ class FindExternalIpAddress(object):
     def __init__(self, p_pyhouses_obj, p_house_obj):
         self.m_pyhouses_obj = p_pyhouses_obj
         self.m_house_obj = p_house_obj
-        self.m_pyhouses_obj.Reactor.callLater(3 * 60, self.get_public_ip)
+        self.m_pyhouses_obj.Reactor.callLater(1 * 60, self.get_public_ip)
 
     def get_public_ip(self):
         """Get the public IP address for the house.
@@ -334,8 +334,8 @@ class API(ReadWriteXML):
         """Start async operation of the internet module.
         """
         self.m_pyhouses_obj = p_pyhouses_obj
-        self.read_internet_xml(p_house_xml)
         self.m_house_obj = p_house_obj
+        self.m_house_obj.Internet = self.read_internet_xml(p_house_xml)
         LOG.info("Starting for house:{0:}.".format(p_house_obj.Name))
         FindExternalIpAddress(p_pyhouses_obj, p_house_obj)
         self.m_dyn_loop = DynDnsAPI(p_pyhouses_obj, p_house_obj)

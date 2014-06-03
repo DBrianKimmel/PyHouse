@@ -1,8 +1,21 @@
-#!/usr/bin/python
-
-"""Various tools that can be imported.  Named differently for recognition.
-
 """
+-*- test-case-name: PyHouse.src.Modules.util.test.test_tools -*-
+
+@name: PyHouse/src/Modules/utils/tools.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
+@copyright: 2013-2014 by D. Brian Kimmel
+@note: Created on Apr 11, 2013
+@license: MIT License
+@summary: Various functions and utility methods.
+
+Various tools that can be imported.  Named differently for recognition.
+"""
+
+# Import system type stuff
+from xml.etree import ElementTree as ET
+from xml.dom import minidom
+
 
 def PrintBytes(p_message):
     """Print all the bytes of a message as hex bytes.
@@ -23,9 +36,74 @@ def PrintBytes(p_message):
     l_message += " <END>"
     return l_message
 
-def PrintDict(p_dict, p_format = "%-25s %s"):
+
+def PrettyPrintCols(strings, widths, split = ' '):
+    """Pretty prints text in colums, with each string breaking at
+    split according to prettyPrint.  margins gives the corresponding
+    right breaking point.
+    """
+    assert len(strings) == len(widths)
+    strings = map(nukenewlines, strings)
+    # pretty Print each column
+    cols = [''] * len(strings)
+    for i in range(len(strings)):
+        cols[i] = prettyPrint(strings[i], widths[i], split)
+    # prepare a format line
+    l_format = ''.join(["%%-%ds" % width for width in widths[0:-1]]) + "%s"
+    def formatline(*cols):
+        return l_format % tuple(map(lambda s: (s or ''), cols))
+    # generate the formatted text
+    return '\n'.join(map(formatline, *cols))
+
+def PrettyPrintAny(p_any):
+    l_type = type(p_any)
+    print(l_type)
+    if isinstance(p_any, dict):
+        print('Found a dict')
+        PrettyPrintDict(p_any)
+    else:
+        PrettyPrintObject(p_any)
+
+def PrettyPrintDict(p_dict, p_format = "%-25s %s"):
     for (key, val) in p_dict.iteritems():
         print(p_format % (str(key) + ':', val))
+
+
+def PrettyPrintObject(p_obj, maxlen = 180, lindent = 24, maxspew = 2000):
+    def truncstring(s, maxlen):
+        if len(s) > maxlen:
+            return s[0:maxlen] + ' ...(%d more chars)...' % (len(s) - maxlen)
+        else:
+            return s
+    l_tab = 2
+    l_attrs = []
+    l_tabbedwidths = [l_tab, lindent - l_tab, maxlen - lindent - l_tab]
+    l_filtered = filter(lambda aname: not aname.startswith('__'), dir(p_obj))
+    # for l_slot in dir(p_obj):
+    for l_slot in l_filtered:
+        l_attr = getattr(p_obj, l_slot)
+        l_attrs.append((l_slot, l_attr))
+    l_attrs.sort()
+    for (attr, l_val) in l_attrs:
+        print(PrettyPrintCols(('', attr, truncstring(str(l_val), maxspew)), l_tabbedwidths, ' '))
+
+
+def PrettyPrintXML(p_element):
+    """Return a pretty-printed XML string for the Element.
+
+    @param p_element: an element to format as a readable XML tree.
+    @return: a string formatted with indentation and newlines.
+    """
+    l_rough_string = ET.tostring(p_element, 'utf-8')
+    l_reparsed = minidom.parseString(l_rough_string)
+    l_doc = l_reparsed.toprettyxml(indent = "    ")
+    l_lines = l_doc.splitlines()
+    for l_line in l_lines:
+        if not l_line.isspace():
+            print l_line
+
+
+#######################################
 
 def PrettyPrint(p_title, p_str, maxlen = 150):
     print('Title: {0:}\n'.format(p_title), '\n'.join(prettyPrint(str(p_str), maxlen, ' ')))
@@ -122,12 +200,12 @@ def PrintObject(p_title, p_obj, suppressdoc = True, maxlen = 180, lindent = 24, 
         else:
             objdoc = ('"""' + objdoc.strip() + '"""')
         print
-        print(prettyPrintCols(('Documentation string:', truncstring(objdoc, maxspew)), normalwidths, ' '))
+        print(PrettyPrintCols(('Documentation string:', truncstring(objdoc, maxspew)), normalwidths, ' '))
     # Built-in methods
     if builtins:
         bi_str = delchars(str(builtins), "[']") or str(None)
         print
-        print(prettyPrintCols(('Built-in Methods:', truncstring(bi_str, maxspew)), normalwidths, ', '))
+        print(PrettyPrintCols(('Built-in Methods:', truncstring(bi_str, maxspew)), normalwidths, ', '))
     # Classes
     if classes:
         print
@@ -136,7 +214,7 @@ def PrintObject(p_title, p_obj, suppressdoc = True, maxlen = 180, lindent = 24, 
         classdoc = getattr(classtype, '__doc__', None) or '<No documentation>'
         if suppressdoc:
             classdoc = '<No documentation>'
-        print(prettyPrintCols(('', classname, truncstring(classdoc, maxspew)), tabbedwidths, ' '))
+        print(PrettyPrintCols(('', classname, truncstring(classdoc, maxspew)), tabbedwidths, ' '))
     # User methods
     if methods:
         print
@@ -145,32 +223,14 @@ def PrintObject(p_title, p_obj, suppressdoc = True, maxlen = 180, lindent = 24, 
         methoddoc = getattr(method, '__doc__', None) or '<No documentation>'
         if suppressdoc:
             methoddoc = '<No documentation>'
-        print(prettyPrintCols(('', methodname, truncstring(methoddoc, maxspew)), tabbedwidths, ' '))
+        print(PrettyPrintCols(('', methodname, truncstring(methoddoc, maxspew)), tabbedwidths, ' '))
     # Attributes
     if attrs:
         print
         print('Attributes:')
     for (attr, val) in attrs:
-        print(prettyPrintCols(('', attr, truncstring(str(val), maxspew)), tabbedwidths, ' '))
+        print(PrettyPrintCols(('', attr, truncstring(str(val), maxspew)), tabbedwidths, ' '))
     print('====================\n')
-
-def prettyPrintCols(strings, widths, split = ' '):
-    """Pretty prints text in colums, with each string breaking at
-    split according to prettyPrint.  margins gives the corresponding
-    right breaking point.
-    """
-    assert len(strings) == len(widths)
-    strings = map(nukenewlines, strings)
-    # pretty Print each column
-    cols = [''] * len(strings)
-    for i in range(len(strings)):
-        cols[i] = prettyPrint(strings[i], widths[i], split)
-    # prepare a format line
-    l_format = ''.join(["%%-%ds" % width for width in widths[0:-1]]) + "%s"
-    def formatline(*cols):
-        return l_format % tuple(map(lambda s: (s or ''), cols))
-    # generate the formatted text
-    return '\n'.join(map(formatline, *cols))
 
 def prettyPrint(string, maxlen = 175, split = ' '):
     """Pretty prints the given string to break at an occurrence of
@@ -238,5 +298,14 @@ def get_light_object(p_house, name = None, key = None):
             if l_obj.Key == key:
                 return l_obj
         return None
+
+
+__all__ = [
+           'PrettyPrintAny',
+           'PrettyPrintCols',
+           'PrettyPrintObject',
+           'PrettyPrintXML'
+           ]
+
 
 # ## END DBK

@@ -54,70 +54,74 @@ callLater = reactor.callLater
 
 class ScheduleXML(xml_tools.ConfigTools):
 
-    def extract_schedule_xml(self, p_entry_xml, p_schedule_obj):
+    m_count = 0
+
+    def read_one_schedule_xml(self, p_schedule_element):
         """Extract schedule information from a schedule xml element.
         """
-        self.read_base_object_xml(p_schedule_obj, p_entry_xml)
-        p_schedule_obj.Level = self.get_int_from_xml(p_entry_xml, 'Level')
-        p_schedule_obj.LightName = self.get_text_from_xml(p_entry_xml, 'LightName')
-        p_schedule_obj.LightNumber = self.get_int_from_xml(p_entry_xml, 'LightNumber')
-        p_schedule_obj.Rate = self.get_int_from_xml(p_entry_xml, 'Rate')
-        p_schedule_obj.RoomName = self.get_text_from_xml(p_entry_xml, 'RoomName')
-        p_schedule_obj.Time = self.get_text_from_xml(p_entry_xml, 'Time')
-        p_schedule_obj.Type = self.get_text_from_xml(p_entry_xml, 'Type')
-        p_schedule_obj.UUID = self.get_uuid_from_xml(p_entry_xml, 'UUID')
-        return p_schedule_obj
+        l_schedule_obj = ScheduleData()
+        self.read_base_object_xml(l_schedule_obj, p_schedule_element)
+        l_schedule_obj.Level = self.get_int_from_xml(p_schedule_element, 'Level')
+        l_schedule_obj.LightName = self.get_text_from_xml(p_schedule_element, 'LightName')
+        l_schedule_obj.LightNumber = self.get_int_from_xml(p_schedule_element, 'LightNumber')
+        l_schedule_obj.Rate = self.get_int_from_xml(p_schedule_element, 'Rate')
+        l_schedule_obj.RoomName = self.get_text_from_xml(p_schedule_element, 'RoomName')
+        l_schedule_obj.Time = self.get_text_from_xml(p_schedule_element, 'Time')
+        l_schedule_obj.Type = self.get_text_from_xml(p_schedule_element, 'Type')
+        return l_schedule_obj
 
-    def read_schedules_xml(self, p_house_obj, p_house_xml):
+    def read_schedules_xml(self, p_schedules_xml):
         """
-        @param p_house_obj: is the text name of the House.
         @param p_house_xml: is the e-tree XML house object
         @return: a dict of the entry to be attached to a house object.
         """
-        l_count = 0
+        self.m_count = 0
         l_dict = {}
-        l_sect = p_house_xml.find('Schedules')
         try:
-            l_list = l_sect.iterfind('Schedule')
+            l_list = p_schedules_xml.iterfind('Schedule')
             for l_entry in l_list:
-                l_schedule_obj = ScheduleData()
-                self.extract_schedule_xml(l_entry, l_schedule_obj)
-                l_schedule_obj.Key = l_count  # Renumber
-                l_dict[l_count] = l_schedule_obj
-                l_count += 1
+                l_schedule_obj = self.read_one_schedule_xml(l_entry)
+                # self.read_one_schedule_xml(l_entry)
+                l_schedule_obj.Key = self.m_count  # Renumber
+                l_dict[self.m_count] = l_schedule_obj
+                self.m_count += 1
         except AttributeError:
-            pass
-        p_house_obj.Schedules = l_dict
-        LOG.info("Loaded {0:} schedules for house:{1:}.".format(l_count, self.m_house_obj.Name))
+            print('ERROR ')
         return l_dict
+
+    def write_one_schedule_xml(self, p_schedule_obj):
+        """
+        """
+        l_entry = self.write_base_object_xml('Schedule', p_schedule_obj)
+        self.put_int_element(l_entry, 'Key', self.m_count)
+        self.put_int_element(l_entry, 'Level', p_schedule_obj.Level)
+        self.put_text_element(l_entry, 'LightName', p_schedule_obj.LightName)
+        self.put_int_element(l_entry, 'LightNumber', p_schedule_obj.LightNumber)
+        self.put_int_element(l_entry, 'Rate', p_schedule_obj.Rate)
+        self.put_text_element(l_entry, 'RoomName', p_schedule_obj.RoomName)
+        self.put_text_element(l_entry, 'Time', p_schedule_obj.Time)
+        self.put_text_element(l_entry, 'Type', p_schedule_obj.Type)
+        return l_entry
 
     def write_schedules_xml(self, p_schedules_obj):
         """Replace all the data in the 'Schedules' section with the current data.
         @param p_parent: is the 'schedules' element
         """
-        l_count = 0
-        l_schedules_xml = ET.Element('Schedules')
+        self.m_count = 0
+        l_xml = ET.Element('Schedules')
         for l_schedule_obj in p_schedules_obj.itervalues():
-            l_schedule_obj.Key = l_count
-            l_entry = self.write_base_object_xml('Schedule', l_schedule_obj)
-            self.put_int_element(l_entry, 'Level', l_schedule_obj.Level)
-            self.put_text_element(l_entry, 'LightName', l_schedule_obj.LightName)
-            self.put_int_element(l_entry, 'LightNumber', l_schedule_obj.LightNumber)
-            self.put_int_element(l_entry, 'Rate', l_schedule_obj.Rate)
-            self.put_text_element(l_entry, 'RoomName', l_schedule_obj.RoomName)
-            self.put_text_element(l_entry, 'Time', l_schedule_obj.Time)
-            self.put_text_element(l_entry, 'Type', l_schedule_obj.Type)
-            self.put_text_element(l_entry, 'UUID', l_schedule_obj.UUID)
-            l_count += 1
-            l_schedules_xml.append(l_entry)
-        return l_schedules_xml
+            l_entry = self.write_one_schedule_xml(l_schedule_obj)
+            l_xml.append(l_entry)
+            self.m_count += 1
+        return l_xml
+
 
 
 class ScheduleExecution(ScheduleData):
 
     def execute_schedule(self, p_slot_list = []):
         """
-        For each SlotName in the passed in list, execute the scheduled event for the house..
+        For each SlotName in the passed in list, execute the scheduled event for the house.
         Delay before generating the next schedule to avoid a race condition
          that duplicates an event if it completes before the clock goes to the next second.
 
@@ -239,7 +243,7 @@ class ScheduleUtility(ScheduleExecution):
         """
         l_now = datetime.datetime.now()
         l_time_now = datetime.time(l_now.hour, l_now.minute, l_now.second)
-        self.m_sunrisesunset.Start(self.m_house_obj)
+        self.m_sunrisesunset.Start(self.m_pyhouses_obj, self.m_house_obj)
         self.m_sunset = self.m_sunrisesunset.get_sunset()
         self.m_sunrise = self.m_sunrisesunset.get_sunrise()
         LOG.info("In get_next_sched - Sunrise:{0:}, Sunset:{1:}".format(self.m_sunrise, self.m_sunset))
@@ -266,6 +270,9 @@ class ScheduleUtility(ScheduleExecution):
         LOG.info("Get_next_schedule complete. {0:}".format(l_debug_msg))
         self.create_timer(l_next, l_list)
 
+    def find_house(self):
+        pass
+
 
 class API(ScheduleUtility, ScheduleXML):
     """Instantiated once for each house (active or not)
@@ -285,12 +292,14 @@ class API(ScheduleUtility, ScheduleXML):
         @param p_house_obj: is a House object for the house being scheduled
         """
         self.m_house_obj = p_house_obj
+        self.m_house_xml = p_house_xml
+        self.m_pyhouses_obj = p_pyhouses_obj
         self.m_house_obj.LightingAPI = lighting.API()
         LOG.info("Starting House {0:}.".format(self.m_house_obj.Name))
-        self.m_sunrisesunset.Start(p_pyhouses_obj, p_house_obj)
-        self.read_schedules_xml(p_house_obj, p_house_xml)
-        self.m_house_obj.LightingAPI.Start(p_pyhouses_obj, p_house_obj, p_house_xml)
-        if p_house_obj.Active:
+        self.m_sunrisesunset.Start(p_pyhouses_obj, self.m_house_obj)
+        self.m_house_obj.Schedules = self.read_schedules_xml(self.m_house_xml)
+        self.m_house_obj.LightingAPI.Start(p_pyhouses_obj, self.m_house_obj, self.m_house_xml)
+        if self.m_house_obj.Active:
             self.get_next_sched()
 
     def Stop(self, p_xml):

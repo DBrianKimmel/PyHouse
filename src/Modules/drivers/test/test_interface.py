@@ -20,9 +20,6 @@ class Test_01_XML(unittest.TestCase):
         self.m_util = xml_tools.PutGetXML()
         self.m_intf = interface.ReadWriteConfig()
 
-    def tearDown(self):
-        pass
-
     def test_0101_read_xml(self):
         l_pyhouse = self.m_root_element
         self.assertEqual(l_pyhouse.tag, 'PyHouse')
@@ -32,13 +29,13 @@ class Test_01_XML(unittest.TestCase):
         print('Node {0:}'.format(l_node))
         self.assertEqual(l_node.tag, 'Node')
 
-    def test_002_xml_find_controllers(self):
+    def test_0103_xml_find_controllers(self):
         l_controllers = self.m_root_element.find('Controllers')
         l_list = l_controllers.findall('Controller')
         for l_controller in l_list:
             print("Controller {0:}".format(l_controller.get('Name')))
 
-    def test_0103_xml_find_serial_1(self):
+    def test_0104_xml_find_serial_1(self):
         l_controllers = self.m_root_element.find('Controllers')
         l_first = l_controllers.find('Controller')
         self.assertEqual(l_first.get('Name'), 'Serial_1')
@@ -47,7 +44,7 @@ class Test_01_XML(unittest.TestCase):
         l_baud = l_first.find('BaudRate')
         self.assertEqual(l_baud.text, '19200')
 
-    def test_004_extract_serial(self):
+    def test_0105_extract_serial(self):
         l_controllers = self.m_root_element.find('Controllers')
         l_first = l_controllers.find('Controller')
         pass

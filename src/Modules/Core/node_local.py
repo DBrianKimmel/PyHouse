@@ -109,35 +109,83 @@ class HandleNodeType(object):
         l_ir.Start(p_pyhouses_obj)
 
 
-MAIN_ELEMENT = 'Node'
+class XML(ConfigTools):
 
-class XML(object):
+    m_count = 0
 
-    m_node = None
+    def read_one_interface_xml(self, p_interface_element):
+        l_interface_obj = NodeInterfaceData()
+        self.read_base_object_xml(l_interface_obj, p_interface_element)
+        l_interface_obj.MacAddress = self.get_text_from_xml(p_interface_element, 'MacAddress')
+        l_interface_obj.V4Address = self.get_text_from_xml(p_interface_element, 'IPv4Address')
+        l_interface_obj.V6Address = self.get_text_from_xml(p_interface_element, 'IPv6Address')
+        return l_interface_obj
 
-    def read_xml(self, p_pyhouses_obj):
+    def read_interfaces_xml(self, p_interfaces_xml):
+        self.m_count = 0
+        l_ret = {}
+        try:
+            for l_node_xml in p_interfaces_xml.iterfind('Interface'):
+                l_node = self.read_one_interface_xml(l_node_xml)
+                l_ret[self.m_count] = l_node
+                self.m_count += 1
+        except AttributeError:
+            l_ret = {}
+        return l_ret
+
+    def write_one_interface_xml(self, p_interface_obj):
+        l_entry = self.write_base_object_xml('Interface', p_interface_obj)
+        self.put_text_element(l_entry, 'MacAddress', p_interface_obj.MacAddress)
+        self.put_text_element(l_entry, 'IPv4Address', p_interface_obj.V4Address)
+        self.put_text_element(l_entry, 'IPv6Address', p_interface_obj.V6Address)
+        return l_entry
+
+    def write_interfaces_xml(self, p_interfaces_obj):
+        l_xml = ET.Element('Interfaces')
+        self.m_count = 0
+        for l_interface_obj in p_interfaces_obj.itervalues():
+            l_entry = self.write_one_interface_xml(l_interface_obj)
+            l_xml.append(l_entry)
+            self.m_count += 1
+        return l_xml
+
+    def read_one_node_xml(self, p_node_xml):
         """
         Read the existing XML file (if it exists) and get the node info.
         """
-        # self.m_node = p_pyhouses_obj.Nodes[0]
-        self.m_node = NodeData()
-        try:
-            l_sect = p_pyhouses_obj.XmlRoot.find(MAIN_ELEMENT)
-            ConfigTools().read_base_object_xml(self.m_node, l_sect)
-            l_sect.find('UUID')
-        except AttributeError:
-            if g_debug >= 1:
-                LOG.warning('Creating entry')
-            l_sect = ET.SubElement(p_pyhouses_obj.XmlRoot, MAIN_ELEMENT)
-            ET.SubElement(l_sect, 'UUID').text = '1111-22-33-44'
-            self.m_node.UUID = PutGetXML().get_uuid_from_xml(l_sect, 'UUID')
-        print('  Node: {0:}'.format(vars(self.m_node)))
-        return self.m_node
+        l_node_obj = NodeData()
+        self.read_base_object_xml(l_node_obj, p_node_xml)
+        l_node_obj.ConnectionAddr_IPv4 = self.get_text_from_xml(p_node_xml, 'ConnectionAddressV4')
+        l_node_obj.Role = self.get_int_from_xml(p_node_xml, 'Role')
+        l_node_obj.Interfaces = self.read_interfaces_xml(p_node_xml.find('Interfaces'))
+        return l_node_obj
 
-    def write_xml(self, p_pyhouses_obj):
-        self.m_node = p_pyhouses_obj.Nodes[0]
-        l_xml = ConfigTools().write_base_object_xml(MAIN_ELEMENT, self.m_node)
-        self.put_text_element(l_xml, 'UUID', self.m_node.UUID)
+    def read_nodes_xml(self, p_nodes_xml):
+        self.m_count = 0
+        l_ret = {}
+        try:
+            for l_node_xml in p_nodes_xml.iterfind('Node'):
+                l_node = self.read_one_node_xml(l_node_xml)
+                l_ret[self.m_count] = l_node
+                self.m_count += 1
+        except:
+            pass
+        return l_ret
+
+    def write_one_node_xml(self, p_node_obj):
+        l_entry = self.write_base_object_xml('Node', p_node_obj)
+        self.put_text_element(l_entry, 'ConnectionAddressV4', p_node_obj.ConnectionAddr_IPv4)
+        self.put_int_element(l_entry, 'Role', p_node_obj.Role)
+        l_entry.append(self.write_interfaces_xml(p_node_obj.Interfaces))
+        return l_entry
+
+    def write_nodes_xml(self, p_nodes_obj):
+        l_xml = ET.Element('Nodes')
+        self.m_count = 0
+        for l_node_obj in p_nodes_obj.itervalues():
+            l_entry = self.write_one_node_xml(l_node_obj)
+            l_xml.append(l_entry)
+            self.m_count += 1
         return l_xml
 
 
@@ -207,6 +255,7 @@ class Utility(XML):
 class API(Utility):
 
     m_node = None
+    m_pyhouses_obj = None
 
     def __init__(self):
         pass
@@ -216,14 +265,14 @@ class API(Utility):
         self.m_node = NodeData()
         GetAllInterfaceData(self.m_node)
         p_pyhouses_obj.Nodes[0] = self.m_node
-        self.read_xml(p_pyhouses_obj)
+        self.read_nodes_xml(p_pyhouses_obj.XmlRoot.find('Nodes'))
         self.get_node_info(p_pyhouses_obj)
         p_pyhouses_obj.Nodes[0].Role = self.find_node_role()
         self.init_node_type(p_pyhouses_obj)
         LOG.info('Started')
 
     def Stop(self, p_xml):
-        p_xml.append(self.write_xml(self.m_pyhouses_obj))
+        p_xml.append(self.write_nodes_xml(self.m_pyhouses_obj.Nodes))
         LOG.info("XML appended.")
 
 # ## END DBK

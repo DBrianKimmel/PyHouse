@@ -17,7 +17,7 @@ from twisted.trial import unittest
 from Modules.Core.data_objects import PyHousesData, HousesData, HouseData, InternetConnectionData, InternetConnectionDynDnsData
 from Modules.housing import internet
 from Modules.web import web_utils
-from Modules.utils.xml_tools import prettify
+from Modules.utils.xml_tools import PrettifyXML
 from src.test import xml_data
 
 
@@ -71,20 +71,20 @@ class Test_02_XML(unittest.TestCase):
     def test_0221_write_one_dyn(self):
         l_dyn_obj = self.m_api.read_one_dyn_dns_xml(self.m_dyn_dns_xml)
         l_xml = self.m_api.write_one_dyn_dns_xml(l_dyn_obj)
-        print('XML: {0:}'.format(prettify(l_xml)))
+        print('XML: {0:}'.format(PrettifyXML(l_xml)))
         self.assertEqual(l_dyn_obj.Name, 'Afraid', 'Bad DynDns Name')
 
     def test_0222_write_all_dyn(self):
         l_dyn_obj = self.m_api.read_dyn_dns_xml(self.m_dyn_dns_xml)
         l_xml = self.m_api.write_dyn_dns_xml(l_dyn_obj)
-        print('XML: {0:}'.format(prettify(l_xml)))
+        print('XML: {0:}'.format(PrettifyXML(l_xml)))
 
     def test_0223_WriteXml(self):
         """ Write out the XML file for the location section
         """
         l_internet = self.m_api.read_internet_xml(self.m_house_xml)
         l_xml = self.m_api.write_internet_xml(l_internet)
-        print('XML: {0:}'.format(prettify(l_xml)))
+        print('XML: {0:}'.format(PrettifyXML(l_xml)))
 
     def test_0231_CreateJson(self):
         """ Create a JSON object for Rooms.

@@ -19,7 +19,7 @@ from twisted.trial import unittest
 from Modules.Core.data_objects import PyHousesData, HousesData, HouseData, LocationData
 from Modules.housing import location
 from Modules.web import web_utils
-from Modules.utils.xml_tools import prettify
+from Modules.utils.xml_tools import PrettifyXML
 from src.test import xml_data
 
 XML = xml_data.XML_LONG
@@ -58,7 +58,7 @@ class Test_02_XML(unittest.TestCase):
         """
         l_location = self.m_api.read_location_xml(self.m_house)
         l_xml = self.m_api.write_location_xml(l_location)
-        print('XML: {0:}'.format(prettify(l_xml)))
+        print('XML: {0:}'.format(PrettifyXML(l_xml)))
 
 
     def test_0221_CreateJson(self):

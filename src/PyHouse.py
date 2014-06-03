@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 """
 -*- test-case-name: PyHouse.src.Modules.test.test_PyHouse -*-
 

@@ -12,13 +12,18 @@ XML to define the PyHouse.xml file
 used for testing
 """
 
+# Missing
+XML_MISSING = ''
 
+
+# No sections
 XML_EMPTY = """
 <PyHouse>
 </PyHouse>
 """
 
 
+# Everything as expected in a running system.
 XML_LONG = """
 <PyHouse>
     <Web WebPort="8580" />
@@ -29,11 +34,24 @@ XML_LONG = """
     <Nodes>
         <Node Name='PiNode-1' Key='0' Active='True'>
             <UUID>87654321-1001-11e3-b583-082e5f899999</UUID>
+            <ConnectionAddressV4>192.168.1.123</ConnectionAddressV4>
             <Interfaces>
                 <Interface Name='eth0' Key="0" Active="True">
+                    <UUID>87654321-1001-11e3-b583-012300001111</UUID>
                     <MacAddress>01:02:03:04:05:06</MacAddress>
-                    <IPv4Address>"192.168.1.33"</IPv4Address>
-                    <IPv6Address>"2000:1D::1"</IPv6Address>
+                    <IPv4Address>192.168.1.11</IPv4Address>
+                    <IPv6Address>2000:1D::1, 2000:1D::101</IPv6Address>
+                </Interface>
+                <Interface Name='wlan0' Key="1" Active="True">
+                    <UUID>87654321-1001-11e3-b583-012300002222</UUID>
+                    <MacAddress>01:02:03:04:05:06</MacAddress>
+                    <IPv4Address>192.168.1.22</IPv4Address>
+                    <IPv6Address>2000:1D::2, 2000:1D::202</IPv6Address>
+                </Interface>
+                <Interface Name='lo' Key="2" Active="True">
+                    <MacAddress>01:02:03:04:05:06</MacAddress>
+                    <IPv4Address>192.168.1.33</IPv4Address>
+                    <IPv6Address>2000:1D::3, 2000:1D::303</IPv6Address>
                 </Interface>
             </Interfaces>
         </Node>

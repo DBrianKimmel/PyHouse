@@ -5,8 +5,8 @@ Created on May 4, 2013
 '''
 
 from twisted.trial import unittest
-from drivers import Driver_Serial
-from lights import lighting_controllers
+from Modules.drivers import Driver_Serial
+from Modules.lights import lighting_controllers
 
 
 class Test(unittest.TestCase):

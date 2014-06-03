@@ -19,6 +19,7 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from Modules.Core.data_objects import PyHousesData, HousesData, HouseData, LocationData
 from Modules.scheduling import schedule
+from Modules.utils.tools import PrettyPrintObject, PrettyPrintXML, PrettyPrintDict, PrintObject
 from Modules.utils import xml_tools
 from src.test import xml_data
 
@@ -50,7 +51,7 @@ class Test_01_XML(unittest.TestCase):
             print("House {0:}".format(l_house.get('Name')))
 
 
-class Test_02_ReadXML(unittest.TestCase):
+class Test_02_ReadWriteXML(unittest.TestCase):
     """
     This section tests the reading and writing of XML used by house.
     """
@@ -59,9 +60,11 @@ class Test_02_ReadXML(unittest.TestCase):
         self.m_pyhouses_obj = PyHousesData()
         self.m_pyhouses_obj.HousesData[0] = HousesData()
         self.m_pyhouses_obj.HousesData[0].HouseObject = HouseData()
-        self.m_pyhouses_obj.XmlRoot = self.m_root = ET.fromstring(XML)
-        self.m_houses = self.m_root.find('Houses')
-        self.m_house = self.m_houses.find('House')
+        self.m_pyhouses_obj.XmlRoot = self.m_root_xml = ET.fromstring(XML)
+        self.m_houses_xml = self.m_root_xml.find('Houses')
+        self.m_house_xml = self.m_houses_xml.find('House')
+        self.m_schedules_xml = self.m_house_xml.find('Schedules')
+        self.m_schedule_xml = self.m_schedules_xml.find('Schedule')
         self.m_house_obj = LocationData()
         self.m_api = schedule.API()
 
@@ -76,14 +79,58 @@ class Test_02_ReadXML(unittest.TestCase):
     def test_0202_find_xml(self):
         """ Be sure that the XML contains the right stuff.
         """
-        self.assertEqual(self.m_root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
-        self.assertEqual(self.m_houses.tag, 'Houses', 'XML - No Houses section')
-        self.assertEqual(self.m_house.tag, 'House', 'XML - No House section')
+        self.assertEqual(self.m_root_xml.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
+        self.assertEqual(self.m_houses_xml.tag, 'Houses', 'XML - No Houses section')
+        self.assertEqual(self.m_house_xml.tag, 'House', 'XML - No House section')
+        self.assertEqual(self.m_schedules_xml.tag, 'Schedules', 'XML - No Schedules section')
+        self.assertEqual(self.m_schedule_xml.tag, 'Schedule', 'XML - No Schedule section')
 
-    def test_0203_ReadXml(self):
+    def test_0231_ReadOneSchedule(self):
         """ Read in the xml file and fill in x
         """
-    def test_0201_read_xml(self):
-        self.m_api.read_xml(self.m_pyhouses_obj, self.m_house)
+        l_schedule_obj = self.m_api.read_one_schedule_xml(self.m_schedule_xml)
+        self.assertEqual(l_schedule_obj.Name, 'Evening')
+        PrettyPrintObject(l_schedule_obj)
+
+    def test_0232_ReadAllSchedules(self):
+        l_schedules = self.m_api.read_schedules_xml(self.m_schedules_xml)
+        print(type(l_schedules))
+        PrettyPrintDict(l_schedules)
+        for k, v in l_schedules.iteritems():
+            PrettyPrintObject(v)
+
+    def test_0241_WriteOneSchedule(self):
+        l_schedule = self.m_api.read_one_schedule_xml(self.m_schedule_xml)
+        l_xml = self.m_api.write_one_schedule_xml(l_schedule)
+        PrettyPrintXML(l_xml)
+
+    def test_0242_WriteAllSchedules(self):
+        l_schedules = self.m_api.read_schedules_xml(self.m_schedules_xml)
+        l_xml = self.m_api.write_schedules_xml(l_schedules)
+        PrettyPrintXML(l_xml)
+
+
+class Test_03_Startup(unittest.TestCase):
+    """
+    This section tests the reading and writing of XML used by house.
+    """
+
+    def setUp(self):
+        self.m_pyhouses_obj = PyHousesData()
+        self.m_pyhouses_obj.HousesData[0] = HousesData()
+        self.m_pyhouses_obj.HousesData[0].HouseObject = HouseData()
+        self.m_pyhouses_obj.XmlRoot = self.m_root_xml = ET.fromstring(XML)
+        self.m_houses_xml = self.m_root_xml.find('Houses')
+        self.m_house_xml = self.m_houses_xml.find('House')
+        self.m_schedules_xml = self.m_house_xml.find('Schedules')
+        self.m_schedule_xml = self.m_schedules_xml.find('Schedule')
+        self.m_house_obj = LocationData()
+        self.m_api = schedule.API()
+
+    def test_0201_buildObjects(self):
+        """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
+        """
+            self.m_api.Start(self.m_pyhouses_obj)
+
 
 # ## END

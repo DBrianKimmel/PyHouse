@@ -330,6 +330,7 @@ class PyHousesData(object):
         #
         self.XmlRoot = None
         self.XmlFileName = ''
+        self.XmlVersion = 2
 
 
 class LocationData(object):

@@ -14,69 +14,141 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHousesData, CoreServicesData, NodeData
+from Modules.Core.data_objects import PyHousesData, CoreServicesData, NodeData, NodeInterfaceData
 from Modules.Core import node_local
 from Modules.utils import xml_tools
+from Modules.utils.tools import PrettyPrintObject, PrettyPrintXML, PrintObject
 from src.test import xml_data
 
-XML = xml_data.XML_LONG
 
-
-class Test_01_XML(unittest.TestCase):
-    """
-    This section will verify the XML in the 'Modules.text.xml_data' file is correct and what the node_local module can read/write.
-    """
-
-    def setUp(self):
-        self.m_root_element = ET.fromstring(XML)
-
-    def test_0101_read_xml(self):
-        l_pyhouse = self.m_root_element
-        self.assertEqual(l_pyhouse.tag, 'PyHouse')
-
-    def test_0102_find_nodes(self):
-        l_nodes = self.m_root_element.find('Nodes')
-        self.assertEqual(l_nodes.tag, 'Nodes')
-
-    def test_0103_find_node_name(self):
-        l_nodes = self.m_root_element.find('Nodes')
-        l_node = l_nodes.find('Node')
-        l_name = l_node.get('Name')
-        self.assertEqual(l_name, 'PiNode-1')
-
-    def test_0104_uuid(self):
-        l_nodes = self.m_root_element.find('Nodes')
-        l_node = l_nodes.find('Node')
-        l_uuid = l_node.find('UUID')
-        self.assertEqual(l_uuid.text, '87654321-1001-11e3-b583-082e5f899999')
-
-
-class Test_02_ReadXML(unittest.TestCase):
+class Test_02_ReadWriteXML(unittest.TestCase):
     """
     This section tests the reading and writing of XML used by node_local.
     """
 
     def setUp(self):
         self.m_pyhouses_obj = PyHousesData()
-        self.m_pyhouses_obj.XmlRoot = ET.fromstring(XML)
         self.m_pyhouses_obj.CoreServicesData = CoreServicesData()
         self.m_pyhouses_obj.Nodes[0] = NodeData()
+        self.m_pyhouses_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
+        self.m_nodes_xml = self.m_root_xml.find('Nodes')
+        self.m_node_xml = self.m_nodes_xml.find('Node')
+        self.m_interfaces_xml = self.m_node_xml.find('Interfaces')
+        self.m_interface_xml = self.m_interfaces_xml.find('Interface')
+        self.m_interface_obj = NodeInterfaceData()
+        self.m_node_obj = NodeData()
         self.m_api = node_local.API()
 
-    def test_0201_read_xml(self):
-        self.m_api.read_xml(self.m_pyhouses_obj)
+    def test_0221_read_one_interface(self):
+        l_interface = self.m_api.read_one_interface_xml(self.m_interface_xml)
+        self.assertEqual(l_interface.Name, 'eth0', 'Bad Name')
+        self.assertEqual(l_interface.Key, 0, 'Bad Key')
+        self.assertEqual(l_interface.Active, True, 'Bad Active')
+        self.assertEqual(l_interface.MacAddress, '01:02:03:04:05:06', 'Bad MacAddress')
+        self.assertEqual(l_interface.V4Address, "192.168.1.11", 'Bad V4Address')
+        self.assertEqual(l_interface.V6Address, '2000:1D::1, 2000:1D::101', 'Bad V6Address')
+        PrettyPrintObject(l_interface)
 
-    def test_0202_write_xml(self):
-        l_node = self.m_api.read_xml(self.m_pyhouses_obj)
-        self.m_api.write_xml(l_node)
+    def test_0222_read_interfaces(self):
+        l_interfaces = self.m_api.read_interfaces_xml(self.m_interfaces_xml)
+        self.assertEqual(l_interfaces[0].Name, 'eth0', 'Bad Name')
+        self.assertEqual(l_interfaces[1].Name, 'wlan0', 'Bad Name')
+        self.assertEqual(l_interfaces[2].Name, 'lo', 'Bad Name')
+        self.assertEqual(len(l_interfaces), 3, 'Wrong interface count.')
+
+    def test_0231_write_one_interface(self):
+        l_interface = self.m_api.read_one_interface_xml(self.m_interface_xml)
+        l_xml = self.m_api.write_one_interface_xml(l_interface)
+        PrettyPrintXML(l_xml)
+
+    def test_0232_write_interfaces(self):
+        l_interfaces = self.m_api.read_interfaces_xml(self.m_interfaces_xml)
+        l_xml = self.m_api.write_interfaces_xml(l_interfaces)
+        PrettyPrintXML(l_xml)
+
+    def test_0241_read_one_node(self):
+        l_node = self.m_api.read_one_node_xml(self.m_node_xml)
+        self.assertEqual(l_node.Name, 'PiNode-1', 'Bad Name')
+        self.assertEqual(l_node.Key, 0, 'Bad Key')
+        self.assertEqual(l_node.Active, True, 'Bad Axtive')
+        self.assertEqual(l_node.Role, 0, 'Bad Role')
+        PrettyPrintObject(l_node)
+
+    def test_0242_read_nodes(self):
+        l_nodes = self.m_api.read_nodes_xml(self.m_nodes_xml)
+        print('Nodes: {0:}'.format((l_nodes)))
+        PrettyPrintObject(l_nodes)
+        PrintObject('--title--', l_nodes)
+
+    def test_0251_write_one_node(self):
+        l_node = self.m_api.read_one_node_xml(self.m_node_xml)
+        l_xml = self.m_api.write_one_node_xml(l_node)
+        PrettyPrintXML(l_xml)
+
+    def test_0252_write_nodes(self):
+        l_nodes = self.m_api.read_nodes_xml(self.m_nodes_xml)
+        l_xml = self.m_api.write_nodes_xml(l_nodes)
+        PrettyPrintXML(l_xml)
 
 
-class Test_03_ReadXML(unittest.TestCase):
+class Test_03_ReadWriteEmptyXML(unittest.TestCase):
+    """
+    This section tests the reading and writing of XML used by node_local.
+    """
 
     def setUp(self):
-        self.m_root_element = ET.fromstring(XML)
+        self.m_pyhouses_obj = PyHousesData()
+        self.m_pyhouses_obj.CoreServicesData = CoreServicesData()
+        self.m_pyhouses_obj.Nodes[0] = NodeData()
+        self.m_pyhouses_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_EMPTY)
+        self.m_nodes_xml = self.m_root_xml.find('Nodes')
+        self.m_node_xml = None
+        self.m_interfaces_xml = None
+        self.m_interface_xml = None
+        self.m_interface_obj = NodeInterfaceData()
+        self.m_node_obj = NodeData()
+        self.m_api = node_local.API()
+
+    def test_0221_read_one_interface(self):
+        l_interface = self.m_api.read_one_interface_xml(self.m_interface_xml)
+        self.assertEqual(l_interface.Name, None, 'Bad Name')
+        PrettyPrintObject(l_interface)
+
+    def test_0222_read_interfaces(self):
+        l_interfaces = self.m_api.read_interfaces_xml(self.m_interfaces_xml)
+        self.assertEqual(l_interfaces, {}, 'Bad Name')
+
+    def test_0242_read_nodes(self):
+        l_nodes = self.m_api.read_nodes_xml(self.m_nodes_xml)
+        print('Nodes: {0:}'.format((l_nodes)))
+        PrettyPrintObject(l_nodes)
+        PrintObject('--title--', l_nodes)
+
+    def test_0252_write_nodes(self):
+        l_nodes = self.m_api.read_nodes_xml(self.m_nodes_xml)
+        l_xml = self.m_api.write_nodes_xml(l_nodes)
+        PrettyPrintXML(l_xml)
+
+
+class Test_10_ApiStart(unittest.TestCase):
+
+    def setUp(self):
+        self.m_pyhouses_obj = PyHousesData()
+        self.m_pyhouses_obj.CoreServicesData = CoreServicesData()
+        self.m_pyhouses_obj.Nodes[0] = NodeData()
+        self.m_pyhouses_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
+        self.m_root_element = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         self.m_util = xml_tools.PutGetXML()
         self.m_pyhouses_obj = PyHousesData()
         self.m_api = node_local.API()
+
+    def test_1001_Init(self):
+        self.m_api
+
+    def test_1002_Start(self):
+        self.m_api.Start(self.m_pyhouses_obj)
+
+    def test_1003_Stop(self):
+        self.m_api.Stop(self.m_root_xml)
 
 # ## END DBK

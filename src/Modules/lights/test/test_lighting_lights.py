@@ -17,7 +17,7 @@ from twisted.trial import unittest
 from Modules.Core.data_objects import PyHousesData, HousesData, HouseData
 from Modules.lights import lighting_lights
 from Modules.web import web_utils
-from Modules.utils.xml_tools import prettify
+from Modules.utils.xml_tools import PrettifyXML
 from src.test import xml_data
 
 XML = xml_data.XML_LONG
@@ -75,12 +75,12 @@ class Test_02_ReadXML(unittest.TestCase):
         """
         l_light = self.m_api.read_one_light_xml(self.m_house_xml)
         l_xml = self.m_api.write_one_light_xml(l_light)
-        print('XML: {0:}'.format(prettify(l_xml)))
+        print('XML: {0:}'.format(PrettifyXML(l_xml)))
 
     def test_0212_WriteAllLights(self):
         l_lights_xml = self.m_api.read_lights_xml(self.m_house_xml)
         l_xml = self.m_api.write_lights_xml(l_lights_xml)
-        print('XML: {0:}'.format(prettify(l_xml)))
+        print('XML: {0:}'.format(PrettifyXML(l_xml)))
 
     def test_0221_CreateJson(self):
         """ Create a JSON object for Location.

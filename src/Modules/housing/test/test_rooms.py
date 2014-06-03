@@ -20,7 +20,7 @@ from Modules.Core.data_objects import PyHousesData, HousesData, HouseData, RoomD
 from Modules.housing import rooms
 from src.test import xml_data
 from Modules.web import web_utils
-from Modules.utils.xml_tools import prettify
+from Modules.utils.xml_tools import PrettifyXML
 
 XML = xml_data.XML_LONG
 
@@ -80,7 +80,7 @@ class Test_02_XML(unittest.TestCase):
         """
         l_room = self.m_api.read_one_room(self.m_house_xml)
         l_xml = self.m_api.write_one_room(l_room)
-        print('XML: {0:}'.format(prettify(l_xml)))
+        print('XML: {0:}'.format(PrettifyXML(l_xml)))
 
 
     def test_0222_WriteAllRoomsXml(self):
@@ -88,7 +88,7 @@ class Test_02_XML(unittest.TestCase):
         """
         l_rooms = self.m_api.read_rooms_xml(self.m_house_xml)
         l_xml = self.m_api.write_rooms_xml(l_rooms)
-        print('XML: {0:}'.format(prettify(l_xml)))
+        print('XML: {0:}'.format(PrettifyXML(l_xml)))
 
 
     def test_0231_CreateJson(self):

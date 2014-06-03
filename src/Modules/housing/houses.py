@@ -58,9 +58,9 @@ class Utilities(object):
         """
         Find all the different houses in the XML configuration file.
         Each will have a 'house' sub-tree of elements under that house.
-        When we first start configuring, there are no houses defined - so we need to create an empty house.
+        When we first start configuring, there are no houses defined - so we will need to create an empty house.
 
-        @return: iterable list of all houses defined.
+        @return: iterable list-generator of all houses defined.
         """
         l_xml_root = p_pyhouses_obj.XmlRoot
         try:

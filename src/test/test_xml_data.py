@@ -1,5 +1,5 @@
 """
-@name: PyHouse/test/test_xml_data.py
+@name: PyHouse/src/test/test_xml_data.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @Copyright (c) 2010-2014 by D. Brian Kimmel
@@ -18,8 +18,6 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from src.test import xml_data
 
-XML = xml_data.XML_LONG
-
 
 class Test_01_XML(unittest.TestCase):
     """
@@ -27,27 +25,30 @@ class Test_01_XML(unittest.TestCase):
     """
 
     def setUp(self):
-        self.m_root_element = None
+        self.m_root_element = ET.fromstring(xml_data.XML_LONG)
 
     def test_0101_parse_xml(self):
-        self.m_root_element = ET.fromstring(XML)
         l_pyhouse = self.m_root_element
         self.assertEqual(l_pyhouse.tag, 'PyHouse')
 
     def test_0102_read_xml(self):
-        self.m_root_element = ET.fromstring(XML)
         l_pyhouse = self.m_root_element
         self.assertEqual(l_pyhouse.tag, 'PyHouse')
 
-    def test_0103_find_logs(self):
-        self.m_root_element = ET.fromstring(XML)
+    def test_0103_Logs(self):
+        self.m_root_element = ET.fromstring(xml_data.XML_LONG)
         l_logs = self.m_root_element.find('Logs')
         self.assertEqual(l_logs.tag, 'Logs')
 
-    def test_0104_uuid(self):
-        self.m_root_element = ET.fromstring(XML)
+    def test_0104_LogsDebug(self):
+        self.m_root_element = ET.fromstring(xml_data.XML_LONG)
         l_logs = self.m_root_element.find('Logs')
         l_debug = l_logs.find('Debug')
         self.assertEqual(l_debug.text, '/var/log/pyhouse/debug')
 
+    def test_0105_Nodes(self):
+        l_nodes = self.m_root_element.find('Nodes')
+        l_node = l_nodes.find('Node')
+        l_uuid = l_node.find('UUID')
+        self.assertEqual(l_uuid.text, '87654321-1001-11e3-b583-082e5f899999')
 # ## END DBK
