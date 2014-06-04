@@ -20,9 +20,14 @@ location, lights, controllers and room list.
 TODO:
 Each house can draw itself on a canvas and show lights in the proper
 rooms with their proper current status.
+
+Starting with Version 1.3.0 the concept of multiple houses is dropped.
+Since the Pi - it is silly to try and control multiple houses wuth one computer.
+
+This should also clean up a lot of murky logic as to which house we are working on.
 """
 
-__version_info__ = (1, 1, 0)
+__version_info__ = (1, 3, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 # ## END DBK

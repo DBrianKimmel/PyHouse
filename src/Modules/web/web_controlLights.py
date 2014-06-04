@@ -48,7 +48,7 @@ class ControlLightsElement(athena.LiveElement):
         @param p_index: is the house index number.
         """
         l_ix = int(p_index)
-        l_house = self.m_pyhouses_obj.HousesData[l_ix].HouseObject
+        l_house = self.m_pyhouses_obj.HouseData
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_house))
         return l_json
 
@@ -65,6 +65,6 @@ class ControlLightsElement(athena.LiveElement):
         l_light_obj.CurLevel = l_level = l_json['Level']
         l_light_obj.UUID = l_json['UUID']
         l_light_obj.HouseIx = l_house_ix
-        self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.LightingAPI.ChangeLight(l_light_obj, l_level)
+        self.m_pyhouses_obj.HouseData.LightingAPI.ChangeLight(l_light_obj, l_level)
 
 # ## END DBK

@@ -9,6 +9,8 @@
 @license: MIT License
 @summary: This module handles the lights component of the lighting system.
 
+Inherit from lighting_core.
+
 Each entry should contain enough information to allow functionality of various family of lighting controllers.
 
 Insteon is the first type coded and UPB is to follow.
@@ -53,7 +55,7 @@ class LightingAPI(lighting_core.CoreAPI):
 
     def write_one_light_xml(self, p_light_obj):
         l_light_xml = self.write_base_object_xml('Light', p_light_obj)
-        self.write_light_common(l_light_xml, p_light_obj)
+        self.write_base_lighting_xml(l_light_xml, p_light_obj)
         return l_light_xml
 
     def write_lights_xml(self, p_lights_obj):
@@ -61,7 +63,7 @@ class LightingAPI(lighting_core.CoreAPI):
         l_count = 0
         for l_light_obj in p_lights_obj.itervalues():
             l_light_xml = self.write_base_object_xml('Light', l_light_obj)
-            self.write_light_common(l_light_xml, l_light_obj)
+            self.write_base_lighting_xml(l_light_xml, l_light_obj)
             l_lighting_xml.append(l_light_xml)
             l_count += 1
         return l_lighting_xml

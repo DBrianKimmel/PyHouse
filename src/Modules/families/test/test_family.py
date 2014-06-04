@@ -16,6 +16,7 @@ from twisted.trial import unittest
 from Modules.Core.data_objects import PyHousesData, HousesData, HouseData
 from Modules.families import family
 from src.test import xml_data
+from src.Modules.utils.tools import PrettyPrintAny
 
 XML = xml_data.XML_LONG
 
@@ -24,8 +25,7 @@ class Test_01_Families(unittest.TestCase):
 
     def setUp(self):
         self.m_pyhouses_obj = PyHousesData()
-        self.m_pyhouses_obj.HousesData[0] = HousesData()
-        self.m_pyhouses_obj.HousesData[0].HouseObject = HouseData()
+        self.m_pyhouses_obj.HouseData = HouseData()
         self.m_pyhouses_obj.XmlRoot = self.m_root = ET.fromstring(XML)
         self.m_houses = self.m_root.find('Houses')
         self.m_house = self.m_houses.find('House')
@@ -39,8 +39,8 @@ class Test_01_Families(unittest.TestCase):
 
     def test_0102_build_one(self):
         l_family_obj = self.m_api.build_one_family('Insteon')
+        PrettyPrintAny(l_family_obj)
         self.assertEqual(l_family_obj.Name, 'Insteon', 'Invalid name')
-        self.assertEqual(l_family_obj.Active, True, 'Invalid Active')
         self.assertEqual(l_family_obj.ModuleName, 'Device_Insteon', 'Invalid Module Name')
         self.assertEqual(l_family_obj.PackageName, 'Modules.families.Insteon', 'Invalid Package Name')
 

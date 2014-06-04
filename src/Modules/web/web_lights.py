@@ -49,7 +49,7 @@ class LightsElement(athena.LiveElement):
         @param p_index: is the house index number.
         """
         l_ix = int(p_index)
-        l_house = self.m_pyhouses_obj.HousesData[l_ix].HouseObject
+        l_house = self.m_pyhouses_obj.HouseData
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_house))
         return l_json
 
@@ -63,7 +63,7 @@ class LightsElement(athena.LiveElement):
         l_light_ix = int(l_json['Key'])
         if l_delete:
             try:
-                del self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Lights[l_light_ix]
+                del self.m_pyhouses_obj.HouseData.Lights[l_light_ix]
             except AttributeError:
                 LOG.error("web_lights - Failed to delete - JSON: {0:}".format(l_json))
             return
@@ -71,7 +71,7 @@ class LightsElement(athena.LiveElement):
         # Note - we don't want a plain light here - we want a family light
         #
         try:
-            l_obj = self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Lights[l_light_ix]
+            l_obj = self.m_pyhouses_obj.HouseData.Lights[l_light_ix]
         except KeyError:
             LOG.warning('Creating a new light for house {0:} and light {1:}'.format(l_house_ix, l_light_ix))
             l_obj = lighting_lights.LightData()
@@ -96,6 +96,6 @@ class LightsElement(athena.LiveElement):
             l_obj.Master = l_json['Master']
             l_obj.Responder = l_json['Responder']
             l_obj.ProductKey = l_json['ProductKey']
-        self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Lights[l_light_ix] = l_obj
+        self.m_pyhouses_obj.HouseData.Lights[l_light_ix] = l_obj
 
 # ## END DBK

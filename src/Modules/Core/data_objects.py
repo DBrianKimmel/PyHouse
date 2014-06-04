@@ -12,6 +12,10 @@
 Specific data may be loaded into some attributes for unit testing.
 """
 
+__version_info__ = (1, 3, 0)
+__version__ = '.'.join(map(str, __version_info__))
+
+
 # Import system type stuff
 from twisted.application.service import Application
 from twisted.internet import reactor
@@ -99,6 +103,9 @@ class ControllerData(BaseLightingData):
 
 
 class LightData(BaseLightingData):
+    """This is the light info.
+    Inherits from BaseLightingData and ABaseObject
+    """
 
     def __init__(self):
         self.Controller = None
@@ -125,7 +132,40 @@ class FamilyData(ABaseObject):
         return l_ret
 
 
-class HousesData(ABaseObject):
+class InsteonData (LightData):
+    """This class contains the Insteon specific information about the various devices
+    controlled by PyHouse.
+    """
+
+    def __init__(self):
+        super(InsteonData, self).__init__()
+        self.InsteonAddress = 0  # 3 bytes
+        self.Controller = False
+        self.DevCat = 0  # DevCat and SubCat (2 bytes)
+        self.Family = 'Insteon'
+        self.GroupList = ''
+        self.GroupNumber = 0
+        self.Master = False  # False is Slave
+        self.ProductKey = ''
+        self.Responder = False
+
+    def reprJSON(self, p_ret):
+        """Device_Insteon.
+        """
+        p_ret.update(dict(
+            # InsteonAddress = Insteon_utils.int2dotted_hex(self.InsteonAddress),
+            Controller = self.Controller,
+            DevCat = self.DevCat,
+            GroupList = self.GroupList,
+            GroupNumber = self.GroupNumber,
+            Master = self.Master,
+            Responder = self.Responder,
+            ProductKey = self.ProductKey
+            ))
+        return p_ret
+
+
+class XXXHousesData(ABaseObject):
     """This class holds the data about all houses defined in XML.
     """
 
@@ -242,39 +282,6 @@ class ScheduleData(ABaseObject):
         self.DeleteFlag = False
 
 
-class InsteonData (LightData):
-    """This class contains the Insteon specific information about the various devices
-    controlled by PyHouse.
-    """
-
-    def __init__(self):
-        super(InsteonData, self).__init__()
-        self.InsteonAddress = 0  # 3 bytes
-        self.Controller = False
-        self.DevCat = 0  # DevCat and SubCat (2 bytes)
-        self.Family = 'Insteon'
-        self.GroupList = ''
-        self.GroupNumber = 0
-        self.Master = False  # False is Slave
-        self.ProductKey = ''
-        self.Responder = False
-
-    def reprJSON(self, p_ret):
-        """Device_Insteon.
-        """
-        p_ret.update(dict(
-            # InsteonAddress = Insteon_utils.int2dotted_hex(self.InsteonAddress),
-            Controller = self.Controller,
-            DevCat = self.DevCat,
-            GroupList = self.GroupList,
-            GroupNumber = self.GroupNumber,
-            Master = self.Master,
-            Responder = self.Responder,
-            ProductKey = self.ProductKey
-            ))
-        return p_ret
-
-
 class InternetConnectionData(ABaseObject):
     """Check our external IP-v4 address
     """
@@ -286,7 +293,7 @@ class InternetConnectionData(ABaseObject):
         self.IPv6 = None
         self.DynDns = {}
 
-    def reprJSON(self):
+    def XXreprJSON(self):
         return dict(Name = self.Name, Key = self.Key, Active = self.Active,
                     ExternalDelay = self.ExternalDelay,
                     ExternalIP = self.ExternalIPv4, ExternalUrl = self.ExternalUrl,
@@ -317,16 +324,18 @@ class PyHousesData(object):
         #
         self.API = None
         self.CoreAPI = None
-        self.HousesAPI = None
+        # self.HousesAPI = None  # Dropped  V-1.3.0
+        self.HouseAPI = None  # added V-1.3.0
         self.LogsAPI = None
         self.WebAPI = None
         #
         self.CoreServicesData = {}  # CoreServicesData()
         self.WebData = {}
         self.LogsData = {}
-        self.HousesData = {}  # HousesData()
+        # self.HousesData = {}  # HousesData()  Dropped V-1.3.0
+        self.HouseData = {}  # added V-1.3.0
         self.Nodes = {}
-        self.HouseIndex = -1
+        # self.HouseIndex = -1  # Dropped V-1.3.0
         #
         self.XmlRoot = None
         self.XmlFileName = ''
@@ -373,13 +382,6 @@ class SerialControllerData(object):
         self.XonXoff = False
 
 
-class LogData(object):
-
-    def __init__(self):
-        self.Debug = None
-        self.Error = None
-
-
 class USBControllerData(object):
 
     def __init__(self):
@@ -394,6 +396,13 @@ class  EthernetControllerData(object):
         self.InterfaceType = 'Ethernet'
         self.PortNumber = 0
         self.Protocol = 'TCP'
+
+
+class LogData(object):
+
+    def __init__(self):
+        self.Debug = None
+        self.Error = None
 
 
 class CoreServicesData(object):

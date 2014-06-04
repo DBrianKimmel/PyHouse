@@ -79,7 +79,10 @@ class PutGetXML(object):
 # float
 #-----
     def get_float_from_xml(self, p_xml, p_name, p_default = 0.0):
-        l_xml = p_xml.find(p_name)  # Element
+        try:
+            l_xml = p_xml.find(p_name)  # Element
+        except AttributeError:
+            return None
         if l_xml == None:
             l_xml = p_xml.get(p_name)  # Attribute
         else:

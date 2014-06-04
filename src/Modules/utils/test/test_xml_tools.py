@@ -107,8 +107,7 @@ class Test_03_ConfigTools(unittest.TestCase):
 
     def setUp(self):
         self.m_pyhouses_obj = PyHousesData()
-        self.m_pyhouses_obj.HousesData[0] = HousesData()
-        self.m_pyhouses_obj.HousesData[0].HouseObject = HouseData()
+        self.m_pyhouses_obj.HouseData = HouseData()
         self.m_pyhouses_obj.XmlRoot = self.m_root = ET.fromstring(XML1)
         self.m_houses_xml = self.m_root.find('Houses')
         self.m_house_xml = self.m_houses_xml.find('House')  # First house

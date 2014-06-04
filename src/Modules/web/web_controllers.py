@@ -47,7 +47,7 @@ class ControllersElement(athena.LiveElement):
         """ A JS receiver for House information from the client.
         """
         l_ix = int(p_index)
-        l_house = self.m_pyhouses_obj.HousesData[l_ix].HouseObject
+        l_house = self.m_pyhouses_obj.HouseData
         l_json = web_utils.JsonUnicode().encode_json(l_house)
         return unicode(l_json)
 
@@ -72,7 +72,7 @@ class ControllersElement(athena.LiveElement):
         l_delete = l_json['Delete']
         if l_delete:
             try:
-                del self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Controllers[l_controller_ix]
+                del self.m_pyhouses_obj.HouseData.Controllers[l_controller_ix]
             except AttributeError:
                 print("web_controllers - Failed to delete - JSON: {0:}".FORMAT(l_json))
             return
@@ -80,7 +80,7 @@ class ControllersElement(athena.LiveElement):
         # Note - we don't want a plain controller here - we want a family controller with the proper interface.
         #
         try:
-            l_obj = self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Controllers[l_controller_ix]
+            l_obj = self.m_pyhouses_obj.HouseData.Controllers[l_controller_ix]
         except KeyError:
             l_obj = lighting_controllers.ControllerData()
         l_obj.Name = l_json['Name']
@@ -103,6 +103,6 @@ class ControllersElement(athena.LiveElement):
             l_obj.Master = l_json['Master']
             l_obj.Responder = l_json['Responder']
             l_obj.ProductKey = l_json['ProductKey']
-        self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Controllers[l_controller_ix] = l_obj
+        self.m_pyhouses_obj.HouseData.Controllers[l_controller_ix] = l_obj
 
 # ## END DBK

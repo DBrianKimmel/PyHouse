@@ -50,9 +50,9 @@ class HouseSelectElement(athena.LiveElement):
         l_obj = {}
         for l_key, l_val in l_houses.iteritems():
             l_obj[l_key] = {}
-            l_obj[l_key]['Name'] = l_val.HouseObject.Name
+            l_obj[l_key]['Name'] = l_val.Name
             l_obj[l_key]['Key'] = l_key
-            l_obj[l_key]['Active'] = l_val.HouseObject.Active
+            l_obj[l_key]['Active'] = l_val.Active
         l_json = web_utils.JsonUnicode().encode_json(l_obj)
         return unicode(l_json)
 
@@ -63,7 +63,7 @@ class HouseSelectElement(athena.LiveElement):
         Gather the data for house and send it back to the client.
         """
         l_ix = int(p_index)
-        l_house = self.m_pyhouses_obj.HousesData[l_ix].HouseObject
+        l_house = self.m_pyhouses_obj.HouseData
         l_json = web_utils.JsonUnicode().encode_json(l_house)
         if g_debug >= 1:
             LOG.debug("HouseIx:{0:}, JSON{1:}".format(l_ix, l_json))

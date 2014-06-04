@@ -49,7 +49,7 @@ class ButtonsElement(athena.LiveElement):
         @param p_index: is the house index number.
         """
         l_ix = int(p_index)
-        l_house = self.m_pyhouses_obj.HousesData[l_ix].HouseObject
+        l_house = self.m_pyhouses_obj.HouseData
         l_json = web_utils.JsonUnicode().encode_json(l_house)
         if g_debug >= 3:
             print("web_buttons.getHouseData() - JSON: {0:}".format(l_json))

@@ -15,7 +15,7 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import PyHousesData, HousesData, HouseData
-from Modules.housing import houses
+from Modules.housing import house
 from Modules.utils import xml_tools
 from src.test import xml_data
 from src.Modules.utils.tools import PrettyPrintAny
@@ -62,10 +62,10 @@ class Test_03_ReadEmptyXML(unittest.TestCase):
     def setUp(self):
         self.m_pyhouses_obj = PyHousesData()
         self.m_pyhouses_obj.XmlRoot = ET.fromstring(xml_data.XML_EMPTY)
-        self.m_api = houses.API()
+        self.m_api = house.API()
 
     def test_0301_singleton(self):
-        self.api2 = houses.API()
+        self.api2 = house.API()
         self.assertEqual(self.m_api, self.api2, 'Not a singleton.')
 
     def test_0302_start(self):
@@ -77,14 +77,9 @@ class Test_04_ReadFullXML(unittest.TestCase):
     def setUp(self):
         self.m_pyhouses_obj = PyHousesData()
         self.m_pyhouses_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
-        self.m_pyhouses_obj.HousesData[0] = HousesData()
-        self.m_pyhouses_obj.HousesData[0].HouseObject = HouseData()
-        self.m_pyhouses_obj.HouseIndex = 0
-        self.m_api = houses.API()
-
-    def test_0401_singleton(self):
-        l_api2 = houses.API()
-        self.assertEqual(self.m_api, l_api2, 'Not a singleton.')
+        self.m_pyhouses_obj.HouseData = HouseData()
+        # self.m_pyhouses_obj.HouseIndex = 0
+        self.m_api = house.API()
 
     def test_0402_start(self):
         self.m_api.Start(self.m_pyhouses_obj)
@@ -96,10 +91,9 @@ class Test_05_TestUtilities(unittest.TestCase):
     def setUp(self):
         self.m_pyhouses_obj = PyHousesData()
         self.m_pyhouses_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
-        self.m_pyhouses_obj.HousesData[0] = HousesData()
-        self.m_pyhouses_obj.HousesData[0].HouseObject = HouseData()
-        self.m_pyhouses_obj.HouseIndex = 0
-        self.m_api = houses.API()
+        self.m_pyhouses_obj.HouseData = HouseData()
+        # self.m_pyhouses_obj.HouseIndex = 0
+        self.m_api = house.API()
 
     def test_0501_HouseList(self):
         l_list = self.m_api.get_house_list(self.m_pyhouses_obj)

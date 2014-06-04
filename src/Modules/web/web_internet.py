@@ -44,7 +44,7 @@ class InternetElement(athena.LiveElement):
         @param p_index: is the house index number.
         """
         l_ix = int(p_index)
-        l_house = self.m_pyhouses_obj.HousesData[l_ix].HouseObject
+        l_house = self.m_pyhouses_obj.HouseData
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_house))
         return l_json
 
@@ -56,7 +56,7 @@ class InternetElement(athena.LiveElement):
         l_house_ix = int(l_json['HouseIx'])
         l_dyndns_ix = int(l_json['Key'])
         try:
-            l_obj = self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Internet
+            l_obj = self.m_pyhouses_obj.HouseData.Internet
         except KeyError:
             l_obj = internet.InternetData()
             l_obj.DynDns = {}
@@ -71,6 +71,6 @@ class InternetElement(athena.LiveElement):
         l_obj.DynDns[l_dyndns_ix].Active = l_json['Active']
         l_obj.DynDns[l_dyndns_ix].Interval = l_json['Interval']
         l_obj.DynDns[l_dyndns_ix].Url = l_json['Url']
-        self.m_pyhouses_obj.HousesData[l_house_ix].HouseObject.Internet = l_obj
+        self.m_pyhouses_obj.HouseData.Internet = l_obj
 
 # ## END DBK

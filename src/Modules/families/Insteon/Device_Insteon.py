@@ -88,7 +88,6 @@ class API(LightingAPI):
     """
 
     def __init__(self):
-        # self.m_house_obj = p_house_obj
         pass
 
     def Start(self, p_house_obj):

@@ -16,7 +16,7 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHousesData, HousesData, HouseData, LocationData
+from Modules.Core.data_objects import PyHousesData, HouseData, LocationData
 from Modules.housing import location
 from Modules.web import web_utils
 from Modules.utils.xml_tools import PrettifyXML
@@ -29,8 +29,7 @@ class Test_02_XML(unittest.TestCase):
 
     def _pyHouses(self):
         self.m_pyhouses_obj = PyHousesData()
-        self.m_pyhouses_obj.HousesData[0] = HousesData()
-        self.m_pyhouses_obj.HousesData[0].HouseObject = HouseData()
+        self.m_pyhouses_obj.HouseData = HouseData()
         self.m_pyhouses_obj.XmlRoot = self.m_root = ET.fromstring(XML)
         self.m_houses = self.m_root.find('Houses')
         self.m_house = self.m_houses.find('House')

@@ -28,9 +28,8 @@ class Test_02_ReadXML(unittest.TestCase):
     def setUp(self):
         self.m_pyhouses_obj = PyHousesData()
         self.m_pyhouses_obj.XmlRoot = self.m_root_xml = ET.fromstring(XML)
-        self.m_pyhouses_obj.HousesData[0] = HousesData()
-        self.m_pyhouses_obj.HousesData[0].HouseObject = HouseData()
-        self.m_pyhouses_obj.HouseIndex = 0
+        self.m_pyhouses_obj.HouseData = HouseData()
+        # self.m_pyhouses_obj.HouseIndex = 0
         self.m_houses_xml = self.m_root_xml.find('Houses')
         self.m_house_xml = self.m_houses_xml.find('House')
         pass

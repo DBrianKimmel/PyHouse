@@ -8,6 +8,11 @@
 @note: Created on May 17, 2013
 @license: MIT License
 @summary: This module is for lighting families.
+
+It is called from lighting.py and allows any number of different lighting families to be used.
+So far Insteon and UPB are developed.  Many others may be added.
+
+
 """
 
 # Import system type stuff
@@ -36,7 +41,7 @@ class API(object):
         l_family_obj.ModuleName = 'Device_' + p_family_name
         return l_family_obj
 
-    def import_one_module(self, p_family_name):
+    def XXXimport_one_module(self, p_family_name):
         l_family_obj = self.build_one_family(p_family_name)
         try:
             l_module = importlib.import_module(l_family_obj.PackageName + '.' + l_family_obj.ModuleName, l_family_obj.PackageName)
@@ -61,32 +66,35 @@ class API(object):
             l_module = None
         return l_module
 
+    def initialize_module(self, p_module):
+        try:
+            l_api = p_module.API()
+        except AttributeError as l_reason:
+            l_api = None
+            LOG.error("Cannot get API - Module:{0:}, House:{1:}   Reason: {2:}.".format(p_module, p_house_obj.Name, l_reason))
+        return l_api
+
     def build_lighting_family_info(self, p_house_obj):
-        """NOTE!
-        Any errors (syntax, etc) in the imported modules (or sub-modules) will cause the import to FAIL!
+        """
+        Called from Lighting.
+
+        NOTE! - Any errors (syntax, etc) in the imported modules (or sub-modules) will cause the import to FAIL!
         """
         l_family_data = {}
         self.m_count = 0
         for l_family in VALID_FAMILIES:
-            # print('1 - {0:}'.format(l_family))
             l_family_obj = self.build_one_family(l_family)
-            # print('2 - {0:}'.format(l_family_obj.ModuleName))
             l_module = self.import_module(l_family_obj)
-            # print('3 -')
             try:
                 l_family_obj.ModuleAPI = l_module.API()
-                # print('4 -')
             except AttributeError as l_reason:
                 l_family_obj.ModuleAPI = None
                 LOG.error("Cannot get API - Module:{0:}, House:{1:}   Reason: {2:}.".format(l_module, p_house_obj.Name, l_reason))
-            # print('5 - {0:}'.format(l_family_obj.ModuleAPI))
             l_family_data[self.m_count] = l_family_obj
-            # print('6 - {0:}'.format(self.m_count))
             self.m_count += 1
-        # print('7 - {0:}'.format(l_family_data))
         return l_family_data
 
-    def start_one_lighting_family(self, p_x):
+    def XXXstart_one_lighting_family(self, p_x):
         pass
 
     def start_lighting_families(self, p_house_obj):

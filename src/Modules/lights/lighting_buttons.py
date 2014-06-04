@@ -42,7 +42,7 @@ class ButtonsAPI(lighting_core.CoreAPI):
 
     def write_one_button_xml(self, p_button_obj):
         l_button_xml = self.write_base_object_xml('Controller', p_button_obj)
-        self.write_light_common(l_button_xml, p_button_obj)
+        self.write_base_lighting_xml(l_button_xml, p_button_obj)
         return l_button_xml
 
     def write_buttons_xml(self, p_buttons_obj):

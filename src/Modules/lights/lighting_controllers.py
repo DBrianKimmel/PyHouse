@@ -50,7 +50,7 @@ class ControllersAPI(lighting_core.CoreAPI):
 
     def write_one_controller_xml(self, p_controller_obj):
         l_entry_xml = self.write_base_object_xml('Controller', p_controller_obj)
-        self.write_light_common(l_entry_xml, p_controller_obj)
+        self.write_base_lighting_xml(l_entry_xml, p_controller_obj)
         ET.SubElement(l_entry_xml, 'Interface').text = p_controller_obj.Interface
         ET.SubElement(l_entry_xml, 'Port').text = p_controller_obj.Port
         interface.ReadWriteConfig().write_xml(l_entry_xml, p_controller_obj)

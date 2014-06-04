@@ -21,7 +21,7 @@ Then start the House and all the sub systems.
 from Modules.Core.data_objects import CoreServicesData
 from Modules.Core import nodes
 from Modules.entertain import entertainment
-from Modules.housing import houses
+from Modules.housing import house
 from Modules.web import web_server
 from Modules.utils import pyh_log
 
@@ -53,7 +53,7 @@ class API(object):
         p_pyhouses_obj.CoreServicesData = CoreServicesData()
         self.m_nodes.Start(p_pyhouses_obj)
         # House
-        self.m_pyhouses_obj.HousesAPI = houses.API()
+        self.m_pyhouses_obj.HouseAPI = house.API()
         # SubSystems
         self.m_pyhouses_obj.WebAPI = web_server.API()
         self.m_entertainment.Start(p_pyhouses_obj)

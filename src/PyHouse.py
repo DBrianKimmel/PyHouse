@@ -177,7 +177,8 @@ class API(Utilities):
         """This is automatically invoked when the reactor starts from API().
         """
         self.m_pyhouses_obj.CoreAPI.Start(self.m_pyhouses_obj)
-        self.m_pyhouses_obj.HousesAPI.Start(self.m_pyhouses_obj)
+        # self.m_pyhouses_obj.HousesAPI.Start(self.m_pyhouses_obj)
+        self.m_pyhouses_obj.HouseAPI.Start(self.m_pyhouses_obj)
         self.m_pyhouses_obj.WebAPI.Start(self.m_pyhouses_obj)
         LOG.info("Started.\n")
 
@@ -188,7 +189,8 @@ class API(Utilities):
         l_xml = ET.Element("PyHouse")
         self.m_pyhouses_obj.WebAPI.Stop(l_xml)
         self.m_pyhouses_obj.LogsAPI.Stop(l_xml)
-        self.m_pyhouses_obj.HousesAPI.Stop(l_xml)
+        # self.m_pyhouses_obj.HousesAPI.Stop(l_xml)
+        self.m_pyhouses_obj.HouseAPI.Stop(l_xml)
         self.m_pyhouses_obj.CoreAPI.Stop(l_xml)
         xml_tools.write_xml_file(l_xml, self.m_pyhouses_obj.XmlFileName)
         LOG.info("XML file has been updated.")

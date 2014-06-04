@@ -30,25 +30,20 @@ class Test(unittest.TestCase):
 
     def test_002_houses(self):
         l_data = data_objects.PyHousesData()
-        _l_houses = l_data.HousesData
 
     def Xtest_003_house(self):
         l_data = data_objects.PyHousesData()
-        l_houses = l_data.HousesData
-        _l_house = l_houses.HouseObject[0]
 
     def Xtest_004_name(self):
         l_data = data_objects.PyHousesData()
-        l_houses = l_data.HousesData
-        l_house = l_houses.HouseObject[0]
+        l_house = l_data.HousesData
         l_name = l_house.Name
         self.assertEqual(l_name, 'Test House #1')
         print(l_name)
 
     def Xtest_005_street(self):
         l_data = data_objects.PyHousesData()
-        l_houses = l_data.HousesData
-        l_house = l_houses.HouseObject[0]
+        l_house = l_data.HousesData
         l_location = l_house.Location
         l_street = l_location.Street
         self.assertEqual(l_street, '5191 N Pink Poppy Dr')

@@ -14,6 +14,21 @@
 """
 
 
+
+
+
+
+ACCESS_LEVEL = "dropbox"
+CURL_BIN = "/usr/bin/curl"
+CURL_ACCEPT_CERTIFICATES = "-k"
+CURL_PARAMETERS = "-s"
+
+
+
+
+
+
+
 # Don't edit these...
 API_REQUEST_TOKEN_URL = "https://api.dropbox.com/1/oauth/request_token"
 API_USER_AUTH_URL = "https://www2.dropbox.com/1/oauth/authorize"
@@ -74,7 +89,17 @@ class Dropbox(object):
         # fi
 
 
+    def _get_access_level(self):
+        print(" # Permission type, App folder or Full Dropbox [a/f]: ")
+        read ACCESS_LEVEL
 
+        if [[ $ACCESS_LEVEL == "a" ]]; then
+            ACCESS_LEVEL="sandbox"
+            ACCESS_MSG="App Folder"
+        else
+            ACCESS_LEVEL="dropbox"
+            ACCESS_MSG="Full Dropbox"
+        fi
 
 
 
@@ -380,6 +405,27 @@ sys.exit
 """
 #Default configuration file
 CONFIG_FILE=~/.dropbox_uploader
+
+#Default configuration file
+CONFIG_FILE=~/.dropbox_uploader
+
+#Default chunk size in Mb for the upload process
+#It is recommended to increase this value only if you have enough free space on your /tmp partition
+#Lower values may increase the number of http requests
+CHUNK_SIZE=4
+
+#Curl location
+#If not set, curl will be searched into the $PATH
+#CURL_BIN="/usr/bin/curl"
+
+#Default values
+TMP_DIR="/tmp"
+DEBUG=0
+QUIET=0
+SHOW_PROGRESSBAR=0
+SKIP_EXISTING_FILES=0
+ERROR_STATUS=0
+
 
 #Returns unix timestamp
 function utime {
