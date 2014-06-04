@@ -29,7 +29,7 @@ from Modules.families.Insteon import Insteon_utils
 from Modules.utils import xml_tools
 from Modules.utils import pyh_log
 
-g_debug = 1
+g_debug = 9
 LOG = pyh_log.getLogger('PyHouse.Dev_Insteon ')
 
 

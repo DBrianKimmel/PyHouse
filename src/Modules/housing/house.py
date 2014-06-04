@@ -25,6 +25,7 @@ from Modules.housing import internet
 from Modules.housing import location
 from Modules.housing import rooms
 from Modules.utils import pyh_log
+from src.Modules.utils.tools import PrettyPrintAny
 # from src.Modules.utils.tools import PrettyPrintAny
 
 g_debug = 0
@@ -98,6 +99,7 @@ class API(Utility):
         """Create a house object for when we add a new house.
         """
         self.m_house_obj = HouseData()
+        self.m_house_obj.ScheduleAPI = schedule.API()
 
     def Start(self, p_pyhouses_obj):
         """Start processing for all things house.
@@ -105,17 +107,17 @@ class API(Utility):
         May be stopped and then started anew to force reloading info.
         """
         self.m_pyhouses_obj = p_pyhouses_obj
-        # self.m_pyhouses_obj.HouseIndex = self.m_index
-        l_house_xml = p_pyhouses_obj.XmlRoot.find('Houses/House')
-        self.m_house_obj = self.read_house_xml(l_house_xml)
-        LOG.info("Starting House {0:}, Active:{1:}".format(self.m_house_obj.Name, self.m_house_obj.Active))
-        self.m_house_obj.ScheduleAPI = schedule.API()
+        self.m_pyhouses_obj.HouseData = self.m_house_obj
+        l_house_xml = self.m_pyhouses_obj.XmlParsed.find('Houses/House')
+        # PrettyPrintAny(l_house_xml, ' House ')
+        self.m_pyhouses_obj.HouseData = self.read_house_xml(l_house_xml)
+        LOG.info("Starting House {0:}, Active:{1:}".format(self.m_pyhouses_obj.HouseData.Name, self.m_pyhouses_obj.HouseData.Active))
         self.m_house_obj.InternetAPI = internet.API()
-        self.m_house_obj.ScheduleAPI.Start(self.m_pyhouses_obj, self.m_house_obj, l_house_xml)
+        self.m_house_obj.ScheduleAPI.Start(self.m_pyhouses_obj)
 
-        self.m_house_obj.InternetAPI.Start(p_pyhouses_obj, self.m_house_obj, l_house_xml)
+        self.m_house_obj.InternetAPI.Start(p_pyhouses_obj)
 
-        l_msg = "For house: {0:} ".format(self.m_house_obj.Name)
+        l_msg = "For house: {0:} ".format(p_pyhouses_obj.HouseData.Name)
         l_msg += "- found -  Rooms:{0:}, Schedule:{1:}, Lights:{2:}, Controllers:{3:}".format(
                     len(self.m_house_obj.Rooms), len(self.m_house_obj.Schedules),
                     len(self.m_house_obj.Lights), len(self.m_house_obj.Controllers))

@@ -54,6 +54,7 @@ class API(object):
         self.m_nodes.Start(p_pyhouses_obj)
         # House
         self.m_pyhouses_obj.HouseAPI = house.API()
+        self.m_pyhouses_obj.HouseAPI.Start(self.m_pyhouses_obj)
         # SubSystems
         self.m_pyhouses_obj.WebAPI = web_server.API()
         self.m_entertainment.Start(p_pyhouses_obj)

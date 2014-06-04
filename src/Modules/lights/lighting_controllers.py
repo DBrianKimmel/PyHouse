@@ -15,8 +15,7 @@ from Modules.lights import lighting_core
 from Modules.drivers import interface
 
 
-g_debug = 0
-# 0 = off
+g_debug = 9
 
 
 class ControllersAPI(lighting_core.CoreAPI):
@@ -26,13 +25,20 @@ class ControllersAPI(lighting_core.CoreAPI):
     def __init__(self):
         super(ControllersAPI, self).__init__()
 
+    def read_family_data(self, p_controller_obj, p_controller_xml):
+        l_family = p_controller_obj.Family
+        pass
+
     def read_one_controller_xml(self, p_controller_xml):
         l_controller_obj = ControllerData()
         l_controller_obj = self.read_base_lighting_xml(l_controller_obj, p_controller_xml)
+        self.read_family_data(l_controller_obj, p_controller_xml)
         l_controller_obj.Key = self.m_count  # Renumber
         l_controller_obj.Interface = self.get_text_from_xml(p_controller_xml, 'Interface')
         l_controller_obj.Port = self.get_text_from_xml(p_controller_xml, 'Port')
         interface.ReadWriteConfig().extract_xml(l_controller_obj, p_controller_xml)
+        if g_debug >= 8:
+            print('LC Name: {0:}'.format(l_controller_obj.Name))
         return l_controller_obj
 
     def read_controllers_xml(self, p_house_xml):

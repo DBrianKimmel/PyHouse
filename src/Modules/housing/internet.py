@@ -330,15 +330,16 @@ class API(ReadWriteXML):
     def __init__(self):
         pass
 
-    def Start(self, p_pyhouses_obj, p_house_obj, p_house_xml):
+    def Start(self, p_pyhouses_obj):
         """Start async operation of the internet module.
         """
         self.m_pyhouses_obj = p_pyhouses_obj
-        self.m_house_obj = p_house_obj
-        self.m_house_obj.Internet = self.read_internet_xml(p_house_xml)
-        LOG.info("Starting for house:{0:}.".format(p_house_obj.Name))
-        FindExternalIpAddress(p_pyhouses_obj, p_house_obj)
-        self.m_dyn_loop = DynDnsAPI(p_pyhouses_obj, p_house_obj)
+        self.m_house_obj = self.m_pyhouses_obj.HouseData
+        l_house_xml = self.m_pyhouses_obj.XmlParsed.find('Houses/House')
+        self.m_house_obj.Internet = self.read_internet_xml(l_house_xml)
+        LOG.info("Starting for house:{0:}.".format(self.m_house_obj.Name))
+        FindExternalIpAddress(p_pyhouses_obj, self.m_house_obj)
+        self.m_dyn_loop = DynDnsAPI(p_pyhouses_obj, self.m_house_obj)
 
     def Stop(self, p_xml):
         """Stop async operations

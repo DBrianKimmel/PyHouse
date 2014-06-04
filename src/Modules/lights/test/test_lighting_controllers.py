@@ -19,6 +19,7 @@ from Modules.lights import lighting_controllers
 from Modules.web import web_utils
 from Modules.utils.xml_tools import PrettifyXML
 from src.test import xml_data
+from src.Modules.utils.tools import PrettyPrintAny
 
 XML = xml_data.XML_LONG
 
@@ -35,16 +36,10 @@ class Test_02_XML(unittest.TestCase):
         self.m_controller_xml = self.m_controllers_xml.find('Controller')
         self.m_api = lighting_controllers.ControllersAPI()
 
-    def Xtest_0201_list_elements(self):
-        l_list = self.m_house_xml.iter()
-        for l_tag in l_list:
-            print(' Elements: {0:}  Items: {1:}'.format(l_tag.tag, l_tag.items()))
-
     def test_0202_FindXml(self):
         """ Be sure that the XML contains the right stuff.
         """
         self.assertEqual(self.m_root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
-        self.assertEqual(self.m_houses_xml.tag, 'Houses', 'XML - No Houses section')
         self.assertEqual(self.m_house_xml.tag, 'House', 'XML - No House section')
         self.assertEqual(self.m_controllers_xml.tag, 'Controllers', 'XML - No Controllers section')
         self.assertEqual(self.m_controller_xml.tag, 'Controller', 'XML - No Controller section')
@@ -53,7 +48,7 @@ class Test_02_XML(unittest.TestCase):
         """ Read in the xml file and fill in the lights
         """
         l_controller = self.m_api.read_one_controller_xml(self.m_controller_xml)
-        print('Controller: {0:}'.format(vars(l_controller)))
+        PrettyPrintAny(l_controller)
         self.assertEqual(l_controller.Active, False, 'Bad Active')
         self.assertEqual(l_controller.BaudRate, 19200, 'Bad BaudRate')
         self.assertEqual(l_controller.ByteSize, 8, 'Bad Byte Size')

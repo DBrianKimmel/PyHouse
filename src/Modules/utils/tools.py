@@ -55,14 +55,15 @@ def PrettyPrintCols(strings, widths, split = ' '):
     # generate the formatted text
     return '\n'.join(map(formatline, *cols))
 
-def PrettyPrintAny(p_any):
+def PrettyPrintAny(p_any, p_title = ''):
     l_type = type(p_any)
-    print(l_type)
+    print('=== ', p_title, ' === ', l_type)
     if isinstance(p_any, dict):
         print('Found a dict')
         PrettyPrintDict(p_any)
     else:
         PrettyPrintObject(p_any)
+    print('---------------------------------')
 
 def PrettyPrintDict(p_dict, p_format = "%-25s %s"):
     for (key, val) in p_dict.iteritems():

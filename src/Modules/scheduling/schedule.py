@@ -284,21 +284,21 @@ class API(ScheduleUtility, ScheduleXML):
     def __init__(self):
         self.m_sunrisesunset = sunrisesunset.API()
 
-    def Start(self, p_pyhouses_obj, p_house_obj, p_house_xml):
+    def Start(self, p_pyhouses_obj):
         """Called once for each house.
         Extracts all from xml so an update will write correct info back out to the xml file.
         Does not schedule a next entry for inactive houses.
 
         @param p_house_obj: is a House object for the house being scheduled
         """
-        self.m_house_obj = p_house_obj
-        self.m_house_xml = p_house_xml
+        self.m_house_obj = p_pyhouses_obj.HouseData
+        self.m_house_xml = p_pyhouses_obj.XmlParsed
         self.m_pyhouses_obj = p_pyhouses_obj
         self.m_house_obj.LightingAPI = lighting.API()
         LOG.info("Starting House {0:}.".format(self.m_house_obj.Name))
         self.m_sunrisesunset.Start(p_pyhouses_obj, self.m_house_obj)
         self.m_house_obj.Schedules = self.read_schedules_xml(self.m_house_xml)
-        self.m_house_obj.LightingAPI.Start(p_pyhouses_obj, self.m_house_obj, self.m_house_xml)
+        self.m_house_obj.LightingAPI.Start(p_pyhouses_obj)
         if self.m_house_obj.Active:
             self.get_next_sched()
 

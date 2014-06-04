@@ -32,7 +32,7 @@ class Test_02_XML(unittest.TestCase):
         self.m_pyhouses_obj.HouseData = HouseData()
         self.m_pyhouses_obj.XmlRoot = self.m_root = ET.fromstring(XML)
         self.m_houses = self.m_root.find('Houses')
-        self.m_house = self.m_houses.find('House')
+        self.m_house_xml = self.m_houses.find('House')
         self.m_house_obj = LocationData()
         self.m_api = location.ReadWriteConfig()
 
@@ -44,18 +44,18 @@ class Test_02_XML(unittest.TestCase):
         """
         self.assertEqual(self.m_root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
         self.assertEqual(self.m_houses.tag, 'Houses', 'XML - No Houses section')
-        self.assertEqual(self.m_house.tag, 'House', 'XML - No House section')
+        self.assertEqual(self.m_house_xml.tag, 'House', 'XML - No House section')
 
     def test_0202_ReadXml(self):
         """ Read in the xml file and fill in the location dict
         """
-        l_location = self.m_api.read_location_xml(self.m_house)
+        l_location = self.m_api.read_location_xml(self.m_house_xml)
         self.assertEqual(l_location.City, 'Test City 1', 'Bad city')
 
     def test_0203_WriteXml(self):
         """ Write out the XML file for the location section
         """
-        l_location = self.m_api.read_location_xml(self.m_house)
+        l_location = self.m_api.read_location_xml(self.m_house_xml)
         l_xml = self.m_api.write_location_xml(l_location)
         print('XML: {0:}'.format(PrettifyXML(l_xml)))
 
@@ -63,7 +63,7 @@ class Test_02_XML(unittest.TestCase):
     def test_0221_CreateJson(self):
         """ Create a JSON object for Location.
         """
-        l_location = self.m_api.read_location_xml(self.m_house)
+        l_location = self.m_api.read_location_xml(self.m_house_xml)
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_location))
         print('JSON: {0:}'.format(l_json))
 

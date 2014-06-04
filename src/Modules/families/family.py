@@ -23,7 +23,7 @@ from Modules.Core.data_objects import FamilyData
 from Modules.families import VALID_FAMILIES
 from Modules.utils import pyh_log
 
-g_debug = 1
+g_debug = 9
 LOG = pyh_log.getLogger('PyHouse.Family      ')
 
 
@@ -37,6 +37,7 @@ class API(object):
         l_family_obj = FamilyData()
         l_family_obj.Name = p_family_name
         l_family_obj.Key = self.m_count
+        l_family_obj.Active = True
         l_family_obj.PackageName = 'Modules.families.' + p_family_name
         l_family_obj.ModuleName = 'Device_' + p_family_name
         return l_family_obj
@@ -90,7 +91,7 @@ class API(object):
             except AttributeError as l_reason:
                 l_family_obj.ModuleAPI = None
                 LOG.error("Cannot get API - Module:{0:}, House:{1:}   Reason: {2:}.".format(l_module, p_house_obj.Name, l_reason))
-            l_family_data[self.m_count] = l_family_obj
+            l_family_data[l_family_obj.Name] = l_family_obj
             self.m_count += 1
         return l_family_data
 

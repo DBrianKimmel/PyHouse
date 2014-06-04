@@ -116,7 +116,6 @@ class LightData(BaseLightingData):
 class FamilyData(ABaseObject):
     """A container for every family that has been defined.
     Usually called 'l_family_obj'
-    Since they contain API instances, each house has it's own collection of Family Dicts.
     """
 
     def __init__(self):
@@ -338,6 +337,7 @@ class PyHousesData(object):
         # self.HouseIndex = -1  # Dropped V-1.3.0
         #
         self.XmlRoot = None
+        self.XmlParsed = None
         self.XmlFileName = ''
         self.XmlVersion = 2
 
