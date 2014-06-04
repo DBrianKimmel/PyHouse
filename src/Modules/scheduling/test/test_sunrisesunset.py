@@ -18,7 +18,7 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
-from Modules.Core.data_objects import PyHousesData, HousesData, HouseData, LocationData
+from Modules.Core.data_objects import PyHousesData, HouseData, LocationData
 from Modules.scheduling import sunrisesunset
 from src.test import xml_data
 

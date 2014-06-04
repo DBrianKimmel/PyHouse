@@ -13,7 +13,7 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHousesData, HousesData, HouseData
+from Modules.Core.data_objects import PyHousesData, HouseData
 from Modules.families import family
 from src.test import xml_data
 from src.Modules.utils.tools import PrettyPrintAny

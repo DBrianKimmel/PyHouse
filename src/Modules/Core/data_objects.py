@@ -149,7 +149,7 @@ class InsteonData (LightData):
         self.ProductKey = ''
         self.Responder = False
 
-    def reprJSON(self, p_ret):
+    def XXreprJSON(self, p_ret):
         """Device_Insteon.
         """
         p_ret.update(dict(

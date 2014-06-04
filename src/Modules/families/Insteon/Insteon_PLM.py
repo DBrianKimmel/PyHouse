@@ -997,7 +997,7 @@ class API(LightHandlerAPI):
         """Constructor for the PLM.
         """
         self.m_house_obj = p_house_obj
-        LOG.info('Initialized for house {0:}.'.format(p_house_obj.Name))
+        # LOG.info('Initialized for house {0:}.'.format(p_house_obj.Name))
 
     def Start(self, p_controller_obj):
         self.m_controller_obj = p_controller_obj

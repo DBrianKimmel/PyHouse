@@ -14,7 +14,7 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
-from Modules.Core.data_objects import PyHousesData, HousesData, HouseData, InternetConnectionData, InternetConnectionDynDnsData
+from Modules.Core.data_objects import PyHousesData, HouseData, InternetConnectionData, InternetConnectionDynDnsData
 from Modules.housing import internet
 from Modules.web import web_utils
 from Modules.utils.xml_tools import PrettifyXML

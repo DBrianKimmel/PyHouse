@@ -70,7 +70,7 @@ class LightingAPI(CoreAPI):
     """Interface to the lights of this module.
     """
 
-    def XXchange_light_setting(self, p_light_obj, p_level, p_house_obj):
+    def XXchange_light_setting(self, p_light_obj, p_level, _p_house_obj):
         if p_light_obj.Family == 'Insteon':
             try:
                 for l_controller_obj in self.m_house_obj.Controllers.itervalues():

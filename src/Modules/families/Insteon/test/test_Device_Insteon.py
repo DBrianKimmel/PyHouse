@@ -14,10 +14,11 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHousesData, HousesData, HouseData, InsteonData, LightData
+from Modules.Core.data_objects import PyHousesData, HouseData, InsteonData, LightData
 from Modules.families.Insteon import Device_Insteon
 from Modules.lights import lighting_lights
 from src.test import xml_data
+from src.Modules.utils.tools import PrettyPrintAny
 
 XML = xml_data.XML_LONG
 
@@ -37,16 +38,10 @@ class Test_02_ReadXML(unittest.TestCase):
         self.m_api = Device_Insteon.API()
         self.m_device_obj = LightData()
 
-    def tXest_0201_list_elements(self):
-        l_list = self.m_house_xml.iter()
-        for l_tag in l_list:
-            print(' Elements: {0:}  Items: {1:}'.format(l_tag.tag, l_tag.items()))
-
     def test_0202_FindXml(self):
         """ Be sure that the XML contains the right stuff.
         """
         self.assertEqual(self.m_root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
-        self.assertEqual(self.m_houses_xml.tag, 'Houses', 'XML - No Houses section')
         self.assertEqual(self.m_house_xml.tag, 'House', 'XML - No House section')
         self.assertEqual(self.m_light_xml.tag, 'Light', 'XML - No Light section')
 
@@ -55,8 +50,7 @@ class Test_02_ReadXML(unittest.TestCase):
         """
         l_light = lighting_lights.LightingAPI().read_one_light_xml(self.m_light_xml)
         l_insteon_obj = self.m_api.extract_device_xml(self.m_light_xml, l_light)
-        print('Light: {0:}'.format(vars(l_light)))
-        print('Insteon: {0:}'.format(vars(l_insteon_obj)))
+        PrettyPrintAny(l_insteon_obj)
         self.assertEqual(l_light.Name, 'Test LR Overhead', 'Bad Name')
         self.assertEqual(l_light.Key, 0, 'Bad Key')
         self.assertEqual(l_light.Active, True, 'Bad Active')
