@@ -23,7 +23,7 @@ from Modules.lights.lighting_controllers import ControllersAPI
 from Modules.lights import lighting_lights
 from Modules.lights import lighting_scenes
 from Modules.utils import pyh_log
-from src.Modules.utils.tools import PrettyPrintAny
+# from src.Modules.utils.tools import PrettyPrintAny
 
 g_debug = 9
 LOG = pyh_log.getLogger('PyHouse.Lighting    ')

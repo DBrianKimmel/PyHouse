@@ -15,7 +15,7 @@ from Modules.lights import lighting_core
 from Modules.drivers import interface
 
 
-g_debug = 9
+g_debug = 1
 
 
 class ControllersAPI(lighting_core.CoreAPI):
