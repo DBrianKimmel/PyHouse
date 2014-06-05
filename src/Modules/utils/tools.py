@@ -18,6 +18,19 @@ from xml.etree import ElementTree as ET
 from xml.dom import minidom
 
 
+def PrettyPrintAny(p_any, p_title = ''):
+    l_type = type(p_any)
+    print('=== ', p_title, ' === ', l_type)
+    if isinstance(p_any, dict):
+        PrettyPrintDict(p_any)
+    elif isinstance(p_any, ET.Element):
+        PrettyPrintXML(p_any)
+    else:
+        print(' - - Type is - - {0:}'.format(l_type))
+        PrettyPrintObject(p_any)
+    print('---------------------------------')
+
+
 def PrintBytes(p_message):
     """Print all the bytes of a message as hex bytes.
     """
@@ -55,16 +68,6 @@ def PrettyPrintCols(strings, widths, split = ' '):
         return l_format % tuple(map(lambda s: (s or ''), cols))
     # generate the formatted text
     return '\n'.join(map(formatline, *cols))
-
-def PrettyPrintAny(p_any, p_title = ''):
-    l_type = type(p_any)
-    print('=== ', p_title, ' === ', l_type)
-    if isinstance(p_any, dict):
-        print('Found a dict')
-        PrettyPrintDict(p_any)
-    else:
-        PrettyPrintObject(p_any)
-    print('---------------------------------')
 
 def PrettyPrintDict(p_dict, p_format = "%-25s %s"):
     for (key, val) in p_dict.iteritems():

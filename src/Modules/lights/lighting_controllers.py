@@ -12,10 +12,12 @@ import xml.etree.ElementTree as ET
 # Import PyMh files and modules.
 from Modules.Core.data_objects import ControllerData
 from Modules.lights import lighting_core
+from Modules.utils import pyh_log
 from Modules.drivers import interface
-
+# from src.Modules.utils.tools import PrettyPrintAny
 
 g_debug = 1
+LOG = pyh_log.getLogger('PyHouse.Controller  ')
 
 
 class ControllersAPI(lighting_core.CoreAPI):
@@ -25,26 +27,44 @@ class ControllersAPI(lighting_core.CoreAPI):
     def __init__(self):
         super(ControllersAPI, self).__init__()
 
-    def read_family_data(self, p_controller_obj, p_controller_xml):
-        l_family = p_controller_obj.Family
+    def _read_controller_data(self, p_obj, p_xml):
+        p_obj.Interface = self.get_text_from_xml(p_xml, 'Interface')
+        p_obj.Port = self.get_text_from_xml(p_xml, 'Port')
+
+    def _read_family_data(self, p_obj, p_xml):
+        l_family = p_obj.Family
+        l_api = self.m_pyhouse_obj.HouseData.FamilyData[l_family].ModuleAPI
+        l_api.extract_device_xml(p_obj, p_xml)
+        # PrettyPrintAny(p_obj, 'Lighting Controller')
+
+    def _read_interface_data(self, p_obj, p_xml):
+        interface.ReadWriteConfig().extract_xml(p_obj, p_xml)
         pass
 
     def read_one_controller_xml(self, p_controller_xml):
+        """
+        Get all the information about one controller:
+            Base Light Data
+            Controller Data
+            Family Data
+            Interface Data
+        """
         l_controller_obj = ControllerData()
         l_controller_obj = self.read_base_lighting_xml(l_controller_obj, p_controller_xml)
-        self.read_family_data(l_controller_obj, p_controller_xml)
         l_controller_obj.Key = self.m_count  # Renumber
-        l_controller_obj.Interface = self.get_text_from_xml(p_controller_xml, 'Interface')
-        l_controller_obj.Port = self.get_text_from_xml(p_controller_xml, 'Port')
-        interface.ReadWriteConfig().extract_xml(l_controller_obj, p_controller_xml)
-        if g_debug >= 8:
-            print('LC Name: {0:}'.format(l_controller_obj.Name))
+        self._read_controller_data(l_controller_obj, p_controller_xml)
+        self._read_family_data(l_controller_obj, p_controller_xml)
+        self._read_interface_data(l_controller_obj, p_controller_xml)
         return l_controller_obj
 
-    def read_controllers_xml(self, p_house_xml):
+    def read_controllers_xml(self, p_pyhouse_obj):
+        """Called from lighting.
+        """
+        LOG.debug('--- Reading XML for controllers')
         self.m_count = 0
+        self.m_pyhouse_obj = p_pyhouse_obj
         l_dict = {}
-        l_sect = p_house_xml.find('Controllers')
+        l_sect = p_pyhouse_obj.XmlSection.find('Controllers')
         try:
             for l_controller_xml in l_sect.iterfind('Controller'):
                 l_controller_obj = self.read_one_controller_xml(l_controller_xml)

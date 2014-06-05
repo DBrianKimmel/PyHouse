@@ -20,7 +20,7 @@ import math
 from math import pi
 
 # Import PyMh files
-from Modules.Core.data_objects import PyHousesData
+from Modules.Core.data_objects import PyHouseData
 from Modules.utils import pyh_log
 
 g_debug = 0
@@ -393,8 +393,8 @@ class API(SSAPI):
         self.earth_data = EarthParameters()
         self.solar_data = SolarParameters()
 
-    def Start(self, p_pyhouses_obj, p_house_obj, p_date = datetime.date.today()):
-        self.m_pyhouses_obj = p_pyhouses_obj
+    def Start(self, p_pyhouse_obj, p_house_obj, p_date = datetime.date.today()):
+        self.m_pyhouse_obj = p_pyhouse_obj
         self.m_house_obj = p_house_obj
         SSAPI().load_location(p_house_obj, self.earth_data, self.solar_data)
         self.earth_data.Date = p_date

@@ -142,11 +142,11 @@ class API(Utility):
         g_pandora = pandora.API()
         LOG.debug('Initialized')
 
-    def Start(self, p_pyhouses_obj):
+    def Start(self, p_pyhouse_obj):
         global g_pyhouses_obj
-        g_pyhouses_obj = p_pyhouses_obj
-        self.start_lirc_connect(p_pyhouses_obj)
-        self.start_AMP(p_pyhouses_obj)
+        g_pyhouses_obj = p_pyhouse_obj
+        self.start_lirc_connect(p_pyhouse_obj)
+        self.start_AMP(p_pyhouse_obj)
         LOG.debug('Started')
 
     def Stop(self):

@@ -26,7 +26,7 @@ from Modules.housing import location
 from Modules.housing import rooms
 from Modules.utils import pyh_log
 
-g_debug = 0
+g_debug = 1
 # 0 = off
 # 1 = log extra info
 # + = NOT USED HERE
@@ -88,6 +88,14 @@ class Utility(HouseReadWriteXML):
     """
     """
 
+    m_pyhouse_obj = None
+
+    def get_house_xml(self, p_pyhouse_obj):
+        l_tmp_xml = p_pyhouse_obj.XmlParsed.find('Houses')
+        l_house_xml = l_tmp_xml.find('House')
+        p_pyhouse_obj.XmlSection = l_house_xml
+        return l_house_xml
+
 
 class API(Utility):
     """
@@ -99,23 +107,20 @@ class API(Utility):
         self.m_house_obj = HouseData()
         self.m_house_obj.ScheduleAPI = schedule.API()
 
-    def Start(self, p_pyhouses_obj):
+    def Start(self, p_pyhouse_obj):
         """Start processing for all things house.
         Read in the XML file and update the internal data.
         May be stopped and then started anew to force reloading info.
         """
-        self.m_pyhouses_obj = p_pyhouses_obj
-        self.m_pyhouses_obj.HouseData = self.m_house_obj
-        l_house_xml = self.m_pyhouses_obj.XmlParsed.find('Houses/House')
-        # PrettyPrintAny(l_house_xml, ' House ')
-        self.m_pyhouses_obj.HouseData = self.read_house_xml(l_house_xml)
-        LOG.info("Starting House {0:}, Active:{1:}".format(self.m_pyhouses_obj.HouseData.Name, self.m_pyhouses_obj.HouseData.Active))
+        self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_pyhouse_obj.HouseData = self.m_house_obj
+        l_house_xml = self.get_house_xml(p_pyhouse_obj)
+        self.m_pyhouse_obj.HouseData = self.read_house_xml(l_house_xml)
+        LOG.info("Starting House {0:}, Active:{1:}".format(self.m_pyhouse_obj.HouseData.Name, self.m_pyhouse_obj.HouseData.Active))
         self.m_house_obj.InternetAPI = internet.API()
-        self.m_house_obj.ScheduleAPI.Start(self.m_pyhouses_obj)
-
-        self.m_house_obj.InternetAPI.Start(p_pyhouses_obj)
-
-        l_msg = "For house: {0:} ".format(p_pyhouses_obj.HouseData.Name)
+        self.m_house_obj.ScheduleAPI.Start(self.m_pyhouse_obj)
+        self.m_house_obj.InternetAPI.Start(self.m_pyhouse_obj)
+        l_msg = "For house: {0:} ".format(self.m_pyhouse_obj.HouseData.Name)
         l_msg += "- found -  Rooms:{0:}, Schedule:{1:}, Lights:{2:}, Controllers:{3:}".format(
                     len(self.m_house_obj.Rooms), len(self.m_house_obj.Schedules),
                     len(self.m_house_obj.Lights), len(self.m_house_obj.Controllers))

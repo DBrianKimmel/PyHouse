@@ -26,23 +26,23 @@ class Test(unittest.TestCase):
 
     def test_001_Load(self):
         print('Test 001')
-        _l_data = data_objects.PyHousesData()
+        _l_data = data_objects.PyHouseData()
 
     def test_002_houses(self):
-        l_data = data_objects.PyHousesData()
+        l_data = data_objects.PyHouseData()
 
     def Xtest_003_house(self):
-        l_data = data_objects.PyHousesData()
+        l_data = data_objects.PyHouseData()
 
     def Xtest_004_name(self):
-        l_data = data_objects.PyHousesData()
+        l_data = data_objects.PyHouseData()
         l_house = l_data.HousesData
         l_name = l_house.Name
         self.assertEqual(l_name, 'Test House #1')
         print(l_name)
 
     def Xtest_005_street(self):
-        l_data = data_objects.PyHousesData()
+        l_data = data_objects.PyHouseData()
         l_house = l_data.HousesData
         l_location = l_house.Location
         l_street = l_location.Street

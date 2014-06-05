@@ -38,7 +38,7 @@ class HouseSelectElement(athena.LiveElement):
 
     def __init__(self, p_workspace_obj):
         self.m_workspace_obj = p_workspace_obj
-        self.m_pyhouses_obj = p_workspace_obj.m_pyhouses_obj
+        self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
 
     @athena.expose
     def getHousesToSelect(self, _p_dummy):
@@ -46,7 +46,7 @@ class HouseSelectElement(athena.LiveElement):
 
         Gather the top level data for houses and send it back to the client for building a house select page.
         """
-        l_houses = self.m_pyhouses_obj.HousesData
+        l_houses = self.m_pyhouse_obj.HousesData
         l_obj = {}
         for l_key, l_val in l_houses.iteritems():
             l_obj[l_key] = {}
@@ -63,7 +63,7 @@ class HouseSelectElement(athena.LiveElement):
         Gather the data for house and send it back to the client.
         """
         l_ix = int(p_index)
-        l_house = self.m_pyhouses_obj.HouseData
+        l_house = self.m_pyhouse_obj.HouseData
         l_json = web_utils.JsonUnicode().encode_json(l_house)
         if g_debug >= 1:
             LOG.debug("HouseIx:{0:}, JSON{1:}".format(l_ix, l_json))

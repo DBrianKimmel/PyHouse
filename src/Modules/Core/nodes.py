@@ -42,10 +42,10 @@ class API(object):
         self.m_discovery = node_discovery.API()
         self.m_domain = node_domain.API()
 
-    def Start(self, p_pyhouses_obj):
-        self.m_local.Start(p_pyhouses_obj)
-        self.m_discovery.Start(p_pyhouses_obj)
-        self.m_domain.Start(p_pyhouses_obj)
+    def Start(self, p_pyhouse_obj):
+        self.m_local.Start(p_pyhouse_obj)
+        self.m_discovery.Start(p_pyhouse_obj)
+        self.m_domain.Start(p_pyhouse_obj)
 
     def Stop(self, p_xml):
         self.m_domain.Stop(p_xml)

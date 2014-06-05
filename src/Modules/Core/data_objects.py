@@ -312,7 +312,7 @@ class InternetConnectionDynDnsData(ABaseObject):
                     )
 
 
-class PyHousesData(object):
+class PyHouseData(object):
     """The master object, contains all other 'configuration' objects.
     """
 
@@ -329,16 +329,18 @@ class PyHousesData(object):
         self.WebAPI = None
         #
         self.CoreServicesData = {}  # CoreServicesData()
-        self.WebData = {}
+        self.FamilyData = {}
         self.LogsData = {}
         # self.HousesData = {}  # HousesData()  Dropped V-1.3.0
         self.HouseData = {}  # added V-1.3.0
         self.Nodes = {}
+        self.WebData = {}
         # self.HouseIndex = -1  # Dropped V-1.3.0
         #
-        self.XmlRoot = None
-        self.XmlParsed = None
         self.XmlFileName = ''
+        self.XmlParsed = None
+        self.XmlRoot = None
+        self.XmlSection = None
         self.XmlVersion = 2
 
 

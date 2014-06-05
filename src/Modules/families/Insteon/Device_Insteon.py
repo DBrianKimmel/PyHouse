@@ -35,7 +35,7 @@ LOG = pyh_log.getLogger('PyHouse.Dev_Insteon ')
 
 class CoreAPI(xml_tools.ConfigTools):
 
-    def extract_device_xml(self, p_entry_xml, p_device_obj):
+    def extract_device_xml(self, p_device_obj, p_entry_xml):
         """
         A method to extract Insteon specific elements and insert them into a basic device object.
 
@@ -43,6 +43,7 @@ class CoreAPI(xml_tools.ConfigTools):
         @param p_device_obj : is the Basic Object that will have the extracted elements inserted into.
         @return: a dict of the extracted Insteon Specific data.
         """
+        LOG.debug('--- Extracting XML ')
         l_insteon_obj = InsteonData()
         l_insteon_obj.InsteonAddress = Insteon_utils.dotted_hex2int(p_entry_xml.findtext('Address', default = 0))
         l_insteon_obj.Controller = p_entry_xml.findtext('Controller')

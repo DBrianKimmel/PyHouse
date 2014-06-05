@@ -117,15 +117,15 @@ class API(Utility, ClientConnections):
         LOG.info("Initialized.\n")
         self.m_web_running = False
 
-    def Start(self, p_pyhouses_obj):
-        p_pyhouses_obj.WebData = WebData()
-        self.m_pyhouses_obj = p_pyhouses_obj
-        self.read_web_xml(p_pyhouses_obj)
-        self.start_webserver(p_pyhouses_obj)
+    def Start(self, p_pyhouse_obj):
+        p_pyhouse_obj.WebData = WebData()
+        self.m_pyhouse_obj = p_pyhouse_obj
+        self.read_web_xml(p_pyhouse_obj)
+        self.start_webserver(p_pyhouse_obj)
 
     def Stop(self, p_xml):
-        self.m_pyhouses_obj.WebData.Service.stopService()
-        p_xml.append(self.write_web_xml(self.m_pyhouses_obj))
+        self.m_pyhouse_obj.WebData.Service.stopService()
+        p_xml.append(self.write_web_xml(self.m_pyhouse_obj))
         LOG.info("XML appended.")
 
 # ## END DBK

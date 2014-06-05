@@ -14,7 +14,7 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHousesData, CoreServicesData, NodeData, NodeInterfaceData
+from Modules.Core.data_objects import PyHouseData, CoreServicesData, NodeData, NodeInterfaceData
 from Modules.Core import node_local
 from Modules.utils import xml_tools
 from Modules.utils.tools import PrettyPrintObject, PrettyPrintXML, PrintObject
@@ -27,10 +27,10 @@ class Test_02_ReadWriteXML(unittest.TestCase):
     """
 
     def setUp(self):
-        self.m_pyhouses_obj = PyHousesData()
-        self.m_pyhouses_obj.CoreServicesData = CoreServicesData()
-        self.m_pyhouses_obj.Nodes[0] = NodeData()
-        self.m_pyhouses_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
+        self.m_pyhouse_obj = PyHouseData()
+        self.m_pyhouse_obj.CoreServicesData = CoreServicesData()
+        self.m_pyhouse_obj.Nodes[0] = NodeData()
+        self.m_pyhouse_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         self.m_nodes_xml = self.m_root_xml.find('Nodes')
         self.m_node_xml = self.m_nodes_xml.find('Node')
         self.m_interfaces_xml = self.m_node_xml.find('Interfaces')
@@ -97,10 +97,10 @@ class Test_03_ReadWriteEmptyXML(unittest.TestCase):
     """
 
     def setUp(self):
-        self.m_pyhouses_obj = PyHousesData()
-        self.m_pyhouses_obj.CoreServicesData = CoreServicesData()
-        self.m_pyhouses_obj.Nodes[0] = NodeData()
-        self.m_pyhouses_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_EMPTY)
+        self.m_pyhouse_obj = PyHouseData()
+        self.m_pyhouse_obj.CoreServicesData = CoreServicesData()
+        self.m_pyhouse_obj.Nodes[0] = NodeData()
+        self.m_pyhouse_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_EMPTY)
         self.m_nodes_xml = self.m_root_xml.find('Nodes')
         self.m_node_xml = None
         self.m_interfaces_xml = None
@@ -133,20 +133,20 @@ class Test_03_ReadWriteEmptyXML(unittest.TestCase):
 class Test_10_ApiStart(unittest.TestCase):
 
     def setUp(self):
-        self.m_pyhouses_obj = PyHousesData()
-        self.m_pyhouses_obj.CoreServicesData = CoreServicesData()
-        self.m_pyhouses_obj.Nodes[0] = NodeData()
-        self.m_pyhouses_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
+        self.m_pyhouse_obj = PyHouseData()
+        self.m_pyhouse_obj.CoreServicesData = CoreServicesData()
+        self.m_pyhouse_obj.Nodes[0] = NodeData()
+        self.m_pyhouse_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         self.m_root_element = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         self.m_util = xml_tools.PutGetXML()
-        self.m_pyhouses_obj = PyHousesData()
+        self.m_pyhouse_obj = PyHouseData()
         self.m_api = node_local.API()
 
     def test_1001_Init(self):
         self.m_api
 
     def test_1002_Start(self):
-        self.m_api.Start(self.m_pyhouses_obj)
+        self.m_api.Start(self.m_pyhouse_obj)
 
     def test_1003_Stop(self):
         self.m_api.Stop(self.m_root_xml)

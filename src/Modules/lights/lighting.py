@@ -18,20 +18,15 @@ for every house.
 # Import PyHouse files
 # from Modules.Core.data_objects import ButtonData
 from Modules.families import family
-from Modules.lights import lighting_buttons
+from Modules.lights.lighting_buttons import ButtonsAPI
 from Modules.lights.lighting_controllers import ControllersAPI
-from Modules.lights import lighting_lights
-from Modules.lights import lighting_scenes
+from Modules.lights.lighting_lights import LightingAPI
+from Modules.lights.lighting_scenes import ScenesAPI
 from Modules.utils import pyh_log
 # from src.Modules.utils.tools import PrettyPrintAny
 
 g_debug = 9
 LOG = pyh_log.getLogger('PyHouse.Lighting    ')
-
-class ButtonAPI(lighting_buttons.ButtonsAPI): pass
-# class ControllerAPI(ControllersAPI): pass
-class LightingAPI(lighting_lights.LightingAPI): pass
-class SceneAPI(lighting_scenes.ScenesAPI): pass
 
 
 class Utility(ControllersAPI, LightingAPI):
@@ -43,6 +38,17 @@ class Utility(ControllersAPI, LightingAPI):
     def test_lighting_families(self):
         pass
 
+    def _read_lighting_xml(self, p_pyhouse_obj):
+        """
+        Get all the lighting components for a house
+        XmlSection points to the "House" element
+        """
+        l_house_xml = p_pyhouse_obj.XmlSection
+        # PrettyPrintAny(l_house_xml, 'Lighting() ')
+        p_pyhouse_obj.HouseData.Controllers = ControllersAPI().read_controllers_xml(p_pyhouse_obj)
+        p_pyhouse_obj.HouseData.Buttons = ButtonsAPI().read_buttons_xml(l_house_xml)
+        p_pyhouse_obj.HouseData.Lights = self.read_lights_xml(l_house_xml)
+
 
 class API(Utility):
 
@@ -50,17 +56,13 @@ class API(Utility):
         self.m_family = family.API()
         LOG.info("Initialized.")
 
-    def Start(self, p_pyhouses_obj):
+    def Start(self, p_pyhouse_obj):
         """Allow loading of sub modules and drivers.
         """
-        self.m_house_obj = p_pyhouses_obj.HouseData
-        l_house_xml = p_pyhouses_obj.XmlParsed.find('Houses/House')
-        # PrettyPrintAny(l_house_xml, 'Lighting() ')
+        self.m_house_obj = p_pyhouse_obj.HouseData
         LOG.info("Starting - House:{0:}.".format(self.m_house_obj.Name))
         self.m_house_obj.FamilyData = self.m_family.build_lighting_family_info(self.m_house_obj)
-        self.m_house_obj.Controllers = ControllersAPI().read_controllers_xml(l_house_xml)
-        self.m_house_obj.Buttons = lighting_buttons.ButtonsAPI().read_buttons_xml(l_house_xml)
-        self.m_house_obj.Lights = self.read_lights_xml(l_house_xml)
+        self._read_lighting_xml(p_pyhouse_obj)
         self.m_family.start_lighting_families(self.m_house_obj)
         LOG.info("Started.")
 

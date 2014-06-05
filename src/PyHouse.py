@@ -63,7 +63,7 @@ from twisted.application.service import Application
 import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHousesData
+from Modules.Core.data_objects import PyHouseData
 from Modules.Core import setup
 from Modules.utils import pyh_log
 from Modules.utils import xml_tools
@@ -144,7 +144,7 @@ class Utilities(object):
 class API(Utilities):
     """
     """
-    m_pyhouses_obj = PyHousesData()
+    m_pyhouse_obj = PyHouseData()
 
     def __init__(self):
         """This is the startup of the entire system.
@@ -154,32 +154,31 @@ class API(Utilities):
         Notice that the reactor starts here as the very last step here and that
         call never returns until the reactor is stopped (permanent stoppage).
         """
-        self.m_pyhouses_obj = PyHousesData()
-        self.m_pyhouses_obj.Reactor = reactor
-        self.m_pyhouses_obj.Application = Application('PyHouse')
-        self.m_pyhouses_obj.API = self  # Only used by web server to reload - Do we need this?
+        self.m_pyhouse_obj = PyHouseData()
+        self.m_pyhouse_obj.Reactor = reactor
+        self.m_pyhouse_obj.Application = Application('PyHouse')
+        self.m_pyhouse_obj.API = self  # Only used by web server to reload - Do we need this?
         global g_API
         g_API = self
         handle_signals()
-        self.read_xml_config_info(self.m_pyhouses_obj)
-        self.m_pyhouses_obj.LogsAPI = l_logs = pyh_log.API()
-        l_logs.Start(self.m_pyhouses_obj)
+        self.read_xml_config_info(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.LogsAPI = l_logs = pyh_log.API()
+        l_logs.Start(self.m_pyhouse_obj)
         # global LOG
         LOG.info("Initializing PyHouse.\n\n")
         #
-        self.m_pyhouses_obj.CoreAPI = setup.API()
-        self.m_pyhouses_obj.Reactor.callWhenRunning(self.Start)
+        self.m_pyhouse_obj.CoreAPI = setup.API()
+        self.m_pyhouse_obj.Reactor.callWhenRunning(self.Start)
         LOG.info("Initialized.\n")
-        self.m_pyhouses_obj.Reactor.run()  # reactor never returns so must be last - Event loop will now run
+        self.m_pyhouse_obj.Reactor.run()  # reactor never returns so must be last - Event loop will now run
         LOG.info("PyHouse says Bye Now.\n")
         raise SystemExit, "PyHouse says Bye Now."
 
     def Start(self):
         """This is automatically invoked when the reactor starts from API().
         """
-        self.m_pyhouses_obj.CoreAPI.Start(self.m_pyhouses_obj)
-        self.m_pyhouses_obj.HouseAPI.Start(self.m_pyhouses_obj)
-        self.m_pyhouses_obj.WebAPI.Start(self.m_pyhouses_obj)
+        self.m_pyhouse_obj.CoreAPI.Start(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.WebAPI.Start(self.m_pyhouse_obj)
         LOG.info("Started.\n")
 
     def Stop(self):
@@ -187,11 +186,10 @@ class API(Utilities):
         """
         LOG.info("Saving all data to XML file.")
         l_xml = ET.Element("PyHouse")
-        self.m_pyhouses_obj.WebAPI.Stop(l_xml)
-        self.m_pyhouses_obj.LogsAPI.Stop(l_xml)
-        self.m_pyhouses_obj.HouseAPI.Stop(l_xml)
-        self.m_pyhouses_obj.CoreAPI.Stop(l_xml)
-        xml_tools.write_xml_file(l_xml, self.m_pyhouses_obj.XmlFileName)
+        self.m_pyhouse_obj.WebAPI.Stop(l_xml)
+        self.m_pyhouse_obj.LogsAPI.Stop(l_xml)
+        self.m_pyhouse_obj.CoreAPI.Stop(l_xml)
+        xml_tools.write_xml_file(l_xml, self.m_pyhouse_obj.XmlFileName)
         LOG.info("XML file has been updated.")
         LOG.info("Stopped.\n\n")
 
@@ -207,7 +205,7 @@ class API(Utilities):
         """
         self.Stop()
         LOG.info("Quit.\n\n\n")
-        self.m_pyhouses_obj.Reactor.stop()
+        self.m_pyhouse_obj.Reactor.stop()
 
 
 if __name__ == "__main__":

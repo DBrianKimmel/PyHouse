@@ -17,7 +17,7 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHousesData, HouseData, LocationData
+from Modules.Core.data_objects import PyHouseData, HouseData, LocationData
 from Modules.scheduling import schedule
 from Modules.utils.tools import PrettyPrintObject, PrettyPrintXML, PrettyPrintDict, PrintObject
 from Modules.utils import xml_tools
@@ -57,9 +57,9 @@ class Test_02_ReadWriteXML(unittest.TestCase):
     """
 
     def _pyHouses(self):
-        self.m_pyhouses_obj = PyHousesData()
-        self.m_pyhouses_obj.HouseData = HouseData()
-        self.m_pyhouses_obj.XmlRoot = self.m_root_xml = ET.fromstring(XML)
+        self.m_pyhouse_obj = PyHouseData()
+        self.m_pyhouse_obj.HouseData = HouseData()
+        self.m_pyhouse_obj.XmlRoot = self.m_root_xml = ET.fromstring(XML)
         self.m_houses_xml = self.m_root_xml.find('Houses')
         self.m_house_xml = self.m_houses_xml.find('House')
         self.m_schedules_xml = self.m_house_xml.find('Schedules')
@@ -73,7 +73,7 @@ class Test_02_ReadWriteXML(unittest.TestCase):
     def test_0201_buildObjects(self):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
         """
-        self.assertEqual(self.m_pyhouses_obj.HouseData.Rooms, {}, 'No Rooms{}')
+        self.assertEqual(self.m_pyhouse_obj.HouseData.Rooms, {}, 'No Rooms{}')
 
     def test_0202_find_xml(self):
         """ Be sure that the XML contains the right stuff.
@@ -115,9 +115,9 @@ class Test_03_Startup(unittest.TestCase):
     """
 
     def setUp(self):
-        self.m_pyhouses_obj = PyHousesData()
-        self.m_pyhouses_obj.HouseData = HouseData()
-        self.m_pyhouses_obj.XmlRoot = self.m_root_xml = ET.fromstring(XML)
+        self.m_pyhouse_obj = PyHouseData()
+        self.m_pyhouse_obj.HouseData = HouseData()
+        self.m_pyhouse_obj.XmlRoot = self.m_root_xml = ET.fromstring(XML)
         self.m_houses_xml = self.m_root_xml.find('Houses')
         self.m_house_xml = self.m_houses_xml.find('House')
         self.m_schedules_xml = self.m_house_xml.find('Schedules')

@@ -18,7 +18,7 @@ from twisted.trial import unittest
 
 # Import PyMh files
 # from Modules.lights.lighting import LightData
-from Modules.Core.data_objects import PyHousesData
+from Modules.Core.data_objects import PyHouseData
 from Modules.families.Insteon import Insteon_PLM
 from src.test import xml_data
 
@@ -36,7 +36,7 @@ STX = 0x02
 class Test_01(unittest.TestCase):
 
     def setUp(self):
-        self.m_pyhouses_obj = PyHousesData()
+        self.m_pyhouse_obj = PyHouseData()
         self.m_api = Insteon_PLM.API(None)
         pass
 
@@ -57,7 +57,7 @@ class Test_01(unittest.TestCase):
 class Test_02(unittest.TestCase):
 
     def setUp(self):
-        self.m_pyhouses_obj = PyHousesData()
+        self.m_pyhouse_obj = PyHouseData()
         self.m_api = Insteon_PLM. API()
         pass
 

@@ -116,7 +116,7 @@ class TheRoot(rend.Page):
     """
 
     def __init__(self, staticpath, p_pyhouses_obj, *args, **kw):
-        self.m_pyhouses_obj = p_pyhouses_obj
+        self.m_pyhouse_obj = p_pyhouses_obj
         if staticpath == None:
             l_jspath = util.sibpath(jspath, 'js')
             staticpath = os.path.join(l_jspath, '', 'resource')
@@ -129,7 +129,7 @@ class TheRoot(rend.Page):
         }
 
     def locateChild(self, ctx, segments):
-        l_resource, l_segments = factory(ctx, segments, self.m_pyhouses_obj)
+        l_resource, l_segments = factory(ctx, segments, self.m_pyhouse_obj)
         if l_resource == None:
             l_resource, l_segments = super(TheRoot, self).locateChild(ctx, segments)
         return l_resource, l_segments
@@ -264,7 +264,7 @@ class MainPage(athena.LivePage):
     docFactory = loaders.xmlfile(os.path.join(templatepath, 'mainpage.html'))
 
     def __init__(self, p_pyhouses_obj):
-        self.m_pyhouses_obj = p_pyhouses_obj
+        self.m_pyhouse_obj = p_pyhouses_obj
         super(MainPage, self).__init__()
 
     def child_jsmodule(self, _ctx):
@@ -286,7 +286,7 @@ class MainPage(athena.LivePage):
         l_defer.addErrback(self.eb_disconnect)
 
     def render_workspace(self, ctx, _data):
-        f = Workspace(self.m_pyhouses_obj, self.uid)
+        f = Workspace(self.m_pyhouse_obj, self.uid)
         f.setFragmentParent(self)
         return ctx.tag[f]
 
@@ -315,7 +315,7 @@ class Workspace(athena.LiveElement):
     PG_INITED = 0
 
     def __init__(self, p_pyhouses_obj, uid = None):
-        self.m_pyhouses_obj = p_pyhouses_obj
+        self.m_pyhouse_obj = p_pyhouses_obj
         super(Workspace, self).__init__()
         LOG.info('web_mainpage Workspace initialized.')
         self.state = self.PG_INITED

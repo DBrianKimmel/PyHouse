@@ -32,7 +32,7 @@ class HouseMenuElement(athena.LiveElement):
 
     def __init__(self, p_workspace_obj):
         self.m_workspace_obj = p_workspace_obj
-        self.m_pyhouses_obj = p_workspace_obj.m_pyhouses_obj
+        self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
         if g_debug >= 2:
             print("web_houseMenu.houseMenuElement()")
 

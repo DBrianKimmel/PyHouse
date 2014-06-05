@@ -16,7 +16,7 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHousesData, HouseData, LocationData
+from Modules.Core.data_objects import PyHouseData, HouseData, LocationData
 from Modules.housing import house
 from Modules.web import web_utils
 from Modules.utils import xml_tools
@@ -57,9 +57,9 @@ class Test_02_ReadXML(unittest.TestCase):
     """
 
     def _pyHouses(self):
-        self.m_pyhouses_obj = PyHousesData()
-        self.m_pyhouses_obj.HouseData = HouseData()
-        self.m_pyhouses_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
+        self.m_pyhouse_obj = PyHouseData()
+        self.m_pyhouse_obj.HouseData = HouseData()
+        self.m_pyhouse_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         self.m_houses_xml = self.m_root_xml.find('Houses')
         self.m_house_xml = self.m_houses_xml.find('House')
         self.m_house_obj = LocationData()
@@ -71,7 +71,7 @@ class Test_02_ReadXML(unittest.TestCase):
     def test_0201_buildObjects(self):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
         """
-        self.assertEqual(self.m_pyhouses_obj.HouseData.Rooms, {}, 'No Rooms{}')
+        self.assertEqual(self.m_pyhouse_obj.HouseData.Rooms, {}, 'No Rooms{}')
 
     def test_0202_find_xml(self):
         """ Be sure that the XML contains the right stuff.
@@ -105,19 +105,19 @@ class Test_02_ReadXML(unittest.TestCase):
 class Test_03_Utilities(unittest.TestCase):
 
     def setUp(self):
-        self.m_pyhouses_obj = PyHousesData()
-        self.m_pyhouses_obj.HouseData = HouseData()
-        self.m_pyhouses_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
+        self.m_pyhouse_obj = PyHouseData()
+        self.m_pyhouse_obj.HouseData = HouseData()
+        self.m_pyhouse_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         self.m_houses_xml = self.m_root_xml.find('Houses')
         self.m_house_xml = self.m_houses_xml.find('House')
         self.m_house_obj = LocationData()
         self.m_api = house.API()
 
     def test_0301_HouseList(self):
-        l_list = self.m_api.get_house_list(self.m_pyhouses_obj)
+        l_list = self.m_api.get_house_list(self.m_pyhouse_obj)
         PrettyPrintAny(l_list)
 
     def Xtest_0305_findXml(self):
-        self.m_api.find_house_xml(self.m_pyhouses_obj)
+        self.m_api.find_house_xml(self.m_pyhouse_obj)
 
 # ## END DBK

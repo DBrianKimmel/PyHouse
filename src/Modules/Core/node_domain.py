@@ -187,10 +187,10 @@ class AmpServerFactory(ServerFactory):
     # protocol = AMP
 
     def __init__(self, p_pyhouses_obj):
-        self.m_pyhouses_obj = p_pyhouses_obj
+        self.m_pyhouse_obj = p_pyhouses_obj
 
     def buildProtocol(self, _p_address_tupple):
-        l_protocol = NodeDomainServerProtocol(self.m_pyhouses_obj)
+        l_protocol = NodeDomainServerProtocol(self.m_pyhouse_obj)
         if g_debug >= 4:
             LOG.debug('AmpServerFactory.buildProtocol()  (195)')
         return l_protocol
@@ -208,7 +208,7 @@ class NodeDomainServerProtocol(DomainBoxDispatcher):
     """
     def __init__(self, p_pyhouses_obj):
         LOG.debug('NodeDomainServerProtocol()  (NDSP-1  210)')
-        self.m_pyhouses_obj = p_pyhouses_obj
+        self.m_pyhouse_obj = p_pyhouses_obj
         self.m_disp = DomainBoxDispatcher()
         # AMP.__init__(AMP(), boxReceiver = l_disp)
         # super(NodeDomainServerProtocol, self).__init__()
@@ -254,7 +254,7 @@ class NodeDomainServerProtocol(DomainBoxDispatcher):
         if g_debug >= 1:
             LOG.debug('ServerProtocol - ConnectionMade  (NDSP-5  255)')
             # LOG.debug('    self = {0:}\n'.format(vars(self)))
-        # l_defer12 = self.send_NodeInformation_1(self.m_pyhouses_obj.Nodes[0])
+        # l_defer12 = self.send_NodeInformation_1(self.m_pyhouse_obj.Nodes[0])
         # l_defer12.addCallback(self.cb_got_result12)
         # l_defer12.addErrback(self.eb_err12)
 
@@ -305,7 +305,7 @@ class LocatorClass(CommandLocator):
 class AmpClient(object):
 
     def cb_sendInfo(self, p_ampProto):
-        l_node = self.m_pyhouses_obj.Nodes[0]
+        l_node = self.m_pyhouse_obj.Nodes[0]
         if g_debug >= 4:
             LOG.debug('Client - sending info to remote server.  (300)')
             # LOG.debug('      Address: {0:}'.format(l_node.ConnectionAddr_IPv4))
@@ -321,7 +321,7 @@ class AmpClient(object):
 
         @param p_address: is the address of the server we are connecting to.
         """
-        self.m_pyhouses_obj = p_pyhouses_obj
+        self.m_pyhouse_obj = p_pyhouses_obj
         self.m_address = p_address
         l_endpoint = TCP4ClientEndpoint(p_pyhouses_obj.Reactor, p_address, AMP_PORT)
         l_defer = l_endpoint.connect(ClientFactory.forProtocol(AMP))
@@ -333,7 +333,7 @@ class AmpClient(object):
 
 
 class Utility(AmpClient):
-    m_pyhouses_obj = None
+    m_pyhouse_obj = None
 
     def cb_start_all_clients(self, _ignore):
         """
@@ -342,10 +342,10 @@ class Utility(AmpClient):
         @param _ignore: node_domain.AmpSe rverFactory on 8581
         @type _ignore: class 'twisted.internet.tcp.Port'
         """
-        l_nodes = self.m_pyhouses_obj.Nodes
+        l_nodes = self.m_pyhouse_obj.Nodes
         for l_key, l_node in l_nodes.iteritems():
             if l_key > -1:  # Skip ourself
-                self.create_one_client(self.m_pyhouses_obj, l_node.ConnectionAddr_IPv4)
+                self.create_one_client(self.m_pyhouse_obj, l_node.ConnectionAddr_IPv4)
 
     def eb_start_clients_loop(self, p_reason):
         LOG.error('Utility.eb_start_clients_loop().  (341)')
@@ -357,11 +357,11 @@ class Utility(AmpClient):
 
         For all the nodes we know about, create a client and send a message with our info.
         """
-        l_endpoint = TCP4ServerEndpoint(self.m_pyhouses_obj.Reactor, AMP_PORT)
-        l_factory = AmpServerFactory(self.m_pyhouses_obj)
-        self.m_pyhouses_obj.CoreServicesData.DomainService = StreamServerEndpointService(l_endpoint, l_factory)
-        self.m_pyhouses_obj.CoreServicesData.DomainService.setServiceParent(self.m_pyhouses_obj.Application)
-        l_defer = l_endpoint.listen(AmpServerFactory(self.m_pyhouses_obj))
+        l_endpoint = TCP4ServerEndpoint(self.m_pyhouse_obj.Reactor, AMP_PORT)
+        l_factory = AmpServerFactory(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.CoreServicesData.DomainService = StreamServerEndpointService(l_endpoint, l_factory)
+        self.m_pyhouse_obj.CoreServicesData.DomainService.setServiceParent(self.m_pyhouse_obj.Application)
+        l_defer = l_endpoint.listen(AmpServerFactory(self.m_pyhouse_obj))
         l_defer.addCallback(self.cb_start_all_clients)
         l_defer.addErrback(self.eb_start_clients_loop)
 
@@ -370,13 +370,13 @@ class API(Utility):
     def __init__(self):
         pass
 
-    def Start(self, p_pyhouses_obj, run_delay = 15):
+    def Start(self, p_pyhouse_obj, run_delay = 15):
         """
         Try to avoid missing events due to congestion when a power failure has all nodes rebooting at nearly the same time.
         This delay should help ensure that the nodes are all up and functioning before starting AMP.
         """
-        self.m_pyhouses_obj = p_pyhouses_obj
-        p_pyhouses_obj.Reactor.callLater(run_delay, self.start_amp_services)
+        self.m_pyhouse_obj = p_pyhouse_obj
+        p_pyhouse_obj.Reactor.callLater(run_delay, self.start_amp_services)
 
     def Stop(self, _p_xml):
         pass

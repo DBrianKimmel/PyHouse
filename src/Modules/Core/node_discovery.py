@@ -41,22 +41,22 @@ I_AM = "I am."
 
 class DGramUtil(object):
     m_address_list = []
-    m_pyhouses_obj = None
+    m_pyhouse_obj = None
     m_interface = ''
 
     def _save_node_info(self, p_node):
         l_count = 0
-        for l_node in self.m_pyhouses_obj.Nodes.itervalues():
+        for l_node in self.m_pyhouse_obj.Nodes.itervalues():
             l_count += 1
             if p_node.ConnectionAddr_IPv4 == l_node.ConnectionAddr_IPv4:
                 return
         p_node.Key = l_count
-        self.m_pyhouses_obj.Nodes[l_count] = p_node
+        self.m_pyhouse_obj.Nodes[l_count] = p_node
         LOG.info("Added node # {0:} - From Addr: {1:}, Named: {2:}".format(l_count, p_node.ConnectionAddr_IPv4, p_node.Name))
 
     def set_node_0_addr(self, p_address):
-        if self.m_pyhouses_obj.Nodes[0].ConnectionAddr_IPv4 == None:
-            self.m_pyhouses_obj.Nodes[0].ConnectionAddr_IPv4 = p_address[0]
+        if self.m_pyhouse_obj.Nodes[0].ConnectionAddr_IPv4 == None:
+            self.m_pyhouse_obj.Nodes[0].ConnectionAddr_IPv4 = p_address[0]
             LOG.info("Update our node (slot 0) address to {0:}".format(p_address[0]))
 
 
@@ -66,7 +66,7 @@ class MulticastDiscoveryServerProtocol(DatagramProtocol, DGramUtil):
     """
 
     def __init__(self, p_pyhouses_obj):
-        self.m_pyhouses_obj = p_pyhouses_obj
+        self.m_pyhouse_obj = p_pyhouses_obj
 
     def startProtocol(self):
         """
@@ -96,7 +96,7 @@ class MulticastDiscoveryServerProtocol(DatagramProtocol, DGramUtil):
             self.m_address_list.append(p_address[0])
         if p_datagram.startswith(WHOS_THERE):
             self.set_node_0_addr(p_address)
-            l_str = I_AM + ' ' + self.m_pyhouses_obj.Nodes[0].Name
+            l_str = I_AM + ' ' + self.m_pyhouse_obj.Nodes[0].Name
             self.transport.write(l_str, p_address)
         elif p_datagram.startswith(I_AM):
             l_node.Name = p_datagram.split(' ')[-1]
@@ -105,10 +105,10 @@ class MulticastDiscoveryServerProtocol(DatagramProtocol, DGramUtil):
 
 class MulticastDiscoveryClientProtocol(ConnectedDatagramProtocol, DGramUtil):
     """Find other PyHouse nodes within range."""
-    m_pyhouses_obj = None
+    m_pyhouse_obj = None
 
     def __init__(self, p_pyhouses_obj):
-        self.m_pyhouses_obj = p_pyhouses_obj
+        self.m_pyhouse_obj = p_pyhouses_obj
 
     def startProtocol(self):
         """
@@ -141,7 +141,7 @@ class Utility(object):
     """
 
     def start_node_discovery(self, p_pyhouses_obj):
-        self.m_pyhouses_obj = p_pyhouses_obj
+        self.m_pyhouse_obj = p_pyhouses_obj
         p_pyhouses_obj.CoreServicesData.DiscoveryService = service.Service()
         p_pyhouses_obj.CoreServicesData.DiscoveryService.setName('NodeDiscovery')
         p_pyhouses_obj.CoreServicesData.DiscoveryService.setServiceParent(p_pyhouses_obj.Application)
@@ -160,8 +160,8 @@ class API(Utility):
     def __init__(self):
         pass
 
-    def Start(self, p_pyhouses_obj):
-        self.start_node_discovery(p_pyhouses_obj)
+    def Start(self, p_pyhouse_obj):
+        self.start_node_discovery(p_pyhouse_obj)
 
     def Stop(self, _p_xml):
         LOG.info("Stopped.")

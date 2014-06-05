@@ -33,13 +33,13 @@ class LogsElement(athena.LiveElement):
 
     def __init__(self, p_workspace_obj, p_params):
         self.m_workspace_obj = p_workspace_obj
-        self.m_pyhouses_obj = p_workspace_obj.m_pyhouses_obj
+        self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
 
     @athena.expose
     def getLogData(self):
         """ A JS client has requested all the pyh_log information.
         """
-        l_obj = self.m_pyhouses_obj.LogsData
+        l_obj = self.m_pyhouse_obj.LogsData
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_obj))
         return l_json
 
@@ -51,6 +51,6 @@ class LogsElement(athena.LiveElement):
         l_obj = pyh_log.LogData()
         l_obj.Debug = l_json['Debug']
         l_obj.Error = l_json['Error']
-        self.m_pyhouses_obj.LogsAPI.Update(l_obj)
+        self.m_pyhouse_obj.LogsAPI.Update(l_obj)
 
 # ## END DBK

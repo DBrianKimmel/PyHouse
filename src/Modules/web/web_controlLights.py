@@ -37,7 +37,7 @@ class ControlLightsElement(athena.LiveElement):
 
     def __init__(self, p_workspace_obj, p_params):
         self.m_workspace_obj = p_workspace_obj
-        self.m_pyhouses_obj = p_workspace_obj.m_pyhouses_obj
+        self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
         if g_debug >= 2:
             print("web_controlLights.ControlLightsElement()")
 
@@ -48,7 +48,7 @@ class ControlLightsElement(athena.LiveElement):
         @param p_index: is the house index number.
         """
         l_ix = int(p_index)
-        l_house = self.m_pyhouses_obj.HouseData
+        l_house = self.m_pyhouse_obj.HouseData
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_house))
         return l_json
 
@@ -65,6 +65,6 @@ class ControlLightsElement(athena.LiveElement):
         l_light_obj.CurLevel = l_level = l_json['Level']
         l_light_obj.UUID = l_json['UUID']
         l_light_obj.HouseIx = l_house_ix
-        self.m_pyhouses_obj.HouseData.LightingAPI.ChangeLight(l_light_obj, l_level)
+        self.m_pyhouse_obj.HouseData.LightingAPI.ChangeLight(l_light_obj, l_level)
 
 # ## END DBK

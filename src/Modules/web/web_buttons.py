@@ -36,7 +36,7 @@ class ButtonsElement(athena.LiveElement):
 
     def __init__(self, p_workspace_obj, p_params):
         self.m_workspace_obj = p_workspace_obj
-        self.m_pyhouses_obj = p_workspace_obj.m_pyhouses_obj
+        self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
         if g_debug >= 2:
             print("web_buttons.ButtonsElement()")
 
@@ -49,7 +49,7 @@ class ButtonsElement(athena.LiveElement):
         @param p_index: is the house index number.
         """
         l_ix = int(p_index)
-        l_house = self.m_pyhouses_obj.HouseData
+        l_house = self.m_pyhouse_obj.HouseData
         l_json = web_utils.JsonUnicode().encode_json(l_house)
         if g_debug >= 3:
             print("web_buttons.getHouseData() - JSON: {0:}".format(l_json))

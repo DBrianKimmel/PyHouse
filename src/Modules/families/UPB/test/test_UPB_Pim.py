@@ -22,7 +22,7 @@ import xml.etree.ElementTree as ET
 from Modules.families.UPB import UPB_Pim
 from Modules.lights import lighting_core
 from src.test import xml_data
-from Modules.Core.data_objects import PyHousesData, HouseData, ControllerData
+from Modules.Core.data_objects import PyHouseData, HouseData, ControllerData
 
 XML = xml_data.XML_LONG
 

@@ -44,8 +44,8 @@ class API(object):
         # self.m_pandora = pandora.API()
         LOG.info("Initialized.")
 
-    def Start(self, p_pyhouses_obj):
-        # self.m_pandora.Start(p_pyhouses_obj)
+    def Start(self, p_pyhouse_obj):
+        # self.m_pandora.Start(p_pyhouse_obj)
         LOG.info("Started.")
 
     def Stop(self, p_xml):

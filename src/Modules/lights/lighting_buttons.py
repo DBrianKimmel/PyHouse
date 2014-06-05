@@ -22,10 +22,20 @@ class ButtonsAPI(lighting_core.CoreAPI):
     def __init__(self):
         super(ButtonsAPI, self).__init__()
 
+    def _read_light_data(self, p_obj, p_xml):
+        pass
+
+    def _read_family_data(self, p_obj, p_xml):
+        l_family = p_obj.Family
+        l_api = self.m_pyhouse_obj.HouseData.FamilyData[l_family].ModuleAPI
+        l_api.extract_device_xml(p_obj, p_xml)
+
     def read_one_button_xml(self, p_button_xml):
         l_button_obj = ButtonData()
         l_button_obj = self.read_base_lighting_xml(l_button_obj, p_button_xml)
         l_button_obj.Key = self.m_count  # Renumber
+        self._read_controller_data(l_button_obj, p_button_xml)
+        self._read_family_data(l_button_obj, p_button_xml)
         return l_button_obj
 
     def read_buttons_xml(self, p_house_xml):

@@ -16,7 +16,7 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from Modules.utils import xml_tools
 from src.test import xml_data
-from Modules.Core.data_objects import PyHousesData
+from Modules.Core.data_objects import PyHouseData
 
 XML = xml_data.XML_LONG
 

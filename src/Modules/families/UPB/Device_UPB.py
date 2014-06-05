@@ -21,7 +21,7 @@ class LightingAPI(lighting.LightingAPI):
     """Interface to the lights of this module.
     """
 
-    def extract_device_xml(self, p_entry_xml, p_device_obj):
+    def extract_device_xml(self, p_device_obj, p_entry_xml):
         """
         @param p_entry_xml: is the e-tree XML house object
         @param p_house: is the text name of the House.

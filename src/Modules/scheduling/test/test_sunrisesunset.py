@@ -18,7 +18,7 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
-from Modules.Core.data_objects import PyHousesData, HouseData, LocationData
+from Modules.Core.data_objects import PyHouseData, HouseData, LocationData
 from Modules.scheduling import sunrisesunset
 from src.test import xml_data
 
@@ -35,9 +35,9 @@ class LocationObj():
 class Test_02_XML(unittest.TestCase):
 
     def setUp(self):
-        self.m_pyhouses_obj = PyHousesData()
-        self.m_pyhouses_obj.HouseData = HouseData()
-        self.m_pyhouses_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
+        self.m_pyhouse_obj = PyHouseData()
+        self.m_pyhouse_obj.HouseData = HouseData()
+        self.m_pyhouse_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         self.m_houses_xml = self.m_root_xml.find('Houses')
         self.m_house_xml = self.m_houses_xml.find('House')  # First house
         self.m_location_xml = self.m_house_xml.find('Location')
@@ -46,7 +46,7 @@ class Test_02_XML(unittest.TestCase):
     def test_0201_buildObjects(self):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
         """
-        self.assertEqual(self.m_pyhouses_obj.HouseData.Rooms, {}, 'No Rooms{}')
+        self.assertEqual(self.m_pyhouse_obj.HouseData.Rooms, {}, 'No Rooms{}')
 
     def test_0202_find_xml(self):
         """ Be sure that the XML contains the right stuff.
@@ -59,7 +59,7 @@ class Test_02_XML(unittest.TestCase):
 class Test_03(unittest.TestCase):
 
     def setUp(self):
-        self.m_pyhouses_obj = PyHousesData()
+        self.m_pyhouse_obj = PyHouseData()
         self.m_house_obj = HouseData()
         self.m_house_obj.Name = 'Test House (Pink Poppy)'
         self.m_house_obj.Location = LocationData()
@@ -67,8 +67,8 @@ class Test_03(unittest.TestCase):
         self.m_house_obj.Longitude = -82.517208
         self.m_house_obj.TimeZone = '-5:00'
         self.m_house_obj.SavingTime = '-4:00'
-        self.m_pyhouses_obj.HouseData = HouseData()
-        self.m_pyhouses_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
+        self.m_pyhouse_obj.HouseData = HouseData()
+        self.m_pyhouse_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         self.m_houses_xml = self.m_root_xml.find('Houses')
         self.m_house_xml = self.m_houses_xml.find('House')  # First house
         self.m_location_xml = self.m_house_xml.find('Location')
@@ -84,21 +84,21 @@ class Test_03(unittest.TestCase):
 
 
     def test_0302_start(self):
-        self.m_api.Start(self.m_pyhouses_obj, self.m_house_obj)
+        self.m_api.Start(self.m_pyhouse_obj, self.m_house_obj)
 
     def test_0310_julian(self):
-        self.m_api.Start(self.m_pyhouses_obj, self.m_house_obj, self.now)
+        self.m_api.Start(self.m_pyhouse_obj, self.m_house_obj, self.now)
         l_j2000 = self.m_api.earth_data.J2000
         self.assertEqual(l_j2000, 4905.499100000132)
 
     def test_0331_sunrise(self):
-        self.m_api.Start(self.m_pyhouses_obj, self.m_house_obj, self.now)
+        self.m_api.Start(self.m_pyhouse_obj, self.m_house_obj, self.now)
         result = self.m_api.get_sunrise()
         print('  Sunrise: {0:}  {1:}'.format(result, self.sunrise))
         self.assertEqual(result, self.sunrise)
 
     def test_0332_sunset(self):
-        self.m_api.Start(self.m_pyhouses_obj, self.m_house_obj, self.now)
+        self.m_api.Start(self.m_pyhouse_obj, self.m_house_obj, self.now)
         result = self.m_api.get_sunset()
         print('   Sunset: {0:}  {1:}'.format(result, self.sunset))
         self.assertEqual(result, self.sunset)

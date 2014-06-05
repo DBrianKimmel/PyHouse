@@ -15,7 +15,7 @@ from twisted.internet.defer import Deferred, gatherResults, maybeDeferred
 from twisted.internet import protocol, error, defer, udp
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHousesData
+from Modules.Core.data_objects import PyHouseData
 from Modules.Core import nodes
 
 
@@ -114,7 +114,7 @@ class Test1(unittest.TestCase):
     def setUp(self):
         print("setUp")
         self.m_api = nodes.API()
-        self.m_pyhouse_obj = PyHousesData()
+        self.m_pyhouse_obj = PyHouseData()
 
     def tearDown(self):
         print("tearDown")
@@ -140,7 +140,7 @@ class Test1(unittest.TestCase):
     def test_003_StartClient(self):
         print("Test 003")
         # l_api = nodes.API()
-        # l_pyhouse_obj = PyHousesData()
+        # l_pyhouse_obj = PyHouseData()
         # self.m_api._start_discovery_client(self.m_pyhouse_obj)
 
     def test_101_oldAddress(self):
@@ -459,7 +459,7 @@ class Test2ReactorShutdownInteraction(unittest.TestCase):
 
     def setUp(self):
         """Start a UDP port"""
-        self.m_pyhouse_obj = PyHousesData()
+        self.m_pyhouse_obj = PyHouseData()
         self.server = Server()
         self.port = self.m_pyhouse_obj.Reactor.listenUDP(0, self.server, interface = '127.0.0.1')
 
@@ -503,7 +503,7 @@ class Test2ReactorShutdownInteraction(unittest.TestCase):
 class Test3MulticastTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.m_pyhouse_obj = PyHousesData()
+        self.m_pyhouse_obj = PyHouseData()
         self.server = Server()
         self.client = Client()
         # multicast won't work if we listen over loopback, apparently

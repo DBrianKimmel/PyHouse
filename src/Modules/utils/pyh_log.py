@@ -38,7 +38,7 @@ g_debug = 0
 
 class Utility(xml_tools.ConfigFile):
 
-    m_pyhouses_obj = None
+    m_pyhouse_obj = None
 
     def read_xml(self, p_pyhouses_obj):  # p_log_obj, p_xml_root):
         try:
@@ -65,7 +65,7 @@ class Utility(xml_tools.ConfigFile):
         import logging
         logging.basicConfig()
         l_file = p_pyhouse_obj.LogsData.Debug
-        self.m_pyhouses_obj = p_pyhouse_obj
+        self.m_pyhouse_obj = p_pyhouse_obj
         # l_formatter = logging.Formatter('%(asctime)s %(name)s %(levelname)s - %(message)s')
         l_daily = DailyLogFile.fromFullPath(l_file)
         tpLog.startLogging(l_daily)
@@ -82,7 +82,7 @@ class API(Utility):
         self.m_log_data = LogData()
 
     def Start(self, p_pyhouse_obj):
-        self.m_pyhouses_obj = p_pyhouse_obj
+        self.m_pyhouse_obj = p_pyhouse_obj
         p_pyhouse_obj.LogsData = LogData()
         self.read_xml(p_pyhouse_obj)
         self.setup_debug_log(p_pyhouse_obj)

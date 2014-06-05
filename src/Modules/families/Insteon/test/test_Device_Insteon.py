@@ -14,7 +14,7 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHousesData, HouseData, InsteonData, LightData
+from Modules.Core.data_objects import PyHouseData, HouseData, InsteonData, LightData
 from Modules.families.Insteon import Device_Insteon
 from Modules.lights import lighting_lights
 from src.test import xml_data
@@ -28,9 +28,9 @@ class Test_02_ReadXML(unittest.TestCase):
     """
 
     def setUp(self):
-        self.m_pyhouses_obj = PyHousesData()
-        self.m_pyhouses_obj.HouseData = HouseData()
-        self.m_pyhouses_obj.XmlRoot = self.m_root = ET.fromstring(XML)
+        self.m_pyhouse_obj = PyHouseData()
+        self.m_pyhouse_obj.HouseData = HouseData()
+        self.m_pyhouse_obj.XmlRoot = self.m_root = ET.fromstring(XML)
         self.m_houses_xml = self.m_root.find('Houses')
         self.m_house_xml = self.m_houses_xml.find('House')  # First house
         self.m_lights_xml = self.m_house_xml.find('Lights')
@@ -49,7 +49,7 @@ class Test_02_ReadXML(unittest.TestCase):
         """ Read in the xml file and fill in the lights
         """
         l_light = lighting_lights.LightingAPI().read_one_light_xml(self.m_light_xml)
-        l_insteon_obj = self.m_api.extract_device_xml(self.m_light_xml, l_light)
+        l_insteon_obj = self.m_api.extract_device_xml( l_light), self.m_light_xml)
         PrettyPrintAny(l_insteon_obj)
         self.assertEqual(l_light.Name, 'Test LR Overhead', 'Bad Name')
         self.assertEqual(l_light.Key, 0, 'Bad Key')

@@ -72,7 +72,7 @@ class API(object):
             l_api = p_module.API()
         except AttributeError as l_reason:
             l_api = None
-            LOG.error("Cannot get API - Module:{0:}, House:{1:}   Reason: {2:}.".format(p_module, p_house_obj.Name, l_reason))
+            LOG.error("Cannot get API - Module:{0:},   Reason: {1:}.".format(p_module, l_reason))
         return l_api
 
     def build_lighting_family_info(self, p_house_obj):
@@ -102,7 +102,7 @@ class API(object):
         """Load and start the family if there is a controller in the house for the family.
         Runs Device_<family>.API.Start()
         """
-        LOG.info("Starting lighting families for house {0:}.".format(p_house_obj.Name))
+        LOG.info("---Starting lighting families for house {0:}.".format(p_house_obj.Name))
         for l_family_obj in p_house_obj.FamilyData.itervalues():
             l_family_obj.ModuleAPI.Start(p_house_obj)  # will run Device_<family>.API.Start()
             LOG.info("Started lighting family {0:}.".format(l_family_obj.Name))

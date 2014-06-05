@@ -35,10 +35,20 @@ class LightingAPI(lighting_core.CoreAPI):
 
     m_count = 0
 
+    def _read_light_data(self, p_obj, p_xml):
+        pass
+
+    def _read_family_data(self, p_obj, p_xml):
+        l_family = p_obj.Family
+        l_api = self.m_pyhouse_obj.HouseData.FamilyData[l_family].ModuleAPI
+        l_api.extract_device_xml(p_obj, p_xml)
+
     def read_one_light_xml(self, p_light_xml):
         l_light_obj = LightData()
         l_light_obj = self.read_base_lighting_xml(l_light_obj, p_light_xml)
         l_light_obj.Key = self.m_count  # Renumber
+        self._read_light_data(l_light_obj, p_light_xml)
+        self._read_family_data(l_light_obj, p_light_xml)
         return l_light_obj
 
     def read_lights_xml(self, p_house_xml):

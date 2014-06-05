@@ -14,7 +14,7 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHousesData, HouseData, BaseLightingData
+from Modules.Core.data_objects import PyHouseData, HouseData, BaseLightingData
 from Modules.lights import lighting_core
 from src.test import xml_data
 
@@ -26,10 +26,10 @@ class Test_02_ReadXML(unittest.TestCase):
     """
 
     def setUp(self):
-        self.m_pyhouses_obj = PyHousesData()
-        self.m_pyhouses_obj.XmlRoot = self.m_root_xml = ET.fromstring(XML)
-        self.m_pyhouses_obj.HouseData = HouseData()
-        # self.m_pyhouses_obj.HouseIndex = 0
+        self.m_pyhouse_obj = PyHouseData()
+        self.m_pyhouse_obj.XmlRoot = self.m_root_xml = ET.fromstring(XML)
+        self.m_pyhouse_obj.HouseData = HouseData()
+        # self.m_pyhouse_obj.HouseIndex = 0
         self.m_houses_xml = self.m_root_xml.find('Houses')
         self.m_house_xml = self.m_houses_xml.find('House')
         pass

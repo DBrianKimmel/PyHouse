@@ -255,24 +255,24 @@ class Utility(XML):
 class API(Utility):
 
     m_node = None
-    m_pyhouses_obj = None
+    m_pyhouse_obj = None
 
     def __init__(self):
         pass
 
-    def Start(self, p_pyhouses_obj):
-        self.m_pyhouses_obj = p_pyhouses_obj
+    def Start(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
         self.m_node = NodeData()
         GetAllInterfaceData(self.m_node)
-        p_pyhouses_obj.Nodes[0] = self.m_node
-        self.read_nodes_xml(p_pyhouses_obj.XmlRoot.find('Nodes'))
-        self.get_node_info(p_pyhouses_obj)
-        p_pyhouses_obj.Nodes[0].Role = self.find_node_role()
-        self.init_node_type(p_pyhouses_obj)
+        p_pyhouse_obj.Nodes[0] = self.m_node
+        self.read_nodes_xml(p_pyhouse_obj.XmlRoot.find('Nodes'))
+        self.get_node_info(p_pyhouse_obj)
+        p_pyhouse_obj.Nodes[0].Role = self.find_node_role()
+        self.init_node_type(p_pyhouse_obj)
         LOG.info('Started')
 
     def Stop(self, p_xml):
-        p_xml.append(self.write_nodes_xml(self.m_pyhouses_obj.Nodes))
+        p_xml.append(self.write_nodes_xml(self.m_pyhouse_obj.Nodes))
         LOG.info("XML appended.")
 
 # ## END DBK

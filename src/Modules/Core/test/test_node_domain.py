@@ -24,7 +24,7 @@ from twisted.test import iosim
 from twisted.test.proto_helpers import StringTransport
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHousesData
+from Modules.Core.data_objects import PyHouseData
 from Modules.Core import node_domain
 
 
@@ -387,7 +387,7 @@ class Test_02_CmdDsptch(unittest.TestCase):
         """
         Create a dispatcher to use.
         """
-        self.m_pyhouses_obj = PyHousesData()
+        self.m_pyhouse_obj = PyHouseData()
         self.fake_locator = FakeLocator()
         self.fake_sender = FakeSender()
         self.fake_dispatcher = amp.BoxDispatcher(self.fake_locator)

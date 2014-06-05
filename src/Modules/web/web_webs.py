@@ -41,13 +41,13 @@ class WebsElement(athena.LiveElement):
 
     def __init__(self, p_workspace_obj, p_params):
         self.m_workspace_obj = p_workspace_obj
-        self.m_pyhouses_obj = p_workspace_obj.m_pyhouses_obj
+        self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
 
     @athena.expose
     def getWebsData(self):
         """ A JS client has requested all the webs information.
         """
-        l_obj = self.m_pyhouses_obj.WebData
+        l_obj = self.m_pyhouse_obj.WebData
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_obj))
         return l_json
 

@@ -29,7 +29,7 @@ class LightingAPI(lighting.LightingAPI):
     """Overload the base methods with specific ones here.
     """
 
-    def extract_device_xml(self, _p_entry_xml, p_device_obj):
+    def extract_device_xml(self, p_device_obj, _p_entry_xml):
         """
         @param p_entry_xml: is the e-tree XML house object
         @param p_house: is the text name of the House.

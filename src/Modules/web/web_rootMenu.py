@@ -32,7 +32,7 @@ class RootMenuElement(athena.LiveElement):
     def __init__(self, p_workspace_obj):
         if g_debug >= 2:
             print("web_rootMenu.RootMenuElement()")
-        self.m_pyhouses_obj = p_workspace_obj.m_pyhouses_obj
+        self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
 
     @athena.expose
     def doRootMenuReload(self, p_json):
@@ -41,7 +41,7 @@ class RootMenuElement(athena.LiveElement):
         if g_debug >= 3:
             print("web_rootMenu.RootMenuElement.doRootMenuReload() - Json:{0:}".format(p_json))
         LOG.info("doRootMenuReload called {0:} {1:}".format(self, p_json))
-        self.m_pyhouses_obj.API.Reload(self.m_pyhouses_obj)
+        self.m_pyhouse_obj.API.Reload(self.m_pyhouse_obj)
 
     @athena.expose
     def doRootMenuQuit(self, p_json):

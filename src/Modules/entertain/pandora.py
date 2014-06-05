@@ -84,7 +84,7 @@ class API(object):
         self.m_started = None
         LOG.info("Initialized.")
 
-    def Start(self, p_pyhouses_obj):
+    def Start(self, p_pyhouse_obj):
         """Start the Pandora player when we receive an IR signal to play music.
         This will open the socket for control
         """
@@ -95,7 +95,7 @@ class API(object):
             l_executable = '/usr/bin/pianobar'
             l_args = ('pianobar',)
             l_env = None  # this will pass <os.environ>
-            self.m_transport = p_pyhouses_obj.Reactor.spawnProcess(self.m_processProtocol, l_executable, l_args, l_env)
+            self.m_transport = p_pyhouse_obj.Reactor.spawnProcess(self.m_processProtocol, l_executable, l_args, l_env)
             self.m_started = True
         LOG.info("Started.")
 

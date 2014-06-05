@@ -48,22 +48,23 @@ class API(object):
         self.m_entertainment = entertainment.API()
         self.m_nodes = nodes.API()
 
-    def Start(self, p_pyhouses_obj):
-        self.m_pyhouses_obj = p_pyhouses_obj
-        p_pyhouses_obj.CoreServicesData = CoreServicesData()
-        self.m_nodes.Start(p_pyhouses_obj)
+    def Start(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        p_pyhouse_obj.CoreServicesData = CoreServicesData()
+        self.m_nodes.Start(p_pyhouse_obj)
         # House
-        self.m_pyhouses_obj.HouseAPI = house.API()
-        self.m_pyhouses_obj.HouseAPI.Start(self.m_pyhouses_obj)
+        self.m_pyhouse_obj.HouseAPI = house.API()
+        self.m_pyhouse_obj.HouseAPI.Start(self.m_pyhouse_obj)
         # SubSystems
-        self.m_pyhouses_obj.WebAPI = web_server.API()
-        self.m_entertainment.Start(p_pyhouses_obj)
+        self.m_pyhouse_obj.WebAPI = web_server.API()
+        self.m_entertainment.Start(p_pyhouse_obj)
         LOG.info("Started.")
 
     def Stop(self, p_xml):
         # SubSystems
         self.m_entertainment.Stop(p_xml)
         # House
+        self.m_pyhouse_obj.HouseAPI.Stop(p_xml)
         self.m_nodes.Stop(p_xml)
         LOG.info("Stopped.")
 

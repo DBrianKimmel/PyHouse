@@ -17,7 +17,7 @@ from twisted.internet import error
 # Import PyMh files and modules.
 from Modules.Core import node_discovery
 from src.test import xml_data
-from Modules.Core.data_objects import PyHousesData
+from Modules.Core.data_objects import PyHouseData
 
 XML = xml_data.XML_LONG
 
@@ -83,11 +83,11 @@ class Test(unittest.TestCase):
     def setUp(self):
         print("setUp")
         self.m_api = node_discovery.API()
-        self.m_pyhouses_obj = PyHousesData()
+        self.m_pyhouse_obj = PyHouseData()
         self.m_server = Server()
         self.m_client = Client()
-        self.m_port1 = self.m_pyhouses_obj.Reactor.listenMulticast(0, self.m_server)
-        self.m_port2 = self.m_pyhouses_obj.Reactor.listenMulticast(0, self.m_client)
+        self.m_port1 = self.m_pyhouse_obj.Reactor.listenMulticast(0, self.m_server)
+        self.m_port2 = self.m_pyhouse_obj.Reactor.listenMulticast(0, self.m_client)
         self.m_client.transport.connect("127.0.0.1", self.m_server.transport.getHost().port)
 
     def tearDown(self):
@@ -115,7 +115,7 @@ class Test(unittest.TestCase):
             self.assertEqual(self.m_server.transport.getLoopbackMode(), 0)
             self.m_server.transport.write("Test_002 B", (node_discovery.PYHOUSE_MULTICAST_IP_V4, l_addr.port))
             l_defer = Deferred()
-            self.m_pyhouses_obj.Reactor.callLater(0, l_defer.callback, None)
+            self.m_pyhouse_obj.Reactor.callLater(0, l_defer.callback, None)
             return l_defer
 
         def cb_no_packet(_ignored):
@@ -189,7 +189,7 @@ class Test(unittest.TestCase):
             return result
 
         c = Server()
-        p = self.m_pyhouses_obj.Reactor.listenMulticast(0, c)
+        p = self.m_pyhouse_obj.Reactor.listenMulticast(0, c)
         addr = self.m_server.transport.getHost()
         joined = self.m_server.transport.joinGroup(node_discovery.PYHOUSE_MULTICAST_IP_V4)
         joined.addCallback(cb_joined)
@@ -219,10 +219,10 @@ class Test(unittest.TestCase):
             return l_result_defer
 
         firstClient = Server()
-        firstPort = self.m_pyhouses_obj.Reactor.listenMulticast(0, firstClient, listenMultiple = True)
+        firstPort = self.m_pyhouse_obj.Reactor.listenMulticast(0, firstClient, listenMultiple = True)
         portno = firstPort.getHost().port
         secondClient = Server()
-        secondPort = self.m_pyhouses_obj.Reactor.listenMulticast(portno, secondClient, listenMultiple = True)
+        secondPort = self.m_pyhouse_obj.Reactor.listenMulticast(portno, secondClient, listenMultiple = True)
         theGroup = node_discovery.PYHOUSE_MULTICAST_IP_V4
         l_joined_defer = gatherResults([self.m_server.transport.joinGroup(theGroup), firstPort.joinGroup(theGroup), secondPort.joinGroup(theGroup)])
         l_joined_defer.addCallback(cb_serverJoined)
@@ -232,12 +232,12 @@ class Test(unittest.TestCase):
 
 
     def Xtest_501_server(self):
-        l_server = self.m_api._start_discovery_server(self.m_pyhouses_obj)
+        l_server = self.m_api._start_discovery_server(self.m_pyhouse_obj)
         # l_defer = l_server.m_startedDeferred = defer.Deferred()
         return l_server
 
     def Xtest_502_client(self):
-        _l_client = self.m_api._start_discovery_client(self.m_pyhouses_obj)
+        _l_client = self.m_api._start_discovery_client(self.m_pyhouse_obj)
         # l_defer = l_client.m_startedDeferred = defer.Deferred()
 
 # ## END DBK
