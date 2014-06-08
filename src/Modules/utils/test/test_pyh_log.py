@@ -15,7 +15,7 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from Modules.utils import pyh_log as pyhLog
 from src.test import xml_data
-from Modules.Core.data_objects import PyHousesData
+from Modules.Core.data_objects import PyHouseData
 
 XML = xml_data.XML_LONG
 
@@ -26,7 +26,7 @@ class Test_02_ReadXML(unittest.TestCase):
     """
 
     def setUp(self):
-        self.m_pyhouses_obj = PyHousesData()
+        self.m_pyhouses_obj = PyHouseData()
         self.m_pyhouses_obj.XmlRoot = ET.fromstring(XML)
         self.m_api = pyhLog.API()
 
@@ -42,7 +42,7 @@ class Test_03_SetupLogging(unittest.TestCase):
     """
 
     def setUp(self):
-        self.m_pyhouses_obj = PyHousesData()
+        self.m_pyhouses_obj = PyHouseData()
         self.m_pyhouses_obj.XmlRoot = ET.fromstring(XML)
         self.m_api = pyhLog.API()
         self.m_api.read_xml(self.m_pyhouses_obj)

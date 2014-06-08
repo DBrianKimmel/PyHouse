@@ -15,7 +15,7 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
-from Modules.Core.data_objects import PyHousesData
+from Modules.Core.data_objects import PyHouseData
 from Modules.utils import tools
 from src.test import xml_data
 from src.Modules.utils.tools import PrettyPrintXML, PrettyPrintObject, PrettyPrintAny
@@ -30,7 +30,7 @@ class Test(unittest.TestCase):
         pass
 
     def test_01_PrettyPrintObjects(self):
-        l_obj = PyHousesData()
+        l_obj = PyHouseData()
         PrettyPrintObject(l_obj)
 
     def test_02_PrettyPrintXML(self):

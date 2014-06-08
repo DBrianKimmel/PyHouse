@@ -45,7 +45,7 @@ class Utility(ControllersAPI, LightingAPI):
         """
         l_house_xml = p_pyhouse_obj.XmlSection
         # PrettyPrintAny(l_house_xml, 'Lighting() ')
-        p_pyhouse_obj.HouseData.Controllers = ControllersAPI().read_controllers_xml(p_pyhouse_obj)
+        p_pyhouse_obj.HouseData.Controllers = ControllersAPI(p_pyhouse_obj).read_controllers_xml(p_pyhouse_obj)
         p_pyhouse_obj.HouseData.Buttons = ButtonsAPI().read_buttons_xml(l_house_xml)
         p_pyhouse_obj.HouseData.Lights = self.read_lights_xml(l_house_xml)
 
@@ -61,7 +61,7 @@ class API(Utility):
         """
         self.m_house_obj = p_pyhouse_obj.HouseData
         LOG.info("Starting - House:{0:}.".format(self.m_house_obj.Name))
-        self.m_house_obj.FamilyData = self.m_family.build_lighting_family_info(self.m_house_obj)
+        self.m_house_obj.FamilyData = self.m_family.build_lighting_family_info()
         self._read_lighting_xml(p_pyhouse_obj)
         self.m_family.start_lighting_families(self.m_house_obj)
         LOG.info("Started.")

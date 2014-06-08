@@ -445,14 +445,17 @@ function buildDeleteButton(p_handler) {
 /**
  * Build a table of buttons in the current widget space.
  * Use the names to build callbacks for the buttons being clicked on
- * Used for things like selectingf a light or house to work on.
+ * Used for things like selecting a light or house to work on.
  * 
  * @param p_obj = a dict of item dicts to build from
- * @param nameFunction is the name of a function used to build a more complex caption for the buttons
+ * @param p_handler = is a literal name of a handler function { 'handleMenuOnClick' )
+ * @param nameFunction (optional) is the name of a function used to build a more complex caption for the buttons.
+ * 			Omit this parameter if it is not used - no need for a placeholder
+ * @param noOptions (optional) is the things to skip ('NoAdd' will omit the add button).
  * @returns = innerHTML of a table filled in with buttons
  */
 function buildTable(p_obj, p_handler, /* optional */ nameFunction, noOptions) {
-	//Divmod.debug('---', 'globals.buildTable(1) called. ' + p_obj + ' ' + p_handler + ' ' + nameFunction + ' ' + noOptions);
+	Divmod.debug('---', 'globals.buildTable(1) called. ' + p_obj + ' ' + p_handler + ' ' + nameFunction + ' ' + noOptions);
 	var l_function = nameFunction;
 	var l_options = noOptions;
 	if (typeof nameFunction !== 'function') {
@@ -463,10 +466,12 @@ function buildTable(p_obj, p_handler, /* optional */ nameFunction, noOptions) {
 		l_options = '';
 	var l_cols = 5;
 	var l_count = 0;
-	//Divmod.debug('---', 'globals.buildTable(2) called. ' + Object.keys(p_obj).length);
+
+	Divmod.debug('---', 'globals.buildTable(2) called. Building a table of ' + Object.keys(p_obj).length);
 	var l_html = "<table><tr>\n";
+
 	for (var l_item in p_obj) {
-		//Divmod.debug('---', 'globals.buildTable(3) called. ' + l_item + ' ' + p_obj);
+		Divmod.debug('---', 'globals.buildTable(3) called. ' + l_item + ' ' + p_obj);
 		var l_background = BUTTON_ACTIVE;
 		if (p_obj[l_item]['Active'] != true)
 			l_background = BUTTON_INACTIVE;

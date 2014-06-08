@@ -56,11 +56,11 @@ class Test_01_Families(unittest.TestCase):
         pass
 
     def test_0111_build_family(self):
-        self.m_api.build_lighting_family_info(self.m_house)
+        self.m_api.build_lighting_family_info()
         pass
 
     def test_0112_start_family(self):
-        l_family_obj = self.m_api.build_lighting_family_info(self.m_house)
+        l_family_obj = self.m_api.build_lighting_family_info()
         l_family_obj = self.m_api.build_one_family('Insteon')
         l_ret = self.m_api.import_module(l_family_obj)
         self.assertNotEqual(l_ret, None, 'Error importing module Insteon')

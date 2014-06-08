@@ -75,7 +75,7 @@ class API(object):
             LOG.error("Cannot get API - Module:{0:},   Reason: {1:}.".format(p_module, l_reason))
         return l_api
 
-    def build_lighting_family_info(self, p_house_obj):
+    def build_lighting_family_info(self):
         """
         Called from Lighting.
 
@@ -90,7 +90,7 @@ class API(object):
                 l_family_obj.ModuleAPI = l_module.API()
             except AttributeError as l_reason:
                 l_family_obj.ModuleAPI = None
-                LOG.error("Cannot get API - Module:{0:}, House:{1:}   Reason: {2:}.".format(l_module, p_house_obj.Name, l_reason))
+                LOG.error("Cannot get API - Module:{0:},   Reason: {2:}.".format(l_module, l_reason))
             l_family_data[l_family_obj.Name] = l_family_obj
             self.m_count += 1
         return l_family_data
@@ -99,7 +99,8 @@ class API(object):
         pass
 
     def start_lighting_families(self, p_house_obj):
-        """Load and start the family if there is a controller in the house for the family.
+        """
+        Load and start the family if there is a controller in the house for the family.
         Runs Device_<family>.API.Start()
         """
         LOG.info("---Starting lighting families for house {0:}.".format(p_house_obj.Name))

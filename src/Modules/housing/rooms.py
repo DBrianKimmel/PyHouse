@@ -14,8 +14,8 @@
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
-from Modules.utils import xml_tools
 from Modules.Core.data_objects import RoomData
+from Modules.utils import xml_tools
 
 
 g_debug = 0

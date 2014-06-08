@@ -47,7 +47,7 @@ class BaseLightingData(ABaseObject):
         self.RoomName = ''
         self.Type = ''
 
-    def reprJSON(self):
+    def XXreprJSON(self):
         """lighting_core.
         """
         l_ret = dict(
@@ -89,7 +89,7 @@ class ControllerData(BaseLightingData):
         self._Message = ''
         self._Queue = None
 
-    def reprJSON(self):
+    def XXreprJSON(self):
         '''lighting_controllers.
         '''
         # print "lighting_controllers.reprJSON(1)"
@@ -123,7 +123,7 @@ class FamilyData(ABaseObject):
         self.ModuleName = ''  # Device_Insteon
         self.PackageName = ''  # Modules.families.Insteon
 
-    def reprJSON(self):
+    def XXreprJSON(self):
         l_ret = dict(Name = self.Name, Key = self.Key, Active = self.Active,
             ModuleName = self.ModuleName,
             PackageName = self.PackageName
@@ -203,7 +203,7 @@ class HouseData(ABaseObject):
         self.Schedules = {}
         self.Thermostats = {}
 
-    def reprJSON(self):
+    def XXreprJSON(self):
         """HouseData.
         """
         l_ret = dict(
@@ -229,7 +229,7 @@ class RoomData(ABaseObject):
         self.Size = ''
         self.Type = 'Room'
 
-    def reprJSON(self):
+    def XXreprJSON(self):
         l_ret = dict(Name = self.Name, Key = self.Key, Active = self.Active,
                     Comment = self.Comment, Corner = self.Corner, Size = self.Size,
                     Type = self.Type, UUID = self.UUID)
@@ -306,7 +306,7 @@ class InternetConnectionDynDnsData(ABaseObject):
         self.Interval = 0
         self.Url = None
 
-    def reprJSON(self):
+    def XXreprJSON(self):
         return dict(Name = self.Name, Key = self.Key, Active = self.Active,
                     Interval = self.Interval, Url = self.Url
                     )
@@ -357,7 +357,7 @@ class LocationData(object):
         self.TimeZone = '-5:00'
         self.ZipCode = '12345'
 
-    def reprJSON(self):
+    def XXreprJSON(self):
         l_ret = dict(
             City = self.City, Latitude = self.Latitude, Longitude = self.Longitude, Phone = self.Phone,
             SavingsTime = self.SavingTime, State = self.State, Street = self.Street, TimeZone = self.TimeZone,

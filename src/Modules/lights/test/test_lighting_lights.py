@@ -17,7 +17,7 @@ from twisted.trial import unittest
 from Modules.Core.data_objects import PyHouseData, HouseData
 from Modules.lights import lighting_lights
 from Modules.web import web_utils
-from Modules.utils.xml_tools import PrettifyXML
+from Modules.utils.tools import PrettyPrintAny
 from src.test import xml_data
 
 XML = xml_data.XML_LONG
@@ -74,12 +74,12 @@ class Test_02_ReadXML(unittest.TestCase):
         """
         l_light = self.m_api.read_one_light_xml(self.m_house_xml)
         l_xml = self.m_api.write_one_light_xml(l_light)
-        print('XML: {0:}'.format(PrettifyXML(l_xml)))
+        print('XML: {0:}'.format(PrettyPrintAny(l_xml)))
 
     def test_0212_WriteAllLights(self):
         l_lights_xml = self.m_api.read_lights_xml(self.m_house_xml)
         l_xml = self.m_api.write_lights_xml(l_lights_xml)
-        print('XML: {0:}'.format(PrettifyXML(l_xml)))
+        print('XML: {0:}'.format(PrettyPrintAny(l_xml)))
 
     def test_0221_CreateJson(self):
         """ Create a JSON object for Location.
@@ -87,7 +87,7 @@ class Test_02_ReadXML(unittest.TestCase):
         l_light = self.m_api.read_lights_xml(self.m_house_xml)
         print('Light: {0:}'.format(l_light))
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_light))
-        print('JSON: {0:}'.format(l_json))
+        PrettyPrintAny(l_json)
         # self.assertEqual(l_json[0] ['Comment'], 'Switch')
 
 # ## END DBK

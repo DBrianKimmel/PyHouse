@@ -16,8 +16,8 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from Modules.Core.data_objects import PyHouseData, HouseData
 from Modules.lights import lighting_controllers
+from Modules.families import family
 from Modules.web import web_utils
-from Modules.utils.xml_tools import PrettifyXML
 from src.test import xml_data
 from src.Modules.utils.tools import PrettyPrintAny
 
@@ -32,9 +32,11 @@ class Test_02_XML(unittest.TestCase):
         self.m_pyhouse_obj.XmlRoot = self.m_root = ET.fromstring(XML)
         self.m_houses_xml = self.m_root.find('Houses')
         self.m_house_xml = self.m_houses_xml.find('House')  # First house
+        self.m_pyhouse_obj.XmlSection = self.m_house_xml
         self.m_controllers_xml = self.m_house_xml.find('Controllers')
         self.m_controller_xml = self.m_controllers_xml.find('Controller')
-        self.m_api = lighting_controllers.ControllersAPI()
+        self.m_pyhouse_obj.HouseData.FamilyData = family.API().build_lighting_family_info()
+        self.m_api = lighting_controllers.ControllersAPI(self.m_pyhouse_obj)
 
     def test_0202_FindXml(self):
         """ Be sure that the XML contains the right stuff.
@@ -77,14 +79,14 @@ class Test_02_XML(unittest.TestCase):
         """
         l_controller = self.m_api.read_one_controller_xml(self.m_controller_xml)
         l_xml = self.m_api.write_one_controller_xml(l_controller)
-        print('XML: {0:}'.format(PrettifyXML(l_xml)))
+        print('XML: {0:}'.format(PrettyPrintAny(l_xml)))
 
     def test_0212_WriteControllersXml(self):
         """ Write out the XML file for the location section
         """
         l_controllers = self.m_api.read_controllers_xml(self.m_house_xml)
         l_xml = self.m_api.write_controllers_xml(l_controllers)
-        print('XML: {0:}'.format(PrettifyXML(l_xml)))
+        print('XML: {0:}'.format(PrettyPrintAny(l_xml)))
 
     def test_0221_CreateJson(self):
         """ Create a JSON object for Location.

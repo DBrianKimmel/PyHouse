@@ -14,7 +14,7 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHousesData, HouseData
+from Modules.Core.data_objects import PyHouseData, HouseData
 from Modules.housing import house
 from Modules.utils import xml_tools
 from src.test import xml_data
@@ -60,7 +60,7 @@ class Test_02_FullXML(unittest.TestCase):
 class Test_03_ReadEmptyXML(unittest.TestCase):
 
     def setUp(self):
-        self.m_pyhouses_obj = PyHousesData()
+        self.m_pyhouses_obj = PyHouseData()
         self.m_pyhouses_obj.XmlRoot = ET.fromstring(xml_data.XML_EMPTY)
         self.m_api = house.API()
 
@@ -75,7 +75,7 @@ class Test_03_ReadEmptyXML(unittest.TestCase):
 class Test_04_ReadFullXML(unittest.TestCase):
 
     def setUp(self):
-        self.m_pyhouses_obj = PyHousesData()
+        self.m_pyhouses_obj = PyHouseData()
         self.m_pyhouses_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         self.m_pyhouses_obj.HouseData = HouseData()
         # self.m_pyhouses_obj.HouseIndex = 0
@@ -89,7 +89,7 @@ class Test_04_ReadFullXML(unittest.TestCase):
 class Test_05_TestUtilities(unittest.TestCase):
 
     def setUp(self):
-        self.m_pyhouses_obj = PyHousesData()
+        self.m_pyhouses_obj = PyHouseData()
         self.m_pyhouses_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         self.m_pyhouses_obj.HouseData = HouseData()
         # self.m_pyhouses_obj.HouseIndex = 0

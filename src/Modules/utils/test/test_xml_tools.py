@@ -17,7 +17,7 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHousesData, HouseData, BaseLightingData
+from Modules.Core.data_objects import PyHouseData, HouseData, BaseLightingData
 from Modules.utils import xml_tools
 from Modules.lights import lighting_lights
 from Modules.lights import lighting_controllers
@@ -44,8 +44,8 @@ class Test_02_PutGetXML(unittest.TestCase):
     """
 
     def setUp(self):
-        self.m_pyhouses_obj = PyHousesData()
-        self.m_pyhouses_obj.XmlRoot = ET.fromstring(XML1)
+        self.m_pyhouse_obj = PyHouseData()
+        self.m_pyhouse_obj.XmlRoot = ET.fromstring(XML1)
         self.m_fields = ET.fromstring(XML)
         self.m_api = xml_tools.PutGetXML()
 
@@ -106,9 +106,9 @@ class Test_03_ConfigTools(unittest.TestCase):
     """
 
     def setUp(self):
-        self.m_pyhouses_obj = PyHousesData()
-        self.m_pyhouses_obj.HouseData = HouseData()
-        self.m_pyhouses_obj.XmlRoot = self.m_root = ET.fromstring(XML1)
+        self.m_pyhouse_obj = PyHouseData()
+        self.m_pyhouse_obj.HouseData = HouseData()
+        self.m_pyhouse_obj.XmlRoot = self.m_root = ET.fromstring(XML1)
         self.m_houses_xml = self.m_root.find('Houses')
         self.m_house_xml = self.m_houses_xml.find('House')  # First house
         self.m_lights_xml = self.m_house_xml.find('Lights')
@@ -130,7 +130,7 @@ class Test_04_ConfigFile(unittest.TestCase):
     """
 
     def setUp(self):
-        self.m_pyhouses_obj = PyHousesData()
+        self.m_pyhouses_obj = PyHouseData()
         self.m_pyhouses_obj.XmlRoot = ET.fromstring(XML1)
         self.m_houses_xml = self.m_pyhouses_obj.XmlRoot.find('Houses')
         self.m_house_xml = self.m_houses_xml.find('House')
@@ -145,7 +145,7 @@ class Test_05_UnClass(unittest.TestCase):
     """
 
     def setUp(self):
-        self.m_pyhouses_obj = PyHousesData()
+        self.m_pyhouses_obj = PyHouseData()
         self.m_pyhouses_obj.XmlRoot = ET.fromstring(XML1)
         self.m_houses_xml = self.m_pyhouses_obj.XmlRoot.find('Houses')
         self.m_house_xml = self.m_houses_xml.find('House')
@@ -157,7 +157,7 @@ class Test_05_UnClass(unittest.TestCase):
     def test_0501_StuffAttrs(self):
         l_objA = lighting_lights.LightingAPI().read_one_light_xml(self.m_light_xml)
         print('A: {0:}'.format(vars(l_objA)))
-        l_objB = lighting_controllers.ControllersAPI().read_one_controller_xml(self.m_controller_xml)
+        l_objB = lighting_controllers.ControllersAPI(self.m_pyhouses_obj).read_one_controller_xml(self.m_controller_xml)
         # l_objAdeep = copy.deepcopy(l_objA)
         print('B: {0:}'.format(vars(l_objB)))
         xml_tools.stuff_new_attrs(l_objA, l_objB)

@@ -25,10 +25,53 @@ def PrettyPrintAny(p_any, p_title = ''):
         PrettyPrintDict(p_any)
     elif isinstance(p_any, ET.Element):
         PrettyPrintXML(p_any)
+    elif isinstance(p_any, str):
+        PrettyPrintString(p_any)
     else:
-        print(' - - Type is - - {0:}'.format(l_type))
+        print(' - - Other Type is - - {0:}'.format(l_type))
         PrettyPrintObject(p_any)
     print('---------------------------------')
+
+def PrettyPrintDict(p_dict, p_format = "%-25s %s"):
+    for (key, val) in p_dict.iteritems():
+        print(p_format % (str(key) + ':', val))
+
+def PrettyPrintXML(p_element):
+    """Return a pretty-printed XML string for the Element.
+
+    @param p_element: an element to format as a readable XML tree.
+    @return: a string formatted with indentation and newlines.
+    """
+    l_rough_string = ET.tostring(p_element, 'utf-8')
+    l_reparsed = minidom.parseString(l_rough_string)
+    l_doc = l_reparsed.toprettyxml(indent = "    ")
+    l_lines = l_doc.splitlines()
+    for l_line in l_lines:
+        if not l_line.isspace():
+            print l_line
+
+def PrettyPrintObject(p_obj, maxlen = 180, lindent = 24, maxspew = 2000):
+    def truncstring(s, maxlen):
+        if len(s) > maxlen:
+            return s[0:maxlen] + ' ...(%d more chars)...' % (len(s) - maxlen)
+        else:
+            return s
+    l_tab = 2
+    l_attrs = []
+    l_tabbedwidths = [l_tab, lindent - l_tab, maxlen - lindent - l_tab]
+    l_filtered = filter(lambda aname: not aname.startswith('__'), dir(p_obj))
+    # for l_slot in dir(p_obj):
+    for l_slot in l_filtered:
+        l_attr = getattr(p_obj, l_slot)
+        l_attrs.append((l_slot, l_attr))
+    l_attrs.sort()
+    for (attr, l_val) in l_attrs:
+        print(PrettyPrintCols(('', attr, truncstring(str(l_val), maxspew)), l_tabbedwidths, ' '))
+
+def PrettyPrintString(p_obj):
+    l_str = prettyPrint(p_obj, 120)
+    print(l_str)
+
 
 
 def PrintBytes(p_message):
@@ -68,44 +111,6 @@ def PrettyPrintCols(strings, widths, split = ' '):
         return l_format % tuple(map(lambda s: (s or ''), cols))
     # generate the formatted text
     return '\n'.join(map(formatline, *cols))
-
-def PrettyPrintDict(p_dict, p_format = "%-25s %s"):
-    for (key, val) in p_dict.iteritems():
-        print(p_format % (str(key) + ':', val))
-
-
-def PrettyPrintObject(p_obj, maxlen = 180, lindent = 24, maxspew = 2000):
-    def truncstring(s, maxlen):
-        if len(s) > maxlen:
-            return s[0:maxlen] + ' ...(%d more chars)...' % (len(s) - maxlen)
-        else:
-            return s
-    l_tab = 2
-    l_attrs = []
-    l_tabbedwidths = [l_tab, lindent - l_tab, maxlen - lindent - l_tab]
-    l_filtered = filter(lambda aname: not aname.startswith('__'), dir(p_obj))
-    # for l_slot in dir(p_obj):
-    for l_slot in l_filtered:
-        l_attr = getattr(p_obj, l_slot)
-        l_attrs.append((l_slot, l_attr))
-    l_attrs.sort()
-    for (attr, l_val) in l_attrs:
-        print(PrettyPrintCols(('', attr, truncstring(str(l_val), maxspew)), l_tabbedwidths, ' '))
-
-
-def PrettyPrintXML(p_element):
-    """Return a pretty-printed XML string for the Element.
-
-    @param p_element: an element to format as a readable XML tree.
-    @return: a string formatted with indentation and newlines.
-    """
-    l_rough_string = ET.tostring(p_element, 'utf-8')
-    l_reparsed = minidom.parseString(l_rough_string)
-    l_doc = l_reparsed.toprettyxml(indent = "    ")
-    l_lines = l_doc.splitlines()
-    for l_line in l_lines:
-        if not l_line.isspace():
-            print l_line
 
 
 #######################################

@@ -1,11 +1,19 @@
-'''
-Created on May 30, 2013
+"""
+-*- test-case-name: PyHouse.Modules.web.test.test_web_utils -*-
 
-@author: briank
-'''
+@name: PyHouse/src/Modules/web/web_utils.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
+@Copyright (c) 2013-2014 by D. Brian Kimmel
+@license: MIT License
+@note: Created on May 30, 2013
+@summary: Test handling the information for a house.
+
+"""
 
 # Import system type stuff
 import datetime
+import jsonpickle
 import random
 import twisted.python.components as tpc
 from nevow import flat
@@ -23,13 +31,6 @@ from Modules.utils import xml_tools
 
 
 g_debug = 0
-# 0 = off
-# 1 = log extra info
-# 2 = major routine entry
-# 3 = Config file handling
-# 4 = Debugging info
-# 5 = dump
-# + = NOT USED HERE
 
 
 # Web States defined
@@ -55,21 +56,31 @@ BUTTON = 'post_btn'
 
 
 class State(object):
-    """The state of the web server
+    """Used by various web_ modules to keep the state of the web server.
     """
     def __init__(self):
         self.State = WS_IDLE
 
 
 class WebUtilities(xml_tools.ConfigFile):
-    """
+    """Unused
     """
 
 
 class ComplexHandler(json.JSONEncoder):
     """
+    Handle JSON conversion.
+    Use reprJSON method if a data class has one - or-
+    convert every attribute in the Data class when it does not have a reprJSON method.
     """
+
     def default(self, p_obj):
+        """
+        @param p_obj: is an instance of a Data class to get a JSON representation.
+        @return: a JSON encoding of the object.
+
+        reprJSON is for extremely complex objects that cannot be encoded otherwise.
+        """
         if hasattr(p_obj, 'reprJSON'):
             return p_obj.reprJSON()
         else:
@@ -126,7 +137,8 @@ class JsonUnicode(object):
         """Convert a python object to a valid json object.
         """
         try:
-            l_json = json.dumps(p_obj, cls = ComplexHandler)
+            # l_json = json.dumps(p_obj, cls = ComplexHandler)
+            l_json = jsonpickle.encode(p_obj)
         except (TypeError, ValueError) as l_error:
             print('web_utils.encode_json ERROR {0:}'.format(l_error))
             l_json = None

@@ -58,9 +58,9 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 	function startWidget(self) {
 		function cb_getHousesInfo(p_json) {
 			//Divmod.debug('---', 'houseSelect.startWidget.cb_getHousesInfo() was called.');
-			//console.log("houseSelect.startWidget.cb   JSON = %O", p_json);
+			console.log("houseSelect.startWidget.cb   JSON = %O", p_json);
 			var l_obj = JSON.parse(p_json);
-			var l_tab = buildTable(l_obj, 'handleMenuOnClick');
+			var l_tab = buildTable(l_obj, 'handleMenuOnClick', 'NoAdd');
 			self.showSelectButtons();
 			self.hideSelectedHouse();
 			self.nodeById('HouseSelectTableDiv').innerHTML = l_tab;
@@ -83,7 +83,7 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 	function getSelectedHouseData(self) {
 		function cb_getSelectedHouseData(p_json) {
 			//Divmod.debug('---', 'houseSelect.cb_getSelectedHouseData.cb_getSelectedHouseData() was called.');
-			//console.log("ss.cb   p1 %O", p_json);
+			console.log("ss.cb   p1 %O", p_json);
 			var l_obj = JSON.parse(p_json);
 			globals.House.HouseObj = l_obj;
 		}
