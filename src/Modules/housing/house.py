@@ -127,14 +127,14 @@ class API(Utility):
         LOG.info("Started. - {0:}\n".format(l_msg))
         return self.m_house_obj
 
-    def Stop(self, p_xml, p_house_obj):
+    def Stop(self, p_xml):
         """Stop all houses.
         Append the house XML to the passed in xlm tree.
         """
         LOG.info("Stopping House:{0:}.".format(self.m_house_obj.Name))
-        l_house_xml = self.write_house_xml(p_house_obj)
-        l_house_xml.append(self.write_location_xml(p_house_obj.Location))
-        l_house_xml.append(self.write_rooms_xml(p_house_obj.Rooms))
+        l_house_xml = self.write_house_xml(self.m_house_obj)
+        l_house_xml.append(self.write_location_xml(self.m_house_obj.Location))
+        l_house_xml.append(self.write_rooms_xml(self.m_house_obj.Rooms))
         try:
             self.m_house_obj.ScheduleAPI.Stop(l_house_xml)
         except AttributeError:  # New house has  no schedule
