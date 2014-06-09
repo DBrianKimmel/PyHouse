@@ -14,7 +14,7 @@ from Modules.Core.data_objects import ControllerData
 from Modules.lights import lighting_core
 from Modules.utils import pyh_log
 from Modules.drivers import interface
-from src.Modules.utils.tools import PrettyPrintAny
+# from src.Modules.utils.tools import PrettyPrintAny
 
 g_debug = 1
 LOG = pyh_log.getLogger('PyHouse.Controller  ')
@@ -35,11 +35,11 @@ class ControllersAPI(lighting_core.CoreAPI):
 
     def _read_family_data(self, p_obj, p_xml):
         l_family = p_obj.Family
-        PrettyPrintAny(self.m_pyhouse_obj.HouseData, 'HouseData')
-        PrettyPrintAny(self.m_pyhouse_obj.HouseData.FamilyData, 'FamilyData')
+        # PrettyPrintAny(self.m_pyhouse_obj.HouseData, 'HouseData')
+        # PrettyPrintAny(self.m_pyhouse_obj.HouseData.FamilyData, 'FamilyData')
         l_api = self.m_pyhouse_obj.HouseData.FamilyData[l_family].ModuleAPI
         l_api.extract_device_xml(p_obj, p_xml)
-        PrettyPrintAny(p_obj, 'Lighting Controller')
+        # PrettyPrintAny(p_obj, 'Lighting Controller')
 
     def _read_interface_data(self, p_obj, p_xml):
         interface.ReadWriteConfig().extract_xml(p_obj, p_xml)

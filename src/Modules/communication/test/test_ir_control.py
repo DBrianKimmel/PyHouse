@@ -6,6 +6,7 @@
 @license: MIT License
 @note: Created on Mar 22, 2014
 @summary: Test
+
 """
 
 # Import system type stuff
@@ -22,7 +23,7 @@ XML = xml_data.XML_LONG
 
 class Test_02_XML(unittest.TestCase):
 
-    def _pyHouses(self):
+    def setUp(self):
         self.m_pyhouse_obj = PyHouseData()
         self.m_pyhouse_obj.HouseData = HouseData()
         self.m_pyhouse_obj.XmlRoot = self.m_root = ET.fromstring(XML)
@@ -30,10 +31,6 @@ class Test_02_XML(unittest.TestCase):
         self.m_house = self.m_houses.find('House')
         self.m_house_obj = RoomData()
         self.m_api = ir_control.API()
-
-    def setUp(self):
-        pass
-
 
     def tearDown(self):
         pass

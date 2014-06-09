@@ -1,12 +1,12 @@
 """
-pandora.py
+-*- test-case-name: PyHouse.src.Modules.entertain.test.test_pandora -*-
 
-Created on Feb 27, 2014
-
-@author: briank
-
+@name: PyHouse/src/Modules/entertain/pandora.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
-
+@note: Created on Feb 27, 2014
+@license: MIT License
 @summary: Controls pandora playback thru pianobar.
 
 When PyHouse starts initially, Pandora is inactive.
