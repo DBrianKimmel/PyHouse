@@ -67,7 +67,7 @@ class GetAllInterfaceData(object):
         global InterfacesData
         for l_ix in l_interfaces:
             l_interface = NodeInterfaceData()
-            l_interface.Type = 'Other'
+            l_interface.NodeInterfaceType = 'Other'
             l_interface.Name = l_ix
             l_interface.Key = l_count
             for l_af in netifaces.ifaddresses(l_ix):
@@ -80,7 +80,7 @@ class GetAllInterfaceData(object):
             if l_interface.V4Address == [] and l_interface.V6Address == []:
                 continue
             LOG.info("Interface:{0:}, Mac:{1:}, V4:{2:}, V6:{3:} - {4:}".format(l_interface.Name, l_interface.MacAddress, l_interface.V4Address, l_interface.V6Address, l_count))
-            p_node.Interfaces[l_count] = l_interface
+            p_node.NodeInterfaces[l_count] = l_interface
             l_count += 1
 
     def _get_list(self, p_list):
@@ -156,8 +156,8 @@ class XML(ConfigTools):
         l_node_obj = NodeData()
         self.read_base_object_xml(l_node_obj, p_node_xml)
         l_node_obj.ConnectionAddr_IPv4 = self.get_text_from_xml(p_node_xml, 'ConnectionAddressV4')
-        l_node_obj.Role = self.get_int_from_xml(p_node_xml, 'Role')
-        l_node_obj.Interfaces = self.read_interfaces_xml(p_node_xml.find('Interfaces'))
+        l_node_obj.NodeRole = self.get_int_from_xml(p_node_xml, 'NodeRole')
+        l_node_obj.NodeInterfaces = self.read_interfaces_xml(p_node_xml.find('Interfaces'))
         return l_node_obj
 
     def read_nodes_xml(self, p_nodes_xml):
@@ -175,8 +175,8 @@ class XML(ConfigTools):
     def write_one_node_xml(self, p_node_obj):
         l_entry = self.write_base_object_xml('Node', p_node_obj)
         self.put_text_element(l_entry, 'ConnectionAddressV4', p_node_obj.ConnectionAddr_IPv4)
-        self.put_int_element(l_entry, 'Role', p_node_obj.Role)
-        l_entry.append(self.write_interfaces_xml(p_node_obj.Interfaces))
+        self.put_int_element(l_entry, 'NodeRole', p_node_obj.NodeRole)
+        l_entry.append(self.write_interfaces_xml(p_node_obj.NodeInterfaces))
         return l_entry
 
     def write_nodes_xml(self, p_nodes_obj):
@@ -220,7 +220,7 @@ class Utility(XML):
         return p_role
 
     def init_node_type(self, p_pyhouses_obj):
-        l_role = p_pyhouses_obj.Nodes[0].Role
+        l_role = p_pyhouses_obj.Nodes[0].NodeRole
         if l_role & NODE_PIFACECAD:
             self._init_ir_control(p_pyhouses_obj)
         elif l_role & NODE_LIGHTS:
@@ -267,7 +267,7 @@ class API(Utility):
         p_pyhouse_obj.Nodes[0] = self.m_node
         self.read_nodes_xml(p_pyhouse_obj.XmlRoot.find('Nodes'))
         self.get_node_info(p_pyhouse_obj)
-        p_pyhouse_obj.Nodes[0].Role = self.find_node_role()
+        p_pyhouse_obj.Nodes[0].NodeRole = self.find_node_role()
         self.init_node_type(p_pyhouse_obj)
         LOG.info('Started')
 

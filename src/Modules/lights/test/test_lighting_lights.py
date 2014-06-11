@@ -62,7 +62,7 @@ class Test_02_ReadXML(unittest.TestCase):
         self.assertEqual(l_light.Dimmable, False, 'Bad dimmable')
         self.assertEqual(l_light.Family, 'Insteon', 'Bad family')
         self.assertEqual(l_light.RoomName, 'Test Living Room', 'Bad Room Name')
-        self.assertEqual(l_light.Type, 'Light', 'Bad Type')
+        self.assertEqual(l_light.LightingType, 'Light', 'Bad LightingType')
 
     def test_0203_ReadLightsXml(self):
         l_lights = self.m_api.read_lights_xml(self.m_house_xml)
@@ -81,7 +81,7 @@ class Test_02_ReadXML(unittest.TestCase):
         l_xml = self.m_api.write_lights_xml(l_lights_xml)
         print('XML: {0:}'.format(PrettyPrintAny(l_xml)))
 
-    def test_0221_CreateJson(self):
+    def test_0281_CreateJson(self):
         """ Create a JSON object for Location.
         """
         l_light = self.m_api.read_lights_xml(self.m_house_xml)

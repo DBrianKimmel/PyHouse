@@ -178,7 +178,6 @@ class API(Utilities):
         """This is automatically invoked when the reactor starts from API().
         """
         self.m_pyhouse_obj.CoreAPI.Start(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.WebAPI.Start(self.m_pyhouse_obj)
         LOG.info("Started.\n")
 
     def Stop(self):
@@ -186,12 +185,9 @@ class API(Utilities):
         """
         LOG.info("Saving all data to XML file.")
         l_xml = ET.Element("PyHouse")
-        self.m_pyhouse_obj.WebAPI.Stop(l_xml)
-        self.m_pyhouse_obj.LogsAPI.Stop(l_xml)
         self.m_pyhouse_obj.CoreAPI.Stop(l_xml)
+        self.m_pyhouse_obj.LogsAPI.Stop(l_xml)
         xml_tools.write_xml_file(l_xml, self.m_pyhouse_obj.XmlFileName)
-        LOG.info("XML file has been updated.")
-        LOG.info("Stopped.\n\n")
 
     def Reload(self, _p_pyhouses_obj):
         """Update XML file with current info.
@@ -204,7 +200,6 @@ class API(Utilities):
         """Prepare to exit all of pyhouse
         """
         self.Stop()
-        LOG.info("Quit.\n\n\n")
         self.m_pyhouse_obj.Reactor.stop()
 
 

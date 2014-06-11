@@ -15,7 +15,7 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, CoreServicesData, NodeData
+from Modules.Core.data_objects import PyHouseData, CoreServices, NodeData
 from Modules.Core import node_local
 # from Modules.utils import xml_tools
 from src.test import xml_data
@@ -40,7 +40,7 @@ class Test_02_ReadXML(unittest.TestCase):
     def setUp(self):
         self.m_pyhouse_obj = PyHouseData()
         self.m_pyhouse_obj.XmlRoot = ET.fromstring(xml_data.XML_LONG)
-        self.m_pyhouse_obj.CoreServicesData = CoreServicesData()
+        self.m_pyhouse_obj.CoreServices = CoreServices()
         self.m_pyhouse_obj.Nodes[0] = NodeData()
         self.m_api = node_local.API()
 

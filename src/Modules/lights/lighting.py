@@ -49,6 +49,11 @@ class Utility(ControllersAPI, LightingAPI):
         p_pyhouse_obj.HouseData.Buttons = ButtonsAPI().read_buttons_xml(l_house_xml)
         p_pyhouse_obj.HouseData.Lights = self.read_lights_xml(l_house_xml)
 
+    def _write_lighting_xml(self, p_xml):
+        p_xml.append(self.write_lights_xml(self.m_house_obj.Lights))
+        p_xml.append(self.write_buttons_xml(self.m_house_obj.Buttons))
+        p_xml.append(self.write_controllers_xml(self.m_house_obj.Controllers))
+
 
 class API(Utility):
 
@@ -71,17 +76,15 @@ class API(Utility):
         """
         LOG.info("Stopping all lighting families.")
         self.m_family.stop_lighting_families(p_xml, self.m_house_obj.FamilyData)
-        p_xml.append(self.write_lights_xml(self.m_house_obj.Lights))
-        p_xml.append(self.write_buttons_xml(self.m_house_obj.Buttons))
-        p_xml.append(self.write_controllers_xml(self.m_house_obj.Controllers))
+        self._write_lighting_xml(p_xml)
         LOG.info("Stopped.")
 
     def ChangeLight(self, p_light_obj, p_level):
         l_key = p_light_obj.Key
         l_light_obj = self.m_house_obj.Lights[l_key]
-        LOG.info("Turn Light {0:} to level {1:}, Family:{2:}".format(l_light_obj.Name, p_level, l_light_obj.Family))
+        LOG.info("Turn Light {0:} to level {1:}, Family:{2:}".format(l_light_obj.Name, p_level, l_light_obj.LightingFamily))
         for l_family_obj in self.m_house_obj.FamilyData.itervalues():
-            if l_family_obj.Name != l_light_obj.Family:
+            if l_family_obj.Name != l_light_obj.LightingFamily:
                 continue
             l_family_obj.ModuleAPI.ChangeLight(l_light_obj, p_level, 0)
 

@@ -28,7 +28,7 @@ What I want to happen on startup:
 import pprint
 from twisted.internet.endpoints import TCP4ClientEndpoint, TCP4ServerEndpoint
 from twisted.internet.protocol import ServerFactory, ClientFactory
-from twisted.protocols.amp import AMP, Integer, String, AmpList, Command, CommandLocator
+from twisted.protocols.amp import AMP, Integer, String, AmpList, Command, CommandLocator, BinaryBoxProtocol
 from twisted.internet.defer import Deferred
 from twisted.application.internet import StreamServerEndpointService
 
@@ -61,7 +61,7 @@ class NodeInformationCommand(Command):
     arguments = [('Name', String()),
                  ('Active', String(optional = True)),
                  ('Address', String(optional = True)),
-                 ('Role', Integer(optional = True)),
+                 ('NodeRole', Integer(optional = True)),
                  ('UUID', String(optional = True))
                  ]
     response = [('Name', String()),
@@ -87,10 +87,11 @@ class DomainBoxDispatcher(AMP):
 
     m_amp = None
 
-    def __init__(self):
+    def __init__(self, p_pyhouse_obj):
         """
         @param p_address: is a 3-tupple (AddressFamily, IPv4Addr, Port)
         """
+        self.m_pyhouse_obj = p_pyhouse_obj
         self.m_locator = LocatorClass()
         super(DomainBoxDispatcher, self).__init__(self.m_locator)
         self.m_amp = self
@@ -143,7 +144,7 @@ class DomainBoxDispatcher(AMP):
         self.boxSender = None
 
 
-    def send_NodeInformation_1(self, p_node):
+    def XXXsend_NodeInformation_1(self, p_node):
         """For some reason, this gives a error 'NoneType' object has no attribute 'sendBox'
         The information is sent somehow.
         """
@@ -154,7 +155,7 @@ class DomainBoxDispatcher(AMP):
         try:
             l_defer = self.callRemote(NodeInformationCommand,
                         Name = p_node.Name, Active = str(p_node.Active), Address = p_node.ConnectionAddr_IPv4,
-                        Role = int(p_node.Role), UUID = "1122")
+                        Role = int(p_node.NodeRole), UUID = "1122")
             if g_debug >= 1:
                 # LOG.debug(' Dispatch - send_NodeInformation_1  - SENT to {0:} (236)'.format(self.m_address))
                 pass
@@ -173,29 +174,28 @@ class DomainBoxDispatcher(AMP):
     NodeInformationCommand.responder(receive_NodeInformation)
 
 
-    def update_NodeInformation(self, _p_box):
+    def update_NodeInformation(self, p_box):
         if g_debug >= 1:
             LOG.debug('Dispatch - update_NodeInformation  (DBD-9  178)')
-        pass
-
-
+            LOG.debug('     Box: {0:}'.format(vars(p_box)))
+        for l_node in self.m_pyhouse_obj.Nodes.itervals():
+            if l_node.Name == p_box.Name:
+                l_node.Role = p_box.Role
+                l_node.UUID = p_box.UUID
+                l_node.Active = p_box.Active
 
 
 class AmpServerFactory(ServerFactory):
     """
     """
-    # protocol = AMP
-
     def __init__(self, p_pyhouses_obj):
         self.m_pyhouse_obj = p_pyhouses_obj
 
     def buildProtocol(self, _p_address_tupple):
         l_protocol = NodeDomainServerProtocol(self.m_pyhouse_obj)
         if g_debug >= 4:
-            LOG.debug('AmpServerFactory.buildProtocol()  (195)')
+            LOG.debug('AmpServerFactory.buildProtocol()  (197)')
         return l_protocol
-
-
 
 
 class NodeDomainServerProtocol(DomainBoxDispatcher):
@@ -206,10 +206,10 @@ class NodeDomainServerProtocol(DomainBoxDispatcher):
     When BinaryBoxProtocol is connected to a transport, it calls startReceivingBoxes on its IBoxReceiver
     with itself as the IBoxSender parameter.
     """
-    def __init__(self, p_pyhouses_obj):
+    def __init__(self, p_pyhouse_obj):
         LOG.debug('NodeDomainServerProtocol()  (NDSP-1  210)')
-        self.m_pyhouse_obj = p_pyhouses_obj
-        self.m_disp = DomainBoxDispatcher()
+        self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_disp = DomainBoxDispatcher(p_pyhouse_obj)
         # AMP.__init__(AMP(), boxReceiver = l_disp)
         # super(NodeDomainServerProtocol, self).__init__()
         if g_debug >= 1:
@@ -311,7 +311,7 @@ class AmpClient(object):
             # LOG.debug('      Address: {0:}'.format(l_node.ConnectionAddr_IPv4))
         l_ret = p_ampProto.callRemote(NodeInformationCommand,
                         Name = l_node.Name, Active = str(l_node.Active), Address = l_node.ConnectionAddr_IPv4,
-                        Role = int(l_node.Role), UUID = "1122")
+                        Role = int(l_node.NodeRole), UUID = "1122")
         return l_ret
 
 
@@ -344,26 +344,32 @@ class Utility(AmpClient):
         """
         l_nodes = self.m_pyhouse_obj.Nodes
         for l_key, l_node in l_nodes.iteritems():
-            if l_key > -1:  # Skip ourself
+            if l_key > 0:  # Skip ourself
                 self.create_one_client(self.m_pyhouse_obj, l_node.ConnectionAddr_IPv4)
 
     def eb_start_clients_loop(self, p_reason):
-        LOG.error('Utility.eb_start_clients_loop().  (341)')
+        LOG.error('Utility.eb_start_clients_loop().')
         LOG.error('     ERROR Creating client - {0:}.\n'.format(p_reason))
+
+    def start_amp_server(self, p_pyhouse_obj, p_endpoint):
+        """
+        Start the domain server to listen for all incoming requests.
+        Then, for all the nodes we know about, create a client and send a message with our info.
+        """
+        l_defer = p_endpoint.listen(AmpServerFactory(p_pyhouse_obj))
+        l_defer.addCallback(self.cb_start_all_clients)
+        l_defer.addErrback(self.eb_start_clients_loop)
 
     def start_amp_services(self):
         """
-        Start the domain server to listen for all incoming requests.
-
-        For all the nodes we know about, create a client and send a message with our info.
+        Create a service that we can stop and restart
         """
         l_endpoint = TCP4ServerEndpoint(self.m_pyhouse_obj.Reactor, AMP_PORT)
         l_factory = AmpServerFactory(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.CoreServicesData.DomainService = StreamServerEndpointService(l_endpoint, l_factory)
-        self.m_pyhouse_obj.CoreServicesData.DomainService.setServiceParent(self.m_pyhouse_obj.Application)
-        l_defer = l_endpoint.listen(AmpServerFactory(self.m_pyhouse_obj))
-        l_defer.addCallback(self.cb_start_all_clients)
-        l_defer.addErrback(self.eb_start_clients_loop)
+        self.m_pyhouse_obj.CoreServices.DomainService = StreamServerEndpointService(l_endpoint, l_factory)
+        self.m_pyhouse_obj.CoreServices.DomainService.setServiceParent(self.m_pyhouse_obj.Application)
+        self.start_amp_server(self.m_pyhouse_obj, l_endpoint)
+
 
 class API(Utility):
 

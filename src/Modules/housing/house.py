@@ -120,11 +120,11 @@ class API(Utility):
         self.m_house_obj.InternetAPI = internet.API()
         self.m_house_obj.ScheduleAPI.Start(self.m_pyhouse_obj)
         self.m_house_obj.InternetAPI.Start(self.m_pyhouse_obj)
-        l_msg = "For house: {0:} ".format(self.m_pyhouse_obj.HouseData.Name)
-        l_msg += "- found -  Rooms:{0:}, Schedule:{1:}, Lights:{2:}, Controllers:{3:}".format(
-                    len(self.m_house_obj.Rooms), len(self.m_house_obj.Schedules),
-                    len(self.m_house_obj.Lights), len(self.m_house_obj.Controllers))
-        LOG.info("Started. - {0:}\n".format(l_msg))
+        # l_msg = "For house: {0:} ".format(self.m_pyhouse_obj.HouseData.Name)
+        # l_msg += "- found -  Rooms:{0:}, Schedule:{1:}, Lights:{2:}, Controllers:{3:}".format(
+        #            len(self.m_house_obj.Rooms), len(self.m_house_obj.Schedules),
+        #            len(self.m_house_obj.Lights), len(self.m_house_obj.Controllers)
+        # LOG.info("Started. - {0:}\n".format(l_msg))
         return self.m_house_obj
 
     def Stop(self, p_xml):

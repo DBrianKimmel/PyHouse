@@ -36,17 +36,17 @@ class CoreAPI(ConfigTools):
         p_device_obj.Comment = self.get_text_from_xml(p_entry_xml, 'Comment')
         p_device_obj.Coords = self.get_text_from_xml(p_entry_xml, 'Coords')
         p_device_obj.Dimmable = self.get_bool_from_xml(p_entry_xml, 'Dimmable')
-        p_device_obj.Family = l_fam = self.get_text_from_xml(p_entry_xml, 'Family')
+        p_device_obj.LightingFamily = l_fam = self.get_text_from_xml(p_entry_xml, 'Family')
         p_device_obj.RoomName = p_entry_xml.findtext('Room')
-        p_device_obj.Type = p_entry_xml.findtext('Type')
+        p_device_obj.LightingType = p_entry_xml.findtext('Type')
         return p_device_obj
 
     def write_base_lighting_xml(self, p_entry, p_device_obj):
         self.put_text_element(p_entry, 'Comment', p_device_obj.Comment)
         self.put_text_element(p_entry, 'Coords', p_device_obj.Coords)
         self.put_bool_element(p_entry, 'Dimmable', p_device_obj.Dimmable)
-        self.put_text_element(p_entry, 'Family', p_device_obj.Family)
+        self.put_text_element(p_entry, 'Family', p_device_obj.LightingFamily)
         self.put_text_element(p_entry, 'Room', p_device_obj.RoomName)
-        self.put_text_element(p_entry, 'Type', p_device_obj.Type)
+        self.put_text_element(p_entry, 'Type', p_device_obj.LightingType)
 
 # ## END DBK

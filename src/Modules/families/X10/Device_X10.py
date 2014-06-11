@@ -38,7 +38,7 @@ class LightingAPI(lighting.LightingAPI):
         return p_device_obj
 
     def insert_device_xml(self, p_entry_xml, p_device_obj):
-        if p_device_obj.Family == 'Insteon':
+        if p_device_obj.LightingFamily == 'Insteon':
             ET.SubElement(p_entry_xml, 'Address').text = p_device_obj.Address
             ET.SubElement(p_entry_xml, 'Controller').text = self.put_bool(p_device_obj.Controller)
             ET.SubElement(p_entry_xml, 'DevCat').text = str(p_device_obj.DevCat)
@@ -47,7 +47,7 @@ class LightingAPI(lighting.LightingAPI):
             ET.SubElement(p_entry_xml, 'Master').text = str(p_device_obj.Master)
             ET.SubElement(p_entry_xml, 'ProductKey').text = str(p_device_obj.ProductKey)
             ET.SubElement(p_entry_xml, 'Responder').text = self.put_bool(p_device_obj.Responder)
-        elif p_device_obj.Family == 'UPB':
+        elif p_device_obj.LightingFamily == 'UPB':
             try:
                 ET.SubElement(p_entry_xml, 'NetworkID').text = self.put_str(p_device_obj.NetworkID)
                 ET.SubElement(p_entry_xml, 'Password').text = str(p_device_obj.Password)

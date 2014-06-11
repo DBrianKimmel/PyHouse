@@ -72,10 +72,10 @@ class LightingAPI(CoreAPI):
     """
 
     def XXchange_light_setting(self, p_light_obj, p_level, _p_house_obj):
-        if p_light_obj.Family == 'Insteon':
+        if p_light_obj.LightingFamily == 'Insteon':
             try:
                 for l_controller_obj in self.m_house_obj.Controllers.itervalues():
-                    if l_controller_obj.Family != 'Insteon':
+                    if l_controller_obj.LightingFamily != 'Insteon':
                         continue
                     if l_controller_obj.Active != True:
                         continue
@@ -97,7 +97,7 @@ class API(LightingAPI):
         self.m_house_obj = p_house_obj
         l_count = 0
         for l_controller_obj in p_house_obj.Controllers.itervalues():
-            if l_controller_obj.Family != 'Insteon':
+            if l_controller_obj.LightingFamily != 'Insteon':
                 continue
             if l_controller_obj.Active != True:
                 continue
@@ -121,7 +121,7 @@ class API(LightingAPI):
     def Stop(self, p_xml):
         try:
             for l_controller_obj in self.m_house_obj.Controllers.itervalues():
-                if l_controller_obj.Family != 'Insteon':
+                if l_controller_obj.LightingFamily != 'Insteon':
                     continue
                 if l_controller_obj.Active != True:
                     continue
@@ -132,11 +132,11 @@ class API(LightingAPI):
 
     def ChangeLight(self, p_light_obj, p_level, _p_rate = 0):
         if g_debug >= 1:
-            LOG.debug('Change light Name:{0:}, Family:{1:}'.format(p_light_obj.Name, p_light_obj.Family))
+            LOG.debug('Change light Name:{0:}, Family:{1:}'.format(p_light_obj.Name, p_light_obj.LightingFamily))
         if p_light_obj.Family == 'Insteon':
             try:
                 for l_controller_obj in self.m_house_obj.Controllers.itervalues():
-                    if l_controller_obj.Family != 'Insteon':
+                    if l_controller_obj.LightingFamily != 'Insteon':
                         continue
                     if l_controller_obj.Active != True:
                         continue

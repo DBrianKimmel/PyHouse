@@ -72,7 +72,7 @@ class RoomsElement(athena.LiveElement):
         l_obj.Comment = l_json['Comment']
         l_obj.Corner = l_json['Corner']
         l_obj.Size = l_json['Size']
-        l_obj.Type = 'Room'
+        l_obj.RoomType = 'Room'
         self.m_pyhouse_obj.HouseData.Rooms[l_room_ix] = l_obj
 
 # ## END DBK

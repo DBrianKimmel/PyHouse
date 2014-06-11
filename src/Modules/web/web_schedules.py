@@ -75,7 +75,7 @@ class SchedulesElement(athena.LiveElement):
         l_obj.Rate = l_json['Rate']
         l_obj.RoomName = l_json['RoomName']
         l_obj.Time = l_json['Time']
-        l_obj.Type = l_json['Type']
+        l_obj.ScheduleType = l_json['Type']
         l_obj.UUID = l_json['UUID']
         l_obj.DeleteFlag = l_json['Delete']
         l_obj.HouseIx = l_house_ix

@@ -14,7 +14,7 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, CoreServicesData, NodeData, NodeInterfaceData
+from Modules.Core.data_objects import PyHouseData, CoreServices, NodeData, NodeInterfaceData
 from Modules.Core import node_local
 from Modules.utils import xml_tools
 from Modules.utils.tools import PrettyPrintObject, PrettyPrintXML, PrintObject
@@ -28,7 +28,7 @@ class Test_02_ReadWriteXML(unittest.TestCase):
 
     def setUp(self):
         self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.CoreServicesData = CoreServicesData()
+        self.m_pyhouse_obj.CoreServices = CoreServices()
         self.m_pyhouse_obj.Nodes[0] = NodeData()
         self.m_pyhouse_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         self.m_nodes_xml = self.m_root_xml.find('Nodes')
@@ -71,7 +71,7 @@ class Test_02_ReadWriteXML(unittest.TestCase):
         self.assertEqual(l_node.Name, 'PiNode-1', 'Bad Name')
         self.assertEqual(l_node.Key, 0, 'Bad Key')
         self.assertEqual(l_node.Active, True, 'Bad Axtive')
-        self.assertEqual(l_node.Role, 0, 'Bad Role')
+        self.assertEqual(l_node.NodeRole, 0, 'Bad NodeRole')
         PrettyPrintObject(l_node)
 
     def test_0242_read_nodes(self):
@@ -98,7 +98,7 @@ class Test_03_ReadWriteEmptyXML(unittest.TestCase):
 
     def setUp(self):
         self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.CoreServicesData = CoreServicesData()
+        self.m_pyhouse_obj.CoreServices = CoreServices()
         self.m_pyhouse_obj.Nodes[0] = NodeData()
         self.m_pyhouse_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_EMPTY)
         self.m_nodes_xml = self.m_root_xml.find('Nodes')
@@ -134,7 +134,7 @@ class Test_10_ApiStart(unittest.TestCase):
 
     def setUp(self):
         self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.CoreServicesData = CoreServicesData()
+        self.m_pyhouse_obj.CoreServices = CoreServices()
         self.m_pyhouse_obj.Nodes[0] = NodeData()
         self.m_pyhouse_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         self.m_root_element = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)

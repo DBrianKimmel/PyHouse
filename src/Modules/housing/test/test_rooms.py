@@ -23,15 +23,13 @@ from Modules.web import web_utils
 from Modules.utils.xml_tools import PrettifyXML
 from src.Modules.utils.tools import PrettyPrintAny
 
-XML = xml_data.XML_LONG
-
 
 class Test_02_XML(unittest.TestCase):
 
     def _pyHouses(self):
         self.m_pyhouse_obj = PyHouseData()
         self.m_pyhouse_obj.HouseData = HouseData()
-        self.m_pyhouse_obj.XmlRoot = self.m_root_xml = ET.fromstring(XML)
+        self.m_pyhouse_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         self.m_houses_xml = self.m_root_xml.find('Houses')
         self.m_house_xml = self.m_houses_xml.find('House')  # First house
         self.m_rooms_xml = self.m_house_xml.find('Rooms')

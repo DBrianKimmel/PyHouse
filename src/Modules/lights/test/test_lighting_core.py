@@ -35,11 +35,6 @@ class Test_02_ReadXML(unittest.TestCase):
         self.m_controller_xml = self.m_controllers_xml.find('Controller')
         self.m_api = lighting_core.CoreAPI()
 
-    def tXest_0201_list_elements(self):
-        l_list = self.m_house_xml.iter()
-        for l_tag in l_list:
-            print(' Elements: {0:}  Items: {1:}'.format(l_tag.tag, l_tag.items()))
-
     def test_0202_FindXml(self):
         """ Be sure that the XML contains the right stuff.
         """
@@ -59,8 +54,8 @@ class Test_02_ReadXML(unittest.TestCase):
         self.assertEqual(l_controller.Coords, 'None', 'Bad Coords')
         self.assertEqual(l_controller.Dimmable, True, 'Bad Dimmable')
         self.assertEqual(l_controller.Family, 'Insteon', 'Bad Family')
-        self.assertEqual(l_controller.Interface, 'Serial', 'Bad Interface')
+        self.assertEqual(l_controller.ControllerInterface, 'Serial', 'Bad Interface')
         self.assertEqual(l_controller.RoomName, 'Office', 'Bad Room Name')
-        self.assertEqual(l_controller.Type, 'Controller', 'Bad Type')
+        self.assertEqual(l_controller.LightingType, 'Controller', 'Bad LightingType')
 
 # ## END DBK

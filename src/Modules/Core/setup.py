@@ -18,7 +18,7 @@ Then start the House and all the sub systems.
 # Import system type stuff
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import CoreServicesData
+from Modules.Core.data_objects import CoreServices
 from Modules.Core import nodes
 from Modules.entertain import entertainment
 from Modules.housing import house
@@ -50,7 +50,7 @@ class API(object):
 
     def Start(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        p_pyhouse_obj.CoreServicesData = CoreServicesData()
+        p_pyhouse_obj.CoreServices = CoreServices()
         self.m_nodes.Start(p_pyhouse_obj)
         # House
         self.m_pyhouse_obj.HouseAPI = house.API()
@@ -63,6 +63,7 @@ class API(object):
     def Stop(self, p_xml):
         # SubSystems
         self.m_entertainment.Stop(p_xml)
+        self.m_pyhouse_obj.WebAPI.Stop(p_xml)
         # House
         self.m_pyhouse_obj.HouseAPI.Stop(p_xml)
         self.m_nodes.Stop(p_xml)

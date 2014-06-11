@@ -67,7 +67,7 @@ class ScheduleXML(xml_tools.ConfigTools):
         l_schedule_obj.Rate = self.get_int_from_xml(p_schedule_element, 'Rate')
         l_schedule_obj.RoomName = self.get_text_from_xml(p_schedule_element, 'RoomName')
         l_schedule_obj.Time = self.get_text_from_xml(p_schedule_element, 'Time')
-        l_schedule_obj.Type = self.get_text_from_xml(p_schedule_element, 'Type')
+        l_schedule_obj.ScheduleType = self.get_text_from_xml(p_schedule_element, 'Type')
         return l_schedule_obj
 
     def read_schedules_xml(self, p_schedules_xml):
@@ -100,7 +100,7 @@ class ScheduleXML(xml_tools.ConfigTools):
         self.put_int_element(l_entry, 'Rate', p_schedule_obj.Rate)
         self.put_text_element(l_entry, 'RoomName', p_schedule_obj.RoomName)
         self.put_text_element(l_entry, 'Time', p_schedule_obj.Time)
-        self.put_text_element(l_entry, 'Type', p_schedule_obj.Type)
+        self.put_text_element(l_entry, 'Type', p_schedule_obj.ScheduleType)
         return l_entry
 
     def write_schedules_xml(self, p_schedules_obj):
@@ -131,9 +131,9 @@ class ScheduleExecution(ScheduleData):
         for ix in range(len(p_slot_list)):
             l_sched_obj = self.m_house_obj.Schedules[p_slot_list[ix]]
             # TODO: We need a small dispatch for the various schedule types (hvac, security, entertainment, lights, ...)
-            if l_sched_obj.Type == 'Device':
+            if l_sched_obj.ScheduleType == 'Device':
                 pass
-            elif l_sched_obj.Type == 'Scene':
+            elif l_sched_obj.ScheduleType == 'Scene':
                 pass
             l_light_obj = tools.get_light_object(self.m_house_obj, name = l_sched_obj.LightName)
             LOG.info("Executing schedule Name:{0:}, Light:{1:}, Level:{2:}".format(l_sched_obj.Name, l_sched_obj.LightName, l_sched_obj.Level))

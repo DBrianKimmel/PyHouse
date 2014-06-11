@@ -82,13 +82,13 @@ class LightsElement(athena.LiveElement):
         l_obj.Comment = l_json['Comment']
         l_obj.Coords = l_json['Coords']
         l_obj.Dimmable = l_json['Dimmable']
-        l_obj.Family = l_json['Family']
+        l_obj.LightingFamily = l_json['LightingFamily']
         l_obj.RoomName = l_json['RoomName']
-        l_obj.Type = l_json['Type']
+        l_obj.LightingType = l_json['Type']
         l_obj.UUID = l_json['UUID']
         if len(l_obj.UUID) < 8:
             l_obj.UUID = str(uuid.uuid1())
-        if l_obj.Family == 'Insteon':
+        if l_obj.LightingFamily == 'Insteon':
             l_obj.InsteonAddress = web_utils.dotted_hex2int(l_json['InsteonAddress'])
             l_obj.DevCat = l_json['DevCat']
             l_obj.GroupNumber = l_json['GroupNumber']

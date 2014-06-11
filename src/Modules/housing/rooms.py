@@ -31,7 +31,6 @@ class ReadWriteConfig(xml_tools.ConfigTools):
     def read_one_room(self, p_room_element):
         l_room_obj = RoomData()
         self.read_base_object_xml(l_room_obj, p_room_element)
-        # l_room_obj.UUID = self.get_uuid_from_xml(p_room_element, 'UUID')
         l_room_obj.Key = self.m_count  # Renumber
         l_room_obj.Comment = self.get_text_from_xml(p_room_element, 'Comment')
         l_room_obj.Corner = self.get_text_from_xml(p_room_element, 'Corner')

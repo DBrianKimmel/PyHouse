@@ -448,27 +448,27 @@ class UpbPimAPI(LightingAPI):
         """
         self.m_controller_obj = p_controller_obj
         self.m_controller_obj._Queue = Queue.Queue(300)
-        if self.m_controller_obj.Family.lower() != 'upb':
+        if self.m_controller_obj.LightingFamily.lower() != 'upb':
             return False
         if self.m_controller_obj.Active != True:
             return False
         if g_debug >= 1:
-            LOG.debug("UPB_PIM.start_controller() - Family:{0:}, Interface:{1:}, Active:{2:}".format(self.m_controller_obj.Family, self.m_controller_obj.Interface, self.m_controller_obj.Active))
+            LOG.debug("UPB_PIM.start_controller() - Family:{0:}, Interface:{1:}, Active:{2:}".format(self.m_controller_obj.LightingFamily, self.m_controller_obj.Interface, self.m_controller_obj.Active))
         l_key = self.m_controller_obj.Key
         l_pim = PimData()
-        l_pim.Interface = self.m_controller_obj.Interface
+        l_pim.ControllerInterface = self.m_controller_obj.ControllerInterface
         l_pim.Name = self.m_controller_obj.Name
         l_pim.NetworkID = int(self.m_controller_obj.NetworkID, 0)
         l_pim.Password = self.m_controller_obj.Password
         l_pim.UnitID = int(self.m_controller_obj.UnitID, 0)
-        LOG.info('Found UPB PIM named: {0:}, Type={1:}'.format(l_pim.Name, l_pim.Interface))
-        if self.m_controller_obj.Interface.lower() == 'serial':
+        LOG.info('Found UPB PIM named: {0:}, Type={1:}'.format(l_pim.Name, l_pim.ControllerInterface))
+        if self.m_controller_obj.ControllerInterface.lower() == 'serial':
             from drivers import Driver_Serial
             l_driver = Driver_Serial.API()
-        elif self.m_controller_obj.Interface.lower() == 'ethernet':
+        elif self.m_controller_obj.ControllerInterface.lower() == 'ethernet':
             from drivers import Driver_Ethernet
             l_driver = Driver_Ethernet.API()
-        elif self.m_controller_obj.Interface.lower() == 'usb':
+        elif self.m_controller_obj.ControllerInterface.lower() == 'usb':
             # from drivers import Driver_USB_17DD_5500
             from Modules.drivers import Driver_USB
             # l_driver = Driver_USB_17DD_5500.API()
@@ -501,7 +501,7 @@ class API(UpbPimAPI):
 
     def ChangeLight(self, p_light_obj, p_level, _p_rate = 0):
         for l_obj in self.m_house_obj.Lights.itervalues():
-            if l_obj.Family != 'UPB':
+            if l_obj.LightingFamily != 'UPB':
                 continue
             if l_obj.Active == False:
                 continue

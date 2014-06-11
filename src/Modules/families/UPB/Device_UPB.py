@@ -59,7 +59,7 @@ class API(LightingAPI):
         self.m_house_obj = p_house_obj
         l_count = 0
         for l_controller_obj in self.m_house_obj.Controllers.itervalues():
-            if l_controller_obj.Family != 'UPB':
+            if l_controller_obj.LightingFamily != 'UPB':
                 continue
             if l_controller_obj.Active != True:
                 continue
@@ -83,7 +83,7 @@ class API(LightingAPI):
     def Stop(self, p_xml):
         try:
             for l_controller_obj in self.m_house_obj.Controllers.itervalues():
-                if l_controller_obj.Family != 'UPB':
+                if l_controller_obj.LightingFamily != 'UPB':
                     continue
                 if l_controller_obj.Active != True:
                     continue
@@ -95,7 +95,7 @@ class API(LightingAPI):
     def ChangeLight(self, p_light_obj, p_level, _p_rate = 0):
         try:
             for l_controller_obj in self.m_house_obj.Controllers.itervalues():
-                if (l_controller_obj.Family == 'UPB') and (l_controller_obj.Active == True):
+                if (l_controller_obj.LightingFamily == 'UPB') and (l_controller_obj.Active == True):
                     l_controller_obj._HandlerAPI.ChangeLight(p_light_obj, p_level)
         except AttributeError:
             pass

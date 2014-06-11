@@ -142,9 +142,9 @@ class Utility(object):
 
     def start_node_discovery(self, p_pyhouses_obj):
         self.m_pyhouse_obj = p_pyhouses_obj
-        p_pyhouses_obj.CoreServicesData.DiscoveryService = service.Service()
-        p_pyhouses_obj.CoreServicesData.DiscoveryService.setName('NodeDiscovery')
-        p_pyhouses_obj.CoreServicesData.DiscoveryService.setServiceParent(p_pyhouses_obj.Application)
+        p_pyhouses_obj.CoreServices.DiscoveryService = service.Service()
+        p_pyhouses_obj.CoreServices.DiscoveryService.setName('NodeDiscovery')
+        p_pyhouses_obj.CoreServices.DiscoveryService.setServiceParent(p_pyhouses_obj.Application)
         self._start_discovery_server(p_pyhouses_obj)
         self._start_discovery_client(p_pyhouses_obj)
 

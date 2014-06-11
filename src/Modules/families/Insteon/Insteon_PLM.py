@@ -317,7 +317,7 @@ class DecodeResponses(CreateCommands):
 
     def _find_addr(self, p_class, p_addr):
         for l_obj in p_class.itervalues():
-            if l_obj.Family != 'Insteon':
+            if l_obj.LightingFamily != 'Insteon':
                 continue
             if l_obj.InsteonAddress == p_addr:
                 return l_obj
@@ -947,14 +947,14 @@ class LightHandlerAPI(InsteonPlmAPI):
         if g_debug >= 3:
             l_msg = "Insteon_PLM.start_controller_driver() - Controller:{0:}, ".format(p_controller_obj.Name)
             l_msg += "Family:{0:}, Interface:{1:}, Active:{2:}".format(
-                    p_controller_obj.Family, p_controller_obj.Interface, p_controller_obj.Active)
-        if p_controller_obj.Interface.lower() == 'serial':
+                    p_controller_obj.LightingFamily, p_controller_obj.ControllerInterface, p_controller_obj.Active)
+        if p_controller_obj.ControllerInterface.lower() == 'serial':
             from Modules.drivers import Driver_Serial
             l_driver = Driver_Serial.API()
-        elif p_controller_obj.Interface.lower() == 'ethernet':
+        elif p_controller_obj.ControllerInterface.lower() == 'ethernet':
             from Modules.drivers import Driver_Ethernet
             l_driver = Driver_Ethernet.API()
-        elif p_controller_obj.Interface.lower() == 'usb':
+        elif p_controller_obj.ControllerInterface.lower() == 'usb':
             # from drivers import Driver_USB_0403_6001
             # l_driver = Driver_USB_0403_6001.API()
             from Modules.drivers import Driver_USB
@@ -978,7 +978,7 @@ class LightHandlerAPI(InsteonPlmAPI):
         """
         LOG.info('Getting light levels of all Insteon lights')
         for l_light_obj in self.m_house_obj.Lights.itervalues():
-            if l_light_obj.Family != 'Insteon':
+            if l_light_obj.LightingFamily != 'Insteon':
                 continue
             if l_light_obj.Active != True:
                 continue

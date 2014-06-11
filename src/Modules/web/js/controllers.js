@@ -125,13 +125,13 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 		self.nodeById('CommentDiv').innerHTML        = buildTextWidget('ControllerComment', p_obj.Comment);
 		self.nodeById('CoordsDiv').innerHTML         = buildTextWidget('ControllerCoords', p_obj.Coords);
 		self.nodeById('DimmableDiv').innerHTML       = buildTrueFalseWidget('ControllerDimmable', p_obj.Dimmable);
-		self.nodeById('FamilyDiv').innerHTML         = buildTextWidget('ControllerFamily', p_obj.Family);
+		self.nodeById('FamilyDiv').innerHTML         = buildTextWidget('ControllerFamily', p_obj.LightingFamily);
 		self.nodeById('RoomNameDiv').innerHTML       = buildRoomSelectWidget('ControllerRoomName', p_obj.RoomName);
 		self.nodeById('TypeDiv').innerHTML           = buildTextWidget('ControllerType', p_obj.Type, 'disabled');
 		self.nodeById('UUIDDiv').innerHTML           = buildTextWidget('ControllerUUID', p_obj.UUID, 'disabled');
 		self.nodeById('InterfaceDiv').innerHTML      = buildInterfaceSelectWidget('ControllerInterface', p_obj.Interface);
 		self.nodeById('PortDiv').innerHTML           = buildTextWidget('ControllerPort', p_obj.Port);
-        if (p_obj['Family'] == 'Insteon') {  // Insteon info
+        if (p_obj['LightingFamily'] == 'Insteon') {  // Insteon info
 			self.fillInsteonEntry(p_obj);
         }
 		self.nodeById('ControllerEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick');
@@ -162,7 +162,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 			HouseIx : globals.House.HouseIx,
 			Delete : false
             }
-        if (l_data['Family'] == 'Insteon') {
+        if (l_data['LightingFamily'] == 'Insteon') {
         	l_data = self.fetchInsteonEntry(l_data);
         }
         return l_data;
@@ -185,7 +185,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 			Comment : '',
 			Coords : '',
 			Dimmable : false,
-			Family : '',
+			LightingFamily : '',
 			RoomName : '',
             Type : 'Controller',
 			UUID : '',

@@ -30,11 +30,11 @@ class ControllersAPI(lighting_core.CoreAPI):
         self.m_pyhouse_obj = p_pyhouse_obj
 
     def _read_controller_data(self, p_obj, p_xml):
-        p_obj.Interface = self.get_text_from_xml(p_xml, 'Interface')
+        p_obj.ControllerInterface = self.get_text_from_xml(p_xml, 'Interface')
         p_obj.Port = self.get_text_from_xml(p_xml, 'Port')
 
     def _read_family_data(self, p_obj, p_xml):
-        l_family = p_obj.Family
+        l_family = p_obj.LightingFamily
         # PrettyPrintAny(self.m_pyhouse_obj.HouseData, 'HouseData')
         # PrettyPrintAny(self.m_pyhouse_obj.HouseData.FamilyData, 'FamilyData')
         l_api = self.m_pyhouse_obj.HouseData.FamilyData[l_family].ModuleAPI
@@ -64,9 +64,9 @@ class ControllersAPI(lighting_core.CoreAPI):
     def read_controllers_xml(self, p_pyhouse_obj):
         """Called from lighting.
         """
-        LOG.debug('--- Reading XML for controllers')
-        self.m_count = 0
         self.m_pyhouse_obj = p_pyhouse_obj
+        # PrettyPrintAny(self.m_pyhouse_obj, 'PyHouseData')
+        self.m_count = 0
         l_dict = {}
         l_sect = p_pyhouse_obj.XmlSection.find('Controllers')
         try:
@@ -81,7 +81,7 @@ class ControllersAPI(lighting_core.CoreAPI):
     def write_one_controller_xml(self, p_controller_obj):
         l_entry_xml = self.write_base_object_xml('Controller', p_controller_obj)
         self.write_base_lighting_xml(l_entry_xml, p_controller_obj)
-        ET.SubElement(l_entry_xml, 'Interface').text = p_controller_obj.Interface
+        ET.SubElement(l_entry_xml, 'Interface').text = p_controller_obj.ControllerInterface
         ET.SubElement(l_entry_xml, 'Port').text = p_controller_obj.Port
         interface.ReadWriteConfig().write_xml(l_entry_xml, p_controller_obj)
         return l_entry_xml

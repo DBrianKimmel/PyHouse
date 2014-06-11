@@ -41,12 +41,22 @@ class Test_02_XML(unittest.TestCase):
     def test_0202_FindXml(self):
         """ Be sure that the XML contains the right stuff.
         """
+        PrettyPrintAny(self.m_pyhouse_obj, 'PyHouseData')
         self.assertEqual(self.m_root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
         self.assertEqual(self.m_house_xml.tag, 'House', 'XML - No House section')
         self.assertEqual(self.m_controllers_xml.tag, 'Controllers', 'XML - No Controllers section')
         self.assertEqual(self.m_controller_xml.tag, 'Controller', 'XML - No Controller section')
 
-    def test_0203_ReadOneControllerXml(self):
+    def test_0221_ReadInterfaceXml(self):
+        pass
+
+    def test_0222_ReadFamilyXml(self):
+        pass
+
+    def test_0223_ReadControllerXml(self):
+        pass
+
+    def test_0243_ReadOneControllerXml(self):
         """ Read in the xml file and fill in the lights
         """
         l_controller = self.m_api.read_one_controller_xml(self.m_controller_xml)
@@ -58,40 +68,40 @@ class Test_02_XML(unittest.TestCase):
         self.assertEqual(l_controller.Coords, 'None', 'Bad Coords')
         self.assertEqual(l_controller.Dimmable, True, 'Bad Dimmable')
         self.assertEqual(l_controller.DsrDtr, False, 'Bad DsrDtr')
-        self.assertEqual(l_controller.Family, 'Insteon', 'Bad Family')
-        self.assertEqual(l_controller.Interface, 'Serial', 'Bad Interface')
+        self.assertEqual(l_controller.LightingFamily, 'Insteon', 'Bad Family')
+        self.assertEqual(l_controller.ControllerInterface, 'Serial', 'Bad Interface')
         self.assertEqual(l_controller.Key, 0, 'Bad Key')
         self.assertEqual(l_controller.Name, 'PLM_1', 'Bad Name')
         self.assertEqual(l_controller.Parity, 'N', 'Bad Parity')
         self.assertEqual(l_controller.RoomName, 'Office', 'Bad Room Name')
         self.assertEqual(l_controller.RtsCts, False, 'Bad RtsCts')
         self.assertEqual(l_controller.StopBits, 1.0, 'Bad Stop Bits')
-        self.assertEqual(l_controller.Type, 'Controller', 'Bad Type')
+        self.assertEqual(l_controller.LightingType, 'Controller', 'Bad LightingType')
         self.assertEqual(l_controller.XonXoff, False, 'Bad XonXoff')
 
-    def test_0204_ReadControllersXml(self):
-        l_controllers = self.m_api.read_controllers_xml(self.m_house_xml)
+    def test_0244_ReadControllersXml(self):
+        l_controllers = self.m_api.read_controllers_xml(self.m_pyhouse_obj)
         print('Controllers {0:}'.format(l_controllers))
         self.assertEqual(len(l_controllers), 3)
 
-    def test_0211_WriteOneControllerXml(self):
+    def test_0261_WriteOneControllerXml(self):
         """ Write out the XML file for the location section
         """
         l_controller = self.m_api.read_one_controller_xml(self.m_controller_xml)
         l_xml = self.m_api.write_one_controller_xml(l_controller)
         print('XML: {0:}'.format(PrettyPrintAny(l_xml)))
 
-    def test_0212_WriteControllersXml(self):
+    def test_0262_WriteControllersXml(self):
         """ Write out the XML file for the location section
         """
-        l_controllers = self.m_api.read_controllers_xml(self.m_house_xml)
+        l_controllers = self.m_api.read_controllers_xml(self.m_pyhouse_obj)
         l_xml = self.m_api.write_controllers_xml(l_controllers)
         print('XML: {0:}'.format(PrettyPrintAny(l_xml)))
 
-    def test_0221_CreateJson(self):
+    def test_0281_CreateJson(self):
         """ Create a JSON object for Location.
         """
-        l_controller = self.m_api.read_controllers_xml(self.m_house_xml)
+        l_controller = self.m_api.read_controllers_xml(self.m_pyhouse_obj)
         print('ControllerS: {0:}'.format(l_controller))
         print('Controller 0: {0:}'.format(vars(l_controller[0])))
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_controller))

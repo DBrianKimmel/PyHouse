@@ -39,7 +39,7 @@ class LightingAPI(lighting_core.CoreAPI):
         pass
 
     def _read_family_data(self, p_obj, p_xml):
-        l_family = p_obj.Family
+        l_family = p_obj.LightingLightingFamily
         l_api = self.m_pyhouse_obj.HouseData.FamilyData[l_family].ModuleAPI
         l_api.extract_device_xml(p_obj, p_xml)
 
