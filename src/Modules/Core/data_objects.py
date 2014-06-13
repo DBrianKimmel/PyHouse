@@ -309,8 +309,10 @@ class CoreServices(object):
     """various twisted services in PyHouse
     """
     def __init__(self):
-        self.DiscoveryService = None
-        self.DomainService = None
+        self.NodeDiscoveryService = None
+        self.NodeDomainService = None
+        self.InternetConnectionService = None
+        self.IrControlService = None
         self.WebServerService = None
 
 

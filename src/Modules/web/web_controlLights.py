@@ -22,11 +22,6 @@ templatepath = os.path.join(webpath, 'template')
 
 g_debug = 0
 # 0 = off
-# 1 = log extra info
-# 2 = major routine entry
-# 3 = Config file handling
-# 4 = Dump JSON
-# + = NOT USED HERE
 LOG = pyh_log.getLogger('PyHouse.webClLgt    ')
 
 class ControlLightsElement(athena.LiveElement):

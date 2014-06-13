@@ -28,8 +28,8 @@ What I want to happen on startup:
 import pprint
 from twisted.internet.endpoints import TCP4ClientEndpoint, TCP4ServerEndpoint
 from twisted.internet.protocol import ServerFactory, ClientFactory
-from twisted.protocols.amp import AMP, Integer, String, AmpList, Command, CommandLocator, BinaryBoxProtocol
-from twisted.internet.defer import Deferred
+from twisted.protocols.amp import AMP, Command, Integer, String, AmpList
+# from twisted.internet.defer import Deferred
 from twisted.application.internet import StreamServerEndpointService
 
 # Import PyMh files and modules.
@@ -70,43 +70,44 @@ class NodeInformationCommand(Command):
     # errors = {NodeInformationError: 'Name error'}
 
 
-class ResponseNodeInfo(AMP):
-
-    @NodeInformationCommand.responder
-    def response_NodeOnfo(self):
-        l_ret = dict(Name = 'abc', Answer = 'Yes')
-        return l_ret
-
-
+class GetNodeList(Command):
+    """ Get a list of all the nodes.
+    """
+    commandName = 'getNodelist'
+    arguments = [('length', Integer())]
+    response = [('Nodes', AmpList([('x', String())]))]
 
 
 
 
-
-class DomainBoxDispatcher(AMP):
+class DomainBoxDispatcher_AmpProtocol(AMP):
+    """
+    A subclass of (BinaryBoxProtocol, BoxDispatcher, CommandLocator, SimpleStringLocator)
+    """
 
     m_amp = None
+    m_pyhouse_obj = None
+    m_transport = None
+
 
     def __init__(self, p_pyhouse_obj):
         """
         @param p_address: is a 3-tupple (AddressFamily, IPv4Addr, Port)
         """
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_locator = LocatorClass()
-        super(DomainBoxDispatcher, self).__init__(self.m_locator)
         self.m_amp = self
         if g_debug >= 1:
-            LOG.debug('Dispatch DomainBoxDispatcher()  (DBD-1  098)')
-            # LOG.debug('      Self: {0:}'.format(vars(self)))
-
+            LOG.debug('Dispatch DomainBoxDispatcher_AmpProtocol()  (DBD-1  100)')
+            LOG.debug('      Repr: {0:}'.format(repr(self)))
 
     def makeConnection(self, p_transport):
-        """Called from twisted.internet.endpoints
+        """
+        Emit a helpful log message when the connection is made.
         Required to be here - passes back the transport apparently.
         """
         self.m_transport = p_transport
         if g_debug >= 2:
-            LOG.debug('Dispatch - makeConnection  (DBD-2  108)')
+            LOG.debug('Dispatch - makeConnection  (DBD-2  110)')
             LOG.debug('      Transport:{0:}'.format(p_transport))
 
 
@@ -118,8 +119,17 @@ class DomainBoxDispatcher(AMP):
         If you need to send any greeting or initial message, do it here.
         """
         if g_debug >= 1:
-            LOG.debug('Dispatch - connectionMade  (DBD-3  120)')
+            LOG.debug('Dispatch - connectionMade  (DBD-3  122)')
         pass
+
+
+    def connectionLost(self, p_reason):
+        """Clean up the connection.
+        """
+        if g_debug >= 1:
+            LOG.debug('ServerProtocol - connectionLost  (NDSP-6  130)')
+            LOG.debug('       ERROR: {0:}\n'.format(p_reason))
+
 
 
 
@@ -143,35 +153,23 @@ class DomainBoxDispatcher(AMP):
             LOG.debug('      Reason: {0:}'.format(p_reason))
         self.boxSender = None
 
-
-    def XXXsend_NodeInformation_1(self, p_node):
-        """For some reason, this gives a error 'NoneType' object has no attribute 'sendBox'
-        The information is sent somehow.
-        """
-        l_protocol = self
-        if g_debug >= 1:
-            LOG.debug('Dispatch - send_NodeInformation_1  (DBD-7  153)')
-            LOG.debug('     l_protocol: {0:}'.format(l_protocol))
-        try:
-            l_defer = self.callRemote(NodeInformationCommand,
-                        Name = p_node.Name, Active = str(p_node.Active), Address = p_node.ConnectionAddr_IPv4,
-                        Role = int(p_node.NodeRole), UUID = "1122")
-            if g_debug >= 1:
-                # LOG.debug(' Dispatch - send_NodeInformation_1  - SENT to {0:} (236)'.format(self.m_address))
-                pass
-        except AttributeError as l_error:
-            LOG.error('Dispatch - send_NodeInformation_1  (162)')
-            LOG.error('     ERROR: {0:}\n'.format(l_error))
-            l_defer = Deferred()
-        return l_defer
-
-
+    @NodeInformationCommand.responder
     def receive_NodeInformation(self, Name = None, Active = None, Address = None, Role = None, UUID = None):
+        """
+        The responder expects to be called with a serialized box.
+        It will then
+            deserialize it,
+            dispatch the objects to application code,
+            take the object the application code returns,
+            serialize it,
+            and then return that serialized form.
+        """
         if g_debug >= 1:
             LOG.debug('Dispatch - receive_NodeInformation - RECEIVED  (DBD-8  170)')
+        l_box = NodeInformationCommand.makeArguments({'Name': 'AAA'})
         l_ret = dict(Name = Name, Answer = 'Got it ok')
         return l_ret
-    NodeInformationCommand.responder(receive_NodeInformation)
+    # NodeInformationCommand.responder(receive_NodeInformation)
 
 
     def update_NodeInformation(self, p_box):
@@ -183,6 +181,12 @@ class DomainBoxDispatcher(AMP):
                 l_node.Role = p_box.Role
                 l_node.UUID = p_box.UUID
                 l_node.Active = p_box.Active
+
+    # @NodeInformationCommand.responder
+    def response_NodeOnfo(self):
+        LOG.debug('LocatorClass - received  remote server.  (300)')
+        l_ret = dict(Name = 'abc', Answer = 'Yes')
+        return l_ret
 
 
 class AmpServerFactory(ServerFactory):
@@ -198,7 +202,7 @@ class AmpServerFactory(ServerFactory):
         return l_protocol
 
 
-class NodeDomainServerProtocol(DomainBoxDispatcher):
+class NodeDomainServerProtocol(DomainBoxDispatcher_AmpProtocol):
     """
     Implement dataReceived(data) to handle both event-based and synchronous input.
     output can be sent through the 'transport' attribute.
@@ -209,16 +213,10 @@ class NodeDomainServerProtocol(DomainBoxDispatcher):
     def __init__(self, p_pyhouse_obj):
         LOG.debug('NodeDomainServerProtocol()  (NDSP-1  210)')
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_disp = DomainBoxDispatcher(p_pyhouse_obj)
-        # AMP.__init__(AMP(), boxReceiver = l_disp)
-        # super(NodeDomainServerProtocol, self).__init__()
+        self.m_disp = DomainBoxDispatcher_AmpProtocol(p_pyhouse_obj)
         if g_debug >= 1:
             LOG.debug('ServerProtocol() initialized  (NDSP-1a  216)')
-            # LOG.debug('      Proto:{0:}'.format(l_disp))
             LOG.debug('      Dispatch:{0:}'.format(self.m_disp))
-            # LOG.debug('      Self: {0:}'.format(vars(self)))
-        # self.locate_responder('NodeInformationCommand')
-        # self.connectionMade()
 
 
 
@@ -235,8 +233,6 @@ class NodeDomainServerProtocol(DomainBoxDispatcher):
             LOG.debug('     Client Addr:{0:}'.format(self.m_address))
             LOG.debug('     Result:{0:}'.format(p_result))
             LOG.debug('     Transport{0:}'.format(self.transport))
-        # LocatorClass().NodeInformationResponse('test dbk')
-
 
     def eb_err12(self, p_ConnectionDone):
         LOG.error('ServerProtocol - ConnectionMade  (242)')
@@ -254,25 +250,6 @@ class NodeDomainServerProtocol(DomainBoxDispatcher):
         if g_debug >= 1:
             LOG.debug('ServerProtocol - ConnectionMade  (NDSP-5  255)')
             # LOG.debug('    self = {0:}\n'.format(vars(self)))
-        # l_defer12 = self.send_NodeInformation_1(self.m_pyhouse_obj.Nodes[0])
-        # l_defer12.addCallback(self.cb_got_result12)
-        # l_defer12.addErrback(self.eb_err12)
-
-
-    def connectionLost(self, p_reason):
-        """Clean up the connection.
-        """
-        if g_debug >= 1:
-            LOG.debug('ServerProtocol - connectionLost  (NDSP-6  256)')
-            LOG.debug('       ERROR: {0:}\n'.format(p_reason))
-
-
-    def XXlocate_responder(self, p_name):
-        if g_debug >= 1:
-            LOG.debug('ServerProtocol - locate_responder  (NDSP-7  272)')
-            LOG.debug('        Name: {0:}'.format(p_name))
-
-
 
 
 
@@ -284,36 +261,20 @@ class UsernameUnavailable(Exception): pass
 class IrPacketError(Exception): pass
 
 
-class GetNodeList(Command):
-    """ Get a list of all the nodes.
-    """
-    commandName = 'getNodelist'
-    arguments = [('length', Integer())]
-    response = [('Nodes', AmpList([('x', String())]))]
-
-
-
-
-class LocatorClass(CommandLocator):
-    """
-    """
-
-
-
-
-
 class AmpClient(object):
 
     def cb_sendInfo(self, p_ampProto):
         l_node = self.m_pyhouse_obj.Nodes[0]
         if g_debug >= 4:
-            LOG.debug('Client - sending info to remote server.  (300)')
+            LOG.debug('Client - sending info to remote server.  (310)')
             # LOG.debug('      Address: {0:}'.format(l_node.ConnectionAddr_IPv4))
+        l_ampBox = NodeInformationCommand.makeArguments({
+                        'Name': l_node.Name, 'Active': str(l_node.Active), 'Address': l_node.ConnectionAddr_IPv4,
+                        'Role': int(l_node.NodeRole), 'UUID': "1122"})
         l_ret = p_ampProto.callRemote(NodeInformationCommand,
                         Name = l_node.Name, Active = str(l_node.Active), Address = l_node.ConnectionAddr_IPv4,
                         Role = int(l_node.NodeRole), UUID = "1122")
         return l_ret
-
 
     def create_one_client(self, p_pyhouses_obj, p_address):
         """
@@ -327,9 +288,8 @@ class AmpClient(object):
         l_defer = l_endpoint.connect(ClientFactory.forProtocol(AMP))
         l_defer.addCallback(self.cb_sendInfo)
         if g_debug >= 8:
-            LOG.debug('Client create_one_client  (320)')
+            LOG.debug('Client create_one_client  (330)')
             LOG.debug('     Server Address: {0:}'.format(p_address))
-
 
 
 class Utility(AmpClient):
@@ -344,7 +304,7 @@ class Utility(AmpClient):
         """
         l_nodes = self.m_pyhouse_obj.Nodes
         for l_key, l_node in l_nodes.iteritems():
-            if l_key > 0:  # Skip ourself
+            if l_key > -1:  # Skip ourself
                 self.create_one_client(self.m_pyhouse_obj, l_node.ConnectionAddr_IPv4)
 
     def eb_start_clients_loop(self, p_reason):
@@ -366,8 +326,9 @@ class Utility(AmpClient):
         """
         l_endpoint = TCP4ServerEndpoint(self.m_pyhouse_obj.Reactor, AMP_PORT)
         l_factory = AmpServerFactory(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.CoreServices.DomainService = StreamServerEndpointService(l_endpoint, l_factory)
-        self.m_pyhouse_obj.CoreServices.DomainService.setServiceParent(self.m_pyhouse_obj.Application)
+        self.m_pyhouse_obj.CoreServices.NodeDomainService = StreamServerEndpointService(l_endpoint, l_factory)
+        self.m_pyhouse_obj.CoreServices.NodeDomainService.setName('NodeDomain')
+        self.m_pyhouse_obj.CoreServices.NodeDomainService.setServiceParent(self.m_pyhouse_obj.Application)
         self.start_amp_server(self.m_pyhouse_obj, l_endpoint)
 
 

@@ -130,8 +130,9 @@ class Utility(LircConnection):
         l_endpoint = TCP4ServerEndpoint
         l_factory = Factory()
         l_factory.protocol = AMP
-        l_service = StreamServerEndpointService(l_endpoint, l_factory)
-        l_service.setServiceParent(p_pyhouses_obj.Application)
+        p_pyhouses_obj.CoreServices.IrControlService = StreamServerEndpointService(l_endpoint, l_factory)
+        p_pyhouses_obj.CoreServices.IrControlService.setName('IrControl')
+        p_pyhouses_obj.CoreServices.IrControlService.setServiceParent(p_pyhouses_obj.Application)
 
 class API(Utility):
 
