@@ -28,7 +28,7 @@ from Modules.Core.data_objects import InsteonData
 from Modules.families.Insteon import Insteon_utils
 from Modules.utils import xml_tools
 from Modules.utils import pyh_log
-from src.Modules.utils.tools import PrettyPrintAny
+# from src.Modules.utils.tools import PrettyPrintAny
 
 g_debug = 9
 LOG = pyh_log.getLogger('PyHouse.Dev_Insteon ')
@@ -135,8 +135,8 @@ class API(LightingAPI):
     def ChangeLight(self, p_light_obj, p_level, _p_rate = 0):
         # if g_debug >= 1:
         #    LOG.debug('Change light Name:{0:}, Family:{1:}'.format(p_light_obj.Name, p_light_obj.LightingFamily))
-        PrettyPrintAny(p_light_obj, 'Light Object Device_Insteon')
-        l_api = self.m_pyhouse_obj.HouseData.FamilyData[p_light_obj.LightingFamily].ModuleAPI
+        # PrettyPrintAny(p_light_obj, 'Light Object Device_Insteon')
+        # l_api = self.m_pyhouse_obj.HouseData.FamilyData[p_light_obj.LightingFamily].ModuleAPI
         # PrettyPrintAny(l_api, 'Light Object Device_Insteon 2')
         # l_api.ChangeLight(p_light_obj, p_level)
         # if p_light_obj.LightingFamily == 'Insteon':
@@ -149,5 +149,6 @@ class API(LightingAPI):
         #            l_controller_obj._HandlerAPI.ChangeLight(p_light_obj, p_level)
         #    except AttributeError as e:  # no controllers for house. (House is being added).
         #        LOG.warning('Could not change light setting {0:}'.format(e))
+        pass
 
 # ## END DBK

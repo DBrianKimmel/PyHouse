@@ -22,6 +22,7 @@ import importlib
 from Modules.Core.data_objects import FamilyData
 from Modules.families import VALID_FAMILIES
 from Modules.utils import pyh_log
+# from src.Modules.utils.tools import PrettyPrintAny
 
 g_debug = 9
 LOG = pyh_log.getLogger('PyHouse.Family      ')
@@ -90,7 +91,7 @@ class API(object):
                 l_family_obj.ModuleAPI = l_module.API()
             except AttributeError as l_reason:
                 l_family_obj.ModuleAPI = None
-                LOG.error("Cannot get API - Module:{0:},   Reason: {2:}.".format(l_module, l_reason))
+                LOG.error("Cannot get API - Module:{0:},   Reason: {1:}.".format(l_module, l_reason))
             l_family_data[l_family_obj.Name] = l_family_obj
             self.m_count += 1
         return l_family_data

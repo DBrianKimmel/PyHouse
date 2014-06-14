@@ -40,7 +40,7 @@ from Modules.families.Insteon import Insteon_utils
 from Modules.families.Insteon import Insteon_Link
 from Modules.families.Insteon.Device_Insteon import InsteonData
 from Modules.utils import pyh_log
-from src.Modules.utils.tools import PrettyPrintAny
+# from src.Modules.utils.tools import PrettyPrintAny
 
 g_debug = 9
 LOG = pyh_log.getLogger('PyHouse.Insteon_PLM ')
