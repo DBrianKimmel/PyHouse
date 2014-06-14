@@ -21,14 +21,15 @@ from xml.dom import minidom
 def PrettyPrintAny(p_any, p_title = ''):
     l_type = type(p_any)
     print('=== ', p_title, ' === ', l_type)
+    #
     if isinstance(p_any, dict):
         PrettyPrintDict(p_any)
     elif isinstance(p_any, ET.Element):
         PrettyPrintXML(p_any)
     elif isinstance(p_any, str):
         PrettyPrintString(p_any)
+    # Default to an object
     else:
-        print(' - - Other Type is - - {0:}'.format(l_type))
         PrettyPrintObject(p_any)
     print('---------------------------------')
 
@@ -36,12 +37,14 @@ def PrettyPrintDict(p_dict, p_format = "%-25s %s"):
     for (key, val) in p_dict.iteritems():
         print(p_format % (str(key) + ':', val))
 
-def PrettyPrintXML(p_element):
+def PrettyPrintXML(p_element, p_title = ''):
     """Return a pretty-printed XML string for the Element.
 
     @param p_element: an element to format as a readable XML tree.
     @return: a string formatted with indentation and newlines.
     """
+    l_type = type(p_element)
+    print('===XML=== ', p_title, ' === ', l_type)
     l_rough_string = ET.tostring(p_element, 'utf-8')
     l_reparsed = minidom.parseString(l_rough_string)
     l_doc = l_reparsed.toprettyxml(indent = "    ")

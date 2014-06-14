@@ -138,7 +138,7 @@ class Utilities(object):
             xml_tools.ConfigFile().create_empty_config_file(p_pyhouses_obj.XmlFileName)
             l_xmltree = ET.parse(p_pyhouses_obj.XmlFileName)
         p_pyhouses_obj.XmlRoot = l_xmltree.getroot()
-        p_pyhouses_obj.XmlParsed = l_xmltree
+        p_pyhouses_obj.XmlParsed = p_pyhouses_obj.XmlRoot
 
 
 class API(Utilities):

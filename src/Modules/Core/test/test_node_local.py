@@ -17,7 +17,7 @@ from twisted.trial import unittest
 from Modules.Core.data_objects import PyHouseData, CoreServices, NodeData, NodeInterfaceData
 from Modules.Core import node_local
 from Modules.utils import xml_tools
-from Modules.utils.tools import PrettyPrintObject, PrettyPrintXML, PrintObject
+from Modules.utils.tools import PrettyPrintAny
 from src.test import xml_data
 
 
@@ -47,7 +47,7 @@ class Test_02_ReadWriteXML(unittest.TestCase):
         self.assertEqual(l_interface.MacAddress, '01:02:03:04:05:06', 'Bad MacAddress')
         self.assertEqual(l_interface.V4Address, "192.168.1.11", 'Bad V4Address')
         self.assertEqual(l_interface.V6Address, '2000:1D::1, 2000:1D::101', 'Bad V6Address')
-        PrettyPrintObject(l_interface)
+        PrettyPrintAny(l_interface)
 
     def test_0222_read_interfaces(self):
         l_interfaces = self.m_api.read_interfaces_xml(self.m_interfaces_xml)
@@ -59,12 +59,12 @@ class Test_02_ReadWriteXML(unittest.TestCase):
     def test_0231_write_one_interface(self):
         l_interface = self.m_api.read_one_interface_xml(self.m_interface_xml)
         l_xml = self.m_api.write_one_interface_xml(l_interface)
-        PrettyPrintXML(l_xml)
+        PrettyPrintAny(l_xml)
 
     def test_0232_write_interfaces(self):
         l_interfaces = self.m_api.read_interfaces_xml(self.m_interfaces_xml)
         l_xml = self.m_api.write_interfaces_xml(l_interfaces)
-        PrettyPrintXML(l_xml)
+        PrettyPrintAny(l_xml)
 
     def test_0241_read_one_node(self):
         l_node = self.m_api.read_one_node_xml(self.m_node_xml)
@@ -72,23 +72,23 @@ class Test_02_ReadWriteXML(unittest.TestCase):
         self.assertEqual(l_node.Key, 0, 'Bad Key')
         self.assertEqual(l_node.Active, True, 'Bad Axtive')
         self.assertEqual(l_node.NodeRole, 0, 'Bad NodeRole')
-        PrettyPrintObject(l_node)
+        PrettyPrintAny(l_node)
 
     def test_0242_read_nodes(self):
         l_nodes = self.m_api.read_nodes_xml(self.m_nodes_xml)
         print('Nodes: {0:}'.format((l_nodes)))
-        PrettyPrintObject(l_nodes)
-        PrintObject('--title--', l_nodes)
+        PrettyPrintAny(l_nodes)
+        PrettyPrintAny(l_nodes)
 
     def test_0251_write_one_node(self):
         l_node = self.m_api.read_one_node_xml(self.m_node_xml)
         l_xml = self.m_api.write_one_node_xml(l_node)
-        PrettyPrintXML(l_xml)
+        PrettyPrintAny(l_xml)
 
     def test_0252_write_nodes(self):
         l_nodes = self.m_api.read_nodes_xml(self.m_nodes_xml)
         l_xml = self.m_api.write_nodes_xml(l_nodes)
-        PrettyPrintXML(l_xml)
+        PrettyPrintAny(l_xml)
 
 
 class Test_03_ReadWriteEmptyXML(unittest.TestCase):
@@ -112,7 +112,7 @@ class Test_03_ReadWriteEmptyXML(unittest.TestCase):
     def test_0221_read_one_interface(self):
         l_interface = self.m_api.read_one_interface_xml(self.m_interface_xml)
         self.assertEqual(l_interface.Name, None, 'Bad Name')
-        PrettyPrintObject(l_interface)
+        PrettyPrintAny(l_interface)
 
     def test_0222_read_interfaces(self):
         l_interfaces = self.m_api.read_interfaces_xml(self.m_interfaces_xml)
@@ -121,13 +121,13 @@ class Test_03_ReadWriteEmptyXML(unittest.TestCase):
     def test_0242_read_nodes(self):
         l_nodes = self.m_api.read_nodes_xml(self.m_nodes_xml)
         print('Nodes: {0:}'.format((l_nodes)))
-        PrettyPrintObject(l_nodes)
-        PrintObject('--title--', l_nodes)
+        PrettyPrintAny(l_nodes)
+        PrettyPrintAny(l_nodes)
 
     def test_0252_write_nodes(self):
         l_nodes = self.m_api.read_nodes_xml(self.m_nodes_xml)
         l_xml = self.m_api.write_nodes_xml(l_nodes)
-        PrettyPrintXML(l_xml)
+        PrettyPrintAny(l_xml)
 
 
 class Test_10_ApiStart(unittest.TestCase):

@@ -19,7 +19,7 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from Modules.Core.data_objects import PyHouseData, HouseData, LocationData
 from Modules.scheduling import schedule
-from Modules.utils.tools import PrettyPrintObject, PrettyPrintXML, PrettyPrintDict, PrintObject
+from Modules.utils.tools import PrettyPrintAny
 from Modules.utils import xml_tools
 from src.test import xml_data
 
@@ -89,24 +89,23 @@ class Test_02_ReadWriteXML(unittest.TestCase):
         """
         l_schedule_obj = self.m_api.read_one_schedule_xml(self.m_schedule_xml)
         self.assertEqual(l_schedule_obj.Name, 'Evening')
-        PrettyPrintObject(l_schedule_obj)
+        PrettyPrintAny(l_schedule_obj)
 
     def test_0232_ReadAllSchedules(self):
         l_schedules = self.m_api.read_schedules_xml(self.m_schedules_xml)
-        print(type(l_schedules))
-        PrettyPrintDict(l_schedules)
+        PrettyPrintAny(l_schedules, 'All Schedules')
         for k, v in l_schedules.iteritems():
-            PrettyPrintObject(v)
+            PrettyPrintAny(v, 'All Schedules-2')
 
     def test_0241_WriteOneSchedule(self):
         l_schedule = self.m_api.read_one_schedule_xml(self.m_schedule_xml)
         l_xml = self.m_api.write_one_schedule_xml(l_schedule)
-        PrettyPrintXML(l_xml)
+        PrettyPrintAny(l_xml)
 
     def test_0242_WriteAllSchedules(self):
         l_schedules = self.m_api.read_schedules_xml(self.m_schedules_xml)
         l_xml = self.m_api.write_schedules_xml(l_schedules)
-        PrettyPrintXML(l_xml)
+        PrettyPrintAny(l_xml)
 
 
 class Test_03_Startup(unittest.TestCase):
@@ -125,10 +124,10 @@ class Test_03_Startup(unittest.TestCase):
         self.m_house_obj = LocationData()
         self.m_api = schedule.API()
 
-    def test_0201_buildObjects(self):
+    def Xtest_0201_buildObjects(self):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
         """
-            self.m_api.Start(self.m_pyhouses_obj)
+        self.m_api.Start(self.m_pyhouses_obj)
 
 
 # ## END

@@ -59,6 +59,7 @@ class ControllersAPI(lighting_core.CoreAPI):
         self._read_controller_data(l_controller_obj, p_controller_xml)
         self._read_family_data(l_controller_obj, p_controller_xml)
         self._read_interface_data(l_controller_obj, p_controller_xml)
+        # PrettyPrintAny(l_controller_obj, 'Controller')
         return l_controller_obj
 
     def read_controllers_xml(self, p_pyhouse_obj):

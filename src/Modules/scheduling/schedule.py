@@ -42,7 +42,7 @@ from Modules.utils import xml_tools
 from Modules.utils import tools
 from Modules.scheduling import sunrisesunset
 from Modules.utils import pyh_log
-
+# from Modules.utils.tools import PrettyPrintAny
 
 g_debug = 0
 # 0 = off
@@ -68,25 +68,32 @@ class ScheduleXML(xml_tools.ConfigTools):
         l_schedule_obj.RoomName = self.get_text_from_xml(p_schedule_element, 'RoomName')
         l_schedule_obj.Time = self.get_text_from_xml(p_schedule_element, 'Time')
         l_schedule_obj.ScheduleType = self.get_text_from_xml(p_schedule_element, 'Type')
+        # PrettyPrintAny(l_schedule_obj, 'One Schedule')
         return l_schedule_obj
 
-    def read_schedules_xml(self, p_schedules_xml):
+    def read_schedules_xml(self, p_house_xml):
         """
         @param p_house_xml: is the e-tree XML house object
         @return: a dict of the entry to be attached to a house object.
         """
         self.m_count = 0
         l_dict = {}
+        # PrettyPrintAny(p_house_xml, 'House_Xml 1')
+        l_schedules_xml = p_house_xml.find('Schedules')
+        # PrettyPrintAny(l_schedules_xml, 'House_Xml 2')
         try:
-            l_list = p_schedules_xml.iterfind('Schedule')
+            l_schedules_xml = p_house_xml.find('Schedules')
+            # PrettyPrintAny(l_schedules_xml, 'House_Xml 3')
+            l_list = l_schedules_xml.iterfind('Schedule')
             for l_entry in l_list:
                 l_schedule_obj = self.read_one_schedule_xml(l_entry)
                 # self.read_one_schedule_xml(l_entry)
                 l_schedule_obj.Key = self.m_count  # Renumber
                 l_dict[self.m_count] = l_schedule_obj
                 self.m_count += 1
-        except AttributeError:
-            print('ERROR ')
+        except AttributeError as e_error:
+            print('ERROR in schedule.read_schedules_xml() - {0:}'.format(e_error))
+        # PrettyPrintAny(l_dict, 'All Schedules')
         return l_dict
 
     def write_one_schedule_xml(self, p_schedule_obj):
@@ -270,7 +277,7 @@ class ScheduleUtility(ScheduleExecution):
         LOG.info("Get_next_schedule complete. {0:}".format(l_debug_msg))
         self.create_timer(l_next, l_list)
 
-    def find_house(self):
+    def XXfind_house(self):
         pass
 
 
@@ -291,8 +298,10 @@ class API(ScheduleUtility, ScheduleXML):
 
         @param p_house_obj: is a House object for the house being scheduled
         """
+        # PrettyPrintAny(p_pyhouse_obj, 'PyHouse from Schedule')
         self.m_house_obj = p_pyhouse_obj.HouseData
-        self.m_house_xml = p_pyhouse_obj.XmlParsed
+        self.m_house_xml = p_pyhouse_obj.XmlRoot.find('Houses/House')
+        # PrettyPrintAny(self.m_house_xml, 'm_house_xml from Schedule')
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_house_obj.LightingAPI = lighting.API()
         LOG.info("Starting House {0:}.".format(self.m_house_obj.Name))
