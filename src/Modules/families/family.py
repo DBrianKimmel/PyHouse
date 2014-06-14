@@ -98,14 +98,14 @@ class API(object):
     def XXXstart_one_lighting_family(self, p_x):
         pass
 
-    def start_lighting_families(self, p_house_obj):
+    def start_lighting_families(self, p_pyhouse_obj, p_house_obj):
         """
         Load and start the family if there is a controller in the house for the family.
         Runs Device_<family>.API.Start()
         """
         LOG.info("---Starting lighting families for house {0:}.".format(p_house_obj.Name))
         for l_family_obj in p_house_obj.FamilyData.itervalues():
-            l_family_obj.ModuleAPI.Start(p_house_obj)  # will run Device_<family>.API.Start()
+            l_family_obj.ModuleAPI.Start(p_pyhouse_obj, p_house_obj)  # will run Device_<family>.API.Start()
             LOG.info("Started lighting family {0:}.".format(l_family_obj.Name))
 
     def stop_lighting_families(self, p_xml, p_house_obj):

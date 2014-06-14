@@ -53,7 +53,7 @@ class API(LightingAPI):
         """
         pass
 
-    def Start(self, p_house_obj):
+    def Start(self, p_pyhouse_obj, p_house_obj):
         """For the given house, this will start all the controllers for family = UPB in that house.
         """
         self.m_house_obj = p_house_obj

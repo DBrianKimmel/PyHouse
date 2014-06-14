@@ -25,6 +25,7 @@ import xml.etree.ElementTree as ET
 # Import PyHouse files
 from Modules.Core.data_objects import LightData
 from Modules.lights import lighting_core
+# from src.Modules.utils.tools import PrettyPrintAny
 
 
 g_debug = 0
@@ -35,11 +36,14 @@ class LightingAPI(lighting_core.CoreAPI):
 
     m_count = 0
 
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+
     def _read_light_data(self, p_obj, p_xml):
         pass
 
     def _read_family_data(self, p_obj, p_xml):
-        l_family = p_obj.LightingLightingFamily
+        l_family = p_obj.LightingFamily
         l_api = self.m_pyhouse_obj.HouseData.FamilyData[l_family].ModuleAPI
         l_api.extract_device_xml(p_obj, p_xml)
 
@@ -49,17 +53,21 @@ class LightingAPI(lighting_core.CoreAPI):
         l_light_obj.Key = self.m_count  # Renumber
         self._read_light_data(l_light_obj, p_light_xml)
         self._read_family_data(l_light_obj, p_light_xml)
+        # PrettyPrintAny(l_light_obj, 'One Lights')
         return l_light_obj
 
-    def read_lights_xml(self, p_house_xml):
+    def read_lights_xml(self, p_pyhouse_obj):
         self.m_count = 0
         l_lights_dict = {}
-        l_sect = p_house_xml.find('Lights')
+        l_house_xml = p_pyhouse_obj.XmlRoot.find('Houses/House')
+        l_lights_xml = l_house_xml.find('Lights')
+        # PrettyPrintAny(l_lights_xml, 'Lighting Lights')
         try:
-            for l_light_xml in l_sect.iterfind('Light'):
+            for l_light_xml in l_lights_xml.iterfind('Light'):
                 l_lights_dict[self.m_count] = self.read_one_light_xml(l_light_xml)
                 self.m_count += 1
-        except AttributeError:  # No Lights section
+        except AttributeError as e_error:  # No Lights section
+            print('Lighting_Lights - No Lights defined - {0:}'.format(e_error))
             l_lights_dict = {}
         return l_lights_dict
 

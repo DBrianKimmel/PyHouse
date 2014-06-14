@@ -26,7 +26,6 @@ class ControllersAPI(lighting_core.CoreAPI):
     m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
-        super(ControllersAPI, self).__init__()
         self.m_pyhouse_obj = p_pyhouse_obj
 
     def _read_controller_data(self, p_obj, p_xml):
@@ -66,16 +65,18 @@ class ControllersAPI(lighting_core.CoreAPI):
         """Called from lighting.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
-        # PrettyPrintAny(self.m_pyhouse_obj, 'PyHouseData')
         self.m_count = 0
         l_dict = {}
-        l_sect = p_pyhouse_obj.XmlSection.find('Controllers')
+        l_house_xml = p_pyhouse_obj.XmlRoot.find('Houses/House')
+        l_controllers_xml = l_house_xml.find('Controllers')
+        # PrettyPrintAny(l_controllers_xml, 'Lighting Controllers')
         try:
-            for l_controller_xml in l_sect.iterfind('Controller'):
+            for l_controller_xml in l_controllers_xml.iterfind('Controller'):
                 l_controller_obj = self.read_one_controller_xml(l_controller_xml)
                 l_dict[self.m_count] = l_controller_obj
                 self.m_count += 1
-        except AttributeError:  # No Controller section
+        except AttributeError as e_error:  # No Controller section
+            print('Lighting Controllers - No Controllers found - {0:}'.format(e_error))
             l_dict = {}
         return l_dict
 

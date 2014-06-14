@@ -12,9 +12,11 @@ from nevow import athena
 from nevow import loaders
 
 # Import PyMh files and modules.
+from Modules.Core.data_objects import LightData
 from Modules.web import web_utils
 from Modules.lights import lighting_lights
 from Modules.utils import pyh_log
+from src.Modules.utils.tools import PrettyPrintAny
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -54,12 +56,13 @@ class ControlLightsElement(athena.LiveElement):
         l_json = web_utils.JsonUnicode().decode_json(p_json)
         l_house_ix = int(l_json['HouseIx'])
         l_light_ix = int(l_json['Key'])
-        l_light_obj = lighting_lights.LightData()
+        l_light_obj = LightData()
         l_light_obj.Name = l_json['Name']
         l_light_obj.Key = l_light_ix
         l_light_obj.CurLevel = l_level = l_json['Level']
         l_light_obj.UUID = l_json['UUID']
         l_light_obj.HouseIx = l_house_ix
+        PrettyPrintAny(l_light_obj, 'web_controlLights')
         self.m_pyhouse_obj.HouseData.LightingAPI.ChangeLight(l_light_obj, l_level)
 
 # ## END DBK

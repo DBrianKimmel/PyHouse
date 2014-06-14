@@ -40,17 +40,9 @@ from Modules.families.Insteon import Insteon_utils
 from Modules.families.Insteon import Insteon_Link
 from Modules.families.Insteon.Device_Insteon import InsteonData
 from Modules.utils import pyh_log
+from src.Modules.utils.tools import PrettyPrintAny
 
-g_debug = 1
-# 0 = off
-# 1 = log extra info
-# 2 = major routine entry
-# 3 = Minor routine entry
-# 4 = sent commands high level
-# 5 = decode response
-# 6 = sent command detail (number)
-# 7 = diagnostics
-# + = NOT USED HERE
+g_debug = 9
 LOG = pyh_log.getLogger('PyHouse.Insteon_PLM ')
 
 callLater = reactor.callLater

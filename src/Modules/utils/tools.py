@@ -37,14 +37,14 @@ def PrettyPrintDict(p_dict, p_format = "%-25s %s"):
     for (key, val) in p_dict.iteritems():
         print(p_format % (str(key) + ':', val))
 
-def PrettyPrintXML(p_element, p_title = ''):
+def PrettyPrintXML(p_element, _p_title = ''):
     """Return a pretty-printed XML string for the Element.
 
     @param p_element: an element to format as a readable XML tree.
     @return: a string formatted with indentation and newlines.
     """
-    l_type = type(p_element)
-    print('===XML=== ', p_title, ' === ', l_type)
+    # l_type = type(p_element)
+    # print('===XML=== ', p_title, ' === ', l_type)
     l_rough_string = ET.tostring(p_element, 'utf-8')
     l_reparsed = minidom.parseString(l_rough_string)
     l_doc = l_reparsed.toprettyxml(indent = "    ")

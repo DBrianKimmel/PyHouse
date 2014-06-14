@@ -57,6 +57,7 @@ class API(object):
         self.m_pyhouse_obj.HouseAPI.Start(self.m_pyhouse_obj)
         # SubSystems
         self.m_pyhouse_obj.WebAPI = web_server.API()
+        self.m_pyhouse_obj.WebAPI.Start(p_pyhouse_obj)
         self.m_entertainment.Start(p_pyhouse_obj)
         LOG.info("Started.")
 

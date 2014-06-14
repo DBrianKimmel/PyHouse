@@ -103,9 +103,9 @@ class Utility(xml_tools.ConfigFile):
         #
         l_site_dir = None
         l_site = appserver.NevowSite(web_mainpage.TheRoot(l_site_dir, p_pyhouses_obj))
-        if not p_pyhouses_obj.WebData.Service.running:
-            p_pyhouses_obj.Reactor.listenTCP(p_pyhouses_obj.WebData.WebPort, l_site)
-            p_pyhouses_obj.WebData.Service.startService()
+        # if not p_pyhouses_obj.WebData.Service.running:
+        p_pyhouses_obj.Reactor.listenTCP(p_pyhouses_obj.WebData.WebPort, l_site)
+        # p_pyhouses_obj.WebData.Service.startService()
         l_msg = "Port:{0:}, Path:{1:}".format(p_pyhouses_obj.WebData.WebPort, l_site_dir)
         LOG.info("Started - {0:}".format(l_msg))
 

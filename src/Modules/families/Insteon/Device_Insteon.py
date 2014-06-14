@@ -28,6 +28,7 @@ from Modules.Core.data_objects import InsteonData
 from Modules.families.Insteon import Insteon_utils
 from Modules.utils import xml_tools
 from Modules.utils import pyh_log
+from src.Modules.utils.tools import PrettyPrintAny
 
 g_debug = 9
 LOG = pyh_log.getLogger('PyHouse.Dev_Insteon ')
@@ -43,7 +44,7 @@ class CoreAPI(xml_tools.ConfigTools):
         @param p_device_obj : is the Basic Object that will have the extracted elements inserted into.
         @return: a dict of the extracted Insteon Specific data.
         """
-        LOG.debug('--- Extracting XML ')
+        # LOG.debug('--- Extracting XML ')
         l_insteon_obj = InsteonData()
         l_insteon_obj.InsteonAddress = Insteon_utils.dotted_hex2int(p_entry_xml.findtext('Address', default = 0))
         l_insteon_obj.Controller = p_entry_xml.findtext('Controller')
@@ -91,10 +92,11 @@ class API(LightingAPI):
     def __init__(self):
         pass
 
-    def Start(self, p_house_obj):
+    def Start(self, p_pyhouse_obj, p_house_obj):
         """For the given house, this will start all the controllers for family = Insteon in that house.
         """
         self.m_house_obj = p_house_obj
+        self.m_pyhouse_obj = p_pyhouse_obj
         l_count = 0
         for l_controller_obj in p_house_obj.Controllers.itervalues():
             if l_controller_obj.LightingFamily != 'Insteon':
@@ -131,17 +133,21 @@ class API(LightingAPI):
         return p_xml
 
     def ChangeLight(self, p_light_obj, p_level, _p_rate = 0):
-        if g_debug >= 1:
-            LOG.debug('Change light Name:{0:}, Family:{1:}'.format(p_light_obj.Name, p_light_obj.LightingFamily))
-        if p_light_obj.Family == 'Insteon':
-            try:
-                for l_controller_obj in self.m_house_obj.Controllers.itervalues():
-                    if l_controller_obj.LightingFamily != 'Insteon':
-                        continue
-                    if l_controller_obj.Active != True:
-                        continue
-                    l_controller_obj._HandlerAPI.ChangeLight(p_light_obj, p_level)
-            except AttributeError as e:  # no controllers for house. (House is being added).
-                LOG.warning('Could not change light setting {0:}'.format(e))
+        # if g_debug >= 1:
+        #    LOG.debug('Change light Name:{0:}, Family:{1:}'.format(p_light_obj.Name, p_light_obj.LightingFamily))
+        PrettyPrintAny(p_light_obj, 'Light Object Device_Insteon')
+        l_api = self.m_pyhouse_obj.HouseData.FamilyData[p_light_obj.LightingFamily].ModuleAPI
+        # PrettyPrintAny(l_api, 'Light Object Device_Insteon 2')
+        # l_api.ChangeLight(p_light_obj, p_level)
+        # if p_light_obj.LightingFamily == 'Insteon':
+        #    try:
+        #        for l_controller_obj in self.m_house_obj.Controllers.itervalues():
+        #            if l_controller_obj.LightingFamily != 'Insteon':
+        #                continue
+        #            if l_controller_obj.Active != True:
+        #                continue
+        #            l_controller_obj._HandlerAPI.ChangeLight(p_light_obj, p_level)
+        #    except AttributeError as e:  # no controllers for house. (House is being added).
+        #        LOG.warning('Could not change light setting {0:}'.format(e))
 
 # ## END DBK

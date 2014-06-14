@@ -9,6 +9,7 @@ import xml.etree.ElementTree as ET
 # Import PyHouse files
 from Modules.Core.data_objects import ButtonData
 from Modules.lights import lighting_core
+# from src.Modules.utils.tools import PrettyPrintAny
 
 
 g_debug = 0
@@ -19,8 +20,8 @@ class ButtonsAPI(lighting_core.CoreAPI):
 
     m_count = 0
 
-    def __init__(self):
-        super(ButtonsAPI, self).__init__()
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
 
     def _read_light_data(self, p_obj, p_xml):
         pass
@@ -38,12 +39,14 @@ class ButtonsAPI(lighting_core.CoreAPI):
         self._read_family_data(l_button_obj, p_button_xml)
         return l_button_obj
 
-    def read_buttons_xml(self, p_house_xml):
+    def read_buttons_xml(self, p_pyhouse_obj):
         self.m_count = 0
         l_button_dict = {}
-        l_sect = p_house_xml.find('Buttons')
+        l_house_xml = p_pyhouse_obj.XmlRoot.find('Houses/House')
+        l_buttons_xml = l_house_xml.find('Buttons')
+        # PrettyPrintAny(l_buttons_xml, 'Lighting Buttons')
         try:
-            for l_button_xml in l_sect.iterfind('Button'):
+            for l_button_xml in l_buttons_xml.iterfind('Button'):
                 l_button_dict[self.m_count] = self.read_one_button_xml(l_button_xml)
                 self.m_count += 1
         except AttributeError:  # No Buttons section
