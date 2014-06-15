@@ -92,13 +92,13 @@ class API(LightingAPI):
     def __init__(self):
         pass
 
-    def Start(self, p_pyhouse_obj, p_house_obj):
+    def Start(self, p_pyhouse_obj):
         """For the given house, this will start all the controllers for family = Insteon in that house.
         """
-        self.m_house_obj = p_house_obj
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_house_obj = p_pyhouse_obj.HouseData
         l_count = 0
-        for l_controller_obj in p_house_obj.Controllers.itervalues():
+        for l_controller_obj in p_pyhouse_obj.HouseData.Controllers.itervalues():
             if l_controller_obj.LightingFamily != 'Insteon':
                 continue
             if l_controller_obj.Active != True:
@@ -111,13 +111,13 @@ class API(LightingAPI):
                 continue
             else:
                 from Modules.families.Insteon import Insteon_PLM
-                l_controller_obj._HandlerAPI = Insteon_PLM.API(p_house_obj)
-                if l_controller_obj._HandlerAPI.Start(l_controller_obj):
+                l_controller_obj._HandlerAPI = Insteon_PLM.API()
+                if l_controller_obj._HandlerAPI.Start(p_pyhouse_obj, l_controller_obj):
                     l_count += 1
                 else:
                     LOG.error('Controller {0:} failed to start.'.format(l_controller_obj.Name))
                     l_controller_obj.Active = False
-        l_msg = 'Started {0:} Insteon Controllers, House:{1:}.'.format(l_count, p_house_obj.Name)
+        l_msg = 'Started {0:} Insteon Controllers, House:{1:}.'.format(l_count, p_pyhouse_obj.HouseData.Name)
         LOG.info(l_msg)
 
     def Stop(self, p_xml):

@@ -25,7 +25,6 @@ What I want to happen on startup:
 """
 
 # Import system type stuff
-import pprint
 from twisted.internet.endpoints import TCP4ClientEndpoint, TCP4ServerEndpoint
 from twisted.internet.protocol import ServerFactory, ClientFactory
 from twisted.protocols.amp import AMP, Command, Integer, String, AmpList
@@ -37,7 +36,6 @@ from Modules.utils import pyh_log
 
 g_debug = 5
 LOG = pyh_log.getLogger('PyHouse.NodeDomain  ')
-PP = pprint.PrettyPrinter
 
 NODE_SERVER = 'tcp:port=8581'
 AMP_PORT = 8581
@@ -326,9 +324,9 @@ class Utility(AmpClient):
         """
         l_endpoint = TCP4ServerEndpoint(self.m_pyhouse_obj.Reactor, AMP_PORT)
         l_factory = AmpServerFactory(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.CoreServices.NodeDomainService = StreamServerEndpointService(l_endpoint, l_factory)
-        self.m_pyhouse_obj.CoreServices.NodeDomainService.setName('NodeDomain')
-        self.m_pyhouse_obj.CoreServices.NodeDomainService.setServiceParent(self.m_pyhouse_obj.Application)
+        self.m_pyhouse_obj.CoreServicesData.NodeDomainService = StreamServerEndpointService(l_endpoint, l_factory)
+        self.m_pyhouse_obj.CoreServicesData.NodeDomainService.setName('NodeDomain')
+        self.m_pyhouse_obj.CoreServicesData.NodeDomainService.setServiceParent(self.m_pyhouse_obj.Application)
         self.start_amp_server(self.m_pyhouse_obj, l_endpoint)
 
 

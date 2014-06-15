@@ -75,8 +75,8 @@ class API(object):
         """
         pass
 
-    def Start(self, p_pyhouse_obj, p_house_obj):
-        self.m_house_obj = p_house_obj
+    def Start(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info('Started.')
 
     def Stop(self, p_xml):

@@ -25,7 +25,7 @@ XML_EMPTY = """
 
 # Everything as expected in a running system.
 XML_LONG = """
-<PyHouse>
+<PyHouse Version='2'>
     <Web WebPort="8580" />
     <Logs>
         <Debug>/var/log/pyhouse/debug</Debug>
@@ -891,7 +891,7 @@ XML_LONG = """
 
 
 XML_SHORT = """
-<PyHouse>
+<PyHouse Version='2'>
     <Web>
     </Web>
     <Nodes>

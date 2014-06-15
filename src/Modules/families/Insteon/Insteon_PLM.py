@@ -985,20 +985,18 @@ class LightHandlerAPI(InsteonPlmAPI):
 
 class API(LightHandlerAPI):
 
-    def __init__(self, p_house_obj):
+    def __init__(self):
         """Constructor for the PLM.
         """
-        self.m_house_obj = p_house_obj
-        # LOG.info('Initialized for house {0:}.'.format(p_house_obj.Name))
+        pass
 
-    def Start(self, p_controller_obj):
+    def Start(self, p_pyhouse_obj, p_controller_obj):
         self.m_controller_obj = p_controller_obj
-        LOG.info('Starting Controller:{0:} for house:{1:}'.format(p_controller_obj.Name, self.m_house_obj.Name))
-        if self.start_controller_driver(p_controller_obj, self.m_house_obj):
-            self.m_protocol = PlmDriverProtocol(self.m_controller_obj, self.m_house_obj)
+        LOG.info('Starting Controller:{0:}'.format(p_controller_obj.Name))
+        if self.start_controller_driver(p_controller_obj, p_pyhouse_obj.HouseData):
+            self.m_protocol = PlmDriverProtocol(self.m_controller_obj, p_pyhouse_obj.HouseData)
             self.set_plm_mode(self.m_controller_obj)
             self.get_all_lights_status()
-            # self.get_link_records(self.m_house_obj, self.m_controller_obj)
             LOG.info('Started.')
             return True
         return False

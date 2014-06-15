@@ -24,6 +24,7 @@ from Modules.entertain import entertainment
 from Modules.housing import house
 from Modules.web import web_server
 from Modules.utils import pyh_log
+# from src.Modules.utils.tools import PrettyPrintAny
 
 g_debug = 0
 LOG = pyh_log.getLogger('PyHouse.CoreSetup   ')
@@ -49,15 +50,16 @@ class API(object):
         self.m_nodes = nodes.API()
 
     def Start(self, p_pyhouse_obj):
+        # PrettyPrintAny(p_pyhouse_obj, 'setup - 1')
         self.m_pyhouse_obj = p_pyhouse_obj
-        p_pyhouse_obj.CoreServices = CoreServices()
+        p_pyhouse_obj.CoreServicesData = CoreServices()
         self.m_nodes.Start(p_pyhouse_obj)
         # House
-        self.m_pyhouse_obj.HouseAPI = house.API()
-        self.m_pyhouse_obj.HouseAPI.Start(self.m_pyhouse_obj)
+        p_pyhouse_obj.HouseAPI = house.API()
+        p_pyhouse_obj.HouseAPI.Start(p_pyhouse_obj)
         # SubSystems
-        self.m_pyhouse_obj.WebAPI = web_server.API()
-        self.m_pyhouse_obj.WebAPI.Start(p_pyhouse_obj)
+        p_pyhouse_obj.WebAPI = web_server.API()
+        p_pyhouse_obj.WebAPI.Start(p_pyhouse_obj)
         self.m_entertainment.Start(p_pyhouse_obj)
         LOG.info("Started.")
 

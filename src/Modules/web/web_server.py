@@ -97,9 +97,9 @@ class Utility(xml_tools.ConfigFile):
         return l_web_xml
 
     def start_webserver(self, p_pyhouses_obj):
-        p_pyhouses_obj.CoreServices.WebServerService = service.Service()
-        p_pyhouses_obj.CoreServices.WebServerService.setName('WebServer')
-        p_pyhouses_obj.CoreServices.WebServerService.setServiceParent(p_pyhouses_obj.Application)
+        p_pyhouses_obj.CoreServicesData.WebServerService = service.Service()
+        p_pyhouses_obj.CoreServicesData.WebServerService.setName('WebServer')
+        p_pyhouses_obj.CoreServicesData.WebServerService.setServiceParent(p_pyhouses_obj.Application)
         #
         l_site_dir = None
         l_site = appserver.NevowSite(web_mainpage.TheRoot(l_site_dir, p_pyhouses_obj))
@@ -124,7 +124,7 @@ class API(Utility, ClientConnections):
         self.start_webserver(p_pyhouse_obj)
 
     def Stop(self, p_xml):
-        self.m_pyhouse_obj.WebData.Service.stopService()
+        self.m_pyhouse_obj.CoreServicesData.WebServerService.stopService()
         p_xml.append(self.write_web_xml(self.m_pyhouse_obj))
         LOG.info("XML appended.")
 

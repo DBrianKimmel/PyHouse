@@ -485,11 +485,10 @@ class UpbPimAPI(LightingAPI):
 
 class API(UpbPimAPI):
 
-    def __init__(self, p_house_obj):
-        self.m_house_obj = p_house_obj
+    def __init__(self):
         LOG.info('Initialized.')
 
-    def Start(self, p_controller_obj):
+    def Start(self, p_pyhouse_obj, p_controller_obj):
         self.m_controller_obj = p_controller_obj
         LOG.info('Start House:{0:}, Controller:{1:}.'.format(self.m_house_obj.Name, self.m_controller_obj.Name))
         self.start_controller(self.m_house_obj, self.m_controller_obj)

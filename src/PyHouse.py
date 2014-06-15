@@ -67,6 +67,7 @@ from Modules.Core.data_objects import PyHouseData
 from Modules.Core import setup
 from Modules.utils import pyh_log
 from Modules.utils import xml_tools
+from Modules.utils.tools import PrettyPrintAny
 
 g_debug = 0
 LOG = pyh_log.getLogger('PyHouse             ')
@@ -102,12 +103,13 @@ def handle_signals():
     if platform.uname()[0] != 'Windows':
         signal.signal(signal.SIGHUP, SigHupHandler)
     signal.signal(signal.SIGINT, SigIntHandler)
+    signal.signal(signal.SIGTERM, SigKillHandler)
 
 def SigHupHandler(signum, _stackframe):
     """
     """
-    if g_debug >= 1:
-        LOG.debug('Hup Signal handler called with signal {0:}'.format(signum))
+    # if g_debug >= 1:
+    LOG.debug('Hup Signal handler called with signal {0:}'.format(signum))
     g_API.Stop()
     g_API.Start()
 
@@ -121,24 +123,31 @@ def SigIntHandler(signum, _stackframe):
     g_API.Quit()
     exit
 
+def SigKillHandler(signum, _stackframe):
+    """
+    """
+    LOG.debug('SigInt - Signal handler called with signal {0:}'.format(signum))
+    LOG.info('SigKill \n')
+    exit
+
 
 class Utilities(object):
 
-    def read_xml_config_info(self, p_pyhouses_obj):
+    def read_xml_config_info(self, p_pyhouse_obj):
         """This will read the XML config file(s).
         There may be a device config file.
-        This puts the XML tree and file name in the pyhouses object for use by various modules.
+        This puts the XML tree and file name in the pyhouse object for use by various modules.
         """
         if g_debug >= 1:
             LOG.debug("Utilities.read_xml_config_info()")
-        p_pyhouses_obj.XmlFileName = xml_tools.open_config_file()
+        p_pyhouse_obj.XmlFileName = xml_tools.open_config_file()
         try:
-            l_xmltree = ET.parse(p_pyhouses_obj.XmlFileName)
+            l_xmltree = ET.parse(p_pyhouse_obj.XmlFileName)
         except SyntaxError:
-            xml_tools.ConfigFile().create_empty_config_file(p_pyhouses_obj.XmlFileName)
-            l_xmltree = ET.parse(p_pyhouses_obj.XmlFileName)
-        p_pyhouses_obj.XmlRoot = l_xmltree.getroot()
-        p_pyhouses_obj.XmlParsed = p_pyhouses_obj.XmlRoot
+            xml_tools.ConfigFile().create_empty_config_file(p_pyhouse_obj.XmlFileName)
+            l_xmltree = ET.parse(p_pyhouse_obj.XmlFileName)
+        p_pyhouse_obj.XmlRoot = l_xmltree.getroot()
+        p_pyhouse_obj.XmlParsed = p_pyhouse_obj.XmlRoot
 
 
 class API(Utilities):
@@ -154,6 +163,7 @@ class API(Utilities):
         Notice that the reactor starts here as the very last step here and that
         call never returns until the reactor is stopped (permanent stoppage).
         """
+        print('PyHouse Start Initializing')
         self.m_pyhouse_obj = PyHouseData()
         self.m_pyhouse_obj.Reactor = reactor
         self.m_pyhouse_obj.Application = Application('PyHouse')
@@ -162,9 +172,9 @@ class API(Utilities):
         g_API = self
         handle_signals()
         self.read_xml_config_info(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.LogsAPI = l_logs = pyh_log.API()
-        l_logs.Start(self.m_pyhouse_obj)
-        # global LOG
+        self.m_pyhouse_obj.LogsAPI = pyh_log.API()
+        self.m_pyhouse_obj.LogsAPI.Start(self.m_pyhouse_obj)
+        # PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse 1')
         LOG.info("Initializing PyHouse.\n\n")
         #
         self.m_pyhouse_obj.CoreAPI = setup.API()

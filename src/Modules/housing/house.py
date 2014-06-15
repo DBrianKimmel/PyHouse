@@ -25,6 +25,8 @@ from Modules.housing import internet
 from Modules.housing import location
 from Modules.housing import rooms
 from Modules.utils import pyh_log
+from Modules.utils.tools import PrettyPrintAny
+
 
 g_debug = 1
 # 0 = off
@@ -78,6 +80,7 @@ class HouseReadWriteXML(location.ReadWriteConfig, rooms.ReadWriteConfig):
     def write_house_xml(self, p_house_obj):
         """Replace the data in the 'Houses' section with the current data.
         """
+        PrettyPrintAny(p_house_obj, 'House obj')
         l_house_xml = self.write_base_object_xml('House', p_house_obj)
         l_house_xml.append(self.write_location_xml(p_house_obj.Location))
         l_house_xml.append(self.write_rooms_xml(p_house_obj.Rooms))
@@ -104,8 +107,6 @@ class API(Utility):
     def __init__(self):
         """Create a house object for when we add a new house.
         """
-        self.m_house_obj = HouseData()
-        self.m_house_obj.ScheduleAPI = schedule.API()
 
     def Start(self, p_pyhouse_obj):
         """Start processing for all things house.
@@ -113,25 +114,20 @@ class API(Utility):
         May be stopped and then started anew to force reloading info.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_pyhouse_obj.HouseData = self.m_house_obj
+        p_pyhouse_obj.HouseData = HouseData()
         l_house_xml = self.get_house_xml(p_pyhouse_obj)
-        self.m_pyhouse_obj.HouseData = self.read_house_xml(l_house_xml)
+        p_pyhouse_obj.HouseData = self.read_house_xml(l_house_xml)
+        p_pyhouse_obj.HouseData.ScheduleAPI = schedule.API()
+        p_pyhouse_obj.HouseData.InternetAPI = internet.API()
         LOG.info("Starting House {0:}, Active:{1:}".format(self.m_pyhouse_obj.HouseData.Name, self.m_pyhouse_obj.HouseData.Active))
-        self.m_house_obj.InternetAPI = internet.API()
-        self.m_house_obj.ScheduleAPI.Start(self.m_pyhouse_obj)
-        self.m_house_obj.InternetAPI.Start(self.m_pyhouse_obj)
-        # l_msg = "For house: {0:} ".format(self.m_pyhouse_obj.HouseData.Name)
-        # l_msg += "- found -  Rooms:{0:}, Schedule:{1:}, Lights:{2:}, Controllers:{3:}".format(
-        #            len(self.m_house_obj.Rooms), len(self.m_house_obj.Schedules),
-        #            len(self.m_house_obj.Lights), len(self.m_house_obj.Controllers)
-        # LOG.info("Started. - {0:}\n".format(l_msg))
-        return self.m_house_obj
+        p_pyhouse_obj.HouseData.ScheduleAPI.Start(self.m_pyhouse_obj)
+        p_pyhouse_obj.HouseData.InternetAPI.Start(self.m_pyhouse_obj)
 
     def Stop(self, p_xml):
         """Stop all houses.
         Append the house XML to the passed in xlm tree.
         """
-        LOG.info("Stopping House:{0:}.".format(self.m_house_obj.Name))
+        LOG.info("Stopping House.")
         l_house_xml = self.write_house_xml(self.m_house_obj)
         l_house_xml.append(self.write_location_xml(self.m_house_obj.Location))
         l_house_xml.append(self.write_rooms_xml(self.m_house_obj.Rooms))
