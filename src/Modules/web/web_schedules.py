@@ -1,8 +1,15 @@
-'''
-Created on Jun 3, 2013
+"""
+-*- test-case-name: PyHouse.src.Modules.web.test.test_web_schedules -*-
 
-@author: briank
-'''
+@name: PyHouse/src/Modules/web/web_schedules.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
+@Copyright (c) 2013-2014 by D. Brian Kimmel
+@license: MIT License
+@note: Created on Jun 3, 2013
+@summary: Web interface to schedules for the selected house.
+
+"""
 
 # Import system type stuff
 import os
@@ -10,7 +17,7 @@ from nevow import athena
 from nevow import loaders
 
 # Import PyMh files and modules.
-from Modules.web import web_utils
+from Modules.web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.scheduling import schedule
 from Modules.utils import pyh_log
 
@@ -34,26 +41,20 @@ class SchedulesElement(athena.LiveElement):
     docFactory = loaders.xmlfile(os.path.join(templatepath, 'schedulesElement.html'))
     jsClass = u'schedules.SchedulesWidget'
 
-    def __init__(self, p_workspace_obj, p_params):
+    def __init__(self, p_workspace_obj, _p_params):
         self.m_workspace_obj = p_workspace_obj
         self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
 
     @athena.expose
-    def getHouseData(self, p_index):
-        """ A JS client has requested all the information for a given house.
-
-        @param p_index: is the house index number.
-        """
-        l_ix = int(p_index)
-        l_house = self.m_pyhouse_obj.HouseData
-        l_json = web_utils.JsonUnicode().encode_json(l_house)
-        return unicode(l_json)
+    def getHouseData(self, _p_index):
+        l_house = GetJSONHouseInfo(self.m_pyhouse_obj.HouseData)
+        return l_house
 
     @athena.expose
     def saveScheduleData(self, p_json):
         """A new/changed schedule is returned.  Process it and update the internal data via schedule.py
         """
-        l_json = web_utils.JsonUnicode().decode_json(p_json)
+        l_json = JsonUnicode().decode_json(p_json)
         l_delete = l_json['Delete']
         l_house_ix = int(l_json['HouseIx'])
         l_schedule_ix = int(l_json['Key'])

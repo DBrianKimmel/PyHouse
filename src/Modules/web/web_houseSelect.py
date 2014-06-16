@@ -17,8 +17,8 @@ from nevow import loaders
 from nevow import athena
 
 # Import PyMh files and modules.
-from Modules.web.web_utils import JsonUnicode
-# from Modules.Core.data_objects import HouseData
+# from Modules.Core.data_objects import JsonHouseData
+from Modules.web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.utils import pyh_log
 # from Modules.utils.tools import PrettyPrintAny
 
@@ -29,14 +29,6 @@ templatepath = os.path.join(webpath, 'template')
 
 g_debug = 0
 LOG = pyh_log.getLogger('PyHouse.webHouseSel ')
-
-
-class JsonHouseData(object):
-    def __init__(self):
-        self.Rooms = {}
-        self.Lights = {}
-        self.Controllers = {}
-        self.Buttons = {}
 
 
 class HouseSelectElement(athena.LiveElement):
@@ -68,21 +60,8 @@ class HouseSelectElement(athena.LiveElement):
         return unicode(l_json)
 
     @athena.expose
-    def getSelectedHouseData(self, p_index):
-        """This is called from the client when a house was selected.
-
-        Gather the data for house and send it back to the client.
-        Data consists of Rooms, Lights
-        """
-        l_house = JsonHouseData()
-        # PrettyPrintAny(self.m_pyhouse_obj, 'Selected House Data - pyhouse 1 ')
-        _l_ix = int(p_index)
-        l_house.Rooms = self.m_pyhouse_obj.HouseData.Rooms
-        l_house.Lights = self.m_pyhouse_obj.HouseData.Lights
-        # PrettyPrintAny(l_house, 'Selected House Data - l_house 2 ')
-        l_json = JsonUnicode().encode_json(l_house)
-        # PrettyPrintAny(l_json, 'Selected House Data - Json 3 ')
-        # LOG.debug("HouseIx:{0:}, JSON{1:}".format(l_ix, l_json))
-        return unicode(l_json)
+    def getSelectedHouseData(self, _p_index):
+        l_house = GetJSONHouseInfo(self.m_pyhouse_obj.HouseData)
+        return l_house
 
 # ## END DBK

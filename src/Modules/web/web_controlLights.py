@@ -18,7 +18,7 @@ from nevow import loaders
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import LightData
-from Modules.web import web_utils
+from Modules.web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.utils import pyh_log
 from Modules.utils.tools import PrettyPrintAny
 
@@ -46,17 +46,15 @@ class ControlLightsElement(athena.LiveElement):
 
         @param p_index: is the house index number.
         """
-        _l_ix = int(p_index)
-        l_house = self.m_pyhouse_obj.HouseData
-        l_json = unicode(web_utils.JsonUnicode().encode_json(l_house))
-        PrettyPrintAny(l_json, 'web_controlLights to browser')
-        return l_json
+        print('webCtLights getHouseData Entry ix = {0:}'.format(p_index))
+        l_house = GetJSONHouseInfo(self.m_pyhouse_obj.HouseData)
+        return l_house
 
     @athena.expose
     def saveControlLightData(self, p_json):
         """A changed Light is returned.  Process it and update the light level
         """
-        l_json = web_utils.JsonUnicode().decode_json(p_json)
+        l_json = JsonUnicode().decode_json(p_json)
         l_house_ix = int(l_json['HouseIx'])
         l_light_ix = int(l_json['Key'])
         l_light_obj = LightData()

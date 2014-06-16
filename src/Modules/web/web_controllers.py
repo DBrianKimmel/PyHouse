@@ -1,7 +1,14 @@
 '''
-Created on Apr 8, 2013
+-*- test-case-name: PyHouse.src.Modules.web.test.test_web_controllers -*-
 
-@author: briank
+@name: PyHouse/src/Modules/web/web_controllers.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
+@Copyright (c) 2013-2014 by D. Brian Kimmel
+@license: MIT License
+@note: Created on Apr 8, 2013
+@summary: Web interface to schedules for the selected house.
+
 '''
 
 # Import system type stuff
@@ -10,7 +17,7 @@ from nevow import loaders
 from nevow import athena
 
 # Import PyMh files and modules.
-from Modules.web import web_utils
+from Modules.web.web_utils import JsonUnicode, GetJSONHouseInfo, dotted_hex2int
 from Modules.drivers import interface
 from Modules.lights import lighting_controllers
 from Modules.utils import pyh_log
@@ -43,13 +50,9 @@ class ControllersElement(athena.LiveElement):
             print("web_controllers.ControllersElement()")
 
     @athena.expose
-    def getHouseData(self, p_index):
-        """ A JS receiver for House information from the client.
-        """
-        l_ix = int(p_index)
-        l_house = self.m_pyhouse_obj.HouseData
-        l_json = web_utils.JsonUnicode().encode_json(l_house)
-        return unicode(l_json)
+    def getHouseData(self, _p_index):
+        l_house = GetJSONHouseInfo(self.m_pyhouse_obj.HouseData)
+        return l_house
 
     @athena.expose
     def getInterfaceData(self):
@@ -59,14 +62,14 @@ class ControllersElement(athena.LiveElement):
         l_obj = {}
         for l_interface in l_interfaces:
             l_name = l_interface + 'Data'
-        l_json = web_utils.JsonUnicode().encode_json(l_obj)
+        l_json = JsonUnicode().encode_json(l_obj)
         return unicode(l_json)
 
     @athena.expose
     def saveControllerData(self, p_json):
         """A new/changed controller is returned.  Process it and update the internal data via controller.py
         """
-        l_json = web_utils.JsonUnicode().decode_json(p_json)
+        l_json = JsonUnicode().decode_json(p_json)
         l_house_ix = int(l_json['HouseIx'])
         l_controller_ix = int(l_json['Key'])
         l_delete = l_json['Delete']
@@ -96,7 +99,7 @@ class ControllersElement(athena.LiveElement):
         l_obj.Interface = l_json['Interface']
         l_obj.Port = l_json['Port']
         if l_obj.LightingFamily == 'Insteon':
-            l_obj.InsteonAddress = web_utils.dotted_hex2int(l_json['InsteonAddress'])
+            l_obj.InsteonAddress = dotted_hex2int(l_json['InsteonAddress'])
             l_obj.DevCat = l_json['DevCat']
             l_obj.GroupNumber = l_json['GroupNumber']
             l_obj.GroupList = l_json['GroupList']

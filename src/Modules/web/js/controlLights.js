@@ -61,8 +61,8 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 	 */
 	function fetchHouseData(self) {
 		function cb_fetchHouseData(p_json) {
-			Divmod.debug('---', 'controlLights.cb_fetchHouseData.cb_fetchHouseData() was called.');
-			console.log("controlLights.fetchHouseData.cb_fetchHouseData   p1 %O", p_json);
+			//Divmod.debug('---', 'controlLights.fetchHouseData.cb_fetchHouseData() was called.');
+			//console.log("controlLights.fetchHouseData.cb_fetchHouseData   p1 %O", p_json);
 			globals.House.HouseObj = JSON.parse(p_json);
 			var l_tab = buildTable(globals.House.HouseObj.Lights, 'handleMenuOnClick');
 			self.nodeById('ControlLightTableDiv').innerHTML = l_tab;
@@ -70,7 +70,8 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 		function eb_fetchHouseData(res) {
 			Divmod.debug('---', 'controlLights.eb_fetchHouseData() was called.  ERROR ' + res);
 		}
-        var l_defer = self.callRemote("getHouseData", globals.House.HouseIx);  // call server @ web_controlLights.py
+		//Divmod.debug('---', 'controlLights.fetchHouseData() was called.');
+       	var l_defer = self.callRemote("getHouseData", globals.House.HouseIx);  // call server @ web_controlLights.py
 		l_defer.addCallback(cb_fetchHouseData);
 		l_defer.addErrback(eb_fetchHouseData);
         return false;
@@ -137,7 +138,7 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 			self.showWidget(self);
 		}
 		function eb_handleDataOnClick(res){
-			Divmod.debug('---', 'controlLights.eb_handleDataOnClick() was called. res=' + res);
+			Divmod.debug('---', 'controlLights.eb_handleDataOnClick() was called. ERROR=' + res);
 		}
     	var l_json = JSON.stringify(self.fetchEntry(self));
 		//Divmod.debug('---', 'controlLights.handleDataOnClick() was called. json:' + l_json);

@@ -28,6 +28,8 @@ def PrettyPrintAny(p_any, p_title = ''):
         PrettyPrintXML(p_any)
     elif isinstance(p_any, str):
         PrettyPrintString(p_any)
+    elif isinstance(p_any, unicode):
+        PrettyPrintUnicode(p_any)
     # Default to an object
     else:
         PrettyPrintObject(p_any)
@@ -72,7 +74,12 @@ def PrettyPrintObject(p_obj, maxlen = 180, lindent = 24, maxspew = 2000):
         print(PrettyPrintCols(('', attr, truncstring(str(l_val), maxspew)), l_tabbedwidths, ' '))
 
 def PrettyPrintString(p_obj):
-    l_str = prettyPrint(p_obj, 120)
+    l_str = prettyPrint(p_obj, maxlen = 120)
+    print(l_str)
+
+def PrettyPrintUnicode(p_obj):
+    l_obj = str(p_obj)
+    l_str = prettyPrint(l_obj, maxlen = 120)
     print(l_str)
 
 

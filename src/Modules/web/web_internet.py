@@ -18,7 +18,7 @@ from nevow import loaders
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import InternetConnectionData
-from Modules.web import web_utils
+from Modules.web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.utils import pyh_log
 
 # Handy helper for finding external resources nearby.
@@ -40,21 +40,15 @@ class InternetElement(athena.LiveElement):
         self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
 
     @athena.expose
-    def getHouseData(self, p_index):
-        """ A JS client has requested all the information for a given house.
-
-        @param p_index: is the house index number.
-        """
-        _l_ix = int(p_index)
-        l_house = self.m_pyhouse_obj.HouseData
-        l_json = unicode(web_utils.JsonUnicode().encode_json(l_house))
-        return l_json
+    def getHouseData(self, _p_index):
+        l_house = GetJSONHouseInfo(self.m_pyhouse_obj.HouseData)
+        return l_house
 
     @athena.expose
     def saveInternetData(self, p_json):
         """Internet data is returned, so update the house info.
         """
-        l_json = web_utils.JsonUnicode().decode_json(p_json)
+        l_json = JsonUnicode().decode_json(p_json)
         _l_house_ix = int(l_json['HouseIx'])
         l_dyndns_ix = int(l_json['Key'])
         try:
@@ -67,7 +61,6 @@ class InternetElement(athena.LiveElement):
         l_obj.Active = True
         l_obj.ExternalDelay = l_json['ExternalDelay']
         l_obj.ExternalUrl = l_json['ExternalUrl']
-        # l_obj.ExternalIP = None  # returned from url to check our external IP address
         l_obj.DynDns[l_dyndns_ix].Name = l_json['Name']
         l_obj.DynDns[l_dyndns_ix].Key = l_dyndns_ix
         l_obj.DynDns[l_dyndns_ix].Active = l_json['Active']

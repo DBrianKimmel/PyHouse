@@ -1,8 +1,15 @@
-'''
-Created on Jun 3, 2013
+"""
+-*- test-case-name: PyHouse.src.Modules.web.test.test_web_lights -*-
 
-@author: briank
-'''
+@name: PyHouse/src/Modules/web/web_lights.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
+@Copyright (c) 2013-2014 by D. Brian Kimmel
+@license: MIT License
+@note: Created on Jun 3, 2013
+@summary: Handle all of the lights information for a house.
+
+"""
 
 # Import system type stuff
 import os
@@ -11,7 +18,7 @@ from nevow import loaders
 from nevow import athena
 
 # Import PyMh files and modules.
-from Modules.web import web_utils
+from Modules.web.web_utils import JsonUnicode, GetJSONHouseInfo, dotted_hex2int
 from Modules.lights import lighting_lights
 from Modules.utils import pyh_log
 
@@ -20,9 +27,6 @@ webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
 
 g_debug = 0
-# 0 = off
-# 1 = log extra info
-# + = NOT USED HERE
 LOG = pyh_log.getLogger('PyHouse.webLight    ')
 
 
@@ -32,7 +36,7 @@ class LightsElement(athena.LiveElement):
     docFactory = loaders.xmlfile(os.path.join(templatepath, 'lightsElement.html'))
     jsClass = u'lights.LightsWidget'
 
-    def __init__(self, p_workspace_obj, p_params):
+    def __init__(self, p_workspace_obj, _p_params):
         """Called when connection is made to browser.
 
         @param p_params: = 'dummy'
@@ -41,23 +45,15 @@ class LightsElement(athena.LiveElement):
         self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
 
     @athena.expose
-    def getHouseData(self, p_index):
-        """ A JS client has requested all the lights information for a given house.
-
-        Return the information via callback to the client.
-
-        @param p_index: is the house index number.
-        """
-        l_ix = int(p_index)
-        l_house = self.m_pyhouse_obj.HouseData
-        l_json = unicode(web_utils.JsonUnicode().encode_json(l_house))
-        return l_json
+    def getHouseData(self, _p_index):
+        l_house = GetJSONHouseInfo(self.m_pyhouse_obj.HouseData)
+        return l_house
 
     @athena.expose
     def saveLightData(self, p_json):
         """A new/changed light is returned.  Process it and update the internal data via light_xxxx.py
         """
-        l_json = web_utils.JsonUnicode().decode_json(p_json)
+        l_json = JsonUnicode().decode_json(p_json)
         l_delete = l_json['Delete']
         l_house_ix = int(l_json['HouseIx'])
         l_light_ix = int(l_json['Key'])
@@ -89,7 +85,7 @@ class LightsElement(athena.LiveElement):
         if len(l_obj.UUID) < 8:
             l_obj.UUID = str(uuid.uuid1())
         if l_obj.LightingFamily == 'Insteon':
-            l_obj.InsteonAddress = web_utils.dotted_hex2int(l_json['InsteonAddress'])
+            l_obj.InsteonAddress = dotted_hex2int(l_json['InsteonAddress'])
             l_obj.DevCat = l_json['DevCat']
             l_obj.GroupNumber = l_json['GroupNumber']
             l_obj.GroupList = l_json['GroupList']

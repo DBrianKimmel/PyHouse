@@ -141,6 +141,17 @@ class HouseData(ABaseObject):
         self.Thermostats = {}
 
 
+class JsonHouseData(ABaseObject):
+    """Simplified for JSON encoding.
+    """
+    def __init__(self):
+        self.Buttons = {}
+        self.Controllers = {}
+        self.Lights = {}
+        self.Rooms = {}
+        self.Schedules = {}
+
+
 class RoomData(ABaseObject):
     """A room of the house.
     Used to draw pictures of the house

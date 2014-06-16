@@ -72,7 +72,4 @@ class Test_01_Json(unittest.TestCase):
         PrettyPrintAny(l_json, 'JSON')
         print('JSON: {0:}'.format(l_json))
 
-    def Xtest_add_attrs(self):
-        web_utils.add_attr_list(self.c_attr, ['abc/aaa', '/ddd/bbb.ext'])
-
 # ## END DBK

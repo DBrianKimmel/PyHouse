@@ -1,8 +1,15 @@
-'''
-Created on Jun 3, 2013
+"""
+-*- test-case-name: PyHouse.src.Modules.web.test.test_web_buttons -*-
 
-@author: briank
-'''
+@name: PyHouse/src/Modules/web/web_buttons.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
+@Copyright (c) 2013-2014 by D. Brian Kimmel
+@license: MIT License
+@note: Created on Jun 3, 2013
+@summary: Web interface to buttons for the selected house.
+
+"""
 
 # Import system type stuff
 import os
@@ -10,7 +17,7 @@ from nevow import loaders
 from nevow import athena
 
 # Import PyMh files and modules.
-from Modules.web import web_utils
+from Modules.web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.lights import lighting_buttons
 from Modules.utils import pyh_log
 
@@ -19,12 +26,6 @@ webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
 
 g_debug = 0
-# 0 = off
-# 1 = log extra info
-# 2 = major routine entry
-# 3 = Config file handling
-# 4 = Dump JSON
-# + = NOT USED HERE
 LOG = pyh_log.getLogger('PyHouse.webButton   ')
 
 
@@ -34,35 +35,22 @@ class ButtonsElement(athena.LiveElement):
     docFactory = loaders.xmlfile(os.path.join(templatepath, 'buttonsElement.html'))
     jsClass = u'buttons.ButtonsWidget'
 
-    def __init__(self, p_workspace_obj, p_params):
+    def __init__(self, p_workspace_obj, _p_params):
         self.m_workspace_obj = p_workspace_obj
         self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
         if g_debug >= 2:
             print("web_buttons.ButtonsElement()")
 
     @athena.expose
-    def getHouseData(self, p_index):
-        """ A JS client has requested all the House information for a given house.
-
-        Return the information via a remote call to the client.
-
-        @param p_index: is the house index number.
-        """
-        l_ix = int(p_index)
-        l_house = self.m_pyhouse_obj.HouseData
-        l_json = web_utils.JsonUnicode().encode_json(l_house)
-        if g_debug >= 3:
-            print("web_buttons.getHouseData() - JSON: {0:}".format(l_json))
-        return unicode(l_json)
+    def getHouseData(self, _p_index):
+        l_house = GetJSONHouseInfo(self.m_pyhouse_obj.HouseData)
+        return l_house
 
     @athena.expose
     def saveButtonData(self, p_json):
         """A new/changed button is returned.
         """
-        l_json = web_utils.JsonUnicode().decode_json(p_json)
-        l_ix = int(l_json['HouseIx'])
-        if g_debug >= 4:
-            print("web_buttons.ButtonsElement.saveButtonData() - JSON:{0:}".format(l_json))
+        l_json = JsonUnicode().decode_json(p_json)
         l_obj = lighting_buttons.ButtonData()
         l_obj.Name = l_json['Name']
         l_obj.Active = l_json['Active']
