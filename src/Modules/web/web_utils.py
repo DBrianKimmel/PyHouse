@@ -28,6 +28,7 @@ import json
 
 # Import PyMh files and modules.
 from Modules.utils import xml_tools
+from Modules.utils.tools import PrettyPrintAny
 
 
 g_debug = 0
@@ -138,10 +139,10 @@ class JsonUnicode(object):
         """
         try:
             # l_json = json.dumps(p_obj, cls = ComplexHandler)
-            l_json = jsonpickle.encode(p_obj)
+            l_json = jsonpickle.encode(p_obj, unpicklable = False, max_depth = 100)
         except (TypeError, ValueError) as l_error:
             print('web_utils.encode_json ERROR {0:}'.format(l_error))
-            l_json = None
+            l_json = '{}'
         return l_json
 
 

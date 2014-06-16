@@ -133,7 +133,7 @@ class API(Utility):
         l_obj = LogData()
         l_obj.Debug = p_entry.Debug
         l_obj.Error = p_entry.Error
-        self.m_house_obj.LogData = l_obj  # update schedule entry within a house
+        self.m_pyhouse_obj.LogData = l_obj  # update schedule entry within a house
 
 
 def getLogger(p_name):

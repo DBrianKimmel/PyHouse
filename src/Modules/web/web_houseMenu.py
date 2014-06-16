@@ -1,9 +1,15 @@
-#!/usr/bin/python
-'''
-Created on May 30, 2013
+"""
+-*- test-case-name: PyHouse.src.Modules.web.test.test_web_houseMenu -*-
 
-@author: briank
-'''
+@name: PyHouse/src/Modules/web/web_houseMenu.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
+@Copyright (c) 2013-2014 by D. Brian Kimmel
+@license: MIT License
+@note: Created on May 30, 2013
+@summary: Handle all of the information for a house.
+
+"""
 
 # Import system type stuff
 import os
@@ -18,9 +24,6 @@ webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
 
 g_debug = 0
-# 0 = off
-# 1 = log extra info
-# + = NOT USED HERE
 LOG = pyh_log.getLogger('PyHouse.webHMenu    ')
 
 
@@ -33,7 +36,6 @@ class HouseMenuElement(athena.LiveElement):
     def __init__(self, p_workspace_obj):
         self.m_workspace_obj = p_workspace_obj
         self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
-        if g_debug >= 2:
-            print("web_houseMenu.houseMenuElement()")
+        print("web_houseMenu.houseMenuElement()")
 
 # ## END DBK

@@ -1,8 +1,15 @@
-'''
-Created on Jun 1, 2013
+"""
+-*- test-case-name: PyHouse.src.Modules.web.test.test_web_houseSelect -*-
 
-@author: briank
-'''
+@name: PyHouse/src/Modules/web/web_houseSelect.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
+@Copyright (c) 2013-2014 by D. Brian Kimmel
+@license: MIT License
+@note: Created on Jun 1, 2013
+@summary: Handle all of the information for a house.
+
+"""
 
 # Import system type stuff
 import os
@@ -10,8 +17,8 @@ from nevow import loaders
 from nevow import athena
 
 # Import PyMh files and modules.
-from Modules.web import web_utils
-from Modules.housing import house
+from Modules.web.web_utils import JsonUnicode
+# from Modules.Core.data_objects import HouseData
 from Modules.utils import pyh_log
 # from src.Modules.utils.tools import PrettyPrintAny
 
@@ -24,12 +31,12 @@ g_debug = 0
 LOG = pyh_log.getLogger('PyHouse.webHouseSel ')
 
 
-class WebHouseData(object):
+class JsonHouseData(object):
     def __init__(self):
-        self.House = house.HouseData()
-
-    def reprJSON(self):
-        return dict(House = self.House)
+        self.Rooms = {}
+        self.Lights = {}
+        self.Controllers = {}
+        self.Buttons = {}
 
 
 class HouseSelectElement(athena.LiveElement):
@@ -41,6 +48,7 @@ class HouseSelectElement(athena.LiveElement):
     def __init__(self, p_workspace_obj):
         self.m_workspace_obj = p_workspace_obj
         self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
+        # PrettyPrintAny(p_workspace_obj, 'web_houseSelect.HouseSelectElement() - workspace_obj')
 
     @athena.expose
     def getHousesToSelect(self, _p_dummy):
@@ -55,8 +63,8 @@ class HouseSelectElement(athena.LiveElement):
         l_obj[0]['Key'] = l_house.Key
         l_obj[0]['Active'] = l_house.Active
         # PrettyPrintAny(l_obj, 'Json 1A ')
-        l_json = web_utils.JsonUnicode().encode_json(l_obj)
-        # rettyPrintAny(l_json, 'Json 1B ')
+        l_json = JsonUnicode().encode_json(l_obj)
+        # PrettyPrintAny(l_json, 'Json 1B ')
         return unicode(l_json)
 
     @athena.expose
@@ -64,13 +72,17 @@ class HouseSelectElement(athena.LiveElement):
         """This is called from the client when a house was selected.
 
         Gather the data for house and send it back to the client.
+        Data consists of Rooms, Lights
         """
-        l_ix = int(p_index)
-        l_house = self.m_pyhouse_obj.HouseData
-        l_json = web_utils.JsonUnicode().encode_json(l_house)
-        # PrettyPrintAny(l_json, 'Json 2 ')
-        if g_debug >= 1:
-            LOG.debug("HouseIx:{0:}, JSON{1:}".format(l_ix, l_json))
+        l_house = JsonHouseData()
+        # PrettyPrintAny(self.m_pyhouse_obj, 'Selected House Data - pyhouse 1 ')
+        _l_ix = int(p_index)
+        l_house.Rooms = self.m_pyhouse_obj.HouseData.Rooms
+        l_house.Lights = self.m_pyhouse_obj.HouseData.Lights
+        # PrettyPrintAny(l_house, 'Selected House Data - l_house 2 ')
+        l_json = JsonUnicode().encode_json(l_house)
+        # PrettyPrintAny(l_json, 'Selected House Data - Json 3 ')
+        # LOG.debug("HouseIx:{0:}, JSON{1:}".format(l_ix, l_json))
         return unicode(l_json)
 
 # ## END DBK

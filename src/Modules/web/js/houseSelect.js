@@ -82,15 +82,15 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 	 */
 	function getSelectedHouseData(self) {
 		function cb_getSelectedHouseData(p_json) {
-			Divmod.debug('---', 'houseSelect.cb_getSelectedHouseData.cb_getSelectedHouseData() was called.');
-			console.log("ss.cb   p1 %O", p_json);
+			//Divmod.debug('---', 'houseSelect.cb_getSelectedHouseData.cb_getSelectedHouseData() was called.');
+			//console.log("houseSelect.getSelectedHouseData.cb_getSelectedHouseData   p1 %O", p_json);
 			var l_obj = JSON.parse(p_json);
 			globals.House.HouseObj = l_obj;
 		}
 		function eb_getSelectedHouseData(res) {
 			Divmod.debug('---', 'houseSelect.eb_getSelectedHouseData() was called. ERROR = ' + res);
 		}
-		Divmod.debug('---', 'houseSelect.getSelectedHouseData() was called. ');
+		//Divmod.debug('---', 'houseSelect.getSelectedHouseData() was called. ');
 		self.hideSelectButtons();
 		self.showSelectedHouse();
 		self.nodeById('HouseSelectedDiv').innerHTML = 'Working on house: ' + globals.House.HouseName;
@@ -114,7 +114,7 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 		if (l_ix <= 1000) {
 			globals.House.HouseIx = l_ix;
 			globals.House.HouseName = l_name;
-			//Divmod.debug('---', 'houseSelect.handleMenuOnClick("house" Button) was called.  Ix: ' + l_ix + '  Name: ' + l_name);
+			Divmod.debug('---', 'houseSelect.handleMenuOnClick("house" Button) was called.  Ix: ' + l_ix + '  Name: ' + l_name);
 			self.getSelectedHouseData(l_ix)
 			self.hideSelectButtons();
 			self.showSelectedHouse();

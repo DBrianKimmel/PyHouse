@@ -1,8 +1,15 @@
-'''
-Created on Jun 3, 2013
+"""
+-*- test-case-name: PyHouse.src.Modules.web.test.test_web_internet -*-
 
-@author: briank
-'''
+@name: PyHouse/src/Modules/web/web_internet.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
+@Copyright (c) 2013-2014 by D. Brian Kimmel
+@license: MIT License
+@note: Created on Jun 3, 2013
+@summary: Handle all of the information for a house.
+
+"""
 
 # Import system type stuff
 import os
@@ -10,8 +17,8 @@ from nevow import athena
 from nevow import loaders
 
 # Import PyMh files and modules.
+from Modules.Core.data_objects import InternetConnectionData
 from Modules.web import web_utils
-from Modules.housing import internet
 from Modules.utils import pyh_log
 
 # Handy helper for finding external resources nearby.
@@ -19,13 +26,8 @@ webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
 
 g_debug = 0
-# 0 = off
-# 1 = log extra info
-# 2 = major routine entry
-# 3 = Config file handling
-# 4 = Dump JSON
-# + = NOT USED HERE
 LOG = pyh_log.getLogger('PyHouse.webInternet ')
+
 
 class InternetElement(athena.LiveElement):
     """ a 'live' internet element.
@@ -33,7 +35,7 @@ class InternetElement(athena.LiveElement):
     docFactory = loaders.xmlfile(os.path.join(templatepath, 'internetElement.html'))
     jsClass = u'internet.InternetWidget'
 
-    def __init__(self, p_workspace_obj, p_params):
+    def __init__(self, p_workspace_obj, _p_params):
         self.m_workspace_obj = p_workspace_obj
         self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
 
@@ -43,7 +45,7 @@ class InternetElement(athena.LiveElement):
 
         @param p_index: is the house index number.
         """
-        l_ix = int(p_index)
+        _l_ix = int(p_index)
         l_house = self.m_pyhouse_obj.HouseData
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_house))
         return l_json
@@ -53,12 +55,12 @@ class InternetElement(athena.LiveElement):
         """Internet data is returned, so update the house info.
         """
         l_json = web_utils.JsonUnicode().decode_json(p_json)
-        l_house_ix = int(l_json['HouseIx'])
+        _l_house_ix = int(l_json['HouseIx'])
         l_dyndns_ix = int(l_json['Key'])
         try:
             l_obj = self.m_pyhouse_obj.HouseData.Internet
         except KeyError:
-            l_obj = internet.InternetData()
+            l_obj = InternetConnectionData()
             l_obj.DynDns = {}
         l_obj.Name = l_json['Name']
         l_obj.Key = 0

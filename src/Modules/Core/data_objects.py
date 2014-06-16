@@ -10,6 +10,8 @@
 @summary: This module is the definition of major data objects.
 
 Specific data may be loaded into some attributes for unit testing.
+
+NOTE that the ...Data entries need to be dicts so JSON encoding of the data works properly.
 """
 
 __version_info__ = (1, 3, 0)
@@ -218,6 +220,8 @@ class InternetConnectionDynDnsData(ABaseObject):
 
 class PyHouseData(object):
     """The master object, contains all other 'configuration' objects.
+
+    NOTE that the data entries need to be dicts so json encoding of the data works properly.
     """
     def __init__(self):
         # Twisted stuff
@@ -234,9 +238,9 @@ class PyHouseData(object):
         self.ComputerData = {}
         self.CoreServicesData = {}  # CoreServices()
         self.FamilyData = {}
-        self.LogsData = {}
+        self.LogsData = {}  # LogData()
         # self.HousesData = {}  # HousesData()  Dropped V-1.3.0
-        self.HouseData = HouseData()  # added V-1.3.0
+        self.HouseData = {}  # HouseData()  # added V-1.3.0
         self.Nodes = {}
         self.WebData = {}
         # self.HouseIndex = -1  # Dropped V-1.3.0
@@ -250,7 +254,7 @@ class PyHouseData(object):
 
 class LocationData(object):
     """Location of the houses
-    Lat and Long allow the computation of local sunrise and sunset
+    Latitude and Longitude allow the computation of local sunrise and sunset
     """
     def __init__(self):
         self.City = ''
@@ -289,7 +293,7 @@ class USBControllerData(object):
 
 
 class  EthernetControllerData(object):
-    """A lighting controller that is connected to the noede via ethernet
+    """A lighting controller that is connected to the node via Ethernet
     """
     def __init__(self):
         self.ControllerInterface = 'Ethernet'
@@ -298,7 +302,7 @@ class  EthernetControllerData(object):
 
 
 class LogData(object):
-    """Locations of varoous logs
+    """Locations of various logs
     """
     def __init__(self):
         self.Debug = None
@@ -306,7 +310,7 @@ class LogData(object):
 
 
 class CoreServices(object):
-    """various twisted services in PyHouse
+    """Various twisted services in PyHouse
     """
     def __init__(self):
         self.NodeDiscoveryService = None
@@ -321,12 +325,11 @@ class WebData(object):
     """
     def __init__(self):
         self.WebPort = 8580
-        self.Service = None
         self.Logins = {}  # LoginData()
 
 
 class LoginData(object):
-    """a dict of login_names as keys and encrypted passwords as values - see web_login for details.
+    """A dict of login_names as keys and encrypted passwords as values - see web_login for details.
     """
     def __init__(self):
         self.LoginName = None
