@@ -20,7 +20,7 @@ from nevow import athena
 from Modules.web.web_utils import JsonUnicode
 # from Modules.Core.data_objects import HouseData
 from Modules.utils import pyh_log
-# from src.Modules.utils.tools import PrettyPrintAny
+# from Modules.utils.tools import PrettyPrintAny
 
 
 # Handy helper for finding external resources nearby.

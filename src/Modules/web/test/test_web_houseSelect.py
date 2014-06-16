@@ -15,7 +15,7 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from Modules.Core.data_objects import HouseData
 from Modules.web import web_houseSelect
-from src.Modules.utils.tools import PrettyPrintAny
+from Modules.utils.tools import PrettyPrintAny
 
 
 class Test_10(unittest.TestCase):

@@ -21,7 +21,7 @@ from Modules.housing import rooms
 from src.test import xml_data
 from Modules.web import web_utils
 from Modules.utils.xml_tools import PrettifyXML
-from src.Modules.utils.tools import PrettyPrintAny
+from Modules.utils.tools import PrettyPrintAny
 
 
 class Test_02_XML(unittest.TestCase):

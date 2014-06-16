@@ -16,7 +16,7 @@ from twisted.trial import unittest
 from Modules.Core.data_objects import PyHouseData, HouseData
 from Modules.families import family
 from src.test import xml_data
-from src.Modules.utils.tools import PrettyPrintAny
+from Modules.utils.tools import PrettyPrintAny
 
 XML = xml_data.XML_LONG
 

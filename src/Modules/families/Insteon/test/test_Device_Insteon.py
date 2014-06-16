@@ -18,7 +18,7 @@ from Modules.Core.data_objects import PyHouseData, HouseData, InsteonData, Light
 from Modules.families.Insteon import Device_Insteon
 from Modules.lights import lighting_lights
 from src.test import xml_data
-from src.Modules.utils.tools import PrettyPrintAny
+from Modules.utils.tools import PrettyPrintAny
 
 XML = xml_data.XML_LONG
 

@@ -14,7 +14,7 @@ from Modules.web import web_utils
 from Modules.housing import rooms
 from src.test import xml_data
 from Modules.utils.xml_tools import PrettifyXML
-from src.Modules.utils.tools import PrettyPrintAny
+from Modules.utils.tools import PrettyPrintAny
 
 
 PY_DATA = [ { 'a123': u'A', 'b': (2, 4), 'c': 3.0 }, 'def D E F' ]

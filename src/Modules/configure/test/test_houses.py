@@ -18,7 +18,7 @@ from Modules.Core.data_objects import PyHouseData, HouseData
 from Modules.housing import house
 from Modules.utils import xml_tools
 from src.test import xml_data
-from src.Modules.utils.tools import PrettyPrintAny
+from Modules.utils.tools import PrettyPrintAny
 
 
 class Test_01_EmptyXML(unittest.TestCase):

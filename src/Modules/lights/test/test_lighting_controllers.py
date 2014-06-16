@@ -19,7 +19,7 @@ from Modules.lights import lighting_controllers
 from Modules.families import family
 from Modules.web import web_utils
 from src.test import xml_data
-from src.Modules.utils.tools import PrettyPrintAny
+from Modules.utils.tools import PrettyPrintAny
 
 XML = xml_data.XML_LONG
 

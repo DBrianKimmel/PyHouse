@@ -24,7 +24,7 @@ from Modules.entertain import entertainment
 from Modules.housing import house
 from Modules.web import web_server
 from Modules.utils import pyh_log
-# from src.Modules.utils.tools import PrettyPrintAny
+# from Modules.utils.tools import PrettyPrintAny
 
 g_debug = 0
 LOG = pyh_log.getLogger('PyHouse.CoreSetup   ')

@@ -18,7 +18,7 @@ from twisted.trial import unittest
 from Modules.Core.data_objects import PyHouseData
 from Modules.utils import tools
 from src.test import xml_data
-from src.Modules.utils.tools import PrettyPrintXML, PrettyPrintObject, PrettyPrintAny
+from Modules.utils.tools import PrettyPrintXML, PrettyPrintObject, PrettyPrintAny
 
 
 class Test(unittest.TestCase):

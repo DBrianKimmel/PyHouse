@@ -21,7 +21,7 @@ from Modules.housing import house
 from Modules.web import web_utils
 from Modules.utils import xml_tools
 from src.test import xml_data
-from src.Modules.utils.tools import PrettyPrintAny
+from Modules.utils.tools import PrettyPrintAny
 
 
 class Test_01_XML(unittest.TestCase):

@@ -17,7 +17,7 @@ from twisted.trial import unittest
 from Modules.Core.data_objects import PyHouseData, HouseData, BaseLightingData
 from Modules.lights import lighting
 from src.test import xml_data
-from src.Modules.utils.tools import PrettyPrintAny
+from Modules.utils.tools import PrettyPrintAny
 
 
 class Test_02_ReadXMLLong(unittest.TestCase):

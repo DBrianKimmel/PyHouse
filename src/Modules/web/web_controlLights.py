@@ -20,7 +20,7 @@ from nevow import loaders
 from Modules.Core.data_objects import LightData
 from Modules.web import web_utils
 from Modules.utils import pyh_log
-from src.Modules.utils.tools import PrettyPrintAny
+from Modules.utils.tools import PrettyPrintAny
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
