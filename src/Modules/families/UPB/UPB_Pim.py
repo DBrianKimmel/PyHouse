@@ -453,7 +453,7 @@ class UpbPimAPI(LightingAPI):
         if self.m_controller_obj.Active != True:
             return False
         if g_debug >= 1:
-            LOG.debug("UPB_PIM.start_controller() - Family:{0:}, Interface:{1:}, Active:{2:}".format(self.m_controller_obj.LightingFamily, self.m_controller_obj.Interface, self.m_controller_obj.Active))
+            LOG.debug("UPB_PIM.start_controller() - Family:{0:}, Interface:{1:}, Active:{2:}".format(self.m_controller_obj.LightingFamily, self.m_controller_obj.ControllerInterface, self.m_controller_obj.Active))
         l_key = self.m_controller_obj.Key
         l_pim = PimData()
         l_pim.ControllerInterface = self.m_controller_obj.ControllerInterface
@@ -490,8 +490,8 @@ class API(UpbPimAPI):
 
     def Start(self, p_pyhouse_obj, p_controller_obj):
         self.m_controller_obj = p_controller_obj
-        LOG.info('Start House:{0:}, Controller:{1:}.'.format(self.m_house_obj.Name, self.m_controller_obj.Name))
-        self.start_controller(self.m_house_obj, self.m_controller_obj)
+        LOG.info('Start Controller:{0:}.'.format(self.m_controller_obj.Name))
+        self.start_controller(p_pyhouse_obj.HouseData, self.m_controller_obj)
         self.driver_loop_start(p_controller_obj)
         return True
 
