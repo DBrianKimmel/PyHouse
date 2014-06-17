@@ -26,12 +26,6 @@ webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
 
 g_debug = 0
-# 0 = off
-# 1 = log extra info
-# 2 = major routine entry
-# 3 = Config file handling
-# 4 = Dump JSON
-# + = NOT USED HERE
 LOG = pyh_log.getLogger('PyHouse.webSchedule ')
 
 
@@ -76,7 +70,7 @@ class SchedulesElement(athena.LiveElement):
         l_obj.Rate = l_json['Rate']
         l_obj.RoomName = l_json['RoomName']
         l_obj.Time = l_json['Time']
-        l_obj.ScheduleType = l_json['Type']
+        l_obj.ScheduleType = l_json['ScheduleType']
         l_obj.UUID = l_json['UUID']
         l_obj.DeleteFlag = l_json['Delete']
         l_obj.HouseIx = l_house_ix
