@@ -23,8 +23,6 @@ from Modules.utils.tools import PrettyPrintAny
 from Modules.utils import xml_tools
 from src.test import xml_data
 
-XML = xml_data.XML_LONG
-
 
 class SetupMixin(object):
     """
@@ -44,46 +42,16 @@ class SetupMixin(object):
         # print('SetupMixin setUp ran')
 
 
-class Test_01_XML(unittest.TestCase):
-    """
-    This section will verify the XML in the 'Modules.text.xml_data' file is correct and what the node_local module can read/write.
-    """
-
-    def setUp(self):
-        self.m_root_element = ET.fromstring(XML)
-        self.m_util = xml_tools.PutGetXML()
-        self.m_api = schedule.API()
-
-    def test_0101_read_xml(self):
-        l_pyhouse = self.m_root_element
-        self.assertEqual(l_pyhouse.tag, 'PyHouse')
-
-    def test_0102_find_houses(self):
-        l_houses = self.m_root_element.find('Houses')
-        self.assertEqual(l_houses.tag, 'Houses')
-
-    def test_0103_xml_find_house(self):
-        l_houses = self.m_root_element.find('Houses')
-        l_list = l_houses.findall('House')
-        for l_house in l_list:
-            print("House {0:}".format(l_house.get('Name')))
-
-
 class Test_02_ReadWriteXML(SetupMixin, unittest.TestCase):
     """
-    This section tests the reading and writing of XML used by house.
+    This section tests the reading and writing of XML used by schedules.
     """
 
     def setUp(self):
         self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         SetupMixin.setUp(self)
 
-    def test_0201_buildObjects(self):
-        """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
-        """
-        self.assertEqual(self.m_pyhouse_obj.HouseData.Rooms, {}, 'No Rooms{}')
-
-    def test_0202_find_xml(self):
+    def test_0201_find_xml(self):
         """ Be sure that the XML contains the right stuff.
         """
         self.assertEqual(self.m_root_xml.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
@@ -116,7 +84,31 @@ class Test_02_ReadWriteXML(SetupMixin, unittest.TestCase):
         PrettyPrintAny(l_xml)
 
 
-class Test_03_BuildList(SetupMixin, unittest.TestCase):
+class Test_03_Execution(SetupMixin, unittest.TestCase):
+    """
+    This section tests the Building of a schedule list
+    """
+
+    def setUp(self):
+        self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
+        SetupMixin.setUp(self)
+        self.m_schedules = self.m_api.read_schedules_xml(self.m_schedules_xml)
+        pass
+
+    def test_0301_RunSchedule(self):
+        pass
+
+    def test_0302_SchedulesList(self):
+        pass
+
+    def test_0303_OneSchedule(self):
+        self.m_api.execute_one_schedule(3)
+
+    def test_0304_DispatchSchedule(self):
+        pass
+
+
+class Test_04_Utility(SetupMixin, unittest.TestCase):
     """
     This section tests the Building of a schedule list
     """
@@ -126,12 +118,13 @@ class Test_03_BuildList(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self)
         pass
 
-    def test_0301_substitute(self):
-        l_schedules = self.m_api.read_schedules_xml(self.m_schedules_xml)
-        self.m_api._substitute_time(p_timefield)
+    def test_0401_substitute(self):
+        # l_schedules = self.m_api.read_schedules_xml(self.m_schedules_xml)
+        # self.m_api._substitute_time(p_timefield)
+        pass
 
 
-class Test_06_Startup(unittest.TestCase):
+class Test_05_API(unittest.TestCase):
     """
     This section tests the reading and writing of XML used by house.
     """
@@ -139,7 +132,7 @@ class Test_06_Startup(unittest.TestCase):
     def setUp(self):
         self.m_pyhouse_obj = PyHouseData()
         self.m_pyhouse_obj.HouseData = HouseData()
-        self.m_pyhouse_obj.XmlRoot = self.m_root_xml = ET.fromstring(XML)
+        self.m_pyhouse_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         self.m_houses_xml = self.m_root_xml.find('Houses')
         self.m_house_xml = self.m_houses_xml.find('House')
         self.m_schedules_xml = self.m_house_xml.find('Schedules')

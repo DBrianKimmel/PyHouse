@@ -21,9 +21,8 @@ from Modules.families import family
 from Modules.lights.lighting_buttons import ButtonsAPI
 from Modules.lights.lighting_controllers import ControllersAPI
 from Modules.lights.lighting_lights import LightingAPI
-# from Modules.lights.lighting_scenes import ScenesAPI
 from Modules.utils import pyh_log
-# from Modules.utils.tools import PrettyPrintAny
+from Modules.utils.tools import PrettyPrintAny
 
 g_debug = 9
 LOG = pyh_log.getLogger('PyHouse.Lighting    ')
@@ -86,17 +85,13 @@ class API(Utility):
             web_controlLights
             schedule
         """
-        # PrettyPrintAny(p_light_obj, 'Lighting - Change Light - 1')
+        PrettyPrintAny(p_light_obj, 'Lighting - Change Light - 1')
         l_key = p_light_obj.Key
         l_light_obj = self.m_pyhouse_obj.HouseData.Lights[l_key]
-        # PrettyPrintAny(l_light_obj, 'Lighting - Change Light - 2')
+        PrettyPrintAny(l_light_obj, 'Lighting - Change Light - 2')
         LOG.info("Turn Light {0:} to level {1:}, Family:{2:}".format(l_light_obj.Name, p_level, l_light_obj.LightingFamily))
         l_api = self.m_pyhouse_obj.HouseData.FamilyData[l_light_obj.LightingFamily].ModuleAPI
-        # PrettyPrintAny(l_api, 'Lighting - Change Light - 3')
+        PrettyPrintAny(l_api, 'Lighting - Change Light - 3')
         l_api.ChangeLight(l_light_obj, p_level)
-        # for l_family_obj in self.m_house_obj.FamilyData.itervalues():
-        #    if l_family_obj.Name != l_light_obj.LightingFamily:
-        #        continue
-        #    l_family_obj.ModuleAPI.ChangeLight(l_light_obj, p_level, 0)
 
 # ## END DBK

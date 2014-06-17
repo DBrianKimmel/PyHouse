@@ -16,11 +16,8 @@ This is a base class that other lighting modules inherit from.
 
 # Import PyHouse files
 from Modules.utils.xml_tools import ConfigTools
-from Modules.web import web_utils
-
 
 g_debug = 0
-# 0 = off
 
 
 class CoreAPI(ConfigTools):
@@ -41,12 +38,13 @@ class CoreAPI(ConfigTools):
         p_device_obj.LightingType = p_entry_xml.findtext('Type')
         return p_device_obj
 
-    def write_base_lighting_xml(self, p_entry, p_device_obj):
-        self.put_text_element(p_entry, 'Comment', p_device_obj.Comment)
-        self.put_text_element(p_entry, 'Coords', p_device_obj.Coords)
-        self.put_bool_element(p_entry, 'Dimmable', p_device_obj.Dimmable)
-        self.put_text_element(p_entry, 'Family', p_device_obj.LightingFamily)
-        self.put_text_element(p_entry, 'Room', p_device_obj.RoomName)
-        self.put_text_element(p_entry, 'Type', p_device_obj.LightingType)
+    def write_base_lighting_xml(self, p_entry_xml, p_device_obj):
+        self.put_text_element(p_entry_xml, 'Comment', p_device_obj.Comment)
+        self.put_text_element(p_entry_xml, 'Coords', p_device_obj.Coords)
+        self.put_bool_element(p_entry_xml, 'Dimmable', p_device_obj.Dimmable)
+        self.put_text_element(p_entry_xml, 'Family', p_device_obj.LightingFamily)
+        self.put_text_element(p_entry_xml, 'Room', p_device_obj.RoomName)
+        self.put_text_element(p_entry_xml, 'Type', p_device_obj.LightingType)
+        return p_entry_xml
 
 # ## END DBK

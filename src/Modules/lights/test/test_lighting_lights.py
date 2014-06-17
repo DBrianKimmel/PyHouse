@@ -20,30 +20,37 @@ from Modules.web import web_utils
 from Modules.utils.tools import PrettyPrintAny
 from src.test import xml_data
 
-XML = xml_data.XML_LONG
 
-
-class Test_02_ReadXML(unittest.TestCase):
-    """ This section tests the reading and writing of XML used by node_local.
+class SetupMixin(object):
+    """
     """
 
-    def _pyHouses(self):
+    def setUp(self):
         self.m_pyhouse_obj = PyHouseData()
         self.m_pyhouse_obj.HouseData = HouseData()
-        self.m_pyhouse_obj.XmlRoot = self.m_root = ET.fromstring(XML)
-        self.m_houses_xml = self.m_root.find('Houses')
+        self.m_pyhouse_obj.XmlRoot = self.m_root_xml
+
+        self.m_api = lighting_lights.LightingAPI(self.m_pyhouse_obj)
+
+        self.m_houses_xml = self.m_root_xml.find('Houses')
         self.m_house_xml = self.m_houses_xml.find('House')
         self.m_lights_xml = self.m_house_xml.find('Lights')
         self.m_light_xml = self.m_lights_xml.find('Light')
-        self.m_api = lighting_lights.LightingAPI()
+        # print('SetupMixin setUp ran')
+
+
+class Test_02_ReadXML(SetupMixin, unittest.TestCase):
+    """ This section tests the reading and writing of XML used by node_local.
+    """
 
     def setUp(self):
-        self._pyHouses()
+        self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
+        SetupMixin.setUp(self)
 
     def test_0201_find_xml(self):
         """ Be sure that the XML contains the right stuff.
         """
-        self.assertEqual(self.m_root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
+        self.assertEqual(self.m_root_xml.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
         self.assertEqual(self.m_houses_xml.tag, 'Houses', 'XML - No Houses section')
         self.assertEqual(self.m_house_xml.tag, 'House', 'XML - No House section')
         self.assertEqual(self.m_lights_xml.tag, 'Lights', 'XML - No Lights section')

@@ -8,6 +8,7 @@
 @license: MIT License
 @note: Created on Apr 10, 2013
 @summary: Handle the rooms information for a house.
+
 """
 
 # Import system type stuff

@@ -33,7 +33,6 @@ Operation:
 # Import system type stuff
 import datetime
 import xml.etree.ElementTree as ET
-from twisted.internet import reactor
 
 # Import PyMh files
 from Modules.Core.data_objects import ScheduleData
@@ -49,7 +48,7 @@ g_debug = 0
 # 1 = log extra info
 LOG = pyh_log.getLogger('PyHouse.Schedule    ')
 
-callLater = reactor.callLater
+# callLater = reactor.callLater
 
 
 class ScheduleXML(xml_tools.ConfigTools):
@@ -126,7 +125,32 @@ class ScheduleXML(xml_tools.ConfigTools):
 
 class ScheduleExecution(ScheduleData):
 
-    def execute_schedule(self, p_slot_list = []):
+    def dispatch_schedule(self, p_slot):
+        """
+        TODO: We need a small dispatch for the various schedule types (hvac, security, entertainment, lights, ...)
+        """
+        l_sched_obj = self.m_house_obj.Schedules[p_slot]
+        if l_sched_obj.ScheduleType == 'Device':
+            pass
+        elif l_sched_obj.ScheduleType == 'Scene':
+            pass
+        pass
+
+    def execute_one_schedule(self, p_slot):
+        """Send information to one device to execute a schedule.
+
+        """
+        l_sched_obj = self.m_house_obj.Schedules[p_slot]
+        # TODO: We need a small dispatch for the various schedule types (hvac, security, entertainment, lights, ...)
+        if l_sched_obj.ScheduleType == 'Device':
+            pass
+        elif l_sched_obj.ScheduleType == 'Scene':
+            pass
+        l_light_obj = tools.get_light_object(self.m_house_obj, name = l_sched_obj.LightName)
+        LOG.info("Executing schedule Name:{0:}, Light:{1:}, Level:{2:}".format(l_sched_obj.Name, l_sched_obj.LightName, l_sched_obj.Level))
+        self.m_house_obj.LightingAPI.ChangeLight(l_light_obj, l_sched_obj.Level)
+
+    def execute_schedules_list(self, p_slot_list = []):
         """
         For each SlotName in the passed in list, execute the scheduled event for the house.
         Delay before generating the next schedule to avoid a race condition
@@ -134,23 +158,16 @@ class ScheduleExecution(ScheduleData):
 
         @param p_slot_list: a list of Slots in the next time schedule to be executed.
         """
-        LOG.info("About to execute - House:{0:}, Schedule:{1:}".format(self.m_house_obj.Name, p_slot_list))
-        for ix in range(len(p_slot_list)):
-            l_sched_obj = self.m_house_obj.Schedules[p_slot_list[ix]]
-            # TODO: We need a small dispatch for the various schedule types (hvac, security, entertainment, lights, ...)
-            if l_sched_obj.ScheduleType == 'Device':
-                pass
-            elif l_sched_obj.ScheduleType == 'Scene':
-                pass
-            l_light_obj = tools.get_light_object(self.m_house_obj, name = l_sched_obj.LightName)
-            LOG.info("Executing schedule Name:{0:}, Light:{1:}, Level:{2:}".format(l_sched_obj.Name, l_sched_obj.LightName, l_sched_obj.Level))
-            self.m_house_obj.LightingAPI.ChangeLight(l_light_obj, l_sched_obj.Level)
-        callLater(5, self.get_next_sched)
+        LOG.info("About to execute - Schedule:{0:}".format(p_slot_list))
+        for l_slot in range(len(p_slot_list)):
+            self.execute_one_schedule(l_slot)
+        self.m_pyhouse_obj.Reactor.callLater(5, self.run_schedule)
 
-    def create_timer(self, p_seconds, p_list):
-        """Create a timer that will go off when the next schedule time comes up on the clock.
+    def run_schedule(self):
+        """Find out what schedules need to be done and how long to delay before they are due to be run.
         """
-        callLater(p_seconds, self.execute_schedule, p_list)
+        l_seconds_to_delay, l_schedule_list = self.get_next_sched()
+        self.m_pyhouse_obj.Reactor.callLater(l_seconds_to_delay, self.execute_schedules_list, l_schedule_list)
 
 
 class ScheduleUtility(ScheduleExecution):
@@ -258,8 +275,8 @@ class ScheduleUtility(ScheduleExecution):
         self.m_sunrise = self.m_sunrisesunset.get_sunrise()
         LOG.info("In get_next_sched - Sunrise:{0:}, Sunset:{1:}".format(self.m_sunrise, self.m_sunset))
         l_time_scheduled = l_now
-        l_next = 100000.0
-        l_list = []
+        l_seconds_to_delay = 100000.0
+        l_schedule_list = []
         for l_key, l_schedule_obj in self.m_house_obj.Schedules.iteritems():
             if not l_schedule_obj.Active:
                 continue
@@ -269,19 +286,23 @@ class ScheduleUtility(ScheduleExecution):
             if l_diff < 0:
                 l_diff = l_diff + 86400.0  # tomorrow
             # earlier schedule upcoming.
-            if l_diff < l_next:
-                l_next = l_diff
-                l_list = []
+            if l_diff < l_seconds_to_delay:
+                l_seconds_to_delay = l_diff
+                l_schedule_list = []
                 l_time_scheduled = l_time_sch
             # add to a chain
-            if l_diff == l_next:
-                l_list.append(l_key)
-        l_debug_msg = "Schedule - House:{0:}, delaying {1:} seconds until {2:} for list {3:}".format(self.m_house_obj.Name, l_next, l_time_scheduled, l_list)
+            if l_diff == l_seconds_to_delay:
+                l_schedule_list.append(l_key)
+        l_debug_msg = "Schedule - House:{0:}, delaying {1:} seconds until {2:} for list {3:}".format(self.m_house_obj.Name, l_seconds_to_delay, l_time_scheduled, l_schedule_list)
         LOG.info("Get_next_schedule complete. {0:}".format(l_debug_msg))
-        self.create_timer(l_next, l_list)
+        return l_seconds_to_delay, l_schedule_list
 
-    def XXfind_house(self):
-        pass
+    def start_scheduled_modules(self):
+        self.m_house_obj.LightingAPI = lighting.API()
+
+    def stop_scheduled_modules(self, p_xml):
+        self.m_house_obj.LightingAPI.Stop(p_xml)
+        return p_xml
 
 
 class API(ScheduleUtility, ScheduleXML):
@@ -301,25 +322,21 @@ class API(ScheduleUtility, ScheduleXML):
 
         @param p_house_obj: is a House object for the house being scheduled
         """
-        # PrettyPrintAny(p_pyhouse_obj, 'PyHouse from Schedule')
+        self.m_pyhouse_obj = p_pyhouse_obj
         self.m_house_obj = p_pyhouse_obj.HouseData
         self.m_house_xml = p_pyhouse_obj.XmlRoot.find('Houses/House')
-        # PrettyPrintAny(self.m_house_xml, 'm_house_xml from Schedule')
-        self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_house_obj.LightingAPI = lighting.API()
-        LOG.info("Starting House {0:}.".format(self.m_house_obj.Name))
         self.m_sunrisesunset.Start(p_pyhouse_obj, self.m_house_obj)
         self.m_house_obj.Schedules = self.read_schedules_xml(self.m_house_xml)
-        self.m_house_obj.LightingAPI.Start(p_pyhouse_obj)
+        self.start_scheduled_modules()
         if self.m_house_obj.Active:
-            self.get_next_sched()
+            p_pyhouse_obj.Reactor.callLater(5, self.run_schedule)
 
     def Stop(self, p_xml):
         """Stop everything under me and build xml to be appended to a house xml.
         """
         LOG.info("Stopping schedule for house:{0:}.".format(self.m_house_obj.Name))
         p_xml.append(self.write_schedules_xml(self.m_house_obj.Schedules))
-        self.m_house_obj.LightingAPI.Stop(p_xml)
+        self.stop_scheduled_modules(p_xml)
         LOG.info("Stopped.\n")
 
 # ## END DBK

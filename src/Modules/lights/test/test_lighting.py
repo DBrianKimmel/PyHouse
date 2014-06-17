@@ -20,19 +20,32 @@ from src.test import xml_data
 from Modules.utils.tools import PrettyPrintAny
 
 
-class Test_02_ReadXMLLong(unittest.TestCase):
+class SetupMixin(object):
+    """
+    """
+
+    def setUp(self):
+        self.m_api = lighting.API()
+
+        self.m_pyhouse_obj = PyHouseData()
+        self.m_pyhouse_obj.HouseData = HouseData()
+        self.m_pyhouse_obj.XmlRoot = self.m_root_xml
+
+        self.m_houses_xml = self.m_root_xml.find('Houses')
+        self.m_house_xml = self.m_houses_xml.find('House')
+
+        self.m_lights_xml = self.m_house_xml.find('Lights')
+        self.m_light_xml = self.m_lights_xml.find('Light')  # First one
+        # print('SetupMixin setUp ran')
+
+
+class Test_02_ReadXMLLong(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by node_local.
     """
 
     def setUp(self):
-        self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
-        self.m_pyhouse_obj.HouseData = HouseData()
-        self.m_houses_xml = self.m_root_xml.find('Houses')
-        self.m_house_xml = self.m_houses_xml.find('House')
-        self.m_lights_xml = self.m_house_xml.find('Lights')
-        self.m_light_xml = self.m_lights_xml.find('Light')  # First one
-        self.m_api = lighting.API()
+        self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
+        SetupMixin.setUp(self)
 
     def test_0201_buildObjects(self):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
@@ -55,22 +68,18 @@ class Test_02_ReadXMLLong(unittest.TestCase):
         pass
 
 
-class Test_03_ReadXMLEmpty(unittest.TestCase):
-    """ This section tests the reading and writing of XML used by node_local.
-    """
+# class Test_03_ReadXMLEmpty(SetupMixin, unittest.TestCase):
+#    """ This section tests the reading and writing of XML used by node_local.
+#    """
 
-    def setUp(self):
-        self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_EMPTY)
-        self.m_pyhouse_obj.HouseData = HouseData()
-        self.m_houses_xml = self.m_root_xml.find('Houses')
-        self.m_house_xml = self.m_houses_xml.find('House')
-        pass
+    # def XsetUp(self):
+    #    self.m_root_xml = ET.fromstring(xml_data.XML_EMPTY)
+    #    SetupMixin.setUp(self)
 
-    def test_0301_read_lighting(self):
-        pass
+    # def Xtest_0301_read_lighting(self):
+    #    pass
 
-    def test_0302_write_lighting(self):
-        pass
+    # def Xtest_0302_write_lighting(self):
+    #    pass
 
 # ## END DBK
