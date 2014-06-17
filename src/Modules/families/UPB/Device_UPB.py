@@ -73,7 +73,7 @@ class API(LightingAPI):
             else:
                 # from Modules.families.Insteon import Insteon_PLM
                 l_controller_obj._HandlerAPI = UPB_Pim.API()
-                if l_controller_obj._HandlerAPI.Start(l_controller_obj):
+                if l_controller_obj._HandlerAPI.Start(p_pyhouse_obj, l_controller_obj):
                     l_count += 1
                 else:
                     LOG.error('Controller {0:} failed to start.'.format(l_controller_obj.Name))

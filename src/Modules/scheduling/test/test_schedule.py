@@ -26,6 +26,24 @@ from src.test import xml_data
 XML = xml_data.XML_LONG
 
 
+class SetupMixin(object):
+    """
+    """
+
+    def setUp(self):
+        self.m_api = schedule.API()
+
+        self.m_pyhouse_obj = PyHouseData()
+        self.m_pyhouse_obj.HouseData = HouseData()
+        self.m_pyhouse_obj.XmlRoot = self.m_root_xml
+
+        self.m_houses_xml = self.m_root_xml.find('Houses')
+        self.m_house_xml = self.m_houses_xml.find('House')
+        self.m_schedules_xml = self.m_house_xml.find('Schedules')
+        self.m_schedule_xml = self.m_schedules_xml.find('Schedule')
+        # print('SetupMixin setUp ran')
+
+
 class Test_01_XML(unittest.TestCase):
     """
     This section will verify the XML in the 'Modules.text.xml_data' file is correct and what the node_local module can read/write.
@@ -51,24 +69,14 @@ class Test_01_XML(unittest.TestCase):
             print("House {0:}".format(l_house.get('Name')))
 
 
-class Test_02_ReadWriteXML(unittest.TestCase):
+class Test_02_ReadWriteXML(SetupMixin, unittest.TestCase):
     """
     This section tests the reading and writing of XML used by house.
     """
 
-    def _pyHouses(self):
-        self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.HouseData = HouseData()
-        self.m_pyhouse_obj.XmlRoot = self.m_root_xml = ET.fromstring(XML)
-        self.m_houses_xml = self.m_root_xml.find('Houses')
-        self.m_house_xml = self.m_houses_xml.find('House')
-        self.m_schedules_xml = self.m_house_xml.find('Schedules')
-        self.m_schedule_xml = self.m_schedules_xml.find('Schedule')
-        self.m_house_obj = LocationData()
-        self.m_api = schedule.API()
-
     def setUp(self):
-        self._pyHouses()
+        self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
+        SetupMixin.setUp(self)
 
     def test_0201_buildObjects(self):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
@@ -94,7 +102,7 @@ class Test_02_ReadWriteXML(unittest.TestCase):
     def test_0232_ReadAllSchedules(self):
         l_schedules = self.m_api.read_schedules_xml(self.m_schedules_xml)
         PrettyPrintAny(l_schedules, 'All Schedules')
-        for k, v in l_schedules.iteritems():
+        for _k, v in l_schedules.iteritems():
             PrettyPrintAny(v, 'All Schedules-2')
 
     def test_0241_WriteOneSchedule(self):
@@ -108,7 +116,22 @@ class Test_02_ReadWriteXML(unittest.TestCase):
         PrettyPrintAny(l_xml)
 
 
-class Test_03_Startup(unittest.TestCase):
+class Test_03_BuildList(SetupMixin, unittest.TestCase):
+    """
+    This section tests the Building of a schedule list
+    """
+
+    def setUp(self):
+        self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
+        SetupMixin.setUp(self)
+        pass
+
+    def test_0301_substitute(self):
+        l_schedules = self.m_api.read_schedules_xml(self.m_schedules_xml)
+        self.m_api._substitute_time(p_timefield)
+
+
+class Test_06_Startup(unittest.TestCase):
     """
     This section tests the reading and writing of XML used by house.
     """

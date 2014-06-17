@@ -155,7 +155,7 @@ class ScheduleExecution(ScheduleData):
 
 class ScheduleUtility(ScheduleExecution):
 
-    def _substitute(self, p_timefield):
+    def _substitute_time(self, p_timefield):
         """Substitute for names in timefield.
         Supported fields are: 'sunset'. 'sunrise'
         Return the string timefield.
@@ -226,7 +226,7 @@ class ScheduleUtility(ScheduleExecution):
             p_timefield = p_timefield.replace('-', ' ')
         elif '+' in p_timefield:
             p_timefield = p_timefield.replace('+', ' ')
-        p_timefield = self._substitute(p_timefield)
+        p_timefield = self._substitute_time(p_timefield)
         l_maintime, p_timefield = self._extract_field(p_timefield)
         l_offsettime, p_timefield = self._extract_field(p_timefield)
         if l_sub:
@@ -242,6 +242,9 @@ class ScheduleUtility(ScheduleExecution):
         """Convert a date time to a timedelta.
         """
         return datetime.timedelta(0, p_time.second, 0, 0, p_time.minute, p_time.hour)
+
+    def _get_entries(self, p_schedules):
+        pass
 
     def get_next_sched(self):
         """Get the next schedule from the current time.
