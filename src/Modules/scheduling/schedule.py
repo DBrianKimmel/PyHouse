@@ -43,7 +43,7 @@ from Modules.scheduling import sunrisesunset
 from Modules.utils import pyh_log
 # from Modules.utils.tools import PrettyPrintAny
 
-g_debug = 9
+g_debug = 1
 # 0 = off
 # 1 = log extra info
 LOG = pyh_log.getLogger('PyHouse.Schedule    ')

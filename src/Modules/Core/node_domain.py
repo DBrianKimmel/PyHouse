@@ -266,9 +266,9 @@ class AmpClient(object):
         if g_debug >= 4:
             LOG.debug('Client - sending info to remote server.  (310)')
             # LOG.debug('      Address: {0:}'.format(l_node.ConnectionAddr_IPv4))
-        l_ampBox = NodeInformationCommand.makeArguments({
-                        'Name': l_node.Name, 'Active': str(l_node.Active), 'Address': l_node.ConnectionAddr_IPv4,
-                        'Role': int(l_node.NodeRole), 'UUID': "1122"})
+        # l_ampBox = NodeInformationCommand.makeArguments({
+        #                'Name': l_node.Name, 'Active': str(l_node.Active), 'Address': l_node.ConnectionAddr_IPv4,
+        #                'Role': int(l_node.NodeRole), 'UUID': "1122"}, None)
         l_ret = p_ampProto.callRemote(NodeInformationCommand,
                         Name = l_node.Name, Active = str(l_node.Active), Address = l_node.ConnectionAddr_IPv4,
                         Role = int(l_node.NodeRole), UUID = "1122")
