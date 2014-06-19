@@ -20,7 +20,7 @@ g_debug = 1
 LOG = pyh_log.getLogger('PyHouse.Controller  ')
 
 
-class ControllersAPI(lighting_core.CoreAPI):
+class ControllersAPI(lighting_core.LightingCoreAPI):
 
     m_count = 0
     m_pyhouse_obj = None

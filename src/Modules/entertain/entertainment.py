@@ -28,7 +28,7 @@ g_upnp = None
 Entertainment_Data = {}
 
 
-class EntertainmentAPI(object):
+class Utility(object):
     """
     """
 
@@ -39,7 +39,7 @@ class EntertainmentAPI(object):
         return self.Entertainment_Data
 
 
-class API(object):
+class API(Utility):
     def __init__(self):
         # self.m_pandora = pandora.API()
         LOG.info("Initialized.")

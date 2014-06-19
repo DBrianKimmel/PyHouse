@@ -63,7 +63,7 @@ from twisted.application.service import Application
 import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData
+from Modules.Core.data_objects import PyHouseData, PyHouseAPIs
 from Modules.Core import setup
 from Modules.utils import pyh_log
 from Modules.utils import xml_tools
@@ -135,7 +135,6 @@ class Utilities(object):
 
     def read_xml_config_info(self, p_pyhouse_obj):
         """This will read the XML config file(s).
-        There may be a device config file.
         This puts the XML tree and file name in the pyhouse object for use by various modules.
         """
         if g_debug >= 1:
@@ -167,17 +166,18 @@ class API(Utilities):
         self.m_pyhouse_obj = PyHouseData()
         self.m_pyhouse_obj.Reactor = reactor
         self.m_pyhouse_obj.Application = Application('PyHouse')
-        self.m_pyhouse_obj.API = self  # Only used by web server to reload - Do we need this?
+        self.m_pyhouse_obj.APIs = PyHouseAPIs()
+        self.m_pyhouse_obj.APIs.PyHouseAPI = self  # Only used by web server to reload - Do we need this?
         global g_API
         g_API = self
         handle_signals()
         self.read_xml_config_info(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.LogsAPI = pyh_log.API()
-        self.m_pyhouse_obj.LogsAPI.Start(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.APIs.LogsAPI = pyh_log.API()
+        self.m_pyhouse_obj.APIs.LogsAPI.Start(self.m_pyhouse_obj)
         # PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse 1')
         LOG.info("Initializing PyHouse.\n\n")
         #
-        self.m_pyhouse_obj.CoreAPI = setup.API()
+        self.m_pyhouse_obj.APIs.CoreAPI = setup.API()
         self.m_pyhouse_obj.Reactor.callWhenRunning(self.Start)
         LOG.info("Initialized.\n")
         self.m_pyhouse_obj.Reactor.run()  # reactor never returns so must be last - Event loop will now run
@@ -187,7 +187,7 @@ class API(Utilities):
     def Start(self):
         """This is automatically invoked when the reactor starts from API().
         """
-        self.m_pyhouse_obj.CoreAPI.Start(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.APIs.CoreAPI.Start(self.m_pyhouse_obj)
         LOG.info("Started.\n")
 
     def Stop(self):
@@ -195,8 +195,8 @@ class API(Utilities):
         """
         LOG.info("Saving all data to XML file.")
         l_xml = ET.Element("PyHouse")
-        self.m_pyhouse_obj.CoreAPI.Stop(l_xml)
-        self.m_pyhouse_obj.LogsAPI.Stop(l_xml)
+        self.m_pyhouse_obj.APIs.CoreAPI.Stop(l_xml)
+        self.m_pyhouse_obj.APIs.LogsAPI.Stop(l_xml)
         xml_tools.write_xml_file(l_xml, self.m_pyhouse_obj.XmlFileName)
 
     def Reload(self, _p_pyhouses_obj):

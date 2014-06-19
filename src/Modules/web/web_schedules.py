@@ -20,7 +20,7 @@ from nevow import loaders
 from Modules.web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.scheduling import schedule
 from Modules.utils import pyh_log
-from Modules.utils.tools import PrettyPrintAny
+# from Modules.utils.tools import PrettyPrintAny
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -43,7 +43,7 @@ class SchedulesElement(athena.LiveElement):
     @athena.expose
     def getHouseData(self, _p_index):
         l_house = GetJSONHouseInfo(self.m_pyhouse_obj.HouseData)
-        PrettyPrintAny(l_house, 'Json ')
+        # PrettyPrintAny(l_house, 'Json ')
         return l_house
 
     @athena.expose

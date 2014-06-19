@@ -304,6 +304,9 @@ class Lister():
 
 def get_light_object(p_house_obj, name = None, key = None):
     """return the light object for a given house using the given value.
+    Either a name or a key may be used to identify the light.
+
+    TODO: switch from key to UUID.
 
     @param p_house_obj: is the house object that contains the lights
     @return: the Light object found or None.

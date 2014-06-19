@@ -16,7 +16,7 @@ g_debug = 0
 # 0 = off
 
 
-class ButtonsAPI(lighting_core.CoreAPI):
+class ButtonsAPI(lighting_core.LightingCoreAPI):
 
     m_count = 0
 

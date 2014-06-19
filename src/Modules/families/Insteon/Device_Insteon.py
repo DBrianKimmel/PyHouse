@@ -34,7 +34,7 @@ g_debug = 9
 LOG = pyh_log.getLogger('PyHouse.Dev_Insteon ')
 
 
-class CoreAPI(xml_tools.ConfigTools):
+class InsteonCoreAPI(xml_tools.ConfigTools):
 
     def extract_device_xml(self, p_device_obj, p_entry_xml):
         """
@@ -68,7 +68,7 @@ class CoreAPI(xml_tools.ConfigTools):
         ET.SubElement(p_entry_xml, 'Responder').text = self.put_bool(p_device_obj.Responder)
 
 
-class LightingAPI(CoreAPI):
+class LightingAPI(InsteonCoreAPI):
     """Interface to the lights of this module.
     """
 

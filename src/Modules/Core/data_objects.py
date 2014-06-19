@@ -115,18 +115,7 @@ class HouseData(ABaseObject):
     """This is about a single House.
     """
     def __init__(self):
-        self.CommunicationsAPI = None
-        self.EntertainmentAPI = None
-        self.HvacAPI = None
-        self.InternetAPI = None
-        self.IrrigationAPI = None
-        self.LocationAPI = None
-        self.LightingAPI = None
-        self.PoolAPI = None
-        self.RoomsAPI = None
-        self.ScheduleAPI = None
-        self.SecurityAPI = None
-        self.WeatherAPI = None
+        self.APIs = None
         #
         self.Location = LocationData()  # one location per house.
         # a dict of zero or more of the following.
@@ -139,6 +128,25 @@ class HouseData(ABaseObject):
         self.Rooms = {}
         self.Schedules = {}
         self.Thermostats = {}
+
+
+class HouseAPIs(object):
+    """
+    """
+    def __init__(self):
+        # self.CommunicationsAPI = None
+        # self.EntertainmentAPI = None
+        # self.HvacAPI = None
+        self.InternetAPI = None
+        # self.IrrigationAPI = None
+        # self.LocationAPI = None
+        self.LightingAPI = None
+        # self.PoolAPI = None
+        # self.RoomsAPI = None
+        self.ScheduleAPI = None
+        # self.SecurityAPI = None
+        # self.WeatherAPI = None
+
 
 
 class JsonHouseData(ABaseObject):
@@ -235,16 +243,10 @@ class PyHouseData(object):
     NOTE that the data entries need to be dicts so json encoding of the data works properly.
     """
     def __init__(self):
+        self.APIs = None
         # Twisted stuff
         self.Application = Application('PyHouse')
         self.Reactor = reactor
-        #
-        self.API = None
-        self.CoreAPI = None
-        # self.HousesAPI = None  # Dropped  V-1.3.0
-        self.HouseAPI = None  # added V-1.3.0
-        self.LogsAPI = None
-        self.WebAPI = None
         #
         self.ComputerData = {}
         self.CoreServicesData = {}  # CoreServices()
@@ -261,6 +263,18 @@ class PyHouseData(object):
         self.XmlRoot = None
         self.XmlSection = None
         self.XmlVersion = 2
+
+
+class PyHouseAPIs(object):
+    """
+    """
+
+    def __init__(self):
+        self.PyHouseAPI = None
+        self.CoreAPI = None
+        self.HouseAPI = None  # added V-1.3.0
+        self.LogsAPI = None
+        self.WebAPI = None
 
 
 class LocationData(object):

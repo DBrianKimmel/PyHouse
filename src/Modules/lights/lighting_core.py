@@ -20,7 +20,7 @@ from Modules.utils.xml_tools import ConfigTools
 g_debug = 0
 
 
-class CoreAPI(ConfigTools):
+class LightingCoreAPI(ConfigTools):
 
     def read_base_lighting_xml(self, p_device_obj, p_entry_xml):
         """This will read all the information in a BaseLightingData object

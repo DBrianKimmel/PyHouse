@@ -28,7 +28,7 @@ class SetupMixin(object):
     """
 
     def setUp(self):
-        self.m_api = lighting_core.CoreAPI()
+        self.m_api = lighting_core.LightingCoreAPI()
 
         self.m_pyhouse_obj = PyHouseData()
         self.m_pyhouse_obj.HouseData = HouseData()

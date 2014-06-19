@@ -44,8 +44,6 @@ from Modules.utils import pyh_log
 # from Modules.utils.tools import PrettyPrintAny
 
 g_debug = 1
-# 0 = off
-# 1 = log extra info
 LOG = pyh_log.getLogger('PyHouse.Schedule    ')
 
 # callLater = reactor.callLater
@@ -129,10 +127,10 @@ class ScheduleExecution(ScheduleData):
         """
         TODO: We need a small dispatch for the various schedule types (hvac, security, entertainment, lights, ...)
         """
-        l_sched_obj = self.m_house_obj.Schedules[p_slot]
-        if l_sched_obj.ScheduleType == 'Device':
+        l_schedule_obj = self.m_house_obj.Schedules[p_slot]
+        if l_schedule_obj.ScheduleType == 'Device':
             pass
-        elif l_sched_obj.ScheduleType == 'Scene':
+        elif l_schedule_obj.ScheduleType == 'Scene':
             pass
         pass
 
@@ -140,15 +138,21 @@ class ScheduleExecution(ScheduleData):
         """Send information to one device to execute a schedule.
 
         """
-        l_sched_obj = self.m_house_obj.Schedules[p_slot]
+        l_schedule_obj = self.m_house_obj.Schedules[p_slot]
         # TODO: We need a small dispatch for the various schedule types (hvac, security, entertainment, lights, ...)
-        if l_sched_obj.ScheduleType == 'Device':
+        if l_schedule_obj.ScheduleType == 'LightingDevice':
+            print('execute_one_schedule type = LightingDevice')
             pass
-        elif l_sched_obj.ScheduleType == 'Scene':
+        if l_schedule_obj.ScheduleType == 'Device':
+            print('execute_one_schedule type = Device')
             pass
-        l_light_obj = tools.get_light_object(self.m_house_obj, name = l_sched_obj.LightName)
-        LOG.info("Executing schedule Name:{0:}, Light:{1:}, Level:{2:}".format(l_sched_obj.Name, l_sched_obj.LightName, l_sched_obj.Level))
-        self.m_house_obj.LightingAPI.ChangeLight(l_light_obj, l_sched_obj.Level)
+        elif l_schedule_obj.ScheduleType == 'Scene':
+            print('execute_one_schedule type = Scene')
+            pass
+        # PrettyPrintAny(self.m_house_obj, 'execute_one_schedule')
+        l_light_obj = tools.get_light_object(self.m_house_obj, name = l_schedule_obj.LightName)
+        LOG.info("Executing one schedule Name:{0:}, Light:{1:}, Level:{2:}".format(l_schedule_obj.Name, l_schedule_obj.LightName, l_schedule_obj.Level))
+        self.m_house_obj.APIs.LightingAPI.ChangeLight(l_light_obj, l_schedule_obj.Level)
 
     def execute_schedules_list(self, p_slot_list = []):
         """
@@ -167,6 +171,8 @@ class ScheduleExecution(ScheduleData):
         """Find out what schedules need to be done and how long to delay before they are due to be run.
         """
         l_seconds_to_delay, l_schedule_list = self.get_next_sched()
+        if g_debug >= 1:
+            LOG.info('run_schedule delay: {0:} - List: {1:}'.format(l_seconds_to_delay, l_schedule_list))
         self.m_pyhouse_obj.Reactor.callLater(l_seconds_to_delay, self.execute_schedules_list, l_schedule_list)
 
 
@@ -297,11 +303,14 @@ class ScheduleUtility(ScheduleExecution):
         LOG.info("Get_next_schedule complete. {0:}".format(l_debug_msg))
         return l_seconds_to_delay, l_schedule_list
 
-    def start_scheduled_modules(self):
-        self.m_house_obj.LightingAPI = lighting.API()
+    def init_scheduled_modules(self):
+        self.m_house_obj.APIs.LightingAPI = lighting.API()
+
+    def start_scheduled_modules(self, p_pyhouse_obj):
+        self.m_house_obj.APIs.LightingAPI.Start(p_pyhouse_obj)
 
     def stop_scheduled_modules(self, p_xml):
-        self.m_house_obj.LightingAPI.Stop(p_xml)
+        self.m_house_obj.APIs.LightingAPI.Stop(p_xml)
         return p_xml
 
 
@@ -322,12 +331,14 @@ class API(ScheduleUtility, ScheduleXML):
 
         @param p_house_obj: is a House object for the house being scheduled
         """
+        # PrettyPrintAny(p_pyhouse_obj, 'Schedule - PyHouse Obj')
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_house_obj = p_pyhouse_obj.HouseData
-        self.m_house_xml = p_pyhouse_obj.XmlRoot.find('Houses/House')
+        p_pyhouse_obj.HouseData.Schedules = self.read_schedules_xml(p_pyhouse_obj.XmlRoot.find('Houses/House'))
         self.m_sunrisesunset.Start(p_pyhouse_obj, self.m_house_obj)
-        self.m_house_obj.Schedules = self.read_schedules_xml(self.m_house_xml)
-        self.start_scheduled_modules()
+        self.init_scheduled_modules()
+        self.start_scheduled_modules(p_pyhouse_obj)
+        LOG.info("Started.")
         if self.m_house_obj.Active:
             p_pyhouse_obj.Reactor.callLater(5, self.run_schedule)
 

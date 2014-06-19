@@ -19,13 +19,13 @@ Rooms and lights and HVAC are associated with a particular house.
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Core.data_objects import HouseData
+from Modules.Core.data_objects import HouseData, HouseAPIs
 from Modules.scheduling import schedule
 from Modules.housing import internet
 from Modules.housing import location
 from Modules.housing import rooms
 from Modules.utils import pyh_log
-from Modules.utils.tools import PrettyPrintAny
+# from Modules.utils.tools import PrettyPrintAny
 
 
 g_debug = 1
@@ -54,8 +54,8 @@ class HouseItems(object):
     """
 
     def init_all_components(self):
-        self.m_house_obj.InternetAPI = internet.API()
-        self.m_house_obj.ScheduleAPI = schedule.API(self.m_house_obj)
+        self.m_house_obj.APIs.InternetAPI = internet.API()
+        self.m_house_obj.APIs.ScheduleAPI = schedule.API(self.m_house_obj)
         pass
 
 
@@ -71,7 +71,7 @@ class HouseReadWriteXML(location.ReadWriteConfig, rooms.ReadWriteConfig):
         @param p_house_obj: is
         @param p_house_xml: is
         """
-        l_house_obj = HouseData()
+        l_house_obj = self.m_pyhouse_obj.HouseData
         self.read_base_object_xml(l_house_obj, p_house_xml)
         l_house_obj.Location = self.read_location_xml(p_house_xml)
         l_house_obj.Rooms = self.read_rooms_xml(p_house_xml)
@@ -80,7 +80,7 @@ class HouseReadWriteXML(location.ReadWriteConfig, rooms.ReadWriteConfig):
     def write_house_xml(self, p_house_obj):
         """Replace the data in the 'Houses' section with the current data.
         """
-        PrettyPrintAny(p_house_obj, 'House obj')
+        # PrettyPrintAny(p_house_obj, 'House obj')
         l_house_xml = self.write_base_object_xml('House', p_house_obj)
         l_house_xml.append(self.write_location_xml(p_house_obj.Location))
         l_house_xml.append(self.write_rooms_xml(p_house_obj.Rooms))
@@ -113,15 +113,18 @@ class API(Utility):
         Read in the XML file and update the internal data.
         May be stopped and then started anew to force reloading info.
         """
+        # PrettyPrintAny(p_pyhouse_obj, 'House - PyHouse Obj')
         self.m_pyhouse_obj = p_pyhouse_obj
         p_pyhouse_obj.HouseData = HouseData()
+        p_pyhouse_obj.HouseData.APIs = HouseAPIs()
         l_house_xml = self.get_house_xml(p_pyhouse_obj)
+        # PrettyPrintAny(p_pyhouse_obj.HouseData, 'p_pyhouse_obj.HouseData')
         p_pyhouse_obj.HouseData = self.read_house_xml(l_house_xml)
-        p_pyhouse_obj.HouseData.ScheduleAPI = schedule.API()
-        p_pyhouse_obj.HouseData.InternetAPI = internet.API()
+        p_pyhouse_obj.HouseData.APIs.ScheduleAPI = schedule.API()
+        p_pyhouse_obj.HouseData.APIs.InternetAPI = internet.API()
         LOG.info("Starting House {0:}, Active:{1:}".format(self.m_pyhouse_obj.HouseData.Name, self.m_pyhouse_obj.HouseData.Active))
-        p_pyhouse_obj.HouseData.ScheduleAPI.Start(self.m_pyhouse_obj)
-        p_pyhouse_obj.HouseData.InternetAPI.Start(self.m_pyhouse_obj)
+        p_pyhouse_obj.HouseData.APIs.ScheduleAPI.Start(self.m_pyhouse_obj)
+        p_pyhouse_obj.HouseData.APIs.InternetAPI.Start(self.m_pyhouse_obj)
 
     def Stop(self, p_xml):
         """Stop all houses.
@@ -132,11 +135,11 @@ class API(Utility):
         l_house_xml.append(self.write_location_xml(self.m_house_obj.Location))
         l_house_xml.append(self.write_rooms_xml(self.m_house_obj.Rooms))
         try:
-            self.m_house_obj.ScheduleAPI.Stop(l_house_xml)
+            self.m_house_obj.APIs.ScheduleAPI.Stop(l_house_xml)
         except AttributeError:  # New house has  no schedule
             LOG.warning("No schedule XML")
         try:
-            self.m_house_obj.InternetAPI.Stop(l_house_xml)
+            self.m_house_obj.APIs.InternetAPI.Stop(l_house_xml)
         except AttributeError:  # New house has  no internet
             LOG.warning("No internet XML")
         p_xml.append(l_house_xml)

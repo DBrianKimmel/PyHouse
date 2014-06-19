@@ -20,7 +20,7 @@ from xml.etree import ElementTree as ET
 from xml.dom import minidom
 
 # Import PyMh files
-from Modules.utils.tools import PrettyPrintObject
+from Modules.utils.tools import PrettyPrintAny
 
 
 g_debug = 0
@@ -218,7 +218,7 @@ class ConfigTools(PutGetXML):
             l_elem.set('Key', str(p_object.Key))
             self.put_text_element(l_elem, 'UUID', p_object.UUID)
         except AttributeError as e_error:
-            print('ERROR in writeBaseObj {0:} {1:}'.format(e_error, PrettyPrintObject(p_object)))
+            print('ERROR in writeBaseObj {0:} {1:}'.format(e_error, PrettyPrintAny(p_object, 'Error in writeBaseObj')))
         return l_elem
 
     def read_base_object_xml(self, p_base_obj, p_entry_element_xml):
@@ -325,10 +325,11 @@ def open_config_file():
     try:
         open(l_file_name, mode = 'r')
     except Exception as e:  # IOError:
-        # g_logger.error(" -- Error in open_config_file {0:}".format(e))
+        print(" -- Error in open_config_file {0:}".format(e))
         l_file_name = '~/.PyHouse/PyHouse.xml'
         l_file_name = os.path.expanduser(l_file_name)
         ConfigFile().create_empty_config_file(l_file_name)
+    print('open_config_file {0:}'.format(l_file_name))
     return l_file_name
 
 def write_xml_file(p_xmltree, p_filename):

@@ -50,25 +50,25 @@ class API(object):
         self.m_nodes = nodes.API()
 
     def Start(self, p_pyhouse_obj):
-        # PrettyPrintAny(p_pyhouse_obj, 'setup - 1')
+        # PrettyPrintAny(p_pyhouse_obj, 'Core setup - PyHouse Obj')
         self.m_pyhouse_obj = p_pyhouse_obj
         p_pyhouse_obj.CoreServicesData = CoreServices()
         self.m_nodes.Start(p_pyhouse_obj)
         # House
-        p_pyhouse_obj.HouseAPI = house.API()
-        p_pyhouse_obj.HouseAPI.Start(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.HouseAPI = house.API()
+        p_pyhouse_obj.APIs.HouseAPI.Start(p_pyhouse_obj)
         # SubSystems
-        p_pyhouse_obj.WebAPI = web_server.API()
-        p_pyhouse_obj.WebAPI.Start(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.WebAPI = web_server.API()
+        p_pyhouse_obj.APIs.WebAPI.Start(p_pyhouse_obj)
         self.m_entertainment.Start(p_pyhouse_obj)
         LOG.info("Started.")
 
     def Stop(self, p_xml):
         # SubSystems
         self.m_entertainment.Stop(p_xml)
-        self.m_pyhouse_obj.WebAPI.Stop(p_xml)
+        self.m_pyhouse_obj.APIs.WebAPI.Stop(p_xml)
         # House
-        self.m_pyhouse_obj.HouseAPI.Stop(p_xml)
+        self.m_pyhouse_obj.APIs.HouseAPI.Stop(p_xml)
         self.m_nodes.Stop(p_xml)
         LOG.info("Stopped.")
 
