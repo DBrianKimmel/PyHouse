@@ -111,6 +111,14 @@ class InsteonData (LightData):
         self.Responder = False
 
 
+class ComputerData(object):
+    """
+    """
+    def __init__(self):
+        self.InternetConnection = {}  # InternetConnectionData()
+        self.Nodes = {}
+
+
 class HouseData(ABaseObject):
     """This is about a single House.
     """
@@ -122,9 +130,7 @@ class HouseData(ABaseObject):
         self.Buttons = {}  # ButtonData()
         self.Controllers = {}  # ControllerData()
         self.FamilyData = {}  # FamilyData()
-        self.Internet = {}
         self.Lights = {}  # LightData()
-        self.Nodes = {}  # All the PyHouse Nodes in the house
         self.Rooms = {}
         self.Schedules = {}
         self.Thermostats = {}
@@ -248,7 +254,7 @@ class PyHouseData(object):
         self.Application = Application('PyHouse')
         self.Reactor = reactor
         #
-        self.ComputerData = {}
+        self.ComputerData = {}  # ComputerData()
         self.CoreServicesData = {}  # CoreServices()
         # .FamilyData = {}  # FamilyData()
         self.LogsData = {}  # LogData()

@@ -18,45 +18,42 @@ from xml.etree import ElementTree as ET
 from xml.dom import minidom
 
 
-def PrettyPrintAny(p_any, p_title = ''):
+def PrettyPrintAny(p_any, title = '', maxlen = 180):
     l_type = type(p_any)
-    print('=== ', p_title, ' === ', l_type)
+    print('===== ', title, '===== ', l_type)
     #
     if isinstance(p_any, dict):
         PrettyPrintDict(p_any)
     elif isinstance(p_any, ET.Element):
-        PrettyPrintXML(p_any)
+        PrettyPrintXML(p_any, maxlen = maxlen)
     elif isinstance(p_any, str):
-        PrettyPrintString(p_any)
+        PrettyPrintString(p_any, maxlen = maxlen)
     elif isinstance(p_any, unicode):
-        PrettyPrintUnicode(p_any)
-    # Default to an object
-    else:
-        PrettyPrintObject(p_any)
+        PrettyPrintUnicode(p_any, maxlen = maxlen)
+    else:  # Default to an object
+        PrettyPrintObject(p_any, maxlen = maxlen)
     print('---------------------------------')
 
 def PrettyPrintDict(p_dict, p_format = "%-25s %s"):
     for (key, val) in p_dict.iteritems():
         print(p_format % (str(key) + ':', val))
 
-def PrettyPrintXML(p_element, _p_title = ''):
+def PrettyPrintXML(p_element, maxlen):
     """Return a pretty-printed XML string for the Element.
 
     @param p_element: an element to format as a readable XML tree.
     @return: a string formatted with indentation and newlines.
     """
-    # l_type = type(p_element)
-    # print('===XML=== ', p_title, ' === ', l_type)
     l_rough_string = ET.tostring(p_element, 'utf-8')
     l_reparsed = minidom.parseString(l_rough_string)
     l_doc = l_reparsed.toprettyxml(indent = "    ")
     l_lines = l_doc.splitlines()
     for l_line in l_lines:
         if not l_line.isspace():
-            print l_line
+            print(_format_line(l_line, maxlen = maxlen))
 
-def PrettyPrintObject(p_obj, maxlen = 180, lindent = 24, maxspew = 2000):
-    def truncstring(s, maxlen):
+def PrettyPrintObject(p_obj, maxlen, lindent = 24, maxspew = 2000):
+    def _truncstring(s, maxlen):
         if len(s) > maxlen:
             return s[0:maxlen] + ' ...(%d more chars)...' % (len(s) - maxlen)
         else:
@@ -71,16 +68,14 @@ def PrettyPrintObject(p_obj, maxlen = 180, lindent = 24, maxspew = 2000):
         l_attrs.append((l_slot, l_attr))
     l_attrs.sort()
     for (attr, l_val) in l_attrs:
-        print(PrettyPrintCols(('', attr, truncstring(str(l_val), maxspew)), l_tabbedwidths, ' '))
+        print(PrettyPrintCols(('', attr, _truncstring(str(l_val), maxspew)), l_tabbedwidths, ' '))
 
-def PrettyPrintString(p_obj):
-    l_str = prettyPrint(p_obj, maxlen = 120)
+def PrettyPrintString(p_obj, maxlen):
+    l_str = _format_line(p_obj, maxlen = maxlen)
     print(l_str)
 
-def PrettyPrintUnicode(p_obj):
-    l_obj = str(p_obj)
-    l_str = prettyPrint(l_obj, maxlen = 120)
-    print(l_str)
+def PrettyPrintUnicode(p_obj, maxlen):
+    print(_format_line(str(p_obj), maxlen = maxlen))
 
 
 
@@ -106,15 +101,15 @@ def PrintBytes(p_message):
 
 def PrettyPrintCols(strings, widths, split = ' '):
     """Pretty prints text in colums, with each string breaking at
-    split according to prettyPrint.  margins gives the corresponding
+    split according to _format_line.  margins gives the corresponding
     right breaking point.
     """
     assert len(strings) == len(widths)
-    strings = map(nukenewlines, strings)
+    strings = map(_nukenewlines, strings)
     # pretty Print each column
     cols = [''] * len(strings)
     for i in range(len(strings)):
-        cols[i] = prettyPrint(strings[i], widths[i], split)
+        cols[i] = _format_line(strings[i], widths[i], split)
     # prepare a format line
     l_format = ''.join(["%%-%ds" % width for width in widths[0:-1]]) + "%s"
     def formatline(*cols):
@@ -126,7 +121,7 @@ def PrettyPrintCols(strings, widths, split = ' '):
 #######################################
 
 def PrettyPrint(p_title, p_str, maxlen = 150):
-    print('Title: {0:}\n'.format(p_title), '\n'.join(prettyPrint(str(p_str), maxlen, ' ')))
+    print('Title: {0:}\n'.format(p_title), '\n'.join(_format_line(str(p_str), maxlen, ' ')))
 
 def PrintObject(p_title, p_obj, suppressdoc = True, maxlen = 180, lindent = 24, maxspew = 2000):
     """Print a nicely formatted overview of an object.
@@ -212,7 +207,7 @@ def PrintObject(p_title, p_obj, suppressdoc = True, maxlen = 180, lindent = 24, 
     if objclass == '':
         objclass = type(p_obj).__name__
     intro = "\nInstance of class '{0:}' as defined in module {1:} with id {2:}".format(objclass, objmodule, id(p_obj))
-    print('\nTitle:  ', p_title, '\n'.join(prettyPrint(intro, maxlen)))
+    print('\nTitle:  ', p_title, '\n'.join(_format_line(intro, maxlen)))
     # Object's Docstring
     if not suppressdoc:
         if objdoc is None:
@@ -223,7 +218,7 @@ def PrintObject(p_title, p_obj, suppressdoc = True, maxlen = 180, lindent = 24, 
         print(PrettyPrintCols(('Documentation string:', truncstring(objdoc, maxspew)), normalwidths, ' '))
     # Built-in methods
     if builtins:
-        bi_str = delchars(str(builtins), "[']") or str(None)
+        bi_str = _delchars(str(builtins), "[']") or str(None)
         print
         print(PrettyPrintCols(('Built-in Methods:', truncstring(bi_str, maxspew)), normalwidths, ', '))
     # Classes
@@ -252,7 +247,7 @@ def PrintObject(p_title, p_obj, suppressdoc = True, maxlen = 180, lindent = 24, 
         print(PrettyPrintCols(('', attr, truncstring(str(val), maxspew)), tabbedwidths, ' '))
     print('====================\n')
 
-def prettyPrint(string, maxlen = 175, split = ' '):
+def _format_line(string, maxlen = 175, split = ' '):
     """Pretty prints the given string to break at an occurrence of
     split where necessary to avoid lines longer than maxlen.
 
@@ -269,7 +264,7 @@ def prettyPrint(string, maxlen = 175, split = ' '):
         oldeol = eol + len(split)
     return lines
 
-def nukenewlines(string):
+def _nukenewlines(string):
     """Strip newlines and any trailing/following whitespace; rejoin
     with a single space where the newlines were.
 
@@ -279,7 +274,7 @@ def nukenewlines(string):
     lines = string.splitlines()
     return ' '.join([line.strip() for line in lines])
 
-def delchars(p_str, chars):
+def _delchars(p_str, chars):
     """Returns a string for which all occurrences of characters in
     chars have been removed."""
     # Translate demands a mapping string of 256 characters;

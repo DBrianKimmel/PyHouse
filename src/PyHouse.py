@@ -63,7 +63,7 @@ from twisted.application.service import Application
 import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, PyHouseAPIs
+from Modules.Core.data_objects import PyHouseData, PyHouseAPIs, ComputerData
 from Modules.Core import setup
 from Modules.utils import pyh_log
 from Modules.utils import xml_tools
@@ -148,6 +148,14 @@ class Utilities(object):
         p_pyhouse_obj.XmlRoot = l_xmltree.getroot()
         p_pyhouse_obj.XmlParsed = p_pyhouse_obj.XmlRoot
 
+    def build_pyhouse_obj(self):
+        l_pyhouse_obj = PyHouseData()
+        l_pyhouse_obj.Reactor = reactor
+        l_pyhouse_obj.Application = Application('PyHouse')
+        l_pyhouse_obj.APIs = PyHouseAPIs()
+        l_pyhouse_obj.ComputerData = ComputerData()
+        return l_pyhouse_obj
+
 
 class API(Utilities):
     """
@@ -163,10 +171,7 @@ class API(Utilities):
         call never returns until the reactor is stopped (permanent stoppage).
         """
         print('PyHouse Start Initializing')
-        self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.Reactor = reactor
-        self.m_pyhouse_obj.Application = Application('PyHouse')
-        self.m_pyhouse_obj.APIs = PyHouseAPIs()
+        self.m_pyhouse_obj = self.build_pyhouse_obj()
         self.m_pyhouse_obj.APIs.PyHouseAPI = self  # Only used by web server to reload - Do we need this?
         global g_API
         g_API = self

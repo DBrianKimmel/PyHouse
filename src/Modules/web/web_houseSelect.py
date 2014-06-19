@@ -54,14 +54,15 @@ class HouseSelectElement(athena.LiveElement):
         l_obj[0]['Name'] = l_house.Name
         l_obj[0]['Key'] = l_house.Key
         l_obj[0]['Active'] = l_house.Active
-        # PrettyPrintAny(l_obj, 'Json 1A ')
+        # PrettyPrintAny(l_obj, 'House_Select - Json 1A ')
         l_json = JsonUnicode().encode_json(l_obj)
-        # PrettyPrintAny(l_json, 'Json 1B ')
+        # PrettyPrintAny(l_json, 'House_Select - Json 1B ')
         return unicode(l_json)
 
     @athena.expose
     def getSelectedHouseData(self, _p_index):
         l_house = GetJSONHouseInfo(self.m_pyhouse_obj.HouseData)
+        # PrettyPrintAny(l_house, 'House_Select - Json 2 ')
         return l_house
 
 # ## END DBK

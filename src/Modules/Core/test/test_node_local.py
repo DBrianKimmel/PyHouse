@@ -29,7 +29,7 @@ class Test_02_ReadWriteXML(unittest.TestCase):
     def setUp(self):
         self.m_pyhouse_obj = PyHouseData()
         self.m_pyhouse_obj.CoreServicesData = CoreServices()
-        self.m_pyhouse_obj.Nodes[0] = NodeData()
+        self.m_pyhouse_obj.ComputerData.Nodes[0] = NodeData()
         self.m_pyhouse_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         self.m_nodes_xml = self.m_root_xml.find('Nodes')
         self.m_node_xml = self.m_nodes_xml.find('Node')
@@ -99,7 +99,7 @@ class Test_03_ReadWriteEmptyXML(unittest.TestCase):
     def setUp(self):
         self.m_pyhouse_obj = PyHouseData()
         self.m_pyhouse_obj.CoreServicesData = CoreServices()
-        self.m_pyhouse_obj.Nodes[0] = NodeData()
+        self.m_pyhouse_obj.ComputerData.Nodes[0] = NodeData()
         self.m_pyhouse_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_EMPTY)
         self.m_nodes_xml = self.m_root_xml.find('Nodes')
         self.m_node_xml = None
@@ -135,7 +135,7 @@ class Test_10_ApiStart(unittest.TestCase):
     def setUp(self):
         self.m_pyhouse_obj = PyHouseData()
         self.m_pyhouse_obj.CoreServicesData = CoreServices()
-        self.m_pyhouse_obj.Nodes[0] = NodeData()
+        self.m_pyhouse_obj.ComputerData.Nodes[0] = NodeData()
         self.m_pyhouse_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         self.m_root_element = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         self.m_util = xml_tools.PutGetXML()

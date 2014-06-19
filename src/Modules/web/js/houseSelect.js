@@ -57,7 +57,7 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 	 */
 	function startWidget(self) {
 		function cb_getHousesInfo(p_json) {
-			//Divmod.debug('---', 'houseSelect.startWidget.cb_getHousesInfo() was called.');
+			Divmod.debug('---', 'houseSelect.startWidget.cb_getHousesInfo() was called.');
 			//console.log("houseSelect.startWidget.cb   JSON = %O", p_json);
 			var l_obj = JSON.parse(p_json);
 			var l_tab = buildTable(l_obj, 'handleMenuOnClick', 'NoAdd');
@@ -68,7 +68,7 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 		function eb_getHousesInfo(res) {
 			Divmod.debug('---', 'houseSelect.eb_getHousesInfo() was called. ERROR = ' + res);
 		}
-		//Divmod.debug('---', 'houseSelect.startWidget() was called.');
+		Divmod.debug('---', 'houseSelect.startWidget() was called.');
 		self.showWidget()
         var l_defer = self.callRemote("getHousesToSelect", '');  // call server @ web_houseSelect.py
 		l_defer.addCallback(cb_getHousesInfo);

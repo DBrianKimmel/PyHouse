@@ -21,6 +21,7 @@ from nevow import athena
 from Modules.web.web_utils import JsonUnicode, GetJSONHouseInfo, dotted_hex2int
 from Modules.lights import lighting_lights
 from Modules.utils import pyh_log
+# from Modules.utils.tools import PrettyPrintAny
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -46,7 +47,9 @@ class LightsElement(athena.LiveElement):
 
     @athena.expose
     def getHouseData(self, _p_index):
+        # PrettyPrintAny(self.m_pyhouse_obj, 'Web Lights - HouseData ')
         l_house = GetJSONHouseInfo(self.m_pyhouse_obj.HouseData)
+        # PrettyPrintAny(l_house, 'Web Lights - Json ')
         return l_house
 
     @athena.expose

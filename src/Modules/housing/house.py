@@ -38,7 +38,6 @@ LOG = pyh_log.getLogger('PyHouse.House       ')
 class HouseItems(object):
     """
     Process all the house based items:
-        Internet (1)
         Location (1)
         Rooms (0+)
         Schedule (0+)

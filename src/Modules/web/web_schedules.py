@@ -43,7 +43,7 @@ class SchedulesElement(athena.LiveElement):
     @athena.expose
     def getHouseData(self, _p_index):
         l_house = GetJSONHouseInfo(self.m_pyhouse_obj.HouseData)
-        # PrettyPrintAny(l_house, 'Json ')
+        # PrettyPrintAny(l_house, 'web_schedules - Json ')
         return l_house
 
     @athena.expose

@@ -193,9 +193,9 @@ class XML(ConfigTools):
 class Utility(XML):
 
     def get_node_info(self, p_pyhouses_obj):
-        p_pyhouses_obj.Nodes[0].Name = platform.node()
-        p_pyhouses_obj.Nodes[0].Key = 0
-        p_pyhouses_obj.Nodes[0].Active = True
+        p_pyhouses_obj.ComputerData.Nodes[0].Name = platform.node()
+        p_pyhouses_obj.ComputerData.Nodes[0].Key = 0
+        p_pyhouses_obj.ComputerData.Nodes[0].Active = True
 
     def find_node_role(self):
         p_role = NODE_NOTHING
@@ -220,7 +220,7 @@ class Utility(XML):
         return p_role
 
     def init_node_type(self, p_pyhouses_obj):
-        l_role = p_pyhouses_obj.Nodes[0].NodeRole
+        l_role = p_pyhouses_obj.ComputerData.Nodes[0].NodeRole
         if l_role & NODE_PIFACECAD:
             self._init_ir_control(p_pyhouses_obj)
         elif l_role & NODE_LIGHTS:
@@ -240,16 +240,16 @@ class Utility(XML):
         """
         l_max_key = -1
         try:
-            for l_node in p_pyhouses_obj.Nodes.itervalues():
+            for l_node in p_pyhouses_obj.ComputerData.Nodes.itervalues():
                 if l_node.Name == p_node.Name:
-                    p_pyhouses_obj.Nodes[l_node.Key] = p_node
+                    p_pyhouses_obj.ComputerData.Nodes[l_node.Key] = p_node
                     return
                 if l_node.Key > l_max_key:
                     l_max_key = l_node.Key
         except AttributeError:
             pass
-        p_pyhouses_obj.Nodes[l_max_key + 1] = p_node
-        LOG.debug('Nodes = {0:}'.format(p_pyhouses_obj.Nodes))
+        p_pyhouses_obj.ComputerData.Nodes[l_max_key + 1] = p_node
+        LOG.debug('Nodes = {0:}'.format(p_pyhouses_obj.ComputerData.Nodes))
 
 
 class API(Utility):
@@ -264,15 +264,15 @@ class API(Utility):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_node = NodeData()
         GetAllInterfaceData(self.m_node)
-        p_pyhouse_obj.Nodes[0] = self.m_node
+        p_pyhouse_obj.ComputerData.Nodes[0] = self.m_node
         self.read_nodes_xml(p_pyhouse_obj.XmlRoot.find('Nodes'))
         self.get_node_info(p_pyhouse_obj)
-        p_pyhouse_obj.Nodes[0].NodeRole = self.find_node_role()
+        p_pyhouse_obj.ComputerData.Nodes[0].NodeRole = self.find_node_role()
         self.init_node_type(p_pyhouse_obj)
         LOG.info('Started')
 
     def Stop(self, p_xml):
-        p_xml.append(self.write_nodes_xml(self.m_pyhouse_obj.Nodes))
+        p_xml.append(self.write_nodes_xml(self.m_pyhouse_obj.ComputerData.Nodes))
         LOG.info("XML appended.")
 
 # ## END DBK

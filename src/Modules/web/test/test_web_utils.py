@@ -69,7 +69,7 @@ class Test_01_Json(unittest.TestCase):
         l_rooms = self.m_api.read_rooms_xml(self.m_house_xml)
         PrettyPrintAny(l_rooms, 'Rooms')
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_rooms))
-        PrettyPrintAny(l_json, 'JSON')
+        PrettyPrintAny(l_json, 'JSON', maxlen = 100)
         print('JSON: {0:}'.format(l_json))
 
 # ## END DBK

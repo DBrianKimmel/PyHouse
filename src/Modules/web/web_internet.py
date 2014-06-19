@@ -46,13 +46,13 @@ class InternetElement(athena.LiveElement):
 
     @athena.expose
     def saveInternetData(self, p_json):
-        """Internet data is returned, so update the house info.
+        """Internet data is returned, so update the computer info.
         """
         l_json = JsonUnicode().decode_json(p_json)
         _l_house_ix = int(l_json['HouseIx'])
         l_dyndns_ix = int(l_json['Key'])
         try:
-            l_obj = self.m_pyhouse_obj.HouseData.Internet
+            l_obj = self.m_pyhouse_obj.Computer.Internet
         except KeyError:
             l_obj = InternetConnectionData()
             l_obj.DynDns = {}
@@ -66,6 +66,6 @@ class InternetElement(athena.LiveElement):
         l_obj.DynDns[l_dyndns_ix].Active = l_json['Active']
         l_obj.DynDns[l_dyndns_ix].Interval = l_json['Interval']
         l_obj.DynDns[l_dyndns_ix].Url = l_json['Url']
-        self.m_pyhouse_obj.HouseData.Internet = l_obj
+        self.m_pyhouse_obj.ComputerData.Internet = l_obj
 
 # ## END DBK

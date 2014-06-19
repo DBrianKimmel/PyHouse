@@ -12,29 +12,17 @@
 """
 
 # Import system type stuff
-# import datetime
 import jsonpickle
-# import random
-# import twisted.python.components as tpc
-# from nevow import flat
-# from nevow import inevow
-# from nevow import rend
-# from nevow import static
-# from nevow import url
-# from nevow import util
-# from nevow.rend import _CARRYOVER
-# from formless import iformless
 import json
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import JsonHouseData
 # from Modules.utils.tools import PrettyPrintAny
 
-
 g_debug = 0
 
-
 # Web States defined
+#-------------------
 WS_IDLE = 0  # Starting state
 WS_LOGGED_IN = 1  # Successful login completed
 WS_ROOTMENU = 2
@@ -52,8 +40,6 @@ WS_BUTTONS = 501
 WS_CONTROLLERS = 502
 WS_LIGHTS = 503
 
-SUBMIT = '_submit'
-BUTTON = 'post_btn'
 
 def GetJSONHouseInfo(p_house_obj):
     """Get house info for the browser.
@@ -68,9 +54,9 @@ def GetJSONHouseInfo(p_house_obj):
     l_ret.Lights = p_house_obj.Lights
     l_ret.Rooms = p_house_obj.Rooms
     l_ret.Schedules = p_house_obj.Schedules
-    # PrettyPrintAny(l_ret, 'web_utils house data')
+    # PrettyPrintAny(l_ret, title = 'web_utils - house data', maxlen = 120)
     l_json = unicode(JsonUnicode().encode_json(l_ret))
-    # PrettyPrintAny(l_json, 'web_utils to browser JSON')
+    # PrettyPrintAny(l_json, 'web_utils -> browser - JSON')
     return l_json
 
 class State(object):
@@ -122,7 +108,7 @@ class JsonUnicode(object):
         """
         try:
             # l_json = json.dumps(p_obj, cls = ComplexHandler)
-            l_json = jsonpickle.encode(p_obj, unpicklable = False, max_depth = 150)
+            l_json = jsonpickle.encode(p_obj, unpicklable = False, max_depth = 5)
         except (TypeError, ValueError) as l_error:
             print('web_utils.encode_json ERROR {0:}'.format(l_error))
             l_json = '{}'

@@ -16,7 +16,6 @@ import xml.etree.ElementTree as ET
 # Import PyMh files
 from Modules.Core.data_objects import SerialControllerData, USBControllerData, EthernetControllerData
 from Modules.utils import xml_tools
-# from Modules.utils.tools import PrintObject
 
 g_debug = 0
 

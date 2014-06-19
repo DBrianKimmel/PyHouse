@@ -66,6 +66,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 	 */
 	function fetchHouseData(self) {
 		function cb_fetchHouseData(p_json) {
+			Divmod.debug('---', 'lights.cb_fetchHouseData was called.  Self:' + self);
 			globals.House.HouseObj = JSON.parse(p_json);
 			var l_tab = buildTable(globals.House.HouseObj.Lights, 'handleMenuOnClick', self.buildButtonName);
 			self.nodeById('LightTableDiv').innerHTML = l_tab;
@@ -73,6 +74,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		function eb_fetchHouseData(res) {
 			Divmod.debug('---', 'lights.eb_fetchHouseData() was called. ERROR: ' + res);
 		}
+		Divmod.debug('---', 'lights.fetchHouseData was called.  Self:' + self);
         var l_defer = self.callRemote("getHouseData", globals.House.HouseIx);  // call server @ web_lights.py
 		l_defer.addCallback(cb_fetchHouseData);
 		l_defer.addErrback(eb_fetchHouseData);

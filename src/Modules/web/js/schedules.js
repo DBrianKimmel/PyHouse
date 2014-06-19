@@ -74,6 +74,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 	 */
 	function fetchHouseData(self) {
 		function cb_fetchHouseData(p_json) {
+			Divmod.debug('---', 'schedules.cb_fetchHouseData  was called. ');
 			globals.House.HouseObj = JSON.parse(p_json);
 			var l_tab = buildTable(globals.House.HouseObj.Schedules, 'handleMenuOnClick', self.buildButtonName);
 			self.nodeById('ScheduleTableDiv').innerHTML = l_tab;
@@ -81,6 +82,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 		function eb_fetchHouseData(res) {
 			Divmod.debug('---', 'schedules.eb_fetchHouseData() was called.  ERROR: ' + res);
 		}
+		Divmod.debug('---', 'schedules.fetchHouseData  was called. ');
         var l_defer = self.callRemote("getHouseData", globals.House.HouseIx);  // call server @ web_schedules.py
 		l_defer.addCallback(cb_fetchHouseData);
 		l_defer.addErrback(eb_fetchHouseData);

@@ -174,7 +174,7 @@ class DomainBoxDispatcher_AmpProtocol(AMP):
         if g_debug >= 1:
             LOG.debug('Dispatch - update_NodeInformation  (DBD-9  178)')
             LOG.debug('     Box: {0:}'.format(vars(p_box)))
-        for l_node in self.m_pyhouse_obj.Nodes.itervals():
+        for l_node in self.m_pyhouse_obj.ComputerData.Nodes.itervals():
             if l_node.Name == p_box.Name:
                 l_node.Role = p_box.Role
                 l_node.UUID = p_box.UUID
@@ -300,7 +300,7 @@ class Utility(AmpClient):
         @param _ignore: node_domain.AmpSe rverFactory on 8581
         @type _ignore: class 'twisted.internet.tcp.Port'
         """
-        l_nodes = self.m_pyhouse_obj.Nodes
+        l_nodes = self.m_pyhouse_obj.ComputerData.Nodes
         for l_key, l_node in l_nodes.iteritems():
             if l_key > -1:  # Skip ourself
                 self.create_one_client(self.m_pyhouse_obj, l_node.ConnectionAddr_IPv4)
