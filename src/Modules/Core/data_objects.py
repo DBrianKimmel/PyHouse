@@ -121,7 +121,7 @@ class HouseData(ABaseObject):
         # a dict of zero or more of the following.
         self.Buttons = {}  # ButtonData()
         self.Controllers = {}  # ControllerData()
-        self.FamilyData = {}
+        self.FamilyData = {}  # FamilyData()
         self.Internet = {}
         self.Lights = {}  # LightData()
         self.Nodes = {}  # All the PyHouse Nodes in the house
@@ -250,7 +250,7 @@ class PyHouseData(object):
         #
         self.ComputerData = {}
         self.CoreServicesData = {}  # CoreServices()
-        self.FamilyData = {}
+        # .FamilyData = {}  # FamilyData()
         self.LogsData = {}  # LogData()
         # self.HousesData = {}  # HousesData()  Dropped V-1.3.0
         self.HouseData = {}  # HouseData()  # added V-1.3.0

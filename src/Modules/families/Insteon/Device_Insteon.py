@@ -111,7 +111,7 @@ class API(LightingAPI):
                 continue
             else:
                 from Modules.families.Insteon import Insteon_PLM
-                l_controller_obj._HandlerAPI = Insteon_PLM.API()
+                self.m_plm = l_controller_obj._HandlerAPI = Insteon_PLM.API()
                 if l_controller_obj._HandlerAPI.Start(p_pyhouse_obj, l_controller_obj):
                     l_count += 1
                 else:
@@ -133,12 +133,12 @@ class API(LightingAPI):
         return p_xml
 
     def ChangeLight(self, p_light_obj, p_level, _p_rate = 0):
-        # if g_debug >= 1:
-        #    LOG.debug('Change light Name:{0:}, Family:{1:}'.format(p_light_obj.Name, p_light_obj.LightingFamily))
+        if g_debug >= 1:
+            LOG.debug('Change light Name:{0:}, Family:{1:}'.format(p_light_obj.Name, p_light_obj.LightingFamily))
         # PrettyPrintAny(p_light_obj, 'Light Object Device_Insteon')
-        # l_api = self.m_pyhouse_obj.HouseData.FamilyData[p_light_obj.LightingFamily].ModuleAPI
+        l_api = self.m_pyhouse_obj.HouseData.FamilyData[p_light_obj.LightingFamily].ModuleAPI
         # PrettyPrintAny(l_api, 'Light Object Device_Insteon 2')
-        # l_api.ChangeLight(p_light_obj, p_level)
+        self.m_plm.ChangeLight(p_light_obj, p_level)
         # if p_light_obj.LightingFamily == 'Insteon':
         #    try:
         #        for l_controller_obj in self.m_house_obj.Controllers.itervalues():

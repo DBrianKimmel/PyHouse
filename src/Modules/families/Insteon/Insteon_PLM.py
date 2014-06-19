@@ -1009,6 +1009,7 @@ class API(LightHandlerAPI):
         LOG.info('Stopped.')
 
     def ChangeLight(self, p_light_obj, p_level, p_rate = 0):
+        # PrettyPrintAny(p_light_obj, 'Insteon_PLM - Change Light - 3')
         if g_debug >= 1:
             LOG.debug("Change light:{0:} to level:{1:} at rate:{2:}".format(p_light_obj.Name, p_level, p_rate))
         if int(p_level) == 0:

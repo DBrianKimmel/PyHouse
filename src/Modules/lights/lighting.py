@@ -94,7 +94,7 @@ class API(Utility):
             l_api = self.m_pyhouse_obj.HouseData.FamilyData[l_light_obj.LightingFamily].ModuleAPI
             # PrettyPrintAny(l_api, 'Lighting - Change Light - 3')
             l_api.ChangeLight(l_light_obj, p_level)
-        except:
-            pass
+        except Exception as e_error:
+            print('Lighting Change Light ERROR - {0:}'.format(e_error))
 
 # ## END DBK
