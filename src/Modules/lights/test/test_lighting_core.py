@@ -70,7 +70,7 @@ class Test_02_ReadXML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_base.Comment, 'SwitchLink On/Off', 'Bad Comments')
         self.assertEqual(l_base.Coords, "['0', '0']", 'Bad Coords')
         self.assertEqual(l_base.Dimmable, False, 'Bad Dimmable')
-        self.assertEqual(l_base.LightingFamily, 'Insteon', 'Bad Family')
+        self.assertEqual(l_base.LightingFamily, 'Insteon', 'Bad LightingFamily')
         self.assertEqual(l_base.RoomName, 'Test Living Room', 'Bad Room Name')
 
     def test_0204_WriteBaseXml(self):

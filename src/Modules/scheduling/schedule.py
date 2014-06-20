@@ -1,5 +1,16 @@
 """
 
+-*- test-case-name: PyHouse.src.Modules.scheduling.test.test_schedule -*-
+
+@name: PyHouse/src/Modules/scheduling/schedule.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
+@Copyright (c) 2013-2014 by D. Brian Kimmel
+@license: MIT License
+@note: Created on Apr 8, 2013
+@summary: Schedule events
+
+
 
 Handle the home automation system schedule for one house.
 
@@ -41,12 +52,10 @@ from Modules.utils import xml_tools
 from Modules.utils import tools
 from Modules.scheduling import sunrisesunset
 from Modules.utils import pyh_log
-# from Modules.utils.tools import PrettyPrintAny
+from Modules.utils.tools import PrettyPrintAny
 
 g_debug = 1
 LOG = pyh_log.getLogger('PyHouse.Schedule    ')
-
-# callLater = reactor.callLater
 
 
 class ScheduleXML(xml_tools.ConfigTools):
@@ -65,7 +74,6 @@ class ScheduleXML(xml_tools.ConfigTools):
         l_schedule_obj.RoomName = self.get_text_from_xml(p_schedule_element, 'RoomName')
         l_schedule_obj.Time = self.get_text_from_xml(p_schedule_element, 'Time')
         l_schedule_obj.ScheduleType = self.get_text_from_xml(p_schedule_element, 'Type')
-        # PrettyPrintAny(l_schedule_obj, 'One Schedule')
         return l_schedule_obj
 
     def read_schedules_xml(self, p_house_xml):
@@ -75,22 +83,17 @@ class ScheduleXML(xml_tools.ConfigTools):
         """
         self.m_count = 0
         l_dict = {}
-        # PrettyPrintAny(p_house_xml, 'House_Xml 1')
         l_schedules_xml = p_house_xml.find('Schedules')
-        # PrettyPrintAny(l_schedules_xml, 'House_Xml 2')
+        # PrettyPrintAny(l_schedules_xml, 'Schedules')
         try:
-            l_schedules_xml = p_house_xml.find('Schedules')
-            # PrettyPrintAny(l_schedules_xml, 'House_Xml 3')
             l_list = l_schedules_xml.iterfind('Schedule')
             for l_entry in l_list:
                 l_schedule_obj = self.read_one_schedule_xml(l_entry)
-                # self.read_one_schedule_xml(l_entry)
                 l_schedule_obj.Key = self.m_count  # Renumber
                 l_dict[self.m_count] = l_schedule_obj
                 self.m_count += 1
         except AttributeError as e_error:
             print('ERROR in schedule.read_schedules_xml() - {0:}'.format(e_error))
-        # PrettyPrintAny(l_dict, 'All Schedules')
         return l_dict
 
     def write_one_schedule_xml(self, p_schedule_obj):
@@ -113,6 +116,7 @@ class ScheduleXML(xml_tools.ConfigTools):
         """
         self.m_count = 0
         l_xml = ET.Element('Schedules')
+        PrettyPrintAny(p_schedules_obj, 'Schedule - SchedulesObj')
         for l_schedule_obj in p_schedules_obj.itervalues():
             l_entry = self.write_one_schedule_xml(l_schedule_obj)
             l_xml.append(l_entry)
@@ -152,6 +156,8 @@ class ScheduleExecution(ScheduleData):
         # PrettyPrintAny(self.m_house_obj, 'execute_one_schedule')
         l_light_obj = tools.get_light_object(self.m_house_obj, name = l_schedule_obj.LightName)
         LOG.info("Executing one schedule Name:{0:}, Light:{1:}, Level:{2:}".format(l_schedule_obj.Name, l_schedule_obj.LightName, l_schedule_obj.Level))
+        # PrettyPrintAny(l_schedule_obj, 'Schedule - execute one schedule - Schedule', 140)
+        # PrettyPrintAny(l_light_obj, 'Schedule - execute one schedule - Light', 140)
         self.m_house_obj.APIs.LightingAPI.ChangeLight(l_light_obj, l_schedule_obj.Level)
 
     def execute_schedules_list(self, p_slot_list = []):
@@ -164,7 +170,7 @@ class ScheduleExecution(ScheduleData):
         """
         LOG.info("About to execute - Schedule:{0:}".format(p_slot_list))
         for l_slot in range(len(p_slot_list)):
-            self.execute_one_schedule(l_slot)
+            self.execute_one_schedule(p_slot_list[l_slot])
         self.m_pyhouse_obj.Reactor.callLater(5, self.run_schedule)
 
     def run_schedule(self):

@@ -83,7 +83,7 @@ class LightsElement(athena.LiveElement):
         l_obj.Dimmable = l_json['Dimmable']
         l_obj.LightingFamily = l_json['LightingFamily']
         l_obj.RoomName = l_json['RoomName']
-        l_obj.LightingType = l_json['Type']
+        l_obj.LightingType = l_json['LightingType']
         l_obj.UUID = l_json['UUID']
         if len(l_obj.UUID) < 8:
             l_obj.UUID = str(uuid.uuid1())

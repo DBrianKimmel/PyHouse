@@ -66,7 +66,7 @@ class Test_02_PrettyPrint(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self)
 
     def test_0201_GetLightObject(self):
-        self.m_pyhouse_obj.HouseData.Lights = lighting_lights.LightingAPI(self.m_pyhouse_obj).read_lights_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.HouseData.Lights = lighting_lights.LightingLightsAPI(self.m_pyhouse_obj).read_lights_xml(self.m_pyhouse_obj)
         l_obj = tools.get_light_object(self.m_pyhouse_obj.HouseData, name = 'lr_cans', key = None)
         PrettyPrintAny(l_obj)
 

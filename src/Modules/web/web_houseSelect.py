@@ -17,7 +17,6 @@ from nevow import loaders
 from nevow import athena
 
 # Import PyMh files and modules.
-# from Modules.Core.data_objects import JsonHouseData
 from Modules.web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.utils import pyh_log
 # from Modules.utils.tools import PrettyPrintAny

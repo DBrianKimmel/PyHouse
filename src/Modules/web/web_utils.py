@@ -49,6 +49,10 @@ def GetJSONHouseInfo(p_house_obj):
     @param p_house_obj: is the complete information
     """
     l_ret = JsonHouseData()
+    # l_ret.Name - p_house_obj.Name
+    # l_ret.Active = p_house_obj.Active
+    # l_ret.Key = 0
+    # l_ret.UUID = 'No such thing'
     l_ret.Buttons = p_house_obj.Buttons
     l_ret.Controllers = p_house_obj.Controllers
     l_ret.Lights = p_house_obj.Lights

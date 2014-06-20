@@ -121,11 +121,11 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		self.nodeById('CommentDiv').innerHTML  = buildTextWidget('LightComment', p_obj.Comment);
 		self.nodeById('CoordsDiv').innerHTML   = buildTextWidget('LightCoords', p_obj.Coords);
 		self.nodeById('DimmableDiv').innerHTML = buildTrueFalseWidget('LightDimmable', p_obj.Dimmable);
-		self.nodeById('FamilyDiv').innerHTML   = buildFamilySelectWidget('LightFamily', 'Families', p_obj.Family);
+		self.nodeById('FamilyDiv').innerHTML   = buildFamilySelectWidget('LightFamily', 'Families', p_obj.LightingFamily);
 		self.nodeById('RoomNameDiv').innerHTML = buildRoomSelectWidget('LightRoomName', p_obj.RoomName);
-		self.nodeById('TypeDiv').innerHTML     = buildTextWidget('LightType', p_obj.Type, 'disabled');
+		self.nodeById('TypeDiv').innerHTML     = buildTextWidget('LightType', p_obj.LightingType, 'disabled');
 		self.nodeById('UUIDDiv').innerHTML     = buildTextWidget('LightUUID', p_obj.UUID, 'disabled');
-        if (p_obj['Family'] == 'Insteon') {  // Insteon info
+        if (p_obj['LightingFamily'] == 'Insteon') {  // Insteon info
 			self.fillInsteonEntry(p_obj);
         }
 		self.nodeById('LightEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick');

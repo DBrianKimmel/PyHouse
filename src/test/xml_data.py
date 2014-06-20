@@ -249,6 +249,90 @@ XML_LONG = """
                     <Type>Device</Type>
                     <UUID>ec95d101-89c9-11e3-bb08-082e5f8cdfd2</UUID>
                 </Schedule>
+                <Schedule Active="True" Key="2" Name="Evening">
+                    <Level>100</Level><LightName>outside_gar</LightName><LightNumber>1</LightNumber>
+                    <Rate>0</Rate><RoomName>Garage</RoomName><Time>sunset - 00:02</Time>
+                    <Type>Device</Type><UUID>ec95d102-89c9-11e3-abe6-082e5f8cdfd2</UUID>
+                </Schedule>
+                <Schedule Active="True" Key="3" Name="Evening">
+                    <Level>100</Level><LightName>outside_front</LightName>
+                    <LightNumber>0</LightNumber><Rate>0</Rate><RoomName>Foyer</RoomName>
+                    <Time>sunset</Time><Type>Device</Type>
+                    <UUID>ec95d103-89c9-11e3-8567-082e5f8cdfd2</UUID>
+                </Schedule>
+                <Schedule Active="True" Key="4" Name="Evening">
+                <Level>100</Level><LightName>wet_bar</LightName><LightNumber>8</LightNumber>
+                    <Rate>0</Rate><RoomName>Living Room</RoomName>
+                    <Time>sunset - 00:04</Time><Type>Device</Type>
+                    <UUID>ec95d104-89c9-11e3-b921-082e5f8cdfd2</UUID>
+                </Schedule>
+                <Schedule Active="False" Key="5" Name="Night xxx">
+                    <Level>60</Level>
+                    <LightName>mbr_rope</LightName><LightNumber>6</LightNumber>
+                    <Rate>0</Rate><RoomName>Master Bedroom</RoomName>
+                    <Time>22:00</Time><Type>Device</Type>
+                    <UUID>ec95d105-89c9-11e3-8b11-082e5f8cdfd2</UUID>
+                </Schedule>
+                <Schedule Active="True" Key="6" Name="Night">
+                    <Level>0</Level><LightName>outside_gar</LightName>
+                    <LightNumber>1</LightNumber>
+                    <Rate>0</Rate><RoomName>Garage</RoomName><Time>23:00</Time>
+                    <Type>Device</Type><UUID>ec95f811-89c9-11e3-a802-082e5f8cdfd2</UUID>
+                </Schedule>
+                <Schedule Active="True" Key="7" Name="Night">
+                    <Level>0</Level><LightName>outside_front</LightName><LightNumber>0</LightNumber>
+                    <Rate>0</Rate><RoomName>Foyer</RoomName><Time>23:00</Time>
+                    <Type>Device</Type><UUID>ec95f812-89c9-11e3-931a-082e5f8cdfd2</UUID>
+                </Schedule>
+                <Schedule Active="True" Key="8" Name="Evening">
+                    <Level>60</Level><LightName>mbr_rope</LightName>
+                    <LightNumber>6</LightNumber><Rate>0</Rate><RoomName>Master Bedroom</RoomName>
+                    <Time>22:10</Time><Type>Device</Type><UUID>ec95f813-89c9-11e3-a132-082e5f8cdfd2</UUID>
+                </Schedule>
+                <Schedule Active="True" Key="9" Name="Night">
+                    <Level>0</Level><LightName>lr_rope</LightName><LightNumber>7</LightNumber>
+                    <Rate>0</Rate><RoomName>Living Room</RoomName>
+                    <Time>23:30</Time>
+                    <Type>Device</Type><UUID>ec95f814-89c9-11e3-91e0-082e5f8cdfd2</UUID>
+                </Schedule>
+                <Schedule Active="True" Key="10" Name="Night">
+                    <Level>0</Level><LightName>lr_cans</LightName>
+                    <LightNumber>10</LightNumber><Rate>0</Rate><RoomName>Living Room</RoomName>
+                    <Time>23:31</Time><Type>Device</Type><UUID>ec95f815-89c9-11e3-b6de-082e5f8cdfd2</UUID>
+                </Schedule>
+                <Schedule Active="True" Key="11" Name="Night">
+                    <Level>0</Level><LightName>wet_bar</LightName><LightNumber>8</LightNumber>
+                    <Rate>0</Rate><RoomName>Living Room</RoomName><Time>00:15</Time>
+                    <Type>Device</Type><UUID>ec95f816-89c9-11e3-b338-082e5f8cdfd2</UUID>
+                </Schedule>
+                <Schedule Active="True" Key="12" Name="Morning">
+                    <Level>0</Level><LightName>mbr_rope</LightName>
+                    <LightNumber>6</LightNumber><Rate>0</Rate>
+                    <RoomName>Master Bedroom</RoomName>
+                    <Time>sunrise + 00:30</Time><Type>Device</Type>
+                    <UUID>ec95f817-89c9-11e3-9bc6-082e5f8cdfd2</UUID>
+                </Schedule>
+                <Schedule Active="False" Key="13" Name="Testing">
+                    <Level>100</Level><LightName>lr_rope</LightName><LightNumber>7</LightNumber>
+                    <Rate>0</Rate><RoomName>Office</RoomName><Time>10:06</Time>
+                    <Type>Device</Type><UUID>ec961f21-89c9-11e3-a428-082e5f8cdfd2</UUID>
+                </Schedule>
+                <Schedule Active="False" Key="14" Name="Testing">
+                    <Level>0</Level>
+                    <LightName>lr_rope</LightName><LightNumber>7</LightNumber><Rate>0</Rate><RoomName>Office</RoomName>
+                    <Time>10:31</Time><Type>Device</Type><UUID>ec961f22-89c9-11e3-a510-082e5f8cdfd2</UUID>
+                </Schedule>
+                <Schedule Active="False" Key="15" Name="Testing">
+                    <Level>0</Level><LightName>test_lamp1</LightName><LightNumber>9</LightNumber><Rate>0</Rate>
+                    <RoomName>Breakfast Nook</RoomName><Time>10:24</Time>
+                    <Type>Device</Type><UUID>ec961f23-89c9-11e3-af9e-082e5f8cdfd2</UUID>
+                </Schedule>
+                <Schedule Active="False" Key="16" Name="Testing">
+                    <Level>0</Level><LightName>kitchen_counter</LightName>
+                    <LightNumber>11</LightNumber><Rate>0</Rate>
+                    <RoomName>Kitchen</RoomName>
+                    <Time>21:56</Time><Type>Device</Type><UUID>ec961f24-89c9-11e3-ae3a-082e5f8cdfd2</UUID>
+                </Schedule>
             </Schedules>
             <Hvac>
                 <Thermostats>

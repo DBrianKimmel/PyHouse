@@ -43,7 +43,7 @@ class WebsElement(athena.LiveElement):
     def getWebsData(self):
         """ A JS client has requested all the webs information.
         """
-        l_obj = self.m_pyhouse_obj.WebData
+        l_obj = self.m_pyhouse_obj.Computer.WebData
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_obj))
         return l_json
 

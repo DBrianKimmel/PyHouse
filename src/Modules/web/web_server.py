@@ -68,42 +68,29 @@ class ClientConnections(object):
 class Utility(xml_tools.ConfigFile):
 
     def read_web_xml(self, p_pyhouses_obj):
-        p_pyhouses_obj.WebData = WebData()
+        l_ret = WebData()
+        p_pyhouses_obj.Computer.WebData = WebData()
         try:
             l_sect = p_pyhouses_obj.XmlRoot.find('Web')
-            l_sect.find('WebPort')
+            l_ret.WebPort = self.get_int_from_xml(l_sect, 'WebPort')
         except AttributeError:
             if g_debug >= 0:
                 LOG.error("web_server.read_web_xml() - ERROR in finding Web/WebPort, Creating entry {0:}".format(l_sect))
-            l_sect = ET.SubElement(p_pyhouses_obj.XmlRoot, 'Web')
-            ET.SubElement(l_sect, 'Port').text = '8580'
-            self.put_int_attribute(l_sect, 'WebPort', 8580)
-            p_pyhouses_obj.WebData.WebPort = 8580
-            l_logs = ET.SubElement(l_sect, 'Logins')
-            l_login = ET.SubElement(l_logs, 'Login')
-            l_login.set('Name', 'admin')
-            l_login.set('Key', '0')
-            l_login.set('Active', True)
-            ET.SubElement(l_login, 'Password').text = '12admin34'
-            return
-        p_pyhouses_obj.WebData.WebPort = l_sect.findtext('WebPort')
-        p_pyhouses_obj.WebData.WebPort = 8580
-        # l_web_data.WebPort = self.get_int_from_xml(l_sect, 'WebPort')
-        return
+            l_ret.WebPort = 8580
+        return l_ret
 
-    def write_web_xml(self, p_pyhouses_obj):
+    def write_web_xml(self, p_web_obj):
         l_web_xml = ET.Element("Web")
-        self.put_int_attribute(l_web_xml, 'WebPort', p_pyhouses_obj.WebData.WebPort)
+        self.put_int_attribute(l_web_xml, 'WebPort', p_web_obj.WebPort)
         return l_web_xml
 
     def start_webserver(self, p_pyhouses_obj):
-        p_pyhouses_obj.CoreServicesData.WebServerService = service.Service()
-        p_pyhouses_obj.CoreServicesData.WebServerService.setName('WebServer')
-        p_pyhouses_obj.CoreServicesData.WebServerService.setServiceParent(p_pyhouses_obj.Application)
+        p_pyhouses_obj.Services.WebServerService = service.Service()
+        p_pyhouses_obj.Services.WebServerService.setName('WebServer')
+        p_pyhouses_obj.Services.WebServerService.setServiceParent(p_pyhouses_obj.Application)
         #
         l_site_dir = None
         l_site = appserver.NevowSite(web_mainpage.TheRoot(l_site_dir, p_pyhouses_obj))
-        # if not p_pyhouses_obj.WebData.Service.running:
         p_pyhouses_obj.Reactor.listenTCP(p_pyhouses_obj.WebData.WebPort, l_site)
         l_msg = "Port:{0:}, Path:{1:}".format(p_pyhouses_obj.WebData.WebPort, l_site_dir)
         LOG.info("Started - {0:}".format(l_msg))
@@ -117,14 +104,15 @@ class API(Utility, ClientConnections):
         self.m_web_running = False
 
     def Start(self, p_pyhouse_obj):
-        p_pyhouse_obj.WebData = WebData()
+        p_pyhouse_obj                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      .WebData = WebData()
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.read_web_xml(p_pyhouse_obj)
+        p_pyhouse_obj.Computer.WebData = WebData()
+        l_web = self.read_web_xml(p_pyhouse_obj)
         self.start_webserver(p_pyhouse_obj)
 
     def Stop(self, p_xml):
-        self.m_pyhouse_obj.CoreServicesData.WebServerService.stopService()
-        p_xml.append(self.write_web_xml(self.m_pyhouse_obj))
+        self.m_pyhouse_obj.Services.WebServerService.stopService()
+        p_xml.append(self.write_web_xml(self.m_pyhouse_obj.Computer.Web))
         LOG.info("XML appended.")
 
 # ## END DBK

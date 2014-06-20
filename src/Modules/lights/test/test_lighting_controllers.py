@@ -68,7 +68,7 @@ class Test_02_XML(unittest.TestCase):
         self.assertEqual(l_controller.Coords, 'None', 'Bad Coords')
         self.assertEqual(l_controller.Dimmable, True, 'Bad Dimmable')
         self.assertEqual(l_controller.DsrDtr, False, 'Bad DsrDtr')
-        self.assertEqual(l_controller.LightingFamily, 'Insteon', 'Bad Family')
+        self.assertEqual(l_controller.LightingFamily, 'Insteon', 'Bad LightingFamily')
         self.assertEqual(l_controller.ControllerInterface, 'Serial', 'Bad Interface')
         self.assertEqual(l_controller.Key, 0, 'Bad Key')
         self.assertEqual(l_controller.Name, 'PLM_1', 'Bad Name')

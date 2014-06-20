@@ -155,7 +155,7 @@ class Test_05_UnClass(unittest.TestCase):
         self.m_controller_xml = self.m_controllers_xml.find('Controller')
 
     def test_0501_StuffAttrs(self):
-        l_objA = lighting_lights.LightingAPI().read_one_light_xml(self.m_light_xml)
+        l_objA = lighting_lights.LightingLightsAPI().read_one_light_xml(self.m_light_xml)
         print('A: {0:}'.format(vars(l_objA)))
         l_objB = lighting_controllers.ControllersAPI(self.m_pyhouses_obj).read_one_controller_xml(self.m_controller_xml)
         # l_objAdeep = copy.deepcopy(l_objA)

@@ -68,24 +68,7 @@ class InsteonCoreAPI(xml_tools.ConfigTools):
         ET.SubElement(p_entry_xml, 'Responder').text = self.put_bool(p_device_obj.Responder)
 
 
-class LightingAPI(InsteonCoreAPI):
-    """Interface to the lights of this module.
-    """
-
-    def XXchange_light_setting(self, p_light_obj, p_level, _p_house_obj):
-        if p_light_obj.LightingFamily == 'Insteon':
-            try:
-                for l_controller_obj in self.m_house_obj.Controllers.itervalues():
-                    if l_controller_obj.LightingFamily != 'Insteon':
-                        continue
-                    if l_controller_obj.Active != True:
-                        continue
-                    l_controller_obj._HandlerAPI.change_light_setting(p_light_obj, p_level)
-            except AttributeError:
-                pass  # no controllers for house(House is being added)
-
-
-class API(LightingAPI):
+class API(InsteonCoreAPI):
     """
     """
 
@@ -134,7 +117,7 @@ class API(LightingAPI):
 
     def ChangeLight(self, p_light_obj, p_level, _p_rate = 0):
         if g_debug >= 1:
-            LOG.debug('Change light Name:{0:}, Family:{1:}'.format(p_light_obj.Name, p_light_obj.LightingFamily))
+            LOG.debug('Change light Name:{0:}, LightingFamily:{1:}'.format(p_light_obj.Name, p_light_obj.LightingFamily))
         # PrettyPrintAny(p_light_obj, 'Light Object Device_Insteon')
         l_api = self.m_pyhouse_obj.HouseData.FamilyData[p_light_obj.LightingFamily].ModuleAPI
         # PrettyPrintAny(l_api, 'Light Object Device_Insteon 2')

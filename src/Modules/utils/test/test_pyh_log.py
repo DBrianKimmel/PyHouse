@@ -5,7 +5,8 @@
 @copyright: 2014 by D. Brian Kimmel
 @note: Created on Apr 30, 2014
 @license: MIT License
-@summary: This module is for testing logging.\
+@summary: This module is for testing logging.
+
 """
 
 # Import system type stuff
@@ -13,43 +14,60 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
+from Modules.Core.data_objects import PyHouseData, ComputerData, LogData, HouseData
 from Modules.utils import pyh_log as pyhLog
+from Modules.utils.tools import PrettyPrintAny
 from src.test import xml_data
-from Modules.Core.data_objects import PyHouseData
-
-XML = xml_data.XML_LONG
 
 
-class Test_02_ReadXML(unittest.TestCase):
+class SetupMixin(object):
+    """
+    """
+
+    def setUp(self):
+        self.m_api = pyhLog.API()
+
+        self.m_pyhouse_obj = PyHouseData()
+        self.m_pyhouse_obj.Computer = ComputerData()
+        self.m_pyhouse_obj.Computer.Logs = LogData()
+        self.m_pyhouse_obj.HouseData = HouseData()
+        self.m_pyhouse_obj.XmlRoot = self.m_root_xml
+
+        self.m_houses_xml = self.m_root_xml.find('Houses')
+        self.m_house_xml = self.m_houses_xml.find('House')
+
+
+class Test_02_ReadXML(SetupMixin, unittest.TestCase):
     """
     This section tests the reading and writing of XML used by node_local.
     """
 
     def setUp(self):
-        self.m_pyhouses_obj = PyHouseData()
-        self.m_pyhouses_obj.XmlRoot = ET.fromstring(XML)
-        self.m_api = pyhLog.API()
+        self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
+        SetupMixin.setUp(self)
 
     def test_0201_read_xml(self):
-        self.m_api.read_xml(self.m_pyhouses_obj)
-        self.assertEqual(self.m_pyhouses_obj.LogsData.Debug, '/var/log/pyhouse/debug')
-        self.assertEqual(self.m_pyhouses_obj.LogsData.Error, '/var/log/pyhouse/error')
+        l_log = self.m_api.read_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.Computer.Logs = l_log
+        PrettyPrintAny(l_log)
+        self.assertEqual(self.m_pyhouse_obj.Computer.Logs.Debug, '/var/log/pyhouse/debug')
+        self.assertEqual(self.m_pyhouse_obj.Computer.Logs.Error, '/var/log/pyhouse/error')
 
 
-class Test_03_SetupLogging(unittest.TestCase):
+class Test_03_SetupLogging(SetupMixin, unittest.TestCase):
     """
     This section tests the reading and writing of XML used by node_local.
     """
 
     def setUp(self):
-        self.m_pyhouses_obj = PyHouseData()
-        self.m_pyhouses_obj.XmlRoot = ET.fromstring(XML)
-        self.m_api = pyhLog.API()
-        self.m_api.read_xml(self.m_pyhouses_obj)
+        self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
+        SetupMixin.setUp(self)
+        self.m_pyhouse_obj.Computer.Logs = self.m_api.read_xml(self.m_pyhouse_obj)
+        self.m_api.read_xml(self.m_pyhouse_obj)
         self.LOG = pyhLog.getLogger('PyHouse.test_pyh_log ')
 
     def test_0301_openLogger(self):
-        self.m_api.setup_debug_log(self.m_pyhouses_obj)
+        self.m_api.setup_debug_log(self.m_pyhouse_obj)
         self.LOG.debug('test-0301')
         print('self.LOG: {0:}'.format(self.LOG))
 

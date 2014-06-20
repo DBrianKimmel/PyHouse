@@ -828,11 +828,7 @@ class PlmDriverProtocol(DecodeResponses):
                 self._decode_message(self.m_controller_obj, self.m_house_obj)
 
 
-class LightingAPI(CreateCommands):
-    pass
-
-
-class InsteonPlmCommands(LightingAPI):
+class InsteonPlmCommands(CreateCommands):
 
     def scan_one_light(self, p_name):
         """Scan a light.  we are looking for DevCat and any other info about
@@ -939,7 +935,7 @@ class LightHandlerAPI(InsteonPlmAPI):
         self.m_house_obj = p_house_obj
         if g_debug >= 3:
             l_msg = "Insteon_PLM.start_controller_driver() - Controller:{0:}, ".format(p_controller_obj.Name)
-            l_msg += "Family:{0:}, Interface:{1:}, Active:{2:}".format(
+            l_msg += "LightingFamily:{0:}, Interface:{1:}, Active:{2:}".format(
                     p_controller_obj.LightingFamily, p_controller_obj.ControllerInterface, p_controller_obj.Active)
         if p_controller_obj.ControllerInterface.lower() == 'serial':
             from Modules.drivers import Driver_Serial

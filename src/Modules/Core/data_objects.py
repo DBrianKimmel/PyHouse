@@ -111,12 +111,34 @@ class InsteonData (LightData):
         self.Responder = False
 
 
+class UPBData(LightData):
+    """Locally held data about each of the PIM controllers we find.
+    """
+
+    def __init__(self):
+        self.LightingFamily = 'UPB'
+        self.NetworkID = 0
+        self.UPBAddress = 11  # Same as NetworkID
+        self.Password = None
+        self.UnitID = 0xFF
+
+
+class X10LightingData(LightData):
+
+    def __init__(self):
+        # lighting.LightData.__init__(self)
+        self.LightingFamily = "X10"
+        self.X10Address = 'ab'
+
+
 class ComputerData(object):
     """
     """
     def __init__(self):
         self.InternetConnection = {}  # InternetConnectionData()
-        self.Nodes = {}
+        self.Logs = {}  # LogData()
+        self.Nodes = {}  # NodeData()
+        self.Web = {}  # WebData()
 
 
 class HouseData(ABaseObject):
@@ -254,15 +276,10 @@ class PyHouseData(object):
         self.Application = Application('PyHouse')
         self.Reactor = reactor
         #
-        self.ComputerData = {}  # ComputerData()
-        self.CoreServicesData = {}  # CoreServices()
-        # .FamilyData = {}  # FamilyData()
-        self.LogsData = {}  # LogData()
-        # self.HousesData = {}  # HousesData()  Dropped V-1.3.0
+        self.Computer = {}  # ComputerData()
+        self.House = {}  # HouseData
         self.HouseData = {}  # HouseData()  # added V-1.3.0
-        self.Nodes = {}
-        self.WebData = {}
-        # self.HouseIndex = -1  # Dropped V-1.3.0
+        self.Services = {}  # CoreServicesData()
         #
         self.XmlFileName = ''
         self.XmlParsed = None
@@ -340,7 +357,7 @@ class LogData(object):
         self.Error = None
 
 
-class CoreServices(object):
+class CoreServicesData(object):
     """Various twisted services in PyHouse
     """
     def __init__(self):

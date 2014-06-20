@@ -63,7 +63,7 @@ from twisted.application.service import Application
 import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, PyHouseAPIs, ComputerData
+from Modules.Core.data_objects import PyHouseData, PyHouseAPIs, ComputerData, CoreServicesData
 from Modules.Core import setup
 from Modules.utils import pyh_log
 from Modules.utils import xml_tools
@@ -153,7 +153,8 @@ class Utilities(object):
         l_pyhouse_obj.Reactor = reactor
         l_pyhouse_obj.Application = Application('PyHouse')
         l_pyhouse_obj.APIs = PyHouseAPIs()
-        l_pyhouse_obj.ComputerData = ComputerData()
+        l_pyhouse_obj.Computer = ComputerData()
+        l_pyhouse_obj.Services = CoreServicesData()
         return l_pyhouse_obj
 
 

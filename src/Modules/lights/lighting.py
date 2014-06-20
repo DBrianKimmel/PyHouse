@@ -20,7 +20,7 @@ for every house.
 from Modules.families import family
 from Modules.lights.lighting_buttons import ButtonsAPI
 from Modules.lights.lighting_controllers import ControllersAPI
-from Modules.lights.lighting_lights import LightingAPI
+from Modules.lights.lighting_lights import LightingLightsAPI
 from Modules.utils import pyh_log
 # from Modules.utils.tools import PrettyPrintAny
 
@@ -28,7 +28,7 @@ g_debug = 9
 LOG = pyh_log.getLogger('PyHouse.Lighting    ')
 
 
-class Utility(ControllersAPI, LightingAPI):
+class Utility(ControllersAPI, LightingLightsAPI):
     """Commands we can run from high places.
     """
 
@@ -46,7 +46,7 @@ class Utility(ControllersAPI, LightingAPI):
         # PrettyPrintAny(l_house_xml, 'Lighting() ')
         p_pyhouse_obj.HouseData.Controllers = ControllersAPI(p_pyhouse_obj).read_controllers_xml(p_pyhouse_obj)
         p_pyhouse_obj.HouseData.Buttons = ButtonsAPI(p_pyhouse_obj).read_buttons_xml(p_pyhouse_obj)
-        p_pyhouse_obj.HouseData.Lights = LightingAPI(p_pyhouse_obj).read_lights_xml(p_pyhouse_obj)
+        p_pyhouse_obj.HouseData.Lights = LightingLightsAPI(p_pyhouse_obj).read_lights_xml(p_pyhouse_obj)
 
     def _write_lighting_xml(self, p_xml):
         p_xml.append(self.write_lights_xml(self.m_house_obj.Lights))
@@ -90,7 +90,7 @@ class API(Utility):
             l_key = p_light_obj.Key
             l_light_obj = self.m_pyhouse_obj.HouseData.Lights[l_key]
             # PrettyPrintAny(l_light_obj, 'Lighting - Change Light - 2')
-            LOG.info("Turn Light {0:} to level {1:}, Family:{2:}".format(l_light_obj.Name, p_level, l_light_obj.LightingFamily))
+            LOG.info("Turn Light {0:} to level {1:}, LightingFamily:{2:}".format(l_light_obj.Name, p_level, l_light_obj.LightingFamily))
             l_api = self.m_pyhouse_obj.HouseData.FamilyData[l_light_obj.LightingFamily].ModuleAPI
             # PrettyPrintAny(l_api, 'Lighting - Change Light - 3')
             l_api.ChangeLight(l_light_obj, p_level)

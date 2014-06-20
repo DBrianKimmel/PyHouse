@@ -66,6 +66,6 @@ class InternetElement(athena.LiveElement):
         l_obj.DynDns[l_dyndns_ix].Active = l_json['Active']
         l_obj.DynDns[l_dyndns_ix].Interval = l_json['Interval']
         l_obj.DynDns[l_dyndns_ix].Url = l_json['Url']
-        self.m_pyhouse_obj.ComputerData.Internet = l_obj
+        self.m_pyhouse_obj.Computer.InternetConnection = l_obj
 
 # ## END DBK

@@ -17,15 +17,7 @@ g_debug = 0
 LOG = pyh_log.getLogger('PyHouse.Dev_X10     ')
 
 
-class X10LightingData(LightData):
-
-    def __init__(self):
-        # lighting.LightData.__init__(self)
-        self.set_family("X10")
-        self.Address = 'ab'
-
-
-class LightingAPI(lighting.LightingAPI):
+class ReadWriteXml(object):
     """Overload the base methods with specific ones here.
     """
 
@@ -49,7 +41,7 @@ class LightingAPI(lighting.LightingAPI):
             ET.SubElement(p_entry_xml, 'Responder').text = self.put_bool(p_device_obj.Responder)
         elif p_device_obj.LightingFamily == 'UPB':
             try:
-                ET.SubElement(p_entry_xml, 'NetworkID').text = self.put_str(p_device_obj.NetworkID)
+                ET.SubElement(p_entry_xml, 'X10Address').text = self.put_str(p_device_obj.X10Address)
                 ET.SubElement(p_entry_xml, 'Password').text = str(p_device_obj.Password)
                 ET.SubElement(p_entry_xml, 'UnitID').text = str(p_device_obj.UnitID)
             except AttributeError:

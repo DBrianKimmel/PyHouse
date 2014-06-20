@@ -44,7 +44,7 @@ class LogsElement(athena.LiveElement):
     def getLogData(self):
         """ A JS client has requested all the pyh_log information.
         """
-        l_obj = self.m_pyhouse_obj.LogsData
+        l_obj = self.m_pyhouse_obj.Computer.Logs
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_obj))
         return l_json
 

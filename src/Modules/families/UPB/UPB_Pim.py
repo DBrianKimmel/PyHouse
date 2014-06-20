@@ -79,6 +79,7 @@ import Queue
 from twisted.internet import reactor
 
 # Import PyMh files
+from Modules.Core.data_objects import UPBData
 import Device_UPB
 from Modules.utils.tools import PrintBytes
 from Modules.utils import pyh_log
@@ -140,18 +141,6 @@ pim_commands = {
 
 
 # Controller_Data = Device_UPB.Controller_Data
-
-
-class PimData(object):
-    """Locally held data about each of the PIM controllers we find.
-    """
-
-    def __init__(self):
-        self.Interface = None
-        self.Name = None
-        self.NetworkID = 0
-        self.Password = None
-        self.UnitID = 0xFF
 
 
 class UpbPimUtility(object):
@@ -430,11 +419,7 @@ class CreateCommands(UpbPimUtility, PimDriverInterface):
         self.set_register_value(0xFF, 0x70, l_val)
 
 
-class LightingAPI(Device_UPB.LightingAPI, CreateCommands):
-    pass
-
-
-class UpbPimAPI(LightingAPI):
+class UpbPimAPI(Device_UPB.ReadWriteXml, CreateCommands):
 
     def start_controller(self, p_house_obj, p_controller_obj):
         """Find and initialize the UPB PIM type controllers.
@@ -453,20 +438,20 @@ class UpbPimAPI(LightingAPI):
         if self.m_controller_obj.Active != True:
             return False
         if g_debug >= 1:
-            LOG.debug("UPB_PIM.start_controller() - Family:{0:}, Interface:{1:}, Active:{2:}".format(self.m_controller_obj.LightingFamily, self.m_controller_obj.ControllerInterface, self.m_controller_obj.Active))
+            LOG.debug("UPB_PIM.start_controller() - LightingFamily:{0:}, Interface:{1:}, Active:{2:}".format(self.m_controller_obj.LightingFamily, self.m_controller_obj.ControllerInterface, self.m_controller_obj.Active))
         l_key = self.m_controller_obj.Key
-        l_pim = PimData()
+        l_pim = UPBData()
         l_pim.ControllerInterface = self.m_controller_obj.ControllerInterface
         l_pim.Name = self.m_controller_obj.Name
-        l_pim.NetworkID = int(self.m_controller_obj.NetworkID, 0)
+        l_pim.UPBAddress = int(self.m_controller_obj.UPBAddress, 0)
         l_pim.Password = self.m_controller_obj.Password
         l_pim.UnitID = int(self.m_controller_obj.UnitID, 0)
         LOG.info('Found UPB PIM named: {0:}, Type={1:}'.format(l_pim.Name, l_pim.ControllerInterface))
         if self.m_controller_obj.ControllerInterface.lower() == 'serial':
-            from drivers import Driver_Serial
+            from Modules.drivers import Driver_Serial
             l_driver = Driver_Serial.API()
         elif self.m_controller_obj.ControllerInterface.lower() == 'ethernet':
-            from drivers import Driver_Ethernet
+            from Modules.drivers import Driver_Ethernet
             l_driver = Driver_Ethernet.API()
         elif self.m_controller_obj.ControllerInterface.lower() == 'usb':
             # from drivers import Driver_USB_17DD_5500

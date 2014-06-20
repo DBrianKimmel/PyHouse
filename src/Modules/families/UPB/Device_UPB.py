@@ -17,7 +17,7 @@ g_debug = 0
 LOG = pyh_log.getLogger('PyHouse.Device_UPB  ')
 
 
-class LightingAPI(lighting.LightingAPI):
+class ReadWriteXml(object):
     """Interface to the lights of this module.
     """
 
@@ -27,26 +27,24 @@ class LightingAPI(lighting.LightingAPI):
         @param p_house: is the text name of the House.
         @return: a dict of the entry to be attached to a house object.
         """
-        p_device_obj.NetworkID = p_entry_xml.findtext('NetworkID')
+        p_device_obj.UPBAddress = p_entry_xml.findtext('NetworkID')
         p_device_obj.Password = p_entry_xml.findtext('Password')
         p_device_obj.UnitID = p_entry_xml.findtext('UnitID')
         return p_device_obj
 
     def insert_device_xml(self, p_entry_xml, p_device_obj):
         try:
-            ET.SubElement(p_entry_xml, 'NetworkID').text = self.put_str(p_device_obj.NetworkID)
+            ET.SubElement(p_entry_xml, 'NetworkID').text = self.put_str(p_device_obj.UPBAddress)
             ET.SubElement(p_entry_xml, 'Password').text = str(p_device_obj.Password)
             ET.SubElement(p_entry_xml, 'UnitID').text = str(p_device_obj.UnitID)
         except AttributeError:
             pass
 
 
-class LoadSaveInsteonData(LightingAPI): pass
-
 import UPB_Pim
 
 
-class API(LightingAPI):
+class API(ReadWriteXml):
 
     def __init__(self):
         """Constructor for the UPB.

@@ -100,7 +100,7 @@ class Utility(xml_tools.ConfigFile):
         """Debug and more severe goes to the base logger
         """
         logging.basicConfig()
-        l_file = p_pyhouse_obj.LogsData.Debug
+        l_file = p_pyhouse_obj.Computer.Logs.Debug
         self.m_pyhouse_obj = p_pyhouse_obj
         l_daily = DailyLogFile.fromFullPath(l_file)
         tpLog.startLogging(l_daily)
@@ -118,12 +118,12 @@ class API(Utility):
 
     def Start(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        p_pyhouse_obj.LogsData = LogData()
+        p_pyhouse_obj.Computer.Logs = LogData()
         # PrettyPrintAny(p_pyhouse_obj, 'Logs 1')
-        p_pyhouse_obj.LogsData = self.read_xml(p_pyhouse_obj)
-        # PrettyPrintAny(p_pyhouse_obj.LogsData, 'Logs 2')
+        p_pyhouse_obj.Computer.Logs = self.read_xml(p_pyhouse_obj)
+        # PrettyPrintAny(p_pyhouse_obj.Computer.Logs, 'Logs 2')
         self.setup_debug_log(p_pyhouse_obj)
-        # PrettyPrintAny(p_pyhouse_obj.LogsData, 'Logs 3')
+        # PrettyPrintAny(p_pyhouse_obj.Computer.Logs, 'Logs 3')
 
     def Stop(self, p_xml):
         p_xml.append(self.write_xml(self.m_log_data))

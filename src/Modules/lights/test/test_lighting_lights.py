@@ -30,7 +30,7 @@ class SetupMixin(object):
         self.m_pyhouse_obj.HouseData = HouseData()
         self.m_pyhouse_obj.XmlRoot = self.m_root_xml
 
-        self.m_api = lighting_lights.LightingAPI(self.m_pyhouse_obj)
+        self.m_api = lighting_lights.LightingLightsAPI(self.m_pyhouse_obj)
 
         self.m_houses_xml = self.m_root_xml.find('Houses')
         self.m_house_xml = self.m_houses_xml.find('House')
@@ -67,7 +67,7 @@ class Test_02_ReadXML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_light.Comment, 'SwitchLink On/Off', 'Bad comment')
         self.assertEqual(l_light.Coords, "['0', '0']", 'Bad coords')
         self.assertEqual(l_light.Dimmable, False, 'Bad dimmable')
-        self.assertEqual(l_light.Family, 'Insteon', 'Bad family')
+        self.assertEqual(l_light.LightingFamily, 'Insteon', 'Bad Lighting family')
         self.assertEqual(l_light.RoomName, 'Test Living Room', 'Bad Room Name')
         self.assertEqual(l_light.LightingType, 'Light', 'Bad LightingType')
 

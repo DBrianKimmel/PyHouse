@@ -32,7 +32,7 @@ g_debug = 0
 # 0 = off
 
 
-class LightingAPI(lighting_core.LightingCoreAPI):
+class LightingLightsAPI(lighting_core.LightingCoreAPI):
 
     m_count = 0
 
