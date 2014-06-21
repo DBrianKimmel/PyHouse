@@ -28,8 +28,8 @@ class SetupMixin(object):
 
     def setUp(self):
         self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.HouseData = HouseData()
-        self.m_pyhouse_obj.XmlRoot = self.m_root_xml
+        self.m_pyhouse_obj.House = HouseData()
+        self.m_pyhouse_obj.Xml.XmlRoot = self.m_root_xml
 
         self.m_houses_xml = self.m_root_xml.find('Houses')
         self.m_house_xml = self.m_houses_xml.find('House')

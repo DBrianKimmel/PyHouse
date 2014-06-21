@@ -42,7 +42,7 @@ class HouseElement(athena.LiveElement):
 
     @athena.expose
     def getHouseData(self, _p_index):
-        l_house = GetJSONHouseInfo(self.m_pyhouse_obj.HouseData)
+        l_house = GetJSONHouseInfo(self.m_pyhouse_obj.House.OBJs)
         return l_house
 
     @athena.expose
@@ -54,17 +54,17 @@ class HouseElement(athena.LiveElement):
         l_delete = l_json['Delete']
         if l_delete:
             try:
-                del self.m_pyhouse_obj.HouseData
+                del self.m_pyhouse_obj.House
             except AttributeError:
                 print("web_lights - Failed to delete - JSON: {0:}".format(l_json))
             return
         if l_house_ix == -1:  # adding a new house
-            l_house_ix = len(self.m_pyhouse_obj.HouseData)
-        l_obj = self.m_pyhouse_obj.HouseData
+            l_house_ix = len(self.m_pyhouse_obj.House.OBJs)
+        l_obj = self.m_pyhouse_obj.House.OBJs
         try:
-            self.m_pyhouse_obj.HouseData[l_house_ix] = l_obj
+            self.m_pyhouse_obj.House.OBJs[l_house_ix] = l_obj
         except AttributeError:
-            self.m_pyhouse_obj.HouseData = l_obj
+            self.m_pyhouse_obj.House.OBJs = l_obj
         l_obj.Name = l_json['Name']
         l_obj.Key = int(l_json['Key'])
         l_obj.HouseIx = l_house_ix
@@ -77,6 +77,6 @@ class HouseElement(athena.LiveElement):
         l_obj.Location.Longitude = l_json['Longitude']
         l_obj.Location.TimeZone = l_json['TimeZone']
         l_obj.Location.SavingsTime = l_json['SavingsTime']
-        self.m_pyhouse_obj.HouseData = l_obj
+        self.m_pyhouse_obj.House = l_obj
 
 # ## END DBK

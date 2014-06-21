@@ -36,20 +36,11 @@ from Modules.web import web_utils
 from Modules.web import web_mainpage
 from Modules.utils import pyh_log
 from Modules.utils import xml_tools
-
-# Handy helper for finding external resources nearby.
-# webpath = os.path.join(os.path.split(__file__)[0])
-# templatepath = os.path.join(webpath, 'template')
-# imagepath = os.path.join(webpath, 'images')
-# jspath = os.path.join(webpath, 'js')
-
+from Modules.utils.tools import PrettyPrintAny
 
 ENDPOINT_WEB_SERVER = 'tcp:port=8580'
 
 g_debug = 9
-# 0 = off
-# 1 = log extra info
-# + = NOT USED HERE
 LOG = pyh_log.getLogger('PyHouse.WebServer   ')
 
 
@@ -69,13 +60,11 @@ class Utility(xml_tools.ConfigFile):
 
     def read_web_xml(self, p_pyhouses_obj):
         l_ret = WebData()
-        p_pyhouses_obj.Computer.WebData = WebData()
+        p_pyhouses_obj.Computer.Web = WebData()
         try:
             l_sect = p_pyhouses_obj.XmlRoot.find('Web')
             l_ret.WebPort = self.get_int_from_xml(l_sect, 'WebPort')
         except AttributeError:
-            if g_debug >= 0:
-                LOG.error("web_server.read_web_xml() - ERROR in finding Web/WebPort, Creating entry {0:}".format(l_sect))
             l_ret.WebPort = 8580
         return l_ret
 
@@ -87,12 +76,12 @@ class Utility(xml_tools.ConfigFile):
     def start_webserver(self, p_pyhouses_obj):
         p_pyhouses_obj.Services.WebServerService = service.Service()
         p_pyhouses_obj.Services.WebServerService.setName('WebServer')
-        p_pyhouses_obj.Services.WebServerService.setServiceParent(p_pyhouses_obj.Application)
+        p_pyhouses_obj.Services.WebServerService.setServiceParent(p_pyhouses_obj.Twisted.Application)
         #
         l_site_dir = None
         l_site = appserver.NevowSite(web_mainpage.TheRoot(l_site_dir, p_pyhouses_obj))
-        p_pyhouses_obj.Reactor.listenTCP(p_pyhouses_obj.WebData.WebPort, l_site)
-        l_msg = "Port:{0:}, Path:{1:}".format(p_pyhouses_obj.WebData.WebPort, l_site_dir)
+        p_pyhouses_obj.Twisted.Reactor.listenTCP(p_pyhouses_obj.Computer.Web.WebPort, l_site)
+        l_msg = "Port:{0:}, Path:{1:}".format(p_pyhouses_obj.Computer.Web.WebPort, l_site_dir)
         LOG.info("Started - {0:}".format(l_msg))
 
 
@@ -104,14 +93,14 @@ class API(Utility, ClientConnections):
         self.m_web_running = False
 
     def Start(self, p_pyhouse_obj):
-        p_pyhouse_obj                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      .WebData = WebData()
         self.m_pyhouse_obj = p_pyhouse_obj
-        p_pyhouse_obj.Computer.WebData = WebData()
+        p_pyhouse_obj.Computer.Web = WebData()
         l_web = self.read_web_xml(p_pyhouse_obj)
         self.start_webserver(p_pyhouse_obj)
 
     def Stop(self, p_xml):
         self.m_pyhouse_obj.Services.WebServerService.stopService()
+        PrettyPrintAny(self.m_pyhouse_obj.Computer, 'Web_Server - .Computer.')
         p_xml.append(self.write_web_xml(self.m_pyhouse_obj.Computer.Web))
         LOG.info("XML appended.")
 

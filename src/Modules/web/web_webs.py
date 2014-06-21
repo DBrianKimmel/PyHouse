@@ -20,6 +20,7 @@ from nevow import loaders
 from Modules.Core.data_objects import WebData
 from Modules.utils import pyh_log
 from Modules.web import web_utils
+from Modules.utils.tools import PrettyPrintAny
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -43,7 +44,8 @@ class WebsElement(athena.LiveElement):
     def getWebsData(self):
         """ A JS client has requested all the webs information.
         """
-        l_obj = self.m_pyhouse_obj.Computer.WebData
+        l_obj = self.m_pyhouse_obj.Computer.Web
+        PrettyPrintAny(l_obj, 'Web_webs Web_Obj')
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_obj))
         return l_json
 
@@ -54,6 +56,6 @@ class WebsElement(athena.LiveElement):
         l_json = web_utils.JsonUnicode().decode_json(p_json)
         l_obj = WebData()
         l_obj.Port = l_json['Port']
-        self.m_pyhouse_obj.APIs.WebAPI.Update(l_obj)
+        self.m_pyhouse_obj.House.APIs.WebAPI.Update(l_obj)
 
 # ## END DBK

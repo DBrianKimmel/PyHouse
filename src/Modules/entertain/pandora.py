@@ -95,7 +95,7 @@ class API(object):
             l_executable = '/usr/bin/pianobar'
             l_args = ('pianobar',)
             l_env = None  # this will pass <os.environ>
-            self.m_transport = p_pyhouse_obj.Reactor.spawnProcess(self.m_processProtocol, l_executable, l_args, l_env)
+            self.m_transport = p_pyhouse_obj.Twisted.Reactor.spawnProcess(self.m_processProtocol, l_executable, l_args, l_env)
             self.m_started = True
         LOG.info("Started.")
 

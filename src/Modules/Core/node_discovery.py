@@ -144,15 +144,15 @@ class Utility(object):
         self.m_pyhouse_obj = p_pyhouses_obj
         p_pyhouses_obj.Services.NodeDiscoveryService = service.Service()
         p_pyhouses_obj.Services.NodeDiscoveryService.setName('NodeDiscovery')
-        p_pyhouses_obj.Services.NodeDiscoveryService.setServiceParent(p_pyhouses_obj.Application)
+        p_pyhouses_obj.Services.NodeDiscoveryService.setServiceParent(p_pyhouses_obj.Twisted.Application)
         self._start_discovery_server(p_pyhouses_obj)
         self._start_discovery_client(p_pyhouses_obj)
 
     def _start_discovery_server(self, p_pyhouses_obj):
-        p_pyhouses_obj.Reactor.listenMulticast(PYHOUSE_DISCOVERY_PORT, MulticastDiscoveryServerProtocol(p_pyhouses_obj), listenMultiple = True)
+        p_pyhouses_obj.Twisted.Reactor.listenMulticast(PYHOUSE_DISCOVERY_PORT, MulticastDiscoveryServerProtocol(p_pyhouses_obj), listenMultiple = True)
 
     def _start_discovery_client(self, p_pyhouses_obj):
-        p_pyhouses_obj.Reactor.listenMulticast(PYHOUSE_DISCOVERY_PORT, MulticastDiscoveryClientProtocol(p_pyhouses_obj), listenMultiple = True)
+        p_pyhouses_obj.Twisted.Reactor.listenMulticast(PYHOUSE_DISCOVERY_PORT, MulticastDiscoveryClientProtocol(p_pyhouses_obj), listenMultiple = True)
 
 
 class API(Utility):

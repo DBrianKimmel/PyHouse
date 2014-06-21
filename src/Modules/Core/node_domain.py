@@ -282,7 +282,7 @@ class AmpClient(object):
         """
         self.m_pyhouse_obj = p_pyhouses_obj
         self.m_address = p_address
-        l_endpoint = TCP4ClientEndpoint(p_pyhouses_obj.Reactor, p_address, AMP_PORT)
+        l_endpoint = TCP4ClientEndpoint(p_pyhouses_obj.Twisted.Reactor, p_address, AMP_PORT)
         l_defer = l_endpoint.connect(ClientFactory.forProtocol(AMP))
         l_defer.addCallback(self.cb_sendInfo)
         if g_debug >= 8:
@@ -322,11 +322,11 @@ class Utility(AmpClient):
         """
         Create a service that we can stop and restart
         """
-        l_endpoint = TCP4ServerEndpoint(self.m_pyhouse_obj.Reactor, AMP_PORT)
+        l_endpoint = TCP4ServerEndpoint(self.m_pyhouse_obj.Twisted.Reactor, AMP_PORT)
         l_factory = AmpServerFactory(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Services.NodeDomainService = StreamServerEndpointService(l_endpoint, l_factory)
         self.m_pyhouse_obj.Services.NodeDomainService.setName('NodeDomain')
-        self.m_pyhouse_obj.Services.NodeDomainService.setServiceParent(self.m_pyhouse_obj.Application)
+        self.m_pyhouse_obj.Services.NodeDomainService.setServiceParent(self.m_pyhouse_obj.Twisted.Application)
         self.start_amp_server(self.m_pyhouse_obj, l_endpoint)
 
 
@@ -341,7 +341,7 @@ class API(Utility):
         This delay should help ensure that the nodes are all up and functioning before starting AMP.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
-        p_pyhouse_obj.Reactor.callLater(run_delay, self.start_amp_services)
+        p_pyhouse_obj.Twisted.Reactor.callLater(run_delay, self.start_amp_services)
 
     def Stop(self, _p_xml):
         pass

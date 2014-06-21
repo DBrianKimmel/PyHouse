@@ -30,7 +30,7 @@ class Test_01_RawConvert(unittest.TestCase):
     def setUp(self):
         self.m_pyhouse_obj = PyHouseData()
         self.m_pyhouse_obj.HouseData = HouseData()
-        self.m_pyhouse_obj.XmlRoot = self.m_root = ET.fromstring(XML)
+        self.m_pyhouse_obj.Xml.XmlRoot = self.m_root = ET.fromstring(XML)
         self.m_houses_xml = self.m_root.find('Houses')
         self.m_house_xml = self.m_houses_xml.find('House')  # First house
         self.m_nodes_xml = self.m_root.find('Nodes')

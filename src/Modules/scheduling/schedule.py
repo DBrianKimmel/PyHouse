@@ -142,7 +142,8 @@ class ScheduleExecution(ScheduleData):
         """Send information to one device to execute a schedule.
 
         """
-        l_schedule_obj = self.m_house_obj.Schedules[p_slot]
+        # PrettyPrintAny(self.m_house_obj, 'execute_one_schedule')
+        l_schedule_obj = self.m_house_obj.OBJs.Schedules[p_slot]
         # TODO: We need a small dispatch for the various schedule types (hvac, security, entertainment, lights, ...)
         if l_schedule_obj.ScheduleType == 'LightingDevice':
             print('execute_one_schedule type = LightingDevice')
@@ -153,7 +154,6 @@ class ScheduleExecution(ScheduleData):
         elif l_schedule_obj.ScheduleType == 'Scene':
             print('execute_one_schedule type = Scene')
             pass
-        # PrettyPrintAny(self.m_house_obj, 'execute_one_schedule')
         l_light_obj = tools.get_light_object(self.m_house_obj, name = l_schedule_obj.LightName)
         LOG.info("Executing one schedule Name:{0:}, Light:{1:}, Level:{2:}".format(l_schedule_obj.Name, l_schedule_obj.LightName, l_schedule_obj.Level))
         # PrettyPrintAny(l_schedule_obj, 'Schedule - execute one schedule - Schedule', 140)
@@ -171,7 +171,7 @@ class ScheduleExecution(ScheduleData):
         LOG.info("About to execute - Schedule:{0:}".format(p_slot_list))
         for l_slot in range(len(p_slot_list)):
             self.execute_one_schedule(p_slot_list[l_slot])
-        self.m_pyhouse_obj.Reactor.callLater(5, self.run_schedule)
+        self.m_pyhouse_obj.Twisted.Reactor.callLater(5, self.run_schedule)
 
     def run_schedule(self):
         """Find out what schedules need to be done and how long to delay before they are due to be run.
@@ -179,7 +179,7 @@ class ScheduleExecution(ScheduleData):
         l_seconds_to_delay, l_schedule_list = self.get_next_sched()
         if g_debug >= 1:
             LOG.info('run_schedule delay: {0:} - List: {1:}'.format(l_seconds_to_delay, l_schedule_list))
-        self.m_pyhouse_obj.Reactor.callLater(l_seconds_to_delay, self.execute_schedules_list, l_schedule_list)
+        self.m_pyhouse_obj.Twisted.Reactor.callLater(l_seconds_to_delay, self.execute_schedules_list, l_schedule_list)
 
 
 class ScheduleUtility(ScheduleExecution):
@@ -339,14 +339,14 @@ class API(ScheduleUtility, ScheduleXML):
         """
         # PrettyPrintAny(p_pyhouse_obj, 'Schedule - PyHouse Obj')
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_house_obj = p_pyhouse_obj.HouseData
-        p_pyhouse_obj.HouseData.Schedules = self.read_schedules_xml(p_pyhouse_obj.XmlRoot.find('Houses/House'))
+        self.m_house_obj = p_pyhouse_obj.House
+        p_pyhouse_obj.House.OBJs.Schedules = self.read_schedules_xml(p_pyhouse_obj.Xml.XmlRoot.find('Houses/House'))
         self.m_sunrisesunset.Start(p_pyhouse_obj, self.m_house_obj)
         self.init_scheduled_modules()
         self.start_scheduled_modules(p_pyhouse_obj)
         LOG.info("Started.")
         if self.m_house_obj.Active:
-            p_pyhouse_obj.Reactor.callLater(5, self.run_schedule)
+            p_pyhouse_obj.Twisted.Reactor.callLater(5, self.run_schedule)
 
     def Stop(self, p_xml):
         """Stop everything under me and build xml to be appended to a house xml.

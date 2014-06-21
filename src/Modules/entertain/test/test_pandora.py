@@ -10,12 +10,9 @@
 """
 
 # Import system type stuff
-import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
-from Modules.Core.data_objects import PyHouseData, HouseData, RoomData
-from Modules.communication import ir_control
 from src.test import xml_data
 
 XML = xml_data.XML_LONG

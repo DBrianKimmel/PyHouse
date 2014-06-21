@@ -78,7 +78,7 @@ class SetupMixin(object):
 
         self.m_pyhouse_obj = PyHouseData()
         self.m_pyhouse_obj.Computer = ComputerData()
-        self.m_pyhouse_obj.XmlRoot = self.m_root_xml
+        self.m_pyhouse_obj.Xml.XmlRoot = self.m_root_xml
 
         self.m_houses_xml = self.m_root_xml.find('Houses')
         self.m_house_xml = self.m_houses_xml.find('House')

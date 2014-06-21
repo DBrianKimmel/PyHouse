@@ -265,7 +265,7 @@ class API(Utility):
         self.m_node = NodeData()
         GetAllInterfaceData(self.m_node)
         p_pyhouse_obj.Computer.Nodes[0] = self.m_node
-        self.read_nodes_xml(p_pyhouse_obj.XmlRoot.find('Nodes'))
+        self.read_nodes_xml(p_pyhouse_obj.Xml.XmlRoot.find('Nodes'))
         self.get_node_info(p_pyhouse_obj)
         p_pyhouse_obj.Computer.Nodes[0].NodeRole = self.find_node_role()
         self.init_node_type(p_pyhouse_obj)

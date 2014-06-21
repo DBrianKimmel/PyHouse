@@ -13,7 +13,6 @@
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import HouseData
 from Modules.web import web_houseSelect
 from Modules.utils.tools import PrettyPrintAny
 

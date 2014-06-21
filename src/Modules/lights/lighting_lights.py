@@ -44,7 +44,7 @@ class LightingLightsAPI(lighting_core.LightingCoreAPI):
 
     def _read_family_data(self, p_obj, p_xml):
         l_family = p_obj.LightingFamily
-        l_api = self.m_pyhouse_obj.HouseData.FamilyData[l_family].ModuleAPI
+        l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[l_family].ModuleAPI
         l_api.extract_device_xml(p_obj, p_xml)
 
     def read_one_light_xml(self, p_light_xml):
@@ -59,7 +59,7 @@ class LightingLightsAPI(lighting_core.LightingCoreAPI):
     def read_lights_xml(self, p_pyhouse_obj):
         self.m_count = 0
         l_lights_dict = {}
-        l_house_xml = p_pyhouse_obj.XmlRoot.find('Houses/House')
+        l_house_xml = p_pyhouse_obj.Xml.XmlRoot.find('Houses/House')
         l_lights_xml = l_house_xml.find('Lights')
         # PrettyPrintAny(l_lights_xml, 'Lighting Lights')
         try:

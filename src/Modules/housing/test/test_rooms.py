@@ -28,13 +28,12 @@ class Test_02_XML(unittest.TestCase):
 
     def _pyHouses(self):
         self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.HouseData = HouseData()
+        self.m_pyhouse_obj.House = HouseData()
         self.m_pyhouse_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         self.m_houses_xml = self.m_root_xml.find('Houses')
         self.m_house_xml = self.m_houses_xml.find('House')  # First house
         self.m_rooms_xml = self.m_house_xml.find('Rooms')
         self.m_room_xml = self.m_rooms_xml.find('Room')  # First room
-        self.m_house_obj = HouseData()
         self.m_room_obj = RoomData()
         self.m_api = rooms.ReadWriteConfig()
 
@@ -44,7 +43,7 @@ class Test_02_XML(unittest.TestCase):
     def test_0201_buildObjects(self):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
         """
-        self.assertEqual(self.m_pyhouse_obj.HouseData.Rooms, {}, 'No Rooms{}')
+        self.assertEqual(self.m_pyhouse_obj.House.OBJs.Rooms, {}, 'No Rooms{}')
 
     def test_0202_find_xml(self):
         """ Be sure that the XML contains the right stuff.
@@ -92,7 +91,7 @@ class Test_02_XML(unittest.TestCase):
     def test_0231_CreateJson(self):
         """ Create a JSON object for Rooms.
         """
-        self.m_pyhouse_obj.HouseData.Rooms = l_rooms = self.m_api.read_rooms_xml(self.m_house_xml)
+        self.m_pyhouse_obj.House.OBJs.Rooms = l_rooms = self.m_api.read_rooms_xml(self.m_house_xml)
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_rooms))
         print('JSON: {0:}'.format(l_json))
         PrettyPrintAny(l_json, 'JSON')

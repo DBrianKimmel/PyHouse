@@ -42,7 +42,7 @@ class SchedulesElement(athena.LiveElement):
 
     @athena.expose
     def getHouseData(self, _p_index):
-        l_house = GetJSONHouseInfo(self.m_pyhouse_obj.HouseData)
+        l_house = GetJSONHouseInfo(self.m_pyhouse_obj.House.OBJs)
         # PrettyPrintAny(l_house, 'web_schedules - Json ')
         return l_house
 
@@ -56,12 +56,12 @@ class SchedulesElement(athena.LiveElement):
         l_schedule_ix = int(l_json['Key'])
         if l_delete:
             try:
-                del self.m_pyhouse_obj.HouseData.Schedules[l_schedule_ix]
+                del self.m_pyhouse_obj.House.OBJs.Schedules[l_schedule_ix]
             except AttributeError as e:
                 LOG.warning('Failed to delete schedule: {0:}, ix:{1:}').format(e, l_schedule_ix)
             return
         try:
-            l_obj = self.m_pyhouse_obj.HouseData.Schedules[l_schedule_ix]
+            l_obj = self.m_pyhouse_obj.House.OBJs.Schedules[l_schedule_ix]
         except KeyError:
             l_obj = schedule.ScheduleData()
         l_obj.Name = l_json['Name']
@@ -76,6 +76,6 @@ class SchedulesElement(athena.LiveElement):
         l_obj.UUID = l_json['UUID']
         l_obj.DeleteFlag = l_json['Delete']
         l_obj.HouseIx = l_house_ix
-        self.m_pyhouse_obj.HouseData.Schedules[l_schedule_ix] = l_obj
+        self.m_pyhouse_obj.House.OBJs.Schedules[l_schedule_ix] = l_obj
 
 # ## END DBK

@@ -30,7 +30,7 @@ class ReadWriteConfig(xml_tools.ConfigTools):
 
     def read_location_xml(self, p_house_xml):
         """
-        @param p_house_obj: is p_pyhouses_obj.HouseData
+        @param p_house_obj: is p_pyhouses_obj.House.OBJs
         @param p_house_xml: is one of 0+ 'House' elements
         """
         l_location_obj = LocationData()

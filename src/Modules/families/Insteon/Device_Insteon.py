@@ -79,9 +79,9 @@ class API(InsteonCoreAPI):
         """For the given house, this will start all the controllers for family = Insteon in that house.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_house_obj = p_pyhouse_obj.HouseData
+        self.m_house_obj = p_pyhouse_obj.House.OBJs
         l_count = 0
-        for l_controller_obj in p_pyhouse_obj.HouseData.Controllers.itervalues():
+        for l_controller_obj in p_pyhouse_obj.House.OBJs.Controllers.itervalues():
             if l_controller_obj.LightingFamily != 'Insteon':
                 continue
             if l_controller_obj.Active != True:
@@ -100,7 +100,7 @@ class API(InsteonCoreAPI):
                 else:
                     LOG.error('Controller {0:} failed to start.'.format(l_controller_obj.Name))
                     l_controller_obj.Active = False
-        l_msg = 'Started {0:} Insteon Controllers, House:{1:}.'.format(l_count, p_pyhouse_obj.HouseData.Name)
+        l_msg = 'Started {0:} Insteon Controllers, House:{1:}.'.format(l_count, p_pyhouse_obj.House.Name)
         LOG.info(l_msg)
 
     def Stop(self, p_xml):
@@ -119,7 +119,7 @@ class API(InsteonCoreAPI):
         if g_debug >= 1:
             LOG.debug('Change light Name:{0:}, LightingFamily:{1:}'.format(p_light_obj.Name, p_light_obj.LightingFamily))
         # PrettyPrintAny(p_light_obj, 'Light Object Device_Insteon')
-        l_api = self.m_pyhouse_obj.HouseData.FamilyData[p_light_obj.LightingFamily].ModuleAPI
+        l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[p_light_obj.LightingFamily].ModuleAPI
         # PrettyPrintAny(l_api, 'Light Object Device_Insteon 2')
         self.m_plm.ChangeLight(p_light_obj, p_level)
         # if p_light_obj.LightingFamily == 'Insteon':

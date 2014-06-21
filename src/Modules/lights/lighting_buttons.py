@@ -28,7 +28,7 @@ class ButtonsAPI(lighting_core.LightingCoreAPI):
 
     def _read_family_data(self, p_obj, p_xml):
         l_family = p_obj.LightingFamily
-        l_api = self.m_pyhouse_obj.HouseData.FamilyData[l_family].ModuleAPI
+        l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[l_family].ModuleAPI
         l_api.extract_device_xml(p_obj, p_xml)
 
     def read_one_button_xml(self, p_button_xml):
@@ -42,7 +42,7 @@ class ButtonsAPI(lighting_core.LightingCoreAPI):
     def read_buttons_xml(self, p_pyhouse_obj):
         self.m_count = 0
         l_button_dict = {}
-        l_house_xml = p_pyhouse_obj.XmlRoot.find('Houses/House')
+        l_house_xml = p_pyhouse_obj.Xml.XmlRoot.find('Houses/House')
         l_buttons_xml = l_house_xml.find('Buttons')
         # PrettyPrintAny(l_buttons_xml, 'Lighting Buttons')
         try:

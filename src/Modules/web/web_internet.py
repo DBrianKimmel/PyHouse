@@ -41,7 +41,7 @@ class InternetElement(athena.LiveElement):
 
     @athena.expose
     def getHouseData(self, _p_index):
-        l_house = GetJSONHouseInfo(self.m_pyhouse_obj.HouseData)
+        l_house = GetJSONHouseInfo(self.m_pyhouse_obj.Computer)
         return l_house
 
     @athena.expose
@@ -52,7 +52,7 @@ class InternetElement(athena.LiveElement):
         _l_house_ix = int(l_json['HouseIx'])
         l_dyndns_ix = int(l_json['Key'])
         try:
-            l_obj = self.m_pyhouse_obj.Computer.Internet
+            l_obj = self.m_pyhouse_obj.Computer.InternetConnection
         except KeyError:
             l_obj = InternetConnectionData()
             l_obj.DynDns = {}

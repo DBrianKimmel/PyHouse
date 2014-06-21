@@ -19,7 +19,6 @@ Rooms and lights and HVAC are associated with a particular house.
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Core.data_objects import HouseData, HouseAPIs
 from Modules.scheduling import schedule
 from Modules.housing import internet
 from Modules.housing import location
@@ -70,7 +69,8 @@ class HouseReadWriteXML(location.ReadWriteConfig, rooms.ReadWriteConfig):
         @param p_house_obj: is
         @param p_house_xml: is
         """
-        l_house_obj = self.m_pyhouse_obj.HouseData
+        l_house_obj = self.m_pyhouse_obj.House
+        # PrettyPrintAny(l_house_obj, 'House - HouseObj')
         self.read_base_object_xml(l_house_obj, p_house_xml)
         l_house_obj.Location = self.read_location_xml(p_house_xml)
         l_house_obj.Rooms = self.read_rooms_xml(p_house_xml)
@@ -93,7 +93,7 @@ class Utility(HouseReadWriteXML):
     m_pyhouse_obj = None
 
     def get_house_xml(self, p_pyhouse_obj):
-        l_tmp_xml = p_pyhouse_obj.XmlParsed.find('Houses')
+        l_tmp_xml = p_pyhouse_obj.Xml.XmlParsed.find('Houses')
         l_house_xml = l_tmp_xml.find('House')
         p_pyhouse_obj.XmlSection = l_house_xml
         return l_house_xml
@@ -112,18 +112,14 @@ class API(Utility):
         Read in the XML file and update the internal data.
         May be stopped and then started anew to force reloading info.
         """
-        # PrettyPrintAny(p_pyhouse_obj, 'House - PyHouse Obj')
         self.m_pyhouse_obj = p_pyhouse_obj
-        p_pyhouse_obj.HouseData = HouseData()
-        p_pyhouse_obj.HouseData.APIs = HouseAPIs()
         l_house_xml = self.get_house_xml(p_pyhouse_obj)
-        # PrettyPrintAny(p_pyhouse_obj.HouseData, 'p_pyhouse_obj.HouseData')
-        p_pyhouse_obj.HouseData = self.read_house_xml(l_house_xml)
-        p_pyhouse_obj.HouseData.APIs.ScheduleAPI = schedule.API()
-        p_pyhouse_obj.HouseData.APIs.InternetAPI = internet.API()
-        LOG.info("Starting House {0:}, Active:{1:}".format(self.m_pyhouse_obj.HouseData.Name, self.m_pyhouse_obj.HouseData.Active))
-        p_pyhouse_obj.HouseData.APIs.ScheduleAPI.Start(self.m_pyhouse_obj)
-        p_pyhouse_obj.HouseData.APIs.InternetAPI.Start(self.m_pyhouse_obj)
+        p_pyhouse_obj.House.OBJs = self.read_house_xml(l_house_xml)
+        p_pyhouse_obj.House.APIs.ScheduleAPI = schedule.API()
+        p_pyhouse_obj.House.APIs.InternetAPI = internet.API()
+        LOG.info("Starting House {0:}, Active:{1:}".format(self.m_pyhouse_obj.House.Name, self.m_pyhouse_obj.House.Active))
+        p_pyhouse_obj.House.APIs.ScheduleAPI.Start(self.m_pyhouse_obj)
+        p_pyhouse_obj.House.APIs.InternetAPI.Start(self.m_pyhouse_obj)
 
     def Stop(self, p_xml):
         """Stop all houses.

@@ -12,13 +12,10 @@ Tests all working OK - DBK 2014-05-22
 """
 
 # Import system type stuff
-import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, HouseData, InsteonData, LightData
 from Modules.families.Insteon import Insteon_utils
-from Modules.lights import lighting_lights
 from src.test import xml_data
 
 XML = xml_data.XML_LONG

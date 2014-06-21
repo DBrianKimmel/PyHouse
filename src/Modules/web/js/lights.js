@@ -152,20 +152,20 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 	},
 	function fetchEntry(self) {
         var l_data = {
-            Name     : fetchTextWidget('LightName'),
-            Key      : fetchTextWidget('LightKey'),
-			Active   : fetchTrueFalseWidget('LightActive'),
-			Comment  : fetchTextWidget('LightComment'),
-			Coords   : fetchTextWidget('LightCoords'),
-			Dimmable : fetchTrueFalseWidget('LightDimmable'),
-			Family   : fetchSelectWidget('LightFamily'),
-			RoomName : fetchSelectWidget('LightRoomName'),
-			Type     : fetchTextWidget('LightType'),
-			UUID     : fetchTextWidget('LightUUID'),
-			HouseIx  : globals.House.HouseIx,
-			Delete   : false
+            Name        : fetchTextWidget('LightName'),
+            Key         : fetchTextWidget('LightKey'),
+			Active      : fetchTrueFalseWidget('LightActive'),
+			Comment     : fetchTextWidget('LightComment'),
+			Coords      : fetchTextWidget('LightCoords'),
+			Dimmable    : fetchTrueFalseWidget('LightDimmable'),
+			LightingFamily : fetchSelectWidget('LightFamily'),
+			RoomName    : fetchSelectWidget('LightRoomName'),
+			LightingType: fetchTextWidget('LightType'),
+			UUID        : fetchTextWidget('LightUUID'),
+			HouseIx     : globals.House.HouseIx,
+			Delete      : false
             }
-        if (l_data['Family'] == 'Insteon') {
+        if (l_data['LightingFamily'] == 'Insteon') {
         	l_data = self.fetchInsteonEntry(l_data);
         }
 		return l_data;
@@ -192,7 +192,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
     			Comment  : '',
     			Coords   : '',
     			Dimmable : false,
-    			Family   : 'Insteon',
+    			LightingFamily   : 'Insteon',
     			RoomName : '',
     			Type     : 'Light',
     			UUID     : '',

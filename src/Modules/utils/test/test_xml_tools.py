@@ -45,7 +45,7 @@ class Test_02_PutGetXML(unittest.TestCase):
 
     def setUp(self):
         self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.XmlRoot = ET.fromstring(XML1)
+        self.m_pyhouse_obj.Xml.XmlRoot = ET.fromstring(XML1)
         self.m_fields = ET.fromstring(XML)
         self.m_api = xml_tools.PutGetXML()
 
@@ -108,7 +108,7 @@ class Test_03_ConfigTools(unittest.TestCase):
     def setUp(self):
         self.m_pyhouse_obj = PyHouseData()
         self.m_pyhouse_obj.HouseData = HouseData()
-        self.m_pyhouse_obj.XmlRoot = self.m_root = ET.fromstring(XML1)
+        self.m_pyhouse_obj.Xml.XmlRoot = self.m_root = ET.fromstring(XML1)
         self.m_houses_xml = self.m_root.find('Houses')
         self.m_house_xml = self.m_houses_xml.find('House')  # First house
         self.m_lights_xml = self.m_house_xml.find('Lights')

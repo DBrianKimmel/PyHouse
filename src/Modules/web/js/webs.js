@@ -80,7 +80,7 @@ helpers.Widget.subclass(webs, 'WebsWidget').methods(
 	function fillEntry(self, p_obj) {
 		//Divmod.debug('---', 'webs.fillEntry(1) was called.  Self:' + self);
 		//console.log("webs.fillEntry() - Obj = %O", p_obj);
-        self.nodeById('PortDiv').innerHTML = buildTextWidget('PortName', p_obj.Port);
+        self.nodeById('PortDiv').innerHTML = buildTextWidget('PortName', p_obj.WebPort);
 		self.nodeById('WebEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick', 'NoDelete');
 	},
 	function fetchEntry(self) {

@@ -78,11 +78,11 @@ class Utility(xml_tools.ConfigFile):
         # PrettyPrintAny(p_pyhouse_obj, 'read log xml 1')
         l_ret = LogData()
         try:
-            l_logs_xml = p_pyhouse_obj.XmlRoot.find('Logs')
+            l_logs_xml = p_pyhouse_obj.Xml.XmlRoot.find('Logs')
             # PrettyPrintAny(l_logs_xml, 'read log xml A')
         except AttributeError as e_error:
             print("log.read_xml() - Warning - Logs section is missing - {0:}".format(e_error))
-            l_logs_xml = ET.SubElement(p_pyhouse_obj.XmlRoot, 'Logs')
+            l_logs_xml = ET.SubElement(p_pyhouse_obj.Xml.XmlRoot, 'Logs')
             ET.SubElement(l_logs_xml, 'Debug').text = 'None'
             ET.SubElement(l_logs_xml, 'Error').text = 'None'
         l_ret.Debug = self.get_text_from_xml(l_logs_xml, 'Debug')

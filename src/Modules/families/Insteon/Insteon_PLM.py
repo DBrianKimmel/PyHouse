@@ -780,7 +780,7 @@ class PlmDriverProtocol(DecodeResponses):
 
     def __init__(self, p_pyhouse_obj, p_controller_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_house_obj = p_pyhouse_obj.HouseData
+        self.m_house_obj = p_pyhouse_obj.House.OBJs
         if g_debug >= 1:
             LOG.debug("Insteon_PLM.PlmDriverProtocol.__init__()")
         p_controller_obj._Queue = Queue.Queue(300)
@@ -797,7 +797,7 @@ class PlmDriverProtocol(DecodeResponses):
 
         Uses twisted to get a callback when the timer expires.
         """
-        self.m_pyhouse_obj.Reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send)
+        self.m_pyhouse_obj.Twisted.Reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send)
         try:
             l_command = self.m_controller_obj._Queue.get(False)
         except Queue.Empty:
@@ -816,7 +816,7 @@ class PlmDriverProtocol(DecodeResponses):
 
         TODO: instead of fixed time, callback to here from driver when bytes are rx'ed.
         """
-        self.m_pyhouse_obj.Reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop)
+        self.m_pyhouse_obj.Twisted.Reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop)
         if self.m_controller_obj._DriverAPI != None:
             l_msg = self.m_controller_obj._DriverAPI.fetch_read_data(self.m_controller_obj)
             self.m_controller_obj._Message += l_msg
@@ -991,7 +991,7 @@ class API(LightHandlerAPI):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_controller_obj = p_controller_obj
         LOG.info('Starting Controller:{0:}'.format(p_controller_obj.Name))
-        if self.start_controller_driver(p_controller_obj, p_pyhouse_obj.HouseData):
+        if self.start_controller_driver(p_controller_obj, p_pyhouse_obj.House.OBJs):
             self.m_protocol = PlmDriverProtocol(p_pyhouse_obj, self.m_controller_obj)
             self.set_plm_mode(self.m_controller_obj)
             self.get_all_lights_status()

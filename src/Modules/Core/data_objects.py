@@ -117,7 +117,6 @@ class UPBData(LightData):
 
     def __init__(self):
         self.LightingFamily = 'UPB'
-        self.NetworkID = 0
         self.UPBAddress = 11  # Same as NetworkID
         self.Password = None
         self.UnitID = 0xFF
@@ -126,7 +125,6 @@ class UPBData(LightData):
 class X10LightingData(LightData):
 
     def __init__(self):
-        # lighting.LightData.__init__(self)
         self.LightingFamily = "X10"
         self.X10Address = 'ab'
 
@@ -141,37 +139,44 @@ class ComputerData(object):
         self.Web = {}  # WebData()
 
 
-class HouseData(ABaseObject):
+class HouseInformation(ABaseObject):
+    """The collection of information about a house.
+    Causes JSON errors
+    """
+    def __init__(self):
+        self.APIs = {}  # HouseAPIs()
+        self.OBJs = {}  # HouseData()
+
+
+class HouseData(object):
     """This is about a single House.
     """
     def __init__(self):
-        self.APIs = None
-        #
-        self.Location = LocationData()  # one location per house.
-        # a dict of zero or more of the following.
         self.Buttons = {}  # ButtonData()
         self.Controllers = {}  # ControllerData()
         self.FamilyData = {}  # FamilyData()
         self.Lights = {}  # LightData()
-        self.Rooms = {}
-        self.Schedules = {}
-        self.Thermostats = {}
+        self.Location = {}  # LocationData() - one location per house.
+        self.Rooms = {}  # RoomData()
+        self.Schedules = {}  # ScheduleData()
+        self.Thermostats = {}  # ThermostatData()
 
 
 class HouseAPIs(object):
     """
     """
     def __init__(self):
-        # self.CommunicationsAPI = None
-        # self.EntertainmentAPI = None
-        # self.HvacAPI = None
+        self.EntertainmentAPI = None
         self.InternetAPI = None
+        self.LightingAPI = None
+        self.ScheduleAPI = None
+        #
+        # self.CommunicationsAPI = None
+        # self.HvacAPI = None
         # self.IrrigationAPI = None
         # self.LocationAPI = None
-        self.LightingAPI = None
         # self.PoolAPI = None
         # self.RoomsAPI = None
-        self.ScheduleAPI = None
         # self.SecurityAPI = None
         # self.WeatherAPI = None
 
@@ -271,16 +276,17 @@ class PyHouseData(object):
     NOTE that the data entries need to be dicts so json encoding of the data works properly.
     """
     def __init__(self):
-        self.APIs = None
-        # Twisted stuff
-        self.Application = Application('PyHouse')
-        self.Reactor = reactor
-        #
         self.Computer = {}  # ComputerData()
-        self.House = {}  # HouseData
-        self.HouseData = {}  # HouseData()  # added V-1.3.0
+        self.House = {}  # HouseInformation()
         self.Services = {}  # CoreServicesData()
-        #
+        self.Twisted = {}  # TwistedInfo()
+        self.Xml = {}  # XmlData
+
+
+class XmlData(object):
+    """A collection of XLM data used for Configutation
+    """
+    def __init__(self):
         self.XmlFileName = ''
         self.XmlParsed = None
         self.XmlRoot = None
@@ -295,9 +301,28 @@ class PyHouseAPIs(object):
     def __init__(self):
         self.PyHouseAPI = None
         self.CoreAPI = None
-        self.HouseAPI = None  # added V-1.3.0
+        self.HouseAPI = None
         self.LogsAPI = None
         self.WebAPI = None
+
+
+class TwistedInfo(object):
+    """Twisted info is kept in this class
+    """
+    def __init__(self):
+        self.Application = Application('PyHouse')
+        self.Reactor = reactor
+
+
+class CoreServicesData(object):
+    """Various twisted services in PyHouse
+    """
+    def __init__(self):
+        self.NodeDiscoveryService = None
+        self.NodeDomainService = None
+        self.InternetConnectionService = None
+        self.IrControlService = None
+        self.WebServerService = None
 
 
 class LocationData(object):
@@ -355,17 +380,6 @@ class LogData(object):
     def __init__(self):
         self.Debug = None
         self.Error = None
-
-
-class CoreServicesData(object):
-    """Various twisted services in PyHouse
-    """
-    def __init__(self):
-        self.NodeDiscoveryService = None
-        self.NodeDomainService = None
-        self.InternetConnectionService = None
-        self.IrControlService = None
-        self.WebServerService = None
 
 
 class WebData(object):

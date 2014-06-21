@@ -129,7 +129,7 @@ class Test1(unittest.TestCase):
         # server = nodes.API()
         server = Server()
         l_defer = server.m_startedDeferred = defer.Deferred()
-        p = self.m_pyhouse_obj.Reactor.listenUDP(0, server, interface = "127.0.0.1")
+        p = self.m_pyhouse_obj.Twisted.Reactor.listenUDP(0, server, interface = "127.0.0.1")
         def cbStarted(_ignored):
             addr = p.getHost()
             print "addr = {0:}".format(addr)
@@ -149,7 +149,7 @@ class Test1(unittest.TestCase):
         """
         server = Server()
         l_defer = server.m_startedDeferred = defer.Deferred()
-        p = self.m_pyhouse_obj.Reactor.listenUDP(0, server, interface = "127.0.0.1")
+        p = self.m_pyhouse_obj.Twisted.Reactor.listenUDP(0, server, interface = "127.0.0.1")
         def cbStarted(_ignored):
             addr = p.getHost()
             self.assertEqual(addr.type, 'UDP')
@@ -163,7 +163,7 @@ class Test1(unittest.TestCase):
         """
         server = Server()
         l_defer = server.m_startedDeferred = defer.Deferred()
-        port1 = self.m_pyhouse_obj.Reactor.listenUDP(0, server, interface = "127.0.0.1")
+        port1 = self.m_pyhouse_obj.Twisted.Reactor.listenUDP(0, server, interface = "127.0.0.1")
         def cbStarted(_ignored):
             self.assertEqual(server.m_started, 1)
             self.assertEqual(server.m_stopped, 0)
@@ -178,14 +178,14 @@ class Test1(unittest.TestCase):
         """
         server = Server()
         l_defer = server.m_startedDeferred = defer.Deferred()
-        p = self.m_pyhouse_obj.Reactor.listenUDP(0, server, interface = "127.0.0.1")
+        p = self.m_pyhouse_obj.Twisted.Reactor.listenUDP(0, server, interface = "127.0.0.1")
 
         def cbStarted(_ignored, port):
             return port.stopListening()
 
         def cbStopped(_ignored):
             l_defer = server.m_startedDeferred = defer.Deferred()
-            p = self.m_pyhouse_obj.Reactor.listenUDP(0, server, interface = "127.0.0.1")
+            p = self.m_pyhouse_obj.Twisted.Reactor.listenUDP(0, server, interface = "127.0.0.1")
             return l_defer.addCallback(cbStarted, p)
 
         return l_defer.addCallback(cbStarted, p)
@@ -196,14 +196,14 @@ class Test1(unittest.TestCase):
         """
         server = Server()
         l_defer = server.m_startedDeferred = defer.Deferred()
-        port = self.m_pyhouse_obj.Reactor.listenUDP(0, server, interface = '127.0.0.1')
+        port = self.m_pyhouse_obj.Twisted.Reactor.listenUDP(0, server, interface = '127.0.0.1')
 
         def cbStarted(_ignored):
             self.assertEqual(port.getHost(), server.transport.getHost())
             server2 = Server()
             self.assertRaises(
                 error.CannotListenError,
-                self.m_pyhouse_obj.Reactor.listenUDP, port.getHost().port, server2,
+                self.m_pyhouse_obj.Twisted.Reactor.listenUDP, port.getHost().port, server2,
                 interface = '127.0.0.1')
 
         l_defer.addCallback(cbStarted)
@@ -220,12 +220,12 @@ class Test1(unittest.TestCase):
         """
         server = Server()
         serverStarted = server.m_startedDeferred = defer.Deferred()
-        port1 = self.m_pyhouse_obj.Reactor.listenUDP(0, server, interface = "127.0.0.1")
+        port1 = self.m_pyhouse_obj.Twisted.Reactor.listenUDP(0, server, interface = "127.0.0.1")
         client = GoodClient()
         clientStarted = client.m_startedDeferred = defer.Deferred()
 
         def cbServerStarted(_ignored):
-            self.port2 = self.m_pyhouse_obj.Reactor.listenUDP(0, client, interface = "127.0.0.1")
+            self.port2 = self.m_pyhouse_obj.Twisted.Reactor.listenUDP(0, client, interface = "127.0.0.1")
             return clientStarted
 
         l_defer = serverStarted.addCallback(cbServerStarted)
@@ -292,10 +292,10 @@ class Test1(unittest.TestCase):
         """
         client = GoodClient()
         clientStarted = client.m_startedDeferred = defer.Deferred()
-        port = self.m_pyhouse_obj.Reactor.listenUDP(0, client, interface = "127.0.0.1")
+        port = self.m_pyhouse_obj.Twisted.Reactor.listenUDP(0, client, interface = "127.0.0.1")
         server = Server()
         serverStarted = server.m_startedDeferred = defer.Deferred()
-        port2 = self.m_pyhouse_obj.Reactor.listenUDP(0, server, interface = "127.0.0.1")
+        port2 = self.m_pyhouse_obj.Twisted.Reactor.listenUDP(0, server, interface = "127.0.0.1")
         l_defer = defer.DeferredList([clientStarted, serverStarted], fireOnOneErrback = True)
 
         def cbStarted(_ignored):
@@ -320,7 +320,7 @@ class Test1(unittest.TestCase):
         A call to a transport's connect method fails with a L{RuntimeError} when the transport is already connected.
         """
         client = GoodClient()
-        port = self.m_pyhouse_obj.Reactor.listenUDP(0, client, interface = "127.0.0.1")
+        port = self.m_pyhouse_obj.Twisted.Reactor.listenUDP(0, client, interface = "127.0.0.1")
         self.assertRaises(ValueError, client.transport.connect, "localhost", 80)
         client.transport.connect("127.0.0.1", 80)
         self.assertRaises(RuntimeError, client.transport.connect, "127.0.0.1", 80)
@@ -342,7 +342,7 @@ class Test1(unittest.TestCase):
         finalDeferred.addCallback(cbCompleted)
 
         client = BadClient()
-        port = self.m_pyhouse_obj.Reactor.listenUDP(0, client, interface = '127.0.0.1')
+        port = self.m_pyhouse_obj.Twisted.Reactor.listenUDP(0, client, interface = '127.0.0.1')
 
         def cbCleanup(result):
             """
@@ -397,7 +397,7 @@ class Test1(unittest.TestCase):
                     # exception which causes it hasn't even been raised yet.
                     # Give the datagramReceived call a chance to finish, then
                     # let the test finish asserting things.
-                    self.m_pyhouse_obj.Reactor.callLater(0, finalDeferred.callback, None)
+                    self.m_pyhouse_obj.Twisted.Reactor.callLater(0, finalDeferred.callback, None)
                 else:
                     makeAttempt()
 
@@ -415,7 +415,7 @@ class Test1(unittest.TestCase):
             packetDeferred.addCallbacks(cbPacketReceived, ebPacketTimeout)
             packetDeferred.addErrback(finalDeferred.errback)
 
-            timeoutCall = self.m_pyhouse_obj.Reactor.callLater(0.1, packetDeferred.errback, error.TimeoutError("Timed out in testDatagramReceivedError"))
+            timeoutCall = self.m_pyhouse_obj.Twisted.Reactor.callLater(0.1, packetDeferred.errback, error.TimeoutError("Timed out in testDatagramReceivedError"))
 
         makeAttempt()
         return finalDeferred
@@ -425,7 +425,7 @@ class Test1(unittest.TestCase):
         The port number being listened on can be found in the string returned from calling repr() on L{twisted.internet.udp.Port}.
         """
         client = GoodClient()
-        p = self.m_pyhouse_obj.Reactor.listenUDP(0, client)
+        p = self.m_pyhouse_obj.Twisted.Reactor.listenUDP(0, client)
         portNo = str(p.getHost().port)
         self.failIf(repr(p).find(portNo) == -1)
         def stoppedListening(_ign):
@@ -454,14 +454,14 @@ class Test1(unittest.TestCase):
         self.assertEqual(len(warnings), 0)
 
 
-class Test2ReactorShutdownInteraction(unittest.TestCase):
+class Test2Twisted.ReactorShutdownInteraction(unittest.TestCase):
     """Test reactor shutdown interaction"""
 
     def setUp(self):
         """Start a UDP port"""
         self.m_pyhouse_obj = PyHouseData()
         self.server = Server()
-        self.port = self.m_pyhouse_obj.Reactor.listenUDP(0, self.server, interface = '127.0.0.1')
+        self.port = self.m_pyhouse_obj.Twisted.Reactor.listenUDP(0, self.server, interface = '127.0.0.1')
 
     def tearDown(self):
         """Stop the UDP port"""
@@ -486,7 +486,7 @@ class Test2ReactorShutdownInteraction(unittest.TestCase):
             # Then delay this Deferred chain until the protocol has been
             # disconnected, as the reactor should do in an error condition
             # such as we are inducing.  This is very much a whitebox test.
-            self.m_pyhouse_obj.Reactor.callLater(0, finished.callback, None)
+            self.m_pyhouse_obj.Twisted.Reactor.callLater(0, finished.callback, None)
         pr.addCallback(pktRece)
 
         def flushErrors(_ignored):
@@ -507,8 +507,8 @@ class Test3MulticastTestCase(unittest.TestCase):
         self.server = Server()
         self.client = Client()
         # multicast won't work if we listen over loopback, apparently
-        self.port1 = self.m_pyhouse_obj.Reactor.listenMulticast(0, self.server)
-        self.port2 = self.m_pyhouse_obj.Reactor.listenMulticast(0, self.client)
+        self.port1 = self.m_pyhouse_obj.Twisted.Reactor.listenMulticast(0, self.server)
+        self.port2 = self.m_pyhouse_obj.Twisted.Reactor.listenMulticast(0, self.client)
         self.client.transport.connect("127.0.0.1", self.server.transport.getHost().port)
 
     def tearDown(self):
@@ -544,7 +544,7 @@ class Test3MulticastTestCase(unittest.TestCase):
             self.server.transport.write("hello", ("225.0.0.250", addr.port))
             # This is fairly lame.
             l_defer = Deferred()
-            self.m_pyhouse_obj.Reactor.callLater(0, l_defer.callback, None)
+            self.m_pyhouse_obj.Twisted.Reactor.callLater(0, l_defer.callback, None)
             return l_defer
 
         joined.addCallback(cbPacket)
@@ -608,7 +608,7 @@ class Test3MulticastTestCase(unittest.TestCase):
         Test that a multicast group can be joined and messages sent to and received from it.
         """
         c = Server()
-        p = self.m_pyhouse_obj.Reactor.listenMulticast(0, c)
+        p = self.m_pyhouse_obj.Twisted.Reactor.listenMulticast(0, c)
         addr = self.server.transport.getHost()
         joined = self.server.transport.joinGroup("225.0.0.250")
 
@@ -635,10 +635,10 @@ class Test3MulticastTestCase(unittest.TestCase):
         that they both receive multicast messages directed to that address.
         """
         firstClient = Server()
-        firstPort = self.m_pyhouse_obj.Reactor.listenMulticast(0, firstClient, listenMultiple = True)
+        firstPort = self.m_pyhouse_obj.Twisted.Reactor.listenMulticast(0, firstClient, listenMultiple = True)
         portno = firstPort.getHost().port
         secondClient = Server()
-        secondPort = self.m_pyhouse_obj.Reactor.listenMulticast(portno, secondClient, listenMultiple = True)
+        secondPort = self.m_pyhouse_obj.Twisted.Reactor.listenMulticast(portno, secondClient, listenMultiple = True)
         theGroup = "225.0.0.250"
         joined = gatherResults([self.server.transport.joinGroup(theGroup), firstPort.joinGroup(theGroup), secondPort.joinGroup(theGroup)])
 

@@ -36,7 +36,7 @@ class Test_02_XML(unittest.TestCase):
 
     def setUp(self):
         self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.HouseData = HouseData()
+        self.m_pyhouse_obj.House = HouseData()
         self.m_pyhouse_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         self.m_houses_xml = self.m_root_xml.find('Houses')
         self.m_house_xml = self.m_houses_xml.find('House')  # First house
@@ -46,7 +46,7 @@ class Test_02_XML(unittest.TestCase):
     def test_0201_buildObjects(self):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
         """
-        self.assertEqual(self.m_pyhouse_obj.HouseData.Rooms, {}, 'No Rooms{}')
+        self.assertEqual(self.m_pyhouse_obj.House.OBJs.Rooms, {}, 'No Rooms{}')
 
     def test_0202_find_xml(self):
         """ Be sure that the XML contains the right stuff.

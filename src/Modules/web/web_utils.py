@@ -44,7 +44,6 @@ WS_LIGHTS = 503
 def GetJSONHouseInfo(p_house_obj):
     """Get house info for the browser.
     This is simplified so JSON encoding works.
-    Perhaps we should split the HouseData object and do it that way.
 
     @param p_house_obj: is the complete information
     """

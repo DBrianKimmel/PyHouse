@@ -476,7 +476,7 @@ class API(UpbPimAPI):
     def Start(self, p_pyhouse_obj, p_controller_obj):
         self.m_controller_obj = p_controller_obj
         LOG.info('Start Controller:{0:}.'.format(self.m_controller_obj.Name))
-        self.start_controller(p_pyhouse_obj.HouseData, self.m_controller_obj)
+        self.start_controller(p_pyhouse_obj.House.OBJs, self.m_controller_obj)
         self.driver_loop_start(p_controller_obj)
         return True
 

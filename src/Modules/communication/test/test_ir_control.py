@@ -14,22 +14,23 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
-from Modules.Core.data_objects import PyHouseData, HouseData, RoomData
 from Modules.communication import ir_control
-from src.test import xml_data
+from src.test import xml_data, test_mixin
 
 XML = xml_data.XML_LONG
+
+
+class SetupMixin(object):
+    """
+    """
+
+    def setUp(self):
+        test_mixin.Setup()
 
 
 class Test_02_XML(unittest.TestCase):
 
     def setUp(self):
-        self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.HouseData = HouseData()
-        self.m_pyhouse_obj.XmlRoot = self.m_root = ET.fromstring(XML)
-        self.m_houses = self.m_root.find('Houses')
-        self.m_house = self.m_houses.find('House')
-        self.m_house_obj = RoomData()
         self.m_api = ir_control.API()
 
     def tearDown(self):

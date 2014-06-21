@@ -44,9 +44,9 @@ class Utility(ControllersAPI, LightingLightsAPI):
         """
         # l_house_xml = p_pyhouse_obj.XmlSection
         # PrettyPrintAny(l_house_xml, 'Lighting() ')
-        p_pyhouse_obj.HouseData.Controllers = ControllersAPI(p_pyhouse_obj).read_controllers_xml(p_pyhouse_obj)
-        p_pyhouse_obj.HouseData.Buttons = ButtonsAPI(p_pyhouse_obj).read_buttons_xml(p_pyhouse_obj)
-        p_pyhouse_obj.HouseData.Lights = LightingLightsAPI(p_pyhouse_obj).read_lights_xml(p_pyhouse_obj)
+        p_pyhouse_obj.House.OBJs.Controllers = ControllersAPI(p_pyhouse_obj).read_controllers_xml(p_pyhouse_obj)
+        p_pyhouse_obj.House.OBJs.Buttons = ButtonsAPI(p_pyhouse_obj).read_buttons_xml(p_pyhouse_obj)
+        p_pyhouse_obj.House.OBJs.Lights = LightingLightsAPI(p_pyhouse_obj).read_lights_xml(p_pyhouse_obj)
 
     def _write_lighting_xml(self, p_xml):
         p_xml.append(self.write_lights_xml(self.m_house_obj.Lights))
@@ -64,7 +64,7 @@ class API(Utility):
         """Allow loading of sub modules and drivers.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_house_obj = p_pyhouse_obj.HouseData
+        self.m_house_obj = p_pyhouse_obj.House.OBJs
         LOG.info("Starting - House:{0:}.".format(self.m_house_obj.Name))
         self.m_house_obj.FamilyData = self.m_family.build_lighting_family_info()
         self._read_lighting_xml(p_pyhouse_obj)
@@ -88,10 +88,10 @@ class API(Utility):
         # PrettyPrintAny(p_light_obj, 'Lighting - Change Light - 1')
         try:
             l_key = p_light_obj.Key
-            l_light_obj = self.m_pyhouse_obj.HouseData.Lights[l_key]
+            l_light_obj = self.m_pyhouse_obj.House.OBJs.Lights[l_key]
             # PrettyPrintAny(l_light_obj, 'Lighting - Change Light - 2')
             LOG.info("Turn Light {0:} to level {1:}, LightingFamily:{2:}".format(l_light_obj.Name, p_level, l_light_obj.LightingFamily))
-            l_api = self.m_pyhouse_obj.HouseData.FamilyData[l_light_obj.LightingFamily].ModuleAPI
+            l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[l_light_obj.LightingFamily].ModuleAPI
             # PrettyPrintAny(l_api, 'Lighting - Change Light - 3')
             l_api.ChangeLight(l_light_obj, p_level)
         except Exception as e_error:

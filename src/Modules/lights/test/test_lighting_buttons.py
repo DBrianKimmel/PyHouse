@@ -27,7 +27,7 @@ class Test_02_XML(unittest.TestCase):
 
     def setUp(self):
         self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.HouseData = HouseData()
+        self.m_pyhouse_obj.House = HouseData()
         self.m_pyhouse_obj.XmlRoot = self.m_root = ET.fromstring(XML)
         self.m_houses_xml = self.m_root.find('Houses')
         self.m_house_xml = self.m_houses_xml.find('House')  # First house

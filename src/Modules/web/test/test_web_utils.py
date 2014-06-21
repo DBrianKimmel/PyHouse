@@ -29,8 +29,8 @@ class Test_01_Json(unittest.TestCase):
     def setUp(self):
         self.c_attr = Attribs()
         self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.HouseData = HouseData()
-        self.m_pyhouse_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
+        self.m_pyhouse_obj.House = HouseData()
+        self.m_pyhouse_obj.Xml.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         self.m_houses_xml = self.m_root_xml.find('Houses')
         self.m_house_xml = self.m_houses_xml.find('House')  # First house
         self.m_rooms_xml = self.m_house_xml.find('Rooms')

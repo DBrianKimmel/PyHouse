@@ -34,9 +34,7 @@ class ControllersAPI(lighting_core.LightingCoreAPI):
 
     def _read_family_data(self, p_obj, p_xml):
         l_family = p_obj.LightingFamily
-        # PrettyPrintAny(self.m_pyhouse_obj.HouseData, 'HouseData')
-        # PrettyPrintAny(self.m_pyhouse_obj.HouseData.FamilyData, 'FamilyData')
-        l_api = self.m_pyhouse_obj.HouseData.FamilyData[l_family].ModuleAPI
+        l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[l_family].ModuleAPI
         l_api.extract_device_xml(p_obj, p_xml)
         # PrettyPrintAny(p_obj, 'Lighting Controller')
 
@@ -67,7 +65,7 @@ class ControllersAPI(lighting_core.LightingCoreAPI):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_count = 0
         l_dict = {}
-        l_house_xml = p_pyhouse_obj.XmlRoot.find('Houses/House')
+        l_house_xml = p_pyhouse_obj.Xml.XmlRoot.find('Houses/House')
         l_controllers_xml = l_house_xml.find('Controllers')
         # PrettyPrintAny(l_controllers_xml, 'Lighting Controllers')
         try:

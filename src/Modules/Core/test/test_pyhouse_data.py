@@ -36,14 +36,14 @@ class Test(unittest.TestCase):
 
     def Xtest_004_name(self):
         l_data = data_objects.PyHouseData()
-        l_house = l_data.HouseData
+        l_house = l_data.House
         l_name = l_house.Name
         self.assertEqual(l_name, 'Test House #1')
         print(l_name)
 
     def Xtest_005_street(self):
         l_data = data_objects.PyHouseData()
-        l_house = l_data.HouseData
+        l_house = l_data.House
         l_location = l_house.Location
         l_street = l_location.Street
         self.assertEqual(l_street, '5191 N Pink Poppy Dr')

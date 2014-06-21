@@ -14,10 +14,9 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, HouseData
 from Modules.scheduling import schedule
 from Modules.utils.tools import PrettyPrintAny
-from src.test import xml_data
+from src.test import xml_data, test_mixin
 
 
 class SetupMixin(object):
@@ -25,16 +24,14 @@ class SetupMixin(object):
     """
 
     def setUp(self):
+        test_mixin.Setup()
         self.m_api = schedule.API()
-
-        self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.HouseData = HouseData()
-        self.m_pyhouse_obj.XmlRoot = self.m_root_xml
 
         self.m_houses_xml = self.m_root_xml.find('Houses')
         self.m_house_xml = self.m_houses_xml.find('House')
         self.m_schedules_xml = self.m_house_xml.find('Schedules')
         self.m_schedule_xml = self.m_schedules_xml.find('Schedule')
+        print('test_schedule.SetupMixin')
 
 
 class Test_02_ReadWriteXML(SetupMixin, unittest.TestCase):
@@ -45,6 +42,7 @@ class Test_02_ReadWriteXML(SetupMixin, unittest.TestCase):
     def setUp(self):
         self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         SetupMixin.setUp(self)
+        print('test_schedule.Test_02')
 
     def test_0201_find_xml(self):
         """ Be sure that the XML contains the right stuff.
@@ -98,10 +96,11 @@ class Test_03_Execution(SetupMixin, unittest.TestCase):
         self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         SetupMixin.setUp(self)
         self.m_schedules = self.m_api.read_schedules_xml(self.m_schedules_xml)
-        pass
+        print('Test_03.Setup()')
+        PrettyPrintAny(self, 'test_schedule - self')
 
     def test_0301_RunSchedule(self):
-        pass
+        PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse Obj')
 
     def test_0302_SchedulesList(self):
         pass

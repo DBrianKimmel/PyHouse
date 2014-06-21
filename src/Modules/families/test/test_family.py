@@ -25,7 +25,7 @@ class Test_01_Families(unittest.TestCase):
 
     def setUp(self):
         self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.HouseData = HouseData()
+        self.m_pyhouse_obj.House.OBJs = HouseData()
         self.m_pyhouse_obj.XmlRoot = self.m_root = ET.fromstring(XML)
         self.m_houses = self.m_root.find('Houses')
         self.m_house = self.m_houses.find('House')

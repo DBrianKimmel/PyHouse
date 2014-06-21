@@ -231,14 +231,14 @@ class FindExternalIpAddress(object):
     def __init__(self, p_pyhouses_obj, p_house_obj):
         self.m_pyhouse_obj = p_pyhouses_obj
         self.m_house_obj = p_house_obj
-        self.m_pyhouse_obj.Reactor.callLater(1 * 60, self.get_public_ip)
+        self.m_pyhouse_obj.Twisted.Reactor.callLater(1 * 60, self.get_public_ip)
 
     def get_public_ip(self):
         """Get the public IP address for the house.
         """
         if self.m_house_obj.Internet.ExternalDelay < 600:
             self.m_house_obj.Internet.ExternalDelay = 600
-        self.m_pyhouse_obj.Reactor.callLater(self.m_house_obj.Internet.ExternalDelay, self.get_public_ip)
+        self.m_pyhouse_obj.Twisted.Reactor.callLater(self.m_house_obj.Internet.ExternalDelay, self.get_public_ip)
         self.m_url = self.m_house_obj.Internet.ExternalUrl
         if self.m_url == None:
             LOG.error("URL is missing for House:{0:}".format(self.m_house_obj.Name))
@@ -279,7 +279,7 @@ class DynDnsAPI(object):
         self.m_house_obj = p_house_obj
         self.m_pyhouse_obj = p_pyhouses_obj
         # Wait a bit to avoid all the starting chaos
-        self.m_pyhouse_obj.Reactor.callLater(3 * 60, self.update_start_process)
+        self.m_pyhouse_obj.Twisted.Reactor.callLater(3 * 60, self.update_start_process)
 
     def update_start_process(self):
         """After waiting for the initial startup activities to die down, this is invoked
@@ -288,7 +288,7 @@ class DynDnsAPI(object):
         self.m_running = True
         for l_dyn_obj in self.m_house_obj.Internet.DynDns.itervalues():
             l_cmd = lambda x = l_dyn_obj.Interval, y = l_dyn_obj: self.update_loop(x, y)
-            self.m_pyhouse_obj.Reactor.callLater(l_dyn_obj.Interval, l_cmd)
+            self.m_pyhouse_obj.Twisted.Reactor.callLater(l_dyn_obj.Interval, l_cmd)
 
     def stop_dyndns_process(self):
         self.m_running = False
@@ -320,7 +320,7 @@ class DynDnsAPI(object):
 
     def cb_do_delay(self, _p_response):
         l_cmd = lambda x = self.m_dyn_obj.Interval, y = self.m_dyn_obj: self.update_loop(x, y)
-        self.m_pyhouse_obj.Reactor.callLater(self.m_dyn_obj.Interval, l_cmd)
+        self.m_pyhouse_obj.Twisted.Reactor.callLater(self.m_dyn_obj.Interval, l_cmd)
 
 
 class API(ReadWriteXML):
@@ -334,8 +334,8 @@ class API(ReadWriteXML):
         """Start async operation of the internet module.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_house_obj = self.m_pyhouse_obj.HouseData
-        l_house_xml = self.m_pyhouse_obj.XmlParsed.find('Houses/House')
+        self.m_house_obj = self.m_pyhouse_obj.House.OBJs
+        l_house_xml = self.m_pyhouse_obj.Xml.XmlParsed.find('Houses/House')
         self.m_house_obj.Internet = self.read_internet_xml(l_house_xml)
         LOG.info("Starting for house:{0:}.".format(self.m_house_obj.Name))
         FindExternalIpAddress(p_pyhouse_obj, self.m_house_obj)

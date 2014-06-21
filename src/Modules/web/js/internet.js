@@ -60,8 +60,8 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 
 	// ============================================================================
 	/**
-	 * This triggers getting the internet data from the server.
-	 * The server calls displayInternetButtons with the internet info.
+	 * This triggers getting the Internet data from the server.
+	 * The server calls displayInternetButtons with the Internet info.
 	 */
 	function fetchHouseData(self) {
 		function cb_fetchHouseData(p_json) {

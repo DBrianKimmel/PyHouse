@@ -47,7 +47,7 @@ class HouseSelectElement(athena.LiveElement):
 
         Gather the top level data for houses and send it back to the client for building a house select page.
         """
-        l_house = self.m_pyhouse_obj.HouseData
+        l_house = self.m_pyhouse_obj.House.OBJs
         l_obj = {}
         l_obj[0] = {}
         l_obj[0]['Name'] = l_house.Name
@@ -60,7 +60,7 @@ class HouseSelectElement(athena.LiveElement):
 
     @athena.expose
     def getSelectedHouseData(self, _p_index):
-        l_house = GetJSONHouseInfo(self.m_pyhouse_obj.HouseData)
+        l_house = GetJSONHouseInfo(self.m_pyhouse_obj.House.OBJs)
         # PrettyPrintAny(l_house, 'House_Select - Json 2 ')
         return l_house
 

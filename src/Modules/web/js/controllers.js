@@ -153,7 +153,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 			Comment :        fetchTextWidget('ControllerComment'),
 			Coords :         fetchTextWidget('ControllerCoords'),
 			Dimmable :       fetchTrueFalseWidget('ControllerDimmable'),
-			Family :         fetchTextWidget('ControllerFamily'),
+			LightingFamily : fetchTextWidget('ControllerFamily'),
 			RoomName :       fetchSelectWidget('ControllerRoomName'),
 			Type :           fetchTextWidget('ControllerType'),
 			UUID :           fetchTextWidget('ControllerUUID'),

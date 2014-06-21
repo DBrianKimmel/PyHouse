@@ -40,7 +40,7 @@ class RoomsElement(athena.LiveElement):
 
     @athena.expose
     def getHouseData(self, _p_index):
-        l_house = GetJSONHouseInfo(self.m_pyhouse_obj.HouseData)
+        l_house = GetJSONHouseInfo(self.m_pyhouse_obj.House.OBJs)
         return l_house
 
     @athena.expose
@@ -52,12 +52,12 @@ class RoomsElement(athena.LiveElement):
         l_delete = l_json['Delete']
         if l_delete:
             try:
-                del self.m_pyhouse_obj.HouseData.Rooms[l_room_ix]
+                del self.m_pyhouse_obj.House.OBJs.Rooms[l_room_ix]
             except AttributeError:
                 print("web_rooms - Failed to delete - JSON: {0:}".format(l_json))
             return
         try:
-            l_obj = self.m_pyhouse_obj.HouseData.Rooms[l_room_ix]
+            l_obj = self.m_pyhouse_obj.House.OBJs.Rooms[l_room_ix]
         except KeyError:
             l_obj = rooms.RoomData()
         l_obj.Name = l_json['Name']
@@ -67,6 +67,6 @@ class RoomsElement(athena.LiveElement):
         l_obj.Corner = l_json['Corner']
         l_obj.Size = l_json['Size']
         l_obj.RoomType = 'Room'
-        self.m_pyhouse_obj.HouseData.Rooms[l_room_ix] = l_obj
+        self.m_pyhouse_obj.House.OBJs.Rooms[l_room_ix] = l_obj
 
 # ## END DBK

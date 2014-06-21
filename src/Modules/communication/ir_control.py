@@ -84,7 +84,7 @@ class LircFactory(Factory):
 class LircConnection(object):
 
     def start_lirc_connect(self, p_pyhouses_obj):
-        l_endpoint = clientFromString(p_pyhouses_obj.Reactor, LIRC_SOCKET)
+        l_endpoint = clientFromString(p_pyhouses_obj.Twisted.Reactor, LIRC_SOCKET)
         l_factory = LircFactory()
         l_defer = l_endpoint.connect(l_factory)
         l_defer.addCallback(self.cb_connect)
@@ -132,7 +132,7 @@ class Utility(LircConnection):
         l_factory.protocol = AMP
         p_pyhouses_obj.Services.IrControlService = StreamServerEndpointService(l_endpoint, l_factory)
         p_pyhouses_obj.Services.IrControlService.setName('IrControl')
-        p_pyhouses_obj.Services.IrControlService.setServiceParent(p_pyhouses_obj.Application)
+        p_pyhouses_obj.Services.IrControlService.setServiceParent(p_pyhouses_obj.Twisted.Application)
 
 class API(Utility):
 
