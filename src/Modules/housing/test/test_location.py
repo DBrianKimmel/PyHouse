@@ -34,7 +34,7 @@ class Test_02_XML(unittest.TestCase):
         self.m_houses = self.m_root.find('Houses')
         self.m_house_xml = self.m_houses.find('House')
         self.m_house_obj = LocationData()
-        self.m_api = location.ReadWriteConfig()
+        self.m_api = location.ReadWriteConfigXml()
 
     def setUp(self):
         self._pyHouses()

@@ -57,17 +57,20 @@ class HouseItems(object):
         pass
 
 
-class HouseReadWriteXML(location.ReadWriteConfig, rooms.ReadWriteConfig):
+class ReadWriteConfigXml(location.ReadWriteConfigXml, rooms.ReadWriteConfigXml):
     """Use the internal data to read / write an updated config file.
 
     This is called from the web interface or the GUI when the data has been changed.
     """
 
+    def get_house_xml(self, p_pyhouse_obj):
+        l_tmp_xml = p_pyhouse_obj.Xml.XmlParsed.find('Houses')
+        l_house_xml = l_tmp_xml.find('House')
+        p_pyhouse_obj.XmlSection = l_house_xml
+        return l_house_xml
+
     def read_house_xml(self, p_house_xml):
         """Read house information, location and rooms.
-
-        @param p_house_obj: is
-        @param p_house_xml: is
         """
         l_house_obj = self.m_pyhouse_obj.House
         # PrettyPrintAny(l_house_obj, 'House - HouseObj')
@@ -86,17 +89,27 @@ class HouseReadWriteXML(location.ReadWriteConfig, rooms.ReadWriteConfig):
         return l_house_xml
 
 
-class Utility(HouseReadWriteXML):
+class Utility(ReadWriteConfigXml):
     """
     """
 
     m_pyhouse_obj = None
 
-    def get_house_xml(self, p_pyhouse_obj):
-        l_tmp_xml = p_pyhouse_obj.Xml.XmlParsed.find('Houses')
-        l_house_xml = l_tmp_xml.find('House')
-        p_pyhouse_obj.XmlSection = l_house_xml
-        return l_house_xml
+    def start_house_parts(self, p_pyhouse_obj):
+        p_pyhouse_obj.House.APIs.ScheduleAPI = schedule.API()
+        p_pyhouse_obj.House.APIs.InternetAPI = internet.API()
+        p_pyhouse_obj.House.APIs.ScheduleAPI.Start(self.m_pyhouse_obj)
+        p_pyhouse_obj.House.APIs.InternetAPI.Start(self.m_pyhouse_obj)
+
+    def stop_house_parts(self, p_xml):
+        try:
+            self.m_house_obj.APIs.ScheduleAPI.Stop(p_xml)
+        except AttributeError:  # New house has  no schedule
+            LOG.warning("No schedule XML")
+        try:
+            self.m_house_obj.APIs.InternetAPI.Stop(p_xml)
+        except AttributeError:  # New house has  no internet
+            LOG.warning("No internet XML")
 
 
 class API(Utility):
@@ -115,28 +128,18 @@ class API(Utility):
         self.m_pyhouse_obj = p_pyhouse_obj
         l_house_xml = self.get_house_xml(p_pyhouse_obj)
         p_pyhouse_obj.House.OBJs = self.read_house_xml(l_house_xml)
-        p_pyhouse_obj.House.APIs.ScheduleAPI = schedule.API()
-        p_pyhouse_obj.House.APIs.InternetAPI = internet.API()
+        self.start_house_parts(p_pyhouse_obj)
         LOG.info("Starting House {0:}, Active:{1:}".format(self.m_pyhouse_obj.House.Name, self.m_pyhouse_obj.House.Active))
-        p_pyhouse_obj.House.APIs.ScheduleAPI.Start(self.m_pyhouse_obj)
-        p_pyhouse_obj.House.APIs.InternetAPI.Start(self.m_pyhouse_obj)
 
     def Stop(self, p_xml):
         """Stop all houses.
         Append the house XML to the passed in xlm tree.
         """
         LOG.info("Stopping House.")
-        l_house_xml = self.write_house_xml(self.m_house_obj)
-        l_house_xml.append(self.write_location_xml(self.m_house_obj.Location))
-        l_house_xml.append(self.write_rooms_xml(self.m_house_obj.Rooms))
-        try:
-            self.m_house_obj.APIs.ScheduleAPI.Stop(l_house_xml)
-        except AttributeError:  # New house has  no schedule
-            LOG.warning("No schedule XML")
-        try:
-            self.m_house_obj.APIs.InternetAPI.Stop(l_house_xml)
-        except AttributeError:  # New house has  no internet
-            LOG.warning("No internet XML")
+        l_house_xml = self.write_house_xml(self.m_pyhouse_obj.House)
+        l_house_xml.append(self.write_location_xml(self.m_pyhouse_obj.House.Location))
+        l_house_xml.append(self.write_rooms_xml(self.m_pyhouse_obj.House.Rooms))
+        self.stop_house_parts(l_house_xml)
         p_xml.append(l_house_xml)
         LOG.info("Stopped.")
 

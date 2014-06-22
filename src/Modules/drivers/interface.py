@@ -28,7 +28,7 @@ from Modules.drivers import VALID_INTERFACES
 from Modules.drivers import VALID_PROTOCOLS
 
 
-class ReadWriteConfig(xml_tools.ConfigTools):
+class ReadWriteConfigXml(xml_tools.ConfigTools):
     """Read and write the interface information based in the interface type.
     """
 

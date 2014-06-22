@@ -24,7 +24,7 @@ import xml.etree.ElementTree as ET
 
 # Import PyHouse files
 from Modules.Core.data_objects import LightData
-from Modules.lights import lighting_core
+from Modules.lights.lighting_core import ReadWriteConfigXml
 # from Modules.utils.tools import PrettyPrintAny
 
 
@@ -32,7 +32,7 @@ g_debug = 0
 # 0 = off
 
 
-class LightingLightsAPI(lighting_core.LightingCoreAPI):
+class LightingLightsAPI(ReadWriteConfigXml):
 
     m_count = 0
 

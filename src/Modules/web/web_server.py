@@ -56,22 +56,27 @@ class ClientConnections(object):
         self.ConnectedBrowsers.append(p_login)
 
 
-class Utility(xml_tools.ConfigFile):
+class ReadWriteConfigXml(xml_tools.ConfigFile):
+    """
+    """
 
     def read_web_xml(self, p_pyhouses_obj):
         l_ret = WebData()
         p_pyhouses_obj.Computer.Web = WebData()
         try:
-            l_sect = p_pyhouses_obj.XmlRoot.find('Web')
+            l_sect = p_pyhouses_obj.XmlRoot.find('WebSection')
             l_ret.WebPort = self.get_int_from_xml(l_sect, 'WebPort')
         except AttributeError:
             l_ret.WebPort = 8580
         return l_ret
 
     def write_web_xml(self, p_web_obj):
-        l_web_xml = ET.Element("Web")
-        self.put_int_attribute(l_web_xml, 'WebPort', p_web_obj.WebPort)
+        l_web_xml = ET.Element("WebSection")
+        self.put_int_element(l_web_xml, 'WebPort', p_web_obj.WebPort)
         return l_web_xml
+
+
+class Utility(ReadWriteConfigXml):
 
     def start_webserver(self, p_pyhouses_obj):
         p_pyhouses_obj.Services.WebServerService = service.Service()

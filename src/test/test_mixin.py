@@ -1,7 +1,12 @@
 """
-Created on Jun 20, 2014
+@name: PyHouse/src/test/test_mixin.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
+@Copyright (c) 2013-2014 by D. Brian Kimmel
+@license: MIT License
+@note: Created on Jun 40, 2013
+@summary: Test handling the information for a house.
 
-@author: briank
 """
 
 # Import system type stuff

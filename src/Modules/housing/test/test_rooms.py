@@ -35,7 +35,7 @@ class Test_02_XML(unittest.TestCase):
         self.m_rooms_xml = self.m_house_xml.find('Rooms')
         self.m_room_xml = self.m_rooms_xml.find('Room')  # First room
         self.m_room_obj = RoomData()
-        self.m_api = rooms.ReadWriteConfig()
+        self.m_api = rooms.ReadWriteConfigXml()
 
     def setUp(self):
         self._pyHouses()

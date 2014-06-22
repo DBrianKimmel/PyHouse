@@ -99,8 +99,8 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 		self.nodeById('ActiveDiv').innerHTML   = buildTrueFalseWidget('ScheduleActive', p_obj.Active);
 		self.nodeById('UUIDDiv').innerHTML     = buildTextWidget('ScheduleUUID', p_obj.UUID, 'disabled');
 		self.nodeById('TypeDiv').innerHTML     = buildTextWidget('ScheduleType', p_obj.Type);  // s/b select box of valid types
-		self.nodeById('RoomNameDiv').innerHTML = buildRoomSelectWidget('ScheduleRoomName', p_obj.RoomName);
-		self.nodeById('LightNameDiv').innerHTML = buildLightSelectWidget('ScheduleLightName', p_obj.LightName);
+		self.nodeById('RoomNameDiv').innerHTML = buildRoomSelectWidget('ScheduleRoomName', p_obj.RoomName, 'disabled');
+		self.nodeById('LightNameDiv').innerHTML = buildLightSelectWidget('ScheduleLightName', p_obj.LightName, 'disabled');
 		self.nodeById('TimeDiv').innerHTML     = buildTextWidget('ScheduleTime', p_obj.Time);
 		self.nodeById('LevelDiv').innerHTML    = buildLevelSliderWidget('ScheduleLevel', p_obj.Level);
 		self.nodeById('RateDiv').innerHTML     = buildTextWidget('ScheduleRate', p_obj.Rate, 'disabled');

@@ -17,7 +17,7 @@ from twisted.web import server
 from twisted.web.test.test_web import DummyRequest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, ComputerData
+from Modules.Core.data_objects import PyHouseData, ComputerData, XmlData
 from Modules.web import web_server
 from Modules.utils.tools import PrettyPrintAny
 from src.test import xml_data
@@ -78,11 +78,12 @@ class SetupMixin(object):
 
         self.m_pyhouse_obj = PyHouseData()
         self.m_pyhouse_obj.Computer = ComputerData()
+        self.m_pyhouse_obj.Xml = XmlData()
         self.m_pyhouse_obj.Xml.XmlRoot = self.m_root_xml
 
-        self.m_houses_xml = self.m_root_xml.find('Houses')
-        self.m_house_xml = self.m_houses_xml.find('House')
-        self.m_web_xml = self.m_root_xml.find('Web')
+        self.m_houses_xml = self.m_root_xml.find('HouseDivision')
+        self.m_computer_xml = self.m_root_xml.find('ComputerDivision')
+        self.m_web_xml = self.m_computer_xml.find('WebSection')
         self.m_web_port_xml = self.m_web_xml.findtext('WebPort')
 
 
@@ -96,7 +97,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         """ Be sure that the XML contains the right stuff.
         """
         self.assertEqual(self.m_root_xml.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
-        self.assertEqual(self.m_web_xml.tag, 'Web', 'XML - No Web section')
+        self.assertEqual(self.m_web_xml.tag, 'WebSection', 'XML - No Web section')
 
     def test_0211_ReadXML(self):
         l_web = self.m_api.read_web_xml(self.m_pyhouse_obj)

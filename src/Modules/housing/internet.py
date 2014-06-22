@@ -29,6 +29,7 @@ from twisted.web.http_headers import Headers
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import InternetConnectionData, InternetConnectionDynDnsData
+from Modules.Core.Locations import *
 from Modules.utils import xml_tools
 from Modules.utils import convert
 from Modules.utils import pyh_log
@@ -39,32 +40,8 @@ g_debug = 1
 # + = NOT USED HERE
 LOG = pyh_log.getLogger('PyHouse.Internet    ')
 
-#======================================
-#
-# Data classes for this module
-#
-#======================================
 
-class InterfaceIpAddresses(object):
-
-    def __init__(self):
-        self.Name = ''
-        self.Key = 0
-        self.Active = False
-        self.MacAddress = ''
-        self.V4Address = ''
-        self.V6Address = ''
-
-#======================================
-#
-# Synchronous portion
-#
-# We don't want to take off and run until ALL XML is read in.
-# Also halt all asynchronous operations and write out the XML when requested.
-#
-#======================================
-
-class ReadWriteXML(xml_tools.ConfigTools):
+class ReadWriteConfigXml(xml_tools.ConfigTools):
     """
     """
 
@@ -323,7 +300,7 @@ class DynDnsAPI(object):
         self.m_pyhouse_obj.Twisted.Reactor.callLater(self.m_dyn_obj.Interval, l_cmd)
 
 
-class API(ReadWriteXML):
+class API(ReadWriteConfigXml):
 
     m_house_obj = None
 
@@ -336,7 +313,7 @@ class API(ReadWriteXML):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_house_obj = self.m_pyhouse_obj.House.OBJs
         l_house_xml = self.m_pyhouse_obj.Xml.XmlParsed.find('Houses/House')
-        self.m_house_obj.Internet = self.read_internet_xml(l_house_xml)
+        self.m_pyhouse_obj.Computer.InternetConnection = self.read_internet_xml(l_house_xml)
         LOG.info("Starting for house:{0:}.".format(self.m_house_obj.Name))
         FindExternalIpAddress(p_pyhouse_obj, self.m_house_obj)
         self.m_dyn_loop = DynDnsAPI(p_pyhouse_obj, self.m_house_obj)

@@ -18,7 +18,7 @@ class Test_01_XML(unittest.TestCase):
     def setUp(self):
         self.m_root_element = ET.fromstring(XML)
         self.m_util = xml_tools.PutGetXML()
-        self.m_intf = interface.ReadWriteConfig()
+        self.m_intf = interface.ReadWriteConfigXml()
 
     def test_0101_read_xml(self):
         l_pyhouse = self.m_root_element

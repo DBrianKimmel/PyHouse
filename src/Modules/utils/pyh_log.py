@@ -70,18 +70,18 @@ class Logger(object):
         tpLog.msg(message, level = level, system = self.name)
 
 
-class Utility(xml_tools.ConfigFile):
+class ReadWriteConfigXml(xml_tools.ConfigTools):
+    """
+    """
 
-    m_pyhouse_obj = None
-
-    def read_xml(self, p_pyhouse_obj):  # p_log_obj, p_xml_root):
-        # PrettyPrintAny(p_pyhouse_obj, 'read log xml 1')
+    def read_xml(self, p_pyhouse_obj):
         l_ret = LogData()
         try:
-            l_logs_xml = p_pyhouse_obj.Xml.XmlRoot.find('Logs')
+            l_computer = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
+            l_logs_xml = l_computer.find('LogSection')
             # PrettyPrintAny(l_logs_xml, 'read log xml A')
         except AttributeError as e_error:
-            print("log.read_xml() - Warning - Logs section is missing - {0:}".format(e_error))
+            print("log.read_xml() - Warning - LogSection is missing - {0:}".format(e_error))
             l_logs_xml = ET.SubElement(p_pyhouse_obj.Xml.XmlRoot, 'Logs')
             ET.SubElement(l_logs_xml, 'Debug').text = 'None'
             ET.SubElement(l_logs_xml, 'Error').text = 'None'
@@ -95,6 +95,11 @@ class Utility(xml_tools.ConfigFile):
         self.put_text_element(l_log_xml, 'Debug', p_log_data.Debug)
         self.put_text_element(l_log_xml, 'Error', p_log_data.Error)
         return l_log_xml
+
+
+class Utility(ReadWriteConfigXml):
+
+    m_pyhouse_obj = None
 
     def setup_debug_log (self, p_pyhouse_obj):
         """Debug and more severe goes to the base logger

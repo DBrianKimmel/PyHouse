@@ -28,7 +28,12 @@ g_debug = 9
 LOG = pyh_log.getLogger('PyHouse.Family      ')
 
 
-class API(object):
+class ReadWriteConfigXml(object):
+    """
+    """
+
+
+class API(ReadWriteConfigXml):
     """
     """
 

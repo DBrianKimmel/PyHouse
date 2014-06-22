@@ -164,7 +164,7 @@ class DomainBoxDispatcher_AmpProtocol(AMP):
         """
         if g_debug >= 1:
             LOG.debug('Dispatch - receive_NodeInformation - RECEIVED  (DBD-8  170)')
-        l_box = NodeInformationCommand.makeArguments({'Name': 'AAA'})
+        _l_box = NodeInformationCommand.makeArguments({'Name': 'AAA'})
         l_ret = dict(Name = Name, Answer = 'Got it ok')
         return l_ret
     # NodeInformationCommand.responder(receive_NodeInformation)
@@ -262,7 +262,7 @@ class IrPacketError(Exception): pass
 class AmpClient(object):
 
     def cb_sendInfo(self, p_ampProto):
-        l_node = self.m_pyhouse_obj.Nodes[0]
+        l_node = self.m_pyhouse_obj.Computer.Nodes[0]
         if g_debug >= 4:
             LOG.debug('Client - sending info to remote server.  (310)')
             # LOG.debug('      Address: {0:}'.format(l_node.ConnectionAddr_IPv4))

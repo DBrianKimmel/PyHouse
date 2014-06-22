@@ -66,12 +66,12 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 	function fetchHouseData(self) {
 		function cb_fetchHouseData(p_json) {
 			Divmod.debug('---', 'internet.cb_fetchHouseData() was called. ' + p_json);
-			globals.House.HouseObj = JSON.parse(p_json);
+			globals.Computer = JSON.parse(p_json);
 			// this is the external IP address finding url and its value
-	        self.nodeById('UrlDiv').innerHTML = buildTextWidget('InternetUrl', globals.House.HouseObj.Internet.ExternalUrl);
-	        self.nodeById('ExtDelayDiv').innerHTML = buildTextWidget('InternetExtDelay', globals.House.HouseObj.Internet.ExternalDelay);
-	        self.nodeById('ExtIpDiv').innerHTML = buildTextWidget('InternetExtIp', globals.House.HouseObj.Internet.ExternalIP, 'disabled');
-			var l_tab = buildTable(globals.House.HouseObj.Internet.DynDns, 'handleMenuOnClick');
+	        self.nodeById('UrlDiv').innerHTML = buildTextWidget('InternetUrl', globals.Computer.InternetConnection.ExternalUrl);
+	        self.nodeById('ExtDelayDiv').innerHTML = buildTextWidget('InternetExtDelay', globals.Computer.InternetConnection.ExternalDelay);
+	        self.nodeById('ExtIpDiv').innerHTML = buildTextWidget('InternetExtIp', globals.Computer.InternetConnection.ExternalIP, 'disabled');
+			var l_tab = buildTable(globals.Computer.InternetConnection.DynDns, 'handleMenuOnClick');
 			self.nodeById('InternetTableDiv').innerHTML = l_tab;
 			
 		}
@@ -79,7 +79,7 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 			Divmod.debug('---', 'internet.eb_fetchHouseData() was called. ERROR: ' + res);
 		}
 		Divmod.debug('---', 'internet.fetchHouseData() was called. ');
-        var l_defer = self.callRemote("getHouseData", globals.House.HouseIx);  // call server @ web_internet.py
+        var l_defer = self.callRemote("getHouseData", 0);  // call server @ web_internet.py
 		l_defer.addCallback(cb_fetchHouseData);
 		l_defer.addErrback(eb_fetchHouseData);
         return false;

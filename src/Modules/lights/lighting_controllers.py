@@ -11,7 +11,7 @@ import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import ControllerData
-from Modules.lights import lighting_core
+from Modules.lights.lighting_core import ReadWriteConfigXml
 from Modules.utils import pyh_log
 from Modules.drivers import interface
 # from Modules.utils.tools import PrettyPrintAny
@@ -20,7 +20,7 @@ g_debug = 1
 LOG = pyh_log.getLogger('PyHouse.Controller  ')
 
 
-class ControllersAPI(lighting_core.LightingCoreAPI):
+class ControllersAPI(ReadWriteConfigXml):
 
     m_count = 0
     m_pyhouse_obj = None
@@ -83,7 +83,7 @@ class ControllersAPI(lighting_core.LightingCoreAPI):
         self.write_base_lighting_xml(l_entry_xml, p_controller_obj)
         ET.SubElement(l_entry_xml, 'Interface').text = p_controller_obj.ControllerInterface
         ET.SubElement(l_entry_xml, 'Port').text = p_controller_obj.Port
-        interface.ReadWriteConfig().write_xml(l_entry_xml, p_controller_obj)
+        interface.ReadWriteConfigXml().write_xml(l_entry_xml, p_controller_obj)
         return l_entry_xml
 
     def write_controllers_xml(self, p_controllers_obj):

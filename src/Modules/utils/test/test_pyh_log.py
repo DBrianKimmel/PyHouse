@@ -14,10 +14,10 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, ComputerData, LogData, HouseData
+from Modules.Core.data_objects import PyHouseData, ComputerData, LogData, HouseData, XmlData
 from Modules.utils import pyh_log as pyhLog
 from Modules.utils.tools import PrettyPrintAny
-from src.test import xml_data
+from src.test import xml_data, test_mixin
 
 
 class SetupMixin(object):
@@ -25,19 +25,21 @@ class SetupMixin(object):
     """
 
     def setUp(self):
+        test_mixin.Setup()
         self.m_api = pyhLog.API()
 
         self.m_pyhouse_obj = PyHouseData()
         self.m_pyhouse_obj.Computer = ComputerData()
         self.m_pyhouse_obj.Computer.Logs = LogData()
         self.m_pyhouse_obj.HouseData = HouseData()
+        self.m_pyhouse_obj.Xml = XmlData
         self.m_pyhouse_obj.Xml.XmlRoot = self.m_root_xml
 
-        self.m_houses_xml = self.m_root_xml.find('Houses')
-        self.m_house_xml = self.m_houses_xml.find('House')
+        self.m_houses_xml = self.m_root_xml.find('HouseDivision')
+        self.m_house_xml = self.m_houses_xml.find('HouseDivision')
 
 
-class Test_02_ReadXML(SetupMixin, unittest.TestCase):
+class Test_02_ReadWriteXML(SetupMixin, unittest.TestCase):
     """
     This section tests the reading and writing of XML used by node_local.
     """
@@ -47,9 +49,10 @@ class Test_02_ReadXML(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self)
 
     def test_0201_read_xml(self):
+        # PrettyPrintAny(Test_02_ReadXML, 'Test_02')
         l_log = self.m_api.read_xml(self.m_pyhouse_obj)
+        PrettyPrintAny(l_log, 'Test_02')
         self.m_pyhouse_obj.Computer.Logs = l_log
-        PrettyPrintAny(l_log)
         self.assertEqual(self.m_pyhouse_obj.Computer.Logs.Debug, '/var/log/pyhouse/debug')
         self.assertEqual(self.m_pyhouse_obj.Computer.Logs.Error, '/var/log/pyhouse/error')
 

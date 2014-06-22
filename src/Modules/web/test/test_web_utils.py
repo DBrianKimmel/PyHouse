@@ -1,8 +1,13 @@
-'''
-Created on Jun 29, 2013
-
+"""
+@name: PyHouse/src/Modules/web/test/test_web_clock.py
 @author: briank
-'''
+@contact: <d.briankimmel@gmail.com>
+@Copyright: (c)  2014 by briank
+@license: MIT License
+@note: Created on Jun 29, 2013
+@Summary:  Test web utilities module
+
+"""
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -13,7 +18,6 @@ from Modules.Core.data_objects import PyHouseData, HouseData, RoomData
 from Modules.web import web_utils
 from Modules.housing import rooms
 from src.test import xml_data
-from Modules.utils.xml_tools import PrettifyXML
 from Modules.utils.tools import PrettyPrintAny
 
 
@@ -37,7 +41,7 @@ class Test_01_Json(unittest.TestCase):
         self.m_room_xml = self.m_rooms_xml.find('Room')  # First room
         self.m_house_obj = HouseData()
         self.m_room_obj = RoomData()
-        self.m_api = rooms.ReadWriteConfig()
+        self.m_api = rooms.ReadWriteConfigXml()
 
     def tearDown(self):
         pass

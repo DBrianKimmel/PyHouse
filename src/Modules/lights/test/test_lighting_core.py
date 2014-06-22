@@ -16,7 +16,7 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import PyHouseData, HouseData, LightData
-from Modules.lights import lighting_core
+from Modules.lights.lighting_core import ReadWriteConfigXml
 from src.test import xml_data
 from Modules.utils.tools import PrettyPrintAny
 
@@ -28,7 +28,7 @@ class SetupMixin(object):
     """
 
     def setUp(self):
-        self.m_api = lighting_core.LightingCoreAPI()
+        self.m_api = ReadWriteConfigXml()
 
         self.m_pyhouse_obj = PyHouseData()
         self.m_pyhouse_obj.HouseData = HouseData()

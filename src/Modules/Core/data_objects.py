@@ -25,6 +25,19 @@ from twisted.internet import reactor
 # Import PyMh files and modules.
 
 
+class PyHouseData(object):
+    """The master object, contains all other 'configuration' objects.
+
+    NOTE that the data entries need to be dicts so json encoding of the data works properly.
+    """
+    def __init__(self):
+        self.Computer = {}  # ComputerData()
+        self.House = {}  # HouseInformation()
+        self.Services = {}  # CoreServicesData()
+        self.Twisted = {}  # TwistedInfo()
+        self.Xml = {}  # XmlData
+
+
 class ABaseObject(object):
     """This data is in almost every other object.
     Do not use this object, derive objects from it.
@@ -268,19 +281,6 @@ class InternetConnectionDynDnsData(ABaseObject):
     def __init__(self):
         self.Interval = 0
         self.Url = None
-
-
-class PyHouseData(object):
-    """The master object, contains all other 'configuration' objects.
-
-    NOTE that the data entries need to be dicts so json encoding of the data works properly.
-    """
-    def __init__(self):
-        self.Computer = {}  # ComputerData()
-        self.House = {}  # HouseInformation()
-        self.Services = {}  # CoreServicesData()
-        self.Twisted = {}  # TwistedInfo()
-        self.Xml = {}  # XmlData
 
 
 class XmlData(object):

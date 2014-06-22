@@ -127,7 +127,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 		self.nodeById('DimmableDiv').innerHTML       = buildTrueFalseWidget('ControllerDimmable', p_obj.Dimmable);
 		self.nodeById('FamilyDiv').innerHTML         = buildTextWidget('ControllerFamily', p_obj.LightingFamily);
 		self.nodeById('RoomNameDiv').innerHTML       = buildRoomSelectWidget('ControllerRoomName', p_obj.RoomName);
-		self.nodeById('TypeDiv').innerHTML           = buildTextWidget('ControllerType', p_obj.Type, 'disabled');
+		self.nodeById('TypeDiv').innerHTML           = buildTextWidget('ControllerType', p_obj.LightingType, 'disabled');
 		self.nodeById('UUIDDiv').innerHTML           = buildTextWidget('ControllerUUID', p_obj.UUID, 'disabled');
 		self.nodeById('InterfaceDiv').innerHTML      = buildInterfaceSelectWidget('ControllerInterface', p_obj.Interface);
 		self.nodeById('PortDiv').innerHTML           = buildTextWidget('ControllerPort', p_obj.Port);
@@ -155,7 +155,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 			Dimmable :       fetchTrueFalseWidget('ControllerDimmable'),
 			LightingFamily : fetchTextWidget('ControllerFamily'),
 			RoomName :       fetchSelectWidget('ControllerRoomName'),
-			Type :           fetchTextWidget('ControllerType'),
+			LightingType :   fetchTextWidget('ControllerType'),
 			UUID :           fetchTextWidget('ControllerUUID'),
 			Interface :      fetchSelectWidget('ControllerInterface'),
 			Port :           fetchTextWidget('ControllerPort'),
@@ -187,14 +187,14 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 			Dimmable : false,
 			LightingFamily : '',
 			RoomName : '',
-            Type : 'Controller',
+            LightingType : 'Controller',
 			UUID : '',
 			HouseIx : p_ix,
 			Delete : false
             }
         return l_data;
     },
-   
+
     // ============================================================================
     /**
      * Event handler for submit buttons at bottom of entry portion of this widget.

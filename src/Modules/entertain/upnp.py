@@ -127,7 +127,7 @@ class FindAllInterfaceData(object):
         pass
 
 
-class ReadWriteXML(xml_tools.ConfigTools):
+class ReadWriteConfigXml(xml_tools.ConfigTools):
     """
     """
 
@@ -376,7 +376,7 @@ class DynDnsAPI(object):
         callLater(self.m_dyn_obj.Interval, l_cmd)
 
 
-class API(ReadWriteXML):
+class API(ReadWriteConfigXml):
 
     m_house_obj = None
 

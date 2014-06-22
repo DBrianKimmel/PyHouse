@@ -24,7 +24,7 @@ from Modules.Core.data_objects import LocationData
 g_debug = 0
 m_logger = None
 
-class ReadWriteConfig(xml_tools.ConfigTools):
+class ReadWriteConfigXml(xml_tools.ConfigTools):
     """Use the internal data to read / write an updated XML config file.
     """
 

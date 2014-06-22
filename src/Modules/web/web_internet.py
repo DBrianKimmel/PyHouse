@@ -40,9 +40,9 @@ class InternetElement(athena.LiveElement):
         self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
 
     @athena.expose
-    def getHouseData(self, _p_index):
-        l_house = GetJSONHouseInfo(self.m_pyhouse_obj.Computer)
-        return l_house
+    def getHouseData(self, _ignore):
+        l_computer = JsonUnicode().encode_json(self.m_pyhouse_obj.Computer)
+        return l_computer
 
     @athena.expose
     def saveInternetData(self, p_json):

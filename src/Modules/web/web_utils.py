@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse.Modules.web.test.test_web_utils -*-
+-*- test-case-name: PyHouse.src.Modules.web.test.test_web_utils -*-
 
 @name: PyHouse/src/Modules/web/web_utils.py
 @author: D. Brian Kimmel
@@ -17,7 +17,7 @@ import json
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import JsonHouseData
-# from Modules.utils.tools import PrettyPrintAny
+from Modules.utils.tools import PrettyPrintAny
 
 g_debug = 0
 
@@ -109,6 +109,7 @@ class JsonUnicode(object):
     def encode_json(self, p_obj):
         """Convert a python object to a valid json object.
         """
+        PrettyPrintAny(p_obj, 'Web_Utils - encode_json ')
         try:
             # l_json = json.dumps(p_obj, cls = ComplexHandler)
             l_json = jsonpickle.encode(p_obj, unpicklable = False, max_depth = 5)

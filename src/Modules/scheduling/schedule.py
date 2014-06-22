@@ -58,7 +58,7 @@ g_debug = 1
 LOG = pyh_log.getLogger('PyHouse.Schedule    ')
 
 
-class ScheduleXML(xml_tools.ConfigTools):
+class ReadWriteConfigXml(xml_tools.ConfigTools):
 
     m_count = 0
 
@@ -320,7 +320,7 @@ class ScheduleUtility(ScheduleExecution):
         return p_xml
 
 
-class API(ScheduleUtility, ScheduleXML):
+class API(ScheduleUtility, ReadWriteConfigXml):
     """Instantiated once for each house (active or not)
     """
 

@@ -1,7 +1,14 @@
 """
-Created on Sep 5, 2013
+-*- test-case-name: PyHouse.src.Modules.web.test.test_web_clock -*-
 
-@author: briank
+@name: PyHouse/src/Modules/web/web_clock.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
+@Copyright (c) 2013-2014 by D. Brian Kimmel
+@license: MIT License
+@note: Created on Sep 5, 2013
+@summary: Display a clock on the web page.
+
 """
 
 # Import system type stuff
@@ -18,13 +25,8 @@ webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
 
 g_debug = 0
-# 0 = off
-# 1 = log extra info
-# 2 = major routine entry
-# + = NOT USED HERE
 LOG = pyh_log.getLogger('PyHouse.webClock    ')
 
-#==============================================================================
 
 class ClockElement(athena.LiveElement):
     jsClass = u'clock.ClockWidget'
@@ -32,8 +34,6 @@ class ClockElement(athena.LiveElement):
 
     @athena.expose
     def getTimeOfDay(self):
-        if g_debug >= 2:
-            print("web_mainpage.Clock.getTimeOfDay() - called from browser")
         return uc(time.strftime("%I:%M:%S", time.localtime(time.time())))
 
 def uc(msg):

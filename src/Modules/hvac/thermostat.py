@@ -15,7 +15,7 @@ g_debug = 0
 LOG = pyh_log.getLogger('PyHouse.Thermostat    ')
 
 
-class ReadWriteXML(xml_tools.ConfigTools):
+class ReadWriteConfigXml(xml_tools.ConfigTools):
     """
     """
 
