@@ -1,7 +1,7 @@
 """
--*- test-case-name: PyHouse.src.Modules.housing.test.test_internet -*-
+-*- test-case-name: PyHouse.src.Modules.computer.test.test_internet -*-
 
-@Name: PyHouse/src/Modules/housing/internet.py
+@Name: PyHouse/src/Modules/computer/internet.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @copyright: 2012-2014 by D. Brian Kimmel
@@ -14,7 +14,7 @@ Get the internet address and make reports available for web interface.
 
 Since PyHouse is always running (as a daemon) this module will get the IP-v4 address that is
 assigned to our router by the ISP.
-It will then take that IP address and update our Dynamic DNS provider so we may browse to that
+It will then take that IP address and update our Dynamic DNS provider(s) so we may browse to that
 address from some external device and check on the status of the house.
 """
 

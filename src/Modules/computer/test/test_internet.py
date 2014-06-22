@@ -1,11 +1,11 @@
 """
-@name: PyHouse/src/housing/test/test_internet.py
+@name: PyHouse/src/computer/test/test_internet.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @Copyright (c) 2013-2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Apr 8, 2013
-@summary: Test handling the internet information for a house.
+@summary: Test handling the internet information for a computer.
 
 """
 
@@ -14,8 +14,8 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
-from Modules.Core.data_objects import PyHouseData, HouseData, InternetConnectionData, InternetConnectionDynDnsData
-from Modules.housing import internet
+from Modules.Core.data_objects import PyHouseData, HouseData, ComputerData, InternetConnectionData, InternetConnectionDynDnsData
+from Modules.computer import 
 from Modules.web import web_utils
 from Modules.utils.xml_tools import PrettifyXML
 from src.test import xml_data
@@ -25,11 +25,11 @@ class Test_02_XML(unittest.TestCase):
 
     def setUp(self):
         self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.HouseData = HouseData()
+        self.m_pyhouse_obj.Computer = ComputerData()
         self.m_pyhouse_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
-        self.m_houses_xml = self.m_root_xml.find('Houses')
-        self.m_house_xml = self.m_houses_xml.find('House')  # First house
-        self.m_internet_xml = self.m_house_xml.find('Internet')
+        self.m_computer_xml = self.m_root_xml.find('ComputerDivision')
+        self.m_internets_xml = self.m_computer_xml.find('InternetSection')
+        self.m_internet_xml = self.m_internets_xml.find('Internet')
         self.m_dyn_dns_xml = self.m_internet_xml.find('DynamicDNS')
         self.m_house_obj = HouseData()
         self.m_internet_obj = InternetConnectionData()
@@ -39,13 +39,13 @@ class Test_02_XML(unittest.TestCase):
     def test_0201_buildObjects(self):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
         """
-        self.assertEqual(self.m_pyhouse_obj.HouseData.Internet, {}, 'No Internet{}')
+        self.assertEqual(self.m_pyhouse_obj.Computer.InternetConnection, {}, 'No Internet{}')
 
     def test_0202_find_xml(self):
         """ Be sure that the XML contains the right stuff.
         """
         self.assertEqual(self.m_root_xml.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
-        self.assertEqual(self.m_houses_xml.tag, 'Houses', 'XML - No Houses section')
+        self.assertEqual(self.m_computer_xml.tag, 'ComputerDivision', 'XML - No Computer section')
         self.assertEqual(self.m_house_xml.tag, 'House', 'XML - No House section')
         self.assertEqual(self.m_internet_xml.tag, 'Internet', 'XML - No Internet section')
         self.assertEqual(self.m_dyn_dns_xml.tag, 'DynamicDNS', 'XML - No Internet section')
