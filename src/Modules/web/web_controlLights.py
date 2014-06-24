@@ -64,6 +64,6 @@ class ControlLightsElement(athena.LiveElement):
         l_light_obj.UUID = l_json['UUID']
         l_light_obj.HouseIx = l_house_ix
         # PrettyPrintAny(l_light_obj, 'web_controlLights return')
-        self.m_pyhouse_obj.House.APIs.LightingAPI.ChangeLight(l_light_obj, l_level)
+        self.m_pyhouse_obj.APIs.LightingAPI.ChangeLight(l_light_obj, l_level)
 
 # ## END DBK

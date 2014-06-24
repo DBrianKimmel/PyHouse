@@ -79,13 +79,13 @@ class ReadWriteConfigXml(xml_tools.ConfigTools):
             self.m_count += 1
         return l_dns_xml
 
-    def read_internet_xml(self, p_house_xml):
+    def read_internet_xml(self, p_internet_xml):
         """
         """
         l_internet_obj = InternetConnectionData()
-        l_sect = p_house_xml.find('Internet')
+        l_sect = p_internet_xml.find('Internet')
         try:
-            l_internet_obj.ExternalIPv4 = self.get_text_from_xml(p_house_xml, 'ExternalIP')
+            l_internet_obj.ExternalIPv4 = self.get_text_from_xml(p_internet_xml, 'ExternalIP')
             l_internet_obj.ExternalDelay = self.get_int_from_xml(l_sect, 'ExternalDelay')
             l_internet_obj.ExternalUrl = self.get_text_from_xml(l_sect, 'ExternalUrl')
         except AttributeError:
@@ -108,7 +108,7 @@ class ReadWriteConfigXml(xml_tools.ConfigTools):
         """Create a sub tree for 'Internet' - the sub elements do not have to be present.
         @return: a sub tree ready to be appended to house
         """
-        l_internet_xml = ET.Element('Internet')
+        l_internet_xml = ET.Element('InternetSection')
         self.put_text_attribute(l_internet_xml, 'ExternalIP', p_internet_obj.ExternalIPv4)
         self.put_int_attribute(l_internet_xml, 'ExternalDelay', p_internet_obj.ExternalDelay)
         self.put_text_attribute(l_internet_xml, 'ExternalUrl', p_internet_obj.ExternalUrl)
@@ -205,20 +205,19 @@ class FindExternalIpAddress(object):
 
     m_url = None
 
-    def __init__(self, p_pyhouses_obj, p_house_obj):
+    def __init__(self, p_pyhouses_obj):
         self.m_pyhouse_obj = p_pyhouses_obj
-        self.m_house_obj = p_house_obj
         self.m_pyhouse_obj.Twisted.Reactor.callLater(1 * 60, self.get_public_ip)
 
     def get_public_ip(self):
         """Get the public IP address for the house.
         """
-        if self.m_house_obj.Internet.ExternalDelay < 600:
-            self.m_house_obj.Internet.ExternalDelay = 600
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(self.m_house_obj.Internet.ExternalDelay, self.get_public_ip)
-        self.m_url = self.m_house_obj.Internet.ExternalUrl
+        if self.m_pyhouse_obj.Computer.InternetConnection.ExternalDelay < 600:
+            self.m_pyhouse_obj.Computer.InternetConnection.ExternalDelay = 600
+        self.m_pyhouse_obj.Twisted.Reactor.callLater(self.m_pyhouse_obj.Computer.InternetConnection.ExternalDelay, self.get_public_ip)
+        self.m_url = self.m_pyhouse_obj.Computer.InternetConnection.ExternalUrl
         if self.m_url == None:
-            LOG.error("URL is missing for House:{0:}".format(self.m_house_obj.Name))
+            LOG.error("URL is missing for House:{0:}".format(self.m_pyhouse_obj.House.Name))
             return
         LOG.debug("About to get URL:{0:}".format(self.m_url))
         l_ip_page_defer = getPage(self.m_url)
@@ -234,13 +233,13 @@ class FindExternalIpAddress(object):
         """
         # This is for Shawn Powers page - http://snar.co/ip
         l_quad = p_ip_page
-        self.m_house_obj.Internet.ExternalIPv4 = l_quad
+        self.m_pyhouse_obj.Computer.InternetConnection.ExternalIPv4 = l_quad
         l_addr = convert.ConvertEthernet().dotted_quad2long(l_quad)
-        LOG.info("Got External IP page for House:{0:}, Page:{1:}".format(self.m_house_obj.Name, p_ip_page))
+        LOG.info("Got External IP page for House:{0:}, Page:{1:}".format(self.m_pyhouse_obj.House.Name, p_ip_page))
         return l_addr
 
     def eb_no_page(self, p_reason):
-        LOG.error("Failed to Get External IP page for House:{0:}, {1:}".format(self.m_house_obj.Name, p_reason))
+        LOG.error("Failed to Get External IP page for House:{0:}, {1:}".format(self.m_pyhouse_obj.House.Name, p_reason))
 
 
 class DynDnsAPI(object):
@@ -252,8 +251,7 @@ class DynDnsAPI(object):
     Allow for missing responses so as to not break the chain of events.
     """
 
-    def __init__(self, p_pyhouses_obj, p_house_obj):
-        self.m_house_obj = p_house_obj
+    def __init__(self, p_pyhouses_obj):
         self.m_pyhouse_obj = p_pyhouses_obj
         # Wait a bit to avoid all the starting chaos
         self.m_pyhouse_obj.Twisted.Reactor.callLater(3 * 60, self.update_start_process)
@@ -263,7 +261,7 @@ class DynDnsAPI(object):
         to start up a loop for each dynamic service being updated.
         """
         self.m_running = True
-        for l_dyn_obj in self.m_house_obj.Internet.DynDns.itervalues():
+        for l_dyn_obj in self.m_pyhouse_obj.Computer.InternetConnection.DynDns.itervalues():
             l_cmd = lambda x = l_dyn_obj.Interval, y = l_dyn_obj: self.update_loop(x, y)
             self.m_pyhouse_obj.Twisted.Reactor.callLater(l_dyn_obj.Interval, l_cmd)
 
@@ -277,7 +275,7 @@ class DynDnsAPI(object):
         """
         if not self.m_running:
             return
-        LOG.info("Update DynDns for House:{0:}, {1:}, {2:}".format(self.m_house_obj.Name, p_dyn_obj.Name, p_dyn_obj.Url))
+        LOG.info("Update DynDns for House:{0:}, {1:}, {2:}".format(self.m_pyhouse_obj.House.Name, p_dyn_obj.Name, p_dyn_obj.Url))
         self.m_dyn_obj = p_dyn_obj
         self.m_deferred = getPage(p_dyn_obj.Url)
         self.m_deferred.addCallback(self.cb_parse_dyndns)
@@ -293,7 +291,7 @@ class DynDnsAPI(object):
     def eb_parse_dyndns(self, p_response):
         """Afraid.org has no errors except no response in which case we can do nothing anyhow.
         """
-        LOG.warning("Update DynDns for House:{0:} failed ERROR - {1:}.".format(self.m_house_obj.Name, p_response))
+        LOG.warning("Update DynDns for House:{0:} failed ERROR - {1:}.".format(self.m_pyhouse_obj.House.Name, p_response))
 
     def cb_do_delay(self, _p_response):
         l_cmd = lambda x = self.m_dyn_obj.Interval, y = self.m_dyn_obj: self.update_loop(x, y)
@@ -302,8 +300,6 @@ class DynDnsAPI(object):
 
 class API(ReadWriteConfigXml):
 
-    m_house_obj = None
-
     def __init__(self):
         pass
 
@@ -311,19 +307,18 @@ class API(ReadWriteConfigXml):
         """Start async operation of the internet module.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_house_obj = self.m_pyhouse_obj.House.OBJs
-        l_house_xml = self.m_pyhouse_obj.Xml.XmlParsed.find('Houses/House')
-        self.m_pyhouse_obj.Computer.InternetConnection = self.read_internet_xml(l_house_xml)
-        LOG.info("Starting for house:{0:}.".format(self.m_house_obj.Name))
-        FindExternalIpAddress(p_pyhouse_obj, self.m_house_obj)
-        self.m_dyn_loop = DynDnsAPI(p_pyhouse_obj, self.m_house_obj)
+        l_internet_xml = self.m_pyhouse_obj.Xml.XmlParsed.find('ComputerDivision/InternetSection')
+        self.m_pyhouse_obj.Computer.InternetConnection = self.read_internet_xml(l_internet_xml)
+        LOG.info("Starting for house:{0:}.".format(self.m_pyhouse_obj.House.Name))
+        FindExternalIpAddress(p_pyhouse_obj)
+        self.m_dyn_loop = DynDnsAPI(p_pyhouse_obj)
 
     def Stop(self, p_xml):
         """Stop async operations
         write out the XML file.
         """
-        LOG.info("Stopping dyndns for house:{0:}.".format(self.m_house_obj.Name))
+        LOG.info("Stopping dyndns for house:{0:}.".format(self.m_pyhouse_obj.House.Name))
         self.m_dyn_loop.stop_dyndns_process()
-        p_xml.append(self.write_internet_xml(self.m_house_obj.Internet))
+        p_xml.append(self.write_internet_xml(self.m_pyhouse_obj.Computer.InternetConnection))
 
 # ## END DBK

@@ -109,7 +109,7 @@ class API(ReadWriteConfigXml):
         Load and start the family if there is a controller in the house for the family.
         Runs Device_<family>.API.Start()
         """
-        LOG.info("---Starting lighting families for house {0:}.".format(p_house_obj.Name))
+        LOG.info("---Starting lighting families for house {0:}.".format(p_pyhouse_obj.House.Name))
         for l_family_obj in p_house_obj.FamilyData.itervalues():
             l_family_obj.ModuleAPI.Start(p_pyhouse_obj)  # will run Device_<family>.API.Start()
             LOG.info("Started lighting family {0:}.".format(l_family_obj.Name))

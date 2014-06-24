@@ -59,8 +59,8 @@ class LightingLightsAPI(ReadWriteConfigXml):
     def read_lights_xml(self, p_pyhouse_obj):
         self.m_count = 0
         l_lights_dict = {}
-        l_house_xml = p_pyhouse_obj.Xml.XmlRoot.find('Houses/House')
-        l_lights_xml = l_house_xml.find('Lights')
+        l_house_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
+        l_lights_xml = l_house_xml.find('LightSection')
         # PrettyPrintAny(l_lights_xml, 'Lighting Lights')
         try:
             for l_light_xml in l_lights_xml.iterfind('Light'):
@@ -77,7 +77,7 @@ class LightingLightsAPI(ReadWriteConfigXml):
         return l_light_xml
 
     def write_lights_xml(self, p_lights_obj):
-        l_lighting_xml = ET.Element('Lights')
+        l_lighting_xml = ET.Element('LightSection')
         l_count = 0
         for l_light_obj in p_lights_obj.itervalues():
             l_light_xml = self.write_base_object_xml('Light', l_light_obj)

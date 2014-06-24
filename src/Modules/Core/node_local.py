@@ -109,7 +109,8 @@ class HandleNodeType(object):
         l_ir.Start(p_pyhouses_obj)
 
 
-class XML(ConfigTools):
+class ReadWriteConfigXml(ConfigTools):
+# class XML(ConfigTools):
 
     m_count = 0
 
@@ -190,7 +191,7 @@ class XML(ConfigTools):
 
 
 
-class Utility(XML):
+class Utility(ReadWriteConfigXml):
 
     def get_node_info(self, p_pyhouses_obj):
         p_pyhouses_obj.Computer.Nodes[0].Name = platform.node()

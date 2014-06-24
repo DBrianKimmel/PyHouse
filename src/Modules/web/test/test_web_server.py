@@ -17,7 +17,7 @@ from twisted.web import server
 from twisted.web.test.test_web import DummyRequest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, ComputerData, XmlData
+from Modules.Core.data_objects import PyHouseData, ComputerInformation, XmlInformation
 from Modules.web import web_server
 from Modules.utils.tools import PrettyPrintAny
 from src.test import xml_data
@@ -77,8 +77,8 @@ class SetupMixin(object):
         self.m_api = web_server.API()
 
         self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.Computer = ComputerData()
-        self.m_pyhouse_obj.Xml = XmlData()
+        self.m_pyhouse_obj.Computer = ComputerInformation()
+        self.m_pyhouse_obj.Xml = XmlInformation()
         self.m_pyhouse_obj.Xml.XmlRoot = self.m_root_xml
 
         self.m_houses_xml = self.m_root_xml.find('HouseDivision')

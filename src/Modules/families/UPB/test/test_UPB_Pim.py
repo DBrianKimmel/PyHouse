@@ -22,7 +22,7 @@ import xml.etree.ElementTree as ET
 from Modules.families.UPB import UPB_Pim
 from Modules.lights import lighting_core
 from src.test import xml_data
-from Modules.Core.data_objects import PyHouseData, HouseData, ControllerData
+from Modules.Core.data_objects import PyHouseData, HouseObjs, ControllerData
 
 XML = xml_data.XML_LONG
 
@@ -32,7 +32,7 @@ class Test(unittest.TestCase):
 
     def setUp(self):
         self.m_root_element = ET.fromstring(XML)
-        self.m_house_obj = HouseData()
+        self.m_house_obj = HouseObjs()
         self.m_controller = ControllerData()
         self.m_api = UPB_Pim.API()
 

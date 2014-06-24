@@ -14,7 +14,7 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, ComputerData, LogData, HouseData, XmlData
+from Modules.Core.data_objects import PyHouseData, ComputerInformation, LogData, XmlInformation
 from Modules.utils import pyh_log as pyhLog
 from Modules.utils.tools import PrettyPrintAny
 from src.test import xml_data, test_mixin
@@ -29,10 +29,10 @@ class SetupMixin(object):
         self.m_api = pyhLog.API()
 
         self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.Computer = ComputerData()
+        self.m_pyhouse_obj.Computer = ComputerInformation()
         self.m_pyhouse_obj.Computer.Logs = LogData()
         self.m_pyhouse_obj.HouseData = HouseData()
-        self.m_pyhouse_obj.Xml = XmlData
+        self.m_pyhouse_obj.Xml = XmlInformation
         self.m_pyhouse_obj.Xml.XmlRoot = self.m_root_xml
 
         self.m_houses_xml = self.m_root_xml.find('HouseDivision')

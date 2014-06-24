@@ -14,6 +14,7 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
+from Modules.Core.data_objects import HouseObjs
 from Modules.scheduling import schedule
 from Modules.utils.tools import PrettyPrintAny
 from src.test import xml_data, test_mixin
@@ -25,6 +26,7 @@ class SetupMixin(object):
 
     def setUp(self):
         test_mixin.Setup()
+        self.m_pyhouse_obj.House.OBJs = HouseObjs()
         self.m_api = schedule.API()
 
         self.m_houses_xml = self.m_root_xml.find('Houses')

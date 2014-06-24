@@ -16,10 +16,10 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, HouseData, LocationData
+from Modules.Core.data_objects import PyHouseData, HouseObjs, LocationData
 from Modules.housing import location
 from Modules.web import web_utils
-from Modules.utils.xml_tools import PrettifyXML
+from Modules.utils.tools import PrettyPrintAny
 from src.test import xml_data
 
 XML = xml_data.XML_LONG
@@ -29,7 +29,7 @@ class Test_02_XML(unittest.TestCase):
 
     def _pyHouses(self):
         self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.HouseData = HouseData()
+        self.m_pyhouse_obj.HouseObjs = HouseObjs()
         self.m_pyhouse_obj.XmlRoot = self.m_root = ET.fromstring(XML)
         self.m_houses = self.m_root.find('Houses')
         self.m_house_xml = self.m_houses.find('House')
@@ -57,7 +57,7 @@ class Test_02_XML(unittest.TestCase):
         """
         l_location = self.m_api.read_location_xml(self.m_house_xml)
         l_xml = self.m_api.write_location_xml(l_location)
-        print('XML: {0:}'.format(PrettifyXML(l_xml)))
+        print('XML: {0:}'.format(PretttPrintAny(l_xml)))
 
 
     def test_0221_CreateJson(self):

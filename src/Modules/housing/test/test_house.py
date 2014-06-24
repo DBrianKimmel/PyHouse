@@ -16,7 +16,7 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, HouseData, LocationData
+from Modules.Core.data_objects import PyHouseData, HouseObjs, LocationData
 from Modules.housing import house
 from Modules.web import web_utils
 from Modules.utils import xml_tools
@@ -58,7 +58,7 @@ class Test_02_ReadXML(unittest.TestCase):
 
     def _pyHouses(self):
         self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.HouseData = HouseData()
+        self.m_pyhouse_obj.HouseObjs = HouseObjs()
         self.m_pyhouse_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         self.m_houses_xml = self.m_root_xml.find('Houses')
         self.m_house_xml = self.m_houses_xml.find('House')
@@ -71,7 +71,7 @@ class Test_02_ReadXML(unittest.TestCase):
     def test_0201_buildObjects(self):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
         """
-        self.assertEqual(self.m_pyhouse_obj.HouseData.Rooms, {}, 'No Rooms{}')
+        self.assertEqual(self.m_pyhouse_obj.HouseObjs.Rooms, {}, 'No Rooms{}')
 
     def test_0202_find_xml(self):
         """ Be sure that the XML contains the right stuff.
@@ -91,7 +91,7 @@ class Test_02_ReadXML(unittest.TestCase):
     def test_0204_write_house_xml(self):
         l_house_obj = self.m_api.read_house_xml(self.m_house_xml)
         l_xml = self.m_api.write_house_xml(l_house_obj)
-        print('XML: {0:}'.format(xml_tools.PrettifyXML(l_xml)))
+        print('XML: {0:}'.format(xml_tools.PrettyPrintAny(l_xml)))
 
     def test_0221_CreateJson(self):
         """ Create a JSON object for Location.
@@ -106,7 +106,7 @@ class Test_03_Utilities(unittest.TestCase):
 
     def setUp(self):
         self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.HouseData = HouseData()
+        self.m_pyhouse_obj.HouseObjs = HouseObjs()
         self.m_pyhouse_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         self.m_houses_xml = self.m_root_xml.find('Houses')
         self.m_house_xml = self.m_houses_xml.find('House')

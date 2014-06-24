@@ -16,11 +16,10 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
-from Modules.Core.data_objects import PyHouseData, HouseData, RoomData
+from Modules.Core.data_objects import PyHouseData, HouseObjs, RoomData
 from Modules.housing import rooms
 from src.test import xml_data
 from Modules.web import web_utils
-from Modules.utils.xml_tools import PrettifyXML
 from Modules.utils.tools import PrettyPrintAny
 
 
@@ -28,7 +27,7 @@ class Test_02_XML(unittest.TestCase):
 
     def _pyHouses(self):
         self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.House = HouseData()
+        self.m_pyhouse_obj.House = HouseObjs()
         self.m_pyhouse_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         self.m_houses_xml = self.m_root_xml.find('Houses')
         self.m_house_xml = self.m_houses_xml.find('House')  # First house
@@ -77,7 +76,7 @@ class Test_02_XML(unittest.TestCase):
         """
         l_room = self.m_api.read_one_room(self.m_house_xml)
         l_xml = self.m_api.write_one_room(l_room)
-        print('XML: {0:}'.format(PrettifyXML(l_xml)))
+        print('XML: {0:}'.format(PrettyPrintAny(l_xml)))
 
 
     def test_0222_WriteAllRoomsXml(self):
@@ -85,7 +84,7 @@ class Test_02_XML(unittest.TestCase):
         """
         l_rooms = self.m_api.read_rooms_xml(self.m_house_xml)
         l_xml = self.m_api.write_rooms_xml(l_rooms)
-        print('XML: {0:}'.format(PrettifyXML(l_xml)))
+        print('XML: {0:}'.format(PrettPrintAny(l_xml)))
 
 
     def test_0231_CreateJson(self):

@@ -31,11 +31,12 @@ class PyHouseData(object):
     NOTE that the data entries need to be dicts so json encoding of the data works properly.
     """
     def __init__(self):
-        self.Computer = {}  # ComputerData()
+        self.APIs = {}  # PyHouseAPIs()
+        self.Computer = {}  # ComputerInformation()
         self.House = {}  # HouseInformation()
-        self.Services = {}  # CoreServicesData()
-        self.Twisted = {}  # TwistedInfo()
-        self.Xml = {}  # XmlData
+        self.Services = {}  # CoreServicesInformation()
+        self.Twisted = {}  # TwistedInformation()
+        self.Xml = {}  # XmlInformation()
 
 
 class ABaseObject(object):
@@ -57,7 +58,7 @@ class BaseLightingData(ABaseObject):
     def __init__(self):
         self.Comment = ''
         self.Coords = ''  # Room relative coords of the device
-        self.Dimmable = False
+        self.IsDimmable = False
         self.LightingFamily = None
         self.RoomName = ''
         self.LightingType = ''  # Button | Light | Controller
@@ -77,13 +78,13 @@ class ControllerData(BaseLightingData):
     """
     def __init__(self):
         self.LightingType = 'Controller'  # Override the Core definition
-        self.ControllerInterface = ''  # Serial | USB | Ethernet
+        self.InterfaceType = ''  # Serial | USB | Ethernet
         self.Port = ''
         #
-        self._DriverAPI = None  # ControllerInterface API() - Serial, USB etc.
+        self._DriverAPI = None  # InterfaceType API() - Serial, USB etc.
         self._HandlerAPI = None  # PLM, PIM, etc (family controller device handler) API() address
         #
-        self._Data = None  # ControllerInterface specific data
+        self._Data = None  # InterfaceType specific data
         self._Message = ''
         self._Queue = None
 
@@ -93,14 +94,13 @@ class LightData(BaseLightingData):
     Inherits from BaseLightingData and ABaseObject
     """
     def __init__(self):
-        self.Controller = None
+        self.IsController = None
         self.LightingType = 'Light'
         self.CurLevel = 0
 
 
 class FamilyData(ABaseObject):
     """A container for every family that has been defined.
-    Usually called 'l_family_obj'
     """
     def __init__(self):
         self.ModuleAPI = None  # Device_Insteon.API()
@@ -114,14 +114,14 @@ class InsteonData (LightData):
     def __init__(self):
         super(InsteonData, self).__init__()
         self.InsteonAddress = 0  # 3 bytes
-        self.Controller = False
+        self.IsController = False
         self.DevCat = 0  # DevCat and SubCat (2 bytes)
         self.LightingFamily = 'Insteon'
         self.GroupList = ''
         self.GroupNumber = 0
-        self.Master = False  # False is Slave
+        self.IsMaster = False  # False is Slave
         self.ProductKey = ''
-        self.Responder = False
+        self.IsResponder = False
 
 
 class UPBData(LightData):
@@ -142,14 +142,24 @@ class X10LightingData(LightData):
         self.X10Address = 'ab'
 
 
-class ComputerData(object):
+class ComputerInformation(object):
     """
     """
     def __init__(self):
+        # self.APIs = {}  # ComputerAPIs()
         self.InternetConnection = {}  # InternetConnectionData()
         self.Logs = {}  # LogData()
         self.Nodes = {}  # NodeData()
         self.Web = {}  # WebData()
+
+
+class XXXComputerAPIs(object):
+    """
+    """
+    def __init__(self):
+        self.LogsAPI = None
+        self.NodesAPI = None
+        self.WebAPI = None
 
 
 class HouseInformation(ABaseObject):
@@ -158,10 +168,10 @@ class HouseInformation(ABaseObject):
     """
     def __init__(self):
         self.APIs = {}  # HouseAPIs()
-        self.OBJs = {}  # HouseData()
+        self.OBJs = {}  # HouseObjs()
 
 
-class HouseData(object):
+class HouseObjs(object):
     """This is about a single House.
     """
     def __init__(self):
@@ -175,7 +185,7 @@ class HouseData(object):
         self.Thermostats = {}  # ThermostatData()
 
 
-class HouseAPIs(object):
+class XXXHouseAPIs(object):
     """
     """
     def __init__(self):
@@ -283,7 +293,7 @@ class InternetConnectionDynDnsData(ABaseObject):
         self.Url = None
 
 
-class XmlData(object):
+class XmlInformation(object):
     """A collection of XLM data used for Configutation
     """
     def __init__(self):
@@ -291,7 +301,7 @@ class XmlData(object):
         self.XmlParsed = None
         self.XmlRoot = None
         self.XmlSection = None
-        self.XmlVersion = 2
+        self.XmlVersion = __version__
 
 
 class PyHouseAPIs(object):
@@ -299,14 +309,28 @@ class PyHouseAPIs(object):
     """
 
     def __init__(self):
-        self.PyHouseAPI = None
         self.CoreAPI = None
+        self.EntertainmentAPI = None
         self.HouseAPI = None
+        self.InternetAPI = None
+        self.LightingAPI = None
         self.LogsAPI = None
+        self.NodesAPI = None
+        self.PyHouseAPI = None
+        self.ScheduleAPI = None
         self.WebAPI = None
+        #
+        # self.CommunicationsAPI = None
+        # self.HvacAPI = None
+        # self.IrrigationAPI = None
+        # self.LocationAPI = None
+        # self.PoolAPI = None
+        # self.RoomsAPI = None
+        # self.SecurityAPI = None
+        # self.WeatherAPI = None
 
 
-class TwistedInfo(object):
+class TwistedInformation(object):
     """Twisted info is kept in this class
     """
     def __init__(self):
@@ -314,7 +338,7 @@ class TwistedInfo(object):
         self.Reactor = reactor
 
 
-class CoreServicesData(object):
+class CoreServicesInformation(object):
     """Various twisted services in PyHouse
     """
     def __init__(self):
@@ -345,7 +369,7 @@ class SerialControllerData(object):
     """The additional data needed for serial interfaces.
     """
     def __init__(self):
-        self.ControllerInterface = 'Serial'
+        self.InterfaceType = 'Serial'
         self.BaudRate = 9600
         self.ByteSize = 8
         self.DsrDtr = False
@@ -360,7 +384,7 @@ class USBControllerData(object):
     """A lighting controller that is plugged into one of the nodes USB ports
     """
     def __init__(self):
-        self.ControllerInterface = 'USB'
+        self.InterfaceType = 'USB'
         self.Product = 0
         self.Vendor = 0
 
@@ -369,7 +393,7 @@ class  EthernetControllerData(object):
     """A lighting controller that is connected to the node via Ethernet
     """
     def __init__(self):
-        self.ControllerInterface = 'Ethernet'
+        self.InterfaceType = 'Ethernet'
         self.PortNumber = 0
         self.Protocol = 'TCP'
 

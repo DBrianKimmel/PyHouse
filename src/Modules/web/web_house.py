@@ -77,6 +77,6 @@ class HouseElement(athena.LiveElement):
         l_obj.Location.Longitude = l_json['Longitude']
         l_obj.Location.TimeZone = l_json['TimeZone']
         l_obj.Location.SavingsTime = l_json['SavingsTime']
-        self.m_pyhouse_obj.House = l_obj
+        self.m_pyhouse_obj.House.OBJs = l_obj
 
 # ## END DBK

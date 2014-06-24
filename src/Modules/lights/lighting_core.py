@@ -16,6 +16,7 @@ This is a base class that other lighting modules inherit from.
 
 # Import PyHouse files
 from Modules.utils.xml_tools import ConfigTools
+# from Modules.utils.tools import PrettyPrintAny
 
 g_debug = 0
 
@@ -32,19 +33,20 @@ class ReadWriteConfigXml(ConfigTools):
         self.read_base_object_xml(p_device_obj, p_entry_xml)
         p_device_obj.Comment = self.get_text_from_xml(p_entry_xml, 'Comment')
         p_device_obj.Coords = self.get_text_from_xml(p_entry_xml, 'Coords')
-        p_device_obj.Dimmable = self.get_bool_from_xml(p_entry_xml, 'IsDimmable')
-        p_device_obj.LightingFamily = l_fam = self.get_text_from_xml(p_entry_xml, 'LightingFamily')
+        p_device_obj.IsDimmable = self.get_bool_from_xml(p_entry_xml, 'IsDimmable')
+        p_device_obj.LightingFamily = self.get_text_from_xml(p_entry_xml, 'LightingFamily')
         p_device_obj.RoomName = p_entry_xml.findtext('Room')
-        p_device_obj.LightingType = p_entry_xml.findtext('Type')
+        p_device_obj.LightingType = p_entry_xml.findtext('LightingType')
+        # PrettyPrintAny(p_device_obj, 'Lighting_Core - lighting')
         return p_device_obj
 
     def write_base_lighting_xml(self, p_entry_xml, p_device_obj):
         self.put_text_element(p_entry_xml, 'Comment', p_device_obj.Comment)
         self.put_text_element(p_entry_xml, 'Coords', p_device_obj.Coords)
-        self.put_bool_element(p_entry_xml, 'IsDimmable', p_device_obj.Dimmable)
+        self.put_bool_element(p_entry_xml, 'IsDimmable', p_device_obj.IsDimmable)
         self.put_text_element(p_entry_xml, 'LightingFamily', p_device_obj.LightingFamily)
         self.put_text_element(p_entry_xml, 'Room', p_device_obj.RoomName)
-        self.put_text_element(p_entry_xml, 'Type', p_device_obj.LightingType)
+        self.put_text_element(p_entry_xml, 'LightingType', p_device_obj.LightingType)
         return p_entry_xml
 
 # ## END DBK

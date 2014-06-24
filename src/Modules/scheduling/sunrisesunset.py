@@ -384,7 +384,7 @@ class SSAPI(SunCalcs):
         p_earth_data.Latitude = p_house_obj.Location.Latitude
         p_earth_data.Longitude = p_house_obj.Location.Longitude
         p_earth_data.TimeZone = p_house_obj.Location.TimeZone
-        p_earth_data.Name = p_house_obj.Name
+        # p_earth_data.Name = p_house_obj.Name
 
 
 class API(SSAPI):
@@ -393,10 +393,10 @@ class API(SSAPI):
         self.earth_data = EarthParameters()
         self.solar_data = SolarParameters()
 
-    def Start(self, p_pyhouse_obj, p_house_obj, p_date = datetime.date.today()):
+    def Start(self, p_pyhouse_obj, p_date = datetime.date.today()):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_house_obj = p_house_obj
-        SSAPI().load_location(p_house_obj, self.earth_data, self.solar_data)
+        self.m_house_obj = p_pyhouse_obj.House.OBJs
+        SSAPI().load_location(self.m_house_obj, self.earth_data, self.solar_data)
         self.earth_data.Date = p_date
         SSAPI().calc_sunrise_sunset(self.earth_data, self.solar_data)
 

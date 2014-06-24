@@ -438,22 +438,22 @@ class UpbPimAPI(Device_UPB.ReadWriteXml, CreateCommands):
         if self.m_controller_obj.Active != True:
             return False
         if g_debug >= 1:
-            LOG.debug("UPB_PIM.start_controller() - LightingFamily:{0:}, Interface:{1:}, Active:{2:}".format(self.m_controller_obj.LightingFamily, self.m_controller_obj.ControllerInterface, self.m_controller_obj.Active))
+            LOG.debug("UPB_PIM.start_controller() - LightingFamily:{0:}, InterfaceType:{1:}, Active:{2:}".format(self.m_controller_obj.LightingFamily, self.m_controller_obj.InterfaceType, self.m_controller_obj.Active))
         l_key = self.m_controller_obj.Key
         l_pim = UPBData()
-        l_pim.ControllerInterface = self.m_controller_obj.ControllerInterface
+        l_pim.InterfaceType = self.m_controller_obj.InterfaceType
         l_pim.Name = self.m_controller_obj.Name
         l_pim.UPBAddress = int(self.m_controller_obj.UPBAddress, 0)
         l_pim.Password = self.m_controller_obj.Password
         l_pim.UnitID = int(self.m_controller_obj.UnitID, 0)
-        LOG.info('Found UPB PIM named: {0:}, Type={1:}'.format(l_pim.Name, l_pim.ControllerInterface))
-        if self.m_controller_obj.ControllerInterface.lower() == 'serial':
+        LOG.info('Found UPB PIM named: {0:}, Type={1:}'.format(l_pim.Name, l_pim.InterfaceType))
+        if self.m_controller_obj.InterfaceType.lower() == 'serial':
             from Modules.drivers import Driver_Serial
             l_driver = Driver_Serial.API()
-        elif self.m_controller_obj.ControllerInterface.lower() == 'ethernet':
+        elif self.m_controller_obj.InterfaceType.lower() == 'ethernet':
             from Modules.drivers import Driver_Ethernet
             l_driver = Driver_Ethernet.API()
-        elif self.m_controller_obj.ControllerInterface.lower() == 'usb':
+        elif self.m_controller_obj.InterfaceType.lower() == 'usb':
             # from drivers import Driver_USB_17DD_5500
             from Modules.drivers import Driver_USB
             # l_driver = Driver_USB_17DD_5500.API()

@@ -1,0 +1,217 @@
+2014-06-22 12:05:51-0400 [-] Log opened.
+2014-06-22 12:05:51-0400 [PyHouse             ] Initializing PyHouse.
+	
+	
+2014-06-22 12:05:51-0400 [PyHouse.CoreSetup   ] 
+	------------------------------------------------------------------
+	
+	
+2014-06-22 12:05:51-0400 [PyHouse             ] Initialized.
+	
+2014-06-22 12:05:51-0400 [PyHouse.NodeLocal   ] Interface:{59F2EEE3-780E-4B30-80B2-EB8216CC63B6}, Mac:, V4:['169.254.32.60'], V6:['fe80::66d4:daff:fe71:60b%16'] - 0
+2014-06-22 12:05:51-0400 [PyHouse.NodeLocal   ] Interface:{5A910E84-B99A-43FF-A257-67149139B4AF}, Mac:, V4:['169.254.17.194'], V6:['fe80::4225:c2ff:fee4:fcd9%15'] - 1
+2014-06-22 12:05:51-0400 [PyHouse.NodeLocal   ] Interface:{EA594141-246C-4537-B0CF-DA1DDCDD956C}, Mac:, V4:['169.254.172.228'], V6:['fe80::4225:c2ff:fee4:fcd9%14'] - 2
+2014-06-22 12:05:51-0400 [PyHouse.NodeLocal   ] Interface:{C31DACE4-33A2-443F-81BA-C5701557C5CD}, Mac:, V4:['192.168.1.115'], V6:['2604:8800:100:8268:4225:c2ff:fee4:fcd8', '2604:8800:100:8268:2592:b4dc:26d2:925a', 'fe80::4225:c2ff:fee4:fcd8%13'] - 3
+2014-06-22 12:05:51-0400 [PyHouse.NodeLocal   ] Interface:{9C3C3D30-6889-49A3-A733-839B1B06C97C}, Mac:, V4:['169.254.249.175'], V6:['fe80::a2e:5fff:fe8c:dfd2%11'] - 4
+2014-06-22 12:05:51-0400 [PyHouse.NodeLocal   ] Interface:{846EE342-7039-11DE-9D20-806E6F6E6963}, Mac:, V4:['127.0.0.1'], V6:['::1'] - 5
+2014-06-22 12:05:51-0400 [PyHouse.NodeLocal   ] Interface:{3D1CA875-5DE6-467A-A016-6F378F7A8F16}, Mac:, V4:[], V6:['fe80::5efe:192.168.1.115%18'] - 6
+2014-06-22 12:05:51-0400 [PyHouse.NodeLocal   ] Interface:{C026DBCB-EF4F-4F50-A0EF-9D707D9DAF48}, Mac:, V4:[], V6:['2001:0:9d38:6ab8:10b1:1143:b746:e807', 'fe80::10b1:1143:b746:e807%17'] - 7
+2014-06-22 12:05:51-0400 [PyHouse.NodeLocal   ] Windows Node
+2014-06-22 12:05:51-0400 [PyHouse.NodeLocal   ] Started
+2014-06-22 12:05:51-0400 [-] MulticastDiscoveryServerProtocol starting on 8582
+2014-06-22 12:05:51-0400 [-] Starting protocol <Modules.Core.node_discovery.MulticastDiscoveryServerProtocol object at 0x0000000003E79828>
+2014-06-22 12:05:51-0400 [-] MulticastDiscoveryClientProtocol starting on 8582
+2014-06-22 12:05:51-0400 [-] Starting protocol <Modules.Core.node_discovery.MulticastDiscoveryClientProtocol object at 0x0000000003E79BA8>
+2014-06-22 12:05:51-0400 [-] Unhandled Error
+	Traceback (most recent call last):
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 416, in fireEvent
+	    DeferredList(beforeResults).addCallback(self._continueFiring)
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 306, in addCallback
+	    callbackKeywords=kw)
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 295, in addCallbacks
+	    self._runCallbacks()
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 577, in _runCallbacks
+	    current.result = callback(current.result, *args, **kw)
+	--- <exception caught here> ---
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 429, in _continueFiring
+	    callable(*args, **kwargs)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\PyHouse.py", line 205, in Start
+	    self.m_pyhouse_obj.House.APIs.CoreAPI.Start(self.m_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\Core\setup.py", line 56, in Start
+	    p_pyhouse_obj.House.APIs.HouseAPI.Start(p_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\housing\house.py", line 129, in Start
+	    p_pyhouse_obj.House.OBJs = self.read_house_xml(l_house_xml)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\housing\house.py", line 77, in read_house_xml
+	    l_house_obj.Location = self.read_location_xml(p_house_xml)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\housing\location.py", line 37, in read_location_xml
+	    l_location_xml = p_house_xml.find('Location')
+	exceptions.AttributeError: 'NoneType' object has no attribute 'find'
+	
+2014-06-22 12:05:51-0400 [PyHouse.NodeDiscovry] Update our node (slot 0) address to 192.168.1.115
+2014-06-22 12:05:51-0400 [PyHouse.NodeDiscovry] Added node # 1 - From Addr: 192.168.1.35, Named: pi-05
+2014-06-22 12:05:51-0400 [PyHouse.NodeDiscovry] Added node # 2 - From Addr: 192.168.1.33, Named: pi-03
+2014-06-22 12:05:51-0400 [PyHouse.NodeDiscovry] Added node # 3 - From Addr: 192.168.1.36, Named: pi-06
+2014-06-22 12:05:51-0400 [PyHouse.NodeDiscovry] Added node # 4 - From Addr: 192.168.1.32, Named: pi-02
+2014-06-22 12:06:06-0400 [-] AmpServerFactory starting on 8581
+2014-06-22 12:06:06-0400 [-] Starting factory <Modules.Core.node_domain.AmpServerFactory instance at 0x0000000003E7CAC8>
+2014-06-22 12:06:06-0400 [-] Starting factory <twisted.internet.protocol.ClientFactory instance at 0x0000000003F70488>
+2014-06-22 12:06:06-0400 [-] Starting factory <twisted.internet.protocol.ClientFactory instance at 0x0000000003F707C8>
+2014-06-22 12:06:06-0400 [-] Starting factory <twisted.internet.protocol.ClientFactory instance at 0x0000000003F70AC8>
+2014-06-22 12:06:06-0400 [-] Starting factory <twisted.internet.protocol.ClientFactory instance at 0x0000000003F70E08>
+2014-06-22 12:06:06-0400 [-] Starting factory <twisted.internet.protocol.ClientFactory instance at 0x0000000003F751C8>
+2014-06-22 12:06:06-0400 [PyHouse.NodeDomain  ] NodeDomainServerProtocol()  (NDSP-1  210)
+2014-06-22 12:06:06-0400 [PyHouse.NodeDomain  ] Dispatch DomainBoxDispatcher_AmpProtocol()  (DBD-1  100)
+2014-06-22 12:06:06-0400 [PyHouse.NodeDomain  ]       Repr: <DomainBoxDispatcher_AmpProtocol at 0x3f6eba8>
+2014-06-22 12:06:06-0400 [PyHouse.NodeDomain  ] ServerProtocol() initialized  (NDSP-1a  216)
+2014-06-22 12:06:06-0400 [PyHouse.NodeDomain  ]       Dispatch:<DomainBoxDispatcher_AmpProtocol at 0x3f6eba8>
+2014-06-22 12:06:06-0400 [PyHouse.NodeDomain  ] AmpServerFactory.buildProtocol()  (197)
+2014-06-22 12:06:06-0400 [PyHouse.NodeDomain  ] Dispatch - makeConnection  (DBD-2  110)
+2014-06-22 12:06:06-0400 [PyHouse.NodeDomain  ]       Transport:<NodeDomainServerProtocol #0 on 8581>
+2014-06-22 12:06:06-0400 [Uninitialized] AMP connection established (HOST:IPv4Address(TCP, '192.168.1.115', 39601) PEER:IPv4Address(TCP, '192.168.1.115', 8581))
+2014-06-22 12:06:06-0400 [PyHouse.NodeDomain  ] Client - sending info to remote server.  (310)
+2014-06-22 12:06:06-0400 [Uninitialized] AMP connection established (HOST:IPv4Address(TCP, '192.168.1.115', 39602) PEER:IPv4Address(TCP, '192.168.1.35', 8581))
+2014-06-22 12:06:06-0400 [PyHouse.NodeDomain  ] Client - sending info to remote server.  (310)
+2014-06-22 12:06:06-0400 [Uninitialized] AMP connection established (HOST:IPv4Address(TCP, '192.168.1.115', 39605) PEER:IPv4Address(TCP, '192.168.1.32', 8581))
+2014-06-22 12:06:06-0400 [PyHouse.NodeDomain  ] Client - sending info to remote server.  (310)
+2014-06-22 12:06:06-0400 [Uninitialized] AMP connection established (HOST:IPv4Address(TCP, '192.168.1.115', 39604) PEER:IPv4Address(TCP, '192.168.1.33', 8581))
+2014-06-22 12:06:06-0400 [PyHouse.NodeDomain  ] Client - sending info to remote server.  (310)
+2014-06-22 12:06:06-0400 [Uninitialized] AMP connection established (HOST:IPv4Address(TCP, '192.168.1.115', 39603) PEER:IPv4Address(TCP, '192.168.1.36', 8581))
+2014-06-22 12:06:06-0400 [PyHouse.NodeDomain  ] Client - sending info to remote server.  (310)
+2014-06-22 12:45:55-0400 [-] Log opened.
+2014-06-22 12:45:55-0400 [PyHouse             ] Initializing PyHouse.
+	
+	
+2014-06-22 12:45:55-0400 [PyHouse.CoreSetup   ] 
+	------------------------------------------------------------------
+	
+	
+2014-06-22 12:45:55-0400 [PyHouse             ] Initialized.
+	
+2014-06-22 12:45:55-0400 [PyHouse.NodeLocal   ] Interface:{59F2EEE3-780E-4B30-80B2-EB8216CC63B6}, Mac:, V4:['169.254.32.60'], V6:['fe80::66d4:daff:fe71:60b%16'] - 0
+2014-06-22 12:45:55-0400 [PyHouse.NodeLocal   ] Interface:{5A910E84-B99A-43FF-A257-67149139B4AF}, Mac:, V4:['169.254.17.194'], V6:['fe80::4225:c2ff:fee4:fcd9%15'] - 1
+2014-06-22 12:45:55-0400 [PyHouse.NodeLocal   ] Interface:{EA594141-246C-4537-B0CF-DA1DDCDD956C}, Mac:, V4:['169.254.172.228'], V6:['fe80::4225:c2ff:fee4:fcd9%14'] - 2
+2014-06-22 12:45:55-0400 [PyHouse.NodeLocal   ] Interface:{C31DACE4-33A2-443F-81BA-C5701557C5CD}, Mac:, V4:['192.168.1.115'], V6:['2604:8800:100:8268:4225:c2ff:fee4:fcd8', '2604:8800:100:8268:2592:b4dc:26d2:925a', 'fe80::4225:c2ff:fee4:fcd8%13'] - 3
+2014-06-22 12:45:55-0400 [PyHouse.NodeLocal   ] Interface:{9C3C3D30-6889-49A3-A733-839B1B06C97C}, Mac:, V4:['169.254.249.175'], V6:['fe80::a2e:5fff:fe8c:dfd2%11'] - 4
+2014-06-22 12:45:55-0400 [PyHouse.NodeLocal   ] Interface:{846EE342-7039-11DE-9D20-806E6F6E6963}, Mac:, V4:['127.0.0.1'], V6:['::1'] - 5
+2014-06-22 12:45:55-0400 [PyHouse.NodeLocal   ] Interface:{3D1CA875-5DE6-467A-A016-6F378F7A8F16}, Mac:, V4:[], V6:['fe80::5efe:192.168.1.115%18'] - 6
+2014-06-22 12:45:55-0400 [PyHouse.NodeLocal   ] Interface:{C026DBCB-EF4F-4F50-A0EF-9D707D9DAF48}, Mac:, V4:[], V6:['2001:0:9d38:6ab8:10b1:1143:b746:e807', 'fe80::10b1:1143:b746:e807%17'] - 7
+2014-06-22 12:45:55-0400 [PyHouse.NodeLocal   ] Windows Node
+2014-06-22 12:45:55-0400 [PyHouse.NodeLocal   ] Started
+2014-06-22 12:45:55-0400 [-] MulticastDiscoveryServerProtocol starting on 8582
+2014-06-22 12:45:55-0400 [-] Starting protocol <Modules.Core.node_discovery.MulticastDiscoveryServerProtocol object at 0x0000000003FF0198>
+2014-06-22 12:45:55-0400 [-] MulticastDiscoveryClientProtocol starting on 8582
+2014-06-22 12:45:55-0400 [-] Starting protocol <Modules.Core.node_discovery.MulticastDiscoveryClientProtocol object at 0x0000000003FF0780>
+2014-06-22 12:45:55-0400 [-] Unhandled Error
+	Traceback (most recent call last):
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 416, in fireEvent
+	    DeferredList(beforeResults).addCallback(self._continueFiring)
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 306, in addCallback
+	    callbackKeywords=kw)
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 295, in addCallbacks
+	    self._runCallbacks()
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 577, in _runCallbacks
+	    current.result = callback(current.result, *args, **kw)
+	--- <exception caught here> ---
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 429, in _continueFiring
+	    callable(*args, **kwargs)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\PyHouse.py", line 205, in Start
+	    self.m_pyhouse_obj.House.APIs.CoreAPI.Start(self.m_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\Core\setup.py", line 56, in Start
+	    p_pyhouse_obj.House.APIs.HouseAPI.Start(p_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\housing\house.py", line 129, in Start
+	    p_pyhouse_obj.House.OBJs = self.read_house_xml(l_house_xml)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\housing\house.py", line 77, in read_house_xml
+	    l_house_obj.Location = self.read_location_xml(p_house_xml)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\housing\location.py", line 37, in read_location_xml
+	    l_location_xml = p_house_xml.find('Location')
+	exceptions.AttributeError: 'NoneType' object has no attribute 'find'
+	
+2014-06-22 12:45:55-0400 [PyHouse.NodeDiscovry] Update our node (slot 0) address to 192.168.1.115
+2014-06-22 12:45:55-0400 [PyHouse.NodeDiscovry] Added node # 1 - From Addr: 192.168.1.35, Named: pi-05
+2014-06-22 12:45:55-0400 [PyHouse.NodeDiscovry] Added node # 2 - From Addr: 192.168.1.36, Named: pi-06
+2014-06-22 12:45:55-0400 [PyHouse.NodeDiscovry] Added node # 3 - From Addr: 192.168.1.33, Named: pi-03
+2014-06-22 12:45:55-0400 [PyHouse.NodeDiscovry] Added node # 4 - From Addr: 192.168.1.32, Named: pi-02
+2014-06-22 12:45:58-0400 [PyHouse.NodeDiscovry] Added node # 5 - From Addr: 192.168.1.54, Named: alki-4.site
+2014-06-22 12:46:36-0400 [-] Log opened.
+2014-06-22 12:46:36-0400 [PyHouse             ] Initializing PyHouse.
+	
+	
+2014-06-22 12:46:36-0400 [PyHouse.CoreSetup   ] 
+	------------------------------------------------------------------
+	
+	
+2014-06-22 12:46:36-0400 [PyHouse             ] Initialized.
+	
+2014-06-22 12:46:36-0400 [PyHouse.NodeLocal   ] Interface:{59F2EEE3-780E-4B30-80B2-EB8216CC63B6}, Mac:, V4:['169.254.32.60'], V6:['fe80::66d4:daff:fe71:60b%16'] - 0
+2014-06-22 12:46:36-0400 [PyHouse.NodeLocal   ] Interface:{5A910E84-B99A-43FF-A257-67149139B4AF}, Mac:, V4:['169.254.17.194'], V6:['fe80::4225:c2ff:fee4:fcd9%15'] - 1
+2014-06-22 12:46:36-0400 [PyHouse.NodeLocal   ] Interface:{EA594141-246C-4537-B0CF-DA1DDCDD956C}, Mac:, V4:['169.254.172.228'], V6:['fe80::4225:c2ff:fee4:fcd9%14'] - 2
+2014-06-22 12:46:36-0400 [PyHouse.NodeLocal   ] Interface:{C31DACE4-33A2-443F-81BA-C5701557C5CD}, Mac:, V4:['192.168.1.115'], V6:['2604:8800:100:8268:4225:c2ff:fee4:fcd8', '2604:8800:100:8268:2592:b4dc:26d2:925a', 'fe80::4225:c2ff:fee4:fcd8%13'] - 3
+2014-06-22 12:46:36-0400 [PyHouse.NodeLocal   ] Interface:{9C3C3D30-6889-49A3-A733-839B1B06C97C}, Mac:, V4:['169.254.249.175'], V6:['fe80::a2e:5fff:fe8c:dfd2%11'] - 4
+2014-06-22 12:46:36-0400 [PyHouse.NodeLocal   ] Interface:{846EE342-7039-11DE-9D20-806E6F6E6963}, Mac:, V4:['127.0.0.1'], V6:['::1'] - 5
+2014-06-22 12:46:36-0400 [PyHouse.NodeLocal   ] Interface:{3D1CA875-5DE6-467A-A016-6F378F7A8F16}, Mac:, V4:[], V6:['fe80::5efe:192.168.1.115%18'] - 6
+2014-06-22 12:46:36-0400 [PyHouse.NodeLocal   ] Interface:{C026DBCB-EF4F-4F50-A0EF-9D707D9DAF48}, Mac:, V4:[], V6:['2001:0:9d38:6ab8:10b1:1143:b746:e807', 'fe80::10b1:1143:b746:e807%17'] - 7
+2014-06-22 12:46:36-0400 [PyHouse.NodeLocal   ] Windows Node
+2014-06-22 12:46:36-0400 [PyHouse.NodeLocal   ] Started
+2014-06-22 12:46:36-0400 [-] MulticastDiscoveryServerProtocol starting on 8582
+2014-06-22 12:46:36-0400 [-] Starting protocol <Modules.Core.node_discovery.MulticastDiscoveryServerProtocol object at 0x0000000003DBD630>
+2014-06-22 12:46:36-0400 [-] MulticastDiscoveryClientProtocol starting on 8582
+2014-06-22 12:46:36-0400 [-] Starting protocol <Modules.Core.node_discovery.MulticastDiscoveryClientProtocol object at 0x0000000003DBD9B0>
+2014-06-22 12:46:36-0400 [-] Unhandled Error
+	Traceback (most recent call last):
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 416, in fireEvent
+	    DeferredList(beforeResults).addCallback(self._continueFiring)
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 306, in addCallback
+	    callbackKeywords=kw)
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 295, in addCallbacks
+	    self._runCallbacks()
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 577, in _runCallbacks
+	    current.result = callback(current.result, *args, **kw)
+	--- <exception caught here> ---
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 429, in _continueFiring
+	    callable(*args, **kwargs)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\PyHouse.py", line 205, in Start
+	    self.m_pyhouse_obj.House.APIs.CoreAPI.Start(self.m_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\Core\setup.py", line 56, in Start
+	    p_pyhouse_obj.House.APIs.HouseAPI.Start(p_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\housing\house.py", line 129, in Start
+	    p_pyhouse_obj.House.OBJs = self.read_house_xml(l_house_xml)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\housing\house.py", line 77, in read_house_xml
+	    l_house_obj.Location = self.read_location_xml(p_house_xml)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\housing\location.py", line 37, in read_location_xml
+	    l_location_xml = p_house_xml.find('Location')
+	exceptions.AttributeError: 'NoneType' object has no attribute 'find'
+	
+2014-06-22 12:46:36-0400 [PyHouse.NodeDiscovry] Update our node (slot 0) address to 192.168.1.115
+2014-06-22 12:46:36-0400 [PyHouse.NodeDiscovry] Added node # 1 - From Addr: 192.168.1.54, Named: alki-4.site
+2014-06-22 12:46:36-0400 [PyHouse.NodeDiscovry] Added node # 2 - From Addr: 192.168.1.35, Named: pi-05
+2014-06-22 12:46:36-0400 [PyHouse.NodeDiscovry] Added node # 3 - From Addr: 192.168.1.33, Named: pi-03
+2014-06-22 12:46:36-0400 [PyHouse.NodeDiscovry] Added node # 4 - From Addr: 192.168.1.36, Named: pi-06
+2014-06-22 12:46:36-0400 [PyHouse.NodeDiscovry] Added node # 5 - From Addr: 192.168.1.32, Named: pi-02
+2014-06-22 12:46:51-0400 [-] AmpServerFactory starting on 8581
+2014-06-22 12:46:51-0400 [-] Starting factory <Modules.Core.node_domain.AmpServerFactory instance at 0x0000000003DBF548>
+2014-06-22 12:46:51-0400 [-] Starting factory <twisted.internet.protocol.ClientFactory instance at 0x0000000003DBA4C8>
+2014-06-22 12:46:51-0400 [-] Starting factory <twisted.internet.protocol.ClientFactory instance at 0x0000000003E64148>
+2014-06-22 12:46:51-0400 [-] Starting factory <twisted.internet.protocol.ClientFactory instance at 0x0000000003E64448>
+2014-06-22 12:46:51-0400 [-] Starting factory <twisted.internet.protocol.ClientFactory instance at 0x0000000003E64788>
+2014-06-22 12:46:51-0400 [-] Starting factory <twisted.internet.protocol.ClientFactory instance at 0x0000000003E64B08>
+2014-06-22 12:46:51-0400 [-] Starting factory <twisted.internet.protocol.ClientFactory instance at 0x0000000003E64E88>
+2014-06-22 12:46:51-0400 [PyHouse.NodeDomain  ] NodeDomainServerProtocol()  (NDSP-1  210)
+2014-06-22 12:46:51-0400 [PyHouse.NodeDomain  ] Dispatch DomainBoxDispatcher_AmpProtocol()  (DBD-1  100)
+2014-06-22 12:46:51-0400 [PyHouse.NodeDomain  ]       Repr: <DomainBoxDispatcher_AmpProtocol at 0x3e5fa58>
+2014-06-22 12:46:51-0400 [PyHouse.NodeDomain  ] ServerProtocol() initialized  (NDSP-1a  216)
+2014-06-22 12:46:51-0400 [PyHouse.NodeDomain  ]       Dispatch:<DomainBoxDispatcher_AmpProtocol at 0x3e5fa58>
+2014-06-22 12:46:51-0400 [PyHouse.NodeDomain  ] AmpServerFactory.buildProtocol()  (197)
+2014-06-22 12:46:51-0400 [PyHouse.NodeDomain  ] Dispatch - makeConnection  (DBD-2  110)
+2014-06-22 12:46:51-0400 [PyHouse.NodeDomain  ]       Transport:<NodeDomainServerProtocol #0 on 8581>
+2014-06-22 12:46:51-0400 [Uninitialized] AMP connection established (HOST:IPv4Address(TCP, '192.168.1.115', 40275) PEER:IPv4Address(TCP, '192.168.1.115', 8581))
+2014-06-22 12:46:51-0400 [PyHouse.NodeDomain  ] Client - sending info to remote server.  (310)
+2014-06-22 12:46:51-0400 [Uninitialized] AMP connection established (HOST:IPv4Address(TCP, '192.168.1.115', 40276) PEER:IPv4Address(TCP, '192.168.1.54', 8581))
+2014-06-22 12:46:51-0400 [PyHouse.NodeDomain  ] Client - sending info to remote server.  (310)
+2014-06-22 12:46:51-0400 [Uninitialized] AMP connection established (HOST:IPv4Address(TCP, '192.168.1.115', 40279) PEER:IPv4Address(TCP, '192.168.1.32', 8581))
+2014-06-22 12:46:51-0400 [PyHouse.NodeDomain  ] Client - sending info to remote server.  (310)
+2014-06-22 12:46:51-0400 [Uninitialized] AMP connection established (HOST:IPv4Address(TCP, '192.168.1.115', 40277) PEER:IPv4Address(TCP, '192.168.1.33', 8581))
+2014-06-22 12:46:51-0400 [PyHouse.NodeDomain  ] Client - sending info to remote server.  (310)
+2014-06-22 12:46:51-0400 [Uninitialized] AMP connection established (HOST:IPv4Address(TCP, '192.168.1.115', 40280) PEER:IPv4Address(TCP, '192.168.1.36', 8581))
+2014-06-22 12:46:51-0400 [PyHouse.NodeDomain  ] Client - sending info to remote server.  (310)
+2014-06-22 12:46:52-0400 [Uninitialized] AMP connection established (HOST:IPv4Address(TCP, '192.168.1.115', 40278) PEER:IPv4Address(TCP, '192.168.1.35', 8581))
+2014-06-22 12:46:52-0400 [PyHouse.NodeDomain  ] Client - sending info to remote server.  (310)

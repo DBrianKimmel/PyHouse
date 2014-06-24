@@ -129,7 +129,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 		self.nodeById('RoomNameDiv').innerHTML       = buildRoomSelectWidget('ControllerRoomName', p_obj.RoomName);
 		self.nodeById('TypeDiv').innerHTML           = buildTextWidget('ControllerType', p_obj.LightingType, 'disabled');
 		self.nodeById('UUIDDiv').innerHTML           = buildTextWidget('ControllerUUID', p_obj.UUID, 'disabled');
-		self.nodeById('InterfaceDiv').innerHTML      = buildInterfaceSelectWidget('ControllerInterface', p_obj.Interface);
+		self.nodeById('InterfaceDiv').innerHTML      = buildInterfaceSelectWidget('InterfaceType', p_obj.InterfaceType);
 		self.nodeById('PortDiv').innerHTML           = buildTextWidget('ControllerPort', p_obj.Port);
         if (p_obj['LightingFamily'] == 'Insteon') {  // Insteon info
 			self.fillInsteonEntry(p_obj);
@@ -141,8 +141,8 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 		self.nodeById('i02Div').innerHTML  = buildTextWidget('LightDevCat', p_obj.DevCat);
 		self.nodeById('i03Div').innerHTML  = buildTextWidget('LightGroupNumber', p_obj.GroupNumber);
 		self.nodeById('i04Div').innerHTML  = buildTextWidget('LightGroupList', p_obj.GroupList);
-		self.nodeById('i05Div').innerHTML  = buildTrueFalseWidget('LightMaster', p_obj.Master);
-		self.nodeById('i06Div').innerHTML  = buildTrueFalseWidget('LightResponder', p_obj.Responder);
+		self.nodeById('i05Div').innerHTML  = buildTrueFalseWidget('LightMaster', p_obj.IsMaster);
+		self.nodeById('i06Div').innerHTML  = buildTrueFalseWidget('LightResponder', p_obj.IsResponder);
 		self.nodeById('i07Div').innerHTML  = buildTextWidget('LightProductKey', p_obj.ProductKey);
 	},
     function fetchEntry(self) {
@@ -152,12 +152,12 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 			Active :         fetchTrueFalseWidget('ControllerActive'),
 			Comment :        fetchTextWidget('ControllerComment'),
 			Coords :         fetchTextWidget('ControllerCoords'),
-			Dimmable :       fetchTrueFalseWidget('ControllerDimmable'),
+			IsDimmable :     fetchTrueFalseWidget('ControllerDimmable'),
 			LightingFamily : fetchTextWidget('ControllerFamily'),
 			RoomName :       fetchSelectWidget('ControllerRoomName'),
 			LightingType :   fetchTextWidget('ControllerType'),
 			UUID :           fetchTextWidget('ControllerUUID'),
-			Interface :      fetchSelectWidget('ControllerInterface'),
+			InterfaceType :      fetchSelectWidget('InterfaceType'),
 			Port :           fetchTextWidget('ControllerPort'),
 			HouseIx : globals.House.HouseIx,
 			Delete : false
@@ -172,8 +172,8 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
         p_data['DevCat'] = fetchTextWidget('LightDevCat');
         p_data['GroupNumber'] = fetchTextWidget('LightGroupNumber');
         p_data['GroupList'] = fetchTextWidget('LightGroupList');
-        p_data['Master'] = fetchTrueFalseWidget('LightMaster');
-        p_data['Responder'] = fetchTrueFalseWidget('LightResponder');
+        p_data['IsMaster'] = fetchTrueFalseWidget('LightMaster');
+        p_data['IsResponder'] = fetchTrueFalseWidget('LightResponder');
         p_data['ProductKey'] = fetchTextWidget('LightProductKey');
 		return p_data;
 	},
@@ -184,7 +184,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
             Active : false,
 			Comment : '',
 			Coords : '',
-			Dimmable : false,
+			IsDimmable : false,
 			LightingFamily : '',
 			RoomName : '',
             LightingType : 'Controller',

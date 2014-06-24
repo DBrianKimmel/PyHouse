@@ -34,7 +34,7 @@ g_debug = 9
 LOG = pyh_log.getLogger('PyHouse.Dev_Insteon ')
 
 
-class InsteonCoreAPI(xml_tools.ConfigTools):
+class ReadWriteConfigXml(xml_tools.ConfigTools):
 
     def extract_device_xml(self, p_device_obj, p_entry_xml):
         """
@@ -47,28 +47,28 @@ class InsteonCoreAPI(xml_tools.ConfigTools):
         # LOG.debug('--- Extracting XML ')
         l_insteon_obj = InsteonData()
         l_insteon_obj.InsteonAddress = Insteon_utils.dotted_hex2int(p_entry_xml.findtext('Address', default = 0))
-        l_insteon_obj.Controller = p_entry_xml.findtext('Controller')
+        l_insteon_obj.IsController = p_entry_xml.findtext('IsController')
         l_insteon_obj.DevCat = p_entry_xml.findtext('DevCat')
         l_insteon_obj.GroupList = p_entry_xml.findtext('GroupList')
         l_insteon_obj.GroupNumber = p_entry_xml.findtext('GroupNumber')
-        l_insteon_obj.Master = p_entry_xml.findtext('Master')
+        l_insteon_obj.IsMaster = p_entry_xml.findtext('IsMaster')
         l_insteon_obj.ProductKey = p_entry_xml.findtext('ProductKey')
-        l_insteon_obj.Responder = p_entry_xml.findtext('Responder')
+        l_insteon_obj.IsResponder = p_entry_xml.findtext('IsResponder')
         xml_tools.stuff_new_attrs(p_device_obj, l_insteon_obj)
         return l_insteon_obj
 
     def insert_device_xml(self, p_entry_xml, p_device_obj):
         ET.SubElement(p_entry_xml, 'Address').text = Insteon_utils.int2dotted_hex(int(p_device_obj.InsteonAddress))
-        ET.SubElement(p_entry_xml, 'Controller').text = self.put_bool(p_device_obj.Controller)
+        ET.SubElement(p_entry_xml, 'IsController').text = self.put_bool(p_device_obj.IsController)
         ET.SubElement(p_entry_xml, 'DevCat').text = str(p_device_obj.DevCat)
         ET.SubElement(p_entry_xml, 'GroupList').text = str(p_device_obj.GroupList)
         ET.SubElement(p_entry_xml, 'GroupNumber').text = str(p_device_obj.GroupNumber)
-        ET.SubElement(p_entry_xml, 'Master').text = str(p_device_obj.Master)
+        ET.SubElement(p_entry_xml, 'IsMaster').text = str(p_device_obj.IsMaster)
         ET.SubElement(p_entry_xml, 'ProductKey').text = str(p_device_obj.ProductKey)
-        ET.SubElement(p_entry_xml, 'Responder').text = self.put_bool(p_device_obj.Responder)
+        ET.SubElement(p_entry_xml, 'IsResponder').text = self.put_bool(p_device_obj.IsResponder)
 
 
-class API(InsteonCoreAPI):
+class API(ReadWriteConfigXml):
     """
     """
 
@@ -119,7 +119,7 @@ class API(InsteonCoreAPI):
         if g_debug >= 1:
             LOG.debug('Change light Name:{0:}, LightingFamily:{1:}'.format(p_light_obj.Name, p_light_obj.LightingFamily))
         # PrettyPrintAny(p_light_obj, 'Light Object Device_Insteon')
-        l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[p_light_obj.LightingFamily].ModuleAPI
+        _l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[p_light_obj.LightingFamily].ModuleAPI
         # PrettyPrintAny(l_api, 'Light Object Device_Insteon 2')
         self.m_plm.ChangeLight(p_light_obj, p_level)
         # if p_light_obj.LightingFamily == 'Insteon':

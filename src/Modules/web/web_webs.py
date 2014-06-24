@@ -56,6 +56,6 @@ class WebsElement(athena.LiveElement):
         l_json = web_utils.JsonUnicode().decode_json(p_json)
         l_obj = WebData()
         l_obj.Port = l_json['Port']
-        self.m_pyhouse_obj.House.APIs.WebAPI.Update(l_obj)
+        self.m_pyhouse_obj.APIs.WebAPI.Update(l_obj)
 
 # ## END DBK

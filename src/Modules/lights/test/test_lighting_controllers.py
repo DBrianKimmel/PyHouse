@@ -14,28 +14,33 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, HouseData
 from Modules.lights import lighting_controllers
 from Modules.families import family
 from Modules.web import web_utils
-from src.test import xml_data
 from Modules.utils.tools import PrettyPrintAny
+from src.test import xml_data, test_mixin
 
-XML = xml_data.XML_LONG
 
-
-class Test_02_XML(unittest.TestCase):
+class SetupMixin(object):
+    """
+    """
 
     def setUp(self):
-        self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.HouseData = HouseData()
-        self.m_pyhouse_obj.XmlRoot = self.m_root = ET.fromstring(XML)
-        self.m_houses_xml = self.m_root.find('Houses')
-        self.m_house_xml = self.m_houses_xml.find('House')  # First house
-        self.m_pyhouse_obj.XmlSection = self.m_house_xml
-        self.m_controllers_xml = self.m_house_xml.find('Controllers')
+        test_mixin.Setup().BuildPyHouse()
+        PrettyPrintAny(self, 'TestLighting - ', 80)
+
+        self.m_house_xml = self.m_root_xml.find('HouseDivision')
+        self.m_controllers_xml = self.m_house_xml.find('ControllerSection')
         self.m_controller_xml = self.m_controllers_xml.find('Controller')
-        self.m_pyhouse_obj.HouseData.FamilyData = family.API().build_lighting_family_info()
+        print('test_schedule.SetupMixin')
+
+
+class Test_02_XML(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
+        SetupMixin.setUp(self)
+        self.m_pyhouse_obj.HouseObjs.FamilyData = family.API().build_lighting_family_info()
         self.m_api = lighting_controllers.ControllersAPI(self.m_pyhouse_obj)
 
     def test_0202_FindXml(self):
@@ -66,10 +71,10 @@ class Test_02_XML(unittest.TestCase):
         self.assertEqual(l_controller.ByteSize, 8, 'Bad Byte Size')
         self.assertEqual(l_controller.Comment, 'Dongle using serial converter 067B:2303', 'Bad Comments')
         self.assertEqual(l_controller.Coords, 'None', 'Bad Coords')
-        self.assertEqual(l_controller.Dimmable, True, 'Bad Dimmable')
+        self.assertEqual(l_controller.IsDimmable, True, 'Bad Dimmable')
         self.assertEqual(l_controller.DsrDtr, False, 'Bad DsrDtr')
         self.assertEqual(l_controller.LightingFamily, 'Insteon', 'Bad LightingFamily')
-        self.assertEqual(l_controller.ControllerInterface, 'Serial', 'Bad Interface')
+        self.assertEqual(l_controller.InterfaceType, 'Serial', 'Bad InterfaceType')
         self.assertEqual(l_controller.Key, 0, 'Bad Key')
         self.assertEqual(l_controller.Name, 'PLM_1', 'Bad Name')
         self.assertEqual(l_controller.Parity, 'N', 'Bad Parity')

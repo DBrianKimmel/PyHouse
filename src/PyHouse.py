@@ -54,20 +54,24 @@ __version_info__ = (1, 2, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff
+import datetime
 import errno
 import os
 import platform
 import signal
+import xml.etree.ElementTree as ET
 from twisted.internet import reactor
 from twisted.application.service import Application
-import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, PyHouseAPIs, ComputerData, CoreServicesData, HouseInformation, TwistedInfo, XmlData
+from Modules.Core.data_objects import PyHouseData, PyHouseAPIs, CoreServicesInformation, \
+            ComputerInformation, \
+            HouseInformation, HouseObjs, \
+            TwistedInformation, XmlInformation
 from Modules.Core import setup
 from Modules.utils import pyh_log
 from Modules.utils import xml_tools
-# from Modules.utils.tools import PrettyPrintAny
+from Modules.utils.tools import PrettyPrintAny
 
 g_debug = 0
 LOG = pyh_log.getLogger('PyHouse             ')
@@ -149,27 +153,28 @@ class Utilities(object):
         p_pyhouse_obj.Xml.XmlParsed = p_pyhouse_obj.Xml.XmlRoot
 
     def build_twisted_info(self, _p_pyhouse_obj):
-        l_ret = TwistedInfo()
+        l_ret = TwistedInformation()
         l_ret.Reactor = reactor
         l_ret.Application = Application('PyHouse')
         return l_ret
 
-    def build_pyhouse_obj(self):
-        l_pyhouse_obj = PyHouseData()
-        l_pyhouse_obj.Computer = ComputerData()
-        l_pyhouse_obj.House = HouseInformation()
-        l_pyhouse_obj.Services = CoreServicesData()
-        l_pyhouse_obj.Twisted = self.build_twisted_info(l_pyhouse_obj)
-        l_pyhouse_obj.Xml = XmlData()
+    def build_pyhouse_obj(self, p_pyhouse_obj):
+        # p_pyhouse_obj = PyHouseData()
+        p_pyhouse_obj.APIs = PyHouseAPIs
+        p_pyhouse_obj.Computer = ComputerInformation()
+        p_pyhouse_obj.House = HouseInformation()
+        p_pyhouse_obj.House.OBJs = HouseObjs()
+        p_pyhouse_obj.Services = CoreServicesInformation()
+        p_pyhouse_obj.Twisted = self.build_twisted_info(p_pyhouse_obj)
+        p_pyhouse_obj.Xml = XmlInformation()
         #
-        l_pyhouse_obj.House.APIs = PyHouseAPIs()
-        return l_pyhouse_obj
+        return p_pyhouse_obj
 
 
 class API(Utilities):
     """
     """
-    m_pyhouse_obj = PyHouseData()
+    m_pyhouse_obj = None
 
     def __init__(self):
         """This is the startup of the entire system.
@@ -180,18 +185,22 @@ class API(Utilities):
         call never returns until the reactor is stopped (permanent stoppage).
         """
         print('PyHouse Start Initializing')
-        self.m_pyhouse_obj = self.build_pyhouse_obj()
-        self.m_pyhouse_obj.House.APIs.PyHouseAPI = self  # Only used by web server to reload - Do we need this?
+        self.m_pyhouse_obj = PyHouseData()
+        self.m_pyhouse_obj = self.build_pyhouse_obj(self.m_pyhouse_obj)
+        # PrettyPrintAny(self.m_pyhouse_obj, 'm_pyhouse_obj')
+        # PrettyPrintAny(self.m_pyhouse_obj.Computer, 'm_pyhouse_obj.Computer')
+        # PrettyPrintAny(self.m_pyhouse_obj.Computer.APIs, 'm_pyhouse_obj.Computer.APIs')
+        self.m_pyhouse_obj.APIs.PyHouseAPI = self  # Only used by web server to reload - Do we need this?
         global g_API
         g_API = self
         handle_signals()
         self.read_xml_config_info(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.APIs.LogsAPI = pyh_log.API()
-        self.m_pyhouse_obj.House.APIs.LogsAPI.Start(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.APIs.LogsAPI = pyh_log.API()
+        self.m_pyhouse_obj.APIs.LogsAPI.Start(self.m_pyhouse_obj)
         # PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse 1')
         LOG.info("Initializing PyHouse.\n\n")
         #
-        self.m_pyhouse_obj.House.APIs.CoreAPI = setup.API()
+        self.m_pyhouse_obj.APIs.CoreAPI = setup.API()
         self.m_pyhouse_obj.Twisted.Reactor.callWhenRunning(self.Start)
 
         LOG.info("Initialized.\n")
@@ -202,7 +211,7 @@ class API(Utilities):
     def Start(self):
         """This is automatically invoked when the reactor starts from API().
         """
-        self.m_pyhouse_obj.House.APIs.CoreAPI.Start(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.APIs.CoreAPI.Start(self.m_pyhouse_obj)
         LOG.info("Started.\n")
 
     def Stop(self):
@@ -210,8 +219,10 @@ class API(Utilities):
         """
         LOG.info("Saving all data to XML file.")
         l_xml = ET.Element("PyHouse")
-        self.m_pyhouse_obj.House.APIs.CoreAPI.Stop(l_xml)
-        self.m_pyhouse_obj.House.APIs.LogsAPI.Stop(l_xml)
+        xml_tools.PutGetXML().put_text_attribute(l_xml, 'Version', XmlInformation.XmlVersion)
+        l_xml.append(ET.Comment('Updated by PyHouse {0:}'.format(datetime.datetime.now())))
+        self.m_pyhouse_obj.APIs.CoreAPI.Stop(l_xml)
+        self.m_pyhouse_obj.APIs.LogsAPI.Stop(l_xml)
         xml_tools.write_xml_file(l_xml, self.m_pyhouse_obj.Xml.XmlFileName)
 
     def Reload(self, _p_pyhouses_obj):

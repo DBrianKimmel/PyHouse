@@ -120,7 +120,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		self.nodeById('ActiveDiv').innerHTML   = buildTrueFalseWidget('LightActive', p_obj.Active);
 		self.nodeById('CommentDiv').innerHTML  = buildTextWidget('LightComment', p_obj.Comment);
 		self.nodeById('CoordsDiv').innerHTML   = buildTextWidget('LightCoords', p_obj.Coords);
-		self.nodeById('DimmableDiv').innerHTML = buildTrueFalseWidget('LightDimmable', p_obj.Dimmable);
+		self.nodeById('DimmableDiv').innerHTML = buildTrueFalseWidget('LightDimmable', p_obj.IsDimmable);
 		self.nodeById('FamilyDiv').innerHTML   = buildFamilySelectWidget('LightFamily', 'Families', p_obj.LightingFamily);
 		self.nodeById('RoomNameDiv').innerHTML = buildRoomSelectWidget('LightRoomName', p_obj.RoomName);
 		self.nodeById('TypeDiv').innerHTML     = buildTextWidget('LightType', p_obj.LightingType, 'disabled');
@@ -143,8 +143,8 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		self.nodeById('i02Div').innerHTML  = buildTextWidget('LightDevCat', p_obj.DevCat);
 		self.nodeById('i03Div').innerHTML  = buildTextWidget('LightGroupNumber', p_obj.GroupNumber);
 		self.nodeById('i04Div').innerHTML  = buildTextWidget('LightGroupList', p_obj.GroupList);
-		self.nodeById('i05Div').innerHTML  = buildTrueFalseWidget('LightMaster', p_obj.Master);
-		self.nodeById('i06Div').innerHTML  = buildTrueFalseWidget('LightResponder', p_obj.Responder);
+		self.nodeById('i05Div').innerHTML  = buildTrueFalseWidget('LightMaster', p_obj.IsMaster);
+		self.nodeById('i06Div').innerHTML  = buildTrueFalseWidget('LightResponder', p_obj.IsResponder);
 		self.nodeById('i07Div').innerHTML  = buildTextWidget('LightProductKey', p_obj.ProductKey);
 	},
 	function fillUpbEntry(self, p_obj) {
@@ -157,7 +157,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 			Active      : fetchTrueFalseWidget('LightActive'),
 			Comment     : fetchTextWidget('LightComment'),
 			Coords      : fetchTextWidget('LightCoords'),
-			Dimmable    : fetchTrueFalseWidget('LightDimmable'),
+			IsDimmable    : fetchTrueFalseWidget('LightDimmable'),
 			LightingFamily : fetchSelectWidget('LightFamily'),
 			RoomName    : fetchSelectWidget('LightRoomName'),
 			LightingType: fetchTextWidget('LightType'),
@@ -176,8 +176,8 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
         p_data['DevCat'] = fetchTextWidget('LightDevCat');
         p_data['GroupNumber'] = fetchTextWidget('LightGroupNumber');
         p_data['GroupList'] = fetchTextWidget('LightGroupList');
-        p_data['Master'] = fetchTrueFalseWidget('LightMaster');
-        p_data['Responder'] = fetchTrueFalseWidget('LightResponder');
+        p_data['IsMaster'] = fetchTrueFalseWidget('LightMaster');
+        p_data['IsResponder'] = fetchTrueFalseWidget('LightResponder');
         p_data['ProductKey'] = fetchTextWidget('LightProductKey');
 		//Divmod.debug('---', 'lights.fetchInsteonEntry(2) was called. ' + p_data);
         //console.log("lights.fetchInsteonEntry(3)  %O", p_data)
@@ -191,7 +191,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
     			Active   : false,
     			Comment  : '',
     			Coords   : '',
-    			Dimmable : false,
+    			IsDimmable : false,
     			LightingFamily   : 'Insteon',
     			RoomName : '',
     			Type     : 'Light',

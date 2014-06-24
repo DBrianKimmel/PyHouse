@@ -80,7 +80,7 @@ class LightsElement(athena.LiveElement):
         l_obj.Key = int(l_json['Key'])
         l_obj.Comment = l_json['Comment']
         l_obj.Coords = l_json['Coords']
-        l_obj.Dimmable = l_json['Dimmable']
+        l_obj.IsDimmable = l_json['IsDimmable']
         l_obj.LightingFamily = l_json['LightingFamily']
         l_obj.RoomName = l_json['RoomName']
         l_obj.LightingType = l_json['LightingType']
@@ -92,8 +92,8 @@ class LightsElement(athena.LiveElement):
             l_obj.DevCat = l_json['DevCat']
             l_obj.GroupNumber = l_json['GroupNumber']
             l_obj.GroupList = l_json['GroupList']
-            l_obj.Master = l_json['Master']
-            l_obj.Responder = l_json['Responder']
+            l_obj.IsMaster = l_json['IsMaster']
+            l_obj.IsResponder = l_json['IsResponder']
             l_obj.ProductKey = l_json['ProductKey']
         self.m_pyhouse_obj.House.OBJs.Lights[l_light_ix] = l_obj
 

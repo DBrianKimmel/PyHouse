@@ -14,7 +14,7 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, HouseData, RoomData
+from Modules.Core.data_objects import PyHouseData, HouseObjs, RoomData
 from Modules.web import web_utils
 from Modules.housing import rooms
 from src.test import xml_data
@@ -33,13 +33,13 @@ class Test_01_Json(unittest.TestCase):
     def setUp(self):
         self.c_attr = Attribs()
         self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.House = HouseData()
+        self.m_pyhouse_obj.House = HouseObjs()
         self.m_pyhouse_obj.Xml.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         self.m_houses_xml = self.m_root_xml.find('Houses')
         self.m_house_xml = self.m_houses_xml.find('House')  # First house
         self.m_rooms_xml = self.m_house_xml.find('Rooms')
         self.m_room_xml = self.m_rooms_xml.find('Room')  # First room
-        self.m_house_obj = HouseData()
+        self.m_house_obj = HouseObjs()
         self.m_room_obj = RoomData()
         self.m_api = rooms.ReadWriteConfigXml()
 

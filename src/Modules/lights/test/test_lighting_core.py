@@ -15,7 +15,7 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, HouseData, LightData
+from Modules.Core.data_objects import PyHouseData, HouseObjs, LightData
 from Modules.lights.lighting_core import ReadWriteConfigXml
 from src.test import xml_data
 from Modules.utils.tools import PrettyPrintAny
@@ -31,7 +31,7 @@ class SetupMixin(object):
         self.m_api = ReadWriteConfigXml()
 
         self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.HouseData = HouseData()
+        self.m_pyhouse_obj.HouseObjs = HouseObjs()
         self.m_pyhouse_obj.XmlRoot = self.m_root_xml
         self.m_light_data = LightData()
 
@@ -69,7 +69,7 @@ class Test_02_ReadXML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_base.Active, True, 'Bad Active')
         self.assertEqual(l_base.Comment, 'SwitchLink On/Off', 'Bad Comments')
         self.assertEqual(l_base.Coords, "['0', '0']", 'Bad Coords')
-        self.assertEqual(l_base.Dimmable, False, 'Bad Dimmable')
+        self.assertEqual(l_base.IsDimmable, False, 'Bad Dimmable')
         self.assertEqual(l_base.LightingFamily, 'Insteon', 'Bad LightingFamily')
         self.assertEqual(l_base.RoomName, 'Test Living Room', 'Bad Room Name')
 

@@ -14,10 +14,10 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
-from Modules.Core.data_objects import PyHouseData, HouseData, ComputerData, InternetConnectionData, InternetConnectionDynDnsData
-from Modules.computer import 
+from Modules.Core.data_objects import PyHouseData, ComputerInformation, XmlInformation, InternetConnectionData, InternetConnectionDynDnsData
+from Modules.computer import internet
 from Modules.web import web_utils
-from Modules.utils.xml_tools import PrettifyXML
+from Modules.utils.tools import PrettyPrintAny
 from src.test import xml_data
 
 
@@ -25,13 +25,16 @@ class Test_02_XML(unittest.TestCase):
 
     def setUp(self):
         self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.Computer = ComputerData()
-        self.m_pyhouse_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
+        self.m_pyhouse_obj.Computer = ComputerInformation()
+        self.m_pyhouse_obj.Xml = XmlInformation
+        self.m_pyhouse_obj.Xml.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         self.m_computer_xml = self.m_root_xml.find('ComputerDivision')
         self.m_internets_xml = self.m_computer_xml.find('InternetSection')
+        # PrettyPrintAny(self.m_internets_xml, 'Internet section')
         self.m_internet_xml = self.m_internets_xml.find('Internet')
-        self.m_dyn_dns_xml = self.m_internet_xml.find('DynamicDNS')
-        self.m_house_obj = HouseData()
+        PrettyPrintAny(self.m_internet_xml, 'Internet Entry')
+        self.m_dns_sect_xml = self.m_internet_xml.find('DynamicDnsSection')
+        self.m_dyn_dns_xml = self.m_dns_sect_xml.find('DynamicDNS')
         self.m_internet_obj = InternetConnectionData()
         self.m_dyn_dns_obj = InternetConnectionDynDnsData()
         self.m_api = internet.API()
@@ -46,7 +49,7 @@ class Test_02_XML(unittest.TestCase):
         """
         self.assertEqual(self.m_root_xml.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
         self.assertEqual(self.m_computer_xml.tag, 'ComputerDivision', 'XML - No Computer section')
-        self.assertEqual(self.m_house_xml.tag, 'House', 'XML - No House section')
+        self.assertEqual(self.m_internets_xml.tag, 'InternetSection', 'XML - No Internet section')
         self.assertEqual(self.m_internet_xml.tag, 'Internet', 'XML - No Internet section')
         self.assertEqual(self.m_dyn_dns_xml.tag, 'DynamicDNS', 'XML - No Internet section')
 
@@ -61,29 +64,28 @@ class Test_02_XML(unittest.TestCase):
     def test_0213_ReadXML(self):
         """ Be sure that the XML contains the right stuff.
         """
-        self.m_api.read_internet_xml(self.m_house_xml)
+        self.m_api.read_internet_xml(self.m_internet_xml)
         self.assertEqual(self.m_root_xml.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
-        self.assertEqual(self.m_houses_xml.tag, 'Houses', 'XML - No Houses section')
-        self.assertEqual(self.m_house_xml.tag, 'House', 'XML - No House section')
-        self.assertEqual(self.m_internet_xml.tag, 'Internet', 'XML - No Internet section')
+        self.assertEqual(self.m_internets_xml.tag, 'InternetSection', 'XML - No Internet section')
+        self.assertEqual(self.m_internet_xml.tag, 'Internet', 'XML - No internet entry')
 
     def test_0221_write_one_dyn(self):
         l_dyn_obj = self.m_api.read_one_dyn_dns_xml(self.m_dyn_dns_xml)
         l_xml = self.m_api.write_one_dyn_dns_xml(l_dyn_obj)
-        print('XML: {0:}'.format(PrettifyXML(l_xml)))
+        print('XML: {0:}'.format(PrettyPrintAny(l_xml, 'one dns')))
         self.assertEqual(l_dyn_obj.Name, 'Afraid', 'Bad DynDns Name')
 
     def test_0222_write_all_dyn(self):
         l_dyn_obj = self.m_api.read_dyn_dns_xml(self.m_dyn_dns_xml)
         l_xml = self.m_api.write_dyn_dns_xml(l_dyn_obj)
-        print('XML: {0:}'.format(PrettifyXML(l_xml)))
+        print('XML: {0:}'.format(PrettyPrintAny(l_xml, 'All dns')))
 
     def test_0223_WriteXml(self):
         """ Write out the XML file for the location section
         """
         l_internet = self.m_api.read_internet_xml(self.m_house_xml)
         l_xml = self.m_api.write_internet_xml(l_internet)
-        print('XML: {0:}'.format(PrettifyXML(l_xml)))
+        print('XML: {0:}'.format(PrettyPrintAny(l_xml, 'Write xml')))
 
     def Xtest_0231_CreateJson(self):
         """ Create a JSON object for Rooms.
@@ -98,15 +100,10 @@ class Test_03_GetExternalIp(unittest.TestCase):
 
     def setUp(self):
         self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.HouseData = HouseData()
-        self.m_pyhouse_obj.XmlRoot = self.m_root = ET.fromstring(xml_data.XML_LONG)
-        self.m_houses_xml = self.m_root.find('Houses')
-        self.m_house_xml = self.m_houses_xml.find('House')  # First house
-        self.m_house_obj = HouseData()
-        self.m_house_obj.Active = True
         self.m_api = internet.API()
 
     def test_0301_createClient(self):
-        l_client = self.m_api.Start(self.m_pyhouse_obj, self.m_house_obj, self.m_house_xml)
+        # l_client = self.m_api.Start(self.m_pyhouse_obj, self.m_house_obj, self.m_house_xml)
+        pass
 
 # ## END DBK

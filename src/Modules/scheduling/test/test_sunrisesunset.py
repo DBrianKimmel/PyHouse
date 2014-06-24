@@ -18,7 +18,7 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
-from Modules.Core.data_objects import PyHouseData, HouseData, LocationData
+from Modules.Core.data_objects import PyHouseData, HouseObjs, LocationData
 from Modules.scheduling import sunrisesunset
 from src.test import xml_data
 
@@ -36,7 +36,7 @@ class Test_02_XML(unittest.TestCase):
 
     def setUp(self):
         self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.House = HouseData()
+        self.m_pyhouse_obj.House = HouseObjs()
         self.m_pyhouse_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         self.m_houses_xml = self.m_root_xml.find('Houses')
         self.m_house_xml = self.m_houses_xml.find('House')  # First house
@@ -60,14 +60,14 @@ class Test_03(unittest.TestCase):
 
     def setUp(self):
         self.m_pyhouse_obj = PyHouseData()
-        self.m_house_obj = HouseData()
+        self.m_house_obj = HouseObjs()
         self.m_house_obj.Name = 'Test House (Pink Poppy)'
         self.m_house_obj.Location = LocationData()
         self.m_house_obj.Latitude = 28.938448
         self.m_house_obj.Longitude = -82.517208
         self.m_house_obj.TimeZone = '-5:00'
         self.m_house_obj.SavingTime = '-4:00'
-        self.m_pyhouse_obj.HouseData = HouseData()
+        self.m_pyhouse_obj.HouseObjs = HouseObjs()
         self.m_pyhouse_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         self.m_houses_xml = self.m_root_xml.find('Houses')
         self.m_house_xml = self.m_houses_xml.find('House')  # First house

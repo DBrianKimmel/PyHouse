@@ -15,7 +15,7 @@ Default to /var/log/pyhouse/xxx
 Be sure it exists and is read/write for the user running PyHouse.
 
 This module sets up the logging used by PyHouse.
-It configures 'PyHouse' in the logging standard library module.
+It configures PyHouse in the logging standard library module.
 It has been redone to utilize twisted logging.
 It has been a pain trying to write tests for other modules, hence the switch.
 """

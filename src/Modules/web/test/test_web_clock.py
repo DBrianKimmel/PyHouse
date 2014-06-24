@@ -13,9 +13,7 @@
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, HouseData, RoomData
-from Modules.web import web_utils
-from Modules.utils.tools import PrettyPrintAny
+# from Modules.utils.tools import PrettyPrintAny
 from src.test import test_mixin
 
 

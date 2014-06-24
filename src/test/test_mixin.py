@@ -12,7 +12,12 @@
 # Import system type stuff
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, ComputerData, CoreServicesData, HouseData, TwistedInfo, XmlData
+from Modules.Core.data_objects import PyHouseData, PyHouseAPIs, \
+            CoreServicesInformation, \
+            ComputerInformation, \
+            HouseInformation, HouseObjs, \
+            TwistedInformation, \
+            XmlInformation
 from Modules.utils.tools import PrettyPrintAny
 
 
@@ -22,11 +27,13 @@ class SetupPyHouseObj(object):
 
     def BuildPyHouse(self):
         l_ret = PyHouseData()
-        l_ret.Computer = ComputerData()
-        l_ret.House = HouseData()
-        l_ret.Services = CoreServicesData()
-        l_ret.Twisted = TwistedInfo()
-        l_ret.Xml = XmlData()
+        l_ret.APIs = PyHouseAPIs
+        l_ret.Computer = ComputerInformation()
+        l_ret.House = HouseInformation()
+        l_ret.House.OBJs = HouseObjs()
+        l_ret.Services = CoreServicesInformation()
+        l_ret.Twisted = TwistedInformation()
+        l_ret.Xml = XmlInformation()
         return l_ret
 
 
@@ -35,6 +42,7 @@ class Setup(SetupPyHouseObj):
     def __init__(self):
         self.m_pyhouse_obj = self.BuildPyHouse()
         print('test_mixin.Setup()')
-        PrettyPrintAny(self, 'test_mixin - self')
+        PrettyPrintAny(self, 'test_mixin - Setup() - self')
+        PrettyPrintAny(self.m_pyhouse_obj, 'test_mixin - Setup() - pyhouse_obj')
 
 # ## END DBK

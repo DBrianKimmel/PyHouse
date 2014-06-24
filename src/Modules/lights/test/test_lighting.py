@@ -14,7 +14,7 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, HouseData, BaseLightingData
+from Modules.Core.data_objects import PyHouseData, HouseObjs, BaseLightingData
 from Modules.lights import lighting
 from src.test import xml_data
 from Modules.utils.tools import PrettyPrintAny
@@ -28,7 +28,7 @@ class SetupMixin(object):
         self.m_api = lighting.API()
 
         self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.HouseData = HouseData()
+        self.m_pyhouse_obj.HouseObjs = HouseObjs()
         self.m_pyhouse_obj.XmlRoot = self.m_root_xml
 
         self.m_houses_xml = self.m_root_xml.find('Houses')
@@ -50,7 +50,7 @@ class Test_02_ReadXMLLong(SetupMixin, unittest.TestCase):
     def test_0201_buildObjects(self):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
         """
-        self.assertEqual(self.m_pyhouse_obj.HouseData.Lights, {}, 'No Lights{}')
+        self.assertEqual(self.m_pyhouse_obj.HouseObjs.Lights, {}, 'No Lights{}')
         PrettyPrintAny(self.m_pyhouse_obj, 'PyHouseData')
 
     def test_0202_find_xml(self):

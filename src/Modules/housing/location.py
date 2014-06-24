@@ -20,6 +20,7 @@ import xml.etree.ElementTree as ET
 # Import PyMh files
 from Modules.utils import xml_tools
 from Modules.Core.data_objects import LocationData
+from Modules.utils.tools import PrettyPrintAny
 
 g_debug = 0
 m_logger = None
@@ -34,7 +35,7 @@ class ReadWriteConfigXml(xml_tools.ConfigTools):
         @param p_house_xml: is one of 0+ 'House' elements
         """
         l_location_obj = LocationData()
-        l_location_xml = p_house_xml.find('Location')
+        l_location_xml = p_house_xml.find('LocationSection')
         l_location_obj.Street = self.get_text_from_xml(l_location_xml, 'Street')
         l_location_obj.City = self.get_text_from_xml(l_location_xml, 'City')
         l_location_obj.State = self.get_text_from_xml(l_location_xml, 'State')
@@ -44,12 +45,13 @@ class ReadWriteConfigXml(xml_tools.ConfigTools):
         l_location_obj.Longitude = self.get_float_from_xml(l_location_xml, 'Longitude')
         l_location_obj.TimeZone = self.get_float_from_xml(l_location_xml, 'TimeZone')
         l_location_obj.SavingTime = self.get_float_from_xml(l_location_xml, 'SavingTime')
+        # PrettyPrintAny(l_location_obj, 'Location ')
         return l_location_obj
 
     def write_location_xml(self, p_location_obj):
         """Replace the data in the 'House/Location' section with the current data.
         """
-        l_entry = ET.Element('Location')
+        l_entry = ET.Element('LocationSection')
         self.put_text_element(l_entry, 'Street', p_location_obj.Street)
         self.put_text_element(l_entry, 'City', p_location_obj.City)
         self.put_text_element(l_entry, 'State', p_location_obj.State)

@@ -23,7 +23,7 @@ from Modules.entertain import entertainment
 from Modules.housing import house
 from Modules.web import web_server
 from Modules.utils import pyh_log
-# from Modules.utils.tools import PrettyPrintAny
+from Modules.utils.tools import PrettyPrintAny
 
 g_debug = 0
 LOG = pyh_log.getLogger('PyHouse.CoreSetup   ')
@@ -48,25 +48,27 @@ class API(object):
         self.m_nodes = nodes.API()
 
     def Start(self, p_pyhouse_obj):
-        # PrettyPrintAny(p_pyhouse_obj, 'Core setup - PyHouse Obj')
+        LOG.info("Starting.")
+        # PrettyPrintAny(p_pyhouse_obj, 'Core setup - Start - PyHouse')
+        # PrettyPrintAny(p_pyhouse_obj.Xml, 'Core setup - PyHouse.Xml')
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_nodes.Start(p_pyhouse_obj)
         # House
-        p_pyhouse_obj.House.APIs.HouseAPI = house.API()
-        p_pyhouse_obj.House.APIs.HouseAPI.Start(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.HouseAPI = house.API()
+        p_pyhouse_obj.APIs.HouseAPI.Start(p_pyhouse_obj)
         # SubSystems
-        p_pyhouse_obj.House.APIs.WebAPI = web_server.API()
-        p_pyhouse_obj.House.APIs.WebAPI.Start(p_pyhouse_obj)
-        p_pyhouse_obj.House.APIs.EntertainmentAPI = entertainment.API()
-        p_pyhouse_obj.House.APIs.EntertainmentAPI.Start(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.WebAPI = web_server.API()
+        p_pyhouse_obj.APIs.WebAPI.Start(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.EntertainmentAPI = entertainment.API()
+        p_pyhouse_obj.APIs.EntertainmentAPI.Start(p_pyhouse_obj)
         LOG.info("Started.")
 
     def Stop(self, p_xml):
         # SubSystems
-        self.m_pyhouse_obj.House.APIs.EntertainmentAPI.Stop(p_xml)
-        self.m_pyhouse_obj.House.APIs.WebAPI.Stop(p_xml)
+        self.m_pyhouse_obj.APIs.EntertainmentAPI.Stop(p_xml)
+        self.m_pyhouse_obj.APIs.WebAPI.Stop(p_xml)
         # House
-        self.m_pyhouse_obj.House.APIs.HouseAPI.Stop(p_xml)
+        self.m_pyhouse_obj.APIs.HouseAPI.Stop(p_xml)
         self.m_nodes.Stop(p_xml)
         LOG.info("Stopped.")
 

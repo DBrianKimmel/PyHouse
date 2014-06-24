@@ -1,5 +1,4 @@
 """
-
 -*- test-case-name: PyHouse.src.Modules.scheduling.test.test_schedule -*-
 
 @name: PyHouse/src/Modules/scheduling/schedule.py
@@ -11,8 +10,7 @@
 @summary: Schedule events
 
 
-
-Handle the home automation system schedule for one house.
+Handle the home automation system schedule for a house.
 
 The schedule is at the Core of PyHouse.
 Lighting events, entertainment events, etc. for one house are triggered by the schedule and are run by twisted.
@@ -38,7 +36,7 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 
   TODO: create a group of timers and cancel the changed ones when the schedules object is changed.
-          Keep all times as UTC - display them as local time for editing.
+        Keep all times as UTC - display them as local time for editing.
 """
 
 # Import system type stuff
@@ -83,11 +81,9 @@ class ReadWriteConfigXml(xml_tools.ConfigTools):
         """
         self.m_count = 0
         l_dict = {}
-        l_schedules_xml = p_house_xml.find('Schedules')
-        # PrettyPrintAny(l_schedules_xml, 'Schedules')
+        l_schedules_xml = p_house_xml.find('ScheduleSection')
         try:
-            l_list = l_schedules_xml.iterfind('Schedule')
-            for l_entry in l_list:
+            for l_entry in l_schedules_xml.iterfind('Schedule'):
                 l_schedule_obj = self.read_one_schedule_xml(l_entry)
                 l_schedule_obj.Key = self.m_count  # Renumber
                 l_dict[self.m_count] = l_schedule_obj
@@ -115,7 +111,7 @@ class ReadWriteConfigXml(xml_tools.ConfigTools):
         @param p_parent: is the 'schedules' element
         """
         self.m_count = 0
-        l_xml = ET.Element('Schedules')
+        l_xml = ET.Element('ScheduleSection')
         PrettyPrintAny(p_schedules_obj, 'Schedule - SchedulesObj')
         for l_schedule_obj in p_schedules_obj.itervalues():
             l_entry = self.write_one_schedule_xml(l_schedule_obj)
@@ -282,14 +278,17 @@ class ScheduleUtility(ScheduleExecution):
         """
         l_now = datetime.datetime.now()
         l_time_now = datetime.time(l_now.hour, l_now.minute, l_now.second)
-        self.m_sunrisesunset.Start(self.m_pyhouse_obj, self.m_house_obj)
-        self.m_sunset = self.m_sunrisesunset.get_sunset()
-        self.m_sunrise = self.m_sunrisesunset.get_sunrise()
+        self.m_sunrisesunset_api.Start(self.m_pyhouse_obj)
+        self.m_sunset = self.m_sunrisesunset_api.get_sunset()
+        self.m_sunrise = self.m_sunrisesunset_api.get_sunrise()
         LOG.info("In get_next_sched - Sunrise:{0:}, Sunset:{1:}".format(self.m_sunrise, self.m_sunset))
         l_time_scheduled = l_now
         l_seconds_to_delay = 100000.0
         l_schedule_list = []
-        for l_key, l_schedule_obj in self.m_house_obj.Schedules.iteritems():
+        PrettyPrintAny(self.m_pyhouse_obj, 'Schedule - get_next_sched - m_pyhouse_obj')
+        PrettyPrintAny(self.m_pyhouse_obj.House, 'Schedule - get_next_sched - m_pyhouse_obj.House')
+        PrettyPrintAny(self.m_pyhouse_obj.House.OBJs, 'Schedule - get_next_sched - m_pyhouse_obj.House.OBJs')
+        for l_key, l_schedule_obj in self.m_pyhouse_obj.House.OBJs.Schedules.iteritems():
             if not l_schedule_obj.Active:
                 continue
             l_time_sch = self._extract_time(l_schedule_obj.Time)
@@ -310,10 +309,10 @@ class ScheduleUtility(ScheduleExecution):
         return l_seconds_to_delay, l_schedule_list
 
     def init_scheduled_modules(self):
-        self.m_house_obj.APIs.LightingAPI = lighting.API()
+        self.m_pyhouse_obj.APIs.LightingAPI = lighting.API()
 
     def start_scheduled_modules(self, p_pyhouse_obj):
-        self.m_house_obj.APIs.LightingAPI.Start(p_pyhouse_obj)
+        self.m_pyhouse_obj.APIs.LightingAPI.Start(p_pyhouse_obj)
 
     def stop_scheduled_modules(self, p_xml):
         self.m_house_obj.APIs.LightingAPI.Stop(p_xml)
@@ -325,10 +324,10 @@ class API(ScheduleUtility, ReadWriteConfigXml):
     """
 
     m_house_obj = None
-    m_sunrisesunset = None
+    m_sunrisesunset_api = None
 
     def __init__(self):
-        self.m_sunrisesunset = sunrisesunset.API()
+        self.m_sunrisesunset_api = sunrisesunset.API()
 
     def Start(self, p_pyhouse_obj):
         """Called once for each house.
@@ -337,11 +336,12 @@ class API(ScheduleUtility, ReadWriteConfigXml):
 
         @param p_house_obj: is a House object for the house being scheduled
         """
+        LOG.info("Starting.")
         # PrettyPrintAny(p_pyhouse_obj, 'Schedule - PyHouse Obj')
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_house_obj = p_pyhouse_obj.House
-        p_pyhouse_obj.House.OBJs.Schedules = self.read_schedules_xml(p_pyhouse_obj.Xml.XmlRoot.find('Houses/House'))
-        self.m_sunrisesunset.Start(p_pyhouse_obj, self.m_house_obj)
+        p_pyhouse_obj.House.OBJs.Schedules = self.read_schedules_xml(p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision'))
+        self.m_sunrisesunset_api.Start(p_pyhouse_obj)
         self.init_scheduled_modules()
         self.start_scheduled_modules(p_pyhouse_obj)
         LOG.info("Started.")

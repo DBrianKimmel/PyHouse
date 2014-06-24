@@ -14,10 +14,10 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, HouseData
+from Modules.Core.data_objects import PyHouseData, HouseObjs
 from Modules.lights import lighting_buttons
 from Modules.web import web_utils
-from Modules.utils.xml_tools import PrettifyXML
+from Modules.utils.tools import PrettyPrintAny
 from src.test import xml_data
 
 XML = xml_data.XML_LONG
@@ -27,7 +27,7 @@ class Test_02_XML(unittest.TestCase):
 
     def setUp(self):
         self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.House = HouseData()
+        self.m_pyhouse_obj.House = HouseObjs()
         self.m_pyhouse_obj.XmlRoot = self.m_root = ET.fromstring(XML)
         self.m_houses_xml = self.m_root.find('Houses')
         self.m_house_xml = self.m_houses_xml.find('House')  # First house
@@ -63,14 +63,14 @@ class Test_02_XML(unittest.TestCase):
         """
         l_button = self.m_api.read_one_button_xml(self.m_button_xml)
         l_xml = self.m_api.write_one_button_xml(l_button)
-        print('XML: {0:}'.format(PrettifyXML(l_xml)))
+        print('XML: {0:}'.format(PrettyPrintAny(l_xml)))
 
     def test_0212_WriteButtonsXml(self):
         """ Write out the XML file for the Buttons section
         """
         l_button = self.m_api.read_buttons_xml(self.m_house_xml)
         l_xml = self.m_api.write_buttons_xml(l_button)
-        print('XML: {0:}'.format(PrettifyXML(l_xml)))
+        print('XML: {0:}'.format(PrettyPrintAny(l_xml)))
 
     def test_0221_CreateJson(self):
         """ Create a JSON object for Buttons.

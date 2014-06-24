@@ -35,7 +35,7 @@ class ReadWriteConfigXml(xml_tools.ConfigTools):
     def extract_xml(self, p_controller_obj, p_controller_xml):
         """Update the controller object by extracting the passed in XML.
         """
-        l_if = (p_controller_obj.ControllerInterface)
+        l_if = (p_controller_obj.InterfaceType)
         if l_if == 'Serial':
             self._extract_serial_xml(p_controller_obj, p_controller_xml)
         elif l_if == 'USB':
@@ -44,11 +44,11 @@ class ReadWriteConfigXml(xml_tools.ConfigTools):
             self._extract_ethernet_xml(p_controller_obj, p_controller_xml)
 
     def write_xml(self, p_entry, p_controller_obj):
-            if p_controller_obj.ControllerInterface == 'Serial':
+            if p_controller_obj.InterfaceType == 'Serial':
                 self._write_serial_xml(p_entry, p_controller_obj)
-            elif p_controller_obj.ControllerInterface == 'USB':
+            elif p_controller_obj.InterfaceType == 'USB':
                 self._write_usb_xml(p_entry, p_controller_obj)
-            elif p_controller_obj.ControllerInterface == 'Ethernet':
+            elif p_controller_obj.InterfaceType == 'Ethernet':
                 self._write_ethernet_xml(p_entry, p_controller_obj)
 
     def _extract_serial_xml(self, p_controller_obj, p_controller_xml):

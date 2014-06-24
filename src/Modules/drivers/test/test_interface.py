@@ -39,13 +39,13 @@ class Test_01_XML(unittest.TestCase):
         l_controllers = self.m_root_element.find('Controllers')
         l_first = l_controllers.find('Controller')
         self.assertEqual(l_first.get('Name'), 'Serial_1')
-        l_interf = l_first.find('Interface')
+        l_interf = l_first.find('InterfaceType')
         self.assertEqual(l_interf.text, 'Serial')
         l_baud = l_first.find('BaudRate')
         self.assertEqual(l_baud.text, '19200')
 
     def test_0105_extract_serial(self):
-        l_controllers = self.m_root_element.find('Controllers')
+        l_controllers = self.m_root_element.find('ControllerSection')
         l_first = l_controllers.find('Controller')
         pass
 

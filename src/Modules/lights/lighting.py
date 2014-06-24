@@ -22,7 +22,7 @@ from Modules.lights.lighting_buttons import ButtonsAPI
 from Modules.lights.lighting_controllers import ControllersAPI
 from Modules.lights.lighting_lights import LightingLightsAPI
 from Modules.utils import pyh_log
-# from Modules.utils.tools import PrettyPrintAny
+from Modules.utils.tools import PrettyPrintAny
 
 g_debug = 9
 LOG = pyh_log.getLogger('PyHouse.Lighting    ')
@@ -43,10 +43,12 @@ class Utility(ControllersAPI, LightingLightsAPI):
         XmlSection points to the "House" element
         """
         # l_house_xml = p_pyhouse_obj.XmlSection
-        # PrettyPrintAny(l_house_xml, 'Lighting() ')
+        PrettyPrintAny(p_pyhouse_obj, 'Lighting - read_lighting_xml - pyhouse_obj ')
+        PrettyPrintAny(p_pyhouse_obj.House, 'Lighting - read_lighting_xml - pyhouse_obj.House ')
         p_pyhouse_obj.House.OBJs.Controllers = ControllersAPI(p_pyhouse_obj).read_controllers_xml(p_pyhouse_obj)
         p_pyhouse_obj.House.OBJs.Buttons = ButtonsAPI(p_pyhouse_obj).read_buttons_xml(p_pyhouse_obj)
         p_pyhouse_obj.House.OBJs.Lights = LightingLightsAPI(p_pyhouse_obj).read_lights_xml(p_pyhouse_obj)
+        PrettyPrintAny(p_pyhouse_obj.House.OBJs, 'Lighting - read_xml')
 
     def _write_lighting_xml(self, p_xml):
         p_xml.append(self.write_lights_xml(self.m_house_obj.Lights))
@@ -63,9 +65,10 @@ class API(Utility):
     def Start(self, p_pyhouse_obj):
         """Allow loading of sub modules and drivers.
         """
+        LOG.info("Starting.")
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_house_obj = p_pyhouse_obj.House.OBJs
-        LOG.info("Starting - House:{0:}.".format(self.m_house_obj.Name))
+        LOG.info("Starting.")
         self.m_house_obj.FamilyData = self.m_family.build_lighting_family_info()
         self._read_lighting_xml(p_pyhouse_obj)
         self.m_family.start_lighting_families(p_pyhouse_obj, self.m_house_obj)

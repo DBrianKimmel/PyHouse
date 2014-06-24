@@ -31,7 +31,7 @@ class Test_02_ReadXML(unittest.TestCase):
         self.m_pyhouse_obj = PyHouseData()
         self.m_pyhouse_obj.House.OBJs = {}
         self.m_pyhouse_obj.XmlRoot = self.m_root = ET.fromstring(XML)
-        self.m_houses_xml = self.m_root.find('Houses')
+        self.m_houses_xml = self.m_root.find('HouseDivision')
         self.m_house_xml = self.m_houses_xml.find('House')  # First house
         self.m_lights_xml = self.m_house_xml.find('Lights')
         self.m_light_xml = self.m_lights_xml.find('Light')

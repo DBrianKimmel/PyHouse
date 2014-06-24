@@ -29,17 +29,17 @@ class ControllersAPI(ReadWriteConfigXml):
         self.m_pyhouse_obj = p_pyhouse_obj
 
     def _read_controller_data(self, p_obj, p_xml):
-        p_obj.ControllerInterface = self.get_text_from_xml(p_xml, 'Interface')
+        p_obj.InterfaceType = self.get_text_from_xml(p_xml, 'InterfaceType')
         p_obj.Port = self.get_text_from_xml(p_xml, 'Port')
 
-    def _read_family_data(self, p_obj, p_xml):
-        l_family = p_obj.LightingFamily
+    def _read_family_data(self, p_controller_obj, p_xml):
+        l_family = p_controller_obj.LightingFamily
         l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[l_family].ModuleAPI
-        l_api.extract_device_xml(p_obj, p_xml)
-        # PrettyPrintAny(p_obj, 'Lighting Controller')
+        l_api.extract_device_xml(p_controller_obj, p_xml)
+        # PrettyPrintAny(p_controller_obj, 'Lighting Controller')
 
     def _read_interface_data(self, p_obj, p_xml):
-        interface.ReadWriteConfig().extract_xml(p_obj, p_xml)
+        interface.ReadWriteConfigXml().extract_xml(p_obj, p_xml)
         pass
 
     def read_one_controller_xml(self, p_controller_xml):
@@ -65,8 +65,8 @@ class ControllersAPI(ReadWriteConfigXml):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_count = 0
         l_dict = {}
-        l_house_xml = p_pyhouse_obj.Xml.XmlRoot.find('Houses/House')
-        l_controllers_xml = l_house_xml.find('Controllers')
+        l_house_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
+        l_controllers_xml = l_house_xml.find('ControllerSection')
         # PrettyPrintAny(l_controllers_xml, 'Lighting Controllers')
         try:
             for l_controller_xml in l_controllers_xml.iterfind('Controller'):
@@ -81,14 +81,14 @@ class ControllersAPI(ReadWriteConfigXml):
     def write_one_controller_xml(self, p_controller_obj):
         l_entry_xml = self.write_base_object_xml('Controller', p_controller_obj)
         self.write_base_lighting_xml(l_entry_xml, p_controller_obj)
-        ET.SubElement(l_entry_xml, 'Interface').text = p_controller_obj.ControllerInterface
+        ET.SubElement(l_entry_xml, 'InterfaceType').text = p_controller_obj.InterfaceType
         ET.SubElement(l_entry_xml, 'Port').text = p_controller_obj.Port
         interface.ReadWriteConfigXml().write_xml(l_entry_xml, p_controller_obj)
         return l_entry_xml
 
     def write_controllers_xml(self, p_controllers_obj):
         l_count = 0
-        l_controllers_xml = ET.Element('Controllers')
+        l_controllers_xml = ET.Element('ControllerSection')
         for l_controller_obj in p_controllers_obj.itervalues():
             l_entry_xml = self.write_one_controller_xml(l_controller_obj)
             l_controllers_xml.append(l_entry_xml)

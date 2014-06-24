@@ -13,7 +13,7 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, HouseData
+from Modules.Core.data_objects import PyHouseData, HouseObjs
 from Modules.families import family
 from src.test import xml_data
 from Modules.utils.tools import PrettyPrintAny
@@ -25,9 +25,9 @@ class Test_01_Families(unittest.TestCase):
 
     def setUp(self):
         self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.House.OBJs = HouseData()
+        self.m_pyhouse_obj.House.OBJs = HouseObjs()
         self.m_pyhouse_obj.XmlRoot = self.m_root = ET.fromstring(XML)
-        self.m_houses = self.m_root.find('Houses')
+        self.m_houses = self.m_root.find('HouseDivision')
         self.m_house = self.m_houses.find('House')
         # self.m_house_obj = RoomData()
         self.m_api = family.API()
