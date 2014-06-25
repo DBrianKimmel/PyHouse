@@ -31,11 +31,11 @@ class Test_01_RawConvert(unittest.TestCase):
         self.m_pyhouse_obj = PyHouseData()
         self.m_pyhouse_obj.HouseData = HouseData()
         self.m_pyhouse_obj.Xml.XmlRoot = self.m_root = ET.fromstring(XML)
-        self.m_houses_xml = self.m_root.find('Houses')
+        self.m_houses_xml = self.m_root.find('HouseDivision')
         self.m_house_xml = self.m_houses_xml.find('House')  # First house
-        self.m_nodes_xml = self.m_root.find('Nodes')
+        self.m_nodes_xml = self.m_root.find('NodeSection')
         self.m_node_xml = self.m_nodes_xml.find('Node')  # First house
-        self.m_interfaces_xml = self.m_node_xml.find('Interfaces')
+        self.m_interfaces_xml = self.m_node_xml.find('InterfaceSection')
         self.m_interface_xml = self.m_interfaces_xml.find('Interface')  # First house
         self.m_api = ConvertEthernet()
 

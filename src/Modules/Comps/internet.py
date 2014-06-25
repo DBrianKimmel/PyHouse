@@ -30,7 +30,7 @@ from twisted.web.http_headers import Headers
 # Import PyMh files and modules.
 from Modules.Core.data_objects import InternetConnectionData, InternetConnectionDynDnsData
 from Modules.Core.Locations import *
-from Modules.utils import xml_tools
+from Modules.utils.xml_tools import XmlConfigTools
 from Modules.utils import convert
 from Modules.utils import pyh_log
 
@@ -41,7 +41,7 @@ g_debug = 1
 LOG = pyh_log.getLogger('PyHouse.Internet    ')
 
 
-class ReadWriteConfigXml(xml_tools.ConfigTools):
+class ReadWriteConfigXml(XmlConfigTools):
     """
     """
 
@@ -309,7 +309,7 @@ class API(ReadWriteConfigXml):
         self.m_pyhouse_obj = p_pyhouse_obj
         l_internet_xml = self.m_pyhouse_obj.Xml.XmlParsed.find('ComputerDivision/InternetSection')
         self.m_pyhouse_obj.Computer.InternetConnection = self.read_internet_xml(l_internet_xml)
-        LOG.info("Starting for house:{0:}.".format(self.m_pyhouse_obj.House.Name))
+        LOG.info("Starting.")
         FindExternalIpAddress(p_pyhouse_obj)
         self.m_dyn_loop = DynDnsAPI(p_pyhouse_obj)
 

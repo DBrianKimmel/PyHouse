@@ -19,6 +19,7 @@ Rooms and lights and HVAC are associated with a particular house.
 # Import system type stuff
 
 # Import PyMh files
+from Modules.Core.data_objects import HouseInformation, HouseObjs
 from Modules.scheduling import schedule
 from Modules.computer import internet
 from Modules.housing import location
@@ -28,9 +29,6 @@ from Modules.utils.tools import PrettyPrintAny
 
 
 g_debug = 1
-# 0 = off
-# 1 = log extra info
-# + = NOT USED HERE
 LOG = pyh_log.getLogger('PyHouse.House       ')
 
 
@@ -71,7 +69,8 @@ class ReadWriteConfigXml(location.ReadWriteConfigXml, rooms.ReadWriteConfigXml):
     def read_house_xml(self, p_pyhouse_obj):
         """Read house information, location and rooms.
         """
-        l_xml = p_pyhouse_obj.Xml.XmlSection = p_pyhouse_obj.Xml.XmlParsed.find('HouseDivision')
+        l_xml = p_pyhouse_obj.Xml.XmlSection = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
+        # PrettyPrintAny(l_xml, 'House - read_house_xml - l_xml')
         self.read_base_object_xml(p_pyhouse_obj.House, l_xml)
         p_pyhouse_obj.House.OBJs.Location = self.read_location_xml(l_xml)
         p_pyhouse_obj.House.OBJs.Rooms = self.read_rooms_xml(l_xml)
@@ -83,9 +82,9 @@ class ReadWriteConfigXml(location.ReadWriteConfigXml, rooms.ReadWriteConfigXml):
         """Replace the data in the 'Houses' section with the current data.
         """
         # PrettyPrintAny(p_house_obj, 'House obj')
-        l_house_xml = self.write_base_object_xml('House', p_house_obj)
-        l_house_xml.append(self.write_location_xml(p_house_obj.Location))
-        l_house_xml.append(self.write_rooms_xml(p_house_obj.Rooms))
+        l_house_xml = self.write_base_object_xml('HouseDivision', p_house_obj)
+        l_house_xml.append(self.write_location_xml(p_house_obj.OBJs.Location))
+        l_house_xml.append(self.write_rooms_xml(p_house_obj.OBJs.Rooms))
         return l_house_xml
 
 
@@ -97,22 +96,17 @@ class Utility(ReadWriteConfigXml):
 
     def start_house_parts(self, p_pyhouse_obj):
         # PrettyPrintAny(p_pyhouse_obj, 'House - StartHouseParts - PyHouse')
-        # PrettyPrintAny(p_pyhouse_obj.House, 'House - StartHouseParts - PyHouse.House')
-        # PrettyPrintAny(p_pyhouse_obj.APIs, 'House - StartHouseParts - PyHouse.House.APIs')
+        # PrettyPrintAny(p_pyhouse_obj.APIs, 'House - StartHouseParts - PyHouse.APIs')
         p_pyhouse_obj.APIs.ScheduleAPI = schedule.API()
-        p_pyhouse_obj.APIs.InternetAPI = internet.API()
         p_pyhouse_obj.APIs.ScheduleAPI.Start(self.m_pyhouse_obj)
-        p_pyhouse_obj.APIs.InternetAPI.Start(self.m_pyhouse_obj)
 
     def stop_house_parts(self, p_xml):
+        PrettyPrintAny(self.m_pyhouse_obj, 'House - StartHouseParts - PyHouse')
+        PrettyPrintAny(self.m_pyhouse_obj.APIs, 'House - StopHouseParts - PyHouse.APIs')
         try:
             self.m_pyhouse_obj.APIs.ScheduleAPI.Stop(p_xml)
-        except AttributeError:  # New house has  no schedule
-            LOG.warning("No schedule XML")
-        try:
-            self.m_pyhouse_obj.APIs.InternetAPI.Stop(p_xml)
-        except AttributeError:  # New house has  no internet
-            LOG.warning("No internet XML")
+        except AttributeError as e_error:  # New house has  no schedule
+            LOG.warning("No schedule XML - {0:}".format(e_error))
 
 
 class API(Utility):
@@ -129,9 +123,13 @@ class API(Utility):
         May be stopped and then started anew to force reloading info.
         """
         LOG.info('Starting')
+        p_pyhouse_obj.House = HouseInformation
+        p_pyhouse_obj.House.OBJs = HouseObjs
         self.m_pyhouse_obj = p_pyhouse_obj
         p_pyhouse_obj.House.OBJs = self.read_house_xml(p_pyhouse_obj)
         self.start_house_parts(p_pyhouse_obj)
+        # PrettyPrintAny(p_pyhouse_obj.House, 'House - Start - PyHouse.House')
+        # PrettyPrintAny(p_pyhouse_obj.House.OBJs, 'House - Start - PyHouse.House.OBJs')
         LOG.info("Started House {0:}, Active:{1:}".format(self.m_pyhouse_obj.House.Name, self.m_pyhouse_obj.House.Active))
 
     def Stop(self, p_xml):
@@ -140,8 +138,6 @@ class API(Utility):
         """
         LOG.info("Stopping House.")
         l_house_xml = self.write_house_xml(self.m_pyhouse_obj.House)
-        l_house_xml.append(self.write_location_xml(self.m_pyhouse_obj.House.Location))
-        l_house_xml.append(self.write_rooms_xml(self.m_pyhouse_obj.House.Rooms))
         self.stop_house_parts(l_house_xml)
         p_xml.append(l_house_xml)
         LOG.info("Stopped.")

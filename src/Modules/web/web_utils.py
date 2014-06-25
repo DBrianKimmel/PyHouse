@@ -109,7 +109,7 @@ class JsonUnicode(object):
     def encode_json(self, p_obj):
         """Convert a python object to a valid json object.
         """
-        PrettyPrintAny(p_obj, 'Web_Utils - encode_json ')
+        # PrettyPrintAny(p_obj, 'Web_Utils - encode_json ')
         try:
             # l_json = json.dumps(p_obj, cls = ComplexHandler)
             l_json = jsonpickle.encode(p_obj, unpicklable = False, max_depth = 5)

@@ -17,7 +17,6 @@ import os
 import sys
 import uuid
 from xml.etree import ElementTree as ET
-from xml.dom import minidom
 
 # Import PyMh files
 from Modules.utils.tools import PrettyPrintAny
@@ -200,7 +199,7 @@ class PutGetXML(object):
         return l_text
 
 
-class ConfigTools(PutGetXML):
+class XmlConfigTools(PutGetXML):
 
     def read_base_object_xml(self, p_base_obj, p_entry_element_xml):
         """Get the BaseObject entries from the XML element.
@@ -215,11 +214,17 @@ class ConfigTools(PutGetXML):
         p_base_obj.UUID = self.get_uuid_from_xml(p_entry_element_xml, 'UUID')
 
     def write_base_object_xml(self, p_element_name, p_object):
+        """
+        Note that UUID is optional.
+        """
+        l_elem = ET.Element(p_element_name)
         try:
-            l_elem = ET.Element(p_element_name)
             l_elem.set('Active', self.put_bool(p_object.Active))
             l_elem.set('Name', p_object.Name)
             l_elem.set('Key', str(p_object.Key))
+        except AttributeError as e_error:
+            print('ERROR in writeBaseObj {0:} {1:}'.format(e_error, PrettyPrintAny(p_object, 'Error in writeBaseObj')))
+        try:
             self.put_text_element(l_elem, 'UUID', p_object.UUID)
         except AttributeError as e_error:
             print('ERROR in writeBaseObj {0:} {1:}'.format(e_error, PrettyPrintAny(p_object, 'Error in writeBaseObj')))

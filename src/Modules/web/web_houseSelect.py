@@ -47,7 +47,7 @@ class HouseSelectElement(athena.LiveElement):
 
         Gather the top level data for houses and send it back to the client for building a house select page.
         """
-        l_house = self.m_pyhouse_obj.House.OBJs
+        l_house = self.m_pyhouse_obj.House
         l_obj = {}
         l_obj[0] = {}
         l_obj[0]['Name'] = l_house.Name

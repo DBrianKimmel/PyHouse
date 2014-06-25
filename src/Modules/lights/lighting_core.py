@@ -15,13 +15,13 @@ This is a base class that other lighting modules inherit from.
 # Import system type stuff
 
 # Import PyHouse files
-from Modules.utils.xml_tools import ConfigTools
+from Modules.utils.xml_tools import XmlConfigTools
 # from Modules.utils.tools import PrettyPrintAny
 
 g_debug = 0
 
 
-class ReadWriteConfigXml(ConfigTools):
+class ReadWriteConfigXml(XmlConfigTools):
 
     def read_base_lighting_xml(self, p_device_obj, p_entry_xml):
         """This will read all the information in a BaseLightingData object

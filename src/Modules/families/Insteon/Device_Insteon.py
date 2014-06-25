@@ -30,11 +30,11 @@ from Modules.utils import xml_tools
 from Modules.utils import pyh_log
 # from Modules.utils.tools import PrettyPrintAny
 
-g_debug = 9
+g_debug = 0
 LOG = pyh_log.getLogger('PyHouse.Dev_Insteon ')
 
 
-class ReadWriteConfigXml(xml_tools.ConfigTools):
+class ReadWriteConfigXml(xml_tools.XmlConfigTools):
 
     def extract_device_xml(self, p_device_obj, p_entry_xml):
         """

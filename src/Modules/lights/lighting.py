@@ -43,12 +43,12 @@ class Utility(ControllersAPI, LightingLightsAPI):
         XmlSection points to the "House" element
         """
         # l_house_xml = p_pyhouse_obj.XmlSection
-        PrettyPrintAny(p_pyhouse_obj, 'Lighting - read_lighting_xml - pyhouse_obj ')
-        PrettyPrintAny(p_pyhouse_obj.House, 'Lighting - read_lighting_xml - pyhouse_obj.House ')
+        # PrettyPrintAny(p_pyhouse_obj, 'Lighting - read_lighting_xml - pyhouse_obj ')
+        # PrettyPrintAny(p_pyhouse_obj.House, 'Lighting - read_lighting_xml - pyhouse_obj.House ')
         p_pyhouse_obj.House.OBJs.Controllers = ControllersAPI(p_pyhouse_obj).read_controllers_xml(p_pyhouse_obj)
         p_pyhouse_obj.House.OBJs.Buttons = ButtonsAPI(p_pyhouse_obj).read_buttons_xml(p_pyhouse_obj)
         p_pyhouse_obj.House.OBJs.Lights = LightingLightsAPI(p_pyhouse_obj).read_lights_xml(p_pyhouse_obj)
-        PrettyPrintAny(p_pyhouse_obj.House.OBJs, 'Lighting - read_xml')
+        # PrettyPrintAny(p_pyhouse_obj.House.OBJs, 'Lighting - read_xml')
 
     def _write_lighting_xml(self, p_xml):
         p_xml.append(self.write_lights_xml(self.m_house_obj.Lights))

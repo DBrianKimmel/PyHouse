@@ -1,4 +1,9 @@
 """
+Created on Jun 25, 2014
+
+@author: briank
+"""
+"""
 -*- test-case-name: PyHouse.src.Modules.security.test.test_dropbox_uploader -*-
 
 @name: PyHouse/src/Modules/security/dropbox_uploader.py
@@ -12,6 +17,9 @@
 
 
 """
+
+
+# from Modules.security.dropbox_uploader import ACCESS_LEVEL
 
 
 
@@ -91,15 +99,15 @@ class Dropbox(object):
 
     def _get_access_level(self):
         print(" # Permission type, App folder or Full Dropbox [a/f]: ")
-        read ACCESS_LEVEL
+        # read ACCESS_LEVEL
+        ACCESS_LEVEL = ''
 
-        if [[ $ACCESS_LEVEL == "a" ]]; then
-            ACCESS_LEVEL="sandbox"
-            ACCESS_MSG="App Folder"
-        else
-            ACCESS_LEVEL="dropbox"
-            ACCESS_MSG="Full Dropbox"
-        fi
+        if  ACCESS_LEVEL == "a":
+            ACCESS_LEVEL = "sandbox"
+            ACCESS_MSG = "App Folder"
+        else:
+            ACCESS_LEVEL = "dropbox"
+            ACCESS_MSG = "Full Dropbox"
 
 
 

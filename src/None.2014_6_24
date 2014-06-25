@@ -1,0 +1,342 @@
+2014-06-24 13:06:57-0400 [-] Log opened.
+2014-06-24 13:06:57-0400 [-] NevowSite starting on 8580
+2014-06-24 13:06:57-0400 [-] Starting factory <nevow.appserver.NevowSite instance at 0x0000000003D8A608>
+2014-06-24 13:06:57-0400 [PyHouse.WebServer   ] Started - Port:8580, Path:None
+2014-06-24 13:06:57-0400 [-] Unhandled Error
+	Traceback (most recent call last):
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 416, in fireEvent
+	    DeferredList(beforeResults).addCallback(self._continueFiring)
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 306, in addCallback
+	    callbackKeywords=kw)
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 295, in addCallbacks
+	    self._runCallbacks()
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 577, in _runCallbacks
+	    current.result = callback(current.result, *args, **kw)
+	--- <exception caught here> ---
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 429, in _continueFiring
+	    callable(*args, **kwargs)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\PyHouse.py", line 209, in Start
+	    self.m_pyhouse_obj.APIs.CoreAPI.Start(self.m_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\Core\setup.py", line 59, in Start
+	    p_pyhouse_obj.APIs.ComputerAPI.Start(p_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\computer\computer.py", line 57, in Start
+	    p_pyhouse_obj.House.OBJs = self.read_house_xml(p_pyhouse_obj)
+	exceptions.AttributeError: 'API' object has no attribute 'read_house_xml'
+	
+2014-06-24 13:08:22-0400 [-] Log opened.
+2014-06-24 13:08:22-0400 [-] NevowSite starting on 8580
+2014-06-24 13:08:22-0400 [-] Starting factory <nevow.appserver.NevowSite instance at 0x0000000003D7A588>
+2014-06-24 13:08:22-0400 [PyHouse.WebServer   ] Started - Port:8580, Path:None
+2014-06-24 13:08:22-0400 [PyHouse.Computer    ] Starting
+2014-06-24 13:08:22-0400 [PyMh.Entertainment] Started.
+2014-06-24 13:08:22-0400 [PyHouse.House       ] Starting
+2014-06-24 13:08:22-0400 [-] Unhandled Error
+	Traceback (most recent call last):
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 416, in fireEvent
+	    DeferredList(beforeResults).addCallback(self._continueFiring)
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 306, in addCallback
+	    callbackKeywords=kw)
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 295, in addCallbacks
+	    self._runCallbacks()
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 577, in _runCallbacks
+	    current.result = callback(current.result, *args, **kw)
+	--- <exception caught here> ---
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 429, in _continueFiring
+	    callable(*args, **kwargs)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\PyHouse.py", line 209, in Start
+	    self.m_pyhouse_obj.APIs.CoreAPI.Start(self.m_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\Core\setup.py", line 61, in Start
+	    p_pyhouse_obj.APIs.HouseAPI.Start(p_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\housing\house.py", line 133, in Start
+	    p_pyhouse_obj.House.OBJs = self.read_house_xml(p_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\housing\house.py", line 76, in read_house_xml
+	    p_pyhouse_obj.House.OBJs.Location = self.read_location_xml(l_xml)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\housing\location.py", line 38, in read_location_xml
+	    l_location_xml = p_house_xml.find('LocationSection')
+	exceptions.AttributeError: 'NoneType' object has no attribute 'find'
+	
+2014-06-24 14:26:44-0400 [-] Log opened.
+2014-06-24 14:26:44-0400 [-] NevowSite starting on 8580
+2014-06-24 14:26:44-0400 [-] Starting factory <nevow.appserver.NevowSite instance at 0x0000000003CC9588>
+2014-06-24 14:26:44-0400 [PyHouse.WebServer   ] Started - Port:8580, Path:None
+2014-06-24 14:26:44-0400 [PyHouse.Computer    ] Starting
+2014-06-24 14:26:44-0400 [PyMh.Entertainment] Started.
+2014-06-24 14:26:44-0400 [PyHouse.House       ] Starting
+2014-06-24 14:26:44-0400 [-] Unhandled Error
+	Traceback (most recent call last):
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 416, in fireEvent
+	    DeferredList(beforeResults).addCallback(self._continueFiring)
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 306, in addCallback
+	    callbackKeywords=kw)
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 295, in addCallbacks
+	    self._runCallbacks()
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 577, in _runCallbacks
+	    current.result = callback(current.result, *args, **kw)
+	--- <exception caught here> ---
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 429, in _continueFiring
+	    callable(*args, **kwargs)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\PyHouse.py", line 209, in Start
+	    self.m_pyhouse_obj.APIs.CoreAPI.Start(self.m_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\Core\setup.py", line 61, in Start
+	    p_pyhouse_obj.APIs.HouseAPI.Start(p_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\housing\house.py", line 133, in Start
+	    p_pyhouse_obj.House.OBJs = self.read_house_xml(p_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\housing\house.py", line 76, in read_house_xml
+	    p_pyhouse_obj.House.OBJs.Location = self.read_location_xml(l_xml)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\housing\location.py", line 38, in read_location_xml
+	    l_location_xml = p_house_xml.find('LocationSection')
+	exceptions.AttributeError: 'NoneType' object has no attribute 'find'
+	
+2014-06-24 14:29:30-0400 [-] Log opened.
+2014-06-24 14:29:30-0400 [-] NevowSite starting on 8580
+2014-06-24 14:29:30-0400 [-] Starting factory <nevow.appserver.NevowSite instance at 0x0000000003DA9588>
+2014-06-24 14:29:30-0400 [PyHouse.WebServer   ] Started - Port:8580, Path:None
+2014-06-24 14:29:30-0400 [PyHouse.Computer    ] Starting
+2014-06-24 14:29:30-0400 [PyMh.Entertainment] Started.
+2014-06-24 14:29:30-0400 [PyHouse.House       ] Starting
+2014-06-24 14:29:30-0400 [-] Unhandled Error
+	Traceback (most recent call last):
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 416, in fireEvent
+	    DeferredList(beforeResults).addCallback(self._continueFiring)
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 306, in addCallback
+	    callbackKeywords=kw)
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 295, in addCallbacks
+	    self._runCallbacks()
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 577, in _runCallbacks
+	    current.result = callback(current.result, *args, **kw)
+	--- <exception caught here> ---
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 429, in _continueFiring
+	    callable(*args, **kwargs)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\PyHouse.py", line 209, in Start
+	    self.m_pyhouse_obj.APIs.CoreAPI.Start(self.m_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\Core\setup.py", line 61, in Start
+	    p_pyhouse_obj.APIs.HouseAPI.Start(p_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\housing\house.py", line 133, in Start
+	    p_pyhouse_obj.House.OBJs = self.read_house_xml(p_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\housing\house.py", line 76, in read_house_xml
+	    p_pyhouse_obj.House.OBJs.Location = self.read_location_xml(l_xml)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\housing\location.py", line 38, in read_location_xml
+	    l_location_xml = p_house_xml.find('LocationSection')
+	exceptions.AttributeError: 'NoneType' object has no attribute 'find'
+	
+2014-06-24 14:32:27-0400 [-] Log opened.
+2014-06-24 14:32:27-0400 [-] Unhandled Error
+	Traceback (most recent call last):
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 416, in fireEvent
+	    DeferredList(beforeResults).addCallback(self._continueFiring)
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 306, in addCallback
+	    callbackKeywords=kw)
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 295, in addCallbacks
+	    self._runCallbacks()
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 577, in _runCallbacks
+	    current.result = callback(current.result, *args, **kw)
+	--- <exception caught here> ---
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 429, in _continueFiring
+	    callable(*args, **kwargs)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\PyHouse.py", line 209, in Start
+	    self.m_pyhouse_obj.APIs.CoreAPI.Start(self.m_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\Core\setup.py", line 59, in Start
+	    p_pyhouse_obj.APIs.ComputerAPI.Start(p_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\computer\computer.py", line 54, in Start
+	    p_pyhouse_obj.APIs.WebAPI.Start(p_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\web\web_server.py", line 104, in Start
+	    self.start_webserver(p_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\web\web_server.py", line 88, in start_webserver
+	    p_pyhouses_obj.Twisted.Reactor.listenTCP(p_pyhouses_obj.Computer.Web.WebPort, l_site)
+	  File "C:\Python27\lib\site-packages\twisted\internet\posixbase.py", line 495, in listenTCP
+	    p.startListening()
+	  File "C:\Python27\lib\site-packages\twisted\internet\tcp.py", line 979, in startListening
+	    raise CannotListenError(self.interface, self.port, le)
+	twisted.internet.error.CannotListenError: Couldn't listen on any:8580: [Errno 10048] Only one usage of each socket address (protocol/network address/port) is normally permitted.
+	
+2014-06-24 14:33:00-0400 [-] Log opened.
+2014-06-24 14:33:00-0400 [-] NevowSite starting on 8580
+2014-06-24 14:33:00-0400 [-] Starting factory <nevow.appserver.NevowSite instance at 0x0000000003C39588>
+2014-06-24 14:33:00-0400 [PyHouse.WebServer   ] Started - Port:8580, Path:None
+2014-06-24 14:33:00-0400 [PyHouse.Computer    ] Starting
+2014-06-24 14:33:00-0400 [PyMh.Entertainment] Started.
+2014-06-24 14:33:00-0400 [PyHouse.House       ] Starting
+2014-06-24 14:33:00-0400 [-] Unhandled Error
+	Traceback (most recent call last):
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 416, in fireEvent
+	    DeferredList(beforeResults).addCallback(self._continueFiring)
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 306, in addCallback
+	    callbackKeywords=kw)
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 295, in addCallbacks
+	    self._runCallbacks()
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 577, in _runCallbacks
+	    current.result = callback(current.result, *args, **kw)
+	--- <exception caught here> ---
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 429, in _continueFiring
+	    callable(*args, **kwargs)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\PyHouse.py", line 209, in Start
+	    self.m_pyhouse_obj.APIs.CoreAPI.Start(self.m_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\Core\setup.py", line 61, in Start
+	    p_pyhouse_obj.APIs.HouseAPI.Start(p_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\housing\house.py", line 133, in Start
+	    p_pyhouse_obj.House.OBJs = self.read_house_xml(p_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\housing\house.py", line 76, in read_house_xml
+	    p_pyhouse_obj.House.OBJs.Location = self.read_location_xml(l_xml)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\housing\location.py", line 37, in read_location_xml
+	    PrettyPrintAny(p_house_xml, 'Location - HouseXML', maxlen)
+	exceptions.NameError: global name 'maxlen' is not defined
+	
+2014-06-24 14:33:33-0400 [-] Log opened.
+2014-06-24 14:33:33-0400 [-] NevowSite starting on 8580
+2014-06-24 14:33:33-0400 [-] Starting factory <nevow.appserver.NevowSite instance at 0x0000000003D98FC8>
+2014-06-24 14:33:33-0400 [PyHouse.WebServer   ] Started - Port:8580, Path:None
+2014-06-24 14:33:33-0400 [PyHouse.Computer    ] Starting
+2014-06-24 14:33:33-0400 [PyMh.Entertainment] Started.
+2014-06-24 14:33:33-0400 [PyHouse.House       ] Starting
+2014-06-24 14:33:33-0400 [-] ('===== ', 'Location - HouseXML', '===== ', <type 'NoneType'>)
+2014-06-24 14:33:33-0400 [-] ---------------------------------
+2014-06-24 14:33:33-0400 [-] Unhandled Error
+	Traceback (most recent call last):
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 416, in fireEvent
+	    DeferredList(beforeResults).addCallback(self._continueFiring)
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 306, in addCallback
+	    callbackKeywords=kw)
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 295, in addCallbacks
+	    self._runCallbacks()
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 577, in _runCallbacks
+	    current.result = callback(current.result, *args, **kw)
+	--- <exception caught here> ---
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 429, in _continueFiring
+	    callable(*args, **kwargs)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\PyHouse.py", line 209, in Start
+	    self.m_pyhouse_obj.APIs.CoreAPI.Start(self.m_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\Core\setup.py", line 61, in Start
+	    p_pyhouse_obj.APIs.HouseAPI.Start(p_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\housing\house.py", line 133, in Start
+	    p_pyhouse_obj.House.OBJs = self.read_house_xml(p_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\housing\house.py", line 76, in read_house_xml
+	    p_pyhouse_obj.House.OBJs.Location = self.read_location_xml(l_xml)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\housing\location.py", line 39, in read_location_xml
+	    l_location_xml = p_house_xml.find('LocationSection')
+	exceptions.AttributeError: 'NoneType' object has no attribute 'find'
+	
+2014-06-24 16:28:06-0400 [-] Log opened.
+2014-06-24 16:28:06-0400 [-] NevowSite starting on 8580
+2014-06-24 16:28:06-0400 [-] Starting factory <nevow.appserver.NevowSite instance at 0x0000000003C9E5C8>
+2014-06-24 16:28:06-0400 [PyHouse.WebServer   ] Started - Port:8580, Path:None
+2014-06-24 16:28:06-0400 [PyHouse.Computer    ] Starting
+2014-06-24 16:28:06-0400 [PyMh.Entertainment] Started.
+2014-06-24 16:28:06-0400 [PyHouse.House       ] Starting
+2014-06-24 16:28:06-0400 [-] Unhandled Error
+	Traceback (most recent call last):
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 416, in fireEvent
+	    DeferredList(beforeResults).addCallback(self._continueFiring)
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 306, in addCallback
+	    callbackKeywords=kw)
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 295, in addCallbacks
+	    self._runCallbacks()
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 577, in _runCallbacks
+	    current.result = callback(current.result, *args, **kw)
+	--- <exception caught here> ---
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 429, in _continueFiring
+	    callable(*args, **kwargs)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\PyHouse.py", line 186, in Start
+	    self.m_pyhouse_obj.APIs.CoreAPI.Start(self.m_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\Core\setup.py", line 113, in Start
+	    p_pyhouse_obj.APIs.HouseAPI.Start(p_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\housing\house.py", line 133, in Start
+	    p_pyhouse_obj.House.OBJs = self.read_house_xml(p_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\housing\house.py", line 75, in read_house_xml
+	    self.read_base_object_xml(p_pyhouse_obj.House, l_xml)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\utils\xml_tools.py", line 212, in read_base_object_xml
+	    p_base_obj.Name = self.get_text_from_xml(p_entry_element_xml, 'Name')
+	exceptions.AttributeError: 'dict' object has no attribute 'Name'
+	
+2014-06-24 16:57:31-0400 [-] Log opened.
+2014-06-24 16:57:31-0400 [-] NevowSite starting on 8580
+2014-06-24 16:57:31-0400 [-] Starting factory <nevow.appserver.NevowSite instance at 0x0000000003EB8648>
+2014-06-24 16:57:31-0400 [PyHouse.WebServer   ] Started - Port:8580, Path:None
+2014-06-24 16:57:31-0400 [PyHouse.Computer    ] Starting
+2014-06-24 16:57:31-0400 [PyHouse.House       ] Starting
+2014-06-24 16:57:31-0400 [-] Unhandled Error
+	Traceback (most recent call last):
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 416, in fireEvent
+	    DeferredList(beforeResults).addCallback(self._continueFiring)
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 306, in addCallback
+	    callbackKeywords=kw)
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 295, in addCallbacks
+	    self._runCallbacks()
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 577, in _runCallbacks
+	    current.result = callback(current.result, *args, **kw)
+	--- <exception caught here> ---
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 429, in _continueFiring
+	    callable(*args, **kwargs)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\PyHouse.py", line 186, in Start
+	    self.m_pyhouse_obj.APIs.CoreAPI.Start(self.m_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\Core\setup.py", line 104, in Start
+	    p_pyhouse_obj.APIs.HouseAPI.Start(p_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\housing\house.py", line 133, in Start
+	    p_pyhouse_obj.House.OBJs = self.read_house_xml(p_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\housing\house.py", line 75, in read_house_xml
+	    self.read_base_object_xml(p_pyhouse_obj.House, l_xml)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\utils\xml_tools.py", line 212, in read_base_object_xml
+	    p_base_obj.Name = self.get_text_from_xml(p_entry_element_xml, 'Name')
+	exceptions.AttributeError: 'dict' object has no attribute 'Name'
+	
+2014-06-24 16:59:11-0400 [-] Log opened.
+2014-06-24 16:59:11-0400 [-] NevowSite starting on 8580
+2014-06-24 16:59:11-0400 [-] Starting factory <nevow.appserver.NevowSite instance at 0x0000000003D9C548>
+2014-06-24 16:59:11-0400 [PyHouse.WebServer   ] Started - Port:8580, Path:None
+2014-06-24 16:59:11-0400 [PyHouse.Computer    ] Starting
+2014-06-24 16:59:11-0400 [PyHouse.House       ] Starting
+2014-06-24 16:59:11-0400 [-] Unhandled Error
+	Traceback (most recent call last):
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 416, in fireEvent
+	    DeferredList(beforeResults).addCallback(self._continueFiring)
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 306, in addCallback
+	    callbackKeywords=kw)
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 295, in addCallbacks
+	    self._runCallbacks()
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 577, in _runCallbacks
+	    current.result = callback(current.result, *args, **kw)
+	--- <exception caught here> ---
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 429, in _continueFiring
+	    callable(*args, **kwargs)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\PyHouse.py", line 172, in Start
+	    self.m_pyhouse_obj.APIs.CoreAPI.Start(self.m_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\Core\setup.py", line 104, in Start
+	    p_pyhouse_obj.APIs.HouseAPI.Start(p_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\housing\house.py", line 133, in Start
+	    p_pyhouse_obj.House.OBJs = self.read_house_xml(p_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\housing\house.py", line 75, in read_house_xml
+	    self.read_base_object_xml(p_pyhouse_obj.House, l_xml)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\utils\xml_tools.py", line 212, in read_base_object_xml
+	    p_base_obj.Name = self.get_text_from_xml(p_entry_element_xml, 'Name')
+	exceptions.AttributeError: 'dict' object has no attribute 'Name'
+	
+2014-06-24 17:07:30-0400 [-] Log opened.
+2014-06-24 17:07:30-0400 [-] NevowSite starting on 8580
+2014-06-24 17:07:30-0400 [-] Starting factory <nevow.appserver.NevowSite instance at 0x0000000003F58548>
+2014-06-24 17:07:30-0400 [PyHouse.WebServer   ] Started - Port:8580, Path:None
+2014-06-24 17:07:30-0400 [PyHouse.Computer    ] Starting
+2014-06-24 17:07:30-0400 [PyHouse.House       ] Starting
+2014-06-24 17:07:30-0400 [-] Unhandled Error
+	Traceback (most recent call last):
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 416, in fireEvent
+	    DeferredList(beforeResults).addCallback(self._continueFiring)
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 306, in addCallback
+	    callbackKeywords=kw)
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 295, in addCallbacks
+	    self._runCallbacks()
+	  File "C:\Python27\lib\site-packages\twisted\internet\defer.py", line 577, in _runCallbacks
+	    current.result = callback(current.result, *args, **kw)
+	--- <exception caught here> ---
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 429, in _continueFiring
+	    callable(*args, **kwargs)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\PyHouse.py", line 172, in Start
+	    self.m_pyhouse_obj.APIs.CoreAPI.Start(self.m_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\Core\setup.py", line 108, in Start
+	    p_pyhouse_obj.APIs.HouseAPI.Start(p_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\housing\house.py", line 133, in Start
+	    p_pyhouse_obj.House.OBJs = self.read_house_xml(p_pyhouse_obj)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\housing\house.py", line 75, in read_house_xml
+	    self.read_base_object_xml(p_pyhouse_obj.House, l_xml)
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\Modules\utils\xml_tools.py", line 212, in read_base_object_xml
+	    p_base_obj.Name = self.get_text_from_xml(p_entry_element_xml, 'Name')
+	exceptions.AttributeError: 'dict' object has no attribute 'Name'
+	

@@ -30,7 +30,7 @@ import xml.etree.ElementTree as ET
 # Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData, NodeInterfaceData
 from Modules.communication import ir_control
-from Modules.utils.xml_tools import PutGetXML, ConfigTools
+from Modules.utils.xml_tools import PutGetXML, XmlConfigTools
 from Modules.utils import pyh_log
 
 g_debug = 0
@@ -70,6 +70,8 @@ class GetAllInterfaceData(object):
             l_interface.NodeInterfaceType = 'Other'
             l_interface.Name = l_ix
             l_interface.Key = l_count
+            l_interface.Active = True
+            l_interface.UUID = '123'
             for l_af in netifaces.ifaddresses(l_ix):
                 if netifaces.address_families[l_af] == 'AF_PACKET':
                     l_interface.MacAddress = self._get_list(netifaces.ifaddresses(l_ix)[l_af])
@@ -109,8 +111,8 @@ class HandleNodeType(object):
         l_ir.Start(p_pyhouses_obj)
 
 
-class ReadWriteConfigXml(ConfigTools):
-# class XML(ConfigTools):
+class ReadWriteConfigXml(XmlConfigTools):
+# class XML(XmlConfigTools):
 
     m_count = 0
 
@@ -142,7 +144,7 @@ class ReadWriteConfigXml(ConfigTools):
         return l_entry
 
     def write_interfaces_xml(self, p_interfaces_obj):
-        l_xml = ET.Element('Interfaces')
+        l_xml = ET.Element('InterfaceSection')
         self.m_count = 0
         for l_interface_obj in p_interfaces_obj.itervalues():
             l_entry = self.write_one_interface_xml(l_interface_obj)
@@ -158,7 +160,7 @@ class ReadWriteConfigXml(ConfigTools):
         self.read_base_object_xml(l_node_obj, p_node_xml)
         l_node_obj.ConnectionAddr_IPv4 = self.get_text_from_xml(p_node_xml, 'ConnectionAddressV4')
         l_node_obj.NodeRole = self.get_int_from_xml(p_node_xml, 'NodeRole')
-        l_node_obj.NodeInterfaces = self.read_interfaces_xml(p_node_xml.find('Interfaces'))
+        l_node_obj.NodeInterfaces = self.read_interfaces_xml(p_node_xml.find('InterfaceSection'))
         return l_node_obj
 
     def read_nodes_xml(self, p_nodes_xml):
@@ -181,7 +183,7 @@ class ReadWriteConfigXml(ConfigTools):
         return l_entry
 
     def write_nodes_xml(self, p_nodes_obj):
-        l_xml = ET.Element('Nodes')
+        l_xml = ET.Element('NodeSection')
         self.m_count = 0
         for l_node_obj in p_nodes_obj.itervalues():
             l_entry = self.write_one_node_xml(l_node_obj)
@@ -266,7 +268,7 @@ class API(Utility):
         self.m_node = NodeData()
         GetAllInterfaceData(self.m_node)
         p_pyhouse_obj.Computer.Nodes[0] = self.m_node
-        self.read_nodes_xml(p_pyhouse_obj.Xml.XmlRoot.find('Nodes'))
+        self.read_nodes_xml(p_pyhouse_obj.Xml.XmlRoot.find('NodeSection'))
         self.get_node_info(p_pyhouse_obj)
         p_pyhouse_obj.Computer.Nodes[0].NodeRole = self.find_node_role()
         self.init_node_type(p_pyhouse_obj)

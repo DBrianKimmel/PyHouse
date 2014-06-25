@@ -26,7 +26,7 @@ g_debug = 0
 m_logger = None
 
 
-class ReadWriteConfigXml(xml_tools.ConfigTools):
+class ReadWriteConfigXml(xml_tools.XmlConfigTools):
     m_count = 0
 
     def read_one_room(self, p_room_element):

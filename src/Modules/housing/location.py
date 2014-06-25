@@ -18,14 +18,14 @@ moon rise, tides, etc.
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
-from Modules.utils import xml_tools
 from Modules.Core.data_objects import LocationData
-from Modules.utils.tools import PrettyPrintAny
+from Modules.utils.xml_tools import XmlConfigTools
+# from Modules.utils.tools import PrettyPrintAny
 
 g_debug = 0
 m_logger = None
 
-class ReadWriteConfigXml(xml_tools.ConfigTools):
+class ReadWriteConfigXml(XmlConfigTools):
     """Use the internal data to read / write an updated XML config file.
     """
 
@@ -34,6 +34,7 @@ class ReadWriteConfigXml(xml_tools.ConfigTools):
         @param p_house_obj: is p_pyhouses_obj.House.OBJs
         @param p_house_xml: is one of 0+ 'House' elements
         """
+        # PrettyPrintAny(p_house_xml, 'Location - HouseXML', 100)
         l_location_obj = LocationData()
         l_location_xml = p_house_xml.find('LocationSection')
         l_location_obj.Street = self.get_text_from_xml(l_location_xml, 'Street')

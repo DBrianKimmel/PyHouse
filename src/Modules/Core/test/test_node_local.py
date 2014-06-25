@@ -31,9 +31,9 @@ class Test_02_ReadWriteXML(unittest.TestCase):
         self.m_pyhouse_obj.Services = CoreServicesInformation()
         self.m_pyhouse_obj.Computer.Nodes[0] = NodeData()
         self.m_pyhouse_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
-        self.m_nodes_xml = self.m_root_xml.find('Nodes')
+        self.m_nodes_xml = self.m_root_xml.find('NodeSection')
         self.m_node_xml = self.m_nodes_xml.find('Node')
-        self.m_interfaces_xml = self.m_node_xml.find('Interfaces')
+        self.m_interfaces_xml = self.m_node_xml.find('InterfaceSection')
         self.m_interface_xml = self.m_interfaces_xml.find('Interface')
         self.m_interface_obj = NodeInterfaceData()
         self.m_node_obj = NodeData()
@@ -101,7 +101,7 @@ class Test_03_ReadWriteEmptyXML(unittest.TestCase):
         self.m_pyhouse_obj.Services = CoreServicesInformation()
         self.m_pyhouse_obj.Computer.Nodes[0] = NodeData()
         self.m_pyhouse_obj.XmlRoot = self.m_root_xml = ET.fromstring(xml_data.XML_EMPTY)
-        self.m_nodes_xml = self.m_root_xml.find('Nodes')
+        self.m_nodes_xml = self.m_root_xml.find('NodeSection')
         self.m_node_xml = None
         self.m_interfaces_xml = None
         self.m_interface_xml = None

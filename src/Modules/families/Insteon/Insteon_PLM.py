@@ -42,7 +42,7 @@ from Modules.families.Insteon.Device_Insteon import InsteonData
 from Modules.utils import pyh_log
 # from Modules.utils.tools import PrettyPrintAny
 
-g_debug = 9
+g_debug = 0
 LOG = pyh_log.getLogger('PyHouse.Insteon_PLM ')
 
 callLater = reactor.callLater
@@ -537,7 +537,7 @@ class DecodeResponses(CreateCommands):
         """Insteon Button Press event (3 bytes).
         See p 276 of developers guide.
         """
-        LOG.warning("== 54 message not decoded yet.")
+        LOG.warning("== 54 Insteon Button Press - message not decoded yet.")
         l_ret = False
         return self.check_for_more_decoding(p_controller_obj, l_ret)
 

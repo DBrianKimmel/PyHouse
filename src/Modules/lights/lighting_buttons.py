@@ -51,7 +51,7 @@ class ButtonsAPI(ReadWriteConfigXml):
         except AttributeError as e_error:  # No Buttons section
             print('LightingButtons ERROR {0:}'.format(e_error))
             l_button_dict = {}
-        PrettyPrintAny(l_button_dict, 'Lighting_Buttons - ReadButtonsXml - Dict')
+        # PrettyPrintAny(l_button_dict, 'Lighting_Buttons - ReadButtonsXml - Dict')
         return l_button_dict
 
     def write_one_button_xml(self, p_button_obj):

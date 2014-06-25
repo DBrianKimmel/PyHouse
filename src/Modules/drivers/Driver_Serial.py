@@ -24,7 +24,6 @@ from twisted.internet.serialport import SerialPort
 import serial
 
 # Import PyMh files
-from Modules.Core.data_objects import NodeData, NodeInterfaceData
 from Modules.utils.tools import PrintBytes
 from Modules.utils import pyh_log
 
@@ -87,10 +86,11 @@ class SerialAPI(object):
         """
         if g_debug >= 1:
             LOG.debug("Writing {0:}".format(PrintBytes(p_message)))
-        try:
-            self.m_serial.writeSomeData(p_message)
-        except (AttributeError, TypeError) as e:
-            LOG.warning("Bad serial write - {0:} {1:}".format(e, PrintBytes(p_message)))
+        if self.m_active:
+            try:
+                self.m_serial.writeSomeData(p_message)
+            except (AttributeError, TypeError) as e:
+                LOG.warning("Bad serial write - {0:} {1:}".format(e, PrintBytes(p_message)))
         return
 
 
@@ -104,9 +104,11 @@ class API(SerialAPI):
         @param p_controller_obj:is the Controller_Data object for a serial device to open.
         """
         self.m_controller_obj = p_controller_obj
-        self.twisted_open_device(self.m_controller_obj)
-        LOG.info("Started controller {0:}".format(self.m_controller_obj.Name))
-        return True
+        l_ret = self.twisted_open_device(self.m_controller_obj)
+        self.m_active = l_ret
+        if l_ret:
+            LOG.info("Started controller {0:}".format(self.m_controller_obj.Name))
+        return l_ret
 
     def Stop(self):
         self.close_device(self.m_controller_obj)

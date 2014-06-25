@@ -70,7 +70,7 @@ class Logger(object):
         tpLog.msg(message, level = level, system = self.name)
 
 
-class ReadWriteConfigXml(xml_tools.ConfigTools):
+class ReadWriteConfigXml(xml_tools.XmlConfigTools):
     """
     """
 
@@ -91,7 +91,7 @@ class ReadWriteConfigXml(xml_tools.ConfigTools):
         return l_ret
 
     def write_xml(self, p_log_data):
-        l_log_xml = ET.Element("Logs")
+        l_log_xml = ET.Element("LogSection")
         self.put_text_element(l_log_xml, 'Debug', p_log_data.Debug)
         self.put_text_element(l_log_xml, 'Error', p_log_data.Error)
         return l_log_xml
@@ -101,13 +101,12 @@ class Utility(ReadWriteConfigXml):
 
     m_pyhouse_obj = None
 
-    def setup_debug_log (self, p_pyhouse_obj):
+    def setup_debug_log (self, p_file):
         """Debug and more severe goes to the base logger
         """
         logging.basicConfig()
-        l_file = p_pyhouse_obj.Computer.Logs.Debug
-        self.m_pyhouse_obj = p_pyhouse_obj
-        l_daily = DailyLogFile.fromFullPath(l_file)
+        # l_file = p_pyhouse_obj.Computer.Logs.Debug
+        l_daily = DailyLogFile.fromFullPath(p_file)
         tpLog.startLogging(l_daily)
         observer = tpLog.PythonLoggingObserver()
         observer.start()
@@ -123,12 +122,19 @@ class API(Utility):
 
     def Start(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        p_pyhouse_obj.Computer.Logs = LogData()
+        # p_pyhouse_obj.Computer.Logs = LogData()
         # PrettyPrintAny(p_pyhouse_obj, 'Logs 1')
-        p_pyhouse_obj.Computer.Logs = self.read_xml(p_pyhouse_obj)
+        l_ret = self.read_xml(p_pyhouse_obj)
+        # p_pyhouse_obj.Computer.Logs = l_ret
         # PrettyPrintAny(p_pyhouse_obj.Computer.Logs, 'Logs 2')
-        self.setup_debug_log(p_pyhouse_obj)
+        self.setup_debug_log(l_ret.Debug)
         # PrettyPrintAny(p_pyhouse_obj.Computer.Logs, 'Logs 3')
+        # print('==============================================\n\n')
+        try:
+            self.m_pyhouse_obj.Computer.Logs = l_ret
+        except AttributeError:
+            pass
+        return l_ret
 
     def Stop(self, p_xml):
         p_xml.append(self.write_xml(self.m_log_data))

@@ -309,6 +309,7 @@ class PyHouseAPIs(object):
     """
 
     def __init__(self):
+        self.ComouterAPI = None
         self.CoreAPI = None
         self.EntertainmentAPI = None
         self.HouseAPI = None

@@ -16,13 +16,17 @@ Then start the House and all the sub systems.
 """
 
 # Import system type stuff
+import datetime
+import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
-from Modules.Core import nodes
-from Modules.entertain import entertainment
+from Modules.Core.data_objects import CoreServicesInformation, XmlInformation
+from Modules.Comps import computer
+# from Modules.entertain import entertainment
 from Modules.housing import house
-from Modules.web import web_server
 from Modules.utils import pyh_log
+from Modules.utils import xml_tools
+from Modules.utils.xml_tools import XmlConfigTools
 from Modules.utils.tools import PrettyPrintAny
 
 g_debug = 0
@@ -32,44 +36,82 @@ INTER_NODE = 'tcp:port=8581'
 INTRA_NODE = 'unix:path=/var/run/pyhouse/node:lockfile=1'
 
 
-class Utility(object):
+class ReadWriteConfigXml(XmlConfigTools):
+    """Use the internal data to read / write an updated XML config file.
+    """
 
-    def dispatch(self):
-        pass
+    def read_xml_config_info(self, p_pyhouse_obj):
+        """This will read the XML config file(s).
+        This puts the XML tree and file name in the pyhouse object for use by various modules.
+        """
+        p_pyhouse_obj.Xml.XmlFileName = l_name = xml_tools.open_config_file()
+        try:
+            l_xmltree = ET.parse(l_name)
+            print('Setup-XML file {0:} parsed OK.'.format(l_name))
+        except SyntaxError as e_error:
+            print('Setup-XML file ERROR - {0:} - {1:}'.format(e_error, l_name))
+            xml_tools.ConfigFile().create_empty_config_file(l_name)
+            l_xmltree = ET.parse(p_pyhouse_obj.Xml.XmlFileName)
+        p_pyhouse_obj.Xml.XmlRoot = l_xmltree.getroot()
+        p_pyhouse_obj.Xml.XmlParsed = p_pyhouse_obj.Xml.XmlRoot
+
+    def write_xml_config_file(self):
+        LOG.info("Saving all data to XML file.")
+        l_xml = ET.Element("PyHouse")
+        xml_tools.PutGetXML().put_text_attribute(l_xml, 'Version', self.m_pyhouse_obj.Xml.XmlVersion)
+        l_xml.append(ET.Comment('Updated by PyHouse {0:}'.format(datetime.datetime.now())))
+        # self.m_pyhouse_obj.APIs.CoreAPI.Stop(l_xml)
+        # self.m_pyhouse_obj.APIs.LogsAPI.Stop(l_xml)
+        self.m_pyhouse_obj.APIs.ComputerAPI.Stop(l_xml)
+        self.m_pyhouse_obj.APIs.HouseAPI.Stop(l_xml)
+        xml_tools.write_xml_file(l_xml, self.m_pyhouse_obj.Xml.XmlFileName)
 
 
-class API(object):
+class Utility(ReadWriteConfigXml):
+    """
+    """
+
+    def log_start(self, p_pyhouse_obj):
+        """Logging is the very first thing we start so we can see errors in the starting process
+        """
+        l_log = pyh_log.API()
+        l_log.Start(p_pyhouse_obj)
+        LOG.info("\n------------------------------------------------------------------\n\n")
+
+
+class API(Utility):
 
     m_entertainment = None
-    m_nodes = None
 
-    def __init__(self):
-        LOG.info("\n------------------------------------------------------------------\n\n")
-        self.m_nodes = nodes.API()
+    def __init__(self, p_pyhouse_obj):
+        """
+        This runs before the reactor has started - Be Careful!
+        """
+        p_pyhouse_obj.Services = CoreServicesInformation()
+        p_pyhouse_obj.Xml = XmlInformation()
+        p_pyhouse_obj.APIs.ComputerAPI = computer.API()
+        p_pyhouse_obj.APIs.HouseAPI = house.API()
+        self.m_pyhouse_obj = p_pyhouse_obj
 
     def Start(self, p_pyhouse_obj):
-        LOG.info("Starting.")
-        # PrettyPrintAny(p_pyhouse_obj, 'Core setup - Start - PyHouse')
-        # PrettyPrintAny(p_pyhouse_obj.Xml, 'Core setup - PyHouse.Xml')
+        """The reactor is now running.
+        """
+        self.read_xml_config_info(self.m_pyhouse_obj)
+        self.log_start(p_pyhouse_obj)
+        # p_pyhouse_obj.APIs.EntertainmentAPI = entertainment.API()
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_nodes.Start(p_pyhouse_obj)
-        # House
-        p_pyhouse_obj.APIs.HouseAPI = house.API()
+        # PrettyPrintAny(p_pyhouse_obj, 'Setup - Start - PyHouse', 100)
+
+        p_pyhouse_obj.APIs.ComputerAPI.Start(p_pyhouse_obj)  # Logs now started
+        # PrettyPrintAny(p_pyhouse_obj.Computer, 'Setup - Start - Computer', 100)
+        # p_pyhouse_obj.APIs.EntertainmentAPI.Start(p_pyhouse_obj)
         p_pyhouse_obj.APIs.HouseAPI.Start(p_pyhouse_obj)
-        # SubSystems
-        p_pyhouse_obj.APIs.WebAPI = web_server.API()
-        p_pyhouse_obj.APIs.WebAPI.Start(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.EntertainmentAPI = entertainment.API()
-        p_pyhouse_obj.APIs.EntertainmentAPI.Start(p_pyhouse_obj)
+        # PrettyPrintAny(p_pyhouse_obj.Computer, 'Setup - Start - Computer', 100)
+        # p_pyhouse_obj.APIs.NodesAPI.Start(p_pyhouse_obj)
         LOG.info("Started.")
 
-    def Stop(self, p_xml):
-        # SubSystems
-        self.m_pyhouse_obj.APIs.EntertainmentAPI.Stop(p_xml)
-        self.m_pyhouse_obj.APIs.WebAPI.Stop(p_xml)
-        # House
-        self.m_pyhouse_obj.APIs.HouseAPI.Stop(p_xml)
-        self.m_nodes.Stop(p_xml)
+    def Stop(self):
+        self.write_xml_config_file()
         LOG.info("Stopped.")
 
 # ## END DBK

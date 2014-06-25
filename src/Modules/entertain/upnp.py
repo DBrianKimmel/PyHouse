@@ -127,7 +127,7 @@ class FindAllInterfaceData(object):
         pass
 
 
-class ReadWriteConfigXml(xml_tools.ConfigTools):
+class ReadWriteConfigXml(xml_tools.XmlConfigTools):
     """
     """
 

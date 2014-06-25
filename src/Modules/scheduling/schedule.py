@@ -56,7 +56,7 @@ g_debug = 1
 LOG = pyh_log.getLogger('PyHouse.Schedule    ')
 
 
-class ReadWriteConfigXml(xml_tools.ConfigTools):
+class ReadWriteConfigXml(xml_tools.XmlConfigTools):
 
     m_count = 0
 
@@ -112,7 +112,7 @@ class ReadWriteConfigXml(xml_tools.ConfigTools):
         """
         self.m_count = 0
         l_xml = ET.Element('ScheduleSection')
-        PrettyPrintAny(p_schedules_obj, 'Schedule - SchedulesObj')
+        # PrettyPrintAny(p_schedules_obj, 'Schedule - SchedulesObj')
         for l_schedule_obj in p_schedules_obj.itervalues():
             l_entry = self.write_one_schedule_xml(l_schedule_obj)
             l_xml.append(l_entry)
@@ -285,9 +285,9 @@ class ScheduleUtility(ScheduleExecution):
         l_time_scheduled = l_now
         l_seconds_to_delay = 100000.0
         l_schedule_list = []
-        PrettyPrintAny(self.m_pyhouse_obj, 'Schedule - get_next_sched - m_pyhouse_obj')
-        PrettyPrintAny(self.m_pyhouse_obj.House, 'Schedule - get_next_sched - m_pyhouse_obj.House')
-        PrettyPrintAny(self.m_pyhouse_obj.House.OBJs, 'Schedule - get_next_sched - m_pyhouse_obj.House.OBJs')
+        # PrettyPrintAny(self.m_pyhouse_obj, 'Schedule - get_next_sched - m_pyhouse_obj')
+        # PrettyPrintAny(self.m_pyhouse_obj.House, 'Schedule - get_next_sched - m_pyhouse_obj.House')
+        # PrettyPrintAny(self.m_pyhouse_obj.House.OBJs, 'Schedule - get_next_sched - m_pyhouse_obj.House.OBJs')
         for l_key, l_schedule_obj in self.m_pyhouse_obj.House.OBJs.Schedules.iteritems():
             if not l_schedule_obj.Active:
                 continue
@@ -352,7 +352,7 @@ class API(ScheduleUtility, ReadWriteConfigXml):
         """Stop everything under me and build xml to be appended to a house xml.
         """
         LOG.info("Stopping schedule for house:{0:}.".format(self.m_house_obj.Name))
-        p_xml.append(self.write_schedules_xml(self.m_house_obj.Schedules))
+        p_xml.append(self.write_schedules_xml(self.m_pyhouse_obj.House.OBJs.Schedules))
         self.stop_scheduled_modules(p_xml)
         LOG.info("Stopped.\n")
 
