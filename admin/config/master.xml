@@ -1,7 +1,8 @@
 <PyHouse>
     <ComputerDivision>
         <InternetSection>
-            <Internet Name="Connection-1" Key="0" Active="True" UUID='123'>
+            <Internet Name="Connection-1" Key="0" Active="True">
+                <UUID>1234</UUID>
                 <ExternalUrl>http://snar.co/ip</ExternalUrl>
                 <ExternalDelay>28800</ExternalDelay>
                 <ExternalIP>65.35.48.61</ExternalIP>

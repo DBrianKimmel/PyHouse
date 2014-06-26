@@ -289,8 +289,8 @@ class InternetConnectionDynDnsData(ABaseObject):
     """One or more dynamic dns servers that we need to update
     """
     def __init__(self):
-        self.Interval = 0
-        self.Url = None
+        self.UpdateInterval = 0
+        self.UpdateUrl = None
 
 
 class XmlInformation(object):
@@ -300,6 +300,7 @@ class XmlInformation(object):
         self.XmlFileName = ''
         self.XmlParsed = None
         self.XmlRoot = None
+        self.XmlDivision = None
         self.XmlSection = None
         self.XmlVersion = __version__
 

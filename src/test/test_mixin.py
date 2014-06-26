@@ -42,7 +42,7 @@ class Setup(SetupPyHouseObj):
     def __init__(self):
         self.m_pyhouse_obj = self.BuildPyHouse()
         print('test_mixin.Setup()')
-        PrettyPrintAny(self, 'test_mixin - Setup() - self')
-        PrettyPrintAny(self.m_pyhouse_obj, 'test_mixin - Setup() - pyhouse_obj')
+        # PrettyPrintAny(self, 'test_mixin - Setup() - self')
+        # PrettyPrintAny(self.m_pyhouse_obj, 'test_mixin - Setup() - pyhouse_obj')
 
 # ## END DBK

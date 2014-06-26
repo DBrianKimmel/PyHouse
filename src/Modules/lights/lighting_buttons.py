@@ -60,6 +60,7 @@ class ButtonsAPI(ReadWriteConfigXml):
         return l_button_xml
 
     def write_buttons_xml(self, p_buttons_obj):
+        print('lighting_buttons.write_buttons_xml')
         self.m_count = 0
         l_buttons_xml = ET.Element('ButtonSection')
         for l_button_obj in p_buttons_obj.itervalues():

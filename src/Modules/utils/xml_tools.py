@@ -220,14 +220,22 @@ class XmlConfigTools(PutGetXML):
         l_elem = ET.Element(p_element_name)
         try:
             l_elem.set('Active', self.put_bool(p_object.Active))
+        except AttributeError:
+            l_elem.set('Active', self.put_bool(True))
+        try:
             l_elem.set('Name', p_object.Name)
+        except AttributeError:
+            l_elem.set('Name', self.put_str('No Name Given'))
+        try:
             l_elem.set('Key', str(p_object.Key))
-        except AttributeError as e_error:
-            print('ERROR in writeBaseObj {0:} {1:}'.format(e_error, PrettyPrintAny(p_object, 'Error in writeBaseObj')))
+        except AttributeError:
+            l_elem.set('Key', '123456')
+
         try:
             self.put_text_element(l_elem, 'UUID', p_object.UUID)
         except AttributeError as e_error:
-            print('ERROR in writeBaseObj {0:} {1:}'.format(e_error, PrettyPrintAny(p_object, 'Error in writeBaseObj')))
+            self.put_text_element(l_elem, 'UUID', 'No UUID Given')
+            # print('ERROR in writeBaseObj {0:} {1:}'.format(e_error, PrettyPrintAny(p_object, 'Error in writeBaseObj')))
         return l_elem
 
 

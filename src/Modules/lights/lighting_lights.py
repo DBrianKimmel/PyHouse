@@ -27,9 +27,7 @@ from Modules.Core.data_objects import LightData
 from Modules.lights.lighting_core import ReadWriteConfigXml
 # from Modules.utils.tools import PrettyPrintAny
 
-
 g_debug = 0
-# 0 = off
 
 
 class LightingLightsAPI(ReadWriteConfigXml):
@@ -77,6 +75,7 @@ class LightingLightsAPI(ReadWriteConfigXml):
         return l_light_xml
 
     def write_lights_xml(self, p_lights_obj):
+        print('lighting_lights.write_lights_xml')
         l_lighting_xml = ET.Element('LightSection')
         l_count = 0
         for l_light_obj in p_lights_obj.itervalues():

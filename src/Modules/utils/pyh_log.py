@@ -104,8 +104,8 @@ class Utility(ReadWriteConfigXml):
     def setup_debug_log (self, p_file):
         """Debug and more severe goes to the base logger
         """
+        # print('pyh_log start logging to {0:}'.format(p_file))
         logging.basicConfig()
-        # l_file = p_pyhouse_obj.Computer.Logs.Debug
         l_daily = DailyLogFile.fromFullPath(p_file)
         tpLog.startLogging(l_daily)
         observer = tpLog.PythonLoggingObserver()
@@ -122,14 +122,8 @@ class API(Utility):
 
     def Start(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        # p_pyhouse_obj.Computer.Logs = LogData()
-        # PrettyPrintAny(p_pyhouse_obj, 'Logs 1')
         l_ret = self.read_xml(p_pyhouse_obj)
-        # p_pyhouse_obj.Computer.Logs = l_ret
-        # PrettyPrintAny(p_pyhouse_obj.Computer.Logs, 'Logs 2')
         self.setup_debug_log(l_ret.Debug)
-        # PrettyPrintAny(p_pyhouse_obj.Computer.Logs, 'Logs 3')
-        # print('==============================================\n\n')
         try:
             self.m_pyhouse_obj.Computer.Logs = l_ret
         except AttributeError:
@@ -137,14 +131,14 @@ class API(Utility):
         return l_ret
 
     def Stop(self, p_xml):
-        p_xml.append(self.write_xml(self.m_log_data))
+        p_xml.append(self.write_xml(self.m_pyhouse_obj.Computer.Logs))
         return p_xml
 
     def Update(self, p_entry):
         l_obj = LogData()
         l_obj.Debug = p_entry.Debug
         l_obj.Error = p_entry.Error
-        self.m_pyhouse_obj.LogData = l_obj  # update schedule entry within a house
+        self.m_pyhouse_obj.LogData = l_obj
 
 
 def getLogger(p_name):

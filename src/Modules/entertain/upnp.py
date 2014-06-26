@@ -74,12 +74,12 @@ class DynDnsData(object):
         self.Name = ''
         self.Key = 0
         self.Active = False
-        self.Interval = 0
-        self.Url = None
+        self.UpdateInterval = 0
+        self.UpdateUrl = None
 
     def reprJSON(self):
         return dict(Name = self.Name, Key = self.Key, Active = self.Active,
-                    Interval = self.Interval, Url = self.Url
+                    Interval = self.UpdateInterval, Url = self.UpdateUrl
                     )
 
 
@@ -138,11 +138,11 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
     def extract_dyn_dns(self, p_internet_xml):
         l_dyndns_obj = DynDnsData()
         self.read_base_object_xml(l_dyndns_obj, p_internet_xml)
-        l_dyndns_obj.Interval = self.get_int_from_xml(p_internet_xml, 'Interval')
-        l_dyndns_obj.Url = self.get_text_from_xml(p_internet_xml, 'Url')
+        l_dyndns_obj.UpdateInterval = self.get_int_from_xml(p_internet_xml, 'UpdateInterval')
+        l_dyndns_obj.UpdateUrl = self.get_text_from_xml(p_internet_xml, 'UpdateUrl')
         if g_debug >= 1:
-            LOG.debug("internet.extract_dyn_dns() - Name:{0:}, Interval:{1:}, Url:{2:};".format(
-                            l_dyndns_obj.Name, l_dyndns_obj.Interval, l_dyndns_obj.Url))
+            LOG.debug("internet.extract_dyn_dns() - Name:{0:}, UpdateInterval:{1:}, UpdateUrl:{2:};".format(
+                            l_dyndns_obj.Name, l_dyndns_obj.UpdateInterval, l_dyndns_obj.UpdateUrl))
         return l_dyndns_obj
 
     def insert_dyn_dns(self):
@@ -180,7 +180,7 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
             l_dyndns.Key = l_count  # Renumber
             p_house_obj.Internet.DynDns[l_count] = l_dyndns
             l_count += 1
-        LOG.info('Loaded Url:{0:}, Delay:{1:}'.format(self.m_external_url, self.m_external_delay))
+        LOG.info('Loaded UpdateUrl:{0:}, Delay:{1:}'.format(self.m_external_url, self.m_external_delay))
         return p_house_obj.Internet
 
     def write_internet(self, p_house_obj):
@@ -194,8 +194,8 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         try:
             for l_dyndns_obj in p_house_obj.Internet.DynDns.itervalues():
                 l_entry = self.write_base_object_xml('DynamicDNS', l_dyndns_obj)
-                self.put_int_element(l_entry, 'Interval', l_dyndns_obj.Interval)
-                self.put_text_element(l_entry, 'Url', l_dyndns_obj.Url)
+                self.put_int_element(l_entry, 'UpdateInterval', l_dyndns_obj.UpdateInterval)
+                self.put_text_element(l_entry, 'UpdateUrl', l_dyndns_obj.UpdateUrl)
                 l_internet_xml.append(l_entry)
         except AttributeError:
             pass
@@ -325,7 +325,7 @@ class DynDnsAPI(object):
     This is a repeating two stage process.
     First get our current External IP address.
     Second, update zero or more Dyn DNS sites with our address
-    Then wait Interval time and repeat forever.
+    Then wait UpdateInterval time and repeat forever.
     Allow for missing responses so as to not break the chain of events.
     """
 
@@ -340,8 +340,8 @@ class DynDnsAPI(object):
         """
         self.m_running = True
         for l_dyn_obj in self.m_house_obj.Internet.DynDns.itervalues():
-            l_cmd = lambda x = l_dyn_obj.Interval, y = l_dyn_obj: self.update_loop(x, y)
-            callLater(l_dyn_obj.Interval, l_cmd)
+            l_cmd = lambda x = l_dyn_obj.UpdateInterval, y = l_dyn_obj: self.update_loop(x, y)
+            callLater(l_dyn_obj.UpdateInterval, l_cmd)
 
     def stop_dyndns_process(self):
         self.m_running = False
@@ -353,9 +353,9 @@ class DynDnsAPI(object):
         """
         if not self.m_running:
             return
-        LOG.info("Update DynDns for House:{0:}, {1:}, {2:}".format(self.m_house_obj.Name, p_dyn_obj.Name, p_dyn_obj.Url))
+        LOG.info("Update DynDns for House:{0:}, {1:}, {2:}".format(self.m_house_obj.Name, p_dyn_obj.Name, p_dyn_obj.UpdateUrl))
         self.m_dyn_obj = p_dyn_obj
-        self.m_deferred = getPage(p_dyn_obj.Url)
+        self.m_deferred = getPage(p_dyn_obj.UpdateUrl)
         self.m_deferred.addCallback(self.cb_parse_dyndns)
         self.m_deferred.addErrback(self.eb_parse_dyndns)
         self.m_deferred.addBoth(self.cb_do_delay)
@@ -372,8 +372,8 @@ class DynDnsAPI(object):
         LOG.warning("Update DynDns for House:{0:} failed ERROR - {1:}.".format(self.m_house_obj.Name, p_response))
 
     def cb_do_delay(self, _p_response):
-        l_cmd = lambda x = self.m_dyn_obj.Interval, y = self.m_dyn_obj: self.update_loop(x, y)
-        callLater(self.m_dyn_obj.Interval, l_cmd)
+        l_cmd = lambda x = self.m_dyn_obj.UpdateInterval, y = self.m_dyn_obj: self.update_loop(x, y)
+        callLater(self.m_dyn_obj.UpdateInterval, l_cmd)
 
 
 class API(ReadWriteConfigXml):

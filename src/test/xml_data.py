@@ -49,6 +49,59 @@ XML_EMPTY = """
 XML_LONG = """
 <PyHouse Version='2'>
 
+    <ComputerDivision>
+        <LogSection>
+            <Debug>/var/log/pyhouse/debug</Debug>
+            <Error>/var/log/pyhouse/error</Error>
+        </LogSection>
+        <WebSection>
+            <WebPort>8580</WebPort>
+        </WebSection>
+        <InternetSection>
+            <Internet Name="Connection-1" Key="0" Active="True">
+                <UUID>1234</UUID>
+                <ExternalUrl>http://snar.co/ip</ExternalUrl>
+                <ExternalDelay>28800</ExternalDelay>
+                <ExternalIP>65.35.48.61</ExternalIP>
+                <DynamicDnsSection>
+                    <DynamicDNS Active="True" Key="0" Name="Afraid">
+                        <UUID>6543</UUID>
+                        <UpdateUrl>http://freedns.afraid.org/dynamic/update.php?VDZtSkE2MzFVMVVBQVd5QXg2MDo5MjU1MzYw</UpdateUrl>
+                        <UpdateInterval>21600</UpdateInterval>
+                    </DynamicDNS>
+                </DynamicDnsSection>
+            </Internet>
+        </InternetSection>
+
+<!-- Tested to here -->
+
+        <NodeSection>
+            <Node Name='pi-01' Key='0' Active='True'>
+                <UUID>87654321-1001-11e3-b583-082e5f899999</UUID>
+                <ConnectionAddressV4>192.168.1.123</ConnectionAddressV4>
+                <InterfaceSection>
+                    <Interface Name='eth0' Key="0" Active="True">
+                        <UUID>87654321-1001-11e3-b583-012300001111</UUID>
+                        <MacAddress>01:02:03:04:05:06</MacAddress>
+                        <IPv4Address>192.168.1.11</IPv4Address>
+                        <IPv6Address>2000:1D::1, 2000:1D::101</IPv6Address>
+                    </Interface>
+                    <Interface Name='wlan0' Key="1" Active="True">
+                        <UUID>87654321-1001-11e3-b583-012300002222</UUID>
+                        <MacAddress>01:02:03:04:05:06</MacAddress>
+                        <IPv4Address>192.168.1.22</IPv4Address>
+                        <IPv6Address>2000:1D::2, 2000:1D::202</IPv6Address>
+                    </Interface>
+                    <Interface Name='lo' Key="2" Active="True">
+                        <MacAddress>01:02:03:04:05:06</MacAddress>
+                        <IPv4Address>192.168.1.33</IPv4Address>
+                        <IPv6Address>2000:1D::3, 2000:1D::303</IPv6Address>
+                    </Interface>
+                </InterfaceSection>
+            </Node>
+        </NodeSection>
+    </ComputerDivision>
+
     <HouseDivision Active="True" Key="0" Name="Pink Poppy">
         <UUID>12345678-1002-11e3-b583-333e5f8cdfd2</UUID>
         <LocationSection>
@@ -291,57 +344,6 @@ XML_LONG = """
         <EntertainmentSection />
     </HouseDivision>
 
-    <ComputerDivision>
-        <LogSection>
-            <Debug>/var/log/pyhouse/debug</Debug>
-            <Error>/var/log/pyhouse/error</Error>
-        </LogSection>
-        <WebSection>
-            <WebPort>8580</WebPort>
-        </WebSection>
-
-<!-- Tested to here -->
-
-        <InternetSection>
-            <Internet Name="Connection-1" Key="0" Active="True" UUID='123'>
-                <ExternalUrl>http://snar.co/ip</ExternalUrl>
-                <ExternalDelay>28800</ExternalDelay>
-                <ExternalIP>65.35.48.61</ExternalIP>
-                <DynamicDnsSection>
-                    <DynamicDNS Active="True" Key="0" Name="Afraid">
-                        <UpdateUrl>http://freedns.afraid.org/dynamic/update.php?VDZtSkE2MzFVMVVBQVd5QXg2MDo5MjU1MzYw</UpdateUrl>
-                        <UpdateInterval>21600</UpdateInterval>
-                    </DynamicDNS>
-                </DynamicDnsSection>
-            </Internet>
-        </InternetSection>
-
-        <NodeSection>
-            <Node Name='pi-01' Key='0' Active='True'>
-                <UUID>87654321-1001-11e3-b583-082e5f899999</UUID>
-                <ConnectionAddressV4>192.168.1.123</ConnectionAddressV4>
-                <InterfaceSection>
-                    <Interface Name='eth0' Key="0" Active="True">
-                        <UUID>87654321-1001-11e3-b583-012300001111</UUID>
-                        <MacAddress>01:02:03:04:05:06</MacAddress>
-                        <IPv4Address>192.168.1.11</IPv4Address>
-                        <IPv6Address>2000:1D::1, 2000:1D::101</IPv6Address>
-                    </Interface>
-                    <Interface Name='wlan0' Key="1" Active="True">
-                        <UUID>87654321-1001-11e3-b583-012300002222</UUID>
-                        <MacAddress>01:02:03:04:05:06</MacAddress>
-                        <IPv4Address>192.168.1.22</IPv4Address>
-                        <IPv6Address>2000:1D::2, 2000:1D::202</IPv6Address>
-                    </Interface>
-                    <Interface Name='lo' Key="2" Active="True">
-                        <MacAddress>01:02:03:04:05:06</MacAddress>
-                        <IPv4Address>192.168.1.33</IPv4Address>
-                        <IPv6Address>2000:1D::3, 2000:1D::303</IPv6Address>
-                    </Interface>
-                </InterfaceSection>
-            </Node>
-        </NodeSection>
-    </ComputerDivision>
 
 </PyHouse>
 """

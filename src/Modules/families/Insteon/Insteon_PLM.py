@@ -529,7 +529,7 @@ class DecodeResponses(CreateCommands):
         """Insteon All-Linking completed (10 bytes).
         See p 260 of developers guide.
         """
-        LOG.warning("== 53 message not decoded yet.")
+        LOG.warning("== 53 Insteon All linking Completed - message not decoded yet.")
         l_ret = False
         return self.check_for_more_decoding(p_controller_obj, l_ret)
 

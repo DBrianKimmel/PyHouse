@@ -87,6 +87,7 @@ class ControllersAPI(ReadWriteConfigXml):
         return l_entry_xml
 
     def write_controllers_xml(self, p_controllers_obj):
+        print('lighting_controllers.write_controllers_xml')
         l_count = 0
         l_controllers_xml = ET.Element('ControllerSection')
         for l_controller_obj in p_controllers_obj.itervalues():

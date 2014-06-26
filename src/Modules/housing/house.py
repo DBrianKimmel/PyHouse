@@ -21,7 +21,6 @@ Rooms and lights and HVAC are associated with a particular house.
 # Import PyMh files
 from Modules.Core.data_objects import HouseInformation, HouseObjs
 from Modules.scheduling import schedule
-from Modules.computer import internet
 from Modules.housing import location
 from Modules.housing import rooms
 from Modules.utils import pyh_log
@@ -50,7 +49,6 @@ class HouseItems(object):
     """
 
     def init_all_components(self):
-        # self.m_house_obj.APIs.InternetAPI = internet.API()
         self.m_house_obj.APIs.ScheduleAPI = schedule.API(self.m_house_obj)
         pass
 
@@ -62,14 +60,14 @@ class ReadWriteConfigXml(location.ReadWriteConfigXml, rooms.ReadWriteConfigXml):
     """
 
     def get_house_xml(self, p_pyhouse_obj):
-        l_house_xml = p_pyhouse_obj.Xml.XmlParsed.find('HouseDivision')
-        p_pyhouse_obj.Xml.XmlSection = l_house_xml
-        return l_house_xml
+        l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
+        p_pyhouse_obj.Xml.XmlSection = l_xml
+        return l_xml
 
     def read_house_xml(self, p_pyhouse_obj):
         """Read house information, location and rooms.
         """
-        l_xml = p_pyhouse_obj.Xml.XmlSection = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
+        l_xml = self.get_house_xml(p_pyhouse_obj)
         # PrettyPrintAny(l_xml, 'House - read_house_xml - l_xml')
         self.read_base_object_xml(p_pyhouse_obj.House, l_xml)
         p_pyhouse_obj.House.OBJs.Location = self.read_location_xml(l_xml)

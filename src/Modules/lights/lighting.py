@@ -22,13 +22,13 @@ from Modules.lights.lighting_buttons import ButtonsAPI
 from Modules.lights.lighting_controllers import ControllersAPI
 from Modules.lights.lighting_lights import LightingLightsAPI
 from Modules.utils import pyh_log
-from Modules.utils.tools import PrettyPrintAny
+# from Modules.utils.tools import PrettyPrintAny
 
 g_debug = 9
 LOG = pyh_log.getLogger('PyHouse.Lighting    ')
 
 
-class Utility(ControllersAPI, LightingLightsAPI):
+class Utility(ControllersAPI, ButtonsAPI, LightingLightsAPI):
     """Commands we can run from high places.
     """
 
@@ -51,6 +51,7 @@ class Utility(ControllersAPI, LightingLightsAPI):
         # PrettyPrintAny(p_pyhouse_obj.House.OBJs, 'Lighting - read_xml')
 
     def _write_lighting_xml(self, p_xml):
+        LOG.info('Writing lights, buttons and controllers ')
         p_xml.append(self.write_lights_xml(self.m_house_obj.Lights))
         p_xml.append(self.write_buttons_xml(self.m_house_obj.Buttons))
         p_xml.append(self.write_controllers_xml(self.m_house_obj.Controllers))
@@ -78,7 +79,7 @@ class API(Utility):
         """Allow cleanup of all drivers.
         """
         LOG.info("Stopping all lighting families.")
-        self.m_family.stop_lighting_families(p_xml, self.m_house_obj.FamilyData)
+        self.m_family.stop_lighting_families(p_xml, self.m_house_obj)
         self._write_lighting_xml(p_xml)
         LOG.info("Stopped.")
 

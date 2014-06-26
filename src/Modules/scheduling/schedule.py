@@ -315,7 +315,7 @@ class ScheduleUtility(ScheduleExecution):
         self.m_pyhouse_obj.APIs.LightingAPI.Start(p_pyhouse_obj)
 
     def stop_scheduled_modules(self, p_xml):
-        self.m_house_obj.APIs.LightingAPI.Stop(p_xml)
+        self.m_pyhouse_obj.APIs.LightingAPI.Stop(p_xml)
         return p_xml
 
 
