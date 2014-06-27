@@ -281,7 +281,7 @@ class InternetConnectionData(ABaseObject):
         self.ExternalDelay = 600  # Minimum value
         self.ExternalIPv4 = None  # returned from url to check our external IPv4 address
         self.ExternalUrl = None
-        self.IPv6 = None
+        self.ExternalIPv6 = None
         self.DynDns = {}  # InternetConnectionDynDnsData()
 
 
