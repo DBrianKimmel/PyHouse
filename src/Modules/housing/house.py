@@ -61,7 +61,6 @@ class ReadWriteConfigXml(location.ReadWriteConfigXml, rooms.ReadWriteConfigXml):
 
     def get_house_xml(self, p_pyhouse_obj):
         l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
-        p_pyhouse_obj.Xml.XmlSection = l_xml
         return l_xml
 
     def read_house_xml(self, p_pyhouse_obj):

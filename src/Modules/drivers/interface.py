@@ -43,13 +43,13 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         elif l_if == 'Ethernet':
             self._extract_ethernet_xml(p_controller_obj, p_controller_xml)
 
-    def write_xml(self, p_entry, p_controller_obj):
+    def write_interface_xml(self, p_controller_obj, p_xml):
             if p_controller_obj.InterfaceType == 'Serial':
-                self._write_serial_xml(p_entry, p_controller_obj)
+                self._write_serial_xml(p_xml, p_controller_obj)
             elif p_controller_obj.InterfaceType == 'USB':
-                self._write_usb_xml(p_entry, p_controller_obj)
+                self._write_usb_xml(p_xml, p_controller_obj)
             elif p_controller_obj.InterfaceType == 'Ethernet':
-                self._write_ethernet_xml(p_entry, p_controller_obj)
+                self._write_ethernet_xml(p_xml, p_controller_obj)
 
     def _extract_serial_xml(self, p_controller_obj, p_controller_xml):
         l_serial = SerialControllerData()

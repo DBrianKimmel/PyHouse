@@ -27,16 +27,19 @@ class SetupMixin(object):
 
     def setUp(self):
         test_mixin.Setup()
+        self.m_pyhouse_obj = test_mixin.SetupPyHouseObj().BuildPyHouse()
 
 
 class Test_02_XML(SetupMixin, unittest.TestCase):
+    """ This section tests the reading and writing of XML used by inernet.
+    """
 
     def setUp(self):
         self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         SetupMixin.setUp(self)
 
-        self.m_computer_xml = self.m_root_xml.find('ComputerDivision')
-        self.m_inter_sectn_xml = self.m_computer_xml.find('InternetSection')
+        self.m_computer_div_xml = self.m_root_xml.find('ComputerDivision')
+        self.m_inter_sectn_xml = self.m_computer_div_xml.find('InternetSection')
         self.m_internet_xml = self.m_inter_sectn_xml.find('Internet')
         self.m_dns_sect_xml = self.m_internet_xml.find('DynamicDnsSection')
         self.m_dyn_dns_xml = self.m_dns_sect_xml.find('DynamicDNS')
@@ -48,7 +51,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         """ Be sure that the XML contains the right stuff.
         """
         self.assertEqual(self.m_root_xml.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
-        self.assertEqual(self.m_computer_xml.tag, 'ComputerDivision', 'XML - No Computer section')
+        self.assertEqual(self.m_computer_div_xml.tag, 'ComputerDivision', 'XML - No Computer section')
         self.assertEqual(self.m_inter_sectn_xml.tag, 'InternetSection', 'XML - No Internet section')
         self.assertEqual(self.m_internet_xml.tag, 'Internet', 'XML - No Internet section')
         self.assertEqual(self.m_dyn_dns_xml.tag, 'DynamicDNS', 'XML - No Internet section')

@@ -79,9 +79,12 @@ class ReadWriteConfigXml(xml_tools.ConfigFile):
 class Utility(ReadWriteConfigXml):
 
     def start_webserver(self, p_pyhouses_obj):
-        p_pyhouses_obj.Services.WebServerService = service.Service()
-        p_pyhouses_obj.Services.WebServerService.setName('WebServer')
-        p_pyhouses_obj.Services.WebServerService.setServiceParent(p_pyhouses_obj.Twisted.Application)
+        try:
+            p_pyhouses_obj.Services.WebServerService = service.Service()
+            p_pyhouses_obj.Services.WebServerService.setName('WebServer')
+            p_pyhouses_obj.Services.WebServerService.setServiceParent(p_pyhouses_obj.Twisted.Application)
+        except RuntimeError:  # The service is already installed
+            pass
         #
         l_site_dir = None
         l_site = appserver.NevowSite(web_mainpage.TheRoot(l_site_dir, p_pyhouses_obj))

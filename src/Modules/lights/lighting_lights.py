@@ -25,12 +25,17 @@ import xml.etree.ElementTree as ET
 # Import PyHouse files
 from Modules.Core.data_objects import LightData
 from Modules.lights.lighting_core import ReadWriteConfigXml
-# from Modules.utils.tools import PrettyPrintAny
 
 g_debug = 0
 
 
 class LightingLightsAPI(ReadWriteConfigXml):
+    """
+    Get/Put all the information about one light:
+        Base Light Data
+        Light Data
+        Family Data
+    """
 
     m_count = 0
 
@@ -38,7 +43,9 @@ class LightingLightsAPI(ReadWriteConfigXml):
         self.m_pyhouse_obj = p_pyhouse_obj
 
     def _read_light_data(self, p_obj, p_xml):
-        pass
+        p_obj.IsController = self.get_text_from_xml(self, p_xml, 'IsController')
+        p_obj.LightingType = self.get_text_from_xml(p_xml, 'LightingType', 'Light')
+        p_obj.CurLevel = self.get_int_from_xml(p_xml, 'CurLevel', 0)
 
     def _read_family_data(self, p_obj, p_xml):
         l_family = p_obj.LightingFamily
@@ -51,17 +58,13 @@ class LightingLightsAPI(ReadWriteConfigXml):
         l_light_obj.Key = self.m_count  # Renumber
         self._read_light_data(l_light_obj, p_light_xml)
         self._read_family_data(l_light_obj, p_light_xml)
-        # PrettyPrintAny(l_light_obj, 'One Lights')
         return l_light_obj
 
-    def read_lights_xml(self, p_pyhouse_obj):
+    def read_lights_xml(self, p_light_sect_xml):
         self.m_count = 0
         l_lights_dict = {}
-        l_house_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
-        l_lights_xml = l_house_xml.find('LightSection')
-        # PrettyPrintAny(l_lights_xml, 'Lighting Lights')
         try:
-            for l_light_xml in l_lights_xml.iterfind('Light'):
+            for l_light_xml in p_light_sect_xml.iterfind('Light'):
                 l_lights_dict[self.m_count] = self.read_one_light_xml(l_light_xml)
                 self.m_count += 1
         except AttributeError as e_error:  # No Lights section
@@ -69,20 +72,32 @@ class LightingLightsAPI(ReadWriteConfigXml):
             l_lights_dict = {}
         return l_lights_dict
 
+
+    def _write_light_data(self, p_light_obj, l_light_xml):
+        self.put_text_element(l_light_xml, 'IsController', p_light_obj.IsController)
+        self.put_text_element(l_light_xml, 'LightingType', p_light_obj.LightingType)
+        self.put_text_element(l_light_xml, 'CurLevel', p_light_obj.CurLevel)
+        pass
+
+    def _write_family_data(self, p_light_obj, p_light_xml):
+        l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[p_light_obj.LightingFamily].ModuleAPI
+        l_api.insert_device_xml(p_light_xml, p_light_obj)
+
     def write_one_light_xml(self, p_light_obj):
         l_light_xml = self.write_base_object_xml('Light', p_light_obj)
         self.write_base_lighting_xml(l_light_xml, p_light_obj)
+        self._write_light_data(p_light_obj, l_light_xml)
+        self._write_family_data(p_light_obj, l_light_xml)
+        self
         return l_light_xml
 
     def write_lights_xml(self, p_lights_obj):
         print('lighting_lights.write_lights_xml')
         l_lighting_xml = ET.Element('LightSection')
-        l_count = 0
+        self.m_count = 0
         for l_light_obj in p_lights_obj.itervalues():
-            l_light_xml = self.write_base_object_xml('Light', l_light_obj)
-            self.write_base_lighting_xml(l_light_xml, l_light_obj)
-            l_lighting_xml.append(l_light_xml)
-            l_count += 1
+            l_lighting_xml.append(self.write_one_light_xml(l_light_obj))
+            self.m_count += 1
         return l_lighting_xml
 
 # ## END DBK

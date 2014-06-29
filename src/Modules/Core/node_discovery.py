@@ -40,6 +40,7 @@ PYHOUSE_DISCOVERY_PORT = 8582
 WHOS_THERE = "Who's There?"
 I_AM = "I am."
 
+
 class DGramUtil(object):
     m_address_list = []
     m_pyhouse_obj = None
@@ -145,17 +146,24 @@ class Utility(object):
     Use listenMultiple=True so that we can run a server and a client on same node.
     """
 
+    m_service_installed = False
+
     def start_node_discovery(self, p_pyhouses_obj):
         self.m_pyhouse_obj = p_pyhouses_obj
-        PrettyPrintAny(p_pyhouses_obj.Services, 'NodeDiscovery - StartService - PyHouse.Services')
-        p_pyhouses_obj.Services.NodeDiscoveryService = service.Service()
-        p_pyhouses_obj.Services.NodeDiscoveryService.setName('NodeDiscovery')
-        p_pyhouses_obj.Services.NodeDiscoveryService.setServiceParent(p_pyhouses_obj.Twisted.Application)
-        self._start_discovery_server(p_pyhouses_obj)
-        self._start_discovery_client(p_pyhouses_obj)
+        print('NodeDiscovery - StartNodeDiscovery - {0:}'.format(self.m_service_installed))
+        try:
+            p_pyhouses_obj.Services.NodeDiscoveryService = service.Service()
+            p_pyhouses_obj.Services.NodeDiscoveryService.setName('NodeDiscovery')
+            p_pyhouses_obj.Services.NodeDiscoveryService.setServiceParent(p_pyhouses_obj.Twisted.Application)
+            self._start_discovery_server(p_pyhouses_obj)
+            self._start_discovery_client(p_pyhouses_obj)
+            PrettyPrintAny(p_pyhouses_obj.Services, 'NodeDiscovery - StartService - PyHouse.Services')
+        except RuntimeError:  # The service is already installed
+            pass
+        self.m_service_installed = True
 
     def stop_node_discovery(self):
-        self.m_pyhouse_obj.Services.NodeDiscoveryService = None
+        pass
 
     def _start_discovery_server(self, p_pyhouses_obj):
         p_pyhouses_obj.Twisted.Reactor.listenMulticast(PYHOUSE_DISCOVERY_PORT, MulticastDiscoveryServerProtocol(p_pyhouses_obj), listenMultiple = True)
@@ -167,10 +175,11 @@ class Utility(object):
 class API(Utility):
 
     def __init__(self):
-        pass
+        LOG.info("Initialized.")
 
     def Start(self, p_pyhouse_obj):
         self.start_node_discovery(p_pyhouse_obj)
+        LOG.info("Started.")
 
     def Stop(self, _p_xml):
         self.stop_node_discovery()

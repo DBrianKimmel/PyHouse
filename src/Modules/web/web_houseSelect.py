@@ -60,7 +60,7 @@ class HouseSelectElement(athena.LiveElement):
 
     @athena.expose
     def getSelectedHouseData(self, _p_index):
-        l_house = GetJSONHouseInfo(self.m_pyhouse_obj.House.OBJs)
+        l_house = GetJSONHouseInfo(self.m_pyhouse_obj)
         # PrettyPrintAny(l_house, 'House_Select - Json 2 ')
         return l_house
 

@@ -47,7 +47,7 @@ class ControlLightsElement(athena.LiveElement):
         @param p_index: is the house index number.
         """
         print('webCtLights getHouseData Entry ix = {0:}'.format(p_index))
-        l_house = GetJSONHouseInfo(self.m_pyhouse_obj.House.OBJs)
+        l_house = GetJSONHouseInfo(self.m_pyhouse_obj)
         return l_house
 
     @athena.expose

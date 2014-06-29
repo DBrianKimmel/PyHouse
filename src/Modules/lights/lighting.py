@@ -16,7 +16,6 @@ for every house.
 # Import system type stuff
 
 # Import PyHouse files
-# from Modules.Core.data_objects import ButtonData
 from Modules.families import family
 from Modules.lights.lighting_buttons import ButtonsAPI
 from Modules.lights.lighting_controllers import ControllersAPI
@@ -32,23 +31,14 @@ class Utility(ControllersAPI, ButtonsAPI, LightingLightsAPI):
     """Commands we can run from high places.
     """
 
-    m_family_data = None
-
-    def test_lighting_families(self):
-        pass
-
     def _read_lighting_xml(self, p_pyhouse_obj):
         """
         Get all the lighting components for a house
-        XmlSection points to the "House" element
         """
-        # l_house_xml = p_pyhouse_obj.XmlSection
-        # PrettyPrintAny(p_pyhouse_obj, 'Lighting - read_lighting_xml - pyhouse_obj ')
-        # PrettyPrintAny(p_pyhouse_obj.House, 'Lighting - read_lighting_xml - pyhouse_obj.House ')
-        p_pyhouse_obj.House.OBJs.Controllers = ControllersAPI(p_pyhouse_obj).read_controllers_xml(p_pyhouse_obj)
-        p_pyhouse_obj.House.OBJs.Buttons = ButtonsAPI(p_pyhouse_obj).read_buttons_xml(p_pyhouse_obj)
-        p_pyhouse_obj.House.OBJs.Lights = LightingLightsAPI(p_pyhouse_obj).read_lights_xml(p_pyhouse_obj)
-        # PrettyPrintAny(p_pyhouse_obj.House.OBJs, 'Lighting - read_xml')
+        l_house_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
+        p_pyhouse_obj.House.OBJs.Controllers = ControllersAPI(p_pyhouse_obj).read_controllers_xml(l_house_xml.find('ControllerSection'))
+        p_pyhouse_obj.House.OBJs.Buttons = ButtonsAPI(p_pyhouse_obj).read_buttons_xml(l_house_xml.find('ButtonSection'))
+        p_pyhouse_obj.House.OBJs.Lights = LightingLightsAPI(p_pyhouse_obj).read_lights_xml(l_house_xml.find('LightSection'))
 
     def _write_lighting_xml(self, p_xml):
         LOG.info('Writing lights, buttons and controllers ')
@@ -69,7 +59,6 @@ class API(Utility):
         LOG.info("Starting.")
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_house_obj = p_pyhouse_obj.House.OBJs
-        LOG.info("Starting.")
         self.m_house_obj.FamilyData = self.m_family.build_lighting_family_info()
         self._read_lighting_xml(p_pyhouse_obj)
         self.m_family.start_lighting_families(p_pyhouse_obj, self.m_house_obj)
@@ -89,14 +78,11 @@ class API(Utility):
             web_controlLights
             schedule
         """
-        # PrettyPrintAny(p_light_obj, 'Lighting - Change Light - 1')
         try:
             l_key = p_light_obj.Key
             l_light_obj = self.m_pyhouse_obj.House.OBJs.Lights[l_key]
-            # PrettyPrintAny(l_light_obj, 'Lighting - Change Light - 2')
             LOG.info("Turn Light {0:} to level {1:}, LightingFamily:{2:}".format(l_light_obj.Name, p_level, l_light_obj.LightingFamily))
             l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[l_light_obj.LightingFamily].ModuleAPI
-            # PrettyPrintAny(l_api, 'Lighting - Change Light - 3')
             l_api.ChangeLight(l_light_obj, p_level)
         except Exception as e_error:
             print('Lighting Change Light ERROR - {0:}'.format(e_error))

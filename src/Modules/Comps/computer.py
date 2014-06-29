@@ -33,7 +33,6 @@ class ReadWriteConfigXml(XmlConfigTools):
 
     def read_computer_xml(self, p_pyhouse_obj):
         l_xml = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
-        p_pyhouse_obj.Xml.XmlDivision = l_xml
 
     def write_computer_xml(self):
         """Replace the data in the 'ComputerDivision' section with the current data.

@@ -325,7 +325,7 @@ def open_config_file():
     return l_file_name
 
 def write_xml_file(p_xmltree, p_filename):
-    PrettyPrintAny(p_xmltree, 'XML_Tools - write_xml_file')
+    # PrettyPrintAny(p_xmltree, 'XML_Tools - write_xml_file')
     l_tree = ET.ElementTree()
     l_tree._setroot(p_xmltree)
     l_tree.write(p_filename, xml_declaration = True)

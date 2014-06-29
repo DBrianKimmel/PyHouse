@@ -19,6 +19,7 @@ from nevow import loaders
 # Import PyMh files and modules.
 from Modules.web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.utils import pyh_log
+from Modules.utils.tools import PrettyPrintAny
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -42,7 +43,13 @@ class HouseElement(athena.LiveElement):
 
     @athena.expose
     def getHouseData(self, _p_index):
-        l_house = GetJSONHouseInfo(self.m_pyhouse_obj.House.OBJs)
+        # l_data = self.m_pyhouse_obj.House
+        # PrettyPrintAny(l_data, 'House Data', 100)
+        # PrettyPrintAny(l_data.OBJs, 'House Data OBJs', 100)
+        # l_computer = JsonUnicode().encode_json(self.m_pyhouse_obj.Computer.InternetConnection)
+        # l_house = JsonUnicode().encode_json(self.m_pyhouse_obj.House.OBJs)
+        # PrettyPrintAny(l_house, 'WebHouse HouseJSON', 100)
+        l_house = GetJSONHouseInfo(self.m_pyhouse_obj)
         return l_house
 
     @athena.expose
@@ -58,13 +65,15 @@ class HouseElement(athena.LiveElement):
             except AttributeError:
                 print("web_lights - Failed to delete - JSON: {0:}".format(l_json))
             return
-        if l_house_ix == -1:  # adding a new house
-            l_house_ix = len(self.m_pyhouse_obj.House.OBJs)
+        PrettyPrintAny(l_json, 'WebHouse - JSON', 100)
+        # if l_house_ix == -1:  # adding a new house
+        #    l_house_ix = len(self.m_pyhouse_obj.House.OBJs)
         l_obj = self.m_pyhouse_obj.House.OBJs
-        try:
-            self.m_pyhouse_obj.House.OBJs[l_house_ix] = l_obj
-        except AttributeError:
-            self.m_pyhouse_obj.House.OBJs = l_obj
+        PrettyPrintAny(l_obj, 'WebHouse - OBJ', 100)
+        # try:
+        #    self.m_pyhouse_obj.House.OBJs[l_house_ix] = l_obj
+        # except AttributeError:
+        #    self.m_pyhouse_obj.House.OBJs = l_obj
         l_obj.Name = l_json['Name']
         l_obj.Key = int(l_json['Key'])
         l_obj.HouseIx = l_house_ix

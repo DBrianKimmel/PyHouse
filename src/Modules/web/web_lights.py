@@ -48,7 +48,7 @@ class LightsElement(athena.LiveElement):
     @athena.expose
     def getHouseData(self, _p_index):
         # PrettyPrintAny(self.m_pyhouse_obj, 'Web Lights - House.OBJs ')
-        l_house = GetJSONHouseInfo(self.m_pyhouse_obj.House.OBJs)
+        l_house = GetJSONHouseInfo(self.m_pyhouse_obj)
         # PrettyPrintAny(l_house, 'Web Lights - Json ')
         return l_house
 

@@ -176,12 +176,15 @@ class API(Utilities):
         """Stop various modules to prepare for restarting them.
         """
         self.m_pyhouse_obj.APIs.CoreAPI.Stop()
+        LOG.info("Stopped.\n")
 
     def Reload(self, _p_pyhouses_obj):
         """Update XML file with current info.
         """
-        self.Stop()
-        self.Start()
+        LOG.info("Reloading")
+        self.m_pyhouse_obj.APIs.CoreAPI.Reload()
+        # self.Stop()
+        # self.Start()
         LOG.info("Reloaded.\n\n\n")
 
     def Quit(self):

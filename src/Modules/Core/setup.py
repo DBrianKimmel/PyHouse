@@ -53,15 +53,12 @@ class ReadWriteConfigXml(XmlConfigTools):
             xml_tools.ConfigFile().create_empty_config_file(l_name)
             l_xmltree = ET.parse(p_pyhouse_obj.Xml.XmlFileName)
         p_pyhouse_obj.Xml.XmlRoot = l_xmltree.getroot()
-        p_pyhouse_obj.Xml.XmlParsed = p_pyhouse_obj.Xml.XmlRoot
 
     def write_xml_config_file(self):
         LOG.info("Saving all data to XML file.")
         l_xml = ET.Element("PyHouse")
         xml_tools.PutGetXML().put_text_attribute(l_xml, 'Version', self.m_pyhouse_obj.Xml.XmlVersion)
         l_xml.append(ET.Comment('Updated by PyHouse {0:}'.format(datetime.datetime.now())))
-        # self.m_pyhouse_obj.APIs.CoreAPI.Stop(l_xml)
-        # self.m_pyhouse_obj.APIs.LogsAPI.Stop(l_xml)
         self.m_pyhouse_obj.APIs.ComputerAPI.Stop(l_xml)
         self.m_pyhouse_obj.APIs.HouseAPI.Stop(l_xml)
         xml_tools.write_xml_file(l_xml, self.m_pyhouse_obj.Xml.XmlFileName)
@@ -81,8 +78,6 @@ class Utility(ReadWriteConfigXml):
 
 class API(Utility):
 
-    m_entertainment = None
-
     def __init__(self, p_pyhouse_obj):
         """
         This runs before the reactor has started - Be Careful!
@@ -98,20 +93,17 @@ class API(Utility):
         """
         self.read_xml_config_info(self.m_pyhouse_obj)
         self.log_start(p_pyhouse_obj)
-        # p_pyhouse_obj.APIs.EntertainmentAPI = entertainment.API()
         self.m_pyhouse_obj = p_pyhouse_obj
-        # PrettyPrintAny(p_pyhouse_obj, 'Setup - Start - PyHouse', 100)
-
         p_pyhouse_obj.APIs.ComputerAPI.Start(p_pyhouse_obj)  # Logs now started
-        # PrettyPrintAny(p_pyhouse_obj.Computer, 'Setup - Start - Computer', 100)
-        # p_pyhouse_obj.APIs.EntertainmentAPI.Start(p_pyhouse_obj)
         p_pyhouse_obj.APIs.HouseAPI.Start(p_pyhouse_obj)
-        # PrettyPrintAny(p_pyhouse_obj.Computer, 'Setup - Start - Computer', 100)
-        # p_pyhouse_obj.APIs.NodesAPI.Start(p_pyhouse_obj)
         LOG.info("Started.")
 
     def Stop(self):
         self.write_xml_config_file()
         LOG.info("Stopped.")
+
+    def Reload(self):
+        self.write_xml_config_file()
+        LOG.info("Reloaded.")
 
 # ## END DBK

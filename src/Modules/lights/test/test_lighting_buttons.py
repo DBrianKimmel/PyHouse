@@ -14,49 +14,59 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, HouseObjs
+from Modules.Core.data_objects import PyHouseData, ButtonData
 from Modules.lights import lighting_buttons
+from Modules.families import family
 from Modules.web import web_utils
 from Modules.utils.tools import PrettyPrintAny
-from src.test import xml_data
+from src.test import xml_data, test_mixin
 
-XML = xml_data.XML_LONG
-
-
-class Test_02_XML(unittest.TestCase):
+class SetupMixin(object):
+    """
+    """
 
     def setUp(self):
-        self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.House = HouseObjs()
-        self.m_pyhouse_obj.XmlRoot = self.m_root = ET.fromstring(XML)
-        self.m_houses_xml = self.m_root.find('Houses')
-        self.m_house_xml = self.m_houses_xml.find('House')  # First house
-        self.m_buttons_xml = self.m_house_xml.find('Buttons')
-        self.m_button_xml = self.m_buttons_xml.find('Button')
-        self.m_api = lighting_buttons.ButtonsAPI()
+        test_mixin.Setup()
+        self.m_pyhouse_obj = test_mixin.SetupPyHouseObj().BuildPyHouse()
+        self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
+
+
+class Test_02_XML(SetupMixin, unittest.TestCase):
+    """ This section tests the reading and writing of XML used by lighting_lights.
+    """
+
+    def setUp(self):
+        self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
+        SetupMixin.setUp(self)
+
+        self.m_house_div_xml = self.m_root_xml.find('HouseDivision')
+        self.m_button_sect_xml = self.m_house_div_xml.find('ButtonSection')
+        self.m_button_xml = self.m_button_sect_xml.find('Button')
+        self.m_light_obj = ButtonData()
+
+        self.m_api = lighting_buttons.ButtonsAPI(self.m_pyhouse_obj)
 
     def test_0202_find_xml(self):
         """ Be sure that the XML contains the right stuff.
         """
-        self.assertEqual(self.m_root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
-        self.assertEqual(self.m_houses_xml.tag, 'Houses', 'XML - No Houses section')
-        self.assertEqual(self.m_house_xml.tag, 'House', 'XML - No House section')
-        self.assertEqual(self.m_buttons_xml.tag, 'Buttons', 'XML - No Buttons section')
+        self.assertEqual(self.m_root_xml.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
+        self.assertEqual(self.m_house_div_xml.tag, 'HouseDivision', 'XML - No Houses section')
+        self.assertEqual(self.m_button_sect_xml.tag, 'ButtonSection', 'XML - No Buttons section')
         self.assertEqual(self.m_button_xml.tag, 'Button', 'XML - No Button section')
 
     def test_0203_ReadOneButtonXml(self):
         """ Read in the xml file and fill in the lights
         """
         l_button = self.m_api.read_one_button_xml(self.m_button_xml)
-        print('Button: {0:}'.format(vars(l_button)))
         self.assertEqual(l_button.Active, False, 'Bad Active')
         self.assertEqual(l_button.Key, 0, 'Bad key')
         self.assertEqual(l_button.Name, 'kpl_1_A', 'Bad Name')
+        PrettyPrintAny(l_button, 'ReadOneButton', 120)
 
-    def test_0204_ReadButtonsXml(self):
-        l_buttons = self.m_api.read_buttons_xml(self.m_house_xml)
-        print('Controllers {0:}'.format(l_buttons))
-        self.assertEqual(len(l_buttons), 2)
+    def test_0204_ReadAllButtonsXml(self):
+        l_buttons = self.m_api.read_buttons_xml(self.m_button_sect_xml)
+        self.assertEqual(len(l_buttons), 11)
+        PrettyPrintAny(l_buttons, 'ReadAllButton', 120)
 
     def test_0211_WriteOneButtonXml(self):
         """ Write out the XML file for the button section
@@ -65,17 +75,17 @@ class Test_02_XML(unittest.TestCase):
         l_xml = self.m_api.write_one_button_xml(l_button)
         print('XML: {0:}'.format(PrettyPrintAny(l_xml)))
 
-    def test_0212_WriteButtonsXml(self):
+    def test_0212_WriteAllButtonsXml(self):
         """ Write out the XML file for the Buttons section
         """
-        l_button = self.m_api.read_buttons_xml(self.m_house_xml)
+        l_button = self.m_api.read_buttons_xml(self.m_button_sect_xml)
         l_xml = self.m_api.write_buttons_xml(l_button)
         print('XML: {0:}'.format(PrettyPrintAny(l_xml)))
 
     def test_0221_CreateJson(self):
         """ Create a JSON object for Buttons.
         """
-        l_buttons = self.m_api.read_buttons_xml(self.m_house_xml)
+        l_buttons = self.m_api.read_buttons_xml(self.m_button_sect_xml)
         print('ButtonsS: {0:}'.format(l_buttons))
         print('Button 0: {0:}'.format(vars(l_buttons[0])))
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_buttons))

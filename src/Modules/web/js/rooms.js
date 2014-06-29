@@ -1,5 +1,6 @@
-/* rooms.js
- * 
+/**
+ *  rooms.js
+ *
  * Displays the rooms
  */
 
@@ -13,6 +14,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		rooms.RoomsWidget.upcall(self, '__init__', node);
 	},
 
+	// ============================================================================
 	/**
      * Place the widget in the workspace.
 	 * 
@@ -21,41 +23,29 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	 */
 	function ready(self) {
 		function cb_widgetready(res) {
-			// do whatever initialization needs here, 'show' for the widget is handled in superclass
-			//Divmod.debug('---', 'rooms.cb_widgready() was called. self = ' + self);
 			self.hideWidget();
 		}
-		//Divmod.debug('---', 'rooms.ready() was called. ' + self);
 		var uris = collectIMG_src(self.node, null);
 		var l_defer = loadImages(uris);
 		l_defer.addCallback(cb_widgetready);
 		return l_defer;
 	},
-
-	/**
-	 * routines for showing and hiding parts of the screen.
-	 */
 	function showWidget(self) {
-		//Divmod.debug('---', 'rooms.showWidget() was called.');
 		self.node.style.display = 'block';
 		self.showButtons();
 		self.hideEntry();
 		self.fetchHouseData();
 	},
 	function showButtons(self) {
-		//Divmod.debug('---', 'rooms.showButtons() was called. ');
 		self.nodeById('RoomButtonsDiv').style.display = 'block';	
 	},
 	function hideButtons(self) {
-		//Divmod.debug('---', 'rooms.hideButtons() was called. ');
 		self.nodeById('RoomButtonsDiv').style.display = 'none';		
 	},
 	function showEntry(self) {
-		//Divmod.debug('---', 'rooms.showEntry() was called. ');
 		self.nodeById('RoomEntryDiv').style.display = 'block';
 	},
 	function hideEntry(self) {
-		//Divmod.debug('---', 'rooms.hideEntry() was called. ');
 		self.nodeById('RoomEntryDiv').style.display = 'none';
 	},
 

@@ -46,7 +46,7 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         """
         # LOG.debug('--- Extracting XML ')
         l_insteon_obj = InsteonData()
-        l_insteon_obj.InsteonAddress = Insteon_utils.dotted_hex2int(p_entry_xml.findtext('Address', default = 0))
+        l_insteon_obj.InsteonAddress = Insteon_utils.dotted_hex2int(p_entry_xml.findtext('Address', default = '88.88.88'))
         l_insteon_obj.IsController = p_entry_xml.findtext('IsController')
         l_insteon_obj.DevCat = p_entry_xml.findtext('DevCat')
         l_insteon_obj.GroupList = p_entry_xml.findtext('GroupList')

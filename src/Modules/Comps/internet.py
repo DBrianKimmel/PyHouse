@@ -376,6 +376,6 @@ class API(Utility):
         LOG.info("Stopping dyndns.")
         # self.m_dyn_loop.stop_dyndns_process()
         p_xml.append(self.write_internet_xml(self.m_pyhouse_obj.Computer.InternetConnection))
-        self.stop_internet_discovery(self.m_pyhouse_obj)
+        # self.stop_internet_discovery(self.m_pyhouse_obj)
 
 # ## END DBK

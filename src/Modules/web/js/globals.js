@@ -42,11 +42,7 @@ globals = {
 	fonts : [ 'Verdana', 'Arial', 'Helvetica', 'sans-serif' ],
 	workspace : null,
 
-	Computer : {IntetnetConnection : {},
-				Logs : {},
-				Nodes : {},
-				Web : {}
-				},
+	Computer : {},
 	House : {},
 	Interface : {},
 	User : {},

@@ -1,7 +1,7 @@
 /**
  * internet.js
  * 
- * The internet widget.
+ * The Internet widget.
  */
 
 // import Nevow.Athena
@@ -9,7 +9,7 @@
 // import helpers
 
 /**
- * The internet widget.
+ * The Internet widget.
  */
 helpers.Widget.subclass(internet, 'InternetWidget').methods(
 
@@ -46,16 +46,16 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 		self.fetchHouseData();
 	},
 	function hideButtons(self) {
-		self.nodeById('InternetButtonsDiv').style.display = 'none';		
+		self.nodeById('InternetButtonsDiv').style.display = 'none';
 	},
 	function showButtons(self) {
-		self.nodeById('InternetButtonsDiv').style.display = 'block';	
+		self.nodeById('InternetButtonsDiv').style.display = 'block';
 	},
 	function hideEntry(self) {
-		self.nodeById('InternetEntryDiv').style.display = 'none';		
+		self.nodeById('InternetEntryDiv').style.display = 'none';
 	},
 	function showEntry(self) {
-		self.nodeById('InternetEntryDiv').style.display = 'block';		
+		self.nodeById('InternetEntryDiv').style.display = 'block';
 	},
 
 	// ============================================================================
@@ -67,13 +67,13 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 		function cb_fetchHouseData(p_json) {
 			Divmod.debug('---', 'internet.cb_fetchHouseData() was called. ' + p_json);
 			globals.Computer = JSON.parse(p_json);
-			// this is the external IP address finding url and its value
+			// this is the external IP address finding URL and its value
 	        self.nodeById('UrlDiv').innerHTML = buildTextWidget('InternetUrl', globals.Computer.InternetConnection.ExternalUrl);
 	        self.nodeById('ExtDelayDiv').innerHTML = buildTextWidget('InternetExtDelay', globals.Computer.InternetConnection.ExternalDelay);
 	        self.nodeById('ExtIpDiv').innerHTML = buildTextWidget('InternetExtIp', globals.Computer.InternetConnection.ExternalIP, 'disabled');
 			var l_tab = buildTable(globals.Computer.InternetConnection.DynDns, 'handleMenuOnClick');
 			self.nodeById('InternetTableDiv').innerHTML = l_tab;
-			
+
 		}
 		function eb_fetchHouseData(res) {
 			Divmod.debug('---', 'internet.eb_fetchHouseData() was called. ERROR: ' + res);
@@ -165,7 +165,7 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 			l_node.showWidget();
 		}
 	},
-	
+
 	// ============================================================================
 	/**
 	 * Event handler for buttons at bottom of the data entry portion of this widget.
@@ -173,24 +173,22 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 	 */
 	function handleDataOnClick(self, p_node) {
 		function cb_handleDataOnClick(p_json) {
-			Divmod.debug('---', 'internet.cb_handleDataOnClick() was called.');
+			//Divmod.debug('---', 'internet.cb_handleDataOnClick() was called.');
 			self.showWidget();
 		}
 		function eb_handleDataOnClick(res){
 			Divmod.debug('---', 'internet.eb_handleDataOnClick() was called. ERROR =' + res);
 		}
 		var l_ix = p_node.name;
-		Divmod.debug('---', 'internet.handleDataOnClick() was called. Node:' + l_ix);
+		//Divmod.debug('---', 'internet.handleDataOnClick() was called. Node:' + l_ix);
 		switch(l_ix) {
 		case '10003':  // Change Button
 	    	var l_json = JSON.stringify(self.fetchEntry());
-			Divmod.debug('---', 'internet.handleDataOnClick(Change) was called. JSON:' + l_json);
 	        var l_defer = self.callRemote("saveInternetData", l_json);  // @ web_internet
 			l_defer.addCallback(cb_handleDataOnClick);
 			l_defer.addErrback(eb_handleDataOnClick);
 			break;
 		case '10002':  // Back button
-			Divmod.debug('---', 'internet.handleDataOnClick(Back) was called.  ');
 			self.hideEntry();
 			self.showButtons();
 			break;
@@ -198,14 +196,12 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 			var l_obj = self.fetchEntry();
 			l_obj['Delete'] = true;
 	    	var l_json = JSON.stringify(l_obj);
-			Divmod.debug('---', 'internet.handleDataOnClick(Delete) was called. JSON:' + l_json);
 	        var l_defer = self.callRemote("saveInternetData", l_json);  // @ web_rooms
 			l_defer.addCallback(cb_handleDataOnClick);
 			l_defer.addErrback(eb_handleDataOnClick);
 			break;
 		default:
-			Divmod.debug('---', 'internet.handleDataOnClick(Default) was called. l_ix:' + l_ix);
-			break;			
+			break;
 		}
         return false;  // false stops the chain.
 	}

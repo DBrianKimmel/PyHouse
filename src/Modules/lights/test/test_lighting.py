@@ -14,10 +14,11 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, HouseObjs, BaseLightingData
+from Modules.Core.data_objects import PyHouseData, HouseObjs, LightData
 from Modules.lights import lighting
-from src.test import xml_data
+from Modules.families import family
 from Modules.utils.tools import PrettyPrintAny
+from src.test import xml_data, test_mixin
 
 
 class SetupMixin(object):
@@ -25,21 +26,12 @@ class SetupMixin(object):
     """
 
     def setUp(self):
-        self.m_api = lighting.API()
-
-        self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.HouseObjs = HouseObjs()
-        self.m_pyhouse_obj.XmlRoot = self.m_root_xml
-
-        self.m_houses_xml = self.m_root_xml.find('Houses')
-        self.m_house_xml = self.m_houses_xml.find('House')
-
-        self.m_lights_xml = self.m_house_xml.find('Lights')
-        self.m_light_xml = self.m_lights_xml.find('Light')  # First one
-        # print('SetupMixin setUp ran')
+        test_mixin.Setup()
+        self.m_pyhouse_obj = test_mixin.SetupPyHouseObj().BuildPyHouse()
+        self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
 
 
-class Test_02_ReadXMLLong(SetupMixin, unittest.TestCase):
+class Test_02_XML(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by node_local.
     """
 
@@ -47,21 +39,24 @@ class Test_02_ReadXMLLong(SetupMixin, unittest.TestCase):
         self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         SetupMixin.setUp(self)
 
-    def test_0201_buildObjects(self):
-        """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
-        """
-        self.assertEqual(self.m_pyhouse_obj.HouseObjs.Lights, {}, 'No Lights{}')
-        PrettyPrintAny(self.m_pyhouse_obj, 'PyHouseData')
+        self.m_house_div_xml = self.m_root_xml.find('HouseDivision')
+        self.m_light_sect_xml = self.m_house_div_xml.find('LightSection')
+        self.m_light_xml = self.m_light_sect_xml.find('Light')
+        self.m_light_obj = LightData()
+
+        self.m_api = lighting.API()
 
     def test_0202_find_xml(self):
         """ Be sure that the XML contains the right stuff.
         """
         self.assertEqual(self.m_root_xml.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
-        self.assertEqual(self.m_houses_xml.tag, 'Houses', 'XML - No Houses section')
-        self.assertEqual(self.m_house_xml.tag, 'House', 'XML - No House section')
-        self.assertEqual(self.m_lights_xml.tag, 'Lights', 'XML - No Lights section')
+        self.assertEqual(self.m_house_div_xml.tag, 'HouseDivision', 'XML - No Houses section')
+        self.assertEqual(self.m_light_sect_xml.tag, 'LightSection', 'XML - No Lights section')
+        self.assertEqual(self.m_light_xml.tag, 'Light', 'XML - No Light')
 
     def test_0211_read_lighting(self):
+        PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse_obj', 120)
+        PrettyPrintAny(self.m_pyhouse_obj.Xml, 'PyHouse_obj.Xml', 120)
         self.m_api._read_lighting_xml(self.m_pyhouse_obj)
 
     def test_0212_write_lighting(self):

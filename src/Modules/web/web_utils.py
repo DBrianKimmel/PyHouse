@@ -16,8 +16,8 @@ import jsonpickle
 import json
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import JsonHouseData
-from Modules.utils.tools import PrettyPrintAny
+from Modules.Core.data_objects import JsonHouseData, ComputerInformation
+# from Modules.utils.tools import PrettyPrintAny
 
 g_debug = 0
 
@@ -41,26 +41,39 @@ WS_CONTROLLERS = 502
 WS_LIGHTS = 503
 
 
-def GetJSONHouseInfo(p_house_obj):
+def GetJSONHouseInfo(p_pyhouse_obj):
     """Get house info for the browser.
-    This is simplified so JSON encoding works.
+    This is simplified and customized so JSON encoding works.
 
     @param p_house_obj: is the complete information
     """
     l_ret = JsonHouseData()
-    # l_ret.Name - p_house_obj.Name
-    # l_ret.Active = p_house_obj.Active
-    # l_ret.Key = 0
-    # l_ret.UUID = 'No such thing'
-    l_ret.Buttons = p_house_obj.Buttons
-    l_ret.Controllers = p_house_obj.Controllers
-    l_ret.Lights = p_house_obj.Lights
-    l_ret.Rooms = p_house_obj.Rooms
-    l_ret.Schedules = p_house_obj.Schedules
-    # PrettyPrintAny(l_ret, title = 'web_utils - house data', maxlen = 120)
+    l_ret.Name = p_pyhouse_obj.House.Name
+    l_ret.Key = p_pyhouse_obj.House.Key
+    l_ret.Active = p_pyhouse_obj.House.Active
+    l_ret.Buttons = p_pyhouse_obj.House.OBJs.Buttons
+    l_ret.Controllers = p_pyhouse_obj.House.OBJs.Controllers
+    l_ret.Lights = p_pyhouse_obj.House.OBJs.Lights
+    l_ret.Location = p_pyhouse_obj.House.OBJs.Location
+    l_ret.Rooms = p_pyhouse_obj.House.OBJs.Rooms
+    l_ret.Schedules = p_pyhouse_obj.House.OBJs.Schedules
     l_json = unicode(JsonUnicode().encode_json(l_ret))
-    # PrettyPrintAny(l_json, 'web_utils -> browser - JSON')
     return l_json
+
+def GetJSONComputerInfo(p_pyhouse_obj):
+    """Get house info for the browser.
+    This is simplified and customized so JSON encoding works.
+
+    @param p_house_obj: is the complete information
+    """
+    l_ret = ComputerInformation()
+    l_ret.InternetConnection = p_pyhouse_obj.Computer.InternetConnection
+    l_ret.Logs = p_pyhouse_obj.Computer.Logs
+    l_ret.Nodes = p_pyhouse_obj.Computer.Nodes
+    l_ret.Web = p_pyhouse_obj.Computer.Web
+    l_json = unicode(JsonUnicode().encode_json(l_ret))
+    return l_json
+
 
 class State(object):
     """Used by various web_ modules to keep the state of the web server.
@@ -109,13 +122,11 @@ class JsonUnicode(object):
     def encode_json(self, p_obj):
         """Convert a python object to a valid json object.
         """
-        # PrettyPrintAny(p_obj, 'Web_Utils - encode_json ')
         try:
-            # l_json = json.dumps(p_obj, cls = ComplexHandler)
             l_json = jsonpickle.encode(p_obj, unpicklable = False, max_depth = 5)
         except (TypeError, ValueError) as l_error:
             print('web_utils.encode_json ERROR {0:}'.format(l_error))
-            l_json = '{}'
+            l_json = u'{}'
         return l_json
 
 

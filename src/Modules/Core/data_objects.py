@@ -212,6 +212,7 @@ class JsonHouseData(ABaseObject):
         self.Buttons = {}
         self.Controllers = {}
         self.Lights = {}
+        self.Location = {}
         self.Rooms = {}
         self.Schedules = {}
 
@@ -298,10 +299,7 @@ class XmlInformation(object):
     """
     def __init__(self):
         self.XmlFileName = ''
-        self.XmlParsed = None
         self.XmlRoot = None
-        self.XmlDivision = None
-        self.XmlSection = None
         self.XmlVersion = __version__
 
 

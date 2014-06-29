@@ -38,20 +38,12 @@ class ButtonsAPI(ReadWriteConfigXml):
         self._read_family_data(l_button_obj, p_button_xml)
         return l_button_obj
 
-    def read_buttons_xml(self, p_pyhouse_obj):
+    def read_buttons_xml(self, p_button_sect_xml):
         self.m_count = 0
         l_button_dict = {}
-        l_house_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
-        l_buttons_xml = l_house_xml.find('ButtonSection')
-        # PrettyPrintAny(l_buttons_xml, 'Lighting_Buttons - ReadButtonsXml ')
-        try:
-            for l_button_xml in l_buttons_xml.iterfind('Button'):
-                l_button_dict[self.m_count] = self.read_one_button_xml(l_button_xml)
-                self.m_count += 1
-        except AttributeError as e_error:  # No Buttons section
-            print('LightingButtons ERROR {0:}'.format(e_error))
-            l_button_dict = {}
-        # PrettyPrintAny(l_button_dict, 'Lighting_Buttons - ReadButtonsXml - Dict')
+        for l_button_xml in p_button_sect_xml.iterfind('Button'):
+            l_button_dict[self.m_count] = self.read_one_button_xml(l_button_xml)
+            self.m_count += 1
         return l_button_dict
 
     def write_one_button_xml(self, p_button_obj):

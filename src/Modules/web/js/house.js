@@ -1,6 +1,6 @@
 /**
  * house.js
- * 
+ *
  * The house widget.
  */
 
@@ -8,9 +8,6 @@
 // import globals
 // import helpers
 
-/**
- * The house widget.
- */
 helpers.Widget.subclass(house, 'HouseWidget').methods(
 
     function __init__(self, node) {
@@ -20,16 +17,14 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 	// ============================================================================
 	/**
      * Place the widget in the workspace.
-	 * 
+	 *
 	 * @param self is    <"Instance" of undefined.house.HouseWidget>
 	 * @returns a deferred
 	 */
 	function ready(self) {
 		function cb_widgetready(res) {
-			//Divmod.debug('---', 'house.js - cb_widgready was called.');
 			self.hideWidget();
 		}
-		//Divmod.debug('---', 'house.ready() was called.');
 		var uris = collectIMG_src(self.node, null);
 		var l_defer = loadImages(uris);
 		l_defer.addCallback(cb_widgetready);
@@ -62,7 +57,6 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 		function eb_fetchHouseData(res) {
 			Divmod.debug('---', 'house.eb_fetchHouseData() was called. ERROR: ' + res);
 		}
-		//Divmod.debug('---', 'house.fetchHouseData() was called. ');
 		if (globals.House.HouseIx == -1) {
 			globals.House.HouseObj = {};
 			globals.House.HouseObj.House = self.createEntry(0);
@@ -81,8 +75,8 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 	 * 
 	 */
 	function fillEntry(self, p_obj) {
-		//Divmod.debug('---', 'house.fillEntry(1) was called. ');
-		//console.log("house.fillEntry() - Obj = %O", p_obj);
+		Divmod.debug('---', 'house.fillEntry(1) was called. ');
+		console.log("house.fillEntry() - Obj = %O", p_obj);
         self.nodeById('NameDiv').innerHTML = buildTextWidget('HouseName', p_obj.Name);
         self.nodeById('KeyDiv').innerHTML = buildTextWidget('HouseKey', p_obj.Key, 'disabled');
 		self.nodeById('ActiveDiv').innerHTML = buildTrueFalseWidget('HouseActive', p_obj.Active);
