@@ -271,7 +271,7 @@ class AmpClient(object):
         #                'Role': int(l_node.NodeRole), 'UUID': "1122"}, None)
         l_ret = p_ampProto.callRemote(NodeInformationCommand,
                         Name = l_node.Name, Active = str(l_node.Active), Address = l_node.ConnectionAddr_IPv4,
-                        Role = int(l_node.NodeRole), UUID = "1122")
+                        NodeRole = int(l_node.NodeRole), UUID = "1122")
         return l_ret
 
     def create_one_client(self, p_pyhouses_obj, p_address):
