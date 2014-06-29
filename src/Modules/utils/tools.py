@@ -297,16 +297,15 @@ class Lister():
                 l_ret = l_ret + "\tName: {0:}={1:}\n".format(attr, self.__dict__ [attr])
         return l_ret
 
-def get_light_object(p_house_obj, name = None, key = None):
+def get_light_object(p_pyhouse_obj, name = None, key = None):
     """return the light object for a given house using the given value.
     Either a name or a key may be used to identify the light.
 
     TODO: switch from key to UUID.
 
-    @param p_house_obj: is the house object that contains the lights
     @return: the Light object found or None.
     """
-    l_lights = p_house_obj.Lights
+    l_lights = p_pyhouse_obj.House.OBJs.Lights
     if name != None:
         for l_obj in l_lights.itervalues():
             if l_obj.Name == name:

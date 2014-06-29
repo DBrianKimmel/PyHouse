@@ -15,11 +15,12 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
-from Modules.Core.data_objects import PyHouseData, HouseData
+from Modules.Core.data_objects import PyHouseData
 from Modules.utils import tools
 from Modules.lights import lighting_lights
-from src.test import xml_data
-from Modules.utils.tools import PrettyPrintXML, PrettyPrintObject, PrettyPrintAny
+from Modules.families import family
+from src.test import xml_data, test_mixin
+from Modules.utils.tools import PrettyPrintAny
 
 
 class SetupMixin(object):
@@ -27,18 +28,12 @@ class SetupMixin(object):
     """
 
     def setUp(self):
-        self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.House = HouseData()
-        self.m_pyhouse_obj.Xml.XmlRoot = self.m_root_xml
-
-        self.m_houses_xml = self.m_root_xml.find('Houses')
-        self.m_house_xml = self.m_houses_xml.find('House')
-        self.m_schedules_xml = self.m_house_xml.find('Schedules')
-        self.m_schedule_xml = self.m_schedules_xml.find('Schedule')
-        # print('SetupMixin setUp ran')
+        test_mixin.Setup()
+        self.m_pyhouse_obj = test_mixin.SetupPyHouseObj().BuildPyHouse()
+        # self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
 
 
-class Test_01_PrettyPrint(unittest.TestCase):
+class Test_01_PrettyPrint(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         pass
@@ -48,11 +43,11 @@ class Test_01_PrettyPrint(unittest.TestCase):
 
     def test_01_PrettyPrintObjects(self):
         l_obj = PyHouseData()
-        PrettyPrintObject(l_obj)
+        PrettyPrintAny(l_obj, 'Some Obj')
 
     def test_02_PrettyPrintXML(self):
         l_xml = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
-        PrettyPrintXML(l_xml)
+        PrettyPrintAny(l_xml, 'XML')
 
     def test_03_any(self):
         l_any = {'abc': 'Long A B C', 'def' : 'Another long thing.'}
@@ -61,13 +56,35 @@ class Test_01_PrettyPrint(unittest.TestCase):
 
 class Test_02_PrettyPrint(SetupMixin, unittest.TestCase):
 
+    def _load_family(self):
+        l_family = family.API().build_lighting_family_info()
+        self.m_pyhouse_obj.House.OBJs.FamilyData = l_family
+        return l_family
+
+    def _load_lights(self, p_light_sect_xml):
+        l_family = self._load_family()
+        l_light_api = lighting_lights.LightingLightsAPI(self.m_pyhouse_obj)
+        l_lights = l_light_api.read_lights_xml(p_light_sect_xml)
+        PrettyPrintAny(l_lights, 'Lights', 80)
+        self.m_pyhouse_obj.House.OBJs.Lights = l_lights
+        self.m_pyhouse_obj.House.OBJs.FamilyData = l_family
+
     def setUp(self):
         self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         SetupMixin.setUp(self)
+        self.m_house_div_xml = self.m_root_xml.find('HouseDivision')
+        self.m_computer_div_xml = self.m_root_xml.find('ComputerDivision')
+        self.m_light_sect_xml = self.m_house_div_xml.find('LightSection')
+        self.m_light_xml = self.m_light_sect_xml.find('Light')
 
     def test_0201_GetLightObject(self):
-        self.m_pyhouse_obj.HouseData.Lights = lighting_lights.LightingLightsAPI(self.m_pyhouse_obj).read_lights_xml(self.m_pyhouse_obj)
-        l_obj = tools.get_light_object(self.m_pyhouse_obj.HouseData, name = 'lr_cans', key = None)
-        PrettyPrintAny(l_obj)
+        self._load_lights(self.m_light_sect_xml)
+        PrettyPrintAny(self.m_pyhouse_obj, "PyHouse", 120)
+        PrettyPrintAny(self.m_pyhouse_obj.House, "PyHouse.House", 100)
+        PrettyPrintAny(self.m_pyhouse_obj.House.OBJs, "PyHouse.House.OBJs", 100)
+        PrettyPrintAny(self.m_pyhouse_obj.House.OBJs.Lights, "PyHouse.House.OBJs.Lights", 80)
+        l_obj = tools.get_light_object(self.m_pyhouse_obj, name = 'lr_cans', key = None)
+        PrettyPrintAny(l_obj, 'Light Obj', 80)
+        self.assertEqual(l_obj.Name, 'lr_cans')
 
 # ## END DBK

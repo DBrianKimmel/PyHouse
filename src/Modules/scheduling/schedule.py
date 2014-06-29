@@ -150,10 +150,8 @@ class ScheduleExecution(ScheduleData):
         elif l_schedule_obj.ScheduleType == 'Scene':
             print('execute_one_schedule type = Scene')
             pass
-        l_light_obj = tools.get_light_object(self.m_house_obj, name = l_schedule_obj.LightName)
+        l_light_obj = tools.get_light_object(self.m_pyhouse_obj, name = l_schedule_obj.LightName)
         LOG.info("Executing one schedule Name:{0:}, Light:{1:}, Level:{2:}".format(l_schedule_obj.Name, l_schedule_obj.LightName, l_schedule_obj.Level))
-        # PrettyPrintAny(l_schedule_obj, 'Schedule - execute one schedule - Schedule', 140)
-        # PrettyPrintAny(l_light_obj, 'Schedule - execute one schedule - Light', 140)
         self.m_house_obj.APIs.LightingAPI.ChangeLight(l_light_obj, l_schedule_obj.Level)
 
     def execute_schedules_list(self, p_slot_list = []):
