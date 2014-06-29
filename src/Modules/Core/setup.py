@@ -47,7 +47,7 @@ class ReadWriteConfigXml(XmlConfigTools):
         p_pyhouse_obj.Xml.XmlFileName = l_name = xml_tools.open_config_file()
         try:
             l_xmltree = ET.parse(l_name)
-            print('Setup-XML file {0:} parsed OK.'.format(l_name))
+            # print('Setup-XML file {0:} parsed OK.'.format(l_name))
         except SyntaxError as e_error:
             print('Setup-XML file ERROR - {0:} - {1:}'.format(e_error, l_name))
             xml_tools.ConfigFile().create_empty_config_file(l_name)

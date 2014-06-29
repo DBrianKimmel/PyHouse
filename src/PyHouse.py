@@ -155,7 +155,7 @@ class API(Utilities):
         handle_signals()
         global g_API
         g_API = self
-        print('PyHouse Start Initializing')
+        # print('PyHouse Start Initializing')
         self.m_pyhouse_obj = PyHouseData()
         self.m_pyhouse_obj.APIs = PyHouseAPIs()
         self.m_pyhouse_obj.APIs.PyHouseAPI = self  # Only used by web server to reload - Do we need this?
