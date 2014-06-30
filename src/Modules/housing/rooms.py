@@ -18,11 +18,7 @@ import xml.etree.ElementTree as ET
 from Modules.Core.data_objects import RoomData
 from Modules.utils import xml_tools
 
-
 g_debug = 0
-# 0 = off
-# 1 = log extra info
-# + = NOT USED HERE
 m_logger = None
 
 

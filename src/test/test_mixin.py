@@ -36,6 +36,24 @@ class SetupPyHouseObj(object):
         l_ret.Xml = XmlInformation()
         return l_ret
 
+    def BuildXml(self):
+        self.m_house_div_xml = self.m_root_xml.find('HouseDivision')
+        self.m_button_sect_xml = self.m_house_div_xml.find('ButtonSection')
+        self.m_controller_sect_xml = self.m_house_div_xml.find('ControllerSection')
+        self.m_family_sect_xml = self.m_house_div_xml.find('FamilySection')
+        self.m_light_sect_xml = self.m_house_div_xml.find('LightSection')
+        self.m_location_sect_xml = self.m_house_div_xml.find('LocationSection')
+        self.m_room_sect_xml = self.m_house_div_xml.find('RoomSection')
+        self.m_schedule_sect_xml = self.m_house_div_xml.find('ScheduleSection')
+        self.m_thermostat_sect_xml = self.m_controller_sect_xml.find('ThermostatSection')
+        #
+        self.m_computer_div_xml = self.m_root_xml.find('ComputerDivision')
+        self.m_internet_sect_xml = self.m_computer_div_xml.find('InternetSection')
+        self.m_log_sect_xml = self.m_computer_div_xml.find('LogSection')
+        self.m_node_sect_xml = self.m_computer_div_xml.find('InternetSection')
+        self.m_web_sect_xml = self.m_computer_div_xml.find('WebSection')
+        self.m_dynamic_dns_sect_xml = self.m_internet_xml.find('DynamicDnsSection')
+
 
 class Setup(SetupPyHouseObj):
 

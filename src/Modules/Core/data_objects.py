@@ -312,6 +312,7 @@ class PyHouseAPIs(object):
         self.CoreAPI = None
         self.EntertainmentAPI = None
         self.HouseAPI = None
+        self.HvacAPI = None
         self.InternetAPI = None
         self.LightingAPI = None
         self.LogsAPI = None
@@ -321,7 +322,6 @@ class PyHouseAPIs(object):
         self.WebAPI = None
         #
         # self.CommunicationsAPI = None
-        # self.HvacAPI = None
         # self.IrrigationAPI = None
         # self.LocationAPI = None
         # self.PoolAPI = None

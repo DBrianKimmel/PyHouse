@@ -46,6 +46,7 @@ import xml.etree.ElementTree as ET
 # Import PyMh files
 from Modules.Core.data_objects import ScheduleData
 from Modules.lights import lighting
+from Modules.hvac import thermostat
 from Modules.utils import xml_tools
 from Modules.utils import tools
 from Modules.scheduling import sunrisesunset
@@ -127,7 +128,7 @@ class ScheduleExecution(ScheduleData):
         """
         TODO: We need a small dispatch for the various schedule types (hvac, security, entertainment, lights, ...)
         """
-        l_schedule_obj = self.m_house_obj.Schedules[p_slot]
+        l_schedule_obj = self.m_pyhouse_obj.House.OBJs.Schedules[p_slot]
         if l_schedule_obj.ScheduleType == 'Device':
             pass
         elif l_schedule_obj.ScheduleType == 'Scene':
@@ -138,8 +139,7 @@ class ScheduleExecution(ScheduleData):
         """Send information to one device to execute a schedule.
 
         """
-        # PrettyPrintAny(self.m_house_obj, 'execute_one_schedule')
-        l_schedule_obj = self.m_house_obj.OBJs.Schedules[p_slot]
+        l_schedule_obj = self.m_pyhouse_obj.House.OBJs.Schedules[p_slot]
         # TODO: We need a small dispatch for the various schedule types (hvac, security, entertainment, lights, ...)
         if l_schedule_obj.ScheduleType == 'LightingDevice':
             print('execute_one_schedule type = LightingDevice')
@@ -152,7 +152,7 @@ class ScheduleExecution(ScheduleData):
             pass
         l_light_obj = tools.get_light_object(self.m_pyhouse_obj, name = l_schedule_obj.LightName)
         LOG.info("Executing one schedule Name:{0:}, Light:{1:}, Level:{2:}".format(l_schedule_obj.Name, l_schedule_obj.LightName, l_schedule_obj.Level))
-        self.m_house_obj.APIs.LightingAPI.ChangeLight(l_light_obj, l_schedule_obj.Level)
+        self.m_pyhouse_obj.APIs.LightingAPI.ChangeLight(l_light_obj, l_schedule_obj.Level)
 
     def execute_schedules_list(self, p_slot_list = []):
         """
@@ -302,12 +302,13 @@ class ScheduleUtility(ScheduleExecution):
             # add to a chain
             if l_diff == l_seconds_to_delay:
                 l_schedule_list.append(l_key)
-        l_debug_msg = "Schedule - House:{0:}, delaying {1:} seconds until {2:} for list {3:}".format(self.m_house_obj.Name, l_seconds_to_delay, l_time_scheduled, l_schedule_list)
+        l_debug_msg = "Schedule - House:{0:}, delaying {1:} seconds until {2:} for list {3:}".format(self.m_pyhouse_obj.House.Name, l_seconds_to_delay, l_time_scheduled, l_schedule_list)
         LOG.info("Get_next_schedule complete. {0:}".format(l_debug_msg))
         return l_seconds_to_delay, l_schedule_list
 
     def init_scheduled_modules(self):
         self.m_pyhouse_obj.APIs.LightingAPI = lighting.API()
+        self.m_pyhouse_obj.APIs.HvacAPI = thermostat.API()
 
     def start_scheduled_modules(self, p_pyhouse_obj):
         self.m_pyhouse_obj.APIs.LightingAPI.Start(p_pyhouse_obj)
@@ -321,7 +322,6 @@ class API(ScheduleUtility, ReadWriteConfigXml):
     """Instantiated once for each house (active or not)
     """
 
-    m_house_obj = None
     m_sunrisesunset_api = None
 
     def __init__(self):
@@ -335,23 +335,25 @@ class API(ScheduleUtility, ReadWriteConfigXml):
         @param p_house_obj: is a House object for the house being scheduled
         """
         LOG.info("Starting.")
-        # PrettyPrintAny(p_pyhouse_obj, 'Schedule - PyHouse Obj')
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_house_obj = p_pyhouse_obj.House
         p_pyhouse_obj.House.OBJs.Schedules = self.read_schedules_xml(p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision'))
         self.m_sunrisesunset_api.Start(p_pyhouse_obj)
         self.init_scheduled_modules()
         self.start_scheduled_modules(p_pyhouse_obj)
         LOG.info("Started.")
-        if self.m_house_obj.Active:
-            p_pyhouse_obj.Twisted.Reactor.callLater(5, self.run_schedule)
+        if self.m_pyhouse_obj.House.Active:
+            self.m_pyhouse_obj.Twisted.Reactor.callLater(5, self.run_schedule)
 
     def Stop(self, p_xml):
         """Stop everything under me and build xml to be appended to a house xml.
         """
-        LOG.info("Stopping schedule for house:{0:}.".format(self.m_house_obj.Name))
+        LOG.info("Stopping schedule for house:{0:}.".format(self.m_pyhouse_obj.House.Name))
         p_xml.append(self.write_schedules_xml(self.m_pyhouse_obj.House.OBJs.Schedules))
         self.stop_scheduled_modules(p_xml)
         LOG.info("Stopped.\n")
+
+    def Reload(self):
+        if self.m_pyhouse_obj.House.Active:
+            self.m_pyhouse_obj.Twisted.Reactor.callLater(5, self.run_schedule)
 
 # ## END DBK

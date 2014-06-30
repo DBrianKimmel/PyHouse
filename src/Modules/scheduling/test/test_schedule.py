@@ -29,12 +29,6 @@ class SetupMixin(object):
         self.m_pyhouse_obj.House.OBJs = HouseObjs()
         self.m_api = schedule.API()
 
-        self.m_houses_xml = self.m_root_xml.find('Houses')
-        self.m_house_xml = self.m_houses_xml.find('House')
-        self.m_schedules_xml = self.m_house_xml.find('Schedules')
-        self.m_schedule_xml = self.m_schedules_xml.find('Schedule')
-        print('test_schedule.SetupMixin')
-
 
 class Test_02_ReadWriteXML(SetupMixin, unittest.TestCase):
     """

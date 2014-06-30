@@ -139,4 +139,7 @@ class API(Utility):
         p_xml.append(l_house_xml)
         LOG.info("Stopped.")
 
+    def Reload(self):
+        pass
+
 # ##  END DBK
