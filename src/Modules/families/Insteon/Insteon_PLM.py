@@ -40,7 +40,7 @@ from Modules.families.Insteon import Insteon_utils
 from Modules.families.Insteon import Insteon_Link
 from Modules.families.Insteon.Device_Insteon import InsteonData
 from Modules.utils import pyh_log
-# from Modules.utils.tools import PrettyPrintAny
+from Modules.utils.tools import PrettyPrintAny
 
 g_debug = 0
 LOG = pyh_log.getLogger('PyHouse.Insteon_PLM ')
@@ -313,8 +313,9 @@ class DecodeResponses(CreateCommands):
         Find the address of something Insteon.
         @param p_class: is an OBJ like p_pyhouse_obj.House.OBJs.Controllers
         """
-        print(p_class)
+        # print(p_class)
         for l_obj in p_class.itervalues():
+            PrettyPrintAny(l_obj, 'InsteonPLM - _findAddr - obj', 100)
             if l_obj.ControllerFamily == 'Insteon':
                 continue
             if l_obj.InsteonAddress == p_addr:
