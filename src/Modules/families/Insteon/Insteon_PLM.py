@@ -311,7 +311,9 @@ class DecodeResponses(CreateCommands):
     def _find_addr(self, p_class, p_addr):
         """
         Find the address of something Insteon.
+        @param p_class: is an OBJ like p_pyhouse_obj.House.OBJs.Controllers
         """
+        print(p_class)
         for l_obj in p_class.itervalues():
             if l_obj.ControllerFamily == 'Insteon':
                 continue
