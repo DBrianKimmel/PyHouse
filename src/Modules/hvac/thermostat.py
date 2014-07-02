@@ -33,14 +33,17 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
 
     def _read_thermostat_data(self, p_obj, p_xml):
         """
-        @return: a ThermostatData object
+        @return: a ThermostatData object.
         """
-        p_obj.CurrentTemperature = self.get_float_from_xml(p_xml, 'CurrentTemperature')
-        p_obj.SetTemperature = self.get_float_from_xml(p_xml, 'SetTemperature')
+        p_obj.CoolSetPoint = self.get_float_from_xml(p_xml, 'CoolSetPoint', 76.0)
         p_obj.ControllerFamily = self.get_text_from_xml(p_xml, 'ControllerFamily')
+        p_obj.CurrentTemperature = self.get_float_from_xml(p_xml, 'CurrentTemperature')
+        p_obj.HeatSetPoint = self.get_float_from_xml(p_xml, 'HeatSetPoint', 68.0)
+        p_obj.ThermostatMode = self.get_text_from_xml(p_xml, 'ThermostatMode', 'Cool')
+        p_obj.ThermostatScale = self.get_text_from_xml(p_xml, 'ThermostatScale', 'F')
 
     def _read_family_data(self, p_obj, p_xml):
-        l_family = p_obj.ThermostatFamily
+        l_family = p_obj.ControllerFamily
         l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[l_family].ModuleAPI
         l_api.extract_device_xml(p_obj, p_xml)
 
@@ -67,9 +70,12 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         return l_ret
 
     def _write_thermostat_data(self, p_obj, p_xml):
-        self.put_float_element(p_xml, 'CurrentTemperature', p_obj.CurrentTemperature)
-        self.put_float_element(p_xml, 'SetTemperature', p_obj.SetTemperature)
+        self.put_float_element(p_xml, 'CoolSetPoint', p_obj.CoolSetPoint)
         self.put_text_element(p_xml, 'ControllerFamily', p_obj.ControllerFamily)
+        self.put_float_element(p_xml, 'CurrentTemperature', p_obj.CurrentTemperature)
+        self.put_float_element(p_xml, 'HeatSetPoint', p_obj.HeatSetPoint)
+        self.put_text_element(p_xml, 'ThermostatMode', p_obj.ThermostatMode)
+        self.put_text_element(p_xml, 'ThermostatScale', p_obj.ThermostatScale)
         pass
 
     def _write_family_data(self, p_obj, p_xml):
@@ -106,7 +112,7 @@ class API(ReadWriteConfigXml):
 
     def Start(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.read_all_thermostats(p_pyhouse_obj)
+        p_pyhouse_obj.House.OBJs.Thermostat = self.read_all_thermostats(p_pyhouse_obj)
         LOG.info("Started.")
 
     def Stop(self, p_xml):

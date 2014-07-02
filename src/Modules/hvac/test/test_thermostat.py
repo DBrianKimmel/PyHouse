@@ -40,6 +40,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
+        super(Test_02_XML, self).__init__()
         self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         SetupMixin.setUp(self)
 

@@ -253,10 +253,12 @@ class NodeInterfaceData(ABaseObject):
 class ThermostatData(ABaseObject):
 
     def __init__(self):
-        # self.ThermostatAPI = None
-        self.CurrentTemperature = 0
-        self.SetTemperature = 0
+        self.CoolSetPoint = 76
         self.ControllerFamily = None
+        self.CurrentTemperature = 0
+        self.HeatSetPoint = 70
+        self.ThermostatMode = 'Cool'  # Cool | Heat | Auto | EHeat
+        self.ThermostatScale = 'F'  # F | C
 
 
 class ScheduleData(ABaseObject):

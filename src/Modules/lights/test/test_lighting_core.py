@@ -32,7 +32,7 @@ class SetupMixin(object):
         test_mixin.Setup()
         self.m_pyhouse_obj = test_mixin.SetupPyHouseObj().BuildPyHouse()
         self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
-        PrettyPrintAny(self, 'TestLightingCore - SetupMixin - Self', 100)
+        # PrettyPrintAny(self, 'TestLightingCore - SetupMixin - Self', 100)
 
 
 class Test_02_XML(SetupMixin, unittest.TestCase):
@@ -40,7 +40,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        super(Test_02_XML, self).__init__()
+        # super(Test_02_XML, self).__init__()
         self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         SetupMixin.setUp(self)
         self.m_pyhouse_obj = PyHouseData()
@@ -56,7 +56,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         self.m_controller_sect_xml = self.m_house_div_xml.find('ControllerSection')
         self.m_controller_xml = self.m_controller_sect_xml.find('Controller')
         self.m_controller_obj = ControllerData()
-        PrettyPrintAny(self, 'TestLightingCore - Test_02_Setup - Self', 100)
+        # PrettyPrintAny(self, 'TestLightingCore - Test_02_Setup - Self', 100)
 
     def test_0202_FindXml(self):
         """ Be sure that the XML contains the right stuff.
