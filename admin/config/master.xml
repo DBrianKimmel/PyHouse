@@ -316,14 +316,14 @@
             <Controller Active="False" Key="2" Name="UPB_PIM"><Comment>UPB PIM  using USB connection</Comment><Coords /><IsDimmable>False</IsDimmable><ControllerFamily>UPB</ControllerFamily><RoomName>Master Bath</RoomName>
                 <LightingType>Controller</LightingType><NetworkID>0</NetworkID><Password>0</Password><UnitID>255</UnitID><InterfaceType>USB</InterfaceType><Port>None</Port><Vendor>6109</Vendor>
                 <Product>21760</Product></Controller>
-            </ControllerSection>
-            <ThermostatSection>
-                <Thermostat Name="Main Thermostat" Key="0" Active="True">
-                    <ControllerFamily>Insteon</ControllerFamily>
-                    <CurrentTemperature>76</CurrentTemperature>
-                    <Address>18:C9:4A</Address>
-                </Thermostat>
-            </ThermostatSection>
+        </ControllerSection>
+        <ThermostatSection>
+            <Thermostat Name="Main Thermostat" Key="0" Active="True">
+                <ControllerFamily>Insteon</ControllerFamily>
+                <CurrentTemperature>76</CurrentTemperature>
+                <Address>18.C9.4A</Address>
+            </Thermostat>
+        </ThermostatSection>
         <EntertainmentSection />
     </HouseDivision>
 </PyHouse>

@@ -21,6 +21,7 @@ import xml.etree.ElementTree as ET
 from Modules.Core.data_objects import ThermostatData
 from Modules.utils import xml_tools
 from Modules.utils import pyh_log
+from Modules.utils.tools import PrettyPrintAny
 
 g_debug = 0
 LOG = pyh_log.getLogger('PyHouse.Thermostat  >>')
@@ -111,13 +112,23 @@ class API(ReadWriteConfigXml):
         LOG.info("Initialized.")
 
     def Start(self, p_pyhouse_obj):
+        LOG.info("Starting.")
+        l_xml = p_pyhouse_obj.Xml.XmlRoot
+        print(l_xml)
+        l_xml = l_xml.find('HouseDivision')
+        # PrettyPrintAny(l_xml, 'Thermostat - Start - HouseDivision', 100)
+        l_xml = l_xml.find('ThermostatSection')
+        print(l_xml)
         p_pyhouse_obj.House.OBJs.Thermostats = ThermostatData()
         self.m_pyhouse_obj = p_pyhouse_obj
-        p_pyhouse_obj.House.OBJs.Thermostats = self.read_all_thermostats(p_pyhouse_obj)
+        p_pyhouse_obj.House.OBJs.Thermostats = self.read_all_thermostats_xml(l_xml)
+        # PrettyPrintAny(p_pyhouse_obj, 'Thermostat - start - pyhouse', 100)
+        # PrettyPrintAny(p_pyhouse_obj.House, 'Thermostat - start - pyhouse.House', 100)
+        # PrettyPrintAny(p_pyhouse_obj.House.OBJs, 'Thermostat - start - pyhouse.House.OBJs', 100)
         LOG.info("Started.")
 
     def Stop(self, p_xml):
-        l_xml = self.write_all_thermostats(self.m_pyhouse_obj)
+        l_xml = self.write_all_thermostats_xml(self.m_pyhouse_obj)
         p_xml.append(l_xml)
         LOG.info("Stopped.")
         return l_xml

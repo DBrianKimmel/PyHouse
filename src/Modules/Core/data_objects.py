@@ -56,6 +56,7 @@ class BaseLightingData(ABaseObject):
     """
 
     def __init__(self):
+        super(BaseLightingData, self).__init__()
         self.Comment = ''
         self.Coords = ''  # Room relative coords of the device
         self.IsDimmable = False
@@ -70,6 +71,7 @@ class ButtonData(BaseLightingData):
     Also may control scenes.
     """
     def __init__(self):
+        super(ButtonData, self).__init__()
         self.LightingType = 'Button'
 
 
@@ -77,6 +79,7 @@ class ControllerData(BaseLightingData):
     """This data is common to all lighting controllers.
     """
     def __init__(self):
+        super(ControllerData, self).__init__()
         self.LightingType = 'Controller'  # Override the Core definition
         self.InterfaceType = ''  # Serial | USB | Ethernet
         self.Port = ''
@@ -94,6 +97,7 @@ class LightData(BaseLightingData):
     Inherits from BaseLightingData and ABaseObject
     """
     def __init__(self):
+        super(LightData, self).__init__()
         self.IsController = None
         self.LightingType = 'Light'
         self.CurLevel = 0
@@ -103,6 +107,7 @@ class FamilyData(ABaseObject):
     """A container for every family that has been defined.
     """
     def __init__(self):
+        super(FamilyData, self).__init__()
         self.ModuleAPI = None  # Device_Insteon.API()
         self.ModuleName = ''  # Device_Insteon
         self.PackageName = ''  # Modules.families.Insteon
@@ -129,6 +134,7 @@ class UPBData(LightData):
     """
 
     def __init__(self):
+        super(UPBData, self).__init__()
         self.ControllerFamily = 'UPB'
         self.UPBAddress = 11  # Same as NetworkID
         self.Password = None
@@ -138,6 +144,7 @@ class UPBData(LightData):
 class X10LightingData(LightData):
 
     def __init__(self):
+        super(X10LightingData, self).__init__()
         self.ControllerFamily = "X10"
         self.X10Address = 'ab'
 
@@ -146,7 +153,6 @@ class ComputerInformation(object):
     """
     """
     def __init__(self):
-        # self.APIs = {}  # ComputerAPIs()
         self.InternetConnection = {}  # InternetConnectionData()
         self.Logs = {}  # LogData()
         self.Nodes = {}  # NodeData()
@@ -167,6 +173,7 @@ class HouseInformation(ABaseObject):
     Causes JSON errors
     """
     def __init__(self):
+        super(HouseInformation, self).__init__()
         self.APIs = {}  # HouseAPIs()
         self.OBJs = {}  # HouseObjs()
 
@@ -223,6 +230,7 @@ class RoomData(ABaseObject):
     Used to define the location of switches, lights etc.
     """
     def __init__(self):
+        super(RoomData, self).__init__()
         self.Comment = ''
         self.Corner = ''
         self.Size = ''
@@ -253,6 +261,7 @@ class NodeInterfaceData(ABaseObject):
 class ThermostatData(ABaseObject):
 
     def __init__(self):
+        super(ThermostatData, self).__init__()
         self.CoolSetPoint = 76
         self.ControllerFamily = None
         self.CurrentTemperature = 0
@@ -265,6 +274,7 @@ class ScheduleData(ABaseObject):
     """A schedule of when events happen.
     """
     def __init__(self):
+        super(ScheduleData, self).__init__()
         self.Level = 0
         self.LightName = None
         self.LightNumber = 0  # Depricated methinks
