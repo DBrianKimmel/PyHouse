@@ -56,13 +56,17 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_controller_xml.tag, 'Controller', 'XML - No Controller section')
 
     def test_0221_ReadInterfaceXml(self):
-        pass
+        l_interface = self.m_api._read_interface_data(self.m_controller_obj, self.m_controller_xml)
+        PrettyPrintAny(l_interface, 'Read Interface', 100)
 
     def test_0222_ReadFamilyXml(self):
-        pass
+        self.m_controller_obj.ControllerFamily = 'Insteon'
+        l_family = self.m_api._read_family_data(self.m_controller_obj, self.m_controller_xml)
+        PrettyPrintAny(l_family, 'Read Family', 100)
 
     def test_0223_ReadControllerXml(self):
-        pass
+        l_controller = self.m_api._read_controller_data(self.m_controller_obj, self.m_controller_xml)
+        PrettyPrintAny(l_controller, 'Read Controller', 100)
 
     def test_0243_ReadOneControllerXml(self):
         """ Read in the xml file and fill in the lights
@@ -75,7 +79,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_controller.Coords, 'None', 'Bad Coords')
         self.assertEqual(l_controller.IsDimmable, False, 'Bad Dimmable')
         self.assertEqual(l_controller.DsrDtr, False, 'Bad DsrDtr')
-        self.assertEqual(l_controller.LightingFamily, 'Insteon', 'Bad LightingFamily')
+        self.assertEqual(l_controller.ControllerFamily, 'Insteon', 'Bad ControllerFamily')
         self.assertEqual(l_controller.InterfaceType, 'Serial', 'Bad InterfaceType')
         self.assertEqual(l_controller.Key, 0, 'Bad Key')
         self.assertEqual(l_controller.Name, 'PLM_1', 'Bad Name')

@@ -10,6 +10,7 @@
 """
 
 # Import system type stuff
+import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import PyHouseData, PyHouseAPIs, \
@@ -19,6 +20,7 @@ from Modules.Core.data_objects import PyHouseData, PyHouseAPIs, \
             TwistedInformation, \
             XmlInformation
 from Modules.utils.tools import PrettyPrintAny
+from src.test import xml_data
 
 
 class SetupPyHouseObj(object):
@@ -46,21 +48,33 @@ class SetupPyHouseObj(object):
         self.m_room_sect_xml = self.m_house_div_xml.find('RoomSection')
         self.m_schedule_sect_xml = self.m_house_div_xml.find('ScheduleSection')
         self.m_thermostat_sect_xml = self.m_controller_sect_xml.find('ThermostatSection')
+        self.m_button_xml = self.m_button_sect_xml.find('Button')
+        self.m_controller_xml = self.m_house_div_xml.find('Controller')
+        self.m_family_xml = self.m_house_div_xml.find('Family')
+        self.m_light_xml = self.m_house_div_xml.find('Light')
+        self.m_location_xml = self.m_house_div_xml.find('Location')
+        self.m_room_xml = self.m_house_div_xml.find('Room')
+        self.m_schedule_xml = self.m_house_div_xml.find('Schedule')
+        self.m_thermostat_xml = self.m_controller_sect_xml.find('Thermostat')
         #
         self.m_computer_div_xml = self.m_root_xml.find('ComputerDivision')
         self.m_internet_sect_xml = self.m_computer_div_xml.find('InternetSection')
         self.m_log_sect_xml = self.m_computer_div_xml.find('LogSection')
         self.m_node_sect_xml = self.m_computer_div_xml.find('InternetSection')
         self.m_web_sect_xml = self.m_computer_div_xml.find('WebSection')
-        self.m_dynamic_dns_sect_xml = self.m_internet_xml.find('DynamicDnsSection')
+        self.m_dynamic_dns_sect_xml = self.m_internet_sect_xml.find('DynamicDnsSection')
+        # PrettyPrintAny(self, 'TestMixin - Self', 100)
 
 
 class Setup(SetupPyHouseObj):
 
     def __init__(self):
         self.m_pyhouse_obj = self.BuildPyHouse()
-        print('test_mixin.Setup()')
-        # PrettyPrintAny(self, 'test_mixin - Setup() - self')
-        # PrettyPrintAny(self.m_pyhouse_obj, 'test_mixin - Setup() - pyhouse_obj')
+        try:
+            self.m_root_xml
+        except (NameError, AttributeError):
+            self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
+        self.BuildXml()
+        # PrettyPrintAny(self, 'TestMixin - Setup() -  Self', 100)
 
 # ## END DBK

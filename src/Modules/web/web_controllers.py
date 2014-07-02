@@ -92,13 +92,13 @@ class ControllersElement(athena.LiveElement):
         l_obj.Comment = l_json['Comment']
         l_obj.Coords = l_json['Coords']
         l_obj.IsDimmable = l_json['IsDimmable']
-        l_obj.LightingFamily = l_json['LightingFamily']
+        l_obj.ControllerFamily = l_json['ControllerFamily']
         l_obj.RoomName = l_json['RoomName']
         l_obj.LightingType = l_json['LightingType']
         l_obj.UUID = l_json['UUID']
         l_obj.InterfaceType = l_json['InterfaceType']
         l_obj.Port = l_json['Port']
-        if l_obj.LightingFamily == 'Insteon':
+        if l_obj.ControllerFamily == 'Insteon':
             l_obj.InsteonAddress = dotted_hex2int(l_json['InsteonAddress'])
             l_obj.DevCat = l_json['DevCat']
             l_obj.GroupNumber = l_json['GroupNumber']

@@ -31,37 +31,75 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
     """
     m_count = 0
 
-    def read_one_thermostat(self, p_thermostat_element):
+    def _read_thermostat_data(self, p_obj, p_xml):
+        """
+        @return: a ThermostatData object
+        """
+        p_obj.CurrentTemperature = self.get_float_from_xml(p_xml, 'CurrentTemperature')
+        p_obj.SetTemperature = self.get_float_from_xml(p_xml, 'SetTemperature')
+        p_obj.ControllerFamily = self.get_text_from_xml(p_xml, 'ControllerFamily')
+
+    def _read_family_data(self, p_obj, p_xml):
+        l_family = p_obj.ThermostatFamily
+        l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[l_family].ModuleAPI
+        l_api.extract_device_xml(p_obj, p_xml)
+
+    def read_one_thermostat_xml(self, p_thermostat_element):
+        """
+        @return: a ThermostatData object
+        """
         l_thermostat_obj = ThermostatData()
         self.read_base_object_xml(l_thermostat_obj, p_thermostat_element)
         l_thermostat_obj.Key = self.m_count  # Renumber
-        l_thermostat_obj.Comment = self.get_text_from_xml(p_thermostat_element, 'Comment')
+        self._read_thermostat_data(l_thermostat_obj, p_thermostat_element)
+        self._read_family_data(l_thermostat_obj, p_thermostat_element)
         return l_thermostat_obj
 
-    def read_all_thermostats(self, p_pyhouse_obj):
+    def read_all_thermostats_xml(self, p_thermostat_sect_element):
         """
         """
-        l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
-        l_xml = l_xml.find('ThermostatSection')
-        l_dict = {}
-        return l_dict
+        l_ret = {}
+        self.m_count = 0
+        for l_xml in p_thermostat_sect_element.iterfind('Thermostat'):
+            l_obj = self.read_one_thermostat_xml(l_xml)
+            l_ret[self.m_count] = l_obj
+            self.m_count += 1
+        return l_ret
 
-    def write_one_thermostat(self, p_thermostat_obj):
-        l_thermostat_xml = ET.Element('Thermostat')
-        return l_thermostat_xml
+    def _write_thermostat_data(self, p_obj, p_xml):
+        self.put_float_element(p_xml, 'CurrentTemperature', p_obj.CurrentTemperature)
+        self.put_float_element(p_xml, 'SetTemperature', p_obj.SetTemperature)
+        self.put_text_element(p_xml, 'ControllerFamily', p_obj.ControllerFamily)
         pass
 
-    def write_all_thermostats(self, p_pyhouse_obj):
+    def _write_family_data(self, p_obj, p_xml):
+        l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[p_obj.ControllerFamily].ModuleAPI
+        l_api.insert_device_xml(p_xml, p_obj)
+
+    def write_one_thermostat_xml(self, p_thermostat_obj):
+        """
+        """
+        l_xml = self.write_base_object_xml('Thermostat', p_thermostat_obj)
+        self._write_thermostat_data(p_thermostat_obj, l_xml)
+        self._write_family_data(p_thermostat_obj, l_xml)
+        return l_xml
+
+    def write_all_thermostats_xml(self, p_thermostat_sect_obj):
         """Create a sub tree for 'Internet' - the sub elements do not have to be present.
         @return: a sub tree ready to be appended to "something"
         """
-        l_thermostat_xml = ET.Element('ThermostatSection')
-        return l_thermostat_xml
+        l_xml = ET.Element('ThermostatSection')
+        self.m_count = 0
+        for l_obj in p_thermostat_sect_obj.itervalues():
+            l_entry = self.write_one_thermostat_xml(l_obj)
+            l_xml.append(l_entry)
+            self.m_count += 1
+        return l_xml
 
 
 class API(ReadWriteConfigXml):
 
-    m_house_obj = None
+    m_pyhouse_obj = None
 
     def __init__(self):
         LOG.info("Initialized.")

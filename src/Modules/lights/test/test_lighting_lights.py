@@ -33,7 +33,8 @@ class SetupMixin(object):
 
 
 class Test_02_XML(SetupMixin, unittest.TestCase):
-    """ This section tests the reading and writing of XML used by lighting_lights.
+    """
+    This section tests the reading and writing of XML used by lighting_lights.
     """
 
     def setUp(self):
@@ -68,14 +69,14 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_light.Comment, 'SwitchLink On/Off', 'Bad comment')
         self.assertEqual(l_light.Coords, "['0', '0']", 'Bad coords')
         self.assertEqual(l_light.IsDimmable, False, 'Bad dimmable')
-        self.assertEqual(l_light.LightingFamily, 'Insteon', 'Bad Lighting family')
+        self.assertEqual(l_light.ControllerFamily, 'Insteon', 'Bad Lighting family')
         self.assertEqual(l_light.RoomName, 'Foyer', 'Bad Room Name')
         self.assertEqual(l_light.LightingType, 'Light', 'Bad LightingType')
         PrettyPrintAny(l_light, 'ReadOneLight', 120)
 
     def test_0203_ReadAllLightsXml(self):
         l_lights = self.m_api.read_lights_xml(self.m_light_sect_xml)
-        self.assertEqual(len(l_lights), 16)
+        self.assertEqual(len(l_lights), 5)
 
     def test_0211_WriteOneLightXml(self):
         """ Write out the XML file for the location section

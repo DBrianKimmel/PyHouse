@@ -14,7 +14,7 @@ from Modules.Core.data_objects import ControllerData
 from Modules.lights.lighting_core import ReadWriteConfigXml
 from Modules.utils import pyh_log
 from Modules.drivers import interface
-# from Modules.utils.tools import PrettyPrintAny
+from Modules.utils.tools import PrettyPrintAny
 
 g_debug = 1
 LOG = pyh_log.getLogger('PyHouse.Controller  ')
@@ -40,9 +40,15 @@ class ControllersAPI(ReadWriteConfigXml):
         p_obj.Port = self.get_text_from_xml(p_xml, 'Port')
 
     def _read_family_data(self, p_controller_obj, p_xml):
-        l_family = p_controller_obj.LightingFamily
-        l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[l_family].ModuleAPI
-        l_api.extract_device_xml(p_controller_obj, p_xml)
+        """
+        Read and fill in the family specific data of the controller.
+        """
+        l_family = p_controller_obj.ControllerFamily
+        try:
+            l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[l_family].ModuleAPI
+            l_api.extract_device_xml(p_controller_obj, p_xml)
+        except KeyError:  # ControllerFamily invalid or missing
+            pass
 
     def _read_interface_data(self, p_obj, p_xml):
         interface.ReadWriteConfigXml().extract_xml(p_obj, p_xml)
@@ -52,6 +58,7 @@ class ControllersAPI(ReadWriteConfigXml):
         l_controller_obj = ControllerData()
         l_controller_obj = self.read_base_lighting_xml(l_controller_obj, p_controller_xml)
         l_controller_obj.Key = self.m_count  # Renumber
+        # PrettyPrintAny(l_controller_obj, 'LightingController - readOneController - ControllerObj', 100)
         self._read_controller_data(l_controller_obj, p_controller_xml)
         self._read_family_data(l_controller_obj, p_controller_xml)
         self._read_interface_data(l_controller_obj, p_controller_xml)
@@ -79,7 +86,7 @@ class ControllersAPI(ReadWriteConfigXml):
         self.put_text_element(p_xml, 'Port', p_obj.Port)
 
     def _write_family_data(self, p_controller_obj, p_xml):
-        l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[p_controller_obj.LightingFamily].ModuleAPI
+        l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[p_controller_obj.ControllerFamily].ModuleAPI
         l_api.insert_device_xml(p_xml, p_controller_obj)
 
     def _write_interface_data(self, p_obj, p_xml):

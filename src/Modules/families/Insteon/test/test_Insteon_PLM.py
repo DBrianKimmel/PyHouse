@@ -37,7 +37,7 @@ class Test_01(unittest.TestCase):
 
     def setUp(self):
         self.m_pyhouse_obj = PyHouseData()
-        self.m_api = Insteon_PLM.API(None)
+        self.m_api = Insteon_PLM.API()
         pass
 
     def test_0101_get_message_length(self):

@@ -121,11 +121,11 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		self.nodeById('CommentDiv').innerHTML  = buildTextWidget('LightComment', p_obj.Comment);
 		self.nodeById('CoordsDiv').innerHTML   = buildTextWidget('LightCoords', p_obj.Coords);
 		self.nodeById('DimmableDiv').innerHTML = buildTrueFalseWidget('LightDimmable', p_obj.IsDimmable);
-		self.nodeById('FamilyDiv').innerHTML   = buildFamilySelectWidget('LightFamily', 'Families', p_obj.LightingFamily);
+		self.nodeById('FamilyDiv').innerHTML   = buildFamilySelectWidget('LightFamily', 'Families', p_obj.ControllerFamily);
 		self.nodeById('RoomNameDiv').innerHTML = buildRoomSelectWidget('LightRoomName', p_obj.RoomName);
 		self.nodeById('TypeDiv').innerHTML     = buildTextWidget('LightType', p_obj.LightingType, 'disabled');
 		self.nodeById('UUIDDiv').innerHTML     = buildTextWidget('LightUUID', p_obj.UUID, 'disabled');
-        if (p_obj['LightingFamily'] == 'Insteon') {  // Insteon info
+        if (p_obj['ControllerFamily'] == 'Insteon') {  // Insteon info
 			self.fillInsteonEntry(p_obj);
         }
 		self.nodeById('LightEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick');
@@ -158,14 +158,14 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 			Comment     : fetchTextWidget('LightComment'),
 			Coords      : fetchTextWidget('LightCoords'),
 			IsDimmable    : fetchTrueFalseWidget('LightDimmable'),
-			LightingFamily : fetchSelectWidget('LightFamily'),
+			ControllerFamily : fetchSelectWidget('LightFamily'),
 			RoomName    : fetchSelectWidget('LightRoomName'),
 			LightingType: fetchTextWidget('LightType'),
 			UUID        : fetchTextWidget('LightUUID'),
 			HouseIx     : globals.House.HouseIx,
 			Delete      : false
             }
-        if (l_data['LightingFamily'] == 'Insteon') {
+        if (l_data['ControllerFamily'] == 'Insteon') {
         	l_data = self.fetchInsteonEntry(l_data);
         }
 		return l_data;
@@ -192,7 +192,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
     			Comment  : '',
     			Coords   : '',
     			IsDimmable : false,
-    			LightingFamily   : 'Insteon',
+    			ControllerFamily   : 'Insteon',
     			RoomName : '',
     			Type     : 'Light',
     			UUID     : '',

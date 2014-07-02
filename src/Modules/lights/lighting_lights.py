@@ -48,7 +48,7 @@ class LightingLightsAPI(ReadWriteConfigXml):
         p_obj.CurLevel = self.get_int_from_xml(p_xml, 'CurLevel', 0)
 
     def _read_family_data(self, p_obj, p_xml):
-        l_family = p_obj.LightingFamily
+        l_family = p_obj.ControllerFamily
         l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[l_family].ModuleAPI
         l_api.extract_device_xml(p_obj, p_xml)
 
@@ -80,7 +80,7 @@ class LightingLightsAPI(ReadWriteConfigXml):
         pass
 
     def _write_family_data(self, p_light_obj, p_light_xml):
-        l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[p_light_obj.LightingFamily].ModuleAPI
+        l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[p_light_obj.ControllerFamily].ModuleAPI
         l_api.insert_device_xml(p_light_xml, p_light_obj)
 
     def write_one_light_xml(self, p_light_obj):

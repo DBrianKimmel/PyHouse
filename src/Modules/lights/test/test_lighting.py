@@ -14,7 +14,7 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, HouseObjs, LightData
+from Modules.Core.data_objects import LightData
 from Modules.lights import lighting
 from Modules.families import family
 from Modules.utils.tools import PrettyPrintAny
@@ -28,7 +28,6 @@ class SetupMixin(object):
     def setUp(self):
         test_mixin.Setup()
         self.m_pyhouse_obj = test_mixin.SetupPyHouseObj().BuildPyHouse()
-        self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
 
 
 class Test_02_XML(SetupMixin, unittest.TestCase):
@@ -60,7 +59,8 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         self.m_api._read_lighting_xml(self.m_pyhouse_obj)
 
     def test_0212_write_lighting(self):
-        pass
+        l_obj = self.m_api._read_lighting_xml(self.m_pyhouse_obj)
+        self.m_api._write_lighting_xml(l_obj)
 
 
 # class Test_03_ReadXMLEmpty(SetupMixin, unittest.TestCase):

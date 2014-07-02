@@ -83,7 +83,7 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 		self.nodeById('ActiveDiv').innerHTML = buildTrueFalseWidget('ButtonActive', p_obj.Active);
 		self.nodeById('CommentDiv').innerHTML = buildTextWidget('ButtonComment', p_obj.Comment);
 		self.nodeById('CoordsDiv').innerHTML = buildTextWidget('ButtonCoords', p_obj.Coords);
-		self.nodeById('FamilyDiv').innerHTML = buildTextWidget('ButtonFamily', p_obj.LightingFamily);
+		self.nodeById('FamilyDiv').innerHTML = buildTextWidget('ButtonFamily', p_obj.ControllerFamily);
 		self.nodeById('RoomNameDiv').innerHTML = buildRoomSelectWidget('ButtonRoomName', p_obj.RoomName);
 		self.nodeById('TypeDiv').innerHTML = buildTextWidget('ButtonType', p_obj.Type);  // s/b select box of valid types
 		self.nodeById('UUIDDiv').innerHTML = buildTextWidget('ButtonUUID', p_obj.UUID, 'disabled');

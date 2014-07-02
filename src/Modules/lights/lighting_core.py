@@ -34,7 +34,7 @@ class ReadWriteConfigXml(XmlConfigTools):
         p_device_obj.Comment = self.get_text_from_xml(p_entry_xml, 'Comment')
         p_device_obj.Coords = self.get_text_from_xml(p_entry_xml, 'Coords')
         p_device_obj.IsDimmable = self.get_bool_from_xml(p_entry_xml, 'IsDimmable')
-        p_device_obj.LightingFamily = self.get_text_from_xml(p_entry_xml, 'LightingFamily')
+        p_device_obj.ControllerFamily = self.get_text_from_xml(p_entry_xml, 'ControllerFamily')
         p_device_obj.RoomName = p_entry_xml.findtext('RoomName')
         p_device_obj.LightingType = p_entry_xml.findtext('LightingType')
         # PrettyPrintAny(p_device_obj, 'Lighting_Core - lighting')
@@ -44,7 +44,7 @@ class ReadWriteConfigXml(XmlConfigTools):
         self.put_text_element(p_entry_xml, 'Comment', p_device_obj.Comment)
         self.put_text_element(p_entry_xml, 'Coords', p_device_obj.Coords)
         self.put_bool_element(p_entry_xml, 'IsDimmable', p_device_obj.IsDimmable)
-        self.put_text_element(p_entry_xml, 'LightingFamily', p_device_obj.LightingFamily)
+        self.put_text_element(p_entry_xml, 'ControllerFamily', p_device_obj.ControllerFamily)
         self.put_text_element(p_entry_xml, 'Room', p_device_obj.RoomName)
         self.put_text_element(p_entry_xml, 'LightingType', p_device_obj.LightingType)
         return p_entry_xml

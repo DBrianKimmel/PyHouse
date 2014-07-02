@@ -27,7 +27,7 @@ class ButtonsAPI(ReadWriteConfigXml):
         pass
 
     def _read_family_data(self, p_obj, p_xml):
-        l_family = p_obj.LightingFamily
+        l_family = p_obj.ControllerFamily
         l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[l_family].ModuleAPI
         l_api.extract_device_xml(p_obj, p_xml)
 

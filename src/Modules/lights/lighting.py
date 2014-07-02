@@ -34,6 +34,7 @@ class Utility(ControllersAPI, ButtonsAPI, LightingLightsAPI):
     def _read_lighting_xml(self, p_pyhouse_obj):
         """
         Get all the lighting components for a house
+        Uses p_pyhouse_obj since many sections of xml are needed.
         """
         l_house_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
         p_pyhouse_obj.House.OBJs.Controllers = ControllersAPI(p_pyhouse_obj).read_controllers_xml(l_house_xml.find('ControllerSection'))
@@ -81,8 +82,8 @@ class API(Utility):
         try:
             l_key = p_light_obj.Key
             l_light_obj = self.m_pyhouse_obj.House.OBJs.Lights[l_key]
-            LOG.info("Turn Light {0:} to level {1:}, LightingFamily:{2:}".format(l_light_obj.Name, p_level, l_light_obj.LightingFamily))
-            l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[l_light_obj.LightingFamily].ModuleAPI
+            LOG.info("Turn Light {0:} to level {1:}, ControllerFamily:{2:}".format(l_light_obj.Name, p_level, l_light_obj.ControllerFamily))
+            l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[l_light_obj.ControllerFamily].ModuleAPI
             l_api.ChangeLight(l_light_obj, p_level)
         except Exception as e_error:
             print('Lighting Change Light ERROR - {0:}'.format(e_error))

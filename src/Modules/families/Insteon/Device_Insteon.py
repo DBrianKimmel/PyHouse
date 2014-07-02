@@ -82,7 +82,7 @@ class API(ReadWriteConfigXml):
         self.m_house_obj = p_pyhouse_obj.House.OBJs
         l_count = 0
         for l_controller_obj in p_pyhouse_obj.House.OBJs.Controllers.itervalues():
-            if l_controller_obj.LightingFamily != 'Insteon':
+            if l_controller_obj.ControllerFamily != 'Insteon':
                 continue
             if l_controller_obj.Active != True:
                 continue
@@ -106,7 +106,7 @@ class API(ReadWriteConfigXml):
     def Stop(self, p_xml):
         try:
             for l_controller_obj in self.m_house_obj.Controllers.itervalues():
-                if l_controller_obj.LightingFamily != 'Insteon':
+                if l_controller_obj.ControllerFamily != 'Insteon':
                     continue
                 if l_controller_obj.Active != True:
                     continue
@@ -116,22 +116,12 @@ class API(ReadWriteConfigXml):
         return p_xml
 
     def ChangeLight(self, p_light_obj, p_level, _p_rate = 0):
+        """
+        Do the Insteon thing to change the level of an Insteon light
+        """
         if g_debug >= 1:
-            LOG.debug('Change light Name:{0:}, LightingFamily:{1:}'.format(p_light_obj.Name, p_light_obj.LightingFamily))
-        # PrettyPrintAny(p_light_obj, 'Light Object Device_Insteon')
-        _l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[p_light_obj.LightingFamily].ModuleAPI
-        # PrettyPrintAny(l_api, 'Light Object Device_Insteon 2')
+            LOG.debug('Change light Name:{0:}, ControllerFamily:{1:}'.format(p_light_obj.Name, p_light_obj.ControllerFamily))
+        _l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[p_light_obj.ControllerFamily].ModuleAPI
         self.m_plm.ChangeLight(p_light_obj, p_level)
-        # if p_light_obj.LightingFamily == 'Insteon':
-        #    try:
-        #        for l_controller_obj in self.m_house_obj.Controllers.itervalues():
-        #            if l_controller_obj.LightingFamily != 'Insteon':
-        #                continue
-        #            if l_controller_obj.Active != True:
-        #                continue
-        #            l_controller_obj._HandlerAPI.ChangeLight(p_light_obj, p_level)
-        #    except AttributeError as e:  # no controllers for house. (House is being added).
-        #        LOG.warning('Could not change light setting {0:}'.format(e))
-        pass
 
 # ## END DBK

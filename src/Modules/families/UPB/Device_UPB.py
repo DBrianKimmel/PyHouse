@@ -58,7 +58,7 @@ class API(ReadWriteXml):
         self.m_house_obj = p_pyhouse_obj.House.OBJs
         l_count = 0
         for l_controller_obj in self.m_house_obj.Controllers.itervalues():
-            if l_controller_obj.LightingFamily != 'UPB':
+            if l_controller_obj.ControllerFamily != 'UPB':
                 continue
             if l_controller_obj.Active != True:
                 continue
@@ -82,7 +82,7 @@ class API(ReadWriteXml):
     def Stop(self, p_xml):
         try:
             for l_controller_obj in self.m_house_obj.Controllers.itervalues():
-                if l_controller_obj.LightingFamily != 'UPB':
+                if l_controller_obj.ControllerFamily != 'UPB':
                     continue
                 if l_controller_obj.Active != True:
                     continue
@@ -94,7 +94,7 @@ class API(ReadWriteXml):
     def ChangeLight(self, p_light_obj, p_level, _p_rate = 0):
         try:
             for l_controller_obj in self.m_house_obj.Controllers.itervalues():
-                if (l_controller_obj.LightingFamily == 'UPB') and (l_controller_obj.Active == True):
+                if (l_controller_obj.ControllerFamily == 'UPB') and (l_controller_obj.Active == True):
                     l_controller_obj._HandlerAPI.ChangeLight(p_light_obj, p_level)
         except AttributeError:
             pass

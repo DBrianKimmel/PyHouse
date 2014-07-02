@@ -88,6 +88,11 @@ helpers.Widget.subclass(houseMenu, 'HouseMenuWidget').methods(
 			var l_node = findWidgetByClass('Internet');
 			l_node.showWidget();
 			break;
+		case 'Thermostat':
+			self.hideWidget();
+			var l_node = findWidgetByClass('Thermostat');
+			l_node.showWidget();
+			break;
 		case 'Back':
 			self.hideWidget();
 			var l_node = findWidgetByClass('RootMenu');

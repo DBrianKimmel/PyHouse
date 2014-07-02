@@ -29,7 +29,7 @@ from twisted.web.http_headers import Headers
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import InternetConnectionData, InternetConnectionDynDnsData
-from Modules.Core.Locations import *
+# from Modules.Core.Locations import *
 from Modules.Comps import inet_find_snar, inet_update_freedns
 from Modules.utils.xml_tools import XmlConfigTools
 from Modules.utils import convert
@@ -74,6 +74,7 @@ class ReadWriteConfigXml(XmlConfigTools):
         May have a <DynamicDnsSection> contained.
 
         @param p_internet_element: a <Internet Name...> element
+        @return: a internetConnectionData object
         """
         l_internet_obj = InternetConnectionData()
         self.read_base_object_xml(l_internet_obj, p_internet_element)

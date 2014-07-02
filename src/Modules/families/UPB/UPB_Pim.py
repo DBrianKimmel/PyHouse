@@ -433,12 +433,12 @@ class UpbPimAPI(Device_UPB.ReadWriteXml, CreateCommands):
         """
         self.m_controller_obj = p_controller_obj
         self.m_controller_obj._Queue = Queue.Queue(300)
-        if self.m_controller_obj.LightingFamily.lower() != 'upb':
+        if self.m_controller_obj.ControllerFamily.lower() != 'upb':
             return False
         if self.m_controller_obj.Active != True:
             return False
         if g_debug >= 1:
-            LOG.debug("UPB_PIM.start_controller() - LightingFamily:{0:}, InterfaceType:{1:}, Active:{2:}".format(self.m_controller_obj.LightingFamily, self.m_controller_obj.InterfaceType, self.m_controller_obj.Active))
+            LOG.debug("UPB_PIM.start_controller() - ControllerFamily:{0:}, InterfaceType:{1:}, Active:{2:}".format(self.m_controller_obj.ControllerFamily, self.m_controller_obj.InterfaceType, self.m_controller_obj.Active))
         l_key = self.m_controller_obj.Key
         l_pim = UPBData()
         l_pim.InterfaceType = self.m_controller_obj.InterfaceType
@@ -485,7 +485,7 @@ class API(UpbPimAPI):
 
     def ChangeLight(self, p_light_obj, p_level, _p_rate = 0):
         for l_obj in self.m_house_obj.Lights.itervalues():
-            if l_obj.LightingFamily != 'UPB':
+            if l_obj.ControllerFamily != 'UPB':
                 continue
             if l_obj.Active == False:
                 continue

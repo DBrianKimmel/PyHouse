@@ -59,7 +59,7 @@ class BaseLightingData(ABaseObject):
         self.Comment = ''
         self.Coords = ''  # Room relative coords of the device
         self.IsDimmable = False
-        self.LightingFamily = None
+        self.ControllerFamily = None
         self.RoomName = ''
         self.LightingType = ''  # Button | Light | Controller
 
@@ -116,7 +116,7 @@ class InsteonData (LightData):
         self.InsteonAddress = 0  # 3 bytes
         self.IsController = False
         self.DevCat = 0  # DevCat and SubCat (2 bytes)
-        self.LightingFamily = 'Insteon'
+        self.ControllerFamily = 'Insteon'
         self.GroupList = ''
         self.GroupNumber = 0
         self.IsMaster = False  # False is Slave
@@ -129,7 +129,7 @@ class UPBData(LightData):
     """
 
     def __init__(self):
-        self.LightingFamily = 'UPB'
+        self.ControllerFamily = 'UPB'
         self.UPBAddress = 11  # Same as NetworkID
         self.Password = None
         self.UnitID = 0xFF
@@ -138,7 +138,7 @@ class UPBData(LightData):
 class X10LightingData(LightData):
 
     def __init__(self):
-        self.LightingFamily = "X10"
+        self.ControllerFamily = "X10"
         self.X10Address = 'ab'
 
 
@@ -253,9 +253,10 @@ class NodeInterfaceData(ABaseObject):
 class ThermostatData(ABaseObject):
 
     def __init__(self):
-        self.ThermostatAPI = None
+        # self.ThermostatAPI = None
         self.CurrentTemperature = 0
         self.SetTemperature = 0
+        self.ControllerFamily = None
 
 
 class ScheduleData(ABaseObject):

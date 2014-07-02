@@ -306,25 +306,42 @@ class CreateCommands(InsteonPlmUtility):
 class DecodeResponses(CreateCommands):
 
     m_house_obj = None
+    m_pyhouse_obj = None
 
     def _find_addr(self, p_class, p_addr):
+        """
+        Find the address of something Insteon.
+        """
         for l_obj in p_class.itervalues():
-            if l_obj.LightingFamily != 'Insteon':
+            if l_obj.ControllerFamily == 'Insteon':
                 continue
             if l_obj.InsteonAddress == p_addr:
                 return l_obj
-        LOG.warning("Address {0:} NOT found".format(Insteon_utils.int2dotted_hex(p_addr)))
+        # LOG.warning("Address {0:} NOT found".format(Insteon_utils.int2dotted_hex(p_addr)))
         return None
 
     def get_obj_from_message(self, p_message, p_index):
-        l_id = Insteon_utils.message2int(p_message, p_index)
+        """Here we have a message from the PLM.  Find out what device has that address.
+
+        @param p_message: is the message from the plm we are extracting the Insteon address from.
+        @param p_index: is the index of the first byte in the message.
+                Various messages contain the address at different offsets.
+
+        We need to check:
+            Lighting devices
+            Thermostat devices
+            Add other devices if we add them.
+        """
+        l_id = Insteon_utils.message2int(p_message, p_index)  # Extract the 3 byte address from the message and convert to an Int.
         l_ret = self._find_addr(self.m_house_obj.Lights, l_id)
         if l_ret == None:
             l_ret = self._find_addr(self.m_house_obj.Controllers, l_id)
         if l_ret == None:
             l_ret = self._find_addr(self.m_house_obj.Buttons, l_id)
         if l_ret == None:
-            # l_ret = LightData()  # an empty new object
+            l_ret = self._find_addr(self.m_pyhouse_obj.House.OBJs.Thermostat, l_id)
+        if l_ret == None:
+            LOG.warning("Address {0:} NOT found".format(Insteon_utils.int2dotted_hex(l_id)))
             l_ret = InsteonData()  # an empty new object
             l_ret.Name = '**' + str(l_id) + '**'
         if g_debug >= 2:
@@ -438,7 +455,7 @@ class DecodeResponses(CreateCommands):
             l_10 = l_message[10]
         except IndexError:
             l_10 = 0
-            LOG.warning("Short 50 message rxed - {p:}".format(PrintBytes(l_message)))
+            LOG.warning("Short 50 message rxed - {0:}".format(PrintBytes(l_message)))
         l_data = [l_9, l_10]
         l_debug_msg = 'Standard Message; '
         l_flags = self._decode_message_flag(l_8)
@@ -935,8 +952,8 @@ class LightHandlerAPI(InsteonPlmAPI):
         self.m_house_obj = p_house_obj
         if g_debug >= 3:
             l_msg = "Insteon_PLM.start_controller_driver() - Controller:{0:}, ".format(p_controller_obj.Name)
-            l_msg += "LightingFamily:{0:}, InterfaceType:{1:}, Active:{2:}".format(
-                    p_controller_obj.LightingFamily, p_controller_obj.InterfaceType, p_controller_obj.Active)
+            l_msg += "ControllerFamily:{0:}, InterfaceType:{1:}, Active:{2:}".format(
+                    p_controller_obj.ControllerFamily, p_controller_obj.InterfaceType, p_controller_obj.Active)
         if p_controller_obj.InterfaceType.lower() == 'serial':
             from Modules.drivers import Driver_Serial
             l_driver = Driver_Serial.API()
@@ -967,7 +984,7 @@ class LightHandlerAPI(InsteonPlmAPI):
         """
         LOG.info('Getting light levels of all Insteon lights')
         for l_light_obj in self.m_house_obj.Lights.itervalues():
-            if l_light_obj.LightingFamily != 'Insteon':
+            if l_light_obj.ControllerFamily != 'Insteon':
                 continue
             if l_light_obj.Active != True:
                 continue
@@ -1005,7 +1022,9 @@ class API(LightHandlerAPI):
         LOG.info('Stopped.')
 
     def ChangeLight(self, p_light_obj, p_level, p_rate = 0):
-        # PrettyPrintAny(p_light_obj, 'Insteon_PLM - Change Light - 3')
+        """
+        Send a command to change a light's level
+        """
         if g_debug >= 1:
             LOG.debug("Change light:{0:} to level:{1:} at rate:{2:}".format(p_light_obj.Name, p_level, p_rate))
         if int(p_level) == 0:
