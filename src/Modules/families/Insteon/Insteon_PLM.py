@@ -313,11 +313,11 @@ class DecodeResponses(CreateCommands):
         Find the address of something Insteon.
         @param p_class: is an OBJ like p_pyhouse_obj.House.OBJs.Controllers
         """
-        # print(p_class)
+
         for l_obj in p_class.itervalues():
-            PrettyPrintAny(l_obj, 'InsteonPLM - _findAddr - obj', 100)
-            if l_obj.ControllerFamily == 'Insteon':
-                continue
+            # PrettyPrintAny(l_obj, 'InsteonPLM - _findAddr - obj', 100)
+            if l_obj.ControllerFamily != 'Insteon':
+                continue  # ignore any non-Insteon devices in the class
             if l_obj.InsteonAddress == p_addr:
                 return l_obj
         # LOG.warning("Address {0:} NOT found".format(Insteon_utils.int2dotted_hex(p_addr)))
