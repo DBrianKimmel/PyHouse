@@ -342,7 +342,7 @@ class DecodeResponses(CreateCommands):
         if l_ret == None:
             l_ret = self._find_addr(self.m_house_obj.Buttons, l_id)
         if l_ret == None:
-            l_ret = self._find_addr(self.m_pyhouse_obj.House.OBJs.Thermostat, l_id)
+            l_ret = self._find_addr(self.m_pyhouse_obj.House.OBJs.Thermostats, l_id)
         if l_ret == None:
             LOG.warning("Address {0:} NOT found".format(Insteon_utils.int2dotted_hex(l_id)))
             l_ret = InsteonData()  # an empty new object

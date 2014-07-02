@@ -111,8 +111,9 @@ class API(ReadWriteConfigXml):
         LOG.info("Initialized.")
 
     def Start(self, p_pyhouse_obj):
+        p_pyhouse_obj.House.OBJs.Thermostats = ThermostatData()
         self.m_pyhouse_obj = p_pyhouse_obj
-        p_pyhouse_obj.House.OBJs.Thermostat = self.read_all_thermostats(p_pyhouse_obj)
+        p_pyhouse_obj.House.OBJs.Thermostats = self.read_all_thermostats(p_pyhouse_obj)
         LOG.info("Started.")
 
     def Stop(self, p_xml):
