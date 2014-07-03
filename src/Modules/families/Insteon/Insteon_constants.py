@@ -85,7 +85,8 @@ MESSAGE_TYPES = {
     'thermostat_get_mode': 0x6b,
     'thermostat_get_temp': 0x6b,
     'thermostat_setpoint_cool': 0x6c,
-    'thermostat_setpoint_heat': 0x6d}
+    'thermostat_setpoint_heat': 0x6d,
+    'thermostat_report': 0x6e}
 
 # This is the length of the response from the PLM.
 # Wait till we get the proper number of bytes before decoding the response.

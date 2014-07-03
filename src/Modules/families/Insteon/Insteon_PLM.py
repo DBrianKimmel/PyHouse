@@ -38,6 +38,7 @@ from Modules.utils.tools import PrintBytes
 from Modules.families.Insteon.Insteon_constants import *
 from Modules.families.Insteon import Insteon_utils
 from Modules.families.Insteon import Insteon_Link
+from Modules.families.Insteon import Insteon_HVAC
 from Modules.families.Insteon.Device_Insteon import InsteonData
 from Modules.utils import pyh_log
 from Modules.utils.tools import PrettyPrintAny
@@ -103,16 +104,14 @@ class InsteonPlmUtility(ControllerData):
             l_message_length = 1
         return l_message_length
 
-    def _extract_bytes_from_message(self, p_message, p_offset, p_length):
-        l_ret = p_message[p_offset:p_offset + p_length - 1]
-        return l_ret
-
     def _get_addr_from_message(self, p_message, p_index):
         """Extract the address from a message.
 
         The message is a byte array returned from the PLM.
         The address is 3 consecutive bytes starting at p_index.
-        Return a string 'A1.B2.C3' (upper case) that is the address.
+
+        @param p_message: is the byte array returned by the controller.
+        @param p_index: is the offset into the message of a 3 byte field we will fetch and convert to an int
         """
         l_id = Insteon_utils.message2int(p_message, p_index)
         return l_id
@@ -336,6 +335,7 @@ class DecodeResponses(CreateCommands):
             Add other devices if we add them.
         """
         l_id = Insteon_utils.message2int(p_message, p_index)  # Extract the 3 byte address from the message and convert to an Int.
+        l_dotted = Insteon_utils.int2dotted_hex(l_id)
         l_ret = self._find_addr(self.m_house_obj.Lights, l_id)
         if l_ret == None:
             l_ret = self._find_addr(self.m_house_obj.Controllers, l_id)
@@ -346,9 +346,9 @@ class DecodeResponses(CreateCommands):
         if l_ret == None:
             LOG.warning("Address {0:} NOT found".format(Insteon_utils.int2dotted_hex(l_id)))
             l_ret = InsteonData()  # an empty new object
-            l_ret.Name = '**' + str(l_id) + '**'
+            l_ret.Name = '*NoName-' + l_dotted + '-**'
         if g_debug >= 2:
-            LOG.debug("Insteon_PLM.get_obj_from_message - Address:{0:}({1:}), found:{2:}".format(Insteon_utils.int2dotted_hex(l_id), l_id, l_ret.Name))
+            LOG.debug("Insteon_PLM.get_obj_from_message - Address:{0:}({1:}), found:{2:}".format(l_dotted, l_id, l_ret.Name))
         return l_ret
 
     def _drop_first_byte(self, p_controller_obj):
@@ -435,7 +435,7 @@ class DecodeResponses(CreateCommands):
         """ Insteon Standard Message Received (11 bytes)
         A Standard-length INSTEON message is received from either a Controller or Responder that you are ALL-Linked to.
 
-        See p 246 of developers guide.
+        See p 231(244) of developers guide.
         """
         l_message = p_controller_obj._Message
         l_obj_from = self.get_obj_from_message(l_message, 2)
@@ -447,9 +447,9 @@ class DecodeResponses(CreateCommands):
         except IndexError:
             l_7 = 0
         try:
-            l_8 = l_message[8]
+            l_message_flags = l_message[8]
         except IndexError:
-            l_8 = 0
+            l_message_flags = 0
         try:
             l_9 = l_message[9]
         except IndexError:
@@ -461,25 +461,25 @@ class DecodeResponses(CreateCommands):
             LOG.warning("Short 50 message rxed - {0:}".format(PrintBytes(l_message)))
         l_data = [l_9, l_10]
         l_debug_msg = 'Standard Message; '
-        l_flags = self._decode_message_flag(l_8)
-        # Break down bits 7, 6, 5 into message type
-        if l_8 & 0xE0 == 0x00:  # (000) Direct message type
+        l_flags = self._decode_message_flag(l_message_flags)
+        # Break down bits 7(msb), 6, 5 into message type
+        if l_message_flags & 0xE0 == 0x00:  # (000) Direct message type
             l_debug_msg += "DirectMessage from {0:}; ".format(l_name_from)
-        elif l_8 & 0xE0 == 0x20:  # (001) ACK of Direct message type
+        elif l_message_flags & 0xE0 == 0x20:  # (001) ACK of Direct message type
             l_debug_msg += "AckDirectMessage from {0:}; ".format(l_name_from)
-        elif l_8 & 0xE0 == 0x40:  # (010) All-Link Broadcast Clean-Up message type
+        elif l_message_flags & 0xE0 == 0x40:  # (010) All-Link Broadcast Clean-Up message type
             l_debug_msg += "All-Link Broadcast clean up from {0:}; ".format(l_name_from)
-        elif l_8 & 0xE0 == 0x60:  # (011) All-Link Clean-Up ACK response message type
+        elif l_message_flags & 0xE0 == 0x60:  # (011) All-Link Clean-Up ACK response message type
             l_debug_msg += "All-Link Clean up ACK from {0:}; ".format(l_name_from)
-        elif l_8 & 0xE0 == 0x80:  # Broadcast Message (100)
+        elif l_message_flags & 0xE0 == 0x80:  # Broadcast Message (100)
             l_debug_msg += self._get_devcat(l_message, l_obj_from)
-        elif l_8 & 0xE0 == 0xA0:  # (101) NAK of Direct message type
+        elif l_message_flags & 0xE0 == 0xA0:  # (101) NAK of Direct message type
             l_debug_msg += "NAK of direct message(1) from {0:}; ".format(l_name_from)
-        elif l_8 & 0xE0 == 0xC0:  # (110) all link broadcast of group is
+        elif l_message_flags & 0xE0 == 0xC0:  # (110) all link broadcast of group id
             l_group = l_7
             l_debug_msg += "All-Link broadcast From:{0:}, Group:{1:}, Flags:{2:}, Data:{3:}; ".format(l_name_from, l_group, l_flags, l_data)
             LOG.info("== 50B All-link Broadcast From:{0:}, Group:{1:}, Flags:{2:}, Data:{3:} ==".format(l_name_from, l_group, l_flags, l_data))
-        elif l_8 & 0xE0 == 0xE0:  # (111) NAK of Direct message type
+        elif l_message_flags & 0xE0 == 0xE0:  # (111) NAK of Direct message type
             l_debug_msg += "NAK of direct message(2) from {0:}; ".format(l_name_from)
         #
         try:
@@ -494,7 +494,7 @@ class DecodeResponses(CreateCommands):
                 LOG.info("Got an ID request. Light:{0:}".format(l_name_from,))
             elif l_obj_from._Command1 == MESSAGE_TYPES['on']:  # 0x11
                 l_obj_from.CurLevel = 100
-                l_debug_msg += "Light:{0:} turned Full ON; ".format(l_name_from)
+                l_debug_msg += "Device:{0:} turned Full ON  ; ".format(l_name_from)
                 self.update_object(l_obj_from)
             elif l_obj_from._Command1 == MESSAGE_TYPES['off']:  # 0x13
                 l_obj_from.CurLevel = 0
@@ -506,6 +506,9 @@ class DecodeResponses(CreateCommands):
                 l_debug_msg += "Status of light:{0:} is level:{1:}; ".format(l_name_from, l_level)
                 LOG.info("PLM:{0:} Got Light Status From:{1:}, Level is:{2:}".format(p_controller_obj.Name, l_name_from, l_level))
                 self.update_object(l_obj_from)
+            elif l_obj_from._Command1 == MESSAGE_TYPES['thermostat_report']:  # 0x6e
+                l_ret = Insteon_HVAC.ihvac_utility().decode_50_record(l_obj_from, l_9, l_10)
+                pass
             else:
                 l_debug_msg += "Insteon_PLM._decode_50_record() unknown type - last command was {0:#x} - {1:}; ".format(l_obj_from._Command1, PrintBytes(l_message))
         except AttributeError:
@@ -1000,7 +1003,7 @@ class LightHandlerAPI(InsteonPlmAPI):
         self.queue_62_command(p_light_obj, MESSAGE_TYPES['status_request'], 0)  # 0x19
 
 
-class API(LightHandlerAPI):
+class API(LightHandlerAPI, PlmDriverProtocol):
 
     def __init__(self):
         """Constructor for the PLM.
