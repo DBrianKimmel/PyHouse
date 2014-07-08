@@ -45,7 +45,7 @@ class ABaseObject(object):
     """
 
     def __init__(self):
-        self.Name = ''
+        self.Name = 'Undefined Object'
         self.Key = 0
         self.Active = False
         self.UUID = None  # The UUID is optional, not all objects use this
@@ -136,9 +136,9 @@ class UPBData(LightData):
     def __init__(self):
         super(UPBData, self).__init__()
         self.ControllerFamily = 'UPB'
-        self.UPBAddress = 11  # Same as NetworkID
-        self.Password = None
-        self.UnitID = 0xFF
+        self.UPBAddress = 0xFF
+        self.UPBPassword = None
+        self.UPBNetworkID = 0xFF
 
 
 class X10LightingData(LightData):
@@ -146,7 +146,8 @@ class X10LightingData(LightData):
     def __init__(self):
         super(X10LightingData, self).__init__()
         self.ControllerFamily = "X10"
-        self.X10Address = 'ab'
+        self.X10UnitAddress = 'ab'
+        self.X10HouseAddress = 0x0F
 
 
 class ComputerInformation(object):
@@ -159,22 +160,13 @@ class ComputerInformation(object):
         self.Web = {}  # WebData()
 
 
-class XXXComputerAPIs(object):
-    """
-    """
-    def __init__(self):
-        self.LogsAPI = None
-        self.NodesAPI = None
-        self.WebAPI = None
-
-
 class HouseInformation(ABaseObject):
     """The collection of information about a house.
     Causes JSON errors
     """
     def __init__(self):
         super(HouseInformation, self).__init__()
-        self.APIs = {}  # HouseAPIs()
+        self.Name = 'New House'
         self.OBJs = {}  # HouseObjs()
 
 
@@ -185,37 +177,20 @@ class HouseObjs(object):
         self.Buttons = {}  # ButtonData()
         self.Controllers = {}  # ControllerData()
         self.FamilyData = {}  # FamilyData()
+        self.Irrigation = {}  # IrrigationData()
         self.Lights = {}  # LightData()
         self.Location = {}  # LocationData() - one location per house.
+        self.Pools = {}  # PoolData()
         self.Rooms = {}  # RoomData()
         self.Schedules = {}  # ScheduleData()
         self.Thermostats = {}  # ThermostatData()
-
-
-class XXXHouseAPIs(object):
-    """
-    """
-    def __init__(self):
-        self.EntertainmentAPI = None
-        self.InternetAPI = None
-        self.LightingAPI = None
-        self.ScheduleAPI = None
-        #
-        # self.CommunicationsAPI = None
-        # self.HvacAPI = None
-        # self.IrrigationAPI = None
-        # self.LocationAPI = None
-        # self.PoolAPI = None
-        # self.RoomsAPI = None
-        # self.SecurityAPI = None
-        # self.WeatherAPI = None
-
 
 
 class JsonHouseData(ABaseObject):
     """Simplified for JSON encoding.
     """
     def __init__(self):
+        super(JsonHouseData, self).__init__()
         self.Buttons = {}
         self.Controllers = {}
         self.Lights = {}
@@ -258,6 +233,22 @@ class NodeInterfaceData(ABaseObject):
         self.V6Address = []
 
 
+class IrrigationData(ABaseObject):
+    """
+    """
+    def __init__(self):
+        super(IrrigationData, self).__init__()
+        self.ControllerFamily = None
+
+
+class PoolData(ABaseObject):
+    """
+    """
+    def __init__(self):
+        super(PoolData, self).__init__()
+        self.ControllerFamily = None
+
+
 class ThermostatData(ABaseObject):
 
     def __init__(self):
@@ -277,7 +268,6 @@ class ScheduleData(ABaseObject):
         super(ScheduleData, self).__init__()
         self.Level = 0
         self.LightName = None
-        self.LightNumber = 0  # Depricated methinks
         self.Object = None  # a light (perhaps other) object
         self.Rate = 0
         self.RoomName = None
@@ -292,6 +282,7 @@ class InternetConnectionData(ABaseObject):
     """Check our nodes external IP-v4 address
     """
     def __init__(self):
+        super(InternetConnectionData, self).__init__()
         self.ExternalDelay = 600  # Minimum value
         self.ExternalIPv4 = None  # returned from url to check our external IPv4 address
         self.ExternalUrl = None
@@ -303,6 +294,7 @@ class InternetConnectionDynDnsData(ABaseObject):
     """One or more dynamic dns servers that we need to update
     """
     def __init__(self):
+        super(InternetConnectionDynDnsData, self).__init__()
         self.UpdateInterval = 0
         self.UpdateUrl = None
 
@@ -321,26 +313,23 @@ class PyHouseAPIs(object):
     """
 
     def __init__(self):
+        self.CommunicationsAPI = None
         self.ComouterAPI = None
         self.CoreAPI = None
         self.EntertainmentAPI = None
         self.HouseAPI = None
         self.HvacAPI = None
         self.InternetAPI = None
+        self.IrrigationAPI = None
         self.LightingAPI = None
         self.LogsAPI = None
         self.NodesAPI = None
+        self.PoolAPI = None
         self.PyHouseAPI = None
         self.ScheduleAPI = None
+        self.SecurityAPI = None
+        self.WeatherAPI = None
         self.WebAPI = None
-        #
-        # self.CommunicationsAPI = None
-        # self.IrrigationAPI = None
-        # self.LocationAPI = None
-        # self.PoolAPI = None
-        # self.RoomsAPI = None
-        # self.SecurityAPI = None
-        # self.WeatherAPI = None
 
 
 class TwistedInformation(object):

@@ -19,7 +19,6 @@ from nevow import athena
 # Import PyMh files and modules.
 from Modules.web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.utils import pyh_log
-# from Modules.utils.tools import PrettyPrintAny
 
 
 # Handy helper for finding external resources nearby.
@@ -39,7 +38,6 @@ class HouseSelectElement(athena.LiveElement):
     def __init__(self, p_workspace_obj):
         self.m_workspace_obj = p_workspace_obj
         self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
-        # PrettyPrintAny(p_workspace_obj, 'web_houseSelect.HouseSelectElement() - workspace_obj')
 
     @athena.expose
     def getHousesToSelect(self, _p_dummy):
@@ -53,15 +51,12 @@ class HouseSelectElement(athena.LiveElement):
         l_obj[0]['Name'] = l_house.Name
         l_obj[0]['Key'] = l_house.Key
         l_obj[0]['Active'] = l_house.Active
-        # PrettyPrintAny(l_obj, 'House_Select - Json 1A ')
         l_json = JsonUnicode().encode_json(l_obj)
-        # PrettyPrintAny(l_json, 'House_Select - Json 1B ')
         return unicode(l_json)
 
     @athena.expose
     def getSelectedHouseData(self, _p_index):
         l_house = GetJSONHouseInfo(self.m_pyhouse_obj)
-        # PrettyPrintAny(l_house, 'House_Select - Json 2 ')
         return l_house
 
 # ## END DBK

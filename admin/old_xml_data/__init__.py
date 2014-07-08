@@ -165,9 +165,9 @@ XML_LONG = """
                     <Room>Master Bath</Room>
                     <Type>Controller</Type>
                     <UUID>ec9bc470-89c9-11e3-8f15-082e5f8cdfd2</UUID>
-                    <NetworkID>0</NetworkID>
-                    <Password>0</Password>
-                    <UnitID>255</UnitID>
+                    <UPBNetworkID>0</UPBNetworkID>
+                    <UPBPassword>0</UPBPassword>
+                    <UPBAddress>255</UPBAddress>
                     <Interface>USB</Interface>
                     <Port>None</Port>
                     <Vendor>6109</Vendor>
@@ -543,14 +543,17 @@ XML_LONG = """
                 <Light Active="True" Key="11" Name="kitchen_counter">
                     <Comment>None</Comment><Coords>None</Coords><Dimmable>False</Dimmable>
                     <Family>UPB</Family><Room>Kitchen</Room><Type>Light</Type>
-                    <UUID>ec9e0e62-89c9-11e3-9e00-082e5f8cdfd2</UUID><NetworkID>6</NetworkID>
-                    <Password>1293</Password><UnitID>20</UnitID>
+                    <UUID>ec9e0e62-89c9-11e3-9e00-082e5f8cdfd2</UUID><UPBNetworkID>6</UPBNetworkID>
+                    <UPBPassword>1293</UPBPassword>
+                    <UPBAddress>20</UPBAddress>
                 </Light>
                 <Light Active="False" Key="12" Name="test_light_u1">
                     <Comment>None</Comment><Coords>None</Coords>
                     <Dimmable>False</Dimmable><Family>UPB</Family><Room>Music Room</Room>
                     <Type>Light</Type><UUID>ec9e0e63-89c9-11e3-a2ce-082e5f8cdfd2</UUID>
-                    <NetworkID>6</NetworkID><Password>1293</Password><UnitID>21</UnitID>
+                    <UPBNetworkID>6</UPBNetworkID>
+                    <UPBPassword>1293</UPBPassword>
+                    <UPBAddress>21</UPBAddress>
                 </Light>
                 <Light Active="False" Key="13" Name="Christmas_01 a">
                     <Comment>None</Comment><Coords>None</Coords><Dimmable>False</Dimmable>
@@ -671,8 +674,10 @@ XML_LONG = """
                 <Button Active="False" Key="10" Name="TestButton">
                     <Comment>None</Comment>
                     <Coords>None</Coords><Dimmable>False</Dimmable><Family>UPB</Family><Room />
-                    <Type /><UUID>ec97a5c2-89c9-11e3-bb03-082e5f8cdfd2</UUID><NetworkID>6</NetworkID>
-                    <Password>1293</Password><UnitID>85</UnitID>
+                    <Type /><UUID>ec97a5c2-89c9-11e3-bb03-082e5f8cdfd2</UUID>
+                    <UPBNetworkID>6</UPBNetworkID>
+                    <UPBPassword>1293</UPBPassword>
+                    <UPBAddress>85</UPBAddress>
                 </Button>
             </Buttons>
             <Controllers>
@@ -719,7 +724,9 @@ XML_LONG = """
                     <Dimmable>True</Dimmable>
                     <Family>UPB</Family><Room>Master Bath</Room><Type>Controller</Type>
                     <UUID>ec9bc470-89c9-11e3-8f15-082e5f8cdfd2</UUID>
-                    <NetworkID>0</NetworkID><Password>0</Password><UnitID>255</UnitID>
+                    <UPBNetworkID>0</UPBNetworkID>
+                    <UPBPassword>0</UPBPassword>
+                    <UPBAddress>255</UPBAddress>
                     <Interface>USB</Interface><Port>None</Port><Vendor>6109</Vendor><Product>21760</Product>
                 </Controller>
             </Controllers>

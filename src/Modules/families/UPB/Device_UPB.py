@@ -7,13 +7,11 @@
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
-from Modules.Core.data_objects import LightData
-from Modules.lights import lighting
+from Modules.Core.data_objects import UPBData
+from Modules.utils import xml_tools
 from Modules.utils import pyh_log
 
-
 g_debug = 0
-
 LOG = pyh_log.getLogger('PyHouse.Device_UPB  ')
 
 
@@ -27,16 +25,18 @@ class ReadWriteXml(object):
         @param p_house: is the text name of the House.
         @return: a dict of the entry to be attached to a house object.
         """
-        p_device_obj.UPBAddress = p_entry_xml.findtext('NetworkID')
-        p_device_obj.Password = p_entry_xml.findtext('Password')
-        p_device_obj.UnitID = p_entry_xml.findtext('UnitID')
+        l_obj = UPBData()
+        l_obj.UPBNetworkID = p_entry_xml.findtext('UPBNetworkID')
+        l_obj.UPBPassword = p_entry_xml.findtext('UPBPassword')
+        l_obj.UPBAddress = p_entry_xml.findtext('UPBAddress')
+        xml_tools.stuff_new_attrs(p_device_obj, l_obj)
         return p_device_obj
 
     def insert_device_xml(self, p_entry_xml, p_device_obj):
         try:
-            ET.SubElement(p_entry_xml, 'NetworkID').text = self.put_str(p_device_obj.UPBAddress)
-            ET.SubElement(p_entry_xml, 'Password').text = str(p_device_obj.Password)
-            ET.SubElement(p_entry_xml, 'UnitID').text = str(p_device_obj.UnitID)
+            ET.SubElement(p_entry_xml, 'UPBNetworkID').text = self.put_str(p_device_obj.UPBNetworkID)
+            ET.SubElement(p_entry_xml, 'UPBPassword').text = str(p_device_obj.UPBPassword)
+            ET.SubElement(p_entry_xml, 'UPBAddress').text = str(p_device_obj.UPBAddress)
         except AttributeError:
             pass
 

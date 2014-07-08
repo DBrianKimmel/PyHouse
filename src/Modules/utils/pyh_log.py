@@ -79,15 +79,13 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         try:
             l_computer = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
             l_logs_xml = l_computer.find('LogSection')
-            # PrettyPrintAny(l_logs_xml, 'read log xml A')
         except AttributeError as e_error:
             print("log.read_xml() - Warning - LogSection is missing - {0:}".format(e_error))
             l_logs_xml = ET.SubElement(p_pyhouse_obj.Xml.XmlRoot, 'Logs')
-            ET.SubElement(l_logs_xml, 'Debug').text = 'None'
+            ET.SubElement(l_logs_xml, 'Debug').text = '/tmp/debug'
             ET.SubElement(l_logs_xml, 'Error').text = 'None'
         l_ret.Debug = self.get_text_from_xml(l_logs_xml, 'Debug')
         l_ret.Error = self.get_text_from_xml(l_logs_xml, 'Error')
-        # PrettyPrintAny(l_ret, 'read log xml 2')
         return l_ret
 
     def write_xml(self, p_log_data):

@@ -36,7 +36,7 @@ from Modules.web import web_utils
 from Modules.web import web_mainpage
 from Modules.utils import pyh_log
 from Modules.utils import xml_tools
-from Modules.utils.tools import PrettyPrintAny
+# from Modules.utils.tools import PrettyPrintAny
 
 ENDPOINT_WEB_SERVER = 'tcp:port=8580'
 
@@ -62,7 +62,6 @@ class ReadWriteConfigXml(xml_tools.ConfigFile):
 
     def read_web_xml(self, p_pyhouses_obj):
         l_ret = WebData()
-        p_pyhouses_obj.Computer.Web = WebData()
         try:
             l_sect = p_pyhouses_obj.XmlRoot.find('WebSection')
             l_ret.WebPort = self.get_int_from_xml(l_sect, 'WebPort')
@@ -77,6 +76,9 @@ class ReadWriteConfigXml(xml_tools.ConfigFile):
 
 
 class Utility(ReadWriteConfigXml):
+
+    def update_pyhouse_obj(self, p_pyhouse_obj):
+        p_pyhouse_obj.Computer.Web = WebData()
 
     def start_webserver(self, p_pyhouses_obj):
         try:
@@ -101,14 +103,13 @@ class API(Utility, ClientConnections):
         self.m_web_running = False
 
     def Start(self, p_pyhouse_obj):
+        self.update_pyhouse_obj(p_pyhouse_obj)
         self.m_pyhouse_obj = p_pyhouse_obj
-        p_pyhouse_obj.Computer.Web = WebData()
-        l_web = self.read_web_xml(p_pyhouse_obj)
+        p_pyhouse_obj.Computer.Web = self.read_web_xml(p_pyhouse_obj)
         self.start_webserver(p_pyhouse_obj)
 
     def Stop(self, p_xml):
         self.m_pyhouse_obj.Services.WebServerService.stopService()
-        PrettyPrintAny(self.m_pyhouse_obj.Computer, 'Web_Server - .Computer.')
         p_xml.append(self.write_web_xml(self.m_pyhouse_obj.Computer.Web))
         LOG.info("XML appended.")
 

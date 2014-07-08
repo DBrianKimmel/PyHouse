@@ -30,23 +30,19 @@ TODO: implement all-links
 
 # Import system type stuff
 import Queue
-from twisted.internet import reactor
 
 # Import PyMh files
-# from Modules.lights.lighting import LightData
+from Modules.Core.data_objects import InsteonData
 from Modules.utils.tools import PrintBytes
 from Modules.families.Insteon.Insteon_constants import *
 from Modules.families.Insteon import Insteon_utils
 from Modules.families.Insteon import Insteon_Link
 from Modules.families.Insteon import Insteon_HVAC
-from Modules.families.Insteon.Device_Insteon import InsteonData
 from Modules.utils import pyh_log
-from Modules.utils.tools import PrettyPrintAny
+# from Modules.utils.tools import PrettyPrintAny
 
-g_debug = 0
+g_debug = 4
 LOG = pyh_log.getLogger('PyHouse.Insteon_PLM ')
-
-callLater = reactor.callLater
 
 # Timeouts for send/receive delays
 SEND_TIMEOUT = 0.8
@@ -151,8 +147,7 @@ class InsteonPlmUtility(ControllerData):
             l_ret += '-Std-'
         else:
             l_ret += '-Ext-'
-        l_ret = "{0:}{1:d}-{2:d}={3:#X}".format(
-                        l_ret, l_hops_left, l_max_hops, p_byte)
+        l_ret = "{0:}{1:d}-{2:d}={3:#X}".format(l_ret, l_hops_left, l_max_hops, p_byte)
         return l_ret
 
 
@@ -161,6 +156,9 @@ class CreateCommands(InsteonPlmUtility):
     """
 
     def queue_plm_command(self, p_command):
+        # print('  p_command = {0:}'.format(PrintBytes(p_command)))
+        # PrettyPrintAny(self.m_controller_obj, 'InsteonPLM - queuePlmCommand - m_controller_obj', 100)
+        # PrettyPrintAny(self.m_pyhouse_obj, 'InsteonPLM - queuePlmCommand - m_pyhouse_obj', 100)
         self.m_controller_obj._Queue.put(p_command)
         if g_debug >= 1:
             LOG.debug("Insteon_PLM.queue_plm_command() - Q-Size:{0:}, Command:{1:}".format(self.m_controller_obj._Queue.qsize(), PrintBytes(p_command)))
@@ -507,14 +505,13 @@ class DecodeResponses(CreateCommands):
                 LOG.info("PLM:{0:} Got Light Status From:{1:}, Level is:{2:}".format(p_controller_obj.Name, l_name_from, l_level))
                 self.update_object(l_obj_from)
             elif l_obj_from._Command1 == MESSAGE_TYPES['thermostat_report']:  # 0x6e
-                l_ret = Insteon_HVAC.ihvac_utility().decode_50_record(l_obj_from, l_9, l_10)
+                l_ret1 = Insteon_HVAC.ihvac_utility().decode_50_record(l_obj_from, l_9, l_10)
                 pass
             else:
                 l_debug_msg += "Insteon_PLM._decode_50_record() unknown type - last command was {0:#x} - {1:}; ".format(l_obj_from._Command1, PrintBytes(l_message))
         except AttributeError:
             pass
         l_ret = True
-
         if g_debug >= 1:
             LOG.debug(l_debug_msg)
         return self.check_for_more_decoding(p_controller_obj, l_ret)
@@ -1013,6 +1010,7 @@ class API(LightHandlerAPI, PlmDriverProtocol):
     def Start(self, p_pyhouse_obj, p_controller_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_controller_obj = p_controller_obj
+        self.m_protocol = PlmDriverProtocol(p_pyhouse_obj, self.m_controller_obj)
         LOG.info('Starting Controller:{0:}'.format(p_controller_obj.Name))
         if self.start_controller_driver(p_controller_obj, p_pyhouse_obj.House.OBJs):
             self.m_protocol = PlmDriverProtocol(p_pyhouse_obj, self.m_controller_obj)

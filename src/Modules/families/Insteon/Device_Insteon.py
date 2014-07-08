@@ -30,7 +30,7 @@ from Modules.utils import xml_tools
 from Modules.utils import pyh_log
 # from Modules.utils.tools import PrettyPrintAny
 
-g_debug = 0
+g_debug = 1
 LOG = pyh_log.getLogger('PyHouse.Dev_Insteon ')
 
 
@@ -44,28 +44,27 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         @param p_device_obj : is the Basic Object that will have the extracted elements inserted into.
         @return: a dict of the extracted Insteon Specific data.
         """
-        # LOG.debug('--- Extracting XML ')
         l_insteon_obj = InsteonData()
-        l_insteon_obj.InsteonAddress = Insteon_utils.dotted_hex2int(p_entry_xml.findtext('Address', default = '88.88.88'))
-        l_insteon_obj.IsController = p_entry_xml.findtext('IsController')
-        l_insteon_obj.DevCat = p_entry_xml.findtext('DevCat')
-        l_insteon_obj.GroupList = p_entry_xml.findtext('GroupList')
-        l_insteon_obj.GroupNumber = p_entry_xml.findtext('GroupNumber')
-        l_insteon_obj.IsMaster = p_entry_xml.findtext('IsMaster')
-        l_insteon_obj.ProductKey = p_entry_xml.findtext('ProductKey')
-        l_insteon_obj.IsResponder = p_entry_xml.findtext('IsResponder')
+        l_insteon_obj.InsteonAddress = Insteon_utils.dotted_hex2int(self.get_text_from_xml(p_entry_xml, 'Address', '88.88.88'))
+        l_insteon_obj.DevCat = self.get_int_from_xml(p_entry_xml, 'DevCat')
+        l_insteon_obj.GroupList = self.get_text_from_xml(p_entry_xml, 'GroupList')
+        l_insteon_obj.GroupNumber = self.get_int_from_xml(p_entry_xml, 'GroupNumber')
+        l_insteon_obj.IsController = self.get_bool_from_xml(p_entry_xml, 'IsController')
+        l_insteon_obj.IsMaster = self.get_bool_from_xml(p_entry_xml, 'IsMaster')
+        l_insteon_obj.IsResponder = self.get_bool_from_xml(p_entry_xml, 'IsResponder')
+        l_insteon_obj.ProductKey = self.get_text_from_xml(p_entry_xml, 'ProductKey')
         xml_tools.stuff_new_attrs(p_device_obj, l_insteon_obj)
         return l_insteon_obj
 
     def insert_device_xml(self, p_entry_xml, p_device_obj):
-        ET.SubElement(p_entry_xml, 'Address').text = Insteon_utils.int2dotted_hex(int(p_device_obj.InsteonAddress))
-        ET.SubElement(p_entry_xml, 'IsController').text = self.put_bool(p_device_obj.IsController)
-        ET.SubElement(p_entry_xml, 'DevCat').text = str(p_device_obj.DevCat)
-        ET.SubElement(p_entry_xml, 'GroupList').text = str(p_device_obj.GroupList)
-        ET.SubElement(p_entry_xml, 'GroupNumber').text = str(p_device_obj.GroupNumber)
-        ET.SubElement(p_entry_xml, 'IsMaster').text = str(p_device_obj.IsMaster)
-        ET.SubElement(p_entry_xml, 'ProductKey').text = str(p_device_obj.ProductKey)
-        ET.SubElement(p_entry_xml, 'IsResponder').text = self.put_bool(p_device_obj.IsResponder)
+        self.put_text_element(p_entry_xml, 'Address', Insteon_utils.int2dotted_hex(int(p_device_obj.InsteonAddress)))
+        self.put_int_element(p_entry_xml, 'DevCat', p_device_obj.DevCat)
+        self.put_text_element(p_entry_xml, 'GroupList', p_device_obj.GroupList)
+        self.put_int_element(p_entry_xml, 'GroupNumber', p_device_obj.GroupNumber)
+        self.put_bool_element(p_entry_xml, 'IsController', p_device_obj.IsController)
+        self.put_bool_element(p_entry_xml, 'IsMaster', p_device_obj.IsMaster)
+        self.put_bool_element(p_entry_xml, 'IsResoonder', p_device_obj.IsResponder)
+        self.put_text_element(p_entry_xml, 'ProductKey', p_device_obj.ProductKey)
 
 
 class API(ReadWriteConfigXml):

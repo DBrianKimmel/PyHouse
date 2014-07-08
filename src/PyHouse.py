@@ -58,8 +58,8 @@ import errno
 import os
 import platform
 import signal
-from twisted.internet import reactor
-from twisted.application.service import Application
+# from twisted.internet import reactor
+# from twisted.application.service import Application
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import PyHouseData, PyHouseAPIs, TwistedInformation
@@ -133,11 +133,6 @@ class Utilities(object):
     """
     """
 
-    def setup_twisted_info(self, p_pyhouse_obj):
-        p_pyhouse_obj.Twisted = TwistedInformation()
-        p_pyhouse_obj.Twisted.Reactor = reactor
-        p_pyhouse_obj.Twisted.Application = Application('PyHouse')
-
 
 class API(Utilities):
     """
@@ -155,12 +150,7 @@ class API(Utilities):
         handle_signals()
         global g_API
         g_API = self
-        # print('PyHouse Start Initializing')
-        self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.APIs = PyHouseAPIs()
-        self.m_pyhouse_obj.APIs.PyHouseAPI = self  # Only used by web server to reload - Do we need this?
-        self.m_pyhouse_obj.APIs.CoreAPI = setup.API(self.m_pyhouse_obj)
-        self.setup_twisted_info(self.m_pyhouse_obj)
+        self.m_pyhouse_obj = setup.build_pyhouse_obj(self)
         self.m_pyhouse_obj.Twisted.Reactor.callWhenRunning(self.Start)
         self.m_pyhouse_obj.Twisted.Reactor.run()  # reactor never returns so must be last - Event loop will now run
         LOG.info("PyHouse says Bye Now.\n")
@@ -180,15 +170,14 @@ class API(Utilities):
 
     def Reload(self, _p_pyhouses_obj):
         """Update XML file with current info.
+        Keep on running after the snapshot.
         """
         LOG.info("Reloading")
         self.m_pyhouse_obj.APIs.CoreAPI.Reload()
-        # self.Stop()
-        # self.Start()
         LOG.info("Reloaded.\n\n\n")
 
     def Quit(self):
-        """Prepare to exit all of pyhouse
+        """Prepare to exit all of PyHouse.
         """
         self.Stop()
         self.m_pyhouse_obj.Twisted.Reactor.stop()

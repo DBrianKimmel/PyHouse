@@ -40,12 +40,15 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         @param p_house_xml: is
         """
         l_ret = {}
-        l_rooms_xml = p_house_xml.find('RoomSection')
-        self.m_count = 0
-        for l_room_xml in l_rooms_xml.iterfind('Room'):
-            l_room_obj = self.read_one_room(l_room_xml)
-            l_ret[self.m_count] = l_room_obj
-            self.m_count += 1
+        try:
+            l_rooms_xml = p_house_xml.find('RoomSection')
+            self.m_count = 0
+            for l_room_xml in l_rooms_xml.iterfind('Room'):
+                l_room_obj = self.read_one_room(l_room_xml)
+                l_ret[self.m_count] = l_room_obj
+                self.m_count += 1
+        except AttributeError:
+            pass
         return l_ret
 
     def write_one_room(self, p_room_object):

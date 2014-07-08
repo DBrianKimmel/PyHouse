@@ -37,9 +37,12 @@ class Utility(ControllersAPI, ButtonsAPI, LightingLightsAPI):
         Uses p_pyhouse_obj since many sections of xml are needed.
         """
         l_house_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
-        p_pyhouse_obj.House.OBJs.Controllers = ControllersAPI(p_pyhouse_obj).read_controllers_xml(l_house_xml.find('ControllerSection'))
-        p_pyhouse_obj.House.OBJs.Buttons = ButtonsAPI(p_pyhouse_obj).read_buttons_xml(l_house_xml.find('ButtonSection'))
-        p_pyhouse_obj.House.OBJs.Lights = LightingLightsAPI(p_pyhouse_obj).read_lights_xml(l_house_xml.find('LightSection'))
+        try:
+            p_pyhouse_obj.House.OBJs.Controllers = ControllersAPI(p_pyhouse_obj).read_controllers_xml(l_house_xml.find('ControllerSection'))
+            p_pyhouse_obj.House.OBJs.Buttons = ButtonsAPI(p_pyhouse_obj).read_buttons_xml(l_house_xml.find('ButtonSection'))
+            p_pyhouse_obj.House.OBJs.Lights = LightingLightsAPI(p_pyhouse_obj).read_lights_xml(l_house_xml.find('LightSection'))
+        except AttributeError:
+            pass
 
     def _write_lighting_xml(self, p_xml):
         LOG.info('Writing lights, buttons and controllers ')

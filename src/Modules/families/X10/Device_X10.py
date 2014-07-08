@@ -41,7 +41,7 @@ class ReadWriteXml(object):
             ET.SubElement(p_entry_xml, 'IsResponder').text = self.put_bool(p_device_obj.IsResponder)
         elif p_device_obj.ControllerFamily == 'UPB':
             try:
-                ET.SubElement(p_entry_xml, 'X10Address').text = self.put_str(p_device_obj.X10Address)
+                ET.SubElement(p_entry_xml, 'X10UnitAddress').text = self.put_str(p_device_obj.X10UnitAddress)
                 ET.SubElement(p_entry_xml, 'Password').text = str(p_device_obj.Password)
                 ET.SubElement(p_entry_xml, 'UnitID').text = str(p_device_obj.UnitID)
             except AttributeError:

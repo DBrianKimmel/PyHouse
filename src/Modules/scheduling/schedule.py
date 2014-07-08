@@ -22,10 +22,15 @@ Read/reread the schedule file at:
 
 
 Controls:
-  Lighting
-  HVAC
-  Security
-  Entertainment
+    Communication
+    Entertainment
+    HVAC
+    Irrigation
+    Lighting
+    Pool
+    Remote
+    Security
+    UPNP
 
 Operation:
 
@@ -45,11 +50,12 @@ import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from Modules.Core.data_objects import ScheduleData
+from Modules.scheduling import sunrisesunset
 from Modules.lights import lighting
 from Modules.hvac import thermostat
+from Modules.irrigation import irrigation
 from Modules.utils import xml_tools
 from Modules.utils import tools
-from Modules.scheduling import sunrisesunset
 from Modules.utils import pyh_log
 from Modules.utils.tools import PrettyPrintAny
 
@@ -68,7 +74,7 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         self.read_base_object_xml(l_schedule_obj, p_schedule_element)
         l_schedule_obj.Level = self.get_int_from_xml(p_schedule_element, 'Level')
         l_schedule_obj.LightName = self.get_text_from_xml(p_schedule_element, 'LightName')
-        l_schedule_obj.LightNumber = self.get_int_from_xml(p_schedule_element, 'LightNumber')
+        # l_schedule_obj.LightNumber = self.get_int_from_xml(p_schedule_element, 'LightNumber')
         l_schedule_obj.Rate = self.get_int_from_xml(p_schedule_element, 'Rate')
         l_schedule_obj.RoomName = self.get_text_from_xml(p_schedule_element, 'RoomName')
         l_schedule_obj.Time = self.get_text_from_xml(p_schedule_element, 'Time')
@@ -82,8 +88,8 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         """
         self.m_count = 0
         l_dict = {}
-        l_schedules_xml = p_house_xml.find('ScheduleSection')
         try:
+            l_schedules_xml = p_house_xml.find('ScheduleSection')
             for l_entry in l_schedules_xml.iterfind('Schedule'):
                 l_schedule_obj = self.read_one_schedule_xml(l_entry)
                 l_schedule_obj.Key = self.m_count  # Renumber
@@ -100,7 +106,7 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         self.put_int_element(l_entry, 'Key', self.m_count)
         self.put_int_element(l_entry, 'Level', p_schedule_obj.Level)
         self.put_text_element(l_entry, 'LightName', p_schedule_obj.LightName)
-        self.put_int_element(l_entry, 'LightNumber', p_schedule_obj.LightNumber)
+        # self.put_int_element(l_entry, 'LightNumber', p_schedule_obj.LightNumber)
         self.put_int_element(l_entry, 'Rate', p_schedule_obj.Rate)
         self.put_text_element(l_entry, 'RoomName', p_schedule_obj.RoomName)
         self.put_text_element(l_entry, 'Time', p_schedule_obj.Time)
@@ -306,17 +312,26 @@ class ScheduleUtility(ScheduleExecution):
         LOG.info("Get_next_schedule complete. {0:}".format(l_debug_msg))
         return l_seconds_to_delay, l_schedule_list
 
-    def init_scheduled_modules(self):
-        self.m_pyhouse_obj.APIs.LightingAPI = lighting.API()
-        self.m_pyhouse_obj.APIs.HvacAPI = thermostat.API()
+    def update_pyhouse_obj(self, p_pyhouse_obj):
+        pass
+
+    def add_api_references(self, p_pyhouse_obj):
+        p_pyhouse_obj.APIs.LightingAPI = lighting.API()
+        p_pyhouse_obj.APIs.HvacAPI = thermostat.API()
+        p_pyhouse_obj.APIs.IrrigationAPI = irrigation.API()
 
     def start_scheduled_modules(self, p_pyhouse_obj):
-        self.m_pyhouse_obj.APIs.LightingAPI.Start(p_pyhouse_obj)
-        self.m_pyhouse_obj.APIs.HvacAPI.Start(p_pyhouse_obj)
+        """
+        TODO: Lighting must be first since it loads families etc.
+        """
+        p_pyhouse_obj.APIs.LightingAPI.Start(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.HvacAPI.Start(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.IrrigationAPI.Start(p_pyhouse_obj)
 
     def stop_scheduled_modules(self, p_xml):
-        self.m_pyhouse_obj.APIs.LightingAPI.Stop(p_xml)
         self.m_pyhouse_obj.APIs.HvacAPI.Stop(p_xml)
+        self.m_pyhouse_obj.APIs.LightingAPI.Stop(p_xml)
+        self.m_pyhouse_obj.APIs.IrrigationAPI.Stop(p_xml)
         return p_xml
 
 
@@ -337,25 +352,26 @@ class API(ScheduleUtility, ReadWriteConfigXml):
         @param p_house_obj: is a House object for the house being scheduled
         """
         LOG.info("Starting.")
+        self.update_pyhouse_obj(p_pyhouse_obj)
+        self.add_api_references(p_pyhouse_obj)
         self.m_pyhouse_obj = p_pyhouse_obj
         p_pyhouse_obj.House.OBJs.Schedules = self.read_schedules_xml(p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision'))
         self.m_sunrisesunset_api.Start(p_pyhouse_obj)
-        self.init_scheduled_modules()
         self.start_scheduled_modules(p_pyhouse_obj)
-        LOG.info("Started.")
         if self.m_pyhouse_obj.House.Active:
             self.m_pyhouse_obj.Twisted.Reactor.callLater(5, self.run_schedule)
+        LOG.info("Started.")
 
     def Stop(self, p_xml):
         """Stop everything under me and build xml to be appended to a house xml.
         """
-        LOG.info("Stopping schedule for house:{0:}.".format(self.m_pyhouse_obj.House.Name))
         p_xml.append(self.write_schedules_xml(self.m_pyhouse_obj.House.OBJs.Schedules))
         self.stop_scheduled_modules(p_xml)
-        LOG.info("Stopped.\n")
+        LOG.info("Stopped.")
 
     def Reload(self):
         if self.m_pyhouse_obj.House.Active:
             self.m_pyhouse_obj.Twisted.Reactor.callLater(5, self.run_schedule)
+        LOG.info("Reloaded.")
 
 # ## END DBK

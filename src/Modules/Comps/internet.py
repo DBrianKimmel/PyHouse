@@ -95,13 +95,16 @@ class ReadWriteConfigXml(XmlConfigTools):
         @param p_internet_section_xml: is the <InternetSection> element
         """
         l_ret = {}
-        l_list = p_internet_section_xml.iterfind('Internet')
-        for l_entry in l_list:
-            # PrettyPrintAny(l_entry, 'Internet - read_internet_xml - InternetSectionEntry')
-            l_inet = self.read_one_internet_xml(l_entry)
-            l_inet.Key = self.m_count  # Renumber
-            l_ret[self.m_count] = l_inet
-            self.m_count += 1
+        try:
+            l_list = p_internet_section_xml.iterfind('Internet')
+            for l_entry in l_list:
+                # PrettyPrintAny(l_entry, 'Internet - read_internet_xml - InternetSectionEntry')
+                l_inet = self.read_one_internet_xml(l_entry)
+                l_inet.Key = self.m_count  # Renumber
+                l_ret[self.m_count] = l_inet
+                self.m_count += 1
+        except AttributeError:
+            pass
         return l_ret
 
 
@@ -339,8 +342,11 @@ class Utility(ReadWriteConfigXml):
         @return: the XML element <InternetSection>
         """
         l_ret = p_pyhouse_obj.Xml.XmlRoot
-        l_ret = l_ret.find('ComputerDivision')
-        l_ret = l_ret.find('InternetSection')
+        try:
+            l_ret = l_ret.find('ComputerDivision')
+            l_ret = l_ret.find('InternetSection')
+        except AttributeError:
+            pass
         return l_ret
 
     def start_internet_discovery(self, p_pyhouse_obj):
@@ -367,16 +373,12 @@ class API(Utility):
         self.m_pyhouse_obj.Computer.InternetConnection = self.read_internet_xml(l_internet_xml)
         self.start_internet_discovery(p_pyhouse_obj)
         LOG.info("Started.")
-        # FindExternalIpAddress(p_pyhouse_obj)
-        # self.m_dyn_loop = DynDnsAPI(p_pyhouse_obj)
 
     def Stop(self, p_xml):
         """Stop async operations
         write out the XML file.
         """
         LOG.info("Stopping dyndns.")
-        # self.m_dyn_loop.stop_dyndns_process()
         p_xml.append(self.write_internet_xml(self.m_pyhouse_obj.Computer.InternetConnection))
-        # self.stop_internet_discovery(self.m_pyhouse_obj)
 
 # ## END DBK

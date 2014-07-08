@@ -406,7 +406,7 @@ class CreateCommands(UpbPimUtility, PimDriverInterface):
         """
         if g_debug >= 1:
             LOG.debug("Setting register {0:#0X} to value {1:}".format(p_register, p_values))
-        self._compose_command(p_controller_obj, pim_commands['set_register_value'], int(p_controller_obj.UnitID), int(p_register), p_values[0])
+        self._compose_command(p_controller_obj, pim_commands['set_register_value'], int(p_controller_obj.UPBAddress), int(p_register), p_values[0])
         pass
 
     def set_pim_mode(self):
@@ -444,8 +444,8 @@ class UpbPimAPI(Device_UPB.ReadWriteXml, CreateCommands):
         l_pim.InterfaceType = self.m_controller_obj.InterfaceType
         l_pim.Name = self.m_controller_obj.Name
         l_pim.UPBAddress = int(self.m_controller_obj.UPBAddress, 0)
-        l_pim.Password = self.m_controller_obj.Password
-        l_pim.UnitID = int(self.m_controller_obj.UnitID, 0)
+        l_pim.UPBPassword = self.m_controller_obj.UPBPassword
+        l_pim.UPBNetworkID = int(self.m_controller_obj.UPBNetworkID, 0)
         LOG.info('Found UPB PIM named: {0:}, Type={1:}'.format(l_pim.Name, l_pim.InterfaceType))
         if self.m_controller_obj.InterfaceType.lower() == 'serial':
             from Modules.drivers import Driver_Serial

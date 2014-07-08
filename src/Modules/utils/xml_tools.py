@@ -208,9 +208,9 @@ class XmlConfigTools(PutGetXML):
         @param p_base_obj: is the object into which we will put the data.
         @param p_entry_element_xml: is the element we will extract data from (including children).
         """
-        p_base_obj.Name = self.get_text_from_xml(p_entry_element_xml, 'Name')
-        p_base_obj.Key = self.get_int_from_xml(p_entry_element_xml, 'Key')
-        p_base_obj.Active = self.get_bool_from_xml(p_entry_element_xml, 'Active')
+        p_base_obj.Name = self.get_text_from_xml(p_entry_element_xml, 'Name', 'Missing Name')
+        p_base_obj.Key = self.get_int_from_xml(p_entry_element_xml, 'Key', 0)
+        p_base_obj.Active = self.get_bool_from_xml(p_entry_element_xml, 'Active', False)
         p_base_obj.UUID = self.get_uuid_from_xml(p_entry_element_xml, 'UUID')
 
     def write_base_object_xml(self, p_element_name, p_object):

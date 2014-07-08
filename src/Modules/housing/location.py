@@ -34,19 +34,20 @@ class ReadWriteConfigXml(XmlConfigTools):
         @param p_house_obj: is p_pyhouses_obj.House.OBJs
         @param p_house_xml: is one of 0+ 'House' elements
         """
-        # PrettyPrintAny(p_house_xml, 'Location - HouseXML', 100)
         l_location_obj = LocationData()
-        l_location_xml = p_house_xml.find('LocationSection')
-        l_location_obj.Street = self.get_text_from_xml(l_location_xml, 'Street')
-        l_location_obj.City = self.get_text_from_xml(l_location_xml, 'City')
-        l_location_obj.State = self.get_text_from_xml(l_location_xml, 'State')
-        l_location_obj.ZipCode = self.get_text_from_xml(l_location_xml, 'ZipCode')
-        l_location_obj.Phone = self.get_text_from_xml(l_location_xml, 'Phone')
-        l_location_obj.Latitude = self.get_float_from_xml(l_location_xml, 'Latitude')
-        l_location_obj.Longitude = self.get_float_from_xml(l_location_xml, 'Longitude')
-        l_location_obj.TimeZone = self.get_float_from_xml(l_location_xml, 'TimeZone')
-        l_location_obj.SavingTime = self.get_float_from_xml(l_location_xml, 'SavingTime')
-        # PrettyPrintAny(l_location_obj, 'Location ')
+        try:
+            l_location_xml = p_house_xml.find('LocationSection')
+            l_location_obj.Street = self.get_text_from_xml(l_location_xml, 'Street')
+            l_location_obj.City = self.get_text_from_xml(l_location_xml, 'City')
+            l_location_obj.State = self.get_text_from_xml(l_location_xml, 'State')
+            l_location_obj.ZipCode = self.get_text_from_xml(l_location_xml, 'ZipCode')
+            l_location_obj.Phone = self.get_text_from_xml(l_location_xml, 'Phone')
+            l_location_obj.Latitude = self.get_float_from_xml(l_location_xml, 'Latitude')
+            l_location_obj.Longitude = self.get_float_from_xml(l_location_xml, 'Longitude')
+            l_location_obj.TimeZone = self.get_float_from_xml(l_location_xml, 'TimeZone')
+            l_location_obj.SavingTime = self.get_float_from_xml(l_location_xml, 'SavingTime')
+        except AttributeError:
+            pass
         return l_location_obj
 
     def write_location_xml(self, p_location_obj):

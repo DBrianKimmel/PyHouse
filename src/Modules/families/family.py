@@ -48,17 +48,6 @@ class API(ReadWriteConfigXml):
         l_family_obj.ModuleName = 'Device_' + p_family_name
         return l_family_obj
 
-    def XXXimport_one_module(self, p_family_name):
-        l_family_obj = self.build_one_family(p_family_name)
-        try:
-            l_module = importlib.import_module(l_family_obj.PackageName + '.' + l_family_obj.ModuleName, l_family_obj.PackageName)
-        except ImportError as l_error:
-            l_msg = 'Found error "{0:}" while trying to import module {1:}.'.format(l_error, l_family_obj.ModuleName)
-            print("Cannot import:\n    Module: {0:}\n    Package: {1:}\n    Error: {2:}\n\n".format(l_family_obj.ModuleName, l_family_obj.PackageName, l_msg))
-            LOG.error(l_msg)
-            l_module = None
-        return l_module
-
     def import_module(self, p_family_obj):
         """This routine will attempt to import a module.
         Any errors, such as syntax errors, in the module will cause the import to fail.
@@ -100,9 +89,6 @@ class API(ReadWriteConfigXml):
             l_family_data[l_family_obj.Name] = l_family_obj
             self.m_count += 1
         return l_family_data
-
-    def XXXstart_one_lighting_family(self, p_x):
-        pass
 
     def start_lighting_families(self, p_pyhouse_obj, p_house_obj):
         """
