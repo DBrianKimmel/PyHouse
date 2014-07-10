@@ -7,13 +7,15 @@
 @Copyright (c) 2013-2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Apr 27, 2013
-@summary: This module is for testing Insteon conversion routines.
+@summary: This module is for Insteon conversion routines.
+
+This is a bunch of routines to deal with Insteon devices.
+Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
 
 def message2int(p_message, p_index):
-    """Extract the address from a message.
-
+    """Extract the address (3 bytes) from a response message.
     The message is a byte array returned from the PLM.
     Return a 24 bit int that is the address.
     """
@@ -24,7 +26,8 @@ def message2int(p_message, p_index):
     return l_int
 
 def int2message(p_int, p_message, p_index):
-    """Place an insteon address (int internlly) into a message at offset.
+    """Place an Insteon address (int internally) into a message at a given offset.
+    The message must exist and be long enough to include a 3 byte area for the address.
     """
     l_ix = 256 * 256
     while l_ix > 0:
@@ -34,8 +37,13 @@ def int2message(p_int, p_message, p_index):
     return p_message
 
 def dotted_hex2int(p_addr):
-    """Convert A1.B2.C3 to int
     """
+    Convert A1.B2.C3 to int
+    @param p_addr: is a 3 byte string with a format of 'A1.B2.3F'
+
+    In case users get confused and use ':' as a separator, handle that too.
+    """
+    p_addr.replace(':', '.')
     l_hexn = ''.join(["%02X" % int(l_ix, 16) for l_ix in p_addr.split('.')])
     return int(l_hexn, 16)
 

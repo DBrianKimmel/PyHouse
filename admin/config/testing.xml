@@ -137,124 +137,76 @@
                 <LightName>lr_cans</LightName>
                 <Rate>0</Rate>
                 <RoomName>Living Room</RoomName>
-                <Time>sunset - 00:15</Time>
+                <Time>23:00</Time>
                 <ScheduleType>LightingDevice</ScheduleType>
             </Schedule>
             <Schedule Active="True" Key="1" Name="Evening">
-                <Level>100</Level>
-                <LightName>lr_rope</LightName>
-                <Rate>0</Rate>
-                <RoomName>Living Room</RoomName>
-                <Time>sunset - 00:15</Time>
-                <ScheduleType>LightingDevice</ScheduleType>
+                <Level>100</Level><LightName>lr_rope</LightName>
+                <LightNumber>7</LightNumber><Rate>0</Rate><RoomName>Living Room</RoomName>
+                <Time>23:05</Time><ScheduleType>LightingDevice</ScheduleType>
             </Schedule>
             <Schedule Active="True" Key="2" Name="Evening">
-                <Level>100</Level>
-                <LightName>outside_gar</LightName>
-                <Rate>0</Rate>
-                <RoomName>Garage</RoomName>
-                <Time>sunset - 00:10</Time>
+                <Level>100</Level><LightName>outside_gar</LightName><LightNumber>1</LightNumber><Rate>0</Rate><RoomName>Garage</RoomName>
+                <Time>23:10</Time>
                 <ScheduleType>LightingDevice</ScheduleType>
             </Schedule>
             <Schedule Active="True" Key="3" Name="Evening">
-                <Level>100</Level>
-                <LightName>outside_front</LightName>
-                <Rate>0</Rate>
+                <Level>100</Level><LightName>outside_front</LightName>
+                <LightNumber>0</LightNumber><Rate>0</Rate>
                 <RoomName>Foyer</RoomName>
-                <Time>sunset - 00:10</Time>
-                <ScheduleType>LightingDevice</ScheduleType>
-            </Schedule>
+                <Time>23:12</Time><ScheduleType>LightingDevice</ScheduleType></Schedule>
             <Schedule Active="True" Key="4" Name="Evening">
                 <Level>100</Level>
                 <LightName>wet_bar</LightName>
+                <LightNumber>8</LightNumber>
                 <Rate>0</Rate>
                 <RoomName>Living Room</RoomName>
-                <Time>sunset - 00:12</Time>
+                <Time>23:15</Time>
                 <ScheduleType>LightingDevice</ScheduleType>
             </Schedule>
             <Schedule Active="False" Key="5" Name="Night xxx">
-                <Level>60</Level>
-                <LightName>mbr_rope</LightName>
-                <Rate>0</Rate>
-                <RoomName>Master Bedroom</RoomName>
-                <Time>sunset + 00:15</Time>
-                <ScheduleType>LightingDevice</ScheduleType>
-            </Schedule>
+                <Level>60</Level><LightName>mbr_rope</LightName><LightNumber>6</LightNumber><Rate>0</Rate><RoomName>Master Bedroom</RoomName>
+                <Time>23:20</Time><ScheduleType>LightingDevice</ScheduleType></Schedule>
             <Schedule Active="True" Key="6" Name="Night">
-                <Level>0</Level>
-                <LightName>outside_gar</LightName>
-                <Rate>0</Rate>
-                <RoomName>Garage</RoomName>
-                <Time>23:00</Time>
-                <ScheduleType>LightingDevice</ScheduleType>
-            </Schedule>
+                <Level>0</Level><LightName>outside_gar</LightName><LightNumber>1</LightNumber>
+                <Rate>0</Rate><RoomName>Garage</RoomName><Time>23:00</Time><ScheduleType>LightingDevice</ScheduleType></Schedule>
             <Schedule Active="True" Key="7" Name="Night">
-                <Level>0</Level>
-                <LightName>outside_front</LightName>
-                <Rate>0</Rate>
-                <RoomName>Foyer</RoomName>
-                <Time>23:00</Time>
-                <ScheduleType>LightingDevice</ScheduleType>
-            </Schedule>
+                <Level>0</Level><LightName>outside_front</LightName><LightNumber>0</LightNumber><Rate>0</Rate><RoomName>Foyer</RoomName>
+                <Time>23:25</Time><ScheduleType>LightingDevice</ScheduleType></Schedule>
             <Schedule Active="True" Key="8" Name="Evening">
-                <Level>60</Level>
-                <LightName>mbr_rope</LightName>
-                <Rate>0</Rate>
-                <RoomName>Master Bedroom</RoomName>
-                <Time>23:30</Time>
-                <ScheduleType>LightingDevice</ScheduleType>
-            </Schedule>
+                <Level>60</Level><LightName>mbr_rope</LightName><LightNumber>6</LightNumber><Rate>0</Rate><RoomName>Master Bedroom</RoomName>
+                <Time>23:30</Time><ScheduleType>LightingDevice</ScheduleType></Schedule>
             <Schedule Active="True" Key="9" Name="Night">
-                <Level>0</Level>
-                <LightName>lr_rope</LightName>
-                <Rate>0</Rate>
-                <RoomName>Living Room</RoomName>
-                <Time>23:30</Time>
-                <ScheduleType>LightingDevice</ScheduleType>
-            </Schedule>
+                <Level>0</Level><LightName>lr_rope</LightName><LightNumber>7</LightNumber><Rate>0</Rate><RoomName>Living Room</RoomName>
+                <Time>23:35</Time><ScheduleType>LightingDevice</ScheduleType></Schedule>
             <Schedule Active="True" Key="10" Name="Night">
-                <Level>0</Level>
-                <LightName>lr_cans</LightName>
-                <Rate>0</Rate>
-                <RoomName>Living Room</RoomName>
-                <Time>23:35</Time>
-                <ScheduleType>LightingDevice</ScheduleType>
-            </Schedule>
+                <Level>0</Level><LightName>lr_cans</LightName><LightNumber>10</LightNumber>
+                <Rate>0</Rate><RoomName>Living Room</RoomName>
+                <Time>23:40</Time><ScheduleType>LightingDevice</ScheduleType></Schedule>
             <Schedule Active="True" Key="11" Name="Night">
-                <Level>0</Level>
-                <LightName>wet_bar</LightName>
-                <Rate>0</Rate>
-                <RoomName>Living Room</RoomName>
-                <Time>00:15</Time>
-                <ScheduleType>LightingDevice</ScheduleType>
-            </Schedule>
+                <Level>0</Level><LightName>wet_bar</LightName><LightNumber>8</LightNumber><Rate>0</Rate><RoomName>Living Room</RoomName>
+                <Time>23:45</Time><ScheduleType>LightingDevice</ScheduleType></Schedule>
             <Schedule Active="True" Key="12" Name="Morning">
-                <Level>0</Level>
-                <LightName>mbr_rope</LightName>
-                <Rate>0</Rate>
-                <RoomName>Master Bedroom</RoomName>
-                <Time>sunrise + 00:30</Time>
+                <Level>0</Level><LightName>mbr_rope</LightName><LightNumber>6</LightNumber>
+                <Rate>0</Rate><RoomName>Master Bedroom</RoomName><Time>sunrise + 00:30</Time><ScheduleType>LightingDevice</ScheduleType></Schedule>
+            <Schedule Active="True" Key="13" Name="Testing">
+                <Level>100</Level><LightName>lr_rope</LightName><LightNumber>7</LightNumber><Rate>0</Rate><RoomName>Office</RoomName>
+                <Time>23:50</Time>
                 <ScheduleType>LightingDevice</ScheduleType>
             </Schedule>
-            <Schedule Active="False" Key="13" Name="Testing">
-                <Level>100</Level>
-                <LightName>lr_rope</LightName>
-                <Rate>0</Rate>
-                <RoomName>Office</RoomName>
-                <Time>11:00</Time>
-                <ScheduleType>LightingDevice</ScheduleType>
-            </Schedule>
-            <Schedule Active="False" Key="14" Name="Testing">
+            <Schedule Active="True" Key="14" Name="Testing">
                 <Level>0</Level>
                 <LightName>lr_rope</LightName>
+                <LightNumber>7</LightNumber>
                 <Rate>0</Rate>
                 <RoomName>Office</RoomName>
-                <Time>11:02</Time>
+                <Time>23:52</Time>
                 <ScheduleType>LightingDevice</ScheduleType>
             </Schedule>
             <Schedule Active="False" Key="15" Name="Testing">
                 <Level>0</Level>
                 <LightName>test_lamp1</LightName>
+                <LightNumber>9</LightNumber>
                 <Rate>0</Rate>
                 <RoomName>Breakfast Nook</RoomName>
                 <Time>23:55</Time>
@@ -263,6 +215,7 @@
             <Schedule Active="False" Key="16" Name="Testing">
                 <Level>0</Level>
                 <LightName>kitchen_counter</LightName>
+                <LightNumber>11</LightNumber>
                 <Rate>0</Rate>
                 <RoomName>Kitchen</RoomName>
                 <Time>23:57</Time>
