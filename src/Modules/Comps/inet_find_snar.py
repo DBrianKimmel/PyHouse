@@ -10,6 +10,7 @@
 @summary: This module determines our external IPv4 address using snar.co
 
 We use an external site that sees the IP we are coming from and returns it to us as a web page.
+This module is for Shawn Powers page - http://snar.co/ip
 
 This is because most ISP's use NAT to expand the IPv4 address space.
 
@@ -31,33 +32,30 @@ g_debug = 1
 LOG = pyh_log.getLogger('PyHouse.InternetFnd ')
 
 
-
-
 class FindExternalIpAddress(object):
-    """Find our external dynamic IP address.
-    Keep the house object up to date.
-
-    Methods:
-        SNMP to the router
-        External site returning IP address (may need scraping)
+    """
+    Find our external dynamic IP address using an external site returning our IP address.
     """
 
     m_url = None
     m_reactor = None
 
     def __init__(self, p_internet_obj, p_reactor):
-        """Delay a bit so we are not too busy with initialization and then start the IPv4 query process.
         """
+        Delay a bit so we are not too busy with initialization and then start the IPv4 query process.
+        """
+        l_initial_delay = 2 * 60  # 2 Minutes
         self.m_internet_obj = p_internet_obj
         self.m_reactor = p_reactor
-        self.m_reactor.callLater(1 * 60, self.get_public_ip)
+        self.m_reactor.callLater(l_initial_delay, self.get_public_ip)
 
     def get_public_ip(self):
-        """Get the public IP address for the house.
         """
-        # PrettyPrintAny(p_internet_connection, 'InetFindSnar - GetOnePublicIp - p_internet_connection')
-        if self.m_internet_obj.ExternalDelay < 600:
-            self.m_internet_obj.ExternalDelay = 600
+        Get the public IP address for the house.
+        """
+        l_minimum_delay = 10 * 60  # 10 Minutes
+        if self.m_internet_obj.ExternalDelay < l_minimum_delay:
+            self.m_internet_obj.ExternalDelay = l_minimum_delay
         self.m_reactor.callLater(self.m_internet_obj.ExternalDelay, self.get_public_ip)
         self.m_url = self.m_internet_obj.ExternalUrl
         if self.m_url == None:
@@ -75,7 +73,6 @@ class FindExternalIpAddress(object):
 
         @param p_ip_page: is the web page as a string
         """
-        # This is for Shawn Powers page - http://snar.co/ip
         l_quad = p_ip_page
         self.m_internet_obj.ExternalIPv4 = l_quad
         l_addr = convert.ConvertEthernet().dotted_quad2long(l_quad)
@@ -86,7 +83,21 @@ class FindExternalIpAddress(object):
         LOG.error("Failed to Get External IP page - {0:}".format(p_reason))
 
 
-class API(FindExternalIpAddress):
+class Utility(FindExternalIpAddress):
+    """
+    """
+
+    def get_delay(self, p_internet_obj):
+        """
+        Get the delay between attempts to check for our External IP address.
+        We don't want to be a nuisance and load a connection down with lots of queries.
+        """
+        l_minimum_delay = 10 * 60  # 10 Minutes
+        if p_internet_obj.ExternalDelay < l_minimum_delay:
+            p_internet_obj.ExternalDelay = l_minimum_delay
+
+
+class API(Utility):
 
     m_reactor = None
 
@@ -95,6 +106,7 @@ class API(FindExternalIpAddress):
 
     def Start(self, p_pyhouse_obj, p_ix):
         self.m_internet_obj = p_pyhouse_obj.Computer.InternetConnection[p_ix]
+        self.get_delay(self.m_internet_obj)
         self.m_reactor = p_pyhouse_obj.Twisted.Reactor
         FindExternalIpAddress(self.m_internet_obj, self.m_reactor)
 

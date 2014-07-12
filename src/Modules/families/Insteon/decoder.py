@@ -32,16 +32,22 @@ from Modules.utils import pyh_log
 g_debug = 4
 LOG = pyh_log.getLogger('PyHouse.Insteon_decd')
 
+# OBJ_LIST = [Lights, Controllers, Buttons, Thermostats, Irrigation, Pool]
 
-class DecodeResponses(object):
 
-    m_house_obj = None
-    m_pyhouse_obj = None
-    m_index = 0
+class Utility(object):
+    """
+    """
 
-    def __init__(self, p_pyhouse_obj, p_controller_obj):
-        self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_index = p_controller_obj.Key
+    def get_device_class(self, p_pyhouse_obj):
+        """
+        Return a class of objects (Lights, Thermostats) that may have an Insteon <ControllerFamily> within.
+        """
+        l_house = p_pyhouse_obj.House.OBJs
+        for l_class in l_house.itervalues():
+            if l_class == Schedule:
+                continue
+        pass
 
     def _find_addr(self, p_class, p_addr):
         """
@@ -100,7 +106,95 @@ class DecodeResponses(object):
         except IndexError:
             pass
 
-    def _decode_message(self, p_controller_obj, p_house_obj):
+    def get_devcat(self, p_message, p_obj):
+        l_devcat = p_message[5] * 256 + p_message[6]
+        p_obj.DevCat = int(l_devcat)
+        self.update_object(p_obj)
+        l_debug_msg = "DevCat From={0:}, DevCat={1:#x}, flags={2:}".format(p_obj.Name, l_devcat, self._decode_message_flag(p_message[8]))
+        LOG.info("Got DevCat from light:{0:}, DevCat:{1:}".format(p_obj.Name, l_devcat))
+        return l_debug_msg
+
+    def update_object(self, p_obj):
+        # TODO: implement
+        pass
+
+    def _decode_message_flag(self, p_byte):
+        """
+        """
+        l_type = (p_byte & 0xE0) >> 5
+        l_extended = (p_byte & 0x10)
+        l_hops_left = (p_byte & 0x0C) >= 4
+        l_max_hops = (p_byte & 0x03)
+        if l_type == 4:
+            l_ret = 'Broadcast'  # Broadcast
+        elif l_type == 0:
+            l_ret = 'Direct'  # Direct message
+        elif l_type == 1:
+            l_ret = 'DirACK'  # Direct message ACK
+        elif l_type == 5:
+            l_ret = 'DirNAK'  # Direct message NAK
+        elif l_type == 6:
+            l_ret = 'All_Brdcst'  # All-Link Broadcast
+        elif l_type == 2:
+            l_ret = 'All_Cleanup'  # All-Link Cleanup
+        elif l_type == 3:
+            l_ret = 'All_Clean_ACK'  # All-Link Cleanup ACK
+        else:
+            l_ret = 'All_Clean_NAK'  # All-Link Cleanup NAK
+        if l_extended == 0:
+            l_ret += '-Std-'
+        else:
+            l_ret += '-Ext-'
+        l_ret = "{0:}{1:d}-{2:d}={3:#X}".format(l_ret, l_hops_left, l_max_hops, p_byte)
+        return l_ret
+
+    def _get_addr_from_message(self, p_message, p_index):
+        """Extract the address from a message.
+
+        The message is a byte array returned from the PLM.
+        The address is 3 consecutive bytes starting at p_index.
+
+        @param p_message: is the byte array returned by the controller.
+        @param p_index: is the offset into the message of a 3 byte field we will fetch and convert to an int
+        """
+        l_id = Insteon_utils.message2int(p_message, p_index)
+        return l_id
+
+    def _get_ack_nak(self, p_byte):
+        if p_byte == 0x06:
+            return 'ACK '
+        elif p_byte == 0x15:
+            return 'NAK '
+        else:
+            return "{0:#02X} ".format(p_byte)
+
+    def _get_message_length(self, p_message):
+        """Get the documented length that the message is supposed to be.
+
+        Use the message type byte to find out how long the response from the PLM
+        is supposed to be.
+        With asynchronous routines, we want to wait till the entire message is
+        received before proceeding with its decoding.
+        """
+        l_id = p_message[1]
+        try:
+            l_message_length = MESSAGE_LENGTH[l_id]
+        except KeyError:
+            l_message_length = 1
+        return l_message_length
+
+
+class DecodeResponses(Utility):
+
+    m_house_obj = None
+    m_pyhouse_obj = None
+    m_index = 0
+
+    def __init__(self, p_pyhouse_obj, p_controller_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_index = p_controller_obj.Key
+
+    def decode_message(self, p_controller_obj, p_house_obj):
         """Decode a message that was ACKed / NAked.
         see Insteon Developers Manual pages 238-241
 
@@ -160,14 +254,6 @@ class DecodeResponses(object):
             self.check_for_more_decoding(p_controller_obj, l_ret)
         return l_ret
 
-    def _get_devcat(self, p_message, p_light_obj):
-        l_devcat = p_message[5] * 256 + p_message[6]
-        p_light_obj.DevCat = int(l_devcat)
-        self.update_object(p_light_obj)
-        l_debug_msg = "DevCat From={0:}, DevCat={1:#x}, flags={2:}".format(p_light_obj.Name, l_devcat, self._decode_message_flag(p_message[8]))
-        LOG.info("Got DevCat from light:{0:}, DevCat:{1:}".format(p_light_obj.Name, l_devcat))
-        return l_debug_msg
-
     def _decode_50_record(self, p_controller_obj):
         """ Insteon Standard Message Received (11 bytes)
         A Standard-length INSTEON message is received from either a Controller or Responder that you are ALL-Linked to.
@@ -207,7 +293,7 @@ class DecodeResponses(object):
         elif l_message_flags & 0xE0 == 0x60:  # (011) All-Link Clean-Up ACK response message type
             l_debug_msg += "All-Link Clean up ACK from {0:}; ".format(l_name_from)
         elif l_message_flags & 0xE0 == 0x80:  # Broadcast Message (100)
-            l_debug_msg += self._get_devcat(l_message, l_obj_from)
+            l_debug_msg += self.get_devcat(l_message, l_obj_from)
         elif l_message_flags & 0xE0 == 0xA0:  # (101) NAK of Direct message type
             l_debug_msg += "NAK of direct message(1) from {0:}; ".format(l_name_from)
         elif l_message_flags & 0xE0 == 0xC0:  # (110) all link broadcast of group id
@@ -515,15 +601,11 @@ class DecodeResponses(object):
         l_chop = self._get_message_length(p_controller_obj._Message)
         if l_cur_len >= l_chop:
             p_controller_obj._Message = p_controller_obj._Message[l_chop:]
-            l_ret = self._decode_message(p_controller_obj, self.m_house_obj)
+            l_ret = self.decode_message(p_controller_obj, self.m_house_obj)
         else:
             l_msg = "check_for_more_decoding() trying to chop an incomplete message - {0:}".format(
                     PrintBytes(p_controller_obj._Message))
             LOG.error(l_msg)
         return l_ret
-
-    def update_object(self, p_obj):
-        # TODO: implement
-        pass
 
 # ## END DBK

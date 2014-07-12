@@ -253,10 +253,10 @@ class ThermostatData(ABaseObject):
 
     def __init__(self):
         super(ThermostatData, self).__init__()
-        self.CoolSetPoint = 76
-        self.ControllerFamily = None
+        self.CoolSetPoint = 0
+        self.ControllerFamily = 'No Family'
         self.CurrentTemperature = 0
-        self.HeatSetPoint = 70
+        self.HeatSetPoint = 0
         self.ThermostatMode = 'Cool'  # Cool | Heat | Auto | EHeat
         self.ThermostatScale = 'F'  # F | C
 

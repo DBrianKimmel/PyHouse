@@ -20,21 +20,13 @@ address from some external device and check on the status of the house.
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
-from twisted.internet import reactor
-from twisted.web.client import getPage
-from twisted.internet.protocol import Protocol, ClientFactory
-from twisted.internet.defer import Deferred
-from twisted.web.client import Agent
-from twisted.web.http_headers import Headers
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import InternetConnectionData, InternetConnectionDynDnsData
-# from Modules.Core.Locations import *
 from Modules.Comps import inet_find_snar, inet_update_freedns
 from Modules.utils.xml_tools import XmlConfigTools
-from Modules.utils import convert
 from Modules.utils import pyh_log
-from Modules.utils.tools import PrettyPrintAny
+# from Modules.utils.tools import PrettyPrintAny
 
 g_debug = 1
 LOG = pyh_log.getLogger('PyHouse.Internet    ')
@@ -42,6 +34,7 @@ LOG = pyh_log.getLogger('PyHouse.Internet    ')
 
 class ReadWriteConfigXml(XmlConfigTools):
     """
+    This section is fairly well tested by the unit test module.
     """
 
     m_count = 0
@@ -145,199 +138,12 @@ class ReadWriteConfigXml(XmlConfigTools):
         return l_xml
 
 
-#======================================
-#
-# Now all asynchronous code
-#
-#======================================
-
-class XXXMyProtocol(Protocol):
-    """
-    """
-
-    def __init__(self, p_finished):
-        self.m_finished = p_finished
-
-    def dataReceived(self, p_bytes):
-        if self.m_remaining:
-            l_display = p_bytes[:self.m_remaining]
-            self.m_remaining -= len(l_display)
-
-    def connectionLost(self, _p_reason):
-        self.m_finished.callback(None)
-
-
-class XXXMyClientFactory(ClientFactory):
-
-    protocol = XXXMyProtocol
-
-    def __init__(self, deferred):
-        self.deferred = deferred
-
-    def poem_finished(self, poem):
-        if self.deferred is not None:
-            d, self.deferred = self.deferred, None
-            d.callback(poem)
-
-    def clientConnectionFailed(self, _connector, reason):
-        if self.deferred is not None:
-            d, self.deferred = self.deferred, None
-            d.errback(reason)
-
-
-class XXXMyGet(object):
-    """
-    """
-
-    def __init__(self):
-        pass
-
-    def my_getPage(self, p_url):
-        if g_debug >= 1:
-            LOG.debug("Requesting {0:}".format(p_url))
-        l_d = Agent(reactor).request('GET', p_url, Headers({'User-Agent': ['twisted']}), None)
-        l_d.addCallbacks(self.handleResponse, self.handleError)
-        return l_d
-
-    def handleResponse(self, p_r):
-        LOG.debug("version={0:}\ncode={1:}\nphrase='{2:}'".format(p_r.version, p_r.code, p_r.phrase))
-        for k, v in p_r.headers.getAllRawHeaders():
-            print("%s: %s" % (k, '\n  '.join(v)))
-        l_whenFinished = Deferred()
-        p_r.deliverBody(MyProtocol(l_whenFinished))
-        return l_whenFinished
-
-    def handleError(self, p_reason):
-        p_reason.printTraceback()
-
-
-class UpdateDnsSites(object):
-    """
-    """
-
-
-class XXXFindExternalIpAddress(object):
-    """Find our external dynamic IP address.
-    Keep the house object up to date.
-
-    Methods:
-        SNMP to the router
-        External site returning IP address (may need scraping)
-    """
-
-    m_url = None
-
-    def __init__(self, p_pyhouses_obj):
-        self.m_pyhouse_obj = p_pyhouses_obj
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(1 * 60, self.get_public_ip)
-
-    def get_public_ip(self):
-        PrettyPrintAny(self.m_pyhouse_obj, 'Internet - GetPublicIp - PyHouseObj')
-        PrettyPrintAny(self.m_pyhouse_obj.Computer, 'Internet - GetPublicIp - PyHouseObj.Computer')
-        PrettyPrintAny(self.m_pyhouse_obj.Computer.InternetConnection, 'Internet - GetPublicIp - PyHouseObj.Computer.InternetConnection')
-        for l_ip in self.m_pyhouse_obj.Computer.InternetConnection.itervalues():
-            self.get_one_public_ip(l_ip)
-
-    def get_one_public_ip(self, p_internet_connection):
-        """Get the public IP address for the house.
-        """
-        PrettyPrintAny(p_internet_connection, 'Internet - GetOnePublicIp - p_internet_connection')
-        if p_internet_connection.ExternalDelay < 600:
-            p_internet_connection.ExternalDelay = 600
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(p_internet_connection.ExternalDelay, self.get_public_ip)
-        self.m_url = p_internet_connection.ExternalUrl
-        if self.m_url == None:
-            LOG.error("URL is missing for House:{0:}".format(self.m_pyhouse_obj.House.Name))
-            return
-        LOG.debug("About to get URL:{0:}".format(self.m_url))
-        l_ip_page_defer = getPage(self.m_url)
-        l_ip_page_defer.addCallbacks(self.cb_parse_page, self.eb_no_page)
-
-    def cb_parse_page(self, p_ip_page):
-        """This gets the page with the IP in it and returns it.
-        Different sites will need different page scraping to get the IP address.
-        dotted quad IPs are converted to 4 byte IPv4 addresses
-        IP V-6 is not handled yet.
-
-        @param p_ip_page: is the web page as a string
-        """
-        # This is for Shawn Powers page - http://snar.co/ip
-        l_quad = p_ip_page
-        self.m_pyhouse_obj.Computer.InternetConnection.ExternalIPv4 = l_quad
-        l_addr = convert.ConvertEthernet().dotted_quad2long(l_quad)
-        LOG.info("Got External IP page for House:{0:}, Page:{1:}".format(self.m_pyhouse_obj.House.Name, p_ip_page))
-        return l_addr
-
-    def eb_no_page(self, p_reason):
-        LOG.error("Failed to Get External IP page for House:{0:}, {1:}".format(self.m_pyhouse_obj.House.Name, p_reason))
-
-
-class XXXDynDnsAPI(object):
-    """Update zero or more dynamic DNS sites.
-    This is a repeating two stage process.
-    First get our current External IP address.
-    Second, update zero or more Dyn DNS sites with our address
-    Then wait UpdateInterval time and repeat forever.
-    Allow for missing responses so as to not break the chain of events.
-    """
-
-    def __init__(self, p_pyhouses_obj):
-        self.m_pyhouse_obj = p_pyhouses_obj
-        # Wait a bit to avoid all the starting chaos
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(3 * 60, self.update_start_process)
-
-    def update_start_process(self):
-        """After waiting for the initial startup activities to die down, this is invoked
-        to start up a loop for each dynamic service being updated.
-        """
-        self.m_running = True
-        PrettyPrintAny(self.m_pyhouse_obj, 'Internet - UpdateStartProcess - PyHouseObj')
-        PrettyPrintAny(self.m_pyhouse_obj.Computer, 'Internet - UpdateStartProcess - PyHouseObj.Computer')
-        PrettyPrintAny(self.m_pyhouse_obj.Computer.InternetConnection, 'Internet - UpdateStartProcess - PyHouseObj.Computer.InternetConnection')
-        for l_dyn_obj in self.m_pyhouse_obj.Computer.InternetConnection.DynDns.itervalues():
-            l_cmd = lambda x = l_dyn_obj.UpdateInterval, y = l_dyn_obj: self.update_loop(x, y)
-            self.m_pyhouse_obj.Twisted.Reactor.callLater(l_dyn_obj.UpdateInterval, l_cmd)
-
-    def stop_dyndns_process(self):
-        self.m_running = False
-
-    def update_loop(self, _p_interval, p_dyn_obj):
-        """Fetching the page from afraid.org using this url will update the IP address
-        using this computers PUBLIC ip address.
-        Other methods may be required if using some other dyn dns servicee.
-        """
-        if not self.m_running:
-            return
-        LOG.info("Update DynDns for House:{0:}, {1:}, {2:}".format(self.m_pyhouse_obj.House.Name, p_dyn_obj.Name, p_dyn_obj.UpdateUrl))
-        self.m_dyn_obj = p_dyn_obj
-        self.m_deferred = getPage(p_dyn_obj.UpdateUrl)
-        self.m_deferred.addCallback(self.cb_parse_dyndns)
-        self.m_deferred.addErrback(self.eb_parse_dyndns)
-        self.m_deferred.addBoth(self.cb_do_delay)
-
-    def cb_parse_dyndns(self, _p_response):
-        """Update the external web site with our external IP address.
-        In the case of afraid.org, nothing needs to be done to respond to the web page fetched.
-        """
-        return
-
-    def eb_parse_dyndns(self, p_response):
-        """Afraid.org has no errors except no response in which case we can do nothing anyhow.
-        """
-        LOG.warning("Update DynDns for House:{0:} failed ERROR - {1:}.".format(self.m_pyhouse_obj.House.Name, p_response))
-
-    def cb_do_delay(self, _p_response):
-        l_cmd = lambda x = self.m_dyn_obj.UpdateInterval, y = self.m_dyn_obj: self.update_loop(x, y)
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(self.m_dyn_obj.UpdateInterval, l_cmd)
-
-
 class Utility(ReadWriteConfigXml):
     """
     """
 
     def find_xml(self, p_pyhouse_obj):
-        """One never knows what else may be running so find the InternetSection.
-        This could probably use some checking for malformed XML.
+        """ Find the XML InternetSection.
 
         @return: the XML element <InternetSection>
         """
@@ -366,17 +172,17 @@ class API(Utility):
         pass
 
     def Start(self, p_pyhouse_obj):
-        """Start async operation of the internet module.
+        """
+        Start async operation of the internet module.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
-        l_internet_xml = self.find_xml(p_pyhouse_obj)
-        self.m_pyhouse_obj.Computer.InternetConnection = self.read_internet_xml(l_internet_xml)
+        self.m_pyhouse_obj.Computer.InternetConnection = self.read_internet_xml(self.find_xml(p_pyhouse_obj))
         self.start_internet_discovery(p_pyhouse_obj)
         LOG.info("Started.")
 
     def Stop(self, p_xml):
-        """Stop async operations
-        write out the XML file.
+        """
+        Stop async operations, write out the XML file.
         """
         LOG.info("Stopping dyndns.")
         p_xml.append(self.write_internet_xml(self.m_pyhouse_obj.Computer.InternetConnection))

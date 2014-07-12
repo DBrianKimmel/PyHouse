@@ -20,7 +20,7 @@ from Modules.housing import house
 from Modules.web import web_utils
 from Modules.Core import setup
 from Modules.utils.tools import PrettyPrintAny
-from src.test import xml_data
+from test import xml_data
 
 
 class SetupMixin(object):
@@ -33,7 +33,7 @@ class SetupMixin(object):
         self.m_thermostat_obj = ThermostatData()
         self.m_api = thermostat.API()
         self.m_pyhouse_obj = house.API().update_pyhouse_obj(self.m_pyhouse_obj)
-        PrettyPrintAny(self.m_pyhouse_obj, 'SetupMixin.Setup - PyHouse_obj', 100)
+        # PrettyPrintAny(self.m_pyhouse_obj, 'SetupMixin.Setup - PyHouse_obj', 100)
         return self.m_pyhouse_obj
 
 
@@ -49,7 +49,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         self.m_house_div_xml = self.m_root_xml.find('HouseDivision')
         self.m_thermostat_sect_xml = self.m_house_div_xml.find('ThermostatSection')
         self.m_thermostat_xml = self.m_thermostat_sect_xml.find('Thermostat')
-        # PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse_obj', 120)
+
 
     def test_0201_FindXml(self):
         """ Be sure that the XML contains the right stuff.
@@ -58,44 +58,71 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_house_div_xml.tag, 'HouseDivision', 'XML - No House Division')
         self.assertEqual(self.m_thermostat_sect_xml.tag, 'ThermostatSection', 'XML - No Thermostat section')
         self.assertEqual(self.m_thermostat_xml.tag, 'Thermostat', 'XML - No Thermostat Entry')
-        # PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse_obj', 120)
-        # PrettyPrintAny(self.m_pyhouse_obj.Xml, '201 PyHouse_obj.Xml', 120)
+        PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse_obj', 120)
+        PrettyPrintAny(self.m_thermostat_xml, 'ThermoxtatXML', 120)
 
-    def test_0211_ReadOneThermostatXml(self):
+    def test_0211_ReadThermostatData(self):
+        """
+        """
+        self.m_api._read_thermostat_data(self.m_thermostat_obj, self.m_thermostat_xml)
+        PrettyPrintAny(self.m_thermostat_obj, 'ReadControllerData', 100)
+        self.assertEqual(self.m_thermostat_obj.ControllerFamily, 'Insteon', 'Bad Controller Family')
+
+    def test_0212_ReadFamilyData(self):
+        """
+        """
+        self.m_thermostat_obj.ControllerFamily = 'Insteon'
+        self.m_api._read_thermostat_data(self.m_thermostat_obj, self.m_thermostat_xml)
+        PrettyPrintAny(self.m_thermostat_obj, 'ReadFamilyData', 100)
+
+    def test_0231_ReadOneThermostatXml(self):
         """ Read in the xml file and fill in the lights
         """
-        PrettyPrintAny(self.m_pyhouse_obj, '0211 PyHouse_obj', 120)
-        l_entry = self.m_api.read_one_thermostat_xml(self.m_thermostat_xml)
+        PrettyPrintAny(self.m_pyhouse_obj, '0231 PyHouse_obj', 120)
+        l_entry = self.m_api.read_one_thermostat_xml(self.m_thermostat_xml, self.m_pyhouse_obj)
         self.assertEqual(l_entry.Active, True, 'Bad Active')
         self.assertEqual(l_entry.Name, 'Test Thermostat One', 'Bad Name')
         self.assertEqual(l_entry.Key, 0, 'Key')
-        self.assertEqual(l_entry.SetTemperature, 76.0, 'Bad Set Temperature')
+        self.assertEqual(l_entry.HeatSetPoint, 71.0, 'Bad Heat SetPoint')
+        self.assertEqual(l_entry.CoolSetPoint, 78.0, 'Bad Cool Se[Point')
         self.assertEqual(l_entry.CurrentTemperature, 76.0, 'Bad Current temperature')
         PrettyPrintAny(l_entry, 'One Thermostat Entry', 100)
 
-    def test_0212_ReadAllThermostatsXml(self):
-        l_controllers = self.m_api.read_all_thermostats_xml(self.m_thermostat_sect_xml)
+    def test_0232_ReadAllThermostatsXml(self):
+        l_controllers = self.m_api.read_all_thermostats_xml(self.m_pyhouse_obj)
         self.assertEqual(len(l_controllers), 1)
         PrettyPrintAny(l_controllers, 'All Thermostats', 100)
+
+    def test_0251_WriteThermostatData(self):
+        self.m_api._read_thermostat_data(self.m_thermostat_obj, self.m_thermostat_xml)
+        PrettyPrintAny(self.m_thermostat_obj, 'WriteThermostatData', 100)
+
+    def test_0252_WriteFamilyData(self):
+        self.m_thermostat = self.m_api.read_all_thermostats_xml(self.m_pyhouse_obj)
+        PrettyPrintAny(self.m_thermostat_obj, 'WriteFamilyData A', 100)
+        PrettyPrintAny(self.m_pyhouse_obj.House.OBJs, 'WriteFamilyData B', 100)
+
+        self.m_api._write_family_data(self.m_thermostat_obj, self.m_thermostat_xml, self.m_pyhouse_obj)
+        PrettyPrintAny(self.m_thermostat_xml, 'WriteFamilyData C', 100)
 
     def test_0262_WriteOneThermostatXml(self):
         """ Write out the XML file for the location section
         """
-        l_thermostat = self.m_api.read_one_thermostat_xml(self.m_thermostat_xml)
-        l_xml = self.m_api.write_one_thermostat_xml(l_thermostat)
+        l_thermostat = self.m_api.read_one_thermostat_xml(self.m_thermostat_xml, self.m_pyhouse_obj)
+        l_xml = self.m_api.write_one_thermostat_xml(l_thermostat, self.m_pyhouse_obj)
         PrettyPrintAny(l_xml, 'One thermostat', 100)
 
     def test_0264_WriteAllThermostatsXml(self):
         """ Write out the XML file for the location section
         """
-        l_controllers = self.m_api.read_all_thermostats_xml(self.m_thermostat_sect_xml)
-        l_xml = self.m_api.write_all_thermostats_xml(l_controllers)
+        l_controllers = self.m_api.read_all_thermostats_xml(self.m_pyhouse_obj)
+        l_xml = self.m_api.write_all_thermostats_xml(l_controllers, self.m_pyhouse_obj)
         PrettyPrintAny(l_xml, 'AllControllers', 100)
 
     def test_0281_CreateJson(self):
         """ Create a JSON object for Location.
         """
-        l_thermostat = self.m_api.read_all_thermostats_xml(self.m_thermostat_sect_xml)
+        l_thermostat = self.m_api.read_all_thermostats_xml(self.m_pyhouse_obj)
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_thermostat))
         PrettyPrintAny(l_json, 'JSON', 120)
 

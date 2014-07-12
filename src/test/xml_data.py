@@ -25,26 +25,6 @@ XML_EMPTY = """
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Everything as expected in a running system.
 XML_LONG = """
 <PyHouse Version='2'>
@@ -365,10 +345,13 @@ XML_LONG = """
         </ControllerSection>
         <ThermostatSection>
             <Thermostat Name='Test Thermostat One' Active='True' Key='0'>
-                <CurrentTemperature>76</CurrentTemperature>
-                <SetTemperature>76</SetTemperature>
                 <ControllerFamily>Insteon</ControllerFamily>
-                <Address>18:C9:4A</Address>
+                <CoolSetPoint>78.0</CoolSetPoint>
+                <CurrentTemperature>76</CurrentTemperature>
+                <HeatSetPoint>71.0</HeatSetPoint>
+                <ThermostatMode>Cool</ThermostatMode>
+                <ThermostatScale>F</ThermostatScale>
+                <Address>18.C9.4A</Address>
             </Thermostat>
         </ThermostatSection>
         <EntertainmentSection />

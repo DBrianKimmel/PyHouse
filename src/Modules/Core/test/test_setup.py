@@ -14,16 +14,17 @@ from twisted.trial import unittest
 import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
-from Modules.Core import setup
-from src.test import xml_data
 from Modules.Core.data_objects import PyHouseData, CoreServicesInformation
+from Modules.Core import setup
+from test import xml_data
 
 XML = xml_data.XML_LONG
 
 
 class Test_01_XML(unittest.TestCase):
     """
-    This section will verify the XML in the 'Modules.text.xml_data' file is correct and what the setup module can read/write.
+    This section will verify the XML in the 'Modules.text.xml_data' file is correct and what the setup module can
+    read/write.
     """
 
     def setUp(self):
@@ -48,5 +49,10 @@ class Test_02_ReadXML(unittest.TestCase):
         self.m_pyhouse_obj.XmlRoot = ET.fromstring(XML)
         self.m_pyhouse_obj.Services = CoreServicesInformation()
         self.m_api = setup.API()
+
+    def test_0201_ReadXml(self):
+        self.m_pyhouse_obj = setup.build_pyhouse_obj(self)
+        self.m_api.setup_xml_file(self.m_pyhouse_obj)
+        self.m_api.read_xml_config_info(self.m_pyhouse_obj)
 
 # ## END DBK

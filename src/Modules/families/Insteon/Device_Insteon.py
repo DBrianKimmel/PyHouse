@@ -21,7 +21,6 @@ serial_port
 """
 
 # Import system type stuff
-import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from Modules.Core.data_objects import InsteonData
@@ -35,6 +34,12 @@ LOG = pyh_log.getLogger('PyHouse.Dev_Insteon ')
 
 
 class ReadWriteConfigXml(xml_tools.XmlConfigTools):
+    """
+    These routines are called from read_family_data in various modules.
+    This is done so Lights, Thermostats, Irrigation and Pool devices can use the XML data for Insteon devices.
+
+    This class and methods are pointed to by family.py and must be the same in every Device package.
+    """
 
     def extract_device_xml(self, p_device_obj, p_entry_xml):
         """
@@ -75,7 +80,8 @@ class API(ReadWriteConfigXml):
         pass
 
     def Start(self, p_pyhouse_obj):
-        """For the given house, this will start all the controllers for family = Insteon in that house.
+        """
+        This will start all the controllers for family = Insteon in the house.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_house_obj = p_pyhouse_obj.House.OBJs
@@ -110,8 +116,8 @@ class API(ReadWriteConfigXml):
                 if l_controller_obj.Active != True:
                     continue
                 l_controller_obj._HandlerAPI.Stop(l_controller_obj)
-        except AttributeError:
-            pass  # no controllers for house(House is being added)
+        except AttributeError as e_err:
+            LOG.warning('Stop Warning - {0:}'.format(e_err))  # no controllers for house(House is being added)
         return p_xml
 
     def ChangeLight(self, p_light_obj, p_level, _p_rate = 0):

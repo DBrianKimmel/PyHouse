@@ -42,39 +42,43 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         p_obj.HeatSetPoint = self.get_float_from_xml(p_xml, 'HeatSetPoint', 68.0)
         p_obj.ThermostatMode = self.get_text_from_xml(p_xml, 'ThermostatMode', 'Cool')
         p_obj.ThermostatScale = self.get_text_from_xml(p_xml, 'ThermostatScale', 'F')
+        return p_obj
 
-    def _read_family_data(self, p_obj, p_xml):
+    def _read_family_data(self, p_obj, p_xml, p_pyhouse_obj):
         try:
             l_family = p_obj.ControllerFamily
-            l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[l_family].ModuleAPI
+            l_api = p_pyhouse_obj.House.OBJs.FamilyData[l_family].ModuleAPI
             l_api.extract_device_xml(p_obj, p_xml)
-        except KeyError:
-            pass
+        except KeyError as e_err:
+            LOG.error('ReadFamilyData ERROR {0:}'.format(e_err))
 
-    def read_one_thermostat_xml(self, p_thermostat_element):
+    def read_one_thermostat_xml(self, p_thermostat_element, p_pyhouse_obj):
         """
         @return: a ThermostatData object
         """
         l_thermostat_obj = ThermostatData()
         self.read_base_object_xml(l_thermostat_obj, p_thermostat_element)
+        # PrettyPrintAny(l_thermostat_obj, 'Thermostat - ReadOneThermostat - A', 100)
         l_thermostat_obj.Key = self.m_count  # Renumber
         self._read_thermostat_data(l_thermostat_obj, p_thermostat_element)
-        self._read_family_data(l_thermostat_obj, p_thermostat_element)
+        # PrettyPrintAny(l_thermostat_obj, 'Thermostat - ReadOneThermostat - B', 100)
+        self._read_family_data(l_thermostat_obj, p_thermostat_element, p_pyhouse_obj)
+        # PrettyPrintAny(l_thermostat_obj, 'Thermostat - ReadOneThermostat - C', 100)
         return l_thermostat_obj
 
-    def read_all_thermostats_xml(self, p_thermostat_sect_element):
+    def read_all_thermostats_xml(self, p_pyhouse_obj):
         """
         """
+        l_xml_sect = self.setup_xml(p_pyhouse_obj)
         l_ret = {}
         self.m_count = 0
         try:
-            for l_xml in p_thermostat_sect_element.iterfind('Thermostat'):
-                l_obj = self.read_one_thermostat_xml(l_xml)
+            for l_xml in l_xml_sect.iterfind('Thermostat'):
+                l_obj = self.read_one_thermostat_xml(l_xml, p_pyhouse_obj)
                 l_ret[self.m_count] = l_obj
                 self.m_count += 1
-        except AttributeError:
-            pass
-        # PrettyPrintAny(self.m_pyhouse_obj.House.OBJs.Thermostats, 'thermostat - ReadAll - .thermostats', 100)
+        except AttributeError as e_err:
+            LOG.error('ReadAllThermostats AttributeError {0:}'.format(e_err))
         return l_ret
 
     def _write_thermostat_data(self, p_obj, p_xml):
@@ -86,19 +90,23 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         self.put_text_element(p_xml, 'ThermostatScale', p_obj.ThermostatScale)
         pass
 
-    def _write_family_data(self, p_obj, p_xml):
-        l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[p_obj.ControllerFamily].ModuleAPI
-        l_api.insert_device_xml(p_xml, p_obj)
+    def _write_family_data(self, p_obj, p_xml, p_pyhouse_obj):
+        try:
+            l_api = p_pyhouse_obj.House.OBJs.FamilyData[p_obj.ControllerFamily].ModuleAPI
+            print(l_api)
+            l_api.insert_device_xml(p_xml, p_obj)
+        except KeyError as e_err:
+            LOG.error('Write Family Key Error {0:}'.format(e_err))
 
-    def write_one_thermostat_xml(self, p_thermostat_obj):
+    def write_one_thermostat_xml(self, p_thermostat_obj, p_pyhouse_obj):
         """
         """
         l_xml = self.write_base_object_xml('Thermostat', p_thermostat_obj)
         self._write_thermostat_data(p_thermostat_obj, l_xml)
-        self._write_family_data(p_thermostat_obj, l_xml)
+        self._write_family_data(p_thermostat_obj, l_xml, p_pyhouse_obj)
         return l_xml
 
-    def write_all_thermostats_xml(self, p_thermostat_sect_obj):
+    def write_all_thermostats_xml(self, p_thermostat_sect_obj, p_pyhouse_obj):
         """Create a sub tree for 'Internet' - the sub elements do not have to be present.
         @return: a sub tree ready to be appended to "something"
         """
@@ -106,7 +114,7 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         self.m_count = 0
         try:
             for l_obj in p_thermostat_sect_obj.itervalues():
-                l_entry = self.write_one_thermostat_xml(l_obj)
+                l_entry = self.write_one_thermostat_xml(l_obj, p_pyhouse_obj)
                 l_xml.append(l_entry)
                 self.m_count += 1
         except AttributeError as e:
@@ -129,8 +137,8 @@ class Utility(ReadWriteConfigXml):
         try:
             l_xml = l_xml.find('HouseDivision')
             l_xml = l_xml.find('ThermostatSection')
-        except AttributeError:
-            pass
+        except AttributeError as e_err:
+            LOG.error('SetupXML ERROR {0:}'.format(e_err))
         return l_xml
 
 
@@ -144,11 +152,11 @@ class API(Utility):
     def Start(self, p_pyhouse_obj):
         self.update_pyhouse_obj(p_pyhouse_obj)
         self.m_pyhouse_obj = p_pyhouse_obj
-        p_pyhouse_obj.House.OBJs.Thermostats = self.read_all_thermostats_xml(self.setup_xml(p_pyhouse_obj))
+        p_pyhouse_obj.House.OBJs.Thermostats = self.read_all_thermostats_xml(p_pyhouse_obj)
         LOG.info("Started.")
 
     def Stop(self, p_xml):
-        l_xml = self.write_all_thermostats_xml(self.m_pyhouse_obj.House.OBJs.Thermostats)
+        l_xml = self.write_all_thermostats_xml(self.m_pyhouse_obj.House.OBJs.Thermostats, self.m_pyhouse_obj)
         p_xml.append(l_xml)
         LOG.info("Stopped.")
         return l_xml

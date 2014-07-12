@@ -29,7 +29,7 @@ from Modules.housing import house
 from Modules.utils import pyh_log
 from Modules.utils import xml_tools
 from Modules.utils.xml_tools import XmlConfigTools
-from Modules.utils.tools import PrettyPrintAny
+# from Modules.utils.tools import PrettyPrintAny
 
 g_debug = 0
 LOG = pyh_log.getLogger('PyHouse.CoreSetup   ')
@@ -42,16 +42,19 @@ class ReadWriteConfigXml(XmlConfigTools):
     """Use the internal data to read / write an updated XML config file.
     """
 
+    def setup_xml_file(self, p_pyhouse_obj):
+        p_pyhouse_obj.Xml.XmlFileName = xml_tools.open_config_file()
+
     def read_xml_config_info(self, p_pyhouse_obj):
         """This will read the XML config file(s).
         This puts the XML tree and file name in the pyhouse object for use by various modules.
         """
-        p_pyhouse_obj.Xml.XmlFileName = l_name = xml_tools.open_config_file()
+        l_name = p_pyhouse_obj.Xml.XmlFileName
         try:
             l_xmltree = ET.parse(l_name)
             print('Setup-XML file {0:} parsed OK.'.format(l_name))
         except SyntaxError as e_error:
-            print('Setup-XML file ERROR - {0:} - {1:}'.format(e_error, l_name))
+            LOG.error('Setup-XML file ERROR - {0:} - {1:}'.format(e_error, l_name))
             xml_tools.ConfigFile().create_empty_config_file(l_name)
             l_xmltree = ET.parse(p_pyhouse_obj.Xml.XmlFileName)
         p_pyhouse_obj.Xml.XmlRoot = l_xmltree.getroot()
@@ -94,6 +97,7 @@ class API(Utility):
         """
         LOG.info("Starting.")
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.setup_xml_file(p_pyhouse_obj)
         self.read_xml_config_info(self.m_pyhouse_obj)
         self.log_start(p_pyhouse_obj)
         self.m_pyhouse_obj = p_pyhouse_obj

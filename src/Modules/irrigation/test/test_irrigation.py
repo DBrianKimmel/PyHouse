@@ -18,7 +18,7 @@ from Modules.irrigation import irrigation
 from Modules.web import web_utils
 from Modules.Core import setup
 from Modules.utils.tools import PrettyPrintAny
-from src.test import xml_data
+from test import xml_data
 
 
 class SetupMixin(object):
@@ -28,7 +28,7 @@ class SetupMixin(object):
     def setUp(self):
         self.m_pyhouse_obj = setup.build_pyhouse_obj(self)
         self.m_pyhouse_obj.Xml.XmlRoot = self.m_root_xml
-        self.m_thermostat_obj = IrrigationData()
+        self.m_irrigation_obj = IrrigationData()
         return self.m_pyhouse_obj
 
 

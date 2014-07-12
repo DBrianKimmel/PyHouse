@@ -17,7 +17,7 @@ from twisted.trial import unittest
 from Modules.Core.data_objects import PyHouseData, LightData
 from Modules.families.Insteon import Device_Insteon
 from Modules.lights import lighting_lights
-from src.test import xml_data
+from test import xml_data
 from Modules.utils.tools import PrettyPrintAny
 
 XML = xml_data.XML_LONG
