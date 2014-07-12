@@ -578,7 +578,11 @@
         <ThermostatSection>
             <Thermostat Name="Main Thermostat" Key="0" Active="True">
                 <ControllerFamily>Insteon</ControllerFamily>
+                <CoolSetPoint>78.0</CoolSetPoint>
                 <CurrentTemperature>76</CurrentTemperature>
+                <HeatSetPoint>71.0</HeatSetPoint>
+                <ThermostatMode>Cool</ThermostatMode>
+                <ThermostatScale>F</ThermostatScale>
                 <Address>18.C9.4A</Address>
             </Thermostat>
         </ThermostatSection>
