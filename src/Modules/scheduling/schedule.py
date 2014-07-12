@@ -57,7 +57,7 @@ from Modules.irrigation import irrigation
 from Modules.utils import xml_tools
 from Modules.utils import tools
 from Modules.utils import pyh_log
-from Modules.utils.tools import PrettyPrintAny
+# from Modules.utils.tools import PrettyPrintAny
 
 g_debug = 1
 LOG = pyh_log.getLogger('PyHouse.Schedule    ')
@@ -74,11 +74,10 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         self.read_base_object_xml(l_schedule_obj, p_schedule_element)
         l_schedule_obj.Level = self.get_int_from_xml(p_schedule_element, 'Level')
         l_schedule_obj.LightName = self.get_text_from_xml(p_schedule_element, 'LightName')
-        # l_schedule_obj.LightNumber = self.get_int_from_xml(p_schedule_element, 'LightNumber')
         l_schedule_obj.Rate = self.get_int_from_xml(p_schedule_element, 'Rate')
         l_schedule_obj.RoomName = self.get_text_from_xml(p_schedule_element, 'RoomName')
+        l_schedule_obj.ScheduleType = self.get_text_from_xml(p_schedule_element, 'ScheduleType')
         l_schedule_obj.Time = self.get_text_from_xml(p_schedule_element, 'Time')
-        l_schedule_obj.ScheduleType = self.get_text_from_xml(p_schedule_element, 'Type')
         return l_schedule_obj
 
     def read_schedules_xml(self, p_house_xml):
@@ -106,11 +105,10 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         self.put_int_element(l_entry, 'Key', self.m_count)
         self.put_int_element(l_entry, 'Level', p_schedule_obj.Level)
         self.put_text_element(l_entry, 'LightName', p_schedule_obj.LightName)
-        # self.put_int_element(l_entry, 'LightNumber', p_schedule_obj.LightNumber)
         self.put_int_element(l_entry, 'Rate', p_schedule_obj.Rate)
         self.put_text_element(l_entry, 'RoomName', p_schedule_obj.RoomName)
+        self.put_text_element(l_entry, 'ScheduleType', p_schedule_obj.ScheduleType)
         self.put_text_element(l_entry, 'Time', p_schedule_obj.Time)
-        self.put_text_element(l_entry, 'Type', p_schedule_obj.ScheduleType)
         return l_entry
 
     def write_schedules_xml(self, p_schedules_obj):
@@ -142,22 +140,25 @@ class ScheduleExecution(ScheduleData):
         pass
 
     def execute_one_schedule(self, p_slot):
-        """Send information to one device to execute a schedule.
-
+        """
+        Send information to one device to execute a schedule.
         """
         l_schedule_obj = self.m_pyhouse_obj.House.OBJs.Schedules[p_slot]
+        # PrettyPrintAny(l_schedule_obj, 'Schedule - ExecuteOneSchedule - ScheduleObject', 120)
+        # PrettyPrintAny(self.m_pyhouse_obj.House.OBJs, 'Schedule - ExecuteOneSchedule - PyHouseObj', 120)
         # TODO: We need a small dispatch for the various schedule types (hvac, security, entertainment, lights, ...)
         if l_schedule_obj.ScheduleType == 'LightingDevice':
-            print('execute_one_schedule type = LightingDevice')
+            LOG.debug('execute_one_schedule type = LightingDevice')
             pass
         if l_schedule_obj.ScheduleType == 'Device':
-            print('execute_one_schedule type = Device')
+            LOG.debug('execute_one_schedule type = Device')
             pass
         elif l_schedule_obj.ScheduleType == 'Scene':
-            print('execute_one_schedule type = Scene')
+            LOG.debug('execute_one_schedule type = Scene')
             pass
         l_light_obj = tools.get_light_object(self.m_pyhouse_obj, name = l_schedule_obj.LightName)
-        LOG.info("Executing one schedule Name:{0:}, Light:{1:}, Level:{2:}".format(l_schedule_obj.Name, l_schedule_obj.LightName, l_schedule_obj.Level))
+        LOG.info("Executing one schedule Name:{0:}, Light:{1:}, Level:{2:}, Slot:{3:}".format(l_schedule_obj.Name, l_schedule_obj.LightName, l_schedule_obj.Level, p_slot))
+        # PrettyPrintAny(l_light_obj, 'Schedule_light_object', 120)
         self.m_pyhouse_obj.APIs.LightingAPI.ChangeLight(l_light_obj, l_schedule_obj.Level)
 
     def execute_schedules_list(self, p_slot_list = []):

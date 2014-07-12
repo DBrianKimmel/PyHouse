@@ -62,7 +62,6 @@ import signal
 # from twisted.application.service import Application
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, PyHouseAPIs, TwistedInformation
 from Modules.Core import setup
 from Modules.utils import pyh_log
 # from Modules.utils.tools import PrettyPrintAny

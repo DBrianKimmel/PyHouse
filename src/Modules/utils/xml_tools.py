@@ -208,10 +208,13 @@ class XmlConfigTools(PutGetXML):
         @param p_base_obj: is the object into which we will put the data.
         @param p_entry_element_xml: is the element we will extract data from (including children).
         """
-        p_base_obj.Name = self.get_text_from_xml(p_entry_element_xml, 'Name', 'Missing Name')
-        p_base_obj.Key = self.get_int_from_xml(p_entry_element_xml, 'Key', 0)
-        p_base_obj.Active = self.get_bool_from_xml(p_entry_element_xml, 'Active', False)
-        p_base_obj.UUID = self.get_uuid_from_xml(p_entry_element_xml, 'UUID')
+        try:
+            p_base_obj.Name = self.get_text_from_xml(p_entry_element_xml, 'Name', 'Missing Name')
+            p_base_obj.Key = self.get_int_from_xml(p_entry_element_xml, 'Key', 0)
+            p_base_obj.Active = self.get_bool_from_xml(p_entry_element_xml, 'Active', False)
+            p_base_obj.UUID = self.get_uuid_from_xml(p_entry_element_xml, 'UUID')
+        except Exception as e_err:
+            print('Read error in read_base_obj - {0:}'.format(e_err))
 
     def write_base_object_xml(self, p_element_name, p_object):
         """
@@ -233,9 +236,9 @@ class XmlConfigTools(PutGetXML):
 
         try:
             self.put_text_element(l_elem, 'UUID', p_object.UUID)
-        except AttributeError as e_error:
+        except AttributeError as e_err:
             self.put_text_element(l_elem, 'UUID', 'No UUID Given')
-            # print('ERROR in writeBaseObj {0:} {1:}'.format(e_error, PrettyPrintAny(p_object, 'Error in writeBaseObj')))
+            print('ERROR in writeBaseObj {0:} {1:}'.format(e_err, PrettyPrintAny(p_object, 'Error in writeBaseObj', 120)))
         return l_elem
 
 

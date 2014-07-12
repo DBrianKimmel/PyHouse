@@ -16,7 +16,7 @@ This is a base class that other lighting modules inherit from.
 
 # Import PyHouse files
 from Modules.utils.xml_tools import XmlConfigTools
-# from Modules.utils.tools import PrettyPrintAny
+from Modules.utils.tools import PrettyPrintAny
 
 g_debug = 0
 
@@ -35,8 +35,8 @@ class ReadWriteConfigXml(XmlConfigTools):
         p_device_obj.Coords = self.get_text_from_xml(p_entry_xml, 'Coords')
         p_device_obj.IsDimmable = self.get_bool_from_xml(p_entry_xml, 'IsDimmable')
         p_device_obj.ControllerFamily = self.get_text_from_xml(p_entry_xml, 'ControllerFamily')
-        p_device_obj.RoomName = p_entry_xml.findtext('RoomName')
-        p_device_obj.LightingType = p_entry_xml.findtext('LightingType')
+        p_device_obj.LightingType = self.get_text_from_xml(p_entry_xml, 'LightingType')
+        p_device_obj.RoomName = self.get_text_from_xml(p_entry_xml, 'RoomName')
         # PrettyPrintAny(p_device_obj, 'Lighting_Core - lighting')
         return p_device_obj
 

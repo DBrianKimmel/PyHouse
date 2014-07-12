@@ -14,7 +14,7 @@ from Modules.Core.data_objects import ControllerData
 from Modules.lights.lighting_core import ReadWriteConfigXml
 from Modules.utils import pyh_log
 from Modules.drivers import interface
-from Modules.utils.tools import PrettyPrintAny
+# from Modules.utils.tools import PrettyPrintAny
 
 g_debug = 1
 LOG = pyh_log.getLogger('PyHouse.Controller  ')
@@ -47,21 +47,24 @@ class ControllersAPI(ReadWriteConfigXml):
         try:
             l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[l_family].ModuleAPI
             l_api.extract_device_xml(p_controller_obj, p_xml)
-        except KeyError:  # ControllerFamily invalid or missing
-            pass
+        except KeyError as e_err:  # ControllerFamily invalid or missing
+            LOG.error('ERROR ReadFamilyData {0:}'.format(e_err))
 
     def _read_interface_data(self, p_obj, p_xml):
         interface.ReadWriteConfigXml().extract_xml(p_obj, p_xml)
         pass
 
     def read_one_controller_xml(self, p_controller_xml):
-        l_controller_obj = ControllerData()
-        l_controller_obj = self.read_base_lighting_xml(l_controller_obj, p_controller_xml)
-        l_controller_obj.Key = self.m_count  # Renumber
-        # PrettyPrintAny(l_controller_obj, 'LightingController - readOneController - ControllerObj', 100)
-        self._read_controller_data(l_controller_obj, p_controller_xml)
-        self._read_family_data(l_controller_obj, p_controller_xml)
-        self._read_interface_data(l_controller_obj, p_controller_xml)
+        try:
+            l_controller_obj = ControllerData()
+            l_controller_obj = self.read_base_lighting_xml(l_controller_obj, p_controller_xml)
+            l_controller_obj.Key = self.m_count  # Renumber
+            # PrettyPrintAny(l_controller_obj, 'LightingController - readOneController - ControllerObj', 100)
+            self._read_controller_data(l_controller_obj, p_controller_xml)
+            self._read_family_data(l_controller_obj, p_controller_xml)
+            self._read_interface_data(l_controller_obj, p_controller_xml)
+        except Exception as e_err:
+            LOG.error('ReadOneController ERROR {0:}'.format(e_err))
         return l_controller_obj
 
     def read_controllers_xml(self, p_controller_sect_xml):
@@ -76,7 +79,7 @@ class ControllersAPI(ReadWriteConfigXml):
                 l_dict[self.m_count] = l_controller_obj
                 self.m_count += 1
         except AttributeError as e_error:  # No Controller section
-            print('Lighting Controllers - No Controllers found - {0:}'.format(e_error))
+            LOG.warning('Lighting Controllers - No Controllers found - {0:}'.format(e_error))
             l_dict = {}
         return l_dict
 

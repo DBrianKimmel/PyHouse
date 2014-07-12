@@ -25,8 +25,10 @@ import xml.etree.ElementTree as ET
 # Import PyHouse files
 from Modules.Core.data_objects import LightData
 from Modules.lights.lighting_core import ReadWriteConfigXml
+from Modules.utils import pyh_log
 
 g_debug = 0
+LOG = pyh_log.getLogger('PyHouse.LightgLights')
 
 
 class LightingLightsAPI(ReadWriteConfigXml):
@@ -48,9 +50,12 @@ class LightingLightsAPI(ReadWriteConfigXml):
         p_obj.CurLevel = self.get_int_from_xml(p_xml, 'CurLevel', 0)
 
     def _read_family_data(self, p_obj, p_xml):
-        l_family = p_obj.ControllerFamily
-        l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[l_family].ModuleAPI
-        l_api.extract_device_xml(p_obj, p_xml)
+        try:
+            l_family = p_obj.ControllerFamily
+            l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[l_family].ModuleAPI
+            l_api.extract_device_xml(p_obj, p_xml)
+        except Exception as e_err:
+            LOG.error('ERROR in reading family Data {0:}'.format(e_err))
 
     def read_one_light_xml(self, p_light_xml):
         l_light_obj = LightData()
@@ -68,7 +73,7 @@ class LightingLightsAPI(ReadWriteConfigXml):
                 l_lights_dict[self.m_count] = self.read_one_light_xml(l_light_xml)
                 self.m_count += 1
         except AttributeError as e_error:  # No Lights section
-            print('Lighting_Lights - No Lights defined - {0:}'.format(e_error))
+            LOG.warning('Lighting_Lights - No Lights defined - {0:}'.format(e_error))
             l_lights_dict = {}
         return l_lights_dict
 

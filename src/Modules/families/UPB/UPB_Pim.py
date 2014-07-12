@@ -443,9 +443,9 @@ class UpbPimAPI(Device_UPB.ReadWriteXml, CreateCommands):
         l_pim = UPBData()
         l_pim.InterfaceType = self.m_controller_obj.InterfaceType
         l_pim.Name = self.m_controller_obj.Name
-        l_pim.UPBAddress = int(self.m_controller_obj.UPBAddress, 0)
+        l_pim.UPBAddress = self.m_controller_obj.UPBAddress
         l_pim.UPBPassword = self.m_controller_obj.UPBPassword
-        l_pim.UPBNetworkID = int(self.m_controller_obj.UPBNetworkID, 0)
+        l_pim.UPBNetworkID = self.m_controller_obj.UPBNetworkID
         LOG.info('Found UPB PIM named: {0:}, Type={1:}'.format(l_pim.Name, l_pim.InterfaceType))
         if self.m_controller_obj.InterfaceType.lower() == 'serial':
             from Modules.drivers import Driver_Serial

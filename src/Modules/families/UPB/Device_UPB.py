@@ -4,18 +4,17 @@
 """
 
 # Import system type stuff
-import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from Modules.Core.data_objects import UPBData
 from Modules.utils import xml_tools
 from Modules.utils import pyh_log
 
-g_debug = 0
+g_debug = 9
 LOG = pyh_log.getLogger('PyHouse.Device_UPB  ')
 
 
-class ReadWriteXml(object):
+class ReadWriteXml(xml_tools.XmlConfigTools):
     """Interface to the lights of this module.
     """
 
@@ -26,19 +25,19 @@ class ReadWriteXml(object):
         @return: a dict of the entry to be attached to a house object.
         """
         l_obj = UPBData()
-        l_obj.UPBNetworkID = p_entry_xml.findtext('UPBNetworkID')
-        l_obj.UPBPassword = p_entry_xml.findtext('UPBPassword')
-        l_obj.UPBAddress = p_entry_xml.findtext('UPBAddress')
+        l_obj.UPBAddress = self.get_int_from_xml(p_entry_xml, 'Address', 255)
+        l_obj.UPBNetworkID = self.get_int_from_xml(p_entry_xml, 'UPBNetworkID')
+        l_obj.UPBPassword = self.get_int_from_xml(p_entry_xml, 'UPBPassword')
         xml_tools.stuff_new_attrs(p_device_obj, l_obj)
         return p_device_obj
 
     def insert_device_xml(self, p_entry_xml, p_device_obj):
         try:
-            ET.SubElement(p_entry_xml, 'UPBNetworkID').text = self.put_str(p_device_obj.UPBNetworkID)
-            ET.SubElement(p_entry_xml, 'UPBPassword').text = str(p_device_obj.UPBPassword)
-            ET.SubElement(p_entry_xml, 'UPBAddress').text = str(p_device_obj.UPBAddress)
-        except AttributeError:
-            pass
+            self.put_int_element(p_entry_xml, 'UPBAddress', p_device_obj.UPBAddress)
+            self.put_int_element(p_entry_xml, 'UPBNetworkID', p_device_obj.UPBNetworkID)
+            self.put_int_element(p_entry_xml, 'UPBPassword', p_device_obj.UPBPassword)
+        except AttributeError as e_err:
+            LOG.error('InsertDeviceXML ERROR {0:}'.format(e_err))
 
 
 import UPB_Pim
@@ -87,16 +86,15 @@ class API(ReadWriteXml):
                 if l_controller_obj.Active != True:
                     continue
                 l_controller_obj._HandlerAPI.Stop(l_controller_obj)
-        except AttributeError:
+        except AttributeError as e_err:
+            LOG.error('Stop ERROR {0:}'.format(e_err))
             pass  # no controllers for house (House is being added)
         return p_xml
 
     def ChangeLight(self, p_light_obj, p_level, _p_rate = 0):
-        try:
-            for l_controller_obj in self.m_house_obj.Controllers.itervalues():
-                if (l_controller_obj.ControllerFamily == 'UPB') and (l_controller_obj.Active == True):
-                    l_controller_obj._HandlerAPI.ChangeLight(p_light_obj, p_level)
-        except AttributeError:
-            pass
+        if g_debug >= 1:
+            LOG.debug('Change light Name:{0:}, ControllerFamily:{1:}'.format(p_light_obj.Name, p_light_obj.ControllerFamily))
+        _l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[p_light_obj.ControllerFamily].ModuleAPI
+        self.m_plm.ChangeLight(p_light_obj, p_level)
 
 # ## END

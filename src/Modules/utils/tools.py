@@ -17,6 +17,10 @@ Various tools that can be imported.  Named differently for recognition.
 from xml.etree import ElementTree as ET
 from xml.dom import minidom
 
+# Import PyMh files
+
+g_debug = 1
+
 
 def PrettyPrintAny(p_any, title = '', maxlen = 180):
     l_type = type(p_any)
@@ -298,23 +302,27 @@ class Lister():
         return l_ret
 
 def get_light_object(p_pyhouse_obj, name = None, key = None):
-    """return the light object for a given house using the given value.
+    """return the light object for a house using the given value.
     Either a name or a key may be used to identify the light.
 
     TODO: switch from key to UUID.
+    Add other devices
 
     @return: the Light object found or None.
     """
     l_lights = p_pyhouse_obj.House.OBJs.Lights
     if name != None:
         for l_obj in l_lights.itervalues():
+            # print('xxx {0:}'.format(l_obj.Name))
             if l_obj.Name == name:
                 return l_obj
+        print('tools().GetLightObj using Name:{0:} - lookup failed'.format(name))
     elif key != None:
         for l_obj in l_lights.itervalues():
             if l_obj.Key == key:
                 return l_obj
-        return None
+    print('tools().GetLightObj failed - arg error Name:{0:}, Key:{1:}'.format(name, key))
+    return None
 
 
 __all__ = [

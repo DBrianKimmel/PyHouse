@@ -41,8 +41,8 @@ class Utility(ControllersAPI, ButtonsAPI, LightingLightsAPI):
             p_pyhouse_obj.House.OBJs.Controllers = ControllersAPI(p_pyhouse_obj).read_controllers_xml(l_house_xml.find('ControllerSection'))
             p_pyhouse_obj.House.OBJs.Buttons = ButtonsAPI(p_pyhouse_obj).read_buttons_xml(l_house_xml.find('ButtonSection'))
             p_pyhouse_obj.House.OBJs.Lights = LightingLightsAPI(p_pyhouse_obj).read_lights_xml(l_house_xml.find('LightSection'))
-        except AttributeError:
-            pass
+        except AttributeError as e_err:
+            LOG.error('ReadLighting ERROR - {0:}'.format(e_err))
 
     def _write_lighting_xml(self, p_xml):
         LOG.info('Writing lights, buttons and controllers ')
@@ -88,7 +88,7 @@ class API(Utility):
             LOG.info("Turn Light {0:} to level {1:}, ControllerFamily:{2:}".format(l_light_obj.Name, p_level, l_light_obj.ControllerFamily))
             l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[l_light_obj.ControllerFamily].ModuleAPI
             l_api.ChangeLight(l_light_obj, p_level)
-        except Exception as e_error:
-            print('Lighting Change Light ERROR - {0:}'.format(e_error))
+        except Exception as e_err:
+            LOG.error('ChangeLight ERROR - {0:}'.format(e_err))
 
 # ## END DBK

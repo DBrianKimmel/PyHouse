@@ -16,8 +16,10 @@ import xml.etree.ElementTree as ET
 # Import PyMh files
 from Modules.Core.data_objects import SerialControllerData, USBControllerData, EthernetControllerData
 from Modules.utils import xml_tools
+from Modules.utils import pyh_log
 
 g_debug = 0
+LOG = pyh_log.getLogger('PyHouse.Controller  ')
 
 """Note:
 There must be a 'Data' class for each valid interface.

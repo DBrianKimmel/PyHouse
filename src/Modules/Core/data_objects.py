@@ -136,9 +136,9 @@ class UPBData(LightData):
     def __init__(self):
         super(UPBData, self).__init__()
         self.ControllerFamily = 'UPB'
-        self.UPBAddress = 0xFF
-        self.UPBPassword = None
-        self.UPBNetworkID = 0xFF
+        self.UPBAddress = 0
+        self.UPBPassword = 0
+        self.UPBNetworkID = 0
 
 
 class X10LightingData(LightData):
@@ -271,8 +271,8 @@ class ScheduleData(ABaseObject):
         self.Object = None  # a light (perhaps other) object
         self.Rate = 0
         self.RoomName = None
-        self.Time = None
         self.ScheduleType = 'Device'  # For future expansion into scenes, entertainment etc.
+        self.Time = None
         # for use by web browser - not saved in xml
         self.HouseIx = None
         self.DeleteFlag = False

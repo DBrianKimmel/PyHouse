@@ -50,7 +50,7 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         @return: a dict of the extracted Insteon Specific data.
         """
         l_insteon_obj = InsteonData()
-        l_insteon_obj.InsteonAddress = Insteon_utils.dotted_hex2int(self.get_text_from_xml(p_entry_xml, 'Address', '88.88.88'))
+        l_insteon_obj.InsteonAddress = Insteon_utils.dotted_hex2int(self.get_text_from_xml(p_entry_xml, 'Address'))
         l_insteon_obj.DevCat = self.get_int_from_xml(p_entry_xml, 'DevCat')
         l_insteon_obj.GroupList = self.get_text_from_xml(p_entry_xml, 'GroupList')
         l_insteon_obj.GroupNumber = self.get_int_from_xml(p_entry_xml, 'GroupNumber')
