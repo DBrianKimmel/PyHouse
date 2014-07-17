@@ -385,20 +385,6 @@ class InsteonPlmAPI(InsteonAllLinks):
     def put_aldb_record(self, p_addr, p_record):
         pass
 
-    def get_engine_version(self, p_obj):
-        """ i1 = pre 2007 I think
-            i2 = no checksum - new commands
-            i2cs = 2012 add checksums + new commands.
-        """
-        LOG.debug('Request Insteon Engine version from device: {0:}'.format(p_obj.Name))
-        self.queue_62_command(p_obj.Name, MESSAGE_TYPES['engine_version'], 0)  # 0x0D
-
-    def get_id_request(self, p_obj):
-        """Get the device DevCat
-        """
-        LOG.debug('Request Insteon ID(devCat) from device: {0:}'.format(p_obj.Name))
-        self.queue_62_command(p_obj.Name, MESSAGE_TYPES['id_request'], 0)  # 0x10
-
     def ping_plm(self):
         """Send a command to the plm and get its response.
         """
@@ -443,24 +429,44 @@ class LightHandlerAPI(InsteonPlmAPI):
         LOG.info('Setting mode of Insteon controller {0:}.'.format(p_controller_obj.Name))
         self.queue_6B_command(MODE_MONITOR)
 
-    def _get_one_light_status(self, p_light_obj):
+    def _get_one_light_status(self, p_obj):
         """Get the status of a light.
         We will (apparently) get back a 62-ACK followed by a 50 with the level in the response.
         """
-        self.queue_62_command(p_light_obj, MESSAGE_TYPES['status_request'], 0)  # 0x19
+        LOG.debug('Request Status from device: {0:}'.format(p_obj.Name))
+        self.queue_62_command(p_obj, MESSAGE_TYPES['status_request'], 0)  # 0x19
+
+    def _get_engine_version(self, p_obj):
+        """ i1 = pre 2007 I think
+            i2 = no checksum - new commands
+            i2cs = 2012 add checksums + new commands.
+        """
+        LOG.debug('Request Engine version from device: {0:}'.format(p_obj.Name))
+        self.queue_62_command(p_obj.Name, MESSAGE_TYPES['engine_version'], 0)  # 0x0D
+
+    def _get_id_request(self, p_obj):
+        """Get the device DevCat
+        """
+        LOG.debug('Request ID(devCat) from device: {0:}'.format(p_obj.Name))
+        self.queue_62_command(p_obj.Name, MESSAGE_TYPES['id_request'], 0)  # 0x10
+
+    def get_obj_info(self, l_obj):
+        if l_obj.ControllerFamily != 'Insteon':
+            return
+        if l_obj.Active != True:
+            return
+        self._get_one_light_status(l_obj)
+        self._get_id_request(l_obj)
+        self._get_engine_version(l_obj)
 
     def get_all_lights_information(self):
         """Get the status (current level) of all lights.
         """
-        LOG.info('Getting light levels of all Insteon lights')
-        for l_light_obj in self.m_house_obj.Lights.itervalues():
-            if l_light_obj.ControllerFamily != 'Insteon':
-                continue
-            if l_light_obj.Active != True:
-                continue
-            self._get_one_light_status(l_light_obj)
-            self.get_engine_version(l_light_obj)
-            self.get_id_request(l_light_obj)
+        LOG.info('Getting devide information of all Insteon devices')
+        for l_light_obj in self.m_pyhouse_obj.House.OBJs.Lights.itervalues():
+            self.get_obj_info(l_light_obj)
+        for l_button_obj in self.m_pyhouse_obj.House.OBJs.Button.itervalues():
+            self.get_obj_info(l_button_obj)
 
 
 class Utility(LightHandlerAPI, PlmDriverProtocol):
