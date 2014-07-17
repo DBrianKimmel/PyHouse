@@ -120,7 +120,7 @@ class InsteonData (LightData):
     """
     def __init__(self):
         super(InsteonData, self).__init__()
-        self.InsteonAddress = 0  # 3 bytes
+        self.InsteonAddress = 0  # Long integer internally - '1A.B3.3C' for external reaability
         self.IsController = False
         self.DevCat = 0  # DevCat and SubCat (2 bytes)
         self.ControllerFamily = 'Insteon'

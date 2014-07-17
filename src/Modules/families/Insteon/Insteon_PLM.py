@@ -135,22 +135,22 @@ class CreateCommands(InsteonPlmUtility):
         """
         pass
 
-    def queue_62_command(self, p_light_obj, p_cmd1, p_cmd2):
+    def queue_62_command(self, p_obj, p_cmd1, p_cmd2):
         """Send Insteon Standard Length Message (8 bytes).
         See page 243 of Insteon Developers Guide.
 
-        @param p_light_obj: is the Light object of the device
+        @param p_obj: is the Light object of the device
         @param p_cmd1: is the first command byte
         @param p_cmd2: is the second command byte
         @return: the response from queue_plm_command
         """
         l_command = self._queue_command('insteon_send')
-        Insteon_utils.int2message(p_light_obj.InsteonAddress, l_command, 2)
+        Insteon_utils.int2message(p_obj.InsteonAddress, l_command, 2)
         l_command[5] = FLAG_MAX_HOPS + FLAG_HOPS_LEFT  # 0x0F
-        l_command[6] = p_light_obj._Command1 = p_cmd1
-        l_command[7] = p_light_obj._Command2 = p_cmd2
+        l_command[6] = p_obj._Command1 = p_cmd1
+        l_command[7] = p_obj._Command2 = p_cmd2
         if g_debug >= 1:
-            LOG.debug("Queue62 command to device: {2:}, Command: {0:#X},{1:#X}, Address: ({3:x}.{4:x}.{5:x})".format(p_cmd1, p_cmd2, p_light_obj.Name, l_command[2], l_command[3], l_command[4]))
+            LOG.debug("Queue62 command to device: {2:}, Command: {0:#X},{1:#X}, Address: ({3:x}.{4:x}.{5:x})".format(p_cmd1, p_cmd2, p_obj.Name, l_command[2], l_command[3], l_command[4]))
         return self.queue_plm_command(l_command)
 
     def queue_63_command(self, p_obj):
@@ -450,7 +450,7 @@ class LightHandlerAPI(InsteonPlmAPI):
         LOG.debug('Request ID(devCat) from device: {0:}'.format(p_obj.Name))
         self.queue_62_command(p_obj.Name, MESSAGE_TYPES['id_request'], 0)  # 0x10
 
-    def get_obj_info(self, l_obj):
+    def _get_obj_info(self, l_obj):
         if l_obj.ControllerFamily != 'Insteon':
             return
         if l_obj.Active != True:
@@ -464,9 +464,9 @@ class LightHandlerAPI(InsteonPlmAPI):
         """
         LOG.info('Getting devide information of all Insteon devices')
         for l_light_obj in self.m_pyhouse_obj.House.OBJs.Lights.itervalues():
-            self.get_obj_info(l_light_obj)
+            self._get_obj_info(l_light_obj)
         for l_button_obj in self.m_pyhouse_obj.House.OBJs.Button.itervalues():
-            self.get_obj_info(l_button_obj)
+            self._get_obj_info(l_button_obj)
 
 
 class Utility(LightHandlerAPI, PlmDriverProtocol):

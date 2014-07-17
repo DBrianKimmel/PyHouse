@@ -33,8 +33,9 @@ def int2message(p_int, p_message, p_index):
     The message must exist and be long enough to include a 3 byte area for the address.
     """
     l_ix = 256 * 256
+    l_int = p_int
     while l_ix > 0:
-        p_message[p_index], p_int = divmod(p_int, l_ix)
+        p_message[p_index], l_int = divmod(l_int, l_ix)
         l_ix = l_ix / 256
         p_index += 1
     return p_message
