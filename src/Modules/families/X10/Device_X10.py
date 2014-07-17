@@ -33,11 +33,9 @@ class ReadWriteXml(object):
         if p_device_obj.ControllerFamily == 'Insteon':
             ET.SubElement(p_entry_xml, 'Address').text = p_device_obj.Address
             ET.SubElement(p_entry_xml, 'IsController').text = self.put_bool(p_device_obj.IsController)
-            ET.SubElement(p_entry_xml, 'DevCat').text = str(p_device_obj.DevCat)
             ET.SubElement(p_entry_xml, 'GroupList').text = str(p_device_obj.GroupList)
             ET.SubElement(p_entry_xml, 'GroupNumber').text = str(p_device_obj.GroupNumber)
             ET.SubElement(p_entry_xml, 'IsMaster').text = str(p_device_obj.IsMaster)
-            ET.SubElement(p_entry_xml, 'ProductKey').text = str(p_device_obj.ProductKey)
             ET.SubElement(p_entry_xml, 'IsResponder').text = self.put_bool(p_device_obj.IsResponder)
         elif p_device_obj.ControllerFamily == 'UPB':
             try:

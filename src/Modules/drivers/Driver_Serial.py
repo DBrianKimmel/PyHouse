@@ -56,11 +56,15 @@ class SerialAPI(object):
     m_serial = None
 
     def twisted_open_device(self, p_controller_obj):
+        """
+        @return: True if the driver opened OK and is usable
+                 False if the driver is not functional for any reason.
+        """
         try:
             self.m_serial = SerialPort(SerialProtocol(self, p_controller_obj), p_controller_obj.Port,
                     reactor, baudrate = p_controller_obj.BaudRate)
         except serial.serialutil.SerialException as e:
-            l_msg = "Open failed for Device:{0:}, Port:{1:}".format(p_controller_obj.Name, p_controller_obj.Port), e
+            l_msg = "ERROR Open failed for Device:{0:}, Port:{1:}".format(p_controller_obj.Name, p_controller_obj.Port), e
             LOG.error(l_msg)
             return False
         LOG.info("Opened Device:{0:}, Port:{1:}".format(p_controller_obj.Name, p_controller_obj.Port))

@@ -21,6 +21,7 @@ For each message passed to this module:
 
 # Import PyMh files
 from Modules.Core.data_objects import InsteonData
+from Modules.Core import conversions
 from Modules.utils.tools import PrintBytes
 from Modules.families.Insteon.Insteon_constants import *
 from Modules.families.Insteon import Insteon_utils
@@ -62,7 +63,7 @@ class Utility(object):
                 continue  # ignore any non-Insteon devices in the class
             if l_obj.InsteonAddress == p_addr:
                 return l_obj
-        # LOG.warning("Address {0:} NOT found".format(Insteon_utils.int2dotted_hex(p_addr)))
+        # LOG.warning("Address {0:} NOT found".format(Insteon_utils.int2dotted_3hex(p_addr)))
         return None
 
     def get_obj_from_message(self, p_message, p_index):
@@ -78,7 +79,7 @@ class Utility(object):
             Add other devices if we add them.
         """
         l_id = Insteon_utils.message2int(p_message, p_index)  # Extract the 3 byte address from the message and convert to an Int.
-        l_dotted = Insteon_utils.int2dotted_hex(l_id)
+        l_dotted = conversions.int2dotted_hex(l_id, 3)
         l_ret = self._find_addr(self.m_house_obj.Lights, l_id)
         if l_ret == None:
             l_ret = self._find_addr(self.m_house_obj.Controllers, l_id)
@@ -87,7 +88,7 @@ class Utility(object):
         if l_ret == None:
             l_ret = self._find_addr(self.m_pyhouse_obj.House.OBJs.Thermostats, l_id)
         if l_ret == None:
-            LOG.warning("Address {0:} NOT found".format(Insteon_utils.int2dotted_hex(l_id)))
+            LOG.warning("Address {0:} NOT found".format(conversions.int2dotted_hex(l_id, 3)))
             l_ret = InsteonData()  # an empty new object
             l_ret.Name = '*NoName-' + l_dotted + '-**'
         if g_debug >= 2:

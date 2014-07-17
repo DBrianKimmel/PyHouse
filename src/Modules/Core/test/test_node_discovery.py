@@ -16,7 +16,7 @@ from twisted.internet import error
 
 # Import PyMh files and modules.
 from Modules.Core import node_discovery
-from src.test import xml_data
+from test import xml_data
 from Modules.Core.data_objects import PyHouseData
 
 XML = xml_data.XML_LONG

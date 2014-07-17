@@ -18,7 +18,8 @@ from nevow import loaders
 from nevow import athena
 
 # Import PyMh files and modules.
-from Modules.web.web_utils import JsonUnicode, GetJSONHouseInfo, dotted_hex2int
+from Modules.Core import conversions
+from Modules.web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.lights import lighting_lights
 from Modules.utils import pyh_log
 # from Modules.utils.tools import PrettyPrintAny
@@ -88,13 +89,13 @@ class LightsElement(athena.LiveElement):
         if len(l_obj.UUID) < 8:
             l_obj.UUID = str(uuid.uuid1())
         if l_obj.ControllerFamily == 'Insteon':
-            l_obj.InsteonAddress = dotted_hex2int(l_json['InsteonAddress'])
-            l_obj.DevCat = l_json['DevCat']
+            l_obj.InsteonAddress = conversions.dotted_hex2int(l_json['InsteonAddress'])
+            l_obj.DevCat = conversions.dotted_hex2int(l_json['DevCat'])
             l_obj.GroupNumber = l_json['GroupNumber']
             l_obj.GroupList = l_json['GroupList']
             l_obj.IsMaster = l_json['IsMaster']
             l_obj.IsResponder = l_json['IsResponder']
-            l_obj.ProductKey = l_json['ProductKey']
+            l_obj.ProductKey = conversions.dotted_hex2int(l_json['ProductKey'])
         self.m_pyhouse_obj.House.OBJs.Lights[l_light_ix] = l_obj
 
 # ## END DBK

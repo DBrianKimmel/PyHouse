@@ -1,12 +1,11 @@
 """
-@name: PyHouse/src/Modules/communication/test/test_send_email.py
-@author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
-@Copyright (c) 2013-2014 by D. Brian Kimmel
+@name: PyHouse/src/Modules/utils/test/test_config_file.py
+@author: briank
+@contact: <d.briankimmel@gmail.com>
+@Copyright: (c)  2014 by briank
 @license: MIT License
-@note: Created on Jun 3, 2014
-@summary: Schedule events
-
+@note: Created on Jul 15, 2014
+@Summary:
 
 """
 
@@ -16,12 +15,12 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import ThermostatData
-from Modules.hvac import thermostat
+from Modules.utils import config_file
 from Modules.housing import house
-from Modules.web import web_utils
 from Modules.Core import setup
-from Modules.utils.tools import PrettyPrintAny
+# from Modules.utils.tools import PrettyPrintAny
 from test import xml_data
+from Modules.utils.tools import PrettyPrint, PrettyPrintAny
 
 
 class SetupMixin(object):
@@ -32,9 +31,9 @@ class SetupMixin(object):
         self.m_pyhouse_obj = setup.build_pyhouse_obj(self)
         self.m_pyhouse_obj.Xml.XmlRoot = self.m_root_xml
         self.m_thermostat_obj = ThermostatData()
-        self.m_api = thermostat.API()
+        self.m_api = config_file.ConfigAPI()
         self.m_pyhouse_obj = house.API().update_pyhouse_obj(self.m_pyhouse_obj)
-        PrettyPrintAny(self.m_pyhouse_obj, 'SetupMixin.Setup - PyHouse_obj', 100)
+        # PrettyPrintAny(self.m_pyhouse_obj, 'SetupMixin.Setup - PyHouse_obj', 100)
         return self.m_pyhouse_obj
 
 
@@ -50,17 +49,26 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         self.m_house_div_xml = self.m_root_xml.find('HouseDivision')
         self.m_thermostat_sect_xml = self.m_house_div_xml.find('ThermostatSection')
         self.m_thermostat_xml = self.m_thermostat_sect_xml.find('Thermostat')
-        # PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse_obj', 120)
 
-    def test_0201_FindXml(self):
-        """ Be sure that the XML contains the right stuff.
-        """
-        self.assertEqual(self.m_root_xml.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
-        self.assertEqual(self.m_house_div_xml.tag, 'HouseDivision', 'XML - No House Division')
-        self.assertEqual(self.m_thermostat_sect_xml.tag, 'ThermostatSection', 'XML - No Thermostat section')
-        self.assertEqual(self.m_thermostat_xml.tag, 'Thermostat', 'XML - No Thermostat Entry')
-        # PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse_obj', 120)
-        # PrettyPrintAny(self.m_pyhouse_obj.Xml, '201 PyHouse_obj.Xml', 120)
 
+    def test_0201_FindDir(self):
+        l_dir = self.m_api._locate_config_dir()
+        print(l_dir)
+
+    def test_0202_FindFile(self):
+        l_file = self.m_api._locate_config_file()
+        print(l_file)
+
+    def test_0221_ReadConfig(self):
+        self.m_api.read_config_file(self.m_pyhouse_obj)
+        PrettyPrintAny(self.m_pyhouse_obj.Xml, 'Xml', 120)
+        PrettyPrintAny(self.m_pyhouse_obj.Xml.XmlRoot, 'XmlRoot', 120)
+
+    def test_0231_WriteConfig(self):
+        self.m_api.read_config_file(self.m_pyhouse_obj)
+        l_xml = self.m_pyhouse_obj.Xml.XmlRoot
+        l_file = self.m_pyhouse_obj.Xml.XmlFileName
+        self.m_api.write_config_file(self.m_pyhouse_obj, l_xml, l_file)
+        pass
 
 # ## END DBK

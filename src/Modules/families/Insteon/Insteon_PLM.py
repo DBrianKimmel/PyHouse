@@ -362,7 +362,7 @@ class InsteonAllLinks(InsteonPlmCommands):
         """
         # p_light_obj = LightData()
         p_light_obj = InsteonData()
-        p_light_obj.InsteonAddress = self.dotted_hex2int(p_address)
+        p_light_obj.InsteonAddress = self.dotted_3hex2int(p_address)
         p_light_obj.GroupNumber = p_group
         # p_code = 0x00  # Find First
         p_code = 0x00  # Delete First Found record

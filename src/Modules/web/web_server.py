@@ -56,7 +56,7 @@ class ClientConnections(object):
         self.ConnectedBrowsers.append(p_login)
 
 
-class ReadWriteConfigXml(xml_tools.ConfigFile):
+class ReadWriteConfigXml(xml_tools.PutGetXML):
     """
     """
 

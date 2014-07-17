@@ -17,7 +17,8 @@ from nevow import loaders
 from nevow import athena
 
 # Import PyMh files and modules.
-from Modules.web.web_utils import JsonUnicode, GetJSONHouseInfo, dotted_hex2int
+from Modules.Core import conversions
+from Modules.web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.drivers import interface
 from Modules.lights import lighting_controllers
 from Modules.utils import pyh_log
@@ -99,8 +100,8 @@ class ControllersElement(athena.LiveElement):
         l_obj.InterfaceType = l_json['InterfaceType']
         l_obj.Port = l_json['Port']
         if l_obj.ControllerFamily == 'Insteon':
-            l_obj.InsteonAddress = dotted_hex2int(l_json['InsteonAddress'])
-            l_obj.DevCat = l_json['DevCat']
+            l_obj.InsteonAddress = conversions.dotted_hex2int(l_json['InsteonAddress'])
+            l_obj.DevCat = conversions.dotted_hex2int(l_json['DevCat'])
             l_obj.GroupNumber = l_json['GroupNumber']
             l_obj.GroupList = l_json['GroupList']
             l_obj.IsMaster = l_json['IsMaster']

@@ -9,9 +9,11 @@
 @note: Created on Mar 20, 2014
 @summary: This module is the definition of major data objects.
 
+self.Entry        This entry is stored in xml and memory when read in.
+self._Entry       This entry in NOT stored in XML but is stored in memory when read in.
+
 Specific data may be loaded into some attributes for unit testing.
 
-NOTE that the ...Data entries need to be dicts so JSON encoding of the data works properly.
 """
 
 __version_info__ = (1, 3, 0)
@@ -98,9 +100,9 @@ class LightData(BaseLightingData):
     """
     def __init__(self):
         super(LightData, self).__init__()
+        self.CurLevel = 0
         self.IsController = None
         self.LightingType = 'Light'
-        self.CurLevel = 0
 
 
 class FamilyData(ABaseObject):
@@ -155,6 +157,7 @@ class ComputerInformation(object):
     """
     def __init__(self):
         self.InternetConnection = {}  # InternetConnectionData()
+        self.Email = {}  # EmailData()
         self.Logs = {}  # LogData()
         self.Nodes = {}  # NodeData()
         self.Web = {}  # WebData()
@@ -316,6 +319,7 @@ class PyHouseAPIs(object):
         self.CommunicationsAPI = None
         self.ComouterAPI = None
         self.CoreAPI = None
+        self.EmailAPI = None
         self.EntertainmentAPI = None
         self.HouseAPI = None
         self.HvacAPI = None
@@ -423,5 +427,14 @@ class LoginData(object):
         self.LoginName = None
         self.LoginEncryptedPassword = None
 
+
+class EmailData(object):
+    """Email information.
+    """
+    def __init__(self):
+        self.EmailFromAddress = ''
+        self.EmailToAddress = ''
+        self.GmailLogin = ''
+        self.GmailPassword = ''
 
 # ## END DBK

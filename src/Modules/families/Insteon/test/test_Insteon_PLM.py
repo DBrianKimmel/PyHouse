@@ -61,8 +61,8 @@ class Test_01(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_api._get_message_length(MSG_99), 1)
 
     def test_0102_ExtractAddress(self):
-        self.assertEqual(self.m_api._get_addr_from_message(MSG_50, 2), Insteon_utils.dotted_hex2int(ADR_16C9D0))
-        self.assertEqual(self.m_api._get_addr_from_message(MSG_62, 2), Insteon_utils.dotted_hex2int(ADR_17C272))
+        self.assertEqual(self.m_api._get_addr_from_message(MSG_50, 2), Insteon_utils.dotted_3hex2int(ADR_16C9D0))
+        self.assertEqual(self.m_api._get_addr_from_message(MSG_62, 2), Insteon_utils.dotted_3hex2int(ADR_17C272))
 
     def test_0103_QueueCommand(self):
         l_ret_1 = self.m_api._queue_command('insteon_send')

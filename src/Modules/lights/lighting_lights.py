@@ -45,7 +45,7 @@ class LightingLightsAPI(ReadWriteConfigXml):
         self.m_pyhouse_obj = p_pyhouse_obj
 
     def _read_light_data(self, p_obj, p_xml):
-        p_obj.IsController = self.get_text_from_xml(self, p_xml, 'IsController')
+        p_obj.IsController = self.get_text_from_xml(p_xml, 'IsController')
         p_obj.LightingType = self.get_text_from_xml(p_xml, 'LightingType', 'Light')
         p_obj.CurLevel = self.get_int_from_xml(p_xml, 'CurLevel', 0)
 

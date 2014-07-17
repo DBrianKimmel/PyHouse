@@ -24,10 +24,10 @@ serial_port
 
 # Import PyMh files
 from Modules.Core.data_objects import InsteonData
-from Modules.families.Insteon import Insteon_utils
+from Modules.Core import conversions
 from Modules.utils import xml_tools
 from Modules.utils import pyh_log
-# from Modules.utils.tools import PrettyPrintAny
+from Modules.utils.tools import PrettyPrintAny
 
 g_debug = 1
 LOG = pyh_log.getLogger('PyHouse.Dev_Insteon ')
@@ -49,27 +49,32 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         @param p_device_obj : is the Basic Object that will have the extracted elements inserted into.
         @return: a dict of the extracted Insteon Specific data.
         """
+        # PrettyPrintAny(p_entry_xml, 'DeviceInsteon extract  XML', 120)
         l_insteon_obj = InsteonData()
-        l_insteon_obj.InsteonAddress = Insteon_utils.dotted_hex2int(self.get_text_from_xml(p_entry_xml, 'Address'))
-        l_insteon_obj.DevCat = self.get_int_from_xml(p_entry_xml, 'DevCat')
+        l_insteon_obj.InsteonAddress = conversions.dotted_hex2int(self.get_text_from_xml(p_entry_xml, 'Address', '77.88.99'))
+        l_insteon_obj.DevCat = conversions.dotted_hex2int(self.get_text_from_xml(p_entry_xml, 'DevCat', 'A1.B2'))
         l_insteon_obj.GroupList = self.get_text_from_xml(p_entry_xml, 'GroupList')
-        l_insteon_obj.GroupNumber = self.get_int_from_xml(p_entry_xml, 'GroupNumber')
+        l_insteon_obj.GroupNumber = self.get_int_from_xml(p_entry_xml, 'GroupNumber', 0)
         l_insteon_obj.IsController = self.get_bool_from_xml(p_entry_xml, 'IsController')
         l_insteon_obj.IsMaster = self.get_bool_from_xml(p_entry_xml, 'IsMaster')
         l_insteon_obj.IsResponder = self.get_bool_from_xml(p_entry_xml, 'IsResponder')
-        l_insteon_obj.ProductKey = self.get_text_from_xml(p_entry_xml, 'ProductKey')
+        try:
+            l_insteon_obj.ProductKey = conversions.dotted_hex2int(self.get_text_from_xml(p_entry_xml, 'ProductKey', '98.76.54'))
+        except Exception:
+            l_insteon_obj.ProductKey = 0
         xml_tools.stuff_new_attrs(p_device_obj, l_insteon_obj)
         return l_insteon_obj
 
     def insert_device_xml(self, p_entry_xml, p_device_obj):
-        self.put_text_element(p_entry_xml, 'Address', Insteon_utils.int2dotted_hex(int(p_device_obj.InsteonAddress)))
-        self.put_int_element(p_entry_xml, 'DevCat', p_device_obj.DevCat)
+        print('Insteon Write {0:}'.format(p_device_obj.Name))
+        self.put_text_element(p_entry_xml, 'Address', conversions.int2dotted_hex(p_device_obj.InsteonAddress, 3))
+        self.put_int_element(p_entry_xml, 'DevCat', conversions.int2dotted_hex(p_device_obj.DevCat, 2))
         self.put_text_element(p_entry_xml, 'GroupList', p_device_obj.GroupList)
         self.put_int_element(p_entry_xml, 'GroupNumber', p_device_obj.GroupNumber)
         self.put_bool_element(p_entry_xml, 'IsController', p_device_obj.IsController)
         self.put_bool_element(p_entry_xml, 'IsMaster', p_device_obj.IsMaster)
-        self.put_bool_element(p_entry_xml, 'IsResoonder', p_device_obj.IsResponder)
-        self.put_text_element(p_entry_xml, 'ProductKey', p_device_obj.ProductKey)
+        self.put_bool_element(p_entry_xml, 'IsResponder', p_device_obj.IsResponder)
+        self.put_text_element(p_entry_xml, 'ProductKey', conversions.int2dotted_hex(p_device_obj.ProductKey, 3))
 
 
 class API(ReadWriteConfigXml):

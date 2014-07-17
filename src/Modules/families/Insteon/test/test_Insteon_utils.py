@@ -16,7 +16,7 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.families.Insteon import Insteon_utils
-from src.test import xml_data
+from test import xml_data
 
 XML = xml_data.XML_LONG
 
@@ -43,23 +43,13 @@ class Test_01_Conversions(unittest.TestCase):
         l_result = oper(p_args)
         self.assertEqual(l_result, r)
 
-    def test_001_int2dotted(self):
-        self._test(self.inst.int2dotted_hex, 10597059, 'A1.B2.C3')
-        self._test(self.inst.int2dotted_hex, ADDR_DR_SLAVE_INT, ADDR_DR_SLAVE_DOT)
-        self._test(self.inst.int2dotted_hex, ADDR_NOOK_INT, ADDR_NOOK_DOT)
-
-    def test_002_dotted2int(self):
-        self._test(self.inst.dotted_hex2int, 'A1.B2.C3', 10597059)
-        self._test(self.inst.dotted_hex2int, ADDR_DR_SLAVE_DOT, ADDR_DR_SLAVE_INT)
-        self._test(self.inst.dotted_hex2int, ADDR_NOOK_DOT, ADDR_NOOK_INT)
-
-    def test_003_message2int(self):
+    def test_0110_message2int(self):
         result = self.inst.message2int(MSG_50, 2)
         self.assertEqual(result, ADDR_DR_SLAVE_INT)
         result = self.inst.message2int(MSG_62, 2)
         self.assertEqual(result, ADDR_NOOK_INT)
 
-    def test_004_int2message(self):
+    def test_0111_int2message(self):
         l_msg = bytearray(11)
         l_msg[:] = MSG_50
         result = self.inst.int2message(ADDR_DR_SLAVE_INT, l_msg, 2)

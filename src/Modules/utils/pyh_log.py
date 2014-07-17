@@ -29,7 +29,7 @@ from twisted.python.logfile import DailyLogFile
 
 # Import PyMh files
 from Modules.Core.data_objects import LogData
-from Modules.utils import xml_tools
+from Modules.utils.xml_tools import XmlConfigTools
 # from Modules.utils.tools import PrettyPrintAny
 
 
@@ -70,7 +70,7 @@ class Logger(object):
         tpLog.msg(message, level = level, system = self.name)
 
 
-class ReadWriteConfigXml(xml_tools.XmlConfigTools):
+class ReadWriteConfigXml(XmlConfigTools):
     """
     """
 

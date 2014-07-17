@@ -79,7 +79,5 @@ class Test_02_ReadXML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_light.Active, True, 'Bad Active')
         self.assertEqual(l_light.UUID, 'ec9d9930-89c9-11e3-a1ab-082e5f8cdfd2', 'Bad UUID')
         self.assertEqual(l_light.InsteonAddress, 1122867, 'Bad Address')
-        self.assertEqual(l_light.DevCat, '3140', 'Bad DevCat')
-        self.assertEqual(l_light.ProductKey, '30.1A.35', 'Bad ProductKey')
 
 # ## END DBK

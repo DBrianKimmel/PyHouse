@@ -24,10 +24,10 @@ from twisted.application.service import Application
 # Import PyMh files and modules.
 from Modules.Core.data_objects import PyHouseData, PyHouseAPIs, TwistedInformation, CoreServicesInformation, XmlInformation
 from Modules.Comps import computer
-# from Modules.entertain import entertainment
 from Modules.housing import house
 from Modules.utils import pyh_log
 from Modules.utils import xml_tools
+from Modules.utils.config_file import ConfigAPI
 from Modules.utils.xml_tools import XmlConfigTools
 # from Modules.utils.tools import PrettyPrintAny
 
@@ -43,7 +43,7 @@ class ReadWriteConfigXml(XmlConfigTools):
     """
 
     def setup_xml_file(self, p_pyhouse_obj):
-        p_pyhouse_obj.Xml.XmlFileName = xml_tools.open_config_file()
+        p_pyhouse_obj.Xml.XmlFileName = ConfigAPI().open_config_file()
 
     def read_xml_config_info(self, p_pyhouse_obj):
         """This will read the XML config file(s).
@@ -64,7 +64,7 @@ class ReadWriteConfigXml(XmlConfigTools):
         l_xml = self.initialize_Xml()
         self.m_pyhouse_obj.APIs.ComputerAPI.Stop(l_xml)
         self.m_pyhouse_obj.APIs.HouseAPI.Stop(l_xml)
-        xml_tools.write_xml_file(l_xml, self.m_pyhouse_obj.Xml.XmlFileName)
+        ConfigAPI().write_config_file(self.m_pyhpuse_obj, l_xml, self.m_pyhouse_obj.Xml.XmlFileName)
 
 
 class Utility(ReadWriteConfigXml):
@@ -91,9 +91,13 @@ class API(Utility):
         """
         This runs before the reactor has started - Be Careful!
         """
+        pass
 
     def Start(self, p_pyhouse_obj):
-        """The reactor is now running.
+        """
+        The reactor is now running.
+
+        @param p_pyhouse_obj: is the skeleton Obj filled in some by PyHouse.py.
         """
         LOG.info("Starting.")
         self.m_pyhouse_obj = p_pyhouse_obj

@@ -84,10 +84,10 @@ class MulticastDiscoveryServerProtocol(DatagramProtocol, DGramUtil):
 
     def datagramReceived(self, p_datagram, p_address):
         """
-        @type p_datagram: C{str}
+        @type  p_datagram: C{str}
         @param p_datagram: is the contents of the datagram.
 
-        @type p_address: C{tupple) (ipaddr, port)
+        @type  p_address: C{tupple) (IpAddr, port)
         @param p_address: is the (IpAddr, Port) of the sender of this datagram (reply to address).
         """
         l_node = NodeData()
@@ -150,7 +150,7 @@ class Utility(object):
 
     def start_node_discovery(self, p_pyhouses_obj):
         self.m_pyhouse_obj = p_pyhouses_obj
-        print('NodeDiscovery - StartNodeDiscovery - {0:}'.format(self.m_service_installed))
+        print('NodeDiscovery - StartNodeDiscovery - Service:{0:}'.format(self.m_service_installed))
         try:
             p_pyhouses_obj.Services.NodeDiscoveryService = service.Service()
             p_pyhouses_obj.Services.NodeDiscoveryService.setName('NodeDiscovery')
