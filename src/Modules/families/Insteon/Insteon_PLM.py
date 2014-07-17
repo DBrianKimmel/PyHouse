@@ -318,13 +318,7 @@ class PlmDriverProtocol(CreateCommands):
 class InsteonPlmCommands(CreateCommands):
 
     def scan_one_light(self, p_name):
-        """Scan a light.  we are looking for DevCat and any other info about
-        device.
-        send message to the light/button/etc
-        get ack of message sent
-        pause a bit
-        get response
-        ???
+        """Scan a light.  we are looking for DevCat and any other info about the device.
 
         @param p_name: is the key for the entry in Light_Data
         """
@@ -449,7 +443,13 @@ class LightHandlerAPI(InsteonPlmAPI):
         LOG.info('Setting mode of Insteon controller {0:}.'.format(p_controller_obj.Name))
         self.queue_6B_command(MODE_MONITOR)
 
-    def get_all_lights_status(self):
+    def _get_one_light_status(self, p_light_obj):
+        """Get the status of a light.
+        We will (apparently) get back a 62-ACK followed by a 50 with the level in the response.
+        """
+        self.queue_62_command(p_light_obj, MESSAGE_TYPES['status_request'], 0)  # 0x19
+
+    def get_all_lights_information(self):
         """Get the status (current level) of all lights.
         """
         LOG.info('Getting light levels of all Insteon lights')
@@ -459,12 +459,8 @@ class LightHandlerAPI(InsteonPlmAPI):
             if l_light_obj.Active != True:
                 continue
             self._get_one_light_status(l_light_obj)
-
-    def _get_one_light_status(self, p_light_obj):
-        """Get the status of a light.
-        We will (apparently) get back a 62-ACK followed by a 50 with the level in the response.
-        """
-        self.queue_62_command(p_light_obj, MESSAGE_TYPES['status_request'], 0)  # 0x19
+            self.get_engine_version(l_light_obj)
+            self.get_id_request(l_light_obj)
 
 
 class Utility(LightHandlerAPI, PlmDriverProtocol):
@@ -483,7 +479,7 @@ class Utility(LightHandlerAPI, PlmDriverProtocol):
             self.m_protocol = PlmDriverProtocol(p_pyhouse_obj, self.m_controller_obj)
             decoder.DecodeResponses(p_pyhouse_obj, p_controller_obj)
             self.set_plm_mode(self.m_controller_obj)
-            self.get_all_lights_status()
+            self.get_all_lights_information()
         return l_ret
 
 

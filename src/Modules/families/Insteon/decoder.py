@@ -468,8 +468,8 @@ class DecodeResponses(Utility):
         Basically, a response to the 62 command.
         See p 243 of developers guide.
 
-        This is an ack/nak of the command and generally is not very interesting.
-        Another response MAY follow this message with further data.
+        This is an ack/nak of the command and generally is not very interesting by itself.
+        Depending on the command sent, another response MAY follow this message with further data.
         """
         l_message = p_controller_obj._Message
         l_obj = self.get_obj_from_message(l_message, 2)
