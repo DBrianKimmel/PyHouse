@@ -189,11 +189,11 @@ class DecodeResponses(Utility):
 
     m_house_obj = None
     m_pyhouse_obj = None
-    m_index = 0
+    m_idex = 0
 
     def __init__(self, p_pyhouse_obj, p_controller_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_index = p_controller_obj.Key
+        self.m_controller_obj = p_controller_obj
 
     def decode_message(self, p_controller_obj, p_house_obj):
         """Decode a message that was ACKed / NAked.
