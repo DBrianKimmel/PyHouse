@@ -264,6 +264,7 @@ class PlmDriverProtocol(CreateCommands):
             LOG.debug("Insteon_PLM.PlmDriverProtocol.__init__()")
         p_controller_obj._Queue = Queue.Queue(300)
         self.m_controller_obj = p_controller_obj
+        self.m_decoder = decoder.DecodeResponses(p_pyhouse_obj, self.m_house_obj)
         self.dequeue_and_send()
         self.receive_loop()
 
@@ -311,7 +312,7 @@ class PlmDriverProtocol(CreateCommands):
             l_cur_len = len(l_msg)
             l_response_len = self._get_message_length(l_msg)
             if l_cur_len >= l_response_len:
-                self.decode_message(self.m_controller_obj, self.m_house_obj)
+                self.m_decoder.decode_message(self.m_controller_obj, self.m_house_obj)
 
 
 class InsteonPlmCommands(CreateCommands):
