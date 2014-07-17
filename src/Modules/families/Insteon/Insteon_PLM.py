@@ -465,7 +465,7 @@ class LightHandlerAPI(InsteonPlmAPI):
         LOG.info('Getting devide information of all Insteon devices')
         for l_light_obj in self.m_pyhouse_obj.House.OBJs.Lights.itervalues():
             self._get_obj_info(l_light_obj)
-        for l_button_obj in self.m_pyhouse_obj.House.OBJs.Button.itervalues():
+        for l_button_obj in self.m_pyhouse_obj.House.OBJs.Buttons.itervalues():
             self._get_obj_info(l_button_obj)
 
 

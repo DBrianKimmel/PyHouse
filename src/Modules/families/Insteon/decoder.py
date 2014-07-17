@@ -209,13 +209,15 @@ class DecodeResponses(Utility):
         self.m_house_obj = p_house_obj
         while len(p_controller_obj._Message) >= 2:
             l_stx = p_controller_obj._Message[0]
-            LOG.debug("decode_message() - {0:}".format(PrintBytes(p_controller_obj._Message)))
+            # LOG.debug("decode_message() - {0:}".format(PrintBytes(p_controller_obj._Message)))
             if l_stx == STX:
+                LOG.debug("decode_message() - {0:}".format(PrintBytes(p_controller_obj._Message)))
                 l_need_len = self._get_message_length(p_controller_obj._Message)
                 l_cur_len = len(p_controller_obj._Message)
                 if l_cur_len >= l_need_len:
                     self._decode_dispatch(p_controller_obj)
                 else:
+                    LOG.warning('decode_message() - Message was too short - waiting for rest of message.')
                     return
             else:
                 self._drop_first_byte(p_controller_obj)
