@@ -16,7 +16,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__version_info__ = (1, 3, 0)
+__version_info__ = (1, 3, 01)
 __version__ = '.'.join(map(str, __version_info__))
 
 
@@ -211,6 +211,7 @@ class RoomData(ABaseObject):
         super(RoomData, self).__init__()
         self.Comment = ''
         self.Corner = ''
+        self.Floor = ''  # O | B | 1 | 2 | 3 | 4 | A | R
         self.Size = ''
         self.RoomType = 'Room'
 

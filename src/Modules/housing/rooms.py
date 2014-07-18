@@ -31,6 +31,7 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         l_room_obj.Key = self.m_count  # Renumber
         l_room_obj.Comment = self.get_text_from_xml(p_room_element, 'Comment')
         l_room_obj.Corner = self.get_text_from_xml(p_room_element, 'Corner')
+        l_room_obj.Floor = self.get_text_from_xml(p_room_element, 'Floor', '1')
         l_room_obj.Size = self.get_text_from_xml(p_room_element, 'Size')
         return l_room_obj
 
@@ -56,6 +57,7 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         # self.put_text_element(l_entry, 'UUID', p_room_object.UUID)
         self.put_text_element(l_entry, 'Comment', p_room_object.Comment)
         self.put_text_element(l_entry, 'Corner', p_room_object.Corner)
+        self.put_text_element(l_entry, 'Floor', p_room_object.Floor)
         self.put_text_element(l_entry, 'Size', p_room_object.Size)
         return l_entry
 

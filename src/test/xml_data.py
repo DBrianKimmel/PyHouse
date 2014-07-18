@@ -89,9 +89,9 @@ XML_LONG = """
             <Latitude>28.938448</Latitude><Longitude>-82.517208</Longitude><TimeZone>-240.0</TimeZone><SavingTime>60.0</SavingTime>
         </LocationSection>
         <RoomSection>
-            <Room Active="True" Key="0" Name="IsMaster Bath">
-                <Comment />
-                <Corner>0.83, 10.58</Corner>
+            <Room Active="True" Key="0" Name="Master Bath">
+                <Comment>Test Comment</Comment>
+                <Corner>0.50, 10.50</Corner>
                 <Size>14.00, 13.50</Size>
             </Room>
             <Room Active="True" Key="1" Name="Master Bed Closet 1">
