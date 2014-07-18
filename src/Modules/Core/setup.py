@@ -55,7 +55,7 @@ class ReadWriteConfigXml(XmlConfigTools):
             print('Setup-XML file {0:} parsed OK.'.format(l_name))
         except SyntaxError as e_error:
             LOG.error('Setup-XML file ERROR - {0:} - {1:}'.format(e_error, l_name))
-            xml_tools.ConfigFile().create_empty_config_file(l_name)
+            ConfigAPI().create_empty_config_file(l_name)
             l_xmltree = ET.parse(p_pyhouse_obj.Xml.XmlFileName)
         p_pyhouse_obj.Xml.XmlRoot = l_xmltree.getroot()
 
@@ -64,7 +64,7 @@ class ReadWriteConfigXml(XmlConfigTools):
         l_xml = self.initialize_Xml()
         self.m_pyhouse_obj.APIs.ComputerAPI.Stop(l_xml)
         self.m_pyhouse_obj.APIs.HouseAPI.Stop(l_xml)
-        ConfigAPI().write_config_file(self.m_pyhpuse_obj, l_xml, self.m_pyhouse_obj.Xml.XmlFileName)
+        ConfigAPI().write_config_file(self.m_pyhouse_obj, l_xml, self.m_pyhouse_obj.Xml.XmlFileName)
 
 
 class Utility(ReadWriteConfigXml):

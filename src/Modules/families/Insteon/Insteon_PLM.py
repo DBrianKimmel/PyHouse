@@ -459,14 +459,18 @@ class LightHandlerAPI(InsteonPlmAPI):
         self._get_id_request(l_obj)
         self._get_engine_version(l_obj)
 
-    def get_all_lights_information(self):
-        """Get the status (current level) of all lights.
+    def get_all_device_information(self):
+        """Get the status (current level) of all insteon devices.
         """
         LOG.info('Getting devide information of all Insteon devices')
-        for l_light_obj in self.m_pyhouse_obj.House.OBJs.Lights.itervalues():
-            self._get_obj_info(l_light_obj)
-        for l_button_obj in self.m_pyhouse_obj.House.OBJs.Buttons.itervalues():
-            self._get_obj_info(l_button_obj)
+        for l_obj in self.m_pyhouse_obj.House.OBJs.Lights.itervalues():
+            self._get_obj_info(l_obj)
+        for l_obj in self.m_pyhouse_obj.House.OBJs.Buttons.itervalues():
+            self._get_obj_info(l_obj)
+        for l_obj in self.m_pyhouse_obj.House.OBJs.Controllers.itervalues():
+            self._get_obj_info(l_obj)
+        for l_obj in self.m_pyhouse_obj.House.OBJs.Thermostat.itervalues():
+            self._get_obj_info(l_obj)
 
 
 class Utility(LightHandlerAPI, PlmDriverProtocol):
@@ -485,7 +489,7 @@ class Utility(LightHandlerAPI, PlmDriverProtocol):
             self.m_protocol = PlmDriverProtocol(p_pyhouse_obj, self.m_controller_obj)
             decoder.DecodeResponses(p_pyhouse_obj, p_controller_obj)
             self.set_plm_mode(self.m_controller_obj)
-            self.get_all_lights_information()
+            self.get_all_device_information()
         return l_ret
 
 

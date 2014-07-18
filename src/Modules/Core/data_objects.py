@@ -211,7 +211,7 @@ class RoomData(ABaseObject):
         super(RoomData, self).__init__()
         self.Comment = ''
         self.Corner = ''
-        self.Floor = ''  # O | B | 1 | 2 | 3 | 4 | A | R
+        self.Floor = ''  # Outside | Basement | 1st | 2nd | 3rd | 4th | Attic | Roof
         self.Size = ''
         self.RoomType = 'Room'
 
