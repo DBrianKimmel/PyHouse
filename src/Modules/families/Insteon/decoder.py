@@ -112,7 +112,7 @@ class Utility(object):
         p_obj.DevCat = int(l_devcat)
         self.update_object(p_obj)
         l_debug_msg = "DevCat From={0:}, DevCat={1:#x}, flags={2:}".format(p_obj.Name, l_devcat, self._decode_message_flag(p_message[8]))
-        LOG.info("Got DevCat from light:{0:}, DevCat:{1:}".format(p_obj.Name, l_devcat))
+        LOG.info("Got DevCat from light:{0:}, DevCat:{1:}".format(p_obj.Name, conversions.int2dotted_hex(l_devcat, 2)))
         return l_debug_msg
 
     def update_object(self, p_obj):
