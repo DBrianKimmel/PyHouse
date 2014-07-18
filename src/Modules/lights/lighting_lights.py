@@ -46,7 +46,7 @@ class LightingLightsAPI(ReadWriteConfigXml):
 
     def _read_light_data(self, p_obj, p_xml):
         p_obj.IsController = self.get_text_from_xml(p_xml, 'IsController')
-        p_obj.LightingType = self.get_text_from_xml(p_xml, 'LightingType', 'Light')
+        # p_obj.LightingType = self.get_text_from_xml(p_xml, 'LightingType', 'Light')
         p_obj.CurLevel = self.get_int_from_xml(p_xml, 'CurLevel', 0)
 
     def _read_family_data(self, p_obj, p_xml):
@@ -80,7 +80,7 @@ class LightingLightsAPI(ReadWriteConfigXml):
 
     def _write_light_data(self, p_light_obj, l_light_xml):
         self.put_text_element(l_light_xml, 'IsController', p_light_obj.IsController)
-        self.put_text_element(l_light_xml, 'LightingType', p_light_obj.LightingType)
+        # self.put_text_element(l_light_xml, 'LightingType', p_light_obj.LightingType)
         self.put_text_element(l_light_xml, 'CurLevel', p_light_obj.CurLevel)
         pass
 

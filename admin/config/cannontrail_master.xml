@@ -51,14 +51,14 @@
     <HouseDivision Active="True" Key="0" Name="Pink Poppy">
         <UUID>12345678-1002-11e3-b583-333e5f8cdfd2</UUID>
         <LocationSection>
-            <Street>5191 N Pink Poppy Dr</Street>
-            <City>Beverly Hills</City>
-            <State>Florida</State>
-            <ZipCode>34465</ZipCode>
-            <Phone>(352) 270-8096</Phone>
-            <Latitude>28.938448</Latitude>
-            <Longitude>-82.517208</Longitude>
-            <TimeZone>-240.0</TimeZone>
+            <Street>718 Cannon Trl</Street>
+            <City>Franklin</City>
+            <State>NC</State>
+            <ZipCode>28734</ZipCode>
+            <Phone>(828) 369-8513</Phone>
+            <Latitude>35.144569</Latitude>
+            <Longitude>-83.458291</Longitude>
+            <TimeZone>-300.0</TimeZone>
             <SavingTime>60.0</SavingTime>
         </LocationSection>
         <RoomSection>
@@ -101,8 +101,8 @@
                 <Coords>['0', '0']</Coords>
                 <IsDimmable>True</IsDimmable>
                 <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>Foyer</RoomName>
-                <LightingType>Outside</LightingType>
+                <RoomName>Outside</RoomName>
+                <LightingType>Light</LightingType>
                 <Address>1C.A3.1A</Address>
                 <IsController>True</IsController>
                 <DevCat>00.00</DevCat>

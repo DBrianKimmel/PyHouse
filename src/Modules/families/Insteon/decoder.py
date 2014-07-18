@@ -45,7 +45,7 @@ class Utility(object):
         Return a class of objects (Lights, Thermostats) that may have an Insteon <ControllerFamily> within.
         """
         l_house = p_pyhouse_obj.House.OBJs
-        for l_class in l_house.itervalues():
+        for l_class in l_house:
             if l_class == Schedule:
                 continue
         pass

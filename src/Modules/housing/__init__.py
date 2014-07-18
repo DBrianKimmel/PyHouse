@@ -30,4 +30,6 @@ This should also clean up a lot of murky logic as to which house we are working 
 __version_info__ = (1, 3, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
+VALID_FLOORS = ['Outside', 'Basement', '1st', '2nd', '3rd', '4th', 'Attic', 'Roof']
+
 # ## END DBK

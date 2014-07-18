@@ -33,7 +33,6 @@ class SetupMixin(object):
         self.m_thermostat_obj = ThermostatData()
         self.m_api = thermostat.API()
         self.m_pyhouse_obj = house.API().update_pyhouse_obj(self.m_pyhouse_obj)
-        # PrettyPrintAny(self.m_pyhouse_obj, 'SetupMixin.Setup - PyHouse_obj', 100)
         return self.m_pyhouse_obj
 
 

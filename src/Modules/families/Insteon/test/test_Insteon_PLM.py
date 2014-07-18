@@ -23,7 +23,7 @@ from Modules.families.Insteon import Insteon_PLM
 from Modules.families.Insteon import Insteon_utils
 from Modules.families import family
 from Modules.utils.tools import PrettyPrintAny
-from src.test import xml_data, test_mixin
+from test import xml_data, test_mixin
 
 
 ADR_16C9D0 = '16.C9.D0'
