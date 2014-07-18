@@ -469,7 +469,7 @@ class LightHandlerAPI(InsteonPlmAPI):
             self._get_obj_info(l_obj)
         for l_obj in self.m_pyhouse_obj.House.OBJs.Controllers.itervalues():
             self._get_obj_info(l_obj)
-        for l_obj in self.m_pyhouse_obj.House.OBJs.Thermostat.itervalues():
+        for l_obj in self.m_pyhouse_obj.House.OBJs.Thermostats.itervalues():
             self._get_obj_info(l_obj)
 
 
