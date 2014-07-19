@@ -19,20 +19,27 @@ from Modules.Core.data_objects import PyHouseData, PyHouseAPIs, \
             HouseInformation, HouseObjs, \
             TwistedInformation, \
             XmlInformation
-from Modules.utils.tools import PrettyPrintAny
-from src.test import xml_data
+# from Modules.utils.tools import PrettyPrintAny
+from test import xml_data
 
 
 class SetupPyHouseObj(object):
     """
     """
 
-    def BuildPyHouse(self):
+    def _BuildHouse(self):
+        l_ret = HouseInformation()
+        l_ret.Name = 'Test House'
+        l_ret.Active = True
+        l_ret.Key = 0
+        l_ret.OBJs = HouseObjs()
+        return l_ret
+
+    def BuildPyHouseObj(self):
         l_ret = PyHouseData()
         l_ret.APIs = PyHouseAPIs
         l_ret.Computer = ComputerInformation()
-        l_ret.House = HouseInformation()
-        l_ret.House.OBJs = HouseObjs()
+        l_ret.House = self._BuildHouse()
         l_ret.Services = CoreServicesInformation()
         l_ret.Twisted = TwistedInformation()
         l_ret.Xml = XmlInformation()
@@ -65,16 +72,19 @@ class SetupPyHouseObj(object):
         self.m_dynamic_dns_sect_xml = self.m_internet_sect_xml.find('DynamicDnsSection')
         # PrettyPrintAny(self, 'TestMixin - Self', 100)
 
+    def setUp(self):
+        self.BuildPyHouseObj()
 
-class Setup(SetupPyHouseObj):
 
-    def __init__(self):
-        self.m_pyhouse_obj = self.BuildPyHouse()
-        try:
-            self.m_root_xml
-        except (NameError, AttributeError):
-            self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
-        self.BuildXml()
-        # PrettyPrintAny(self, 'TestMixin - Setup() -  Self', 100)
-
+# class SetupMixin(SetupPyHouseObj):
+#
+#    def __init__(self):
+#        self.m_pyhouse_obj = self.BuildPyHouse()
+#        try:
+#            self.m_root_xml
+#        except (NameError, AttributeError):
+#            self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
+#        self.BuildXml()
+#        # PrettyPrintAny(self, 'TestMixin - Setup() -  Self', 100)
+#
 # ## END DBK

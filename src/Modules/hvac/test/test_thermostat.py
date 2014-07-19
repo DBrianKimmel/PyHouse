@@ -20,10 +20,10 @@ from Modules.housing import house
 from Modules.web import web_utils
 from Modules.Core import setup
 from Modules.utils.tools import PrettyPrintAny
-from test import xml_data
+from test import testing_mixin, xml_data
 
 
-class SetupMixin(object):
+class SetupMixin(testing_mixin.SetupPyHouseObj.setUp):
     """
     """
 
@@ -43,7 +43,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
-        self.m_pyhouse_obj = SetupMixin.setUp(self)
+        # self.m_pyhouse_obj = SetupMixin.setUp(self)
         house.API().update_pyhouse_obj(self.m_pyhouse_obj)
         self.m_house_div_xml = self.m_root_xml.find('HouseDivision')
         self.m_thermostat_sect_xml = self.m_house_div_xml.find('ThermostatSection')
@@ -126,22 +126,22 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         PrettyPrintAny(l_json, 'JSON', 120)
 
 
-class Test_03_Start(SetupMixin, unittest.TestCase):
-    """
-    This section will verify the XML in the 'Modules.text.xml_data' file is correct and what the node_local module can read/write.
-    """
+# class Test_03_Start(testing_mixin.SetupMixin, unittest.TestCase):
+    # """
+    # This section will verify the XML in the 'Modules.text.xml_data' file is correct and what the node_local module can read/write.
+    # """
 
-    def setUp(self):
-        self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
-        self.m_pyhouse_obj = SetupMixin.setUp(self)
-        self.m_api = thermostat.API()
+    # def setUp(self):
+    #    self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
+    #    # self.m_pyhouse_obj = SetupMixin.setUp(self)
+    #    self.m_api = thermostat.API()
 
-    def test_0301_Xml(self):
-        """ Be sure that the XML contains the right stuff.
-        """
-        PrettyPrintAny(self.m_pyhouse_obj.Xml, 'PyHouse_Obj.Xml', 100)
-        print('test_0301')
-        l_xml = self.m_api.setup_xml(self.m_pyhouse_obj)
-        PrettyPrintAny(l_xml, 'Xml', 100)
+    # def test_0301_Xml(self):
+    #    """ Be sure that the XML contains the right stuff.
+    #    """
+    #    PrettyPrintAny(self.m_pyhouse_obj.Xml, 'PyHouse_Obj.Xml', 100)
+    #    print('test_0301')
+    #    l_xml = self.m_api.setup_xml(self.m_pyhouse_obj)
+    #    PrettyPrintAny(l_xml, 'Xml', 100)
 
 # ## END DBK

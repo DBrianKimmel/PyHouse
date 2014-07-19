@@ -7,6 +7,7 @@
 @note: Created on Feb 21, 2014
 @summary: This module is for testing local node data.
 
+Passed all 10 tests - DBK - 2014-07-18
 """
 
 # Import system type stuff
@@ -16,10 +17,12 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from Modules.Core.data_objects import PyHouseData, ControllerData
 from Modules.lights import lighting_controllers
+from Modules.housing import house
 from Modules.families import family
+from Modules.Core import setup
 from Modules.web import web_utils
 from Modules.utils.tools import PrettyPrintAny
-from src.test import xml_data, test_mixin
+from test import xml_data
 
 
 class SetupMixin(object):
@@ -27,9 +30,11 @@ class SetupMixin(object):
     """
 
     def setUp(self):
-        test_mixin.Setup().BuildPyHouse()
-        self.m_pyhouse_obj = test_mixin.SetupPyHouseObj().BuildPyHouse()
+        self.m_pyhouse_obj = setup.build_pyhouse_obj(self)
+        self.m_pyhouse_obj.Xml.XmlRoot = self.m_root_xml
+        self.m_pyhouse_obj = house.API().update_pyhouse_obj(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
+        return self.m_pyhouse_obj
 
 
 class Test_02_XML(SetupMixin, unittest.TestCase):
@@ -40,6 +45,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         SetupMixin.setUp(self)
 
+        self.m_api = lighting_controllers.ControllersAPI(self.m_pyhouse_obj)
         self.m_house_div_xml = self.m_root_xml.find('HouseDivision')
         self.m_controller_sect_xml = self.m_house_div_xml.find('ControllerSection')
         self.m_controller_xml = self.m_controller_sect_xml.find('Controller')

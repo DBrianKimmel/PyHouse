@@ -7,6 +7,7 @@
 @license: MIT License
 @summary: This module sets up the Core part of PyHouse.
 
+Passed all 4 tests - DBK - 2014-07-18
 """
 
 # Import system type stuff

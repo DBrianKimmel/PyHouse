@@ -214,6 +214,21 @@
                 <RtsCts>False</RtsCts>
                 <XonXoff>False</XonXoff>
             </Controller>
+            <Controller Active="True" Key="2" Name="UPB_PIM">
+                <Comment>UPB PIM - using USB connection</Comment>
+                <Coords>None</Coords>
+                <IsDimmable>False</IsDimmable>
+                <ControllerFamily>UPB</ControllerFamily>
+                <RoomName>Master Bath</RoomName>
+                <LightingType>Controller</LightingType>
+                <NetworkID>6</NetworkID>
+                <Password>1293</Password>
+                <UnitID>255</UnitID>
+                <InterfaceType>USB</InterfaceType>
+                <Port>None</Port>
+                <Vendor>6109</Vendor>
+                <Product>21760</Product>
+            </Controller>
         </ControllerSection>
     </HouseDivision>
 </PyHouse>

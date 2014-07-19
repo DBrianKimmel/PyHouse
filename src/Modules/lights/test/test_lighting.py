@@ -18,7 +18,7 @@ from Modules.Core.data_objects import LightData
 from Modules.lights import lighting
 from Modules.families import family
 from Modules.utils.tools import PrettyPrintAny
-from src.test import xml_data, test_mixin
+from test import xml_data, test_mixin
 
 
 class SetupMixin(object):
