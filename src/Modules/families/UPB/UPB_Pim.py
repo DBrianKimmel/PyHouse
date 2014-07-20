@@ -202,7 +202,7 @@ class DecodeResponses(object):
     def decode_response(self, p_controller_obj, p_message):
         """A response message starts with a 'P' (0x50) and ends with a '\r' (0x0D).
         """
-        PrettyPrintAny(self.m_controller, 'UPBPim - DecodeResponse - Controller', 120)
+        PrettyPrintAny(p_controller_obj, 'UPBPim - DecodeResponse - Controller', 120)
         if len(p_message) < 1:
             return
         l_message = p_controller_obj._Message
