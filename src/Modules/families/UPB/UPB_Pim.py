@@ -199,11 +199,22 @@ class DecodeResponses(object):
         if g_debug >= 1:
             LOG.debug(l_ret)
 
+    def _get_message_body(self, p_message):
+        """
+        A valid message begins with 'P' (0x50) and ends with \r (0x0D).
+        While we have chars left in the message, find the Start of the message.
+        """
+        if len(p_message) < 1:
+            return False
+        PrintBytes(p_message)
+        return True
+
+
     def decode_response(self, p_controller_obj, p_message):
         """A response message starts with a 'P' (0x50) and ends with a '\r' (0x0D).
         """
-        PrettyPrintAny(p_controller_obj, 'UPBPim - DecodeResponse - Controller', 120)
-        if len(p_message) < 1:
+        self.m_controller_obj = p_controller_obj
+        if not self._get_message_body(p_message):
             return
         l_message = p_controller_obj._Message
         l_hdr = l_message[0]
