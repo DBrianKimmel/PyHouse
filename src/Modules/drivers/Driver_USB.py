@@ -363,7 +363,7 @@ class API(UsbDriverAPI):
         l_data.Name = p_controller_obj.Name
         l_data.Port = p_controller_obj.Port
         l_data.Vendor = p_controller_obj.Vendor
-        l_data.Product - p_controller_obj.Product
+        l_data.Product = p_controller_obj.Product
         return l_data
 
     def __init__(self):
