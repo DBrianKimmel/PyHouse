@@ -58,12 +58,9 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         """
         l_thermostat_obj = ThermostatData()
         self.read_base_object_xml(l_thermostat_obj, p_thermostat_element)
-        # PrettyPrintAny(l_thermostat_obj, 'Thermostat - ReadOneThermostat - A', 100)
         l_thermostat_obj.Key = self.m_count  # Renumber
         self._read_thermostat_data(l_thermostat_obj, p_thermostat_element)
-        # PrettyPrintAny(l_thermostat_obj, 'Thermostat - ReadOneThermostat - B', 100)
         self._read_family_data(l_thermostat_obj, p_thermostat_element, p_pyhouse_obj)
-        # PrettyPrintAny(l_thermostat_obj, 'Thermostat - ReadOneThermostat - C', 100)
         return l_thermostat_obj
 
     def read_all_thermostats_xml(self, p_pyhouse_obj):
@@ -72,6 +69,8 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         l_xml_sect = self.setup_xml(p_pyhouse_obj)
         l_ret = {}
         self.m_count = 0
+        if l_xml_sect == None:
+            return l_ret
         try:
             for l_xml in l_xml_sect.iterfind('Thermostat'):
                 l_obj = self.read_one_thermostat_xml(l_xml, p_pyhouse_obj)

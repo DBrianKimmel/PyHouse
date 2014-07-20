@@ -23,7 +23,6 @@ import sys
 # export PYUSB_DEBUG_LEVEL
 import usb.core
 import usb.util
-from twisted.internet import reactor
 from twisted.internet.protocol import Protocol
 
 # Import PyHouse modules
@@ -31,14 +30,7 @@ from Modules.utils.tools import PrintBytes
 from Modules.utils import pyh_log
 
 g_debug = 2
-# 0 = off
-# 1 = log extra info
-# 2 = log empty responses
-# + = NOT USED HERE
-
 LOG = pyh_log.getLogger('PyHouse.USBDriver   ')
-
-callLater = reactor.callLater
 
 
 # Timeouts for send/receive delays
@@ -120,28 +112,37 @@ class UsbDriverAPI(UsbDeviceData):
             LOG.debug(l_msg)
         return l_ret
 
+    def _format_vpn(self, p_controller_obj):
+        """Printable Vendor Product and controller name
+        """
+        l_ret = "{0:#04x}:{1:#04x} {2:}".format(p_controller_obj.Vendor, p_controller_obj.Product, p_controller_obj.Name)
+        return l_ret
+
+    def _is_hid(self, p_device):
+        if p_device.bDeviceClass == 3:
+            return True
+
     def _setup_find_device(self, p_controller_obj):
         """First step in opening a USB device.
         Get the number of configurations.
 
         @return:  None if no such device or a pyusb device object
         """
+        l_vpn = self._format_vpn(p_controller_obj)
         try:
             l_device = usb.core.find(idVendor = p_controller_obj.Vendor, idProduct = p_controller_obj.Product)
         except usb.USBError:
-            l_msg = "ERROR no such USB device for {0:}".format(p_controller_obj.Name)
+            l_msg = "ERROR no such USB device for {0:}".format(l_vpn)
             LOG.error(l_msg)
             return None
         if l_device == None:
-            LOG.error('ERROR - USB device not found  {0:X}:{1:X}, {2:}'.format(
-                        p_controller_obj.Vendor, p_controller_obj.Product, p_controller_obj.Name))
+            LOG.error('ERROR - USB device not found  {0:}'.format(l_vpn))
             return None
         p_controller_obj._Data.Device = l_device
         p_controller_obj._Data.num_configs = l_device.bNumConfigurations
-        if p_controller_obj._Data.Device.bDeviceClass == 3:
-            p_controller_obj._Data.hid_device = True
+        p_controller_obj._Data.hid_device = self._is_hid(l_device)
         if g_debug >= 1:
-            LOG.debug('Found a device - HID:{0:}'.format(p_controller_obj._Data))
+            LOG.debug('Found a device - HID: {0:}'.format(l_vpn))
         p_controller_obj._Data.configs = {}
         return l_device
 
@@ -228,8 +229,8 @@ class UsbDriverAPI(UsbDeviceData):
     def open_device(self, p_controller_obj):
         self.m_controller_obj = p_controller_obj
         p_controller_obj._Message = bytearray()
-        LOG.info("Opening USB device - {0:#04X}:{1:#04X} - {2:} on port {3:}".format(
-            p_controller_obj.Vendor, p_controller_obj.Product, p_controller_obj.Name, p_controller_obj.Port))
+        l_vpn = self._format_vpn(p_controller_obj)
+        LOG.info("Opening USB device - {0:}".format(l_vpn))
         p_controller_obj._Data.Device = self._setup_find_device(p_controller_obj)
         if p_controller_obj._Data.Device == None:
             LOG.error('ERROR - Setup Failed')
@@ -245,8 +246,8 @@ class UsbDriverAPI(UsbDeviceData):
         self.m_controller_obj = p_controller_obj
         p_controller_obj._Data.Device.reset()
 
-    def read_usb(self, p_controller_obj):
-        callLater(RECEIVE_TIMEOUT, lambda x = p_controller_obj: self.read_usb(x))
+    def read_usb(self, p_pyhouse_obj, p_controller_obj):
+        p_pyhouse_obj.Twisted.Reactorp.callLater(RECEIVE_TIMEOUT, lambda x = p_controller_obj: self.read_usb(x))
         if p_controller_obj._Data.hid_device:
             self.read_report(p_controller_obj)
         else:
@@ -254,6 +255,8 @@ class UsbDriverAPI(UsbDeviceData):
 
     def read_device(self, p_controller_obj):
         """
+        Get any data the USB device has and append it to the controller _Data field.
+        @return: the number of bytes fetched from the controller
         """
         try:
             l_msg = p_controller_obj._Data.Device.read(p_controller_obj._Data.epi_addr, p_controller_obj._Data.epi_packet_size, timeout = 100)
@@ -355,6 +358,14 @@ class UsbDriverAPI(UsbDeviceData):
 
 class API(UsbDriverAPI):
 
+    def _get_usb_device_data(self, p_controller_obj):
+        l_data = UsbDeviceData()
+        l_data.Name = p_controller_obj.Name
+        l_data.Port = p_controller_obj.Port
+        l_data.Vendor = p_controller_obj.Vendor
+        l_data.Product - p_controller_obj.Product
+        return l_data
+
     def __init__(self):
         """
         """
@@ -366,9 +377,9 @@ class API(UsbDriverAPI):
         """
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_controller_obj = p_controller_obj
-        p_controller_obj._Data = UsbDeviceData()
+        p_controller_obj._Data = self._get_usb_device_data(p_controller_obj)
         if self.open_device(p_controller_obj):
-            self.read_usb(p_controller_obj)
+            self.read_usb(p_pyhouse_obj, p_controller_obj)
             LOG.info("Opened Controller:{0:}".format(p_controller_obj.Name))
             self.write_usb(p_controller_obj, bytearray(b'\x00\x01\x02\x03'))
             self.write_usb(p_controller_obj, bytearray(b'\xff\x01\x02\x03'))

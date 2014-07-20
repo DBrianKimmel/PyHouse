@@ -1462,7 +1462,6 @@ class LiveFireBase:
         """
         Create an amp server and connect a client to it.
         """
-        # from twisted.internet import reactor
         self.serverFactory = protocol.ServerFactory()
         self.serverFactory.protocol = self.serverProto
         self.clientFactory = protocol.ClientFactory()

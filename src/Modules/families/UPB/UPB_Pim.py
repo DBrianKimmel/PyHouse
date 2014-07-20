@@ -77,8 +77,7 @@ import Queue
 
 # Import PyMh files
 from Modules.Core.data_objects import UPBData
-import Device_UPB
-from Modules.utils.tools import PrintBytes
+from Modules.utils.tools import PrintBytes, PrettyPrintAny
 from Modules.utils import pyh_log
 
 g_debug = 9
@@ -97,6 +96,12 @@ ACK_MSG = 0x40
 # Timeouts for send/receive delays
 SEND_TIMEOUT = 0.8
 RECEIVE_TIMEOUT = 0.3  # this is for fetching data in the rx buffer
+
+
+# Command types
+CTL_T = 0x14  # transmit a UPB Message
+CTL_R = 0x12  # Read PIM Registers
+CTL_W = 0x17  # Write PIM Registers
 
 
 pim_commands = {
@@ -149,7 +154,12 @@ class UpbPimUtility(object):
         return l_out
 
     def _compose_command(self, p_controller_obj, _p_command, _p_device_id, *p_args):
-        """Build the command for each controller found.
+        """Build the command.
+
+        @param p_controller_obj: is the controller information.
+        @param p_command: is the command
+        @param p_device_id: Is the UPB address of the target.
+        @param p_args: is the data for the command
         """
         l_hdr = bytearray(0 + len(p_args))
         # l_hdr[0] = 0x14
@@ -189,155 +199,53 @@ class DecodeResponses(object):
         if g_debug >= 1:
             LOG.debug(l_ret)
 
-    def decode_response(self, p_message):
-        """A message starts with a 'P' (0x50) and ends with a '\r' (0x0D).
+    def decode_response(self, p_controller_obj, p_message):
+        """A response message starts with a 'P' (0x50) and ends with a '\r' (0x0D).
         """
+        PrettyPrintAny(self.m_controller, 'UPBPim - DecodeResponse - Controller', 120)
         if len(p_message) < 1:
             return
-        self.l_message = p_message
-        # Get the length which seems to be x in 0xFx first byte
-        # self.l_msg_len = p_message[0] & 0x0F
-        # self._next_char()
-        self.l_hdr = self.l_message[0]
-        self.l_msg_len = len(self.l_message)
-        self.l_message = self.l_message[1:]
-        # All PIM response messages begin with 'P' which is 0x50
-        if self.l_msg_len < 1:
+        l_message = p_controller_obj._Message
+        l_hdr = l_message[0]
+        l_msg_len = len(l_message)
+        l_message = l_message[1:]
+        if l_msg_len < 1:
             return
-        while self.l_msg_len > 0:
+        while l_msg_len > 0:
             self._next_char()  # Get the starting char - must be 'P' (0x50)
-            if self.l_hdr != 0x50:
+            if l_hdr != 0x50:
                 l_msg = "UPB_Pim.decode_response() - Did not find valid message start 'P'(0x50)  - ERROR! char was {0:#x} - Flushing till next 0x0D".format(self.l_hdr)
                 LOG.warning(l_msg)
                 self._flushing()
                 continue
             #
             self._next_char()  # drop the 0x50 char
-            if self.l_hdr == 0x41:  # 'A'
+            if l_hdr == 0x41:  # 'A'
                 if g_debug >= 2:
                     LOG.error("UPB_Pim - Previous command was accepted")
-            elif self.l_hdr == 0x42:  # 'B'
+            elif l_hdr == 0x42:  # 'B'
                 if g_debug >= 2:
                     LOG.error("UPB_Pim - Previous command was rejected because device is busy.")
-            elif self.l_hdr == 0x45:  # 'E'
+            elif l_hdr == 0x45:  # 'E'
                 if g_debug >= 2:
                     LOG.error("UPB_Pim - Previous command was rejected with a command error.")
-            elif self.l_hdr == 0x4B:  # 'K'
+            elif l_hdr == 0x4B:  # 'K'
                 if g_debug >= 2:
                     LOG.error("UPB_Pim.decode_response() found 'K' (0x4b) - ACK pulse also received.")
-            elif self.l_hdr == 0x4E:  # 'N'
+            elif l_hdr == 0x4E:  # 'N'
                 if g_debug >= 2:
                     LOG.error("UPB_Pim.decode_response() found 'N' (0x4E) - No ACK pulse received from device.")
-            elif self.l_hdr == 0x52:  # 'R'
+            elif l_hdr == 0x52:  # 'R'
                 if g_debug >= 2:
                     LOG.error("UPB_Pim.decode_response() found 'R' (0x52) - Register report recieved")
                 self._get_rest()
-            elif self.l_hdr == 0x55:  # 'U'
+            elif l_hdr == 0x55:  # 'U'
                 if g_debug >= 2:
                     LOG.error("UPB_Pim.decode_response() found 'U' (0x55) - Message report received.")
                 self._get_rest()
             else:
                 LOG.error("UPB_Pim.decode_response() found unknown code {0:#x} {1:}".format(self.l_hdr, PrintBytes(self.l_message)))
             self._next_char()  # Drop the 0x0d char
-
-""" int PIMMain::decodeResponse( QByteArray& k_msg, QByteArray& k_msgRet ) {
-    QString l_str = messageToString( k_msg );
-    // All pIM response messages begin with 'P' which is 0x50
-    if ( l_response[0] != (char)0x50 ) {
-        DEBUG( 1, "decodeResponse did not find valid message 1 - ERROR! char was " << (int)l_response[0] );
-        l_response.remove( 0, 1 );
-        l_len--;
-        if ( l_len < 1 ) return -1;
-    }
-    while ( l_len > 0 ) {
-        if ( l_response[0] == (char) 0x0D ) {
-            l_response.remove( 0, 1 );
-            l_len--;
-            //l_ret = -1;
-            continue;
-        }
-        if ( l_response[0] != (char)0x50 ) {
-            DEBUG( 1, "decodeResponse did not find valid message 2 - ERROR! char was " << (int)l_response[0] );
-            l_response.remove( 0, 1 );
-            l_len--;
-            l_ret = -1;
-            continue;
-        }
-        switch( l_response[1] ) {
-            case 0x41:      // 'A'
-                DEBUG( 3, "... A - Message accepted." );
-                l_response.remove( 0, 3 );
-                l_len -= 3;
-                l_ret |= 0x0001;
-                break;
-            case 0x45:      // 'E'
-                DEBUG( -3, "... E - Rejected prev cmd because it contained an error." );
-                l_response.remove( 0, 3 );
-                l_len -= 3;
-                l_ret |= 0x8001;
-                break;
-
-            case 0x4B:      // 'K'
-                DEBUG( 3, "... K - Ack pulse was also recieved." );
-                l_response.remove( 0, 3 );
-                l_len -= 3;
-                l_ret |= 0x0002;
-                break;
-            case 0x4E:      // 'N'
-                DEBUG( -3, "... N - NO ack pulse was recieved from device." );
-                l_response.remove( 0, 3 );
-                l_len -= 3;
-                l_ret |= 0x8002;
-                break;
-
-            case 0x42:      // 'B'
-                DEBUG( -3, "... B - Rejected prev cmd because PIM is busy." );
-                l_response.remove( 0, 3 );
-                l_len -= 3;
-                l_ret |= 0x8004;
-                break;
-
-            case 0x52:      // 'R'
-                // get rid of 'PR'
-                l_response.remove( 0, 2 ); l_len -= 2;
-                // get register #
-                l_reg =  l_response.left( 2 ); l_response.remove( 0, 2 ); l_len -= 2;
-                // we now have the registers values encoded as hex nibbles
-                while ( l_response[0] != (char)0x0d ) {
-                    k_msgRet.append( l_response[0] );
-                    l_response.remove( 0, 1 );
-                    l_len--;
-                }
-                DEBUG( 3, "... R - Register report recieved - Register=" << l_reg << " " << k_msgRet );
-                l_ret |= 0x0010;
-                break;
-
-            case 0x55:      // 'U'
-                l_response.remove( 0, 2 );
-                l_len -= 2;
-                l_reg =  l_response.left( 2 );
-                l_response.remove( 0, 2 );
-                l_len -= 2;
-                while ( l_response[0] != (char)0x0d ) {
-                    k_msgRet.append( l_response[0] );
-                    l_response.remove( 0, 1 );
-                    l_len--;
-                }
-                l_len--;
-                DEBUG( -3, "... U - Message Report recieved - len=" << l_reg << "  " << k_msgRet << " Len-" << l_len );
-                l_ret |= 0x0020;
-                break;
-
-            default:
-                DEBUG( 0, "... Unhandled return message. len=" << l_len << " " << l_response );
-                l_len--;
-                l_response.remove( 0, 1 );
-                l_ret |= 0x8100;
-        }
-    }
-    return l_ret;
-}
-"""
 
 
 class PimDriverInterface(DecodeResponses):
@@ -380,13 +288,14 @@ class PimDriverInterface(DecodeResponses):
                 LOG.debug(l_msg)
 
     def receive_loop(self, p_controller_obj):
+        """Periodically, get the current RX data from the driver.
+        """
         self.m_pyhouse_obj.Twisted.Reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop, p_controller_obj)
         if p_controller_obj._DriverAPI != None:
             l_msg = p_controller_obj._DriverAPI.fetch_read_data(p_controller_obj)
             if len(l_msg) == 0:
-            # if l_msg[0] == 0xF0:
                 return
-            self.decode_response(l_msg)
+            self.decode_response(p_controller_obj, l_msg)
 
 
 class CreateCommands(UpbPimUtility, PimDriverInterface):
@@ -397,13 +306,13 @@ class CreateCommands(UpbPimUtility, PimDriverInterface):
         """Set one of the device's registers.
         """
         if g_debug >= 1:
-            LOG.debug("Setting register {0:#0X} to value {1:}".format(p_register, p_values))
+            LOG.debug("Setting register {0:#0x} to value {1:}".format(p_register, p_values))
         self._compose_command(p_controller_obj, pim_commands['set_register_value'], int(p_controller_obj.UPBAddress), int(p_register), p_values[0])
         pass
 
     def set_pim_mode(self):
         # Send a write register 70 to set PIM mode
-        # Command is <17> 70 03 8D <0D>
+        # Command to be sent is <17> 70 03 8D <0D>
         l_val = bytearray(1)
         l_val[0] = 0x03
         if g_debug >= 1:
@@ -411,7 +320,7 @@ class CreateCommands(UpbPimUtility, PimDriverInterface):
         self.set_register_value(0xFF, 0x70, l_val)
 
 
-class UpbPimAPI(Device_UPB.ReadWriteXml, CreateCommands):
+class UpbPimAPI(CreateCommands):
 
     def _load_driver(self, p_controller_obj):
         if p_controller_obj.InterfaceType.lower() == 'serial':
@@ -442,7 +351,6 @@ class UpbPimAPI(Device_UPB.ReadWriteXml, CreateCommands):
         if g_debug >= 1:
             LOG.debug("UPB_PIM.start_controller() - ControllerFamily:{0:}, InterfaceType:{1:}".format(
                         p_controller_obj.ControllerFamily, p_controller_obj.InterfaceType))
-        l_key = p_controller_obj.Key
         l_pim = self._initilaize_pim(p_controller_obj)
         l_driver = self._load_driver(p_controller_obj)
         l_driver.Start(p_pyhouse_obj, p_controller_obj)

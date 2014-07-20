@@ -19,7 +19,7 @@ from Modules.Core.data_objects import UPBData
 from Modules.utils import xml_tools
 from Modules.utils import pyh_log
 
-g_debug = 9
+g_debug = 0
 LOG = pyh_log.getLogger('PyHouse.Device_UPB  ')
 
 
@@ -71,7 +71,6 @@ class API(ReadWriteXml):
         self.m_pyhouse_obj = p_pyhouse_obj
         l_count = 0
         for l_controller_obj in self.m_pyhouse_obj.House.OBJs.Controllers.itervalues():
-            LOG.info('Starting Controller {0:}'.format(l_controller_obj.Name))
             if not self._is_upb_active(l_controller_obj):
                 continue
             LOG.info('Found controller {0:}'.format(l_controller_obj.Name))
@@ -106,8 +105,7 @@ class API(ReadWriteXml):
         return p_xml
 
     def ChangeLight(self, p_light_obj, p_level, _p_rate = 0):
-        if g_debug >= 1:
-            LOG.debug('Change light Name:{0:}, ControllerFamily:{1:}'.format(p_light_obj.Name, p_light_obj.ControllerFamily))
+        LOG.debug('Change light Name:{0:}, ControllerFamily:{1:}'.format(p_light_obj.Name, p_light_obj.ControllerFamily))
         _l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[p_light_obj.ControllerFamily].ModuleAPI
         self.m_plm.ChangeLight(p_light_obj, p_level)
 
