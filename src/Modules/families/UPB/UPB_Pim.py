@@ -445,7 +445,7 @@ class UpbPimAPI(Device_UPB.ReadWriteXml, CreateCommands):
         l_key = p_controller_obj.Key
         l_pim = self._initilaize_pim(p_controller_obj)
         l_driver = self._load_driver(p_controller_obj)
-        l_driver.Start(p_controller_obj)
+        l_driver.Start(p_pyhouse_obj, p_controller_obj)
         p_pyhouse_obj.House.OBJs.Controllers[p_controller_obj.Key]._DriverAPI = l_driver
         l_pim._DriverAPI = l_driver
         self.set_register_value(p_controller_obj, 0x70, [0x03])

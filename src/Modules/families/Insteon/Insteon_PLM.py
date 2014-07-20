@@ -398,12 +398,7 @@ class LightHandlerAPI(InsteonPlmAPI):
     """This is the API for light control.
     """
 
-    def start_controller_driver(self, p_controller_obj, p_house_obj):
-        self.m_house_obj = p_house_obj
-        if g_debug >= 3:
-            l_msg = "Insteon_PLM.start_controller_driver() - Controller:{0:}, ".format(p_controller_obj.Name)
-            l_msg += "ControllerFamily:{0:}, InterfaceType:{1:}, Active:{2:}".format(
-                    p_controller_obj.ControllerFamily, p_controller_obj.InterfaceType, p_controller_obj.Active)
+    def _load_driver(self, p_controller_obj):
         if p_controller_obj.InterfaceType.lower() == 'serial':
             from Modules.drivers import Driver_Serial
             l_driver = Driver_Serial.API()
@@ -411,12 +406,19 @@ class LightHandlerAPI(InsteonPlmAPI):
             from Modules.drivers import Driver_Ethernet
             l_driver = Driver_Ethernet.API()
         elif p_controller_obj.InterfaceType.lower() == 'usb':
-            # from drivers import Driver_USB_0403_6001
-            # l_driver = Driver_USB_0403_6001.API()
             from Modules.drivers import Driver_USB
             l_driver = Driver_USB.API()
+        return l_driver
+
+    def start_controller_driver(self, p_pyhouse_obj, p_controller_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        if g_debug >= 3:
+            l_msg = "Insteon_PLM.start_controller_driver() - Controller:{0:}, ".format(p_controller_obj.Name)
+            l_msg += "ControllerFamily:{0:}, InterfaceType:{1:}, Active:{2:}".format(
+                    p_controller_obj.ControllerFamily, p_controller_obj.InterfaceType, p_controller_obj.Active)
+        l_driver = self._load_driver(p_controller_obj)
         p_controller_obj._DriverAPI = l_driver
-        l_ret = l_driver.Start(p_controller_obj)
+        l_ret = l_driver.Start(p_pyhouse_obj, p_controller_obj)
         return l_ret
 
     def stop_controller_driver(self, p_controller_obj):
@@ -484,7 +486,7 @@ class Utility(LightHandlerAPI, PlmDriverProtocol):
 
         """
         LOG.info('Starting Controller:{0:}'.format(p_controller_obj.Name))
-        l_ret = self.start_controller_driver(p_controller_obj, p_pyhouse_obj.House.OBJs)
+        l_ret = self.start_controller_driver(p_pyhouse_obj, p_controller_obj)
         if l_ret:
             self.m_protocol = PlmDriverProtocol(p_pyhouse_obj, self.m_controller_obj)
             decoder.DecodeResponses(p_pyhouse_obj, p_controller_obj)
