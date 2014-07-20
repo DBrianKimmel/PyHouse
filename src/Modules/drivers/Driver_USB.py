@@ -56,7 +56,7 @@ class UsbDeviceData(object):
         self.hid_device = False
         self.message = ''
 
-    def __str__(self):
+    def XX__str__(self):
         l_ret = "UsbDevice:: Name:{0:}, Vendor: {1:}, Product: {2:}, Port: {3:} ".format(self.Name, self.Vendor, self.Product, self.Port)
         return l_ret
 
