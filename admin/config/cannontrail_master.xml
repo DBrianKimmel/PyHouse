@@ -214,7 +214,7 @@
                 <RtsCts>False</RtsCts>
                 <XonXoff>False</XonXoff>
             </Controller>
-            <Controller Active="True" Key="2" Name="UPB_PIM">
+            <Controller Active="True" Key="2" Name="Upb_Pim">
                 <Comment>UPB PIM - using USB connection</Comment>
                 <Coords>None</Coords>
                 <IsDimmable>False</IsDimmable>

@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 """Driver_Ethernet.py - Ethernet Driver module.
 
 This will interface various PyHouse modules to an ethernet connected controller device.
@@ -27,7 +25,9 @@ class API(object):
         LOG.info(" Initializing Ethernet port.")
         return None
 
-    def Start(self, p_obj):
+    def Start(self, p_pyhouse_obj, p_controller_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_controller_obj = p_controller_obj
         LOG.info("Starting Ethernet port.")
         return None
 

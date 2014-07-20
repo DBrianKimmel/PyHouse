@@ -1,6 +1,15 @@
-#!/usr/bin/python
+"""
+-*- test-case-name: PyHouse.src.Modules.families.UPB.test.test_Device_UPB -*-
 
-"""Load the database with UPB devices.
+@name: PyHouse/src/Modules/families/UPB/Device_UPB.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
+@copyright: 2011-2014 by D. Brian Kimmel
+@license: MIT License
+@note: Created on Mar 27, 2011
+@summary: This module is for communicating with UPB controllers.
+
+Load the database with UPB devices.
 """
 
 # Import system type stuff
@@ -40,7 +49,7 @@ class ReadWriteXml(xml_tools.XmlConfigTools):
             LOG.error('InsertDeviceXML ERROR {0:}'.format(e_err))
 
 
-import UPB_Pim
+from Modules.families.UPB import UPB_Pim
 
 
 class API(ReadWriteXml):
@@ -56,11 +65,12 @@ class API(ReadWriteXml):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_house_obj = p_pyhouse_obj.House.OBJs
         l_count = 0
-        for l_controller_obj in self.m_house_obj.Controllers.itervalues():
+        for l_controller_obj in self.m_pyhouse_obj.House.OBJs.Controllers.itervalues():
             if l_controller_obj.ControllerFamily != 'UPB':
                 continue
             if l_controller_obj.Active != True:
                 continue
+            LOG.info('Found controller {0:}'.format(l_controller_obj.Name))
             # Only one controller may be active at a time (for now).
             # But all controllers need to be processed so they may be written back to XML.
             if l_count > 0:
@@ -68,10 +78,10 @@ class API(ReadWriteXml):
                 LOG.warning('Controller {0:} skipped - another one is active.'.format(l_controller_obj.Name))
                 continue
             else:
-                # from Modules.families.Insteon import Insteon_PLM
                 l_controller_obj._HandlerAPI = UPB_Pim.API()
                 if l_controller_obj._HandlerAPI.Start(p_pyhouse_obj, l_controller_obj):
                     l_count += 1
+                    LOG.info('Controller {0:} Started.'.format(l_controller_obj.Name))
                 else:
                     LOG.error('Controller {0:} failed to start.'.format(l_controller_obj.Name))
                     l_controller_obj.Active = False

@@ -1,44 +1,20 @@
-#!/usr/bin/python
-
-# Copyright (C) 2012 by D. Brian Kimmel
-#
-# The following terms apply to all files associated
-# with the software unless explicitly disclaimed in individual files.
-#
-# The authors hereby grant permission to use, copy, modify, distribute,
-# and license this software and its documentation for any purpose, provided
-# that existing copyright notices are retained in all copies and that this
-# notice is included verbatim in any distributions. No written agreement,
-# license, or royalty fee is required for any of the authorized uses.
-# Modifications to this software may be copyrighted by their authors
-# and need not follow the licensing terms described here, provided that
-# the new terms are clearly indicated on the first page of each file where
-# they apply.
-#
-# IN NO EVENT SHALL THE AUTHORS OR DISTRIBUTORS BE LIABLE TO ANY PARTY
-# FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
-# ARISING OUT OF THE USE OF THIS SOFTWARE, ITS DOCUMENTATION, OR ANY
-# DERIVATIVES THEREOF, EVEN IF THE AUTHORS HAVE BEEN ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
-#
-# THE AUTHORS AND DISTRIBUTORS SPECIFICALLY DISCLAIM ANY WARRANTIES,
-# INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.  THIS SOFTWARE
-# IS PROVIDED ON AN "AS IS" BASIS, AND THE AUTHORS AND DISTRIBUTORS HAVE
-# NO OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR
-# MODIFICATIONS.
-
 """
-Driver_USB.py - USB Driver module.
+-*- test-case-name: PyHouse.src.Modules.drivers.test.test_thermostat -*-
+
+@name: PyHouse/src/Modules/drivers/Driver_USB.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
+@copyright: 2011-2014 by D. Brian Kimmel
+@license: MIT License
+@note: Created on Mar 27, 2011
+@summary: This module is for communicating with USB devices.
+
 
 This will interface various PyHouse modules to a USB device.
 
 This may be instanced as many times as there are USB devices to control.
 
-This should also allow control of many different houses.
 """
-
-__author__ = 'D. Brian Kimmel'
 
 # Import system type stuff
 import sys
@@ -157,7 +133,8 @@ class UsbDriverAPI(UsbDeviceData):
             LOG.error(l_msg)
             return None
         if l_device == None:
-            LOG.error('USB device not found  {0:X}:{1:X}, {2:}'.format(p_controller_obj.Vendor, p_controller_obj.Product, p_controller_obj.Name))
+            LOG.error('ERROR - USB device not found  {0:X}:{1:X}, {2:}'.format(
+                        p_controller_obj.Vendor, p_controller_obj.Product, p_controller_obj.Name))
             return None
         p_controller_obj._Data.Device = l_device
         p_controller_obj._Data.num_configs = l_device.bNumConfigurations
@@ -255,13 +232,13 @@ class UsbDriverAPI(UsbDeviceData):
             p_controller_obj.Vendor, p_controller_obj.Product, p_controller_obj.Name, p_controller_obj.Port))
         p_controller_obj._Data.Device = self._setup_find_device(p_controller_obj)
         if p_controller_obj._Data.Device == None:
+            LOG.error('ERROR - Setup Failed')
             return False
         self._setup_detach_kernel(p_controller_obj)
         self._setup_configurations(p_controller_obj)
         self._setup_interfaces(p_controller_obj)
         self._setup_endpoints(p_controller_obj)
         _l_msg = self._setup_hid_17DD_5500(p_controller_obj)
-        # self._write_control_device(p_controller_obj, l_msg)
         return True
 
     def close_device(self, p_controller_obj):
@@ -383,14 +360,14 @@ class API(UsbDriverAPI):
         """
         pass
 
-    def Start(self, p_controller_obj):
+    def Start(self, p_pyhouse_obj, p_controller_obj):
         """
         @param p_controller_obj: is the Controller_Data object we are starting.
-        @param p_parent: is the address of the caller USB device driver
         """
+        self.m_pyhouse_obj = p_pyhouse_obj
         self.m_controller_obj = p_controller_obj
-        p_controller_obj._Data = self.m_usb = UsbDeviceData()
-        if self.open_device(p_controller_obj) == True:
+        p_controller_obj._Data = UsbDeviceData()
+        if self.open_device(p_controller_obj):
             self.read_usb(p_controller_obj)
             LOG.info("Opened Controller:{0:}".format(p_controller_obj.Name))
             self.write_usb(p_controller_obj, bytearray(b'\x00\x01\x02\x03'))

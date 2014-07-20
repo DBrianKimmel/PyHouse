@@ -103,10 +103,12 @@ class API(SerialAPI):
     def __init__(self):
         pass
 
-    def Start(self, p_controller_obj):
+    def Start(self, p_pyhouse_obj, p_controller_obj):
         """
         @param p_controller_obj:is the Controller_Data object for a serial device to open.
         """
+        self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_controller_obj = p_controller_obj
         self.m_controller_obj = p_controller_obj
         l_ret = self.twisted_open_device(self.m_controller_obj)
         self.m_active = l_ret

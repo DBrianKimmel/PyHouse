@@ -1,11 +1,11 @@
 """
-@name: PyHouse/src/Modules/families/UPB/test/test_Device_UPBpy
+@name: PyHouse/src/Modules/families/UPB/test/test_Device_UPB.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @Copyright (c) 2013-2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Apr 8, 2013
-@summary: This module is for testing lighting Core.
+@summary: This module is for testing UPB devices.
 
 """
 

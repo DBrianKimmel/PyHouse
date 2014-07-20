@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 Modules/families/UPB/UPB_Pim.py
 
@@ -76,7 +74,6 @@ PU080001FF02864B25 <21:01:04 75664.25>
 
 # Import system type stuff
 import Queue
-from twisted.internet import reactor
 
 # Import PyMh files
 from Modules.Core.data_objects import UPBData
@@ -85,13 +82,7 @@ from Modules.utils.tools import PrintBytes
 from Modules.utils import pyh_log
 
 g_debug = 2
-# 0 = off
-# 1 = log extra info
-# 2 = major routine entry
-# + = NOT USED HERE
 LOG = pyh_log.getLogger('PyHouse.UPB_PIM     ')
-
-callLater = reactor.callLater
 
 
 # UPB Control Word
@@ -363,7 +354,8 @@ class PimDriverInterface(DecodeResponses):
             LOG.debug(l_msg)
         return l_string
 
-    def driver_loop_start(self, p_controller_obj):
+    def driver_loop_start(self, p_pyhouse_obj, p_controller_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
         self.dequeue_and_send(p_controller_obj)
         self.receive_loop(p_controller_obj)
 
@@ -374,7 +366,7 @@ class PimDriverInterface(DecodeResponses):
         p_controller_obj._Queue.put(p_command)
 
     def dequeue_and_send(self, p_controller_obj):
-        callLater(SEND_TIMEOUT, self.dequeue_and_send, p_controller_obj)
+        self.m_pyhouse_obj.Twisted.Reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send, p_controller_obj)
         try:
             l_command = p_controller_obj._Queue.get(False)
         except  Queue.Empty:
@@ -388,7 +380,7 @@ class PimDriverInterface(DecodeResponses):
                 LOG.debug(l_msg)
 
     def receive_loop(self, p_controller_obj):
-        callLater(RECEIVE_TIMEOUT, self.receive_loop, p_controller_obj)
+        self.m_pyhouse_obj.Twisted.Reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop, p_controller_obj)
         if p_controller_obj._DriverAPI != None:
             l_msg = p_controller_obj._DriverAPI.fetch_read_data(p_controller_obj)
             if len(l_msg) == 0:
@@ -421,45 +413,40 @@ class CreateCommands(UpbPimUtility, PimDriverInterface):
 
 class UpbPimAPI(Device_UPB.ReadWriteXml, CreateCommands):
 
-    def start_controller(self, p_house_obj, p_controller_obj):
-        """Find and initialize the UPB PIM type controllers.
-
-        skip all NON UPB controllers.
-        Also skip controllers that are not active.
-
-        Set up the controller and create links to it.
-        Initialize the controller
-        Initialize any interface special requirements.
-        """
-        self.m_controller_obj = p_controller_obj
-        self.m_controller_obj._Queue = Queue.Queue(300)
-        if self.m_controller_obj.ControllerFamily.lower() != 'upb':
-            return False
-        if self.m_controller_obj.Active != True:
-            return False
-        if g_debug >= 1:
-            LOG.debug("UPB_PIM.start_controller() - ControllerFamily:{0:}, InterfaceType:{1:}, Active:{2:}".format(self.m_controller_obj.ControllerFamily, self.m_controller_obj.InterfaceType, self.m_controller_obj.Active))
-        l_key = self.m_controller_obj.Key
-        l_pim = UPBData()
-        l_pim.InterfaceType = self.m_controller_obj.InterfaceType
-        l_pim.Name = self.m_controller_obj.Name
-        l_pim.UPBAddress = self.m_controller_obj.UPBAddress
-        l_pim.UPBPassword = self.m_controller_obj.UPBPassword
-        l_pim.UPBNetworkID = self.m_controller_obj.UPBNetworkID
-        LOG.info('Found UPB PIM named: {0:}, Type={1:}'.format(l_pim.Name, l_pim.InterfaceType))
-        if self.m_controller_obj.InterfaceType.lower() == 'serial':
+    def _load_driver(self, p_controller_obj):
+        if p_controller_obj.InterfaceType.lower() == 'serial':
             from Modules.drivers import Driver_Serial
             l_driver = Driver_Serial.API()
-        elif self.m_controller_obj.InterfaceType.lower() == 'ethernet':
+        elif p_controller_obj.InterfaceType.lower() == 'ethernet':
             from Modules.drivers import Driver_Ethernet
             l_driver = Driver_Ethernet.API()
-        elif self.m_controller_obj.InterfaceType.lower() == 'usb':
-            # from drivers import Driver_USB_17DD_5500
+        elif p_controller_obj.InterfaceType.lower() == 'usb':
             from Modules.drivers import Driver_USB
-            # l_driver = Driver_USB_17DD_5500.API()
             l_driver = Driver_USB.API()
-        l_driver.Start(self.m_controller_obj)
-        p_house_obj.Controllers[l_key]._DriverAPI = l_driver
+        return l_driver
+
+    def _initilaize_pim(self, p_controller_obj):
+        l_pim = UPBData()
+        l_pim.InterfaceType = p_controller_obj.InterfaceType
+        l_pim.Name = p_controller_obj.Name
+        l_pim.UPBAddress = p_controller_obj.UPBAddress
+        l_pim.UPBPassword = p_controller_obj.UPBPassword
+        l_pim.UPBNetworkID = p_controller_obj.UPBNetworkID
+        LOG.info('Found UPB PIM named: {0:}, Type={1:}'.format(l_pim.Name, l_pim.InterfaceType))
+        return l_pim
+
+    def start_controller(self, p_pyhouse_obj, p_controller_obj):
+        """
+        """
+        p_controller_obj._Queue = Queue.Queue(300)
+        if g_debug >= 1:
+            LOG.debug("UPB_PIM.start_controller() - ControllerFamily:{0:}, InterfaceType:{1:}".format(
+                        p_controller_obj.ControllerFamily, p_controller_obj.InterfaceType))
+        l_key = p_controller_obj.Key
+        l_pim = self._initilaize_pim(p_controller_obj)
+        l_driver = self._load_driver(p_controller_obj)
+        l_driver.Start(p_controller_obj)
+        p_pyhouse_obj.House.OBJs.Controllers[p_controller_obj.Key]._DriverAPI = l_driver
         l_pim._DriverAPI = l_driver
         self.set_register_value(p_controller_obj, 0x70, [0x03])
         return True
@@ -469,24 +456,25 @@ class UpbPimAPI(Device_UPB.ReadWriteXml, CreateCommands):
 
 
 class API(UpbPimAPI):
+    m_pyhouse_obj = None
+    m_controller_obj = None
 
     def __init__(self):
         LOG.info('Initialized.')
 
     def Start(self, p_pyhouse_obj, p_controller_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
         self.m_controller_obj = p_controller_obj
-        LOG.info('Start Controller:{0:}.'.format(self.m_controller_obj.Name))
-        self.start_controller(p_pyhouse_obj.House.OBJs, self.m_controller_obj)
-        self.driver_loop_start(p_controller_obj)
-        return True
+        if self.start_controller(p_pyhouse_obj, p_controller_obj):
+            self.driver_loop_start(p_pyhouse_obj, p_controller_obj)
+            return True
+        return False
 
     def Stop(self, p_controller_obj):
         pass
 
     def ChangeLight(self, p_light_obj, p_level, _p_rate = 0):
         for l_obj in self.m_house_obj.Lights.itervalues():
-            if l_obj.ControllerFamily != 'UPB':
-                continue
             if l_obj.Active == False:
                 continue
             l_name = p_light_obj.Name
