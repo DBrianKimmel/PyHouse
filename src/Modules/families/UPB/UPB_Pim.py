@@ -206,7 +206,7 @@ class DecodeResponses(object):
         """
         if len(p_message) < 1:
             return False
-        PrintBytes(p_message)
+        print('Message = {0:}'.format(PrintBytes(p_message)))
         return True
 
 
@@ -214,7 +214,7 @@ class DecodeResponses(object):
         """A response message starts with a 'P' (0x50) and ends with a '\r' (0x0D).
         """
         self.m_controller_obj = p_controller_obj
-        if not self._get_message_body(p_message):
+        if self._get_message_body(p_message) == False:
             return
         l_message = p_controller_obj._Message
         l_hdr = l_message[0]
