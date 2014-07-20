@@ -40,7 +40,7 @@ from Modules.families.Insteon import decoder
 from Modules.utils import pyh_log
 # from Modules.utils.tools import PrettyPrintAny
 
-g_debug = 4
+g_debug = 9
 LOG = pyh_log.getLogger('PyHouse.Insteon_PLM ')
 
 # Timeouts for send/receive delays

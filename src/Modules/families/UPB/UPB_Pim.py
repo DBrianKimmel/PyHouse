@@ -81,7 +81,7 @@ import Device_UPB
 from Modules.utils.tools import PrintBytes
 from Modules.utils import pyh_log
 
-g_debug = 2
+g_debug = 9
 LOG = pyh_log.getLogger('PyHouse.UPB_PIM     ')
 
 

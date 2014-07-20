@@ -54,6 +54,12 @@ from Modules.families.UPB import UPB_Pim
 
 class API(ReadWriteXml):
 
+    def _is_upb_active(self, p_controller_obj):
+        if p_controller_obj.ControllerFamily != 'UPB':
+            return False
+        if p_controller_obj.Active:
+            return True
+
     def __init__(self):
         """Constructor for the UPB.
         """
@@ -63,12 +69,10 @@ class API(ReadWriteXml):
         """For the given house, this will start all the controllers for family = UPB in that house.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_house_obj = p_pyhouse_obj.House.OBJs
         l_count = 0
         for l_controller_obj in self.m_pyhouse_obj.House.OBJs.Controllers.itervalues():
-            if l_controller_obj.ControllerFamily != 'UPB':
-                continue
-            if l_controller_obj.Active != True:
+            LOG.info('Starting Controller {0:}'.format(l_controller_obj.Name))
+            if not self._is_upb_active(l_controller_obj):
                 continue
             LOG.info('Found controller {0:}'.format(l_controller_obj.Name))
             # Only one controller may be active at a time (for now).
@@ -90,7 +94,7 @@ class API(ReadWriteXml):
 
     def Stop(self, p_xml):
         try:
-            for l_controller_obj in self.m_house_obj.Controllers.itervalues():
+            for l_controller_obj in self.m_pyhouse_obj.House.OBJs.Controllers.itervalues():
                 if l_controller_obj.ControllerFamily != 'UPB':
                     continue
                 if l_controller_obj.Active != True:
