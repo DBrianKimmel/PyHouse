@@ -247,7 +247,7 @@ class UsbDriverAPI(UsbDeviceData):
         p_controller_obj._Data.Device.reset()
 
     def read_usb(self, p_pyhouse_obj, p_controller_obj):
-        p_pyhouse_obj.Twisted.Reactorp.callLater(RECEIVE_TIMEOUT, lambda x = p_controller_obj: self.read_usb(x))
+        p_pyhouse_obj.Twisted.Reactor.callLater(RECEIVE_TIMEOUT, lambda x = p_controller_obj: self.read_usb(x))
         if p_controller_obj._Data.hid_device:
             self.read_report(p_controller_obj)
         else:
