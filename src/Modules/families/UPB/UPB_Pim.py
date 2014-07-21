@@ -210,11 +210,11 @@ class DecodeResponses(object):
         return True
 
 
-    def decode_response(self, p_controller_obj, p_message):
+    def decode_response(self, p_controller_obj):
         """A response message starts with a 'P' (0x50) and ends with a '\r' (0x0D).
         """
         self.m_controller_obj = p_controller_obj
-        if self._get_message_body(p_message) == False:
+        if self._get_message_body(p_controller_obj._Message) == False:
             return
         l_message = p_controller_obj._Message
         l_hdr = l_message[0]
@@ -306,7 +306,7 @@ class PimDriverInterface(DecodeResponses):
             l_msg = p_controller_obj._DriverAPI.fetch_read_data(p_controller_obj)
             if len(l_msg) == 0:
                 return
-            self.decode_response(p_controller_obj, l_msg)
+            self.decode_response(p_controller_obj)
 
 
 class CreateCommands(UpbPimUtility, PimDriverInterface):
