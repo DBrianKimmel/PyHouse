@@ -204,9 +204,10 @@ class BuildCommand(object):
         l_cmd[1:] = l_cmd
         l_cmd[0] = CTL_T
         l_cmd.append(0x0d)
+        self.queue_pim_command(p_controller_obj, l_cmd)
 
+    def change_register_command_FORCE(self, p_controller_obj, *_p_args):
         l_xx = b'\x14\x37\x30\x30\x33\x38\x44\x0d'
-        # self.queue_pim_command(p_controller_obj, l_cmd)
         self.queue_pim_command(p_controller_obj, l_xx)
         pass
 
@@ -367,7 +368,7 @@ class CreateCommands(UpbPimUtility, PimDriverInterface, BuildCommand):
         if g_debug >= 1:
             LOG.debug("Setting register {0:#0x} to value {1:}".format(p_register, p_values))
         # self._compose_command(p_controller_obj, pim_commands['set_register_value'], int(p_controller_obj.UPBAddress), int(p_register), p_values[0])
-        self.change_register_command(p_controller_obj, p_values)
+        self.change_register_command_FORCE(p_controller_obj, p_values)
         pass
 
     def set_pim_mode(self):
