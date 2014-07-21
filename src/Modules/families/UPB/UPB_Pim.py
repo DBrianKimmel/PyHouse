@@ -357,7 +357,7 @@ class PimDriverInterface(DecodeResponses):
             self.decode_response(p_controller_obj)
 
 
-class CreateCommands(UpbPimUtility, PimDriverInterface):
+class CreateCommands(UpbPimUtility, PimDriverInterface, BuildCommand):
     """
     """
 
