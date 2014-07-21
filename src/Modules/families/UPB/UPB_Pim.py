@@ -95,7 +95,7 @@ ACK_MSG = 0x40
 
 # Timeouts for send/receive delays
 SEND_TIMEOUT = 0.8
-RECEIVE_TIMEOUT = 0.3  # this is for fetching data in the rx buffer
+RECEIVE_TIMEOUT = 0.3  # this is for fetching data in the RX buffer
 
 
 # Command types
@@ -136,22 +136,82 @@ pim_commands = {
 }
 
 
-# Controller_Data = Device_UPB.Controller_Data
+class BuildCommand(object):
+    """
+    This class will take a command bytearray and convert it ot a bytearray for sending.
 
+    Write register commands:
+    The command for changing register 70's value to 03 is  ==> 70 03.
+    First we add a checksum (8D in this case) to the bytearray ==> 70 03 8D.
+    next 70 03 8D is converted to 37 30 30 33 38 44 by converting each nibble to an ascii hex value.
+    Finally the command becomes 14 37 30 30 33 38 44 0D and is queued for sending
+    """
 
-class UpbPimUtility(object):
+    def _nibble_to_hex(self, p_nibble):
+        """Take the low order nibble and convert it to a single byte that is the ascii code for the nibble.
+
+        0x01 ==> 0x31 ('1')
+        0x0A ==> 0x41 ('A')
+        0x0F ==> 0x46 ('F')
+        """
+        l_ret = 0x30 + p_nibble
+        if l_ret > 0x39:
+            l_ret += 0x07
+        l_ret = chr(l_ret)
+        return ord(l_ret)
+
+    def _byte_to_2chars(self, p_byte):
+        """Take a single byte and return 2 bytes that are the ascii hex equivalent.
+
+        0x12 ==> 0x3132 ('12')
+        """
+        l_ret = bytearray(2)
+        l_ret[0] = self._nibble_to_hex(p_byte / 16)
+        l_ret [1] = self._nibble_to_hex(p_byte % 16)
+        return l_ret
 
     def _calculate_checksum(self, p_msg):
+        """Take a byte array of arbitrary length and return a byte array with the checksum appended to the original.
+
+        b'\x70\x03' ==> b'\x70\x03\x8D'
+        """
         l_out = bytearray(0)
         l_cs = 0
         for l_ix in range(len(p_msg)):
-            l_byte = p_msg[l_ix]
+            l_byte = ord(p_msg[l_ix])
             l_cs = (l_cs + l_byte) % 256
             l_out.append(l_byte)
         l_out.append(int(256 - l_cs))
-        if g_debug >= 1:
-            LOG.debug("Calculate checksum - {0:}".format(PrintBytes(l_out)))
         return l_out
+
+    def _convert_pim(self, p_array):
+        l_string = chr(CTL_T)  # Transmit a UPB message
+        for l_byte in p_array:
+            l_char = "{0:02X}".format(l_byte)
+            # l_char = chr(l_byte)
+            l_string += l_char
+        l_string += chr(0x0D)
+        if g_debug >= 1:
+            l_msg = "Convert_pim - {0:}".format(PrintBytes(l_string))
+            LOG.debug(l_msg)
+        return l_string
+
+    def change_register_command(self, p_controller_obj, *p_args):
+        l_cmd = bytearray(len(p_args))
+        for l_ix in range(len(p_args)):
+            l_cmd[0 + l_ix] = str(p_args[0][l_ix])
+        l_cmd = self._calculate_checksum(l_cmd)
+        l_cmd[1:] = l_cmd
+        l_cmd[0] = CTL_T
+        l_cmd.append(0x0d)
+
+        l_xx = b'\x14\x37\x30\x30\x33\x38\x44\x0d'
+        # self.queue_pim_command(p_controller_obj, l_cmd)
+        self.queue_pim_command(p_controller_obj, l_xx)
+        pass
+
+
+class UpbPimUtility(object):
 
     def _compose_command(self, p_controller_obj, _p_command, _p_device_id, *p_args):
         """Build the command.
@@ -166,7 +226,7 @@ class UpbPimUtility(object):
         for l_ix in range(len(p_args)):
             l_hdr[0 + l_ix] = p_args[l_ix]
         l_hdr = self._calculate_checksum(l_hdr)
-        l_msg = "Ctl:{0:#02X}  ".format(l_hdr[0])
+        l_msg = "Ctl:{0:#02x}  ".format(l_hdr[0])
         if g_debug >= 1:
             LOG.debug('Compose Command - {0:}'.format(l_msg))
         self.queue_pim_command(p_controller_obj, l_hdr)
@@ -261,18 +321,6 @@ class DecodeResponses(object):
 
 class PimDriverInterface(DecodeResponses):
 
-    def _convert_pim(self, p_array):
-        l_string = chr(0x14)
-        for l_byte in p_array:
-            l_char = "{0:02X}".format(l_byte)
-            # l_char = chr(l_byte)
-            l_string += l_char
-        l_string += chr(0x0D)
-        if g_debug >= 1:
-            l_msg = "Convert_pim - {0:}".format(PrintBytes(l_string))
-            LOG.debug(l_msg)
-        return l_string
-
     def driver_loop_start(self, p_pyhouse_obj, p_controller_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.dequeue_and_send(p_controller_obj)
@@ -318,12 +366,15 @@ class CreateCommands(UpbPimUtility, PimDriverInterface):
         """
         if g_debug >= 1:
             LOG.debug("Setting register {0:#0x} to value {1:}".format(p_register, p_values))
-        self._compose_command(p_controller_obj, pim_commands['set_register_value'], int(p_controller_obj.UPBAddress), int(p_register), p_values[0])
+        # self._compose_command(p_controller_obj, pim_commands['set_register_value'], int(p_controller_obj.UPBAddress), int(p_register), p_values[0])
+        self.change_register_command(p_controller_obj, p_values)
         pass
 
     def set_pim_mode(self):
-        # Send a write register 70 to set PIM mode
-        # Command to be sent is <17> 70 03 8D <0D>
+        """
+        Send a write register 70 to set PIM mode
+        Command to be sent is <17> 70 03 8D <0D>
+        """
         l_val = bytearray(1)
         l_val[0] = 0x03
         if g_debug >= 1:
@@ -385,6 +436,7 @@ class API(UpbPimAPI):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_controller_obj = p_controller_obj
         if self.start_controller(p_pyhouse_obj, p_controller_obj):
+            LOG.info('Starting driver loop')
             self.driver_loop_start(p_pyhouse_obj, p_controller_obj)
             return True
         return False

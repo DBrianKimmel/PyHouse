@@ -283,11 +283,10 @@ class UsbDriverAPI(UsbDeviceData):
         with the first byte being 0xFx where x is 0-7 = length of the data
         So here we will strip off the length and append the rest of the message to the buffer
 
-        I realy think this is pim specific but it makes sense to only pass back the real message if we can.
+        I really think this is PIM specific but it makes sense to only pass back the real message if we can.
         """
         try:
             l_msg = p_controller_obj._Data.Device.read(p_controller_obj._Data.epi_addr, p_controller_obj._Data.epi_packet_size, timeout = 100)
-            # l_len = len(l_msg)
             l_len = l_msg[0] & 0x0F
             if l_len > 0:
                 if g_debug >= 1:
