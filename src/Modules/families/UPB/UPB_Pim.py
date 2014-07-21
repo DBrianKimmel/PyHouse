@@ -340,8 +340,8 @@ class PimDriverInterface(DecodeResponses):
         except  Queue.Empty:
             return
         if p_controller_obj._DriverAPI != None:
-            l_send = self._convert_pim(l_command)
-            # l_send = l_command
+            # l_send = self._convert_pim(l_command)
+            l_send = l_command
             p_controller_obj._DriverAPI.Write(l_send)
             if g_debug >= 1:
                 l_msg = 'Sent to controller:{0:}, Message: {1:} '.format(p_controller_obj.Name, PrintBytes(l_send))
