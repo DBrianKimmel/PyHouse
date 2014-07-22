@@ -359,7 +359,9 @@ class PimDriverInterface(DecodeResponses):
     def driver_loop_start(self, p_pyhouse_obj, p_controller_obj):
         LOG.info('Start driver loop')
         self.m_pyhouse_obj = p_pyhouse_obj
+        LOG.info('Sending first command')
         self.dequeue_and_send(p_controller_obj)
+        LOG.info('About to start RX loop')
         self.receive_loop(p_controller_obj)
 
     def XXXqueue_pim_command(self, p_controller_obj, p_command):
@@ -379,8 +381,7 @@ class PimDriverInterface(DecodeResponses):
             l_send = l_command
             p_controller_obj._DriverAPI.Write(l_send)
             if g_debug >= 1:
-                l_msg = 'Sent to controller:{0:}, Message: {1:} '.format(p_controller_obj.Name, PrintBytes(l_send))
-                LOG.debug(l_msg)
+                LOG.debug('Sent to controller:{0:}, Message: {1:} '.format(p_controller_obj.Name, PrintBytes(l_send)))
 
     def receive_loop(self, p_controller_obj):
         """Periodically, get the current RX data from the driver.
