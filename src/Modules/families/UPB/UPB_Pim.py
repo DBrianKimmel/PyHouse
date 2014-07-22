@@ -207,15 +207,20 @@ class BuildCommand(object):
         return l_cmd
 
     def _convert_pim(self, p_array):
-        l_string = chr(CTL_T)  # Transmit a UPB message
+        """Take a command ByteArray and convert it for the serial interface of the pim.
+
+        I think this means taking each nibble of the command and converting it to an ASCII byte.
+
+
+        """
+        l_ret = bytearray(0)
         for l_byte in p_array:
-            l_char = "{0:02X}".format(l_byte)
-            l_string += l_char
-        l_string += chr(0x0D)
+            l_str = self._byte_to_2chars(l_byte)
+            l_ret.append(l_str[0])
+            l_ret.append(l_str[1])
         if g_debug >= 1:
-            l_msg = "Convert_pim - {0:}".format(PrintBytes(l_string))
-            LOG.debug(l_msg)
-        return l_string
+            LOG.debug("Convert_pim - {0:}".format(PrintBytes(l_ret)))
+        return l_ret
 
     def _queue_pim_command(self, p_controller_obj, p_command):
         if g_debug >= 1:
@@ -225,7 +230,9 @@ class BuildCommand(object):
 
     def write_register_command(self, p_controller_obj, p_reg, p_args):
         l_cmd = self._assemble_regwrite(p_reg, p_args)
-        l_cmd = self._convert_pim(l_cmd)
+        l_cmd[1:] = self._convert_pim(l_cmd)
+        l_cmd[0] = CTL_T
+        l_cmd.append(0x0d)
         self._queue_pim_command(p_controller_obj, l_cmd)
         return l_cmd
 

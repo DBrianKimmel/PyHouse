@@ -79,15 +79,20 @@ class Test_01_Utils(unittest.TestCase):
         self.assertEqual(l_ba, b'\xEF\x11')
         print('test_0103-D/ Checksum {0:}'.format(PrintBytes(l_ba)), l_ba)
 
-
     def test_0104_AssembleCommand(self):
         l_ba = self.m_api._assemble_regwrite(b'\x70', b'\x03')
         print('test_0104/ {0:}'.format(PrintBytes(l_ba)), l_ba)
         self.assertEqual(l_ba, b'\x70\x03\x8D')
 
-    def test_0105_Register(self):
+    def test_0105_Convert(self):
+        l_ba = self.m_api._assemble_regwrite(b'\x70', b'\x03')
+        l_cv = self.m_api._convert_pim(l_ba)
+        print('test_0105/ ', PrintBytes(l_cv), l_cv)
+        self.assertEqual(l_cv, (b'\x37\x30\x30\x33\x38\x44'))
+
+    def test_0106_Register(self):
         l_ba = self.m_api.write_register_command(self.m_controller_obj, b'\x70', b'\x03')
-        print('test_0105/ ', PrintBytes(l_ba), l_ba)
+        print('test_0106/ ', PrintBytes(l_ba), l_ba)
         self.assertEqual(l_ba, (b'\x14\x37\x30\x30\x33\x38\x44\x0D'))
 
 # ## END DBK
