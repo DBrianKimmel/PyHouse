@@ -29,7 +29,7 @@ from twisted.internet.protocol import Protocol
 from Modules.utils.tools import PrintBytes
 from Modules.utils import pyh_log
 
-g_debug = 2
+g_debug = 9
 LOG = pyh_log.getLogger('PyHouse.USBDriver   ')
 
 
@@ -318,7 +318,7 @@ class UsbDriverAPI(UsbDeviceData):
 
     def write_report(self, p_controller_obj, p_message):
         if g_debug >= 1:
-            LOG.debug("Write Report")
+            LOG.debug("Write Report - {0:}".format(PrintBytes(p_message)))
         self._write_bis_device(p_controller_obj, p_message)
 
     def write_device(self, p_controller_obj, p_message):

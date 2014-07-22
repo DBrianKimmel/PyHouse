@@ -16,13 +16,13 @@ Created on Apr 8, 2013
 
 # Import system type stuff
 from twisted.trial import unittest
-import xml.etree.ElementTree as ET
+import Queue
 
 # Import PyMh files and modules.
 from Modules.families.UPB import UPB_Pim
 from test import xml_data
-from Modules.Core.data_objects import PyHouseData, HouseObjs, ControllerData
-from Modules.utils.tools import PrintBytes, PrettyPrintAny
+from Modules.Core.data_objects import ControllerData
+from Modules.utils.tools import PrintBytes  # , PrettyPrintAny
 
 XML = xml_data.XML_LONG
 CHG_REG_CMD = b'\x70\x03'
@@ -33,16 +33,22 @@ class Test_01_Utils(unittest.TestCase):
     def setUp(self):
         self.m_api = UPB_Pim.BuildCommand()
         self.m_controller_obj = ControllerData()
+        self.m_controller_obj._Queue = Queue.Queue(300)
 
     def test_0101_Nibble2Hex(self):
         l_hex = self.m_api._nibble_to_hex(0x00)
         self.assertEqual(l_hex, 0x30)
+        print('test_0101/  0x00 ==> {0:#2x} '.format(l_hex), l_hex)
+        #
         l_hex = self.m_api._nibble_to_hex(0x07)
         self.assertEqual(l_hex, 0x37)
+        #
         l_hex = self.m_api._nibble_to_hex(0x0A)
         self.assertEqual(l_hex, 0x41)
+        #
         l_hex = self.m_api._nibble_to_hex(0x0F)
         self.assertEqual(l_hex, 0x46)
+        print('test_0101/  0x0f ==> {0:#2x} '.format(l_hex), l_hex)
 
     def test_0102_Byte2Hex(self):
         l_str = self.m_api._byte_to_2chars(0x00)
@@ -57,17 +63,31 @@ class Test_01_Utils(unittest.TestCase):
         self.assertEqual(l_str, '77')
         l_str = self.m_api._byte_to_2chars(0xff)
         self.assertEqual(l_str, 'FF')
+        print('test_0102/  0xff ==> {0:} '.format(l_str), l_str)
 
     def test_0103_Checksum(self):
         l_ba = self.m_api._calculate_checksum(CHG_REG_CMD)
         self.assertEqual(l_ba, b'\x70\x03\x8D')
-        print('W/ Checksum {0:}'.format(PrintBytes(l_ba)))
+        print('test_0103-A/ Checksum {0:}'.format(PrintBytes(l_ba)))
         l_ba = self.m_api._calculate_checksum(b'\x35\x23\x24')
         self.assertEqual(l_ba, b'\x35\x23\x24\x84')
-        print('W/ Checksum {0:}'.format(PrintBytes(l_ba)))
+        print('test_0103-B/ Checksum {0:}'.format(PrintBytes(l_ba)))
+        l_ba = self.m_api._calculate_checksum(b'\x11')
+        self.assertEqual(l_ba, b'\x11\xEF')
+        print('test_0103-C/ Checksum {0:}'.format(PrintBytes(l_ba)))
+        l_ba = self.m_api._calculate_checksum(b'\xEF')
+        self.assertEqual(l_ba, b'\xEF\x11')
+        print('test_0103-D/ Checksum {0:}'.format(PrintBytes(l_ba)), l_ba)
 
-    def test_0104_Register(self):
-        l_cmd = self.m_api._calculate_checksum(CHG_REG_CMD)
-        l_ba = self.m_api.change_register_command(self.m_controller_obj, l_cmd)
+
+    def test_0104_AssembleCommand(self):
+        l_ba = self.m_api._assemble_regwrite(b'\x70', b'\x03')
+        print('test_0104/ {0:}'.format(PrintBytes(l_ba)), l_ba)
+        self.assertEqual(l_ba, b'\x70\x03\x8D')
+
+    def test_0105_Register(self):
+        l_ba = self.m_api.write_register_command(self.m_controller_obj, b'\x70', b'\x03')
+        print('test_0105/ ', PrintBytes(l_ba), l_ba)
+        self.assertEqual(l_ba, (b'\x14\x37\x30\x30\x33\x38\x44\x0D'))
 
 # ## END DBK

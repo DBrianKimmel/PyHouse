@@ -77,7 +77,7 @@ import Queue
 
 # Import PyMh files
 from Modules.Core.data_objects import UPBData
-from Modules.utils.tools import PrintBytes, PrettyPrintAny
+from Modules.utils.tools import PrintBytes
 from Modules.utils import pyh_log
 
 g_debug = 9
@@ -153,6 +153,8 @@ class BuildCommand(object):
         0x01 ==> 0x31 ('1')
         0x0A ==> 0x41 ('A')
         0x0F ==> 0x46 ('F')
+
+        @return: an int
         """
         l_ret = 0x30 + p_nibble
         if l_ret > 0x39:
@@ -164,31 +166,50 @@ class BuildCommand(object):
         """Take a single byte and return 2 bytes that are the ascii hex equivalent.
 
         0x12 ==> 0x3132 ('12')
+
+        @return: a 2 byte array of ints that are ascii encoded.
         """
         l_ret = bytearray(2)
         l_ret[0] = self._nibble_to_hex(p_byte / 16)
         l_ret [1] = self._nibble_to_hex(p_byte % 16)
         return l_ret
 
-    def _calculate_checksum(self, p_msg):
-        """Take a byte array of arbitrary length and return a byte array with the checksum appended to the original.
+    def _calculate_checksum(self, p_ba):
+        """Take a ByteArray of arbitrary length and return a byte array with the checksum appended to the original.
 
         b'\x70\x03' ==> b'\x70\x03\x8D'
+        @return: a bytearray with the checksum byte appended
         """
         l_out = bytearray(0)
         l_cs = 0
-        for l_ix in range(len(p_msg)):
-            l_byte = ord(p_msg[l_ix])
+        for l_ix in range(len(p_ba)):
+            try:
+                l_byte = ord(p_ba[l_ix])
+            except:
+                l_byte = p_ba[l_ix]
             l_cs = (l_cs + l_byte) % 256
             l_out.append(l_byte)
         l_out.append(int(256 - l_cs))
         return l_out
 
+    def _assemble_regwrite(self, p_reg, p_args):
+        """Take the command and the args and make a ByteArray with the checksum appended
+
+        @param p_reg: is the register number where we will start writing.
+        @param p_args: is the one or more values that we will write into the registers
+        @return: the ByteArray body of the register write command
+        """
+        l_cmd = bytearray(len(p_args) + 1)
+        l_cmd[0] = p_reg
+        for l_ix in range(len(p_args)):
+            l_cmd[1 + l_ix] = p_args[l_ix]
+        l_cmd = self._calculate_checksum(l_cmd)
+        return l_cmd
+
     def _convert_pim(self, p_array):
         l_string = chr(CTL_T)  # Transmit a UPB message
         for l_byte in p_array:
             l_char = "{0:02X}".format(l_byte)
-            # l_char = chr(l_byte)
             l_string += l_char
         l_string += chr(0x0D)
         if g_debug >= 1:
@@ -196,20 +217,17 @@ class BuildCommand(object):
             LOG.debug(l_msg)
         return l_string
 
-    def change_register_command(self, p_controller_obj, *p_args):
-        l_cmd = bytearray(len(p_args))
-        for l_ix in range(len(p_args)):
-            l_cmd[0 + l_ix] = str(p_args[0][l_ix])
-        l_cmd = self._calculate_checksum(l_cmd)
-        l_cmd[1:] = l_cmd
-        l_cmd[0] = CTL_T
-        l_cmd.append(0x0d)
-        self.queue_pim_command(p_controller_obj, l_cmd)
+    def _queue_pim_command(self, p_controller_obj, p_command):
+        if g_debug >= 1:
+            l_msg = "Queue_pim_command {0:}".format(PrintBytes(p_command))
+            LOG.debug(l_msg)
+        p_controller_obj._Queue.put(p_command)
 
-    def change_register_command_FORCE(self, p_controller_obj, *_p_args):
-        l_xx = b'\x14\x37\x30\x30\x33\x38\x44\x0d'
-        self.queue_pim_command(p_controller_obj, l_xx)
-        pass
+    def write_register_command(self, p_controller_obj, p_reg, p_args):
+        l_cmd = self._assemble_regwrite(p_reg, p_args)
+        l_cmd = self._convert_pim(l_cmd)
+        self._queue_pim_command(p_controller_obj, l_cmd)
+        return l_cmd
 
 
 class UpbPimUtility(object):
@@ -367,8 +385,7 @@ class CreateCommands(UpbPimUtility, PimDriverInterface, BuildCommand):
         """
         if g_debug >= 1:
             LOG.debug("Setting register {0:#0x} to value {1:}".format(p_register, p_values))
-        # self._compose_command(p_controller_obj, pim_commands['set_register_value'], int(p_controller_obj.UPBAddress), int(p_register), p_values[0])
-        self.change_register_command_FORCE(p_controller_obj, p_values)
+        self.write_register_command(p_controller_obj, p_register, p_values)
         pass
 
     def set_pim_mode(self):
