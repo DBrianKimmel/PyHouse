@@ -29,7 +29,7 @@ from twisted.internet.protocol import Protocol
 from Modules.utils.tools import PrintBytes
 from Modules.utils import pyh_log
 
-g_debug = 9
+g_debug = 0
 LOG = pyh_log.getLogger('PyHouse.USBDriver   ')
 
 
