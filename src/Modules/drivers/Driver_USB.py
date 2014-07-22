@@ -300,13 +300,15 @@ class UsbDriverAPI(UsbDeviceData):
         except Exception as e:
             LOG.error("Error in read_report() {0:} {1:}".format(sys.exc_info(), e))
             l_len = 0
+        if g_debug >= 1:
+            LOG.info('Message is now {0:}'.format(PrintBytes(p_controller_obj._Message)))
         return l_len
 
     def fetch_read_data(self, p_controller_obj):
         l_ret = p_controller_obj._Message
         p_controller_obj._Message = bytearray()
-        # if g_debug >= 1:
-        #    LOG.debug("Driver_USB.fetch_read_data() - Msg:{0:}".format(PrintBytes(l_ret)))
+        if g_debug >= 1:
+           LOG.debug("fetch_read_data() - Msg:{0:}".format(PrintBytes(l_ret)))
         return l_ret
 
     def write_usb(self, p_controller_obj, p_message):

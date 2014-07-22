@@ -229,12 +229,20 @@ class BuildCommand(object):
         p_controller_obj._Queue.put(p_command)
 
     def write_register_command(self, p_controller_obj, p_reg, p_args):
+        """Take a starting register and one or more values and write them into the controller.
+        Use a 0x14 header to create the command
+        """
         l_cmd = self._assemble_regwrite(p_reg, p_args)
         l_cmd[1:] = self._convert_pim(l_cmd)
         l_cmd[0] = CTL_T
         l_cmd.append(0x0d)
         self._queue_pim_command(p_controller_obj, l_cmd)
         return l_cmd
+
+    def  write_pim_command(self):
+        """Send a command to some UPB device thru the controller
+        """
+        pass
 
 
 class UpbPimUtility(object):
@@ -255,7 +263,8 @@ class UpbPimUtility(object):
         l_msg = "Ctl:{0:#02x}  ".format(l_hdr[0])
         if g_debug >= 1:
             LOG.debug('Compose Command - {0:}'.format(l_msg))
-        self.queue_pim_command(p_controller_obj, l_hdr)
+        # self.queue_pim_command(p_controller_obj, l_hdr)
+
 
 
 class DecodeResponses(object):
@@ -348,11 +357,12 @@ class DecodeResponses(object):
 class PimDriverInterface(DecodeResponses):
 
     def driver_loop_start(self, p_pyhouse_obj, p_controller_obj):
+        LOG.info('Start driver loop')
         self.m_pyhouse_obj = p_pyhouse_obj
         self.dequeue_and_send(p_controller_obj)
         self.receive_loop(p_controller_obj)
 
-    def queue_pim_command(self, p_controller_obj, p_command):
+    def XXXqueue_pim_command(self, p_controller_obj, p_command):
         if g_debug >= 1:
             l_msg = "Queue_pim_command {0:}".format(PrintBytes(p_command))
             LOG.debug(l_msg)
