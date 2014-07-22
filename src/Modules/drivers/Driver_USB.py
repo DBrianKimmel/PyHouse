@@ -292,7 +292,7 @@ class UsbDriverAPI(UsbDeviceData):
                 if g_debug >= 1:
                     LOG.debug("read_report() - Len:{0:}, Msg:{1:}".format(l_len, PrintBytes(l_msg)))
                 l_msg = l_msg[1:]
-                for l_x in range(l_len - 1):
+                for l_x in range(l_len):
                     p_controller_obj._Message.append(l_msg[l_x])
         except usb.USBError as e:
             LOG.error("read_report() got USBError {0:}".format(e))
@@ -308,7 +308,7 @@ class UsbDriverAPI(UsbDeviceData):
         l_ret = p_controller_obj._Message
         p_controller_obj._Message = bytearray()
         if g_debug >= 1:
-           LOG.debug("fetch_read_data() - Msg:{0:}".format(PrintBytes(l_ret)))
+            LOG.debug("fetch_read_data() - Msg:{0:}".format(PrintBytes(l_ret)))
         return l_ret
 
     def write_usb(self, p_controller_obj, p_message):
