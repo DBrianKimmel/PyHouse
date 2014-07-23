@@ -3,7 +3,6 @@
 -*- test-case-name: PyHouse.src.Modules.test.test_PyHouse -*-
 
 @name: PyHouse/src/Modules/Pyhouse.py
-
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @Copyright (c) 2010-2014 by D. Brian Kimmel

@@ -128,8 +128,7 @@ class UsbDriverAPI(UsbDeviceData):
         try:
             l_device = usb.core.find(idVendor = p_USB_obj.Vendor, idProduct = p_USB_obj.Product)
         except usb.USBError:
-            l_msg = "ERROR no such USB device for {0:}".format(l_vpn)
-            LOG.error(l_msg)
+            LOG.error("ERROR no such USB device for {0:}".format(l_vpn))
             return None
         if l_device == None:
             LOG.error('ERROR - USB device not found  {0:}'.format(l_vpn))
@@ -300,18 +299,18 @@ class UsbDriverAPI(UsbDeviceData):
             LOG.info('Message is now {0:}'.format(PrintBytes(p_USB_obj.message)))
         return l_len
 
-    def fetch_read_data(self, p_USB_obj):
-        l_ret = p_USB_obj.message
-        p_USB_obj.message = bytearray()
+    def fetch_read_data(self):
+        l_ret = self.m_USB_obj.message
+        self.m_USB_obj.message = bytearray()
         if g_debug >= 0:
             LOG.debug("fetch_read_data() - Msg:{0:}".format(PrintBytes(l_ret)))
         return l_ret
 
-    def write_usb(self, p_USB_obj, p_message):
-        if p_USB_obj.hid_device:
-            self.write_report(p_USB_obj, p_message)
+    def write_usb(self, p_message):
+        if self.m_USB_obj.hid_device:
+            self.write_report(self.m_USB_obj, p_message)
         else:
-            self.write_device(p_USB_obj, p_message)
+            self.write_device(self.m_USB_obj, p_message)
         pass
 
     def write_report(self, p_USB_obj, p_message):
@@ -378,8 +377,8 @@ class API(UsbDriverAPI):
         if self.open_device(self.m_USB_obj):
             self.read_usb(p_pyhouse_obj, self.m_USB_obj)
             LOG.info("Opened Controller:{0:}".format(self.m_USB_obj.Name))
-            self.write_usb(self.m_USB_obj, bytearray(b'\x00\x01\x02\x03'))
-            self.write_usb(self.m_USB_obj, bytearray(b'\xff\x01\x02\x03'))
+            self.write_usb(bytearray(b'\x00\x01\x02\x03'))
+            self.write_usb(bytearray(b'\xff\x01\x02\x03'))
             return True
         else:
             LOG.warning("Failed to open Controller:{0:}".format(self.m_USB_obj.Name))
@@ -389,11 +388,12 @@ class API(UsbDriverAPI):
         self.close_device(self.m_controller_obj)
 
     def Read(self):
-        pass
+        l_ret = self.fetch_read_data()
+        return l_ret
 
     def Write(self, p_message):
         if g_debug >= 1:
             LOG.debug("Write() - {0:}".format(PrintBytes(p_message)))
-        self.write_usb(self.m_controller_obj, p_message)
+        self.write_usb(p_message)
 
 # ## END DBK

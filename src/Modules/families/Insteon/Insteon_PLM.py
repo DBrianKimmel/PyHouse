@@ -284,7 +284,7 @@ class PlmDriverProtocol(CreateCommands):
             return
         if self.m_controller_obj._DriverAPI != None:
             self.m_controller_obj._Command1 = l_command
-            self.m_controller_obj._DriverAPI.write_device(l_command)
+            self.m_controller_obj._DriverAPI.Write(l_command)
             if g_debug >= 6:
                 LOG.debug("Send to controller:{0:}, Message:{1:}".format(self.m_controller_obj.Name, PrintBytes(l_command)))
 
@@ -292,7 +292,7 @@ class PlmDriverProtocol(CreateCommands):
         """
         Accumulate data received
         """
-        l_msg = p_controller_obj._DriverAPI.fetch_read_data(p_controller_obj)
+        l_msg = p_controller_obj._DriverAPI.Read()
         p_controller_obj._Message += l_msg
         return p_controller_obj._Message
 

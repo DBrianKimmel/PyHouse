@@ -121,9 +121,10 @@ class API(SerialAPI):
         LOG.info("Stopped controller {0:}".format(self.m_controller_obj.Name))
 
     def Read(self):
-        pass
+        l_ret = self.fetch_read_data()
+        return l_ret
 
     def Write(self, p_message):
-        pass
+        self.write_device(p_message)
 
 # ## END DBK

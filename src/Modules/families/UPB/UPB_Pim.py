@@ -385,9 +385,8 @@ class PimDriverInterface(DecodeResponses):
         """Periodically, get the current RX data from the driver.
         """
         self.m_pyhouse_obj.Twisted.Reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop, p_controller_obj)
-        # LOG.info('In receive_loop')
         if p_controller_obj._DriverAPI != None:
-            l_msg = p_controller_obj._DriverAPI.fetch_read_data(p_controller_obj)
+            l_msg = p_controller_obj._DriverAPI.Read()
             if len(l_msg) == 0:
                 return
             self.decode_response(p_controller_obj, l_msg)
