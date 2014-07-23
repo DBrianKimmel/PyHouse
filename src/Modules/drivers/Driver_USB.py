@@ -250,7 +250,8 @@ class UsbDriverAPI(UsbDeviceData):
             l_msg = self.read_hid_report(p_USB_obj)
         else:
             l_msg = self.read_device(p_USB_obj)
-        p_USB_obj.message.append(l_msg)
+        for l_ix in range(len(l_msg)):
+            p_USB_obj.message.append(l_msg[l_ix])
         return l_msg
 
     def read_device(self, p_USB_obj):
