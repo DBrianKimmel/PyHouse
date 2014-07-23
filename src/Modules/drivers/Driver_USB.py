@@ -252,6 +252,7 @@ class UsbDriverAPI(UsbDeviceData):
             l_msg = self.read_device(self.m_USB_obj)
         for l_ix in range(len(l_msg)):
             self.m_USB_obj.message.append(l_msg[l_ix])
+        print('Driver read ', l_msg, self.m_USB_obj.message)
         return l_msg
 
     def read_device(self, p_USB_obj):
@@ -306,7 +307,7 @@ class UsbDriverAPI(UsbDeviceData):
 
     def fetch_read_data(self):
         l_ret = self.m_USB_obj.message
-        PrettyPrintAny(self.m_USB_obj, 'Driver_USB - FetchData ')
+        # PrettyPrintAny(self.m_USB_obj, 'Driver_USB - FetchData ')
         self.m_USB_obj.message = bytearray()
         if len(l_ret) == 0:
             return l_ret
