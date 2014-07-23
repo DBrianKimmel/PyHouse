@@ -58,8 +58,11 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
     def read_all_irrigation_xml(self, p_sect_element):
         """
         """
+        l_xml_sect = self.setup_xml(self.m_pyhouse_obj)
         l_ret = {}
         self.m_count = 0
+        if l_xml_sect == None:
+            return l_ret
         try:
             for l_xml in p_sect_element.iterfind('Irrigation'):
                 l_obj = self.read_one_irrigation_xml(l_xml)

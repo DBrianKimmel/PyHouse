@@ -389,7 +389,7 @@ class PimDriverInterface(DecodeResponses):
             l_msg = p_controller_obj._DriverAPI.Read()
             if len(l_msg) == 0:
                 return
-            self.decode_response(p_controller_obj, l_msg)
+            self.decode_response(p_controller_obj)
         else:
             if g_debug >= 1:
                 LOG.info('No driver defined ')

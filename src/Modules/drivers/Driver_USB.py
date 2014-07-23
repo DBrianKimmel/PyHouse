@@ -302,7 +302,7 @@ class UsbDriverAPI(UsbDeviceData):
     def fetch_read_data(self):
         l_ret = self.m_USB_obj.message
         self.m_USB_obj.message = bytearray()
-        if g_debug >= 0:
+        if g_debug >= 1:
             LOG.debug("fetch_read_data() - Msg:{0:}".format(PrintBytes(l_ret)))
         return l_ret
 
