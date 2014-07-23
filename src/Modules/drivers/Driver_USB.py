@@ -242,11 +242,16 @@ class UsbDriverAPI(UsbDeviceData):
         p_USB_obj.Device.reset()
 
     def read_usb(self, p_pyhouse_obj, p_USB_obj):
+        """Routine that reads the USB device.
+        Calls either HID or Non-HID routines to fetch tha actual data.
+        """
         p_pyhouse_obj.Twisted.Reactor.callLater(RECEIVE_TIMEOUT, lambda x = p_pyhouse_obj, y = p_USB_obj: self.read_usb(x, y))
         if p_USB_obj.hid_device:
-            self.read_report(p_USB_obj)
+            l_msg = self.read_hid_report(p_USB_obj)
         else:
-            self.read_device(p_USB_obj)
+            l_msg = self.read_device(p_USB_obj)
+        p_USB_obj.message.append(l_msg)
+        return l_msg
 
     def read_device(self, p_USB_obj):
         """
@@ -254,24 +259,18 @@ class UsbDriverAPI(UsbDeviceData):
         @return: the number of bytes fetched from the controller
         """
         try:
-            l_msg = p_USB_obj.Device.read(p_USB_obj.epi_addr, p_USB_obj.epi_packet_size, timeout = 100)
-            l_len = len(l_msg)
-            if l_len > 0:
-                if g_debug >= 1:
-                    LOG.debug("read_device() - Len:{0:}, Msg:{1:}".format(l_len, PrintBytes(l_msg)))
-                for l_x in range(l_len):
-                    p_USB_obj.message.append(l_msg[l_x])
-            elif g_debug >= 2:
-                    LOG.debug("read_device() - Len:{0:}, Msg:{1:}".format(l_len, PrintBytes(l_msg)))
-        except usb.USBError as e:
-            LOG.error("Driver_USB.read_device_1() got USBError {0:}".format(e))
-            l_len = 0
-        except Exception as e:
-            LOG.error(" -- Error in Driver_USB.read_device_1() {0:}".format(e))
-            l_len = 0
-        return l_len
+            l_msg = p_USB_obj.Device.read(p_USB_obj.epi_addr, p_USB_obj.epi_packet_size, timeout = 100)  # Note - No device to test with
+            if g_debug >= 1:
+                LOG.debug("read_device() - Msg:{1:}".format(PrintBytes(l_msg)))
+        except usb.USBError as e_err:
+            LOG.error("ERROR - read_device() got USBError - {0:}".format(e_err))
+            l_msg = bytearray(0)
+        except Exception as e_err:
+            LOG.error("ERROR - read_device() {0:}".format(e_err))
+            l_msg = bytearray(0)
+        return l_msg
 
-    def read_report(self, p_USB_obj):
+    def read_hid_report(self, p_USB_obj):
         """This is probably not the right place to do this BUT
 
         The report looks like 0xF1 0x33 0x00 0x00 0x00 0x00 0x00 0x00
@@ -289,21 +288,18 @@ class UsbDriverAPI(UsbDeviceData):
             l_len = l_msg[0] & 0x0F
             if l_len > 0:
                 if g_debug >= 1:
-                    LOG.debug("read_report() - Len:{0:}, Msg:{1:}".format(l_len, PrintBytes(l_msg)))
+                    LOG.debug("read_hid_report() - Msg:{1:}".format(PrintBytes(l_msg)))
                 l_msg = l_msg[1:]
-                for l_x in range(l_len):
-                    p_USB_obj.message.append(l_msg[l_x])
-            else:
-                return 0
-        except usb.USBError as e:
-            LOG.error("read_report() got USBError {0:}".format(e))
+        except usb.USBError as e_err:
+            LOG.error("ERROR - read_hid_report() got USBError {0:}".format(e_err))
             l_len = 0
-        except Exception as e:
-            LOG.error("Error in read_report() {0:} {1:}".format(sys.exc_info(), e))
-            l_len = 0
+        except Exception as e_err:
+            LOG.error("ERROR - read_hid_report() {0:}".format(e_err))
+            l_msg = bytearray(0)
         if g_debug >= 1:
-            LOG.info('read_report() message is now {0:}'.format(PrintBytes(p_USB_obj.message)))
-        return l_len
+            LOG.info('read_hid_report() message is now {0:}'.format(PrintBytes(l_msg)))
+            l_msg = bytearray(0)
+        return l_msg
 
     def fetch_read_data(self):
         l_ret = self.m_USB_obj.message
