@@ -53,6 +53,7 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
             elif p_controller_obj.InterfaceType == 'Ethernet':
                 self._write_ethernet_xml(p_xml, p_controller_obj)
 
+
     def _extract_serial_xml(self, p_controller_obj, p_controller_xml):
         l_serial = SerialControllerData()
         l_xml = p_controller_xml
@@ -101,6 +102,7 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         except AttributeError:
             ET.SubElement(p_xml, 'XonXoff').text = False
 
+
     def _extract_usb_xml(self, p_controller_obj, p_controller_xml):
         l_usb = USBControllerData()
         l_xml = p_controller_xml
@@ -118,6 +120,7 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
             ET.SubElement(p_xml, 'Product').text = str(p_controller_obj.Product)
         except AttributeError:
             ET.SubElement(p_xml, 'Product').text = 0
+
 
     def _extract_ethernet_xml(self, p_controller_obj, p_controller_xml):
         l_ethernet = EthernetControllerData()

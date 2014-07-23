@@ -29,7 +29,7 @@ from twisted.internet.protocol import Protocol
 from Modules.utils.tools import PrintBytes
 from Modules.utils import pyh_log
 
-g_debug = 0
+g_debug = 1
 LOG = pyh_log.getLogger('PyHouse.USBDriver   ')
 
 
@@ -279,6 +279,10 @@ class UsbDriverAPI(UsbDeviceData):
         So here we will strip off the length and append the rest of the message to the buffer
 
         I really think this is PIM specific but it makes sense to only pass back the real message if we can.
+
+        When we get interrupts working (if ever) then we can pass the data to the UPB pim for cleanup but for now
+        we need to do this to avoid filling up the pim buffer with an endledss string of 0xF0 bytes meaning no data
+        was available.
         """
         try:
             l_msg = p_USB_obj.Device.read(p_USB_obj.epi_addr, p_USB_obj.epi_packet_size, timeout = 100)
@@ -302,6 +306,8 @@ class UsbDriverAPI(UsbDeviceData):
     def fetch_read_data(self):
         l_ret = self.m_USB_obj.message
         self.m_USB_obj.message = bytearray()
+        # if len(l_ret) == 0:
+        #    return l_ret
         if g_debug >= 1:
             LOG.debug("fetch_read_data() - Msg:{0:}".format(PrintBytes(l_ret)))
         return l_ret
@@ -311,7 +317,6 @@ class UsbDriverAPI(UsbDeviceData):
             self.write_report(self.m_USB_obj, p_message)
         else:
             self.write_device(self.m_USB_obj, p_message)
-        pass
 
     def write_report(self, p_USB_obj, p_message):
         if g_debug >= 1:
@@ -365,7 +370,8 @@ class API(UsbDriverAPI):
     def __init__(self):
         """
         """
-        pass
+        if g_debug >= 1:
+            LOG.info('Initialized')
 
     def Start(self, p_pyhouse_obj, p_controller_obj):
         """
@@ -379,10 +385,13 @@ class API(UsbDriverAPI):
             LOG.info("Opened Controller:{0:}".format(self.m_USB_obj.Name))
             self.write_usb(bytearray(b'\x00\x01\x02\x03'))
             self.write_usb(bytearray(b'\xff\x01\x02\x03'))
-            return True
+            l_ret = True
         else:
             LOG.warning("Failed to open Controller:{0:}".format(self.m_USB_obj.Name))
-            return False
+            l_ret = False
+        if g_debug >= 1:
+            LOG.info('Started')
+        return l_ret
 
     def Stop(self):
         self.close_device(self.m_controller_obj)
@@ -392,8 +401,6 @@ class API(UsbDriverAPI):
         return l_ret
 
     def Write(self, p_message):
-        if g_debug >= 1:
-            LOG.debug("Write() - {0:}".format(PrintBytes(p_message)))
         self.write_usb(p_message)
 
 # ## END DBK
