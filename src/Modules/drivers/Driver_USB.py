@@ -289,8 +289,10 @@ class UsbDriverAPI(UsbDeviceData):
             l_len = l_msg[0] & 0x0F
             if l_len > 0:
                 if g_debug >= 1:
-                    LOG.debug("read_hid_report() - Msg:{1:}".format(PrintBytes(l_msg)))
+                    LOG.debug("read_hid_report() - Msg:{0:}".format(PrintBytes(l_msg)))
                 l_msg = l_msg[1:]
+            else:
+                return bytearray(0)
         except usb.USBError as e_err:
             LOG.error("ERROR - read_hid_report() got USBError {0:}".format(e_err))
             l_len = 0
