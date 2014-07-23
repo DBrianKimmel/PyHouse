@@ -269,40 +269,9 @@ class UpbPimUtility(object):
 
 class DecodeResponses(object):
 
-    def _next_char(self):
-        try:
-            self.l_hdr = self.l_message[0]
-            self.l_message = self.l_message[1:]
-            self.l_msg_len = self.l_msg_len - 1
-        except IndexError:
-            self.l_hdr = 0x00
-            self.l_msg_len = 0
-
-    def _get_rest(self):
-        l_rest = self.l_hdr
-        while self.l_hdr != 0x0d:
-            self._next_char()
-            l_rest += self.l_hdr
+    def _get_rest(self, p_message):
+        l_rest = p_message[2:]
         return l_rest
-
-    def _flushing(self):
-        l_ret = 'Flushed: '
-        while self.l_hdr != 0x0d and self.l_msg_len > 0:
-            l_ret += "{0:#2x} ".format(self.l_hdr)
-            self._next_char()
-            print("Flushed {0:#2x} --- ".format(self.l_hdr))
-        if g_debug >= 1:
-            LOG.debug(l_ret)
-
-    def XXX_get_message_body(self, p_message):
-        """
-        A valid message begins with 'P' (0x50) and ends with \r (0x0D).
-        While we have chars left in the message, find the Start of the message.
-        """
-        if len(p_message) < 1:
-            return False
-        print('Message = {0:}'.format(PrintBytes(p_message)))
-        return True
 
     def _extract_one_message(self, p_controller_obj):
         """Valid messages start with a 'P' (0x50) and end with a NewLine (0x0dD).
@@ -318,6 +287,7 @@ class DecodeResponses(object):
             LOG.warning('Decoding result - discarding leading junk {0:}'.format(PrintBytes(p_controller_obj._Message[0:l_start])))
         l_message = p_controller_obj._Message[l_start:l_end]
         p_controller_obj._Message = p_controller_obj._Message[l_end + 1:]
+        LOG.debug('Extracted message {0:}'.format(PrintBytes(l_message)))
         return l_message
 
     def decode_response(self, p_controller_obj):
