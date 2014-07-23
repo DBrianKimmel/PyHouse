@@ -26,7 +26,7 @@ import usb.util
 from twisted.internet.protocol import Protocol
 
 # Import PyHouse modules
-from Modules.utils.tools import PrintBytes
+from Modules.utils.tools import PrintBytes, PrettyPrintAny
 from Modules.utils import pyh_log
 
 g_debug = 1
@@ -306,6 +306,7 @@ class UsbDriverAPI(UsbDeviceData):
 
     def fetch_read_data(self):
         l_ret = self.m_USB_obj.message
+        PrettyPrintAny(self.m_USB_obj, 'Driver_USB - FetchData ')
         self.m_USB_obj.message = bytearray()
         if len(l_ret) == 0:
             return l_ret

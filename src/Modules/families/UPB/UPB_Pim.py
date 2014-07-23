@@ -378,7 +378,7 @@ class PimDriverInterface(DecodeResponses):
         self.m_pyhouse_obj.Twisted.Reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop, p_controller_obj)
         if p_controller_obj._DriverAPI != None:
             l_msg = p_controller_obj._DriverAPI.Read()
-            if g_debug >= 1:
+            if g_debug >= 2:
                 LOG.debug('Fetched message  {0:}'.format(PrintBytes(l_msg)))
             if len(l_msg) == 0:
                 return
