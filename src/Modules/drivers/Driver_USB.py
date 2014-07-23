@@ -293,6 +293,8 @@ class UsbDriverAPI(UsbDeviceData):
                 l_msg = l_msg[1:]
                 for l_x in range(l_len):
                     p_USB_obj.message.append(l_msg[l_x])
+            else:
+                return 0
         except usb.USBError as e:
             LOG.error("read_report() got USBError {0:}".format(e))
             l_len = 0
@@ -300,7 +302,7 @@ class UsbDriverAPI(UsbDeviceData):
             LOG.error("Error in read_report() {0:} {1:}".format(sys.exc_info(), e))
             l_len = 0
         if g_debug >= 1:
-            LOG.info('Message is now {0:}'.format(PrintBytes(p_USB_obj.message)))
+            LOG.info('read_report() message is now {0:}'.format(PrintBytes(p_USB_obj.message)))
         return l_len
 
     def fetch_read_data(self):

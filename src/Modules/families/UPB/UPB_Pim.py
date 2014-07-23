@@ -294,7 +294,7 @@ class DecodeResponses(object):
         if g_debug >= 1:
             LOG.debug(l_ret)
 
-    def _get_message_body(self, p_message):
+    def XXX_get_message_body(self, p_message):
         """
         A valid message begins with 'P' (0x50) and ends with \r (0x0D).
         While we have chars left in the message, find the Start of the message.
@@ -304,54 +304,75 @@ class DecodeResponses(object):
         print('Message = {0:}'.format(PrintBytes(p_message)))
         return True
 
+    def _extract_one_message(self, p_controller_obj):
+        """Valid messages start with a 'P' (0x50) and end with a NewLine (0x0dD).
+        Remove any leading Junk characters
+        Skip over any 0xFx characters as they are a USB HID length of data byte.
+        Find the next Newline - If none we do not have a command so leave things in the _Message buffer.
+        """
+        l_start = p_controller_obj._Message.find('P')
+        l_end = p_controller_obj._Message.find('\r')
+        if l_end < 0:
+            return ''  # Not a complete message yet.
+        if l_start > 0:
+            LOG.warning('Decoding result - discarding leading junk {0:}'.format(PrintBytes(p_controller_obj._Message[0:l_start])))
+        l_message = p_controller_obj._Message[l_start:l_end]
+        p_controller_obj._Message = p_controller_obj._Message[l_end + 1:]
+        return l_message
 
     def decode_response(self, p_controller_obj):
         """A response message starts with a 'P' (0x50) and ends with a '\r' (0x0D).
         """
-        self.m_controller_obj = p_controller_obj
-        if self._get_message_body(p_controller_obj._Message) == False:
+        l_message = self._extract_one_message(p_controller_obj)
+        if len(l_message) == 0:
             return
-        l_message = p_controller_obj._Message
-        l_hdr = l_message[0]
-        l_msg_len = len(l_message)
-        l_message = l_message[1:]
-        if l_msg_len < 1:
-            return
-        while l_msg_len > 0:
-            self._next_char()  # Get the starting char - must be 'P' (0x50)
-            if l_hdr != 0x50:
-                l_msg = "UPB_Pim.decode_response() - Did not find valid message start 'P'(0x50)  - ERROR! char was {0:#x} - Flushing till next 0x0D".format(self.l_hdr)
-                LOG.warning(l_msg)
-                self._flushing()
-                continue
-            #
-            self._next_char()  # drop the 0x50 char
-            if l_hdr == 0x41:  # 'A'
-                if g_debug >= 2:
-                    LOG.error("UPB_Pim - Previous command was accepted")
-            elif l_hdr == 0x42:  # 'B'
-                if g_debug >= 2:
-                    LOG.error("UPB_Pim - Previous command was rejected because device is busy.")
-            elif l_hdr == 0x45:  # 'E'
-                if g_debug >= 2:
-                    LOG.error("UPB_Pim - Previous command was rejected with a command error.")
-            elif l_hdr == 0x4B:  # 'K'
-                if g_debug >= 2:
-                    LOG.error("UPB_Pim.decode_response() found 'K' (0x4b) - ACK pulse also received.")
-            elif l_hdr == 0x4E:  # 'N'
-                if g_debug >= 2:
-                    LOG.error("UPB_Pim.decode_response() found 'N' (0x4E) - No ACK pulse received from device.")
-            elif l_hdr == 0x52:  # 'R'
-                if g_debug >= 2:
-                    LOG.error("UPB_Pim.decode_response() found 'R' (0x52) - Register report recieved")
-                self._get_rest()
-            elif l_hdr == 0x55:  # 'U'
-                if g_debug >= 2:
-                    LOG.error("UPB_Pim.decode_response() found 'U' (0x55) - Message report received.")
-                self._get_rest()
-            else:
-                LOG.error("UPB_Pim.decode_response() found unknown code {0:#x} {1:}".format(self.l_hdr, PrintBytes(self.l_message)))
-            self._next_char()  # Drop the 0x0d char
+        l_hdr = ord(l_message[1])
+        if l_hdr == 0x41:  # 'A'
+            self._decode_A()
+        elif l_hdr == 0x42:  # 'B'
+            self._decode_B()
+        elif l_hdr == 0x45:  # 'E'
+            self._decode_E()
+        elif l_hdr == 0x4B:  # 'K'
+            self._decode_K()
+        elif l_hdr == 0x4E:  # 'N'
+            self._decode_N()
+        elif l_hdr == 0x52:  # 'R'
+            self._decode_R()
+        elif l_hdr == 0x55:  # 'U'
+            self._decode_U()
+        else:
+            LOG.error("UPB_Pim.decode_response() found unknown code {0:#x} {1:}".format(l_hdr, PrintBytes(l_message)))
+
+    def _decode_A(self):
+        if g_debug >= 2:
+            LOG.error("UPB_Pim - Previous command was accepted")
+
+    def _decode_B(self):
+        if g_debug >= 2:
+            LOG.error("UPB_Pim - Previous command was rejected because device is busy.")
+
+    def _decode_E(self):
+        if g_debug >= 2:
+            LOG.error("UPB_Pim - Previous command was rejected with a command error.")
+
+    def _decode_K(self):
+        if g_debug >= 2:
+            LOG.error("UPB_Pim.decode_response() found 'K' (0x4b) - ACK pulse also received.")
+
+    def _decode_N(self):
+        if g_debug >= 2:
+            LOG.error("UPB_Pim.decode_response() found 'N' (0x4E) - No ACK pulse received from device.")
+
+    def _decode_R(self):
+        if g_debug >= 2:
+            LOG.error("UPB_Pim.decode_response() found 'R' (0x52) - Register report received")
+        self._get_rest()
+
+    def _decode_U(self):
+        if g_debug >= 2:
+            LOG.error("UPB_Pim.decode_response() found 'U' (0x55) - Message report received.")
+        self._get_rest()
 
 
 class PimDriverInterface(DecodeResponses):

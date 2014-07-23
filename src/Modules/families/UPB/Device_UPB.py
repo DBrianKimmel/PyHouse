@@ -10,6 +10,9 @@
 @summary: This module is for communicating with UPB controllers.
 
 Load the database with UPB devices.
+Start Active UPB Controllers.
+    If more than one ???
+
 """
 
 # Import system type stuff

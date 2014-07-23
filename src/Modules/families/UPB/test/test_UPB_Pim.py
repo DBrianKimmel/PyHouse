@@ -93,4 +93,23 @@ class Test_01_Utils(unittest.TestCase):
         print('test_0106/ ', PrintBytes(l_ba), l_ba)
         self.assertEqual(l_ba, (b'\x14\x37\x30\x30\x33\x38\x44\x0D'))
 
+
+TEST_MESSAGE = b'\x15PE\r\x06'
+
+class Test_02_Decode(unittest.TestCase):
+
+    def setUp(self):
+        self.m_api = UPB_Pim.DecodeResponses()
+        self.m_controller_obj = ControllerData()
+        self.m_controller_obj._Message = TEST_MESSAGE
+
+    def test_0201_NextChar(self):
+        pass
+
+    def test_0210_ExtractMsg(self):
+        print('Before', PrintBytes(self.m_controller_obj._Message))
+        l_msg = self.m_api.decode_response(self.m_controller_obj)
+        print(l_msg)
+        print('After', PrintBytes(self.m_controller_obj._Message))
+
 # ## END DBK

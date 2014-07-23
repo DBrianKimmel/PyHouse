@@ -11,9 +11,7 @@ from Modules.Core.data_objects import LightData
 from Modules.lights import lighting
 from Modules.utils import pyh_log
 
-
 g_debug = 0
-
 LOG = pyh_log.getLogger('PyHouse.Dev_X10     ')
 
 
@@ -67,7 +65,7 @@ class API(object):
 
     def Start(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        LOG.info('Started.')
+        # LOG.info('Started.')
 
     def Stop(self, p_xml):
         return p_xml
