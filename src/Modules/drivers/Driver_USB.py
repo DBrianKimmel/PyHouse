@@ -241,17 +241,17 @@ class UsbDriverAPI(UsbDeviceData):
         self.m_controller_obj = p_USB_obj
         p_USB_obj.Device.reset()
 
-    def read_usb(self, p_pyhouse_obj, p_USB_obj):
+    def read_usb(self, p_pyhouse_obj):
         """Routine that reads the USB device.
         Calls either HID or Non-HID routines to fetch tha actual data.
         """
-        p_pyhouse_obj.Twisted.Reactor.callLater(RECEIVE_TIMEOUT, lambda x = p_pyhouse_obj, y = p_USB_obj: self.read_usb(x, y))
-        if p_USB_obj.hid_device:
-            l_msg = self.read_hid_report(p_USB_obj)
+        p_pyhouse_obj.Twisted.Reactor.callLater(RECEIVE_TIMEOUT, self.read_usb, p_pyhouse_obj)
+        if self.m_USB_obj.hid_device:
+            l_msg = self.read_hid_report(self.m_USB_obj)
         else:
-            l_msg = self.read_device(p_USB_obj)
+            l_msg = self.read_device(self.m_USB_obj)
         for l_ix in range(len(l_msg)):
-            p_USB_obj.message.append(l_msg[l_ix])
+            self.m_USB_obj.message.append(l_msg[l_ix])
         return l_msg
 
     def read_device(self, p_USB_obj):
@@ -383,7 +383,7 @@ class API(UsbDriverAPI):
         self.m_controller_obj = p_controller_obj
         self.m_USB_obj = self._get_usb_device_data(p_controller_obj)
         if self.open_device(self.m_USB_obj):
-            self.read_usb(p_pyhouse_obj, self.m_USB_obj)
+            self.read_usb(p_pyhouse_obj)
             LOG.info("Opened Controller:{0:}".format(self.m_USB_obj.Name))
             self.write_usb(bytearray(b'\x00\x01\x02\x03'))
             self.write_usb(bytearray(b'\xff\x01\x02\x03'))
