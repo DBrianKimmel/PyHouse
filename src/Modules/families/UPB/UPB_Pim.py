@@ -189,7 +189,7 @@ class BuildCommand(object):
                 l_byte = p_ba[l_ix]
             l_cs = (l_cs + l_byte) % 256
             l_out.append(l_byte)
-        l_out.append(int(256 - l_cs))
+        # l_out.append(int(256 - l_cs))
         return l_out
 
     def _assemble_regwrite(self, p_reg, p_args):
