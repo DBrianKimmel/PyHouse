@@ -252,7 +252,7 @@ class UsbDriverAPI(UsbDeviceData):
             l_msg = self.read_device(self.m_USB_obj)
         for l_ix in range(len(l_msg)):
             self.m_USB_obj.message.append(l_msg[l_ix])
-        print('Driver read ', l_msg, self.m_USB_obj.message)
+        LOG.debug('Driver - ReadUSB {0:} - :1:}'.format(l_msg, self.m_USB_obj.message))
         return l_msg
 
     def read_device(self, p_USB_obj):
@@ -290,7 +290,7 @@ class UsbDriverAPI(UsbDeviceData):
             l_len = l_msg[0] & 0x0F
             if l_len > 0:
                 if g_debug >= 1:
-                    LOG.debug("read_hid_report() - Msg:{0:}".format(PrintBytes(l_msg)))
+                    LOG.debug("read_hid_report() A - Msg:{0:}".format(PrintBytes(l_msg)))
                 l_msg = l_msg[1:]
             else:
                 return bytearray(0)
@@ -301,8 +301,7 @@ class UsbDriverAPI(UsbDeviceData):
             LOG.error("ERROR - read_hid_report() {0:}".format(e_err))
             l_msg = bytearray(0)
         if g_debug >= 1:
-            LOG.info('read_hid_report() message is now {0:}'.format(PrintBytes(l_msg)))
-            l_msg = bytearray(0)
+            LOG.info('read_hid_report() B - message is now {0:}'.format(PrintBytes(l_msg)))
         return l_msg
 
     def fetch_read_data(self):
