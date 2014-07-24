@@ -95,7 +95,7 @@ ACK_MSG = 0x40
 
 # Timeouts for send/receive delays
 SEND_TIMEOUT = 0.8
-RECEIVE_TIMEOUT = 0.3  # this is for fetching data in the RX buffer
+RECEIVE_TIMEOUT = 0.9  # this is for fetching data in the RX buffer
 
 
 # Command types
@@ -293,6 +293,7 @@ class DecodeResponses(object):
     def decode_response(self, p_controller_obj):
         """A response message starts with a 'P' (0x50) and ends with a '\r' (0x0D).
         """
+        LOG.debug('DecodeResponse')
         l_message = self._extract_one_message(p_controller_obj)
         if len(l_message) == 0:
             return
@@ -378,10 +379,10 @@ class PimDriverInterface(DecodeResponses):
         self.m_pyhouse_obj.Twisted.Reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop, p_controller_obj)
         if p_controller_obj._DriverAPI != None:
             l_msg = p_controller_obj._DriverAPI.Read()
-            if g_debug >= 2:
-                LOG.debug('Fetched message  {0:}'.format(PrintBytes(l_msg)))
             if len(l_msg) == 0:
                 return
+            if g_debug >= 2:
+                LOG.debug('Fetched message  {0:}'.format(PrintBytes(l_msg)))
             self.decode_response(p_controller_obj)
         else:
             if g_debug >= 1:

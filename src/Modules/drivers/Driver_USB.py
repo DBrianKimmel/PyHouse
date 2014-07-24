@@ -14,10 +14,11 @@ This will interface various PyHouse modules to a USB device.
 
 This may be instanced as many times as there are USB devices to control.
 
+Instead of using callLater timers, it would be better to use deferred callbacks when data arrives.
+
 """
 
 # Import system type stuff
-import sys
 # Use USB package that was written by Wander Lairson Costa
 # PYUSB_DEBUG_LEVEL=debug
 # export PYUSB_DEBUG_LEVEL
@@ -252,7 +253,10 @@ class UsbDriverAPI(UsbDeviceData):
             l_msg = self.read_device(self.m_USB_obj)
         for l_ix in range(len(l_msg)):
             self.m_USB_obj.message.append(l_msg[l_ix])
-        LOG.debug('Driver - ReadUSB {0:} - {1:}'.format(l_msg, self.m_USB_obj.message))
+        if len(l_msg) > 0:
+            LOG.debug('Driver - ReadUSB  JustRead:{0:}'.format(PrintBytes(l_msg)))
+        if len(self.m_USB_obj.message) > 0:
+            LOG.debug('Driver - ReadUSB  Accumulated:{0:}'.format(PrintBytes(self.m_USB_obj.message)))
         return l_msg
 
     def read_device(self, p_USB_obj):
