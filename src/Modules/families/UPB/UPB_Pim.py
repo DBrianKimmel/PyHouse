@@ -295,15 +295,8 @@ class DecodeResponses(object):
         LOG.debug('Extracted message {0:}'.format(PrintBytes(l_message)))
         return l_message
 
-    def decode_response(self, p_controller_obj):
-        """A response message starts with a 'P' (0x50) and ends with a '\r' (0x0D).
-        """
-        LOG.debug('DecodeResponse A - {0:}'.format(PrintBytes(p_controller_obj._Message)))
-        l_message = self._extract_one_message(p_controller_obj)
-        LOG.debug('DecodeResponse B - {0:}'.format(PrintBytes(l_message)))
-        if len(l_message) == 0:
-            return
-        l_hdr = l_message[1]
+    def _dispatch_decode(self, p_message):
+        l_hdr = p_message[1]
         if l_hdr == 0x41:  # 'A'
             self._decode_A()
         elif l_hdr == 0x42:  # 'B'
@@ -319,7 +312,18 @@ class DecodeResponses(object):
         elif l_hdr == 0x55:  # 'U'
             self._decode_U()
         else:
-            LOG.error("UPB_Pim.decode_response() found unknown code {0:#x} {1:}".format(l_hdr, PrintBytes(l_message)))
+            LOG.error("UPB_Pim.decode_response() found unknown code {0:#x} {1:}".format(l_hdr, PrintBytes(p_message)))
+
+    def decode_response(self, p_controller_obj):
+        """A response message starts with a 'P' (0x50) and ends with a '\r' (0x0D).
+        """
+        LOG.debug('DecodeResponse A - {0:}'.format(PrintBytes(p_controller_obj._Message)))
+        l_message = self._extract_one_message(p_controller_obj)
+        LOG.debug('DecodeResponse B - {0:}'.format(PrintBytes(l_message)))
+        if len(l_message) == 0:
+            return
+        self._dispatch_decode(l_message)
+        self.decode_response(p_controller_obj)
 
     def _decode_A(self):
         if g_debug >= 2:
