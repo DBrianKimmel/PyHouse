@@ -283,7 +283,7 @@ class UsbDriverAPI(UsbDeviceData):
         @param p_message: is the data received from the USB device
         @type p_message: bytearray
 
-        @return: a nytearray with the length byte removes and trimmed to the length
+        @return: a bytearray with the length byte removes and trimmed to the length
         """
         l_ret = bytearray(0)
         if len(p_message) == 0:
@@ -317,8 +317,6 @@ class UsbDriverAPI(UsbDeviceData):
             LOG.error("ERROR - read_hid_report() {0:}".format(e_err))
             l_msg = bytearray(0)
         l_ret = self._extract_hid_report(l_msg)
-        if g_debug >= 1:
-            LOG.info('read_hid_report() B - message is now {0:}'.format(PrintBytes(l_ret)))
         return l_ret
 
     def fetch_read_data(self):

@@ -234,7 +234,7 @@ class BuildCommand(object):
         """
         l_cmd = self._assemble_regwrite(p_reg, p_args)
         l_cmd[1:] = self._convert_pim(l_cmd)
-        l_cmd[0] = CTL_T
+        l_cmd[0] = CTL_W
         l_cmd.append(0x0d)
         self._queue_pim_command(p_controller_obj, l_cmd)
         return l_cmd
@@ -296,6 +296,11 @@ class DecodeResponses(object):
         return l_message
 
     def _dispatch_decode(self, p_message):
+        """
+        Dispatch to the various message received methods
+
+        See Page 12 of - UPB Powerline Interface Module (PIM) Description Ver 1.6
+        """
         l_hdr = p_message[1]
         if l_hdr == 0x41:  # 'A'
             self._decode_A()
@@ -414,6 +419,15 @@ class CreateCommands(UpbPimUtility, PimDriverInterface, BuildCommand):
 
     def set_pim_mode(self):
         """
+        Set the PIM operating mode:
+
+        Page 6 of UPB Powerline Interface Module (PIM) Description Version 1.6
+
+        The PIM mode register is 0x70
+
+        Bit 0 (lsb) set to 1 is "No Idles Sent"
+        Bit 1 set to 1 puts the PIM into "Message Mode"
+
         Send a write register 70 to set PIM mode
         Command to be sent is <17> 70 03 8D <0D>
         """
