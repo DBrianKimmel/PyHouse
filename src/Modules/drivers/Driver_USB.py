@@ -252,7 +252,7 @@ class UsbDriverAPI(UsbDeviceData):
             l_msg = self.read_device(self.m_USB_obj)
         for l_ix in range(len(l_msg)):
             self.m_USB_obj.message.append(l_msg[l_ix])
-        LOG.debug('Driver - ReadUSB {0:} - {:1:}'.format(l_msg, self.m_USB_obj.message))
+        LOG.debug('Driver - ReadUSB {0:} - {1:}'.format(l_msg, self.m_USB_obj.message))
         return l_msg
 
     def read_device(self, p_USB_obj):
