@@ -384,6 +384,8 @@ class PimDriverInterface(DecodeResponses):
                 return
             if g_debug >= 2:
                 LOG.debug('Fetched message  {0:}'.format(PrintBytes(l_msg)))
+            for l_ix in range(len(l_msg)):
+                p_controller_obj._Message.append(l_msg[l_ix])
             self.decode_response(p_controller_obj)
         else:
             if g_debug >= 1:
