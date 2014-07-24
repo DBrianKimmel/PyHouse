@@ -276,6 +276,25 @@ class UsbDriverAPI(UsbDeviceData):
             l_msg = bytearray(0)
         return l_msg
 
+    def _extract_hid_report(self, p_message):
+        """
+        Take a HID report and clean up the data to be useful
+
+        @param p_message: is the data received from the USB device
+        @type p_message: bytearray
+
+        @return: a nytearray with the length byte removes and trimmed to the length
+        """
+        l_ret = bytearray(0)
+        if len(p_message) == 0:
+            return l_ret
+        l_len = p_message[0] & 0x0F
+        if l_len > 0:
+            if g_debug >= 1:
+                LOG.debug("read_hid_report() A - Msg:{0:}".format(PrintBytes(p_message)))
+            l_ret = p_message[1:l_len + 1]
+        return l_ret
+
     def read_hid_report(self, p_USB_obj):
         """This is probably not the right place to do this BUT
 
@@ -291,22 +310,16 @@ class UsbDriverAPI(UsbDeviceData):
         """
         try:
             l_msg = p_USB_obj.Device.read(p_USB_obj.epi_addr, p_USB_obj.epi_packet_size, timeout = 100)
-            l_len = l_msg[0] & 0x0F
-            if l_len > 0:
-                if g_debug >= 1:
-                    LOG.debug("read_hid_report() A - Msg:{0:}".format(PrintBytes(l_msg)))
-                l_msg = l_msg[1:]
-            else:
-                return bytearray(0)
         except usb.USBError as e_err:
             LOG.error("ERROR - read_hid_report() got USBError {0:}".format(e_err))
-            l_len = 0
+            l_msg = bytearray(0)
         except Exception as e_err:
             LOG.error("ERROR - read_hid_report() {0:}".format(e_err))
             l_msg = bytearray(0)
+        l_ret = self._extract_hid_report(l_msg)
         if g_debug >= 1:
-            LOG.info('read_hid_report() B - message is now {0:}'.format(PrintBytes(l_msg)))
-        return l_msg
+            LOG.info('read_hid_report() B - message is now {0:}'.format(PrintBytes(l_ret)))
+        return l_ret
 
     def fetch_read_data(self):
         l_ret = self.m_USB_obj.message
