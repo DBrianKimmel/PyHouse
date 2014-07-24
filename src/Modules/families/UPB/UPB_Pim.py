@@ -303,7 +303,7 @@ class DecodeResponses(object):
         LOG.debug('DecodeResponse B - {0:}'.format(PrintBytes(l_message)))
         if len(l_message) == 0:
             return
-        l_hdr = ord(l_message[1])
+        l_hdr = l_message[1]
         if l_hdr == 0x41:  # 'A'
             self._decode_A()
         elif l_hdr == 0x42:  # 'B'
