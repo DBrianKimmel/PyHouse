@@ -293,8 +293,9 @@ class DecodeResponses(object):
     def decode_response(self, p_controller_obj):
         """A response message starts with a 'P' (0x50) and ends with a '\r' (0x0D).
         """
-        LOG.debug('DecodeResponse')
+        LOG.debug('DecodeResponse A - {0:}'.format(p_controller_obj._Message))
         l_message = self._extract_one_message(p_controller_obj)
+        LOG.debug('DecodeResponse B - {0:}'.format(l_message))
         if len(l_message) == 0:
             return
         l_hdr = ord(l_message[1])
