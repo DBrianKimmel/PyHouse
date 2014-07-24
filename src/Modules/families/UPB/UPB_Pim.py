@@ -285,6 +285,11 @@ class DecodeResponses(object):
             return ''  # Not a complete message yet.
         if l_start > 0:
             LOG.warning('Decoding result - discarding leading junk {0:}'.format(PrintBytes(p_controller_obj._Message[0:l_start])))
+            p_controller_obj._Message = p_controller_obj._Message[l_start:]
+            l_start = 0
+            l_end = p_controller_obj._Message.find('\r')
+            if l_end < 0:
+                return ''  # Not a complete message yet.
         l_message = p_controller_obj._Message[l_start:l_end]
         p_controller_obj._Message = p_controller_obj._Message[l_end + 1:]
         LOG.debug('Extracted message {0:}'.format(PrintBytes(l_message)))
@@ -293,9 +298,9 @@ class DecodeResponses(object):
     def decode_response(self, p_controller_obj):
         """A response message starts with a 'P' (0x50) and ends with a '\r' (0x0D).
         """
-        LOG.debug('DecodeResponse A - {0:}'.format(p_controller_obj._Message))
+        LOG.debug('DecodeResponse A - {0:}'.format(PrintBytes(p_controller_obj._Message)))
         l_message = self._extract_one_message(p_controller_obj)
-        LOG.debug('DecodeResponse B - {0:}'.format(l_message))
+        LOG.debug('DecodeResponse B - {0:}'.format(PrintBytes(l_message)))
         if len(l_message) == 0:
             return
         l_hdr = ord(l_message[1])
