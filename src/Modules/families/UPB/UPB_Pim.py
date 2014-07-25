@@ -498,7 +498,7 @@ class UpbPimAPI(CreateCommands):
         l_driver = self._load_driver(p_controller_obj)
         l_driver.Start(p_pyhouse_obj, p_controller_obj)
         p_pyhouse_obj.House.OBJs.Controllers[p_controller_obj.Key]._DriverAPI = l_driver
-        self.m_pim_pim._DriverAPI = l_driver
+        self.m_pim._DriverAPI = l_driver
         self.set_register_value(p_controller_obj, 0x70, [0x03])
         self.null_command(p_controller_obj)
         return True
