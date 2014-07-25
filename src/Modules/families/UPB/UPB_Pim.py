@@ -493,7 +493,7 @@ class UpbPimAPI(CreateCommands):
         """
         p_controller_obj._Queue = Queue.Queue(300)
         if g_debug >= 1:
-            LOG.debug("start_controller() - InterfaceType:{1:}".format(p_controller_obj.InterfaceType))
+            LOG.debug("start_controller() - InterfaceType:{0:}".format(p_controller_obj.InterfaceType))
         self.m_pim = self._initilaize_pim(p_controller_obj)
         l_driver = self._load_driver(p_controller_obj)
         l_driver.Start(p_pyhouse_obj, p_controller_obj)
