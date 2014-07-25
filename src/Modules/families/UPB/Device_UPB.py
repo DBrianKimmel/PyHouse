@@ -18,12 +18,31 @@ Start Active UPB Controllers.
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Core.data_objects import UPBData
+from Modules.Core.data_objects import LightData
 from Modules.utils import xml_tools
 from Modules.utils import pyh_log
 
 g_debug = 0
 LOG = pyh_log.getLogger('PyHouse.Device_UPB  ')
+
+
+class UPBData(LightData):
+    """
+    Locally held data about each of the UPB PIM controllers we find.
+
+    This is known only within the UPB family package.
+    """
+
+    def __init__(self):
+        super(UPBData, self).__init__()
+        self.ControllerFamily = 'UPB'
+        self.UPBAddress = 0
+        self.UPBPassword = 0
+        self.UPBNetworkID = 0
+
+
+# PIM is loaded after UPBData is defined
+from Modules.families.UPB import UPB_Pim
 
 
 class ReadWriteXml(xml_tools.XmlConfigTools):
@@ -50,9 +69,6 @@ class ReadWriteXml(xml_tools.XmlConfigTools):
             self.put_int_element(p_entry_xml, 'UPBPassword', p_device_obj.UPBPassword)
         except AttributeError as e_err:
             LOG.error('InsertDeviceXML ERROR {0:}'.format(e_err))
-
-
-from Modules.families.UPB import UPB_Pim
 
 
 class API(ReadWriteXml):

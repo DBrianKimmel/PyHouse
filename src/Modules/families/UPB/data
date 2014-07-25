@@ -1,0 +1,1629 @@
+/**
+Copyright 2007 by D. Brian Kimmel.  All rights reserved.
+ */
+
+#include <QtDebug>
+
+#include "usbhidserial.h"
+#include "macros.h"
+
+#define PIM_USB_INTERFACE   0
+
+const int HID_GET_REPORT    = 0x01;
+const int HID_GET_IDLE      = 0x02;
+const int HID_GET_PROTOCOL  = 0x03;
+const int HID_SET_REPORT    = 0x09;
+const int HID_SET_IDLE      = 0x0A;
+const int HID_SET_PROTOCOL  = 0x0B;
+
+// EPERM            1      /* Operation not permitted */
+// ENOENT           2      /* No such file or directory */
+// ESRCH            3      /* No such process */
+// EINTR            4      /* Interrupted system call */
+// EIO              5      /* I/O error */
+// ENXIO            6      /* No such device or address */
+// E2BIG            7      /* Argument list too long */
+// ENOEXEC          8      /* Exec format error */
+// EBADF            9      /* Bad file number */
+// ECHILD          10      /* No child processes */
+// EAGAIN          11      /* Try again */
+// ENOMEM          12      /* Out of memory */
+// EACCES          13      /* Permission denied */
+// EFAULT          14      /* Bad address */
+// ENOTBLK         15      /* Block device required */
+// EBUSY           16      /* Device or resource busy */
+// EEXIST          17      /* File exists */
+// EXDEV           18      /* Cross-device link */
+// ENODEV          19      /* No such device */
+// ENOTDIR         20      /* Not a directory */
+// EISDIR          21      /* Is a directory */
+// EINVAL          22      /* Invalid argument */
+// ENFILE          23      /* File table overflow */
+// EMFILE          24      /* Too many open files */
+// ENOTTY          25      /* Not a typewriter */
+// ETXTBSY         26      /* Text file busy */
+// EFBIG           27      /* File too large */
+// ENOSPC          28      /* No space left on device */
+// ESPIPE          29      /* Illegal seek */
+// EROFS           30      /* Read-only file system */
+// EMLINK          31      /* Too many links */
+// EPIPE           32      /* Broken pipe */
+// EDOM            33      /* Math argument out of domain of func */
+// ERANGE          34      /* Math result not representable */
+// ENODATA         61      /* No data available */
+
+// Public routines
+
+UsbHidSerial::UsbHidSerial( int k_vendor, int k_product, int k_debug ) :
+            m_idVendor( k_vendor ),
+            m_idProduct( k_product ),
+            m_debugLevel( k_debug ),
+            m_interface( 0 ),
+            m_configuration( 0 )
+            {
+    DEBUG( -1, "UsbHidSerial::Constructor - Entry" );
+    mp_ctlDevice      = 0;
+    mp_handle         = 0;
+    m_timeout         = 5 * 1000;
+    m_interface_claimed = FALSE;
+    // Initialize the libraries we are using.
+    usb_set_debug( 0 );
+    usb_init();
+    AcquireDevice();
+}
+
+UsbHidSerial::~UsbHidSerial() {
+    DEBUG( 1, "UsbHidSerial::Destructor - Entry" );
+    if ( mp_ctlDevice == NULL ) {
+        DEBUG( 0, "UsbHidSerial::Destructor - Invalid Device - FAIL!!!\n" );
+        return;
+    }
+    usb_release_interface( mp_handle, m_interface );
+    usb_close( mp_handle );
+    DEBUG( 2, "UsbHidSerial::Destructor - Exit" );
+}
+
+void UsbHidSerial::AcquireDevice() {
+    bool        l_ok;
+    DEBUG( 1, "UsbHidSerial::AcquireDevice" );
+    int l_busCount = usb_find_busses();
+    int l_deviceCount = usb_find_devices();
+    DEBUG( 3, "UsbHidSerial::AcquireDevice - Found usb busses and devices - Buses=" << l_busCount << ", Devices=" << l_deviceCount );
+    // Our find of the proper device
+    l_ok = FindDevice( m_idVendor, m_idProduct );
+    if ( l_ok ) { l_ok = OpenDevice();  }
+    if ( l_ok ) { l_ok = ClaimInterface(); }
+    if ( l_ok ) { l_ok = SetConfig(); }
+    if ( l_ok ) { l_ok = InitializeHID(); }
+    DEBUG( 2, "UsbHidSerial::AcquireDevice - Exit Bus=" << m_usbBus << ": Device=" << m_usbDevice );
+}
+
+void UsbHidSerial::DropDevice() {
+    DEBUG( 1, "UsbHidSerial::DropDevice" );
+    int l_result = usb_release_interface( mp_handle, m_interface );
+    if ( l_result != 0 ) {
+        DEBUG( 0, "UsbHidSerial::DropDevice - error releasing interface=" << l_result );
+    }
+    sleep(2);
+    l_result = usb_close(mp_handle);
+    if ( l_result != 0 ) {
+        DEBUG( 0, "UsbHidSerial::DropDevice - error closing device=" << l_result );
+    }
+    sleep(2);
+    DEBUG( 2, "UsbHidSerial::usbDropDevice - Exit" );
+}
+
+int UsbHidSerial::usbReadBytes( QByteArray& kr_buffer ) {
+    int     l_ret;
+    int     l_endPoint = 0x81; // Interrupt IN End Point
+    char    l_buff[128];
+    int     l_size          = 8;
+
+    DEBUG( 6, "UsbHidSerial::usbReadBytes - Entry " );
+    memset( l_buff, 0, 100 );
+    if ( mp_ctlDevice == 0 ) {
+        DEBUG( 0, "UsbHidSerial::usbReadBytes - Invalid Device - FAIL!!! " );
+        return -1;
+    }
+    l_ret = usb_interrupt_read( mp_handle,
+                                l_endPoint,
+                                l_buff,
+                                l_size,
+                                m_timeout );
+    kr_buffer = l_buff;
+    QString l_str = ToString( l_buff );
+    l_size = strlen( l_buff );
+    DEBUG( 7, "UsbHidSerial::usbReadBytes - Returned " << l_size << " " << l_str.toAscii() );
+    return l_ret;
+}
+
+int UsbHidSerial::Write1Byte(char k_byte) {
+    int l_ret = 0;
+    QByteArray l_buf;
+    l_buf[0] = 0x31;
+    l_buf[1] = k_byte;
+    l_ret = usb_interrupt_write( mp_handle,
+                                 2, // Interrupt OUT End Point
+                                 l_buf.data(),
+                                 2,
+                                 m_timeout );
+    return l_ret;
+}
+
+int UsbHidSerial::usbWriteBytes( const QByteArray& k_buffer ) {
+    int         l_ret = 0;
+    QString l_str = ToString( k_buffer );
+    DEBUG( 6, "UsbHidSerial::usbWriteBytes - Entry Len=" << k_buffer.size() << " " << l_str.toAscii() );
+    if ( mp_ctlDevice == 0 ) {
+        DEBUG( 0, "UsbHidSerial::usbWriteBytes - Invalid Device - FAIL!!! " );
+        return -1;
+    }
+
+    for ( int l_ix = 0; l_ix < k_buffer.size(); l_ix++ ) {
+        l_ret = Write1Byte(k_buffer[l_ix]);
+        // if the device re-enumerated we will get an error of -19 here.
+        if ( l_ret < 0 ) {
+            DEBUG( 0, "UsbHidSerial::usbWriteBytes - got error " << l_ret << " attempting to re-acquiire the PIM" );
+            DropDevice();
+            AcquireDevice();
+            l_ret = Write1Byte(k_buffer[l_ix]);
+        }
+        if ( l_ret < 0 ) {
+            DEBUG( 0, "UsbHidSerial::usbWriteBytes = ERROR Wrote=" << l_ret  << " " << usb_strerror() );
+            return -1;
+        }
+    }
+    DEBUG( 7, "UsbHidSerial::usbWriteBytes - Exit" );
+    return l_ret;
+}
+
+// Protected routines
+
+bool UsbHidSerial::FindDevice( int k_vendor, int k_product ) {
+    struct usb_bus*    lp_bus;
+    int                 l_device_count = 0;
+    int                 l_device_num = 0;
+    DEBUG( 1, "UsbHidSerial::FindDevice - Entry" );
+    for ( lp_bus = usb_get_busses(); lp_bus != NULL; lp_bus = lp_bus->next ) {
+        DEBUG( 3, " Found Bus=" << lp_bus->dirname );
+        struct usb_device* lp_dev;
+        m_usbBus = atoi( lp_bus->dirname );
+        for ( lp_dev = lp_bus->devices; lp_dev != NULL; lp_dev = lp_dev->next ) {
+            DEBUG( 3, " Found Device=" << lp_dev->filename << "," << lp_dev->descriptor.idVendor << "," << lp_dev->descriptor.idProduct );
+            if ( lp_dev->descriptor.idVendor  == k_vendor &&
+                    lp_dev->descriptor.idProduct == k_product ) {
+                m_idVendor  = lp_dev->descriptor.idVendor;
+                m_idProduct = lp_dev->descriptor.idProduct;
+                m_usbDevice = atoi( lp_dev->filename );
+                DEBUG( 3, "  Found our device - control num =" << l_device_count );
+                if ( l_device_count == l_device_num) {
+                    mp_ctlDevice = lp_dev;
+                    DEBUG( 1, "UsbHidSerial::FindDevice - Exit OK - Device=" << m_usbBus << ":" << m_usbDevice << l_device_count );
+                    return TRUE;
+                }
+                l_device_count++;
+            } // our hid device
+        } // devices
+    } // Busses
+    DEBUG( 0, "UsbHidSerial::FindDevice - Exit FAILED!!!" );
+    mp_ctlDevice = 0;
+    return FALSE;
+}
+
+bool UsbHidSerial::OpenDevice() {
+    DEBUG( 1, "UsbHidSerial::OpenDevice - Entry" );
+    // Open the device that we found for the given vendor/product.
+    mp_handle = usb_open( mp_ctlDevice );
+    if ( mp_handle == NULL) {
+        DEBUG( 0, "UsbHidSerial::OpenDevice - Exit FAILED to open device !!!" );
+        return FALSE;
+    }
+    // We do not know how to handle more than 1 config yet.
+    if ( mp_ctlDevice->descriptor.bNumConfigurations != 1 ) {
+        DEBUG( 0, "UsbHidSerial::OpenDevice - Exit FAILED - wrong config count =" << mp_ctlDevice->descriptor.bNumConfigurations );
+        return FALSE;
+    }
+    // We also can not handle multiple interfaces yet.
+    if ( mp_ctlDevice->config->bNumInterfaces != 1 ) {
+        DEBUG( 0, "UsbHidSerial::OpenDevice - Exit FAILED - wrong Interface count =" << mp_ctlDevice->config->bNumInterfaces );
+        return FALSE;
+    }
+    // Get the config descriptor
+    m_configuration     =  mp_ctlDevice->config->bConfigurationValue;
+    m_mfgrName   = GetString( 1 );
+    m_deviceName = GetString( 2 );
+    DEBUG( 5, "  Successfully opened device\n" \
+            << "    Device Mfgr          =" << mp_ctlDevice->descriptor.iManufacturer << "\n" \
+            << "    Device protocol      =" << mp_ctlDevice->descriptor.bDeviceProtocol << "\n" \
+            << "    Configuration Count  =" << mp_ctlDevice->descriptor.bNumConfigurations << "\n" \
+            << "    Configuration Value  =" << mp_ctlDevice->config->bConfigurationValue << "\n" \
+            << "    Interface class      =" << mp_ctlDevice->config->interface->altsetting->bInterfaceClass << "\n" \
+            << "    Interface sub class  =" << mp_ctlDevice->config->interface->altsetting->bInterfaceSubClass << "\n" \
+            << "    Mfgr                 =" << m_mfgrName.toAscii() << "\n" \
+            << "    Device type          =" << m_deviceName.toAscii() );
+    DEBUG( 2, "UsbHidSerial::OpenDevice - Exit OK" );
+    return TRUE;
+}
+
+bool UsbHidSerial::SetConfig() {
+    int l_ret = usb_set_configuration( mp_handle,  m_configuration );
+    if ( l_ret != 0 ) {
+        DEBUG( 0, "UsbHidSerial::SetConfig - FAILED returned " << l_ret << " - " << usb_strerror() );
+        return TRUE;
+    }
+    DEBUG( 2, "UsbHidSerial::SetConfig - Exit OK" );
+    return TRUE;
+}
+
+bool UsbHidSerial::InitializeHID() {
+    int l_ret;
+    DEBUG( 1, "UsbHidSerial::InitializeHID - Entry" );
+    QByteArray l_report = "12345";
+    l_report[0] = 0xc0;
+    l_report[1] = 0x12;
+    l_report[2] = 0x00;
+    l_report[3] = 0x00;
+    l_report[4] = 0x03;
+    int l_requestType = USB_ENDPOINT_OUT | USB_TYPE_CLASS | USB_RECIP_INTERFACE; // 0x21
+    int l_request = HID_SET_REPORT; // 0x09
+    int l_value   = 0x0003; // Report type & Report ID
+    int l_index   = 0;
+    l_ret = usb_control_msg( mp_handle,
+                             l_requestType,
+                             l_request,
+                             l_value,
+                             l_index,
+                             l_report.data(),
+                             l_report.size(),
+                             m_timeout );
+    if ( l_ret < 0 ) {
+        DEBUG( 0, "UsbHidSerial::InitializeHID = ERROR returned=" << l_ret << " " << usb_strerror() );
+        return -1;
+    }
+    DEBUG( 2, "UsbHidSerial::InitializeHID - Exit OK" );
+    return TRUE;
+}
+
+bool UsbHidSerial::ClaimInterface() {
+    int         l_ret;
+    int         l_retries = 3;
+    m_interface = 0;
+    DEBUG( -1, "UsbHidSerial::ClaimInterface Entry - Interface=" << m_interface );
+    // Don't reclaim interface.
+    if ( m_interface_claimed ) {
+        DEBUG( 0, "UsbHidSerial::ClaimInterface Already claimed - Exit OK" );
+        return TRUE;
+    }
+    // Try to detach kernel - it may not be attached in the first place
+    DEBUG( 3, "   Trying to detach kernel driver" );
+    l_ret = usb_detach_kernel_driver_np( mp_handle, m_interface );
+    if ( l_ret != 0 ) {
+        /** @todo try to avoid message if it was not attached.
+        if ( errno == ENODATA )
+        */
+        DEBUG( 0, "   Detach failed " << l_ret << " " << usb_strerror() << "   Detach failed - Continuing anyway" );
+    } else {
+        DEBUG( 3, "   Detach successful " << l_ret << " " << usb_strerror() );
+    }
+    // Now try setting config (again).
+    DEBUG( 3, "   Trying to configure device" << m_configuration );
+    l_ret = usb_set_configuration( mp_handle, m_configuration );
+    if ( l_ret != 0 ) {
+        DEBUG( 0, "usb_set_configuration failed - Exiting " << l_ret << " " << usb_strerror() );
+        return FALSE;
+    }
+    // Next try to claim interface
+    while ( l_retries > 0 ) {
+        DEBUG( 4, "   Repeat count=" << l_retries << " Claiming interface #" << m_interface );
+        l_ret = usb_claim_interface( mp_handle, m_interface );
+        if ( l_ret != 0 ) {
+            DEBUG( 5, "    usb_claim_interface failed retries left =" << l_ret  << " " << usb_strerror() );
+            l_ret = usb_detach_kernel_driver_np( mp_handle, m_interface );
+            if ( l_ret == 0 ) {
+                DEBUG( 5, "    Device detached " << usb_strerror() );
+            } else {
+                DEBUG( 0, "    Detach failed    Continuing anyway" << usb_strerror() );
+            }
+        } else {
+            DEBUG( 3, "  usb_claim_interface succeded and returned" << l_ret );
+            break;
+        }
+        l_retries--;
+        DEBUG( 7, "   Repeat count decremented to " << l_retries );
+    }
+    m_interface_claimed = TRUE;
+    DEBUG(  2, "UsbHidSerial::ClaimInterface - Exit OK Interface=" << m_interface );
+    return TRUE;
+}
+
+QString UsbHidSerial::GetString( int k_index ) {
+    QString     l_str;
+    char        l_chr[1024];
+    int l_ret = usb_get_string_simple( mp_handle, k_index, l_chr , 1024 );
+    if ( l_ret < 0 ) {
+        return QString();
+    }
+    l_chr[l_ret] = 0x00;
+    l_str.append( l_chr );
+    return l_str;
+}
+
+QString UsbHidSerial::ToString( const QByteArray& k_ba ) {
+    QString l_str( " " );
+    char    l_char[128];
+    int     l_size = k_ba.size();
+    for ( int l_ix = 0; l_ix < l_size; l_ix++ ) {
+        int l_byte = (unsigned int)k_ba[l_ix]&0xFF;
+        if ( ( l_byte > 0x1F ) && ( l_byte < 0x7F ) ) {
+            sprintf( l_char, "%c ", l_byte );
+        } else {
+            sprintf( l_char, "0x%2.2X ", l_byte );
+        }
+        l_str.append( l_char );
+    }
+    return l_str;
+}
+
+/* How to detach a device from the kernel HID driver:
+ *
+ * The hid.o or usbhid.ko kernel modules claim a HID device on insertion,
+ * usually. To be able to use it with libhid, you need to blacklist the
+ * device (which requires a kernel recompilation), or simply tell libhid to
+ * detach it for you. hid_open just opens the device, hid_force_open will
+ * try n times to detach the device before failing.
+ * In the following, n == 3.
+ *
+ * To open the HID, you need permission to the file in the /proc usbfs
+ * (which must be mounted -- most distros do that by default):
+ *   mount -t usbfs none /proc/bus/usb
+ * You can use hotplug to automatically give permissions to the device on
+ * connection. Please see
+ *   http://cvs.ailab.ch/cgi-bin/viewcvs.cgi/external/libphidgets/hotplug/
+ * for an example. Try NOT to work as root!
+ */
+
+/*  Actual for Bus 001 Device 006: ID 17dd:5500
+          Report Descriptor: (length is 37)
+            Item(Global): Usage Page, data= [ 0xa0 0xff ] 65440
+                            (null)
+            Item(Local ): Usage, data= [ 0x01 ] 1
+                            (null)
+            Item(Main  ): Collection, data= [ 0x01 ] 1
+                            Application
+            Item(Local ): Usage, data= [ 0x01 ] 1
+                            (null)
+            Item(Global): Logical Minimum, data= [ 0x00 ] 0
+            Item(Global): Logical Maximum, data= [ 0xff 0x00 ] 255
+            Item(Global): Report Size, data= [ 0x08 ] 8
+            Item(Global): Report Count, data= [ 0x08 ] 8
+            Item(Main  ): Input, data= [ 0x02 ] 2
+                            Data Variable Absolute No_Wrap Linear
+                            Preferred_State No_Null_Position Non_Volatile Bitfield
+            Item(Local ): Usage, data= [ 0x02 ] 2
+                            (null)
+            Item(Global): Report Size, data= [ 0x08 ] 8
+            Item(Global): Report Count, data= [ 0x08 ] 8
+            Item(Main  ): Output, data= [ 0x02 ] 2
+                            Data Variable Absolute No_Wrap Linear
+                            Preferred_State No_Null_Position Non_Volatile Bitfield
+            Item(Local ): Usage, data= [ 0x03 ] 3
+                            (null)
+            Item(Global): Report Size, data= [ 0x08 ] 8
+            Item(Global): Report Count, data= [ 0x05 ] 5
+            Item(Main  ): Feature, data= [ 0x02 ] 2
+                            Data Variable Absolute No_Wrap Linear
+                            Preferred_State No_Null_Position Non_Volatile Bitfield
+            Item(Main  ): End Collection, data=none
+*/
+
+/* How to write to and read from a device:
+ *
+ * Writing to a device requires the HID usage path, a buffer, and the length
+ * of the latter. You must also know the exact length of a packet expected
+ * by the device, and the protocol to speak over HID.
+ *
+ * libhid uses the MGE hidparser, which parses the HID usage tree and places
+ * the available usages at its leafs (leaves?). The path information can be
+ * read from the `lsusb -vvv` output, or by inspecting the output of
+ * hid_dump_tree. In the output, 0x80 denotes an input endoint (sent by the
+ * device), and 0x90 an output endpoint (sent to the device). These are then
+ * used to communicate with the device.
+ *
+ * In the example of the Phidgets QuadServoController (www.phidgets.com, and
+ * libphidgets.alioth.debian.org), the following two paths identify the
+ * input and output descriptors respectively.
+ *
+ *   unsigned char const PATHLEN = 3;
+ *   int const PATH_IN[PATHLEN] = { 0xffa00001, 0xffa00002, 0xffa10003 };
+ *   int const PATH_OUT[PATHLEN] = { 0xffa00001, 0xffa00002, 0xffa10004 };
+ *
+ * This is derived from the output of `lsusb -d 0x06c2:0x0038 -vvv` as
+ * follows. You need to run `libhid_detach_device 06c2:0038` before lsusb
+ * will output this info:
+ *
+ *   Bus 001 Device 028: ID 06c2:0038 GLAB Chester 4-Motor PhidgetServo v3.0
+ *   Device Descriptor:
+ *     [...]
+ *     Configuration Descriptor:
+ *       [...]
+ *       Interface Descriptor:
+ *         [...]
+ *         iInterface
+ *           HID Device Descriptor:
+ *           [...]
+ *              Report Descriptor:
+ *              [...]
+ *                Item(Global): Usage Page, data= [ 0xa0 0xff ] 65440
+ *                [...]
+ *                Item(Local ): Usage, data= [ 0x01 ] 1
+ *                [...]
+ *
+ *                Item(Local ): Usage, data= [ 0x02 ] 2
+ *                [...]
+ *
+ *                Item(Global): Usage Page, data= [ 0xa1 0xff ] 65441
+ *                [...]
+ *
+ *                Item(Local ): Usage, data= [ 0x03 ] 3
+ *                [...]
+ *                Item(Main  ): Input, data= [ 0x02 ] 2
+ *                [...]
+ *
+ *                Item(Local ): Usage, data= [ 0x04 ] 4
+ *                [...]
+ *                Item(Main  ): Output, data= [ 0x02 ] 2
+ *                [...]
+ *
+ * So working backwards,
+ *   "Item(Main) Output" is usage 4 of usage page 65441,
+ *   which is rooted at "Item(Local) ... 2" of usage page 65440,
+ *   which is rooted at "Item(Local) ... 1" of usage page 65440
+ *
+ * A path component is 32 bits, the high 16 bits identify the usage page,
+ * and the low 16 bits the item number. Thus (now working forwards):
+ *
+ *   65440 << 16 + 1      -> 0xffa00001
+ *   65440 << 16 + 2      -> 0xffa00002
+ *   65441 << 16 + 4      -> 0xffa10004
+ *
+ * which gives the path the the output usage of the HID. The input usage may
+ * be found analogously.
+ *"
+ * Now, to send 6 bytes:
+ *
+ *   unsigned char const SEND_PACKET_LEN = 6;
+ *   // fill an example packet:
+ *   char const PACKET[SEND_PACKET_LEN] = { 0x0, 0x1, 0x2, 0x3, 0x4, 0x5 };
+ *
+ *   ret = hid_set_output_report(hid, PATH_IN, PATHLEN, PACKET, SEND_PACKET_LEN);
+ *   if (ret != HID_RET_SUCCESS) {
+ *     fprintf(stderr, "hid_set_output_report failed with return code %d\n", ret);
+ *   }
+ *
+ * And reading works similarly:
+ *   char packet[RECV_PACKET_LEN];
+ *   ret = hid_get_input_report(hid, PATH_OUT, PATHLEN, packet, RECV_PACKET_LEN);
+ *   if (ret != HID_RET_SUCCESS) {
+ *     fprintf(stderr, "hid_get_input_report failed with return code %d\n", ret);
+ *   }
+ *   // now use the RECV_PACKET_LEN bytes starting at *packet."
+ */
+
+/*
+Sent to PIM <17>70 03 8D <0D> <2005-09-24 20:58:55 75535.86>
+PA <20:58:55 75535.94>
+
+Sent to PIM <14>07 10 01 03 FF 30 B6 <0D> <2005-09-24 20:58:55 75535.94>
+PA <20:58:56 75536.03>
+PK <20:58:56 75536.24>
+PU080001FF03864629 <20:58:56 75536.47>
+
+Sent to PIM <14>07 10 01 02 FF 30 B7 <0D> <2005-09-24 20:58:57 75537.47>
+PA <20:58:57 75537.51>
+PK <20:58:57 75537.66>
+PU080001FF02860070 <20:58:57 75537.86>
+
+Sent to PIM <14>07 10 01 01 FF 30 B8 <0D> <2005-09-24 20:58:58 75538.86>
+PA <20:58:58 75538.9>
+PK <20:58:59 75539.05>
+PU8904010001860600E5 <20:58:59 75539.29>
+PU8905010001860600E4 <20:58:59 75539.45>
+
+Sent to PIM <14>07 10 01 00 FF 30 B9 <0D> <2005-09-24 20:59:00 75540.45>
+PA <20:59:00 75540.58>
+PK <20:59:00 75540.63>
+PU8905010001860600E4 <20:59:01 75541.04>
+PU080001FF03864629 <20:59:01 75541.26>
+
+Sent to PIM <14>87 10 01 82 FF 20 C7 <0D> <2005-09-24 20:59:21 75561.36>
+PA <20:59:21 75561.48>
+PK <20:59:21 75561.77>
+
+Sent to PIM <14>07 10 01 03 FF 30 B6 <0D> <2005-09-24 20:59:31 75571.77>
+PA <20:59:31 75571.83>
+PK <20:59:32 75572.13>
+PU080001FF0386006F <20:59:32 75572.58>
+
+Sent to PIM <14>87 10 01 81 FF 20 C8 <0D> <2005-09-24 21:00:33 75633.89>
+PA <21:00:33 75633.97>
+PK <21:00:34 75634.27>
+
+Sent to PIM <14>07 10 01 03 FF 30 B6 <0D> <2005-09-24 21:00:44 75644.27>
+PA <21:00:44 75644.36>
+PK <21:00:44 75644.64>
+PU080001FF03864629 <21:00:45 75645>
+
+Sent to PIM <14>87 10 01 83 FF 20 C6 <0D> <2005-09-24 21:00:53 75653.08>
+PA <21:00:53 75653.16>
+PK <21:00:53 75653.47>
+
+Sent to PIM <14>87 10 01 82 FF 20 C7 <0D> <2005-09-24 21:00:53 75653.47>
+PA <21:00:53 75653.58>
+PK <21:00:53 75653.91>
+
+Sent to PIM <14>07 10 01 02 FF 30 B7 <0D> <2005-09-24 21:01:03 75663.47>
+PA <21:01:03 75663.56>
+PK <21:01:03 75663.84>
+PU080001FF02864B25 <21:01:04 75664.25>
+
+Sent to PIM <14>07 10 01 03 FF 30 B6 <0D> <2005-09-24 21:01:06 75666.25>
+PA <21:01:06 75666.33>
+PK <21:01:06 75666.63>
+PU080001FF0386006F <21:01:07 75667.03>
+*/
+
+// END
+
+
+
+===========================================================================================================================================
+
+
+
+/**
+Copyright 2007 by D. Brian Kimmel.  All rights reserved.
+*/
+
+/** @file usbhidserial.h
+@brief Implement user space driver.
+*/
+
+#ifndef USBHIDSERIAL_H
+#define USBHIDSERIAL_H
+
+#include <QObject>
+#include <QByteArray>
+
+extern "C" {
+#include <usb.h>
+}
+
+/** @class UsbHidSerial
+Class for USB HID PIM device manipulation.
+
+This class deals with the USB/HID portion of the device.
+the PIMMain class deals with the PIM and its specific messaging.
+
+This class is instansiated by PIMMain if the device is USB and not
+a serial port device.
+
+There are 2 seperate parts to the CIM or PIM.
+The first is the USB/HID portion and the second is the PIM specific portion.
+
+The HID portion deals with the communication of the usb device.
+The HID device uses interrupt transfers so it should be mostly like reading
+a serial port.
+
+The PIM portion deals with the messages and responses from the pim.
+These messages are independant of the underlying device be it serial or USB,
+as far as I can tell.
+Therefore the code for this portion is in the PIMMain class.
+*/
+class UsbHidSerial : public QObject  {
+    Q_OBJECT
+
+public:
+
+    /** Constructor to find passed in vendor and product codes.
+    @param Vendor is the 16 bit vendor ID (0x17dd).
+    @param Product is the 16 bit product code (0x5500).
+    @param Debug is the debug level.
+    */
+    UsbHidSerial( int Vendor, int Product, int Debug = 0 );
+
+    /** Standard Destructor.
+    */
+    ~UsbHidSerial();
+
+    /** Read a string of bytes from the PIM.
+    @param Buffer is a reference to the returned data area.
+    */
+    int usbReadBytes( QByteArray& Buffer );
+
+    /** Read a byte string.
+
+    @param Buffer is the buffer to be written.
+    */
+    int usbWriteBytes( const QByteArray& Buffer );
+
+protected:
+    /** undocumented.
+    */
+    QString GetString( int Index );
+
+    /** Make a printable version of the byte array.
+    @param Array is the array to make printable.
+    Used for debugging mostly.
+    */
+    QString ToString( const QByteArray& Array );
+
+    /** Search the USB tree and find our device.
+    @param Vendor is the 16 bit vendor ID (0x17dd).
+    @param Product is the 16 bit product code (0x5500).
+    @returns TRUE if our device was found in the USB tree.
+    */
+    bool FindDevice( int Vendor, int Product );
+
+    /** Claim the interface.
+    @returns TRUE if the interface could be claimed from the kernel.
+    */
+    bool ClaimInterface();
+
+    /** Initialize the USB HID device.
+    @returns TRUE if the HIDportion could be initialized.
+    Initializes the HID portion of the device.
+    */
+    bool InitializeHID();
+
+    /** Acquire device.
+    This is a complex operation used to communicate with a HID USB device.
+    It needs to be done every time we talk to a newly enumerated USB device.
+    This means it should be called after power failures (e.g.) on the PIM
+    as well as every time the usb device is re-plugged in.
+    */
+    void AcquireDevice();
+
+    /** Drop device.
+    */
+    void DropDevice();
+
+    /** Open the device that we found.
+    Extract a bunch of information from the Device Descriptor and
+    store it it private data areas for this instance.
+    @returns TRUE if open was sucessful and the device is of a proper type
+    for us to use as a PIM.
+    */
+    bool OpenDevice();
+
+    /** Set up the proper configuration.
+    @returns TRUE if we could do the setup.
+    */
+    bool SetConfig();
+
+    int Write1Byte(char k_byte);
+
+signals:
+
+    /** Signal emitted when the PIM has async data for us.
+    */
+    void usbRxInterrupt( int );
+
+private:
+
+    /** The assigned mfgr ID. */
+    int                     m_idVendor;
+    /** The assigned product number. */
+    int                     m_idProduct;
+    /** The debug level for the device. */
+    int                     m_debugLevel;
+
+    /** Structure from system usb.h to hold device pointer.
+    */
+    struct usb_device*    mp_ctlDevice;
+
+    /** Device access pointer from usb.h.
+    */
+    usb_dev_handle*         mp_handle;
+
+    /** Number of the interface that we are using.
+    */
+    int                     m_interface;
+
+    /** Timeout of USB operations in mSecs.
+    */
+    int                     m_timeout;
+
+    /** Which of the USB configs for the device will be used.
+    Default is 1.
+    */
+    int                     m_configuration;
+
+    /** The name of the mfgr as reported by device.
+    */
+    QString                 m_mfgrName;
+
+    /** The device name assigned by the mfgr.
+    */
+    QString                 m_deviceName;
+
+    /** Enumerated Bus number (by kernel).
+    */
+    int                     m_usbBus;
+
+    /** Device number upon a USB bus.
+    */
+    int                     m_usbDevice;
+
+    /** Flag is set when the interface has been sucessfully claimed.
+    */
+    bool                    m_interface_claimed;
+};
+#endif
+// END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/***************************************************************************
+ pimmain.cpp
+    begin: 2007
+    copyright(C) 2007, 2008 by D. Brian Kimmel
+    briank@kimmel.biz
+ ***************************************************************************/
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the artistic license.                           *
+ *                                                                         *
+ ***************************************************************************/
+
+
+#undef INCLUDE_X10
+
+#include <QtDebug>
+#include <QDateTime>
+
+#include "pimmain.h"
+#ifdef INCLUDE_X10
+    #include "qextserialport.h"
+#endif
+#include "lightingsystem.h"
+#include "lightdevice.h"
+#include "macros.h"
+
+#define PIM_USB_VENDOR_ID   0x17dd
+#define PIM_USB_PRODUCT_ID  0x5500
+
+//< Offsets into a UPB message
+const int UPBMSG_CONTROL_HIGH = 0;
+const int UPBMSG_CONTROL_LOW  = 1;
+const int UPBMSG_NETWORK_ID   = 2;
+const int UPBMSG_DEST_ID      = 3;
+const int UPBMSG_SOURCE_ID    = 4;
+const int UPBMSG_MESSAGE_ID   = 5;
+const int UPBMSG_BODY         = 6;
+
+// Commands to the pim
+const int CMD_START_SETUP_MODE          = 0x03;
+const int CMD_STOP_SETUP_MODE           = 0x04;
+const int CMD_GET_DEVICE_STATUS         = 0x07;
+const int CMD_GET_REGISTER_VALUE        = 0x10;
+const int CMD_SET_REGISTER_VALUE        = 0x11;
+const int CMD_GOTO                      = 0x22;
+const int CMD_FADE_START                = 0x23;
+const int CMD_FADE_STOP                 = 0x24;
+const int CMD_REPORT_STATE              = 0x30;
+
+PIMMain::PIMMain(int k_debug, QObject* kp_parent ) :
+        mp_parent( kp_parent ),
+        m_debugLevel( k_debug )
+{
+    DEBUG( -1, "PIMMain::Constructor " );
+    m_pimConfigured = FALSE;
+    m_isOpen = FALSE;
+    mp_pimUsbPort    = new UsbHidSerial( PIM_USB_VENDOR_ID, PIM_USB_PRODUCT_ID, m_debugLevel );
+//    if ( k_interface == "SERIAL" ) {
+//        m_interface = PIM_SERIAL;
+//    } else if ( k_interface == "USB" ) {
+        m_interface = PIM_USB;
+//    } else {
+//        m_interface = PIM_INVALID;
+//    }
+    // Temp values
+    m_netID             = 0xFF;
+    m_unitID            = 255;
+    pimConfigure();
+    mp_nextTimer   = new QTimer();
+    QObject::connect( mp_nextTimer, SIGNAL( timeout() ), this, SLOT( slotTimer() ) );
+    QObject::connect( this, SIGNAL( signalPimRxed( QByteArray ) ), this, SLOT( slotReceivedPimMessage( QByteArray ) ) );
+    mp_nextTimer->start( 1*1000 );
+    DEBUG( 2, "PIMMain::Constructor - Exit - this=" << this );
+}
+
+PIMMain::~PIMMain() {
+
+    DEBUG( 1, "PIMMain::Destructor - Entry" );
+    pimClose();
+    if ( m_interface == PIM_SERIAL ) {
+#ifdef INCLUDE_X10
+        delete mp_pimSerialPort;
+#endif
+    } else if ( m_interface == PIM_USB ) {
+        delete mp_pimUsbPort;
+    }
+    DEBUG( 2, "PIMMain::Destructor - Exit" );
+}
+
+Erc_t PIMMain::pimOpen( const QString& k_portName, const QString& k_controllerName, const QString& k_interface) {
+    m_portName = k_portName;
+    m_controllerName = k_controllerName;
+    if ( k_interface == "SERIAL" ) {
+        m_interface = PIM_SERIAL;
+    } else if ( k_interface == "USB" ) {
+        m_interface = PIM_USB;
+    } else {
+        m_interface = PIM_INVALID;
+    }
+    DEBUG( 1, "PIMMain::pimOpen - Entry " << m_Name.toAscii() );
+    m_pimConfigured = FALSE;
+    if ( m_interface == PIM_SERIAL ) {
+#ifdef INCLUDE_X10
+        m_isOpen = mp_pimSerialPort->open( QIODevice::ReadWrite );
+        if ( ! m_isOpen ) {
+            DEBUG( 0, "PIMMain::pimOpen open r/w returned false for port " << m_portName.toAscii() );
+            return ERC_SERVICE_NOT_AVAIL;
+        }
+        DEBUG( 2, "PIMMain::pimOpen - Serial - Exit OK" );
+#endif
+        return ERC_OK;
+    } else if ( m_interface == PIM_USB ) {
+        // Send a write register 70 to set PIM mode
+        // Command is <17>70 03 8D <0D>
+        QByteArray l_msg( 1, 0x03 );
+        pimWriteRegisters( 0x70, l_msg );
+        m_isOpen = TRUE;
+        mp_nextTimer->stop();
+        mp_nextTimer->start( 1*1000 );
+        DEBUG( 2, "PIMMain::pimOpen - USB - Exit OK" );
+        return ERC_OK;
+    }
+    // Something we do not know about then.
+    m_isOpen = FALSE;
+    DEBUG( 0, "PIMMain::pimOpen - ERROR Exit - Unknown pim device " << m_interface );
+    return ERC_SERVICE_NOT_AVAIL;
+}
+
+Erc_t PIMMain::pimClose() {
+    DEBUG( 1, "PIMMain::pimClose()" );
+    return ERC_OK;
+}
+
+bool PIMMain::pimReOpen() {
+    DEBUG( 1, "PIMMain::pimReOpen" );
+    pimClose();
+    pimOpen();
+    return TRUE;
+}
+
+void PIMMain::sendMessageGetResponse(const QByteArray& k_message, QByteArray& k_response) {
+    DEBUG( 1, "PIMMain::sendMessageGetResponse" << messageToString( k_message ).toAscii() );
+    slotPimSendMessage(k_message);
+    QByteArray l_response;
+    // Pim should always get a PA for getting the message to send.
+    getResponse( l_response );  // PA
+    // if the remote light device got a good message we should get an ack next.
+    getResponse( l_response );  // PK
+    k_response = l_response;
+}
+
+QByteArray PIMMain::pimReadRegisters( int k_regStart, int k_count ) {
+    QByteArray  l_msg( 2, 0 );
+    QByteArray  l_response;
+    DEBUG( 1, "PIMMain::pimReadRegisters()" );
+    // Build PIM comand to read its internal registers.
+    l_msg[0] = k_regStart & 0xFF;
+    l_msg[1] = k_count & 0xFF;
+    pimCalculateCS( l_msg );
+    l_msg.prepend( 0x12 );
+    slotPimSendMessage( l_msg );
+    getResponse( l_response );  // PA
+    return l_response;
+}
+
+int PIMMain::pimWriteRegisters( int k_regStart, QByteArray& k_values ) {
+    QByteArray  l_msg;
+    QByteArray  l_response;
+    DEBUG( 1, "PIMMain::pimWriteRegisters start=" << k_regStart << " Count=" << k_values.size() );
+    l_msg = k_values;
+    l_msg.prepend( k_regStart );
+    pimCalculateCS( l_msg );
+    l_msg.prepend( 0x17 );
+    slotPimSendMessage( l_msg );
+    getResponse( l_response );   // PA
+    DEBUG( 2, "PIMMain::pimWriteRegisters - Exit" );
+    return 0;
+}
+
+QByteArray PIMMain::pimDetectNetworks() {
+    QByteArray  l_msg, l_answer;
+    QByteArray  l_response;
+    DEBUG( 1, "PIMMain::pimDetectNetworks" );
+    for ( int l_ix = 1; l_ix < 25; l_ix++ ) {
+        l_msg = QByteArray( 6, 0 );
+        DEBUG( 1, "PIMMain::pimDetectNetworks net=" << l_ix);
+        l_msg[UPBMSG_CONTROL_HIGH] = 1;
+        l_msg[UPBMSG_CONTROL_LOW]  = 0x10; // Request ack and acknowledgement
+        l_msg[UPBMSG_NETWORK_ID]   = l_ix & 0xFF;
+        l_msg[UPBMSG_DEST_ID]      = 0x00; // Broadcast DID
+        l_msg[UPBMSG_SOURCE_ID]    = m_unitID & 0xFF;
+        l_msg[UPBMSG_MESSAGE_ID]   = 0x00 & 0xFF; // aka messageID
+        l_msg[UPBMSG_CONTROL_HIGH] = ( l_msg.size() + 1 ) & 0xFF;
+        pimCalculateCS( l_msg );
+        l_msg.prepend( 0x14 );
+        slotPimSendMessage( l_msg );
+        int l_net = getResponse( l_response );   // PA
+        if ( l_net == 1 ) {
+            l_answer.append( (char)l_ix );
+        }
+    }
+    QString l_str = messageToString( l_answer, FALSE );
+    DEBUG( 1, "=========== " << l_answer.size() << " " << l_str.toAscii() );
+    m_debugLevel = 0;
+    return l_answer;
+}
+
+QByteArray PIMMain::ScanDevices(int k_net, int k_min, int k_max) {
+    QByteArray l_out, l_answer, l_response;
+    for ( int l_ix = k_min; l_ix < k_max; l_ix++ ) {
+        l_out = QByteArray( 6, 0 );
+        DEBUG( 1, "PIMMain::ScanDevices " << l_ix);
+        l_out[UPBMSG_CONTROL_LOW]  = 0x10;
+        l_out[UPBMSG_NETWORK_ID]   = k_net & 0xFF;
+        l_out[UPBMSG_DEST_ID]      = l_ix & 0xFF;
+        l_out[UPBMSG_SOURCE_ID]    = m_unitID & 0xFF;
+        l_out[UPBMSG_MESSAGE_ID]   = CMD_GET_DEVICE_STATUS & 0xFF;
+        l_out[UPBMSG_CONTROL_HIGH] = ( ( l_out.size() + 1 ) ) & 0xFF;
+        pimCalculateCS( l_out );
+        DEBUG( 5, "PIMMain::ScanDevices - TRANSMIT_UPB_MESSAGE" << l_out.data() );
+        l_out.prepend( 0x14 );
+        slotPimSendMessage( l_out );
+        int l_net = getResponse( l_response );   // PA
+        DEBUG( -1, "PIMMain::ScanDevices " << l_ix << " Responded " << l_net);
+        if ( l_net < 4 ) {
+            l_answer.append( (char)l_ix );
+        }
+        sleep(3);
+    }
+    QString l_str = messageToString( l_answer, FALSE );
+    DEBUG( -1, "=====PIMMain::ScanDevices found " << l_answer.size() << " Devices, UnitIDs are " << l_str.toAscii() );
+    return l_answer;
+}
+
+int PIMMain::pimGetNetworkInfo(  LightDevice* kp_device, QByteArray& k_nameRet ) {
+    QByteArray l_out, l_response;
+    bool l_ok;
+    getDeviceRegisterReport( kp_device, 0, 1, l_response );
+    int l_netID = l_response.toInt( &l_ok, 16 );
+    getDeviceRegisterReport( kp_device, 16, 16, l_response );
+    for ( int l_ix = 0; l_ix < 16; l_ix++ ) {
+        QByteArray l_char = l_response.left( 2 );
+        l_response.remove( 0, 2 );
+        l_out[l_ix] = (char)( l_char.toInt( &l_ok, 16 ) );
+    }
+    if (  m_debugLevel > 0 ) {
+        QString l_str = messageToString( l_out );
+        DEBUG( 1, "PIMMain::pimGetNetworkInfo name=" << l_str << l_netID );
+    }
+    k_nameRet = l_out;
+    return l_netID;
+}
+
+void PIMMain::ProgramDeviceInSetup( LightDevice* kp_device ) {
+    // These are what we want to program into the device - so build the proper array.
+    int l_unitID    = kp_device->property( "UnitID" ).toInt();
+    int l_netID     = kp_device->property( "NetworkID" ).toInt();
+    int l_password  = kp_device->property( "Password" ).toInt();
+    // temp patch - Ugly hack alert !!!
+    l_netID = 6;
+    l_password = 0x050D;
+    QByteArray l_out( 4, 0 );
+    l_out[0] = l_netID & 0xFF;
+    l_out[1] = l_unitID & 0xFF;
+    l_out[2] = ( l_password / 256 ) & 0xFF;
+    l_out[3] = ( l_password % 256 ) & 0xFF;
+    QString l_str   = QString("%1").arg(l_password,4,16, QLatin1Char( '0' ));
+    DEBUG( -1, "PIMMain::ProgramDeviceInSetup -to- New UnitID=" << l_unitID << ", new netID=" << l_netID << ", New Password=" << l_str );
+    // temp patch - Ugly hack alert !!!
+    l_netID = 6;
+    l_password = 0x050D;
+    // These are the factory defaults of the device.
+    // We need to send the message to this address so it will see the new program params.
+    // This ws where the above message will be sent by setting up kp_device.
+    kp_device->setProperty( "UnitID", 0x00 );
+    kp_device->setProperty( "NetworkID", 0x00 );
+    kp_device->setProperty( "Password", 0x1234 );
+    // Write the NetworkID, UnitID and NetworkPassword
+    writeDeviceRegisters( kp_device, 0, 4, l_out );
+    // Update the LightDevice to what we just programmed.
+    kp_device->setProperty( "UnitID", l_unitID );
+    kp_device->setProperty( "NetworkID", l_netID );
+    kp_device->setProperty( "Password", l_password );
+    exitSetupMode( kp_device );
+    DEBUG( -2, "PIMMain::ProgramDeviceInSetup - Exit" );
+    m_debugLevel = 0;
+}
+
+void PIMMain::pimOperateDevice( LightDevice* kp_device ) {
+    DEBUG( 9, "PIMMain::pimOperateDevice - ENTRY" );
+    QByteArray  l_response;
+    int l_level = kp_device->property( "LightLevel" ).toInt();
+    int l_rate  = kp_device->property( "FadeRate" ).toInt();
+    int l_index = kp_device->property( "Index" ).toInt();
+    QDateTime l_lastTime    = kp_device->property( "LastActionTime" ).toDateTime();
+    if ( l_lastTime.secsTo( QDateTime::currentDateTime() ) < 9 ) {
+        m_debugLevel = 0;
+        return;
+    }
+    DEBUG( 1, "PIMMain::pimOperateDevice " << kp_device->property( "DeviceName" ).toString().toAscii() << "to level" << l_level );
+    QByteArray      l_out( 2, (char)0 );
+    l_out[0] = l_level & 0xFF;
+    l_out[1] = l_rate  & 0xFF;
+    int l_command = CMD_FADE_START;
+    if ( l_index == 10 || l_index == 15 || l_index == 16 ) {
+        l_command = CMD_GOTO;
+        DEBUG( -1, "PIMMain::pimOperateDevice - Using GOTO" );
+    }
+    QByteArray l_msg = pimComposeMessage( kp_device, l_command, l_out, FALSE );
+    sendMessageGetResponse(l_msg, l_response);
+    exitSetupMode( kp_device );
+}
+
+int PIMMain::getDeviceRegisterReport( LightDevice* kp_device, int k_start, int k_count, QByteArray& k_value ) {
+    QByteArray  l_response;
+    DEBUG( 1, "PIMMain::getDeviceRegisterReport  start=" << k_start << ", Count=" << k_count );
+    if ( ( k_count < 1 ) || ( k_count > 16 ) ) {
+        DEBUG( 0, "PIMMain::getDeviceRegisterReport count not 1 to 16 =" << k_count );
+        return -1;
+    }
+    QByteArray      l_out( 2, (char)0 );
+    l_out[0] = k_start & 0xFF;
+    l_out[1] = k_count & 0x1F;
+    QByteArray l_msg = pimComposeMessage( kp_device, CMD_GET_REGISTER_VALUE, l_out, FALSE );
+    sendMessageGetResponse(l_msg, l_response);
+    getResponse( l_response );   // PU
+    if ( ( l_response.size() - 14 ) != ( k_count * 2 ) ) {
+        DEBUG( 0, "PIMMain::getDeviceRegisterReport - ERROR invalid report recieved" );
+        return -1;
+    }
+    l_response = decodeReport( l_response );
+    k_value = l_response;
+    return k_count;
+}
+
+int PIMMain::writeDeviceRegisters( LightDevice* kp_device, int k_start, int k_count, QByteArray& k_value ) {
+    if ( k_value.size() != k_count ) {
+        DEBUG( 0, "PIMMain::writeDeviceRegisters size mismatch " << k_count <<  k_value.size() );
+    }
+    QString l_str = "";
+    for ( int l_ix= 0; l_ix < k_count; l_ix++ ) {
+        l_str += QString("%1 ").arg(k_value[l_ix], 2,16, QLatin1Char( '0' ));
+    }
+    QByteArray  l_response;
+    DEBUG( -1, "PIMMain::writeDeviceRegisters  start=" << k_start << ", Count=" << k_count << l_str );
+    QByteArray l_out = k_value;
+    l_out.prepend( k_start & 0xFF );
+    QByteArray l_msg = pimComposeMessage( kp_device, CMD_SET_REGISTER_VALUE, l_out, FALSE );
+    sendMessageGetResponse(l_msg, l_response);
+    DEBUG( -2, "PIMMain::writeDeviceRegisters - Exit" );
+    return 0;
+}
+
+bool PIMMain::getDeviceInfo( LightDevice* kp_device ) {
+    QString l_name = kp_device->property( "DeviceName" ).toString();
+    QByteArray  l_response;
+    bool l_ok;
+    DEBUG( -1, "PIMMain::getDeviceInfo for device" << l_name.toAscii() );
+    // Network
+    getDeviceRegisterReport( kp_device, 0, 1, l_response );
+    int l_netID = l_response.toInt( &l_ok, 16 );
+    // Unit ID
+    getDeviceRegisterReport( kp_device, 1, 1, l_response );
+    int l_unitID = l_response.toInt( &l_ok, 16 );
+    int l_mfgrID, l_prodID;
+    getMfgrProduct(kp_device,l_mfgrID,l_prodID);
+    kp_device->setProperty( "Mfgr", l_mfgrID );
+    kp_device->setProperty( "Product", l_prodID );
+    DEBUG( -1, "PIMMain::getDeviceInfo for " << l_name.toAscii() << ", UnitID=" << l_unitID << ", NetID=" << l_netID
+            << ", MfgrID=" << l_mfgrID << ", ProductID=" << l_prodID );
+    return TRUE;
+}
+
+bool PIMMain::getMfgrProduct( LightDevice* kp_device, int& k_mfgrRet, int& k_productRet ) {
+    QByteArray  l_response;
+    bool l_ok;
+    DEBUG( 1, "PIMMain::getMfgrProduct" );
+    getDeviceRegisterReport( kp_device, 6, 2, l_response );
+    int l_mfgrID = l_response.toInt( &l_ok, 16 );
+    getDeviceRegisterReport( kp_device, 8, 2, l_response );
+    int l_prodID = l_response.toInt( &l_ok, 16 );
+    k_mfgrRet = l_mfgrID;
+    k_productRet = l_prodID;
+    return TRUE;
+}
+
+int PIMMain::pimGetDeviceStateReport( LightDevice* kp_device ) {
+    QByteArray l_response;
+    bool l_ok;
+    DEBUG( 1, "PIMMain::pimGetDeviceStateReport" );
+    QByteArray      l_out( 2, (char)0 );
+    QByteArray l_msg = pimComposeMessage( kp_device, CMD_REPORT_STATE, l_out, FALSE );
+    sendMessageGetResponse(l_msg, l_response);
+    getResponse( l_response );   // PU
+    // All I have seen so far is a one byte result which is the
+    //  the light level 0x00 thru 0x64 (0-100).
+    l_response = decodeReport( l_response );
+    int l_value = l_response.toInt( &l_ok, 16 );
+    return l_value;
+}
+
+void PIMMain::pimGetDeviceStatusReport( LightDevice* kp_device ) {
+    QByteArray  l_out, l_response;
+    DEBUG( 1, "PIMMain::pimGetDeviceStatusReport" );
+    QByteArray l_msg = pimComposeMessage( kp_device, CMD_GET_DEVICE_STATUS, l_out, FALSE );
+    sendMessageGetResponse(l_msg, l_response);
+    getResponse( l_response );   // PU
+    l_response = decodeReport( l_response );
+}
+
+bool PIMMain::pimIsValid() {
+    DEBUG( 1, "PIMMain::pimIsValid - Bool=" << m_isOpen );
+    return TRUE; // m_isOpen;
+}
+
+// Protected methods.
+
+QByteArray PIMMain::pimComposeMessage( LightDevice* kp_device, int k_cmd, QByteArray k_values, bool k_link ) {
+    QByteArray l_out( 6, 0 );
+    int l_unitID = kp_device->property( "UnitID" ).toInt();
+    int l_netID  = kp_device->property( "NetworkID" ).toInt();
+    DEBUG( 1, "PIMMain::pimComposeMessage UnitID=" << l_unitID << " cmd=" << k_cmd << " Len=" << k_values.size() << " NetID=" << l_netID );
+    l_out[UPBMSG_CONTROL_LOW]  = 0x10;
+    l_out[UPBMSG_NETWORK_ID]   = l_netID & 0xFF;
+    l_out[UPBMSG_DEST_ID]      = l_unitID & 0xFF;
+    l_out[UPBMSG_SOURCE_ID]    = m_unitID & 0xFF; // aka messageID
+    l_out[UPBMSG_MESSAGE_ID]   = k_cmd & 0xFF; // aka messageID
+    l_out.append( k_values );
+    l_out[UPBMSG_CONTROL_HIGH] = ( ( l_out.size() + 1 ) ) & 0xFF;
+    // This is a link command so modify the control
+    if ( k_link )
+        l_out[UPBMSG_CONTROL_HIGH] = l_out[UPBMSG_CONTROL_HIGH] | 0x80;
+    pimCalculateCS( l_out );
+    DEBUG( 5, "PIMMain::pimComposeMessage TRANSMIT_UPB_MESSAGE" << l_out.data() );
+    l_out.prepend( 0x14 );
+    return l_out;
+}
+
+bool PIMMain::pimConfigure() {
+
+    DEBUG( 1, "PIMMain::pimConfigure" );
+    if ( m_interface == PIM_SERIAL ) {
+#ifdef INCLUDE_X10
+    // This is the serial port configuration
+        mp_pimSerialPort->setParity( PAR_NONE );
+        mp_pimSerialPort->setBaudRate( BAUD9600 );
+        mp_pimSerialPort->setStopBits( STOP_1 );
+        mp_pimSerialPort->setFlowControl( FLOW_OFF );
+        mp_pimSerialPort->setDataBits( DATA_8 );
+        mp_pimSerialPort->setDtr();
+        m_pimConfigured = TRUE;
+#endif
+    } else if ( m_interface == PIM_USB ) {
+        m_pimConfigured = TRUE;
+    }
+    return TRUE;
+}
+
+bool PIMMain::pimCalculateCS( QByteArray& k_array ) {
+    int l_cs = 0;
+    int l_byte;
+    QString l_str;
+    QByteArray l_out;
+    DEBUG( 6, "PIMMain::pimCalculateCS - Entry" );
+    if ( k_array.size() < 2 ) {
+        return FALSE;
+    }
+    for ( int l_ix = 0; l_ix < k_array.size(); l_ix++ ) {
+        l_byte = k_array[l_ix]&0xFF;
+        l_cs = ( l_cs + l_byte ) % 256;
+        if ( l_byte < 0x10 )
+            l_out.append( '0' );
+        l_out.append( QByteArray().setNum( l_byte, 16 ) );
+    }
+    l_out.append( QByteArray().setNum( 256 - l_cs, 16 ) );
+    l_out.append( 0x0d );
+    k_array = l_out.toUpper();
+    DEBUG( 8, "PIMMain::pimCalculateCS  Result =" << k_array.data() << " " << k_array.size() );
+    return TRUE;
+}
+
+// Private Methods
+
+int PIMMain::receiveShort( QByteArray& kr_msg ) {
+    int l_ret = -1;
+    DEBUG( 7, "PIMMain::receiveShort" );
+    if ( m_interface == PIM_SERIAL ) {
+        DEBUG( 0, "PIMMain::receiveShort (Serial Port) - ERROR Serial PIM not yet implemented." );
+    } else if ( m_interface == PIM_USB ) {
+        l_ret = mp_pimUsbPort->usbReadBytes( kr_msg );
+        DEBUG( 8, "PIMMain::receiveShort (USB) - Len" << kr_msg.size() );
+    } else {
+        DEBUG( 0, "PIMMain::receiveShort - ERROR invalid pim type=" << m_interface );
+    }
+    return l_ret;
+}
+
+int PIMMain::receiveLong( QByteArray& kr_msg ) {
+    QByteArray l_qba, l_response;
+    int l_ret = receiveShort( l_qba );
+    int l_len = l_qba[0] & 0x0F;
+    int l_repeat = 40;
+    // First a (hopefully) short spin to see if data is ready.
+    while ( l_len == 0 && l_repeat > 0 ) {
+        usleep( 20000 );
+        l_ret = receiveShort( l_qba );
+        l_len = l_qba[0] & 0x0F;
+        l_repeat--;
+    }
+    // Next - get all the data.
+    l_len = l_qba[0] & 0x0F;
+    l_repeat = 50;
+    while ( l_len != 0 && l_repeat > 0 ) {
+        l_qba.remove( 0, 1 ); // Drop the length encoded byte
+        l_response.append( l_qba );
+        l_ret = receiveShort( l_qba );
+        l_len = l_qba[0] & 0x0F;
+        l_repeat--;
+    }
+    // We should have the whole message by now.
+    if ( l_response.size() > 0 ) {
+        QString l_str = messageToString( l_response );
+        DEBUG( 1, "PIMMain::receiveLong " << l_str.toAscii() );
+    }
+    kr_msg = l_response;
+    return l_response.size();
+}
+
+int PIMMain::getResponse( QByteArray& kr_msg ) {
+    QByteArray  l_response, l_qba, l_decoded;
+    int l_ret = receiveLong( l_response );
+    l_ret = decodeResponse( l_response, l_decoded );
+    kr_msg = l_decoded;
+    DEBUG( 5, "PIMMain::getResponse - Exit = " << l_ret );
+    return l_ret;
+}
+
+int PIMMain::decodeResponse( QByteArray& k_msg, QByteArray& k_msgRet ) {
+    int         l_ret = 0;
+    QByteArray  l_response = k_msg;
+    int l_len = k_msg.size();
+    QByteArray  l_reg;
+    k_msgRet.clear();
+
+    QString l_str = messageToString( k_msg );
+    DEBUG( 7, "PIMMain::decodeResponse - Len=" << l_len << " " << l_str.toAscii() );
+    // All pIM response messages begin with 'P' which is 0x50
+    if ( l_response[0] != (char)0x50 ) {
+        DEBUG( 1, "decodeResponse did not find valid message 1 - ERROR! char was " << (int)l_response[0] );
+        l_response.remove( 0, 1 );
+        l_len--;
+        if ( l_len < 1 ) return -1;
+    }
+    while ( l_len > 0 ) {
+        if ( l_response[0] == (char) 0x0D ) {
+            l_response.remove( 0, 1 );
+            l_len--;
+            //l_ret = -1;
+            continue;
+        }
+        if ( l_response[0] != (char)0x50 ) {
+            DEBUG( 1, "decodeResponse did not find valid message 2 - ERROR! char was " << (int)l_response[0] );
+            l_response.remove( 0, 1 );
+            l_len--;
+            l_ret = -1;
+            continue;
+        }
+        switch( l_response[1] ) {
+            case 0x41:      // 'A'
+                DEBUG( 3, "... A - Message accepted." );
+                l_response.remove( 0, 3 );
+                l_len -= 3;
+                l_ret |= 0x0001;
+                break;
+            case 0x45:      // 'E'
+                DEBUG( -3, "... E - Rejected prev cmd because it contained an error." );
+                l_response.remove( 0, 3 );
+                l_len -= 3;
+                l_ret |= 0x8001;
+                break;
+
+            case 0x4B:      // 'K'
+                DEBUG( 3, "... K - Ack pulse was also recieved." );
+                l_response.remove( 0, 3 );
+                l_len -= 3;
+                l_ret |= 0x0002;
+                break;
+            case 0x4E:      // 'N'
+                DEBUG( -3, "... N - NO ack pulse was recieved from device." );
+                l_response.remove( 0, 3 );
+                l_len -= 3;
+                l_ret |= 0x8002;
+                break;
+
+            case 0x42:      // 'B'
+                DEBUG( -3, "... B - Rejected prev cmd because PIM is busy." );
+                l_response.remove( 0, 3 );
+                l_len -= 3;
+                l_ret |= 0x8004;
+                break;
+
+            case 0x52:      // 'R'
+                // get rid of 'PR'
+                l_response.remove( 0, 2 ); l_len -= 2;
+                // get register #
+                l_reg =  l_response.left( 2 ); l_response.remove( 0, 2 ); l_len -= 2;
+                // we now have the registers values encoded as hex nibbles
+                while ( l_response[0] != (char)0x0d ) {
+                    k_msgRet.append( l_response[0] );
+                    l_response.remove( 0, 1 );
+                    l_len--;
+                }
+                DEBUG( 3, "... R - Register report recieved - Register=" << l_reg << " " << k_msgRet );
+                l_ret |= 0x0010;
+                break;
+
+            case 0x55:      // 'U'
+                l_response.remove( 0, 2 );
+                l_len -= 2;
+                l_reg =  l_response.left( 2 );
+                l_response.remove( 0, 2 );
+                l_len -= 2;
+                while ( l_response[0] != (char)0x0d ) {
+                    k_msgRet.append( l_response[0] );
+                    l_response.remove( 0, 1 );
+                    l_len--;
+                }
+                l_len--;
+                DEBUG( 3, "... U - Message Report recieved - len=" << l_reg << "  " << k_msgRet << " Len-" << l_len );
+                l_ret |= 0x0020;
+                break;
+
+            default:
+                DEBUG( 0, "... Unhandled return message. len=" << l_len << " " << l_response );
+                l_len--;
+                l_response.remove( 0, 1 );
+                l_ret |= 0x8100;
+        }
+    }
+    return l_ret;
+}
+
+QByteArray PIMMain::decodeReport( const QByteArray& k_report ) {
+    QByteArray l_report = k_report;
+    // Get the network bytes.
+    QByteArray l_netArr = l_report.left( 4 );
+    l_report.remove( 0, 4 );
+    // Get the UnitID bytes.
+    QByteArray l_unitArr = l_report.left( 4 );
+    l_report.remove( 0, 4 );
+    // Get the report ID
+    QByteArray l_reportArr = l_report.left( 2 );
+    l_report.remove( 0, 2 );
+    // Get the starting offset.
+    QByteArray l_offsetArr = l_report.left( 2 );
+    l_report.remove( 0, 2 );
+    // Pick up the checksum from the end of the string.
+    QByteArray l_cksumtArr = l_report.right( 2 );
+    l_report.chop( 2 );
+    DEBUG( 1, "PIMMain::decodeReport  Net=" << l_netArr << " Unit=" << l_unitArr \
+                << " Report=" << l_reportArr << " Offset=" << l_offsetArr << "  Report=" << l_report );
+    return l_report;
+}
+
+QString PIMMain::messageToString ( const QByteArray& k_ba, bool k_short ) {
+    QString l_str( " " );
+    char    l_char[8];
+    int     l_size = k_ba.length();
+    for ( int l_ix = 0; l_ix < l_size; l_ix++ ) {
+        unsigned int l_ch = (unsigned int)k_ba[l_ix]&0xFF;
+        unsigned int l_pch = l_ch;
+        if ( l_ch < 0x20 || l_ch > 0x7f ) l_pch = 0x20;
+        if ( k_short && ( ( l_ch >= 0x20 ) && ( l_ch <= 0x7f ) ) )
+            sprintf( l_char, "%c ", (char)l_pch );
+        else
+            sprintf( l_char, "0x%2.2X ", l_ch );
+        l_str.append( l_char );
+    }
+    return l_str;
+}
+
+void PIMMain::enterSetupMode( LightDevice* kp_device ) {
+    QByteArray  l_response;
+    int l_password  = 0x0d0a; // kp_device->getUPBDevicePointer()->getDeviceNetworkPointer()->getNetworkPassword();
+    DEBUG( 1, "PIMMain::enterSetupMode" );
+    QByteArray      l_out( 2, (char)0 );
+    l_out[0] = ( l_password / 256 ) & 0xFF;
+    l_out[1] = ( l_password % 256 ) & 0xFF;
+    QByteArray l_msg = pimComposeMessage( kp_device, CMD_START_SETUP_MODE, l_out, FALSE );
+    sendMessageGetResponse(l_msg, l_response);
+}
+
+void PIMMain::exitSetupMode( LightDevice* kp_device ) {
+    QByteArray  l_response, l_out;
+    DEBUG( 1, "PIMMain::exitSetupMode " );
+    QByteArray l_msg = pimComposeMessage( kp_device, CMD_STOP_SETUP_MODE, l_out, FALSE );
+    sendMessageGetResponse(l_msg, l_response);
+}
+
+void PIMMain::decode89Report( const QByteArray& k_rept ) {
+// turned on remote light fireplace
+//QTime("17:31:36") PIMMain::slotReceivedPimMessage " P U 8 9 0 4 0 6 6 B 0 2 2 0 F F F F E 2 0x0D "
+//QTime("17:31:37") PIMMain::slotReceivedPimMessage " P U 8 9 0 5 0 6 6 B 0 2 2 0 F F F F E 1 0x0D "
+// turned off remote light - fireplace
+//QTime("17:31:41") PIMMain::slotReceivedPimMessage " P U 8 9 0 4 0 6 6 C 0 2 2 1 F F F F E 0 0x0D "
+//QTime("17:31:42") PIMMain::slotReceivedPimMessage " P U 8 9 0 5 0 6 6 C 0 2 2 1 F F F F D F 0x0D "
+    QByteArray l_report = k_rept;
+    DEBUG( 1, "PIMMain::decode89Report" );
+    // the report ID = 89
+    l_report.remove( 0, 2 );
+    bool l_ok;
+    // 2 bytes of something
+    // perhape 04 = button pressed and 05 = button released
+    int l_field1 = l_report.left( 2 ).toInt( &l_ok, 16 );
+    l_report.remove( 0, 2 );
+    // 2 bytes of NetworkID = 06
+    int l_netID = l_report.left( 2 ).toInt( &l_ok, 16 );
+    l_report.remove( 0, 2 );
+    // 2 bytes of LinkID = 6B(107) and 6C(108)
+    int l_linkID = l_report.left( 2 ).toInt( &l_ok, 16 );
+    l_report.remove( 0, 2 );
+    // 2 bytes of something
+    int l_field4 = l_report.left( 2 ).toInt( &l_ok, 16 );
+    l_report.remove( 0, 2 );
+    // 2 bytes of command - 20=activate selected link, 21=deactivate selected link
+    int l_field5 = l_report.left( 2 ).toInt( &l_ok, 16 );
+    l_report.remove( 0, 2 );
+    // 2 bytes of something - FF
+    int l_field6 = l_report.left( 2 ).toInt( &l_ok, 16 );
+    l_report.remove( 0, 2 );
+    // 2 bytes of something - FF
+    int l_field7 = l_report.left( 2 ).toInt( &l_ok, 16 );
+    l_report.remove( 0, 2 );
+    DEBUG( -2, "PIMMain::decode89Report field1=" << l_field1 << ", Net=" << l_netID << ", LinkID=" << l_linkID
+            << ", field-4=" << l_field4 << ", DeviceCommand=" << l_field5 << ", field-6=" << l_field6 << ", field-7=" << l_field7 );
+}
+
+/*
+QString PIMMain::hex2Ascii(const QByteArray& k_message) {
+    QString l_return;
+    bool l_ok;
+    for (int l_ix = 0; l_ix < k_message.size(); l_ix += 2) {
+        int l_byte = k_message.mid(l_ix,2).toInt(&l_ok, 16);
+        l_return.append((char)l_byte);
+        //DEBUG( -1, "PIMMain::hex2Ascii " << l_return.toAscii() );
+    }
+    return l_return;
+}
+
+QByteArray PIMMain::ascii2Hex(const QString& k_text) {
+    QByteArray l_return;
+    for (int l_ix=0; l_ix < k_text.size(); l_ix++) {
+        int l_int = k_text.mid(l_ix,1).toInt();
+        l_return.append((char)(l_int / 16));
+        l_return.append((char)(l_int % 16));
+    }
+    return l_return;
+}
+
+
+QString PIMMain::getNetworkName(LightDevice* kp_device) {
+    QString l_name = kp_device->property( "DeviceName" ).toString();
+    DEBUG( 1, "PIMMain::getNetworkName from " << l_name.toAscii() );
+    QByteArray l_bytesRet;
+    getDeviceRegisterReport( kp_device, 16, 16, l_bytesRet );
+    QString l_netName = hex2Ascii(l_bytesRet);
+    DEBUG( -1, "PIMMain::getNetworkName " << l_netName.toAscii());
+    return l_netName;
+}
+
+
+QString PIMMain::getRoomName(LightDevice* kp_device) {
+    QString l_name = kp_device->property( "DeviceName" ).toString();
+    DEBUG( 1, "PIMMain::getRoomName from " << l_name.toAscii() );
+    QByteArray l_bytesRet;
+    getDeviceRegisterReport( kp_device, 32, 16, l_bytesRet );
+    QString l_roomName = hex2Ascii(l_bytesRet);
+    DEBUG( -1, "PIMMain::getRoomName " << l_roomName.toAscii());
+    return l_roomName;
+}
+
+QString PIMMain::getDeviceName(LightDevice* kp_device) {
+    QString l_name = kp_device->property( "DeviceName" ).toString();
+    DEBUG( 1, "PIMMain::getDeviceName from " << l_name.toAscii() );
+    QByteArray l_bytesRet;
+    getDeviceRegisterReport( kp_device, 48, 16, l_bytesRet );
+    QString l_deviceName = hex2Ascii(l_bytesRet);
+    DEBUG( -1, "PIMMain::getDeviceName " << l_deviceName.toAscii());
+    return l_deviceName;
+}
+
+void PIMMain::setRoomName(LightDevice* kp_device, const QString& k_name) {
+    QByteArray l_qba = ascii2Hex(k_name);
+    DEBUG( 1, "PIMMain::setRoomName " << l_qba);
+    int l_ok = writeDeviceRegisters(kp_device, 32, 16,l_qba);
+    if (l_ok != 0) {
+        DEBUG( 0, "PIMMain::setRoomName write reg returned " << l_ok);
+    }
+}
+*/
+
+// S L O T S
+
+void PIMMain::slotPimSendMessage( QByteArray k_msg ) {
+    DEBUG( 8, "PIMMain::slot PimSendMessage" << messageToString( k_msg ).toAscii() );
+    if ( m_interface == PIM_SERIAL ) {
+#ifdef INCLUDE_X10
+        int l_ret = mp_pimSerialPort->write( k_msg.data(), k_msg.length() );
+        if ( l_ret < 0 ) { DEBUG( 0, "PIMMain::slot PimSendMessage - errno = " << errno ); }
+#endif
+    } else if ( m_interface == PIM_USB ) {
+        int l_ret = mp_pimUsbPort->usbWriteBytes( k_msg );
+        if ( l_ret < 0 ) { DEBUG( 0, "PIMMain::slot PimSendMessage" ); }
+        DEBUG( 8, "PIMMain::slot PimSendMessage - Exit OK " );
+    }
+}
+
+void PIMMain::slotTimer() {
+    DEBUG( 1, "PIMMain::slotTimer" );
+    QByteArray l_msg;
+    int l_ret = receiveLong( l_msg ); // sneaky method of polling for messages!
+    int l_len = l_msg[0] & 0x0F;
+    if ( ( 0 == l_len ) && ( 0 == l_ret ) )
+        return;
+    QString l_str = messageToString( l_msg );
+    DEBUG( 2, "PIMMain::slotTimer len=" << l_ret << " " << l_str.toAscii() );
+    emit signalPimRxed( l_msg );
+}
+
+void PIMMain::slotReceivedPimMessage( QByteArray k_message ) {
+//QTime("17:31:36") PIMMain::slotReceivedPimMessage " P U 8 9 0 4 0 6 6 B 0 2 2 0 F F F F E 2 0x0D "
+    QString l_str = messageToString( k_message );
+    DEBUG( -1, "PIMMain::slotReceivedPimMessage" << l_str.toAscii() );
+    QByteArray l_report = k_message;
+    bool l_ok;
+    l_str = l_report.left( 2 );
+    if ( l_str != "PU" ) {
+        DEBUG( 0, "" );
+        return;
+    }
+    // We got a PU message from the pim - figure out which report it is and call
+    // the appropriate method to decode the report.
+    l_report.remove( 0, 2 );    // remove the PU
+    int l_reportType = l_report.left( 2 ).toInt( &l_ok, 10 );
+    if ( 89 == l_reportType ) {
+        decode89Report( l_report );
+    }
+}
+
+// END
+

@@ -24,7 +24,7 @@ from Modules.families import VALID_FAMILIES
 from Modules.utils import pyh_log
 # from Modules.utils.tools import PrettyPrintAny
 
-g_debug = 9
+g_debug = 0
 LOG = pyh_log.getLogger('PyHouse.Family      ')
 
 
@@ -51,12 +51,12 @@ class API(ReadWriteConfigXml):
     def import_module(self, p_family_obj):
         """This routine will attempt to import a module.
         Any errors, such as syntax errors, in the module will cause the import to fail.
-        Hopefully, this will detect all such errors and make the developers life much easier by reporting the error.
+        Hopefully, this method will detect all such errors and make the developers life much easier by reporting the error.
         """
         try:
             l_module = importlib.import_module(p_family_obj.PackageName + '.' + p_family_obj.ModuleName, p_family_obj.PackageName)
         except ImportError as l_error:
-            l_msg = 'Found error "{0:}" while trying to import module {1:}.'.format(l_error, p_family_obj.ModuleName)
+            l_msg = 'ERROR "{0:}" while trying to import module {1:}.'.format(l_error, p_family_obj.ModuleName)
             print("Cannot import:\n    Module: {0:}\n    Package: {1:}\n    Error: {2:}\n\n".format(p_family_obj.ModuleName, p_family_obj.PackageName, l_msg))
             LOG.error(l_msg)
             l_module = None
@@ -95,11 +95,14 @@ class API(ReadWriteConfigXml):
         Load and start the family if there is a controller in the house for the family.
         Runs Device_<family>.API.Start()
         """
-        LOG.info("=== Starting lighting families for house {0:}.".format(p_pyhouse_obj.House.Name))
+        if g_debug >= 1:
+            LOG.info("=== Starting lighting families for house {0:}.".format(p_pyhouse_obj.House.Name))
         for l_family_obj in p_house_obj.FamilyData.itervalues():
+            if g_debug >= 1:
+                LOG.debug('  = Starting Family {0:}'.format(l_family_obj.Name))
             l_family_obj.ModuleAPI.Start(p_pyhouse_obj)  # will run Device_<family>.API.Start()
-            LOG.info("=== Started lighting family {0:}.".format(l_family_obj.Name))
-        LOG.info("=== Started all lighting families for house {0:}.".format(p_pyhouse_obj.House.Name))
+        if g_debug >= 1:
+            LOG.info("=== Started all lighting families for house {0:}.".format(p_pyhouse_obj.House.Name))
 
     def stop_lighting_families(self, p_xml, p_house_obj):
         for l_family_obj in p_house_obj.FamilyData.itervalues():

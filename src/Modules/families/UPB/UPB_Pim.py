@@ -76,7 +76,7 @@ PU080001FF02864B25 <21:01:04 75664.25>
 import Queue
 
 # Import PyMh files
-from Modules.Core.data_objects import UPBData
+from Modules.families.UPB.Device_UPB import UPBData
 from Modules.utils.tools import PrintBytes
 from Modules.utils import pyh_log
 
@@ -136,9 +136,22 @@ pim_commands = {
 }
 
 
+class UpbPimData(object):
+    def __init__(self):
+        self.Name = 'Undefined Upb Pim'
+        self.InterfaceType = ''  # Serial | USB | Ethernet
+        self.UPBAddress = 0
+        self.UPBPassword = 0
+        self.UPBNetworkID = 0
+        #
+        self._Message = ''
+        self._Queue = None
+        self._DriverAPI = None  # InterfaceType API() - Serial, USB etc.
+
+
 class BuildCommand(object):
     """
-    This class will take a command bytearray and convert it ot a bytearray for sending.
+    This class will take a command bytearray and convert it to a bytearray for sending.
 
     Write register commands:
     The command for changing register 70's value to 03 is  ==> 70 03.
@@ -148,12 +161,9 @@ class BuildCommand(object):
     """
 
     def _nibble_to_hex(self, p_nibble):
-        """Take the low order nibble and convert it to a single byte that is the ascii code for the nibble.
-
+        """
+        Take the low order nibble and convert it to a single byte that is the ASCII code for the nibble.
         0x01 ==> 0x31 ('1')
-        0x0A ==> 0x41 ('A')
-        0x0F ==> 0x46 ('F')
-
         @return: an int
         """
         l_ret = 0x30 + p_nibble
@@ -163,11 +173,12 @@ class BuildCommand(object):
         return ord(l_ret)
 
     def _byte_to_2chars(self, p_byte):
-        """Take a single byte and return 2 bytes that are the ascii hex equivalent.
+        """
+        Take a single byte and return 2 bytes that are the ascii hex equivalent.
 
         0x12 ==> 0x3132 ('12')
 
-        @return: a 2 byte array of ints that are ascii encoded.
+        @return: a 2 byte array of ints that are ASCII encoded.
         """
         l_ret = bytearray(2)
         l_ret[0] = self._nibble_to_hex(p_byte / 16)
@@ -189,7 +200,7 @@ class BuildCommand(object):
                 l_byte = p_ba[l_ix]
             l_cs = (l_cs + l_byte) % 256
             l_out.append(l_byte)
-        # l_out.append(int(256 - l_cs))
+        l_out.append(int(256 - l_cs))
         return l_out
 
     def _assemble_regwrite(self, p_reg, p_args):
@@ -211,7 +222,6 @@ class BuildCommand(object):
 
         I think this means taking each nibble of the command and converting it to an ASCII byte.
 
-
         """
         l_ret = bytearray(0)
         for l_byte in p_array:
@@ -221,6 +231,15 @@ class BuildCommand(object):
         if g_debug >= 1:
             LOG.debug("Convert_pim - {0:}".format(PrintBytes(l_ret)))
         return l_ret
+
+    def _create_packet_header(self):
+        l_ph = bytearray(5)
+        l_ph[0] = 0
+        l_ph[1] = 0
+        l_ph[2] = self.m_pim.NetworkID
+        l_ph[3] = self.m_pim.UPBAddress
+        l_ph[4] = 0xff
+        return l_ph
 
     def _queue_pim_command(self, p_controller_obj, p_command):
         if g_debug >= 1:
@@ -239,7 +258,7 @@ class BuildCommand(object):
         self._queue_pim_command(p_controller_obj, l_cmd)
         return l_cmd
 
-    def  write_pim_command(self):
+    def  write_pim_command(self, p_controller_obj, _p_command, _p_device_id, *p_args):
         """Send a command to some UPB device thru the controller
         """
         pass
@@ -384,9 +403,9 @@ class PimDriverInterface(DecodeResponses):
         except  Queue.Empty:
             return
         if p_controller_obj._DriverAPI != None:
-            p_controller_obj._DriverAPI.Write(l_command)
             if g_debug >= 1:
-                LOG.debug('Sent to controller:{0:}, Message: {1:} '.format(p_controller_obj.Name, PrintBytes(l_command)))
+                LOG.debug('Sending to controller:{0:}, Message: {1:} '.format(p_controller_obj.Name, PrintBytes(l_command)))
+            p_controller_obj._DriverAPI.Write(l_command)
 
     def receive_loop(self, p_controller_obj):
         """Periodically, get the current RX data from the driver.
@@ -433,14 +452,20 @@ class CreateCommands(UpbPimUtility, PimDriverInterface, BuildCommand):
         """
         l_val = bytearray(1)
         l_val[0] = 0x03
-        if g_debug >= 1:
-            LOG.debug("Setting Pim Mode - Register {0:#X} to value {1:}".format(0x70, l_val))
         self.set_register_value(0xFF, 0x70, l_val)
+
+    def null_command(self, p_controller_obj):
+        self.write_pim_command(p_controller_obj, pim_commands['null'], '0xFF')
+        pass
 
 
 class UpbPimAPI(CreateCommands):
 
     def _load_driver(self, p_controller_obj):
+        """
+        Select a driver depending on the controller's interface type.
+
+        """
         l_driver = None
         if p_controller_obj.InterfaceType.lower() == 'serial':
             from Modules.drivers import Driver_Serial
@@ -468,14 +493,14 @@ class UpbPimAPI(CreateCommands):
         """
         p_controller_obj._Queue = Queue.Queue(300)
         if g_debug >= 1:
-            LOG.debug("UPB_PIM.start_controller() - ControllerFamily:{0:}, InterfaceType:{1:}".format(
-                        p_controller_obj.ControllerFamily, p_controller_obj.InterfaceType))
-        l_pim = self._initilaize_pim(p_controller_obj)
+            LOG.debug("start_controller() - InterfaceType:{1:}".format(p_controller_obj.InterfaceType))
+        self.m_pim = self._initilaize_pim(p_controller_obj)
         l_driver = self._load_driver(p_controller_obj)
         l_driver.Start(p_pyhouse_obj, p_controller_obj)
         p_pyhouse_obj.House.OBJs.Controllers[p_controller_obj.Key]._DriverAPI = l_driver
-        l_pim._DriverAPI = l_driver
+        self.m_pim_pim._DriverAPI = l_driver
         self.set_register_value(p_controller_obj, 0x70, [0x03])
+        self.null_command(p_controller_obj)
         return True
 
     def get_response(self):

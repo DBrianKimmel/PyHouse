@@ -131,18 +131,6 @@ class InsteonData (LightData):
         self.IsResponder = False
 
 
-class UPBData(LightData):
-    """Locally held data about each of the PIM controllers we find.
-    """
-
-    def __init__(self):
-        super(UPBData, self).__init__()
-        self.ControllerFamily = 'UPB'
-        self.UPBAddress = 0
-        self.UPBPassword = 0
-        self.UPBNetworkID = 0
-
-
 class X10LightingData(LightData):
 
     def __init__(self):

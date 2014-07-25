@@ -39,7 +39,10 @@ RECEIVE_TIMEOUT = 0.3
 
 
 class UsbDeviceData(object):
-    """This is the data object for one USB controller device.
+    """
+    This is the data object for one USB controller device.
+
+    Instance
     """
 
     def __init__(self):
@@ -400,8 +403,6 @@ class API(UsbDriverAPI):
         if self.open_device(self.m_USB_obj):
             self.read_usb(p_pyhouse_obj)
             LOG.info("Opened Controller:{0:}".format(self.m_USB_obj.Name))
-            # self.write_usb(bytearray(b'\x00\x01\x02\x03'))
-            # self.write_usb(bytearray(b'\xff\x01\x02\x03'))
             l_ret = True
         else:
             LOG.warning("Failed to open Controller:{0:}".format(self.m_USB_obj.Name))
