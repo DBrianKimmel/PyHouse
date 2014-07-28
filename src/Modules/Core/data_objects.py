@@ -266,8 +266,7 @@ class ScheduleData(ABaseObject):
         self.ScheduleType = 'Device'  # For future expansion into scenes, entertainment etc.
         self.Time = None
         # for use by web browser - not saved in xml
-        self.HouseIx = None
-        self.DeleteFlag = False
+        self._DeleteFlag = False
 
 
 class InternetConnectionData(ABaseObject):

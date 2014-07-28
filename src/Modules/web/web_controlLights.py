@@ -55,15 +55,12 @@ class ControlLightsElement(athena.LiveElement):
         """A changed Light is returned.  Process it and update the light level
         """
         l_json = JsonUnicode().decode_json(p_json)
-        l_house_ix = int(l_json['HouseIx'])
         l_light_ix = int(l_json['Key'])
         l_light_obj = LightData()
         l_light_obj.Name = l_json['Name']
         l_light_obj.Key = l_light_ix
         l_light_obj.CurLevel = l_level = l_json['Level']
         l_light_obj.UUID = l_json['UUID']
-        l_light_obj.HouseIx = l_house_ix
-        # PrettyPrintAny(l_light_obj, 'web_controlLights return')
         self.m_pyhouse_obj.APIs.LightingAPI.ChangeLight(l_light_obj, l_level)
 
 # ## END DBK

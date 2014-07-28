@@ -75,7 +75,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 			Divmod.debug('---', 'lights.eb_fetchHouseData() was called. ERROR: ' + res);
 		}
 		Divmod.debug('---', 'lights.fetchHouseData was called.  Self:' + self);
-        var l_defer = self.callRemote("getHouseData", globals.House.HouseIx);  // call server @ web_lights.py
+        var l_defer = self.callRemote("getHouseData");  // call server @ web_lights.py
 		l_defer.addCallback(cb_fetchHouseData);
 		l_defer.addErrback(eb_fetchHouseData);
         return false;
@@ -104,7 +104,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		} else if (l_ix == 10001) {  // The "Add" button
 			self.showEntry();
 			self.hideButtons();
-			var l_ent = self.createEntry(globals.House.HouseIx);
+			var l_ent = self.createEntry();
 			self.fillEntry(l_ent);
 		} else if (l_ix == 10002) {  // The "Back" button
 			self.hideWidget();
@@ -162,7 +162,6 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 			RoomName    : fetchSelectWidget('LightRoomName'),
 			LightingType: fetchTextWidget('LightType'),
 			UUID        : fetchTextWidget('LightUUID'),
-			HouseIx     : globals.House.HouseIx,
 			Delete      : false
             }
         if (l_data['ControllerFamily'] == 'Insteon') {
@@ -183,8 +182,8 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
         //console.log("lights.fetchInsteonEntry(3)  %O", p_data)
 		return p_data;
 	},
-	function createEntry(self, p_ix) {
-		//Divmod.debug('---', 'lights.createEntry() was called.  Ix: ' + p_ix);
+	function createEntry(self) {
+		//Divmod.debug('---', 'lights.createEntry() was called.);
         var l_Data = {
     			Name     : 'Change Me',
     			Key      : Object.keys(globals.House.HouseObj.Lights).length,
@@ -197,7 +196,6 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
     			Type     : 'Light',
     			UUID     : '',
     			InsteonAddress  : '',
-    			HouseIx  : p_ix,
     			Delete   : false
                 }
 		return l_Data;

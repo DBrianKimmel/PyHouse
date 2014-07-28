@@ -67,7 +67,10 @@ class API(object):
         self.m_pyhouse_obj = p_pyhouse_obj
         # LOG.info('Started.')
 
-    def Stop(self, p_xml):
+    def Stop(self):
+        pass
+
+    def SaveXml(self, p_xml):
         return p_xml
 
     def ChangeLight(self, p_light_obj, p_level, p_rate = 0):

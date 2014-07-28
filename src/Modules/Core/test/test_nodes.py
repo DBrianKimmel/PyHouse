@@ -132,7 +132,7 @@ class Test1(unittest.TestCase):
         p = self.m_pyhouse_obj.Twisted.Reactor.listenUDP(0, server, interface = "127.0.0.1")
         def cbStarted(_ignored):
             addr = p.getHost()
-            print "addr = {0:}".format(addr)
+            print("addr = {0:}".format(addr))
             self.assertEqual(addr.type, 'UDP')
             return p.stopListening()
         return l_defer.addCallback(cbStarted)

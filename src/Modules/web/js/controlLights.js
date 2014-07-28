@@ -71,7 +71,7 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 			Divmod.debug('---', 'controlLights.eb_fetchHouseData() was called.  ERROR ' + res);
 		}
 		//Divmod.debug('---', 'controlLights.fetchHouseData() was called.');
-       	var l_defer = self.callRemote("getHouseData", globals.House.HouseIx);  // call server @ web_controlLights.py
+       	var l_defer = self.callRemote("getHouseData");  // call server @ web_controlLights.py
 		l_defer.addCallback(cb_fetchHouseData);
 		l_defer.addErrback(eb_fetchHouseData);
         return false;
@@ -122,7 +122,6 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 			UUID : fetchTextWidget('CtlLightUUID'),
 			//RoomName : fetchSelectWidget('CtlLightRoomName'),
 			Level : fetchLevelWidget('CtlLightLevel'),
-			HouseIx : globals.House.HouseIx,
             }
 		return l_data;
 	},

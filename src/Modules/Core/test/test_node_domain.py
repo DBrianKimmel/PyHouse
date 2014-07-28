@@ -1191,8 +1191,8 @@ class Test_05_AMP(unittest.TestCase):
                     Print = None,
                     # optional = None,
                     )
-        print "L[0][1]", L[0][1]
-        print "l_b", l_b
+        print("L[0][1]", L[0][1])
+        print("l_b", l_b)
         for k, _v in l_b.iteritems():
             self.assertEquals(L[0][1][k], l_b[k])
         self.assertEquals(L[1], dict(Print = None, hello = 'aaa'))

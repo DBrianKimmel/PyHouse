@@ -151,6 +151,7 @@ class API(Utilities):
         self.m_pyhouse_obj = setup.build_pyhouse_obj(self)
         self.m_pyhouse_obj.Twisted.Reactor.callWhenRunning(self.Start)
         self.m_pyhouse_obj.Twisted.Reactor.run()  # reactor never returns so must be last - Event loop will now run
+        #  When the reactor stops we continue here
         LOG.info("PyHouse says Bye Now.\n")
         raise SystemExit, "PyHouse says Bye Now."
 
@@ -166,13 +167,13 @@ class API(Utilities):
         self.m_pyhouse_obj.APIs.CoreAPI.Stop()
         LOG.info("Stopped.\n")
 
-    def Reload(self, _p_pyhouses_obj):
+    def SaveXml(self, _p_pyhouses_obj):
         """Update XML file with current info.
         Keep on running after the snapshot.
         """
-        LOG.info("Reloading")
-        self.m_pyhouse_obj.APIs.CoreAPI.Reload()
-        LOG.info("Reloaded.\n\n\n")
+        LOG.info("Saving XML")
+        self.m_pyhouse_obj.APIs.CoreAPI.SaveXml()
+        LOG.info("Saved XML.\n")
 
     def Quit(self):
         """Prepare to exit all of PyHouse.

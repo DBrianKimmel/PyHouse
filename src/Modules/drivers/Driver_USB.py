@@ -27,10 +27,10 @@ import usb.util
 from twisted.internet.protocol import Protocol
 
 # Import PyHouse modules
-from Modules.utils.tools import PrintBytes, PrettyPrintAny
+from Modules.utils.tools import PrintBytes  # , PrettyPrintAny
 from Modules.utils import pyh_log
 
-g_debug = 1
+g_debug = 0
 LOG = pyh_log.getLogger('PyHouse.USBDriver   ')
 
 

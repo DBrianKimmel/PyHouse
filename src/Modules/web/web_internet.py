@@ -51,7 +51,6 @@ class InternetElement(athena.LiveElement):
         """Internet data is returned, so update the computer info.
         """
         l_json = JsonUnicode().decode_json(p_json)
-        _l_house_ix = int(l_json['HouseIx'])
         l_dyndns_ix = int(l_json['Key'])
         try:
             l_obj = self.m_pyhouse_obj.Computer.InternetConnection

@@ -1,7 +1,7 @@
 """
 -*- test-case-name: PyHouse.src.Modules.drivers.test.test_Driver_Serial -*-
 
-@name: PyHouse/src/Modules/deivers/Driver_Serial.py
+@name: PyHouse/src/Modules/drivers/Driver_Serial.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @copyright: 2010-2014 by D. Brian Kimmel
@@ -13,22 +13,56 @@
 This will interface various PyHouse modules to a serial device.
 
 This may be instanced as many times as there are serial devices to control.
-Serial USB Dongles also are controlled by this driver as they emulate a serial port.
+Some serial USB Dongles also are controlled by this driver as they emulate a serial port.
 
 """
 
 # Import system type stuff
+import xml.etree.ElementTree as ET
 from twisted.internet import reactor
 from twisted.internet.protocol import Protocol
 from twisted.internet.serialport import SerialPort
 import serial
 
 # Import PyMh files
+from Modules.Core.data_objects import SerialControllerData
 from Modules.utils.tools import PrintBytes
 from Modules.utils import pyh_log
+from Modules.utils import xml_tools
 
 g_debug = 0
 LOG = pyh_log.getLogger('PyHouse.DriverSerial')
+
+
+class ReadWriteConfigXml(xml_tools.XmlConfigTools):
+    """Read and write the interface information based in the interface type.
+    """
+
+
+    def _read_serial_interface_xml(self, p_controller_obj, p_controller_entry):
+        l_serial = SerialControllerData()
+        l_serial.BaudRate = self.get_int_from_xml(p_controller_entry, 'BaudRate', 19200)
+        l_serial.ByteSize = self.get_int_from_xml(p_controller_entry, 'ByteSize', 8)
+        l_serial.DsrDtr = self.get_bool_from_xml(p_controller_entry, 'DsrDtr', False)
+        l_serial.Parity = self.get_text_from_xml(p_controller_entry, 'Parity', 'N')
+        l_serial.RtsCts = self.get_bool_from_xml(p_controller_entry, 'RtsCts', False)
+        l_serial.StopBits = self.get_float_from_xml(p_controller_entry, 'StopBits', 1.0)
+        l_serial.Timeout = self.get_float_from_xml(p_controller_entry, 'Timeout', 1.0)
+        l_serial.XonXoff = self.get_bool_from_xml(p_controller_entry, 'XonXoff', False)
+        # Put the serial information into the controller object
+        xml_tools.stuff_new_attrs(p_controller_obj, l_serial)
+        return l_serial
+
+    def _write_serial_interface_xml(self, p_xml, p_controller_obj):
+        self.put_int_element(p_xml, 'BaudRate', p_controller_obj.BaudRate)
+        self.put_int_element(p_xml, 'ByteSize', p_controller_obj.ByteSize)
+        self.put_bool_element(p_xml, 'DsrDtr', p_controller_obj.DsrDtr)
+        self.put_text_element(p_xml, 'Parity', p_controller_obj.Parity)
+        self.put_bool_element(p_xml, 'RtsCts', p_controller_obj.RtsCts)
+        self.put_float_element(p_xml, 'StopBits', p_controller_obj.StopBits)
+        self.put_float_element(p_xml, 'Timeout', p_controller_obj.Timeout)
+        self.put_bool_element(p_xml, 'XonXoff', p_controller_obj.XonXoff)
+        return p_xml
 
 
 class SerialProtocol(Protocol):
@@ -49,7 +83,7 @@ class SerialProtocol(Protocol):
         self.m_controller_obj._Message += p_data
 
 
-class SerialAPI(object):
+class SerialAPI(ReadWriteConfigXml):
     """Contains all external commands.
     """
     m_bytes = 0

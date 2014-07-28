@@ -66,7 +66,8 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         return l_insteon_obj
 
     def insert_device_xml(self, p_entry_xml, p_device_obj):
-        print('Insteon Write {0:}'.format(p_device_obj.Name))
+        if g_debug >= 1:
+            LOG.debug('Insteon Write {0:}'.format(p_device_obj.Name))
         self.put_text_element(p_entry_xml, 'Address', conversions.int2dotted_hex(p_device_obj.InsteonAddress, 3))
         self.put_int_element(p_entry_xml, 'DevCat', conversions.int2dotted_hex(p_device_obj.DevCat, 2))
         self.put_text_element(p_entry_xml, 'GroupList', p_device_obj.GroupList)
@@ -113,7 +114,7 @@ class API(ReadWriteConfigXml):
         l_msg = 'Started {0:} Insteon Controllers, House:{1:}.'.format(l_count, p_pyhouse_obj.House.Name)
         LOG.info(l_msg)
 
-    def Stop(self, p_xml):
+    def Stop(self):
         try:
             for l_controller_obj in self.m_house_obj.Controllers.itervalues():
                 if l_controller_obj.ControllerFamily != 'Insteon':
@@ -123,6 +124,8 @@ class API(ReadWriteConfigXml):
                 l_controller_obj._HandlerAPI.Stop(l_controller_obj)
         except AttributeError as e_err:
             LOG.warning('Stop Warning - {0:}'.format(e_err))  # no controllers for house(House is being added)
+
+    def SaveXml(self, p_xml):
         return p_xml
 
     def ChangeLight(self, p_light_obj, p_level, _p_rate = 0):

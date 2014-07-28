@@ -94,7 +94,7 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 		self.hideSelectButtons();
 		self.showSelectedHouse();
 		self.nodeById('HouseSelectedDiv').innerHTML = 'Working on house: ' + globals.House.HouseName;
-        var l_defer = self.callRemote("getSelectedHouseData", globals.House.HouseIx);  // call server @ web_houseSelect.py
+        var l_defer = self.callRemote("getSelectedHouseData");  // call server @ web_houseSelect.py
 		l_defer.addCallback(cb_getSelectedHouseData);
 		l_defer.addErrback(eb_getSelectedHouseData);
         return false;

@@ -108,9 +108,11 @@ class API(Utility, ClientConnections):
         p_pyhouse_obj.Computer.Web = self.read_web_xml(p_pyhouse_obj)
         self.start_webserver(p_pyhouse_obj)
 
-    def Stop(self, p_xml):
+    def Stop(self):
         self.m_pyhouse_obj.Services.WebServerService.stopService()
+
+    def SaveXml(self, p_xml):
         p_xml.append(self.write_web_xml(self.m_pyhouse_obj.Computer.Web))
-        LOG.info("XML appended.")
+        LOG.info("Saved XML.")
 
 # ## END DBK

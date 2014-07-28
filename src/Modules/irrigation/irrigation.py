@@ -140,14 +140,15 @@ class API(Utility):
         self.update_pyhouse_obj(p_pyhouse_obj)
         self.m_pyhouse_obj = p_pyhouse_obj
         p_pyhouse_obj.House.OBJs.Irrigation = self.read_all_irrigation_xml(self.setup_xml(p_pyhouse_obj))
-        # PrettyPrintAny(p_pyhouse_obj.House.OBJs.Irrigation, 'irrigation - Start', 100)
         LOG.info("Started.")
 
-    def Stop(self, p_xml):
-        LOG.info("Stopping.")
+    def Stop(self):
+        LOG.info("Stopped.")
+
+    def SaveXml(self, p_xml):
         l_xml = self.write_all_irrigation_xml(self.m_pyhouse_obj.House.OBJs.Irrigation)
         p_xml.append(l_xml)
-        LOG.info("Stopped.")
+        LOG.info("Saved XML.")
         return l_xml
 
 # ## END DBK

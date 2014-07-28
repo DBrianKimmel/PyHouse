@@ -130,11 +130,13 @@ XML_LONG = """
             </Schedule>
             <Schedule Active="True" Key="2" Name="Evening">
                 <Level>100</Level><LightName>outside_gar</LightName><LightNumber>1</LightNumber><Rate>0</Rate><RoomName>Garage</RoomName>
-                <Time>sunset - 00:02</Time><ScheduleType>LightingDevice</ScheduleType>
+                <Time>sunset - 00:02</Time>
+                <ScheduleType>LightingDevice</ScheduleType>
             </Schedule>
             <Schedule Active="True" Key="3" Name="Evening">
                 <Level>100</Level><LightName>outside_front</LightName>
-                <LightNumber>0</LightNumber><Rate>0</Rate><RoomName>Foyer</RoomName><Time>sunset</Time><ScheduleType>LightingDevice</ScheduleType>
+                <LightNumber>0</LightNumber><Rate>0</Rate><RoomName>Foyer</RoomName><Time>sunset</Time>
+                <ScheduleType>LightingDevice</ScheduleType>
             </Schedule>
             <Schedule Active="True" Key="4" Name="Evening">
                 <Level>100</Level>
@@ -148,11 +150,17 @@ XML_LONG = """
             <Schedule Active="False" Key="5" Name="Night xxx">
                 <Level>60</Level><LightName>mbr_rope</LightName>
                 <LightNumber>6</LightNumber><Rate>0</Rate><RoomName>Master Bedroom</RoomName>
-                <Time>22:00</Time><ScheduleType>LightingDevice</ScheduleType>
+                <Time>22:00</Time>
+                <ScheduleType>LightingDevice</ScheduleType>
             </Schedule>
             <Schedule Active="True" Key="6" Name="Night">
-                <Level>0</Level><LightName>outside_gar</LightName><LightNumber>1</LightNumber>
-                <Rate>0</Rate><RoomName>Garage</RoomName><Time>23:00</Time><ScheduleType>LightingDevice</ScheduleType>
+                <Level>0</Level>
+                <LightName>outside_gar</LightName>
+                <LightNumber>1</LightNumber>
+                <Rate>0</Rate>
+                <RoomName>Garage</RoomName>
+                <Time>23:00</Time>
+                <ScheduleType>LightingDevice</ScheduleType>
             </Schedule>
         </ScheduleSection>
         <LightSection>
@@ -168,22 +176,28 @@ XML_LONG = """
                 <DevCat>3140</DevCat>
                 <GroupList>All_Lights|Outside|Foyer(0;0)</GroupList>
                 <GroupNumber>0</GroupNumber>
-                <IsMaster>0</IsMaster>
+                <IsMaster>True</IsMaster>
                 <ProductKey>30.1A.35</ProductKey>
                 <IsResponder>True</IsResponder>
+                <CurLevel>73</CurLevel>
             </Light>
             <Light Active="True" Key="1" Name="outside_gar">
                 <Comment>SwitchLink On/Off</Comment><Coords>['0', '0']</Coords>
                 <IsDimmable>False</IsDimmable><ControllerFamily>Insteon</ControllerFamily>
                 <RoomName>Garage</RoomName><LightingType>Light</LightingType><Address>17.47.A1</Address>
                 <IsController>True</IsController><DevCat>0x0</DevCat><GroupList>All_Lights|Outside|Garage(0;0)</GroupList>
-                <GroupNumber>0</GroupNumber><IsMaster>0</IsMaster><ProductKey>0</ProductKey><IsResponder>True</IsResponder>
+                <GroupNumber>0</GroupNumber>
+                <IsMaster>True</IsMaster>
+                <ProductKey>0</ProductKey><IsResponder>True</IsResponder>
             </Light>
-            <Light Active="True" Key="2" Name="dr_chand"><Comment>SwitchLink dimmer</Comment><Coords>['0', '0']</Coords>
-            <IsDimmable>True</IsDimmable><ControllerFamily>Insteon</ControllerFamily>
+            <Light Active="True" Key="2" Name="dr_chand">
+                <Comment>SwitchLink dimmer</Comment><Coords>['0', '0']</Coords>
+                <IsDimmable>True</IsDimmable><ControllerFamily>Insteon</ControllerFamily>
                 <RoomName>Dining Room</RoomName><LightingType>Light</LightingType><Address>16.C9.37</Address>
                 <IsController>True</IsController><DevCat>0</DevCat><GroupList>All_Lights|DiningRoom(12;12)</GroupList>
-                <GroupNumber>0</GroupNumber><IsMaster>0</IsMaster><ProductKey>F4.20.20</ProductKey>
+                <GroupNumber>0</GroupNumber>
+                <IsMaster>True</IsMaster>
+                <ProductKey>F4.20.20</ProductKey>
                 <IsResponder>True</IsResponder></Light>
             <Light Active="True" Key="3" Name="dr_chand_slave">
                 <Comment>SwitchLink dimmer</Comment>
@@ -197,7 +211,7 @@ XML_LONG = """
                 <DevCat>8007</DevCat>
                 <GroupList>All_Lights|Pantry(0;0)</GroupList>
                 <GroupNumber>0</GroupNumber>
-                <IsMaster>0</IsMaster>
+                <IsMaster>False</IsMaster>
                 <ProductKey>EB.2A.A8</ProductKey>
                 <IsResponder>True</IsResponder>
             </Light>
@@ -213,7 +227,7 @@ XML_LONG = """
                 <DevCat>0xc44</DevCat>
                 <GroupList>All_Lights|Pantry(0;0)</GroupList>
                 <GroupNumber>0</GroupNumber>
-                <IsMaster>0</IsMaster>
+                <IsMaster>True</IsMaster>
                 <ProductKey>0</ProductKey>
                 <IsResponder>True</IsResponder>
             </Light>
@@ -224,14 +238,14 @@ XML_LONG = """
                 <Coords />
                 <IsDimmable>False</IsDimmable>
                 <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>IsMaster Bath</RoomName>
+                <RoomName>Master Bath</RoomName>
                 <LightingType>Button</LightingType>
                 <Address>16.E5.B6</Address>
                 <IsController>True</IsController>
                 <DevCat>0x0</DevCat>
                 <GroupList>All_Lights|MasterBedroom(0;0)</GroupList>
                 <GroupNumber>1</GroupNumber>
-                <IsMaster>0</IsMaster>
+                <IsMaster>True</IsMaster>
                 <ProductKey>0</ProductKey>
                 <IsResponder>True</IsResponder>
             </Button>
@@ -277,7 +291,8 @@ XML_LONG = """
                 <Address>16.E5.B6</Address>
                 <IsController>True</IsController>
                 <DevCat>0</DevCat><GroupList>All_Buttons</GroupList><GroupNumber>4</GroupNumber>
-                <IsMaster>False</IsMaster><ProductKey>0</ProductKey>
+                <IsMaster>False</IsMaster>
+                <ProductKey>0</ProductKey>
                 <IsResponder>True</IsResponder>
             </Button>
         </ButtonSection>
@@ -293,7 +308,7 @@ XML_LONG = """
                 <IsController>True</IsController>
                 <DevCat>0x0</DevCat><GroupList />
                 <GroupNumber>0</GroupNumber>
-                <IsMaster>0</IsMaster>
+                <IsMaster>False</IsMaster>
                 <ProductKey>0</ProductKey>
                 <IsResponder>True</IsResponder>
                 <InterfaceType>Serial</InterfaceType>
@@ -303,6 +318,9 @@ XML_LONG = """
                 <Parity>N</Parity>
                 <StopBits>1.0</StopBits>
                 <Timeout>1.0</Timeout>
+                <DsrDtr>False</DsrDtr>
+                <RtsCts>False</RtsCts>
+                <XonXoff>False</XonXoff>
             </Controller>
             <Controller Active="True" Key="1" Name="PowerLink">
                 <Comment>2413UH Powerlink Controller</Comment>
@@ -316,7 +334,7 @@ XML_LONG = """
                 <DevCat>0x0</DevCat>
                 <GroupList />
                 <GroupNumber>0</GroupNumber>
-                <IsMaster>0</IsMaster>
+                <IsMaster>False</IsMaster>
                 <ProductKey>0</ProductKey>
                 <IsResponder>True</IsResponder>
                 <InterfaceType>Serial</InterfaceType>
@@ -326,7 +344,10 @@ XML_LONG = """
                 <Parity>N</Parity>
                 <StopBits>1.0</StopBits>
                 <Timeout>1.0</Timeout>
-                </Controller>
+                <DsrDtr>False</DsrDtr>
+                <RtsCts>False</RtsCts>
+                <XonXoff>False</XonXoff>
+            </Controller>
             <Controller Active="False" Key="2" Name="UPB_PIM">
                 <Comment>UPB PIM  using USB connection</Comment>
                 <Coords />

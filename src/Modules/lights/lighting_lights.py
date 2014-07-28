@@ -46,16 +46,17 @@ class LightingLightsAPI(ReadWriteConfigXml):
 
     def _read_light_data(self, p_obj, p_xml):
         p_obj.IsController = self.get_text_from_xml(p_xml, 'IsController')
-        # p_obj.LightingType = self.get_text_from_xml(p_xml, 'LightingType', 'Light')
         p_obj.CurLevel = self.get_int_from_xml(p_xml, 'CurLevel', 0)
 
     def _read_family_data(self, p_obj, p_xml):
+        l_api = None
         try:
             l_family = p_obj.ControllerFamily
             l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[l_family].ModuleAPI
             l_api.extract_device_xml(p_obj, p_xml)
         except Exception as e_err:
             LOG.error('ERROR in reading family Data {0:}'.format(e_err))
+        return l_api  # for testing
 
     def read_one_light_xml(self, p_light_xml):
         l_light_obj = LightData()
@@ -65,7 +66,7 @@ class LightingLightsAPI(ReadWriteConfigXml):
         self._read_family_data(l_light_obj, p_light_xml)
         return l_light_obj
 
-    def read_lights_xml(self, p_light_sect_xml):
+    def read_all_lights_xml(self, p_light_sect_xml):
         self.m_count = 0
         l_lights_dict = {}
         try:
@@ -89,20 +90,18 @@ class LightingLightsAPI(ReadWriteConfigXml):
         l_api.insert_device_xml(p_light_xml, p_light_obj)
 
     def write_one_light_xml(self, p_light_obj):
-        l_light_xml = self.write_base_object_xml('Light', p_light_obj)
-        self.write_base_lighting_xml(l_light_xml, p_light_obj)
+        l_light_xml = self.write_base_lighting_xml(p_light_obj)
         self._write_light_data(p_light_obj, l_light_xml)
         self._write_family_data(p_light_obj, l_light_xml)
         self
         return l_light_xml
 
-    def write_lights_xml(self, p_lights_obj):
-        print('lighting_lights.write_lights_xml')
-        l_lighting_xml = ET.Element('LightSection')
+    def write_all_lights_xml(self, p_lights_obj):
+        l_xml = ET.Element('LightSection')
         self.m_count = 0
         for l_light_obj in p_lights_obj.itervalues():
-            l_lighting_xml.append(self.write_one_light_xml(l_light_obj))
+            l_xml.append(self.write_one_light_xml(l_light_obj))
             self.m_count += 1
-        return l_lighting_xml
+        return l_xml
 
 # ## END DBK

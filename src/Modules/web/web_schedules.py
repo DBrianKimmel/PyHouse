@@ -52,7 +52,6 @@ class SchedulesElement(athena.LiveElement):
         """
         l_json = JsonUnicode().decode_json(p_json)
         l_delete = l_json['Delete']
-        l_house_ix = int(l_json['HouseIx'])
         l_schedule_ix = int(l_json['Key'])
         if l_delete:
             try:
@@ -74,8 +73,7 @@ class SchedulesElement(athena.LiveElement):
         l_obj.Time = l_json['Time']
         l_obj.ScheduleType = l_json['ScheduleType']
         l_obj.UUID = l_json['UUID']
-        l_obj.DeleteFlag = l_json['Delete']
-        l_obj.HouseIx = l_house_ix
+        l_obj._DeleteFlag = l_json['Delete']
         self.m_pyhouse_obj.House.OBJs.Schedules[l_schedule_ix] = l_obj
 
 # ## END DBK

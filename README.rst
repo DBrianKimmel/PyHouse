@@ -19,6 +19,7 @@ What is PyHouse?
 PyHouse is one or more nodes, running PyHouse software, and co-operating with
 other nodes either in the same domain or in in affiliated domains.
 
+
 Nodes
 -----
 Each node is a separate computer that will self boot, start the PyHouse software
@@ -28,12 +29,14 @@ each other using IP-V6 over some common media such as Ethernet or Wi-Fi.
 It is now (2013-06-06) running in a raspberry pi model B.  It has been turning
 lights on and off reliably for several weeks on this new platform.
 
+
 Domains
 -------
 Domains are a group of nodes that are able to communicate with each other and
 have been given authentication tokens to allow them to share information.
-This will allow two condominiums to be independent of each other and two houses
+This will allow two adjacent Town Houses to be independent of each other and two houses
 separated by many miles to cooperate with each other.
+
 
 Configuration
 -------------
@@ -43,6 +46,10 @@ configuration also has current status stored in the file.  This allows the
 node to have a reboot and continue operations.  Some status information may be
 lost as there is no attempt to be a real-time node.
 
+Configuration files are being split out of the master file and into "Module" files.
+Each module is about equivalent to a python package.
+
+
 Organization
 ------------
 
@@ -51,15 +58,23 @@ to implement its basic structure.  This allows an event loop to control the vari
 services in a totally asynchronous manner, the lighting system is independent of
 the entertainment system and so on.
 
+As we move from a Desktop/Server to small (Raspberry Pi) computers, we are moving
+toward having each node load only the parts of the software that it needs.  There is
+no real need to hve each node load the entire PyHouse software.
+
+
 Requirements
 ------------
 
 Python 2.7 (awaiting twisted to work with version 3.x)
 Twisted 13.2.0
 
+
+
 =======
 Systems
 =======
+
 
 Lighting
 --------

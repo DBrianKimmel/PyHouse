@@ -80,10 +80,13 @@ class API(object):
     def Start(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def Stop(self, p_xml):
+    def Stop(self):
+        LOG.info("Stopped.")
+
+    def SaveXml(self, p_xml):
         l_xml = self.write_all_thermostats_xml(self.m_pyhouse_obj, self.m_pyhouse_obj.Computer.Email)
         p_xml.append(l_xml)
-        LOG.info("Stopped.")
+        LOG.info("Saved XML.")
         return p_xml
 
 # ## END DBK

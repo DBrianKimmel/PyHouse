@@ -113,4 +113,7 @@ class API(Utility):
     def Stop(self, ignore1, ignore2):
         pass
 
+    def SaveXml(self, p_xml):
+        return p_xml
+
 # ## END DBK

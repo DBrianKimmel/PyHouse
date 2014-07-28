@@ -64,7 +64,7 @@ class Test_02_PrettyPrint(SetupMixin, unittest.TestCase):
     def _load_lights(self, p_light_sect_xml):
         l_family = self._load_family()
         l_light_api = lighting_lights.LightingLightsAPI(self.m_pyhouse_obj)
-        l_lights = l_light_api.read_lights_xml(p_light_sect_xml)
+        l_lights = l_light_api.read_all_lights_xml(p_light_sect_xml)
         PrettyPrintAny(l_lights, 'Lights', 80)
         self.m_pyhouse_obj.House.OBJs.Lights = l_lights
         self.m_pyhouse_obj.House.OBJs.FamilyData = l_family

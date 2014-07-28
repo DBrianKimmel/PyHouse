@@ -22,10 +22,10 @@ class Test(unittest.TestCase):
 
     def test_001_LocalVersion(self):
         l_version = auto_update.FindLocalVersion().get_version()
-        print l_version
+        print(l_version)
 
     def test_002_RepositoryVersion(self):
         l_version = auto_update.FindRepositoryVersion().get_version()
-        print l_version
+        print(l_version)
 
 # ## END DBK

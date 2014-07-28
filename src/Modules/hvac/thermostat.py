@@ -92,7 +92,6 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
     def _write_family_data(self, p_obj, p_xml, p_pyhouse_obj):
         try:
             l_api = p_pyhouse_obj.House.OBJs.FamilyData[p_obj.ControllerFamily].ModuleAPI
-            print(l_api)
             l_api.insert_device_xml(p_xml, p_obj)
         except KeyError as e_err:
             LOG.error('Write Family Key Error {0:}'.format(e_err))
@@ -154,10 +153,13 @@ class API(Utility):
         p_pyhouse_obj.House.OBJs.Thermostats = self.read_all_thermostats_xml(p_pyhouse_obj)
         LOG.info("Started.")
 
-    def Stop(self, p_xml):
+    def Stop(self):
+        LOG.info("Stopped.")
+
+    def SaveXml(self, p_xml):
         l_xml = self.write_all_thermostats_xml(self.m_pyhouse_obj.House.OBJs.Thermostats, self.m_pyhouse_obj)
         p_xml.append(l_xml)
-        LOG.info("Stopped.")
+        LOG.info("Saved XML.")
         return l_xml
 
 # ## END DBK

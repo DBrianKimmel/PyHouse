@@ -343,7 +343,10 @@ class API(Utility):
         self.m_pyhouse_obj = p_pyhouse_obj
         p_pyhouse_obj.Twisted.Reactor.callLater(run_delay, self.start_amp_services)
 
-    def Stop(self, _p_xml):
+    def Stop(self):
+        pass
+
+    def SaveXml(self, _p_xml):
         pass
 
 # ## END DBK

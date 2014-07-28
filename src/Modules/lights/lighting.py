@@ -40,15 +40,15 @@ class Utility(ControllersAPI, ButtonsAPI, LightingLightsAPI):
         try:
             p_pyhouse_obj.House.OBJs.Controllers = ControllersAPI(p_pyhouse_obj).read_controllers_xml(l_house_xml.find('ControllerSection'))
             p_pyhouse_obj.House.OBJs.Buttons = ButtonsAPI(p_pyhouse_obj).read_buttons_xml(l_house_xml.find('ButtonSection'))
-            p_pyhouse_obj.House.OBJs.Lights = LightingLightsAPI(p_pyhouse_obj).read_lights_xml(l_house_xml.find('LightSection'))
+            p_pyhouse_obj.House.OBJs.Lights = LightingLightsAPI(p_pyhouse_obj).read_all_lights_xml(l_house_xml.find('LightSection'))
         except AttributeError as e_err:
             LOG.error('ReadLighting ERROR - {0:}'.format(e_err))
 
-    def _write_lighting_xml(self, p_xml):
+    def _write_lighting_xml(self, p_house_objs, p_house_element):
         LOG.info('Writing lights, buttons and controllers ')
-        p_xml.append(self.write_lights_xml(self.m_house_obj.Lights))
-        p_xml.append(self.write_buttons_xml(self.m_house_obj.Buttons))
-        p_xml.append(self.write_controllers_xml(self.m_house_obj.Controllers))
+        p_house_element.append(self.write_all_lights_xml(p_house_objs.Lights))
+        p_house_element.append(self.write_buttons_xml(p_house_objs.Buttons))
+        p_house_element.append(self.write_controllers_xml(p_house_objs.Controllers))
 
 
 class API(Utility):
@@ -68,13 +68,20 @@ class API(Utility):
         self.m_family.start_lighting_families(p_pyhouse_obj, self.m_house_obj)
         LOG.info("Started.")
 
-    def Stop(self, p_xml):
+    def Stop(self):
         """Allow cleanup of all drivers.
         """
         LOG.info("Stopping all lighting families.")
-        self.m_family.stop_lighting_families(p_xml, self.m_house_obj)
-        self._write_lighting_xml(p_xml)
+        self.m_family.stop_lighting_families(self.m_house_obj)
         LOG.info("Stopped.")
+
+    def SaveXml(self, p_xml):
+        """Allow cleanup of all drivers.
+        """
+        LOG.info("Stopping all lighting families.")
+        self.m_family.save_lighting_families(p_xml, self.m_house_obj)
+        self._write_lighting_xml(self.m_pyhouse_obj.House.OBJs, p_xml)
+        LOG.info("Saved XML.")
 
     def ChangeLight(self, p_light_obj, p_level, _p_rate = None):
         """

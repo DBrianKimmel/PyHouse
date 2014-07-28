@@ -19,7 +19,11 @@ class API(object):
     def Start(self):
         pass
 
-    def Stop(self, p_xml):
+    def Stop(self):
+        pass
+
+    def SaveXml(self, p_xml):
+        LOG.info('Saved XML.')
         return p_xml
 
 # ## END DBK

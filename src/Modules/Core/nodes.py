@@ -47,9 +47,14 @@ class API(object):
         self.m_discovery.Start(p_pyhouse_obj)
         self.m_domain.Start(p_pyhouse_obj)
 
-    def Stop(self, p_xml):
-        self.m_domain.Stop(p_xml)
-        self.m_discovery.Stop(p_xml)
-        self.m_local.Stop(p_xml)
+    def Stop(self):
+        self.m_domain.Stop()
+        self.m_discovery.Stop()
+        self.m_local.Stop()
+
+    def SaveXml(self, p_xml):
+        self.m_domain.SaveXml(p_xml)
+        self.m_discovery.SaveXml(p_xml)
+        self.m_local.SaveXml(p_xml)
 
 # ## END DBK

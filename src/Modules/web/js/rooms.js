@@ -62,7 +62,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		function eb_fetchHouseData(res) {
 			Divmod.debug('---', 'rooms.eb_fetchHouseData() was called. ERROR = ' + res);
 		}
-        var l_defer = self.callRemote("getHouseData", globals.House.HouseIx);  // call server @ web_rooms.py
+        var l_defer = self.callRemote("getHouseData");  // call server @ web_rooms.py
 		l_defer.addCallback(cb_fetchHouseData);
 		l_defer.addErrback(eb_fetchHouseData);
         return false;
@@ -94,7 +94,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 			// The "Add" button
 			self.showEntry();
 			self.hideButtons();
-			var l_ent = self.createEntry(globals.House.HouseIx);
+			var l_ent = self.createEntry();
 			self.fillEntry(l_ent);
 		} else if (l_ix == 10002) {
 			// The "Back" button
@@ -118,7 +118,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		self.nodeById('Size').value = sched.Size;
 		self.nodeById('RoomEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick');
 	},
-	function createEntry(self, p_ix) {
+	function createEntry(self) {
     	//Divmod.debug('---', 'rooms.createEntry() was called. ');
         var l_data = {
 			Name : 'Change Me',
@@ -127,7 +127,6 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 			Comment : '',
 			Corner : '',
 			Size : '',
-			HouseIx : p_ix,
 			Delete : false
 		}
 		return l_data;
@@ -142,7 +141,6 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 			Corner : self.nodeById('Corner').value,
 			Type : 'Room',
 			Size : self.nodeById('Size').value,
-			HouseIx : globals.House.HouseIx,
 			Delete : false
 		}
 		return l_data;

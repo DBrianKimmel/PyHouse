@@ -18,16 +18,10 @@ Created on Jun 27, 2014
 
 # Import system type stuff
 from twisted.web.client import getPage
-from twisted.internet.protocol import Protocol, ClientFactory
-from twisted.internet.defer import Deferred
-from twisted.web.client import Agent
-from twisted.web.http_headers import Headers
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import InternetConnectionData, InternetConnectionDynDnsData
-from Modules.Core.Locations import *
 from Modules.utils import pyh_log
-from Modules.utils.tools import PrettyPrintAny
+# from Modules.utils.tools import PrettyPrintAny
 
 g_debug = 1
 LOG = pyh_log.getLogger('PyHouse.Internet    ')
@@ -107,7 +101,10 @@ class API(DynDnsAPI):
         self.m_reactor = p_pyhouse_obj.Twisted.Reactor
         self.m_dyn_loop = DynDnsAPI(self.m_internet_obj, self.m_reactor)
 
-    def Stop(self, _ignore1, ignore2):
+    def Stop(self, _ignore1, _ignore2):
         self.m_dyn_loop.stop_dyndns_process()
+
+    def SaveXml(self, p_xml):
+        return p_xml
 
 # ## END DBK

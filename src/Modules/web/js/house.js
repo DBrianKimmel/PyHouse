@@ -64,7 +64,7 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 			self.fillEntry(l_obj);
 			return false;
 		}
-        var l_defer = self.callRemote("getHouseData", globals.House.HouseIx);  // call server @ web_house.py
+        var l_defer = self.callRemote("getHouseData");  // call server @ web_house.py
 		l_defer.addCallback(cb_fetchHouseData);
 		l_defer.addErrback(eb_fetchHouseData);
         return false;
@@ -110,7 +110,6 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
     			Key : 0,
     			Active : false,
     			Location : l_loc,
-    			HouseIx : p_ix,
     			Delete : false
     		}
         //console.log("create House %O", l_data);
@@ -132,7 +131,6 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 			TimeZone : fetchTextWidget('HouseTimeZone'),
 			SavingsTime : fetchTextWidget('HouseSavingsTime'),
 			UUID : fetchTextWidget('HouseUUID'),
-			HouseIx : globals.House.HouseIx,
 			Delete : false
             }
 		return l_data;
@@ -150,7 +148,6 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 	function handleMenuOnClick(self, p_node) {
 		var l_ix = p_node.name;
 		var l_name = p_node.value;
-		globals.House.HouseIx = l_ix;
 		globals.House.HouseName = l_name;
 		if (l_ix <= 1000) {
 			// One of the House buttons.
@@ -164,7 +161,7 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 			// The "Add" button
 			//Divmod.debug('---', 'house.handleMenuOnClick(Add Button) was called. ' + l_ix + ' ' + l_name);
 			self.showEntry();
-			var l_ent = self.createEntry(globals.House.HouseIx);
+			var l_ent = self.createEntry();
 			self.fillEntry(l_ent);
 		} else if (l_ix == 10002) {
 			// The "Back" button

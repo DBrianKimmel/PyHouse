@@ -103,7 +103,6 @@ helpers.Widget.subclass(thermostat, 'ThermostatWidget').methods(
 			Active : fetchTrueFalseWidget('DynDnsActive'),
             Url : fetchTextWidget('DynDnsUrl'),
             Interval : fetchTextWidget('DynDnsInterval'),
-			HouseIx : globals.House.HouseIx,
 			Delete : false
             }
 		return l_data;
@@ -116,7 +115,6 @@ helpers.Widget.subclass(thermostat, 'ThermostatWidget').methods(
     			Active : false,
     			Url : '',
     			Interval : 0,
-    			HouseIx : p_ix,
     			Delete : false
                 }
 		return l_Data;

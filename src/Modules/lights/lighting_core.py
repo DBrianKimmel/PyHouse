@@ -16,7 +16,6 @@ This is a base class that other lighting modules inherit from.
 
 # Import PyHouse files
 from Modules.utils.xml_tools import XmlConfigTools
-from Modules.utils.tools import PrettyPrintAny
 
 g_debug = 0
 
@@ -32,21 +31,21 @@ class ReadWriteConfigXml(XmlConfigTools):
         """
         self.read_base_object_xml(p_device_obj, p_entry_xml)
         p_device_obj.Comment = self.get_text_from_xml(p_entry_xml, 'Comment')
+        p_device_obj.ControllerFamily = self.get_text_from_xml(p_entry_xml, 'ControllerFamily')
         p_device_obj.Coords = self.get_text_from_xml(p_entry_xml, 'Coords')
         p_device_obj.IsDimmable = self.get_bool_from_xml(p_entry_xml, 'IsDimmable')
-        p_device_obj.ControllerFamily = self.get_text_from_xml(p_entry_xml, 'ControllerFamily')
         p_device_obj.LightingType = self.get_text_from_xml(p_entry_xml, 'LightingType')
         p_device_obj.RoomName = self.get_text_from_xml(p_entry_xml, 'RoomName')
-        # PrettyPrintAny(p_device_obj, 'Lighting_Core - lighting')
         return p_device_obj
 
-    def write_base_lighting_xml(self, p_entry_xml, p_device_obj):
-        self.put_text_element(p_entry_xml, 'Comment', p_device_obj.Comment)
-        self.put_text_element(p_entry_xml, 'Coords', p_device_obj.Coords)
-        self.put_bool_element(p_entry_xml, 'IsDimmable', p_device_obj.IsDimmable)
-        self.put_text_element(p_entry_xml, 'ControllerFamily', p_device_obj.ControllerFamily)
-        self.put_text_element(p_entry_xml, 'Room', p_device_obj.RoomName)
-        self.put_text_element(p_entry_xml, 'LightingType', p_device_obj.LightingType)
-        return p_entry_xml
+    def write_base_lighting_xml(self, p_device_obj):
+        l_xml = self.write_base_object_xml('Light', p_device_obj)
+        self.put_text_element(l_xml, 'Comment', p_device_obj.Comment)
+        self.put_text_element(l_xml, 'ControllerFamily', p_device_obj.ControllerFamily)
+        self.put_text_element(l_xml, 'Coords', p_device_obj.Coords)
+        self.put_bool_element(l_xml, 'IsDimmable', p_device_obj.IsDimmable)
+        self.put_text_element(l_xml, 'LightingType', p_device_obj.LightingType)
+        self.put_text_element(l_xml, 'RoomName', p_device_obj.RoomName)
+        return l_xml
 
 # ## END DBK

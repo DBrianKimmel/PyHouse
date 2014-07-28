@@ -57,7 +57,6 @@ class HouseElement(athena.LiveElement):
         """House data is returned, so update the house info.
         """
         l_json = JsonUnicode().decode_json(p_json)
-        l_house_ix = int(l_json['HouseIx'])
         l_delete = l_json['Delete']
         if l_delete:
             try:
@@ -76,7 +75,6 @@ class HouseElement(athena.LiveElement):
         #    self.m_pyhouse_obj.House.OBJs = l_obj
         l_obj.Name = l_json['Name']
         l_obj.Key = int(l_json['Key'])
-        l_obj.HouseIx = l_house_ix
         l_obj.Location.Street = l_json['Street']
         l_obj.Location.City = l_json['City']
         l_obj.Location.State = l_json['State']

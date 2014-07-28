@@ -1,52 +1,59 @@
-'''
-Created on Apr 10, 2013
+"""
+@name: PyHouse/src/Modules/drivers/test/test_interface.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
+@copyright: 2013-2014 by D. Brian Kimmel
+@license: MIT License
+@note: Created on Apr 10, 2013
+@summary: This module is for testing local node data.
 
-@author: briank
-'''
+Passed 0 tests - DBK - 2014-07-27
+"""
 
+# Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
+# Import PyMh files and modules.
+from Modules.Core.data_objects import ControllerData
 from Modules.drivers import interface
+from Modules.lights import lighting_controllers
 from Modules.utils import xml_tools
 from test import xml_data
+from test.testing_mixin import SetupPyHouseObj
+from Modules.utils.tools import PrettyPrintAny
 
-XML = xml_data.XML_LONG
+class SetupMixin(object):
+    """
+    """
 
-class Test_01_XML(unittest.TestCase):
+    def setUp(self, p_root):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
+        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+        self.m_controller_obj = ControllerData()
+        self.m_ctlr_api = lighting_controllers.ControllersAPI(self.m_pyhouse_obj)
+
+
+class Test_02_XML(SetupMixin, unittest.TestCase):
+    """ This section tests the reading and writing of XML used by lighting_controllers.
+    """
 
     def setUp(self):
-        self.m_root_element = ET.fromstring(XML)
-        self.m_util = xml_tools.PutGetXML()
-        self.m_intf = interface.ReadWriteConfigXml()
+        self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
+        SetupMixin.setUp(self, self.m_root_xml)
+        SetupPyHouseObj().BuildXml(self.m_root_xml)
 
-    def test_0101_read_xml(self):
-        l_pyhouse = self.m_root_element
-        self.assertEqual(l_pyhouse.tag, 'PyHouse')
+    def test_0202_FindXml(self):
+        """ Be sure that the XML contains the right stuff.
+        """
+        PrettyPrintAny(self.m_pyhouse_obj, 'PyHouseData')
+        self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
+        self.assertEqual(self.m_xml.controller_sect.tag, 'ControllerSection', 'XML - No Controllers section')
+        self.assertEqual(self.m_xml.controller.tag, 'Controller', 'XML - No Controller section')
 
-    def test_0102_find_node(self):
-        l_node = self.m_root_element.find('Node')
-        print('Node {0:}'.format(l_node))
-        self.assertEqual(l_node.tag, 'Node')
-
-    def test_0103_xml_find_controllers(self):
-        l_controllers = self.m_root_element.find('Controllers')
-        l_list = l_controllers.findall('Controller')
-        for l_controller in l_list:
-            print("Controller {0:}".format(l_controller.get('Name')))
-
-    def test_0104_xml_find_serial_1(self):
-        l_controllers = self.m_root_element.find('Controllers')
-        l_first = l_controllers.find('Controller')
-        self.assertEqual(l_first.get('Name'), 'Serial_1')
-        l_interf = l_first.find('InterfaceType')
-        self.assertEqual(l_interf.text, 'Serial')
-        l_baud = l_first.find('BaudRate')
-        self.assertEqual(l_baud.text, '19200')
-
-    def test_0105_extract_serial(self):
-        l_controllers = self.m_root_element.find('ControllerSection')
-        l_first = l_controllers.find('Controller')
-        pass
+    def test_0211_ExtractXML(self):
+        l_controllers = self.m_ctlr_api.read_controllers_xml(self.m_xml.controller_sect)
+        l_interface = interface.ReadWriteConfigXml().extract_xml(self.m_controller_obj, l_controllers[0])
+        PrettyPrintAny(l_interface, 'Interface', 120)
 
 # ## END

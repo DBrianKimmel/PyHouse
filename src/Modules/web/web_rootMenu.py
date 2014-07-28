@@ -38,10 +38,8 @@ class RootMenuElement(athena.LiveElement):
     def doRootMenuReload(self, p_json):
         """ Process a message for a XML save/reload from the browser/client.
         """
-        if g_debug >= 3:
-            print("web_rootMenu.RootMenuElement.doRootMenuReload() - Json:{0:}".format(p_json))
         LOG.info("doRootMenuReload called {0:} {1:}".format(self, p_json))
-        self.m_pyhouse_obj.APIs.PyHouseAPI.Reload(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.APIs.PyHouseAPI.SaveXml(self.m_pyhouse_obj)
 
     @athena.expose
     def doRootMenuQuit(self, p_json):

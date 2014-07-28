@@ -45,8 +45,6 @@ class Test_01(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self)
 
     def test_0101_FindAddress(self):
-
-        PrettyPrintAny(l_c, 'House', 120)
         l_obj = self.m_api._find_addr(self.m_pyhouse_obj.House.OBJs.Controllers, 'A1.B2.C3')
         PrettyPrintAny(l_obj, 'Found Object', 120)
 

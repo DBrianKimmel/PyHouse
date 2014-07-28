@@ -45,11 +45,16 @@ class API(Utility):
         LOG.info("Initialized.")
 
     def Start(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
         # self.m_pandora.Start(p_pyhouse_obj)
         LOG.info("Started.")
 
-    def Stop(self, p_xml):
+    def Stop(self):
         # self.m_pandora.Stop()
         LOG.info("Stopped.")
+
+    def SaveXml(self, _p_xml):
+        # self.m_pandora.Stop()
+        LOG.info("Saved XML.")
 
 # ## END DBK

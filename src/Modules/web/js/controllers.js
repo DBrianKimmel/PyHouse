@@ -86,7 +86,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
         function eb_fetchHouseData(res) {
             Divmod.debug('---', 'controllers.eb_fetchHouseData() was called.  ERROR - ' + res);
         }
-        var l_defer = self.callRemote("getHouseData", globals.House.HouseIx);  // call server @ web_controllers.py
+        var l_defer = self.callRemote("getHouseData");  // call server @ web_controllers.py
         l_defer.addCallback(cb_fetchHouseData);
         l_defer.addErrback(eb_fetchHouseData);
         return false;
@@ -110,7 +110,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
         } else if (l_ix == 10001) {  // The 'Add' button
             self.hideButtons();
             self.showEntry();
-			var l_ent = self.createEntry(globals.House.HouseIx);
+			var l_ent = self.createEntry();
 			self.fillEntry(l_ent);
         } else if (l_ix == 10002) {  // The 'Back' button
             self.hideWidget();
@@ -159,7 +159,6 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 			UUID :           fetchTextWidget('ControllerUUID'),
 			InterfaceType :      fetchSelectWidget('InterfaceType'),
 			Port :           fetchTextWidget('ControllerPort'),
-			HouseIx : globals.House.HouseIx,
 			Delete : false
             }
         if (l_data['ControllerFamily'] == 'Insteon') {
@@ -177,7 +176,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
         p_data['ProductKey'] = fetchTextWidget('LightProductKey');
 		return p_data;
 	},
-    function createEntry(self, p_ix) {
+    function createEntry(self) {
         var l_data = {
             Name : 'Change Me',
             Key : Object.keys(globals.House.HouseObj.Controllers).length,
@@ -189,7 +188,6 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 			RoomName : '',
             LightingType : 'Controller',
 			UUID : '',
-			HouseIx : p_ix,
 			Delete : false
             }
         return l_data;

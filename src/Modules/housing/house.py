@@ -98,11 +98,8 @@ class Utility(ReadWriteConfigXml):
     def start_house_parts(self, p_pyhouse_obj):
         p_pyhouse_obj.APIs.ScheduleAPI.Start(self.m_pyhouse_obj)
 
-    def stop_house_parts(self, p_xml):
-        try:
-            self.m_pyhouse_obj.APIs.ScheduleAPI.Stop(p_xml)
-        except AttributeError as e_error:  # New house has  no schedule
-            LOG.warning("No schedule XML - {0:}".format(e_error))
+    def stop_house_parts(self):
+        self.m_pyhouse_obj.APIs.ScheduleAPI.Stop()
 
 
 class API(Utility):
@@ -124,26 +121,23 @@ class API(Utility):
         self.m_pyhouse_obj = p_pyhouse_obj
         p_pyhouse_obj.House.OBJs = self.read_house_xml(p_pyhouse_obj)
         self.start_house_parts(p_pyhouse_obj)
-        LOG.info("Started House {0:}, Active:{1:}".format(self.m_pyhouse_obj.House.Name, self.m_pyhouse_obj.House.Active))
+        LOG.info("Started House {0:}".format(self.m_pyhouse_obj.House.Name))
 
-    def Stop(self, p_xml):
+    def Stop(self):
         """Stop all houses.
         Append the house XML to the passed in xlm tree.
         """
         LOG.info("Stopping House.")
-        l_house_xml = self.write_house_xml(self.m_pyhouse_obj.House)
-        self.stop_house_parts(l_house_xml)
-        p_xml.append(l_house_xml)
+        self.stop_house_parts()
         LOG.info("Stopped.")
 
-    def Reload(self, p_xml):
+    def SaveXml(self, p_xml):
         """
         Take a snapshot of the current Configuration/Status and write out an XML file.
         """
-        LOG.info("Reloading.")
         l_xml = self.write_house_xml(self.m_pyhouse_obj.House)
-        self.stop_house_parts(l_xml)
+        self.m_pyhouse_obj.APIs.ScheduleAPI.SaveXml(l_xml)
         p_xml.append(l_xml)
-        LOG.info("Reloaded.")
+        LOG.info("Saved XML.")
 
 # ##  END DBK

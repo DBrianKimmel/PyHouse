@@ -128,15 +128,18 @@ class API(Utility):
             pass
         return l_ret
 
-    def Stop(self, p_xml):
+    def Stop(self):
+        pass
+
+    def SaveXml(self, p_xml):
         p_xml.append(self.write_xml(self.m_pyhouse_obj.Computer.Logs))
         return p_xml
 
-    def Update(self, p_entry):
-        l_obj = LogData()
-        l_obj.Debug = p_entry.Debug
-        l_obj.Error = p_entry.Error
-        self.m_pyhouse_obj.LogData = l_obj
+    # def Update(self):
+        # l_obj = LogData()
+        # l_obj.Debug = p_entry.Debug
+        # l_obj.Error = p_entry.Error
+        # self.m_pyhouse_obj.LogData = l_obj
 
 
 def getLogger(p_name):

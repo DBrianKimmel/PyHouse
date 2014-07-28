@@ -110,7 +110,7 @@ class API(ReadWriteXml):
         l_msg = 'Started {0:} UPB Controllers, House:{1:}.'.format(l_count, p_pyhouse_obj.House.Name)
         LOG.info(l_msg)
 
-    def Stop(self, p_xml):
+    def Stop(self):
         try:
             for l_controller_obj in self.m_pyhouse_obj.House.OBJs.Controllers.itervalues():
                 if l_controller_obj.ControllerFamily != 'UPB':
@@ -121,6 +121,8 @@ class API(ReadWriteXml):
         except AttributeError as e_err:
             LOG.error('Stop ERROR {0:}'.format(e_err))
             pass  # no controllers for house (House is being added)
+
+    def SaveXml(self, p_xml):
         return p_xml
 
     def ChangeLight(self, p_light_obj, p_level, _p_rate = 0):

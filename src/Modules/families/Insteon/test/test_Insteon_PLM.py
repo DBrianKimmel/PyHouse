@@ -23,7 +23,7 @@ from Modules.families.Insteon import Insteon_PLM
 from Modules.families.Insteon import Insteon_utils
 from Modules.families import family
 from Modules.utils.tools import PrettyPrintAny
-from test import xml_data, test_mixin
+from test import xml_data, testing_mixin
 
 
 ADR_16C9D0 = '16.C9.D0'
@@ -42,9 +42,7 @@ class SetupMixin(object):
     """
 
     def setUp(self):
-        test_mixin.Setup()
-        test_mixin.Setup().BuildPyHouse()
-        self.m_pyhouse_obj = test_mixin.SetupPyHouseObj().BuildPyHouse()
+        self.m_pyhouse_obj = testing_mixin.SetupPyHouseObj().BuildPyHouse()
         self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
         self.m_api = Insteon_PLM.API()
 
@@ -61,8 +59,8 @@ class Test_01(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_api._get_message_length(MSG_99), 1)
 
     def test_0102_ExtractAddress(self):
-        self.assertEqual(self.m_api._get_addr_from_message(MSG_50, 2), Insteon_utils.dotted_3hex2int(ADR_16C9D0))
-        self.assertEqual(self.m_api._get_addr_from_message(MSG_62, 2), Insteon_utils.dotted_3hex2int(ADR_17C272))
+        self.assertEqual(self.m_api._get_addr_from_message(MSG_50, 2), Insteon_utils.dotted_hex2int(ADR_16C9D0))
+        self.assertEqual(self.m_api._get_addr_from_message(MSG_62, 2), Insteon_utils.dotted_hex2int(ADR_17C272))
 
     def test_0103_QueueCommand(self):
         l_ret_1 = self.m_api._queue_command('insteon_send')

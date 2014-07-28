@@ -104,9 +104,13 @@ class API(ReadWriteConfigXml):
         if g_debug >= 1:
             LOG.info("=== Started all lighting families for house {0:}.".format(p_pyhouse_obj.House.Name))
 
-    def stop_lighting_families(self, p_xml, p_house_obj):
+    def stop_lighting_families(self, p_house_obj):
         for l_family_obj in p_house_obj.FamilyData.itervalues():
-            l_family_obj.ModuleAPI.Stop(p_xml)
+            l_family_obj.ModuleAPI.Stop()
+
+    def save_lighting_families(self, p_xml, p_house_obj):
+        for l_family_obj in p_house_obj.FamilyData.itervalues():
+            l_family_obj.ModuleAPI.SaveXml(p_xml)
 
 # ## END DBK
 

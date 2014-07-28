@@ -65,7 +65,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
 
     def test_0204_ReadAllButtonsXml(self):
         l_buttons = self.m_api.read_buttons_xml(self.m_button_sect_xml)
-        self.assertEqual(len(l_buttons), 11)
+        self.assertEqual(len(l_buttons), 4)
         PrettyPrintAny(l_buttons, 'ReadAllButton', 120)
 
     def test_0211_WriteOneButtonXml(self):

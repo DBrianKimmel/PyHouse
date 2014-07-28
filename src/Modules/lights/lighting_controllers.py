@@ -96,15 +96,13 @@ class ControllersAPI(ReadWriteConfigXml):
         interface.ReadWriteConfigXml().write_interface_xml(p_obj, p_xml)
 
     def write_one_controller_xml(self, p_controller_obj):
-        l_controller_xml = self.write_base_object_xml('Controller', p_controller_obj)
-        self.write_base_lighting_xml(l_controller_xml, p_controller_obj)
+        l_controller_xml = self.write_base_lighting_xml(p_controller_obj)
         self._write_controller_data(p_controller_obj, l_controller_xml)
         self._write_family_data(p_controller_obj, l_controller_xml)
         self._write_interface_data(p_controller_obj, l_controller_xml)
         return l_controller_xml
 
     def write_controllers_xml(self, p_controller_sect_obj):
-        print('lighting_controllers.write_controllers_xml')
         self.m_count = 0
         l_controllers_xml = ET.Element('ControllerSection')
         for l_controller_obj in p_controller_sect_obj.itervalues():

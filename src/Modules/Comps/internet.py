@@ -180,11 +180,16 @@ class API(Utility):
         self.start_internet_discovery(p_pyhouse_obj)
         LOG.info("Started.")
 
-    def Stop(self, p_xml):
+    def Stop(self):
         """
-        Stop async operations, write out the XML file.
+        Stop async operations.
         """
-        LOG.info("Stopping dyndns.")
+        self.stop_internet_discovery(self.m_pyhouse_obj)
+        LOG.info("Stopped.")
+
+    def SaveXml(self, p_xml):
         p_xml.append(self.write_internet_xml(self.m_pyhouse_obj.Computer.InternetConnection))
+        LOG.info('Saved XML')
+
 
 # ## END DBK

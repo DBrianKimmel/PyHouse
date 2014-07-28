@@ -13,6 +13,13 @@
 This will set up this node and then find all other nodes in the same domain (House).
 
 Then start the House and all the sub systems.
+
+Each node has two main sections.
+    The first is the Computer part.
+    It deals with things that pertain to the computer.
+
+    The second is the house.  This is the main part.
+    Every system and sub-system that pertains to the house being automated is here.
 """
 
 # Import system type stuff
@@ -36,6 +43,7 @@ LOG = pyh_log.getLogger('PyHouse.CoreSetup   ')
 
 INTER_NODE = 'tcp:port=8581'
 INTRA_NODE = 'unix:path=/var/run/pyhouse/node:lockfile=1'
+RELOAD_TIME = 1 * 60 * 60
 
 
 class ReadWriteConfigXml(XmlConfigTools):
@@ -52,19 +60,11 @@ class ReadWriteConfigXml(XmlConfigTools):
         l_name = p_pyhouse_obj.Xml.XmlFileName
         try:
             l_xmltree = ET.parse(l_name)
-            print('Setup-XML file {0:} parsed OK.'.format(l_name))
         except SyntaxError as e_error:
             LOG.error('Setup-XML file ERROR - {0:} - {1:}'.format(e_error, l_name))
             ConfigAPI().create_empty_config_file(l_name)
             l_xmltree = ET.parse(p_pyhouse_obj.Xml.XmlFileName)
         p_pyhouse_obj.Xml.XmlRoot = l_xmltree.getroot()
-
-    def write_xml_config_file(self):
-        LOG.info("Saving all data to XML file.")
-        l_xml = self.initialize_Xml()
-        self.m_pyhouse_obj.APIs.ComputerAPI.Stop(l_xml)
-        self.m_pyhouse_obj.APIs.HouseAPI.Stop(l_xml)
-        ConfigAPI().write_config_file(self.m_pyhouse_obj, l_xml, self.m_pyhouse_obj.Xml.XmlFileName)
 
 
 class Utility(ReadWriteConfigXml):
@@ -83,6 +83,13 @@ class Utility(ReadWriteConfigXml):
         xml_tools.PutGetXML().put_text_attribute(l_xml, 'Version', self.m_pyhouse_obj.Xml.XmlVersion)
         l_xml.append(ET.Comment('Updated by PyHouse {0:}'.format(datetime.datetime.now())))
         return l_xml
+
+    def save_data(self, p_pyhouse_obj):
+        """
+        Trigger a SaveXml to save the updated PyHouse data.
+        """
+        self.m_pyhouse_obj.Twisted.Reactor.callLater(RELOAD_TIME, self.save_data, p_pyhouse_obj)
+        self.SaveXml()
 
 
 class API(Utility):
@@ -104,24 +111,29 @@ class API(Utility):
         self.setup_xml_file(p_pyhouse_obj)
         self.read_xml_config_info(self.m_pyhouse_obj)
         self.log_start(p_pyhouse_obj)
+        # Logging system is now enabled
         self.m_pyhouse_obj = p_pyhouse_obj
-        p_pyhouse_obj.APIs.ComputerAPI.Start(p_pyhouse_obj)  # Logs now started
+        p_pyhouse_obj.APIs.ComputerAPI.Start(p_pyhouse_obj)
         p_pyhouse_obj.APIs.HouseAPI.Start(p_pyhouse_obj)
         LOG.info("Started.")
+        self.m_pyhouse_obj.Twisted.Reactor.callLater(RELOAD_TIME, self.save_data, p_pyhouse_obj)
 
     def Stop(self):
-        self.Reload()
+        self.SaveXml()
+        self.m_pyhouse_obj.APIs.ComputerAPI.Stop()
+        self.m_pyhouse_obj.APIs.HouseAPI.Stop()
         LOG.info("Stopped.")
 
-    def Reload(self):
+    def SaveXml(self):
         """
         Take a snapshot of the current Configuration/Status and write out an XML file.
         """
+        LOG.info("Saving XML.\n")
         l_xml = self.initialize_Xml()
-        self.m_pyhouse_obj.APIs.ComputerAPI.Reload(l_xml)
-        self.m_pyhouse_obj.APIs.HouseAPI.Reload(l_xml)
-        self.write_xml_config_file()
-        LOG.info("Reloaded.")
+        self.m_pyhouse_obj.APIs.ComputerAPI.SaveXml(l_xml)
+        self.m_pyhouse_obj.APIs.HouseAPI.SaveXml(l_xml)
+        ConfigAPI().write_config_file(self.m_pyhouse_obj, l_xml, self.m_pyhouse_obj.Xml.XmlFileName)
+        LOG.info("Saved XML.")
 
 def build_pyhouse_obj(p_parent):
     """

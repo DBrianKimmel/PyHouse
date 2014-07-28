@@ -244,7 +244,8 @@ class XmlConfigTools(PutGetXML):
             self.put_text_element(l_elem, 'UUID', p_object.UUID)
         except AttributeError as e_err:
             self.put_text_element(l_elem, 'UUID', 'No UUID Given')
-            print('ERROR in writeBaseObj {0:} {1:}'.format(e_err, PrettyPrintAny(p_object, 'Error in writeBaseObj', 120)))
+            # print('ERROR in writeBaseObj {0:} {1:}'.format(e_err, PrettyPrintAny(p_object, 'Error in writeBaseObj', 120)))
+            print('ERROR in writeBaseObj {0:}'.format(e_err))
         return l_elem
 
 

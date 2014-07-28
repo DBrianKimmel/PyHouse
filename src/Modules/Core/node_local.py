@@ -30,7 +30,7 @@ import xml.etree.ElementTree as ET
 # Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData, NodeInterfaceData
 from Modules.communication import ir_control
-from Modules.utils.xml_tools import PutGetXML, XmlConfigTools
+from Modules.utils.xml_tools import XmlConfigTools
 from Modules.utils import pyh_log
 
 g_debug = 0
@@ -274,8 +274,11 @@ class API(Utility):
         self.init_node_type(p_pyhouse_obj)
         LOG.info('Started')
 
-    def Stop(self, p_xml):
+    def Stop(self):
+        LOG.info("Stopped.")
+
+    def SaveXml(self, p_xml):
         p_xml.append(self.write_nodes_xml(self.m_pyhouse_obj.Computer.Nodes))
-        LOG.info("XML appended.")
+        LOG.info("Saved XML.")
 
 # ## END DBK

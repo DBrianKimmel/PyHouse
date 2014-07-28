@@ -71,7 +71,6 @@ class ControllersElement(athena.LiveElement):
         """A new/changed controller is returned.  Process it and update the internal data via controller.py
         """
         l_json = JsonUnicode().decode_json(p_json)
-        l_house_ix = int(l_json['HouseIx'])
         l_controller_ix = int(l_json['Key'])
         l_delete = l_json['Delete']
         if l_delete:

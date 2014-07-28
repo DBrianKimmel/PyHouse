@@ -83,7 +83,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 			Divmod.debug('---', 'schedules.eb_fetchHouseData() was called.  ERROR: ' + res);
 		}
 		Divmod.debug('---', 'schedules.fetchHouseData  was called. ');
-        var l_defer = self.callRemote("getHouseData", globals.House.HouseIx);  // call server @ web_schedules.py
+        var l_defer = self.callRemote("getHouseData", 0);  // call server @ web_schedules.py
 		l_defer.addCallback(cb_fetchHouseData);
 		l_defer.addErrback(eb_fetchHouseData);
         return false;
@@ -121,13 +121,12 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 			Rate      : fetchTextWidget('ScheduleRate'),
 			RoomName  : fetchSelectWidget('ScheduleRoomName'),
 			LightName : fetchSelectWidget('ScheduleLightName'),
-			HouseIx : globals.House.HouseIx,
 			Delete : false
         }
 		return l_data;
 	},
-	function createEntry(self, p_ix) {
-		//Divmod.debug('---', 'schedules.createEntry() was called.  Ix: ' + p_ix);
+	function createEntry(self) {
+		//Divmod.debug('---', 'schedules.createEntry() was called.);
         var l_data = {
 			Name : 'Change Me',
 			Key : Object.keys(globals.House.HouseObj.Schedules).length,
@@ -139,7 +138,6 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 			RoomName : '',
 			LightName : '',
 			UUID : '',
-			HouseIx : p_ix,
 			Delete : false
         }
 		return l_data;
@@ -170,7 +168,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 			//Divmod.debug('---', 'schedules.handleMenuOnClick(Add Button) was called. ' + l_ix + ' ' + l_name);
 			self.showEntry();
 			self.hideButtons();
-			var l_ent = self.createEntry(globals.House.HouseIx);
+			var l_ent = self.createEntry();
 			self.fillEntry(l_ent);
 		} else if (l_ix == 10002) {
 			// The "Back" button

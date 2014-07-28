@@ -56,6 +56,6 @@ class LogsElement(athena.LiveElement):
         l_obj = LogData()
         l_obj.Debug = l_json['Debug']
         l_obj.Error = l_json['Error']
-        self.m_pyhouse_obj.LogsAPI.Update(l_obj)
+        self.m_pyhouse_obj.LogsAPI.SaveXml(l_obj)
 
 # ## END DBK

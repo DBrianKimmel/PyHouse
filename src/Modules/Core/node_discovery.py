@@ -150,7 +150,7 @@ class Utility(object):
 
     def start_node_discovery(self, p_pyhouses_obj):
         self.m_pyhouse_obj = p_pyhouses_obj
-        print('NodeDiscovery - StartNodeDiscovery - Service:{0:}'.format(self.m_service_installed))
+        LOG.info('NodeDiscovery - StartNodeDiscovery - Service:{0:}'.format(self.m_service_installed))
         try:
             p_pyhouses_obj.Services.NodeDiscoveryService = service.Service()
             p_pyhouses_obj.Services.NodeDiscoveryService.setName('NodeDiscovery')
@@ -181,8 +181,12 @@ class API(Utility):
         self.start_node_discovery(p_pyhouse_obj)
         LOG.info("Started.")
 
-    def Stop(self, _p_xml):
+    def Stop(self):
         self.stop_node_discovery()
         LOG.info("Stopped.")
+
+    def SaveXml(self, p_xml):
+        LOG.info('Saved XML')
+        return p_xml
 
 # ## END DBK

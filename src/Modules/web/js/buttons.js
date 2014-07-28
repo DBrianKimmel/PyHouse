@@ -36,7 +36,7 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 		self.node.style.display = 'block';
 		self.showButtons(self);
 		self.hideEntry(self);
-		self.fetchHouseData(globals.House.HouseIx);
+		self.fetchHouseData();
 	},
 	function hideButtons(self) {
 		self.nodeById('ButtonButtonsDiv').style.display = 'none';		
@@ -66,7 +66,7 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 		function eb_fetchHouseData(res) {
 			Divmod.debug('---', 'buttons.eb_fetchHouseData() was called.  ERROR - ' + res);
 		}
-        var l_defer = self.callRemote("getHouseData", globals.House.HouseIx);  // call server @ web_buttons.py
+        var l_defer = self.callRemote("getHouseData");  // call server @ web_buttons.py
 		l_defer.addCallback(cb_fetchHouseData);
 		l_defer.addErrback(eb_fetchHouseData);
         return false;
@@ -100,7 +100,6 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 			RoomName : fetchSelectWidget('ButtonRoomName'),
 			Type : fetchTextWidget('ButtonType'),
 			UUID : fetchTextWidget('ButtonUUID'),
-			HouseIx : globals.House.HouseIx,
 			Delete : false
             }
 		return l_data;

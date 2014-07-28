@@ -109,20 +109,18 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 			Active : fetchTrueFalseWidget('DynDnsActive'),
             Url : fetchTextWidget('DynDnsUrl'),
             Interval : fetchTextWidget('DynDnsInterval'),
-			HouseIx : globals.House.HouseIx,
 			Delete : false
             }
 		return l_data;
 	},
-	function createEntry(self, p_ix) {
-		Divmod.debug('---', 'internet.createEntry() was called.  Ix: ' + p_ix);
+	function createEntry(self) {
+		Divmod.debug('---', 'internet.createEntry() was called.);
         var l_Data = {
     			Name : 'Change Me',
     			Key : Object.keys(globals.House.HouseObj.Internet).length,
     			Active : false,
     			Url : '',
     			Interval : 0,
-    			HouseIx : p_ix,
     			Delete : false
                 }
 		return l_Data;

@@ -59,7 +59,6 @@ class LightsElement(athena.LiveElement):
         """
         l_json = JsonUnicode().decode_json(p_json)
         l_delete = l_json['Delete']
-        l_house_ix = int(l_json['HouseIx'])
         l_light_ix = int(l_json['Key'])
         if l_delete:
             try:
@@ -73,7 +72,7 @@ class LightsElement(athena.LiveElement):
         try:
             l_obj = self.m_pyhouse_obj.House.OBJs.Lights[l_light_ix]
         except KeyError:
-            LOG.warning('Creating a new light for house {0:} and light {1:}'.format(l_house_ix, l_light_ix))
+            LOG.warning('Creating a new light for light {0:}'.format(l_light_ix))
             l_obj = lighting_lights.LightData()
         #
         l_obj.Name = l_json['Name']
