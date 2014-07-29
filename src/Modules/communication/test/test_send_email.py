@@ -15,27 +15,20 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import ThermostatData
-from Modules.hvac import thermostat
-from Modules.housing import house
-from Modules.web import web_utils
-from Modules.Core import setup
-from Modules.utils.tools import PrettyPrintAny
+from Modules.Core.data_objects import EmailData
+from Modules.communication import send_email
 from test import xml_data
+from test.testing_mixin import SetupPyHouseObj
+from Modules.utils.tools import PrettyPrintAny
 
 
 class SetupMixin(object):
     """
     """
 
-    def setUp(self):
-        self.m_pyhouse_obj = setup.build_pyhouse_obj(self)
-        self.m_pyhouse_obj.Xml.XmlRoot = self.m_root_xml
-        self.m_thermostat_obj = ThermostatData()
-        self.m_api = thermostat.API()
-        self.m_pyhouse_obj = house.API().update_pyhouse_obj(self.m_pyhouse_obj)
-        PrettyPrintAny(self.m_pyhouse_obj, 'SetupMixin.Setup - PyHouse_obj', 100)
-        return self.m_pyhouse_obj
+    def setUp(self, p_root):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
+        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
 class Test_02_XML(SetupMixin, unittest.TestCase):
@@ -44,23 +37,23 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
-        self.m_pyhouse_obj = SetupMixin.setUp(self)
-        house.API().update_pyhouse_obj(self.m_pyhouse_obj)
-        self.m_house_div_xml = self.m_root_xml.find('HouseDivision')
-        self.m_thermostat_sect_xml = self.m_house_div_xml.find('ThermostatSection')
-        self.m_thermostat_xml = self.m_thermostat_sect_xml.find('Thermostat')
-        # PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse_obj', 120)
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        self.m_api = send_email.API()
+        self.m_email_obj = EmailData()
 
     def test_0201_FindXml(self):
         """ Be sure that the XML contains the right stuff.
         """
-        self.assertEqual(self.m_root_xml.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
-        self.assertEqual(self.m_house_div_xml.tag, 'HouseDivision', 'XML - No House Division')
-        self.assertEqual(self.m_thermostat_sect_xml.tag, 'ThermostatSection', 'XML - No Thermostat section')
-        self.assertEqual(self.m_thermostat_xml.tag, 'Thermostat', 'XML - No Thermostat Entry')
-        # PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse_obj', 120)
-        # PrettyPrintAny(self.m_pyhouse_obj.Xml, '201 PyHouse_obj.Xml', 120)
+        self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
+        self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision', 'XML - No House Division')
 
+    def test_0210_Read(self):
+        pass
+
+    def test_0220_Write(self):
+        pass
+
+    def test_0290_Send(self):
+        pass
 
 # ## END DBK

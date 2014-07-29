@@ -43,7 +43,7 @@ LOG = pyh_log.getLogger('PyHouse.CoreSetup   ')
 
 INTER_NODE = 'tcp:port=8581'
 INTRA_NODE = 'unix:path=/var/run/pyhouse/node:lockfile=1'
-RELOAD_TIME = 1 * 60 * 60
+RELOAD_TIME = 1 * 60  # * 60
 
 
 class ReadWriteConfigXml(XmlConfigTools):

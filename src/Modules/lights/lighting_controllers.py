@@ -47,24 +47,25 @@ class ControllersAPI(ReadWriteConfigXml):
         try:
             l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[l_family].ModuleAPI
             l_api.extract_device_xml(p_controller_obj, p_xml)
-        except KeyError as e_err:  # ControllerFamily invalid or missing
-            LOG.error('ERROR ReadFamilyData {0:}'.format(e_err))
+        except Exception as e_err:  # ControllerFamily invalid or missing
+            LOG.error('ERROR - Read Family Data {0:}'.format(e_err))
 
     def _read_interface_data(self, p_obj, p_xml):
-        interface.ReadWriteConfigXml().extract_xml(p_obj, p_xml)
-        pass
+        try:
+            interface.ReadWriteConfigXml().read_interface_xml(p_obj, p_xml)
+        except Exception as e_err:  # ControllerFamily invalid or missing
+            LOG.error('ERROR - Read Interface Data - {0:} - {1:} - {2:}'.format(e_err, p_obj.Name, p_obj.InterfaceType))
 
     def read_one_controller_xml(self, p_controller_xml):
         try:
             l_controller_obj = ControllerData()
             l_controller_obj = self.read_base_lighting_xml(l_controller_obj, p_controller_xml)
             l_controller_obj.Key = self.m_count  # Renumber
-            # PrettyPrintAny(l_controller_obj, 'LightingController - readOneController - ControllerObj', 100)
             self._read_controller_data(l_controller_obj, p_controller_xml)
             self._read_family_data(l_controller_obj, p_controller_xml)
             self._read_interface_data(l_controller_obj, p_controller_xml)
         except Exception as e_err:
-            LOG.error('ReadOneController ERROR {0:}'.format(e_err))
+            LOG.error('ERROR - ReadOneController - {0:}'.format(e_err))
         return l_controller_obj
 
     def read_controllers_xml(self, p_controller_sect_xml):

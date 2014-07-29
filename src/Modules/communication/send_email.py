@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.scheduling.test.test_schedule -*-
+-*- test-case-name: PyHouse.src.Modules.communications.test.test_send_email -*-
 
 @name: PyHouse/src/Modules/communication/send_email.py
 @author: D. Brian Kimmel
@@ -18,6 +18,7 @@ If you don't have an account - get one or write another module to handle your ma
 """
 
 # Import system type stuff
+import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from Modules.Core.data_objects import EmailData
@@ -37,21 +38,17 @@ class ReadWriteConfigXml(PutGetXML):
         """
         @return: a ThermostatData object.
         """
+        l_div_xml = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
+        l_xml = l_div_xml.find('EmailSection')
         l_obj = EmailData
         l_obj.EmailFromAddress = self.get_text_from_xml(l_xml, 'EmailFromAddress')
+        l_obj.EmailToAddress = self.get_text_from_xml(l_xml, 'EmailToAddress')
+        l_obj.GmailLogin = self.get_text_from_xml(l_xml, 'GmailLogin')
+        l_obj.GmailPassword = self.get_text_from_xml(l_xml, 'GmailPassword')
         return l_obj
 
-    def write_email_data(self, p_obj, p_xml):
+    def write_email_xml(self, p_obj, p_xml):
         l_xml = ET.Element('EmailSection')
-        self.m_count = 0
-        try:
-            for l_obj in p_thermostat_sect_obj.itervalues():
-                l_entry = self.write_one_thermostat_xml(l_obj, p_pyhouse_obj)
-                l_xml.append(l_entry)
-                self.m_count += 1
-        except AttributeError as e:
-            LOG.error('ERROR writing all thermostats {0:}'.format(e))
-        return l_xml
         self.put_text_element(p_xml, 'EmailFromAddress', p_obj.EmailFromAddress)
         pass
 
@@ -84,9 +81,12 @@ class API(object):
         LOG.info("Stopped.")
 
     def SaveXml(self, p_xml):
-        l_xml = self.write_all_thermostats_xml(self.m_pyhouse_obj, self.m_pyhouse_obj.Computer.Email)
+        l_xml = self.write_email_xml(self.m_pyhouse_obj)
         p_xml.append(l_xml)
         LOG.info("Saved XML.")
         return p_xml
+
+    def SendEmail(self, p_to_address, p_message):
+        pass
 
 # ## END DBK

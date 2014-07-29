@@ -1,5 +1,5 @@
 """
-@name: PyHouse/src/Modules/drivers/test/test_Driver_Serial.py
+@name: PyHouse/src/Modules/drivers/Serial/test/test_Driver_Serial.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @copyright: 2013_2014 by D. Brian Kimmel
@@ -16,7 +16,7 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import ControllerData
-from Modules.drivers import Driver_Serial
+from Modules.drivers.Serial import serial_xml
 from Modules.lights import lighting_controllers
 from Modules.families import family
 from test import xml_data
@@ -42,7 +42,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, self.m_root_xml)
         SetupPyHouseObj().BuildXml(self.m_root_xml)
         self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
-        self.m_api = Driver_Serial.API()
+        self.m_api = serial_xml.ReadWriteConfigXml()
         self.m_controller_obj = ControllerData()
 
     def test_0202_FindXml(self):
@@ -54,15 +54,21 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.controller.tag, 'Controller', 'XML - No Controller section')
 
     def test_0221_ReadSerialXml(self):
-        l_interface = self.m_api._read_serial_interface_xml(self.m_controller_obj, self.m_xml.controller)
+        l_interface = self.m_api.read_serial_interface_xml(self.m_xml.controller)
         self.assertEqual(l_interface.BaudRate, 19200, 'Bad Baud Rate')
+        self.assertEqual(l_interface.ByteSize, 8, 'Bad ByteSize')
+        self.assertEqual(l_interface.DsrDtr, False, 'Bad DsrDtr')
+        self.assertEqual(l_interface.Parity, 'N', 'Bad Parity')
+        self.assertEqual(l_interface.RtsCts, False, 'Bad RtsCts')
+        self.assertEqual(l_interface.StopBits, 1.0, 'Bad StopBits')
+        self.assertEqual(l_interface.Timeout, 1.0, 'Bad Timeout')
+        self.assertEqual(l_interface.XonXoff, False, 'Bad XonXoff')
         PrettyPrintAny(l_interface, 'Read Interface', 100)
 
     def test_0241_WriteSerialXml(self):
         l_obj = lighting_controllers.ControllersAPI(self.m_pyhouse_obj).read_one_controller_xml(self.m_xml.controller)
         PrettyPrintAny(l_obj, 'Controller', 120)
-        l_ret = self.m_api._write_serial_interface_xml(self.m_xml.controller, l_obj)
+        l_ret = self.m_api.write_serial_interface_xml(self.m_xml.controller, l_obj)
         PrettyPrintAny(l_ret, 'Interface Xml', 120)
-
 
 # ## END

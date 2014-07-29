@@ -468,13 +468,13 @@ class UpbPimAPI(CreateCommands):
         """
         l_driver = None
         if p_controller_obj.InterfaceType.lower() == 'serial':
-            from Modules.drivers import Driver_Serial
+            from Modules.drivers.Serial import Driver_Serial
             l_driver = Driver_Serial.API()
         elif p_controller_obj.InterfaceType.lower() == 'ethernet':
-            from Modules.drivers import Driver_Ethernet
+            from Modules.drivers.Ethernet import Driver_Ethernet
             l_driver = Driver_Ethernet.API()
         elif p_controller_obj.InterfaceType.lower() == 'usb':
-            from Modules.drivers import Driver_USB
+            from Modules.drivers.USB import Driver_USB
             l_driver = Driver_USB.API()
         return l_driver
 
