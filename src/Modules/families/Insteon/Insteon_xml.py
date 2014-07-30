@@ -1,4 +1,6 @@
 """
+Created on Jul 29, 2014
+
 -*- test-case-name: PyHouse.src.Modules.families.Insteon.test.test_Device_Insteon -*-
 
 @name: PyHouse/src/Modules/families/Insteon/Device_Insteon.py
@@ -76,65 +78,5 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         self.put_bool_element(p_entry_xml, 'IsMaster', p_device_obj.IsMaster)
         self.put_bool_element(p_entry_xml, 'IsResponder', p_device_obj.IsResponder)
         self.put_text_element(p_entry_xml, 'ProductKey', conversions.int2dotted_hex(p_device_obj.ProductKey, 3))
-
-
-class API(ReadWriteConfigXml):
-    """
-    """
-
-    def __init__(self):
-        pass
-
-    def Start(self, p_pyhouse_obj):
-        """
-        This will start all the controllers for family = Insteon in the house.
-        """
-        self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_house_obj = p_pyhouse_obj.House.OBJs
-        l_count = 0
-        for l_controller_obj in p_pyhouse_obj.House.OBJs.Controllers.itervalues():
-            if l_controller_obj.ControllerFamily != 'Insteon':
-                continue
-            if l_controller_obj.Active != True:
-                continue
-            # Only one controller may be active at a time (for now).
-            # But all controllers need to be processed so they may be written back to XML.
-            if l_count > 0:
-                l_controller_obj.Active = False
-                LOG.warning('Controller {0:} skipped - another one is active.'.format(l_controller_obj.Name))
-                continue
-            else:
-                from Modules.families.Insteon import Insteon_PLM
-                self.m_plm = l_controller_obj._HandlerAPI = Insteon_PLM.API()
-                if l_controller_obj._HandlerAPI.Start(p_pyhouse_obj, l_controller_obj):
-                    l_count += 1
-                else:
-                    LOG.error('Controller {0:} failed to start.'.format(l_controller_obj.Name))
-                    l_controller_obj.Active = False
-        l_msg = 'Started {0:} Insteon Controllers, House:{1:}.'.format(l_count, p_pyhouse_obj.House.Name)
-        LOG.info(l_msg)
-
-    def Stop(self):
-        try:
-            for l_controller_obj in self.m_house_obj.Controllers.itervalues():
-                if l_controller_obj.ControllerFamily != 'Insteon':
-                    continue
-                if l_controller_obj.Active != True:
-                    continue
-                l_controller_obj._HandlerAPI.Stop(l_controller_obj)
-        except AttributeError as e_err:
-            LOG.warning('Stop Warning - {0:}'.format(e_err))  # no controllers for house(House is being added)
-
-    def SaveXml(self, p_xml):
-        return p_xml
-
-    def ChangeLight(self, p_light_obj, p_level, _p_rate = 0):
-        """
-        Do the Insteon thing to change the level of an Insteon light
-        """
-        if g_debug >= 1:
-            LOG.debug('Change light Name:{0:}, ControllerFamily:{1:}'.format(p_light_obj.Name, p_light_obj.ControllerFamily))
-        _l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[p_light_obj.ControllerFamily].ModuleAPI
-        self.m_plm.ChangeLight(p_light_obj, p_level)
 
 # ## END DBK

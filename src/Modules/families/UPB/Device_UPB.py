@@ -22,7 +22,7 @@ from Modules.Core.data_objects import LightData
 from Modules.utils import xml_tools
 from Modules.utils import pyh_log
 
-g_debug = 0
+g_debug = 9
 LOG = pyh_log.getLogger('PyHouse.Device_UPB  ')
 
 
@@ -90,37 +90,23 @@ class API(ReadWriteXml):
         self.m_pyhouse_obj = p_pyhouse_obj
         l_count = 0
         for l_controller_obj in self.m_pyhouse_obj.House.OBJs.Controllers.itervalues():
-            if not self._is_upb_active(l_controller_obj):
-                continue
-            LOG.info('Found controller {0:}'.format(l_controller_obj.Name))
-            # Only one controller may be active at a time (for now).
-            # But all controllers need to be processed so they may be written back to XML.
-            if l_count > 0:
-                l_controller_obj.Active = False
-                LOG.warning('Controller {0:} skipped - another one is active.'.format(l_controller_obj.Name))
-                continue
-            else:
+            if self._is_upb_active(l_controller_obj):
                 l_controller_obj._HandlerAPI = UPB_Pim.API()
                 if l_controller_obj._HandlerAPI.Start(p_pyhouse_obj, l_controller_obj):
-                    l_count += 1
                     LOG.info('Controller {0:} Started.'.format(l_controller_obj.Name))
+                    l_count += 1
                 else:
                     LOG.error('Controller {0:} failed to start.'.format(l_controller_obj.Name))
                     l_controller_obj.Active = False
-        l_msg = 'Started {0:} UPB Controllers, House:{1:}.'.format(l_count, p_pyhouse_obj.House.Name)
-        LOG.info(l_msg)
+        LOG.info('Started {0:} UPB Controllers.'.format(l_count))
 
     def Stop(self):
         try:
             for l_controller_obj in self.m_pyhouse_obj.House.OBJs.Controllers.itervalues():
-                if l_controller_obj.ControllerFamily != 'UPB':
-                    continue
-                if l_controller_obj.Active != True:
-                    continue
-                l_controller_obj._HandlerAPI.Stop(l_controller_obj)
+                if self._is_upb_active(l_controller_obj):
+                    l_controller_obj._HandlerAPI.Stop(l_controller_obj)
         except AttributeError as e_err:
             LOG.error('Stop ERROR {0:}'.format(e_err))
-            pass  # no controllers for house (House is being added)
 
     def SaveXml(self, p_xml):
         return p_xml

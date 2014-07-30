@@ -30,7 +30,7 @@ from twisted.internet.protocol import Protocol
 from Modules.utils.tools import PrintBytes  # , PrettyPrintAny
 from Modules.utils import pyh_log
 
-g_debug = 0
+g_debug = 9
 LOG = pyh_log.getLogger('PyHouse.USBDriver   ')
 
 
@@ -113,7 +113,7 @@ class UsbDriverAPI(UsbDeviceData):
         return l_ret
 
     def _format_vpn(self, p_USB_obj):
-        """Printable Vendor Product and controller name
+        """Printable Vendor, Product and controller name
         """
         l_ret = "{0:#04x}:{1:#04x} {2:}".format(p_USB_obj.Vendor, p_USB_obj.Product, p_USB_obj.Name)
         return l_ret
@@ -324,7 +324,6 @@ class UsbDriverAPI(UsbDeviceData):
 
     def fetch_read_data(self):
         l_ret = self.m_USB_obj.message
-        # PrettyPrintAny(self.m_USB_obj, 'Driver_USB - FetchData ')
         self.m_USB_obj.message = bytearray()
         if len(l_ret) == 0:
             return l_ret

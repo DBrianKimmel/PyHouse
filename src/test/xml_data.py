@@ -173,7 +173,7 @@ XML_LONG = """
                 <LightingType>Light</LightingType>
                 <Address>16.62.2D</Address>
                 <IsController>True</IsController>
-                <DevCat>3140</DevCat>
+                <DevCat>02.0A</DevCat>
                 <GroupList>All_Lights|Outside|Foyer(0;0)</GroupList>
                 <GroupNumber>0</GroupNumber>
                 <IsMaster>True</IsMaster>

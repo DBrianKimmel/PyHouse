@@ -21,6 +21,7 @@ import importlib
 # Import PyHouse files
 from Modules.Core.data_objects import FamilyData
 from Modules.families import VALID_FAMILIES
+from Modules.utils import xml_tools
 from Modules.utils import pyh_log
 # from Modules.utils.tools import PrettyPrintAny
 
@@ -28,9 +29,35 @@ g_debug = 0
 LOG = pyh_log.getLogger('PyHouse.Family      ')
 
 
-class ReadWriteConfigXml(object):
+class ReadWriteConfigXml(xml_tools.XmlConfigTools):
+    """Read and write the interface information based in the interface type.
     """
-    """
+
+    def _buildFileName(self, p_family):
+        l_ret = p_family + '-xml'
+        return l_ret
+
+    def read_family_xml(self, p_controller_obj, p_controller_xml):
+        """Update the controller object by extracting the passed in XML.
+        """
+        if p_controller_obj.ControllerFamily == 'Insteon':
+            l_interface = Insteon_xml.ReadWriteConfigXml().read_interface_xml(p_controller_xml)
+        else:
+            LOG.error('ERROR - Read - Unknown InterfaceType - {0:}'.format(p_controller_obj.InterfaceType))
+            l_interface = None
+        # Put the serial information into the controller object
+        xml_tools.stuff_new_attrs(p_controller_obj, l_interface)
+
+    def write_family_xml(self, p_controller_obj, p_xml):
+        if p_controller_obj.InterfaceType == 'Ethernet':
+            ethernet_xml.ReadWriteConfigXml().write_interface_xml(p_xml, p_controller_obj)
+        elif p_controller_obj.InterfaceType == 'Serial':
+            serial_xml.ReadWriteConfigXml().write_interface_xml(p_xml, p_controller_obj)
+        elif p_controller_obj.InterfaceType == 'USB':
+            usb_xml.ReadWriteConfigXml().write_interface_xml(p_xml, p_controller_obj)
+        else:
+            LOG.error('ERROR - Write - Unknown InterfaceType - {0:}'.format(p_controller_obj.InterfaceType))
+
 
 
 class API(ReadWriteConfigXml):
