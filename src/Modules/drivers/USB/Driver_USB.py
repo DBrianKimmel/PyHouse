@@ -29,6 +29,7 @@ from twisted.internet.protocol import Protocol
 # Import PyHouse modules
 from Modules.utils.tools import PrintBytes  # , PrettyPrintAny
 from Modules.utils import pyh_log
+from Modules.utils.tools import PrettyPrintAny
 
 g_debug = 9
 LOG = pyh_log.getLogger('PyHouse.USBDriver   ')
@@ -331,11 +332,11 @@ class UsbDriverAPI(UsbDeviceData):
             LOG.debug("fetch_read_data() - Msg:{0:}".format(PrintBytes(l_ret)))
         return l_ret
 
-    def write_usb(self, p_message):
-        if self.m_USB_obj.hid_device:
-            self.write_report(self.m_USB_obj, p_message)
+    def write_usb(self, p_USB_obj, p_message):
+        if p_USB_obj.hid_device:
+            self.write_report(p_USB_obj, p_message)
         else:
-            self.write_device(self.m_USB_obj, p_message)
+            self.write_device(p_USB_obj, p_message)
 
     def write_report(self, p_USB_obj, p_message):
         if g_debug >= 1:
@@ -418,6 +419,7 @@ class API(UsbDriverAPI):
         return l_ret
 
     def Write(self, p_message):
-        self.write_usb(p_message)
+        LOG.debug('Write - USB_obj {0:}'.format(PrettyPrintAny(self.m_USB_obj, 'USB_obj', 120)))
+        self.write_usb(self.m_USB_obj, p_message)
 
 # ## END DBK

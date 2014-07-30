@@ -47,10 +47,6 @@ class Test_02_ReadXML(SetupMixin, unittest.TestCase):
     def test_0203_ReadOneLightXml(self):
         """ Read in the xml file and fill in the lights
         """
-        # l_entry = self.m_api.read_one_thermostat_xml(self.m_xml.thermostat, self.m_pyhouse_obj)
-        # self.assertEqual(l_entry.Active, True, 'Bad Active')
-        # self.assertEqual(l_entry.Name, 'Test Thermostat One', 'Bad Name')
-
         l_light = lighting_lights.LightingLightsAPI(self.m_pyhouse_obj).read_one_light_xml(self.m_xml.light)
         l_insteon_obj = self.m_api.extract_device_xml(l_light, self.m_xml.light)
         PrettyPrintAny(l_insteon_obj, 'Insteon', 120)
