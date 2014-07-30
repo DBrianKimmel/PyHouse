@@ -123,13 +123,21 @@ class UsbDriverAPI(UsbDeviceData):
         if p_device.bDeviceClass == 3:
             return True
 
-    def _setup_find_device(self, p_USB_obj):
+    def _save_find_device(self, p_USB_obj, p_device):
+        p_USB_obj.Device = p_device
+        p_USB_obj.num_configs = p_device.bNumConfigurations
+        p_USB_obj.hid_device = self._is_hid(p_device)
+        p_USB_obj.configs = {}
+        return p_USB_obj
+
+    def _open_find_device(self, p_USB_obj):
         """First step in opening a USB device.
         Get the number of configurations.
 
         @return:  None if no such device or a pyusb device object
         """
         l_vpn = self._format_vpn(p_USB_obj)
+        l_device = None
         try:
             l_device = usb.core.find(idVendor = p_USB_obj.Vendor, idProduct = p_USB_obj.Product)
         except usb.USBError:
@@ -138,12 +146,11 @@ class UsbDriverAPI(UsbDeviceData):
         if l_device == None:
             LOG.error('ERROR - USB device not found  {0:}'.format(l_vpn))
             return None
-        p_USB_obj.Device = l_device
-        p_USB_obj.num_configs = l_device.bNumConfigurations
-        p_USB_obj.hid_device = self._is_hid(l_device)
+        p_USB_obj.Device = self._save_find_device(p_USB_obj, l_device)
         if g_debug >= 1:
             LOG.debug('Found a device - HID: {0:}'.format(l_vpn))
-        p_USB_obj.configs = {}
+        if g_debug > 2:
+            PrettyPrintAny(l_device, 'find - l_device', 120)
         return l_device
 
     def _setup_detach_kernel(self, p_USB_obj):
@@ -199,7 +206,6 @@ class UsbDriverAPI(UsbDeviceData):
         """We will deal with 2 endpoints here - as that is what I expect a controller to have.
         No use in be too general if no device exists that is more complex.
         """
-        self.m_controller_obj = p_USB_obj
         if g_debug >= 1:
             LOG.debug("_setup_endpoints() - Name: {0:},  endpoint count: {1:}".format(p_USB_obj.Name, p_USB_obj.num_endpoints))
         p_USB_obj.ep_out = usb.util.find_descriptor(
@@ -227,11 +233,10 @@ class UsbDriverAPI(UsbDeviceData):
             custom_match = lambda e: usb.util.endpoint_direction(e.bEndpointAddress) == usb.util.ENDPOINT_IN)
 
     def open_device(self, p_USB_obj):
-        self.m_controller_obj = p_USB_obj
         p_USB_obj.message = bytearray()
         l_vpn = self._format_vpn(p_USB_obj)
         LOG.info("Opening USB device - {0:}".format(l_vpn))
-        p_USB_obj.Device = self._setup_find_device(p_USB_obj)
+        p_USB_obj.Device = self._open_find_device(p_USB_obj)
         if p_USB_obj.Device == None:
             LOG.error('ERROR - Setup Failed')
             return False
@@ -243,7 +248,6 @@ class UsbDriverAPI(UsbDeviceData):
         return True
 
     def close_device(self, p_USB_obj):
-        self.m_controller_obj = p_USB_obj
         p_USB_obj.Device.reset()
 
     def read_usb(self, p_pyhouse_obj):
