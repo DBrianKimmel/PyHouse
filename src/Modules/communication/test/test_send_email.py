@@ -8,6 +8,30 @@
 @summary: Schedule events
 
 
+
+
+    From nobody Wed Jul 30 22:41:30 2014
+    Content-Type: multipart/mixed; boundary="===============1622763079=="
+    MIME-Version: 1.0
+    Subject: Test Subject
+    From: mail.sender@Gmail.Com
+    To: mail.receiver@Gmail.Com
+
+    --===============1622763079==
+    Content-Type: text/plain; charset="us-ascii"
+    MIME-Version: 1.0
+    Content-Transfer-Encoding: 7bit
+
+    Test email Body
+    --===============1622763079==
+    Content-Type: application/binary
+    MIME-Version: 1.0
+    Content-Transfer-Encoding: base64
+    Content-Disposition: attachment; filename="data.bin"
+
+    VGVzdCBBdHRhY2htZW50
+    --===============1622763079==--
+
 """
 
 # Import system type stuff
@@ -46,14 +70,30 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         """
         self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
         self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision', 'XML - No House Division')
+        PrettyPrintAny(self.m_pyhouse_obj, 'Pyhouse', 120)
+        PrettyPrintAny(self.m_pyhouse_obj.Computer, 'Pyhouse', 120)
+        PrettyPrintAny(self.m_pyhouse_obj.House, 'Pyhouse', 120)
 
     def test_0210_Read(self):
-        pass
+        l_xml = self.m_api.read_email_xml(self.m_pyhouse_obj)
+        self.assertEqual(l_xml.EmailFromAddress, 'mail.sender@Gmail.Com', 'Bad From Address')
+        self.assertEqual(l_xml.EmailToAddress, 'mail.receiver@Gmail.Com', 'Bad To Address')
+        self.assertEqual(l_xml.GmailLogin, 'TestAccount@Gmail.Com', 'Bad Login')
+        self.assertEqual(l_xml.GmailPassword, 'Test=!=Password', 'Bad Password')
+        PrettyPrintAny(l_xml, 'Xml', 120)
 
     def test_0220_Write(self):
-        pass
+        l_xml = self.m_api.read_email_xml(self.m_pyhouse_obj)
+        l_ret = self.m_api.write_email_xml(l_xml)
+        PrettyPrintAny(l_xml, 'Parsed', 120)
+        PrettyPrintAny(l_ret, 'XML', 120)
 
     def test_0290_Send(self):
-        pass
+        l_xml = self.m_api.read_email_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.Computer.Email = l_xml
+        l_ret = self.m_api.create_email_message(self.m_pyhouse_obj, l_xml.EmailToAddress, 'Test Subject', 'Test email Body', 'Test Attachment')
+        PrettyPrintAny(l_xml, 'Parsed', 120)
+        PrettyPrintAny(l_ret, 'XML', 120)
+
 
 # ## END DBK

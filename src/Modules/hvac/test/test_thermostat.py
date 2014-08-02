@@ -17,23 +17,20 @@ from twisted.trial import unittest
 from Modules.Core.data_objects import ThermostatData
 from Modules.hvac import thermostat
 from Modules.housing import house
+from Modules.families import family
 from Modules.web import web_utils
-from Modules.Core import setup
+from test import xml_data
+from test.testing_mixin import SetupPyHouseObj
 from Modules.utils.tools import PrettyPrintAny
-from test import testing_mixin, xml_data
 
 
-class SetupMixin(testing_mixin.SetupPyHouseObj.setUp):
+class SetupMixin(object):
     """
     """
 
-    def setUp(self):
-        self.m_pyhouse_obj = setup.build_pyhouse_obj(self)
-        self.m_pyhouse_obj.Xml.XmlRoot = self.m_root_xml
-        self.m_thermostat_obj = ThermostatData()
-        self.m_api = thermostat.API()
-        self.m_pyhouse_obj = house.API().update_pyhouse_obj(self.m_pyhouse_obj)
-        return self.m_pyhouse_obj
+    def setUp(self, p_root):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
+        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
 class Test_02_XML(SetupMixin, unittest.TestCase):
@@ -42,28 +39,26 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
-        # self.m_pyhouse_obj = SetupMixin.setUp(self)
-        house.API().update_pyhouse_obj(self.m_pyhouse_obj)
-        self.m_house_div_xml = self.m_root_xml.find('HouseDivision')
-        self.m_thermostat_sect_xml = self.m_house_div_xml.find('ThermostatSection')
-        self.m_thermostat_xml = self.m_thermostat_sect_xml.find('Thermostat')
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
+        self.m_api = thermostat.API()
+        self.m_thermostat_obj = ThermostatData()
 
 
     def test_0201_FindXml(self):
         """ Be sure that the XML contains the right stuff.
         """
-        self.assertEqual(self.m_root_xml.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
-        self.assertEqual(self.m_house_div_xml.tag, 'HouseDivision', 'XML - No House Division')
-        self.assertEqual(self.m_thermostat_sect_xml.tag, 'ThermostatSection', 'XML - No Thermostat section')
-        self.assertEqual(self.m_thermostat_xml.tag, 'Thermostat', 'XML - No Thermostat Entry')
+        self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
+        self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision', 'XML - No House Division')
+        self.assertEqual(self.m_xml.thermostat_sect.tag, 'ThermostatSection', 'XML - No Thermostat section')
+        self.assertEqual(self.m_xml.thermostat.tag, 'Thermostat', 'XML - No Thermostat Entry')
         PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse_obj', 120)
-        PrettyPrintAny(self.m_thermostat_xml, 'ThermoxtatXML', 120)
+        PrettyPrintAny(self.m_xml.thermostat, 'ThermoxtatXML', 120)
 
     def test_0211_ReadThermostatData(self):
         """
         """
-        self.m_api._read_thermostat_data(self.m_thermostat_obj, self.m_thermostat_xml)
+        self.m_api._read_thermostat_data(self.m_thermostat_obj, self.m_xml.thermostat)
         PrettyPrintAny(self.m_thermostat_obj, 'ReadControllerData', 100)
         self.assertEqual(self.m_thermostat_obj.ControllerFamily, 'Insteon', 'Bad Controller Family')
 
@@ -71,14 +66,14 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         """
         """
         self.m_thermostat_obj.ControllerFamily = 'Insteon'
-        self.m_api._read_thermostat_data(self.m_thermostat_obj, self.m_thermostat_xml)
+        self.m_api._read_thermostat_data(self.m_thermostat_obj, self.m_xml.thermostat)
         PrettyPrintAny(self.m_thermostat_obj, 'ReadFamilyData', 100)
 
     def test_0231_ReadOneThermostatXml(self):
         """ Read in the xml file and fill in the lights
         """
         PrettyPrintAny(self.m_pyhouse_obj, '0231 PyHouse_obj', 120)
-        l_entry = self.m_api.read_one_thermostat_xml(self.m_thermostat_xml, self.m_pyhouse_obj)
+        l_entry = self.m_api.read_one_thermostat_xml(self.m_xml.thermostat, self.m_pyhouse_obj)
         self.assertEqual(l_entry.Active, True, 'Bad Active')
         self.assertEqual(l_entry.Name, 'Test Thermostat One', 'Bad Name')
         self.assertEqual(l_entry.Key, 0, 'Key')
@@ -93,7 +88,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         PrettyPrintAny(l_controllers, 'All Thermostats', 100)
 
     def test_0251_WriteThermostatData(self):
-        self.m_api._read_thermostat_data(self.m_thermostat_obj, self.m_thermostat_xml)
+        self.m_api._read_thermostat_data(self.m_thermostat_obj, self.m_xml.thermostat)
         PrettyPrintAny(self.m_thermostat_obj, 'WriteThermostatData', 100)
 
     def test_0252_WriteFamilyData(self):
@@ -101,13 +96,13 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         PrettyPrintAny(self.m_thermostat_obj, 'WriteFamilyData A', 100)
         PrettyPrintAny(self.m_pyhouse_obj.House.OBJs, 'WriteFamilyData B', 100)
 
-        self.m_api._write_family_data(self.m_thermostat_obj, self.m_thermostat_xml, self.m_pyhouse_obj)
-        PrettyPrintAny(self.m_thermostat_xml, 'WriteFamilyData C', 100)
+        self.m_api._write_family_data(self.m_thermostat_obj, self.m_xml.thermostat, self.m_pyhouse_obj)
+        PrettyPrintAny(self.m_xml.thermostat, 'WriteFamilyData C', 100)
 
     def test_0262_WriteOneThermostatXml(self):
         """ Write out the XML file for the location section
         """
-        l_thermostat = self.m_api.read_one_thermostat_xml(self.m_thermostat_xml, self.m_pyhouse_obj)
+        l_thermostat = self.m_api.read_one_thermostat_xml(self.m_xml.thermostat, self.m_pyhouse_obj)
         l_xml = self.m_api.write_one_thermostat_xml(l_thermostat, self.m_pyhouse_obj)
         PrettyPrintAny(l_xml, 'One thermostat', 100)
 

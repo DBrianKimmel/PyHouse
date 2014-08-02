@@ -30,7 +30,7 @@ PLEASE REFACTOR ME!
 from Modules.Core.data_objects import InsteonData
 from Modules.Core import conversions
 from Modules.utils.tools import PrintBytes
-from Modules.families.Insteon.Insteon_constants import *
+from Modules.families.Insteon.Insteon_constants import ACK, MESSAGE_TYPES, MESSAGE_LENGTH, NAK, STX
 from Modules.families.Insteon import Insteon_utils
 from Modules.families.Insteon import Insteon_Link
 from Modules.families.Insteon import Insteon_HVAC
@@ -52,9 +52,10 @@ class Utility(object):
         Return a class of objects (Lights, Thermostats) that may have an Insteon <ControllerFamily> within.
         """
         l_house = p_pyhouse_obj.House.OBJs
-        for l_class in l_house:
-            if l_class == Schedule:
-                continue
+        for _l_class in l_house:
+            # if l_class == Schedule:
+            #    continue
+            pass
         pass
 
     def _find_addr(self, p_class, p_addr):
@@ -127,6 +128,14 @@ class Utility(object):
         # TODO: implement
         pass
 
+    def _decode_message_type_flag(self, p_type):
+        TYPE_X = ['Direct', 'Direct_ACK', 'AllCleanup', 'All_Cleanup_ACK', 'Broadcast', 'Direct_NAK', 'All_Broadcast', 'All_Cleanup_NAK']
+        return TYPE_X[p_type] + ' Msg'
+
+    def _decode_extended_flag(self, p_extended):
+        TYPE_X = ['-Std-', '-Ext-']
+        return TYPE_X[p_extended]
+
     def _decode_message_flag(self, p_byte):
         """
         """
@@ -134,27 +143,9 @@ class Utility(object):
         l_extended = (p_byte & 0x10)
         l_hops_left = (p_byte & 0x0C) >= 4
         l_max_hops = (p_byte & 0x03)
-        if l_type == 4:
-            l_ret = 'Broadcast'  # Broadcast
-        elif l_type == 0:
-            l_ret = 'Direct'  # Direct message
-        elif l_type == 1:
-            l_ret = 'DirACK'  # Direct message ACK
-        elif l_type == 5:
-            l_ret = 'DirNAK'  # Direct message NAK
-        elif l_type == 6:
-            l_ret = 'All_Brdcst'  # All-Link Broadcast
-        elif l_type == 2:
-            l_ret = 'All_Cleanup'  # All-Link Cleanup
-        elif l_type == 3:
-            l_ret = 'All_Clean_ACK'  # All-Link Cleanup ACK
-        else:
-            l_ret = 'All_Clean_NAK'  # All-Link Cleanup NAK
-        if l_extended == 0:
-            l_ret += '-Std-'
-        else:
-            l_ret += '-Ext-'
-        l_ret = "{0:}{1:d}-{2:d}={3:#X}".format(l_ret, l_hops_left, l_max_hops, p_byte)
+        l_ret = self._decode_message_type_flag(l_type)
+        l_ret += self._decode_extended_flag(l_extended)
+        l_ret += "{0:d}-{1:d}={2:#X}".format(l_hops_left, l_max_hops, p_byte)
         return l_ret
 
     def _get_addr_from_message(self, p_message, p_index):
@@ -215,10 +206,10 @@ class Utility(object):
             l_level = int(((l_10 + 2) * 100) / 256)
             l_obj_from.CurLevel = l_level
             l_debug_msg += "Status of light:{0:} is level:{1:}; ".format(l_name_from, l_level)
-            LOG.info("PLM:{0:} Got Light Status From:{1:}, Level is:{2:}".format(p_controller_obj.Name, l_name_from, l_level))
+            LOG.info("Got Light Status From:{0:}, Level is:{1:}".format(l_name_from, l_level))
             self.update_object(l_obj_from)
         elif l_obj_from._Command1 == MESSAGE_TYPES['thermostat_report']:  # 0x6e
-            l_ret1 = Insteon_HVAC.ihvac_utility().decode_50_record(l_obj_from, l_9, l_10)
+            _l_ret1 = Insteon_HVAC.ihvac_utility().decode_50_record(l_obj_from, l_9, l_10)
             pass
         else:
             l_debug_msg += "Insteon_PLM._decode_50_record() unknown type - last command was {0:#x} - {1:}; ".format(l_obj_from._Command1, PrintBytes(l_message))
@@ -325,26 +316,14 @@ class DecodeResponses(Utility):
             LOG.warning("Short 50 message rxed - {0:}".format(PrintBytes(l_message)))
         l_data = [l_9, l_10]
         l_debug_msg = 'Standard Message; '
-        l_flags = self._decode_message_flag(l_message_flags)
+        l_flags = self._decode_message_flag(l_message_flags) + ' From: {0:}'.format(l_obj_from.Name)
         # Break down bits 7(msb), 6, 5 into message type
-        if l_message_flags & 0xE0 == 0x00:  # (000) Direct message type
-            l_debug_msg += "DirectMessage from {0:}; ".format(l_name_from)
-        elif l_message_flags & 0xE0 == 0x20:  # (001) ACK of Direct message type
-            l_debug_msg += "AckDirectMessage from {0:}; ".format(l_name_from)
-        elif l_message_flags & 0xE0 == 0x40:  # (010) All-Link Broadcast Clean-Up message type
-            l_debug_msg += "All-Link Broadcast clean up from {0:}; ".format(l_name_from)
-        elif l_message_flags & 0xE0 == 0x60:  # (011) All-Link Clean-Up ACK response message type
-            l_debug_msg += "All-Link Clean up ACK from {0:}; ".format(l_name_from)
-        elif l_message_flags & 0xE0 == 0x80:  # Broadcast Message (100)
+        if l_message_flags & 0xE0 == 0x80:  # Broadcast Message (100)
             l_debug_msg += self.get_devcat(l_message, l_obj_from)
-        elif l_message_flags & 0xE0 == 0xA0:  # (101) NAK of Direct message type
-            l_debug_msg += "NAK of direct message(1) from {0:}; ".format(l_name_from)
         elif l_message_flags & 0xE0 == 0xC0:  # (110) all link broadcast of group id
             l_group = l_7
             l_debug_msg += "All-Link broadcast From:{0:}, Group:{1:}, Flags:{2:}, Data:{3:}; ".format(l_name_from, l_group, l_flags, l_data)
             LOG.info("== 50B All-link Broadcast From:{0:}, Group:{1:}, Flags:{2:}, Data:{3:} ==".format(l_name_from, l_group, l_flags, l_data))
-        elif l_message_flags & 0xE0 == 0xE0:  # (111) NAK of Direct message type
-            l_debug_msg += "NAK of direct message(2) from {0:}; ".format(l_name_from)
         #
         try:
             if l_obj_from._Command1 == MESSAGE_TYPES['product_data_request']:  # 0x03
@@ -371,7 +350,7 @@ class DecodeResponses(Utility):
                 LOG.info("PLM:{0:} Got Light Status From:{1:}, Level is:{2:}".format(p_controller_obj.Name, l_name_from, l_level))
                 self.update_object(l_obj_from)
             elif l_obj_from._Command1 == MESSAGE_TYPES['thermostat_report']:  # 0x6e
-                l_ret1 = Insteon_HVAC.ihvac_utility().decode_50_record(l_obj_from, l_9, l_10)
+                _l_ret1 = Insteon_HVAC.ihvac_utility().decode_50_record(l_obj_from, l_9, l_10)
                 pass
             else:
                 l_debug_msg += "Insteon_PLM._decode_50_record() unknown type - last command was {0:#x} - {1:}; ".format(l_obj_from._Command1, PrintBytes(l_message))

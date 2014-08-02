@@ -50,6 +50,10 @@ class SetupPyHouseObj(object):
     """
     """
 
+    def _BuildComputer(self):
+        l_ret = ComputerInformation()
+        return l_ret
+
     def _BuildHouse(self):
         l_ret = HouseInformation()
         l_ret.Name = 'Test House'
@@ -61,7 +65,7 @@ class SetupPyHouseObj(object):
     def BuildPyHouseObj(self, p_root):
         l_ret = PyHouseData()
         l_ret.APIs = PyHouseAPIs
-        l_ret.Computer = ComputerInformation()
+        l_ret.Computer = self._BuildComputer()
         l_ret.House = self._BuildHouse()
         l_ret.Services = CoreServicesInformation()
         l_ret.Twisted = TwistedInformation()

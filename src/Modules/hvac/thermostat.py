@@ -69,7 +69,7 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         l_xml_sect = self.setup_xml(p_pyhouse_obj)
         l_ret = {}
         self.m_count = 0
-        if l_xml_sect == None:
+        if l_xml_sect == None:  # no thermostats defined
             return l_ret
         try:
             for l_xml in l_xml_sect.iterfind('Thermostat'):

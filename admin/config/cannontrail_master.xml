@@ -161,6 +161,22 @@
                 <IsResponder>True</IsResponder></Light>
         </LightSection>
         <ButtonSection>
+            <Button Active="True" Key="0" Name="Button1">
+                <Comment>Test Button</Comment>
+                <Coords>['0', '0']</Coords>
+                <IsDimmable>True</IsDimmable>
+                <ControllerFamily>Insteon</ControllerFamily>
+                <RoomName>Dining Room</RoomName>
+                <LightingType>Button</LightingType>
+                <Address>1D.2A.CE</Address>
+                <IsController>True</IsController>
+                <DevCat>00.00</DevCat>
+                <GroupList>All_Lights|Pantry(0;0)</GroupList>
+                <GroupNumber>0</GroupNumber>
+                <IsMaster>True</IsMaster>
+                <ProductKey>00.00.00</ProductKey>
+                <IsResponder>False</IsResponder>
+            </Button>
         </ButtonSection>
         <ControllerSection>
             <Controller Active="False" Key="0" Name="PLM_1">
@@ -188,7 +204,7 @@
                 <RtsCts>False</RtsCts>
                 <XonXoff>False</XonXoff>
             </Controller>
-            <Controller Active="True" Key="1" Name="PowerLink">
+            <Controller Active="False" Key="1" Name="PowerLink">
                 <Comment>2413UH Powerlink Controller</Comment>
                 <Coords>None</Coords>
                 <IsDimmable>False</IsDimmable>
@@ -214,7 +230,7 @@
                 <RtsCts>False</RtsCts>
                 <XonXoff>False</XonXoff>
             </Controller>
-            <Controller Active="True" Key="2" Name="Upb_Pim">
+            <Controller Active="False" Key="2" Name="Upb_Pim">
                 <Comment>UPB PIM - using USB connection</Comment>
                 <Coords>None</Coords>
                 <IsDimmable>False</IsDimmable>

@@ -80,6 +80,12 @@ XML_LONG = """
                 </InterfaceSection>
             </Node>
         </NodeSection>
+        <EmailSection>
+            <EmailFromAddress>mail.sender@Gmail.Com</EmailFromAddress>
+            <EmailToAddress>mail.receiver@Gmail.Com</EmailToAddress>
+            <GmailLogin>TestAccount@Gmail.Com</GmailLogin>
+            <GmailPassword>Test=!=Password</GmailPassword>
+        </EmailSection>
     </ComputerDivision>
 
     <HouseDivision Active="True" Key="0" Name="Pink Poppy">

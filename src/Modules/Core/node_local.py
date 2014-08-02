@@ -16,8 +16,8 @@ This module:
     Saves all the gathered information in PyHouseData.
     Starts services on the local node (i.e. ir_service).
 
-The discovered services may be fooled bu non PyHouse devices plugged into toe computer so it is possible to override the role
-via configuration.  Once overridden the nwe role will "stick" by being written into the local XML file.
+The discovered services may be fooled by non PyHouse devices plugged into toe computer so it is possible to override the role
+via configuration.  Once overridden the new role will "stick" by being written into the local XML file.
 """
 
 # Import system type stuff
@@ -57,6 +57,7 @@ NODE_TUNNEL = 0x0040
 class GetAllInterfaceData(object):
     """Loop thru all the interfaces and extract the info
     """
+
     def __init__(self, p_node):
         """
         @type p_node: C{NodeData}
@@ -252,7 +253,8 @@ class Utility(ReadWriteConfigXml):
         except AttributeError:
             pass
         p_pyhouses_obj.Computer.Nodes[l_max_key + 1] = p_node
-        LOG.debug('Nodes = {0:}'.format(p_pyhouses_obj.Compute.Nodes))
+        if g_debug >= 1:
+            LOG.debug('Nodes = {0:}'.format(p_pyhouses_obj.Compute.Nodes))
 
 
 class API(Utility):

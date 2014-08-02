@@ -18,7 +18,16 @@ If you don't have an account - get one or write another module to handle your ma
 """
 
 # Import system type stuff
+import email.mime.application
 import xml.etree.ElementTree as ET
+# from OpenSSL.SSL import SSLv3_METHOD
+# from twisted.mail.smtp import ESMTPSenderFactory
+from twisted.internet.ssl import ClientContextFactory
+from twisted.internet.defer import Deferred
+try:
+    from cStringIO import cStringIO as StringIO
+except ImportError:
+    from StringIO import StringIO
 
 # Import PyMh files
 from Modules.Core.data_objects import EmailData
@@ -34,7 +43,7 @@ class ReadWriteConfigXml(PutGetXML):
     """
     m_count = 0
 
-    def read_email_data(self, p_pyhouse_obj):
+    def read_email_xml(self, p_pyhouse_obj):
         """
         @return: a ThermostatData object.
         """
@@ -47,16 +56,20 @@ class ReadWriteConfigXml(PutGetXML):
         l_obj.GmailPassword = self.get_text_from_xml(l_xml, 'GmailPassword')
         return l_obj
 
-    def write_email_xml(self, p_obj, p_xml):
+    def write_email_xml(self, p_obj):
         l_xml = ET.Element('EmailSection')
-        self.put_text_element(p_xml, 'EmailFromAddress', p_obj.EmailFromAddress)
-        pass
+        self.put_text_element(l_xml, 'EmailFromAddress', p_obj.EmailFromAddress)
+        self.put_text_element(l_xml, 'EmailToAddress', p_obj.EmailToAddress)
+        self.put_text_element(l_xml, 'GmailLogin', p_obj.GmailLogin)
+        self.put_text_element(l_xml, 'GmailPassword', p_obj.GmailPassword)
+        return l_xml
 
 
 
-class Utility(object):
+class Utility(ReadWriteConfigXml):
     """
     """
+
     def setup_xml(self, p_pyhouse_obj):
         l_xml = p_pyhouse_obj.Xml.XmlRoot
         try:
@@ -66,16 +79,42 @@ class Utility(object):
             LOG.error('SetupXML ERROR {0:}'.format(e_err))
         return l_xml
 
+    def create_email_message(self, p_pyhouse_obj, p_address, p_subject, p_body, p_attachment = None):
+        l_msg = email.mime.Multipart.MIMEMultipart()
+        l_msg['Subject'] = p_subject
+        l_msg['From'] = p_pyhouse_obj.Computer.Email.EmailFromAddress
+        l_msg['To'] = p_address
+        l_body = email.mime.Text.MIMEText(p_body)
+        l_msg.attach(l_body)
+        l_att = email.mime.application.MIMEApplication(p_attachment, _subtype = "binary")
+        l_att.add_header('Content-Disposition', 'attachment', filename = "data.bin")
+        l_msg.attach(l_att)
+        # Create a context factory which only allows SSLv3 and does not verify the peer's certificate.
+        return str(l_msg)
 
-class API(object):
+    def send_email_message(self, p_pyhouse_obj, smtp_server, smtp_port, username, password, from_, to, msg):
+        # contextFactory = ClientContextFactory()
+        # contextFactory.method = SSLv3_METHOD
+        resultDeferred = Deferred()
+        mime_obj = StringIO(str(msg))
+        # senderFactory = ESMTPSenderFactory(username, password, from_, to, mime_obj, resultDeferred, contextFactory = contextFactory)
+        # reactor.connectTCP(smtp_server, smtp_port, senderFactory)
+        print "Sending Email"
+        return resultDeferred
+
+
+class API(Utility):
     """
     """
+    m_pyhouse_obj = None
 
     def __init__(self):
         pass
 
     def Start(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        p_pyhouse_obj.Computer.Email = self.read_email_xml(p_pyhouse_obj)
+
 
     def Stop(self):
         LOG.info("Stopped.")
@@ -86,7 +125,8 @@ class API(object):
         LOG.info("Saved XML.")
         return p_xml
 
-    def SendEmail(self, p_to_address, p_message):
-        pass
+    def SendEmail(self, p_to_address, p_subject, p_message, p_attachment):
+        l_email = self.create_email(self.m_pyhouse_obj, p_to_address, p_subject, p_message, p_attachment)
+        # self.send_email(smtp_server, smtp_port, username, password, from_, to, msg)
 
 # ## END DBK

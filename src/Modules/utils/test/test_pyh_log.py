@@ -14,40 +14,42 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, ComputerInformation, LogData, XmlInformation
+from Modules.Core.data_objects import ComputerInformation
 from Modules.utils import pyh_log as pyhLog
-from Modules.Core import setup
-from Modules.utils.tools import PrettyPrintAny
 from test import xml_data
+from test.testing_mixin import SetupPyHouseObj
+from Modules.utils.tools import PrettyPrintAny
 
 
 class SetupMixin(object):
     """
     """
 
-    def setUp(self):
-        self.m_pyhouse_obj = setup.build_pyhouse_obj(self)
-        self.m_pyhouse_obj.Xml.XmlRoot = self.m_root_xml
-        self.m_api = pyhLog.API()
+    def setUp(self, p_root):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
+        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-class Test_02_ReadWriteXML(SetupMixin, unittest.TestCase):
+class Test_02_XML(SetupMixin, unittest.TestCase):
     """
     This section tests the reading and writing of XML used by node_local.
     """
 
     def setUp(self):
-        self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
-        SetupMixin.setUp(self)
-        self.m_pyhouse_obj.Computer = ComputerInformation
-        self.m_house_div_xml = self.m_root_xml.find('HouseDivision')
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        self.m_api = pyhLog.API()
 
-    def test_0201_read_xml(self):
+    def test_0201_Read(self):
         l_log = self.m_api.read_xml(self.m_pyhouse_obj)
         PrettyPrintAny(l_log, 'Test_02', 120)
         self.m_pyhouse_obj.Computer.Logs = l_log
         self.assertEqual(self.m_pyhouse_obj.Computer.Logs.Debug, '/var/log/pyhouse/debug')
         self.assertEqual(self.m_pyhouse_obj.Computer.Logs.Error, '/var/log/pyhouse/error')
+
+    def test_0202_Write(self):
+        l_log = self.m_api.read_xml(self.m_pyhouse_obj)
+        l_xml = self.m_api.write_xml(l_log)
+        PrettyPrintAny(l_xml, 'XML', 120)
 
 
 class Test_03_SetupLogging(SetupMixin, unittest.TestCase):
@@ -56,10 +58,8 @@ class Test_03_SetupLogging(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
-        SetupMixin.setUp(self)
-        self.m_pyhouse_obj.Computer = ComputerInformation
-        self.m_pyhouse_obj.Computer.Logs = self.m_api.read_xml(self.m_pyhouse_obj)
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        self.m_api = pyhLog.API()
         self.m_api.read_xml(self.m_pyhouse_obj)
         self.LOG = pyhLog.getLogger('PyHouse.test_pyh_log ')
 

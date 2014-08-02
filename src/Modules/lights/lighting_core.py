@@ -39,7 +39,7 @@ class ReadWriteConfigXml(XmlConfigTools):
         return p_device_obj
 
     def write_base_lighting_xml(self, p_device_obj):
-        l_xml = self.write_base_object_xml('Light', p_device_obj)
+        l_xml = self.write_base_object_xml(p_device_obj.LightingType, p_device_obj)
         self.put_text_element(l_xml, 'Comment', p_device_obj.Comment)
         self.put_text_element(l_xml, 'ControllerFamily', p_device_obj.ControllerFamily)
         self.put_text_element(l_xml, 'Coords', p_device_obj.Coords)
