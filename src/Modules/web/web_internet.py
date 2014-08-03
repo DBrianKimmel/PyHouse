@@ -41,7 +41,7 @@ class InternetElement(athena.LiveElement):
         self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
 
     @athena.expose
-    def getHouseData(self, _ignore):
+    def getHouseData(self):
         l_computer = JsonUnicode().encode_json(self.m_pyhouse_obj.Computer.InternetConnection)
         PrettyPrintAny(l_computer, 'WebInternet - GetData', 100)
         return l_computer

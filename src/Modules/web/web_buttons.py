@@ -42,7 +42,7 @@ class ButtonsElement(athena.LiveElement):
             print("web_buttons.ButtonsElement()")
 
     @athena.expose
-    def getHouseData(self, _p_index):
+    def getHouseData(self):
         l_house = GetJSONHouseInfo(self.m_pyhouse_obj)
         return l_house
 

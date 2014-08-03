@@ -28,11 +28,11 @@ What I want to happen on startup:
 from twisted.internet.endpoints import TCP4ClientEndpoint, TCP4ServerEndpoint
 from twisted.internet.protocol import ServerFactory, ClientFactory
 from twisted.protocols.amp import AMP, Command, Integer, String, AmpList
-# from twisted.internet.defer import Deferred
 from twisted.application.internet import StreamServerEndpointService
 
 # Import PyMh files and modules.
 from Modules.utils import pyh_log
+from Modules.utils.tools import PrettyPrintAny
 
 g_debug = 5
 LOG = pyh_log.getLogger('PyHouse.NodeDomain  ')
@@ -76,17 +76,14 @@ class GetNodeList(Command):
     response = [('Nodes', AmpList([('x', String())]))]
 
 
-
-
 class DomainBoxDispatcher_AmpProtocol(AMP):
     """
-    A subclass of (BinaryBoxProtocol, BoxDispatcher, CommandLocator, SimpleStringLocator)
+    AMP is a subclass of (BinaryBoxProtocol, BoxDispatcher, CommandLocator, SimpleStringLocator)
     """
 
     m_amp = None
     m_pyhouse_obj = None
     m_transport = None
-
 
     def __init__(self, p_pyhouse_obj):
         """
@@ -95,8 +92,8 @@ class DomainBoxDispatcher_AmpProtocol(AMP):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_amp = self
         if g_debug >= 1:
-            LOG.debug('Dispatch DomainBoxDispatcher_AmpProtocol()  (DBD-1  100)')
-            LOG.debug('      Repr: {0:}'.format(repr(self)))
+            LOG.debug('==095== Dispatch DomainBoxDispatcher_AmpProtocol()')
+            LOG.debug('        Repr: {0:}'.format(repr(self)))
 
     def makeConnection(self, p_transport):
         """
@@ -105,9 +102,8 @@ class DomainBoxDispatcher_AmpProtocol(AMP):
         """
         self.m_transport = p_transport
         if g_debug >= 2:
-            LOG.debug('Dispatch - makeConnection  (DBD-2  110)')
-            LOG.debug('      Transport:{0:}'.format(p_transport))
-
+            LOG.debug('==105== Dispatch - makeConnection')
+            LOG.debug('        Transport:{0:}'.format(p_transport))
 
     def connectionMade(self):
         """Somebody connected to us...
@@ -117,7 +113,7 @@ class DomainBoxDispatcher_AmpProtocol(AMP):
         If you need to send any greeting or initial message, do it here.
         """
         if g_debug >= 1:
-            LOG.debug('Dispatch - connectionMade  (DBD-3  122)')
+            LOG.debug('==116== Dispatch - connectionMade')
         pass
 
 
@@ -125,30 +121,30 @@ class DomainBoxDispatcher_AmpProtocol(AMP):
         """Clean up the connection.
         """
         if g_debug >= 1:
-            LOG.debug('ServerProtocol - connectionLost  (NDSP-6  130)')
-            LOG.debug('       ERROR: {0:}\n'.format(p_reason))
+            LOG.debug('==124== ServerProtocol - connectionLost')
+            LOG.debug('        ERROR: {0:}\n'.format(p_reason))
 
 
 
 
     def startReceivingBoxes(self, p_boxSender):
         if g_debug >= 1:
-            LOG.debug('Dispatch - Start Receiving boxes  (DBD-4  127)')
-            LOG.debug('      Sender:{0:}'.format(p_boxSender))
+            LOG.debug('==132== Dispatch - Start Receiving boxes')
+            LOG.debug('        Sender:{0:}'.format(p_boxSender))
         self.boxSender = p_boxSender
 
 
     def ampBoxReceived(self, p_box):
         if g_debug >= 1:
-            LOG.debug(' Dispatch - Received box  (DBD-5  134)')
-            LOG.debug('      Box:{0:}'.format(p_box))
+            LOG.debug('==139== Dispatch - Received box ')
+            LOG.debug('        Box:{0:}'.format(p_box))
         self.boxSender.sendBox(p_box)
 
 
     def stopReceivingBoxes(self, p_reason):
         if g_debug >= 1:
-            LOG.debug(' Dispatch - Stop Receiving boxes  (DBD-6  141)')
-            LOG.debug('      Reason: {0:}'.format(p_reason))
+            LOG.debug('==146== Dispatch - Stop Receiving boxes')
+            LOG.debug('        Reason: {0:}'.format(p_reason))
         self.boxSender = None
 
     @NodeInformationCommand.responder
@@ -163,7 +159,7 @@ class DomainBoxDispatcher_AmpProtocol(AMP):
             and then return that serialized form.
         """
         if g_debug >= 1:
-            LOG.debug('Dispatch - receive_NodeInformation - RECEIVED  (DBD-8  170)')
+            LOG.debug('==162== Dispatch - receive_NodeInformation - RECEIVED')
         _l_box = NodeInformationCommand.makeArguments({'Name': 'AAA'})
         l_ret = dict(Name = Name, Answer = 'Got it ok')
         return l_ret
@@ -172,8 +168,8 @@ class DomainBoxDispatcher_AmpProtocol(AMP):
 
     def update_NodeInformation(self, p_box):
         if g_debug >= 1:
-            LOG.debug('Dispatch - update_NodeInformation  (DBD-9  178)')
-            LOG.debug('     Box: {0:}'.format(vars(p_box)))
+            LOG.debug('==178== Dispatch - update_NodeInformation')
+            LOG.debug('        Box: {0:}'.format(vars(p_box)))
         for l_node in self.m_pyhouse_obj.Computer.Nodes.itervals():
             if l_node.Name == p_box.Name:
                 l_node.Role = p_box.Role
@@ -182,7 +178,7 @@ class DomainBoxDispatcher_AmpProtocol(AMP):
 
     # @NodeInformationCommand.responder
     def response_NodeOnfo(self):
-        LOG.debug('LocatorClass - received  remote server.  (300)')
+        LOG.debug('==181== LocatorClass - received  remote server.')
         l_ret = dict(Name = 'abc', Answer = 'Yes')
         return l_ret
 
@@ -195,8 +191,9 @@ class AmpServerFactory(ServerFactory):
 
     def buildProtocol(self, _p_address_tupple):
         l_protocol = NodeDomainServerProtocol(self.m_pyhouse_obj)
+        self.protocol = l_protocol
         if g_debug >= 4:
-            LOG.debug('AmpServerFactory.buildProtocol()  (197)')
+            LOG.debug('==195== AmpServerFactory.buildProtocol()')
         return l_protocol
 
 
@@ -209,33 +206,47 @@ class NodeDomainServerProtocol(DomainBoxDispatcher_AmpProtocol):
     with itself as the IBoxSender parameter.
     """
     def __init__(self, p_pyhouse_obj):
-        LOG.debug('NodeDomainServerProtocol()  (NDSP-1  210)')
+        LOG.debug('==208== NodeDomainServerProtocol()')
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_disp = DomainBoxDispatcher_AmpProtocol(p_pyhouse_obj)
         if g_debug >= 1:
-            LOG.debug('ServerProtocol() initialized  (NDSP-1a  216)')
-            LOG.debug('      Dispatch:{0:}'.format(self.m_disp))
+            LOG.debug('==212== ServerProtocol() initialized')
+            LOG.debug('        Dispatch:{0:}'.format(self.m_disp))
 
+    def _extract_arg(self, p_msg):
+        l_len = ord(p_msg[0]) * 256 + ord(p_msg[1])
+        l_arg = p_msg[2:l_len + 2]
+        l_rest = p_msg[l_len + 2:]
+        return l_arg, l_rest
 
+    def _make_dict_from_message(self, p_msg):
+        l_dict = {}
+        l_rest = p_msg
+        while len(l_rest) > 2:
+            l_key, l_rest = self._extract_arg(l_rest)
+            l_arg, l_rest = self._extract_arg(l_rest)
+            l_dict[l_key] = l_arg
+        return l_dict
 
     def dataReceived(self, p_data):
         if g_debug >= 1:
-            LOG.debug('ServerProtocol - data rxed  (NDSP-2  227)')
-            LOG.debug('       Data rxed: {0:}'.format(PrintBox(p_data)))
-
+            LOG.debug('==237== ServerProtocol - data rxed')
+            LOG.debug('        Data rxed: {0:}'.format(PrintBox(p_data)))
+        l_dict = self._make_dict_from_message(p_data)
+        PrettyPrintAny(l_dict, 'NodeDomain - DataReceived - Dict', 120)
 
 
     def cb_got_result12(self, p_result):
         if g_debug >= 1:
-            LOG.debug('ServerProtocol - ConnectionMade cb_got_result  (NDSP-3  234)')
-            LOG.debug('     Client Addr:{0:}'.format(self.m_address))
-            LOG.debug('     Result:{0:}'.format(p_result))
-            LOG.debug('     Transport{0:}'.format(self.transport))
+            LOG.debug('==240== ServerProtocol - ConnectionMade cb_got_result')
+            LOG.debug('        Client Addr:{0:}'.format(self.m_address))
+            LOG.debug('        Result:{0:}'.format(p_result))
+            LOG.debug('        Transport{0:}'.format(self.transport))
 
     def eb_err12(self, p_ConnectionDone):
-        LOG.error('ServerProtocol - ConnectionMade  (242)')
-        LOG.error('     Address: {0:}'.format(self.m_address))
-        LOG.error('     ERROR: {0:}\n'.format(p_ConnectionDone))
+        LOG.error('==246== ServerProtocol - ConnectionMade')
+        LOG.error('        Address: {0:}'.format(self.m_address))
+        LOG.error('        ERROR: {0:}\n'.format(p_ConnectionDone))
 
 
     def connectionMade(self):
@@ -246,7 +257,7 @@ class NodeDomainServerProtocol(DomainBoxDispatcher_AmpProtocol):
         If you need to send any greeting or initial message, do it here.
         """
         if g_debug >= 1:
-            LOG.debug('ServerProtocol - ConnectionMade  (NDSP-5  255)')
+            LOG.debug('==259== ServerProtocol - ConnectionMade')
             # LOG.debug('    self = {0:}\n'.format(vars(self)))
 
 
@@ -264,30 +275,28 @@ class AmpClient(object):
     def cb_sendInfo(self, p_ampProto):
         l_node = self.m_pyhouse_obj.Computer.Nodes[0]
         if g_debug >= 4:
-            LOG.debug('Client - sending info to remote server.  (310)')
-            # LOG.debug('      Address: {0:}'.format(l_node.ConnectionAddr_IPv4))
-        # l_ampBox = NodeInformationCommand.makeArguments({
-        #                'Name': l_node.Name, 'Active': str(l_node.Active), 'Address': l_node.ConnectionAddr_IPv4,
-        #                'Role': int(l_node.NodeRole), 'UUID': "1122"}, None)
+            LOG.debug('==277== Client - sending our node info to remote server.')
+            LOG.debug('        Protocol:{0:}   Addr:{1:}'.format(p_ampProto, self.m_address))
         l_ret = p_ampProto.callRemote(NodeInformationCommand,
                         Name = l_node.Name, Active = str(l_node.Active), Address = l_node.ConnectionAddr_IPv4,
-                        NodeRole = int(l_node.NodeRole), UUID = "1122")
+                        NodeRole = int(l_node.NodeRole), UUID = "01234567-1234-2345-3456-01234567890ab")
         return l_ret
+
+    def eb_send_info(self, p_reason):
+        LOG.warn('WARNING - Failed to create a client to send to another node.  {0:}'.format(p_reason))
 
     def create_one_client(self, p_pyhouses_obj, p_address):
         """
         Create a client to talk to some node's servers.
-
         @param p_address: is the address of the server we are connecting to.
         """
         self.m_pyhouse_obj = p_pyhouses_obj
         self.m_address = p_address
         l_endpoint = TCP4ClientEndpoint(p_pyhouses_obj.Twisted.Reactor, p_address, AMP_PORT)
+        LOG.debug('==295== About to create client to {0:}'.format(p_address))
         l_defer = l_endpoint.connect(ClientFactory.forProtocol(AMP))
         l_defer.addCallback(self.cb_sendInfo)
-        if g_debug >= 8:
-            LOG.debug('Client create_one_client  (330)')
-            LOG.debug('     Server Address: {0:}'.format(p_address))
+        l_defer.addErrback(self.eb_send_info)
 
 
 class Utility(AmpClient):

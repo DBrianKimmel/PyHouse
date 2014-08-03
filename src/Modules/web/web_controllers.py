@@ -51,7 +51,7 @@ class ControllersElement(athena.LiveElement):
             print("web_controllers.ControllersElement()")
 
     @athena.expose
-    def getHouseData(self, _p_index):
+    def getHouseData(self):
         l_house = GetJSONHouseInfo(self.m_pyhouse_obj)
         return l_house
 

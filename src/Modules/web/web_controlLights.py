@@ -41,12 +41,11 @@ class ControlLightsElement(athena.LiveElement):
         self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
 
     @athena.expose
-    def getHouseData(self, p_index):
+    def getHouseData(self):
         """ A JS client has requested all the information for a given house.
 
         @param p_index: is the house index number.
         """
-        print('webCtLights getHouseData Entry ix = {0:}'.format(p_index))
         l_house = GetJSONHouseInfo(self.m_pyhouse_obj)
         return l_house
 

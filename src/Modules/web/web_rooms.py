@@ -39,7 +39,7 @@ class RoomsElement(athena.LiveElement):
         self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
 
     @athena.expose
-    def getHouseData(self, _p_index):
+    def getHouseData(self):
         l_house = GetJSONHouseInfo(self.m_pyhouse_obj)
         return l_house
 

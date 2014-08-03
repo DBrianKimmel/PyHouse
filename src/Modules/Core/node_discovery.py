@@ -157,7 +157,6 @@ class Utility(object):
             p_pyhouses_obj.Services.NodeDiscoveryService.setServiceParent(p_pyhouses_obj.Twisted.Application)
             self._start_discovery_server(p_pyhouses_obj)
             self._start_discovery_client(p_pyhouses_obj)
-            # PrettyPrintAny(p_pyhouses_obj.Services, 'NodeDiscovery - StartService - PyHouse.Services')
         except RuntimeError:  # The service is already installed
             pass
         self.m_service_installed = True

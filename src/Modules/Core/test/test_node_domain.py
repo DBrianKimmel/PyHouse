@@ -16,6 +16,7 @@ Tests for L{twisted.protocols.amp}.
 """
 
 # Import system type stuff
+import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 from twisted.python.failure import Failure
 from twisted.protocols import amp
@@ -26,7 +27,41 @@ from twisted.test.proto_helpers import StringTransport
 # Import PyMh files and modules.
 from Modules.Core.data_objects import PyHouseData
 from Modules.Core import node_domain
+from test import xml_data
+from test.testing_mixin import SetupPyHouseObj
+from Modules.utils.tools import PrettyPrintAny
 
+
+class SetupMixin(object):
+    """
+    """
+
+    def setUp(self, p_root):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
+        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+
+
+class MessageExtraction(SetupMixin, unittest.TestCase):
+    """
+    (6)Active, (4)True, (7)Address, (12)192.168.1.35, (4)Name, (5)pi-05, (8)NodeRole,
+     (2)10, (4)UUID, (4)1122, (4)_ask, (1)1, (8)_command, (22)NodeInformationCommand
+    """
+    m_msg = b'\x00\x06Active\x00\x04True' + \
+            b'\x00\x07Address\x00\x0C192.168.1.35' + \
+            b'\x00\x04Name\x00\x05pi-05' + \
+            b'\x00\x08NodeRole\x00\x0210' + \
+            b'\x00\x04UUID\x00\x041122' + \
+            b'\x00\x04_ask\x00\x011' + \
+            b'\x00\x08_command\x00\x16NodeInformationCommand'
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+
+    def test_0001_Msg(self):
+        PrettyPrintAny(self.m_msg, 'Raw Data', 120)
+        l_api = node_domain.NodeDomainServerProtocol(self.m_pyhouse_obj)
+        l_dict = l_api._make_dict_from_message(self.m_msg)
+        PrettyPrintAny(l_dict, 'Processed Data', 120)
 
 class TestProtocol(protocol.Protocol):
 

@@ -42,13 +42,7 @@ class HouseElement(athena.LiveElement):
             print("web_house.HouseElement()")
 
     @athena.expose
-    def getHouseData(self, _p_index):
-        # l_data = self.m_pyhouse_obj.House
-        # PrettyPrintAny(l_data, 'House Data', 100)
-        # PrettyPrintAny(l_data.OBJs, 'House Data OBJs', 100)
-        # l_computer = JsonUnicode().encode_json(self.m_pyhouse_obj.Computer.InternetConnection)
-        # l_house = JsonUnicode().encode_json(self.m_pyhouse_obj.House.OBJs)
-        # PrettyPrintAny(l_house, 'WebHouse HouseJSON', 100)
+    def getHouseData(self):
         l_house = GetJSONHouseInfo(self.m_pyhouse_obj)
         return l_house
 

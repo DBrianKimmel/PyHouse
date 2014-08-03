@@ -55,7 +55,7 @@ class HouseSelectElement(athena.LiveElement):
         return unicode(l_json)
 
     @athena.expose
-    def getSelectedHouseData(self, _p_index):
+    def getSelectedHouseData(self):
         l_house = GetJSONHouseInfo(self.m_pyhouse_obj)
         return l_house
 
