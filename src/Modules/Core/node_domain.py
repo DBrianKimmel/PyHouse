@@ -228,7 +228,7 @@ class NodeDomainServerProtocol(DomainAmp):
     """
 
     def __init__(self, p_pyhouse_obj):
-        LOG.debug('==245== NodeDomainServerProtocol()')
+        LOG.debug('==200== NodeDomainServerProtocol()')
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_disp = DomainAmp(p_pyhouse_obj)
 
@@ -249,17 +249,18 @@ class NodeDomainServerProtocol(DomainAmp):
 
     def dataReceived(self, p_data):
         l_dict = self._make_dict_from_message(p_data)
+        LOG.debug('==210== ServerProtocol - dataReceived()')
         PrettyPrintAny(l_dict, 'NodeDomain - DataReceived - Dict', 120)
 
     def cb_got_result12(self, p_result):
         if g_debug >= 1:
-            LOG.debug('==284== ServerProtocol - ConnectionMade cb_got_result(Result)')
+            LOG.debug('==220== ServerProtocol - ConnectionMade cb_got_result(Result)')
             LOG.debug('        Client Addr:{0:}'.format(self.m_address))
             LOG.debug('        Result:{0:}'.format(p_result))
             LOG.debug('        Transport{0:}'.format(self.transport))
 
     def eb_err12(self, p_ConnectionDone):
-        LOG.error('==292== ServerProtocol - ConnectionMade eb_G')
+        LOG.error('==230== ServerProtocol - ConnectionMade eb_G')
         LOG.error('        Address: {0:}'.format(self.m_address))
         LOG.error('        ERROR: {0:}\n'.format(p_ConnectionDone))
 
@@ -271,7 +272,7 @@ class NodeDomainServerProtocol(DomainAmp):
         If you need to send any greeting or initial message, do it here.
         """
         if g_debug >= 1:
-            LOG.debug('==306== ServerProtocol - ConnectionMade')
+            LOG.debug('==240== ServerProtocol - ConnectionMade')
 
 
 class AmpClient(object):
@@ -296,7 +297,6 @@ class AmpClient(object):
         self.m_pyhouse_obj = p_pyhouses_obj
         self.m_address = p_address
         l_endpoint = TCP4ClientEndpoint(p_pyhouses_obj.Twisted.Reactor, p_address, AMP_PORT)
-        # LOG.debug('==346== About to create client to {0:}'.format(p_address))
         l_defer = l_endpoint.connect(ClientFactory.forProtocol(AMP))
         l_defer.addCallback(self.cb_sendInfo)
         l_defer.addErrback(self.eb_send_info)
@@ -314,7 +314,7 @@ class Utility(AmpClient):
         """
         l_nodes = self.m_pyhouse_obj.Computer.Nodes
         for l_key, l_node in l_nodes.iteritems():
-            if l_key > -1:  # Skip ourself
+            if l_key > 0:  # Skip ourself
                 self.create_one_client(self.m_pyhouse_obj, l_node.ConnectionAddr_IPv4)
 
     def eb_start_clients_loop(self, p_reason):
