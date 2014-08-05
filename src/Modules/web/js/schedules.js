@@ -1,4 +1,9 @@
-H
+/**
+ * schedules.js
+ *
+ * The Schedule widget.
+ */
+
 // import Nevow.Athena
 // import globals
 // import helpers
