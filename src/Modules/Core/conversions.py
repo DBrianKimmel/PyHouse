@@ -14,6 +14,11 @@
 # Import system type stuff
 import math
 
+# Import PyMh files
+from Modules.utils import pyh_log
+
+LOG = pyh_log.getLogger('PyHouse.CoreConvert ')
+
 
 """
 Internally, things are stored as integers but when working with humans dotted hex is easier to remember.
@@ -43,10 +48,13 @@ def int2dotted_hex(p_int, p_size):
     """
     l_ix = _get_factor(p_size)
     l_hex = []
-    while l_ix > 0:
-        l_byte, p_int = divmod(p_int, l_ix)
-        l_hex.append("{0:02X}".format(l_byte))
-        l_ix = l_ix / 256
-    return str('.'.join(l_hex))
+    try:
+        while l_ix > 0:
+            l_byte, p_int = divmod(p_int, l_ix)
+            l_hex.append("{0:02X}".format(l_byte))
+            l_ix = l_ix / 256
+        return str('.'.join(l_hex))
+    except TypeError as e_err:
+        LOG.error('ERROR in converting int to dotted Hex {0:} - Type:{1:} - {2:}'.format(p_int, type(p_int), e_err))
 
 # ## END DBK
