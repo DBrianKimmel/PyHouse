@@ -15,20 +15,18 @@
 import math
 
 
-
 """
 Internally, things are stored as integers but when working with humans dotted hex is easier to remember.
 
 So for 1 to 4 bytes we convert 123456 to 'A1.b2.C3' and visa-versa.
 """
+
 def _get_factor(p_size):
     """Internal utility to get a power of 256 (1 byte)
     """
     if p_size <= 1:
         return 0
-    l_ix = int(math.pow(256, (p_size - 1)))
-    return l_ix
-
+    return int(math.pow(256, (p_size - 1)))
 
 def dotted_hex2int(p_hex):
     """

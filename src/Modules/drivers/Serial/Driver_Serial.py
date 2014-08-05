@@ -112,7 +112,9 @@ class API(SerialAPI):
         l_ret = self.twisted_open_device(self.m_controller_obj)
         self.m_active = l_ret
         if l_ret:
-            LOG.info("Started controller {0:}".format(self.m_controller_obj.Name))
+            LOG.info("Started Serial controller {0:}".format(self.m_controller_obj.Name))
+        else:
+            LOG.error('ERROR - failed to start Serial controller {0:}'.format(self.m_controller_obj.Name))
         return l_ret
 
     def Stop(self):

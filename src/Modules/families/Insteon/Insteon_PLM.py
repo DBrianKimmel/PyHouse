@@ -34,7 +34,7 @@ import Queue
 # Import PyMh files
 from Modules.Core.data_objects import InsteonData
 from Modules.utils.tools import PrintBytes
-from Modules.families.Insteon.Insteon_constants import *
+from Modules.families.Insteon.Insteon_constants import COMMAND_LENGTH, MESSAGE_LENGTH, MESSAGE_TYPES, PLM_COMMANDS, STX
 from Modules.families.Insteon import Insteon_utils
 from Modules.families.Insteon import decoder
 from Modules.utils import pyh_log

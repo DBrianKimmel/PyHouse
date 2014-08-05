@@ -78,7 +78,31 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         self.put_text_element(p_entry_xml, 'ProductKey', conversions.int2dotted_hex(p_device_obj.ProductKey, 3))
 
 
-class API(ReadWriteConfigXml):
+class Utility(ReadWriteConfigXml):
+    """
+    """
+
+    def _is_valid_controller(self, p_controller_obj):
+        if p_controller_obj.ControllerFamily != 'Insteon':
+            return False
+        if p_controller_obj.Active != True:
+            return False
+        return True
+
+    def start_plm(self, p_pyhouse_obj, p_controller_obj):
+        """
+        import PLM module when we run this otherwise we will get a circular import
+        """
+        from Modules.families.Insteon import Insteon_PLM
+        self.m_plm = p_controller_obj._HandlerAPI = Insteon_PLM.API()
+        if p_controller_obj._HandlerAPI.Start(p_pyhouse_obj, p_controller_obj):
+            pass
+        else:
+            LOG.error('Controller {0:} failed to start.'.format(p_controller_obj.Name))
+            p_controller_obj.Active = False
+
+
+class API(Utility):
     """
     """
 
@@ -90,38 +114,16 @@ class API(ReadWriteConfigXml):
         This will start all the controllers for family = Insteon in the house.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_house_obj = p_pyhouse_obj.House.OBJs
-        l_count = 0
         for l_controller_obj in p_pyhouse_obj.House.OBJs.Controllers.itervalues():
-            if l_controller_obj.ControllerFamily != 'Insteon':
-                continue
-            if l_controller_obj.Active != True:
-                continue
-            # Only one controller may be active at a time (for now).
-            # But all controllers need to be processed so they may be written back to XML.
-            if l_count > 0:
-                l_controller_obj.Active = False
-                LOG.warning('Controller {0:} skipped - another one is active.'.format(l_controller_obj.Name))
-                continue
-            else:
-                from Modules.families.Insteon import Insteon_PLM
-                self.m_plm = l_controller_obj._HandlerAPI = Insteon_PLM.API()
-                if l_controller_obj._HandlerAPI.Start(p_pyhouse_obj, l_controller_obj):
-                    l_count += 1
-                else:
-                    LOG.error('Controller {0:} failed to start.'.format(l_controller_obj.Name))
-                    l_controller_obj.Active = False
-        l_msg = 'Started {0:} Insteon Controllers, House:{1:}.'.format(l_count, p_pyhouse_obj.House.Name)
-        LOG.info(l_msg)
+            if self._is_valid_controller(l_controller_obj):
+                self.start_plm(p_pyhouse_obj, l_controller_obj)
+        LOG.info('Started the Insteon Controllers.')
 
     def Stop(self):
         try:
-            for l_controller_obj in self.m_house_obj.Controllers.itervalues():
-                if l_controller_obj.ControllerFamily != 'Insteon':
-                    continue
-                if l_controller_obj.Active != True:
-                    continue
-                l_controller_obj._HandlerAPI.Stop(l_controller_obj)
+            for l_controller_obj in self.m_pyhouse_obj.House.OBJs.Controllers.itervalues():
+                if self._is_valid_controller(l_controller_obj):
+                    l_controller_obj._HandlerAPI.Stop(l_controller_obj)
         except AttributeError as e_err:
             LOG.warning('Stop Warning - {0:}'.format(e_err))  # no controllers for house(House is being added)
 

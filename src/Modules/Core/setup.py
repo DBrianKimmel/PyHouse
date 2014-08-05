@@ -76,7 +76,12 @@ class Utility(ReadWriteConfigXml):
         """
         l_log = pyh_log.API()
         l_log.Start(p_pyhouse_obj)
-        LOG.info("\n------------------------------------------------------------------\n\n")
+        LOG.info("""
+        ------------------------------------------------------------------
+                        House: {0:}
+        ------------------------------------------------------------------
+
+        """.format(p_pyhouse_obj.House.Name))
 
     def initialize_Xml(self):
         l_xml = ET.Element("PyHouse")
