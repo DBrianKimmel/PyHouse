@@ -34,6 +34,9 @@ def int2message(p_int, p_message, p_index):
     """Place an Insteon address (int internally) into a message at a given offset.
     The message must exist and be long enough to include a 3 byte area for the address.
     """
+    if p_int > 16777215 or p_int < 0:
+        print 'ERROR - Insteon_utils - trying to convert {0:} to message byte string.'.format(p_int)
+        p_int = 16777215
     l_ix = 256 * 256
     l_int = p_int
     while l_ix > 0:
