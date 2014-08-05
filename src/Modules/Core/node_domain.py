@@ -293,7 +293,7 @@ class AmpClient(object):
         """
         Loop thru all the nodes we know about.  Start a client for each node except ourself (Nodes[0]).
         """
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(2 * 60, self.start_sending_to_all_clients)
+        self.m_pyhouse_obj.Twisted.Reactor.callLater(2 * 60 * 60, self.start_sending_to_all_clients)
         for l_key, l_node in self.m_pyhouse_obj.Computer.Nodes.iteritems():
             if l_key > -1:  # Skip ourself
                 self.create_one_client(self.m_pyhouse_obj, l_node.ConnectionAddr_IPv4)

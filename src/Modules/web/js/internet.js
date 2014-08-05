@@ -1,6 +1,6 @@
 /**
  * internet.js
- * 
+ *
  * The Internet widget.
  */
 
@@ -25,10 +25,10 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 	 */
 	function ready(self) {
 		function cb_widgetready(res) {
-			//Divmod.debug('---', 'internet.js - cb_widgready was called.');
+			Divmod.debug('---', 'internet.js - cb_widgready was called.');
 			self.hideWidget();
 		}
-		//Divmod.debug('---', 'internet.ready() was called.');
+		Divmod.debug('---', 'internet.ready() was called.');
 		var uris = collectIMG_src(self.node, null);
 		var l_defer = loadImages(uris);
 		l_defer.addCallback(cb_widgetready);
@@ -73,7 +73,6 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 	        self.nodeById('ExtIpDiv').innerHTML = buildTextWidget('InternetExtIp', globals.Computer.InternetConnection.ExternalIP, 'disabled');
 			var l_tab = buildTable(globals.Computer.InternetConnection.DynDns, 'handleMenuOnClick');
 			self.nodeById('InternetTableDiv').innerHTML = l_tab;
-
 		}
 		function eb_fetchHouseData(res) {
 			Divmod.debug('---', 'internet.eb_fetchHouseData() was called. ERROR: ' + res);

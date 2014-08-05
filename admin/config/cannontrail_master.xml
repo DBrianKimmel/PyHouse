@@ -48,7 +48,7 @@
         </NodeSection>
     </ComputerDivision>
 
-    <HouseDivision Active="True" Key="0" Name="Pink Poppy">
+    <HouseDivision Active="True" Key="0" Name="Cannon Trail">
         <UUID>12345678-1002-11e3-b583-333e5f8cdfd2</UUID>
         <LocationSection>
             <Street>718 Cannon Trl</Street>
