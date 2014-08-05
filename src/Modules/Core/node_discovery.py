@@ -174,7 +174,7 @@ class Utility(object):
 class API(Utility):
 
     def __init__(self):
-        LOG.info("Initialized.")
+        pass
 
     def Start(self, p_pyhouse_obj):
         self.start_node_discovery(p_pyhouse_obj)

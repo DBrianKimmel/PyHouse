@@ -97,6 +97,7 @@ class Utility(ReadWriteConfigXml):
         l_plmAPI = Insteon_PLM.API()
         p_controller_obj._HandlerAPI = l_plmAPI
         if l_plmAPI.Start(p_pyhouse_obj, p_controller_obj):
+            LOG.info('Successfully started Insteon controller {0:}'.format(p_controller_obj.Name))
             return l_plmAPI
         else:
             LOG.error('Controller {0:} failed to start.'.format(p_controller_obj.Name))
@@ -147,7 +148,6 @@ class API(Utility):
         """
         if g_debug >= 1:
             LOG.debug('Change light Name:{0:}, ControllerFamily:{1:}'.format(p_light_obj.Name, p_light_obj.ControllerFamily))
-        _l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[p_light_obj.ControllerFamily].ModuleAPI
         self.m_plm.ChangeLight(p_light_obj, p_level)
 
 # ## END DBK
