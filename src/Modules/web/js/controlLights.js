@@ -1,5 +1,5 @@
 /* controlLights.js
- * 
+ *
  * Displays the control light screens
  */
 

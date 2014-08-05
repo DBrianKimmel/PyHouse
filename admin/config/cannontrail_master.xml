@@ -74,12 +74,12 @@
                 <Size>14.00, 13.50</Size>
                 <Floor>2</Floor>
             </Room>
-            <Room Active="True" Key="2" Name="Master Bed Closet 1">
+            <Room Active="True" Key="2" Name="Garage">
                 <Comment />
                 <Corner>0.83, 24.58</Corner>
                 <Size>6.91, 8.91</Size>
             </Room>
-            <Room Active="False" Key="3" Name="Master Bedroom">
+            <Room Active="False" Key="3" Name="Kitchen">
                 <Comment />
                 <Corner>0.83, 25.08</Corner>
                 <Size>14.00, 18.00</Size>
@@ -88,13 +88,37 @@
         <ScheduleSection>
             <Schedule Active="True" Key="0" Name="Evening">
                 <Level>100</Level>
-                <LightName>lr_cans</LightName>
+                <LightName>FrontDoor</LightName>
                 <Rate>0</Rate>
-                <RoomName>Living Room</RoomName>
-                <Time>sunset - 00:15</Time>
+                <RoomName>Outside</RoomName>
+                <Time>sunset</Time>
                 <ScheduleType>LightingDevice</ScheduleType>
             </Schedule>
-        </ScheduleSection>
+            <Schedule Active="True" Key="1" Name="Evening">
+                <Level>100</Level>
+                <LightName>ChandMaster</LightName>
+                <Rate>0</Rate>
+                <RoomName>Dining Room</RoomName>
+                <Time>sunset</Time>
+                <ScheduleType>LightingDevice</ScheduleType>
+            </Schedule>
+            <Schedule Active="True" Key="2" Name="Night">
+                <Level>0</Level>
+                <LightName>FrontDoor</LightName>
+                <Rate>0</Rate>
+                <RoomName>Outside</RoomName>
+                <Time>23:30</Time>
+                <ScheduleType>LightingDevice</ScheduleType>
+            </Schedule>
+            <Schedule Active="True" Key="3" Name="Night">
+                <Level>0</Level>
+                <LightName>ChandMaster</LightName>
+                <Rate>0</Rate>
+                <RoomName>Dining Room</RoomName>
+                <Time>23:30</Time>
+                <ScheduleType>LightingDevice</ScheduleType>
+            </Schedule>
+            </ScheduleSection>
         <LightSection>
             <Light Active="True" Key="0" Name="FrontDoor">
                 <Comment>SwitchLink Dimmer</Comment>
@@ -191,7 +215,7 @@
                 <DevCat>00.00</DevCat><GroupList />
                 <GroupNumber>0</GroupNumber>
                 <IsMaster>True</IsMaster>
-                <ProductKey>0</ProductKey>
+                <ProductKey>00.00.00</ProductKey>
                 <IsResponder>True</IsResponder>
                 <InterfaceType>Serial</InterfaceType>
                 <Port>/dev/ttyUSB0</Port>
@@ -217,7 +241,7 @@
                 <GroupList />
                 <GroupNumber>0</GroupNumber>
                 <IsMaster>True</IsMaster>
-                <ProductKey>0</ProductKey>
+                <ProductKey>00.00.00</ProductKey>
                 <IsResponder>True</IsResponder>
                 <InterfaceType>Serial</InterfaceType>
                 <Port>/dev/ttyUSB0</Port>
