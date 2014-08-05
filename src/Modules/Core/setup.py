@@ -36,7 +36,7 @@ from Modules.utils import pyh_log
 from Modules.utils import xml_tools
 from Modules.utils.config_file import ConfigAPI
 from Modules.utils.xml_tools import XmlConfigTools
-# from Modules.utils.tools import PrettyPrintAny
+from Modules.utils.tools import PrettyPrintAny
 
 g_debug = 0
 LOG = pyh_log.getLogger('PyHouse.CoreSetup   ')
@@ -72,16 +72,15 @@ class Utility(ReadWriteConfigXml):
     """
 
     def log_start(self, p_pyhouse_obj):
-        """Logging is the very first thing we start so we can see errors in the starting process
+        """Logging is the very first thing we start so we can see errors in the starting process.
+        Note that the house and computer xml has not been processed yet.
         """
         l_log = pyh_log.API()
         l_log.Start(p_pyhouse_obj)
         LOG.info("""
         ------------------------------------------------------------------
-                        House: {0:}
-        ------------------------------------------------------------------
 
-        """.format(p_pyhouse_obj.House.Name))
+        """)
 
     def initialize_Xml(self):
         l_xml = ET.Element("PyHouse")
