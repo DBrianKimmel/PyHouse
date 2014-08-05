@@ -1,13 +1,4 @@
-/* schedules.js
- * 
- * The schedule widget.
- * 
- * This widget has 2 parts:
- *   1. The schedule selection section which shows a button for each schedule and allows one to add a new schedule.
- *   2. The schedule data section which allows entering/changing all the detail about the selected schedule.
- *      It also allows the schedule to be deleted.
- */
-
+H
 // import Nevow.Athena
 // import globals
 // import helpers
@@ -83,7 +74,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 			Divmod.debug('---', 'schedules.eb_fetchHouseData() was called.  ERROR: ' + res);
 		}
 		Divmod.debug('---', 'schedules.fetchHouseData  was called. ');
-        var l_defer = self.callRemote("getHouseData", 0);  // call server @ web_schedules.py
+        var l_defer = self.callRemote("getHouseData");  // call server @ web_schedules.py
 		l_defer.addCallback(cb_fetchHouseData);
 		l_defer.addErrback(eb_fetchHouseData);
         return false;

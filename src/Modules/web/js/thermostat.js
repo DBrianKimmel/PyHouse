@@ -73,7 +73,7 @@ helpers.Widget.subclass(thermostat, 'ThermostatWidget').methods(
 			Divmod.debug('---', 'thermostat.eb_fetchHouseData() was called. ERROR: ' + res);
 		}
 		//Divmod.debug('---', 'thermostat.fetchHouseData() was called. ');
-        var l_defer = self.callRemote("getHouseData", 0);  // call server @ web_thermostat.py
+        var l_defer = self.callRemote("getHouseData");  // call server @ web_thermostat.py
 		l_defer.addCallback(cb_fetchHouseData);
 		l_defer.addErrback(eb_fetchHouseData);
         return false;

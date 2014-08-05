@@ -79,7 +79,7 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 			Divmod.debug('---', 'internet.eb_fetchHouseData() was called. ERROR: ' + res);
 		}
 		Divmod.debug('---', 'internet.fetchHouseData() was called. ');
-        var l_defer = self.callRemote("getHouseData", 0);  // call server @ web_internet.py
+        var l_defer = self.callRemote("getHouseData");  // call server @ web_internet.py
 		l_defer.addCallback(cb_fetchHouseData);
 		l_defer.addErrback(eb_fetchHouseData);
         return false;
