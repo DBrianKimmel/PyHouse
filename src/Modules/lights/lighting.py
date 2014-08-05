@@ -83,6 +83,10 @@ class API(Utility):
         self._write_lighting_xml(self.m_pyhouse_obj.House.OBJs, p_xml)
         LOG.info("Saved XML.")
 
+    def _get_api_for_family(self, p_pyhouse_obj, p_light_obj):
+        l_ret = p_pyhouse_obj.House.OBJs.FamilyData[p_light_obj.ControllerFamily].ModuleAPI
+        return l_ret
+
     def ChangeLight(self, p_light_obj, p_level, _p_rate = None):
         """
         Called by:
@@ -90,12 +94,11 @@ class API(Utility):
             schedule
         """
         try:
-            l_key = p_light_obj.Key
-            l_light_obj = self.m_pyhouse_obj.House.OBJs.Lights[l_key]
+            l_light_obj = self.m_pyhouse_obj.House.OBJs.Lights[p_light_obj.Key]
             LOG.info("Turn Light {0:} to level {1:}, ControllerFamily:{2:}".format(l_light_obj.Name, p_level, l_light_obj.ControllerFamily))
-            l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[l_light_obj.ControllerFamily].ModuleAPI
+            l_api = self._get_api_for_family(self.m_pyhouse_obj, p_light_obj)
             l_api.ChangeLight(l_light_obj, p_level)
         except Exception as e_err:
-            LOG.error('ChangeLight ERROR - {0:}'.format(e_err))
+            LOG.error('ERROR - ChangeLight - {0:}'.format(e_err))
 
 # ## END DBK

@@ -94,16 +94,31 @@ class Utility(ReadWriteConfigXml):
         import PLM module when we run this otherwise we will get a circular import
         """
         from Modules.families.Insteon import Insteon_PLM
-        self.m_plm = p_controller_obj._HandlerAPI = Insteon_PLM.API()
-        if p_controller_obj._HandlerAPI.Start(p_pyhouse_obj, p_controller_obj):
-            pass
+        l_plmAPI = Insteon_PLM.API()
+        p_controller_obj._HandlerAPI = l_plmAPI
+        if l_plmAPI.Start(p_pyhouse_obj, p_controller_obj):
+            return l_plmAPI
         else:
             LOG.error('Controller {0:} failed to start.'.format(p_controller_obj.Name))
             p_controller_obj.Active = False
+            return None
+
+    def _start_all_controllers(self, p_pyhouse_obj):
+        l_ret = None
+        for l_controller_obj in p_pyhouse_obj.House.OBJs.Controllers.itervalues():
+            if self._is_valid_controller(l_controller_obj):
+                l_ret = self.start_plm(p_pyhouse_obj, l_controller_obj)
+        return l_ret
+
+    def _stop_all_controllers(self, p_pyhouse_obj):
+        for l_controller_obj in p_pyhouse_obj.House.OBJs.Controllers.itervalues():
+            if self._is_valid_controller(l_controller_obj):
+                l_controller_obj._HandlerAPI.Stop(l_controller_obj)
 
 
 class API(Utility):
     """
+    These are the public methods available to use Insteon devices.
     """
 
     def __init__(self):
@@ -114,16 +129,12 @@ class API(Utility):
         This will start all the controllers for family = Insteon in the house.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
-        for l_controller_obj in p_pyhouse_obj.House.OBJs.Controllers.itervalues():
-            if self._is_valid_controller(l_controller_obj):
-                self.start_plm(p_pyhouse_obj, l_controller_obj)
+        self.m_plm = self._start_all_controllers(p_pyhouse_obj)
         LOG.info('Started the Insteon Controllers.')
 
     def Stop(self):
         try:
-            for l_controller_obj in self.m_pyhouse_obj.House.OBJs.Controllers.itervalues():
-                if self._is_valid_controller(l_controller_obj):
-                    l_controller_obj._HandlerAPI.Stop(l_controller_obj)
+            self._stop_all_controllers(self.m_pyhouse_obj)
         except AttributeError as e_err:
             LOG.warning('Stop Warning - {0:}'.format(e_err))  # no controllers for house(House is being added)
 
