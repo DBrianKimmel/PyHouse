@@ -73,6 +73,8 @@ class SerialAPI(object):
         """Flush all pending output and close the serial port.
         """
         LOG.info("Close Device {0:}".format(p_controller_obj.Name))
+        if self.m_serial == None:  #  not currently open
+            return
         self.m_serial.close()
 
     def fetch_read_data(self, p_controller_obj):
@@ -122,7 +124,7 @@ class API(SerialAPI):
         LOG.info("Stopped controller {0:}".format(self.m_controller_obj.Name))
 
     def Read(self):
-        l_ret = self.fetch_read_data()
+        l_ret = self.fetch_read_data(self.m_controller_obj)
         return l_ret
 
     def Write(self, p_message):
