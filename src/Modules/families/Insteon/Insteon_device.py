@@ -1,7 +1,7 @@
 """
--*- test-case-name: PyHouse.src.Modules.families.Insteon.test.test_Device_Insteon -*-
+-*- test-case-name: PyHouse.src.Modules.families.Insteon.test.test_Insteon_device -*-
 
-@name: PyHouse/src/Modules/families/Insteon/Device_Insteon.py
+@name: PyHouse/src/Modules/families/Insteon/Insteon_device.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @copyright: 2011-2014 by D. Brian Kimmel
@@ -23,7 +23,7 @@ serial_port
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Core.data_objects import InsteonData
+from Modules.families.Insteon.Insteon_data import InsteonData
 from Modules.Core import conversions
 from Modules.utils import xml_tools
 from Modules.utils import pyh_log
@@ -82,14 +82,22 @@ class Utility(ReadWriteConfigXml):
     """
     """
 
-    def _is_valid_controller(self, p_controller_obj):
-        if p_controller_obj.ControllerFamily != 'Insteon':
+    def _is_insteon(self, p_obj):
+        try:
+            return p_obj.ControllerFamily == 'Insteon'
+        except AttributeError:
             return False
-        if p_controller_obj.Active != True:
-            return False
-        return True
 
-    def start_plm(self, p_pyhouse_obj, p_controller_obj):
+    def _is_active(self, p_obj):
+        try:
+            return p_obj.Active == True
+        except AttributeError:
+            return False
+
+    def _is_valid_controller(self, p_controller_obj):
+        return self._is_insteon(p_controller_obj) and self._is_active(p_controller_obj)
+
+    def _start_plm(self, p_pyhouse_obj, p_controller_obj):
         """
         import PLM module when we run this otherwise we will get a circular import
         """
@@ -108,7 +116,7 @@ class Utility(ReadWriteConfigXml):
         l_ret = None
         for l_controller_obj in p_pyhouse_obj.House.OBJs.Controllers.itervalues():
             if self._is_valid_controller(l_controller_obj):
-                l_ret = self.start_plm(p_pyhouse_obj, l_controller_obj)
+                l_ret = self._start_plm(p_pyhouse_obj, l_controller_obj)
         return l_ret
 
     def _stop_all_controllers(self, p_pyhouse_obj):

@@ -1,7 +1,7 @@
 """
--*- test-case-name: PyHouse.src.Modules.families.UPB.test.test_Device_UPB -*-
+-*- test-case-name: PyHouse.src.Modules.families.UPB.test.test_UPB_device -*-
 
-@name: PyHouse/src/Modules/families/UPB/Device_UPB.py
+@name: PyHouse/src/Modules/families/UPB/UPB_device.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @copyright: 2011-2014 by D. Brian Kimmel
@@ -18,60 +18,14 @@ Start Active UPB Controllers.
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Core.data_objects import LightData
-from Modules.utils import xml_tools
+from Modules.families.UPB import UPB_Pim, UPB_xml
 from Modules.utils import pyh_log
 
 g_debug = 9
-LOG = pyh_log.getLogger('PyHouse.Device_UPB  ')
+LOG = pyh_log.getLogger('PyHouse.UPB_device  ')
 
 
-class UPBData(LightData):
-    """
-    Locally held data about each of the UPB PIM controllers we find.
-
-    This is known only within the UPB family package.
-    """
-
-    def __init__(self):
-        super(UPBData, self).__init__()
-        self.ControllerFamily = 'UPB'
-        self.UPBAddress = 0
-        self.UPBPassword = 0
-        self.UPBNetworkID = 0
-
-
-# PIM is loaded after UPBData is defined
-from Modules.families.UPB import UPB_Pim
-
-
-class ReadWriteXml(xml_tools.XmlConfigTools):
-    """Interface to the lights of this module.
-    """
-
-    def extract_device_xml(self, p_device_obj, p_entry_xml):
-        """
-        @param p_entry_xml: is the e-tree XML house object
-        @param p_house: is the text name of the House.
-        @return: a dict of the entry to be attached to a house object.
-        """
-        l_obj = UPBData()
-        l_obj.UPBAddress = self.get_int_from_xml(p_entry_xml, 'Address', 255)
-        l_obj.UPBNetworkID = self.get_int_from_xml(p_entry_xml, 'UPBNetworkID')
-        l_obj.UPBPassword = self.get_int_from_xml(p_entry_xml, 'UPBPassword')
-        xml_tools.stuff_new_attrs(p_device_obj, l_obj)
-        return p_device_obj
-
-    def insert_device_xml(self, p_entry_xml, p_device_obj):
-        try:
-            self.put_int_element(p_entry_xml, 'UPBAddress', p_device_obj.UPBAddress)
-            self.put_int_element(p_entry_xml, 'UPBNetworkID', p_device_obj.UPBNetworkID)
-            self.put_int_element(p_entry_xml, 'UPBPassword', p_device_obj.UPBPassword)
-        except AttributeError as e_err:
-            LOG.error('InsertDeviceXML ERROR {0:}'.format(e_err))
-
-
-class API(ReadWriteXml):
+class API(object):
 
     def _is_upb_active(self, p_controller_obj):
         if p_controller_obj.ControllerFamily != 'UPB':
@@ -108,6 +62,7 @@ class API(ReadWriteXml):
         except AttributeError as e_err:
             LOG.error('Stop ERROR {0:}'.format(e_err))
 
+
     def SaveXml(self, p_xml):
         return p_xml
 
@@ -115,5 +70,11 @@ class API(ReadWriteXml):
         LOG.debug('Change light Name:{0:}, ControllerFamily:{1:}'.format(p_light_obj.Name, p_light_obj.ControllerFamily))
         _l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[p_light_obj.ControllerFamily].ModuleAPI
         self.m_plm.ChangeLight(p_light_obj, p_level)
+
+    def ReadXml(self, p_device, p_xml):
+        UPB_xml.ReadXml()
+
+    def WriteXml(self, p_xml):
+        return p_xml
 
 # ## END

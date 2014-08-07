@@ -62,7 +62,7 @@ class BaseLightingData(ABaseObject):
         self.Comment = ''
         self.Coords = ''  # Room relative coords of the device
         self.IsDimmable = False
-        self.ControllerFamily = None
+        self.ControllerFamily = 'Null'
         self.RoomName = ''
         self.LightingType = ''  # Button | Light | Controller
 
@@ -110,25 +110,10 @@ class FamilyData(ABaseObject):
     """
     def __init__(self):
         super(FamilyData, self).__init__()
-        self.ModuleAPI = None  # Device_Insteon.API()
-        self.ModuleName = ''  # Device_Insteon
-        self.PackageName = ''  # Modules.families.Insteon
-
-
-class InsteonData (LightData):
-    """This class contains the Insteon specific information about the various devices controlled by PyHouse.
-    """
-    def __init__(self):
-        super(InsteonData, self).__init__()
-        self.InsteonAddress = 0  # Long integer internally - '1A.B3.3C' for external reaability
-        self.IsController = False
-        self.DevCat = 0  # DevCat and SubCat (2 bytes)
-        self.ControllerFamily = 'Insteon'
-        self.GroupList = ''
-        self.GroupNumber = 0
-        self.IsMaster = False  # False is Slave
-        self.ProductKey = ''
-        self.IsResponder = False
+        self.FamilyModuleAPI = None  # Insteon_device.API()
+        self.FamilyDeviceModuleName = ''  # Insteon_device
+        self.FamilyXmlModuleName = ''  # Insteon_device
+        self.FamilyPackageName = ''  # Modules.families.Insteon
 
 
 class X10LightingData(LightData):
@@ -230,7 +215,7 @@ class IrrigationData(ABaseObject):
     """
     def __init__(self):
         super(IrrigationData, self).__init__()
-        self.ControllerFamily = None
+        self.ControllerFamily = 'Null'
 
 
 class PoolData(ABaseObject):
@@ -238,7 +223,7 @@ class PoolData(ABaseObject):
     """
     def __init__(self):
         super(PoolData, self).__init__()
-        self.ControllerFamily = None
+        self.ControllerFamily = 'Null'
 
 
 class ThermostatData(ABaseObject):
@@ -246,7 +231,7 @@ class ThermostatData(ABaseObject):
     def __init__(self):
         super(ThermostatData, self).__init__()
         self.CoolSetPoint = 0
-        self.ControllerFamily = 'No Family'
+        self.ControllerFamily = 'Null'
         self.CurrentTemperature = 0
         self.HeatSetPoint = 0
         self.ThermostatMode = 'Cool'  # Cool | Heat | Auto | EHeat
@@ -301,14 +286,17 @@ class XmlInformation(object):
 
 class PyHouseAPIs(object):
     """
+    Most of these have a single entry.
+    Others are dicts of APIs, one per instance.
     """
 
     def __init__(self):
         self.CommunicationsAPI = None
-        self.ComouterAPI = None
+        self.ComputerAPI = None
         self.CoreAPI = None
         self.EmailAPI = None
         self.EntertainmentAPI = None
+        self.FamilyAPI = None
         self.HouseAPI = None
         self.HvacAPI = None
         self.InternetAPI = None

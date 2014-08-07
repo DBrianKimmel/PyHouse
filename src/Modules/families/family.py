@@ -25,7 +25,7 @@ from Modules.utils import xml_tools
 from Modules.utils import pyh_log
 # from Modules.utils.tools import PrettyPrintAny
 
-g_debug = 0
+g_debug = 1
 LOG = pyh_log.getLogger('PyHouse.Family      ')
 
 
@@ -33,69 +33,72 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
     """Read and write the interface information based in the interface type.
     """
 
-    def _buildFileName(self, p_family):
-        l_ret = p_family + '-xml'
-        return l_ret
-
     def read_family_xml(self, p_controller_obj, p_controller_xml):
         """Update the controller object by extracting the passed in XML.
         """
-        if p_controller_obj.ControllerFamily == 'Insteon':
-            l_interface = Insteon_xml.ReadWriteConfigXml().read_interface_xml(p_controller_xml)
-        else:
-            LOG.error('ERROR - Read - Unknown InterfaceType - {0:}'.format(p_controller_obj.InterfaceType))
-            l_interface = None
-        # Put the serial information into the controller object
-        xml_tools.stuff_new_attrs(p_controller_obj, l_interface)
+        pass
 
     def write_family_xml(self, p_controller_obj, p_xml):
-        if p_controller_obj.InterfaceType == 'Ethernet':
-            ethernet_xml.ReadWriteConfigXml().write_interface_xml(p_xml, p_controller_obj)
-        elif p_controller_obj.InterfaceType == 'Serial':
-            serial_xml.ReadWriteConfigXml().write_interface_xml(p_xml, p_controller_obj)
-        elif p_controller_obj.InterfaceType == 'USB':
-            usb_xml.ReadWriteConfigXml().write_interface_xml(p_xml, p_controller_obj)
-        else:
-            LOG.error('ERROR - Write - Unknown InterfaceType - {0:}'.format(p_controller_obj.InterfaceType))
+        pass
 
 
+class Utility(ReadWriteConfigXml):
+    """
+    """
 
-class API(ReadWriteConfigXml):
+    def _build_one_family_data(self, p_family_name):
+        """Build up the FamilyData entry for a single family
+        """
+        l_family_obj = FamilyData()
+        l_family_obj.Name = p_family_name
+        l_family_obj.Key = self.m_count
+        l_family_obj.Active = True
+        l_family_obj.FamilyPackageName = 'Modules.families.' + p_family_name
+        l_family_obj.FamilyDeviceModuleName = p_family_name + '_device'
+        l_family_obj.FamilyXmlModuleName = p_family_name + '_xml'
+        return l_family_obj
+
+    def _import_one_module(self, p_family_obj):
+        """
+        This routine will attempt to import a module.
+
+        Any errors, such as syntax errors, in the module will cause the import to fail.
+        Hopefully, this method will detect all such errors and make the developers life much easier by reporting the error.
+        """
+        l_device = p_family_obj.FamilyPackageName + '.' + p_family_obj.FamilyDeviceModuleName
+        l_xml = p_family_obj.FamilyPackageName + '.' + p_family_obj.FamilyXmlModuleName
+        try:
+            l_module = importlib.import_module(l_device, p_family_obj.FamilyPackageName)
+        except ImportError as l_error:
+            l_msg = 'ERROR "{0:}" while trying to import module {1:}.'.format(l_error, p_family_obj.FamilyDeviceModuleName)
+            print("ERROR - Cannot import:\n    Module: {0:}\n    Package: {1:}\n    Error: {2:}\n\n".format(p_family_obj.FamilyDeviceModuleName, p_family_obj.FamilyPackageName, l_msg))
+            LOG.error(l_msg)
+            l_module = None
+        return l_module
+
+    def _initialize_one_module(self, p_module):
+        """
+        """
+        try:
+            l_api = p_module.API()
+        except AttributeError as l_reason:
+            l_api = None
+            LOG.error("ERROR - Cannot get API - Module:{0:},   Reason: {1:}.".format(p_module, l_reason))
+        return l_api
+
+
+class API(Utility):
     """
     """
 
     m_count = 0
 
-    def build_one_family(self, p_family_name):
-        l_family_obj = FamilyData()
-        l_family_obj.Name = p_family_name
-        l_family_obj.Key = self.m_count
-        l_family_obj.Active = True
-        l_family_obj.PackageName = 'Modules.families.' + p_family_name
-        l_family_obj.ModuleName = 'Device_' + p_family_name
-        return l_family_obj
+    def __init__(self):
+        pass
 
-    def import_module(self, p_family_obj):
-        """This routine will attempt to import a module.
-        Any errors, such as syntax errors, in the module will cause the import to fail.
-        Hopefully, this method will detect all such errors and make the developers life much easier by reporting the error.
-        """
-        try:
-            l_module = importlib.import_module(p_family_obj.PackageName + '.' + p_family_obj.ModuleName, p_family_obj.PackageName)
-        except ImportError as l_error:
-            l_msg = 'ERROR "{0:}" while trying to import module {1:}.'.format(l_error, p_family_obj.ModuleName)
-            print("Cannot import:\n    Module: {0:}\n    Package: {1:}\n    Error: {2:}\n\n".format(p_family_obj.ModuleName, p_family_obj.PackageName, l_msg))
-            LOG.error(l_msg)
-            l_module = None
-        return l_module
-
-    def initialize_module(self, p_module):
-        try:
-            l_api = p_module.API()
-        except AttributeError as l_reason:
-            l_api = None
-            LOG.error("Cannot get API - Module:{0:},   Reason: {1:}.".format(p_module, l_reason))
-        return l_api
+    def Start(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        return self.build_lighting_family_info()
 
     def build_lighting_family_info(self):
         """
@@ -103,16 +106,15 @@ class API(ReadWriteConfigXml):
 
         NOTE! - Any errors (syntax, etc) in the imported modules (or sub-modules) will cause the import to FAIL!
         """
+        if g_debug >= 1:
+            LOG.debug('Starting build_lighting_family_info')
         l_family_data = {}
         self.m_count = 0
         for l_family in VALID_FAMILIES:
-            l_family_obj = self.build_one_family(l_family)
-            l_module = self.import_module(l_family_obj)
-            try:
-                l_family_obj.ModuleAPI = l_module.API()
-            except AttributeError as l_reason:
-                l_family_obj.ModuleAPI = None
-                LOG.error("Cannot get API - Module:{0:},   Reason: {1:}.".format(l_module, l_reason))
+            l_family_obj = self._build_one_family_data(l_family)
+            l_module = self._import_one_module(l_family_obj)
+            l_api = self._initialize_one_module(l_module)
+            l_family_obj.FamilyModuleAPI = l_api
             l_family_data[l_family_obj.Name] = l_family_obj
             self.m_count += 1
         return l_family_data
@@ -123,21 +125,25 @@ class API(ReadWriteConfigXml):
         Runs Device_<family>.API.Start()
         """
         if g_debug >= 1:
-            LOG.info("=== Starting lighting families for house {0:}.".format(p_pyhouse_obj.House.Name))
+            LOG.info("Starting lighting families.")
         for l_family_obj in p_house_obj.FamilyData.itervalues():
             if g_debug >= 1:
-                LOG.debug('  = Starting Family {0:}'.format(l_family_obj.Name))
-            l_family_obj.ModuleAPI.Start(p_pyhouse_obj)  # will run Device_<family>.API.Start()
+                LOG.debug('Starting Family {0:}'.format(l_family_obj.Name))
+            l_family_obj.FamilyModuleAPI.Start(p_pyhouse_obj)  # will run Device_<family>.API.Start()
         if g_debug >= 1:
-            LOG.info("=== Started all lighting families for house {0:}.".format(p_pyhouse_obj.House.Name))
+            LOG.info("Started all lighting families.")
 
     def stop_lighting_families(self, p_house_obj):
         for l_family_obj in p_house_obj.FamilyData.itervalues():
-            l_family_obj.ModuleAPI.Stop()
+            l_family_obj.FamilyModuleAPI.Stop()
 
     def save_lighting_families(self, p_xml, p_house_obj):
         for l_family_obj in p_house_obj.FamilyData.itervalues():
-            l_family_obj.ModuleAPI.SaveXml(p_xml)
+            l_family_obj.FamilyModuleAPI.SaveXml(p_xml)
+
+    def ReadXml(self, p_device_obj, p_device_xml):
+        LOG.info('family ReadXml was called for device {0:}.'.format(p_device_obj.Name))
+        pass
 
 # ## END DBK
 

@@ -145,7 +145,8 @@ class API(Utility):
     m_pyhouse_obj = None
 
     def __init__(self):
-        LOG.info("Initialized.")
+        if g_debug >= 1:
+            LOG.info("Initialized.")
 
     def Start(self, p_pyhouse_obj):
         self.update_pyhouse_obj(p_pyhouse_obj)

@@ -16,7 +16,7 @@ from xml.etree import ElementTree as ET
 
 # Import PyHouse files
 from Modules.Core.data_objects import ComputerInformation
-from Modules.Comps import internet
+from Modules.computers import internet
 from Modules.Core import nodes
 from Modules.utils import pyh_log
 from Modules.utils.xml_tools import XmlConfigTools

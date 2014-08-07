@@ -23,7 +23,7 @@ import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import InternetConnectionData, InternetConnectionDynDnsData
-from Modules.Comps import inet_find_snar, inet_update_freedns
+from Modules.computers import inet_find_snar, inet_update_freedns
 from Modules.utils.xml_tools import XmlConfigTools
 from Modules.utils import pyh_log
 # from Modules.utils.tools import PrettyPrintAny

@@ -51,6 +51,10 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.controller_sect.tag, 'ControllerSection', 'XML - No Controllers section')
         self.assertEqual(self.m_xml.controller.tag, 'Controller', 'XML - No Controller section')
 
+    def test_0211_ReadControllerData(self):
+        l_obj = self.m_api._read_controller_data(self.m_xml.controller)
+        PrettyPrintAny(l_obj, 'Controller Data', 100)
+
     def test_0221_ReadInterfaceXml(self):
         l_interface = self.m_api._read_interface_data(self.m_controller_obj, self.m_xml.controller)
         PrettyPrintAny(l_interface, 'Read Interface', 100)
@@ -61,7 +65,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         PrettyPrintAny(l_family, 'Read Family', 100)
 
     def test_0223_ReadControllerXml(self):
-        l_controller = self.m_api._read_controller_data(self.m_controller_obj, self.m_xml.controller)
+        l_controller = self.m_api._read_controller_data(self.m_xml.controller)
         PrettyPrintAny(l_controller, 'Read Controller', 100)
 
     def test_0243_ReadOneControllerXml(self):

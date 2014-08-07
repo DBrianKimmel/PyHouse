@@ -36,23 +36,24 @@ class ControllersAPI(ReadWriteConfigXml):
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def _read_controller_data(self, p_obj, p_xml):
-        p_obj.InterfaceType = self.get_text_from_xml(p_xml, 'InterfaceType')
-        p_obj.Port = self.get_text_from_xml(p_xml, 'Port')
+    def _read_controller_data(self, p_xml):
+        l_obj = ControllerData()
+        l_obj = self.read_base_lighting_xml(l_obj, p_xml)
+        l_obj.InterfaceType = self.get_text_from_xml(p_xml, 'InterfaceType')
+        l_obj.Port = self.get_text_from_xml(p_xml, 'Port')
+        return l_obj
 
     def _read_family_data(self, p_controller_obj, p_xml):
         """
         Read and fill in the family specific data of the controller.
         """
-        l_family = p_controller_obj.ControllerFamily
-        try:
-            l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[l_family].ModuleAPI
-            l_api.extract_device_xml(p_controller_obj, p_xml)
-
-            # family.ReadWriteConfigXml().
-
-        except Exception as e_err:  # ControllerFamily invalid or missing
-            LOG.error('ERROR - Read Family Data {0:}'.format(e_err))
+        # l_family = p_controller_obj.ControllerFamily
+        family.API().ReadXml(p_controller_obj, p_xml)
+        # try:
+        #    l_xml = self.m_pyhouse_obj.House.OBJs.FamilyData[l_family].FamilyXmlModuleName
+        #    l_xml().ReadXml(p_controller_obj, p_xml)
+        # except Exception as e_err:  # ControllerFamily invalid or missing
+        #    LOG.error('ERROR - Read Family Data {0:}'.format(e_err))
 
     def _read_interface_data(self, p_obj, p_xml):
         try:
@@ -62,10 +63,8 @@ class ControllersAPI(ReadWriteConfigXml):
 
     def read_one_controller_xml(self, p_controller_xml):
         try:
-            l_controller_obj = ControllerData()
-            l_controller_obj = self.read_base_lighting_xml(l_controller_obj, p_controller_xml)
+            l_controller_obj = self._read_controller_data(p_controller_xml)
             l_controller_obj.Key = self.m_count  # Renumber
-            self._read_controller_data(l_controller_obj, p_controller_xml)
             self._read_family_data(l_controller_obj, p_controller_xml)
             self._read_interface_data(l_controller_obj, p_controller_xml)
         except Exception as e_err:
@@ -94,7 +93,7 @@ class ControllersAPI(ReadWriteConfigXml):
         self.put_text_element(p_xml, 'Port', p_obj.Port)
 
     def _write_family_data(self, p_controller_obj, p_xml):
-        l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[p_controller_obj.ControllerFamily].ModuleAPI
+        l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[p_controller_obj.ControllerFamily].FamilyModuleAPI
         l_api.insert_device_xml(p_xml, p_controller_obj)
 
     def _write_interface_data(self, p_obj, p_xml):

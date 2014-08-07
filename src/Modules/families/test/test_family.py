@@ -35,7 +35,8 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
-        self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
+        self.m_api = family.API()
+        # self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
         # self.m_api = lighting_controllers.ControllersAPI(self.m_pyhouse_obj)
         # self.m_controller_obj = ControllerData()
 
@@ -44,43 +45,59 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(family.VALID_FAMILIES[1], 'UPB')
         self.assertEqual(family.VALID_FAMILIES[2], 'X10')
 
-    def test_0202_build_one(self):
-        l_family_obj = self.m_api.build_one_family('Insteon')
+    def test_0211_BuildOne(self):
+        l_family_obj = self.m_api._build_one_family('Insteon')
         PrettyPrintAny(l_family_obj)
         self.assertEqual(l_family_obj.Name, 'Insteon', 'Invalid name')
-        self.assertEqual(l_family_obj.ModuleName, 'Device_Insteon', 'Invalid Module Name')
-        self.assertEqual(l_family_obj.PackageName, 'Modules.families.Insteon', 'Invalid Package Name')
+        self.assertEqual(l_family_obj.FamilyDeviceModuleName, 'Insteon_device', 'Invalid Device Module Name')
+        self.assertEqual(l_family_obj.FamilyPackageName, 'Modules.families.Insteon', 'Invalid Package Name')
 
-    def test_0203_import_one(self):
-        l_family_obj = self.m_api.import_one_module('Insteon')
+    def test_0212_BuildOne(self):
+        l_family_obj = self.m_api._build_one_family('UPB')
+        PrettyPrintAny(l_family_obj)
+        self.assertEqual(l_family_obj.Name, 'UPB', 'Invalid name')
+        self.assertEqual(l_family_obj.FamilyDeviceModuleName, 'UPB_device', 'Invalid Device Module Name')
+        self.assertEqual(l_family_obj.FamilyPackageName, 'Modules.families.UPB', 'Invalid Package Name')
+
+    def test_0213_BuildOne(self):
+        l_family_obj = self.m_api._build_one_family('X10')
+        PrettyPrintAny(l_family_obj)
+        self.assertEqual(l_family_obj.Name, 'X10', 'Invalid name')
+        self.assertEqual(l_family_obj.FamilyDeviceModuleName, 'X10_device', 'Invalid Device Module Name')
+        self.assertEqual(l_family_obj.FamilyPackageName, 'Modules.families.X10', 'Invalid Package Name')
+
+    def test_0221_ImportOne(self):
+        l_obj = self.m_api._build_one_family('Insteon')
+        l_family_obj = self.m_api._import_one_module(l_obj)
         self.assertNotEqual(l_family_obj.API, None, 'Error importing module Insteon')
+
+    def test_0222_ImportOne(self):
+        l_obj = self.m_api._build_one_family('UPB')
+        l_ret = self.m_api._import_one_module(l_obj)
+        self.assertNotEqual(l_ret, None, 'Error importing module UPB')
         pass
 
-    def test_0204_import(self):
-        l_family_obj = self.m_api.build_one_family('Insteon')
-        l_ret = self.m_api.import_module(l_family_obj)
-        self.assertNotEqual(l_ret, None, 'Error importing module Insteon')
+    def test_0223_ImportOne(self):
+        l_obj = self.m_api._build_one_family('X10')
+        l_ret = self.m_api._import_one_module(l_obj)
+        self.assertNotEqual(l_ret, None, 'Error importing module X10')
         pass
 
-    def test_0211_build_family(self):
+    def test_0231_build_family(self):
         self.m_api.build_lighting_family_info()
         pass
 
-    def test_0212_start_family(self):
+    def test_0241_start_family(self):
         l_family_obj = self.m_api.build_lighting_family_info()
-        l_family_obj = self.m_api.build_one_family('Insteon')
-        l_ret = self.m_api.import_module(l_family_obj)
+        l_family_obj = self.m_api._build_one_family('Insteon')
+        l_ret = self.m_api._import_one_module(l_family_obj)
         self.assertNotEqual(l_ret, None, 'Error importing module Insteon')
         pass
 
-    def test_0213_stop_family(self):
-        l_family_obj = self.m_api.build_one_family('Insteon')
-        l_ret = self.m_api.import_module(l_family_obj)
+    def test_0261_stop_family(self):
+        l_family_obj = self.m_api._build_one_family('Insteon')
+        l_ret = self.m_api._import_one_module(l_family_obj)
         self.assertNotEqual(l_ret, None, 'Error importing module Insteon')
-        pass
-
-    def test_0221_BuildXmlName(self):
-
         pass
 
 # ## END DBK

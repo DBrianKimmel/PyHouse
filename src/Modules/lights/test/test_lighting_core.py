@@ -56,7 +56,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse_obj', 120)
         PrettyPrintAny(self.m_pyhouse_obj.Xml, 'PyHouse_obj.Xml', 120)
 
-    def test_0203_ReadBaseXml(self):
+    def test_0211_ReadBaseXml(self):
         """ Read in the xml file and fill in the lights
         """
         l_base = self.m_api.read_base_lighting_xml(self.m_light_obj, self.m_xml.light)
@@ -70,7 +70,21 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_base.ControllerFamily, 'Insteon', 'Bad ControllerFamily')
         self.assertEqual(l_base.RoomName, 'Foyer', 'Bad Room Name')
 
-    def test_0204_WriteBaseXml(self):
+    def test_0212_ReadBaseXml(self):
+        """ Read in the xml file and fill in the lights
+        """
+        l_base = self.m_api.read_base_lighting_xml(self.m_light_obj, self.m_xml.controller)
+        PrettyPrintAny(l_base, 'ReadBaseLighting', 120)
+        self.assertEqual(l_base.Name, 'PLM_1', 'Bad Name')
+        self.assertEqual(l_base.Key, 0, 'Bad Key')
+        self.assertEqual(l_base.Active, False, 'Bad Active')
+        self.assertEqual(l_base.Comment, 'Dongle using serial converter 067B:2303', 'Bad Comments')
+        self.assertEqual(l_base.Coords, "None", 'Bad Coords')
+        self.assertEqual(l_base.IsDimmable, False, 'Bad Dimmable')
+        self.assertEqual(l_base.ControllerFamily, 'Insteon', 'Bad ControllerFamily')
+        self.assertEqual(l_base.RoomName, 'Office', 'Bad Room Name')
+
+    def test_0231_WriteBaseXml(self):
         """ Read in the xml file and fill in the lights
         """
         # l_xml = ET.Element('Lights')
@@ -98,21 +112,21 @@ class Test_03_EmptyXML(SetupMixin, unittest.TestCase):
         PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse_obj', 120)
         PrettyPrintAny(self.m_pyhouse_obj.Xml, 'PyHouse_obj.Xml', 120)
 
-    def test_0203_ReadBaseXml(self):
+    def test_0211_ReadBaseXml(self):
         """ Read in the xml file and fill in the lights
         """
         l_base = self.m_api.read_base_lighting_xml(self.m_light_obj, self.m_xml.light)
         PrettyPrintAny(l_base, 'ReadBaseLighting', 120)
-        self.assertEqual(l_base.Name, None, 'Bad Name')
-        self.assertEqual(l_base.Key, None, 'Bad Key')
+        self.assertEqual(l_base.Name, 'Missing Name', 'Bad Name')
+        self.assertEqual(l_base.Key, 0, 'Bad Key')
         self.assertEqual(l_base.Active, False, 'Bad Active')
-        self.assertEqual(l_base.Comment, None, 'Bad Comments')
-        self.assertEqual(l_base.Coords, None, 'Bad Coords')
+        self.assertEqual(l_base.Comment, 'None', 'Bad Comments')
+        self.assertEqual(l_base.Coords, 'None', 'Bad Coords')
         self.assertEqual(l_base.IsDimmable, False, 'Bad Dimmable')
-        self.assertEqual(l_base.ControllerFamily, None, 'Bad ControllerFamily')
-        self.assertEqual(l_base.RoomName, None, 'Bad Room Name')
+        self.assertEqual(l_base.ControllerFamily, 'None', 'Bad ControllerFamily')
+        self.assertEqual(l_base.RoomName, 'None', 'Bad Room Name')
 
-    def test_0204_WriteBaseXml(self):
+    def test_0231_WriteBaseXml(self):
         """ Read in the xml file and fill in the lights
         """
         # l_xml = ET.Element('Lights')

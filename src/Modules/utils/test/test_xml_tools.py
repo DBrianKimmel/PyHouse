@@ -240,7 +240,14 @@ class Test_03_ConfigTools(SetupMixin, unittest.TestCase):
         self.assertEqual(l_base_obj.Active, True, 'Bad Active')
         # self.assertEqual(l_base_obj.UUID, 'ec9d9930-89c9-11e3-a1ab-082e5f8cdfd2', 'Bad UUID')
 
-    def test_0302_writeBaseObject(self):
+    def test_0301_readBaseObject(self):
+        l_base_obj = BaseLightingData()
+        self.m_api.read_base_object_xml(l_base_obj, self.m_xml.controller)
+        self.assertEqual(l_base_obj.Name, 'PLM_1', 'Bad Name')
+        self.assertEqual(l_base_obj.Key, 0, 'Bad Key')
+        self.assertEqual(l_base_obj.Active, False, 'Bad Active')
+
+    def test_0311_writeBaseObject(self):
         l_base_obj = BaseLightingData()
         self.m_api.read_base_object_xml(l_base_obj, self.m_xml.light)
         l_xml = self.m_api.write_base_object_xml('Light', l_base_obj)

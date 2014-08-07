@@ -42,7 +42,7 @@ class Utility(ControllersAPI, ButtonsAPI, LightingLightsAPI):
             p_pyhouse_obj.House.OBJs.Buttons = ButtonsAPI(p_pyhouse_obj).read_buttons_xml(l_house_xml.find('ButtonSection'))
             p_pyhouse_obj.House.OBJs.Lights = LightingLightsAPI(p_pyhouse_obj).read_all_lights_xml(l_house_xml.find('LightSection'))
         except AttributeError as e_err:
-            LOG.error('ReadLighting ERROR - {0:}'.format(e_err))
+            LOG.error('ERROR - ReadLighting - {0:}'.format(e_err))
 
     def _write_lighting_xml(self, p_house_objs, p_house_element):
         LOG.info('Writing lights, buttons and controllers ')
@@ -55,7 +55,6 @@ class API(Utility):
 
     def __init__(self):
         self.m_family = family.API()
-        LOG.info("Initialized.")
 
     def Start(self, p_pyhouse_obj):
         """Allow loading of sub modules and drivers.
@@ -63,7 +62,7 @@ class API(Utility):
         LOG.info("Starting.")
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_house_obj = p_pyhouse_obj.House.OBJs
-        self.m_house_obj.FamilyData = self.m_family.build_lighting_family_info()
+        # self.m_house_obj.FamilyData = self.m_family.build_lighting_family_info()
         self._read_lighting_xml(p_pyhouse_obj)
         self.m_family.start_lighting_families(p_pyhouse_obj, self.m_house_obj)
         LOG.info("Started.")

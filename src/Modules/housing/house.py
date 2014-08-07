@@ -20,6 +20,7 @@ Rooms and lights and HVAC are associated with a particular house.
 
 # Import PyMh files
 from Modules.Core.data_objects import HouseInformation, HouseObjs
+from Modules.families import family
 from Modules.scheduling import schedule
 from Modules.housing import location
 from Modules.housing import rooms
@@ -93,6 +94,7 @@ class Utility(ReadWriteConfigXml):
 
     def add_api_references(self, p_pyhouse_obj):
         p_pyhouse_obj.APIs.HouseAPI = self
+        p_pyhouse_obj.APIs.FamilyAPI = family.API()
         p_pyhouse_obj.APIs.ScheduleAPI = schedule.API()
 
     def start_house_parts(self, p_pyhouse_obj):
@@ -120,6 +122,8 @@ class API(Utility):
         self.add_api_references(p_pyhouse_obj)
         self.m_pyhouse_obj = p_pyhouse_obj
         p_pyhouse_obj.House.OBJs = self.read_house_xml(p_pyhouse_obj)
+        p_pyhouse_obj.House.OBJs.FamilyData = p_pyhouse_obj.APIs.FamilyAPI.Start(p_pyhouse_obj)
+        # PrettyPrintAny(p_pyhouse_obj.House.OBJs, 'PyHouseObj', 120)
         self.start_house_parts(p_pyhouse_obj)
         LOG.info("Started House {0:}".format(self.m_pyhouse_obj.House.Name))
 

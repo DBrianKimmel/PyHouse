@@ -32,7 +32,7 @@ TODO: implement all-links
 import Queue
 
 # Import PyMh files
-from Modules.Core.data_objects import InsteonData
+from Modules.families.Insteon.Insteon_data import InsteonData
 from Modules.utils.tools import PrintBytes
 from Modules.families.Insteon.Insteon_constants import COMMAND_LENGTH, MESSAGE_LENGTH, MESSAGE_TYPES, PLM_COMMANDS, STX
 from Modules.families.Insteon import Insteon_utils
@@ -504,7 +504,7 @@ class API(Utility):
 
     def Start(self, p_pyhouse_obj, p_controller_obj):
         """
-        Comes from Device_Insteon.API.Start()
+        Comes from Insteon_device.API.Start()
         Note that not all insteon devices are known when we start.
 
         @param p_controller_obj: is the controller we are starting

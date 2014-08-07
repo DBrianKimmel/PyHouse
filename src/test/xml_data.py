@@ -312,10 +312,10 @@ XML_LONG = """
                 <LightingType>Controller</LightingType>
                 <Address>AA.AA.AA</Address>
                 <IsController>True</IsController>
-                <DevCat>0x0</DevCat><GroupList />
+                <DevCat>12.34</DevCat><GroupList />
                 <GroupNumber>0</GroupNumber>
                 <IsMaster>False</IsMaster>
-                <ProductKey>0</ProductKey>
+                <ProductKey>23.45.67</ProductKey>
                 <IsResponder>True</IsResponder>
                 <InterfaceType>Serial</InterfaceType>
                 <Port>/dev/ttyUSB0</Port>

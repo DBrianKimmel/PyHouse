@@ -27,7 +27,7 @@ PLEASE REFACTOR ME!
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Core.data_objects import InsteonData
+from Modules.families.Insteon.Insteon_data import InsteonData
 from Modules.Core import conversions
 from Modules.utils.tools import PrintBytes
 from Modules.families.Insteon.Insteon_constants import ACK, MESSAGE_TYPES, MESSAGE_LENGTH, NAK, STX

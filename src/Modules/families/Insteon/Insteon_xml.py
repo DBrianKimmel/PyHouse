@@ -1,9 +1,9 @@
 """
 Created on Jul 29, 2014
 
--*- test-case-name: PyHouse.src.Modules.families.Insteon.test.test_Device_Insteon -*-
+-*- test-case-name: PyHouse.src.Modules.families.Insteon.test.test_Insteon_xml -*-
 
-@name: PyHouse/src/Modules/families/Insteon/Device_Insteon.py
+@name: PyHouse/src/Modules/families/Insteon/Insteon_xml.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @copyright: 2011-2014 by D. Brian Kimmel
@@ -25,14 +25,14 @@ serial_port
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Core.data_objects import InsteonData
+from Modules.families.Insteon.Insteon_data import InsteonData
 from Modules.Core import conversions
 from Modules.utils import xml_tools
 from Modules.utils import pyh_log
-# from Modules.utils.tools import PrettyPrintAny
+from Modules.utils.tools import PrettyPrintAny
 
 g_debug = 1
-LOG = pyh_log.getLogger('PyHouse.Dev_Insteon ')
+LOG = pyh_log.getLogger('PyHouse.Insteon_xml ')
 
 
 class ReadWriteConfigXml(xml_tools.XmlConfigTools):
@@ -43,6 +43,13 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
     This class and methods are pointed to by family.py and must be the same in every Device package.
     """
 
+    def _read_product_key(self, p_entry_xml, p_default = '98.76.54'):
+        try:
+            l_ret = conversions.dotted_hex2int(self.get_text_from_xml(p_entry_xml, 'ProductKey', p_default))
+        except Exception:
+            l_ret.ProductKey = p_default
+        return l_ret
+
     def extract_device_xml(self, p_device_obj, p_entry_xml):
         """
         A method to extract Insteon specific elements and insert them into a basic device object.
@@ -51,7 +58,6 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         @param p_device_obj : is the Basic Object that will have the extracted elements inserted into.
         @return: a dict of the extracted Insteon Specific data.
         """
-        # PrettyPrintAny(p_entry_xml, 'DeviceInsteon extract  XML', 120)
         l_insteon_obj = InsteonData()
         l_insteon_obj.InsteonAddress = conversions.dotted_hex2int(self.get_text_from_xml(p_entry_xml, 'Address', '77.88.99'))
         l_insteon_obj.DevCat = conversions.dotted_hex2int(self.get_text_from_xml(p_entry_xml, 'DevCat', 'A1.B2'))
@@ -60,11 +66,10 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         l_insteon_obj.IsController = self.get_bool_from_xml(p_entry_xml, 'IsController')
         l_insteon_obj.IsMaster = self.get_bool_from_xml(p_entry_xml, 'IsMaster')
         l_insteon_obj.IsResponder = self.get_bool_from_xml(p_entry_xml, 'IsResponder')
-        try:
-            l_insteon_obj.ProductKey = conversions.dotted_hex2int(self.get_text_from_xml(p_entry_xml, 'ProductKey', '98.76.54'))
-        except Exception:
-            l_insteon_obj.ProductKey = 0
+        l_insteon_obj.ProductKey = self._read_product_key(p_entry_xml)
         xml_tools.stuff_new_attrs(p_device_obj, l_insteon_obj)
+        if g_debug >= 1:
+            LOG.debug('Insteon Read {0:}'.format(PrettyPrintAny(l_insteon_obj, 'Insteon Obj', 120)))
         return l_insteon_obj
 
     def insert_device_xml(self, p_entry_xml, p_device_obj):

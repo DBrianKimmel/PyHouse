@@ -30,13 +30,13 @@ from twisted.application.service import Application
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import PyHouseData, PyHouseAPIs, TwistedInformation, CoreServicesInformation, XmlInformation
-from Modules.Comps import computer
+from Modules.computers import computer
 from Modules.housing import house
 from Modules.utils import pyh_log
 from Modules.utils import xml_tools
 from Modules.utils.config_file import ConfigAPI
 from Modules.utils.xml_tools import XmlConfigTools
-from Modules.utils.tools import PrettyPrintAny
+# from Modules.utils.tools import PrettyPrintAny
 
 g_debug = 0
 LOG = pyh_log.getLogger('PyHouse.CoreSetup   ')
