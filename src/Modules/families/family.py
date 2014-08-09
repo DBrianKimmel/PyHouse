@@ -33,12 +33,12 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
     """Read and write the interface information based in the interface type.
     """
 
-    def read_family_xml(self, p_controller_obj, p_controller_xml):
+    def XXXread_family_xml(self, p_controller_obj, p_controller_xml):
         """Update the controller object by extracting the passed in XML.
         """
         pass
 
-    def write_family_xml(self, p_controller_obj, p_xml):
+    def XXXwrite_family_xml(self, p_controller_obj, p_xml):
         pass
 
 
@@ -66,7 +66,6 @@ class Utility(ReadWriteConfigXml):
         Hopefully, this method will detect all such errors and make the developers life much easier by reporting the error.
         """
         l_device = p_family_obj.FamilyPackageName + '.' + p_family_obj.FamilyDeviceModuleName
-        l_xml = p_family_obj.FamilyPackageName + '.' + p_family_obj.FamilyXmlModuleName
         try:
             l_module = importlib.import_module(l_device, p_family_obj.FamilyPackageName)
         except ImportError as l_error:
@@ -74,7 +73,15 @@ class Utility(ReadWriteConfigXml):
             print("ERROR - Cannot import:\n    Module: {0:}\n    Package: {1:}\n    Error: {2:}\n\n".format(p_family_obj.FamilyDeviceModuleName, p_family_obj.FamilyPackageName, l_msg))
             LOG.error(l_msg)
             l_module = None
-        return l_module
+        l_xml = p_family_obj.FamilyPackageName + '.' + p_family_obj.FamilyXmlModuleName
+        try:
+            l_xml_module = importlib.import_module(l_xml, p_family_obj.FamilyPackageName)
+        except ImportError as l_error:
+            l_msg = 'ERROR "{0:}" while trying to import XML_module {1:}.'.format(l_error, p_family_obj.FamilyXmlModuleName)
+            print("ERROR - Cannot import:\n    XmlModule: {0:}\n    Package: {1:}\n    Error: {2:}\n\n".format(p_family_obj.FamilyXmlModuleName, p_family_obj.FamilyPackageName, l_msg))
+            LOG.error(l_msg)
+            l_module = None
+        return l_module, l_xml_module
 
     def _initialize_one_module(self, p_module):
         """
@@ -112,7 +119,7 @@ class API(Utility):
         self.m_count = 0
         for l_family in VALID_FAMILIES:
             l_family_obj = self._build_one_family_data(l_family)
-            l_module = self._import_one_module(l_family_obj)
+            l_module, l_xml_module = self._import_one_module(l_family_obj)
             l_api = self._initialize_one_module(l_module)
             l_family_obj.FamilyModuleAPI = l_api
             l_family_data[l_family_obj.Name] = l_family_obj

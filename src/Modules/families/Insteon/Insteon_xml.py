@@ -50,7 +50,7 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
             l_ret.ProductKey = p_default
         return l_ret
 
-    def extract_device_xml(self, p_device_obj, p_entry_xml):
+    def ReadXml(self, p_device_obj, p_entry_xml):
         """
         A method to extract Insteon specific elements and insert them into a basic device object.
 
@@ -59,7 +59,7 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         @return: a dict of the extracted Insteon Specific data.
         """
         l_insteon_obj = InsteonData()
-        l_insteon_obj.InsteonAddress = conversions.dotted_hex2int(self.get_text_from_xml(p_entry_xml, 'Address', '77.88.99'))
+        l_insteon_obj.InsteonAddress = conversions.dotted_hex2int(self.get_text_from_xml(p_entry_xml, 'Address', '99.88.77'))
         l_insteon_obj.DevCat = conversions.dotted_hex2int(self.get_text_from_xml(p_entry_xml, 'DevCat', 'A1.B2'))
         l_insteon_obj.GroupList = self.get_text_from_xml(p_entry_xml, 'GroupList')
         l_insteon_obj.GroupNumber = self.get_int_from_xml(p_entry_xml, 'GroupNumber', 0)
@@ -72,7 +72,7 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
             LOG.debug('Insteon Read {0:}'.format(PrettyPrintAny(l_insteon_obj, 'Insteon Obj', 120)))
         return l_insteon_obj
 
-    def insert_device_xml(self, p_entry_xml, p_device_obj):
+    def WriteXml(self, p_entry_xml, p_device_obj):
         if g_debug >= 1:
             LOG.debug('Insteon Write {0:}'.format(p_device_obj.Name))
         self.put_text_element(p_entry_xml, 'Address', conversions.int2dotted_hex(p_device_obj.InsteonAddress, 3))

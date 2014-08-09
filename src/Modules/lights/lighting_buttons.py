@@ -9,6 +9,7 @@ import xml.etree.ElementTree as ET
 # Import PyHouse files
 from Modules.Core.data_objects import ButtonData
 from Modules.lights.lighting_core import ReadWriteConfigXml
+from Modules.families import family
 # from Modules.utils.tools import PrettyPrintAny
 
 
@@ -23,20 +24,18 @@ class ButtonsAPI(ReadWriteConfigXml):
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def _read_light_data(self, p_obj, p_xml):
-        pass
+    def _read_button_data(self, p_xml):
+        l_obj = ButtonData()
+        l_obj = self.read_base_lighting_xml(l_obj, p_xml)
+        return l_obj
 
     def _read_family_data(self, p_obj, p_xml):
-        # PrettyPrintAny(self.m_pyhouse_obj.House.OBJs, 'LightingButtons - ePyHouse_Obj', 120)
-        l_family = p_obj.ControllerFamily
-        l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[l_family].ModuleAPI
-        l_api.extract_device_xml(p_obj, p_xml)
+        family.API().ReadXml(p_obj, p_xml)
 
     def read_one_button_xml(self, p_button_xml):
-        l_button_obj = ButtonData()
-        l_button_obj = self.read_base_lighting_xml(l_button_obj, p_button_xml)
-        l_button_obj.Key = self.m_count  # Renumber
+        l_button_obj = self._read_button_data(p_button_xml)
         self._read_family_data(l_button_obj, p_button_xml)
+        l_button_obj.Key = self.m_count  # Renumber
         return l_button_obj
 
     def read_buttons_xml(self, p_button_sect_xml):

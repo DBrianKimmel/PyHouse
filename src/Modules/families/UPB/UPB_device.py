@@ -68,7 +68,7 @@ class API(object):
 
     def ChangeLight(self, p_light_obj, p_level, _p_rate = 0):
         LOG.debug('Change light Name:{0:}, ControllerFamily:{1:}'.format(p_light_obj.Name, p_light_obj.ControllerFamily))
-        _l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[p_light_obj.ControllerFamily].ModuleAPI
+        _l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[p_light_obj.ControllerFamily].FamilyModuleAPI
         self.m_plm.ChangeLight(p_light_obj, p_level)
 
     def ReadXml(self, p_device, p_xml):

@@ -47,7 +47,7 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
     def _read_family_data(self, p_obj, p_xml, p_pyhouse_obj):
         try:
             l_family = p_obj.ControllerFamily
-            l_api = p_pyhouse_obj.House.OBJs.FamilyData[l_family].ModuleAPI
+            l_api = p_pyhouse_obj.House.OBJs.FamilyData[l_family].FamilyModuleAPI
             l_api.extract_device_xml(p_obj, p_xml)
         except KeyError as e_err:
             LOG.error('ReadFamilyData ERROR {0:}'.format(e_err))
@@ -91,7 +91,7 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
 
     def _write_family_data(self, p_obj, p_xml, p_pyhouse_obj):
         try:
-            l_api = p_pyhouse_obj.House.OBJs.FamilyData[p_obj.ControllerFamily].ModuleAPI
+            l_api = p_pyhouse_obj.House.OBJs.FamilyData[p_obj.ControllerFamily].FamilyModuleAPI
             l_api.insert_device_xml(p_xml, p_obj)
         except KeyError as e_err:
             LOG.error('Write Family Key Error {0:}'.format(e_err))

@@ -47,13 +47,7 @@ class ControllersAPI(ReadWriteConfigXml):
         """
         Read and fill in the family specific data of the controller.
         """
-        # l_family = p_controller_obj.ControllerFamily
         family.API().ReadXml(p_controller_obj, p_xml)
-        # try:
-        #    l_xml = self.m_pyhouse_obj.House.OBJs.FamilyData[l_family].FamilyXmlModuleName
-        #    l_xml().ReadXml(p_controller_obj, p_xml)
-        # except Exception as e_err:  # ControllerFamily invalid or missing
-        #    LOG.error('ERROR - Read Family Data {0:}'.format(e_err))
 
     def _read_interface_data(self, p_obj, p_xml):
         try:

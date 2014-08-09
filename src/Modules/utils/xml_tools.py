@@ -208,7 +208,7 @@ class XmlConfigTools(PutGetXML):
             p_base_obj.Active = self.get_bool_from_xml(p_entry_element_xml, 'Active', False)
             p_base_obj.UUID = self.get_uuid_from_xml(p_entry_element_xml, 'UUID')
         except Exception as e_err:
-            print('ERROR in read_base_obj - {0:}'.format(e_err))
+            print('ERROR in xml_tools.read_base_obj() - {0:}'.format(e_err))
 
     def write_base_object_xml(self, p_element_name, p_object):
         """

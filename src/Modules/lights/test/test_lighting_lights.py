@@ -16,7 +16,7 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from Modules.Core.data_objects import PyHouseData, LightData
 from Modules.lights import lighting_lights
-from Modules.lights.lighting_core import ReadWriteConfigXml
+from Modules.Core import conversions
 from Modules.families import family
 from Modules.web import web_utils
 from Modules.utils.tools import PrettyPrintAny
@@ -39,9 +39,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
-        SetupMixin.setUp(self, self.m_root_xml)
-        SetupPyHouseObj().BuildXml(self.m_root_xml)
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
         self.m_light_obj = LightData()
         self.m_api = lighting_lights.LightingLightsAPI(self.m_pyhouse_obj)
@@ -57,20 +55,18 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         PrettyPrintAny(self.m_pyhouse_obj.Xml, 'PyHouse_obj.Xml', 120)
 
     def test_0211_ReadLightData(self):
-        PrettyPrintAny(self.m_light_obj, 'Light_Obj Before', 120)
-        l_light_obj = ReadWriteConfigXml().read_base_lighting_xml(self.m_light_obj, self.m_xml.light)
-        self.m_api._read_light_data(self.m_light_obj, self.m_xml.light)
-        self.assertEqual(self.m_light_obj.IsController, 'True')
-        self.assertEqual(self.m_light_obj.CurLevel, 73)
-        PrettyPrintAny(self.m_light_obj, 'Light_Obj After', 120)
+        l_light_obj = self.m_api._read_light_data(self.m_xml.light)
+        PrettyPrintAny(l_light_obj, 'Light_Obj', 120)
+        self.assertEqual(l_light_obj.IsController, 'True')
+        self.assertEqual(l_light_obj.CurLevel, 73)
+        self.assertEqual(l_light_obj.ControllerFamily, 'Insteon')
 
     def test_0212_ReadFamilyData(self):
-        PrettyPrintAny(self.m_light_obj, 'Light_Obj Before', 120)
-        self.m_api._read_light_data(self.m_light_obj, self.m_xml.light)
-        l_api = self.m_api._read_family_data(self.m_light_obj, self.m_xml)
-        # self.assertEqual(self.m_light_obj.InsteonAddr, '11.22.33')
-        PrettyPrintAny(self.m_light_obj, 'Light_Obj After', 120)
-        PrettyPrintAny(l_api , 'l_api', 120)
+        l_light_obj = self.m_api._read_light_data(self.m_xml.light)
+        l_api = self.m_api._read_family_data(l_light_obj, self.m_xml.light)
+        PrettyPrintAny(l_light_obj, 'Light_Obj After', 120)
+        print('Address   {0:}'.format(conversions.int2dotted_hex(l_light_obj.InsteonAddress, 3)))
+        self.assertEqual(l_light_obj.InsteonAddress, conversions.dotted_hex2int('16.62.2D'))
 
     def test_0213_ReadOneLightXml(self):
         """ Read in the xml file and fill in the lights
@@ -94,7 +90,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
 
 
     def test_0221_WriteLightData(self):
-        self.m_api._read_light_data(self.m_light_obj, self.m_xml.light)
+        self.m_light_obj = self.m_api._read_light_data(self.m_xml.light)
         pass
 
     def test_0222_WriteLightFamily(self):

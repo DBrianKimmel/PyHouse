@@ -24,6 +24,7 @@ serial_port
 
 # Import PyMh files
 from Modules.families.Insteon.Insteon_data import InsteonData
+from Modules.families.Insteon import Insteon_xml
 from Modules.Core import conversions
 from Modules.utils import xml_tools
 from Modules.utils import pyh_log
@@ -41,7 +42,7 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
     This class and methods are pointed to by family.py and must be the same in every Device package.
     """
 
-    def extract_device_xml(self, p_device_obj, p_entry_xml):
+    def XXXextract_device_xml(self, p_device_obj, p_entry_xml):
         """
         A method to extract Insteon specific elements and insert them into a basic device object.
 
@@ -65,7 +66,7 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         xml_tools.stuff_new_attrs(p_device_obj, l_insteon_obj)
         return l_insteon_obj
 
-    def insert_device_xml(self, p_entry_xml, p_device_obj):
+    def XXXinsert_device_xml(self, p_entry_xml, p_device_obj):
         if g_debug >= 1:
             LOG.debug('Insteon Write {0:}'.format(p_device_obj.Name))
         self.put_text_element(p_entry_xml, 'Address', conversions.int2dotted_hex(p_device_obj.InsteonAddress, 3))
@@ -157,5 +158,8 @@ class API(Utility):
         if g_debug >= 1:
             LOG.debug('Change light Name:{0:}, ControllerFamily:{1:}'.format(p_light_obj.Name, p_light_obj.ControllerFamily))
         self.m_plm.ChangeLight(p_light_obj, p_level)
+
+    def ReadXml(self, p_device_obj, p_entry_xml):
+        Insteon_xml.ReadWriteConfigXml().ReadXml(p_device_obj, p_entry_xml)
 
 # ## END DBK
