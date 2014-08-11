@@ -19,9 +19,9 @@ from Modules.lights import lighting_lights
 from Modules.Core import conversions
 from Modules.families import family
 from Modules.web import web_utils
-from Modules.utils.tools import PrettyPrintAny
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
+from Modules.utils.tools import PrettyPrintAny
 
 
 class SetupMixin(object):
@@ -75,13 +75,13 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_light.Name, 'outside_front', 'Bad Name')
         self.assertEqual(l_light.Key, 0, 'Bad Key')
         self.assertEqual(l_light.Active, True, 'Bad Active')
-        # self.assertEqual(l_light.UUID, 'a6907f21-fe3b-11e3-ad9a-082e5f8cdfd2', 'Bad UUID')
         self.assertEqual(l_light.Comment, 'SwitchLink On/Off', 'Bad comment')
         self.assertEqual(l_light.Coords, "['0', '0']", 'Bad coords')
         self.assertEqual(l_light.IsDimmable, False, 'Bad dimmable')
         self.assertEqual(l_light.ControllerFamily, 'Insteon', 'Bad Lighting family')
         self.assertEqual(l_light.RoomName, 'Foyer', 'Bad Room Name')
         self.assertEqual(l_light.LightingType, 'Light', 'Bad LightingType')
+        self.assertEqual(l_light.InsteonAddress, conversions.dotted_hex2int('16.62.2D'))
         PrettyPrintAny(l_light, 'ReadOneLight', 120)
 
     def test_0214_ReadAllLightsXml(self):

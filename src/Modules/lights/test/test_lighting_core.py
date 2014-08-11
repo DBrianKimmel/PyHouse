@@ -15,7 +15,7 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import LightData
+from Modules.Core.data_objects import LightData, ButtonData, ControllerData
 from Modules.lights.lighting_core import ReadWriteConfigXml
 from Modules.families import family
 from test import xml_data
@@ -43,6 +43,8 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, self.m_root_xml)
         SetupPyHouseObj().BuildXml(self.m_root_xml)
         self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
+        self.m_button_obj = ButtonData()
+        self.m_controller_obj = ControllerData()
         self.m_light_obj = LightData()
         self.m_api = ReadWriteConfigXml()
 
@@ -53,6 +55,10 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision', 'XML - No Houses section')
         self.assertEqual(self.m_xml.light_sect.tag, 'LightSection', 'XML - No Lights section')
         self.assertEqual(self.m_xml.light.tag, 'Light', 'XML - No Light')
+        self.assertEqual(self.m_xml.controller_sect.tag, 'ControllerSection', 'XML - No Controller section')
+        self.assertEqual(self.m_xml.controller.tag, 'Controller', 'XML - No Controller')
+        self.assertEqual(self.m_xml.button_sect.tag, 'ButtonSection', 'XML - No Buttons section')
+        self.assertEqual(self.m_xml.button.tag, 'Button', 'XML - No Button')
         PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse_obj', 120)
         PrettyPrintAny(self.m_pyhouse_obj.Xml, 'PyHouse_obj.Xml', 120)
 
@@ -83,6 +89,20 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_base.IsDimmable, False, 'Bad Dimmable')
         self.assertEqual(l_base.ControllerFamily, 'Insteon', 'Bad ControllerFamily')
         self.assertEqual(l_base.RoomName, 'Office', 'Bad Room Name')
+
+    def test_0213_ReadBaseXml(self):
+        """ Read in the xml file and fill in the lights
+        """
+        l_base = self.m_api.read_base_lighting_xml(self.m_button_obj, self.m_xml.button)
+        PrettyPrintAny(l_base, 'ReadBaseLighting', 120)
+        self.assertEqual(l_base.Name, 'kpl_1_A', 'Bad Name')
+        self.assertEqual(l_base.Key, 0, 'Bad Key')
+        self.assertEqual(l_base.Active, False, 'Bad Active')
+        self.assertEqual(l_base.Comment, 'KeypadLink Button A', 'Bad Comments')
+        self.assertEqual(l_base.Coords, "None", 'Bad Coords')
+        self.assertEqual(l_base.IsDimmable, False, 'Bad Dimmable')
+        self.assertEqual(l_base.ControllerFamily, 'Insteon', 'Bad ControllerFamily')
+        self.assertEqual(l_base.RoomName, 'Master Bath', 'Bad Room Name')
 
     def test_0231_WriteBaseXml(self):
         """ Read in the xml file and fill in the lights

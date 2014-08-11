@@ -149,7 +149,7 @@
                 <GroupList>All_Lights|Outside</GroupList>
                 <GroupNumber>0</GroupNumber>
                 <IsMaster>True</IsMaster>
-                <ProductKey>00.o00.00</ProductKey>
+                <ProductKey>00.00.00</ProductKey>
                 <IsResponder>True</IsResponder>
             </Light>
             <Light Active="True" Key="2" Name="ChandMaster">

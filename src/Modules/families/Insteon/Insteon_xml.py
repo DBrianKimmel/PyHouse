@@ -44,8 +44,11 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
     """
 
     def _read_product_key(self, p_entry_xml, p_default = '98.76.54'):
+        l_ret = p_default
         try:
-            l_ret = conversions.dotted_hex2int(self.get_text_from_xml(p_entry_xml, 'ProductKey', p_default))
+            l_prod = self.get_text_from_xml(p_entry_xml, 'ProductKey', p_default)
+            # print('Insteon_xml - _read_product_key = {0:}'.format(l_prod))
+            l_ret = conversions.dotted_hex2int(l_prod)
         except Exception:
             l_ret.ProductKey = p_default
         return l_ret
@@ -66,10 +69,13 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         l_insteon_obj.IsController = self.get_bool_from_xml(p_entry_xml, 'IsController')
         l_insteon_obj.IsMaster = self.get_bool_from_xml(p_entry_xml, 'IsMaster')
         l_insteon_obj.IsResponder = self.get_bool_from_xml(p_entry_xml, 'IsResponder')
+        # print('Insteon_xml - ReadXml( D )')
         l_insteon_obj.ProductKey = self._read_product_key(p_entry_xml)
+        # print('Insteon_xml - ReadXml( E )')
         xml_tools.stuff_new_attrs(p_device_obj, l_insteon_obj)
-        if g_debug >= 1:
-            LOG.debug('Insteon Read {0:}'.format(PrettyPrintAny(l_insteon_obj, 'Insteon Obj', 120)))
+
+        if g_debug >= 2:
+            LOG.debug('Insteon Read {0:}'.format(PrettyPrintAny(p_device_obj, 'Insteon_xml - ReadXml - p_device_obj', 120)))
         return l_insteon_obj
 
     def WriteXml(self, p_entry_xml, p_device_obj):

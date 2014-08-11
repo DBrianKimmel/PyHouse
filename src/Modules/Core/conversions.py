@@ -33,12 +33,22 @@ def _get_factor(p_size):
         return 0
     return int(math.pow(256, (p_size - 1)))
 
+def _get_int(p_str):
+    l_int = 0
+    try:
+        l_int = int(p_str, 16)
+    except:
+        l_int = 0
+    return l_int
+
 def dotted_hex2int(p_hex):
     """
     @param p_hex: is a str like 'A1.B2.C3'
     """
     p_hex.replace(':', '.')
-    l_hexn = ''.join(["%02X" % int(l_ix, 16) for l_ix in p_hex.split('.')])
+    l_ary = p_hex.split('.')
+    l_hexn = ''.join(["%02X" % _get_int(l_ix) for l_ix in l_ary])
+    # l_hexn = ''.join(["%02X" % int(l_ix, 16) for l_ix in p_hex.split('.')])
     return int(l_hexn, 16)
 
 def int2dotted_hex(p_int, p_size):

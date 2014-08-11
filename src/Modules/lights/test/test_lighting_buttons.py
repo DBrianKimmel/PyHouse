@@ -14,9 +14,10 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, ButtonData
+from Modules.Core.data_objects import ButtonData
 from Modules.lights import lighting_buttons
 from Modules.families import family
+from Modules.Core import conversions
 from Modules.web import web_utils
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
@@ -52,22 +53,26 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         """ Read in the xml file and fill in the lights
         """
         l_button = self.m_api._read_button_data(self.m_xml.button)
+        PrettyPrintAny(l_button, 'ButtonData', 120)
         self.assertEqual(l_button.Name, 'kpl_1_A', 'Bad Name')
         self.assertEqual(l_button.Active, False, 'Bad Active')
         self.assertEqual(l_button.Comment, 'KeypadLink Button A', 'Bad Comment')
         self.assertEqual(l_button.ControllerFamily, 'Insteon', 'Bad Controller Family')
         self.assertEqual(l_button.LightingType, 'Button', 'Bad Lighting Type')
         self.assertEqual(l_button.RoomName, 'Master Bath', 'Bad Room Name')
-        PrettyPrintAny(l_button, 'ButtonData', 120)
 
     def test_0213_ReadOneButtonXml(self):
         """ Read in the xml file and fill in the lights
         """
         l_button = self.m_api.read_one_button_xml(self.m_xml.button)
-        self.assertEqual(l_button.Address, False, 'Bad Address')
+        PrettyPrintAny(l_button, 'ReadOneButton', 120)
+        self.assertEqual(l_button.Name, 'kpl_1_A', 'Bad Name')
+        self.assertEqual(l_button.Active, False, 'Bad Active')
         self.assertEqual(l_button.Key, 0, 'Bad key')
         self.assertEqual(l_button.Name, 'kpl_1_A', 'Bad Name')
-        PrettyPrintAny(l_button, 'ReadOneButton', 120)
+        self.assertEqual(l_button.ControllerFamily, 'Insteon', 'Bad Lighting family')
+        self.assertEqual(l_button.LightingType, 'Button', 'Bad LightingType')
+        self.assertEqual(l_button.InsteonAddress, conversions.dotted_hex2int('16.E5.B6'))
 
     def test_0215_ReadAllButtonsXml(self):
         l_buttons = self.m_api.read_buttons_xml(self.m_xml.button_sect)

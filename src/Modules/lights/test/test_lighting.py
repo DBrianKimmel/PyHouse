@@ -56,7 +56,8 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
 
     def test_0212_write_lighting(self):
         l_obj = self.m_api._read_lighting_xml(self.m_pyhouse_obj)
-        self.m_api._write_lighting_xml(self.m_pyhouse_obj.House.OBJs, self.m_xml.house_div)
+        # self.m_api._write_lighting_xml(self.m_pyhouse_obj.House.OBJs, self.m_xml.house_div)
+        self.m_api._write_lighting_xml(l_obj, self.m_xml.house_div)
 
 
 # class Test_03_ReadXMLEmpty(SetupMixin, unittest.TestCase):

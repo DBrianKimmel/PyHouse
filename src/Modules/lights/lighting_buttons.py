@@ -9,7 +9,7 @@ import xml.etree.ElementTree as ET
 # Import PyHouse files
 from Modules.Core.data_objects import ButtonData
 from Modules.lights.lighting_core import ReadWriteConfigXml
-from Modules.families import family
+from Modules.lights.lighting_utils import Utility
 # from Modules.utils.tools import PrettyPrintAny
 
 
@@ -23,6 +23,7 @@ class ButtonsAPI(ReadWriteConfigXml):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_utils = Utility(p_pyhouse_obj)
 
     def _read_button_data(self, p_xml):
         l_obj = ButtonData()
@@ -30,7 +31,8 @@ class ButtonsAPI(ReadWriteConfigXml):
         return l_obj
 
     def _read_family_data(self, p_obj, p_xml):
-        family.API().ReadXml(p_obj, p_xml)
+        l_api = self.m_utils.read_family_data(p_obj, p_xml)
+        return l_api  # for testing
 
     def read_one_button_xml(self, p_button_xml):
         l_button_obj = self._read_button_data(p_button_xml)

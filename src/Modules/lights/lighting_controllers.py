@@ -12,9 +12,9 @@ import xml.etree.ElementTree as ET
 # Import PyMh files and modules.
 from Modules.Core.data_objects import ControllerData
 from Modules.lights.lighting_core import ReadWriteConfigXml
+from Modules.lights.lighting_utils import Utility
 from Modules.utils import pyh_log
 from Modules.drivers import interface
-from Modules.families import family
 # from Modules.utils.tools import PrettyPrintAny
 
 g_debug = 1
@@ -35,6 +35,7 @@ class ControllersAPI(ReadWriteConfigXml):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_utils = Utility(p_pyhouse_obj)
 
     def _read_controller_data(self, p_xml):
         l_obj = ControllerData()
@@ -43,11 +44,9 @@ class ControllersAPI(ReadWriteConfigXml):
         l_obj.Port = self.get_text_from_xml(p_xml, 'Port')
         return l_obj
 
-    def _read_family_data(self, p_controller_obj, p_xml):
-        """
-        Read and fill in the family specific data of the controller.
-        """
-        family.API().ReadXml(p_controller_obj, p_xml)
+    def _read_family_data(self, p_obj, p_xml):
+        l_api = self.m_utils.read_family_data(p_obj, p_xml)
+        return l_api  # for testing
 
     def _read_interface_data(self, p_obj, p_xml):
         try:
@@ -88,7 +87,7 @@ class ControllersAPI(ReadWriteConfigXml):
 
     def _write_family_data(self, p_controller_obj, p_xml):
         l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[p_controller_obj.ControllerFamily].FamilyModuleAPI
-        l_api.insert_device_xml(p_xml, p_controller_obj)
+        l_api.WriteXml(p_xml, p_controller_obj)
 
     def _write_interface_data(self, p_obj, p_xml):
         interface.ReadWriteConfigXml().write_interface_xml(p_obj, p_xml)

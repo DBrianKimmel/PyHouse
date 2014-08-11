@@ -160,6 +160,10 @@ class API(Utility):
         self.m_plm.ChangeLight(p_light_obj, p_level)
 
     def ReadXml(self, p_device_obj, p_entry_xml):
+        # print('Insteon_device - ReadXml()')
         Insteon_xml.ReadWriteConfigXml().ReadXml(p_device_obj, p_entry_xml)
+
+    def WriteXml(self, p_device_obj, p_entry_xml):
+        Insteon_xml.ReadWriteConfigXml().WriteXml(p_device_obj, p_entry_xml)
 
 # ## END DBK

@@ -38,17 +38,17 @@ def ReadXml(p_device_obj, p_entry_xml):
     @return: a dict of the entry to be attached to a house object.
     """
     l_obj = UPBData()
-    l_obj.UPBAddress = PutGetXML.get_int_from_xml(p_entry_xml, 'Address', 255)
-    l_obj.UPBNetworkID = PutGetXML.get_int_from_xml(p_entry_xml, 'UPBNetworkID')
-    l_obj.UPBPassword = PutGetXML.get_int_from_xml(p_entry_xml, 'UPBPassword')
+    l_obj.UPBAddress = PutGetXML().get_int_from_xml(p_entry_xml, 'Address', 255)
+    l_obj.UPBNetworkID = PutGetXML().get_int_from_xml(p_entry_xml, 'UPBNetworkID')
+    l_obj.UPBPassword = PutGetXML().get_int_from_xml(p_entry_xml, 'UPBPassword')
     stuff_new_attrs(p_device_obj, l_obj)
     return p_device_obj
 
 def WriteXml(p_entry_xml, p_device_obj):
     try:
-        PutGetXML.put_int_element(p_entry_xml, 'UPBAddress', p_device_obj.UPBAddress)
-        PutGetXML.put_int_element(p_entry_xml, 'UPBNetworkID', p_device_obj.UPBNetworkID)
-        PutGetXML.put_int_element(p_entry_xml, 'UPBPassword', p_device_obj.UPBPassword)
+        PutGetXML().put_int_element(p_entry_xml, 'UPBAddress', p_device_obj.UPBAddress)
+        PutGetXML().put_int_element(p_entry_xml, 'UPBNetworkID', p_device_obj.UPBNetworkID)
+        PutGetXML().put_int_element(p_entry_xml, 'UPBPassword', p_device_obj.UPBPassword)
     except AttributeError as e_err:
         LOG.error('InsertDeviceXML ERROR {0:}'.format(e_err))
 

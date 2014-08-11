@@ -72,9 +72,9 @@ class API(object):
         self.m_plm.ChangeLight(p_light_obj, p_level)
 
     def ReadXml(self, p_device, p_xml):
-        UPB_xml.ReadXml()
+        UPB_xml.ReadXml(p_device, p_xml)
 
-    def WriteXml(self, p_xml):
-        return p_xml
+    def WriteXml(self, p_device_obj, p_entry_xml):
+        UPB_xml.WriteXml(p_device_obj, p_entry_xml)
 
 # ## END

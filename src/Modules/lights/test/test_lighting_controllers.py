@@ -18,6 +18,7 @@ from twisted.trial import unittest
 from Modules.Core.data_objects import PyHouseData, ControllerData
 from Modules.lights import lighting_controllers
 from Modules.families import family
+from Modules.Core import conversions
 from Modules.web import web_utils
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
@@ -89,6 +90,9 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_controller.StopBits, 1.0, 'Bad Stop Bits')
         self.assertEqual(l_controller.LightingType, 'Controller', 'Bad LightingType')
         self.assertEqual(l_controller.XonXoff, False, 'Bad XonXoff')
+        self.assertEqual(l_controller.ControllerFamily, 'Insteon', 'Bad Lighting family')
+        self.assertEqual(l_controller.LightingType, 'Controller', 'Bad LightingType')
+        self.assertEqual(l_controller.InsteonAddress, conversions.dotted_hex2int('AA.AA.AA'))
         PrettyPrintAny(l_controller, 'OneController', 100)
 
     def test_0244_ReadAllControllersXml(self):

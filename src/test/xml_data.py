@@ -135,7 +135,8 @@ XML_LONG = """
                 <ScheduleType>LightingDevice</ScheduleType>
             </Schedule>
             <Schedule Active="True" Key="2" Name="Evening">
-                <Level>100</Level><LightName>outside_gar</LightName><LightNumber>1</LightNumber><Rate>0</Rate><RoomName>Garage</RoomName>
+                <Level>100</Level><LightName>outside_gar</LightName><LightNumber>1</LightNumber><Rate>0</Rate>
+                <RoomName>Garage</RoomName>
                 <Time>sunset - 00:02</Time>
                 <ScheduleType>LightingDevice</ScheduleType>
             </Schedule>
@@ -190,8 +191,12 @@ XML_LONG = """
             <Light Active="True" Key="1" Name="outside_gar">
                 <Comment>SwitchLink On/Off</Comment><Coords>['0', '0']</Coords>
                 <IsDimmable>False</IsDimmable><ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>Garage</RoomName><LightingType>Light</LightingType><Address>17.47.A1</Address>
-                <IsController>True</IsController><DevCat>0x0</DevCat><GroupList>All_Lights|Outside|Garage(0;0)</GroupList>
+                <RoomName>Garage</RoomName>
+                <LightingType>Light</LightingType>
+                <Address>17.47.A1</Address>
+                <IsController>True</IsController>
+                <DevCat>0x0</DevCat>
+                <GroupList>All_Lights|Outside|Garage(0;0)</GroupList>
                 <GroupNumber>0</GroupNumber>
                 <IsMaster>True</IsMaster>
                 <ProductKey>0</ProductKey><IsResponder>True</IsResponder>
