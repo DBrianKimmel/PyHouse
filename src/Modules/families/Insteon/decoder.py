@@ -215,7 +215,6 @@ class Utility(object):
             l_debug_msg += "Insteon_PLM._decode_50_record() unknown type - last command was {0:#x} - {1:}; ".format(l_obj_from._Command1, PrintBytes(l_message))
 
 
-
 class DecodeResponses(Utility):
 
     m_house_obj = None
