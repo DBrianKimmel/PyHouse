@@ -174,7 +174,7 @@ class ScheduleExecution(ScheduleData):
     def run_schedule(self):
         """Find out what schedules need to be done and how long to delay before they are due to be run.
         """
-        l_seconds_to_delay, l_schedule_list = self.get_next_sched()
+        l_seconds_to_delay, l_schedule_list = self.get_next_sched(self.m_pyhouse_obj)
         if g_debug >= 1:
             LOG.info('run_schedule delay: {0:} - List: {1:}'.format(l_seconds_to_delay, l_schedule_list))
         self.m_pyhouse_obj.Twisted.Reactor.callLater(l_seconds_to_delay, self.execute_schedules_list, l_schedule_list)
@@ -292,7 +292,7 @@ class ScheduleUtility(ScheduleExecution):
             l_diff = l_diff + 86400.0  # tomorrow
         return l_diff
 
-    def get_next_sched(self):
+    def get_next_sched(self, p_pyhouse_obj):
         """Get the next schedule from the current time.
         Be sure to get the next in a chain of things happening at the same time.
         Establish a list of Names that have equal schedule times
@@ -303,7 +303,7 @@ class ScheduleUtility(ScheduleExecution):
         l_time_scheduled = l_now
         l_seconds_to_delay = 100000.0
         l_schedule_list = []
-        for l_key, l_schedule_obj in self.m_pyhouse_obj.House.OBJs.Schedules.iteritems():
+        for l_key, l_schedule_obj in p_pyhouse_obj.House.OBJs.Schedules.iteritems():
             if not l_schedule_obj.Active:
                 continue
             l_time_sch = self._extract_time(l_schedule_obj.Time)
@@ -351,13 +351,14 @@ class API(ScheduleUtility, ReadWriteConfigXml):
     """
 
     m_sunrisesunset_api = None
+    m_pyhouse_obj = None
 
     def __init__(self):
         self.m_sunrisesunset_api = sunrisesunset.API()
 
     def Start(self, p_pyhouse_obj):
-        """Called once for each house.
-        Extracts all from xml so an update will write correct info back out to the xml file.
+        """
+        Extracts all from XML so an update will write correct info back out to the XML file.
         Does not schedule a next entry for inactive houses.
 
         @param p_house_obj: is a House object for the house being scheduled

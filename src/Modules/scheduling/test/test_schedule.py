@@ -84,17 +84,22 @@ class Test_03_Execution(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         self.m_pyhouse_obj.House.OBJs.Schedules = self.m_api.read_schedules_xml(self.m_pyhouse_obj)
 
-    def test_0301_RunSchedule(self):
-        PrettyPrintAny(self.m_pyhouse_obj.House.OBJs, 'Schedules', 100)
+    def test_0301_GetNext(self):
+        l_delay, l_list = self.m_api.get_next_sched(self.m_pyhouse_obj)
+        print('Delaying {0:} Seconds'.format(l_delay))
+        PrettyPrintAny(l_list, 'Schedule List')
 
-    def test_0302_SchedulesList(self):
+    def test_0303_RunSchedule(self):
+        PrettyPrintAny(self.m_pyhouse_obj.House.OBJs, 'Schedules')
+
+    def test_0305_SchedulesList(self):
         pass
 
-    def test_0303_OneSchedule(self):
+    def test_0307_OneSchedule(self):
         pass
         self.m_api.execute_one_schedule(3)
 
-    def test_0304_DispatchSchedule(self):
+    def test_0309_DispatchSchedule(self):
         pass
 
 class Test_04_Utility(SetupMixin, unittest.TestCase):

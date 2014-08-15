@@ -27,7 +27,7 @@ webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
 
 g_debug = 0
-LOG = pyh_log.getLogger('PyHouse.webClLgt    ')
+LOG = pyh_log.getLogger('PyHouse.webCtlLigt  ')
 
 
 class ControlLightsElement(athena.LiveElement):
@@ -60,6 +60,7 @@ class ControlLightsElement(athena.LiveElement):
         l_light_obj.Key = l_light_ix
         l_light_obj.CurLevel = l_level = l_json['Level']
         l_light_obj.UUID = l_json['UUID']
+        LOG.info('Control Light via Web - Change {0:} device to level {1:}'.format(l_light_obj.Name, l_light_obj.CurLevel))
         self.m_pyhouse_obj.APIs.LightingAPI.ChangeLight(l_light_obj, l_level)
 
 # ## END DBK

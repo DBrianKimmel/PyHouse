@@ -74,4 +74,19 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
     # def Xtest_0302_write_lighting(self):
     #    pass
 
+
+class Test_07_Ops(SetupMixin, unittest.TestCase):
+    """ This section tests the operations
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupPyHouseObj().BuildXml(self.m_xml.root)
+        self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
+        self.m_light_obj = LightData()
+        self.m_api = lighting.API()
+
+    def test_0701_Change(self):
+        pass
+
 # ## END DBK

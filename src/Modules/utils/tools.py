@@ -22,7 +22,7 @@ from xml.dom import minidom
 g_debug = 1
 
 
-def PrettyPrintAny(p_any, title = '', maxlen = 180):
+def PrettyPrintAny(p_any, title = '', maxlen = 120):
     l_type = type(p_any)
     print('===== ', title, '===== ', l_type)
     #

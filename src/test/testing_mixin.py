@@ -16,6 +16,7 @@ from Modules.Core.data_objects import PyHouseData, PyHouseAPIs, \
             CoreServicesInformation, \
             ComputerInformation, \
             HouseInformation, HouseObjs, \
+            LocationData, \
             TwistedInformation, \
             XmlInformation
 # from Modules.utils.tools import PrettyPrintAny
@@ -60,6 +61,7 @@ class SetupPyHouseObj(object):
         l_ret.Active = True
         l_ret.Key = 0
         l_ret.OBJs = HouseObjs()
+        l_ret.OBJs.Location = LocationData()
         return l_ret
 
     def BuildPyHouseObj(self, p_root):
