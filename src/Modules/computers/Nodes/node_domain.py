@@ -278,7 +278,7 @@ class AmpClient(object):
         return l_ret
 
     def eb_send_info(self, p_reason):
-        LOG.warn('WARNING - Failed to create a client to send to another node.  {0:}'.format(p_reason))
+        LOG.warning('WARNING - Failed to create a client to send to another node.  {0:}'.format(p_reason))
 
     def create_one_client(self, p_pyhouses_obj, p_address):
         """
