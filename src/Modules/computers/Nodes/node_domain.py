@@ -206,6 +206,9 @@ class DomainAmp(AMP):
         560
         An AmpBox was received, representing a command, or an answer to a previously issued command (either successful or erroneous).
         Respond to it according to its contents.
+
+        _ask #      : Initial box
+        _error #    : error response
         """
         if g_debug >= 1:
             LOG.debug('==560== Dispatch - BoxReceived(Box)')
