@@ -15,7 +15,7 @@
 import math
 
 # Import PyMh files
-from Modules.utils import pyh_log
+from Modules.Utilities import pyh_log
 
 LOG = pyh_log.getLogger('PyHouse.CoreConvert ')
 

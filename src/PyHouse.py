@@ -62,8 +62,8 @@ import signal
 
 # Import PyMh files and modules.
 from Modules.Core import setup
-from Modules.utils import pyh_log
-# from Modules.utils.tools import PrettyPrintAny
+from Modules.Utilities import pyh_log
+# from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 0
 LOG = pyh_log.getLogger('PyHouse             ')

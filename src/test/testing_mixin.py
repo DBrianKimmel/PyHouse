@@ -99,8 +99,14 @@ class SetupPyHouseObj(object):
             l_xml.computer_div = p_root_xml.find('ComputerDivision')
             l_xml.internet_sect = l_xml.computer_div.find('InternetSection')
             l_xml.log_sect = l_xml.computer_div.find('LogSection')
-            l_xml.node_sect = l_xml.computer_div.find('InternetSection')
+            l_xml.node_sect = l_xml.computer_div.find('NodeSection')
             l_xml.web_sect = l_xml.computer_div.find('WebSection')
+
+            l_xml.internet = l_xml.internet_sect.find('Internet')
+            l_xml.dyndns_sect = l_xml.internet.find('DynamicDnsSection')
+            l_xml.dyndns = l_xml.dyndns_sect.find('DynamicDNS')
+
+            l_xml.node = l_xml.node_sect.find('Node')
         except AttributeError:
             pass
         # PrettyPrintAny(l_xml, 'TestMixin - Self', 100)

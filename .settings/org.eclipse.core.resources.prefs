@@ -1,5 +1,5 @@
 eclipse.preferences.version=1
-encoding//src/Modules/upnp/et.py=utf-8
-encoding//src/Modules/web/web_mainpage.py=iso-8859-1
-encoding//src/Modules/web/web_server.py=iso-8859-1
+encoding//src/Modules/Upnp/et.py=utf-8
+encoding//src/Modules/Web/web_mainpage.py=iso-8859-1
+encoding//src/Modules/Web/web_server.py=iso-8859-1
 encoding//src/setup.py=iso-8859-1
