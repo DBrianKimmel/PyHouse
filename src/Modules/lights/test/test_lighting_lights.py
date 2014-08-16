@@ -63,7 +63,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
 
     def test_0212_ReadFamilyData(self):
         l_light_obj = self.m_api._read_light_data(self.m_xml.light)
-        l_api = self.m_api._read_family_data(l_light_obj, self.m_xml.light)
+        self.m_api._read_family_data(l_light_obj, self.m_xml.light)
         PrettyPrintAny(l_light_obj, 'Light_Obj After', 120)
         print('Address   {0:}'.format(conversions.int2dotted_hex(l_light_obj.InsteonAddress, 3)))
         self.assertEqual(l_light_obj.InsteonAddress, conversions.dotted_hex2int('16.62.2D'))
@@ -71,7 +71,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
     def test_0213_ReadOneLightXml(self):
         """ Read in the xml file and fill in the lights
         """
-        l_light = self.m_api.read_one_light_xml(self.m_xml.light)
+        l_light = self.m_api._read_one_light_xml(self.m_xml.light)
         self.assertEqual(l_light.Name, 'outside_front', 'Bad Name')
         self.assertEqual(l_light.Key, 0, 'Bad Key')
         self.assertEqual(l_light.Active, True, 'Bad Active')
@@ -88,19 +88,30 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         l_lights = self.m_api.read_all_lights_xml(self.m_xml.light_sect)
         self.assertEqual(len(l_lights), 5)
 
+    def test_0221_WriteBase(self):
+        l_light = self.m_api._read_one_light_xml(self.m_xml.light)
+        l_xml = self.m_api.write_base_lighting_xml(l_light)
+        PrettyPrintAny(l_xml, 'Lights XML')
+        # I need a assert test here to check the xml for having a/some elements present.
+        # self.assertSubstring('LightingType', l_xml)
 
     def test_0221_WriteLightData(self):
-        self.m_light_obj = self.m_api._read_light_data(self.m_xml.light)
-        pass
+        l_light = self.m_api._read_one_light_xml(self.m_xml.light)
+        l_xml = self.m_api.write_base_lighting_xml(l_light)
+        self.m_api._write_light_data(l_light, l_xml)
+        PrettyPrintAny(l_xml, 'Lights XML')
 
     def test_0222_WriteLightFamily(self):
-        self.m_api._read_family_data(self.m_light_obj, self.m_xml)
-        pass
+        l_light = self.m_api._read_one_light_xml(self.m_xml.light)
+        l_xml = self.m_api.write_base_lighting_xml(l_light)
+        self.m_api._write_light_data(l_light, l_xml)
+        self.m_api._add_family_data(l_light, l_xml)
+        PrettyPrintAny(l_xml, 'Lights XML')
 
     def test_0223_WriteOneLightXml(self):
         """ Write out the XML file for the location section
         """
-        l_light = self.m_api.read_one_light_xml(self.m_xml.light)
+        l_light = self.m_api._read_one_light_xml(self.m_xml.light)
         l_xml = self.m_api.write_one_light_xml(l_light)
         PrettyPrintAny(l_xml, 'WriteOneLight')
 
@@ -117,16 +128,5 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_light))
         PrettyPrintAny(l_json, 'JSON', 120)
         # self.assertEqual(l_json[0] ['Comment'], 'Switch')
-
-
-class Test_03_GetExternalIp(unittest.TestCase):
-
-    def setUp(self):
-        self.m_pyhouse_obj = PyHouseData()
-        self.m_api = lighting_lights.LightingLightsAPI(None)
-
-    def test_0301_createClient(self):
-        # l_client = self.m_api.Start(self.m_pyhouse_obj, self.m_house_obj, self.m_house_xml)
-        pass
 
 # ## END DBK

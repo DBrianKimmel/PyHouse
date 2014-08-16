@@ -59,7 +59,7 @@ class LightingLightsAPI(ReadWriteConfigXml):
         l_api = self.m_utils.read_family_data(p_obj, p_xml)
         return l_api  # for testing
 
-    def read_one_light_xml(self, p_light_xml):
+    def _read_one_light_xml(self, p_light_xml):
         l_light_obj = self._read_light_data(p_light_xml)
         # print('lighting_lights - read_one_light() - Light {0:}'.format(l_light_obj.Name))
         l_light_obj.Key = self.m_count  # Renumber
@@ -71,7 +71,7 @@ class LightingLightsAPI(ReadWriteConfigXml):
         l_lights_dict = {}
         try:
             for l_light_xml in p_light_sect_xml.iterfind('Light'):
-                l_lights_dict[self.m_count] = self.read_one_light_xml(l_light_xml)
+                l_lights_dict[self.m_count] = self._read_one_light_xml(l_light_xml)
                 self.m_count += 1
         except AttributeError as e_error:  # No Lights section
             LOG.warning('Lighting_Lights - No Lights defined - {0:}'.format(e_error))
@@ -85,14 +85,17 @@ class LightingLightsAPI(ReadWriteConfigXml):
         self.put_text_element(l_light_xml, 'CurLevel', p_light_obj.CurLevel)
         pass
 
-    def _write_family_data(self, p_light_obj, p_light_xml):
+    def _add_family_data(self, p_light_obj, p_light_xml):
+        """
+        Add the family specific information of the light to the XML.
+        """
         l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[p_light_obj.ControllerFamily].FamilyModuleAPI
         l_api.WriteXml(p_light_xml, p_light_obj)
 
     def write_one_light_xml(self, p_light_obj):
         l_light_xml = self.write_base_lighting_xml(p_light_obj)
         self._write_light_data(p_light_obj, l_light_xml)
-        self._write_family_data(p_light_obj, l_light_xml)
+        self._add_family_data(p_light_obj, l_light_xml)
         return l_light_xml
 
     def write_all_lights_xml(self, p_lights_obj):

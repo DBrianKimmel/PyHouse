@@ -121,15 +121,4 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_controller))
         PrettyPrintAny(l_json, 'JSON', 100)
 
-
-class Test_03_GetExternalIp(unittest.TestCase):
-
-    def setUp(self):
-        self.m_pyhouse_obj = PyHouseData()
-        self.m_api = lighting_controllers.ControllersAPI(None)
-
-    def test_0301_createClient(self):
-        # l_client = self.m_api.Start(self.m_pyhouse_obj, self.m_house_obj, self.m_house_xml)
-        pass
-
 # ## END DBK

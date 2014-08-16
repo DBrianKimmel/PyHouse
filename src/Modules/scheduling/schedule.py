@@ -149,10 +149,10 @@ class ScheduleExecution(ScheduleData):
         # PrettyPrintAny(self.m_pyhouse_obj.House.OBJs, 'Schedule - ExecuteOneSchedule - PyHouseObj', 120)
         # TODO: We need a small dispatch for the various schedule types (hvac, security, entertainment, lights, ...)
         if l_schedule_obj.ScheduleType == 'LightingDevice':
-            LOG.debug('execute_one_schedule type = LightingDevice')
+            LOG.debug('Execute_one_schedule type = LightingDevice')
             pass
         elif l_schedule_obj.ScheduleType == 'Scene':
-            LOG.debug('execute_one_schedule type = Scene')
+            LOG.debug('Execute_one_schedule type = Scene')
             pass
         l_light_obj = tools.get_light_object(self.m_pyhouse_obj, name = l_schedule_obj.LightName)
         LOG.info("Executing one schedule Name:{0:}, Light:{1:}, Level:{2:}, Slot:{3:}".format(l_schedule_obj.Name, l_schedule_obj.LightName, l_schedule_obj.Level, p_slot))
@@ -384,6 +384,6 @@ class API(ScheduleUtility, ReadWriteConfigXml):
     def SaveXml(self, p_xml):
         p_xml.append(self.write_schedules_xml(self.m_pyhouse_obj.House.OBJs.Schedules))
         self.save_scheduled_modules(p_xml)
-        LOG.info("Saved XML.")
+        # LOG.info("Saved XML.")
 
 # ## END DBK

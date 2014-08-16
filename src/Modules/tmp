@@ -1,0 +1,45 @@
+2014-08-14 20:26:00-0400 [PyHouse.Schedule    ] About to execute - Schedule:[0, 1]
+2014-08-14 20:26:00-0400 [PyHouse.Schedule    ] execute_one_schedule type = LightingDevice
+2014-08-14 20:26:00-0400 [PyHouse.Schedule    ] Executing one schedule Name:Evening, Light:FrontDoor, Level:100, Slot:0
+2014-08-14 20:26:00-0400 [PyHouse.Lighting    ] Turn Light FrontDoor to level 100, ControllerFamily:Insteon
+2014-08-14 20:26:00-0400 [PyHouse.Dev_Insteon ] Change light Name:FrontDoor, ControllerFamily:Insteon
+2014-08-14 20:26:00-0400 [PyHouse.Insteon_PLM ] Change light:FrontDoor to level:100 at rate:0
+2014-08-14 20:26:00-0400 [PyHouse.Insteon_PLM ] Queue62 command to device: FrontDoor, Command: 0X11,0XFF, Address: (1c.a3.1a)
+2014-08-14 20:26:00-0400 [PyHouse.Insteon_PLM ] Insteon_PLM.queue_plm_command() - Q-Size:1, Command: 0x02 0x62 0x1c 0xa3 0x1a 0x0f 0x11 0xff <END>
+2014-08-14 20:26:00-0400 [PyHouse.Schedule    ] execute_one_schedule type = LightingDevice
+2014-08-14 20:26:00-0400 [PyHouse.Schedule    ] Executing one schedule Name:Evening, Light:ChandMaster, Level:100, Slot:1
+2014-08-14 20:26:00-0400 [PyHouse.Lighting    ] Turn Light ChandMaster to level 100, ControllerFamily:Insteon
+2014-08-14 20:26:00-0400 [PyHouse.Dev_Insteon ] Change light Name:ChandMaster, ControllerFamily:Insteon
+2014-08-14 20:26:00-0400 [PyHouse.Insteon_PLM ] Change light:ChandMaster to level:100 at rate:0
+2014-08-14 20:26:00-0400 [PyHouse.Insteon_PLM ] Queue62 command to device: ChandMaster, Command: 0X11,0XFF, Address: (1d.3f.ad)
+2014-08-14 20:26:00-0400 [PyHouse.Insteon_PLM ] Insteon_PLM.queue_plm_command() - Q-Size:2, Command: 0x02 0x62 0x1d 0x3f 0xad 0x0f 0x11 0xff <END>
+2014-08-14 20:26:00-0400 [PyHouse.Insteon_PLM ] Send to controller:PLM_1, Message: 0x02 0x62 0x1c 0xa3 0x1a 0x0f 0x11 0xff <END>
+2014-08-14 20:26:01-0400 [PyHouse.Insteon_decd] decode_message() -  0x02 0x62 0x1c 0xa3 0x1a 0x0f 0x11 0xff 0x06 0x02 0x50 0x1c 0xa3 0x1a 0x1b <END>
+2014-08-14 20:26:01-0400 [PyHouse.Insteon_decd] Insteon_PLM.get_obj_from_message - Address:1C.A3.1A(1876762), found:FrontDoor
+2014-08-14 20:26:01-0400 [PyHouse.Insteon_decd] Got ACK(62) Device:FrontDoor, ACK
+2014-08-14 20:26:01-0400 [PyHouse.Insteon_decd] decode_message() -  0x02 0x50 0x1c 0xa3 0x1a 0x1b <END>
+2014-08-14 20:26:01-0400 [PyHouse.Insteon_decd] decode_message() - Message was too short - waiting for rest of message.
+2014-08-14 20:26:01-0400 [PyHouse.Insteon_decd] decode_message() -  0x02 0x50 0x1c 0xa3 0x1a 0x1b <END>
+2014-08-14 20:26:01-0400 [PyHouse.Insteon_decd] decode_message() - Message was too short - waiting for rest of message.
+2014-08-14 20:26:01-0400 [PyHouse.Insteon_decd] decode_message() -  0x02 0x50 0x1c 0xa3 0x1a 0x1b 0x47 0x81 0x2b 0x11 0xff <END>
+2014-08-14 20:26:01-0400 [PyHouse.Insteon_decd] Insteon_PLM.get_obj_from_message - Address:1C.A3.1A(1876762), found:FrontDoor
+2014-08-14 20:26:01-0400 [PyHouse.Insteon_decd] Insteon_PLM.get_obj_from_message - Address:1B.47.81(1787777), found:PowerLink
+2014-08-14 20:26:01-0400 [PyHouse.Insteon_decd] Standard Message; Device:FrontDoor turned Full ON  ;
+2014-08-14 20:26:01-0400 [PyHouse.Insteon_PLM ] Send to controller:PLM_1, Message: 0x02 0x62 0x1d 0x3f 0xad 0x0f 0x11 0xff <END>
+2014-08-14 20:26:01-0400 [PyHouse.Insteon_decd] decode_message() -  0x02 0x62 0x1d 0x3f 0xad 0x0f 0x11 0xff 0x06 <END>
+2014-08-14 20:26:01-0400 [PyHouse.Insteon_decd] Insteon_PLM.get_obj_from_message - Address:1D.3F.AD(1916845), found:ChandMaster
+2014-08-14 20:26:01-0400 [PyHouse.Insteon_decd] Got ACK(62) Device:ChandMaster, ACK
+2014-08-14 20:26:01-0400 [PyHouse.Insteon_decd] decode_message() -  0x02 0x50 0x1d 0x3f 0xad 0x1b 0x47 0x81 0x2b 0x11 0xff <END>
+2014-08-14 20:26:01-0400 [PyHouse.Insteon_decd] Insteon_PLM.get_obj_from_message - Address:1D.3F.AD(1916845), found:ChandMaster
+2014-08-14 20:26:01-0400 [PyHouse.Insteon_decd] Insteon_PLM.get_obj_from_message - Address:1B.47.81(1787777), found:PowerLink
+2014-08-14 20:26:01-0400 [PyHouse.Insteon_decd] Standard Message; Device:ChandMaster turned Full ON  ;
+2014-08-14 20:26:05-0400 [PyHouse.Schedule    ] In get_next_sched - Sunrise:06:53:29, Sunset:20:26:39
+
+2014-08-14 23:37:44-0400 [PyHouse.Lighting    ] Turn Light ChandMaster to level 100, ControllerFamily:Insteon
+2014-08-14 23:37:44-0400 [PyHouse.Lighting    ] ERROR - ChangeLight - 'Null'
+
+2014-08-14 23:37:53-0400 [PyHouse.Lighting    ] Turn Light ChandSlave to level 100, ControllerFamily:Insteon
+2014-08-14 23:37:53-0400 [PyHouse.Lighting    ] ERROR - ChangeLight - 'Null'
+
+2014-08-14 23:38:08-0400 [PyHouse.Lighting    ] Turn Light FrontDoor to level 100, ControllerFamily:Insteon
+2014-08-14 23:38:08-0400 [PyHouse.Lighting    ] ERROR - ChangeLight - 'Null'

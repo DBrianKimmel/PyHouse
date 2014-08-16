@@ -51,13 +51,13 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
     def test_0211_read_lighting(self):
         self.m_api._read_lighting_xml(self.m_pyhouse_obj)
         PrettyPrintAny(self.m_pyhouse_obj.House.OBJs, 'PyHouse_obj.House.OBJs', 120)
-        PrettyPrintAny(self.m_pyhouse_obj.House.OBJs.Lights, 'PyHouse_obj-Lights', 120)
         self.assertEqual(self.m_pyhouse_obj.House.OBJs.Lights[0].Name, 'outside_front')
 
     def test_0212_write_lighting(self):
-        l_obj = self.m_api._read_lighting_xml(self.m_pyhouse_obj)
-        # self.m_api._write_lighting_xml(self.m_pyhouse_obj.House.OBJs, self.m_xml.house_div)
-        self.m_api._write_lighting_xml(l_obj, self.m_xml.house_div)
+        self.m_api._read_lighting_xml(self.m_pyhouse_obj)
+        PrettyPrintAny(self.m_pyhouse_obj.House.OBJs, 'Lighting')
+        l_xml = ET.Element('LightSection')
+        self.m_api._write_lighting_xml(self.m_pyhouse_obj.House.OBJs, l_xml)
 
 
 # class Test_03_ReadXMLEmpty(SetupMixin, unittest.TestCase):
@@ -86,7 +86,11 @@ class Test_07_Ops(SetupMixin, unittest.TestCase):
         self.m_light_obj = LightData()
         self.m_api = lighting.API()
 
-    def test_0701_Change(self):
-        pass
+    def test_0702_GetApi(self):
+        l_light = self.m_light_obj
+        l_light.Name = 'Garage'
+        l_light.ControllerFamily = 'Insteon'
+        l_api = self.m_api._get_api_for_family(self.m_pyhouse_obj, self.m_light_obj)
+        print('Api = {0:}'.format(l_api))
 
 # ## END DBK

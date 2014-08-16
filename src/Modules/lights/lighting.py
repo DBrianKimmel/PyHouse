@@ -84,6 +84,7 @@ class API(Utility):
 
     def _get_api_for_family(self, p_pyhouse_obj, p_light_obj):
         l_ret = p_pyhouse_obj.House.OBJs.FamilyData[p_light_obj.ControllerFamily].FamilyModuleAPI
+        LOG.debug('_get_api_for_family - {0:}'.format(l_ret))
         return l_ret
 
     def ChangeLight(self, p_light_obj, p_level, _p_rate = None):
