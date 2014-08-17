@@ -49,7 +49,7 @@ class FindExternalIpAddress(object):
         self.m_reactor = p_reactor
         self.m_reactor.callLater(l_initial_delay, self.get_public_ip, None)
 
-    def get_public_ip(self):
+    def get_public_ip(self, _ignore):
         """
         Get the public IP address for the house.
         """

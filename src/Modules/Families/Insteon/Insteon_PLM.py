@@ -271,7 +271,7 @@ class PlmDriverProtocol(CreateCommands):
     def driver_loop_stop(self):
         pass
 
-    def dequeue_and_send(self):
+    def dequeue_and_send(self, _ignore):
         """Check the sending queue every SEND_TIMEOUT seconds and send if
         anything to send.
 
@@ -296,7 +296,7 @@ class PlmDriverProtocol(CreateCommands):
         p_controller_obj._Message += l_msg
         return p_controller_obj._Message
 
-    def receive_loop(self):
+    def receive_loop(self, _ignore):
         """Check the driver to see if the controller returned any messages.
 
         Decode message only when we get enough bytes to complete a message.

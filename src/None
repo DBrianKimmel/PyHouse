@@ -1,0 +1,196 @@
+2014-08-17 15:38:49-0400 [-] Log opened.
+2014-08-17 15:38:49-0400 [PyHouse.CoreSetup   ] 
+	        ------------------------------------------------------------------
+	
+	        
+2014-08-17 15:38:49-0400 [PyHouse.CoreSetup   ] Starting.
+2014-08-17 15:38:49-0400 [PyHouse.Computer    ] Starting
+2014-08-17 15:38:49-0400 [PyHouse.WebServer   ] Initialized.
+	
+2014-08-17 15:38:49-0400 [PyHouse.Internet    ] Loaded UpdateUrl:http://snar.co/ip, Delay:28800
+2014-08-17 15:38:49-0400 [PyHouse.Internet    ] Started.
+2014-08-17 15:38:50-0400 [PyHouse.NodeLocal   ] Interface:{EF4795CF-8D57-463B-B8C2-10CD2804396D}, Mac:, V4:['169.254.128.230'], V6:['2604:8800:100:282::2', 'fe80::2ff:efff:fe47:95cf%17'] - 0
+2014-08-17 15:38:50-0400 [PyHouse.NodeLocal   ] Interface:{59F2EEE3-780E-4B30-80B2-EB8216CC63B6}, Mac:, V4:['169.254.32.60'], V6:['fe80::66d4:daff:fe71:60b%16'] - 1
+2014-08-17 15:38:50-0400 [PyHouse.NodeLocal   ] Interface:{5A910E84-B99A-43FF-A257-67149139B4AF}, Mac:, V4:['169.254.17.194'], V6:['fe80::4225:c2ff:fee4:fcd9%15'] - 2
+2014-08-17 15:38:50-0400 [PyHouse.NodeLocal   ] Interface:{EA594141-246C-4537-B0CF-DA1DDCDD956C}, Mac:, V4:['169.254.172.228'], V6:['fe80::4225:c2ff:fee4:fcd9%14'] - 3
+2014-08-17 15:38:50-0400 [PyHouse.NodeLocal   ] Interface:{C31DACE4-33A2-443F-81BA-C5701557C5CD}, Mac:, V4:['192.168.1.163'], V6:['2001:4830:1600:84ae:4225:c2ff:fee4:fcd8', '2001:4830:1600:84ae:5523:6f06:efdd:9b12', 'fe80::4225:c2ff:fee4:fcd8%13'] - 4
+2014-08-17 15:38:50-0400 [PyHouse.NodeLocal   ] Interface:{9C3C3D30-6889-49A3-A733-839B1B06C97C}, Mac:, V4:['169.254.249.175'], V6:['fe80::a2e:5fff:fe8c:dfd2%11'] - 5
+2014-08-17 15:38:50-0400 [PyHouse.NodeLocal   ] Interface:{846EE342-7039-11DE-9D20-806E6F6E6963}, Mac:, V4:['127.0.0.1'], V6:['::1'] - 6
+2014-08-17 15:38:50-0400 [PyHouse.NodeLocal   ] Started
+2014-08-17 15:38:50-0400 [PyHouse.NodeDiscovry] NodeDiscovery - StartNodeDiscovery - Service:False
+2014-08-17 15:38:50-0400 [-] MulticastDiscoveryServerProtocol starting on 8582
+2014-08-17 15:38:50-0400 [-] Starting protocol <Modules.Computer.Nodes.node_discovery.MulticastDiscoveryServerProtocol object at 0x0000000003CFCD30>
+2014-08-17 15:38:50-0400 [-] MulticastDiscoveryClientProtocol starting on 8582
+2014-08-17 15:38:50-0400 [-] Starting protocol <Modules.Computer.Nodes.node_discovery.MulticastDiscoveryClientProtocol object at 0x0000000003D02278>
+2014-08-17 15:38:50-0400 [PyHouse.NodeDiscovry] Started.
+2014-08-17 15:38:50-0400 [-] NevowSite starting on 8580
+2014-08-17 15:38:50-0400 [-] Starting factory <nevow.appserver.NevowSite instance at 0x0000000003D00F48>
+2014-08-17 15:38:50-0400 [PyHouse.WebServer   ] Started - Port:8580, Path:None
+2014-08-17 15:38:50-0400 [PyHouse.Computer    ] Started
+2014-08-17 15:38:50-0400 [PyHouse.House       ] Starting.
+2014-08-17 15:38:50-0400 [PyHouse.Family      ] Starting build_lighting_family_info
+2014-08-17 15:38:50-0400 [PyHouse.Schedule    ] Starting.
+2014-08-17 15:38:50-0400 [PyHouse.Lighting    ] Starting.
+2014-08-17 15:38:50-0400 [PyHouse.Family      ] Starting lighting families.
+2014-08-17 15:38:50-0400 [PyHouse.Family      ] Starting Family X10
+2014-08-17 15:38:50-0400 [PyHouse.Family      ] Starting Family Insteon
+2014-08-17 15:38:50-0400 [PyHouse.Dev_Insteon ] Started the Insteon Controllers.
+2014-08-17 15:38:50-0400 [PyHouse.Family      ] Starting Family UPB
+2014-08-17 15:38:50-0400 [PyHouse.UPB_device  ] Started 0 UPB Controllers.
+2014-08-17 15:38:50-0400 [PyHouse.Family      ] Started all lighting families.
+2014-08-17 15:38:50-0400 [PyHouse.Lighting    ] Started.
+2014-08-17 15:38:50-0400 [PyHouse.Thermostat  ] Started.
+2014-08-17 15:38:50-0400 [PyHouse.Irrigation  ] Starting.
+2014-08-17 15:38:50-0400 [PyHouse.Irrigation  ] Started.
+2014-08-17 15:38:50-0400 [PyHouse.Schedule    ] Started.
+2014-08-17 15:38:50-0400 [PyHouse.House       ] Started House Pink Poppy
+2014-08-17 15:38:50-0400 [PyHouse.CoreSetup   ] Started.
+2014-08-17 15:38:50-0400 [PyHouse             ] Started.
+	
+2014-08-17 15:38:50-0400 [PyHouse.NodeDiscovry] Update our node (slot 0) address to 192.168.1.163
+2014-08-17 15:38:50-0400 [PyHouse.NodeDiscovry] Added node # 1 - From Addr: 192.168.1.35, Named: pi-05
+2014-08-17 15:38:50-0400 [PyHouse.NodeDiscovry] Added node # 2 - From Addr: 192.168.1.31, Named: pi-01
+2014-08-17 15:38:50-0400 [PyHouse.NodeDiscovry] Added node # 3 - From Addr: 192.168.1.64, Named: pi-04
+2014-08-17 15:38:55-0400 [-] Unhandled Error
+	Traceback (most recent call last):
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\PyHouse.py", line 186, in <module>
+	    API()
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\PyHouse.py", line 153, in __init__
+	    self.m_pyhouse_obj.Twisted.Reactor.run()  # reactor never returns so must be last - Event loop will now run
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 1192, in run
+	    self.mainLoop()
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 1201, in mainLoop
+	    self.runUntilCurrent()
+	--- <exception caught here> ---
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 824, in runUntilCurrent
+	    call.func(*call.args, **call.kw)
+	exceptions.TypeError: run_schedule() takes exactly 1 argument (2 given)
+	
+2014-08-17 15:39:05-0400 [-] Unhandled Error
+	Traceback (most recent call last):
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\PyHouse.py", line 186, in <module>
+	    API()
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\PyHouse.py", line 153, in __init__
+	    self.m_pyhouse_obj.Twisted.Reactor.run()  # reactor never returns so must be last - Event loop will now run
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 1192, in run
+	    self.mainLoop()
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 1201, in mainLoop
+	    self.runUntilCurrent()
+	--- <exception caught here> ---
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 824, in runUntilCurrent
+	    call.func(*call.args, **call.kw)
+	exceptions.TypeError: create_amp_service() takes exactly 1 argument (2 given)
+	
+2014-08-17 15:40:49-0400 [-] Unhandled Error
+	Traceback (most recent call last):
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\PyHouse.py", line 186, in <module>
+	    API()
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\PyHouse.py", line 153, in __init__
+	    self.m_pyhouse_obj.Twisted.Reactor.run()  # reactor never returns so must be last - Event loop will now run
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 1192, in run
+	    self.mainLoop()
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 1201, in mainLoop
+	    self.runUntilCurrent()
+	--- <exception caught here> ---
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 824, in runUntilCurrent
+	    call.func(*call.args, **call.kw)
+	exceptions.TypeError: get_public_ip() takes exactly 1 argument (2 given)
+	
+2014-08-17 15:40:49-0400 [-] Unhandled Error
+	Traceback (most recent call last):
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\PyHouse.py", line 186, in <module>
+	    API()
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\PyHouse.py", line 153, in __init__
+	    self.m_pyhouse_obj.Twisted.Reactor.run()  # reactor never returns so must be last - Event loop will now run
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 1192, in run
+	    self.mainLoop()
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 1201, in mainLoop
+	    self.runUntilCurrent()
+	--- <exception caught here> ---
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 824, in runUntilCurrent
+	    call.func(*call.args, **call.kw)
+	exceptions.TypeError: update_start_process() takes exactly 1 argument (2 given)
+	
+2014-08-17 15:43:13-0400 [-] Log opened.
+2014-08-17 15:43:13-0400 [PyHouse.CoreSetup   ] 
+	        ------------------------------------------------------------------
+	
+	        
+2014-08-17 15:43:13-0400 [PyHouse.CoreSetup   ] Starting.
+2014-08-17 15:43:13-0400 [PyHouse.Computer    ] Starting
+2014-08-17 15:43:13-0400 [PyHouse.WebServer   ] Initialized.
+	
+2014-08-17 15:43:13-0400 [PyHouse.Internet    ] Loaded UpdateUrl:http://snar.co/ip, Delay:28800
+2014-08-17 15:43:13-0400 [PyHouse.Internet    ] Started.
+2014-08-17 15:43:13-0400 [PyHouse.NodeLocal   ] Interface:{EF4795CF-8D57-463B-B8C2-10CD2804396D}, Mac:, V4:['169.254.128.230'], V6:['2604:8800:100:282::2', 'fe80::2ff:efff:fe47:95cf%17'] - 0
+2014-08-17 15:43:13-0400 [PyHouse.NodeLocal   ] Interface:{59F2EEE3-780E-4B30-80B2-EB8216CC63B6}, Mac:, V4:['169.254.32.60'], V6:['fe80::66d4:daff:fe71:60b%16'] - 1
+2014-08-17 15:43:13-0400 [PyHouse.NodeLocal   ] Interface:{5A910E84-B99A-43FF-A257-67149139B4AF}, Mac:, V4:['169.254.17.194'], V6:['fe80::4225:c2ff:fee4:fcd9%15'] - 2
+2014-08-17 15:43:13-0400 [PyHouse.NodeLocal   ] Interface:{EA594141-246C-4537-B0CF-DA1DDCDD956C}, Mac:, V4:['169.254.172.228'], V6:['fe80::4225:c2ff:fee4:fcd9%14'] - 3
+2014-08-17 15:43:13-0400 [PyHouse.NodeLocal   ] Interface:{C31DACE4-33A2-443F-81BA-C5701557C5CD}, Mac:, V4:['192.168.1.163'], V6:['2001:4830:1600:84ae:4225:c2ff:fee4:fcd8', '2001:4830:1600:84ae:5523:6f06:efdd:9b12', 'fe80::4225:c2ff:fee4:fcd8%13'] - 4
+2014-08-17 15:43:13-0400 [PyHouse.NodeLocal   ] Interface:{9C3C3D30-6889-49A3-A733-839B1B06C97C}, Mac:, V4:['169.254.249.175'], V6:['fe80::a2e:5fff:fe8c:dfd2%11'] - 5
+2014-08-17 15:43:13-0400 [PyHouse.NodeLocal   ] Interface:{846EE342-7039-11DE-9D20-806E6F6E6963}, Mac:, V4:['127.0.0.1'], V6:['::1'] - 6
+2014-08-17 15:43:13-0400 [PyHouse.NodeLocal   ] Started
+2014-08-17 15:43:13-0400 [PyHouse.NodeDiscovry] NodeDiscovery - StartNodeDiscovery - Service:False
+2014-08-17 15:43:13-0400 [-] MulticastDiscoveryServerProtocol starting on 8582
+2014-08-17 15:43:13-0400 [-] Starting protocol <Modules.Computer.Nodes.node_discovery.MulticastDiscoveryServerProtocol object at 0x0000000003E84BE0>
+2014-08-17 15:43:13-0400 [-] MulticastDiscoveryClientProtocol starting on 8582
+2014-08-17 15:43:13-0400 [-] Starting protocol <Modules.Computer.Nodes.node_discovery.MulticastDiscoveryClientProtocol object at 0x0000000003E88128>
+2014-08-17 15:43:13-0400 [PyHouse.NodeDiscovry] Started.
+2014-08-17 15:43:13-0400 [-] NevowSite starting on 8580
+2014-08-17 15:43:13-0400 [-] Starting factory <nevow.appserver.NevowSite instance at 0x0000000003E8A308>
+2014-08-17 15:43:13-0400 [PyHouse.WebServer   ] Started - Port:8580, Path:None
+2014-08-17 15:43:13-0400 [PyHouse.Computer    ] Started
+2014-08-17 15:43:13-0400 [PyHouse.House       ] Starting.
+2014-08-17 15:43:13-0400 [PyHouse.Family      ] Starting build_lighting_family_info
+2014-08-17 15:43:13-0400 [PyHouse.Schedule    ] Starting.
+2014-08-17 15:43:13-0400 [PyHouse.Lighting    ] Starting.
+2014-08-17 15:43:13-0400 [PyHouse.Family      ] Starting lighting families.
+2014-08-17 15:43:13-0400 [PyHouse.Family      ] Starting Family X10
+2014-08-17 15:43:13-0400 [PyHouse.Family      ] Starting Family Insteon
+2014-08-17 15:43:13-0400 [PyHouse.Dev_Insteon ] Started the Insteon Controllers.
+2014-08-17 15:43:13-0400 [PyHouse.Family      ] Starting Family UPB
+2014-08-17 15:43:13-0400 [PyHouse.UPB_device  ] Started 0 UPB Controllers.
+2014-08-17 15:43:13-0400 [PyHouse.Family      ] Started all lighting families.
+2014-08-17 15:43:13-0400 [PyHouse.Lighting    ] Started.
+2014-08-17 15:43:13-0400 [PyHouse.Thermostat  ] Started.
+2014-08-17 15:43:13-0400 [PyHouse.Irrigation  ] Starting.
+2014-08-17 15:43:13-0400 [PyHouse.Irrigation  ] Started.
+2014-08-17 15:43:13-0400 [PyHouse.Schedule    ] Started.
+2014-08-17 15:43:13-0400 [PyHouse.House       ] Started House Pink Poppy
+2014-08-17 15:43:13-0400 [PyHouse.CoreSetup   ] Started.
+2014-08-17 15:43:13-0400 [PyHouse             ] Started.
+	
+2014-08-17 15:43:13-0400 [PyHouse.NodeDiscovry] Update our node (slot 0) address to 192.168.1.163
+2014-08-17 15:43:13-0400 [PyHouse.NodeDiscovry] Added node # 1 - From Addr: 192.168.1.35, Named: pi-05
+2014-08-17 15:43:13-0400 [PyHouse.NodeDiscovry] Added node # 2 - From Addr: 192.168.1.31, Named: pi-01
+2014-08-17 15:43:13-0400 [PyHouse.NodeDiscovry] Added node # 3 - From Addr: 192.168.1.64, Named: pi-04
+2014-08-17 15:43:18-0400 [-] Unhandled Error
+	Traceback (most recent call last):
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\PyHouse.py", line 186, in <module>
+	    API()
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\PyHouse.py", line 153, in __init__
+	    self.m_pyhouse_obj.Twisted.Reactor.run()  # reactor never returns so must be last - Event loop will now run
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 1192, in run
+	    self.mainLoop()
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 1201, in mainLoop
+	    self.runUntilCurrent()
+	--- <exception caught here> ---
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 824, in runUntilCurrent
+	    call.func(*call.args, **call.kw)
+	exceptions.TypeError: run_schedule() takes exactly 1 argument (2 given)
+	
+2014-08-17 15:43:28-0400 [-] Unhandled Error
+	Traceback (most recent call last):
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\PyHouse.py", line 186, in <module>
+	    API()
+	  File "C:\Users\briank\Documents\GitHub\PyHouse\src\PyHouse.py", line 153, in __init__
+	    self.m_pyhouse_obj.Twisted.Reactor.run()  # reactor never returns so must be last - Event loop will now run
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 1192, in run
+	    self.mainLoop()
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 1201, in mainLoop
+	    self.runUntilCurrent()
+	--- <exception caught here> ---
+	  File "C:\Python27\lib\site-packages\twisted\internet\base.py", line 824, in runUntilCurrent
+	    call.func(*call.args, **call.kw)
+	exceptions.TypeError: create_amp_service() takes exactly 1 argument (2 given)
+	

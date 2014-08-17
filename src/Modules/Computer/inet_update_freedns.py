@@ -46,7 +46,7 @@ class DynDnsAPI(object):
         self.m_reactor = p_reactor
         self.m_reactor.callLater(2 * 60, self.update_start_process, None)
 
-    def update_start_process(self):
+    def update_start_process(self, _ignore):
         """After waiting for the initial startup activities to die down, this is invoked
         to start up a loop for each dynamic service being updated.
         """

@@ -292,7 +292,7 @@ class AmpClient(object):
         l_defer.addCallback(self.cb_sendInfo)
         l_defer.addErrback(self.eb_send_info)
 
-    def start_sending_to_all_clients(self):
+    def start_sending_to_all_clients(self, _ignore):
         """
         Loop thru all the nodes we know about.  Start a client for each node except ourself (Nodes[0]).
         """
@@ -327,7 +327,7 @@ class Utility(AmpClient):
         l_defer.addCallback(self.cb_start_all_clients)
         l_defer.addErrback(self.eb_start_clients_loop)
 
-    def create_amp_service(self):
+    def create_amp_service(self, _ignore):
         """
         Create a service that we can stop and restart
         """
