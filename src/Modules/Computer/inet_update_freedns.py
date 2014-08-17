@@ -44,7 +44,7 @@ class DynDnsAPI(object):
         """
         self.m_internet_obj = p_internet_obj
         self.m_reactor = p_reactor
-        self.m_reactor.callLater(2 * 60, self.update_start_process)
+        self.m_reactor.callLater(2 * 60, self.update_start_process, None)
 
     def update_start_process(self):
         """After waiting for the initial startup activities to die down, this is invoked
@@ -53,7 +53,7 @@ class DynDnsAPI(object):
         self.m_running = True
         for l_dyn_obj in self.m_internet_obj.DynDns.itervalues():
             l_cmd = lambda x = l_dyn_obj.UpdateInterval, y = l_dyn_obj: self.update_loop(x, y)
-            self.m_reactor.callLater(l_dyn_obj.UpdateInterval, l_cmd)
+            self.m_reactor.callLater(l_dyn_obj.UpdateInterval, l_cmd, None)
 
     def stop_dyndns_process(self):
         self.m_running = False
@@ -85,7 +85,7 @@ class DynDnsAPI(object):
 
     def cb_do_delay(self, _p_response):
         l_cmd = lambda x = self.m_dyn_obj.UpdateInterval, y = self.m_dyn_obj: self.update_loop(x, y)
-        self.m_reactor.callLater(self.m_dyn_obj.UpdateInterval, l_cmd)
+        self.m_reactor.callLater(self.m_dyn_obj.UpdateInterval, l_cmd, None)
 
 
 class API(DynDnsAPI):

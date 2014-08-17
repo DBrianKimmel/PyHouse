@@ -14,6 +14,7 @@
 # Import system type stuff
 
 # Import PyMh files
+from Modules.Core.data_objects import LightData
 
 
 class NullData(LightData):

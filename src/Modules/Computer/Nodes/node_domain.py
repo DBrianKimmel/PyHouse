@@ -296,7 +296,7 @@ class AmpClient(object):
         """
         Loop thru all the nodes we know about.  Start a client for each node except ourself (Nodes[0]).
         """
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(2 * 60 * 60, self.start_sending_to_all_clients)
+        self.m_pyhouse_obj.Twisted.Reactor.callLater(2 * 60 * 60, self.start_sending_to_all_clients, None)
         for l_key, l_node in self.m_pyhouse_obj.Computer.Nodes.iteritems():
             if l_key > -1:  # Skip ourself
                 self.create_one_client(self.m_pyhouse_obj, l_node.ConnectionAddr_IPv4)
@@ -313,7 +313,7 @@ class Utility(AmpClient):
         @type _ignore: class 'twisted.internet.tcp.Port'
         """
         LOG.info('Domain Server is Listening. {0:}'.format(_ignore))
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(5, self.start_sending_to_all_clients)
+        self.m_pyhouse_obj.Twisted.Reactor.callLater(5, self.start_sending_to_all_clients, None)
 
     def eb_start_clients_loop(self, p_reason):
         LOG.error('ERROR in starting Domain Server (NOT Listening) - {0:}.\n'.format(p_reason))
@@ -350,7 +350,7 @@ class API(Utility):
         This delay should help ensure that the nodes are all up and functioning before starting AMP.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
-        p_pyhouse_obj.Twisted.Reactor.callLater(run_delay, self.create_amp_service)
+        p_pyhouse_obj.Twisted.Reactor.callLater(run_delay, self.create_amp_service, None)
 
     def Stop(self):
         pass

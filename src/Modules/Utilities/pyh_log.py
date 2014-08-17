@@ -36,6 +36,14 @@ from Modules.Utilities.xml_tools import XmlConfigTools
 g_debug = 0
 
 
+def getLogger(p_name):
+    pass
+
+LOG = getLogger('PyHouse.Logger      ')
+
+
+
+
 class Logger(object):
     """
     Wrapper of 'twisted.python.log.msg' function.
@@ -102,12 +110,11 @@ class Utility(ReadWriteConfigXml):
     def setup_debug_log (self, p_file):
         """Debug and more severe goes to the base logger
         """
-        # print('pyh_log start logging to {0:}'.format(p_file))
         logging.basicConfig()
         l_daily = DailyLogFile.fromFullPath(p_file)
-        tpLog.startLogging(l_daily)
-        observer = tpLog.PythonLoggingObserver()
-        observer.start()
+        tpLog.startLogging(l_daily, setStdout = False)
+        # observer = tpLog.PythonLoggingObserver()
+        # observer.start()
 
     def setup_error_log (self):
         pass
@@ -116,6 +123,7 @@ class Utility(ReadWriteConfigXml):
 class API(Utility):
 
     def __init__(self):
+        # print('pyh.log.API().__init__')
         self.m_log_data = LogData()
 
     def Start(self, p_pyhouse_obj):
@@ -140,12 +148,6 @@ class API(Utility):
         # l_obj.Debug = p_entry.Debug
         # l_obj.Error = p_entry.Error
         # self.m_pyhouse_obj.LogData = l_obj
-
-
-def getLogger(p_name):
-    pass
-
-LOG = getLogger('PyHouse.Logger      ')
 
 
 class Manager(object):

@@ -2,7 +2,7 @@
 #
 #
 
-from Modules.communication import test
+from Modules.Communication import test
 # from Modules.configure import test
 # from Modules.core import test
 

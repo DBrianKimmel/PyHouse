@@ -169,9 +169,9 @@ class ScheduleExecution(ScheduleData):
         LOG.info("About to execute - Schedule:{0:}".format(p_slot_list))
         for l_slot in range(len(p_slot_list)):
             self.execute_one_schedule(p_slot_list[l_slot])
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(5, self.run_schedule)
+        self.m_pyhouse_obj.Twisted.Reactor.callLater(5, self.run_schedule, None)
 
-    def run_schedule(self):
+    def run_schedule(self, _ignore):
         """Find out what schedules need to be done and how long to delay before they are due to be run.
         """
         l_seconds_to_delay, l_schedule_list = self.get_next_sched(self.m_pyhouse_obj)
@@ -370,7 +370,7 @@ class API(ScheduleUtility, ReadWriteConfigXml):
         self.m_sunrisesunset_api.Start(p_pyhouse_obj)
         self.start_scheduled_modules(p_pyhouse_obj)
         if self.m_pyhouse_obj.House.Active:
-            self.m_pyhouse_obj.Twisted.Reactor.callLater(5, self.run_schedule)
+            self.m_pyhouse_obj.Twisted.Reactor.callLater(5, self.run_schedule, None)
         else:
             LOG.warning('No Schedules will be run because the house is NOT active.')
         LOG.info("Started.")

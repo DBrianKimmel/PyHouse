@@ -190,7 +190,7 @@ class SunCalcs(SSUtility, SolarParameters):
         """
         l_e_long = p_earth.Longitude
         l_j_star2k = JDATE2000_9 - (l_e_long / 360.0) + p_julian.JulianCycle - JDATE2000
-        print('JStar2000 = {0:}  Long {1:}'.format(l_j_star2k, l_e_long / 360.0))
+        # print('JStar2000 = {0:}  Long {1:}'.format(l_j_star2k, l_e_long / 360.0))
         l_mean_anomaly = self._calc_mean_anomaly(l_j_star2k)
         l_equation_of_center = self._calc_equation_of_center(l_mean_anomaly)
         l_lambda = self._calc_ecliptic_longitude(l_mean_anomaly, l_equation_of_center)
@@ -216,10 +216,10 @@ class SunCalcs(SSUtility, SolarParameters):
         l_rise = l_transit - (l_set - l_transit)
         p_earth.Sunrise = l_rise
         p_earth.Sunset = l_set
-        print("J**         Calculating using hour angle {0:}".format(l_j_starstar))
-        print(" Sunrise {0:}  {1:}".format(l_rise, self._convert_julian_to_time(l_rise, True)))
-        print(" Transit {0:}  {1:}".format(l_transit, self._convert_julian_to_time(l_transit, True)))
-        print(" Sunset  {0:}  {1:}".format(l_set, self._convert_julian_to_time(l_set, True)))
+        # print("J**         Calculating using hour angle {0:}".format(l_j_starstar))
+        # print(" Sunrise {0:}  {1:}".format(l_rise, self._convert_julian_to_time(l_rise, True)))
+        # print(" Transit {0:}  {1:}".format(l_transit, self._convert_julian_to_time(l_transit, True)))
+        # print(" Sunset  {0:}  {1:}".format(l_set, self._convert_julian_to_time(l_set, True)))
 
     def calc_sunrise_sunset(self, p_earth_data, p_solar_data):
         """Trigger all calculations.

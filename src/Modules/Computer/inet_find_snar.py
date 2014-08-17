@@ -47,7 +47,7 @@ class FindExternalIpAddress(object):
         l_initial_delay = 2 * 60  # 2 Minutes
         self.m_internet_obj = p_internet_obj
         self.m_reactor = p_reactor
-        self.m_reactor.callLater(l_initial_delay, self.get_public_ip)
+        self.m_reactor.callLater(l_initial_delay, self.get_public_ip, None)
 
     def get_public_ip(self):
         """
@@ -56,7 +56,7 @@ class FindExternalIpAddress(object):
         l_minimum_delay = 10 * 60  # 10 Minutes
         if self.m_internet_obj.ExternalDelay < l_minimum_delay:
             self.m_internet_obj.ExternalDelay = l_minimum_delay
-        self.m_reactor.callLater(self.m_internet_obj.ExternalDelay, self.get_public_ip)
+        self.m_reactor.callLater(self.m_internet_obj.ExternalDelay, self.get_public_ip, None)
         self.m_url = self.m_internet_obj.ExternalUrl
         if self.m_url == None:
             LOG.error("URL is missing.")

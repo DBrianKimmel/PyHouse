@@ -15,7 +15,7 @@ Tests all working OK - DBK 2014-05-22
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.families.Insteon import Insteon_utils
+from Modules.Families.Insteon import Insteon_utils
 from test import xml_data
 
 XML = xml_data.XML_LONG
@@ -58,5 +58,10 @@ class Test_01_Conversions(unittest.TestCase):
         l_msg[:] = MSG_62
         result = self.inst.int2message(ADDR_NOOK_INT, l_msg, 2)
         self.assertEqual(result, MSG_62)
+
+def suite():
+    suite = unittest.TestSuite()
+    suite.addTest(Test_01_Conversions('test_0110_message2int'))
+    return suite
 
 # ## END

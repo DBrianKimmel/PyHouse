@@ -1,5 +1,5 @@
 """
-@name: PyHouse/src/Modules/families/test/test_family.py
+@name: PyHouse/src/Modules/Families/test/test_family.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @copyright: 2013-2014 by D. Brian Kimmel
@@ -13,11 +13,10 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, HouseObjs
-from Modules.families import family
+from Modules.Families import family
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
-from Modules.utils.tools import PrettyPrintAny
+from Modules.Utilities.tools import PrettyPrintAny
 
 
 class SetupMixin(object):
@@ -50,28 +49,28 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         PrettyPrintAny(l_family_obj)
         self.assertEqual(l_family_obj.Name, 'Insteon', 'Invalid name')
         self.assertEqual(l_family_obj.FamilyDeviceModuleName, 'Insteon_device', 'Invalid Device Module Name')
-        self.assertEqual(l_family_obj.FamilyPackageName, 'Modules.families.Insteon', 'Invalid Package Name')
+        self.assertEqual(l_family_obj.FamilyPackageName, 'Modules.Families.Insteon', 'Invalid Package Name')
 
     def test_0212_BuildOne(self):
         l_family_obj = self.m_api._build_one_family_data('UPB')
         PrettyPrintAny(l_family_obj)
         self.assertEqual(l_family_obj.Name, 'UPB', 'Invalid name')
         self.assertEqual(l_family_obj.FamilyDeviceModuleName, 'UPB_device', 'Invalid Device Module Name')
-        self.assertEqual(l_family_obj.FamilyPackageName, 'Modules.families.UPB', 'Invalid Package Name')
+        self.assertEqual(l_family_obj.FamilyPackageName, 'Modules.Families.UPB', 'Invalid Package Name')
 
     def test_0213_BuildOne(self):
         l_family_obj = self.m_api._build_one_family_data('X10')
         PrettyPrintAny(l_family_obj, 'X10')
         self.assertEqual(l_family_obj.Name, 'X10', 'Invalid name')
         self.assertEqual(l_family_obj.FamilyDeviceModuleName, 'X10_device', 'Invalid Device Module Name')
-        self.assertEqual(l_family_obj.FamilyPackageName, 'Modules.families.X10', 'Invalid Package Name')
+        self.assertEqual(l_family_obj.FamilyPackageName, 'Modules.Families.X10', 'Invalid Package Name')
 
     def test_0214_BuildOne(self):
         l_family_obj = self.m_api._build_one_family_data('Null')
         PrettyPrintAny(l_family_obj, 'Null')
         self.assertEqual(l_family_obj.Name, 'Null', 'Invalid name')
         self.assertEqual(l_family_obj.FamilyDeviceModuleName, 'Null_device', 'Invalid Device Module Name')
-        self.assertEqual(l_family_obj.FamilyPackageName, 'Modules.families.Null', 'Invalid Package Name')
+        self.assertEqual(l_family_obj.FamilyPackageName, 'Modules.Families.Null', 'Invalid Package Name')
 
     def test_0221_ImportOne(self):
         l_obj = self.m_api._build_one_family_data('Insteon')

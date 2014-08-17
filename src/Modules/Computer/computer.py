@@ -49,26 +49,26 @@ class Utility(ReadWriteConfigXml):
 
     def add_api_references(self, p_pyhouse_obj):
         p_pyhouse_obj.APIs.InternetAPI = internet.API()
-        p_pyhouse_obj.APIs.LogsAPI = pyh_log.API()
+        # p_pyhouse_obj.APIs.LogsAPI = pyh_log.API()
         p_pyhouse_obj.APIs.NodesAPI = nodes.API()
         p_pyhouse_obj.APIs.WebAPI = web_server.API()
 
     def start_component_apis(self, p_pyhouse_obj):
         p_pyhouse_obj.APIs.InternetAPI.Start(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.LogsAPI.Start(p_pyhouse_obj)
+        # p_pyhouse_obj.APIs.LogsAPI.Start(p_pyhouse_obj)
         p_pyhouse_obj.APIs.NodesAPI.Start(p_pyhouse_obj)
         p_pyhouse_obj.APIs.WebAPI.Start(p_pyhouse_obj)
 
     def stop_component_apis(self, p_pyhouse_obj):
         p_pyhouse_obj.APIs.InternetAPI.Stop()
-        p_pyhouse_obj.APIs.LogsAPI.Stop()
+        # p_pyhouse_obj.APIs.LogsAPI.Stop()
         p_pyhouse_obj.APIs.NodesAPI.Stop()
         p_pyhouse_obj.APIs.WebAPI.Stop()
 
     def save_component_apis(self, p_pyhouse_obj):
         l_xml = self.write_computer_xml()
         p_pyhouse_obj.APIs.InternetAPI.SaveXml(l_xml)
-        p_pyhouse_obj.APIs.LogsAPI.SaveXml(l_xml)
+        # p_pyhouse_obj.APIs.LogsAPI.SaveXml(l_xml)
         p_pyhouse_obj.APIs.NodesAPI.SaveXml(l_xml)
         p_pyhouse_obj.APIs.WebAPI.SaveXml(l_xml)
         return l_xml

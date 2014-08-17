@@ -19,11 +19,12 @@ from twisted.trial import unittest
 # Import PyMh files
 # from Modules.lights.lighting import LightData
 from Modules.Core.data_objects import PyHouseData, ControllerData
-from Modules.families.Insteon import Insteon_PLM
-from Modules.families.Insteon import Insteon_utils
-from Modules.families import family
-from Modules.utils.tools import PrettyPrintAny
-from test import xml_data, testing_mixin
+from Modules.Families.Insteon import Insteon_PLM, Insteon_decoder
+from Modules.Core import conversions
+from Modules.Families import family
+from Modules.Utilities.tools import PrettyPrintAny
+from test import xml_data
+from test.testing_mixin import SetupPyHouseObj
 
 
 ADR_16C9D0 = '16.C9.D0'
@@ -41,26 +42,27 @@ class SetupMixin(object):
     """
     """
 
-    def setUp(self):
-        self.m_pyhouse_obj = testing_mixin.SetupPyHouseObj().BuildPyHouse()
+    def setUp(self, p_root):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
+        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
-        self.m_api = Insteon_PLM.API()
 
 
-class Test_01(SetupMixin, unittest.TestCase):
+class Test_01_InsteonPlmUtility(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
-        SetupMixin.setUp(self)
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        self.m_api = Insteon_PLM.API()
 
     def test_0101_MessageLength(self):
         self.assertEqual(self.m_api._get_message_length(MSG_50), 11)
         self.assertEqual(self.m_api._get_message_length(MSG_62), 9)
         self.assertEqual(self.m_api._get_message_length(MSG_99), 1)
+        print('test_0101_MessageLength')
 
     def test_0102_ExtractAddress(self):
-        self.assertEqual(self.m_api._get_addr_from_message(MSG_50, 2), Insteon_utils.dotted_hex2int(ADR_16C9D0))
-        self.assertEqual(self.m_api._get_addr_from_message(MSG_62, 2), Insteon_utils.dotted_hex2int(ADR_17C272))
+        self.assertEqual(self.m_api._get_addr_from_message(MSG_50, 2), conversions.dotted_hex2int(ADR_16C9D0))
+        self.assertEqual(self.m_api._get_addr_from_message(MSG_62, 2), conversions.dotted_hex2int(ADR_17C272))
 
     def test_0103_QueueCommand(self):
         l_ret_1 = self.m_api._queue_command('insteon_send')
@@ -68,7 +70,7 @@ class Test_01(SetupMixin, unittest.TestCase):
         self.assertEqual(l_ret_1[0], STX)
 
 
-class Test_02(SetupMixin, unittest.TestCase):
+class Test_02_XML(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         self.m_pyhouse_obj = PyHouseData()
@@ -87,13 +89,18 @@ class Test_02(SetupMixin, unittest.TestCase):
 class Test_03_Thermostat(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        # super(Test_03_Thermostat, self).__init__()
-        self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
-        SetupMixin.setUp(self)
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         self.m_controller_obj = ControllerData()
 
     def test_0301_x(self):
-        self.m_api._decode_50_record(self.m_controller_obj)
-        PrettyPrintAny(self.m_controller_obj, 'controller_obj', 120)
+        pass
+
+def suite():
+    suite = unittest.TestSuite()
+    suite.addTests(Test_01_InsteonPlmUtility())
+    suite.addTest(Test_02_XML('test_0201_get_message_length'))
+    suite.addTest(Test_02_XML('test_0201_getBytes'))
+    suite.addTest(Test_03_Thermostat('test_0301_x'))
+    return suite
 
 # ## END DBK

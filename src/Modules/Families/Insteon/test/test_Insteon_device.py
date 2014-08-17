@@ -15,13 +15,13 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.families.Insteon.Insteon_data import InsteonData
-from Modules.families.Insteon import Insteon_device
+from Modules.Families.Insteon.Insteon_data import InsteonData
+from Modules.Families.Insteon import Insteon_device
 from Modules.Core import conversions
-from Modules.lights import lighting_lights
+from Modules.Lighting import lighting_lights
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
-from Modules.utils.tools import PrettyPrintAny
+from Modules.Utilities.tools import PrettyPrintAny
 
 
 class SetupMixin(object):
@@ -46,5 +46,10 @@ class Test_02_API(SetupMixin, unittest.TestCase):
         """ Be sure that the XML contains the right stuff.
         """
         pass
+
+def suite():
+    suite = unittest.TestSuite()
+    suite.addTest(Test_02_API('test_0202_Init'))
+    return suite
 
 # ## END

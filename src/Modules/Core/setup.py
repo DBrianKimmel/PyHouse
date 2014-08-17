@@ -110,11 +110,11 @@ class API(Utility):
 
         @param p_pyhouse_obj: is the skeleton Obj filled in some by PyHouse.py.
         """
-        LOG.info("Starting.")
         self.m_pyhouse_obj = p_pyhouse_obj
         self.setup_xml_file(p_pyhouse_obj)
         self.read_xml_config_info(self.m_pyhouse_obj)
         self.log_start(p_pyhouse_obj)
+        LOG.info("Starting.")
         # Logging system is now enabled
         self.m_pyhouse_obj = p_pyhouse_obj
         p_pyhouse_obj.APIs.ComputerAPI.Start(p_pyhouse_obj)
