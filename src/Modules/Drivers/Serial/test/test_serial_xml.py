@@ -1,8 +1,8 @@
 """
-@name: PyHouse/src/Modules/drivers/Serial/test/test_serial_xml.py
-@author: briank
+@name: PyHouse/src/Modules/Drivers/Serial/test/test_serial_xml.py
+@author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com>
-@Copyright: (c)  2014 by briank
+@Copyright: (c)  2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Aug 5, 2014
 @Summary:
@@ -16,12 +16,12 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import ControllerData
-from Modules.drivers.Serial import serial_xml
-from Modules.lights import lighting_controllers
-from Modules.families import family
+from Modules.Drivers.Serial import serial_xml
+from Modules.Lighting import lighting_controllers
+from Modules.Families import family
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
-from Modules.utils.tools import PrettyPrintAny
+from Modules.Utilities.tools import PrettyPrintAny
 
 
 class SetupMixin(object):

@@ -24,8 +24,8 @@ from twisted.internet.serialport import SerialPort
 import serial
 
 # Import PyMh files
-from Modules.utils.tools import PrintBytes
-from Modules.utils import pyh_log
+from Modules.Utilities.tools import PrintBytes
+from Modules.Utilities import pyh_log
 
 g_debug = 0
 LOG = pyh_log.getLogger('PyHouse.DriverSerial')

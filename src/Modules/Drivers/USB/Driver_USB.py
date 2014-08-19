@@ -1,7 +1,7 @@
 """
--*- test-case-name: PyHouse.src.Modules.drivers.test.test_Driver_USB -*-
+-*- test-case-name: PyHouse.src.Modules.Drivers/USB.test.test_Driver_USB -*-
 
-@name: PyHouse/src/Modules/drivers/USB/Driver_USB.py
+@name: PyHouse/src/Modules/Drivers/USB/Driver_USB.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @copyright: 2011-2014 by D. Brian Kimmel
@@ -17,9 +17,9 @@ import usb.util
 from twisted.internet.protocol import Protocol
 
 # Import PyHouse Modules
-from Modules.drivers.USB import usb_open
-from Modules.utils.tools import PrintBytes
-from Modules.utils import pyh_log
+from Modules.Drivers.USB import usb_open
+from Modules.Utilities.tools import PrintBytes
+from Modules.Utilities import pyh_log
 
 g_debug = 0
 LOG = pyh_log.getLogger('PyHouse.USBDriver   ')

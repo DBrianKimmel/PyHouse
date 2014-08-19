@@ -1,5 +1,5 @@
 """
-@name: PyHouse/src/Modules/drivers/Serial/test/test_Driver_Serial.py
+@name: PyHouse/src/Modules/Drivers/Serial/test/test_Driver_Serial.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @copyright: 2013_2014 by D. Brian Kimmel
@@ -16,11 +16,11 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import ControllerData
-from Modules.drivers.Serial import Driver_Serial
-from Modules.families import family
+from Modules.Drivers.Serial import Driver_Serial
+from Modules.Families import family
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
-from Modules.utils.tools import PrettyPrintAny
+from Modules.Utilities.tools import PrettyPrintAny
 
 
 class SetupMixin(object):

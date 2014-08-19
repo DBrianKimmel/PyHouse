@@ -1,7 +1,7 @@
 """
--*- test-case-name: PyHouse.src.Modules.drivers.test.test_usb_open -*-
+-*- test-case-name: PyHouse.src.Modules.Drivers.USB.test.test_usb_open -*-
 
-@name: PyHouse/src/Modules/drivers/USB/usb_open.py
+@name: PyHouse/src/Modules/Drivers/USB/usb_open.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @copyright: 2011-2014 by D. Brian Kimmel
@@ -23,7 +23,7 @@ import usb.core
 import usb.util
 
 # Import PyHouse modules
-from Modules.utils import pyh_log
+from Modules.Utilities import pyh_log
 
 g_debug = 0
 LOG = pyh_log.getLogger('PyHouse.USBDriver_O ')

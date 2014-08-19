@@ -1,5 +1,5 @@
 """
-@name: PyHouse/src/Modules/drivers/test/test_Driver_USB.py
+@name: PyHouse/src/Modules/Drivers/USB/test/test_Driver_USB.py
 @author: briank
 @contact: <d.briankimmel@gmail.com>
 @Copyright: (c)  2014 by briank
@@ -12,10 +12,8 @@
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.drivers import Driver_USB
-from test import xml_data
-from Modules.Core.data_objects import ControllerData
-from Modules.utils.tools import PrintBytes  # , PrettyPrintAny
+from Modules.Drivers.USB import Driver_USB
+from Modules.Utilities.tools import PrintBytes  # , PrettyPrintAny
 
 RAW_01 = bytearray(b'\xF7\x50\x45\x0d\x45\x0d\x50\x45')
 RAW_02 = bytearray(b'\xF4\x0D\x50\x45\x0d\x00\x00\x00')
