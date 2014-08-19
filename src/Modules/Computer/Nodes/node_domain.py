@@ -1,7 +1,7 @@
 """
--*- test-case-name: PyHouse.src.Modules.Core.test.test_node_domain -*-
+-*- test-case-name: PyHouse.src.Modules.Computer.Nodes.test.test_node_domain -*-
 
-@name: PyHouse/src/Modules/Core/node_domain.py
+@name: PyHouse/src/Modules/Computer/Nodes/node_domain.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
@@ -27,7 +27,7 @@ What I want to happen on startup:
 # Import system type stuff
 from twisted.internet.endpoints import TCP4ClientEndpoint, TCP4ServerEndpoint
 from twisted.internet.protocol import ServerFactory, ClientFactory
-from twisted.protocols.amp import AMP, Command, Integer, String, AmpList
+from twisted.protocols.amp import AMP, Command, CommandLocator, Integer, String, AmpList
 from twisted.application.internet import StreamServerEndpointService
 
 # Import PyMh files and modules.
@@ -94,40 +94,46 @@ class SendNodeList(Command):
 
 
 class MessageProcessing(AMP):
-    """Process message we receive from different nodes.
+    """
+    class 100
+    Process message we receive from different nodes.
     """
 
     def process_node_info(self, p_box, p_pyhouse_obj):
         """
+        110
         """
         self.m_pyhouse_obj = p_pyhouse_obj
         l_ret = None
         if p_box['_command'] == 'NodeInformationCommand':
             l_ret = self.update_NodeInformation(p_box)
+        else:
+            LOG.debug('==110== Invalid box received - {0:}'.format(p_box))
         return l_ret
 
     def update_NodeInformation(self, p_box):
         """
-        710
+        120
         """
         for _k_key, l_node in self.m_pyhouse_obj.Computer.Nodes.iteritems():
             if l_node.Name == p_box['Name']:
                 l_node.Role = p_box['NodeRole']
                 l_node.UUID = p_box['UUID']
                 l_node.Active = p_box['Active']
-                LOG.info('==710== Node {0:} updated'.format(l_node.Key))
+                LOG.info('==120== Node {0:} updated'.format(l_node.Key))
         l_ret = dict(Name = 'abc', Answer = 'Yes')
         return l_ret
 
 
-class AmpLocator(object):
+class AmpLocator(CommandLocator):
     """
+    class 200
     """
 
     @NodeInformationCommand.responder
     def receive_NodeInformation(self, p_box):
         """
-        580
+        210
         The responder expects to be called with a serialized box.
         It will then
             deserialize it,
@@ -137,20 +143,21 @@ class AmpLocator(object):
             and then return that serialized form.
         """
         if g_debug >= 1:
-            LOG.debug('==580== Dispatch - receive_NodeInformation() - RECEIVED  Name=:{0:}'.format(p_box))
+            LOG.debug('==210== Dispatch - receive_NodeInformation() - RECEIVED  Name=:{0:}'.format(p_box))
         l_ret = dict(Name = 'AAA', Answer = 'Got it ok')
         return l_ret
 
 
 class DomainAmp(AMP):
     """
+    class 300
     AMP is a subclass of (BinaryBoxProtocol, BoxDispatcher, CommandLocator, SimpleStringLocator)
     """
     locator = AmpLocator()
 
     def __init__(self, p_pyhouse_obj):
         """ Override
-        500
+        310
         @param p_address: is a 3-tupple (AddressFamily, IPv4Addr, Port)
         """
         self.m_pyhouse_obj = p_pyhouse_obj
@@ -159,7 +166,7 @@ class DomainAmp(AMP):
 
     def makeConnection(self, p_transport):
         """ Override
-        510
+        315
         Emit a helpful log message when the connection is made.
         Required to be here - passes back the transport.
         """
@@ -168,33 +175,33 @@ class DomainAmp(AMP):
 
     def connectionLost(self, p_reason):
         """ Override
-        520
+        320
         Clean up the connection.
         """
-        LOG.debug('Connection Lost - Reason: {0:}'.format(p_reason))
+        LOG.debug('==320== Connection Lost - Reason: {0:}'.format(p_reason))
         self.m_transport = None
 
     def dataReceived(self, data):
         """ Override
-        530
+        325
         Either parse incoming data as AmpBoxes or relay it to our nested protocol.
         """
         return AMP.dataReceived(self, data)
 
     def connectionMade(self):
         """
-        540
+        330
         Somebody connected to us...
         This may be considered the initializer of the protocol, because it is called when the connection is completed.
         For clients, this is called once the connection to the server has been established.
         For servers, this is called after an accept() call stops blocking and a socket has been received.
         If you need to send any greeting or initial message, do it here.
         """
-        LOG.info('Received a connection')
+        LOG.info('==330== Received a connection')
 
     def startReceivingBoxes(self, p_boxSender):
         """ Override
-        550
+        335
         The given boxSender is going to start calling boxReceived on this BoxDispatcher.
 
         @param boxSender: The L{IBoxSender} to send command responses to.
@@ -203,7 +210,7 @@ class DomainAmp(AMP):
 
     def ampBoxReceived(self, p_box):
         """ Override
-        560
+        340
         An AmpBox was received, representing a command, or an answer to a previously issued command (either successful or erroneous).
         Respond to it according to its contents.
 
@@ -211,40 +218,40 @@ class DomainAmp(AMP):
         _error #    : error response
         """
         if g_debug >= 1:
-            LOG.debug('==560== Dispatch - BoxReceived(Box)')
+            LOG.debug('==340== Dispatch - BoxReceived(Box)')
             LOG.debug('        Box:{0:}'.format(p_box))
-        # PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse 560', 120)
-        MessageProcessing().process_node_info(p_box, self.m_pyhouse_obj)
-        # self.receive_NodeInformation(p_box)
+        l_ret = MessageProcessing().process_node_info(p_box, self.m_pyhouse_obj)
+        return l_ret
 
     def stopReceivingBoxes(self, p_reason):
         """ Override
-        570
+        345
         No further boxes will be received here. Terminate all currently oustanding command deferreds with the given reason.
         """
         if g_debug >= 1:
-            LOG.debug('==570== Dispatch - StopReceivingBoxes(Reason)')
+            LOG.debug('==345== Dispatch - StopReceivingBoxes(Reason)')
             LOG.debug('        Reason: {0:}'.format(p_reason))
         self.boxSender = None
 
     def response_NodeOnfo(self):
         """
-        590
+        350
         """
-        LOG.debug('==590== Dispatch - received  remote server.')
+        LOG.debug('==350== Dispatch - received  remote server.')
         l_ret = dict(Name = 'abc', Answer = 'Yes')
         return l_ret
 
     def sendBox(self, p_box):
         """ Override
-        595
+        355
         """
-        LOG.info('==595== SendBox {0:}'.format(p_box))
+        LOG.info('==355== SendBox {0:}'.format(p_box))
         AMP.sendBox(self, p_box)
 
 
 class AmpServerFactory(ServerFactory):
     """
+    class 400
     """
 
     def __init__(self, p_pyhouses_obj):
@@ -257,43 +264,79 @@ class AmpServerFactory(ServerFactory):
 
 
 class AmpClient(object):
+    """
+    class 500
+    """
 
-    def cb_msg_sent(self, p_arg):
-        LOG.debug('Cl10-cb >>{0:}<<'.format(p_arg))
+    def _print_peer_ip_address(self, p_address):
+        """
+        510
+        Takes a twisted address structure and returns the IP address portion.
+        IPv4Address   .type   .host   .port
+        """
+        return p_address.host
 
-    def eb_msg_sent(self, p_arg):
-        LOG.debug('Cl10-eb {0:}'.format(p_arg))
+    def _build_NodeInfo_command(self, p_node, p_protocol):
+        """
+        515
+        Take the node information about this node and compose a command; send the command
+        """
+        l_defer = p_protocol.callRemote(
+                    NodeInformationCommand,
+                    Name = p_node.Name,
+                    Active = str(p_node.Active),
+                    Address = p_node.ConnectionAddr_IPv4,
+                    NodeRole = int(p_node.NodeRole),
+                    UUID = "01234567-1234-2345-3456-01234567890ab"
+                    )
+        LOG.info('==515== --> buildNodeInfo - defer = {0:}'.format(l_defer))
+        return l_defer
 
-    def send_node_info(self, p_protocol):
+    def send_node_information(self, p_protocol):
+        """
+        520
+        Send our local node information to all other nodes in our node list.
+        """
+
+        def cb_send_node_information(p_arg):
+            LOG.debug('Cl10-cb >>{0:}<<'.format(p_arg))
+            return p_arg
+
+        def eb_send_node_information(p_reason):
+            LOG.debug('ERROR - Send_node_information failed - {0:}'.format(p_reason))
+
+        LOG.info('==520== --> send_node_info starting')
         l_node = self.m_pyhouse_obj.Computer.Nodes[0]
-        l_defer = p_protocol.callRemote(NodeInformationCommand,
-                        Name = l_node.Name, Active = str(l_node.Active), Address = l_node.ConnectionAddr_IPv4,
-                        NodeRole = int(l_node.NodeRole), UUID = "01234567-1234-2345-3456-01234567890ab")
-        l_defer.addCallback(self.cb_msg_sent)
-        l_defer.addErrback(self.eb_msg_sent)
-
-    def cb_sendInfo(self, p_protocol):
-        LOG.info('Sending to {0:}'.format(p_protocol))
-        l_ret = self.send_node_info(p_protocol)
-        return l_ret
-
-    def eb_send_info(self, p_reason):
-        LOG.warning('WARNING - Failed to create a client to send to another node.  {0:}'.format(p_reason))
+        l_defer = self._build_NodeInfo_command(l_node, p_protocol)
+        l_defer.addCallback(cb_send_node_information)
+        l_defer.addErrback(eb_send_node_information)
 
     def create_one_client(self, p_pyhouses_obj, p_address):
         """
+        525
         Create a client to talk to some node's servers.
         @param p_address: is the address of the server we are connecting to.
         """
+        def cb_create_one_client(p_protocol):
+            l_peer = p_protocol.transport.getPeer()
+            LOG.info('==525_cb== Sending Node information to {0:}'.format(self._print_peer_ip_address(l_peer)))
+            l_ret = self.send_node_information(p_protocol)
+            return l_ret
+
+        def eb_create_one_client(p_reason):
+            LOG.warning('==525_eb== WARNING - Failed to create a client to send to another node.  {0:}'.format(p_reason))
+
         self.m_pyhouse_obj = p_pyhouses_obj
         self.m_address = p_address
         l_endpoint = TCP4ClientEndpoint(p_pyhouses_obj.Twisted.Reactor, p_address, AMP_PORT)
         l_defer = l_endpoint.connect(ClientFactory.forProtocol(AMP))
-        l_defer.addCallback(self.cb_sendInfo)
-        l_defer.addErrback(self.eb_send_info)
+        LOG.info('==525== CreateOneClient starting - Defer'.format(l_defer))
+        l_defer.addCallback(cb_create_one_client)
+        l_defer.addErrback(eb_create_one_client)
 
     def start_sending_to_all_clients(self, _ignore):
         """
+        530
         Loop thru all the nodes we know about.  Start a client for each node except ourself (Nodes[0]).
         """
         self.m_pyhouse_obj.Twisted.Reactor.callLater(2 * 60 * 60, self.start_sending_to_all_clients, None)
@@ -303,16 +346,20 @@ class AmpClient(object):
 
 
 class Utility(AmpClient):
+    """
+    class 600
+    """
     m_pyhouse_obj = None
 
-    def cb_start_all_clients(self, _ignore):
+    def cb_start_all_clients(self, p_port):
         """
+        610
         Loop thru all the nodes we know about.  Start a client for each node except ourself (Nodes[0]).
 
-        @param _ignore: node_domain.AmpServerFactory on 8581
-        @type _ignore: class 'twisted.internet.tcp.Port'
+        @param p_port: node_domain.AmpServerFactory on 8581
+        @type p_port: class 'twisted.internet.tcp.Port'
         """
-        LOG.info('Domain Server is Listening. {0:}'.format(_ignore))
+        LOG.info('==610== Domain Server is now Listening. {0:}'.format(p_port))
         self.m_pyhouse_obj.Twisted.Reactor.callLater(5, self.start_sending_to_all_clients, None)
 
     def eb_start_clients_loop(self, p_reason):
@@ -320,6 +367,7 @@ class Utility(AmpClient):
 
     def start_amp_server(self, p_pyhouse_obj, p_endpoint):
         """
+        610
         Start the domain server to listen for all incoming requests.
         Then, for all the nodes we know about, create a client and send a message with our info.
         """
@@ -329,7 +377,7 @@ class Utility(AmpClient):
 
     def create_amp_service(self, _ignore):
         """
-        Create a service that we can stop and restart
+        Create a Message Exchange service that we can stop and restart
         """
         l_endpoint = TCP4ServerEndpoint(self.m_pyhouse_obj.Twisted.Reactor, AMP_PORT)
         l_factory = AmpServerFactory(self.m_pyhouse_obj)
@@ -340,6 +388,9 @@ class Utility(AmpClient):
 
 
 class API(Utility):
+    """
+    class 700
+    """
 
     def __init__(self):
         pass
