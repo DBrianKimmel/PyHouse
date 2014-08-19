@@ -58,7 +58,6 @@ class Test_01_InsteonPlmUtility(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_api._get_message_length(MSG_50), 11)
         self.assertEqual(self.m_api._get_message_length(MSG_62), 9)
         self.assertEqual(self.m_api._get_message_length(MSG_99), 1)
-        # print('test_0101_MessageLength')
 
     def test_0102_ExtractAddress(self):
         # self.assertEqual(self.m_api._get_addr_from_message(MSG_50, 2), conversions.dotted_hex2int(ADR_16C9D0))
@@ -71,7 +70,7 @@ class Test_01_InsteonPlmUtility(SetupMixin, unittest.TestCase):
         self.assertEqual(l_ret_1[0], STX)
 
 
-class Test_02_XML(SetupMixin, unittest.TestCase):
+class Test_02_CreateCommands(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         self.m_pyhouse_obj = PyHouseData()
@@ -87,7 +86,16 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         pass
 
 
-class Test_03_Thermostat(SetupMixin, unittest.TestCase):
+class Test_03_PlmDriverProtocol(SetupMixin, unittest.TestCase):
+    """
+    """
+
+    def setUp(self):
+        self.m_pyhouse_obj = PyHouseData()
+        self.m_api = Insteon_PLM. API()
+
+
+class Test_55_Thermostat(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
@@ -95,13 +103,5 @@ class Test_03_Thermostat(SetupMixin, unittest.TestCase):
 
     def test_0301_x(self):
         pass
-
-def suite():
-    suite = unittest.TestSuite()
-    # suite.addTests(Test_01_InsteonPlmUtility())
-    suite.addTest(Test_02_XML('test_0201_get_message_length'))
-    suite.addTest(Test_02_XML('test_0201_getBytes'))
-    suite.addTest(Test_03_Thermostat('test_0301_x'))
-    return suite
 
 # ## END DBK

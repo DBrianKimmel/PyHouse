@@ -265,7 +265,7 @@ class PlmDriverProtocol(CreateCommands):
         p_controller_obj._Queue = Queue.Queue(300)
         self.m_controller_obj = p_controller_obj
         self.m_decoder = Insteon_decoder.DecodeResponses(p_pyhouse_obj, self.m_house_obj)
-        self.dequeue_and_send()
+        self.dequeue_and_send(None)
         self.receive_loop()
 
     def driver_loop_stop(self):
