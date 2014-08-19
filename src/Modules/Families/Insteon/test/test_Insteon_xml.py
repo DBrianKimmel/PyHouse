@@ -34,7 +34,7 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-class Test_02_XML(SetupMixin, unittest.TestCase):
+class XML(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by node_local.
     """
 
@@ -43,23 +43,20 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         self.m_api = Insteon_xml.ReadWriteConfigXml()
         self.m_controller_api = lighting_controllers.ControllersAPI(self.m_pyhouse_obj)
 
-    def test_0202_FindXml(self):
+    def test_01_FindXml(self):
         """ Be sure that the XML contains the right stuff.
         """
+        PrettyPrintAny(self.m_xml.controller, 'XML Controller')
         self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
         self.assertEqual(self.m_xml.controller_sect.tag, 'ControllerSection', 'XML - No Controller section')
         self.assertEqual(self.m_xml.controller.tag, 'Controller', 'XML - No controller Entry')
-        print('Find XML')
 
-    def test_0203_ReadOneControllerXml(self):
+    def test_11_ReadOneControllerXml(self):
         """ Read in the xml file and fill in the lights
         """
-        PrettyPrintAny(self.m_xml.controller, 'XML Controller', 120)
-        l_device = LightData()
-        # l_device = ReadWriteConfigXml().read_base_lighting_xml(l_device, self.m_xml.controller)
         l_device = self.m_controller_api._read_controller_data(self.m_xml.controller)
         self.m_api.ReadXml(l_device, self.m_xml.controller)
-        PrettyPrintAny(l_device, 'Insteon', 120)
+        PrettyPrintAny(l_device, 'Insteon')
         self.assertEqual(l_device.Name, 'PLM_1', 'Bad Name')
         self.assertEqual(l_device.Key, 0, 'Bad Key')
         self.assertEqual(l_device.Active, False, 'Bad Active')
@@ -67,10 +64,17 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_device.DevCat, conversions.dotted_hex2int('12.34'), 'Bad DevCat')
         self.assertEqual(l_device.ProductKey, conversions.dotted_hex2int('23.45.67'), 'Bad ProductKey')
 
-def suite():
+    def test_21_Write(self):
+        l_device = self.m_controller_api._read_controller_data(self.m_xml.controller)
+        self.m_api.ReadXml(l_device, self.m_xml.controller)
+        l_xml = ET.Element('Test_XML')
+        self.m_api.WriteXml(l_xml, l_device)
+        PrettyPrintAny(l_xml, 'Insteon')
+
+
+def test_suite():
     suite = unittest.TestSuite()
-    suite.addTests(Test_02_XML())
-    # suite.addTest(Test_02_XML('test_0203_ReadOneControllerXml'))
+    # suite.addTests(XML())
     return suite
 
 # ## END

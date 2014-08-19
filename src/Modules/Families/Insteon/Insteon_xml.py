@@ -57,6 +57,8 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         """
         A method to extract Insteon specific elements and insert them into a basic device object.
 
+        We do this to keep the Insteon Data encapsulated.
+
         @param p_entry_xml: is the device's XML element
         @param p_device_obj : is the Basic Object that will have the extracted elements inserted into.
         @return: a dict of the extracted Insteon Specific data.
@@ -69,13 +71,8 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         l_insteon_obj.IsController = self.get_bool_from_xml(p_entry_xml, 'IsController')
         l_insteon_obj.IsMaster = self.get_bool_from_xml(p_entry_xml, 'IsMaster')
         l_insteon_obj.IsResponder = self.get_bool_from_xml(p_entry_xml, 'IsResponder')
-        # print('Insteon_xml - ReadXml( D )')
         l_insteon_obj.ProductKey = self._read_product_key(p_entry_xml)
-        # print('Insteon_xml - ReadXml( E )')
         xml_tools.stuff_new_attrs(p_device_obj, l_insteon_obj)
-
-        if g_debug >= 2:
-            LOG.debug('Insteon Read {0:}'.format(PrettyPrintAny(p_device_obj, 'Insteon_xml - ReadXml - p_device_obj', 120)))
         return l_insteon_obj
 
     def WriteXml(self, p_entry_xml, p_device_obj):

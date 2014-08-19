@@ -79,7 +79,7 @@ def daemonize():
     os.setsid()
     if os.fork():  # launch child and...
         os._exit(0)  # kill off parent again.
-    os.umask(077)
+    os.umask(127)
     null = os.open('/dev/null', os.O_RDWR)
     for i in range(3):
         try:
@@ -153,7 +153,7 @@ class API(Utilities):
         self.m_pyhouse_obj.Twisted.Reactor.run()  # reactor never returns so must be last - Event loop will now run
         #  When the reactor stops we continue here
         LOG.info("PyHouse says Bye Now.\n")
-        raise SystemExit, "PyHouse says Bye Now."
+        raise SystemExit("PyHouse says Bye Now.")
 
     def Start(self):
         """This is automatically invoked when the reactor starts from API().

@@ -1,5 +1,5 @@
 """
-@name: PyHouse/src/Modules/lights/test/test_lighting_controllers.py
+@name: PyHouse/src/Modules/Lighting/test/test_lighting_controllers.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
@@ -15,14 +15,14 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, ControllerData
-from Modules.lights import lighting_controllers
-from Modules.families import family
+from Modules.Core.data_objects import ControllerData
+from Modules.Lighting import lighting_controllers
+from Modules.Families import family
 from Modules.Core import conversions
-from Modules.web import web_utils
+from Modules.Web import web_utils
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
-from Modules.utils.tools import PrettyPrintAny
+from Modules.Utilities.tools import PrettyPrintAny
 
 
 class SetupMixin(object):
@@ -52,18 +52,37 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.controller_sect.tag, 'ControllerSection', 'XML - No Controllers section')
         self.assertEqual(self.m_xml.controller.tag, 'Controller', 'XML - No Controller section')
 
+    def test_0210_BaseData(self):
+        l_obj = self.m_api._read_base_data(self.m_xml.controller)
+        PrettyPrintAny(l_obj, 'Base Data')
+        self.assertEqual(l_obj.Name, 'PLM_1')
+        self.assertEqual(l_obj.Active, False)
+        self.assertEqual(l_obj.LightingType, 'Controller')
+
     def test_0211_ReadControllerData(self):
         l_obj = self.m_api._read_controller_data(self.m_xml.controller)
         PrettyPrintAny(l_obj, 'Controller Data', 100)
+        self.assertEqual(l_obj.InterfaceType, 'Serial')
+        self.assertEqual(l_obj.Port, '/dev/ttyUSB0')
 
     def test_0221_ReadInterfaceXml(self):
-        l_interface = self.m_api._read_interface_data(self.m_controller_obj, self.m_xml.controller)
-        PrettyPrintAny(l_interface, 'Read Interface', 100)
+        l_obj = self.m_api._read_controller_data(self.m_xml.controller)
+        l_interface = self.m_api._read_interface_data(l_obj, self.m_xml.controller)
+        PrettyPrintAny(l_obj, 'Read Interface', 100)
+        self.assertEqual(l_obj.BaudRate, 19200)
+        self.assertEqual(l_obj.ByteSize, 8)
+        self.assertEqual(l_obj.Parity, 'N')
+        self.assertEqual(l_obj.RtsCts, False)
+        self.assertEqual(l_obj.StopBits, 1.0)
+        self.assertEqual(l_obj.Timeout, 1.0)
+        self.assertEqual(l_obj.XonXoff, False)
 
     def test_0222_ReadFamilyXml(self):
-        self.m_controller_obj.ControllerFamily = 'Insteon'
-        l_family = self.m_api._read_family_data(self.m_controller_obj, self.m_xml.controller)
-        PrettyPrintAny(l_family, 'Read Family', 100)
+        l_obj = self.m_api._read_controller_data(self.m_xml.controller)
+        l_family = self.m_api._read_family_data(l_obj, self.m_xml.controller)
+        PrettyPrintAny(l_obj, 'Read Family', 100)
+        self.assertEqual(l_obj.DevCat, conversions.dotted_hex2int('12.34'))
+        self.assertEqual(l_obj.InsteonAddress, conversions.dotted_hex2int('AA.AA.AA'))
 
     def test_0223_ReadControllerXml(self):
         l_controller = self.m_api._read_controller_data(self.m_xml.controller)
@@ -120,5 +139,11 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         l_controller = self.m_api.read_controllers_xml(self.m_xml.controller_sect)
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_controller))
         PrettyPrintAny(l_json, 'JSON', 100)
+
+
+def suite():
+    suite = unittest.TestSuite()
+    suite.addTests(Test_02_XML())
+    return suite
 
 # ## END DBK

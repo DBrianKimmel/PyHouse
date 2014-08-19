@@ -37,9 +37,16 @@ class ControllersAPI(ReadWriteConfigXml):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_utils = Utility(p_pyhouse_obj)
 
-    def _read_controller_data(self, p_xml):
+    def _read_base_data(self, p_xml):
         l_obj = ControllerData()
         l_obj = self.read_base_lighting_xml(l_obj, p_xml)
+        return l_obj
+
+    def _read_controller_data(self, p_xml):
+        """
+        There are 2 extra fields for controllers - get them.
+        """
+        l_obj = self._read_base_data(p_xml)
         l_obj.InterfaceType = self.get_text_from_xml(p_xml, 'InterfaceType')
         l_obj.Port = self.get_text_from_xml(p_xml, 'Port')
         return l_obj

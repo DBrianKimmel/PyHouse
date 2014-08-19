@@ -60,8 +60,8 @@ class Test_01_Conversions(unittest.TestCase):
         self.assertEqual(result, MSG_62)
 
 def suite():
-    suite = unittest.TestSuite()
-    suite.addTest(Test_01_Conversions('test_0110_message2int'))
-    return suite
+    l_suite = unittest.TestSuite()
+    l_suite.addTest(Test_01_Conversions('test_0110_message2int'))
+    return l_suite
 
 # ## END

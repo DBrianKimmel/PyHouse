@@ -31,7 +31,6 @@ class Utility(object):
         try:
             l_family = p_obj.ControllerFamily
             l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[l_family].FamilyModuleAPI
-            # print('lighting_utils - read_family_data() api {0:}'.format(l_api))
             l_api.ReadXml(p_obj, p_xml)
         except Exception as e_err:
             l_msg = 'ERROR in lighting_utils.read_family_data() - {0:} {1:} {2:}'.format(e_err, p_obj.Name, l_family)
