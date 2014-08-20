@@ -1,5 +1,5 @@
 """
-@name: C:/Users/briank/Documents/GitHub/PyHouse/src/Modules/families/UPB/test/test_UPB_xml.py
+@name: C:/Users/briank/Documents/GitHub/PyHouse/src/Modules/Families/UPB/test/test_UPB_xml.py
 @author: briank
 @contact: <d.briankimmel@gmail.com>
 @Copyright: (c)  2014 by briank
@@ -8,10 +8,26 @@
 @Summary:
 
 """
-import unittest
+
+# Import system type stuff
+from twisted.trial import unittest
+
+# Import PyMh files and modules.
+from Modules.Families.UPB import UPB_xml
+from test.testing_mixin import SetupPyHouseObj
+from Modules.Utilities.tools import PrettyPrintAny
 
 
-class Test(unittest.TestCase):
+class SetupMixin(object):
+    """
+    """
+
+    def setUp(self, p_root):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
+        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+
+
+class Test_01_XML(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         pass

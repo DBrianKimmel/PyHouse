@@ -206,7 +206,7 @@ class BuildCommand(object):
 
 class UpbPimUtility(object):
 
-    def _compose_command(self, p_controller_obj, _p_command, _p_device_id, *p_args):
+    def _compose_command(self, _p_controller_obj, _p_command, _p_device_id, *p_args):
         """Build the command.
 
         @param p_controller_obj: is the controller information.
@@ -408,13 +408,13 @@ class UpbPimAPI(CreateCommands):
         """
         l_driver = None
         if p_controller_obj.InterfaceType.lower() == 'serial':
-            from Modules.drivers.Serial import Driver_Serial
+            from Modules.Drivers.Serial import Driver_Serial
             l_driver = Driver_Serial.API()
         elif p_controller_obj.InterfaceType.lower() == 'ethernet':
-            from Modules.drivers.Ethernet import Driver_Ethernet
+            from Modules.Drivers.Ethernet import Driver_Ethernet
             l_driver = Driver_Ethernet.API()
         elif p_controller_obj.InterfaceType.lower() == 'usb':
-            from Modules.drivers.USB import Driver_USB
+            from Modules.Drivers.USB import Driver_USB
             l_driver = Driver_USB.API()
         return l_driver
 
