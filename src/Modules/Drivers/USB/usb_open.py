@@ -25,8 +25,8 @@ import usb.util
 # Import PyHouse modules
 from Modules.Computer import logging_pyh as Logger
 
-g_debug = 0
-LOG = Logger.getLogger('PyHouse.USBDriver_O ')
+g_debug = 1
+LOG = Logger.getLogger('PyHouse.USBDriver_Op')
 
 
 # Timeouts for send/receive delays
@@ -96,8 +96,6 @@ class API(UsbDeviceData):
         p_USB_obj.Device = self._save_find_device(p_USB_obj, l_device)
         if g_debug >= 1:
             LOG.debug('Found a device - HID: {0:}'.format(l_vpn))
-        # if g_debug > 2:
-        #    PrettyPrintAny(l_device, 'find - l_device', 120)
         return l_device
 
     def _setup_detach_kernel(self, p_USB_obj):

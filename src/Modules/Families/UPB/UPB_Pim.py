@@ -1,9 +1,9 @@
 """
-Modules/families/UPB/UPB_Pim.py
+-*- test-case-name: PyHouse.src.Modules.Families.UPB.test.test_UPB_Pim -*-
 
-@name: PyHouse/src/Modules/families/UPB/Device_UPB.py
+@name: PyHouse/src/Modules/Families/UPB/UPB_Pim.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: d.briankimmel@gmail.com
 @copyright: 2011-2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Mar 27, 2011

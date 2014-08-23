@@ -36,6 +36,8 @@ __all__ = [
            'API']
 
 PYHOUSE_MULTICAST_IP_V4 = '234.35.36.37'
+PYHOUSE_MULTICAST_IP_V6 = 'ff05::35:3637'
+
 PYHOUSE_DISCOVERY_PORT = 8582
 WHOS_THERE = "Who's There?"
 I_AM = "I am."

@@ -72,12 +72,7 @@ class Utility(ReadWriteConfigXml):
     """
     """
 
-    def log_start(self, p_pyhouse_obj):
-        """Logging is the very first thing we start so we can see errors in the starting process.
-        Note that the house and computer xml has not been processed yet.
-        """
-        l_log = Logger.API()
-        l_log.Start(p_pyhouse_obj)
+    def log_start(self):
         LOG.info("""
         ------------------------------------------------------------------
 
@@ -132,7 +127,7 @@ class API(Utility):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.setup_xml_file(p_pyhouse_obj)
         self.read_xml_config_info(self.m_pyhouse_obj)
-        self.log_start(p_pyhouse_obj)
+        self.log_start()
         LOG.info("Starting.")
         # Logging system is now enabled
         self.m_pyhouse_obj = p_pyhouse_obj

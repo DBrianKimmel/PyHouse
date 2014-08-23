@@ -22,7 +22,7 @@ from Modules.Drivers.USB import usb_open
 from Modules.Utilities.tools import PrintBytes
 from Modules.Computer import logging_pyh as Logger
 
-g_debug = 0
+g_debug = 1
 LOG = Logger.getLogger('PyHouse.USBDriver   ')
 
 

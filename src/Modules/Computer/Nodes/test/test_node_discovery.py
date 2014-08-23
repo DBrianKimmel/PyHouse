@@ -1,5 +1,5 @@
 """
-@name: PyHouse/src/Modules/Core/test/test_node_discovery.py
+@name: PyHouse/src/Modules/Computer/test/test_node_discovery.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
@@ -15,7 +15,7 @@ from twisted.internet.defer import Deferred, gatherResults, maybeDeferred
 from twisted.internet import error
 
 # Import PyMh files and modules.
-from Modules.computers.Nodes import node_discovery
+from Modules.Computer.Nodes import node_discovery
 from test import xml_data
 from Modules.Core.data_objects import PyHouseData
 
