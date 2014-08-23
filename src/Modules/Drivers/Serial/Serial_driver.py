@@ -1,7 +1,7 @@
 """
--*- test-case-name: PyHouse.src.Modules.drivers.Serial.test.test_Driver_Serial -*-
+-*- test-case-name: PyHouse.src.Modules.Drivers.Serial.test.test_Serial_driver -*-
 
-@name: PyHouse/src/Modules/drivers/Serial/Driver_Serial.py
+@name: PyHouse/src/Modules/Drivers/Serial/Serial_driver.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @copyright: 2010-2014 by D. Brian Kimmel
@@ -28,7 +28,7 @@ from Modules.Utilities.tools import PrintBytes
 from Modules.Computer import logging_pyh as Logger
 
 g_debug = 0
-LOG = Logger.getLogger('PyHouse.DriverSerial')
+LOG = Logger.getLogger('PyHouse.SerialDriver')
 
 
 class SerialProtocol(Protocol):
@@ -124,10 +124,16 @@ class API(SerialAPI):
         LOG.info("Stopped controller {0:}".format(self.m_controller_obj.Name))
 
     def Read(self):
+        """
+        Non-Blocking read from the serial port.
+        """
         l_ret = self.fetch_read_data(self.m_controller_obj)
         return l_ret
 
     def Write(self, p_message):
+        """
+        Non-Blocking write to the serial port
+        """
         self.write_device(p_message)
 
 # ## END DBK

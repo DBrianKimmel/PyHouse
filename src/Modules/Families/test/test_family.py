@@ -6,6 +6,8 @@
 @note: Created on May 17, 2013
 @license: MIT License
 @summary: This module is for testing family.
+
+Passed all 12 tests.  DBK 2014-08-23
 """
 
 # Import system type stuff
@@ -28,7 +30,7 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-class Test_02_XML(SetupMixin, unittest.TestCase):
+class Test_01_Valid(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by lighting_controllers.
     """
 
@@ -36,13 +38,21 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         self.m_api = family.API()
         self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
-        # self.m_api = lighting_controllers.ControllersAPI(self.m_pyhouse_obj)
-        # self.m_controller_obj = ControllerData()
 
     def test_0201_ValidFamilies(self):
         self.assertEqual(family.VALID_FAMILIES[0], 'Insteon')
         self.assertEqual(family.VALID_FAMILIES[1], 'UPB')
         self.assertEqual(family.VALID_FAMILIES[2], 'X10')
+
+
+class Test_02_Utility(SetupMixin, unittest.TestCase):
+    """ This section tests the reading and writing of XML used by lighting_controllers.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        self.m_api = family.API()
+        self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
 
     def test_0211_BuildOne(self):
         l_family_obj = self.m_api._build_one_family_data('Insteon')
@@ -96,19 +106,33 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         self.assertNotEqual(l_family_obj, None, 'Error importing module Null')
         PrettyPrintAny(l_family_obj, 'Null')
 
-    def test_0231_ReadXml(self):
-        self.m_api.build_lighting_family_info()
-        PrettyPrintAny(self.m_pyhouse_obj.House.OBJs.FamilyData, 'Data', 120)
 
+class Test_03_API(SetupMixin, unittest.TestCase):
+    """ This section tests the reading and writing of XML used by lighting_controllers.
+    """
 
-    def test_0241_start_family(self):
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        self.m_api = family.API()
+        self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
+
+    def test_0311_BuildFamily(self):
         l_family_obj = self.m_api.build_lighting_family_info()
+        PrettyPrintAny(l_family_obj, 'Family_Obj')
         l_family_obj = self.m_api._build_one_family_data('Insteon')
         l_ret = self.m_api._import_one_module(l_family_obj)
         self.assertNotEqual(l_ret, None, 'Error importing module Insteon')
         pass
 
-    def test_0261_stop_family(self):
+    def test_0341_start_family(self):
+        l_family_obj = self.m_api.build_lighting_family_info()
+        l_insteon_obj = self.m_api._build_one_family_data('Insteon')
+        PrettyPrintAny(l_insteon_obj, 'Insteon_Obj')
+        l_ret = self.m_api._import_one_module(l_family_obj)
+        self.assertNotEqual(l_ret, None, 'Error importing module Insteon')
+        pass
+
+    def test_0361_stop_family(self):
         l_family_obj = self.m_api._build_one_family_data('Insteon')
         l_ret = self.m_api._import_one_module(l_family_obj)
         self.assertNotEqual(l_ret, None, 'Error importing module Insteon')

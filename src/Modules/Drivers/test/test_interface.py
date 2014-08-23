@@ -16,12 +16,12 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import ControllerData
-from Modules.drivers import interface
-from Modules.lights import lighting_controllers
-from Modules.utils import xml_tools
+from Modules.Drivers import interface
+from Modules.Lighting import lighting_controllers
+from Modules.Utilities import xml_tools
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
-from Modules.utils.tools import PrettyPrintAny
+from Modules.Utilities.tools import PrettyPrintAny
 
 class SetupMixin(object):
     """

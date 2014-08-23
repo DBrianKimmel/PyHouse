@@ -399,15 +399,18 @@ class LightHandlerAPI(InsteonPlmAPI):
     """
 
     def _load_driver(self, p_controller_obj):
+        """
+        Based on the InterfaceType of the controller, load the appropriate driver.
+        """
         if p_controller_obj.InterfaceType.lower() == 'serial':
-            from Modules.Drivers.Serial import Driver_Serial
-            l_driver = Driver_Serial.API()
+            from Modules.Drivers.Serial import Serial_driver
+            l_driver = Serial_driver.API()
         elif p_controller_obj.InterfaceType.lower() == 'ethernet':
-            from Modules.Drivers.Ethernet import Driver_Ethernet
-            l_driver = Driver_Ethernet.API()
+            from Modules.Drivers.Ethernet import Ethernet_driver
+            l_driver = Ethernet_driver.API()
         elif p_controller_obj.InterfaceType.lower() == 'usb':
-            from Modules.Drivers.USB import Driver_USB
-            l_driver = Driver_USB.API()
+            from Modules.Drivers.USB import USB_driver
+            l_driver = USB_driver.API()
         return l_driver
 
     def start_controller_driver(self, p_pyhouse_obj, p_controller_obj):

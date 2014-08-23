@@ -31,7 +31,7 @@ It configures PyHouse in the logging standard library module plus twisted loggin
 import logging
 
 import xml.etree.ElementTree as ET
-# from twisted.python import log as tp_logging
+from twisted.python import log as log_twisted
 # from twisted.python import util
 # from twisted.python.logfile import DailyLogFile
 
@@ -73,6 +73,14 @@ class Utility(object):
     """
     """
 
+    def add_twisted_log_to_pyhouse_log(self):
+        self.m_tw_log = log_twisted.PythonLoggingObserver(loggerName = 'PyHouse.tw          ')
+        self.m_tw_log.start()
+        log_twisted.startLoggingWithObserver(self.m_tw_log)
+
+    def remove_twisted_log_to_pyhouse_log(self):
+        self.m_tw_log.stop()
+
 
 class API(Utility, ReadWriteConfigXml):
 
@@ -83,6 +91,7 @@ class API(Utility, ReadWriteConfigXml):
 
     def Start(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.add_twisted_log_to_pyhouse_log()
         l_ret = self.read_xml(p_pyhouse_obj)
         try:
             self.m_pyhouse_obj.Computer.Logs = l_ret
@@ -91,6 +100,7 @@ class API(Utility, ReadWriteConfigXml):
         return l_ret
 
     def Stop(self):
+        self.remove_twisted_log_to_pyhouse_log()
         pass
 
     def SaveXml(self, p_xml):
@@ -130,14 +140,14 @@ class Manager(object):
 
 
 
-# class LevelFileLogObserver(tp_logging.FileLogObserver):
+# class LevelFileLogObserver(log_twisted.FileLogObserver):
 #    """
 #    Log messages observer. Has internal logging level threshold. Adds log level to output messages.
 #    See 'twisted.python.log.FileLogObserver' for details.
 #    """
 
 #    def __init__(self, f, level = L_INFO):
-#        tp_logging.FileLogObserver.__init__(self, f)
+#        log_twisted.FileLogObserver.__init__(self, f)
 #        self.log_level = level
 
 #    def __call__(self, eventDict):
@@ -156,7 +166,7 @@ class Manager(object):
 #        if level < self.log_level:
 #            return
 
-#        text = tp_logging.textFromEventDict(eventDict)
+#        text = log_twisted.textFromEventDict(eventDict)
 #        if text is None:
 #            return
 
@@ -166,7 +176,7 @@ class Manager(object):
 #            'system': eventDict['system'],
 #            'text': text.replace("\n", "\n\t")
 #        }
-#        msg_str = tp_logging._safeFormat("%(level)8s:[%(system)s]: %(text)s\n", fmt_dict)
+#        msg_str = log_twisted._safeFormat("%(level)8s:[%(system)s]: %(text)s\n", fmt_dict)
 #        util.untilConcludes(self.write, "{0} {1}".format(time_str, msg_str))
 #        util.untilConcludes(self.flush)
 
@@ -203,7 +213,7 @@ class Manager(object):
 #    def _twisted_log(self, message, level):
 #        """ Helper method for enlogging message with specialized log level.
 #        """
-#        tp_logging.msg(message, level = level, system = self.name)
+#        log_twisted.msg(message, level = level, system = self.name)
 
 
 
@@ -225,7 +235,7 @@ class Manager(object):
 #        if level < self.log_level:
 #            return
 
-#        text = tp_logging.textFromEventDict(eventDict)
+#        text = log_twisted.textFromEventDict(eventDict)
 #        if text is None:
 #            return
 

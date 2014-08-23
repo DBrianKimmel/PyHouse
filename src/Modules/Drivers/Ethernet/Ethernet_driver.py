@@ -1,4 +1,4 @@
-"""Driver_Ethernet.py - Ethernet Driver module.
+"""Ethernet_driver.py - Ethernet Driver module.
 
 This will interface various PyHouse modules to an ethernet connected controller device.
 

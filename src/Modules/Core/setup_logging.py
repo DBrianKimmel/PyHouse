@@ -68,7 +68,7 @@ import logging.config
 
 logging.getLogger('PyHouse             ')
 logging.config.dictConfig(LOGGING_DICT)
-logging.critical('PyHouse Starting\n')
+# logging.critical('PyHouse Starting\n')
 
 
 # ## END DBK

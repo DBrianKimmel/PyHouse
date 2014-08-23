@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.Drivers.Serial.test.test_serial_xml -*-
+-*- test-case-name: PyHouse.src.Modules.Drivers.Serial.test.test_Serial_xml -*-
 
 @name: PyHouse/src/Modules/Drivers/Serial/serial_xml.py
 @author: D. Brian Kimmel

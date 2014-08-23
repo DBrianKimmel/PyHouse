@@ -41,6 +41,7 @@ PYHOUSE_MULTICAST_IP_V6 = 'ff05::35:3637'
 PYHOUSE_DISCOVERY_PORT = 8582
 WHOS_THERE = "Who's There?"
 I_AM = "I am."
+MAX_TTL = 4
 
 
 class DGramUtil(object):
@@ -78,7 +79,7 @@ class MulticastDiscoveryServerProtocol(DatagramProtocol, DGramUtil):
         Set the TTL>1 so multicast will cross router hops:
         Join a specific multicast group:
         """
-        self.transport.setTTL(4)
+        self.transport.setTTL(MAX_TTL)
         self.transport.joinGroup(PYHOUSE_MULTICAST_IP_V4)
         self.m_interface = self.transport.getOutgoingInterface()
         if g_debug >= 1:
@@ -121,7 +122,7 @@ class MulticastDiscoveryClientProtocol(ConnectedDatagramProtocol, DGramUtil):
         Called when the protocol starts up.
         All listeners on the Multicast address (including us) will receive the "Who's There?" message.
         """
-        self.transport.setTTL(4)
+        self.transport.setTTL(MAX_TTL)
         self.transport.joinGroup(PYHOUSE_MULTICAST_IP_V4)
         self.m_interface = self.transport.getOutgoingInterface()
         self.transport.write(WHOS_THERE, (PYHOUSE_MULTICAST_IP_V4, PYHOUSE_DISCOVERY_PORT))
@@ -147,12 +148,18 @@ class Utility(object):
     Use UDP multicast to discover the other PyHouse nodes that are local.
     Use listenMultiple=True so that we can run a server and a client on same node.
     """
-
+    m_pyhouse_obj = None
     m_service_installed = False
+
+    def _start_discovery_server(self, p_pyhouses_obj):
+        p_pyhouses_obj.Twisted.Reactor.listenMulticast(PYHOUSE_DISCOVERY_PORT, MulticastDiscoveryServerProtocol(p_pyhouses_obj), listenMultiple = True)
+
+    def _start_discovery_client(self, p_pyhouses_obj):
+        p_pyhouses_obj.Twisted.Reactor.listenMulticast(PYHOUSE_DISCOVERY_PORT, MulticastDiscoveryClientProtocol(p_pyhouses_obj), listenMultiple = True)
 
     def start_node_discovery(self, p_pyhouses_obj):
         self.m_pyhouse_obj = p_pyhouses_obj
-        LOG.info('NodeDiscovery - StartNodeDiscovery - Service:{0:}'.format(self.m_service_installed))
+        # LOG.info('NodeDiscovery - StartNodeDiscovery - Service:{0:}'.format(self.m_service_installed))
         try:
             p_pyhouses_obj.Services.NodeDiscoveryService = service.Service()
             p_pyhouses_obj.Services.NodeDiscoveryService.setName('NodeDiscovery')
@@ -166,12 +173,6 @@ class Utility(object):
     def stop_node_discovery(self):
         pass
 
-    def _start_discovery_server(self, p_pyhouses_obj):
-        p_pyhouses_obj.Twisted.Reactor.listenMulticast(PYHOUSE_DISCOVERY_PORT, MulticastDiscoveryServerProtocol(p_pyhouses_obj), listenMultiple = True)
-
-    def _start_discovery_client(self, p_pyhouses_obj):
-        p_pyhouses_obj.Twisted.Reactor.listenMulticast(PYHOUSE_DISCOVERY_PORT, MulticastDiscoveryClientProtocol(p_pyhouses_obj), listenMultiple = True)
-
 
 class API(Utility):
 
@@ -180,7 +181,7 @@ class API(Utility):
 
     def Start(self, p_pyhouse_obj):
         self.start_node_discovery(p_pyhouse_obj)
-        LOG.info("Started.")
+        # LOG.info("Started.")
 
     def Stop(self):
         self.stop_node_discovery()

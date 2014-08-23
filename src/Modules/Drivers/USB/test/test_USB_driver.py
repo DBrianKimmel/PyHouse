@@ -1,5 +1,5 @@
 """
-@name: PyHouse/src/Modules/Drivers/USB/test/test_Driver_USB.py
+@name: PyHouse/src/Modules/Drivers/USB/test/test_USB_driver.py
 @author: briank
 @contact: <d.briankimmel@gmail.com>
 @Copyright: (c)  2014 by briank
@@ -12,7 +12,7 @@
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Drivers.USB import Driver_USB
+from Modules.Drivers.USB import USB_driver
 from Modules.Utilities.tools import PrintBytes  # , PrettyPrintAny
 
 RAW_01 = bytearray(b'\xF7\x50\x45\x0d\x45\x0d\x50\x45')
@@ -23,7 +23,7 @@ RAW_04 = bytearray(0)
 class Test_01(unittest.TestCase):
 
     def setUp(self):
-        self.m_api = Driver_USB.API()
+        self.m_api = USB_driver.API()
         pass
 
     def test_0101_Extract(self):

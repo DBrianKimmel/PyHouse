@@ -1,5 +1,5 @@
 """
-@name: PyHouse/src/Modules/Drivers/Serial/test/test_Driver_Serial.py
+@name: PyHouse/src/Modules/Drivers/Serial/test/test_Serial_driver.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @copyright: 2013_2014 by D. Brian Kimmel
@@ -16,7 +16,7 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import ControllerData
-from Modules.Drivers.Serial import Driver_Serial
+from Modules.Drivers.Serial import Serial_driver
 from Modules.Families import family
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
@@ -39,7 +39,7 @@ class Test_03_API(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
-        self.m_api = Driver_Serial.API()
+        self.m_api = Serial_driver.API()
         self.m_controller_obj = self._fake_params()
         self.m_controller_obj.BaudRate = 19200
 

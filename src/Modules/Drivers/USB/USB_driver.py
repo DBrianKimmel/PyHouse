@@ -1,7 +1,7 @@
 """
--*- test-case-name: PyHouse.src.Modules.Drivers/USB.test.test_Driver_USB -*-
+-*- test-case-name: PyHouse.src.Modules.Drivers/USB.test.test_USB_driver -*-
 
-@name: PyHouse/src/Modules/Drivers/USB/Driver_USB.py
+@name: PyHouse/src/Modules/Drivers/USB/USB_driver.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @copyright: 2011-2014 by D. Brian Kimmel
@@ -62,15 +62,15 @@ class SerialProtocol(Protocol):
         self.m_controller_obj = p_USB_obj
 
     def connectionFailed(self):
-        LOG.error("Driver_USB.connectionFailed() - {0:}".format(self))
+        LOG.error("USB_driver.connectionFailed() - {0:}".format(self))
 
     def connectionMade(self):
         if g_debug >= 2:
-            LOG.debug('Driver_USB.connectionMade() - Connected to Serial Device')  # , dir(self), vars(self)
+            LOG.debug('USB_driver.connectionMade() - Connected to Serial Device')  # , dir(self), vars(self)
 
     def dataReceived(self, p_data):
         if g_debug >= 2:
-            LOG.debug("Driver_USB.dataReceived() - {0:}".format(PrintBytes(p_data)))
+            LOG.debug("USB_driver.dataReceived() - {0:}".format(PrintBytes(p_data)))
         self.m_USB_obj.message += p_data
 
 
@@ -90,7 +90,7 @@ class UsbDriverAPI(UsbDeviceData):
         l_report[3] = 0x00
         l_report[4] = 0x03  # len ???
         l_requestType = 0x21  # LIBUSB_ENDPOINT_OUT (0x00) | LIBUSB_REQUEST_TYPE_CLASS (0x20) | LIBUSB_RECIPIENT_DEVICE (0x00)
-        l_request = 0x09  # Driver_USB.HID_SET_REPORT  # 0x09
+        l_request = 0x09  # USB_driver.HID_SET_REPORT  # 0x09
         l_value = 0x0003  # Report type & Report ID
         l_index = 0  #
         l_ret = (l_requestType,

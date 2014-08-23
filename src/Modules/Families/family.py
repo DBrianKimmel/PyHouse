@@ -21,7 +21,7 @@ import importlib
 # Import PyHouse files
 from Modules.Core.data_objects import FamilyData
 from Modules.Families import VALID_FAMILIES
-from Modules.Utilities import xml_tools
+from Modules.Utilities.xml_tools import XmlConfigTools
 from Modules.Computer import logging_pyh as Logger
 # from Modules.Utilities.tools import PrettyPrintAny
 
@@ -29,20 +29,7 @@ g_debug = 1
 LOG = Logger.getLogger('PyHouse.Family      ')
 
 
-class ReadWriteConfigXml(xml_tools.XmlConfigTools):
-    """Read and write the interface information based in the interface type.
-    """
-
-    def XXXread_family_xml(self, p_controller_obj, p_controller_xml):
-        """Update the controller object by extracting the passed in XML.
-        """
-        pass
-
-    def XXXwrite_family_xml(self, p_controller_obj, p_xml):
-        pass
-
-
-class Utility(ReadWriteConfigXml):
+class Utility(object):
     """
     """
 

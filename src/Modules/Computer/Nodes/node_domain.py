@@ -351,29 +351,26 @@ class Utility(AmpClient):
     """
     m_pyhouse_obj = None
 
-    def cb_start_all_clients(self, p_port):
-        """
-        610
-        Loop thru all the nodes we know about.  Start a client for each node except ourself (Nodes[0]).
-
-        @param p_port: node_domain.AmpServerFactory on 8581
-        @type p_port: class 'twisted.internet.tcp.Port'
-        """
-        LOG.info('==610== Domain Server is now Listening. {0:}'.format(p_port))
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(5, self.start_sending_to_all_clients, None)
-
-    def eb_start_clients_loop(self, p_reason):
-        LOG.error('ERROR in starting Domain Server (NOT Listening) - {0:}.\n'.format(p_reason))
-
     def start_amp_server(self, p_pyhouse_obj, p_endpoint):
         """
         610
         Start the domain server to listen for all incoming requests.
         Then, for all the nodes we know about, create a client and send a message with our info.
         """
+        def cb_start_all_clients(p_port):
+            """
+            @param p_port: Modules.Computer.Nodes.node_domain.AmpServerFactory on 8581
+            @type p_port: class 'twisted.internet.tcp.Port'
+            """
+            LOG.info('Domain Server is now Listening. {0:}'.format(p_port))
+            self.m_pyhouse_obj.Twisted.Reactor.callLater(5, self.start_sending_to_all_clients, None)
+
+        def eb_start_clients_loop(p_reason):
+            LOG.error('ERROR in starting Domain Server (NOT Listening) - {0:}.\n'.format(p_reason))
+
         l_defer = p_endpoint.listen(AmpServerFactory(p_pyhouse_obj))
-        l_defer.addCallback(self.cb_start_all_clients)
-        l_defer.addErrback(self.eb_start_clients_loop)
+        l_defer.addCallback(cb_start_all_clients)
+        l_defer.addErrback(eb_start_clients_loop)
 
     def create_amp_service(self, _ignore):
         """
