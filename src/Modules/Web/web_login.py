@@ -25,7 +25,7 @@ from Modules.Drivers import VALID_INTERFACES
 from Modules.Drivers import VALID_PROTOCOLS
 from Modules.Scheduling import VALID_SCHEDULING_TYPES
 from Modules.Lighting import VALID_LIGHTS_TYPE
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -36,7 +36,7 @@ g_debug = 0
 # 0 = off
 # 1 = log extra info
 # + = NOT USED HERE
-LOG = pyh_log.getLogger('PyHouse.webLogin    ')
+LOG = Logger.getLogger('PyHouse.webLogin    ')
 
 
 class LoginData(object):

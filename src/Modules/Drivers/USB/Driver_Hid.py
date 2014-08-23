@@ -23,8 +23,8 @@ import usb.util
 from twisted.internet import reactor
 
 # Import PyHouse modules
-from Modules.utils.tools import PrintBytes
-from Modules.utils import pyh_log
+from Modules.Utilities.tools import PrintBytes
+from Modules.Computer import logging_pyh as Logger
 
 callLater = reactor.callLater
 
@@ -34,7 +34,7 @@ g_debug = 0
 # 2 = Startup Details
 # 3 = Read / write details
 
-LOG = pyh_log.getLogger('PyHouse.USBHIDDriver ')
+LOG = Logger.getLogger('PyHouse.USBHIDDriver ')
 g_usb = None
 
 

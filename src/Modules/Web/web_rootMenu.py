@@ -10,7 +10,7 @@ from nevow import loaders
 from nevow import athena
 
 # Import PyMh files and modules.
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -20,7 +20,7 @@ g_debug = 0
 # 0 = off
 # 1 = log extra info
 # + = NOT USED HERE
-LOG = pyh_log.getLogger('PyHouse.webRMenu    ')
+LOG = Logger.getLogger('PyHouse.webRMenu    ')
 
 
 class RootMenuElement(athena.LiveElement):

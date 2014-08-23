@@ -31,11 +31,11 @@ except ImportError:
 
 # Import PyMh files
 from Modules.Core.data_objects import EmailData
-from Modules.utils import pyh_log
-from Modules.utils.xml_tools import PutGetXML
+from Modules.Computer import logging_pyh as Logger
+from Modules.Utilities.xml_tools import PutGetXML
 
 g_debug = 1
-LOG = pyh_log.getLogger('PyHouse.IrControl   ')
+LOG = Logger.getLogger('PyHouse.IrControl   ')
 
 
 class ReadWriteConfigXml(PutGetXML):

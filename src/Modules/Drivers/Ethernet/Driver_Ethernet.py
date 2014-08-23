@@ -11,10 +11,10 @@ This should also allow control of many different houses.
 # Import system type stuff
 
 # Import PyHouse modules
-from Modules.utils import pyh_log
+from Modules.Computer import logging_pyh as Logger
 
 g_debug = 0
-LOG = pyh_log.getLogger('PyHouse.USBDriver')
+LOG = Logger.getLogger('PyHouse.USBDriver')
 
 class API(object):
 

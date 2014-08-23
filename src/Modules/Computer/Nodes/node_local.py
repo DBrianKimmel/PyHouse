@@ -31,10 +31,10 @@ import xml.etree.ElementTree as ET
 from Modules.Core.data_objects import NodeData, NodeInterfaceData
 from Modules.Communication import ir_control
 from Modules.Utilities.xml_tools import XmlConfigTools
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 
 g_debug = 0
-LOG = pyh_log.getLogger('PyHouse.NodeLocal   ')
+LOG = Logger.getLogger('PyHouse.NodeLocal   ')
 
 
 __all__ = ['NODE_NOTHING', 'NODE_LIGHTS',

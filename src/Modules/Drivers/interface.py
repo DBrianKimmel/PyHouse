@@ -28,10 +28,10 @@ from Modules.Drivers.Ethernet import ethernet_xml
 from Modules.Drivers.Serial import serial_xml
 from Modules.Drivers.USB import usb_xml
 from Modules.Utilities import xml_tools
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 
 g_debug = 0
-LOG = pyh_log.getLogger('PyHouse.Interface   ')
+LOG = Logger.getLogger('PyHouse.Interface   ')
 
 from Modules.Drivers import VALID_INTERFACES
 from Modules.Drivers import VALID_PROTOCOLS

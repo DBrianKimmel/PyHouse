@@ -20,10 +20,10 @@ import math
 from math import pi
 
 # Import PyMh files
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 
 g_debug = 0
-LOG = pyh_log.getLogger('PyHouse.Sunrise     ')
+LOG = Logger.getLogger('PyHouse.Sunrise     ')
 
 RAD2DEG = 180.0 / pi
 DEG2RAD = pi / 180.0

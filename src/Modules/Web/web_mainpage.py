@@ -77,7 +77,7 @@ from Modules.Web import web_rooms
 from Modules.Web import web_rootMenu
 from Modules.Web import web_schedules
 from Modules.Web import web_webs
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 
 
 # Handy helper for finding external resources nearby.
@@ -96,7 +96,7 @@ g_debug = 0
 # 4 = Basic data
 # 5 = Detail Data
 # + = NOT USED HERE
-LOG = pyh_log.getLogger('PyHouse.webMainpage ')
+LOG = Logger.getLogger('PyHouse.webMainpage ')
 
 
 class FileNoListDir(static.File):

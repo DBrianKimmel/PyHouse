@@ -25,11 +25,11 @@ from twisted.web.client import getPage
 
 # Import PyMh files and modules.
 from Modules.Utilities import convert
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh
 # from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 1
-LOG = pyh_log.getLogger('PyHouse.InternetFnd ')
+LOG = logging_pyh.getLogger('PyHouse.InternetFnd ')
 
 
 class FindExternalIpAddress(object):

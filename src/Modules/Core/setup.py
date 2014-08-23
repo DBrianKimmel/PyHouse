@@ -31,15 +31,16 @@ from twisted.application.service import Application
 # Import PyMh files and modules.
 from Modules.Core.data_objects import PyHouseData, PyHouseAPIs, TwistedInformation, CoreServicesInformation, XmlInformation
 from Modules.Computer import computer
+from Modules.Computer import logging_pyh as Logger
 from Modules.Housing import house
-from Modules.Utilities import pyh_log
 from Modules.Utilities import xml_tools
 from Modules.Utilities.config_file import ConfigAPI
 from Modules.Utilities.xml_tools import XmlConfigTools
+from Modules.Utilities.tools import PrettyPrintAny
 # from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 0
-LOG = pyh_log.getLogger('PyHouse.CoreSetup   ')
+LOG = Logger.getLogger('PyHouse.CoreSetup   ')
 
 INTER_NODE = 'tcp:port=8581'
 INTRA_NODE = 'unix:path=/var/run/pyhouse/node:lockfile=1'
@@ -75,7 +76,7 @@ class Utility(ReadWriteConfigXml):
         """Logging is the very first thing we start so we can see errors in the starting process.
         Note that the house and computer xml has not been processed yet.
         """
-        l_log = pyh_log.API()
+        l_log = Logger.API()
         l_log.Start(p_pyhouse_obj)
         LOG.info("""
         ------------------------------------------------------------------
@@ -98,9 +99,27 @@ class Utility(ReadWriteConfigXml):
 
 class API(Utility):
 
+    def _setup(self, p_parent):
+        l_pyhouse_obj = PyHouseData()
+        l_pyhouse_obj.APIs = PyHouseAPIs()
+        l_pyhouse_obj.APIs.PyHouseAPI = p_parent  # Only used by web server to reload - Do we need this?
+        l_pyhouse_obj.APIs.CoreSetupAPI = self
+        l_pyhouse_obj.APIs.ComputerAPI = computer.API()
+        l_pyhouse_obj.APIs.HouseAPI = house.API()
+        l_pyhouse_obj.Twisted = TwistedInformation()
+        l_pyhouse_obj.Twisted.Reactor = reactor
+        l_pyhouse_obj.Twisted.Application = Application('PyHouse')
+        l_pyhouse_obj.Services = CoreServicesInformation()
+        l_pyhouse_obj.Xml = XmlInformation()
+        return l_pyhouse_obj
+
     def __init__(self):
         """
         This runs before the reactor has started - Be Careful!
+
+        Build the PyHouse core infrastructure.
+        Other modules will add their own infrastructure as needed.
+        Parts loaded here will be used no matter what modules get loaded.
         """
         pass
 
@@ -138,25 +157,6 @@ class API(Utility):
         self.m_pyhouse_obj.APIs.HouseAPI.SaveXml(l_xml)
         ConfigAPI().write_config_file(self.m_pyhouse_obj, l_xml, self.m_pyhouse_obj.Xml.XmlFileName)
         LOG.info("Saved XML.")
-
-def build_pyhouse_obj(p_parent):
-    """
-    Build the PyHouse core infrastructure.
-    Other modules will add their own infrastructure as needed.
-    Parts loaded here will be used no matter what modules get loaded.
-    """
-    l_pyhouse_obj = PyHouseData()
-    l_pyhouse_obj.APIs = PyHouseAPIs()
-    l_pyhouse_obj.APIs.PyHouseAPI = p_parent  # Only used by web server to reload - Do we need this?
-    l_pyhouse_obj.APIs.CoreAPI = API()
-    l_pyhouse_obj.APIs.ComputerAPI = computer.API()
-    l_pyhouse_obj.APIs.HouseAPI = house.API()
-    l_pyhouse_obj.Twisted = TwistedInformation()
-    l_pyhouse_obj.Twisted.Reactor = reactor
-    l_pyhouse_obj.Twisted.Application = Application('PyHouse')
-    l_pyhouse_obj.Services = CoreServicesInformation()
-    l_pyhouse_obj.Xml = XmlInformation()
-    return l_pyhouse_obj
 
 def load_xml_config():
     pass

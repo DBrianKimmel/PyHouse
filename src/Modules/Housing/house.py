@@ -24,11 +24,11 @@ from Modules.Families import family
 from Modules.Scheduling import schedule
 from Modules.Housing import location
 from Modules.Housing import rooms
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 # from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 1
-LOG = pyh_log.getLogger('PyHouse.House       ')
+LOG = Logger.getLogger('PyHouse.House       ')
 
 
 class HouseItems(object):

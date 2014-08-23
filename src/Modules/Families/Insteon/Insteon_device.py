@@ -27,11 +27,11 @@ from Modules.Families.Insteon.Insteon_data import InsteonData
 from Modules.Families.Insteon import Insteon_xml
 from Modules.Core import conversions
 from Modules.Utilities import xml_tools
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 # from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 1
-LOG = pyh_log.getLogger('PyHouse.Dev_Insteon ')
+LOG = Logger.getLogger('PyHouse.Dev_Insteon ')
 
 
 class ReadWriteConfigXml(xml_tools.XmlConfigTools):

@@ -16,9 +16,9 @@
 # Import PyMh files
 from Modules.Core.data_objects import USBControllerData
 from Modules.Utilities import xml_tools
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 
-LOG = pyh_log.getLogger('PyHouse.UsbXml      ')
+LOG = Logger.getLogger('PyHouse.UsbXml      ')
 
 
 class ReadWriteConfigXml(xml_tools.XmlConfigTools):

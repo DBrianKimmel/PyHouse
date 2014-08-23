@@ -25,11 +25,11 @@ from twisted.internet.protocol import DatagramProtocol, ConnectedDatagramProtoco
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 # from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 0
-LOG = pyh_log.getLogger('PyHouse.NodeDiscovry')
+LOG = Logger.getLogger('PyHouse.NodeDiscovry')
 
 
 __all__ = [

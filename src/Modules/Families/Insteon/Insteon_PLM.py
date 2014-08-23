@@ -37,11 +37,11 @@ from Modules.Utilities.tools import PrintBytes
 from Modules.Families.Insteon.Insteon_constants import COMMAND_LENGTH, MESSAGE_LENGTH, MESSAGE_TYPES, PLM_COMMANDS, STX
 from Modules.Families.Insteon import Insteon_utils
 from Modules.Families.Insteon import Insteon_decoder
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 # from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 9
-LOG = pyh_log.getLogger('PyHouse.Insteon_PLM ')
+LOG = Logger.getLogger('PyHouse.Insteon_PLM ')
 
 # Timeouts for send/receive delays
 SEND_TIMEOUT = 0.8

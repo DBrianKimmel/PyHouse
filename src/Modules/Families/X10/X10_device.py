@@ -7,12 +7,10 @@
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
-from Modules.Core.data_objects import LightData
-from Modules.Lighting import lighting
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 
 g_debug = 0
-LOG = pyh_log.getLogger('PyHouse.Dev_X10     ')
+LOG = Logger.getLogger('PyHouse.Dev_X10     ')
 
 
 class ReadWriteXml(object):

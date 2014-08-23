@@ -34,14 +34,14 @@ import xml.etree.ElementTree as ET
 from Modules.Core.data_objects import WebData
 from Modules.Web import web_utils
 from Modules.Web import web_mainpage
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities import xml_tools
 # from Modules.Utilities.tools import PrettyPrintAny
 
 ENDPOINT_WEB_SERVER = 'tcp:port=8580'
 
 g_debug = 9
-LOG = pyh_log.getLogger('PyHouse.WebServer   ')
+LOG = Logger.getLogger('PyHouse.WebServer   ')
 
 
 class ClientConnections(object):

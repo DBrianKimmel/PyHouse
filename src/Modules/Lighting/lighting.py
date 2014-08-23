@@ -20,11 +20,11 @@ from Modules.Families import family
 from Modules.Lighting.lighting_buttons import ButtonsAPI
 from Modules.Lighting.lighting_controllers import ControllersAPI
 from Modules.Lighting.lighting_lights import LightingLightsAPI
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 # from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 9
-LOG = pyh_log.getLogger('PyHouse.Lighting    ')
+LOG = Logger.getLogger('PyHouse.Lighting    ')
 
 
 class Utility(ControllersAPI, ButtonsAPI, LightingLightsAPI):

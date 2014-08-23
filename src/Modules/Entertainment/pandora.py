@@ -26,10 +26,10 @@ this module goes back to its initial state ready for another session.
 from twisted.internet import protocol
 
 # from Modules.Utilities.tools import PrintBytes
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 
 g_debug = 0
-LOG = pyh_log.getLogger('PyHouse.Pandora     ')
+LOG = Logger.getLogger('PyHouse.Pandora     ')
 
 PB_LOC = '/usr/bin/pianobar'
 

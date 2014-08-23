@@ -26,11 +26,11 @@ from twisted.protocols.amp import AMP
 
 # Import PyMh files and modules.
 from Modules.Entertainment import pandora
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 
 
 g_debug = 1
-LOG = pyh_log.getLogger('PyHouse.IrControl   ')
+LOG = Logger.getLogger('PyHouse.IrControl   ')
 
 g_pandora = None
 g_pyhouses_obj = None

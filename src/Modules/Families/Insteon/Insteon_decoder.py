@@ -34,11 +34,11 @@ from Modules.Families.Insteon.Insteon_constants import ACK, MESSAGE_TYPES, MESSA
 from Modules.Families.Insteon import Insteon_utils
 from Modules.Families.Insteon import Insteon_Link
 from Modules.Families.Insteon import Insteon_HVAC
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 # from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 4
-LOG = pyh_log.getLogger('PyHouse.Insteon_decd')
+LOG = Logger.getLogger('PyHouse.Insteon_decd')
 
 # OBJ_LIST = [Lights, Controllers, Buttons, Thermostats, Irrigation, Pool]
 

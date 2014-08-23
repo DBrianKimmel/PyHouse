@@ -18,13 +18,13 @@ from xml.etree import ElementTree as ET
 from Modules.Core.data_objects import ComputerInformation
 from Modules.Computer import internet
 from Modules.Computer.Nodes import nodes
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities.xml_tools import XmlConfigTools
 from Modules.Web import web_server
 # from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 9
-LOG = pyh_log.getLogger('PyHouse.Computer    ')
+LOG = Logger.getLogger('PyHouse.Computer    ')
 
 
 class ReadWriteConfigXml(XmlConfigTools):
@@ -49,7 +49,7 @@ class Utility(ReadWriteConfigXml):
 
     def add_api_references(self, p_pyhouse_obj):
         p_pyhouse_obj.APIs.InternetAPI = internet.API()
-        # p_pyhouse_obj.APIs.LogsAPI = pyh_log.API()
+        # p_pyhouse_obj.APIs.LogsAPI = Logger.API()
         p_pyhouse_obj.APIs.NodesAPI = nodes.API()
         p_pyhouse_obj.APIs.WebAPI = web_server.API()
 
@@ -68,7 +68,7 @@ class Utility(ReadWriteConfigXml):
     def save_component_apis(self, p_pyhouse_obj):
         l_xml = self.write_computer_xml()
         p_pyhouse_obj.APIs.InternetAPI.SaveXml(l_xml)
-        # p_pyhouse_obj.APIs.LogsAPI.SaveXml(l_xml)
+        p_pyhouse_obj.APIs.LogsAPI.SaveXml(l_xml)
         p_pyhouse_obj.APIs.NodesAPI.SaveXml(l_xml)
         p_pyhouse_obj.APIs.WebAPI.SaveXml(l_xml)
         return l_xml
@@ -78,9 +78,9 @@ class API(Utility):
     """
     """
 
-    def __init__(self):
-        """
-        """
+    # def __init__(self):
+    #    """
+    #    """
 
     def Start(self, p_pyhouse_obj):
         """

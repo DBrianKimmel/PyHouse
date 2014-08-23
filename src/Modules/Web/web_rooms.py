@@ -19,14 +19,14 @@ from nevow import athena
 # Import PyMh files and modules.
 from Modules.Web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.Housing import rooms
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
 
 g_debug = 0
-LOG = pyh_log.getLogger('PyHouse.webRooms    ')
+LOG = Logger.getLogger('PyHouse.webRooms    ')
 
 #==============================================================================
 

@@ -16,11 +16,11 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import LightData, ButtonData, ControllerData
-from Modules.lights.lighting_core import ReadWriteConfigXml
-from Modules.families import family
+from Modules.Lighting.lighting_core import ReadWriteConfigXml
+from Modules.Families import family
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
-from Modules.utils.tools import PrettyPrintAny
+from Modules.Utilities.tools import PrettyPrintAny
 
 XML = xml_data.XML_LONG
 

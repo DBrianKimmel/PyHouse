@@ -31,11 +31,11 @@ from twisted.protocols.amp import AMP, Command, CommandLocator, Integer, String,
 from twisted.application.internet import StreamServerEndpointService
 
 # Import PyMh files and modules.
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 # from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 5
-LOG = pyh_log.getLogger('PyHouse.NodeDomain  ')
+LOG = Logger.getLogger('PyHouse.NodeDomain  ')
 
 NODE_SERVER = 'tcp:port=8581'
 AMP_PORT = 8581

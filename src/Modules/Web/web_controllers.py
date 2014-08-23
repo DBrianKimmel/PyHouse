@@ -21,7 +21,7 @@ from Modules.Core import conversions
 from Modules.Web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.Drivers import interface
 from Modules.Lighting import lighting_controllers
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 
 
 # Handy helper for finding external resources nearby.
@@ -35,7 +35,7 @@ g_debug = 0
 # 3 = Config file handling
 # 4 = Dump JSON
 # + = NOT USED HERE
-LOG = pyh_log.getLogger('PyHouse.webCntlr    ')
+LOG = Logger.getLogger('PyHouse.webCntlr    ')
 
 
 class ControllersElement(athena.LiveElement):

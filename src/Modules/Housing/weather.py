@@ -5,10 +5,10 @@
 
 # Import system type stuff
 
-from Modules.utils import pyh_log
+from Modules.Computer import logging_pyh as Logger
 
 g_debug = 0
-LOG = pyh_log.getLogger('PyHouse.Weather    ')
+LOG = Logger.getLogger('PyHouse.Weather    ')
 
 
 class API(object):

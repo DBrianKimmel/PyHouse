@@ -13,12 +13,12 @@ import xml.etree.ElementTree as ET
 from Modules.Core.data_objects import ControllerData
 from Modules.Lighting.lighting_core import ReadWriteConfigXml
 from Modules.Lighting.lighting_utils import Utility
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 from Modules.Drivers import interface
 # from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 1
-LOG = pyh_log.getLogger('PyHouse.Controller  ')
+LOG = Logger.getLogger('PyHouse.Controller  ')
 
 
 class ControllersAPI(ReadWriteConfigXml):

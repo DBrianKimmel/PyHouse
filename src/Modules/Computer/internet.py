@@ -25,11 +25,11 @@ import xml.etree.ElementTree as ET
 from Modules.Core.data_objects import InternetConnectionData, InternetConnectionDynDnsData
 from Modules.Computer import inet_find_snar, inet_update_freedns
 from Modules.Utilities.xml_tools import XmlConfigTools
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 # from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 1
-LOG = pyh_log.getLogger('PyHouse.Internet    ')
+LOG = Logger.getLogger('PyHouse.Internet    ')
 
 
 class ReadWriteConfigXml(XmlConfigTools):

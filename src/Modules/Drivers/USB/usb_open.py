@@ -23,10 +23,10 @@ import usb.core
 import usb.util
 
 # Import PyHouse modules
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 
 g_debug = 0
-LOG = pyh_log.getLogger('PyHouse.USBDriver_O ')
+LOG = Logger.getLogger('PyHouse.USBDriver_O ')
 
 
 # Timeouts for send/receive delays

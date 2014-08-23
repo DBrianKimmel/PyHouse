@@ -18,18 +18,29 @@ import xml.etree.ElementTree as ET
 from Modules.Core.data_objects import PyHouseData, CoreServicesInformation
 from Modules.Core import setup
 from test import xml_data
+from test.testing_mixin import SetupPyHouseObj
+from Modules.Utilities.tools import PrettyPrintAny
 
 XML = xml_data.XML_LONG
 
 
-class Test_01_XML(unittest.TestCase):
+class SetupMixin(object):
+    """
+    """
+
+    def setUp(self, p_root):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
+        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+
+
+class Test_01_XML(SetupMixin, unittest.TestCase):
     """
     This section will verify the XML in the 'Modules.text.xml_data' file is correct and what the setup module can
     read/write.
     """
 
     def setUp(self):
-        self.m_pyhouse_obj = PyHouseData()
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
 
     def test_0101_ReadEmptyXml(self):
         self.m_pyhouse_obj.XmlRoot = ET.fromstring(xml_data.XML_EMPTY)
@@ -41,19 +52,18 @@ class Test_01_XML(unittest.TestCase):
         self.m_pyhouse_obj.XmlRoot = ET.fromstring(xml_data.XML_LONG)
 
 
-class Test_02_ReadXML(unittest.TestCase):
+class Test_02_XML(SetupMixin, unittest.TestCase):
     """
     This section tests the reading and writing of XML used by setup.
     """
     def setUp(self):
-        self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.XmlRoot = ET.fromstring(XML)
-        self.m_pyhouse_obj.Services = CoreServicesInformation()
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         self.m_api = setup.API()
 
-    def test_0201_ReadXml(self):
-        self.m_pyhouse_obj = setup.build_pyhouse_obj(self)
-        self.m_api.setup_xml_file(self.m_pyhouse_obj)
+    def test_0211_ReadXml(self):
         self.m_api.read_xml_config_info(self.m_pyhouse_obj)
+
+    def test_0221_WriteXml(self):
+        pass
 
 # ## END DBK

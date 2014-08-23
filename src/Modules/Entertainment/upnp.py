@@ -25,9 +25,9 @@ from twisted.internet.defer import Deferred
 from twisted.web.client import Agent
 from twisted.web.http_headers import Headers
 
-from Modules.utils import xml_tools
-from Modules.utils import convert
-from Modules.utils import pyh_log
+from Modules.Utilities import xml_tools
+from Modules.Utilities import convert
+from Modules.Computer import logging_pyh as Logger
 
 g_debug = 1
 # 0 = off
@@ -37,7 +37,7 @@ g_debug = 1
 # 4 = External IP execution
 # 5 = Dump Objects
 # + = NOT USED HERE
-LOG = pyh_log.getLogger('PyHouse.Internet    ')
+LOG = Logger.getLogger('PyHouse.Internet    ')
 
 callLater = reactor.callLater
 

@@ -18,10 +18,10 @@ import Queue
 # Import PyMh files
 from Modules.Families.UPB.UPB_data import UPBData
 from Modules.Utilities.tools import PrintBytes
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 
 g_debug = 9
-LOG = pyh_log.getLogger('PyHouse.UPB_PIM     ')
+LOG = Logger.getLogger('PyHouse.UPB_PIM     ')
 
 
 # UPB Control Word

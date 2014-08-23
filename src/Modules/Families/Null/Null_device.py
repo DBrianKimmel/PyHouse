@@ -14,10 +14,10 @@
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 
 g_debug = 1
-LOG = pyh_log.getLogger('PyHouse.Null_device ')
+LOG = Logger.getLogger('PyHouse.Null_device ')
 
 
 class API(object):

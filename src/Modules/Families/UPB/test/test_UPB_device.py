@@ -29,7 +29,6 @@ class SetupMixin(object):
     """
 
     def setUp(self):
-        self.m_pyhouse_obj = setup.build_pyhouse_obj(self)
         self.m_pyhouse_obj.Xml.XmlRoot = self.m_root_xml
         self.m_thermostat_obj = UPBData()
         self.m_pyhouse_obj = house.API().update_pyhouse_obj(self.m_pyhouse_obj)

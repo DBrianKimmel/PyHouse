@@ -14,11 +14,11 @@
 # Import system type stuff
 
 # Import PyHouse files
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 # from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 0
-LOG = pyh_log.getLogger('PyHouse.LightgUtils ')
+LOG = Logger.getLogger('PyHouse.LightgUtils ')
 
 
 class Utility(object):

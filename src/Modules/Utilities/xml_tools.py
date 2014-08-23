@@ -16,11 +16,8 @@ import uuid
 from xml.etree import ElementTree as ET
 
 # Import PyMh files
-# from Modules.utils.tools import PrettyPrintAny
-# from Modules.utils import pyh_log
 
 g_debug = 0
-# LOG = pyh_log.getLogger('PyHouse.XMLTools     ')
 
 
 class PutGetXML(object):

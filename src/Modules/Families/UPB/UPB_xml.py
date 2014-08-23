@@ -20,10 +20,10 @@ Start Active UPB Controllers.
 # Import PyMh files
 from Modules.Families.UPB.UPB_data import UPBData
 from Modules.Utilities.xml_tools import PutGetXML, stuff_new_attrs
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 
 g_debug = 9
-LOG = pyh_log.getLogger('PyHouse.UPB_xml     ')
+LOG = Logger.getLogger('PyHouse.UPB_xml     ')
 
 
 

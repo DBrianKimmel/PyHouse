@@ -12,17 +12,18 @@
 """
 
 # Import system type stuff
-import usb.core
-import usb.util
+import usb
+# import usb.core
+# import usb.util
 from twisted.internet.protocol import Protocol
 
 # Import PyHouse Modules
 from Modules.Drivers.USB import usb_open
 from Modules.Utilities.tools import PrintBytes
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 
 g_debug = 0
-LOG = pyh_log.getLogger('PyHouse.USBDriver   ')
+LOG = Logger.getLogger('PyHouse.USBDriver   ')
 
 
 # Timeouts for send/receive delays

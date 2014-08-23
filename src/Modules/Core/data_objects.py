@@ -293,7 +293,7 @@ class PyHouseAPIs(object):
     def __init__(self):
         self.CommunicationsAPI = None
         self.ComputerAPI = None
-        self.CoreAPI = None
+        self.CoreSetupAPI = None
         self.EmailAPI = None
         self.EntertainmentAPI = None
         self.FamilyAPI = None

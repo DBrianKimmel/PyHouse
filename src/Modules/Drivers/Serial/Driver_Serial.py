@@ -25,10 +25,10 @@ import serial
 
 # Import PyMh files
 from Modules.Utilities.tools import PrintBytes
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 
 g_debug = 0
-LOG = pyh_log.getLogger('PyHouse.DriverSerial')
+LOG = Logger.getLogger('PyHouse.DriverSerial')
 
 
 class SerialProtocol(Protocol):

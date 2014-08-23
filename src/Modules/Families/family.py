@@ -22,11 +22,11 @@ import importlib
 from Modules.Core.data_objects import FamilyData
 from Modules.Families import VALID_FAMILIES
 from Modules.Utilities import xml_tools
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 # from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 1
-LOG = pyh_log.getLogger('PyHouse.Family      ')
+LOG = Logger.getLogger('PyHouse.Family      ')
 
 
 class ReadWriteConfigXml(xml_tools.XmlConfigTools):

@@ -26,7 +26,6 @@ class SetupMixin(object):
     """
 
     def setUp(self):
-        self.m_pyhouse_obj = setup.build_pyhouse_obj(self)
         self.m_pyhouse_obj.Xml.XmlRoot = self.m_root_xml
         self.m_irrigation_obj = IrrigationData()
         return self.m_pyhouse_obj

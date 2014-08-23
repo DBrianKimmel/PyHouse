@@ -20,11 +20,11 @@ import xml.etree.ElementTree as ET
 # Import PyMh files
 from Modules.Core.data_objects import ThermostatData
 from Modules.Utilities import xml_tools
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 # from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 0
-LOG = pyh_log.getLogger('PyHouse.Thermostat  ')
+LOG = Logger.getLogger('PyHouse.Thermostat  ')
 
 
 class ReadWriteConfigXml(xml_tools.XmlConfigTools):

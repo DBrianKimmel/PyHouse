@@ -21,7 +21,7 @@ from nevow import athena
 from Modules.Core import conversions
 from Modules.Web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.Lighting import lighting_lights
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 # from Modules.Utilities.tools import PrettyPrintAny
 
 # Handy helper for finding external resources nearby.
@@ -29,7 +29,7 @@ webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
 
 g_debug = 0
-LOG = pyh_log.getLogger('PyHouse.webLight    ')
+LOG = Logger.getLogger('PyHouse.webLight    ')
 
 
 class LightsElement(athena.LiveElement):

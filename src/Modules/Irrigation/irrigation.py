@@ -17,11 +17,11 @@ import xml.etree.ElementTree as ET
 # Import PyMh files
 from Modules.Core.data_objects import IrrigationData
 from Modules.Utilities import xml_tools
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logging
 # from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 0
-LOG = pyh_log.getLogger('PyHouse.Irrigation  ')
+LOG = Logging.getLogger('PyHouse.Irrigation  ')
 
 
 class ReadWriteConfigXml(xml_tools.XmlConfigTools):
