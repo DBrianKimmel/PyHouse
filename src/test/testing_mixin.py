@@ -15,6 +15,7 @@
 from Modules.Core.data_objects import PyHouseData, PyHouseAPIs, \
             CoreServicesInformation, \
             ComputerInformation, \
+            NodeData, \
             HouseInformation, HouseObjs, \
             LocationData, \
             TwistedInformation, \
@@ -45,6 +46,10 @@ class XmlData(object):
         self.log_sect = None
         self.node_sect = None
         self.web_sect = None
+        #
+        self.node = None
+        self.interface_sect = None
+        self.interface = None
 
 
 class SetupPyHouseObj(object):
@@ -53,6 +58,7 @@ class SetupPyHouseObj(object):
 
     def _BuildComputer(self):
         l_ret = ComputerInformation()
+        l_ret.Nodes = NodeData()
         return l_ret
 
     def _BuildHouse(self):
@@ -107,6 +113,8 @@ class SetupPyHouseObj(object):
             l_xml.dyndns = l_xml.dyndns_sect.find('DynamicDNS')
 
             l_xml.node = l_xml.node_sect.find('Node')
+            l_xml.interface_sect = l_xml.node.find('InterfaceSection')
+            l_xml.interface = l_xml.interface_sect.find('Interface')
         except AttributeError:
             pass
         # PrettyPrintAny(l_xml, 'TestMixin - Self', 100)

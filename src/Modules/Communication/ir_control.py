@@ -53,9 +53,10 @@ IR_KEYS = [
            ]
 
 class LircProtocol(Protocol):
-    """Protocol for listening to the lirc socket.
+    """
+    Protocol for listening to the lirc socket.
 
-    We get one line of data here (lots of repeats) for every key pressed on the remote.
+    We get one line of data here (with lots of repeats) for every key pressed on the remote.
 
     KeyCode_________ Rp KeyName_______ Remote_________
     00000000a55ad02f 00 KEY_VOLUMEDOWN pioneer-AXD7595
@@ -69,6 +70,8 @@ class LircProtocol(Protocol):
 
 
 class LircFactory(Factory):
+    """Factory to build instances of LircProtocol
+    """
 
     def buildProtocol(self, _addr):
         # "LircFactory - connected"
@@ -82,20 +85,23 @@ class LircFactory(Factory):
 
 
 class LircConnection(object):
+    """
+    Connect to the LIRC socket.
+    """
 
     def start_lirc_connect(self, p_pyhouses_obj):
+
+        def cb_connect(p_reason):
+            LOG.debug("LircConnection good {0:}".format(p_reason))
+
+        def eb_connect(p_reason):
+            LOG.error("LircConnection Error {0:}".format(p_reason))
+
         l_endpoint = clientFromString(p_pyhouses_obj.Twisted.Reactor, LIRC_SOCKET)
         l_factory = LircFactory()
         l_defer = l_endpoint.connect(l_factory)
-        l_defer.addCallback(self.cb_connect)
-        l_defer.addErrback(self.eb_connect)
-
-    def cb_connect(self, p_reason):
-        LOG.debug("LircConnection good {0:}".format(p_reason))
-
-    def eb_connect(self, p_reason):
-        LOG.error("LircConnection Error {0:}".format(p_reason))
-
+        l_defer.addCallback(cb_connect)
+        l_defer.addErrback(eb_connect)
 
 
 class IrDispatch(object):

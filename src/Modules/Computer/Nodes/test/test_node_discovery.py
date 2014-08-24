@@ -10,6 +10,7 @@
 """
 
 # Import system type stuff
+import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 from twisted.internet.defer import Deferred, gatherResults, maybeDeferred
 from twisted.internet import error
@@ -18,8 +19,17 @@ from twisted.internet import error
 from Modules.Computer.Nodes import node_discovery
 from test import xml_data
 from Modules.Core.data_objects import PyHouseData
+from test.testing_mixin import SetupPyHouseObj
 
-XML = xml_data.XML_LONG
+
+class SetupMixin(object):
+    """
+    """
+
+    def setUp(self, p_root):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
+        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+
 
 class Mixin(object):
     m_started = 0
@@ -40,27 +50,27 @@ class Mixin(object):
         self.m_stopped = 1
 
 
-class Server(Mixin, node_discovery.MulticastDiscoveryServerProtocol):
+class TestServer(Mixin, node_discovery.MulticastDiscoveryServerProtocol):
     m_packetReceived = None
     m_refused = 0
 
     def datagramReceived(self, p_data, p_addr):
-        super(Server, self).datagramReceived(p_data, p_addr)
+        super(TestServer, self).datagramReceived(p_data, p_addr)
         self.m_packets.append((p_data, p_addr))
-        print("Server packet {0:} - Addr:{1:}".format(p_data, p_addr))
+        print("TestServer packet {0:} - Addr:{1:}".format(p_data, p_addr))
         if self.m_packetReceived is not None:
             l_defer, self.m_packetReceived = self.m_packetReceived, None
             l_defer.callback(None)
 
 
-class Client(Mixin, node_discovery.MulticastDiscoveryClientProtocol):
+class TestClient(Mixin, node_discovery.MulticastDiscoveryClientProtocol):
     m_packetReceived = None
     m_refused = 0
 
     def datagramReceived(self, p_data):
-        super(Client, self).datagramReceived(p_data)
+        super(TestClient, self).datagramReceived(p_data)
         self.m_packets.append(p_data)
-        print("Client packet {0:}".format(p_data))
+        print("TestClient packet {0:}".format(p_data))
         if self.m_packetReceived is not None:
             l_defer, self.m_packetReceived = self.m_packetReceived, None
             l_defer.callback(None)
@@ -78,14 +88,15 @@ class Client(Mixin, node_discovery.MulticastDiscoveryClientProtocol):
         self.m_refused = 1
 
 
-class Test(unittest.TestCase):
+class Test(SetupMixin, unittest.TestCase):
 
     def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        self.m_api = node_discovery.API()
         print("setUp")
         self.m_api = node_discovery.API()
-        self.m_pyhouse_obj = PyHouseData()
-        self.m_server = Server()
-        self.m_client = Client()
+        self.m_server = TestServer()
+        self.m_client = TestClient()
         self.m_port1 = self.m_pyhouse_obj.Twisted.Reactor.listenMulticast(0, self.m_server)
         self.m_port2 = self.m_pyhouse_obj.Twisted.Reactor.listenMulticast(0, self.m_client)
         self.m_client.transport.connect("127.0.0.1", self.m_server.transport.getHost().port)
@@ -188,7 +199,7 @@ class Test(unittest.TestCase):
             result.addCallback(lambda _ign: passthrough)
             return result
 
-        c = Server()
+        c = TestServer()
         p = self.m_pyhouse_obj.Twisted.Reactor.listenMulticast(0, c)
         addr = self.m_server.transport.getHost()
         joined = self.m_server.transport.joinGroup(node_discovery.PYHOUSE_MULTICAST_IP_V4)
@@ -218,10 +229,10 @@ class Test(unittest.TestCase):
             l_result_defer.addCallback(lambda _ign: passthrough)
             return l_result_defer
 
-        firstClient = Server()
+        firstClient = TestServer()
         firstPort = self.m_pyhouse_obj.Twisted.Reactor.listenMulticast(0, firstClient, listenMultiple = True)
         portno = firstPort.getHost().port
-        secondClient = Server()
+        secondClient = TestServer()
         secondPort = self.m_pyhouse_obj.Twisted.Reactor.listenMulticast(portno, secondClient, listenMultiple = True)
         theGroup = node_discovery.PYHOUSE_MULTICAST_IP_V4
         l_joined_defer = gatherResults([self.m_server.transport.joinGroup(theGroup), firstPort.joinGroup(theGroup), secondPort.joinGroup(theGroup)])

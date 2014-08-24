@@ -99,7 +99,7 @@ class API(Utility, ClientConnections):
 
     def __init__(self):
         self.State = web_utils.WS_IDLE
-        LOG.info("Initialized.\n")
+        # LOG.info("Initialized.\n")
         self.m_web_running = False
 
     def Start(self, p_pyhouse_obj):

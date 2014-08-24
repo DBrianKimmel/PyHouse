@@ -11,13 +11,14 @@
 
 This module:
     Gathers information about the interfaces (ethernet, wifi etc.) on this node.
-    Gathers information about the devices attached to this node.
+    Gathers information about the controller devices attached to this node.
     Gathers information about the specialized PyHouse software installed on this node.
     Saves all the gathered information in PyHouseData.
     Starts services on the local node (i.e. ir_service).
 
-The discovered services may be fooled by non PyHouse devices plugged into toe computer so it is possible to override the role
-via configuration.  Once overridden the new role will "stick" by being written into the local XML file.
+The discovered services may be fooled by non PyHouse devices plugged into the computer
+  so it is possible to override the role via configuration.
+Once overridden the new role will "stick" by being written into the local XML file.
 """
 
 # Import system type stuff
@@ -30,8 +31,10 @@ import xml.etree.ElementTree as ET
 # Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData, NodeInterfaceData
 from Modules.Communication import ir_control
-from Modules.Utilities.xml_tools import XmlConfigTools
 from Modules.Computer import logging_pyh as Logger
+from Modules.Utilities.xml_tools import XmlConfigTools
+from Modules.Utilities.tools import PrettyPrintAny
+
 
 g_debug = 0
 LOG = Logger.getLogger('PyHouse.NodeLocal   ')
@@ -63,34 +66,58 @@ class GetAllInterfaceData(object):
         @type p_node: C{NodeData}
         @param p_node: the node information
         """
-        l_interfaces = netifaces.interfaces()
-        l_count = 0
-        global InterfacesData
-        for l_ix in l_interfaces:
-            l_interface = NodeInterfaceData()
-            l_interface.NodeInterfaceType = 'Other'
-            l_interface.Name = l_ix
-            l_interface.Key = l_count
-            l_interface.Active = True
-            l_interface.UUID = '123'
-            for l_af in netifaces.ifaddresses(l_ix):
-                if netifaces.address_families[l_af] == 'AF_PACKET':
-                    l_interface.MacAddress = self._get_list(netifaces.ifaddresses(l_ix)[l_af])
-                if netifaces.address_families[l_af] == 'AF_INET':
-                    l_interface.V4Address = self._get_list(netifaces.ifaddresses(l_ix)[l_af])
-                if netifaces.address_families[l_af] == 'AF_INET6':
-                    l_interface.V6Address = self._get_list(netifaces.ifaddresses(l_ix)[l_af])
-            if l_interface.V4Address == [] and l_interface.V6Address == []:
-                continue
-            LOG.info("Interface:{0:}, Mac:{1:}, V4:{2:}, V6:{3:} - {4:}".format(l_interface.Name, l_interface.MacAddress, l_interface.V4Address, l_interface.V6Address, l_count))
-            p_node.NodeInterfaces[l_count] = l_interface
-            l_count += 1
+        self.m_count = 0
+        for l_interface_name in self._find_all_interface_names():
+            # PrettyPrintAny(l_interface_name, 'Interface Name')
+            self._get_one_interface(l_interface_name, self.m_count)
+            self.m_count += 1
 
-    def _get_list(self, p_list):
+    def _find_all_interface_names(self):
+        """
+        This returns a list of interface names.
+        """
+        l_interface_names = netifaces.interfaces()
+        # PrettyPrintAny(l_interface_names, 'Interfaces')
+        return l_interface_names
+
+    def _find_addr_family_name(self, p_ix):
+        l_name = netifaces.address_families[p_ix]
+        return l_name
+
+    def _find_addr_lists(self, p_interface_name):
+        l_ret = netifaces.ifaddresses(p_interface_name)
+        return l_ret
+
+    def _get_address_list(self, p_list):
         l_list = []
         for l_ent in p_list:
             l_list.append(l_ent['addr'])
         return l_list
+
+    def _get_af(self):
+        pass
+
+    def _get_one_interface(self, p_interface_name, p_ix):
+        l_interface = NodeInterfaceData()
+        l_interface.Name = p_interface_name
+        l_interface.Key = p_ix
+        l_interface.Active = True
+        l_interface.UUID = '123'
+        l_interface.NodeInterfaceType = 'Other'
+        for l_af in self._find_addr_lists(p_interface_name):
+            # print('l_af =', l_af)
+            if self._find_addr_family_name(l_af) == 'AF_PACKET':
+                l_interface.MacAddress = self._get_address_list(self._find_addr_lists(p_interface_name)[l_af])
+            if self._find_addr_family_name(l_af) == 'AF_INET':
+                l_interface.V4Address = self._get_address_list(self._find_addr_lists(p_interface_name)[l_af])
+            if self._find_addr_family_name(l_af) == 'AF_INET6':
+                l_interface.V6Address = self._get_address_list(self._find_addr_lists(p_interface_name)[l_af])
+        if l_interface.V4Address == [] and l_interface.V6Address == []:
+            return
+        LOG.info("\n\t\t\tInterface:{0:}\n\t\t\tMac:{1:}\n\t\t\tV4:{2:}\n\t\t\tV6:{3:}".format(l_interface.Name, l_interface.MacAddress, l_interface.V4Address, l_interface.V6Address))
+
+    def _get_all_families(self, p_interface):
+        pass
 
 
 class HandleNodeType(object):
@@ -113,7 +140,6 @@ class HandleNodeType(object):
 
 
 class ReadWriteConfigXml(XmlConfigTools):
-# class XML(XmlConfigTools):
 
     m_count = 0
 
@@ -193,8 +219,55 @@ class ReadWriteConfigXml(XmlConfigTools):
         return l_xml
 
 
-
 class Utility(ReadWriteConfigXml):
+
+    def _is_camera_node(self):
+        """
+        Test to see if this node has a camera attached
+        """
+        l_ret = NODE_NOTHING
+        return l_ret
+
+    def _is_controller_node(self):
+        """
+        Test to see if this node has a controller attached
+        """
+        l_ret = NODE_NOTHING
+        for l_file in os.listdir('/dev'):
+            # Test for lights
+            if fnmatch.fnmatch(l_file, 'ttyUSB?'):
+                l_ret |= NODE_LIGHTS
+                LOG.debug('Lighting Node')
+        return l_ret
+
+    def _is_ir_node(self):
+        """
+        Test to see if this node has an IR sensor attached.
+        I only have a PiFace-CAD attached
+        """
+        l_ret = NODE_NOTHING
+        for l_file in os.listdir('/dev'):
+            if fnmatch.fnmatch(l_file, 'lirc?'):
+                l_ret |= NODE_PIFACECAD
+                LOG.debug('Lirc Node')
+        return l_ret
+
+    def _is_pandora_node(self):
+        """
+        Test to see if this node is a Pandora player
+        """
+        l_ret = NODE_NOTHING
+        if os.path.exists('/usr/bin/pianobar'):
+            l_ret |= NODE_PANDORA
+            LOG.debug('This node is a Pandora Player Node')
+        return l_ret
+
+    def _unix_node_test(self, p_role):
+        p_role |= self._is_camera_node()
+        p_role |= self._is_controller_node()
+        p_role |= self._is_ir_node()
+        p_role |= self._is_pandora_node()
+        return p_role
 
     def get_node_info(self, p_pyhouses_obj):
         p_pyhouses_obj.Computer.Nodes[0].Name = platform.node()
@@ -202,26 +275,13 @@ class Utility(ReadWriteConfigXml):
         p_pyhouses_obj.Computer.Nodes[0].Active = True
 
     def find_node_role(self):
-        p_role = NODE_NOTHING
+        l_role = NODE_NOTHING
         try:
-            for l_file in os.listdir('/dev'):
-                # Test for lights
-                if fnmatch.fnmatch(l_file, 'ttyUSB?'):
-                    p_role |= NODE_LIGHTS
-                    LOG.debug('Lighting Node')
-                if fnmatch.fnmatch(l_file, 'lirc?'):
-                    p_role |= NODE_PIFACECAD
-                    LOG.debug('Lirc Node')
-            # Test for Pandora
-            if os.path.exists('/usr/bin/pianobar'):
-                p_role |= NODE_PANDORA
-                LOG.debug('Pandora Node')
-            # Test for camera
-            #
+            self._unix_node_test(l_role)
         except WindowsError:
-            p_role |= NODE_WINDOWS
-            LOG.debug('Windows Node')
-        return p_role
+            l_role |= NODE_WINDOWS
+            LOG.info('Windows Node')
+        return l_role
 
     def init_node_type(self, p_pyhouses_obj):
         l_role = p_pyhouses_obj.Computer.Nodes[0].NodeRole
@@ -256,10 +316,14 @@ class Utility(ReadWriteConfigXml):
         if g_debug >= 1:
             LOG.debug('Nodes = {0:}'.format(p_pyhouses_obj.Compute.Nodes))
 
+    def create_locl_node(self):
+        l_node = NodeData()
+        GetAllInterfaceData(l_node)
+        return l_node
+
 
 class API(Utility):
 
-    m_node = None
     m_pyhouse_obj = None
 
     def __init__(self):
@@ -267,14 +331,11 @@ class API(Utility):
 
     def Start(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_node = NodeData()
-        GetAllInterfaceData(self.m_node)
-        p_pyhouse_obj.Computer.Nodes[0] = self.m_node
+        p_pyhouse_obj.Computer.Nodes[0] = self.create_locl_node()
         self.read_nodes_xml(p_pyhouse_obj.Xml.XmlRoot.find('NodeSection'))
         self.get_node_info(p_pyhouse_obj)
         p_pyhouse_obj.Computer.Nodes[0].NodeRole = self.find_node_role()
         self.init_node_type(p_pyhouse_obj)
-        LOG.info('Started')
 
     def Stop(self):
         LOG.info("Stopped.")

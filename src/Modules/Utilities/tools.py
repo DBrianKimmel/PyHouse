@@ -34,6 +34,8 @@ def PrettyPrintAny(p_any, title = '', maxlen = 120):
         PrettyPrintString(p_any, maxlen = maxlen)
     elif isinstance(p_any, unicode):
         PrettyPrintUnicode(p_any, maxlen = maxlen)
+    elif isinstance(p_any, list):
+        PrettyPrintList(p_any, maxlen = maxlen)
     else:  # Default to an object
         PrettyPrintObject(p_any, maxlen = maxlen)
     print('---------------------------------')
@@ -80,6 +82,10 @@ def PrettyPrintString(p_obj, maxlen):
 
 def PrettyPrintUnicode(p_obj, maxlen):
     print(_format_line(str(p_obj), maxlen = maxlen))
+
+def PrettyPrintList(p_obj, maxlen):
+    print(p_obj)
+    # print(_format_line(p_obj, maxlen = maxlen))
 
 
 
