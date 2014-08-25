@@ -27,7 +27,7 @@ Reading the interface stuffs the interface XML data into the controller object.
 from Modules.Drivers.Ethernet import Ethernet_xml
 from Modules.Drivers.Serial import Serial_xml
 from Modules.Drivers.USB import USB_xml
-from Modules.Utilities.xml_tools import XmlConfigTools
+from Modules.Utilities.xml_tools import XmlConfigTools, stuff_new_attrs
 from Modules.Computer import logging_pyh as Logger
 
 g_debug = 0
@@ -62,24 +62,25 @@ class ReadWriteConfigXml(XmlConfigTools):
         """Update the controller object by extracting the passed in XML.
         """
         if p_controller_obj.InterfaceType == 'Ethernet':
-            l_interface = ethernet_xml.ReadWriteConfigXml().read_interface_xml(p_controller_xml)
+            l_interface = Ethernet_xml.ReadWriteConfigXml().read_interface_xml(p_controller_xml)
         elif p_controller_obj.InterfaceType == 'Serial':
             l_interface = Serial_xml.ReadWriteConfigXml().read_interface_xml(p_controller_xml)
         elif p_controller_obj.InterfaceType == 'USB':
-            l_interface = usb_xml.ReadWriteConfigXml().read_interface_xml(p_controller_xml)
+            l_interface = USB_xml.ReadWriteConfigXml().read_interface_xml(p_controller_xml)
         else:
             LOG.error('ERROR - Read - Unknown InterfaceType - {0:}'.format(p_controller_obj.InterfaceType))
             l_interface = None
         # Put the serial information into the controller object
-        xml_tools.stuff_new_attrs(p_controller_obj, l_interface)
+        stuff_new_attrs(p_controller_obj, l_interface)
+        return l_interface  # for testing
 
     def write_interface_xml(self, p_controller_obj, p_xml):
         if p_controller_obj.InterfaceType == 'Ethernet':
-            ethernet_xml.ReadWriteConfigXml().write_interface_xml(p_xml, p_controller_obj)
+            Ethernet_xml.ReadWriteConfigXml().write_interface_xml(p_xml, p_controller_obj)
         elif p_controller_obj.InterfaceType == 'Serial':
             Serial_xml.ReadWriteConfigXml().write_interface_xml(p_xml, p_controller_obj)
         elif p_controller_obj.InterfaceType == 'USB':
-            usb_xml.ReadWriteConfigXml().write_interface_xml(p_xml, p_controller_obj)
+            USB_xml.ReadWriteConfigXml().write_interface_xml(p_xml, p_controller_obj)
         else:
             LOG.error('ERROR - Write - Unknown InterfaceType - {0:}'.format(p_controller_obj.InterfaceType))
 

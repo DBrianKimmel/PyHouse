@@ -45,10 +45,24 @@ class Utility(ControllersAPI, ButtonsAPI, LightingLightsAPI):
             LOG.error('ERROR - ReadLighting - {0:}'.format(e_err))
 
     def _write_lighting_xml(self, p_house_objs, p_house_element):
-        LOG.info('Writing lights, buttons and controllers ')
-        p_house_element.append(self.write_all_lights_xml(p_house_objs.Lights))
-        p_house_element.append(self.write_buttons_xml(p_house_objs.Buttons))
-        p_house_element.append(self.write_controllers_xml(p_house_objs.Controllers))
+        try:
+            # p_house_element.append(self.write_all_lights_xml(p_house_objs.Lights))
+            # p_house_element.append(self.write_buttons_xml(p_house_objs.Buttons))
+            p_house_element.append(self.write_controllers_xml(p_house_objs.Controllers))
+        except AttributeError as e_err:
+            LOG.error('ERRROR in writing lighting {0:}'.format(e_err))
+
+    def _find_full_obj(self, p_lights, p_web_obj):
+        """
+        given the limited information from the web browser, look up and return the full object.
+
+        If more than one light has the same name, return the first one found.
+        """
+        for l_light in p_lights.itervalues():
+            if p_web_obj.Name == l_light.Name:
+                return l_light
+        LOG.error('ERROR - no light with name {0:} was found.'.format(p_web_obj.Name))
+        return None
 
 
 class API(Utility):
@@ -87,16 +101,17 @@ class API(Utility):
         LOG.debug('_get_api_for_family - {0:}'.format(l_ret))
         return l_ret
 
-    def ChangeLight(self, p_light_obj, p_level, _p_rate = None):
+    def ChangeLight(self, p_web_light_obj, p_level, _p_rate = None):
         """
         Called by:
             web_controlLights
             schedule
         """
+        l_light_obj = self._find_full_obj(self.m_pyhouse_obj.House.OBJs.Lights, p_web_light_obj)
+
         try:
-            l_light_obj = self.m_pyhouse_obj.House.OBJs.Lights[p_light_obj.Key]
             LOG.info("Turn Light {0:} to level {1:}, ControllerFamily:{2:}".format(l_light_obj.Name, p_level, l_light_obj.ControllerFamily))
-            l_api = self._get_api_for_family(self.m_pyhouse_obj, p_light_obj)
+            l_api = self._get_api_for_family(self.m_pyhouse_obj, l_light_obj)
             l_api.ChangeLight(l_light_obj, p_level)
         except Exception as e_err:
             LOG.error('ERROR - ChangeLight - {0:}'.format(e_err))

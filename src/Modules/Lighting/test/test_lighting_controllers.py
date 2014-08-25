@@ -61,14 +61,15 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
 
     def test_0211_ReadControllerData(self):
         l_obj = self.m_api._read_controller_data(self.m_xml.controller)
-        PrettyPrintAny(l_obj, 'Controller Data', 100)
+        PrettyPrintAny(l_obj, 'Controller Data')
         self.assertEqual(l_obj.InterfaceType, 'Serial')
         self.assertEqual(l_obj.Port, '/dev/ttyUSB0')
 
     def test_0221_ReadInterfaceXml(self):
         l_obj = self.m_api._read_controller_data(self.m_xml.controller)
+        PrettyPrintAny(l_obj, 'Read Interface A')
         l_interface = self.m_api._read_interface_data(l_obj, self.m_xml.controller)
-        PrettyPrintAny(l_obj, 'Read Interface', 100)
+        PrettyPrintAny(l_interface, 'Read Interface B')
         self.assertEqual(l_obj.BaudRate, 19200)
         self.assertEqual(l_obj.ByteSize, 8)
         self.assertEqual(l_obj.Parity, 'N')

@@ -15,9 +15,9 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import LightData
-from Modules.lights import lighting
-from Modules.families import family
-from Modules.utils.tools import PrettyPrintAny
+from Modules.Lighting import lighting
+from Modules.Families import family
+from Modules.Utilities.tools import PrettyPrintAny
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
 
@@ -50,14 +50,15 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
 
     def test_0211_read_lighting(self):
         self.m_api._read_lighting_xml(self.m_pyhouse_obj)
-        PrettyPrintAny(self.m_pyhouse_obj.House.OBJs, 'PyHouse_obj.House.OBJs', 120)
+        PrettyPrintAny(self.m_pyhouse_obj.House.OBJs, 'PyHouse_obj.House.OBJs')
         self.assertEqual(self.m_pyhouse_obj.House.OBJs.Lights[0].Name, 'outside_front')
 
     def test_0212_write_lighting(self):
         self.m_api._read_lighting_xml(self.m_pyhouse_obj)
         PrettyPrintAny(self.m_pyhouse_obj.House.OBJs, 'Lighting')
-        l_xml = ET.Element('LightSection')
+        l_xml = ET.Element('HouseDivision')
         self.m_api._write_lighting_xml(self.m_pyhouse_obj.House.OBJs, l_xml)
+        PrettyPrintAny(l_xml, 'XML')
 
 
 # class Test_03_ReadXMLEmpty(SetupMixin, unittest.TestCase):
@@ -73,6 +74,30 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
 
     # def Xtest_0302_write_lighting(self):
     #    pass
+
+
+class Test_06_Utility(SetupMixin, unittest.TestCase):
+    """
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupPyHouseObj().BuildXml(self.m_xml.root)
+        self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
+        self.m_light_obj = LightData()
+        self.m_api = lighting.API()
+
+    def test_0601_FindFull(self):
+        l_web_obj = LightData()
+        l_web_obj.Name = 'dr_chand'
+        self.m_api._read_lighting_xml(self.m_pyhouse_obj)
+        l_light = self.m_api._find_full_obj(self.m_pyhouse_obj.House.OBJs.Lights, l_web_obj)
+        PrettyPrintAny(l_light, 'Light')
+        self.assertEqual(l_light.Name, 'dr_chand')
+        #
+        l_web_obj.Name = 'NoSuchLight'
+        l_light = self.m_api._find_full_obj(self.m_pyhouse_obj.House.OBJs.Lights, l_web_obj)
+        self.assertEqual(l_light, None)
 
 
 class Test_07_Ops(SetupMixin, unittest.TestCase):
