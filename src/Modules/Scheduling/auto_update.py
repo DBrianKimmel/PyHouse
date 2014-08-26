@@ -1,9 +1,16 @@
 """
-Created on Dec 31, 2013
+-*- test-case-name: PyHouse.Modules.Scheduling.test.test_auto_update -*-
 
-@author: briank
+@name: PyHouse/src/Modules/Scheduling/auto_update.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
+@copyright: 2013-2014 by D. Brian Kimmel
+@note: Created on Dec 31, 2013
+@license: MIT License
+@summary: Handle the automatic updating of PyHouse
 
-This module checks with something central and updates the PyHouse software if an update is needed.
+This module automatically updates PyHouse
+
 """
 
 
@@ -13,17 +20,29 @@ This module checks with something central and updates the PyHouse software if an
 # get a version string. if that also fails, use 'latest'.
 #
 
-import os
+# Import system type stuff
+import os.path
+
+# Import PyHouse files
 
 
 class FindLocalVersion(object):
 
+    def _find_pyhouse_version_file(self):
+        """
+        Find the normalized VERSION file name
+        PyHouse/src/VERSION
+        """
+        l_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../VERSION')
+        l_filename = os.path.splitunc(l_filename)[1]
+        l_filename = os.path.normpath(l_filename)
+        return l_filename
+
     def __init__(self):
         self.m_version = 'latest'
         self.m_source = 'latest'
-        self.m_filename = None
+        self.m_filename = self._find_pyhouse_version_file()
         try:
-            self.m_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'VERSION')
             with open(self.m_filename) as f:
                 self.m_version = f.read().strip()
                 self.m_source = 'Local file {0:}'.format(self.m_filename)
@@ -60,9 +79,19 @@ class FindRepositoryVersion(object):
         return self.m_version
 
 
-class API(object):
+class Utility(object):
     """
     """
 
+    def compare_versions(self, p_local_ver, p_repos_ver):
+        return True
+
+
+class API(Utility):
+    """
+    """
+
+    def Start(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
 
 # ## END DBK

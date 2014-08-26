@@ -133,7 +133,7 @@ class ServerProtocol(DatagramProtocol):
         @param p_address: is the (IpAddr, Port) of the sender of this datagram (reply to address).
         """
         if g_debug >= 1:
-            LOG.debug("Server Discovery Datagram {0:} received from {1:}".format(repr(p_datagram), repr(p_address)))
+            LOG.debug("Discovery Server rxed: {0:} from: {1:}".format(repr(p_datagram), p_address[0]))
         DGramUtil()._append_address(p_address)
         if p_datagram.startswith(WHOS_THERE):
             DGramUtil()._send_response(p_address, self.m_pyhouse_obj, self.transport)
@@ -166,7 +166,7 @@ class ClientProtocol(ConnectedDatagramProtocol):
         """
         NodeUtil().initialize_node(p_address[0], None)
         if g_debug >= 1:
-            LOG.debug('Discovery Client rxed:{0:} From:{1:}'.format(p_datagram, p_address[0]))
+            LOG.debug('Discovery Client rxed: {0:} From: {1:}'.format(p_datagram, p_address[0]))
         if p_datagram.startswith(WHOS_THERE):
             DGramUtil().set_node_0_addr(p_address, self.m_pyhouse_obj)
 

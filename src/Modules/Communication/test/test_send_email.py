@@ -8,8 +8,6 @@
 @summary: Schedule events
 
 
-
-
     From nobody Wed Jul 30 22:41:30 2014
     Content-Type: multipart/mixed; boundary="===============1622763079=="
     MIME-Version: 1.0
@@ -40,10 +38,10 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import EmailData
-from Modules.communication import send_email
+from Modules.Communication import send_email
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
-from Modules.utils.tools import PrettyPrintAny
+from Modules.Utilities.tools import PrettyPrintAny
 
 
 class SetupMixin(object):
@@ -75,7 +73,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         PrettyPrintAny(self.m_pyhouse_obj.House, 'Pyhouse', 120)
 
     def test_0210_Read(self):
-        l_xml = self.m_api.read_email_xml(self.m_pyhouse_obj)
+        l_xml = self.m_api.read_xml(self.m_pyhouse_obj)
         self.assertEqual(l_xml.EmailFromAddress, 'mail.sender@Gmail.Com', 'Bad From Address')
         self.assertEqual(l_xml.EmailToAddress, 'mail.receiver@Gmail.Com', 'Bad To Address')
         self.assertEqual(l_xml.GmailLogin, 'TestAccount@Gmail.Com', 'Bad Login')
@@ -83,17 +81,17 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         PrettyPrintAny(l_xml, 'Xml', 120)
 
     def test_0220_Write(self):
-        l_xml = self.m_api.read_email_xml(self.m_pyhouse_obj)
-        l_ret = self.m_api.write_email_xml(l_xml)
+        l_xml = self.m_api.read_xml(self.m_pyhouse_obj)
+        l_ret = self.m_api.write_xml(l_xml)
         PrettyPrintAny(l_xml, 'Parsed', 120)
         PrettyPrintAny(l_ret, 'XML', 120)
 
     def test_0290_Send(self):
-        l_xml = self.m_api.read_email_xml(self.m_pyhouse_obj)
+        l_xml = self.m_api.read_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Computer.Email = l_xml
         l_ret = self.m_api.create_email_message(self.m_pyhouse_obj, l_xml.EmailToAddress, 'Test Subject', 'Test email Body', 'Test Attachment')
-        PrettyPrintAny(l_xml, 'Parsed', 120)
-        PrettyPrintAny(l_ret, 'XML', 120)
+        PrettyPrintAny(l_xml, 'Parsed')
+        PrettyPrintAny(l_ret, 'XML')
 
 
 # ## END DBK

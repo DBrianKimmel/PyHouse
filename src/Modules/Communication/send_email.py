@@ -1,7 +1,7 @@
 """
--*- test-case-name: PyHouse.src.Modules.communications.test.test_send_email -*-
+-*- test-case-name: PyHouse.src.Modules.Communications.test.test_send_email -*-
 
-@name: PyHouse/src/Modules/communication/send_email.py
+@name: PyHouse/src/Modules/Communication/send_email.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @Copyright (c) 2013-2014 by D. Brian Kimmel
@@ -11,18 +11,14 @@
 
 Fake out gmail.com and look like sendmail is connected.
 
-This uses gmail.
+This uses gmail as a mail relay agent
 If you don't have an account - get one or write another module to handle your mail.
-
 
 """
 
 # Import system type stuff
 import email.mime.application
 import xml.etree.ElementTree as ET
-# from OpenSSL.SSL import SSLv3_METHOD
-# from twisted.mail.smtp import ESMTPSenderFactory
-from twisted.internet.ssl import ClientContextFactory
 from twisted.internet.defer import Deferred
 try:
     from cStringIO import cStringIO as StringIO
@@ -35,7 +31,7 @@ from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities.xml_tools import PutGetXML
 
 g_debug = 1
-LOG = Logger.getLogger('PyHouse.IrControl   ')
+LOG = Logger.getLogger('PyHouse.Email      ')
 
 
 class ReadWriteConfigXml(PutGetXML):
@@ -43,7 +39,7 @@ class ReadWriteConfigXml(PutGetXML):
     """
     m_count = 0
 
-    def read_email_xml(self, p_pyhouse_obj):
+    def read_xml(self, p_pyhouse_obj):
         """
         @return: a ThermostatData object.
         """
@@ -56,14 +52,13 @@ class ReadWriteConfigXml(PutGetXML):
         l_obj.GmailPassword = self.get_text_from_xml(l_xml, 'GmailPassword')
         return l_obj
 
-    def write_email_xml(self, p_obj):
+    def write_xml(self, p_obj):
         l_xml = ET.Element('EmailSection')
         self.put_text_element(l_xml, 'EmailFromAddress', p_obj.EmailFromAddress)
         self.put_text_element(l_xml, 'EmailToAddress', p_obj.EmailToAddress)
         self.put_text_element(l_xml, 'GmailLogin', p_obj.GmailLogin)
         self.put_text_element(l_xml, 'GmailPassword', p_obj.GmailPassword)
         return l_xml
-
 
 
 class Utility(ReadWriteConfigXml):
@@ -108,13 +103,9 @@ class API(Utility):
     """
     m_pyhouse_obj = None
 
-    def __init__(self):
-        pass
-
     def Start(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         p_pyhouse_obj.Computer.Email = self.read_email_xml(p_pyhouse_obj)
-
 
     def Stop(self):
         LOG.info("Stopped.")
@@ -126,6 +117,9 @@ class API(Utility):
         return p_xml
 
     def SendEmail(self, p_to_address, p_subject, p_message, p_attachment):
+        """
+        This is the main interface to email.
+        """
         l_email = self.create_email(self.m_pyhouse_obj, p_to_address, p_subject, p_message, p_attachment)
         # self.send_email(smtp_server, smtp_port, username, password, from_, to, msg)
 

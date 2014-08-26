@@ -1,7 +1,7 @@
 """
--*- test-case-name: PyHouse.src.Modules.scheduling.test.test_schedule -*-
+-*- test-case-name: PyHouse.src.Modules.Scheduling.test.test_schedule -*-
 
-@name: PyHouse/src/Modules/scheduling/schedule.py
+@name: PyHouse/src/Modules/Scheduling/schedule.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @Copyright (c) 2013-2014 by D. Brian Kimmel
@@ -155,7 +155,7 @@ class ScheduleExecution(ScheduleData):
             LOG.debug('Execute_one_schedule type = Scene')
             pass
         l_light_obj = tools.get_light_object(self.m_pyhouse_obj, name = l_schedule_obj.LightName)
-        LOG.info("Executing one schedule Name:{0:}, Light:{1:}, Level:{2:}, Slot:{3:}".format(l_schedule_obj.Name, l_schedule_obj.LightName, l_schedule_obj.Level, p_slot))
+        LOG.info("Name:{0:}, Light:{1:}, Level:{2:}, Slot:{3:}".format(l_schedule_obj.Name, l_schedule_obj.LightName, l_schedule_obj.Level, p_slot))
         self.m_pyhouse_obj.APIs.LightingAPI.ChangeLight(l_light_obj, l_schedule_obj.Level)
 
     def execute_schedules_list(self, p_slot_list = []):
@@ -176,7 +176,7 @@ class ScheduleExecution(ScheduleData):
         """
         l_seconds_to_delay, l_schedule_list = self.get_next_sched(self.m_pyhouse_obj)
         if g_debug >= 1:
-            LOG.info('run_schedule delay: {0:} - List: {1:}'.format(l_seconds_to_delay, l_schedule_list))
+            LOG.info('Delay: {0:} - List: {1:}'.format(l_seconds_to_delay, l_schedule_list))
         self.m_pyhouse_obj.Twisted.Reactor.callLater(l_seconds_to_delay, self.execute_schedules_list, l_schedule_list)
 
 
@@ -212,13 +212,13 @@ class ScheduleUtility(ScheduleExecution):
                 p_timefield = p_timefield[8:]
             except ValueError:
                 if g_debug >= 7:
-                    print("schedule._extract_field() not HH:MM:SS - try shorter")
+                    print("ERROR - not HH:MM:SS - try shorter")
                 try:
                     l_ret = datetime.datetime.strptime(p_timefield[0:5], '%H:%M')
                     p_timefield = p_timefield[5:]
                 except ValueError:
                     if g_debug >= 7:
-                        print("schedule._extract_field() ERROR not HH:MM - using 00:00:00")
+                        print("ERROR - not HH:MM - using 00:00:00")
                     l_ret = datetime.time(0, 0, 0)
             try:
                 while p_timefield[0] == ' ':
@@ -317,7 +317,7 @@ class ScheduleUtility(ScheduleExecution):
             # add to a chain
             if l_diff == l_seconds_to_delay:
                 l_schedule_list.append(l_key)
-        l_debug_msg = "Schedule - House:{0:}, delaying {1:} seconds until {2:} for list {3:}".format(self.m_pyhouse_obj.House.Name, l_seconds_to_delay, l_time_scheduled, l_schedule_list)
+        l_debug_msg = "Delaying {0:} seconds until {1:} for list {2:}".format(l_seconds_to_delay, l_time_scheduled, l_schedule_list)
         LOG.info("Get_next_schedule complete. {0:}".format(l_debug_msg))
         return l_seconds_to_delay, l_schedule_list
 

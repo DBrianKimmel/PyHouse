@@ -132,24 +132,17 @@ class API(Utility):
 
     m_pyhouse_obj = None
 
-    def __init__(self):
-        if g_debug >= 1:
-            LOG.info("Initialized.")
-
     def Start(self, p_pyhouse_obj):
-        LOG.info("Starting.")
         self.update_pyhouse_obj(p_pyhouse_obj)
         self.m_pyhouse_obj = p_pyhouse_obj
         p_pyhouse_obj.House.OBJs.Irrigation = self.read_all_irrigation_xml(self.setup_xml(p_pyhouse_obj))
-        LOG.info("Started.")
 
     def Stop(self):
-        LOG.info("Stopped.")
+        pass
 
     def SaveXml(self, p_xml):
         l_xml = self.write_all_irrigation_xml(self.m_pyhouse_obj.House.OBJs.Irrigation)
         p_xml.append(l_xml)
-        LOG.info("Saved XML.")
         return l_xml
 
 # ## END DBK

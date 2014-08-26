@@ -1,7 +1,7 @@
 """
--*- test-case-name: PyHouse.src.Modules.Comps.test.test_inet_find_snar -*-
+-*- test-case-name: PyHouse.src.Modules.Computer.test.test_inet_find_snar -*-
 
-@Name: PyHouse/src/Modules/Comps/inet_find_snar.py
+@Name: PyHouse/src/Modules/Computer/inet_find_snar.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @copyright: 2012-2014 by D. Brian Kimmel
@@ -61,7 +61,7 @@ class FindExternalIpAddress(object):
         if self.m_url == None:
             LOG.error("URL is missing.")
             return
-        LOG.debug("About to get URL:{0:}".format(self.m_url))
+        # LOG.debug("About to get URL:{0:}".format(self.m_url))
         l_ip_page_defer = getPage(self.m_url)
         l_ip_page_defer.addCallbacks(self.cb_parse_page, self.eb_no_page)
 

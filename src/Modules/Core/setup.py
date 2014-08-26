@@ -36,7 +36,6 @@ from Modules.Housing import house
 from Modules.Utilities import xml_tools
 from Modules.Utilities.config_file import ConfigAPI
 from Modules.Utilities.xml_tools import XmlConfigTools
-from Modules.Utilities.tools import PrettyPrintAny
 # from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 0
@@ -146,7 +145,7 @@ class API(Utility):
         """
         Take a snapshot of the current Configuration/Status and write out an XML file.
         """
-        LOG.info("Saving XML.\n")
+        # LOG.info("Saving XML.")
         l_xml = self.initialize_Xml()
         self.m_pyhouse_obj.APIs.ComputerAPI.SaveXml(l_xml)
         self.m_pyhouse_obj.APIs.HouseAPI.SaveXml(l_xml)
