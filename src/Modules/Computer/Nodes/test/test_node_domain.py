@@ -41,7 +41,7 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-class MessageExtraction(SetupMixin, unittest.TestCase):
+class Test_01_MessageExtraction(SetupMixin, unittest.TestCase):
     """
     (6)Active, (4)True, (7)Address, (12)192.168.1.35, (4)Name, (5)pi-05, (8)NodeRole,
      (2)10, (4)UUID, (4)1122, (4)_ask, (1)1, (8)_command, (22)NodeInformationCommand
@@ -409,10 +409,13 @@ class FakeSender:
             self.unhandledErrors.append(failure)
 
 
-class Test_02_CmdDsptch(unittest.TestCase):
+
+
+
+
+class Test_02_CmdDsptch(SetupMixin, unittest.TestCase):
     """
-    The AMP CommandDispatcher class dispatches converts AMP boxes into commands and responses
-    using Command.responder decorator.
+    The AMP CommandDispatcher class dispatches converts AMP boxes into commands and responses using Command.responder decorator.
 
     Note: Originally, AMP's factoring was such that many tests for this functionality are now implemented as full round-trip tests in L{AMPTest}.
     Future tests should be written at this level instead, to ensure API compatibility and to provide more granular, readable units of test coverage.
@@ -422,7 +425,7 @@ class Test_02_CmdDsptch(unittest.TestCase):
         """
         Create a dispatcher to use.
         """
-        self.m_pyhouse_obj = PyHouseData()
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         self.fake_locator = FakeLocator()
         self.fake_sender = FakeSender()
         self.fake_dispatcher = amp.BoxDispatcher(self.fake_locator)
@@ -440,6 +443,7 @@ class Test_02_CmdDsptch(unittest.TestCase):
         self.fake_locator.commands['hello'] = thunk
         self.fake_dispatcher.ampBoxReceived(l_input)
         self.assertEquals(received, [l_input])
+        PrettyPrintAny(l_input, 'Input')
 
     def test_0202_sendUnhandledError(self):
         """
@@ -468,7 +472,7 @@ class Test_02_CmdDsptch(unittest.TestCase):
         self.assertEquals(len(self.fake_sender.unhandledErrors), 1)
         self.assertEquals(self.fake_sender.unhandledErrors[0].value, err)
 
-    def Xtest_0204_callRemote(self):
+    def test_0204_callRemote(self):
         """
         L{CommandDispatcher.callRemote} should emit a properly formatted '_ask' box to its boxSender and record an outstanding L{Deferred}.
         When a corresponding '_answer' packet is received, the L{Deferred} should be fired,
