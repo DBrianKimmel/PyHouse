@@ -27,12 +27,12 @@ What I want to happen on startup:
 # Import system type stuff
 from twisted.internet.endpoints import TCP4ClientEndpoint, TCP4ServerEndpoint
 from twisted.internet.protocol import ServerFactory, ClientFactory
-from twisted.protocols.amp import AMP, Command, CommandLocator, Integer, String, AmpList, AmpBox
+from twisted.protocols.amp import AMP, Command, Integer, String, AmpList
 from twisted.application.internet import StreamServerEndpointService
 
 # Import PyMh files and modules.
 from Modules.Computer import logging_pyh as Logger
-from Modules.Utilities.tools import PrettyPrintAny
+# from Modules.Utilities.tools import PrettyPrintAny
 
 LOG = Logger.getLogger('PyHouse.NodeDomain  ')
 
@@ -60,9 +60,10 @@ class NodeInfo(Command):
                  ('UUID', String(optional = True))
                  ]
     response = [('Name', String()),
-                ('Answer', String(optional = True))
+                ('From', String(optional = True)),
+                ('NodeId', Integer(optional = True))
                 ]
-    errors = {NodeInfoError: 'Name error'}
+    errors = {NodeInfoError: 'Node Info error'}
 
 
 class GetNodeList(Command):
@@ -103,7 +104,7 @@ class DomainProtocol(AMP):
 
         @param boxSender: The L{IBoxSender} to send command responses to.
         """
-        LOG.info('Start\n')
+        # LOG.info('Start\n')
         self.boxSender = p_boxSender
 
     def makeConnection(self, p_transport):
@@ -119,8 +120,9 @@ class DomainProtocol(AMP):
         """ Override
         Either parse incoming data as AmpBoxes or relay it to our nested (switched-to) protocol.
         """
-        # l_box = AMP.dataReceived(self, data)
         l_box = super(DomainProtocol, self).dataReceived(data)
+        if l_box == None:
+            return
         LOG.info('Data arrived AmpBox {0:} \n'.format(l_box))
         self.ampBoxReceived(l_box)
 
@@ -133,7 +135,7 @@ class DomainProtocol(AMP):
         _answer #   : Response box
         _error #    : error response
         """
-        LOG.info('AmpBox Received from {0:}\n\t{1:}\n'.format(self.m_peer_address.host, p_box))
+        LOG.info('AmpBox Received from {0:}\n\t{1:}'.format(self.m_peer_address.host, p_box))
         if p_box == None:
             LOG.error('We got a None instead of a box ???')
             return None
@@ -158,8 +160,8 @@ class DomainProtocol(AMP):
     def receive_NodeInfo(self, Name, Active, Address, NodeRole, UUID):
         """
         """
-        LOG.debug('Dispatch - receive_NodeInfo() B - RECEIVED  Name=:{0:}'.format(Name))
         l_response = MessageProcessing(self.m_pyhouse_obj).update_NodeInfo(Name, Active, Address, NodeRole, UUID)
+        LOG.debug('receive_NodeInfo() - from  address=:{0:}\n\tResponse = {1:}'.format(Address, l_response))
         return l_response
 
 
@@ -174,19 +176,21 @@ class MessageProcessing(object):
     def update_NodeInfo(self, Name, Active, Address, NodeRole, UUID):
         """
         Update our PyHouse Nodes information with the data we just got.
-        Create a response we cn pass back to the sender
+        Create a response we can pass back to the sender
         """
-        # LOG.info('We got a box \n\t{0:}\n'.format(p_box))
-        for _k_key, l_node in self.m_pyhouse_obj.Computer.Nodes.iteritems():
+        l_key = -1
+        for l_node in self.m_pyhouse_obj.Computer.Nodes.itervalues():
             if l_node.Name == Name:
                 l_node.Active = Active
                 l_node.Address = Address
                 l_node.Role = NodeRole
                 l_node.UUID = UUID
-                LOG.info('Node {0:} updated'.format(l_node.Key))
-        l_response = {'Name' : 'A_104',
-                      'Answer' : 'Yes'}
-        LOG.info('Return response {0:}'.format(l_response))
+                l_key = int(l_node.Key)
+                # LOG.info('Node {0:} updated'.format(l_node.Key))
+        l_response = {'Name' : Name,
+                      'From' : self.m_pyhouse_obj.Computer.Nodes[0].Name,
+                      'NodeId' : l_key}
+        # LOG.info('Return response {0:}'.format(l_response))
         return l_response
 
 
@@ -244,7 +248,7 @@ class AmpClient(object):
         """
 
         def cb_send_node_information(p_arg):
-            LOG.info('Sent node info OK - {0:} \n'.format(p_arg))
+            # LOG.info('Sent node info OK - {0:} \n'.format(p_arg))
             return p_arg
 
         def eb_send_node_information(p_reason):
