@@ -27,7 +27,7 @@ What I want to happen on startup:
 # Import system type stuff
 from twisted.internet.endpoints import TCP4ClientEndpoint, TCP4ServerEndpoint
 from twisted.internet.protocol import ServerFactory, ClientFactory
-from twisted.protocols.amp import AMP, Command, CommandLocator, Integer, String, AmpList
+from twisted.protocols.amp import AMP, Command, CommandLocator, Integer, String, AmpList, Box, AmpBox
 from twisted.application.internet import StreamServerEndpointService
 
 # Import PyMh files and modules.
@@ -43,7 +43,7 @@ AMP_PORT = 8581
 """ ------------------------------------------------------------------
  Command exceptions
 """
-class NodeInformationError(Exception): pass
+class NodeInfoError(Exception): pass
 class UsernameUnavailable(Exception): pass
 class IrPacketError(Exception): pass
 
@@ -51,8 +51,8 @@ class IrPacketError(Exception): pass
  Commands and Responders
 """
 
-class NodeInformationCommand(Command):
-    commandName = 'NodeInformationCommand'
+class NodeInfo(Command):
+    commandName = 'NodeInfo'
     arguments = [('Name', String()),
                  ('Active', String(optional = True)),
                  ('Address', String(optional = True)),
@@ -62,7 +62,7 @@ class NodeInformationCommand(Command):
     response = [('Name', String()),
                 ('Answer', String(optional = True))
                 ]
-    errors = {NodeInformationError: 'Name error'}
+    errors = {NodeInfoError: 'Name error'}
 
 
 class GetNodeList(Command):
@@ -88,39 +88,43 @@ class MessageProcessing(AMP):
     Process message we receive from different nodes.
     """
 
-    def process_node_info(self, p_box, p_pyhouse_obj):
-        """
-        """
-        self.m_pyhouse_obj = p_pyhouse_obj
-        l_ret = None
-        if p_box['_command'] == 'NodeInformationCommand':
-            l_ret = self.update_NodeInformation(p_box)
-        else:
-            LOG.error('ERROR - Invalid box received - {0:}'.format(p_box))
-        return l_ret
-
-    def update_NodeInformation(self, p_box):
+    def update_NodeInfo(self, p_box):
         """
         Update our PyHouse Nodes information with the data we just got.
         Create a response we cn pass back to the sender
         """
-        LOG.info('We got a box - {0:}'.format(p_box))
+        # LOG.info('We got a box \n\t{0:}\n'.format(p_box))
         for _k_key, l_node in self.m_pyhouse_obj.Computer.Nodes.iteritems():
             if l_node.Name == p_box['Name']:
                 l_node.Role = p_box['NodeRole']
                 l_node.UUID = p_box['UUID']
                 l_node.Active = p_box['Active']
                 LOG.info('Node {0:} updated'.format(l_node.Key))
-        l_ret = dict(Name = 'abc', Answer = 'Yes')
-        return l_ret
+        l_ix = p_box['_ask']
+        l_response = {'Name' : 'A_104',
+                      'Answer' : 'Yes',
+                      '_answer' : l_ix}
+        LOG.info('Return response {0:}'.format(l_response))
+        return l_response
+
+    def process_node_info(self, p_box, p_pyhouse_obj):
+        """
+        """
+        self.m_pyhouse_obj = p_pyhouse_obj
+        if p_box['_command'] == 'NodeInfo':
+            l_response = self.update_NodeInfo(p_box)
+        else:
+            LOG.error('ERROR - Invalid box received - {0:}'.format(p_box))
+            l_response = None
+        return AmpBox(l_response)
 
 
 class AmpLocator(CommandLocator):
     """
     """
 
-    @NodeInformationCommand.responder
-    def receive_NodeInformation(self, p_box):
+    @NodeInfo.responder
+    def XXXreceive_NodeInfo(self, p_box):
         """
         The responder expects to be called with a serialized box.
         It will then
@@ -130,8 +134,9 @@ class AmpLocator(CommandLocator):
             serialize it,
             and then return that serialized form.
         """
-        LOG.debug('Dispatch - receive_NodeInformation() - RECEIVED  Name=:{0:}'.format(p_box))
-        l_ret = dict(Name = 'AAA', Answer = 'Got it ok')
+        LOG.debug('Dispatch - receive_NodeInfo A() - RECEIVED  Name=:{0:}'.format(p_box))
+        l_ret = {'_answer' : '1', 'Name' : 'A138',
+                 'Answer' : 'Got it OK'}
         return l_ret
 
 
@@ -150,6 +155,8 @@ class DomainAmp(AMP):
     # locator = None
     # boxReceiver = AmpBoxReceiver()
     # boxReceiver = None
+    m_peer_address = None
+    m_transport = None
 
     def __init__(self, p_pyhouse_obj):
         """ Override
@@ -160,8 +167,8 @@ class DomainAmp(AMP):
         super(DomainAmp, self).__init__()
         self.m_transport = None
 
-    @NodeInformationCommand.responder
-    def receive_NodeInformation(self, p_box):
+    @NodeInfo.responder
+    def receive_NodeInfo(self, p_box):
         """
         The responder expects to be called with a serialized box.
         It will then
@@ -171,8 +178,9 @@ class DomainAmp(AMP):
             serialize it,
             and then return that serialized form.
         """
-        LOG.debug('Dispatch - receive_NodeInformation() - RECEIVED  Name=:{0:}'.format(p_box))
-        l_ret = dict(Name = 'AAA', Answer = 'Got it ok')
+        LOG.debug('Dispatch - receive_NodeInfo() B - RECEIVED  Name=:{0:}'.format(p_box))
+        l_dict = {'_answer' : '1', 'Name' : 'A182', 'Answer' : 'Got it ok'}
+        l_ret = Box(l_dict)
         return l_ret
 
     def makeConnection(self, p_transport):
@@ -181,7 +189,8 @@ class DomainAmp(AMP):
         Required to be here - passes back the transport.
         """
         self.m_transport = p_transport
-        LOG.info('Make')
+        self.m_peer_address = p_transport.getPeer()
+        LOG.info('Make Connection')
         return AMP.makeConnection(self, p_transport);
 
     def connectionLost(self, p_reason):
@@ -207,8 +216,8 @@ class DomainAmp(AMP):
         For servers, this is called after an accept() call stops blocking and a socket has been received.
         If you need to send any greeting or initial message, do it here.
         """
-        l_host = self.transport.getPeer().host
-        LOG.info('Server received a connection from {0:}'.format(l_host))
+        l_peer = self.transport.getPeer().host
+        LOG.info('Server received a connection from {0:}'.format(l_peer))
 
     def startReceivingBoxes(self, p_boxSender):
         """ Override
@@ -225,16 +234,16 @@ class DomainAmp(AMP):
         Respond to it according to its contents.
 
         _ask #      : Initial box
-        _answer @   : Response box
+        _answer #   : Response box
         _error #    : error response
         """
-        LOG.debug('Dispatch - BoxReceived(Box)\n\t{0:}'.format(p_box))
+        LOG.info('Dispatch - AmpBoxReceived(Box) from {0:}\n\t{1:}\n'.format(self.m_peer_address.host, p_box))
         if p_box == None:
             LOG.error('We got a None instead of a box ???')
             return None
-        l_ret = MessageProcessing().process_node_info(p_box, self.m_pyhouse_obj)
-
-        return l_ret
+        l_response = MessageProcessing().process_node_info(p_box, self.m_pyhouse_obj)
+        return AMP.ampBoxReceived(self, l_response)
+        # return AMP.ampBoxReceived(self, p_box)
 
     def stopReceivingBoxes(self, p_reason):
         """ Override
@@ -248,7 +257,7 @@ class DomainAmp(AMP):
         """
         """
         LOG.debug('Dispatch - received  remote server.')
-        l_ret = dict(Name = 'abc', Answer = 'Yes')
+        l_ret = {'_answer' : '1', 'Name' : 'A260', 'Answer' : 'Got it ok'}
         return l_ret
 
     def sendBox(self, p_box):
@@ -285,24 +294,23 @@ class AmpClient(object):
         """
         return p_address.host
 
-    def _send_NodeInfo_box(self, p_node, p_protocol):
+    def send_NodeInfo_box(self, p_node, p_protocol):
         """
         Take the node information about this node - build a box and send it.
-        Wait for Success or Failure.
         """
         LOG.info('Composing node info box for {0:}.'.format(p_node.Name))
         l_defer = p_protocol.callRemote(
-                    NodeInformationCommand,
+                    NodeInfo,
                     Name = p_node.Name,
                     Active = str(p_node.Active),
                     Address = p_node.ConnectionAddr_IPv4,
                     NodeRole = int(p_node.NodeRole),
-                    UUID = "01234567-1234-2345-3456-01234567890ab"
+                    # UUID = "01234567-1234-2345-3456-01234567890ab"
+                    UUID = "309"
                     )
-        # LOG.info('Node info box. Defer:{0:} - Protocol:{1:}'.format(l_defer, p_protocol))
         return l_defer
 
-    def send_node_information(self, p_protocol):
+    def send_node_information(self, p_protocol, p_address):
         """
         Send our local node information to another node in our node list.
 
@@ -316,14 +324,18 @@ class AmpClient(object):
             return p_arg
 
         def eb_send_node_information(p_reason):
-            LOG.error('ERROR - Send_node_information failed - {0:} \n'.format(p_reason))
+            LOG.error('ERROR - Send_node_information to {0:} failed\n\t{1:}\n'.format(self.m_address, p_reason))
 
-        pass
+        def bb_send_node_info(p_arg):
+            LOG.info('Done sending node info - stop client. arg={0:}'.format(p_arg))
+
+        self.m_address = p_address
         l_host = p_protocol.transport.getPeer().host
         LOG.info('Send node_info to {0:}'.format(l_host))
-        l_defer = self._send_NodeInfo_box(self.m_pyhouse_obj.Computer.Nodes[0], p_protocol)
+        l_defer = self.send_NodeInfo_box(self.m_pyhouse_obj.Computer.Nodes[0], p_protocol)
         l_defer.addCallback(cb_send_node_information)
         l_defer.addErrback(eb_send_node_information)
+        l_defer.addBoth(bb_send_node_info)
 
     def update_client_node(self, p_pyhouses_obj, p_address):
         """
@@ -334,13 +346,13 @@ class AmpClient(object):
         def cb_update_client_node(p_protocol):
             l_peer = p_protocol.transport.getPeer()
             LOG.info('Updating Node information on {0:}'.format(self._print_peer_ip_address(l_peer)))
-            l_ret = self.send_node_information(p_protocol)
+            l_ret = self.send_node_information(p_protocol, self.m_address)
             return l_ret
 
         def eb_update_client_node(p_reason):
             LOG.error('ERROR - Failed to create a client to update node \n {0:}'.format(p_reason))
 
-        def close_connection():
+        def bb_close_connection(p_arg):
             LOG.info('Closing connection to node {0:}'.format(p_address))
             pass
 
@@ -351,7 +363,7 @@ class AmpClient(object):
         LOG.info('Create Client to {0:}'.format(p_address))
         l_defer.addCallback(cb_update_client_node)
         l_defer.addErrback(eb_update_client_node)
-        l_defer.addBoth(close_connection)
+        l_defer.addBoth(bb_close_connection)
 
     def start_sending_to_all_clients(self, _ignore):
         """
@@ -403,7 +415,6 @@ class Utility(AmpClient):
 
 class API(Utility):
     """
-    class 700
     """
 
     def __init__(self):

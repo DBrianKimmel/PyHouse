@@ -415,10 +415,13 @@ class FakeSender:
 
 class Test_02_CmdDsptch(SetupMixin, unittest.TestCase):
     """
-    The AMP CommandDispatcher class dispatches converts AMP boxes into commands and responses using Command.responder decorator.
+    The AMP CommandDispatcher class dispatches converts AMP boxes into commands and responses using
+       Command.responder decorator.
 
-    Note: Originally, AMP's factoring was such that many tests for this functionality are now implemented as full round-trip tests in L{AMPTest}.
-    Future tests should be written at this level instead, to ensure API compatibility and to provide more granular, readable units of test coverage.
+    Note: Originally, AMP's factoring was such that many tests for this functionality are now implemented as
+     full round-trip tests in L{AMPTest}.
+    Future tests should be written at this level instead, to ensure API compatibility and
+     to provide more granular, readable units of test coverage.
     """
 
     def setUp(self):
@@ -433,7 +436,8 @@ class Test_02_CmdDsptch(SetupMixin, unittest.TestCase):
 
     def test_0201_receivedAsk(self):
         """
-        L{CommandDispatcher.ampBoxReceived} should locate the appropriate command in its responder lookup, based on the '_ask' key.
+        L{CommandDispatcher.ampBoxReceived} should locate the appropriate command in its responder lookup,
+          based on the '_ask' key.
         """
         received = []
         def thunk(box):
@@ -444,6 +448,7 @@ class Test_02_CmdDsptch(SetupMixin, unittest.TestCase):
         self.fake_dispatcher.ampBoxReceived(l_input)
         self.assertEquals(received, [l_input])
         PrettyPrintAny(l_input, 'Input')
+        PrettyPrintAny(received, 'received')
 
     def test_0202_sendUnhandledError(self):
         """
@@ -471,10 +476,12 @@ class Test_02_CmdDsptch(SetupMixin, unittest.TestCase):
         self.fake_dispatcher.ampBoxReceived(l_input)
         self.assertEquals(len(self.fake_sender.unhandledErrors), 1)
         self.assertEquals(self.fake_sender.unhandledErrors[0].value, err)
+        PrettyPrintAny(l_input, 'Input')
 
     def test_0204_callRemote(self):
         """
-        L{CommandDispatcher.callRemote} should emit a properly formatted '_ask' box to its boxSender and record an outstanding L{Deferred}.
+        L{CommandDispatcher.callRemote} should emit a properly formatted '_ask' box to its boxSender
+          and record an outstanding L{Deferred}.
         When a corresponding '_answer' packet is received, the L{Deferred} should be fired,
          and the results translated via the given L{Command}'s response de-serialization.
         """
@@ -485,10 +492,11 @@ class Test_02_CmdDsptch(SetupMixin, unittest.TestCase):
         self.assertEquals(answers, [])
         self.fake_dispatcher.ampBoxReceived(amp.AmpBox({'hello': "yay", 'print': "ignored", '_answer': "1"}))
         self.assertEquals(answers, [dict(hello = "yay", Print = u"ignored")])
+        PrettyPrintAny(answers, 'Answers - 0204')
 
     def test_0205_DBK_NodeInfo(self):
-        l_defer = self.fake_dispatcher.callRemote(node_domain.NodeInformationCommand, Name = 'DBK - 0205')
-        self.assertEquals(self.fake_sender.sentBoxes, [amp.AmpBox(_command = "NodeInformationCommand", _ask = "1", Name = "DBK - 0205")])
+        l_defer = self.fake_dispatcher.callRemote(node_domain.NodeInfo, Name = 'DBK - 0205')
+        self.assertEquals(self.fake_sender.sentBoxes, [amp.AmpBox(_command = "NodeInfo", _ask = "1", Name = "DBK - 0205")])
         answers = []
         l_defer.addCallback(answers.append)
         self.assertEquals(answers, [])
@@ -500,7 +508,8 @@ class Test_02_CmdDsptch(SetupMixin, unittest.TestCase):
 """  ========================================================================================
 This section will test command locators
 
-The CommandLocator should enable users to specify responders to commands as functions that take structured objects, annotated with metadata.
+The CommandLocator should enable users to specify responders to commands as functions that take
+ structured objects, annotated with metadata.
 """
 
 class SimpleGreeting(amp.Command):
@@ -552,13 +561,14 @@ class OverrideLocatorAMP(amp.AMP):
 
 class Test_03_CmdLctr(unittest.TestCase):
     """
-    The CommandLocator should enable users to specify responders to commands as functions that take structured objects, annotated with metadata.
+    The CommandLocator should enable users to specify responders to commands as functions that take
+     structured objects, annotated with metadata.
     """
 
     def test_0301_responderDecorator(self):
         """
-        A method on a L{CommandLocator} subclass decorated with a L{Command} subclass's L{responder} decorator should be returned from
-        locateResponder, wrapped in logic to serialize and deserialize its arguments.
+        A method on a L{CommandLocator} subclass decorated with a L{Command} subclass's L{responder} decorator
+         should be returned from locateResponder, wrapped in logic to serialize and deserialize its arguments.
         """
         locator = TestLocator()
         responderCallable = locator.locateResponder("simple")
@@ -569,8 +579,10 @@ class Test_03_CmdLctr(unittest.TestCase):
 
     def Xtest_0302_lookupFunctionDeprecatedOverride(self):
         """
-        Subclasses which override locateResponder under its old name, lookupFunction, should have the override invoked instead.
-        (This tests an AMP subclass, because in the version of the code that could invoke this deprecated code path, there was no L{CommandLocator}.)
+        Subclasses which override locateResponder under its old name, lookupFunction, should have the
+         override invoked instead.
+        (This tests an AMP subclass, because in the version of the code that could invoke this
+         deprecated code path, there was no L{CommandLocator}.)
         """
         locator = OverrideLocatorAMP()
         customResponderObject = self.assertWarns(PendingDeprecationWarning, "Override locateResponder, not lookupFunction.",
@@ -650,17 +662,18 @@ class Test_04_BinaryProto(unittest.TestCase):
 
     def test_0401_startReceivingBoxes(self):
         """
-        When L{amp.BinaryBoxProtocol} is connected to a transport, it calls C{startReceivingBoxes} on its L{IBoxReceiver} with itself
-         as the L{IBoxSender} parameter.
+        When L{amp.BinaryBoxProtocol} is connected to a transport, it calls C{startReceivingBoxes} on
+         its L{IBoxReceiver} with itself as the L{IBoxSender} parameter.
         """
         protocol = amp.BinaryBoxProtocol(self)
         protocol.makeConnection(None)
         self.assertIdentical(self._boxSender, protocol)
 
-    def Xtest_0402_sendBoxInStartReceivingBoxes(self):
+    def test_0402_sendBoxInStartReceivingBoxes(self):
         """
-        The L{IBoxReceiver} which is started when L{amp.BinaryBoxProtocol} is connected to a transport can call C{sendBox} on the L{IBoxSender}
-        passed to it before C{startReceivingBoxes} returns and have that box sent.
+        The L{IBoxReceiver} which is started when L{amp.BinaryBoxProtocol} is connected to a transport can
+         call C{sendBox} on the L{IBoxSender} passed to it before C{startReceivingBoxes} returns and have
+         that box sent.
         """
         class SynchronouslySendingReceiver:
             def startReceivingBoxes(self, sender):
@@ -671,7 +684,7 @@ class Test_04_BinaryProto(unittest.TestCase):
         protocol.makeConnection(transport)
         self.assertEqual(transport.value(), '\x00\x03foo\x00\x03bar\x00\x00')
 
-    def Xtest_0403_receiveBoxStateMachine(self):
+    def test_0403_receiveBoxStateMachine(self):
         """
         When a binary box protocol receives:
             * a key
@@ -685,9 +698,10 @@ class Test_04_BinaryProto(unittest.TestCase):
         a.stringReceived("")
         self.assertEquals(self.boxes, [amp.AmpBox(hello = "world")])
 
-    def Xtest_0404_firstBoxFirstKeyExcessiveLength(self):
+    def test_0404_firstBoxFirstKeyExcessiveLength(self):
         """
-        L{amp.BinaryBoxProtocol} drops its connection if the length prefix for the first a key it receives is larger than 255.
+        L{amp.BinaryBoxProtocol} drops its connection if the length prefix for the first a key it receives
+         is larger than 255.
         """
         transport = StringTransport()
         protocol = amp.BinaryBoxProtocol(self)
@@ -695,9 +709,10 @@ class Test_04_BinaryProto(unittest.TestCase):
         protocol.dataReceived('\x01\x00')
         self.assertTrue(transport.disconnecting)
 
-    def Xtest_0405_firstBoxSubsequentKeyExcessiveLength(self):
+    def test_0405_firstBoxSubsequentKeyExcessiveLength(self):
         """
-        L{amp.BinaryBoxProtocol} drops its connection if the length prefix for a subsequent key in the first box it receives is larger than 255.
+        L{amp.BinaryBoxProtocol} drops its connection if the length prefix for a subsequent key in the
+         first box it receives is larger than 255.
         """
         transport = StringTransport()
         protocol = amp.BinaryBoxProtocol(self)
@@ -707,9 +722,10 @@ class Test_04_BinaryProto(unittest.TestCase):
         protocol.dataReceived('\x01\x00')
         self.assertTrue(transport.disconnecting)
 
-    def Xtest_0406_subsequentBoxFirstKeyExcessiveLength(self):
+    def test_0406_subsequentBoxFirstKeyExcessiveLength(self):
         """
-        L{amp.BinaryBoxProtocol} drops its connection if the length prefix for the first key in a subsequent box it receives is larger than 255.
+        L{amp.BinaryBoxProtocol} drops its connection if the length prefix for the first key in a
+         subsequent box it receives is larger than 255.
         """
         transport = StringTransport()
         protocol = amp.BinaryBoxProtocol(self)
@@ -719,10 +735,10 @@ class Test_04_BinaryProto(unittest.TestCase):
         protocol.dataReceived('\x01\x00')
         self.assertTrue(transport.disconnecting)
 
-    def Xtest_0407_excessiveKeyFailure(self):
+    def test_0407_excessiveKeyFailure(self):
         """
-        If L{amp.BinaryBoxProtocol} disconnects because it received a key length prefix which was too large, the L{IBoxReceiver}'s
-        C{stopReceivingBoxes} method is called with a L{TooLong} failure.
+        If L{amp.BinaryBoxProtocol} disconnects because it received a key length prefix which was too
+         large, the L{IBoxReceiver}'s C{stopReceivingBoxes} method is called with a L{TooLong} failure.
         """
         protocol = amp.BinaryBoxProtocol(self)
         protocol.makeConnection(StringTransport())
@@ -736,7 +752,8 @@ class Test_04_BinaryProto(unittest.TestCase):
 
     def test_0408_receiveBoxData(self):
         """
-        When a binary box protocol receives the serialized form of an AMP box, it should emit a similar box to its boxReceiver.
+        When a binary box protocol receives the serialized form of an AMP box, it should emit a
+         similar box to its boxReceiver.
         """
         a = amp.BinaryBoxProtocol(self)
         a.dataReceived(amp.Box({"testKey": "valueTest", "anotherKey": "anotherValue"}).serialize())
@@ -768,7 +785,8 @@ class Test_04_BinaryProto(unittest.TestCase):
 
     def test_0411_connectionLostStopSendingBoxes(self):
         """
-        When a binary box protocol loses its connection, it should notify its box receiver that it has stopped receiving boxes.
+        When a binary box protocol loses its connection, it should notify its box receiver that it has
+         stopped receiving boxes.
         """
         a = amp.BinaryBoxProtocol(self)
         a.makeConnection(self)
@@ -809,10 +827,12 @@ class Test_04_BinaryProto(unittest.TestCase):
         self.assertEquals("".join(otherProto.data), "\x00\x00Hello, world!more data")
         self.assertRaises(amp.ProtocolSwitched, a.sendBox, anyOldBox)
 
-    def Xtest_0413_protocolSwitchInvalidStates(self):
+    def test_0413_protocolSwitchInvalidStates(self):
         """
-        In order to make sure the protocol never gets any invalid data sent into the middle of a box, it must be locked for switching before it is switched.
-        It can only be unlocked if the switch failed, and attempting to send a box while it is locked should raise an exception.
+        In order to make sure the protocol never gets any invalid data sent into the middle of a box,
+         it must be locked for switching before it is switched.
+        It can only be unlocked if the switch failed, and attempting to send a box while it is locked
+         should raise an exception.
         """
         a = amp.BinaryBoxProtocol(self)
         a.makeConnection(self)
@@ -827,7 +847,7 @@ class Test_04_BinaryProto(unittest.TestCase):
         a._switchTo(otherProto)
         self.assertRaises(amp.ProtocolSwitched, a._unlockFromSwitch)
 
-    def Xtest_0414_protocolSwitchLoseConnection(self):
+    def test_0414_protocolSwitchLoseConnection(self):
         """
         When the protocol is switched, it should notify its nested protocol of disconnection.
         """
@@ -844,7 +864,7 @@ class Test_04_BinaryProto(unittest.TestCase):
         a.connectionLost(connectionFailure)
         self.assertEquals(connectionLoser.reason, connectionFailure)
 
-    def Xtest_0415_protocolSwitchLoseClientConnection(self):
+    def test_0415_protocolSwitchLoseClientConnection(self):
         """
         When the protocol is switched, it should notify its nested client protocol factory of disconnection.
         """
@@ -872,6 +892,7 @@ class Test_04_BinaryProto(unittest.TestCase):
         a.makeConnection(self)
         a.sendBox(aBox)
         self.assertEquals(''.join(self.data), aBox.serialize())
+        PrettyPrintAny(aBox, 'aBox')
 
 
 
@@ -883,15 +904,17 @@ class Test_05_AMP(unittest.TestCase):
 
     def test_0507_brokenReturnValue(self):
         """
-        It can be very confusing if you write some code which responds to a command, but gets the return value wrong.
+        It can be very confusing if you write some code which responds to a command,
+         but gets the return value wrong.
         Most commonly you end up returning None instead of a dictionary.
         Verify that if that happens, the framework logs a useful error.
         """
         L = []
-        SimpleSymmetricCommandProtocol().dispatchCommand(amp.AmpBox(_command = BrokenReturn.commandName)).addErrback(L.append)
+        l_defer = SimpleSymmetricCommandProtocol().dispatchCommand(amp.AmpBox(_command = BrokenReturn.commandName))
+        l_defer.addErrback(L.append)
         _blr = L[0].trap(amp.BadLocalReturn)
-        print('0507 L[]:{0:}'.format(L))
         self.failUnlessIn('None', repr(L[0].value))
+        PrettyPrintAny(L, 'L - 507')
 
     def test_0508_unknownArgument(self):
         """
@@ -900,19 +923,21 @@ class Test_05_AMP(unittest.TestCase):
         l_client, _l_server, l_pump = connectedServerAndClient()
         L = []
         HELLO = 'world'
-        l_client.callRemote(FutureHello, hello = HELLO, bonus = "I'm not in the book!").addCallback(L.append)
+        l_defer = l_client.callRemote(FutureHello, hello = HELLO, bonus = "I'm not in the book!")
+        l_defer.addCallback(L.append)
         l_pump.flush()
-        print('0508 L[]:{0:}'.format(L))
         self.assertEquals(L[0]['hello'], HELLO)
+        PrettyPrintAny(L, 'L - 508')
 
-    def test_0512_helloWorldCommand(self):
+    def test_0512A_helloWorldCommand(self):
         """ TODO:
         Verify that a simple command can be sent and its response received with the high-level value parsing API.
         """
         l_client, _l_server, l_pump = connectedServerAndClient()
         L = []
-        HELLO = '0512 - world'
-        l_client.sendHello(HELLO).addCallback(L.append)
+        HELLO = '0512A - world'
+        l_defer = l_client.sendHello(HELLO)
+        l_defer.addCallback(L.append)
         l_pump.flush()
         print('0512-A Client:{0:}'.format(l_client))
         print('0512-B Server:{0:}'.format(_l_server))
@@ -920,36 +945,39 @@ class Test_05_AMP(unittest.TestCase):
         print('0512-D L[]: {0:}'.format(L))
         self.assertEquals(L[0]['hello'], HELLO)
 
-    def test_0512A_DBK_InfoCommand(self):
+    def test_0512B_DBK_InfoCommand(self):
         """ TODO:
         Verify that a simple command can be sent and its response received with the high-level value parsing API.
         """
         l_client, _l_server, l_pump = connectedServerAndClient()
         L = []
-        HELLO = '0512 - world'
+        HELLO = '0512B - world'
         l_defer = l_client.sendHello(HELLO)
         l_defer.addCallback(L.append)
         l_pump.flush()
-        print('0512A-1 L[]: {0:}'.format(L))
+        print('0512B-1 L[]: {0:}'.format(L))
         self.assertEquals(L[0]['hello'], HELLO)
 
     def test_0513_helloErrorHandling(self):
         """
-        Verify that if a known error type is raised and handled, it will be properly relayed to the other end of the connection
-        and translated into an exception, and no error will be logged.
+        Verify that if a known error type is raised and handled, it will be properly relayed to the other
+         end of the connection and translated into an exception, and no error will be logged.
         """
         L = []
         l_client, _l_server, l_pump = connectedServerAndClient()
         HELLO = 'screw you'
-        l_client.sendHello(HELLO).addErrback(L.append)
+        l_defer = l_client.sendHello(HELLO)
+        l_defer.addErrback(L.append)
         l_pump.flush()
         L[0].trap(UnfriendlyGreeting)
         self.assertEquals(str(L[0].value), "Don't be a dick.")
+        PrettyPrintAny(L, 'L - 513')
 
     def test_0514_helloFatalErrorHandling(self):
         """
-        Verify that if a known, fatal error type is raised and handled, it will be properly relayed to the other end of the connection and translated
-        into an exception, no error will be logged, and the connection will be terminated.
+        Verify that if a known, fatal error type is raised and handled, it will be properly relayed to the
+         other end of the connection and translated into an exception, no error will be logged, and the
+         connection will be terminated.
         """
         L = []
         l_client, _l_server, l_pump = connectedServerAndClient()
@@ -963,8 +991,8 @@ class Test_05_AMP(unittest.TestCase):
 
     def test_0515_helloNoErrorHandling(self):
         """
-        Verify that if an unknown error type is raised, it will be relayed to the other end of the connection and translated into an exception,
-         it will be logged, and then the connection will be dropped.
+        Verify that if an unknown error type is raised, it will be relayed to the other end of the connection
+         and translated into an exception, it will be logged, and then the connection will be dropped.
         """
         L = []
         l_client, _l_server, l_pump = connectedServerAndClient()
@@ -981,7 +1009,8 @@ class Test_05_AMP(unittest.TestCase):
 
     def test_0516_lateAnswer(self):
         """
-        Verify that a command that does not get answered until after the connection terminates will not cause any errors.
+        Verify that a command that does not get answered until after the connection terminates will not cause
+         any errors.
         """
         l_client, l_server, l_pump = connectedServerAndClient()
         L = []
@@ -1028,26 +1057,30 @@ class Test_05_AMP(unittest.TestCase):
     def test_0519_noAnswerResponderBadAnswer(self):
         """
         Verify that responders of requiresAnswer=False commands have to return a dictionary anyway.
-        (requiresAnswer is a hint from the _client_ - the server may be called upon to answer commands in any case, if the client wants to know when they complete.)
+        (requiresAnswer is a hint from the _client_ - the server may be called upon to answer commands
+         in any case, if the client wants to know when they complete.)
         """
         l_client, _l_server, l_pump = connectedServerAndClient(ServerClass = BadNoAnswerCommandProtocol, ClientClass = SimpleSymmetricCommandProtocol)
         l_client.callRemote(NoAnswerHello, hello = "hello")
         l_pump.flush()
         le = self.flushLoggedErrors(amp.BadLocalReturn)
         self.assertEquals(len(le), 1)
-
+        PrettyPrintAny(le, 'le - 519')
 
     def test_0520_noAnswerResponderAskedForAnswer(self):
         """
-        Verify that responders with requiresAnswer=False will actually respond if the client sets requiresAnswer=True.
+        Verify that responders with requiresAnswer=False will actually respond if the client sets
+         requiresAnswer=True.
         In other words, verify that requiresAnswer is a hint honored only by the client.
         """
         l_client, _l_server, l_pump = connectedServerAndClient(ServerClass = NoAnswerCommandProtocol, ClientClass = SimpleSymmetricCommandProtocol)
         L = []
-        l_client.callRemote(Hello, hello = "Hello!").addCallback(L.append)
+        l_defer = l_client.callRemote(Hello, hello = "Hello!")
+        l_defer.addCallback(L.append)
         l_pump.flush()
         self.assertEquals(len(L), 1)
         self.assertEquals(L, [dict(hello = "Hello!-noanswer", Print = None)])  # Optional response argument
+        PrettyPrintAny(L, 'L - 520')
 
     def test_0521_ampListCommand(self):
         """
@@ -1055,10 +1088,12 @@ class Test_05_AMP(unittest.TestCase):
         """
         l_client, _l_server, l_pump = connectedServerAndClient()
         L = []
-        l_client.callRemote(GetList, length = 10).addCallback(L.append)
+        l_defer = l_client.callRemote(GetList, length = 10)
+        l_defer.addCallback(L.append)
         l_pump.flush()
         values = L.pop().get('body')
         self.assertEquals(values, [{'x': 1}] * 10)
+        PrettyPrintAny(values, 'L - 521')
 
     def test_0522_failEarlyOnArgSending(self):
         """
@@ -1069,7 +1104,8 @@ class Test_05_AMP(unittest.TestCase):
 
     def test_0523_doubleProtocolSwitch(self):
         """
-        As a debugging aid, a protocol system should raise a L{ProtocolSwitched} exception when asked to switch a protocol that is already switched.
+        As a debugging aid, a protocol system should raise a L{ProtocolSwitched} exception when asked to
+         switch a protocol that is already switched.
         """
         serverDeferred = defer.Deferred()
         serverProto = SimpleSymmetricCommandProtocol(serverDeferred)
@@ -1130,13 +1166,15 @@ class Test_05_AMP(unittest.TestCase):
 
     def test_0525_protocolSwitchDeferred(self):
         """
-        Verify that protocol-switching even works if the value returned from the command that does the switch is deferred.
+        Verify that protocol-switching even works if the value returned from the command that does the switch
+         is deferred.
         """
         return self.test_0524_protocolSwitch(switcher = DeferredSymmetricCommandProtocol)
 
     def test_0526_protocolSwitchFail(self, switcher = SimpleSymmetricCommandProtocol):
         """
-        Verify that if we try to switch protocols and it fails, the connection stays up and we can go back to speaking AMP.
+        Verify that if we try to switch protocols and it fails, the connection stays up and we can go back
+         to speaking AMP.
         """
         self.testSucceeded = False
 
@@ -1194,6 +1232,7 @@ class Test_05_AMP(unittest.TestCase):
         l_server.ampBoxReceived = L.append
         l_client.callRemote(Hello, hello = 'hello test', mixedCase = 'mixed case arg test', dash_arg = 'x', underscore_arg = 'y')
         l_pump.flush()
+        PrettyPrintAny(L, 'L 530')
         self.assertEquals(len(L), 1)
         for k, v in [('_command', Hello.commandName),
                      ('hello', 'hello test'),
