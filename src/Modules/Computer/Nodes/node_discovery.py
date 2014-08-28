@@ -67,12 +67,12 @@ class DGramUtil(object):
                 return
         p_node.Key = l_count
         p_pyhouse_obj.Computer.Nodes[l_count] = p_node
-        LOG.info("Added node # {0:} - From Addr: {1:}, Named: {2:}".format(l_count, p_node.ConnectionAddr_IPv4, p_node.Name))
+        # LOG.info("Added node # {0:} - From Addr: {1:}, Named: {2:}".format(l_count, p_node.ConnectionAddr_IPv4, p_node.Name))
 
     def set_node_0_addr(self, p_address, p_pyhouse_obj):
         if p_pyhouse_obj.Computer.Nodes[0].ConnectionAddr_IPv4 == None:
             p_pyhouse_obj.Computer.Nodes[0].ConnectionAddr_IPv4 = p_address[0]
-            LOG.info("Update our node (slot 0) address to {0:}".format(p_address[0]))
+            # LOG.info("Update our node (slot 0) address to {0:}".format(p_address[0]))
 
     def _create_node(self, p_datagram, p_address, p_pyhouse_obj):
         l_node = NodeUtil().initialize_node(p_address[0], None)
@@ -121,8 +121,7 @@ class ServerProtocol(DatagramProtocol):
         Join a specific multicast group:
         """
         self.m_interface = DGramUtil().setup_multicast(self.transport)
-        if g_debug >= 1:
-            LOG.debug('Discovery Server Protocol started. {0:}'.format(self.m_interface))
+        # LOG.debug('Discovery Server Protocol started. {0:}'.format(self.m_interface))
 
     def datagramReceived(self, p_datagram, p_address):
         """
@@ -132,8 +131,7 @@ class ServerProtocol(DatagramProtocol):
         @type  p_address: C{tupple) (IpAddr, port)
         @param p_address: is the (IpAddr, Port) of the sender of this datagram (reply to address).
         """
-        if g_debug >= 1:
-            LOG.debug("Discovery Server rxed: {0:} from: {1:}".format(repr(p_datagram), p_address[0]))
+        # LOG.debug("Discovery Server rxed: {0:} from: {1:}".format(repr(p_datagram), p_address[0]))
         DGramUtil()._append_address(p_address)
         if p_datagram.startswith(WHOS_THERE):
             DGramUtil()._send_response(p_address, self.m_pyhouse_obj, self.transport)
@@ -157,16 +155,14 @@ class ClientProtocol(ConnectedDatagramProtocol):
         """
         self.m_interface = DGramUtil().setup_multicast(self.transport)
         DGramUtil()._send_query(self.transport)
-        if g_debug >= 1:
-            LOG.debug('Discovery Client Protocol started  {0:}.'.format(self.m_interface))
+        # LOG.debug('Discovery Client Protocol started  {0:}.'.format(self.m_interface))
 
     def datagramReceived(self, p_datagram, p_address):
         """
         The client only rxes WHOS_THERE
         """
         NodeUtil().initialize_node(p_address[0], None)
-        if g_debug >= 1:
-            LOG.debug('Discovery Client rxed: {0:} From: {1:}'.format(p_datagram, p_address[0]))
+        # LOG.debug('Discovery Client rxed: {0:} From: {1:}'.format(p_datagram, p_address[0]))
         if p_datagram.startswith(WHOS_THERE):
             DGramUtil().set_node_0_addr(p_address, self.m_pyhouse_obj)
 

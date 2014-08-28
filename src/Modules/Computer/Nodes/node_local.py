@@ -114,7 +114,7 @@ class GetAllInterfaceData(object):
                 l_interface.V6Address = self._get_address_list(self._find_addr_lists(p_interface_name)[l_af])
         if l_interface.V4Address == [] and l_interface.V6Address == []:
             return
-        LOG.info("\n\t\t\tInterface:{0:}\n\t\t\tMac:{1:}\n\t\t\tV4:{2:}\n\t\t\tV6:{3:}".format(l_interface.Name, l_interface.MacAddress, l_interface.V4Address, l_interface.V6Address))
+        # LOG.info("\n\t\t\tInterface:{0:}\n\t\t\tMac:{1:}\n\t\t\tV4:{2:}\n\t\t\tV6:{3:}".format(l_interface.Name, l_interface.MacAddress, l_interface.V4Address, l_interface.V6Address))
 
     def _get_all_families(self, p_interface):
         pass
