@@ -324,9 +324,6 @@ class Utility(SSAPI):
 
 class API(Utility):
 
-    def __init__(self):
-        pass
-
     def Start(self, p_pyhouse_obj, p_date = datetime.date.today()):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_earth_data = self._load_location(p_pyhouse_obj)

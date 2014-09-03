@@ -15,13 +15,13 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import ThermostatData
-from Modules.hvac import thermostat
-from Modules.housing import house
-from Modules.families import family
-from Modules.web import web_utils
+from Modules.Hvac import thermostat
+from Modules.Housing import house
+from Modules.Families import family
+from Modules.Web import web_utils
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
-from Modules.utils.tools import PrettyPrintAny
+from Modules.Utilities.tools import PrettyPrintAny
 
 
 class SetupMixin(object):

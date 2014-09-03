@@ -11,27 +11,27 @@
 
 # Import system type stuff
 from twisted.trial import unittest
+import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
+from test import xml_data
+from test.testing_mixin import SetupPyHouseObj
 # from Modules.utils.tools import PrettyPrintAny
-from src.test import test_mixin
 
 
 class SetupMixin(object):
     """
     """
 
-    def setUp(self):
-        test_mixin.Setup()
-        # self.m_api = schedule.API()
+    def setUp(self, p_root):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
+        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
 class Test(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        self.m_root_xml = None
-        SetupMixin.setUp(self)
-        pass
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
 
     def testName(self):
         pass

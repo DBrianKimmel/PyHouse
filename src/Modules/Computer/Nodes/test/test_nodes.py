@@ -16,7 +16,7 @@ from twisted.internet import protocol, error, defer, udp
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import PyHouseData
-from Modules.computers.Nodes import nodes
+from Modules.Computer.Nodes import nodes
 
 
 class Mixin:

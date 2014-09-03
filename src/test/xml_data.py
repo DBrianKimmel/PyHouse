@@ -79,6 +79,10 @@ XML_LONG = """
                     </Interface>
                 </InterfaceSection>
             </Node>
+            <Node Name='pi-02' Key='0' Active='True'>
+                <UUID>87654321-1001-11e3-b583-082e5f899999</UUID>
+                <ConnectionAddressV4>192.168.1.124</ConnectionAddressV4>
+            </Node>
         </NodeSection>
         <EmailSection>
             <EmailFromAddress>mail.sender@Gmail.Com</EmailFromAddress>

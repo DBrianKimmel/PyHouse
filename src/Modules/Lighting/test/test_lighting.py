@@ -1,5 +1,5 @@
 """
-@name: PyHouse/src/Modules/lights/test/test_lighting.py
+@name: PyHouse/src/Modules/Lighting/test/test_lighting.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @copyright: 2013-2014 by D. Brian Kimmel
@@ -10,16 +10,16 @@
 """
 
 # Import system type stuff
-import xml.etree.ElementTree as ET
 from twisted.trial import unittest
+import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import LightData
 from Modules.Lighting import lighting
 from Modules.Families import family
-from Modules.Utilities.tools import PrettyPrintAny
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
+from Modules.Utilities.tools import PrettyPrintAny
 
 
 class SetupMixin(object):

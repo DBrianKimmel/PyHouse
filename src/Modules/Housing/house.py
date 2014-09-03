@@ -70,7 +70,7 @@ class ReadWriteConfigXml(location.ReadWriteConfigXml, rooms.ReadWriteConfigXml):
         self.read_base_object_xml(p_pyhouse_obj.House, l_xml)
         p_pyhouse_obj.House.OBJs.Location = self.read_location_xml(l_xml)
         p_pyhouse_obj.House.OBJs.Rooms = self.read_rooms_xml(l_xml)
-        return p_pyhouse_obj.House.OBJs
+        return p_pyhouse_obj.House
 
     def write_house_xml(self, p_house_obj):
         """Replace the data in the 'Houses' section with the current data.
@@ -121,7 +121,7 @@ class API(Utility):
         self.update_pyhouse_obj(p_pyhouse_obj)
         self.add_api_references(p_pyhouse_obj)
         self.m_pyhouse_obj = p_pyhouse_obj
-        p_pyhouse_obj.House.OBJs = self.read_house_xml(p_pyhouse_obj)
+        p_pyhouse_obj.House = self.read_house_xml(p_pyhouse_obj)
         p_pyhouse_obj.House.OBJs.FamilyData = p_pyhouse_obj.APIs.FamilyAPI.Start(p_pyhouse_obj)
         # PrettyPrintAny(p_pyhouse_obj.House.OBJs, 'PyHouseObj', 120)
         self.start_house_parts(p_pyhouse_obj)

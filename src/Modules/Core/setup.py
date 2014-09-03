@@ -50,9 +50,6 @@ class ReadWriteConfigXml(XmlConfigTools):
     """Use the internal data to read / write an updated XML config file.
     """
 
-    def setup_xml_file(self, p_pyhouse_obj):
-        p_pyhouse_obj.Xml.XmlFileName = ConfigAPI().open_config_file()
-
     def read_xml_config_info(self, p_pyhouse_obj):
         """This will read the XML config file(s).
         This puts the XML tree and file name in the pyhouse object for use by various modules.
@@ -77,7 +74,11 @@ class Utility(ReadWriteConfigXml):
 
         """)
 
-    def initialize_Xml(self):
+    def load_xml_config_file(self, p_pyhouse_obj):
+        # p_pyhouse_obj.Xml.XmlFileName = ConfigAPI().open_config_file(p_pyhouse_obj)
+        p_pyhouse_obj.Xml.XmlFileName = '/etc/pyhouse/master.xml'
+
+    def create_empty_xml_skeleton(self):
         l_xml = ET.Element("PyHouse")
         xml_tools.PutGetXML().put_text_attribute(l_xml, 'Version', self.m_pyhouse_obj.Xml.XmlVersion)
         l_xml.append(ET.Comment('Updated by PyHouse {0:}'.format(datetime.datetime.now())))
@@ -105,15 +106,12 @@ class API(Utility):
         l_pyhouse_obj.Twisted.Application = Application('PyHouse')
         l_pyhouse_obj.Services = CoreServicesInformation()
         l_pyhouse_obj.Xml = XmlInformation()
+        l_pyhouse_obj.Xml.XmlFileName = '/etc/pyhouse/master.xml'
         return l_pyhouse_obj
 
     def __init__(self):
         """
         This runs before the reactor has started - Be Careful!
-
-        Build the PyHouse core infrastructure.
-        Other modules will add their own infrastructure as needed.
-        Parts loaded here will be used no matter what modules get loaded.
         """
         pass
 
@@ -124,7 +122,7 @@ class API(Utility):
         @param p_pyhouse_obj: is the skeleton Obj filled in some by PyHouse.py.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.setup_xml_file(p_pyhouse_obj)
+        self.load_xml_config_file(p_pyhouse_obj)
         self.read_xml_config_info(self.m_pyhouse_obj)
         self.log_start()
         LOG.info("Starting.")
@@ -133,7 +131,7 @@ class API(Utility):
         p_pyhouse_obj.APIs.ComputerAPI.Start(p_pyhouse_obj)
         p_pyhouse_obj.APIs.HouseAPI.Start(p_pyhouse_obj)
         LOG.info("Started.")
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(RELOAD_TIME, self.save_data, p_pyhouse_obj)
+        self.save_data(p_pyhouse_obj)
 
     def Stop(self):
         self.SaveXml()
@@ -146,10 +144,10 @@ class API(Utility):
         Take a snapshot of the current Configuration/Status and write out an XML file.
         """
         # LOG.info("Saving XML.")
-        l_xml = self.initialize_Xml()
+        l_xml = self.create_empty_xml_skeleton()
         self.m_pyhouse_obj.APIs.ComputerAPI.SaveXml(l_xml)
         self.m_pyhouse_obj.APIs.HouseAPI.SaveXml(l_xml)
-        ConfigAPI().write_config_file(self.m_pyhouse_obj, l_xml, self.m_pyhouse_obj.Xml.XmlFileName)
+        ConfigAPI().write_xml_config_file(self.m_pyhouse_obj, l_xml, self.m_pyhouse_obj.Xml.XmlFileName)
         LOG.info("Saved XML.")
 
 def load_xml_config():

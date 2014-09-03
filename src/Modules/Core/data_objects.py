@@ -158,7 +158,7 @@ class HouseObjs(object):
         self.Location = {}  # LocationData() - one location per house.
         self.Pools = {}  # PoolData()
         self.Rooms = {}  # RoomData()
-        self.Schedules = {}  # ScheduleData()
+        self.Schedules = {}  # ScheduleBaseData()
         self.Thermostats = {}  # ThermostatData()
 
 
@@ -239,20 +239,33 @@ class ThermostatData(ABaseObject):
         self.ThermostatScale = 'F'  # F | C
 
 
-class ScheduleData(ABaseObject):
+class ScheduleBaseData(ABaseObject):
     """A schedule of when events happen.
     """
     def __init__(self):
-        super(ScheduleData, self).__init__()
-        self.Level = 0
-        self.LightName = None
-        self.Object = None  # a light (perhaps other) object
-        self.Rate = 0
-        self.RoomName = None
+        super(ScheduleBaseData, self).__init__()
+        # self.Level = 0
+        # self.LightName = None
+        # self.Object = None  # a light (perhaps other) object
+        # self.Rate = 0
+        # self.RoomName = None
         self.ScheduleType = 'Device'  # For future expansion into scenes, entertainment etc.
         self.Time = None
+        self.DOW = None
+        self.Mode = 0
         # for use by web browser - not saved in xml
         self._DeleteFlag = False
+
+
+class ScheduleLightData(object):
+    """A schedule piece for lighting events.
+    """
+    def __init__(self):
+        self.Level = 0
+        self.LightName = None
+        self.Rate = 0
+        self.RoomName = None
+        self.ScheduleType = 'LightingDevice'  # For future expansion into scenes, entertainment etc.
 
 
 class InternetConnectionData(ABaseObject):

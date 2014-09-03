@@ -1,7 +1,7 @@
 """
--*- test-case-name: PyHouse.src.Modules.web.test.test_web_utils -*-
+-*- test-case-name: PyHouse.src.Modules.Web.test.test_web_utils -*-
 
-@name: PyHouse/src/Modules/web/web_utils.py
+@name: PyHouse/src/Modules/Web/web_utils.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @Copyright (c) 2013-2014 by D. Brian Kimmel

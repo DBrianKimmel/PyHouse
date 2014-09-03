@@ -1,5 +1,5 @@
 """
-@name: PyHouse/src/Modules/web/test/test_web_server.py
+@name: PyHouse/src/Modules/Web/test/test_web_server.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @copyright: 2013-2014 by D. Brian Kimmel
@@ -18,9 +18,17 @@ from twisted.web.test.test_web import DummyRequest
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import PyHouseData, ComputerInformation, XmlInformation
-from Modules.web import web_server
-from Modules.utils.tools import PrettyPrintAny
-from src.test import xml_data
+from Modules.Web import web_server
+from test import xml_data
+from test.testing_mixin import SetupPyHouseObj
+from Modules.Utilities.tools import PrettyPrintAny
+
+
+class SetupMixin(object):
+
+    def setUp(self, p_root):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
+        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
 class SmartDummyRequest(DummyRequest):
@@ -69,29 +77,10 @@ class DummySite(server.Site):
             raise ValueError("Unexpected return value: %r" % (result,))
 
 
-class SetupMixin(object):
-    """
-    """
-
-    def setUp(self):
-        self.m_api = web_server.API()
-
-        self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.Computer = ComputerInformation()
-        self.m_pyhouse_obj.Xml = XmlInformation()
-        self.m_pyhouse_obj.Xml.XmlRoot = self.m_root_xml
-
-        self.m_houses_xml = self.m_root_xml.find('HouseDivision')
-        self.m_computer_xml = self.m_root_xml.find('ComputerDivision')
-        self.m_web_xml = self.m_computer_xml.find('WebSection')
-        self.m_web_port_xml = self.m_web_xml.findtext('WebPort')
-
-
 class Test_02_XML(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
-        SetupMixin.setUp(self)
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
 
     def test_0201_find_xml(self):
         """ Be sure that the XML contains the right stuff.

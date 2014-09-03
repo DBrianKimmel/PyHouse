@@ -104,7 +104,7 @@ class API(Utility, ReadWriteConfigXml):
         pass
 
     def SaveXml(self, p_xml):
-        p_xml.append(self.write_xml(self.m_pyhouse_obj.Computer.Logs))
+        # p_xml.append(self.write_xml(self.m_pyhouse_obj.Computer.Logs))
         return p_xml
 
     # def Update(self):

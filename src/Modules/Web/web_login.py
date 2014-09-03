@@ -1,7 +1,13 @@
 """
-Created on Jul 27, 2013
+-*- test-case-name: PyHouse.src.Modules.Core.test.test_data_objects -*-
 
-@author: briank
+@name: PyHouse/src/Modules/Web/web_login.py
+@author: D. Brian Kimmel
+@contact: <d.briankimmel@gmail.com
+@copyright: 2013-2014 by D. Brian Kimmel
+@note: Created on Jul 27, 2013
+@license: MIT License
+@summary: Handle the web server login.
 
 Server side code.
 
@@ -10,6 +16,7 @@ This page is presented when the browser connects to the server.
 The user is required to login to allow further access to the PyHouse controls.
 After the user is authenticated, this element is converted to a "loged in as" entry near the
  top of the screen and has no further interactions with the user.
+
 """
 
 

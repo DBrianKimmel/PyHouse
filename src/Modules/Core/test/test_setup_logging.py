@@ -1,20 +1,21 @@
 """
-@name: C:/Users/briank/Documents/GitHub/PyHouse/src/Modules/Computer/test/test_computer.py
+@name: PyHouse/src/Modules/Core/test/test_setup_logging.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com>
 @Copyright: (c)  2014 by D. Brian Kimmel
 @license: MIT License
-@note: Created on Jul 25, 2014
+@note: Created on Aug 30, 2014
 @Summary:
 
 """
 
 # Import system type stuff
-from twisted.trial import unittest
 import xml.etree.ElementTree as ET
+from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Computer import computer
+from Modules.Core import setup_logging
+from Modules.Computer import logging_pyh as Logger
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
@@ -27,20 +28,18 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_api = computer.API()
 
 
-class Test_01_XML(SetupMixin, unittest.TestCase):
+class Test_01_NoXML(SetupMixin, unittest.TestCase):
+    """
+    This section tests the reading and writing of XML used by node_local.
+    """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_EMPTY))
+        self.m_api = Logger.API()
 
-    def tearDown(self):
-        pass
-
-    def test_0101_Update(self):
-        self.m_api.update_pyhouse_obj(self.m_pyhouse_obj)
-        PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse')
-        PrettyPrintAny(self.m_pyhouse_obj.Computer, 'Computer')
+    def test_0101(self):
+        PrettyPrintAny(setup_logging.LOGGING_DICT, 'Logging')
 
 # ## END DBK

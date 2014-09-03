@@ -74,23 +74,6 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         PrettyPrintAny(l_xml, 'XML', 120)
 
 
-class Test_03_Utility(SetupMixin, unittest.TestCase):
-    """
-    """
-
-    def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
-        self.m_api = Logger.API()
-
-    def test_0301_setup_debug_log(self):
-        l_file = self.m_api.setup_debug_log('/tmp/debug')
-        PrettyPrintAny(l_file, 'File')
-
-    def test_0302_setup_error_log(self):
-        self.m_api.setup_error_log('/tmp/debug')
-        pass
-
-
 class Test_04_SetupLogging(SetupMixin, unittest.TestCase):
     """
     This section tests the reading and writing of XML used by node_local.
@@ -101,11 +84,6 @@ class Test_04_SetupLogging(SetupMixin, unittest.TestCase):
         self.m_api = Logger.API()
         self.m_api.read_xml(self.m_pyhouse_obj)
         self.LOG = Logger.getLogger('PyHouse.test_logging_pyh ')
-
-    def test_0401_openLogger(self):
-        self.m_api.setup_debug_log(self.m_pyhouse_obj)
-        self.LOG.debug('test-0301')
-        print('self.LOG: {0:}'.format(self.LOG))
 
     def test_0402_openDebug(self):
         pass

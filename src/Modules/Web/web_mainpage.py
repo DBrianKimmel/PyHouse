@@ -89,13 +89,6 @@ jspath = os.path.join(webpath, 'js')
 templatepath = os.path.join(webpath, 'template')
 
 g_debug = 0
-# 0 = off
-# 1 = log extra info
-# 2 = major routine entry
-# 3 = Config file handling
-# 4 = Basic data
-# 5 = Detail Data
-# + = NOT USED HERE
 LOG = Logger.getLogger('PyHouse.webMainpage ')
 
 

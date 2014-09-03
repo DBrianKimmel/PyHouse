@@ -502,7 +502,7 @@ class Test_02_CmdDsptch(SetupMixin, unittest.TestCase):
         self.assertEquals(answers, [])
         self.fake_dispatcher.ampBoxReceived(amp.AmpBox({'Answer': "yay-0205", 'Name': "Marcia", '_answer': "1"}))
         print('Answers {0:}'.format(answers))
-        self.assertEquals(answers, [dict(Answer = "yay-0205", Name = "Marcia")])
+        self.assertEquals(answers, [dict(Name = "Marcia")])
 
 
 """  ========================================================================================

@@ -1,11 +1,11 @@
 """
-@name: PyHouse/src/Modules/utils/test/test_xml_tools.py
+@name: PyHouse/src/Modules/Utilities/test/test_xml_tools.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: d.briankimmel@gmail.com
 @copyright: 2013-2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Apr 11, 2013
-@summary: This module is for testing xml tools.
+@summary: This module is for testing XML tools.
 
 
 Tests all working OK - DBK 2014-05-28
@@ -17,13 +17,13 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.utils import xml_tools
-from Modules.Core.data_objects import BaseLightingData
-from Modules.lights import lighting_lights
-from Modules.lights import lighting_controllers
+from Modules.Utilities import xml_tools
+from Modules.Core.data_objects import BaseLightingData, ControllerData
+from Modules.Lighting import lighting_lights
+from Modules.Lighting import lighting_controllers
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
-from Modules.utils.tools import PrettyPrintAny
+from Modules.Utilities.tools import PrettyPrintAny
 
 XML = """
 <Test b1='True' f1='3.14158265' i1='371' t1='Test of text attribute' >
@@ -240,7 +240,7 @@ class Test_03_ConfigTools(SetupMixin, unittest.TestCase):
         self.assertEqual(l_base_obj.Active, True, 'Bad Active')
         # self.assertEqual(l_base_obj.UUID, 'ec9d9930-89c9-11e3-a1ab-082e5f8cdfd2', 'Bad UUID')
 
-    def test_0301_readBaseObject(self):
+    def test_0302_readBaseObject(self):
         l_base_obj = BaseLightingData()
         self.m_api.read_base_object_xml(l_base_obj, self.m_xml.controller)
         self.assertEqual(l_base_obj.Name, 'PLM_1', 'Bad Name')
@@ -263,14 +263,16 @@ class Test_05_NoClass(SetupMixin, unittest.TestCase):
         self.m_pyhouse_obj = SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
 
     def test_0501_StuffAttrs(self):
-        l_objA = lighting_lights.LightingLightsAPI(self.m_pyhouse_obj).read_one_light_xml(self.m_xml.light)
+        # l_objA = lighting_lights.LightingLightsAPI(self.m_pyhouse_obj).read_one_light_xml(self.m_xml.light)
+        l_objA = BaseLightingData()
         PrettyPrintAny(l_objA, 'Obj A', 120)
-        l_objB = lighting_controllers.ControllersAPI(self.m_pyhouse_obj).read_one_controller_xml(self.m_xml.controller)
+        # l_objB = lighting_controllers.ControllersAPI(self.m_pyhouse_obj).read_one_controller_xml(self.m_xml.controller)
+        l_objB = ControllerData()
         # l_objAdeep = copy.deepcopy(l_objA)
         PrettyPrintAny(l_objB, 'Obj B', 120)
         xml_tools.stuff_new_attrs(l_objA, l_objB)
         PrettyPrintAny(l_objA, 'Result B stuffed into A', 120)
-        self.assertEqual(l_objA.Parity, l_objB.Parity)
+        self.assertEqual(l_objA.IsDimmable, l_objB.IsDimmable)
 
 
 

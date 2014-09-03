@@ -61,7 +61,7 @@ class SchedulesElement(athena.LiveElement):
         try:
             l_obj = self.m_pyhouse_obj.House.OBJs.Schedules[l_schedule_ix]
         except KeyError:
-            l_obj = schedule.ScheduleData()
+            l_obj = schedule.ScheduleBaseData()
         l_obj.Name = l_json['Name']
         l_obj.Active = l_json['Active']
         l_obj.Key = int(l_json['Key'])

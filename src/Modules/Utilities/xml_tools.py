@@ -1,9 +1,9 @@
 """
--*- test-case-name: PyHouse.src.Modules.util.test.test_xml_tools -*-
+-*- test-case-name: PyHouse.src.Modules.Utilities.test.test_xml_tools -*-
 
-@name: PyHouse/src/Modules/utils/xml_tools.py
+@name: PyHouse/src/Modules/Utilities/xml_tools.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: d.briankimmel@gmail.com
 @copyright: 2012-2014 by D. Brian Kimmel
 @note: Created on Jun 2, 2012
 @license: MIT License
@@ -217,11 +217,11 @@ class XmlConfigTools(PutGetXML):
         self.put_bool_attribute(l_elem, 'Active', p_object.Active)
 
         try:
-            self.put_text_element(l_elem, 'UUID', p_object.UUID)
+            self.put_uuid_element(l_elem, 'UUID', p_object.UUID)
         except AttributeError as e_err:
-            self.put_text_element(l_elem, 'UUID', 'No UUID Given')
+            self.put_uuid_element(l_elem, 'UUID', 'No UUID Given')
             # print('ERROR in writeBaseObj {0:} {1:}'.format(e_err, PrettyPrintAny(p_object, 'Error in writeBaseObj', 120)))
-            print('ERROR in writeBaseObj {0:}'.format(e_err))
+            # print('ERROR in writeBaseObj {0:}'.format(e_err))
         return l_elem
 
 

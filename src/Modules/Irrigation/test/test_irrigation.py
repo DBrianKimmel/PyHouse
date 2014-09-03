@@ -14,10 +14,10 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import IrrigationData
-from Modules.irrigation import irrigation
-from Modules.web import web_utils
+from Modules.Irrigation import irrigation
+from Modules.Web import web_utils
 from Modules.Core import setup
-from Modules.utils.tools import PrettyPrintAny
+from Modules.Utilities.tools import PrettyPrintAny
 from test import xml_data
 
 

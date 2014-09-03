@@ -22,29 +22,31 @@ from xml.dom import minidom
 g_debug = 1
 
 
-def PrettyPrintAny(p_any, title = '', maxlen = 120):
+def PrettyPrintAny(p_any, title = '', maxlen = 120, indent = ''):
     l_type = type(p_any)
     print('===== ', title, '===== ', l_type)
-    #
+    _print_all(p_any, maxlen, indent)
+
+def _print_all(p_any, maxlen, indent):
     if isinstance(p_any, dict):
-        PrettyPrintDict(p_any)
+        _print_dict(p_any)
     elif isinstance(p_any, ET.Element):
-        PrettyPrintXML(p_any, maxlen = maxlen)
+        _print_XML(p_any, maxlen = maxlen)
     elif isinstance(p_any, str):
-        PrettyPrintString(p_any, maxlen = maxlen)
+        _print_string(p_any, maxlen = maxlen, indent = indent)
     elif isinstance(p_any, unicode):
-        PrettyPrintUnicode(p_any, maxlen = maxlen)
+        _print_unicode(p_any, maxlen = maxlen)
     elif isinstance(p_any, list):
-        PrettyPrintList(p_any, maxlen = maxlen)
+        _print_list(p_any, maxlen = maxlen, indent = indent + '     ')
     else:  # Default to an object
-        PrettyPrintObject(p_any, maxlen = maxlen)
+        _print_object(p_any, maxlen = maxlen)
     print('---------------------------------')
 
-def PrettyPrintDict(p_dict, p_format = "%-25s %s"):
+def _print_dict(p_dict, p_format = "%-30s %s"):
     for (key, val) in p_dict.iteritems():
         print(p_format % (str(key) + ':', val))
 
-def PrettyPrintXML(p_element, maxlen):
+def _print_XML(p_element, maxlen):
     """Return a pretty-printed XML string for the Element.
 
     @param p_element: an element to format as a readable XML tree.
@@ -58,7 +60,22 @@ def PrettyPrintXML(p_element, maxlen):
         if not l_line.isspace():
             print(_format_line(l_line, maxlen = maxlen))
 
-def PrettyPrintObject(p_obj, maxlen, lindent = 24, maxspew = 2000):
+def _print_string(p_obj, maxlen, indent):
+    l_str = _split_long_lines(p_obj, maxlen = maxlen)
+    for l_line in l_str:
+        print(indent + l_line)
+    # print([l_line for l_line in l_str])
+    # print('SSS', l_str)
+
+def _print_unicode(p_obj, maxlen):
+    print(_format_line(str(p_obj), maxlen = maxlen))
+
+def _print_list(p_obj, maxlen, indent):
+    maxlen = maxlen
+    print(p_obj)
+    # print(_format_line(p_obj, maxlen = maxlen))
+
+def _print_object(p_obj, maxlen, lindent = 24, maxspew = 2000):
     def _truncstring(s, maxlen):
         if len(s) > maxlen:
             return s[0:maxlen] + ' ...(%d more chars)...' % (len(s) - maxlen)
@@ -76,18 +93,8 @@ def PrettyPrintObject(p_obj, maxlen, lindent = 24, maxspew = 2000):
     for (attr, l_val) in l_attrs:
         print(PrettyPrintCols(('', attr, _truncstring(str(l_val), maxspew)), l_tabbedwidths, ' '))
 
-def PrettyPrintString(p_obj, maxlen):
-    l_str = _format_line(p_obj, maxlen = maxlen)
-    print(l_str)
 
-def PrettyPrintUnicode(p_obj, maxlen):
-    print(_format_line(str(p_obj), maxlen = maxlen))
-
-def PrettyPrintList(p_obj, maxlen):
-    print(p_obj)
-    # print(_format_line(p_obj, maxlen = maxlen))
-
-
+# ======================================================================
 
 def PrintBytes(p_message):
     """Print all the bytes of a message as hex bytes.
@@ -273,6 +280,11 @@ def _format_line(string, maxlen = 175, split = ' '):
         lines.append(string[oldeol:eol])
         oldeol = eol + len(split)
     return lines
+
+def _split_long_lines(string, maxlen = 175):
+    l_lines = _format_line(string, maxlen)
+    return l_lines
+    return '--'.join(l_line for l_line in l_lines)
 
 def _nukenewlines(string):
     """Strip newlines and any trailing/following whitespace; rejoin

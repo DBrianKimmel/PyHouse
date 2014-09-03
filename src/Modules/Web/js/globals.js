@@ -37,6 +37,9 @@ var BUTTON_ADD      = '#ffd0d0';
 var BUTTON_BACK     = '#ffd0d0';
 var BUTTON_CHANGE   = '#ffd0d0';
 var BUTTON_DELETE   = '#ffd0d0';
+var BUTTON_YELLOW   = '#f7ffa0';
+var BUTTON_RED      = '#ffa0a0';
+var BUTTON_GREEN    = '#b0ffa0';
 
 globals = {
 	fonts : [ 'Verdana', 'Arial', 'Helvetica', 'sans-serif' ],

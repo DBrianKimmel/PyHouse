@@ -23,7 +23,6 @@ from Modules.Utilities.xml_tools import XmlConfigTools
 from Modules.Web import web_server
 # from Modules.Utilities.tools import PrettyPrintAny
 
-g_debug = 9
 LOG = Logger.getLogger('PyHouse.Computer    ')
 
 
@@ -49,7 +48,7 @@ class Utility(ReadWriteConfigXml):
 
     def add_api_references(self, p_pyhouse_obj):
         p_pyhouse_obj.APIs.InternetAPI = internet.API()
-        # p_pyhouse_obj.APIs.LogsAPI = Logger.API()
+        p_pyhouse_obj.APIs.LogsAPI = Logger.API()
         p_pyhouse_obj.APIs.NodesAPI = nodes.API()
         p_pyhouse_obj.APIs.WebAPI = web_server.API()
 
@@ -78,15 +77,11 @@ class API(Utility):
     """
     """
 
-    # def __init__(self):
-    #    """
-    #    """
-
     def Start(self, p_pyhouse_obj):
         """
         Start processing
         """
-        LOG.info('Starting')
+        # LOG.info('Starting')
         self.m_pyhouse_obj = p_pyhouse_obj
         self.update_pyhouse_obj(p_pyhouse_obj)
         self.add_api_references(p_pyhouse_obj)
@@ -107,6 +102,6 @@ class API(Utility):
         """
         l_xml = self.save_component_apis(self.m_pyhouse_obj)
         p_xml.append(l_xml)
-        LOG.info("Saved XML.")
+        # LOG.info("Saved XML.")
 
 # ## END DBK

@@ -3,7 +3,7 @@
 
 @name: PyHouse/src/Modules/Scheduling/schedule.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: d.briankimmel@gmail.com
 @Copyright (c) 2013-2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Apr 8, 2013
@@ -46,15 +46,14 @@ Operation:
 
 # Import system type stuff
 import datetime
-import xml.etree.ElementTree as ET
 
 # Import PyMh files
-from Modules.Core.data_objects import ScheduleData
+from Modules.Core.data_objects import ScheduleBaseData
 from Modules.Scheduling import sunrisesunset
+from Modules.Scheduling import schedule_xml
 from Modules.Lighting import lighting
 from Modules.Hvac import thermostat
 from Modules.Irrigation import irrigation
-from Modules.Utilities import xml_tools
 from Modules.Utilities import tools
 from Modules.Computer import logging_pyh as Logger
 # from Modules.Utilities.tools import PrettyPrintAny
@@ -63,71 +62,7 @@ g_debug = 1
 LOG = Logger.getLogger('PyHouse.Schedule    ')
 
 
-class ReadWriteConfigXml(xml_tools.XmlConfigTools):
-
-    m_count = 0
-
-    def read_one_schedule_xml(self, p_schedule_element):
-        """Extract schedule information from a schedule xml element.
-        """
-        l_schedule_obj = ScheduleData()
-        self.read_base_object_xml(l_schedule_obj, p_schedule_element)
-        l_schedule_obj.Level = self.get_int_from_xml(p_schedule_element, 'Level')
-        l_schedule_obj.LightName = self.get_text_from_xml(p_schedule_element, 'LightName')
-        l_schedule_obj.Rate = self.get_int_from_xml(p_schedule_element, 'Rate')
-        l_schedule_obj.RoomName = self.get_text_from_xml(p_schedule_element, 'RoomName')
-        l_schedule_obj.ScheduleType = self.get_text_from_xml(p_schedule_element, 'ScheduleType')
-        l_schedule_obj.Time = self.get_text_from_xml(p_schedule_element, 'Time')
-        return l_schedule_obj
-
-    def read_schedules_xml(self, p_pyhouse_obj):
-        """
-        @param p_house_xml: is the e-tree XML house object
-        @return: a dict of the entry to be attached to a house object.
-        """
-        l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
-        self.m_count = 0
-        l_dict = {}
-        try:
-            l_schedules_xml = l_xml.find('ScheduleSection')
-            for l_entry in l_schedules_xml.iterfind('Schedule'):
-                l_schedule_obj = self.read_one_schedule_xml(l_entry)
-                l_schedule_obj.Key = self.m_count  # Renumber
-                l_dict[self.m_count] = l_schedule_obj
-                self.m_count += 1
-        except AttributeError as e_err:
-            LOG.error('ERROR in schedule.read_schedules_xml() - {0:}'.format(e_err))
-        return l_dict
-
-    def write_one_schedule_xml(self, p_schedule_obj):
-        """
-        """
-        l_entry = self.write_base_object_xml('Schedule', p_schedule_obj)
-        self.put_int_element(l_entry, 'Key', self.m_count)
-        self.put_int_element(l_entry, 'Level', p_schedule_obj.Level)
-        self.put_text_element(l_entry, 'LightName', p_schedule_obj.LightName)
-        self.put_int_element(l_entry, 'Rate', p_schedule_obj.Rate)
-        self.put_text_element(l_entry, 'RoomName', p_schedule_obj.RoomName)
-        self.put_text_element(l_entry, 'ScheduleType', p_schedule_obj.ScheduleType)
-        self.put_text_element(l_entry, 'Time', p_schedule_obj.Time)
-        return l_entry
-
-    def write_schedules_xml(self, p_schedules_obj):
-        """Replace all the data in the 'Schedules' section with the current data.
-        @param p_parent: is the 'schedules' element
-        """
-        self.m_count = 0
-        l_xml = ET.Element('ScheduleSection')
-        # PrettyPrintAny(p_schedules_obj, 'Schedule - SchedulesObj')
-        for l_schedule_obj in p_schedules_obj.itervalues():
-            l_entry = self.write_one_schedule_xml(l_schedule_obj)
-            l_xml.append(l_entry)
-            self.m_count += 1
-        return l_xml
-
-
-
-class ScheduleExecution(ScheduleData):
+class ScheduleExecution(ScheduleBaseData):
 
     def dispatch_schedule(self, p_slot):
         """
@@ -276,7 +211,7 @@ class ScheduleUtility(ScheduleExecution):
     def _get_entries(self, p_schedules):
         pass
 
-    def _sunrise_sunset(self):
+    def _get_sunrise_sunset(self):
         self.m_sunrisesunset_api.Start(self.m_pyhouse_obj)
         self.m_sunset = self.m_sunrisesunset_api.get_sunset()
         self.m_sunrise = self.m_sunrisesunset_api.get_sunrise()
@@ -292,14 +227,18 @@ class ScheduleUtility(ScheduleExecution):
             l_diff = l_diff + 86400.0  # tomorrow
         return l_diff
 
+    def _now_daytime(self):
+        l_now = datetime.datetime.now()
+        return datetime.time(l_now.hour, l_now.minute, l_now.second)
+
     def get_next_sched(self, p_pyhouse_obj):
         """Get the next schedule from the current time.
         Be sure to get the next in a chain of things happening at the same time.
         Establish a list of Names that have equal schedule times
         """
-        self._sunrise_sunset()
+        self._get_sunrise_sunset()
         l_now = datetime.datetime.now()
-        l_time_now = datetime.time(l_now.hour, l_now.minute, l_now.second)
+        l_time_now = self._now_daytime()
         l_time_scheduled = l_now
         l_seconds_to_delay = 100000.0
         l_schedule_list = []
@@ -346,7 +285,7 @@ class ScheduleUtility(ScheduleExecution):
         return p_xml
 
 
-class API(ScheduleUtility, ReadWriteConfigXml):
+class API(ScheduleUtility):
     """Instantiated once for each house (active or not)
     """
 
@@ -366,7 +305,7 @@ class API(ScheduleUtility, ReadWriteConfigXml):
         LOG.info("Starting.")
         self.add_api_references(p_pyhouse_obj)
         self.m_pyhouse_obj = p_pyhouse_obj
-        p_pyhouse_obj.House.OBJs.Schedules = self.read_schedules_xml(p_pyhouse_obj)
+        p_pyhouse_obj.House.OBJs.Schedules = schedule_xml.ReadWriteConfigXml().read_schedules_xml(p_pyhouse_obj)
         self.m_sunrisesunset_api.Start(p_pyhouse_obj)
         self.start_scheduled_modules(p_pyhouse_obj)
         if self.m_pyhouse_obj.House.Active:
@@ -382,7 +321,7 @@ class API(ScheduleUtility, ReadWriteConfigXml):
         LOG.info("Stopped.")
 
     def SaveXml(self, p_xml):
-        p_xml.append(self.write_schedules_xml(self.m_pyhouse_obj.House.OBJs.Schedules))
+        p_xml.append(schedule_xml.ReadWriteConfigXml().write_schedules_xml(self.m_pyhouse_obj.House.OBJs.Schedules))
         self.save_scheduled_modules(p_xml)
         # LOG.info("Saved XML.")
 

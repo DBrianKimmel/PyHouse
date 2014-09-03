@@ -58,7 +58,7 @@ class SetupPyHouseObj(object):
 
     def _BuildComputer(self):
         l_ret = ComputerInformation()
-        l_ret.Nodes = NodeData()
+        # l_ret.Nodes = NodeData()
         return l_ret
 
     def _BuildHouse(self):

@@ -19,7 +19,7 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 # from Modules.utils.tools import PrettyPrintAny
-from src.test import xml_data
+from test import xml_data
 
 
 class Test_01_XML(unittest.TestCase):

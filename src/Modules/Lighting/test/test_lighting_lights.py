@@ -14,14 +14,14 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, LightData
-from Modules.lights import lighting_lights
+from Modules.Core.data_objects import LightData
+from Modules.Lighting import lighting_lights
 from Modules.Core import conversions
-from Modules.families import family
-from Modules.web import web_utils
+from Modules.Families import family
+from Modules.Web import web_utils
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
-from Modules.utils.tools import PrettyPrintAny
+from Modules.Utilities.tools import PrettyPrintAny
 
 
 class SetupMixin(object):

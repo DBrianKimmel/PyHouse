@@ -1,7 +1,7 @@
 """
--*- test-case-name: PyHouse.Modules.web.test.test_web_server -*-
+-*- test-case-name: PyHouse.Modules.Web.test.test_web_server -*-
 
-@name: PyHouse/src/Modules/web/web_server.py
+@name: PyHouse/src/Modules/Web/web_server.py
 @author: D. Brian Kimmel
 @contact: <d.briankimmel@gmail.com
 @copyright: 2012-2014 by D. Brian Kimmel
@@ -12,7 +12,7 @@
 This is a Main Module - always present.
 
 Open a port (8580 default) that will allow web browsers to control the
-PyHouse system.  This will be an AJAX/COMET system using nevow athena.
+PyHouse system.  This will be an AJAX/COMET system using Nevow Athena.
 
 On initial startup allow a house to be created
     then rooms
@@ -35,7 +35,7 @@ from Modules.Core.data_objects import WebData
 from Modules.Web import web_utils
 from Modules.Web import web_mainpage
 from Modules.Computer import logging_pyh as Logger
-from Modules.Utilities import xml_tools
+from Modules.Utilities.xml_tools import PutGetXML
 # from Modules.Utilities.tools import PrettyPrintAny
 
 ENDPOINT_WEB_SERVER = 'tcp:port=8580'
@@ -56,7 +56,7 @@ class ClientConnections(object):
         self.ConnectedBrowsers.append(p_login)
 
 
-class ReadWriteConfigXml(xml_tools.PutGetXML):
+class ReadWriteConfigXml(PutGetXML):
     """
     """
 

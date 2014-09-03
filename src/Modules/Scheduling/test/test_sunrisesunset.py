@@ -18,11 +18,11 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
-from Modules.Core.data_objects import PyHouseData, HouseObjs, LocationData
-from Modules.scheduling import sunrisesunset
+# from Modules.Core.data_objects import PyHouseData, HouseObjs, LocationData
+from Modules.Scheduling import sunrisesunset
 from test.testing_mixin import SetupPyHouseObj
 from test import xml_data
-from Modules.utils.tools import PrettyPrintAny
+from Modules.Utilities.tools import PrettyPrintAny
 
 
 class SetupMixin(object):
@@ -98,7 +98,7 @@ class Test_03(SetupMixin, unittest.TestCase):
 
     def test_0313_JulianDate(self):
         l_day = self.m_api._calculate_julian_date(self.date_2013_06_06)
-        print l_day
+        print('Julian Date:', l_day)
         self.assertEqual(l_day, 2456449.5)
 
     def test_0319_Julian(self):
