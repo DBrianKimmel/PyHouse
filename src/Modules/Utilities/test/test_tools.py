@@ -71,4 +71,15 @@ class Test_01_Print(SetupMixin, unittest.TestCase):
         l_any = {'abc': 'Long A B C', 'def' : 'Another long thing.'}
         PrettyPrintAny(l_any)
 
+
+class Test_02_Find(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_EMPTY))
+        self.m_api = tools.GetPyhouse(self.m_pyhouse_obj)
+
+    def test_0201_House(self):
+        l_loc = self.m_api.Location().Latitude
+        print(l_loc)
+
 # ## END DBK

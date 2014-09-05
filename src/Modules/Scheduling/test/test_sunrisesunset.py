@@ -43,27 +43,67 @@ class LocationObj():
         self.SavingTime = '-4:00'
 
 
-class Test_02_XML(SetupMixin, unittest.TestCase):
+class Test_01_XML(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         self.m_api = sunrisesunset.API()
 
-    def test_0201_buildObjects(self):
+    def test_0101_BuildObjects(self):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
         """
         self.assertEqual(self.m_pyhouse_obj.House.OBJs.Rooms, {}, 'No Rooms{}')
-        PrettyPrintAny(self.m_pyhouse_obj.House.OBJs, 'OBJs', 120)
+        PrettyPrintAny(self.m_pyhouse_obj.House.OBJs, 'OBJs')
 
-    def test_0202_find_xml(self):
+    def test_0102_find_xml(self):
         """ Be sure that the XML contains the right stuff.
         """
         self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
         self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision', 'XML - No House section')
         self.assertEqual(self.m_xml.location_sect.tag, 'LocationSection', 'XML - No Location section')
-        PrettyPrintAny(self.m_xml, 'All Xml', 120)
+        PrettyPrintAny(self.m_xml, 'All XML')
 
-class Test_03(SetupMixin, unittest.TestCase):
+
+class Test_02_Util(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        self.m_api = sunrisesunset.Util
+
+    def test_0201_Degree(self):
+        l_ret = self.m_api._revolution(175.5)
+        self.assertEqual(l_ret, 175.5)
+        l_ret = self.m_api._revolution(1175.5)
+        self.assertEqual(l_ret, 95.5)
+        l_ret = self.m_api._revolution(12375.5)
+        self.assertEqual(l_ret, 135.5)
+        l_ret = self.m_api._revolution(-175.5)
+        self.assertEqual(l_ret, 184.5)
+        l_ret = self.m_api._revolution(-1175.5)
+        self.assertEqual(l_ret, 264.5)
+        l_ret = self.m_api._revolution(-12375.5)
+        self.assertEqual(l_ret, 224.5)
+
+    def test_0202_Hours(self):
+        l_ret = self.m_api._normalize_hours(2.5)
+        self.assertEqual(l_ret, 2.5)
+        l_ret = self.m_api._normalize_hours(102.5)
+        self.assertEqual(l_ret, 6.5)
+        l_ret = self.m_api._normalize_hours(1002.5)
+        self.assertEqual(l_ret, 18.5)
+        l_ret = self.m_api._normalize_hours(-2.5)
+        self.assertEqual(l_ret, 21.5)
+        l_ret = self.m_api._normalize_hours(-102.5)
+        self.assertEqual(l_ret, 17.5)
+        l_ret = self.m_api._normalize_hours(-1002.5)
+        self.assertEqual(l_ret, 5.5)
+
+    def test_0203_Time(self):
+        l_ret = self.m_api._convert_to_time(2.5)
+        self.assertEqual(l_ret, datetime.time(2, 30))
+
+
+class Test_03_Observer(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
@@ -78,56 +118,76 @@ class Test_03(SetupMixin, unittest.TestCase):
         self.sunrise = datetime.time(6, 32, 36)  # 06:31:06
         self.sunset = datetime.time(20, 27, 32)  # 20:26:41
 
-
     def test_0301_Location(self):
         l_location = self.m_api._load_location(self.m_pyhouse_obj)
         PrettyPrintAny(l_location, 'Location', 120)
         self.assertEqual(l_location.Latitude, 28.938448)
 
 
-    def test_0311_JanFeb(self):
+class Test_04_Julian(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        self.Latitude = 28.938448
+        self.Longitude = -82.517208
+        self.TimeZone = '-5:00'
+        self.SavingTime = '-4:00'
+        self.m_pyhouse_obj.House.OBJs.Location.Latitude = 28.938448
+        self.m_api = sunrisesunset.API()
+        self.m_loc = self.m_api._load_location(self.m_pyhouse_obj)
+        self.date_2013_06_06 = datetime.date(2013, 6, 6)
+        self.sunrise = datetime.time(6, 32, 36)  # 06:31:06
+        self.sunset = datetime.time(20, 27, 32)  # 20:26:41
+
+    def test_0411_JanFeb(self):
         self.assertEqual(self.m_api._is_jan_feb(datetime.date(2013, 1, 1)), 1)
         self.assertEqual(self.m_api._is_jan_feb(datetime.date(2013, 2, 1)), 1)
         self.assertEqual(self.m_api._is_jan_feb(datetime.date(2013, 3, 1)), 0)
         self.assertEqual(self.m_api._is_jan_feb(datetime.date(2013, 12, 1)), 0)
 
-    def test_0312_JulianDay(self):
+    def test_0212_JulianDay(self):
         l_day = self.m_api._calculate_julian_day(self.date_2013_06_06)
-        print l_day
+        print('Julian Day: {0:}'.format(l_day))
         self.assertEqual(l_day, 2456450)
 
-    def test_0313_JulianDate(self):
+    def test_0213_JulianDate(self):
         l_day = self.m_api._calculate_julian_date(self.date_2013_06_06)
         print('Julian Date:', l_day)
         self.assertEqual(l_day, 2456449.5)
 
-    def test_0319_Julian(self):
+    def test_0219_Julian(self):
         l_julian = self.m_api._calculate_all_julian_dates(self.date_2013_06_06, self.m_loc)
         PrettyPrintAny(l_julian, '0301 Julian', 120)
         self.assertEqual(l_julian.JulianDate, 2456449.500000)
 
 
-    def test_0350_SolarEL(self):
+class Test_05_Sun(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        self.m_api = sunrisesunset.SunCalcs
+        self.date_2013_06_06 = datetime.date(2013, 6, 6)
+
+    def test_0311_EclipticLLongitude(self):
         l_elong = self.m_api._calc_ecliptic_latitude()
         print('Ecliptic Longitude {0:}'.format(l_elong))
         self.assertEqual(l_elong, 0.0)
 
-    def test_0351_SolarMA(self):
+    def test_0312_SolarMA(self):
         l_loc = self.m_api._load_location(self.m_pyhouse_obj)
         l_jul = self.m_api._calculate_all_julian_dates(self.date_2013_06_06, l_loc)
         pass
 
-    def test_0359_Solar(self):
-        self.m_api._calculate_solar_params()
-        pass
-
+    def test_0329_Solar(self):
+        l_solar = self.m_api._calculate_solar_params()
+        PrettyPrintAny(l_solar, 'Solar Params')
 
     def test_0390_SS(self):
         l_loc = self.m_api._load_location(self.m_pyhouse_obj)
         l_jul = self.m_api._calculate_all_julian_dates(self.date_2013_06_06, l_loc)
         l_sol = self.m_api._calculate_solar_params()
         l_ret = self.m_api._calcSolarNoonParams(l_loc, l_sol, l_jul)
-        PrettyPrintAny(l_ret, 'Result', 120)
+        PrettyPrintAny(l_ret, 'Result')
 
     def test_0391_start(self):
         self.m_api.Start(self.m_pyhouse_obj, self.date_2013_06_06)

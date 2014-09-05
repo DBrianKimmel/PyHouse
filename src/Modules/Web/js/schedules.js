@@ -112,6 +112,8 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 			RoomName  : fetchSelectWidget('ScheduleRoomName'),
 			ScheduleType : fetchTextWidget('ScheduleType'),
 			UUID      : fetchTextWidget('ScheduleUUID'),
+			
+			// be sure to strip any leading or trailing white space and lower case text
 			Time      : fetchTextWidget('ScheduleTime'),
 			Level     : fetchLevelWidget('ScheduleLevel'),
 			Rate      : fetchTextWidget('ScheduleRate'),

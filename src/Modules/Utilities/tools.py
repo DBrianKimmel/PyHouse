@@ -305,6 +305,21 @@ def _delchars(p_str, chars):
     return p_str.translate(identity, chars)
 
 
+class GetPyhouse(object):
+
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+
+    def House(self, p_pyhouse):
+        return self.m_pyhouse.House
+
+    def Schedules(self):
+        return self.m_pyhouse_obj.House.OBJs.Schedules
+
+    def Location(self):
+        return self.m_pyhouse_obj.House.OBJs.Location
+
+
 class Lister():
 
     def __repr__(self):
