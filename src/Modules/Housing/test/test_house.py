@@ -42,11 +42,11 @@ class Test_01_XML(SetupMixin, unittest.TestCase):
         self.m_util = xml_tools.PutGetXML()
         self.m_api = house.API()
 
-    def test_0101_read_xml(self):
+    def test_01_read_xml(self):
         l_pyhouse = self.m_xml.root
         self.assertEqual(l_pyhouse.tag, 'PyHouse')
 
-    def test_0102_find_houses(self):
+    def test_02_find_houses(self):
         l_houses = self.m_xml.root.find('HouseDivision')
         self.assertEqual(l_houses.tag, 'HouseDivision')
 
@@ -60,12 +60,13 @@ class Test_02_ReadXML(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         self.m_api = house.API()
 
-    def test_0201_buildObjects(self):
+    def test_01_buildObjects(self):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
         """
+        PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse')
         self.assertEqual(self.m_pyhouse_obj.House.OBJs.Rooms, {}, 'No Rooms{}')
 
-    def test_0203_ReadXml(self):
+    def test_02_ReadXml(self):
         """ Read in the xml file and fill in x
         """
         l_house_obj = self.m_api.read_house_xml(self.m_pyhouse_obj)
@@ -73,12 +74,12 @@ class Test_02_ReadXML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_house_obj.Name, 'Pink Poppy', 'Bad Name')
         self.assertEqual(l_house_obj.OBJs.Location.Street, '5191 N Pink Poppy Dr', 'Bad Street')
 
-    def test_0204_write_house_xml(self):
+    def test_03_write_house_xml(self):
         l_house_obj = self.m_api.read_house_xml(self.m_pyhouse_obj)
         l_xml = self.m_api.write_house_xml(l_house_obj)
         PrettyPrintAny(l_xml, 'XML')
 
-    def test_0221_CreateJson(self):
+    def test_04_CreateJson(self):
         """ Create a JSON object for Location.
         """
         l_house = self.m_api.read_house_xml(self.m_pyhouse_obj)
@@ -94,7 +95,12 @@ class Test_03_Utilities(SetupMixin, unittest.TestCase):
         self.m_api = house.API()
         self.m_house_obj = LocationData()
 
-    def test_0305_findXml(self):
+    def test_01_findXml(self):
         self.m_api.get_house_xml(self.m_pyhouse_obj)
+
+    def test_02_Update(self):
+        PrettyPrintAny(self.m_pyhouse_obj.House, 'PyHouse')
+        l_obj = self.m_api.update_pyhouse_obj(self.m_pyhouse_obj)
+        PrettyPrintAny(l_obj.House, 'PyHouse',)
 
 # ## END DBK

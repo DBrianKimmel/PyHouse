@@ -21,7 +21,7 @@ Rooms and lights and HVAC are associated with a particular house.
 # Import PyMh files
 from Modules.Core.data_objects import HouseInformation, HouseObjs
 from Modules.Families import family
-from Modules.Scheduling import schedule
+from Modules.Scheduling import schedule, sunrisesunset
 from Modules.Housing import location
 from Modules.Housing import rooms
 from Modules.Computer import logging_pyh as Logger
@@ -95,6 +95,7 @@ class Utility(ReadWriteConfigXml):
     def add_api_references(self, p_pyhouse_obj):
         p_pyhouse_obj.APIs.HouseAPI = self
         p_pyhouse_obj.APIs.FamilyAPI = family.API()
+        p_pyhouse_obj.APIs.SunRiseSetAPI = sunrisesunset.API()
         p_pyhouse_obj.APIs.ScheduleAPI = schedule.API()
 
     def start_house_parts(self, p_pyhouse_obj):
@@ -103,14 +104,19 @@ class Utility(ReadWriteConfigXml):
     def stop_house_parts(self):
         self.m_pyhouse_obj.APIs.ScheduleAPI.Stop()
 
+    def get_sunrise_set(self, p_pyhouse_obj):
+        """
+        Retrieve datetime.datetime for sunrise and sunset.
+        """
+        p_pyhouse_obj.APIs.SunRiseSetAPI = sunrisesunset.API()
+        p_pyhouse_obj.APIs.SunRiseSetAPI.Start(p_pyhouse_obj)
+        p_pyhouse_obj.House.OBJs.Location._Sunrise = p_pyhouse_obj.APIs.SunRiseSetAPI.get_sunrise_datetime()
+        p_pyhouse_obj.House.OBJs.Location._Sunset = p_pyhouse_obj.APIs.SunRiseSetAPI.get_sunset_datetime()
+
 
 class API(Utility):
     """
     """
-
-    def __init__(self):
-        """Create a house object for when we add a new house.
-        """
 
     def Start(self, p_pyhouse_obj):
         """Start processing for all things house.
@@ -123,7 +129,7 @@ class API(Utility):
         self.m_pyhouse_obj = p_pyhouse_obj
         p_pyhouse_obj.House = self.read_house_xml(p_pyhouse_obj)
         p_pyhouse_obj.House.OBJs.FamilyData = p_pyhouse_obj.APIs.FamilyAPI.Start(p_pyhouse_obj)
-        # PrettyPrintAny(p_pyhouse_obj.House.OBJs, 'PyHouseObj', 120)
+        self.get_sunrise_set(p_pyhouse_obj)
         self.start_house_parts(p_pyhouse_obj)
         LOG.info("Started House {0:}".format(self.m_pyhouse_obj.House.Name))
 

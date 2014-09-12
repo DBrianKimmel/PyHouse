@@ -87,8 +87,9 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 		self.nodeById('PhoneDiv').innerHTML = buildTextWidget('HousePhone', p_obj.Location.Phone);
 		self.nodeById('LatitudeDiv').innerHTML = buildTextWidget('HouseLatitude', p_obj.Location.Latitude);
 		self.nodeById('LongitudeDiv').innerHTML = buildTextWidget('HouseLongitude', p_obj.Location.Longitude);
-		self.nodeById('TimeZoneDiv').innerHTML = buildTextWidget('HouseTimeZone', p_obj.Location.TimeZone);
-		self.nodeById('SavingsTimeDiv').innerHTML = buildTextWidget('HouseSavingsTime', p_obj.Location.SavingsTime);
+		self.nodeById('TimeZoneNameDiv').innerHTML = buildTextWidget('HouseTimeZoneName', p_obj.Location.TimeZoneName);
+		self.nodeById('TimeZoneOffsetDiv').innerHTML = buildTextWidget('HouseTimeZoneOffset', p_obj.Location.TimeZoneOffset);
+		self.nodeById('DaylightSavingsTimeDiv').innerHTML = buildTextWidget('HouseDaylightSavingsTime', p_obj.Location.DaylightSavingsTime);
 		self.nodeById('UUIDDiv').innerHTML = buildTextWidget('HouseUUID', p_obj.UUID, 'disabled');
 		self.nodeById('HouseEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick', 'NoDelete');
 	},
@@ -102,8 +103,9 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 				Phone : '',
 				Latitude : '',
 				Longitude : '',
-				TimeZone : '',
-				SavingsTime : ''
+				TimeZoneName : '',
+				TimeZoneOffset : '',
+				DaylightSavingsTime : ''
     		}
         var l_data = {
     			Name : 'Change Me',
@@ -128,8 +130,9 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 			Phone : fetchTextWidget('HousePhone'),
 			Latitude : fetchTextWidget('HouseLatitude'),
 			Longitude : fetchTextWidget('HouseLongitude'),
-			TimeZone : fetchTextWidget('HouseTimeZone'),
-			SavingsTime : fetchTextWidget('HouseSavingsTime'),
+			TimeZoneName : fetchTextWidget('HouseTimeZoneName'),
+			TimeZoneOffset : fetchTextWidget('HouseTimeZoneOffset'),
+			DaylightSavingsTime : fetchTextWidget('HouseDaylightSavingsTime'),
 			UUID : fetchTextWidget('HouseUUID'),
 			Delete : false
             }

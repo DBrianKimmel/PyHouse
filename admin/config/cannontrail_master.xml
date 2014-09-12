@@ -58,8 +58,9 @@
             <Phone>(828) 369-8513</Phone>
             <Latitude>35.144569</Latitude>
             <Longitude>-83.458291</Longitude>
-            <TimeZone>-300.0</TimeZone>
-            <SavingTime>60.0</SavingTime>
+            <TimeZoneName>USA/Eastern</TimeZoneName>
+            <TimeZoneOffset>-5:00</TimeZoneOffset>
+            <DaylightSavingsTime>-4:00</DaylightSavingsTime>
         </LocationSection>
         <RoomSection>
             <Room Active="True" Key="0" Name="Outside">

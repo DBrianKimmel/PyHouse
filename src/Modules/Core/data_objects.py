@@ -301,7 +301,6 @@ class XmlInformation(object):
 class PyHouseAPIs(object):
     """
     Most of these have a single entry.
-    Others are dicts of APIs, one per instance.
     """
 
     def __init__(self):
@@ -322,6 +321,7 @@ class PyHouseAPIs(object):
         self.PyHouseAPI = None
         self.ScheduleAPI = None
         self.SecurityAPI = None
+        self.SunRiseSetAPI = None
         self.WeatherAPI = None
         self.WebAPI = None
 
@@ -350,15 +350,19 @@ class LocationData(object):
     Latitude and Longitude allow the computation of local sunrise and sunset
     """
     def __init__(self):
+        self.Street = ''
         self.City = ''
+        self.State = 'FL'
+        self.ZipCode = '12345'
         self.Latitude = 28.938448
         self.Longitude = -82.517208
         self.Phone = ''
-        self.SavingTime = '-4:00'
-        self.State = 'FL'
-        self.Street = ''
-        self.TimeZone = '-5:00'
-        self.ZipCode = '12345'
+        self.TimeZoneName = 'USA/Eastern'
+        self.TimeZoneOffset = '-5:00'
+        self.DaylightSavingsTime = '-4:00'
+        # Computed at startup (refreshed periodically)
+        self._Sunrise = None
+        self._Sunset = None
 
 
 class SerialControllerData(object):

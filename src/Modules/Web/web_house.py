@@ -76,8 +76,9 @@ class HouseElement(athena.LiveElement):
         l_obj.Location.Phone = l_json['Phone']
         l_obj.Location.Latitude = l_json['Latitude']
         l_obj.Location.Longitude = l_json['Longitude']
-        l_obj.Location.TimeZone = l_json['TimeZone']
-        l_obj.Location.SavingsTime = l_json['SavingsTime']
+        l_obj.Location.TimeZoneName = l_json['TimeZoneName']
+        l_obj.Location.TimeZoneOffset = l_json['TimeZoneOffset']
+        l_obj.Location.DaylightSavingsTime = l_json['DaylightSavingsTime']
         self.m_pyhouse_obj.House.OBJs = l_obj
 
 # ## END DBK

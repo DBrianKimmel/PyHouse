@@ -44,8 +44,9 @@ class ReadWriteConfigXml(XmlConfigTools):
             l_location_obj.Phone = self.get_text_from_xml(l_location_xml, 'Phone')
             l_location_obj.Latitude = self.get_float_from_xml(l_location_xml, 'Latitude')
             l_location_obj.Longitude = self.get_float_from_xml(l_location_xml, 'Longitude')
-            l_location_obj.TimeZone = self.get_float_from_xml(l_location_xml, 'TimeZone')
-            l_location_obj.SavingTime = self.get_float_from_xml(l_location_xml, 'SavingTime')
+            l_location_obj.TimeZoneName = self.get_text_from_xml(l_location_xml, 'TimeZoneName')
+            l_location_obj.TimeZoneOffset = self.get_text_from_xml(l_location_xml, 'TimeZoneOffset')
+            l_location_obj.DaylightSavingsTime = self.get_text_from_xml(l_location_xml, 'DaylightSavingsTime')
         except AttributeError:
             pass
         return l_location_obj
@@ -61,8 +62,9 @@ class ReadWriteConfigXml(XmlConfigTools):
         self.put_text_element(l_entry, 'Phone', p_location_obj.Phone)
         self.put_float_element(l_entry, 'Latitude', p_location_obj.Latitude)
         self.put_float_element(l_entry, 'Longitude', p_location_obj.Longitude)
-        self.put_float_element(l_entry, 'TimeZone', p_location_obj.TimeZone)
-        self.put_float_element(l_entry, 'SavingTime', p_location_obj.SavingTime)
+        self.put_text_element(l_entry, 'TimeZoneName', p_location_obj.TimeZoneName)
+        self.put_text_element(l_entry, 'TimeZoneOffset', p_location_obj.TimeZoneOffset)
+        self.put_text_element(l_entry, 'DaylightSavingsTime', p_location_obj.DaylightSavingsTime)
         return l_entry
 
 # ## END DBK

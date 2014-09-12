@@ -95,8 +95,16 @@ XML_LONG = """
     <HouseDivision Active="True" Key="0" Name="Pink Poppy">
         <UUID>12345678-1002-11e3-b583-333e5f8cdfd2</UUID>
         <LocationSection>
-            <Street>5191 N Pink Poppy Dr</Street><City>Beverly Hills</City><State>Florida</State><ZipCode>34465</ZipCode><Phone>(352) 270-8096</Phone>
-            <Latitude>28.938448</Latitude><Longitude>-82.517208</Longitude><TimeZone>-240.0</TimeZone><SavingTime>60.0</SavingTime>
+            <Street>5191 N Pink Poppy Dr</Street>
+            <City>Beverly Hills</City>
+            <State>Florida</State>
+            <ZipCode>34465</ZipCode>
+            <Phone>(352) 270-8096</Phone>
+            <Latitude>28.938448</Latitude>
+            <Longitude>-82.517208</Longitude>
+            <TimeZoneName>USA/Eastern</TimeZoneName>
+            <TimeZoneOffset>-5:00</TimeZoneOffset>
+            <DaylightSavingsTime>-4:00</DaylightSavingsTime>
         </LocationSection>
         <RoomSection>
             <Room Active="True" Key="0" Name="Master Bath">
