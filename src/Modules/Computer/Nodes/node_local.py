@@ -33,7 +33,7 @@ from Modules.Core.data_objects import NodeData, NodeInterfaceData
 from Modules.Communication import ir_control
 from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities.xml_tools import XmlConfigTools
-from Modules.Utilities.tools import PrettyPrintAny
+# from Modules.Utilities.tools import PrettyPrintAny
 
 
 g_debug = 0
@@ -72,7 +72,6 @@ class GetAllInterfaceData(object):
         """
         self.m_count = 0
         for l_interface_name in self._find_all_interface_names():
-            # PrettyPrintAny(l_interface_name, 'Interface Name')
             self._get_one_interface(l_interface_name, self.m_count)
             self.m_count += 1
 
@@ -81,7 +80,6 @@ class GetAllInterfaceData(object):
         This returns a list of interface names.
         """
         l_interface_names = netifaces.interfaces()
-        # PrettyPrintAny(l_interface_names, 'Interfaces')
         return l_interface_names
 
     def _find_addr_family_name(self, p_ix):

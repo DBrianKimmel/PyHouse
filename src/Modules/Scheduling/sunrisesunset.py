@@ -30,6 +30,7 @@ from math import pi
 # Import PyMh files
 from Modules.Computer import logging_pyh as Logger
 # from Modules.Utilities.tools import GetPyhouse
+from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 0
 LOG = Logger.getLogger('PyHouse.Sunrise     ')
@@ -290,7 +291,7 @@ class SunCalcs(object):
         l_j_star2k = p_julian.J2KCycle + JDATE2000_9 - JDATE2000 - (l_e_long / 360.0)
 
         """
-        l_c1 = p_julian.J2K
+        l_c1 = p_julian.J2KTransit
         l_mean_anomaly = Util._revolution(357.5291 + (0.98560028 * (l_c1))) * DEG2RAD
         # print('CalcMeanAnomaly = {} >> {}'.format(l_c1, l_mean_anomaly * RAD2DEG))
         return l_mean_anomaly
@@ -363,7 +364,8 @@ class SunCalcs(object):
         """
         l_latitude = p_earth.Latitude
         l_declination = p_solar.SolarDeclination
-        l_x = (math.sin(-0.83 * DEG2RAD) - (math.sin(l_latitude) * math.sin(l_declination))) / \
+        l_x = (math.sin(-0.83 * DEG2RAD) - \
+                (math.sin(l_latitude) * math.sin(l_declination))) / \
                 (math.cos(l_latitude) * math.cos(l_declination))
         l_ha = math.acos(l_x)
         return l_ha
@@ -385,11 +387,14 @@ class SunriseSet(SunCalcs):
         for _l_ix in range(p_ix):
             l_test = p_solar.MeanAnomaly
             p_solar = self._recursive_calcs(p_julian, p_solar)
-            if p_solar.MeanAnomaly == l_test + 111.111:
+            # print('iteration of recursive {}'.format(_l_ix))
+            # PrettyPrintAny(p_solar, 'After Recursive')
+            if p_solar.MeanAnomaly == l_test:
                 return p_solar
         l_msg = 'Ran out of iterations without converging.'
         # print('{}'.format(l_msg))
         LOG.info(l_msg)
+        return p_solar
 
     def calcSolarNoonParams(self, p_earth, p_julian):
         """

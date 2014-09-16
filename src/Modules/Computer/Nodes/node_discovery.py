@@ -1,13 +1,21 @@
 """
--*- test-case-name: PyHouse.src.Modules.Core.test.test_node_discovery -*-
+-*- test-case-name: PyHouse.src.Modules.Computer/Nodes.test.test_node_discovery -*-
 
-@name: PyHouse/src/Modules/Core/node_discovery.py
+@name: PyHouse/src/Modules/Computer/Nodes/node_discovery.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: d.briankimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Apr 5, 2014
-@summary: This module is for discovering all the PyHouse nodes in a domain.
+@summary: This module provides a service for discovering all the PyHouse nodes in a domain,
+and in related domains.
+
+This service runs periodically to find any new nodes and any dropped nodes.
+
+This service is implemented using twisted.
+It seems that twisted does not support endpoints for multicast and UDP protocols, so we shall have to build our own.
+As I write this, I have not found where IPV6 is yet supported for multicast, so again, we shall ha e to do it ourselves.
+
 
 This Module:
     Uses IPv4 multicast to discover the other PyHouse nodes in the local network
@@ -32,9 +40,17 @@ g_debug = 9
 LOG = Logger.getLogger('PyHouse.NodeDiscovry')
 
 
-__all__ = [
-           'API']
 
+"""
+IPv6:
+FF01::        Interface-local scope
+FF02::        Link-Local scope
+FF03::        Realm-Local scope
+FF04::        Admin-Local scope
+FF05::        Site-Local scope
+FF08::        Organization-Local scope
+FF0E::        Global scope
+"""
 PYHOUSE_MULTICAST_IP_V4 = '234.35.36.37'
 PYHOUSE_MULTICAST_IP_V6 = 'ff05::35:3637'
 
@@ -58,13 +74,6 @@ class NodeUtil(object):
 class DGramUtil(object):
     m_address_list = []
     m_interface = ''
-    m_address = PYHOUSE_MULTICAST_IP_V4
-
-    def __init__(self, p_family):
-        if p_family == 4:
-            self.m_address = PYHOUSE_MULTICAST_IP_V4
-        else:
-            self.m_address = PYHOUSE_MULTICAST_IP_V6
 
     def _save_node_info(self, p_node, p_pyhouse_obj):
         l_count = 0
@@ -92,23 +101,24 @@ class DGramUtil(object):
         if p_address[0] not in self.m_address_list:
             self.m_address_list.append(p_address[0])
 
-    def _send_query(self, p_transport):
+    def send_query(self, p_transport, p_address):
         """
-        Send out a "WHOS_THERE" query to find out everyone out there that is subscribed to our discovery multicast address.
+        Client will send out a "WHOS_THERE" query.
+        This will find out all nodes that are subscribed to the PyHouse discovery multicast address.
         """
-        p_transport.write(WHOS_THERE, (self.m_address, PYHOUSE_DISCOVERY_PORT))
+        p_transport.write(WHOS_THERE, (p_address, PYHOUSE_DISCOVERY_PORT))
 
-    def _send_response(self, p_address, p_pyhouse_obj, p_transport):
+    def send_response(self, p_transport, p_address, p_pyhouse_obj):
         """
-        Send a message out in response to a "WHOS_THERE" query.
+        Server will send a message out in response to a "WHOS_THERE" query.
         """
         self.set_node_0_addr(p_address, p_pyhouse_obj)
         l_str = I_AM + ' ' + p_pyhouse_obj.Computer.Nodes[0].Name
         p_transport.write(l_str, p_address)
 
-    def setup_multicast(self, p_transport):
+    def setup_multicast(self, p_transport, p_address):
         p_transport.setTTL(MAX_TTL)
-        p_transport.joinGroup(self.m_address)
+        p_transport.joinGroup(p_address)
         l_interface = p_transport.getOutgoingInterface()
         return l_interface
 
@@ -123,12 +133,8 @@ class ServerProtocolV4(DatagramProtocol):
         self.m_pyhouse_obj = p_pyhouse_obj
 
     def startProtocol(self):
-        """
-        Called after protocol has started listening.
-        Set the TTL>1 so multicast will cross router hops:
-        Join a specific multicast group:
-        """
-        self.m_interface = DGramUtil(4).setup_multicast(self.transport)
+        """Called after protocol has started listening."""
+        self.m_interface = DGramUtil().setup_multicast(self.transport, PYHOUSE_MULTICAST_IP_V4)
         # LOG.debug('Discovery Server Protocol started. {0:}'.format(self.m_interface))
 
     def datagramReceived(self, p_datagram, p_address):
@@ -140,11 +146,11 @@ class ServerProtocolV4(DatagramProtocol):
         @param p_address: is the (IpAddr, Port) of the sender of this datagram (reply to address).
         """
         # LOG.debug("Discovery Server rxed: {0:} from: {1:}".format(repr(p_datagram), p_address[0]))
-        DGramUtil(4)._append_address(p_address)
+        DGramUtil()._append_address(p_address)
         if p_datagram.startswith(WHOS_THERE):
-            DGramUtil(4)._send_response(p_address, self.m_pyhouse_obj, self.transport)
+            DGramUtil().send_response(self.transport, p_address, self.m_pyhouse_obj)
         elif p_datagram.startswith(I_AM):
-            DGramUtil(4)._create_node(p_datagram, p_address, self.m_pyhouse_obj)
+            DGramUtil()._create_node(p_datagram, p_address, self.m_pyhouse_obj)
 
 
 class ServerProtocolV6(DatagramProtocol):
@@ -157,12 +163,8 @@ class ServerProtocolV6(DatagramProtocol):
         self.m_pyhouse_obj = p_pyhouse_obj
 
     def startProtocol(self):
-        """
-        Called after protocol has started listening.
-        Set the TTL>1 so multicast will cross router hops:
-        Join a specific multicast group:
-        """
-        self.m_interface = DGramUtil(6).setup_multicast(self.transport)
+        """Called after protocol has started listening."""
+        self.m_interface = DGramUtil().setup_multicast(self.transport, PYHOUSE_MULTICAST_IP_V6)
         # LOG.debug('Discovery Server Protocol started. {0:}'.format(self.m_interface))
 
     def datagramReceived(self, p_datagram, p_address):
@@ -174,11 +176,11 @@ class ServerProtocolV6(DatagramProtocol):
         @param p_address: is the (IpAddr, Port) of the sender of this datagram (reply to address).
         """
         # LOG.debug("Discovery Server rxed: {0:} from: {1:}".format(repr(p_datagram), p_address[0]))
-        DGramUtil(6)._append_address(p_address)
+        DGramUtil()._append_address(p_address)
         if p_datagram.startswith(WHOS_THERE):
-            DGramUtil(6)._send_response(p_address, self.m_pyhouse_obj, self.transport)
+            DGramUtil().send_response(self.transport, p_address, self.m_pyhouse_obj)
         elif p_datagram.startswith(I_AM):
-            DGramUtil(6)._create_node(p_datagram, p_address, self.m_pyhouse_obj)
+            DGramUtil()._create_node(p_datagram, p_address, self.m_pyhouse_obj)
 
 
 class ClientProtocolV4(ConnectedDatagramProtocol):
@@ -195,8 +197,8 @@ class ClientProtocolV4(ConnectedDatagramProtocol):
         Called when the protocol starts up.
         All listeners on the Multicast address (including us) will receive the "Who's There?" message.
         """
-        self.m_interface = DGramUtil(4).setup_multicast(self.transport)
-        DGramUtil(4)._send_query(self.transport)
+        self.m_interface = DGramUtil().setup_multicast(self.transport, PYHOUSE_MULTICAST_IP_V4)
+        DGramUtil().send_query(self.transport, PYHOUSE_MULTICAST_IP_V4)
         # LOG.debug('Discovery Client Protocol started  {0:}.'.format(self.m_interface))
 
     def datagramReceived(self, p_datagram, p_address):
@@ -206,7 +208,7 @@ class ClientProtocolV4(ConnectedDatagramProtocol):
         NodeUtil().initialize_node(p_address[0], None)
         # LOG.debug('Discovery Client rxed: {0:} From: {1:}'.format(p_datagram, p_address[0]))
         if p_datagram.startswith(WHOS_THERE):
-            DGramUtil(4).set_node_0_addr(p_address, self.m_pyhouse_obj)
+            DGramUtil().set_node_0_addr(p_address, self.m_pyhouse_obj)
 
 
 class ClientProtocolV6(ConnectedDatagramProtocol):
@@ -223,8 +225,8 @@ class ClientProtocolV6(ConnectedDatagramProtocol):
         Called when the protocol starts up.
         All listeners on the Multicast address (including us) will receive the "Who's There?" message.
         """
-        self.m_interface = DGramUtil(6).setup_multicast(self.transport)
-        DGramUtil(6)._send_query(self.transport)
+        self.m_interface = DGramUtil().setup_multicast(self.transport, PYHOUSE_MULTICAST_IP_V6)
+        DGramUtil().send_query(self.transport, PYHOUSE_MULTICAST_IP_V6)
         # LOG.debug('Discovery Client Protocol started  {0:}.'.format(self.m_interface))
 
     def datagramReceived(self, p_datagram, p_address):
@@ -234,7 +236,7 @@ class ClientProtocolV6(ConnectedDatagramProtocol):
         NodeUtil().initialize_node(p_address[0], None)
         # LOG.debug('Discovery Client rxed: {0:} From: {1:}'.format(p_datagram, p_address[0]))
         if p_datagram.startswith(WHOS_THERE):
-            DGramUtil(6).set_node_0_addr(p_address, self.m_pyhouse_obj)
+            DGramUtil().set_node_0_addr(p_address, self.m_pyhouse_obj)
 
 
 class Utility(object):
@@ -245,42 +247,57 @@ class Utility(object):
     m_pyhouse_obj = None
     m_service_installed = False
 
-    def _start_discovery_server_V4(self, p_pyhouse_obj):
-        p_pyhouse_obj.Twisted.Reactor.listenMulticast(PYHOUSE_DISCOVERY_PORT, ServerProtocolV4(p_pyhouse_obj), listenMultiple = True)
+    def _start_discovery_server(self, p_pyhouse_obj, p_interface):
+        l_port = p_pyhouse_obj.Twisted.Reactor.listenMulticast(
+                    PYHOUSE_DISCOVERY_PORT,
+                    ServerProtocolV4(p_pyhouse_obj),
+                    listenMultiple = True,
+                    interface = p_interface)
 
-    def _start_discovery_server_V6(self, p_pyhouse_obj):
-        p_pyhouse_obj.Twisted.Reactor.listenMulticast(PYHOUSE_DISCOVERY_PORT, ServerProtocolV6(p_pyhouse_obj), listenMultiple = True,
-                                                      interface = '::')
+    def _start_discovery_client(self, p_pyhouse_obj, p_interface):
+        p_pyhouse_obj.Twisted.Reactor.listenMulticast(
+                    PYHOUSE_DISCOVERY_PORT,
+                    ClientProtocolV4(p_pyhouse_obj),
+                    listenMultiple = True,
+                    interface = p_interface)
 
-    def _start_discovery_client_V4(self, p_pyhouse_obj):
-        p_pyhouse_obj.Twisted.Reactor.listenMulticast(PYHOUSE_DISCOVERY_PORT, ClientProtocolV4(p_pyhouse_obj), listenMultiple = True)
+    def start_node_discovery_service(self, p_pyhouse_obj):
+        p_pyhouse_obj.Services.NodeDiscoveryService.startService()
 
-    def _start_discovery_client_V6(self, p_pyhouse_obj):
-        p_pyhouse_obj.Twisted.Reactor.listenMulticast(PYHOUSE_DISCOVERY_PORT, ClientProtocolV6(p_pyhouse_obj),
-                                                      listenMultiple = True, interface = '::')
+    def stop_node_discovery_service(self, p_pyhouse_obj):
+        p_pyhouse_obj.Services.NodeDiscoveryService.stopService()
 
-    def start_node_discovery(self, p_pyhouse_obj):
+    def create_discovery_service(self, p_pyhouse_obj):
+        """
+        """
         try:
             p_pyhouse_obj.Services.NodeDiscoveryService = service.Service()
             p_pyhouse_obj.Services.NodeDiscoveryService.setName('NodeDiscovery')
             p_pyhouse_obj.Services.NodeDiscoveryService.setServiceParent(p_pyhouse_obj.Twisted.Application)
-            self._start_discovery_server_V4(p_pyhouse_obj)
-            self._start_discovery_client_V4(p_pyhouse_obj)
+            self._start_discovery_server(p_pyhouse_obj, '')
+            self._start_discovery_client(p_pyhouse_obj, '')
         except RuntimeError:  # The service is already installed
             pass
         self.m_service_installed = True
 
 
 class API(Utility):
+    """
+    Initiate and stop this service
+    """
 
     def Start(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.start_node_discovery(p_pyhouse_obj)
+        self.create_discovery_service(p_pyhouse_obj)
+        self.start_node_discovery_service(p_pyhouse_obj)
 
     def Stop(self):
-        pass
+        self.stop_node_discovery_service(self.m_pyhouse_obj)
 
     def SaveXml(self, p_xml):
         return p_xml
+
+__all__ = [
+           'API']
 
 # ## END DBK

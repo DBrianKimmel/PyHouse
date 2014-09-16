@@ -29,6 +29,23 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+        self.m_api = node_local.API()
+
+
+class Test_01_Structure(SetupMixin, unittest.TestCase):
+    """
+    This section tests the reading and writing of XML used by node_local.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        self.m_interface_obj = NodeInterfaceData()
+        self.m_node_obj = NodeData()
+
+    def test_01_PyHouse(self):
+        PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse')
+        PrettyPrintAny(self.m_pyhouse_obj.Computer, 'Computer')
+        PrettyPrintAny(self.m_pyhouse_obj.Computer.Nodes, 'Nodes')
 
 
 class Test_02_XML(SetupMixin, unittest.TestCase):
@@ -38,16 +55,8 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
-        self.m_interface_obj = NodeInterfaceData()
-        self.m_node_obj = NodeData()
-        self.m_api = node_local.API()
 
-    def test_0201_PyHouse(self):
-        PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse')
-        PrettyPrintAny(self.m_pyhouse_obj.Computer, 'Computer')
-        PrettyPrintAny(self.m_pyhouse_obj.Computer.Nodes, 'Nodes')
-
-    def test_0211_ReadOneInterface(self):
+    def test_01_ReadOneInterface(self):
         l_interface = self.m_api._read_one_interface_xml(self.m_xml.interface)
         PrettyPrintAny(l_interface, 'One Interface')
         self.assertEqual(l_interface.Name, 'eth0', 'Bad Name')
@@ -57,7 +66,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_interface.V4Address, "192.168.1.11", 'Bad V4Address')
         self.assertEqual(l_interface.V6Address, '2000:1D::1, 2000:1D::101', 'Bad V6Address')
 
-    def test_0212_ReadAllInterfaces(self):
+    def test_02_ReadAllInterfaces(self):
         l_interfaces = self.m_api._read_interfaces_xml(self.m_xml.interface_sect)
         PrettyPrintAny(l_interfaces, 'All Interfaces')
         PrettyPrintAny(l_interfaces[1], 'Interface_1')
@@ -66,7 +75,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_interfaces[2].Name, 'lo', 'Bad Name')
         self.assertEqual(len(l_interfaces), 3, 'Wrong interface count.')
 
-    def test_0221_ReadOneNode(self):
+    def test_03_ReadOneNode(self):
         l_node = self.m_api._read_one_node_xml(self.m_xml.node)
         PrettyPrintAny(l_node, 'One Node', 105)
         self.assertEqual(l_node.Name, 'pi-01', 'Bad Name')
@@ -74,27 +83,27 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_node.Active, True, 'Bad Axtive')
         self.assertEqual(l_node.NodeRole, 0, 'Bad NodeRole')
 
-    def test_0222_ReadAllNodes(self):
+    def test_04_ReadAllNodes(self):
         l_nodes = self.m_api.read_all_nodes_xml(self.m_pyhouse_obj)
         PrettyPrintAny(l_nodes, 'All Nodes', 10)
         PrettyPrintAny(l_nodes[0], 'Node 0', 10)
 
-    def test_0251_WriteOneInterface(self):
+    def test_31_WriteOneInterface(self):
         l_interface = self.m_api._read_one_interface_xml(self.m_xml.interface)
         l_xml = self.m_api._write_one_interface_xml(l_interface)
         PrettyPrintAny(l_xml)
 
-    def test_0252_WriteAllInterfaces(self):
+    def test_32_WriteAllInterfaces(self):
         l_interfaces = self.m_api._read_interfaces_xml(self.m_xml.interface_sect)
         l_xml = self.m_api._write_interfaces_xml(l_interfaces)
         PrettyPrintAny(l_xml)
 
-    def test_0261_WriteOneNode(self):
+    def test_33_WriteOneNode(self):
         l_node = self.m_api._read_one_node_xml(self.m_xml.node)
         l_xml = self.m_api._write_one_node_xml(l_node)
         PrettyPrintAny(l_xml)
 
-    def test_0262_WriteAllNodes(self):
+    def test_34_WriteAllNodes(self):
         l_nodes = self.m_api.read_all_nodes_xml(self.m_pyhouse_obj)
         l_xml = self.m_api.write_nodes_xml(l_nodes)
         PrettyPrintAny(l_xml)
@@ -107,62 +116,72 @@ class Test_03_EmptyXML(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_EMPTY))
-        self.m_interface_obj = NodeInterfaceData()
-        self.m_node_obj = NodeData()
-        self.m_api = node_local.API()
 
-    def test_0321_ReadOneInterface(self):
+    def test_01_ReadOneInterface(self):
         l_interface = self.m_api._read_one_interface_xml(self.m_xml.interface)
         self.assertEqual(l_interface.Name, 'Missing Name', 'Bad Name')
         PrettyPrintAny(l_interface, 'One empty interface')
 
-    def test_0322_ReadAllInterfaces(self):
+    def test_02_ReadAllInterfaces(self):
         l_interfaces = self.m_api._read_interfaces_xml(self.m_xml.interface_sect)
         PrettyPrintAny(l_interfaces, 'All empty interface')
         self.assertEqual(l_interfaces, {}, 'Bad Name')
 
-    def test_0341_ReadOneNode(self):
+    def test_03_ReadOneNode(self):
         l_node = self.m_api._read_one_node_xml(self.m_xml.node)
         PrettyPrintAny(l_node, 'One empty node')
 
-    def test_0342_ReadAllNodes(self):
+    def test_04_ReadAllNodes(self):
         l_nodes = self.m_api.read_all_nodes_xml(self.m_pyhouse_obj)
         print('Nodes: {0:}'.format((l_nodes)))
         PrettyPrintAny(l_nodes, 'All empty nodes')
 
-    def test_0351_WriteOneInterface(self):
+    def test_31_WriteOneInterface(self):
         l_nodes = self.m_api.read_all_nodes_xml(self.m_pyhouse_obj)
         l_xml = self.m_api.write_nodes_xml(l_nodes)
         PrettyPrintAny(l_xml)
 
-    def test_0352_WriteAllInterfaces(self):
+    def test_32_WriteAllInterfaces(self):
         l_nodes = self.m_api.read_all_nodes_xml(self.m_pyhouse_obj)
         l_xml = self.m_api.write_nodes_xml(l_nodes)
         PrettyPrintAny(l_xml)
 
-    def test_0353_WriteOneNodes(self):
+    def test_33_WriteOneNodes(self):
         l_nodes = self.m_api.read_all_nodes_xml(self.m_pyhouse_obj)
         l_xml = self.m_api.write_nodes_xml(l_nodes)
         PrettyPrintAny(l_xml)
 
-    def test_0354_WriteAllNodes(self):
+    def test_34_WriteAllNodes(self):
         l_nodes = self.m_api.read_all_nodes_xml(self.m_pyhouse_obj)
         l_xml = self.m_api.write_nodes_xml(l_nodes)
         PrettyPrintAny(l_xml)
 
 
-class Test_10_Api(SetupMixin, unittest.TestCase):
+class FakeNetiface(object):
+    """
+    """
+
+
+class Test_04_Interface(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
-        self.m_util = xml_tools.PutGetXML()
-        self.m_pyhouse_obj = PyHouseData()
         self.m_api = node_local.API()
 
-    def test_1002_Start(self):
+    def test_01_Start(self):
         self.m_api.Start(self.m_pyhouse_obj)
 
-    def test_1003_Stop(self):
+
+class Test_07_Api(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        self.m_api = node_local.API()
+
+    def test_02_Start(self):
+        self.m_api.Start(self.m_pyhouse_obj)
+
+    def test_03_Stop(self):
         self.m_api.Stop()
 
 # ## END DBK

@@ -19,9 +19,9 @@ from twisted.trial import unittest
 import Queue
 
 # Import PyMh files and modules.
-from Modules.families.UPB import UPB_Pim
+from Modules.Families.UPB import UPB_Pim
 from Modules.Core.data_objects import ControllerData
-from Modules.utils.tools import PrintBytes  # , PrettyPrintAny
+from Modules.Utilities.tools import PrintBytes  # , PrettyPrintAny
 
 CHG_REG_CMD = b'\x70\x03'
 
