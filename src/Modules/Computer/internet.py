@@ -1,14 +1,17 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Comps.test.test_internet -*-
 
-@Name: PyHouse/src/Modules/Comps/internet.py
+@Name: PyHouse/src/Modules/Computer/internet.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: d.briankimmel@gmail.com
 @copyright: 2012-2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Mar 20, 2012
 @summary: This module determines the IP address of the ISP connection.
 
+
+All nodes currently run this.  This is overkill!
+We need a way to have only one of the nodes run this and if successful, block the other nodes from running.
 
 Get the internet address and make reports available for web interface.
 
@@ -20,6 +23,7 @@ address from some external device and check on the status of the house.
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
+from twisted.application import service
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import InternetConnectionData, InternetConnectionDynDnsData
@@ -142,6 +146,9 @@ class Utility(ReadWriteConfigXml):
     """
     """
 
+    m_snarAPI = None
+    m_freednsAPI = None
+
     def find_xml(self, p_pyhouse_obj):
         """ Find the XML InternetSection.
 
@@ -165,6 +172,20 @@ class Utility(ReadWriteConfigXml):
             inet_find_snar.API().Stop(p_pyhouse_obj, l_ix)
             inet_update_freedns.API().Stop(p_pyhouse_obj, l_ix)
 
+    def create_internet_service(self, p_pyhouse_obj):
+        """
+        Create the twisted service for internet discovery.
+        """
+        try:
+            p_pyhouse_obj.Services.InternetDiscoveryService = service.Service()
+            p_pyhouse_obj.Services.InternetDiscoveryService.setName('NodeDiscovery')
+            p_pyhouse_obj.Services.InternetDiscoveryService.setServiceParent(p_pyhouse_obj.Twisted.Application)
+            self._start_discovery_server(p_pyhouse_obj, '')
+            self._start_discovery_client(p_pyhouse_obj, '')
+        except RuntimeError:  # The service is already installed
+            pass
+        self.m_service_installed = True
+
 
 class API(Utility):
 
@@ -176,6 +197,7 @@ class API(Utility):
         Start async operation of the internet module.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.create_internet_service(p_pyhouse_obj)
         self.m_pyhouse_obj.Computer.InternetConnection = self.read_internet_xml(self.find_xml(p_pyhouse_obj))
         self.start_internet_discovery(p_pyhouse_obj)
         LOG.info("Started.")

@@ -94,15 +94,13 @@ class API(DynDnsAPI):
         pass
 
     def Start(self, p_pyhouse_obj, p_ix):
-        # PrettyPrintAny(self.m_pyhouse_obj, 'InetUpdateFreedns - UpdateStartProcess - PyHouseObj')
-        # PrettyPrintAny(self.m_pyhouse_obj.Computer, 'InetUpdateFreedns - UpdateStartProcess - PyHouseObj.Computer')
-        # PrettyPrintAny(self.m_pyhouse_obj.Computer.InternetConnection, 'InetUpdateFreedns - UpdateStartProcess - PyHouseObj.Computer.InternetConnection')
         self.m_internet_obj = p_pyhouse_obj.Computer.InternetConnection[p_ix]
         self.m_reactor = p_pyhouse_obj.Twisted.Reactor
         self.m_dyn_loop = DynDnsAPI(self.m_internet_obj, self.m_reactor)
 
     def Stop(self, _ignore1, _ignore2):
-        self.m_dyn_loop.stop_dyndns_process()
+        # self.m_dyn_loop.stop_dyndns_process()
+        pass
 
     def SaveXml(self, p_xml):
         return p_xml

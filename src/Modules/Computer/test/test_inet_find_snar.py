@@ -8,16 +8,32 @@
 @Summary:
 
 """
-import unittest
+
+# Import system type stuff
+import xml.etree.ElementTree as ET
+from twisted.trial import unittest
+
+# Import PyMh files and modules.
+from test import xml_data
+from test.testing_mixin import SetupPyHouseObj
+from Modules.Utilities.tools import PrettyPrintAny
 
 
-class Test(unittest.TestCase):
+class SetupMixin(object):
+    """
+    Set up pyhouse_obj and xml element pointers
+    """
+
+    def setUp(self, p_root):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
+        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+
+
+class Test(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        pass
-
-    def tearDown(self):
-        pass
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        self.m_reactor = self.m_pyhouse_obj.Twisted.Reactor
 
     def testName(self):
         pass

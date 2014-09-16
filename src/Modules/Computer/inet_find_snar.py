@@ -3,7 +3,7 @@
 
 @Name: PyHouse/src/Modules/Computer/inet_find_snar.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: d.briankimmel@gmail.com
 @copyright: 2012-2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Jun 27, 2014
@@ -23,13 +23,18 @@ where 'ix' is the internet connection number.
 # Import system type stuff
 from twisted.web.client import getPage
 
+from twisted.internet.endpoints import HostnameEndpoint
+from twisted.web.client import ProxyAgent
+
+
 # Import PyMh files and modules.
 from Modules.Utilities import convert
 from Modules.Computer import logging_pyh
 # from Modules.Utilities.tools import PrettyPrintAny
 
-g_debug = 1
+
 LOG = logging_pyh.getLogger('PyHouse.InternetFnd ')
+INITIAL_DELAY = 2 * 60
 
 
 class FindExternalIpAddress(object):
@@ -44,10 +49,9 @@ class FindExternalIpAddress(object):
         """
         Delay a bit so we are not too busy with initialization and then start the IPv4 query process.
         """
-        l_initial_delay = 2 * 60  # 2 Minutes
         self.m_internet_obj = p_internet_obj
         self.m_reactor = p_reactor
-        self.m_reactor.callLater(l_initial_delay, self.get_public_ip, None)
+        self.m_reactor.callLater(INITIAL_DELAY, self.get_public_ip, None)
 
     def get_public_ip(self, _ignore):
         """

@@ -340,7 +340,8 @@ class CoreServicesInformation(object):
     def __init__(self):
         self.NodeDiscoveryService = None
         self.NodeDomainService = None
-        self.InternetConnectionService = None
+        self.InternetDiscoveryService = None
+        self.InternetUpdateService = None
         self.IrControlService = None
         self.WebServerService = None
 
