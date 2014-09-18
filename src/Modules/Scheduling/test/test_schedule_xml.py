@@ -1,7 +1,7 @@
 """
 @name: C:/Users/briank/Documents/GitHub/PyHouse/src/Modules/Scheduling/test/test_schedule_xml.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com>
+@contact: D.BrianKimmel@gmail.com>
 @Copyright: (c)  2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Sep 2, 2014

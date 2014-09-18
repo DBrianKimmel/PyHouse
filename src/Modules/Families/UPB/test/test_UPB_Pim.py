@@ -6,7 +6,7 @@
 Created on Apr 8, 2013
 
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @copyright: 2013-2014 by D. Brian Kimmel
 @license: MIT License
 

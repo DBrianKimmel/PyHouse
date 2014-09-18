@@ -3,7 +3,7 @@
 
 @name: PyHouse/src/Modules/Web/web_server.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @copyright: 2012-2014 by D. Brian Kimmel
 @note: Created on Apr 3, 2012
 @license: MIT License

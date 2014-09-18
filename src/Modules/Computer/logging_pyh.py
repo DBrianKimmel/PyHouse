@@ -3,7 +3,7 @@
 
 @name: PyHouse/src/Modules/Computer/logging_pyh.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @copyright: 2010-2014 by D. Brian Kimmel
 @note: Created on Jan 20, 2014
 @license: MIT License

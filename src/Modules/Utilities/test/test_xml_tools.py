@@ -1,7 +1,7 @@
 """
 @name: PyHouse/src/Modules/Utilities/test/test_xml_tools.py
 @author: D. Brian Kimmel
-@contact: d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @copyright: 2013-2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Apr 11, 2013

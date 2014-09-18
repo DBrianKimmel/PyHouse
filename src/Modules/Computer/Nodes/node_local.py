@@ -3,7 +3,7 @@
 
 @name: PyHouse/src/Modules/Core/node_local.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
 @note: Created on Apr 2, 2014
 @license: MIT License
@@ -33,7 +33,6 @@ from Modules.Core.data_objects import NodeData, NodeInterfaceData
 from Modules.Communication import ir_control
 from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities.xml_tools import XmlConfigTools
-# from Modules.Utilities.tools import PrettyPrintAny
 
 
 g_debug = 0
@@ -65,7 +64,7 @@ class GetAllInterfaceData(object):
      we end up with import type errors in this class.
     """
 
-    def __init__(self, p_node):
+    def __init__(self):
         """
         @type p_node: C{NodeData}
         @param p_node: the node information
@@ -96,9 +95,6 @@ class GetAllInterfaceData(object):
             l_list.append(l_ent['addr'])
         return l_list
 
-    def _get_af(self):
-        pass
-
     def _get_one_interface(self, p_interface_name, p_ix):
         l_interface = NodeInterfaceData()
         l_interface.Name = p_interface_name
@@ -117,9 +113,15 @@ class GetAllInterfaceData(object):
         if l_interface.V4Address == [] and l_interface.V6Address == []:
             return
         # LOG.info("\n\t\t\tInterface:{0:}\n\t\t\tMac:{1:}\n\t\t\tV4:{2:}\n\t\t\tV6:{3:}".format(l_interface.Name, l_interface.MacAddress, l_interface.V4Address, l_interface.V6Address))
+        return l_interface
 
-    def _get_all_families(self, p_interface):
-        pass
+    def get_all_interfaces(self, p_node):
+        self.m_count = 0
+        for l_interface_name in self._find_all_interface_names():
+            l_iface = self._get_one_interface(l_interface_name, self.m_count)
+            p_node.NodeInterfaces[self.m_count] = l_iface
+            self.m_count += 1
+        return p_node
 
 
 class HandleNodeType(object):
@@ -338,7 +340,8 @@ class Utility(ReadWriteConfigXml):
 
     def create_local_node(self):
         l_node = NodeData()
-        GetAllInterfaceData(l_node)
+        l_api = GetAllInterfaceData()
+        l_api.get_all_interfaces(l_node)
         return l_node
 
 
@@ -348,8 +351,8 @@ class API(Utility):
 
     def Start(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        p_pyhouse_obj.Computer.Nodes[0] = self.create_local_node()
         self.read_all_nodes_xml(p_pyhouse_obj)
+        p_pyhouse_obj.Computer.Nodes[0] = self.create_local_node()
         self.get_node_info(p_pyhouse_obj)
         p_pyhouse_obj.Computer.Nodes[0].NodeRole = self.find_node_role()
         self.init_node_type(p_pyhouse_obj)

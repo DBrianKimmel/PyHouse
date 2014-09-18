@@ -1,7 +1,7 @@
 """
 @name: PyHouse/src/Modules/Web/test/test_web_login.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com>
+@contact: D.BrianKimmel@gmail.com>
 @Copyright: (c)  2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Aug 29, 2014

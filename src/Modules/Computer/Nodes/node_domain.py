@@ -3,7 +3,7 @@
 
 @name: PyHouse/src/Modules/Computer/Nodes/node_domain.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
 @note: Created on Apr 3, 2014
 @license: MIT License
@@ -38,6 +38,7 @@ LOG = Logger.getLogger('PyHouse.NodeDomain  ')
 
 NODE_SERVER = 'tcp:port=8581'
 AMP_PORT = 8581
+INITIAL_DELAY = 10
 
 
 """ ------------------------------------------------------------------
@@ -341,13 +342,13 @@ class API(Utility):
     def __init__(self):
         pass
 
-    def Start(self, p_pyhouse_obj, run_delay = 10):
+    def Start(self, p_pyhouse_obj):
         """
         Try to avoid missing events due to congestion when a power failure has all nodes rebooting at nearly the same time.
         This delay should help ensure that the nodes are all up and functioning before starting AMP.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
-        p_pyhouse_obj.Twisted.Reactor.callLater(run_delay, self.create_amp_service, None)
+        p_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self.create_amp_service, None)
 
     def Stop(self):
         pass

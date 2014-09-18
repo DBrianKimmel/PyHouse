@@ -3,7 +3,7 @@
 
 @name: PyHouse/src/Modules/Lighting/lighting.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @copyright: 2010-2014 by D. Brian Kimmel
 @note: Created on Apr 2, 2010
 @license: MIT License
@@ -101,18 +101,18 @@ class API(Utility):
         LOG.debug('_get_api_for_family - {0:}'.format(l_ret))
         return l_ret
 
-    def ChangeLight(self, p_web_light_obj, p_level, _p_rate = None):
+    def ChangeLight(self, p_light_obj, p_new_level, _p_rate = None):
         """
         Called by:
             web_controlLights
             schedule
         """
-        l_light_obj = self._find_full_obj(self.m_pyhouse_obj.House.OBJs.Lights, p_web_light_obj)
+        l_light_obj = self._find_full_obj(self.m_pyhouse_obj.House.OBJs.Lights, p_light_obj)
 
         try:
-            LOG.info("Turn Light {0:} to level {1:}, ControllerFamily:{2:}".format(l_light_obj.Name, p_level, l_light_obj.ControllerFamily))
+            LOG.info("Turn Light {0:} to level {1:}, ControllerFamily:{2:}".format(l_light_obj.Name, p_new_level, l_light_obj.ControllerFamily))
             l_api = self._get_api_for_family(self.m_pyhouse_obj, l_light_obj)
-            l_api.ChangeLight(l_light_obj, p_level)
+            l_api.ChangeLight(l_light_obj, p_new_level)
         except Exception as e_err:
             LOG.error('ERROR - ChangeLight - {0:}'.format(e_err))
 

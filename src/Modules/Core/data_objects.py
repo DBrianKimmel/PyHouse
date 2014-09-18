@@ -3,7 +3,7 @@
 
 @Name: PyHouse/src/Modules/Core/data_objects.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Mar 20, 2014

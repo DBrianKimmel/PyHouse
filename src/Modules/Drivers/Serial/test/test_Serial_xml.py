@@ -1,7 +1,7 @@
 """
 @name: PyHouse/src/Modules/Drivers/Serial/test/test_serial_xml.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com>
+@contact: D.BrianKimmel@gmail.com>
 @Copyright: (c)  2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Aug 5, 2014

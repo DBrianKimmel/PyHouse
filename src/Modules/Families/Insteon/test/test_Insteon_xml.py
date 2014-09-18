@@ -1,7 +1,7 @@
 """
 @name: PyHouse/src/Modules/families/Insteon/test/test_Insteon_xml.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
 @note: Created on Aug 5, 2014
 @license: MIT License

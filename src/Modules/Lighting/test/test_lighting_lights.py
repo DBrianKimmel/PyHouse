@@ -1,7 +1,7 @@
 """
 @name: PyHouse/src/Modules/lights/test/test_lighting_lights.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
 @note: Created on May 23, 2014
 @license: MIT License

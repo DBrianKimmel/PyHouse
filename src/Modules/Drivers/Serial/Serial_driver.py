@@ -3,7 +3,7 @@
 
 @name: PyHouse/src/Modules/Drivers/Serial/Serial_driver.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @copyright: 2010-2014 by D. Brian Kimmel
 @note: Created on Feb 18, 2010
 @license: MIT License

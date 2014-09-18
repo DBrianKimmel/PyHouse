@@ -1,7 +1,7 @@
 """
 @name: PyHouse/src/Modules/scheduling/sunrisesunset.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @copyright: 2011-2014 by D. Brian Kimmel
 @note: Created on Mar 6, 2011
 @license: MIT License

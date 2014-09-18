@@ -1,7 +1,7 @@
 """
 @name: PyHouse/src/Modules/Lighting/test/test_lighting.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @copyright: 2013-2014 by D. Brian Kimmel
 @note: Created on Apr 9, 2013
 @license: MIT License
@@ -29,7 +29,7 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-class Test_02_XML(SetupMixin, unittest.TestCase):
+class C_01_XML(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by node_local.
     """
 
@@ -40,7 +40,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         self.m_light_obj = LightData()
         self.m_api = lighting.API()
 
-    def test_0202_find_xml(self):
+    def test_01_find_xml(self):
         """ Be sure that the XML contains the right stuff.
         """
         self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
@@ -48,12 +48,12 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.light_sect.tag, 'LightSection', 'XML - No Lights section')
         self.assertEqual(self.m_xml.light.tag, 'Light', 'XML - No Light')
 
-    def test_0211_read_lighting(self):
+    def test_02_read_lighting(self):
         self.m_api._read_lighting_xml(self.m_pyhouse_obj)
         PrettyPrintAny(self.m_pyhouse_obj.House.OBJs, 'PyHouse_obj.House.OBJs')
         self.assertEqual(self.m_pyhouse_obj.House.OBJs.Lights[0].Name, 'outside_front')
 
-    def test_0212_write_lighting(self):
+    def test_03_write_lighting(self):
         self.m_api._read_lighting_xml(self.m_pyhouse_obj)
         PrettyPrintAny(self.m_pyhouse_obj.House.OBJs, 'Lighting')
         l_xml = ET.Element('HouseDivision')
@@ -76,7 +76,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
     #    pass
 
 
-class Test_06_Utility(SetupMixin, unittest.TestCase):
+class C_02_Utility(SetupMixin, unittest.TestCase):
     """
     """
 
@@ -87,7 +87,7 @@ class Test_06_Utility(SetupMixin, unittest.TestCase):
         self.m_light_obj = LightData()
         self.m_api = lighting.API()
 
-    def test_0601_FindFull(self):
+    def test_01_FindFull(self):
         l_web_obj = LightData()
         l_web_obj.Name = 'dr_chand'
         self.m_api._read_lighting_xml(self.m_pyhouse_obj)
@@ -100,7 +100,7 @@ class Test_06_Utility(SetupMixin, unittest.TestCase):
         self.assertEqual(l_light, None)
 
 
-class Test_07_Ops(SetupMixin, unittest.TestCase):
+class C_03_Ops(SetupMixin, unittest.TestCase):
     """ This section tests the operations
     """
 
@@ -111,7 +111,7 @@ class Test_07_Ops(SetupMixin, unittest.TestCase):
         self.m_light_obj = LightData()
         self.m_api = lighting.API()
 
-    def test_0702_GetApi(self):
+    def test_01_GetApi(self):
         l_light = self.m_light_obj
         l_light.Name = 'Garage'
         l_light.ControllerFamily = 'Insteon'

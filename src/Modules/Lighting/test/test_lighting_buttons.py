@@ -1,7 +1,7 @@
 """
 @name: PyHouse/src/Modules/lighting/test/test_lighting_buttons.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on May 22, 2014

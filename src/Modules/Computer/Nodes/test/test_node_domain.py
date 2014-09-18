@@ -1,7 +1,7 @@
 """
 @name: PyHouse/src/Modules/Computer/Nodes/node_domain.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
 @note: Created on Apr 25, 2014
 @license: MIT License
@@ -236,7 +236,7 @@ class SimpleSymmetricCommandProtocol(FactoryNotifier):
 
     def sendInfo(self, p_text):
         print('DBK SimpleSymetricCommandProtocol - sendHello')
-        return self.callRemote(node_domain.NodeInformationCommand, Name = p_text, Address = '192.168.1.2')
+        return self.callRemote(node_domain.NodeInfo, Name = p_text, Address = '192.168.1.2')
 
     def receive_Hello(self, hello, From, optional = None, Print = None, mixedCase = None, dash_arg = None, underscore_arg = None):
         From = From; optional = optional; Print = Print; mixedCase = mixedCase; dash_arg = dash_arg; underscore_arg = underscore_arg

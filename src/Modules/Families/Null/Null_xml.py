@@ -3,7 +3,7 @@
 
 @name: PyHouse/src/Modules/families/Null/Null_xml.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Aug 9, 2014

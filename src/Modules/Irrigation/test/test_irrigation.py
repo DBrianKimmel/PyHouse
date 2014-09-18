@@ -1,7 +1,7 @@
 """
 @name: C:/Users/briank/Documents/GitHub/PyHouse/src/Modules/irrigation/test/test_irrigation.py
 @author: briank
-@contact: <d.briankimmel@gmail.com>
+@contact: D.BrianKimmel@gmail.com>
 @Copyright: (c)  2014 by briank
 @license: MIT License
 @note: Created on Jul 4, 2014

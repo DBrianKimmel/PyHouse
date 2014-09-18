@@ -1,7 +1,7 @@
 """
 @name: C:/Users/briank/Documents/GitHub/PyHouse/src/Modules/Comps/test/test_inet_find_snar.py
 @author: briank
-@contact: <d.briankimmel@gmail.com>
+@contact: D.BrianKimmel@gmail.com>
 @Copyright: (c)  2014 by briank
 @license: MIT License
 @note: Created on Jun 27, 2014

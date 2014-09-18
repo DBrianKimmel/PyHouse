@@ -1,7 +1,7 @@
 """
 @name: C:/Users/briank/Documents/GitHub/PyHouse/src/Modules/Drivers/Null/test/test_Null_xml.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com>
+@contact: D.BrianKimmel@gmail.com>
 @Copyright: (c)  2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Aug 23, 2014

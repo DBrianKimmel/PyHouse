@@ -1,7 +1,7 @@
 """
 @name: PyHouse/src/Computer/test/test_internet.py
 @author: D. Brian Kimmel
-@contact: d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @Copyright (c) 2013-2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Apr 8, 2013
@@ -121,7 +121,8 @@ class Test_02_Util(SetupMixin, unittest.TestCase):
     def test_01_Service(self):
         """
         """
-        # self.m_api.
+        self.m_api.Start(self.m_pyhouse_obj)
+        PrettyPrintAny(self.m_pyhouse_obj.Services, 'PyHouse')
         pass
 
 # ## END DBK

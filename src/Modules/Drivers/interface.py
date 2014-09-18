@@ -3,7 +3,7 @@
 
 @name: PyHouse/src/Modules/Driveres/interface.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @Copyright (c) 2013-2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Mar 21, 2013

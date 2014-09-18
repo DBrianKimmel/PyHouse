@@ -63,7 +63,7 @@ from Modules.Computer import logging_pyh as Logger
 g_debug = 1
 LOG = Logger.getLogger('PyHouse.Schedule    ')
 SECONDS_IN_DAY = 86400
-SECONDS_IN_WEEK = 604800  # 7 * 24 * 60 ^ 60
+SECONDS_IN_WEEK = 604800  # 7 * 24 * 60 * 60
 
 
 class RiseSetData(object):
@@ -232,11 +232,10 @@ class ScheduleExecution(object):
     def execute_one_schedule(self, p_slot):
         """
         Send information to one device to execute a schedule.
+
+        TODO: We need a small dispatch for the various schedule types (hvac, security, entertainment, lights, ...)
         """
         l_schedule_obj = self.m_pyhouse_obj.House.OBJs.Schedules[p_slot]
-        # PrettyPrintAny(l_schedule_obj, 'Schedule - ExecuteOneSchedule - ScheduleObject', 120)
-        # PrettyPrintAny(self.m_pyhouse_obj.House.OBJs, 'Schedule - ExecuteOneSchedule - PyHouseObj', 120)
-        # TODO: We need a small dispatch for the various schedule types (hvac, security, entertainment, lights, ...)
         if l_schedule_obj.ScheduleType == 'LightingDevice':
             LOG.debug('Execute_one_schedule type = LightingDevice')
             pass

@@ -1,7 +1,7 @@
 """
 @name: PyHouse/src/test/test_xml_data.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @Copyright (c) 2010-2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on May 4, 2014

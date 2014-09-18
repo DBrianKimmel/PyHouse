@@ -1,7 +1,7 @@
 """
 @name: PyHouse/src/Modules/Web/test/test_root_menu.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @copyright: 2013-2014 by D. Brian Kimmel
 @note: Created on Jul 12, 2013
 @license: MIT License

@@ -8,7 +8,7 @@ Created on Jun 27, 2014
 
 @Name: PyHouse/src/Modules/Comps/inet_update_freedns.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @copyright: 2012-2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Mar 20, 2012
@@ -25,7 +25,7 @@ from Modules.Computer import logging_pyh
 
 g_debug = 1
 LOG = logging_pyh.getLogger('PyHouse.Internet    ')
-
+INITIAL_DELAY = 2 * 60
 
 
 
@@ -44,7 +44,7 @@ class DynDnsAPI(object):
         """
         self.m_internet_obj = p_internet_obj
         self.m_reactor = p_reactor
-        self.m_reactor.callLater(2 * 60, self.update_start_process, None)
+        self.m_reactor.callLater(INITIAL_DELAY, self.update_start_process, None)
 
     def update_start_process(self, _ignore):
         """After waiting for the initial startup activities to die down, this is invoked

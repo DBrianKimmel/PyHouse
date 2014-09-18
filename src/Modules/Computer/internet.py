@@ -3,7 +3,7 @@
 
 @Name: PyHouse/src/Modules/Computer/internet.py
 @author: D. Brian Kimmel
-@contact: d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @copyright: 2012-2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Mar 20, 2012
@@ -146,6 +146,7 @@ class Utility(ReadWriteConfigXml):
     """
     """
 
+    m_pyhouse_obj = None
     m_snarAPI = None
     m_freednsAPI = None
 
@@ -180,8 +181,7 @@ class Utility(ReadWriteConfigXml):
             p_pyhouse_obj.Services.InternetDiscoveryService = service.Service()
             p_pyhouse_obj.Services.InternetDiscoveryService.setName('NodeDiscovery')
             p_pyhouse_obj.Services.InternetDiscoveryService.setServiceParent(p_pyhouse_obj.Twisted.Application)
-            self._start_discovery_server(p_pyhouse_obj, '')
-            self._start_discovery_client(p_pyhouse_obj, '')
+            self.start_internet_discovery(p_pyhouse_obj)
         except RuntimeError:  # The service is already installed
             pass
         self.m_service_installed = True

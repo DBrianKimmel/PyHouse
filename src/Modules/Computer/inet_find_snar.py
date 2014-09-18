@@ -3,7 +3,7 @@
 
 @Name: PyHouse/src/Modules/Computer/inet_find_snar.py
 @author: D. Brian Kimmel
-@contact: d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @copyright: 2012-2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Jun 27, 2014

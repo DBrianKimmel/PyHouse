@@ -1,7 +1,7 @@
 """
 @name: PyHouse/src/Modules/Core/test/test_setup_logging.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com>
+@contact: D.BrianKimmel@gmail.com>
 @Copyright: (c)  2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Aug 30, 2014

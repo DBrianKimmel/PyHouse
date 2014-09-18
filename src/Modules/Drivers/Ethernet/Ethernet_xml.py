@@ -3,7 +3,7 @@
 
 @name: PyHouse/src/Modules/Drivers/Ethernet/ethernet_xml.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @Copyright (c) 2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Jul 29, 2014

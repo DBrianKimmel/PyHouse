@@ -1,7 +1,7 @@
 """
 @name: PyHouse/src/Modules/test/test_communication.py
 @author: d. Brian Kimmel
-@contact: <d.briankimmel@gmail.com>
+@contact: D.BrianKimmel@gmail.com>
 @Copyright: (c)  2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Aug 16, 2014
