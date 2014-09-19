@@ -31,7 +31,7 @@ from Modules.Utilities import xml_tools
 from Modules.Computer import logging_pyh as Logger
 # from Modules.Utilities.tools import PrettyPrintAny
 
-g_debug = 1
+g_debug = 0
 LOG = Logger.getLogger('PyHouse.Insteon_xml ')
 
 
@@ -77,7 +77,7 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
 
     def WriteXml(self, p_entry_xml, p_device_obj):
         if g_debug >= 1:
-            LOG.debug('Insteon Write {0:}'.format(p_device_obj.Name))
+            LOG.info('Insteon Write {}'.format(p_device_obj.Name))
         self.put_text_element(p_entry_xml, 'Address', conversions.int2dotted_hex(p_device_obj.InsteonAddress, 3))
         self.put_int_element(p_entry_xml, 'DevCat', conversions.int2dotted_hex(p_device_obj.DevCat, 2))
         self.put_text_element(p_entry_xml, 'GroupList', p_device_obj.GroupList)

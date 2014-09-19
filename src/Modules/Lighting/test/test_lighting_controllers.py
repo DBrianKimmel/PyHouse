@@ -116,7 +116,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         PrettyPrintAny(l_controller, 'OneController', 100)
 
     def test_0244_ReadAllControllersXml(self):
-        l_controllers = self.m_api.read_controllers_xml(self.m_xml.controller_sect)
+        l_controllers = self.m_api.read_all_controllers_xml(self.m_xml.controller_sect)
         self.assertEqual(len(l_controllers), 3)
         PrettyPrintAny(l_controllers, 'AllControllers', 100)
 
@@ -130,14 +130,14 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
     def test_0262_WriteControllersXml(self):
         """ Write out the XML file for the location section
         """
-        l_controllers = self.m_api.read_controllers_xml(self.m_xml.controller_sect)
+        l_controllers = self.m_api.read_all_controllers_xml(self.m_xml.controller_sect)
         l_xml = self.m_api.write_controllers_xml(l_controllers)
         PrettyPrintAny(l_xml, 'AllControllers', 100)
 
     def test_0281_CreateJson(self):
         """ Create a JSON object for Location.
         """
-        l_controller = self.m_api.read_controllers_xml(self.m_xml.controller_sect)
+        l_controller = self.m_api.read_all_controllers_xml(self.m_xml.controller_sect)
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_controller))
         PrettyPrintAny(l_json, 'JSON', 100)
 

@@ -75,7 +75,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_button.InsteonAddress, conversions.dotted_hex2int('16.E5.B6'))
 
     def test_0215_ReadAllButtonsXml(self):
-        l_buttons = self.m_api.read_buttons_xml(self.m_xml.button_sect)
+        l_buttons = self.m_api.read_all_buttons_xml(self.m_xml.button_sect)
         self.assertEqual(len(l_buttons), 4)
         PrettyPrintAny(l_buttons, 'ReadAllButton', 120)
 
@@ -89,14 +89,14 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
     def test_0232_WriteAllButtonsXml(self):
         """ Write out the XML file for the Buttons section
         """
-        l_button = self.m_api.read_buttons_xml(self.m_xml.button_sect)
+        l_button = self.m_api.read_all_buttons_xml(self.m_xml.button_sect)
         l_xml = self.m_api.write_buttons_xml(l_button)
         print('XML: {0:}'.format(PrettyPrintAny(l_xml)))
 
     def test_0251_CreateJson(self):
         """ Create a JSON object for Buttons.
         """
-        l_buttons = self.m_api.read_buttons_xml(self.m_xml.button_sect)
+        l_buttons = self.m_api.read_all_buttons_xml(self.m_xml.button_sect)
         print('ButtonsS: {0:}'.format(l_buttons))
         print('Button 0: {0:}'.format(vars(l_buttons[0])))
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_buttons))

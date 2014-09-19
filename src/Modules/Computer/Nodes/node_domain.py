@@ -39,6 +39,7 @@ LOG = Logger.getLogger('PyHouse.NodeDomain  ')
 NODE_SERVER = 'tcp:port=8581'
 AMP_PORT = 8581
 INITIAL_DELAY = 10
+REPEAT_DELAY = 2 * 60 * 60
 
 
 """ ------------------------------------------------------------------
@@ -281,6 +282,7 @@ class AmpClient(object):
 
         self.m_pyhouse_obj = p_pyhouses_obj
         self.m_address = p_address
+        LOG.info('Client to Address: {}'.format(p_address))
         l_endpoint = TCP4ClientEndpoint(p_pyhouses_obj.Twisted.Reactor, p_address, AMP_PORT)
         l_defer = l_endpoint.connect(ClientFactory.forProtocol(AMP))
         l_defer.addCallback(cb_update_client_node)
@@ -292,8 +294,9 @@ class AmpClient(object):
         This runs every 2 hours.
         Loop thru all the nodes we know about.  Start a client for each node except ourself (Nodes[0]).
         """
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(2 * 60 * 60, self.start_sending_to_all_clients, None)
+        self.m_pyhouse_obj.Twisted.Reactor.callLater(REPEAT_DELAY, self.start_sending_to_all_clients, None)
         for l_key, l_node in self.m_pyhouse_obj.Computer.Nodes.iteritems():
+            LOG.info('Sending to Node {} {} at ()'.format(l_key, l_node.Name, l_node.ConnectionAddr_IPv4))
             if l_key > -1:  # Skip ourself
                 self.update_client_node(self.m_pyhouse_obj, l_node.ConnectionAddr_IPv4)
 

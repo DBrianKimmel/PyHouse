@@ -71,19 +71,18 @@ class ControllersAPI(ReadWriteConfigXml):
             LOG.error('ERROR - ReadOneController - {0:}'.format(e_err))
         return l_controller_obj
 
-    def read_controllers_xml(self, p_controller_sect_xml):
+    def read_all_controllers_xml(self, p_controller_sect_xml):
         """Called from lighting.
         """
         self.m_count = 0
         l_dict = {}
-        # PrettyPrintAny(l_controllers_xml, 'Lighting Controllers')
         try:
             for l_controller_xml in p_controller_sect_xml.iterfind('Controller'):
                 l_controller_obj = self.read_one_controller_xml(l_controller_xml)
                 l_dict[self.m_count] = l_controller_obj
                 self.m_count += 1
         except AttributeError as e_error:  # No Controller section
-            LOG.warning('Lighting Controllers - No Controllers found - {0:}'.format(e_error))
+            LOG.warning('No Controllers found - {0:}'.format(e_error))
             l_dict = {}
         return l_dict
 

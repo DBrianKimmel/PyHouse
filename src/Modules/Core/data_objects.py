@@ -196,7 +196,7 @@ class NodeData(ABaseObject):
     def __init__(self):
         self.ConnectionAddr_IPv4 = None
         self.ConnectionAddr_IPv6 = None
-        self.NodeRole = 0
+        self.NodeRole = None
         self.NodeInterfaces = {}  # NodeInterfaceData()
 
 

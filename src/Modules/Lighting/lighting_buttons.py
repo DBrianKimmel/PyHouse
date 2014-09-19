@@ -10,11 +10,12 @@ import xml.etree.ElementTree as ET
 from Modules.Core.data_objects import ButtonData
 from Modules.Lighting.lighting_core import ReadWriteConfigXml
 from Modules.Lighting.lighting_utils import Utility
+from Modules.Computer import logging_pyh as Logging
 # from Modules.Utilities.tools import PrettyPrintAny
 
 
 g_debug = 0
-# 0 = off
+LOG = Logging.getLogger('PyHouse.LightgButton')
 
 
 class ButtonsAPI(ReadWriteConfigXml):
@@ -40,12 +41,16 @@ class ButtonsAPI(ReadWriteConfigXml):
         l_button_obj.Key = self.m_count  # Renumber
         return l_button_obj
 
-    def read_buttons_xml(self, p_button_sect_xml):
+    def read_all_buttons_xml(self, p_button_sect_xml):
         self.m_count = 0
         l_button_dict = {}
-        for l_button_xml in p_button_sect_xml.iterfind('Button'):
-            l_button_dict[self.m_count] = self.read_one_button_xml(l_button_xml)
-            self.m_count += 1
+        try:
+            for l_button_xml in p_button_sect_xml.iterfind('Button'):
+                l_button_dict[self.m_count] = self.read_one_button_xml(l_button_xml)
+                self.m_count += 1
+        except AttributeError as e_error:  # No Buttons
+            LOG.warning('No Buttons defined - {0:}'.format(e_error))
+            l_button_dict = {}
         return l_button_dict
 
     def write_one_button_xml(self, p_button_obj):

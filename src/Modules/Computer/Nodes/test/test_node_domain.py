@@ -25,7 +25,7 @@ from twisted.test import iosim
 from twisted.test.proto_helpers import StringTransport
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData
+# from Modules.Core.data_objects import PyHouseData
 from Modules.Computer.Nodes import node_domain
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
