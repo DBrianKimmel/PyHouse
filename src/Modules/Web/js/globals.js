@@ -1,17 +1,17 @@
 /**
  * globals.js - the global hook where we hang our coat and everything else
- * 
+ *
  * A not so impressive way to get dynamic modules loading properly when inserting fragments at some later time into the webapp.
  * The most promising way is to preload although this could lead to quite some code clutter,
  *  but knowing that the clients do not unload JS means at least preloading does no harm.
- *  
+ *
  *  modulesWaiting = {};
- *  
+ *
  *  function moduleLoaded(module) {
  *      modulesWaiting[module] = null;
  *      //Divmod.debug("moduleLoaded", "loaded module: " + module);
  *  }
- *  
+ *
  *  function waitForModules(module, f) {
  *      modulesWaiting[module] = f;
  *      for (var m in modulesWaiting) {
@@ -575,8 +575,8 @@ function buildRoomSelectWidget(p_id, p_checked) {
 		l_list[ix] = l_obj[ix].Name;
 	return buildSelectWidget(p_id, l_list, p_checked);
 }
-function buildLightSelectWidget(p_id, p_checked) {
-	//Divmod.debug('---', 'globals.buildLightSelectWidget() was called. Id=' + p_id + '  Checked=' + p_checked);
+function buildLightNameSelectWidget(p_id, p_checked) {
+	//Divmod.debug('---', 'globals.buildLightNameSelectWidget() was called. Id=' + p_id + '  Checked=' + p_checked);
 	var l_obj = globals.House.HouseObj.Lights;
 	var l_list = [];
 	for (var ix = 0; ix < Object.keys(l_obj).length; ix++)
@@ -587,8 +587,20 @@ function buildFamilySelectWidget(p_id, p_checked) {
 	//Divmod.debug('---', 'globals.buildFamilySelectWidget() was called. Id=' + p_id + '  Checked=' + p_checked);
 	return buildSelectWidget(p_id, globals.Valid.Families, p_checked);
 }
-function buildInterfaceSelectWidget(p_id, p_checked) {
-	return buildSelectWidget(p_id, globals.Valid.Interfaces, p_checked);
+function buildFloorSelectWidget(p_id, p_checked) {
+	return buildSelectWidget(p_id, globals.Valid.Floors, p_checked);
+}
+function buildInterfaceTypeSelectWidget(p_id, p_checked) {
+	return buildSelectWidget(p_id, globals.Valid.InterfaceType, p_checked);
+}
+function buildLightTypeSelectWidget(p_id, p_checked) {
+	return buildSelectWidget(p_id, globals.Valid.LightType, p_checked);
+}
+function buildProtocolTypeSelectWidget(p_id, p_checked) {
+	return buildSelectWidget(p_id, globals.Valid.ProtocolType, p_checked);
+}
+function buildScheduleTypeSelectWidget(p_id, p_checked) {
+	return buildSelectWidget(p_id, globals.Valid.ScheduleType, p_checked);
 }
 /**
  * Build a valid select widget

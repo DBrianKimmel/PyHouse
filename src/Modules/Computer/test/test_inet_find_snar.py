@@ -12,6 +12,7 @@
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
+from twisted.internet import reactor
 
 # Import PyMh files and modules.
 from test import xml_data
@@ -27,15 +28,16 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+        self.m_pyhouse_obj.Twisted.Reactor = reactor
 
 
-class Test(SetupMixin, unittest.TestCase):
+class C_01_Util(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         self.m_reactor = self.m_pyhouse_obj.Twisted.Reactor
 
-    def testName(self):
+    def test_01_IPv4_addr(self):
         pass
 
 # ## END DBK

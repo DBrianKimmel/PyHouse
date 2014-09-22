@@ -13,14 +13,13 @@
 """
 
 # Import system type stuff
-import datetime
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from Modules.Core.data_objects import ScheduleBaseData, ScheduleLightData
 from Modules.Utilities.xml_tools import XmlConfigTools, stuff_new_attrs
 from Modules.Computer import logging_pyh as Logger
-from Modules.Utilities.tools import PrettyPrintAny
+# from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 1
 LOG = Logger.getLogger('PyHouse.ScheduleXml ')

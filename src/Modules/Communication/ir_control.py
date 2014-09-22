@@ -89,7 +89,7 @@ class LircConnection(object):
     Connect to the LIRC socket.
     """
 
-    def start_lirc_connect(self, p_pyhouses_obj):
+    def start_lirc_connect(self, p_pyhouse_obj):
 
         def cb_connect(p_reason):
             LOG.debug("LircConnection good {0:}".format(p_reason))
@@ -97,7 +97,7 @@ class LircConnection(object):
         def eb_connect(p_reason):
             LOG.error("LircConnection Error {0:}".format(p_reason))
 
-        l_endpoint = clientFromString(p_pyhouses_obj.Twisted.Reactor, LIRC_SOCKET)
+        l_endpoint = clientFromString(p_pyhouse_obj.Twisted.Reactor, LIRC_SOCKET)
         l_factory = LircFactory()
         l_defer = l_endpoint.connect(l_factory)
         l_defer.addCallback(cb_connect)
@@ -132,13 +132,13 @@ class IrDispatch(object):
 
 class Utility(LircConnection):
 
-    def start_AMP(self, p_pyhouses_obj):
+    def start_AMP(self, p_pyhouse_obj):
         l_endpoint = TCP4ServerEndpoint
         l_factory = Factory()
         l_factory.protocol = AMP
-        p_pyhouses_obj.Services.IrControlService = StreamServerEndpointService(l_endpoint, l_factory)
-        p_pyhouses_obj.Services.IrControlService.setName('IrControl')
-        p_pyhouses_obj.Services.IrControlService.setServiceParent(p_pyhouses_obj.Twisted.Application)
+        p_pyhouse_obj.Services.IrControlService = StreamServerEndpointService(l_endpoint, l_factory)
+        p_pyhouse_obj.Services.IrControlService.setName('IrControl')
+        p_pyhouse_obj.Services.IrControlService.setServiceParent(p_pyhouse_obj.Twisted.Application)
 
 class API(Utility):
 

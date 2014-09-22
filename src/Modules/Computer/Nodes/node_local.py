@@ -131,16 +131,16 @@ class HandleNodeType(object):
     def __init__(self, p_role):
         self.find_node_type(p_role)
 
-    def init_node_type(self, p_pyhouses_obj):
+    def init_node_type(self, p_pyhouse_obj):
         if self.m_node & NODE_PIFACECAD:
-            self._init_ir_control(p_pyhouses_obj)
+            self._init_ir_control(p_pyhouse_obj)
 
 
-    def _init_ir_control(self, p_pyhouses_obj):
+    def _init_ir_control(self, p_pyhouse_obj):
         """This node has an IR receiver so set it up.
         """
         l_ir = ir_control.API()
-        l_ir.Start(p_pyhouses_obj)
+        l_ir.Start(p_pyhouse_obj)
 
 
 class ReadWriteConfigXml(XmlConfigTools):
@@ -291,10 +291,10 @@ class Utility(ReadWriteConfigXml):
         p_role |= self._is_tunnel_node()
         return p_role
 
-    def get_node_info(self, p_pyhouses_obj):
-        p_pyhouses_obj.Computer.Nodes[0].Name = platform.node()
-        p_pyhouses_obj.Computer.Nodes[0].Key = 0
-        p_pyhouses_obj.Computer.Nodes[0].Active = True
+    def get_node_info(self, p_pyhouse_obj):
+        p_pyhouse_obj.Computer.Nodes[0].Name = platform.node()
+        p_pyhouse_obj.Computer.Nodes[0].Key = 0
+        p_pyhouse_obj.Computer.Nodes[0].Active = True
 
     def find_node_role(self):
         l_role = NODE_NOTHING
@@ -305,38 +305,38 @@ class Utility(ReadWriteConfigXml):
             LOG.info('Windows Node')
         return l_role
 
-    def init_node_type(self, p_pyhouses_obj):
-        l_role = p_pyhouses_obj.Computer.Nodes[0].NodeRole
+    def init_node_type(self, p_pyhouse_obj):
+        l_role = p_pyhouse_obj.Computer.Nodes[0].NodeRole
         if l_role & NODE_PIFACECAD:
-            self._init_ir_control(p_pyhouses_obj)
+            self._init_ir_control(p_pyhouse_obj)
         elif l_role & NODE_LIGHTS:
             pass
         elif l_role & NODE_CAMERA:
             pass
 
-    def _init_ir_control(self, p_pyhouses_obj):
+    def _init_ir_control(self, p_pyhouse_obj):
         """This node has an IR receiver so set it up.
         """
         l_ir = ir_control.API()
-        l_ir.Start(p_pyhouses_obj)
+        l_ir.Start(p_pyhouse_obj)
 
-    def insert_node(self, p_node, p_pyhouses_obj):
+    def insert_node(self, p_node, p_pyhouse_obj):
         return
         """The local node should always be node 0 - Do I want to force it ???
         """
         l_max_key = -1
         try:
-            for l_node in p_pyhouses_obj.Computer.Nodes.itervalues():
+            for l_node in p_pyhouse_obj.Computer.Nodes.itervalues():
                 if l_node.Name == p_node.Name:
-                    p_pyhouses_obj.Computer.Nodes[l_node.Key] = p_node
+                    p_pyhouse_obj.Computer.Nodes[l_node.Key] = p_node
                     return
                 if l_node.Key > l_max_key:
                     l_max_key = l_node.Key
         except AttributeError:
             pass
-        p_pyhouses_obj.Computer.Nodes[l_max_key + 1] = p_node
+        p_pyhouse_obj.Computer.Nodes[l_max_key + 1] = p_node
         if g_debug >= 1:
-            LOG.debug('Nodes = {0:}'.format(p_pyhouses_obj.Compute.Nodes))
+            LOG.debug('Nodes = {0:}'.format(p_pyhouse_obj.Compute.Nodes))
 
     def create_local_node(self):
         l_node = NodeData()

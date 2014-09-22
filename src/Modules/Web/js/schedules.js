@@ -95,14 +95,15 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 		self.nodeById('ActiveDiv').innerHTML   = buildTrueFalseWidget('ScheduleActive', p_obj.Active);
 		self.nodeById('UUIDDiv').innerHTML     = buildTextWidget('ScheduleUUID', p_obj.UUID, 'disabled');
 		self.nodeById('TypeDiv').innerHTML     = buildTextWidget('ScheduleType', p_obj.Type);  // s/b select box of valid types
-		self.nodeById('RoomNameDiv').innerHTML = buildRoomSelectWidget('ScheduleRoomName', p_obj.RoomName, 'disabled');
-		self.nodeById('LightNameDiv').innerHTML = buildLightSelectWidget('ScheduleLightName', p_obj.LightName, 'disabled');
 		self.nodeById('TimeDiv').innerHTML     = buildTextWidget('ScheduleTime', p_obj.Time);
+		
+		self.nodeById('RoomNameDiv').innerHTML = buildRoomSelectWidget('ScheduleRoomName', p_obj.RoomName, 'disabled');
+		self.nodeById('LightNameDiv').innerHTML = buildLightNameSelectWidget('ScheduleLightName', p_obj.LightName, 'disabled');
 		self.nodeById('LevelDiv').innerHTML    = buildLevelSliderWidget('ScheduleLevel', p_obj.Level);
 		self.nodeById('RateDiv').innerHTML     = buildTextWidget('ScheduleRate', p_obj.Rate, 'disabled');
 		self.nodeById('ScheduleEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick');
 	},
-	
+
 	function fetchEntry(self) {
 		//Divmod.debug('---', 'schedules.fetchEntry() was called. ');
         var l_data = {
@@ -112,7 +113,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 			RoomName  : fetchSelectWidget('ScheduleRoomName'),
 			ScheduleType : fetchTextWidget('ScheduleType'),
 			UUID      : fetchTextWidget('ScheduleUUID'),
-			
+
 			// be sure to strip any leading or trailing white space and lower case text
 			Time      : fetchTextWidget('ScheduleTime'),
 			Level     : fetchLevelWidget('ScheduleLevel'),
@@ -129,13 +130,15 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 			Name : 'Change Me',
 			Key : Object.keys(globals.House.HouseObj.Schedules).length,
 			Active : false,
+			UUID : '',
 			ScheduleType : '',
 			Time : '',
+			DOW : 127,
+			Mode : 0,
 			Level : 0,
 			Rate : 0,
 			RoomName : '',
 			LightName : '',
-			UUID : '',
 			Delete : false
         }
 		return l_data;
@@ -176,7 +179,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 			l_node.showWidget();
 		}
 	},
-	
+
 	/**
 	 * Event handler for submit buttons at bottom of entry portion of this widget.
 	 * Get the possibly changed data and send it to the server.

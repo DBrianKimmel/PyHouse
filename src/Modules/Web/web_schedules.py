@@ -17,6 +17,7 @@ from nevow import athena
 from nevow import loaders
 
 # Import PyMh files and modules.
+from Modules.Core.data_objects import ScheduleBaseData
 from Modules.Web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.Scheduling import schedule
 from Modules.Computer import logging_pyh as Logger
@@ -61,17 +62,22 @@ class SchedulesElement(athena.LiveElement):
         try:
             l_obj = self.m_pyhouse_obj.House.OBJs.Schedules[l_schedule_ix]
         except KeyError:
-            l_obj = schedule.ScheduleBaseData()
+            l_obj = ScheduleBaseData()
         l_obj.Name = l_json['Name']
         l_obj.Active = l_json['Active']
         l_obj.Key = int(l_json['Key'])
+        l_obj.UUID = l_json['UUID']
+        #
+        self.DOW = None
+        self.Mode = None
+        l_obj.ScheduleType = l_json['ScheduleType']
+        l_obj.Time = l_json['Time']
+        #
         l_obj.Level = int(l_json['Level'])
         l_obj.LightName = l_json['LightName']
         l_obj.Rate = l_json['Rate']
         l_obj.RoomName = l_json['RoomName']
-        l_obj.Time = l_json['Time']
-        l_obj.ScheduleType = l_json['ScheduleType']
-        l_obj.UUID = l_json['UUID']
+        #
         l_obj._DeleteFlag = l_json['Delete']
         self.m_pyhouse_obj.House.OBJs.Schedules[l_schedule_ix] = l_obj
 

@@ -34,6 +34,8 @@ from Modules.Computer import logging_pyh as Logger
 
 g_debug = 1
 LOG = Logger.getLogger('PyHouse.Internet    ')
+INITIAL_DELAY = 25
+REPEAT_DELAY = 2 * 60 * 60
 
 
 class ReadWriteConfigXml(XmlConfigTools):
@@ -183,7 +185,7 @@ class Utility(ReadWriteConfigXml):
             p_pyhouse_obj.Services.InternetDiscoveryService.setServiceParent(p_pyhouse_obj.Twisted.Application)
             self.start_internet_discovery(p_pyhouse_obj)
         except RuntimeError:  # The service is already installed
-            pass
+            LOG.warning('Internet Discovery Service already loaded.')
         self.m_service_installed = True
 
 
@@ -212,6 +214,5 @@ class API(Utility):
     def SaveXml(self, p_xml):
         p_xml.append(self.write_internet_xml(self.m_pyhouse_obj.Computer.InternetConnection))
         LOG.info('Saved XML')
-
 
 # ## END DBK

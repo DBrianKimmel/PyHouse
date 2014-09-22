@@ -34,8 +34,9 @@ from Modules.Computer import logging_pyh
 
 
 LOG = logging_pyh.getLogger('PyHouse.InternetFnd ')
-INITIAL_DELAY = 2 * 60
-
+INITIAL_DELAY = 35
+REPEAT_DELAY = 2 * 60 * 60  # 2 Hours
+MINIMUM_DELAY = 30 * 60  # 30 Minutes
 
 class FindExternalIpAddress(object):
     """
@@ -45,61 +46,74 @@ class FindExternalIpAddress(object):
     m_url = None
     m_reactor = None
 
-    def __init__(self, p_internet_obj, p_reactor):
+    def __init__(self, p_pyhouse_obj, p_internet_obj):
         """
         Delay a bit so we are not too busy with initialization and then start the IPv4 query process.
         """
+        self.m_pyhouse_obj = p_pyhouse_obj
         self.m_internet_obj = p_internet_obj
-        self.m_reactor = p_reactor
-        self.m_reactor.callLater(INITIAL_DELAY, self.get_public_ip, None)
+        p_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self.get_public_ip, None)
+
+    def _get_delay(self, p_internet_obj):
+        if p_internet_obj.ExternalDelay < MINIMUM_DELAY:
+            p_internet_obj.ExternalDelay = MINIMUM_DELAY
+        return p_internet_obj.ExternalDelay
+
+    def _extract_ip(self, p_string):
+        l_quad = p_string
+        l_addr = convert.ConvertEthernet().dotted_quad2long(l_quad)
+        return l_addr, l_quad
+
+    def _snar_scrape(self, p_page):
+        """
+        For snar - the only thing is to use the page as a string.
+        """
+        l_string = p_page
+        return l_string
 
     def get_public_ip(self, _ignore):
         """
         Get the public IP address for the house.
-        """
-        l_minimum_delay = 10 * 60  # 10 Minutes
-        if self.m_internet_obj.ExternalDelay < l_minimum_delay:
-            self.m_internet_obj.ExternalDelay = l_minimum_delay
-        self.m_reactor.callLater(self.m_internet_obj.ExternalDelay, self.get_public_ip, None)
-        self.m_url = self.m_internet_obj.ExternalUrl
-        if self.m_url == None:
-            LOG.error("URL is missing.")
-            return
-        # LOG.debug("About to get URL:{0:}".format(self.m_url))
-        l_ip_page_defer = getPage(self.m_url)
-        l_ip_page_defer.addCallbacks(self.cb_parse_page, self.eb_no_page)
 
-    def cb_parse_page(self, p_ip_page):
-        """This gets the page with the IP in it and returns it.
+        This gets the page with the IP in it and returns it.
         Different sites will need different page scraping to get the IP address.
         dotted quad IPs are converted to 4 byte IPv4 addresses
         IP V-6 is not handled yet.
 
         @param p_ip_page: is the web page as a string
         """
-        l_quad = p_ip_page
-        self.m_internet_obj.ExternalIPv4 = l_quad
-        l_addr = convert.ConvertEthernet().dotted_quad2long(l_quad)
-        LOG.info("Got External IP page - {0:}".format(p_ip_page))
-        return l_addr
+        def cb_parse_page(p_ip_page):
+            LOG.info("Got External IP page - {0:}".format(p_ip_page))
+            l_string = self._snar_scrape(p_ip_page)
+            l_addr_str, _l_quad = self._extract_ip(l_string)
+            return l_addr_str
 
-    def eb_no_page(self, p_reason):
-        LOG.error("Failed to Get External IP page - {0:}".format(p_reason))
+        def eb_no_page(p_reason):
+            LOG.error("Failed to Get External IP page - {0:}".format(p_reason))
+
+        self.m_pyhouse_obj.Twisted.Reactor.callLater(self._get_delay(self.m_internet_obj), self.get_public_ip, None)
+        self.m_url = self.m_internet_obj.ExternalUrl
+        if self.m_url == None:
+            LOG.error("URL is missing.")
+            return
+        # LOG.debug("About to get URL:{0:}".format(self.m_url))
+        l_ip_page_defer = getPage(self.m_url)
+        l_ip_page_defer.addCallbacks(cb_parse_page, eb_no_page)
+
+    def get_public_ip2(self, _ignore):
+        def cb_1():
+            pass
+
+        p_hostname = 'snar.co'
+        endpoint = HostnameEndpoint(self.m_pyhouse_obj.Twisted.Reactor, p_hostname, 80)
+        l_agent = ProxyAgent(endpoint)
+        l_defer = l_agent.request(b"GET", b"http://google.com/")
+        l_defer.addCallback(cb_1)
 
 
 class Utility(FindExternalIpAddress):
     """
     """
-
-    def get_delay(self, p_internet_obj):
-        """
-        Get the delay between attempts to check for our External IP address.
-        We don't want to be a nuisance and load a connection down with lots of queries.
-        """
-        l_minimum_delay = 10 * 60  # 10 Minutes
-        if p_internet_obj.ExternalDelay < l_minimum_delay:
-            p_internet_obj.ExternalDelay = l_minimum_delay
-
 
 class API(Utility):
 
@@ -110,9 +124,8 @@ class API(Utility):
 
     def Start(self, p_pyhouse_obj, p_ix):
         self.m_internet_obj = p_pyhouse_obj.Computer.InternetConnection[p_ix]
-        self.get_delay(self.m_internet_obj)
         self.m_reactor = p_pyhouse_obj.Twisted.Reactor
-        FindExternalIpAddress(self.m_internet_obj, self.m_reactor)
+        FindExternalIpAddress(p_pyhouse_obj, self.m_internet_obj)
 
     def Stop(self, ignore1, ignore2):
         pass

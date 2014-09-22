@@ -129,7 +129,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 		self.nodeById('RoomNameDiv').innerHTML       = buildRoomSelectWidget('ControllerRoomName', p_obj.RoomName);
 		self.nodeById('TypeDiv').innerHTML           = buildTextWidget('ControllerType', p_obj.LightingType, 'disabled');
 		self.nodeById('UUIDDiv').innerHTML           = buildTextWidget('ControllerUUID', p_obj.UUID, 'disabled');
-		self.nodeById('InterfaceDiv').innerHTML      = buildInterfaceSelectWidget('InterfaceType', p_obj.InterfaceType);
+		self.nodeById('InterfaceDiv').innerHTML      = buildInterfaceTypeSelectWidget('InterfaceType', p_obj.InterfaceType);
 		self.nodeById('PortDiv').innerHTML           = buildTextWidget('ControllerPort', p_obj.Port);
         if (p_obj['ControllerFamily'] == 'Insteon') {  // Insteon info
 			self.fillInsteonEntry(p_obj);

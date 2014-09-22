@@ -60,10 +60,10 @@ class ReadWriteConfigXml(PutGetXML):
     """
     """
 
-    def read_web_xml(self, p_pyhouses_obj):
+    def read_web_xml(self, p_pyhouse_obj):
         l_ret = WebData()
         try:
-            l_sect = p_pyhouses_obj.XmlRoot.find('WebSection')
+            l_sect = p_pyhouse_obj.XmlRoot.find('WebSection')
             l_ret.WebPort = self.get_int_from_xml(l_sect, 'WebPort')
         except AttributeError:
             l_ret.WebPort = 8580
@@ -80,18 +80,18 @@ class Utility(ReadWriteConfigXml):
     def update_pyhouse_obj(self, p_pyhouse_obj):
         p_pyhouse_obj.Computer.Web = WebData()
 
-    def start_webserver(self, p_pyhouses_obj):
+    def start_webserver(self, p_pyhouse_obj):
         try:
-            p_pyhouses_obj.Services.WebServerService = service.Service()
-            p_pyhouses_obj.Services.WebServerService.setName('WebServer')
-            p_pyhouses_obj.Services.WebServerService.setServiceParent(p_pyhouses_obj.Twisted.Application)
+            p_pyhouse_obj.Services.WebServerService = service.Service()
+            p_pyhouse_obj.Services.WebServerService.setName('WebServer')
+            p_pyhouse_obj.Services.WebServerService.setServiceParent(p_pyhouse_obj.Twisted.Application)
         except RuntimeError:  # The service is already installed
             pass
         #
         l_site_dir = None
-        l_site = appserver.NevowSite(web_mainpage.TheRoot(l_site_dir, p_pyhouses_obj))
-        p_pyhouses_obj.Twisted.Reactor.listenTCP(p_pyhouses_obj.Computer.Web.WebPort, l_site)
-        l_msg = "Port:{0:}, Path:{1:}".format(p_pyhouses_obj.Computer.Web.WebPort, l_site_dir)
+        l_site = appserver.NevowSite(web_mainpage.TheRoot(l_site_dir, p_pyhouse_obj))
+        p_pyhouse_obj.Twisted.Reactor.listenTCP(p_pyhouse_obj.Computer.Web.WebPort, l_site)
+        l_msg = "Port:{0:}, Path:{1:}".format(p_pyhouse_obj.Computer.Web.WebPort, l_site_dir)
         LOG.info("Started - {0:}".format(l_msg))
 
 

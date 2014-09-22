@@ -244,11 +244,6 @@ class ScheduleBaseData(ABaseObject):
     """
     def __init__(self):
         super(ScheduleBaseData, self).__init__()
-        # self.Level = 0
-        # self.LightName = None
-        # self.Object = None  # a light (perhaps other) object
-        # self.Rate = 0
-        # self.RoomName = None
         self.ScheduleType = 'Device'  # For future expansion into scenes, entertainment etc.
         self.Time = None
         self.DOW = None
@@ -340,6 +335,7 @@ class CoreServicesInformation(object):
     def __init__(self):
         self.NodeDiscoveryService = None
         self.NodeDomainService = None
+        self.InterNodeComm = None
         self.InternetDiscoveryService = None
         self.InternetUpdateService = None
         self.IrControlService = None

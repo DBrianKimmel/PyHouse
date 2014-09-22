@@ -108,8 +108,8 @@ class TheRoot(rend.Page):
     """This is the root - given to the app server!
     """
 
-    def __init__(self, staticpath, p_pyhouses_obj, *args, **kw):
-        self.m_pyhouse_obj = p_pyhouses_obj
+    def __init__(self, staticpath, p_pyhouse_obj, *args, **kw):
+        self.m_pyhouse_obj = p_pyhouse_obj
         if staticpath == None:
             l_jspath = util.sibpath(jspath, 'js')
             staticpath = os.path.join(l_jspath, '', 'resource')
@@ -256,8 +256,8 @@ class MainPage(athena.LivePage):
     jsClass = u'mainPage.mainPage'
     docFactory = loaders.xmlfile(os.path.join(templatepath, 'mainpage.html'))
 
-    def __init__(self, p_pyhouses_obj):
-        self.m_pyhouse_obj = p_pyhouses_obj
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
         super(MainPage, self).__init__()
 
     def child_jsmodule(self, _ctx):
@@ -307,8 +307,8 @@ class Workspace(athena.LiveElement):
     PG_UNKNOWN = -1
     PG_INITED = 0
 
-    def __init__(self, p_pyhouses_obj, uid = None):
-        self.m_pyhouse_obj = p_pyhouses_obj
+    def __init__(self, p_pyhouse_obj, uid = None):
+        self.m_pyhouse_obj = p_pyhouse_obj
         super(Workspace, self).__init__()
         LOG.info('web_mainpage Workspace initialized.')
         self.state = self.PG_INITED
@@ -478,14 +478,14 @@ class Workspace(athena.LiveElement):
 
 #==============================================================================
 
-def factory(ctx, segments, p_pyhouses_obj):
+def factory(ctx, segments, p_pyhouse_obj):
     """ If segments contains a liveID (len = 32) the page stored in self.Clients will be returned.
     Status of the given page is stored in the page object itself and nowhere else.
     """
     seg0 = segments[0]
     if seg0 == '':
         # Starting page - no segments yet
-        return MainPage(p_pyhouses_obj), segments[1:]
+        return MainPage(p_pyhouse_obj), segments[1:]
     elif _mainPageFactory.Clients.has_key(seg0):
         # xxx
         return _mainPageFactory.Clients[seg0], segments[1:]

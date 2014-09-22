@@ -171,7 +171,7 @@ class API(Utilities):
         self.m_pyhouse_obj.APIs.CoreSetupAPI.Stop()
         LOG.info("Stopped.\n")
 
-    def SaveXml(self, _p_pyhouses_obj):
+    def SaveXml(self, _p_pyhouse_obj):
         """Update XML file with current info.
         Keep on running after the snapshot.
         """

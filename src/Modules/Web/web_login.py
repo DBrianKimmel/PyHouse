@@ -30,6 +30,7 @@ from Modules.Web import web_utils
 from Modules.Families import VALID_FAMILIES
 from Modules.Drivers import VALID_INTERFACES
 from Modules.Drivers import VALID_PROTOCOLS
+from Modules.Housing import VALID_FLOORS
 from Modules.Scheduling import VALID_SCHEDULING_TYPES
 from Modules.Lighting import VALID_LIGHTS_TYPE
 from Modules.Computer import logging_pyh as Logger
@@ -101,11 +102,19 @@ class LoginElement(athena.LiveElement):
         Return via JSON:
             VALID_INTERFACES
             VALID_FAMILIES
+            VALID_FLOORS
             VALID_LIGHTS_TYPES
+            VALID_PROTOCOLS
             VALID_SCHEDULING_TYPES
         """
-        l_obj = dict(Interfaces = VALID_INTERFACES, Protocols = VALID_PROTOCOLS, Families = VALID_FAMILIES,
-                     Lights = VALID_LIGHTS_TYPE, Scheduling = VALID_SCHEDULING_TYPES)
+        l_obj = dict(
+                     Families = VALID_FAMILIES,
+                     Floors = VALID_FLOORS,
+                     InterfaceType = VALID_INTERFACES,
+                     LightType = VALID_LIGHTS_TYPE,
+                     ProtocolType = VALID_PROTOCOLS,
+                     ScheduleType = VALID_SCHEDULING_TYPES
+                     )
         l_json = web_utils.JsonUnicode().encode_json(l_obj)
         return unicode(l_json)
 

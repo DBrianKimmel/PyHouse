@@ -58,8 +58,9 @@
             <Phone>(352) 270-8096</Phone>
             <Latitude>28.938448</Latitude>
             <Longitude>-82.517208</Longitude>
-            <TimeZone>-240.0</TimeZone>
-            <SavingTime>60.0</SavingTime>
+            <TimeZoneName>US/Eastern</TimeZoneName>
+            <TimeZoneOffset>-240.0</TimeZoneOffset>
+            <DaylightSavingsTime>60.0</DaylightSavingsTime>
         </LocationSection>
         <RoomSection>
             <Room Active="True" Key="0" Name="IsMaster Bath">
@@ -246,7 +247,7 @@
                 <DevCat>3140</DevCat>
                 <GroupList>All_Lights|Outside|Foyer(0;0)</GroupList>
                 <GroupNumber>0</GroupNumber>
-                <IsMaster>0</IsMaster>
+                <IsMaster>True</IsMaster>
                 <ProductKey>30.1A.35</ProductKey>
                 <IsResponder>True</IsResponder>
             </Light>
@@ -257,32 +258,51 @@
                 <LightingType>Light</LightingType>
                 <Address>17.47.A1</Address>
                 <IsController>True</IsController>
-                <DevCat>0x0</DevCat><GroupList>All_Lights|Outside|Garage(0;0)</GroupList>
-                <GroupNumber>0</GroupNumber><IsMaster>0</IsMaster><ProductKey>0</ProductKey><IsResponder>True</IsResponder>
+                <DevCat>0x0</DevCat>
+                <GroupList>All_Lights|Outside|Garage(0;0)</GroupList>
+                <GroupNumber>0</GroupNumber>
+                <IsMaster>True</IsMaster>
+                <ProductKey>0</ProductKey>
+                <IsResponder>True</IsResponder>
             </Light>
             <Light Active="True" Key="2" Name="dr_chand">
                 <Comment>SwitchLink dimmer</Comment>
                 <Coords>['0', '0']</Coords>
                 <IsDimmable>True</IsDimmable>
                 <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>Dining Room</RoomName><LightingType>Light</LightingType><Address>16.C9.37</Address>
-                <IsController>True</IsController><DevCat>0</DevCat><GroupList>All_Lights|DiningRoom(12;12)</GroupList>
+                <RoomName>Dining Room</RoomName>
+                <LightingType>Light</LightingType>
+                <Address>16.C9.37</Address>
+                <IsController>True</IsController>
+                <DevCat>0</DevCat>
+                <GroupList>All_Lights|DiningRoom(12;12)</GroupList>
                 <GroupNumber>0</GroupNumber>
-                <IsMaster>0</IsMaster><ProductKey>F4.20.20</ProductKey><IsResponder>True</IsResponder>
+                <IsMaster>True</IsMaster>
+                <ProductKey>F4.20.20</ProductKey>
+                <IsResponder>True</IsResponder>
             </Light>
             <Light Active="True" Key="3" Name="dr_chand_slave">
-                <Comment>SwitchLink dimmer</Comment><Coords>['0', '0']</Coords><IsDimmable>True</IsDimmable>
+                <Comment>SwitchLink dimmer</Comment>
+                <Coords>['0', '0']</Coords>
+                <IsDimmable>True</IsDimmable>
                 <ControllerFamily>Insteon</ControllerFamily>
                 <RoomName>Dining Room</RoomName>
                 <LightingType>Light</LightingType>
                 <Address>16.C9.D0</Address><IsController>True</IsController>
-                <DevCat>8007</DevCat><GroupList>All_Lights|Pantry(0;0)</GroupList><GroupNumber>0</GroupNumber>
-                <IsMaster>0</IsMaster><ProductKey>EB.2A.A8</ProductKey><IsResponder>True</IsResponder></Light>
+                <DevCat>8007</DevCat>
+                <GroupList>All_Lights|Pantry(0;0)</GroupList>
+                <GroupNumber>0</GroupNumber>
+                <IsMaster>True</IsMaster>
+                <ProductKey>EB.2A.A8</ProductKey>
+                <IsResponder>True</IsResponder>
+            </Light>
             <Light Active="True" Key="4" Name="nook_chand">
-                <Comment>SwitchLink dimmer</Comment><Coords>['0', '0']</Coords>
+                <Comment>SwitchLink dimmer</Comment>
+                <Coords>['0', '0']</Coords>
                 <IsDimmable>True</IsDimmable>
                 <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>Breakfast Nook</RoomName><LightingType>Light</LightingType>
+                <RoomName>Breakfast Nook</RoomName>
+                <LightingType>Light</LightingType>
                 <Address>17.C2.72</Address><IsController>True</IsController>
                 <DevCat>0xc44</DevCat><GroupList>All_Lights|Pantry(0;0)</GroupList>
                 <GroupNumber>0</GroupNumber><IsMaster>0</IsMaster><ProductKey>0</ProductKey>
@@ -500,7 +520,7 @@
                 <StopBits>1.0</StopBits>
                 <Timeout>1.0</Timeout>
             </Controller>
-            <Controller Active="True" Key="1" Name="PowerLink">
+            <Controller Active="False" Key="1" Name="PowerLink">
                 <Comment>2413UH Powerlink Controller</Comment>
                 <Coords />
                 <IsDimmable>False</IsDimmable>

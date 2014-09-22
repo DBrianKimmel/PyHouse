@@ -202,8 +202,8 @@ class AmpServerFactory(ServerFactory):
     When one is made, build a protocol for using that connection.
     """
 
-    def __init__(self, p_pyhouses_obj):
-        self.m_pyhouse_obj = p_pyhouses_obj
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
 
     def buildProtocol(self, _p_address_tupple):
         # LOG.info('Server Factory is now building a DomainProtocol protocol - Addr: {0:}'.format(_p_address_tupple))
@@ -245,12 +245,10 @@ class AmpClient(object):
         Send our local node information to another node in our node list.
 
         @param p_protocol: is an AMP instance
-
-        Either the CB or EB will fire !
         """
 
         def cb_send_node_information(p_arg):
-            # LOG.info('Sent node info OK - {0:} \n'.format(p_arg))
+            LOG.info('Sent node info OK - {0:} \n'.format(p_arg))
             return p_arg
 
         def eb_send_node_information(p_reason):
@@ -264,7 +262,7 @@ class AmpClient(object):
         l_defer.addErrback(eb_send_node_information)
         l_defer.addBoth(bb_send_node_info)
 
-    def update_client_node(self, p_pyhouses_obj, p_address):
+    def update_client_node(self, p_pyhouse_obj, p_address):
         """
         Create a client to talk to some node's servers.
         Send node info
@@ -280,16 +278,16 @@ class AmpClient(object):
             # LOG.info('Closing connection to node {0:} - Arg: {1:}'.format(p_address, p_arg))
             pass
 
-        self.m_pyhouse_obj = p_pyhouses_obj
+        self.m_pyhouse_obj = p_pyhouse_obj
         self.m_address = p_address
         LOG.info('Client to Address: {}'.format(p_address))
-        l_endpoint = TCP4ClientEndpoint(p_pyhouses_obj.Twisted.Reactor, p_address, AMP_PORT)
+        l_endpoint = TCP4ClientEndpoint(p_pyhouse_obj.Twisted.Reactor, p_address, AMP_PORT)
         l_defer = l_endpoint.connect(ClientFactory.forProtocol(AMP))
         l_defer.addCallback(cb_update_client_node)
         l_defer.addErrback(eb_update_client_node)
         l_defer.addBoth(bb_close_connection)
 
-    def start_sending_to_all_clients(self, _ignore):
+    def start_sending_to_all_cclients(self, _ignore):
         """
         This runs every 2 hours.
         Loop thru all the nodes we know about.  Start a client for each node except ourself (Nodes[0]).
