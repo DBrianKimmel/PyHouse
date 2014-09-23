@@ -43,8 +43,8 @@ class Utility(ControllersAPI, ButtonsAPI, LightingLightsAPI):
 
     def _write_lighting_xml(self, p_house_objs, p_house_element):
         try:
-            # p_house_element.append(self.write_all_lights_xml(p_house_objs.Lights))
-            # p_house_element.append(self.write_buttons_xml(p_house_objs.Buttons))
+            p_house_element.append(self.write_all_lights_xml(p_house_objs.Lights))
+            p_house_element.append(self.write_buttons_xml(p_house_objs.Buttons))
             p_house_element.append(self.write_controllers_xml(p_house_objs.Controllers))
         except AttributeError as e_err:
             LOG.error('ERRROR in writing lighting {0:}'.format(e_err))

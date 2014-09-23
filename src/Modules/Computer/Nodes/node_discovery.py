@@ -253,7 +253,7 @@ class Utility(object):
                     ServerProtocolV4(p_pyhouse_obj),
                     listenMultiple = True,
                     interface = p_interface)
-        # LOG.info('Started {}'.format(_l_port))
+        LOG.info('Started {}'.format(_l_port))
 
     def _start_discovery_client(self, p_pyhouse_obj, p_interface):
         _l_port = p_pyhouse_obj.Twisted.Reactor.listenMulticast(
@@ -261,10 +261,12 @@ class Utility(object):
                     ClientProtocolV4(p_pyhouse_obj),
                     listenMultiple = True,
                     interface = p_interface)
-        # LOG.info('Started {}'.format(_l_port))
+        LOG.info('Started {}'.format(_l_port))
 
     def start_node_discovery_service(self, p_pyhouse_obj):
         p_pyhouse_obj.Services.NodeDiscoveryService.startService()
+        self._start_discovery_server(p_pyhouse_obj, '')
+        self._start_discovery_client(p_pyhouse_obj, '')
 
     def stop_node_discovery_service(self, p_pyhouse_obj):
         p_pyhouse_obj.Services.NodeDiscoveryService.stopService()
@@ -272,11 +274,11 @@ class Utility(object):
     def create_discovery_service(self, p_pyhouse_obj):
         """
         """
+        LOG.info('Create Discovery Service')
         try:
             p_pyhouse_obj.Services.NodeDiscoveryService = service.Service()
             p_pyhouse_obj.Services.NodeDiscoveryService.setName('NodeDiscovery')
-            self._start_discovery_server(p_pyhouse_obj, '')
-            self._start_discovery_client(p_pyhouse_obj, '')
+            p_pyhouse_obj.Services.NodeDiscoveryService.setServiceParent(p_pyhouse_obj.Twisted.Application)
         except RuntimeError:
             LOG.info('Service already installed.')
         self.m_service_installed = True

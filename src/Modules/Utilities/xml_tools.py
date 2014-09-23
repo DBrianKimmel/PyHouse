@@ -62,7 +62,7 @@ class PutGetXML(object):
         if l_xml == "False" or l_xml == False:
             return False
         else:
-            print('XMLTools - GetBool - ERROR invalid bool value found for:{0:} - {1:}=>False'.format(p_name, l_xml))
+            print('XMLTools - GetBool - ERROR invalid bool value found for:{} - {}=>False  - {}'.format(p_name, l_xml, p_xml))
         return False
 
     def put_bool_attribute(self, p_xml_element, p_name, p_bool = 'False'):

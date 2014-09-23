@@ -54,8 +54,9 @@ class ButtonsAPI(ReadWriteConfigXml):
         return l_button_dict
 
     def write_one_button_xml(self, p_button_obj):
-        l_button_xml = self.write_base_object_xml('Button', p_button_obj)
+        # l_button_xml = self.write_base_object_xml('Button', p_button_obj)
         l_button_xml = self.write_base_lighting_xml(p_button_obj)
+        self._add_family_data(p_button_obj, l_button_xml)
         return l_button_xml
 
     def write_buttons_xml(self, p_buttons_obj):

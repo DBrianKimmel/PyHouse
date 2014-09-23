@@ -101,7 +101,7 @@ class LightData(BaseLightingData):
     def __init__(self):
         super(LightData, self).__init__()
         self.CurLevel = 0
-        self.IsController = None
+        # self.IsController = None
         self.LightingType = 'Light'
 
 

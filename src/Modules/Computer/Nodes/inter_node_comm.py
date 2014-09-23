@@ -15,7 +15,7 @@ from twisted.protocols.amp import AMP, Command, Integer, String, Float, AmpList
 from twisted.internet import reactor
 from twisted.internet import defer
 from twisted.internet.protocol import ServerFactory
-from twisted.internet.protocol import ClientFactory
+# from twisted.internet.protocol import ClientFactory
 from twisted.internet.endpoints import TCP4ClientEndpoint, connectProtocol
 from twisted.internet.endpoints import TCP4ServerEndpoint
 from twisted.application.internet import StreamServerEndpointService
@@ -37,11 +37,10 @@ CLIENT_DELAY = 3
 """ ------------------------------------------------------------------
  Command exceptions
 """
+
 class NodeInfoError(Exception): pass
 class UsernameUnavailable(Exception): pass
 class IrPacketError(Exception): pass
-
-
 
 """ ------------------------------------------------------------------
  Commands and Responders
@@ -50,7 +49,7 @@ class IrPacketError(Exception): pass
 class NodeInfo(Command):
     arguments = [('Name', String()),
                  ('Active', String(optional = True)),
-                 ('Address', String(optional = True)),
+                 ('AddressV4', String(optional = True)),
                  ('NodeRole', Integer(optional = True)),
                  ('UUID', String(optional = True))
                  ]
@@ -93,9 +92,9 @@ class InterNodeProtocol(amp.AMP):
         self.m_pyhouse_obj = p_pyhouse_obj
 
     @NodeInfo.responder
-    def receive_NodeInfo(self, Name, Active, Address, NodeRole, UUID):
-        l_response = self.update_NodeInfo(Name, Active, Address, NodeRole, UUID)
-        LOG.info('receive_NodeInfo() - from  address=:{}\n\tResponse = {}'.format(Address, l_response))
+    def receive_NodeInfo(self, Name, Active, AddressV4, NodeRole, UUID):
+        l_response = self.update_NodeInfo(Name, Active, AddressV4, NodeRole, UUID)
+        LOG.info('receive_NodeInfo() - from  address=:{}\n\tResponse = {}'.format(AddressV4, l_response))
         return l_response
 
 
@@ -112,7 +111,7 @@ class InterNodeProtocol(amp.AMP):
         print 'Server - Divided: %d / %d = %f' % (numerator, denominator, l_result)
         return {'result': l_result}
 
-    def update_NodeInfo(self, Name, Active, Address, NodeRole, UUID):
+    def update_NodeInfo(self, Name, Active, AddressV4, NodeRole, UUID):
         """
         Update our PyHouse Nodes information with the data we just got.
         Create a response we can pass back to the sender
@@ -121,7 +120,7 @@ class InterNodeProtocol(amp.AMP):
         for l_node in self.m_pyhouse_obj.Computer.Nodes.itervalues():
             if l_node.Name == Name:
                 l_node.Active = Active
-                l_node.Address = Address
+                l_node.AddressV4 = AddressV4
                 l_node.Role = NodeRole
                 l_node.UUID = UUID
                 l_key = int(l_node.Key)
@@ -189,7 +188,7 @@ class MathClient(object):
 
 class Utility(object):
 
-    def _send_NodeInfo_box(self, p_node, p_protocol):
+    def _build_NodeInfo_box(self, p_node, p_protocol):
         """
         Take the node information about this node - build a box and send it.
         """
@@ -197,17 +196,18 @@ class Utility(object):
                     NodeInfo,
                     Name = p_node.Name,
                     Active = str(p_node.Active),
-                    Address = p_node.ConnectionAddr_IPv4,
+                    AddressV4 = p_node.ConnectionAddr_IPv4,
                     NodeRole = int(p_node.NodeRole),
                     # UUID = "01234567-1234-2345-3456-01234567890ab"
                     UUID = "309"
                     )
         return l_defer
 
-    def send_our_info_to_node(self, p_pyhouse, p_address):
+
+    def send_our_info_to_node(self, p_pyhouse_obj, p_address):
 
         def cb_send_our_info(p_amp_protocol):
-            l_defer = self._send_NodeInfo_box(self.m_node, p_amp_protocol)
+            l_defer = self._build_NodeInfo_box(self.m_node, p_amp_protocol)
             return l_defer
 
         def cb_get_info_response(p_result):
@@ -216,7 +216,7 @@ class Utility(object):
         def eb_send_our_info(p_message):
             LOG.info('ERROR sending info - {}'.format(p_message))
 
-        self.m_node = self.m_pyhouse_obj.Computer.Nodes[0]
+        self.m_node = p_pyhouse_obj.Computer.Nodes[0]
         LOG.info('Sending our node info to {}'.format(p_address))
         destination = TCP4ClientEndpoint(reactor, p_address, AMP_PORT)
         l_defer = connectProtocol(destination, AMP())
@@ -231,8 +231,8 @@ class Utility(object):
 
         The server stays running for the duration of the PyHouse daemon.
         """
-        def cb_start_server(_p_port):
-            LOG.info('Server listening.')
+        def cb_start_server(p_port):
+            LOG.info('Server listening on port {}.'.format(p_port.getHost()))
             self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self._send_node_info_to_all, self.m_pyhouse_obj)
 
         def eb_start_server(p_reason):
@@ -264,20 +264,16 @@ class API(Utility):
 
     def _send_node_info_to_all(self, p_pyhouse_obj):
         """
-        Loop thru all the nodes we know about (from node_discivery) and send them our node info
+        Loop thru all the nodes we know about (from node_discovery) and send them our node info
         """
         for l_node in p_pyhouse_obj.Computer.Nodes.itervalues():
-            # LOG.info('Sending to Node {} {} at {}'.format(l_key, l_node.Name, l_node.ConnectionAddr_IPv4))
-            # self._create_amp_client(p_pyhouse_obj, l_node.ConnectionAddr_IPv4)
             self.send_our_info_to_node(p_pyhouse_obj, l_node.ConnectionAddr_IPv4)
 
 
     def Start(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        # LOG.info('Starting.')
         l_endpoint = self._create_amp_service(p_pyhouse_obj)
         self._start_amp_server(p_pyhouse_obj, l_endpoint)
-        # LOG.info('Started.')
 
 
     def Stop(self):
