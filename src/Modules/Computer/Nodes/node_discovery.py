@@ -106,12 +106,14 @@ class DGramUtil(object):
         Client will send out a "WHOS_THERE" query.
         This will find out all nodes that are subscribed to the PyHouse discovery multicast address.
         """
+        LOG.info('Client sent WHOs There')
         p_transport.write(WHOS_THERE, (p_address, PYHOUSE_DISCOVERY_PORT))
 
     def send_response(self, p_transport, p_address, p_pyhouse_obj):
         """
         Server will send a message out in response to a "WHOS_THERE" query.
         """
+        LOG.info('Send I Am Response')
         self.set_node_0_addr(p_address, p_pyhouse_obj)
         l_str = I_AM + ' ' + p_pyhouse_obj.Computer.Nodes[0].Name
         p_transport.write(l_str, p_address)
@@ -135,7 +137,7 @@ class ServerProtocolV4(DatagramProtocol):
     def startProtocol(self):
         """Called after protocol has started listening."""
         self.m_interface = DGramUtil().setup_multicast(self.transport, PYHOUSE_MULTICAST_IP_V4)
-        # LOG.info('Discovery Server Protocol started. {}'.format(self.m_interface))
+        LOG.info('Discovery Server Protocol started. {}'.format(self.m_interface))
 
     def datagramReceived(self, p_datagram, p_address):
         """
@@ -145,37 +147,7 @@ class ServerProtocolV4(DatagramProtocol):
         @type  p_address: C{tupple) (IpAddr, port)
         @param p_address: is the (IpAddr, Port) of the sender of this datagram (reply to address).
         """
-        # LOG.info("Discovery Server rxed: {0:} from: {1:}".format(repr(p_datagram), p_address[0]))
-        DGramUtil()._append_address(p_address)
-        if p_datagram.startswith(WHOS_THERE):
-            DGramUtil().send_response(self.transport, p_address, self.m_pyhouse_obj)
-        elif p_datagram.startswith(I_AM):
-            DGramUtil()._create_node(p_datagram, p_address, self.m_pyhouse_obj)
-
-
-class ServerProtocolV6(DatagramProtocol):
-    """
-    Listen for PyHouse nodes and respond to them.
-    We should get a packet from ourself and also packets from other nodes that are running.
-    """
-
-    def __init__(self, p_pyhouse_obj):
-        self.m_pyhouse_obj = p_pyhouse_obj
-
-    def startProtocol(self):
-        """Called after protocol has started listening."""
-        self.m_interface = DGramUtil().setup_multicast(self.transport, PYHOUSE_MULTICAST_IP_V6)
-        # LOG.info('Discovery Server Protocol started. {0:}'.format(self.m_interface))
-
-    def datagramReceived(self, p_datagram, p_address):
-        """
-        @type  p_datagram: C{str}
-        @param p_datagram: is the contents of the datagram.
-
-        @type  p_address: C{tupple) (IpAddr, port)
-        @param p_address: is the (IpAddr, Port) of the sender of this datagram (reply to address).
-        """
-        # LOG.info("Discovery Server rxed: {0:} from: {1:}".format(repr(p_datagram), p_address[0]))
+        LOG.info("Discovery Server rxed: {0:} from: {1:}".format(repr(p_datagram), p_address[0]))
         DGramUtil()._append_address(p_address)
         if p_datagram.startswith(WHOS_THERE):
             DGramUtil().send_response(self.transport, p_address, self.m_pyhouse_obj)
@@ -199,42 +171,14 @@ class ClientProtocolV4(ConnectedDatagramProtocol):
         """
         self.m_interface = DGramUtil().setup_multicast(self.transport, PYHOUSE_MULTICAST_IP_V4)
         DGramUtil().send_query(self.transport, PYHOUSE_MULTICAST_IP_V4)
-        # LOG.info('Discovery Client Protocol started  {}.'.format(self.m_interface))
+        LOG.info('Discovery Client Protocol started  {}.'.format(self.m_interface))
 
     def datagramReceived(self, p_datagram, p_address):
         """
         The client only rxes WHOS_THERE
         """
         NodeUtil().initialize_node(p_address[0], None)
-        # LOG.info('Discovery Client rxed: {0:} From: {1:}'.format(p_datagram, p_address[0]))
-        if p_datagram.startswith(WHOS_THERE):
-            DGramUtil().set_node_0_addr(p_address, self.m_pyhouse_obj)
-
-
-class ClientProtocolV6(ConnectedDatagramProtocol):
-    """
-    Find other PyHouse nodes within range.
-    """
-    m_pyhouse_obj = None
-
-    def __init__(self, p_pyhouse_obj):
-        self.m_pyhouse_obj = p_pyhouse_obj
-
-    def startProtocol(self):
-        """
-        Called when the protocol starts up.
-        All listeners on the Multicast address (including us) will receive the "Who's There?" message.
-        """
-        self.m_interface = DGramUtil().setup_multicast(self.transport, PYHOUSE_MULTICAST_IP_V6)
-        DGramUtil().send_query(self.transport, PYHOUSE_MULTICAST_IP_V6)
-        # LOG.info('Discovery Client Protocol started  {}.'.format(self.m_interface))
-
-    def datagramReceived(self, p_datagram, p_address):
-        """
-        The client only rxes WHOS_THERE
-        """
-        NodeUtil().initialize_node(p_address[0], None)
-        # LOG.info('Discovery Client rxed: {} From: {}'.format(p_datagram, p_address[0]))
+        LOG.info('Discovery Client rxed: {0:} From: {1:}'.format(p_datagram, p_address[0]))
         if p_datagram.startswith(WHOS_THERE):
             DGramUtil().set_node_0_addr(p_address, self.m_pyhouse_obj)
 
@@ -247,26 +191,26 @@ class Utility(object):
     m_pyhouse_obj = None
     m_service_installed = False
 
-    def _start_discovery_server(self, p_pyhouse_obj, p_interface):
-        _l_port = p_pyhouse_obj.Twisted.Reactor.listenMulticast(
+    def _start_discovery_server(self, p_pyhouse_obj):
+        l_port = p_pyhouse_obj.Twisted.Reactor.listenMulticast(
                     PYHOUSE_DISCOVERY_PORT,
                     ServerProtocolV4(p_pyhouse_obj),
-                    listenMultiple = True,
-                    interface = p_interface)
-        LOG.info('Started {}'.format(_l_port))
+                    listenMultiple = True)
+        LOG.info('Started {}'.format(l_port))
+        return l_port
 
-    def _start_discovery_client(self, p_pyhouse_obj, p_interface):
-        _l_port = p_pyhouse_obj.Twisted.Reactor.listenMulticast(
+    def _start_discovery_client(self, p_pyhouse_obj):
+        l_port = p_pyhouse_obj.Twisted.Reactor.listenMulticast(
                     PYHOUSE_DISCOVERY_PORT,
                     ClientProtocolV4(p_pyhouse_obj),
-                    listenMultiple = True,
-                    interface = p_interface)
-        LOG.info('Started {}'.format(_l_port))
+                    listenMultiple = True)
+        LOG.info('Started {}'.format(l_port))
+        return l_port
 
     def start_node_discovery_service(self, p_pyhouse_obj):
         p_pyhouse_obj.Services.NodeDiscoveryService.startService()
-        self._start_discovery_server(p_pyhouse_obj, '')
-        self._start_discovery_client(p_pyhouse_obj, '')
+        self._start_discovery_server(p_pyhouse_obj)
+        self._start_discovery_client(p_pyhouse_obj)
 
     def stop_node_discovery_service(self, p_pyhouse_obj):
         p_pyhouse_obj.Services.NodeDiscoveryService.stopService()

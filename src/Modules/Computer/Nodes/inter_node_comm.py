@@ -21,6 +21,7 @@ from twisted.internet.endpoints import TCP4ServerEndpoint
 from twisted.application.internet import StreamServerEndpointService
 
 # Import PyMh files and modules.
+from Modules.Core.data_objects import NodeData
 from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities.tools import PrettyPrintAny
 
@@ -268,6 +269,7 @@ class API(Utility):
         """
         for l_node in p_pyhouse_obj.Computer.Nodes.itervalues():
             self.send_our_info_to_node(p_pyhouse_obj, l_node.ConnectionAddr_IPv4)
+        self.m_pyhouse_obj.Twisted.Reactor.callLater(REPEAT_DELAY, self._send_node_info_to_all, self.m_pyhouse_obj)
 
 
     def Start(self, p_pyhouse_obj):

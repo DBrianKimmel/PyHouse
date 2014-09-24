@@ -194,6 +194,7 @@ class NodeData(ABaseObject):
     Name is the Node's HostName
     """
     def __init__(self):
+        super(NodeData, self).__init__()
         self.ConnectionAddr_IPv4 = None
         self.ConnectionAddr_IPv6 = None
         self.NodeRole = None
@@ -205,6 +206,7 @@ class NodeInterfaceData(ABaseObject):
     Holds information about each of the interfaces on the local node.
     """
     def __init__(self):
+        super(NodeInterfaceData, self).__init__()
         self.NodeInterfaceType = None  # Ethernet | Wireless | Loop | Tunnel | Other
         self.MacAddress = ''
         self.V4Address = []
