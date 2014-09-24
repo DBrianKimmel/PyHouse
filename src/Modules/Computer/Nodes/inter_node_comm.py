@@ -51,6 +51,7 @@ class NodeInfo(Command):
     arguments = [('Name', String()),
                  ('Active', String(optional = True)),
                  ('AddressV4', String(optional = True)),
+                 ('AddressV6', String(optional = True)),
                  ('NodeRole', Integer(optional = True)),
                  ('UUID', String(optional = True))
                  ]
@@ -93,8 +94,10 @@ class InterNodeProtocol(amp.AMP):
         self.m_pyhouse_obj = p_pyhouse_obj
 
     @NodeInfo.responder
-    def receive_NodeInfo(self, Name, Active, AddressV4, NodeRole, UUID):
-        l_response = self.update_NodeInfo(Name, Active, AddressV4, NodeRole, UUID)
+    def receive_NodeInfo(self, Name, Active, AddressV4, AddressV6, NodeRole, UUID):
+        l_node = self.create_node_from_response(Name, Active, AddressV4, AddressV6, NodeRole, UUID)
+        l_key = self.insert_node(l_node)
+        l_response = self.create_response(l_node, l_key)
         LOG.info('receive_NodeInfo() - from  address=:{}\n\tResponse = {}'.format(AddressV4, l_response))
         return l_response
 
@@ -104,31 +107,45 @@ class InterNodeProtocol(amp.AMP):
         l_total = a + b
         print('Server - Did a sum: {} + {} = {}'.format(a, b, l_total))
         return {'total': l_total}
-
-
     @Divide.responder
     def divide(self, numerator, denominator):
         l_result = float(numerator) / denominator
         print 'Server - Divided: %d / %d = %f' % (numerator, denominator, l_result)
         return {'result': l_result}
 
-    def update_NodeInfo(self, Name, Active, AddressV4, NodeRole, UUID):
+
+    def create_node_from_response(self, Name, Active, AddressV4, AddressV6, NodeRole, UUID):
+        l_node = NodeData()
+        l_node.Name = Name
+        l_node.Active = Active
+        l_node.ConnectionAddr_IPv4 = AddressV4
+        l_node.ConnectionAddr_IPv6 = AddressV6
+        l_node.NodeRole = NodeRole
+        l_node.UUID = UUID
+        return l_node
+
+    def insert_node(self, p_node):
+        l_len = len(self.m_pyhouse_obj.Computer.Nodes)
+        for l_node in self.m_pyhouse_obj.Computer.Nodes.itervalues():
+            if p_node.Name == l_node.Name:
+                l_node.Active = p_node.Active
+                l_node.ConnectionAddr_IPv4 = p_node.ConnectionAddr_IPv4
+                l_node.ConnectionAddr_IPv6 = p_node.ConnectionAddr_IPv6
+                l_node.NodeRole = p_node.NodeRole
+                l_node.UUID = p_node.UUID
+                return l_node.Key
+        self.m_pyhouse_obj.Computer.Nodes[l_len] = p_node
+        return l_len
+
+
+    def create_response(self, p_node, p_key):
         """
         Update our PyHouse Nodes information with the data we just got.
         Create a response we can pass back to the sender
         """
-        l_key = -1
-        for l_node in self.m_pyhouse_obj.Computer.Nodes.itervalues():
-            if l_node.Name == Name:
-                l_node.Active = Active
-                l_node.AddressV4 = AddressV4
-                l_node.Role = NodeRole
-                l_node.UUID = UUID
-                l_key = int(l_node.Key)
-                # LOG.info('Node {0:} updated'.format(l_node.Key))
-        l_response = {'Name' : Name,
+        l_response = {'Name' : p_node.Name,
                       'From' : self.m_pyhouse_obj.Computer.Nodes[0].Name,
-                      'NodeId' : l_key}
+                      'NodeId' : p_key}
         # LOG.info('Return response {0:}'.format(l_response))
         return l_response
 
@@ -198,6 +215,7 @@ class Utility(object):
                     Name = p_node.Name,
                     Active = str(p_node.Active),
                     AddressV4 = p_node.ConnectionAddr_IPv4,
+                    AddressV6 = p_node.ConnectionAddr_IPv6,
                     NodeRole = int(p_node.NodeRole),
                     # UUID = "01234567-1234-2345-3456-01234567890ab"
                     UUID = "309"
