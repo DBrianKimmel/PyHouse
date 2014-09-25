@@ -109,7 +109,7 @@ class BadClient(protocol.DatagramProtocol):
         raise BadClientError("Application code is very buggy!")
 
 
-class Test1(unittest.TestCase):
+class C_01(unittest.TestCase):
 
     def setUp(self):
         print("setUp")
@@ -119,11 +119,11 @@ class Test1(unittest.TestCase):
     def tearDown(self):
         print("tearDown")
 
-    def test_001_Init(self):
+    def test_01_Init(self):
         print("Test 001")
         self.assertIsNotNone(self.m_api)
 
-    def test_002_StartServer(self):
+    def test_02_StartServer(self):
         print("Test 002")
         # self.m_api.StartServer(self.m_pyhouse_obj)
         # server = nodes.API()
@@ -137,13 +137,13 @@ class Test1(unittest.TestCase):
             return p.stopListening()
         return l_defer.addCallback(cbStarted)
 
-    def test_003_StartClient(self):
+    def test_03_StartClient(self):
         print("Test 003")
         # l_api = nodes.API()
         # l_pyhouse_obj = PyHouseData()
         # self.m_api._start_discovery_client(self.m_pyhouse_obj)
 
-    def test_101_oldAddress(self):
+    def test_04_oldAddress(self):
         """
         The C{type} of the host address of a listening L{DatagramProtocol}'s transport is C{"UDP"}.
         """
@@ -156,7 +156,7 @@ class Test1(unittest.TestCase):
             return p.stopListening()
         return l_defer.addCallback(cbStarted)
 
-    def test_102_startStop(self):
+    def test_05_startStop(self):
         """
         The L{DatagramProtocol}'s C{startProtocol} and C{stopProtocol}
         methods are called when its transports starts and stops listening, respectively.
@@ -172,7 +172,7 @@ class Test1(unittest.TestCase):
             self.assertEqual(server.m_stopped, 1)
         return l_defer.addCallback(cbStarted).addCallback(cbStopped)
 
-    def test_103_rebind(self):
+    def test_06_rebind(self):
         """
         Re-listening with the same L{DatagramProtocol} re-invokes the C{startProtocol} callback.
         """
@@ -190,7 +190,7 @@ class Test1(unittest.TestCase):
 
         return l_defer.addCallback(cbStarted, p)
 
-    def test_104_bindError(self):
+    def test_07_bindError(self):
         """
         A L{CannotListenError} exception is raised when attempting to bind a second protocol instance to an already bound port
         """
@@ -214,7 +214,7 @@ class Test1(unittest.TestCase):
         l_defer.addCallback(cbFinished)
         return l_defer
 
-    def test_105_sendPackets(self):
+    def test_08_sendPackets(self):
         """
         Datagrams can be sent with the transport's C{write} method and received via the C{datagramReceived} callback method.
         """

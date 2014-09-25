@@ -11,11 +11,9 @@
 
 # Import system type stuff
 from twisted.protocols import amp
-from twisted.protocols.amp import AMP, Command, Integer, String, Float, AmpList
+from twisted.protocols.amp import AMP, Command, Integer, String, AmpList
 from twisted.internet import reactor
-from twisted.internet import defer
 from twisted.internet.protocol import ServerFactory
-# from twisted.internet.protocol import ClientFactory
 from twisted.internet.endpoints import TCP4ClientEndpoint, connectProtocol
 from twisted.internet.endpoints import TCP4ServerEndpoint
 from twisted.application.internet import StreamServerEndpointService
@@ -23,7 +21,7 @@ from twisted.application.internet import StreamServerEndpointService
 # Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData
 from Modules.Computer import logging_pyh as Logger
-from Modules.Utilities.tools import PrettyPrintAny
+# from Modules.Utilities.tools import PrettyPrintAny
 
 
 LOG = Logger.getLogger('PyHouse.InterNodeCom')
@@ -32,7 +30,6 @@ NODE_SERVER = 'tcp:port=8581'
 AMP_PORT = 8581
 INITIAL_DELAY = 10
 REPEAT_DELAY = 2 * 60 * 60
-CLIENT_DELAY = 3
 
 
 """ ------------------------------------------------------------------
@@ -61,11 +58,13 @@ class NodeInfo(Command):
                 ]
     errors = {NodeInfoError: 'Node Info error'}
 
+
 class GetNodeList(Command):
     """ Get a list of all the nodes.
     """
     arguments = [('length', Integer())]
     response = [('Nodes', AmpList([('x', String())]))]
+
 
 class SendNodeList(Command):
     """ Send a list of all the nodes.
@@ -75,16 +74,6 @@ class SendNodeList(Command):
                  ]
     response = [('Length', Integer())]
 
-class Sum(Command):
-    arguments = [('a', Integer()),
-                 ('b', Integer())]
-    response = [('total', Integer())]
-
-class Divide(Command):
-    arguments = [('numerator', Integer()),
-                 ('denominator', Integer())]
-    response = [('result', Float())]
-    errors = {ZeroDivisionError: 'ZERO_DIVISION'}
 
 # ================== Server =======================
 
@@ -99,19 +88,12 @@ class InterNodeProtocol(amp.AMP):
         l_key = self.insert_node(l_node)
         l_response = self.create_response(l_node, l_key)
         LOG.info('receive_NodeInfo() - from  address=:{}\n\tResponse = {}'.format(AddressV4, l_response))
+        self._dump_nodes()
         return l_response
 
-
-    @Sum.responder
-    def sum(self, a, b):
-        l_total = a + b
-        print('Server - Did a sum: {} + {} = {}'.format(a, b, l_total))
-        return {'total': l_total}
-    @Divide.responder
-    def divide(self, numerator, denominator):
-        l_result = float(numerator) / denominator
-        print 'Server - Divided: %d / %d = %f' % (numerator, denominator, l_result)
-        return {'result': l_result}
+    def _dump_nodes(self):
+        for l_node in self.m_pyhouse_obj.Computer.Nodes.itervalues():
+            LOG.info('Node: {}  {}'.format(l_node.Name, l_node.ConnectionAddr_IPv4))
 
 
     def create_node_from_response(self, Name, Active, AddressV4, AddressV6, NodeRole, UUID):
@@ -124,6 +106,7 @@ class InterNodeProtocol(amp.AMP):
         l_node.UUID = UUID
         return l_node
 
+
     def insert_node(self, p_node):
         l_len = len(self.m_pyhouse_obj.Computer.Nodes)
         for l_node in self.m_pyhouse_obj.Computer.Nodes.itervalues():
@@ -134,6 +117,7 @@ class InterNodeProtocol(amp.AMP):
                 l_node.NodeRole = p_node.NodeRole
                 l_node.UUID = p_node.UUID
                 return l_node.Key
+        p_node.Key = l_len
         self.m_pyhouse_obj.Computer.Nodes[l_len] = p_node
         return l_len
 
@@ -156,51 +140,12 @@ class AmpServerFactory(ServerFactory):
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
+
     def buildProtocol(self, _p_address_tupple):
         # LOG.info('Server Factory is now building an InterNodeProtocol protocol - Addr: {}'.format(_p_address_tupple))
         l_protocol = InterNodeProtocol(self.m_pyhouse_obj)
         self.protocol = l_protocol
         return l_protocol
-
-
-# ================== Client =======================
-
-class MathClient(object):
-    """
-    """
-
-    def doMath(self):
-        destination = TCP4ClientEndpoint(reactor, '127.0.0.1', AMP_PORT)
-
-        def connected_sum(ampProto):
-            l_ret = ampProto.callRemote(Sum, a = 13, b = 81)
-            PrettyPrintAny(l_ret, 'call remote result')
-            return l_ret
-
-        def summed(result):
-            l_ret = result['total']
-            PrettyPrintAny(result, 'Result')
-            PrettyPrintAny(l_ret, 'xxx')
-            return l_ret
-        sumDeferred = connectProtocol(destination, AMP())
-        sumDeferred.addCallback(connected_sum)
-        sumDeferred.addCallback(summed)
-
-        def connected_divide(ampProto):
-            return ampProto.callRemote(Divide, numerator = 1234, denominator = 3)
-        def trapZero(result):
-            result.trap(ZeroDivisionError)
-            print "Client - Divided by zero: returning INF"
-            return 1e1000
-        divideDeferred = connectProtocol(destination, AMP())
-        divideDeferred.addCallback(connected_divide)
-        divideDeferred.addErrback(trapZero)
-
-
-        def math_done(result):
-            print 'Client - Done with math:', result
-        l_defer = defer.DeferredList([sumDeferred, divideDeferred])
-        l_defer.addCallback(math_done)
 
 
 
@@ -252,7 +197,7 @@ class Utility(object):
         """
         def cb_start_server(p_port):
             LOG.info('Server listening on port {}.'.format(p_port.getHost()))
-            self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self._send_node_info_to_all, self.m_pyhouse_obj)
+            self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self._info_loop, self.m_pyhouse_obj)
 
         def eb_start_server(p_reason):
             LOG.error('ERROR in starting Server; {}.\n'.format(p_reason))
@@ -276,18 +221,23 @@ class Utility(object):
         return l_Listen_endpoint
 
 
+    def _info_loop(self, p_pyhouse_obj):
+        self.m_pyhouse_obj.Twisted.Reactor.callLater(REPEAT_DELAY, self._info_loop, p_pyhouse_obj)
+        self.send_node_info_to_all(p_pyhouse_obj)
+
+
 
 class API(Utility):
     """
+    Items that are called by other modules
     """
 
-    def _send_node_info_to_all(self, p_pyhouse_obj):
+    def send_node_info_to_all(self, p_pyhouse_obj):
         """
         Loop thru all the nodes we know about (from node_discovery) and send them our node info
         """
         for l_node in p_pyhouse_obj.Computer.Nodes.itervalues():
             self.send_our_info_to_node(p_pyhouse_obj, l_node.ConnectionAddr_IPv4)
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(REPEAT_DELAY, self._send_node_info_to_all, self.m_pyhouse_obj)
 
 
     def Start(self, p_pyhouse_obj):
