@@ -69,7 +69,7 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 			globals.Computer = JSON.parse(p_json);
 			// this is the external IP address finding URL and its value
 	        self.nodeById('UrlDiv').innerHTML = buildTextWidget('InternetUrl', globals.Computer.InternetConnection.ExternalUrl);
-	        self.nodeById('ExtDelayDiv').innerHTML = buildTextWidget('InternetExtDelay', globals.Computer.InternetConnection.ExternalDelay);
+	        // self.nodeById('ExtDelayDiv').innerHTML = buildTextWidget('InternetExtDelay', globals.Computer.InternetConnection.ExternalDelay);
 	        self.nodeById('ExtIpDiv').innerHTML = buildTextWidget('InternetExtIp', globals.Computer.InternetConnection.ExternalIP, 'disabled');
 			var l_tab = buildTable(globals.Computer.InternetConnection.DynDns, 'handleMenuOnClick');
 			self.nodeById('InternetTableDiv').innerHTML = l_tab;
@@ -101,7 +101,7 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 	function fetchEntry(self) {
 		Divmod.debug('---', 'internet.fetchEntry() was called. ');
         var l_data = {
-        	ExternalDelay : fetchTextWidget('InternetExtDelay'),
+        	// ExternalDelay : fetchTextWidget('InternetExtDelay'),
         	ExternalUrl : fetchTextWidget('InternetUrl'),
             Name : fetchTextWidget('DynDnsName'),
             Key : fetchTextWidget('DynDnsKey'),

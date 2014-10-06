@@ -26,6 +26,10 @@
     THE SOFTWARE.
 
 
+                  cp   /c/Users/briank/Documents/GitHub/PyHouse/admin/config/cannontrail_master.xml   /c/etc//pyhouse//master.xml
+
+                  > error ; > debug ; clear ; tail -f debug
+
 Uses I{Epytext} mark-up for documentation.
 
 see C{Modules.__init__.py} for Core documentation.

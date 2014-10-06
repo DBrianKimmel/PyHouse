@@ -1,12 +1,7 @@
 """
-Created on Jun 27, 2014
+-*- test-case-name: PyHouse.src.Modules.Computer.Internet.test.test_inet_update_dyn_dns-*-
 
-@author: briank
-"""
-"""
--*- test-case-name: PyHouse.src.Modules.Comps.test.test_inet_update_freedns-*-
-
-@Name: PyHouse/src/Modules/Comps/inet_update_freedns.py
+@Name: PyHouse/src/Modules/Computer/Internet/inet_update_dyn_dns.py
 @author: D. Brian Kimmel
 @contact: D.BrianKimmel@gmail.com
 @copyright: 2012-2014 by D. Brian Kimmel
@@ -18,6 +13,7 @@ Created on Jun 27, 2014
 
 # Import system type stuff
 from twisted.web.client import getPage
+from twisted.internet.defer import Deferred
 
 # Import PyMh files and modules.
 from Modules.Computer import logging_pyh
@@ -25,7 +21,7 @@ from Modules.Computer import logging_pyh
 
 g_debug = 1
 LOG = logging_pyh.getLogger('PyHouse.Internet    ')
-INITIAL_DELAY = 2 * 60
+INITIAL_DELAY = 1 * 60
 
 
 
@@ -38,7 +34,7 @@ class DynDnsAPI(object):
     Allow for missing responses so as to not break the chain of events.
     """
 
-    def __init__(self, p_internet_obj, p_reactor):
+    def XX__init__(self, p_internet_obj, p_reactor):
         """
         Wait a bit to avoid all the starting chaos.
         """
@@ -90,7 +86,11 @@ class DynDnsAPI(object):
 
 class API(DynDnsAPI):
 
-    def __init__(self):
+    def UpdateAllDynDns(self, p_pyhouse_obj):
+        l_defer = Deferred()
+        for l_internet in p_pyhouse_obj.Computer.InternetConnection.UpdateUrls.iterkeys():
+            pass
+        return l_defer
         pass
 
     def Start(self, p_pyhouse_obj, p_ix):
@@ -101,8 +101,5 @@ class API(DynDnsAPI):
     def Stop(self, _ignore1, _ignore2):
         # self.m_dyn_loop.stop_dyndns_process()
         pass
-
-    def SaveXml(self, p_xml):
-        return p_xml
 
 # ## END DBK

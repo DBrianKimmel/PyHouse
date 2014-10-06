@@ -1,18 +1,14 @@
 <PyHouse>
     <ComputerDivision>
         <InternetSection>
-            <Internet Name="Connection-1" Key="0" Active="True">
-                <UUID>1234</UUID>
-                <ExternalUrl>http://snar.co/ip</ExternalUrl>
-                <ExternalDelay>28800</ExternalDelay>
-                <ExternalIP>65.35.48.61</ExternalIP>
-                <DynamicDnsSection>
-                    <DynamicDNS Active="True" Key="0" Name="Afraid">
-                        <UpdateUrl>http://freedns.afraid.org/dynamic/update.php?VDZtSkE2MzFVMVVBQVd5QXg2MDo4MDk0ODM1</UpdateUrl>
-                        <UpdateInterval>21600</UpdateInterval>
-                    </DynamicDNS>
-                </DynamicDnsSection>
-            </Internet>
+            <LocaterUrlSection>
+                <ExternalUrl>http://snar.co/ip/</ExternalUrl>
+                <ExternalUrl>http://checkip.dyndns.com/</ExternalUrl>
+            </LocaterUrlSection>
+            <UpdaterUrlSection>
+                <UpdateUrl>http://freedns.afraid.org/dynamic/update.php?VDZtSkE2MzFVMVVBQVd5QXg2MDo4MDk0ODM1</UpdateUrl>
+            </UpdaterUrlSection>
+            <ExternalIPv4>65.35.48.61</ExternalIPv4>
         </InternetSection>
         <LogSection>
             <Debug>/var/log/pyhouse/debug</Debug>

@@ -64,6 +64,8 @@ g_debug = 1
 LOG = Logger.getLogger('PyHouse.Schedule    ')
 SECONDS_IN_DAY = 86400
 SECONDS_IN_WEEK = 604800  # 7 * 24 * 60 * 60
+INITIAL_DELAY = 5
+PAUSE_DELAY = 5
 
 
 class RiseSetData(object):
@@ -257,7 +259,7 @@ class ScheduleExecution(object):
         LOG.info("About to execute - Schedule:{0:}".format(p_slot_list))
         for l_slot in range(len(p_slot_list)):
             self.execute_one_schedule(p_slot_list[l_slot])
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(5, self.run_schedule, None)
+        self.m_pyhouse_obj.Twisted.Reactor.callLater(PAUSE_DELAY, self.run_schedule, None)
 
     def run_schedule(self, _ignore):
         """Find out what schedules need to be done and how long to delay before they are due to be run.
@@ -359,7 +361,7 @@ class API(ScheduleUtility, ScheduleExecution):
 
     def _run_schedules(self, p_pyhouse_obj):
         if p_pyhouse_obj.House.Active:
-            p_pyhouse_obj.Twisted.Reactor.callLater(5, self.run_schedule, None)
+            p_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self.run_schedule, None)
             LOG.info("Started.")
         else:
             LOG.warning('No Schedules will be run because the house is NOT active.')

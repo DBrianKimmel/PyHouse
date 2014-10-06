@@ -63,7 +63,7 @@ helpers.Widget.subclass(thermostat, 'ThermostatWidget').methods(
 			//globals.Computer = JSON.parse(p_json);
 			// this is the external IP address finding URL and its value
 	        self.nodeById('UrlDiv').innerHTML = buildTextWidget('ThermostatUrl', globals.Computer.ThermostatConnection.ExternalUrl);
-	        self.nodeById('ExtDelayDiv').innerHTML = buildTextWidget('ThermostatExtDelay', globals.Computer.ThermostatConnection.ExternalDelay);
+	        // self.nodeById('ExtDelayDiv').innerHTML = buildTextWidget('ThermostatExtDelay', globals.Computer.ThermostatConnection.ExternalDelay);
 	        self.nodeById('ExtIpDiv').innerHTML = buildTextWidget('ThermostatExtIp', globals.Computer.ThermostatConnection.ExternalIP, 'disabled');
 			var l_tab = buildTable(globals.Computer.ThermostatConnection.DynDns, 'handleMenuOnClick');
 			self.nodeById('ThermostatTableDiv').innerHTML = l_tab;
@@ -96,7 +96,7 @@ helpers.Widget.subclass(thermostat, 'ThermostatWidget').methods(
 	function fetchEntry(self) {
 		Divmod.debug('---', 'thermostat.fetchEntry() was called. ');
         var l_data = {
-        	ExternalDelay : fetchTextWidget('ThermostatExtDelay'),
+        	// ExternalDelay : fetchTextWidget('ThermostatExtDelay'),
         	ExternalUrl : fetchTextWidget('ThermostatUrl'),
             Name : fetchTextWidget('DynDnsName'),
             Key : fetchTextWidget('DynDnsKey'),

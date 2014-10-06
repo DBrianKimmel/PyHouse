@@ -35,7 +35,7 @@ class SetupMixin(object):
 
 
 
-class A01_Start(SetupMixin, unittest.TestCase):
+class C01_Start(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
@@ -61,5 +61,12 @@ class A01_Start(SetupMixin, unittest.TestCase):
 
     def test_04_Start(self):
         self.m_api.Start(self.m_pyhouse_obj)
+
+
+def TestSuite():
+    import unittest
+    suite = unittest.TestLoader().loadTestsFromTestCase(C01_Start)
+    # print('\nSuite {}'.format(suite))
+    return suite
 
 # ## END DBK

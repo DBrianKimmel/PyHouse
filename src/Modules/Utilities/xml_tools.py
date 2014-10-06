@@ -12,6 +12,7 @@
 """
 
 # Import system type stuff
+import re
 import uuid
 from xml.etree import ElementTree as ET
 
@@ -188,6 +189,19 @@ class PutGetXML(object):
         @param p_text: is the value to set into this element.
         """
         self.put_text_element(p_parent_element, p_name, p_uuid)
+
+
+    def get_ipv4(self, p_xml, p_name):
+        l_field = self._get_element_field(p_xml, p_name)
+        l_re = re.compile(r'(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})')
+        l_ip = re.compile(r'(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})').search(l_field).group(1)
+        return l_ip
+
+    def get_ipv6(self, p_xml, p_name):
+        pass
+
+    def get_date_time(self, p_xml, p_name):
+        pass
 
 
 class XmlConfigTools(PutGetXML):

@@ -1,15 +1,16 @@
 """
-@name: PyHouse/src/Modules/Core/nodes.py
+@name: PyHouse/src/Modules/Computer/Nodes/test/test_nodes.py
 @author: D. Brian Kimmel
 @contact: D.BrianKimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Mar 20, 2014
-@summary: This module does everything for nodes.
+@summary: This module tests everything for nodes.
 
 """
 
 # Import system type stuff
+import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 from twisted.internet.defer import Deferred, gatherResults, maybeDeferred
 from twisted.internet import protocol, error, defer, udp
@@ -17,6 +18,20 @@ from twisted.internet import protocol, error, defer, udp
 # Import PyMh files and modules.
 from Modules.Core.data_objects import PyHouseData
 from Modules.Computer.Nodes import nodes
+from Modules.Computer.Nodes.test import test_inter_node_comm
+from test import xml_data
+from test.testing_mixin import SetupPyHouseObj
+from Modules.Utilities.tools import PrettyPrintAny
+
+
+class SetupMixin(object):
+    """
+    """
+
+    def setUp(self, p_root):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
+        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+
 
 
 class Mixin:
@@ -109,12 +124,30 @@ class BadClient(protocol.DatagramProtocol):
         raise BadClientError("Application code is very buggy!")
 
 
-class C_01(unittest.TestCase):
+class C_01_xxx(SetupMixin, unittest.TestCase):
+    """
+    """
 
     def setUp(self):
-        print("setUp")
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+
+    def tearDown(self):
+        pass
+
+    def test_01_Setup(self):
+        PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse')
+        PrettyPrintAny(self.m_pyhouse_obj.Twisted, 'PyHouse.Twisted')
+
+    def test_02_InterNode(self):
+        suite = test_inter_node_comm.TestSuite()
+        PrettyPrintAny(suite, 'Test Suite')
+        suite.runTest()
+
+class C_11(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         self.m_api = nodes.API()
-        self.m_pyhouse_obj = PyHouseData()
 
     def tearDown(self):
         print("tearDown")
@@ -454,12 +487,12 @@ class C_01(unittest.TestCase):
         self.assertEqual(len(warnings), 0)
 
 
-class Test2TwistedReactorShutdownInteraction(unittest.TestCase):
+class C_12_Test2TwistedReactorShutdownInteraction(SetupMixin, unittest.TestCase):
     """Test reactor shutdown interaction"""
 
     def setUp(self):
         """Start a UDP port"""
-        self.m_pyhouse_obj = PyHouseData()
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         self.server = Server()
         self.port = self.m_pyhouse_obj.Twisted.Reactor.listenUDP(0, self.server, interface = '127.0.0.1')
 
@@ -500,10 +533,10 @@ class Test2TwistedReactorShutdownInteraction(unittest.TestCase):
         return finished
 
 
-class Test3MulticastTestCase(unittest.TestCase):
+class C_13_Test3MulticastTestCase(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        self.m_pyhouse_obj = PyHouseData()
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         self.server = Server()
         self.client = Client()
         # multicast won't work if we listen over loopback, apparently
@@ -666,11 +699,4 @@ class Test3MulticastTestCase(unittest.TestCase):
         joined.addBoth(cleanup)
         return joined
 
-
-
-
-
-# if __name__ == '__main__':
-#    unittest.main(verbosity = 2)
-
-    # ## END DBK
+# ## END DBK

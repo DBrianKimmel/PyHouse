@@ -43,6 +43,8 @@ class XmlData(object):
         #
         self.computer_div = None
         self.internet_sect = None
+        self.locater_sect = None
+        self.updater_sect = None
         self.log_sect = None
         self.node_sect = None
         self.web_sect = None
@@ -104,6 +106,8 @@ class SetupPyHouseObj(object):
             #
             l_xml.computer_div = p_root_xml.find('ComputerDivision')
             l_xml.internet_sect = l_xml.computer_div.find('InternetSection')
+            l_xml.locater_sect = l_xml.internet_sect.find('LocaterUrlSection')
+            l_xml.updater_sect = l_xml.internet_sect.find('UpdaterUrlSection')
             l_xml.log_sect = l_xml.computer_div.find('LogSection')
             l_xml.node_sect = l_xml.computer_div.find('NodeSection')
             l_xml.web_sect = l_xml.computer_div.find('WebSection')

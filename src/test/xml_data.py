@@ -37,20 +37,18 @@ XML_LONG = """
         <WebSection>
             <WebPort>8580</WebPort>
         </WebSection>
+
         <InternetSection>
-            <Internet Name="Connection-1" Key="0" Active="True">
-                <UUID>1234</UUID>
-                <ExternalUrl>http://snar.co/ip</ExternalUrl>
-                <ExternalDelay>28800</ExternalDelay>
-                <ExternalIP>65.35.48.61</ExternalIP>
-                <DynamicDnsSection>
-                    <DynamicDNS Active="True" Key="0" Name="Afraid">
-                        <UUID>6543</UUID>
-                        <UpdateUrl>http://freedns.afraid.org/dynamic/update.php?VDZtSkE2MzFVMVVBQVd5QXg2MDo5MjU1MzYw</UpdateUrl>
-                        <UpdateInterval>21600</UpdateInterval>
-                    </DynamicDNS>
-                </DynamicDnsSection>
-            </Internet>
+            <LocaterUrlSection>
+                <LocateUrl>http://snar.co/ip/</LocateUrl>
+                <LocateUrl>http://checkip.dyndns.com/</LocateUrl>
+            </LocaterUrlSection>
+            <UpdaterUrlSection>
+                <UpdateUrl>http://freedns.afraid.org/dynamic/update.php?abc</UpdateUrl>
+            </UpdaterUrlSection>
+            <ExternalIPv4>65.35.48.61</ExternalIPv4>
+            <ExternalIPv6>1234:5678::1</ExternalIPv6>
+            <LastChanged>2014-10-02T12:34:56</LastChanged>
         </InternetSection>
 
 <!-- Tested to here -->

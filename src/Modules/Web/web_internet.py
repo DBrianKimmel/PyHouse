@@ -60,7 +60,7 @@ class InternetElement(athena.LiveElement):
         l_obj.Name = l_json['Name']
         l_obj.Key = 0
         l_obj.Active = True
-        l_obj.ExternalDelay = l_json['ExternalDelay']
+        # l_obj.ExternalDelay = l_json['ExternalDelay']
         l_obj.ExternalUrl = l_json['ExternalUrl']
         l_obj.DynDns[l_dyndns_ix].Name = l_json['Name']
         l_obj.DynDns[l_dyndns_ix].Key = l_dyndns_ix

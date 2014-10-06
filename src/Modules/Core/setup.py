@@ -43,7 +43,8 @@ LOG = Logger.getLogger('PyHouse.CoreSetup   ')
 
 INTER_NODE = 'tcp:port=8581'
 INTRA_NODE = 'unix:path=/var/run/pyhouse/node:lockfile=1'
-RELOAD_DELAY = 2 * 60 * 60  # 2 hours
+INITIAL_DELAY = 2 * 60
+REPEAT_DELAY = 2 * 60 * 60  # 2 hours
 
 
 class ReadWriteConfigXml(XmlConfigTools):
@@ -84,11 +85,8 @@ class Utility(ReadWriteConfigXml):
         l_xml.append(ET.Comment('Updated by PyHouse {0:}'.format(datetime.datetime.now())))
         return l_xml
 
-    def save_data(self, p_pyhouse_obj):
-        """
-        Trigger a SaveXml to save the updated PyHouse data.
-        """
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(RELOAD_DELAY, self.save_data, p_pyhouse_obj)
+    def _xml_save_loop(self, p_pyhouse_obj):
+        self.m_pyhouse_obj.Twisted.Reactor.callLater(REPEAT_DELAY, self._xml_save_loop, p_pyhouse_obj)
         self.SaveXml()
 
 
@@ -131,7 +129,7 @@ class API(Utility):
         p_pyhouse_obj.APIs.ComputerAPI.Start(p_pyhouse_obj)
         p_pyhouse_obj.APIs.HouseAPI.Start(p_pyhouse_obj)
         LOG.info("Started.")
-        self.save_data(p_pyhouse_obj)
+        self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self._xml_save_loop, p_pyhouse_obj)
 
     def Stop(self):
         self.SaveXml()

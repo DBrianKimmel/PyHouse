@@ -265,25 +265,15 @@ class ScheduleLightData(object):
         self.ScheduleType = 'LightingDevice'  # For future expansion into scenes, entertainment etc.
 
 
-class InternetConnectionData(ABaseObject):
+class InternetConnectionData(object):
     """Check our nodes external IP-v4 address
     """
     def __init__(self):
-        super(InternetConnectionData, self).__init__()
-        self.ExternalDelay = 600  # Minimum value
-        self.ExternalIPv4 = None  # returned from url to check our external IPv4 address
-        self.ExternalUrl = None
+        self.ExternalIPv4 = None
         self.ExternalIPv6 = None
-        self.DynDns = {}  # InternetConnectionDynDnsData()
-
-
-class InternetConnectionDynDnsData(ABaseObject):
-    """One or more dynamic dns servers that we need to update
-    """
-    def __init__(self):
-        super(InternetConnectionDynDnsData, self).__init__()
-        self.UpdateInterval = 0
-        self.UpdateUrl = None
+        self.LastChanged = None
+        self.LocateUrls = {}
+        self.UpdateUrls = {}
 
 
 class XmlInformation(object):

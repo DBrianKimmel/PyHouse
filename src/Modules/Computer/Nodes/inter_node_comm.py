@@ -87,8 +87,8 @@ class InterNodeProtocol(amp.AMP):
         l_node = self.create_node_from_response(Name, Active, AddressV4, AddressV6, NodeRole, UUID)
         l_key = self.insert_node(l_node)
         l_response = self.create_response(l_node, l_key)
-        LOG.info('receive_NodeInfo() - from  address=:{}\n\tResponse = {}'.format(AddressV4, l_response))
-        self._dump_nodes()
+        # LOG.info('receive_NodeInfo() - from  address=:{}\n\tResponse = {}'.format(AddressV4, l_response))
+        # self._dump_nodes()
         return l_response
 
     def _dump_nodes(self):
@@ -196,7 +196,7 @@ class Utility(object):
         The server stays running for the duration of the PyHouse daemon.
         """
         def cb_start_server(p_port):
-            LOG.info('Server listening on port {}.'.format(p_port.getHost()))
+            # LOG.info('Server listening on port {}.'.format(p_port.getHost()))
             self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self._info_loop, self.m_pyhouse_obj)
 
         def eb_start_server(p_reason):
