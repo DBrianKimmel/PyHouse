@@ -14,10 +14,6 @@ This module is for Shawn Powers page - http://snar.co/ip
 
 This is because most ISP's use NAT to expand the IPv4 address space.
 
-When the IPv4 address is found, it will update:
-    pyhouse_obj.Computer.InternetConnection[ix].ExternalIPv4
-where 'ix' is the internet connection number.
-'IX' is zero for most sites but there can be more than one Internet connection and therefore 'ix' exists.
 """
 
 # Import system type stuff
@@ -47,7 +43,7 @@ class FindExternalIpAddress(object):
 
     def _extract_ip(self, p_string):
         l_quad = p_string
-        l_addr = convert.ConvertEthernet().dotted_quad2long(l_quad)
+        l_addr = convert.ConvertEthernet().str_to_long(l_quad)
         return l_addr, l_quad
 
     def _snar_scrape(self, p_page):
@@ -141,7 +137,8 @@ class API(Utility):
         """
         l_defer = Deferred()
         for l_key in p_pyhouse_obj.Computer.InternetConnection.LocateUrls.iterkeys():
-            self.get_public_ip(p_pyhouse_obj, l_key)
+            l_ret = self.get_public_ip(p_pyhouse_obj, l_key)
+            LOG.info('Get ip addr {}'.format(l_ret))
         return l_defer
 
 # ## END DBK

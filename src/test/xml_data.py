@@ -12,6 +12,14 @@ XML to define the PyHouse.xml file
 used for testing
 """
 
+# Import system type stuff
+
+# Import PyMh files
+from Modules.Computer.Internet.test.test_internet_xml import INTERNET_XML
+from Modules.Communication.send_email import EMAIL_XML
+from Modules.Web.test.test_web_server import WEB_SERVER_XML
+
+
 # Missing
 XML_MISSING = ''
 
@@ -24,35 +32,20 @@ XML_EMPTY = """
 
 
 
-
-# Everything as expected in a running system.
-XML_LONG = """
-<PyHouse Version='2'>
-
+COMPUTER_HEADER_XML = """
     <ComputerDivision>
+"""
+COMPUTER_TRAILER_XML = """
+    </ComputerDivision>
+"""
+
+COMPUTER_BODY_XML = """\
         <LogSection>
             <Debug>/var/log/pyhouse/debug</Debug>
             <Error>/var/log/pyhouse/error</Error>
         </LogSection>
-        <WebSection>
-            <WebPort>8580</WebPort>
-        </WebSection>
-
-        <InternetSection>
-            <LocaterUrlSection>
-                <LocateUrl>http://snar.co/ip/</LocateUrl>
-                <LocateUrl>http://checkip.dyndns.com/</LocateUrl>
-            </LocaterUrlSection>
-            <UpdaterUrlSection>
-                <UpdateUrl>http://freedns.afraid.org/dynamic/update.php?abc</UpdateUrl>
-            </UpdaterUrlSection>
-            <ExternalIPv4>65.35.48.61</ExternalIPv4>
-            <ExternalIPv6>1234:5678::1</ExternalIPv6>
-            <LastChanged>2014-10-02T12:34:56</LastChanged>
-        </InternetSection>
-
-<!-- Tested to here -->
-
+"""
+NODES_XML = """\
         <NodeSection>
             <Node Name='pi-01' Key='0' Active='True'>
                 <UUID>87654321-1001-11e3-b583-082e5f899999</UUID>
@@ -82,14 +75,18 @@ XML_LONG = """
                 <ConnectionAddressV4>192.168.1.124</ConnectionAddressV4>
             </Node>
         </NodeSection>
-        <EmailSection>
-            <EmailFromAddress>mail.sender@Gmail.Com</EmailFromAddress>
-            <EmailToAddress>mail.receiver@Gmail.Com</EmailToAddress>
-            <GmailLogin>TestAccount@Gmail.Com</GmailLogin>
-            <GmailPassword>Test=!=Password</GmailPassword>
-        </EmailSection>
-    </ComputerDivision>
+"""
 
+COMPUTER_XML = '\n'.join([
+        COMPUTER_HEADER_XML,
+        WEB_SERVER_XML,
+        INTERNET_XML,
+        NODES_XML,
+        EMAIL_XML,
+        COMPUTER_TRAILER_XML
+                          ])
+
+HOUSE_XML = """
     <HouseDivision Active="True" Key="0" Name="Pink Poppy">
         <UUID>12345678-1002-11e3-b583-333e5f8cdfd2</UUID>
         <LocationSection>
@@ -398,8 +395,26 @@ XML_LONG = """
         </ThermostatSection>
         <EntertainmentSection />
     </HouseDivision>
+"""
+
+PYHOUSE_HEADER_XML = """\
+<PyHouse Version='2'>
+"""
+
+PYHOUSE_TRAILER_XML = """
 </PyHouse>
 """
+
+
+
+# Everything as expected in a running system.
+XML_LONG = '/n'.join([
+      PYHOUSE_HEADER_XML,
+      COMPUTER_XML,
+      HOUSE_XML,
+      PYHOUSE_TRAILER_XML])
+
+
 
 
 

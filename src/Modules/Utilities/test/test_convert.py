@@ -1,5 +1,5 @@
 """
-@name: PyHouse/src/Modules/utils/test/test_xml_tools.py
+@name: PyHouse/src/Modules/Utilities/test/test_convert.py
 @author: D. Brian Kimmel
 @contact: D.BrianKimmel@gmail.com
 @copyright: 2013-2014 by D. Brian Kimmel
@@ -16,37 +16,49 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, HouseData, BaseLightingData
-from Modules.utils.convert import ConvertEthernet
-from src.test import xml_data
+from Modules.Utilities import convert
+from test import xml_data
+from test.testing_mixin import SetupPyHouseObj
 
-XML = xml_data.XML_LONG
 
-class Test_01_RawConvert(unittest.TestCase):
+STR_IPV4 = '192.168.1.54'
+LONG_IPV4 = 3232235830L
+STR_IPV6 = '2001:1234::1'
+LONG_IPV6 = 42540857365213159232363542340108812289L
+
+
+class SetupMixin(object):
     """
-    This series tests the PutGetXML class methods
+    Set up pyhouse_obj and xml element pointers
     """
+
+    def setUp(self, p_root):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
+        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+
+
+
+class C_01_RawConvert(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.HouseData = HouseData()
-        self.m_pyhouse_obj.Xml.XmlRoot = self.m_root = ET.fromstring(XML)
-        self.m_houses_xml = self.m_root.find('HouseDivision')
-        self.m_house_xml = self.m_houses_xml.find('House')  # First house
-        self.m_nodes_xml = self.m_root.find('NodeSection')
-        self.m_node_xml = self.m_nodes_xml.find('Node')  # First house
-        self.m_interfaces_xml = self.m_node_xml.find('InterfaceSection')
-        self.m_interface_xml = self.m_interfaces_xml.find('Interface')  # First house
-        self.m_api = ConvertEthernet()
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        self.m_reactor = self.m_pyhouse_obj.Twisted.Reactor
+        self.m_api = convert
 
-    def _test(self, oper, a, r):
-        result = oper(a)
-        self.assertEqual(result, r)
+    def test_01_Str2Long(self):
+        l_long = self.m_api.str_to_long(STR_IPV4)
+        self.assertEqual(l_long, LONG_IPV4)
 
-    def test_0101_ethernet_2dotted(self):
-        self._test(self.m_api.dotted_quad2long, '192.168.1.65', 3232235841L)
+    def test_02_Str2Long(self):
+        l_long = self.m_api.str_to_long(STR_IPV6)
+        self.assertEqual(l_long, LONG_IPV6)
 
-    def test_0102_ethernet_2long(self):
-        self._test(self.m_api.long2dotted_quad, 3232235841L, '192.168.1.65')
+    def test_03_Long2Str(self):
+        l_long = self.m_api.long_to_str(LONG_IPV4)
+        self.assertEqual(l_long, STR_IPV4)
+
+    def test_04_Long2Str(self):
+        l_long = self.m_api.long_to_str(LONG_IPV6)
+        self.assertEqual(l_long, STR_IPV6)
 
 # ## END

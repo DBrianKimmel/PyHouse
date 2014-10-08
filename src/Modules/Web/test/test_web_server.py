@@ -17,12 +17,18 @@ from twisted.web import server
 from twisted.web.test.test_web import DummyRequest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, ComputerInformation, XmlInformation
-from Modules.Web import web_server
-from test import xml_data
+# from Modules.Web import web_server
+# from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
 
+
+
+WEB_SERVER_XML = """
+        <WebSection>
+            <WebPort>8580</WebPort>
+        </WebSection>
+"""
 
 class SetupMixin(object):
 
@@ -77,24 +83,24 @@ class DummySite(server.Site):
             raise ValueError("Unexpected return value: %r" % (result,))
 
 
-class Test_02_XML(SetupMixin, unittest.TestCase):
+class C02_XML(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_0201_find_xml(self):
+    def test_01_find_xml(self):
         """ Be sure that the XML contains the right stuff.
         """
         self.assertEqual(self.m_root_xml.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
         self.assertEqual(self.m_web_xml.tag, 'WebSection', 'XML - No Web section')
 
-    def test_0211_ReadXML(self):
+    def test_11_ReadXML(self):
         l_web = self.m_api.read_web_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Computer.Logs = l_web
         PrettyPrintAny(l_web, 'Web Data')
         self.assertEqual(l_web.WebPort, 8580, 'Bad WebPort')
 
-    def test_0221_WriteXML(self):
+    def test_21_WriteXML(self):
         l_web = self.m_api.read_web_xml(self.m_pyhouse_obj)
         l_xml = self.m_api.write_web_xml(l_web)
         PrettyPrintAny(l_xml)

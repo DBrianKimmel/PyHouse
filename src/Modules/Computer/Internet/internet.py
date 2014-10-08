@@ -44,7 +44,11 @@ class Utility(object):
     m_freednsAPI = None
 
 
-    def stop_internet_discovery(self, _p_pyhouse_obj):
+    def _start_internet_discovery(self, _p_pyhouse_obj):
+        pass
+
+
+    def _stop_internet_discovery(self, _p_pyhouse_obj):
         pass
 
 
@@ -67,10 +71,23 @@ class Utility(object):
         self.m_pyhouse_obj.Twisted.Reactor.callLater(REPEAT_DELAY, self._internet_loop, p_pyhouse_obj)
 
 
+    def _read_xml_configuration(self, p_pyhouse_obj):
+        l_config = internet_xml.API().read_internet_xml(p_pyhouse_obj)
+        p_pyhouse_obj.Computer.InternetConnection = l_config
+        return l_config
+
+    def _write_xml_config(self, p_pyhouse_obj):
+        l_xml = internet_xml.API().write_internet_xml(p_pyhouse_obj.Computer.InternetConnection)
+        return l_xml
+
+
 
 class API(Utility):
     """
     """
+
+    def _save_pyhouse_obj(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
 
     @staticmethod
     def FindExternalIp(p_pyhouse_obj):
@@ -87,6 +104,7 @@ class API(Utility):
         l_defer = inet_find_external_ip.API().FindExternalIP(p_pyhouse_obj)
         l_defer.addCallback(cb_find_external_ip)
         l_defer.addErrback(eb_find_external_ip)
+        return l_defer
 
     @staticmethod
     def UpdateDynDnsSites(p_pyhouse_obj):
@@ -102,13 +120,14 @@ class API(Utility):
         l_defer = inet_update_dyn_dns.API().UpdateAllDynDns(p_pyhouse_obj)
         l_defer.addCallback(cb_done_updating)
         l_defer.addErrback(eb_error)
+        return l_defer
 
     def Start(self, p_pyhouse_obj):
         """
         Start async operation of the Internet module.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_pyhouse_obj.Computer.InternetConnection = internet_xml.API().read_internet_xml(p_pyhouse_obj)
+        self._read_xml_configuration(p_pyhouse_obj)
         self._create_internet_discovery_service(p_pyhouse_obj)
         self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self._internet_loop, p_pyhouse_obj)
         LOG.info("Started.")
@@ -121,7 +140,9 @@ class API(Utility):
         LOG.info("Stopped.")
 
     def SaveXml(self, p_xml):
-        p_xml.append(internet_xml.API().write_internet_xml(self.m_pyhouse_obj.Computer.InternetConnection))
+        l_xml = self._write_xml_config(self.m_pyhouse_obj)
+        p_xml.append(l_xml)
         LOG.info('Saved XML')
+        return p_xml
 
 # ## END DBK

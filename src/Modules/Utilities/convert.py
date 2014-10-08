@@ -1,7 +1,14 @@
 """
-Created on Apr 3, 2013
+-*- test-case-name: PyHouse.src.Modules.Utility.test.test_convert -*-
 
-@author: briank
+@Name: PyHouse/src/Modules/Utilities/convert.py
+@author: D. Brian Kimmel
+@contact: D.BrianKimmel@gmail.com
+@copyright: 2012-2014 by D. Brian Kimmel
+@license: MIT License
+@note: Created on Apr 3, 2013
+@summary: This module determines the IP address of the ISP connection.
+
 
 Utility routines to convert external readable numbers to integers for
 ease in comparing.
@@ -9,40 +16,23 @@ ease in comparing.
 
 # Import system type stuff
 import re
+import netaddr
 
 
 
-class ConvertEthernet(object):
-    '''
-    Handle Ethernet V-4 32 bit numbers
-    '192.168.1.65' != 3232235841L
-    '''
+"""
+Handle IP V-4 32 bit numbers or V6 128 bit numbers
+'192.168.1.54' == 3232235830L
+'2001:1234::1' == 42540857365213159232363542340108812289L
+"""
 
+def str_to_long(p_str):
+    l_long = int(netaddr.IPAddress(p_str))
+    return l_long
 
-    def dotted_quad2long(self, p_quad):
-        """convert decimal dotted quad string to long integer
-        """
-        l_hexn = ''.join(["%02X" % long(i) for i in p_quad.split('.')])
-        return long(l_hexn, 16)
-
-    def long2dotted_quad(self, p_long):
-        """convert long int to dotted quad string
-        """
-        d = 256 * 256 * 256
-        q = []
-        while d > 0:
-            m, p_long = divmod(p_long, d)
-            q.append(str(m))
-            d = d / 256
-        return '.'.join(q)
-
-def XXXv4_to_int(p_v4):
-    l_sum = 0
-    l_mul = 1
-    for l_part in reversed(p_v4.split(".")):
-        l_sum += int(l_part) * l_mul
-        l_mul *= 2 ** 8
-    return l_sum
+def long_to_str(p_int):
+    l_str = str(netaddr.IPAddress(p_int))
+    return l_str
 
 
 def is_valid_ipv4(ip):

@@ -9,7 +9,7 @@
 @license: MIT License
 @summary: Log Module.
 
-This is a Main Module - always present.
+This is NO LONGER USED!.
 
 Isolates PyHouse from the logging libraries used.
 Provides a number of logging levels: Error, Warning, Info and Debug.
@@ -29,11 +29,8 @@ It configures PyHouse in the logging standard library module plus twisted loggin
 
 # Import system type stuff
 import logging
-
 import xml.etree.ElementTree as ET
 from twisted.python import log as log_twisted
-# from twisted.python import util
-# from twisted.python.logfile import DailyLogFile
 
 # Import PyMh files
 from Modules.Core.data_objects import LogData

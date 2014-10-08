@@ -12,11 +12,12 @@
 """
 
 # Import system type stuff
-import re
 import uuid
 from xml.etree import ElementTree as ET
+import dateutil.parser as dparser
 
 # Import PyMh files
+from Modules.Utilities import convert
 
 g_debug = 0
 
@@ -45,12 +46,15 @@ class PutGetXML(object):
         l_xml = self._get_element_field(p_xml, p_name)
         if l_xml == None:
             l_xml = self._get_attribute_field(p_xml, p_name)
+        if l_xml == None:
+            if p_xml.tag == p_name:
+                l_xml = p_xml.text
         return l_xml
 
 #-----
 # Bool
 #-----
-    def get_bool_from_xml(self, p_xml, p_name, default = False):
+    def get_bool_from_xml(self, p_xml, p_name, _default = False):
         """Get a boolean from xml - element or attribute
 
         @param p_xml: is a parent element containing the item we are interested in.
@@ -175,7 +179,7 @@ class PutGetXML(object):
 
         UUIDs are always an element - None returned  an attribute
         """
-        l_xml = self._get_element_field(p_xml, p_name)
+        l_xml = self._get_any_field(p_xml, p_name)
         if l_xml == None:
             return None
         if len(l_xml) < 36:
@@ -191,17 +195,19 @@ class PutGetXML(object):
         self.put_text_element(p_parent_element, p_name, p_uuid)
 
 
-    def get_ipv4(self, p_xml, p_name):
-        l_field = self._get_element_field(p_xml, p_name)
-        l_re = re.compile(r'(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})')
-        l_ip = re.compile(r'(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})').search(l_field).group(1)
-        return l_ip
+    def get_ip_from_xml(self, p_xml, p_name):
+        """
+        Get either IPv4 or IPv6 from the xml file
+        Return a (very) long Integer for the result
+        """
+        l_field = self._get_any_field(p_xml, p_name)
+        l_long = convert.str_to_long(l_field)
+        return l_long
 
-    def get_ipv6(self, p_xml, p_name):
-        pass
-
-    def get_date_time(self, p_xml, p_name):
-        pass
+    def get_date_time_from_xml(self, p_xml, p_name):
+        l_field = self._get_any_field(p_xml, p_name)
+        l_ret = dparser.parse(l_field, fuzzy = True)
+        return l_ret
 
 
 class XmlConfigTools(PutGetXML):
@@ -232,10 +238,8 @@ class XmlConfigTools(PutGetXML):
 
         try:
             self.put_uuid_element(l_elem, 'UUID', p_object.UUID)
-        except AttributeError as e_err:
+        except AttributeError:
             self.put_uuid_element(l_elem, 'UUID', 'No UUID Given')
-            # print('ERROR in writeBaseObj {0:} {1:}'.format(e_err, PrettyPrintAny(p_object, 'Error in writeBaseObj', 120)))
-            # print('ERROR in writeBaseObj {0:}'.format(e_err))
         return l_elem
 
 

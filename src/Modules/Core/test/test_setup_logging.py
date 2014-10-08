@@ -30,7 +30,7 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-class Test_01_NoXML(SetupMixin, unittest.TestCase):
+class C01_NoXML(SetupMixin, unittest.TestCase):
     """
     This section tests the reading and writing of XML used by node_local.
     """
@@ -39,7 +39,7 @@ class Test_01_NoXML(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_EMPTY))
         self.m_api = Logger.API()
 
-    def test_0101(self):
+    def test_01(self):
         PrettyPrintAny(setup_logging.LOGGING_DICT, 'Logging')
 
 # ## END DBK

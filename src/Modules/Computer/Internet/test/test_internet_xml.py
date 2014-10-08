@@ -11,6 +11,7 @@
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
+import datetime
 from twisted.trial import unittest
 
 # Import PyMh files
@@ -18,8 +19,28 @@ from Modules.Core.data_objects import InternetConnectionData
 from Modules.Computer.Internet import internet_xml
 from Modules.Web import web_utils
 from Modules.Utilities.tools import PrettyPrintAny
-from test import xml_data
+# from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
+from Modules.Utilities import convert
+
+
+INTERNET_XML = """
+        <InternetSection>
+            <LocaterUrlSection>
+                <LocateUrl>http://snar.co/ip/</LocateUrl>
+                <LocateUrl>http://checkip.dyndns.com/</LocateUrl>
+            </LocaterUrlSection>
+            <UpdaterUrlSection>
+                <UpdateUrl>http://freedns.afraid.org/dynamic/update.php?abc</UpdateUrl>
+            </UpdaterUrlSection>
+            <ExternalIPv4>65.35.48.61</ExternalIPv4>
+            <ExternalIPv6>1234:5678::1</ExternalIPv6>
+            <LastChanged>2014-10-02T12:34:56</LastChanged>
+        </InternetSection>
+"""
+
+DATETIME = datetime.datetime(2014, 10, 2, 12, 34, 56)
+
 
 
 class SetupMixin(object):
@@ -34,7 +55,7 @@ class C01_XML(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_internet_obj = InternetConnectionData()
         self.m_api = internet_xml.API()
 
@@ -42,6 +63,7 @@ class C01_XML(SetupMixin, unittest.TestCase):
         """ Be sure that the XML contains the right stuff.
         """
         self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
+        PrettyPrintAny(self.m_xml.root.tag)
         self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision', 'XML - No Computer section')
         self.assertEqual(self.m_xml.internet_sect.tag, 'InternetSection', 'XML - No Internet section')
         self.assertEqual(self.m_xml.locater_sect.tag, 'LocaterUrlSection')
@@ -64,16 +86,16 @@ class C01_XML(SetupMixin, unittest.TestCase):
     def test_03_ReadDerived(self):
         l_icd = self.m_api._read_derived(self.m_xml.internet_sect)
         PrettyPrintAny(l_icd, 'ICD')
-        self.assertEqual(l_icd.ExternalIPv4, '65.35.48.61')
-        self.assertEqual(l_icd.ExternalIPv6, '1234:5678::1')
-        self.assertEqual(l_icd.LastChanged, '2014-10-02T12:34:56')
+        self.assertEqual(l_icd.ExternalIPv4, convert.str_to_long('65.35.48.61'))
+        self.assertEqual(l_icd.ExternalIPv6, convert.str_to_long('1234:5678::1'))
+        self.assertEqual(l_icd.LastChanged, DATETIME)
 
     def test_04_RedAllInternet(self):
         l_obj = self.m_api.read_internet_xml(self.m_pyhouse_obj)
         PrettyPrintAny(l_obj, 'All Internet')
         self.assertEqual(l_obj.LocateUrls[0], 'http://snar.co/ip/')
         self.assertEqual(l_obj.UpdateUrls[0], 'http://freedns.afraid.org/dynamic/update.php?abc')
-        self.assertEqual(l_obj.ExternalIPv4, '65.35.48.61')
+        self.assertEqual(l_obj.ExternalIPv4, convert.str_to_long('65.35.48.61'))
 
     def test_11_WriteLocates(self):
         l_internet_obj = self.m_api.read_internet_xml(self.m_pyhouse_obj)

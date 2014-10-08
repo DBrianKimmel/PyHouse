@@ -1,7 +1,7 @@
 """
--*- test-case-name: PyHouse.src.Modules.Core.test.test_setup -*-
+-*- test-case-name: PyHouse.src.Modules.Core.test.test_setup_logging -*-
 
-@name: PyHouse/src/Modules/Core/setup.py
+@name: PyHouse/src/Modules/Core/setup_logging.py
 @author: D. Brian Kimmel
 @contact: D.BrianKimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
@@ -37,10 +37,11 @@ LOGGING_DICT = {
             'formatter' : 'standard',
         },
         'debug' : {
-            'class':'logging.FileHandler',
+            'class':'logging.handlers.TimedRotatingFileHandler',
             'level' : 'DEBUG',
             'formatter' : 'verbose',
             'filename' : '/var/log/pyhouse/debug',
+            'when' : 'midnight',
         },
         'error' : {
             'class':'logging.handlers.TimedRotatingFileHandler',

@@ -1,5 +1,7 @@
 """
-@name: PyHouse/src/test/test_mixin.py
+-*- test-case-name: PyHouse.src.test.test_testing_mixin -*-
+
+@name: PyHouse/src/test/testing_mixin.py
 @author: D. Brian Kimmel
 @contact: D.BrianKimmel@gmail.com
 @Copyright (c) 2013-2014 by D. Brian Kimmel
@@ -15,12 +17,10 @@
 from Modules.Core.data_objects import PyHouseData, PyHouseAPIs, \
             CoreServicesInformation, \
             ComputerInformation, \
-            NodeData, \
             HouseInformation, HouseObjs, \
             LocationData, \
             TwistedInformation, \
             XmlInformation
-# from Modules.utils.tools import PrettyPrintAny
 
 
 class XmlData(object):

@@ -5,7 +5,7 @@
 @copyright: 2014 by D. Brian Kimmel
 @note: Created on Apr 30, 2014
 @license: MIT License
-@summary: This module is for testing logging.
+@summary: This module is NO LONGER USED!
 
 """
 
@@ -30,7 +30,7 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-class Test_01_NoXML(SetupMixin, unittest.TestCase):
+class C01_NoXML(SetupMixin, unittest.TestCase):
     """
     This section tests the reading and writing of XML used by node_local.
     """
@@ -52,7 +52,7 @@ class Test_01_NoXML(SetupMixin, unittest.TestCase):
         PrettyPrintAny(l_xml, 'XML', 120)
 
 
-class Test_02_XML(SetupMixin, unittest.TestCase):
+class C02_XML(SetupMixin, unittest.TestCase):
     """
     This section tests the reading and writing of XML used by node_local.
     """

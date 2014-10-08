@@ -15,9 +15,11 @@ Tests all working OK - DBK 2014-05-28
 # import copy
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
+import datetime
 
 # Import PyMh files and modules.
 from Modules.Utilities import xml_tools
+from Modules.Utilities import convert
 from Modules.Core.data_objects import BaseLightingData, ControllerData
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
@@ -36,6 +38,7 @@ XML = """
         <b4>True</b4>
     </Part_3>
     <IPv4>98.76.0.123</IPv4>
+    <IPv6>1234:dead::beef</IPv6>
     <ExternalIPv6>1234:5678::1</ExternalIPv6>
     <DateTime>2014-10-02T12:34:56</DateTime>
 </Test>
@@ -60,19 +63,19 @@ class A02_Compound(SetupMixin, unittest.TestCase):
         self.m_fields = ET.fromstring(XML)
         self.m_api = xml_tools.PutGetXML()
 
-    def test_01_GetIpv4(self):
-        l_elem = self.m_api.get_ipv4(self.m_fields, 'IPv4')
-        self.assertEqual(l_elem, '98.76.0.123')
+    def test_01_GetIpV4(self):
+        l_elem = self.m_api.get_ip_from_xml(self.m_fields, 'IPv4')
+        self.assertEqual(l_elem, convert.str_to_long('98.76.0.123'))
         print('Element = {}'.format(l_elem))
 
     def test_02_GetIPv6(self):
-        l_elem = self.m_api.get_ipv6(self.m_fields, 'IPv6')
-        self.assertEqual(l_elem, '1234:5678::1')
+        l_elem = self.m_api.get_ip_from_xml(self.m_fields, 'IPv6')
+        self.assertEqual(l_elem, convert.str_to_long('1234:dead::beef'))
         print('Element = {}'.format(l_elem))
 
     def test_03_GetDateTime(self):
-        l_elem = self.m_api.get_date_time(self.m_fields, 'DateTime')
-        self.assertEqual(l_elem, '2014-10-02T12:34:56')
+        l_elem = self.m_api.get_date_time_from_xml(self.m_fields, 'DateTime')
+        self.assertEqual(l_elem, datetime.datetime(2014, 10, 2, 12, 34, 56))
         print('Element = {}'.format(l_elem))
 
 
@@ -197,6 +200,9 @@ class C01_XML(SetupMixin, unittest.TestCase):
         print('Text = {0:}'.format(l_text))
 
     def test_51A_GetTextElement(self):
+        """
+        we seem to not work if the field is the xml passed in.
+        """
         l_text = self.m_api.get_text_from_xml(self.m_fields.find('TextField1'), 'TextField1')
         self.assertEqual(l_text, 'Test of text element')
         print('Text = {0:}'.format(l_text))

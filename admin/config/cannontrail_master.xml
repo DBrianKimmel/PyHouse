@@ -81,7 +81,12 @@
                 <Corner>0.83, 25.08</Corner>
                 <Size>14.00, 18.00</Size>
             </Room>
-        </RoomSection>
+            <Room Active="False" Key="4" Name="LivingRoom">
+                <Comment />
+                <Corner>0.83, 25.08</Corner>
+                <Size>14.00, 18.00</Size>
+            </Room>
+            </RoomSection>
         <ScheduleSection>
             <Schedule Active="True" Key="0" Name="Evening">
                 <Level>100</Level>
@@ -179,8 +184,25 @@
                 <GroupNumber>0</GroupNumber>
                 <IsMaster>True</IsMaster>
                 <ProductKey>00.00.00</ProductKey>
-                <IsResponder>True</IsResponder></Light>
-        </LightSection>
+                <IsResponder>True</IsResponder>
+            </Light>
+            <Light Active="True" Key="4" Name="FireplaceLights">
+                <Comment>SwitchLink Dimmer</Comment>
+                <Coords>['0', '0']</Coords>
+                <IsDimmable>True</IsDimmable>
+                <ControllerFamily>Insteon</ControllerFamily>
+                <RoomName>LivingRoom</RoomName>
+                <LightingType>Light</LightingType>
+                <Address>1D.26.74</Address>
+                <IsController>True</IsController>
+                <DevCat>00.00</DevCat>
+                <GroupList>All_Lights|LivingRoom(0;0)</GroupList>
+                <GroupNumber>0</GroupNumber>
+                <IsMaster>True</IsMaster>
+                <ProductKey>00.00.00</ProductKey>
+                <IsResponder>True</IsResponder>
+            </Light>
+            </LightSection>
         <ButtonSection>
             <Button Active="True" Key="0" Name="Button1">
                 <Comment>Test Button</Comment>

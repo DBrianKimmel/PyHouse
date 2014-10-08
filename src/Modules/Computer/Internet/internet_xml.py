@@ -57,9 +57,9 @@ class Util(XmlConfigTools):
 
     def _read_derived(self, p_internet_sect_xml):
         l_icd = InternetConnectionData()
-        l_icd.ExternalIPv4 = self.get_text_from_xml(p_internet_sect_xml, 'ExternalIPv4')
-        l_icd.ExternalIPv6 = self.get_text_from_xml(p_internet_sect_xml, 'ExternalIPv6')
-        l_icd.LastChanged = self.get_text_from_xml(p_internet_sect_xml, 'LastChanged')
+        l_icd.ExternalIPv4 = self.get_ip_from_xml(p_internet_sect_xml, 'ExternalIPv4')
+        l_icd.ExternalIPv6 = self.get_ip_from_xml(p_internet_sect_xml, 'ExternalIPv6')
+        l_icd.LastChanged = self.get_date_time_from_xml(p_internet_sect_xml, 'LastChanged')
         return l_icd
 
 

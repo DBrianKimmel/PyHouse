@@ -31,7 +31,6 @@ This module will establish a domain network and use Twisted's AMP protocol to pa
 # Import PyMh files and modules.
 from Modules.Computer.Nodes import node_local
 from Modules.Computer.Nodes import node_discovery
-# from Modules.Computer.Nodes import node_domain
 from Modules.Computer.Nodes import inter_node_comm
 
 g_debug = 0
