@@ -28,7 +28,7 @@ from Modules.Computer import logging_pyh as Logger
 # from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 1
-LOG = Logger.getLogger('PyHouse.Dev_Insteon ')
+LOG = Logger.getLogger('PyHouse.Insteon_Dev ')
 
 
 class Utility(object):
@@ -103,13 +103,13 @@ class API(Utility):
     def SaveXml(self, p_xml):
         return p_xml
 
-    def ChangeLight(self, p_light_obj, p_level, _p_rate = 0):
+    def ChangeLight(self, p_light_obj, p_level, p_rate = 0):
         """
         Do the Insteon thing to change the level of an Insteon light
         """
         # if g_debug >= 1:
-        LOG.debug('Change light Name:{0:}, ControllerFamily:{1:}'.format(p_light_obj.Name, p_light_obj.ControllerFamily))
-        self.m_plm.ChangeLight(p_light_obj, p_level)
+        LOG.info('Change light Name:{}, ControllerFamily:{} to level:{}'.format(p_light_obj.Name, p_light_obj.ControllerFamily, p_level))
+        self.m_plm.ChangeLight(p_light_obj, p_level, p_rate)
 
     def ReadXml(self, p_device_obj, p_entry_xml):
         # print('Insteon_device - ReadXml()')

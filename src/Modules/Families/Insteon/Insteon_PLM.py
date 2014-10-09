@@ -527,8 +527,7 @@ class API(Utility):
         """
         Send a command to change a light's level
         """
-        if g_debug >= 1:
-            LOG.debug("Change light:{0:} to level:{1:} at rate:{2:}".format(p_light_obj.Name, p_level, p_rate))
+        LOG.info("Change light:{} to level:{} at rate:{}".format(p_light_obj.Name, p_level, p_rate))
         if int(p_level) == 0:
             self.queue_62_command(p_light_obj, MESSAGE_TYPES['off'], 0)
         elif int(p_level) == 100:
