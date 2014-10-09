@@ -20,10 +20,27 @@ import xml.etree.ElementTree as ET
 # Import PyMh files
 from Modules.Core.data_objects import LocationData
 from Modules.Utilities.xml_tools import XmlConfigTools
-# from Modules.Utilities.tools import PrettyPrintAny
+
 
 g_debug = 0
 m_logger = None
+
+
+LOCATION_XML = """
+        <LocationSection>
+            <Street>5191 N Pink Poppy Dr</Street>
+            <City>Beverly Hills</City>
+            <State>Florida</State>
+            <ZipCode>34465</ZipCode>
+            <Phone>(352) 270-8096</Phone>
+            <Latitude>28.938448</Latitude>
+            <Longitude>-82.517208</Longitude>
+            <TimeZoneName>USA/Eastern</TimeZoneName>
+            <TimeZoneOffset>-5:00</TimeZoneOffset>
+            <DaylightSavingsTime>-4:00</DaylightSavingsTime>
+        </LocationSection>
+"""
+
 
 class ReadWriteConfigXml(XmlConfigTools):
     """Use the internal data to read / write an updated XML config file.

@@ -16,11 +16,10 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, HouseObjs, LocationData
+from Modules.Core.data_objects import LocationData
 from Modules.Housing import location
 from Modules.Web import web_utils
-from Modules.Utilities.tools import PrettyPrintAny
-from test import xml_data
+from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
 
@@ -35,7 +34,7 @@ class SetupMixin(object):
 class Test_02_XML(SetupMixin, unittest.TestCase):
 
     def _pyHouses(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_house_obj = LocationData()
         self.m_api = location.ReadWriteConfigXml()
 

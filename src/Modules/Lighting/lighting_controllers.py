@@ -21,6 +21,78 @@ g_debug = 1
 LOG = Logger.getLogger('PyHouse.Controller  ')
 
 
+CONTROLLER_XML = """
+        <ControllerSection>
+            <Controller Active="False" Key="0" Name="PLM_1">
+                <Comment>Dongle using serial converter 067B:2303</Comment>
+                <Coords />
+                <IsDimmable>False</IsDimmable>
+                <ControllerFamily>Insteon</ControllerFamily>
+                <RoomName>Office</RoomName>
+                <LightingType>Controller</LightingType>
+                <Address>AA.AA.AA</Address>
+                <IsController>True</IsController>
+                <DevCat>12.34</DevCat><GroupList />
+                <GroupNumber>0</GroupNumber>
+                <IsMaster>False</IsMaster>
+                <ProductKey>23.45.67</ProductKey>
+                <IsResponder>True</IsResponder>
+                <InterfaceType>Serial</InterfaceType>
+                <Port>/dev/ttyUSB0</Port>
+                <BaudRate>19200</BaudRate>
+                <ByteSize>8</ByteSize>
+                <Parity>N</Parity>
+                <StopBits>1.0</StopBits>
+                <Timeout>1.0</Timeout>
+                <DsrDtr>False</DsrDtr>
+                <RtsCts>False</RtsCts>
+                <XonXoff>False</XonXoff>
+            </Controller>
+            <Controller Active="True" Key="1" Name="PowerLink">
+                <Comment>2413UH Powerlink Controller</Comment>
+                <Coords />
+                <IsDimmable>False</IsDimmable>
+                <ControllerFamily>Insteon</ControllerFamily>
+                <RoomName>Office</RoomName>
+                <LightingType>Controller</LightingType>
+                <Address>17.03.B2</Address>
+                <IsController>True</IsController>
+                <DevCat>0x0</DevCat>
+                <GroupList />
+                <GroupNumber>0</GroupNumber>
+                <IsMaster>False</IsMaster>
+                <ProductKey>0</ProductKey>
+                <IsResponder>True</IsResponder>
+                <InterfaceType>Serial</InterfaceType>
+                <Port>/dev/ttyUSB0</Port>
+                <BaudRate>19200</BaudRate>
+                <ByteSize>8</ByteSize>
+                <Parity>N</Parity>
+                <StopBits>1.0</StopBits>
+                <Timeout>1.0</Timeout>
+                <DsrDtr>False</DsrDtr>
+                <RtsCts>False</RtsCts>
+                <XonXoff>False</XonXoff>
+            </Controller>
+            <Controller Active="False" Key="2" Name="UPB_PIM">
+                <Comment>UPB PIM  using USB connection</Comment>
+                <Coords />
+                <IsDimmable>False</IsDimmable>
+                <ControllerFamily>UPB</ControllerFamily>
+                <RoomName>Master Bath</RoomName>
+                <LightingType>Controller</LightingType>
+                <UPBNetworkID>6</UPBNetworkID>
+                <UPBPassword>1253</UPBPassword>
+                <UPBAddress>255</UPBAddress>
+                <InterfaceType>USB</InterfaceType>
+                <Port>None</Port>
+                <Vendor>6109</Vendor>
+                <Product>21760</Product>
+            </Controller>
+        </ControllerSection>
+"""
+
+
 class ControllersAPI(ReadWriteConfigXml):
     """
     Get/Put all the information about one controller:

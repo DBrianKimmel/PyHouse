@@ -24,6 +24,63 @@ from Modules.Computer import logging_pyh as Logger
 g_debug = 1
 LOG = Logger.getLogger('PyHouse.ScheduleXml ')
 
+SCHEDULE_XML = """
+        <ScheduleSection>
+            <Schedule Active="True" Key="0" Name="Evening">
+                <Level>100</Level>
+                <LightName>lr_cans</LightName>
+                <Rate>0</Rate>
+                <RoomName>Living Room</RoomName>
+                <Time>sunset - 00:06</Time>
+                <ScheduleType>LightingDevice</ScheduleType>
+            </Schedule>
+            <Schedule Active="True" Key="1" Name="Evening">
+                <Level>100</Level>
+                <LightName>lr_rope</LightName>
+                <LightNumber>7</LightNumber>
+                <Rate>0</Rate>
+                <RoomName>Living Room</RoomName>
+                <Time>sunset - 00:08</Time>
+                <ScheduleType>LightingDevice</ScheduleType>
+            </Schedule>
+            <Schedule Active="True" Key="2" Name="Evening">
+                <Level>100</Level><LightName>outside_gar</LightName><LightNumber>1</LightNumber><Rate>0</Rate>
+                <RoomName>Garage</RoomName>
+                <Time>sunset - 00:02</Time>
+                <ScheduleType>LightingDevice</ScheduleType>
+            </Schedule>
+            <Schedule Active="True" Key="3" Name="Evening">
+                <Level>100</Level><LightName>outside_front</LightName>
+                <LightNumber>0</LightNumber><Rate>0</Rate><RoomName>Foyer</RoomName><Time>sunset</Time>
+                <ScheduleType>LightingDevice</ScheduleType>
+            </Schedule>
+            <Schedule Active="True" Key="4" Name="Evening">
+                <Level>100</Level>
+                <LightName>wet_bar</LightName>
+                <LightNumber>8</LightNumber>
+                <Rate>0</Rate>
+                <RoomName>Living Room</RoomName>
+                <Time>sunset - 00:04</Time>
+                <ScheduleType>LightingDevice</ScheduleType>
+            </Schedule>
+            <Schedule Active="False" Key="5" Name="Night xxx">
+                <Level>60</Level><LightName>mbr_rope</LightName>
+                <LightNumber>6</LightNumber><Rate>0</Rate><RoomName>Master Bedroom</RoomName>
+                <Time>22:00</Time>
+                <ScheduleType>LightingDevice</ScheduleType>
+            </Schedule>
+            <Schedule Active="True" Key="6" Name="Night">
+                <Level>0</Level>
+                <LightName>outside_gar</LightName>
+                <LightNumber>1</LightNumber>
+                <Rate>0</Rate>
+                <RoomName>Garage</RoomName>
+                <Time>23:00</Time>
+                <ScheduleType>LightingDevice</ScheduleType>
+            </Schedule>
+        </ScheduleSection>
+"""
+
 
 class ReadWriteConfigXml(XmlConfigTools):
 
@@ -44,10 +101,16 @@ class ReadWriteConfigXml(XmlConfigTools):
         """
         l_obj = ScheduleBaseData()
         self.read_base_object_xml(l_obj, p_schedule_element)
-        l_obj.DOW = self.get_int_from_xml(l_obj, 'DayOfWeek', 0x7F)
-        l_obj.Mode = self.get_int_from_xml(l_obj, 'Mode', 0)
         l_obj.Time = self.get_text_from_xml(p_schedule_element, 'Time')
         l_obj.ScheduleType = self.get_text_from_xml(p_schedule_element, 'ScheduleType')
+        try:
+            l_obj.DOW = self.get_int_from_xml(l_obj, 'DayOfWeek', 0x7F)
+        except:
+            l_obj.DOW = 0x7F
+        try:
+            l_obj.Mode = self.get_int_from_xml(l_obj, 'Mode', 0)
+        except:
+            l_obj.Mode = 0
         return l_obj
 
     def read_one_schedule(self, p_schedule_element):

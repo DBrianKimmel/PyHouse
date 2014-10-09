@@ -21,10 +21,24 @@ import xml.etree.ElementTree as ET
 from Modules.Core.data_objects import ThermostatData
 from Modules.Utilities import xml_tools
 from Modules.Computer import logging_pyh as Logger
-# from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 0
 LOG = Logger.getLogger('PyHouse.Thermostat  ')
+
+
+THERMOSTAT_XML = """
+        <ThermostatSection>
+            <Thermostat Name='Test Thermostat One' Active='True' Key='0'>
+                <ControllerFamily>Insteon</ControllerFamily>
+                <CoolSetPoint>78.0</CoolSetPoint>
+                <CurrentTemperature>76</CurrentTemperature>
+                <HeatSetPoint>71.0</HeatSetPoint>
+                <ThermostatMode>Cool</ThermostatMode>
+                <ThermostatScale>F</ThermostatScale>
+                <Address>18.C9.4A</Address>
+            </Thermostat>
+        </ThermostatSection>
+"""
 
 
 class ReadWriteConfigXml(xml_tools.XmlConfigTools):

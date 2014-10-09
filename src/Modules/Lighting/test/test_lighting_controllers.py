@@ -20,7 +20,7 @@ from Modules.Lighting import lighting_controllers
 from Modules.Families import family
 from Modules.Core import conversions
 from Modules.Web import web_utils
-from test import xml_data
+from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
 
@@ -39,7 +39,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
         self.m_api = lighting_controllers.ControllersAPI(self.m_pyhouse_obj)
         self.m_controller_obj = ControllerData()
@@ -80,7 +80,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
 
     def test_0222_ReadFamilyXml(self):
         l_obj = self.m_api._read_controller_data(self.m_xml.controller)
-        l_family = self.m_api._read_family_data(l_obj, self.m_xml.controller)
+        _l_family = self.m_api._read_family_data(l_obj, self.m_xml.controller)
         PrettyPrintAny(l_obj, 'Read Family', 100)
         self.assertEqual(l_obj.DevCat, conversions.dotted_hex2int('12.34'))
         self.assertEqual(l_obj.InsteonAddress, conversions.dotted_hex2int('AA.AA.AA'))

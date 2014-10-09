@@ -18,7 +18,7 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from Modules.Core.data_objects import ScheduleBaseData
 from Modules.Scheduling import schedule_xml
-from test import xml_data
+from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
 
@@ -34,15 +34,15 @@ class SetupMixin(object):
         self.m_api = schedule_xml.ReadWriteConfigXml()
 
 
-class Test_02_XML(SetupMixin, unittest.TestCase):
+class C01_XML(SetupMixin, unittest.TestCase):
     """
     This section tests the reading and writing of XML used by schedules.
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_0201_FindXML(self):
+    def test_01_FindXML(self):
         """ Be sure that the XML contains the right stuff.
         """
         self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
@@ -50,6 +50,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.schedule_sect.tag, 'ScheduleSection', 'XML - No Schedules section')
         self.assertEqual(self.m_xml.schedule.tag, 'Schedule', 'XML - No Schedule section')
         PrettyPrintAny(self.m_pyhouse_obj.Xml, 'XML')
+        PrettyPrintAny(self.m_xml.schedule_sect, 'Schedule')
 
     def test_0231_ReadOneBase(self):
         """ Read in the xml file and fill in x
