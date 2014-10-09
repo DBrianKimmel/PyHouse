@@ -1,7 +1,7 @@
 """
--*- test-case-name: PyHouse.src.Modules.families.Insteon.test.test_Insteon_PLM -*-
+-*- test-case-name: PyHouse.src.Modules.Families.Insteon.test.test_Insteon_PLM -*-
 
-@name: PyHouse/src/Modules/families/Insteon/Insteon_PLM.py
+@name: PyHouse/src/Modules/Families/Insteon/Insteon_PLM.py
 @author: D. Brian Kimmel
 @contact: D.BrianKimmel@gmail.com
 @copyright: 2010-2014 by D. Brian Kimmel
@@ -37,7 +37,7 @@ from Modules.Families.Insteon import Insteon_HVAC
 from Modules.Computer import logging_pyh as Logger
 # from Modules.Utilities.tools import PrettyPrintAny
 
-g_debug = 4
+g_debug = 0
 LOG = Logger.getLogger('PyHouse.Insteon_decd')
 
 # OBJ_LIST = [Lights, Controllers, Buttons, Thermostats, Irrigation, Pool]

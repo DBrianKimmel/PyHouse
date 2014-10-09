@@ -1,5 +1,5 @@
 """
-@name: PyHouse/src/Modules/family/Insteon/__init__.py
+@name: PyHouse/src/Modules/Families/Insteon/__init__.py
 @author: D. Brian Kimmel
 @contact: D.BrianKimmel@gmail.com
 @copyright: 2010-2014 by D. Brian Kimmel

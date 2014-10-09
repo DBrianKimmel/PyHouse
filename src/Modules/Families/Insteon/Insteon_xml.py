@@ -1,9 +1,7 @@
 """
-Created on Jul 29, 2014
+-*- test-case-name: PyHouse.src.Modules.Families.Insteon.test.test_Insteon_xml -*-
 
--*- test-case-name: PyHouse.src.Modules.families.Insteon.test.test_Insteon_xml -*-
-
-@name: PyHouse/src/Modules/families/Insteon/Insteon_xml.py
+@name: PyHouse/src/Modules/Families/Insteon/Insteon_xml.py
 @author: D. Brian Kimmel
 @contact: D.BrianKimmel@gmail.com
 @copyright: 2011-2014 by D. Brian Kimmel
@@ -29,7 +27,6 @@ from Modules.Families.Insteon.Insteon_data import InsteonData
 from Modules.Core import conversions
 from Modules.Utilities import xml_tools
 from Modules.Computer import logging_pyh as Logger
-# from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 0
 LOG = Logger.getLogger('PyHouse.Insteon_xml ')

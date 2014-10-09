@@ -1,7 +1,7 @@
 """
--*- test-case-name: PyHouse.src.Modules.families.Insteon.test.test_Insteon_PLM -*-
+-*- test-case-name: PyHouse.src.Modules.Families.Insteon.test.test_Insteon_PLM -*-
 
-@name: PyHouse/src/Modules/families/Insteon/Insteon_PLM.py
+@name: PyHouse/src/Modules/Families/Insteon/Insteon_PLM.py
 @author: D. Brian Kimmel
 @contact: D.BrianKimmel@gmail.com
 @copyright: 2010-2014 by D. Brian Kimmel
@@ -38,9 +38,8 @@ from Modules.Families.Insteon.Insteon_constants import COMMAND_LENGTH, MESSAGE_L
 from Modules.Families.Insteon import Insteon_utils
 from Modules.Families.Insteon import Insteon_decoder
 from Modules.Computer import logging_pyh as Logger
-# from Modules.Utilities.tools import PrettyPrintAny
 
-g_debug = 9
+g_debug = 0
 LOG = Logger.getLogger('PyHouse.Insteon_PLM ')
 
 # Timeouts for send/receive delays
@@ -104,10 +103,11 @@ class CreateCommands(InsteonPlmUtility):
     """Send various commands to the PLM.
     """
 
+    def _format_address(self, p_addr):
+        l_ret = 'Address:({0:x}.{1:x}.{2:x})'.format(p_addr[0], p_addr[1], p_addr[2])
+        return l_ret
+
     def queue_plm_command(self, p_command):
-        # print('  p_command = {0:}'.format(PrintBytes(p_command)))
-        # PrettyPrintAny(self.m_controller_obj, 'InsteonPLM - queuePlmCommand - m_controller_obj', 100)
-        # PrettyPrintAny(self.m_pyhouse_obj, 'InsteonPLM - queuePlmCommand - m_pyhouse_obj', 100)
         self.m_controller_obj._Queue.put(p_command)
         if g_debug >= 1:
             LOG.debug("Insteon_PLM.queue_plm_command() - Q-Size:{0:}, Command:{1:}".format(self.m_controller_obj._Queue.qsize(), PrintBytes(p_command)))
@@ -150,7 +150,7 @@ class CreateCommands(InsteonPlmUtility):
         l_command[6] = p_obj._Command1 = p_cmd1
         l_command[7] = p_obj._Command2 = p_cmd2
         if g_debug >= 1:
-            LOG.debug("Queue62 command to device: {2:}, Command: {0:#X},{1:#X}, Address: ({3:x}.{4:x}.{5:x})".format(p_cmd1, p_cmd2, p_obj.Name, l_command[2], l_command[3], l_command[4]))
+            LOG.debug("Device: {:0}, Command: {:1#X},{:2#X}, {:3}".format(p_obj.Name, p_cmd1, p_cmd2, self._format_address(l_command[2:5])))
         return self.queue_plm_command(l_command)
 
     def queue_63_command(self, p_obj):

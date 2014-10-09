@@ -1,7 +1,7 @@
 """
--*- test-case-name: PyHouse.src.Modules.families.Insteon.test.test_Insteon_device -*-
+-*- test-case-name: PyHouse.src.Modules.Families.Insteon.test.test_Insteon_device -*-
 
-@name: PyHouse/src/Modules/families/Insteon/Insteon_device.py
+@name: PyHouse/src/Modules/Families/Insteon/Insteon_device.py
 @author: D. Brian Kimmel
 @contact: D.BrianKimmel@gmail.com
 @copyright: 2011-2014 by D. Brian Kimmel
@@ -27,7 +27,7 @@ from Modules.Families.Insteon import Insteon_xml
 from Modules.Computer import logging_pyh as Logger
 # from Modules.Utilities.tools import PrettyPrintAny
 
-g_debug = 1
+g_debug = 0
 LOG = Logger.getLogger('PyHouse.Insteon_Dev ')
 
 
@@ -75,6 +75,10 @@ class Utility(object):
         for l_controller_obj in p_pyhouse_obj.House.OBJs.Controllers.itervalues():
             if Utility._is_valid_controller(l_controller_obj):
                 l_ret = Utility._start_plm(p_pyhouse_obj, l_controller_obj)
+            elif Utility._is_insteon(l_controller_obj):
+                LOG.warning('Controller {} is NOT started per config file.'.format(l_controller_obj.Name))
+            else:
+                pass  # Not interested in this controller.
         return l_ret
 
     @staticmethod
@@ -112,7 +116,7 @@ class API(object):
         """
         Do the Insteon thing to change the level of an Insteon light
         """
-        LOG.info('Light Name:{}; Controller Family:{}; to level:{}; PLM:{};'.format(p_light_obj.Name, p_light_obj.ControllerFamily, p_level, self.m_plm))
+        LOG.info('Light Name:{}; Controller Family:{}; to level:{};'.format(p_light_obj.Name, p_light_obj.ControllerFamily, p_level))
         self.m_plm.ChangeLight(p_light_obj, p_level, p_rate)
 
     def ReadXml(self, p_device_obj, p_entry_xml):

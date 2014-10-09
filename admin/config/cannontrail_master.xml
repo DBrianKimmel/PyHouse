@@ -249,7 +249,7 @@
                 <RtsCts>False</RtsCts>
                 <XonXoff>False</XonXoff>
             </Controller>
-            <Controller Active="False" Key="1" Name="PowerLink">
+            <Controller Active="True" Key="1" Name="PowerLink">
                 <Comment>2413UH Powerlink Controller</Comment>
                 <Coords>None</Coords>
                 <IsDimmable>False</IsDimmable>

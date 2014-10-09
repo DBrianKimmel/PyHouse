@@ -1,7 +1,7 @@
 """
--*- test-case-name: PyHouse.src.Modules.families.Insteon.test.test_Insteon_data -*-
+-*- test-case-name: PyHouse.src.Modules.Families.Insteon.test.test_Insteon_data -*-
 
-@name: PyHouse/src/Modules/families/Insteon/Insteon_data.py
+@name: PyHouse/src/Modules/Families/Insteon/Insteon_data.py
 @author: D. Brian Kimmel
 @contact: D.BrianKimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
