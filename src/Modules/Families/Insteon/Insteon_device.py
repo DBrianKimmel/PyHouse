@@ -83,13 +83,7 @@ class API(Utility):
     These are the public methods available to use Insteon devices.
     """
 
-    def __init__(self):
-        pass
-
     def Start(self, p_pyhouse_obj):
-        """
-        This will start all the controllers for family = Insteon in the house.
-        """
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_plm = self._start_all_controllers(p_pyhouse_obj)
         LOG.info('Started the Insteon Controllers.')
@@ -107,12 +101,10 @@ class API(Utility):
         """
         Do the Insteon thing to change the level of an Insteon light
         """
-        # if g_debug >= 1:
-        LOG.info('Change light Name:{}, ControllerFamily:{} to level:{}'.format(p_light_obj.Name, p_light_obj.ControllerFamily, p_level))
+        LOG.info('Light Name:{}; Controller Family:{}; to level:{}; PLM:{};'.format(p_light_obj.Name, p_light_obj.ControllerFamily, p_level, self.m_plm))
         self.m_plm.ChangeLight(p_light_obj, p_level, p_rate)
 
     def ReadXml(self, p_device_obj, p_entry_xml):
-        # print('Insteon_device - ReadXml()')
         Insteon_xml.ReadWriteConfigXml().ReadXml(p_device_obj, p_entry_xml)
 
     def WriteXml(self, p_device_obj, p_entry_xml):
