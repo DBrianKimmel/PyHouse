@@ -9,7 +9,9 @@
                 <UpdateUrl>http://freedns.afraid.org/dynamic/update.php?VDZtSkE2MzFVMVVBQVd5QXg2MDo4MDk0ODM1</UpdateUrl>
             </UpdaterUrlSection>
             <ExternalIPv4>65.35.48.61</ExternalIPv4>
-        </InternetSection>
+            <ExternalIPv6>2001:4830:1600:84ae::1</ExternalIPv6>
+            <LastChanged>2014-10-02 12:34:56</LastChanged>
+            </InternetSection>
         <LogSection>
             <Debug>/var/log/pyhouse/debug</Debug>
             <Error>/var/log/pyhouse/error</Error>
