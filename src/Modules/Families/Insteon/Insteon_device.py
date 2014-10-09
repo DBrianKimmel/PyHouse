@@ -35,22 +35,26 @@ class Utility(object):
     """
     """
 
-    def _is_insteon(self, p_obj):
+    @staticmethod
+    def _is_insteon(p_obj):
         try:
             return p_obj.ControllerFamily == 'Insteon'
         except AttributeError:
             return False
 
-    def _is_active(self, p_obj):
+    @staticmethod
+    def _is_active(p_obj):
         try:
             return p_obj.Active == True
         except AttributeError:
             return False
 
-    def _is_valid_controller(self, p_controller_obj):
-        return self._is_insteon(p_controller_obj) and self._is_active(p_controller_obj)
+    @staticmethod
+    def _is_valid_controller(p_controller_obj):
+        return Utility._is_insteon(p_controller_obj) and Utility._is_active(p_controller_obj)
 
-    def _start_plm(self, p_pyhouse_obj, p_controller_obj):
+    @staticmethod
+    def _start_plm(p_pyhouse_obj, p_controller_obj):
         """
         import PLM module when we run this otherwise we will get a circular import
         """
@@ -65,32 +69,39 @@ class Utility(object):
             p_controller_obj.Active = False
             return None
 
-    def _start_all_controllers(self, p_pyhouse_obj):
+    @staticmethod
+    def _start_all_controllers(p_pyhouse_obj):
         l_ret = None
         for l_controller_obj in p_pyhouse_obj.House.OBJs.Controllers.itervalues():
-            if self._is_valid_controller(l_controller_obj):
-                l_ret = self._start_plm(p_pyhouse_obj, l_controller_obj)
+            if Utility._is_valid_controller(l_controller_obj):
+                l_ret = Utility._start_plm(p_pyhouse_obj, l_controller_obj)
         return l_ret
 
-    def _stop_all_controllers(self, p_pyhouse_obj):
+    @staticmethod
+    def _stop_all_controllers(p_pyhouse_obj):
         for l_controller_obj in p_pyhouse_obj.House.OBJs.Controllers.itervalues():
-            if self._is_valid_controller(l_controller_obj):
+            if Utility._is_valid_controller(l_controller_obj):
                 l_controller_obj._HandlerAPI.Stop(l_controller_obj)
 
 
-class API(Utility):
+class API(object):
     """
     These are the public methods available to use Insteon devices.
     """
 
+    m_plm = None
+
+    def __init__(self):
+        LOG.info('Created an instance of Insteon_device.')
+
     def Start(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_plm = self._start_all_controllers(p_pyhouse_obj)
+        self.m_plm = Utility._start_all_controllers(p_pyhouse_obj)
         LOG.info('Started the Insteon Controllers.')
 
     def Stop(self):
         try:
-            self._stop_all_controllers(self.m_pyhouse_obj)
+            Utility._stop_all_controllers(self.m_pyhouse_obj)
         except AttributeError as e_err:
             LOG.warning('Stop Warning - {0:}'.format(e_err))  # no controllers for house(House is being added)
 
