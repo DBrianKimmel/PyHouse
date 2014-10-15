@@ -32,7 +32,7 @@ from Modules.Drivers import VALID_INTERFACES
 from Modules.Drivers import VALID_PROTOCOLS
 from Modules.Housing import VALID_FLOORS
 from Modules.Scheduling import VALID_SCHEDULING_TYPES, VALID_SCHEDULE_MODES
-from Modules.Lighting import VALID_LIGHTS_TYPE
+from Modules.Lighting import VALID_LIGHTING_TYPE
 from Modules.Computer import logging_pyh as Logger
 
 # Handy helper for finding external resources nearby.
@@ -103,7 +103,7 @@ class LoginElement(athena.LiveElement):
             VALID_INTERFACES
             VALID_FAMILIES
             VALID_FLOORS
-            VALID_LIGHTS_TYPES
+            VALID_LIGHTING_TYPES
             VALID_PROTOCOLS
             VALID_SCHEDULING_TYPES
             VALID_SCHEDULE_MODES
@@ -112,7 +112,7 @@ class LoginElement(athena.LiveElement):
                      Families = VALID_FAMILIES,
                      Floors = VALID_FLOORS,
                      InterfaceType = VALID_INTERFACES,
-                     LightType = VALID_LIGHTS_TYPE,
+                     LightType = VALID_LIGHTING_TYPE,
                      ProtocolType = VALID_PROTOCOLS,
                      ScheduleType = VALID_SCHEDULING_TYPES,
                      ScheduleMode = VALID_SCHEDULE_MODES

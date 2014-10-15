@@ -22,14 +22,14 @@ class InsteonData (LightData):
     """
     def __init__(self):
         super(InsteonData, self).__init__()
-        self.InsteonAddress = 0  # Long integer internally - '1A.B3.3C' for external reaability
-        self.IsController = False
-        self.DevCat = 0  # DevCat and SubCat (2 bytes)
         self.ControllerFamily = 'Insteon'
+        self.DevCat = 0  # DevCat and SubCat (2 bytes)
         self.GroupList = ''
         self.GroupNumber = 0
+        self.InsteonAddress = 0  # Long integer internally - '1A.B3.3C' for external reaability
+        self.IsController = False
         self.IsMaster = False  # False is Slave
-        self.ProductKey = ''
         self.IsResponder = False
+        self.ProductKey = ''
 
 # ## END DBK

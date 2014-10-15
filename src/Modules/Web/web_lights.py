@@ -22,7 +22,7 @@ from Modules.Core import conversions
 from Modules.Web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.Lighting import lighting_lights
 from Modules.Computer import logging_pyh as Logger
-# from Modules.Utilities.tools import PrettyPrintAny
+from Modules.Utilities.tools import PrettyPrintAny
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -56,6 +56,7 @@ class LightsElement(athena.LiveElement):
         """A new/changed light is returned.  Process it and update the internal data via light_xxxx.py
         """
         l_json = JsonUnicode().decode_json(p_json)
+        PrettyPrintAny(l_json, 'JSON')
         l_delete = l_json['Delete']
         l_light_ix = int(l_json['Key'])
         if l_delete:
@@ -75,7 +76,7 @@ class LightsElement(athena.LiveElement):
         #
         l_obj.Name = l_json['Name']
         l_obj.Active = l_json['Active']
-        l_obj.Key = int(l_json['Key'])
+        l_obj.Key = l_light_ix
         l_obj.Comment = l_json['Comment']
         l_obj.Coords = l_json['Coords']
         l_obj.IsDimmable = l_json['IsDimmable']
@@ -85,14 +86,20 @@ class LightsElement(athena.LiveElement):
         l_obj.UUID = l_json['UUID']
         if len(l_obj.UUID) < 8:
             l_obj.UUID = str(uuid.uuid1())
+        PrettyPrintAny(l_obj, 'LightObj')
         if l_obj.ControllerFamily == 'Insteon':
-            l_obj.InsteonAddress = conversions.dotted_hex2int(l_json['InsteonAddress'])
             l_obj.DevCat = conversions.dotted_hex2int(l_json['DevCat'])
-            l_obj.GroupNumber = l_json['GroupNumber']
             l_obj.GroupList = l_json['GroupList']
+            l_obj.GroupNumber = l_json['GroupNumber']
+            l_obj.InsteonAddress = conversions.dotted_hex2int(l_json['InsteonAddress'])
+            l_obj.IsController = l_json['IsController']
             l_obj.IsMaster = l_json['IsMaster']
             l_obj.IsResponder = l_json['IsResponder']
             l_obj.ProductKey = conversions.dotted_hex2int(l_json['ProductKey'])
+        elif l_obj.ControllerFamily == 'UPB':
+            l_obj.UPBAddress = l_json['UPBAddress']
+            l_obj.UPBPassword = l_json['UPBPassword']
+            l_obj.UPBNetworkID = l_json['UPBNetworkID']
         self.m_pyhouse_obj.House.OBJs.Lights[l_light_ix] = l_obj
 
 # ## END DBK

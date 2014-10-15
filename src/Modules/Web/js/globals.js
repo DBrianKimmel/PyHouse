@@ -599,7 +599,7 @@ function buildLightNameSelectWidget(p_id, p_checked) {
 	return buildSelectWidget(p_id, l_list, p_checked);
 }
 function buildFamilySelectWidget(p_id, p_checked) {
-	//Divmod.debug('---', 'globals.buildFamilySelectWidget() was called. Id=' + p_id + '  Checked=' + p_checked);
+	Divmod.debug('---', 'globals.buildFamilySelectWidget() was called. Id=' + p_id + '  Checked=' + p_checked);
 	return buildSelectWidget(p_id, globals.Valid.Families, p_checked);
 }
 function buildFloorSelectWidget(p_id, p_checked) {

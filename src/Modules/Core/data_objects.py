@@ -65,7 +65,7 @@ class BaseLightingData(ABaseObject):
         self.IsDimmable = False
         self.ControllerFamily = 'Null'
         self.RoomName = ''
-        self.LightingType = ''  # Button | Light | Controller
+        self.LightingType = ''  # VALID_LIGHTING_TYPE = Button | Light | Controller
 
 
 class ButtonData(BaseLightingData):
@@ -102,7 +102,6 @@ class LightData(BaseLightingData):
     def __init__(self):
         super(LightData, self).__init__()
         self.CurLevel = 0
-        # self.IsController = None
         self.LightingType = 'Light'
 
 

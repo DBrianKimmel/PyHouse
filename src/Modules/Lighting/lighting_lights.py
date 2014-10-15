@@ -39,9 +39,10 @@ LIGHTS_XML = """
                 <Comment>SwitchLink On/Off</Comment>
                 <Coords>['0', '0']</Coords>
                 <IsDimmable>False</IsDimmable>
-                <ControllerFamily>Insteon</ControllerFamily>
                 <RoomName>Foyer</RoomName>
                 <LightingType>Light</LightingType>
+                <ControllerFamily>Insteon</ControllerFamily>
+
                 <Address>16.62.2D</Address>
                 <IsController>True</IsController>
                 <DevCat>02.0A</DevCat>
@@ -53,8 +54,10 @@ LIGHTS_XML = """
                 <CurLevel>73</CurLevel>
             </Light>
             <Light Active="True" Key="1" Name="outside_gar">
-                <Comment>SwitchLink On/Off</Comment><Coords>['0', '0']</Coords>
-                <IsDimmable>False</IsDimmable><ControllerFamily>Insteon</ControllerFamily>
+                <Comment>SwitchLink On/Off</Comment>
+                <Coords>['0', '0']</Coords>
+                <IsDimmable>False</IsDimmable>
+                <ControllerFamily>Insteon</ControllerFamily>
                 <RoomName>Garage</RoomName>
                 <LightingType>Light</LightingType>
                 <Address>17.47.A1</Address>
@@ -63,7 +66,8 @@ LIGHTS_XML = """
                 <GroupList>All_Lights|Outside|Garage(0;0)</GroupList>
                 <GroupNumber>0</GroupNumber>
                 <IsMaster>True</IsMaster>
-                <ProductKey>0</ProductKey><IsResponder>True</IsResponder>
+                <ProductKey>0</ProductKey>
+                <IsResponder>True</IsResponder>
             </Light>
             <Light Active="True" Key="2" Name="dr_chand">
                 <Comment>SwitchLink dimmer</Comment><Coords>['0', '0']</Coords>
