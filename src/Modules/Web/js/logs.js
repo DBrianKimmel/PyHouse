@@ -89,7 +89,7 @@ helpers.Widget.subclass(logs, 'LogsWidget').methods(
 		self.nodeById('LogEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick', 'NoDelete');
 	},
 	function fetchEntry(self) {
-		Divmod.debug('---', 'lights.fetchEntry() was called. ');
+		Divmod.debug('---', 'logs.fetchEntry() was called. ');
         var l_data = {
                 Debug : fetchTextWidget('LogDebug'),
                 Error : fetchTextWidget('LogError'),

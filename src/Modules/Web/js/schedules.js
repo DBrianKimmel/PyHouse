@@ -1,19 +1,26 @@
 /**
- * schedules.js
+ * @name: PyHouse/src/Modules/Web/js/schedules.js
+ * @author: D. Brian Kimmel
+ * @contact: D.BrianKimmel@gmail.com
+ * @Copyright (c) 2014 by D. Brian Kimmel
+ * @license: MIT License
+ * @note: Created on Mar 11, 2014
+ * @summary: Displays the Schedule widget.
  *
- * The Schedule widget.
  */
-
 // import Nevow.Athena
 // import globals
 // import helpers
 
+
+
 helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 
 	function __init__(self, node) {
-		//Divmod.debug('---', 'schedules.__init__() was called. - self=' + self + "  node=" + node);
 		schedules.SchedulesWidget.upcall(self, '__init__', node);
 	},
+
+
 
 	/**
      * Place the widget in the workspace.
@@ -23,10 +30,8 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 	 */
 	function ready(self) {
 		function cb_widgetready(res) {
-			//Divmod.debug('---', 'schedules.cb_widgready() was called. - res='  + res);
 			self.hideWidget();
 		}
-		//Divmod.debug('---', 'scheduless.ready() was called. ');
 		var uris = collectIMG_src(self.node, null);
 		var l_defer = loadImages(uris);
 		l_defer.addCallback(cb_widgetready);
@@ -64,13 +69,14 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 		return l_html;
 	},
 
+
+
 	// ============================================================================
 	/**
 	 * This triggers getting the schedule data from the server.
 	 */
 	function fetchHouseData(self) {
 		function cb_fetchHouseData(p_json) {
-			Divmod.debug('---', 'schedules.cb_fetchHouseData  was called. ');
 			globals.House.HouseObj = JSON.parse(p_json);
 			var l_tab = buildTable(globals.House.HouseObj.Schedules, 'handleMenuOnClick', self.buildButtonName);
 			self.nodeById('ScheduleTableDiv').innerHTML = l_tab;
@@ -78,12 +84,12 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 		function eb_fetchHouseData(res) {
 			Divmod.debug('---', 'schedules.eb_fetchHouseData() was called.  ERROR: ' + res);
 		}
-		Divmod.debug('---', 'schedules.fetchHouseData  was called. ');
         var l_defer = self.callRemote("getHouseData");  // call server @ web_schedules.py
 		l_defer.addCallback(cb_fetchHouseData);
 		l_defer.addErrback(eb_fetchHouseData);
         return false;
 	},
+
 
 	/**
 	 * Fill in the schedule entry screen with all of the data for this schedule.
@@ -94,28 +100,29 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
         self.nodeById('KeyDiv').innerHTML      = buildTextWidget('ScheduleKey', p_obj.Key, 'disabled');
 		self.nodeById('ActiveDiv').innerHTML   = buildTrueFalseWidget('ScheduleActive', p_obj.Active);
 		self.nodeById('UUIDDiv').innerHTML     = buildTextWidget('ScheduleUUID', p_obj.UUID, 'disabled');
-		self.nodeById('TypeDiv').innerHTML     = buildTextWidget('ScheduleType', p_obj.Type);  // s/b select box of valid types
+		self.nodeById('TypeDiv').innerHTML     = buildScheduleTypeSelectWidget('ScheduleType', p_obj.Type);
 		self.nodeById('TimeDiv').innerHTML     = buildTextWidget('ScheduleTime', p_obj.Time);
-		
+
 		self.nodeById('RoomNameDiv').innerHTML = buildRoomSelectWidget('ScheduleRoomName', p_obj.RoomName, 'disabled');
-		self.nodeById('LightNameDiv').innerHTML = buildLightNameSelectWidget('ScheduleLightName', p_obj.LightName, 'disabled');
+		self.nodeById('LightNameDiv').innerHTML= buildLightNameSelectWidget('ScheduleLightName', p_obj.LightName, 'disabled');
 		self.nodeById('LevelDiv').innerHTML    = buildLevelSliderWidget('ScheduleLevel', p_obj.Level);
 		self.nodeById('RateDiv').innerHTML     = buildTextWidget('ScheduleRate', p_obj.Rate, 'disabled');
+		self.nodeById('DowDiv').innerHTML      = buildDowWidget('ScheduleDow', p_obj.DOW);
+		self.nodeById('ModeDiv').innerHTML     = buildScheduleModeSelectWidget('ScheduleMode', p_obj.Mode);
 		self.nodeById('ScheduleEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick');
 	},
 
 	function fetchEntry(self) {
-		//Divmod.debug('---', 'schedules.fetchEntry() was called. ');
         var l_data = {
             Name      : fetchTextWidget('ScheduleName'),
             Key       : fetchTextWidget('ScheduleKey'),
 			Active    : fetchTrueFalseWidget('ScheduleActive'),
-			RoomName  : fetchSelectWidget('ScheduleRoomName'),
-			ScheduleType : fetchTextWidget('ScheduleType'),
 			UUID      : fetchTextWidget('ScheduleUUID'),
+			ScheduleType : fetchSelectWidget('ScheduleType'),
+			Time      : fetchTextWidget('ScheduleTime'),  // be sure to strip any leading or trailing white space and lower case text
+			DOW       : fetchDowWidget('ScheduleDow'),
+			Mode      : fetchSelectWidget('ScheduleMode'),
 
-			// be sure to strip any leading or trailing white space and lower case text
-			Time      : fetchTextWidget('ScheduleTime'),
 			Level     : fetchLevelWidget('ScheduleLevel'),
 			Rate      : fetchTextWidget('ScheduleRate'),
 			RoomName  : fetchSelectWidget('ScheduleRoomName'),
@@ -131,7 +138,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 			Key : Object.keys(globals.House.HouseObj.Schedules).length,
 			Active : false,
 			UUID : '',
-			ScheduleType : '',
+			ScheduleType : 'LightingDevice',
 			Time : '',
 			DOW : 127,
 			Mode : 0,

@@ -1,13 +1,13 @@
 """
--*- test-case-name: PyHouse.src.Modules.web.test.test_web_internet -*-
+-*- test-case-name: PyHouse.src.Modules.Web.test.test_web_internet -*-
 
-@name: PyHouse/src/Modules/web/web_internet.py
+@name: PyHouse/src/Modules/Web/web_internet.py
 @author: D. Brian Kimmel
 @contact: D.BrianKimmel@gmail.com
 @Copyright (c) 2013-2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Jun 3, 2013
-@summary: Handle all of the information for a house.
+@summary: Handle the Internet information for a house.
 
 """
 
@@ -37,6 +37,7 @@ class InternetElement(athena.LiveElement):
     jsClass = u'internet.InternetWidget'
 
     def __init__(self, p_workspace_obj, _p_params):
+        # print('InternetElement __init__')
         self.m_workspace_obj = p_workspace_obj
         self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
 

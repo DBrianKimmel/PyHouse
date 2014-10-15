@@ -11,7 +11,6 @@
 
 
 # Import system type stuff
-import datetime
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 

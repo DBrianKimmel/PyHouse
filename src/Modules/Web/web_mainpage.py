@@ -76,6 +76,7 @@ from Modules.Web import web_logs
 from Modules.Web import web_rooms
 from Modules.Web import web_rootMenu
 from Modules.Web import web_schedules
+from Modules.Web import web_thermostats
 from Modules.Web import web_webs
 from Modules.Computer import logging_pyh as Logger
 
@@ -324,34 +325,35 @@ class Workspace(athena.LiveElement):
 
     @athena.expose
     def inject_404(self):
+        LOG.info("404 called from browser")
         f = FourOfour()
         f.setFragmentParent(self)
         return f
 
     @athena.expose
     def buttons(self, p_params):
-        LOG.info("buttons called")
+        LOG.info("buttons called from browser")
         l_element = web_buttons.ButtonsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def clock(self, _p_params):
-        LOG.info("clock called")
+        LOG.info("clock called from browser")
         l_element = web_clock.ClockElement()
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def controllers(self, p_params):
-        LOG.info("controllers called")
+        LOG.info("controllers called from browser")
         l_element = web_controllers.ControllersElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def controlLights(self, p_params):
-        LOG.info("controlLights called")
+        LOG.info("controlLights called from browser")
         l_element = web_controlLights.ControlLightsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
@@ -386,6 +388,7 @@ class Workspace(athena.LiveElement):
 
     @athena.expose
     def lights(self, p_params):
+        LOG.info("lights called from browser")
         l_element = web_lights.LightsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
@@ -401,33 +404,42 @@ class Workspace(athena.LiveElement):
 
     @athena.expose
     def logs(self, p_params):
+        LOG.info("logs called from browser")
         l_element = web_logs.LogsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def rooms(self, p_params):
-        LOG.info("rooms called")
+        LOG.info("rooms called from browser")
         l_element = web_rooms.RoomsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def rootMenu(self, _p_params):
-        LOG.info("rootMenu called")
+        LOG.info("rootMenu called from browser")
         l_element = web_rootMenu.RootMenuElement(self)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def schedules(self, p_params):
-        LOG.info("schedules called")
+        LOG.info("schedules called from browser")
         l_element = web_schedules.SchedulesElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
+    def thermostats(self, p_params):
+        LOG.info("thermostats called from browser")
+        l_element = web_thermostats.ThermostatsElement(self, p_params)
+        l_element.setFragmentParent(self)
+        return l_element
+
+    @athena.expose
     def webs(self, p_params):
+        LOG.info("webs called from browser")
         l_element = web_webs.WebsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element

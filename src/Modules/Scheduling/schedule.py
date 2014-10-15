@@ -49,11 +49,9 @@ import datetime
 import dateutil.parser as dparser
 
 # Import PyMh files
-# from Modules.Core.data_objects import ScheduleBaseData
-# from Modules.Scheduling import sunrisesunset
 from Modules.Scheduling import schedule_xml
 from Modules.Lighting import lighting
-from Modules.Hvac import thermostat
+from Modules.Hvac import thermostats
 from Modules.Irrigation import irrigation
 from Modules.Utilities import tools
 from Modules.Utilities.tools import GetPyhouse
@@ -137,22 +135,18 @@ class ScheduleTime(object):
         l_timefield = p_schedule_obj.Time.lower()
         l_offset = self._extract_time_or_offset(l_timefield)
         if 'sunrise' in l_timefield:
-            # print('Sunrise: {0:} - Offset: {1:}<<'.format(p_rise_set.Sunrise, l_offset))
             l_datetime = p_rise_set.Sunrise
             if '-' in l_timefield:
                 l_datetime = l_datetime - l_offset
             else:
                 l_datetime = l_datetime + l_offset
         elif 'sunset' in l_timefield:
-            # print('1234 Sunset: {}'.format(p_rise_set.Sunset))
-            # print('1234 Offset: {}'.format(l_offset))
             l_datetime = p_rise_set.Sunset
             if '-' in l_timefield:
                 l_datetime = l_datetime - l_offset
             else:
                 l_datetime = l_datetime + l_offset
         else:
-            # print('Time: {0:}<<'.format(l_offset))
             l_datetime = l_offset
         return l_datetime
 
@@ -209,9 +203,6 @@ class ScheduleTime(object):
         l_riseset = RiseSetData()
         l_riseset.Sunrise = p_pyhouse_obj.House.OBJs.Location._Sunrise
         l_riseset.Sunset = p_pyhouse_obj.House.OBJs.Location._Sunset
-        # self.m_sunrisesunset_api.Start(self.m_pyhouse_obj)
-        # l_riseset.Sunrise = self.m_sunrisesunset_api.get_sunrise_datetime()
-        # l_riseset.Sunset = self.m_sunrisesunset_api.get_sunset_datetime()
         LOG.info("In get_next_sched - Sunrise:{0:}, Sunset:{1:}".format(l_riseset.Sunrise, l_riseset.Sunset))
         return l_riseset
 
@@ -278,7 +269,6 @@ class ScheduleUtility(ScheduleTime):
         @param p_time: is a datetime of a time to convert
         @return: a timedelta if the time to convert
         """
-        # PrettyPrintAny(p_time, 'Time to make delta of')
         return datetime.timedelta(0, p_time.second, 0, 0, p_time.minute, p_time.hour)
 
     def get_next_sched(self, p_pyhouse_obj):
@@ -321,7 +311,7 @@ class UpdatePyhouse(object):
     @staticmethod
     def add_api_references(p_pyhouse_obj):
         p_pyhouse_obj.APIs.LightingAPI = lighting.API()
-        p_pyhouse_obj.APIs.HvacAPI = thermostat.API()
+        p_pyhouse_obj.APIs.HvacAPI = thermostats.API()
         p_pyhouse_obj.APIs.IrrigationAPI = irrigation.API()
 
     @staticmethod
@@ -390,6 +380,5 @@ class API(ScheduleUtility, ScheduleExecution):
     def SaveXml(self, p_xml):
         p_xml.append(schedule_xml.ReadWriteConfigXml().write_schedules_xml(self.m_pyhouse_obj.House.OBJs.Schedules))
         UpdatePyhouse.save_scheduled_modules(self.m_pyhouse_obj, p_xml)
-        # LOG.info("Saved XML.")
 
 # ## END DBK

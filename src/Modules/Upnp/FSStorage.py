@@ -216,13 +216,13 @@ class FSItem(FSObject, Item):
 			    'http-get:*:%s:*' % 'video/x-msvideo'))
 		Item.doUpdate(self)
 
-def ignoreFiles(path, fobj):
+def ignoreFiles(path, _fobj):
 	if os.path.basename(path) in _filestoignore:
 		return IgnoreFile, None
 
 	return None, None
 
-def defFS(path, fobj):
+def defFS(path, _fobj):
 	if os.path.isdir(path):
 		# new dir
 		return FSDirectory, { 'path': path }

@@ -93,7 +93,7 @@ class ContentDirectoryControl(UPnPPublisher, dict):
 		i = klass(self, nid, parent, title, *args, **kwargs)
 		if hasattr(i, 'content'):
 			self.webbase.putChild(nid, i.content)
-		#log.msg('children:', `self.children[parent]`, `i`)
+		# log.msg('children:', `self.children[parent]`, `i`)
 		self.children[parent].append(i)
 		self[i.id] = i
 		return i.id
@@ -105,9 +105,9 @@ class ContentDirectoryControl(UPnPPublisher, dict):
 		if not self.has_key(p_id):
 			log.msg('already removed:', p_id)
 			return
-		#log.msg('removing:', p_id)
+		# log.msg('removing:', p_id)
 		if isinstance(self[p_id], Container):
-			#log.msg('children:', Container.__repr__(self.children[p_id]), map(None, self.children[p_id]))
+			# log.msg('children:', Container.__repr__(self.children[p_id]), map(None, self.children[p_id]))
 			while self.children[p_id]:
 				self.delItem(self.children[p_id][0].id)
 			assert len(self.children[p_id]) == 0
@@ -142,7 +142,7 @@ class ContentDirectoryControl(UPnPPublisher, dict):
 
 	def soap_GetSearchCapabilities(self, *args, **kwargs):
 		"""Required: Return the searching capabilities supported by the device."""
-		log.msg('GetSearchCapabilities()')
+		log.msg('GetSearchCapabilities() {}'.format(kwargs))
 		return { 'SearchCaps': '' }
 
 	def soap_GetSortCapabilities(self, *args, **kwargs):

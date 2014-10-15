@@ -1,14 +1,21 @@
 /** helpers.js
- * 
+ *
+ * @name: PyHouse/src/Modules/Web/js/helpers.js
+ * @author: D. Brian Kimmel
+ * @contact: D.BrianKimmel@gmail.com
+ * @Copyright (c) 2012-2014 by D. Brian Kimmel
+ * @license: MIT License
+ * @note: Created about 2012
+ * @summary: Displays the Internet element
  * This script is the live element functionality.
  */
-
 // import Nevow.Athena
+
+
 
 /**
  * This basic widget can attach subwidgets and provides some other basic functionality.
  */
-
 Nevow.Athena.Widget.subclass(helpers, 'Widget').methods(
 
 	function __init__(self, node) {
@@ -48,18 +55,21 @@ Nevow.Athena.Widget.subclass(helpers, 'Widget').methods(
 	function loaded(self) {
 		// This function is called by the Athena setup.
 		self.isloaded = true;
-	},  // loaded
+	},
+
 
 	function show(self) {
 		self.node.style.visibility = 'visible';
-	},  // show
+	},
+
 
 	function hide(self) {
 		self.node.style.visibility = 'hidden';
-	},  // hide
+	},
+
 
 	/** Generic ErrorBack 
-	 * 
+	 *
 	 * @param self is an instance of workspace.Workspace
 	 * @param res(string) is an error message.
 	 */
@@ -71,42 +81,110 @@ Nevow.Athena.Widget.subclass(helpers, 'Widget').methods(
 		console.log("GenericErrBck - %O", l_node);
 	},
 
-	function attachWidget(self, p_name, p_params, p_readyfunc) {
-		//Divmod.debug('---', 'attachWidget - ' + p_name + ' is being attached to:' + self.node.className + ', with params:'+ p_params + ', ready_function:' + p_readyfunc);
-		var l_defer_1 = self.callRemote(p_name, p_params);
-		l_defer_1.addCallback(function liveElementReceived(le) {
-			//Divmod.debug('---', 'attachWidget - ' + p_name + ' callRemote' );
-			var d2 = self.addChildWidgetFromWidgetInfo(le);
-			d2.addCallback(function childAdded(widget) {
-				//Divmod.debug('---', 'attachWidget - ' + p_name + ' addChildWidgetFromWidgetInfo');
-				self.node.appendChild(widget.node);
-				var d3 = widget.ready();
-				//Divmod.debug('---', 'attachWidget - ' + p_name + ' widget.ready' );
 
+	/**
+	 * Do the things that a widget requests when it becomes ready.
+	 * <This was originally embedded in attachWidget>
+	 * 
+	 * @param p_readyfunc is the function to be called when the widget is done loading (and initializing?)
+	 */
+	function widget_ready(self, widget, p_readyfunc) {
+
+		// Default readyfunc that shows the widget.
+		function isready() {
+			widget.show();
+		}
+
+		// If we did not call with a readyfunc, add a dummy function that is ready
+		if (!p_readyfunc)
+			p_readyfunc = isready;
+
+		function eb_widget_ready(p_reason) {  // widget.ready failed
+			self.eb_genericErrback(p_reason + ' widget.ready failed for: ' + p_name );
+		}
+
+		var l_defer_3 = widget.ready();
+		l_defer_3.addCallback(p_readyfunc);
+		l_defer_3.addErrback(eb_widget_ready);
+	},
+
+	function attachWidget(self, p_name, p_params, p_readyfunc) {
+		// Divmod.debug('---', 'attachWidget - "' + p_name + '" is being attached to:' + self.node.className + ', with params:'+ p_params);
+
+		function cb_call_remote(le) {
+		}
+		function eb_call_remote(p_reason) {
+			self.eb_genericErrback('Error: ' + p_reason + ' in callRemote failed for Name: ' + p_name);
+		}
+		var l_defer_1 = self.callRemote(p_name, p_params);
+
+		function liveElementReceived(le) {
+
+			function cb_childAdded(widget) {
+				self.node.appendChild(widget.node);
+				self.widget_ready(widget, p_readyfunc);
+			}
+
+			function eb_add_child(p_reason) {  // addChildWidgetFromWidgetInfo failed
+				self.eb_genericErrback('Error: ' + p_reason + ' in addChildWidgetFromWidgetInfo failed for Name: ' + p_name);
+			}
+
+			var l_defer_2 = self.addChildWidgetFromWidgetInfo(le);
+			l_defer_2.addCallback(cb_childAdded);
+			l_defer_2.addErrback(eb_add_child);
+		}  // liveElementReceived
+		l_defer_1.addCallback(liveElementReceived);
+		l_defer_1.addErrback(eb_call_remote);
+	},
+
+
+	function WORKS_attachWidget(self, p_name, p_params, p_readyfunc) {
+		Divmod.debug('---', 'attachWidget - "' + p_name + '" is being attached to:' + self.node.className + ', with params:'+ p_params + ', ready_function:' + p_readyfunc);
+
+		function cb_call_remote(le) {
+		}
+		function eb_call_remote(p_reason) {
+			self.eb_genericErrback('Error: ' + p_reason + ' in addChildWidgetFromWidgetInfo failed for Name: ' + p_name);
+		}
+		var l_defer_1 = self.callRemote(p_name, p_params);
+
+		l_defer_1.addCallback(function liveElementReceived(le) {
+			var l_defer_2 = self.addChildWidgetFromWidgetInfo(le);
+			l_defer_2.addCallback(function childAdded(widget) {
+				self.node.appendChild(widget.node);
+				var l_defer_3 = widget.ready();
+
+				// Default readyfunc that shows the widget.
 				function isready() {
 					widget.show();
-					}  // isready
+				}
 
+				// If we did not call with a readyfunc, add a dummy function that is ready
 				if (!p_readyfunc)
 					p_readyfunc = isready;
-				d3.addCallback(p_readyfunc);
-				d3.addErrback(function(res) {  // widget.ready failed
-					self.eb_genericErrback(res + ' widget.ready failed for: ' + p_name );
+
+				l_defer_3.addCallback(p_readyfunc);
+				l_defer_3.addErrback(function(p_reason) {  // widget.ready failed
+					self.eb_genericErrback(p_reason + ' widget.ready failed for: ' + p_name );
+					}
+					);
+				}  // childAdded
+			); // add callback to d2
+			function eb_add_child(p_reason) {  // addChildWidgetFromWidgetInfo failed
+				self.eb_genericErrback('Error: ' + p_reason + ' in addChildWidgetFromWidgetInfo failed for Name: ' + p_name);
 				}
-				);
-			}  // childAdded
-			);
-			d2.addErrback(function(res) {  // addChildWidgetFromWidgetInfo failed
-				self.eb_genericErrback(res + ' addChildWidgetFromWidgetInfo failed for: ' + p_name);
+			l_defer_2.addErrback(function(p_reason) {  // addChildWidgetFromWidgetInfo failed
+				self.eb_genericErrback('Error: ' + p_reason + ' in addChildWidgetFromWidgetInfo failed for Name: ' + p_name);
 				}
 			);
 		}  // liveElementReceived
 		);
-		l_defer_1.addErrback(function(res) {  // callRemote failed
-			self.eb_genericErrback(res + ' callRemote failed for: ' + p_name);
-		}
+		l_defer_1.addErrback(function(p_reason) {  // callRemote failed
+			self.eb_genericErrback('Error: ' + p_reason + ' in callRemote failed for Name: ' + p_name);
+			}
 		);
 	},
+
 
 	function detached(self) {
 		Divmod.debug('---', self.node.className + ' object was detached cleanly.');
@@ -114,10 +192,14 @@ Nevow.Athena.Widget.subclass(helpers, 'Widget').methods(
 		helpers.Widget.upcall(self, 'detached');
 	},
 
-	// DBK Added all widget functions below this line
+
+	// DBK Added all widget functions below this line ----------------
+
 	function showWidget(self) {
 		self.node.style.display = 'block';
 	},
+
+
 	function hideWidget(self) {
 		self.node.style.display = 'none';
 	}

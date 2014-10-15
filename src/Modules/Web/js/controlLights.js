@@ -55,6 +55,7 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 		self.nodeById('ControlLightEntryDiv').style.display = 'block';
 	},
 
+
 	// ============================================================================
 	/**
 	 * This triggers getting the house data from the server.
@@ -76,6 +77,7 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 		l_defer.addErrback(eb_fetchHouseData);
         return false;
 	},
+
 
 	// ============================================================================
 	/**
@@ -106,8 +108,6 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 		}
 	},
 	function fillEntry(self, p_obj) {
-		//Divmod.debug('---', 'controlLights.fillEntry() was called. ');
-		//console.log("controlLights.fillEntry() - Obj %O", p_obj);
         self.nodeById('NameDiv').innerHTML = buildTextWidget('CtlLightName', p_obj.Name, 'disabled');
         self.nodeById('KeyDiv').innerHTML = buildTextWidget('CtlLightKey', p_obj.Key, 'disabled');
 		self.nodeById('UUIDDiv').innerHTML = buildTextWidget('CtlLightUUID', p_obj.UUID, 'disabled');
@@ -126,6 +126,7 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 		return l_data;
 	},
 
+
 	// ============================================================================
 	/**
 	 * Event handler for submit buttons at bottom of entry portion of this widget.
@@ -133,7 +134,6 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 	 */
 	function handleDataOnClick(self, p_node) {
 		function cb_handleDataOnClick(p_json) {
-			//Divmod.debug('---', 'controlLights.cb_handleDataOnClick() was called.');
 			self.showWidget(self);
 		}
 		function eb_handleDataOnClick(res){

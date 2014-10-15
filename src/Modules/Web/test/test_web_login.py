@@ -12,13 +12,13 @@
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
-from twisted.internet.defer import succeed
-from twisted.web import server
-from twisted.web.test.test_web import DummyRequest
+# from twisted.internet.defer import succeed
+# from twisted.web import server
+# from twisted.web.test.test_web import DummyRequest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, ComputerInformation, XmlInformation
-from Modules.Web import web_login
+# from Modules.Core.data_objects import PyHouseData, ComputerInformation, XmlInformation
+# from Modules.Web import web_login
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny

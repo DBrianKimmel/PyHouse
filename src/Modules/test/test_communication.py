@@ -24,8 +24,6 @@ class Test(unittest.TestCase):
         pass
 
     def test_Communication(self):
-        from Modules.communication import test
-        test()
         print('Ran Modules.test.communication')
 
 # ## END DBK

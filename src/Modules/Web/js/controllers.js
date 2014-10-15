@@ -1,14 +1,22 @@
-/* controllers.js
- * 
+/**
+ *
+ * @name: PyHouse/src/Modules/Web/js/controllers.js
+ * @author: D. Brian Kimmel
+ * @contact: D.BrianKimmel@gmail.com
+ * @Copyright (c) 2014 by D. Brian Kimmel
+ * @license: MIT License
+ * @note: Created on Mar 11, 2014
+ * @summary: Displays the controller element
  * Displays the controllers.
  * Browser side code.
  * 
  * Note that a controller contains common light info, controller info, family info and interface info.
-*/
-
+ */
 // import Nevow.Athena
 // import globals
 // import helpers
+
+
 
 /**
  * The controller widget.
@@ -20,7 +28,7 @@
  */
 
 helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
-        
+
     function __init__(self, node) {
         controllers.ControllersWidget.upcall(self, '__init__', node);
     },

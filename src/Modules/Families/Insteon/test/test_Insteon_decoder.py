@@ -16,42 +16,50 @@ import xml.etree.ElementTree as ET
 # Import PyMh files
 # from Modules.lights.lighting import LightData
 from Modules.Families.Insteon import Insteon_decoder
-from Modules.Housing import house
+from test.xml_data import XML_LONG
+from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
-from Modules.Core import setup
-from test import xml_data
+
+
+
+MSG_50 = bytearray(b'\x02\x50\x16\xc9\xd0\x1b\x47\x81\x27\x09\x00')
+MSG_62 = bytearray(b'\x02\x62\x17\xc2\x72\x0f\x19\x00\x06')
+MSG_99 = bytearray(b'\x02\x99')
+
 
 
 class SetupMixin(object):
     """
     """
 
-    def setUp(self):
-        self.m_pyhouse_obj.Xml.XmlRoot = self.m_root_xml
-        #
-        self.m_api = Insteon_decoder.Utility()
-        self.m_house_api = house.API()
-        self.m_pyhouse_obj = self.m_house_api.update_pyhouse_obj(self.m_pyhouse_obj)
-        return self.m_pyhouse_obj
+    def setUp(self, p_root):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
+        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-class Test_01(SetupMixin, unittest.TestCase):
+class C01(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
-        SetupMixin.setUp(self)
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        # PrettyPrintAny(self.m_pyhouse_obj.House.OBJs)
+        self.m_controller_obj = self.m_pyhouse_obj.House.OBJs.Controllers
+        self.m_api = Insteon_decoder.DecodeResponses(self.m_pyhouse_obj, self.m_controller_obj)
 
-    def test_0101_FindAddress(self):
-        # l_obj = self.m_api._find_addr(self.m_pyhouse_obj.House.OBJs.Controllers, 'A1.B2.C3')
-        # PrettyPrintAny(l_obj, 'testInsteonDecoder - FindAddress - Object', 120)
+
+    def test_01_DeviceClass(self):
         pass
 
-    def test_0102_x(self):
+    def test_02_FindAddress(self):
+        l_obj = self.m_api._find_addr(self.m_pyhouse_obj.House.OBJs.Controllers, 'A1.B2.C3')
+        PrettyPrintAny(l_obj, 'testInsteonDecoder - FindAddress - Object', 120)
+
+
+    def test_03_GetObjFromMsg(self):
         pass
 
 def suite():
     suite = unittest.TestSuite()
-    suite.addTest(Test_01('test_0101_FindAddress'))
+    suite.addTest(C01('test_01_FindAddress'))
     return suite
 
 # ## END DBK

@@ -1,11 +1,17 @@
-/* clock.js
+/**
+ * @name: PyHouse/src/Modules/Web/js/clock.js
+ * @author: D. Brian Kimmel
+ * @contact: D.BrianKimmel@gmail.com
+ * @Copyright (c) 2012-2014 by D. Brian Kimmel
+ * @license: MIT License
+ * @note: Created about 2012
+ * @summary: Displays the server time, polling from the client via nevow's RPC
  *
- * Displays the server time, polling from the client via nevow's RPC
  */
-
 // import Nevow.Athena
 // import globals
 // import helpers
+
 
 
 helpers.Widget.subclass(clock, 'ClockWidget').methods(
@@ -14,8 +20,10 @@ helpers.Widget.subclass(clock, 'ClockWidget').methods(
 		clock.ClockWidget.upcall(self, '__init__', node);
 	},
 
+
 	/**
-	 * 
+	 * This kicks off the time showing when ready.
+	 *
 	 * @param self is    <"Instance" of undefined.clock.ClockWidget>
 	 * @returns a deferred
 	 */
@@ -34,6 +42,7 @@ helpers.Widget.subclass(clock, 'ClockWidget').methods(
 		return l_defer;
 	},
 
+
 	/**
 	 * This sends a message to the server to get the servers time.
 	 * when the callback returns the time, it displays the time and schedules itself in 1 second.
@@ -41,7 +50,6 @@ helpers.Widget.subclass(clock, 'ClockWidget').methods(
 	 * @param self
 	 */
 	function getAndShowTime(self) {
-
 		function cb_showTime(p_time) {
 			self.node.innerHTML = p_time;
 			self.callLater(10.0, function() {
@@ -49,9 +57,7 @@ helpers.Widget.subclass(clock, 'ClockWidget').methods(
 				}
 			);
 		}
-
-		//Divmod.debug('---', 'clock.getAndShowTime() was called.');
-		var d = self.callRemote('getTimeOfDay');
-		d.addCallback(cb_showTime);
+		var l_defer = self.callRemote('getTimeOfDay');
+		l_defer.addCallback(cb_showTime);
 	}
 );

@@ -1,7 +1,7 @@
 """
--*- test-case-name: PyHouse.src.Modules.web.test.test_web_houseMenu -*-
+-*- test-case-name: PyHouse.src.Modules.Web.test.test_web_houseMenu -*-
 
-@name: PyHouse/src/Modules/web/web_houseMenu.py
+@name: PyHouse/src/Modules/Web/web_houseMenu.py
 @author: D. Brian Kimmel
 @contact: D.BrianKimmel@gmail.com
 @Copyright (c) 2013-2014 by D. Brian Kimmel
@@ -36,6 +36,6 @@ class HouseMenuElement(athena.LiveElement):
     def __init__(self, p_workspace_obj):
         self.m_workspace_obj = p_workspace_obj
         self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
-        print("web_houseMenu.houseMenuElement()")
+        # print("web_houseMenu.houseMenuElement()")
 
 # ## END DBK

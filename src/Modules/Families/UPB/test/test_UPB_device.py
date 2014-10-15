@@ -14,14 +14,12 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import UPBData
-from Modules.families.UPB import Device_UPB
-from Modules.lights import lighting_lights
-from Modules.hvac import thermostat
-from Modules.housing import house
-from Modules.Core import setup
+from Modules.Families.UPB import UPB_device, UPB_data
+from Modules.Lighting import lighting_lights
+from Modules.Hvac import thermostat
+from Modules.Housing import house
 from test import xml_data
-from Modules.utils.tools import PrettyPrintAny
+from Modules.Utilities.tools import PrettyPrintAny
 
 
 class SetupMixin(object):
@@ -30,10 +28,10 @@ class SetupMixin(object):
 
     def setUp(self):
         self.m_pyhouse_obj.Xml.XmlRoot = self.m_root_xml
-        self.m_thermostat_obj = UPBData()
+        self.m_thermostat_obj = UPB_data()
         self.m_pyhouse_obj = house.API().update_pyhouse_obj(self.m_pyhouse_obj)
         # PrettyPrintAny(self.m_pyhouse_obj, 'SetupMixin.Setup - PyHouse_obj', 100)
-        self.m_api = Device_UPB.API()
+        self.m_api = UPB_device.API()
         self.m_thermostat_api = thermostat.API()
         self.m_light_api = lighting_lights.LightingLightsAPI(self.m_pyhouse_obj)
         return self.m_pyhouse_obj

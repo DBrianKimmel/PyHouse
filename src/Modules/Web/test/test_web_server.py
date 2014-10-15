@@ -18,17 +18,11 @@ from twisted.web.test.test_web import DummyRequest
 
 # Import PyMh files and modules.
 # from Modules.Web import web_server
-# from test.xml_data import XML_LONG
+from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
 
 
-
-WEB_SERVER_XML = """
-        <WebSection>
-            <WebPort>8580</WebPort>
-        </WebSection>
-"""
 
 class SetupMixin(object):
 

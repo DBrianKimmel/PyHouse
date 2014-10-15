@@ -19,25 +19,10 @@ from Modules.Core.data_objects import InternetConnectionData
 from Modules.Computer.Internet import internet_xml
 from Modules.Web import web_utils
 from Modules.Utilities.tools import PrettyPrintAny
-# from test.xml_data import XML_LONG
+from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities import convert
 
-
-INTERNET_XML = """
-        <InternetSection>
-            <LocaterUrlSection>
-                <LocateUrl>http://snar.co/ip/</LocateUrl>
-                <LocateUrl>http://checkip.dyndns.com/</LocateUrl>
-            </LocaterUrlSection>
-            <UpdaterUrlSection>
-                <UpdateUrl>http://freedns.afraid.org/dynamic/update.php?abc</UpdateUrl>
-            </UpdaterUrlSection>
-            <ExternalIPv4>65.35.48.61</ExternalIPv4>
-            <ExternalIPv6>1234:5678::1</ExternalIPv6>
-            <LastChanged>2014-10-02T12:34:56</LastChanged>
-        </InternetSection>
-"""
 
 DATETIME = datetime.datetime(2014, 10, 2, 12, 34, 56)
 

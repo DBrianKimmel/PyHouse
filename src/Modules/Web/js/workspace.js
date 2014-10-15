@@ -13,6 +13,8 @@
 // import globals
 // import helpers
 
+
+
 /**
  * This is just another basic widget derived from C{common.helpers.Widget} with a twist.
  * 
@@ -24,7 +26,6 @@
  * This call then starts the pulling in of whatever is needed.
  * Please see additional comments below. 
  */
-
 helpers.Widget.subclass(workspace, 'Workspace').methods(
 
 	function __init__(self, node) {
@@ -44,7 +45,9 @@ helpers.Widget.subclass(workspace, 'Workspace').methods(
 		var waitroller = self.nodeById('waitroller');
 		waitroller.style.visibility = 'hidden';
 	},
-	
+
+
+
 	/**
 	 * Do whatever needs to be started up, checking for images loading and other stuff.
 	 * This function is called by the C{Divmod.Runtime} code as startup event, see C{globals.js}
@@ -54,15 +57,12 @@ helpers.Widget.subclass(workspace, 'Workspace').methods(
 	 * workspace.py/.js - the mother of all widgets which gets the startup call in the beginning then attaching
 	 *  whatever you please to attach to it.
 	 */
-	
 	function appStartup(self) {
 
 		function ready() { // we're now ready for action
-			//Divmod.debug('---', 'workspace.Workspace.appStartup - ' + self );
 			var l_defer = self.callRemote('guiready');
 
 			l_defer.addCallback(function(res) {
-				//Divmod.debug('---', 'workspace.Workspace.addCallback - ' + res );
 				globals.__init__();
 				globals.reqType = res[0];
 				globals.user = res[1];
@@ -81,11 +81,12 @@ helpers.Widget.subclass(workspace, 'Workspace').methods(
 				self.attachWidget('logs', 'dummy');
 				self.attachWidget('house', 'dummy');
 				self.attachWidget('internet', 'dummy');
+				self.attachWidget('thermostats', 'dummy');
 				self.hideWaitRoller();
-			});  // addCallback
+			});
 
 			l_defer.addErrback(function(res) {
-				//Divmod.debug('---', 'ERROR - workspace.guiready.errback() - ' + res );
+				Divmod.debug('---', 'ERROR - workspace.guiready.errback() - ' + res );
 				self.node.appendChild(document.createTextNode('Error: ' + res.error.message));
 			});  // addErrback
 		} // ready

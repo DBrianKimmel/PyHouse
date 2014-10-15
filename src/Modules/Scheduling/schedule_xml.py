@@ -117,6 +117,9 @@ class ReadWriteConfigXml(XmlConfigTools):
         l_obj = self.read_one_base_schedule(p_schedule_element)
         if l_obj.ScheduleType == 'LightingDevice':
             l_type = self.read_one_lighting_schedule(p_schedule_element)
+        else:
+            LOG.error('ERROR - invalid device found - {}'.format(l_obj.ScheduleType))
+            l_type = {}
         stuff_new_attrs(l_obj, l_type)
         return l_obj
 
@@ -143,7 +146,6 @@ class ReadWriteConfigXml(XmlConfigTools):
         """
         """
         l_entry = self.write_base_object_xml('Schedule', p_schedule_obj)
-        self.put_int_element(l_entry, 'Key', self.m_count)
         self.put_text_element(l_entry, 'ScheduleType', p_schedule_obj.ScheduleType)
         self.put_text_element(l_entry, 'Time', p_schedule_obj.Time)
         self.put_int_element(l_entry, 'DayOfWeek', int(p_schedule_obj.DOW))
@@ -164,6 +166,8 @@ class ReadWriteConfigXml(XmlConfigTools):
         l_entry = self.write_one_base_schedule(p_schedule_obj)
         if p_schedule_obj.ScheduleType == 'LightingDevice':
             self.write_one_light_schedule(p_schedule_obj, l_entry)
+        else:
+            LOG.error('ERROR - invalid schedule type {}'.format(p_schedule_obj.ScheduleType))
         return l_entry
 
     def write_schedules_xml(self, p_schedules_obj):

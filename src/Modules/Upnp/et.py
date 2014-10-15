@@ -81,7 +81,7 @@ elementtree.ElementTree._encode_entity = new_encode_entity
 # if XMLParser isn't available.
 
 if not hasattr(ET, 'XMLParser'):
-    def XMLParser(encoding = 'utf-8'):
+    def XMLParser(_encoding = 'utf-8'):
         return ET.XMLTreeBuilder()
 
     ET.XMLParser = XMLParser

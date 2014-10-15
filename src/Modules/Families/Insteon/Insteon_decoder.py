@@ -86,6 +86,8 @@ class Utility(object):
             Lighting devices
             Thermostat devices
             Add other devices if we add them.
+
+        @return: The object that contains the address -or- a dummy object with noname in Name
         """
         l_id = Insteon_utils.message2int(p_message, p_index)  # Extract the 3 byte address from the message and convert to an Int.
         l_dotted = conversions.int2dotted_hex(l_id, 3)
@@ -233,21 +235,19 @@ class DecodeResponses(Utility):
         This should be invoked every time we pick up more messages from the controller.
         It should loop and decode each message present and leave when done
 
-
         @return: a flag that is True for ACK and False for NAK/Invalid response.
         """
         self.m_house_obj = p_house_obj
         while len(p_controller_obj._Message) >= 2:
             l_stx = p_controller_obj._Message[0]
-            # LOG.debug("decode_message() - {0:}".format(PrintBytes(p_controller_obj._Message)))
             if l_stx == STX:
-                LOG.debug("decode_message() - {0:}".format(PrintBytes(p_controller_obj._Message)))
+                LOG.debug("{}".format(PrintBytes(p_controller_obj._Message)))
                 l_need_len = self._get_message_length(p_controller_obj._Message)
                 l_cur_len = len(p_controller_obj._Message)
                 if l_cur_len >= l_need_len:
                     self._decode_dispatch(p_controller_obj)
                 else:
-                    LOG.warning('decode_message() - Message was too short - waiting for rest of message.')
+                    LOG.warning('Message was too short - waiting for rest of message.')
                     return
             else:
                 self._drop_first_byte(p_controller_obj)

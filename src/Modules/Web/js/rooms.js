@@ -1,9 +1,12 @@
 /**
- *  rooms.js
- *
- * Displays the rooms
+ * @name: PyHouse/src/Modules/Web/js/rooms.js
+ * @author: D. Brian Kimmel
+ * @contact: D.BrianKimmel@gmail.com
+ * @Copyright (c) 2014 by D. Brian Kimmel
+ * @license: MIT License
+ * @note: Created on Mar 11, 2014
+ * @summary: Displays the rooms
  */
-
 // import Nevow.Athena
 // import globals
 // import helpers

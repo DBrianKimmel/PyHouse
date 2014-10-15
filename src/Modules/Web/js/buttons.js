@@ -164,7 +164,7 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 			l_defer.addErrback(eb_handleDataOnClick);
 			break;
 		case '10002':  // Back button
-			//Divmod.debug('---', 'buttonss.handleDataOnClick(Back) was called.  ');
+			//Divmod.debug('---', 'buttons.handleDataOnClick(Back) was called.  ');
 			self.hideEntry();
 			self.showButtons();
 			break;

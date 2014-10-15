@@ -23,7 +23,7 @@ import subprocess
 import os
 import time
 from datetime import datetime
-from PIL import Image
+# from PIL import Image
 
 forceCapture = True
 forceCaptureTime = 60 * 60  # Once an hour
@@ -45,7 +45,7 @@ def capture_test_image():
     return im, buffer
 
 # Save a full size image to disk
-def save_image(width, height, diskSpaceToReserve):
+def save_image(_width, _height, diskSpaceToReserve):
     keep_disk_space_free(diskSpaceToReserve)
     time = datetime.now()
     filename = "capture-%04d%02d%02d-%02d%02d%02d.jpg" % (time.year, time.month, time.day, time.hour, time.minute, time.second)

@@ -19,9 +19,8 @@ from nevow import loaders
 # Import PyMh files and modules.
 from Modules.Core.data_objects import ScheduleBaseData
 from Modules.Web.web_utils import JsonUnicode, GetJSONHouseInfo
-from Modules.Scheduling import schedule
 from Modules.Computer import logging_pyh as Logger
-# from Modules.Utilities.tools import PrettyPrintAny
+from Modules.Utilities.tools import PrettyPrintAny
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -51,6 +50,7 @@ class SchedulesElement(athena.LiveElement):
         """A new/changed schedule is returned.  Process it and update the internal data via schedule.py
         """
         l_json = JsonUnicode().decode_json(p_json)
+        PrettyPrintAny(l_json, 'JSON')
         l_delete = l_json['Delete']
         l_schedule_ix = int(l_json['Key'])
         if l_delete:
@@ -65,13 +65,13 @@ class SchedulesElement(athena.LiveElement):
             l_obj = ScheduleBaseData()
         l_obj.Name = l_json['Name']
         l_obj.Active = l_json['Active']
-        l_obj.Key = int(l_json['Key'])
+        l_obj.Key = l_schedule_ix
         l_obj.UUID = l_json['UUID']
         #
-        self.DOW = None
-        self.Mode = None
         l_obj.ScheduleType = l_json['ScheduleType']
         l_obj.Time = l_json['Time']
+        l_obj.DOW = l_json['DOW']
+        l_obj.Mode = l_json['Mode']
         #
         l_obj.Level = int(l_json['Level'])
         l_obj.LightName = l_json['LightName']
@@ -80,5 +80,6 @@ class SchedulesElement(athena.LiveElement):
         #
         l_obj._DeleteFlag = l_json['Delete']
         self.m_pyhouse_obj.House.OBJs.Schedules[l_schedule_ix] = l_obj
+        PrettyPrintAny(l_obj, 'ScheduleObject')
 
 # ## END DBK

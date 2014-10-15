@@ -21,6 +21,22 @@ from Modules.Computer import logging_pyh as Logger
 g_debug = 1
 LOG = Logger.getLogger('PyHouse.Internet_xml')
 
+INTERNET_XML = """
+        <InternetSection>
+            <LocaterUrlSection>
+                <LocateUrl>http://snar.co/ip/</LocateUrl>
+                <LocateUrl>http://checkip.dyndns.com/</LocateUrl>
+            </LocaterUrlSection>
+            <UpdaterUrlSection>
+                <UpdateUrl>http://freedns.afraid.org/dynamic/update.php?abc</UpdateUrl>
+            </UpdaterUrlSection>
+            <ExternalIPv4>65.35.48.61</ExternalIPv4>
+            <ExternalIPv6>1234:5678::1</ExternalIPv6>
+            <LastChanged>2014-10-02T12:34:56</LastChanged>
+        </InternetSection>
+"""
+
+
 
 class Util(XmlConfigTools):
     """

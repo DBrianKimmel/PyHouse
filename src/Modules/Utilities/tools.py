@@ -68,7 +68,7 @@ class PrettyPrintAny(object):
         """
         l_rough_string = ET.tostring(p_element, 'utf-8')
         l_reparsed = minidom.parseString(l_rough_string)
-        l_doc = l_reparsed.toprettyxml(indent = "    ")
+        l_doc = l_reparsed.toprettyxml()
         l_lines = l_doc.splitlines()
         for l_line in l_lines:
             if not l_line.isspace():

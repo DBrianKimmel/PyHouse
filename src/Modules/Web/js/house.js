@@ -1,17 +1,24 @@
 /**
- * house.js
+ * @name: PyHouse/src/Modules/Web/js/house.js
+ * @author: D. Brian Kimmel
+ * @contact: D.BrianKimmel@gmail.com
+ * @Copyright (c) 2012-2014 by D. Brian Kimmel
+ * @license: MIT License
+ * @note: Created about 2012
+ * @summary: Displays the Internet element
  *
- * The house widget.
  */
-
 // import Nevow.Athena
 // import globals
 // import helpers
+
+
 
 helpers.Widget.subclass(house, 'HouseWidget').methods(
 
     function __init__(self, node) {
         house.HouseWidget.upcall(self, "__init__", node);
+		//Divmod.debug('---', 'house.__init__() was called.');
     },
 
 	// ============================================================================

@@ -1,10 +1,15 @@
 <!-- PyHouse/src/web/templates/login.html
  -->
-<div
-    xmlns:nevow = "http://nevow.com/ns/nevow/0.1"
-    nevow:render = "liveElement"
-    class = "Clock"
-    id = 'ClockDiv' >
+<div id='ClockDiv'
+    xmlns:nevow="http://nevow.com/ns/nevow/0.1"
+    nevow:render="liveElement"
+    class="Clock">
+    <table>
+        <tr>
+            <td>+<div class='Bar1' style='background-color: #DDFFDD;'></div>--</td>
+            <td><div id='ClockId'></div></td>
+        </tr>
+    </table>
 </div>
 <!--
 ### END DBK -->

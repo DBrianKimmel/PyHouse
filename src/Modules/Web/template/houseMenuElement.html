@@ -1,12 +1,11 @@
 <!--  PyHouse/src/web/templates/houseMenuElement.html
  -->
  
- <div 
+ <div id='HouseMenuDiv'
     xmlns:athena = 'http://divmod.org/ns/athena/0.7'
     xmlns:nevow  = 'http://nevow.com/ns/nevow/0.1'
     nevow:render = 'liveElement'
-    class = "HouseMenu"
-    id = 'HouseMenuDiv'>
+    class = "HouseMenu">
     <h2>Select a function:</h2>
     <table style = 'width: 60%;'>
         <tr>
@@ -26,7 +25,7 @@
                 <athena:handler event = 'onclick' handler = 'doHandleOnClick' /></button></td>
             <td><button type = 'button' value = 'Internet' name = 'Internet'>Internet
                 <athena:handler event = 'onclick' handler = 'doHandleOnClick' /></button></td>
-            <td><button type = 'button' value = 'Thermostat' name = 'Thermostat'>Internet
+            <td><button type = 'button' value = 'Thermostat' name = 'Thermostat'>Thermostat
                 <athena:handler event = 'onclick' handler = 'doHandleOnClick' /></button></td>
         </tr><tr>
             <td><button type = 'button' value = 'Back'   name = 'Back'>Back

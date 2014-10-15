@@ -18,7 +18,7 @@ import usb
 from twisted.internet.protocol import Protocol
 
 # Import PyHouse Modules
-from Modules.Drivers.USB import usb_open
+from Modules.Drivers.USB import USB_open
 from Modules.Utilities.tools import PrintBytes
 from Modules.Computer import logging_pyh as Logger
 
@@ -268,7 +268,7 @@ class API(UsbDriverAPI):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_controller_obj = p_controller_obj
         self.m_USB_obj = self._get_usb_device_data(p_controller_obj)
-        if usb_open.API().open_device(self.m_USB_obj):
+        if USB_open.API().open_device(self.m_USB_obj):
             self.read_usb(p_pyhouse_obj)
             LOG.info("Opened Controller:{0:}".format(self.m_USB_obj.Name))
             l_ret = True
@@ -280,7 +280,7 @@ class API(UsbDriverAPI):
         return l_ret
 
     def Stop(self):
-        usb_open.API().close_device(self.m_USB_obj)
+        USB_open.API().close_device(self.m_USB_obj)
 
     def Read(self):
         l_ret = self.fetch_read_data()

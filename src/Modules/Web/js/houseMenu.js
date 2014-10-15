@@ -1,6 +1,12 @@
-/* houseMenu.js
- * 
- * Displays the house menu element
+/**
+ * @name: PyHouse/src/Modules/Web/js/houseMenu.js
+ * @author: D. Brian Kimmel
+ * @contact: D.BrianKimmel@gmail.com
+ * @Copyright (c) 2012-2014 by D. Brian Kimmel
+ * @license: MIT License
+ * @note: Created about 2012
+ * @summary: Displays the house menu element
+ *
  */
 
 // import Nevow.Athena
@@ -9,7 +15,7 @@
 
 /**
  * The house menu widget.
- * 
+ *
  */
 helpers.Widget.subclass(houseMenu, 'HouseMenuWidget').methods(
 
@@ -17,7 +23,7 @@ helpers.Widget.subclass(houseMenu, 'HouseMenuWidget').methods(
         houseMenu.HouseMenuWidget.upcall(self, "__init__", node);
     },
 
-    
+
 	// ============================================================================
     /**
      * Place the widget in the workspace.
@@ -27,10 +33,8 @@ helpers.Widget.subclass(houseMenu, 'HouseMenuWidget').methods(
 	function ready(self) {
 		function cb_widgetready(res) {
 			// do whatever init needs here, show for the widget is handled in superclass
-			//Divmod.debug('---', 'houseMenu.cb_widgetready() was called.');
 			self.hideWidget();
 		}
-		//Divmod.debug('---', 'houseMenu.ready() was called.');
 		var uris = collectIMG_src(self.node, null);
 		var l_defer = loadImages(uris);
 		l_defer.addCallback(cb_widgetready);

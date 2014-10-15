@@ -15,6 +15,7 @@ self._Entry       This entry in NOT stored in XML but is stored in memory when r
 Specific data may be loaded into some attributes for unit testing.
 
 """
+from nevow.livepage import self
 
 __version_info__ = (1, 3, 01)
 __version__ = '.'.join(map(str, __version_info__))
@@ -263,6 +264,14 @@ class ScheduleLightData(object):
         self.Rate = 0
         self.RoomName = None
         self.ScheduleType = 'LightingDevice'  # For future expansion into scenes, entertainment etc.
+
+
+class ScheduleThermostatData(object):
+    """
+    """
+    def __init__(self):
+        self.HeatSetting = None
+        self.CoolSetting = None
 
 
 class InternetConnectionData(object):

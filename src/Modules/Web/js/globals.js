@@ -1,5 +1,11 @@
 /**
- * globals.js - the global hook where we hang our coat and everything else
+ * @name: PyHouse/src/Modules/Web/js/globals.js
+ * @author: D. Brian Kimmel
+ * @contact: D.BrianKimmel@gmail.com
+ * @Copyright (c) 2014 by D. Brian Kimmel
+ * @license: MIT License
+ * @note: Created on Mar 11, 2014
+ * @summary: the global hook where we hang our coat and everything else
  *
  * A not so impressive way to get dynamic modules loading properly when inserting fragments at some later time into the webapp.
  * The most promising way is to preload although this could lead to quite some code clutter,
@@ -24,7 +30,6 @@
 
 
 // import Divmod.Runtime
-
 // import helpers
 
 
@@ -33,13 +38,14 @@ var REQ_ROOT = 0;
 var REQ_WITHID = 2;
 var BUTTON_INACTIVE = '#d0f0c0';
 var BUTTON_ACTIVE   = '#d0d0ff';
-var BUTTON_ADD      = '#ffd0d0';
-var BUTTON_BACK     = '#ffd0d0';
-var BUTTON_CHANGE   = '#ffd0d0';
-var BUTTON_DELETE   = '#ffd0d0';
-var BUTTON_YELLOW   = '#f7ffa0';
-var BUTTON_RED      = '#ffa0a0';
-var BUTTON_GREEN    = '#b0ffa0';
+var BUTTON_ADD      = 10001;
+var BUTTON_BACK     = 10002;
+var BUTTON_CHANGE   = 10003;
+var BUTTON_DELETE   = 10004;
+var COLOR_LIGHT_RED      = '#ffa0a0';
+var COLOR_LIGHT_YELLOW   = '#f7ffa0';
+var COLOR_LIGHT_GREEN    = '#b0ffa0';
+var COLOR_LIGHT_BLUE     = '#d0d0ff';
 
 globals = {
 	fonts : [ 'Verdana', 'Arial', 'Helvetica', 'sans-serif' ],
@@ -115,6 +121,7 @@ function getCardSizefromCSS() {
 }  // getCardSizefromCSS
 
 
+
 function collectClasses(node) {
 	var classnames = [];
 	var nodes = getElementsByTagAndClassName('div', null, node);  // (tagname, classname, parent)
@@ -125,6 +132,7 @@ function collectClasses(node) {
 	}
 	return classnames;
 }
+
 
 
 /**
@@ -145,6 +153,7 @@ function collectIMG_src(node, imgs) {
 }
 
 
+
 function getCSSrules(n) {
 	if (n < document.styleSheets.length) {
 		if (document.styleSheets[0].rules) {
@@ -155,6 +164,7 @@ function getCSSrules(n) {
 	}
 	return null;
 }
+
 
 
 /**
@@ -247,6 +257,7 @@ function waitfor(flags, timeout) {
 }  // waitfor
 
 
+
 /**
  * Load image URIs
  */
@@ -265,7 +276,7 @@ function loadImages(uris) {
 		var img = new Image();
 		img.src = uris[i];
 		imgs.push(img);
-	}  // for loop
+	}
 
 	/**
 	 * Test to see if image is read into DOM yet.
@@ -316,16 +327,15 @@ function loadImages(uris) {
 
 	var stepcount = 0;
 	var steprate = 2; // checks per second
-	var readyDeferred = Divmod.Defer.Deferred();
+	var l_ready_deferred = Divmod.Defer.Deferred();
 
 	var checkStep = function() {
 		if ((stepcount > 120)) {
 			self.timer = null;
-			// readyDeferred.errback(new minimal.common.globals.ImageLoadingError(
-			readyDeferred.errback(new globals.ImageLoadingError(
+			l_ready_deferred.errback(new globals.ImageLoadingError(
 					'could not load all images: ' + imgsNotloaded()));
 		} else if (imgsloaded()) {
-			readyDeferred.callback();
+			l_ready_deferred.callback();
 		} else {
 			stepcount++;
 			self.timer = setTimeout(checkStep, 1000 / steprate);
@@ -333,8 +343,9 @@ function loadImages(uris) {
 	};  // checkStep
 
 	self.timer = setTimeout(checkStep, 1000 / steprate);
-	return readyDeferred;
+	return l_ready_deferred;
 }  // loadImages
+
 
 
 /**
@@ -369,11 +380,11 @@ function serverState(p_state) {
 }
 
 
+
 /**
  * Find a widget in the workspace using 'class' of the widget.
  */
 function findWidgetByClass(p_name) {
-	//Divmod.debug('---', 'globals.findWidgetByClass(1) - Name:' + p_name);
 	for (var ix=0; ix < globals.workspace.childWidgets.length; ix++) {
 		var l_widget = globals.workspace.childWidgets[ix];
 		if (l_widget.node.className.toLowerCase() == p_name.toLowerCase())
@@ -384,11 +395,11 @@ function findWidgetByClass(p_name) {
 }
 
 
+
 /**
  * Get PyHouse data from server.
  */
 function getPyHouseData() {
-	//Divmod.debug('---', 'globals.getPyHouseData() was called. ');
 	var steprate = 2; // checks per second
 	var maxsteps = steprate * 60 * 60 * 24;
 	var stepcount = 0;
@@ -415,6 +426,7 @@ function updatePyHouseData() {
 }
 
 
+
 /**
  * A series of routines to build HTML for insertion into widgets.
  */
@@ -434,17 +446,19 @@ function buildButton(p_obj, p_handler, p_background_color, /* optional */ nameFu
 	return l_html;
 }
 function buildAddButton(p_handler) {
-	return buildButton({'Name' : 'Add', 'Key' : 10001}, p_handler, BUTTON_ADD);
+	return buildButton({'Name' : 'Add', 'Key' : BUTTON_ADD}, p_handler, COLOR_LIGHT_BLUE);
 }
 function buildBackButton(p_handler) {
-	return buildButton({'Name' : 'Back', 'Key' : 10002}, p_handler, BUTTON_BACK);
+	return buildButton({'Name' : 'Back', 'Key' : BUTTON_BACK}, p_handler, COLOR_LIGHT_BLUE);
 }
 function buildChangeButton(p_handler) {
-	return buildButton({'Name' : 'Change', 'Key' : 10003}, p_handler, BUTTON_CHANGE);
+	return buildButton({'Name' : 'Change', 'Key' : BUTTON_CHANGE}, p_handler, COLOR_LIGHT_BLUE);
 }
 function buildDeleteButton(p_handler) {
-	return buildButton({'Name' : 'Delete', 'Key' : 10004}, p_handler, BUTTON_DELETE);
+	return buildButton({'Name' : 'Delete', 'Key' : BUTTON_DELETE}, p_handler, COLOR_LIGHT_BLUE);
 }
+
+
 
 /**
  * Build a table of buttons in the current widget space.
@@ -459,7 +473,6 @@ function buildDeleteButton(p_handler) {
  * @returns = innerHTML of a table filled in with buttons
  */
 function buildTable(p_obj, p_handler, /* optional */ nameFunction, noOptions) {
-	//Divmod.debug('---', 'globals.buildTable(1) called. ' + p_obj + ' ' + p_handler + ' ' + nameFunction + ' ' + noOptions);
 	var l_function = nameFunction;
 	var l_options = noOptions;
 	if (typeof nameFunction !== 'function') {
@@ -470,15 +483,12 @@ function buildTable(p_obj, p_handler, /* optional */ nameFunction, noOptions) {
 		l_options = '';
 	var l_cols = 5;
 	var l_count = 0;
-
-	//Divmod.debug('---', 'globals.buildTable(2) called. Building a table of ' + Object.keys(p_obj).length);
 	var l_html = "<table><tr>\n";
 
 	for (var l_item in p_obj) {
-		//Divmod.debug('---', 'globals.buildTable(3) called. ' + l_item + ' ' + p_obj);
-		var l_background = BUTTON_ACTIVE;
+		var l_background = COLOR_LIGHT_GREEN;
 		if (p_obj[l_item]['Active'] != true)
-			l_background = BUTTON_INACTIVE;
+			l_background = COLOR_LIGHT_RED;
 		l_html += buildButton(p_obj[l_item], p_handler, l_background, l_function);
 		l_count++;
 		if ((l_count > 0) & (l_count % l_cols == 0))
@@ -492,6 +502,7 @@ function buildTable(p_obj, p_handler, /* optional */ nameFunction, noOptions) {
 	l_html += "</tr></table>\n";
 	return l_html;
 }
+
 function buildEntryButtons(p_handler, /* optional */ noOptions) {
 	//Divmod.debug('---', 'globals.buildEntryButtons() called.  Handler=' + p_handler + '  ' + noOptions);
 	var l_options = noOptions;
@@ -506,6 +517,8 @@ function buildEntryButtons(p_handler, /* optional */ noOptions) {
 		l_html += buildBackButton(p_handler);
 	return l_html;
 }
+
+
 
 /**
  * Radio button set widget.
@@ -542,6 +555,8 @@ function fetchTrueFalseWidget(p_name) {
 	}
 	return l_ret;
 }
+
+
 
 /**
  * Build a select widget
@@ -599,6 +614,9 @@ function buildLightTypeSelectWidget(p_id, p_checked) {
 function buildProtocolTypeSelectWidget(p_id, p_checked) {
 	return buildSelectWidget(p_id, globals.Valid.ProtocolType, p_checked);
 }
+function buildScheduleModeSelectWidget(p_id, p_checked) {
+	return buildSelectWidget(p_id, globals.Valid.ScheduleMode, p_checked);
+}
 function buildScheduleTypeSelectWidget(p_id, p_checked) {
 	return buildSelectWidget(p_id, globals.Valid.ScheduleType, p_checked);
 }
@@ -607,24 +625,27 @@ function buildScheduleTypeSelectWidget(p_id, p_checked) {
  */
 function buildValidSelectWidget(p_id, p_list, p_checked) {
 	l_list = globals.Valid[p_list];
-	//Divmod.debug('---', 'globals.buildValidSelectWidget() was called. Id=' + p_id + '  Checked=' + p_checked + '  List=' + l_list);
 	var l_html = '';
 	l_html += buildSelectWidget(p_id, l_list, p_checked)
 	return l_html;
 }
 
+
+
 /**
  * Build a slider widget
  */
 function buildSliderWidget(p_id, p_value) {
-	//Divmod.debug('---', 'globals.buildSliderWidget() called.  Value=' + p_value);
 	var l_html = "<input type='range' min='0' max='100' id='" + p_id + "' name='slider' ";
 	l_html += "value='" + p_value + "' ";
 	l_html += ">\n";
+	l_html += '&nbsp';  // add a box to display the slider value and find a way to update it when the slider is moved.
+	l_html += "<input type='text' id='" + p_id;
+	l_html += "' size='4' value='" + p_value;
+	l_html += "' >\n";
 	return l_html;
 }
 function buildLevelSliderWidget(p_name, p_level) {
-	//.debug('---', 'globals.buildLevelSliderWidget() called.  Level=' + p_level);
 	var l_html = buildSliderWidget(p_name, p_level);
 	return l_html;
 }
@@ -632,6 +653,8 @@ function fetchLevelWidget(p_id) {
 	//Divmod.debug('---', 'globals.fetchLevelWidget() called.  Name=' + p_name);
 	return document.getElementById(p_id).value;
 }
+
+
 
 /**
  * Build a text widget
@@ -641,10 +664,12 @@ function buildTextWidget(p_id, p_value, /* optional */ p_options) {
 	var l_options = p_options;
 	if (p_options === undefined)
 		l_options = '';
-	l_html += "<input type='text' id='" + p_id + "' size='40' value='" + p_value + "' ";
+	l_html += "<input type='text' id='" + p_id;
+	l_html += "' size='40' value='" + p_value;
+	l_html += "' ";
 	if (l_options.toLowerCase().indexOf('disable') > -1)
 		l_html += "disabled='disabled' ";
-	l_html += " >\n"
+	l_html += " >\n";
 	return l_html;
 }
 function fetchTextWidget(p_id) {
@@ -652,15 +677,71 @@ function fetchTextWidget(p_id) {
 	return l_data;
 }
 
+
+/**
+ * Build a DOW widget (mon = 0)
+ */
+function buildDowWidget(p_id, p_value, /* optional */ p_options) {
+	var l_html = '';
+	l_html += "<input type='checkbox' name='" + p_id + "' value='1'";
+	if (p_value & 1)
+		l_html += " checked ";
+	l_html += ">Mon&nbsp\n";
+	l_html += "<input type='checkbox' name='" + p_id + "' value='2'";
+	if (p_value & 2)
+		l_html += " checked ";
+	l_html += ">Tue&nbsp\n";
+	l_html += "<input type='checkbox' name='" + p_id + "' value='4'";
+	if (p_value & 4)
+		l_html += " checked ";
+	l_html += ">Wed&nbsp\n";
+	l_html += "<input type='checkbox' name='" + p_id + "' value='8'";
+	if (p_value & 8)
+		l_html += " checked ";
+	l_html += ">Thu&nbsp\n";
+	l_html += "<input type='checkbox' name='" + p_id + "' value='16'";
+	if (p_value & 16)
+		l_html += " checked ";
+	l_html += ">Fri&nbsp\n";
+	l_html += "<input type='checkbox' name='" + p_id + "' value='32'";
+	if (p_value & 32)
+		l_html += " checked ";
+	l_html += ">Sat&nbsp\n";
+	l_html += "<input type='checkbox' name='" + p_id + "' value='64'";
+	if (p_value & 64)
+		l_html += " checked ";
+	l_html += ">Sun&nbsp\n";
+
+	return l_html;
+}
+function fetchDowWidget(p_id) {
+	var l_dow = document.getElementsByName(p_id);
+	var l_ret = 0;
+	for (var ix = 0; ix < l_dow.length; ix++) {
+		// Divmod.debug('---', 'globals.fetchDowWidget() called.  Name=' + p_id + '  Checked:' + l_dow[ix].checked + '  Val:' + l_dow[ix].value);
+		if (l_dow[ix].checked) {
+			l_ret += parseInt(l_dow[ix].value)
+		}
+	}
+	// Divmod.debug('---', 'globals.fetchDowWidget() called.  FinalValue=' + l_ret);
+	return l_ret;
+}
+
+
+
 /**
  * Build an entire row to put in the table
  */
 function buildTextRowWidget(p_id, p_name, p_value, /* optional */ hidden) {
-	//Divmod.debug('---', 'globals.buildTextRowWidget() was called.  Name' + p_name + '  Value=' + p_value);
 	var l_html = '';
-	l_html += "<tr><td>" + p_name + "</td><td><input type='text' id='" + p_name + "' value='" + p_value + "' /></td></tr>\n";
+	l_html += "<tr><td>" + p_name;
+	l_html += "</td><td><input type='text' id='" + p_name;
+	l_html += "' value='" + p_value;
+	l_html += "' /></td></tr>\n";
 	return l_html;
 }
+
+
 
 /**
  * Startup
