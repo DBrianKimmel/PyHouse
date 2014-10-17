@@ -1,0 +1,55 @@
+Ajax via Dvimod Nevow Athena
+============================
+
+
+Finding child resources.
+------------------------
+
+First, the glue modules under PyHouse/src/plugins/nevow/plugins/ must be copied
+to the nevow/plugin directory for the given os/distribution.  These glue modules
+allow athena to find the various .css and .js files needed to operate.
+Nevow uses a different mechanism to locate these files.
+
+It is possible (thanks to Wenrner Thie) to do our own finding of resources and avoid the plugins.
+This seems a lot smarter to me since it handles different platforms a lot better.
+
+
+
+Templates.
+----------
+
+I have chosen to use HTML instead of stan.
+
+The html file starts out with:
+
+    <html
+        xmlns        = 'http://www.w3.org/1999/xhtml'
+        xmlns:nevow  = 'http://nevow.com/ns/nevow/0.1'
+        xmlns:athena = 'http://divmod.org/ns/athena/0.7'
+        lang         = 'en'
+        >
+    
+
+In order to auto load the athena JS files add:
+    <head nevow:render = 'liveglue'>
+
+
+
+To add a new element / widget.
+==============================
+
+xxxElement.html must be added to define the element / widget.
+
+web_xxx.py must be added to handle the server side of the new widget.
+
+xxx.js must be added to handle the client side of the widget.
+
+web_mainpage must import the web_xxx module and provide a callback with the name (xxx) of the xxx.js file to render the element/widget.
+
+workspace.js must add an attachWidget call to load the xxx element.
+
+
+
+
+
+    
