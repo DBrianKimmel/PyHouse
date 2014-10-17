@@ -1,3 +1,9 @@
+/**
+ * @Name: PyHouse/src/Modules/Web/css/lcars.css
+ *
+ * Found on the internet.
+ */
+
 html,
 body,
 div,
@@ -5,12 +11,7 @@ span,
 applet,
 object,
 iframe,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
+h1, h2, h3, h4, h5, h6,
 p,
 blockquote,
 pre,
@@ -47,14 +48,7 @@ fieldset,
 form,
 label,
 legend,
-table,
-caption,
-tbody,
-tfoot,
-thead,
-tr,
-th,
-td {
+table, caption, tbody, tfoot, thead, tr, th, td {
   margin: 0;
   padding: 0;
   border: 0;

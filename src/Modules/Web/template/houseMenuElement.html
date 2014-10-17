@@ -2,9 +2,10 @@
  -->
 <div id='HouseMenuDiv' xmlns:athena='http://divmod.org/ns/athena/0.7'
 	xmlns:nevow='http://nevow.com/ns/nevow/0.1' nevow:render='liveElement'
-	class='HouseMenu'
->
+	class='HouseMenu'>
+
 	<div class='lcars-container'>
+
 		<!-- TOP ROW - Elbows & DIVIDER-->
 		<div class='l-cars-row spaced'>
 			<div class="lcars-column u-1-8 lcars-elbow left bottom lcars-blue-bg">
@@ -18,8 +19,11 @@
 			</div>
 			<div class="lcars-column u-1-8 lcars-elbow right bottom lcars-tan-bg">
 			</div>
-			<!-- NEXT ROW -->
+
+            <!-- MIDDLE ROW -->
 			<div class="lcars-row spaced">
+
+                <!-- LEFT COLUMN -->
 				<div class="lcars-column u-1-8">
 					<ul class="lcars-menu">
 						<li class="lcars-blue-bg"></li>
@@ -27,6 +31,7 @@
 						<li class="lcars-tan-bg"></li>
 					</ul>
 				</div>
+                <!-- CENTER SECTION -->
 				<div class="lcars-column u-6-8">
 					<div class='lcars-row spaced'>
 						<div class="lcars-row spaced">
@@ -99,6 +104,8 @@
                         </div>
 					</div>
 				</div>
+
+                <!-- RIGHT COLUMN -->
 				<div class="lcars-column u-1-8">
 					<ul class="lcars-menu">
 						<li class="lcars-tan-bg"></li>
@@ -107,27 +114,18 @@
 					</ul>
 				</div>
 			</div>
+
 			<!-- BOTTOM ROW -->
 			<div class="lcars-row spaced">
 				<div class="lcars-column u-1-8 lcars-elbow left top lcars-tan-bg">
 				</div>
-				<div
-					class="lcars-column u-6-8 lcars-divider bottom lcars-tan-blue-divide"
-				></div>
+				<div class="lcars-column u-6-8 lcars-divider bottom lcars-tan-blue-divide">
+				</div>
 				<div class="lcars-column u-1-8 lcars-elbow right top lcars-blue-bg">
 				</div>
 			</div>
 		</div>
 	</div>
-	<h2>Select a function:</h2>
-	<table style='width: 60%;'>
-		<tr>
-			<td><button type='button' value='Back' name='Back'>
-					Back
-					<athena:handler event='onclick' handler='doHandleOnClick' />
-				</button></td>
-		</tr>
-	</table>
 </div>
 <!--
 ### END DBK -->
