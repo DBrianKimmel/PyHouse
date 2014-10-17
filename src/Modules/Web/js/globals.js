@@ -46,6 +46,8 @@ var COLOR_LIGHT_RED      = '#ffa0a0';
 var COLOR_LIGHT_YELLOW   = '#f7ffa0';
 var COLOR_LIGHT_GREEN    = '#b0ffa0';
 var COLOR_LIGHT_BLUE     = '#d0d0ff';
+var COLOR_LCARS_RED      = '#ff3300';
+var COLOR_LCARS_L_BLUE   = '#ccccff';
 
 globals = {
 	fonts : [ 'Verdana', 'Arial', 'Helvetica', 'sans-serif' ],
