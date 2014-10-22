@@ -42,7 +42,7 @@ Nevow.Athena.Widget.subclass(helpers, 'Widget').methods(
 		}
 
 		/**
-		 *  Pre action tasks needing time, getting things from the server like text should be done here.
+		 * Pre action tasks needing time, getting things from the server like text should be done here.
 		 * There is nothing worse than a widget which has stuff percolating in at random.
 		 */
 		var uris = collectIMG_src(self.node, null);

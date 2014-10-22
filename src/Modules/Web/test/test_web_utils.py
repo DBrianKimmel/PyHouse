@@ -37,7 +37,7 @@ class Attribs(object):
     def_attr = 'Hello World!'
 
 
-class Test_01_Json(SetupMixin, unittest.TestCase):
+class C01_Json(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
@@ -45,36 +45,52 @@ class Test_01_Json(SetupMixin, unittest.TestCase):
         self.m_room_obj = RoomData()
         self.m_api = rooms.ReadWriteConfigXml()
 
-    def test_0101_encode(self):
+    def test_01_Encode(self):
         y = web_utils.JsonUnicode().convert_to_unicode('abc')
         PrettyPrintAny(y, 'Y')
         self.assertEquals(y, u'abc', "Convert to unicode failed.")
 
-    def test_0102_dencode(self):
+    def test_02_Decode(self):
         y = web_utils.JsonUnicode().convert_from_unicode(u'ABC')
         PrettyPrintAny(y, 'Y')
         self.assertEquals(y, 'ABC', "Convert from unicode failed.")
 
-    def test_0103_json_encode(self):
+    def test_03_Json_Encode(self):
         x = PY_DATA
         y = web_utils.JsonUnicode().encode_json(x)
         PrettyPrintAny(y, 'Y')
 
-    def test_0104_json_decode(self):
+    def test_04_Json_Decode(self):
         x = "{'de4' : 'D E F'}"
         y = web_utils.JsonUnicode().decode_json(x)
         PrettyPrintAny(y, 'Y')
 
-    def test_0111_Room(self):
+    def test_11_Room(self):
         l_rooms = self.m_api.read_one_room(self.m_xml.room)
         PrettyPrintAny(l_rooms, 'Room')
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_rooms))
         PrettyPrintAny(l_json, 'JSON')
 
-    def test_0112_Rooms(self):
+    def test_12_Rooms(self):
         l_rooms = self.m_api.read_rooms_xml(self.m_xml.house_div)
         PrettyPrintAny(l_rooms, 'Rooms')
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_rooms))
         PrettyPrintAny(l_json, 'JSON')
+
+
+
+class C02_Json(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        self.m_house_obj = HouseObjs()
+        self.m_room_obj = RoomData()
+        self.m_api = rooms.ReadWriteConfigXml()
+
+    def test_01_HouseInfo(self):
+        l_json = web_utils.GetJSONHouseInfo(self.m_pyhouse_obj)
+        PrettyPrintAny(l_json, 'JSON', 60)
+        # self.assertEquals(l_json.Name, u'Test House')
+
 
 # ## END DBK

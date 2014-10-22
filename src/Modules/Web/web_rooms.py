@@ -28,6 +28,8 @@ templatepath = os.path.join(webpath, 'template')
 g_debug = 0
 LOG = Logger.getLogger('PyHouse.webRooms    ')
 
+
+
 #==============================================================================
 
 class RoomsElement(athena.LiveElement):
@@ -39,9 +41,13 @@ class RoomsElement(athena.LiveElement):
         self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
 
     @athena.expose
-    def getHouseData(self):
-        l_house = GetJSONHouseInfo(self.m_pyhouse_obj)
-        return l_house
+    def getServerData(self):
+        """
+        Get a lot of server JSON data and pass it to the client browser.
+        """
+        l_json = GetJSONHouseInfo(self.m_pyhouse_obj)
+        LOG.info('Fetched {}'.format(l_json))
+        return l_json
 
     @athena.expose
     def saveRoomData(self, p_json):

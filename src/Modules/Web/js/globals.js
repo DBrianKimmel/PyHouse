@@ -27,8 +27,6 @@
  *  }
  *
  */
-
-
 // import Divmod.Runtime
 // import helpers
 
@@ -50,7 +48,7 @@ var COLOR_LCARS_RED      = '#ff3300';
 var COLOR_LCARS_L_BLUE   = '#ccccff';
 
 globals = {
-	fonts : [ 'Verdana', 'Arial', 'Helvetica', 'sans-serif' ],
+	XXXfonts : [ 'Verdana', 'Arial', 'Helvetica', 'sans-serif' ],
 	workspace : null,
 
 	Computer : {},
@@ -69,7 +67,7 @@ globals = {
 			w : 800,
 			h : 655
 		};
-	}  // __init__
+	}
 };
 
 
@@ -88,6 +86,7 @@ function getCardSizefromCSS() {
 	var h = 0;
 	var n = 0;
 	var done = false;
+	Divmod.debug('---', 'globals.getCardSizefromCSS was called.');
 	while (!done) {
 		var rules = getCSSrules(n);
 		if (rules === null)
@@ -120,11 +119,12 @@ function getCardSizefromCSS() {
 		w : w,
 		h : h
 	};
-}  // getCardSizefromCSS
+}
 
 
 
 function collectClasses(node) {
+	Divmod.debug('---', 'globals.collectClasses was called.');
 	var classnames = [];
 	var nodes = getElementsByTagAndClassName('div', null, node);  // (tagname, classname, parent)
 	for ( var i = 0; i < nodes.length; i++) {
@@ -143,6 +143,8 @@ function collectClasses(node) {
  *  be passed later on to the loadImages function, which preloads all those images.
  */
 function collectIMG_src(node, imgs) {
+	// Divmod.debug('---', 'globals.collectIMG_src was called.  Node:' + node.className);
+	// console.log("  collectIMG_src    %O", node);
 	if (imgs != typeof ([])) {
 		imgs = [];
 	}
@@ -157,6 +159,7 @@ function collectIMG_src(node, imgs) {
 
 
 function getCSSrules(n) {
+	Divmod.debug('---', 'globals.getCSSrules was called.');
 	if (n < document.styleSheets.length) {
 		if (document.styleSheets[0].rules) {
 			return document.styleSheets[n].rules; // IE
@@ -177,6 +180,7 @@ function getCSSrules(n) {
  * This allows for having an images array beforehand and adding other images (from offsite URIs) to the array manually.
  */
 function collectCSS_backgroundImages(imgs, selectors) {
+	Divmod.debug('---', 'globals.collectCSS_backgroundImages was called.');
 	if (imgs === null) {
 		imgs = [];
 	}
@@ -273,6 +277,7 @@ globals.ImageLoadingError = Divmod.Error.subclass('globals.ImageLoadingError');
  * trigger errback if time expired before they all were loaded.
  */
 function loadImages(uris) {
+	// Divmod.debug('---', 'globals.loadImages was called.');
 	var imgs = [];
 	for ( var i = 0; i < uris.length; i++) {
 		var img = new Image();
@@ -360,7 +365,7 @@ function loadImages(uris) {
 globals.ServerStateError = Divmod.Error.subclass('globals.ServerStateError');
 
 function serverState(p_state) {
-	//Divmod.debug('---', 'globals.serverState was called. state:' + p_state);
+	// Divmod.debug('---', 'globals.serverState was called. state:' + p_state);
 	var m_state = p_state;
 	var steprate = 2; // checks per second
 	var maxsteps = steprate * 60 * 60 * 24;
@@ -447,6 +452,11 @@ function buildButton(p_obj, p_handler, p_background_color, /* optional */ nameFu
 	l_html += "</button></td>\n";
 	return l_html;
 }
+/**
+ * <button type='button' class='lcars-button radius *bg_color*' name='*name*' onclick='return Nevow.Athena.Widget.handleEvent(this, "onclick", *p_handler*')>
+ * *buttonName*
+ * </button>
+ */
 function buildAddButton(p_handler) {
 	return buildButton({'Name' : 'Add', 'Key' : BUTTON_ADD}, p_handler, COLOR_LIGHT_BLUE);
 }
@@ -461,11 +471,41 @@ function buildDeleteButton(p_handler) {
 }
 
 
+function buildLcarButton(p_obj, p_handler, p_background_color, /* optional */ nameFunction) {
+	var l_html = '';
+	l_html += "<button type='button' ";
+	l_html += "value='" + p_obj['Name'] + "' ";
+	l_html += "class='lcars-button radius " + p_background_color + "' ";
+	l_html += "name='" + p_obj['Key'] + "' ";
+	l_html += "onclick='return Nevow.Athena.Widget.handleEvent(this, \"onclick\", \""  + p_handler + "\" ";
+	l_html += ");' >\n";
+	if (typeof nameFunction === 'function')
+		l_html += nameFunction(p_obj);
+	else
+		l_html += p_obj['Name'];
+	l_html += "</button>\n";
+	// console.log("globals.buildLcarButton() - %O", l_html)
+	return l_html;
+}
+function buildLcarAddButton(p_handler) {
+	return buildLcarButton({'Name' : 'Add', 'Key' : BUTTON_ADD}, p_handler, 'lcars-salmon-bg');
+}
+function buildLcarBackButton(p_handler) {
+	return buildLcarButton({'Name' : 'Back', 'Key' : BUTTON_BACK}, p_handler, 'lcars-salmon-bg');
+}
+function buildLcarChangeButton(p_handler) {
+	return buildLcarButton({'Name' : 'Change', 'Key' : BUTTON_CHANGE}, p_handler, 'lcars-salmon-bg');
+}
+function buildLcarDeleteButton(p_handler) {
+	return buildLcarButton({'Name' : 'Delete', 'Key' : BUTTON_DELETE}, p_handler, 'lcars-salmon-bg');
+}
+
+
 
 /**
  * Build a table of buttons in the current widget space.
  * Use the names to build callbacks for the buttons being clicked on
- * Used for things like selecting a light or house to work on.
+ * Used for things like selecting a light or schedule to work on.
  * 
  * @param p_obj = a dict of item dicts to build from
  * @param p_handler = is a literal name of a handler function { 'handleMenuOnClick' )
@@ -505,6 +545,65 @@ function buildTable(p_obj, p_handler, /* optional */ nameFunction, noOptions) {
 	return l_html;
 }
 
+
+
+
+/**
+ * Build a table of buttons in the current widget space.
+ * Use the names to build callbacks for the buttons being clicked on
+ * Used for things like selecting a light or schedule to work on.
+ *
+ * @param p_obj = a dict of item dicts to build from
+ * @param p_handler = is a literal name of a handler function { 'handleMenuOnClick' )
+ * @param p_nameFunction (optional) is the name of a function used to build a more complex caption for the buttons.
+ * 			Omit this parameter if it is not used - no need for a placeholder
+ * @param p_noOptions (optional) is the things to skip ('NoAdd' will omit the add button).
+ *
+ * @returns = innerHTML of a table filled in with buttons
+ */
+function buildLcarTable(p_obj, p_handler, p_nameFunction, p_noOptions) {
+	// Divmod.debug('---', 'globals.buildLcarTable() called.  Handler=' + p_handler + '  ' + p_noOptions);
+	var l_nameFunction = p_nameFunction;
+	var l_noOptions = p_noOptions;
+	// See if function was passed
+	if (typeof p_nameFunction !== 'function') {
+		l_noOptions = p_nameFunction;
+		l_nameFunction = null;
+	}
+	if (l_noOptions === undefined)
+		l_noOptions = '';
+	var l_cols = 6;
+	var l_count = 0;
+	var l_html = "<div class='lcars-row spaced'>\n";
+	for (var l_item in p_obj) {
+		var l_background = 'lcars-purple-bg';
+		if (p_obj[l_item]['Active'] != true)
+			l_background = 'lcars-pink-bg';
+	    l_html += "<div class='lcars-column u-1-6'>\n";
+		l_html += buildLcarButton(p_obj[l_item], p_handler, l_background, l_nameFunction);
+		l_count++;
+	    l_html += "</div>\n";  // column
+		if ((l_count > 0) & (l_count % l_cols == 0)) {
+			l_html += "</div>\n";  // Row
+			l_html += "<div class='lcars-row spaced'>\n";
+		}
+	}
+	l_html += "</div>\n";  // Row
+	l_html += "<div class='lcars-row spaced'>\n";
+	if (l_noOptions.toLowerCase().indexOf('add') === -1)
+		l_html += buildLcarAddButton(p_handler);
+	if (l_noOptions.toLowerCase().indexOf('back') === -1)
+		l_html += buildLcarBackButton(p_handler);
+	l_html += "</div>\n";  // Row
+	return l_html;
+
+}
+
+
+
+/**
+ * Entry buttons are for the bottom of data entry screens.
+ */
 function buildEntryButtons(p_handler, /* optional */ noOptions) {
 	//Divmod.debug('---', 'globals.buildEntryButtons() called.  Handler=' + p_handler + '  ' + noOptions);
 	var l_options = noOptions;
@@ -517,6 +616,20 @@ function buildEntryButtons(p_handler, /* optional */ noOptions) {
 		l_html += buildDeleteButton(p_handler);
 	if (l_options.toLowerCase().indexOf('back') === -1)
 		l_html += buildBackButton(p_handler);
+	return l_html;
+}
+function buildLcarEntryButtons(p_handler, /* optional */ noOptions) {
+	//Divmod.debug('---', 'globals.buildEntryButtons() called.  Handler=' + p_handler + '  ' + noOptions);
+	var l_options = noOptions;
+	if (l_options === undefined)
+		l_options = '';
+	var l_html = '';
+	if (l_options.toLowerCase().indexOf('change') === -1)
+		l_html = buildLcarChangeButton(p_handler);
+	if (l_options.toLowerCase().indexOf('delete') === -1)
+		l_html += buildLcarDeleteButton(p_handler);
+	if (l_options.toLowerCase().indexOf('back') === -1)
+		l_html += buildLcarBackButton(p_handler);
 	return l_html;
 }
 
@@ -536,12 +649,38 @@ function buildRadioButtonWidget(p_name, p_label, p_value, p_checkVal) {
 	l_html += "/>" + p_label + '&nbsp;\n';
 	return l_html;
 }
+function buildLcarRadioButtonWidget(p_name, p_label, p_value, p_checkVal) {
+	var l_html = "&nbsp;<input type='radio' name='" + p_name + "' value='" + p_value + "' ";
+	if (p_value == p_checkVal)
+		l_html += "checked='checked'";
+	l_html += "/>" + p_label + '&nbsp;\n';
+	return l_html;
+}
 function buildTrueFalseWidget(p_name, p_value) {
 	var l_html = "<span id='" + p_name + "Buttons'>";
 	var l_value = p_value != false;  // force to be a bool
 	l_html += buildRadioButtonWidget(p_name, 'True',  true, l_value);
 	l_html += buildRadioButtonWidget(p_name, 'False', false, l_value);
 	l_html += '</span>\n';
+	return l_html;
+}
+function buildLcarTrueFalseWidget(p_name, p_caption, p_value) {
+
+	var l_html = '';
+	var l_value = p_value != false;  // force to be a bool
+	l_html += "<div class='lcars-row spaced'>\n";
+	l_html += "<div class=lcars-column u-1-1'>\n";
+	l_html += "<div class='lcars-button radius'>\n";
+	l_html += p_caption;
+
+	l_html += "<span id='" + p_name + "Buttons'>";
+	l_html += buildLcarRadioButtonWidget(p_name, 'True',  true, l_value);
+	l_html += buildLcarRadioButtonWidget(p_name, 'False', false, l_value);
+	l_html += '</span>\n';
+
+	l_html += "</div>\n";  // Button
+	l_html += "</div>\n";  // Column
+	l_html += "</div>\n";  // row 1
 	return l_html;
 }
 function fetchTrueFalseWidget(p_name) {
@@ -576,6 +715,20 @@ function buildSelectWidget(p_id, p_list, p_checked) {
 	l_html += "</select>\n";
 	return l_html;
 }
+function buildLcarSelectWidget(p_id, p_list, p_checked) {
+	//Divmod.debug('---', 'globals.buildSelectWidget() called.  p_list=' + p_list + '  p_checked=' + p_checked);
+	var l_html = "";
+	l_html += "<select id='" + p_id + "' >\n";
+	for (var ix = 0; ix < p_list.length; ix++) {
+		var l_name = p_list[ix];
+		l_html += "<option value='" + ix + "' ";
+		if (l_name == p_checked)
+			l_html += 'selected ';
+		l_html += ">" + l_name + "</option>\n";
+	}
+	l_html += "</select>\n";
+	return l_html;
+}
 function fetchSelectWidget(p_id) {
 	var l_field = document.getElementById(p_id);
 	var l_ix = l_field.value;
@@ -591,6 +744,14 @@ function buildRoomSelectWidget(p_id, p_checked) {
 	for (var ix = 0; ix < Object.keys(l_obj).length; ix++)
 		l_list[ix] = l_obj[ix].Name;
 	return buildSelectWidget(p_id, l_list, p_checked);
+}
+function buildLcarRoomSelectWidget(p_id, p_checked) {
+	//Divmod.debug('---', 'globals.buildRoomSelectWidget() was called. Id=' + p_id + '  Checked=' + p_checked);
+	var l_obj = globals.House.HouseObj.Rooms;
+	var l_list = [];
+	for (var ix = 0; ix < Object.keys(l_obj).length; ix++)
+		l_list[ix] = l_obj[ix].Name;
+	return buildLcarSelectWidget(p_id, l_list, p_checked);
 }
 function buildLightNameSelectWidget(p_id, p_checked) {
 	//Divmod.debug('---', 'globals.buildLightNameSelectWidget() was called. Id=' + p_id + '  Checked=' + p_checked);
@@ -660,7 +821,35 @@ function fetchLevelWidget(p_id) {
 
 /**
  * Build a text widget
+ * 
+ * @param: p_id is the ID of the imput widget.
+ * @param: p_value is the value to be displyed when the widget appears.
+ * @param: p_options contains 'disable' if the field is unchangeable.
  */
+function buildLcarTextWidget(p_id, p_caption, p_value, p_options) {
+	var l_html = '';
+	var l_options = p_options;
+	if (p_options === undefined)
+		l_options = '';
+	l_html += "<div class='lcars-row spaced'>\n";
+	l_html += "<div class=lcars-column u-1-1'>\n";
+	l_html += "<div class='lcars-button radius'>\n";
+	l_html += p_caption;
+	l_html += "<input type='text' class='lcars-button-addition' id='" + p_id;
+	l_html += "' size='40' value='" + p_value;
+	l_html += "' ";
+	if (l_options.toLowerCase().indexOf('disable') > -1)
+		l_html += "disabled='disabled' ";
+	l_html += " />\n";
+	l_html += "</div>\n";  // Button
+	l_html += "</div>\n";  // Column
+	l_html += "</div>\n";  // row 1
+	return l_html;
+}
+function fetchTextWidget(p_id) {
+	var l_data = document.getElementById(p_id).value;
+	return l_data;
+}
 function buildTextWidget(p_id, p_value, /* optional */ p_options) {
 	var l_html = '';
 	var l_options = p_options;
@@ -671,13 +860,9 @@ function buildTextWidget(p_id, p_value, /* optional */ p_options) {
 	l_html += "' ";
 	if (l_options.toLowerCase().indexOf('disable') > -1)
 		l_html += "disabled='disabled' ";
-	l_html += " >\n";
+	l_html += " />\n";
 	return l_html;
-}
-function fetchTextWidget(p_id) {
-	var l_data = document.getElementById(p_id).value;
-	return l_data;
-}
+};
 
 
 /**
@@ -742,6 +927,81 @@ function buildTextRowWidget(p_id, p_name, p_value, /* optional */ hidden) {
 	l_html += "' /></td></tr>\n";
 	return l_html;
 }
+
+
+/**
+ * Build the top part of the display.
+ *
+ * @param: p_title(str) is the title to display near the center of the display
+ */
+function build_lcars_top(p_title, /* optional* */ p_color){
+	// Divmod.debug('---', 'globals.build_lcars_top() was called.');
+	var l_color = p_color;
+	if (l_color === undefined) 
+		l_color = 'lcars-salmon-color';
+	var l_html = '';
+	l_html += "<div class='lcars-row spaced'>\n";
+    l_html += "  <div class='lcars-column u-1-8 lcars-elbow left bottom lcars-blue-bg'></div>\n";
+	l_html += "  <div class='lcars-column u-6-8 lcars-divider lcars-blue-tan-divide'>\n";
+	l_html += "    <div class='lcars-row'>\n";
+	l_html += "      <div class='lcars-column u-1-2'>\n";
+	l_html += "        <h1 class='right " + l_color + "'>" + p_title + "</h1>\n";
+	l_html += "      </div>\n";  // column_1-2
+	l_html += "    </div>\n";  // row 2
+	l_html += "  </div>\n";  // column_6-8
+	l_html += "  <div class='lcars-column u-1-8 lcars-elbow right bottom lcars-tan-bg'></div>\n";
+	l_html += "</div>\n";
+	return l_html;
+};
+/**
+ * Bild the middle part of the display
+ *
+ * @param: p_rows is the number of rows to allow space for.
+ * @param: p_html is the (big) html for the entire menu.
+ */
+function build_lcars_middle_menu(p_rows, p_html){
+	// Divmod.debug('---', 'globals.build_lcars_middle() was called.');
+	var l_html = '';
+	var l_half = (p_rows + 1) / 2;
+	l_html += "<div class='lcars-row spaced'>\n";  // row 1
+	l_html += "  <div class='lcars-column u-1-8'>\n";  // Column 1
+	l_html += "    <ul class='lcars-menu'>\n";
+	for (var l_row = 0; l_row < l_half; l_row++) {
+		l_html += "      <li class='lcars-blue-bg'></li>\n";
+	}
+	for (var l_row = 0; l_row < l_half; l_row++) {
+		l_html += "      <li class='lcars-tan-bg'></li>\n";
+	}
+	l_html += "    </ul>\n";
+	l_html += "  </div>\n";  // column 1
+	l_html += "  <div class='lcars-column u-6-8'>\n";
+	l_html += p_html;
+
+	l_html += "  </div>\n";
+	l_html += "  <div class='lcars-column u-1-8'>\n";
+	l_html += "    <ul class='lcars-menu'>\n";  // RIGHT
+	for (var l_row = 0; l_row < l_half; l_row++) {
+		l_html += "      <li class='lcars-tan-bg'></li>\n";
+	}
+	for (var l_row = 0; l_row < l_half; l_row++) {
+		l_html += "      <li class='lcars-blue-bg'></li>\n";
+	}
+	l_html += "    </ul>\n";
+	l_html += "  </div>\n";
+	l_html += "</div>\n";
+	// console.log("globals.build_lcars_middle() - %O", l_html)
+	return l_html;
+};
+function build_lcars_bottom(){
+	// Divmod.debug('---', 'globals.build_lcars_bottom() was called.');
+	var l_html = '';
+	l_html += "<div class='lcars-row spaced'>\n";
+	l_html += "  <div class='lcars-column u-1-8 lcars-elbow left top lcars-tan-bg'></div>";
+	l_html += "  <div class='lcars-column u-6-8 lcars-divider bottom lcars-tan-blue-divide'></div>";
+	l_html += "  <div class='lcars-column u-1-8 lcars-elbow right top lcars-blue-bg'></div>\n";
+	l_html += "</div>\n";
+	return l_html;
+};
 
 
 

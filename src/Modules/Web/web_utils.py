@@ -45,7 +45,7 @@ def GetJSONHouseInfo(p_pyhouse_obj):
     """Get house info for the browser.
     This is simplified and customized so JSON encoding works.
 
-    @param p_house_obj: is the complete information
+    @param p_pyhouse_obj: is the complete information
     """
     l_ret = JsonHouseData()
     l_ret.Name = p_pyhouse_obj.House.Name
@@ -57,6 +57,7 @@ def GetJSONHouseInfo(p_pyhouse_obj):
     l_ret.Location = p_pyhouse_obj.House.OBJs.Location
     l_ret.Rooms = p_pyhouse_obj.House.OBJs.Rooms
     l_ret.Schedules = p_pyhouse_obj.House.OBJs.Schedules
+    l_ret.Thermostats = p_pyhouse_obj.House.OBJs.Thermostats
     l_json = unicode(JsonUnicode().encode_json(l_ret))
     return l_json
 

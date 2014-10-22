@@ -173,6 +173,7 @@ class JsonHouseData(ABaseObject):
         self.Location = {}
         self.Rooms = {}
         self.Schedules = {}
+        self.Thermostats = {}
 
 
 class RoomData(ABaseObject):

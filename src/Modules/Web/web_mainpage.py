@@ -142,6 +142,7 @@ class mainPageFactory:
         self.Clients = {}
         l_siteJSPackage = athena.AutoJSPackage(jspath)
         _l_siteCSSPackage = athena.AutoCSSPackage(csspath)
+        LOG.info('CSS - {}'.format(_l_siteCSSPackage))
         athena.jsDeps.mapping.update(l_siteJSPackage.mapping)
 
     def addClient(self, client):
@@ -260,6 +261,7 @@ class MainPage(athena.LivePage):
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         super(MainPage, self).__init__()
+        LOG.info('Main Page Initializing')
 
     def child_jsmodule(self, _ctx):
         return MappingCompressedResource(self.jsModules.mapping)
@@ -311,7 +313,7 @@ class Workspace(athena.LiveElement):
     def __init__(self, p_pyhouse_obj, uid = None):
         self.m_pyhouse_obj = p_pyhouse_obj
         super(Workspace, self).__init__()
-        LOG.info('web_mainpage Workspace initialized.')
+        LOG.info('Workspace initialized.')
         self.state = self.PG_INITED
         self.uid = uid
 
@@ -332,63 +334,63 @@ class Workspace(athena.LiveElement):
 
     @athena.expose
     def buttons(self, p_params):
-        LOG.info("buttons called from browser")
+        LOG.info("Buttons loaded into browser")
         l_element = web_buttons.ButtonsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def clock(self, _p_params):
-        LOG.info("clock called from browser")
+        LOG.info("Clock loaded into browser")
         l_element = web_clock.ClockElement()
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def controllers(self, p_params):
-        LOG.info("controllers called from browser")
+        LOG.info("Controllers loaded into browser")
         l_element = web_controllers.ControllersElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def controlLights(self, p_params):
-        LOG.info("controlLights called from browser")
+        LOG.info("Control Lights loaded into browser")
         l_element = web_controlLights.ControlLightsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def house(self, _p_params):
-        LOG.info("house called from browser")
+        LOG.info("House loaded into browser")
         l_element = web_house.HouseElement(self)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def houseMenu(self, _p_params):
-        LOG.info("houseMenu called from browser")
+        LOG.info("House Menu loaded into browser")
         l_element = web_houseMenu.HouseMenuElement(self)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def houseSelect(self, _p_params):
-        LOG.info("houseSelect called from browser")
+        LOG.info("House Select loaded into browser")
         l_element = web_houseSelect.HouseSelectElement(self)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def internet(self, p_params):
-        LOG.info("internet called from browser")
+        LOG.info("Internet loaded into browser")
         l_element = web_internet.InternetElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def lights(self, p_params):
-        LOG.info("lights called from browser")
+        LOG.info("Lights loaded into browser")
         l_element = web_lights.LightsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
@@ -397,49 +399,49 @@ class Workspace(athena.LiveElement):
     def login(self, _p_params):
         """ Place and display the login widget.
         """
-        LOG.info("login called from browser")
+        LOG.info("Login loaded into browser")
         l_element = web_login.LoginElement(self)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def logs(self, p_params):
-        LOG.info("logs called from browser")
+        LOG.info("Logs loaded into browser")
         l_element = web_logs.LogsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def rooms(self, p_params):
-        LOG.info("rooms called from browser")
+        LOG.info("Rooms loaded into browser")
         l_element = web_rooms.RoomsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def rootMenu(self, _p_params):
-        LOG.info("rootMenu called from browser")
+        LOG.info("Root Menu loaded into browser")
         l_element = web_rootMenu.RootMenuElement(self)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def schedules(self, p_params):
-        LOG.info("schedules called from browser")
+        LOG.info("schedules loaded into browser")
         l_element = web_schedules.SchedulesElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def thermostats(self, p_params):
-        LOG.info("thermostats called from browser")
+        LOG.info("Thermostats loaded into browser")
         l_element = web_thermostats.ThermostatsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def webs(self, p_params):
-        LOG.info("webs called from browser")
+        LOG.info("Web-s loaded into browser")
         l_element = web_webs.WebsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
@@ -488,6 +490,7 @@ class Workspace(athena.LiveElement):
             l_defer.addErrback(eb_nomatch)
         return l_defer
 
+
 #==============================================================================
 
 def factory(ctx, segments, p_pyhouse_obj):
@@ -533,6 +536,7 @@ def dc(msg):
     else:
         return msg.encode('iso-8859-1')
 
+
 def dumpObjects(delta = True, limit = 0, include = [], exclude = []):
     global prev
     if include != [] and exclude != []:
@@ -560,10 +564,10 @@ def dumpObjects(delta = True, limit = 0, include = [], exclude = []):
                 print('%0.6d -- %0.6d -- ' % (dt, objects[name]), name)
             prev[name] = objects[name]
 
+
 def getObjects(oname):
     """
-    gets an object list with all the named objects out of the sea of
-    gc'ed objects
+    gets an object list with all the named objects out of the sea of gc'ed objects
     """
     l_obj_list = []
     gc.collect()

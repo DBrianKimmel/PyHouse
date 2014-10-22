@@ -10,6 +10,7 @@
 // import Nevow.Athena
 // import globals
 // import helpers
+// import lcars
 
 helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 
@@ -17,7 +18,9 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		rooms.RoomsWidget.upcall(self, '__init__', node);
 	},
 
-	// ============================================================================
+
+
+// ============================================================================
 	/**
      * Place the widget in the workspace.
 	 * 
@@ -33,6 +36,9 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		l_defer.addCallback(cb_widgetready);
 		return l_defer;
 	},
+	/**
+	 * Show the self.node widget - rooms.RoomsWidget -
+	 */
 	function showWidget(self) {
 		self.node.style.display = 'block';
 		self.showButtons();
@@ -40,32 +46,45 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		self.fetchHouseData();
 	},
 	function showButtons(self) {
-		self.nodeById('RoomButtonsDiv').style.display = 'block';	
+		self.nodeById('RoomSelectionButtonsDiv').style.display = 'block';
 	},
 	function hideButtons(self) {
-		self.nodeById('RoomButtonsDiv').style.display = 'none';		
+		self.nodeById('RoomSelectionButtonsDiv').style.display = 'none';
 	},
 	function showEntry(self) {
-		self.nodeById('RoomEntryDiv').style.display = 'block';
+		self.nodeById('RoomDataEntryDiv').style.display = 'block';
 	},
 	function hideEntry(self) {
-		self.nodeById('RoomEntryDiv').style.display = 'none';
+		self.nodeById('RoomDataEntryDiv').style.display = 'none';
 	},
 
-	// ============================================================================
+
+
+// ============================================================================
+
 	/**
-	 * This triggers getting the room data from the server.
+	 * Build a screen full of buttons - One for each room and some actions.
+	 */
+	function buildLcarRoomSelectScreen(self){
+		var l_button_html = buildLcarTable(globals.House.HouseObj.Rooms, 'handleMenuOnClick');
+		var l_html = build_lcars_top('Rooms', 'lcars-salmon-color');
+		l_html += build_lcars_middle_menu(2, l_button_html);
+		l_html += build_lcars_bottom();
+		self.nodeById('RoomSelectionButtonsDiv').innerHTML = l_html;
+	},
+	/**
+	 * This triggers getting the data from the server's web_rooms .
 	 */
 	function fetchHouseData(self) {
 		function cb_fetchHouseData(p_json) {
+			// Divmod.debug('---', 'rooms.cb_fetchHouseData() was called.');
 			globals.House.HouseObj = JSON.parse(p_json);
-			var l_tab = buildTable(globals.House.HouseObj.Rooms, 'handleMenuOnClick');
-			self.nodeById('RoomTableDiv').innerHTML = l_tab;
+			self.buildLcarRoomSelectScreen()
 		}
-		function eb_fetchHouseData(res) {
-			Divmod.debug('---', 'rooms.eb_fetchHouseData() was called. ERROR = ' + res);
+		function eb_fetchHouseData(p_result) {
+			Divmod.debug('---', 'rooms.eb_fetchHouseData() was called. ERROR = ' + p_result);
 		}
-        var l_defer = self.callRemote("getHouseData");  // call server @ web_rooms.py
+        var l_defer = self.callRemote("getServerData");
 		l_defer.addCallback(cb_fetchHouseData);
 		l_defer.addErrback(eb_fetchHouseData);
         return false;
@@ -106,20 +125,33 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 			l_node.showWidget();
 		}
 	},
-	
+
+	// ============================================================================
+	/**
+	 * Build a screen full of data entry fields.
+	 */
+	function buildLcarRoomDataEntryScreen(self, p_entry){
+		var l_room = arguments[1];
+		var l_entry_html = "";
+		l_entry_html += buildLcarTextWidget('Name', 'Room Name', l_room.Name);
+		l_entry_html += buildLcarTextWidget('Key', 'Room Index', l_room.Key);
+		l_entry_html += buildLcarTrueFalseWidget('RoomActive', 'Active ?', l_room.Active);
+		l_entry_html += buildLcarTextWidget('Comment', 'Comment', l_room.Comment);
+		l_entry_html += buildLcarTextWidget('Corner', 'Corner', l_room.Corner);
+		l_entry_html += buildLcarTextWidget('Size', 'Size', l_room.Size);
+		l_entry_html += buildLcarEntryButtons();
+		var l_html = build_lcars_top('Enter Room Data', 'lcars-salmon-color');
+		l_html += build_lcars_middle_menu(6, l_entry_html);
+		l_html += build_lcars_bottom();
+		self.nodeById('RoomDataEntryDiv').innerHTML = l_html;
+	},
+
 	/**
 	 * Fill in the schedule entry screen with all of the data for this room.
 	 */
 	function fillEntry(self, p_entry) {
-		var sched = arguments[1];
-		//Divmod.debug('---', 'rooms.fillEntry() was called. ' + sched);
-		self.nodeById('Name').value = sched.Name;
-		self.nodeById('Key').value = sched.Key;
-		self.nodeById('ActiveDiv').innerHTML = buildTrueFalseWidget('RoomActive', sched.Active);
-		self.nodeById('Comment').value = sched.Comment;
-		self.nodeById('Corner').value = sched.Corner;
-		self.nodeById('Size').value = sched.Size;
-		self.nodeById('RoomEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick');
+		// Divmod.debug('---', 'rooms.fillEntry() was called.');
+		self.buildLcarRoomDataEntryScreen(p_entry)
 	},
 	function createEntry(self) {
     	//Divmod.debug('---', 'rooms.createEntry() was called. ');
@@ -139,15 +171,16 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
         var l_data = {
 			Name : self.nodeById('Name').value,
 			Key : self.nodeById('Key').value,
-			Active : fetchTrueFalseWidget('RoomActive'),
-			Comment : self.nodeById('Comment').value,
-			Corner : self.nodeById('Corner').value,
-			Type : 'Room',
-			Size : self.nodeById('Size').value,
+			//Active : fetchTrueFalseWidget('RoomActive'),
+			//Comment : self.nodeById('Comment').value,
+			//Corner : self.nodeById('Corner').value,
+			//Type : 'Room',
+			//Size : self.nodeById('Size').value,
 			Delete : false
 		}
 		return l_data;
 	},
+
 
 	/**
 	 * Event handler for rooms buttons at bottom of entry portion of this widget.
@@ -195,3 +228,6 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
         return false;
 	}
 );
+//Divmod.debug('---', 'rooms.handleMenuOnClick(1) was called. ' + l_ix + ' ' + l_name);
+//console.log("rooms.handleMenuOnClick() - l_obj = %O", l_obj);
+// ### END DBK

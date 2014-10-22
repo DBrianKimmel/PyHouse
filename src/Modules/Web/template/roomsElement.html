@@ -5,23 +5,21 @@
     xmlns:nevow="http://nevow.com/ns/nevow/0.1"
     nevow:render="liveElement"
     class="Rooms">
-    <div id='RoomButtonsDiv'>
-       <h2>Select a Room (or Add):</h2>
-       <div id='RoomTableDiv'>
-       </div>
-    </div>
-    <div id='RoomEntryDiv'>
-        <h2>Enter Room data (or Delete)</h2>
-		<table style='Width: 100%;'>
-			<tr><td>Name</td><td><input type='text' id='Name' /></td></tr>
-			<tr><td>Key</td><td><input type='text' id='Key' disabled='disabled' /></td></tr>
-			<tr><td>Active</td><td><div id='ActiveDiv' /></td></tr>
-			<tr><td>Comment</td><td><input type='text' id='Comment' /></td></tr>
-			<tr><td>Corner</td><td><input type='text' id='Corner' /></td></tr>
-			<tr><td>Size</td><td><input type='text' id='Size' /></td></tr>
-		</table>
-		<div id='RoomEntryButtonsDiv'></div>
-    </div>
+ 
+    <div class='lcars-container' >
+	    <div id='RoomSelectionButtonsDiv'></div>
+	    <div id='RoomDataEntryDiv'></div>
+	</div>
 </div>
 <!-- 
+            <h2>Enter Room data (or Delete)</h2>
+            <table style='Width: 100%;'>
+                <tr><td>Name</td><td><input type='text' id='Name' /></td></tr>
+                <tr><td>Key</td><td><input type='text' id='Key' disabled='disabled' /></td></tr>
+                <tr><td>Active</td><td><div id='ActiveDiv' /></td></tr>
+                <tr><td>Comment</td><td><input type='text' id='Comment' /></td></tr>
+                <tr><td>Corner</td><td><input type='text' id='Corner' /></td></tr>
+                <tr><td>Size</td><td><input type='text' id='Size' /></td></tr>
+            </table>
+            <div id='RoomEntryButtonsDiv'></div>
 END DBK  -->

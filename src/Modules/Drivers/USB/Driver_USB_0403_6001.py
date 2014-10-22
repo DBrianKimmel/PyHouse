@@ -12,7 +12,7 @@ from twisted.internet import reactor
 import usb
 
 # Import PyMh files
-from Modules.drivers import USB_driver
+from Modules.Drivers.USB import USB_driver
 
 callLater = reactor.callLater
 
