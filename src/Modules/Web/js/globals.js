@@ -434,8 +434,26 @@ function updatePyHouseData() {
 
 
 
+// ============================================================================
 /**
  * A series of routines to build HTML for insertion into widgets.
+ */
+
+/**
+ * Build an athena qualified ID
+ */
+function buildAthenaId(self, p_id) {
+	Divmod.debug('---', 'globals.buildAthenaId() was called.' );
+	console.log("globals.buildAthenaId() - %O", self)
+	l_id = self.node.id + '-' + p_id
+	var l_ret = l_id.substring(0, 6) + 'id' + l_id.substring(6, l_id.length);
+	// console.log('global.buildAthenaId self = %O', self)
+	console.log('global.buildAthenaId  l_id = %O', l_ret)
+	return l_ret
+}
+
+/**
+ * Build a button
  */
 function buildButton(p_obj, p_handler, p_background_color, /* optional */ nameFunction) {
 	var l_html = '<td>';
@@ -471,6 +489,9 @@ function buildDeleteButton(p_handler) {
 }
 
 
+/**
+ * Build a LCAR style button
+ */
 function buildLcarButton(p_obj, p_handler, p_background_color, /* optional */ nameFunction) {
 	var l_html = '';
 	l_html += "<button type='button' ";
@@ -619,7 +640,7 @@ function buildEntryButtons(p_handler, /* optional */ noOptions) {
 	return l_html;
 }
 function buildLcarEntryButtons(p_handler, /* optional */ noOptions) {
-	//Divmod.debug('---', 'globals.buildEntryButtons() called.  Handler=' + p_handler + '  ' + noOptions);
+	Divmod.debug('---', 'globals.buildEntryButtons() called.  Handler=' + p_handler + '  ' + noOptions);
 	var l_options = noOptions;
 	if (l_options === undefined)
 		l_options = '';
@@ -664,7 +685,7 @@ function buildTrueFalseWidget(p_name, p_value) {
 	l_html += '</span>\n';
 	return l_html;
 }
-function buildLcarTrueFalseWidget(p_name, p_caption, p_value) {
+function buildLcarTrueFalseWidget(self, p_id, p_caption, p_value) {
 
 	var l_html = '';
 	var l_value = p_value != false;  // force to be a bool
@@ -673,9 +694,9 @@ function buildLcarTrueFalseWidget(p_name, p_caption, p_value) {
 	l_html += "<div class='lcars-button radius'>\n";
 	l_html += p_caption;
 
-	l_html += "<span id='" + p_name + "Buttons'>";
-	l_html += buildLcarRadioButtonWidget(p_name, 'True',  true, l_value);
-	l_html += buildLcarRadioButtonWidget(p_name, 'False', false, l_value);
+	l_html += "<span id='" + buildAthenaId(self, p_id) + "Buttons'>";
+	l_html += buildLcarRadioButtonWidget(p_id, 'True',  true, l_value);
+	l_html += buildLcarRadioButtonWidget(p_id, 'False', false, l_value);
 	l_html += '</span>\n';
 
 	l_html += "</div>\n";  // Button
@@ -826,7 +847,8 @@ function fetchLevelWidget(p_id) {
  * @param: p_value is the value to be displyed when the widget appears.
  * @param: p_options contains 'disable' if the field is unchangeable.
  */
-function buildLcarTextWidget(p_id, p_caption, p_value, p_options) {
+function buildLcarTextWidget(self, p_id, p_caption, p_value, p_options) {
+	Divmod.debug('---', 'globals.buildLcarTextWidget() was called.');
 	var l_html = '';
 	var l_options = p_options;
 	if (p_options === undefined)
@@ -835,7 +857,7 @@ function buildLcarTextWidget(p_id, p_caption, p_value, p_options) {
 	l_html += "<div class=lcars-column u-1-1'>\n";
 	l_html += "<div class='lcars-button radius'>\n";
 	l_html += p_caption;
-	l_html += "<input type='text' class='lcars-button-addition' id='" + p_id;
+	l_html += "<input type='text' class='lcars-button-addition' id='" + buildAthenaId(self, p_id);
 	l_html += "' size='40' value='" + p_value;
 	l_html += "' ";
 	if (l_options.toLowerCase().indexOf('disable') > -1)
@@ -844,6 +866,7 @@ function buildLcarTextWidget(p_id, p_caption, p_value, p_options) {
 	l_html += "</div>\n";  // Button
 	l_html += "</div>\n";  // Column
 	l_html += "</div>\n";  // row 1
+	console.log("globals.buildLcarTextWidget() - %O", l_html)
 	return l_html;
 }
 function fetchTextWidget(p_id) {
@@ -1013,4 +1036,6 @@ Divmod.Runtime.theRuntime.addLoadEvent(
 		globals.workspace.appStartup();
 	}
 );
+// Divmod.debug('---', 'globals.buildLcarTextWidget() was called.');
+// console.log("globals.build_lcars_middle() - %O", l_html)
 // END DBK

@@ -126,20 +126,23 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		}
 	},
 
-	// ============================================================================
+
+// ============================================================================
+
 	/**
 	 * Build a screen full of data entry fields.
 	 */
-	function buildLcarRoomDataEntryScreen(self, p_entry){
+	function buildLcarRoomDataEntryScreen(self, p_entry, p_handler){
+		console.log("rooms.buildLcarRoomDataEntryScreen() - self = %O", self);
 		var l_room = arguments[1];
 		var l_entry_html = "";
-		l_entry_html += buildLcarTextWidget('Name', 'Room Name', l_room.Name);
-		l_entry_html += buildLcarTextWidget('Key', 'Room Index', l_room.Key);
-		l_entry_html += buildLcarTrueFalseWidget('RoomActive', 'Active ?', l_room.Active);
-		l_entry_html += buildLcarTextWidget('Comment', 'Comment', l_room.Comment);
-		l_entry_html += buildLcarTextWidget('Corner', 'Corner', l_room.Corner);
-		l_entry_html += buildLcarTextWidget('Size', 'Size', l_room.Size);
-		l_entry_html += buildLcarEntryButtons();
+		l_entry_html += buildLcarTextWidget(self, 'Name', 'Room Name', l_room.Name);
+		l_entry_html += buildLcarTextWidget(self, 'Key', 'Room Index', l_room.Key);
+		l_entry_html += buildLcarTrueFalseWidget(self, 'RoomActive', 'Active ?', l_room.Active);
+		l_entry_html += buildLcarTextWidget(self, 'Comment', 'Comment', l_room.Comment);
+		l_entry_html += buildLcarTextWidget(self, 'Corner', 'Corner', l_room.Corner);
+		l_entry_html += buildLcarTextWidget(self, 'Size', 'Size', l_room.Size);
+		l_entry_html += buildLcarEntryButtons(p_handler);
 		var l_html = build_lcars_top('Enter Room Data', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(6, l_entry_html);
 		l_html += build_lcars_bottom();
@@ -151,7 +154,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	 */
 	function fillEntry(self, p_entry) {
 		// Divmod.debug('---', 'rooms.fillEntry() was called.');
-		self.buildLcarRoomDataEntryScreen(p_entry)
+		self.buildLcarRoomDataEntryScreen(p_entry, 'handleDataOnClick')
 	},
 	function createEntry(self) {
     	//Divmod.debug('---', 'rooms.createEntry() was called. ');
@@ -167,20 +170,22 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		return l_data;
 	},
 	function fetchEntry(self) {
-    	//Divmod.debug('---', 'rooms.fetchEntry() was called. ' + self);
+    	Divmod.debug('---', 'rooms.fetchEntry() was called. ' + self);
         var l_data = {
 			Name : self.nodeById('Name').value,
 			Key : self.nodeById('Key').value,
-			//Active : fetchTrueFalseWidget('RoomActive'),
-			//Comment : self.nodeById('Comment').value,
-			//Corner : self.nodeById('Corner').value,
-			//Type : 'Room',
-			//Size : self.nodeById('Size').value,
+			Active : fetchTrueFalseWidget('RoomActive'),
+			Comment : self.nodeById('Comment').value,
+			Corner : self.nodeById('Corner').value,
+			Type : 'Room',
+			Size : self.nodeById('Size').value,
 			Delete : false
 		}
 		return l_data;
 	},
 
+
+	// ============================================================================
 
 	/**
 	 * Event handler for rooms buttons at bottom of entry portion of this widget.
@@ -191,7 +196,6 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	 */
 	function handleDataOnClick(self, p_node) {
 		function cb_handleDataOnClick(p_json) {
-			//Divmod.debug('---', 'rooms.cb_handleDataOnClick() was called.');
 			self.showWidget();
 		}
 		function eb_handleDataOnClick(res){
@@ -201,13 +205,11 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		switch(l_ix) {
 		case '10003':  // Change Button
 	    	var l_json = JSON.stringify(self.fetchEntry());
-			//Divmod.debug('---', 'rooms.handleDataOnClick(Change) was called. JSON:' + l_json);
 	        var l_defer = self.callRemote("saveRoomData", l_json);  // @ web_schedule
 			l_defer.addCallback(cb_handleDataOnClick);
 			l_defer.addErrback(eb_handleDataOnClick);
 			break;
 		case '10002':  // Back button
-			//Divmod.debug('---', 'rooms.handleDataOnClick(Back) was called.  ');
 			self.hideEntry();
 			self.showButtons();
 			break;
@@ -215,14 +217,13 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 			var l_obj = self.fetchEntry();
 			l_obj['Delete'] = true;
 	    	var l_json = JSON.stringify(l_obj);
-			//Divmod.debug('---', 'rooms.handleDataOnClick(Delete) was called. JSON:' + l_json);
 	        var l_defer = self.callRemote("saveRoomData", l_json);  // @ web_rooms
 			l_defer.addCallback(cb_handleDataOnClick);
 			l_defer.addErrback(eb_handleDataOnClick);
 			break;
 		default:
 			Divmod.debug('---', 'rooms.handleDataOnClick(Default) was called. l_ix:' + l_ix);
-			break;			
+			break;
 		}
 		// return false stops the resetting of the server.
         return false;
