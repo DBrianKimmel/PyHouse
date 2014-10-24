@@ -77,14 +77,13 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	 */
 	function fetchHouseData(self) {
 		function cb_fetchHouseData(p_json) {
-			// Divmod.debug('---', 'rooms.cb_fetchHouseData() was called.');
 			globals.House.HouseObj = JSON.parse(p_json);
 			self.buildLcarRoomSelectScreen()
 		}
 		function eb_fetchHouseData(p_result) {
 			Divmod.debug('---', 'rooms.eb_fetchHouseData() was called. ERROR = ' + p_result);
 		}
-        var l_defer = self.callRemote("getServerData");
+        var l_defer = self.callRemote("getServerData");  // @ web_rooms.py
 		l_defer.addCallback(cb_fetchHouseData);
 		l_defer.addErrback(eb_fetchHouseData);
         return false;

@@ -53,6 +53,7 @@ globals = {
 
 	Computer : {},
 	House : {},
+	List : {},  // List of houses to select from
 	Interface : {},
 	User : {},
 	Valid : {},
@@ -443,12 +444,12 @@ function updatePyHouseData() {
  * Build an athena qualified ID
  */
 function buildAthenaId(self, p_id) {
-	Divmod.debug('---', 'globals.buildAthenaId() was called.' );
-	console.log("globals.buildAthenaId() - %O", self)
+	// Divmod.debug('---', 'globals.buildAthenaId() was called.' );
+	// console.log("globals.buildAthenaId() - %O", self)
 	l_id = self.node.id + '-' + p_id
 	var l_ret = l_id.substring(0, 6) + 'id' + l_id.substring(6, l_id.length);
 	// console.log('global.buildAthenaId self = %O', self)
-	console.log('global.buildAthenaId  l_id = %O', l_ret)
+	// console.log('global.buildAthenaId  l_id = %O', l_ret)
 	return l_ret
 }
 
@@ -640,7 +641,7 @@ function buildEntryButtons(p_handler, /* optional */ noOptions) {
 	return l_html;
 }
 function buildLcarEntryButtons(p_handler, /* optional */ noOptions) {
-	Divmod.debug('---', 'globals.buildEntryButtons() called.  Handler=' + p_handler + '  ' + noOptions);
+	// Divmod.debug('---', 'globals.buildEntryButtons() called.  Handler=' + p_handler + '  ' + noOptions);
 	var l_options = noOptions;
 	if (l_options === undefined)
 		l_options = '';
@@ -848,7 +849,7 @@ function fetchLevelWidget(p_id) {
  * @param: p_options contains 'disable' if the field is unchangeable.
  */
 function buildLcarTextWidget(self, p_id, p_caption, p_value, p_options) {
-	Divmod.debug('---', 'globals.buildLcarTextWidget() was called.');
+	// Divmod.debug('---', 'globals.buildLcarTextWidget() was called.');
 	var l_html = '';
 	var l_options = p_options;
 	if (p_options === undefined)
@@ -866,7 +867,7 @@ function buildLcarTextWidget(self, p_id, p_caption, p_value, p_options) {
 	l_html += "</div>\n";  // Button
 	l_html += "</div>\n";  // Column
 	l_html += "</div>\n";  // row 1
-	console.log("globals.buildLcarTextWidget() - %O", l_html)
+	// console.log("globals.buildLcarTextWidget() - %O", l_html)
 	return l_html;
 }
 function fetchTextWidget(p_id) {
