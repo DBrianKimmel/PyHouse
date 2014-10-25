@@ -65,8 +65,8 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	/**
 	 * Build a screen full of buttons - One for each room and some actions.
 	 */
-	function buildLcarRoomSelectScreen(self){
-		var l_button_html = buildLcarTable(globals.House.HouseObj.Rooms, 'handleMenuOnClick');
+	function buildLcarSelectScreen(self){
+		var l_button_html = buildLcarSelectionButtonsTable(globals.House.HouseObj.Rooms, 'handleMenuOnClick');
 		var l_html = build_lcars_top('Rooms', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(2, l_button_html);
 		l_html += build_lcars_bottom();
@@ -78,7 +78,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	function fetchHouseData(self) {
 		function cb_fetchHouseData(p_json) {
 			globals.House.HouseObj = JSON.parse(p_json);
-			self.buildLcarRoomSelectScreen()
+			self.buildLcarSelectScreen()
 		}
 		function eb_fetchHouseData(p_result) {
 			Divmod.debug('---', 'rooms.eb_fetchHouseData() was called. ERROR = ' + p_result);
@@ -102,23 +102,18 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		var l_name = p_node.value;
 		globals.House.RoomIx = l_ix;
 		globals.House.RoomName = l_name;
-		if (l_ix <= 1000) {
-			// One of the rooms buttons.
+		if (l_ix <= 1000) {  // One of the rooms buttons.
 			var l_obj = globals.House.HouseObj.Rooms[l_ix];
 			globals.House.RoomObj = l_obj;
-			//Divmod.debug('---', 'rooms.handleMenuOnClick(1) was called. ' + l_ix + ' ' + l_name);
-			//console.log("rooms.handleMenuOnClick() - l_obj = %O", l_obj);
 			self.showEntry();
 			self.hideButtons();
 			self.fillEntry(l_obj);
-		} else if (l_ix == 10001) {
-			// The "Add" button
+		} else if (l_ix == 10001) {  // The "Add" button
 			self.showEntry();
 			self.hideButtons();
 			var l_ent = self.createEntry();
 			self.fillEntry(l_ent);
-		} else if (l_ix == 10002) {
-			// The "Back" button
+		} else if (l_ix == 10002) {  // The "Back" button
 			self.hideWidget();
 			var l_node = findWidgetByClass('HouseMenu');
 			l_node.showWidget();

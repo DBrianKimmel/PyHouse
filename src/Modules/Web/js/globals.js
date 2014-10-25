@@ -444,13 +444,9 @@ function updatePyHouseData() {
  * Build an athena qualified ID
  */
 function buildAthenaId(self, p_id) {
-	// Divmod.debug('---', 'globals.buildAthenaId() was called.' );
-	// console.log("globals.buildAthenaId() - %O", self)
-	l_id = self.node.id + '-' + p_id
+	l_id = self.node.id + '-' + p_id;
 	var l_ret = l_id.substring(0, 6) + 'id' + l_id.substring(6, l_id.length);
-	// console.log('global.buildAthenaId self = %O', self)
-	// console.log('global.buildAthenaId  l_id = %O', l_ret)
-	return l_ret
+	return l_ret;
 }
 
 /**
@@ -459,15 +455,15 @@ function buildAthenaId(self, p_id) {
 function buildButton(p_obj, p_handler, p_background_color, /* optional */ nameFunction) {
 	var l_html = '<td>';
 	l_html += "<button type='button' ";
-	l_html += "value='" + p_obj['Name'] + "' ";
-	l_html += "name ='" + p_obj['Key'] + "' ";
+	l_html += "value='" + p_obj.Name + "' ";
+	l_html += "name ='" + p_obj.Key + "' ";
 	l_html += "style = 'background-color: " + p_background_color + "' ";
 	l_html += "onclick = 'return Nevow.Athena.Widget.handleEvent(this, \"onclick\", \""  + p_handler + "\" ";
 	l_html += ");' >\n";
 	if (typeof nameFunction === 'function')
 		l_html += nameFunction(p_obj);
 	else
-		l_html += p_obj['Name'];
+		l_html += p_obj.Name;
 	l_html += "</button></td>\n";
 	return l_html;
 }
@@ -496,15 +492,15 @@ function buildDeleteButton(p_handler) {
 function buildLcarButton(p_obj, p_handler, p_background_color, /* optional */ nameFunction) {
 	var l_html = '';
 	l_html += "<button type='button' ";
-	l_html += "value='" + p_obj['Name'] + "' ";
+	l_html += "value='" + p_obj.Name + "' ";
 	l_html += "class='lcars-button radius " + p_background_color + "' ";
-	l_html += "name='" + p_obj['Key'] + "' ";
+	l_html += "name='" + p_obj.Key + "' ";
 	l_html += "onclick='return Nevow.Athena.Widget.handleEvent(this, \"onclick\", \""  + p_handler + "\" ";
 	l_html += ");' >\n";
 	if (typeof nameFunction === 'function')
 		l_html += nameFunction(p_obj);
 	else
-		l_html += p_obj['Name'];
+		l_html += p_obj.Name;
 	l_html += "</button>\n";
 	// console.log("globals.buildLcarButton() - %O", l_html)
 	return l_html;
@@ -551,11 +547,11 @@ function buildTable(p_obj, p_handler, /* optional */ nameFunction, noOptions) {
 
 	for (var l_item in p_obj) {
 		var l_background = COLOR_LIGHT_GREEN;
-		if (p_obj[l_item]['Active'] != true)
+		if (p_obj[l_item].Active !== true)
 			l_background = COLOR_LIGHT_RED;
 		l_html += buildButton(p_obj[l_item], p_handler, l_background, l_function);
 		l_count++;
-		if ((l_count > 0) & (l_count % l_cols == 0))
+		if ((l_count > 0) & (l_count % l_cols === 0))
 			l_html += '</tr><tr>\n';
 	}
 	l_html += "</tr><tr>\n";
@@ -566,8 +562,6 @@ function buildTable(p_obj, p_handler, /* optional */ nameFunction, noOptions) {
 	l_html += "</tr></table>\n";
 	return l_html;
 }
-
-
 
 
 /**
@@ -583,8 +577,8 @@ function buildTable(p_obj, p_handler, /* optional */ nameFunction, noOptions) {
  *
  * @returns = innerHTML of a table filled in with buttons
  */
-function buildLcarTable(p_obj, p_handler, p_nameFunction, p_noOptions) {
-	// Divmod.debug('---', 'globals.buildLcarTable() called.  Handler=' + p_handler + '  ' + p_noOptions);
+function buildLcarSelectionButtonsTable(p_obj, p_handler, p_nameFunction, p_noOptions) {
+	// Divmod.debug('---', 'globals.buildLcarSelectionButtonsTable() called.  Handler=' + p_handler + '  ' + p_noOptions);
 	var l_nameFunction = p_nameFunction;
 	var l_noOptions = p_noOptions;
 	// See if function was passed
@@ -599,13 +593,13 @@ function buildLcarTable(p_obj, p_handler, p_nameFunction, p_noOptions) {
 	var l_html = "<div class='lcars-row spaced'>\n";
 	for (var l_item in p_obj) {
 		var l_background = 'lcars-purple-bg';
-		if (p_obj[l_item]['Active'] != true)
+		if (p_obj[l_item].Active !== true)
 			l_background = 'lcars-pink-bg';
-	    l_html += "<div class='lcars-column u-1-6'>\n";
+	    l_html += "<div class='lcars-column u-1-7'>\n";
 		l_html += buildLcarButton(p_obj[l_item], p_handler, l_background, l_nameFunction);
 		l_count++;
 	    l_html += "</div>\n";  // column
-		if ((l_count > 0) & (l_count % l_cols == 0)) {
+		if ((l_count > 0) & (l_count % l_cols === 0)) {
 			l_html += "</div>\n";  // Row
 			l_html += "<div class='lcars-row spaced'>\n";
 		}
@@ -620,7 +614,6 @@ function buildLcarTable(p_obj, p_handler, p_nameFunction, p_noOptions) {
 	return l_html;
 
 }
-
 
 
 /**
@@ -656,7 +649,6 @@ function buildLcarEntryButtons(p_handler, /* optional */ noOptions) {
 }
 
 
-
 /**
  * Radio button set widget.
  * 
@@ -680,7 +672,7 @@ function buildLcarRadioButtonWidget(p_name, p_label, p_value, p_checkVal) {
 }
 function buildTrueFalseWidget(p_name, p_value) {
 	var l_html = "<span id='" + p_name + "Buttons'>";
-	var l_value = p_value != false;  // force to be a bool
+	var l_value = p_value !== false;  // force to be a bool
 	l_html += buildRadioButtonWidget(p_name, 'True',  true, l_value);
 	l_html += buildRadioButtonWidget(p_name, 'False', false, l_value);
 	l_html += '</span>\n';
@@ -689,13 +681,13 @@ function buildTrueFalseWidget(p_name, p_value) {
 function buildLcarTrueFalseWidget(self, p_id, p_caption, p_value) {
 
 	var l_html = '';
-	var l_value = p_value != false;  // force to be a bool
+	var l_value = p_value !== false;  // force to be a bool
 	l_html += "<div class='lcars-row spaced'>\n";
-	l_html += "<div class=lcars-column u-1-1'>\n";
+	l_html += "<div class=lcars-column u-3-4'>\n";
 	l_html += "<div class='lcars-button radius'>\n";
 	l_html += p_caption;
 
-	l_html += "<span id='" + buildAthenaId(self, p_id) + "Buttons'>";
+	l_html += "<span class='lcars-button-addition' id='" + buildAthenaId(self, p_id) + "Buttons'>";
 	l_html += buildLcarRadioButtonWidget(p_id, 'True',  true, l_value);
 	l_html += buildLcarRadioButtonWidget(p_id, 'False', false, l_value);
 	l_html += '</span>\n';
@@ -712,13 +704,12 @@ function fetchTrueFalseWidget(p_name) {
 	for (var ix = 0; ix < l_active.length; ix++) {
 		//Divmod.debug('---', 'globals.fetchTrueFalse() called.  Name=' + p_name + '  Checked:' + l_active[ix].checked + '  Val:' + l_active[ix].value);
 		if (l_active[ix].checked && l_active[ix].value === 'true') {
-			l_ret = true
+			l_ret = true;
 			break;
 		}
 	}
 	return l_ret;
 }
-
 
 
 /**
@@ -737,10 +728,14 @@ function buildSelectWidget(p_id, p_list, p_checked) {
 	l_html += "</select>\n";
 	return l_html;
 }
-function buildLcarSelectWidget(p_id, p_list, p_checked) {
+function buildLcarSelectWidget(self, p_id, p_caption, p_list, p_checked) {
 	//Divmod.debug('---', 'globals.buildSelectWidget() called.  p_list=' + p_list + '  p_checked=' + p_checked);
 	var l_html = "";
-	l_html += "<select id='" + p_id + "' >\n";
+	l_html += "<div class='lcars-row spaced'>\n";
+	l_html += "<div class=lcars-column u-3-4'>\n";
+	l_html += "<div class='lcars-button radius'>\n";
+	l_html += p_caption;
+	l_html += "<select class='lcars-button-addition' id='" + p_id + "' >\n";
 	for (var ix = 0; ix < p_list.length; ix++) {
 		var l_name = p_list[ix];
 		l_html += "<option value='" + ix + "' ";
@@ -749,6 +744,9 @@ function buildLcarSelectWidget(p_id, p_list, p_checked) {
 		l_html += ">" + l_name + "</option>\n";
 	}
 	l_html += "</select>\n";
+	l_html += "</div>\n";
+	l_html += "</div>\n";
+	l_html += "</div>\n";
 	return l_html;
 }
 function fetchSelectWidget(p_id) {
@@ -760,20 +758,19 @@ function fetchSelectWidget(p_id) {
 	return l_name;
 }
 function buildRoomSelectWidget(p_id, p_checked) {
-	//Divmod.debug('---', 'globals.buildRoomSelectWidget() was called. Id=' + p_id + '  Checked=' + p_checked);
 	var l_obj = globals.House.HouseObj.Rooms;
 	var l_list = [];
 	for (var ix = 0; ix < Object.keys(l_obj).length; ix++)
 		l_list[ix] = l_obj[ix].Name;
 	return buildSelectWidget(p_id, l_list, p_checked);
 }
-function buildLcarRoomSelectWidget(p_id, p_checked) {
+function buildLcarRoomSelectWidget(self, p_id, p_caption, p_checked) {
 	//Divmod.debug('---', 'globals.buildRoomSelectWidget() was called. Id=' + p_id + '  Checked=' + p_checked);
 	var l_obj = globals.House.HouseObj.Rooms;
 	var l_list = [];
 	for (var ix = 0; ix < Object.keys(l_obj).length; ix++)
 		l_list[ix] = l_obj[ix].Name;
-	return buildLcarSelectWidget(p_id, l_list, p_checked);
+	return buildLcarSelectWidget(self, p_id, p_caption, l_list, p_checked);
 }
 function buildLightNameSelectWidget(p_id, p_checked) {
 	//Divmod.debug('---', 'globals.buildLightNameSelectWidget() was called. Id=' + p_id + '  Checked=' + p_checked);
@@ -783,27 +780,57 @@ function buildLightNameSelectWidget(p_id, p_checked) {
 		l_list[ix] = l_obj[ix].Name;
 	return buildSelectWidget(p_id, l_list, p_checked);
 }
-function buildFamilySelectWidget(p_id, p_checked) {
+function buildLcarLightNameSelectWidget(self, p_id, p_caption, p_checked) {
+	//Divmod.debug('---', 'globals.buildLightNameSelectWidget() was called. Id=' + p_id + '  Checked=' + p_checked);
+	var l_obj = globals.House.HouseObj.Lights;
+	var l_list = [];
+	for (var ix = 0; ix < Object.keys(l_obj).length; ix++)
+		l_list[ix] = l_obj[ix].Name;
+	return buildLcarSelectWidget(self, p_id, p_caption, l_list, p_checked);
+}
+function buildFamilySelectWidget(self, p_id, p_caption, p_checked) {
 	Divmod.debug('---', 'globals.buildFamilySelectWidget() was called. Id=' + p_id + '  Checked=' + p_checked);
-	return buildSelectWidget(p_id, globals.Valid.Families, p_checked);
+	return buildSelectWidget(self, p_id, p_caption, globals.Valid.Families, p_checked);
+}
+function buildLcarFamilySelectWidget(self, p_id, p_caption, p_checked) {
+	Divmod.debug('---', 'globals.buildLcaeFamilySelectWidget() was called. Id=' + p_id + '  Checked=' + p_checked);
+	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.Families, p_checked);
 }
 function buildFloorSelectWidget(p_id, p_checked) {
 	return buildSelectWidget(p_id, globals.Valid.Floors, p_checked);
 }
+function buildLcarFloorSelectWidget(self, p_id, p_caption, p_checked) {
+	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.Floors, p_checked);
+}
 function buildInterfaceTypeSelectWidget(p_id, p_checked) {
 	return buildSelectWidget(p_id, globals.Valid.InterfaceType, p_checked);
+}
+function buildLcarInterfaceTypeSelectWidget(self, p_id, p_caption, p_checked) {
+	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.InterfaceType, p_checked);
 }
 function buildLightTypeSelectWidget(p_id, p_checked) {
 	return buildSelectWidget(p_id, globals.Valid.LightType, p_checked);
 }
+function buildLcarLightTypeSelectWidget(self, p_id, p_caption, p_checked) {
+	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.LightType, p_checked);
+}
 function buildProtocolTypeSelectWidget(p_id, p_checked) {
 	return buildSelectWidget(p_id, globals.Valid.ProtocolType, p_checked);
+}
+function buildLcarProtocolTypeSelectWidget(self, p_id, p_caption, p_checked) {
+	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.ProtocolType, p_checked);
 }
 function buildScheduleModeSelectWidget(p_id, p_checked) {
 	return buildSelectWidget(p_id, globals.Valid.ScheduleMode, p_checked);
 }
+function buildLcarScheduleModeSelectWidget(self, p_id, p_caption, p_checked) {
+	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.ScheduleMode, p_checked);
+}
 function buildScheduleTypeSelectWidget(p_id, p_checked) {
 	return buildSelectWidget(p_id, globals.Valid.ScheduleType, p_checked);
+}
+function buildLcarScheduleTypeSelectWidget(self, p_id, p_caption, p_checked) {
+	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.ScheduleType, p_checked);
 }
 /**
  * Build a valid select widget
@@ -811,7 +838,7 @@ function buildScheduleTypeSelectWidget(p_id, p_checked) {
 function buildValidSelectWidget(p_id, p_list, p_checked) {
 	l_list = globals.Valid[p_list];
 	var l_html = '';
-	l_html += buildSelectWidget(p_id, l_list, p_checked)
+	l_html += buildSelectWidget(p_id, l_list, p_checked);
 	return l_html;
 }
 
@@ -830,8 +857,30 @@ function buildSliderWidget(p_id, p_value) {
 	l_html += "' >\n";
 	return l_html;
 }
+function buildLcarSliderWidget(self, p_id, p_caption, p_value) {
+	var l_html = "";
+	l_html += "<div class='lcars-row spaced'>\n";
+	l_html += "<div class=lcars-column u-3-4'>\n";
+	l_html += "<div class='lcars-button radius'>\n";
+	l_html += p_caption;
+	l_html += "<input class='lcars-button-addition' type='range' min='0' max='100' id='" + p_id + "' name='slider' ";
+	l_html += "value='" + p_value + "' ";
+	l_html += ">\n";
+	l_html += '&nbsp';  // add a box to display the slider value and find a way to update it when the slider is moved.
+	l_html += "<input type='text' id='" + p_id;
+	l_html += "' size='4' value='" + p_value;
+	l_html += "' >\n";
+	l_html += "</div>\n";
+	l_html += "</div>\n";
+	l_html += "</div>\n";
+	return l_html;
+}
 function buildLevelSliderWidget(p_name, p_level) {
 	var l_html = buildSliderWidget(p_name, p_level);
+	return l_html;
+}
+function buildLcarLevelSliderWidget(self, p_name, p_caption, p_level) {
+	var l_html = buildLcarSliderWidget(self, p_name, p_caption, p_level);
 	return l_html;
 }
 function fetchLevelWidget(p_id) {
@@ -847,19 +896,24 @@ function fetchLevelWidget(p_id) {
  * @param: p_id is the ID of the imput widget.
  * @param: p_value is the value to be displyed when the widget appears.
  * @param: p_options contains 'disable' if the field is unchangeable.
+ * 			contains size=xx to change the size of the entry field
  */
 function buildLcarTextWidget(self, p_id, p_caption, p_value, p_options) {
 	// Divmod.debug('---', 'globals.buildLcarTextWidget() was called.');
 	var l_html = '';
+	var l_size = 40;
 	var l_options = p_options;
 	if (p_options === undefined)
 		l_options = '';
 	l_html += "<div class='lcars-row spaced'>\n";
-	l_html += "<div class=lcars-column u-1-1'>\n";
+	l_html += "<div class=lcars-column u-3-4'>\n";
 	l_html += "<div class='lcars-button radius'>\n";
 	l_html += p_caption;
 	l_html += "<input type='text' class='lcars-button-addition' id='" + buildAthenaId(self, p_id);
-	l_html += "' size='40' value='" + p_value;
+	var l_ix = l_options.toLowerCase().indexOf('size=');
+	if (l_ix > -1)
+		l_size = l_options.substring(l_ix, l_ix+2);
+	l_html += "' size='" + l_size + "' value='" + p_value;
 	l_html += "' ";
 	if (l_options.toLowerCase().indexOf('disable') > -1)
 		l_html += "disabled='disabled' ";
@@ -886,7 +940,7 @@ function buildTextWidget(p_id, p_value, /* optional */ p_options) {
 		l_html += "disabled='disabled' ";
 	l_html += " />\n";
 	return l_html;
-};
+}
 
 
 /**
@@ -931,13 +985,12 @@ function fetchDowWidget(p_id) {
 	for (var ix = 0; ix < l_dow.length; ix++) {
 		// Divmod.debug('---', 'globals.fetchDowWidget() called.  Name=' + p_id + '  Checked:' + l_dow[ix].checked + '  Val:' + l_dow[ix].value);
 		if (l_dow[ix].checked) {
-			l_ret += parseInt(l_dow[ix].value)
+			l_ret += parseInt(l_dow[ix].value);
 		}
 	}
 	// Divmod.debug('---', 'globals.fetchDowWidget() called.  FinalValue=' + l_ret);
 	return l_ret;
 }
-
 
 
 /**
@@ -976,7 +1029,7 @@ function build_lcars_top(p_title, /* optional* */ p_color){
 	l_html += "  <div class='lcars-column u-1-8 lcars-elbow right bottom lcars-tan-bg'></div>\n";
 	l_html += "</div>\n";
 	return l_html;
-};
+}
 /**
  * Bild the middle part of the display
  *
@@ -993,7 +1046,7 @@ function build_lcars_middle_menu(p_rows, p_html){
 	for (var l_row = 0; l_row < l_half; l_row++) {
 		l_html += "      <li class='lcars-blue-bg'></li>\n";
 	}
-	for (var l_row = 0; l_row < l_half; l_row++) {
+	for (l_row = 0; l_row < l_half; l_row++) {
 		l_html += "      <li class='lcars-tan-bg'></li>\n";
 	}
 	l_html += "    </ul>\n";
@@ -1004,10 +1057,10 @@ function build_lcars_middle_menu(p_rows, p_html){
 	l_html += "  </div>\n";
 	l_html += "  <div class='lcars-column u-1-8'>\n";
 	l_html += "    <ul class='lcars-menu'>\n";  // RIGHT
-	for (var l_row = 0; l_row < l_half; l_row++) {
+	for (l_row = 0; l_row < l_half; l_row++) {
 		l_html += "      <li class='lcars-tan-bg'></li>\n";
 	}
-	for (var l_row = 0; l_row < l_half; l_row++) {
+	for (l_row = 0; l_row < l_half; l_row++) {
 		l_html += "      <li class='lcars-blue-bg'></li>\n";
 	}
 	l_html += "    </ul>\n";
@@ -1015,7 +1068,10 @@ function build_lcars_middle_menu(p_rows, p_html){
 	l_html += "</div>\n";
 	// console.log("globals.build_lcars_middle() - %O", l_html)
 	return l_html;
-};
+}
+/**
+ * Build the top part of the display.
+ */
 function build_lcars_bottom(){
 	// Divmod.debug('---', 'globals.build_lcars_bottom() was called.');
 	var l_html = '';
@@ -1025,7 +1081,7 @@ function build_lcars_bottom(){
 	l_html += "  <div class='lcars-column u-1-8 lcars-elbow right top lcars-blue-bg'></div>\n";
 	l_html += "</div>\n";
 	return l_html;
-};
+}
 
 
 

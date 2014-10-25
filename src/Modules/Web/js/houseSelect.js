@@ -54,7 +54,7 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 	function buildLcarSelectScreen(self){
 		// Divmod.debug('---', 'houseSelect.buildLcarSelectScreen was called.');
 		// console.log("houseSelect.buildLcarSelectScreen  Globals - %O", globals.House);
-		var l_button_html = buildLcarTable(globals.List, 'handleMenuOnClick', 'NoAdd');
+		var l_button_html = buildLcarSelectionButtonsTable(globals.List, 'handleMenuOnClick', 'NoAdd');
 		var l_html = build_lcars_top('Select House', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(2, l_button_html);
 		l_html += build_lcars_bottom();

@@ -23,7 +23,7 @@ from Modules.Housing.rooms import ROOMS_XML
 from Modules.Scheduling.schedule_xml import SCHEDULE_XML
 from Modules.Lighting.lighting_lights import LIGHTS_XML
 from Modules.Lighting.lighting_buttons import BUTTONS_XML
-from Modules.Lighting.lighting_controllers import CONTROLLER_XML
+from Modules.Lighting.test.test_lighting_controllers import CONTROLLER_XML
 from Modules.Hvac.thermostats import THERMOSTAT_XML
 
 

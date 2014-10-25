@@ -21,7 +21,7 @@ g_debug = 1
 LOG = Logger.getLogger('PyHouse.Controller  ')
 
 
-CONTROLLER_XML = """
+X_CONTROLLER_XML = """
         <ControllerSection>
             <Controller Active="False" Key="0" Name="PLM_1">
                 <Comment>Dongle using serial converter 067B:2303</Comment>
