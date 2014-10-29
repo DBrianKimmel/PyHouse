@@ -43,20 +43,20 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 	 */
 	function showWidget(self) {
 		self.node.style.display = 'block';
-		self.showButtons();
-		self.hideEntry();
+		self.showSelectionButtons();
+		self.hideDataEntry();
 		self.fetchHouseData();
 	},
-	function hideButtons(self) {
+	function hideSelectionButtons(self) {
 		self.nodeById('ThermostatButtonsDiv').style.display = 'none';
 	},
-	function showButtons(self) {
+	function showSelectionButtons(self) {
 		self.nodeById('ThermostatButtonsDiv').style.display = 'block';
 	},
-	function hideEntry(self) {
+	function hideDataEntry(self) {
 		self.nodeById('ThermostatEntryDiv').style.display = 'none';
 	},
-	function showEntry(self) {
+	function showDataEntry(self) {
 		self.nodeById('ThermostatEntryDiv').style.display = 'block';
 	},
 
@@ -106,13 +106,13 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 	function fetchEntry(self) {
 		Divmod.debug('---', 'thermostats.fetchEntry() was called. ');
         var l_data = {
-        	// ExternalDelay : fetchTextWidget('ThermostatExtDelay'),
-        	ExternalUrl : fetchTextWidget('ThermostatUrl'),
-            Name : fetchTextWidget('DynDnsName'),
-            Key : fetchTextWidget('DynDnsKey'),
-			Active : fetchTrueFalseWidget('DynDnsActive'),
-            Url : fetchTextWidget('DynDnsUrl'),
-            Interval : fetchTextWidget('DynDnsInterval'),
+        	// ExternalDelay : fetchTextWidget(self, 'ThermostatExtDelay'),
+        	ExternalUrl : fetchTextWidget(self, 'ThermostatUrl'),
+            Name : fetchTextWidget(self, 'DynDnsName'),
+            Key : fetchTextWidget(self, 'DynDnsKey'),
+			Active : fetchTrueFalseWidget(self, 'DynDnsActive'),
+            Url : fetchTextWidget(self, 'DynDnsUrl'),
+            Interval : fetchTextWidget(self, 'DynDnsInterval'),
 			Delete : false
             }
 		return l_data;
@@ -150,14 +150,14 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 			var l_obj = globals.House.HouseObj.Thermostat;
 			Divmod.debug('---', 'thermostats.handleMenuOnClick("Thermostat" Button) was called. ' + l_ix + ' ' + l_name);
 			//console.log("thermostats.handleMenuOnClick() - l_obj = %O", l_obj);
-			self.showEntry();
-			//self.hideButtons();
+			self.showDataEntry();
+			//self.hideSelectionButtons();
 			self.fillEntry(l_obj, l_ix);
 		} else if (l_ix == 10001) {
 			// The "Add" button
 			Divmod.debug('---', 'thermostats.handleMenuOnClick(Add Button) was called. ' + l_ix + ' ' + l_name);
-			self.showEntry();
-			self.hideButtons();
+			self.showDataEntry();
+			self.hideSelectionButtons();
 			var l_ent = self.createEntry(globals.House.ThermostatIx);
 			self.fillEntry(l_ent);
 		} else if (l_ix == 10002) {
@@ -193,8 +193,8 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 			l_defer.addErrback(eb_handleDataOnClick);
 			break;
 		case '10002':  // Back button
-			self.hideEntry();
-			self.showButtons();
+			self.hideDataEntry();
+			self.showSelectionButtons();
 			break;
 		case '10004':  // Delete button
 			var l_obj = self.fetchEntry();

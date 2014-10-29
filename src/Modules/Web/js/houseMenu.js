@@ -8,7 +8,6 @@
  * @summary: Displays the house menu element
  *
  */
-
 // import Nevow.Athena
 // import globals
 // import helpers

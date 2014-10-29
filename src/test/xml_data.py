@@ -19,7 +19,7 @@ from Modules.Computer.Internet.internet_xml import INTERNET_XML
 from Modules.Communication.send_email import EMAIL_XML
 from Modules.Web.web_server import WEB_SERVER_XML
 from Modules.Housing.location import LOCATION_XML
-from Modules.Housing.rooms import ROOMS_XML
+from Modules.Housing.rooms_xml_def import ROOMS_XML
 from Modules.Scheduling.schedule_xml import SCHEDULE_XML
 from Modules.Lighting.lighting_lights import LIGHTS_XML
 from Modules.Lighting.lighting_buttons import BUTTONS_XML

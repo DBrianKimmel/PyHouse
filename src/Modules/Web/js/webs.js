@@ -50,10 +50,10 @@ helpers.Widget.subclass(webs, 'WebsWidget').methods(
 		//Divmod.debug('---', 'webs.showWidget() was called.');
 		self.node.style.display = 'block';
 	},
-	function hideEntry(self) {
+	function hideDataEntry(self) {
 		self.nodeById('WebEntryDiv').style.display = 'none';		
 	},
-	function showEntry(self) {
+	function showDataEntry(self) {
 		self.nodeById('WebEntryDiv').style.display = 'block';		
 	},
 
@@ -86,7 +86,7 @@ helpers.Widget.subclass(webs, 'WebsWidget').methods(
 	function fetchEntry(self) {
 		//Divmod.debug('---', 'webs.fetchEntry() was called. ');
         var l_data = {
-            Port : fetchTextWidget('PortName'),
+            Port : fetchTextWidget(self, 'PortName'),
             }
 		return l_data;
 	},

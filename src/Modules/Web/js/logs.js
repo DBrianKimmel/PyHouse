@@ -54,10 +54,10 @@ helpers.Widget.subclass(logs, 'LogsWidget').methods(
 		//Divmod.debug('---', 'logs.showWidget() was called.');
 		self.node.style.display = 'block';
 	},
-	function hideEntry(self) {
+	function hideDataEntry(self) {
 		self.nodeById('LogEntryDiv').style.display = 'none';		
 	},
-	function showEntry(self) {
+	function showDataEntry(self) {
 		self.nodeById('LogEntryDiv').style.display = 'block';		
 	},
 
@@ -91,8 +91,8 @@ helpers.Widget.subclass(logs, 'LogsWidget').methods(
 	function fetchEntry(self) {
 		Divmod.debug('---', 'logs.fetchEntry() was called. ');
         var l_data = {
-                Debug : fetchTextWidget('LogDebug'),
-                Error : fetchTextWidget('LogError'),
+                Debug : fetchTextWidget(self, 'LogDebug'),
+                Error : fetchTextWidget(self, 'LogError'),
             }
 		return l_data;
 	},

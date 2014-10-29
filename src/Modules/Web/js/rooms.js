@@ -41,21 +41,21 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	 */
 	function showWidget(self) {
 		self.node.style.display = 'block';
-		self.showButtons();
-		self.hideEntry();
+		self.showSelectionButtons();
+		self.hideDataEntry();
 		self.fetchHouseData();
 	},
-	function showButtons(self) {
-		self.nodeById('RoomSelectionButtonsDiv').style.display = 'block';
+	function showSelectionButtons(self) {
+		self.nodeById('SelectionButtonsDiv').style.display = 'block';
 	},
-	function hideButtons(self) {
-		self.nodeById('RoomSelectionButtonsDiv').style.display = 'none';
+	function hideSelectionButtons(self) {
+		self.nodeById('SelectionButtonsDiv').style.display = 'none';
 	},
-	function showEntry(self) {
-		self.nodeById('RoomDataEntryDiv').style.display = 'block';
+	function showDataEntry(self) {
+		self.nodeById('DataEntryDiv').style.display = 'block';
 	},
-	function hideEntry(self) {
-		self.nodeById('RoomDataEntryDiv').style.display = 'none';
+	function hideDataEntry(self) {
+		self.nodeById('DataEntryDiv').style.display = 'none';
 	},
 
 
@@ -70,7 +70,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		var l_html = build_lcars_top('Rooms', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(2, l_button_html);
 		l_html += build_lcars_bottom();
-		self.nodeById('RoomSelectionButtonsDiv').innerHTML = l_html;
+		self.nodeById('SelectionButtonsDiv').innerHTML = l_html;
 	},
 	/**
 	 * This triggers getting the data from the server's web_rooms .
@@ -105,12 +105,12 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		if (l_ix <= 1000) {  // One of the rooms buttons.
 			var l_obj = globals.House.HouseObj.Rooms[l_ix];
 			globals.House.RoomObj = l_obj;
-			self.showEntry();
-			self.hideButtons();
+			self.showDataEntry();
+			self.hideSelectionButtons();
 			self.fillEntry(l_obj);
 		} else if (l_ix == 10001) {  // The "Add" button
-			self.showEntry();
-			self.hideButtons();
+			self.showDataEntry();
+			self.hideSelectionButtons();
 			var l_ent = self.createEntry();
 			self.fillEntry(l_ent);
 		} else if (l_ix == 10002) {  // The "Back" button
@@ -127,7 +127,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	 * Build a screen full of data entry fields.
 	 */
 	function buildLcarRoomDataEntryScreen(self, p_entry, p_handler){
-		console.log("rooms.buildLcarRoomDataEntryScreen() - self = %O", self);
+		// console.log("rooms.buildLcarRoomDataEntryScreen() - self = %O", self);
 		var l_room = arguments[1];
 		var l_entry_html = "";
 		l_entry_html += buildLcarTextWidget(self, 'Name', 'Room Name', l_room.Name);
@@ -140,7 +140,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		var l_html = build_lcars_top('Enter Room Data', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(6, l_entry_html);
 		l_html += build_lcars_bottom();
-		self.nodeById('RoomDataEntryDiv').innerHTML = l_html;
+		self.nodeById('DataEntryDiv').innerHTML = l_html;
 	},
 
 	/**
@@ -164,15 +164,15 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		return l_data;
 	},
 	function fetchEntry(self) {
-    	Divmod.debug('---', 'rooms.fetchEntry() was called. ' + self);
+    	// Divmod.debug('---', 'rooms.fetchEntry() was called. ' + self);
         var l_data = {
-			Name : self.nodeById('Name').value,
-			Key : self.nodeById('Key').value,
-			Active : fetchTrueFalseWidget('RoomActive'),
-			Comment : self.nodeById('Comment').value,
-			Corner : self.nodeById('Corner').value,
+			Name : fetchTextWidget(self, 'Name'),
+			Key : fetchTextWidget(self, 'Key'),
+			Active : fetchTrueFalseWidget(self, 'RoomActive'),
+			Comment : fetchTextWidget(self, 'Comment'),
+			Corner : fetchTextWidget(self, 'Corner'),
 			Type : 'Room',
-			Size : self.nodeById('Size').value,
+			Size : fetchTextWidget(self, 'Size'),
 			Delete : false
 		}
 		return l_data;
@@ -204,8 +204,8 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 			l_defer.addErrback(eb_handleDataOnClick);
 			break;
 		case '10002':  // Back button
-			self.hideEntry();
-			self.showButtons();
+			self.hideDataEntry();
+			self.showSelectionButtons();
 			break;
 		case '10004':  // Delete button
 			var l_obj = self.fetchEntry();

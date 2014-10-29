@@ -34,20 +34,20 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 	function showWidget(self) {
 		//Divmod.debug('---', 'buttons.showWidget() was called.');
 		self.node.style.display = 'block';
-		self.showButtons(self);
-		self.hideEntry(self);
+		self.showSelectionButtons(self);
+		self.hideDataEntry(self);
 		self.fetchHouseData();
 	},
-	function hideButtons(self) {
+	function hideSelectionButtons(self) {
 		self.nodeById('ButtonButtonsDiv').style.display = 'none';		
 	},
-	function showButtons(self) {
+	function showSelectionButtons(self) {
 		self.nodeById('ButtonButtonsDiv').style.display = 'block';	
 	},
-	function hideEntry(self) {
+	function hideDataEntry(self) {
 		self.nodeById('ButtonEntryDiv').style.display = 'none';		
 	},
-	function showEntry(self) {
+	function showDataEntry(self) {
 		self.nodeById('ButtonEntryDiv').style.display = 'block';		
 	},
 
@@ -91,15 +91,15 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 	},
 	function fetchEntry(self) {
         var l_data = {
-			Name : fetchTextWidget('ButtonName'),
-			Key : fetchTextWidget('ButtonKey'),
-			Active : fetchTrueFalseWidget('ButtonActive'),
-			Comment : fetchTextWidget('ButtonComment'),
-			Coords : fetchTextWidget('ButtonCoords'),
-			Family : fetchTextWidget('ButtonFamily'),
-			RoomName : fetchSelectWidget('ButtonRoomName'),
-			Type : fetchTextWidget('ButtonType'),
-			UUID : fetchTextWidget('ButtonUUID'),
+			Name : fetchTextWidget(self, 'ButtonName'),
+			Key : fetchTextWidget(self, 'ButtonKey'),
+			Active : fetchTrueFalseWidget(self,'ButtonActive'),
+			Comment : fetchTextWidget(self, 'ButtonComment'),
+			Coords : fetchTextWidget(self, 'ButtonCoords'),
+			Family : fetchTextWidget(self, 'ButtonFamily'),
+			RoomName : fetchSelectWidget(self, 'ButtonRoomName'),
+			Type : fetchTextWidget(self, 'ButtonType'),
+			UUID : fetchTextWidget(self, 'ButtonUUID'),
 			Delete : false
             }
 		return l_data;
@@ -123,13 +123,13 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 			var l_obj = globals.House.HouseObj.Buttons[l_ix];
 			//Divmod.debug('---', 'buttons.handleMenuOnClick(1) was called. ' + l_ix + ' ' + l_name);
 			//console.log("buttons.handleMenuOnClick() - l_obj = %O", l_obj);
-			self.showEntry();
-			self.hideButtons();
+			self.showDataEntry();
+			self.hideSelectionButtons();
 			self.fillEntry(l_obj);
 		} else if (l_ix == 10001) {
 			// The "Add" button
-			self.showEntry();
-			self.hideButtons();
+			self.showDataEntry();
+			self.hideSelectionButtons();
 		} else if (l_ix == 10002) {
 			// The "Back" button
 			self.hideWidget();
@@ -165,8 +165,8 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 			break;
 		case '10002':  // Back button
 			//Divmod.debug('---', 'buttons.handleDataOnClick(Back) was called.  ');
-			self.hideEntry();
-			self.showButtons();
+			self.hideDataEntry();
+			self.showSelectionButtons();
 			break;
 		case '10004':  // Delete button
 			var l_obj = self.fetchEntry();

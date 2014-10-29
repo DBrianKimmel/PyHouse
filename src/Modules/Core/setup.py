@@ -82,7 +82,8 @@ class Utility(ReadWriteConfigXml):
     def create_empty_xml_skeleton(self):
         l_xml = ET.Element("PyHouse")
         xml_tools.PutGetXML().put_text_attribute(l_xml, 'Version', self.m_pyhouse_obj.Xml.XmlVersion)
-        l_xml.append(ET.Comment('Updated by PyHouse {0:}'.format(datetime.datetime.now())))
+        xml_tools.PutGetXML().put_text_attribute(l_xml, 'xmlns:comp', 'http://PyHouse.Org/ComputerDiv')
+        l_xml.append(ET.Comment(' Updated by PyHouse {0:} '.format(datetime.datetime.now())))
         return l_xml
 
     def _xml_save_loop(self, p_pyhouse_obj):

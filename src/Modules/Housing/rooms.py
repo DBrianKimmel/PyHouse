@@ -22,30 +22,6 @@ from Modules.Utilities import xml_tools
 g_debug = 0
 m_logger = None
 
-ROOMS_XML = """
-        <RoomSection>
-            <Room Active="True" Key="0" Name="Master Bath">
-                <Comment>Test Comment</Comment>
-                <Corner>0.50, 10.50</Corner>
-                <Size>14.00, 13.50</Size>
-            </Room>
-            <Room Active="True" Key="1" Name="Master Bed Closet 1">
-                <Comment />
-                <Corner>0.83, 24.58</Corner>
-                <Size>6.91, 8.91</Size>
-            </Room>
-            <Room Active="False" Key="2" Name="Master Bedroom">
-                <Comment />
-                <Corner>0.83, 25.08</Corner>
-                <Size>14.00, 18.00</Size>
-            </Room>
-            <Room Active="False" Key="3" Name="Master Sitting Room">
-                <Comment />
-                <Corner>0.83, 54.16</Corner>
-                <Size>14.00, 8.00</Size>
-            </Room>
-        </RoomSection>
-"""
 
 
 class ReadWriteConfigXml(xml_tools.XmlConfigTools):

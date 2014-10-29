@@ -46,20 +46,20 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 	function showWidget(self) {
 		// Divmod.debug('---', 'internet.showWidget() was called.');
 		self.node.style.display = 'block';
-		self.showButtons();
-		self.hideEntry();
+		self.showSelectionButtons();
+		self.hideDataEntry();
 		self.fetchHouseData();
 	},
-	function hideButtons(self) {
+	function hideSelectionButtons(self) {
 		self.nodeById('InternetButtonsDiv').style.display = 'none';
 	},
-	function showButtons(self) {
+	function showSelectionButtons(self) {
 		self.nodeById('InternetButtonsDiv').style.display = 'block';
 	},
-	function hideEntry(self) {
+	function hideDataEntry(self) {
 		self.nodeById('InternetEntryDiv').style.display = 'none';
 	},
-	function showEntry(self) {
+	function showDataEntry(self) {
 		self.nodeById('InternetEntryDiv').style.display = 'block';
 	},
 
@@ -107,13 +107,13 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 	function fetchEntry(self) {
 		// Divmod.debug('---', 'internet.fetchEntry() was called. ');
         var l_data = {
-        	// ExternalDelay : fetchTextWidget('InternetExtDelay')
-            // Interval : fetchTextWidget('DynDnsInterval')
-        	ExternalUrl : fetchTextWidget('InternetUrl'),
-            Name : fetchTextWidget('DynDnsName'),
-            Key : fetchTextWidget('DynDnsKey'),
-			Active : fetchTrueFalseWidget('DynDnsActive'),
-            Url : fetchTextWidget('DynDnsUrl'),
+        	// ExternalDelay : fetchTextWidget(self, 'InternetExtDelay')
+            // Interval : fetchTextWidget(self, 'DynDnsInterval')
+        	ExternalUrl : fetchTextWidget(self, 'InternetUrl'),
+            Name : fetchTextWidget(self, 'DynDnsName'),
+            Key : fetchTextWidget(self, 'DynDnsKey'),
+			Active : fetchTrueFalseWidget(self, 'DynDnsActive'),
+            Url : fetchTextWidget(self, 'DynDnsUrl'),
  			Delete : false
             }
 		return l_data;
@@ -151,14 +151,14 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 			var l_obj = globals.House.HouseObj.Internet;
 			// Divmod.debug('---', 'internet.handleMenuOnClick("Internet" Button) was called. ' + l_ix + ' ' + l_name);
 			// console.log("internet.handleMenuOnClick() - l_obj = %O", l_obj);
-			self.showEntry();
-			//self.hideButtons();
+			self.showDataEntry();
+			//self.hideSelectionButtons();
 			self.fillEntry(l_obj, l_ix);
 		} else if (l_ix == 10001) {
 			// The "Add" button
 			// Divmod.debug('---', 'internet.handleMenuOnClick(Add Button) was called. ' + l_ix + ' ' + l_name);
-			self.showEntry();
-			self.hideButtons();
+			self.showDataEntry();
+			self.hideSelectionButtons();
 			var l_ent = self.createEntry(globals.House.InternetIx);
 			self.fillEntry(l_ent);
 		} else if (l_ix == 10002) {
@@ -193,8 +193,8 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 			l_defer.addErrback(eb_handleDataOnClick);
 			break;
 		case '10002':  // Back button
-			self.hideEntry();
-			self.showButtons();
+			self.hideDataEntry();
+			self.showSelectionButtons();
 			break;
 		case '10004':  // Delete button
 			var l_obj = self.fetchEntry();

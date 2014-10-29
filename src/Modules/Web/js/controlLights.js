@@ -30,20 +30,20 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 	},
 	function showWidget(self) {
 		self.node.style.display = 'block';
-		self.showButtons(self);
-		self.hideEntry(self);
+		self.showSelectionButtons(self);
+		self.hideDataEntry(self);
 		self.fetchHouseData();
 	},
-	function hideButtons(self) {
+	function hideSelectionButtons(self) {
 		self.nodeById('SelectionButtonsDiv').style.display = 'none';
 	},
-	function showButtons(self) {
+	function showSelectionButtons(self) {
 		self.nodeById('SelectionButtonsDiv').style.display = 'block';
 	},
-	function hideEntry(self) {
+	function hideDataEntry(self) {
 		self.nodeById('DataEntryDiv').style.display = 'none';
 	},
-	function showEntry(self) {
+	function showDataEntry(self) {
 		self.nodeById('DataEntryDiv').style.display = 'block';
 	},
 
@@ -97,8 +97,8 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 		if (l_ix <= 1000) {  // One of the controlLights buttons.
 			var l_obj = globals.House.HouseObj.Lights[l_ix];
 			globals.House.LightObj = l_obj;
-			self.showEntry();
-			self.hideButtons();
+			self.showDataEntry();
+			self.hideSelectionButtons();
 			//console.log("controlLights.handleMenuOnClick() - l_ix = %O", l_ix);
 			//console.log("controlLights.handleMenuOnClick() - l_obj = %O", l_obj);
 			self.fillEntry(l_obj);
@@ -113,25 +113,13 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 // ============================================================================
 
 	function buildLcarDataEntryScreen(self, p_entry, p_handler){
-		Divmod.debug('---', 'controlLights.buildLcarDataEntryScreen(1) was called.');
-		//console.log("controlLights.buildLcarDataEntryScreen() - self = %O", self);
-		//console.log("controlLights.buildLcarDataEntryScreen() - p_entry = %O", p_entry);
-		//console.log("controlLights.buildLcarDataEntryScreen() - p_handler = %O", p_handler);
 		var l_light = arguments[1];
 		var l_entry_html = "";
 		l_entry_html += buildLcarTextWidget(self, 'CtlLightName', 'Light Name', l_light.Name, 'disabled');
-		Divmod.debug('---', 'controlLights.buildLcarDataEntryScreen(2) was called.');
 		l_entry_html += buildLcarTextWidget(self, 'CtlLightKey', 'Light Index', l_light.Key, 'disabled');
-		Divmod.debug('---', 'controlLights.buildLcarDataEntryScreen(3) was called.');
 		l_entry_html += buildLcarTextWidget(self, 'CtlLightUUID', 'UUID', l_light.UUID, 'disabled');
-		Divmod.debug('---', 'controlLights.buildLcarDataEntryScreen(4) was called.');
 		l_entry_html += buildLcarRoomSelectWidget(self, 'CtlLightRoomName', 'Room Name', l_light.RoomName, 'disabled');
-		Divmod.debug('---', 'controlLights.buildLcarDataEntryScreen(5) was called.');
 		l_entry_html += buildLcarLevelSliderWidget(self, 'CtlLightLevel', 'Level', l_light.CurLevel);
-		l_entry_html += "";
-		l_entry_html += "";
-		l_entry_html += "";
-		Divmod.debug('---', 'controlLights.buildLcarDataEntryScreen(6) was called.');
 		l_entry_html += buildLcarEntryButtons(p_handler);
 		var l_html = build_lcars_top('Control Light', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(6, l_entry_html);
@@ -144,10 +132,10 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 	},
 	function fetchEntry(self) {
         var l_data = {
-            Name : fetchTextWidget('CtlLightName'),
-            Key : fetchTextWidget('CtlLightKey'),
-			UUID : fetchTextWidget('CtlLightUUID'),
-			Level : fetchLevelWidget('CtlLightLevel'),
+            Name : fetchTextWidget(self, 'CtlLightName'),
+            Key : fetchTextWidget(self, 'CtlLightKey'),
+			UUID : fetchTextWidget(self, 'CtlLightUUID'),
+			Level : fetchLevelWidget(self, 'CtlLightLevel'),
             };
 		return l_data;
 	},

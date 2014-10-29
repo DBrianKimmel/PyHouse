@@ -435,6 +435,21 @@ function updatePyHouseData() {
 
 
 
+//============================================================================
+
+function showSelectionButtons(self) {
+	self.nodeById('SelectionButtonsDiv').style.display = 'block';
+}
+function hideSelectionButtons(self) {
+	self.nodeById('SelectionButtonsDiv').style.display = 'none';
+}
+function showDataEntry(self) {
+	self.nodeById('DataEntryDiv').style.display = 'block';
+}
+function hideDataEntry(self) {
+	self.nodeById('DataEntryDiv').style.display = 'none';
+}
+
 // ============================================================================
 /**
  * A series of routines to build HTML for insertion into widgets.
@@ -678,32 +693,36 @@ function buildTrueFalseWidget(p_name, p_value) {
 	l_html += '</span>\n';
 	return l_html;
 }
+/**
+ * Note the name is athenaid:xx-Name
+ */
 function buildLcarTrueFalseWidget(self, p_id, p_caption, p_value) {
-
 	var l_html = '';
+	var l_name = buildAthenaId(self, p_id);
 	var l_value = p_value !== false;  // force to be a bool
 	l_html += "<div class='lcars-row spaced'>\n";
 	l_html += "<div class=lcars-column u-3-4'>\n";
 	l_html += "<div class='lcars-button radius'>\n";
 	l_html += p_caption;
-
-	l_html += "<span class='lcars-button-addition' id='" + buildAthenaId(self, p_id) + "Buttons'>";
-	l_html += buildLcarRadioButtonWidget(p_id, 'True',  true, l_value);
-	l_html += buildLcarRadioButtonWidget(p_id, 'False', false, l_value);
+	l_html += "<span class='lcars-button-addition'>\n";
+	l_html += buildLcarRadioButtonWidget(l_name, 'True',  true, l_value);
+	l_html += buildLcarRadioButtonWidget(l_name, 'False', false, l_value);
 	l_html += '</span>\n';
-
 	l_html += "</div>\n";  // Button
 	l_html += "</div>\n";  // Column
 	l_html += "</div>\n";  // row 1
 	return l_html;
 }
-function fetchTrueFalseWidget(p_name) {
-	var l_active = document.getElementsByName(p_name);
+function fetchTrueFalseWidget(self, p_name) {
+	var l_name = buildAthenaId(self, p_name);
+	// Divmod.debug('---', 'globals.fetchTrueFalse() called.  Name=' + l_name);
+	var l_buttons = document.getElementsByName(l_name);
+	// console.log("globals.fetchTrueFalseWidget() - %O", l_buttons);
 	var l_ret = false;
-	//Divmod.debug('---', 'globals.fetchTrueFalse() called.  Name=' + p_name + '  Len:' + l_active.length);
-	for (var ix = 0; ix < l_active.length; ix++) {
-		//Divmod.debug('---', 'globals.fetchTrueFalse() called.  Name=' + p_name + '  Checked:' + l_active[ix].checked + '  Val:' + l_active[ix].value);
-		if (l_active[ix].checked && l_active[ix].value === 'true') {
+	// Divmod.debug('---', 'globals.fetchTrueFalse() called.  Name=' + l_name + '  Len:' + l_buttons.length);
+	for (var ix = 0; ix < l_buttons.length; ix++) {
+		// Divmod.debug('---', 'globals.fetchTrueFalse() called.  Name=' + l_name + '  Checked:' + l_buttons[ix].checked + '  Val:' + l_buttons[ix].value);
+		if (l_buttons[ix].checked && l_buttons[ix].value === 'true') {
 			l_ret = true;
 			break;
 		}
@@ -714,10 +733,21 @@ function fetchTrueFalseWidget(p_name) {
 
 /**
  * Build a select widget
+ * 
+ * @param: p_id is the ID of the select field.
+ * @param: p_list is the list of valid options to be added to the select box.
+ * @param: p_checked is the text of the option list that is selected.
+ * @param: p_optionChange is the optional onchange function name.
  */
-function buildSelectWidget(p_id, p_list, p_checked) {
-	//Divmod.debug('---', 'globals.buildSelectWidget() called.  p_list=' + p_list + '  p_checked=' + p_checked);
-	var l_html = "<select id='" + p_id + "' >\n";
+function buildSelectWidget(p_id, p_list, p_checked, /* optional */ p_optionChange) {
+	// Divmod.debug('---', 'globals.buildSelectWidget() called.  p_list=' + p_list + '  p_checked=' + p_checked + '  Change=' + p_optionChange);
+	var l_option = p_optionChange;
+	var l_html = "";
+	l_html += "<select id='" + p_id + "'";
+	if (l_option !== 'undefined') {
+		l_html += " onchange='" + l_option + "()'";
+	}
+	l_html += ">\n";
 	for (var ix = 0; ix < p_list.length; ix++) {
 		var l_name = p_list[ix];
 		l_html += "<option value='" + ix + "' ";
@@ -728,14 +758,18 @@ function buildSelectWidget(p_id, p_list, p_checked) {
 	l_html += "</select>\n";
 	return l_html;
 }
-function buildLcarSelectWidget(self, p_id, p_caption, p_list, p_checked) {
-	//Divmod.debug('---', 'globals.buildSelectWidget() called.  p_list=' + p_list + '  p_checked=' + p_checked);
+function buildLcarSelectWidget(self, p_id, p_caption, p_list, p_checked, /* optional */ p_optionChange) {
+	// Divmod.debug('---', 'globals.buildLcarSelectWidget() called.  p_id= ' + p_id + '  p_list= ' + p_list + '  p_checked= ' + p_checked + '  Change= ' + p_optionChange);
+	var l_option = p_optionChange;
 	var l_html = "";
 	l_html += "<div class='lcars-row spaced'>\n";
 	l_html += "<div class=lcars-column u-3-4'>\n";
 	l_html += "<div class='lcars-button radius'>\n";
 	l_html += p_caption;
-	l_html += "<select class='lcars-button-addition' id='" + p_id + "' >\n";
+	l_html += "<select class='lcars-button-addition' id='" + buildAthenaId(self, p_id) + "' ";
+	if (l_option !== 'undefined') 
+		l_html += "onchange='return Nevow.Athena.Widget.handleEvent(this, \"onchange\", \"" + l_option + "\");' ";
+	l_html += ">\n";
 	for (var ix = 0; ix < p_list.length; ix++) {
 		var l_name = p_list[ix];
 		l_html += "<option value='" + ix + "' ";
@@ -749,12 +783,12 @@ function buildLcarSelectWidget(self, p_id, p_caption, p_list, p_checked) {
 	l_html += "</div>\n";
 	return l_html;
 }
-function fetchSelectWidget(p_id) {
-	var l_field = document.getElementById(p_id);
+function fetchSelectWidget(self, p_id) {
+	// Divmod.debug('---', 'globals.fetchSelectWidget() was called. Id=' + p_id);
+	var l_field = self.nodeById(p_id);
+	// console.log("global.fetchSelectWidget()  Field    %O", l_field);
 	var l_ix = l_field.value;
 	var l_name = l_field.options[l_field.selectedIndex].text;
-	//Divmod.debug('---', 'globals.fetchSelectWidget(1) was called. Id=' + p_id);
-	//console.log("    %O", l_field);
 	return l_name;
 }
 function buildRoomSelectWidget(p_id, p_checked) {
@@ -788,13 +822,13 @@ function buildLcarLightNameSelectWidget(self, p_id, p_caption, p_checked) {
 		l_list[ix] = l_obj[ix].Name;
 	return buildLcarSelectWidget(self, p_id, p_caption, l_list, p_checked);
 }
-function buildFamilySelectWidget(self, p_id, p_caption, p_checked) {
-	Divmod.debug('---', 'globals.buildFamilySelectWidget() was called. Id=' + p_id + '  Checked=' + p_checked);
-	return buildSelectWidget(self, p_id, p_caption, globals.Valid.Families, p_checked);
-}
-function buildLcarFamilySelectWidget(self, p_id, p_caption, p_checked) {
-	Divmod.debug('---', 'globals.buildLcaeFamilySelectWidget() was called. Id=' + p_id + '  Checked=' + p_checked);
-	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.Families, p_checked);
+/**
+ * Special - has onchange 
+ */
+function buildLcarFamilySelectWidget(self, p_id, p_caption, p_checked, p_change) {
+	// Divmod.debug('---', 'globals.buildLcarFamilySelectWidget() was called. Id=' + p_id + '  Checked=' + p_checked + '  Change=' + p_change);
+	// console.log("globals.buildLcarFamilySelectWidget() -  ValidFamilies  %O", globals.Valid.Families);
+	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.Families, p_checked, p_change);
 }
 function buildFloorSelectWidget(p_id, p_checked) {
 	return buildSelectWidget(p_id, globals.Valid.Floors, p_checked);
@@ -863,13 +897,15 @@ function buildLcarSliderWidget(self, p_id, p_caption, p_value) {
 	l_html += "<div class=lcars-column u-3-4'>\n";
 	l_html += "<div class='lcars-button radius'>\n";
 	l_html += p_caption;
-	l_html += "<input class='lcars-button-addition' type='range' min='0' max='100' id='" + p_id + "' name='slider' ";
+	l_html += "<span class='lcars-button-addition' id='" + buildAthenaId(self, p_id) + "Slider'>";
+	l_html += "<input class='lcars-button-addition' type='range' min='0' max='100' id='" + buildAthenaId(self, p_id) + "' name='slider' ";
 	l_html += "value='" + p_value + "' ";
 	l_html += ">\n";
 	l_html += '&nbsp';  // add a box to display the slider value and find a way to update it when the slider is moved.
 	l_html += "<input type='text' id='" + p_id;
 	l_html += "' size='4' value='" + p_value;
 	l_html += "' >\n";
+	l_html += "</span>\n";
 	l_html += "</div>\n";
 	l_html += "</div>\n";
 	l_html += "</div>\n";
@@ -883,8 +919,8 @@ function buildLcarLevelSliderWidget(self, p_name, p_caption, p_level) {
 	var l_html = buildLcarSliderWidget(self, p_name, p_caption, p_level);
 	return l_html;
 }
-function fetchLevelWidget(p_id) {
-	//Divmod.debug('---', 'globals.fetchLevelWidget() called.  Name=' + p_name);
+function fetchLevelWidget(self, p_id) {
+	Divmod.debug('---', 'globals.fetchLevelWidget() called.  p_id=' + p_id);
 	return document.getElementById(p_id).value;
 }
 
@@ -912,7 +948,7 @@ function buildLcarTextWidget(self, p_id, p_caption, p_value, p_options) {
 	l_html += "<input type='text' class='lcars-button-addition' id='" + buildAthenaId(self, p_id);
 	var l_ix = l_options.toLowerCase().indexOf('size=');
 	if (l_ix > -1)
-		l_size = l_options.substring(l_ix, l_ix+2);
+		l_size = l_options.substring(l_ix+5, l_ix+7);
 	l_html += "' size='" + l_size + "' value='" + p_value;
 	l_html += "' ";
 	if (l_options.toLowerCase().indexOf('disable') > -1)
@@ -924,8 +960,9 @@ function buildLcarTextWidget(self, p_id, p_caption, p_value, p_options) {
 	// console.log("globals.buildLcarTextWidget() - %O", l_html)
 	return l_html;
 }
-function fetchTextWidget(p_id) {
-	var l_data = document.getElementById(p_id).value;
+function fetchTextWidget(self, p_id) {
+	// Divmod.debug('---', 'globals.fetchTextWidget() was called for ' + p_id);
+	var l_data = self.nodeById(p_id).value;
 	return l_data;
 }
 function buildTextWidget(p_id, p_value, /* optional */ p_options) {
@@ -979,7 +1016,50 @@ function buildDowWidget(p_id, p_value, /* optional */ p_options) {
 
 	return l_html;
 }
-function fetchDowWidget(p_id) {
+function buildLcarDowWidget(self, p_id, p_caption, p_value, /* optional */ p_options) {
+	var l_html = '';
+	l_html += "<div class='lcars-row spaced'>\n";
+	l_html += "<div class=lcars-column u-3-4'>\n";
+	l_html += "<div class='lcars-button radius'>\n";
+	l_html += p_caption;
+
+	l_html += "<span class='lcars-button-addition' id='" + buildAthenaId(self, p_id) + "Buttons'>";
+	l_html += "<input type='checkbox' name='" + p_id + "' value='1'";
+	if (p_value & 1)
+		l_html += " checked ";
+	l_html += ">Mon&nbsp\n";
+	l_html += "<input type='checkbox' name='" + p_id + "' value='2'";
+	if (p_value & 2)
+		l_html += " checked ";
+	l_html += ">Tue&nbsp\n";
+	l_html += "<input type='checkbox' name='" + p_id + "' value='4'";
+	if (p_value & 4)
+		l_html += " checked ";
+	l_html += ">Wed&nbsp\n";
+	l_html += "<input type='checkbox' name='" + p_id + "' value='8'";
+	if (p_value & 8)
+		l_html += " checked ";
+	l_html += ">Thu&nbsp\n";
+	l_html += "<input type='checkbox' name='" + p_id + "' value='16'";
+	if (p_value & 16)
+		l_html += " checked ";
+	l_html += ">Fri&nbsp\n";
+	l_html += "<input type='checkbox' name='" + p_id + "' value='32'";
+	if (p_value & 32)
+		l_html += " checked ";
+	l_html += ">Sat&nbsp\n";
+	l_html += "<input type='checkbox' name='" + p_id + "' value='64'";
+	if (p_value & 64)
+		l_html += " checked ";
+	l_html += ">Sun&nbsp\n";
+	l_html += "</span>\n";
+	l_html += "</div>\n";  // Button
+	l_html += "</div>\n";  // Column
+	l_html += "</div>\n";  // row 1
+	return l_html;
+}
+function fetchDowWidget(self, p_id) {
+	// Divmod.debug('---', 'globals.fetchDowWidget() called.  p_id=' + p_id);
 	var l_dow = document.getElementsByName(p_id);
 	var l_ret = 0;
 	for (var ix = 0; ix < l_dow.length; ix++) {
@@ -1094,5 +1174,5 @@ Divmod.Runtime.theRuntime.addLoadEvent(
 	}
 );
 // Divmod.debug('---', 'globals.buildLcarTextWidget() was called.');
-// console.log("globals.build_lcars_middle() - %O", l_html)
+// console.log("globals.build_lcars_middle() - %O", l_html);
 // END DBK

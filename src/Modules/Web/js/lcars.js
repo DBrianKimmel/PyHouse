@@ -8,8 +8,13 @@
  * @summary: Displays the rooms
  */
 // import Nevow.Athena
+// import globals
+// import helpers
 
 
+lcarsDefs = {
+		test : 123
+};
 
 function build_lcars_top(p_title){
 	Divmod.debug('---', 'lcars_top.build_lcars_top() was called.');
@@ -26,5 +31,6 @@ function build_lcars_top(p_title){
 	l_html += "";
 	l_html += '</div>\n'; // row
 	return l_html;
-};
+}
+
 // END DBK

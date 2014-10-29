@@ -39,13 +39,13 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 	},
 	function showWidget(self) {
 		self.node.style.display = 'block';
-		self.showEntry();
+		self.showDataEntry();
 		self.fetchHouseData();
 	},
-	function hideEntry(self) {
+	function hideDataEntry(self) {
 		self.nodeById('HouseEntryDiv').style.display = 'none';		
 	},
-	function showEntry(self) {
+	function showDataEntry(self) {
 		self.nodeById('HouseEntryDiv').style.display = 'block';		
 	},
 
@@ -127,20 +127,20 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 	function fetchEntry(self) {
 		//Divmod.debug('---', 'house.fetchEntry() was called. ');
         var l_data = {
-            Name : fetchTextWidget('HouseName'),
-            Key : fetchTextWidget('HouseKey'),
-			Active : fetchTrueFalseWidget('HouseActive'),
-			Street : fetchTextWidget('HouseStreet'),
-			City : fetchTextWidget('HouseCity'),
-			State : fetchTextWidget('HouseState'),
-			ZipCode : fetchTextWidget('HouseZipCode'),
-			Phone : fetchTextWidget('HousePhone'),
-			Latitude : fetchTextWidget('HouseLatitude'),
-			Longitude : fetchTextWidget('HouseLongitude'),
-			TimeZoneName : fetchTextWidget('HouseTimeZoneName'),
-			TimeZoneOffset : fetchTextWidget('HouseTimeZoneOffset'),
-			DaylightSavingsTime : fetchTextWidget('HouseDaylightSavingsTime'),
-			UUID : fetchTextWidget('HouseUUID'),
+            Name : fetchTextWidget(self, 'HouseName'),
+            Key : fetchTextWidget(self, 'HouseKey'),
+			Active : fetchTrueFalseWidget(self, 'HouseActive'),
+			Street : fetchTextWidget(self, 'HouseStreet'),
+			City : fetchTextWidget(self, 'HouseCity'),
+			State : fetchTextWidget(self, 'HouseState'),
+			ZipCode : fetchTextWidget(self, 'HouseZipCode'),
+			Phone : fetchTextWidget(self, 'HousePhone'),
+			Latitude : fetchTextWidget(self, 'HouseLatitude'),
+			Longitude : fetchTextWidget(self, 'HouseLongitude'),
+			TimeZoneName : fetchTextWidget(self, 'HouseTimeZoneName'),
+			TimeZoneOffset : fetchTextWidget(self, 'HouseTimeZoneOffset'),
+			DaylightSavingsTime : fetchTextWidget(self, 'HouseDaylightSavingsTime'),
+			UUID : fetchTextWidget(self, 'HouseUUID'),
 			Delete : false
             }
 		return l_data;
@@ -165,12 +165,12 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 			globals.House.HouseObj = l_obj;
 			//Divmod.debug('---', 'house.handleMenuOnClick("House" Button) was called. ' + l_ix + ' ' + l_name);
 			//console.log("house.handleMenuOnClick() - l_obj = %O", l_obj);
-			self.showEntry();
+			self.showDataEntry();
 			self.fillEntry(l_obj);
 		} else if (l_ix == 10001) {
 			// The "Add" button
 			//Divmod.debug('---', 'house.handleMenuOnClick(Add Button) was called. ' + l_ix + ' ' + l_name);
-			self.showEntry();
+			self.showDataEntry();
 			var l_ent = self.createEntry();
 			self.fillEntry(l_ent);
 		} else if (l_ix == 10002) {
@@ -206,7 +206,7 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 			l_defer.addErrback(eb_handleDataOnClick);
 			break;
 		case '10002':  // Back button
-			self.hideEntry();
+			self.hideDataEntry();
 			var l_node = findWidgetByClass('HouseMenu');
 			l_node.showWidget();
 			break;

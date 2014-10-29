@@ -50,20 +50,20 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
     },
     function showWidget(self) {
         self.node.style.display = 'block';
-        self.showButtons(self);
-        self.hideEntry(self);
+        self.showSelectionButtons(self);
+        self.hideDataEntry(self);
         self.fetchHouseData();
     },
-    function hideButtons(self) {
+    function hideSelectionButtons(self) {
         self.nodeById('ControllerButtonsDiv').style.display = 'none';        
     },
-    function showButtons(self) {
+    function showSelectionButtons(self) {
         self.nodeById('ControllerButtonsDiv').style.display = 'block';    
     },
-    function hideEntry(self) {
+    function hideDataEntry(self) {
         self.nodeById('ControllerEntryDiv').style.display = 'none';        
     },
-    function showEntry(self) {
+    function showDataEntry(self) {
         self.nodeById('ControllerEntryDiv').style.display = 'block';        
     },
     
@@ -111,13 +111,13 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 		globals.House.ControllerName = l_name;
         if (l_ix <= 1000) {  // One of the controller buttons
             //Divmod.debug('---', 'controllers.hndleMenuOnClick(Controller) was called. ');
-            self.hideButtons();
-            self.showEntry();
+            self.hideSelectionButtons();
+            self.showDataEntry();
 			var l_obj = globals.House.HouseObj.Controllers[l_ix];
             self.fillEntry(l_obj);
         } else if (l_ix == 10001) {  // The 'Add' button
-            self.hideButtons();
-            self.showEntry();
+            self.hideSelectionButtons();
+            self.showDataEntry();
 			var l_ent = self.createEntry();
 			self.fillEntry(l_ent);
         } else if (l_ix == 10002) {  // The 'Back' button
@@ -155,18 +155,18 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 	},
     function fetchEntry(self) {
         var l_data = {
-            Name :           fetchTextWidget('ControllerName'),
-            Key :            fetchTextWidget('ControllerKey'),
-			Active :         fetchTrueFalseWidget('ControllerActive'),
-			Comment :        fetchTextWidget('ControllerComment'),
-			Coords :         fetchTextWidget('ControllerCoords'),
-			IsDimmable :     fetchTrueFalseWidget('ControllerDimmable'),
-			ControllerFamily : fetchTextWidget('ControllerFamily'),
-			RoomName :       fetchSelectWidget('ControllerRoomName'),
-			LightingType :   fetchTextWidget('ControllerType'),
-			UUID :           fetchTextWidget('ControllerUUID'),
-			InterfaceType :      fetchSelectWidget('InterfaceType'),
-			Port :           fetchTextWidget('ControllerPort'),
+            Name :           fetchTextWidget(self, 'ControllerName'),
+            Key :            fetchTextWidget(self, 'ControllerKey'),
+			Active :         fetchTrueFalseWidget(self, 'ControllerActive'),
+			Comment :        fetchTextWidget(self, 'ControllerComment'),
+			Coords :         fetchTextWidget(self, 'ControllerCoords'),
+			IsDimmable :     fetchTrueFalseWidget(self, 'ControllerDimmable'),
+			ControllerFamily : fetchTextWidget(self, 'ControllerFamily'),
+			RoomName :       fetchSelectWidget(self, 'ControllerRoomName'),
+			LightingType :   fetchTextWidget(self, 'ControllerType'),
+			UUID :           fetchTextWidget(self, 'ControllerUUID'),
+			InterfaceType :      fetchSelectWidget(self, 'InterfaceType'),
+			Port :           fetchTextWidget(self, 'ControllerPort'),
 			Delete : false
             }
         if (l_data['ControllerFamily'] == 'Insteon') {
@@ -175,13 +175,13 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
         return l_data;
     },
 	function fetchInsteonEntry(self, p_data) {
-        p_data['InsteonAddress'] = fetchTextWidget('LightAddress');
-        p_data['DevCat'] = fetchTextWidget('LightDevCat');
-        p_data['GroupNumber'] = fetchTextWidget('LightGroupNumber');
-        p_data['GroupList'] = fetchTextWidget('LightGroupList');
-        p_data['IsMaster'] = fetchTrueFalseWidget('LightMaster');
-        p_data['IsResponder'] = fetchTrueFalseWidget('LightResponder');
-        p_data['ProductKey'] = fetchTextWidget('LightProductKey');
+        p_data['InsteonAddress'] = fetchTextWidget(self, 'LightAddress');
+        p_data['DevCat'] = fetchTextWidget(self, 'LightDevCat');
+        p_data['GroupNumber'] = fetchTextWidget(self, 'LightGroupNumber');
+        p_data['GroupList'] = fetchTextWidget(self, 'LightGroupList');
+        p_data['IsMaster'] = fetchTrueFalseWidget(self, 'LightMaster');
+        p_data['IsResponder'] = fetchTrueFalseWidget(self, 'LightResponder');
+        p_data['ProductKey'] = fetchTextWidget(self, 'LightProductKey');
 		return p_data;
 	},
     function createEntry(self) {
@@ -225,8 +225,8 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 			break;
 		case '10002':  // The 'Back' button
 			//Divmod.debug('---', 'controllers.handleDataOnClick(Back) was called.  ');
-			self.hideEntry();
-			self.showButtons();
+			self.hideDataEntry();
+			self.showSelectionButtons();
 			break;
 		case '10004':  // The 'Delete' button
 			var l_obj = self.fetchEntry();

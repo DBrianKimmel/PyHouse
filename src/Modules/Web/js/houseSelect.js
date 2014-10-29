@@ -41,10 +41,10 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 		self.nodeById('SelectionButtonsDiv').style.display = 'block';
 	},
 	function hideSelectedHouse(self) {
-		self.nodeById('HouseDataEntryDiv').style.display = 'none';
+		self.nodeById('DataEntryDiv').style.display = 'none';
 	},
 	function showSelectedHouse(self) {
-		self.nodeById('HouseDataEntryDiv').style.display = 'block';
+		self.nodeById('DataEntryDiv').style.display = 'block';
 	},
 	
 	// ============================================================================
