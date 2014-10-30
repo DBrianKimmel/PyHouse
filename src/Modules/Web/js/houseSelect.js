@@ -112,6 +112,7 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 	function handleMenuOnClick(self, p_node) {
 		var l_ix = p_node.name;
 		var l_name = p_node.value;
+		var l_node = 0;
 		// Divmod.debug('---', 'houseSelect.handleMenuOnClick(1) was called. ' + l_ix + '  ' + l_name);
 		if (l_ix <= 1000) {
 			globals.House.HouseIx = l_ix;
@@ -119,17 +120,17 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 			self.getSelectedHouseData(l_ix)
 			self.hideSelectButtons();
 			// Divmod.debug('---', 'houseSelect.handleMenuOnClick(2) was called. ' + l_ix + '  ' + l_name);
-			self.showSelectedHouse();
-			var l_node = findWidgetByClass('HouseMenu');
+			self.hideSelectedHouse();
+			l_node = findWidgetByClass('HouseMenu');
 			l_node.showWidget();
 		} else if (l_ix == 10001) {  // The "Add" button
 			globals.House.HouseIx = -1;
 			self.hideSelectButtons();
-			var l_node = findWidgetByClass('House');
+			l_node = findWidgetByClass('House');
 			l_node.showWidget();
 		} else if (l_ix == 10002) {  // The "Back" button
 			self.hideWidget();
-			var l_node = findWidgetByClass('RootMenu');
+			l_node = findWidgetByClass('RootMenu');
 			l_node.showWidget();
 		}
 	}

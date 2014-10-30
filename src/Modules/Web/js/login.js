@@ -50,13 +50,13 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 	function showLoggingInDiv(self) {
 		//Divmod.debug('---', 'login.showLoggingInDiv() was called. ');
 		self.nodeById('LoggingInDiv').style.display = 'block';
-		self.nodeById('LoggedInDiv').style.display = 'none';
+		// self.nodeById('LoggedInDiv').style.display = 'none';
 	},
 	function hideLoggedInDiv(self) {
-		self.nodeById('LoggedInDiv').style.display = "none";
+		//self.nodeById('LoggedInDiv').style.display = "none";
 	},
 	function showLoggedInDiv(self) {
-		self.nodeById('LoggedInDiv').style.display = "block";
+		//self.nodeById('LoggedInDiv').style.display = "block";
 	},
 
     // ============================================================================
@@ -72,7 +72,18 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
         var l_defer = self.callRemote("getValidLists");  // @ web_login
 		l_defer.addCallback(cb_fetchValidLists);
 	},
-	
+	function buildLcarLoginScreen(self, p_handler){
+		Divmod.debug('---', 'login.buildLcarLoginScreen() was called.');
+		var l_login_html = "";
+		l_login_html += buildLcarTextWidget(self, 'LoginName', 'Name', '');
+		l_login_html += buildLcarTextWidget(self, 'LoginPassword', 'Password', '');
+		l_login_html += xxxx;
+		var l_html = build_lcars_top('Control Lights', 'lcars-salmon-color');
+		l_html += build_lcars_middle_menu(2, l_login_html);
+		l_html += build_lcars_bottom();
+		self.nodeById('SelectionButtonsDiv').innerHTML = l_html;
+	},
+
 	// ============================================================================
 	/**
 	 * This is an event handler from the LogIn key in the login form.
@@ -116,13 +127,12 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 			globals.User.Fullname = p_obj.Fullname;
 			globals.User.LoggedIn = true;
 			self.hideLoggingInDiv(self);
-			self.showLoggedInDiv(self);
-			self.nodeById('LoggedInDiv').innerHTML = 'Logged in: ' + p_obj.Fullname;
+			// self.showLoggedInDiv(self);
 			var l_defer = serverState(22);
 			l_defer.addCallback(cb_showNextScreen);
 		} else {
 			self.showLoggingInDiv(self);
-			self.hideLoggedInDiv(self);
+			// self.hideLoggedInDiv(self);
         	self.nodeById('LoginPassword').value = '';
 		}
 	}

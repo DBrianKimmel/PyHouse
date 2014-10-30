@@ -85,27 +85,25 @@ Nevow.Athena.Widget.subclass(helpers, 'Widget').methods(
 	/**
 	 * Do the things that a widget requests when it becomes ready.
 	 * <This was originally embedded in attachWidget>
-	 * 
-	 * @param p_readyfunc is the function to be called when the widget is done loading (and initializing?)
+	 *
+	 * @param p_widget is the widget being added/started.
+	 * @param p_readyfunc is the optional function to be called when the widget is done loading (and initializing?)
 	 */
-	function widget_ready(self, widget, p_readyfunc) {
-
+	function widget_ready(self, p_widget, p_readyfunc) {
 		// Default readyfunc that shows the widget.
 		function isready() {
-			widget.show();
+			p_widget.show();
 		}
-
 		// If we did not call with a readyfunc, add a dummy function that is ready
 		if (!p_readyfunc)
 			p_readyfunc = isready;
-
 		function eb_widget_ready(p_reason) {  // widget.ready failed
-			self.eb_genericErrback(p_reason + ' widget.ready failed for: ' + p_name );
+			self.eb_genericErrback('widget.ready failed for: ' + p_widget.node.className + ' - ' + p_reason);
 		}
-
-		var l_defer_3 = widget.ready();
-		l_defer_3.addCallback(p_readyfunc);
-		l_defer_3.addErrback(eb_widget_ready);
+		// console.log("helpers.widget_ready()  p_widget  %O", p_widget);
+		var l_defer = p_widget.ready();
+		l_defer.addCallback(p_readyfunc);
+		l_defer.addErrback(eb_widget_ready);
 	},
 
 	function attachWidget(self, p_name, p_params, p_readyfunc) {
@@ -228,5 +226,6 @@ helpers.Widget.subclass(helpers, 'FourOfour').methods(
 		alert('this is a fourOfour Message');
 	}
 );
-
+//console.log("helpers.handleDataOnClick()  json  %O", l_json);
+//Divmod.debug('---', 'helpers.handleDataOnClick(Change) was called. JSON:' + l_json);
 // END DBK

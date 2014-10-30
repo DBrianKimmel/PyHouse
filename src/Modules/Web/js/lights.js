@@ -11,7 +11,8 @@
 // import globals
 // import helpers
 // import lcars
-console.log("lights.  lcars  %O", lcars);
+
+// console.log("lights.  lcars  %O", lcars);
 
 helpers.Widget.subclass(lights, 'LightsWidget').methods(
 
@@ -108,6 +109,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		if (l_ix <= 1000) {  // we clicked on one of the buttons, show the details for the light.
 			var l_obj = globals.House.HouseObj.Lights[l_ix];
 			globals.House.LightObj = l_obj;
+			globals.House.Self = self;
 			self.showDataEntry();
 			self.hideSelectionButtons();
 			self.fillEntry(l_obj);
@@ -128,54 +130,52 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 	/**
 	 * Build a screen full of data entry fields.
 	 */
+	function buildBasicPart(self, p_light, p_html, p_onchange) {
+		p_html += buildLcarTextWidget(self, 'Name', 'Light Name', p_light.Name);
+		p_html += buildLcarTextWidget(self, 'Key', 'Light Index', p_light.Key, 'size=10');
+		p_html += buildLcarTrueFalseWidget(self, 'Active', 'Active ?', p_light.Active);
+		p_html += buildLcarTextWidget(self, 'Comment', 'Comment', p_light.Comment);
+		p_html += buildLcarTextWidget(self, 'LightCoords', 'Coords', p_light.Coords);
+		p_html += buildLcarTrueFalseWidget(self, 'LightDimmable', 'Light Dimmable ?', p_light.IsDimmable);
+		p_html += buildLcarFamilySelectWidget(self, 'LightFamily', 'Family', p_light.ControllerFamily, p_onchange);
+		p_html += buildLcarRoomSelectWidget(self, 'LightRoomName', 'Room', p_light.RoomName);
+		p_html += buildLcarLightTypeSelectWidget(self, 'LightType', 'Type', p_light.LightingType, 'disabled');
+		p_html += buildLcarTextWidget(self, 'LightUUID', 'UUID', p_light.UUID, 'disabled');
+		return p_html;
+	},
+	function buildInsteonPart(self, p_light, p_html) {
+		p_html += buildLcarTextWidget(self, 'LightAddressI', 'Insteon Address', p_light.InsteonAddress);
+		p_html += buildLcarTextWidget(self, 'LightDevCat', 'Dev Cat', p_light.DevCat);
+		p_html += buildLcarTextWidget(self, 'LightGroupNumber', 'Group Number', p_light.GroupNumber);
+		p_html += buildLcarTextWidget(self, 'LightGroupList', 'Group List', p_light.GroupList);
+		p_html += buildLcarTrueFalseWidget(self, 'LightMaster', 'Light Master ?', p_light.IsMaster);
+		p_html += buildLcarTrueFalseWidget(self, 'LightController', 'Light Controller ?', p_light.IsController);
+		p_html += buildLcarTrueFalseWidget(self, 'LightResponder', 'Light Responder ?', p_light.IsResponder);
+		p_html += buildLcarTextWidget(self, 'LightProductKey', 'Product Key', p_light.ProductKey);
+		return p_html;
+	},
+	function buildUpbPart(self, p_light, p_html) {
+		p_html += buildLcarTextWidget(self, 'LightAddressU', 'UPB Address', p_light.UPBAddress);
+		p_html += buildLcarTextWidget(self, 'LightPassword', 'UPB Password', p_light.UPBPassword);
+		p_html += buildLcarTextWidget(self, 'LightNetworkID', 'UPB Network', p_light.UPBNetworkID);
+		return p_html;
+	},
+	function buildAllParts(self, p_light, p_html, p_handler, p_onchange) {
+		p_html = self.buildBasicPart(p_light, p_html, p_onchange) ;
+		if (p_light.ControllerFamily == 'Insteon') {
+			p_html = self.buildInsteonPart(p_light, p_html);
+		}
+        if (p_light.ControllerFamily == 'UPB') {
+        	p_html = self.buildUpbPart(p_light, p_html)
+        }
+		p_html += buildLcarEntryButtons(p_handler);
+		return p_html;
+	},
 	function buildLcarDataEntryScreen(self, p_entry, p_handler){
 		// Divmod.debug('---', 'rooms.buildLcarDataEntryScreen() was called.');
 		// console.log("lights.buildLcarDataEntryScreen() - self = %O", self);
 		var l_light = arguments[1];
-		console.log("lights.buildLcarDataEntryScreen() - func = %O", familyChanged);
-		function buildBasicPart(self, p_light, p_html, p_onchange) {
-			p_html += buildLcarTextWidget(self, 'Name', 'Light Name', p_light.Name);
-			p_html += buildLcarTextWidget(self, 'Key', 'Light Index', p_light.Key, 'size=10');
-			p_html += buildLcarTrueFalseWidget(self, 'Active', 'Active ?', p_light.Active);
-			p_html += buildLcarTextWidget(self, 'Comment', 'Comment', p_light.Comment);
-			p_html += buildLcarTextWidget(self, 'LightCoords', 'Coords', p_light.Coords);
-			p_html += buildLcarTrueFalseWidget(self, 'LightDimmable', 'Light Dimmable ?', p_light.IsDimmable);
-			p_html += buildLcarFamilySelectWidget(self, 'LightFamily', 'Family', p_light.ControllerFamily, p_onchange);
-			p_html += buildLcarRoomSelectWidget(self, 'LightRoomName', 'Room', p_light.RoomName);
-			p_html += buildLcarLightTypeSelectWidget(self, 'LightType', 'Type', p_light.LightingType, 'disabled');
-			p_html += buildLcarTextWidget(self, 'LightUUID', 'UUID', p_light.UUID, 'disabled');
-			return p_html;
-		}
-		function buildInsteonPart(self, p_light, p_html) {
-			p_html += buildLcarTextWidget(self, 'LightAddressI', 'Insteon Address', p_light.InsteonAddress);
-			p_html += buildLcarTextWidget(self, 'LightDevCat', 'Dev Cat', p_light.DevCat);
-			p_html += buildLcarTextWidget(self, 'LightGroupNumber', 'Group Number', p_light.GroupNumber);
-			p_html += buildLcarTextWidget(self, 'LightGroupList', 'Group List', p_light.GroupList);
-			p_html += buildLcarTrueFalseWidget(self, 'LightMaster', 'Light Master ?', p_light.IsMaster);
-			p_html += buildLcarTrueFalseWidget(self, 'LightController', 'Light Controller ?', p_light.IsController);
-			p_html += buildLcarTrueFalseWidget(self, 'LightResponder', 'Light Responder ?', p_light.IsResponder);
-			p_html += buildLcarTextWidget(self, 'LightProductKey', 'Product Key', p_light.ProductKey);
-			return p_html;
-		}
-		function buildUpbPart(self, p_light, p_html) {
-			p_html += buildLcarTextWidget(self, 'LightAddressU', 'UPB Address', p_light.UPBAddress);
-			p_html += buildLcarTextWidget(self, 'LightPassword', 'UPB Password', p_light.UPBPassword);
-			p_html += buildLcarTextWidget(self, 'LightNetworkID', 'UPB Network', p_light.UPBNetworkID);
-			return p_html;
-		}
-		function buildAllParts(self, p_light, p_html, p_onchange) {
-			p_html = buildBasicPart(self, p_light, p_html, p_onchange) ;
-			if (p_light.ControllerFamily == 'Insteon') {
-				p_html = buildInsteonPart(self, p_light, p_html);
-			}
-	        if (p_light.ControllerFamily == 'UPB') {
-	        	p_html = buildUpbPart(self, p_light, p_html)
-	        }
-			p_html += buildLcarEntryButtons(p_handler);
-			return p_html;
-		}
-		var l_html;
-		l_html = buildAllParts(self, l_light, l_html, 'familyChanged');
+		var l_html = self.buildAllParts(l_light, l_html, p_handler, 'familyChanged');
 		var l_html_2 = "";
 		l_html_2 += build_lcars_top('Enter Light Data', 'lcars-salmon-color');
 		l_html_2 += build_lcars_middle_menu(26, l_html);
@@ -183,8 +183,14 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		self.nodeById('DataEntryDiv').innerHTML = l_html_2;
 	},
 	function familyChanged() {
-		Divmod.debug('---', 'lights.familyChanged was called !!!');
-		console.log("lights.buildLcarDataEntryScreen() - light %O", l_light);
+		var l_obj = globals.House.LightObj;
+		var l_self = globals.House.Self;
+		// Divmod.debug('---', 'lights.familyChanged was called !!!');
+		// console.log("lights.buildLcarDataEntryScreen() - light %O", l_obj);
+		// console.log("lights.buildLcarDataEntryScreen() - l_self %O", l_self);
+		var l_family = fetchSelectWidget(l_self, 'LightFamily');
+		l_obj.ControllerFamily = l_family;
+		l_self.fillEntry(l_obj);
 	},
 
 	function fillEntry(self, p_obj) {
@@ -192,7 +198,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		self.buildLcarDataEntryScreen(p_obj, 'handleDataOnClick');
 	},
 	function fetchEntry(self) {
-		Divmod.debug('---', 'lights.fetchEntry(1) was called.');
+		// Divmod.debug('---', 'lights.fetchEntry(1) was called.');
         var l_data = {
 			Name			: fetchTextWidget(self, 'Name'),
 			Key				: fetchTextWidget(self, 'Key'),
@@ -212,11 +218,11 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
         if (l_data.ControllerFamily === 'UPB') {
         	l_data = self.fetchUpbEntry(l_data);
         }
-      	console.log("lights.fetchEntry()  l_data  %O", l_data)
+      	// console.log("lights.fetchEntry()  l_data  %O", l_data)
 		return l_data;
 	},
 	function fetchInsteonEntry(self, p_data) {
-		Divmod.debug('---', 'lights.fetchInsteonEntry() was called.');
+		// Divmod.debug('---', 'lights.fetchInsteonEntry() was called.');
         p_data.InsteonAddress = fetchTextWidget(self, 'LightAddressI');
         p_data.DevCat = fetchTextWidget(self, 'LightDevCat');
         p_data.GroupNumber = fetchTextWidget(self, 'LightGroupNumber');
@@ -226,7 +232,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
         p_data.IsController = fetchTrueFalseWidget(self, 'LightController');
         p_data.ProductKey = fetchTextWidget(self, 'LightProductKey');
 		// Divmod.debug('---', 'lights.fetchInsteonEntry() finished.');
-      	console.log("lights.fetchInsteonEntry()  p_data  %O", p_data)
+      	// console.log("lights.fetchInsteonEntry()  p_data  %O", p_data)
 		return p_data;
 	},
 	function fetchUpbEntry(self, p_data) {
@@ -235,7 +241,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
         p_data.UPBPassword = fetchTextWidget(self, 'LightPassword');
         p_data.UPBNetworkID = fetchTextWidget(self, 'LightNetworkID');
 		// Divmod.debug('---', 'lights.fetchUpbEntry() finished.');
-      	console.log("lights.fetchUpbEntry()  p_data  %O", p_data)
+      	// console.log("lights.fetchUpbEntry()  p_data  %O", p_data)
 		return p_data;
 	},
 	function createEntry(self) {

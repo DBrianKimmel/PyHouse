@@ -66,7 +66,7 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 	function fetchHouseData(self) {
 		function cb_fetchHouseData(p_json) {
 			globals.House.HouseObj = JSON.parse(p_json);
-			self.buildLcarSelectScreen()
+			self.buildLcarSelectScreen();
 		}
 		function eb_fetchHouseData(res) {
 			Divmod.debug('---', 'controlLights.eb_fetchHouseData() was called.  ERROR ' + res);
@@ -97,6 +97,7 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 		if (l_ix <= 1000) {  // One of the controlLights buttons.
 			var l_obj = globals.House.HouseObj.Lights[l_ix];
 			globals.House.LightObj = l_obj;
+			globals.House.Self = self;
 			self.showDataEntry();
 			self.hideSelectionButtons();
 			//console.log("controlLights.handleMenuOnClick() - l_ix = %O", l_ix);
@@ -120,13 +121,21 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 		l_entry_html += buildLcarTextWidget(self, 'CtlLightUUID', 'UUID', l_light.UUID, 'disabled');
 		l_entry_html += buildLcarRoomSelectWidget(self, 'CtlLightRoomName', 'Room Name', l_light.RoomName, 'disabled');
 		l_entry_html += buildLcarLevelSliderWidget(self, 'CtlLightLevel', 'Level', l_light.CurLevel);
-		l_entry_html += buildLcarEntryButtons(p_handler);
+		l_entry_html += buildLcarEntryButtons(p_handler, 'handleSliderChange');
 		var l_html = build_lcars_top('Control Light', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(6, l_entry_html);
 		l_html += build_lcars_bottom();
 		self.nodeById('DataEntryDiv').innerHTML = l_html;
 	},
-
+	function handleSliderChange(p_event){
+		// Divmod.debug('---', 'controlLights.handleSliderChange() called. - Event= ' + p_event);
+		// console.log("controlLights.handleSliderChange   Event:  %O", p_event);
+		var l_obj = globals.House.LightObj;
+		var l_self = globals.House.Self;
+		var l_level = fetchLevelWidget(l_self, 'CtlLightLevel');
+		// Divmod.debug('---', 'controlLights.handleSliderChange() called. - Level= ' + l_level);
+		updateSliderBoxValue(l_self, 'CtlLightLevel', l_level)
+	},
 	function fillEntry(self, p_entry) {
 		self.buildLcarDataEntryScreen(p_entry, 'handleDataEntryOnClick')
 	},

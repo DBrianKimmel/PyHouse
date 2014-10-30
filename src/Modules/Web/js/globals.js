@@ -294,14 +294,12 @@ function loadImages(uris) {
 	 * @returns {Boolean}
 	 */
 	function isImageOk(img) {
-		if (!img.complete) {
+		if (!img.complete)
 			return false;
-		}
-		if (typeof img.naturalWidth != "undefined" && img.naturalWidth === 0) {
+		if (typeof img.naturalWidth != "undefined" && img.naturalWidth === 0)
 			return false;
-		}
 		return true;
-	}  // isImageOK
+	}
 
 	/**
 	 * Test if *ALL* images have been loaded yet.
@@ -473,7 +471,7 @@ function buildButton(p_obj, p_handler, p_background_color, /* optional */ nameFu
 	l_html += "value='" + p_obj.Name + "' ";
 	l_html += "name ='" + p_obj.Key + "' ";
 	l_html += "style = 'background-color: " + p_background_color + "' ";
-	l_html += "onclick = 'return Nevow.Athena.Widget.handleEvent(this, \"onclick\", \""  + p_handler + "\" ";
+	l_html += "onclick='return Nevow.Athena.Widget.handleEvent(this, \"onclick\", \""  + p_handler + "\" ";
 	l_html += ");' >\n";
 	if (typeof nameFunction === 'function')
 		l_html += nameFunction(p_obj);
@@ -879,49 +877,49 @@ function buildValidSelectWidget(p_id, p_list, p_checked) {
 
 
 /**
- * Build a slider widget
+ * Build a slider widget'
+ *
+ * The widget must handle the slider change event.
  */
-function buildSliderWidget(p_id, p_value) {
-	var l_html = "<input type='range' min='0' max='100' id='" + p_id + "' name='slider' ";
-	l_html += "value='" + p_value + "' ";
-	l_html += ">\n";
-	l_html += '&nbsp';  // add a box to display the slider value and find a way to update it when the slider is moved.
-	l_html += "<input type='text' id='" + p_id;
-	l_html += "' size='4' value='" + p_value;
-	l_html += "' >\n";
-	return l_html;
-}
 function buildLcarSliderWidget(self, p_id, p_caption, p_value) {
+	var l_out = "";
 	var l_html = "";
-	l_html += "<div class='lcars-row spaced'>\n";
-	l_html += "<div class=lcars-column u-3-4'>\n";
-	l_html += "<div class='lcars-button radius'>\n";
-	l_html += p_caption;
-	l_html += "<span class='lcars-button-addition' id='" + buildAthenaId(self, p_id) + "Slider'>";
-	l_html += "<input class='lcars-button-addition' type='range' min='0' max='100' id='" + buildAthenaId(self, p_id) + "' name='slider' ";
+	var l_id = buildAthenaId(self, p_id);
+	l_out += "<div class='lcars-row spaced'>\n";
+	l_out += "<div class=lcars-column u-3-4'>\n";
+	l_out += "<div class='lcars-button radius'>\n";
+	l_out += p_caption;
+	l_out += "<span class='lcars-button-addition' id='" + l_id + "'>";
+	l_html += "<input class='lcars-button-addition' ";
+	l_html += "type='range' min='0' max='100' id='" + l_id + "-Slider' name='slider' ";
+	l_html += "onchange='return Nevow.Athena.Widget.handleEvent(this, \"onchange\", \"handleSliderChange\");' ";
 	l_html += "value='" + p_value + "' ";
 	l_html += ">\n";
 	l_html += '&nbsp';  // add a box to display the slider value and find a way to update it when the slider is moved.
-	l_html += "<input type='text' id='" + p_id;
-	l_html += "' size='4' value='" + p_value;
+	l_html += "<input type='text' id='" + l_id;
+	l_html += "-Box' size='4' value='" + p_value;
 	l_html += "' >\n";
-	l_html += "</span>\n";
-	l_html += "</div>\n";
-	l_html += "</div>\n";
-	l_html += "</div>\n";
-	return l_html;
+	l_out += l_html;
+	l_out += "</span>\n";
+	l_out += "</div>\n";
+	l_out += "</div>\n";
+	l_out += "</div>\n";
+	// console.log("globals.buildLcarSliderWidget() - %O", l_html);
+	return l_out;
 }
-function buildLevelSliderWidget(p_name, p_level) {
-	var l_html = buildSliderWidget(p_name, p_level);
-	return l_html;
+function updateSliderBoxValue(self, p_id, p_value){
+	var l_id = p_id + "-Box";
+	var l_node = self.nodeById(l_id);
+	l_node.value = p_value;
 }
 function buildLcarLevelSliderWidget(self, p_name, p_caption, p_level) {
 	var l_html = buildLcarSliderWidget(self, p_name, p_caption, p_level);
 	return l_html;
 }
 function fetchLevelWidget(self, p_id) {
-	Divmod.debug('---', 'globals.fetchLevelWidget() called.  p_id=' + p_id);
-	return document.getElementById(p_id).value;
+	var l_id = p_id + "-Slider";
+	var l_val = self.nodeById(l_id).value;
+	return l_val;
 }
 
 

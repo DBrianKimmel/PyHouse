@@ -22,7 +22,7 @@ from Modules.Core import conversions
 from Modules.Web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.Lighting import lighting_lights
 from Modules.Computer import logging_pyh as Logger
-from Modules.Utilities.tools import PrettyPrintAny
+# from Modules.Utilities.tools import PrettyPrintAny
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -56,7 +56,7 @@ class LightsElement(athena.LiveElement):
         """A new/changed light is returned.  Process it and update the internal data via light_xxxx.py
         """
         l_json = JsonUnicode().decode_json(p_json)
-        PrettyPrintAny(l_json, 'JSON')
+        # PrettyPrintAny(l_json, 'JSON')
         l_delete = l_json['Delete']
         l_light_ix = int(l_json['Key'])
         if l_delete:
@@ -86,7 +86,7 @@ class LightsElement(athena.LiveElement):
         l_obj.UUID = l_json['UUID']
         if len(l_obj.UUID) < 8:
             l_obj.UUID = str(uuid.uuid1())
-        PrettyPrintAny(l_obj, 'LightObj')
+        # PrettyPrintAny(l_obj, 'LightObj')
         if l_obj.ControllerFamily == 'Insteon':
             l_obj.DevCat = conversions.dotted_hex2int(l_json['DevCat'])
             l_obj.GroupList = l_json['GroupList']
