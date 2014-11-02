@@ -56,7 +56,6 @@ class LightsElement(athena.LiveElement):
         """A new/changed light is returned.  Process it and update the internal data via light_xxxx.py
         """
         l_json = JsonUnicode().decode_json(p_json)
-        # PrettyPrintAny(l_json, 'JSON')
         l_delete = l_json['Delete']
         l_light_ix = int(l_json['Key'])
         if l_delete:

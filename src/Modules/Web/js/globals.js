@@ -646,6 +646,12 @@ function buildEntryButtons(p_handler, /* optional */ noOptions) {
 		l_html += buildBackButton(p_handler);
 	return l_html;
 }
+/**
+ * Entry buttons are for the bottom of data entry screens.
+ * 
+ * @param: p_handler is the onclick event handler for the data entry buttons
+ * @param: noOptions is the string that tells us not to build a button - 'NoDelete' means not to build a delete button
+ */
 function buildLcarEntryButtons(p_handler, /* optional */ noOptions) {
 	// Divmod.debug('---', 'globals.buildEntryButtons() called.  Handler=' + p_handler + '  ' + noOptions);
 	var l_options = noOptions;
@@ -828,9 +834,6 @@ function buildLcarFamilySelectWidget(self, p_id, p_caption, p_checked, p_change)
 	// console.log("globals.buildLcarFamilySelectWidget() -  ValidFamilies  %O", globals.Valid.Families);
 	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.Families, p_checked, p_change);
 }
-function buildFloorSelectWidget(p_id, p_checked) {
-	return buildSelectWidget(p_id, globals.Valid.Floors, p_checked);
-}
 function buildLcarFloorSelectWidget(self, p_id, p_caption, p_checked) {
 	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.Floors, p_checked);
 }
@@ -881,7 +884,7 @@ function buildValidSelectWidget(p_id, p_list, p_checked) {
  *
  * The widget must handle the slider change event.
  */
-function buildLcarSliderWidget(self, p_id, p_caption, p_value) {
+function buildLcarSliderWidget(self, p_id, p_caption, p_value, p_min, p_max, p_step, p_handler) {
 	var l_out = "";
 	var l_html = "";
 	var l_id = buildAthenaId(self, p_id);
@@ -891,11 +894,14 @@ function buildLcarSliderWidget(self, p_id, p_caption, p_value) {
 	l_out += p_caption;
 	l_out += "<span class='lcars-button-addition' id='" + l_id + "'>";
 	l_html += "<input class='lcars-button-addition' ";
-	l_html += "type='range' min='0' max='100' id='" + l_id + "-Slider' name='slider' ";
-	l_html += "onchange='return Nevow.Athena.Widget.handleEvent(this, \"onchange\", \"handleSliderChange\");' ";
+	l_html += "type='range' name='slider' id='" + l_id + "-Slider' ";
+	l_html += "min='" + p_min + "' ";
+	l_html += "max='" + p_max + "' ";
+	l_html += "step='" + p_step + "' ";
+	l_html += "onchange='return Nevow.Athena.Widget.handleEvent(this, \"onchange\", \"" + p_handler + "\");' ";
 	l_html += "value='" + p_value + "' ";
 	l_html += ">\n";
-	l_html += '&nbsp';  // add a box to display the slider value and find a way to update it when the slider is moved.
+	l_html += '&nbsp';
 	l_html += "<input type='text' id='" + l_id;
 	l_html += "-Box' size='4' value='" + p_value;
 	l_html += "' >\n";
@@ -912,11 +918,15 @@ function updateSliderBoxValue(self, p_id, p_value){
 	var l_node = self.nodeById(l_id);
 	l_node.value = p_value;
 }
-function buildLcarLevelSliderWidget(self, p_name, p_caption, p_level) {
-	var l_html = buildLcarSliderWidget(self, p_name, p_caption, p_level);
+function buildLcarLevelSliderWidget(self, p_name, p_caption, p_level, p_handler) {
+	var l_html = buildLcarSliderWidget(self, p_name, p_caption, p_level, 0, 100, 1, p_handler);
 	return l_html;
 }
-function fetchLevelWidget(self, p_id) {
+function buildLcarHvacSliderWidget(self, p_name, p_caption, p_level, p_handler) {
+	var l_html = buildLcarSliderWidget(self, p_name, p_caption, p_level, 60, 90, 0.5, p_handler);
+	return l_html;
+}
+function fetchSliderWidget(self, p_id) {
 	var l_id = p_id + "-Slider";
 	var l_val = self.nodeById(l_id).value;
 	return l_val;
@@ -959,7 +969,7 @@ function buildLcarTextWidget(self, p_id, p_caption, p_value, p_options) {
 	return l_html;
 }
 function fetchTextWidget(self, p_id) {
-	// Divmod.debug('---', 'globals.fetchTextWidget() was called for ' + p_id);
+	Divmod.debug('---', 'globals.fetchTextWidget() was called for ' + p_id);
 	var l_data = self.nodeById(p_id).value;
 	return l_data;
 }

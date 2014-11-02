@@ -120,8 +120,8 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 		l_entry_html += buildLcarTextWidget(self, 'CtlLightKey', 'Light Index', l_light.Key, 'disabled');
 		l_entry_html += buildLcarTextWidget(self, 'CtlLightUUID', 'UUID', l_light.UUID, 'disabled');
 		l_entry_html += buildLcarRoomSelectWidget(self, 'CtlLightRoomName', 'Room Name', l_light.RoomName, 'disabled');
-		l_entry_html += buildLcarLevelSliderWidget(self, 'CtlLightLevel', 'Level', l_light.CurLevel);
-		l_entry_html += buildLcarEntryButtons(p_handler, 'handleSliderChange');
+		l_entry_html += buildLcarLevelSliderWidget(self, 'CtlLightLevel', 'Level', l_light.CurLevel, 'handleSliderChange');
+		l_entry_html += buildLcarEntryButtons(p_handler, 'NoAdd');
 		var l_html = build_lcars_top('Control Light', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(6, l_entry_html);
 		l_html += build_lcars_bottom();
@@ -129,10 +129,10 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 	},
 	function handleSliderChange(p_event){
 		// Divmod.debug('---', 'controlLights.handleSliderChange() called. - Event= ' + p_event);
-		// console.log("controlLights.handleSliderChange   Event:  %O", p_event);
+		console.log("controlLights.handleSliderChange   Event:  %O", p_event);
 		var l_obj = globals.House.LightObj;
 		var l_self = globals.House.Self;
-		var l_level = fetchLevelWidget(l_self, 'CtlLightLevel');
+		var l_level = fetchSliderWidget(l_self, 'CtlLightLevel');
 		// Divmod.debug('---', 'controlLights.handleSliderChange() called. - Level= ' + l_level);
 		updateSliderBoxValue(l_self, 'CtlLightLevel', l_level)
 	},
@@ -144,7 +144,7 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
             Name : fetchTextWidget(self, 'CtlLightName'),
             Key : fetchTextWidget(self, 'CtlLightKey'),
 			UUID : fetchTextWidget(self, 'CtlLightUUID'),
-			Level : fetchLevelWidget(self, 'CtlLightLevel'),
+			Level : fetchSliderWidget(self, 'CtlLightLevel'),
             };
 		return l_data;
 	},

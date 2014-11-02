@@ -45,23 +45,22 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		self.hideDataEntry();
 		self.fetchHouseData();
 	},
-	function showSelectionButtons(self) {
-		self.nodeById('SelectionButtonsDiv').style.display = 'block';
-	},
 	function hideSelectionButtons(self) {
 		self.nodeById('SelectionButtonsDiv').style.display = 'none';
 	},
-	function showDataEntry(self) {
-		self.nodeById('DataEntryDiv').style.display = 'block';
+	function showSelectionButtons(self) {
+		self.nodeById('SelectionButtonsDiv').style.display = 'block';
 	},
 	function hideDataEntry(self) {
 		self.nodeById('DataEntryDiv').style.display = 'none';
+	},
+	function showDataEntry(self) {
+		self.nodeById('DataEntryDiv').style.display = 'block';
 	},
 
 
 
 // ============================================================================
-
 	/**
 	 * Build a screen full of buttons - One for each room and some actions.
 	 */
@@ -88,7 +87,6 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		l_defer.addErrback(eb_fetchHouseData);
         return false;
 	},
-
 	/**
 	 * Event handler for room selection buttons.
 	 * 
@@ -122,7 +120,6 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 
 
 // ============================================================================
-
 	/**
 	 * Build a screen full of data entry fields.
 	 */
@@ -147,7 +144,6 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	 * Fill in the schedule entry screen with all of the data for this room.
 	 */
 	function fillEntry(self, p_entry) {
-		// Divmod.debug('---', 'rooms.fillEntry() was called.');
 		self.buildLcarRoomDataEntryScreen(p_entry, 'handleDataOnClick')
 	},
 	function createEntry(self) {

@@ -14,11 +14,13 @@
 
 # Import system type stuff
 import os
+import uuid
 from nevow import athena
 from nevow import loaders
 
 # Import PyMh files and modules.
-from Modules.Web.web_utils import JsonUnicode
+from Modules.Core.data_objects import ThermostatData
+from Modules.Web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.Computer import logging_pyh as Logger
 # from Modules.Utilities.tools import PrettyPrintAny
 
@@ -44,16 +46,41 @@ class ThermostatsElement(athena.LiveElement):
 
     @athena.expose
     def getHouseData(self):
-        # print('thermostat.ThermostatElement.getHouseData')
-        l_computer = JsonUnicode().encode_json(self.m_pyhouse_obj.House.OBJs.Thermostats)
-        return l_computer
+        l_json = GetJSONHouseInfo(self.m_pyhouse_obj)
+        LOG.info('Fetched {}'.format(l_json))
+        return l_json
 
     @athena.expose
     def saveThermostatsData(self, p_json):
-        """Thermostat data is returned, so update the computer info.
+        """Thermostat data is returned, so update the info.
         """
-        # print('thermostat.saveThermostatData')
         l_json = JsonUnicode().decode_json(p_json)
-        print('JSON: {}'.format(l_json))
+        l_delete = l_json['Delete']
+        l_ix = int(l_json['Key'])
+        if l_delete:
+            try:
+                del self.m_pyhouse_obj.House.OBJs.Thermostats[l_ix]
+            except AttributeError:
+                LOG.error("web_thermostats - Failed to delete - JSON: {0:}".format(l_json))
+            return
+        try:
+            l_obj = self.m_pyhouse_obj.House.OBJs.Thermostats[l_ix]
+        except KeyError:
+            LOG.warning('Creating a new Thermostat for IX{}'.format(l_ix))
+            l_obj = ThermostatData()
+        #
+        l_obj.Name = l_json['Name']
+        l_obj.Active = l_json['Active']
+        l_obj.Key = l_ix
+        l_obj.UUID = l_json['UUID']
+        if len(l_obj.UUID) < 8:
+            l_obj.UUID = str(uuid.uuid1())
+        l_obj.CoolSetPoint = l_json['CoolSetPoint']
+        l_obj.ControllerFamily = 'Null'
+        l_obj.CurrentTemperature = 0
+        l_obj.HeatSetPoint = l_json['HeatSetPoint']
+        l_obj.ThermostatMode = 'Cool'  # Cool | Heat | Auto | EHeat
+        l_obj.ThermostatScale = 'F'  # F | C
+        self.m_pyhouse_obj.House.OBJs.Thermostats[l_ix] = l_obj
 
 # ## END DBK

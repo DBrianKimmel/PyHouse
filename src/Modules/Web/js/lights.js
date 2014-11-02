@@ -10,9 +10,6 @@
 // import Nevow.Athena
 // import globals
 // import helpers
-// import lcars
-
-// console.log("lights.  lcars  %O", lcars);
 
 helpers.Widget.subclass(lights, 'LightsWidget').methods(
 

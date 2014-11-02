@@ -27,12 +27,12 @@ from nevow import athena
 
 # Import PyMh files and modules.
 from Modules.Web import web_utils
+from Modules.Drivers import VALID_INTERFACES, VALID_PROTOCOLS
+from Modules.Hvac import VALID_TEMP_SYSTEMS, VALID_THERMOSTAT_MODES
 from Modules.Families import VALID_FAMILIES
-from Modules.Drivers import VALID_INTERFACES
-from Modules.Drivers import VALID_PROTOCOLS
 from Modules.Housing import VALID_FLOORS
-from Modules.Scheduling import VALID_SCHEDULING_TYPES, VALID_SCHEDULE_MODES
 from Modules.Lighting import VALID_LIGHTING_TYPE
+from Modules.Scheduling import VALID_SCHEDULING_TYPES, VALID_SCHEDULE_MODES
 from Modules.Computer import logging_pyh as Logger
 
 # Handy helper for finding external resources nearby.
@@ -100,13 +100,15 @@ class LoginElement(athena.LiveElement):
         """ A JS request for various validating information has been received from the client.
 
         Return via JSON:
-            VALID_INTERFACES
             VALID_FAMILIES
             VALID_FLOORS
+            VALID_INTERFACES
             VALID_LIGHTING_TYPES
             VALID_PROTOCOLS
             VALID_SCHEDULING_TYPES
             VALID_SCHEDULE_MODES
+            VALID_TEMP_SYSTEMS
+            VALID_THERMOSTAT_MODES
         """
         l_obj = dict(
                      Families = VALID_FAMILIES,
@@ -115,7 +117,9 @@ class LoginElement(athena.LiveElement):
                      LightType = VALID_LIGHTING_TYPE,
                      ProtocolType = VALID_PROTOCOLS,
                      ScheduleType = VALID_SCHEDULING_TYPES,
-                     ScheduleMode = VALID_SCHEDULE_MODES
+                     ScheduleMode = VALID_SCHEDULE_MODES,
+                     TempSystem = VALID_TEMP_SYSTEMS,
+                     ThermostatModes = VALID_THERMOSTAT_MODES
                      )
         l_json = web_utils.JsonUnicode().encode_json(l_obj)
         return unicode(l_json)

@@ -138,23 +138,32 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 		Divmod.debug('---', 'schedules.buildLcarDataEntryScreen(1) was called.');
 		var l_schedule = arguments[1];
 		var l_entry_html = "";
-		l_entry_html += buildLcarTextWidget(self, 'ScheduleName', 'Name', l_schedule.Name);
-		l_entry_html += buildLcarTextWidget(self, 'ScheduleKey', 'Key', l_schedule.Key, 'disabled, size=05');
+		l_entry_html += buildLcarTextWidget(self, 'Name', 'Name', l_schedule.Name);
+		l_entry_html += buildLcarTextWidget(self, 'Key', 'Key', l_schedule.Key, 'disabled, size=05');
 		l_entry_html += buildLcarTrueFalseWidget(self, 'ScheduleActive', 'Active', l_schedule.Active);
 		l_entry_html += buildLcarTextWidget(self, 'ScheduleUUID', 'UUID', l_schedule.UUID, 'disabled');
 		l_entry_html += buildLcarScheduleTypeSelectWidget(self, 'ScheduleType', 'Type', l_schedule.Type);
 		l_entry_html += buildLcarTextWidget(self, 'ScheduleTime', 'Time',  l_schedule.Time);
 		l_entry_html += buildLcarRoomSelectWidget(self, 'ScheduleRoomName', 'Room Name', l_schedule.RoomName, 'disabled');
 		l_entry_html += buildLcarLightNameSelectWidget(self, 'ScheduleLightName', 'Light Name', l_schedule.LightName, 'disabled');
-		l_entry_html += buildLcarLevelSliderWidget(self, 'ScheduleLevel', 'Level', l_schedule.Level);
+		l_entry_html += buildLcarLevelSliderWidget(self, 'ScheduleLevel', 'Level', l_schedule.Level, 'handleSliderChange');
 		l_entry_html += buildLcarTextWidget(self, 'ScheduleRate', 'Rate', l_schedule.Rate, 'disabled');
-		l_entry_html += buildLcarDowWidget(self, 'ScheduleDow', 'Day f Week', l_schedule.DOW);
+		l_entry_html += buildLcarDowWidget(self, 'ScheduleDow', 'Day of Week', l_schedule.DOW);
 		l_entry_html += buildLcarScheduleModeSelectWidget(self, 'ScheduleMode', 'Mode', l_schedule.Mode);
 		l_entry_html += buildLcarEntryButtons(p_handler);
 		var l_html = build_lcars_top('Schedules', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(30, l_entry_html);
 		l_html += build_lcars_bottom();
 		self.nodeById('DataEntryDiv').innerHTML = l_html;
+	},
+	function handleSliderChange(p_event){
+		Divmod.debug('---', 'schedules.handleSliderChange() called. - Event= ' + p_event);
+		console.log("schedules.handleSliderChange   Event:  %O", p_event);
+		var l_obj = globals.House.ScheduleObj;
+		var l_self = globals.House.Self;
+		var l_level = fetchSliderWidget(l_self, 'ScheduleLevel');
+		// Divmod.debug('---', 'schedules.handleSliderChange() called. - Level= ' + l_level);
+		updateSliderBoxValue(l_self, 'ScheduleLevel', l_level)
 	},
 
 	/**
@@ -166,8 +175,8 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 
 	function fetchEntry(self) {
         var l_data = {
-            Name      : fetchTextWidget(self, 'ScheduleName'),
-            Key       : fetchTextWidget(self, 'ScheduleKey'),
+            Name      : fetchTextWidget(self, 'Name'),
+            Key       : fetchTextWidget(self, 'Key'),
 			Active    : fetchTrueFalseWidget(self, 'ScheduleActive'),
 			UUID      : fetchTextWidget(self, 'ScheduleUUID'),
 			ScheduleType : fetchSelectWidget(self, 'ScheduleType'),
@@ -175,7 +184,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 			DOW       : fetchDowWidget(self, 'ScheduleDow'),
 			Mode      : fetchSelectWidget(self, 'ScheduleMode'),
 
-			Level     : fetchLevelWidget(self, 'ScheduleLevel'),
+			Level     : fetchSliderWidget(self, 'ScheduleLevel'),
 			Rate      : fetchTextWidget(self, 'ScheduleRate'),
 			RoomName  : fetchSelectWidget(self, 'ScheduleRoomName'),
 			LightName : fetchSelectWidget(self, 'ScheduleLightName'),
