@@ -42,14 +42,10 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 	function showSelectButtons(self) {
 		self.nodeById('SelectionButtonsDiv').style.display = 'block';
 	},
-	function XXXhideSelectedHouse(self) {
-		self.nodeById('DataEntryDiv').style.display = 'none';
-	},
-	function showSelectedHouse(self) {
-		self.nodeById('DataEntryDiv').style.display = 'block';
-	},
-	
-	// ============================================================================
+
+
+
+// ============================================================================
 	/**
 	 * Build a screen full of buttons (only one now) - One for each house and some actions.
 	 */
@@ -81,7 +77,6 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 		l_defer.addErrback(eb_getHousesInfo);
         return false;
 	},
-
 	/**
 	 * A house was selected.
 	 * Show the house and then load the information for the selected house.
@@ -97,14 +92,12 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 		}
 		// Divmod.debug('---', 'houseSelect.getSelectedHouseData() was called. ');
 		self.hideSelectButtons();
-		// self.showSelectedHouse();
 		// self.nodeById('HouseSelectedDiv').innerHTML = 'Working on house: ' + globals.House.HouseName;
         var l_defer = self.callRemote("getSelectedHouseData");  // call server @ web_houseSelect.py
 		l_defer.addCallback(cb_getSelectedHouseData);
 		l_defer.addErrback(eb_getSelectedHouseData);
         return false;
 	},
-
 	/**
 	 * Handle the user clicking on some button of the house select menu.
 	 * 
@@ -115,7 +108,7 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 		var l_ix = p_node.name;
 		var l_name = p_node.value;
 		var l_node = 0;
-		Divmod.debug('---', 'houseSelect.handleMenuOnClick(1) was called. ' + l_ix + '  ' + l_name);
+		// Divmod.debug('---', 'houseSelect.handleMenuOnClick(1) was called. ' + l_ix + '  ' + l_name);
 		if (l_ix <= 1000) {
 			globals.House.HouseIx = l_ix;
 			globals.House.HouseName = l_name;
@@ -124,6 +117,7 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 			// Divmod.debug('---', 'houseSelect.handleMenuOnClick(2) was called. ' + l_ix + '  ' + l_name);
 			// self.hideSelectedHouse();
 			l_node = findWidgetByClass('HouseMenu');
+			self.hideWidget();
 			l_node.showWidget();
 		} else if (l_ix == 10001) {  // The "Add" button
 			globals.House.HouseIx = -1;

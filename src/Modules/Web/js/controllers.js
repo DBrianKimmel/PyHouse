@@ -192,7 +192,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 		var l_obj = globals.House.LightObj;
 		var l_self = globals.House.Self;
 		Divmod.debug('---', 'controllers.familyChanged was called !!!');
-		var l_family = fetchSelectWidget(l_self, 'LightFamily');
+		var l_family = fetchSelectWidget(l_self, 'ControllerFamily');
 		l_obj.ControllerFamily = l_family;
 		l_self.fillEntry(l_obj);
 	},

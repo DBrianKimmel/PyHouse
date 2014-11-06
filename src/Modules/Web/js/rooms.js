@@ -10,7 +10,6 @@
 // import Nevow.Athena
 // import globals
 // import helpers
-// import lcars
 
 helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 

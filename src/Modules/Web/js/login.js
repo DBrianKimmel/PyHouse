@@ -40,7 +40,6 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
      */
 	function ready(self) {
 		function cb_widgetReady() {
-			// Divmod.debug('---', 'login.cb_widgetReady() was called.');
 			self.showLoggingInDiv();
 			self.fetchValidLists();  // Continue with next phase
 		}
@@ -54,10 +53,9 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 		return l_defer;
 	},
 	function hideLoggingInDiv(self) {
-		self.nodeById('SelectionButtonsDiv').style.display = "none";
+		self.nodeById('SelectionButtonsDiv').style.display = "none";  // No space taken
 	},
 	function showLoggingInDiv(self) {
-		// Divmod.debug('---', 'login.showLoggingInDiv() was called.');
 		self.nodeById('SelectionButtonsDiv').style.display = 'block';
 	},
 
@@ -91,7 +89,7 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 		l_login_html += buildLcarPasswordWidget(self, 'LoginPassword', 'Password', 'size=20');
 		l_login_html += buildLcarButton({'Name' : 'Login', 'Key' : 12345}, p_handler, 'lcars-salmon-bg');
 		var l_html = build_lcars_top('Login', 'lcars-salmon-color');
-		l_html += build_lcars_middle_menu(2, l_login_html);
+		l_html += build_lcars_middle_menu(10, l_login_html);
 		l_html += build_lcars_bottom();
 		self.nodeById('SelectionButtonsDiv').innerHTML = l_html;
 	},
@@ -131,10 +129,14 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 	 * Based on the login success - show the next screen.
 	 */
 	function showNextScreen(self, p_obj) {
-		function cb_showNextScreen(res) {
+		function cb_showNextScreen() {
 			var l_node = findWidgetByClass('RootMenu');
+			self.hideWidget();
 			l_node.showWidget(self);
 			}
+		function eb_showNextScreen(p_reason) {
+			Divmod.debug('---', 'ERROR = login.showNextScreen() - ' + p_reason);
+		}
 		// Divmod.debug('---', 'login.showNextScreen() was called.');
 		if (p_obj.IsLoggedIn === true) {
 			globals.User.ID = p_obj.Username;
@@ -144,6 +146,7 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 			self.hideLoggingInDiv(self);
 			var l_defer = serverState(22);
 			l_defer.addCallback(cb_showNextScreen);
+			l_defer.addErrback(eb_showNextScreen);
 		} else {
 			Divmod.debug('---', 'login.showNextScreen() was called.');
 			self.showLoggingInDiv(self);

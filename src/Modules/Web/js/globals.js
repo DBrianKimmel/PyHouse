@@ -460,16 +460,10 @@ function buildAthenaId(self, p_id) {
 	return l_ret;
 }
 
-function setSizeAttribute(p_options) {
-	var l_size = 40;
-	var l_options = p_options;
-	if (l_options === undefined)
-		l_options = '';
+function setCheckedAttribute(p_checked) {
 	var l_html = "";
-	var l_ix = l_options.toLowerCase().indexOf('size=');
-	if (l_ix > -1)
-		l_size = l_options.substring(l_ix+5, l_ix+7);
-	l_html += " size='" + l_size + "'";
+	if (p_checked)
+		l_html += " checked='checked'";
 	return l_html;
 }
 function setIdAttribute(p_id) {
@@ -477,13 +471,37 @@ function setIdAttribute(p_id) {
 	l_html += " id='" + p_id + "'";
 	return l_html;
 }
+function setNameAttribute(p_name) {
+	var l_html = "";
+	l_html += " name='" + p_name + "'";
+	return l_html;
+}
+function setSizeOption(p_options) {
+	var l_size = 40;
+	if (p_options !== undefined) {
+		var l_ix = p_options.toLowerCase().indexOf('size=');
+		if (l_ix > -1)
+			l_size = p_options.substring(l_ix+5, l_ix+7);
+	}
+	return setSizeAttribute(l_size);
+}
+function setSizeAttribute(p_size) {
+	var l_html = '';
+	l_html += " size='" + p_size + "'";
+	return l_html;
+}
+function setValueAttribute(p_value) {
+	var l_html = " value='" + p_value + "'";
+	return l_html;
+}
 function buildTopDivs(p_caption) {
 	var l_html = '';
 	l_html += "<div class='lcars-row spaced'>\n";
 	l_html += "<div class=lcars-column u-3-4'>\n";
 	l_html += "<div class='lcars-button radius'>\n";
-	if (p_caption !== 'undefined')
+	if (p_caption !== 'undefined') {
 		l_html += p_caption + "&nbsp";
+	}
 	return l_html;
 }
 function buildBottomDivs() {
@@ -500,7 +518,7 @@ function buildBottomDivs() {
 function buildButton(p_obj, p_handler, p_background_color, /* optional */ nameFunction) {
 	var l_html = '<td>';
 	l_html += "<button type='button' ";
-	l_html += "value='" + p_obj.Name + "' ";
+	l_html += setValueAttrubute(p_obj.Name);
 	l_html += "name ='" + p_obj.Key + "' ";
 	l_html += "style = 'background-color: " + p_background_color + "' ";
 	l_html += "onclick='return Nevow.Athena.Widget.handleEvent(this, \"onclick\", \""  + p_handler + "\" ";
@@ -538,9 +556,9 @@ function buildLcarButton(p_obj, p_handler, p_background_color, /* optional */ na
 	var l_html = '';
 	//l_html += "<div class='lcars-button radius " + p_background_color + "'>";
 	l_html += "<button type='button' ";
-	l_html += "value='" + p_obj.Name + "' ";
+	l_html += setValueAttribute(p_obj.Name);
 	l_html += "class='lcars-button radius " + p_background_color + "' ";
-	l_html += "name='" + p_obj.Key + "' ";
+	l_html += setNameAttribute(p_obj.Key);
 	l_html += "onclick='return Nevow.Athena.Widget.handleEvent(this, \"onclick\", \""  + p_handler + "\" ";
 	l_html += ");' >\n";
 	if (typeof nameFunction === 'function')
@@ -709,16 +727,18 @@ function buildLcarEntryButtons(p_handler, /* optional */ noOptions) {
  * @param p_value  is bool showing the current value .
  */
 function buildRadioButtonWidget(p_name, p_label, p_value, p_checkVal) {
-	var l_html = "&nbsp;<input type='radio' name='" + p_name + "' value='" + p_value + "' ";
-	if (p_value == p_checkVal)
-		l_html += "checked='checked'";
-	l_html += "/>" + p_label + '&nbsp;\n';
+	var l_html = "&nbsp;<input type='radio'";
+	l_html += setNameAttribute(p_name);
+	l_html += setValueAttribute(p_value);
+	l_html += setCheckedAttribute(p_value === p_checkVal);
+	l_html += "/>" + p_label + "&nbsp;\n";
 	return l_html;
 }
 function buildLcarRadioButtonWidget(p_name, p_label, p_value, p_checkVal) {
-	var l_html = "&nbsp;<input type='radio' name='" + p_name + "' value='" + p_value + "' ";
-	if (p_value == p_checkVal)
-		l_html += "checked='checked'";
+	var l_html = "&nbsp;<input type='radio'";
+	l_html += setNameAttribute(p_name);
+	l_html += setValueAttribute(p_value);
+	l_html += setCheckedAttribute(p_value === p_checkVal);
 	l_html += "/>" + p_label + '&nbsp;\n';
 	return l_html;
 }
@@ -729,7 +749,7 @@ function buildTrueFalseWidget(p_name, p_value) {
 	var l_value = p_value !== false;  // force to be a bool
 	l_html += buildRadioButtonWidget(p_name, 'True',  true, l_value);
 	l_html += buildRadioButtonWidget(p_name, 'False', false, l_value);
-	l_html += '</span>\n';
+	l_html += "</span>\n";
 	return l_html;
 }
 /**
@@ -743,8 +763,9 @@ function buildLcarTrueFalseWidget(self, p_id, p_caption, p_value) {
 	l_html += "<span class='lcars-button-addition'>\n";
 	l_html += buildLcarRadioButtonWidget(l_name, 'True',  true, l_value);
 	l_html += buildLcarRadioButtonWidget(l_name, 'False', false, l_value);
-	l_html += '</span>\n';
-	l_html += buildBottomDivs;  // Button
+	l_html += "</span>";
+	l_html += buildBottomDivs();
+	// Divmod.debug('---', 'globals.buildLcarTrueFalseWidget() - ' + l_html);
 	return l_html;
 }
 function fetchTrueFalseWidget(self, p_name) {
@@ -785,7 +806,8 @@ function buildSelectWidget(p_id, p_list, p_checked, /* optional */ p_optionChang
 	l_html += ">\n";
 	for (var ix = 0; ix < p_list.length; ix++) {
 		var l_name = p_list[ix];
-		l_html += "<option value='" + ix + "' ";
+		l_html += "<option";
+		l_html += setValueAttribute(ix);
 		if (l_name == p_checked)
 			l_html += 'selected ';
 		l_html += ">" + l_name + "</option>\n";
@@ -805,12 +827,13 @@ function buildLcarSelectWidget(self, p_id, p_caption, p_list, p_checked, /* opti
 	l_html += ">\n";
 	for (var ix = 0; ix < p_list.length; ix++) {
 		var l_name = p_list[ix];
-		l_html += "<option value='" + ix + "' ";
+		l_html += "<option";
+		l_html += setValueAttribute(ix);
 		if (l_name == p_checked)
 			l_html += 'selected ';
 		l_html += ">" + l_name + "</option>\n";
 	}
-	l_html += "</select>\n";
+	l_html += "</select>";
 	l_html += buildBottomDivs();
 	return l_html;
 }
@@ -885,19 +908,22 @@ function buildLcarSliderWidget(self, p_id, p_caption, p_value, p_min, p_max, p_s
 	l_out += setIdAttribute(l_id);
 	l_out += ">";
 	l_html += "<input class='lcars-button-addition' ";
-	l_html += "type='range' name='slider'";
+	l_html += "type='range'";
+	l_html += setNameAttribute('slider');
 	l_html += setIdAttribute(l_id + "-Slider");
 	l_html += "min='" + p_min + "' ";
 	l_html += "max='" + p_max + "' ";
 	l_html += "step='" + p_step + "' ";
 	l_html += "onchange='return Nevow.Athena.Widget.handleEvent(this, \"onchange\", \"" + p_handler + "\");' ";
-	l_html += "value='" + p_value + "' ";
-	l_html += ">\n";
+	l_html += setValueAttribute(p_value);
+	l_html += " >\n";
 	l_html += '&nbsp';
 	l_html += "<input type='text'";
 	l_html += setIdAttribute(l_id);
-	l_html += "-Box' size='4' value='" + p_value;
-	l_html += "' >\n";
+	l_html += "-Box'";
+	l_html += setSizeAttribute(4);
+	l_html += setValueAttribute(p_value);
+	l_html += " >\n";
 	l_out += l_html;
 	l_out += "</span>\n";
 	l_out += buildBottomDivs();
@@ -941,9 +967,9 @@ function buildLcarTextWidget(self, p_id, p_caption, p_value, p_options) {
 	var l_html = buildTopDivs(p_caption);
 	l_html += "<input type='text' class='lcars-button-addition'";
 	l_html += setIdAttribute(buildAthenaId(self, p_id));
-	l_html += setSizeAttribute(p_options);
-	l_html += " value='" + p_value;
-	l_html += "' ";
+	l_html += setSizeOption(p_options);
+	l_html += setValueAttribute(p_value);
+	l_html += " ";
 	if (l_options.toLowerCase().indexOf('disable') > -1)
 		l_html += "disabled='disabled' ";
 	l_html += " />\n";
@@ -954,7 +980,9 @@ function buildLcarPasswordWidget(self, p_id, p_caption) {
 	var l_html = buildTopDivs(p_caption);
 	l_html += "<input type='password' class='lcars-button-addition'";
 	l_html += setIdAttribute(buildAthenaId(self, p_id));
-	l_html += "' size='20' value='' />\n";
+	l_html += setSizeAttribute(20);
+	l_html += setValueAttribute('');
+	l_html += " />\n";
 	l_html += buildBottomDivs();
 	return l_html;
 }
@@ -969,7 +997,8 @@ function buildTextWidget(p_id, p_value, /* optional */ p_options) {
 		l_options = '';
 	l_html += "<input type='text'";
 	l_html += setIdAttribute(p_id);
-	l_html += "' size='40' value='" + p_value;
+	l_html += "' size='40'";
+	l_html += setValueAttribute(p_value);
 	l_html += "' ";
 	if (l_options.toLowerCase().indexOf('disable') > -1)
 		l_html += "disabled='disabled' ";
@@ -979,42 +1008,6 @@ function buildTextWidget(p_id, p_value, /* optional */ p_options) {
 
 
 
-/**
- * Build a DOW widget (mon = 0)
- */
-function buildDowWidget(p_id, p_value, /* optional */ p_options) {
-	var l_html = '';
-	l_html += "<input type='checkbox' name='" + p_id + "' value='1'";
-	if (p_value & 1)
-		l_html += " checked ";
-	l_html += ">Mon&nbsp\n";
-	l_html += "<input type='checkbox' name='" + p_id + "' value='2'";
-	if (p_value & 2)
-		l_html += " checked ";
-	l_html += ">Tue&nbsp\n";
-	l_html += "<input type='checkbox' name='" + p_id + "' value='4'";
-	if (p_value & 4)
-		l_html += " checked ";
-	l_html += ">Wed&nbsp\n";
-	l_html += "<input type='checkbox' name='" + p_id + "' value='8'";
-	if (p_value & 8)
-		l_html += " checked ";
-	l_html += ">Thu&nbsp\n";
-	l_html += "<input type='checkbox' name='" + p_id + "' value='16'";
-	if (p_value & 16)
-		l_html += " checked ";
-	l_html += ">Fri&nbsp\n";
-	l_html += "<input type='checkbox' name='" + p_id + "' value='32'";
-	if (p_value & 32)
-		l_html += " checked ";
-	l_html += ">Sat&nbsp\n";
-	l_html += "<input type='checkbox' name='" + p_id + "' value='64'";
-	if (p_value & 64)
-		l_html += " checked ";
-	l_html += ">Sun&nbsp\n";
-
-	return l_html;
-}
 function buildLcarDowWidget(self, p_id, p_caption, p_value, /* optional */ p_options) {
 	var l_html = buildTopDivs(p_caption);
 	l_html += "<span class='lcars-button-addition'";
@@ -1063,85 +1056,6 @@ function fetchDowWidget(self, p_id) {
 	}
 	// Divmod.debug('---', 'globals.fetchDowWidget() called.  FinalValue=' + l_ret);
 	return l_ret;
-}
-
-
-
-/**
- * Build the top part of the display.
- *
- * @param: p_title(str) is the title to display near the center of the display
- */
-function build_lcars_top(p_title, /* optional* */ p_color){
-	// Divmod.debug('---', 'globals.build_lcars_top() was called.');
-	var l_color = p_color;
-	if (l_color === undefined) 
-		l_color = 'lcars-salmon-color';
-	var l_html = '';
-	l_html += "<div class='lcars-row spaced'>\n";
-    l_html += "  <div class='lcars-column u-1-8 lcars-elbow left bottom lcars-blue-bg'></div>\n";
-	l_html += "  <div class='lcars-column u-6-8 lcars-divider lcars-blue-tan-divide'>\n";
-	l_html += "    <div class='lcars-row'>\n";
-	l_html += "      <div class='lcars-column u-1-2'>\n";
-	l_html += "        <h1 class='right " + l_color + "'>" + p_title + "</h1>\n";
-	l_html += "      </div>\n";  // column_1-2
-	l_html += "    </div>\n";  // row 2
-	l_html += "  </div>\n";  // column_6-8
-	l_html += "  <div class='lcars-column u-1-8 lcars-elbow right bottom lcars-tan-bg'></div>\n";
-	l_html += "</div>\n";
-	return l_html;
-}
-/**
- * Bild the middle part of the display
- *
- * @param: p_rows is the number of rows to allow space for.
- * @param: p_html is the (big) html for the entire menu.
- */
-function build_lcars_middle_menu(p_rows, p_html){
-	// Divmod.debug('---', 'globals.build_lcars_middle() was called.');
-	var l_html = '';
-	var l_half = (p_rows + 1) / 2;
-	l_html += "<div class='lcars-row spaced'>\n";  // row 1
-	l_html += "  <div class='lcars-column u-1-8'>\n";  // Column 1
-	l_html += "    <ul class='lcars-menu'>\n";
-	for (var l_row = 0; l_row < l_half; l_row++) {
-		l_html += "      <li class='lcars-blue-bg'></li>\n";
-	}
-	for (l_row = 0; l_row < l_half; l_row++) {
-		l_html += "      <li class='lcars-tan-bg'></li>\n";
-	}
-	l_html += "    </ul>\n";
-	l_html += "  </div>\n";  // column 1
-	l_html += "  <div class='lcars-column u-6-8'>\n";
-	l_html += p_html;
-
-	l_html += "  </div>\n";
-	l_html += "  <div class='lcars-column u-1-8'>\n";
-	l_html += "    <ul class='lcars-menu'>\n";  // RIGHT
-	for (l_row = 0; l_row < l_half; l_row++) {
-		l_html += "      <li class='lcars-tan-bg'></li>\n";
-	}
-	for (l_row = 0; l_row < l_half; l_row++) {
-		l_html += "      <li class='lcars-blue-bg'></li>\n";
-	}
-	l_html += "    </ul>\n";
-	l_html += "  </div>\n";
-	l_html += "</div>\n";
-	// console.log("globals.build_lcars_middle() - %O", l_html)
-	return l_html;
-}
-/**
- * Build the top part of the display.
- */
-function build_lcars_bottom(){
-	// Divmod.debug('---', 'globals.build_lcars_bottom() was called.');
-	var l_html = '';
-	l_html += "<div class='lcars-row spaced'>\n";
-	l_html += "  <div class='lcars-column u-1-8 lcars-elbow left top lcars-tan-bg'></div>";
-	l_html += "  <div class='lcars-column u-6-8 lcars-divider bottom lcars-tan-blue-divide'></div>";
-	l_html += "  <div class='lcars-column u-1-8 lcars-elbow right top lcars-blue-bg'></div>\n";
-	l_html += "</div>\n";
-	return l_html;
 }
 
 

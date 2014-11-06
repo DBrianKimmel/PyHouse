@@ -177,7 +177,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		var l_html = self.buildAllParts(l_light, l_html, p_handler, 'familyChanged');
 		var l_html_2 = "";
 		l_html_2 += build_lcars_top('Enter Light Data', 'lcars-salmon-color');
-		l_html_2 += build_lcars_middle_menu(26, l_html);
+		l_html_2 += build_lcars_middle_menu(40, l_html);
 		l_html_2 += build_lcars_bottom();
 		self.nodeById('DataEntryDiv').innerHTML = l_html_2;
 	},

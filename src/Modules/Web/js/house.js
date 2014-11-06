@@ -49,7 +49,35 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 		self.nodeById('HouseEntryDiv').style.display = 'block';		
 	},
 
-	// ============================================================================
+
+
+// ============================================================================
+	function buildLcarDataEntryScreen(self, p_entry, p_handler){
+		// Divmod.debug('---', 'house.cb_fetchHouseData() was called. ' + p_json);
+		// console.log("house.buildLcarRoomDataEntryScreen() - self = %O", self);
+		var l_house = arguments[1];
+		var l_entry_html = "";
+		l_entry_html += buildLcarTextWidget(self, 'Name', 'House Name', l_house.Name);
+		l_entry_html += buildLcarTextWidget(self, 'Key', 'House Index', l_house.Key);
+		l_entry_html += buildLcarTrueFalseWidget(self, 'Active', 'Active ?', l_house.Active);
+		l_entry_html += buildLcarTextWidget(self, 'Street', 'Street', l_house.Street);
+		l_entry_html += buildLcarTextWidget(self, 'City', 'City', l_house.City);
+		l_entry_html += buildLcarTextWidget(self, 'State', 'State', l_house.State);
+		l_entry_html += buildLcarTextWidget(self, 'ZipCode', 'Zip Code', l_house.ZipCode);
+		l_entry_html += buildLcarTextWidget(self, 'Phone', 'Phone', l_house.Phone);
+		l_entry_html += buildLcarTextWidget(self, 'Latitude', 'Latitude', l_house.Latitude);
+		l_entry_html += buildLcarTextWidget(self, 'Longitude', 'Longitude', l_house.Longitude);
+		l_entry_html += buildLcarTextWidget(self, 'TimeZoneName', 'TimeZone Name', l_house.TimeZone);
+		l_entry_html += buildLcarTextWidget(self, 'TimeZoneOffset', 'TimeZone Offset', l_house.TimeZone);
+		l_entry_html += buildLcarTextWidget(self, 'DST', 'DST', l_house.DaylightSavingsTime);
+		l_entry_html += buildLcarTextWidget(self, 'UUID', 'UUID', l_house.UUID);
+
+		l_entry_html += buildLcarEntryButtons(p_handler);
+		var l_html = build_lcars_top('Enter House Data', 'lcars-salmon-color');
+		l_html += build_lcars_middle_menu(20, l_entry_html);
+		l_html += build_lcars_bottom();
+		self.nodeById('DataEntryDiv').innerHTML = l_html;
+	},
 	/**
 	 * This triggers getting the house data from the server.
 	 * The server calls displayHouseButtons with the house info.
@@ -81,24 +109,8 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 	 * Fill in the schedule entry screen with all of the data for this schedule.
 	 * 
 	 */
-	function fillEntry(self, p_obj) {
-		Divmod.debug('---', 'house.fillEntry(1) was called. ');
-		console.log("house.fillEntry() - Obj = %O", p_obj);
-        self.nodeById('NameDiv').innerHTML = buildTextWidget('HouseName', p_obj.Name);
-        self.nodeById('KeyDiv').innerHTML = buildTextWidget('HouseKey', p_obj.Key, 'disabled');
-		self.nodeById('ActiveDiv').innerHTML = buildTrueFalseWidget('HouseActive', p_obj.Active);
-		self.nodeById('StreetDiv').innerHTML = buildTextWidget('HouseStreet', p_obj.Location.Street);
-		self.nodeById('CityDiv').innerHTML = buildTextWidget('HouseCity', p_obj.Location.City);
-		self.nodeById('StateDiv').innerHTML = buildTextWidget('HouseState', p_obj.Location.State);
-		self.nodeById('ZipCodeDiv').innerHTML = buildTextWidget('HouseZipCode', p_obj.Location.ZipCode);
-		self.nodeById('PhoneDiv').innerHTML = buildTextWidget('HousePhone', p_obj.Location.Phone);
-		self.nodeById('LatitudeDiv').innerHTML = buildTextWidget('HouseLatitude', p_obj.Location.Latitude);
-		self.nodeById('LongitudeDiv').innerHTML = buildTextWidget('HouseLongitude', p_obj.Location.Longitude);
-		self.nodeById('TimeZoneNameDiv').innerHTML = buildTextWidget('HouseTimeZoneName', p_obj.Location.TimeZoneName);
-		self.nodeById('TimeZoneOffsetDiv').innerHTML = buildTextWidget('HouseTimeZoneOffset', p_obj.Location.TimeZoneOffset);
-		self.nodeById('DaylightSavingsTimeDiv').innerHTML = buildTextWidget('HouseDaylightSavingsTime', p_obj.Location.DaylightSavingsTime);
-		self.nodeById('UUIDDiv').innerHTML = buildTextWidget('HouseUUID', p_obj.UUID, 'disabled');
-		self.nodeById('HouseEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick', 'NoDelete');
+	function fillEntry(self, p_entry) {
+		buildLcarDataEntryScreen(p_entry, 'handleDataOnClick')
 	},
 	function createEntry(self, p_ix) {
     	//Divmod.debug('---', 'house.createEntry() was called. ' + p_ix);
@@ -127,20 +139,20 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 	function fetchEntry(self) {
 		//Divmod.debug('---', 'house.fetchEntry() was called. ');
         var l_data = {
-            Name : fetchTextWidget(self, 'HouseName'),
-            Key : fetchTextWidget(self, 'HouseKey'),
-			Active : fetchTrueFalseWidget(self, 'HouseActive'),
-			Street : fetchTextWidget(self, 'HouseStreet'),
-			City : fetchTextWidget(self, 'HouseCity'),
-			State : fetchTextWidget(self, 'HouseState'),
-			ZipCode : fetchTextWidget(self, 'HouseZipCode'),
-			Phone : fetchTextWidget(self, 'HousePhone'),
-			Latitude : fetchTextWidget(self, 'HouseLatitude'),
-			Longitude : fetchTextWidget(self, 'HouseLongitude'),
-			TimeZoneName : fetchTextWidget(self, 'HouseTimeZoneName'),
-			TimeZoneOffset : fetchTextWidget(self, 'HouseTimeZoneOffset'),
-			DaylightSavingsTime : fetchTextWidget(self, 'HouseDaylightSavingsTime'),
-			UUID : fetchTextWidget(self, 'HouseUUID'),
+            Name			: fetchTextWidget(self, 'Name'),
+            Key				: fetchTextWidget(self, 'Key'),
+			Active			: fetchTrueFalseWidget(self, 'Active'),
+			Street			: fetchTextWidget(self, 'Street'),
+			City			: fetchTextWidget(self, 'City'),
+			State			: fetchTextWidget(self, 'State'),
+			ZipCode			: fetchTextWidget(self, 'ZipCode'),
+			Phone			: fetchTextWidget(self, 'Phone'),
+			Latitude		: fetchTextWidget(self, 'Latitude'),
+			Longitude		: fetchTextWidget(self, 'Longitude'),
+			TimeZoneName	: fetchTextWidget(self, 'TimeZoneName'),
+			TimeZoneOffset	: fetchTextWidget(self, 'TimeZoneOffset'),
+			DaylightSavingsTime : fetchTextWidget(self, 'DaylightSavingsTime'),
+			UUID			: fetchTextWidget(self, 'UUID'),
 			Delete : false
             }
 		return l_data;
@@ -226,4 +238,6 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
         return false;  // false stops the chain.
 	}
 );
+// Divmod.debug('---', 'house.cb_fetchHouseData() was called. ' + p_json);
+// console.log("house.buildLcarRoomDataEntryScreen() - self = %O", self);
 //### END DBK

@@ -89,8 +89,8 @@ helpers.Widget.subclass(houseMenu, 'HouseMenuWidget').methods(
 		self.nodeById('SelectionButtonsDiv').innerHTML = l_html;
 	},
 	function showWidget(self) {
-		Divmod.debug('---', 'houseMenu.showWidget() was called.');
-		console.log("houseMenu.showWidget()  self  %O", self);
+		// Divmod.debug('---', 'houseMenu.showWidget() was called.');
+		// console.log("houseMenu.showWidget()  self  %O", self);
 		self.node.style.display = 'block';
 		self.showSelectionButtons();
 		self.buildLcarSelectScreen();
