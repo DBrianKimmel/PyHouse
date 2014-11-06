@@ -61,15 +61,15 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 	},
 
 
-	// ============================================================================
 
+// ============================================================================
 	/**
 	 * Build a screen full of buttons - One for each light and some actions.
 	 */
 	function buildLcarSelectScreen(self){
 		var l_button_html = buildLcarSelectionButtonsTable(globals.House.HouseObj.Lights, 'handleMenuOnClick');
 		var l_html = build_lcars_top('Lights', 'lcars-salmon-color');
-		l_html += build_lcars_middle_menu(2, l_button_html);
+		l_html += build_lcars_middle_menu(10, l_button_html);
 		l_html += build_lcars_bottom();
 		self.nodeById('SelectionButtonsDiv').innerHTML = l_html;
 	},
@@ -309,6 +309,6 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
         return false;  // false stops the chain.
 	}
 );
-//console.log("lights.handleDataOnClick()  json  %O", l_json);
 //Divmod.debug('---', 'lights.handleDataOnClick(Change) was called.');
+//console.log("lights.handleDataOnClick()  json  %O", l_json);
 //### END DBK

@@ -103,11 +103,11 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 	 */
 	function doHandleOnClick(self, p_node) {  // from html handler onSubmit
 		var l_key = p_node.name;
-		Divmod.debug('---', 'rootMenu.doHandleOnClick() was called with ' + l_key);
+		// Divmod.debug('---', 'rootMenu.doHandleOnClick() was called with ' + l_key);
 		// console.log("rmb p_node", p_node);
 		switch (l_key) {
 		case 'Select':  // House Select
-			Divmod.debug('---', 'rootMenu.doHandleOnClick(Select) was called.');
+			// Divmod.debug('---', 'rootMenu.doHandleOnClick(Select) was called.');
 			self.hideWidget();
 			var l_node = findWidgetByClass('HouseSelect');
 			l_node.getHousesInfo();
@@ -124,23 +124,17 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 			l_node.startWidget();
 			break;
 		case 'Logs':
-			//Divmod.debug('---', 'rootMenu.doHandleOnClick was called for Logs.');
 			self.hideWidget();
 			var l_node = findWidgetByClass('Logs');
 			l_node.startWidget();
 			break;
-		case 'Quit':
-			// Quit the browser by logging out
-			//Divmod.debug('---', 'rootMenu.doHandleOnClick was called for Quit.');
+		case 'Quit':  // Quit the browser by logging out
 			self.doRootQuit(p_node);
 			break;
-		case 'Reload':
-			// Force a save and reload of all XML data
-			//Divmod.debug('---', 'rootMenu.doHandleOnClick was called for Reload.');
+		case 'Reload':  // Force a save and reload of all XML data
 			self.callRemote("doRootMenuReload", '');
 			break;
-		default:
-			// We should never get here
+		default:  // We should never get here
 			Divmod.debug('---', 'rootMenu.doHandleOnClick was called for default.');
 			break;
 		}

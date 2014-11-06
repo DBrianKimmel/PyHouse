@@ -54,11 +54,11 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 	 * Build a screen full of buttons (only one now) - One for each house and some actions.
 	 */
 	function buildLcarSelectScreen(self){
-		Divmod.debug('---', 'houseSelect.buildLcarSelectScreen was called.');
+		// Divmod.debug('---', 'houseSelect.buildLcarSelectScreen was called.');
 		// console.log("houseSelect.buildLcarSelectScreen  Globals - %O", globals.House);
 		var l_button_html = buildLcarSelectionButtonsTable(globals.List, 'handleMenuOnClick', 'NoAdd');
 		var l_html = build_lcars_top('Select House', 'lcars-salmon-color');
-		l_html += build_lcars_middle_menu(2, l_button_html);
+		l_html += build_lcars_middle_menu(10, l_button_html);
 		l_html += build_lcars_bottom();
 		self.nodeById('SelectionButtonsDiv').innerHTML = l_html;
 	},
@@ -67,14 +67,14 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 	 */
 	function getHousesInfo(self) {
 		function cb_getHousesInfo(p_json) {
-			Divmod.debug('---', 'houseSelect.cb_getHousesInfo was called.');
+			// Divmod.debug('---', 'houseSelect.cb_getHousesInfo was called.');
 			globals.List = JSON.parse(p_json);
 			self.buildLcarSelectScreen();
 		}
 		function eb_getHousesInfo(p_result) {
 			Divmod.debug('---', 'houseSelect.eb_getHousesInfo() was called. ERROR = ' + p_result);
 		}
-		Divmod.debug('---', 'houseSelect.getHousesInfo was called.');
+		// Divmod.debug('---', 'houseSelect.getHousesInfo was called.');
 		self.showWidget()
         var l_defer = self.callRemote("getHousesToSelect", '');  // @ web_houseSelect.py
 		l_defer.addCallback(cb_getHousesInfo);
@@ -115,7 +115,7 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 		var l_ix = p_node.name;
 		var l_name = p_node.value;
 		var l_node = 0;
-		// Divmod.debug('---', 'houseSelect.handleMenuOnClick(1) was called. ' + l_ix + '  ' + l_name);
+		Divmod.debug('---', 'houseSelect.handleMenuOnClick(1) was called. ' + l_ix + '  ' + l_name);
 		if (l_ix <= 1000) {
 			globals.House.HouseIx = l_ix;
 			globals.House.HouseName = l_name;
