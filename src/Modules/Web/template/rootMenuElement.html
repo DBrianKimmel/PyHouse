@@ -6,95 +6,9 @@
 	xmlns:nevow='http://nevow.com/ns/nevow/0.1'
 	nevow:render='liveElement'>
 
-    <div id='LoggingInDiv' class='lcars-container'>
-
-        <!-- TOP ROW - Elbows & DIVIDER-->
-        <div class='lcars-row spaced'>
-
-            <div class="lcars-column u-1-8 lcars-elbow left bottom lcars-blue-bg">
-            </div>
-            <div class="lcars-column u-6-8 lcars-divider lcars-blue-tan-divide">
-                <div class="lcars-row">
-                    <div class="lcars-column u-1-2">
-                        <h1 class="right">Main Menu</h1>
-                    </div>
-                </div>
-            </div>
-            <div class="lcars-column u-1-8 lcars-elbow right bottom lcars-tan-bg">
-            </div>
-
-            <!-- MIDDLE ROW -->
-            <div class="lcars-row spaced">
-            </div>
-
-                <!-- LEFT MENU -->
-                <div class="lcars-column u-1-8">
-                    <ul class="lcars-menu">
-                        <li class="lcars-blue-bg"></li>
-                         <li class="lcars-tan-bg tall"></li>
-                    </ul>
-                </div>
-
-                <!-- CENTER SECTION -->
-                <div class="lcars-column u-6-8">
-                    <div class='lcars-row spaced'>
-                        <div class="lcars-column u-1-6">
-				            <button type='button' class='lcars-button radius' value='Select_House' name='Select'>
-				                Select House
-				                <athena:handler event='onclick' handler='doHandleOnClick' />
-				            </button>
-                        </div>
-                        <div class="lcars-column u-1-6">
-                            <button type='button' class='lcars-button radius' value='Web Server' name='Web'>
-                                Web Server
-                                <athena:handler event='onclick' handler='doHandleOnClick' />
-                            </button>
-                        </div>
-                        <div class="lcars-column u-1-6">
-                            <button type='button' class='lcars-button radius' value='Logs' name='Logs'>
-                                Logs
-                                <athena:handler event='onclick' handler='doHandleOnClick' />
-                            </button>
-                        </div>
-                    </div>
-                    <div class='lcars-row spaced'>
-                        <div class="lcars-column u-1-6">
-                            <button type='button' class='lcars-button radius lcars-pink-bg' value='Quit' name='Quit'>
-                                Quit
-                                <athena:handler event='onclick' handler='doHandleOnClick' />
-                            </button>
-                        </div>
-                        <div class="lcars-column u-1-6">
-                            <button type='button' class='lcars-button radius lcars-pink-bg' value='Reload' name='Reload'>
-                                Reload
-                                <athena:handler event='onclick' handler='doHandleOnClick' />
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Right MENU -->
-                <div class="lcars-column u-1-8">
-                    <ul class="lcars-menu right">
-                        <li class="lcars-tan-bg"></li>
-                        <li class="lcars-blue-bg tall"></li>
-                    </ul>
-                </div>
-
-            <!-- BOTTOM ROW - ELBOWS & DIVIDER -->
-            <div class="lcars-row spaced">
-                <!-- BOTTOM LEFT ELBOW -->
-                <div class="lcars-column u-1-8 lcars-elbow left top lcars-tan-bg">
-                </div>
-                <!-- BOTTOM DIVIDER AND BUTTONS -->
-                <div
-                    class="lcars-column u-6-8 lcars-divider bottom lcars-tan-blue-divide"
-                ></div>
-                <!-- BOTTOM RIGHT ELBOW -->
-                <div class="lcars-column u-1-8 lcars-elbow right top lcars-blue-bg">
-                </div>
-            </div>
-        </div>
+     <div class='lcars-container' >
+        <div id='SelectionButtonsDiv'></div>
+        <div id='DataEntryDiv'></div>
     </div>
 
 </div>

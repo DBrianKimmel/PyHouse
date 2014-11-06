@@ -21,7 +21,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 
 // ============================================================================
 	/**
-     * Place the widget in the workspace.
+     * Startup - Place the widget in the workspace and hide it.
 	 * 
 	 * @param self is    <"Instance" of undefined.lights.LightsWidget>
 	 * @returns a deferred
@@ -30,16 +30,18 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		function cb_widgetready(res) {
 			self.hideWidget();
 		}
+		// Divmod.debug('---', 'lights.ready() was called.');
 		var uris = collectIMG_src(self.node, null);
 		var l_defer = loadImages(uris);
 		l_defer.addCallback(cb_widgetready);
 		return l_defer;
 	},
 	function showWidget(self) {
+		Divmod.debug('---', 'lights.showWidget() was called.');
 		self.node.style.display = 'block';
 		self.showSelectionButtons();
 		self.hideDataEntry();
-		self.fetchHouseData();
+		self.fetchHouseData();  // Continue with next phase
 	},
 	function hideSelectionButtons(self) {
 		self.nodeById('SelectionButtonsDiv').style.display = 'none';
@@ -158,12 +160,12 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		return p_html;
 	},
 	function buildAllParts(self, p_light, p_html, p_handler, p_onchange) {
-		p_html = self.buildBasicPart(p_light, p_html, p_onchange) ;
+		p_html = self.buildBasicPart(p_light, p_html, p_onchange);
 		if (p_light.ControllerFamily == 'Insteon') {
 			p_html = self.buildInsteonPart(p_light, p_html);
 		}
         if (p_light.ControllerFamily == 'UPB') {
-        	p_html = self.buildUpbPart(p_light, p_html)
+        	p_html = self.buildUpbPart(p_light, p_html);
         }
 		p_html += buildLcarEntryButtons(p_handler);
 		return p_html;
@@ -308,5 +310,5 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 	}
 );
 //console.log("lights.handleDataOnClick()  json  %O", l_json);
-//Divmod.debug('---', 'lights.handleDataOnClick(Change) was called. JSON:' + l_json);
+//Divmod.debug('---', 'lights.handleDataOnClick(Change) was called.');
 //### END DBK

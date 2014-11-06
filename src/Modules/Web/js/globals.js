@@ -34,21 +34,15 @@
 var REQ_404 = -1;
 var REQ_ROOT = 0;
 var REQ_WITHID = 2;
-var BUTTON_INACTIVE = '#d0f0c0';
-var BUTTON_ACTIVE   = '#d0d0ff';
 var BUTTON_ADD      = 10001;
 var BUTTON_BACK     = 10002;
 var BUTTON_CHANGE   = 10003;
 var BUTTON_DELETE   = 10004;
 var COLOR_LIGHT_RED      = '#ffa0a0';
-var COLOR_LIGHT_YELLOW   = '#f7ffa0';
 var COLOR_LIGHT_GREEN    = '#b0ffa0';
-var COLOR_LIGHT_BLUE     = '#d0d0ff';
-var COLOR_LCARS_RED      = '#ff3300';
-var COLOR_LCARS_L_BLUE   = '#ccccff';
 
 globals = {
-	XXXfonts : [ 'Verdana', 'Arial', 'Helvetica', 'sans-serif' ],
+	XXXfonts : [ 'Arial', 'Helvetica', 'sans-serif' ],
 	workspace : null,
 
 	Computer : {},
@@ -336,19 +330,23 @@ function loadImages(uris) {
 	var l_ready_deferred = Divmod.Defer.Deferred();
 
 	var checkStep = function() {
+		var timer = null;
 		if ((stepcount > 120)) {
-			self.timer = null;
+			//self.timer = null;
+			timer = null;
 			l_ready_deferred.errback(new globals.ImageLoadingError(
 					'could not load all images: ' + imgsNotloaded()));
 		} else if (imgsloaded()) {
 			l_ready_deferred.callback();
 		} else {
 			stepcount++;
-			self.timer = setTimeout(checkStep, 1000 / steprate);
+			//self.timer = setTimeout(checkStep, 1000 / steprate);
+			timer = setTimeout(checkStep, 1000 / steprate);
 		}
 	};  // checkStep
 
-	self.timer = setTimeout(checkStep, 1000 / steprate);
+	//self.timer = setTimeout(checkStep, 1000 / steprate);
+	timer = setTimeout(checkStep, 1000 / steprate);
 	return l_ready_deferred;
 }  // loadImages
 
@@ -462,6 +460,40 @@ function buildAthenaId(self, p_id) {
 	return l_ret;
 }
 
+function setSizeAttribute(p_options) {
+	var l_size = 40;
+	var l_options = p_options;
+	if (l_options === undefined)
+		l_options = '';
+	var l_html = "";
+	var l_ix = l_options.toLowerCase().indexOf('size=');
+	if (l_ix > -1)
+		l_size = l_options.substring(l_ix+5, l_ix+7);
+	l_html += " size='" + l_size + "'";
+	return l_html;
+}
+function setIdAttribute(p_id) {
+	var l_html = "";
+	l_html += " id='" + p_id + "'";
+	return l_html;
+}
+function buildTopDivs(p_caption) {
+	var l_html = '';
+	l_html += "<div class='lcars-row spaced'>\n";
+	l_html += "<div class=lcars-column u-3-4'>\n";
+	l_html += "<div class='lcars-button radius'>\n";
+	if (p_caption !== 'undefined')
+		l_html += p_caption + "&nbsp";
+	return l_html;
+}
+function buildBottomDivs() {
+	var l_html = '';
+	l_html += "</div>\n";  // Button
+	l_html += "</div>\n";  // Column
+	l_html += "</div>\n";  // row 1
+	return l_html;
+}
+
 /**
  * Build a button
  */
@@ -504,6 +536,7 @@ function buildDeleteButton(p_handler) {
  */
 function buildLcarButton(p_obj, p_handler, p_background_color, /* optional */ nameFunction) {
 	var l_html = '';
+	//l_html += "<div class='lcars-button radius " + p_background_color + "'>";
 	l_html += "<button type='button' ";
 	l_html += "value='" + p_obj.Name + "' ";
 	l_html += "class='lcars-button radius " + p_background_color + "' ";
@@ -690,7 +723,9 @@ function buildLcarRadioButtonWidget(p_name, p_label, p_value, p_checkVal) {
 	return l_html;
 }
 function buildTrueFalseWidget(p_name, p_value) {
-	var l_html = "<span id='" + p_name + "Buttons'>";
+	var l_html = "<span";
+	l_html += setIdAttribute(p_name + "Buttons");
+	l_html += ">";
 	var l_value = p_value !== false;  // force to be a bool
 	l_html += buildRadioButtonWidget(p_name, 'True',  true, l_value);
 	l_html += buildRadioButtonWidget(p_name, 'False', false, l_value);
@@ -704,17 +739,12 @@ function buildLcarTrueFalseWidget(self, p_id, p_caption, p_value) {
 	var l_html = '';
 	var l_name = buildAthenaId(self, p_id);
 	var l_value = p_value !== false;  // force to be a bool
-	l_html += "<div class='lcars-row spaced'>\n";
-	l_html += "<div class=lcars-column u-3-4'>\n";
-	l_html += "<div class='lcars-button radius'>\n";
-	l_html += p_caption;
+	l_html += buildTopDivs(p_caption);
 	l_html += "<span class='lcars-button-addition'>\n";
 	l_html += buildLcarRadioButtonWidget(l_name, 'True',  true, l_value);
 	l_html += buildLcarRadioButtonWidget(l_name, 'False', false, l_value);
 	l_html += '</span>\n';
-	l_html += "</div>\n";  // Button
-	l_html += "</div>\n";  // Column
-	l_html += "</div>\n";  // row 1
+	l_html += buildBottomDivs;  // Button
 	return l_html;
 }
 function fetchTrueFalseWidget(self, p_name) {
@@ -747,7 +777,8 @@ function buildSelectWidget(p_id, p_list, p_checked, /* optional */ p_optionChang
 	// Divmod.debug('---', 'globals.buildSelectWidget() called.  p_list=' + p_list + '  p_checked=' + p_checked + '  Change=' + p_optionChange);
 	var l_option = p_optionChange;
 	var l_html = "";
-	l_html += "<select id='" + p_id + "'";
+	l_html += "<select";
+	l_html += setIdAttribute(p_id);
 	if (l_option !== 'undefined') {
 		l_html += " onchange='" + l_option + "()'";
 	}
@@ -766,11 +797,9 @@ function buildLcarSelectWidget(self, p_id, p_caption, p_list, p_checked, /* opti
 	// Divmod.debug('---', 'globals.buildLcarSelectWidget() called.  p_id= ' + p_id + '  p_list= ' + p_list + '  p_checked= ' + p_checked + '  Change= ' + p_optionChange);
 	var l_option = p_optionChange;
 	var l_html = "";
-	l_html += "<div class='lcars-row spaced'>\n";
-	l_html += "<div class=lcars-column u-3-4'>\n";
-	l_html += "<div class='lcars-button radius'>\n";
-	l_html += p_caption;
-	l_html += "<select class='lcars-button-addition' id='" + buildAthenaId(self, p_id) + "' ";
+	l_html += buildTopDivs(p_caption);
+	l_html += "<select class='lcars-button-addition'";
+	l_html += setIdAttribute(buildAthenaId(self, p_id));
 	if (l_option !== 'undefined') 
 		l_html += "onchange='return Nevow.Athena.Widget.handleEvent(this, \"onchange\", \"" + l_option + "\");' ";
 	l_html += ">\n";
@@ -782,9 +811,7 @@ function buildLcarSelectWidget(self, p_id, p_caption, p_list, p_checked, /* opti
 		l_html += ">" + l_name + "</option>\n";
 	}
 	l_html += "</select>\n";
-	l_html += "</div>\n";
-	l_html += "</div>\n";
-	l_html += "</div>\n";
+	l_html += buildBottomDivs();
 	return l_html;
 }
 function fetchSelectWidget(self, p_id) {
@@ -810,16 +837,8 @@ function buildLcarRoomSelectWidget(self, p_id, p_caption, p_checked) {
 		l_list[ix] = l_obj[ix].Name;
 	return buildLcarSelectWidget(self, p_id, p_caption, l_list, p_checked);
 }
-function buildLightNameSelectWidget(p_id, p_checked) {
-	//Divmod.debug('---', 'globals.buildLightNameSelectWidget() was called. Id=' + p_id + '  Checked=' + p_checked);
-	var l_obj = globals.House.HouseObj.Lights;
-	var l_list = [];
-	for (var ix = 0; ix < Object.keys(l_obj).length; ix++)
-		l_list[ix] = l_obj[ix].Name;
-	return buildSelectWidget(p_id, l_list, p_checked);
-}
 function buildLcarLightNameSelectWidget(self, p_id, p_caption, p_checked) {
-	//Divmod.debug('---', 'globals.buildLightNameSelectWidget() was called. Id=' + p_id + '  Checked=' + p_checked);
+	//Divmod.debug('---', 'globals.buildLcarLightNameSelectWidget() was called. Id=' + p_id + '  Checked=' + p_checked);
 	var l_obj = globals.House.HouseObj.Lights;
 	var l_list = [];
 	for (var ix = 0; ix < Object.keys(l_obj).length; ix++)
@@ -830,51 +849,25 @@ function buildLcarLightNameSelectWidget(self, p_id, p_caption, p_checked) {
  * Special - has onchange 
  */
 function buildLcarFamilySelectWidget(self, p_id, p_caption, p_checked, p_change) {
-	// Divmod.debug('---', 'globals.buildLcarFamilySelectWidget() was called. Id=' + p_id + '  Checked=' + p_checked + '  Change=' + p_change);
-	// console.log("globals.buildLcarFamilySelectWidget() -  ValidFamilies  %O", globals.Valid.Families);
 	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.Families, p_checked, p_change);
 }
 function buildLcarFloorSelectWidget(self, p_id, p_caption, p_checked) {
 	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.Floors, p_checked);
 }
-function buildInterfaceTypeSelectWidget(p_id, p_checked) {
-	return buildSelectWidget(p_id, globals.Valid.InterfaceType, p_checked);
-}
 function buildLcarInterfaceTypeSelectWidget(self, p_id, p_caption, p_checked) {
 	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.InterfaceType, p_checked);
-}
-function buildLightTypeSelectWidget(p_id, p_checked) {
-	return buildSelectWidget(p_id, globals.Valid.LightType, p_checked);
 }
 function buildLcarLightTypeSelectWidget(self, p_id, p_caption, p_checked) {
 	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.LightType, p_checked);
 }
-function buildProtocolTypeSelectWidget(p_id, p_checked) {
-	return buildSelectWidget(p_id, globals.Valid.ProtocolType, p_checked);
-}
 function buildLcarProtocolTypeSelectWidget(self, p_id, p_caption, p_checked) {
 	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.ProtocolType, p_checked);
-}
-function buildScheduleModeSelectWidget(p_id, p_checked) {
-	return buildSelectWidget(p_id, globals.Valid.ScheduleMode, p_checked);
 }
 function buildLcarScheduleModeSelectWidget(self, p_id, p_caption, p_checked) {
 	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.ScheduleMode, p_checked);
 }
-function buildScheduleTypeSelectWidget(p_id, p_checked) {
-	return buildSelectWidget(p_id, globals.Valid.ScheduleType, p_checked);
-}
 function buildLcarScheduleTypeSelectWidget(self, p_id, p_caption, p_checked) {
 	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.ScheduleType, p_checked);
-}
-/**
- * Build a valid select widget
- */
-function buildValidSelectWidget(p_id, p_list, p_checked) {
-	l_list = globals.Valid[p_list];
-	var l_html = '';
-	l_html += buildSelectWidget(p_id, l_list, p_checked);
-	return l_html;
 }
 
 
@@ -885,16 +878,15 @@ function buildValidSelectWidget(p_id, p_list, p_checked) {
  * The widget must handle the slider change event.
  */
 function buildLcarSliderWidget(self, p_id, p_caption, p_value, p_min, p_max, p_step, p_handler) {
-	var l_out = "";
 	var l_html = "";
 	var l_id = buildAthenaId(self, p_id);
-	l_out += "<div class='lcars-row spaced'>\n";
-	l_out += "<div class=lcars-column u-3-4'>\n";
-	l_out += "<div class='lcars-button radius'>\n";
-	l_out += p_caption;
-	l_out += "<span class='lcars-button-addition' id='" + l_id + "'>";
+	var l_out = buildTopDivs(p_caption);
+	l_out += "<span class='lcars-button-addition'";
+	l_out += setIdAttribute(l_id);
+	l_out += ">";
 	l_html += "<input class='lcars-button-addition' ";
-	l_html += "type='range' name='slider' id='" + l_id + "-Slider' ";
+	l_html += "type='range' name='slider'";
+	l_html += setIdAttribute(l_id + "-Slider");
 	l_html += "min='" + p_min + "' ";
 	l_html += "max='" + p_max + "' ";
 	l_html += "step='" + p_step + "' ";
@@ -902,15 +894,13 @@ function buildLcarSliderWidget(self, p_id, p_caption, p_value, p_min, p_max, p_s
 	l_html += "value='" + p_value + "' ";
 	l_html += ">\n";
 	l_html += '&nbsp';
-	l_html += "<input type='text' id='" + l_id;
+	l_html += "<input type='text'";
+	l_html += setIdAttribute(l_id);
 	l_html += "-Box' size='4' value='" + p_value;
 	l_html += "' >\n";
 	l_out += l_html;
 	l_out += "</span>\n";
-	l_out += "</div>\n";
-	l_out += "</div>\n";
-	l_out += "</div>\n";
-	// console.log("globals.buildLcarSliderWidget() - %O", l_html);
+	l_out += buildBottomDivs();
 	return l_out;
 }
 function updateSliderBoxValue(self, p_id, p_value){
@@ -944,32 +934,31 @@ function fetchSliderWidget(self, p_id) {
  */
 function buildLcarTextWidget(self, p_id, p_caption, p_value, p_options) {
 	// Divmod.debug('---', 'globals.buildLcarTextWidget() was called.');
-	var l_html = '';
 	var l_size = 40;
 	var l_options = p_options;
 	if (p_options === undefined)
 		l_options = '';
-	l_html += "<div class='lcars-row spaced'>\n";
-	l_html += "<div class=lcars-column u-3-4'>\n";
-	l_html += "<div class='lcars-button radius'>\n";
-	l_html += p_caption;
-	l_html += "<input type='text' class='lcars-button-addition' id='" + buildAthenaId(self, p_id);
-	var l_ix = l_options.toLowerCase().indexOf('size=');
-	if (l_ix > -1)
-		l_size = l_options.substring(l_ix+5, l_ix+7);
-	l_html += "' size='" + l_size + "' value='" + p_value;
+	var l_html = buildTopDivs(p_caption);
+	l_html += "<input type='text' class='lcars-button-addition'";
+	l_html += setIdAttribute(buildAthenaId(self, p_id));
+	l_html += setSizeAttribute(p_options);
+	l_html += " value='" + p_value;
 	l_html += "' ";
 	if (l_options.toLowerCase().indexOf('disable') > -1)
 		l_html += "disabled='disabled' ";
 	l_html += " />\n";
-	l_html += "</div>\n";  // Button
-	l_html += "</div>\n";  // Column
-	l_html += "</div>\n";  // row 1
-	// console.log("globals.buildLcarTextWidget() - %O", l_html)
+	l_html += buildBottomDivs();
+	return l_html;
+}
+function buildLcarPasswordWidget(self, p_id, p_caption) {
+	var l_html = buildTopDivs(p_caption);
+	l_html += "<input type='password' class='lcars-button-addition'";
+	l_html += setIdAttribute(buildAthenaId(self, p_id));
+	l_html += "' size='20' value='' />\n";
+	l_html += buildBottomDivs();
 	return l_html;
 }
 function fetchTextWidget(self, p_id) {
-	Divmod.debug('---', 'globals.fetchTextWidget() was called for ' + p_id);
 	var l_data = self.nodeById(p_id).value;
 	return l_data;
 }
@@ -978,7 +967,8 @@ function buildTextWidget(p_id, p_value, /* optional */ p_options) {
 	var l_options = p_options;
 	if (p_options === undefined)
 		l_options = '';
-	l_html += "<input type='text' id='" + p_id;
+	l_html += "<input type='text'";
+	l_html += setIdAttribute(p_id);
 	l_html += "' size='40' value='" + p_value;
 	l_html += "' ";
 	if (l_options.toLowerCase().indexOf('disable') > -1)
@@ -986,6 +976,7 @@ function buildTextWidget(p_id, p_value, /* optional */ p_options) {
 	l_html += " />\n";
 	return l_html;
 }
+
 
 
 /**
@@ -1025,13 +1016,10 @@ function buildDowWidget(p_id, p_value, /* optional */ p_options) {
 	return l_html;
 }
 function buildLcarDowWidget(self, p_id, p_caption, p_value, /* optional */ p_options) {
-	var l_html = '';
-	l_html += "<div class='lcars-row spaced'>\n";
-	l_html += "<div class=lcars-column u-3-4'>\n";
-	l_html += "<div class='lcars-button radius'>\n";
-	l_html += p_caption;
-
-	l_html += "<span class='lcars-button-addition' id='" + buildAthenaId(self, p_id) + "Buttons'>";
+	var l_html = buildTopDivs(p_caption);
+	l_html += "<span class='lcars-button-addition'";
+	l_html += setIdAttribute(buildAthenaId(self, p_id) + "Buttons");
+	l_html += ">";
 	l_html += "<input type='checkbox' name='" + p_id + "' value='1'";
 	if (p_value & 1)
 		l_html += " checked ";
@@ -1061,13 +1049,10 @@ function buildLcarDowWidget(self, p_id, p_caption, p_value, /* optional */ p_opt
 		l_html += " checked ";
 	l_html += ">Sun&nbsp\n";
 	l_html += "</span>\n";
-	l_html += "</div>\n";  // Button
-	l_html += "</div>\n";  // Column
-	l_html += "</div>\n";  // row 1
+	l_html += buildBottomDivs();
 	return l_html;
 }
 function fetchDowWidget(self, p_id) {
-	// Divmod.debug('---', 'globals.fetchDowWidget() called.  p_id=' + p_id);
 	var l_dow = document.getElementsByName(p_id);
 	var l_ret = 0;
 	for (var ix = 0; ix < l_dow.length; ix++) {
@@ -1080,18 +1065,6 @@ function fetchDowWidget(self, p_id) {
 	return l_ret;
 }
 
-
-/**
- * Build an entire row to put in the table
- */
-function buildTextRowWidget(p_id, p_name, p_value, /* optional */ hidden) {
-	var l_html = '';
-	l_html += "<tr><td>" + p_name;
-	l_html += "</td><td><input type='text' id='" + p_name;
-	l_html += "' value='" + p_value;
-	l_html += "' /></td></tr>\n";
-	return l_html;
-}
 
 
 /**

@@ -450,8 +450,6 @@ class Workspace(athena.LiveElement):
 
     @athena.expose
     def guiready(self):
-        pass
-
         def cb_usermatch(p_user):  # select usually returns a list, knowing that we have unique results
             reqtype = REQ_404  # the result is unpacked already and a single item returned
             udata = {}
@@ -464,7 +462,6 @@ class Workspace(athena.LiveElement):
                     else:
                         udata[uc(k)] = p_user[k]
             return reqtype, udata
-
         def cb_rootmatch(_res):  # select usually returns a list, knowing that we have unique results
             reqtype = REQ_ROOT  # the result is unpacked already and a single item returned
             udata = {}
@@ -476,10 +473,9 @@ class Workspace(athena.LiveElement):
                 else:
                     udata[uc(k)] = user[k]
             return reqtype, udata
-
         def eb_nomatch():
             pass
-
+        LOG.info('GuiReady called')
         if self.uid and len(self.uid) == 32:
             l_defer = self.page.userstore.getUserWithUID(self.uid)
             l_defer.addCallback(cb_usermatch)

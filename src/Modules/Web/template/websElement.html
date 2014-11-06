@@ -1,17 +1,15 @@
-<!-- PyHouse/src/Modules/web/templates/websElement.html
+<!-- PyHouse/src/Modules/Web/templates/websElement.html
  -->
 <div id = 'WebsDiv'
+    class = "Webs"
     xmlns:nevow = "http://nevow.com/ns/nevow/0.1"
-    nevow:render = "liveElement"
-    class = "Webs">
-    <div id='WebEntryDiv'>
-        <h2>Enter Web data</h2>
-        <table style = 'Width: 100%;'>
-            <tr id='PortRow'><td>Port</td><td><div id='PortDiv'></div></td></tr>
-        </table>
-        <div id='WebEntryButtonsDiv'>
-        </div>
+    nevow:render = "liveElement">
+
+    <div class='lcars-container' >
+        <div id='SelectionButtonsDiv'></div>
+        <div id='DataEntryDiv'></div>
     </div>
+
 </div>
 <!--
 ### END DBK -->

@@ -194,6 +194,7 @@ Nevow.Athena.Widget.subclass(helpers, 'Widget').methods(
 	// DBK Added all widget functions below this line ----------------
 
 	function showWidget(self) {
+		Divmod.debug('---', 'Helpers.showWidget() was called for ' + self.node.className);
 		self.node.style.display = 'block';
 	},
 

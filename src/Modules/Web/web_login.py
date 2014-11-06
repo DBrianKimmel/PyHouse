@@ -26,6 +26,7 @@ from nevow import loaders
 from nevow import athena
 
 # Import PyMh files and modules.
+from Modules.Core.data_objects import LoginData
 from Modules.Web import web_utils
 from Modules.Drivers import VALID_INTERFACES, VALID_PROTOCOLS
 from Modules.Hvac import VALID_TEMP_SYSTEMS, VALID_THERMOSTAT_MODES
@@ -40,32 +41,8 @@ webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
 
 
-g_debug = 0
-# 0 = off
-# 1 = log extra info
-# + = NOT USED HERE
+
 LOG = Logger.getLogger('PyHouse.webLogin    ')
-
-
-class LoginData(object):
-    """ Allowed logins
-
-    Stage 2 - Username and password (stored password is encrypted)
-    Stage 3 - Username and some sort of common login identifier from some secure external site.
-    """
-
-    def __init__(self):
-        """Login Data
-        """
-        self.Username = ''
-        self.EncryptedPassword = ''
-        self.Fullname = 'Not logged in'
-        self.LoggedIn = False
-        self.ServerState = web_utils.WS_IDLE
-
-    def reprJSON(self):
-        return dict(Username = self.Username, EncryptedPassword = self.EncryptedPassword, Fullname = self.Fullname,
-                    LoggedIn = self.LoggedIn, ServerState = self.ServerState)
 
 
 class LoginElement(athena.LiveElement):
@@ -88,10 +65,9 @@ class LoginElement(athena.LiveElement):
 
             @param p_json: is the username and password passed back by the client.
         """
-        LOG.info("doLogin called {0:}.".format(p_json))
+        LOG.info("doLogin called {}.".format(p_json))
         l_obj = web_utils.JsonUnicode().decode_json(p_json)
-        self.m_login_obj = LoginData()
-        l_login_obj = self.validate_user(l_obj, self.m_login_obj)
+        l_login_obj = self.validate_user(l_obj)
         l_json = web_utils.JsonUnicode().encode_json(l_login_obj)
         return unicode(l_json)
 
@@ -124,23 +100,24 @@ class LoginElement(athena.LiveElement):
         l_json = web_utils.JsonUnicode().encode_json(l_obj)
         return unicode(l_json)
 
-    def validate_user(self, p_obj, p_login_obj):
+    def validate_user(self, p_obj):
         """Validate the user and put all results into the LoginData object.
 
         TODO: validate user - add password check for security
         """
-        p_login_obj.Username = p_obj['Username']
-        p_login_obj.EncryptedPassword = p_obj['Password']
-        # if p_login_obj.Username == 'briank' and p_login_obj.Password == 'nitt4agmtc':
-        if p_login_obj.Username == 'briank' and p_login_obj.EncryptedPassword == 'd':
-            p_login_obj.Fullname = 'D. Brian Kimmel'
-            p_login_obj.LoggedIn = True
-            p_login_obj.ServerState = web_utils.WS_LOGGED_IN
+        l_login_obj = LoginData()
+        l_login_obj.LoginName = p_obj['LoginName']
+        l_login_obj.LoginEncryptedPassword = p_obj['Password']
+        # if p_login_obj.LoginName == 'briank' and p_login_obj.Password == 'nitt4agmtc':
+        if l_login_obj.LoginName == 'briank' and l_login_obj.LoginEncryptedPassword == 'd':
+            l_login_obj.LoginFullName = 'D. Brian Kimmel'
+            l_login_obj.IsLoggedIn = True
+            l_login_obj.ServerState = web_utils.WS_LOGGED_IN
             # web_server.API().add_browser(p_login_obj)
         else:
-            p_login_obj.LoggedIn = False
-            p_login_obj.Fullname = 'Not logged In'
-        return p_login_obj
-
+            l_login_obj.IsLoggedIn = False
+            l_login_obj.LoginFullName = 'Not logged In'
+            l_login_obj.ServerState = 0
+        return l_login_obj
 
 # ## END DBK

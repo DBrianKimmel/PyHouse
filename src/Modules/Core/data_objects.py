@@ -418,6 +418,9 @@ class LoginData(object):
     def __init__(self):
         self.LoginName = None
         self.LoginEncryptedPassword = None
+        self.LoginFullName = 'Not logged in'
+        self.IsLoggedIn = False
+        self.ServerState = None
 
 
 class EmailData(object):

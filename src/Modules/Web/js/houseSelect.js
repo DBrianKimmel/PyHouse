@@ -19,9 +19,11 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
         houseSelect.HouseSelectWidget.upcall(self, "__init__", node);
     },
 
-	// ============================================================================
+
+
+// ============================================================================
     /**
-     * Place the widget in the workspace.
+     * Startup - Place the widget in the workspace and hide it.
      * 
      * Override the ready function in C{ helpers.Widget.ready() }
      */
@@ -40,7 +42,7 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 	function showSelectButtons(self) {
 		self.nodeById('SelectionButtonsDiv').style.display = 'block';
 	},
-	function hideSelectedHouse(self) {
+	function XXXhideSelectedHouse(self) {
 		self.nodeById('DataEntryDiv').style.display = 'none';
 	},
 	function showSelectedHouse(self) {
@@ -52,7 +54,7 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 	 * Build a screen full of buttons (only one now) - One for each house and some actions.
 	 */
 	function buildLcarSelectScreen(self){
-		// Divmod.debug('---', 'houseSelect.buildLcarSelectScreen was called.');
+		Divmod.debug('---', 'houseSelect.buildLcarSelectScreen was called.');
 		// console.log("houseSelect.buildLcarSelectScreen  Globals - %O", globals.House);
 		var l_button_html = buildLcarSelectionButtonsTable(globals.List, 'handleMenuOnClick', 'NoAdd');
 		var l_html = build_lcars_top('Select House', 'lcars-salmon-color');
@@ -63,16 +65,16 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 	/**
 	 * Called from the root menu screen when the house select button was clicked.
 	 */
-	function startWidget(self) {
+	function getHousesInfo(self) {
 		function cb_getHousesInfo(p_json) {
-			// Divmod.debug('---', 'houseSelect.cb_getHousesInfo was called.');
+			Divmod.debug('---', 'houseSelect.cb_getHousesInfo was called.');
 			globals.List = JSON.parse(p_json);
-			self.buildLcarSelectScreen()
+			self.buildLcarSelectScreen();
 		}
 		function eb_getHousesInfo(p_result) {
 			Divmod.debug('---', 'houseSelect.eb_getHousesInfo() was called. ERROR = ' + p_result);
 		}
-		// Divmod.debug('---', 'houseSelect.startWidget was called.');
+		Divmod.debug('---', 'houseSelect.getHousesInfo was called.');
 		self.showWidget()
         var l_defer = self.callRemote("getHousesToSelect", '');  // @ web_houseSelect.py
 		l_defer.addCallback(cb_getHousesInfo);
@@ -95,7 +97,7 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 		}
 		// Divmod.debug('---', 'houseSelect.getSelectedHouseData() was called. ');
 		self.hideSelectButtons();
-		self.showSelectedHouse();
+		// self.showSelectedHouse();
 		// self.nodeById('HouseSelectedDiv').innerHTML = 'Working on house: ' + globals.House.HouseName;
         var l_defer = self.callRemote("getSelectedHouseData");  // call server @ web_houseSelect.py
 		l_defer.addCallback(cb_getSelectedHouseData);
@@ -120,7 +122,7 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 			self.getSelectedHouseData(l_ix)
 			self.hideSelectButtons();
 			// Divmod.debug('---', 'houseSelect.handleMenuOnClick(2) was called. ' + l_ix + '  ' + l_name);
-			self.hideSelectedHouse();
+			// self.hideSelectedHouse();
 			l_node = findWidgetByClass('HouseMenu');
 			l_node.showWidget();
 		} else if (l_ix == 10001) {  // The "Add" button

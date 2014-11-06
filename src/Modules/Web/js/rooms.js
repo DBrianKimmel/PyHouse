@@ -175,8 +175,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	},
 
 
-	// ============================================================================
-
+// ============================================================================
 	/**
 	 * Event handler for rooms buttons at bottom of entry portion of this widget.
 	 * Get the possibly changed data and send it to the server.

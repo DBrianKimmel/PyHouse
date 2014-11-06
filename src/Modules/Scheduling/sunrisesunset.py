@@ -106,13 +106,13 @@ class LocationTz(datetime.tzinfo):
     """
 
     def utcoffset(self, _dt):
-        return datetime.timedelta(hours = -4)
+        return datetime.timedelta(hours = -5)
 
     def tzname(self, _dt):
         return "USA/Eastern"
 
     def dst(self, _dt):
-        return datetime.timedelta(hours = -4)
+        return datetime.timedelta(hours = -5)
 
 
 class Util(object):

@@ -61,9 +61,7 @@ helpers.Widget.subclass(workspace, 'Workspace').methods(
 	function appStartup(self) {
 
 		function ready() { // we're now ready for action
-			var l_defer = self.callRemote('guiready');
-
-			l_defer.addCallback(function(res) {
+			function cb_ready(res) {
 				globals.__init__();
 				globals.reqType = res[0];
 				globals.user = res[1];
@@ -84,14 +82,19 @@ helpers.Widget.subclass(workspace, 'Workspace').methods(
 				self.attachWidget('internet', 'dummy');
 				self.attachWidget('thermostats', 'dummy');
 				self.hideWaitRoller();
-			});
-
-			l_defer.addErrback(function(res) {
-				Divmod.debug('---', 'ERROR - workspace.guiready.errback() - ' + res );
-				self.node.appendChild(document.createTextNode('Error: ' + res.error.message));
-			});  // addErrback
+				// Divmod.debug('---', 'workspace.ready.cb_ready done');
+			}
+			function eb_ready(p_reason) {
+				// Divmod.debug('---', 'ERROR - workspace.guiready.errback() - ' + p_reason );
+				self.node.appendChild(document.createTextNode('Error: ' + p_reason.error.message));
+			}
+			// Divmod.debug('---', 'workspace.appStartup.ready()');
+			var l_defer = self.callRemote('guiready');
+			l_defer.addCallback(cb_ready);
+			l_defer.addErrback(eb_ready);
 		} // ready
 
+		// Divmod.debug('---', 'workspace.appStartup()');
 		var d = Divmod.Defer.succeed();
 		d.addCallback(ready);
 	} // appStartup

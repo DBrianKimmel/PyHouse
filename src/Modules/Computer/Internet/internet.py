@@ -129,6 +129,7 @@ class API(Utility):
         self.m_pyhouse_obj = p_pyhouse_obj
         self._read_xml_configuration(p_pyhouse_obj)
         self._create_internet_discovery_service(p_pyhouse_obj)
+        self._start_internet_discovery(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self._internet_loop, p_pyhouse_obj)
         LOG.info("Started.")
 
@@ -136,7 +137,7 @@ class API(Utility):
         """
         Stop async operations.
         """
-        self.stop_internet_discovery(self.m_pyhouse_obj)
+        self._stop_internet_discovery(self.m_pyhouse_obj)
         LOG.info("Stopped.")
 
     def SaveXml(self, p_xml):

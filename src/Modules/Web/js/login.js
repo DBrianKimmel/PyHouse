@@ -27,92 +27,106 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
         login.LoginWidget.upcall(self, "__init__", node);
     },
 
-    // ============================================================================
+
+
+// ============================================================================
     /**
-     * Place the widget in the workspace.
+     * Startup - Place the widget in the workspace and hide it.
      * 
      * Override the ready function in C{ helpers.Widget.ready() }
+     * 
+     * This is the initial widget shown in the browser.
+     * Do things a little differently in login.js
      */
 	function ready(self) {
-		function cb_widgetready(res) {
+		function cb_widgetReady() {
+			// Divmod.debug('---', 'login.cb_widgetReady() was called.');
 			self.showLoggingInDiv();
-			self.fetchValidLists();
+			self.fetchValidLists();  // Continue with next phase
 		}
-		//Divmod.debug('---', 'login.ready() was called. ');
+		function eb_widgetReady(p_reason) {
+			Divmod.debug('---', 'ERROR - login.eb_widgetReady() - .' + p_reason);
+		}
 		var uris = collectIMG_src(self.node, null);
 		var l_defer = loadImages(uris);
-		l_defer.addCallback(cb_widgetready);
+		l_defer.addCallback(cb_widgetReady);
+		l_defer.addErrback(eb_widgetReady);
 		return l_defer;
 	},
 	function hideLoggingInDiv(self) {
-		self.nodeById('LoggingInDiv').style.display = "none";
+		self.nodeById('SelectionButtonsDiv').style.display = "none";
 	},
 	function showLoggingInDiv(self) {
-		//Divmod.debug('---', 'login.showLoggingInDiv() was called. ');
-		self.nodeById('LoggingInDiv').style.display = 'block';
-		// self.nodeById('LoggedInDiv').style.display = 'none';
-	},
-	function hideLoggedInDiv(self) {
-		//self.nodeById('LoggedInDiv').style.display = "none";
-	},
-	function showLoggedInDiv(self) {
-		//self.nodeById('LoggedInDiv').style.display = "block";
+		// Divmod.debug('---', 'login.showLoggingInDiv() was called.');
+		self.nodeById('SelectionButtonsDiv').style.display = 'block';
 	},
 
-    // ============================================================================
+
+
+// ============================================================================
 	/**
 	 * Fetch various valid things from server.
+	 * These never change till new software is added to PyHouse.
+	 * These are used to build selection widgets used by all later screens.
 	 */
 	function fetchValidLists(self) {
 		function cb_fetchValidLists(p_json) {
     		globals.Valid = JSON.parse(p_json);
-			//Divmod.debug('---', 'login.cb_fetchValidLists() was called.');
+    		self.buildLcarLoginScreen('doLoginSubmit')
 		}
-		//Divmod.debug('---', 'login.fetchValidLists() was called. ');
+		function eb_fetchValidLists(p_reason) {
+			Divmod.debug('---', 'ERROR - login.eb_fetchValidLists() - .' + p_reason);
+		}
+		// Divmod.debug('---', 'login.fetchValidLists() was called.');
         var l_defer = self.callRemote("getValidLists");  // @ web_login
 		l_defer.addCallback(cb_fetchValidLists);
+		l_defer.addErrback(eb_fetchValidLists);
 	},
+	/**
+	 * Build a screen for logging in.
+	 */
 	function buildLcarLoginScreen(self, p_handler){
-		Divmod.debug('---', 'login.buildLcarLoginScreen() was called.');
 		var l_login_html = "";
 		l_login_html += buildLcarTextWidget(self, 'LoginName', 'Name', '');
-		l_login_html += buildLcarTextWidget(self, 'LoginPassword', 'Password', '');
-		l_login_html += xxxx;
-		var l_html = build_lcars_top('Control Lights', 'lcars-salmon-color');
+		l_login_html += buildLcarPasswordWidget(self, 'LoginPassword', 'Password', 'size=20');
+		l_login_html += buildLcarButton({'Name' : 'Login', 'Key' : 12345}, p_handler, 'lcars-salmon-bg');
+		var l_html = build_lcars_top('Login', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(2, l_login_html);
 		l_html += build_lcars_bottom();
 		self.nodeById('SelectionButtonsDiv').innerHTML = l_html;
 	},
 
-	// ============================================================================
+
+
+// ============================================================================
 	/**
 	 * This is an event handler from the LogIn key in the login form.
-	 * 
+	 *
 	 * @param self
 	 * @returns {Boolean} False to stop the processing cycle.
 	 */
-	function doLoginSubmit(self) {  // from html handler onSubmit
+	function doLoginSubmit(self) {
 		function cb_doLoginSubmit(p_json) {
-			//Divmod.debug('---', 'login.cb_doLoginSubmit() was called.  JSON: ' + p_json);
 			var l_obj = JSON.parse(p_json);
 			self.showNextScreen(l_obj);
 		}
 		function eb_doLoginSubmit(res){
 			Divmod.debug('---', 'login.eb_doLoginSubmit() was called.  ERROR = ' + res);
 		}
-        var l_logData = {
-        	Username : self.nodeById('LoginName').value,
-        	Password : self.nodeById('LoginPassword').value
+        var l_loginData = {
+    		LoginName : fetchTextWidget(self, 'LoginName'),
+    		Password : fetchTextWidget(self, 'LoginPassword'),
         };
-    	var l_json = JSON.stringify(l_logData);
-		//Divmod.debug('---', 'login.doLoginSubmit() was called. JSON: ' + l_json);
+    	var l_json = JSON.stringify(l_loginData);
+		// Divmod.debug('---', 'login.doLoginSubmit() was called. JSON: ' + l_json);
         var l_defer = self.callRemote("doLogin", l_json);  // @ web_login
 		l_defer.addCallback(cb_doLoginSubmit);
 		l_defer.addErrback(eb_doLoginSubmit);
         return false;  // Stops the resetting of the server.
 	},
-	
-	// ============================================================================
+
+
+// ============================================================================
 	/**
 	 * Based on the login success - show the next screen.
 	 */
@@ -120,21 +134,23 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 		function cb_showNextScreen(res) {
 			var l_node = findWidgetByClass('RootMenu');
 			l_node.showWidget(self);
-		}
-		if (p_obj.LoggedIn === true) {
+			}
+		// Divmod.debug('---', 'login.showNextScreen() was called.');
+		if (p_obj.IsLoggedIn === true) {
 			globals.User.ID = p_obj.Username;
 			globals.User.Password = p_obj.Password;
 			globals.User.Fullname = p_obj.Fullname;
 			globals.User.LoggedIn = true;
 			self.hideLoggingInDiv(self);
-			// self.showLoggedInDiv(self);
 			var l_defer = serverState(22);
 			l_defer.addCallback(cb_showNextScreen);
 		} else {
+			Divmod.debug('---', 'login.showNextScreen() was called.');
 			self.showLoggingInDiv(self);
-			// self.hideLoggedInDiv(self);
         	self.nodeById('LoginPassword').value = '';
 		}
 	}
 );
+//Divmod.debug('---', 'login.handleMenuOnClick(1) was called. ' + l_ix + ' ' + l_name);
+//console.log("login.handleMenuOnClick() - l_obj = %O", l_obj);
 //### END DBK
