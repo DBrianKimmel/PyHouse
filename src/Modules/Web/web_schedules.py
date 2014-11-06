@@ -20,7 +20,7 @@ from nevow import loaders
 from Modules.Core.data_objects import ScheduleBaseData
 from Modules.Web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.Computer import logging_pyh as Logger
-from Modules.Utilities.tools import PrettyPrintAny
+# from Modules.Utilities.tools import PrettyPrintAny
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -50,7 +50,7 @@ class SchedulesElement(athena.LiveElement):
         """A new/changed schedule is returned.  Process it and update the internal data via schedule.py
         """
         l_json = JsonUnicode().decode_json(p_json)
-        PrettyPrintAny(l_json, 'JSON')
+        # PrettyPrintAny(l_json, 'JSON')
         l_delete = l_json['Delete']
         l_schedule_ix = int(l_json['Key'])
         if l_delete:
@@ -80,6 +80,6 @@ class SchedulesElement(athena.LiveElement):
         #
         l_obj._DeleteFlag = l_json['Delete']
         self.m_pyhouse_obj.House.OBJs.Schedules[l_schedule_ix] = l_obj
-        PrettyPrintAny(l_obj, 'ScheduleObject')
+        # PrettyPrintAny(l_obj, 'ScheduleObject')
 
 # ## END DBK

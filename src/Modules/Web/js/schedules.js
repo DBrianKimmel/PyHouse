@@ -75,7 +75,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 	 */
 	function buildLcarSelectScreen(self){
 		// Divmod.debug('---', 'schedules.buildLcarSelectScreen() was called.');
-		var l_button_html = buildLcarSelectionButtonsTable(globals.House.HouseObj.Schedules, 'handleMenuOnClick');
+		var l_button_html = buildLcarSelectionButtonsTable(globals.House.HouseObj.Schedules, 'handleMenuOnClick', 'buildButtonName');
 		var l_html = build_lcars_top('Schedules', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(4, l_button_html);
 		l_html += build_lcars_bottom();
@@ -135,7 +135,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 // ============================================================================
 
 	function buildLcarDataEntryScreen(self, p_entry, p_handler){
-		Divmod.debug('---', 'schedules.buildLcarDataEntryScreen(1) was called.');
+		// Divmod.debug('---', 'schedules.buildLcarDataEntryScreen(1) was called.');
 		var l_schedule = arguments[1];
 		var l_entry_html = "";
 		l_entry_html += buildLcarTextWidget(self, 'Name', 'Name', l_schedule.Name);
@@ -144,10 +144,10 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 		l_entry_html += buildLcarTextWidget(self, 'ScheduleUUID', 'UUID', l_schedule.UUID, 'disabled');
 		l_entry_html += buildLcarScheduleTypeSelectWidget(self, 'ScheduleType', 'Type', l_schedule.Type);
 		l_entry_html += buildLcarTextWidget(self, 'ScheduleTime', 'Time',  l_schedule.Time);
-		l_entry_html += buildLcarRoomSelectWidget(self, 'ScheduleRoomName', 'Room Name', l_schedule.RoomName, 'disabled');
-		l_entry_html += buildLcarLightNameSelectWidget(self, 'ScheduleLightName', 'Light Name', l_schedule.LightName, 'disabled');
+		l_entry_html += buildLcarRoomSelectWidget(self, 'ScheduleRoomName', 'Room Name', l_schedule.RoomName);
+		l_entry_html += buildLcarLightNameSelectWidget(self, 'ScheduleLightName', 'Light Name', l_schedule.LightName);
 		l_entry_html += buildLcarLevelSliderWidget(self, 'ScheduleLevel', 'Level', l_schedule.Level, 'handleSliderChange');
-		l_entry_html += buildLcarTextWidget(self, 'ScheduleRate', 'Rate', l_schedule.Rate, 'disabled');
+		l_entry_html += buildLcarTextWidget(self, 'ScheduleRate', 'Rate', l_schedule.Rate);
 		l_entry_html += buildLcarDowWidget(self, 'ScheduleDow', 'Day of Week', l_schedule.DOW);
 		l_entry_html += buildLcarScheduleModeSelectWidget(self, 'ScheduleMode', 'Mode', l_schedule.Mode);
 		l_entry_html += buildLcarEntryButtons(p_handler);
@@ -217,20 +217,20 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 	 * Event handler for submit buttons at bottom of entry portion of this widget.
 	 * Get the possibly changed data and send it to the server.
 	 */
-	function handleDataOnClick(self, p_node) {
-		function cb_handleDataOnClick(p_json) {
+	function handleDataEntryOnClick(self, p_node) {
+		function cb_handleDataEntryOnClick(p_json) {
 			self.showWidget();
 		}
-		function eb_handleDataOnClick(res){
-			Divmod.debug('---', 'schedules.eb_handleDataOnClick() was called. ERROR =' + res);
+		function eb_handleDataEntryOnClick(res){
+			Divmod.debug('---', 'schedules.eb_handleDataEntryOnClick() was called. ERROR =' + res);
 		}
 		var l_ix = p_node.name;
 		switch(l_ix) {
 		case '10003':  // Change Button
 	    	var l_json = JSON.stringify(self.fetchEntry());
 	        var l_defer = self.callRemote("saveScheduleData", l_json);  // @ web_schedule
-			l_defer.addCallback(cb_handleDataOnClick);
-			l_defer.addErrback(eb_handleDataOnClick);
+			l_defer.addCallback(cb_handleDataEntryOnClick);
+			l_defer.addErrback(eb_handleDataEntryOnClick);
 			break;
 		case '10002':  // Back button
 			self.hideDataEntry();
@@ -241,16 +241,16 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 			l_obj.Delete = true;
 	    	l_json = JSON.stringify(l_obj);
 	        l_defer = self.callRemote("saveScheduleData", l_json);  // @ web_rooms
-			l_defer.addCallback(cb_handleDataOnClick);
-			l_defer.addErrback(eb_handleDataOnClick);
+			l_defer.addCallback(cb_handleDataEntryOnClick);
+			l_defer.addErrback(eb_handleDataEntryOnClick);
 			break;
 		default:
-			Divmod.debug('---', 'schedules.handleDataOnClick(Default) was called. l_ix:' + l_ix);
+			Divmod.debug('---', 'schedules.handleDataEntryOnClick(Default) was called. l_ix:' + l_ix);
 			break;
 		}
         return false;  // return false stops the resetting of the server.
 	}
 );
-//Divmod.debug('---', 'schedules.handleDataOnClick(Back) was called.  ');
+//Divmod.debug('---', 'schedules.handleDataEntryOnClick(Back) was called.  ');
 //console.log("schedules.fetchHouseData.cb_fetchHouseData   p1 %O", p_json);
 // ### END DBK
