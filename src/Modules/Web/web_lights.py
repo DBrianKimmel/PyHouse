@@ -9,6 +9,8 @@
 @note: Created on Jun 3, 2013
 @summary: Handle all of the lights information for a house.
 
+TODO: Change all references to a light if name changes.
+
 """
 
 # Import system type stuff

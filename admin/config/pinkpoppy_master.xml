@@ -59,7 +59,7 @@
             <DaylightSavingsTime>None</DaylightSavingsTime>
         </LocationSection>
         <RoomSection>
-            <Room Active="True" Key="0" Name="IsMaster Bath">
+            <Room Active="True" Key="0" Name="Master Bath">
                 <UUID>c12a0876-092e-11e4-bffa-b827eb189eb4</UUID>
                 <Comment>None</Comment>
                 <Corner>0.83, 10.58</Corner>
@@ -216,8 +216,8 @@
                 <Mode>Normal</Mode>
                 <Level>50</Level>
                 <LightName>outside_front</LightName>
-                <Rate>undefined</Rate>
-                <RoomName>IsMaster Bath</RoomName>
+                <Rate>0</Rate>
+                <RoomName>Outside</RoomName>
             </Schedule>
             <Schedule Active="True" Key="1" Name="Evening">
                 <UUID>c1378474-092e-11e4-bffa-b827eb189eb4</UUID>
@@ -227,8 +227,8 @@
                 <Mode>Normal</Mode>
                 <Level>50</Level>
                 <LightName>outside_front</LightName>
-                <Rate>undefined</Rate>
-                <RoomName>IsMaster Bath</RoomName>
+                <Rate>0</Rate>
+                <RoomName>Outside</RoomName>
             </Schedule>
             <Schedule Active="True" Key="2" Name="Evening">
                 <UUID>c1382140-092e-11e4-bffa-b827eb189eb4</UUID>
@@ -238,8 +238,8 @@
                 <Mode>Normal</Mode>
                 <Level>50</Level>
                 <LightName>outside_front</LightName>
-                <Rate>undefined</Rate>
-                <RoomName>IsMaster Bath</RoomName>
+                <Rate>0</Rate>
+                <RoomName>Outside</RoomName>
             </Schedule>
             <Schedule Active="True" Key="3" Name="Evening">
                 <UUID>c138c05a-092e-11e4-bffa-b827eb189eb4</UUID>

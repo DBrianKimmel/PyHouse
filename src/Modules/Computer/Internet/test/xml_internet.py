@@ -18,7 +18,7 @@ INTERNET_XML = """
                 <LocateUrl>http://checkip.dyndns.com/</LocateUrl>
             </LocaterUrlSection>
             <UpdaterUrlSection>
-                <UpdateUrl>http://freedns.afraid.org/dynamic/update.php?abc</UpdateUrl>
+                <UpdateUrl>http://freedns.afraid.org/dynamic/update.php?12345</UpdateUrl>
             </UpdaterUrlSection>
             <ExternalIPv4>65.35.48.61</ExternalIPv4>
             <ExternalIPv6>1234:5678::1</ExternalIPv6>

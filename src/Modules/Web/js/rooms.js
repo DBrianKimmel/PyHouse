@@ -66,7 +66,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	function buildLcarSelectScreen(self){
 		var l_button_html = buildLcarSelectionButtonsTable(globals.House.HouseObj.Rooms, 'handleMenuOnClick');
 		var l_html = build_lcars_top('Rooms', 'lcars-salmon-color');
-		l_html += build_lcars_middle_menu(2, l_button_html);
+		l_html += build_lcars_middle_menu(6, l_button_html);
 		l_html += build_lcars_bottom();
 		self.nodeById('SelectionButtonsDiv').innerHTML = l_html;
 	},
@@ -134,7 +134,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		l_entry_html += buildLcarTextWidget(self, 'Size', 'Size', l_room.Size);
 		l_entry_html += buildLcarEntryButtons(p_handler);
 		var l_html = build_lcars_top('Enter Room Data', 'lcars-salmon-color');
-		l_html += build_lcars_middle_menu(6, l_entry_html);
+		l_html += build_lcars_middle_menu(15, l_entry_html);
 		l_html += build_lcars_bottom();
 		self.nodeById('DataEntryDiv').innerHTML = l_html;
 	},
