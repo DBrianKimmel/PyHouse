@@ -19,7 +19,7 @@ from nevow import loaders
 # Import PyMh files and modules.
 from Modules.Web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.Computer import logging_pyh as Logger
-from Modules.Utilities.tools import PrettyPrintAny
+# from Modules.Utilities.tools import PrettyPrintAny
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -58,27 +58,27 @@ class HouseElement(athena.LiveElement):
             except AttributeError:
                 print("web_lights - Failed to delete - JSON: {0:}".format(l_json))
             return
-        PrettyPrintAny(l_json, 'WebHouse - JSON', 100)
+        # PrettyPrintAny(l_json, 'WebHouse - JSON', 100)
         # if l_house_ix == -1:  # adding a new house
         #    l_house_ix = len(self.m_pyhouse_obj.House.OBJs)
         l_obj = self.m_pyhouse_obj.House.OBJs
-        PrettyPrintAny(l_obj, 'WebHouse - OBJ', 100)
+        # PrettyPrintAny(l_obj, 'WebHouse - OBJ', 100)
         # try:
         #    self.m_pyhouse_obj.House.OBJs[l_house_ix] = l_obj
         # except AttributeError:
         #    self.m_pyhouse_obj.House.OBJs = l_obj
         l_obj.Name = l_json['Name']
         l_obj.Key = int(l_json['Key'])
-        l_obj.Location.Street = l_json['Street']
-        l_obj.Location.City = l_json['City']
-        l_obj.Location.State = l_json['State']
-        l_obj.Location.ZipCode = l_json['ZipCode']
-        l_obj.Location.Phone = l_json['Phone']
-        l_obj.Location.Latitude = l_json['Latitude']
-        l_obj.Location.Longitude = l_json['Longitude']
-        l_obj.Location.TimeZoneName = l_json['TimeZoneName']
-        l_obj.Location.TimeZoneOffset = l_json['TimeZoneOffset']
-        l_obj.Location.DaylightSavingsTime = l_json['DaylightSavingsTime']
+        l_obj.Location.Street = l_json['Location']['Street']
+        l_obj.Location.City = l_json['Location']['City']
+        l_obj.Location.State = l_json['Location']['State']
+        l_obj.Location.ZipCode = l_json['Location']['ZipCode']
+        l_obj.Location.Phone = l_json['Location']['Phone']
+        l_obj.Location.Latitude = l_json['Location']['Latitude']
+        l_obj.Location.Longitude = l_json['Location']['Longitude']
+        l_obj.Location.TimeZoneName = l_json['Location']['TimeZoneName']
+        # l_obj.Location.TimeZoneOffset = l_json['Location']['TimeZoneOffset']
+        # l_obj.Location.DaylightSavingsTime = l_json['Location']['DaylightSavingsTime']
         self.m_pyhouse_obj.House.OBJs = l_obj
 
 # ## END DBK

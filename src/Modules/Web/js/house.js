@@ -43,10 +43,10 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 		self.fetchHouseData();
 	},
 	function hideDataEntry(self) {
-		self.nodeById('HouseEntryDiv').style.display = 'none';		
+		self.nodeById('DataEntryDiv').style.display = 'none';		
 	},
 	function showDataEntry(self) {
-		self.nodeById('HouseEntryDiv').style.display = 'block';		
+		self.nodeById('DataEntryDiv').style.display = 'block';		
 	},
 
 
@@ -56,23 +56,23 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 		// Divmod.debug('---', 'house.cb_fetchHouseData() was called. ' + p_json);
 		// console.log("house.buildLcarRoomDataEntryScreen() - self = %O", self);
 		var l_house = arguments[1];
+		var l_location = l_house.Location;
 		var l_entry_html = "";
 		l_entry_html += buildLcarTextWidget(self, 'Name', 'House Name', l_house.Name);
 		l_entry_html += buildLcarTextWidget(self, 'Key', 'House Index', l_house.Key);
 		l_entry_html += buildLcarTrueFalseWidget(self, 'Active', 'Active ?', l_house.Active);
-		l_entry_html += buildLcarTextWidget(self, 'Street', 'Street', l_house.Street);
-		l_entry_html += buildLcarTextWidget(self, 'City', 'City', l_house.City);
-		l_entry_html += buildLcarTextWidget(self, 'State', 'State', l_house.State);
-		l_entry_html += buildLcarTextWidget(self, 'ZipCode', 'Zip Code', l_house.ZipCode);
-		l_entry_html += buildLcarTextWidget(self, 'Phone', 'Phone', l_house.Phone);
-		l_entry_html += buildLcarTextWidget(self, 'Latitude', 'Latitude', l_house.Latitude);
-		l_entry_html += buildLcarTextWidget(self, 'Longitude', 'Longitude', l_house.Longitude);
-		l_entry_html += buildLcarTextWidget(self, 'TimeZoneName', 'TimeZone Name', l_house.TimeZone);
-		l_entry_html += buildLcarTextWidget(self, 'TimeZoneOffset', 'TimeZone Offset', l_house.TimeZone);
-		l_entry_html += buildLcarTextWidget(self, 'DST', 'DST', l_house.DaylightSavingsTime);
 		l_entry_html += buildLcarTextWidget(self, 'UUID', 'UUID', l_house.UUID);
+		l_entry_html += buildLcarTextWidget(self, 'Street', 'Street', l_location.Street);
+		l_entry_html += buildLcarTextWidget(self, 'City', 'City', l_location.City);
+		l_entry_html += buildLcarTextWidget(self, 'State', 'State', l_location.State);
+		l_entry_html += buildLcarTextWidget(self, 'ZipCode', 'Zip Code', l_location.ZipCode);
+		l_entry_html += buildLcarTextWidget(self, 'Phone', 'Phone', l_location.Phone);
+		l_entry_html += buildLcarTextWidget(self, 'Latitude', 'Latitude', l_location.Latitude);
+		l_entry_html += buildLcarTextWidget(self, 'Longitude', 'Longitude', l_location.Longitude);
+		l_entry_html += buildLcarTextWidget(self, 'TimeZoneName', 'TimeZone Name', l_location.TimeZone);
+		l_entry_html += buildLcarTextWidget(self, 'DST', 'DST', l_location.DaylightSavingsTime);
 
-		l_entry_html += buildLcarEntryButtons(p_handler);
+		l_entry_html += buildLcarEntryButtons(p_handler, 'NoDelete');
 		var l_html = build_lcars_top('Enter House Data', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(20, l_entry_html);
 		l_html += build_lcars_bottom();
@@ -84,21 +84,15 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 	 */
 	function fetchHouseData(self) {
 		function cb_fetchHouseData(p_json) {
-			//Divmod.debug('---', 'house.cb_fetchHouseData() was called. ' + p_json);
+			console.log("house.cb_fetchHouseData() - JSON = %O", p_json);
 			globals.House.HouseObj.House = JSON.parse(p_json);
 			var l_obj = globals.House.HouseObj;
-			self.fillEntry(l_obj);
+			self.buildLcarDataEntryScreen(l_obj, 'handleDataOnClick')
 		}
-		function eb_fetchHouseData(res) {
-			Divmod.debug('---', 'house.eb_fetchHouseData() was called. ERROR: ' + res);
+		function eb_fetchHouseData(p_reason) {
+			Divmod.debug('---', 'ERROR - house.eb_fetchHouseData() - ' + p_reason);
 		}
-		if (globals.House.HouseIx == -1) {
-			globals.House.HouseObj = {};
-			globals.House.HouseObj.House = self.createEntry(0);
-			var l_obj = globals.House.HouseObj.House;
-			self.fillEntry(l_obj);
-			return false;
-		}
+		Divmod.debug('---', 'house.fetchHouseData() was called. ');
         var l_defer = self.callRemote("getHouseData");  // call server @ web_house.py
 		l_defer.addCallback(cb_fetchHouseData);
 		l_defer.addErrback(eb_fetchHouseData);
@@ -123,15 +117,15 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 				Latitude : '',
 				Longitude : '',
 				TimeZoneName : '',
-				TimeZoneOffset : '',
 				DaylightSavingsTime : ''
     		}
         var l_data = {
-    			Name : 'Change Me',
-    			Key : 0,
-    			Active : false,
+    			Name	: 'Change Me',
+    			Key		: 0,
+    			Active	: false,
+    			UUID	: '',
     			Location : l_loc,
-    			Delete : false
+    			Delete	: false
     		}
         //console.log("create House %O", l_data);
         return l_data;
@@ -142,6 +136,10 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
             Name			: fetchTextWidget(self, 'Name'),
             Key				: fetchTextWidget(self, 'Key'),
 			Active			: fetchTrueFalseWidget(self, 'Active'),
+			UUID			: fetchTextWidget(self, 'UUID'),
+			Delete			: false
+        };
+		var l_location = {
 			Street			: fetchTextWidget(self, 'Street'),
 			City			: fetchTextWidget(self, 'City'),
 			State			: fetchTextWidget(self, 'State'),
@@ -150,62 +148,25 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 			Latitude		: fetchTextWidget(self, 'Latitude'),
 			Longitude		: fetchTextWidget(self, 'Longitude'),
 			TimeZoneName	: fetchTextWidget(self, 'TimeZoneName'),
-			TimeZoneOffset	: fetchTextWidget(self, 'TimeZoneOffset'),
-			DaylightSavingsTime : fetchTextWidget(self, 'DaylightSavingsTime'),
-			UUID			: fetchTextWidget(self, 'UUID'),
-			Delete : false
-            }
+			DaylightSavingsTime : fetchTextWidget(self, 'DST')
+        };
+        l_data.Location = l_location;
 		return l_data;
 	},
 
-	// ============================================================================
-	/**
-	 * Event handler for house selection buttons.
-	 * 
-	 * The user can click on a house button, the "Add" button or the "Back" button.
-	 * 
-	 * @param self is    <"Instance" of undefined.house.HouseWidget>
-	 * @param p_node is  the node of the button that was clicked.
-	 */
-	function handleMenuOnClick(self, p_node) {
-		var l_ix = p_node.name;
-		var l_name = p_node.value;
-		globals.House.HouseName = l_name;
-		if (l_ix <= 1000) {
-			// One of the House buttons.
-			var l_obj = globals.House.HouseObj.House[l_ix];
-			globals.House.HouseObj = l_obj;
-			//Divmod.debug('---', 'house.handleMenuOnClick("House" Button) was called. ' + l_ix + ' ' + l_name);
-			//console.log("house.handleMenuOnClick() - l_obj = %O", l_obj);
-			self.showDataEntry();
-			self.fillEntry(l_obj);
-		} else if (l_ix == 10001) {
-			// The "Add" button
-			//Divmod.debug('---', 'house.handleMenuOnClick(Add Button) was called. ' + l_ix + ' ' + l_name);
-			self.showDataEntry();
-			var l_ent = self.createEntry();
-			self.fillEntry(l_ent);
-		} else if (l_ix == 10002) {
-			// The "Back" button
-			//Divmod.debug('---', 'house.handleMenuOnClick(Back Button) was called. ' + l_ix + ' ' + l_name);
-			self.hideWidget();
-			var l_node = findWidgetByClass('HouseMenu');
-			l_node.showWidget();
-		}
-	},
-	
-	// ============================================================================
+
+
+// ============================================================================
 	/**
 	 * Event handler for buttons at bottom of the data entry portion of this widget.
 	 * Get the possibly changed data and send it to the server.
 	 */
 	function handleDataOnClick(self, p_node) {
 		function cb_handleDataOnClick(p_json) {
-			//Divmod.debug('---', 'house.cb_handleDataOnClick() was called.');
 			self.showWidget();
 		}
-		function eb_handleDataOnClick(res){
-			Divmod.debug('---', 'house.eb_handleDataOnClick() was called. ERROR =' + res);
+		function eb_handleDataOnClick(p_reason){
+			Divmod.debug('---', 'ERROR house.eb_handleDataOnClick() - ' + p_reason);
 		}
 		var l_ix = p_node.name;
 		switch(l_ix) {
@@ -222,18 +183,9 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 			var l_node = findWidgetByClass('HouseMenu');
 			l_node.showWidget();
 			break;
-		case '10004':  // Delete button
-			var l_entry = self.fetchEntry();
-			l_entry['Delete'] = true;
-	    	var l_json = JSON.stringify(l_entry);
-			//Divmod.debug('---', 'house.handleDataOnClick(Delete) was called. JSON:' + l_json);
-	        var l_defer = self.callRemote("saveHouseData", l_json);  // @ web_rooms
-			l_defer.addCallback(cb_handleDataOnClick);
-			l_defer.addErrback(eb_handleDataOnClick);
-			break;
 		default:
 			Divmod.debug('---', 'house.handleDataOnClick(Default) was called. l_ix:' + l_ix);
-			break;			
+			break;
 		}
         return false;  // false stops the chain.
 	}

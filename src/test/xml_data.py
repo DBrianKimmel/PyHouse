@@ -15,16 +15,17 @@ used for testing
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Computer.Internet.internet_xml import INTERNET_XML
 from Modules.Communication.send_email import EMAIL_XML
-from Modules.Web.web_server import WEB_SERVER_XML
-from Modules.Housing.location import LOCATION_XML
-from Modules.Housing.rooms_xml_def import ROOMS_XML
-from Modules.Scheduling.schedule_xml import SCHEDULE_XML
+from Modules.Computer.Internet.test.xml_internet import INTERNET_XML
+from Modules.Computer.Nodes.test.xml_nodes import NODES_XML
+from Modules.Housing.test.xml_location import LOCATION_XML
+from Modules.Housing.test.xml_rooms import ROOMS_XML
+from Modules.Hvac.test.xml_thermostat import THERMOSTAT_XML
 from Modules.Lighting.lighting_lights import LIGHTS_XML
 from Modules.Lighting.lighting_buttons import BUTTONS_XML
-from Modules.Lighting.test.test_lighting_controllers import CONTROLLER_XML
-from Modules.Hvac.thermostats import THERMOSTAT_XML
+from Modules.Lighting.test.xml_lighting_controllers import CONTROLLER_XML
+from Modules.Scheduling.test.xml_schedule import SCHEDULE_XML
+from Modules.Web.web_server import WEB_SERVER_XML
 
 
 # Missing
@@ -51,37 +52,6 @@ COMPUTER_BODY_XML = """\
             <Debug>/var/log/pyhouse/debug</Debug>
             <Error>/var/log/pyhouse/error</Error>
         </LogSection>
-"""
-NODES_XML = """\
-        <NodeSection>
-            <Node Name='pi-01' Key='0' Active='True'>
-                <UUID>87654321-1001-11e3-b583-082e5f899999</UUID>
-                <ConnectionAddressV4>192.168.1.123</ConnectionAddressV4>
-                <InterfaceSection>
-                    <Interface Name='eth0' Key="0" Active="True">
-                        <UUID>87654321-1001-11e3-b583-012300001111</UUID>
-                        <MacAddress>01:02:03:04:05:06</MacAddress>
-                        <IPv4Address>192.168.1.11</IPv4Address>
-                        <IPv6Address>2000:1D::1, 2000:1D::101</IPv6Address>
-                    </Interface>
-                    <Interface Name='wlan0' Key="1" Active="True">
-                        <UUID>87654321-1001-11e3-b583-012300002222</UUID>
-                        <MacAddress>01:02:03:04:05:06</MacAddress>
-                        <IPv4Address>192.168.1.22</IPv4Address>
-                        <IPv6Address>2000:1D::2, 2000:1D::202</IPv6Address>
-                    </Interface>
-                    <Interface Name='lo' Key="2" Active="True">
-                        <MacAddress>01:02:03:04:05:06</MacAddress>
-                        <IPv4Address>192.168.1.33</IPv4Address>
-                        <IPv6Address>2000:1D::3, 2000:1D::303</IPv6Address>
-                    </Interface>
-                </InterfaceSection>
-            </Node>
-            <Node Name='pi-02' Key='0' Active='True'>
-                <UUID>87654321-1001-11e3-b583-082e5f899999</UUID>
-                <ConnectionAddressV4>192.168.1.124</ConnectionAddressV4>
-            </Node>
-        </NodeSection>
 """
 
 COMPUTER_XML = '\n'.join([

@@ -28,6 +28,7 @@ T_SUNRISE = datetime.datetime(2014, 6, 6, 7, 12, 34)
 T_SUNSET = datetime.datetime(2014, 6, 6, 20, 19, 18)
 
 
+
 class MockupRiseSet(object):
     """
     A fake module to get sunrise and sunset.

@@ -24,12 +24,12 @@ TODO:Round sunset and sunrise to the nearest minute.
 # Import system type stuff
 import datetime
 import dateutil.parser as dparser
+from dateutil.tz import tzlocal
 import math
 from math import pi
 
 # Import PyMh files
 from Modules.Computer import logging_pyh as Logger
-# from Modules.Utilities.tools import GetPyhouse
 from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 0
@@ -45,6 +45,7 @@ ZERO = datetime.timedelta(0)
 HOUR = datetime.timedelta(hours = 1)
 HOUR_4 = datetime.timedelta(hours = -4)
 HOUR_5 = datetime.timedelta(hours = -5)
+
 
 
 class JulianParameters(object):

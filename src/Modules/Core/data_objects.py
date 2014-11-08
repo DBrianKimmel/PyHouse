@@ -355,9 +355,9 @@ class LocationData(object):
         self.Latitude = 28.938448
         self.Longitude = -82.517208
         self.Phone = ''
-        self.TimeZoneName = 'USA/Eastern'
-        self.TimeZoneOffset = '-5:00'
-        self.DaylightSavingsTime = '-4:00'
+        self.TimeZoneName = 'America/New_York'
+        # self.TimeZoneOffset = '-5:00'
+        # self.DaylightSavingsTime = '-4:00'
         # Computed at startup (refreshed periodically)
         self._Sunrise = None
         self._Sunset = None

@@ -1,7 +1,7 @@
 """
--*- test-case-name: PyHouse.src.Modules.housing.test.test_house -*-
+-*- test-case-name: PyHouse.src.Modules.Housing.test.test_house -*-
 
-@name: PyHouse/src/Modules/housing/house.py
+@name: PyHouse/src/Modules/Housing/house.py
 @author: D. Brian Kimmel
 @contact: D.BrianKimmel@gmail.com
 @Copyright (c) 2013-2014 by D. Brian Kimmel

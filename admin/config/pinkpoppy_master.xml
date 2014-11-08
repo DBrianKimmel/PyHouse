@@ -1,53 +1,49 @@
-<PyHouse>
+<PyHouse Version="1.3.1" xmlns:comp="http://PyHouse.Org/ComputerDiv">
+<!-- Updated by PyHouse 2014-11-08 09:19:55.461235 -->
     <ComputerDivision>
         <InternetSection>
-            <Internet Name="Connection-1" Key="0" Active="True">
-                <UUID>1234</UUID>
-                <ExternalUrl>http://snar.co/ip</ExternalUrl>
-                <ExternalDelay>28800</ExternalDelay>
-                <ExternalIP>65.35.48.61</ExternalIP>
-                <DynamicDnsSection>
-                    <DynamicDNS Active="True" Key="0" Name="Afraid">
-                        <UpdateUrl>http://freedns.afraid.org/dynamic/update.php?VDZtSkE2MzFVMVVBQVd5QXg2MDo5MjU1MzYw</UpdateUrl>
-                        <UpdateInterval>21600</UpdateInterval>
-                    </DynamicDNS>
-                </DynamicDnsSection>
-            </Internet>
+            <ExternalIPv4>None</ExternalIPv4>
+            <ExternalIPv6>None</ExternalIPv6>
+            <LastChanged>None</LastChanged>
+            <LocaterUrlSection>
+                <LocateUrl>http://snar.co/ip/</LocateUrl>
+                <LocateUrl>http://checkip.dyndns.com/</LocateUrl>
+            </LocaterUrlSection>
+            <UpdaterUrlSection>
+                <UpdateUrl>http://freedns.afraid.org/dynamic/update.php?12345</UpdateUrl>
+            </UpdaterUrlSection>
         </InternetSection>
-        <LogSection>
-            <Debug>/var/log/pyhouse/debug</Debug>
-            <Error>/var/log/pyhouse/error</Error>
-        </LogSection>
-        <WebSection>
-            <WebPort>8580</WebPort>
-        </WebSection>
         <NodeSection>
-            <Node Name='pi-01' Key='0' Active='True'>
-                <UUID>87654321-1001-11e3-b583-082e5f899999</UUID>
-                <ConnectionAddressV4>192.168.1.123</ConnectionAddressV4>
+            <Node Active="True" Key="0" Name="pi-02">
+                <UUID>309</UUID>
+                <ConnectionAddressV4>192.168.1.32</ConnectionAddressV4>
+                <NodeRole>0</NodeRole>
                 <InterfaceSection>
-                    <Interface Name='eth0' Key="0" Active="True">
-                        <UUID>87654321-1001-11e3-b583-012300001111</UUID>
-                        <MacAddress>01:02:03:04:05:06</MacAddress>
-                        <IPv4Address>192.168.1.11</IPv4Address>
-                        <IPv6Address>2000:1D::1, 2000:1D::101</IPv6Address>
+                    <Interface Active="True" Key="0" Name="lo">
+                        <UUID>123</UUID>
+                        <MacAddress>['00:00:00:00:00:00']</MacAddress>
+                        <IPv4Address>['127.0.0.1']</IPv4Address>
+                        <IPv6Address>['::1']</IPv6Address>
                     </Interface>
-                    <Interface Name='wlan0' Key="1" Active="True">
-                        <UUID>87654321-1001-11e3-b583-012300002222</UUID>
-                        <MacAddress>01:02:03:04:05:06</MacAddress>
-                        <IPv4Address>192.168.1.22</IPv4Address>
-                        <IPv6Address>2000:1D::2, 2000:1D::202</IPv6Address>
-                    </Interface>
-                    <Interface Name='lo' Key="2" Active="True">
-                        <MacAddress>01:02:03:04:05:06</MacAddress>
-                        <IPv4Address>192.168.1.33</IPv4Address>
-                        <IPv6Address>2000:1D::3, 2000:1D::303</IPv6Address>
+                    <Interface Active="True" Key="1" Name="eth0">
+                        <UUID>123</UUID>
+                        <MacAddress>['b8:27:eb:18:9e:b4']</MacAddress>
+                        <IPv4Address>['192.168.1.32']</IPv4Address>
+                        <IPv6Address>['2604:8800:100:8268::2', 'fe80::ba27:ebff:fe18:9eb4%eth0']</IPv6Address>
                     </Interface>
                 </InterfaceSection>
             </Node>
+            <Node Active="True" Key="1" Name="briank-laptop-2">
+                <UUID>309</UUID>
+                <ConnectionAddressV4>192.168.1.115</ConnectionAddressV4>
+                <NodeRole>0</NodeRole>
+                <InterfaceSection />
+            </Node>
         </NodeSection>
+        <WebSection>
+            <WebPort>8580</WebPort>
+        </WebSection>
     </ComputerDivision>
-
     <HouseDivision Active="True" Key="0" Name="Pink Poppy">
         <UUID>12345678-1002-11e3-b583-333e5f8cdfd2</UUID>
         <LocationSection>
@@ -58,707 +54,855 @@
             <Phone>(352) 270-8096</Phone>
             <Latitude>28.938448</Latitude>
             <Longitude>-82.517208</Longitude>
-            <TimeZoneName>USA/Eastern</TimeZoneName>
-            <TimeZoneOffset>-5:00</TimeZoneOffset>
-            <DaylightSavingsTime>-4:00</DaylightSavingsTime>
+            <TimeZoneName>None</TimeZoneName>
+            <TimeZoneOffset>None</TimeZoneOffset>
+            <DaylightSavingsTime>None</DaylightSavingsTime>
         </LocationSection>
         <RoomSection>
-            <Room Active="True" Key="0" Name="Master Bath">
-                <Comment />
+            <Room Active="True" Key="0" Name="IsMaster Bath">
+                <UUID>c12a0876-092e-11e4-bffa-b827eb189eb4</UUID>
+                <Comment>None</Comment>
                 <Corner>0.83, 10.58</Corner>
+                <Floor>1</Floor>
                 <Size>14.00, 13.50</Size>
             </Room>
             <Room Active="True" Key="1" Name="Master Bed Closet 1">
-                <Comment />
+                <UUID>c12aa8da-092e-11e4-bffa-b827eb189eb4</UUID>
+                <Comment>None</Comment>
                 <Corner>0.83, 24.58</Corner>
+                <Floor>1</Floor>
                 <Size>6.91, 8.91</Size>
             </Room>
             <Room Active="False" Key="2" Name="Master Bedroom">
-                <Comment />
+                <UUID>c12b2472-092e-11e4-bffa-b827eb189eb4</UUID>
+                <Comment>None</Comment>
                 <Corner>0.83, 25.08</Corner>
+                <Floor>1</Floor>
                 <Size>14.00, 18.00</Size>
             </Room>
             <Room Active="False" Key="3" Name="Master Sitting Room">
-                <Comment /><Corner>0.83, 54.16</Corner><HouseName>Pink Poppy</HouseName><Size>14.00, 8.00</Size>
+                <UUID>c12b9da8-092e-11e4-bffa-b827eb189eb4</UUID>
+                <Comment>None</Comment>
+                <Corner>0.83, 54.16</Corner>
+                <Floor>1</Floor>
+                <Size>14.00, 8.00</Size>
             </Room>
             <Room Active="False" Key="4" Name="Lanai">
-                <Comment /><Corner>0.00, 68.66</Corner><HouseName>Pink Poppy</HouseName><Size>41.00, 10.00</Size>
+                <UUID>c12c0fea-092e-11e4-bffa-b827eb189eb4</UUID>
+                <Comment>None</Comment>
+                <Corner>0.00, 68.66</Corner>
+                <Floor>1</Floor>
+                <Size>41.00, 10.00</Size>
             </Room>
             <Room Active="False" Key="5" Name="Pool">
-                <Comment /><Corner>8.91, 72.33</Corner><HouseName>Pink Poppy</HouseName><Size>39.00, 19.00</Size>
+                <UUID>c12ca0ea-092e-11e4-bffa-b827eb189eb4</UUID>
+                <Comment>None</Comment>
+                <Corner>8.91, 72.33</Corner>
+                <Floor>1</Floor>
+                <Size>39.00, 19.00</Size>
             </Room>
             <Room Active="False" Key="6" Name="Living Room">
-                <Comment /><Corner>21.00, 31.00</Corner><HouseName>Pink Poppy</HouseName><Size>10.00, 20.00</Size>
+                <UUID>c12d25b0-092e-11e4-bffa-b827eb189eb4</UUID>
+                <Comment>None</Comment>
+                <Corner>21.00, 31.00</Corner>
+                <Floor>1</Floor>
+                <Size>10.00, 20.00</Size>
             </Room>
             <Room Active="False" Key="7" Name="Music Room">
-                <Comment /><Corner>15.50, 16.16</Corner><HouseName>Pink Poppy</HouseName><Size>12.00, 12.00</Size>
+                <UUID>c12d9a22-092e-11e4-bffa-b827eb189eb4</UUID>
+                <Comment>None</Comment>
+                <Corner>15.50, 16.16</Corner>
+                <Floor>1</Floor>
+                <Size>12.00, 12.00</Size>
             </Room>
             <Room Active="False" Key="8" Name="Foyer">
-                <Comment /><Corner>28.16, 20.25</Corner><HouseName>Pink Poppy</HouseName><Size>7.66, 11.41</Size>
+                <UUID>c12e1b0a-092e-11e4-bffa-b827eb189eb4</UUID>
+                <Comment>None</Comment>
+                <Corner>28.16, 20.25</Corner>
+                <Floor>1</Floor>
+                <Size>7.66, 11.41</Size>
             </Room>
             <Room Active="False" Key="9" Name="Game Room">
-                <Comment /><Corner>2.00, 2.00</Corner><HouseName>Pink Poppy</HouseName><Size>1.00, 1.00</Size>
+                <UUID>c12e8d88-092e-11e4-bffa-b827eb189eb4</UUID>
+                <Comment>None</Comment>
+                <Corner>2.00, 2.00</Corner>
+                <Floor>1</Floor>
+                <Size>1.00, 1.00</Size>
             </Room>
             <Room Active="False" Key="10" Name="Laundry Room">
-                <Comment /><Corner>2.00, 2.00</Corner><HouseName>Pink Poppy</HouseName><Size>1.00, 1.00</Size>
+                <UUID>c12f001a-092e-11e4-bffa-b827eb189eb4</UUID>
+                <Comment>None</Comment>
+                <Corner>2.00, 2.00</Corner>
+                <Floor>1</Floor>
+                <Size>1.00, 1.00</Size>
             </Room>
             <Room Active="False" Key="11" Name="Back Bathroom">
-                <Comment /><Corner>2.00, 2.00</Corner><HouseName>Pink Poppy</HouseName><Size>1.00, 1.00</Size>
+                <UUID>c12f84a4-092e-11e4-bffa-b827eb189eb4</UUID>
+                <Comment>None</Comment>
+                <Corner>2.00, 2.00</Corner>
+                <Floor>1</Floor>
+                <Size>1.00, 1.00</Size>
             </Room>
             <Room Active="False" Key="12" Name="Office">
-                <Comment /><Corner>2.00, 2.00</Corner><HouseName>Pink Poppy</HouseName><Size>1.00, 1.00</Size>
+                <UUID>c12ffb5a-092e-11e4-bffa-b827eb189eb4</UUID>
+                <Comment>None</Comment>
+                <Corner>2.00, 2.00</Corner>
+                <Floor>1</Floor>
+                <Size>1.00, 1.00</Size>
             </Room>
             <Room Active="False" Key="13" Name="Bedroom 2">
-                <Comment /><Corner>2.00, 2.00</Corner><HouseName>Pink Poppy</HouseName><Size>1.00, 1.00</Size>
+                <UUID>c130733c-092e-11e4-bffa-b827eb189eb4</UUID>
+                <Comment>None</Comment>
+                <Corner>2.00, 2.00</Corner>
+                <Floor>1</Floor>
+                <Size>1.00, 1.00</Size>
             </Room>
             <Room Active="False" Key="14" Name="Guest Bathroom">
-                <Comment /><Corner>2.00, 2.00</Corner><HouseName>Pink Poppy</HouseName><Size>1.00, 1.00</Size>
+                <UUID>c130f316-092e-11e4-bffa-b827eb189eb4</UUID>
+                <Comment>None</Comment>
+                <Corner>2.00, 2.00</Corner>
+                <Floor>1</Floor>
+                <Size>1.00, 1.00</Size>
             </Room>
             <Room Active="False" Key="15" Name="Bedroom 3">
-                <Comment /><Corner>2.00, 2.00</Corner><HouseName>Pink Poppy</HouseName><Size>1.00, 1.00</Size>
+                <UUID>c1316828-092e-11e4-bffa-b827eb189eb4</UUID>
+                <Comment>None</Comment>
+                <Corner>2.00, 2.00</Corner>
+                <Floor>1</Floor>
+                <Size>1.00, 1.00</Size>
             </Room>
             <Room Active="False" Key="16" Name="Pantry">
-                <Comment /><Corner>2.00, 2.00</Corner><HouseName>Pink Poppy</HouseName><Size>1.00, 1.00</Size>
+                <UUID>c131e15e-092e-11e4-bffa-b827eb189eb4</UUID>
+                <Comment>None</Comment>
+                <Corner>2.00, 2.00</Corner>
+                <Floor>1</Floor>
+                <Size>1.00, 1.00</Size>
             </Room>
             <Room Active="False" Key="17" Name="Garage">
-                <Comment /><Corner>2.00, 2.00</Corner><HouseName>Pink Poppy</HouseName><Size>1.00, 1.00</Size>
+                <UUID>c1325440-092e-11e4-bffa-b827eb189eb4</UUID>
+                <Comment>None</Comment>
+                <Corner>2.00, 2.00</Corner>
+                <Floor>1</Floor>
+                <Size>1.00, 1.00</Size>
             </Room>
             <Room Active="True" Key="18" Name="Dining Room">
-                <Comment>None</Comment><Corner>0,0</Corner><HouseName>Pink Poppy</HouseName><Size>12, 12</Size>
+                <UUID>c132d352-092e-11e4-bffa-b827eb189eb4</UUID>
+                <Comment>None</Comment>
+                <Corner>0,0</Corner>
+                <Floor>1</Floor>
+                <Size>12, 12</Size>
             </Room>
             <Room Active="False" Key="19" Name="Breakfast Nook">
-                <Comment>None</Comment><Corner>0, 0</Corner><HouseName>Pink Poppy</HouseName><Size>10, 10</Size>
+                <UUID>c1334a44-092e-11e4-bffa-b827eb189eb4</UUID>
+                <Comment>None</Comment>
+                <Corner>0, 0</Corner>
+                <Floor>1</Floor>
+                <Size>10, 10</Size>
             </Room>
             <Room Active="False" Key="20" Name="Kitchen">
-                <Comment />
+                <UUID>c133bc04-092e-11e4-bffa-b827eb189eb4</UUID>
+                <Comment>None</Comment>
                 <Corner>1,1</Corner>
+                <Floor>1</Floor>
                 <Size>10, 10</Size>
             </Room>
         </RoomSection>
         <ScheduleSection>
             <Schedule Active="True" Key="0" Name="Evening">
-                <Level>100</Level>
-                <LightName>lr_cans</LightName>
-                <Rate>0</Rate>
-                <RoomName>Living Room</RoomName>
-                <Time>sunset - 00:15</Time>
+                <UUID>c1369c76-092e-11e4-bffa-b827eb189eb4</UUID>
                 <ScheduleType>LightingDevice</ScheduleType>
+                <Time>sunset - 00:15</Time>
+                <DayOfWeek>127</DayOfWeek>
+                <Mode>Normal</Mode>
+                <Level>50</Level>
+                <LightName>outside_front</LightName>
+                <Rate>undefined</Rate>
+                <RoomName>IsMaster Bath</RoomName>
             </Schedule>
             <Schedule Active="True" Key="1" Name="Evening">
-                <Level>100</Level>
-                <LightName>lr_rope</LightName>
-                <Rate>0</Rate>
-                <RoomName>Living Room</RoomName>
-                <Time>sunset - 00:15</Time>
+                <UUID>c1378474-092e-11e4-bffa-b827eb189eb4</UUID>
                 <ScheduleType>LightingDevice</ScheduleType>
+                <Time>sunset - 00:15</Time>
+                <DayOfWeek>127</DayOfWeek>
+                <Mode>Normal</Mode>
+                <Level>50</Level>
+                <LightName>outside_front</LightName>
+                <Rate>undefined</Rate>
+                <RoomName>IsMaster Bath</RoomName>
             </Schedule>
             <Schedule Active="True" Key="2" Name="Evening">
-                <Level>100</Level>
-                <LightName>outside_gar</LightName>
-                <Rate>0</Rate>
-                <RoomName>Garage</RoomName>
-                <Time>sunset - 00:10</Time>
+                <UUID>c1382140-092e-11e4-bffa-b827eb189eb4</UUID>
                 <ScheduleType>LightingDevice</ScheduleType>
+                <Time>sunset - 00:10</Time>
+                <DayOfWeek>127</DayOfWeek>
+                <Mode>Normal</Mode>
+                <Level>50</Level>
+                <LightName>outside_front</LightName>
+                <Rate>undefined</Rate>
+                <RoomName>IsMaster Bath</RoomName>
             </Schedule>
             <Schedule Active="True" Key="3" Name="Evening">
-                <Level>100</Level>
-                <LightName>outside_front</LightName>
-                <Rate>0</Rate>
-                <RoomName>Foyer</RoomName>
-                <Time>sunset - 00:10</Time>
+                <UUID>c138c05a-092e-11e4-bffa-b827eb189eb4</UUID>
                 <ScheduleType>LightingDevice</ScheduleType>
+                <Time>sunset - 00:10</Time>
+                <DayOfWeek>127</DayOfWeek>
+                <Mode>Normal</Mode>
+                <Level>50</Level>
+                <LightName>outside_front</LightName>
+                <Rate>undefined</Rate>
+                <RoomName>IsMaster Bath</RoomName>
             </Schedule>
             <Schedule Active="True" Key="4" Name="Evening">
-                <Level>100</Level>
-                <LightName>wet_bar</LightName>
-                <Rate>0</Rate>
-                <RoomName>Living Room</RoomName>
+                <UUID>c1395d80-092e-11e4-bffa-b827eb189eb4</UUID>
+                <ScheduleType>None</ScheduleType>
                 <Time>sunset - 00:12</Time>
-                <ScheduleType>LightingDevice</ScheduleType>
+                <DayOfWeek>127</DayOfWeek>
+                <Mode>0</Mode>
             </Schedule>
             <Schedule Active="False" Key="5" Name="Night xxx">
-                <Level>60</Level>
-                <LightName>mbr_rope</LightName>
-                <Rate>0</Rate>
-                <RoomName>Master Bedroom</RoomName>
-                <Time>sunset + 00:15</Time>
+                <UUID>c139f380-092e-11e4-bffa-b827eb189eb4</UUID>
                 <ScheduleType>LightingDevice</ScheduleType>
+                <Time>sunset + 00:15</Time>
+                <DayOfWeek>127</DayOfWeek>
+                <Mode>Normal</Mode>
+                <Level>50</Level>
+                <LightName>outside_front</LightName>
+                <Rate>undefined</Rate>
+                <RoomName>IsMaster Bath</RoomName>
             </Schedule>
             <Schedule Active="True" Key="6" Name="Night">
-                <Level>0</Level>
-                <LightName>outside_gar</LightName>
-                <Rate>0</Rate>
-                <RoomName>Garage</RoomName>
-                <Time>23:00</Time>
+                <UUID>c13a99ca-092e-11e4-bffa-b827eb189eb4</UUID>
                 <ScheduleType>LightingDevice</ScheduleType>
+                <Time>23:00</Time>
+                <DayOfWeek>127</DayOfWeek>
+                <Mode>Normal</Mode>
+                <Level>50</Level>
+                <LightName>outside_front</LightName>
+                <Rate>undefined</Rate>
+                <RoomName>IsMaster Bath</RoomName>
             </Schedule>
             <Schedule Active="True" Key="7" Name="Night">
-                <Level>0</Level>
-                <LightName>outside_front</LightName>
-                <Rate>0</Rate>
-                <RoomName>Foyer</RoomName>
-                <Time>23:00</Time>
+                <UUID>c13b2f84-092e-11e4-bffa-b827eb189eb4</UUID>
                 <ScheduleType>LightingDevice</ScheduleType>
+                <Time>23:00</Time>
+                <DayOfWeek>127</DayOfWeek>
+                <Mode>Normal</Mode>
+                <Level>50</Level>
+                <LightName>outside_front</LightName>
+                <Rate>undefined</Rate>
+                <RoomName>IsMaster Bath</RoomName>
             </Schedule>
             <Schedule Active="True" Key="8" Name="Evening">
-                <Level>60</Level>
-                <LightName>mbr_rope</LightName>
-                <Rate>0</Rate>
-                <RoomName>Master Bedroom</RoomName>
-                <Time>23:30</Time>
+                <UUID>c13bd75e-092e-11e4-bffa-b827eb189eb4</UUID>
                 <ScheduleType>LightingDevice</ScheduleType>
+                <Time>23:30</Time>
+                <DayOfWeek>127</DayOfWeek>
+                <Mode>Normal</Mode>
+                <Level>50</Level>
+                <LightName>outside_front</LightName>
+                <Rate>undefined</Rate>
+                <RoomName>IsMaster Bath</RoomName>
             </Schedule>
             <Schedule Active="True" Key="9" Name="Night">
-                <Level>0</Level>
-                <LightName>lr_rope</LightName>
-                <Rate>0</Rate>
-                <RoomName>Living Room</RoomName>
-                <Time>23:30</Time>
+                <UUID>c13c6f20-092e-11e4-bffa-b827eb189eb4</UUID>
                 <ScheduleType>LightingDevice</ScheduleType>
+                <Time>23:30</Time>
+                <DayOfWeek>127</DayOfWeek>
+                <Mode>Normal</Mode>
+                <Level>50</Level>
+                <LightName>outside_front</LightName>
+                <Rate>undefined</Rate>
+                <RoomName>IsMaster Bath</RoomName>
             </Schedule>
             <Schedule Active="True" Key="10" Name="Night">
-                <Level>0</Level>
-                <LightName>lr_cans</LightName>
-                <Rate>0</Rate>
-                <RoomName>Living Room</RoomName>
-                <Time>23:35</Time>
+                <UUID>c13d0b92-092e-11e4-bffa-b827eb189eb4</UUID>
                 <ScheduleType>LightingDevice</ScheduleType>
+                <Time>23:35</Time>
+                <DayOfWeek>127</DayOfWeek>
+                <Mode>Normal</Mode>
+                <Level>50</Level>
+                <LightName>outside_front</LightName>
+                <Rate>undefined</Rate>
+                <RoomName>IsMaster Bath</RoomName>
             </Schedule>
             <Schedule Active="True" Key="11" Name="Night">
-                <Level>0</Level>
-                <LightName>wet_bar</LightName>
-                <Rate>0</Rate>
-                <RoomName>Living Room</RoomName>
-                <Time>00:15</Time>
+                <UUID>c13daa20-092e-11e4-bffa-b827eb189eb4</UUID>
                 <ScheduleType>LightingDevice</ScheduleType>
+                <Time>00:15</Time>
+                <DayOfWeek>127</DayOfWeek>
+                <Mode>Normal</Mode>
+                <Level>50</Level>
+                <LightName>outside_front</LightName>
+                <Rate>undefined</Rate>
+                <RoomName>IsMaster Bath</RoomName>
             </Schedule>
             <Schedule Active="True" Key="12" Name="Morning">
-                <Level>0</Level>
-                <LightName>mbr_rope</LightName>
-                <Rate>0</Rate>
-                <RoomName>Master Bedroom</RoomName>
-                <Time>sunrise + 00:30</Time>
+                <UUID>c13e47a0-092e-11e4-bffa-b827eb189eb4</UUID>
                 <ScheduleType>LightingDevice</ScheduleType>
+                <Time>sunrise + 00:30</Time>
+                <DayOfWeek>127</DayOfWeek>
+                <Mode>Normal</Mode>
+                <Level>50</Level>
+                <LightName>outside_front</LightName>
+                <Rate>undefined</Rate>
+                <RoomName>IsMaster Bath</RoomName>
             </Schedule>
             <Schedule Active="False" Key="13" Name="Testing">
-                <Level>100</Level>
-                <LightName>lr_rope</LightName>
-                <Rate>0</Rate>
-                <RoomName>Office</RoomName>
-                <Time>11:00</Time>
+                <UUID>c13ee994-092e-11e4-bffa-b827eb189eb4</UUID>
                 <ScheduleType>LightingDevice</ScheduleType>
+                <Time>11:00</Time>
+                <DayOfWeek>127</DayOfWeek>
+                <Mode>Normal</Mode>
+                <Level>50</Level>
+                <LightName>outside_front</LightName>
+                <Rate>undefined</Rate>
+                <RoomName>IsMaster Bath</RoomName>
             </Schedule>
             <Schedule Active="False" Key="14" Name="Testing">
-                <Level>0</Level>
-                <LightName>lr_rope</LightName>
-                <Rate>0</Rate>
-                <RoomName>Office</RoomName>
-                <Time>11:02</Time>
+                <UUID>c13f8692-092e-11e4-bffa-b827eb189eb4</UUID>
                 <ScheduleType>LightingDevice</ScheduleType>
+                <Time>11:02</Time>
+                <DayOfWeek>127</DayOfWeek>
+                <Mode>Normal</Mode>
+                <Level>50</Level>
+                <LightName>outside_front</LightName>
+                <Rate>undefined</Rate>
+                <RoomName>IsMaster Bath</RoomName>
             </Schedule>
             <Schedule Active="False" Key="15" Name="Testing">
-                <Level>0</Level>
-                <LightName>test_lamp1</LightName>
-                <Rate>0</Rate>
-                <RoomName>Breakfast Nook</RoomName>
-                <Time>23:55</Time>
+                <UUID>c14024bc-092e-11e4-bffa-b827eb189eb4</UUID>
                 <ScheduleType>LightingDevice</ScheduleType>
+                <Time>23:55</Time>
+                <DayOfWeek>127</DayOfWeek>
+                <Mode>Normal</Mode>
+                <Level>50</Level>
+                <LightName>outside_front</LightName>
+                <Rate>undefined</Rate>
+                <RoomName>IsMaster Bath</RoomName>
             </Schedule>
             <Schedule Active="False" Key="16" Name="Testing">
-                <Level>0</Level>
-                <LightName>kitchen_counter</LightName>
-                <Rate>0</Rate>
-                <RoomName>Kitchen</RoomName>
-                <Time>23:57</Time>
+                <UUID>c140c192-092e-11e4-bffa-b827eb189eb4</UUID>
                 <ScheduleType>LightingDevice</ScheduleType>
+                <Time>23:57</Time>
+                <DayOfWeek>127</DayOfWeek>
+                <Mode>Normal</Mode>
+                <Level>55</Level>
+                <LightName>outside_front</LightName>
+                <Rate>undefined</Rate>
+                <RoomName>IsMaster Bath</RoomName>
             </Schedule>
         </ScheduleSection>
+        <ThermostatSection />
         <LightSection>
             <Light Active="True" Key="0" Name="outside_front">
+                <UUID>c15f7d76-092e-11e4-bffa-b827eb189eb4</UUID>
                 <Comment>SwitchLink On/Off</Comment>
+                <ControllerFamily>Insteon</ControllerFamily>
                 <Coords>['0', '0']</Coords>
                 <IsDimmable>False</IsDimmable>
-                <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>Foyer</RoomName>
                 <LightingType>Light</LightingType>
+                <RoomName>None</RoomName>
+                <LightingType>Light</LightingType>
+                <CurLevel>0</CurLevel>
                 <Address>16.62.2D</Address>
-                <IsController>True</IsController>
-                <DevCat>0C.44</DevCat>
+                <DevCat>02.1C</DevCat>
                 <GroupList>All_Lights|Outside|Foyer(0;0)</GroupList>
                 <GroupNumber>0</GroupNumber>
-                <IsMaster>True</IsMaster>
+                <IsController>False</IsController>
+                <IsMaster>False</IsMaster>
+                <IsResponder>False</IsResponder>
                 <ProductKey>30.1A.35</ProductKey>
-                <IsResponder>True</IsResponder>
             </Light>
             <Light Active="True" Key="1" Name="outside_gar">
+                <UUID>c1610bbe-092e-11e4-bffa-b827eb189eb4</UUID>
                 <Comment>SwitchLink On/Off</Comment>
+                <ControllerFamily>Insteon</ControllerFamily>
                 <Coords>['0', '0']</Coords>
                 <IsDimmable>False</IsDimmable>
-                <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>Garage</RoomName>
                 <LightingType>Light</LightingType>
+                <RoomName>None</RoomName>
+                <LightingType>Light</LightingType>
+                <CurLevel>0</CurLevel>
                 <Address>17.47.A1</Address>
-                <IsController>True</IsController>
-                <DevCat>02.0A</DevCat>
+                <DevCat>02.1C</DevCat>
                 <GroupList>All_Lights|Outside|Garage(0;0)</GroupList>
                 <GroupNumber>0</GroupNumber>
-                <IsMaster>True</IsMaster>
-                <ProductKey>0</ProductKey>
-                <IsResponder>True</IsResponder>
+                <IsController>False</IsController>
+                <IsMaster>False</IsMaster>
+                <IsResponder>False</IsResponder>
+                <ProductKey>00.00.00</ProductKey>
             </Light>
             <Light Active="True" Key="2" Name="dr_chand">
+                <UUID>c16294de-092e-11e4-bffa-b827eb189eb4</UUID>
                 <Comment>SwitchLink dimmer</Comment>
+                <ControllerFamily>Insteon</ControllerFamily>
                 <Coords>['0', '0']</Coords>
                 <IsDimmable>True</IsDimmable>
-                <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>Dining Room</RoomName>
                 <LightingType>Light</LightingType>
+                <RoomName>None</RoomName>
+                <LightingType>Light</LightingType>
+                <CurLevel>0</CurLevel>
                 <Address>16.C9.37</Address>
-                <IsController>True</IsController>
-                <DevCat>01.01</DevCat>
+                <DevCat>01.19</DevCat>
                 <GroupList>All_Lights|DiningRoom(12;12)</GroupList>
                 <GroupNumber>0</GroupNumber>
-                <IsMaster>True</IsMaster>
+                <IsController>False</IsController>
+                <IsMaster>False</IsMaster>
+                <IsResponder>False</IsResponder>
                 <ProductKey>F4.20.20</ProductKey>
-                <IsResponder>True</IsResponder>
             </Light>
             <Light Active="True" Key="3" Name="dr_chand_slave">
+                <UUID>c16414f8-092e-11e4-bffa-b827eb189eb4</UUID>
                 <Comment>SwitchLink dimmer</Comment>
+                <ControllerFamily>Insteon</ControllerFamily>
                 <Coords>['0', '0']</Coords>
                 <IsDimmable>True</IsDimmable>
-                <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>Dining Room</RoomName>
                 <LightingType>Light</LightingType>
+                <RoomName>None</RoomName>
+                <LightingType>Light</LightingType>
+                <CurLevel>0</CurLevel>
                 <Address>16.C9.D0</Address>
-                <IsController>True</IsController>
-                <DevCat>01.01</DevCat>
+                <DevCat>01.19</DevCat>
                 <GroupList>All_Lights|Pantry(0;0)</GroupList>
                 <GroupNumber>0</GroupNumber>
-                <IsMaster>True</IsMaster>
+                <IsController>False</IsController>
+                <IsMaster>False</IsMaster>
+                <IsResponder>False</IsResponder>
                 <ProductKey>EB.2A.A8</ProductKey>
-                <IsResponder>True</IsResponder></Light>
+            </Light>
             <Light Active="True" Key="4" Name="nook_chand">
+                <UUID>c16597b0-092e-11e4-bffa-b827eb189eb4</UUID>
                 <Comment>SwitchLink dimmer</Comment>
+                <ControllerFamily>Insteon</ControllerFamily>
                 <Coords>['0', '0']</Coords>
                 <IsDimmable>True</IsDimmable>
-                <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>Breakfast Nook</RoomName>
                 <LightingType>Light</LightingType>
+                <RoomName>None</RoomName>
+                <LightingType>Light</LightingType>
+                <CurLevel>0</CurLevel>
                 <Address>17.C2.72</Address>
-                <IsController>True</IsController>
-                <DevCat>01.01</DevCat>
+                <DevCat>01.19</DevCat>
                 <GroupList>All_Lights|Pantry(0;0)</GroupList>
                 <GroupNumber>0</GroupNumber>
-                <IsMaster>True</IsMaster>
-                <ProductKey>0</ProductKey>
-                <IsResponder>True</IsResponder></Light>
+                <IsController>False</IsController>
+                <IsMaster>False</IsMaster>
+                <IsResponder>False</IsResponder>
+                <ProductKey>00.00.00</ProductKey>
+            </Light>
             <Light Active="True" Key="5" Name="nook_chand_slave">
+                <UUID>c1672044-092e-11e4-bffa-b827eb189eb4</UUID>
                 <Comment>SwitchLink dimmer</Comment>
+                <ControllerFamily>Insteon</ControllerFamily>
                 <Coords>['0', '0']</Coords>
                 <IsDimmable>True</IsDimmable>
-                <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>Breakfast Nook</RoomName>
                 <LightingType>Light</LightingType>
+                <RoomName>None</RoomName>
+                <LightingType>Light</LightingType>
+                <CurLevel>0</CurLevel>
                 <Address>17.C3.30</Address>
-                <IsController>True</IsController>
-                <DevCat>01.01</DevCat>
+                <DevCat>01.19</DevCat>
                 <GroupList>All_Lights|Nook(12;12)</GroupList>
                 <GroupNumber>0</GroupNumber>
-                <IsMaster>True</IsMaster>
-                <ProductKey>0</ProductKey>
-                <IsResponder>True</IsResponder></Light>
-            <Light Active="True" Key="6" Name="mbr_rope">
-                <Comment>SwitchLink dimmer</Comment>
-                <Coords>['0', '0']</Coords>
-                <IsDimmable>True</IsDimmable>
-                <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>Master Bedroom</RoomName>
-                <LightingType>Light</LightingType>
-                <Address>16.C0.C4</Address>
-                <IsController>True</IsController>
-                <DevCat>01.01</DevCat>
-                <GroupList>All_Lights|MasterBedroom(7;9)</GroupList>
-                <GroupNumber>0</GroupNumber>
+                <IsController>False</IsController>
                 <IsMaster>False</IsMaster>
-                <ProductKey>D0.30.D9</ProductKey>
-                <IsResponder>True</IsResponder></Light>
-            <Light Active="True" Key="7" Name="lr_rope">
-                <Comment>SwitchLink dimmer Dual Band (*A*)</Comment>
+                <IsResponder>False</IsResponder>
+                <ProductKey>00.00.00</ProductKey>
+            </Light>
+            <Light Active="True" Key="6" Name="mbr_rope">
+                <UUID>c168ab12-092e-11e4-bffa-b827eb189eb4</UUID>
+                <Comment>SwitchLink dimmer</Comment>
+                <ControllerFamily>Insteon</ControllerFamily>
                 <Coords>['0', '0']</Coords>
                 <IsDimmable>True</IsDimmable>
-                <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>Living Room</RoomName>
                 <LightingType>Light</LightingType>
+                <RoomName>None</RoomName>
+                <LightingType>Light</LightingType>
+                <CurLevel>100</CurLevel>
+                <Address>16.C0.C4</Address>
+                <DevCat>613.24</DevCat>
+                <GroupList>All_Lights|IsMasterBedroom(7;9)</GroupList>
+                <GroupNumber>0</GroupNumber>
+                <IsController>False</IsController>
+                <IsMaster>False</IsMaster>
+                <IsResponder>False</IsResponder>
+                <ProductKey>D0.30.D9</ProductKey>
+            </Light>
+            <Light Active="True" Key="7" Name="lr_rope">
+                <UUID>c16a2c76-092e-11e4-bffa-b827eb189eb4</UUID>
+                <Comment>SwitchLink dimmer Dual Band (*A*)</Comment>
+                <ControllerFamily>Insteon</ControllerFamily>
+                <Coords>['0', '0']</Coords>
+                <IsDimmable>True</IsDimmable>
+                <LightingType>Light</LightingType>
+                <RoomName>None</RoomName>
+                <LightingType>Light</LightingType>
+                <CurLevel>100</CurLevel>
                 <Address>18.C9.4A</Address>
-                <IsController>True</IsController>
-                <DevCat>02.0A</DevCat>
+                <DevCat>00.00</DevCat>
                 <GroupList>All_Lights|LR|LivingRoom(21;0)</GroupList>
                 <GroupNumber>0</GroupNumber>
-                <IsMaster>True</IsMaster>
-                <ProductKey>0</ProductKey>
-                <IsResponder>True</IsResponder></Light>
+                <IsController>False</IsController>
+                <IsMaster>False</IsMaster>
+                <IsResponder>False</IsResponder>
+                <ProductKey>00.00.00</ProductKey>
+            </Light>
             <Light Active="True" Key="8" Name="wet_bar">
+                <UUID>c16bade4-092e-11e4-bffa-b827eb189eb4</UUID>
                 <Comment>SwitchLink dimmer Dual Band (*A*)</Comment>
+                <ControllerFamily>Insteon</ControllerFamily>
                 <Coords>['0', '0']</Coords>
                 <IsDimmable>False</IsDimmable>
-                <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>Living Room</RoomName>
                 <LightingType>Light</LightingType>
+                <RoomName>None</RoomName>
+                <LightingType>Light</LightingType>
+                <CurLevel>100</CurLevel>
                 <Address>18.C5.8F</Address>
-                <IsController>True</IsController>
-                <DevCat>8F.B3</DevCat>
+                <DevCat>01.20</DevCat>
                 <GroupList>All_Lights|LR|LivingRoom(11;10)</GroupList>
                 <GroupNumber>0</GroupNumber>
-                <IsMaster>True</IsMaster>
-                <ProductKey>9451516</ProductKey>
-                <IsResponder>True</IsResponder></Light>
+                <IsController>False</IsController>
+                <IsMaster>False</IsMaster>
+                <IsResponder>False</IsResponder>
+                <ProductKey>945.15.16</ProductKey>
+            </Light>
             <Light Active="True" Key="9" Name="test_lamp1">
-                <Comment>v4.3 LampLink</Comment> 
+                <UUID>c16d2e08-092e-11e4-bffa-b827eb189eb4</UUID>
+                <Comment>v4.3 LampLink</Comment>
+                <ControllerFamily>Insteon</ControllerFamily>
                 <Coords>['0', '0']</Coords>
                 <IsDimmable>False</IsDimmable>
-                <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>Office</RoomName>
                 <LightingType>Light</LightingType>
+                <RoomName>None</RoomName>
+                <LightingType>Light</LightingType>
+                <CurLevel>0</CurLevel>
                 <Address>11.11.11</Address>
-                <IsController>True</IsController>
-                <DevCat>00.00</DevCat>
+                <DevCat>01.0E</DevCat>
                 <GroupList>All_Lights|Office(8;8)</GroupList>
                 <GroupNumber>0</GroupNumber>
-                <IsMaster>True</IsMaster>
-                <ProductKey>0</ProductKey>
-                <IsResponder>True</IsResponder></Light>
+                <IsController>False</IsController>
+                <IsMaster>False</IsMaster>
+                <IsResponder>False</IsResponder>
+                <ProductKey>00.00.00</ProductKey>
+            </Light>
             <Light Active="True" Key="10" Name="lr_cans">
+                <UUID>c16eb05c-092e-11e4-bffa-b827eb189eb4</UUID>
                 <Comment>SwitchLink dimmer</Comment>
+                <ControllerFamily>Insteon</ControllerFamily>
                 <Coords>['0', '0']</Coords>
                 <IsDimmable>True</IsDimmable>
-                <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>Living Room</RoomName>
                 <LightingType>Light</LightingType>
+                <RoomName>None</RoomName>
+                <LightingType>Light</LightingType>
+                <CurLevel>100</CurLevel>
                 <Address>16.C2.9A</Address>
-                <IsController>True</IsController>
-                <DevCat>01.01</DevCat>
+                <DevCat>00.00</DevCat>
                 <GroupList>All_Lights|LR|LivingRoom(20;0)</GroupList>
                 <GroupNumber>0</GroupNumber>
-                <IsMaster>True</IsMaster>
-                <ProductKey>0</ProductKey>
-                <IsResponder>True</IsResponder></Light>
+                <IsController>False</IsController>
+                <IsMaster>False</IsMaster>
+                <IsResponder>False</IsResponder>
+                <ProductKey>00.00.00</ProductKey>
+            </Light>
             <Light Active="True" Key="11" Name="kitchen_counter">
-                <Comment />
-                <Coords />
-                <IsDimmable>False</IsDimmable>
+                <UUID>c17027c0-092e-11e4-bffa-b827eb189eb4</UUID>
+                <Comment>None</Comment>
                 <ControllerFamily>UPB</ControllerFamily>
-                <RoomName>Kitchen</RoomName>
+                <Coords>None</Coords>
+                <IsDimmable>False</IsDimmable>
                 <LightingType>Light</LightingType>
-                <NetworkID>6</NetworkID>
-                <Password>1293</Password>
-                <UnitID>20</UnitID>
+                <RoomName>None</RoomName>
+                <LightingType>Light</LightingType>
+                <CurLevel>0</CurLevel>
+                <UPBAddress>255</UPBAddress>
+                <UPBNetworkID>0</UPBNetworkID>
+                <UPBPassword>0</UPBPassword>
             </Light>
             <Light Active="False" Key="12" Name="test_light_u1">
-                <Comment />
-                <Coords />
-                <IsDimmable>False</IsDimmable>
+                <UUID>c1714bfa-092e-11e4-bffa-b827eb189eb4</UUID>
+                <Comment>None</Comment>
                 <ControllerFamily>UPB</ControllerFamily>
-                <RoomName>Music Room</RoomName>
+                <Coords>None</Coords>
+                <IsDimmable>False</IsDimmable>
                 <LightingType>Light</LightingType>
-                <NetworkID>6</NetworkID>
-                <Password>1293</Password>
-                <UnitID>21</UnitID>
+                <RoomName>None</RoomName>
+                <LightingType>Light</LightingType>
+                <CurLevel>0</CurLevel>
+                <UPBAddress>255</UPBAddress>
+                <UPBNetworkID>0</UPBNetworkID>
+                <UPBPassword>0</UPBPassword>
             </Light>
             <Light Active="False" Key="13" Name="Christmas_01 a">
-                <Comment>LampLink</Comment>
+                <UUID>c17272c8-092e-11e4-bffa-b827eb189eb4</UUID>
+                <Comment>None</Comment>
+                <ControllerFamily>Insteon</ControllerFamily>
                 <Coords>None</Coords>
                 <IsDimmable>False</IsDimmable>
-                <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>Living Room</RoomName>
                 <LightingType>Light</LightingType>
+                <RoomName>None</RoomName>
+                <LightingType>Light</LightingType>
+                <CurLevel>0</CurLevel>
                 <Address>1A.E7.12</Address>
-                <IsController>True</IsController>
                 <DevCat>00.00</DevCat>
-                <GroupList />
+                <GroupList>None</GroupList>
                 <GroupNumber>0</GroupNumber>
-                <IsMaster>True</IsMaster>
+                <IsController>False</IsController>
+                <IsMaster>False</IsMaster>
+                <IsResponder>False</IsResponder>
                 <ProductKey>00.00.00</ProductKey>
-                <IsResponder>True</IsResponder></Light>
+            </Light>
             <Light Active="False" Key="14" Name="Christmas_02">
-                <Comment>LampLink</Comment>
+                <UUID>c173f198-092e-11e4-bffa-b827eb189eb4</UUID>
+                <Comment>None</Comment>
+                <ControllerFamily>Insteon</ControllerFamily>
                 <Coords>None</Coords>
                 <IsDimmable>False</IsDimmable>
-                <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>Living Room</RoomName>
                 <LightingType>Light</LightingType>
+                <RoomName>None</RoomName>
+                <LightingType>Light</LightingType>
+                <CurLevel>0</CurLevel>
                 <Address>1A.EB.84</Address>
-                <IsController>True</IsController>
                 <DevCat>00.00</DevCat>
-                <GroupList />
+                <GroupList>None</GroupList>
                 <GroupNumber>0</GroupNumber>
-                <IsMaster>True</IsMaster>
+                <IsController>False</IsController>
+                <IsMaster>False</IsMaster>
+                <IsResponder>False</IsResponder>
                 <ProductKey>00.00.00</ProductKey>
-                <IsResponder>True</IsResponder></Light>
+            </Light>
             <Light Active="False" Key="15" Name="Christmas_03">
-                <Comment>LampLink</Comment>
+                <UUID>c1756d8e-092e-11e4-bffa-b827eb189eb4</UUID>
+                <Comment>None</Comment>
+                <ControllerFamily>Insteon</ControllerFamily>
                 <Coords>None</Coords>
                 <IsDimmable>False</IsDimmable>
-                <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>Living Room</RoomName>
                 <LightingType>Light</LightingType>
+                <RoomName>None</RoomName>
+                <LightingType>Light</LightingType>
+                <CurLevel>0</CurLevel>
                 <Address>1A.EB.29</Address>
-                <IsController>True</IsController>
                 <DevCat>00.00</DevCat>
-                <GroupList />
+                <GroupList>None</GroupList>
                 <GroupNumber>0</GroupNumber>
-                <IsMaster>True</IsMaster>
+                <IsController>False</IsController>
+                <IsMaster>False</IsMaster>
+                <IsResponder>False</IsResponder>
                 <ProductKey>00.00.00</ProductKey>
-                <IsResponder>True</IsResponder></Light>
+            </Light>
         </LightSection>
         <ButtonSection>
             <Button Active="False" Key="0" Name="kpl_1_A">
+                <UUID>c150b732-092e-11e4-bffa-b827eb189eb4</UUID>
                 <Comment>KeypadLink Button A</Comment>
+                <ControllerFamily>Insteon</ControllerFamily>
                 <Coords>None</Coords>
                 <IsDimmable>False</IsDimmable>
-                <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>Master Bath</RoomName>
                 <LightingType>Button</LightingType>
-                <Address>16.E5.B6</Address>
-                <IsController>True</IsController>
-                <DevCat>00.00</DevCat>
-                <GroupList>All_Lights|MasterBedroom(0;0)</GroupList>
-                <GroupNumber>1</GroupNumber>
-                <IsMaster>True</IsMaster>
-                <ProductKey>0</ProductKey>
-                <IsResponder>True</IsResponder>
+                <RoomName>None</RoomName>
+                <Address>99.88.77</Address>
+                <DevCat>A1.B2</DevCat>
+                <GroupList>None</GroupList>
+                <GroupNumber>0</GroupNumber>
+                <IsController>False</IsController>
+                <IsMaster>False</IsMaster>
+                <IsResponder>False</IsResponder>
+                <ProductKey>98.76.54</ProductKey>
             </Button>
             <Button Active="False" Key="1" Name="kpl_1_B">
-                <Comment>KeypadLink Button B</Comment><Coords />
-                <IsDimmable>False</IsDimmable>
+                <UUID>c1521942-092e-11e4-bffa-b827eb189eb4</UUID>
+                <Comment>KeypadLink Button B</Comment>
                 <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>BR</RoomName>
+                <Coords>None</Coords>
+                <IsDimmable>False</IsDimmable>
                 <LightingType>Button</LightingType>
-                <Address>16.E5.B6</Address>
-                <IsController>True</IsController>
-                <DevCat>00.00</DevCat>
-                <GroupList>All_Buttons</GroupList>
-                <GroupNumber>2</GroupNumber>
+                <RoomName>None</RoomName>
+                <Address>99.88.77</Address>
+                <DevCat>A1.B2</DevCat>
+                <GroupList>None</GroupList>
+                <GroupNumber>0</GroupNumber>
+                <IsController>False</IsController>
                 <IsMaster>False</IsMaster>
-                <ProductKey>0</ProductKey>
-                <IsResponder>True</IsResponder></Button>
+                <IsResponder>False</IsResponder>
+                <ProductKey>98.76.54</ProductKey>
+            </Button>
             <Button Active="False" Key="2" Name="kpl_1_C">
+                <UUID>c1536ff4-092e-11e4-bffa-b827eb189eb4</UUID>
                 <Comment>KeypadLink Button C</Comment>
+                <ControllerFamily>Insteon</ControllerFamily>
                 <Coords>None</Coords>
                 <IsDimmable>False</IsDimmable>
-                <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>BR</RoomName>
                 <LightingType>Button</LightingType>
-                <Address>16.E5.B6</Address>
-                <IsController>True</IsController>
-                <DevCat>00.00</DevCat>
-                <GroupList>All_Buttons</GroupList>
-                <GroupNumber>3</GroupNumber>
+                <RoomName>None</RoomName>
+                <Address>99.88.77</Address>
+                <DevCat>A1.B2</DevCat>
+                <GroupList>None</GroupList>
+                <GroupNumber>0</GroupNumber>
+                <IsController>False</IsController>
                 <IsMaster>False</IsMaster>
-                <ProductKey>0</ProductKey>
-                <IsResponder>True</IsResponder></Button>
+                <IsResponder>False</IsResponder>
+                <ProductKey>98.76.54</ProductKey>
+            </Button>
             <Button Active="False" Key="3" Name="kpl_1_D">
+                <UUID>c154c552-092e-11e4-bffa-b827eb189eb4</UUID>
                 <Comment>KeypadLink Button D</Comment>
+                <ControllerFamily>Insteon</ControllerFamily>
                 <Coords>None</Coords>
                 <IsDimmable>False</IsDimmable>
-                <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>BR</RoomName>
                 <LightingType>Button</LightingType>
-                <Address>16.E5.B6</Address>
-                <IsController>True</IsController>
-                <DevCat>00.00</DevCat>
-                <GroupList>All_Buttons</GroupList>
-                <GroupNumber>4</GroupNumber>
+                <RoomName>None</RoomName>
+                <Address>99.88.77</Address>
+                <DevCat>A1.B2</DevCat>
+                <GroupList>None</GroupList>
+                <GroupNumber>0</GroupNumber>
+                <IsController>False</IsController>
                 <IsMaster>False</IsMaster>
-                <ProductKey>0</ProductKey>
-                <IsResponder>True</IsResponder></Button>
+                <IsResponder>False</IsResponder>
+                <ProductKey>98.76.54</ProductKey>
+            </Button>
             <Button Active="False" Key="4" Name="kpl_1_E">
+                <UUID>c1561dee-092e-11e4-bffa-b827eb189eb4</UUID>
                 <Comment>KeypadLink Button E</Comment>
+                <ControllerFamily>Insteon</ControllerFamily>
                 <Coords>None</Coords>
                 <IsDimmable>False</IsDimmable>
-                <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>BR</RoomName>
                 <LightingType>Button</LightingType>
-                <Address>16.E5.B6</Address>
-                <IsController>True</IsController>
-                <DevCat>00.00</DevCat>
-                <GroupList>All_Buttons</GroupList>
-                <GroupNumber>5</GroupNumber>
+                <RoomName>None</RoomName>
+                <Address>99.88.77</Address>
+                <DevCat>A1.B2</DevCat>
+                <GroupList>None</GroupList>
+                <GroupNumber>0</GroupNumber>
+                <IsController>False</IsController>
                 <IsMaster>False</IsMaster>
-                <ProductKey>0</ProductKey>
-                <IsResponder>True</IsResponder></Button>
+                <IsResponder>False</IsResponder>
+                <ProductKey>98.76.54</ProductKey>
+            </Button>
             <Button Active="False" Key="5" Name="kpl_1_F">
+                <UUID>c15776c6-092e-11e4-bffa-b827eb189eb4</UUID>
                 <Comment>KeypadLink Button F</Comment>
+                <ControllerFamily>Insteon</ControllerFamily>
                 <Coords>None</Coords>
                 <IsDimmable>False</IsDimmable>
-                <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>BR</RoomName>
                 <LightingType>Button</LightingType>
-                <Address>16.E5.B6</Address>
-                <IsController>True</IsController>
-                <DevCat>00.00</DevCat>
-                <GroupList>All_Buttons</GroupList>
-                <GroupNumber>6</GroupNumber>
+                <RoomName>None</RoomName>
+                <Address>99.88.77</Address>
+                <DevCat>A1.B2</DevCat>
+                <GroupList>None</GroupList>
+                <GroupNumber>0</GroupNumber>
+                <IsController>False</IsController>
                 <IsMaster>False</IsMaster>
-                <ProductKey>0</ProductKey>
-                <IsResponder>True</IsResponder></Button>
+                <IsResponder>False</IsResponder>
+                <ProductKey>98.76.54</ProductKey>
+            </Button>
             <Button Active="False" Key="6" Name="kpl_1_G">
+                <UUID>c158d138-092e-11e4-bffa-b827eb189eb4</UUID>
                 <Comment>KeypadLink Button G</Comment>
+                <ControllerFamily>Insteon</ControllerFamily>
                 <Coords>None</Coords>
                 <IsDimmable>False</IsDimmable>
-                <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>BR</RoomName>
                 <LightingType>Button</LightingType>
-                <Address>16.E5.B6</Address>
-                <IsController>True</IsController>
-                <DevCat>00.00</DevCat>
-                <GroupList>All_Buttons</GroupList>
-                <GroupNumber>7</GroupNumber>
+                <RoomName>None</RoomName>
+                <Address>99.88.77</Address>
+                <DevCat>A1.B2</DevCat>
+                <GroupList>None</GroupList>
+                <GroupNumber>0</GroupNumber>
+                <IsController>False</IsController>
                 <IsMaster>False</IsMaster>
-                <ProductKey>0</ProductKey>
-                <IsResponder>True</IsResponder></Button>
+                <IsResponder>False</IsResponder>
+                <ProductKey>98.76.54</ProductKey>
+            </Button>
             <Button Active="False" Key="7" Name="kpl_1_H">
+                <UUID>c15a2920-092e-11e4-bffa-b827eb189eb4</UUID>
                 <Comment>KeypadLink Button H</Comment>
+                <ControllerFamily>Insteon</ControllerFamily>
                 <Coords>None</Coords>
                 <IsDimmable>False</IsDimmable>
-                <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>BR</RoomName>
                 <LightingType>Button</LightingType>
-                <Address>16.E5.B6</Address>
-                <IsController>True</IsController>
-                <DevCat>00.00</DevCat>
-                <GroupList>All_Buttons</GroupList>
-                <GroupNumber>8</GroupNumber>
-                <IsMaster>False</IsMaster>
-                <ProductKey>0</ProductKey>
-                <IsResponder>True</IsResponder></Button>
-            <Button Active="False" Key="8" Name="nook_chand_slave">
-                <Comment>SwitchLink dimmer</Comment>
-                <Coords>None</Coords>
-                <IsDimmable>True</IsDimmable>
-                <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>BR</RoomName>
-                <LightingType>Light</LightingType>
-                <Address>17.C3.30</Address>
-                <IsController>True</IsController>
-                <DevCat>00.00</DevCat>
-                <GroupList>All_Lights|Nook(12;12)</GroupList>
+                <RoomName>None</RoomName>
+                <Address>99.88.77</Address>
+                <DevCat>A1.B2</DevCat>
+                <GroupList>None</GroupList>
                 <GroupNumber>0</GroupNumber>
+                <IsController>False</IsController>
                 <IsMaster>False</IsMaster>
-                <ProductKey>0</ProductKey>
-                <IsResponder>True</IsResponder></Button>
-            <Button Active="False" Key="9" Name="dr_chand2">
-                <Comment>SwitchLink dimmer</Comment>
-                <Coords>None</Coords>
-                <IsDimmable>True</IsDimmable>
-                <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>BR</RoomName>
-                <LightingType>Light</LightingType>
-                <Address>16.C9.D0</Address>
-                <IsController>True</IsController>
-                <DevCat>00.00</DevCat>
-                <GroupList>All_Lights|Pantry(0;0)</GroupList>
-                <GroupNumber>0</GroupNumber>
-                <IsMaster>False</IsMaster>
-                <ProductKey>0</ProductKey>
-                <IsResponder>True</IsResponder></Button>
-            <Button Active="False" Key="10" Name="TestButton">
-                <Comment>None</Comment>
-                <Coords>None</Coords>
-                <IsDimmable>False</IsDimmable>
-                <ControllerFamily>UPB</ControllerFamily>
-                <Room>BR</Room>
-                <LightingType>Lighting</LightingType>
-                <NetworkID>6</NetworkID>
-                <Password>1293</Password>
-                <UnitID>85</UnitID>
+                <IsResponder>False</IsResponder>
+                <ProductKey>98.76.54</ProductKey>
             </Button>
         </ButtonSection>
         <ControllerSection>
             <Controller Active="False" Key="0" Name="PLM_1">
+                <UUID>c1490758-092e-11e4-bffa-b827eb189eb4</UUID>
                 <Comment>Dongle using serial converter 067B:2303</Comment>
+                <ControllerFamily>Insteon</ControllerFamily>
                 <Coords>None</Coords>
                 <IsDimmable>False</IsDimmable>
-                <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>Office</RoomName>
                 <LightingType>Controller</LightingType>
-                <Address>AA.AA.AA</Address>
-                <IsController>True</IsController>
-                <DevCat>00.00</DevCat><GroupList />
-                <GroupNumber>0</GroupNumber>
-                <IsMaster>True</IsMaster>
-                <ProductKey>0</ProductKey>
-                <IsResponder>True</IsResponder>
+                <RoomName>None</RoomName>
                 <InterfaceType>Serial</InterfaceType>
                 <Port>/dev/ttyUSB0</Port>
+                <Address>AA.AA.AA</Address>
+                <DevCat>00.00</DevCat>
+                <GroupList>None</GroupList>
+                <GroupNumber>0</GroupNumber>
+                <IsController>True</IsController>
+                <IsMaster>False</IsMaster>
+                <IsResponder>False</IsResponder>
+                <ProductKey>00.00.00</ProductKey>
                 <BaudRate>19200</BaudRate>
                 <ByteSize>8</ByteSize>
+                <DsrDtr>False</DsrDtr>
                 <Parity>N</Parity>
+                <RtsCts>False</RtsCts>
                 <StopBits>1.0</StopBits>
                 <Timeout>1.0</Timeout>
-                <DsrDtr>False</DsrDtr>
-                <RtsCts>False</RtsCts>
                 <XonXoff>False</XonXoff>
             </Controller>
             <Controller Active="True" Key="1" Name="PowerLink">
+                <UUID>c14c9788-092e-11e4-bffa-b827eb189eb4</UUID>
                 <Comment>2413UH Powerlink Controller</Comment>
+                <ControllerFamily>Insteon</ControllerFamily>
                 <Coords>None</Coords>
                 <IsDimmable>False</IsDimmable>
-                <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>Office</RoomName>
                 <LightingType>Controller</LightingType>
-                <Address>17.03.B2</Address>
-                <IsController>True</IsController>
-                <DevCat>00.00</DevCat>
-                <GroupList />
-                <GroupNumber>0</GroupNumber>
-                <IsMaster>True</IsMaster>
-                <ProductKey>0</ProductKey>
-                <IsResponder>True</IsResponder>
+                <RoomName>None</RoomName>
                 <InterfaceType>Serial</InterfaceType>
                 <Port>/dev/ttyUSB0</Port>
+                <Address>17.03.B2</Address>
+                <DevCat>00.00</DevCat>
+                <GroupList>None</GroupList>
+                <GroupNumber>0</GroupNumber>
+                <IsController>True</IsController>
+                <IsMaster>False</IsMaster>
+                <IsResponder>False</IsResponder>
+                <ProductKey>00.00.00</ProductKey>
                 <BaudRate>19200</BaudRate>
                 <ByteSize>8</ByteSize>
+                <DsrDtr>False</DsrDtr>
                 <Parity>N</Parity>
+                <RtsCts>False</RtsCts>
                 <StopBits>1.0</StopBits>
                 <Timeout>1.0</Timeout>
-                <DsrDtr>False</DsrDtr>
-                <RtsCts>False</RtsCts>
                 <XonXoff>False</XonXoff>
             </Controller>
             <Controller Active="False" Key="2" Name="UPB_PIM">
+                <UUID>c14ed4ee-092e-11e4-bffa-b827eb189eb4</UUID>
                 <Comment>UPB PIM  using USB connection</Comment>
+                <ControllerFamily>UPB</ControllerFamily>
                 <Coords>None</Coords>
                 <IsDimmable>False</IsDimmable>
-                <ControllerFamily>UPB</ControllerFamily>
-                <RoomName>Master Bath</RoomName>
                 <LightingType>Controller</LightingType>
-                <NetworkID>6</NetworkID>
-                <Password>1293</Password>
-                <UnitID>255</UnitID>
+                <RoomName>None</RoomName>
                 <InterfaceType>USB</InterfaceType>
                 <Port>None</Port>
-                <Vendor>6109</Vendor>
+                <UPBAddress>255</UPBAddress>
+                <UPBNetworkID>0</UPBNetworkID>
+                <UPBPassword>0</UPBPassword>
                 <Product>21760</Product>
+                <Vendor>6109</Vendor>
             </Controller>
         </ControllerSection>
-        <ThermostatSection>
-            <Thermostat Name="Main Thermostat" Key="0" Active="True">
-                <ControllerFamily>Insteon</ControllerFamily>
-                <CoolSetPoint>78.0</CoolSetPoint>
-                <CurrentTemperature>76</CurrentTemperature>
-                <HeatSetPoint>71.0</HeatSetPoint>
-                <ThermostatMode>Cool</ThermostatMode>
-                <ThermostatScale>F</ThermostatScale>
-                <Address>18.C9.4A</Address>
-                <IsController>True</IsController>
-                <IsMaster>True</IsMaster>
-                <IsResponder>True</IsResponder>
-            </Thermostat>
-        </ThermostatSection>
         <IrrigationSection>
-            <Irrigation Name='Pool Filler' Key="0" Active="True">
+            <Irrigation Active="True" Key="0" Name="Pool Filler">
+                <UUID>c1a3c166-092e-11e4-bffa-b827eb189eb4</UUID>
             </Irrigation>
         </IrrigationSection>
-        <EntertainmentSection />
     </HouseDivision>
 </PyHouse>

@@ -47,7 +47,7 @@ class ThermostatsElement(athena.LiveElement):
     @athena.expose
     def getHouseData(self):
         l_json = GetJSONHouseInfo(self.m_pyhouse_obj)
-        LOG.info('Fetched {}'.format(l_json))
+        # LOG.info('Fetched {}'.format(l_json))
         return l_json
 
     @athena.expose

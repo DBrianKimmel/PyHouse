@@ -94,8 +94,8 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 			globals.House.HouseObj = JSON.parse(p_json);
 			self.buildLcarSelectScreen()
         }
-        function eb_fetchHouseData(res) {
-            Divmod.debug('---', 'controllers.eb_fetchHouseData() was called.  ERROR - ' + res);
+        function eb_fetchHouseData(p_reason) {
+            Divmod.debug('---', 'ERROR controllers.eb_fetchHouseData() - ' + p_reason);
         }
         var l_defer = self.callRemote("getHouseData");  // call server @ web_controllers.py
         l_defer.addCallback(cb_fetchHouseData);

@@ -21,7 +21,7 @@ import importlib
 # Import PyHouse files
 from Modules.Core.data_objects import FamilyData
 from Modules.Families import VALID_FAMILIES
-from Modules.Utilities.xml_tools import XmlConfigTools
+# from Modules.Utilities.xml_tools import XmlConfigTools
 from Modules.Computer import logging_pyh as Logger
 # from Modules.Utilities.tools import PrettyPrintAny
 
@@ -106,7 +106,7 @@ class API(Utility):
         self.m_count = 0
         for l_family in VALID_FAMILIES:
             l_family_obj = self._build_one_family_data(l_family)
-            l_module, l_xml_module = self._import_one_module(l_family_obj)
+            l_module, _l_xml_module = self._import_one_module(l_family_obj)
             l_api = self._initialize_one_module(l_module)
             l_family_obj.FamilyModuleAPI = l_api
             l_family_data[l_family_obj.Name] = l_family_obj
@@ -135,7 +135,7 @@ class API(Utility):
         for l_family_obj in p_house_obj.FamilyData.itervalues():
             l_family_obj.FamilyModuleAPI.SaveXml(p_xml)
 
-    def ReadXml(self, p_device_obj, p_device_xml):
+    def ReadXml(self, p_device_obj, _p_device_xml):
         LOG.info('family ReadXml was called for device {0:}.'.format(p_device_obj.Name))
         pass
 

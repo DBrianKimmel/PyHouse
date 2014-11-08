@@ -170,38 +170,8 @@ class SetupMixin(object):
         return l_loc
 
 
-class Test_01_Results(SetupMixin, unittest.TestCase):
-    """
-    Overall test to see if sunrise and sunset are correct for any date.
-    These tests should break if any other test is bad.
-    """
 
-    def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
-        self.m_api = sunrisesunset.API()
-
-    def test_01_Sunrise(self):
-        """
-        Given a date, we should get a correct sunrise datetime
-        """
-        self.m_api.Start(self.m_pyhouse_obj, T_DATE)
-        self.m_earth = self.m_api._load_location(self.m_pyhouse_obj)
-        l_result = self.m_api.get_sunrise_datetime()
-        print('Sunrise for date {};  Calc: {};  S/B: {}'.format(T_DATE, l_result, T_SUNRISE))
-        PrettyPrintAny(self.m_earth, 'T_01, t_01, Params')
-        self.assertEqual(l_result, T_SUNRISE)
-
-    def test_02_Sunset(self):
-        """
-        Given a date, we should get a correct sunset datetime
-        """
-        self.m_api.Start(self.m_pyhouse_obj, T_DATE)
-        l_result = self.m_api.get_sunset_datetime()
-        print('Sunset for date {};  Calc: {};  S/B: {}'.format(T_DATE, l_result, T_SUNSET))
-        self.assertEqual(l_result, T_SUNSET)
-
-
-class Test_02_Utility(SetupMixin, unittest.TestCase):
+class C01_Utility(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
@@ -242,7 +212,53 @@ class Test_02_Utility(SetupMixin, unittest.TestCase):
         self.assertEqual(l_ret, datetime.timedelta(1, 30780))
 
 
-class Test_03_ObserverEarth(SetupMixin, unittest.TestCase):
+
+class C02_Time(SetupMixin, unittest.TestCase):
+    """Testing time and timezone
+    The user inputs a valid timezone and the web interface fills in the internal values
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        self.m_api = sunrisesunset.API()
+
+    def test_01_TZ(self):
+        pass
+
+
+
+class C04_Results(SetupMixin, unittest.TestCase):
+    """
+    Overall test to see if sunrise and sunset are correct for any date.
+    These tests should break if any other test is bad.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        self.m_api = sunrisesunset.API()
+
+    def test_01_Sunrise(self):
+        """
+        Given a date, we should get a correct sunrise datetime
+        """
+        self.m_api.Start(self.m_pyhouse_obj, T_DATE)
+        self.m_earth = self.m_api._load_location(self.m_pyhouse_obj)
+        l_result = self.m_api.get_sunrise_datetime()
+        print('Sunrise for date {};  Calc: {};  S/B: {}'.format(T_DATE, l_result, T_SUNRISE))
+        PrettyPrintAny(self.m_earth, 'T_01, t_01, Params')
+        self.assertEqual(l_result, T_SUNRISE)
+
+    def test_02_Sunset(self):
+        """
+        Given a date, we should get a correct sunset datetime
+        """
+        self.m_api.Start(self.m_pyhouse_obj, T_DATE)
+        l_result = self.m_api.get_sunset_datetime()
+        print('Sunset for date {};  Calc: {};  S/B: {}'.format(T_DATE, l_result, T_SUNSET))
+        self.assertEqual(l_result, T_SUNSET)
+
+
+class C07_ObserverEarth(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
@@ -255,7 +271,7 @@ class Test_03_ObserverEarth(SetupMixin, unittest.TestCase):
         self.assertEqual(l_location.Latitude, T_LATITUDE)
 
 
-class Test_04_Julian(SetupMixin, unittest.TestCase):
+class C08_Julian(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
@@ -313,7 +329,7 @@ class Test_04_Julian(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_api._is_jan_feb(datetime.date(2013, 12, 1)), 0)
 
 
-class Test_05_Sun(SetupMixin, unittest.TestCase):
+class C15_Sun(SetupMixin, unittest.TestCase):
 
     def t1(self):
         self.m_solar.EclipticLatitude = self.m_api._calc_ecliptic_latitude()

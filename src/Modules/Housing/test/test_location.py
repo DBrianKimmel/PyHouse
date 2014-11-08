@@ -31,7 +31,7 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-class Test_02_XML(SetupMixin, unittest.TestCase):
+class C01_XML(SetupMixin, unittest.TestCase):
 
     def _pyHouses(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
@@ -41,19 +41,27 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
     def setUp(self):
         self._pyHouses()
 
-    def test_0201_find_xml(self):
+    def test_01_find_xml(self):
         """ Be sure that the XML contains the right stuff.
         """
         self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
         self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision', 'XML - No Houses Division')
 
-    def test_0202_ReadXml(self):
+    def test_02_ReadXml(self):
         """ Read in the xml file and fill in the location dict
         """
         l_location = self.m_api.read_location_xml(self.m_xml.house_div)
+        PrettyPrintAny(l_location, 'Location')
+        self.assertEqual(l_location.Street, '5191 N Pink Poppy Dr', 'Bad Address')
         self.assertEqual(l_location.City, 'Beverly Hills', 'Bad city')
+        self.assertEqual(l_location.State, 'Florida', 'Bad state')
+        self.assertEqual(l_location.ZipCode, '34465', 'Bad zip code')
+        self.assertEqual(l_location.Phone, '(352) 270-8096', 'Bad phone')
+        self.assertEqual(l_location.Latitude, 28.938448, 'Bad latitude')
+        self.assertEqual(l_location.Longitude, -82.517208, 'Bad longitude')
+        self.assertEqual(l_location.TimeZoneName, 'America/New_York', 'Bad time zone name')
 
-    def test_0203_WriteXml(self):
+    def test_03_WriteXml(self):
         """ Write out the XML file for the location section
         """
         l_location = self.m_api.read_location_xml(self.m_xml.house_div)
@@ -61,11 +69,11 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         PrettyPrintAny(l_xml, 'Location')
 
 
-    def test_0221_CreateJson(self):
+    def test_21_CreateJson(self):
         """ Create a JSON object for Location.
         """
         l_location = self.m_api.read_location_xml(self.m_xml.house_div)
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_location))
-        print('JSON: {0:}'.format(l_json))
+        PrettyPrintAny('JSON', l_json)
 
 # ## END DBK

@@ -1,7 +1,7 @@
 """
--*- test-case-name: PyHouse.src.Modules.hvac.test.test_thermostat -*-
+-*- test-case-name: PyHouse.src.Modules.Hvac.test.test_thermostat -*-
 
-@name: PyHouse/src/Modules/hvac/thermostat.py
+@name: PyHouse/src/Modules/Hvac/thermostats.py
 @author: D. Brian Kimmel
 @contact: D.BrianKimmel@gmail.com
 @copyright: 2013-2014 by D. Brian Kimmel
@@ -26,20 +26,6 @@ g_debug = 0
 LOG = Logger.getLogger('PyHouse.Thermostat  ')
 
 
-THERMOSTAT_XML = """
-        <ThermostatSection>
-            <Thermostat Name='Test Thermostat One' Active='True' Key='0'>
-                <ControllerFamily>Insteon</ControllerFamily>
-                <CoolSetPoint>78.0</CoolSetPoint>
-                <CurrentTemperature>76</CurrentTemperature>
-                <HeatSetPoint>71.0</HeatSetPoint>
-                <ThermostatMode>Cool</ThermostatMode>
-                <ThermostatScale>F</ThermostatScale>
-                <Address>18.C9.4A</Address>
-            </Thermostat>
-        </ThermostatSection>
-"""
-
 
 class ReadWriteConfigXml(xml_tools.XmlConfigTools):
     """
@@ -50,8 +36,8 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         """
         @return: a ThermostatData object.
         """
-        p_obj.CoolSetPoint = self.get_float_from_xml(p_xml, 'CoolSetPoint', 76.0)
         p_obj.ControllerFamily = self.get_text_from_xml(p_xml, 'ControllerFamily')
+        p_obj.CoolSetPoint = self.get_float_from_xml(p_xml, 'CoolSetPoint', 76.0)
         p_obj.CurrentTemperature = self.get_float_from_xml(p_xml, 'CurrentTemperature')
         p_obj.HeatSetPoint = self.get_float_from_xml(p_xml, 'HeatSetPoint', 68.0)
         p_obj.ThermostatMode = self.get_text_from_xml(p_xml, 'ThermostatMode', 'Cool')
@@ -59,12 +45,14 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         return p_obj
 
     def _read_family_data(self, p_obj, p_xml, p_pyhouse_obj):
+        l_ret = 'Invalid family'
         try:
             l_family = p_obj.ControllerFamily
             l_api = p_pyhouse_obj.House.OBJs.FamilyData[l_family].FamilyModuleAPI
-            l_api.extract_device_xml(p_obj, p_xml)
-        except KeyError as e_err:
-            LOG.error('ReadFamilyData ERROR {0:}'.format(e_err))
+            l_ret = l_api.extract_device_xml(p_obj, p_xml)
+        except (KeyError, AttributeError) as e_err:
+            LOG.error('ReadFamilyData ERROR {} Family:{}'.format(e_err, l_family))
+        return l_ret
 
     def read_one_thermostat_xml(self, p_thermostat_element, p_pyhouse_obj):
         """
@@ -107,8 +95,8 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         try:
             l_api = p_pyhouse_obj.House.OBJs.FamilyData[p_obj.ControllerFamily].FamilyModuleAPI
             l_api.insert_device_xml(p_xml, p_obj)
-        except KeyError as e_err:
-            LOG.error('Write Family Key Error {0:}'.format(e_err))
+        except (KeyError, AttributeError) as e_err:
+            LOG.error('Write Family Error {}  Family:{}'.format(e_err, p_obj.ControllerFamily))
 
     def write_one_thermostat_xml(self, p_thermostat_obj, p_pyhouse_obj):
         """
