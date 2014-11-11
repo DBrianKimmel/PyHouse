@@ -115,7 +115,7 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 			Active : fetchTrueFalseWidget(self, 'DynDnsActive'),
             Url : fetchTextWidget(self, 'DynDnsUrl'),
  			Delete : false
-            }
+            };
 		return l_data;
 	},
 
@@ -128,7 +128,7 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
     			Url : '',
     			Interval : 0,
     			Delete : false
-                }
+                };
 		return l_Data;
 	},
 
@@ -184,11 +184,13 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 			Divmod.debug('---', 'internet.eb_handleDataOnClick() was called. ERROR =' + res);
 		}
 		var l_ix = p_node.name;
+		var l_defer;
+		var l_json;
 		// Divmod.debug('---', 'internet.handleDataOnClick() was called. Node:' + l_ix);
 		switch(l_ix) {
 		case '10003':  // Change Button
-	    	var l_json = JSON.stringify(self.fetchEntry());
-	        var l_defer = self.callRemote("saveInternetData", l_json);  // @ web_internet
+	    	l_json = JSON.stringify(self.fetchEntry());
+	        l_defer = self.callRemote("saveInternetData", l_json);  // @ web_internet
 			l_defer.addCallback(cb_handleDataOnClick);
 			l_defer.addErrback(eb_handleDataOnClick);
 			break;
@@ -198,9 +200,9 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 			break;
 		case '10004':  // Delete button
 			var l_obj = self.fetchEntry();
-			l_obj['Delete'] = true;
-	    	var l_json = JSON.stringify(l_obj);
-	        var l_defer = self.callRemote("saveInternetData", l_json);  // @ web_rooms
+			l_obj.Delete = true;
+	    	l_json = JSON.stringify(l_obj);
+	        l_defer = self.callRemote("saveInternetData", l_json);  // @ web_rooms
 			l_defer.addCallback(cb_handleDataOnClick);
 			l_defer.addErrback(eb_handleDataOnClick);
 			break;

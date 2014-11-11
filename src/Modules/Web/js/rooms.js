@@ -76,7 +76,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	function fetchHouseData(self) {
 		function cb_fetchHouseData(p_json) {
 			globals.House.HouseObj = JSON.parse(p_json);
-			self.buildLcarSelectScreen()
+			self.buildLcarSelectScreen();
 		}
 		function eb_fetchHouseData(p_result) {
 			Divmod.debug('---', 'rooms.eb_fetchHouseData() was called. ERROR = ' + p_result);
@@ -143,7 +143,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	 * Fill in the schedule entry screen with all of the data for this room.
 	 */
 	function fillEntry(self, p_entry) {
-		self.buildLcarRoomDataEntryScreen(p_entry, 'handleDataOnClick')
+		self.buildLcarRoomDataEntryScreen(p_entry, 'handleDataOnClick');
 	},
 	function createEntry(self) {
     	//Divmod.debug('---', 'rooms.createEntry() was called. ');
@@ -155,7 +155,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 			Corner : '',
 			Size : '',
 			Delete : false
-		}
+		};
 		return l_data;
 	},
 	function fetchEntry(self) {
@@ -169,7 +169,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 			Type : 'Room',
 			Size : fetchTextWidget(self, 'Size'),
 			Delete : false
-		}
+		};
 		return l_data;
 	},
 
@@ -190,10 +190,12 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 			Divmod.debug('---', 'rooms.eb_handleDataOnClick() was called. ERROR =' + res);
 		}
 		var l_ix = p_node.name;
+		var l_defer;
+		var l_json;
 		switch(l_ix) {
 		case '10003':  // Change Button
-	    	var l_json = JSON.stringify(self.fetchEntry());
-	        var l_defer = self.callRemote("saveRoomData", l_json);  // @ web_schedule
+	    	l_json = JSON.stringify(self.fetchEntry());
+	        l_defer = self.callRemote("saveRoomData", l_json);  // @ web_schedule
 			l_defer.addCallback(cb_handleDataOnClick);
 			l_defer.addErrback(eb_handleDataOnClick);
 			break;
@@ -203,9 +205,9 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 			break;
 		case '10004':  // Delete button
 			var l_obj = self.fetchEntry();
-			l_obj['Delete'] = true;
-	    	var l_json = JSON.stringify(l_obj);
-	        var l_defer = self.callRemote("saveRoomData", l_json);  // @ web_rooms
+			l_obj.Delete = true;
+	    	l_json = JSON.stringify(l_obj);
+	        l_defer = self.callRemote("saveRoomData", l_json);  // @ web_rooms
 			l_defer.addCallback(cb_handleDataOnClick);
 			l_defer.addErrback(eb_handleDataOnClick);
 			break;

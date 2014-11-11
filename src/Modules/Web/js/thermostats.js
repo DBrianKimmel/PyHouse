@@ -79,7 +79,7 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 	function fetchHouseData(self) {
 		function cb_fetchHouseData(p_json) {
 			globals.House.HouseObj = JSON.parse(p_json);
-			self.buildLcarSelectScreen()
+			self.buildLcarSelectScreen();
 		}
 		function eb_fetchHouseData(res) {
 			Divmod.debug('---', 'thermostats.eb_fetchHouseData() was called. ERROR: ' + res);
@@ -146,13 +146,13 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 		var l_obj = globals.House.ThermostatObj;
 		var l_self = globals.House.Self;
 		var l_level = fetchSliderWidget(l_self, 'HeatSetting');
-		updateSliderBoxValue(l_self, 'HeatSetting', l_level)
+		updateSliderBoxValue(l_self, 'HeatSetting', l_level);
 	},
 	function handleSliderChangeHot(p_event){
 		var l_obj = globals.House.ThermostatObj;
 		var l_self = globals.House.Self;
 		var l_level = fetchSliderWidget(l_self, 'HeatSetting');
-		updateSliderBoxValue(l_self, 'HeatSetting', l_level)
+		updateSliderBoxValue(l_self, 'HeatSetting', l_level);
 	},
 	/**
 	 * Fill in the dynamic dns part of the compound entry screen with all of the data for this schedule.
@@ -160,7 +160,7 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 	 */
 	function fillEntry(self, p_entry, p_ix) {
 		Divmod.debug('---', 'thermostats.fillEntry() was called.  Ix:' + p_ix);
-		self.buildLcarDataEntryScreen(p_entry, 'handleDataOnClick')
+		self.buildLcarDataEntryScreen(p_entry, 'handleDataOnClick');
 	},
 	function fetchEntry(self) {
 		Divmod.debug('---', 'thermostats.fetchEntry() was called. ');
@@ -180,7 +180,7 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 		Divmod.debug('---', 'thermostats.createEntry() was called.  Ix: ' + p_ix);
 		var l_key = 0;
 		if (globals.House.HouseObj.Thermostats !== 'undefined')
-			l_key = Object.keys(globals.House.HouseObj.Thermostats).length
+			l_key = Object.keys(globals.House.HouseObj.Thermostats).length;
         var l_Data = {
     			Name : 'Change Me',
     			Key : l_key,
@@ -247,11 +247,13 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 			Divmod.debug('---', 'thermostats.eb_handleDataOnClick() was called. ERROR =' + res);
 		}
 		var l_ix = p_node.name;
+		var l_defer;
+		var l_json;
 		//Divmod.debug('---', 'thermostats.handleDataOnClick() was called. Node:' + l_ix);
 		switch(l_ix) {
 		case '10003':  // Change Button
-	    	var l_json = JSON.stringify(self.fetchEntry());
-	        var l_defer = self.callRemote("saveThermostatsData", l_json);  // @ web_thermostat
+	    	l_json = JSON.stringify(self.fetchEntry());
+	        l_defer = self.callRemote("saveThermostatsData", l_json);  // @ web_thermostat
 			l_defer.addCallback(cb_handleDataOnClick);
 			l_defer.addErrback(eb_handleDataOnClick);
 			break;
@@ -261,9 +263,9 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 			break;
 		case '10004':  // Delete button
 			var l_obj = self.fetchEntry();
-			l_obj['Delete'] = true;
-	    	var l_json = JSON.stringify(l_obj);
-	        var l_defer = self.callRemote("saveThermostatsData", l_json);  // @ web_rooms
+			l_obj.Delete = true;
+	    	l_json = JSON.stringify(l_obj);
+	        l_defer = self.callRemote("saveThermostatsData", l_json);  // @ web_rooms
 			l_defer.addCallback(cb_handleDataOnClick);
 			l_defer.addErrback(eb_handleDataOnClick);
 			break;

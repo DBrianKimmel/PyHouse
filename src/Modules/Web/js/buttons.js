@@ -101,7 +101,7 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 			Type : fetchTextWidget(self, 'ButtonType'),
 			UUID : fetchTextWidget(self, 'ButtonUUID'),
 			Delete : false
-            }
+            };
 		return l_data;
 	},
 
@@ -154,12 +154,14 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 		function eb_handleDataOnClick(res){
 			//Divmod.debug('---', 'button.eb_handleDataOnClick() was called. res=' + res);
 		}
+		var l_defer;
 		var l_ix = p_node.name;
+		var l_json;
 		switch(l_ix) {
 		case '10003':  // Change Button
-	    	var l_json = JSON.stringify(self.fetchEntry(self));
+	    	l_json = JSON.stringify(self.fetchEntry(self));
 			//Divmod.debug('---', 'buttons.handleDataOnClick(1) was called. json:' + l_json);
-	        var l_defer = self.callRemote("saveButtonData", l_json);  // @ web_button
+	        l_defer = self.callRemote("saveButtonData", l_json);  // @ web_button
 			l_defer.addCallback(cb_handleDataOnClick);
 			l_defer.addErrback(eb_handleDataOnClick);
 			break;
@@ -170,16 +172,16 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 			break;
 		case '10004':  // Delete button
 			var l_obj = self.fetchEntry();
-			l_obj['Delete'] = true;
-	    	var l_json = JSON.stringify(l_obj);
+			l_obj.Delete = true;
+	    	l_json = JSON.stringify(l_obj);
 			//Divmod.debug('---', 'buttons.handleDataOnClick(Delete) was called. JSON:' + l_json);
-	        var l_defer = self.callRemote("saveButtonData", l_json);  // @ web_rooms
+	        l_defer = self.callRemote("saveButtonData", l_json);  // @ web_rooms
 			l_defer.addCallback(cb_handleDataOnClick);
 			l_defer.addErrback(eb_handleDataOnClick);
 			break;
 		default:
 			Divmod.debug('---', 'buttons.handleDataOnClick(Default) was called. l_ix:' + l_ix);
-			break;			
+			break;
 		}
         return false;  // false stops the chain.
 	}

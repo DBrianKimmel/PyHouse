@@ -98,6 +98,18 @@ CONTROLLER_XSD = """
               <xs:element type="xs:string" name="ControllerFamily"/>
               <xs:element type="xs:string" name="RoomName"/>
               <xs:element type="xs:string" name="LightingType"/>
+            </xs:sequence>
+            <xs:attribute type="xs:string" name="Active" use="optional"/>
+            <xs:attribute type="xs:byte" name="Key" use="optional"/>
+            <xs:attribute type="xs:string" name="Name" use="optional"/>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
+"""
+OTHER = """
               <xs:element type="xs:string" name="Address" minOccurs="0"/>
               <xs:element type="xs:string" name="IsController" minOccurs="0"/>
               <xs:element type="xs:string" name="DevCat" minOccurs="0"/>
@@ -121,15 +133,5 @@ CONTROLLER_XSD = """
               <xs:element type="xs:string" name="XonXoff" minOccurs="0"/>
               <xs:element type="xs:short" name="Vendor" minOccurs="0"/>
               <xs:element type="xs:short" name="Product" minOccurs="0"/>
-            </xs:sequence>
-            <xs:attribute type="xs:string" name="Active" use="optional"/>
-            <xs:attribute type="xs:byte" name="Key" use="optional"/>
-            <xs:attribute type="xs:string" name="Name" use="optional"/>
-          </xs:complexType>
-        </xs:element>
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-</xs:schema>
 """
 # ## END DBK

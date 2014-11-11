@@ -75,7 +75,7 @@ helpers.Widget.subclass(logs, 'LogsWidget').methods(
 			Divmod.debug('---', 'logs.eb_startWidget() was called. ERROR = ' + res);
 		}
 		//Divmod.debug('---', 'logs.startWidget() was called.');
-		self.showWidget()
+		self.showWidget();
         var l_defer = self.callRemote("getLogData");  // call server @ web_logs.py
 		l_defer.addCallback(cb_startWidget);
 		l_defer.addErrback(eb_startWidget);
@@ -93,7 +93,7 @@ helpers.Widget.subclass(logs, 'LogsWidget').methods(
         var l_data = {
                 Debug : fetchTextWidget(self, 'LogDebug'),
                 Error : fetchTextWidget(self, 'LogError'),
-            }
+            };
 		return l_data;
 	},
 

@@ -103,7 +103,7 @@ class Utility(ReadWriteConfigXml):
         # contextFactory = ClientContextFactory()
         # contextFactory.method = SSLv3_METHOD
         resultDeferred = Deferred()
-        mime_obj = StringIO(str(msg))
+        _mime_obj = StringIO(str(msg))
         # senderFactory = ESMTPSenderFactory(username, password, from_, to, mime_obj, resultDeferred, contextFactory = contextFactory)
         # reactor.connectTCP(smtp_server, smtp_port, senderFactory)
         print "Sending Email"

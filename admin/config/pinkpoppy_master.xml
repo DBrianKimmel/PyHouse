@@ -249,15 +249,19 @@
                 <Mode>Normal</Mode>
                 <Level>50</Level>
                 <LightName>outside_front</LightName>
-                <Rate>undefined</Rate>
+                <Rate>0</Rate>
                 <RoomName>IsMaster Bath</RoomName>
             </Schedule>
             <Schedule Active="True" Key="4" Name="Evening">
                 <UUID>c1395d80-092e-11e4-bffa-b827eb189eb4</UUID>
-                <ScheduleType>None</ScheduleType>
+                <ScheduleType>LightingDevice</ScheduleType>
                 <Time>sunset - 00:12</Time>
                 <DayOfWeek>127</DayOfWeek>
                 <Mode>0</Mode>
+                <Level>50</Level>
+                <LightName>outside_front</LightName>
+                <Rate>0</Rate>
+                <RoomName>IsMaster Bath</RoomName>
             </Schedule>
             <Schedule Active="False" Key="5" Name="Night xxx">
                 <UUID>c139f380-092e-11e4-bffa-b827eb189eb4</UUID>
@@ -267,7 +271,7 @@
                 <Mode>Normal</Mode>
                 <Level>50</Level>
                 <LightName>outside_front</LightName>
-                <Rate>undefined</Rate>
+                <Rate>0</Rate>
                 <RoomName>IsMaster Bath</RoomName>
             </Schedule>
             <Schedule Active="True" Key="6" Name="Night">
@@ -278,7 +282,7 @@
                 <Mode>Normal</Mode>
                 <Level>50</Level>
                 <LightName>outside_front</LightName>
-                <Rate>undefined</Rate>
+                <Rate>0</Rate>
                 <RoomName>IsMaster Bath</RoomName>
             </Schedule>
             <Schedule Active="True" Key="7" Name="Night">
@@ -289,7 +293,7 @@
                 <Mode>Normal</Mode>
                 <Level>50</Level>
                 <LightName>outside_front</LightName>
-                <Rate>undefined</Rate>
+                <Rate>0</Rate>
                 <RoomName>IsMaster Bath</RoomName>
             </Schedule>
             <Schedule Active="True" Key="8" Name="Evening">
@@ -300,7 +304,7 @@
                 <Mode>Normal</Mode>
                 <Level>50</Level>
                 <LightName>outside_front</LightName>
-                <Rate>undefined</Rate>
+                <Rate>0</Rate>
                 <RoomName>IsMaster Bath</RoomName>
             </Schedule>
             <Schedule Active="True" Key="9" Name="Night">
@@ -311,7 +315,7 @@
                 <Mode>Normal</Mode>
                 <Level>50</Level>
                 <LightName>outside_front</LightName>
-                <Rate>undefined</Rate>
+                <Rate>0</Rate>
                 <RoomName>IsMaster Bath</RoomName>
             </Schedule>
             <Schedule Active="True" Key="10" Name="Night">
@@ -322,7 +326,7 @@
                 <Mode>Normal</Mode>
                 <Level>50</Level>
                 <LightName>outside_front</LightName>
-                <Rate>undefined</Rate>
+                <Rate>0</Rate>
                 <RoomName>IsMaster Bath</RoomName>
             </Schedule>
             <Schedule Active="True" Key="11" Name="Night">
@@ -333,7 +337,7 @@
                 <Mode>Normal</Mode>
                 <Level>50</Level>
                 <LightName>outside_front</LightName>
-                <Rate>undefined</Rate>
+                <Rate>0</Rate>
                 <RoomName>IsMaster Bath</RoomName>
             </Schedule>
             <Schedule Active="True" Key="12" Name="Morning">
@@ -344,7 +348,7 @@
                 <Mode>Normal</Mode>
                 <Level>50</Level>
                 <LightName>outside_front</LightName>
-                <Rate>undefined</Rate>
+                <Rate>0</Rate>
                 <RoomName>IsMaster Bath</RoomName>
             </Schedule>
             <Schedule Active="False" Key="13" Name="Testing">
@@ -355,7 +359,7 @@
                 <Mode>Normal</Mode>
                 <Level>50</Level>
                 <LightName>outside_front</LightName>
-                <Rate>undefined</Rate>
+                <Rate>0</Rate>
                 <RoomName>IsMaster Bath</RoomName>
             </Schedule>
             <Schedule Active="False" Key="14" Name="Testing">
@@ -366,7 +370,7 @@
                 <Mode>Normal</Mode>
                 <Level>50</Level>
                 <LightName>outside_front</LightName>
-                <Rate>undefined</Rate>
+                <Rate>0</Rate>
                 <RoomName>IsMaster Bath</RoomName>
             </Schedule>
             <Schedule Active="False" Key="15" Name="Testing">
@@ -377,7 +381,7 @@
                 <Mode>Normal</Mode>
                 <Level>50</Level>
                 <LightName>outside_front</LightName>
-                <Rate>undefined</Rate>
+                <Rate>0</Rate>
                 <RoomName>IsMaster Bath</RoomName>
             </Schedule>
             <Schedule Active="False" Key="16" Name="Testing">
@@ -388,7 +392,7 @@
                 <Mode>Normal</Mode>
                 <Level>55</Level>
                 <LightName>outside_front</LightName>
-                <Rate>undefined</Rate>
+                <Rate>0</Rate>
                 <RoomName>IsMaster Bath</RoomName>
             </Schedule>
         </ScheduleSection>

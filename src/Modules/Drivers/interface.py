@@ -34,7 +34,7 @@ g_debug = 0
 LOG = Logger.getLogger('PyHouse.Interface   ')
 
 from Modules.Drivers import VALID_INTERFACES
-from Modules.Drivers import VALID_PROTOCOLS
+# from Modules.Drivers import VALID_PROTOCOLS
 
 
 class Utility(object):

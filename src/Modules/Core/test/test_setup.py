@@ -19,7 +19,7 @@ import xml.etree.ElementTree as ET
 from Modules.Core import setup
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.tools import PrettyPrintAny
+# from Modules.Utilities.tools import PrettyPrintAny
 
 XML = xml_data.XML_LONG
 

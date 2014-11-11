@@ -30,11 +30,11 @@ to proxy the poem for the server running on port 10000.
 
     parser = optparse.OptionParser(usage)
 
-    help = "The port to listen on. Default to a random available port."
-    parser.add_option('--port', type = 'int', help = help)
+    l_help = "The port to listen on. Default to a random available port."
+    parser.add_option('--port', type = 'int', help = l_help)
 
-    help = "The interface to listen on. Default is localhost."
-    parser.add_option('--iface', help = help, default = 'localhost')
+    l_help = "The interface to listen on. Default is localhost."
+    parser.add_option('--iface', help = l_help, default = 'localhost')
 
     options, args = parser.parse_args()
 
@@ -61,7 +61,7 @@ class PoetryProxyProtocol(Protocol):
     def connectionMade(self):
         d = maybeDeferred(self.factory.service.get_poem)
         d.addCallback(self.transport.write)
-        d.addBoth(lambda r: self.transport.loseConnection())
+        d.addBoth(lambda _r: self.transport.loseConnection())
 
 
 class PoetryProxyFactory(ServerFactory):
@@ -98,7 +98,7 @@ class PoetryClientFactory(ClientFactory):
             d, self.deferred = self.deferred, None
             d.callback(poem)
 
-    def clientConnectionFailed(self, connector, reason):
+    def clientConnectionFailed(self, _connector, reason):
         if self.deferred is not None:
             d, self.deferred = self.deferred, None
             d.errback(reason)

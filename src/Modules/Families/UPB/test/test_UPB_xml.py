@@ -13,9 +13,9 @@
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Families.UPB import UPB_xml
+# from Modules.Families.UPB import UPB_xml
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.tools import PrettyPrintAny
+# from Modules.Utilities.tools import PrettyPrintAny
 
 
 class SetupMixin(object):

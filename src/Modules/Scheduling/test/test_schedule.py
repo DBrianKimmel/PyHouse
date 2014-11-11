@@ -17,7 +17,6 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from Modules.Core.data_objects import ScheduleBaseData
 from Modules.Scheduling import schedule
-# from Modules.Scheduling import sunrisesunset
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
@@ -51,7 +50,7 @@ class SetupMixin(object):
         self.m_api = schedule.API()
 
 
-class Test_01_Time(SetupMixin, unittest.TestCase):
+class C01_Time(SetupMixin, unittest.TestCase):
     """
     This section tests the schedule's time
     """
@@ -223,7 +222,7 @@ class Test_01_Time(SetupMixin, unittest.TestCase):
         pass
 
 
-class Test_02(SetupMixin, unittest.TestCase):
+class C02_Loc(SetupMixin, unittest.TestCase):
     """
     """
 
@@ -237,7 +236,7 @@ class Test_02(SetupMixin, unittest.TestCase):
         pass
 
 
-class Test_03_Setup(SetupMixin, unittest.TestCase):
+class C03_Setup(SetupMixin, unittest.TestCase):
     """
     This section tests the Building of a schedule list
     """
@@ -265,7 +264,7 @@ class Test_03_Setup(SetupMixin, unittest.TestCase):
         pass
 
 
-class Test_04_Utility(SetupMixin, unittest.TestCase):
+class C04_Utility(SetupMixin, unittest.TestCase):
     """
     This section tests the Building of a schedule list
     """
@@ -280,7 +279,7 @@ class Test_04_Utility(SetupMixin, unittest.TestCase):
         pass
 
     def test_55_Next(self):
-        # l_delay, l_list = self.m_api.get_next_sched(self.m_pyhouse_obj)
+        # l_delay, l_list = self.m_api.find_next_scheduled_event(self.m_pyhouse_obj)
         pass
 
 # ## END

@@ -224,7 +224,7 @@ helpers.Widget.subclass(helpers, 'FourOfour').methods(
 	},
 
 	function show(self) {
-		alert('this is a fourOfour Message');
+		//alert('this is a fourOfour Message');
 	}
 );
 //console.log("helpers.handleDataOnClick()  json  %O", l_json);

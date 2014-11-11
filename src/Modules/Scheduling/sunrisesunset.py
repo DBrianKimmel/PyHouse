@@ -24,13 +24,13 @@ TODO:Round sunset and sunrise to the nearest minute.
 # Import system type stuff
 import datetime
 import dateutil.parser as dparser
-from dateutil.tz import tzlocal
+from dateutil.tz import *
 import math
 from math import pi
 
 # Import PyMh files
 from Modules.Computer import logging_pyh as Logger
-from Modules.Utilities.tools import PrettyPrintAny
+# from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 0
 LOG = Logger.getLogger('PyHouse.Sunrise     ')
@@ -462,22 +462,36 @@ class Utility(SSAPI, SunriseSet):
         l_time = datetime.time(l_dt.hour, l_dt.minute, l_dt.second)
         return l_time
 
-    def _load_location(self, p_pyhouse_obj):
+    def _load_location(self, p_pyhouse_obj, p_gregorian_date):
         l_earth_data = EarthParameters()
         # l_earth_data.Latitude = GetPyhouse(p_pyhouse_obj).Location().Latitude
         l_earth_data.Latitude = p_pyhouse_obj.House.OBJs.Location.Latitude
         l_earth_data.Longitude = p_pyhouse_obj.House.OBJs.Location.Longitude
         l_earth_data.TimeZoneName = p_pyhouse_obj.House.OBJs.Location.TimeZoneName
-        l_earth_data.TimeZoneOffset = self._get_zone_time(p_pyhouse_obj.House.OBJs.Location.TimeZoneOffset)
-        l_earth_data.DaylightSavingsTime = self._get_zone_time(p_pyhouse_obj.House.OBJs.Location.DaylightSavingsTime)
+        self._get_tz_params(l_earth_data, p_gregorian_date)
+        # l_earth_data.TimeZoneOffset = self._get_zone_time(p_pyhouse_obj.House.OBJs.Location.TimeZoneOffset)
+        # l_earth_data.DaylightSavingsTime = self._get_zone_time(p_pyhouse_obj.House.OBJs.Location.DaylightSavingsTime)
         return l_earth_data
+
+    def _get_tz_params(self, p_earth_data, p_gregorian_date):
+        l_tz_name = p_earth_data.TimeZoneName
+        l_zone = gettz(l_tz_name)
+        l = p_gregorian_date
+        l_dst = datetime.datetime(l.year, l.month, l.day, 12, 0, 0).dst > 0
+        p_earth_data._IsDaylightSavingsTime = l_dst
+        p_earth_data._TimeZoneOffset = None  # l_zone._ttinfo_before
+        # if l_dst:
+        #    p_earth_data._TimeZoneOffset = l_zone._dstoffset
+        l_ret = tzlocal()
+        return p_earth_data, l_zone
+
 
 
 class API(Utility):
 
     def Start(self, p_pyhouse_obj, p_gregorian_date = datetime.date.today()):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_earth_data = self._load_location(p_pyhouse_obj)
+        self.m_earth_data = self._load_location(p_pyhouse_obj, p_gregorian_date)
         self.m_julian_data = JDate.calculate_all_julian_dates(p_gregorian_date, self.m_earth_data)
         self.m_solar_data = self._calculate_solar_params()
         self.m_solar_data = self.calcSolarNoonParams(self.m_earth_data, self.m_julian_data)

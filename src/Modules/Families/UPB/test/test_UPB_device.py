@@ -16,7 +16,7 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from Modules.Families.UPB import UPB_device, UPB_data
 from Modules.Lighting import lighting_lights
-from Modules.Hvac import thermostat
+from Modules.Hvac import thermostats
 from Modules.Housing import house
 from test import xml_data
 from Modules.Utilities.tools import PrettyPrintAny
@@ -32,7 +32,7 @@ class SetupMixin(object):
         self.m_pyhouse_obj = house.API().update_pyhouse_obj(self.m_pyhouse_obj)
         # PrettyPrintAny(self.m_pyhouse_obj, 'SetupMixin.Setup - PyHouse_obj', 100)
         self.m_api = UPB_device.API()
-        self.m_thermostat_api = thermostat.API()
+        self.m_thermostat_api = thermostats.API()
         self.m_light_api = lighting_lights.LightingLightsAPI(self.m_pyhouse_obj)
         return self.m_pyhouse_obj
 

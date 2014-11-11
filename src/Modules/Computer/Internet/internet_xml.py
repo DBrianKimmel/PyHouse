@@ -36,9 +36,7 @@ class Util(XmlConfigTools):
         self.m_count = 0
         try:
             for l_xml in p_locater_sect_xml.iterfind('LocateUrl'):
-                print(l_xml)
                 l_url = str(l_xml.text)
-                print(l_url)
                 l_dict[self.m_count] = l_url
                 self.m_count += 1
         except AttributeError as e_err:

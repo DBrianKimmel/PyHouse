@@ -23,7 +23,6 @@ Device Descriptor:
   bNumConfigurations      1
 '''
 # import array
-import sys
 from twisted.internet import reactor
 import usb
 # Use USB package that was written by Wander Lairson Costa

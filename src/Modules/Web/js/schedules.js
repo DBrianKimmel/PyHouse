@@ -87,7 +87,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 	function fetchHouseData(self) {
 		function cb_fetchHouseData(p_json) {
 			globals.House.HouseObj = JSON.parse(p_json);
-			self.buildLcarSelectScreen()
+			self.buildLcarSelectScreen();
 		}
 		function eb_fetchHouseData(res) {
 			Divmod.debug('---', 'schedules.eb_fetchHouseData() was called.  ERROR: ' + res);
@@ -163,14 +163,14 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 		var l_self = globals.House.Self;
 		var l_level = fetchSliderWidget(l_self, 'ScheduleLevel');
 		// Divmod.debug('---', 'schedules.handleSliderChange() called. - Level= ' + l_level);
-		updateSliderBoxValue(l_self, 'ScheduleLevel', l_level)
+		updateSliderBoxValue(l_self, 'ScheduleLevel', l_level);
 	},
 
 	/**
 	 * Fill in the schedule entry screen with all of the data for this schedule.
 	 */
 	function fillEntry(self, p_entry) {
-		self.buildLcarDataEntryScreen(p_entry, 'handleDataEntryOnClick')
+		self.buildLcarDataEntryScreen(p_entry, 'handleDataEntryOnClick');
 	},
 
 	function fetchEntry(self) {

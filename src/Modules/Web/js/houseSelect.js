@@ -71,7 +71,7 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 			Divmod.debug('---', 'houseSelect.eb_getHousesInfo() was called. ERROR = ' + p_result);
 		}
 		// Divmod.debug('---', 'houseSelect.getHousesInfo was called.');
-		self.showWidget()
+		self.showWidget();
         var l_defer = self.callRemote("getHousesToSelect", '');  // @ web_houseSelect.py
 		l_defer.addCallback(cb_getHousesInfo);
 		l_defer.addErrback(eb_getHousesInfo);
@@ -112,7 +112,7 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 		if (l_ix <= 1000) {
 			globals.House.HouseIx = l_ix;
 			globals.House.HouseName = l_name;
-			self.getSelectedHouseData(l_ix)
+			self.getSelectedHouseData(l_ix);
 			self.hideSelectButtons();
 			// Divmod.debug('---', 'houseSelect.handleMenuOnClick(2) was called. ' + l_ix + '  ' + l_name);
 			// self.hideSelectedHouse();

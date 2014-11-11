@@ -29,7 +29,7 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 	 * @returns a deferred
 	 */
 	function ready(self) {
-		function cb_widgetready(res) {
+		function cb_widgetready() {
 			self.hideWidget();
 		}
 		var uris = collectIMG_src(self.node, null);
@@ -87,7 +87,7 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 			console.log("house.cb_fetchHouseData() - JSON = %O", p_json);
 			globals.House.HouseObj.House = JSON.parse(p_json);
 			var l_obj = globals.House.HouseObj;
-			self.buildLcarDataEntryScreen(l_obj, 'handleDataOnClick')
+			self.buildLcarDataEntryScreen(l_obj, 'handleDataOnClick');
 		}
 		function eb_fetchHouseData(p_reason) {
 			Divmod.debug('---', 'ERROR - house.eb_fetchHouseData() - ' + p_reason);
@@ -104,9 +104,9 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 	 * 
 	 */
 	function fillEntry(self, p_entry) {
-		buildLcarDataEntryScreen(p_entry, 'handleDataOnClick')
+		buildLcarDataEntryScreen(p_entry, 'handleDataOnClick');
 	},
-	function createEntry(self, p_ix) {
+	function createEntry() {
     	//Divmod.debug('---', 'house.createEntry() was called. ' + p_ix);
         var l_loc = {
 				Street : '',
@@ -118,7 +118,7 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 				Longitude : '',
 				TimeZoneName : '',
 				DaylightSavingsTime : ''
-    		}
+    		};
         var l_data = {
     			Name	: 'Change Me',
     			Key		: 0,
@@ -126,7 +126,7 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
     			UUID	: '',
     			Location : l_loc,
     			Delete	: false
-    		}
+    		};
         //console.log("create House %O", l_data);
         return l_data;
 	},
@@ -162,7 +162,7 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 	 * Get the possibly changed data and send it to the server.
 	 */
 	function handleDataOnClick(self, p_node) {
-		function cb_handleDataOnClick(p_json) {
+		function cb_handleDataOnClick() {
 			self.showWidget();
 		}
 		function eb_handleDataOnClick(p_reason){

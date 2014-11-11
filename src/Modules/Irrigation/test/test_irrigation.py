@@ -9,16 +9,11 @@
 
 """
 # Import system type stuff
-import xml.etree.ElementTree as ET
+# import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import IrrigationData
-from Modules.Irrigation import irrigation
-from Modules.Web import web_utils
-from Modules.Core import setup
-from Modules.Utilities.tools import PrettyPrintAny
-from test import xml_data
 
 
 class SetupMixin(object):

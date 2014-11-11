@@ -16,7 +16,7 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import PyHouseData, CoreServicesInformation, NodeData
-from Modules.Core import node_local
+from Modules.Computer.Nodes import node_local
 from src.test import xml_data
 
 

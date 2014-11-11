@@ -5,8 +5,6 @@ Created on May 30, 2013
 '''
 
 # Import system type stuff
-from nevow import tags as _Tag
-from nevow import url as _Url
 
 
 class WebException(Exception):

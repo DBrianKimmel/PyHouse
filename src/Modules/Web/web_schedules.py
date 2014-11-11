@@ -20,6 +20,7 @@ from nevow import loaders
 from Modules.Core.data_objects import ScheduleBaseData
 from Modules.Web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.Computer import logging_pyh as Logger
+from Modules.Scheduling import schedule
 # from Modules.Utilities.tools import PrettyPrintAny
 
 # Handy helper for finding external resources nearby.
@@ -80,6 +81,6 @@ class SchedulesElement(athena.LiveElement):
         #
         l_obj._DeleteFlag = l_json['Delete']
         self.m_pyhouse_obj.House.OBJs.Schedules[l_schedule_ix] = l_obj
-        # PrettyPrintAny(l_obj, 'ScheduleObject')
+        self.m_workspace_obj.APIs.ScheduleAPI.RestartSchedule()
 
 # ## END DBK

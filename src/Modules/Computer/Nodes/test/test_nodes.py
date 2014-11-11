@@ -16,7 +16,7 @@ from twisted.internet.defer import Deferred, gatherResults, maybeDeferred
 from twisted.internet import protocol, error, defer, udp
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData
+# from Modules.Core.data_objects import PyHouseData
 from Modules.Computer.Nodes import nodes
 from Modules.Computer.Nodes.test import test_inter_node_comm
 from test import xml_data

@@ -1,4 +1,10 @@
-<PyHouse>
+<?xml version="1.0"?>
+
+<PyHouse
+    xmlns="http://PyHouse.org/schemas"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://PyHouse.org/schemas main.xsd">
+
     <ComputerDivision>
         <InternetSection>
             <LocaterUrlSection>

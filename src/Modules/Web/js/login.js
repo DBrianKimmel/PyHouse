@@ -70,7 +70,7 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 	function fetchValidLists(self) {
 		function cb_fetchValidLists(p_json) {
     		globals.Valid = JSON.parse(p_json);
-    		self.buildLcarLoginScreen('doLoginSubmit')
+    		self.buildLcarLoginScreen('doLoginSubmit');
 		}
 		function eb_fetchValidLists(p_reason) {
 			Divmod.debug('---', 'ERROR - login.eb_fetchValidLists() - .' + p_reason);

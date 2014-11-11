@@ -16,7 +16,7 @@ import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from Modules.Core.data_objects import RoomData
-from Modules.Housing import VALID_FLOORS
+# from Modules.Housing import VALID_FLOORS
 from Modules.Utilities import xml_tools
 
 g_debug = 0

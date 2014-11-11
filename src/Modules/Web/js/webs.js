@@ -71,7 +71,7 @@ helpers.Widget.subclass(webs, 'WebsWidget').methods(
 			Divmod.debug('---', 'webs.eb_startWidget() was called. ERROR = ' + res);
 		}
 		//Divmod.debug('---', 'webs.startWidget() was called.');
-		self.showWidget()
+		self.showWidget();
         var l_defer = self.callRemote("getWebsData");  // call server @ web_webs.py
 		l_defer.addCallback(cb_startWidget);
 		l_defer.addErrback(eb_startWidget);
@@ -87,7 +87,7 @@ helpers.Widget.subclass(webs, 'WebsWidget').methods(
 		//Divmod.debug('---', 'webs.fetchEntry() was called. ');
         var l_data = {
             Port : fetchTextWidget(self, 'PortName'),
-            }
+            };
 		return l_data;
 	},
 

@@ -61,17 +61,17 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 		// Divmod.debug('---', 'rootMenu.buildLcarScreen was called.');
 		var l_menu_html = "";
 		var l_obj = {'Name' : 'SelectHouse', 'Key' : 'Select'};
-		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-orange-bg')
+		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-orange-bg');
 		l_obj = {'Name' : 'House', 'Key' : 'House'};
-		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-orange-bg')
+		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-orange-bg');
 		l_obj = {'Name' : 'Web', 'Key' : 'Web'};
-		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-putple-bg')
+		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-putple-bg');
 
 		l_menu_html += "<div class='lcars-row spaced'>\n";
 		l_obj = {'Name' : 'Quit', 'Key' : 'Quit'};
-		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-salmon-bg')
+		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-salmon-bg');
 		l_obj = {'Name' : 'Reload', 'Key' : 'Reload'};
-		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-salmon-bg')
+		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-salmon-bg');
 		l_menu_html += "</div>\n";
 		var l_html = build_lcars_top('Menu', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(10, l_menu_html);
@@ -84,12 +84,12 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 	function fetchHouseData(self) {
 		function cb_fetchHouseData(p_json) {
 			globals.House.HouseObj = JSON.parse(p_json);
-			self.buildLcarSelectScreen()
+			self.buildLcarSelectScreen();
 		}
 		function eb_fetchHouseData(p_reason) {
 			Divmod.debug('---', 'lights.eb_fetchHouseData() was called. ERROR: ' + p_reason);
 		}
-		self.buildLcarScreen()
+		self.buildLcarScreen();
         //var l_defer = self.callRemote("getHouseData");
 		//l_defer.addCallback(cb_fetchHouseData);
 		//l_defer.addErrback(eb_fetchHouseData);
@@ -103,29 +103,30 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 	 */
 	function doHandleOnClick(self, p_node) {  // from html handler onSubmit
 		var l_key = p_node.name;
+		var l_node;
 		// Divmod.debug('---', 'rootMenu.doHandleOnClick() was called with ' + l_key);
 		// console.log("rmb p_node", p_node);
 		switch (l_key) {
 		case 'Select':  // House Select
 			// Divmod.debug('---', 'rootMenu.doHandleOnClick(Select) was called.');
 			self.hideWidget();
-			var l_node = findWidgetByClass('HouseSelect');
+			l_node = findWidgetByClass('HouseSelect');
 			l_node.getHousesInfo();
 			break;
 		case 'House':
 			//Divmod.debug('---', 'rootMenu.doHandleOnClick was called for House.');
 			self.hideWidget();
-			var l_node = findWidgetByClass('House');
+			l_node = findWidgetByClass('House');
 			l_node.startWidget();
 			break;
 		case 'Web':
 			self.hideWidget();
-			var l_node = findWidgetByClass('Webs');
+			l_node = findWidgetByClass('Webs');
 			l_node.startWidget();
 			break;
 		case 'Logs':
 			self.hideWidget();
-			var l_node = findWidgetByClass('Logs');
+			l_node = findWidgetByClass('Logs');
 			l_node.startWidget();
 			break;
 		case 'Quit':  // Quit the browser by logging out

@@ -100,7 +100,7 @@ DEG2RAD = pi / 180.0
 # All Tests
 T_LATITUDE = 28.938448
 T_LONGITUDE = -82.517208  # lon/360 = -0.2292144666666667
-T_TIMEZONE_NAME = 'US/Eastern'
+T_TIMEZONE_NAME = 'America/New_York'
 T_TIMEZONE_OFFSET = '-5:00'
 T_DAYLIGHT_SAVINGS_TIME = '-4:00'
 
@@ -242,7 +242,7 @@ class C04_Results(SetupMixin, unittest.TestCase):
         Given a date, we should get a correct sunrise datetime
         """
         self.m_api.Start(self.m_pyhouse_obj, T_DATE)
-        self.m_earth = self.m_api._load_location(self.m_pyhouse_obj)
+        self.m_earth = self.m_api._load_location(self.m_pyhouse_obj, T_DATE)
         l_result = self.m_api.get_sunrise_datetime()
         print('Sunrise for date {};  Calc: {};  S/B: {}'.format(T_DATE, l_result, T_SUNRISE))
         PrettyPrintAny(self.m_earth, 'T_01, t_01, Params')
@@ -266,9 +266,17 @@ class C07_ObserverEarth(SetupMixin, unittest.TestCase):
         self.m_api = sunrisesunset.API()
 
     def test_01_Location(self):
-        l_location = self.m_api._load_location(self.m_pyhouse_obj)
+        l_location = self.m_api._load_location(self.m_pyhouse_obj, T_DATE)
         PrettyPrintAny(l_location, 'Location')
         self.assertEqual(l_location.Latitude, T_LATITUDE)
+
+    def test_02_TzParams(self):
+        # l_location = self.m_api._load_location(self.m_pyhouse_obj, T_DATE)
+        l_tz, l_x = self.m_api._get_tz_params(self.m_earth, T_DATE)
+        l_ret = l_tz
+        PrettyPrintAny(l_ret, 'Misc')
+        PrettyPrintAny(l_tz, 'TZ')
+        PrettyPrintAny(l_x, 'rAW')
 
 
 class C08_Julian(SetupMixin, unittest.TestCase):

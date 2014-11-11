@@ -24,7 +24,7 @@ class Test_01(unittest.TestCase):
         pass
 
     def test_0101_valid_families(self):
-        path_inspect = inspect.getfile(inspect.currentframe())  # script filename (usually with path)
+        _path_inspect = inspect.getfile(inspect.currentframe())  # script filename (usually with path)
         path_file = os.path.abspath(__file__)
         l_dir = os.path.dirname(path_file)
         l_dir = os.path.dirname(l_dir)
@@ -55,7 +55,7 @@ class Test_02_Insteon(unittest.TestCase):
         pass
 
     def test_0101_ValidFamilies(self):
-        path_inspect = inspect.getfile(inspect.currentframe())  # script filename (usually with path)
+        _path_inspect = inspect.getfile(inspect.currentframe())  # script filename (usually with path)
         path_file = os.path.abspath(__file__)
         l_dir = os.path.dirname(path_file)
         l_dir = os.path.dirname(l_dir)
@@ -79,5 +79,7 @@ def suite():
     return suite
 
 class MySuite():
+    """
+    """
 
 # ## END

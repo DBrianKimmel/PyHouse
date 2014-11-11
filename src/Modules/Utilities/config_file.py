@@ -14,11 +14,10 @@
 # Import system type stuff
 import datetime
 import os
-import sys
 from xml.etree import ElementTree as ET
 
 # Import PyMh files
-from Modules.Utilities.tools import PrettyPrintAny
+# from Modules.Utilities.tools import PrettyPrintAny
 
 
 class ConfigAPI(object):

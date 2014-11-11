@@ -42,6 +42,8 @@ Operation:
 
   TODO: create a group of timers and cancel the changed ones when the schedules object is changed.
         Keep all times as UTC - display them as local time for editing.
+
+        Have modules that want schedule events to register with us.
 """
 
 # Import system type stuff
@@ -56,14 +58,61 @@ from Modules.Irrigation import irrigation
 from Modules.Utilities import tools
 from Modules.Utilities.tools import GetPyhouse
 from Modules.Computer import logging_pyh as Logger
-# from Modules.Utilities.tools import PrettyPrintAny
 
-g_debug = 1
+
+
 LOG = Logger.getLogger('PyHouse.Schedule    ')
 SECONDS_IN_DAY = 86400
 SECONDS_IN_WEEK = 604800  # 7 * 24 * 60 * 60
 INITIAL_DELAY = 5
 PAUSE_DELAY = 5
+
+
+
+class Sch(object):
+
+    @staticmethod
+    def find_event(p_event):
+        if not p_event.Active:
+            return None
+        if not p_event.ScheduleType == 'LightingDevice':
+            return None
+
+
+    @staticmethod
+    def _make_timedelta(p_datetime):
+        """Convert a datetime to a timedelta.
+
+        @param p_datetime: is a datetime of a time to convert
+        @return: a timedelta if the time to convert
+        """
+        return datetime.timedelta(0, p_datetime.second, 0, 0, p_datetime.minute, p_datetime.hour)
+
+
+
+
+class ScheduleTimer(object):
+    """The timer for the next schedule execution.
+    """
+
+    m_schedule_timer = None
+
+
+    def XXXset_schedule_timer(self, p_delay, p_list):
+        """Find out what schedules need to be done and how long to delay before they are due to be run.
+        """
+        LOG.info('Delay: {0:} - List: {1:}'.format(p_delay, p_list))
+        self.m_schedule_timer = self.m_pyhouse_obj.Twisted.Reactor.callLater(p_delay, self.execute_schedules_list, p_list)
+
+
+    def cancel_schedule_timer(self):
+        """
+        Stop the current schedule timer.
+        """
+        self.m_schedule_timer.cancel()
+        self.m_schedule_timer = None
+
+
 
 
 class RiseSetData(object):
@@ -175,11 +224,11 @@ class ScheduleTime(object):
         if type(p_sched) == datetime.timedelta:
             l_sched = p_sched.total_seconds()
         else:
-            l_sched = self._make_timedelta(p_sched).total_seconds()
+            l_sched = Sch._make_timedelta(p_sched).total_seconds()
         if type(p_now) == datetime.timedelta:
             l_now = p_now.total_seconds()
         else:
-            l_now = self._make_timedelta(p_now).total_seconds()
+            l_now = Sch._make_timedelta(p_now).total_seconds()
         l_diff = l_sched - l_now
         if l_diff < 0:
             l_diff = l_diff + 86400.0  # tomorrow
@@ -203,7 +252,7 @@ class ScheduleTime(object):
         l_riseset = RiseSetData()
         l_riseset.Sunrise = p_pyhouse_obj.House.OBJs.Location._Sunrise
         l_riseset.Sunset = p_pyhouse_obj.House.OBJs.Location._Sunset
-        LOG.info("In get_next_sched - Sunrise:{0:}, Sunset:{1:}".format(l_riseset.Sunrise, l_riseset.Sunset))
+        LOG.info("Sunrise:{0:}, Sunset:{1:}".format(l_riseset.Sunrise, l_riseset.Sunset))
         return l_riseset
 
 
@@ -211,9 +260,7 @@ class ScheduleExecution(object):
 
     def dispatch_schedule(self, p_slot):
         """
-
         TODO: We need a small dispatch for the various schedule types (hvac, security, entertainment, lights, ...)
-
         """
         l_schedule_obj = GetPyhouse(self.m_pyhouse_obj).Schedules[p_slot]
         if l_schedule_obj.ScheduleType == 'LightingDevice':
@@ -225,8 +272,6 @@ class ScheduleExecution(object):
     def execute_one_schedule(self, p_slot):
         """
         Send information to one device to execute a schedule.
-
-        TODO: We need a small dispatch for the various schedule types (hvac, security, entertainment, lights, ...)
         """
         l_schedule_obj = self.m_pyhouse_obj.House.OBJs.Schedules[p_slot]
         if l_schedule_obj.ScheduleType == 'LightingDevice':
@@ -250,35 +295,27 @@ class ScheduleExecution(object):
         LOG.info("About to execute - Schedule:{0:}".format(p_slot_list))
         for l_slot in range(len(p_slot_list)):
             self.execute_one_schedule(p_slot_list[l_slot])
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(PAUSE_DELAY, self.run_schedule, None)
+        self.m_schedule_timer = self.m_pyhouse_obj.Twisted.Reactor.callLater(PAUSE_DELAY, self.set_schedule_timer, None)
 
-    def run_schedule(self, _ignore):
+    def set_schedule_timer(self, _ignore):
         """Find out what schedules need to be done and how long to delay before they are due to be run.
         """
-        l_seconds_to_delay, l_schedule_list = self.get_next_sched(self.m_pyhouse_obj)
-        if g_debug >= 1:
-            LOG.info('Delay: {0:} - List: {1:}'.format(l_seconds_to_delay, l_schedule_list))
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(l_seconds_to_delay, self.execute_schedules_list, l_schedule_list)
+        l_seconds_to_delay, l_schedule_list = self.find_next_scheduled_event(self.m_pyhouse_obj)
+        LOG.info('Delay: {0:} - List: {1:}'.format(l_seconds_to_delay, l_schedule_list))
+        self.m_schedule_timer = self.m_pyhouse_obj.Twisted.Reactor.callLater(l_seconds_to_delay, self.execute_schedules_list, l_schedule_list)
+
 
 
 class ScheduleUtility(ScheduleTime):
 
-    def _make_timedelta(self, p_time):
-        """Convert a datetime to a timedelta.
-
-        @param p_time: is a datetime of a time to convert
-        @return: a timedelta if the time to convert
-        """
-        return datetime.timedelta(0, p_time.second, 0, 0, p_time.minute, p_time.hour)
-
-    def get_next_sched(self, p_pyhouse_obj):
+    def find_next_scheduled_event(self, p_pyhouse_obj):
         """
         Get the current time
         Go thru all the schedules and find the next schedules to run.
             Note that there may be several scheduled events for that time
         return the list and the delay time
 
-        If the list is empty, ???
+        If the list is empty, wait a week.
         """
         l_riseset = self._get_sunrise_sunset(p_pyhouse_obj)
         l_now_daytime = self._now_daytime()  # Save value to avoid jitter
@@ -302,7 +339,7 @@ class ScheduleUtility(ScheduleTime):
                 l_schedule_list.append(l_key)
 
         l_debug_msg = "Delaying {0:} seconds until {1:} for list {2:}".format(l_seconds_to_delay, l_time_scheduled, l_schedule_list)
-        LOG.info("Get_next_schedule complete. {0:}".format(l_debug_msg))
+        LOG.info("find_next_scheduled_event complete. {0:}".format(l_debug_msg))
         return l_seconds_to_delay, l_schedule_list
 
 
@@ -349,13 +386,6 @@ class API(ScheduleUtility, ScheduleExecution):
         l_sunset = self.m_pyhouse_obj.House.OBJs.Location._Sunset
         LOG.info('Got Sunrise: {};   Sunset: {}'.format(l_sunrise, l_sunset))
 
-    def _run_schedules(self, p_pyhouse_obj):
-        if p_pyhouse_obj.House.Active:
-            p_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self.run_schedule, None)
-            LOG.info("Started.")
-        else:
-            LOG.warning('No Schedules will be run because the house is NOT active.')
-
     def Start(self, p_pyhouse_obj):
         """
         Extracts all from XML so an update will write correct info back out to the XML file.
@@ -369,13 +399,17 @@ class API(ScheduleUtility, ScheduleExecution):
         p_pyhouse_obj.House.OBJs.Schedules = schedule_xml.ReadWriteConfigXml().read_schedules_xml(p_pyhouse_obj)
         self._fetch_sunrise_set()
         UpdatePyhouse.start_scheduled_modules(p_pyhouse_obj)
-        self._run_schedules(p_pyhouse_obj)
+        p_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self.set_schedule_timer, None)
 
     def Stop(self):
         """Stop everything under me.
         """
         UpdatePyhouse.stop_scheduled_modules(self.m_pyhouse_obj)
         LOG.info("Stopped.")
+
+    def RestartSchedule(self):
+        LOG.info("Restart")
+        pass
 
     def SaveXml(self, p_xml):
         p_xml.append(schedule_xml.ReadWriteConfigXml().write_schedules_xml(self.m_pyhouse_obj.House.OBJs.Schedules))

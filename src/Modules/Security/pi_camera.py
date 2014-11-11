@@ -39,10 +39,10 @@ def capture_test_image():
     imageData = StringIO.StringIO()
     imageData.write(subprocess.check_output(command, shell = True))
     imageData.seek(0)
-    im = Image.open(imageData)
-    buffer = im.load()
+    im = None  # Image.open(imageData)
+    l_buffer = im.load()
     imageData.close()
-    return im, buffer
+    return im, l_buffer
 
 # Save a full size image to disk
 def save_image(_width, _height, diskSpaceToReserve):

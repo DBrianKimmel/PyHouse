@@ -20,7 +20,6 @@ from twisted.trial import unittest
 # from Modules.lights.lighting import LightData
 from Modules.Core.data_objects import PyHouseData, ControllerData
 from Modules.Families.Insteon import Insteon_PLM
-from Modules.Core import conversions
 from Modules.Families import family
 # from Modules.Utilities.tools import PrettyPrintAny
 from test import xml_data

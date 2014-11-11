@@ -54,15 +54,16 @@ class C01_XML(SetupMixin, unittest.TestCase):
     def test_0231_ReadOneBase(self):
         """ Read in the xml file and fill in x
         """
-        l_schedule_obj = self.m_api.read_one_base_schedule(self.m_xml.schedule)
+        l_schedule_obj = self.m_api._read_one_base_schedule(self.m_xml.schedule)
         PrettyPrintAny(l_schedule_obj)
         self.assertEqual(l_schedule_obj.Name, 'Evening')
         self.assertEqual(l_schedule_obj.Key, 0, 'No Key')
         self.assertEqual(l_schedule_obj.Mode, 0, 'No Mode')
+        self.assertEqual(l_schedule_obj.Mode, 0, 'No Mode')
 
     def test_0232_ReadOneLight(self):
-        # l_schedule_obj = self.m_api.read_one_base_schedule(self.m_xml.schedule)
-        l_light = self.m_api.read_one_lighting_schedule(self.m_xml.schedule)
+        # l_schedule_obj = self.m_api._read_one_base_schedule(self.m_xml.schedule)
+        l_light = self.m_api._read_one_lighting_schedule(self.m_xml.schedule)
         PrettyPrintAny(l_light, 'Light part of schedule')
         self.assertEqual(l_light.LightName, 'lr_cans')
 

@@ -16,7 +16,7 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import ControllerData
-from Modules.Drivers.Serial import serial_xml
+from Modules.Drivers.Serial import Serial_xml
 from Modules.Lighting import lighting_controllers
 from Modules.Families import family
 from test import xml_data
@@ -40,7 +40,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
-        self.m_api = serial_xml.ReadWriteConfigXml()
+        self.m_api = Serial_xml.ReadWriteConfigXml()
         self.m_controller_obj = ControllerData()
 
     def test_0202_FindXml(self):

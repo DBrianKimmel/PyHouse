@@ -92,7 +92,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
     function fetchHouseData(self) {
         function cb_fetchHouseData(p_json) {
 			globals.House.HouseObj = JSON.parse(p_json);
-			self.buildLcarSelectScreen()
+			self.buildLcarSelectScreen();
         }
         function eb_fetchHouseData(p_reason) {
             Divmod.debug('---', 'ERROR controllers.eb_fetchHouseData() - ' + p_reason);
@@ -172,7 +172,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 			p_html = self.buildInsteonPart(p_controller, p_html);
 		}
         if (p_controller.ControllerFamily == 'UPB') {
-        	p_html = self.buildUpbPart(p_controller, p_html)
+        	p_html = self.buildUpbPart(p_controller, p_html);
         }
 		p_html += buildLcarEntryButtons(p_handler);
 		return p_html;
@@ -214,8 +214,8 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 			InterfaceType :      fetchSelectWidget(self, 'InterfaceType'),
 			Port :           fetchTextWidget(self, 'ControllerPort'),
 			Delete : false
-            }
-        if (l_data['ControllerFamily'] == 'Insteon') {
+            };
+        if (l_data.ControllerFamily == 'Insteon') {
         	l_data = self.fetchInsteonEntry(l_data);
         }
         return l_data;

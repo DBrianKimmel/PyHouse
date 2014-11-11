@@ -30,7 +30,7 @@ class ReadWriteConfigXml(XmlConfigTools):
 
     m_count = 0
 
-    def read_one_lighting_schedule(self, p_schedule_element):
+    def _read_one_lighting_schedule(self, p_schedule_element):
         """Extract schedule information from a schedule xml element.
         """
         l_obj = ScheduleLightData()
@@ -40,7 +40,7 @@ class ReadWriteConfigXml(XmlConfigTools):
         l_obj.RoomName = self.get_text_from_xml(p_schedule_element, 'RoomName')
         return l_obj  # for testing
 
-    def read_one_base_schedule(self, p_schedule_element):
+    def _read_one_base_schedule(self, p_schedule_element):
         """Extract schedule information from a schedule xml element.
         """
         l_obj = ScheduleBaseData()
@@ -58,11 +58,11 @@ class ReadWriteConfigXml(XmlConfigTools):
         return l_obj
 
     def read_one_schedule(self, p_schedule_element):
-        l_obj = self.read_one_base_schedule(p_schedule_element)
+        l_obj = self._read_one_base_schedule(p_schedule_element)
         if l_obj.ScheduleType == 'LightingDevice':
-            l_type = self.read_one_lighting_schedule(p_schedule_element)
+            l_type = self._read_one_lighting_schedule(p_schedule_element)
         else:
-            LOG.error('ERROR - invalid device found - {}'.format(l_obj.ScheduleType))
+            LOG.error('ERROR - invalid device found - {} for {}'.format(l_obj.ScheduleType, l_obj.Name))
             l_type = {}
         stuff_new_attrs(l_obj, l_type)
         return l_obj

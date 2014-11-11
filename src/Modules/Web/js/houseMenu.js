@@ -58,30 +58,30 @@ helpers.Widget.subclass(houseMenu, 'HouseMenuWidget').methods(
 	function buildLcarSelectScreen(self){
 		var l_menu_html = "";
 		var l_obj = {'Name' : 'House Location', 'Key' : 'Location'};
-		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-orange-bg')
+		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-orange-bg');
 		l_obj = {'Name' : 'Rooms', 'Key' : 'Rooms'};
-		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-orange-bg')
+		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-orange-bg');
 		l_obj = {'Name' : 'Lights', 'Key' : 'Lights'};
-		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-orange-bg')
+		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-orange-bg');
 		l_obj = {'Name' : 'Buttons', 'Key' : 'Buttons'};
-		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-orange-bg')
+		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-orange-bg');
 		l_obj = {'Name' : 'Controllers', 'Key' : 'Controllers'};
-		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-orange-bg')
+		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-orange-bg');
 		l_obj = {'Name' : 'Schedules', 'Key' : 'Schedules'};
-		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-orange-bg')
+		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-orange-bg');
 
 		l_menu_html += "<div class='lcars-row spaced'>\n";
 		l_obj = {'Name' : 'Control Lights', 'Key' : 'Levels'};
-		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-orange-bg')
+		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-orange-bg');
 		l_obj = {'Name' : 'Internet', 'Key' : 'Internet'};
-		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-orange-bg')
+		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-orange-bg');
 		l_obj = {'Name' : 'Thermostats', 'Key' : 'Thermo'};
-		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-orange-bg')
+		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-orange-bg');
 		l_menu_html += "</div>\n";
 
 		l_menu_html += "<div class='lcars-row spaced'>\n";
 		l_obj = {'Name' : 'Back', 'Key' : 'Back'};
-		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-salmon-bg')
+		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-salmon-bg');
 		l_menu_html += "</div>\n";
 		var l_html = build_lcars_top('House Menu', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(10, l_menu_html);
@@ -105,55 +105,56 @@ helpers.Widget.subclass(houseMenu, 'HouseMenuWidget').methods(
 	 */
 	function doHandleOnClick(self, p_node) {
 		var l_key = p_node.name;
+		var l_node;
 		switch (l_key) {
 		case 'Location':
 			self.hideWidget();
-			var l_node = findWidgetByClass('House');
+			l_node = findWidgetByClass('House');
 			l_node.showWidget();
 			break;
 		case 'Rooms':
 			self.hideWidget();
-			var l_node = findWidgetByClass('Rooms');
+			l_node = findWidgetByClass('Rooms');
 			l_node.showWidget();
 			break;
 		case 'Lights':
 			self.hideWidget();
-			var l_node = findWidgetByClass('Lights');
+			l_node = findWidgetByClass('Lights');
 			l_node.showWidget();
 			break;
 		case 'Buttons':
 			self.hideWidget();
-			var l_node = findWidgetByClass('Buttons');
+			l_node = findWidgetByClass('Buttons');
 			l_node.showWidget();
 			break;
 		case 'Controllers':
 			self.hideWidget();
-			var l_node = findWidgetByClass('Controllers');
+			l_node = findWidgetByClass('Controllers');
 			l_node.showWidget();
 			break;
 		case 'Schedules':
 			self.hideWidget();
-			var l_node = findWidgetByClass('Schedules');
+			l_node = findWidgetByClass('Schedules');
 			l_node.showWidget();
 			break;
 		case 'Levels':
 			self.hideWidget();
-			var l_node = findWidgetByClass('ControlLights');
+			l_node = findWidgetByClass('ControlLights');
 			l_node.showWidget();
 			break;
 		case 'Internet':
 			self.hideWidget();
-			var l_node = findWidgetByClass('Internet');
+			l_node = findWidgetByClass('Internet');
 			l_node.showWidget();
 			break;
 		case 'Thermo':
 			self.hideWidget();
-			var l_node = findWidgetByClass('Thermostat');
+			l_node = findWidgetByClass('Thermostat');
 			l_node.showWidget();
 			break;
 		case 'Back':
 			self.hideWidget();
-			var l_node = findWidgetByClass('RootMenu');
+			l_node = findWidgetByClass('RootMenu');
 			l_node.showWidget();
 			break;
 		default:

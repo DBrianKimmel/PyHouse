@@ -79,7 +79,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 	function fetchHouseData(self) {
 		function cb_fetchHouseData(p_json) {
 			globals.House.HouseObj = JSON.parse(p_json);
-			self.buildLcarSelectScreen()
+			self.buildLcarSelectScreen();
 		}
 		function eb_fetchHouseData(res) {
 			Divmod.debug('---', 'lights.eb_fetchHouseData() was called. ERROR: ' + res);

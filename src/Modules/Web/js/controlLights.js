@@ -130,14 +130,14 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 	function handleSliderChange(p_event){
 		// Divmod.debug('---', 'controlLights.handleSliderChange() called. - Event= ' + p_event);
 		console.log("controlLights.handleSliderChange   Event:  %O", p_event);
-		var l_obj = globals.House.LightObj;
+		// var l_obj = globals.House.LightObj;
 		var l_self = globals.House.Self;
 		var l_level = fetchSliderWidget(l_self, 'CtlLightLevel');
 		// Divmod.debug('---', 'controlLights.handleSliderChange() called. - Level= ' + l_level);
-		updateSliderBoxValue(l_self, 'CtlLightLevel', l_level)
+		updateSliderBoxValue(l_self, 'CtlLightLevel', l_level);
 	},
 	function fillEntry(self, p_entry) {
-		self.buildLcarDataEntryScreen(p_entry, 'handleDataEntryOnClick')
+		self.buildLcarDataEntryScreen(p_entry, 'handleDataEntryOnClick');
 	},
 	function fetchEntry(self) {
         var l_data = {
@@ -156,7 +156,7 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 	 * Get the possibly changed data and send it to the server.
 	 */
 	function handleDataEntryOnClick(self, p_node) {
-		function cb_handleDataOnClick(p_json) {
+		function cb_handleDataOnClick() {
 			self.showWidget(self);
 		}
 		function eb_handleDataOnClick(res){

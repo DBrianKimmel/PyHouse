@@ -17,11 +17,10 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from Modules.Families.Insteon.Insteon_data import InsteonData
 from Modules.Families.Insteon import Insteon_device
-from Modules.Core import conversions
-from Modules.Lighting import lighting_lights
+# from Modules.Core import conversions
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.tools import PrettyPrintAny
+# from Modules.Utilities.tools import PrettyPrintAny
 
 
 class SetupMixin(object):
