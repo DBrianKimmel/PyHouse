@@ -116,6 +116,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 		if (l_ix <= 1000) {  // One of the schedule buttons.
 			var l_obj = globals.House.HouseObj.Schedules[l_ix];
 			globals.House.ScheduleObj = l_obj;
+			globals.House.Self = self;
 			self.showDataEntry();
 			self.hideSelectionButtons();
 			self.fillEntry(l_obj);
@@ -135,7 +136,6 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 // ============================================================================
 
 	function buildLcarDataEntryScreen(self, p_entry, p_handler){
-		// Divmod.debug('---', 'schedules.buildLcarDataEntryScreen(1) was called.');
 		var l_schedule = arguments[1];
 		var l_entry_html = "";
 		l_entry_html += buildLcarTextWidget(self, 'Name', 'Name', l_schedule.Name);
@@ -157,12 +157,9 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 		self.nodeById('DataEntryDiv').innerHTML = l_html;
 	},
 	function handleSliderChange(p_event){
-		Divmod.debug('---', 'schedules.handleSliderChange() called. - Event= ' + p_event);
-		console.log("schedules.handleSliderChange   Event:  %O", p_event);
 		var l_obj = globals.House.ScheduleObj;
 		var l_self = globals.House.Self;
 		var l_level = fetchSliderWidget(l_self, 'ScheduleLevel');
-		// Divmod.debug('---', 'schedules.handleSliderChange() called. - Level= ' + l_level);
 		updateSliderBoxValue(l_self, 'ScheduleLevel', l_level);
 	},
 

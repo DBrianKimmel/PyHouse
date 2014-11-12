@@ -919,8 +919,7 @@ function buildLcarSliderWidget(self, p_id, p_caption, p_value, p_min, p_max, p_s
 	l_html += " >\n";
 	l_html += '&nbsp';
 	l_html += "<input type='text'";
-	l_html += setIdAttribute(l_id);
-	l_html += "-Box'";
+	l_html += setIdAttribute(l_id + "-Box");
 	l_html += setSizeAttribute(4);
 	l_html += setValueAttribute(p_value);
 	l_html += " >\n";
@@ -943,7 +942,9 @@ function buildLcarHvacSliderWidget(self, p_name, p_caption, p_level, p_handler) 
 	return l_html;
 }
 function fetchSliderWidget(self, p_id) {
+	Divmod.debug('---', 'globals.fetchSliderWidget() Id=' + p_id);
 	var l_id = p_id + "-Slider";
+	Divmod.debug('---', 'globals.fetchSliderWidget() Id=' + l_id);
 	var l_val = self.nodeById(l_id).value;
 	return l_val;
 }

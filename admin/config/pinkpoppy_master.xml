@@ -208,60 +208,60 @@
             </Room>
         </RoomSection>
         <ScheduleSection>
-            <Schedule Active="True" Key="0" Name="Evening">
+            <Schedule Active="True" Key="0" Name="Evening 1">
                 <UUID>c1369c76-092e-11e4-bffa-b827eb189eb4</UUID>
                 <ScheduleType>LightingDevice</ScheduleType>
                 <Time>sunset - 00:15</Time>
                 <DayOfWeek>127</DayOfWeek>
                 <Mode>Normal</Mode>
-                <Level>50</Level>
+                <Level>100</Level>
                 <LightName>outside_front</LightName>
                 <Rate>0</Rate>
-                <RoomName>Outside</RoomName>
+                <RoomName>Foyer</RoomName>
             </Schedule>
-            <Schedule Active="True" Key="1" Name="Evening">
+            <Schedule Active="True" Key="1" Name="Evening 2">
                 <UUID>c1378474-092e-11e4-bffa-b827eb189eb4</UUID>
                 <ScheduleType>LightingDevice</ScheduleType>
                 <Time>sunset - 00:15</Time>
                 <DayOfWeek>127</DayOfWeek>
                 <Mode>Normal</Mode>
-                <Level>50</Level>
-                <LightName>outside_front</LightName>
+                <Level>100</Level>
+                <LightName>outside_gar</LightName>
                 <Rate>0</Rate>
-                <RoomName>Outside</RoomName>
+                <RoomName>Garage</RoomName>
             </Schedule>
-            <Schedule Active="True" Key="2" Name="Evening">
+            <Schedule Active="True" Key="2" Name="Evening 3">
                 <UUID>c1382140-092e-11e4-bffa-b827eb189eb4</UUID>
                 <ScheduleType>LightingDevice</ScheduleType>
                 <Time>sunset - 00:10</Time>
                 <DayOfWeek>127</DayOfWeek>
                 <Mode>Normal</Mode>
-                <Level>50</Level>
-                <LightName>outside_front</LightName>
+                <Level>100</Level>
+                <LightName>lr_cans</LightName>
                 <Rate>0</Rate>
-                <RoomName>Outside</RoomName>
+                <RoomName>Living Room</RoomName>
             </Schedule>
-            <Schedule Active="True" Key="3" Name="Evening">
+            <Schedule Active="True" Key="3" Name="Evening 4">
                 <UUID>c138c05a-092e-11e4-bffa-b827eb189eb4</UUID>
                 <ScheduleType>LightingDevice</ScheduleType>
                 <Time>sunset - 00:10</Time>
                 <DayOfWeek>127</DayOfWeek>
                 <Mode>Normal</Mode>
-                <Level>50</Level>
-                <LightName>outside_front</LightName>
+                <Level>100</Level>
+                <LightName>lr_cans</LightName>
                 <Rate>0</Rate>
-                <RoomName>IsMaster Bath</RoomName>
+                <RoomName>Living Room</RoomName>
             </Schedule>
-            <Schedule Active="True" Key="4" Name="Evening">
+            <Schedule Active="True" Key="4" Name="Evening 5">
                 <UUID>c1395d80-092e-11e4-bffa-b827eb189eb4</UUID>
                 <ScheduleType>LightingDevice</ScheduleType>
                 <Time>sunset - 00:12</Time>
                 <DayOfWeek>127</DayOfWeek>
                 <Mode>0</Mode>
                 <Level>50</Level>
-                <LightName>outside_front</LightName>
+                <LightName>lr_rope</LightName>
                 <Rate>0</Rate>
-                <RoomName>IsMaster Bath</RoomName>
+                <RoomName>Living Room</RoomName>
             </Schedule>
             <Schedule Active="False" Key="5" Name="Night xxx">
                 <UUID>c139f380-092e-11e4-bffa-b827eb189eb4</UUID>
