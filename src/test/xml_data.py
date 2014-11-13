@@ -21,9 +21,10 @@ from Modules.Computer.Nodes.test.xml_nodes import NODES_XML
 from Modules.Housing.test.xml_location import LOCATION_XML
 from Modules.Housing.test.xml_rooms import ROOMS_XML
 from Modules.Hvac.test.xml_thermostat import THERMOSTAT_XML
-from Modules.Lighting.lighting_lights import LIGHTS_XML
-from Modules.Lighting.lighting_buttons import BUTTONS_XML
+from Modules.Lighting.test.xml_lighting_core import LIGHT_CORE_XML
+from Modules.Lighting.test.xml_lighting_buttons import BUTTONS_XML
 from Modules.Lighting.test.xml_lighting_controllers import CONTROLLER_XML
+from Modules.Lighting.test.xml_lighting_lights import LIGHTS_XML
 from Modules.Scheduling.test.xml_schedule import SCHEDULE_XML
 from Modules.Web.web_server import WEB_SERVER_XML
 

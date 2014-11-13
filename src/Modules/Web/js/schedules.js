@@ -75,9 +75,9 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 	 */
 	function buildLcarSelectScreen(self){
 		// Divmod.debug('---', 'schedules.buildLcarSelectScreen() was called.');
-		var l_button_html = buildLcarSelectionButtonsTable(globals.House.HouseObj.Schedules, 'handleMenuOnClick', 'buildButtonName');
+		var l_button_html = buildLcarSelectionButtonsTable(globals.House.HouseObj.Schedules, 'handleMenuOnClick', self.buildButtonName);
 		var l_html = build_lcars_top('Schedules', 'lcars-salmon-color');
-		l_html += build_lcars_middle_menu(4, l_button_html);
+		l_html += build_lcars_middle_menu(15, l_button_html);
 		l_html += build_lcars_bottom();
 		self.nodeById('SelectionButtonsDiv').innerHTML = l_html;
 	},

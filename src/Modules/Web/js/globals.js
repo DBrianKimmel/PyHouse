@@ -647,6 +647,7 @@ function buildLcarSelectionButtonsTable(p_obj, p_handler, p_nameFunction, p_noOp
 	var l_noOptions = p_noOptions;
 	// See if function was passed
 	if (typeof p_nameFunction !== 'function') {
+		Divmod.debug('---', 'globals.buildLcarSelectionButtonsTable() called.  Name Func=' + p_nameFunction);
 		l_noOptions = p_nameFunction;
 		l_nameFunction = null;
 	}

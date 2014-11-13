@@ -31,7 +31,7 @@ XML = """
     <BoolField2>False</BoolField2>
     <BoolField3>Howdy</BoolField3>
     <FloatField>3.14158265</FloatField>
-    <IntField>371</IntField>
+    <IntField>246</IntField>
     <TextField1>Test of text element</TextField1>
     <UUIDField>01234567-fedc-2468-7531-0123456789ab</UUIDField>
     <Part_3 b3='True' f3='3.14158265' i3='371' t3='Test of text'>
@@ -53,7 +53,7 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-class A02_Compound(SetupMixin, unittest.TestCase):
+class A01_Compound(SetupMixin, unittest.TestCase):
     """
     This series tests the complex PutGetXML class methods
     """
@@ -77,6 +77,31 @@ class A02_Compound(SetupMixin, unittest.TestCase):
         l_elem = self.m_api.get_date_time_from_xml(self.m_fields, 'DateTime')
         self.assertEqual(l_elem, datetime.datetime(2014, 10, 2, 12, 34, 56))
         print('Element = {}'.format(l_elem))
+
+
+
+class A02_GetAnyField(SetupMixin, unittest.TestCase):
+    """
+    """
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        self.m_fields = ET.fromstring(XML)
+        self.m_api = xml_tools.PutGetXML()
+
+    def test_01_Missing(self):
+        l_missing = self.m_api._get_any_field(self.m_fields, 'NoValidName')
+        print l_missing
+        self.assertIsNone(l_missing)
+
+    def test_02_Element(self):
+        l_result = self.m_api._get_any_field(self.m_fields, 'IntField')
+        print l_result
+        self.assertEqual(l_result, '246')
+
+    def test_03_Attribute(self):
+        l_result = self.m_api._get_any_field(self.m_fields, 'i1')
+        print l_result
+        self.assertEqual(l_result, '371')
 
 
 
@@ -177,7 +202,7 @@ class C01_XML(SetupMixin, unittest.TestCase):
 
     def test_41_GetIntElement(self):
         result = self.m_api.get_int_from_xml(self.m_fields, 'IntField')
-        self.assertEqual(result, 371)
+        self.assertEqual(result, 246)
 
     def test_42_GetIntAttribute(self):
         result = self.m_api.get_int_from_xml(self.m_fields, 'i1')

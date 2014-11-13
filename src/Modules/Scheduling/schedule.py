@@ -299,8 +299,10 @@ class ScheduleExecution(object):
 
     def set_schedule_timer(self, _ignore):
         """Find out what schedules need to be done and how long to delay before they are due to be run.
+
+        This is called by callLater so an ignored parameter is required.
         """
-        l_seconds_to_delay, l_schedule_list = self.find_next_scheduled_event(self.m_pyhouse_obj)
+        l_seconds_to_delay, l_schedule_list = self.find_next_scheduled_events(self.m_pyhouse_obj)
         LOG.info('Delay: {0:} - List: {1:}'.format(l_seconds_to_delay, l_schedule_list))
         self.m_schedule_timer = self.m_pyhouse_obj.Twisted.Reactor.callLater(l_seconds_to_delay, self.execute_schedules_list, l_schedule_list)
 
@@ -308,7 +310,7 @@ class ScheduleExecution(object):
 
 class ScheduleUtility(ScheduleTime):
 
-    def find_next_scheduled_event(self, p_pyhouse_obj):
+    def find_next_scheduled_events(self, p_pyhouse_obj):
         """
         Get the current time
         Go thru all the schedules and find the next schedules to run.
@@ -320,6 +322,7 @@ class ScheduleUtility(ScheduleTime):
         l_riseset = self._get_sunrise_sunset(p_pyhouse_obj)
         l_now_daytime = self._now_daytime()  # Save value to avoid jitter
         l_time_scheduled = l_now_daytime
+        # If nothing is found, use these defaults
         l_seconds_to_delay = SECONDS_IN_WEEK
         l_schedule_list = []
 
@@ -329,17 +332,17 @@ class ScheduleUtility(ScheduleTime):
             l_time_sch = self._extract_time_of_day(l_schedule_obj, l_riseset)
             # now see if this is 1) part of a chain -or- 2) an earlier schedule
             l_diff = self._find_diff(l_time_sch, l_now_daytime)
-            # earlier schedule upcoming.
-            if l_diff < l_seconds_to_delay:
+
+            if l_diff == l_seconds_to_delay:  # Add to lists for the given time.
+                l_schedule_list.append(l_key)
+            elif l_diff < l_seconds_to_delay:  # earlier schedule upcoming.
                 l_seconds_to_delay = l_diff
                 l_schedule_list = []
                 l_time_scheduled = l_time_sch
             # add to a chain
-            if l_diff == l_seconds_to_delay:
-                l_schedule_list.append(l_key)
 
         l_debug_msg = "Delaying {0:} seconds until {1:} for list {2:}".format(l_seconds_to_delay, l_time_scheduled, l_schedule_list)
-        LOG.info("find_next_scheduled_event complete. {0:}".format(l_debug_msg))
+        LOG.info("find_next_scheduled_events complete. {0:}".format(l_debug_msg))
         return l_seconds_to_delay, l_schedule_list
 
 
@@ -409,6 +412,7 @@ class API(ScheduleUtility, ScheduleExecution):
 
     def RestartSchedule(self):
         LOG.info("Restart")
+        self.find_next_scheduled_events(self.m_pyhouse_obj)
         pass
 
     def SaveXml(self, p_xml):
