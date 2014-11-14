@@ -59,7 +59,7 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 		var l_location = l_house.Location;
 		var l_entry_html = "";
 		l_entry_html += buildLcarTextWidget(self, 'Name', 'House Name', l_house.Name);
-		l_entry_html += buildLcarTextWidget(self, 'Key', 'House Index', l_house.Key);
+		l_entry_html += buildLcarTextWidget(self, 'Key', 'House Index', l_house.Key, disabled);
 		l_entry_html += buildLcarTrueFalseWidget(self, 'Active', 'Active ?', l_house.Active);
 		l_entry_html += buildLcarTextWidget(self, 'UUID', 'UUID', l_house.UUID);
 		l_entry_html += buildLcarTextWidget(self, 'Street', 'Street', l_location.Street);
@@ -69,8 +69,8 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 		l_entry_html += buildLcarTextWidget(self, 'Phone', 'Phone', l_location.Phone);
 		l_entry_html += buildLcarTextWidget(self, 'Latitude', 'Latitude', l_location.Latitude);
 		l_entry_html += buildLcarTextWidget(self, 'Longitude', 'Longitude', l_location.Longitude);
-		l_entry_html += buildLcarTextWidget(self, 'TimeZoneName', 'TimeZone Name', l_location.TimeZone);
-		l_entry_html += buildLcarTextWidget(self, 'DST', 'DST', l_location.DaylightSavingsTime);
+		l_entry_html += buildLcarTextWidget(self, 'TimeZoneName', 'TimeZone Name', l_location.TimeZoneName);
+		l_entry_html += buildLcarTrueFalseWidget(self, 'DST', 'DST ?', l_location.DaylightSavingsTime);
 
 		l_entry_html += buildLcarEntryButtons(p_handler, 'NoDelete');
 		var l_html = build_lcars_top('Enter House Data', 'lcars-salmon-color');

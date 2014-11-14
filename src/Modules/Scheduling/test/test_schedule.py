@@ -50,7 +50,23 @@ class SetupMixin(object):
         self.m_api = schedule.API()
 
 
-class C01_Time(SetupMixin, unittest.TestCase):
+
+class C01_Static(SetupMixin, unittest.TestCase):
+    """
+    Test Staticmethods
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+
+    def test_01_MakeTimedelta(self):
+        l_delta = schedule.Sch._make_timedelta(T_NOW)
+        print('Now: {};   Delta: {}'.format(T_NOW, l_delta))
+        self.assertEqual(l_delta, datetime.timedelta(0, 45296))
+
+
+
+class C02_Time(SetupMixin, unittest.TestCase):
     """
     This section tests the schedule's time
     """
@@ -207,11 +223,6 @@ class C01_Time(SetupMixin, unittest.TestCase):
         print('Field: "{}";    Result: {}\n'.format(self.m_schedule_obj.Time, l_time))
         PrettyPrintAny(l_time, 'ExtractTimeOdDay result')
 
-    def test_08_MakeTimedelta(self):
-        l_delta = self.m_api._make_timedelta(T_NOW)
-        print('Now: {};   Delta: {}'.format(T_NOW, l_delta))
-        self.assertEqual(l_delta, datetime.timedelta(0, 45296))
-
     def test_09_Seconds2Wait(self):
         l_riseset = MockupRiseSet().mock()
         PrettyPrintAny(l_riseset, 'Mock RiseSet')
@@ -222,7 +233,7 @@ class C01_Time(SetupMixin, unittest.TestCase):
         pass
 
 
-class C02_Loc(SetupMixin, unittest.TestCase):
+class C03_Loc(SetupMixin, unittest.TestCase):
     """
     """
 
@@ -236,7 +247,7 @@ class C02_Loc(SetupMixin, unittest.TestCase):
         pass
 
 
-class C03_Setup(SetupMixin, unittest.TestCase):
+class C04_Setup(SetupMixin, unittest.TestCase):
     """
     This section tests the Building of a schedule list
     """
@@ -264,7 +275,7 @@ class C03_Setup(SetupMixin, unittest.TestCase):
         pass
 
 
-class C04_Utility(SetupMixin, unittest.TestCase):
+class C05_Utility(SetupMixin, unittest.TestCase):
     """
     This section tests the Building of a schedule list
     """

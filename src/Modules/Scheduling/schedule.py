@@ -77,6 +77,7 @@ class Sch(object):
             return None
         if not p_event.ScheduleType == 'LightingDevice':
             return None
+        return p_event
 
 
     @staticmethod
@@ -98,20 +99,22 @@ class ScheduleTimer(object):
     m_schedule_timer = None
 
 
-    def XXXset_schedule_timer(self, p_delay, p_list):
+    def start_schedule_timer(self, p_function, p_delay, p_list):
         """Find out what schedules need to be done and how long to delay before they are due to be run.
         """
         LOG.info('Delay: {0:} - List: {1:}'.format(p_delay, p_list))
-        self.m_schedule_timer = self.m_pyhouse_obj.Twisted.Reactor.callLater(p_delay, self.execute_schedules_list, p_list)
+        self.m_schedule_timer = self.m_pyhouse_obj.Twisted.Reactor.callLater(p_delay, p_function, p_list)
 
 
     def cancel_schedule_timer(self):
         """
         Stop the current schedule timer.
         """
-        self.m_schedule_timer.cancel()
+        try:
+            self.m_schedule_timer.cancel()
+        except:
+            pass
         self.m_schedule_timer = None
-
 
 
 

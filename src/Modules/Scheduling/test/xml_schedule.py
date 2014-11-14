@@ -10,7 +10,7 @@
 """
 SCHEDULE_XML = """
         <ScheduleSection>
-            <Schedule Active="True" Key="0" Name="Evening">
+            <Schedule Active="True" Key="0" Name="Evening 1">
                 <Level>100</Level>
                 <LightName>lr_cans</LightName>
                 <Rate>0</Rate>
@@ -84,9 +84,9 @@ SCHEDULE_XSD = """
               <xs:element type="xs:string" name="Time"/>
               <xs:element type="xs:string" name="ScheduleType"/>
             </xs:sequence>
-            <xs:attribute type="xs:string" name="Active"/>
-            <xs:attribute type="xs:byte" name="Key"/>
             <xs:attribute type="xs:string" name="Name" />
+            <xs:attribute type="xs:integer" name="Key"/>
+            <xs:attribute type="xs:boolean" name="Active"/>
           </xs:complexType>
         </xs:element>
       </xs:sequence>

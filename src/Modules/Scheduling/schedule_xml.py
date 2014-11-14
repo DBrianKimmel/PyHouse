@@ -57,7 +57,7 @@ class ReadWriteConfigXml(XmlConfigTools):
             l_obj.Mode = 0
         return l_obj
 
-    def read_one_schedule(self, p_schedule_element):
+    def _read_one_schedule(self, p_schedule_element):
         l_obj = self._read_one_base_schedule(p_schedule_element)
         if l_obj.ScheduleType == 'LightingDevice':
             l_type = self._read_one_lighting_schedule(p_schedule_element)
@@ -78,7 +78,7 @@ class ReadWriteConfigXml(XmlConfigTools):
         try:
             l_schedules_xml = l_xml.find('ScheduleSection')
             for l_entry in l_schedules_xml.iterfind('Schedule'):
-                l_schedule_obj = self.read_one_schedule(l_entry)
+                l_schedule_obj = self._read_one_schedule(l_entry)
                 l_schedule_obj.Key = self.m_count  # Renumber
                 l_dict[self.m_count] = l_schedule_obj
                 self.m_count += 1
@@ -86,7 +86,7 @@ class ReadWriteConfigXml(XmlConfigTools):
             LOG.error('ERROR in schedule.read_schedules_xml() - {0:}'.format(e_err))
         return l_dict
 
-    def write_one_base_schedule(self, p_schedule_obj):
+    def _write_one_base_schedule(self, p_schedule_obj):
         """
         """
         l_entry = self.write_base_object_xml('Schedule', p_schedule_obj)
@@ -96,20 +96,21 @@ class ReadWriteConfigXml(XmlConfigTools):
         self.put_int_element(l_entry, 'Mode', p_schedule_obj.Mode)
         return l_entry
 
-    def write_one_light_schedule(self, p_schedule_obj, p_entry):
+    def _write_one_light_schedule(self, p_schedule_obj, p_entry):
         """
+        Shove our entries in.
         """
         self.put_int_element(p_entry, 'Level', p_schedule_obj.Level)
         self.put_text_element(p_entry, 'LightName', p_schedule_obj.LightName)
         self.put_int_element(p_entry, 'Rate', p_schedule_obj.Rate)
         self.put_text_element(p_entry, 'RoomName', p_schedule_obj.RoomName)
 
-    def write_one_schedule(self, p_schedule_obj):
+    def _write_one_schedule(self, p_schedule_obj):
         """
         """
-        l_entry = self.write_one_base_schedule(p_schedule_obj)
+        l_entry = self._write_one_base_schedule(p_schedule_obj)
         if p_schedule_obj.ScheduleType == 'LightingDevice':
-            self.write_one_light_schedule(p_schedule_obj, l_entry)
+            self._write_one_light_schedule(p_schedule_obj, l_entry)
         else:
             LOG.error('ERROR - invalid schedule type {}'.format(p_schedule_obj.ScheduleType))
         return l_entry
@@ -122,7 +123,7 @@ class ReadWriteConfigXml(XmlConfigTools):
         l_xml = ET.Element('ScheduleSection')
         # PrettyPrintAny(p_schedules_obj, 'Schedule - SchedulesObj')
         for l_schedule_obj in p_schedules_obj.itervalues():
-            l_entry = self.write_one_schedule(l_schedule_obj)
+            l_entry = self._write_one_schedule(l_schedule_obj)
             l_xml.append(l_entry)
             self.m_count += 1
         return l_xml

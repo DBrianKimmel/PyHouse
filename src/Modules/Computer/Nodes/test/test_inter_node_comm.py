@@ -11,11 +11,8 @@
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
-# from twisted.internet import protocol
-# from twisted.internet import defer
-# from twisted.internet import error
-# from twisted.internet import reactor
 from twisted.trial import unittest
+from twisted.trial.runner import TestLoader
 
 # Import PyMh files and modules.
 from Modules.Computer.Nodes import inter_node_comm
@@ -64,7 +61,7 @@ class C01_Start(SetupMixin, unittest.TestCase):
 
 
 def TestSuite():
-    suite = unittest.TestLoader().loadTestsFromTestCase(C01_Start)
+    suite = TestLoader().loadTestsFromTestCase(C01_Start)
     # print('\nSuite {}'.format(suite))
     return suite
 

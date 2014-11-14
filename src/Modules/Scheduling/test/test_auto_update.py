@@ -29,7 +29,7 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-class Test_02_XML(SetupMixin, unittest.TestCase):
+class C01_XML(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by node_local.
     """
 
@@ -38,28 +38,28 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         SetupPyHouseObj().BuildXml(self.m_xml.root)
 
 
-class Test_03_Local(SetupMixin, unittest.TestCase):
+class C02_Local(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         SetupPyHouseObj().BuildXml(self.m_xml.root)
 
-    def test_0301_PyHouse(self):
+    def test_01_PyHouse(self):
         l_file = auto_update.FindLocalVersion()._find_pyhouse_version_file()
         print('Local File = {0:}'.format(l_file))
 
-    def test_0321_LocalVersion(self):
+    def test_02_Version(self):
         l_version = auto_update.FindLocalVersion().get_version()
         print(l_version)
 
 
-class Test_04_Repository(SetupMixin, unittest.TestCase):
+class C03_Repository(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         SetupPyHouseObj().BuildXml(self.m_xml.root)
 
-    def test_0402_RepositoryVersion(self):
+    def test_01_Version(self):
         l_version = auto_update.FindRepositoryVersion().get_version()
         print(l_version)
 
