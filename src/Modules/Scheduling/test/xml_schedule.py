@@ -9,60 +9,60 @@
 
 """
 SCHEDULE_XML = """
-        <ScheduleSection>
-            <Schedule Active="True" Key="0" Name="Evening 1">
-                <Level>100</Level>
-                <LightName>lr_cans</LightName>
-                <Rate>0</Rate>
-                <RoomName>Living Room</RoomName>
-                <Time>sunset - 00:06</Time>
-                <ScheduleType>LightingDevice</ScheduleType>
-            </Schedule>
-            <Schedule Active="True" Key="1" Name="Evening">
-                <Level>100</Level>
-                <LightName>lr_rope</LightName>
-                <LightNumber>7</LightNumber>
-                <Rate>0</Rate>
-                <RoomName>Living Room</RoomName>
-                <Time>sunset - 00:08</Time>
-                <ScheduleType>LightingDevice</ScheduleType>
-            </Schedule>
-            <Schedule Active="True" Key="2" Name="Evening">
-                <Level>100</Level><LightName>outside_gar</LightName><LightNumber>1</LightNumber><Rate>0</Rate>
-                <RoomName>Garage</RoomName>
-                <Time>sunset - 00:02</Time>
-                <ScheduleType>LightingDevice</ScheduleType>
-            </Schedule>
-            <Schedule Active="True" Key="3" Name="Evening">
-                <Level>100</Level><LightName>outside_front</LightName>
-                <LightNumber>0</LightNumber><Rate>0</Rate><RoomName>Foyer</RoomName><Time>sunset</Time>
-                <ScheduleType>LightingDevice</ScheduleType>
-            </Schedule>
-            <Schedule Active="True" Key="4" Name="Evening">
-                <Level>100</Level>
-                <LightName>wet_bar</LightName>
-                <LightNumber>8</LightNumber>
-                <Rate>0</Rate>
-                <RoomName>Living Room</RoomName>
-                <Time>sunset - 00:04</Time>
-                <ScheduleType>LightingDevice</ScheduleType>
-            </Schedule>
-            <Schedule Active="False" Key="5" Name="Night xxx">
-                <Level>60</Level><LightName>mbr_rope</LightName>
-                <LightNumber>6</LightNumber><Rate>0</Rate><RoomName>Master Bedroom</RoomName>
-                <Time>22:00</Time>
-                <ScheduleType>LightingDevice</ScheduleType>
-            </Schedule>
-            <Schedule Active="True" Key="6" Name="Night">
-                <Level>0</Level>
-                <LightName>outside_gar</LightName>
-                <LightNumber>1</LightNumber>
-                <Rate>0</Rate>
-                <RoomName>Garage</RoomName>
-                <Time>23:00</Time>
-                <ScheduleType>LightingDevice</ScheduleType>
-            </Schedule>
-        </ScheduleSection>
+<ScheduleSection>
+    <Schedule Name="Evening 1" Key="0" Active="True">
+        <Level>100</Level>
+        <LightName>lr_cans</LightName>
+        <Rate>0</Rate>
+        <RoomName>Living Room</RoomName>
+        <Time>13:57</Time>
+        <ScheduleType>LightingDevice</ScheduleType>
+    </Schedule>
+    <Schedule Active="True" Key="1" Name="Evening">
+        <Level>100</Level>
+        <LightName>lr_rope</LightName>
+        <LightNumber>7</LightNumber>
+        <Rate>0</Rate>
+        <RoomName>Living Room</RoomName>
+        <Time>13:57</Time>
+        <ScheduleType>LightingDevice</ScheduleType>
+    </Schedule>
+    <Schedule Active="True" Key="2" Name="Evening">
+        <Level>100</Level><LightName>outside_gar</LightName><LightNumber>1</LightNumber><Rate>0</Rate>
+        <RoomName>Garage</RoomName>
+        <Time>sunset - 00:02</Time>
+        <ScheduleType>LightingDevice</ScheduleType>
+    </Schedule>
+    <Schedule Active="True" Key="3" Name="Evening">
+        <Level>100</Level><LightName>outside_front</LightName>
+        <LightNumber>0</LightNumber><Rate>0</Rate><RoomName>Foyer</RoomName><Time>sunset</Time>
+        <ScheduleType>LightingDevice</ScheduleType>
+    </Schedule>
+    <Schedule Active="True" Key="4" Name="Evening">
+        <Level>100</Level>
+        <LightName>wet_bar</LightName>
+        <LightNumber>8</LightNumber>
+        <Rate>0</Rate>
+        <RoomName>Living Room</RoomName>
+        <Time>sunset - 00:04</Time>
+        <ScheduleType>LightingDevice</ScheduleType>
+    </Schedule>
+    <Schedule Active="False" Key="5" Name="Night xxx">
+        <Level>60</Level><LightName>mbr_rope</LightName>
+        <LightNumber>6</LightNumber><Rate>0</Rate><RoomName>Master Bedroom</RoomName>
+        <Time>22:00</Time>
+        <ScheduleType>LightingDevice</ScheduleType>
+    </Schedule>
+    <Schedule Active="True" Key="6" Name="Night">
+        <Level>0</Level>
+        <LightName>outside_gar</LightName>
+        <LightNumber>1</LightNumber>
+        <Rate>0</Rate>
+        <RoomName>Garage</RoomName>
+        <Time>23:00</Time>
+        <ScheduleType>LightingDevice</ScheduleType>
+    </Schedule>
+</ScheduleSection>
 """
 
 SCHEDULE_XSD = """

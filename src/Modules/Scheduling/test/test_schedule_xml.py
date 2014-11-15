@@ -44,6 +44,7 @@ class C01_XML(SetupMixin, unittest.TestCase):
     def test_01_FindXML(self):
         """ Be sure that the XML contains the right stuff.
         """
+        PrettyPrintAny(self.m_xml.root, 'XML')
         self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
         self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision', 'XML - No Houses section')
         self.assertEqual(self.m_xml.schedule_sect.tag, 'ScheduleSection', 'XML - No Schedules section')

@@ -16,7 +16,7 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import ScheduleBaseData
-from Modules.Scheduling import schedule
+from Modules.Scheduling import schedule, schedule_xml
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
@@ -233,8 +233,10 @@ class C02_Time(SetupMixin, unittest.TestCase):
         pass
 
 
+
 class C03_Loc(SetupMixin, unittest.TestCase):
     """
+    Test things to do with the house location.
     """
 
     def setUp(self):
@@ -243,8 +245,10 @@ class C03_Loc(SetupMixin, unittest.TestCase):
         self.m_now = datetime.datetime(2014, 6, 6, 12, 15, 30)
 
     def test_01_LoadLocation(self):
-        # self.m_api._
-        pass
+        self.m_pyhouse_obj.House.OBJs.Location._Sunrise = T_SUNRISE
+        self.m_pyhouse_obj.House.OBJs.Location._Sunset = T_SUNSET
+        PrettyPrintAny(self.m_pyhouse_obj.House.OBJs.Location, 'Location')
+
 
 
 class C04_Setup(SetupMixin, unittest.TestCase):
@@ -254,9 +258,16 @@ class C04_Setup(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        self.m_pyhouse_obj.House.OBJs.Location._Sunrise = T_SUNRISE
+        self.m_pyhouse_obj.House.OBJs.Location._Sunset = T_SUNSET
+        self.m_pyhouse_obj.House.OBJs.Schedules = schedule_xml.ReadWriteConfigXml().read_schedules_xml(self.m_pyhouse_obj)
 
-    def test_01_xxx(self):
-        PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse_obj')
+    def test_01_BuildSched(self):
+        PrettyPrintAny(self.m_pyhouse_obj.House.OBJs, 'Schedules')
+
+        l_delay, l_list = self.m_api.find_next_scheduled_events(self.m_pyhouse_obj, T_NOW)
+        print('Delay: {}'.format(l_delay))
+        PrettyPrintAny(l_list, 'List')
 
     def test_02_yyy(self):
         PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse_obj')
@@ -273,6 +284,7 @@ class C04_Setup(SetupMixin, unittest.TestCase):
 
     def Xtest_09_DispatchSchedule(self):
         pass
+
 
 
 class C05_Utility(SetupMixin, unittest.TestCase):

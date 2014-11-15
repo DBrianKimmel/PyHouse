@@ -89,20 +89,28 @@ HOUSE_XML = '\n'.join([
        ])
 
 
-PYHOUSE_HEADER_XML = """\
-<PyHouse Version='2'>
+PYHOUSE_SCHEMA = """
 """
+
+PYHOUSE_HEADER_XML = """
+<PyHouse
+    Version='2'
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://PyHouse.org schemas/PyHouse.xsd">
+"""
+
 PYHOUSE_TRAILER_XML = """
 </PyHouse>
 """
+
+
+
 # Everything as expected in a running system.
 XML_LONG = '/n'.join([
-      PYHOUSE_HEADER_XML,
-      COMPUTER_XML,
-      HOUSE_XML,
-      PYHOUSE_TRAILER_XML])
-
-
+    PYHOUSE_HEADER_XML,
+    COMPUTER_XML,
+    HOUSE_XML,
+    PYHOUSE_TRAILER_XML])
 
 
 
