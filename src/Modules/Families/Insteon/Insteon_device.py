@@ -122,7 +122,7 @@ class API(object):
     def ReadXml(self, p_device_obj, p_entry_xml):
         Insteon_xml.ReadWriteConfigXml().ReadXml(p_device_obj, p_entry_xml)
 
-    def WriteXml(self, p_device_obj, p_entry_xml):
-        Insteon_xml.ReadWriteConfigXml().WriteXml(p_device_obj, p_entry_xml)
+    def WriteXml(self, p_out_xml, p_device):
+        Insteon_xml.ReadWriteConfigXml().WriteXml(p_out_xml, p_device)
 
 # ## END DBK

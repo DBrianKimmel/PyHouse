@@ -6,15 +6,6 @@
  * D. Brian Kimmel
  * 
  * Displays the Logs
- * 
-	ret = ret + '<form method="post" action="_submit!!post" enctype="multipart/form-data">\n';
-	ret = ret +	'  Debug:';
-	ret = ret +	'    <input type = "text" name = "Debug" value = "' + l_obj.Debug + '" /><br />\n';
-	ret = ret +	'  Error:';
-	ret = ret +	'    <input type = "text" name = "Error" value = "' + l_obj.Error + '" /><br />\n';
-	ret = ret +	'  <br />\n';
-	ret = ret + '  <input type="submit" name="post_btn" value="Change_Logs" />\n';
-	ret = ret + '</form>\n';
  */
 
 // import Nevow.Athena

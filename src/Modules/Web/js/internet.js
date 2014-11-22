@@ -43,7 +43,7 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 	/**
 	 * routines for showing and hiding parts of the screen.
 	 */
-	function showWidget(self) {
+	function startWidget(self) {
 		// Divmod.debug('---', 'internet.showWidget() was called.');
 		self.node.style.display = 'block';
 		self.showSelectionButtons();
@@ -70,19 +70,11 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 	 */
 	function fetchHouseData(self) {
 		function cb_fetchHouseData(p_json) {
-			// Divmod.debug('---', 'internet.cb_fetchHouseData() was called. ' + p_json);
 			globals.Computer = JSON.parse(p_json);
-			// this is the external IP address finding URL and its value
-	        self.nodeById('UrlDiv').innerHTML = buildTextWidget('InternetUrl', globals.Computer.InternetConnection.ExternalUrl);
-	        // self.nodeById('ExtDelayDiv').innerHTML = buildTextWidget('InternetExtDelay', globals.Computer.InternetConnection.ExternalDelay);
-	        self.nodeById('ExtIpDiv').innerHTML = buildTextWidget('InternetExtIp', globals.Computer.InternetConnection.ExternalIP, 'disabled');
-			var l_tab = buildTable(globals.Computer.InternetConnection.DynDns, 'handleMenuOnClick');
-			self.nodeById('InternetTableDiv').innerHTML = l_tab;
 		}
 		function eb_fetchHouseData(res) {
 			Divmod.debug('---', 'internet.eb_fetchHouseData() was called. ERROR: ' + res);
 		}
-		// Divmod.debug('---', 'internet.fetchHouseData() was called. ');
         var l_defer = self.callRemote("getHouseData");  // call server @ web_internet.py
 		l_defer.addCallback(cb_fetchHouseData);
 		l_defer.addErrback(eb_fetchHouseData);
@@ -96,12 +88,6 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 	function fillEntry(self, p_obj, p_ix) {
 		// Divmod.debug('---', 'internet.fillEntry(1) was called.  Ix:' + p_ix);
 		// console.log("internet.fillEntry() - Obj = %O", p_obj);
-        self.nodeById('DynDnsNameDiv').innerHTML = buildTextWidget('DynDnsName', p_obj.DynDns[p_ix].Name);
-        self.nodeById('DynDnsKeyDiv').innerHTML = buildTextWidget('DynDnsKey', p_obj.DynDns[p_ix].Key, 'disabled');
-        self.nodeById('DynDnsActiveDiv').innerHTML = buildTrueFalseWidget('DynDnsActive', p_obj.DynDns[p_ix].Active);
-        self.nodeById('DynDnsUrlDiv').innerHTML = buildTextWidget('DynDnsUrl', p_obj.DynDns[p_ix].Url);
-        self.nodeById('DynDnsIntervalDiv').innerHTML = buildTextWidget('DynDnsInterval', p_obj.DynDns[p_ix].Interval);
-		self.nodeById('InternetEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick');
 	},
 
 	function fetchEntry(self) {
@@ -109,11 +95,6 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
         var l_data = {
         	// ExternalDelay : fetchTextWidget(self, 'InternetExtDelay')
             // Interval : fetchTextWidget(self, 'DynDnsInterval')
-        	ExternalUrl : fetchTextWidget(self, 'InternetUrl'),
-            Name : fetchTextWidget(self, 'DynDnsName'),
-            Key : fetchTextWidget(self, 'DynDnsKey'),
-			Active : fetchTrueFalseWidget(self, 'DynDnsActive'),
-            Url : fetchTextWidget(self, 'DynDnsUrl'),
  			Delete : false
             };
 		return l_data;
@@ -166,7 +147,7 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 			// Divmod.debug('---', 'internet.handleMenuOnClick(Back Button) was called. ' + l_ix + ' ' + l_name);
 			self.hideWidget();
 			var l_node = findWidgetByClass('HouseMenu');
-			l_node.showWidget();
+			l_node.showWidget2('HouseMenu');
 		}
 	},
 

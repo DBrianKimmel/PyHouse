@@ -10,8 +10,12 @@
 """
 
 
-UPB_XML = """
-"""
+UPB_XML = """\
+    <ControllerFamily>UPB</ControllerFamily>
+    <UPBNetworkID>6</UPBNetworkID>
+    <UPBPassword>1253</UPBPassword>
+    <UPBAddress>255</UPBAddress>"""
+
 
 
 UPB_XSD = """

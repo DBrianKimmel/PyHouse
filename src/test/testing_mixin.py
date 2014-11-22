@@ -24,6 +24,13 @@ from Modules.Core.data_objects import PyHouseData, PyHouseAPIs, \
 
 
 class XmlData(object):
+    """
+    Testing XML infrastructure
+        PyHouse
+            Divisions
+                Sections
+                    Item XML
+    """
     def __init__(self):
         self.root = None
         self.house_div = None
@@ -46,9 +53,9 @@ class XmlData(object):
         self.locater_sect = None
         self.updater_sect = None
         self.log_sect = None
-        self.node_sect = None
         self.web_sect = None
         #
+        self.node_sect = None
         self.node = None
         self.interface_sect = None
         self.interface = None
@@ -60,7 +67,6 @@ class SetupPyHouseObj(object):
 
     def _BuildComputer(self):
         l_ret = ComputerInformation()
-        # l_ret.Nodes = NodeData()
         return l_ret
 
     def _BuildHouse(self):

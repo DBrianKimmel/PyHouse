@@ -96,6 +96,7 @@ class API(Util):
             l_xml = l_xml.find('ComputerDivision')
             l_internet_sect_xml = l_xml.find('InternetSection')
         except AttributeError as e_err:
+            l_internet_sect_xml = None
             LOG.error('Internet section missing from XML - {}'.format(e_err))
         try:
             l_icd = self._read_derived(l_internet_sect_xml)

@@ -66,9 +66,6 @@ class LightsElement(athena.LiveElement):
             except AttributeError:
                 LOG.error("web_lights - Failed to delete - JSON: {0:}".format(l_json))
             return
-        #
-        # Note - we don't want a plain light here - we want a family light
-        #
         try:
             l_obj = self.m_pyhouse_obj.House.OBJs.Lights[l_light_ix]
         except KeyError:
@@ -87,7 +84,6 @@ class LightsElement(athena.LiveElement):
         l_obj.UUID = l_json['UUID']
         if len(l_obj.UUID) < 8:
             l_obj.UUID = str(uuid.uuid1())
-        # PrettyPrintAny(l_obj, 'LightObj')
         if l_obj.ControllerFamily == 'Insteon':
             l_obj.DevCat = conversions.dotted_hex2int(l_json['DevCat'])
             l_obj.GroupList = l_json['GroupList']

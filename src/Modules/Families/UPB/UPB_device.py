@@ -74,7 +74,7 @@ class API(object):
     def ReadXml(self, p_device, p_xml):
         UPB_xml.ReadXml(p_device, p_xml)
 
-    def WriteXml(self, p_device_obj, p_entry_xml):
-        UPB_xml.WriteXml(p_device_obj, p_entry_xml)
+    def WriteXml(self, p_out_xml, p_device_obj):
+        UPB_xml.WriteXml(p_out_xml, p_device_obj)
 
 # ## END

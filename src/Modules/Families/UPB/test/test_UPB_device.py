@@ -64,7 +64,7 @@ class Test_02_ReadXML(SetupMixin, unittest.TestCase):
     def test_0203_ReadOneLightXml(self):
         """ Read in the xml file and fill in the lights
         """
-        l_entry = self.m_thermostat_api.read_one_thermostat_xml(self.m_thermostat_xml, self.m_pyhouse_obj)
+        l_entry = self.m_thermostat_api._read_one_thermostat_xml(self.m_thermostat_xml, self.m_pyhouse_obj)
         self.assertEqual(l_entry.Active, True, 'Bad Active')
         self.assertEqual(l_entry.Name, 'Test Thermostat One', 'Bad Name')
 

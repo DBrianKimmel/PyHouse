@@ -39,8 +39,10 @@ helpers.Widget.subclass(houseMenu, 'HouseMenuWidget').methods(
 		l_defer.addCallback(cb_widgetready);
 		return l_defer;
 	},
-	function showWidget(self) {
-		self.node.style.display = 'block';
+	function startWidget(self) {
+		// Divmod.debug('---', 'houseMenu.startWidget() was called.');
+		self.showSelectionButtons();
+		self.buildLcarSelectScreen();
 	},
 	function hideSelectionButtons(self) {
 		self.nodeById('SelectionButtonsDiv').style.display = 'none';
@@ -88,13 +90,6 @@ helpers.Widget.subclass(houseMenu, 'HouseMenuWidget').methods(
 		l_html += build_lcars_bottom();
 		self.nodeById('SelectionButtonsDiv').innerHTML = l_html;
 	},
-	function showWidget(self) {
-		// Divmod.debug('---', 'houseMenu.showWidget() was called.');
-		// console.log("houseMenu.showWidget()  self  %O", self);
-		self.node.style.display = 'block';
-		self.showSelectionButtons();
-		self.buildLcarSelectScreen();
-	},
 
 
 
@@ -108,54 +103,34 @@ helpers.Widget.subclass(houseMenu, 'HouseMenuWidget').methods(
 		var l_node;
 		switch (l_key) {
 		case 'Location':
-			self.hideWidget();
-			l_node = findWidgetByClass('House');
-			l_node.showWidget();
+			self.showWidget2('House');
 			break;
 		case 'Rooms':
-			self.hideWidget();
-			l_node = findWidgetByClass('Rooms');
-			l_node.showWidget();
+			self.showWidget2('Rooms');
 			break;
 		case 'Lights':
-			self.hideWidget();
-			l_node = findWidgetByClass('Lights');
-			l_node.showWidget();
+			self.showWidget2('Lights');
 			break;
 		case 'Buttons':
-			self.hideWidget();
-			l_node = findWidgetByClass('Buttons');
-			l_node.showWidget();
+			self.showWidget2('Buttons');
 			break;
 		case 'Controllers':
-			self.hideWidget();
-			l_node = findWidgetByClass('Controllers');
-			l_node.showWidget();
+			self.showWidget2('Controllers');
 			break;
 		case 'Schedules':
-			self.hideWidget();
-			l_node = findWidgetByClass('Schedules');
-			l_node.showWidget();
+			self.showWidget2('Schedules');
 			break;
 		case 'Levels':
-			self.hideWidget();
-			l_node = findWidgetByClass('ControlLights');
-			l_node.showWidget();
+			self.showWidget2('ControlLights');
 			break;
 		case 'Internet':
-			self.hideWidget();
-			l_node = findWidgetByClass('Internet');
-			l_node.showWidget();
+			self.showWidget2('Internet');
 			break;
 		case 'Thermo':
-			self.hideWidget();
-			l_node = findWidgetByClass('Thermostat');
-			l_node.showWidget();
+			self.showWidget2('Thermostat');
 			break;
 		case 'Back':
-			self.hideWidget();
-			l_node = findWidgetByClass('RootMenu');
-			l_node.showWidget();
+			self.showWidget2('RootMenu');
 			break;
 		default:
 			Divmod.debug('---', 'houseMenu.doHandleOnClick(Default) was called.');

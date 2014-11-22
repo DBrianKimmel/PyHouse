@@ -17,9 +17,11 @@ import json
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import JsonHouseData, ComputerInformation
-# from Modules.utils.tools import PrettyPrintAny
+from Modules.Computer import logging_pyh as Logger
+from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 0
+LOG = Logger.getLogger('PyHouse.webUtils    ')
 
 # Web States defined
 #-------------------
@@ -41,6 +43,7 @@ WS_CONTROLLERS = 502
 WS_LIGHTS = 503
 
 
+
 def GetJSONHouseInfo(p_pyhouse_obj):
     """Get house info for the browser.
     This is simplified and customized so JSON encoding works.
@@ -51,6 +54,7 @@ def GetJSONHouseInfo(p_pyhouse_obj):
     l_ret.Name = p_pyhouse_obj.House.Name
     l_ret.Key = p_pyhouse_obj.House.Key
     l_ret.Active = p_pyhouse_obj.House.Active
+    #
     l_ret.Buttons = p_pyhouse_obj.House.OBJs.Buttons
     l_ret.Controllers = p_pyhouse_obj.House.OBJs.Controllers
     l_ret.Lights = p_pyhouse_obj.House.OBJs.Lights
@@ -59,6 +63,10 @@ def GetJSONHouseInfo(p_pyhouse_obj):
     l_ret.Schedules = p_pyhouse_obj.House.OBJs.Schedules
     l_ret.Thermostats = p_pyhouse_obj.House.OBJs.Thermostats
     l_json = unicode(JsonUnicode().encode_json(l_ret))
+    try:
+        PrettyPrintAny(l_ret, 'JSON send House Info')
+    except:
+        pass
     return l_json
 
 def GetJSONComputerInfo(p_pyhouse_obj):

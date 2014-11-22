@@ -31,8 +31,7 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 	/**
 	 * routines for showing and hiding parts of the screen.
 	 */
-	function showWidget(self) {
-		//Divmod.debug('---', 'buttons.showWidget() was called.');
+	function startWidget(self) {
 		self.node.style.display = 'block';
 		self.showSelectionButtons(self);
 		self.hideDataEntry(self);
@@ -58,13 +57,10 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 	 */
 	function fetchHouseData(self) {
 		function cb_fetchHouseData(p_json) {
-			//Divmod.debug('---', 'buttons.cb_fetchHouseData() was called. ' + p_json);
 			globals.House.HouseObj = JSON.parse(p_json);
-			var l_tab = buildTable(globals.House.HouseObj.Buttons, 'handleMenuOnClick');
-			self.nodeById('ButtonTableDiv').innerHTML = l_tab;
 		}
-		function eb_fetchHouseData(res) {
-			Divmod.debug('---', 'buttons.eb_fetchHouseData() was called.  ERROR - ' + res);
+		function eb_fetchHouseData(p_reason) {
+			Divmod.debug('---', 'buttons.eb_fetchHouseData() was called.  ERROR - ' + p_reason);
 		}
         var l_defer = self.callRemote("getHouseData");  // call server @ web_buttons.py
 		l_defer.addCallback(cb_fetchHouseData);
@@ -78,16 +74,6 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 	 */
 	function fillEntry(self, p_obj) {
 		//Divmod.debug('---', 'buttons.fillEntry() was called. ' + p_obj);
-		self.nodeById('NameDiv').innerHTML = buildTextWidget('ButtonName', p_obj.Name);
-		self.nodeById('KeyDiv').innerHTML = buildTextWidget('ButtonKey', p_obj.Key, 'disabled');
-		self.nodeById('ActiveDiv').innerHTML = buildTrueFalseWidget('ButtonActive', p_obj.Active);
-		self.nodeById('CommentDiv').innerHTML = buildTextWidget('ButtonComment', p_obj.Comment);
-		self.nodeById('CoordsDiv').innerHTML = buildTextWidget('ButtonCoords', p_obj.Coords);
-		self.nodeById('FamilyDiv').innerHTML = buildTextWidget('ButtonFamily', p_obj.ControllerFamily);
-		self.nodeById('RoomNameDiv').innerHTML = buildRoomSelectWidget('ButtonRoomName', p_obj.RoomName);
-		self.nodeById('TypeDiv').innerHTML = buildTextWidget('ButtonType', p_obj.Type);  // s/b select box of valid types
-		self.nodeById('UUIDDiv').innerHTML = buildTextWidget('ButtonUUID', p_obj.UUID, 'disabled');
-		self.nodeById('ButtonEntryButtonsDiv').innerHTML = buildEntryButtons('handleDataOnClick');
 	},
 	function fetchEntry(self) {
         var l_data = {
@@ -130,11 +116,8 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 			// The "Add" button
 			self.showDataEntry();
 			self.hideSelectionButtons();
-		} else if (l_ix == 10002) {
-			// The "Back" button
-			self.hideWidget();
-			var l_node = findWidgetByClass('HouseMenu');
-			l_node.showWidget();
+		} else if (l_ix == 10002) {  // The "Back" button
+			self.showWidget2('HouseMenu');
 		}
 	},
 	
@@ -146,10 +129,9 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 		//Divmod.debug('---', 'buttons.handleDataOnClick() was called. ');
 		//console.log("buttons.handleDataOnClick() - self %O", self);
 		//console.log("buttons.handleDataOnClick() - node %O", p_node);
-		
+
 		function cb_handleDataOnClick(p_json) {
-			//Divmod.debug('---', 'button.cb_handleDataOnClick() was called.');
-			self.showWidget(self);
+			Divmod.debug('---', 'button.cb_handleDataOnClick() was called.');
 		}
 		function eb_handleDataOnClick(res){
 			//Divmod.debug('---', 'button.eb_handleDataOnClick() was called. res=' + res);
@@ -186,3 +168,6 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
         return false;  // false stops the chain.
 	}
 );
+// Divmod.debug('---', 'buttons.handleMenuOnClick(1) was called. ' + l_ix + ' ' + l_name);
+// console.log("buttons.handleMenuOnClick() - l_obj = %O", l_obj);
+// ### END DBK

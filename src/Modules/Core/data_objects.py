@@ -48,7 +48,7 @@ class ABaseObject(object):
     """
 
     def __init__(self):
-        self.Name = 'Undefined Object'
+        self.Name = 'Undefined ABaseObject'
         self.Key = 0
         self.Active = False
         self.UUID = None  # The UUID is optional, not all objects use this
@@ -106,14 +106,14 @@ class LightData(BaseLightingData):
 
 
 class FamilyData(ABaseObject):
-    """A container for every family that has been defined.
+    """A container for every family that has been defined in modules.
     """
     def __init__(self):
         super(FamilyData, self).__init__()
         self.FamilyModuleAPI = None  # Insteon_device.API()
         self.FamilyDeviceModuleName = ''  # Insteon_device
         self.FamilyXmlModuleName = ''  # Insteon_device
-        self.FamilyPackageName = ''  # Modules.families.Insteon
+        self.FamilyPackageName = ''  # Modules.Families.Insteon
 
 
 class X10LightingData(LightData):
@@ -152,7 +152,7 @@ class HouseObjs(object):
     def __init__(self):
         self.Buttons = {}  # ButtonData()
         self.Controllers = {}  # ControllerData()
-        self.FamilyData = {}  # FamilyData()
+        self.FamilyData = {}  # FamilyData('FamilyName')
         self.Irrigation = {}  # IrrigationData()
         self.Lights = {}  # LightData()
         self.Location = {}  # LocationData() - one location per house.

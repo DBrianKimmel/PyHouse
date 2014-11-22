@@ -32,4 +32,10 @@ class API(object):
         LOG.error('ERROR - Null_device ReadXml was called')
         pass
 
+    def SaveXml(self, p_xml):
+        pass
+
+    def WriteXml(self, p_out_xml, p_device):
+        pass
+
 # ## END DBK

@@ -197,10 +197,17 @@ Nevow.Athena.Widget.subclass(helpers, 'Widget').methods(
 		Divmod.debug('---', 'Helpers.showWidget() was called for ' + self.node.className);
 		self.node.style.display = 'block';
 	},
-
-
+	function showWidget2(self, p_class) {
+		self.node.style.display = 'none';
+		var l_widget = findWidgetByClass(p_class);
+		l_widget.node.style.display = 'block';
+		l_widget.startWidget()
+	},
 	function hideWidget(self) {
 		self.node.style.display = 'none';
+	},
+	function hideWidget2(self, p_name) {
+		p_name.node.style.display = 'none';
 	}
 );
 

@@ -19,7 +19,7 @@ from nevow import loaders
 # Import PyMh files and modules.
 from Modules.Web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.Computer import logging_pyh as Logger
-# from Modules.Utilities.tools import PrettyPrintAny
+from Modules.Utilities.tools import PrettyPrintAny
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -51,6 +51,7 @@ class HouseElement(athena.LiveElement):
         """House data is returned, so update the house info.
         """
         l_json = JsonUnicode().decode_json(p_json)
+        LOG.info('Update House info - {}'.format(l_json))
         l_delete = l_json['Delete']
         if l_delete:
             try:
@@ -58,15 +59,7 @@ class HouseElement(athena.LiveElement):
             except AttributeError:
                 print("web_lights - Failed to delete - JSON: {0:}".format(l_json))
             return
-        # PrettyPrintAny(l_json, 'WebHouse - JSON', 100)
-        # if l_house_ix == -1:  # adding a new house
-        #    l_house_ix = len(self.m_pyhouse_obj.House.OBJs)
         l_obj = self.m_pyhouse_obj.House.OBJs
-        # PrettyPrintAny(l_obj, 'WebHouse - OBJ', 100)
-        # try:
-        #    self.m_pyhouse_obj.House.OBJs[l_house_ix] = l_obj
-        # except AttributeError:
-        #    self.m_pyhouse_obj.House.OBJs = l_obj
         l_obj.Name = l_json['Name']
         l_obj.Key = int(l_json['Key'])
         l_obj.Active = True
@@ -78,8 +71,8 @@ class HouseElement(athena.LiveElement):
         l_obj.Location.Latitude = l_json['Location']['Latitude']
         l_obj.Location.Longitude = l_json['Location']['Longitude']
         l_obj.Location.TimeZoneName = l_json['Location']['TimeZoneName']
-        # l_obj.Location.TimeZoneOffset = l_json['Location']['TimeZoneOffset']
-        # l_obj.Location.DaylightSavingsTime = l_json['Location']['DaylightSavingsTime']
+        PrettyPrintAny(l_obj, 'Obj')
+        PrettyPrintAny(l_obj.Location, 'Obj.Location')
         self.m_pyhouse_obj.House.OBJs = l_obj
 
 # ## END DBK

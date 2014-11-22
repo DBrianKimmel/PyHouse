@@ -38,7 +38,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	/**
 	 * Show the self.node widget - rooms.RoomsWidget -
 	 */
-	function showWidget(self) {
+	function startWidget(self) {
 		self.node.style.display = 'block';
 		self.showSelectionButtons();
 		self.hideDataEntry();
@@ -66,7 +66,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	function buildLcarSelectScreen(self){
 		var l_button_html = buildLcarSelectionButtonsTable(globals.House.HouseObj.Rooms, 'handleMenuOnClick');
 		var l_html = build_lcars_top('Rooms', 'lcars-salmon-color');
-		l_html += build_lcars_middle_menu(6, l_button_html);
+		l_html += build_lcars_middle_menu(15, l_button_html);
 		l_html += build_lcars_bottom();
 		self.nodeById('SelectionButtonsDiv').innerHTML = l_html;
 	},
@@ -111,9 +111,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 			var l_ent = self.createEntry();
 			self.fillEntry(l_ent);
 		} else if (l_ix == 10002) {  // The "Back" button
-			self.hideWidget();
-			var l_node = findWidgetByClass('HouseMenu');
-			l_node.showWidget();
+			self.showWidget2('HouseMenu');
 		}
 	},
 
@@ -184,7 +182,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	 */
 	function handleDataOnClick(self, p_node) {
 		function cb_handleDataOnClick(p_json) {
-			self.showWidget();
+			// self.showWidget();
 		}
 		function eb_handleDataOnClick(res){
 			Divmod.debug('---', 'rooms.eb_handleDataOnClick() was called. ERROR =' + res);

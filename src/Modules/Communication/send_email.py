@@ -35,17 +35,6 @@ LOG = Logger.getLogger('PyHouse.Email      ')
 
 
 
-EMAIL_XML = """
-        <EmailSection>
-            <EmailFromAddress>mail.sender@Gmail.Com</EmailFromAddress>
-            <EmailToAddress>mail.receiver@Gmail.Com</EmailToAddress>
-            <GmailLogin>TestAccount@Gmail.Com</GmailLogin>
-            <GmailPassword>Test=!=Password</GmailPassword>
-        </EmailSection>
-"""
-
-
-
 class ReadWriteConfigXml(PutGetXML):
     """
     """

@@ -43,6 +43,8 @@ class PutGetXML(object):
         return l_xml
 
     def _get_any_field(self, p_xml, p_name):
+        if p_xml == None:  # We were passed XML without a tag of p_name
+            return None
         l_xml = self._get_element_field(p_xml, p_name)
         if l_xml == None:
             l_xml = self._get_attribute_field(p_xml, p_name)
@@ -226,6 +228,7 @@ class XmlConfigTools(PutGetXML):
             p_base_obj.UUID = self.get_uuid_from_xml(p_entry_element_xml, 'UUID')
         except Exception as e_err:
             print('ERROR in xml_tools.read_base_obj() - {0:}'.format(e_err))
+        return p_base_obj
 
     def write_base_object_xml(self, p_element_name, p_object):
         """

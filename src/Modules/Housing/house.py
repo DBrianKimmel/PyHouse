@@ -59,14 +59,19 @@ class ReadWriteConfigXml(location.ReadWriteConfigXml, rooms.ReadWriteConfigXml):
     This is called from the web interface or the GUI when the data has been changed.
     """
 
-    def get_house_xml(self, p_pyhouse_obj):
+    def _get_house_xml(self, p_pyhouse_obj):
         l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
+        return l_xml
+
+    def _read_base_house(self, p_pyhouse_obj):
+        l_xml = self._get_house_xml(p_pyhouse_obj)
+        self.read_base_object_xml(p_pyhouse_obj.House, l_xml)
         return l_xml
 
     def read_house_xml(self, p_pyhouse_obj):
         """Read house information, location and rooms.
         """
-        l_xml = self.get_house_xml(p_pyhouse_obj)
+        l_xml = self._get_house_xml(p_pyhouse_obj)
         self.read_base_object_xml(p_pyhouse_obj.House, l_xml)
         p_pyhouse_obj.House.OBJs.Location = self.read_location_xml(l_xml)
         p_pyhouse_obj.House.OBJs.Rooms = self.read_rooms_xml(l_xml)
@@ -146,8 +151,8 @@ class API(Utility):
         Take a snapshot of the current Configuration/Status and write out an XML file.
         """
         l_xml = self.write_house_xml(self.m_pyhouse_obj.House)
-        self.m_pyhouse_obj.APIs.ScheduleAPI.SaveXml(l_xml)
+        self.m_pyhouse_obj.APIs.ScheduleAPI.WriteXml(l_xml)
         p_xml.append(l_xml)
-        LOG.info("Saved XML.")
+        LOG.info("Wrote XML.")
 
 # ##  END DBK

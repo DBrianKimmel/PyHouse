@@ -4,7 +4,7 @@
 @contact: D.BrianKimmel@gmail.com
 @Copyright: (c)  2014 by D. Brian Kimmel
 @license: MIT License
-@note: Created on Nov 7, 2014
+@note: Created on Nov 22, 2014
 @Summary:
 
 """
@@ -36,6 +36,8 @@ ROOMS_XML = """
 </RoomSection>
 """
 
+
+
 ROOMS_XSD = """
 <xs:schema
     attributeFormDefault="unqualified"
@@ -63,4 +65,5 @@ ROOMS_XSD = """
 
 </xs:schema>
 """
+
 # ## END DBK

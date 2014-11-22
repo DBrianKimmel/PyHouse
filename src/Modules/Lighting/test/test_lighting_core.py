@@ -7,6 +7,12 @@
 @note: Created on May 4, 2014
 @summary: This module is for testing lighting Core.
 
+Despite its name as "Lighting" this module is also capable of reading and writing
+other devices such as thermostats, irrigation systems and pool systems to name a few.
+
+Notice that devices have a lot of configuration entries is XML.  This module only deals with
+the "Core" definitions.
+
 Tests all working OK - DBK 2014-07-27
 """
 
@@ -25,6 +31,7 @@ from Modules.Utilities.tools import PrettyPrintAny
 XML = xml_data.XML_LONG
 
 
+
 class SetupMixin(object):
     """
     """
@@ -34,7 +41,8 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-class C01_XML(SetupMixin, unittest.TestCase):
+
+class C01_FindXML(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by node_local.
     """
 
@@ -52,7 +60,7 @@ class C01_XML(SetupMixin, unittest.TestCase):
         """ Be sure that the XML contains the right stuff.
         """
         PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse_obj', 120)
-        PrettyPrintAny(self.m_pyhouse_obj.Xml, 'PyHouse_obj.Xml', 120)
+        PrettyPrintAny(self.m_xml, 'XML', 120)
         self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
         self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision', 'XML - No Houses section')
         self.assertEqual(self.m_xml.light_sect.tag, 'LightSection', 'XML - No Lights section')
@@ -62,7 +70,23 @@ class C01_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.button_sect.tag, 'ButtonSection', 'XML - No Buttons section')
         self.assertEqual(self.m_xml.button.tag, 'Button', 'XML - No Button')
 
-    def test_02_ReadBaseXml(self):
+
+
+class C02_ReadXML(SetupMixin, unittest.TestCase):
+    """ This section tests the reading and writing of XML used by node_local.
+    """
+
+    def setUp(self):
+        self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
+        SetupMixin.setUp(self, self.m_root_xml)
+        SetupPyHouseObj().BuildXml(self.m_root_xml)
+        self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
+        self.m_button_obj = ButtonData()
+        self.m_controller_obj = ControllerData()
+        self.m_light_obj = LightData()
+        self.m_api = ReadWriteConfigXml()
+
+    def test_01_BaseLight(self):
         """ Read in the xml file and fill in the lights
         """
         l_base = self.m_api.read_base_lighting_xml(self.m_light_obj, self.m_xml.light)
@@ -76,7 +100,7 @@ class C01_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_base.ControllerFamily, 'Insteon', 'Bad ControllerFamily')
         self.assertEqual(l_base.RoomName, 'Foyer', 'Bad Room Name')
 
-    def test_03_ReadBaseXml(self):
+    def test_02_ReadBaseController(self):
         """ Read in the xml file and fill in the lights
         """
         l_base = self.m_api.read_base_lighting_xml(self.m_light_obj, self.m_xml.controller)
@@ -90,7 +114,7 @@ class C01_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_base.ControllerFamily, 'Insteon', 'Bad ControllerFamily')
         self.assertEqual(l_base.RoomName, 'Office', 'Bad Room Name')
 
-    def test_04_ReadBaseXml(self):
+    def test_03_ReadBaseButton(self):
         """ Read in the xml file and fill in the lights
         """
         l_base = self.m_api.read_base_lighting_xml(self.m_button_obj, self.m_xml.button)
@@ -104,7 +128,23 @@ class C01_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_base.ControllerFamily, 'Insteon', 'Bad ControllerFamily')
         self.assertEqual(l_base.RoomName, 'Master Bath', 'Bad Room Name')
 
-    def test_11_WriteBaseXml(self):
+
+
+class C03_WriteXML(SetupMixin, unittest.TestCase):
+    """ This section tests the reading and writing of XML used by node_local.
+    """
+
+    def setUp(self):
+        self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
+        SetupMixin.setUp(self, self.m_root_xml)
+        SetupPyHouseObj().BuildXml(self.m_root_xml)
+        self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
+        self.m_button_obj = ButtonData()
+        self.m_controller_obj = ControllerData()
+        self.m_light_obj = LightData()
+        self.m_api = ReadWriteConfigXml()
+
+    def test_01_BaseLight(self):
         """ Read in the xml file and fill in the lights
         """
         # l_xml = ET.Element('Lights')
@@ -112,9 +152,26 @@ class C01_XML(SetupMixin, unittest.TestCase):
         l_xml = self.m_api.write_base_lighting_xml(l_base)
         PrettyPrintAny(l_xml, 'Lighting Core')
 
+    def test_02_BaseController(self):
+        """ Read in the xml file and fill in the lights
+        """
+        # l_xml = ET.Element('Lights')
+        l_base = self.m_api.read_base_lighting_xml(self.m_light_obj, self.m_xml.controller)
+        l_xml = self.m_api.write_base_lighting_xml(l_base)
+        PrettyPrintAny(l_xml, 'Lighting Core')
 
-class C02_EmptyXML(SetupMixin, unittest.TestCase):
-    """ This section tests the reading and writing of XML used by node_local.
+    def test_03_BaseButton(self):
+        """ Read in the xml file and fill in the lights
+        """
+        # l_xml = ET.Element('Lights')
+        l_base = self.m_api.read_base_lighting_xml(self.m_light_obj, self.m_xml.button)
+        l_xml = self.m_api.write_base_lighting_xml(l_base)
+        PrettyPrintAny(l_xml, 'Lighting Core')
+
+
+
+class C04_EmptyXML(SetupMixin, unittest.TestCase):
+    """ This section tests the reading and writing of XML before anything has been defined.
     """
 
     def setUp(self):
@@ -128,9 +185,23 @@ class C02_EmptyXML(SetupMixin, unittest.TestCase):
     def test_01_FindXml(self):
         """ Be sure that the XML contains the right stuff.
         """
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
         PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse_obj', 120)
-        PrettyPrintAny(self.m_pyhouse_obj.Xml, 'PyHouse_obj.Xml', 120)
+        PrettyPrintAny(self.m_xml, 'XML', 120)
+        self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
+
+
+
+class C05_EmptyXML(SetupMixin, unittest.TestCase):
+    """ This section tests the reading and writing of XML used by node_local.
+    """
+
+    def setUp(self):
+        self.m_root_xml = ET.fromstring(xml_data.XML_EMPTY)
+        SetupMixin.setUp(self, self.m_root_xml)
+        SetupPyHouseObj().BuildXml(self.m_root_xml)
+        self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
+        self.m_light_obj = LightData()
+        self.m_api = ReadWriteConfigXml()
 
     def test_02_ReadBaseXml(self):
         """ Read in the xml file and fill in the lights
@@ -146,7 +217,21 @@ class C02_EmptyXML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_base.ControllerFamily, 'None', 'Bad ControllerFamily')
         self.assertEqual(l_base.RoomName, 'None', 'Bad Room Name')
 
-    def test_03_WriteBaseXml(self):
+
+
+class C06_EmptyXML(SetupMixin, unittest.TestCase):
+    """ This section tests the reading and writing of XML used by node_local.
+    """
+
+    def setUp(self):
+        self.m_root_xml = ET.fromstring(xml_data.XML_EMPTY)
+        SetupMixin.setUp(self, self.m_root_xml)
+        SetupPyHouseObj().BuildXml(self.m_root_xml)
+        self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
+        self.m_light_obj = LightData()
+        self.m_api = ReadWriteConfigXml()
+
+    def test_01_WriteBaseXml(self):
         """ Read in the xml file and fill in the lights
         """
         # l_xml = ET.Element('Lights')

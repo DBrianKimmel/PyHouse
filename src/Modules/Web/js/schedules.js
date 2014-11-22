@@ -41,7 +41,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 	/**
 	 * routines for showing and hiding parts of the screen.
 	 */
-	function showWidget(self) {
+	function startWidget(self) {
 		self.node.style.display = 'block';
 		self.showSelectionButtons();
 		self.hideDataEntry();
@@ -126,9 +126,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 			var l_ent = self.createEntry();
 			self.fillEntry(l_ent);
 		} else if (l_ix == 10002) {  // The "Back" button
-			self.hideWidget();
-			var l_node = findWidgetByClass('HouseMenu');
-			l_node.showWidget();
+			self.showWidget2('HouseMenu');
 		}
 	},
 
@@ -216,7 +214,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 	 */
 	function handleDataEntryOnClick(self, p_node) {
 		function cb_handleDataEntryOnClick(p_json) {
-			self.showWidget();
+			// self.showWidget();
 		}
 		function eb_handleDataEntryOnClick(res){
 			Divmod.debug('---', 'schedules.eb_handleDataEntryOnClick() was called. ERROR =' + res);

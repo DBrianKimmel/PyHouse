@@ -418,7 +418,7 @@ class API(ScheduleUtility, ScheduleExecution):
         self.find_next_scheduled_events(self.m_pyhouse_obj, self._now_daytime())
         pass
 
-    def SaveXml(self, p_xml):
+    def WriteXml(self, p_xml):
         p_xml.append(schedule_xml.ReadWriteConfigXml().write_schedules_xml(self.m_pyhouse_obj.House.OBJs.Schedules))
         UpdatePyhouse.save_scheduled_modules(self.m_pyhouse_obj, p_xml)
 

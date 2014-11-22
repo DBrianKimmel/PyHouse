@@ -56,11 +56,6 @@ class ReadWriteXml(object):
 
 class API(object):
 
-    def __init__(self):
-        """Constructor for the PLM.
-        """
-        pass
-
     def Start(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         # LOG.info('Started.')
@@ -68,8 +63,11 @@ class API(object):
     def Stop(self):
         pass
 
-    def SaveXml(self, p_xml):
+    def WriteXml(self, p_xml):
         return p_xml
+
+    def SaveXml(self, p_xml):
+        pass
 
     def ChangeLight(self, p_light_obj, p_level, p_rate = 0):
         pass

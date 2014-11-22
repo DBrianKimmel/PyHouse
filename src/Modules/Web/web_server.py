@@ -43,11 +43,6 @@ ENDPOINT_WEB_SERVER = 'tcp:port=8580'
 g_debug = 9
 LOG = Logger.getLogger('PyHouse.WebServer   ')
 
-WEB_SERVER_XML = """
-        <WebSection>
-            <WebPort>8580</WebPort>
-        </WebSection>
-"""
 
 
 class ClientConnections(object):

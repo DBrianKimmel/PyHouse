@@ -9,8 +9,28 @@
 
 """
 
-COMPUTER_XML = """
-"""
+# Import system type stuff
+
+# Import PyMh files
+from Modules.Communication.test.xml_communications import COMMUNICATION_XML
+from Modules.Computer.Internet.test.xml_internet import INTERNET_XML
+from Modules.Computer.Nodes.test.xml_nodes import NODES_XML
+from Modules.Web.test.xml_web import WEB_SERVER_XML
+
+
+
+COMPUTER_DIVISION_XML = '\n'.join([
+    "<ComputerDivision>",
+    WEB_SERVER_XML,
+    INTERNET_XML,
+    NODES_XML,
+    COMMUNICATION_XML,
+    "</ComputerDivision>",
+    ''
+])
+
+
+
 
 COMPUTER_XSD = """
 """

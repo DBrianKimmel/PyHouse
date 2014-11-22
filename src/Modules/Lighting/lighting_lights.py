@@ -25,7 +25,7 @@ import xml.etree.ElementTree as ET
 # Import PyHouse files
 from Modules.Core.data_objects import LightData
 from Modules.Lighting.lighting_core import ReadWriteConfigXml
-from Modules.Lighting.lighting_utils import Utility
+from Modules.Families.family_utils import FamUtil
 from Modules.Computer import logging_pyh as Logging
 # from Modules.Utilities.tools import PrettyPrintAny
 
@@ -46,18 +46,15 @@ class LightingLightsAPI(ReadWriteConfigXml):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_utils = Utility(p_pyhouse_obj)
 
     def _read_light_data(self, p_xml):
         l_light_obj = LightData()
         l_light_obj = self.read_base_lighting_xml(l_light_obj, p_xml)
-        # l_light_obj.IsController = self.get_text_from_xml(p_xml, 'IsController')
         l_light_obj.CurLevel = self.get_int_from_xml(p_xml, 'CurLevel', 0)
         return l_light_obj
 
     def _read_family_data(self, p_obj, p_xml):
-        # print('lighting_lights - read_family_data() - utils {0:}'.format(self.m_utils))
-        l_api = self.m_utils.read_family_data(p_obj, p_xml)
+        l_api = FamUtil().read_family_data(self.m_pyhouse_obj, p_obj, p_xml)
         return l_api  # for testing
 
     def _read_one_light_xml(self, p_light_xml):

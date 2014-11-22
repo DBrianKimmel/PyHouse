@@ -1,11 +1,11 @@
 """
-@name: C:/Users/briank/Documents/GitHub/PyHouse/src/Modules/Housing/test/xml_location.py
+@name: PyHouse/src/Modules/Housing/test/xml_location.py
 @author: D. Brian Kimmel
 @contact: D.BrianKimmel@gmail.com
 @Copyright: (c)  2014 by D. Brian Kimmel
 @license: MIT License
-@note: Created on Nov 7, 2014
-@Summary: XML data for house location
+@note: Created on Nov 22, 2014
+@Summary:
 
 Notice that only TZ name is stored in the xml - offsets are derived on XML Read since they never change for a run.
 
@@ -15,17 +15,18 @@ The Olson Time Zone names are used and supported.
 
 
 LOCATION_XML = """
-        <LocationSection>
-            <Street>5191 N Pink Poppy Dr</Street>
-            <City>Beverly Hills</City>
-            <State>Florida</State>
-            <ZipCode>34465</ZipCode>
-            <Phone>(352) 270-8096</Phone>
-            <Latitude>28.938448</Latitude>
-            <Longitude>-82.517208</Longitude>
-            <TimeZoneName>America/New_York</TimeZoneName>
-        </LocationSection>
+<LocationSection>
+    <Street>5191 N Pink Poppy Dr</Street>
+    <City>Beverly Hills</City>
+    <State>Florida</State>
+    <ZipCode>34465</ZipCode>
+    <Phone>(352) 270-8096</Phone>
+    <Latitude>28.938448</Latitude>
+    <Longitude>-82.517208</Longitude>
+    <TimeZoneName>America/New_York</TimeZoneName>
+</LocationSection>
 """
+
 
 LOCATION_XSD = """
 <xs:schema
@@ -49,18 +50,6 @@ LOCATION_XSD = """
   </xs:element>
 
 </xs:schema>
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 <xs:element name='LocationSection >
@@ -91,4 +80,6 @@ LOCATION_XSD = """
     </xs:sequence>
 </xs:complexType>
 """
+
+
 # ## END DBK

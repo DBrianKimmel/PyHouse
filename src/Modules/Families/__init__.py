@@ -42,6 +42,6 @@ Each family consists of four or more major areas:
 __version_info__ = (1, 1, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
-VALID_FAMILIES = ['Insteon', 'UPB', 'X10']
+VALID_FAMILIES = ['Insteon', 'UPB', 'X10', 'Null']
 
 # ## END DBK

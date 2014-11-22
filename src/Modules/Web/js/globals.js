@@ -512,41 +512,6 @@ function buildBottomDivs() {
 	return l_html;
 }
 
-/**
- * Build a button
- */
-function buildButton(p_obj, p_handler, p_background_color, /* optional */ nameFunction) {
-	var l_html = '<td>';
-	l_html += "<button type='button' ";
-	l_html += setValueAttrubute(p_obj.Name);
-	l_html += "name ='" + p_obj.Key + "' ";
-	l_html += "style = 'background-color: " + p_background_color + "' ";
-	l_html += "onclick='return Nevow.Athena.Widget.handleEvent(this, \"onclick\", \""  + p_handler + "\" ";
-	l_html += ");' >\n";
-	if (typeof nameFunction === 'function')
-		l_html += nameFunction(p_obj);
-	else
-		l_html += p_obj.Name;
-	l_html += "</button></td>\n";
-	return l_html;
-}
-/**
- * <button type='button' class='lcars-button radius *bg_color*' name='*name*' onclick='return Nevow.Athena.Widget.handleEvent(this, "onclick", *p_handler*')>
- * *buttonName*
- * </button>
- */
-function buildAddButton(p_handler) {
-	return buildButton({'Name' : 'Add', 'Key' : BUTTON_ADD}, p_handler, COLOR_LIGHT_BLUE);
-}
-function buildBackButton(p_handler) {
-	return buildButton({'Name' : 'Back', 'Key' : BUTTON_BACK}, p_handler, COLOR_LIGHT_BLUE);
-}
-function buildChangeButton(p_handler) {
-	return buildButton({'Name' : 'Change', 'Key' : BUTTON_CHANGE}, p_handler, COLOR_LIGHT_BLUE);
-}
-function buildDeleteButton(p_handler) {
-	return buildButton({'Name' : 'Delete', 'Key' : BUTTON_DELETE}, p_handler, COLOR_LIGHT_BLUE);
-}
 
 
 /**
@@ -588,50 +553,6 @@ function buildLcarDeleteButton(p_handler) {
  * Build a table of buttons in the current widget space.
  * Use the names to build callbacks for the buttons being clicked on
  * Used for things like selecting a light or schedule to work on.
- * 
- * @param p_obj = a dict of item dicts to build from
- * @param p_handler = is a literal name of a handler function { 'handleMenuOnClick' )
- * @param nameFunction (optional) is the name of a function used to build a more complex caption for the buttons.
- * 			Omit this parameter if it is not used - no need for a placeholder
- * @param noOptions (optional) is the things to skip ('NoAdd' will omit the add button).
- * @returns = innerHTML of a table filled in with buttons
- */
-function buildTable(p_obj, p_handler, /* optional */ nameFunction, noOptions) {
-	var l_function = nameFunction;
-	var l_options = noOptions;
-	if (typeof nameFunction !== 'function') {
-		l_options = l_function;
-		l_function = null;
-	}
-	if (l_options === undefined)
-		l_options = '';
-	var l_cols = 5;
-	var l_count = 0;
-	var l_html = "<table><tr>\n";
-
-	for (var l_item in p_obj) {
-		var l_background = COLOR_LIGHT_GREEN;
-		if (p_obj[l_item].Active !== true)
-			l_background = COLOR_LIGHT_RED;
-		l_html += buildButton(p_obj[l_item], p_handler, l_background, l_function);
-		l_count++;
-		if ((l_count > 0) & (l_count % l_cols === 0))
-			l_html += '</tr><tr>\n';
-	}
-	l_html += "</tr><tr>\n";
-	if (l_options.toLowerCase().indexOf('add') === -1)
-		l_html += buildAddButton(p_handler);
-	if (l_options.toLowerCase().indexOf('back') === -1)
-		l_html += buildBackButton(p_handler);
-	l_html += "</tr></table>\n";
-	return l_html;
-}
-
-
-/**
- * Build a table of buttons in the current widget space.
- * Use the names to build callbacks for the buttons being clicked on
- * Used for things like selecting a light or schedule to work on.
  *
  * @param p_obj = a dict of item dicts to build from
  * @param p_handler = is a literal name of a handler function { 'handleMenuOnClick' )
@@ -642,25 +563,22 @@ function buildTable(p_obj, p_handler, /* optional */ nameFunction, noOptions) {
  * @returns = innerHTML of a table filled in with buttons
  */
 function buildLcarSelectionButtonsTable(p_obj, p_handler, p_nameFunction, p_noOptions) {
-	// Divmod.debug('---', 'globals.buildLcarSelectionButtonsTable() called.  Handler=' + p_handler + '  ' + p_noOptions);
 	var l_nameFunction = p_nameFunction;
 	var l_noOptions = p_noOptions;
-	// See if function was passed
-	if (typeof p_nameFunction !== 'function') {
-		Divmod.debug('---', 'globals.buildLcarSelectionButtonsTable() called.  Name Func=' + p_nameFunction);
+	if (typeof p_nameFunction !== 'function') {  // See if function was passed
 		l_noOptions = p_nameFunction;
 		l_nameFunction = null;
 	}
 	if (l_noOptions === undefined)
 		l_noOptions = '';
-	var l_cols = 6;
+	var l_cols = 5;
 	var l_count = 0;
 	var l_html = "<div class='lcars-row spaced'>\n";
 	for (var l_item in p_obj) {
 		var l_background = 'lcars-purple-bg';
 		if (p_obj[l_item].Active !== true)
 			l_background = 'lcars-pink-bg';
-	    l_html += "<div class='lcars-column u-1-7'>\n";
+	    l_html += "<div class='lcars-column u-1-6'>\n";
 		l_html += buildLcarButton(p_obj[l_item], p_handler, l_background, l_nameFunction);
 		l_count++;
 	    l_html += "</div>\n";  // column
@@ -677,27 +595,9 @@ function buildLcarSelectionButtonsTable(p_obj, p_handler, p_nameFunction, p_noOp
 		l_html += buildLcarBackButton(p_handler);
 	l_html += "</div>\n";  // Row
 	return l_html;
-
 }
 
 
-/**
- * Entry buttons are for the bottom of data entry screens.
- */
-function buildEntryButtons(p_handler, /* optional */ noOptions) {
-	//Divmod.debug('---', 'globals.buildEntryButtons() called.  Handler=' + p_handler + '  ' + noOptions);
-	var l_options = noOptions;
-	if (l_options === undefined)
-		l_options = '';
-	var l_html = '';
-	if (l_options.toLowerCase().indexOf('change') === -1)
-		l_html = buildChangeButton(p_handler);
-	if (l_options.toLowerCase().indexOf('delete') === -1)
-		l_html += buildDeleteButton(p_handler);
-	if (l_options.toLowerCase().indexOf('back') === -1)
-		l_html += buildBackButton(p_handler);
-	return l_html;
-}
 /**
  * Entry buttons are for the bottom of data entry screens.
  * 
@@ -705,7 +605,7 @@ function buildEntryButtons(p_handler, /* optional */ noOptions) {
  * @param: noOptions is the string that tells us not to build a button - 'NoDelete' means not to build a delete button
  */
 function buildLcarEntryButtons(p_handler, /* optional */ noOptions) {
-	// Divmod.debug('---', 'globals.buildEntryButtons() called.  Handler=' + p_handler + '  ' + noOptions);
+	// Divmod.debug('---', 'globals.buildLcarEntryButtons() called.  Handler=' + p_handler + '  ' + noOptions);
 	var l_options = noOptions;
 	if (l_options === undefined)
 		l_options = '';
@@ -720,6 +620,7 @@ function buildLcarEntryButtons(p_handler, /* optional */ noOptions) {
 }
 
 
+//========== Radio Button Widgets ==================================================================
 /**
  * Radio button set widget.
  * 
@@ -727,30 +628,12 @@ function buildLcarEntryButtons(p_handler, /* optional */ noOptions) {
  *   suggested values are like 'SchedActive', 'RoomActive'
  * @param p_value  is bool showing the current value .
  */
-function buildRadioButtonWidget(p_name, p_label, p_value, p_checkVal) {
-	var l_html = "&nbsp;<input type='radio'";
-	l_html += setNameAttribute(p_name);
-	l_html += setValueAttribute(p_value);
-	l_html += setCheckedAttribute(p_value === p_checkVal);
-	l_html += "/>" + p_label + "&nbsp;\n";
-	return l_html;
-}
-function buildLcarRadioButtonWidget(p_name, p_label, p_value, p_checkVal) {
+function _buildLcarRadioButtonWidget(p_name, p_label, p_value, p_checkVal) {
 	var l_html = "&nbsp;<input type='radio'";
 	l_html += setNameAttribute(p_name);
 	l_html += setValueAttribute(p_value);
 	l_html += setCheckedAttribute(p_value === p_checkVal);
 	l_html += "/>" + p_label + '&nbsp;\n';
-	return l_html;
-}
-function buildTrueFalseWidget(p_name, p_value) {
-	var l_html = "<span";
-	l_html += setIdAttribute(p_name + "Buttons");
-	l_html += ">";
-	var l_value = p_value !== false;  // force to be a bool
-	l_html += buildRadioButtonWidget(p_name, 'True',  true, l_value);
-	l_html += buildRadioButtonWidget(p_name, 'False', false, l_value);
-	l_html += "</span>\n";
 	return l_html;
 }
 /**
@@ -762,22 +645,17 @@ function buildLcarTrueFalseWidget(self, p_id, p_caption, p_value) {
 	var l_value = p_value !== false;  // force to be a bool
 	l_html += buildTopDivs(p_caption);
 	l_html += "<span class='lcars-button-addition'>\n";
-	l_html += buildLcarRadioButtonWidget(l_name, 'True',  true, l_value);
-	l_html += buildLcarRadioButtonWidget(l_name, 'False', false, l_value);
+	l_html += _buildLcarRadioButtonWidget(l_name, 'True',  true, l_value);
+	l_html += _buildLcarRadioButtonWidget(l_name, 'False', false, l_value);
 	l_html += "</span>";
 	l_html += buildBottomDivs();
-	// Divmod.debug('---', 'globals.buildLcarTrueFalseWidget() - ' + l_html);
 	return l_html;
 }
 function fetchTrueFalseWidget(self, p_name) {
 	var l_name = buildAthenaId(self, p_name);
-	// Divmod.debug('---', 'globals.fetchTrueFalse() called.  Name=' + l_name);
 	var l_buttons = document.getElementsByName(l_name);
-	// console.log("globals.fetchTrueFalseWidget() - %O", l_buttons);
 	var l_ret = false;
-	// Divmod.debug('---', 'globals.fetchTrueFalse() called.  Name=' + l_name + '  Len:' + l_buttons.length);
 	for (var ix = 0; ix < l_buttons.length; ix++) {
-		// Divmod.debug('---', 'globals.fetchTrueFalse() called.  Name=' + l_name + '  Checked:' + l_buttons[ix].checked + '  Val:' + l_buttons[ix].value);
 		if (l_buttons[ix].checked && l_buttons[ix].value === 'true') {
 			l_ret = true;
 			break;
@@ -787,6 +665,7 @@ function fetchTrueFalseWidget(self, p_name) {
 }
 
 
+//========== Select Widgets ==================================================================
 /**
  * Build a select widget
  * 
@@ -795,29 +674,7 @@ function fetchTrueFalseWidget(self, p_name) {
  * @param: p_checked is the text of the option list that is selected.
  * @param: p_optionChange is the optional onchange function name.
  */
-function buildSelectWidget(p_id, p_list, p_checked, /* optional */ p_optionChange) {
-	// Divmod.debug('---', 'globals.buildSelectWidget() called.  p_list=' + p_list + '  p_checked=' + p_checked + '  Change=' + p_optionChange);
-	var l_option = p_optionChange;
-	var l_html = "";
-	l_html += "<select";
-	l_html += setIdAttribute(p_id);
-	if (l_option !== 'undefined') {
-		l_html += " onchange='" + l_option + "()'";
-	}
-	l_html += ">\n";
-	for (var ix = 0; ix < p_list.length; ix++) {
-		var l_name = p_list[ix];
-		l_html += "<option";
-		l_html += setValueAttribute(ix);
-		if (l_name == p_checked)
-			l_html += 'selected ';
-		l_html += ">" + l_name + "</option>\n";
-	}
-	l_html += "</select>\n";
-	return l_html;
-}
 function buildLcarSelectWidget(self, p_id, p_caption, p_list, p_checked, /* optional */ p_optionChange) {
-	// Divmod.debug('---', 'globals.buildLcarSelectWidget() called.  p_id= ' + p_id + '  p_list= ' + p_list + '  p_checked= ' + p_checked + '  Change= ' + p_optionChange);
 	var l_option = p_optionChange;
 	var l_html = "";
 	l_html += buildTopDivs(p_caption);
@@ -839,22 +696,18 @@ function buildLcarSelectWidget(self, p_id, p_caption, p_list, p_checked, /* opti
 	return l_html;
 }
 function fetchSelectWidget(self, p_id) {
-	// Divmod.debug('---', 'globals.fetchSelectWidget() was called. Id=' + p_id);
 	var l_field = self.nodeById(p_id);
-	// console.log("global.fetchSelectWidget()  Field    %O", l_field);
 	var l_ix = l_field.value;
 	var l_name = l_field.options[l_field.selectedIndex].text;
 	return l_name;
 }
-function buildRoomSelectWidget(p_id, p_checked) {
-	var l_obj = globals.House.HouseObj.Rooms;
+function _makeNamesList(p_obj) {
 	var l_list = [];
-	for (var ix = 0; ix < Object.keys(l_obj).length; ix++)
-		l_list[ix] = l_obj[ix].Name;
-	return buildSelectWidget(p_id, l_list, p_checked);
+	for (var ix = 0; ix < Object.keys(p_obj).length; ix++)
+		l_list[ix] = p_obj[ix].Name;
+	return l_list;
 }
 function buildLcarRoomSelectWidget(self, p_id, p_caption, p_checked) {
-	//Divmod.debug('---', 'globals.buildRoomSelectWidget() was called. Id=' + p_id + '  Checked=' + p_checked);
 	var l_obj = globals.House.HouseObj.Rooms;
 	var l_list = [];
 	for (var ix = 0; ix < Object.keys(l_obj).length; ix++)
@@ -862,18 +715,11 @@ function buildLcarRoomSelectWidget(self, p_id, p_caption, p_checked) {
 	return buildLcarSelectWidget(self, p_id, p_caption, l_list, p_checked);
 }
 function buildLcarLightNameSelectWidget(self, p_id, p_caption, p_checked) {
-	//Divmod.debug('---', 'globals.buildLcarLightNameSelectWidget() was called. Id=' + p_id + '  Checked=' + p_checked);
 	var l_obj = globals.House.HouseObj.Lights;
 	var l_list = [];
 	for (var ix = 0; ix < Object.keys(l_obj).length; ix++)
 		l_list[ix] = l_obj[ix].Name;
 	return buildLcarSelectWidget(self, p_id, p_caption, l_list, p_checked);
-}
-/**
- * Special - has onchange 
- */
-function buildLcarFamilySelectWidget(self, p_id, p_caption, p_checked, p_change) {
-	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.Families, p_checked, p_change);
 }
 function buildLcarFloorSelectWidget(self, p_id, p_caption, p_checked) {
 	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.Floors, p_checked);
@@ -893,9 +739,16 @@ function buildLcarScheduleModeSelectWidget(self, p_id, p_caption, p_checked) {
 function buildLcarScheduleTypeSelectWidget(self, p_id, p_caption, p_checked) {
 	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.ScheduleType, p_checked);
 }
+/**
+ * Special - has onchange 
+ */
+function buildLcarFamilySelectWidget(self, p_id, p_caption, p_checked, p_change) {
+	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.Families, p_checked, p_change);
+}
 
 
 
+//========== Slider Widgets ==================================================================
 /**
  * Build a slider widget'
  *
@@ -929,6 +782,13 @@ function buildLcarSliderWidget(self, p_id, p_caption, p_value, p_min, p_max, p_s
 	l_out += buildBottomDivs();
 	return l_out;
 }
+function fetchSliderWidget(self, p_id) {
+	Divmod.debug('---', 'globals.fetchSliderWidget(1) Id=' + p_id);
+	var l_id = p_id + "-Slider";
+	Divmod.debug('---', 'globals.fetchSliderWidget(2) Id=' + l_id);
+	var l_val = self.nodeById(l_id).value;
+	return l_val;
+}
 function updateSliderBoxValue(self, p_id, p_value){
 	var l_id = p_id + "-Box";
 	var l_node = self.nodeById(l_id);
@@ -942,16 +802,10 @@ function buildLcarHvacSliderWidget(self, p_name, p_caption, p_level, p_handler) 
 	var l_html = buildLcarSliderWidget(self, p_name, p_caption, p_level, 60, 90, 0.5, p_handler);
 	return l_html;
 }
-function fetchSliderWidget(self, p_id) {
-	Divmod.debug('---', 'globals.fetchSliderWidget() Id=' + p_id);
-	var l_id = p_id + "-Slider";
-	Divmod.debug('---', 'globals.fetchSliderWidget() Id=' + l_id);
-	var l_val = self.nodeById(l_id).value;
-	return l_val;
-}
 
 
 
+//========== Text Widgets ==================================================================
 /**
  * Build a text widget
  * 
@@ -992,24 +846,13 @@ function fetchTextWidget(self, p_id) {
 	var l_data = self.nodeById(p_id).value;
 	return l_data;
 }
-function buildTextWidget(p_id, p_value, /* optional */ p_options) {
-	var l_html = '';
-	var l_options = p_options;
-	if (p_options === undefined)
-		l_options = '';
-	l_html += "<input type='text'";
-	l_html += setIdAttribute(p_id);
-	l_html += "' size='40'";
-	l_html += setValueAttribute(p_value);
-	l_html += "' ";
-	if (l_options.toLowerCase().indexOf('disable') > -1)
-		l_html += "disabled='disabled' ";
-	l_html += " />\n";
-	return l_html;
-}
 
 
 
+//========== DOW Widgets ==================================================================
+/**
+ * Day of Week Widget
+ */
 function buildLcarDowWidget(self, p_id, p_caption, p_value, /* optional */ p_options) {
 	var l_html = buildTopDivs(p_caption);
 	l_html += "<span class='lcars-button-addition'";
@@ -1062,6 +905,7 @@ function fetchDowWidget(self, p_id) {
 
 
 
+//============================================================================
 /**
  * Startup
  */

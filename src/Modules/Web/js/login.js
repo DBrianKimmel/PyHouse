@@ -64,13 +64,13 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 // ============================================================================
 	/**
 	 * Fetch various valid things from server.
-	 * These never change till new software is added to PyHouse.
+	 * These never change during a run of this PyHouse daemon.
 	 * These are used to build selection widgets used by all later screens.
 	 */
 	function fetchValidLists(self) {
 		function cb_fetchValidLists(p_json) {
     		globals.Valid = JSON.parse(p_json);
-    		self.buildLcarLoginScreen('doLoginSubmit');
+    		self.buildLcarLoginScreen('handleLoginButtonClick');
 		}
 		function eb_fetchValidLists(p_reason) {
 			Divmod.debug('---', 'ERROR - login.eb_fetchValidLists() - .' + p_reason);
@@ -98,28 +98,30 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 
 // ============================================================================
 	/**
-	 * This is an event handler from the LogIn key in the login form.
+	 * This is an event handler for the 'LogIn' button in the login screen.
+	 *
+	 * Sends the login information to the server.
+	 * Receives the result of the login attempt back from the server.
 	 *
 	 * @param self
 	 * @returns {Boolean} False to stop the processing cycle.
 	 */
-	function doLoginSubmit(self) {
-		function cb_doLoginSubmit(p_json) {
+	function handleLoginButtonClick(self) {
+		function cb_handleLoginButtonClick(p_json) {
 			var l_obj = JSON.parse(p_json);
 			self.showNextScreen(l_obj);
 		}
-		function eb_doLoginSubmit(res){
-			Divmod.debug('---', 'login.eb_doLoginSubmit() was called.  ERROR = ' + res);
+		function eb_handleLoginButtonClick(res){
+			Divmod.debug('---', 'login.eb_handleLoginButtonClick() was called.  ERROR = ' + res);
 		}
         var l_loginData = {
     		LoginName : fetchTextWidget(self, 'LoginName'),
     		Password : fetchTextWidget(self, 'LoginPassword'),
         };
     	var l_json = JSON.stringify(l_loginData);
-		// Divmod.debug('---', 'login.doLoginSubmit() was called. JSON: ' + l_json);
         var l_defer = self.callRemote("doLogin", l_json);  // @ web_login
-		l_defer.addCallback(cb_doLoginSubmit);
-		l_defer.addErrback(eb_doLoginSubmit);
+		l_defer.addCallback(cb_handleLoginButtonClick);
+		l_defer.addErrback(eb_handleLoginButtonClick);
         return false;  // Stops the resetting of the server.
 	},
 
@@ -130,9 +132,9 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 	 */
 	function showNextScreen(self, p_obj) {
 		function cb_showNextScreen() {
-			var l_node = findWidgetByClass('RootMenu');
-			self.hideWidget();
-			l_node.showWidget(self);
+			// Divmod.debug('---', 'login.cb_showNextScreen() was called.');
+			self.hideWidget2(self);
+			self.showWidget2('RootMenu');
 			}
 		function eb_showNextScreen(p_reason) {
 			Divmod.debug('---', 'ERROR = login.showNextScreen() - ' + p_reason);
@@ -148,12 +150,13 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 			l_defer.addCallback(cb_showNextScreen);
 			l_defer.addErrback(eb_showNextScreen);
 		} else {
-			Divmod.debug('---', 'login.showNextScreen() was called.');
+			Divmod.debug('---', 'login.showNextScreen(3) was called.');
+			globals.User.Fullname = 'Login Attempt failed!';
 			self.showLoggingInDiv(self);
         	self.nodeById('LoginPassword').value = '';
 		}
 	}
 );
-//Divmod.debug('---', 'login.handleMenuOnClick(1) was called. ' + l_ix + ' ' + l_name);
+//Divmod.debug('---', 'login.handleMenuOnClick(1) was called.');
 //console.log("login.handleMenuOnClick() - l_obj = %O", l_obj);
 //### END DBK

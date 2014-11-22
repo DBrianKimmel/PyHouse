@@ -19,10 +19,10 @@ from nevow import athena
 from nevow import loaders
 
 # Import PyMh files and modules.
+from Modules.Core import conversions
 from Modules.Core.data_objects import ThermostatData
 from Modules.Web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.Computer import logging_pyh as Logger
-# from Modules.Utilities.tools import PrettyPrintAny
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -30,6 +30,7 @@ templatepath = os.path.join(webpath, 'template')
 
 g_debug = 0
 LOG = Logger.getLogger('PyHouse.webThermost ')
+
 
 
 class ThermostatsElement(athena.LiveElement):
@@ -55,6 +56,7 @@ class ThermostatsElement(athena.LiveElement):
         """Thermostat data is returned, so update the info.
         """
         l_json = JsonUnicode().decode_json(p_json)
+        LOG.info('JSON {}'.format(l_json))
         l_delete = l_json['Delete']
         l_ix = int(l_json['Key'])
         if l_delete:
@@ -66,7 +68,7 @@ class ThermostatsElement(athena.LiveElement):
         try:
             l_obj = self.m_pyhouse_obj.House.OBJs.Thermostats[l_ix]
         except KeyError:
-            LOG.warning('Creating a new Thermostat for IX{}'.format(l_ix))
+            LOG.warning('Creating a new Thermostat for Key:{}'.format(l_ix))
             l_obj = ThermostatData()
         #
         l_obj.Name = l_json['Name']
@@ -76,11 +78,24 @@ class ThermostatsElement(athena.LiveElement):
         if len(l_obj.UUID) < 8:
             l_obj.UUID = str(uuid.uuid1())
         l_obj.CoolSetPoint = l_json['CoolSetPoint']
-        l_obj.ControllerFamily = 'Null'
+        l_obj.ControllerFamily = l_json['ControllerFamily']
         l_obj.CurrentTemperature = 0
         l_obj.HeatSetPoint = l_json['HeatSetPoint']
         l_obj.ThermostatMode = 'Cool'  # Cool | Heat | Auto | EHeat
         l_obj.ThermostatScale = 'F'  # F | C
+        if l_obj.ControllerFamily == 'Insteon':
+            l_obj.DevCat = conversions.dotted_hex2int(l_json['DevCat'])
+            l_obj.GroupList = l_json['GroupList']
+            l_obj.GroupNumber = l_json['GroupNumber']
+            l_obj.InsteonAddress = conversions.dotted_hex2int(l_json['InsteonAddress'])
+            l_obj.IsController = l_json['IsController']
+            l_obj.IsMaster = l_json['IsMaster']
+            l_obj.IsResponder = l_json['IsResponder']
+            l_obj.ProductKey = conversions.dotted_hex2int(l_json['ProductKey'])
+        elif l_obj.ControllerFamily == 'UPB':
+            l_obj.UPBAddress = l_json['UPBAddress']
+            l_obj.UPBPassword = l_json['UPBPassword']
+            l_obj.UPBNetworkID = l_json['UPBNetworkID']
         self.m_pyhouse_obj.House.OBJs.Thermostats[l_ix] = l_obj
 
 # ## END DBK

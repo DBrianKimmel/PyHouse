@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.housing.test.test_location -*-
+-*- test-case-name: PyHouse.src.Modules.Housing.test.test_location -*-
 
 @name: PyHouse/src/Modules/Housing/location.py
 @author: D. Brian Kimmel
@@ -27,7 +27,6 @@ m_logger = None
 
 
 
-
 class ReadWriteConfigXml(XmlConfigTools):
     """Use the internal data to read / write an updated XML config file.
     """
@@ -48,8 +47,6 @@ class ReadWriteConfigXml(XmlConfigTools):
             l_obj.Latitude = self.get_float_from_xml(l_location_xml, 'Latitude')
             l_obj.Longitude = self.get_float_from_xml(l_location_xml, 'Longitude')
             l_obj.TimeZoneName = self.get_text_from_xml(l_location_xml, 'TimeZoneName')
-            l_obj.TimeZoneOffset = '-5:00'
-            l_obj.DaylightSavingsTime = '-4:00'
         except AttributeError:
             pass
         return l_obj
@@ -66,8 +63,6 @@ class ReadWriteConfigXml(XmlConfigTools):
         self.put_float_element(l_entry, 'Latitude', p_location_obj.Latitude)
         self.put_float_element(l_entry, 'Longitude', p_location_obj.Longitude)
         self.put_text_element(l_entry, 'TimeZoneName', p_location_obj.TimeZoneName)
-        # self.put_text_element(l_entry, 'TimeZoneOffset', p_location_obj.TimeZoneOffset)
-        # self.put_text_element(l_entry, 'DaylightSavingsTime', p_location_obj.DaylightSavingsTime)
         return l_entry
 
 # ## END DBK

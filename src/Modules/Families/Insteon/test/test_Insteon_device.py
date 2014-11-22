@@ -20,7 +20,7 @@ from Modules.Families.Insteon import Insteon_device
 # from Modules.Core import conversions
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
-# from Modules.Utilities.tools import PrettyPrintAny
+from Modules.Utilities.tools import PrettyPrintAny
 
 
 class SetupMixin(object):
@@ -32,16 +32,16 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-class Test_02_API(SetupMixin, unittest.TestCase):
+class C01_API(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by node_local.
     """
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         self.m_api = Insteon_device.API()
-        self.m_controller_obj = InsteonData()
+        self.m_device = InsteonData()
 
-    def test_0202_Init(self):
+    def test_01_Init(self):
         """ Be sure that the XML contains the right stuff.
         """
         pass

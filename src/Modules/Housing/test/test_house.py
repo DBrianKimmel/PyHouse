@@ -33,7 +33,7 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-class Test_01_XML(SetupMixin, unittest.TestCase):
+class C01_XML(SetupMixin, unittest.TestCase):
     """
     This section will verify the XML in the 'Modules.text.xml_data' file is correct and what the node_local module can read/write.
     """
@@ -51,8 +51,16 @@ class Test_01_XML(SetupMixin, unittest.TestCase):
         l_houses = self.m_xml.root.find('HouseDivision')
         self.assertEqual(l_houses.tag, 'HouseDivision')
 
+    def test_03_PyHouse(self):
+        l_xml_1 = self.m_pyhouse_obj.Xml.XmlRoot
+        PrettyPrintAny(l_xml_1)
+        l_xml_2 = l_xml_1.find('ComputerDivision')
+        PrettyPrintAny(l_xml_2)
+        l_xml_2 = l_xml_1.find('HouseDivision')
+        PrettyPrintAny(l_xml_2)
 
-class Test_02_ReadXML(SetupMixin, unittest.TestCase):
+
+class C02_ReadXML(SetupMixin, unittest.TestCase):
     """
     This section tests the reading and writing of XML used by house.
     """
@@ -67,7 +75,11 @@ class Test_02_ReadXML(SetupMixin, unittest.TestCase):
         PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse')
         self.assertEqual(self.m_pyhouse_obj.House.OBJs.Rooms, {}, 'No Rooms{}')
 
-    def test_02_ReadXml(self):
+    def test_02_Base(self):
+        l_obj = self.m_api._read_base_house(self.m_pyhouse_obj)
+        PrettyPrintAny(l_obj, 'Base House')
+
+    def test_03_ReadXml(self):
         """ Read in the xml file and fill in x
         """
         l_house_obj = self.m_api.read_house_xml(self.m_pyhouse_obj)
@@ -75,12 +87,34 @@ class Test_02_ReadXML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_house_obj.Name, 'Pink Poppy', 'Bad Name')
         self.assertEqual(l_house_obj.OBJs.Location.Street, '5191 N Pink Poppy Dr', 'Bad Street')
 
-    def test_03_write_house_xml(self):
+
+
+class C03_WriteXML(SetupMixin, unittest.TestCase):
+    """
+    This section tests the reading and writing of XML used by house.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        self.m_api = house.API()
+
+    def test_01_write_house_xml(self):
         l_house_obj = self.m_api.read_house_xml(self.m_pyhouse_obj)
         l_xml = self.m_api.write_house_xml(l_house_obj)
         PrettyPrintAny(l_xml, 'XML')
 
-    def test_04_CreateJson(self):
+
+
+class C04_JSON(SetupMixin, unittest.TestCase):
+    """
+    This section tests the reading and writing of XML used by house.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        self.m_api = house.API()
+
+    def test_01_CreateJson(self):
         """ Create a JSON object for Location.
         """
         l_house = self.m_api.read_house_xml(self.m_pyhouse_obj)
@@ -89,7 +123,8 @@ class Test_02_ReadXML(SetupMixin, unittest.TestCase):
         print('JSON: {0:}'.format(l_json))
 
 
-class Test_03_Utilities(SetupMixin, unittest.TestCase):
+
+class C05_Utilities(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
@@ -97,7 +132,9 @@ class Test_03_Utilities(SetupMixin, unittest.TestCase):
         self.m_house_obj = LocationData()
 
     def test_01_findXml(self):
-        self.m_api.get_house_xml(self.m_pyhouse_obj)
+        l_xml = self.m_api._get_house_xml(self.m_pyhouse_obj)
+        print('XML: {}'.format(l_xml))
+        PrettyPrintAny(l_xml, 'XML')
 
     def test_02_Update(self):
         PrettyPrintAny(self.m_pyhouse_obj.House, 'PyHouse')

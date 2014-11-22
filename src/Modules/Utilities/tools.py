@@ -66,6 +66,7 @@ class PrettyPrintAny(object):
         @param p_element: an element to format as a readable XML tree.
         @return: a string formatted with indentation and newlines.
         """
+        l_tabbedwidths = [indent, 30, maxlen - 30]
         l_rough_string = ET.tostring(p_element, 'utf-8')
         l_reparsed = minidom.parseString(l_rough_string)
         l_doc = l_reparsed.toprettyxml()
@@ -77,7 +78,11 @@ class PrettyPrintAny(object):
 
     def _print_list(self, p_obj, maxlen, indent):
         maxlen = maxlen
-        print(p_obj)
+        l_tabbedwidths = [indent, 30, maxlen - 30]
+        l_ix = 1
+        for l_line in p_obj:
+            print('{}\t{}'.format(l_ix, l_line))
+            l_ix += 1
         # print(_format_line(p_obj, maxlen = maxlen))
 
     def _print_object(self, p_obj, maxlen, indent = 24, maxspew = 2000):

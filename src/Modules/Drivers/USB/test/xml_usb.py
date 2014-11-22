@@ -12,6 +12,10 @@
 
 
 USB_XML = """
+        <InterfaceType>USB</InterfaceType>
+        <Port>None</Port>
+        <Vendor>6109</Vendor>
+        <Product>21760</Product>
 """
 
 USB_XSD = """
@@ -40,6 +44,32 @@ USB_XSD = """
     <xs:element type="xs:boolean" name="XonXoff"/>
 
 </xs:schema>
+"""
+
+OTHER = """
+    <xs:element type="xs:string" name="Address" minOccurs="0"/>
+    <xs:element type="xs:string" name="IsController" minOccurs="0"/>
+    <xs:element type="xs:string" name="DevCat" minOccurs="0"/>
+    <xs:element type="xs:string" name="GroupList" minOccurs="0"/>
+    <xs:element type="xs:byte" name="GroupNumber" minOccurs="0"/>
+    <xs:element type="xs:string" name="IsMaster" minOccurs="0"/>
+    <xs:element type="xs:string" name="ProductKey" minOccurs="0"/>
+    <xs:element type="xs:string" name="IsResponder" minOccurs="0"/>
+    <xs:element type="xs:byte" name="UPBNetworkID" minOccurs="0"/>
+    <xs:element type="xs:short" name="UPBPassword" minOccurs="0"/>
+    <xs:element type="xs:short" name="UPBAddress" minOccurs="0"/>
+    <xs:element type="xs:string" name="InterfaceType"/>
+    <xs:element type="xs:string" name="Port"/>
+    <xs:element type="xs:short" name="BaudRate" minOccurs="0"/>
+    <xs:element type="xs:byte" name="ByteSize" minOccurs="0"/>
+    <xs:element type="xs:string" name="Parity" minOccurs="0"/>
+    <xs:element type="xs:float" name="StopBits" minOccurs="0"/>
+    <xs:element type="xs:float" name="Timeout" minOccurs="0"/>
+    <xs:element type="xs:string" name="DsrDtr" minOccurs="0"/>
+    <xs:element type="xs:string" name="RtsCts" minOccurs="0"/>
+    <xs:element type="xs:string" name="XonXoff" minOccurs="0"/>
+    <xs:element type="xs:short" name="Vendor" minOccurs="0"/>
+    <xs:element type="xs:short" name="Product" minOccurs="0"/>
 """
 
 # ## END DBK

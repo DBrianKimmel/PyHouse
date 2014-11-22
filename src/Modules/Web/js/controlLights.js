@@ -28,7 +28,7 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 		l_defer.addCallback(cb_widgetready);
 		return l_defer;
 	},
-	function showWidget(self) {
+	function startWidget(self) {
 		self.node.style.display = 'block';
 		self.showSelectionButtons(self);
 		self.hideDataEntry(self);
@@ -53,10 +53,9 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 	 * Build a screen full of buttons - One for each light and some actions.
 	 */
 	function buildLcarSelectScreen(self){
-		// Divmod.debug('---', 'controlLights.buildLcarSelectScreen() was called.');
 		var l_button_html = buildLcarSelectionButtonsTable(globals.House.HouseObj.Lights, 'handleMenuOnClick');
 		var l_html = build_lcars_top('Control Lights', 'lcars-salmon-color');
-		l_html += build_lcars_middle_menu(2, l_button_html);
+		l_html += build_lcars_middle_menu(10, l_button_html);
 		l_html += build_lcars_bottom();
 		self.nodeById('SelectionButtonsDiv').innerHTML = l_html;
 	},
@@ -89,7 +88,6 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 	 * @param p_node is  the node of the button that was clicked.
 	 */
 	function handleMenuOnClick(self, p_node) {
-		//Divmod.debug('---', 'controlLights.handleMenuOnClick() was called.');
 		var l_ix = p_node.name;
 		var l_name = p_node.value;
 		globals.House.LightIx = l_ix;
@@ -98,15 +96,11 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 			var l_obj = globals.House.HouseObj.Lights[l_ix];
 			globals.House.LightObj = l_obj;
 			globals.House.Self = self;
-			self.showDataEntry();
+			// self.showDataEntry();
 			self.hideSelectionButtons();
-			//console.log("controlLights.handleMenuOnClick() - l_ix = %O", l_ix);
-			//console.log("controlLights.handleMenuOnClick() - l_obj = %O", l_obj);
 			self.fillEntry(l_obj);
 		} else if (l_ix == 10002) {  // The "Back" button
-			self.hideWidget();
-			var l_node = findWidgetByClass('HouseMenu');
-			l_node.showWidget();
+			self.showWidget2('HouseMenu');
 		}
 	},
 
@@ -157,7 +151,6 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 	 */
 	function handleDataEntryOnClick(self, p_node) {
 		function cb_handleDataOnClick() {
-			self.showWidget(self);
 		}
 		function eb_handleDataOnClick(res){
 			Divmod.debug('---', 'controlLights.eb_handleDataOnClick() was called. ERROR=' + res);

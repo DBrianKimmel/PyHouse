@@ -12,7 +12,7 @@ import xml.etree.ElementTree as ET
 # Import PyMh files and modules.
 from Modules.Core.data_objects import ControllerData
 from Modules.Lighting.lighting_core import ReadWriteConfigXml
-from Modules.Lighting.lighting_utils import Utility
+from Modules.Families.family_utils import FamUtil
 from Modules.Computer import logging_pyh as Logger
 from Modules.Drivers import interface
 # from Modules.Utilities.tools import PrettyPrintAny
@@ -20,77 +20,6 @@ from Modules.Drivers import interface
 g_debug = 1
 LOG = Logger.getLogger('PyHouse.Controller  ')
 
-
-X_CONTROLLER_XML = """
-        <ControllerSection>
-            <Controller Active="False" Key="0" Name="PLM_1">
-                <Comment>Dongle using serial converter 067B:2303</Comment>
-                <Coords />
-                <IsDimmable>False</IsDimmable>
-                <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>Office</RoomName>
-                <LightingType>Controller</LightingType>
-                <Address>AA.AA.AA</Address>
-                <IsController>True</IsController>
-                <DevCat>12.34</DevCat><GroupList />
-                <GroupNumber>0</GroupNumber>
-                <IsMaster>False</IsMaster>
-                <ProductKey>23.45.67</ProductKey>
-                <IsResponder>True</IsResponder>
-                <InterfaceType>Serial</InterfaceType>
-                <Port>/dev/ttyUSB0</Port>
-                <BaudRate>19200</BaudRate>
-                <ByteSize>8</ByteSize>
-                <Parity>N</Parity>
-                <StopBits>1.0</StopBits>
-                <Timeout>1.0</Timeout>
-                <DsrDtr>False</DsrDtr>
-                <RtsCts>False</RtsCts>
-                <XonXoff>False</XonXoff>
-            </Controller>
-            <Controller Active="True" Key="1" Name="PowerLink">
-                <Comment>2413UH Powerlink Controller</Comment>
-                <Coords />
-                <IsDimmable>False</IsDimmable>
-                <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>Office</RoomName>
-                <LightingType>Controller</LightingType>
-                <Address>17.03.B2</Address>
-                <IsController>True</IsController>
-                <DevCat>0x0</DevCat>
-                <GroupList />
-                <GroupNumber>0</GroupNumber>
-                <IsMaster>False</IsMaster>
-                <ProductKey>0</ProductKey>
-                <IsResponder>True</IsResponder>
-                <InterfaceType>Serial</InterfaceType>
-                <Port>/dev/ttyUSB0</Port>
-                <BaudRate>19200</BaudRate>
-                <ByteSize>8</ByteSize>
-                <Parity>N</Parity>
-                <StopBits>1.0</StopBits>
-                <Timeout>1.0</Timeout>
-                <DsrDtr>False</DsrDtr>
-                <RtsCts>False</RtsCts>
-                <XonXoff>False</XonXoff>
-            </Controller>
-            <Controller Active="False" Key="2" Name="UPB_PIM">
-                <Comment>UPB PIM  using USB connection</Comment>
-                <Coords />
-                <IsDimmable>False</IsDimmable>
-                <ControllerFamily>UPB</ControllerFamily>
-                <RoomName>Master Bath</RoomName>
-                <LightingType>Controller</LightingType>
-                <UPBNetworkID>6</UPBNetworkID>
-                <UPBPassword>1253</UPBPassword>
-                <UPBAddress>255</UPBAddress>
-                <InterfaceType>USB</InterfaceType>
-                <Port>None</Port>
-                <Vendor>6109</Vendor>
-                <Product>21760</Product>
-            </Controller>
-        </ControllerSection>
-"""
 
 
 class ControllersAPI(ReadWriteConfigXml):
@@ -107,7 +36,6 @@ class ControllersAPI(ReadWriteConfigXml):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_utils = Utility(p_pyhouse_obj)
 
     def _read_base_data(self, p_xml):
         l_obj = ControllerData()
@@ -124,7 +52,7 @@ class ControllersAPI(ReadWriteConfigXml):
         return l_obj
 
     def _read_family_data(self, p_obj, p_xml):
-        l_api = self.m_utils.read_family_data(p_obj, p_xml)
+        l_api = FamUtil().read_family_data(self.m_pyhouse_obj, p_obj, p_xml)
         return l_api  # for testing
 
     def _read_interface_data(self, p_obj, p_xml):
@@ -155,7 +83,6 @@ class ControllersAPI(ReadWriteConfigXml):
                 self.m_count += 1
         except AttributeError as e_error:  # No Controller section
             LOG.warning('No Controllers found - {0:}'.format(e_error))
-            l_dict = {}
         return l_dict
 
 

@@ -1,5 +1,5 @@
 /** rootMenu.js
- * 
+ *
  * Displays the Root Menu section
  */
 // import Nevow.Athena
@@ -38,14 +38,9 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 		return l_defer;
 	},
 	function startWidget(self) {
-		Divmod.debug('---', 'rootMenu.startWidget() was called. ');
-		self.showWidget();
-	},
-	function showWidget(self) {
-		// Divmod.debug('---', 'rootMenu.showWidget() was called.');
-		self.node.style.display = 'block';
+		// Divmod.debug('---', 'rootMenu.startWidget() was called.');
 		self.showSelectionButtons();
-		self.fetchHouseData();  // Continue with next phase
+		self.fetchHouseData();
 	},
 	function hideSelectionButtons(self) {
 		self.nodeById('SelectionButtonsDiv').style.display = 'none';
@@ -101,33 +96,18 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 	 * @param self is    <"Instance" of undefined.rootMenu.RootMenuWidget>
 	 * @param p_node is  the node of the button that was clicked.
 	 */
-	function doHandleOnClick(self, p_node) {  // from html handler onSubmit
+	function doHandleOnClick(self, p_node) {
 		var l_key = p_node.name;
 		var l_node;
-		// Divmod.debug('---', 'rootMenu.doHandleOnClick() was called with ' + l_key);
-		// console.log("rmb p_node", p_node);
 		switch (l_key) {
 		case 'Select':  // House Select
-			// Divmod.debug('---', 'rootMenu.doHandleOnClick(Select) was called.');
-			self.hideWidget();
-			l_node = findWidgetByClass('HouseSelect');
-			l_node.getHousesInfo();
+			self.showWidget2('HouseSelect');
 			break;
 		case 'House':
-			//Divmod.debug('---', 'rootMenu.doHandleOnClick was called for House.');
-			self.hideWidget();
-			l_node = findWidgetByClass('House');
-			l_node.startWidget();
+			self.showWidget2('House');
 			break;
 		case 'Web':
-			self.hideWidget();
-			l_node = findWidgetByClass('Webs');
-			l_node.startWidget();
-			break;
-		case 'Logs':
-			self.hideWidget();
-			l_node = findWidgetByClass('Logs');
-			l_node.startWidget();
+			self.showWidget2('Webs');
 			break;
 		case 'Quit':  // Quit the browser by logging out
 			self.doRootQuit(p_node);
@@ -147,9 +127,7 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 		globals.User.ID = null;
 		globals.User.LoggedIn = false;
 		globals.User.Password = null;
-		self.hideWidget();
-		var l_node = findWidgetByClass('Login');
-		l_node.showWidget();
+		self.showWidget2('Login');
 		l_node.showLoggingInDiv();
 	}
 );

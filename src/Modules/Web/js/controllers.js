@@ -40,7 +40,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
         l_defer.addCallback(cb_widgetready);
         return l_defer;
     },
-    function showWidget(self) {
+    function startWidget(self) {
         self.node.style.display = 'block';
         self.showSelectionButtons(self);
         self.hideDataEntry(self);
@@ -124,9 +124,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 			var l_ent = self.createEntry();
 			self.fillEntry(l_ent);
         } else if (l_ix == 10002) {  // The 'Back' button
-            self.hideWidget();
-            var l_node = findWidgetByClass('HouseMenu');
-            l_node.showWidget();
+            self.showWidget2('HouseMenu');
         }
     },
 
@@ -266,7 +264,6 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
     function handleDataOnClick(self, p_node) {
         function cb_handleDataOnClick(p_json) {
             //Divmod.debug('---', 'controller.cb_handleDataOnClick() was called.');
-            self.showWidget();
         }
         function eb_handleDataOnClick(res){
             Divmod.debug('---', 'login.eb_handleDataOnClick() was called.  ERROR = ' + res);

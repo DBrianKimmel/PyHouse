@@ -11,6 +11,16 @@
 
 
 SERIAL_XML = """
+        <InterfaceType>Serial</InterfaceType>
+        <Port>/dev/ttyUSB0</Port>
+        <BaudRate>19200</BaudRate>
+        <ByteSize>8</ByteSize>
+        <Parity>N</Parity>
+        <StopBits>1.0</StopBits>
+        <Timeout>1.0</Timeout>
+        <DsrDtr>False</DsrDtr>
+        <RtsCts>False</RtsCts>
+        <XonXoff>False</XonXoff>
 """
 
 SERIAL_XSD = """

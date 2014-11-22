@@ -1,15 +1,12 @@
 /**
- * @name: PyHouse/src/Modules/Web/js/rooms.js
+ * @name: PyHouse/src/Modules/Web/js/lcars.js
  * @author: D. Brian Kimmel
  * @contact: D.BrianKimmel@gmail.com
  * @Copyright (c) 2014 by D. Brian Kimmel
  * @license: MIT License
- * @note: Created on Mar 11, 2014
- * @summary: Displays the rooms
+ * @note: Created on Sep 12, 2014
+ * @summary: Lcars components.
  */
-// import Nevow.Athena
-// import globals
-// import helpers
 
 
 lcarsDefs = {
@@ -47,43 +44,39 @@ function build_lcars_top(p_title, /* optional* */ p_color){
  * @param: p_html is the (big) html for the entire body.
  */
 function build_lcars_middle_menu(p_rows, p_html){
-	// Divmod.debug('---', 'lcars.build_lcars_middle() was called.');
 	var l_html = '';
 	var l_half = (p_rows + 1) / 2;
 	l_html += "<div class='lcars-row spaced'>\n";  // row 1
+
 	l_html += "  <div class='lcars-column u-1-8'>\n";  // Column 1
-	l_html += "    <ul class='lcars-menu'>\n";
-	for (var l_row = 0; l_row < l_half; l_row++) {
+	l_html += "    <ul class='lcars-menu left'>\n";  // filler bar left
+	for (var l_row = 0; l_row < l_half; l_row++)
 		l_html += "      <li class='lcars-blue-bg'></li>\n";
-	}
-	for (l_row = 0; l_row < l_half; l_row++) {
+	for (l_row = 0; l_row < l_half; l_row++)
 		l_html += "      <li class='lcars-tan-bg'></li>\n";
-	}
 	l_html += "    </ul>\n";
 	l_html += "  </div>\n";  // column 1
-	l_html += "  <div class='lcars-column u-6-8'>\n";
-	l_html += p_html;
 
+	l_html += "  <div class='lcars-column u-6-8'>\n";  // Middle columns
+	l_html += p_html;
 	l_html += "  </div>\n";
-	l_html += "  <div class='lcars-column u-1-8'>\n";
-	l_html += "    <ul class='lcars-menu'>\n";  // RIGHT
-	for (l_row = 0; l_row < l_half; l_row++) {
+
+	l_html += "  <div class='lcars-column u-1-8'>\n";  // Right columns
+	l_html += "    <ul class='lcars-menu right'>\n";
+	for (l_row = 0; l_row < l_half; l_row++)
 		l_html += "      <li class='lcars-tan-bg'></li>\n";
-	}
-	for (l_row = 0; l_row < l_half; l_row++) {
+	for (l_row = 0; l_row < l_half; l_row++)
 		l_html += "      <li class='lcars-blue-bg'></li>\n";
-	}
 	l_html += "    </ul>\n";
 	l_html += "  </div>\n";
+
 	l_html += "</div>\n";
-	// console.log("lcars.build_lcars_middle() - %O", l_html)
 	return l_html;
 }
 /**
  * Build the bottom part of the display.
  */
 function build_lcars_bottom(){
-	// Divmod.debug('---', 'lcars.build_lcars_bottom() was called.');
 	var l_html = '';
 	l_html += "<div class='lcars-row spaced'>\n";
 	l_html += "  <div class='lcars-column u-1-8 lcars-elbow left top lcars-tan-bg'></div>";

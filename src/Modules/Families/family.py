@@ -100,11 +100,11 @@ class API(Utility):
 
         NOTE! - Any errors (syntax, etc) in the imported modules (or sub-modules) will cause the import to FAIL!
         """
-        if g_debug >= 1:
-            LOG.debug('Starting build_lighting_family_info')
+        LOG.info('Starting build_lighting_family_info')
         l_family_data = {}
         self.m_count = 0
         for l_family in VALID_FAMILIES:
+            LOG.info(' Building family {}'.format(l_family))
             l_family_obj = self._build_one_family_data(l_family)
             l_module, _l_xml_module = self._import_one_module(l_family_obj)
             l_api = self._initialize_one_module(l_module)

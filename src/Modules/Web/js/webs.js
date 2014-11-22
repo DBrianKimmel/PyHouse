@@ -37,17 +37,14 @@ helpers.Widget.subclass(webs, 'WebsWidget').methods(
 	 */
 	function ready(self) {
 		function cb_widgetready(res) {
-			//Divmod.debug('---', 'webs.cb_widgready() was called.');
 			self.hideWidget();
 		}
-		//Divmod.debug('---', 'webs.ready() was called. ' + self);
 		var uris = collectIMG_src(self.node, null);
 		var l_defer = loadImages(uris);
 		l_defer.addCallback(cb_widgetready);
 		return l_defer;
 	},
-	function showWidget(self) {
-		//Divmod.debug('---', 'webs.showWidget() was called.');
+	function startWidget(self) {
 		self.node.style.display = 'block';
 	},
 	function hideDataEntry(self) {
@@ -116,7 +113,7 @@ helpers.Widget.subclass(webs, 'WebsWidget').methods(
 			break;
 		case '10002':  // Back button
 			//Divmod.debug('---', 'webs.handleDataOnClick(Back) was called.  ');
-			self.hideWidget();
+			self.hideWidget2(self);
 			var l_node = findWidgetByClass('RootMenu');
 			l_node.startWidget();
 			break;
