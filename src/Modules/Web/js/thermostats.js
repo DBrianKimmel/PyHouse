@@ -18,7 +18,7 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 
 
 
- // ============================================================================
+// ============================================================================
     /**
      * Place the widget in the workspace.
 	 *
@@ -42,10 +42,9 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 	 * routines for showing and hiding parts of the screen.
 	 */
 	function startWidget(self) {
-		Divmod.debug('---', 'thermostats.startWidget() was called.');
 		showSelectionButtons(self);
 		hideDataEntry(self);
-		self.fetchHouseData();
+		self.fetchDataFromServer();
 	},
 
 
@@ -65,17 +64,17 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 	 * This triggers getting the Thermostat data from the server.
 	 * The server calls displayThermostatButtons with the Thermostat info.
 	 */
-	function fetchHouseData(self) {
-		function cb_fetchHouseData(p_json) {
+	function fetchDataFromServer(self) {
+		function cb_fetchDataFromServer(p_json) {
 			globals.House.HouseObj = JSON.parse(p_json);
 			self.buildLcarSelectScreen();
 		}
-		function eb_fetchHouseData(res) {
-			Divmod.debug('---', 'thermostats.eb_fetchHouseData() was called. ERROR: ' + res);
+		function eb_fetchDataFromServer(res) {
+			Divmod.debug('---', 'thermostats.eb_fetchDataFromServer() was called. ERROR: ' + res);
 		}
         var l_defer = self.callRemote("getHouseData");  // call server @ web_thermostat.py
-		l_defer.addCallback(cb_fetchHouseData);
-		l_defer.addErrback(eb_fetchHouseData);
+		l_defer.addCallback(cb_fetchDataFromServer);
+		l_defer.addErrback(eb_fetchDataFromServer);
         return false;
 	},
 	/**
@@ -260,8 +259,7 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 	 */
 	function handleDataOnClick(self, p_node) {
 		function cb_handleDataOnClick(p_json) {
-			//Divmod.debug('---', 'thermostats.cb_handleDataOnClick() was called.');
-			// self.showWidget();
+			self.startWidget();
 		}
 		function eb_handleDataOnClick(res){
 			Divmod.debug('---', 'thermostats.eb_handleDataOnClick() was called. ERROR =' + res);

@@ -29,7 +29,9 @@ from twisted.internet import reactor
 from twisted.application.service import Application
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, PyHouseAPIs, TwistedInformation, CoreServicesInformation, XmlInformation
+from Modules.Core.data_objects import PyHouseData, PyHouseAPIs, \
+    TwistedInformation, CoreServicesInformation, XmlInformation, \
+    CompAPIs, HouseAPIs
 from Modules.Computer import computer
 from Modules.Computer import logging_pyh as Logger
 from Modules.Housing import house
@@ -58,7 +60,7 @@ class ReadWriteConfigXml(XmlConfigTools):
         l_name = p_pyhouse_obj.Xml.XmlFileName
         try:
             l_xmltree = ET.parse(l_name)
-        except SyntaxError as e_error:
+        except (SyntaxError, IOError) as e_error:
             LOG.error('Setup-XML file ERROR - {0:} - {1:}'.format(e_error, l_name))
             ConfigAPI().create_empty_config_file(l_name)
             l_xmltree = ET.parse(p_pyhouse_obj.Xml.XmlFileName)
@@ -82,7 +84,10 @@ class Utility(ReadWriteConfigXml):
     def create_empty_xml_skeleton(self):
         l_xml = ET.Element("PyHouse")
         xml_tools.PutGetXML().put_text_attribute(l_xml, 'Version', self.m_pyhouse_obj.Xml.XmlVersion)
+        xml_tools.PutGetXML().put_text_attribute(l_xml, 'xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance')
+        xml_tools.PutGetXML().put_text_attribute(l_xml, 'xsi:schemaLocation', 'http://PyHouse.org schemas/PyHouse.xsd')
         xml_tools.PutGetXML().put_text_attribute(l_xml, 'xmlns:comp', 'http://PyHouse.Org/ComputerDiv')
+        #
         l_xml.append(ET.Comment(' Updated by PyHouse {0:} '.format(datetime.datetime.now())))
         return l_xml
 
@@ -90,16 +95,15 @@ class Utility(ReadWriteConfigXml):
         self.m_pyhouse_obj.Twisted.Reactor.callLater(REPEAT_DELAY, self._xml_save_loop, p_pyhouse_obj)
         self.SaveXml()
 
-
-class API(Utility):
-
-    def _setup(self, p_parent):
+    def create_pyhouse_obj(self, p_parent):
         l_pyhouse_obj = PyHouseData()
         l_pyhouse_obj.APIs = PyHouseAPIs()
+        l_pyhouse_obj.APIs.Comp = CompAPIs()
+        l_pyhouse_obj.APIs.House = HouseAPIs()
         l_pyhouse_obj.APIs.PyHouseAPI = p_parent  # Only used by web server to reload - Do we need this?
         l_pyhouse_obj.APIs.CoreSetupAPI = self
-        l_pyhouse_obj.APIs.ComputerAPI = computer.API()
-        l_pyhouse_obj.APIs.HouseAPI = house.API()
+        l_pyhouse_obj.APIs.Comp.ComputerAPI = computer.API()
+        l_pyhouse_obj.APIs.House.HouseAPI = house.API()
         l_pyhouse_obj.Twisted = TwistedInformation()
         l_pyhouse_obj.Twisted.Reactor = reactor
         l_pyhouse_obj.Twisted.Application = Application('PyHouse')
@@ -108,11 +112,9 @@ class API(Utility):
         l_pyhouse_obj.Xml.XmlFileName = '/etc/pyhouse/master.xml'
         return l_pyhouse_obj
 
-    def __init__(self):
-        """
-        This runs before the reactor has started - Be Careful!
-        """
-        pass
+
+
+class API(Utility):
 
     def Start(self, p_pyhouse_obj):
         """
@@ -127,15 +129,15 @@ class API(Utility):
         LOG.info("Starting.")
         # Logging system is now enabled
         self.m_pyhouse_obj = p_pyhouse_obj
-        p_pyhouse_obj.APIs.ComputerAPI.Start(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.HouseAPI.Start(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.Comp.ComputerAPI.Start(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.House.HouseAPI.Start(p_pyhouse_obj)
         LOG.info("Started.")
         self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self._xml_save_loop, p_pyhouse_obj)
 
     def Stop(self):
         self.SaveXml()
-        self.m_pyhouse_obj.APIs.ComputerAPI.Stop()
-        self.m_pyhouse_obj.APIs.HouseAPI.Stop()
+        self.m_pyhouse_obj.APIs.Comp.ComputerAPI.Stop()
+        self.m_pyhouse_obj.APIs.House.HouseAPI.Stop()
         LOG.info("Stopped.")
 
     def SaveXml(self):
@@ -144,8 +146,8 @@ class API(Utility):
         """
         # LOG.info("Saving XML.")
         l_xml = self.create_empty_xml_skeleton()
-        self.m_pyhouse_obj.APIs.ComputerAPI.SaveXml(l_xml)
-        self.m_pyhouse_obj.APIs.HouseAPI.SaveXml(l_xml)
+        self.m_pyhouse_obj.APIs.Comp.ComputerAPI.SaveXml(l_xml)
+        self.m_pyhouse_obj.APIs.House.HouseAPI.SaveXml(l_xml)
         ConfigAPI().write_xml_config_file(self.m_pyhouse_obj, l_xml, self.m_pyhouse_obj.Xml.XmlFileName)
         LOG.info("Saved XML.")
 

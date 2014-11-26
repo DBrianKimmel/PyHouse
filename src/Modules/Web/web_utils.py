@@ -63,10 +63,10 @@ def GetJSONHouseInfo(p_pyhouse_obj):
     l_ret.Schedules = p_pyhouse_obj.House.OBJs.Schedules
     l_ret.Thermostats = p_pyhouse_obj.House.OBJs.Thermostats
     l_json = unicode(JsonUnicode().encode_json(l_ret))
-    try:
-        PrettyPrintAny(l_ret, 'JSON send House Info')
-    except:
-        pass
+    # try:
+    #    PrettyPrintAny(l_ret, 'JSON send House Info')
+    # except:
+    #    pass
     return l_json
 
 def GetJSONComputerInfo(p_pyhouse_obj):

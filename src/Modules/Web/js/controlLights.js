@@ -151,6 +151,7 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 	 */
 	function handleDataEntryOnClick(self, p_node) {
 		function cb_handleDataOnClick() {
+			self.startWidget()
 		}
 		function eb_handleDataOnClick(res){
 			Divmod.debug('---', 'controlLights.eb_handleDataOnClick() was called. ERROR=' + res);

@@ -27,7 +27,7 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 	 */
 	function ready(self) {
 		function cb_widgetready() {
-			hideWidget(self);
+			self.hideWidget();
 		}
 		function eb_widgetready(p_reason) {
 			Divmod.debug('---', 'ERROR - house.eb_widgetready() - ' + p_reason);
@@ -39,7 +39,7 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 	},
 	function startWidget(self) {
 		showDataEntry(self);
-		self.fetchHouseData();
+		self.fetchDataFromServer();
 	},
 
 
@@ -48,18 +48,19 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 	/**
 	 * This triggers getting the house data from the server.
 	 */
-	function fetchHouseData(self) {
-		function cb_fetchHouseData(p_json) {
+	function fetchDataFromServer(self) {
+		function cb_fetchDataFromServer(p_json) {
 			globals.House.HouseObj.House = JSON.parse(p_json);
 			var l_obj = globals.House.HouseObj;
-			self.buildLcarDataEntryScreen(l_obj, 'handleDataOnClick');
+			console.log("house.buildLcarRoomDataEntryScreen() - Fetched Data = %O", l_obj);
+			self.buildLcarDataEntryScreen(l_obj, 'handleDataEntryOnClick');
 		}
-		function eb_fetchHouseData(p_reason) {
-			Divmod.debug('---', 'ERROR - house.eb_fetchHouseData() - ' + p_reason);
+		function eb_fetchDataFromServer(p_reason) {
+			Divmod.debug('---', 'ERROR - house.eb_fetchDataFromServer() - ' + p_reason);
 		}
         var l_defer = self.callRemote("getHouseData");  // call server @ web_house.py
-		l_defer.addCallback(cb_fetchHouseData);
-		l_defer.addErrback(eb_fetchHouseData);
+		l_defer.addCallback(cb_fetchDataFromServer);
+		l_defer.addErrback(eb_fetchDataFromServer);
         return false;
 	},
 	function buildLcarDataEntryScreen(self, p_entry, p_handler){
@@ -139,34 +140,34 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 	 * Event handler for buttons at bottom of the data entry portion of this widget.
 	 * Get the possibly changed data and send it to the server.
 	 */
-	function handleDataOnClick(self, p_node) {
-		function cb_handleDataOnClick() {
+	function handleDataEntryOnClick(self, p_node) {
+		function cb_handleDataEntryOnClick() {
 			self.showWidget2('HouseMenu');
 		}
-		function eb_handleDataOnClick(p_reason){
-			Divmod.debug('---', 'ERROR house.eb_handleDataOnClick() - ' + p_reason);
+		function eb_handleDataEntryOnClick(p_reason){
+			Divmod.debug('---', 'ERROR house.eb_handleDataEntryOnClick() - ' + p_reason);
 		}
 		var l_ix = p_node.name;
 		switch(l_ix) {
 		case '10003':  // Change Button
-			Divmod.debug('---', 'house.handleDataOnClick() was called.');
+			Divmod.debug('---', 'house.handleDataEntryOnClick() was called.');
 	    	var l_entry = self.fetchEntry();
 			globals.House.HouseObj.House = l_entry;
 	    	var l_json = JSON.stringify(l_entry);
 	        var l_defer = self.callRemote("saveHouseData", l_json);  // @ web_house
-			l_defer.addCallback(cb_handleDataOnClick);
-			l_defer.addErrback(eb_handleDataOnClick);
+			l_defer.addCallback(cb_handleDataEntryOnClick);
+			l_defer.addErrback(eb_handleDataEntryOnClick);
 			break;
 		case '10002':  // Back button
 			self.showWidget2('HouseMenu');
 			break;
 		default:
-			Divmod.debug('---', 'house.handleDataOnClick(Default) was called. l_ix:' + l_ix);
+			Divmod.debug('---', 'house.handleDataEntryOnClick(Default) was called. l_ix:' + l_ix);
 			break;
 		}
         return false;  // false stops the chain.
 	}
 );
-// Divmod.debug('---', 'house.cb_fetchHouseData() was called. ' + p_json);
+// Divmod.debug('---', 'house.cb_fetchDataFromServer() was called. ' + p_json);
 // console.log("house.buildLcarRoomDataEntryScreen() - self = %O", self);
 //### END DBK

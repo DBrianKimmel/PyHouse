@@ -300,26 +300,37 @@ class PyHouseAPIs(object):
     """
 
     def __init__(self):
+        self.Modules = {}  # A dict of ModuleName : Reference
+        self.Comp = {}  # CompAPIs()
+        self.House = {}  # HouseAPIs()
+        self.CoreSetupAPI = None
+        self.PyHouseAPI = None
+
+
+class CompAPIs(object):
+    def __init__(self):
         self.CommunicationsAPI = None
         self.ComputerAPI = None
-        self.CoreSetupAPI = None
         self.EmailAPI = None
+        self.InternetAPI = None
+        self.NodesAPI = None
+        self.WeatherAPI = None
+        self.WebAPI = None
+
+
+class HouseAPIs(object):
+    def __init__(self):
+        self.Modules = {}  # A dict of ModuleName : Reference
         self.EntertainmentAPI = None
         self.FamilyAPI = None
         self.HouseAPI = None
         self.HvacAPI = None
-        self.InternetAPI = None
         self.IrrigationAPI = None
         self.LightingAPI = None
-        self.LogsAPI = None
-        self.NodesAPI = None
         self.PoolAPI = None
-        self.PyHouseAPI = None
         self.ScheduleAPI = None
         self.SecurityAPI = None
         self.SunRiseSetAPI = None
-        self.WeatherAPI = None
-        self.WebAPI = None
 
 
 class TwistedInformation(object):

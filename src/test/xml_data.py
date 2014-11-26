@@ -83,4 +83,9 @@ XML_LONG = '\n'.join([
     "</PyHouse>"
 ])
 
+
+XSD_HEADER = """
+"""
+XSD_LONG = XSD_HEADER
+
 # ## END DBK

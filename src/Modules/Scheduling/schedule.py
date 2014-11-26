@@ -285,7 +285,7 @@ class ScheduleExecution(object):
             pass
         l_light_obj = tools.get_light_object(self.m_pyhouse_obj, name = l_schedule_obj.LightName)
         LOG.info("Name:{0:}, Light:{1:}, Level:{2:}, Slot:{3:}".format(l_schedule_obj.Name, l_schedule_obj.LightName, l_schedule_obj.Level, p_slot))
-        self.m_pyhouse_obj.APIs.LightingAPI.ChangeLight(l_light_obj, l_schedule_obj.Level)
+        self.m_pyhouse_obj.APIs.House.LightingAPI.ChangeLight(l_light_obj, l_schedule_obj.Level)
 
     def execute_schedules_list(self, p_slot_list = []):
         """
@@ -353,30 +353,30 @@ class UpdatePyhouse(object):
 
     @staticmethod
     def add_api_references(p_pyhouse_obj):
-        p_pyhouse_obj.APIs.LightingAPI = lighting.API()
-        p_pyhouse_obj.APIs.HvacAPI = thermostats.API()
-        p_pyhouse_obj.APIs.IrrigationAPI = irrigation.API()
+        p_pyhouse_obj.APIs.House.LightingAPI = lighting.API()
+        p_pyhouse_obj.APIs.House.HvacAPI = thermostats.API()
+        p_pyhouse_obj.APIs.House.IrrigationAPI = irrigation.API()
 
     @staticmethod
     def start_scheduled_modules(p_pyhouse_obj):
         """
         TODO: Lighting must be first since it loads families etc.
         """
-        p_pyhouse_obj.APIs.LightingAPI.Start(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.HvacAPI.Start(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.IrrigationAPI.Start(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.House.LightingAPI.Start(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.House.HvacAPI.Start(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.House.IrrigationAPI.Start(p_pyhouse_obj)
 
     @staticmethod
     def stop_scheduled_modules(p_pyhouse_obj):
-        p_pyhouse_obj.APIs.HvacAPI.Stop()
-        p_pyhouse_obj.APIs.LightingAPI.Stop()
-        p_pyhouse_obj.APIs.IrrigationAPI.Stop()
+        p_pyhouse_obj.APIs.House.HvacAPI.Stop()
+        p_pyhouse_obj.APIs.House.LightingAPI.Stop()
+        p_pyhouse_obj.APIs.House.IrrigationAPI.Stop()
 
     @staticmethod
     def save_scheduled_modules(p_pyhouse_obj, p_xml):
-        p_pyhouse_obj.APIs.HvacAPI.SaveXml(p_xml)
-        p_pyhouse_obj.APIs.LightingAPI.SaveXml(p_xml)
-        p_pyhouse_obj.APIs.IrrigationAPI.SaveXml(p_xml)
+        p_pyhouse_obj.APIs.House.HvacAPI.SaveXml(p_xml)
+        p_pyhouse_obj.APIs.House.LightingAPI.SaveXml(p_xml)
+        p_pyhouse_obj.APIs.House.IrrigationAPI.SaveXml(p_xml)
         return p_xml
 
 

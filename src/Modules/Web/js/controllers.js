@@ -263,10 +263,10 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
      */
     function handleDataOnClick(self, p_node) {
         function cb_handleDataOnClick(p_json) {
-            //Divmod.debug('---', 'controller.cb_handleDataOnClick() was called.');
+        	self.startWidget()
         }
-        function eb_handleDataOnClick(res){
-            Divmod.debug('---', 'login.eb_handleDataOnClick() was called.  ERROR = ' + res);
+        function eb_handleDataOnClick(p_reason){
+            Divmod.debug('---', 'ERROR controllers.eb_handleDataOnClick() - ' + p_reason);
         }
 		var l_ix = p_node.name;
 		var l_obj = self.fetchEntry();

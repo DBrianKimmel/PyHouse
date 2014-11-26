@@ -82,4 +82,14 @@ class C02_Parsed(unittest.TestCase):
         l_div = self.m_root_element.find('HouseDivision')
         self.assertEqual(l_div.tag, 'HouseDivision')
 
+
+
+class C02_Schema(unittest.TestCase):
+    """
+    Test XML to comply with XSD.
+    """
+
+    def setUp(self):
+        pass
+
 # ## END DBK

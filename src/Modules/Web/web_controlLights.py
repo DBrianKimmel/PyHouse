@@ -62,6 +62,6 @@ class ControlLightsElement(athena.LiveElement):
         l_light_obj.LightingType = 'Light'
         l_light_obj.UUID = l_json['UUID']
         LOG.info('Control Light via Web - Change {0:} device to level {1:}'.format(l_light_obj.Name, l_light_obj.CurLevel))
-        self.m_pyhouse_obj.APIs.LightingAPI.ChangeLight(l_light_obj, l_level)
+        self.m_pyhouse_obj.APIs.House.LightingAPI.ChangeLight(l_light_obj, l_level)
 
 # ## END DBK

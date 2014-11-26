@@ -3,6 +3,8 @@ hvac.__init__.py
 
 This is the interface from HVAC to PyHouse.
 
+The only valid function at this point is the thermostat.
+
 """
 
 __version_info__ = (1, 1, 0)

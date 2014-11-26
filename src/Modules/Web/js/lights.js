@@ -41,7 +41,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		self.node.style.display = 'block';
 		self.showSelectionButtons();
 		self.hideDataEntry();
-		self.fetchHouseData();  // Continue with next phase
+		self.fetchDataFromServer();  // Continue with next phase
 	},
 	function hideSelectionButtons(self) {
 		self.nodeById('SelectionButtonsDiv').style.display = 'none';
@@ -64,6 +64,22 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 
 // ============================================================================
 	/**
+	 * This triggers getting the lights data from the server.
+	 */
+	function fetchDataFromServer(self) {
+		function cb_fetchDataFromServer(p_json) {
+			globals.House.HouseObj = JSON.parse(p_json);
+			self.buildLcarSelectScreen();
+		}
+		function eb_fetchDataFromServer(res) {
+			Divmod.debug('---', 'lights.eb_fetchDataFromServer() was called. ERROR: ' + res);
+		}
+        var l_defer = self.callRemote("getHouseData");
+		l_defer.addCallback(cb_fetchDataFromServer);
+		l_defer.addErrback(eb_fetchDataFromServer);
+        return false;
+	},
+	/**
 	 * Build a screen full of buttons - One for each light and some actions.
 	 */
 	function buildLcarSelectScreen(self){
@@ -73,25 +89,6 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		l_html += build_lcars_bottom();
 		self.nodeById('SelectionButtonsDiv').innerHTML = l_html;
 	},
-	/**
-	 * This triggers getting the lights data from the server.
-	 */
-	function fetchHouseData(self) {
-		function cb_fetchHouseData(p_json) {
-			globals.House.HouseObj = JSON.parse(p_json);
-			self.buildLcarSelectScreen();
-		}
-		function eb_fetchHouseData(res) {
-			Divmod.debug('---', 'lights.eb_fetchHouseData() was called. ERROR: ' + res);
-		}
-        var l_defer = self.callRemote("getHouseData");
-		l_defer.addCallback(cb_fetchHouseData);
-		l_defer.addErrback(eb_fetchHouseData);
-        return false;
-	},
-
-
-	// ============================================================================
 	/**
 	 * Event handler for light selection buttons.
 	 * 
@@ -122,8 +119,9 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		}
 	},
 
-	// ============================================================================
 
+
+// ============================================================================
 	/**
 	 * Build a screen full of data entry fields.
 	 */
@@ -189,10 +187,9 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		l_obj.ControllerFamily = l_family;
 		l_self.fillEntry(l_obj);
 	},
-
 	function fillEntry(self, p_obj) {
 		// Divmod.debug('---', 'lights.fillEntry was called.');
-		self.buildLcarDataEntryScreen(p_obj, 'handleDataOnClick');
+		self.buildLcarDataEntryScreen(p_obj, 'handleDataEntryOnClick');
 	},
 	function fetchEntry(self) {
 		// Divmod.debug('---', 'lights.fetchEntry(1) was called.');
@@ -267,26 +264,26 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 	},
 
 
-	// ============================================================================
+
+// ============================================================================
 	/**
 	 * Event handler for buttons at bottom of the data entry portion of this widget.
 	 * Get the possibly changed data and send it to the server.
 	 */
-	function handleDataOnClick(self, p_node) {
-		function cb_handleDataOnClick(p_json) {
-			// self.showWidget();
+	function handleDataEntryOnClick(self, p_node) {
+		function cb_handleDataEntryOnClick(p_json) {
+			self.startWidget();
 		}
-		function eb_handleDataOnClick(res){
-			Divmod.debug('---', 'lights.eb_handleDataOnClick() was called. ERROR =' + res);
+		function eb_handleDataEntryOnClick(res){
+			Divmod.debug('---', 'lights.eb_handleDataEntryOnClick() was called. ERROR =' + res);
 		}
 		var l_ix = p_node.name;
-		// Divmod.debug('---', 'lights.handleDataOnClick was called. IX:' + l_ix);
 		switch(l_ix) {
 		case '10003':  // Change Button
 	    	var l_json = JSON.stringify(self.fetchEntry());
 	        var l_defer = self.callRemote("saveLightData", l_json);
-			l_defer.addCallback(cb_handleDataOnClick);
-			l_defer.addErrback(eb_handleDataOnClick);
+			l_defer.addCallback(cb_handleDataEntryOnClick);
+			l_defer.addErrback(eb_handleDataEntryOnClick);
 			break;
 		case '10002':  // Back button
 			self.hideDataEntry();
@@ -297,16 +294,16 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 			l_obj.Delete = true;
 	    	l_json = JSON.stringify(l_obj);
 	        l_defer = self.callRemote("saveLightData", l_json);
-			l_defer.addCallback(cb_handleDataOnClick);
-			l_defer.addErrback(eb_handleDataOnClick);
+			l_defer.addCallback(cb_handleDataEntryOnClick);
+			l_defer.addErrback(eb_handleDataEntryOnClick);
 			break;
 		default:
-			Divmod.debug('---', 'lights.handleDataOnClick(Default) was called. l_ix:' + l_ix);
+			Divmod.debug('---', 'lights.handleDataEntryOnClick(Default) was called. l_ix:' + l_ix);
 			break;
 		}
         return false;  // false stops the chain.
 	}
 );
-//Divmod.debug('---', 'lights.handleDataOnClick(Change) was called.');
-//console.log("lights.handleDataOnClick()  json  %O", l_json);
+//Divmod.debug('---', 'lights.handleDataEntryOnClick(Change) was called.');
+//console.log("lights.handleDataEntryOnClick()  json  %O", l_json);
 //### END DBK

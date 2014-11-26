@@ -44,6 +44,10 @@ class HouseElement(athena.LiveElement):
     @athena.expose
     def getHouseData(self):
         l_house = GetJSONHouseInfo(self.m_pyhouse_obj)
+        try:
+            PrettyPrintAny(l_house, 'JSON send House Info')
+        except:
+            pass
         return l_house
 
     @athena.expose

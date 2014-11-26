@@ -69,6 +69,11 @@ class C02_Utils(SetupMixin, unittest.TestCase):
         l_family = FamUtil.get_family(self.m_device_obj)
         print('Testing - Family: "{}"'.format(l_family))
         self.assertEqual(l_family, 'Insteon')
+        #
+        self.m_device_obj.ControllerFamily = 'UPB'
+        l_family = FamUtil.get_family(self.m_device_obj)
+        print('Testing - Family: "{}"'.format(l_family))
+        self.assertEqual(l_family, 'UPB')
 
     def test_02_GetApi(self):
         l_api = FamUtil.get_family_api(self.m_pyhouse_obj, self.m_device_obj)
@@ -103,7 +108,7 @@ class C03_Read(SetupMixin, unittest.TestCase):
         PrettyPrintAny(l_light, 'Light 1')
         FamUtil().read_family_data(self.m_pyhouse_obj, l_light, l_xml)
         PrettyPrintAny(l_light, 'Light 2')
-        self.assertEqual(l_light.Name, 'outside_front')
+        self.assertEqual(l_light.Name, 'Insteon Light')
         self.assertEqual(l_light.ControllerFamily, 'Insteon')
         self.assertEqual(l_light.InsteonAddress, 1466925)
 
@@ -130,7 +135,7 @@ class C04_Write(SetupMixin, unittest.TestCase):
         FamUtil().write_family_data(self.m_pyhouse_obj, l_out_xml, l_light)
         PrettyPrintAny(l_out_xml, 'xml 2')
 
-        self.assertEqual(l_light.Name, 'outside_front')
+        self.assertEqual(l_light.Name, 'Insteon Light')
         self.assertEqual(l_light.ControllerFamily, 'Insteon')
         self.assertEqual(l_light.InsteonAddress, 1466925)
 

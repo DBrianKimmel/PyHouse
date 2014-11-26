@@ -156,7 +156,7 @@ class API(Utilities):
         global g_API
         g_API = self
         self.m_setupAPI = setup.API()
-        self.m_pyhouse_obj = self.m_setupAPI._setup(self)
+        self.m_pyhouse_obj = self.m_setupAPI.create_pyhouse_obj(self)
         self.m_pyhouse_obj.Twisted.Reactor.callWhenRunning(self.Start)
         self.m_pyhouse_obj.Twisted.Reactor.run()  # reactor never returns so must be last - Event loop will now run
         #  When the reactor stops we continue here

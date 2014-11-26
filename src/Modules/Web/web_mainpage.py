@@ -72,7 +72,6 @@ from Modules.Web import web_houseSelect
 from Modules.Web import web_internet
 from Modules.Web import web_lights
 from Modules.Web import web_login
-from Modules.Web import web_logs
 from Modules.Web import web_rooms
 from Modules.Web import web_rootMenu
 from Modules.Web import web_schedules

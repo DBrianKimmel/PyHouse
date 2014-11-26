@@ -214,7 +214,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 	 */
 	function handleDataEntryOnClick(self, p_node) {
 		function cb_handleDataEntryOnClick(p_json) {
-			// self.showWidget();
+			self.startWidget();
 		}
 		function eb_handleDataEntryOnClick(res){
 			Divmod.debug('---', 'schedules.eb_handleDataEntryOnClick() was called. ERROR =' + res);

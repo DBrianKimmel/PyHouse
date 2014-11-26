@@ -9,6 +9,10 @@
 @license: MIT License
 @summary: Handle the computer information.
 
+This handles the Computer part of the node.  (The other part is "house").
+
+This takes care of starting all the computer modules.
+
 """
 
 # Import system type stuff
@@ -24,6 +28,8 @@ from Modules.Web import web_server
 # from Modules.Utilities.tools import PrettyPrintAny
 
 LOG = Logger.getLogger('PyHouse.Computer    ')
+
+MODULES = ['Communication', 'Internet' , 'Node', 'Weather', 'Web']
 
 
 class ReadWriteConfigXml(XmlConfigTools):
@@ -47,29 +53,25 @@ class Utility(ReadWriteConfigXml):
         p_pyhouse_obj.Computer = ComputerInformation()
 
     def add_api_references(self, p_pyhouse_obj):
-        p_pyhouse_obj.APIs.InternetAPI = internet.API()
-        p_pyhouse_obj.APIs.LogsAPI = Logger.API()
-        p_pyhouse_obj.APIs.NodesAPI = nodes.API()
-        p_pyhouse_obj.APIs.WebAPI = web_server.API()
+        p_pyhouse_obj.APIs.Comp.InternetAPI = internet.API()
+        p_pyhouse_obj.APIs.Comp.NodesAPI = nodes.API()
+        p_pyhouse_obj.APIs.Comp.WebAPI = web_server.API()
 
     def start_component_apis(self, p_pyhouse_obj):
-        p_pyhouse_obj.APIs.InternetAPI.Start(p_pyhouse_obj)
-        # p_pyhouse_obj.APIs.LogsAPI.Start(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.NodesAPI.Start(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.WebAPI.Start(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.Comp.InternetAPI.Start(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.Comp.NodesAPI.Start(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.Comp.WebAPI.Start(p_pyhouse_obj)
 
     def stop_component_apis(self, p_pyhouse_obj):
-        p_pyhouse_obj.APIs.InternetAPI.Stop()
-        # p_pyhouse_obj.APIs.LogsAPI.Stop()
-        p_pyhouse_obj.APIs.NodesAPI.Stop()
-        p_pyhouse_obj.APIs.WebAPI.Stop()
+        p_pyhouse_obj.APIs.Comp.InternetAPI.Stop()
+        p_pyhouse_obj.APIs.Comp.NodesAPI.Stop()
+        p_pyhouse_obj.APIs.Comp.WebAPI.Stop()
 
     def save_component_apis(self, p_pyhouse_obj):
         l_xml = self.write_computer_xml()
-        p_pyhouse_obj.APIs.InternetAPI.SaveXml(l_xml)
-        p_pyhouse_obj.APIs.LogsAPI.SaveXml(l_xml)
-        p_pyhouse_obj.APIs.NodesAPI.SaveXml(l_xml)
-        p_pyhouse_obj.APIs.WebAPI.SaveXml(l_xml)
+        p_pyhouse_obj.APIs.Comp.InternetAPI.SaveXml(l_xml)
+        p_pyhouse_obj.APIs.Comp.NodesAPI.SaveXml(l_xml)
+        p_pyhouse_obj.APIs.Comp.WebAPI.SaveXml(l_xml)
         return l_xml
 
 

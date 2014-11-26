@@ -81,6 +81,6 @@ class SchedulesElement(athena.LiveElement):
         #
         l_obj._DeleteFlag = l_json['Delete']
         self.m_pyhouse_obj.House.OBJs.Schedules[l_schedule_ix] = l_obj
-        self.m_pyhouse_obj.APIs.ScheduleAPI.RestartSchedule()
+        self.m_pyhouse_obj.APIs.House.ScheduleAPI.RestartSchedule()
 
 # ## END DBK

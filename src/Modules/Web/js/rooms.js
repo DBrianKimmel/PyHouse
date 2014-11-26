@@ -42,7 +42,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		self.node.style.display = 'block';
 		self.showSelectionButtons();
 		self.hideDataEntry();
-		self.fetchHouseData();
+		self.fetchDataFromServer();
 	},
 	function hideSelectionButtons(self) {
 		self.nodeById('SelectionButtonsDiv').style.display = 'none';
@@ -61,6 +61,22 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 
 // ============================================================================
 	/**
+	 * This triggers getting the data from the server.
+	 */
+	function fetchDataFromServer(self) {
+		function cb_fetchDataFromServer(p_json) {
+			globals.House.HouseObj = JSON.parse(p_json);
+			self.buildLcarSelectScreen();
+		}
+		function eb_fetchDataFromServer(p_result) {
+			Divmod.debug('---', 'rooms.eb_fetchDataFromServer() was called. ERROR = ' + p_result);
+		}
+        var l_defer = self.callRemote("getServerData");  // @ web_rooms.py
+		l_defer.addCallback(cb_fetchDataFromServer);
+		l_defer.addErrback(eb_fetchDataFromServer);
+        return false;
+	},
+	/**
 	 * Build a screen full of buttons - One for each room and some actions.
 	 */
 	function buildLcarSelectScreen(self){
@@ -69,22 +85,6 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		l_html += build_lcars_middle_menu(15, l_button_html);
 		l_html += build_lcars_bottom();
 		self.nodeById('SelectionButtonsDiv').innerHTML = l_html;
-	},
-	/**
-	 * This triggers getting the data from the server's web_rooms .
-	 */
-	function fetchHouseData(self) {
-		function cb_fetchHouseData(p_json) {
-			globals.House.HouseObj = JSON.parse(p_json);
-			self.buildLcarSelectScreen();
-		}
-		function eb_fetchHouseData(p_result) {
-			Divmod.debug('---', 'rooms.eb_fetchHouseData() was called. ERROR = ' + p_result);
-		}
-        var l_defer = self.callRemote("getServerData");  // @ web_rooms.py
-		l_defer.addCallback(cb_fetchHouseData);
-		l_defer.addErrback(eb_fetchHouseData);
-        return false;
 	},
 	/**
 	 * Event handler for room selection buttons.
@@ -104,12 +104,12 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 			globals.House.RoomObj = l_obj;
 			self.showDataEntry();
 			self.hideSelectionButtons();
-			self.fillEntry(l_obj);
+			self.buildLcarRoomDataEntryScreen(l_obj, 'handleDataEntryOnClick');
 		} else if (l_ix == 10001) {  // The "Add" button
 			self.showDataEntry();
 			self.hideSelectionButtons();
-			var l_ent = self.createEntry();
-			self.fillEntry(l_ent);
+			var l_entry = self.createEntry();
+			self.buildLcarRoomDataEntryScreen(l_entry, 'handleDataEntryOnClick');
 		} else if (l_ix == 10002) {  // The "Back" button
 			self.showWidget2('HouseMenu');
 		}
@@ -135,13 +135,6 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		l_html += build_lcars_middle_menu(15, l_entry_html);
 		l_html += build_lcars_bottom();
 		self.nodeById('DataEntryDiv').innerHTML = l_html;
-	},
-
-	/**
-	 * Fill in the schedule entry screen with all of the data for this room.
-	 */
-	function fillEntry(self, p_entry) {
-		self.buildLcarRoomDataEntryScreen(p_entry, 'handleDataOnClick');
 	},
 	function createEntry(self) {
     	//Divmod.debug('---', 'rooms.createEntry() was called. ');
@@ -180,12 +173,12 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	 * @param self is   <"Instance" of undefined.rooms.RoomsWidget>
 	 * @param p_node is the button node that was clicked on
 	 */
-	function handleDataOnClick(self, p_node) {
-		function cb_handleDataOnClick(p_json) {
-			// self.showWidget();
+	function handleDataEntryOnClick(self, p_node) {
+		function cb_handleDataEntryOnClick(p_json) {
+			self.startWidget();
 		}
-		function eb_handleDataOnClick(res){
-			Divmod.debug('---', 'rooms.eb_handleDataOnClick() was called. ERROR =' + res);
+		function eb_handleDataEntryOnClick(res){
+			Divmod.debug('---', 'rooms.eb_handleDataEntryOnClick() was called. ERROR =' + res);
 		}
 		var l_ix = p_node.name;
 		var l_defer;
@@ -194,8 +187,8 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		case '10003':  // Change Button
 	    	l_json = JSON.stringify(self.fetchEntry());
 	        l_defer = self.callRemote("saveRoomData", l_json);  // @ web_schedule
-			l_defer.addCallback(cb_handleDataOnClick);
-			l_defer.addErrback(eb_handleDataOnClick);
+			l_defer.addCallback(cb_handleDataEntryOnClick);
+			l_defer.addErrback(eb_handleDataEntryOnClick);
 			break;
 		case '10002':  // Back button
 			self.hideDataEntry();
@@ -206,11 +199,11 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 			l_obj.Delete = true;
 	    	l_json = JSON.stringify(l_obj);
 	        l_defer = self.callRemote("saveRoomData", l_json);  // @ web_rooms
-			l_defer.addCallback(cb_handleDataOnClick);
-			l_defer.addErrback(eb_handleDataOnClick);
+			l_defer.addCallback(cb_handleDataEntryOnClick);
+			l_defer.addErrback(eb_handleDataEntryOnClick);
 			break;
 		default:
-			Divmod.debug('---', 'rooms.handleDataOnClick(Default) was called. l_ix:' + l_ix);
+			Divmod.debug('---', 'rooms.handleDataEntryOnClick(Default) was called. l_ix:' + l_ix);
 			break;
 		}
 		// return false stops the resetting of the server.

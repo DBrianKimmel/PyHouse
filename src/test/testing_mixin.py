@@ -16,8 +16,8 @@
 # Import PyMh files and modules.
 from Modules.Core.data_objects import PyHouseData, PyHouseAPIs, \
             CoreServicesInformation, \
-            ComputerInformation, \
-            HouseInformation, HouseObjs, \
+            ComputerInformation, CompAPIs, \
+            HouseInformation, HouseAPIs, HouseObjs, \
             LocationData, \
             TwistedInformation, \
             XmlInformation
@@ -80,7 +80,9 @@ class SetupPyHouseObj(object):
 
     def BuildPyHouseObj(self, p_root):
         l_ret = PyHouseData()
-        l_ret.APIs = PyHouseAPIs
+        l_ret.APIs = PyHouseAPIs()
+        l_ret.APIs.Comp = CompAPIs()
+        l_ret.APIs.House = HouseAPIs()
         l_ret.Computer = self._BuildComputer()
         l_ret.House = self._BuildHouse()
         l_ret.Services = CoreServicesInformation()

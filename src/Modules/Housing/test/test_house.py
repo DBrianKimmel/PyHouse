@@ -75,11 +75,26 @@ class C02_ReadXML(SetupMixin, unittest.TestCase):
         PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse')
         self.assertEqual(self.m_pyhouse_obj.House.OBJs.Rooms, {}, 'No Rooms{}')
 
-    def test_02_Base(self):
-        l_obj = self.m_api._read_base_house(self.m_pyhouse_obj)
-        PrettyPrintAny(l_obj, 'Base House')
+    def test_02_Xml(self):
+        l_xml = self.m_api._get_house_xml(self.m_pyhouse_obj)
+        PrettyPrintAny(l_xml, 'XML')
 
-    def test_03_ReadXml(self):
+    def test_03_Base(self):
+        l_xml = self.m_api._get_house_xml(self.m_pyhouse_obj)
+        l_ret = self.m_api._read_base(l_xml)
+        PrettyPrintAny(l_ret, 'House Base')
+
+    def test_04_Location(self):
+        l_xml = self.m_api._get_house_xml(self.m_pyhouse_obj)
+        l_ret = self.m_api._read_location_xml(l_xml)
+        PrettyPrintAny(l_ret, 'House Location')
+
+    def test_05_Rooms(self):
+        l_xml = self.m_api._get_house_xml(self.m_pyhouse_obj)
+        l_ret = self.m_api._read_rooms_xml(l_xml)
+        PrettyPrintAny(l_ret, 'House Rooms')
+
+    def test_06_ReadXml(self):
         """ Read in the xml file and fill in x
         """
         l_house_obj = self.m_api.read_house_xml(self.m_pyhouse_obj)
@@ -115,7 +130,7 @@ class C04_JSON(SetupMixin, unittest.TestCase):
         self.m_api = house.API()
 
     def test_01_CreateJson(self):
-        """ Create a JSON object for Location.
+        """ Create a JSON object for Location.5
         """
         l_house = self.m_api.read_house_xml(self.m_pyhouse_obj)
         print('House: {0:}'.format(l_house))
@@ -129,7 +144,6 @@ class C05_Utilities(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         self.m_api = house.API()
-        self.m_house_obj = LocationData()
 
     def test_01_findXml(self):
         l_xml = self.m_api._get_house_xml(self.m_pyhouse_obj)
@@ -139,6 +153,23 @@ class C05_Utilities(SetupMixin, unittest.TestCase):
     def test_02_Update(self):
         PrettyPrintAny(self.m_pyhouse_obj.House, 'PyHouse')
         l_obj = self.m_api.update_pyhouse_obj(self.m_pyhouse_obj)
-        PrettyPrintAny(l_obj.House, 'PyHouse',)
+        PrettyPrintAny(l_obj.House, 'PyHouse')
+
+
+
+class C06_Modules(SetupMixin, unittest.TestCase):
+    """
+    Test starting up various modules.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        self.m_api = house.API()
+        self.m_api._store_pyhouse_obj(self.m_pyhouse_obj)
+
+    def test_01_Api(self):
+        self.m_api._module_api(self.m_pyhouse_obj, 'Hvac')
+        PrettyPrintAny(self.m_pyhouse_obj.APIs.House, 'House APIs')
+        PrettyPrintAny(self.m_pyhouse_obj.APIs.Modules, 'House APIs Modules')
 
 # ## END DBK
