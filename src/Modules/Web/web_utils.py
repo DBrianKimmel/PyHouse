@@ -44,29 +44,51 @@ WS_LIGHTS = 503
 
 
 
-def GetJSONHouseInfo(p_pyhouse_obj):
-    """Get house info for the browser.
-    This is simplified and customized so JSON encoding works.
-
-    @param p_pyhouse_obj: is the complete information
+class UtilJson(object):
     """
-    l_ret = JsonHouseData()
-    l_ret.Name = p_pyhouse_obj.House.Name
-    l_ret.Key = p_pyhouse_obj.House.Key
-    l_ret.Active = p_pyhouse_obj.House.Active
-    #
-    l_ret.Buttons = p_pyhouse_obj.House.OBJs.Buttons
-    l_ret.Controllers = p_pyhouse_obj.House.OBJs.Controllers
-    l_ret.Lights = p_pyhouse_obj.House.OBJs.Lights
-    l_ret.Location = p_pyhouse_obj.House.OBJs.Location
-    l_ret.Rooms = p_pyhouse_obj.House.OBJs.Rooms
-    l_ret.Schedules = p_pyhouse_obj.House.OBJs.Schedules
-    l_ret.Thermostats = p_pyhouse_obj.House.OBJs.Thermostats
+    """
+
+    @staticmethod
+    def _getHouseBase(p_pyhouse_obj):
+        l_ret = JsonHouseData()
+        l_ret.Name = p_pyhouse_obj.House.Name
+        l_ret.Key = p_pyhouse_obj.House.Key
+        l_ret.Active = p_pyhouse_obj.House.Active
+        return l_ret
+
+
+    @staticmethod
+    def _get_LocRoom(p_pyhouse_obj, p_ret):
+        p_ret.Location = p_pyhouse_obj.House.OBJs.Location
+        p_ret.Rooms = p_pyhouse_obj.House.OBJs.Rooms
+
+
+    @staticmethod
+    def _get_Modules(p_pyhouse_obj, p_ret):
+        p_ret.Buttons = p_pyhouse_obj.House.OBJs.Buttons
+        p_ret.Controllers = p_pyhouse_obj.House.OBJs.Controllers
+        p_ret.Lights = p_pyhouse_obj.House.OBJs.Lights
+        p_ret.Schedules = p_pyhouse_obj.House.OBJs.Schedules
+        p_ret.Thermostats = p_pyhouse_obj.House.OBJs.Thermostats
+
+
+    @staticmethod
+    def _get_AllHouseObjs(p_pyhouse_obj):
+        l_ret = UtilJson._getHouseBase(p_pyhouse_obj)
+        UtilJson._get_LocRoom(p_pyhouse_obj, l_ret)
+        UtilJson._get_Modules(p_pyhouse_obj, l_ret)
+        return l_ret
+
+
+
+def GetJSONHouseInfo(p_pyhouse_obj):
+    """
+    Get house info for the browser.
+
+    This is simplified and customized so JSON encoding works.
+    """
+    l_ret = UtilJson._get_AllHouseObjs(p_pyhouse_obj)
     l_json = unicode(JsonUnicode().encode_json(l_ret))
-    # try:
-    #    PrettyPrintAny(l_ret, 'JSON send House Info')
-    # except:
-    #    pass
     return l_json
 
 def GetJSONComputerInfo(p_pyhouse_obj):

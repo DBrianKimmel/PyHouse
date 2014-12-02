@@ -11,8 +11,6 @@
 
 
 SERIAL_XML = """
-        <InterfaceType>Serial</InterfaceType>
-        <Port>/dev/ttyUSB0</Port>
         <BaudRate>19200</BaudRate>
         <ByteSize>8</ByteSize>
         <Parity>N</Parity>

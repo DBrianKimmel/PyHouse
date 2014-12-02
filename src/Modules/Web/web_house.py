@@ -63,20 +63,18 @@ class HouseElement(athena.LiveElement):
             except AttributeError:
                 print("web_lights - Failed to delete - JSON: {0:}".format(l_json))
             return
-        l_obj = self.m_pyhouse_obj.House.OBJs
-        l_obj.Name = l_json['Name']
-        l_obj.Key = int(l_json['Key'])
-        l_obj.Active = True
-        l_obj.Location.Street = l_json['Location']['Street']
-        l_obj.Location.City = l_json['Location']['City']
-        l_obj.Location.State = l_json['Location']['State']
-        l_obj.Location.ZipCode = l_json['Location']['ZipCode']
-        l_obj.Location.Phone = l_json['Location']['Phone']
-        l_obj.Location.Latitude = l_json['Location']['Latitude']
-        l_obj.Location.Longitude = l_json['Location']['Longitude']
-        l_obj.Location.TimeZoneName = l_json['Location']['TimeZoneName']
-        PrettyPrintAny(l_obj, 'Obj')
-        PrettyPrintAny(l_obj.Location, 'Obj.Location')
-        self.m_pyhouse_obj.House.OBJs = l_obj
+        self.m_pyhouse_obj.House.Name = l_json['Name']
+        self.m_pyhouse_obj.House.Key = int(l_json['Key'])
+        self.m_pyhouse_obj.House.Active = True
+        l_obj = self.m_pyhouse_obj.House.OBJs.Location
+        l_obj.Street = l_json['Location']['Street']
+        l_obj.City = l_json['Location']['City']
+        l_obj.State = l_json['Location']['State']
+        l_obj.ZipCode = l_json['Location']['ZipCode']
+        l_obj.Phone = l_json['Location']['Phone']
+        l_obj.Latitude = l_json['Location']['Latitude']
+        l_obj.Longitude = l_json['Location']['Longitude']
+        l_obj.TimeZoneName = l_json['Location']['TimeZoneName']
+        self.m_pyhouse_obj.House.OBJs.Location = l_obj
 
 # ## END DBK

@@ -88,7 +88,7 @@ class Test_02_Find(SetupMixin, unittest.TestCase):
         PrettyPrintAny(self.m_pyhouse_obj.House.OBJs.Lights, 'Lights')
 
     def test_02_FindObj(self):
-        l_obj = tools.get_light_object(self.m_pyhouse_obj, 'outside_gar', None)
+        l_obj = tools.get_light_object(self.m_pyhouse_obj, 'Insteon Light', None)
         PrettyPrintAny(l_obj, 'Light Obj')
         self.assertIsNotNone(l_obj, 'Must be a light obj')
 

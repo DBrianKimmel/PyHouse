@@ -12,8 +12,6 @@
 
 
 USB_XML = """
-        <InterfaceType>USB</InterfaceType>
-        <Port>None</Port>
         <Vendor>6109</Vendor>
         <Product>21760</Product>
 """

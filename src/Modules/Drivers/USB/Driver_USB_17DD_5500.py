@@ -30,7 +30,7 @@ import usb
 # export PYUSB_DEBUG_LEVEL
 
 # Import PyMh files
-import USB_driver
+from Modules.Drivers.USB import USB_driver
 
 callLater = reactor.callLater
 

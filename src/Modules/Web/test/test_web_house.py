@@ -55,7 +55,7 @@ class C01_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.controller.tag, 'Controller', 'XML - No Controller section')
 
     def test_02_Json(self):
-        l_api = web_house.RoomsElement(self.m_workspace_obj, None)
+        l_api = web_house.HouseElement(self.m_workspace_obj, None)
         l_json = l_api.getServerData()
         PrettyPrintAny(l_json, 'JSON', 70)
 

@@ -130,12 +130,6 @@ class Select(testcase.TestCase):
         f = liveform.LiveForm(
             self.submit,
             [liveform.Parameter('argument', None, unicode)])
-        f.docFactory = loaders.stan(tags.form(render = tags.directive('liveElement'))[
-            tags.select(name = "argument")[
-                tags.option(value = "apples")["apples"],
-                tags.option(value = "oranges")["oranges"]],
-            tags.input(type = 'submit', render = tags.directive('submitbutton'))])
-        f.setFragmentParent(self)
         return f
 
 

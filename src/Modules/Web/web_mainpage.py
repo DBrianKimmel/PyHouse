@@ -404,13 +404,6 @@ class Workspace(athena.LiveElement):
         return l_element
 
     @athena.expose
-    def logs(self, p_params):
-        LOG.info("Logs loaded into browser")
-        l_element = web_logs.LogsElement(self, p_params)
-        l_element.setFragmentParent(self)
-        return l_element
-
-    @athena.expose
     def rooms(self, p_params):
         LOG.info("Rooms loaded into browser")
         l_element = web_rooms.RoomsElement(self, p_params)

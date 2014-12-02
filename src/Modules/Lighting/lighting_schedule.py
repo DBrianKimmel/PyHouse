@@ -25,7 +25,7 @@ class LightingSchedule(object):
     """
 
     def _find_event(self, p_schedule):
-        if not p_event.Active:
+        if not p_schedule.Active:
             return None
         if not p_schedule.ScheduleType == 'LightingEvent':
             return None

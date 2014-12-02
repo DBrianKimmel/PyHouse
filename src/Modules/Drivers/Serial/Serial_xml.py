@@ -37,12 +37,19 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
     def write_interface_xml(self, p_xml, p_controller_obj):
         self.put_int_element(p_xml, 'BaudRate', p_controller_obj.BaudRate)
         self.put_int_element(p_xml, 'ByteSize', p_controller_obj.ByteSize)
-        self.put_bool_element(p_xml, 'DsrDtr', p_controller_obj.DsrDtr)
         self.put_text_element(p_xml, 'Parity', p_controller_obj.Parity)
-        self.put_bool_element(p_xml, 'RtsCts', p_controller_obj.RtsCts)
         self.put_float_element(p_xml, 'StopBits', p_controller_obj.StopBits)
-        self.put_float_element(p_xml, 'Timeout', p_controller_obj.Timeout)
-        self.put_bool_element(p_xml, 'XonXoff', p_controller_obj.XonXoff)
+        try:
+            self.put_bool_element(p_xml, 'DsrDtr', p_controller_obj.DsrDtr)
+            self.put_bool_element(p_xml, 'RtsCts', p_controller_obj.RtsCts)
+            self.put_float_element(p_xml, 'Timeout', p_controller_obj.Timeout)
+            self.put_bool_element(p_xml, 'XonXoff', p_controller_obj.XonXoff)
+        except AttributeError:
+            self.put_bool_element(p_xml, 'DsrDtr', False)
+            self.put_bool_element(p_xml, 'RtsCts', False)
+            self.put_float_element(p_xml, 'Timeout', 1.0)
+            self.put_bool_element(p_xml, 'XonXoff', False)
+
         return p_xml
 
 # ## END DBK

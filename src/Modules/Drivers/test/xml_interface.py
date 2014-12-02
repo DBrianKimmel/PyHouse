@@ -10,8 +10,8 @@
 """
 
 INTERFACE_XML = """
+        <InterfaceType>USB</InterfaceType>
+        <Port>None</Port>
 """
 
-INTERFACE_XSD = """
-"""
 # ## END DBK

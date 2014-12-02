@@ -1,4 +1,10 @@
-<PyHouse>
+<?xml version="1.0" encoding="utf-8"?>
+
+<PyHouse
+    xmlns="http://PyHouse.org/schemas"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://PyHouse.org/schemas PyHouse.xsd">
+
     <ComputerDivision>
         <InternetSection>
             <Internet Name="Connection-1" Key="0" Active="True">

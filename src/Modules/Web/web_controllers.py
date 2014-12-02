@@ -1,15 +1,15 @@
-'''
--*- test-case-name: PyHouse.src.Modules.web.test.test_web_controllers -*-
+"""
+-*- test-case-name: PyHouse.src.Modules.Web.test.test_web_controllers -*-
 
-@name: PyHouse/src/Modules/web/web_controllers.py
+@name: PyHouse/src/Modules/Web/web_controllers.py
 @author: D. Brian Kimmel
 @contact: D.BrianKimmel@gmail.com
 @Copyright (c) 2013-2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Apr 8, 2013
-@summary: Web interface to schedules for the selected house.
+@summary: Web interface to controllers for the selected house.
 
-'''
+"""
 
 # Import system type stuff
 import os
@@ -29,13 +29,8 @@ webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
 
 g_debug = 0
-# 0 = off
-# 1 = log extra info
-# 2 = major routine entry
-# 3 = Config file handling
-# 4 = Dump JSON
-# + = NOT USED HERE
 LOG = Logger.getLogger('PyHouse.webCntlr    ')
+
 
 
 class ControllersElement(athena.LiveElement):
@@ -104,8 +99,16 @@ class ControllersElement(athena.LiveElement):
             l_obj.GroupNumber = l_json['GroupNumber']
             l_obj.GroupList = l_json['GroupList']
             l_obj.IsMaster = l_json['IsMaster']
+            l_obj.IsController = l_json['IsController']
             l_obj.IsResponder = l_json['IsResponder']
             l_obj.ProductKey = l_json['ProductKey']
+        elif l_obj.ControllerFamily == 'UPB':
+            l_obj.UPBAddress = l_json['UPBAddress']
+            l_obj.UPBPassword = l_json['UPBPassword']
+            l_obj.UPBNetworkID = l_json['UPBNetworkID']
+        if l_obj.InterfaceType == 'Serial':
+            l_obj.BaudRate = l_json['BaudRate']
         self.m_pyhouse_obj.House.OBJs.Controllers[l_controller_ix] = l_obj
+        LOG.info('Controller Added - {}'.format(l_obj))
 
 # ## END DBK

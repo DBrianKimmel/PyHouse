@@ -70,8 +70,6 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
 
 
     def WriteXml(self, p_out_xml, p_device):
-        if g_debug >= 1:
-            LOG.info('Insteon Write {}'.format(p_device.Name))
         self.put_text_element(p_out_xml, 'Address', conversions.int2dotted_hex(p_device.InsteonAddress, 3))
         self.put_int_element(p_out_xml, 'DevCat', conversions.int2dotted_hex(p_device.DevCat, 2))
         self.put_text_element(p_out_xml, 'GroupList', p_device.GroupList)

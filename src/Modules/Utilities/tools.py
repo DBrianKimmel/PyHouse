@@ -22,15 +22,15 @@ from xml.dom import minidom
 g_debug = 1
 
 
+
 class PrettyPrintAny(object):
-    """
-    """
 
     def __init__(self, p_any, title = '', maxlen = 120):
         self.m_indent = 0
         self.m_type = type(p_any)
         print('===== ', title, '===== ', self.m_type)
         self._type_dispatcher(p_any, maxlen, self.m_indent)
+
 
     def _type_dispatcher(self, p_any, maxlen, indent):
         if isinstance(p_any, dict):
@@ -47,18 +47,20 @@ class PrettyPrintAny(object):
             self._print_object(p_any, maxlen = maxlen, indent = indent)
         print('---------------------------------')
 
+
     def _print_string(self, p_obj, maxlen, indent):
         print(PrettyPrintCols(('', p_obj), [indent, maxlen - indent], ' '))
+
 
     def _print_unicode(self, p_obj, maxlen, indent):
         print(PrettyPrintCols(('', p_obj), [indent, maxlen - indent], ' '))
 
+
     def _print_dict(self, p_dict, maxlen, indent):
-        # p_format = "%-30s %s"
         l_tabbedwidths = [indent, 30, maxlen - 30]
         for key, val in p_dict.iteritems():
             print(PrettyPrintCols(('', str(key), str(val)), l_tabbedwidths, ' '))
-            # print(p_format % (str(key) + ':', val))
+
 
     def _print_XML(self, p_element, maxlen, indent):
         """Return a pretty-printed XML string for the Element.
@@ -83,7 +85,7 @@ class PrettyPrintAny(object):
         for l_line in p_obj:
             print('{}\t{}'.format(l_ix, l_line))
             l_ix += 1
-        # print(_format_line(p_obj, maxlen = maxlen))
+
 
     def _print_object(self, p_obj, maxlen, indent = 24, maxspew = 2000):
         l_col_1_width = 28
@@ -91,13 +93,13 @@ class PrettyPrintAny(object):
         l_attrs = []
         l_tabbedwidths = [indent, l_col_1_width - l_tab, maxlen - l_col_1_width - l_tab]
         l_filtered = filter(lambda aname: not aname.startswith('__'), dir(p_obj))
-        # for l_slot in dir(p_obj):
         for l_slot in l_filtered:
             l_attr = getattr(p_obj, l_slot)
             l_attrs.append((l_slot, l_attr))
         l_attrs.sort()
         for (attr, l_val) in l_attrs:
             print(PrettyPrintCols(('', attr, truncstring(str(l_val), maxspew)), l_tabbedwidths, ' '))
+
 
 
 def truncstring(s, maxlen = 2000):
