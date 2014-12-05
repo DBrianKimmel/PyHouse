@@ -93,7 +93,7 @@ class Utility(ReadWriteConfigXml):
 
     def _xml_save_loop(self, p_pyhouse_obj):
         self.m_pyhouse_obj.Twisted.Reactor.callLater(REPEAT_DELAY, self._xml_save_loop, p_pyhouse_obj)
-        self.SaveXml()
+        self.WriteXml()
 
     def create_pyhouse_obj(self, p_parent):
         l_pyhouse_obj = PyHouseData()
@@ -135,19 +135,19 @@ class API(Utility):
         self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self._xml_save_loop, p_pyhouse_obj)
 
     def Stop(self):
-        self.SaveXml()
+        self.WriteXml()
         self.m_pyhouse_obj.APIs.Comp.ComputerAPI.Stop()
         self.m_pyhouse_obj.APIs.House.HouseAPI.Stop()
         LOG.info("Stopped.")
 
-    def SaveXml(self):
+    def WriteXml(self):
         """
         Take a snapshot of the current Configuration/Status and write out an XML file.
         """
         # LOG.info("Saving XML.")
         l_xml = self.create_empty_xml_skeleton()
-        self.m_pyhouse_obj.APIs.Comp.ComputerAPI.SaveXml(l_xml)
-        self.m_pyhouse_obj.APIs.House.HouseAPI.SaveXml(l_xml)
+        self.m_pyhouse_obj.APIs.Comp.ComputerAPI.WriteXml(l_xml)
+        self.m_pyhouse_obj.APIs.House.HouseAPI.WriteXml(l_xml)
         ConfigAPI().write_xml_config_file(self.m_pyhouse_obj, l_xml, self.m_pyhouse_obj.Xml.XmlFileName)
         LOG.info("Saved XML.")
 

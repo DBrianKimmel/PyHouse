@@ -391,7 +391,7 @@ class C03_Read(SetupMixin, unittest.TestCase):
 
 
 
-class C04_Write(SetupMixin, unittest.TestCase):
+class C04_WriteXml(SetupMixin, unittest.TestCase):
     """
     This tests the ConfigTools section
     """
@@ -400,7 +400,7 @@ class C04_Write(SetupMixin, unittest.TestCase):
         self.m_pyhouse_obj = SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         self.m_api = xml_tools.XmlConfigTools()
 
-    def test_01_writeBaseObject(self):
+    def test_01_BaseObject(self):
         l_base_obj = BaseLightingData()
         self.m_api.read_base_object_xml(l_base_obj, self.m_xml.light)
         l_base_obj.Key = 43

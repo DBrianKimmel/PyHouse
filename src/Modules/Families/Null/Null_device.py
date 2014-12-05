@@ -26,10 +26,8 @@ class API(object):
 
     def Start(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        LOG.error('ERROR - Null_device Start was called')
 
     def ReadXml(self, p_obj, p_xml):
-        LOG.error('ERROR - Null_device ReadXml was called')
         pass
 
     def SaveXml(self, p_xml):

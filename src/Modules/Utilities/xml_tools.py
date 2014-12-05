@@ -121,7 +121,7 @@ class PutGetXML(object):
             l_var = int(l_xml)
         except (ValueError, TypeError):
             l_var = default
-            print('XMLTools - Getint - ERROR invalid  int found for:{0:} - {1:}=>False'.format(p_name, l_xml))
+            print('XMLTools - GetInt - ERROR - Invalid Int found for:{} - {}=>False'.format(p_name, l_xml))
         return l_var
 
     def put_int_attribute(self, p_xml_element, p_name, p_int):

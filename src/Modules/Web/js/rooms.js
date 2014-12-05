@@ -88,9 +88,9 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	},
 	/**
 	 * Event handler for room selection buttons.
-	 * 
+	 *
 	 * The user can click on a room button, the "Add" button or the "Back" button.
-	 * 
+	 *
 	 * @param self is    <"Instance" of undefined.schedules.SchedulesWidget>
 	 * @param p_node is  the node of the button that was clicked.
 	 */
@@ -125,7 +125,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		var l_room = arguments[1];
 		var l_entry_html = "";
 		l_entry_html += buildLcarTextWidget(self, 'Name', 'Room Name', l_room.Name);
-		l_entry_html += buildLcarTextWidget(self, 'Key', 'Room Index', l_room.Key);
+		l_entry_html += buildLcarTextWidget(self, 'Key', 'Room Index', l_room.Key, 'disabled');
 		l_entry_html += buildLcarTrueFalseWidget(self, 'RoomActive', 'Active ?', l_room.Active);
 		l_entry_html += buildLcarTextWidget(self, 'Comment', 'Comment', l_room.Comment);
 		l_entry_html += buildLcarTextWidget(self, 'Corner', 'Corner', l_room.Corner);
@@ -141,7 +141,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
         var l_data = {
 			Name : 'Change Me',
 			Key : Object.keys(globals.House.HouseObj.Rooms).length,
-			Active : false,
+			Active : true,
 			Comment : '',
 			Corner : '',
 			Size : '',

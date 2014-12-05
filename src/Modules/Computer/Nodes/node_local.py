@@ -1,7 +1,7 @@
 """
--*- test-case-name: PyHouse.src.Modules.Core.test.test_node_local -*-
+-*- test-case-name: PyHouse.src.Modules.Comouter.Nodes.test.test_node_local -*-
 
-@name: PyHouse/src/Modules/Core/node_local.py
+@name: PyHouse/src/Modules/Computer/Nodes/node_local.py
 @author: D. Brian Kimmel
 @contact: D.BrianKimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
@@ -22,7 +22,7 @@ Once overridden the new role will "stick" by being written into the local XML fi
 """
 
 # Import system type stuff
-import fnmatch
+import fnmatch  # Filename matching with shell patterns
 import netifaces
 import os
 import platform
@@ -46,14 +46,15 @@ __all__ = ['NODE_NOTHING', 'NODE_LIGHTS',
            ]
 
 
-NODE_NOTHING = 0x0000
-NODE_LIGHTS = 0x0001
-NODE_PANDORA = 0x0002
-NODE_CAMERA = 0x0004
-NODE_PIFACECAD = 0x0008
-NODE_V6ROUTER = 0x0010
-NODE_WINDOWS = 0x0020
-NODE_TUNNEL = 0x0040
+NODE_NOTHING = 0x0000  # a basic node with no special functions
+NODE_LIGHTS = 0x0001  # Node has an attached controller for Lights (optionally other stuff)
+NODE_PANDORA = 0x0002  # Node can use pianobar to receive Pandora streams
+NODE_CAMERA = 0x0004  # Pi with attached camera (not USB camera)
+NODE_PIFACECAD = 0x0008  #
+NODE_V6ROUTER = 0x0010  # Iv6 Router node
+NODE_WINDOWS = 0x0020  # Windowd - not Linux
+NODE_TUNNEL = 0x0040  # IPv6 Tunnel
+NODE_IR = 0x0080  # Infra-red receiver and optional transmitter
 
 
 class GetAllInterfaceData(object):
@@ -179,8 +180,8 @@ class ReadWriteConfigXml(XmlConfigTools):
         l_node_obj.NodeRole = self.get_int_from_xml(p_node_xml, 'NodeRole')
         try:
             l_node_obj.NodeInterfaces = self._read_interfaces_xml(p_node_xml.find('InterfaceSection'))
-        except:
-            pass
+        except AttributeError as e_err:
+            print('ERROR OneNodeRead error {}'.format(e_err))
         return l_node_obj
 
     def read_all_nodes_xml(self, p_pyhouse_obj):
@@ -217,6 +218,7 @@ class ReadWriteConfigXml(XmlConfigTools):
     def _write_one_node_xml(self, p_node_obj):
         l_entry = self.write_base_object_xml('Node', p_node_obj)
         self.put_text_element(l_entry, 'ConnectionAddressV4', p_node_obj.ConnectionAddr_IPv4)
+        self.put_text_element(l_entry, 'ConnectionAddressV6', p_node_obj.ConnectionAddr_IPv6)
         self.put_int_element(l_entry, 'NodeRole', p_node_obj.NodeRole)
         l_entry.append(self._write_interfaces_xml(p_node_obj.NodeInterfaces))
         return l_entry

@@ -192,7 +192,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 			Key				: fetchTextWidget(self, 'Key'),
 			Active			: fetchTrueFalseWidget(self, 'Active'),
 			Comment			: fetchTextWidget(self, 'Comment'),
-			Coords      	: fetchTextWidget(self, 'LightCoords'),
+			Coords      	: fetchTextWidget(self, 'Coords'),
 			IsDimmable    	: fetchTrueFalseWidget(self, 'Dimmable'),
 			ControllerFamily: fetchSelectWidget(self, 'Family'),
 			RoomName    	: fetchSelectWidget(self, 'RoomName'),

@@ -175,7 +175,7 @@ class API(Utility):
         self.stop_house_parts()
         LOG.info("Stopped.")
 
-    def SaveXml(self, p_xml):
+    def WriteXml(self, p_xml):
         """
         Take a snapshot of the current Configuration/Status and write out an XML file.
         """

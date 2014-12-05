@@ -50,16 +50,6 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 
 // ============================================================================
 	/**
-	 * Build a screen full of buttons - One for each light and some actions.
-	 */
-	function buildLcarSelectScreen(self){
-		var l_button_html = buildLcarSelectionButtonsTable(globals.House.HouseObj.Lights, 'handleMenuOnClick');
-		var l_html = build_lcars_top('Control Lights', 'lcars-salmon-color');
-		l_html += build_lcars_middle_menu(10, l_button_html);
-		l_html += build_lcars_bottom();
-		self.nodeById('SelectionButtonsDiv').innerHTML = l_html;
-	},
-	/**
 	 * This triggers getting the house data from the server.
 	 */
 	function fetchHouseData(self) {
@@ -70,15 +60,23 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 		function eb_fetchHouseData(res) {
 			Divmod.debug('---', 'controlLights.eb_fetchHouseData() was called.  ERROR ' + res);
 		}
-		// Divmod.debug('---', 'controlLights.fetchHouseData() was called.');
+		Divmod.debug('---', 'controlLights.fetchHouseData() was called.');
        	var l_defer = self.callRemote("getHouseData");  // call server @ web_controlLights.py
 		l_defer.addCallback(cb_fetchHouseData);
 		l_defer.addErrback(eb_fetchHouseData);
         return false;
 	},
-
-
-// ============================================================================
+	/**
+	 * Build a screen full of buttons - One for each light and some actions.
+	 */
+	function buildLcarSelectScreen(self){
+		Divmod.debug('---', 'controlLights.buildLcarSelectScreen() was called.');
+		var l_button_html = buildLcarSelectionButtonsTable(globals.House.HouseObj.Lights, 'handleMenuOnClick');
+		var l_html = build_lcars_top('Control Lights', 'lcars-salmon-color');
+		l_html += build_lcars_middle_menu(15, l_button_html);
+		l_html += build_lcars_bottom();
+		self.nodeById('SelectionButtonsDiv').innerHTML = l_html;
+	},
 	/**
 	 * Event handler for light selection buttons.
 	 * 
@@ -96,7 +94,7 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 			var l_obj = globals.House.HouseObj.Lights[l_ix];
 			globals.House.LightObj = l_obj;
 			globals.House.Self = self;
-			// self.showDataEntry();
+			self.showDataEntry();
 			self.hideSelectionButtons();
 			self.fillEntry(l_obj);
 		} else if (l_ix == 10002) {  // The "Back" button

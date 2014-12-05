@@ -118,8 +118,7 @@ class API(Utility):
         Load and start the family if there is a controller in the house for the family.
         Runs Device_<family>.API.Start()
         """
-        if g_debug >= 1:
-            LOG.info("Starting lighting families.")
+        LOG.info("Starting lighting families.")
         for l_family_obj in p_house_obj.FamilyData.itervalues():
             if g_debug >= 1:
                 LOG.debug('Starting Family {0:}'.format(l_family_obj.Name))

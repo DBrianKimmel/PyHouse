@@ -21,10 +21,10 @@ from Modules.Web.test.xml_web import WEB_SERVER_XML
 
 COMPUTER_DIVISION_XML = '\n'.join([
     "<ComputerDivision>",
-    WEB_SERVER_XML,
-    INTERNET_XML,
     NODES_XML,
     COMMUNICATION_XML,
+    WEB_SERVER_XML,
+    INTERNET_XML,
     "</ComputerDivision>",
     ''
 ])

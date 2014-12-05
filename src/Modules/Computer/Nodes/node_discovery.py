@@ -22,7 +22,7 @@ This Module:
     Uses IPv6 multicast to discover nodes and overrides IPv4 contact info.
     Uses neighbor discovery to find other potential devices that may play a part in home automation.
 
-TODO: Delete nodes that have gone away.
+TODO: Mark Inactive nodes that have gone away.
       Check for new nodes periodically.
       Inform domain module that something happened.
 """
@@ -42,7 +42,7 @@ LOG = Logger.getLogger('PyHouse.NodeDiscovry')
 
 
 """
-IPv6:
+IPv6 first 16bit meaning:
 FF01::        Interface-local scope
 FF02::        Link-Local scope
 FF03::        Realm-Local scope
@@ -55,9 +55,10 @@ PYHOUSE_MULTICAST_IP_V4 = '234.35.36.37'
 PYHOUSE_MULTICAST_IP_V6 = 'ff05::35:3637'
 
 PYHOUSE_DISCOVERY_PORT = 8582
-WHOS_THERE = "Who's There?"
-I_AM = "I am."
-MAX_TTL = 4
+WHOS_THERE = "Who's There?"  # Query
+I_AM = "I am."  # Response
+MAX_TTL = 4  # keep mostly local
+
 
 
 class NodeUtil(object):
@@ -69,6 +70,7 @@ class NodeUtil(object):
         l_node.ConnectionAddr_IPv4 = p_addr_v4
         l_node.ConnectionAddr_IPv6 = p_addr_v6
         return l_node
+
 
 
 class DGramUtil(object):
@@ -88,7 +90,7 @@ class DGramUtil(object):
     def set_node_0_addr(self, p_address, p_pyhouse_obj):
         if p_pyhouse_obj.Computer.Nodes[0].ConnectionAddr_IPv4 == None:
             p_pyhouse_obj.Computer.Nodes[0].ConnectionAddr_IPv4 = p_address[0]
-            LOG.info("Update our node (slot 0) address to {}".format(p_address[0]))
+            # LOG.info("Update our node (slot 0) address to {}".format(p_address[0]))
 
     def _create_node(self, p_datagram, p_address, p_pyhouse_obj):
         l_node = NodeUtil().initialize_node(p_address[0], None)
@@ -106,14 +108,14 @@ class DGramUtil(object):
         Client will send out a "WHOS_THERE" query.
         This will find out all nodes that are subscribed to the PyHouse discovery multicast address.
         """
-        LOG.info('Client sent WHOs There')
+        LOG.info("Sent WHOS_THERE to {}".format(p_address[0]))
         p_transport.write(WHOS_THERE, (p_address, PYHOUSE_DISCOVERY_PORT))
 
     def send_response(self, p_transport, p_address, p_pyhouse_obj):
         """
         Server will send a message out in response to a "WHOS_THERE" query.
         """
-        LOG.info('Send I Am Response')
+        LOG.info('Send I_AM Response to {}'.format(p_transport.getHost()))
         self.set_node_0_addr(p_address, p_pyhouse_obj)
         l_str = I_AM + ' ' + p_pyhouse_obj.Computer.Nodes[0].Name
         p_transport.write(l_str, p_address)
@@ -123,6 +125,7 @@ class DGramUtil(object):
         p_transport.joinGroup(p_address)
         l_interface = p_transport.getOutgoingInterface()
         return l_interface
+
 
 
 class ServerProtocolV4(DatagramProtocol):
@@ -155,6 +158,7 @@ class ServerProtocolV4(DatagramProtocol):
             DGramUtil()._create_node(p_datagram, p_address, self.m_pyhouse_obj)
 
 
+
 class ClientProtocolV4(ConnectedDatagramProtocol):
     """
     Find other PyHouse nodes within range.
@@ -183,6 +187,7 @@ class ClientProtocolV4(ConnectedDatagramProtocol):
             DGramUtil().set_node_0_addr(p_address, self.m_pyhouse_obj)
 
 
+
 class Utility(object):
     """
     Use UDP multicast to discover the other PyHouse nodes that are local.
@@ -196,7 +201,7 @@ class Utility(object):
                     PYHOUSE_DISCOVERY_PORT,
                     ServerProtocolV4(p_pyhouse_obj),
                     listenMultiple = True)
-        LOG.info('Started {}'.format(l_port))
+        LOG.info('Started Server {}'.format(l_port))
         return l_port
 
     def _start_discovery_client(self, p_pyhouse_obj):
@@ -204,7 +209,7 @@ class Utility(object):
                     PYHOUSE_DISCOVERY_PORT,
                     ClientProtocolV4(p_pyhouse_obj),
                     listenMultiple = True)
-        LOG.info('Started {}'.format(l_port))
+        LOG.info('Started Client {}'.format(l_port))
         return l_port
 
     def start_node_discovery_service(self, p_pyhouse_obj):
@@ -226,6 +231,7 @@ class Utility(object):
         except RuntimeError:
             LOG.info('Service already installed.')
         self.m_service_installed = True
+
 
 
 class API(Utility):

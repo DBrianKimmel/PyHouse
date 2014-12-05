@@ -180,7 +180,7 @@ class API(Utilities):
         Keep on running after the snapshot.
         """
         LOG.info("Saving XML")
-        self.m_setupAPI.SaveXml()
+        self.m_setupAPI.WriteXml()
         LOG.info("Saved XML.\n")
 
     def Quit(self):

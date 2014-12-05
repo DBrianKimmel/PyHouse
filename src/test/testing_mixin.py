@@ -95,7 +95,7 @@ class SetupPyHouseObj(object):
         l_xml = XmlData()
         l_xml.root = p_root_xml
         try:
-            l_xml.house_div = p_root_xml.find('HouseDivision')
+            l_xml.house_div = l_xml.root.find('HouseDivision')
             #
             l_xml.button_sect = l_xml.house_div.find('ButtonSection')
             l_xml.controller_sect = l_xml.house_div.find('ControllerSection')
@@ -112,24 +112,24 @@ class SetupPyHouseObj(object):
             l_xml.schedule = l_xml.schedule_sect.find('Schedule')
             l_xml.thermostat = l_xml.thermostat_sect.find('Thermostat')
             #
-            l_xml.computer_div = p_root_xml.find('ComputerDivision')
-            l_xml.internet_sect = l_xml.computer_div.find('InternetSection')
-            l_xml.locater_sect = l_xml.internet_sect.find('LocaterUrlSection')
-            l_xml.updater_sect = l_xml.internet_sect.find('UpdaterUrlSection')
-            l_xml.log_sect = l_xml.computer_div.find('LogSection')
+            #
+            #
+            l_xml.computer_div = l_xml.root.find('ComputerDivision')
+            #
             l_xml.node_sect = l_xml.computer_div.find('NodeSection')
-            l_xml.web_sect = l_xml.computer_div.find('WebSection')
-
-            l_xml.internet = l_xml.internet_sect.find('Internet')
-            l_xml.dyndns_sect = l_xml.internet.find('DynamicDnsSection')
-            l_xml.dyndns = l_xml.dyndns_sect.find('DynamicDNS')
-
             l_xml.node = l_xml.node_sect.find('Node')
             l_xml.interface_sect = l_xml.node.find('InterfaceSection')
             l_xml.interface = l_xml.interface_sect.find('Interface')
-        except AttributeError:
-            pass
-        # PrettyPrintAny(l_xml, 'TestMixin - Self', 100)
+            #
+            l_xml.internet_sect = l_xml.computer_div.find('InternetSection')
+            l_xml.internet = l_xml.internet_sect.find('Internet')
+            l_xml.locater_sect = l_xml.internet_sect.find('LocaterUrlSection')
+            l_xml.updater_sect = l_xml.internet_sect.find('UpdaterUrlSection')
+            #
+            l_xml.web_sect = l_xml.computer_div.find('WebSection')
+
+        except AttributeError as e_err:
+            print('ERROR {}'.format(e_err))
         return l_xml
 
     def setUp(self):
