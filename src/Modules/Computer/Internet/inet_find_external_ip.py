@@ -30,7 +30,7 @@ from Modules.Utilities import convert
 # from Modules.Utilities.tools import PrettyPrintAny
 
 
-LOG = logging_pyh.getLogger('PyHouse.InternetFnd ')
+LOG = logging_pyh.getLogger('PyHouse.InternetFnd    ')
 
 
 class FindExternalIpAddress(object):

@@ -24,7 +24,7 @@ from Modules.Families.family_utils import FamUtil
 from Modules.Computer import logging_pyh as Logger
 
 g_debug = 0
-LOG = Logger.getLogger('PyHouse.Thermostat  ')
+LOG = Logger.getLogger('PyHouse.Thermostat     ')
 
 
 
@@ -78,7 +78,6 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         except AttributeError as e_err:
             l_msg = 'ReadAllThermostats AttributeError {0:}'.format(e_err)
             LOG.error(l_msg)
-            # print(l_msg)
         return l_ret
 
 
@@ -97,17 +96,13 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
 
     def _write_thermostat_family(self, p_pyhouse_obj, p_out_xml, p_obj):
         try:
-            l_api = p_pyhouse_obj.House.DeviceOBJs.FamilyData[p_obj.ControllerFamily].FamilyModuleAPI
-            # l_api.insert_device_xml(p_out_xml, p_obj)
+            l_api = p_pyhouse_obj.House.RefOBJs.FamilyData[p_obj.ControllerFamily].FamilyModuleAPI
             l_api.WriteXml(p_out_xml, p_obj)
         except (KeyError, AttributeError) as e_err:
             l_msg = 'Write Family Error {}  Family:{}'.format(e_err, p_obj.ControllerFamily)
             LOG.error(l_msg)
-            # print(l_msg)
 
     def _write_one_thermostat_xml(self, p_pyhouse_obj, p_thermostat_obj):
-        """
-        """
         l_out_xml = self._write_thermostat_base(p_thermostat_obj)
         self._write_thermostat_data(l_out_xml, p_thermostat_obj)
         self._write_thermostat_family(p_pyhouse_obj, l_out_xml, p_thermostat_obj)
@@ -121,7 +116,6 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         self.m_count = 0
         try:
             for l_obj in p_pyhouse_obj.House.DeviceOBJs.Thermostats.itervalues():
-                # print('Name: {}'.format(l_obj))
                 l_entry = self._write_one_thermostat_xml(p_pyhouse_obj, l_obj)
                 l_xml.append(l_entry)
                 self.m_count += 1
