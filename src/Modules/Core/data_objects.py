@@ -17,7 +17,7 @@ Specific data may be loaded into some attributes for unit testing.
 """
 from nevow.livepage import self
 
-__version_info__ = (1, 3, 01)
+__version_info__ = (1, 3, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
 

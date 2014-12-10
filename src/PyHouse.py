@@ -61,9 +61,11 @@ import errno
 import os
 import platform
 import signal
+from twisted.internet import reactor
+from twisted.application.service import Application
 
 # Import PyMh files and modules.
-from Modules.Core import setup_logging  # Executes while loading
+from Modules.Core import data_objects
 from Modules.Core import setup
 from Modules.Computer import logging_pyh as Logger
 
@@ -142,7 +144,29 @@ class Utilities(object):
 class API(Utilities):
     """
     """
-    m_pyhouse_obj = None
+    m_pyhouse_obj = data_objects.PyHouseData()
+
+    def _setup_apis(self):
+        self.m_pyhouse_obj.APIs.Comp = data_objects.CompAPIs()
+        self.m_pyhouse_obj.APIs.House = data_objects.HouseAPIs()
+        self.m_pyhouse_obj.APIs.PyHouseAPI = self
+        self.m_pyhouse_obj.APIs.CoreSetupAPI = setup.API()
+        return self.m_pyhouse_obj
+
+    def _create_pyhouse_obj(self):
+        self.m_pyhouse_obj = data_objects.PyHouseData()
+        self.m_pyhouse_obj.APIs = data_objects.PyHouseAPIs()
+        self.m_pyhouse_obj.Computer = data_objects.ComputerInformation()
+        self.m_pyhouse_obj.House = data_objects.HouseInformation()
+        self.m_pyhouse_obj.Services = data_objects.CoreServicesInformation()
+        self.m_pyhouse_obj.Twisted = data_objects.TwistedInformation()
+        self.m_pyhouse_obj.Xml = data_objects.XmlInformation()
+        #
+        self.m_pyhouse_obj.Twisted.Reactor = reactor
+        self.m_pyhouse_obj.Twisted.Application = Application('PyHouse')
+        self.m_pyhouse_obj.Xml.XmlFileName = '/etc/pyhouse/master.xml'
+        return self.m_pyhouse_obj
+
 
     def __init__(self):
         """This is the startup of the entire system.
@@ -155,8 +179,8 @@ class API(Utilities):
         self.do_daemon_stuff()
         global g_API
         g_API = self
-        self.m_setupAPI = setup.API()
-        self.m_pyhouse_obj = self.m_setupAPI.create_pyhouse_obj(self)
+        self._create_pyhouse_obj()
+        self._setup_apis()
         self.m_pyhouse_obj.Twisted.Reactor.callWhenRunning(self.Start)
         self.m_pyhouse_obj.Twisted.Reactor.run()  # reactor never returns so must be last - Event loop will now run
         #  When the reactor stops we continue here
@@ -167,7 +191,6 @@ class API(Utilities):
         """This is automatically invoked when the reactor starts from API().
         """
         self.m_pyhouse_obj.APIs.CoreSetupAPI.Start(self.m_pyhouse_obj)
-        # LOG.info("Started.\n")
 
     def Stop(self):
         """Stop various modules to prepare for restarting them.

@@ -25,20 +25,15 @@ Each node has two main sections.
 # Import system type stuff
 import datetime
 import xml.etree.ElementTree as ET
-from twisted.internet import reactor
-from twisted.application.service import Application
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, PyHouseAPIs, \
-    TwistedInformation, CoreServicesInformation, XmlInformation, \
-    CompAPIs, HouseAPIs
+from Modules.Core import setup_logging
 from Modules.Computer import computer
 from Modules.Computer import logging_pyh as Logger
 from Modules.Housing import house
 from Modules.Utilities import xml_tools
 from Modules.Utilities.config_file import ConfigAPI
 from Modules.Utilities.xml_tools import XmlConfigTools
-# from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 0
 LOG = Logger.getLogger('PyHouse.CoreSetup      ')
@@ -79,7 +74,6 @@ class Utility(ReadWriteConfigXml):
         """)
 
     def load_xml_config_file(self, p_pyhouse_obj):
-        # p_pyhouse_obj.Xml.XmlFileName = ConfigAPI().open_config_file(p_pyhouse_obj)
         p_pyhouse_obj.Xml.XmlFileName = '/etc/pyhouse/master.xml'
 
     def create_empty_xml_skeleton(self):
@@ -93,29 +87,16 @@ class Utility(ReadWriteConfigXml):
         return l_xml
 
     def _xml_save_loop(self, p_pyhouse_obj):
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(REPEAT_DELAY, self._xml_save_loop, p_pyhouse_obj)
+        self.m_pyhouse_obj.Twisted.Reactor.callLater(REPEAT_DELAY, self._xml_save_loop, self.m_pyhouse_obj)
         self.WriteXml()
-
-    def create_pyhouse_obj(self, p_parent):
-        l_pyhouse_obj = PyHouseData()
-        l_pyhouse_obj.APIs = PyHouseAPIs()
-        l_pyhouse_obj.APIs.Comp = CompAPIs()
-        l_pyhouse_obj.APIs.House = HouseAPIs()
-        l_pyhouse_obj.APIs.PyHouseAPI = p_parent  # Only used by web server to reload - Do we need this?
-        l_pyhouse_obj.APIs.CoreSetupAPI = self
-        l_pyhouse_obj.APIs.Comp.ComputerAPI = computer.API()
-        l_pyhouse_obj.APIs.House.HouseAPI = house.API()
-        l_pyhouse_obj.Twisted = TwistedInformation()
-        l_pyhouse_obj.Twisted.Reactor = reactor
-        l_pyhouse_obj.Twisted.Application = Application('PyHouse')
-        l_pyhouse_obj.Services = CoreServicesInformation()
-        l_pyhouse_obj.Xml = XmlInformation()
-        l_pyhouse_obj.Xml.XmlFileName = '/etc/pyhouse/master.xml'
-        return l_pyhouse_obj
 
 
 
 class API(Utility):
+
+    def _setup_apis(self):
+        self.m_pyhouse_obj.APIs.Comp.ComputerAPI = computer.API()
+        self.m_pyhouse_obj.APIs.House.HouseAPI = house.API()
 
     def Start(self, p_pyhouse_obj):
         """
@@ -124,6 +105,7 @@ class API(Utility):
         @param p_pyhouse_obj: is the skeleton Obj filled in some by PyHouse.py.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
+        self._setup_apis()
         self.load_xml_config_file(p_pyhouse_obj)
         self.read_xml_config_info(self.m_pyhouse_obj)
         self.log_start()
@@ -132,8 +114,8 @@ class API(Utility):
         self.m_pyhouse_obj = p_pyhouse_obj
         p_pyhouse_obj.APIs.Comp.ComputerAPI.Start(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.HouseAPI.Start(p_pyhouse_obj)
+        self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self._xml_save_loop, self.m_pyhouse_obj)
         LOG.info("Started.")
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self._xml_save_loop, p_pyhouse_obj)
 
     def Stop(self):
         self.WriteXml()
@@ -145,14 +127,10 @@ class API(Utility):
         """
         Take a snapshot of the current Configuration/Status and write out an XML file.
         """
-        # LOG.info("Saving XML.")
         l_xml = self.create_empty_xml_skeleton()
         self.m_pyhouse_obj.APIs.Comp.ComputerAPI.WriteXml(l_xml)
         self.m_pyhouse_obj.APIs.House.HouseAPI.WriteXml(l_xml)
         ConfigAPI().write_xml_config_file(self.m_pyhouse_obj, l_xml)
         LOG.info("Saved XML.")
-
-def load_xml_config():
-    pass
 
 # ## END DBK

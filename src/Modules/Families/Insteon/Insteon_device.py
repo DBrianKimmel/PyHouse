@@ -76,7 +76,7 @@ class Utility(object):
             if Utility._is_valid_controller(l_controller_obj):
                 l_ret = Utility._start_plm(p_pyhouse_obj, l_controller_obj)
             elif Utility._is_insteon(l_controller_obj):
-                LOG.warning('Insteon Controller {} is NOT started per config file.'.format(l_controller_obj.Name))
+                LOG.info('Insteon Controller {} is NOT started per config file.'.format(l_controller_obj.Name))
             else:
                 pass  # Not interested in this controller.
         return l_ret
@@ -107,7 +107,7 @@ class API(object):
         try:
             Utility._stop_all_controllers(self.m_pyhouse_obj)
         except AttributeError as e_err:
-            LOG.warning('Stop Warning - {0:}'.format(e_err))  # no controllers for house(House is being added)
+            LOG.info('Stop Warning - {0:}'.format(e_err))  # no controllers for house(House is being added)
 
     def SaveXml(self, p_xml):
         return p_xml
