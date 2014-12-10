@@ -12,16 +12,20 @@
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Lighting.test.xml_core import CORE_DEVICE
+from Modules.Lighting.test.xml_core import *
 from Modules.Families.Insteon.test.xml_insteon import INSTEON_XML
 from Modules.Families.UPB.test.xml_upb import UPB_XML
+
+
+TESTING_LIGHTING_LIGHT_CUR_LEVEL = "12"
 
 
 LIGHT_TYPE = "    <LightingType>Light</LightingType>"
 
 LIGHT_BODY = '\n'.join([
     CORE_DEVICE,
-    LIGHT_TYPE
+    LIGHT_TYPE,
+    "<CurLevel>" + TESTING_LIGHTING_LIGHT_CUR_LEVEL + "</CurLevel>"
     ])
 
 INSTEON_LIGHT_XML = '\n'.join([
@@ -41,9 +45,5 @@ LIGHT_SECTION_XML = '\n'.join([
     INSTEON_LIGHT_XML,
     UPB_LIGHT_XML,
     "</LightSection>"])
-
-
-
-
 
 # ## END DBK

@@ -19,6 +19,28 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 # Import PyMh files
 
 
+
+class Util(object):
+    """
+    """
+
+    def get_device_class(self, p_pyhouse_obj, p_address):
+        """
+        Iterates over all the device objects in a given pyhouse_obj.
+        Return an objects (Lights, Thermostats) that has InsteonAddress.
+        """
+        l_house = p_pyhouse_obj.House.DeviceOBJs
+        print('Address: {}'.format(p_address))
+        print('Objs: {}'.format(l_house))
+        for l_obj in p_pyhouse_obj.House.DeviceOBJs.items():
+            print('Object {}'.format(l_obj))
+        # while True:
+        #    l_device = l_house.next()
+        #    print('Device {}'.format(l_device))
+        return l_house
+
+
+
 def message2int(p_message, p_index):
     """Extract the address (3 bytes) from a response message.
     The message is a byte array returned from the PLM.

@@ -21,9 +21,9 @@ from twisted.trial import unittest
 from Modules.Core.data_objects import PyHouseData, ControllerData
 from Modules.Families.Insteon import Insteon_PLM
 from Modules.Families import family
-# from Modules.Utilities.tools import PrettyPrintAny
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
+# from Modules.Utilities.tools import PrettyPrintAny
 
 
 ADR_16C9D0 = '16.C9.D0'
@@ -44,48 +44,48 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
+        self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
 
 
-class Test_01_InsteonPlmUtility(SetupMixin, unittest.TestCase):
+class C01_Utility(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         self.m_api = Insteon_PLM.API()
 
-    def test_0101_MessageLength(self):
+    def test_01_MessageLength(self):
         self.assertEqual(self.m_api._get_message_length(MSG_50), 11)
         self.assertEqual(self.m_api._get_message_length(MSG_62), 9)
         self.assertEqual(self.m_api._get_message_length(MSG_99), 1)
 
-    def test_0102_ExtractAddress(self):
+    def test_02_ExtractAddress(self):
         # self.assertEqual(self.m_api._get_addr_from_message(MSG_50, 2), conversions.dotted_hex2int(ADR_16C9D0))
         # self.assertEqual(self.m_api._get_addr_from_message(MSG_62, 2), conversions.dotted_hex2int(ADR_17C272))
         pass
 
-    def test_0103_QueueCommand(self):
+    def test_03_QueueCommand(self):
         l_ret_1 = self.m_api._queue_command('insteon_send')
         self.assertEqual(len(l_ret_1), 8)
         self.assertEqual(l_ret_1[0], STX)
 
 
-class Test_02_CreateCommands(SetupMixin, unittest.TestCase):
+class C02_CreateCommands(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         self.m_pyhouse_obj = PyHouseData()
         self.m_api = Insteon_PLM. API()
         pass
 
-    def test_0201_get_message_length(self):
+    def test_01_get_message_length(self):
         self.assertEqual(self.m_api._get_message_length(MSG_50), 11)
         self.assertEqual(self.m_api._get_message_length(MSG_62), 9)
         self.assertEqual(self.m_api._get_message_length(MSG_99), 1)
 
-    def test_0201_getBytes(self):
+    def test_02_getBytes(self):
         pass
 
 
-class Test_03_PlmDriverProtocol(SetupMixin, unittest.TestCase):
+class C03_Driver(SetupMixin, unittest.TestCase):
     """
     """
 
@@ -93,14 +93,17 @@ class Test_03_PlmDriverProtocol(SetupMixin, unittest.TestCase):
         self.m_pyhouse_obj = PyHouseData()
         self.m_api = Insteon_PLM. API()
 
+    def test_01_Driver(self):
+        pass
 
-class Test_55_Thermostat(SetupMixin, unittest.TestCase):
+
+class C04_Thermostat(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         self.m_controller_obj = ControllerData()
 
-    def test_0301_x(self):
+    def test_01_x(self):
         pass
 
 # ## END DBK

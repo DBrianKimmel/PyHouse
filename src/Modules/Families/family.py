@@ -26,7 +26,7 @@ from Modules.Computer import logging_pyh as Logger
 # from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 0
-LOG = Logger.getLogger('PyHouse.Family      ')
+LOG = Logger.getLogger('PyHouse.Family         ')
 
 
 class Utility(object):
@@ -113,13 +113,13 @@ class API(Utility):
             self.m_count += 1
         return l_family_data
 
-    def start_lighting_families(self, p_pyhouse_obj, p_house_obj):
+    def start_lighting_families(self, p_pyhouse_obj):
         """
         Load and start the family if there is a controller in the house for the family.
         Runs Device_<family>.API.Start()
         """
         LOG.info("Starting lighting families.")
-        for l_family_obj in p_house_obj.FamilyData.itervalues():
+        for l_family_obj in p_pyhouse_obj.House.RefOBJs.FamilyData.itervalues():
             if g_debug >= 1:
                 LOG.debug('Starting Family {0:}'.format(l_family_obj.Name))
             l_family_obj.FamilyModuleAPI.Start(p_pyhouse_obj)  # will run Device_<family>.API.Start()

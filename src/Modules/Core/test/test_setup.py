@@ -16,11 +16,14 @@ import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
 from Modules.Core import setup
+from Modules.Core.data_objects import PyHouseAPIs, XmlInformation, ComputerInformation, HouseInformation, \
+    CoreServicesInformation, TwistedInformation
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
 
 XML = xml_data.XML_LONG
+
 
 
 class SetupMixin(object):
@@ -32,10 +35,43 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-class C01_XML(SetupMixin, unittest.TestCase):
+
+class C01_Structures(SetupMixin, unittest.TestCase):
     """
-    This section will verify the XML in the 'Modules.text.xml_data' file is correct and what the setup module can
-    read/write.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+
+    def test_01_PyHouse(self):
+        PrettyPrintAny(self.m_pyhouse_obj, 'PyHouseObj')
+        self.assertIsInstance(self.m_pyhouse_obj.APIs, PyHouseAPIs)
+        self.assertIsInstance(self.m_pyhouse_obj.Computer, ComputerInformation)
+        self.assertIsInstance(self.m_pyhouse_obj.House, HouseInformation)
+        self.assertIsInstance(self.m_pyhouse_obj.Services, CoreServicesInformation)
+        self.assertIsInstance(self.m_pyhouse_obj.Twisted, TwistedInformation)
+        self.assertIsInstance(self.m_pyhouse_obj.Xml, XmlInformation)
+
+    def test_02_Computer(self):
+        PrettyPrintAny(self.m_pyhouse_obj.Computer, 'Computer')
+
+    def test_03_House(self):
+        PrettyPrintAny(self.m_pyhouse_obj.House, 'House')
+
+    def test_04_Services(self):
+        PrettyPrintAny(self.m_pyhouse_obj.Services, 'Service')
+
+    def test_05_Twisted(self):
+        PrettyPrintAny(self.m_pyhouse_obj.Twisted, 'Twisted')
+
+    def test_06_Xml(self):
+        PrettyPrintAny(self.m_pyhouse_obj.Xml, 'Xml')
+
+
+
+
+class C02_XML(SetupMixin, unittest.TestCase):
+    """
     """
 
     def setUp(self):
@@ -43,15 +79,19 @@ class C01_XML(SetupMixin, unittest.TestCase):
 
     def test_01_ReadEmptyXml(self):
         self.m_pyhouse_obj.XmlRoot = ET.fromstring(xml_data.XML_EMPTY)
+        PrettyPrintAny(self.m_pyhouse_obj.XmlRoot, 'Empty XmlRoot')
 
     def test_02_ReadShortXml(self):
         self.m_pyhouse_obj.XmlRoot = ET.fromstring(xml_data.XML_SHORT)
+        PrettyPrintAny(self.m_pyhouse_obj.XmlRoot, 'Short XmlRoot')
 
     def test_03_ReadLongXml(self):
         self.m_pyhouse_obj.XmlRoot = ET.fromstring(xml_data.XML_LONG)
+        PrettyPrintAny(self.m_pyhouse_obj.XmlRoot, 'Long XmlRoot')
 
 
-class Test_02_XML(SetupMixin, unittest.TestCase):
+
+class C03_XML(SetupMixin, unittest.TestCase):
     """
     This section tests the reading and writing of XML used by setup.
     """
@@ -61,6 +101,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
 
     def test_01_ReadXml(self):
         self.m_api.read_xml_config_info(self.m_pyhouse_obj)
+        PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse')
 
     def test_02_WriteXml(self):
         pass

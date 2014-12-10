@@ -33,7 +33,7 @@ import xml.etree.ElementTree as ET
 from twisted.python import log as log_twisted
 
 # Import PyMh files
-from Modules.Core.data_objects import LogData
+# from Modules.Core.data_objects import LogData
 from Modules.Utilities.xml_tools import XmlConfigTools
 # from Modules.Utilities.tools import PrettyPrintAny
 
@@ -48,16 +48,17 @@ class ReadWriteConfigXml(XmlConfigTools):
     """
 
     def read_xml(self, p_pyhouse_obj):
-        l_ret = LogData()
-        try:
-            l_computer = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
-            l_logs_xml = l_computer.find('LogSection')
-            l_ret.Debug = self.get_text_from_xml(l_logs_xml, 'Debug')
-            l_ret.Error = self.get_text_from_xml(l_logs_xml, 'Error')
-        except AttributeError:
-            l_ret.Debug = '/tmp/debug'
-            l_ret.Error = '/tmp/error'
-        return l_ret
+        # l_ret = LogData()
+        # try:
+            # l_computer = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
+            # l_logs_xml = l_computer.find('LogSection')
+            # l_ret.Debug = self.get_text_from_xml(l_logs_xml, 'Debug')
+            # l_ret.Error = self.get_text_from_xml(l_logs_xml, 'Error')
+        # except AttributeError:
+            # l_ret.Debug = '/tmp/debug'
+            # l_ret.Error = '/tmp/error'
+        # return l_ret
+        pass
 
     def write_xml(self, p_log_data):
         l_log_xml = ET.Element("LogSection")
@@ -84,7 +85,8 @@ class API(Utility, ReadWriteConfigXml):
     m_pyhouse_obj = None
 
     def __init__(self):
-        self.m_log_data = LogData()
+        # self.m_log_data = LogData()
+        pass
 
     def Start(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj

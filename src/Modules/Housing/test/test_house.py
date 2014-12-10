@@ -16,7 +16,6 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import LocationData
 from Modules.Housing import house
 from Modules.Web import web_utils
 from Modules.Utilities import xml_tools
@@ -53,11 +52,11 @@ class C01_XML(SetupMixin, unittest.TestCase):
 
     def test_03_PyHouse(self):
         l_xml_1 = self.m_pyhouse_obj.Xml.XmlRoot
-        PrettyPrintAny(l_xml_1)
+        # PrettyPrintAny(l_xml_1)
         l_xml_2 = l_xml_1.find('ComputerDivision')
-        PrettyPrintAny(l_xml_2)
+        PrettyPrintAny(l_xml_2, 'ComputerXML')
         l_xml_2 = l_xml_1.find('HouseDivision')
-        PrettyPrintAny(l_xml_2)
+        PrettyPrintAny(l_xml_2, 'HouseXML')
 
 
 class C02_ReadXML(SetupMixin, unittest.TestCase):
@@ -73,7 +72,7 @@ class C02_ReadXML(SetupMixin, unittest.TestCase):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
         """
         PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse')
-        self.assertEqual(self.m_pyhouse_obj.House.OBJs.Rooms, {}, 'No Rooms{}')
+        self.assertEqual(self.m_pyhouse_obj.House.RefOBJs.Rooms, {}, 'No Rooms{}')
 
     def test_02_Xml(self):
         l_xml = self.m_api._get_house_xml(self.m_pyhouse_obj)
@@ -100,7 +99,7 @@ class C02_ReadXML(SetupMixin, unittest.TestCase):
         l_house_obj = self.m_api.read_house_xml(self.m_pyhouse_obj)
         PrettyPrintAny(l_house_obj)
         self.assertEqual(l_house_obj.Name, 'Pink Poppy', 'Bad Name')
-        self.assertEqual(l_house_obj.OBJs.Location.Street, '5191 N Pink Poppy Dr', 'Bad Street')
+        self.assertEqual(l_house_obj.RefOBJs.Location.Street, '5191 N Pink Poppy Dr', 'Bad Street')
 
 
 

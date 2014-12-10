@@ -48,7 +48,7 @@ class C01_API(SetupMixin, unittest.TestCase):
 
 def suite():
     suite = unittest.TestSuite()
-    suite.addTest(Test_02_API('test_0202_Init'))
+    # suite.addTest(Test_02_API('test_0202_Init'))
     return suite
 
 # ## END

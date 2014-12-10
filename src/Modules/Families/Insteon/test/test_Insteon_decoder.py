@@ -1,5 +1,5 @@
 """
-@name: C:/Users/briank/Documents/GitHub/PyHouse/src/Modules/Families/Insteon/test/test_Insteon_decoder.py
+@name: PyHouse/src/Modules/Families/Insteon/test/test_Insteon_decoder.py
 @author: D. Brian Kimmel
 @contact: D.BrianKimmel@gmail.com>
 @Copyright: (c)  2014 by D. Brian Kimmel
@@ -41,8 +41,7 @@ class C01(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        # PrettyPrintAny(self.m_pyhouse_obj.House.OBJs)
-        self.m_controller_obj = self.m_pyhouse_obj.House.OBJs.Controllers
+        self.m_controller_obj = self.m_pyhouse_obj.House.DeviceOBJs.Controllers
         self.m_api = Insteon_decoder.DecodeResponses(self.m_pyhouse_obj, self.m_controller_obj)
 
 
@@ -50,7 +49,7 @@ class C01(SetupMixin, unittest.TestCase):
         pass
 
     def test_02_FindAddress(self):
-        l_obj = self.m_api._find_addr(self.m_pyhouse_obj.House.OBJs.Controllers, 'A1.B2.C3')
+        l_obj = self.m_api._find_addr(self.m_pyhouse_obj.House.DeviceOBJs.Controllers, 'A1.B2.C3')
         PrettyPrintAny(l_obj, 'testInsteonDecoder - FindAddress - Object', 120)
 
 

@@ -434,16 +434,16 @@ function updatePyHouseData() {
 //============================================================================
 
 function showSelectionButtons(self) {
+	// Divmod.debug('---', 'globals.showSelectionButtons() was called.');
+	// console.log("globals.showSelectionButtons() - %O", self);
+	self.nodeById('DataEntryDiv').style.display = 'none';
 	self.nodeById('SelectionButtonsDiv').style.display = 'block';
 }
-function hideSelectionButtons(self) {
+function showDataEntryFields(self) {
+	// Divmod.debug('---', 'globals.showDataEntryFields() was called.');
+	// console.log("globals.showDataEntryFields() - %O", self);
 	self.nodeById('SelectionButtonsDiv').style.display = 'none';
-}
-function showDataEntry(self) {
 	self.nodeById('DataEntryDiv').style.display = 'block';
-}
-function hideDataEntry(self) {
-	self.nodeById('DataEntryDiv').style.display = 'none';
 }
 
 // ============================================================================
@@ -724,9 +724,6 @@ function buildLcarLightNameSelectWidget(self, p_id, p_caption, p_checked) {
 function buildLcarFloorSelectWidget(self, p_id, p_caption, p_checked) {
 	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.Floors, p_checked);
 }
-function buildLcarInterfaceTypeSelectWidget(self, p_id, p_caption, p_checked) {
-	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.InterfaceType, p_checked);
-}
 function buildLcarLightTypeSelectWidget(self, p_id, p_caption, p_checked) {
 	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.LightType, p_checked);
 }
@@ -738,12 +735,6 @@ function buildLcarScheduleModeSelectWidget(self, p_id, p_caption, p_checked) {
 }
 function buildLcarScheduleTypeSelectWidget(self, p_id, p_caption, p_checked) {
 	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.ScheduleType, p_checked);
-}
-/**
- * Special - has onchange 
- */
-function buildLcarFamilySelectWidget(self, p_id, p_caption, p_checked, p_change) {
-	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.Families, p_checked, p_change);
 }
 
 

@@ -61,7 +61,7 @@ from Modules.Computer import logging_pyh as Logger
 
 
 
-LOG = Logger.getLogger('PyHouse.Schedule    ')
+LOG = Logger.getLogger('PyHouse.Schedule       ')
 SECONDS_IN_DAY = 86400
 SECONDS_IN_WEEK = 604800  # 7 * 24 * 60 * 60
 INITIAL_DELAY = 5
@@ -253,8 +253,8 @@ class ScheduleTime(object):
         this code just gets the values for this module
         """
         l_riseset = RiseSetData()
-        l_riseset.Sunrise = p_pyhouse_obj.House.OBJs.Location._Sunrise
-        l_riseset.Sunset = p_pyhouse_obj.House.OBJs.Location._Sunset
+        l_riseset.Sunrise = p_pyhouse_obj.House.RefOBJs.Location._Sunrise
+        l_riseset.Sunset = p_pyhouse_obj.House.RefOBJs.Location._Sunset
         LOG.info("Sunrise:{0:}, Sunset:{1:}".format(l_riseset.Sunrise, l_riseset.Sunset))
         return l_riseset
 
@@ -276,12 +276,12 @@ class ScheduleExecution(object):
         """
         Send information to one device to execute a schedule.
         """
-        l_schedule_obj = self.m_pyhouse_obj.House.OBJs.Schedules[p_slot]
+        l_schedule_obj = self.m_pyhouse_obj.House.RefOBJs.Schedules[p_slot]
         if l_schedule_obj.ScheduleType == 'LightingDevice':
-            LOG.debug('Execute_one_schedule type = LightingDevice')
+            LOG.info('Execute_one_schedule type = LightingDevice')
             pass
         elif l_schedule_obj.ScheduleType == 'Scene':
-            LOG.debug('Execute_one_schedule type = Scene')
+            LOG.info('Execute_one_schedule type = Scene')
             pass
         l_light_obj = tools.get_light_object(self.m_pyhouse_obj, name = l_schedule_obj.LightName)
         LOG.info("Name:{0:}, Light:{1:}, Level:{2:}, Slot:{3:}".format(l_schedule_obj.Name, l_schedule_obj.LightName, l_schedule_obj.Level, p_slot))
@@ -328,7 +328,7 @@ class ScheduleUtility(ScheduleTime):
         l_seconds_to_delay = SECONDS_IN_WEEK
         l_schedule_list = []
 
-        for l_key, l_schedule_obj in p_pyhouse_obj.House.OBJs.Schedules.iteritems():
+        for l_key, l_schedule_obj in p_pyhouse_obj.House.RefOBJs.Schedules.iteritems():
             if not l_schedule_obj.Active:
                 continue
             l_time_sch = self._extract_time_of_day(l_schedule_obj, l_riseset)
@@ -388,8 +388,8 @@ class API(ScheduleUtility, ScheduleExecution):
     m_pyhouse_obj = None
 
     def _fetch_sunrise_set(self):
-        l_sunrise = self.m_pyhouse_obj.House.OBJs.Location._Sunrise
-        l_sunset = self.m_pyhouse_obj.House.OBJs.Location._Sunset
+        l_sunrise = self.m_pyhouse_obj.House.RefOBJs.Location._Sunrise
+        l_sunset = self.m_pyhouse_obj.House.RefOBJs.Location._Sunset
         LOG.info('Got Sunrise: {};   Sunset: {}'.format(l_sunrise, l_sunset))
 
     def Start(self, p_pyhouse_obj):
@@ -402,7 +402,7 @@ class API(ScheduleUtility, ScheduleExecution):
         LOG.info("Starting.")
         UpdatePyhouse.add_api_references(p_pyhouse_obj)
         self.m_pyhouse_obj = p_pyhouse_obj
-        p_pyhouse_obj.House.OBJs.Schedules = schedule_xml.ReadWriteConfigXml().read_schedules_xml(p_pyhouse_obj)
+        p_pyhouse_obj.House.RefOBJs.Schedules = schedule_xml.ReadWriteConfigXml().read_schedules_xml(p_pyhouse_obj)
         self._fetch_sunrise_set()
         UpdatePyhouse.start_scheduled_modules(p_pyhouse_obj)
         p_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self.set_schedule_timer, None)
@@ -419,7 +419,7 @@ class API(ScheduleUtility, ScheduleExecution):
         pass
 
     def WriteXml(self, p_xml):
-        p_xml.append(schedule_xml.ReadWriteConfigXml().write_schedules_xml(self.m_pyhouse_obj.House.OBJs.Schedules))
+        p_xml.append(schedule_xml.ReadWriteConfigXml().write_schedules_xml(self.m_pyhouse_obj.House.RefOBJs.Schedules))
         UpdatePyhouse.save_scheduled_modules(self.m_pyhouse_obj, p_xml)
 
 # ## END DBK

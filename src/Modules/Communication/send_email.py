@@ -42,11 +42,11 @@ class ReadWriteConfigXml(PutGetXML):
 
     def read_xml(self, p_pyhouse_obj):
         """
-        @return: a ThermostatData object.
+        @return: a EmailData object.
         """
         l_div_xml = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
         l_xml = l_div_xml.find('EmailSection')
-        l_obj = EmailData
+        l_obj = EmailData()
         l_obj.EmailFromAddress = self.get_text_from_xml(l_xml, 'EmailFromAddress')
         l_obj.EmailToAddress = self.get_text_from_xml(l_xml, 'EmailToAddress')
         l_obj.GmailLogin = self.get_text_from_xml(l_xml, 'GmailLogin')

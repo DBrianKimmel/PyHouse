@@ -41,7 +41,7 @@ from Modules.Utilities.xml_tools import PutGetXML
 ENDPOINT_WEB_SERVER = 'tcp:port=8580'
 
 g_debug = 9
-LOG = Logger.getLogger('PyHouse.WebServer   ')
+LOG = Logger.getLogger('PyHouse.WebServer      ')
 
 
 

@@ -245,9 +245,9 @@ class C03_Loc(SetupMixin, unittest.TestCase):
         self.m_now = datetime.datetime(2014, 6, 6, 12, 15, 30)
 
     def test_01_LoadLocation(self):
-        self.m_pyhouse_obj.House.OBJs.Location._Sunrise = T_SUNRISE
-        self.m_pyhouse_obj.House.OBJs.Location._Sunset = T_SUNSET
-        PrettyPrintAny(self.m_pyhouse_obj.House.OBJs.Location, 'Location')
+        self.m_pyhouse_obj.House.RefOBJs.Location._Sunrise = T_SUNRISE
+        self.m_pyhouse_obj.House.RefOBJs.Location._Sunset = T_SUNSET
+        PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs.Location, 'Location')
 
 
 
@@ -258,12 +258,12 @@ class C04_Setup(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
-        self.m_pyhouse_obj.House.OBJs.Location._Sunrise = T_SUNRISE
-        self.m_pyhouse_obj.House.OBJs.Location._Sunset = T_SUNSET
-        self.m_pyhouse_obj.House.OBJs.Schedules = schedule_xml.ReadWriteConfigXml().read_schedules_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.RefOBJs.Location._Sunrise = T_SUNRISE
+        self.m_pyhouse_obj.House.RefOBJs.Location._Sunset = T_SUNSET
+        self.m_pyhouse_obj.House.RefOBJs.Schedules = schedule_xml.ReadWriteConfigXml().read_schedules_xml(self.m_pyhouse_obj)
 
     def test_01_BuildSched(self):
-        PrettyPrintAny(self.m_pyhouse_obj.House.OBJs, 'Schedules')
+        PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs, 'Schedules')
 
         l_delay, l_list = self.m_api.find_next_scheduled_events(self.m_pyhouse_obj, T_NOW)
         print('Delay: {}'.format(l_delay))
@@ -273,7 +273,7 @@ class C04_Setup(SetupMixin, unittest.TestCase):
         PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse_obj')
 
     def Xtest_03_RunSchedule(self):
-        PrettyPrintAny(self.m_pyhouse_obj.House.OBJs, 'Schedules')
+        PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs, 'Schedules')
 
     def Xtest_05_SchedulesList(self):
         pass
@@ -294,7 +294,7 @@ class C05_Utility(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
-        # self.m_pyhouse_obj.House.OBJs.Schedules = self.m_api.read_schedules_xml(self.m_pyhouse_obj)
+        # self.m_pyhouse_obj.House.RefOBJs.Schedules = self.m_api.read_schedules_xml(self.m_pyhouse_obj)
         self.m_timefield = 0
 
     def test_01_SubstituteTime(self):

@@ -17,10 +17,10 @@
 from Modules.Core.data_objects import PyHouseData, PyHouseAPIs, \
             CoreServicesInformation, \
             ComputerInformation, CompAPIs, \
-            HouseInformation, HouseAPIs, HouseObjs, \
+            HouseInformation, HouseAPIs, \
             LocationData, \
             TwistedInformation, \
-            XmlInformation
+            XmlInformation, RefHouseObjs, DeviceHouseObjs
 
 
 class XmlData(object):
@@ -74,8 +74,9 @@ class SetupPyHouseObj(object):
         l_ret.Name = 'Test House'
         l_ret.Active = True
         l_ret.Key = 0
-        l_ret.OBJs = HouseObjs()
-        l_ret.OBJs.Location = LocationData()
+        l_ret.RefOBJs = RefHouseObjs()
+        l_ret.DeviceOBJs = DeviceHouseObjs()
+        l_ret.RefOBJs.Location = LocationData()
         return l_ret
 
     def BuildPyHouseObj(self, p_root):
@@ -89,6 +90,7 @@ class SetupPyHouseObj(object):
         l_ret.Twisted = TwistedInformation()
         l_ret.Xml = XmlInformation()
         l_ret.Xml.XmlRoot = p_root
+        l_ret.Xml.XmlFileName = '/etc/pyhouse/master.xml'
         return l_ret
 
     def BuildXml(self, p_root_xml):

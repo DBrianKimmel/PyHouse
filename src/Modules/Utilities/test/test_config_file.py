@@ -46,7 +46,6 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
     def test_0231_WriteConfig(self):
         self.m_api.open_config_file(self.m_pyhouse_obj)
         l_xml = self.m_pyhouse_obj.Xml.XmlRoot
-        l_file = self.m_pyhouse_obj.Xml.XmlFileName
-        self.m_api.write_xml_config_file(self.m_pyhouse_obj, l_xml, l_file)
+        self.m_api.write_xml_config_file(self.m_pyhouse_obj, l_xml)
 
 # ## END DBK

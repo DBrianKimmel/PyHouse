@@ -35,7 +35,6 @@ from Modules.Families.Insteon import Insteon_utils
 from Modules.Families.Insteon import Insteon_Link
 from Modules.Families.Insteon import Insteon_HVAC
 from Modules.Computer import logging_pyh as Logger
-# from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 0
 LOG = Logger.getLogger('PyHouse.Insteon_decd')
@@ -51,7 +50,7 @@ class Utility(object):
         """
         Return a class of objects (Lights, Thermostats) that may have an Insteon <ControllerFamily> within.
         """
-        l_house = p_pyhouse_obj.House.OBJs
+        l_house = p_pyhouse_obj.House.DeviceOBJs
         for _l_class in l_house:
             # if l_class == Schedule:
             #    continue
@@ -62,7 +61,7 @@ class Utility(object):
         """
         Find the address of something Insteon.
 
-        @param p_class: is an OBJ like p_pyhouse_obj.House.OBJs.Controllers that we will look thru to find the object.
+        @param p_class: is an OBJ like p_pyhouse_obj.House.DeviceOBJs.Controllers that we will look thru to find the object.
         @param p_addr: is the address that we want to find.
 
         @return: the object that has the adderss.  None if not found
@@ -97,13 +96,13 @@ class Utility(object):
         if l_ret == None:
             l_ret = self._find_addr(self.m_house_obj.Buttons, l_id)
         if l_ret == None:
-            l_ret = self._find_addr(self.m_pyhouse_obj.House.OBJs.Thermostats, l_id)
+            l_ret = self._find_addr(self.m_pyhouse_obj.House.DeviceOBJs.Thermostats, l_id)
         if l_ret == None:
             LOG.warning("Address {0:} NOT found".format(conversions.int2dotted_hex(l_id, 3)))
             l_ret = InsteonData()  # an empty new object
             l_ret.Name = '*NoName-' + l_dotted + '-**'
         if g_debug >= 2:
-            LOG.debug("Insteon_PLM.get_obj_from_message - Address:{0:}({1:}), found:{2:}".format(l_dotted, l_id, l_ret.Name))
+            LOG.info("Insteon_PLM.get_obj_from_message - Address:{0:}({1:}), found:{2:}".format(l_dotted, l_id, l_ret.Name))
         return l_ret
 
     def _drop_first_byte(self, p_controller_obj):
@@ -241,7 +240,7 @@ class DecodeResponses(Utility):
         while len(p_controller_obj._Message) >= 2:
             l_stx = p_controller_obj._Message[0]
             if l_stx == STX:
-                LOG.debug("{}".format(PrintBytes(p_controller_obj._Message)))
+                LOG.info("{}".format(PrintBytes(p_controller_obj._Message)))
                 l_need_len = self._get_message_length(p_controller_obj._Message)
                 l_cur_len = len(p_controller_obj._Message)
                 if l_cur_len >= l_need_len:
@@ -357,7 +356,7 @@ class DecodeResponses(Utility):
             pass
         l_ret = True
         if g_debug >= 1:
-            LOG.debug(l_debug_msg)
+            LOG.info(l_debug_msg)
         return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_51_record(self, p_controller_obj):
@@ -502,7 +501,7 @@ class DecodeResponses(Utility):
         l_ack = self._get_ack_nak(l_8)
         l_debug_msg = "Device:{0:}, {1:}".format(l_obj.Name, l_ack)
         if g_debug >= 1:
-            LOG.debug("Got ACK(62) {0:}".format(l_debug_msg))
+            LOG.info("Got ACK(62) {0:}".format(l_debug_msg))
         return self.check_for_more_decoding(p_controller_obj)
 
     def _decode_64_record(self, p_controller_obj):

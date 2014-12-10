@@ -28,7 +28,7 @@ from Modules.Computer import logging_pyh as Logger
 # from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 0
-LOG = Logger.getLogger('PyHouse.Insteon_Dev ')
+LOG = Logger.getLogger('PyHouse.Insteon_Device ')
 
 
 class Utility(object):
@@ -72,18 +72,18 @@ class Utility(object):
     @staticmethod
     def _start_all_controllers(p_pyhouse_obj):
         l_ret = None
-        for l_controller_obj in p_pyhouse_obj.House.OBJs.Controllers.itervalues():
+        for l_controller_obj in p_pyhouse_obj.House.DeviceOBJs.Controllers.itervalues():
             if Utility._is_valid_controller(l_controller_obj):
                 l_ret = Utility._start_plm(p_pyhouse_obj, l_controller_obj)
             elif Utility._is_insteon(l_controller_obj):
-                LOG.warning('Controller {} is NOT started per config file.'.format(l_controller_obj.Name))
+                LOG.warning('Insteon Controller {} is NOT started per config file.'.format(l_controller_obj.Name))
             else:
                 pass  # Not interested in this controller.
         return l_ret
 
     @staticmethod
     def _stop_all_controllers(p_pyhouse_obj):
-        for l_controller_obj in p_pyhouse_obj.House.OBJs.Controllers.itervalues():
+        for l_controller_obj in p_pyhouse_obj.House.DeviceOBJs.Controllers.itervalues():
             if Utility._is_valid_controller(l_controller_obj):
                 l_controller_obj._HandlerAPI.Stop(l_controller_obj)
 

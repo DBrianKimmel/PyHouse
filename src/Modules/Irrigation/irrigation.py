@@ -39,7 +39,7 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
     def _read_family_data(self, p_obj, p_xml):
         try:
             l_family = p_obj.ControllerFamily
-            l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[l_family].FamilyModuleAPI
+            l_api = self.m_pyhouse_obj.House.RefOBJs.FamilyData[l_family].FamilyModuleAPI
             l_api.extract_device_xml(p_obj, p_xml)
         except KeyError:
             pass
@@ -70,7 +70,7 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
                 self.m_count += 1
         except AttributeError as e:
             LOG.error('ERROR is Reading irrigation information - {0:}'.format(e))
-        # PrettyPrintAny(self.m_pyhouse_obj.House.OBJs.Irrigation, 'irrigation - ReadAll ', 100)
+        # PrettyPrintAny(self.m_pyhouse_obj.House.DeviceOBJs.Irrigation, 'irrigation - ReadAll ', 100)
         return l_ret
 
 
@@ -79,7 +79,7 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
 
     def _write_family_data(self, p_obj, p_xml):
         try:
-            l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[p_obj.ControllerFamily].FamilyModuleAPI
+            l_api = self.m_pyhouse_obj.House.DeviceOBJs.FamilyData[p_obj.ControllerFamily].FamilyModuleAPI
             l_api.insert_device_xml(p_xml, p_obj)
         except KeyError:
             pass
@@ -113,7 +113,7 @@ class Utility(ReadWriteConfigXml):
     """
 
     def update_pyhouse_obj(self, p_pyhouse_obj):
-        p_pyhouse_obj.House.OBJs.Irrigation = IrrigationData()
+        p_pyhouse_obj.House.DeviceOBJs.Irrigation = IrrigationData()
 
     def add_api_references(self, p_pyhouse_obj):
         pass
@@ -135,13 +135,13 @@ class API(Utility):
     def Start(self, p_pyhouse_obj):
         self.update_pyhouse_obj(p_pyhouse_obj)
         self.m_pyhouse_obj = p_pyhouse_obj
-        p_pyhouse_obj.House.OBJs.Irrigation = self.read_all_irrigation_xml(self.setup_xml(p_pyhouse_obj))
+        p_pyhouse_obj.House.DeviceOBJs.Irrigation = self.read_all_irrigation_xml(self.setup_xml(p_pyhouse_obj))
 
     def Stop(self):
         pass
 
     def SaveXml(self, p_xml):
-        l_xml = self.write_all_irrigation_xml(self.m_pyhouse_obj.House.OBJs.Irrigation)
+        l_xml = self.write_all_irrigation_xml(self.m_pyhouse_obj.House.DeviceOBJs.Irrigation)
         p_xml.append(l_xml)
         return l_xml
 

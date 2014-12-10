@@ -89,7 +89,7 @@ jspath = os.path.join(webpath, 'js')
 templatepath = os.path.join(webpath, 'template')
 
 g_debug = 0
-LOG = Logger.getLogger('PyHouse.webMainpage ')
+LOG = Logger.getLogger('PyHouse.webMainpage    ')
 
 
 class FileNoListDir(static.File):

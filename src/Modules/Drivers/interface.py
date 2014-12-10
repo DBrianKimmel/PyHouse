@@ -31,7 +31,7 @@ from Modules.Utilities.xml_tools import XmlConfigTools, stuff_new_attrs
 from Modules.Computer import logging_pyh as Logger
 
 g_debug = 0
-LOG = Logger.getLogger('PyHouse.Interface   ')
+LOG = Logger.getLogger('PyHouse.Interface         ')
 
 from Modules.Drivers import VALID_INTERFACES
 # from Modules.Drivers import VALID_PROTOCOLS
@@ -68,7 +68,7 @@ class ReadWriteConfigXml(XmlConfigTools):
         elif p_controller_obj.InterfaceType == 'USB':
             l_interface = USB_xml.ReadWriteConfigXml().read_interface_xml(p_controller_xml)
         else:
-            LOG.error('ERROR - Read - Unknown InterfaceType - {0:}'.format(p_controller_obj.InterfaceType))
+            LOG.error('For {} - Unknown InterfaceType - {}'.format(p_controller_obj.Name, p_controller_obj.InterfaceType))
             l_interface = None
         # Put the serial information into the controller object
         stuff_new_attrs(p_controller_obj, l_interface)

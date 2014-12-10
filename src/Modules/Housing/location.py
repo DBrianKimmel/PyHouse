@@ -33,7 +33,7 @@ class ReadWriteConfigXml(XmlConfigTools):
 
     def read_location_xml(self, p_house_xml):
         """
-        @param p_house_obj: is p_pyhouse_obj.House.OBJs
+        @param p_house_obj: is p_pyhouse_obj.House.RefOBJs
         @param p_house_xml: is one of 0+ 'House' elements
         """
         l_obj = LocationData()

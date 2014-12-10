@@ -48,7 +48,7 @@ class FamUtil(object):
     def get_family_api(p_pyhouse_obj, p_device_obj):
         try:
             l_family = FamUtil.get_family(p_device_obj)
-            l_api = p_pyhouse_obj.House.OBJs.FamilyData[l_family].FamilyModuleAPI
+            l_api = p_pyhouse_obj.House.RefOBJs.FamilyData[l_family].FamilyModuleAPI
         except:
             l_msg = 'ERROR - Device:"{}"; Family:"{}" Cannot find API info '.format(p_device_obj.Name, l_family)
             LOG.error(l_msg)

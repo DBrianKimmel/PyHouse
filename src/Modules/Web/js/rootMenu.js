@@ -38,15 +38,8 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 		return l_defer;
 	},
 	function startWidget(self) {
-		// Divmod.debug('---', 'rootMenu.startWidget() was called.');
-		self.showSelectionButtons();
-		self.fetchHouseData();
-	},
-	function hideSelectionButtons(self) {
-		self.nodeById('SelectionButtonsDiv').style.display = 'none';
-	},
-	function showSelectionButtons(self) {
-		self.nodeById('SelectionButtonsDiv').style.display = 'block';
+		showSelectionButtons(self);
+		self.fetchDataFromServer();
 	},
 
 
@@ -76,18 +69,18 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 	/**
 	 * This triggers getting the data from the server.
 	 */
-	function fetchHouseData(self) {
-		function cb_fetchHouseData(p_json) {
+	function fetchDataFromServer(self) {
+		function cb_fetchDataFromServer(p_json) {
 			globals.House.HouseObj = JSON.parse(p_json);
 			self.buildLcarSelectScreen();
 		}
-		function eb_fetchHouseData(p_reason) {
-			Divmod.debug('---', 'lights.eb_fetchHouseData() was called. ERROR: ' + p_reason);
+		function eb_fetchDataFromServer(p_reason) {
+			Divmod.debug('---', 'lights.eb_fetchDataFromServer() was called. ERROR: ' + p_reason);
 		}
 		self.buildLcarScreen();
         //var l_defer = self.callRemote("getHouseData");
-		//l_defer.addCallback(cb_fetchHouseData);
-		//l_defer.addErrback(eb_fetchHouseData);
+		//l_defer.addCallback(cb_fetchDataFromServer);
+		//l_defer.addErrback(eb_fetchDataFromServer);
         return false;
 	},
 	/**
@@ -101,13 +94,13 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 		var l_node;
 		switch (l_key) {
 		case 'Select':  // House Select
-			self.showWidget2('HouseSelect');
+			self.showWidget('HouseSelect');
 			break;
 		case 'House':
-			self.showWidget2('House');
+			self.showWidget('House');
 			break;
 		case 'Web':
-			self.showWidget2('Webs');
+			self.showWidget('Webs');
 			break;
 		case 'Quit':  // Quit the browser by logging out
 			self.doRootQuit(p_node);
@@ -127,7 +120,7 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 		globals.User.ID = null;
 		globals.User.LoggedIn = false;
 		globals.User.Password = null;
-		self.showWidget2('Login');
+		self.showWidget('Login');
 		l_node.showLoggingInDiv();
 	}
 );

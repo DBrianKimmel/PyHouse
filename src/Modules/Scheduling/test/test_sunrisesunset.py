@@ -283,7 +283,7 @@ class C08_Julian(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
-        self.m_pyhouse_obj.House.OBJs.Location.Latitude = T_LATITUDE
+        self.m_pyhouse_obj.House.RefOBJs.Location.Latitude = T_LATITUDE
         self.m_api = JDate
         self.m_earth = SetupMixin.load_earth()
         self.m_julian = JulianParameters

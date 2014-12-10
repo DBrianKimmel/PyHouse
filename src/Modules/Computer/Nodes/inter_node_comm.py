@@ -24,7 +24,7 @@ from Modules.Computer import logging_pyh as Logger
 # from Modules.Utilities.tools import PrettyPrintAny
 
 
-LOG = Logger.getLogger('PyHouse.InterNodeCom')
+LOG = Logger.getLogger('PyHouse.InterNodeCom   ')
 
 NODE_SERVER = 'tcp:port=8581'
 AMP_PORT = 8581

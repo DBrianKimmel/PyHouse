@@ -9,9 +9,14 @@
 
 """
 
-INTERFACE_XML = """
+INTERFACE_SERIAL_XML = """
+        <InterfaceType>Serial</InterfaceType>
+        <Port>/dev/ttyS0</Port>
+"""
+
+INTERFACE_USB_XML = """
         <InterfaceType>USB</InterfaceType>
-        <Port>None</Port>
+        <Port>/dev/ttyUSB0</Port>
 """
 
 # ## END DBK

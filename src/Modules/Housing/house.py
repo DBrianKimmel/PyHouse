@@ -19,7 +19,7 @@ Rooms and lights and HVAC are associated with a particular house.
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Core.data_objects import HouseInformation, HouseObjs
+from Modules.Core.data_objects import HouseInformation, RefHouseObjs, DeviceHouseObjs
 from Modules.Families import family
 from Modules.Scheduling import schedule, sunrisesunset
 from Modules.Housing import location
@@ -28,7 +28,7 @@ from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 1
-LOG = Logger.getLogger('PyHouse.House       ')
+LOG = Logger.getLogger('PyHouse.House          ')
 
 MODULES = ['Entertainment', 'Hvac', 'Irrigation', 'Lighting', 'Pool', 'Scheduling', 'Security']
 
@@ -66,7 +66,8 @@ class ReadWriteConfigXml(location.ReadWriteConfigXml, rooms.ReadWriteConfigXml):
 
     def _read_base(self, p_xml):
         l_xml = HouseInformation()
-        l_xml.OBJs = HouseObjs()
+        l_xml.RefOBJs = RefHouseObjs()
+        l_xml.DeviceOBJs = DeviceHouseObjs()
         self.read_base_object_xml(l_xml, p_xml)
         return l_xml
 
@@ -83,16 +84,16 @@ class ReadWriteConfigXml(location.ReadWriteConfigXml, rooms.ReadWriteConfigXml):
         """
         l_xml = self._get_house_xml(p_pyhouse_obj)
         l_house = self._read_base(l_xml)
-        l_house.OBJs.Location = self._read_location_xml(l_xml)
-        l_house.OBJs.Rooms = self._read_rooms_xml(l_xml)
+        l_house.RefOBJs.Location = self._read_location_xml(l_xml)
+        l_house.RefOBJs.Rooms = self._read_rooms_xml(l_xml)
         return l_house
 
     def write_house_xml(self, p_house_obj):
         """Replace the data in the 'Houses' section with the current data.
         """
         l_house_xml = self.write_base_object_xml('HouseDivision', p_house_obj)
-        l_house_xml.append(self.write_location_xml(p_house_obj.OBJs.Location))
-        l_house_xml.append(self.write_rooms_xml(p_house_obj.OBJs.Rooms))
+        l_house_xml.append(self.write_location_xml(p_house_obj.RefOBJs.Location))
+        l_house_xml.append(self.write_rooms_xml(p_house_obj.RefOBJs.Rooms))
         return l_house_xml
 
 
@@ -104,7 +105,8 @@ class Utility(ReadWriteConfigXml):
 
     def update_pyhouse_obj(self, p_pyhouse_obj):
         p_pyhouse_obj.House = HouseInformation()
-        p_pyhouse_obj.House.OBJs = HouseObjs()
+        p_pyhouse_obj.House.RefOBJs = RefHouseObjs()
+        p_pyhouse_obj.House.DeviceOBJs = DeviceHouseObjs()
         return p_pyhouse_obj
 
     def add_api_references(self, p_pyhouse_obj):
@@ -125,8 +127,8 @@ class Utility(ReadWriteConfigXml):
         """
         p_pyhouse_obj.APIs.House.SunRiseSetAPI = sunrisesunset.API()
         p_pyhouse_obj.APIs.House.SunRiseSetAPI.Start(p_pyhouse_obj)
-        p_pyhouse_obj.House.OBJs.Location._Sunrise = p_pyhouse_obj.APIs.House.SunRiseSetAPI.get_sunrise_datetime()
-        p_pyhouse_obj.House.OBJs.Location._Sunset = p_pyhouse_obj.APIs.House.SunRiseSetAPI.get_sunset_datetime()
+        p_pyhouse_obj.House.RefOBJs.Location._Sunrise = p_pyhouse_obj.APIs.House.SunRiseSetAPI.get_sunrise_datetime()
+        p_pyhouse_obj.House.RefOBJs.Location._Sunset = p_pyhouse_obj.APIs.House.SunRiseSetAPI.get_sunset_datetime()
 
     def _module_api(self, p_pyhouse_obj, p_module):
         """
@@ -162,7 +164,7 @@ class API(Utility):
         self.add_api_references(p_pyhouse_obj)
         self.m_pyhouse_obj = p_pyhouse_obj
         p_pyhouse_obj.House = self.read_house_xml(p_pyhouse_obj)
-        p_pyhouse_obj.House.OBJs.FamilyData = p_pyhouse_obj.APIs.House.FamilyAPI.Start(p_pyhouse_obj)
+        p_pyhouse_obj.House.RefOBJs.FamilyData = p_pyhouse_obj.APIs.House.FamilyAPI.Start(p_pyhouse_obj)
         self.get_sunrise_set(p_pyhouse_obj)
         self.start_house_parts(p_pyhouse_obj)
         LOG.info("Started House {0:}".format(self.m_pyhouse_obj.House.Name))

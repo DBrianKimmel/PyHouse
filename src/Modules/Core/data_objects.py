@@ -131,7 +131,7 @@ class ComputerInformation(object):
     def __init__(self):
         self.InternetConnection = {}  # InternetConnectionData()
         self.Email = {}  # EmailData()
-        self.Logs = {}  # LogData()
+        # self.Logs = {}  # LogData()
         self.Nodes = {}  # NodeData()
         self.Web = {}  # WebData()
 
@@ -143,23 +143,54 @@ class HouseInformation(ABaseObject):
     def __init__(self):
         super(HouseInformation, self).__init__()
         self.Name = 'New House'
-        self.OBJs = {}  # HouseObjs()
+        self.RefOBJs = {}  # RefHouseObjs()
+        self.DeviceOBJs = {}  # DeviceHouseObjs()
 
 
-class HouseObjs(object):
+class RefHouseObjs(object):
+    """This is about a single House.
+    """
+    def __init__(self):
+        self.FamilyData = {}  # FamilyData('FamilyName')
+        self.Location = {}  # LocationData() - one location per house.
+        self.Rooms = {}  # RoomData()
+        self.Schedules = {}  # ScheduleBaseData()
+
+
+class DeviceHouseObjs(object):
     """This is about a single House.
     """
     def __init__(self):
         self.Buttons = {}  # ButtonData()
         self.Controllers = {}  # ControllerData()
-        self.FamilyData = {}  # FamilyData('FamilyName')
         self.Irrigation = {}  # IrrigationData()
         self.Lights = {}  # LightData()
-        self.Location = {}  # LocationData() - one location per house.
         self.Pools = {}  # PoolData()
-        self.Rooms = {}  # RoomData()
-        self.Schedules = {}  # ScheduleBaseData()
         self.Thermostats = {}  # ThermostatData()
+
+
+# class HouseObjs(object):
+#    """This is about a single House.
+#    """
+#    def __init__(self):
+#        self.Buttons = {}  # ButtonData()
+#        self.Controllers = {}  # ControllerData()
+#        self.FamilyData = {}  # FamilyData('FamilyName')
+#        self.Irrigation = {}  # IrrigationData()
+#        self.Lights = {}  # LightData()
+#        self.Location = {}  # LocationData() - one location per house.
+#        self.Pools = {}  # PoolData()
+#        self.Rooms = {}  # RoomData()
+#        self.Schedules = {}  # ScheduleBaseData()
+#        self.Thermostats = {}  # ThermostatData()
+#    def XX__iter__(self):
+#        return self
+#    def XXnext(self):
+#        for l_iter in self.iteritems():
+#            print('data_objects - Line-165 {}'.format(l_iter))
+#            yield l_iter
+#        # yield self
+
 
 
 class JsonHouseData(ABaseObject):
@@ -407,12 +438,12 @@ class  EthernetControllerData(object):
         self.Protocol = 'TCP'
 
 
-class LogData(object):
-    """Locations of various logs
-    """
-    def __init__(self):
-        self.Debug = None
-        self.Error = None
+# class LogData(object):
+#    """Locations of various logs
+#    """
+#    def __init__(self):
+#        self.Debug = None
+#        self.Error = None
 
 
 class WebData(object):

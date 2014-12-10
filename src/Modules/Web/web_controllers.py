@@ -70,7 +70,7 @@ class ControllersElement(athena.LiveElement):
         l_delete = l_json['Delete']
         if l_delete:
             try:
-                del self.m_pyhouse_obj.House.OBJs.Controllers[l_controller_ix]
+                del self.m_pyhouse_obj.House.DeviceOBJs.Controllers[l_controller_ix]
             except AttributeError:
                 print("web_controllers - Failed to delete - JSON: {0:}".FORMAT(l_json))
             return
@@ -78,7 +78,7 @@ class ControllersElement(athena.LiveElement):
         # Note - we don't want a plain controller here - we want a family controller with the proper interface.
         #
         try:
-            l_obj = self.m_pyhouse_obj.House.OBJs.Controllers[l_controller_ix]
+            l_obj = self.m_pyhouse_obj.House.DeviceOBJs.Controllers[l_controller_ix]
         except KeyError:
             l_obj = lighting_controllers.ControllerData()
         l_obj.Name = l_json['Name']
@@ -108,7 +108,7 @@ class ControllersElement(athena.LiveElement):
             l_obj.UPBNetworkID = l_json['UPBNetworkID']
         if l_obj.InterfaceType == 'Serial':
             l_obj.BaudRate = l_json['BaudRate']
-        self.m_pyhouse_obj.House.OBJs.Controllers[l_controller_ix] = l_obj
+        self.m_pyhouse_obj.House.DeviceOBJs.Controllers[l_controller_ix] = l_obj
         LOG.info('Controller Added - {}'.format(l_obj))
 
 # ## END DBK

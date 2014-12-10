@@ -27,7 +27,7 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 	 */
 	function ready(self) {
 		function cb_widgetready(res) {
-			self.hideWidget2(self);
+			self.hideWidget();
 		}
 		function eb_widgetready(p_reason) {
 			Divmod.debug('---', 'ERROR thermostats.eb_widgetready() - ' + p_reason);
@@ -43,7 +43,6 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 	 */
 	function startWidget(self) {
 		showSelectionButtons(self);
-		hideDataEntry(self);
 		self.fetchDataFromServer();
 	},
 
@@ -94,17 +93,14 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 			var l_obj = globals.House.HouseObj.Thermostats[l_ix];
 			globals.House.ThermostatObj = l_obj;
 			globals.House.Self = self;
-			showDataEntry(self);
-			hideSelectionButtons(self);
+			showDataEntryFields(self);
 			self.buildLcarDataEntryScreen(l_obj, 'handleDataOnClick');
 		} else if (l_ix == 10001) {  // The "Add" button
-			showDataEntry(self);
-			hideSelectionButtons(self);
+			showDataEntryFields(self);
 			var l_ent = self.createEntry();
 			self.buildLcarDataEntryScreen(l_ent, 'handleDataOnClick');
 		} else if (l_ix == 10002) {  // The "Back" button
-			self.hideWidget2(self);
-			self.showWidget2('HouseMenu');
+			self.showWidget('HouseMenu');
 		}
 	},
 
@@ -139,33 +135,14 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 		var l_level = fetchSliderWidget(l_self, 'HeatSetting');
 		updateSliderBoxValue(l_self, 'HeatSetting', l_level);
 	},
-	function buildInsteonPart(self, p_thermostat, p_html) {
-		Divmod.debug('---', 'thermostats.buildInsteonPart() was called.');
-		p_html += buildLcarTextWidget(self, 'InsteonAddress', 'Insteon Address', p_thermostat.InsteonAddress);
-		p_html += buildLcarTextWidget(self, 'DevCat', 'Dev Cat', p_thermostat.DevCat);
-		p_html += buildLcarTextWidget(self, 'GroupNumber', 'Group Number', p_thermostat.GroupNumber);
-		p_html += buildLcarTextWidget(self, 'GroupList', 'Group List', p_thermostat.GroupList);
-		p_html += buildLcarTrueFalseWidget(self, 'Master', 'Master ?', p_thermostat.IsMaster);
-		p_html += buildLcarTrueFalseWidget(self, 'Controller', 'Controller ?', p_thermostat.IsController);
-		p_html += buildLcarTrueFalseWidget(self, 'Responder', 'Responder ?', p_thermostat.IsResponder);
-		p_html += buildLcarTextWidget(self, 'ProductKey', 'Product Key', p_thermostat.ProductKey);
-		return p_html;
-	},
-	function buildUpbPart(self, p_thermostat, p_html) {
-		Divmod.debug('---', 'thermostats.buildUpbPart() was called.');
-		p_html += buildLcarTextWidget(self, 'UPBAddress', 'UPB Address', p_thermostat.UPBAddress);
-		p_html += buildLcarTextWidget(self, 'Password', 'UPB Password', p_thermostat.UPBPassword);
-		p_html += buildLcarTextWidget(self, 'NetworkID', 'UPB Network', p_thermostat.UPBNetworkID);
-		return p_html;
-	},
 	function buildAllParts(self, p_thermostat, p_html, p_handler, p_onchange) {
 		Divmod.debug('---', 'thermostats.buildAllParts() was called - family: ' + p_thermostat.ControllerFamily);
 		p_html = self.buildBasicPart(p_thermostat, p_html, p_onchange);
 		if (p_thermostat.ControllerFamily == 'Insteon') {
-			p_html = self.buildInsteonPart(p_thermostat, p_html);
+			p_html = buildInsteonPart(self, p_thermostat, p_html);
 		}
         if (p_thermostat.ControllerFamily == 'UPB') {
-        	p_html = self.buildUpbPart(p_thermostat, p_html);
+        	p_html = buildUpbPart(self, p_thermostat, p_html);
         }
 		p_html += buildLcarEntryButtons(p_handler);
 		return p_html;
@@ -208,29 +185,12 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 			Delete : false
             };
         if (l_data.ControllerFamily === 'Insteon') {
-        	l_data = self.fetchInsteonEntry(l_data);
+        	l_data = fetchInsteonEntry(self, l_data);
         }
         if (l_data.ControllerFamily === 'UPB') {
-        	l_data = self.fetchUpbEntry(l_data);
+        	l_data = fetchUpbEntry(self, l_data);
         }
 		return l_data;
-	},
-	function fetchInsteonEntry(self, p_data) {
-        p_data.InsteonAddress = fetchTextWidget(self, 'InsteonAddress');
-        p_data.DevCat = fetchTextWidget(self, 'DevCat');
-        p_data.GroupNumber = fetchTextWidget(self, 'GroupNumber');
-        p_data.GroupList = fetchTextWidget(self, 'GroupList');
-        p_data.IsMaster = fetchTrueFalseWidget(self, 'Master');
-        p_data.IsResponder = fetchTrueFalseWidget(self, 'Responder');
-        p_data.IsController = fetchTrueFalseWidget(self, 'Controller');
-        p_data.ProductKey = fetchTextWidget(self, 'ProductKey');
-		return p_data;
-	},
-	function fetchUpbEntry(self, p_data) {
-        p_data.UPBAddress = fetchTextWidget(self, 'UPBAddress');
-        p_data.UPBPassword = fetchTextWidget(self, 'Password');
-        p_data.UPBNetworkID = fetchTextWidget(self, 'NetworkID');
-		return p_data;
 	},
 	function createEntry(self, p_ix) {
 		var l_key = 0;
@@ -276,8 +236,7 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 			l_defer.addErrback(eb_handleDataOnClick);
 			break;
 		case '10002':  // Back button
-			self.hideDataEntry();
-			self.showSelectionButtons();
+			showSelectionButtons(self);
 			break;
 		case '10004':  // Delete button
 			var l_obj = self.fetchEntry();

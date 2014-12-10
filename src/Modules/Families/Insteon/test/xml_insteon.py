@@ -1,5 +1,5 @@
 """
-@name: C:/Users/briank/Documents/GitHub/PyHouse/src/Modules/Families/Insteon/test/xml_insteon.py
+@name: PyHouse/src/Modules/Families/Insteon/test/xml_insteon.py
 @author: D. Brian Kimmel
 @contact: D.BrianKimmel@gmail.com
 @Copyright: (c)  2014 by D. Brian Kimmel
@@ -10,10 +10,15 @@
 """
 
 
+TESTING_INSTEON_ADDRESS = "16.62.2D"
+TESTING_INSTEON_DEVCAT = "02.1C"
+TESTING_INSTEON_PRODUCT_KEY = "20.1A.35"
+
+
 INSTEON_XML = """
     <ControllerFamily>Insteon</ControllerFamily>
-    <Address>16.62.2D</Address>
-    <DevCat>02.1C</DevCat>
+    <Address>""" + TESTING_INSTEON_ADDRESS + """</Address>
+    <DevCat>""" + TESTING_INSTEON_DEVCAT + """</DevCat>
     <GroupList>All_Lights|Outside|Foyer(0;0)</GroupList>
     <GroupNumber>0</GroupNumber>
     <IsController>False</IsController>

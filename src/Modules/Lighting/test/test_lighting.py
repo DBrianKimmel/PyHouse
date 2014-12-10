@@ -36,7 +36,7 @@ class C_01_XML(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         SetupPyHouseObj().BuildXml(self.m_xml.root)
-        self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
+        self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
         self.m_light_obj = LightData()
         self.m_api = lighting.API()
 
@@ -50,14 +50,14 @@ class C_01_XML(SetupMixin, unittest.TestCase):
 
     def test_02_read_lighting(self):
         self.m_api._read_lighting_xml(self.m_pyhouse_obj)
-        PrettyPrintAny(self.m_pyhouse_obj.House.OBJs, 'PyHouse_obj.House.OBJs')
-        self.assertEqual(self.m_pyhouse_obj.House.OBJs.Lights[0].Name, 'outside_front')
+        PrettyPrintAny(self.m_pyhouse_obj.House.DeviceOBJs, 'PyHouse_obj.House.DeviceOBJs')
+        self.assertEqual(self.m_pyhouse_obj.House.DeviceOBJs.Lights[0].Name, 'outside_front')
 
     def test_03_write_lighting(self):
         self.m_api._read_lighting_xml(self.m_pyhouse_obj)
-        PrettyPrintAny(self.m_pyhouse_obj.House.OBJs, 'Lighting')
+        PrettyPrintAny(self.m_pyhouse_obj.House.DeviceOBJs, 'Lighting')
         l_xml = ET.Element('HouseDivision')
-        self.m_api._write_lighting_xml(self.m_pyhouse_obj.House.OBJs, l_xml)
+        self.m_api._write_lighting_xml(self.m_pyhouse_obj.House.DeviceOBJs, l_xml)
         PrettyPrintAny(l_xml, 'XML')
 
 
@@ -83,7 +83,7 @@ class C_02_Utility(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         SetupPyHouseObj().BuildXml(self.m_xml.root)
-        self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
+        self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
         self.m_light_obj = LightData()
         self.m_api = lighting.API()
 
@@ -91,12 +91,12 @@ class C_02_Utility(SetupMixin, unittest.TestCase):
         l_web_obj = LightData()
         l_web_obj.Name = 'dr_chand'
         self.m_api._read_lighting_xml(self.m_pyhouse_obj)
-        l_light = self.m_api._find_full_obj(self.m_pyhouse_obj.House.OBJs.Lights, l_web_obj)
+        l_light = self.m_api._find_full_obj(self.m_pyhouse_obj.House.DeviceOBJs.Lights, l_web_obj)
         PrettyPrintAny(l_light, 'Light')
         self.assertEqual(l_light.Name, 'dr_chand')
         #
         l_web_obj.Name = 'NoSuchLight'
-        l_light = self.m_api._find_full_obj(self.m_pyhouse_obj.House.OBJs.Lights, l_web_obj)
+        l_light = self.m_api._find_full_obj(self.m_pyhouse_obj.House.DeviceOBJs.Lights, l_web_obj)
         self.assertEqual(l_light, None)
 
 
@@ -107,7 +107,7 @@ class C_03_Ops(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         SetupPyHouseObj().BuildXml(self.m_xml.root)
-        self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
+        self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
         self.m_light_obj = LightData()
         self.m_api = lighting.API()
 

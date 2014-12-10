@@ -32,7 +32,7 @@ class SetupMixin(object):
 
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
-        self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
+        self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_device_obj = LightData()
 
@@ -49,7 +49,7 @@ class C01_XML(SetupMixin, unittest.TestCase):
     def test_01_Setup(self):
         """ Did we get everything set up for the rest of the tests of this class.
         """
-        PrettyPrintAny(self.m_pyhouse_obj.House.OBJs, 'OBJs', 115)
+        PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs, 'RefOBJs', 115)
         PrettyPrintAny(self.m_xml, 'XML')
         PrettyPrintAny(self.m_device_obj, 'Device')
 
@@ -94,9 +94,9 @@ class C03_Read(SetupMixin, unittest.TestCase):
     def test_01_Components(self):
         PrettyPrintAny(self.m_pyhouse_obj)
         PrettyPrintAny(self.m_pyhouse_obj.House)
-        PrettyPrintAny(self.m_pyhouse_obj.House.OBJs)
-        PrettyPrintAny(self.m_pyhouse_obj.House.OBJs.FamilyData['Insteon'])
-        PrettyPrintAny(self.m_pyhouse_obj.House.OBJs.FamilyData['Insteon'].FamilyModuleAPI)
+        PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs)
+        PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs.FamilyData['Insteon'])
+        PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs.FamilyData['Insteon'].FamilyModuleAPI)
 
     def test_02_All(self):
         """ Did we get everything set up for the rest of the tests of this class.

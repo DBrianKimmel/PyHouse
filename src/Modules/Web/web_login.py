@@ -30,7 +30,7 @@ from Modules.Core.data_objects import LoginData
 from Modules.Web import web_utils
 from Modules.Drivers import VALID_INTERFACES, VALID_PROTOCOLS
 from Modules.Hvac import VALID_TEMP_SYSTEMS, VALID_THERMOSTAT_MODES
-from Modules.Families import VALID_FAMILIES
+from Modules.Families import VALID_FAMILIES, VALID_DEVICE_TYPES
 from Modules.Housing import VALID_FLOORS
 from Modules.Lighting import VALID_LIGHTING_TYPE
 from Modules.Scheduling import VALID_SCHEDULING_TYPES, VALID_SCHEDULE_MODES
@@ -76,6 +76,7 @@ class LoginElement(athena.LiveElement):
         """ A JS request for various validating information has been received from the client.
 
         Return via JSON:
+            VALID_DEVICE_TYPES
             VALID_FAMILIES
             VALID_FLOORS
             VALID_INTERFACES
@@ -87,6 +88,7 @@ class LoginElement(athena.LiveElement):
             VALID_THERMOSTAT_MODES
         """
         l_obj = dict(
+                     Devices = VALID_DEVICE_TYPES,
                      Families = VALID_FAMILIES,
                      Floors = VALID_FLOORS,
                      InterfaceType = VALID_INTERFACES,

@@ -37,7 +37,7 @@ class Test_01_Valid(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         self.m_api = family.API()
-        self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
+        self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
 
     def test_0201_ValidFamilies(self):
         self.assertEqual(family.VALID_FAMILIES[0], 'Insteon')
@@ -52,7 +52,7 @@ class Test_02_Utility(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         self.m_api = family.API()
-        self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
+        self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
 
     def test_0211_BuildOne(self):
         l_family_obj = self.m_api._build_one_family_data('Insteon')
@@ -114,7 +114,7 @@ class Test_03_API(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         self.m_api = family.API()
-        self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
+        self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
 
     def test_0311_BuildFamily(self):
         l_family_obj = self.m_api.build_lighting_family_info()

@@ -335,10 +335,10 @@ class GetPyhouse(object):
         return self.m_pyhouse.House
 
     def Schedules(self):
-        return self.m_pyhouse_obj.House.OBJs.Schedules
+        return self.m_pyhouse_obj.House.RefOBJs.Schedules
 
     def Location(self):
-        return self.m_pyhouse_obj.House.OBJs.Location
+        return self.m_pyhouse_obj.House.RefOBJs.Location
 
 
 class Lister():
@@ -364,7 +364,7 @@ def get_light_object(p_pyhouse_obj, name = None, key = None):
 
     @return: the Light object found or None.
     """
-    l_lights = p_pyhouse_obj.House.OBJs.Lights
+    l_lights = p_pyhouse_obj.House.DeviceOBJs.Lights
     if name != None:
         for l_obj in l_lights.itervalues():
             if l_obj.Name == name:

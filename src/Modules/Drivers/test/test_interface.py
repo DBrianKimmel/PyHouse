@@ -1,5 +1,5 @@
 """
-@name: PyHouse/src/Modules/drivers/test/test_interface.py
+@name: PyHouse/src/Modules/Drivers/test/test_interface.py
 @author: D. Brian Kimmel
 @contact: D.BrianKimmel@gmail.com
 @copyright: 2013-2014 by D. Brian Kimmel
@@ -34,7 +34,7 @@ class SetupMixin(object):
         self.m_ctlr_api = lighting_controllers.ControllersAPI(self.m_pyhouse_obj)
 
 
-class Test_02_XML(SetupMixin, unittest.TestCase):
+class C01_XML(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by lighting_controllers.
     """
 
@@ -52,7 +52,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.controller.tag, 'Controller', 'XML - No Controller section')
 
     def test_0211_ExtractXML(self):
-        l_controllers = self.m_ctlr_api.read_controllers_xml(self.m_xml.controller_sect)
+        l_controllers = self.m_ctlr_api.read_all_controllers_xml(self.m_xml.controller_sect)
         l_interface = interface.ReadWriteConfigXml().read_interface_xml(self.m_controller_obj, l_controllers[0])
         PrettyPrintAny(l_interface, 'Interface', 120)
 

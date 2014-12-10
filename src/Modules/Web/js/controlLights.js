@@ -30,21 +30,8 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 	},
 	function startWidget(self) {
 		self.node.style.display = 'block';
-		self.showSelectionButtons(self);
-		self.hideDataEntry(self);
-		self.fetchHouseData();
-	},
-	function hideSelectionButtons(self) {
-		self.nodeById('SelectionButtonsDiv').style.display = 'none';
-	},
-	function showSelectionButtons(self) {
-		self.nodeById('SelectionButtonsDiv').style.display = 'block';
-	},
-	function hideDataEntry(self) {
-		self.nodeById('DataEntryDiv').style.display = 'none';
-	},
-	function showDataEntry(self) {
-		self.nodeById('DataEntryDiv').style.display = 'block';
+		showSelectionButtons(self);
+		self.fetchDataFromServer();
 	},
 
 
@@ -52,18 +39,18 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 	/**
 	 * This triggers getting the house data from the server.
 	 */
-	function fetchHouseData(self) {
-		function cb_fetchHouseData(p_json) {
+	function fetchDataFromServer(self) {
+		function cb_fetchDataFromServer(p_json) {
 			globals.House.HouseObj = JSON.parse(p_json);
 			self.buildLcarSelectScreen();
 		}
-		function eb_fetchHouseData(res) {
-			Divmod.debug('---', 'controlLights.eb_fetchHouseData() was called.  ERROR ' + res);
+		function eb_fetchDataFromServer(res) {
+			Divmod.debug('---', 'controlLights.eb_fetchDataFromServer() was called.  ERROR ' + res);
 		}
-		Divmod.debug('---', 'controlLights.fetchHouseData() was called.');
+		Divmod.debug('---', 'controlLights.fetchDataFromServer() was called.');
        	var l_defer = self.callRemote("getHouseData");  // call server @ web_controlLights.py
-		l_defer.addCallback(cb_fetchHouseData);
-		l_defer.addErrback(eb_fetchHouseData);
+		l_defer.addCallback(cb_fetchDataFromServer);
+		l_defer.addErrback(eb_fetchDataFromServer);
         return false;
 	},
 	/**
@@ -94,11 +81,10 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 			var l_obj = globals.House.HouseObj.Lights[l_ix];
 			globals.House.LightObj = l_obj;
 			globals.House.Self = self;
-			self.showDataEntry();
-			self.hideSelectionButtons();
+			showDataEntryFields(self);
 			self.fillEntry(l_obj);
 		} else if (l_ix == 10002) {  // The "Back" button
-			self.showWidget2('HouseMenu');
+			self.showWidget('HouseMenu');
 		}
 	},
 
@@ -109,13 +95,13 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 		var l_light = arguments[1];
 		var l_entry_html = "";
 		l_entry_html += buildLcarTextWidget(self, 'CtlLightName', 'Light Name', l_light.Name, 'disabled');
-		l_entry_html += buildLcarTextWidget(self, 'CtlLightKey', 'Light Index', l_light.Key, 'disabled');
+		l_entry_html += buildLcarTextWidget(self, 'CtlLightKey', 'Light Index', l_light.Key, 'disabled size="05"');
 		l_entry_html += buildLcarTextWidget(self, 'CtlLightUUID', 'UUID', l_light.UUID, 'disabled');
 		l_entry_html += buildLcarRoomSelectWidget(self, 'CtlLightRoomName', 'Room Name', l_light.RoomName, 'disabled');
 		l_entry_html += buildLcarLevelSliderWidget(self, 'CtlLightLevel', 'Level', l_light.CurLevel, 'handleSliderChange');
 		l_entry_html += buildLcarEntryButtons(p_handler, 'NoAdd');
 		var l_html = build_lcars_top('Control Light', 'lcars-salmon-color');
-		l_html += build_lcars_middle_menu(6, l_entry_html);
+		l_html += build_lcars_middle_menu(10, l_entry_html);
 		l_html += build_lcars_bottom();
 		self.nodeById('DataEntryDiv').innerHTML = l_html;
 	},
@@ -161,7 +147,7 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
         return false;  // return false stops the resetting of the server.
 	}
 );
-//Divmod.debug('---', 'controlLights.fetchHouseData.cb_fetchHouseData() was called.');
-//console.log("controlLights.fetchHouseData.cb_fetchHouseData   p1 %O", p_json);
+//Divmod.debug('---', 'controlLights.fetchDataFromServer.cb_fetchDataFromServer() was called.');
+//console.log("controlLights.fetchDataFromServer.cb_fetchDataFromServer   p1 %O", p_json);
 //### END DBK
 

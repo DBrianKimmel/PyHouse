@@ -193,21 +193,29 @@ Nevow.Athena.Widget.subclass(helpers, 'Widget').methods(
 
 	// DBK Added all widget functions below this line ----------------
 
-	function showWidget(self) {
-		Divmod.debug('---', 'Helpers.showWidget() was called for ' + self.node.className);
-		self.node.style.display = 'block';
-	},
-	function showWidget2(self, p_class) {
+	function showWidget(self, p_className) {
+		// Divmod.debug('---', 'helpers.showWidget(1) was called for ' + p_className);
+		// console.log("helpers.showWidget(1)  Self:  %O", self);
 		self.node.style.display = 'none';
-		var l_widget = findWidgetByClass(p_class);
+		var l_widget = findWidgetByClass(p_className);
+		// console.log("helpers.showWidget(2)  l_widget:  %O", l_widget);
 		l_widget.node.style.display = 'block';
-		l_widget.startWidget()
+		// Divmod.debug('---', 'helpers.showWidget(5) was called for ' + p_className);
+		showSelectionButtons(l_widget);
+		// Divmod.debug('---', 'helpers.showWidget(6) was called for ' + p_className);
+		l_widget.startWidget();
 	},
 	function hideWidget(self) {
+		// Divmod.debug('---', 'helpers.hideWidget() was called.');
+		// console.log("helpers.hideWidget()  Self:  %O", self);
 		self.node.style.display = 'none';
 	},
-	function hideWidget2(self, p_name) {
-		p_name.node.style.display = 'none';
+	function startWidget(self) {
+		// Divmod.debug('---', 'helpers.startWidget() was called.');
+		// console.log("helpers.startWidget()  Self:  %O", self);
+		self.node.style.display = 'block';
+		showSelectionButtons(self);
+		self.fetchDataFromServer();
 	}
 );
 
@@ -234,6 +242,6 @@ helpers.Widget.subclass(helpers, 'FourOfour').methods(
 		//alert('this is a fourOfour Message');
 	}
 );
-//console.log("helpers.handleDataOnClick()  json  %O", l_json);
-//Divmod.debug('---', 'helpers.handleDataOnClick(Change) was called. JSON:' + l_json);
+// console.log("helpers.handleDataOnClick()  json  %O", l_json);
+// Divmod.debug('---', 'helpers.handleDataOnClick(Change) was called. JSON:' + l_json);
 // END DBK

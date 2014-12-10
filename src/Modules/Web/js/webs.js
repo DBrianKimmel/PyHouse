@@ -47,31 +47,25 @@ helpers.Widget.subclass(webs, 'WebsWidget').methods(
 	function startWidget(self) {
 		self.node.style.display = 'block';
 	},
-	function hideDataEntry(self) {
-		self.nodeById('WebEntryDiv').style.display = 'none';		
-	},
-	function showDataEntry(self) {
-		self.nodeById('WebEntryDiv').style.display = 'block';		
-	},
 
 	// ============================================================================
 	/**
 	 * Called from the root menu screen when the Web Server button was clicked.
 	 */
-	function startWidget(self) {
-		function cb_startWidget(p_json) {
-			//Divmod.debug('---', 'webs.cb_startWidget() was called.  JSON = ' + p_json);
+	function fetchDataFromServer(self) {
+		function cb_fetchDataFromServer(p_json) {
+			//Divmod.debug('---', 'webs.cb_fetchDataFromServer() was called.  JSON = ' + p_json);
 			var l_obj = JSON.parse(p_json);
 			self.fillEntry(l_obj);
 		}
-		function eb_startWidget(res) {
-			Divmod.debug('---', 'webs.eb_startWidget() was called. ERROR = ' + res);
+		function eb_fetchDataFromServer(res) {
+			Divmod.debug('---', 'webs.eb_fetchDataFromServer() was called. ERROR = ' + res);
 		}
-		//Divmod.debug('---', 'webs.startWidget() was called.');
-		self.showWidget();
+		//Divmod.debug('---', 'webs.fetchDataFromServer() was called.');
+		self.startWidget();
         var l_defer = self.callRemote("getWebsData");  // call server @ web_webs.py
-		l_defer.addCallback(cb_startWidget);
-		l_defer.addErrback(eb_startWidget);
+		l_defer.addCallback(cb_fetchDataFromServer);
+		l_defer.addErrback(eb_fetchDataFromServer);
         return false;  // Stops the resetting of the server.
 	},
 	function fillEntry(self, p_obj) {
@@ -96,7 +90,7 @@ helpers.Widget.subclass(webs, 'WebsWidget').methods(
 	function handleDataOnClick(self, p_node) {
 		function cb_handleDataOnClick(p_json) {
 			//Divmod.debug('---', 'webs.cb_handleDataOnClick() was called.');
-			self.showWidget();
+			self.startWidget();
 		}
 		function eb_handleDataOnClick(res){
 			Divmod.debug('---', 'webs.eb_handleDataOnClick() was called. ERROR =' + res);
@@ -113,7 +107,6 @@ helpers.Widget.subclass(webs, 'WebsWidget').methods(
 			break;
 		case '10002':  // Back button
 			//Divmod.debug('---', 'webs.handleDataOnClick(Back) was called.  ');
-			self.hideWidget2(self);
 			var l_node = findWidgetByClass('RootMenu');
 			l_node.startWidget();
 			break;

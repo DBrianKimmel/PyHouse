@@ -43,21 +43,8 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 	 */
 	function startWidget(self) {
 		self.node.style.display = 'block';
-		self.showSelectionButtons();
-		self.hideDataEntry();
-		self.fetchHouseData();
-	},
-	function hideSelectionButtons(self) {
-		self.nodeById('SelectionButtonsDiv').style.display = 'none';
-	},
-	function showSelectionButtons(self) {
-		self.nodeById('SelectionButtonsDiv').style.display = 'block';
-	},
-	function hideDataEntry(self) {
-		self.nodeById('DataEntryDiv').style.display = 'none';
-	},
-	function showDataEntry(self) {
-		self.nodeById('DataEntryDiv').style.display = 'block';
+		showSelectionButtons(self);
+		self.fetchDataFromServer();
 	},
 	function buildButtonName(self, p_obj) {
 		var l_html = p_obj.Name;
@@ -84,17 +71,17 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 	/**
 	 * This triggers getting the schedule data from the server.
 	 */
-	function fetchHouseData(self) {
-		function cb_fetchHouseData(p_json) {
+	function fetchDataFromServer(self) {
+		function cb_fetchDataFromServer(p_json) {
 			globals.House.HouseObj = JSON.parse(p_json);
 			self.buildLcarSelectScreen();
 		}
-		function eb_fetchHouseData(res) {
-			Divmod.debug('---', 'schedules.eb_fetchHouseData() was called.  ERROR: ' + res);
+		function eb_fetchDataFromServer(res) {
+			Divmod.debug('---', 'schedules.eb_fetchDataFromServer() was called.  ERROR: ' + res);
 		}
         var l_defer = self.callRemote("getHouseData");  // call server @ web_schedules.py
-		l_defer.addCallback(cb_fetchHouseData);
-		l_defer.addErrback(eb_fetchHouseData);
+		l_defer.addCallback(cb_fetchDataFromServer);
+		l_defer.addErrback(eb_fetchDataFromServer);
         return false;
 	},
 
@@ -117,16 +104,14 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 			var l_obj = globals.House.HouseObj.Schedules[l_ix];
 			globals.House.ScheduleObj = l_obj;
 			globals.House.Self = self;
-			self.showDataEntry();
-			self.hideSelectionButtons();
+			showDataEntryFields(self);
 			self.fillEntry(l_obj);
 		} else if (l_ix == 10001) {  // The "Add" button
-			self.showDataEntry();
-			self.hideSelectionButtons();
+			showDataEntryFields(self);
 			var l_ent = self.createEntry();
 			self.fillEntry(l_ent);
 		} else if (l_ix == 10002) {  // The "Back" button
-			self.showWidget2('HouseMenu');
+			self.showWidget('HouseMenu');
 		}
 	},
 
@@ -228,8 +213,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 			l_defer.addErrback(eb_handleDataEntryOnClick);
 			break;
 		case '10002':  // Back button
-			self.hideDataEntry();
-			self.showSelectionButtons();
+			showSelectionButtons(self);
 			break;
 		case '10004':  // Delete button
 			var l_obj = self.fetchEntry();
@@ -247,5 +231,5 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 	}
 );
 //Divmod.debug('---', 'schedules.handleDataEntryOnClick(Back) was called.  ');
-//console.log("schedules.fetchHouseData.cb_fetchHouseData   p1 %O", p_json);
+//console.log("schedules.fetchDataFromServer.cb_fetchDataFromServer   p1 %O", p_json);
 // ### END DBK

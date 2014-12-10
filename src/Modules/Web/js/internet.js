@@ -44,23 +44,9 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 	 * routines for showing and hiding parts of the screen.
 	 */
 	function startWidget(self) {
-		// Divmod.debug('---', 'internet.showWidget() was called.');
 		self.node.style.display = 'block';
-		self.showSelectionButtons();
-		self.hideDataEntry();
-		self.fetchHouseData();
-	},
-	function hideSelectionButtons(self) {
-		self.nodeById('InternetButtonsDiv').style.display = 'none';
-	},
-	function showSelectionButtons(self) {
-		self.nodeById('InternetButtonsDiv').style.display = 'block';
-	},
-	function hideDataEntry(self) {
-		self.nodeById('InternetEntryDiv').style.display = 'none';
-	},
-	function showDataEntry(self) {
-		self.nodeById('InternetEntryDiv').style.display = 'block';
+		showSelectionButtons(self);
+		self.fetchDataFromServer();
 	},
 
 	// ============================================================================
@@ -68,16 +54,16 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 	 * This triggers getting the Internet data from the server.
 	 * The server calls displayInternetButtons with the Internet info.
 	 */
-	function fetchHouseData(self) {
-		function cb_fetchHouseData(p_json) {
+	function fetchDataFromServer(self) {
+		function cb_fetchDataFromServer(p_json) {
 			globals.Computer = JSON.parse(p_json);
 		}
-		function eb_fetchHouseData(res) {
-			Divmod.debug('---', 'internet.eb_fetchHouseData() was called. ERROR: ' + res);
+		function eb_fetchDataFromServer(res) {
+			Divmod.debug('---', 'internet.eb_fetchDataFromServer() was called. ERROR: ' + res);
 		}
         var l_defer = self.callRemote("getHouseData");  // call server @ web_internet.py
-		l_defer.addCallback(cb_fetchHouseData);
-		l_defer.addErrback(eb_fetchHouseData);
+		l_defer.addCallback(cb_fetchDataFromServer);
+		l_defer.addErrback(eb_fetchDataFromServer);
         return false;
 	},
 
@@ -132,14 +118,12 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 			var l_obj = globals.House.HouseObj.Internet;
 			// Divmod.debug('---', 'internet.handleMenuOnClick("Internet" Button) was called. ' + l_ix + ' ' + l_name);
 			// console.log("internet.handleMenuOnClick() - l_obj = %O", l_obj);
-			self.showDataEntry();
-			//self.hideSelectionButtons();
+			showDataEntryFields(self);
 			self.fillEntry(l_obj, l_ix);
 		} else if (l_ix == 10001) {
 			// The "Add" button
 			// Divmod.debug('---', 'internet.handleMenuOnClick(Add Button) was called. ' + l_ix + ' ' + l_name);
-			self.showDataEntry();
-			self.hideSelectionButtons();
+			showDataEntryFields(self);
 			var l_ent = self.createEntry(globals.House.InternetIx);
 			self.fillEntry(l_ent);
 		} else if (l_ix == 10002) {
@@ -147,7 +131,7 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 			// Divmod.debug('---', 'internet.handleMenuOnClick(Back Button) was called. ' + l_ix + ' ' + l_name);
 			self.hideWidget();
 			var l_node = findWidgetByClass('HouseMenu');
-			l_node.showWidget2('HouseMenu');
+			l_node.showWidget('HouseMenu');
 		}
 	},
 
@@ -159,7 +143,7 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 	function handleDataOnClick(self, p_node) {
 		function cb_handleDataOnClick(p_json) {
 			// Divmod.debug('---', 'internet.cb_handleDataOnClick() was called.');
-			self.showWidget();
+			self.startWidget();
 		}
 		function eb_handleDataOnClick(res){
 			Divmod.debug('---', 'internet.eb_handleDataOnClick() was called. ERROR =' + res);
@@ -176,8 +160,7 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 			l_defer.addErrback(eb_handleDataOnClick);
 			break;
 		case '10002':  // Back button
-			self.hideDataEntry();
-			self.showSelectionButtons();
+			showSelectionButtons(self);
 			break;
 		case '10004':  // Delete button
 			var l_obj = self.fetchEntry();

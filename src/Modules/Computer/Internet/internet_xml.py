@@ -19,7 +19,7 @@ from Modules.Utilities.xml_tools import XmlConfigTools
 from Modules.Computer import logging_pyh as Logger
 
 g_debug = 1
-LOG = Logger.getLogger('PyHouse.Internet_xml')
+LOG = Logger.getLogger('PyHouse.Internet_xml   ')
 
 
 

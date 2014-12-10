@@ -37,15 +37,8 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 		return l_defer;
 	},
 	function startWidget(self) {
-		self.showSelectionButtons();
+		showSelectionButtons(self);
 		self.getHousesInfo();
-	},
-	function hideSelectionButtons(self) {
-		// Divmod.debug('---', 'houseSelect.hideSelectionButtons() was called.');
-		self.nodeById('SelectionButtonsDiv').style.display = 'none';
-	},
-	function showSelectionButtons(self) {
-		self.nodeById('SelectionButtonsDiv').style.display = 'block';
 	},
 
 
@@ -90,8 +83,6 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 		function eb_getSelectedHouseData(p_reason) {
 			Divmod.debug('---', 'ERROR houseSelect.eb_getSelectedHouseData() - ' + p_reason);
 		}
-		// Divmod.debug('---', 'houseSelect.getSelectedHouseData() was called. ');
-		self.hideSelectionButtons();
         var l_defer = self.callRemote("getSelectedHouseData");  // call server @ web_houseSelect.py
 		l_defer.addCallback(cb_getSelectedHouseData);
 		l_defer.addErrback(eb_getSelectedHouseData);
@@ -111,14 +102,12 @@ helpers.Widget.subclass(houseSelect, 'HouseSelectWidget').methods(
 			globals.House.HouseIx = l_ix;
 			globals.House.HouseName = l_name;
 			self.getSelectedHouseData(l_ix);
-			self.hideSelectionButtons();
-			self.showWidget2('HouseMenu');
+			self.showWidget('HouseMenu');
 		} else if (l_ix == 10001) {  // The "Add" button
 			globals.House.HouseIx = -1;
-			self.hideSelectionButtons();
-			self.showWidget2('House');
+			self.showWidget('House');
 		} else if (l_ix == 10002) {  // The "Back" button
-			self.showWidget2('RootMenu');
+			self.showWidget('RootMenu');
 		}
 	}
 );

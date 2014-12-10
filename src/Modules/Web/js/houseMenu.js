@@ -40,15 +40,8 @@ helpers.Widget.subclass(houseMenu, 'HouseMenuWidget').methods(
 		return l_defer;
 	},
 	function startWidget(self) {
-		// Divmod.debug('---', 'houseMenu.startWidget() was called.');
-		self.showSelectionButtons();
+		showSelectionButtons(self);
 		self.buildLcarSelectScreen();
-	},
-	function hideSelectionButtons(self) {
-		self.nodeById('SelectionButtonsDiv').style.display = 'none';
-	},
-	function showSelectionButtons(self) {
-		self.nodeById('SelectionButtonsDiv').style.display = 'block';
 	},
 
 
@@ -103,34 +96,34 @@ helpers.Widget.subclass(houseMenu, 'HouseMenuWidget').methods(
 		var l_node;
 		switch (l_key) {
 		case 'Location':
-			self.showWidget2('House');
+			self.showWidget('House');
 			break;
 		case 'Rooms':
-			self.showWidget2('Rooms');
+			self.showWidget('Rooms');
 			break;
 		case 'Lights':
-			self.showWidget2('Lights');
+			self.showWidget('Lights');
 			break;
 		case 'Buttons':
-			self.showWidget2('Buttons');
+			self.showWidget('Buttons');
 			break;
 		case 'Controllers':
-			self.showWidget2('Controllers');
+			self.showWidget('Controllers');
 			break;
 		case 'Schedules':
-			self.showWidget2('Schedules');
+			self.showWidget('Schedules');
 			break;
 		case 'Levels':
-			self.showWidget2('ControlLights');
+			self.showWidget('ControlLights');
 			break;
 		case 'Internet':
-			self.showWidget2('Internet');
+			self.showWidget('Internet');
 			break;
 		case 'Thermo':
-			self.showWidget2('Thermostat');
+			self.showWidget('Thermostat');
 			break;
 		case 'Back':
-			self.showWidget2('RootMenu');
+			self.showWidget('RootMenu');
 			break;
 		default:
 			Divmod.debug('---', 'houseMenu.doHandleOnClick(Default) was called.');

@@ -27,7 +27,7 @@ from Modules.Utilities.xml_tools import XmlConfigTools
 from Modules.Web import web_server
 # from Modules.Utilities.tools import PrettyPrintAny
 
-LOG = Logger.getLogger('PyHouse.Computer    ')
+LOG = Logger.getLogger('PyHouse.Computer       ')
 
 MODULES = ['Communication', 'Internet' , 'Node', 'Weather', 'Web']
 

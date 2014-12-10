@@ -37,7 +37,7 @@ from Modules.Computer import logging_pyh as Logger
 # from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 9
-LOG = Logger.getLogger('PyHouse.NodeDiscovry')
+LOG = Logger.getLogger('PyHouse.NodeDiscovery  ')
 
 
 

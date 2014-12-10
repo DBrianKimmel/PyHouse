@@ -29,7 +29,7 @@ from Modules.Computer.Internet import internet_xml, inet_find_external_ip, inet_
 from Modules.Computer import logging_pyh as Logger
 
 
-LOG = Logger.getLogger('PyHouse.Internet    ')
+LOG = Logger.getLogger('PyHouse.Internet       ')
 INITIAL_DELAY = 5
 REPEAT_DELAY = 2 * 60 * 60
 

@@ -18,7 +18,7 @@ from Modules.Drivers import interface
 # from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 1
-LOG = Logger.getLogger('PyHouse.Controller  ')
+LOG = Logger.getLogger('PyHouse.Controller     ')
 
 
 
@@ -42,14 +42,13 @@ class ControllersAPI(ReadWriteConfigXml):
         l_obj = self.read_base_lighting_xml(l_obj, p_xml)
         return l_obj
 
-    def _read_controller_data(self, p_xml):
+    def _read_controller_data(self, p_obj, p_xml):
         """
         There are 2 extra fields for controllers - get them.
         """
-        l_obj = self._read_base_data(p_xml)
-        l_obj.InterfaceType = self.get_text_from_xml(p_xml, 'InterfaceType')
-        l_obj.Port = self.get_text_from_xml(p_xml, 'Port')
-        return l_obj
+        p_obj.InterfaceType = self.get_text_from_xml(p_xml, 'InterfaceType')
+        p_obj.Port = self.get_text_from_xml(p_xml, 'Port')
+        return p_obj
 
     def _read_family_data(self, p_obj, p_xml):
         l_api = FamUtil().read_family_data(self.m_pyhouse_obj, p_obj, p_xml)
@@ -61,15 +60,16 @@ class ControllersAPI(ReadWriteConfigXml):
         except Exception as e_err:  # ControllerFamily invalid or missing
             LOG.error('ERROR - Read Interface Data - {0:} - {1:} - {2:}'.format(e_err, p_obj.Name, p_obj.InterfaceType))
 
-    def read_one_controller_xml(self, p_controller_xml):
+    def read_one_controller_xml(self, p_xml):
         try:
-            l_controller_obj = self._read_controller_data(p_controller_xml)
-            l_controller_obj.Key = self.m_count  # Renumber
-            self._read_family_data(l_controller_obj, p_controller_xml)
-            self._read_interface_data(l_controller_obj, p_controller_xml)
+            l_obj = self._read_base_data(p_xml)
+            l_obj = self._read_controller_data(l_obj, p_xml)
+            l_obj.Key = self.m_count  # Renumber
+            self._read_family_data(l_obj, p_xml)
+            self._read_interface_data(l_obj, p_xml)
         except Exception as e_err:
             LOG.error('ERROR - ReadOneController - {0:}'.format(e_err))
-        return l_controller_obj
+        return l_obj
 
     def read_all_controllers_xml(self, p_controller_sect_xml):
         """Called from lighting.
@@ -91,7 +91,7 @@ class ControllersAPI(ReadWriteConfigXml):
         self.put_text_element(p_xml, 'Port', p_obj.Port)
 
     def _write_family_data(self, p_controller_obj, p_xml):
-        l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[p_controller_obj.ControllerFamily].FamilyModuleAPI
+        l_api = self.m_pyhouse_obj.House.RefOBJs.FamilyData[p_controller_obj.ControllerFamily].FamilyModuleAPI
         l_api.WriteXml(p_xml, p_controller_obj)
 
     def _write_interface_data(self, p_obj, p_xml):

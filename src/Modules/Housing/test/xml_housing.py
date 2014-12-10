@@ -1,5 +1,5 @@
 """
-@name: C:/Users/briank/Documents/GitHub/PyHouse/src/Modules/Housing/test/xml_location.py
+@name: PyHouse/src/Modules/Housing/test/xml_housing.py
 @author: D. Brian Kimmel
 @contact: D.BrianKimmel@gmail.com
 @Copyright: (c)  2014 by D. Brian Kimmel
@@ -23,7 +23,7 @@ Comments should not need explaining.  They are just present and can contain just
 from Modules.Housing.test.xml_location import LOCATION_XML
 from Modules.Housing.test.xml_rooms import ROOMS_XML
 from Modules.Scheduling.test.xml_schedule import SCHEDULE_XML
-from Modules.Lighting.test.xml_lighting import LIGHTING_XML
+from Modules.Lighting.test.xml_lighting import *
 from Modules.Hvac.test.xml_thermostat import THERMOSTAT_XML
 from Modules.Entertainment.test.xml_entertainment import ENTERTAINMENT_XML
 

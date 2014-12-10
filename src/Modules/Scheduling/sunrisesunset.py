@@ -33,7 +33,7 @@ from Modules.Computer import logging_pyh as Logger
 # from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 0
-LOG = Logger.getLogger('PyHouse.Sunrise     ')
+LOG = Logger.getLogger('PyHouse.Sunrise        ')
 
 RAD2DEG = 180.0 / pi
 DEG2RAD = pi / 180.0
@@ -464,13 +464,10 @@ class Utility(SSAPI, SunriseSet):
 
     def _load_location(self, p_pyhouse_obj, p_gregorian_date):
         l_earth_data = EarthParameters()
-        # l_earth_data.Latitude = GetPyhouse(p_pyhouse_obj).Location().Latitude
-        l_earth_data.Latitude = p_pyhouse_obj.House.OBJs.Location.Latitude
-        l_earth_data.Longitude = p_pyhouse_obj.House.OBJs.Location.Longitude
-        l_earth_data.TimeZoneName = p_pyhouse_obj.House.OBJs.Location.TimeZoneName
+        l_earth_data.Latitude = p_pyhouse_obj.House.RefOBJs.Location.Latitude
+        l_earth_data.Longitude = p_pyhouse_obj.House.RefOBJs.Location.Longitude
+        l_earth_data.TimeZoneName = p_pyhouse_obj.House.RefOBJs.Location.TimeZoneName
         self._get_tz_params(l_earth_data, p_gregorian_date)
-        # l_earth_data.TimeZoneOffset = self._get_zone_time(p_pyhouse_obj.House.OBJs.Location.TimeZoneOffset)
-        # l_earth_data.DaylightSavingsTime = self._get_zone_time(p_pyhouse_obj.House.OBJs.Location.DaylightSavingsTime)
         return l_earth_data
 
     def _get_tz_params(self, p_earth_data, p_gregorian_date):
@@ -495,8 +492,8 @@ class API(Utility):
         self.m_julian_data = JDate.calculate_all_julian_dates(p_gregorian_date, self.m_earth_data)
         self.m_solar_data = self._calculate_solar_params()
         self.m_solar_data = self.calcSolarNoonParams(self.m_earth_data, self.m_julian_data)
-        p_pyhouse_obj.House.OBJs.Location._Sunrise = self.m_solar_data.Sunrise
-        p_pyhouse_obj.House.OBJs.Location._Sunset = self.m_solar_data.Sunset
+        p_pyhouse_obj.House.RefOBJs.Location._Sunrise = self.m_solar_data.Sunrise
+        p_pyhouse_obj.House.RefOBJs.Location._Sunset = self.m_solar_data.Sunset
         LOG.info('Started.')
 
     def Stop(self):

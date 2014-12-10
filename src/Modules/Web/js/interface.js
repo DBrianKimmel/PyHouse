@@ -5,7 +5,11 @@
  * @Copyright (c) 2014 by D. Brian Kimmel
  * @license: MIT License
  * @note: Created on Sep 12, 2014
- * @summary: Lcars components.
+ * @summary: Lcars components to handle all the controller interfaces.
+ * Currently:
+ * 				Serial
+ * 				USB
+ * 				Ethernet
  */
 
 var VALID_BAUD_RATE = ['4800', '9600', '19200', '38400'];
@@ -26,8 +30,18 @@ function buildLcarStopBitsSelectWidget(self, p_id, p_caption, p_checked) {
 	return buildLcarSelectWidget(self, p_id, p_caption, VALID_STOP_BITS, p_checked);
 }
 
+
+/**
+ * Special - has onchange 
+ */
+function buildLcarInterfaceTypeSelectWidget(self, p_id, p_caption, p_checked, p_onchange) {
+	Divmod.debug('---', 'interface.buildLcarInterfaceTypeSelectWidget() called.');
+	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.InterfaceType, p_checked, p_onchange);
+}
+
+
 function buildSerialPart(self, p_controller, p_html) {
-	// Divmod.debug('---', 'interface.buildSerialPart() called.');
+	Divmod.debug('---', 'interface.buildSerialPart() called.');
 	p_html += buildLcarBaudRateSelectWidget(self, 'BaudRate', 'Baud Rate', p_controller.BaudRate);
 	p_html += buildLcarByteSizeSelectWidget(self, 'ByteSize', 'Byte Size', p_controller.ByteSize);
 	p_html += buildLcarParitySelectWidget(self, 'Parity', 'Parity', p_controller.Parity);
@@ -35,7 +49,7 @@ function buildSerialPart(self, p_controller, p_html) {
 	return p_html;
 }
 function fetchSerialEntry(self, p_data) {
-	// Divmod.debug('---', 'interface.fetchSerialEntry() was called.');
+	Divmod.debug('---', 'interface.fetchSerialEntry() was called.');
     p_data.BaudRate = fetchSelectWidget(self, 'BaudRate');
     p_data.ByteSize = fetchSelectWidget(self, 'ByteSize');
     p_data.Parity = fetchSelectWidget(self, 'Parity');
@@ -46,5 +60,17 @@ function fetchSerialEntry(self, p_data) {
     p_data.XonXoff = false;
 	return p_data;
 }
+function createSerialEntry(self, p_data) {
+    p_data.BaudRate = 9600;
+    p_data.ByteSize = 8;
+    p_data.Parity = 'N';
+    p_data.StopBits = 1.0;
+    p_data.DsrDtr = false;
+    p_data.RtsCts = false;
+    p_data.Timeout = 1.0;
+    p_data.XonXoff = false;
+	return p_data;
+}
 
+// Divmod.debug('---', 'interface.buildSerialPart() called.');
 // ### END DBK

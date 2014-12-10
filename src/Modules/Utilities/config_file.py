@@ -45,9 +45,9 @@ class ConfigAPI(object):
         except IOError as e_err:
             print(" -- Error in open_config_file {0:}".format(e_err))
 
-    def write_xml_config_file(self, p_pyhouse_obj, p_xmltree, p_filename):
+    def write_xml_config_file(self, p_pyhouse_obj, p_xmltree):
         l_tree = ET.ElementTree()
         l_tree._setroot(p_xmltree)
-        l_tree.write(p_filename, xml_declaration = True)
+        l_tree.write(p_pyhouse_obj.Xml.XmlFileName, xml_declaration = True)
 
 # ## END DBK

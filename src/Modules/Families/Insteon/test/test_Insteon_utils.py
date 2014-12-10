@@ -11,9 +11,15 @@
 
 # Import system type stuff
 from twisted.trial import unittest
+import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
 from Modules.Families.Insteon import Insteon_utils
+from test.testing_mixin import SetupPyHouseObj
+from test.xml_data import XML_LONG
+from Modules.Utilities.tools import PrettyPrintAny
+
+
 
 ADDR_DR_SLAVE_MSG = bytearray(b'\x16\xc9\xd0')
 ADDR_DR_SLAVE_INT = 1493456
@@ -24,7 +30,35 @@ MSG_50 = bytearray(b'\x02\x50\x16\xc9\xd0\x1b\x47\x81\x27\x09\x00')
 MSG_62 = bytearray(b'\x02\x62\x17\xc2\x72\x0f\x19\x00\x06')
 
 
-class C01_Conversions(unittest.TestCase):
+
+class SetupMixin(object):
+    """
+    """
+
+    def setUp(self, p_root):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
+        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+
+
+
+class C01_Util(SetupMixin, unittest.TestCase):
+    """
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_controller_obj = self.m_pyhouse_obj.House.DeviceOBJs.Controllers
+
+    def test_01_DeviceClass(self):
+        l_house = Insteon_utils.Util().get_device_class(self.m_pyhouse_obj, "xxx")
+        PrettyPrintAny(l_house, 'HouseOBJs')
+
+    def test_02_iterate(self):
+        pass
+
+
+
+class C02_Conversions(unittest.TestCase):
 
 
     def setUp(self):
@@ -47,7 +81,7 @@ class C01_Conversions(unittest.TestCase):
 
 def suite():
     l_suite = unittest.TestSuite()
-    l_suite.addTest(C01_Conversions('test_01_message2int', 'test_02_int2message'))
+    # l_suite.addTest(C01_Conversions('test_01_message2int', 'test_02_int2message'))
     return l_suite
 
 # ## END DBK

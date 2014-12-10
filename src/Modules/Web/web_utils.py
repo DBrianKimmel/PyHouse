@@ -59,17 +59,17 @@ class UtilJson(object):
 
     @staticmethod
     def _get_LocRoom(p_pyhouse_obj, p_ret):
-        p_ret.Location = p_pyhouse_obj.House.OBJs.Location
-        p_ret.Rooms = p_pyhouse_obj.House.OBJs.Rooms
+        p_ret.Location = p_pyhouse_obj.House.RefOBJs.Location
+        p_ret.Rooms = p_pyhouse_obj.House.RefOBJs.Rooms
 
 
     @staticmethod
     def _get_Modules(p_pyhouse_obj, p_ret):
-        p_ret.Buttons = p_pyhouse_obj.House.OBJs.Buttons
-        p_ret.Controllers = p_pyhouse_obj.House.OBJs.Controllers
-        p_ret.Lights = p_pyhouse_obj.House.OBJs.Lights
-        p_ret.Schedules = p_pyhouse_obj.House.OBJs.Schedules
-        p_ret.Thermostats = p_pyhouse_obj.House.OBJs.Thermostats
+        p_ret.Buttons = p_pyhouse_obj.House.DeviceOBJs.Buttons
+        p_ret.Controllers = p_pyhouse_obj.House.DeviceOBJs.Controllers
+        p_ret.Lights = p_pyhouse_obj.House.DeviceOBJs.Lights
+        p_ret.Schedules = p_pyhouse_obj.House.RefOBJs.Schedules
+        p_ret.Thermostats = p_pyhouse_obj.House.DeviceOBJs.Thermostats
 
 
     @staticmethod

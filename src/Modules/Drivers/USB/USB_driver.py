@@ -23,7 +23,7 @@ from Modules.Utilities.tools import PrintBytes
 from Modules.Computer import logging_pyh as Logger
 
 g_debug = 1
-LOG = Logger.getLogger('PyHouse.USBDriver   ')
+LOG = Logger.getLogger('PyHouse.USBDriver      ')
 
 
 # Timeouts for send/receive delays

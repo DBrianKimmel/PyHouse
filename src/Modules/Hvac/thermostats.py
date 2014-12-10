@@ -72,7 +72,6 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         self.m_count = 0
         try:
             for l_xml in l_xml_sect.iterfind('Thermostat'):
-                print l_xml.tag
                 l_obj = self._read_one_thermostat_xml(p_pyhouse_obj, l_xml)
                 l_ret[self.m_count] = l_obj
                 self.m_count += 1
@@ -98,7 +97,7 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
 
     def _write_thermostat_family(self, p_pyhouse_obj, p_out_xml, p_obj):
         try:
-            l_api = p_pyhouse_obj.House.OBJs.FamilyData[p_obj.ControllerFamily].FamilyModuleAPI
+            l_api = p_pyhouse_obj.House.DeviceOBJs.FamilyData[p_obj.ControllerFamily].FamilyModuleAPI
             # l_api.insert_device_xml(p_out_xml, p_obj)
             l_api.WriteXml(p_out_xml, p_obj)
         except (KeyError, AttributeError) as e_err:
@@ -121,13 +120,13 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         l_xml = ET.Element('ThermostatSection')
         self.m_count = 0
         try:
-            for l_obj in p_pyhouse_obj.House.OBJs.Thermostats.itervalues():
-                print('Name: {}'.format(l_obj))
+            for l_obj in p_pyhouse_obj.House.DeviceOBJs.Thermostats.itervalues():
+                # print('Name: {}'.format(l_obj))
                 l_entry = self._write_one_thermostat_xml(p_pyhouse_obj, l_obj)
                 l_xml.append(l_entry)
                 self.m_count += 1
-        except AttributeError as e:
-            l_msg = 'ERROR writing all thermostats {0:}'.format(e)
+        except AttributeError as e_err:
+            l_msg = 'ERROR writing all thermostats {0:}'.format(e_err)
             LOG.error(l_msg)
             print(l_msg)
         return l_xml
@@ -138,7 +137,7 @@ class Utility(ReadWriteConfigXml):
     """
 
     def update_pyhouse_obj(self, p_pyhouse_obj):
-        p_pyhouse_obj.House.OBJs.Thermostats = ThermostatData()
+        p_pyhouse_obj.House.DeviceOBJs.Thermostats = ThermostatData()
 
     def add_api_references(self, p_pyhouse_obj):
         pass
@@ -163,7 +162,7 @@ class API(Utility):
     def Start(self, p_pyhouse_obj):
         self.update_pyhouse_obj(p_pyhouse_obj)
         self.m_pyhouse_obj = p_pyhouse_obj
-        p_pyhouse_obj.House.OBJs.Thermostats = self.read_all_thermostats_xml(p_pyhouse_obj)
+        p_pyhouse_obj.House.DeviceOBJs.Thermostats = self.read_all_thermostats_xml(p_pyhouse_obj)
         LOG.info("Started.")
 
     def Stop(self):

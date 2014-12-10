@@ -38,7 +38,7 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 		return l_defer;
 	},
 	function startWidget(self) {
-		showDataEntry(self);
+		showDataEntryFields(self);
 		self.fetchDataFromServer();
 	},
 
@@ -142,7 +142,7 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 	 */
 	function handleDataEntryOnClick(self, p_node) {
 		function cb_handleDataEntryOnClick() {
-			self.showWidget2('HouseMenu');
+			self.showWidget('HouseMenu');
 		}
 		function eb_handleDataEntryOnClick(p_reason){
 			Divmod.debug('---', 'ERROR house.eb_handleDataEntryOnClick() - ' + p_reason);
@@ -159,7 +159,7 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 			l_defer.addErrback(eb_handleDataEntryOnClick);
 			break;
 		case '10002':  // Back button
-			self.showWidget2('HouseMenu');
+			self.showWidget('HouseMenu');
 			break;
 		default:
 			Divmod.debug('---', 'house.handleDataEntryOnClick(Default) was called. l_ix:' + l_ix);

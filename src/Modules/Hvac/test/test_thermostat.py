@@ -32,7 +32,7 @@ class SetupMixin(object):
 
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
-        self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
+        self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_api = thermostats.API()
         self.m_thermostat_obj = ThermostatData()
@@ -46,7 +46,7 @@ class C01_XML(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
+        self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
 
 
     def test_01_FindXml(self):
@@ -56,7 +56,7 @@ class C01_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision', 'XML - No House Division')
         self.assertEqual(self.m_xml.thermostat_sect.tag, 'ThermostatSection', 'XML - No Thermostat section')
         self.assertEqual(self.m_xml.thermostat.tag, 'Thermostat', 'XML - No Thermostat Entry')
-        PrettyPrintAny(self.m_pyhouse_obj.House.OBJs, 'PyHouse.House.OBJs', 115)
+        PrettyPrintAny(self.m_pyhouse_obj.House.DeviceOBJs, 'PyHouse.House.DeviceOBJs', 115)
         PrettyPrintAny(self.m_xml.thermostat_sect, 'Thermostat Sect', 120)
         PrettyPrintAny(self.m_xml.thermostat, 'ThermostatXML', 120)
 
@@ -69,12 +69,12 @@ class C02_ReadXML(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
+        self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
 
     def test_01_xml(self):
         PrettyPrintAny(self.m_xml.thermostat, 'Base', 100)
-        PrettyPrintAny(self.m_pyhouse_obj.House.OBJs, 'House OBJs')
-        PrettyPrintAny(self.m_pyhouse_obj.House.OBJs.FamilyData, 'Family')
+        PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs, 'House RefOBJs')
+        PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs.FamilyData, 'Family')
 
     def test_02_Base(self):
         l_thermostat = self.m_api._read_thermostat_base(self.m_xml.thermostat)
@@ -137,7 +137,7 @@ class C03_WriteXML(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
+        self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
 
     def test_01_Base(self):
         l_thermostat = self.m_api._read_one_thermostat_xml(self.m_pyhouse_obj, self.m_xml.thermostat)
@@ -169,8 +169,8 @@ class C03_WriteXML(SetupMixin, unittest.TestCase):
         """ Write out the XML file for the location section
         """
         l_thermostats = self.m_api.read_all_thermostats_xml(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.OBJs.Thermostats = l_thermostats
-        PrettyPrintAny(self.m_pyhouse_obj.House.OBJs.Thermostats, 'PyHouse')
+        self.m_pyhouse_obj.House.DeviceOBJs.Thermostats = l_thermostats
+        PrettyPrintAny(self.m_pyhouse_obj.House.DeviceOBJs.Thermostats, 'PyHouse')
         PrettyPrintAny(l_thermostats, 'Thermostats')
         l_out_xml = self.m_api.write_all_thermostats_xml(self.m_pyhouse_obj)
         PrettyPrintAny(l_out_xml, 'AllControllers')
@@ -184,7 +184,7 @@ class C04_JSON(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
+        self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
 
     def test_01_CreateJson(self):
         """ Create a JSON object for Location.
@@ -201,7 +201,7 @@ class C05_Util(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
+        self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
 
     def test_01_Xml(self):
         l_xml = self.m_api.setup_xml(self.m_pyhouse_obj)

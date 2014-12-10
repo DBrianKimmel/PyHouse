@@ -47,7 +47,7 @@ class LightingSchedule(object):
         l_seconds_to_delay = SECONDS_IN_WEEK
         l_schedule_list = []
 
-        for l_key, l_schedule_obj in p_pyhouse_obj.House.OBJs.Schedules.iteritems():
+        for l_key, l_schedule_obj in p_pyhouse_obj.House.RefOBJs.Schedules.iteritems():
             l_event = self._find_event(l_schedule_obj)
             if l_event == None:
                 continue

@@ -132,14 +132,13 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 	 */
 	function showNextScreen(self, p_obj) {
 		function cb_showNextScreen() {
-			// Divmod.debug('---', 'login.cb_showNextScreen() was called.');
-			self.hideWidget2(self);
-			self.showWidget2('RootMenu');
+			// Divmod.debug('---', 'login.cb_showNextScreen(1) was called.');
+			self.showWidget('RootMenu');
 			}
 		function eb_showNextScreen(p_reason) {
 			Divmod.debug('---', 'ERROR = login.showNextScreen() - ' + p_reason);
 		}
-		// Divmod.debug('---', 'login.showNextScreen() was called.');
+		// Divmod.debug('---', 'login.showNextScreen(2) was called.');
 		if (p_obj.IsLoggedIn === true) {
 			globals.User.ID = p_obj.Username;
 			globals.User.Password = p_obj.Password;

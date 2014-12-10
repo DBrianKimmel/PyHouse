@@ -17,8 +17,20 @@ This contains an Insteon modem.
 
 Models 2491T1E and 2491T7E = (2491TxE)
 
-0x6E and 0x6F are old commands
+0x6E and 0x6F are old commands no longer used in the thermostat.
 """
+
+
+
+class Util(object):
+    """
+    """
+
+    def get_device_obj(self, p_pyhouse_obj, p_address):
+        l_ret = self._find_addr(p_pyhouse_obj.House.DeviceOBJs.Thermostats, p_address)
+        return l_ret
+
+
 
 class ihvac_utility(object):
 

@@ -13,8 +13,8 @@
 
 # Import PyMh files
 from Modules.Lighting.test.xml_buttons import BUTTON_SECTION_XML
-from Modules.Lighting.test.xml_lights import LIGHT_SECTION_XML
-from Modules.Lighting.test.xml_controllers import CONTROLLER_SECTION_XML
+from Modules.Lighting.test.xml_lights import *
+from Modules.Lighting.test.xml_controllers import *
 
 
 

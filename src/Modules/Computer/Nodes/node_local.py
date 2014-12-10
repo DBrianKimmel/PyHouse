@@ -36,7 +36,7 @@ from Modules.Utilities.xml_tools import XmlConfigTools
 
 
 g_debug = 0
-LOG = Logger.getLogger('PyHouse.NodeLocal   ')
+LOG = Logger.getLogger('PyHouse.NodeLocal      ')
 
 
 __all__ = ['NODE_NOTHING', 'NODE_LIGHTS',

@@ -1,7 +1,7 @@
 """
--*- test-case-name: PyHouse.Modules.lights.test.test_lighting_core -*-
+-*- test-case-name: PyHouse.Modules.Lighting.test.test_lighting_core -*-
 
-@name: PyHouse/src/Modules/lights/lighting_core.py
+@name: PyHouse/src/Modules/Lighting/lighting_core.py
 @author: D. Brian Kimmel
 @contact: D.BrianKimmel@gmail.com
 @copyright: 2013-2014 by D. Brian Kimmel
@@ -9,7 +9,7 @@
 @license: MIT License
 @summary: A base class for all things lighting
 
-This is a base class that other lighting modules inherit from.
+This is for lighting type devices.
 """
 
 # Import system type stuff

@@ -16,7 +16,7 @@ used for testing
 
 # Import PyMh files
 from Modules.Computer.test.xml_computer import COMPUTER_DIVISION_XML
-from Modules.Housing.test.xml_housing import HOUSE_DIVISION_XML
+from Modules.Housing.test.xml_housing import *
 
 
 

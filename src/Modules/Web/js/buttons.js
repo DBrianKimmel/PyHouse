@@ -33,21 +33,8 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 	 */
 	function startWidget(self) {
 		self.node.style.display = 'block';
-		self.showSelectionButtons(self);
-		self.hideDataEntry(self);
-		self.fetchHouseData();
-	},
-	function hideSelectionButtons(self) {
-		self.nodeById('ButtonButtonsDiv').style.display = 'none';		
-	},
-	function showSelectionButtons(self) {
-		self.nodeById('ButtonButtonsDiv').style.display = 'block';	
-	},
-	function hideDataEntry(self) {
-		self.nodeById('ButtonEntryDiv').style.display = 'none';		
-	},
-	function showDataEntry(self) {
-		self.nodeById('ButtonEntryDiv').style.display = 'block';		
+		showSelectionButtons(self);
+		self.fetchDataFromServer();
 	},
 
 	// ============================================================================
@@ -55,16 +42,16 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 	 * This triggers getting the button data from the server.
 	 * The server calls displayButtonButtons with the buttons info.
 	 */
-	function fetchHouseData(self) {
-		function cb_fetchHouseData(p_json) {
+	function fetchDataFromServer(self) {
+		function cb_fetchDataFromServer(p_json) {
 			globals.House.HouseObj = JSON.parse(p_json);
 		}
-		function eb_fetchHouseData(p_reason) {
-			Divmod.debug('---', 'buttons.eb_fetchHouseData() was called.  ERROR - ' + p_reason);
+		function eb_fetchDataFromServer(p_reason) {
+			Divmod.debug('---', 'buttons.eb_fetchDataFromServer() was called.  ERROR - ' + p_reason);
 		}
         var l_defer = self.callRemote("getHouseData");  // call server @ web_buttons.py
-		l_defer.addCallback(cb_fetchHouseData);
-		l_defer.addErrback(eb_fetchHouseData);
+		l_defer.addCallback(cb_fetchDataFromServer);
+		l_defer.addErrback(eb_fetchDataFromServer);
         return false;
 	},
 
@@ -104,20 +91,14 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 		var l_name = p_node.value;
 		globals.House.ButtonIx = l_ix;
 		globals.House.ButtonName = l_name;
-		if (l_ix <= 1000) {
-			// One of the button buttons.
+		if (l_ix <= 1000) {  // One of the button buttons.
 			var l_obj = globals.House.HouseObj.Buttons[l_ix];
-			//Divmod.debug('---', 'buttons.handleMenuOnClick(1) was called. ' + l_ix + ' ' + l_name);
-			//console.log("buttons.handleMenuOnClick() - l_obj = %O", l_obj);
-			self.showDataEntry();
-			self.hideSelectionButtons();
+			showDataEntryFields(self);
 			self.fillEntry(l_obj);
-		} else if (l_ix == 10001) {
-			// The "Add" button
-			self.showDataEntry();
-			self.hideSelectionButtons();
+		} else if (l_ix == 10001) {  // The "Add" button
+			showDataEntryFields(self);
 		} else if (l_ix == 10002) {  // The "Back" button
-			self.showWidget2('HouseMenu');
+			self.showWidget('HouseMenu');
 		}
 	},
 	
@@ -148,9 +129,7 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 			l_defer.addErrback(eb_handleDataOnClick);
 			break;
 		case '10002':  // Back button
-			//Divmod.debug('---', 'buttons.handleDataOnClick(Back) was called.  ');
-			self.hideDataEntry();
-			self.showSelectionButtons();
+			showSelectionButtons(self);
 			break;
 		case '10004':  // Delete button
 			var l_obj = self.fetchEntry();

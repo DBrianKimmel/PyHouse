@@ -78,14 +78,14 @@ class Test_02_Find(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         self.m_api = tools.GetPyhouse(self.m_pyhouse_obj)
         self.m_light_api = lighting_lights.LightingLightsAPI(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
-        self.m_pyhouse_obj.House.OBJs.Lights = self.m_light_api.read_all_lights_xml(self.m_xml.light_sect)
+        self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
+        self.m_pyhouse_obj.House.DeviceOBJs.Lights = self.m_light_api.read_all_lights_xml(self.m_xml.light_sect)
 
     def test_01_Setup(self):
         l_loc = self.m_api.Location().Latitude
         print(l_loc)
-        PrettyPrintAny(self.m_pyhouse_obj.House.OBJs, 'Lights')
-        PrettyPrintAny(self.m_pyhouse_obj.House.OBJs.Lights, 'Lights')
+        PrettyPrintAny(self.m_pyhouse_obj.House.DeviceOBJs, 'Devices')
+        PrettyPrintAny(self.m_pyhouse_obj.House.DeviceOBJs.Lights, 'Lights')
 
     def test_02_FindObj(self):
         l_obj = tools.get_light_object(self.m_pyhouse_obj, 'Insteon Light', None)

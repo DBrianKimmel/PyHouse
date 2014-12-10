@@ -40,21 +40,8 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	 */
 	function startWidget(self) {
 		self.node.style.display = 'block';
-		self.showSelectionButtons();
-		self.hideDataEntry();
+		showSelectionButtons(self);
 		self.fetchDataFromServer();
-	},
-	function hideSelectionButtons(self) {
-		self.nodeById('SelectionButtonsDiv').style.display = 'none';
-	},
-	function showSelectionButtons(self) {
-		self.nodeById('SelectionButtonsDiv').style.display = 'block';
-	},
-	function hideDataEntry(self) {
-		self.nodeById('DataEntryDiv').style.display = 'none';
-	},
-	function showDataEntry(self) {
-		self.nodeById('DataEntryDiv').style.display = 'block';
 	},
 
 
@@ -102,16 +89,14 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		if (l_ix <= 1000) {  // One of the rooms buttons.
 			var l_obj = globals.House.HouseObj.Rooms[l_ix];
 			globals.House.RoomObj = l_obj;
-			self.showDataEntry();
-			self.hideSelectionButtons();
+			showDataEntryFields(self);
 			self.buildLcarRoomDataEntryScreen(l_obj, 'handleDataEntryOnClick');
 		} else if (l_ix == 10001) {  // The "Add" button
-			self.showDataEntry();
-			self.hideSelectionButtons();
+			showDataEntryFields(self);
 			var l_entry = self.createEntry();
 			self.buildLcarRoomDataEntryScreen(l_entry, 'handleDataEntryOnClick');
 		} else if (l_ix == 10002) {  // The "Back" button
-			self.showWidget2('HouseMenu');
+			self.showWidget('HouseMenu');
 		}
 	},
 
@@ -191,8 +176,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 			l_defer.addErrback(eb_handleDataEntryOnClick);
 			break;
 		case '10002':  // Back button
-			self.hideDataEntry();
-			self.showSelectionButtons();
+			showSelectionButtons(self);
 			break;
 		case '10004':  // Delete button
 			var l_obj = self.fetchEntry();

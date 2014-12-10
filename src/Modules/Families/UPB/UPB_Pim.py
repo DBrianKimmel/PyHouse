@@ -21,7 +21,7 @@ from Modules.Utilities.tools import PrintBytes
 from Modules.Computer import logging_pyh as Logger
 
 g_debug = 9
-LOG = Logger.getLogger('PyHouse.UPB_PIM     ')
+LOG = Logger.getLogger('PyHouse.UPB_PIM        ')
 
 
 # UPB Control Word
@@ -416,6 +416,9 @@ class UpbPimAPI(CreateCommands):
         elif p_controller_obj.InterfaceType.lower() == 'usb':
             from Modules.Drivers.USB import USB_driver
             l_driver = USB_driver.API()
+        else:
+            from Modules.Drivers.Null import Null_driver
+            l_driver = Null_driver.API()
         return l_driver
 
     def _initilaize_pim(self, p_controller_obj):
@@ -432,12 +435,11 @@ class UpbPimAPI(CreateCommands):
         """
         """
         p_controller_obj._Queue = Queue.Queue(300)
-        if g_debug >= 1:
-            LOG.debug("start_controller() - InterfaceType:{0:}".format(p_controller_obj.InterfaceType))
+        LOG.info("start:{} - InterfaceType:{}".format(p_controller_obj.Name, p_controller_obj.InterfaceType))
         self.m_pim = self._initilaize_pim(p_controller_obj)
         l_driver = self._load_driver(p_controller_obj)
         l_driver.Start(p_pyhouse_obj, p_controller_obj)
-        p_pyhouse_obj.House.OBJs.Controllers[p_controller_obj.Key]._DriverAPI = l_driver
+        p_pyhouse_obj.House.DeviceOBJs.Controllers[p_controller_obj.Key]._DriverAPI = l_driver
         self.m_pim._DriverAPI = l_driver
         self.set_register_value(p_controller_obj, 0x70, [0x03])
         self.null_command(p_controller_obj)

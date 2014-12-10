@@ -24,7 +24,7 @@ from Modules.Computer import logging_pyh as Logger
 # from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 9
-LOG = Logger.getLogger('PyHouse.Lighting    ')
+LOG = Logger.getLogger('PyHouse.Lighting       ')
 
 
 class Utility(ControllersAPI, ButtonsAPI, LightingLightsAPI):
@@ -38,13 +38,13 @@ class Utility(ControllersAPI, ButtonsAPI, LightingLightsAPI):
         """
         l_house_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
         try:
-            p_pyhouse_obj.House.OBJs.Controllers = ControllersAPI(p_pyhouse_obj).read_all_controllers_xml(l_house_xml.find('ControllerSection'))
-            p_pyhouse_obj.House.OBJs.Buttons = ButtonsAPI(p_pyhouse_obj).read_all_buttons_xml(l_house_xml.find('ButtonSection'))
-            p_pyhouse_obj.House.OBJs.Lights = LightingLightsAPI(p_pyhouse_obj).read_all_lights_xml(l_house_xml.find('LightSection'))
+            p_pyhouse_obj.House.DeviceOBJs.Controllers = ControllersAPI(p_pyhouse_obj).read_all_controllers_xml(l_house_xml.find('ControllerSection'))
+            p_pyhouse_obj.House.DeviceOBJs.Buttons = ButtonsAPI(p_pyhouse_obj).read_all_buttons_xml(l_house_xml.find('ButtonSection'))
+            p_pyhouse_obj.House.DeviceOBJs.Lights = LightingLightsAPI(p_pyhouse_obj).read_all_lights_xml(l_house_xml.find('LightSection'))
         except AttributeError:
-            p_pyhouse_obj.House.OBJs.Controllers = {}
-            p_pyhouse_obj.House.OBJs.Buttons = {}
-            p_pyhouse_obj.House.OBJs.Lights = {}
+            p_pyhouse_obj.House.DeviceOBJs.Controllers = {}
+            p_pyhouse_obj.House.DeviceOBJs.Buttons = {}
+            p_pyhouse_obj.House.DeviceOBJs.Lights = {}
 
     def _write_lighting_xml(self, p_house_objs, p_house_element):
         try:
@@ -76,9 +76,9 @@ class API(Utility):
         """Allow loading of sub modules and drivers.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_house_obj = p_pyhouse_obj.House.OBJs
+        self.m_house_obj = p_pyhouse_obj.House.DeviceOBJs
         self._read_lighting_xml(p_pyhouse_obj)
-        self.m_family.start_lighting_families(p_pyhouse_obj, self.m_house_obj)
+        self.m_family.start_lighting_families(p_pyhouse_obj)
         LOG.info("Started.")
 
     def Stop(self):
@@ -90,8 +90,8 @@ class API(Utility):
 
     def SaveXml(self, p_xml):
         LOG.info("Saving config info..")
-        self.m_family.save_lighting_families(p_xml, self.m_house_obj)
-        self._write_lighting_xml(self.m_pyhouse_obj.House.OBJs, p_xml)
+        self.m_family.save_lighting_families(p_xml, self.m_pyhouse_obj.House.RefOBJs)
+        self._write_lighting_xml(self.m_pyhouse_obj.House.DeviceOBJs, p_xml)
         LOG.info("Saved XML.")
 
     def _get_api_for_family(self, p_pyhouse_obj, p_light_obj):
@@ -99,7 +99,7 @@ class API(Utility):
         The light we are changing can be in any lighting family.
         Get the instance pointer for the proper family so we can deal with the proper light.
         """
-        l_ret = p_pyhouse_obj.House.OBJs.FamilyData[p_light_obj.ControllerFamily].FamilyModuleAPI
+        l_ret = p_pyhouse_obj.House.RefOBJs.FamilyData[p_light_obj.ControllerFamily].FamilyModuleAPI
         LOG.info('{}'.format(l_ret))
         return l_ret
 
@@ -109,7 +109,7 @@ class API(Utility):
             web_controlLights
             schedule
         """
-        l_light_obj = self._find_full_obj(self.m_pyhouse_obj.House.OBJs.Lights, p_light_obj)
+        l_light_obj = self._find_full_obj(self.m_pyhouse_obj.House.DeviceOBJs.Lights, p_light_obj)
 
         try:
             LOG.info("Turn Light {} to level {}, ControllerFamily:{}".format(l_light_obj.Name, p_new_level, l_light_obj.ControllerFamily))

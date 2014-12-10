@@ -7,14 +7,15 @@
 @note: Created on Nov 22, 2014
 @Summary:
 
+2 *
 """
 
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Lighting.test.xml_core import CORE_DEVICE
-from Modules.Families.Insteon.test.xml_insteon import INSTEON_XML
-from Modules.Families.UPB.test.xml_upb import UPB_XML
+from Modules.Lighting.test.xml_core import *
+from Modules.Families.Insteon.test.xml_insteon import *
+from Modules.Families.UPB.test.xml_upb import *
 
 
 

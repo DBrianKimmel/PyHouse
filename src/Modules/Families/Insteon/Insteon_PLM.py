@@ -40,7 +40,7 @@ from Modules.Families.Insteon import Insteon_decoder
 from Modules.Computer import logging_pyh as Logger
 
 g_debug = 0
-LOG = Logger.getLogger('PyHouse.Insteon_PLM ')
+LOG = Logger.getLogger('PyHouse.Insteon_PLM       ')
 
 # Timeouts for send/receive delays
 SEND_TIMEOUT = 0.8
@@ -259,7 +259,7 @@ class PlmDriverProtocol(CreateCommands):
 
     def __init__(self, p_pyhouse_obj, p_controller_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_house_obj = p_pyhouse_obj.House.OBJs
+        self.m_house_obj = p_pyhouse_obj.House.DeviceOBJs
         if g_debug >= 1:
             LOG.debug("Insteon_PLM.PlmDriverProtocol.__init__()")
         p_controller_obj._Queue = Queue.Queue(300)
@@ -411,6 +411,10 @@ class LightHandlerAPI(InsteonPlmAPI):
         elif p_controller_obj.InterfaceType.lower() == 'usb':
             from Modules.Drivers.USB import USB_driver
             l_driver = USB_driver.API()
+        else:
+            LOG.warning('No driver for {}'.format(p_controller_obj.Name))
+            from Modules.Drivers.Null import Null_driver
+            l_driver = Null_driver.API()
         return l_driver
 
     def start_controller_driver(self, p_pyhouse_obj, p_controller_obj):
@@ -468,13 +472,13 @@ class LightHandlerAPI(InsteonPlmAPI):
         """Get the status (current level) of all insteon devices.
         """
         LOG.info('Getting devide information of all Insteon devices')
-        for l_obj in self.m_pyhouse_obj.House.OBJs.Lights.itervalues():
+        for l_obj in self.m_pyhouse_obj.House.DeviceOBJs.Lights.itervalues():
             self._get_obj_info(l_obj)
-        for l_obj in self.m_pyhouse_obj.House.OBJs.Buttons.itervalues():
+        for l_obj in self.m_pyhouse_obj.House.DeviceOBJs.Buttons.itervalues():
             self._get_obj_info(l_obj)
-        for l_obj in self.m_pyhouse_obj.House.OBJs.Controllers.itervalues():
+        for l_obj in self.m_pyhouse_obj.House.DeviceOBJs.Controllers.itervalues():
             self._get_obj_info(l_obj)
-        for l_obj in self.m_pyhouse_obj.House.OBJs.Thermostats.itervalues():
+        for l_obj in self.m_pyhouse_obj.House.DeviceOBJs.Thermostats.itervalues():
             self._get_obj_info(l_obj)
 
 

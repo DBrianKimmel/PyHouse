@@ -41,12 +41,13 @@ from Modules.Utilities.xml_tools import XmlConfigTools
 # from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 0
-LOG = Logger.getLogger('PyHouse.CoreSetup   ')
+LOG = Logger.getLogger('PyHouse.CoreSetup      ')
 
 INTER_NODE = 'tcp:port=8581'
 INTRA_NODE = 'unix:path=/var/run/pyhouse/node:lockfile=1'
 INITIAL_DELAY = 2 * 60
 REPEAT_DELAY = 2 * 60 * 60  # 2 hours
+
 
 
 class ReadWriteConfigXml(XmlConfigTools):
@@ -148,7 +149,7 @@ class API(Utility):
         l_xml = self.create_empty_xml_skeleton()
         self.m_pyhouse_obj.APIs.Comp.ComputerAPI.WriteXml(l_xml)
         self.m_pyhouse_obj.APIs.House.HouseAPI.WriteXml(l_xml)
-        ConfigAPI().write_xml_config_file(self.m_pyhouse_obj, l_xml, self.m_pyhouse_obj.Xml.XmlFileName)
+        ConfigAPI().write_xml_config_file(self.m_pyhouse_obj, l_xml)
         LOG.info("Saved XML.")
 
 def load_xml_config():

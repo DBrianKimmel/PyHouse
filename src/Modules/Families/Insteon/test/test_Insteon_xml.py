@@ -51,7 +51,7 @@ class C01_Prep(SetupMixin, unittest.TestCase):
         """
         PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse')
         PrettyPrintAny(self.m_pyhouse_obj.House, 'House')
-        PrettyPrintAny(self.m_pyhouse_obj.House.OBJs, 'OBJs')
+        PrettyPrintAny(self.m_pyhouse_obj.House.DeviceOBJs, 'DeviceOBJs')
         PrettyPrintAny(self.m_xml, 'XML')
 
     def test_02_FindXml(self):

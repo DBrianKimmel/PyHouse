@@ -87,7 +87,7 @@ class LightingLightsAPI(ReadWriteConfigXml):
         """
         Add the family specific information of the light to the XML.
         """
-        l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[p_light_obj.ControllerFamily].FamilyModuleAPI
+        l_api = self.m_pyhouse_obj.House.RefOBJs.FamilyData[p_light_obj.ControllerFamily].FamilyModuleAPI
         l_api.WriteXml(p_light_xml, p_light_obj)
 
     def write_one_light_xml(self, p_light_obj):

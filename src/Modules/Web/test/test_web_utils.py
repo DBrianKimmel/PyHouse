@@ -14,7 +14,6 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import HouseObjs, RoomData
 from Modules.Web import web_utils
 from Modules.Housing import rooms
 from test import xml_data
@@ -103,7 +102,7 @@ class C03_House(SetupMixin, unittest.TestCase):
 
     def test_01_Before(self):
         PrettyPrintAny(self.m_pyhouse_obj.House, 'PyHouse.House Before')
-        PrettyPrintAny(self.m_pyhouse_obj.House.OBJs, 'PyHouse.House.OBJs Before')
+        PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs, 'PyHouse.House.RefOBJs Before')
         pass
 
     def test_02_Base(self):

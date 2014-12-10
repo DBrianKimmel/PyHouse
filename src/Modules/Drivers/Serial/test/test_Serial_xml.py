@@ -39,7 +39,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
-        self.m_pyhouse_obj.House.OBJs.FamilyData = family.API().build_lighting_family_info()
+        self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
         self.m_api = Serial_xml.ReadWriteConfigXml()
         self.m_controller_obj = ControllerData()
 

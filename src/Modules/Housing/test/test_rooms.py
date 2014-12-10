@@ -42,7 +42,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
     def test_0201_BuildObjects(self):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
         """
-        self.assertEqual(self.m_pyhouse_obj.House.OBJs.Rooms, {}, 'No Rooms{}')
+        self.assertEqual(self.m_pyhouse_obj.House.RefOBJs.Rooms, {}, 'No Rooms{}')
 
     def test_0202_FindXml(self):
         """ Be sure that the XML contains the right stuff.
@@ -90,7 +90,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
     def test_0231_CreateJson(self):
         """ Create a JSON object for Rooms.
         """
-        self.m_pyhouse_obj.House.OBJs.Rooms = l_rooms = self.m_api.read_rooms_xml(self.m_xml.house_div)
+        self.m_pyhouse_obj.House.RefOBJs.Rooms = l_rooms = self.m_api.read_rooms_xml(self.m_xml.house_div)
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_rooms))
         print('JSON: {0:}'.format(l_json))
         PrettyPrintAny(l_json, 'JSON', 120)
