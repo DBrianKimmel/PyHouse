@@ -21,7 +21,7 @@ from Modules.Computer import logging_pyh as Logging
 # from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 0
-LOG = Logging.getLogger('PyHouse.Irrigation  ')
+LOG = Logging.getLogger('PyHouse.Irrigation     ')
 
 
 class ReadWriteConfigXml(xml_tools.XmlConfigTools):
@@ -79,28 +79,28 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
 
     def _write_family_data(self, p_obj, p_xml):
         try:
-            l_api = self.m_pyhouse_obj.House.DeviceOBJs.FamilyData[p_obj.ControllerFamily].FamilyModuleAPI
+            l_api = self.m_pyhouse_obj.House.RefOBJs.FamilyData[p_obj.ControllerFamily].FamilyModuleAPI
             l_api.insert_device_xml(p_xml, p_obj)
         except KeyError:
             pass
 
-    def write_one_thermostat_xml(self, p_thermostat_obj):
+    def write_one_irrigation_xml(self, p_irrigation_obj):
         """
         """
-        l_xml = self.write_base_object_xml('Irrigation', p_thermostat_obj)
-        self._write_irrigation_data(p_thermostat_obj, l_xml)
-        self._write_family_data(p_thermostat_obj, l_xml)
+        l_xml = self.write_base_object_xml('Irrigation', p_irrigation_obj)
+        self._write_irrigation_data(p_irrigation_obj, l_xml)
+        self._write_family_data(p_irrigation_obj, l_xml)
         return l_xml
 
-    def write_all_irrigation_xml(self, p_thermostat_sect_obj):
+    def write_all_irrigation_xml(self, p_irrigation_sect_obj):
         """Create a sub tree for 'Irrigation' - the sub elements do not have to be present.
         @return: a sub tree ready to be appended to "something"
         """
         l_xml = ET.Element('IrrigationSection')
         self.m_count = 0
         try:
-            for l_obj in p_thermostat_sect_obj.itervalues():
-                l_entry = self.write_one_thermostat_xml(l_obj)
+            for l_obj in p_irrigation_sect_obj.itervalues():
+                l_entry = self.write_one_irrigation_xml(l_obj)
                 l_xml.append(l_entry)
                 self.m_count += 1
         except AttributeError as e:
