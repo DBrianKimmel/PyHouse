@@ -59,7 +59,7 @@ helpers.Widget.subclass(houseMenu, 'HouseMenuWidget').methods(
 			['Buttons',      'Buttons',             'Buttons'         ],
 			['Controllers',  'Controllers',         'Controllers'     ],
 			['Schedules',    'Scheduling',          'Schedules'       ],
-			['Levels',       'Lighhting Control',   'ControlLighting' ],
+			['Levels',       'Lighting Control',    'ControlLighting' ],
 			['Internet',     'Network Addressing',  'Internet'        ],
 			['Thermo',       'Thermostat',          'Thermostat'      ],
 			['Weather',      'Weather',             'Weather'         ],
@@ -96,8 +96,8 @@ helpers.Widget.subclass(houseMenu, 'HouseMenuWidget').methods(
 		case 'Location':
 			self.showWidget('House');
 			break;
-		case 'Rooms':
-			self.showWidget('Rooms');
+		case 'Levels':
+			self.showWidget('ControlLighting');
 			break;
 		case 'Lights':
 			self.showWidget('Lights');
@@ -116,6 +116,9 @@ helpers.Widget.subclass(houseMenu, 'HouseMenuWidget').methods(
 			break;
 		case 'Nodes':
 			self.showWidget('Nodes');
+			break;
+		case 'Rooms':
+			self.showWidget('Rooms');
 			break;
 		case 'Thermo':
 			self.showWidget('Thermostat');
