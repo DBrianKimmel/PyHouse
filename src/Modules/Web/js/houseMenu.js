@@ -97,7 +97,7 @@ helpers.Widget.subclass(houseMenu, 'HouseMenuWidget').methods(
 			self.showWidget('House');
 			break;
 		case 'Levels':
-			self.showWidget('ControlLighting');
+			self.showWidget('ControlLights');
 			break;
 		case 'Lights':
 			self.showWidget('Lights');
