@@ -122,34 +122,32 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 	/**
 	 * Build a screen full of data entry fields.
 	 */
+	function buildLcarDataEntryScreen(self, p_entry, p_handler){
+		var l_obj = arguments[1];
+		var l_html = build_lcars_top('Controller Data', 'lcars-salmon-color');
+		l_html += build_lcars_middle_menu(40, self.buildEntry(l_obj, p_handler));
+		l_html += build_lcars_bottom();
+		self.nodeById('DataEntryDiv').innerHTML = l_html;
+	},
+	function buildEntry(self, p_obj, p_handler, p_onchange) {
+		var l_html = buildBaseEntry(self, p_obj);
+		l_html = buildLightingCoreEntry(self, p_obj, l_html, p_onchange);
+		l_html = self.buildControllerEntry(p_obj, l_html);
+		if (p_obj.ControllerFamily === 'Insteon')
+			l_html = buildInsteonPart(self, p_obj, l_html);
+		else if (p_obj.ControllerFamily === 'UPB')
+        	l_html = buildUpbPart(self, p_obj, l_html);
+		else
+			Divmod.debug('---', 'ERROR - controllers.buildAllParts() Family = ' + p_obj.ControllerFamily);
+		if (p_obj.InterfaceType === 'Serial')
+			l_html = buildSerialPart(self, p_obj, l_html);
+		l_html += buildLcarEntryButtons(p_handler);
+		return l_html;
+	},
 	function buildControllerEntry(self, p_obj, p_html) {
 		p_html += buildLcarInterfaceTypeSelectWidget(self, 'InterfaceType', 'Interface Type', p_obj.InterfaceType, 'interfaceChanged');
 		p_html += buildLcarTextWidget(self, 'Port', 'Port', p_obj.Port);
 		return p_html;
-	},
-	function buildAllParts(self, p_controller, p_handler, p_onchange) {
-		var l_html = buildBaseEntry(self, p_controller, p_onchange);
-		l_html = buildLightingCoreEntry(self, p_controller, l_html, p_onchange);
-		l_html = self.buildControllerEntry(p_controller, l_html);
-		if (p_controller.ControllerFamily === 'Insteon')
-			l_html = buildInsteonPart(self, p_controller, l_html);
-		else if (p_controller.ControllerFamily === 'UPB')
-        	l_html = buildUpbPart(self, p_controller, l_html);
-		else
-			Divmod.debug('---', 'ERROR - controllers.buildAllParts() Family = ' + p_controller.ControllerFamily);
-		if (p_controller.InterfaceType === 'Serial')
-			l_html = buildSerialPart(self, p_controller, l_html);
-		l_html += buildLcarEntryButtons(p_handler);
-		return l_html;
-	},
-	function buildLcarDataEntryScreen(self, p_entry, p_handler){
-		var l_controller = arguments[1];
-		var l_html = self.buildAllParts(l_controller, p_handler, 'familyChanged');
-		var l_html_2 = "";
-		l_html_2 += build_lcars_top('Controller Data', 'lcars-salmon-color');
-		l_html_2 += build_lcars_middle_menu(40, l_html);
-		l_html_2 += build_lcars_bottom();
-		self.nodeById('DataEntryDiv').innerHTML = l_html_2;
 	},
 	function familyChanged() {
 		Divmod.debug('---', 'controllers.familyChanged() was called.');
@@ -167,10 +165,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 		l_self.buildLcarDataEntryScreen(l_obj, 'handleDataOnClick');
 	},
     function fetchEntry(self) {
-    	var l_data = {
-    		Delete :		false
-        };
-		l_data = fetchBaseEntry(self, l_data);
+		var l_data = fetchBaseEntry(self, l_data);
 		l_data = fetchLightingCoreEntry(self, l_data);
 		l_data = self.fetchControllerEntry(l_data);
         if (l_data.ControllerFamily === 'Insteon')
@@ -179,7 +174,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
         	l_data = fetchUpbEntry(self, l_data);
         if (l_data.InterfaceType === 'Serial')
         	l_data = fetchSerialEntry(self, l_data);
-     	console.log("controllers.fetchEntry() - Data = %O", l_data);
+     	// console.log("controllers.fetchEntry() - Data = %O", l_data);
         return l_data;
     },
     function fetchControllerEntry(self, p_data) {
@@ -198,9 +193,9 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
         return l_data;
     },
     function createControllerEntry(self, p_data) {
-		p_data,InterfaceType = 'Serial';
+		p_data.InterfaceType = 'Serial';
 		p_data.Port = '/dev/ttyS0';
-        return l_data;
+        return p_data;
     },
 
 

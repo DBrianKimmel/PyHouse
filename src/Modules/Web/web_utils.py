@@ -18,10 +18,10 @@ import json
 # Import PyMh files and modules.
 from Modules.Core.data_objects import JsonHouseData, ComputerInformation
 from Modules.Computer import logging_pyh as Logger
-from Modules.Utilities.tools import PrettyPrintAny
+
 
 g_debug = 0
-LOG = Logger.getLogger('PyHouse.webUtils    ')
+LOG = Logger.getLogger('PyHouse.webUtils       ')
 
 # Web States defined
 #-------------------
@@ -99,7 +99,6 @@ def GetJSONComputerInfo(p_pyhouse_obj):
     """
     l_ret = ComputerInformation()
     l_ret.InternetConnection = p_pyhouse_obj.Computer.InternetConnection
-    l_ret.Logs = p_pyhouse_obj.Computer.Logs
     l_ret.Nodes = p_pyhouse_obj.Computer.Nodes
     l_ret.Web = p_pyhouse_obj.Computer.Web
     l_json = unicode(JsonUnicode().encode_json(l_ret))

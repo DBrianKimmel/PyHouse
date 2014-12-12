@@ -45,15 +45,20 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 
 
 // ============================================================================
+	function menuItems(self){
+		var l_list = [
+		    // Key,           Caption,               Widget Name
+			['Select' ,      'Select House',        'Select'          ],
+			['House',        'House',               'House'           ],
+			['Web',          'Web',                 'Web'             ]
+			];
+		return l_list;
+	},
 	function buildLcarScreen(self) {
 		// Divmod.debug('---', 'rootMenu.buildLcarScreen was called.');
-		var l_menu_html = "";
-		var l_obj = {'Name' : 'SelectHouse', 'Key' : 'Select'};
-		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-orange-bg');
-		l_obj = {'Name' : 'House', 'Key' : 'House'};
-		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-orange-bg');
-		l_obj = {'Name' : 'Web', 'Key' : 'Web'};
-		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-putple-bg');
+		var l_menu_html = "<div class='lcars-row spaced'>\n";
+		l_menu_html += buildLcarMenuButtons(self.menuItems(), 'doHandleOnClick');
+		l_menu_html += "</div>\n";
 
 		l_menu_html += "<div class='lcars-row spaced'>\n";
 		l_obj = {'Name' : 'Quit', 'Key' : 'Quit'};
@@ -78,9 +83,6 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 			Divmod.debug('---', 'lights.eb_fetchDataFromServer() was called. ERROR: ' + p_reason);
 		}
 		self.buildLcarScreen();
-        //var l_defer = self.callRemote("getHouseData");
-		//l_defer.addCallback(cb_fetchDataFromServer);
-		//l_defer.addErrback(eb_fetchDataFromServer);
         return false;
 	},
 	/**

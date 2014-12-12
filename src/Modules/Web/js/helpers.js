@@ -71,14 +71,16 @@ Nevow.Athena.Widget.subclass(helpers, 'Widget').methods(
 	/** Generic ErrorBack 
 	 *
 	 * @param self is an instance of workspace.Workspace
-	 * @param res(string) is an error message.
+	 * @param p_ewason(string) is an error message.
 	 */
-	function eb_genericErrback(self, res) {
+	function eb_genericErrback(self, p_reason) {
 		var l_node = self.node;
 		var l_nodeName = l_node.nodeName;
 		var l_obj = l_node.attributes;
-		Divmod.debug('---', 'helpers.js - ERROR - attachWidget failed - Node:' + l_nodeName + '  ERROR = ' + res);
-		console.log("GenericErrBck - %O", l_node);
+		Divmod.debug('---', 'helpers.js - ERROR - attachWidget failed - Reason = ' + p_reason);
+		console.log("GenericErrBck - Self: %O", self);
+		console.log("GenericErrBck - Node: %O", l_node);
+		// console.log("GenericErrBck - Attributes: %O", l_obj);
 	},
 
 
@@ -98,6 +100,7 @@ Nevow.Athena.Widget.subclass(helpers, 'Widget').methods(
 		if (!p_readyfunc)
 			p_readyfunc = isready;
 		function eb_widget_ready(p_reason) {  // widget.ready failed
+			Divmod.debug('---', 'helpers.eb_widget_ready - ERROR - Reason = ' + p_reason);
 			self.eb_genericErrback('widget.ready failed for: ' + p_widget.node.className + ' - ' + p_reason);
 		}
 		// console.log("helpers.widget_ready()  p_widget  %O", p_widget);
@@ -106,32 +109,31 @@ Nevow.Athena.Widget.subclass(helpers, 'Widget').methods(
 		l_defer.addErrback(eb_widget_ready);
 	},
 
+	function liveElementReceived(self, p_liveElement, p_readyfunc) {
+		function cb_childAdded(widget) {
+			self.node.appendChild(widget.node);
+			self.widget_ready(widget, p_readyfunc);
+		}
+		function eb_add_child(p_reason) {  // addChildWidgetFromWidgetInfo failed
+			Divmod.debug('---', 'helpers.eb_add_child - ERROR - Reason = ' + p_reason);
+			self.eb_genericErrback('Error: ' + p_reason + ' in addChildWidgetFromWidgetInfo failed for Name: ' + p_name);
+		}
+		var l_defer_2 = self.addChildWidgetFromWidgetInfo(p_liveElement);
+		l_defer_2.addCallback(cb_childAdded);
+		l_defer_2.addErrback(eb_add_child);
+	},
+
 	function attachWidget(self, p_name, p_params, p_readyfunc) {
 		// Divmod.debug('---', 'attachWidget - "' + p_name + '" is being attached to:' + self.node.className + ', with params:'+ p_params);
-
-		function cb_call_remote(le) {
+		function cb_call_remote(p_liveElement) {
+			self.liveElementReceived(p_liveElement, p_readyfunc);
 		}
 		function eb_call_remote(p_reason) {
+			Divmod.debug('---', 'helpers.eb_call_remote - ERROR - Reason = ' + p_reason);
 			self.eb_genericErrback('Error: ' + p_reason + ' in callRemote failed for Name: ' + p_name);
 		}
 		var l_defer_1 = self.callRemote(p_name, p_params);
-
-		function liveElementReceived(le) {
-
-			function cb_childAdded(widget) {
-				self.node.appendChild(widget.node);
-				self.widget_ready(widget, p_readyfunc);
-			}
-
-			function eb_add_child(p_reason) {  // addChildWidgetFromWidgetInfo failed
-				self.eb_genericErrback('Error: ' + p_reason + ' in addChildWidgetFromWidgetInfo failed for Name: ' + p_name);
-			}
-
-			var l_defer_2 = self.addChildWidgetFromWidgetInfo(le);
-			l_defer_2.addCallback(cb_childAdded);
-			l_defer_2.addErrback(eb_add_child);
-		}  // liveElementReceived
-		l_defer_1.addCallback(liveElementReceived);
+		l_defer_1.addCallback(cb_call_remote);
 		l_defer_1.addErrback(eb_call_remote);
 	},
 
@@ -194,25 +196,16 @@ Nevow.Athena.Widget.subclass(helpers, 'Widget').methods(
 	// DBK Added all widget functions below this line ----------------
 
 	function showWidget(self, p_className) {
-		// Divmod.debug('---', 'helpers.showWidget(1) was called for ' + p_className);
-		// console.log("helpers.showWidget(1)  Self:  %O", self);
 		self.node.style.display = 'none';
 		var l_widget = findWidgetByClass(p_className);
-		// console.log("helpers.showWidget(2)  l_widget:  %O", l_widget);
 		l_widget.node.style.display = 'block';
-		// Divmod.debug('---', 'helpers.showWidget(5) was called for ' + p_className);
 		showSelectionButtons(l_widget);
-		// Divmod.debug('---', 'helpers.showWidget(6) was called for ' + p_className);
 		l_widget.startWidget();
 	},
 	function hideWidget(self) {
-		// Divmod.debug('---', 'helpers.hideWidget() was called.');
-		// console.log("helpers.hideWidget()  Self:  %O", self);
 		self.node.style.display = 'none';
 	},
 	function startWidget(self) {
-		// Divmod.debug('---', 'helpers.startWidget() was called.');
-		// console.log("helpers.startWidget()  Self:  %O", self);
 		self.node.style.display = 'block';
 		showSelectionButtons(self);
 		self.fetchDataFromServer();
@@ -227,11 +220,9 @@ Nevow.Athena.Widget.subclass(helpers, 'Widget').methods(
 helpers.Widget.subclass(helpers, 'FourOfour').methods(
 
 	function ready(self) {
-
 		function widgetready(res) {
 			//do whatever init needs here
 		}
-
 		var uris = collectIMG_src(self.node, null);
 		var d = loadImages(uris);
 		d.addCallback(widgetready);

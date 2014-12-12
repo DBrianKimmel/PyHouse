@@ -182,7 +182,7 @@ function collectCSS_backgroundImages(imgs, selectors) {
 
 	function addURI(uri) {
 		for ( var j = 0; j < imgs.length; j++) {
-			if (uri == imgs[j])
+			if (uri == imgs[j]) 
 				return;
 		}
 		imgs.push(uri);
@@ -517,7 +517,7 @@ function buildBottomDivs() {
 /**
  * Build a LCAR style button
  */
-function buildLcarButton(p_obj, p_handler, p_background_color, /* optional */ nameFunction) {
+function XXXbuildLcarButton(p_obj, p_handler, p_background_color, /* optional */ nameFunction) {
 	var l_html = '';
 	//l_html += "<div class='lcars-button radius " + p_background_color + "'>";
 	l_html += "<button type='button' ";

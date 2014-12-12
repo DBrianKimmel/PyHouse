@@ -50,34 +50,32 @@ helpers.Widget.subclass(houseMenu, 'HouseMenuWidget').methods(
 		/**
 		 * Build a screen full of buttons - One for each menu item and some actions.
 		 */
+	function menuItems(self){
+		var l_list = [
+		    // Key,           Caption,               Widget Name
+			['Location' ,    'House Information',   'House'           ],
+			['Rooms',        'Rooms',               'Rooms'           ],
+			['Lights',       'Lights',              'Lights'          ],
+			['Buttons',      'Buttons',             'Buttons'         ],
+			['Controllers',  'Controllers',         'Controllers'     ],
+			['Schedules',    'Scheduling',          'Schedules'       ],
+			['Levels',       'Lighhting Control',   'ControlLighting' ],
+			['Internet',     'Network Addressing',  'Internet'        ],
+			['Thermo',       'Thermostat',          'Thermostat'      ],
+			['Weather',      'Weather',             'Weather'         ],
+			['Nodes',        'Nodes',               'Nodes'           ]
+			];
+		return l_list;
+	},
 	function buildLcarSelectScreen(self){
-		var l_menu_html = "";
-		var l_obj = {'Name' : 'House Location', 'Key' : 'Location'};
-		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-orange-bg');
-		l_obj = {'Name' : 'Rooms', 'Key' : 'Rooms'};
-		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-orange-bg');
-		l_obj = {'Name' : 'Lights', 'Key' : 'Lights'};
-		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-orange-bg');
-		l_obj = {'Name' : 'Buttons', 'Key' : 'Buttons'};
-		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-orange-bg');
-		l_obj = {'Name' : 'Controllers', 'Key' : 'Controllers'};
-		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-orange-bg');
-		l_obj = {'Name' : 'Schedules', 'Key' : 'Schedules'};
-		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-orange-bg');
-
-		l_menu_html += "<div class='lcars-row spaced'>\n";
-		l_obj = {'Name' : 'Control Lights', 'Key' : 'Levels'};
-		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-orange-bg');
-		l_obj = {'Name' : 'Internet', 'Key' : 'Internet'};
-		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-orange-bg');
-		l_obj = {'Name' : 'Thermostats', 'Key' : 'Thermo'};
-		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-orange-bg');
+		var l_menu_html = "<div class='lcars-row spaced'>\n";
+		l_menu_html += buildLcarMenuButtons(self.menuItems(), 'doHandleOnClick');
 		l_menu_html += "</div>\n";
-
 		l_menu_html += "<div class='lcars-row spaced'>\n";
 		l_obj = {'Name' : 'Back', 'Key' : 'Back'};
 		l_menu_html += buildLcarButton(l_obj, 'doHandleOnClick', 'lcars-salmon-bg');
 		l_menu_html += "</div>\n";
+
 		var l_html = build_lcars_top('House Menu', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(10, l_menu_html);
 		l_html += build_lcars_bottom();
@@ -113,11 +111,11 @@ helpers.Widget.subclass(houseMenu, 'HouseMenuWidget').methods(
 		case 'Schedules':
 			self.showWidget('Schedules');
 			break;
-		case 'Levels':
-			self.showWidget('ControlLights');
-			break;
 		case 'Internet':
 			self.showWidget('Internet');
+			break;
+		case 'Nodes':
+			self.showWidget('Nodes');
 			break;
 		case 'Thermo':
 			self.showWidget('Thermostat');

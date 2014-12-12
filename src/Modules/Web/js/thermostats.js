@@ -111,7 +111,7 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 	 * Build a screen full of data entry fields.
 	 */
 	function buildBasicPart(self, p_thermostat, p_html, p_onchange){
-		Divmod.debug('---', 'thermostats.buildBasicPart() was called.');
+		// Divmod.debug('---', 'thermostats.buildBasicPart() was called.');
 		p_html += buildLcarTextWidget(self, 'Name', 'Thermostat Name', p_thermostat.Name);
 		p_html += buildLcarTextWidget(self, 'Key', 'Index', p_thermostat.Key, 'disable');
 		p_html += buildLcarTrueFalseWidget(self, 'ThermostatActive', 'Active ?', p_thermostat.Active);
@@ -122,22 +122,22 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 		return p_html
 	},
 	function handleSliderChangeCool(p_event){
-		Divmod.debug('---', 'thermostats.handleSliderChangeCool() was called.');
+		// Divmod.debug('---', 'thermostats.handleSliderChangeCool() was called.');
 		var l_obj = globals.House.ThermostatObj;
 		var l_self = globals.House.Self;
 		var l_level = fetchSliderWidget(l_self, 'CoolSetting');
 		updateSliderBoxValue(l_self, 'CoolSetting', l_level);
 	},
 	function handleSliderChangeHeat(p_event){
-		Divmod.debug('---', 'thermostats.handleSliderChangeHeat() was called.');
+		// Divmod.debug('---', 'thermostats.handleSliderChangeHeat() was called.');
 		var l_obj = globals.House.ThermostatObj;
 		var l_self = globals.House.Self;
 		var l_level = fetchSliderWidget(l_self, 'HeatSetting');
 		updateSliderBoxValue(l_self, 'HeatSetting', l_level);
 	},
 	function buildAllParts(self, p_thermostat, p_html, p_handler, p_onchange) {
-		Divmod.debug('---', 'thermostats.buildAllParts() was called - family: ' + p_thermostat.ControllerFamily);
-		p_html = self.buildBasicPart(p_thermostat, p_html, p_onchange);
+		// Divmod.debug('---', 'thermostats.buildAllParts() was called - family: ' + p_thermostat.ControllerFamily);
+		var p_html = self.buildBasicPart(p_thermostat, p_html, p_onchange);
 		if (p_thermostat.ControllerFamily == 'Insteon') {
 			p_html = buildInsteonPart(self, p_thermostat, p_html);
 		}
@@ -149,8 +149,8 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 	},
 	function buildLcarDataEntryScreen(self, p_entry, p_handler){
 		var l_thermostat = arguments[1];
-		Divmod.debug('---', 'thermostats.buildLcarDataEntryScreen() was called.');
-		console.log("thermostats.buildLcarDataEntryScreen() - Thermo = %O", l_thermostat);
+		// Divmod.debug('---', 'thermostats.buildLcarDataEntryScreen() was called.');
+		// console.log("thermostats.buildLcarDataEntryScreen() - Thermo = %O", l_thermostat);
 		var l_html = "";
 		var l_data_html = "";
 		l_data_html = self.buildAllParts(l_thermostat, l_data_html, p_handler, 'familyChanged');

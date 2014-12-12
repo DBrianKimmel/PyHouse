@@ -109,38 +109,28 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 	/**
 	 * Build a screen full of data entry fields.
 	 */
-	function buildBasicPart33(self, p_light, p_html, p_onchange) {
-		p_html += buildLcarTextWidget(self, 'Name', 'Light Name', p_light.Name);
-		p_html += buildLcarTextWidget(self, 'Key', 'Light Index', p_light.Key, 'size=10');
-		p_html += buildLcarTrueFalseWidget(self, 'Active', 'Active ?', p_light.Active);
-		p_html += buildLcarTextWidget(self, 'Comment', 'Comment', p_light.Comment);
-		p_html += buildLcarTextWidget(self, 'Coords', 'Coords', p_light.Coords);
-		p_html += buildLcarTrueFalseWidget(self, 'Dimmable', 'Light Dimmable ?', p_light.IsDimmable);
-		p_html += buildLcarFamilySelectWidget(self, 'Family', 'Family', p_light.ControllerFamily, p_onchange);
-		p_html += buildLcarRoomSelectWidget(self, 'RoomName', 'Room', p_light.RoomName);
-		p_html += buildLcarLightTypeSelectWidget(self, 'Type', 'Type', p_light.LightingType, 'disabled');
-		p_html += buildLcarTextWidget(self, 'UUID', 'UUID', p_light.UUID, 'disabled');
-		return p_html;
+	function buildLcarDataEntryScreen(self, p_entry, p_handler){
+		var l_obj = arguments[1];
+		var l_html = build_lcars_top('Enter Light Data', 'lcars-salmon-color');
+		l_html += build_lcars_middle_menu(40, self.buildEntry(l_obj, p_handler));
+		l_html += build_lcars_bottom();
+		self.nodeById('DataEntryDiv').innerHTML = l_html;
 	},
-	function buildAllParts(self, p_light, p_handler, p_onchange) {
-		var p_html = self.buildBasicPart(p_light, p_html, p_onchange);
-		if (p_light.ControllerFamily === 'Insteon')
-			p_html = buildInsteonPart(self, p_light, p_html);
-		else if (p_light.ControllerFamily === 'UPB')
-        	p_html = buildUpbPart(self, p_light, p_html);
+	function buildEntry(self, p_obj, p_handler, p_onchange) {
+		var p_html = buildBaseEntry(self, p_obj);
+		p_html = buildLightingCoreEntry(self, p_obj, p_html, p_onchange);
+		p_html = self.buildLightEntry(p_obj, p_html);
+		if (p_obj.ControllerFamily === 'Insteon')
+			p_html = buildInsteonPart(self, p_obj, p_html);
+		else if (p_obj.ControllerFamily === 'UPB')
+        	p_html = buildUpbPart(self, p_obj, p_html);
 		else
-			Divmod.debug('---', 'ERROR - lights.buildAllParts() Family = ' + p_light.ControllerFamily);
+			Divmod.debug('---', 'ERROR - lights.buildAllParts() Family = ' + p_obj.ControllerFamily);
 		p_html += buildLcarEntryButtons(p_handler);
 		return p_html;
 	},
-	function buildLcarDataEntryScreen(self, p_entry, p_handler){
-		var l_light = arguments[1];
-		var l_html = self.buildAllParts(l_light, p_handler, 'familyChanged');
-		var l_html_2 = "";
-		l_html_2 += build_lcars_top('Enter Light Data', 'lcars-salmon-color');
-		l_html_2 += build_lcars_middle_menu(40, l_html);
-		l_html_2 += build_lcars_bottom();
-		self.nodeById('DataEntryDiv').innerHTML = l_html_2;
+	function buildLightEntry(self, p_obj, p_html, p_onchange) {
+		return p_html;
 	},
 	function familyChanged() {
 		var l_obj = globals.House.LightObj;
@@ -153,50 +143,32 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 	 * Fetch the data we put out and the user updated.
 	 */
 	function fetchEntry(self) {
-        var l_data = {
-			Name			: fetchTextWidget(self, 'Name'),
-			Key				: fetchTextWidget(self, 'Key'),
-			Active			: fetchTrueFalseWidget(self, 'Active'),
-			Comment			: fetchTextWidget(self, 'Comment'),
-			Coords      	: fetchTextWidget(self, 'Coords'),
-			IsDimmable    	: fetchTrueFalseWidget(self, 'Dimmable'),
-			ControllerFamily: fetchSelectWidget(self, 'Family'),
-			RoomName    	: fetchSelectWidget(self, 'RoomName'),
-			LightingType	: fetchSelectWidget(self, 'Type'),	
-			UUID        	: fetchTextWidget(self, 'UUID'),
-			Delete      	: false
-            };
+		var l_data = fetchBaseEntry(self, l_data);
+		l_data = fetchLightingCoreEntry(self, l_data);
+		l_data = self.fetchLightEntry(l_data);
         if (l_data.ControllerFamily === 'Insteon')
         	l_data = fetchInsteonEntry(self, l_data);
         if (l_data.ControllerFamily === 'UPB')
         	l_data = fetchUpbEntry(self, l_data);
 		return l_data;
 	},
+    function fetchLightEntry(self, p_data) {
+    	return p_data;
+    },
 	function createEntry(self) {
 		// Divmod.debug('---', 'lights.createEntry() was called.');
-        var l_Data = {
-    			Name     : 'Change Me',
-    			Key      : Object.keys(globals.House.HouseObj.Lights).length,
-    			Active   : false,
-    			Comment  : '',
-    			Coords   : '',
-    			IsDimmable : false,
-    			ControllerFamily   : 'Insteon',
-    			RoomName : '',
-    			Type     : 'Light',
-    			UUID     : '',
-    			InsteonAddress  : '11.22.33',
-    			DevCat			: 0,
-    			GroupNumber		: 0,
-    			GroupList		: '',
-    			IsMaster		: false,
-    			IsResponder		: false,
-    			IsController	: false,
-    			ProductKey		: 0,
-    			Delete   : false
-                };
-		return l_Data;
+		var l_data = createBaseEntry(self, l_data);
+		l_data = createLightingCoreEntry(self, l_data);
+		l_data = self.createLightEntry(l_data);
+        if (l_data.ControllerFamily === 'Insteon')
+        	l_data = createInsteonEntry(self, l_data);
+        if (l_data.ControllerFamily === 'UPB')
+        	l_data = createUpbEntry(self, l_data);
+        return l_data;
 	},
+    function createLightEntry(self, p_data) {
+    	return p_data;
+    },
 
 
 

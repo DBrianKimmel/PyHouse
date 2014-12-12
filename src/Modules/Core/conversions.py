@@ -48,7 +48,6 @@ def dotted_hex2int(p_hex):
     p_hex.replace(':', '.')
     l_ary = p_hex.split('.')
     l_hexn = ''.join(["%02X" % _get_int(l_ix) for l_ix in l_ary])
-    # l_hexn = ''.join(["%02X" % int(l_ix, 16) for l_ix in p_hex.split('.')])
     return int(l_hexn, 16)
 
 def int2dotted_hex(p_int, p_size):

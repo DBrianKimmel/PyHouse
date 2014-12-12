@@ -1,13 +1,11 @@
 """
--*- test-case-name: PyHouse.src.Modules.web.test.test_web_rooms -*-
-
-@name: PyHouse/src/Modules/web/web_rooms.py
+@name: C:/Users/briank/Documents/GitHub/PyHouse/src/Modules/Web/web_nodes.py
 @author: D. Brian Kimmel
 @contact: D.BrianKimmel@gmail.com
-@Copyright (c) 2013-2014 by D. Brian Kimmel
+@Copyright: (c)  2014 by D. Brian Kimmel
 @license: MIT License
-@note: Created on Jun 3, 2013
-@summary: Web interface to rooms for the selected house.
+@note: Created on Dec 11, 2014
+@Summary:
 
 """
 
@@ -17,7 +15,7 @@ from nevow import loaders
 from nevow import athena
 
 # Import PyMh files and modules.
-from Modules.Web.web_utils import JsonUnicode, GetJSONHouseInfo
+from Modules.Web.web_utils import JsonUnicode, GetJSONComputerInfo
 from Modules.Housing import rooms
 from Modules.Computer import logging_pyh as Logger
 
@@ -26,15 +24,15 @@ webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
 
 g_debug = 0
-LOG = Logger.getLogger('PyHouse.webRooms       ')
+LOG = Logger.getLogger('PyHouse.webNodes       ')
 
 
 
 #==============================================================================
 
-class RoomsElement(athena.LiveElement):
-    jsClass = u'rooms.RoomsWidget'
-    docFactory = loaders.xmlfile(os.path.join(templatepath, 'roomsElement.html'))
+class NodesElement(athena.LiveElement):
+    jsClass = u'nodes.NodesWidget'
+    docFactory = loaders.xmlfile(os.path.join(templatepath, 'nodesElement.html'))
 
     def __init__(self, p_workspace_obj, _p_params):
         self.m_workspace_obj = p_workspace_obj
@@ -45,34 +43,31 @@ class RoomsElement(athena.LiveElement):
         """
         Get a lot of server JSON data and pass it to the client browser.
         """
-        l_json = GetJSONHouseInfo(self.m_pyhouse_obj)
+        l_json = GetJSONComputerInfo(self.m_pyhouse_obj)
         LOG.info('Fetched {}'.format(l_json))
         return l_json
 
     @athena.expose
-    def saveRoomData(self, p_json):
+    def saveNodeData(self, p_json):
         """A new/changed/deleted room is returned.  Process it and update the internal data.
         """
         l_json = JsonUnicode().decode_json(p_json)
-        l_room_ix = int(l_json['Key'])
+        l_ix = int(l_json['Key'])
         l_delete = l_json['Delete']
         if l_delete:
             try:
-                del self.m_pyhouse_obj.House.RefOBJs.Rooms[l_room_ix]
+                del self.m_pyhouse_obj.Computer.Nodes[l_ix]
             except AttributeError:
-                print("web_rooms - Failed to delete - JSON: {0:}".format(l_json))
+                print("web_nodes - Failed to delete - JSON: {0:}".format(l_json))
             return
         try:
-            l_obj = self.m_pyhouse_obj.House.RefOBJs.Rooms[l_room_ix]
+            l_obj = self.m_pyhouse_obj.Computer.Nodes[l_ix]
         except KeyError:
             l_obj = rooms.RoomData()
         l_obj.Name = l_json['Name']
         l_obj.Active = l_json['Active']
-        l_obj.Key = l_room_ix
+        l_obj.Key = l_ix
         l_obj.Comment = l_json['Comment']
-        l_obj.Corner = l_json['Corner']
-        l_obj.Size = l_json['Size']
-        l_obj.RoomType = 'Room'
-        self.m_pyhouse_obj.House.RefOBJs.Rooms[l_room_ix] = l_obj
+        self.m_pyhouse_obj.Computer.Nodes[l_ix] = l_obj
 
 # ## END DBK

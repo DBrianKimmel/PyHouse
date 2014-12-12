@@ -87,6 +87,65 @@ function build_lcars_bottom(){
 }
 
 
+// Menu
+/**
+ * Build a LCAR style Menu button
+ */
+function buildLcarMenuButton(p_button, p_background_color, p_handler){
+	// console.log("lcars.buildLcarMenuButton()  Button  %O", p_button);
+	var l_html = '';
+	l_html += "<button type='button' ";
+	l_html += setValueAttribute(p_button[1]);
+	l_html += "class='lcars-button radius " + p_background_color + "' ";
+	l_html += setNameAttribute(p_button[0]);
+	l_html += "onclick='return Nevow.Athena.Widget.handleEvent(this, \"onclick\", \""  + p_handler + "\" ";
+	l_html += ");' >\n";
+	l_html += p_button[1];
+	return l_html;
+}
+function buildLcarMenuButtons(p_list, p_handler){
+	// console.log("lcars.buildLcarMenuButtons() - list: %O", p_list);
+	var l_button = [];
+	var l_cols = 5;
+	var l_count = 0;
+	var l_html = "<div class='lcars-row spaced'>\n";
+	for (var l_ix = 0; l_ix < p_list.length; l_ix++){
+		l_button = p_list[l_ix];
+		var l_background = 'lcars-orange-bg';
+	    l_html += "<div class='lcars-column u-1-6'>\n";
+		l_html += buildLcarMenuButton(l_button, l_background, p_handler);
+		l_count++;
+	    l_html += "</div>\n";  // column
+		if ((l_count > 0) & (l_count % l_cols === 0)) {
+			l_html += "</div>\n";  // Row
+			l_html += "<div class='lcars-row spaced'>\n";
+		}
+	}
+	l_html += "</div>\n";  // Row
+	return l_html;
+}
+/**
+ * Build a LCAR style button
+ */
+function buildLcarButton(p_obj, p_handler, p_background_color, /* optional */ nameFunction) {
+	var l_html = '';
+	//l_html += "<div class='lcars-button radius " + p_background_color + "'>";
+	l_html += "<button type='button' ";
+	l_html += setValueAttribute(p_obj.Name);
+	l_html += "class='lcars-button radius " + p_background_color + "' ";
+	l_html += setNameAttribute(p_obj.Key);
+	l_html += "onclick='return Nevow.Athena.Widget.handleEvent(this, \"onclick\", \""  + p_handler + "\" ";
+	l_html += ");' >\n";
+	if (typeof nameFunction === 'function')
+		l_html += nameFunction(p_obj);
+	else
+		l_html += p_obj.Name;
+	l_html += "</button>\n";
+	// console.log("globals.buildLcarButton() - %O", l_html)
+	return l_html;
+}
+
+
 // Base entry data routines
 
 function buildBaseEntry(self, p_obj) {
@@ -98,11 +157,14 @@ function buildBaseEntry(self, p_obj) {
 	return l_html;
 }
 function fetchBaseEntry(self, p_data) {
-	p_data.Name = fetchTextWidget(self, 'Name');
-	p_data.Key = fetchTextWidget(self, 'Key');
-	p_data.Active = fetchTrueFalseWidget(self, 'Active');
-	p_data.UUID = fetchTextWidget(self, 'UUID');
-	return p_data;
+    var l_data = {
+    		Delete : false
+        };
+	l_data.Name = fetchTextWidget(self, 'Name');
+	l_data.Key = fetchTextWidget(self, 'Key');
+	l_data.Active = fetchTrueFalseWidget(self, 'Active');
+	l_data.UUID = fetchTextWidget(self, 'UUID');
+	return l_data;
 }
 function createBaseEntry(self, p_key) {
     var l_data = {

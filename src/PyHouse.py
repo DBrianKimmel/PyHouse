@@ -203,7 +203,7 @@ class API(Utilities):
         Keep on running after the snapshot.
         """
         LOG.info("Saving XML")
-        self.m_setupAPI.WriteXml()
+        self.m_pyhouse_obj.APIs.CoreSetupAPI.WriteXml()
         LOG.info("Saved XML.\n")
 
     def Quit(self):

@@ -20,24 +20,38 @@ function buildLcarFamilySelectWidget(self, p_id, p_caption, p_checked, p_change)
 	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.Families, p_checked, p_change);
 }
 
-
-
-function buildInsteonPart(self, p_controller, p_html) {
+function hex2int(p_hex) {
+	l_int = parseInt(p_hex, 16).toString();
+	return p_hex;
+}
+function int2hex(p_int, p_bytes) {
+	var l_hex = Number(p_int).toString(16);
+	if (p_bytes === 2) {
+		l_hex = ('0000' + l_hex).slice(-4)
+		var l_ret = l_hex.slice(0, 2) + '.' + l_hex.slice(2);
+	}
+	if (p_bytes === 3) {
+		l_hex = ('000000' + l_hex).slice(-6)
+		var l_ret = l_hex.slice(0, 2) + '.' + l_hex.slice(2, 4) + '.' + l_hex.slice(4);
+	}
+	return l_ret;
+}
+function buildInsteonPart(self, p_obj, p_html) {
 	// Divmod.debug('---', 'family.buildInsteonPart() was called.');
 	// console.log("family.buildInsteonPart() - self = %O", self);
-	p_html += buildLcarTextWidget(self, 'InsteonAddress', 'Insteon Address', p_controller.InsteonAddress);
-	p_html += buildLcarTextWidget(self, 'DevCat', 'Dev Cat', p_controller.DevCat);
-	p_html += buildLcarTextWidget(self, 'GroupNumber', 'Group Number', p_controller.GroupNumber);
-	p_html += buildLcarTextWidget(self, 'GroupList', 'Group List', p_controller.GroupList);
-	p_html += buildLcarTrueFalseWidget(self, 'Master', 'Light Master ?', p_controller.IsMaster);
-	p_html += buildLcarTrueFalseWidget(self, 'Controller', 'Light Controller ?', p_controller.IsController);
-	p_html += buildLcarTrueFalseWidget(self, 'Responder', 'Light Responder ?', p_controller.IsResponder);
-	p_html += buildLcarTextWidget(self, 'ProductKey', 'Product Key', p_controller.ProductKey);
+	p_html += buildLcarTextWidget(self, 'InsteonAddress', 'Insteon Address', int2hex(p_obj.InsteonAddress, 3));
+	p_html += buildLcarTextWidget(self, 'DevCat', 'Dev Cat', int2hex(p_obj.DevCat, 2));
+	p_html += buildLcarTextWidget(self, 'GroupNumber', 'Group Number', p_obj.GroupNumber);
+	p_html += buildLcarTextWidget(self, 'GroupList', 'Group List', p_obj.GroupList);
+	p_html += buildLcarTrueFalseWidget(self, 'Master', 'Light Master ?', p_obj.IsMaster);
+	p_html += buildLcarTrueFalseWidget(self, 'Controller', 'Light Controller ?', p_obj.IsController);
+	p_html += buildLcarTrueFalseWidget(self, 'Responder', 'Light Responder ?', p_obj.IsResponder);
+	p_html += buildLcarTextWidget(self, 'ProductKey', 'Product Key', int2hex(p_obj.ProductKey, 3));
 	return p_html;
 }
 function fetchInsteonEntry(self, p_data) {
 	// Divmod.debug('---', 'family.fetchInsteonEntry() was called.');
-    p_data.InsteonAddress = fetchTextWidget(self, 'InsteonAddress');
+    p_data.InsteonAddress = hex2int(fetchTextWidget(self, 'InsteonAddress'));
     p_data.DevCat = fetchTextWidget(self, 'DevCat');
     p_data.GroupNumber = fetchTextWidget(self, 'GroupNumber');
     p_data.GroupList = fetchTextWidget(self, 'GroupList');
@@ -61,11 +75,11 @@ function createInsteonEntry(self, p_data) {
 
 
 
-function buildUpbPart(self, p_controller, p_html) {
+function buildUpbPart(self, p_obj, p_html) {
 	// Divmod.debug('---', 'family.buildUpbPart() was called.');
-	p_html += buildLcarTextWidget(self, 'UpbAddress', 'UPB Address', p_controller.UPBAddress);
-	p_html += buildLcarTextWidget(self, 'UpbPassword', 'UPB Password', p_controller.UPBPassword);
-	p_html += buildLcarTextWidget(self, 'UpbNetworkID', 'UPB Network', p_controller.UPBNetworkID);
+	p_html += buildLcarTextWidget(self, 'UpbAddress', 'UPB Address', p_obj.UPBAddress);
+	p_html += buildLcarTextWidget(self, 'UpbPassword', 'UPB Password', p_obj.UPBPassword);
+	p_html += buildLcarTextWidget(self, 'UpbNetworkID', 'UPB Network', p_obj.UPBNetworkID);
 	return p_html;
 }
 function fetchUpbEntry(self, p_data) {

@@ -72,6 +72,7 @@ from Modules.Web import web_houseSelect
 from Modules.Web import web_internet
 from Modules.Web import web_lights
 from Modules.Web import web_login
+from Modules.Web import web_nodes
 from Modules.Web import web_rooms
 from Modules.Web import web_rootMenu
 from Modules.Web import web_schedules
@@ -407,6 +408,13 @@ class Workspace(athena.LiveElement):
     def rooms(self, p_params):
         LOG.info("Rooms loaded into browser")
         l_element = web_rooms.RoomsElement(self, p_params)
+        l_element.setFragmentParent(self)
+        return l_element
+
+    @athena.expose
+    def nodes(self, p_params):
+        LOG.info("Nodes loaded into browser")
+        l_element = web_nodes.NodesElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 

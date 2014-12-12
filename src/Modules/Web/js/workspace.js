@@ -68,24 +68,23 @@ helpers.Widget.subclass(workspace, 'Workspace').methods(
 				globals.__init__();
 				globals.reqType = res[0];
 				globals.user = res[1];
-				self.attachWidget('clock', 'dummy');
-				self.attachWidget('login', 'dummy');
-				self.attachWidget('houseSelect', 'dummy');
-				self.attachWidget('rootMenu', 'dummy');
-				self.attachWidget('houseMenu', 'dummy');
-				self.attachWidget('lights', 'dummy');
-				self.attachWidget('controllers', 'dummy');
 				self.attachWidget('buttons', 'dummy');
-				self.attachWidget('rooms', 'dummy');
-				self.attachWidget('schedules', 'dummy');
+				self.attachWidget('clock', 'dummy');
+				self.attachWidget('controllers', 'dummy');
 				self.attachWidget('controlLights', 'dummy');
-				self.attachWidget('webs', 'dummy');
-				// self.attachWidget('logs', 'dummy');
 				self.attachWidget('house', 'dummy');
+				self.attachWidget('houseMenu', 'dummy');
+				self.attachWidget('houseSelect', 'dummy');
 				self.attachWidget('internet', 'dummy');
+				self.attachWidget('lights', 'dummy');
+				self.attachWidget('login', 'dummy');
+				self.attachWidget('nodes', 'dummy');
+				self.attachWidget('rooms', 'dummy');
+				self.attachWidget('rootMenu', 'dummy');
+				self.attachWidget('schedules', 'dummy');
 				self.attachWidget('thermostats', 'dummy');
+				self.attachWidget('webs', 'dummy');
 				self.hideWaitRoller();
-				// Divmod.debug('---', 'workspace.ready.cb_ready done');
 			}
 			function eb_ready(p_reason) {
 				// Divmod.debug('---', 'ERROR - workspace.guiready.errback() - ' + p_reason );

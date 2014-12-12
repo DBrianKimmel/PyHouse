@@ -131,7 +131,6 @@ class ComputerInformation(object):
     def __init__(self):
         self.InternetConnection = {}  # InternetConnectionData()
         self.Email = {}  # EmailData()
-        # self.Logs = {}  # LogData()
         self.Nodes = {}  # NodeData()
         self.Web = {}  # WebData()
 
@@ -169,29 +168,6 @@ class DeviceHouseObjs(object):
         self.Thermostats = {}  # ThermostatData()
 
 
-# class HouseObjs(object):
-#    """This is about a single House.
-#    """
-#    def __init__(self):
-#        self.Buttons = {}  # ButtonData()
-#        self.Controllers = {}  # ControllerData()
-#        self.FamilyData = {}  # FamilyData('FamilyName')
-#        self.Irrigation = {}  # IrrigationData()
-#        self.Lights = {}  # LightData()
-#        self.Location = {}  # LocationData() - one location per house.
-#        self.Pools = {}  # PoolData()
-#        self.Rooms = {}  # RoomData()
-#        self.Schedules = {}  # ScheduleBaseData()
-#        self.Thermostats = {}  # ThermostatData()
-#    def XX__iter__(self):
-#        return self
-#    def XXnext(self):
-#        for l_iter in self.iteritems():
-#            print('data_objects - Line-165 {}'.format(l_iter))
-#            yield l_iter
-#        # yield self
-
-
 
 class JsonHouseData(ABaseObject):
     """Simplified for JSON encoding.
@@ -227,6 +203,7 @@ class NodeData(ABaseObject):
     """
     def __init__(self):
         super(NodeData, self).__init__()
+        self.Comment = None
         self.ConnectionAddr_IPv4 = None
         self.ConnectionAddr_IPv6 = None
         self.NodeRole = None

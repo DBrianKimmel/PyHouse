@@ -42,7 +42,7 @@ templatepath = os.path.join(webpath, 'template')
 
 
 
-LOG = Logger.getLogger('PyHouse.webLogin    ')
+LOG = Logger.getLogger('PyHouse.webLogin       ')
 
 
 class LoginElement(athena.LiveElement):
