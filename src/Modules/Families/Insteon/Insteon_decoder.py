@@ -37,7 +37,7 @@ from Modules.Families.Insteon import Insteon_HVAC
 from Modules.Computer import logging_pyh as Logger
 
 g_debug = 0
-LOG = Logger.getLogger('PyHouse.Insteon_decd')
+LOG = Logger.getLogger('PyHouse.Insteon_decode ')
 
 # OBJ_LIST = [Lights, Controllers, Buttons, Thermostats, Irrigation, Pool]
 

@@ -110,7 +110,7 @@ class CreateCommands(InsteonPlmUtility):
     def queue_plm_command(self, p_command):
         self.m_controller_obj._Queue.put(p_command)
         if g_debug >= 1:
-            LOG.debug("Insteon_PLM.queue_plm_command() - Q-Size:{0:}, Command:{1:}".format(self.m_controller_obj._Queue.qsize(), PrintBytes(p_command)))
+            LOG.info("Insteon_PLM.queue_plm_command() - Q-Size:{0:}, Command:{1:}".format(self.m_controller_obj._Queue.qsize(), PrintBytes(p_command)))
 
     def _queue_command(self, p_command):
         l_cmd = PLM_COMMANDS[p_command]
@@ -126,7 +126,7 @@ class CreateCommands(InsteonPlmUtility):
         """
         l_command = self._queue_command('plm_info')
         if g_debug >= 1:
-            LOG.debug("Queue command to get IM info")
+            LOG.info("Queue command to get IM info")
         return self.queue_plm_command(l_command)
 
     def queue_61_command(self, p_obj):
@@ -150,7 +150,7 @@ class CreateCommands(InsteonPlmUtility):
         l_command[6] = p_obj._Command1 = p_cmd1
         l_command[7] = p_obj._Command2 = p_cmd2
         if g_debug >= 1:
-            LOG.debug("Device: {:0}, Command: {:1#X},{:2#X}, {:3}".format(p_obj.Name, p_cmd1, p_cmd2, self._format_address(l_command[2:5])))
+            LOG.info("Device: {:0}, Command: {:1#X},{:2#X}, {:3}".format(p_obj.Name, p_cmd1, p_cmd2, self._format_address(l_command[2:5])))
         return self.queue_plm_command(l_command)
 
     def queue_63_command(self, p_obj):
@@ -170,7 +170,7 @@ class CreateCommands(InsteonPlmUtility):
         See p 268 of developers guide.
         """
         if g_debug >= 1:
-            LOG.debug("Queue command to reset the PLM.")
+            LOG.info("Queue command to reset the PLM.")
         l_command = self._queue_command('plm_reset')
         return self.queue_plm_command(l_command)
 
@@ -182,7 +182,7 @@ class CreateCommands(InsteonPlmUtility):
         See p 261 of developers guide.
         """
         if g_debug >= 1:
-            LOG.debug("Queue command to get First all-link record.")
+            LOG.info("Queue command to get First all-link record.")
         l_command = self._queue_command('plm_first_all_link')
         return self.queue_plm_command(l_command)
 
@@ -192,7 +192,7 @@ class CreateCommands(InsteonPlmUtility):
         Returns True if more - False if no more.
         """
         if g_debug >= 1:
-            LOG.debug("Queue command to get Next all-link record.")
+            LOG.info("Queue command to get Next all-link record.")
         l_command = self._queue_command('plm_next_all_link')
         return self.queue_plm_command(l_command)
 
@@ -201,7 +201,7 @@ class CreateCommands(InsteonPlmUtility):
         See page 271  of Insteon Developers Guide.
         """
         if g_debug >= 1:
-            LOG.debug("Queue command to set PLM config flag to {0:#X}".format(p_flags))
+            LOG.info("Queue command to set PLM config flag to {0:#X}".format(p_flags))
         l_command = self._queue_command('plm_set_config')
         l_command[2] = p_flags
         return self.queue_plm_command(l_command)
@@ -219,7 +219,7 @@ class CreateCommands(InsteonPlmUtility):
         """Manage All-Link Record (11 bytes)
         """
         if g_debug >= 1:
-            LOG.debug("Queue command to manage all-link record")
+            LOG.info("Queue command to manage all-link record")
         l_command = self._queue_command('manage_all_link_record')
         l_command[2] = p_code
         l_command[3] = p_flag
@@ -244,7 +244,7 @@ class CreateCommands(InsteonPlmUtility):
         See page 270 of Insteon Developers Guide.
         """
         if g_debug >= 1:
-            LOG.debug("Queue command to get PLM config.")
+            LOG.info("Queue command to get PLM config.")
         l_command = self._queue_command('plm_get_config')
         return self.queue_plm_command(l_command)
 
@@ -261,7 +261,7 @@ class PlmDriverProtocol(CreateCommands):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_house_obj = p_pyhouse_obj.House.DeviceOBJs
         if g_debug >= 1:
-            LOG.debug("Insteon_PLM.PlmDriverProtocol.__init__()")
+            LOG.info("Insteon_PLM.PlmDriverProtocol.__init__()")
         p_controller_obj._Queue = Queue.Queue(300)
         self.m_controller_obj = p_controller_obj
         self.m_decoder = Insteon_decoder.DecodeResponses(p_pyhouse_obj, self.m_house_obj)
@@ -286,7 +286,7 @@ class PlmDriverProtocol(CreateCommands):
             self.m_controller_obj._Command1 = l_command
             self.m_controller_obj._DriverAPI.Write(l_command)
             if g_debug >= 6:
-                LOG.debug("Send to controller:{0:}, Message:{1:}".format(self.m_controller_obj.Name, PrintBytes(l_command)))
+                LOG.info("Send to controller:{0:}, Message:{1:}".format(self.m_controller_obj.Name, PrintBytes(l_command)))
 
     def _append_message(self, p_controller_obj):
         """
@@ -331,7 +331,7 @@ class InsteonAllLinks(InsteonPlmCommands):
         """A command to fetch the all-link database from the PLM
         """
         if g_debug >= 1:
-            LOG.debug("Get all All-Links from controller {0:}.".format(p_controller_obj.Name))
+            LOG.info("Get all All-Links from controller {0:}.".format(p_controller_obj.Name))
         l_ret = self._get_first_allink()
         while l_ret:
             l_ret = self._get_next_allink()
@@ -442,7 +442,7 @@ class LightHandlerAPI(InsteonPlmAPI):
         """Get the status of a light.
         We will (apparently) get back a 62-ACK followed by a 50 with the level in the response.
         """
-        LOG.debug('Request Status from device: {0:}'.format(p_obj.Name))
+        LOG.info('Request Status from device: {0:}'.format(p_obj.Name))
         self.queue_62_command(p_obj, MESSAGE_TYPES['status_request'], 0)  # 0x19
 
     def _get_engine_version(self, p_obj):
@@ -450,13 +450,13 @@ class LightHandlerAPI(InsteonPlmAPI):
             i2 = no checksum - new commands
             i2cs = 2012 add checksums + new commands.
         """
-        LOG.debug('Request Engine version from device: {0:}'.format(p_obj.Name))
+        LOG.info('Request Engine version from device: {0:}'.format(p_obj.Name))
         self.queue_62_command(p_obj, MESSAGE_TYPES['engine_version'], 0)  # 0x0D
 
     def _get_id_request(self, p_obj):
         """Get the device DevCat
         """
-        LOG.debug('Request ID(devCat) from device: {0:}'.format(p_obj.Name))
+        LOG.info('Request ID(devCat) from device: {0:}'.format(p_obj.Name))
         self.queue_62_command(p_obj, MESSAGE_TYPES['id_request'], 0)  # 0x10
 
     def _get_obj_info(self, l_obj):

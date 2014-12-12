@@ -28,7 +28,7 @@ from Modules.Computer import logging_pyh as Logger
 # from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 0
-LOG = Logger.getLogger('PyHouse.Insteon_Device ')
+LOG = Logger.getLogger('PyHouse.Insteon_Device    ')
 
 
 class Utility(object):

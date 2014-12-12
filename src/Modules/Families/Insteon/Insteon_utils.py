@@ -17,6 +17,10 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 # Import system type stuff
 
 # Import PyMh files
+from Modules.Computer import logging_pyh as Logger
+
+
+LOG = Logger.getLogger('PyHouse.Insteon_Util      ')
 
 
 
@@ -57,7 +61,9 @@ def int2message(p_int, p_message, p_index):
     The message must exist and be long enough to include a 3 byte area for the address.
     """
     if p_int > 16777215 or p_int < 0:
-        print 'ERROR - Insteon_utils - trying to convert {0:} to message byte string.'.format(p_int)
+        l_msg = 'ERROR - Insteon_utils - trying to convert {0:X} to message byte string.'.format(p_int)
+        LOG.error(l_msg)
+        print(l_msg)
         p_int = 16777215
     l_ix = 256 * 256
     l_int = p_int
