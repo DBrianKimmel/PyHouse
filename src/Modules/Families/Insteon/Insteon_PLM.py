@@ -40,7 +40,7 @@ from Modules.Families.Insteon import Insteon_decoder
 from Modules.Computer import logging_pyh as Logger
 
 g_debug = 0
-LOG = Logger.getLogger('PyHouse.Insteon_PLM       ')
+LOG = Logger.getLogger('PyHouse.Insteon_PLM    ')
 
 # Timeouts for send/receive delays
 SEND_TIMEOUT = 0.8

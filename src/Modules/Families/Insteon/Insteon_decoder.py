@@ -98,7 +98,7 @@ class Utility(object):
         if l_ret == None:
             l_ret = self._find_addr(self.m_pyhouse_obj.House.DeviceOBJs.Thermostats, l_id)
         if l_ret == None:
-            LOG.warning("Address {0:} NOT found".format(conversions.int2dotted_hex(l_id, 3)))
+            LOG.info("WARNING - Address {0:} NOT found".format(conversions.int2dotted_hex(l_id, 3)))
             l_ret = InsteonData()  # an empty new object
             l_ret.Name = '*NoName-' + l_dotted + '-**'
         if g_debug >= 2:
