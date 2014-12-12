@@ -85,14 +85,17 @@ class LightsElement(athena.LiveElement):
         if len(l_obj.UUID) < 8:
             l_obj.UUID = str(uuid.uuid1())
         if l_obj.ControllerFamily == 'Insteon':
-            l_obj.DevCat = conversions.dotted_hex2int(l_json['DevCat'])
+            # l_obj.DevCat = conversions.dotted_hex2int(l_json['DevCat'])
+            l_obj.DevCat = l_json['DevCat']
             l_obj.GroupList = l_json['GroupList']
             l_obj.GroupNumber = l_json['GroupNumber']
-            l_obj.InsteonAddress = conversions.dotted_hex2int(l_json['InsteonAddress'])
+            # l_obj.InsteonAddress = conversions.dotted_hex2int(l_json['InsteonAddress'])
+            l_obj.InsteonAddress = l_json['InsteonAddress']
             l_obj.IsController = l_json['IsController']
             l_obj.IsMaster = l_json['IsMaster']
             l_obj.IsResponder = l_json['IsResponder']
-            l_obj.ProductKey = conversions.dotted_hex2int(l_json['ProductKey'])
+            # l_obj.ProductKey = conversions.dotted_hex2int(l_json['ProductKey'])
+            l_obj.ProductKey = l_json['ProductKey']
         elif l_obj.ControllerFamily == 'UPB':
             l_obj.UPBAddress = l_json['UPBAddress']
             l_obj.UPBPassword = l_json['UPBPassword']

@@ -61,7 +61,7 @@ def int2message(p_int, p_message, p_index):
     The message must exist and be long enough to include a 3 byte area for the address.
     """
     if p_int > 16777215 or p_int < 0:
-        l_msg = 'ERROR - Insteon_utils - trying to convert {0:X} to message byte string.'.format(p_int)
+        l_msg = 'ERROR - Insteon_utils - trying to convert {0:X}{1:} to message byte string.'.format(p_int, p_int)
         LOG.error(l_msg)
         print(l_msg)
         p_int = 16777215

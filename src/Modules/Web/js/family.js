@@ -19,11 +19,25 @@
 function buildLcarFamilySelectWidget(self, p_id, p_caption, p_checked, p_change) {
 	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.Families, p_checked, p_change);
 }
-
-function hex2int(p_hex) {
-	l_int = parseInt(p_hex, 16).toString();
-	return p_hex;
+/*
+ * get a user field (dotted hex) to an internal field (int string).
+ */
+function hex2int(p_hex, p_bytes) {
+	var l_hex = '00';
+	var l_int = 0;
+	if (p_bytes === 2) {
+		l_hex = p_hex.slice(0, 2) + p_hex.slice(3)
+		l_int = parseInt(l_hex, 16).toString();
+	}
+	if (p_bytes === 3) {
+		l_hex = p_hex.slice(0, 2) + p_hex.slice(3, 5) + p_hex.slice(6);
+		l_int = parseInt(l_hex, 16).toString();
+	}
+	return l_int;
 }
+/*
+ * convert the internal data (int string) to a user field (dotted hex).
+ */
 function int2hex(p_int, p_bytes) {
 	var l_hex = Number(p_int).toString(16);
 	if (p_bytes === 2) {
@@ -51,14 +65,14 @@ function buildInsteonPart(self, p_obj, p_html) {
 }
 function fetchInsteonEntry(self, p_data) {
 	// Divmod.debug('---', 'family.fetchInsteonEntry() was called.');
-    p_data.InsteonAddress = hex2int(fetchTextWidget(self, 'InsteonAddress'));
-    p_data.DevCat = fetchTextWidget(self, 'DevCat');
+    p_data.InsteonAddress = hex2int(fetchTextWidget(self, 'InsteonAddress'), 3);
+    p_data.DevCat = hex2int(fetchTextWidget(self, 'DevCat'), 2);
     p_data.GroupNumber = fetchTextWidget(self, 'GroupNumber');
     p_data.GroupList = fetchTextWidget(self, 'GroupList');
     p_data.IsMaster = fetchTrueFalseWidget(self, 'Master');
     p_data.IsResponder = fetchTrueFalseWidget(self, 'Responder');
     p_data.IsController = fetchTrueFalseWidget(self, 'Controller');
-    p_data.ProductKey = fetchTextWidget(self, 'ProductKey');
+    p_data.ProductKey = hex2int(fetchTextWidget(self, 'ProductKey'), 3);
 	return p_data;
 }
 function createInsteonEntry(self, p_data) {
