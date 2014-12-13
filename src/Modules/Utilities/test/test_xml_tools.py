@@ -372,7 +372,7 @@ class C03_Read(SetupMixin, unittest.TestCase):
         self.m_pyhouse_obj = SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         self.m_api = xml_tools.XmlConfigTools()
 
-    def test_01_readBaseObject(self):
+    def test_01_BaseObject(self):
         l_base_obj = BaseLightingData()
         self.m_api.read_base_object_xml(l_base_obj, self.m_xml.light)
         PrettyPrintAny(l_base_obj, 'Light')
@@ -391,7 +391,27 @@ class C03_Read(SetupMixin, unittest.TestCase):
 
 
 
-class C04_WriteXml(SetupMixin, unittest.TestCase):
+class C04_ReadEmpty(SetupMixin, unittest.TestCase):
+    """
+    This tests the ConfigTools section
+    """
+
+    def setUp(self):
+        self.m_pyhouse_obj = SetupMixin.setUp(self, ET.fromstring(xml_data.XML_EMPTY))
+        self.m_api = xml_tools.XmlConfigTools()
+
+    def test_01_BaseObject(self):
+        l_base_obj = BaseLightingData()
+        self.m_api.read_base_object_xml(l_base_obj, self.m_xml.light)
+        PrettyPrintAny(l_base_obj, 'Light')
+        self.assertEqual(l_base_obj.Name, 'Missing Name')
+        self.assertEqual(l_base_obj.Key, 0)
+        self.assertEqual(l_base_obj.Active, False)
+        # self.assertEqual(l_base_obj.UUID, 'c15f7d76-092e-11e4-bffa-b827eb189eb4', 'Bad UUID')
+
+
+
+class C05_WriteXml(SetupMixin, unittest.TestCase):
     """
     This tests the ConfigTools section
     """
@@ -414,7 +434,7 @@ class C04_WriteXml(SetupMixin, unittest.TestCase):
 
 
 
-class C05_NoClass(SetupMixin, unittest.TestCase):
+class C06_NoClass(SetupMixin, unittest.TestCase):
     """
     This tests the no class routines.
     """
@@ -433,7 +453,5 @@ class C05_NoClass(SetupMixin, unittest.TestCase):
         xml_tools.stuff_new_attrs(l_objA, l_objB)
         PrettyPrintAny(l_objA, 'Result B stuffed into A', 120)
         self.assertEqual(l_objA.IsDimmable, l_objB.IsDimmable)
-
-
 
 # ## END DBK

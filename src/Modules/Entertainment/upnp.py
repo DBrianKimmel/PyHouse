@@ -1,11 +1,10 @@
-'''
+"""
 Created on Mar 1, 2014
 
 @author: briank
-'''
-#!/usr/bin/env python
 
-"""Get the internet address and make reports available for web interface.
+
+Get the internet address and make reports available for web interface.
 
 Since PyHouse is always running (as a daemon) this module will get the IP-v4 address that is
 assigned to our router by the ISP.
@@ -310,7 +309,7 @@ class FindExternalIpAddress(object):
         # This is for Shawn Powers page - http://snar.co/ip
         l_quad = p_ip_page
         self.m_house_obj.Internet.ExternalIP = l_quad
-        l_addr = convert.ConvertEthernet().str_to_long(l_quad)
+        l_addr = convert.str_to_long(l_quad)
         LOG.info("Got External IP page for House:{0:}, Page:{1:}".format(self.m_house_obj.Name, p_ip_page))
         callLater(self.m_house_obj.Internet.ExternalDelay, self.get_public_ip)
         return l_addr

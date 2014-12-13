@@ -27,10 +27,10 @@ from Modules.Core.data_objects import LightData
 from Modules.Lighting.lighting_core import ReadWriteConfigXml
 from Modules.Families.family_utils import FamUtil
 from Modules.Computer import logging_pyh as Logging
-# from Modules.Utilities.tools import PrettyPrintAny
+from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 0
-LOG = Logging.getLogger('PyHouse.LightgLights')
+LOG = Logging.getLogger('PyHouse.LightgLights   ')
 
 
 

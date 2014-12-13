@@ -21,7 +21,7 @@ from Modules.Lighting.lighting_buttons import ButtonsAPI
 from Modules.Lighting.lighting_controllers import ControllersAPI
 from Modules.Lighting.lighting_lights import LightingLightsAPI
 from Modules.Computer import logging_pyh as Logger
-# from Modules.Utilities.tools import PrettyPrintAny
+from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 9
 LOG = Logger.getLogger('PyHouse.Lighting       ')
@@ -34,25 +34,33 @@ class Utility(ControllersAPI, ButtonsAPI, LightingLightsAPI):
     def _read_lighting_xml(self, p_pyhouse_obj):
         """
         Get all the lighting components for a house
-        Uses p_pyhouse_obj since many sections of xml are needed.
         """
         l_house_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
+        l_house_obj = p_pyhouse_obj.House.DeviceOBJs
         try:
-            p_pyhouse_obj.House.DeviceOBJs.Controllers = ControllersAPI(p_pyhouse_obj).read_all_controllers_xml(l_house_xml.find('ControllerSection'))
-            p_pyhouse_obj.House.DeviceOBJs.Buttons = ButtonsAPI(p_pyhouse_obj).read_all_buttons_xml(l_house_xml.find('ButtonSection'))
-            p_pyhouse_obj.House.DeviceOBJs.Lights = LightingLightsAPI(p_pyhouse_obj).read_all_lights_xml(l_house_xml.find('LightSection'))
+            l_house_obj.Controllers = ControllersAPI(p_pyhouse_obj).read_all_controllers_xml(l_house_xml.find('ControllerSection'))
+            l_house_obj.Buttons = ButtonsAPI(p_pyhouse_obj).read_all_buttons_xml(l_house_xml.find('ButtonSection'))
+            l_house_obj.Lights = LightingLightsAPI(p_pyhouse_obj).read_all_lights_xml(l_house_xml.find('LightSection'))
         except AttributeError:
-            p_pyhouse_obj.House.DeviceOBJs.Controllers = {}
-            p_pyhouse_obj.House.DeviceOBJs.Buttons = {}
-            p_pyhouse_obj.House.DeviceOBJs.Lights = {}
+            l_house_obj.Controllers = {}
+            l_house_obj.Buttons = {}
+            l_house_obj.Lights = {}
 
     def _write_lighting_xml(self, p_house_objs, p_house_element):
         try:
-            p_house_element.append(self.write_all_lights_xml(p_house_objs.Lights))
+            # print('1')
+            l_xml = self.write_all_lights_xml(p_house_objs.Lights)
+            # PrettyPrintAny(l_xml, 'Light Part')
+            p_house_element.append(l_xml)
+            # print('2')
             p_house_element.append(self.write_buttons_xml(p_house_objs.Buttons))
+            # print('3')
             p_house_element.append(self.write_controllers_xml(p_house_objs.Controllers))
+            # print('4')
         except AttributeError as e_err:
-            LOG.error('ERRROR in writing lighting {0:}'.format(e_err))
+            l_msg = 'ERROR in writing lighting {0:}'.format(e_err)
+            LOG.error(l_msg)
+            print(l_msg)
 
     def _find_full_obj(self, p_lights, p_web_obj):
         """

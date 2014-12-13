@@ -43,7 +43,7 @@ class FindExternalIpAddress(object):
 
     def _extract_ip(self, p_string):
         l_quad = p_string
-        l_addr = convert.ConvertEthernet().str_to_long(l_quad)
+        l_addr = convert.str_to_long(l_quad)
         return l_addr, l_quad
 
     def _snar_scrape(self, p_page):
@@ -105,15 +105,12 @@ class Utility(FindExternalIpAddress):
 
         @return: a deferred
         """
-
         def cb_response(p_response):
             self.m_headers = p_response
             l_body_defer = self._get_body(p_response)
             return l_body_defer
-
         def eb_response(p_reason):
             LOG.error('ERROR  -failed to fetch Url - {}'.format(p_reason))
-
         l_agent = Agent(p_pyhouse_obj.Twisted.Reactor)
         l_url = self._get_url(p_key)
         l_defer = l_agent.request(

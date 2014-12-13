@@ -42,7 +42,7 @@ class SetupMixin(object):
 
 
 
-class C01_FindXML(SetupMixin, unittest.TestCase):
+class C01_XML(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by node_local.
     """
 
@@ -56,7 +56,7 @@ class C01_FindXML(SetupMixin, unittest.TestCase):
         self.m_light_obj = LightData()
         self.m_api = ReadWriteConfigXml()
 
-    def test_01_FindXml(self):
+    def test_01_Find(self):
         """ Be sure that the XML contains the right stuff.
         """
         PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse_obj', 120)
@@ -72,7 +72,7 @@ class C01_FindXML(SetupMixin, unittest.TestCase):
 
 
 
-class C02_ReadXML(SetupMixin, unittest.TestCase):
+class C02_Read(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by node_local.
     """
 
@@ -91,46 +91,46 @@ class C02_ReadXML(SetupMixin, unittest.TestCase):
         """
         l_base = self.m_api.read_base_lighting_xml(self.m_light_obj, self.m_xml.light)
         PrettyPrintAny(l_base, 'ReadBaseLighting', 120)
-        self.assertEqual(l_base.Name, 'outside_front', 'Bad Name')
+        self.assertEqual(l_base.Name, 'Insteon Light', 'Bad Name')
         self.assertEqual(l_base.Key, 0, 'Bad Key')
         self.assertEqual(l_base.Active, True, 'Bad Active')
         self.assertEqual(l_base.Comment, 'SwitchLink On/Off', 'Bad Comments')
         self.assertEqual(l_base.Coords, "['0', '0']", 'Bad Coords')
-        self.assertEqual(l_base.IsDimmable, False, 'Bad Dimmable')
+        self.assertEqual(l_base.IsDimmable, True, 'Bad Dimmable')
         self.assertEqual(l_base.ControllerFamily, 'Insteon', 'Bad ControllerFamily')
-        self.assertEqual(l_base.RoomName, 'Foyer', 'Bad Room Name')
+        self.assertEqual(l_base.RoomName, 'Master Bath', 'Bad Room Name')
 
-    def test_02_ReadBaseController(self):
+    def test_02_BaseController(self):
         """ Read in the xml file and fill in the lights
         """
         l_base = self.m_api.read_base_lighting_xml(self.m_light_obj, self.m_xml.controller)
         PrettyPrintAny(l_base, 'ReadBaseLighting', 120)
-        self.assertEqual(l_base.Name, 'PLM_1', 'Bad Name')
+        self.assertEqual(l_base.Name, 'Insteon Serial Controller', 'Bad Name')
         self.assertEqual(l_base.Key, 0, 'Bad Key')
-        self.assertEqual(l_base.Active, False, 'Bad Active')
-        self.assertEqual(l_base.Comment, 'Dongle using serial converter 067B:2303', 'Bad Comments')
-        self.assertEqual(l_base.Coords, "None", 'Bad Coords')
-        self.assertEqual(l_base.IsDimmable, False, 'Bad Dimmable')
+        self.assertEqual(l_base.Active, True, 'Bad Active')
+        self.assertEqual(l_base.Comment, 'SwitchLink On/Off', 'Bad Comments')
+        self.assertEqual(l_base.Coords, "['0', '0']", 'Bad Coords')
+        self.assertEqual(l_base.IsDimmable, True, 'Bad Dimmable')
         self.assertEqual(l_base.ControllerFamily, 'Insteon', 'Bad ControllerFamily')
-        self.assertEqual(l_base.RoomName, 'Office', 'Bad Room Name')
+        self.assertEqual(l_base.RoomName, 'Master Bath', 'Bad Room Name')
 
     def test_03_ReadBaseButton(self):
         """ Read in the xml file and fill in the lights
         """
         l_base = self.m_api.read_base_lighting_xml(self.m_button_obj, self.m_xml.button)
         PrettyPrintAny(l_base, 'ReadBaseLighting', 120)
-        self.assertEqual(l_base.Name, 'kpl_1_A', 'Bad Name')
+        self.assertEqual(l_base.Name, 'Insteon button', 'Bad Name')
         self.assertEqual(l_base.Key, 0, 'Bad Key')
-        self.assertEqual(l_base.Active, False, 'Bad Active')
-        self.assertEqual(l_base.Comment, 'KeypadLink Button A', 'Bad Comments')
-        self.assertEqual(l_base.Coords, "None", 'Bad Coords')
-        self.assertEqual(l_base.IsDimmable, False, 'Bad Dimmable')
+        self.assertEqual(l_base.Active, True, 'Bad Active')
+        self.assertEqual(l_base.Comment, 'SwitchLink On/Off', 'Bad Comments')
+        self.assertEqual(l_base.Coords, "['0', '0']", 'Bad Coords')
+        self.assertEqual(l_base.IsDimmable, True, 'Bad Dimmable')
         self.assertEqual(l_base.ControllerFamily, 'Insteon', 'Bad ControllerFamily')
         self.assertEqual(l_base.RoomName, 'Master Bath', 'Bad Room Name')
 
 
 
-class C03_WriteXML(SetupMixin, unittest.TestCase):
+class C03_Write(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by node_local.
     """
 
@@ -151,6 +151,9 @@ class C03_WriteXML(SetupMixin, unittest.TestCase):
         l_base = self.m_api.read_base_lighting_xml(self.m_light_obj, self.m_xml.light)
         l_xml = self.m_api.write_base_lighting_xml(l_base)
         PrettyPrintAny(l_xml, 'Lighting Core')
+        self.assertEqual(l_xml.attrib['Name'], 'Insteon Light')
+        self.assertEqual(l_xml.attrib['Key'], '0')
+        self.assertEqual(l_xml.attrib['Active'], 'True')
 
     def test_02_BaseController(self):
         """ Read in the xml file and fill in the lights
@@ -159,6 +162,9 @@ class C03_WriteXML(SetupMixin, unittest.TestCase):
         l_base = self.m_api.read_base_lighting_xml(self.m_light_obj, self.m_xml.controller)
         l_xml = self.m_api.write_base_lighting_xml(l_base)
         PrettyPrintAny(l_xml, 'Lighting Core')
+        self.assertEqual(l_xml.attrib['Name'], 'Insteon Serial Controller')
+        self.assertEqual(l_xml.attrib['Key'], '0')
+        self.assertEqual(l_xml.attrib['Active'], 'True')
 
     def test_03_BaseButton(self):
         """ Read in the xml file and fill in the lights
@@ -167,6 +173,9 @@ class C03_WriteXML(SetupMixin, unittest.TestCase):
         l_base = self.m_api.read_base_lighting_xml(self.m_light_obj, self.m_xml.button)
         l_xml = self.m_api.write_base_lighting_xml(l_base)
         PrettyPrintAny(l_xml, 'Lighting Core')
+        self.assertEqual(l_xml.attrib['Name'], 'Insteon button')
+        self.assertEqual(l_xml.attrib['Key'], '0')
+        self.assertEqual(l_xml.attrib['Active'], 'True')
 
 
 

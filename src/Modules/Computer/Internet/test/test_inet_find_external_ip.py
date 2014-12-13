@@ -32,7 +32,7 @@ class SetupMixin(object):
         self.m_pyhouse_obj.Twisted.Reactor = reactor
 
 
-class C_01_Util(SetupMixin, unittest.TestCase):
+class C01_Util(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
