@@ -19,7 +19,7 @@ from Modules.Lighting import lighting_lights
 from Modules.Core import conversions
 from Modules.Families import family
 from Modules.Web import web_utils
-from test.xml_data import XML_LONG
+from test.xml_data import *
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
 
@@ -85,7 +85,7 @@ class C02_Read(SetupMixin, unittest.TestCase):
         l_light_obj = self.m_api._read_light_data(self.m_xml.light)
         self.m_api._read_family_data(l_light_obj, self.m_xml.light)
         PrettyPrintAny(l_light_obj, 'Light_Obj After', 120)
-        self.assertEqual(l_light_obj.InsteonAddress, conversions.dotted_hex2int('16.62.2D'))
+        self.assertEqual(l_light_obj.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS))
 
     def test_03_OneLight(self):
         """ Read in the xml file and fill in the lights
@@ -101,7 +101,7 @@ class C02_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_light.ControllerFamily, 'Insteon', 'Bad Lighting family')
         self.assertEqual(l_light.RoomName, 'Master Bath')
         self.assertEqual(l_light.LightingType, 'Light', 'Bad LightingType')
-        self.assertEqual(l_light.InsteonAddress, conversions.dotted_hex2int('16.62.2D'))
+        self.assertEqual(l_light.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS))
 
     def test_04_AllLights(self):
         l_lights = self.m_api.read_all_lights_xml(self.m_xml.light_sect)

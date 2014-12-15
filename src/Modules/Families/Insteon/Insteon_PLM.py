@@ -32,6 +32,7 @@ TODO: implement all-links
 import Queue
 
 # Import PyMh files
+from Modules.Core import conversions
 from Modules.Families.Insteon.Insteon_data import InsteonData
 from Modules.Utilities.tools import PrintBytes
 from Modules.Families.Insteon.Insteon_constants import COMMAND_LENGTH, MESSAGE_LENGTH, MESSAGE_TYPES, PLM_COMMANDS, STX
@@ -139,7 +140,7 @@ class CreateCommands(InsteonPlmUtility):
         """Send Insteon Standard Length Message (8 bytes).
         See page 243 of Insteon Developers Guide.
 
-        @param p_obj: is the Light object of the device
+        @param p_obj: is the device object.
         @param p_cmd1: is the first command byte
         @param p_cmd2: is the second command byte
         @return: the response from queue_plm_command
@@ -357,7 +358,7 @@ class InsteonAllLinks(InsteonPlmCommands):
         """
         # p_light_obj = LightData()
         p_light_obj = InsteonData()
-        p_light_obj.InsteonAddress = self.dotted_3hex2int(p_address)
+        p_light_obj.InsteonAddress = conversions.dotted_hex2int(p_address)
         p_light_obj.GroupNumber = p_group
         # p_code = 0x00  # Find First
         p_code = 0x00  # Delete First Found record
@@ -527,17 +528,17 @@ class API(Utility):
         self.stop_controller_driver(p_controller_obj)
         LOG.info('Stopped.')
 
-    def ChangeLight(self, p_light_obj, p_level, p_rate = 0):
+    def ChangeLight(self, p_device_obj, p_level, p_rate = 0):
         """
-        Send a command to change a light's level
+        Send a command to change a device (light's level)
         """
-        LOG.info("Light Name:{}; to level:{}; at rate:{};".format(p_light_obj.Name, p_level, p_rate))
+        LOG.info("Device Name:{}; to level:{}; at rate:{};".format(p_device_obj.Name, p_level, p_rate))
         if int(p_level) == 0:
-            self.queue_62_command(p_light_obj, MESSAGE_TYPES['off'], 0)
+            self.queue_62_command(p_device_obj, MESSAGE_TYPES['off'], 0)
         elif int(p_level) == 100:
-            self.queue_62_command(p_light_obj, MESSAGE_TYPES['on'], 255)
+            self.queue_62_command(p_device_obj, MESSAGE_TYPES['on'], 255)
         else:
             l_level = int(p_level) * 255 / 100
-            self.queue_62_command(p_light_obj, MESSAGE_TYPES['on'], l_level)
+            self.queue_62_command(p_device_obj, MESSAGE_TYPES['on'], l_level)
 
 # ## END DBK

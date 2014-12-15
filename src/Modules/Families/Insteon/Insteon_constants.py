@@ -152,4 +152,9 @@ COMMAND_LENGTH = {
     0x73: 2
     }
 
+class InsteonError(Exception):
+    """
+    General Insteon error.
+    """
+
 # ## END DBK

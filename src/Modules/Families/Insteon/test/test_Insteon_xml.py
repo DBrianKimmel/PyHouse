@@ -18,8 +18,8 @@ from twisted.trial import unittest
 from Modules.Core.data_objects import LightData
 from Modules.Families.Insteon import Insteon_xml
 from Modules.Core import conversions
-from Modules.Lighting import lighting_core, lighting_lights
-from test import xml_data
+from Modules.Lighting import lighting_core
+from test.xml_data import *
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
 
@@ -40,7 +40,7 @@ class C01_Prep(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_api = Insteon_xml.ReadWriteConfigXml()
         self.m_device = None
         # lighting_core.ReadWriteConfigXml().read_base_lighting_xml(self.m_device, self.m_xml.controller)
@@ -70,7 +70,7 @@ class C02_ReadXML(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_api = Insteon_xml.ReadWriteConfigXml()
         self.m_core_api = lighting_core.ReadWriteConfigXml()
         self.m_device = LightData()
@@ -83,7 +83,7 @@ class C02_ReadXML(SetupMixin, unittest.TestCase):
         l_light = self.m_core_api.read_base_lighting_xml(self.m_device, self.m_xml.light)
         PrettyPrintAny(l_light, 'Light')
         PrettyPrintAny(self.m_device, 'Device')
-        self.assertEqual(l_light.Name, 'outside_front')
+        self.assertEqual(l_light.Name, TESTING_LIGHTING_LIGHTS_INSTEON_NAME)
         self.assertEqual(l_light.ControllerFamily, 'Insteon')
 
     def test_03_InsteonLight(self):
@@ -91,9 +91,9 @@ class C02_ReadXML(SetupMixin, unittest.TestCase):
         l_ret = self.m_api.ReadXml(l_light, self.m_xml.light)
         PrettyPrintAny(l_ret, 'Lret')
         PrettyPrintAny(l_light, 'Light Device 2')
-        self.assertEqual(l_light.Name, 'outside_front')
+        self.assertEqual(l_light.Name, TESTING_LIGHTING_LIGHTS_INSTEON_NAME)
         self.assertEqual(l_light.ControllerFamily, 'Insteon')
-        self.assertEqual(l_light.InsteonAddress, 1466925)
+        self.assertEqual(l_light.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS))
 
 
 
@@ -102,7 +102,7 @@ class C03_WriteXML(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_api = Insteon_xml.ReadWriteConfigXml()
         self.m_core_api = lighting_core.ReadWriteConfigXml()
         self.m_device = LightData()

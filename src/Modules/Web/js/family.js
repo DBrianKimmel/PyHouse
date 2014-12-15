@@ -65,14 +65,21 @@ function buildInsteonPart(self, p_obj, p_html) {
 }
 function fetchInsteonEntry(self, p_data) {
 	// Divmod.debug('---', 'family.fetchInsteonEntry() was called.');
-    p_data.InsteonAddress = hex2int(fetchTextWidget(self, 'InsteonAddress'), 3);
-    p_data.DevCat = hex2int(fetchTextWidget(self, 'DevCat'), 2);
-    p_data.GroupNumber = fetchTextWidget(self, 'GroupNumber');
-    p_data.GroupList = fetchTextWidget(self, 'GroupList');
-    p_data.IsMaster = fetchTrueFalseWidget(self, 'Master');
-    p_data.IsResponder = fetchTrueFalseWidget(self, 'Responder');
-    p_data.IsController = fetchTrueFalseWidget(self, 'Controller');
-    p_data.ProductKey = hex2int(fetchTextWidget(self, 'ProductKey'), 3);
+	try {
+	    p_data.InsteonAddress = hex2int(fetchTextWidget(self, 'InsteonAddress'), 3);
+	    p_data.DevCat = hex2int(fetchTextWidget(self, 'DevCat'), 2);
+	    p_data.GroupNumber = fetchTextWidget(self, 'GroupNumber');
+	    p_data.GroupList = fetchTextWidget(self, 'GroupList');
+	    p_data.IsMaster = fetchTrueFalseWidget(self, 'Master');
+	    p_data.IsResponder = fetchTrueFalseWidget(self, 'Responder');
+	    p_data.IsController = fetchTrueFalseWidget(self, 'Controller');
+	    p_data.ProductKey = hex2int(fetchTextWidget(self, 'ProductKey'), 3);
+	}
+	catch(err) {
+		p_data.InsteonAddress = hex2int('01.01.01', 3);
+		p_data.DevCat = hex2int('01.01', 2);
+		p_data.ProductKey = hex2int('01.01.01', 3);
+	}
 	return p_data;
 }
 function createInsteonEntry(self, p_data) {

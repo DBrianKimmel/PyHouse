@@ -18,9 +18,10 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 # Import PyMh files
 from Modules.Computer import logging_pyh as Logger
+from Modules.Families.Insteon.Insteon_constants import InsteonError
 
 
-LOG = Logger.getLogger('PyHouse.Insteon_Util      ')
+LOG = Logger.getLogger('PyHouse.Insteon_Utils  ')
 
 
 
@@ -43,6 +44,16 @@ class Util(object):
         #    print('Device {}'.format(l_device))
         return l_house
 
+    def get_jaon_data(self, l_obj, l_json):
+        l_obj.DevCat = int(l_json['DevCat'])
+        l_obj.GroupList = l_json['GroupList']
+        l_obj.GroupNumber = l_json['GroupNumber']
+        l_obj.InsteonAddress = int(l_json['InsteonAddress'])
+        l_obj.IsController = l_json['IsController']
+        l_obj.IsMaster = l_json['IsMaster']
+        l_obj.IsResponder = l_json['IsResponder']
+        l_obj.ProductKey = int(l_json['ProductKey'])
+        return l_obj
 
 
 def message2int(p_message, p_index):
@@ -56,14 +67,19 @@ def message2int(p_message, p_index):
         l_int = 0
     return l_int
 
+def insert_address_into_message(p_obj, p_message, p_index):
+    pass
+
 def int2message(p_int, p_message, p_index):
     """Place an Insteon address (int internally) into a message at a given offset.
     The message must exist and be long enough to include a 3 byte area for the address.
     """
+    l_err = False
     if p_int > 16777215 or p_int < 0:
         l_msg = 'ERROR - Insteon_utils - trying to convert {0:} to message byte string.'.format(p_int)
         LOG.error(l_msg)
         print(l_msg)
+        l_err = True
         p_int = 16777215
     l_ix = 256 * 256
     l_int = p_int
@@ -71,6 +87,8 @@ def int2message(p_int, p_message, p_index):
         p_message[p_index], l_int = divmod(l_int, l_ix)
         l_ix = l_ix / 256
         p_index += 1
+        if l_err:
+            raise InsteonError
     return p_message
 
 # ## END DBK

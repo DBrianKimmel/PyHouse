@@ -84,14 +84,7 @@ class ThermostatsElement(athena.LiveElement):
         l_obj.ThermostatMode = 'Cool'  # Cool | Heat | Auto | EHeat
         l_obj.ThermostatScale = 'F'  # F | C
         if l_obj.ControllerFamily == 'Insteon':
-            l_obj.DevCat = conversions.dotted_hex2int(l_json['DevCat'])
-            l_obj.GroupList = l_json['GroupList']
-            l_obj.GroupNumber = l_json['GroupNumber']
-            l_obj.InsteonAddress = conversions.dotted_hex2int(l_json['InsteonAddress'])
-            l_obj.IsController = l_json['IsController']
-            l_obj.IsMaster = l_json['IsMaster']
-            l_obj.IsResponder = l_json['IsResponder']
-            l_obj.ProductKey = conversions.dotted_hex2int(l_json['ProductKey'])
+            Insteon_utils.Util().get_jaon_data(l_obj, l_json)
         elif l_obj.ControllerFamily == 'UPB':
             l_obj.UPBAddress = l_json['UPBAddress']
             l_obj.UPBPassword = l_json['UPBPassword']

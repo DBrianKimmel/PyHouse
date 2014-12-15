@@ -72,7 +72,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_button.Name, 'kpl_1_A', 'Bad Name')
         self.assertEqual(l_button.ControllerFamily, 'Insteon', 'Bad Lighting family')
         self.assertEqual(l_button.LightingType, 'Button', 'Bad LightingType')
-        self.assertEqual(l_button.InsteonAddress, conversions.dotted_hex2int('16.E5.B6'))
+        self.assertEqual(l_button.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS))
 
     def test_0215_ReadAllButtonsXml(self):
         l_buttons = self.m_api.read_all_buttons_xml(self.m_xml.button_sect)

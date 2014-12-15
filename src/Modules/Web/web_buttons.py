@@ -56,5 +56,7 @@ class ButtonsElement(athena.LiveElement):
         l_obj.Active = l_json['Active']
         l_obj.Key = l_json['Key']
         l_obj.Level = l_json['Level']
+        if l_obj.ControllerFamily == 'Insteon':
+            Insteon_utils.Util().get_jaon_data(l_obj, l_json)
 
 # ## END DBK

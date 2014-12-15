@@ -110,15 +110,33 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 	/**
 	 * Build a screen full of data entry fields.
 	 */
-	function buildBasicPart(self, p_thermostat, p_html, p_onchange){
-		// Divmod.debug('---', 'thermostats.buildBasicPart() was called.');
-		p_html += buildLcarTextWidget(self, 'Name', 'Thermostat Name', p_thermostat.Name);
-		p_html += buildLcarTextWidget(self, 'Key', 'Index', p_thermostat.Key, 'disable');
-		p_html += buildLcarTrueFalseWidget(self, 'ThermostatActive', 'Active ?', p_thermostat.Active);
-		p_html += buildLcarTextWidget(self, 'UUID', 'UUID', p_thermostat.UUID, 'disable');
-		p_html += buildLcarHvacSliderWidget(self, 'CoolSetting', 'Cool', p_thermostat.CoolSetPoint, 'handleSliderChangeCool');
-		p_html += buildLcarHvacSliderWidget(self, 'HeatSetting', 'Heat', p_thermostat.HeatSetPoint, 'handleSliderChangeHeat');
-		p_html += buildLcarFamilySelectWidget(self, 'ControllerFamily', 'Family', p_thermostat.ControllerFamily, p_onchange);
+	function buildLcarDataEntryScreen(self, p_entry, p_handler){
+		var l_thermostat = arguments[1];
+		var l_html = build_lcars_top('Thermostat Data', 'lcars-salmon-color');
+		l_html += build_lcars_middle_menu(25, self.buildEntry(l_obj, p_handler));
+		l_html += build_lcars_bottom();
+		self.nodeById('DataEntryDiv').innerHTML = l_html;
+	},
+	function buildEntry(self, p_obj, p_handler, p_onchange){
+		var l_html = buildBaseEntry(self, p_obj);
+		// l_html = buildLightingCoreEntry(self, p_obj, l_html, p_onchange);
+		l_html = self.buildThermostatEntry(p_obj, l_html);
+		if (p_obj.ControllerFamily == 'Insteon')
+			l_html = buildInsteonPart(self, p_obj, l_html);
+		else if (p_obj.ControllerFamily === 'UPB')
+        	l_html = buildUpbPart(self, p_obj, l_html);
+		else
+			Divmod.debug('---', 'ERROR - thermostats.buildEntry() Unknown Family = ' + p_obj.ControllerFamily);
+		l_html += buildLcarEntryButtons(p_handler);
+		return l_html
+	},
+	function buildThermostatEntry(self, p_obj, p_html, p_onchange){
+		p_html += buildLcarTextWidget(self, 'Comment', 'Comment', p_obj.Comment);
+		p_html += buildLcarRoomSelectWidget(self, 'RoomName', 'Room', p_obj.RoomName);
+		p_html += buildLcarLightTypeSelectWidget(self, 'Type', 'Type', p_obj.LightingType, 'disabled');
+		p_html += buildLcarFamilySelectWidget(self, 'ControllerFamily', 'Family', p_obj.ControllerFamily, 'familyChanged');
+		p_html += buildLcarHvacSliderWidget(self, 'CoolSetting', 'Cool', p_obj.CoolSetPoint, 'handleSliderChangeCool');
+		p_html += buildLcarHvacSliderWidget(self, 'HeatSetting', 'Heat', p_obj.HeatSetPoint, 'handleSliderChangeHeat');
 		return p_html
 	},
 	function handleSliderChangeCool(p_event){
@@ -135,38 +153,10 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 		var l_level = fetchSliderWidget(l_self, 'HeatSetting');
 		updateSliderBoxValue(l_self, 'HeatSetting', l_level);
 	},
-	function buildAllParts(self, p_thermostat, p_html, p_handler, p_onchange) {
-		// Divmod.debug('---', 'thermostats.buildAllParts() was called - family: ' + p_thermostat.ControllerFamily);
-		var p_html = self.buildBasicPart(p_thermostat, p_html, p_onchange);
-		if (p_thermostat.ControllerFamily == 'Insteon') {
-			p_html = buildInsteonPart(self, p_thermostat, p_html);
-		}
-        if (p_thermostat.ControllerFamily == 'UPB') {
-        	p_html = buildUpbPart(self, p_thermostat, p_html);
-        }
-		p_html += buildLcarEntryButtons(p_handler);
-		return p_html;
-	},
-	function buildLcarDataEntryScreen(self, p_entry, p_handler){
-		var l_thermostat = arguments[1];
-		// Divmod.debug('---', 'thermostats.buildLcarDataEntryScreen() was called.');
-		// console.log("thermostats.buildLcarDataEntryScreen() - Thermo = %O", l_thermostat);
-		var l_html = "";
-		var l_data_html = "";
-		l_data_html = self.buildAllParts(l_thermostat, l_data_html, p_handler, 'familyChanged');
-		var l_html = build_lcars_top('Thermostat Data', 'lcars-salmon-color');
-		l_html += build_lcars_middle_menu(25, l_data_html);
-		l_html += build_lcars_bottom();
-		self.nodeById('DataEntryDiv').innerHTML = l_html;
-	},
 	function familyChanged() {
 		var l_obj = globals.House.ThermostatObj;
 		var l_self = globals.House.Self;
-		Divmod.debug('---', 'thermostats.familyChanged was called !!!');
-		// console.log("thermostats.buildLcarDataEntryScreen() - light %O", l_obj);
-		// console.log("thermostats.buildLcarDataEntryScreen() - l_self %O", l_self);
-		var l_family = fetchSelectWidget(l_self, 'LightFamily');
-		l_obj.ControllerFamily = l_family;
+		l_obj.ControllerFamily = fetchSelectWidget(l_self, 'Family');;
 		l_self.buildLcarDataEntryScreen(l_obj, 'handleDataOnClick');
 	},
 
@@ -174,40 +164,40 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 
 // ============================================================================
 	function fetchEntry(self) {
-        var l_data = {
-            Name      : fetchTextWidget(self, 'Name'),
-            Key       : fetchTextWidget(self, 'Key'),
-			Active    : fetchTrueFalseWidget(self, 'ThermostatActive'),
-			UUID      : fetchTextWidget(self, 'UUID'),
-			ControllerFamily : fetchSelectWidget(self, 'ControllerFamily'),
-			CoolSetPoint : fetchSliderWidget(self, 'CoolSetting'),
-			HeatSetPoint : fetchSliderWidget(self, 'HeatSetting'),
-			Delete : false
-            };
-        if (l_data.ControllerFamily === 'Insteon') {
+		var l_data = fetchBaseEntry(self, l_data);
+		l_data = self.fetchThermostatEntry(l_data);
+        if (l_data.ControllerFamily === 'Insteon')
         	l_data = fetchInsteonEntry(self, l_data);
-        }
-        if (l_data.ControllerFamily === 'UPB') {
+        if (l_data.ControllerFamily === 'UPB')
         	l_data = fetchUpbEntry(self, l_data);
-        }
 		return l_data;
 	},
-	function createEntry(self, p_ix) {
-		var l_key = 0;
-		if (globals.House.HouseObj.Thermostats !== 'undefined')
-			l_key = Object.keys(globals.House.HouseObj.Thermostats).length;
-        var l_Data = {
-    			Name : 'Change Me',
-    			Key : l_key,
-    			Active : false,
-    			CoolSetPoint : 80,
-    			HeatSetPoint : 65,
-    			ControllerFamily : 'Insteon',
-    			InsteonAddress :	'99.88.77',
-    			DevCat :			'0',
-    			Delete : false
-                };
-		return l_Data;
+	function fetchThermostatEntry(self, p_data) {
+	    p_data.Comment = fetchTextWidget(self, 'Comment');
+	    p_data.RoomName = fetchTextWidget(self, 'RoomName');
+	    p_data.LightingType = 'Thermostat';
+	    p_data.ControllerFamily = fetchSelectWidget(self, 'ControllerFamily');
+		p_data.CoolSetPoint = fetchSliderWidget(self, 'CoolSetting');
+		p_data.HeatSetPoint = fetchSliderWidget(self, 'HeatSetting');
+		return p_data;
+	},
+	function createEntry(self) {
+		var l_data = createBaseEntry(self, l_data);
+		l_data = createLightingCoreEntry(self, l_data);
+		l_data = self.createThermostatEntry(l_data);
+        if (l_data.ControllerFamily === 'Insteon')
+        	l_data = createInsteonEntry(self, l_data);
+        if (l_data.ControllerFamily === 'UPB')
+        	l_data = createUpbEntry(self, l_data);
+        return l_data;
+	},
+	function createThermostatEntry(self, p_data) {
+	    p_data.Comment = '';
+	    p_data.RoomName = '';
+	    p_data.LightingType = 'Thermostat';
+		p_data.CoolSetPoint = 78;
+		p_data.HeatSetPoint = 70;
+		return p_Data;
 	},
 
 

@@ -71,7 +71,7 @@ from Modules.Computer import logging_pyh as Logger
 
 g_debug = 0
 g_API = None
-LOG = Logger.getLogger('PyHouse             ')
+LOG = Logger.getLogger('PyHouse                ')
 
 
 def daemonize():

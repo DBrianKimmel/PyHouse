@@ -87,7 +87,7 @@ class InterNodeProtocol(amp.AMP):
         l_node = self.create_node_from_response(Name, Active, AddressV4, AddressV6, NodeRole, UUID)
         l_key = self.insert_node(l_node)
         l_response = self.create_response(l_node, l_key)
-        # LOG.info('receive_NodeInfo() - from  address=:{}\n\tResponse = {}'.format(AddressV4, l_response))
+        LOG.info('from  address=:{}  Response = {}'.format(AddressV4, l_response))
         # self._dump_nodes()
         return l_response
 
@@ -197,7 +197,8 @@ class Utility(object):
         """
         def cb_start_server(p_port):
             # LOG.info('Server listening on port {}.'.format(p_port.getHost()))
-            self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self._info_loop, self.m_pyhouse_obj)
+            # self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self._info_loop, self.m_pyhouse_obj)
+            pass
 
         def eb_start_server(p_reason):
             LOG.error('ERROR in starting Server; {}.\n'.format(p_reason))
@@ -244,6 +245,7 @@ class API(Utility):
         self.m_pyhouse_obj = p_pyhouse_obj
         l_endpoint = self._create_amp_service(p_pyhouse_obj)
         self._start_amp_server(p_pyhouse_obj, l_endpoint)
+        self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self._info_loop, self.m_pyhouse_obj)
 
 
     def Stop(self):

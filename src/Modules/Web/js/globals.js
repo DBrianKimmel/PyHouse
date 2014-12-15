@@ -774,9 +774,9 @@ function buildLcarSliderWidget(self, p_id, p_caption, p_value, p_min, p_max, p_s
 	return l_out;
 }
 function fetchSliderWidget(self, p_id) {
-	Divmod.debug('---', 'globals.fetchSliderWidget(1) Id=' + p_id);
+	// Divmod.debug('---', 'globals.fetchSliderWidget(1) Id=' + p_id);
 	var l_id = p_id + "-Slider";
-	Divmod.debug('---', 'globals.fetchSliderWidget(2) Id=' + l_id);
+	// Divmod.debug('---', 'globals.fetchSliderWidget(2) Id=' + l_id);
 	var l_val = self.nodeById(l_id).value;
 	return l_val;
 }

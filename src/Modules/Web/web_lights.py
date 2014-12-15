@@ -24,6 +24,7 @@ from Modules.Core import conversions
 from Modules.Web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.Lighting import lighting_lights
 from Modules.Computer import logging_pyh as Logger
+from Modules.Families.Insteon import Insteon_utils
 # from Modules.Utilities.tools import PrettyPrintAny
 
 # Handy helper for finding external resources nearby.
@@ -85,14 +86,7 @@ class LightsElement(athena.LiveElement):
         if len(l_obj.UUID) < 8:
             l_obj.UUID = str(uuid.uuid1())
         if l_obj.ControllerFamily == 'Insteon':
-            l_obj.DevCat = int(l_json['DevCat'])
-            l_obj.GroupList = l_json['GroupList']
-            l_obj.GroupNumber = l_json['GroupNumber']
-            l_obj.InsteonAddress = int(l_json['InsteonAddress'])
-            l_obj.IsController = l_json['IsController']
-            l_obj.IsMaster = l_json['IsMaster']
-            l_obj.IsResponder = l_json['IsResponder']
-            l_obj.ProductKey = int(l_json['ProductKey'])
+            Insteon_utils.Util().get_jaon_data(l_obj, l_json)
         elif l_obj.ControllerFamily == 'UPB':
             l_obj.UPBAddress = l_json['UPBAddress']
             l_obj.UPBPassword = l_json['UPBPassword']

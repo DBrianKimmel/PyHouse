@@ -34,6 +34,9 @@ def _get_factor(p_size):
     return int(math.pow(256, (p_size - 1)))
 
 def _get_int(p_str):
+    """Convert 2 hex chars into a 1 byte int.
+    a3 --> 163
+    """
     l_int = 0
     try:
         l_int = int(p_str, 16)
@@ -57,9 +60,10 @@ def int2dotted_hex(p_int, p_size):
     """
     l_ix = _get_factor(p_size)
     l_hex = []
+    l_int = int(p_int)
     try:
         while l_ix > 0:
-            l_byte, p_int = divmod(p_int, l_ix)
+            l_byte, l_int = divmod(l_int, l_ix)
             l_hex.append("{0:02X}".format(l_byte))
             l_ix = l_ix / 256
         return str('.'.join(l_hex))

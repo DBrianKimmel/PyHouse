@@ -242,6 +242,8 @@ class ThermostatData(ABaseObject):
 
     def __init__(self):
         super(ThermostatData, self).__init__()
+        self.Comment = ''
+        self.RoomName = ''
         self.CoolSetPoint = 0
         self.ControllerFamily = 'Null'
         self.CurrentTemperature = 0

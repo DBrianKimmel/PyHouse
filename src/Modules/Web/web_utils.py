@@ -91,6 +91,8 @@ def GetJSONHouseInfo(p_pyhouse_obj):
     l_json = unicode(JsonUnicode().encode_json(l_ret))
     return l_json
 
+
+
 def GetJSONComputerInfo(p_pyhouse_obj):
     """Get house info for the browser.
     This is simplified and customized so JSON encoding works.
@@ -105,11 +107,13 @@ def GetJSONComputerInfo(p_pyhouse_obj):
     return l_json
 
 
+
 class State(object):
     """Used by various web_ modules to keep the state of the web server.
     """
     def __init__(self):
         self.State = WS_IDLE
+
 
 
 class JsonUnicode(object):

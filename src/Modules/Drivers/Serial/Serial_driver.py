@@ -28,7 +28,7 @@ from Modules.Utilities.tools import PrintBytes
 from Modules.Computer import logging_pyh as Logger
 
 g_debug = 0
-LOG = Logger.getLogger('PyHouse.SerialDriver')
+LOG = Logger.getLogger('PyHouse.SerialDriver   ')
 
 
 class SerialProtocol(Protocol):

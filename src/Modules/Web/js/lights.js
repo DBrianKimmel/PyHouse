@@ -111,23 +111,23 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 	 */
 	function buildLcarDataEntryScreen(self, p_entry, p_handler){
 		var l_obj = arguments[1];
-		var l_html = build_lcars_top('Enter Light Data', 'lcars-salmon-color');
+		var l_html = build_lcars_top('Light Data', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(40, self.buildEntry(l_obj, p_handler));
 		l_html += build_lcars_bottom();
 		self.nodeById('DataEntryDiv').innerHTML = l_html;
 	},
 	function buildEntry(self, p_obj, p_handler, p_onchange) {
-		var p_html = buildBaseEntry(self, p_obj);
-		p_html = buildLightingCoreEntry(self, p_obj, p_html, p_onchange);
-		p_html = self.buildLightEntry(p_obj, p_html);
+		var l_html = buildBaseEntry(self, p_obj);
+		l_html = buildLightingCoreEntry(self, p_obj, l_html, p_onchange);
+		l_html = self.buildLightEntry(p_obj, l_html);
 		if (p_obj.ControllerFamily === 'Insteon')
-			p_html = buildInsteonPart(self, p_obj, p_html);
+			l_html = buildInsteonPart(self, p_obj, l_html);
 		else if (p_obj.ControllerFamily === 'UPB')
-        	p_html = buildUpbPart(self, p_obj, p_html);
+        	l_html = buildUpbPart(self, p_obj, l_html);
 		else
-			Divmod.debug('---', 'ERROR - lights.buildAllParts() Family = ' + p_obj.ControllerFamily);
-		p_html += buildLcarEntryButtons(p_handler);
-		return p_html;
+			Divmod.debug('---', 'ERROR - lights.buildEntry() Unknown Family = ' + p_obj.ControllerFamily);
+		l_html += buildLcarEntryButtons(p_handler);
+		return l_html;
 	},
 	function buildLightEntry(self, p_obj, p_html, p_onchange) {
 		return p_html;

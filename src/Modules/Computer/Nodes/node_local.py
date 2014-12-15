@@ -251,7 +251,7 @@ class Utility(ReadWriteConfigXml):
             # Test for lights
             if fnmatch.fnmatch(l_file, 'ttyUSB?'):
                 l_ret |= NODE_LIGHTS
-                LOG.debug('Lighting Node')
+                LOG.info('Lighting Node')
         return l_ret
 
     def _is_ir_node(self):
@@ -263,7 +263,7 @@ class Utility(ReadWriteConfigXml):
         for l_file in os.listdir('/dev'):
             if fnmatch.fnmatch(l_file, 'lirc?'):
                 l_ret |= NODE_PIFACECAD
-                LOG.debug('Lirc Node')
+                LOG.info('Lirc Node')
         return l_ret
 
     def _is_pandora_node(self):
@@ -273,7 +273,7 @@ class Utility(ReadWriteConfigXml):
         l_ret = NODE_NOTHING
         if os.path.exists('/usr/bin/pianobar'):
             l_ret |= NODE_PANDORA
-            LOG.debug('This node is a Pandora Player Node')
+            LOG.info('This node is a Pandora Player Node')
         return l_ret
 
     def _is_v6_router_node(self):
@@ -338,7 +338,7 @@ class Utility(ReadWriteConfigXml):
             pass
         p_pyhouse_obj.Computer.Nodes[l_max_key + 1] = p_node
         if g_debug >= 1:
-            LOG.debug('Nodes = {0:}'.format(p_pyhouse_obj.Compute.Nodes))
+            LOG.info('Nodes = {0:}'.format(p_pyhouse_obj.Compute.Nodes))
 
     def create_local_node(self):
         l_node = NodeData()
