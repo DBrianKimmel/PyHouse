@@ -16,6 +16,8 @@ NODES_XML = """\
             <Node Name='pi-01' Key='0' Active='True'>
                 <UUID>87654321-1001-11e3-b583-082e5f899999</UUID>
                 <ConnectionAddressV4>192.168.1.123</ConnectionAddressV4>
+                <ConnectionAddressV6>1234:5678::dead.beef</ConnectionAddressV6>
+                <NodeRoll>123</NodeRoll>
                 <InterfaceSection>
                     <Interface Name='eth0' Key="0" Active="True">
                         <UUID>87654321-1001-11e3-b583-012300001111</UUID>
@@ -39,6 +41,7 @@ NODES_XML = """\
             <Node Name='pi-02' Key='0' Active='True'>
                 <UUID>87654321-1001-11e3-b583-082e5f899999</UUID>
                 <ConnectionAddressV4>192.168.1.124</ConnectionAddressV4>
+                <NodeRoll>6</NodeRoll>
             </Node>
         </NodeSection>
 """
