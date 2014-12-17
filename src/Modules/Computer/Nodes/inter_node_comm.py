@@ -228,23 +228,17 @@ class Utility(object):
         l_defer.addErrback(eb_send_our_info)
 
 
-    def _start_amp_server(self, p_pyhouse_obj, p_endpoint):
+    def _send_node_info_to_all(self, p_pyhouse_obj):
         """
-        Start the domain server to listen for all incoming requests.
+        Loop thru all the nodes we know about (from node_discovery) and send them our node info
+        """
+        for l_node in p_pyhouse_obj.Computer.Nodes.itervalues():
+            self.send_our_info_to_node(p_pyhouse_obj, l_node.ConnectionAddr_IPv4)
 
-        The server stays running for the duration of the PyHouse daemon.
-        """
-        def cb_start_server(p_port):
-            # LOG.info('Server listening on port {}.'.format(p_port.getHost()))
-            # self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self._info_loop, self.m_pyhouse_obj)
-            pass
-        def eb_start_server(p_reason):
-            LOG.error('ERROR in starting Server; {}.\n'.format(p_reason))
-        self.m_pyhouse_obj = p_pyhouse_obj
-        l_defer = p_endpoint.listen(AmpServerFactory(p_pyhouse_obj))
-        l_defer.addCallback(cb_start_server)
-        l_defer.addErrback(eb_start_server)
-        return l_defer
+
+    def _info_loop(self, p_pyhouse_obj):
+        self.m_pyhouse_obj.Twisted.Reactor.callLater(REPEAT_DELAY, self._info_loop, p_pyhouse_obj)
+        self._send_node_info_to_all(p_pyhouse_obj)
 
 
     def _create_amp_service(self, p_pyhouse_obj):
@@ -259,17 +253,21 @@ class Utility(object):
         return l_Listen_endpoint
 
 
-    def _send_node_info_to_all(self, p_pyhouse_obj):
+    def _start_amp_server(self, p_pyhouse_obj, p_endpoint):
         """
-        Loop thru all the nodes we know about (from node_discovery) and send them our node info
+        Start the domain server to listen for all incoming requests.
+
+        The server stays running for the duration of the PyHouse daemon.
         """
-        for l_node in p_pyhouse_obj.Computer.Nodes.itervalues():
-            self.send_our_info_to_node(p_pyhouse_obj, l_node.ConnectionAddr_IPv4)
-
-
-    def _info_loop(self, p_pyhouse_obj):
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(REPEAT_DELAY, self._info_loop, p_pyhouse_obj)
-        self._send_node_info_to_all(p_pyhouse_obj)
+        def cb_start_server(p_port):
+            LOG.info('Server listening on port {}.'.format(p_port.getHost()))
+        def eb_start_server(p_reason):
+            LOG.error('ERROR in starting Server; {}.\n'.format(p_reason))
+        self.m_pyhouse_obj = p_pyhouse_obj
+        l_defer = p_endpoint.listen(AmpServerFactory(p_pyhouse_obj))
+        l_defer.addCallback(cb_start_server)
+        l_defer.addErrback(eb_start_server)
+        # return l_defer
 
 
 

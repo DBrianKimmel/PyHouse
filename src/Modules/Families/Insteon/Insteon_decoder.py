@@ -355,8 +355,7 @@ class DecodeResponses(Utility):
         except AttributeError:
             pass
         l_ret = True
-        if g_debug >= 1:
-            LOG.info(l_debug_msg)
+        LOG.info(l_debug_msg)
         return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_51_record(self, p_controller_obj):

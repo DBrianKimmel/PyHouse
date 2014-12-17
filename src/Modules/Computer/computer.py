@@ -104,6 +104,6 @@ class API(Utility):
         """
         l_xml = self.save_component_apis(self.m_pyhouse_obj)
         p_xml.append(l_xml)
-        # LOG.info("Saved XML.")
+        LOG.info("Saved XML.")
 
 # ## END DBK

@@ -87,16 +87,17 @@ class Utility(ReadWriteConfigXml):
         return l_xml
 
     def _xml_save_loop(self, p_pyhouse_obj):
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(REPEAT_DELAY, self._xml_save_loop, self.m_pyhouse_obj)
+        self.m_pyhouse_obj.Twisted.Reactor.callLater(REPEAT_DELAY, self._xml_save_loop, p_pyhouse_obj)
         self.WriteXml()
+
+    def _setup_apis(self, p_pyhouse_obj):
+        p_pyhouse_obj.APIs.Comp.ComputerAPI = computer.API()
+        p_pyhouse_obj.APIs.House.HouseAPI = house.API()
+        self.m_pyhouse_obj = p_pyhouse_obj
 
 
 
 class API(Utility):
-
-    def _setup_apis(self):
-        self.m_pyhouse_obj.APIs.Comp.ComputerAPI = computer.API()
-        self.m_pyhouse_obj.APIs.House.HouseAPI = house.API()
 
     def Start(self, p_pyhouse_obj):
         """
@@ -105,16 +106,15 @@ class API(Utility):
         @param p_pyhouse_obj: is the skeleton Obj filled in some by PyHouse.py.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
-        self._setup_apis()
+        self._setup_apis(p_pyhouse_obj)
         self.load_xml_config_file(p_pyhouse_obj)
-        self.read_xml_config_info(self.m_pyhouse_obj)
+        self.read_xml_config_info(p_pyhouse_obj)
         self.log_start()
         LOG.info("Starting.")
         # Logging system is now enabled
-        self.m_pyhouse_obj = p_pyhouse_obj
         p_pyhouse_obj.APIs.Comp.ComputerAPI.Start(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.HouseAPI.Start(p_pyhouse_obj)
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self._xml_save_loop, self.m_pyhouse_obj)
+        p_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self._xml_save_loop, p_pyhouse_obj)
         LOG.info("Started.")
 
     def Stop(self):

@@ -150,8 +150,7 @@ class CreateCommands(InsteonPlmUtility):
         l_command[5] = FLAG_MAX_HOPS + FLAG_HOPS_LEFT  # 0x0F
         l_command[6] = p_obj._Command1 = p_cmd1
         l_command[7] = p_obj._Command2 = p_cmd2
-        if g_debug >= 1:
-            LOG.info("Device: {:0}, Command: {:1#X},{:2#X}, {:3}".format(p_obj.Name, p_cmd1, p_cmd2, self._format_address(l_command[2:5])))
+        LOG.info("Device: {:0}, Command: {:1#X},{:2#X}, {:3}".format(p_obj.Name, p_cmd1, p_cmd2, self._format_address(l_command[2:5])))
         return self.queue_plm_command(l_command)
 
     def queue_63_command(self, p_obj):

@@ -71,6 +71,11 @@ class Utility(object):
 
     @staticmethod
     def _start_all_controllers(p_pyhouse_obj):
+        """ Return the Insteon_PLM API reference if the controller is:
+                Insteon
+                Active
+            Also, start the controller
+        """
         l_ret = None
         for l_controller_obj in p_pyhouse_obj.House.DeviceOBJs.Controllers.itervalues():
             if Utility._is_valid_controller(l_controller_obj):
@@ -78,7 +83,7 @@ class Utility(object):
             elif Utility._is_insteon(l_controller_obj):
                 LOG.info('Insteon Controller {} is NOT started per config file.'.format(l_controller_obj.Name))
             else:
-                pass  # Not interested in this controller.
+                pass  # Not interested in this controller. (Non-Insteon)
         return l_ret
 
     @staticmethod
