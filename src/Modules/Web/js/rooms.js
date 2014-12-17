@@ -90,11 +90,11 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 			var l_obj = globals.House.HouseObj.Rooms[l_ix];
 			globals.House.RoomObj = l_obj;
 			showDataEntryFields(self);
-			self.buildLcarRoomDataEntryScreen(l_obj, 'handleDataEntryOnClick');
+			self.buildLcarDataEntryScreen(l_obj, 'handleDataEntryOnClick');
 		} else if (l_ix == 10001) {  // The "Add" button
 			showDataEntryFields(self);
 			var l_entry = self.createEntry();
-			self.buildLcarRoomDataEntryScreen(l_entry, 'handleDataEntryOnClick');
+			self.buildLcarDataEntryScreen(l_entry, 'handleDataEntryOnClick');
 		} else if (l_ix == 10002) {  // The "Back" button
 			self.showWidget('HouseMenu');
 		}
@@ -106,7 +106,6 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	 * Build a screen full of data entry fields.
 	 */
 	function buildLcarRoomDataEntryScreen(self, p_entry, p_handler){
-		// console.log("rooms.buildLcarRoomDataEntryScreen() - self = %O", self);
 		var l_room = arguments[1];
 		var l_entry_html = "";
 		l_entry_html += buildLcarTextWidget(self, 'Name', 'Room Name', l_room.Name);
@@ -122,7 +121,6 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		self.nodeById('DataEntryDiv').innerHTML = l_html;
 	},
 	function createEntry(self) {
-    	//Divmod.debug('---', 'rooms.createEntry() was called. ');
         var l_data = {
 			Name : 'Change Me',
 			Key : Object.keys(globals.House.HouseObj.Rooms).length,
@@ -135,7 +133,6 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		return l_data;
 	},
 	function fetchEntry(self) {
-    	// Divmod.debug('---', 'rooms.fetchEntry() was called. ' + self);
         var l_data = {
 			Name : fetchTextWidget(self, 'Name'),
 			Key : fetchTextWidget(self, 'Key'),
@@ -194,6 +191,6 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
         return false;
 	}
 );
-//Divmod.debug('---', 'rooms.handleMenuOnClick(1) was called. ' + l_ix + ' ' + l_name);
-//console.log("rooms.handleMenuOnClick() - l_obj = %O", l_obj);
+// Divmod.debug('---', 'rooms.handleMenuOnClick(1) was called. ' + l_ix + ' ' + l_name);
+// console.log("rooms.handleMenuOnClick() - l_obj = %O", l_obj);
 // ### END DBK

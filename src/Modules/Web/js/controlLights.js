@@ -47,7 +47,6 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 		function eb_fetchDataFromServer(res) {
 			Divmod.debug('---', 'controlLights.eb_fetchDataFromServer() was called.  ERROR ' + res);
 		}
-		Divmod.debug('---', 'controlLights.fetchDataFromServer() was called.');
        	var l_defer = self.callRemote("getHouseData");  // call server @ web_controlLights.py
 		l_defer.addCallback(cb_fetchDataFromServer);
 		l_defer.addErrback(eb_fetchDataFromServer);
@@ -57,7 +56,6 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 	 * Build a screen full of buttons - One for each light and some actions.
 	 */
 	function buildLcarSelectScreen(self){
-		Divmod.debug('---', 'controlLights.buildLcarSelectScreen() was called.');
 		var l_button_html = buildLcarSelectionButtonsTable(globals.House.HouseObj.Lights, 'handleMenuOnClick');
 		var l_html = build_lcars_top('Control Lights', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(15, l_button_html);
@@ -82,7 +80,7 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 			globals.House.LightObj = l_obj;
 			globals.House.Self = self;
 			showDataEntryFields(self);
-			self.fillEntry(l_obj);
+			self.buildLcarDataEntryScreen(l_obj, 'handleDataEntryOnClick');
 		} else if (l_ix == 10002) {  // The "Back" button
 			self.showWidget('HouseMenu');
 		}
@@ -106,16 +104,9 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 		self.nodeById('DataEntryDiv').innerHTML = l_html;
 	},
 	function handleSliderChange(p_event){
-		// Divmod.debug('---', 'controlLights.handleSliderChange() called. - Event= ' + p_event);
-		console.log("controlLights.handleSliderChange   Event:  %O", p_event);
-		// var l_obj = globals.House.LightObj;
 		var l_self = globals.House.Self;
 		var l_level = fetchSliderWidget(l_self, 'CtlLightLevel');
-		// Divmod.debug('---', 'controlLights.handleSliderChange() called. - Level= ' + l_level);
 		updateSliderBoxValue(l_self, 'CtlLightLevel', l_level);
-	},
-	function fillEntry(self, p_entry) {
-		self.buildLcarDataEntryScreen(p_entry, 'handleDataEntryOnClick');
 	},
 	function fetchEntry(self) {
         var l_data = {

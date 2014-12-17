@@ -55,7 +55,7 @@ class C01_Structure(SetupMixin, unittest.TestCase):
 
 
 
-class C06_Interface(SetupMixin, unittest.TestCase):
+class C02_Iface(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
@@ -66,10 +66,12 @@ class C06_Interface(SetupMixin, unittest.TestCase):
     def test_01_IfaceNames(self):
         l_names = node_local.GetAllInterfaceData()._find_all_interface_names()
         PrettyPrintAny(l_names, 'Names')
+        # self.assertEqual()
 
     def test_02_Node(self):
         l_node = self.m_api.create_local_node()
         PrettyPrintAny(l_node, 'Local Node')
+        PrettyPrintAny(l_node.NodeInterfaces[0], 'IFace 0')
 
     def test_03_Node(self):
         pass

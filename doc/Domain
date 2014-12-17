@@ -1,0 +1,4 @@
+The PyHouse Domain is simply called Domain in this project except where it may be confusing which domain is under discussion.
+
+The domain is a 64 bit number expressed the same way as an IPv6 address is expressed.
+All nodes in the domain freely exchange information and cooperate in the PyHouse automation Island.

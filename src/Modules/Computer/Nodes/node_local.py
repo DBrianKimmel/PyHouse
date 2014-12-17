@@ -26,13 +26,11 @@ import fnmatch  # Filename matching with shell patterns
 import netifaces
 import os
 import platform
-import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData, NodeInterfaceData
 from Modules.Communication import ir_control
 from Modules.Computer import logging_pyh as Logger
-from Modules.Computer.Nodes.test.xml_nodes import NODES_XML
 from Modules.Computer.Nodes import nodes_xml
 
 
@@ -114,7 +112,6 @@ class GetAllInterfaceData(object):
                 l_interface.V6Address = self._get_address_list(self._find_addr_lists(p_interface_name)[l_af])
         if l_interface.V4Address == [] and l_interface.V6Address == []:
             return
-        # LOG.info("\n\t\t\tInterface:{0:}\n\t\t\tMac:{1:}\n\t\t\tV4:{2:}\n\t\t\tV6:{3:}".format(l_interface.Name, l_interface.MacAddress, l_interface.V4Address, l_interface.V6Address))
         return l_interface
 
     def get_all_interfaces(self, p_node):

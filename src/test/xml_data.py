@@ -15,7 +15,7 @@ used for testing
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Computer.test.xml_computer import COMPUTER_DIVISION_XML
+from Modules.Computer.test.xml_computer import *
 from Modules.Housing.test.xml_housing import *
 
 

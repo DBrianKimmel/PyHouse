@@ -133,6 +133,7 @@ class ComputerInformation(object):
         self.Email = {}  # EmailData()
         self.Nodes = {}  # NodeData()
         self.Web = {}  # WebData()
+        self.Domain = None
 
 
 class HouseInformation(ABaseObject):
@@ -200,19 +201,21 @@ class RoomData(ABaseObject):
 class NodeData(ABaseObject):
     """Information about a single node.
     Name is the Node's HostName
+    The interface info is only for the local node.
     """
     def __init__(self):
         super(NodeData, self).__init__()
         self.Comment = None
         self.ConnectionAddr_IPv4 = None
         self.ConnectionAddr_IPv6 = None
+        self.NodeId = None
         self.NodeRole = None
         self.NodeInterfaces = {}  # NodeInterfaceData()
 
 
 class NodeInterfaceData(ABaseObject):
     """
-    Holds information about each of the interfaces on the local node.
+    Holds information about each of the interfaces on the *local* node.
     """
     def __init__(self):
         super(NodeInterfaceData, self).__init__()

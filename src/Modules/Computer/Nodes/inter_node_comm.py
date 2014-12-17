@@ -11,7 +11,7 @@
 
 # Import system type stuff
 from twisted.protocols import amp
-from twisted.protocols.amp import AMP, Command, Integer, String, AmpList
+from twisted.protocols.amp import AMP, Command, Integer, String, Boolean, AmpList
 from twisted.internet import reactor
 from twisted.internet.protocol import ServerFactory
 from twisted.internet.endpoints import TCP4ClientEndpoint, connectProtocol
@@ -19,7 +19,7 @@ from twisted.internet.endpoints import TCP4ServerEndpoint
 from twisted.application.internet import StreamServerEndpointService
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import NodeData
+from Modules.Core.data_objects import NodeData, RoomData
 from Modules.Computer import logging_pyh as Logger
 # from Modules.Utilities.tools import PrettyPrintAny
 
@@ -41,21 +41,24 @@ class UsernameUnavailable(Exception): pass
 class IrPacketError(Exception): pass
 
 """ ------------------------------------------------------------------
- Commands and Responders
+ Commands
 """
 
 class NodeInfo(Command):
-    arguments = [('Name', String()),
-                 ('Active', String(optional = True)),
-                 ('AddressV4', String(optional = True)),
-                 ('AddressV6', String(optional = True)),
-                 ('NodeRole', Integer(optional = True)),
-                 ('UUID', String(optional = True))
-                 ]
-    response = [('Name', String()),
-                ('From', String(optional = True)),
-                ('NodeId', Integer(optional = True))
-                ]
+    arguments = [
+        ('Name', String()),
+        ('Active', String(optional = True)),
+        ('AddressV4', String(optional = True)),
+        ('AddressV6', String(optional = True)),
+        ('NodeRole', Integer(optional = True)),
+        ('UUID', String(optional = True))
+        ]
+    response = [
+        ('AckId', String()),
+        ('Name', String()),
+        ('From', String(optional = True)),
+        ('NodeId', Integer(optional = True))
+        ]
     errors = {NodeInfoError: 'Node Info error'}
 
 
@@ -69,10 +72,30 @@ class GetNodeList(Command):
 class SendNodeList(Command):
     """ Send a list of all the nodes.
     """
-    arguments = [('length', Integer()),
-                 ('Nodes', AmpList([('x', String())]))
-                 ]
+    arguments = [
+        ('length', Integer()),
+        ('Nodes', AmpList([('x', String())]))
+        ]
     response = [('Length', Integer())]
+
+
+
+class RoomInfo(Command):
+    """ Send all the info for one room.
+    """
+    arguments = [
+        ('Name' , String()),
+        ('Active', Boolean()),
+        ('UUID', String()),
+        ('Comment', String()),
+        ('Corner', String()),
+        ('Floor', Integer()),
+        ('Size', String()),
+        ('RoomType', String())
+        ]
+    response = [
+        ('Ack', Integer())
+        ]
 
 
 # ================== Server =======================
@@ -82,21 +105,22 @@ class InterNodeProtocol(amp.AMP):
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
+
     @NodeInfo.responder
     def receive_NodeInfo(self, Name, Active, AddressV4, AddressV6, NodeRole, UUID):
+        """ Receive an AMP box from some other node and create the response to the command.
+        Put the info we just got into our PyHouse Obj.
+        """
         l_node = self.create_node_from_response(Name, Active, AddressV4, AddressV6, NodeRole, UUID)
         l_key = self.insert_node(l_node)
-        l_response = self.create_response(l_node, l_key)
+        l_response = self.create_NodeInfo_response(l_node, l_key)
         LOG.info('from  address=:{}  Response = {}'.format(AddressV4, l_response))
-        # self._dump_nodes()
         return l_response
 
-    def _dump_nodes(self):
-        for l_node in self.m_pyhouse_obj.Computer.Nodes.itervalues():
-            LOG.info('Node: {}  {}'.format(l_node.Name, l_node.ConnectionAddr_IPv4))
-
-
     def create_node_from_response(self, Name, Active, AddressV4, AddressV6, NodeRole, UUID):
+        """Create a filled in node obj.
+        Interfaces don't mtter at this point since they are internal to the remote node.
+        """
         l_node = NodeData()
         l_node.Name = Name
         l_node.Active = Active
@@ -106,6 +130,9 @@ class InterNodeProtocol(amp.AMP):
         l_node.UUID = UUID
         return l_node
 
+    def create_room_from_response(self):
+        l_room = RoomData
+        return l_room
 
     def insert_node(self, p_node):
         l_len = len(self.m_pyhouse_obj.Computer.Nodes)
@@ -122,15 +149,15 @@ class InterNodeProtocol(amp.AMP):
         return l_len
 
 
-    def create_response(self, p_node, p_key):
+    def create_NodeInfo_response(self, p_node, p_key):
         """
-        Update our PyHouse Nodes information with the data we just got.
-        Create a response we can pass back to the sender
+        Create a response we can pass back to the NodeInfo sender.
         """
-        l_response = {'Name' : p_node.Name,
-                      'From' : self.m_pyhouse_obj.Computer.Nodes[0].Name,
-                      'NodeId' : p_key}
-        # LOG.info('Return response {0:}'.format(l_response))
+        l_response = {
+            'AckId' : 'NodeInfo',
+            'Name' : p_node.Name,
+            'From' : self.m_pyhouse_obj.Computer.Nodes[0].Name,
+            'NodeId' : p_key}
         return l_response
 
 
@@ -156,30 +183,42 @@ class Utility(object):
         Take the node information about this node - build a box and send it.
         """
         l_defer = p_protocol.callRemote(
-                    NodeInfo,
-                    Name = p_node.Name,
-                    Active = str(p_node.Active),
-                    AddressV4 = p_node.ConnectionAddr_IPv4,
-                    AddressV6 = p_node.ConnectionAddr_IPv6,
-                    NodeRole = int(p_node.NodeRole),
-                    # UUID = "01234567-1234-2345-3456-01234567890ab"
-                    UUID = "309"
-                    )
+            NodeInfo,
+            Name = p_node.Name,
+            Active = str(p_node.Active),
+            AddressV4 = p_node.ConnectionAddr_IPv4,
+            AddressV6 = p_node.ConnectionAddr_IPv6,
+            NodeRole = int(p_node.NodeRole),
+            # UUID = "01234567-1234-2345-3456-01234567890ab"
+            UUID = "309"
+            )
+        return l_defer
+
+    def _build_RoomInfo_box(self, p_room, p_protocol):
+        l_defer = p_protocol.callRemote(
+            RoomInfo,
+            Name = p_room.Name,
+            Active = p_room.Active,
+            UUID = p_room.UUID,
+            Comment = p_room.Comment,
+            Corner = p_room.Cornar,
+            Floor = p_room.Floor,
+            Size = p_room.Size,
+            RoomType = p_room.RoomType
+            )
         return l_defer
 
 
     def send_our_info_to_node(self, p_pyhouse_obj, p_address):
-
+        """ Send
+        """
         def cb_send_our_info(p_amp_protocol):
             l_defer = self._build_NodeInfo_box(self.m_node, p_amp_protocol)
             return l_defer
-
         def cb_get_info_response(p_result):
             LOG.info('Response {}'.format(p_result))
-
         def eb_send_our_info(p_message):
             LOG.info('ERROR sending info - {}'.format(p_message))
-
         self.m_node = p_pyhouse_obj.Computer.Nodes[0]
         LOG.info('Sending our node info to {}'.format(p_address))
         destination = TCP4ClientEndpoint(reactor, p_address, AMP_PORT)
@@ -199,10 +238,8 @@ class Utility(object):
             # LOG.info('Server listening on port {}.'.format(p_port.getHost()))
             # self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self._info_loop, self.m_pyhouse_obj)
             pass
-
         def eb_start_server(p_reason):
             LOG.error('ERROR in starting Server; {}.\n'.format(p_reason))
-
         self.m_pyhouse_obj = p_pyhouse_obj
         l_defer = p_endpoint.listen(AmpServerFactory(p_pyhouse_obj))
         l_defer.addCallback(cb_start_server)
@@ -222,9 +259,17 @@ class Utility(object):
         return l_Listen_endpoint
 
 
+    def _send_node_info_to_all(self, p_pyhouse_obj):
+        """
+        Loop thru all the nodes we know about (from node_discovery) and send them our node info
+        """
+        for l_node in p_pyhouse_obj.Computer.Nodes.itervalues():
+            self.send_our_info_to_node(p_pyhouse_obj, l_node.ConnectionAddr_IPv4)
+
+
     def _info_loop(self, p_pyhouse_obj):
         self.m_pyhouse_obj.Twisted.Reactor.callLater(REPEAT_DELAY, self._info_loop, p_pyhouse_obj)
-        self.send_node_info_to_all(p_pyhouse_obj)
+        self._send_node_info_to_all(p_pyhouse_obj)
 
 
 
@@ -232,14 +277,6 @@ class API(Utility):
     """
     Items that are called by other modules
     """
-
-    def send_node_info_to_all(self, p_pyhouse_obj):
-        """
-        Loop thru all the nodes we know about (from node_discovery) and send them our node info
-        """
-        for l_node in p_pyhouse_obj.Computer.Nodes.itervalues():
-            self.send_our_info_to_node(p_pyhouse_obj, l_node.ConnectionAddr_IPv4)
-
 
     def Start(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj

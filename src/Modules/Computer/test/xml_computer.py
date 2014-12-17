@@ -12,10 +12,10 @@
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Communication.test.xml_communications import COMMUNICATION_XML
-from Modules.Computer.Internet.test.xml_internet import INTERNET_XML
-from Modules.Computer.Nodes.test.xml_nodes import NODES_XML
-from Modules.Web.test.xml_web import WEB_SERVER_XML
+from Modules.Communication.test.xml_communications import *
+from Modules.Computer.Internet.test.xml_internet import *
+from Modules.Computer.Nodes.test.xml_nodes import *
+from Modules.Web.test.xml_web import *
 
 
 

@@ -7,9 +7,6 @@
  * @note: Created on Mar 11, 2014
  * @summary: Displays the lights
  */
-// import Nevow.Athena
-// import globals
-// import helpers
 
 helpers.Widget.subclass(lights, 'LightsWidget').methods(
 

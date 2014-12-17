@@ -18,7 +18,7 @@ from nevow import loaders
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import InternetConnectionData
-from Modules.Web.web_utils import JsonUnicode
+from Modules.Web.web_utils import JsonUnicode, GetJSONComputerInfo
 from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities.tools import PrettyPrintAny
 
@@ -43,8 +43,7 @@ class InternetElement(athena.LiveElement):
 
     @athena.expose
     def getHouseData(self):
-        l_computer = JsonUnicode().encode_json(self.m_pyhouse_obj.Computer.InternetConnection)
-        PrettyPrintAny(l_computer, 'WebInternet - GetData', 100)
+        l_computer = GetJSONComputerInfo(self.m_pyhouse_obj)
         return l_computer
 
     @athena.expose

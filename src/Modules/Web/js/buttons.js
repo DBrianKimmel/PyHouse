@@ -3,16 +3,14 @@
  * Displays the buttons
  */
 
-// import Nevow.Athena
-// import globals
-// import helpers
-
 helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 
 	function __init__(self, node) {
 		buttons.ButtonsWidget.upcall(self, '__init__', node);
 	},
 
+
+// ============================================================================
 	/**
 	 * 
 	 * @param self is    <"Instance" of undefined.buttons.ButtonsWidget>
@@ -27,7 +25,6 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 		l_defer.addCallback(cb_widgetready);
 		return l_defer;
 	},
-
 	/**
 	 * routines for showing and hiding parts of the screen.
 	 */
@@ -37,7 +34,8 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 		self.fetchDataFromServer();
 	},
 
-	// ============================================================================
+
+// ============================================================================
 	/**
 	 * This triggers getting the button data from the server.
 	 * The server calls displayButtonButtons with the buttons info.
@@ -45,6 +43,7 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 	function fetchDataFromServer(self) {
 		function cb_fetchDataFromServer(p_json) {
 			globals.House.HouseObj = JSON.parse(p_json);
+			self.buildLcarSelectScreen();
 		}
 		function eb_fetchDataFromServer(p_reason) {
 			Divmod.debug('---', 'buttons.eb_fetchDataFromServer() was called.  ERROR - ' + p_reason);
@@ -54,30 +53,16 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 		l_defer.addErrback(eb_fetchDataFromServer);
         return false;
 	},
-
-	
 	/**
-	 * Fill in the button entry screen with all of the data for this button.
+	 * Build a screen full of buttons - One for each Button and some actions.
 	 */
-	function fillEntry(self, p_obj) {
-		//Divmod.debug('---', 'buttons.fillEntry() was called. ' + p_obj);
+	function buildLcarSelectScreen(self){
+		var l_button_html = buildLcarSelectionButtonsTable(globals.House.HouseObj.Buttons, 'handleMenuOnClick');
+		var l_html = build_lcars_top('Buttons', 'lcars-salmon-color');
+		l_html += build_lcars_middle_menu(10, l_button_html);
+		l_html += build_lcars_bottom();
+		self.nodeById('SelectionButtonsDiv').innerHTML = l_html;
 	},
-	function fetchEntry(self) {
-        var l_data = {
-			Name : fetchTextWidget(self, 'ButtonName'),
-			Key : fetchTextWidget(self, 'ButtonKey'),
-			Active : fetchTrueFalseWidget(self,'ButtonActive'),
-			Comment : fetchTextWidget(self, 'ButtonComment'),
-			Coords : fetchTextWidget(self, 'ButtonCoords'),
-			Family : fetchTextWidget(self, 'ButtonFamily'),
-			RoomName : fetchSelectWidget(self, 'ButtonRoomName'),
-			Type : fetchTextWidget(self, 'ButtonType'),
-			UUID : fetchTextWidget(self, 'ButtonUUID'),
-			Delete : false
-            };
-		return l_data;
-	},
-
 	/**
 	 * Event handler for button selection buttons.
 	 * 
@@ -94,23 +79,36 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 		if (l_ix <= 1000) {  // One of the button buttons.
 			var l_obj = globals.House.HouseObj.Buttons[l_ix];
 			showDataEntryFields(self);
-			self.fillEntry(l_obj);
+			self.buildLcarSelectScreen(l_obj);
 		} else if (l_ix == 10001) {  // The "Add" button
 			showDataEntryFields(self);
 		} else if (l_ix == 10002) {  // The "Back" button
 			self.showWidget('HouseMenu');
 		}
 	},
+	// ============================================================================
+	function fetchEntry(self) {
+        var l_data = {
+			Name : fetchTextWidget(self, 'ButtonName'),
+			Key : fetchTextWidget(self, 'ButtonKey'),
+			Active : fetchTrueFalseWidget(self,'ButtonActive'),
+			Comment : fetchTextWidget(self, 'ButtonComment'),
+			Coords : fetchTextWidget(self, 'ButtonCoords'),
+			Family : fetchTextWidget(self, 'ButtonFamily'),
+			RoomName : fetchSelectWidget(self, 'ButtonRoomName'),
+			Type : fetchTextWidget(self, 'ButtonType'),
+			UUID : fetchTextWidget(self, 'ButtonUUID'),
+			Delete : false
+            };
+		return l_data;
+	},
+
 	
 	/**
 	 * Event handler for submit buttons at bottom of entry portion of this widget.
 	 * Get the possibly changed data and send it to the server.
 	 */
 	function handleDataOnClick(self, p_node) {
-		//Divmod.debug('---', 'buttons.handleDataOnClick() was called. ');
-		//console.log("buttons.handleDataOnClick() - self %O", self);
-		//console.log("buttons.handleDataOnClick() - node %O", p_node);
-
 		function cb_handleDataOnClick(p_json) {
 			Divmod.debug('---', 'button.cb_handleDataOnClick() was called.');
 		}
@@ -123,7 +121,6 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 		switch(l_ix) {
 		case '10003':  // Change Button
 	    	l_json = JSON.stringify(self.fetchEntry(self));
-			//Divmod.debug('---', 'buttons.handleDataOnClick(1) was called. json:' + l_json);
 	        l_defer = self.callRemote("saveButtonData", l_json);  // @ web_button
 			l_defer.addCallback(cb_handleDataOnClick);
 			l_defer.addErrback(eb_handleDataOnClick);

@@ -9,23 +9,30 @@
 
 """
 
+# Import system type stuff
+
+# Import PyMh files
+
+TESTING_NODES_NODE_NAME_1 = "pi-01"
+TESTING_NODES_INTERFACE_NAME_1 = "eth0"
+TESTING_NODES_INTERFACE_NAME_2 = "wlan0"
 
 
 NODES_XML = """\
         <NodeSection>
-            <Node Name='pi-01' Key='0' Active='True'>
+            <Node Name='""" + TESTING_NODES_NODE_NAME_1 + """' Key='0' Active='True'>
                 <UUID>87654321-1001-11e3-b583-082e5f899999</UUID>
                 <ConnectionAddressV4>192.168.1.123</ConnectionAddressV4>
                 <ConnectionAddressV6>1234:5678::dead.beef</ConnectionAddressV6>
                 <NodeRoll>123</NodeRoll>
                 <InterfaceSection>
-                    <Interface Name='eth0' Key="0" Active="True">
+                    <Interface Name='""" + TESTING_NODES_INTERFACE_NAME_1 + """' Key="0" Active="True">
                         <UUID>87654321-1001-11e3-b583-012300001111</UUID>
                         <MacAddress>01:02:03:04:05:06</MacAddress>
                         <IPv4Address>192.168.1.11</IPv4Address>
                         <IPv6Address>2000:1D::1, 2000:1D::101</IPv6Address>
                     </Interface>
-                    <Interface Name='wlan0' Key="1" Active="True">
+                    <Interface Name='""" + TESTING_NODES_INTERFACE_NAME_2 + """' Key="1" Active="True">
                         <UUID>87654321-1001-11e3-b583-012300002222</UUID>
                         <MacAddress>01:02:03:04:05:06</MacAddress>
                         <IPv4Address>192.168.1.22</IPv4Address>

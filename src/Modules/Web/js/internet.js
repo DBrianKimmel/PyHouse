@@ -49,7 +49,9 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 		self.fetchDataFromServer();
 	},
 
-	// ============================================================================
+
+
+// ============================================================================
 	/**
 	 * This triggers getting the Internet data from the server.
 	 * The server calls displayInternetButtons with the Internet info.
@@ -57,6 +59,7 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 	function fetchDataFromServer(self) {
 		function cb_fetchDataFromServer(p_json) {
 			globals.Computer = JSON.parse(p_json);
+			self.buildLcarSelectScreen();
 		}
 		function eb_fetchDataFromServer(res) {
 			Divmod.debug('---', 'internet.eb_fetchDataFromServer() was called. ERROR: ' + res);
@@ -65,6 +68,16 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 		l_defer.addCallback(cb_fetchDataFromServer);
 		l_defer.addErrback(eb_fetchDataFromServer);
         return false;
+	},
+	/**
+	 * Build a screen full of buttons - One for each light and some actions.
+	 */
+	function buildLcarSelectScreen(self){
+		var l_button_html = buildLcarSelectionButtonsTable(globals.Computer.Internet, 'handleMenuOnClick');
+		var l_html = build_lcars_top('Internet', 'lcars-salmon-color');
+		l_html += build_lcars_middle_menu(10, l_button_html);
+		l_html += build_lcars_bottom();
+		self.nodeById('SelectionButtonsDiv').innerHTML = l_html;
 	},
 
 	/**
