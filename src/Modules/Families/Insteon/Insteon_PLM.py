@@ -464,6 +464,7 @@ class LightHandlerAPI(InsteonPlmAPI):
             return
         if l_obj.Active != True:
             return
+        LOG.info('Device:{}'.format(l_obj.Name))
         self._get_one_light_status(l_obj)
         self._get_id_request(l_obj)
         self._get_engine_version(l_obj)
