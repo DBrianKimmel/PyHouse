@@ -23,7 +23,6 @@ from Modules.Lighting.lighting_lights import LightingLightsAPI
 from Modules.Computer import logging_pyh as Logger
 # from Modules.Utilities.tools import PrettyPrintAny
 
-g_debug = 9
 LOG = Logger.getLogger('PyHouse.Lighting       ')
 
 

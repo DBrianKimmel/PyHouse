@@ -123,7 +123,7 @@ class API(object):
         """
         Do the Insteon thing to change the level of an Insteon light
         """
-        LOG.info('Device Name:{}; to level:{};'.format(p_light_obj.Name, p_level))
+        LOG.info('Device Name:{}; to level:{}; via {}'.format(p_light_obj.Name, p_level, self.m_plm))
         self.m_plm.ChangeLight(p_light_obj, p_level, p_rate)
 
     def ReadXml(self, p_device_obj, p_entry_xml):
