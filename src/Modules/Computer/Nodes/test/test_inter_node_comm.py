@@ -48,17 +48,12 @@ class C01_Start(SetupMixin, unittest.TestCase):
         PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse')
         PrettyPrintAny(self.m_pyhouse_obj.Twisted, 'PyHouse.Twisted')
 
-    def test_02_CreateService(self):
-        l_endpont = self.m_api._create_amp_service(self.m_pyhouse_obj)
-        PrettyPrintAny(l_endpont, 'Endpoint', 240)
-
-    def test_03_start_service(self):
-        l_endpont = self.m_api._create_amp_service(self.m_pyhouse_obj)
-        l_defer = self.m_api._start_amp_server(self.m_pyhouse_obj, l_endpont)
+    def test_02_StartServer(self):
+        l_defer = self.m_api._start_amp_server(self.m_pyhouse_obj)
         PrettyPrintAny(l_defer, 'Defer')
         return l_defer
 
-    def test_04_Start(self):
+    def test_04_StartModule(self):
         self.m_api.Start(self.m_pyhouse_obj)
 
 

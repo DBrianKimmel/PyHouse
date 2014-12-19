@@ -5,7 +5,15 @@
 @Copyright: (c)  2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Sep 20, 2014
-@Summary:
+@Summary:  Internode communications subsystem.
+
+This is the communication system that allows nodes to share information/
+Things like configuration information, Node lists and role information are passed around using this module.
+Events such as IR signals received are passed.
+
+Each node starts a server nad listens for incoming AMP boxes.
+  An ACK type response is sent back to the originator for the AMP message received.
+  The information on the local node is updated.
 
 """
 
@@ -21,10 +29,9 @@ from twisted.application.internet import StreamServerEndpointService
 # Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData, RoomData
 from Modules.Computer import logging_pyh as Logger
-# from Modules.Utilities.tools import PrettyPrintAny
 
 
-LOG = Logger.getLogger('PyHouse.InterNodeCom   ')
+LOG = Logger.getLogger('PyHouse.Inter-NodeComm ')
 
 NODE_SERVER = 'tcp:port=8581'
 AMP_PORT = 8581
@@ -78,6 +85,24 @@ class SendNodeList(Command):
         ]
     response = [('Length', Integer())]
 
+
+
+class HouseInfo(Command):
+    """ Send the house specific information.
+    """
+    arguments = [
+        ('Name', String()),
+        ('Street', String()),
+        ('City', String()),
+        ('State', String()),
+        ('ZipCode', String()),
+        ('Phone', String()),
+        ('Latitude', String()),
+        ('Longitude', String()),
+        ('TimeZoneName', String()),
+
+        ('DomainID', String())
+        ]
 
 
 class RoomInfo(Command):
@@ -209,18 +234,19 @@ class Utility(object):
         return l_defer
 
 
-    def send_our_info_to_node(self, p_pyhouse_obj, p_address):
+    def send_NodeInfo_to_node(self, p_pyhouse_obj, p_address):
         """ Send
         """
         def cb_send_our_info(p_amp_protocol):
             l_defer = self._build_NodeInfo_box(self.m_node, p_amp_protocol)
+            LOG.info('Send NodeInfo')
             return l_defer
         def cb_get_info_response(p_result):
-            LOG.info('Response {}'.format(p_result))
+            LOG.info('NodeInfo Response {}'.format(p_result))
         def eb_send_our_info(p_message):
-            LOG.info('ERROR sending info - {}'.format(p_message))
+            LOG.info('ERROR sending NodeInfo - {}'.format(p_message))
         self.m_node = p_pyhouse_obj.Computer.Nodes[0]
-        LOG.info('Sending our node info to {}'.format(p_address))
+        LOG.info('Sending our NodeInfo to {}'.format(p_address))
         destination = TCP4ClientEndpoint(reactor, p_address, AMP_PORT)
         l_defer = connectProtocol(destination, AMP())
         l_defer.addCallback(cb_send_our_info)
@@ -228,34 +254,24 @@ class Utility(object):
         l_defer.addErrback(eb_send_our_info)
 
 
-    def _send_node_info_to_all(self, p_pyhouse_obj):
+    def _send_NodeInfo_to_all(self, p_pyhouse_obj):
         """
         Loop thru all the nodes we know about (from node_discovery) and send them our node info
         """
         for l_node in p_pyhouse_obj.Computer.Nodes.itervalues():
-            self.send_our_info_to_node(p_pyhouse_obj, l_node.ConnectionAddr_IPv4)
+            self.send_NodeInfo_to_node(p_pyhouse_obj, l_node.ConnectionAddr_IPv4)
 
 
-    def _info_loop(self, p_pyhouse_obj):
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(REPEAT_DELAY, self._info_loop, p_pyhouse_obj)
-        self._send_node_info_to_all(p_pyhouse_obj)
-
-
-    def _create_amp_service(self, p_pyhouse_obj):
+    def _send_periodically(self, p_pyhouse_obj):
+        """ Periodically, refresh other nodes with our information.
         """
-        Create a Message Exchange service that we can stop and restart
-        """
-        l_Listen_endpoint = TCP4ServerEndpoint(p_pyhouse_obj.Twisted.Reactor, AMP_PORT)
-        l_factory = AmpServerFactory(p_pyhouse_obj)
-        p_pyhouse_obj.Services.InterNodeComm = StreamServerEndpointService(l_Listen_endpoint, l_factory)
-        p_pyhouse_obj.Services.InterNodeComm.setName('InterNodeComm')
-        p_pyhouse_obj.Services.InterNodeComm.setServiceParent(p_pyhouse_obj.Twisted.Application)
-        return l_Listen_endpoint
+        p_pyhouse_obj.Twisted.Reactor.callLater(REPEAT_DELAY, self._send_periodically, p_pyhouse_obj)
+        self._send_NodeInfo_to_all(p_pyhouse_obj)
 
 
-    def _start_amp_server(self, p_pyhouse_obj, p_endpoint):
+    def _start_amp_server(self, p_pyhouse_obj):
         """
-        Start the domain server to listen for all incoming requests.
+        Start the Internode communivation server to listen for all incoming requests.
 
         The server stays running for the duration of the PyHouse daemon.
         """
@@ -264,10 +280,10 @@ class Utility(object):
         def eb_start_server(p_reason):
             LOG.error('ERROR in starting Server; {}.\n'.format(p_reason))
         self.m_pyhouse_obj = p_pyhouse_obj
-        l_defer = p_endpoint.listen(AmpServerFactory(p_pyhouse_obj))
+        l_endpoint = TCP4ServerEndpoint(p_pyhouse_obj.Twisted.Reactor, AMP_PORT)
+        l_defer = l_endpoint.listen(AmpServerFactory(p_pyhouse_obj))
         l_defer.addCallback(cb_start_server)
         l_defer.addErrback(eb_start_server)
-        # return l_defer
 
 
 
@@ -278,12 +294,14 @@ class API(Utility):
 
     def Start(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        l_endpoint = self._create_amp_service(p_pyhouse_obj)
-        self._start_amp_server(p_pyhouse_obj, l_endpoint)
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self._info_loop, self.m_pyhouse_obj)
+        self._start_amp_server(p_pyhouse_obj)
+        p_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self._send_periodically, p_pyhouse_obj)
 
 
     def Stop(self):
+        pass
+
+    def SendUpdate(self, p_obj):
         pass
 
 # ## END DBK
