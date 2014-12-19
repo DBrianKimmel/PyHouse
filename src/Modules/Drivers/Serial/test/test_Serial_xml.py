@@ -64,7 +64,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         PrettyPrintAny(l_interface, 'Read Interface', 100)
 
     def test_0241_WriteSerialXml(self):
-        l_obj = lighting_controllers.ControllersAPI(self.m_pyhouse_obj).read_one_controller_xml(self.m_xml.controller)
+        l_obj = lighting_controllers.LCApi(self.m_pyhouse_obj).read_one_controller_xml(self.m_xml.controller)
         PrettyPrintAny(l_obj, 'Controller', 120)
         l_ret = self.m_api.write_interface_xml(self.m_xml.controller, l_obj)
         PrettyPrintAny(l_ret, 'Interface Xml', 120)

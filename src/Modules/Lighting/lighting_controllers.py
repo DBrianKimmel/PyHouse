@@ -22,7 +22,7 @@ LOG = Logger.getLogger('PyHouse.Controller     ')
 
 
 
-class ControllersAPI(ReadWriteConfigXml):
+class LCApi(ReadWriteConfigXml):
     """
     Get/Put all the information about one controller:
         Base Light Data

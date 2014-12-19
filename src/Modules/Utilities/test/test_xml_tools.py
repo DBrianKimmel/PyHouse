@@ -446,7 +446,7 @@ class C06_NoClass(SetupMixin, unittest.TestCase):
         # l_objA = lighting_lights.LightingLightsAPI(self.m_pyhouse_obj).read_one_light_xml(self.m_xml.light)
         l_objA = BaseLightingData()
         PrettyPrintAny(l_objA, 'Obj A', 120)
-        # l_objB = lighting_controllers.ControllersAPI(self.m_pyhouse_obj).read_one_controller_xml(self.m_xml.controller)
+        # l_objB = lighting_controllers.LCApi(self.m_pyhouse_obj).read_one_controller_xml(self.m_xml.controller)
         l_objB = ControllerData()
         # l_objAdeep = copy.deepcopy(l_objA)
         PrettyPrintAny(l_objB, 'Obj B', 120)

@@ -11,8 +11,8 @@
 
 
 All device objects use 'ControllerFamily' to designate the family.
-This is because the things we wish to automate all have some controller that
-speaks to that class of device.
+This is because the things we wish to automate all have some controller that speaks to that
+ class of device.
 
 """
 
@@ -22,11 +22,8 @@ speaks to that class of device.
 from Modules.Computer import logging_pyh as Logger
 
 # Import PyMh files and modules.
-from Modules.Utilities.tools import PrettyPrintAny
 
 
-
-g_debug = 0
 LOG = Logger.getLogger('PyHouse.FamilyUtils ')
 
 

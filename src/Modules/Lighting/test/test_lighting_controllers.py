@@ -34,7 +34,7 @@ class SetupMixin(object):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
-        self.m_api = lighting_controllers.ControllersAPI(self.m_pyhouse_obj)
+        self.m_api = lighting_controllers.LCApi(self.m_pyhouse_obj)
         self.m_controller_obj = ControllerData()
 
 
