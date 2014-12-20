@@ -41,7 +41,7 @@ LOG = Logger.getLogger('PyHouse.Insteon_PLM    ')
 
 # Timeouts for send/receive delays
 SEND_TIMEOUT = 0.8
-RECEIVE_TIMEOUT = 0.3  # this is for fetching data in the rx buffer
+RECEIVE_TIMEOUT = 0.6  # this is for fetching data in the rx buffer
 
 # Modes for setting PLM mode
 MODE_DISABLE_DEADMAN = 0x10

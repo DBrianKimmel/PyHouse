@@ -12,7 +12,6 @@
 It is called from lighting.py and allows any number of different lighting families to be used.
 So far Insteon and UPB are developed.  Many others may be added.
 
-
 """
 
 # Import system type stuff
@@ -21,31 +20,30 @@ import importlib
 # Import PyHouse files
 from Modules.Core.data_objects import FamilyData
 from Modules.Families import VALID_FAMILIES
-# from Modules.Utilities.xml_tools import XmlConfigTools
 from Modules.Computer import logging_pyh as Logger
-# from Modules.Utilities.tools import PrettyPrintAny
 
-g_debug = 0
+
 LOG = Logger.getLogger('PyHouse.Family         ')
 
 
-class Utility(object):
-    """
-    """
 
-    def _build_one_family_data(self, p_family_name):
+class Utility(object):
+
+    @staticmethod
+    def _build_one_family_data(p_name, p_count):
         """Build up the FamilyData entry for a single family
         """
         l_family_obj = FamilyData()
-        l_family_obj.Name = p_family_name
-        l_family_obj.Key = self.m_count
+        l_family_obj.Name = p_name
+        l_family_obj.Key = p_count
         l_family_obj.Active = True
-        l_family_obj.FamilyPackageName = 'Modules.Families.' + p_family_name
-        l_family_obj.FamilyDeviceModuleName = p_family_name + '_device'
-        l_family_obj.FamilyXmlModuleName = p_family_name + '_xml'
+        l_family_obj.FamilyPackageName = 'Modules.Families.' + p_name
+        l_family_obj.FamilyDeviceModuleName = p_name + '_device'
+        l_family_obj.FamilyXmlModuleName = p_name + '_xml'
         return l_family_obj
 
-    def _import_one_module(self, p_family_obj):
+    @staticmethod
+    def _import_one_module(p_family_obj):
         """
         This routine will attempt to import a module.
 
@@ -70,7 +68,8 @@ class Utility(object):
             l_module = None
         return l_module, l_xml_module
 
-    def _initialize_one_module(self, p_module):
+    @staticmethod
+    def _initialize_one_module(p_module):
         """
         """
         try:
@@ -103,11 +102,11 @@ class API(Utility):
         LOG.info('Starting build_lighting_family_info')
         l_family_data = {}
         self.m_count = 0
-        for l_family in VALID_FAMILIES:
-            LOG.info(' Building family {}'.format(l_family))
-            l_family_obj = self._build_one_family_data(l_family)
-            l_module, _l_xml_module = self._import_one_module(l_family_obj)
-            l_api = self._initialize_one_module(l_module)
+        for l_name in VALID_FAMILIES:
+            LOG.info(' Building family {}'.format(l_name))
+            l_family_obj = Utility._build_one_family_data(l_name, self.m_count)
+            l_module, _l_xml_module = Utility._import_one_module(l_family_obj)
+            l_api = Utility._initialize_one_module(l_module)
             l_family_obj.FamilyModuleAPI = l_api
             l_family_data[l_family_obj.Name] = l_family_obj
             self.m_count += 1
@@ -120,11 +119,9 @@ class API(Utility):
         """
         LOG.info("Starting lighting families.")
         for l_family_obj in p_pyhouse_obj.House.RefOBJs.FamilyData.itervalues():
-            if g_debug >= 1:
-                LOG.debug('Starting Family {0:}'.format(l_family_obj.Name))
-            l_family_obj.FamilyModuleAPI.Start(p_pyhouse_obj)  # will run Device_<family>.API.Start()
-        if g_debug >= 1:
-            LOG.info("Started all lighting families.")
+            LOG.debug('Starting Family {0:}'.format(l_family_obj.Name))
+            l_family_obj.FamilyModuleAPI.Start(p_pyhouse_obj)  # will run <family>_device.API().Start()
+        LOG.info("Started all lighting families.")
 
     def stop_lighting_families(self, p_house_obj):
         for l_family_obj in p_house_obj.FamilyData.itervalues():

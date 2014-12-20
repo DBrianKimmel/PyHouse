@@ -27,7 +27,6 @@ import serial
 from Modules.Utilities.tools import PrintBytes
 from Modules.Computer import logging_pyh as Logger
 
-g_debug = 0
 LOG = Logger.getLogger('PyHouse.SerialDriver   ')
 
 
@@ -35,20 +34,17 @@ class SerialProtocol(Protocol):
 
     m_controller_obj = None
 
-    def __init__(self, p_data, p_controller_obj):
-        self.m_data = p_data
+    def __init__(self, p_controller_obj):
         self.m_controller_obj = p_controller_obj
-
-    def connectionFailed(self):
-        pass
-
-    def connectionMade(self):
-        pass
 
     def connectionLost(self, reason):
         LOG.error('The serial driver connection was lost unexpectedly for controller {} - {}'.format(self.m_controller_obj.Name, reason))
 
+    def connectionMade(self):
+        LOG.info('Connection Made to {}'.format(self.m_controller_obj.Name))
+
     def dataReceived(self, p_data):
+        LOG.info('Received {}'.format(PrintBytes(p_data)))
         self.m_controller_obj._Message += p_data
 
 
@@ -64,7 +60,7 @@ class SerialAPI(object):
                  False if the driver is not functional for any reason.
         """
         try:
-            self.m_serial = SerialPort(SerialProtocol(self, p_controller_obj), p_controller_obj.Port,
+            self.m_serial = SerialPort(SerialProtocol(p_controller_obj), p_controller_obj.Port,
                     reactor, baudrate = p_controller_obj.BaudRate)
         except serial.serialutil.SerialException as e_err:
             LOG.error("ERROR Open failed for Device:{0:}, Port:{1:} - {2:}".format(p_controller_obj.Name, p_controller_obj.Port, e_err))
