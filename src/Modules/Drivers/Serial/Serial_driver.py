@@ -33,7 +33,7 @@ LOG = Logger.getLogger('PyHouse.SerialDriver   ')
 
 class SerialProtocol(Protocol):
 
-    m_data = None
+    m_controller_obj = None
 
     def __init__(self, p_data, p_controller_obj):
         self.m_data = p_data
@@ -44,6 +44,9 @@ class SerialProtocol(Protocol):
 
     def connectionMade(self):
         pass
+
+    def connectionLost(self, reason):
+        LOG.error('The serial driver connection was lost unexpectedly for controller {} - {}'.format(self.m_controller_obj.Name, reason))
 
     def dataReceived(self, p_data):
         self.m_controller_obj._Message += p_data
@@ -78,19 +81,16 @@ class SerialAPI(object):
         self.m_serial.close()
 
     def fetch_read_data(self, p_controller_obj):
-        self.m_controller_obj = p_controller_obj
-        l_msg = self.m_controller_obj._Message
+        l_msg = p_controller_obj._Message
         if len(l_msg) > 0:
-            if g_debug >= 1:
-                LOG.debug("Fetch Read Data {0:}".format(PrintBytes(l_msg)))
+            LOG.debug("Fetch Read Data {0:}".format(PrintBytes(l_msg)))
         p_controller_obj._Message = bytearray()
         return l_msg
 
     def write_device(self, p_message):
         """Send the command to the PLM and wait a very short time to be sure we sent it.
         """
-        if g_debug >= 1:
-            LOG.debug("Writing {0:}".format(PrintBytes(p_message)))
+        LOG.debug("Writing {0:}".format(PrintBytes(p_message)))
         if self.m_active:
             try:
                 self.m_serial.writeSomeData(p_message)

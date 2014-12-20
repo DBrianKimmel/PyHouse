@@ -153,14 +153,14 @@ class Commands(object):
         l_command = Utility._create_command_message('plm_next_all_link')
         Utility._queue_command(self.m_controller_obj, l_command)
 
-    def queue_6B_command(self, p_flags):
+    def queue_6B_command(self, p_controller_obj, p_flags):
         """Set IM configuration flags (3 bytes).
         See page 271  of Insteon Developers Guide.
         """
-        LOG.info("Command to set PLM config flag (68) to {0:#X}".format(p_flags))
+        LOG.info("Command to set PLM config flag (6B) - to {:#X}".format(p_flags))
         l_command = Utility._create_command_message('plm_set_config')
         l_command[2] = p_flags
-        Utility._queue_command(self.m_controller_obj, l_command)
+        Utility._queue_command(p_controller_obj, l_command)
 
     def queue_6C_command(self, p_obj):
         pass
@@ -371,7 +371,7 @@ class LightHandlerAPI(InsteonPlmAPI):
         """Set the PLM to a mode
         """
         LOG.info('Setting mode of Insteon controller {0:}.'.format(p_controller_obj.Name))
-        self.queue_6B_command(MODE_MONITOR)
+        self.queue_6B_command(p_controller_obj, MODE_MONITOR)
 
     def _get_one_light_status(self, p_obj):
         """Get the status of a light.
@@ -407,7 +407,7 @@ class LightHandlerAPI(InsteonPlmAPI):
     def get_all_device_information(self, p_pyhouse_obj):
         """Get the status (current level) of all insteon devices.
         """
-        LOG.info('Getting devide information of all Insteon devices')
+        LOG.info('Getting device information of all Insteon devices')
         for l_obj in p_pyhouse_obj.House.DeviceOBJs.Lights.itervalues():
             self._get_obj_info(l_obj)
         for l_obj in p_pyhouse_obj.House.DeviceOBJs.Buttons.itervalues():
@@ -433,7 +433,7 @@ class Utility(LightHandlerAPI, PlmDriverProtocol):
         l_ret = self.start_controller_driver(p_pyhouse_obj, p_controller_obj)
         if l_ret:
             self.m_protocol = PlmDriverProtocol(p_pyhouse_obj, p_controller_obj)
-            Insteon_decoder.DecodeResponses(p_pyhouse_obj, p_controller_obj)
+            self.m_decoder = Insteon_decoder.DecodeResponses(p_pyhouse_obj, p_controller_obj)
             self.set_plm_mode(self.m_controller_obj)
             self.get_all_device_information(p_pyhouse_obj)
         return l_ret
