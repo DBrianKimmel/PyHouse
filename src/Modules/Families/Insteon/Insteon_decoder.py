@@ -225,6 +225,7 @@ class DecodeResponses(Utility):
     def __init__(self, p_pyhouse_obj, p_controller_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_controller_obj = p_controller_obj
+        LOG.info('Starting Decode')
 
     def decode_message(self, p_controller_obj, p_house_obj):
         """Decode a message that was ACKed / NAked.
