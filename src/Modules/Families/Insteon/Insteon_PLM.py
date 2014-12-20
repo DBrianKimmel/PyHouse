@@ -221,6 +221,7 @@ class PlmDriverProtocol(Commands):
         self.receive_loop(p_controller_obj)
 
     def driver_loop_stop(self):
+        LOG.info('Stopped.')
         pass
 
     def dequeue_and_send(self, p_controller_obj):
@@ -238,6 +239,8 @@ class PlmDriverProtocol(Commands):
             LOG.info("Send to controller:{}, Message:{}".format(p_controller_obj.Name, PrintBytes(l_command)))
             p_controller_obj._Command1 = l_command
             p_controller_obj._DriverAPI.Write(l_command)
+        else:
+            LOG.error('UhOh - No driver for {}'.format(p_controller_obj.Name))
 
     def _append_message(self, p_controller_obj):
         """

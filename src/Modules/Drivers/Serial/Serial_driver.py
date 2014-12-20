@@ -79,7 +79,8 @@ class SerialAPI(object):
     def fetch_read_data(self, p_controller_obj):
         l_msg = p_controller_obj._Message
         if len(l_msg) > 0:
-            LOG.debug("Fetch Read Data {0:}".format(PrintBytes(l_msg)))
+            # LOG.debug("Fetch Read Data {0:}".format(PrintBytes(l_msg)))
+            pass
         p_controller_obj._Message = bytearray()
         return l_msg
 
@@ -124,6 +125,7 @@ class API(SerialAPI):
         Non-Blocking read from the serial port.
         """
         l_ret = self.fetch_read_data(self.m_controller_obj)
+        LOG.info('Reading - {}'.format(l_ret))
         return l_ret
 
     def Write(self, p_message):
