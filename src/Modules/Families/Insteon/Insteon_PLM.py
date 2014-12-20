@@ -231,7 +231,7 @@ class PlmDriverProtocol(Commands):
         Uses twisted to get a callback when the timer expires.
         """
         self.m_pyhouse_obj.Twisted.Reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send, p_controller_obj)
-        LOG.info('Start send loop.')
+        LOG.info('Within send loop.')
         try:
             l_command = p_controller_obj._Queue.get(False)
             LOG.info('Got command ')

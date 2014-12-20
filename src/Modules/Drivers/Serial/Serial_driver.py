@@ -45,7 +45,7 @@ class SerialProtocol(Protocol):
 
     def dataReceived(self, p_data):
         LOG.info('Received {}'.format(PrintBytes(p_data)))
-        self.m_controller_obj._Message += p_data
+        self.m_controller_obj._Data += p_data
 
 
 class SerialAPI(object):
@@ -77,11 +77,11 @@ class SerialAPI(object):
         self.m_serial.close()
 
     def fetch_read_data(self, p_controller_obj):
-        l_msg = p_controller_obj._Message
+        l_msg = p_controller_obj._Data
         if len(l_msg) > 0:
             # LOG.debug("Fetch Read Data {0:}".format(PrintBytes(l_msg)))
             pass
-        p_controller_obj._Message = bytearray()
+        p_controller_obj._Data = bytearray()
         return l_msg
 
     def write_device(self, p_message):
