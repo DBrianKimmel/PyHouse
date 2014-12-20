@@ -33,7 +33,10 @@ from Modules.Families.Insteon import Insteon_utils
 from Modules.Families.Insteon import Insteon_decoder
 from Modules.Computer import logging_pyh as Logger
 
+
 LOG = Logger.getLogger('PyHouse.Insteon_PLM    ')
+
+
 
 # Timeouts for send/receive delays
 SEND_TIMEOUT = 0.8
@@ -52,6 +55,7 @@ FLAG_ACKNOWLEDGEMENT = 0x20
 FLAG_EXTENDED_CMD = 0x10
 FLAG_HOPS_LEFT = 0x0C
 FLAG_MAX_HOPS = 0x03
+
 
 
 class ControllerData(InsteonData):
@@ -74,56 +78,19 @@ class ControllerData(InsteonData):
         self._Command2 = 0
 
 
-class InsteonPlmUtility(ControllerData):
 
-    def _get_message_length(self, p_message):
-        """Get the documented length that the message is supposed to be.
-
-        Use the message type byte to find out how long the response from the PLM
-        is supposed to be.
-        With asynchronous routines, we want to wait till the entire message is
-        received before proceeding with its decoding.
-        """
-        l_id = p_message[1]
-        try:
-            l_message_length = MESSAGE_LENGTH[l_id]
-        except KeyError:
-            l_message_length = 1
-        return l_message_length
-
-
-class Commands(InsteonPlmUtility):
+class Commands(object):
     """Send various commands to the PLM.
     """
-
-    def _format_address(self, p_addr):
-        l_ret = 'Address:({0:x}.{1:x}.{2:x})'.format(p_addr[0], p_addr[1], p_addr[2])
-        return l_ret
-
-    def _queue_command(self, p_controller, p_command):
-        p_controller._queue.put(p_command)
-        LOG.info("Q-Size:{0:}, Command:{1:}".format(self.m_controller_obj._Queue.qsize(), PrintBytes(p_command)))
-        pass
-
-    def queue_plm_command(self, p_command):
-        self.m_controller_obj._Queue.put(p_command)
-        LOG.info("Q-Size:{0:}, Command:{1:}".format(self.m_controller_obj._Queue.qsize(), PrintBytes(p_command)))
-
-    def _create_command_message(self, p_command):
-        l_cmd = PLM_COMMANDS[p_command]
-        l_command_bytes = bytearray(COMMAND_LENGTH[l_cmd])
-        l_command_bytes[0] = STX
-        l_command_bytes[1] = l_cmd
-        return l_command_bytes
 
     def queue_60_command(self):
         """Insteon - get IM info (2 bytes).
         See p 273 of developers guide.
         PLM will respond with a 0x60 response.
         """
-        l_command = self._create_command_message('plm_info')
+        l_command = Utility._create_command_message('plm_info')
         LOG.info("Queue command to get IM info")
-        self.queue_plm_command(l_command)
+        Utility._queue_command(self.m_controller_obj, l_command)
 
     def queue_61_command(self, p_obj):
         """Send ALL-Link Command (5 bytes)
@@ -140,13 +107,13 @@ class Commands(InsteonPlmUtility):
         @param p_cmd2: is the second command byte
         """
         LOG.info('62 {}  {}'.format(p_obj.Name, p_obj.InsteonAddress))
-        l_command = self._create_command_message('insteon_send')
+        l_command = Utility._create_command_message('insteon_send')
         Insteon_utils.int2message(p_obj.InsteonAddress, l_command, 2)
         l_command[5] = FLAG_MAX_HOPS + FLAG_HOPS_LEFT  # 0x0F
         l_command[6] = p_obj._Command1 = p_cmd1
         l_command[7] = p_obj._Command2 = p_cmd2
-        LOG.info("Device: {}, Command: {},{}, {}".format(p_obj.Name, p_cmd1, p_cmd2, self._format_address(l_command[2:5])))
-        self.queue_plm_command(l_command)
+        LOG.info("Device: {}, Command: {},{}, {}".format(p_obj.Name, p_cmd1, p_cmd2, Utility._format_address(l_command[2:5])))
+        Utility._queue_command(self.m_controller_obj, l_command)
 
     def queue_63_command(self, p_obj):
         pass
@@ -165,8 +132,8 @@ class Commands(InsteonPlmUtility):
         See p 268 of developers guide.
         """
         LOG.info("Queue command to reset the PLM (67).")
-        l_command = self._create_command_message('plm_reset')
-        self.queue_plm_command(l_command)
+        l_command = Utility._create_command_message('plm_reset')
+        Utility._queue_command(self.m_controller_obj, l_command)
 
     def queue_68_command(self, p_obj):
         pass
@@ -176,8 +143,8 @@ class Commands(InsteonPlmUtility):
         See p 261 of developers guide.
         """
         LOG.info("Queue command to get First all-link record (69).")
-        l_command = self._create_command_message('plm_first_all_link')
-        self.queue_plm_command(l_command)
+        l_command = Utility._create_command_message('plm_first_all_link')
+        Utility._queue_command(self.m_controller_obj, l_command)
 
     def queue_6A_command(self):
         """Get the next record - will get a nak if no more (2 bytes).
@@ -185,17 +152,17 @@ class Commands(InsteonPlmUtility):
         Returns True if more - False if no more.
         """
         LOG.info("Queue command to get Next all-link record (6A).")
-        l_command = self._create_command_message('plm_next_all_link')
-        self.queue_plm_command(l_command)
+        l_command = Utility._create_command_message('plm_next_all_link')
+        Utility._queue_command(self.m_controller_obj, l_command)
 
     def queue_6B_command(self, p_flags):
         """Set IM configuration flags (3 bytes).
         See page 271  of Insteon Developers Guide.
         """
         LOG.info("Queue command to set PLM config flag (68) to {0:#X}".format(p_flags))
-        l_command = self._create_command_message('plm_set_config')
+        l_command = Utility._create_command_message('plm_set_config')
         l_command[2] = p_flags
-        self.queue_plm_command(l_command)
+        Utility._queue_command(self.m_controller_obj, l_command)
 
     def queue_6C_command(self, p_obj):
         pass
@@ -210,13 +177,13 @@ class Commands(InsteonPlmUtility):
         """Manage All-Link Record (11 bytes)
         """
         LOG.info("Queue command to manage all-link record (6F).")
-        l_command = self._create_command_message('manage_all_link_record')
+        l_command = Utility._create_command_message('manage_all_link_record')
         l_command[2] = p_code
         l_command[3] = p_flag
         l_command[4] = p_light_obj.GroupNumber
         Insteon_utils.int2message(p_light_obj.InsteonAddress, l_command, 5)
         l_command[8:11] = p_data
-        self.queue_plm_command(l_command)
+        Utility._queue_command(self.m_controller_obj, l_command)
 
     def queue_70_command(self, p_obj):
         pass
@@ -234,8 +201,9 @@ class Commands(InsteonPlmUtility):
         See page 270 of Insteon Developers Guide.
         """
         LOG.info("Queue command to get PLM config (73).")
-        l_command = self._create_command_message('plm_get_config')
-        self.queue_plm_command(l_command)
+        l_command = Utility._create_command_message('plm_get_config')
+        Utility._queue_command(self.m_controller_obj, l_command)
+
 
 
 class PlmDriverProtocol(Commands):
@@ -297,9 +265,10 @@ class PlmDriverProtocol(Commands):
             if len(l_msg) < 2:
                 return
             l_cur_len = len(l_msg)
-            l_response_len = self._get_message_length(l_msg)
+            l_response_len = Utility._get_message_length(l_msg)
             if l_cur_len >= l_response_len:
                 self.m_decoder.decode_message(self.m_controller_obj, self.m_house_obj)
+
 
 
 class InsteonPlmCommands(Commands):
@@ -361,6 +330,7 @@ class InsteonAllLinks(InsteonPlmCommands):
         LOG.info(l_debug_msg)
 
 
+
 class InsteonPlmAPI(InsteonAllLinks):
     """
     """
@@ -378,6 +348,7 @@ class InsteonPlmAPI(InsteonAllLinks):
 
     def get_link_records(self, _p_house_obj, p_controller_obj):
         self.get_all_allinks(p_controller_obj)
+
 
 
 class LightHandlerAPI(InsteonPlmAPI):
@@ -469,6 +440,7 @@ class LightHandlerAPI(InsteonPlmAPI):
             self._get_obj_info(l_obj)
 
 
+
 class Utility(LightHandlerAPI, PlmDriverProtocol):
     """
     """
@@ -487,6 +459,40 @@ class Utility(LightHandlerAPI, PlmDriverProtocol):
             self.set_plm_mode(self.m_controller_obj)
             self.get_all_device_information()
         return l_ret
+
+    @staticmethod
+    def _create_command_message(p_command):
+        l_cmd = PLM_COMMANDS[p_command]
+        l_command_bytes = bytearray(COMMAND_LENGTH[l_cmd])
+        l_command_bytes[0] = STX
+        l_command_bytes[1] = l_cmd
+        return l_command_bytes
+
+    @staticmethod
+    def _format_address(p_addr):
+        l_ret = 'Address:({0:x}.{1:x}.{2:x})'.format(p_addr[0], p_addr[1], p_addr[2])
+        return l_ret
+
+    @staticmethod
+    def _get_message_length(p_message):
+        """Get the documented length that the message is supposed to be.
+
+        Use the message type byte to find out how long the response from the PLM
+        is supposed to be.
+        With asynchronous routines, we want to wait till the entire message is
+        received before proceeding with its decoding.
+        """
+        l_id = p_message[1]
+        try:
+            l_message_length = MESSAGE_LENGTH[l_id]
+        except KeyError:
+            l_message_length = 1
+        return l_message_length
+
+    @staticmethod
+    def _queue_command(p_controller, p_command):
+        p_controller._queue.put(p_command)
+        LOG.info("Q-Size:{0:}, Command:{1:}".format(p_controller._Queue.qsize(), PrintBytes(p_command)))
 
 
 
