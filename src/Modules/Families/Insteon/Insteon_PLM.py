@@ -213,7 +213,7 @@ class PlmDriverProtocol(Commands):
     def __init__(self, p_pyhouse_obj, p_controller_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_house_obj = p_pyhouse_obj.House.DeviceOBJs
-        LOG.info("Insteon_PLM.PlmDriverProtocol.__init__()")
+        LOG.info("Setting up PLM Device Driver")
         p_controller_obj._Queue = Queue.Queue(300)
         self.m_controller_obj = p_controller_obj
         self.m_decoder = Insteon_decoder.DecodeResponses(p_pyhouse_obj, p_controller_obj)
@@ -245,7 +245,7 @@ class PlmDriverProtocol(Commands):
         """
         l_msg = p_controller_obj._DriverAPI.Read()
         p_controller_obj._Message += l_msg
-        return p_controller_obj._Message
+        return p_controller_obj._Message  # For debugging
 
     def receive_loop(self, p_controller_obj):
         """Check the driver to see if the controller returned any messages.
@@ -257,11 +257,12 @@ class PlmDriverProtocol(Commands):
         """
         self.m_pyhouse_obj.Twisted.Reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop, p_controller_obj)
         if p_controller_obj._DriverAPI != None:
-            l_msg = self._append_message(p_controller_obj)
-            if len(l_msg) < 2:
+            self._append_message(p_controller_obj)
+            l_cur_len = len(p_controller_obj._Message)
+            if l_cur_len < 2:
                 return
-            l_cur_len = len(l_msg)
-            l_response_len = Utility._get_message_length(l_msg)
+            LOG.info('Receive message is now {}'.FORMAT(PrintBytes(p_controller_obj._Message)))
+            l_response_len = Utility._get_message_length(p_controller_obj._Message)
             if l_cur_len >= l_response_len:
                 self.m_decoder.decode_message(p_controller_obj, self.m_house_obj)
 
