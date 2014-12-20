@@ -119,7 +119,7 @@ class API(Utility):
         """
         LOG.info("Starting lighting families.")
         for l_family_obj in p_pyhouse_obj.House.RefOBJs.FamilyData.itervalues():
-            LOG.debug('Starting Family {0:}'.format(l_family_obj.Name))
+            LOG.info('Starting Family {0:}'.format(l_family_obj.Name))
             l_family_obj.FamilyModuleAPI.Start(p_pyhouse_obj)  # will run <family>_device.API().Start()
         LOG.info("Started all lighting families.")
 

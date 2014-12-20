@@ -132,6 +132,7 @@ class API(SerialAPI):
         """
         Non-Blocking write to the serial port
         """
+        LOG.info('Writing - {}'.format(p_message))
         self.write_device(p_message)
 
 # ## END DBK

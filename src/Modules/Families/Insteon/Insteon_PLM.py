@@ -270,6 +270,8 @@ class PlmDriverProtocol(Commands):
             l_response_len = Utility._get_message_length(p_controller_obj._Message)
             if l_cur_len >= l_response_len:
                 self.m_decoder.decode_message(p_controller_obj, self.m_house_obj)
+        else:
+            LOG.error('Driver A{I missing for {}'.format(p_controller_obj.Name))
 
 
 
@@ -362,7 +364,7 @@ class LightHandlerAPI(InsteonPlmAPI):
         l_msg = "Insteon_PLM.start_controller_driver() - Controller:{0:}, ".format(p_controller_obj.Name)
         l_msg += "ControllerFamily:{0:}, InterfaceType:{1:}, Active:{2:}".format(
                 p_controller_obj.ControllerFamily, p_controller_obj.InterfaceType, p_controller_obj.Active)
-        LOG.info(l_msg)
+        LOG.info('Start Controller - {}'.format(l_msg))
         l_driver = FamUtil.get_device_driver_API(p_controller_obj)
         p_controller_obj._DriverAPI = l_driver
         l_ret = l_driver.Start(p_pyhouse_obj, p_controller_obj)
