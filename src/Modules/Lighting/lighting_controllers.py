@@ -51,7 +51,7 @@ class LCApi(ReadWriteConfigXml):
         return p_obj
 
     def _read_family_data(self, p_obj, p_xml):
-        l_api = FamUtil().read_family_data(self.m_pyhouse_obj, p_obj, p_xml)
+        l_api = FamUtil.read_family_data(self.m_pyhouse_obj, p_obj, p_xml)
         return l_api  # for testing
 
     def _read_interface_data(self, p_obj, p_xml):

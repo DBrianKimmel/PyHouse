@@ -19,6 +19,7 @@ import Queue
 from Modules.Families.UPB.UPB_data import UPBData
 from Modules.Utilities.tools import PrintBytes
 from Modules.Computer import logging_pyh as Logger
+from Modules.Families.family_utils import FamUtil
 
 g_debug = 9
 LOG = Logger.getLogger('PyHouse.UPB_PIM        ')
@@ -401,26 +402,6 @@ class CreateCommands(UpbPimUtility, PimDriverInterface, BuildCommand):
 
 class UpbPimAPI(CreateCommands):
 
-    def _load_driver(self, p_controller_obj):
-        """
-        Select a driver depending on the controller's interface type.
-
-        """
-        l_driver = None
-        if p_controller_obj.InterfaceType.lower() == 'serial':
-            from Modules.Drivers.Serial import Serial_driver
-            l_driver = Serial_driver.API()
-        elif p_controller_obj.InterfaceType.lower() == 'ethernet':
-            from Modules.Drivers.Ethernet import Ethernet_driver
-            l_driver = Ethernet_driver.API()
-        elif p_controller_obj.InterfaceType.lower() == 'usb':
-            from Modules.Drivers.USB import USB_driver
-            l_driver = USB_driver.API()
-        else:
-            from Modules.Drivers.Null import Null_driver
-            l_driver = Null_driver.API()
-        return l_driver
-
     def _initilaize_pim(self, p_controller_obj):
         l_pim = UPBData()
         l_pim.InterfaceType = p_controller_obj.InterfaceType
@@ -437,9 +418,9 @@ class UpbPimAPI(CreateCommands):
         p_controller_obj._Queue = Queue.Queue(300)
         LOG.info("start:{} - InterfaceType:{}".format(p_controller_obj.Name, p_controller_obj.InterfaceType))
         self.m_pim = self._initilaize_pim(p_controller_obj)
-        l_driver = self._load_driver(p_controller_obj)
+        l_driver = FamUtil.get_device_driver_API(p_controller_obj)
+        p_controller_obj._DriverAPI = l_driver
         l_driver.Start(p_pyhouse_obj, p_controller_obj)
-        p_pyhouse_obj.House.DeviceOBJs.Controllers[p_controller_obj.Key]._DriverAPI = l_driver
         self.m_pim._DriverAPI = l_driver
         self.set_register_value(p_controller_obj, 0x70, [0x03])
         self.null_command(p_controller_obj)

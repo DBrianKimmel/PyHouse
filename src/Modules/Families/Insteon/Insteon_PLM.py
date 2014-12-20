@@ -32,6 +32,7 @@ from Modules.Families.Insteon.Insteon_constants import COMMAND_LENGTH, MESSAGE_L
 from Modules.Families.Insteon import Insteon_utils
 from Modules.Families.Insteon import Insteon_decoder
 from Modules.Computer import logging_pyh as Logger
+from Modules.Families.family_utils import FamUtil
 
 
 LOG = Logger.getLogger('PyHouse.Insteon_PLM    ')
@@ -80,16 +81,14 @@ class ControllerData(InsteonData):
 
 
 class Commands(object):
-    """Send various commands to the PLM.
-    """
 
     def queue_60_command(self):
-        """Insteon - get IM info (2 bytes).
+        """Get IM info (2 bytes).
         See p 273 of developers guide.
         PLM will respond with a 0x60 response.
         """
+        LOG.info("Command to get IM info (60)")
         l_command = Utility._create_command_message('plm_info')
-        LOG.info("Queue command to get IM info")
         Utility._queue_command(self.m_controller_obj, l_command)
 
     def queue_61_command(self, p_obj):
@@ -106,7 +105,7 @@ class Commands(object):
         @param p_cmd1: is the first command byte
         @param p_cmd2: is the second command byte
         """
-        LOG.info('62 {}  {}'.format(p_obj.Name, p_obj.InsteonAddress))
+        LOG.info('Send Command(62) - To: {}  {}'.format(p_obj.Name, conversions.dotted_hex2int(p_obj.InsteonAddress)))
         l_command = Utility._create_command_message('insteon_send')
         Insteon_utils.int2message(p_obj.InsteonAddress, l_command, 2)
         l_command[5] = FLAG_MAX_HOPS + FLAG_HOPS_LEFT  # 0x0F
@@ -142,16 +141,15 @@ class Commands(object):
         """Get the first all-link record from the plm (2 bytes).
         See p 261 of developers guide.
         """
-        LOG.info("Queue command to get First all-link record (69).")
+        LOG.info("Command to get First all-link record (69).")
         l_command = Utility._create_command_message('plm_first_all_link')
         Utility._queue_command(self.m_controller_obj, l_command)
 
     def queue_6A_command(self):
-        """Get the next record - will get a nak if no more (2 bytes).
+        """Get the next record - will get a NAK if no more (2 bytes).
         See p 262 of developers guide.
-        Returns True if more - False if no more.
         """
-        LOG.info("Queue command to get Next all-link record (6A).")
+        LOG.info("Command to get Next all-link record (6A).")
         l_command = Utility._create_command_message('plm_next_all_link')
         Utility._queue_command(self.m_controller_obj, l_command)
 
@@ -159,7 +157,7 @@ class Commands(object):
         """Set IM configuration flags (3 bytes).
         See page 271  of Insteon Developers Guide.
         """
-        LOG.info("Queue command to set PLM config flag (68) to {0:#X}".format(p_flags))
+        LOG.info("Command to set PLM config flag (68) to {0:#X}".format(p_flags))
         l_command = Utility._create_command_message('plm_set_config')
         l_command[2] = p_flags
         Utility._queue_command(self.m_controller_obj, l_command)
@@ -174,9 +172,8 @@ class Commands(object):
         pass
 
     def queue_6F_command(self, p_light_obj, p_code, p_flag, p_data):
-        """Manage All-Link Record (11 bytes)
-        """
-        LOG.info("Queue command to manage all-link record (6F).")
+        """Manage All-Link Record (11 bytes)"""
+        LOG.info("Command to manage all-link record (6F).")
         l_command = Utility._create_command_message('manage_all_link_record')
         l_command[2] = p_code
         l_command[3] = p_flag
@@ -192,15 +189,14 @@ class Commands(object):
         pass
 
     def queue_72_command(self, p_obj):
-        """RF Sleep
-        """
+        """RF Sleep"""
         pass
 
     def queue_73_command(self, _p_obj):
         """Send request for PLM configuration (2 bytes).
         See page 270 of Insteon Developers Guide.
         """
-        LOG.info("Queue command to get PLM config (73).")
+        LOG.info("Command to get PLM config (73).")
         l_command = Utility._create_command_message('plm_get_config')
         Utility._queue_command(self.m_controller_obj, l_command)
 
@@ -220,28 +216,28 @@ class PlmDriverProtocol(Commands):
         LOG.info("Insteon_PLM.PlmDriverProtocol.__init__()")
         p_controller_obj._Queue = Queue.Queue(300)
         self.m_controller_obj = p_controller_obj
-        self.m_decoder = Insteon_decoder.DecodeResponses(p_pyhouse_obj, self.m_house_obj)
-        self.dequeue_and_send(None)
-        self.receive_loop(None)
+        self.m_decoder = Insteon_decoder.DecodeResponses(p_pyhouse_obj, p_controller_obj)
+        self.dequeue_and_send(p_controller_obj)
+        self.receive_loop(p_controller_obj)
 
     def driver_loop_stop(self):
         pass
 
-    def dequeue_and_send(self, _ignore):
+    def dequeue_and_send(self, p_controller_obj):
         """Check the sending queue every SEND_TIMEOUT seconds and send if
         anything to send.
 
         Uses twisted to get a callback when the timer expires.
         """
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send, None)
+        self.m_pyhouse_obj.Twisted.Reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send, p_controller_obj)
         try:
-            l_command = self.m_controller_obj._Queue.get(False)
+            l_command = p_controller_obj._Queue.get(False)
         except Queue.Empty:
             return
-        if self.m_controller_obj._DriverAPI != None:
-            self.m_controller_obj._Command1 = l_command
-            self.m_controller_obj._DriverAPI.Write(l_command)
-            LOG.info("Send to controller:{}, Message:{}".format(self.m_controller_obj.Name, PrintBytes(l_command)))
+        if p_controller_obj._DriverAPI != None:
+            LOG.info("Send to controller:{}, Message:{}".format(p_controller_obj.Name, PrintBytes(l_command)))
+            p_controller_obj._Command1 = l_command
+            p_controller_obj._DriverAPI.Write(l_command)
 
     def _append_message(self, p_controller_obj):
         """
@@ -251,7 +247,7 @@ class PlmDriverProtocol(Commands):
         p_controller_obj._Message += l_msg
         return p_controller_obj._Message
 
-    def receive_loop(self, _ignore):
+    def receive_loop(self, p_controller_obj):
         """Check the driver to see if the controller returned any messages.
 
         Decode message only when we get enough bytes to complete a message.
@@ -259,15 +255,15 @@ class PlmDriverProtocol(Commands):
 
         TODO: instead of fixed time, callback to here from driver when bytes are rx'ed.
         """
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop, None)
-        if self.m_controller_obj._DriverAPI != None:
-            l_msg = self._append_message(self.m_controller_obj)
+        self.m_pyhouse_obj.Twisted.Reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop, p_controller_obj)
+        if p_controller_obj._DriverAPI != None:
+            l_msg = self._append_message(p_controller_obj)
             if len(l_msg) < 2:
                 return
             l_cur_len = len(l_msg)
             l_response_len = Utility._get_message_length(l_msg)
             if l_cur_len >= l_response_len:
-                self.m_decoder.decode_message(self.m_controller_obj, self.m_house_obj)
+                self.m_decoder.decode_message(p_controller_obj, self.m_house_obj)
 
 
 
@@ -355,32 +351,13 @@ class LightHandlerAPI(InsteonPlmAPI):
     """This is the API for light control.
     """
 
-    def _load_driver(self, p_controller_obj):
-        """
-        Based on the InterfaceType of the controller, load the appropriate driver.
-        """
-        if p_controller_obj.InterfaceType.lower() == 'serial':
-            from Modules.Drivers.Serial import Serial_driver
-            l_driver = Serial_driver.API()
-        elif p_controller_obj.InterfaceType.lower() == 'ethernet':
-            from Modules.Drivers.Ethernet import Ethernet_driver
-            l_driver = Ethernet_driver.API()
-        elif p_controller_obj.InterfaceType.lower() == 'usb':
-            from Modules.Drivers.USB import USB_driver
-            l_driver = USB_driver.API()
-        else:
-            LOG.warning('No driver for {}'.format(p_controller_obj.Name))
-            from Modules.Drivers.Null import Null_driver
-            l_driver = Null_driver.API()
-        return l_driver
-
     def start_controller_driver(self, p_pyhouse_obj, p_controller_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         l_msg = "Insteon_PLM.start_controller_driver() - Controller:{0:}, ".format(p_controller_obj.Name)
         l_msg += "ControllerFamily:{0:}, InterfaceType:{1:}, Active:{2:}".format(
                 p_controller_obj.ControllerFamily, p_controller_obj.InterfaceType, p_controller_obj.Active)
         LOG.info(l_msg)
-        l_driver = self._load_driver(p_controller_obj)
+        l_driver = FamUtil.get_device_driver_API(p_controller_obj)
         p_controller_obj._DriverAPI = l_driver
         l_ret = l_driver.Start(p_pyhouse_obj, p_controller_obj)
         return l_ret
@@ -416,27 +393,27 @@ class LightHandlerAPI(InsteonPlmAPI):
         LOG.info('Request ID(devCat) from device: {0:}'.format(p_obj.Name))
         self.queue_62_command(p_obj, MESSAGE_TYPES['id_request'], 0)  # 0x10
 
-    def _get_obj_info(self, l_obj):
-        if l_obj.ControllerFamily != 'Insteon':
+    def _get_obj_info(self, p_obj):
+        if p_obj.ControllerFamily != 'Insteon':
             return
-        if l_obj.Active != True:
+        if p_obj.Active != True:
             return
-        LOG.info('Device:{}'.format(l_obj.Name))
-        self._get_one_light_status(l_obj)
-        self._get_id_request(l_obj)
-        self._get_engine_version(l_obj)
+        LOG.info('Device:{}'.format(p_obj.Name))
+        self._get_one_light_status(p_obj)
+        self._get_id_request(p_obj)
+        self._get_engine_version(p_obj)
 
-    def get_all_device_information(self):
+    def get_all_device_information(self, p_pyhouse_obj):
         """Get the status (current level) of all insteon devices.
         """
         LOG.info('Getting devide information of all Insteon devices')
-        for l_obj in self.m_pyhouse_obj.House.DeviceOBJs.Lights.itervalues():
+        for l_obj in p_pyhouse_obj.House.DeviceOBJs.Lights.itervalues():
             self._get_obj_info(l_obj)
-        for l_obj in self.m_pyhouse_obj.House.DeviceOBJs.Buttons.itervalues():
+        for l_obj in p_pyhouse_obj.House.DeviceOBJs.Buttons.itervalues():
             self._get_obj_info(l_obj)
-        for l_obj in self.m_pyhouse_obj.House.DeviceOBJs.Controllers.itervalues():
+        for l_obj in p_pyhouse_obj.House.DeviceOBJs.Controllers.itervalues():
             self._get_obj_info(l_obj)
-        for l_obj in self.m_pyhouse_obj.House.DeviceOBJs.Thermostats.itervalues():
+        for l_obj in p_pyhouse_obj.House.DeviceOBJs.Thermostats.itervalues():
             self._get_obj_info(l_obj)
 
 
@@ -454,10 +431,10 @@ class Utility(LightHandlerAPI, PlmDriverProtocol):
         LOG.info('Starting Controller:{0:}'.format(p_controller_obj.Name))
         l_ret = self.start_controller_driver(p_pyhouse_obj, p_controller_obj)
         if l_ret:
-            self.m_protocol = PlmDriverProtocol(p_pyhouse_obj, self.m_controller_obj)
+            self.m_protocol = PlmDriverProtocol(p_pyhouse_obj, p_controller_obj)
             Insteon_decoder.DecodeResponses(p_pyhouse_obj, p_controller_obj)
             self.set_plm_mode(self.m_controller_obj)
-            self.get_all_device_information()
+            self.get_all_device_information(p_pyhouse_obj)
         return l_ret
 
     @staticmethod

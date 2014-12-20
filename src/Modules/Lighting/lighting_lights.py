@@ -53,7 +53,7 @@ class LightingLightsAPI(ReadWriteConfigXml):
         return l_light_obj
 
     def _read_family_data(self, p_obj, p_xml):
-        l_api = FamUtil().read_family_data(self.m_pyhouse_obj, p_obj, p_xml)
+        l_api = FamUtil.read_family_data(self.m_pyhouse_obj, p_obj, p_xml)
         return l_api  # for testing
 
     def _read_one_light_xml(self, p_light_xml):

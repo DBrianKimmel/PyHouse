@@ -52,7 +52,7 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         return p_obj
 
     def _read_family_data(self, p_pyhouse_obj, p_obj, p_xml):
-        l_ret = FamUtil().read_family_data(p_pyhouse_obj, p_obj, p_xml)
+        l_ret = FamUtil.read_family_data(p_pyhouse_obj, p_obj, p_xml)
         return l_ret
 
     def _read_one_thermostat_xml(self, p_pyhouse_obj, p_thermostat_element):

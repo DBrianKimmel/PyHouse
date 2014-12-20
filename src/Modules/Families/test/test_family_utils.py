@@ -106,7 +106,7 @@ class C03_Read(SetupMixin, unittest.TestCase):
         #
         l_light = lighting_core.ReadWriteConfigXml().read_base_lighting_xml(l_device, l_xml)
         PrettyPrintAny(l_light, 'Light 1')
-        FamUtil().read_family_data(self.m_pyhouse_obj, l_light, l_xml)
+        FamUtil.read_family_data(self.m_pyhouse_obj, l_light, l_xml)
         PrettyPrintAny(l_light, 'Light 2')
         self.assertEqual(l_light.Name, 'Insteon Light')
         self.assertEqual(l_light.ControllerFamily, 'Insteon')
@@ -127,12 +127,12 @@ class C04_Write(SetupMixin, unittest.TestCase):
         l_in_xml = self.m_xml.light
         l_device = self.m_device_obj
         l_light = lighting_core.ReadWriteConfigXml().read_base_lighting_xml(l_device, l_in_xml)
-        FamUtil().read_family_data(self.m_pyhouse_obj, l_light, l_in_xml)
+        FamUtil.read_family_data(self.m_pyhouse_obj, l_light, l_in_xml)
         PrettyPrintAny(l_light, 'Light 1')
 
         l_out_xml = lighting_core.ReadWriteConfigXml().write_base_lighting_xml(l_light)
         PrettyPrintAny(l_out_xml, 'xml 1')
-        FamUtil().write_family_data(self.m_pyhouse_obj, l_out_xml, l_light)
+        FamUtil.write_family_data(self.m_pyhouse_obj, l_out_xml, l_light)
         PrettyPrintAny(l_out_xml, 'xml 2')
 
         self.assertEqual(l_light.Name, 'Insteon Light')

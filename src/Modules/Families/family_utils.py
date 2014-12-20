@@ -31,6 +31,27 @@ LOG = Logger.getLogger('PyHouse.FamilyUtils ')
 class FamUtil(object):
 
     @staticmethod
+    def get_device_driver_API(p_controller_obj):
+        """
+        Based on the InterfaceType of the controller, load the appropriate driver and get its API().
+        """
+        if p_controller_obj.InterfaceType.lower() == 'serial':
+            from Modules.Drivers.Serial import Serial_driver
+            l_driver = Serial_driver.API()
+        elif p_controller_obj.InterfaceType.lower() == 'ethernet':
+            from Modules.Drivers.Ethernet import Ethernet_driver
+            l_driver = Ethernet_driver.API()
+        elif p_controller_obj.InterfaceType.lower() == 'usb':
+            from Modules.Drivers.USB import USB_driver
+            l_driver = USB_driver.API()
+        else:
+            LOG.error('No driver for device: {} with interface type: {}'.format(p_controller_obj.Name, p_controller_obj.InterfaceType))
+            from Modules.Drivers.Null import Null_driver
+            l_driver = Null_driver.API()
+        p_controller_obj._DriverAPI = l_driver
+        return l_driver
+
+    @staticmethod
     def get_family(p_device_obj):
         try:
             l_family = p_device_obj.ControllerFamily
@@ -53,7 +74,8 @@ class FamUtil(object):
             l_api = None
         return l_api
 
-    def read_family_data(self, p_pyhouse_obj, p_device_obj, p_xml):
+    @staticmethod
+    def read_family_data(p_pyhouse_obj, p_device_obj, p_xml):
         l_api = FamUtil.get_family_api(p_pyhouse_obj, p_device_obj)
         # print('Family_utils Api: {}'.format(l_api))
         try:
@@ -65,7 +87,8 @@ class FamUtil(object):
             print(l_ret)
         return l_ret  # for testing
 
-    def write_family_data(self, p_pyhouse_obj, p_out_xml, p_device):
+    @staticmethod
+    def write_family_data(p_pyhouse_obj, p_out_xml, p_device):
         l_api = FamUtil.get_family_api(p_pyhouse_obj, p_device)
         try:
             l_ret = l_api.WriteXml(p_out_xml, p_device)
