@@ -90,11 +90,11 @@ class Utility(object):
         """
         l_id = Insteon_utils.message2int(p_message, p_index)  # Extract the 3 byte address from the message and convert to an Int.
         l_dotted = conversions.int2dotted_hex(l_id, 3)
-        l_ret = self._find_addr(self.m_house_obj.Lights, l_id)
+        l_ret = self._find_addr(self.m_pyhouse_obj.House.DeviceOBJs.Lights, l_id)
         if l_ret == None:
-            l_ret = self._find_addr(self.m_house_obj.Controllers, l_id)
+            l_ret = self._find_addr(self.m_pyhouse_obj.House.DeviceOBJs.Controllers, l_id)
         if l_ret == None:
-            l_ret = self._find_addr(self.m_house_obj.Buttons, l_id)
+            l_ret = self._find_addr(self.m_pyhouse_obj.House.DeviceOBJs.Buttons, l_id)
         if l_ret == None:
             l_ret = self._find_addr(self.m_pyhouse_obj.House.DeviceOBJs.Thermostats, l_id)
         if l_ret == None:
@@ -218,7 +218,6 @@ class Utility(object):
 
 class DecodeResponses(Utility):
 
-    m_house_obj = None
     m_pyhouse_obj = None
     m_idex = 0
 
@@ -227,7 +226,7 @@ class DecodeResponses(Utility):
         self.m_controller_obj = p_controller_obj
         LOG.info('Starting Decode')
 
-    def decode_message(self, p_controller_obj, p_house_obj):
+    def decode_message(self, p_controller_obj):
         """Decode a message that was ACKed / NAked.
         see Insteon Developers Manual pages 238-241
 
@@ -237,7 +236,6 @@ class DecodeResponses(Utility):
 
         @return: a flag that is True for ACK and False for NAK/Invalid response.
         """
-        self.m_house_obj = p_house_obj
         LOG.info('Message = {}'.format(PrintBytes(p_controller_obj._Message)))
         while len(p_controller_obj._Message) >= 2:
             l_stx = p_controller_obj._Message[0]
@@ -622,7 +620,7 @@ class DecodeResponses(Utility):
         l_chop = self._get_message_length(p_controller_obj._Message)
         if l_cur_len >= l_chop:
             p_controller_obj._Message = p_controller_obj._Message[l_chop:]
-            l_ret = self.decode_message(p_controller_obj, self.m_house_obj)
+            l_ret = self.decode_message(p_controller_obj)
         else:
             l_msg = "check_for_more_decoding() trying to chop an incomplete message - {0:}".format(
                     PrintBytes(p_controller_obj._Message))
