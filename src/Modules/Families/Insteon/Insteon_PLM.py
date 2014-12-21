@@ -105,7 +105,7 @@ class Commands(object):
         @param p_cmd1: is the first command byte
         @param p_cmd2: is the second command byte
         """
-        LOG.info('Send Command(62) - To: {}  {}'.format(p_obj.Name, conversions.dotted_hex2int(p_obj.InsteonAddress)))
+        LOG.info('Send Command(62) - To: {}  {}'.format(p_obj.Name, conversions.int2dotted_hex(p_obj.InsteonAddress, 3)))
         l_command = Utility._create_command_message('insteon_send')
         Insteon_utils.int2message(p_obj.InsteonAddress, l_command, 2)
         l_command[5] = FLAG_MAX_HOPS + FLAG_HOPS_LEFT  # 0x0F
@@ -265,7 +265,7 @@ class PlmDriverProtocol(Commands):
             l_cur_len = len(p_controller_obj._Message)
             if l_cur_len < 2:
                 return
-            LOG.info('Receive message is now {}'.FORMAT(PrintBytes(p_controller_obj._Message)))
+            LOG.info('Receive message is now {}'.format(PrintBytes(p_controller_obj._Message)))
             l_response_len = Utility._get_message_length(p_controller_obj._Message)
             if l_cur_len >= l_response_len:
                 self.m_decoder.decode_message(p_controller_obj)
