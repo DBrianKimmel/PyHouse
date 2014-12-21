@@ -70,7 +70,7 @@ def message2int(p_message, p_index):
 def insert_address_into_message(p_obj, p_message, p_index):
     pass
 
-def int2message(p_int, p_message, p_index):
+def int2message(p_int, p_message, p_index = 3):
     """Place an Insteon address (int internally) into a message at a given offset.
     The message must exist and be long enough to include a 3 byte area for the address.
     """
@@ -80,7 +80,7 @@ def int2message(p_int, p_message, p_index):
         LOG.error(l_msg)
         print(l_msg)
         l_err = True
-        p_int = 16777215
+        p_int = 12245933  # 0xBADBAD
     l_ix = 256 * 256
     l_int = p_int
     while l_ix > 0:

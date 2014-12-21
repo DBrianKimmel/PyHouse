@@ -105,7 +105,7 @@ class Commands(object):
         @param p_cmd1: is the first command byte
         @param p_cmd2: is the second command byte
         """
-        LOG.info('Send Command(62) - To: {}  {}'.format(p_obj.Name, conversions.int2dotted_hex(p_obj.InsteonAddress, 3)))
+        LOG.info('Send Command(62) - To: {}  {}'.format(p_obj.Name, p_obj.InsteonAddress))
         l_command = Utility._create_command_message('insteon_send')
         Insteon_utils.int2message(p_obj.InsteonAddress, l_command, 2)
         l_command[5] = FLAG_MAX_HOPS + FLAG_HOPS_LEFT  # 0x0F
