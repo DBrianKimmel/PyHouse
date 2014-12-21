@@ -111,7 +111,7 @@ class Commands(object):
         l_command[5] = FLAG_MAX_HOPS + FLAG_HOPS_LEFT  # 0x0F
         l_command[6] = p_obj._Command1 = p_cmd1
         l_command[7] = p_obj._Command2 = p_cmd2
-        LOG.info("Device: {}, Command: {},{}, {}".format(p_obj.Name, p_cmd1, p_cmd2, Utility._format_address(l_command[2:5])))
+        # LOG.info("Device: {}, Command: {},{}, {}".format(p_obj.Name, p_cmd1, p_cmd2, Utility._format_address(l_command[2:5])))
         Utility._queue_command(p_controller_obj, l_command)
 
     def queue_63_command(self, p_controller_obj):
@@ -406,7 +406,7 @@ class LightHandlerAPI(InsteonPlmAPI):
             return
         if p_obj.Active != True:
             return
-        LOG.info('Device:{}'.format(p_obj.Name))
+        # LOG.info('Device:{}'.format(p_obj.Name))
         self._get_one_light_status(p_controller_obj, p_obj)
         self._get_id_request(p_controller_obj, p_obj)
         self._get_engine_version(p_controller_obj, p_obj)
@@ -439,17 +439,17 @@ class Utility(LightHandlerAPI, PlmDriverProtocol):
         LOG.info('Starting Controller:{0:}'.format(p_controller_obj.Name))
         l_ret = self.start_controller_driver(p_pyhouse_obj, p_controller_obj)
         if l_ret:
-            LOG.info('Controller Start was OK  1.')
+            LOG.info('Controller Start was OK.')
             self.m_protocol = PlmDriverProtocol(p_pyhouse_obj, p_controller_obj)
-            LOG.info('Controller Start was OK  2.')
+            # LOG.info('Controller Start was OK  2.')
             self.m_decoder = Insteon_decoder.DecodeResponses(p_pyhouse_obj, p_controller_obj)
-            LOG.info('Controller Start was OK  3.')
+            # LOG.info('Controller Start was OK  3.')
             self.set_plm_mode(p_controller_obj)
-            LOG.info('Controller Start was OK  4.')
+            # LOG.info('Controller Start was OK  4.')
             self.get_all_device_information(p_pyhouse_obj, p_controller_obj)
         else:
             LOG.error('Controller start failed')
-        LOG.info('Controller Start was OK.')
+        # LOG.info('Controller Start was OK.')
         return l_ret
 
     @staticmethod
@@ -484,7 +484,7 @@ class Utility(LightHandlerAPI, PlmDriverProtocol):
     @staticmethod
     def _queue_command(p_controller, p_command):
         p_controller._Queue.put(p_command)
-        LOG.info("Q-Size:{0:}, Command:{1:}".format(p_controller._Queue.qsize(), PrintBytes(p_command)))
+        # LOG.info("Q-Size:{0:}, Command:{1:}".format(p_controller._Queue.qsize(), PrintBytes(p_command)))
 
 
 
