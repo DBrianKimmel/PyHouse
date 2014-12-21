@@ -62,14 +62,19 @@ LOGGING_DICT = {
     },
 }
 
-# Import system type stuff
-# import logging
-import logging.config
-# import logging.handlers
+LOGGER_NAME = 'PyHouse                '
 
-logging.getLogger('PyHouse             ')
+# Import system type stuff
+import logging.config
+from twisted.python import log
+
+
+
+logging.getLogger(LOGGER_NAME)
 logging.config.dictConfig(LOGGING_DICT)
 logging.info('PyHouse Starting\n')
 
+l_observer = log.PythonLoggingObserver(loggerName = LOGGER_NAME)
+l_observer.start()
 
 # ## END DBK
