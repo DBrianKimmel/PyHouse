@@ -59,6 +59,7 @@ class SerialAPI(object):
         @return: True if the driver opened OK and is usable
                  False if the driver is not functional for any reason.
         """
+        p_controller_obj._Data = ''
         try:
             self.m_serial = SerialPort(SerialProtocol(p_controller_obj), p_controller_obj.Port,
                     reactor, baudrate = p_controller_obj.BaudRate)
@@ -108,7 +109,7 @@ class API(SerialAPI):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_controller_obj = p_controller_obj
         self.m_controller_obj = p_controller_obj
-        l_ret = self.twisted_open_device(self.m_controller_obj)
+        l_ret = self.twisted_open_device(p_controller_obj)
         self.m_active = l_ret
         if l_ret:
             LOG.info("Started Serial controller {0:}".format(self.m_controller_obj.Name))
