@@ -79,7 +79,7 @@ def int2message(p_int, p_message, p_index = 3):
         l_msg = 'ERROR - Insteon_utils - trying to convert {0:} to message byte string.'.format(p_int)
         LOG.error(l_msg)
         print(l_msg)
-        l_err = True
+        # l_err = True
         p_int = 12245933  # 0xBADBAD
     l_ix = 256 * 256
     l_int = p_int
@@ -87,8 +87,8 @@ def int2message(p_int, p_message, p_index = 3):
         p_message[p_index], l_int = divmod(l_int, l_ix)
         l_ix = l_ix / 256
         p_index += 1
-        if l_err:
-            raise InsteonError
+        # if l_err:
+        #    raise InsteonError
     return p_message
 
 # ## END DBK
