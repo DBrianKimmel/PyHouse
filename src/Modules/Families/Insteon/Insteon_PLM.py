@@ -439,13 +439,17 @@ class Utility(LightHandlerAPI, PlmDriverProtocol):
         LOG.info('Starting Controller:{0:}'.format(p_controller_obj.Name))
         l_ret = self.start_controller_driver(p_pyhouse_obj, p_controller_obj)
         if l_ret:
-            LOG.info('Controller Start was OK.')
+            LOG.info('Controller Start was OK  1.')
             self.m_protocol = PlmDriverProtocol(p_pyhouse_obj, p_controller_obj)
+            LOG.info('Controller Start was OK  2.')
             self.m_decoder = Insteon_decoder.DecodeResponses(p_pyhouse_obj, p_controller_obj)
+            LOG.info('Controller Start was OK  3.')
             self.set_plm_mode(self.m_controller_obj)
+            LOG.info('Controller Start was OK  4.')
             self.get_all_device_information(p_pyhouse_obj)
         else:
             LOG.error('Controller start failed')
+        LOG.info('Controller Start was OK.')
         return l_ret
 
     @staticmethod
