@@ -213,7 +213,7 @@ class PlmDriverProtocol(Commands):
     def __init__(self, p_pyhouse_obj, p_controller_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_house_obj = p_pyhouse_obj.House.DeviceOBJs
-        LOG.info("Setting up PLM Device Driver")
+        LOG.info("Initializing PLM Device Driver Protocol.")
         p_controller_obj._Queue = Queue.Queue(300)
         self.m_controller_obj = p_controller_obj
         self.m_decoder = Insteon_decoder.DecodeResponses(p_pyhouse_obj, p_controller_obj)
@@ -361,9 +361,9 @@ class LightHandlerAPI(InsteonPlmAPI):
 
     def start_controller_driver(self, p_pyhouse_obj, p_controller_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        l_msg = "Insteon_PLM.start_controller_driver() - Controller:{0:}, ".format(p_controller_obj.Name)
-        l_msg += "ControllerFamily:{0:}, InterfaceType:{1:}, Active:{2:}".format(
-                p_controller_obj.ControllerFamily, p_controller_obj.InterfaceType, p_controller_obj.Active)
+        l_msg = "Controller:{}, ".format(p_controller_obj.Name)
+        l_msg += "ControllerFamily:{}, InterfaceType:{}".format(
+                p_controller_obj.ControllerFamily, p_controller_obj.InterfaceType)
         LOG.info('Start Controller - {}'.format(l_msg))
         l_driver = FamUtil.get_device_driver_API(p_controller_obj)
         p_controller_obj._DriverAPI = l_driver
@@ -439,10 +439,13 @@ class Utility(LightHandlerAPI, PlmDriverProtocol):
         LOG.info('Starting Controller:{0:}'.format(p_controller_obj.Name))
         l_ret = self.start_controller_driver(p_pyhouse_obj, p_controller_obj)
         if l_ret:
+            LOG.info('Controller Start was OK.')
             self.m_protocol = PlmDriverProtocol(p_pyhouse_obj, p_controller_obj)
             self.m_decoder = Insteon_decoder.DecodeResponses(p_pyhouse_obj, p_controller_obj)
             self.set_plm_mode(self.m_controller_obj)
             self.get_all_device_information(p_pyhouse_obj)
+        else:
+            LOG.error('Controller start failed')
         return l_ret
 
     @staticmethod
