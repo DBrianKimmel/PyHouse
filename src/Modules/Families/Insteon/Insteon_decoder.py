@@ -238,6 +238,7 @@ class DecodeResponses(Utility):
         @return: a flag that is True for ACK and False for NAK/Invalid response.
         """
         self.m_house_obj = p_house_obj
+        LOG.info('Message = {}'.format(PrintBytes(p_controller_obj._Message)))
         while len(p_controller_obj._Message) >= 2:
             l_stx = p_controller_obj._Message[0]
             if l_stx == STX:

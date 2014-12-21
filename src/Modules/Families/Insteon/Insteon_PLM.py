@@ -231,10 +231,10 @@ class PlmDriverProtocol(Commands):
         Uses twisted to get a callback when the timer expires.
         """
         self.m_pyhouse_obj.Twisted.Reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send, p_controller_obj)
-        LOG.info('Within send loop.')
+        LOG.info('Within send loop.  Size: {}'.format(p_controller_obj._Queue.qsize()))
         try:
             l_command = p_controller_obj._Queue.get(False)
-            LOG.info('Got command ')
+            LOG.info('Got command:  {}'.format(PrintBytes(l_command)))
         except Queue.Empty:
             return
         if p_controller_obj._DriverAPI != None:
@@ -271,7 +271,7 @@ class PlmDriverProtocol(Commands):
             if l_cur_len >= l_response_len:
                 self.m_decoder.decode_message(p_controller_obj, self.m_house_obj)
         else:
-            LOG.error('Driver A{I missing for {}'.format(p_controller_obj.Name))
+            LOG.error('Driver missing for {}'.format(p_controller_obj.Name))
 
 
 
