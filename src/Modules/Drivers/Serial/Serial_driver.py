@@ -80,7 +80,7 @@ class SerialAPI(object):
     def fetch_read_data(self, p_controller_obj):
         l_msg = p_controller_obj._Data
         if len(l_msg) > 0:
-            # LOG.debug("Fetch Read Data {0:}".format(PrintBytes(l_msg)))
+            # LOG.info("Fetch Read Data {0:}".format(PrintBytes(l_msg)))
             pass
         p_controller_obj._Data = bytearray()
         return l_msg
@@ -88,7 +88,7 @@ class SerialAPI(object):
     def write_device(self, p_message):
         """Send the command to the PLM and wait a very short time to be sure we sent it.
         """
-        LOG.debug("Writing {0:}".format(PrintBytes(p_message)))
+        # LOG.info("Writing {0:}".format(PrintBytes(p_message)))
         if self.m_active:
             try:
                 self.m_serial.writeSomeData(p_message)
@@ -133,7 +133,7 @@ class API(SerialAPI):
         """
         Non-Blocking write to the serial port
         """
-        LOG.info('Writing - {}'.format(p_message))
+        LOG.info('Writing - {}'.format(PrintBytes(p_message)))
         self.write_device(p_message)
 
 # ## END DBK
