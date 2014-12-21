@@ -233,11 +233,11 @@ class PlmDriverProtocol(Commands):
         # LOG.info('Within send loop.  Size: {}'.format(p_controller_obj._Queue.qsize()))
         try:
             l_command = p_controller_obj._Queue.get(False)
-            LOG.info('Got command:  {}'.format(PrintBytes(l_command)))
+            # LOG.info('Got command:  {}'.format(PrintBytes(l_command)))
         except Queue.Empty:
             return
         if p_controller_obj._DriverAPI != None:
-            LOG.info("Send to controller:{}, Message:{}".format(p_controller_obj.Name, PrintBytes(l_command)))
+            # LOG.info("Send to controller:{}, Message:{}".format(p_controller_obj.Name, PrintBytes(l_command)))
             p_controller_obj._Command1 = l_command
             p_controller_obj._DriverAPI.Write(l_command)
         else:
@@ -265,7 +265,7 @@ class PlmDriverProtocol(Commands):
             l_cur_len = len(p_controller_obj._Message)
             if l_cur_len < 2:
                 return
-            LOG.info('Receive message is now {}'.format(PrintBytes(p_controller_obj._Message)))
+            # LOG.info('Receive message is now {}'.format(PrintBytes(p_controller_obj._Message)))
             l_response_len = Utility._get_message_length(p_controller_obj._Message)
             if l_cur_len >= l_response_len:
                 self.m_decoder.decode_message(p_controller_obj)

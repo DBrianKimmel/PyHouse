@@ -236,11 +236,11 @@ class DecodeResponses(Utility):
 
         @return: a flag that is True for ACK and False for NAK/Invalid response.
         """
-        LOG.info('Message = {}'.format(PrintBytes(p_controller_obj._Message)))
+        # LOG.info('Message = {}'.format(PrintBytes(p_controller_obj._Message)))
         while len(p_controller_obj._Message) >= 2:
             l_stx = p_controller_obj._Message[0]
             if l_stx == STX:
-                LOG.info("{}".format(PrintBytes(p_controller_obj._Message)))
+                # LOG.info("{}".format(PrintBytes(p_controller_obj._Message)))
                 l_need_len = self._get_message_length(p_controller_obj._Message)
                 l_cur_len = len(p_controller_obj._Message)
                 if l_cur_len >= l_need_len:

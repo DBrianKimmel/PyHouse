@@ -44,7 +44,7 @@ class SerialProtocol(Protocol):
         LOG.info('Connection Made to {}'.format(self.m_controller_obj.Name))
 
     def dataReceived(self, p_data):
-        LOG.info('Received {}'.format(PrintBytes(p_data)))
+        # LOG.info('Received {}'.format(PrintBytes(p_data)))
         self.m_controller_obj._Data += p_data
 
 
