@@ -17,16 +17,16 @@ for every house.
 
 # Import PyHouse files
 from Modules.Families import family
-from Modules.Lighting.lighting_buttons import ButtonsAPI
+from Modules.Lighting.lighting_buttons import LBApi
 from Modules.Lighting.lighting_controllers import LCApi
-from Modules.Lighting.lighting_lights import LightingLightsAPI
+from Modules.Lighting.lighting_lights import LLApi
 from Modules.Computer import logging_pyh as Logger
 # from Modules.Utilities.tools import PrettyPrintAny
 
 LOG = Logger.getLogger('PyHouse.Lighting       ')
 
 
-class Utility(LCApi, ButtonsAPI, LightingLightsAPI):
+class Utility(LCApi, LBApi, LLApi):
     """Commands we can run from high places.
     """
 
@@ -38,8 +38,8 @@ class Utility(LCApi, ButtonsAPI, LightingLightsAPI):
         l_house_obj = p_pyhouse_obj.House.DeviceOBJs
         try:
             l_house_obj.Controllers = LCApi(p_pyhouse_obj).read_all_controllers_xml(l_house_xml.find('ControllerSection'))
-            l_house_obj.Buttons = ButtonsAPI(p_pyhouse_obj).read_all_buttons_xml(l_house_xml.find('ButtonSection'))
-            l_house_obj.Lights = LightingLightsAPI(p_pyhouse_obj).read_all_lights_xml(l_house_xml.find('LightSection'))
+            l_house_obj.Buttons = LBApi(p_pyhouse_obj).read_all_buttons_xml(l_house_xml.find('ButtonSection'))
+            l_house_obj.Lights = LLApi(p_pyhouse_obj).read_all_lights_xml(l_house_xml.find('LightSection'))
         except AttributeError:
             l_house_obj.Controllers = {}
             l_house_obj.Buttons = {}

@@ -31,7 +31,7 @@ from Modules.Families.Insteon.Insteon_data import InsteonData
 from Modules.Core import conversions
 from Modules.Utilities.tools import PrintBytes
 from Modules.Families.Insteon.Insteon_constants import ACK, MESSAGE_TYPES, MESSAGE_LENGTH, NAK, STX
-from Modules.Families.Insteon import Insteon_utils
+from Modules.Families.Insteon.Insteon_utils import Util
 from Modules.Families.Insteon import Insteon_Link
 from Modules.Families.Insteon import Insteon_HVAC
 from Modules.Computer import logging_pyh as Logger
@@ -42,9 +42,63 @@ LOG = Logger.getLogger('PyHouse.Insteon_decode ')
 # OBJ_LIST = [Lights, Controllers, Buttons, Thermostats, Irrigation, Pool]
 
 
-class Utility(object):
+class D_Util(object):
     """
     """
+
+    @staticmethod
+    def _drop_first_byte(p_controller_obj):
+        """The first byte is not legal, drop it and try again.
+        Silently drop 1st byte if it is a NAK otherwise log it.
+        """
+        l_msg = "Found a leading char {0:#x} - Rest. - {1:}".format(
+                p_controller_obj._Message[0], PrintBytes(p_controller_obj._Message))
+        if p_controller_obj._Message[0] != NAK:
+            LOG.error(l_msg)
+        try:
+            p_controller_obj._Message = p_controller_obj._Message[1:]
+        except IndexError:
+            pass
+
+    @staticmethod
+    def _decode_message_type_flag(p_type):
+        TYPE_X = ['Direct', 'Direct_ACK', 'AllCleanup', 'All_Cleanup_ACK', 'Broadcast', 'Direct_NAK', 'All_Broadcast', 'All_Cleanup_NAK']
+        return TYPE_X[p_type] + ' Msg'
+
+    @staticmethod
+    def _decode_extended_flag(p_extended):
+        TYPE_X = ['-Std-', '-Ext-']
+        return TYPE_X[p_extended]
+
+    @staticmethod
+    def _decode_message_flag(p_byte):
+        """ Get the message flag and convert it to a description of the message.
+        """
+        l_type = (p_byte & 0xE0) >> 5
+        l_extended = (p_byte & 0x10)
+        l_hops_left = (p_byte & 0x0C) >= 4
+        l_max_hops = (p_byte & 0x03)
+        l_ret = D_Util._decode_message_type_flag(l_type)
+        l_ret += D_Util._decode_extended_flag(l_extended)
+        l_ret += "{0:d}-{1:d}={2:#X}".format(l_hops_left, l_max_hops, p_byte)
+        return l_ret
+
+    @staticmethod
+    def _get_message_length(p_message):
+        """ Get the documented length that the message is supposed to be.
+
+        Use the message type byte to find out how long the response from the PLM is supposed to be.
+        With asynchronous routines, we want to wait till the entire message is received before proceeding with its decoding.
+        """
+        l_id = p_message[1]
+        try:
+            l_message_length = MESSAGE_LENGTH[l_id]
+        except KeyError:
+            l_message_length = 1
+        return l_message_length
+
+
+
 
     def get_device_class(self, p_pyhouse_obj):
         """
@@ -52,8 +106,6 @@ class Utility(object):
         """
         l_house = p_pyhouse_obj.House.DeviceOBJs
         for _l_class in l_house:
-            # if l_class == Schedule:
-            #    continue
             pass
         pass
 
@@ -88,7 +140,7 @@ class Utility(object):
 
         @return: The object that contains the address -or- a dummy object with noname in Name
         """
-        l_id = Insteon_utils.message2int(p_message, p_index)  # Extract the 3 byte address from the message and convert to an Int.
+        l_id = D_Util.message2int(p_message, p_index)  # Extract the 3 byte address from the message and convert to an Int.
         l_dotted = conversions.int2dotted_hex(l_id, 3)
         l_ret = self._find_addr(self.m_pyhouse_obj.House.DeviceOBJs.Lights, l_id)
         if l_ret == None:
@@ -105,49 +157,24 @@ class Utility(object):
             LOG.info("Insteon_PLM.get_obj_from_message - Address:{0:}({1:}), found:{2:}".format(l_dotted, l_id, l_ret.Name))
         return l_ret
 
-    def _drop_first_byte(self, p_controller_obj):
-        """The first byte is not legal, drop it and try again.
-        """
-        l_msg = "Insteon_PLM._drop_first_byte() Found a leading char {0:#x} - Rest. - {1:}".format(
-                p_controller_obj._Message[0], PrintBytes(p_controller_obj._Message))
-        if p_controller_obj._Message[0] != NAK:
-            LOG.error(l_msg)
-        try:
-            p_controller_obj._Message = p_controller_obj._Message[1:]
-        except IndexError:
-            pass
-
-    def get_devcat(self, p_message, p_obj):
+    @staticmethod
+    def get_devcat(p_message, p_obj):
         l_devcat = p_message[5] * 256 + p_message[6]
         p_obj.DevCat = int(l_devcat)
-        self.update_object(p_obj)
-        l_debug_msg = "DevCat From={0:}, DevCat={1:#x}, flags={2:}".format(p_obj.Name, l_devcat, self._decode_message_flag(p_message[8]))
+        # self.update_object(p_obj)
+        l_debug_msg = "DevCat From={0:}, DevCat={1:#x}, flags={2:}".format(p_obj.Name, l_devcat, D_Util._decode_message_flag(p_message[8]))
         LOG.info("Got DevCat from light:{0:}, DevCat:{1:}".format(p_obj.Name, conversions.int2dotted_hex(l_devcat, 2)))
         return l_debug_msg
 
-    def update_object(self, p_obj):
+    @staticmethod
+    def get_product_code(p_obj, p_message, p_index):
+        l_debug_msg = ''
+        return l_debug_msg
+
+    @staticmethod
+    def update_object(p_obj):
         # TODO: implement
         pass
-
-    def _decode_message_type_flag(self, p_type):
-        TYPE_X = ['Direct', 'Direct_ACK', 'AllCleanup', 'All_Cleanup_ACK', 'Broadcast', 'Direct_NAK', 'All_Broadcast', 'All_Cleanup_NAK']
-        return TYPE_X[p_type] + ' Msg'
-
-    def _decode_extended_flag(self, p_extended):
-        TYPE_X = ['-Std-', '-Ext-']
-        return TYPE_X[p_extended]
-
-    def _decode_message_flag(self, p_byte):
-        """
-        """
-        l_type = (p_byte & 0xE0) >> 5
-        l_extended = (p_byte & 0x10)
-        l_hops_left = (p_byte & 0x0C) >= 4
-        l_max_hops = (p_byte & 0x03)
-        l_ret = self._decode_message_type_flag(l_type)
-        l_ret += self._decode_extended_flag(l_extended)
-        l_ret += "{0:d}-{1:d}={2:#X}".format(l_hops_left, l_max_hops, p_byte)
-        return l_ret
 
     def _get_addr_from_message(self, p_message, p_index):
         """Extract the address from a message.
@@ -158,7 +185,7 @@ class Utility(object):
         @param p_message: is the byte array returned by the controller.
         @param p_index: is the offset into the message of a 3 byte field we will fetch and convert to an int
         """
-        l_id = Insteon_utils.message2int(p_message, p_index)
+        l_id = D_Util.message2int(p_message, p_index)
         return l_id
 
     def _get_ack_nak(self, p_byte):
@@ -168,21 +195,6 @@ class Utility(object):
             return 'NAK '
         else:
             return "{0:#02X} ".format(p_byte)
-
-    def _get_message_length(self, p_message):
-        """Get the documented length that the message is supposed to be.
-
-        Use the message type byte to find out how long the response from the PLM
-        is supposed to be.
-        With asynchronous routines, we want to wait till the entire message is
-        received before proceeding with its decoding.
-        """
-        l_id = p_message[1]
-        try:
-            l_message_length = MESSAGE_LENGTH[l_id]
-        except KeyError:
-            l_message_length = 1
-        return l_message_length
 
     def decode_command1(self, l_obj_from, l_name_from, l_name_to, l_9, l_10, l_message):
         l_debug_msg = ''
@@ -213,10 +225,28 @@ class Utility(object):
             _l_ret1 = Insteon_HVAC.ihvac_utility().decode_50_record(l_obj_from, l_9, l_10)
             pass
         else:
-            l_debug_msg += "Insteon_PLM._decode_50_record() unknown type - last command was {0:#x} - {1:}; ".format(l_obj_from._Command1, PrintBytes(l_message))
+            l_debug_msg += " unknown type - last command was {0:#x} - {1:}; ".format(l_obj_from._Command1, PrintBytes(l_message))
+
+    @staticmethod
+    def get_next_message(p_controller_obj):
+        """ Get the next message from the controller.
+        Remove the message from the controller object.
+        Return None if there is not a full message left.
+        """
+        while len(p_controller_obj._Message) >= 2:
+            if p_controller_obj._Message[0] != STX:
+                D_Util._drop_first_byte(p_controller_obj)
+                continue  # Loop back for next try at a message
+            l_need_len = D_Util._get_message_length(p_controller_obj._Message)
+            l_cur_len = len(p_controller_obj._Message)
+            if l_cur_len >= l_need_len:
+                l_msg = p_controller_obj._Message[0:l_need_len]
+                p_controller_obj._Message = p_controller_obj._Message[l_need_len:]
+                return l_msg
+        return None
 
 
-class DecodeResponses(Utility):
+class DecodeResponses(D_Util):
 
     m_pyhouse_obj = None
     m_idex = 0
@@ -249,7 +279,7 @@ class DecodeResponses(Utility):
                     LOG.warning('Message was too short - waiting for rest of message.')
                     return
             else:
-                self._drop_first_byte(p_controller_obj)
+                D_Util._drop_first_byte(p_controller_obj)
 
     def _decode_dispatch(self, p_controller_obj):
         """Decode a message that was ACKed / NAked.
@@ -261,7 +291,7 @@ class DecodeResponses(Utility):
         l_ret = False
         l_cmd = p_controller_obj._Message[1]
         if l_cmd == 0:
-            LOG.warning("Found a '0' record ->{0:}.".format(PrintBytes(l_message)))
+            LOG.warning("Found a '0' record ->{}.".format(PrintBytes(l_message)))
             return l_ret
         elif l_cmd == 0x50: l_ret = self._decode_50_record(p_controller_obj)
         elif l_cmd == 0x51: l_ret = self._decode_51_record(p_controller_obj)
@@ -286,6 +316,13 @@ class DecodeResponses(Utility):
             self.check_for_more_decoding(p_controller_obj, l_ret)
         return l_ret
 
+    def get_message_flags(self, p_message, p_index):
+        try:
+            l_message_flags = p_message[p_index]
+        except IndexError:
+            l_message_flags = 0
+        return l_message_flags
+
     def _decode_50_record(self, p_controller_obj):
         """ Insteon Standard Message Received (11 bytes)
         A Standard-length INSTEON message is received from either a Controller or Responder that you are ALL-Linked to.
@@ -301,10 +338,7 @@ class DecodeResponses(Utility):
             l_7 = l_message[7]
         except IndexError:
             l_7 = 0
-        try:
-            l_message_flags = l_message[8]
-        except IndexError:
-            l_message_flags = 0
+        l_message_flags = self.get_message_flags(p_controller_obj._Message, 8)
         try:
             l_9 = l_message[9]
             l_10 = l_message[10]
@@ -314,10 +348,10 @@ class DecodeResponses(Utility):
             LOG.warning("Short 50 message rxed - {0:}".format(PrintBytes(l_message)))
         l_data = [l_9, l_10]
         l_debug_msg = 'Standard Message; '
-        l_flags = self._decode_message_flag(l_message_flags) + ' From: {0:}'.format(l_obj_from.Name)
+        l_flags = D_Util._decode_message_flag(l_message_flags) + ' From: {0:}'.format(l_obj_from.Name)
         # Break down bits 7(msb), 6, 5 into message type
         if l_message_flags & 0xE0 == 0x80:  # Broadcast Message (100)
-            l_debug_msg += self.get_devcat(l_message, l_obj_from)
+            l_debug_msg += D_Util.get_devcat(l_message, l_obj_from)
         elif l_message_flags & 0xE0 == 0xC0:  # (110) all link broadcast of group id
             l_group = l_7
             l_debug_msg += "All-Link broadcast From:{0:}, Group:{1:}, Flags:{2:}, Data:{3:}; ".format(l_name_from, l_group, l_flags, l_data)
@@ -351,7 +385,7 @@ class DecodeResponses(Utility):
                 _l_ret1 = Insteon_HVAC.ihvac_utility().decode_50_record(l_obj_from, l_9, l_10)
                 pass
             else:
-                l_debug_msg += "Insteon_PLM._decode_50_record() unknown type - last command was {0:#x} - {1:}; ".format(l_obj_from._Command1, PrintBytes(l_message))
+                l_debug_msg += " Unknown type - last command was {0:#x} - {1:}; ".format(l_obj_from._Command1, PrintBytes(l_message))
         except AttributeError:
             pass
         l_ret = True
@@ -491,7 +525,7 @@ class DecodeResponses(Utility):
         """
         l_message = p_controller_obj._Message
         l_obj = self.get_obj_from_message(l_message, 2)
-        _l_msgflags = self._decode_message_flag(l_message[5])
+        _l_msgflags = D_Util._decode_message_flag(l_message[5])
         try:
             l_8 = l_message[8]
         except IndexError:

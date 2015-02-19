@@ -33,7 +33,7 @@ LOG = Logging.getLogger('PyHouse.LightgLights   ')
 
 
 
-class LightingLightsAPI(ReadWriteConfigXml):
+class LLApi(ReadWriteConfigXml):
     """
     Get/Put all the information about one light:
         Base Light Data

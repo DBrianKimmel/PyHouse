@@ -18,9 +18,9 @@ from twisted.trial import unittest
 from Modules.Core.data_objects import LightData
 from Modules.Families import family
 from Modules.Families.family_utils import FamUtil
-from Modules.Families.Insteon import Insteon_xml, Insteon_device
+from Modules.Families.Insteon import Insteon_device
 from Modules.Lighting import lighting_core
-from test import xml_data
+from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
 
@@ -43,7 +43,7 @@ class C01_XML(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
 
     def test_01_Setup(self):
@@ -60,7 +60,7 @@ class C02_Utils(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_device_obj.ControllerFamily = 'Insteon'
 
     def test_01_GetFamily(self):
@@ -87,11 +87,11 @@ class C03_Read(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_device_obj.ControllerFamily = 'Insteon'
         self.m_api = FamUtil.get_family_api(self.m_pyhouse_obj, self.m_device_obj)
 
-    def test_01_Components(self):
+    def test_01_Print(self):
         PrettyPrintAny(self.m_pyhouse_obj)
         PrettyPrintAny(self.m_pyhouse_obj.House)
         PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs)
@@ -117,7 +117,7 @@ class C04_Write(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_device_obj.ControllerFamily = 'Insteon'
         self.m_api = FamUtil.get_family_api(self.m_pyhouse_obj, self.m_device_obj)
 

@@ -38,6 +38,7 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+        self.inst = Insteon_utils.Util
 
 
 
@@ -49,11 +50,15 @@ class C01_Util(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_controller_obj = self.m_pyhouse_obj.House.DeviceOBJs.Controllers
 
-    def test_01_DeviceClass(self):
+    def test_01_Devices(self):
+        l_objs = self.inst.get_device_objs(self.m_pyhouse_obj)
+        PrettyPrintAny(l_objs, 'Device Objs')
+
+    def test_02_DeviceClass(self):
         l_house = Insteon_utils.Util().get_device_class(self.m_pyhouse_obj, "xxx")
         PrettyPrintAny(l_house, 'HouseOBJs')
 
-    def test_02_iterate(self):
+    def test_03_iterate(self):
         pass
 
 
@@ -62,16 +67,20 @@ class C02_Conversions(unittest.TestCase):
 
 
     def setUp(self):
-        self.inst = Insteon_utils
+        self.inst = Insteon_utils.Util
         pass
 
-    def test_01_message2int(self):
+    def test_01_Devices(self):
+        l_objs = self.inst.get_device_objs(self.m_pyhouse_obj)
+        PrettyPrintAny(l_objs, 'Device Objs')
+
+    def test_02_Message2int(self):
         result = self.inst.message2int(MSG_50, 2)
         self.assertEqual(result, ADDR_DR_SLAVE_INT)
         result = self.inst.message2int(MSG_62, 2)
         self.assertEqual(result, ADDR_NOOK_INT)
 
-    def test_02_int2message(self):
+    def test_03_Int2message(self):
         l_msg = MSG_50
         result = self.inst.int2message(ADDR_DR_SLAVE_INT, l_msg, 2)
         self.assertEqual(result[2:5], ADDR_DR_SLAVE_MSG)

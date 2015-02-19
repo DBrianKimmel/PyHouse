@@ -5,7 +5,7 @@
 @Copyright (c) 2013-2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Jun 3, 2014
-@summary: Schedule events
+@summary: Send some email testing
 
 
     From nobody Wed Jul 30 22:41:30 2014
@@ -53,7 +53,8 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-class Test_02_XML(SetupMixin, unittest.TestCase):
+
+class C01_Setup(SetupMixin, unittest.TestCase):
     """
     This section will verify the XML in the 'Modules.test.xml_data' file is correct and what the node_local module can read/write.
     """
@@ -63,7 +64,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         self.m_api = send_email.API()
         self.m_email_obj = EmailData()
 
-    def test_0201_FindXml(self):
+    def test_01_FindXml(self):
         """ Be sure that the XML contains the right stuff.
         """
         self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
@@ -72,21 +73,56 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         PrettyPrintAny(self.m_pyhouse_obj.Computer, 'Pyhouse', 120)
         PrettyPrintAny(self.m_pyhouse_obj.House, 'Pyhouse', 120)
 
-    def test_0210_Read(self):
+
+
+class C02_Read(SetupMixin, unittest.TestCase):
+    """
+    This section will verify the XML in the 'Modules.test.xml_data' file is correct and what the node_local module can read/write.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        self.m_api = send_email.API()
+        self.m_email_obj = EmailData()
+
+    def test_01_All(self):
         l_xml = self.m_api.read_xml(self.m_pyhouse_obj)
+        PrettyPrintAny(l_xml, 'Xml', 120)
         self.assertEqual(l_xml.EmailFromAddress, 'mail.sender@Gmail.Com', 'Bad From Address')
         self.assertEqual(l_xml.EmailToAddress, 'mail.receiver@Gmail.Com', 'Bad To Address')
         self.assertEqual(l_xml.GmailLogin, 'TestAccount@Gmail.Com', 'Bad Login')
         self.assertEqual(l_xml.GmailPassword, 'Test=!=Password', 'Bad Password')
-        PrettyPrintAny(l_xml, 'Xml', 120)
 
-    def test_0220_Write(self):
+
+
+class C03_Write(SetupMixin, unittest.TestCase):
+    """
+    This section will verify the XML in the 'Modules.test.xml_data' file is correct and what the node_local module can read/write.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        self.m_api = send_email.API()
+        self.m_email_obj = EmailData()
+
+    def test_03_All(self):
         l_xml = self.m_api.read_xml(self.m_pyhouse_obj)
         l_ret = self.m_api.write_xml(l_xml)
-        PrettyPrintAny(l_xml, 'Parsed', 120)
         PrettyPrintAny(l_ret, 'XML', 120)
 
-    def test_0290_Send(self):
+
+
+class C04_Send(SetupMixin, unittest.TestCase):
+    """
+    This section will verify the XML in the 'Modules.test.xml_data' file is correct and what the node_local module can read/write.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        self.m_api = send_email.API()
+        self.m_email_obj = EmailData()
+
+    def test_01_One(self):
         l_xml = self.m_api.read_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Computer.Email = l_xml
         l_ret = self.m_api.create_email_message(self.m_pyhouse_obj, l_xml.EmailToAddress, 'Test Subject', 'Test email Body', 'Test Attachment')

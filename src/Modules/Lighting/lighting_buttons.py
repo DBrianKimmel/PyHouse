@@ -19,7 +19,7 @@ LOG = Logging.getLogger('PyHouse.LightgButton')
 
 
 
-class ButtonsAPI(ReadWriteConfigXml):
+class LBApi(ReadWriteConfigXml):
 
     m_count = 0
 

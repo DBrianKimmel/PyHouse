@@ -53,6 +53,8 @@ class FamUtil(object):
 
     @staticmethod
     def get_family(p_device_obj):
+        """
+        """
         try:
             l_family = p_device_obj.ControllerFamily
         except AttributeError as e_err:
@@ -77,10 +79,8 @@ class FamUtil(object):
     @staticmethod
     def read_family_data(p_pyhouse_obj, p_device_obj, p_xml):
         l_api = FamUtil.get_family_api(p_pyhouse_obj, p_device_obj)
-        # print('Family_utils Api: {}'.format(l_api))
         try:
             l_ret = l_api.ReadXml(p_device_obj, p_xml)
-            # PrettyPrintAny(l_ret, 'Family_utils - line 64')
         except Exception as e_err:
             l_ret = 'ERROR in family_utils.read_family_data.  Device:"{}"  - {}'.format(p_device_obj.Name, e_err)
             LOG.error(l_ret)

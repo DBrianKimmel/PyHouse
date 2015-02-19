@@ -19,7 +19,7 @@ from Modules.Lighting import lighting_buttons
 from Modules.Families import family
 from Modules.Core import conversions
 from Modules.Web import web_utils
-from test.xml_data import XML_LONG
+from test.xml_data import *
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
 
@@ -38,7 +38,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
-        self.m_api = lighting_buttons.ButtonsAPI(self.m_pyhouse_obj)
+        self.m_api = lighting_buttons.LBApi(self.m_pyhouse_obj)
         self.m_controller_obj = ButtonData()
 
     def test_0202_find_xml(self):

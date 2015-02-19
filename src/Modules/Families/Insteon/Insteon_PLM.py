@@ -29,7 +29,7 @@ from Modules.Core import conversions
 from Modules.Families.Insteon.Insteon_data import InsteonData
 from Modules.Utilities.tools import PrintBytes
 from Modules.Families.Insteon.Insteon_constants import COMMAND_LENGTH, MESSAGE_LENGTH, MESSAGE_TYPES, PLM_COMMANDS, STX
-from Modules.Families.Insteon import Insteon_utils
+from Modules.Families.Insteon.Insteon_utils import Util
 from Modules.Families.Insteon import Insteon_decoder
 from Modules.Computer import logging_pyh as Logger
 from Modules.Families.family_utils import FamUtil
@@ -68,9 +68,8 @@ class ControllerData(InsteonData):
     The USB controller that I have actually uses the Serial protocol so the serial driver
     is used.
 
-    Although there is a manual for Insteon controllers, much of the development was
-    empirically derived.  For this reason, there is a whole lot of debugging code and
-    output.
+    Although there is a manual for Insteon controllers, much of the development was empirically derived.
+    For this reason, there is a whole lot of debugging code and output.
     """
 
     def __init__(self):
@@ -105,13 +104,11 @@ class Commands(object):
         @param p_cmd1: is the first command byte
         @param p_cmd2: is the second command byte
         """
-        # LOG.info('Send Command(62) - To: {}  {}'.format(p_obj.Name, p_obj.InsteonAddress))
         l_command = Utility._create_command_message('insteon_send')
-        Insteon_utils.int2message(p_obj.InsteonAddress, l_command, 2)
+        Util.int2message(p_obj.InsteonAddress, l_command, 2)
         l_command[5] = FLAG_MAX_HOPS + FLAG_HOPS_LEFT  # 0x0F
         l_command[6] = p_obj._Command1 = p_cmd1
         l_command[7] = p_obj._Command2 = p_cmd2
-        # LOG.info("Device: {}, Command: {},{}, {}".format(p_obj.Name, p_cmd1, p_cmd2, Utility._format_address(l_command[2:5])))
         Utility._queue_command(p_controller_obj, l_command)
 
     def queue_63_command(self, p_controller_obj):
@@ -178,7 +175,7 @@ class Commands(object):
         l_command[2] = p_code
         l_command[3] = p_flag
         l_command[4] = p_light_obj.GroupNumber
-        Insteon_utils.int2message(p_light_obj.InsteonAddress, l_command, 5)
+        Util.int2message(p_light_obj.InsteonAddress, l_command, 5)
         l_command[8:11] = p_data
         Utility._queue_command(p_controller_obj, l_command)
 

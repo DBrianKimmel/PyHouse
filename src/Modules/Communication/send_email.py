@@ -19,7 +19,11 @@ If you don't have an account - get one or write another module to handle your ma
 # Import system type stuff
 import email.mime.application
 import xml.etree.ElementTree as ET
+# from openSSL.SSL import SSLv3_METHOD
 from twisted.internet.defer import Deferred
+# from twisted.internet.ssl import ClientContextFactory
+from twisted.mail.smtp import ESMTPSenderFactory
+
 try:
     from cStringIO import cStringIO as StringIO
 except ImportError:
@@ -35,7 +39,7 @@ LOG = Logger.getLogger('PyHouse.Email      ')
 
 
 
-class ReadWriteConfigXml(PutGetXML):
+class ApiXml(PutGetXML):
     """
     """
     m_count = 0
@@ -62,7 +66,7 @@ class ReadWriteConfigXml(PutGetXML):
         return l_xml
 
 
-class Utility(ReadWriteConfigXml):
+class Utility(ApiXml):
     """
     """
 
@@ -88,15 +92,21 @@ class Utility(ReadWriteConfigXml):
         # Create a context factory which only allows SSLv3 and does not verify the peer's certificate.
         return str(l_msg)
 
-    def send_email_message(self, p_pyhouse_obj, smtp_server, smtp_port, username, password, from_, to, msg):
-        # contextFactory = ClientContextFactory()
-        # contextFactory.method = SSLv3_METHOD
-        resultDeferred = Deferred()
-        _mime_obj = StringIO(str(msg))
-        # senderFactory = ESMTPSenderFactory(username, password, from_, to, mime_obj, resultDeferred, contextFactory = contextFactory)
-        # reactor.connectTCP(smtp_server, smtp_port, senderFactory)
+    def send_email_message(self, p_pyhouse_obj, p_smtp_server, p_smtp_port, p_username, p_password,
+                           p_fromaddress, p_toaddress, p_message):
+        l_contextFactory = ClientContextFactory()
+        l_contextFactory.method = SSLv3_METHOD
+        l_deferred = Deferred()
+        _mime_obj = StringIO(str(p_message))
+        l_senderFactory = ESMTPSenderFactory(
+            p_username, p_password,
+            p_fromaddress, p_toaddress,
+            p_message,
+            l_deferred,
+            contextFactory = l_contextFactory)
+        p_pyhouse_obj.Twisted.Reactor.connectTCP(p_smtp_server, p_smtp_port, l_senderFactory)
         print "Sending Email"
-        return resultDeferred
+        return l_deferred
 
 
 class API(Utility):

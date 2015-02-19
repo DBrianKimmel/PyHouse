@@ -17,7 +17,7 @@ This module:
     Starts services on the local node (i.e. ir_service).
 
 The discovered services may be fooled by non PyHouse devices plugged into the computer
-  so it is possible to override the role via configuration.
+  so it will be possible to override the role via configuration.
 Once overridden the new role will "stick" by being written into the local XML file.
 """
 
@@ -143,7 +143,7 @@ class HandleNodeType(object):
 
 
 
-class Utility(object):
+class Util(object):
 
     def _is_camera_node(self):
         """
@@ -250,20 +250,21 @@ class Utility(object):
         if g_debug >= 1:
             LOG.info('Nodes = {0:}'.format(p_pyhouse_obj.Compute.Nodes))
 
-    def create_local_node(self):
+    @staticmethod
+    def create_local_node():
         l_node = NodeData()
         l_api = GetAllInterfaceData()
         l_api.get_all_interfaces(l_node)
         return l_node
 
 
-class API(Utility):
+class API(Util):
 
     m_pyhouse_obj = None
 
     def Start(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        p_pyhouse_obj.Computer.Nodes[0] = self.create_local_node()
+        p_pyhouse_obj.Computer.Nodes[0] = Util.create_local_node()
         self.get_node_info(p_pyhouse_obj)
         p_pyhouse_obj.Computer.Nodes[0].NodeRole = self.find_node_role()
         self.init_node_type(p_pyhouse_obj)

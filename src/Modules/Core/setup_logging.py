@@ -63,7 +63,7 @@ LOGGING_DICT = {
 }
 
 LOGGER_NAME = 'PyHouse                '
-LOGGER_NAME_TWISTED = 'PyHouse.Twisted       '
+LOGGER_NAME_TWISTED = 'PyHouse.Twisted.....   '
 
 # Import system type stuff
 import logging.config
