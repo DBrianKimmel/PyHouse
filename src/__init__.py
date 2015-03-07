@@ -21,6 +21,13 @@ Requirements:
 
 
 
+Windows:
+    pip install dateutils
+    pip install netaddr
+
+
+
+
 Overall documentation.
 
 Each module will most likely contain an 'API' class.  The constructor for
