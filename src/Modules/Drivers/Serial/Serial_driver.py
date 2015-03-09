@@ -64,7 +64,7 @@ class SerialAPI(object):
         except Exception as e_err:
             LOG.error("ERROR Open failed for Device:{0:}, Port:{1:} - {2:}".format(p_controller_obj.Name, p_controller_obj.Port, e_err))
             return False
-        LOG.info("Opened Device:{0:}, Port:{1:}".format(p_controller_obj.Name, p_controller_obj.Port))
+        LOG.info("Opened Device:{}, Port:{}".format(p_controller_obj.Name, p_controller_obj.Port))
         return True
 
     def close_device(self, p_controller_obj):
@@ -77,16 +77,12 @@ class SerialAPI(object):
 
     def fetch_read_data(self, p_controller_obj):
         l_msg = p_controller_obj._Data
-        if len(l_msg) > 0:
-            # LOG.info("Fetch Read Data {0:}".format(PrintBytes(l_msg)))
-            pass
         p_controller_obj._Data = bytearray()
         return l_msg
 
     def write_device(self, p_message):
         """Send the command to the PLM and wait a very short time to be sure we sent it.
         """
-        # LOG.info("Writing {0:}".format(PrintBytes(p_message)))
         if self.m_active:
             try:
                 self.m_serial.writeSomeData(p_message)
@@ -102,30 +98,27 @@ class API(SerialAPI):
 
     def Start(self, p_pyhouse_obj, p_controller_obj):
         """
-        @param p_controller_obj:is the Controller_Data object for a serial device to open.
+        @param p_controller_obj: is the Controller_Data object for a serial device to open.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_controller_obj = p_controller_obj
         self.m_controller_obj = p_controller_obj
         l_ret = self.open_serial_driver(p_pyhouse_obj, p_controller_obj)
         self.m_active = l_ret
         if l_ret:
-            LOG.info("Started Serial controller {0:}".format(self.m_controller_obj.Name))
+            LOG.info("Started Serial controller {}".format(self.m_controller_obj.Name))
         else:
-            LOG.error('ERROR - failed to start Serial controller {0:}'.format(self.m_controller_obj.Name))
+            LOG.error('ERROR - failed to start Serial controller {}'.format(self.m_controller_obj.Name))
         return l_ret
 
     def Stop(self):
         self.close_device(self.m_controller_obj)
-        LOG.info("Stopped controller {0:}".format(self.m_controller_obj.Name))
+        LOG.info("Stopped controller {}".format(self.m_controller_obj.Name))
 
     def Read(self):
         """
         Non-Blocking read from the serial port.
         """
-        l_ret = self.fetch_read_data(self.m_controller_obj)
-        # LOG.info('Reading - {}'.format(l_ret))
-        return l_ret
+        return self.fetch_read_data(self.m_controller_obj)
 
     def Write(self, p_message):
         """
