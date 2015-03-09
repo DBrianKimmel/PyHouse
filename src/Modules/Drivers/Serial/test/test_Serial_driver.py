@@ -32,7 +32,7 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-class Test_03_API(SetupMixin, unittest.TestCase):
+class A01_API(SetupMixin, unittest.TestCase):
     """
     """
 
@@ -48,23 +48,23 @@ class Test_03_API(SetupMixin, unittest.TestCase):
         l_obj.BaudRate = 19200
         return l_obj
 
-    def test_0301_Init(self):
+    def test_01_Init(self):
         pass
 
-    def test_0302_Start(self):
+    def test_02_Start(self):
         self._fake_params()
         self.m_api.Start(self.m_pyhouse_obj, self.m_controller_obj)
         PrettyPrintAny(self.m_controller_obj, 'Controller Obj', 120)
 
-    def test_0303_Stop(self):
+    def test_03_Stop(self):
         self.m_api.Start(self.m_pyhouse_obj, self.m_controller_obj)
         self.m_api.Stop()
 
-    def test_0304_Read(self):
+    def test_04_Read(self):
         self.m_api.Start(self.m_pyhouse_obj, self.m_controller_obj)
         self.m_api.Read()
 
-    def test_0305_Write(self):
+    def test_05_Write(self):
         self.m_api.Start(self.m_pyhouse_obj, self.m_controller_obj)
         self.m_api.Write('xxx')
 

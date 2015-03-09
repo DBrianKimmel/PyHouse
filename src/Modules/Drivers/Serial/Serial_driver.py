@@ -4,7 +4,7 @@
 @name: PyHouse/src/Modules/Drivers/Serial/Serial_driver.py
 @author: D. Brian Kimmel
 @contact: D.BrianKimmel@gmail.com
-@copyright: 2010-2014 by D. Brian Kimmel
+@copyright: 2010-2015 by D. Brian Kimmel
 @note: Created on Feb 18, 2010
 @license: MIT License
 @summary: This module is for driving serial devices
@@ -18,10 +18,8 @@ Some serial USB Dongles also are controlled by this driver as they emulate a ser
 """
 
 # Import system type stuff
-from twisted.internet import reactor
 from twisted.internet.protocol import Protocol
 from twisted.internet.serialport import SerialPort
-import serial
 
 # Import PyMh files
 from Modules.Utilities.tools import PrintBytes
@@ -54,7 +52,7 @@ class SerialAPI(object):
     m_bytes = 0
     m_serial = None
 
-    def twisted_open_device(self, p_controller_obj):
+    def open_serial_driver(self, p_pyhouse_obj, p_controller_obj):
         """
         @return: True if the driver opened OK and is usable
                  False if the driver is not functional for any reason.
@@ -62,8 +60,8 @@ class SerialAPI(object):
         p_controller_obj._Data = ''
         try:
             self.m_serial = SerialPort(SerialProtocol(p_controller_obj), p_controller_obj.Port,
-                    reactor, baudrate = p_controller_obj.BaudRate)
-        except serial.serialutil.SerialException as e_err:
+                    p_pyhouse_obj.Twisted.Reactor, baudrate = p_controller_obj.BaudRate)
+        except Exception as e_err:
             LOG.error("ERROR Open failed for Device:{0:}, Port:{1:} - {2:}".format(p_controller_obj.Name, p_controller_obj.Port, e_err))
             return False
         LOG.info("Opened Device:{0:}, Port:{1:}".format(p_controller_obj.Name, p_controller_obj.Port))
@@ -109,7 +107,7 @@ class API(SerialAPI):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_controller_obj = p_controller_obj
         self.m_controller_obj = p_controller_obj
-        l_ret = self.twisted_open_device(p_controller_obj)
+        l_ret = self.open_serial_driver(p_pyhouse_obj, p_controller_obj)
         self.m_active = l_ret
         if l_ret:
             LOG.info("Started Serial controller {0:}".format(self.m_controller_obj.Name))
