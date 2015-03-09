@@ -3,7 +3,7 @@
 
 @name: PyHouse/src/Modules/families/Null/Null_device.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @Copyright (c) 2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Aug 6, 2014
@@ -14,10 +14,10 @@
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 
 g_debug = 1
-LOG = pyh_log.getLogger('PyHouse.Null_device ')
+LOG = Logger.getLogger('PyHouse.Null_device ')
 
 
 class API(object):
@@ -26,10 +26,14 @@ class API(object):
 
     def Start(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        LOG.error('ERROR - Null_device Start was called')
 
     def ReadXml(self, p_obj, p_xml):
-        LOG.error('ERROR - Null_device ReadXml was called')
+        pass
+
+    def SaveXml(self, p_xml):
+        pass
+
+    def WriteXml(self, p_out_xml, p_device):
         pass
 
 # ## END DBK

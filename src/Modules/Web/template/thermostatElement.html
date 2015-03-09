@@ -1,34 +1,16 @@
-<!-- PyHouse/src/web/templates/thermostatElement.html
+<!-- PyHouse/src/Modules/Web/template/thermostatElement.html
 -->
-<div
+<div id='ThermostatDiv'
+    class='Thermostat'
     xmlns:athena='http://divmod.org/ns/athena/0.7'
     xmlns:nevow='http://nevow.com/ns/nevow/0.1'
-    nevow:render='liveElement'
-    class = 'Thermostat'
-    id = 'ThermostatDiv' >
-    <div id='ThermostatButtonsDiv'>
-        <h2>Select a Button (or Add):</h2>
-        <table style = 'Width: 60%;'>
-            <tr id='UrlRow'><td>IP Discovery URL</td><td><div id='UrlDiv'></div></td></tr>
-            <tr id='ExtDelayRow'><td>IP Discovery Delay</td><td><div id='ExtDelayDiv'></div></td></tr>
-            <tr id='ExtIpRow'><td>External IP</td><td><div id='ExtIpDiv'></div></td></tr>
-        </table>
-		<div id='ThermostatTableDiv'>
-		</div>
+    nevow:render='liveElement'>
+
+    <div class='lcars-container' >
+        <div id='SelectionButtonsDiv'></div>
+        <div id='DataEntryDiv'></div>
     </div>
-    <div id='ThermostatEntryDiv'>
-        <h2>Enter Thermostat data (or Delete)</h2>
-        <table style = 'Width: 60%;'>
-            <tr id='NameRow'><td>Name</td><td><div id='DynDnsNameDiv'></div></td></tr>
-            <tr id='KeyRow'><td>Key</td><td><div id='DynDnsKeyDiv'></div></td></tr>
-            <tr id='ActiveRow'><td>Active</td><td><div id='DynDnsActiveDiv'></div></td></tr>
-            <tr id='DynDnsUrlRow'><td>DynDns URL</td><td><div id='DynDnsUrlDiv'></div></td></tr>
-            <tr id='DynDnsIntervalRow'><td>DynDns Update Interval</td><td><div id='DynDnsIntervalDiv'></div></td></tr>
-        </table>
-        <div id='ThermostatEntryButtonsDiv'>
-        </div>
-    </div>
+
 </div>
 <!--
 ### END DBK -->
- 

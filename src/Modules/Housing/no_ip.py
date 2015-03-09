@@ -2468,14 +2468,14 @@ void autoconf()
 
 # Import system type stuff
 
-from Modules.utils import pyh_log
+from Modules.Computer import logging_pyh as Logger
 
 
 g_debug = 1
 # 0 = off
 # 1 = log extra info
 # + = NOT USED HERE
-LOG = pyh_log.getLogger('PyHouse.No-Ip       ')
+LOG = Logger.getLogger('PyHouse.No-Ip       ')
 
 
 def bencode():

@@ -1,32 +1,16 @@
 <!-- PyHouse/src/web/templates/buttonsElement.html
 -->
-<div 
+<div id='ButtonsDiv'
+    class = "Buttons"
     xmlns:athena = 'http://divmod.org/ns/athena/0.7'
     xmlns:nevow  = 'http://nevow.com/ns/nevow/0.1'
-    nevow:render = 'liveElement'
-    class = "Buttons"
-    id = 'ButtonsDiv' >
-    <div id='ButtonButtonsDiv'>
-       <h2>Select a Button (or Add):</h2>
-       <div id='ButtonTableDiv'>
-       </div>
+    nevow:render = 'liveElement'>
+
+    <div class='lcars-container' >
+        <div id='SelectionButtonsDiv'></div>
+        <div id='DataEntryDiv'></div>
     </div>
-    <div id='ButtonEntryDiv'>
-        <h2>Enter Button data (or Delete)</h2>
-		<table  id='ButtonEntryTable' style = 'Width: 100%;'>
-            <tr id='nameRow'><td>Name</td><td><div id='NameDiv'></div></td></tr>
-            <tr id='KeyRow'><td>Key</td><td><div id='KeyDiv'></div></td>
-                <td><div id='UUIDDiv'></div></td></tr>
-            <tr id='ActiveRow'><td>Active</td><td><div id='ActiveDiv'></div></td></tr>
-            <tr id='TypeRow'><td>Type</td><td><div id='TypeDiv'></div></td></tr>
-            <tr id='FamilyRow'><td>Family</td><td><div id='FamilyDiv'></div></td></tr>
-            <tr id='RoomNameRow'><td>Room</td><td><div id='RoomNameDiv'></div></td></tr>
-            <tr id='CoordsRow'><td>Coords</td><td><div id='CoordsDiv'></div></td></tr>
-            <tr id='CommentRow'><td>Comment</td><td><div id='CommentDiv'></div></td></tr>
-		</table>
-        <div id='ButtonEntryButtonsDiv'>
-        </div>
-    </div>
+
 </div>
 <!--
 ### EBD DBK -->

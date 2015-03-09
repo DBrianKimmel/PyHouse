@@ -1,7 +1,7 @@
 """
 Housing package documentation.
 
-The houseing package allows more than one house to be in the XML file
+The housing package allows more than one house to be in the XML file
 at a time.  We live in two different houses and take the development
 computer back and forth between them.  Having several houses in the
 XML file keeps the data from the previous year intact.  In addition,
@@ -22,7 +22,7 @@ Each house can draw itself on a canvas and show lights in the proper
 rooms with their proper current status.
 
 Starting with Version 1.3.0 the concept of multiple houses is dropped.
-Since the Pi - it is silly to try and control multiple houses wuth one computer.
+Since the Pi - it is silly to try and control multiple houses with one computer.
 
 This should also clean up a lot of murky logic as to which house we are working on.
 """

@@ -3,11 +3,15 @@
 
 @name: PyHouse/src/Modules/computer/computer.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
 @note: Created on Jun 24, 2014
 @license: MIT License
 @summary: Handle the computer information.
+
+This handles the Computer part of the node.  (The other part is "house").
+
+This takes care of starting all the computer modules.
 
 """
 
@@ -16,15 +20,16 @@ from xml.etree import ElementTree as ET
 
 # Import PyHouse files
 from Modules.Core.data_objects import ComputerInformation
-from Modules.Computer import internet
+from Modules.Computer.Internet import internet
 from Modules.Computer.Nodes import nodes
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities.xml_tools import XmlConfigTools
 from Modules.Web import web_server
 # from Modules.Utilities.tools import PrettyPrintAny
 
-g_debug = 9
-LOG = pyh_log.getLogger('PyHouse.Computer    ')
+LOG = Logger.getLogger('PyHouse.Computer       ')
+
+MODULES = ['Communication', 'Internet' , 'Node', 'Weather', 'Web']
 
 
 class ReadWriteConfigXml(XmlConfigTools):
@@ -48,29 +53,25 @@ class Utility(ReadWriteConfigXml):
         p_pyhouse_obj.Computer = ComputerInformation()
 
     def add_api_references(self, p_pyhouse_obj):
-        p_pyhouse_obj.APIs.InternetAPI = internet.API()
-        # p_pyhouse_obj.APIs.LogsAPI = pyh_log.API()
-        p_pyhouse_obj.APIs.NodesAPI = nodes.API()
-        p_pyhouse_obj.APIs.WebAPI = web_server.API()
+        p_pyhouse_obj.APIs.Comp.InternetAPI = internet.API()
+        p_pyhouse_obj.APIs.Comp.NodesAPI = nodes.API()
+        p_pyhouse_obj.APIs.Comp.WebAPI = web_server.API()
 
     def start_component_apis(self, p_pyhouse_obj):
-        p_pyhouse_obj.APIs.InternetAPI.Start(p_pyhouse_obj)
-        # p_pyhouse_obj.APIs.LogsAPI.Start(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.NodesAPI.Start(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.WebAPI.Start(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.Comp.InternetAPI.Start(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.Comp.NodesAPI.Start(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.Comp.WebAPI.Start(p_pyhouse_obj)
 
     def stop_component_apis(self, p_pyhouse_obj):
-        p_pyhouse_obj.APIs.InternetAPI.Stop()
-        # p_pyhouse_obj.APIs.LogsAPI.Stop()
-        p_pyhouse_obj.APIs.NodesAPI.Stop()
-        p_pyhouse_obj.APIs.WebAPI.Stop()
+        p_pyhouse_obj.APIs.Comp.InternetAPI.Stop()
+        p_pyhouse_obj.APIs.Comp.NodesAPI.Stop()
+        p_pyhouse_obj.APIs.Comp.WebAPI.Stop()
 
     def save_component_apis(self, p_pyhouse_obj):
         l_xml = self.write_computer_xml()
-        p_pyhouse_obj.APIs.InternetAPI.SaveXml(l_xml)
-        # p_pyhouse_obj.APIs.LogsAPI.SaveXml(l_xml)
-        p_pyhouse_obj.APIs.NodesAPI.SaveXml(l_xml)
-        p_pyhouse_obj.APIs.WebAPI.SaveXml(l_xml)
+        p_pyhouse_obj.APIs.Comp.InternetAPI.SaveXml(l_xml)
+        p_pyhouse_obj.APIs.Comp.NodesAPI.SaveXml(l_xml)
+        p_pyhouse_obj.APIs.Comp.WebAPI.SaveXml(l_xml)
         return l_xml
 
 
@@ -78,15 +79,11 @@ class API(Utility):
     """
     """
 
-    def __init__(self):
-        """
-        """
-
     def Start(self, p_pyhouse_obj):
         """
         Start processing
         """
-        LOG.info('Starting')
+        # LOG.info('Starting')
         self.m_pyhouse_obj = p_pyhouse_obj
         self.update_pyhouse_obj(p_pyhouse_obj)
         self.add_api_references(p_pyhouse_obj)
@@ -101,7 +98,7 @@ class API(Utility):
         self.stop_component_apis(self.m_pyhouse_obj)
         LOG.info("Stopped.")
 
-    def SaveXml(self, p_xml):
+    def WriteXml(self, p_xml):
         """
         Take a snapshot of the current Configuration/Status and write out an XML file.
         """

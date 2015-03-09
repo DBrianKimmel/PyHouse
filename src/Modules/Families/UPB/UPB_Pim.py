@@ -1,9 +1,9 @@
 """
-Modules/families/UPB/UPB_Pim.py
+-*- test-case-name: PyHouse.src.Modules.Families.UPB.test.test_UPB_Pim -*-
 
-@name: PyHouse/src/Modules/families/UPB/Device_UPB.py
+@name: PyHouse/src/Modules/Families/UPB/UPB_Pim.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @copyright: 2011-2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Mar 27, 2011
@@ -18,10 +18,11 @@ import Queue
 # Import PyMh files
 from Modules.Families.UPB.UPB_data import UPBData
 from Modules.Utilities.tools import PrintBytes
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
+from Modules.Families.family_utils import FamUtil
 
 g_debug = 9
-LOG = pyh_log.getLogger('PyHouse.UPB_PIM     ')
+LOG = Logger.getLogger('PyHouse.UPB_PIM        ')
 
 
 # UPB Control Word
@@ -206,7 +207,7 @@ class BuildCommand(object):
 
 class UpbPimUtility(object):
 
-    def _compose_command(self, p_controller_obj, _p_command, _p_device_id, *p_args):
+    def _compose_command(self, _p_controller_obj, _p_command, _p_device_id, *p_args):
         """Build the command.
 
         @param p_controller_obj: is the controller information.
@@ -401,23 +402,6 @@ class CreateCommands(UpbPimUtility, PimDriverInterface, BuildCommand):
 
 class UpbPimAPI(CreateCommands):
 
-    def _load_driver(self, p_controller_obj):
-        """
-        Select a driver depending on the controller's interface type.
-
-        """
-        l_driver = None
-        if p_controller_obj.InterfaceType.lower() == 'serial':
-            from Modules.drivers.Serial import Driver_Serial
-            l_driver = Driver_Serial.API()
-        elif p_controller_obj.InterfaceType.lower() == 'ethernet':
-            from Modules.drivers.Ethernet import Driver_Ethernet
-            l_driver = Driver_Ethernet.API()
-        elif p_controller_obj.InterfaceType.lower() == 'usb':
-            from Modules.drivers.USB import Driver_USB
-            l_driver = Driver_USB.API()
-        return l_driver
-
     def _initilaize_pim(self, p_controller_obj):
         l_pim = UPBData()
         l_pim.InterfaceType = p_controller_obj.InterfaceType
@@ -432,12 +416,11 @@ class UpbPimAPI(CreateCommands):
         """
         """
         p_controller_obj._Queue = Queue.Queue(300)
-        if g_debug >= 1:
-            LOG.debug("start_controller() - InterfaceType:{0:}".format(p_controller_obj.InterfaceType))
+        LOG.info("start:{} - InterfaceType:{}".format(p_controller_obj.Name, p_controller_obj.InterfaceType))
         self.m_pim = self._initilaize_pim(p_controller_obj)
-        l_driver = self._load_driver(p_controller_obj)
+        l_driver = FamUtil.get_device_driver_API(p_controller_obj)
+        p_controller_obj._DriverAPI = l_driver
         l_driver.Start(p_pyhouse_obj, p_controller_obj)
-        p_pyhouse_obj.House.OBJs.Controllers[p_controller_obj.Key]._DriverAPI = l_driver
         self.m_pim._DriverAPI = l_driver
         self.set_register_value(p_controller_obj, 0x70, [0x03])
         self.null_command(p_controller_obj)

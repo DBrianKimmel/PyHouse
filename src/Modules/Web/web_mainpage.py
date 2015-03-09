@@ -72,12 +72,13 @@ from Modules.Web import web_houseSelect
 from Modules.Web import web_internet
 from Modules.Web import web_lights
 from Modules.Web import web_login
-from Modules.Web import web_logs
+from Modules.Web import web_nodes
 from Modules.Web import web_rooms
 from Modules.Web import web_rootMenu
 from Modules.Web import web_schedules
+from Modules.Web import web_thermostats
 from Modules.Web import web_webs
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 
 
 # Handy helper for finding external resources nearby.
@@ -89,14 +90,7 @@ jspath = os.path.join(webpath, 'js')
 templatepath = os.path.join(webpath, 'template')
 
 g_debug = 0
-# 0 = off
-# 1 = log extra info
-# 2 = major routine entry
-# 3 = Config file handling
-# 4 = Basic data
-# 5 = Detail Data
-# + = NOT USED HERE
-LOG = pyh_log.getLogger('PyHouse.webMainpage ')
+LOG = Logger.getLogger('PyHouse.webMainpage    ')
 
 
 class FileNoListDir(static.File):
@@ -115,8 +109,8 @@ class TheRoot(rend.Page):
     """This is the root - given to the app server!
     """
 
-    def __init__(self, staticpath, p_pyhouses_obj, *args, **kw):
-        self.m_pyhouse_obj = p_pyhouses_obj
+    def __init__(self, staticpath, p_pyhouse_obj, *args, **kw):
+        self.m_pyhouse_obj = p_pyhouse_obj
         if staticpath == None:
             l_jspath = util.sibpath(jspath, 'js')
             staticpath = os.path.join(l_jspath, '', 'resource')
@@ -148,6 +142,7 @@ class mainPageFactory:
         self.Clients = {}
         l_siteJSPackage = athena.AutoJSPackage(jspath)
         _l_siteCSSPackage = athena.AutoCSSPackage(csspath)
+        LOG.info('CSS - {}'.format(_l_siteCSSPackage))
         athena.jsDeps.mapping.update(l_siteJSPackage.mapping)
 
     def addClient(self, client):
@@ -263,9 +258,10 @@ class MainPage(athena.LivePage):
     jsClass = u'mainPage.mainPage'
     docFactory = loaders.xmlfile(os.path.join(templatepath, 'mainpage.html'))
 
-    def __init__(self, p_pyhouses_obj):
-        self.m_pyhouse_obj = p_pyhouses_obj
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
         super(MainPage, self).__init__()
+        LOG.info('Main Page Initializing')
 
     def child_jsmodule(self, _ctx):
         return MappingCompressedResource(self.jsModules.mapping)
@@ -314,10 +310,10 @@ class Workspace(athena.LiveElement):
     PG_UNKNOWN = -1
     PG_INITED = 0
 
-    def __init__(self, p_pyhouses_obj, uid = None):
-        self.m_pyhouse_obj = p_pyhouses_obj
+    def __init__(self, p_pyhouse_obj, uid = None):
+        self.m_pyhouse_obj = p_pyhouse_obj
         super(Workspace, self).__init__()
-        LOG.info('web_mainpage Workspace initialized.')
+        LOG.info('Workspace initialized.')
         self.state = self.PG_INITED
         self.uid = uid
 
@@ -331,68 +327,70 @@ class Workspace(athena.LiveElement):
 
     @athena.expose
     def inject_404(self):
+        LOG.info("404 called from browser")
         f = FourOfour()
         f.setFragmentParent(self)
         return f
 
     @athena.expose
     def buttons(self, p_params):
-        LOG.info("buttons called")
+        LOG.info("Buttons loaded into browser")
         l_element = web_buttons.ButtonsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def clock(self, _p_params):
-        LOG.info("clock called")
+        LOG.info("Clock loaded into browser")
         l_element = web_clock.ClockElement()
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def controllers(self, p_params):
-        LOG.info("controllers called")
+        LOG.info("Controllers loaded into browser")
         l_element = web_controllers.ControllersElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def controlLights(self, p_params):
-        LOG.info("controlLights called")
+        LOG.info("Control Lights loaded into browser")
         l_element = web_controlLights.ControlLightsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def house(self, _p_params):
-        LOG.info("house called from browser")
+        LOG.info("House loaded into browser")
         l_element = web_house.HouseElement(self)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def houseMenu(self, _p_params):
-        LOG.info("houseMenu called from browser")
+        LOG.info("House Menu loaded into browser")
         l_element = web_houseMenu.HouseMenuElement(self)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def houseSelect(self, _p_params):
-        LOG.info("houseSelect called from browser")
+        LOG.info("House Select loaded into browser")
         l_element = web_houseSelect.HouseSelectElement(self)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def internet(self, p_params):
-        LOG.info("internet called from browser")
+        LOG.info("Internet loaded into browser")
         l_element = web_internet.InternetElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def lights(self, p_params):
+        LOG.info("Lights loaded into browser")
         l_element = web_lights.LightsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
@@ -401,40 +399,49 @@ class Workspace(athena.LiveElement):
     def login(self, _p_params):
         """ Place and display the login widget.
         """
-        LOG.info("login called from browser")
+        LOG.info("Login loaded into browser")
         l_element = web_login.LoginElement(self)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
-    def logs(self, p_params):
-        l_element = web_logs.LogsElement(self, p_params)
-        l_element.setFragmentParent(self)
-        return l_element
-
-    @athena.expose
     def rooms(self, p_params):
-        LOG.info("rooms called")
+        LOG.info("Rooms loaded into browser")
         l_element = web_rooms.RoomsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
+    def nodes(self, p_params):
+        LOG.info("Nodes loaded into browser")
+        l_element = web_nodes.NodesElement(self, p_params)
+        l_element.setFragmentParent(self)
+        return l_element
+
+    @athena.expose
     def rootMenu(self, _p_params):
-        LOG.info("rootMenu called")
+        LOG.info("Root Menu loaded into browser")
         l_element = web_rootMenu.RootMenuElement(self)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def schedules(self, p_params):
-        LOG.info("schedules called")
+        LOG.info("schedules loaded into browser")
         l_element = web_schedules.SchedulesElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
+    def thermostats(self, p_params):
+        LOG.info("Thermostats loaded into browser")
+        l_element = web_thermostats.ThermostatsElement(self, p_params)
+        l_element.setFragmentParent(self)
+        return l_element
+
+    @athena.expose
     def webs(self, p_params):
+        LOG.info("Web-s loaded into browser")
         l_element = web_webs.WebsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
@@ -443,8 +450,6 @@ class Workspace(athena.LiveElement):
 
     @athena.expose
     def guiready(self):
-        pass
-
         def cb_usermatch(p_user):  # select usually returns a list, knowing that we have unique results
             reqtype = REQ_404  # the result is unpacked already and a single item returned
             udata = {}
@@ -457,7 +462,6 @@ class Workspace(athena.LiveElement):
                     else:
                         udata[uc(k)] = p_user[k]
             return reqtype, udata
-
         def cb_rootmatch(_res):  # select usually returns a list, knowing that we have unique results
             reqtype = REQ_ROOT  # the result is unpacked already and a single item returned
             udata = {}
@@ -469,10 +473,9 @@ class Workspace(athena.LiveElement):
                 else:
                     udata[uc(k)] = user[k]
             return reqtype, udata
-
         def eb_nomatch():
             pass
-
+        LOG.info('GuiReady called')
         if self.uid and len(self.uid) == 32:
             l_defer = self.page.userstore.getUserWithUID(self.uid)
             l_defer.addCallback(cb_usermatch)
@@ -483,16 +486,17 @@ class Workspace(athena.LiveElement):
             l_defer.addErrback(eb_nomatch)
         return l_defer
 
+
 #==============================================================================
 
-def factory(ctx, segments, p_pyhouses_obj):
+def factory(ctx, segments, p_pyhouse_obj):
     """ If segments contains a liveID (len = 32) the page stored in self.Clients will be returned.
     Status of the given page is stored in the page object itself and nowhere else.
     """
     seg0 = segments[0]
     if seg0 == '':
         # Starting page - no segments yet
-        return MainPage(p_pyhouses_obj), segments[1:]
+        return MainPage(p_pyhouse_obj), segments[1:]
     elif _mainPageFactory.Clients.has_key(seg0):
         # xxx
         return _mainPageFactory.Clients[seg0], segments[1:]
@@ -528,6 +532,7 @@ def dc(msg):
     else:
         return msg.encode('iso-8859-1')
 
+
 def dumpObjects(delta = True, limit = 0, include = [], exclude = []):
     global prev
     if include != [] and exclude != []:
@@ -555,10 +560,10 @@ def dumpObjects(delta = True, limit = 0, include = [], exclude = []):
                 print('%0.6d -- %0.6d -- ' % (dt, objects[name]), name)
             prev[name] = objects[name]
 
+
 def getObjects(oname):
     """
-    gets an object list with all the named objects out of the sea of
-    gc'ed objects
+    gets an object list with all the named objects out of the sea of gc'ed objects
     """
     l_obj_list = []
     gc.collect()

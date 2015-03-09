@@ -3,7 +3,7 @@
 
 @name: PyHouse/src/Modules/families/Null/Null_xml.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Aug 9, 2014
@@ -16,10 +16,10 @@
 # Import PyMh files
 from Modules.Families.Null.Null_data import NullData
 from Modules.Utilities.xml_tools import stuff_new_attrs
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 
 g_debug = 9
-LOG = pyh_log.getLogger('PyHouse.Null_xml    ')
+LOG = Logger.getLogger('PyHouse.Null_xml    ')
 
 
 def ReadXml(p_device_obj, _p_entry_xml):

@@ -3,7 +3,7 @@
 
 @name: PyHouse/src/Modules/lights/lighting_lights.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @copyright: 2011-2014 by D. Brian Kimmel
 @note: Created on May 1, 2011
 @license: MIT License
@@ -25,15 +25,15 @@ import xml.etree.ElementTree as ET
 # Import PyHouse files
 from Modules.Core.data_objects import LightData
 from Modules.Lighting.lighting_core import ReadWriteConfigXml
-from Modules.Lighting.lighting_utils import Utility
-from Modules.Utilities import pyh_log
-# from Modules.Utilities.tools import PrettyPrintAny
+from Modules.Families.family_utils import FamUtil
+from Modules.Computer import logging_pyh as Logging
 
 g_debug = 0
-LOG = pyh_log.getLogger('PyHouse.LightgLights')
+LOG = Logging.getLogger('PyHouse.LightgLights   ')
 
 
-class LightingLightsAPI(ReadWriteConfigXml):
+
+class LLApi(ReadWriteConfigXml):
     """
     Get/Put all the information about one light:
         Base Light Data
@@ -45,18 +45,15 @@ class LightingLightsAPI(ReadWriteConfigXml):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_utils = Utility(p_pyhouse_obj)
 
     def _read_light_data(self, p_xml):
         l_light_obj = LightData()
         l_light_obj = self.read_base_lighting_xml(l_light_obj, p_xml)
-        l_light_obj.IsController = self.get_text_from_xml(p_xml, 'IsController')
         l_light_obj.CurLevel = self.get_int_from_xml(p_xml, 'CurLevel', 0)
         return l_light_obj
 
     def _read_family_data(self, p_obj, p_xml):
-        # print('lighting_lights - read_family_data() - utils {0:}'.format(self.m_utils))
-        l_api = self.m_utils.read_family_data(p_obj, p_xml)
+        l_api = FamUtil.read_family_data(self.m_pyhouse_obj, p_obj, p_xml)
         return l_api  # for testing
 
     def _read_one_light_xml(self, p_light_xml):
@@ -80,7 +77,7 @@ class LightingLightsAPI(ReadWriteConfigXml):
 
 
     def _write_light_data(self, p_light_obj, l_light_xml):
-        self.put_text_element(l_light_xml, 'IsController', p_light_obj.IsController)
+        # self.put_text_element(l_light_xml, 'IsController', p_light_obj.IsController)
         self.put_text_element(l_light_xml, 'LightingType', p_light_obj.LightingType)
         self.put_text_element(l_light_xml, 'CurLevel', p_light_obj.CurLevel)
         pass
@@ -89,7 +86,7 @@ class LightingLightsAPI(ReadWriteConfigXml):
         """
         Add the family specific information of the light to the XML.
         """
-        l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[p_light_obj.ControllerFamily].FamilyModuleAPI
+        l_api = self.m_pyhouse_obj.House.RefOBJs.FamilyData[p_light_obj.ControllerFamily].FamilyModuleAPI
         l_api.WriteXml(p_light_xml, p_light_obj)
 
     def write_one_light_xml(self, p_light_obj):

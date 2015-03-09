@@ -10,17 +10,14 @@ from nevow import loaders
 from nevow import athena
 
 # Import PyMh files and modules.
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
 
 g_debug = 0
-# 0 = off
-# 1 = log extra info
-# + = NOT USED HERE
-LOG = pyh_log.getLogger('PyHouse.webRMenu    ')
+LOG = Logger.getLogger('PyHouse.webRootMenu    ')
 
 
 class RootMenuElement(athena.LiveElement):
@@ -30,23 +27,19 @@ class RootMenuElement(athena.LiveElement):
     jsClass = u'rootMenu.RootMenuWidget'
 
     def __init__(self, p_workspace_obj):
-        if g_debug >= 2:
-            print("web_rootMenu.RootMenuElement()")
         self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
 
     @athena.expose
     def doRootMenuReload(self, p_json):
         """ Process a message for a XML save/reload from the browser/client.
         """
-        LOG.info("doRootMenuReload called {0:} {1:}".format(self, p_json))
+        LOG.info("Self: {}".format(self))
         self.m_pyhouse_obj.APIs.PyHouseAPI.SaveXml(self.m_pyhouse_obj)
 
     @athena.expose
     def doRootMenuQuit(self, p_json):
         """ Process a message for a browser logoff and quit that came from the browser/client.
         """
-        if g_debug >= 3:
-            print("web_rootMenu.RootMenuElement.doRootMenuQuit() - Json:{0:}".format(p_json))
-        LOG.info("doRootMenuQuit called {0:} {1:}".format(self, p_json))
+        LOG.info("Self: {0:};  JSON: {1:}".format(self, p_json))
 
 # ## END DBK

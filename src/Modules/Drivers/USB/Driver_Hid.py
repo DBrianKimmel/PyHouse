@@ -3,7 +3,7 @@ Created on Apr 8, 2013
 
 @author: briank
 
-Driver_USB.py - USB Driver module.
+USB_driver.py - USB Driver module.
 
 This will interface various PyHouse modules to a USB device.
 
@@ -23,8 +23,8 @@ import usb.util
 from twisted.internet import reactor
 
 # Import PyHouse modules
-from Modules.utils.tools import PrintBytes
-from Modules.utils import pyh_log
+# from Modules.Utilities.tools import PrintBytes
+from Modules.Computer import logging_pyh as Logger
 
 callLater = reactor.callLater
 
@@ -34,7 +34,7 @@ g_debug = 0
 # 2 = Startup Details
 # 3 = Read / write details
 
-LOG = pyh_log.getLogger('PyHouse.USBHIDDriver ')
+LOG = Logger.getLogger('PyHouse.USBHIDDriver ')
 g_usb = None
 
 
@@ -70,7 +70,7 @@ class UsbDeviceData(object):
         self.message = ''
 
     def __str__(self):
-        l_ret = "Driver_USB.UsbDeviceData: Name: {0:}, Vendor: {1:#04x}, Product: {2:#04x}, Device: {3:}, Port: {4:}".format(self.Name, self.Vendor, self.Product, self.Device, self.Port)
+        l_ret = "USB_driver.UsbDeviceData: Name: {0:}, Vendor: {1:#04x}, Product: {2:#04x}, Device: {3:}, Port: {4:}".format(self.Name, self.Vendor, self.Product, self.Device, self.Port)
         return l_ret
 
 class UsbDriverAPI(UsbDeviceData):
@@ -108,7 +108,7 @@ class UsbDriverAPI(UsbDeviceData):
         try:
             p_usb.Device.detach_kernel_driver(0)
         except Exception as e:
-            LOG.error("Driver_USB - Error in detaching_kernel_driver {0:} ".format(e))
+            LOG.error("USB_driver - Error in detaching_kernel_driver {0:} ".format(e))
 
     def _setup_configurations(self, p_usb):
         """Now we deal with the USB configuration
@@ -227,7 +227,7 @@ class UsbDriverAPI(UsbDeviceData):
         try:
             l_len = g_usb.Device.write(g_usb.epo_addr, l_message)
         except Exception as e:
-            LOG.error("Driver_USB._write_bis_device() - Error in writing to USB device {0:}".format(e))
+            LOG.error("USB_driver._write_bis_device() - Error in writing to USB device {0:}".format(e))
             l_len = 0
         return l_len
 

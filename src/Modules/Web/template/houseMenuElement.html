@@ -1,39 +1,16 @@
 <!--  PyHouse/src/web/templates/houseMenuElement.html
  -->
- 
- <div 
-    xmlns:athena = 'http://divmod.org/ns/athena/0.7'
-    xmlns:nevow  = 'http://nevow.com/ns/nevow/0.1'
-    nevow:render = 'liveElement'
-    class = "HouseMenu"
-    id = 'HouseMenuDiv'>
-    <h2>Select a function:</h2>
-    <table style = 'width: 60%;'>
-        <tr>
-            <td><button type = 'button' value = 'Location' name = 'Location'>Location
-                <athena:handler event = 'onclick' handler = 'doHandleOnClick' /></button></td>
-            <td><button type = 'button' value = 'Rooms' name = 'Rooms'>Rooms
-                <athena:handler event = 'onclick' handler = 'doHandleOnClick' /></button></td>
-            <td><button type = 'button' value = 'Lights' name = 'Lights'>Lights
-                <athena:handler event = 'onclick' handler = 'doHandleOnClick' /></button></td>
-            <td><button type = 'button' value = 'Buttons' name = 'Buttons'>Buttons
-                <athena:handler event = 'onclick' handler = 'doHandleOnClick' /></button></td>
-            <td><button type = 'button' value = 'Controllers' name = 'Controllers'>Controllers
-                <athena:handler event = 'onclick' handler = 'doHandleOnClick' /></button></td>
-            <td><button type = 'button' value = 'Schedules' name = 'Schedules'>Schedules
-                <athena:handler event = 'onclick' handler = 'doHandleOnClick' /></button></td>
-            <td><button type = 'button' value = 'Levels' name = 'Levels'>Control Lights
-                <athena:handler event = 'onclick' handler = 'doHandleOnClick' /></button></td>
-            <td><button type = 'button' value = 'Internet' name = 'Internet'>Internet
-                <athena:handler event = 'onclick' handler = 'doHandleOnClick' /></button></td>
-            <td><button type = 'button' value = 'Thermostat' name = 'Thermostat'>Internet
-                <athena:handler event = 'onclick' handler = 'doHandleOnClick' /></button></td>
-        </tr><tr>
-            <td><button type = 'button' value = 'Back'   name = 'Back'>Back
-                <athena:handler event = 'onclick' handler = 'doHandleOnClick' /></button></td>
-        </tr>
-    </table>
+<div id='HouseMenuDiv'
+    class='HouseMenu'
+    xmlns:athena='http://divmod.org/ns/athena/0.7'
+	xmlns:nevow='http://nevow.com/ns/nevow/0.1'
+	nevow:render='liveElement'>
+
+     <div class='lcars-container' >
+        <div id='SelectionButtonsDiv'></div>
+        <div id='DataEntryDiv'></div>
+    </div>
+
 </div>
- 
 <!--
 ### END DBK -->

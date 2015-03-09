@@ -1,16 +1,16 @@
-<!-- PyHouse/src/web/templates/houseSelectElement.html
+<!-- PyHouse/src/Modules/Web/template/houseSelectElement.html
  -->
-<div xmlns:nevow = "http://nevow.com/ns/nevow/0.1"
-	xmlns:athena = 'http://divmod.org/ns/athena/0.7'
-	nevow:render = "liveElement"
-	class = "HouseSelect"
-	id = 'HouseSelectDiv' >
-	<div id = 'HouseSelectButtonsDiv'>
-		<h2>Select a house (or add new house)</h2>
-        <div id = 'HouseSelectTableDiv'>
-        </div>
-	</div>
-	<div id = "HouseSelectedDiv"></div>
+<div id='HouseSelectDiv'
+    class="HouseSelect"
+    xmlns:nevow="http://nevow.com/ns/nevow/0.1"
+	xmlns:athena='http://divmod.org/ns/athena/0.7'
+	nevow:render="liveElement">
+
+    <div class='lcars-container' >
+        <div id='SelectionButtonsDiv'></div>
+        <div id='DataEntryDiv'></div>
+    </div>
+
 </div>
 <!--
 ### END DBK -->

@@ -4,7 +4,7 @@
 
 @name: PyHouse/src/Modules/utils/load_passwords.py
 @author: briank
-@contact: <d.briankimmel@gmail.com>
+@contact: D.BrianKimmel@gmail.com>
 @Copyright: (c)  2014 by briank
 @license: MIT License
 @note: Created on Jul 5, 2014
@@ -16,20 +16,20 @@ See the documentation for PassLib here:
 passlib - password hashing library for python - Google Project Hosting
 https://code.google.com/p/passlib/
 
-Passlib 1.6.2 documentation — Passlib v1.6.2 Documentation
+Passlib 1.6.2 documentation ï¿½ Passlib v1.6.2 Documentation
 http://pythonhosted.org/passlib/
 
 passlib-users - Google Groups
 https://groups.google.com/forum/#!forum/passlib-users
 
-New Application Quickstart Guide — Passlib v1.6.2 Documentation
+New Application Quickstart Guide ï¿½ Passlib v1.6.2 Documentation
 http://pythonhosted.org/passlib/new_app_quickstart.html#sha512-crypt
 
-passlib.hash.sha512_crypt - SHA-512 Crypt — Passlib v1.6.2 Documentation
+passlib.hash.sha512_crypt - SHA-512 Crypt ï¿½ Passlib v1.6.2 Documentation
 http://pythonhosted.org/passlib/lib/passlib.hash.sha512_crypt.html#passlib.hash.sha512_crypt
 """
 
-import passlib.hash, crypt
+# import passlib.hash, crypt
 
 ctype = "6"  # for sha512 (see man crypt)
 salt = "qwerty"

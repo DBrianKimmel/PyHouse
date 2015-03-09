@@ -3,7 +3,7 @@
 
 @name: PyHouse/src/Modules/families/UPB/UPB_device.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @copyright: 2011-2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Mar 27, 2011
@@ -19,10 +19,10 @@ Start Active UPB Controllers.
 
 # Import PyMh files
 from Modules.Families.UPB import UPB_Pim, UPB_xml
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 
 g_debug = 9
-LOG = pyh_log.getLogger('PyHouse.UPB_device  ')
+LOG = Logger.getLogger('PyHouse.UPB_device     ')
 
 
 class API(object):
@@ -43,7 +43,7 @@ class API(object):
         """
         self.m_pyhouse_obj = p_pyhouse_obj
         l_count = 0
-        for l_controller_obj in self.m_pyhouse_obj.House.OBJs.Controllers.itervalues():
+        for l_controller_obj in self.m_pyhouse_obj.House.DeviceOBJs.Controllers.itervalues():
             if self._is_upb_active(l_controller_obj):
                 l_controller_obj._HandlerAPI = UPB_Pim.API()
                 if l_controller_obj._HandlerAPI.Start(p_pyhouse_obj, l_controller_obj):
@@ -56,7 +56,7 @@ class API(object):
 
     def Stop(self):
         try:
-            for l_controller_obj in self.m_pyhouse_obj.House.OBJs.Controllers.itervalues():
+            for l_controller_obj in self.m_pyhouse_obj.House.DeviceOBJs.Controllers.itervalues():
                 if self._is_upb_active(l_controller_obj):
                     l_controller_obj._HandlerAPI.Stop(l_controller_obj)
         except AttributeError as e_err:
@@ -68,13 +68,13 @@ class API(object):
 
     def ChangeLight(self, p_light_obj, p_level, _p_rate = 0):
         LOG.debug('Change light Name:{0:}, ControllerFamily:{1:}'.format(p_light_obj.Name, p_light_obj.ControllerFamily))
-        _l_api = self.m_pyhouse_obj.House.OBJs.FamilyData[p_light_obj.ControllerFamily].FamilyModuleAPI
+        _l_api = self.m_pyhouse_obj.House.RefOBJs.FamilyData[p_light_obj.ControllerFamily].FamilyModuleAPI
         self.m_plm.ChangeLight(p_light_obj, p_level)
 
     def ReadXml(self, p_device, p_xml):
         UPB_xml.ReadXml(p_device, p_xml)
 
-    def WriteXml(self, p_device_obj, p_entry_xml):
-        UPB_xml.WriteXml(p_device_obj, p_entry_xml)
+    def WriteXml(self, p_out_xml, p_device_obj):
+        UPB_xml.WriteXml(p_out_xml, p_device_obj)
 
 # ## END

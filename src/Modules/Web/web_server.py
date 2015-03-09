@@ -1,9 +1,9 @@
 """
--*- test-case-name: PyHouse.Modules.web.test.test_web_server -*-
+-*- test-case-name: PyHouse.Modules.Web.test.test_web_server -*-
 
-@name: PyHouse/src/Modules/web/web_server.py
+@name: PyHouse/src/Modules/Web/web_server.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @copyright: 2012-2014 by D. Brian Kimmel
 @note: Created on Apr 3, 2012
 @license: MIT License
@@ -12,7 +12,7 @@
 This is a Main Module - always present.
 
 Open a port (8580 default) that will allow web browsers to control the
-PyHouse system.  This will be an AJAX/COMET system using nevow athena.
+PyHouse system.  This will be an AJAX/COMET system using Nevow Athena.
 
 On initial startup allow a house to be created
     then rooms
@@ -34,14 +34,15 @@ import xml.etree.ElementTree as ET
 from Modules.Core.data_objects import WebData
 from Modules.Web import web_utils
 from Modules.Web import web_mainpage
-from Modules.Utilities import pyh_log
-from Modules.Utilities import xml_tools
+from Modules.Computer import logging_pyh as Logger
+from Modules.Utilities.xml_tools import PutGetXML
 # from Modules.Utilities.tools import PrettyPrintAny
 
 ENDPOINT_WEB_SERVER = 'tcp:port=8580'
 
 g_debug = 9
-LOG = pyh_log.getLogger('PyHouse.WebServer   ')
+LOG = Logger.getLogger('PyHouse.WebServer      ')
+
 
 
 class ClientConnections(object):
@@ -56,14 +57,14 @@ class ClientConnections(object):
         self.ConnectedBrowsers.append(p_login)
 
 
-class ReadWriteConfigXml(xml_tools.PutGetXML):
+class ReadWriteConfigXml(PutGetXML):
     """
     """
 
-    def read_web_xml(self, p_pyhouses_obj):
+    def read_web_xml(self, p_pyhouse_obj):
         l_ret = WebData()
         try:
-            l_sect = p_pyhouses_obj.XmlRoot.find('WebSection')
+            l_sect = p_pyhouse_obj.XmlRoot.find('WebSection')
             l_ret.WebPort = self.get_int_from_xml(l_sect, 'WebPort')
         except AttributeError:
             l_ret.WebPort = 8580
@@ -80,18 +81,18 @@ class Utility(ReadWriteConfigXml):
     def update_pyhouse_obj(self, p_pyhouse_obj):
         p_pyhouse_obj.Computer.Web = WebData()
 
-    def start_webserver(self, p_pyhouses_obj):
+    def start_webserver(self, p_pyhouse_obj):
         try:
-            p_pyhouses_obj.Services.WebServerService = service.Service()
-            p_pyhouses_obj.Services.WebServerService.setName('WebServer')
-            p_pyhouses_obj.Services.WebServerService.setServiceParent(p_pyhouses_obj.Twisted.Application)
+            p_pyhouse_obj.Services.WebServerService = service.Service()
+            p_pyhouse_obj.Services.WebServerService.setName('WebServer')
+            p_pyhouse_obj.Services.WebServerService.setServiceParent(p_pyhouse_obj.Twisted.Application)
         except RuntimeError:  # The service is already installed
-            pass
+            LOG.info('Service already installed.')
         #
         l_site_dir = None
-        l_site = appserver.NevowSite(web_mainpage.TheRoot(l_site_dir, p_pyhouses_obj))
-        p_pyhouses_obj.Twisted.Reactor.listenTCP(p_pyhouses_obj.Computer.Web.WebPort, l_site)
-        l_msg = "Port:{0:}, Path:{1:}".format(p_pyhouses_obj.Computer.Web.WebPort, l_site_dir)
+        l_site = appserver.NevowSite(web_mainpage.TheRoot(l_site_dir, p_pyhouse_obj))
+        p_pyhouse_obj.Twisted.Reactor.listenTCP(p_pyhouse_obj.Computer.Web.WebPort, l_site)
+        l_msg = "Port:{0:}, Path:{1:}".format(p_pyhouse_obj.Computer.Web.WebPort, l_site_dir)
         LOG.info("Started - {0:}".format(l_msg))
 
 
@@ -99,7 +100,7 @@ class API(Utility, ClientConnections):
 
     def __init__(self):
         self.State = web_utils.WS_IDLE
-        LOG.info("Initialized.\n")
+        # LOG.info("Initialized.\n")
         self.m_web_running = False
 
     def Start(self, p_pyhouse_obj):

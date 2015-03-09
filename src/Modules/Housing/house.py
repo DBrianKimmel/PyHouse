@@ -1,15 +1,15 @@
 """
--*- test-case-name: PyHouse.src.Modules.housing.test.test_house -*-
+-*- test-case-name: PyHouse.src.Modules.Housing.test.test_house -*-
 
-@name: PyHouse/src/Modules/housing/house.py
+@name: PyHouse/src/Modules/Housing/house.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @Copyright (c) 2013-2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Apr 10, 2013
 @summary: Handle all of the information for a house.
 
-There is one instance of this module for each house being controlled.
+This is one of two major Node functions (the other is computer).
 
 House.py knows everything about a single house.
 
@@ -19,17 +19,18 @@ Rooms and lights and HVAC are associated with a particular house.
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Core.data_objects import HouseInformation, HouseObjs
+from Modules.Core.data_objects import HouseInformation, RefHouseObjs, DeviceHouseObjs
 from Modules.Families import family
-from Modules.Scheduling import schedule
+from Modules.Scheduling import schedule, sunrisesunset
 from Modules.Housing import location
 from Modules.Housing import rooms
-from Modules.Utilities import pyh_log
-# from Modules.Utilities.tools import PrettyPrintAny
+from Modules.Computer import logging_pyh as Logger
+from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 1
-LOG = pyh_log.getLogger('PyHouse.House       ')
+LOG = Logger.getLogger('PyHouse.House          ')
 
+MODULES = ['Entertainment', 'Hvac', 'Irrigation', 'Lighting', 'Pool', 'Scheduling', 'Security']
 
 class HouseItems(object):
     """
@@ -49,7 +50,7 @@ class HouseItems(object):
     """
 
     def init_all_components(self):
-        self.m_house_obj.APIs.ScheduleAPI = schedule.API(self.m_house_obj)
+        self.m_house_obj.APIs.House.ScheduleAPI = schedule.API(self.m_house_obj)
         pass
 
 
@@ -59,25 +60,40 @@ class ReadWriteConfigXml(location.ReadWriteConfigXml, rooms.ReadWriteConfigXml):
     This is called from the web interface or the GUI when the data has been changed.
     """
 
-    def get_house_xml(self, p_pyhouse_obj):
+    def _get_house_xml(self, p_pyhouse_obj):
         l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
+        return l_xml
+
+    def _read_base(self, p_xml):
+        l_xml = HouseInformation()
+        l_xml.RefOBJs = RefHouseObjs()
+        l_xml.DeviceOBJs = DeviceHouseObjs()
+        self.read_base_object_xml(l_xml, p_xml)
+        return l_xml
+
+    def _read_location_xml(self, p_xml):
+        l_xml = self.read_location_xml(p_xml)
+        return l_xml
+
+    def _read_rooms_xml(self, p_xml):
+        l_xml = self.read_rooms_xml(p_xml)
         return l_xml
 
     def read_house_xml(self, p_pyhouse_obj):
         """Read house information, location and rooms.
         """
-        l_xml = self.get_house_xml(p_pyhouse_obj)
-        self.read_base_object_xml(p_pyhouse_obj.House, l_xml)
-        p_pyhouse_obj.House.OBJs.Location = self.read_location_xml(l_xml)
-        p_pyhouse_obj.House.OBJs.Rooms = self.read_rooms_xml(l_xml)
-        return p_pyhouse_obj.House.OBJs
+        l_xml = self._get_house_xml(p_pyhouse_obj)
+        l_house = self._read_base(l_xml)
+        l_house.RefOBJs.Location = self._read_location_xml(l_xml)
+        l_house.RefOBJs.Rooms = self._read_rooms_xml(l_xml)
+        return l_house
 
     def write_house_xml(self, p_house_obj):
         """Replace the data in the 'Houses' section with the current data.
         """
         l_house_xml = self.write_base_object_xml('HouseDivision', p_house_obj)
-        l_house_xml.append(self.write_location_xml(p_house_obj.OBJs.Location))
-        l_house_xml.append(self.write_rooms_xml(p_house_obj.OBJs.Rooms))
+        l_house_xml.append(self.write_location_xml(p_house_obj.RefOBJs.Location))
+        l_house_xml.append(self.write_rooms_xml(p_house_obj.RefOBJs.Rooms))
         return l_house_xml
 
 
@@ -89,28 +105,54 @@ class Utility(ReadWriteConfigXml):
 
     def update_pyhouse_obj(self, p_pyhouse_obj):
         p_pyhouse_obj.House = HouseInformation()
-        p_pyhouse_obj.House.OBJs = HouseObjs()
+        p_pyhouse_obj.House.RefOBJs = RefHouseObjs()
+        p_pyhouse_obj.House.DeviceOBJs = DeviceHouseObjs()
         return p_pyhouse_obj
 
     def add_api_references(self, p_pyhouse_obj):
-        p_pyhouse_obj.APIs.HouseAPI = self
-        p_pyhouse_obj.APIs.FamilyAPI = family.API()
-        p_pyhouse_obj.APIs.ScheduleAPI = schedule.API()
+        p_pyhouse_obj.APIs.House.HouseAPI = self
+        p_pyhouse_obj.APIs.House.FamilyAPI = family.API()
+        p_pyhouse_obj.APIs.House.SunRiseSetAPI = sunrisesunset.API()
+        p_pyhouse_obj.APIs.House.ScheduleAPI = schedule.API()
 
     def start_house_parts(self, p_pyhouse_obj):
-        p_pyhouse_obj.APIs.ScheduleAPI.Start(self.m_pyhouse_obj)
+        p_pyhouse_obj.APIs.House.ScheduleAPI.Start(self.m_pyhouse_obj)
 
     def stop_house_parts(self):
-        self.m_pyhouse_obj.APIs.ScheduleAPI.Stop()
+        self.m_pyhouse_obj.APIs.House.ScheduleAPI.Stop()
+
+    def get_sunrise_set(self, p_pyhouse_obj):
+        """
+        Retrieve datetime.datetime for sunrise and sunset.
+        """
+        p_pyhouse_obj.APIs.House.SunRiseSetAPI = sunrisesunset.API()
+        p_pyhouse_obj.APIs.House.SunRiseSetAPI.Start(p_pyhouse_obj)
+        p_pyhouse_obj.House.RefOBJs.Location._Sunrise = p_pyhouse_obj.APIs.House.SunRiseSetAPI.get_sunrise_datetime()
+        p_pyhouse_obj.House.RefOBJs.Location._Sunset = p_pyhouse_obj.APIs.House.SunRiseSetAPI.get_sunset_datetime()
+
+    def _module_api(self, p_pyhouse_obj, p_module):
+        """
+        For all the modules listed in MODULES above,
+            Initialize an API reference and save it.
+        """
+        print('For Module {}'.format(p_module))
+        PrettyPrintAny(p_pyhouse_obj.APIs.House, 'HouseAPIs - Before')
+        p_pyhouse_obj.APIs.Modules[p_module] = '123'
+
+    def start_submodules(self):
+        for l_module in MODULES:
+            self._module_api(l_module)
+
+    def _store_pyhouse_obj(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        # PrettyPrintAny(p_pyhouse_obj, 'PyHouse')
+        # PrettyPrintAny(p_pyhouse_obj.APIs, 'PyHouse.APIs')
+        # PrettyPrintAny(p_pyhouse_obj.APIs.House, 'PyHouse.APIs.House')
 
 
 class API(Utility):
     """
     """
-
-    def __init__(self):
-        """Create a house object for when we add a new house.
-        """
 
     def Start(self, p_pyhouse_obj):
         """Start processing for all things house.
@@ -121,9 +163,9 @@ class API(Utility):
         self.update_pyhouse_obj(p_pyhouse_obj)
         self.add_api_references(p_pyhouse_obj)
         self.m_pyhouse_obj = p_pyhouse_obj
-        p_pyhouse_obj.House.OBJs = self.read_house_xml(p_pyhouse_obj)
-        p_pyhouse_obj.House.OBJs.FamilyData = p_pyhouse_obj.APIs.FamilyAPI.Start(p_pyhouse_obj)
-        # PrettyPrintAny(p_pyhouse_obj.House.OBJs, 'PyHouseObj', 120)
+        p_pyhouse_obj.House = self.read_house_xml(p_pyhouse_obj)
+        p_pyhouse_obj.House.RefOBJs.FamilyData = p_pyhouse_obj.APIs.House.FamilyAPI.Start(p_pyhouse_obj)
+        self.get_sunrise_set(p_pyhouse_obj)
         self.start_house_parts(p_pyhouse_obj)
         LOG.info("Started House {0:}".format(self.m_pyhouse_obj.House.Name))
 
@@ -135,13 +177,13 @@ class API(Utility):
         self.stop_house_parts()
         LOG.info("Stopped.")
 
-    def SaveXml(self, p_xml):
+    def WriteXml(self, p_xml):
         """
         Take a snapshot of the current Configuration/Status and write out an XML file.
         """
         l_xml = self.write_house_xml(self.m_pyhouse_obj.House)
-        self.m_pyhouse_obj.APIs.ScheduleAPI.SaveXml(l_xml)
+        self.m_pyhouse_obj.APIs.House.ScheduleAPI.WriteXml(l_xml)
         p_xml.append(l_xml)
-        LOG.info("Saved XML.")
+        LOG.info("Wrote XML.")
 
 # ##  END DBK

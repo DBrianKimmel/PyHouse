@@ -3,7 +3,7 @@
 
 @name: PyHouse/src/Modules/web/web_rooms.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @Copyright (c) 2013-2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Jun 3, 2013
@@ -19,14 +19,16 @@ from nevow import athena
 # Import PyMh files and modules.
 from Modules.Web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.Housing import rooms
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
 
 g_debug = 0
-LOG = pyh_log.getLogger('PyHouse.webRooms    ')
+LOG = Logger.getLogger('PyHouse.webRooms       ')
+
+
 
 #==============================================================================
 
@@ -39,9 +41,13 @@ class RoomsElement(athena.LiveElement):
         self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
 
     @athena.expose
-    def getHouseData(self):
-        l_house = GetJSONHouseInfo(self.m_pyhouse_obj)
-        return l_house
+    def getServerData(self):
+        """
+        Get a lot of server JSON data and pass it to the client browser.
+        """
+        l_json = GetJSONHouseInfo(self.m_pyhouse_obj)
+        LOG.info('Fetched {}'.format(l_json))
+        return l_json
 
     @athena.expose
     def saveRoomData(self, p_json):
@@ -52,12 +58,12 @@ class RoomsElement(athena.LiveElement):
         l_delete = l_json['Delete']
         if l_delete:
             try:
-                del self.m_pyhouse_obj.House.OBJs.Rooms[l_room_ix]
+                del self.m_pyhouse_obj.House.RefOBJs.Rooms[l_room_ix]
             except AttributeError:
                 print("web_rooms - Failed to delete - JSON: {0:}".format(l_json))
             return
         try:
-            l_obj = self.m_pyhouse_obj.House.OBJs.Rooms[l_room_ix]
+            l_obj = self.m_pyhouse_obj.House.RefOBJs.Rooms[l_room_ix]
         except KeyError:
             l_obj = rooms.RoomData()
         l_obj.Name = l_json['Name']
@@ -67,6 +73,6 @@ class RoomsElement(athena.LiveElement):
         l_obj.Corner = l_json['Corner']
         l_obj.Size = l_json['Size']
         l_obj.RoomType = 'Room'
-        self.m_pyhouse_obj.House.OBJs.Rooms[l_room_ix] = l_obj
+        self.m_pyhouse_obj.House.RefOBJs.Rooms[l_room_ix] = l_obj
 
 # ## END DBK

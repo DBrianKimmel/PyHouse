@@ -1,7 +1,7 @@
 """
 @name: PyHouse/src/Modules/families/Insteon/test/test_Insteon_device.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @copyright: 2011-2014 by D. Brian Kimmel
 @note: Created on Apr 1, 2011
 @license: MIT License
@@ -17,8 +17,7 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from Modules.Families.Insteon.Insteon_data import InsteonData
 from Modules.Families.Insteon import Insteon_device
-from Modules.Core import conversions
-from Modules.Lighting import lighting_lights
+# from Modules.Core import conversions
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
@@ -33,23 +32,23 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-class Test_02_API(SetupMixin, unittest.TestCase):
+class C01_API(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by node_local.
     """
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         self.m_api = Insteon_device.API()
-        self.m_controller_obj = InsteonData()
+        self.m_device = InsteonData()
 
-    def test_0202_Init(self):
+    def test_01_Init(self):
         """ Be sure that the XML contains the right stuff.
         """
         pass
 
 def suite():
     suite = unittest.TestSuite()
-    suite.addTest(Test_02_API('test_0202_Init'))
+    # suite.addTest(Test_02_API('test_0202_Init'))
     return suite
 
 # ## END

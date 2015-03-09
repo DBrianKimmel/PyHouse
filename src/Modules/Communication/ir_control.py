@@ -3,7 +3,7 @@
 
 @name: PyHouse/src/Modules/communication/ir_control.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
 @note: Created on Jan 26, 2014
 @license: MIT License
@@ -26,11 +26,11 @@ from twisted.protocols.amp import AMP
 
 # Import PyMh files and modules.
 from Modules.Entertainment import pandora
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 
 
 g_debug = 1
-LOG = pyh_log.getLogger('PyHouse.IrControl   ')
+LOG = Logger.getLogger('PyHouse.IrControl   ')
 
 g_pandora = None
 g_pyhouses_obj = None
@@ -53,9 +53,10 @@ IR_KEYS = [
            ]
 
 class LircProtocol(Protocol):
-    """Protocol for listening to the lirc socket.
+    """
+    Protocol for listening to the lirc socket.
 
-    We get one line of data here (lots of repeats) for every key pressed on the remote.
+    We get one line of data here (with lots of repeats) for every key pressed on the remote.
 
     KeyCode_________ Rp KeyName_______ Remote_________
     00000000a55ad02f 00 KEY_VOLUMEDOWN pioneer-AXD7595
@@ -69,6 +70,8 @@ class LircProtocol(Protocol):
 
 
 class LircFactory(Factory):
+    """Factory to build instances of LircProtocol
+    """
 
     def buildProtocol(self, _addr):
         # "LircFactory - connected"
@@ -82,20 +85,23 @@ class LircFactory(Factory):
 
 
 class LircConnection(object):
+    """
+    Connect to the LIRC socket.
+    """
 
-    def start_lirc_connect(self, p_pyhouses_obj):
-        l_endpoint = clientFromString(p_pyhouses_obj.Twisted.Reactor, LIRC_SOCKET)
+    def start_lirc_connect(self, p_pyhouse_obj):
+
+        def cb_connect(p_reason):
+            LOG.debug("LircConnection good {0:}".format(p_reason))
+
+        def eb_connect(p_reason):
+            LOG.error("LircConnection Error {0:}".format(p_reason))
+
+        l_endpoint = clientFromString(p_pyhouse_obj.Twisted.Reactor, LIRC_SOCKET)
         l_factory = LircFactory()
         l_defer = l_endpoint.connect(l_factory)
-        l_defer.addCallback(self.cb_connect)
-        l_defer.addErrback(self.eb_connect)
-
-    def cb_connect(self, p_reason):
-        LOG.debug("LircConnection good {0:}".format(p_reason))
-
-    def eb_connect(self, p_reason):
-        LOG.error("LircConnection Error {0:}".format(p_reason))
-
+        l_defer.addCallback(cb_connect)
+        l_defer.addErrback(eb_connect)
 
 
 class IrDispatch(object):
@@ -126,13 +132,13 @@ class IrDispatch(object):
 
 class Utility(LircConnection):
 
-    def start_AMP(self, p_pyhouses_obj):
+    def start_AMP(self, p_pyhouse_obj):
         l_endpoint = TCP4ServerEndpoint
         l_factory = Factory()
         l_factory.protocol = AMP
-        p_pyhouses_obj.Services.IrControlService = StreamServerEndpointService(l_endpoint, l_factory)
-        p_pyhouses_obj.Services.IrControlService.setName('IrControl')
-        p_pyhouses_obj.Services.IrControlService.setServiceParent(p_pyhouses_obj.Twisted.Application)
+        p_pyhouse_obj.Services.IrControlService = StreamServerEndpointService(l_endpoint, l_factory)
+        p_pyhouse_obj.Services.IrControlService.setName('IrControl')
+        p_pyhouse_obj.Services.IrControlService.setServiceParent(p_pyhouse_obj.Twisted.Application)
 
 class API(Utility):
 

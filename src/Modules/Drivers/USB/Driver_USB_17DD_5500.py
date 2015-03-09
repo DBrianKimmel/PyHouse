@@ -23,7 +23,6 @@ Device Descriptor:
   bNumConfigurations      1
 '''
 # import array
-import sys
 from twisted.internet import reactor
 import usb
 # Use USB package that was written by Wander Lairson Costa
@@ -31,18 +30,18 @@ import usb
 # export PYUSB_DEBUG_LEVEL
 
 # Import PyMh files
-import Driver_USB
+from Modules.Drivers.USB import USB_driver
 
 callLater = reactor.callLater
 
-g_debug = Driver_USB.g_debug
+g_debug = USB_driver.g_debug
 
 # Timeouts for send/receive delays
 SEND_TIMEOUT = 0.8
 RECEIVE_TIMEOUT = 0.3  # this is for polling the usb device for data to be added to the rx buffer
 READ_TIMER = 0.100  # Every 100 miliseconds
 
-class UsbDriverAPI(Driver_USB.UsbDriverAPI):
+class UsbDriverAPI(USB_driver.UsbDriverAPI):
 
     def setup_hid_device(self):
         """Use the control endpoint to set up report descriptors for HID devices.
@@ -56,7 +55,7 @@ class UsbDriverAPI(Driver_USB.UsbDriverAPI):
         l_report[3] = 0x00
         l_report[4] = 0x03
         l_requestType = 0x21  # LIBUSB_ENDPOINT_OUT (0x00) | LIBUSB_REQUEST_TYPE_CLASS (0x20) | LIBUSB_RECIPIENT_DEVICE (0x00)
-        l_request = Driver_USB.HID_SET_REPORT  # 0x09
+        l_request = USB_driver.HID_SET_REPORT  # 0x09
         l_value = 0x0003  # Report type & Report ID
         l_index = 0
         l_ret = (l_requestType,
@@ -65,13 +64,13 @@ class UsbDriverAPI(Driver_USB.UsbDriverAPI):
                 l_index,
                 l_report)
         if g_debug >= 0:
-            print("Driver_USB_17DD_5500._setup_hid_device() {0:}".format(l_ret))
+            print("USB_driver_17DD_5500._setup_hid_device() {0:}".format(l_ret))
         return l_ret
 
     def read_device(self, p_usb):
         callLater(RECEIVE_TIMEOUT, lambda x = p_usb: self.read_device(x))
         if g_debug > 5:
-            print("Driver_USB_17DD_5500.read_device() - usb ={0:}".format(p_usb))
+            print("USB_driver_17DD_5500.read_device() - usb ={0:}".format(p_usb))
         l_len = -1
         while l_len != 0:
             try:
@@ -80,14 +79,14 @@ class UsbDriverAPI(Driver_USB.UsbDriverAPI):
                 l_len = l_msg[0] - 240
                 if l_len > 0:
                     if g_debug > 1:
-                        print("Driver_USB.read_device() {0:} - {1:}".format(l_len, l_msg))
+                        print("USB_driver.read_device() {0:} - {1:}".format(l_len, l_msg))
                     for l_x in range(l_len):
                         p_usb.message.append(l_msg[l_x + 1])
             except usb.USBError as e:
                 l_len = 0
                 break
             except Exception as e:
-                print(" -- Error in Driver_USB_17DD_5500.read_device() ".format(e))
+                print(" -- Error in USB_driver_17DD_5500.read_device() ".format(e))
                 l_len = 0
                 break
 
@@ -99,7 +98,7 @@ class API(UsbDriverAPI):
     def __init__(self):
         """
         """
-        self.m_driver = Driver_USB.API()
+        self.m_driver = USB_driver.API()
 
     def Start(self, p_controller_obj):
         self.m_driver.Start(p_controller_obj)

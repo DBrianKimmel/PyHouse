@@ -1,11 +1,17 @@
-'''
-Created on Apr 19, 2013
+"""
+-*- test-case-name: PyHouse.src.Modules.Families.Insteon.test.test_Insteon_constants -*-
 
-@author: briank
+@name: PyHouse/src/Modules/Families/Insteon/Insteon_constants.py
+@author: D. Brian Kimmel
+@contact: D.BrianKimmel@gmail.com
+@copyright: 2013-2014 by D. Brian Kimmel
+@license: MIT License
+@note: Created on Apr 19, 2013
+@summary: This module is for communicating with Insteon controllers.
 
 Note! This is designed for 'from Insteon_constants import *'
 
-'''
+"""
 
 STX = 0x02
 ACK = 0x06
@@ -145,5 +151,10 @@ COMMAND_LENGTH = {
     0x72: 2,
     0x73: 2
     }
+
+class InsteonError(Exception):
+    """
+    General Insteon error.
+    """
 
 # ## END DBK

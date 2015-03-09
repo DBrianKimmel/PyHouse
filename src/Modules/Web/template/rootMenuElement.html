@@ -1,31 +1,16 @@
 <!-- PyHouse/src/web/templates/rootMenuElement.html
 -->
-<div
+<div id='RootMenuDiv'
+    class='RootMenu'
     xmlns:athena='http://divmod.org/ns/athena/0.7'
-    xmlns:nevow='http://nevow.com/ns/nevow/0.1'
-	nevow:render='liveElement'
-	class='RootMenu'
-    id='RootMenuDiv' >
-    <h2>Select the menu function.</h2>
-	<table style='width: 60%;'>
-		<tr>
-			<td><button type='button' class='Button1' value='Select_House' name='Select'>Select/Add House
-                <athena:handler event='onclick' handler='doHandleOnClick' /></button></td>
+	xmlns:nevow='http://nevow.com/ns/nevow/0.1'
+	nevow:render='liveElement'>
 
-			<td><button type='button' class='Button2' value='Web Server' name='Web'>Web Server
-                <athena:handler event='onclick' handler='doHandleOnClick' /></button></td>
+     <div class='lcars-container' >
+        <div id='SelectionButtonsDiv'></div>
+        <div id='DataEntryDiv'></div>
+    </div>
 
-			<td><button type='button' class='Button2' value='Logs' name='Logs'>Logs
-                <athena:handler event='onclick' handler='doHandleOnClick' /></button></td>
-		</tr>
-		<tr>
-			<td><button type='button' class='Button2' value='Quit' name='Quit'>Quit
-                <athena:handler event='onclick' handler='doHandleOnClick' /></button></td>
-			<td><button type='button' class='Button2' value='Reload' name='Reload'>Reload
-                <athena:handler event='onclick' handler='doHandleOnClick' /></button></td>
-		</tr>
-	</table>
 </div>
 <!--
 ### END DBK -->
- 

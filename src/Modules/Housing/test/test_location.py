@@ -1,7 +1,7 @@
 """
 @name: PyHouse/src/Modules/housing/test/test_location.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @Copyright (c) 2013-2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Apr 10, 2013
@@ -16,55 +16,64 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, HouseObjs, LocationData
-from Modules.housing import location
-from Modules.web import web_utils
-from Modules.utils.tools import PrettyPrintAny
-from src.test import xml_data
+from Modules.Core.data_objects import LocationData
+from Modules.Housing import location
+from Modules.Web import web_utils
+from test.xml_data import XML_LONG
+from test.testing_mixin import SetupPyHouseObj
+from Modules.Utilities.tools import PrettyPrintAny
 
-XML = xml_data.XML_LONG
+
+class SetupMixin(object):
+
+    def setUp(self, p_root):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
+        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-class Test_02_XML(unittest.TestCase):
+class C01_XML(SetupMixin, unittest.TestCase):
 
     def _pyHouses(self):
-        self.m_pyhouse_obj = PyHouseData()
-        self.m_pyhouse_obj.HouseObjs = HouseObjs()
-        self.m_pyhouse_obj.XmlRoot = self.m_root = ET.fromstring(XML)
-        self.m_houses = self.m_root.find('Houses')
-        self.m_house_xml = self.m_houses.find('House')
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_house_obj = LocationData()
         self.m_api = location.ReadWriteConfigXml()
 
     def setUp(self):
         self._pyHouses()
 
-    def test_0201_find_xml(self):
+    def test_01_find_xml(self):
         """ Be sure that the XML contains the right stuff.
         """
-        self.assertEqual(self.m_root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
-        self.assertEqual(self.m_houses.tag, 'Houses', 'XML - No Houses section')
-        self.assertEqual(self.m_house_xml.tag, 'House', 'XML - No House section')
+        self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
+        self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision', 'XML - No Houses Division')
 
-    def test_0202_ReadXml(self):
+    def test_02_ReadXml(self):
         """ Read in the xml file and fill in the location dict
         """
-        l_location = self.m_api.read_location_xml(self.m_house_xml)
-        self.assertEqual(l_location.City, 'Test City 1', 'Bad city')
+        l_location = self.m_api.read_location_xml(self.m_xml.house_div)
+        PrettyPrintAny(l_location, 'Location')
+        self.assertEqual(l_location.Street, '5191 N Pink Poppy Dr', 'Bad Address')
+        self.assertEqual(l_location.City, 'Beverly Hills', 'Bad city')
+        self.assertEqual(l_location.State, 'Florida', 'Bad state')
+        self.assertEqual(l_location.ZipCode, '34465', 'Bad zip code')
+        self.assertEqual(l_location.Phone, '(352) 270-8096', 'Bad phone')
+        self.assertEqual(l_location.Latitude, 28.938448, 'Bad latitude')
+        self.assertEqual(l_location.Longitude, -82.517208, 'Bad longitude')
+        self.assertEqual(l_location.TimeZoneName, 'America/New_York', 'Bad time zone name')
 
-    def test_0203_WriteXml(self):
+    def test_03_WriteXml(self):
         """ Write out the XML file for the location section
         """
-        l_location = self.m_api.read_location_xml(self.m_house_xml)
+        l_location = self.m_api.read_location_xml(self.m_xml.house_div)
         l_xml = self.m_api.write_location_xml(l_location)
-        print('XML: {0:}'.format(PretttPrintAny(l_xml)))
+        PrettyPrintAny(l_xml, 'Location')
 
 
-    def test_0221_CreateJson(self):
+    def test_21_CreateJson(self):
         """ Create a JSON object for Location.
         """
-        l_location = self.m_api.read_location_xml(self.m_house_xml)
+        l_location = self.m_api.read_location_xml(self.m_xml.house_div)
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_location))
-        print('JSON: {0:}'.format(l_json))
+        PrettyPrintAny('JSON', l_json)
 
 # ## END DBK

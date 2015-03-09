@@ -1,6 +1,14 @@
-#!/usr/bin/python
-
 """
+-*- test-case-name: PyHouse.src.Modules.Families.Insteon.test.test_Insteon_HVAC -*-
+
+@name: PyHouse/src/Modules/Families/Insteon/Insteon_HVAC.py
+@author: D. Brian Kimmel
+@contact: D.BrianKimmel@gmail.com
+@copyright: 2010-2014 by D. Brian Kimmel
+@note: Created on Feb 18, 2010  Split into separate file Jul 9, 2014
+@license: MIT License
+@summary: This module decodes Insteon PLM response messages
+
 Insteon HVAC module.
 
 Adds HVAC (Heating Ventilation Air Conditioning) to the Insteon suite.
@@ -9,8 +17,20 @@ This contains an Insteon modem.
 
 Models 2491T1E and 2491T7E = (2491TxE)
 
-0x6E and 0x6F are old commands
+0x6E and 0x6F are old commands no longer used in the thermostat.
 """
+
+
+
+class Util(object):
+    """
+    """
+
+    def get_device_obj(self, p_pyhouse_obj, p_address):
+        l_ret = self._find_addr(p_pyhouse_obj.House.DeviceOBJs.Thermostats, p_address)
+        return l_ret
+
+
 
 class ihvac_utility(object):
 

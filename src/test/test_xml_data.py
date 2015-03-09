@@ -1,7 +1,7 @@
 """
 @name: PyHouse/src/test/test_xml_data.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @Copyright (c) 2010-2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on May 4, 2014
@@ -18,59 +18,78 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-# from Modules.utils.tools import PrettyPrintAny
-from src.test import xml_data
+from Modules.Utilities.tools import PrettyPrintAny
+from test.xml_data import XML_LONG
 
 
-class Test_01_XML(unittest.TestCase):
+class C01_Raw(unittest.TestCase):
     """
     This section will verify the XML in the 'Modules.test.xml_data' file is correct and what the log module can read/write.
     """
 
     def s_compute(self):
-        self.m_root_element = ET.fromstring(xml_data.XML_LONG)
+        self.m_root_element = ET.fromstring(XML_LONG)
         self.m_division = self.m_root_element.find('ComputerDivision')
 
     def setUp(self):
         pass
 
-    def test_0101_ParseXML(self):
-        self.m_root_element = ET.fromstring(xml_data.XML_LONG)
-        l_pyhouse = self.m_root_element
-        self.assertEqual(l_pyhouse.tag, 'PyHouse')
+    def test_01_raw(self):
+        l_str = XML_LONG.split('\n')
+        PrettyPrintAny(l_str, 'Raw XML', 50)
 
-    def test_0102_ReadXML(self):
-        self.m_root_element = ET.fromstring(xml_data.XML_LONG)
+
+
+class C02_Parsed(unittest.TestCase):
+    """
+    This section will verify the XML in the 'Modules.test.xml_data' file is correct and what the log module can read/write.
+    """
+
+    def setUp(self):
+        self.m_root_element = ET.fromstring(XML_LONG)
+
+    def test_01_All(self):
+        PrettyPrintAny(self.m_root_element, 'PyHouse')
+        self.assertEqual(self.m_root_element.tag, 'PyHouse')
+
+    def test_02_Computer(self):
+        l_div = self.m_root_element.find('ComputerDivision')
+        PrettyPrintAny(l_div, 'Computer Div')
+        self.assertEqual(self.m_root_element.tag, 'PyHouse')
+
+    def test_03_House(self):
+        l_div = self.m_root_element.find('HouseDivision')
+        PrettyPrintAny(l_div, 'House Div')
+        self.assertEqual(self.m_root_element.tag, 'PyHouse')
+
+    def test_03_ReadXML(self):
         l_pyhouse = self.m_root_element
         # PrettyPrintAny(self.m_root_element, 'Root Element', 120)
         self.assertEqual(l_pyhouse.tag, 'PyHouse')
 
-    def test_0103_ComputerDivision(self):
-        self.m_root_element = ET.fromstring(xml_data.XML_LONG)
+    def test_04_ComputerDivision(self):
         l_div = self.m_root_element.find('ComputerDivision')
         self.assertEqual(l_div.tag, 'ComputerDivision')
 
-    def test_0104_Logs(self):
-        self.s_compute()
-        l_logs = self.m_division.find('LogSection')
-        self.assertEqual(l_logs.tag, 'LogSection')
-
-    def test_0105_LogsDebug(self):
-        self.s_compute()
-        l_logs = self.m_division.find('LogSection')
-        l_debug = l_logs.find('Debug')
-        self.assertEqual(l_debug.text, '/var/log/pyhouse/debug')
-
-    def test_0106_Nodes(self):
-        self.s_compute()
-        l_nodes = self.m_division.find('NodeSection')
+    def test_05_Nodes(self):
+        l_div = self.m_root_element.find('ComputerDivision')
+        l_nodes = l_div.find('NodeSection')
         l_node = l_nodes.find('Node')
         l_uuid = l_node.find('UUID')
         self.assertEqual(l_uuid.text, '87654321-1001-11e3-b583-082e5f899999')
 
-    def test_0110_HouseDivision(self):
-        self.m_root_element = ET.fromstring(xml_data.XML_LONG)
+    def test_06_HouseDivision(self):
         l_div = self.m_root_element.find('HouseDivision')
         self.assertEqual(l_div.tag, 'HouseDivision')
+
+
+
+class C02_Schema(unittest.TestCase):
+    """
+    Test XML to comply with XSD.
+    """
+
+    def setUp(self):
+        pass
 
 # ## END DBK

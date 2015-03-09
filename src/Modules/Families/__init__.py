@@ -37,11 +37,15 @@ Each family consists of four or more major areas:
     Scenes - have one or more lights that are controlled together
     Buttons - extra buttons with no light directly attached (key-pad-link)
 
+Since these controllers also control things other than lights, there is also a device type defined.
+Devices to control include Lights, Thermostat, Irrigation valves Pool Equipment etc.
+
 """
 
 __version_info__ = (1, 1, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
-VALID_FAMILIES = ['Insteon', 'UPB', 'X10']
+VALID_FAMILIES = ['Insteon', 'UPB', 'X10', 'Null']
+VALID_DEVICE_TYPES = ['Light', 'Thermostat', 'Irrigation', 'Pool']
 
 # ## END DBK

@@ -1,19 +1,25 @@
-<PyHouse>
+<?xml version="1.0" encoding="utf-8"?>
+
+<PyHouse
+    xmlns="http://PyHouse.org/schemas"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://PyHouse.org/schemas PyHouse.xsd"
+    xsi:noNamespaceSchemaLocation="PyHouse.xsd"
+    >
+
     <ComputerDivision>
         <InternetSection>
-            <Internet Name="Connection-1" Key="0" Active="True">
-                <UUID>1234</UUID>
-                <ExternalUrl>http://snar.co/ip</ExternalUrl>
-                <ExternalDelay>28800</ExternalDelay>
-                <ExternalIP>65.35.48.61</ExternalIP>
-                <DynamicDnsSection>
-                    <DynamicDNS Active="True" Key="0" Name="Afraid">
-                        <UpdateUrl>http://freedns.afraid.org/dynamic/update.php?VDZtSkE2MzFVMVVBQVd5QXg2MDo4MDk0ODM1</UpdateUrl>
-                        <UpdateInterval>21600</UpdateInterval>
-                    </DynamicDNS>
-                </DynamicDnsSection>
-            </Internet>
-        </InternetSection>
+            <LocaterUrlSection>
+                <ExternalUrl>http://snar.co/ip/</ExternalUrl>
+                <ExternalUrl>http://checkip.dyndns.com/</ExternalUrl>
+            </LocaterUrlSection>
+            <UpdaterUrlSection>
+                <UpdateUrl>http://freedns.afraid.org/dynamic/update.php?VDZtSkE2MzFVMVVBQVd5QXg2MDo4MDk0ODM1</UpdateUrl>
+            </UpdaterUrlSection>
+            <ExternalIPv4>65.35.48.61</ExternalIPv4>
+            <ExternalIPv6>2001:4830:1600:84ae::1</ExternalIPv6>
+            <LastChanged>2014-10-02 12:34:56</LastChanged>
+            </InternetSection>
         <LogSection>
             <Debug>/var/log/pyhouse/debug</Debug>
             <Error>/var/log/pyhouse/error</Error>
@@ -58,8 +64,9 @@
             <Phone>(828) 369-8513</Phone>
             <Latitude>35.144569</Latitude>
             <Longitude>-83.458291</Longitude>
-            <TimeZone>-300.0</TimeZone>
-            <SavingTime>60.0</SavingTime>
+            <TimeZoneName>USA/Eastern</TimeZoneName>
+            <TimeZoneOffset>-5:00</TimeZoneOffset>
+            <DaylightSavingsTime>-4:00</DaylightSavingsTime>
         </LocationSection>
         <RoomSection>
             <Room Active="True" Key="0" Name="Outside">
@@ -84,7 +91,12 @@
                 <Corner>0.83, 25.08</Corner>
                 <Size>14.00, 18.00</Size>
             </Room>
-        </RoomSection>
+            <Room Active="False" Key="4" Name="LivingRoom">
+                <Comment />
+                <Corner>0.83, 25.08</Corner>
+                <Size>14.00, 18.00</Size>
+            </Room>
+            </RoomSection>
         <ScheduleSection>
             <Schedule Active="True" Key="0" Name="Evening">
                 <Level>100</Level>
@@ -182,8 +194,25 @@
                 <GroupNumber>0</GroupNumber>
                 <IsMaster>True</IsMaster>
                 <ProductKey>00.00.00</ProductKey>
-                <IsResponder>True</IsResponder></Light>
-        </LightSection>
+                <IsResponder>True</IsResponder>
+            </Light>
+            <Light Active="True" Key="4" Name="FireplaceLights">
+                <Comment>SwitchLink Dimmer</Comment>
+                <Coords>['0', '0']</Coords>
+                <IsDimmable>True</IsDimmable>
+                <ControllerFamily>Insteon</ControllerFamily>
+                <RoomName>LivingRoom</RoomName>
+                <LightingType>Light</LightingType>
+                <Address>1D.26.74</Address>
+                <IsController>True</IsController>
+                <DevCat>00.00</DevCat>
+                <GroupList>All_Lights|LivingRoom(0;0)</GroupList>
+                <GroupNumber>0</GroupNumber>
+                <IsMaster>True</IsMaster>
+                <ProductKey>00.00.00</ProductKey>
+                <IsResponder>True</IsResponder>
+            </Light>
+            </LightSection>
         <ButtonSection>
             <Button Active="True" Key="0" Name="Button1">
                 <Comment>Test Button</Comment>
@@ -228,7 +257,7 @@
                 <RtsCts>False</RtsCts>
                 <XonXoff>False</XonXoff>
             </Controller>
-            <Controller Active="False" Key="1" Name="PowerLink">
+            <Controller Active="True" Key="1" Name="PowerLink">
                 <Comment>2413UH Powerlink Controller</Comment>
                 <Coords>None</Coords>
                 <IsDimmable>False</IsDimmable>

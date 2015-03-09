@@ -19,6 +19,9 @@ What is PyHouse?
 PyHouse is one or more nodes, running PyHouse software, and co-operating with
 other nodes either in the same domain or in in affiliated domains.
 
+PyHouse attempts to avoid 'Islands of Automation' by integrating all the modules
+under one "Roof".
+
 
 Nodes
 -----

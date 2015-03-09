@@ -3,7 +3,7 @@
 
 @Name: PyHouse/src/Modules/Core/data_objects.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Mar 20, 2014
@@ -15,8 +15,9 @@ self._Entry       This entry in NOT stored in XML but is stored in memory when r
 Specific data may be loaded into some attributes for unit testing.
 
 """
+from nevow.livepage import self
 
-__version_info__ = (1, 3, 01)
+__version_info__ = (1, 3, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
 
@@ -47,7 +48,7 @@ class ABaseObject(object):
     """
 
     def __init__(self):
-        self.Name = 'Undefined Object'
+        self.Name = 'Undefined ABaseObject'
         self.Key = 0
         self.Active = False
         self.UUID = None  # The UUID is optional, not all objects use this
@@ -64,7 +65,7 @@ class BaseLightingData(ABaseObject):
         self.IsDimmable = False
         self.ControllerFamily = 'Null'
         self.RoomName = ''
-        self.LightingType = ''  # Button | Light | Controller
+        self.LightingType = ''  # VALID_LIGHTING_TYPE = Button | Light | Controller
 
 
 class ButtonData(BaseLightingData):
@@ -101,19 +102,18 @@ class LightData(BaseLightingData):
     def __init__(self):
         super(LightData, self).__init__()
         self.CurLevel = 0
-        self.IsController = None
         self.LightingType = 'Light'
 
 
 class FamilyData(ABaseObject):
-    """A container for every family that has been defined.
+    """A container for every family that has been defined in modules.
     """
     def __init__(self):
         super(FamilyData, self).__init__()
         self.FamilyModuleAPI = None  # Insteon_device.API()
         self.FamilyDeviceModuleName = ''  # Insteon_device
         self.FamilyXmlModuleName = ''  # Insteon_device
-        self.FamilyPackageName = ''  # Modules.families.Insteon
+        self.FamilyPackageName = ''  # Modules.Families.Insteon
 
 
 class X10LightingData(LightData):
@@ -131,9 +131,9 @@ class ComputerInformation(object):
     def __init__(self):
         self.InternetConnection = {}  # InternetConnectionData()
         self.Email = {}  # EmailData()
-        self.Logs = {}  # LogData()
         self.Nodes = {}  # NodeData()
         self.Web = {}  # WebData()
+        self.Domain = None
 
 
 class HouseInformation(ABaseObject):
@@ -143,23 +143,31 @@ class HouseInformation(ABaseObject):
     def __init__(self):
         super(HouseInformation, self).__init__()
         self.Name = 'New House'
-        self.OBJs = {}  # HouseObjs()
+        self.RefOBJs = {}  # RefHouseObjs()
+        self.DeviceOBJs = {}  # DeviceHouseObjs()
 
 
-class HouseObjs(object):
+class RefHouseObjs(object):
+    """This is about a single House.
+    """
+    def __init__(self):
+        self.FamilyData = {}  # FamilyData('FamilyName')
+        self.Location = {}  # LocationData() - one location per house.
+        self.Rooms = {}  # RoomData()
+        self.Schedules = {}  # ScheduleBaseData()
+
+
+class DeviceHouseObjs(object):
     """This is about a single House.
     """
     def __init__(self):
         self.Buttons = {}  # ButtonData()
         self.Controllers = {}  # ControllerData()
-        self.FamilyData = {}  # FamilyData()
         self.Irrigation = {}  # IrrigationData()
         self.Lights = {}  # LightData()
-        self.Location = {}  # LocationData() - one location per house.
         self.Pools = {}  # PoolData()
-        self.Rooms = {}  # RoomData()
-        self.Schedules = {}  # ScheduleData()
         self.Thermostats = {}  # ThermostatData()
+
 
 
 class JsonHouseData(ABaseObject):
@@ -173,6 +181,7 @@ class JsonHouseData(ABaseObject):
         self.Location = {}
         self.Rooms = {}
         self.Schedules = {}
+        self.Thermostats = {}
 
 
 class RoomData(ABaseObject):
@@ -192,18 +201,24 @@ class RoomData(ABaseObject):
 class NodeData(ABaseObject):
     """Information about a single node.
     Name is the Node's HostName
+    The interface info is only for the local node.
     """
     def __init__(self):
+        super(NodeData, self).__init__()
+        self.Comment = None
         self.ConnectionAddr_IPv4 = None
-        self.NodeRole = 0
+        self.ConnectionAddr_IPv6 = None
+        self.NodeId = None
+        self.NodeRole = None
         self.NodeInterfaces = {}  # NodeInterfaceData()
 
 
 class NodeInterfaceData(ABaseObject):
     """
-    Holds information about each of the interfaces on the local node.
+    Holds information about each of the interfaces on the *local* node.
     """
     def __init__(self):
+        super(NodeInterfaceData, self).__init__()
         self.NodeInterfaceType = None  # Ethernet | Wireless | Loop | Tunnel | Other
         self.MacAddress = ''
         self.V4Address = []
@@ -230,6 +245,8 @@ class ThermostatData(ABaseObject):
 
     def __init__(self):
         super(ThermostatData, self).__init__()
+        self.Comment = ''
+        self.RoomName = ''
         self.CoolSetPoint = 0
         self.ControllerFamily = 'Null'
         self.CurrentTemperature = 0
@@ -238,41 +255,47 @@ class ThermostatData(ABaseObject):
         self.ThermostatScale = 'F'  # F | C
 
 
-class ScheduleData(ABaseObject):
+class ScheduleBaseData(ABaseObject):
     """A schedule of when events happen.
     """
     def __init__(self):
-        super(ScheduleData, self).__init__()
-        self.Level = 0
-        self.LightName = None
-        self.Object = None  # a light (perhaps other) object
-        self.Rate = 0
-        self.RoomName = None
+        super(ScheduleBaseData, self).__init__()
         self.ScheduleType = 'Device'  # For future expansion into scenes, entertainment etc.
         self.Time = None
+        self.DOW = None
+        self.Mode = 0
         # for use by web browser - not saved in xml
         self._DeleteFlag = False
 
 
-class InternetConnectionData(ABaseObject):
+class ScheduleLightData(object):
+    """A schedule piece for lighting events.
+    """
+    def __init__(self):
+        self.Level = 0
+        self.LightName = None
+        self.Rate = 0
+        self.RoomName = None
+        self.ScheduleType = 'LightingDevice'  # For future expansion into scenes, entertainment etc.
+
+
+class ScheduleThermostatData(object):
+    """
+    """
+    def __init__(self):
+        self.HeatSetting = None
+        self.CoolSetting = None
+
+
+class InternetConnectionData(object):
     """Check our nodes external IP-v4 address
     """
     def __init__(self):
-        super(InternetConnectionData, self).__init__()
-        self.ExternalDelay = 600  # Minimum value
-        self.ExternalIPv4 = None  # returned from url to check our external IPv4 address
-        self.ExternalUrl = None
+        self.ExternalIPv4 = None
         self.ExternalIPv6 = None
-        self.DynDns = {}  # InternetConnectionDynDnsData()
-
-
-class InternetConnectionDynDnsData(ABaseObject):
-    """One or more dynamic dns servers that we need to update
-    """
-    def __init__(self):
-        super(InternetConnectionDynDnsData, self).__init__()
-        self.UpdateInterval = 0
-        self.UpdateUrl = None
+        self.LastChanged = None
+        self.LocateUrls = {}
+        self.UpdateUrls = {}
 
 
 class XmlInformation(object):
@@ -287,29 +310,40 @@ class XmlInformation(object):
 class PyHouseAPIs(object):
     """
     Most of these have a single entry.
-    Others are dicts of APIs, one per instance.
     """
 
     def __init__(self):
+        self.Modules = {}  # A dict of ModuleName : Reference
+        self.Comp = {}  # CompAPIs()
+        self.House = {}  # HouseAPIs()
+        self.CoreSetupAPI = None
+        self.PyHouseAPI = None
+
+
+class CompAPIs(object):
+    def __init__(self):
         self.CommunicationsAPI = None
         self.ComputerAPI = None
-        self.CoreAPI = None
         self.EmailAPI = None
+        self.InternetAPI = None
+        self.NodesAPI = None
+        self.WeatherAPI = None
+        self.WebAPI = None
+
+
+class HouseAPIs(object):
+    def __init__(self):
+        self.Modules = {}  # A dict of ModuleName : Reference
         self.EntertainmentAPI = None
         self.FamilyAPI = None
         self.HouseAPI = None
         self.HvacAPI = None
-        self.InternetAPI = None
         self.IrrigationAPI = None
         self.LightingAPI = None
-        self.LogsAPI = None
-        self.NodesAPI = None
         self.PoolAPI = None
-        self.PyHouseAPI = None
         self.ScheduleAPI = None
         self.SecurityAPI = None
-        self.WeatherAPI = None
-        self.WebAPI = None
+        self.SunRiseSetAPI = None
 
 
 class TwistedInformation(object):
@@ -326,7 +360,9 @@ class CoreServicesInformation(object):
     def __init__(self):
         self.NodeDiscoveryService = None
         self.NodeDomainService = None
-        self.InternetConnectionService = None
+        self.InterNodeComm = None
+        self.InternetDiscoveryService = None
+        self.InternetUpdateService = None
         self.IrControlService = None
         self.WebServerService = None
 
@@ -336,15 +372,20 @@ class LocationData(object):
     Latitude and Longitude allow the computation of local sunrise and sunset
     """
     def __init__(self):
+        self.Street = ''
         self.City = ''
+        self.State = 'FL'
+        self.ZipCode = '12345'
         self.Latitude = 28.938448
         self.Longitude = -82.517208
         self.Phone = ''
-        self.SavingTime = '-4:00'
-        self.State = 'FL'
-        self.Street = ''
-        self.TimeZone = '-5:00'
-        self.ZipCode = '12345'
+        self.TimeZoneName = 'America/New_York'
+        self.DomainID = None
+        self._TimeZoneOffset = '-5:00'
+        self._IsDaylightSavingsTime = False
+        # Computed at startup (refreshed periodically)
+        self._Sunrise = None
+        self._Sunset = None
 
 
 class SerialControllerData(object):
@@ -380,12 +421,12 @@ class  EthernetControllerData(object):
         self.Protocol = 'TCP'
 
 
-class LogData(object):
-    """Locations of various logs
-    """
-    def __init__(self):
-        self.Debug = None
-        self.Error = None
+# class LogData(object):
+#    """Locations of various logs
+#    """
+#    def __init__(self):
+#        self.Debug = None
+#        self.Error = None
 
 
 class WebData(object):
@@ -402,6 +443,9 @@ class LoginData(object):
     def __init__(self):
         self.LoginName = None
         self.LoginEncryptedPassword = None
+        self.LoginFullName = 'Not logged in'
+        self.IsLoggedIn = False
+        self.ServerState = None
 
 
 class EmailData(object):

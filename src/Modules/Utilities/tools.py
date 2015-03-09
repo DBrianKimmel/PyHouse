@@ -1,9 +1,9 @@
 """
--*- test-case-name: PyHouse.src.Modules.util.test.test_tools -*-
+-*- test-case-name: PyHouse.src.Modules.Utilities.test.test_tools -*-
 
-@name: PyHouse/src/Modules/utils/tools.py
+@name: PyHouse/src/Modules/Utilities/tools.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @copyright: 2013-2014 by D. Brian Kimmel
 @note: Created on Apr 11, 2013
 @license: MIT License
@@ -22,66 +22,94 @@ from xml.dom import minidom
 g_debug = 1
 
 
-def PrettyPrintAny(p_any, title = '', maxlen = 120):
-    l_type = type(p_any)
-    print('===== ', title, '===== ', l_type)
-    #
-    if isinstance(p_any, dict):
-        PrettyPrintDict(p_any)
-    elif isinstance(p_any, ET.Element):
-        PrettyPrintXML(p_any, maxlen = maxlen)
-    elif isinstance(p_any, str):
-        PrettyPrintString(p_any, maxlen = maxlen)
-    elif isinstance(p_any, unicode):
-        PrettyPrintUnicode(p_any, maxlen = maxlen)
-    else:  # Default to an object
-        PrettyPrintObject(p_any, maxlen = maxlen)
-    print('---------------------------------')
 
-def PrettyPrintDict(p_dict, p_format = "%-25s %s"):
-    for (key, val) in p_dict.iteritems():
-        print(p_format % (str(key) + ':', val))
+class PrettyPrintAny(object):
 
-def PrettyPrintXML(p_element, maxlen):
-    """Return a pretty-printed XML string for the Element.
-
-    @param p_element: an element to format as a readable XML tree.
-    @return: a string formatted with indentation and newlines.
-    """
-    l_rough_string = ET.tostring(p_element, 'utf-8')
-    l_reparsed = minidom.parseString(l_rough_string)
-    l_doc = l_reparsed.toprettyxml(indent = "    ")
-    l_lines = l_doc.splitlines()
-    for l_line in l_lines:
-        if not l_line.isspace():
-            print(_format_line(l_line, maxlen = maxlen))
-
-def PrettyPrintObject(p_obj, maxlen, lindent = 24, maxspew = 2000):
-    def _truncstring(s, maxlen):
-        if len(s) > maxlen:
-            return s[0:maxlen] + ' ...(%d more chars)...' % (len(s) - maxlen)
-        else:
-            return s
-    l_tab = 2
-    l_attrs = []
-    l_tabbedwidths = [l_tab, lindent - l_tab, maxlen - lindent - l_tab]
-    l_filtered = filter(lambda aname: not aname.startswith('__'), dir(p_obj))
-    # for l_slot in dir(p_obj):
-    for l_slot in l_filtered:
-        l_attr = getattr(p_obj, l_slot)
-        l_attrs.append((l_slot, l_attr))
-    l_attrs.sort()
-    for (attr, l_val) in l_attrs:
-        print(PrettyPrintCols(('', attr, _truncstring(str(l_val), maxspew)), l_tabbedwidths, ' '))
-
-def PrettyPrintString(p_obj, maxlen):
-    l_str = _format_line(p_obj, maxlen = maxlen)
-    print(l_str)
-
-def PrettyPrintUnicode(p_obj, maxlen):
-    print(_format_line(str(p_obj), maxlen = maxlen))
+    def __init__(self, p_any, title = '', maxlen = 120):
+        self.m_indent = 0
+        self.m_type = type(p_any)
+        print('===== ', title, '===== ', self.m_type)
+        self._type_dispatcher(p_any, maxlen, self.m_indent)
 
 
+    def _type_dispatcher(self, p_any, maxlen, indent):
+        if isinstance(p_any, dict):
+            self._print_dict(p_any, maxlen = maxlen, indent = indent)
+        elif isinstance(p_any, ET.Element):
+            self._print_XML(p_any, maxlen = maxlen, indent = indent)
+        elif isinstance(p_any, str):
+            self._print_string(p_any, maxlen = maxlen, indent = indent)
+        elif isinstance(p_any, unicode):
+            self._print_unicode(p_any, maxlen = maxlen, indent = indent)
+        elif isinstance(p_any, list):
+            self._print_list(p_any, maxlen = maxlen, indent = indent + 4)
+        else:  # Default to an object
+            self._print_object(p_any, maxlen = maxlen, indent = indent)
+        print('---------------------------------')
+
+
+    def _print_string(self, p_obj, maxlen, indent):
+        print(PrettyPrintCols(('', p_obj), [indent, maxlen - indent], ' '))
+
+
+    def _print_unicode(self, p_obj, maxlen, indent):
+        print(PrettyPrintCols(('', p_obj), [indent, maxlen - indent], ' '))
+
+
+    def _print_dict(self, p_dict, maxlen, indent):
+        l_tabbedwidths = [indent, 30, maxlen - 30]
+        for key, val in p_dict.iteritems():
+            print(PrettyPrintCols(('', str(key), str(val)), l_tabbedwidths, ' '))
+
+
+    def _print_XML(self, p_element, maxlen, indent):
+        """Return a pretty-printed XML string for the Element.
+
+        @param p_element: an element to format as a readable XML tree.
+        @return: a string formatted with indentation and newlines.
+        """
+        l_tabbedwidths = [indent, 30, maxlen - 30]
+        l_rough_string = ET.tostring(p_element, 'utf-8')
+        l_reparsed = minidom.parseString(l_rough_string)
+        l_doc = l_reparsed.toprettyxml()
+        l_lines = l_doc.splitlines()
+        for l_line in l_lines:
+            if not l_line.isspace():
+                print(_format_line(l_line, maxlen = maxlen))
+
+
+    def _print_list(self, p_obj, maxlen, indent):
+        maxlen = maxlen
+        l_tabbedwidths = [indent, 30, maxlen - 30]
+        l_ix = 1
+        for l_line in p_obj:
+            print('{}\t{}'.format(l_ix, l_line))
+            l_ix += 1
+
+
+    def _print_object(self, p_obj, maxlen, indent = 24, maxspew = 2000):
+        l_col_1_width = 28
+        l_tab = 4
+        l_attrs = []
+        l_tabbedwidths = [indent, l_col_1_width - l_tab, maxlen - l_col_1_width - l_tab]
+        l_filtered = filter(lambda aname: not aname.startswith('__'), dir(p_obj))
+        for l_slot in l_filtered:
+            l_attr = getattr(p_obj, l_slot)
+            l_attrs.append((l_slot, l_attr))
+        l_attrs.sort()
+        for (attr, l_val) in l_attrs:
+            print(PrettyPrintCols(('', attr, truncstring(str(l_val), maxspew)), l_tabbedwidths, ' '))
+
+
+
+def truncstring(s, maxlen = 2000):
+    if len(s) > maxlen:
+        return s[0:maxlen] + ' ...(%d more chars)...' % (len(s) - maxlen)
+    else:
+        return s
+
+
+# ======================================================================
 
 def PrintBytes(p_message):
     """Print all the bytes of a message as hex bytes.
@@ -104,9 +132,14 @@ def PrintBytes(p_message):
 
 
 def PrettyPrintCols(strings, widths, split = ' '):
-    """Pretty prints text in colums, with each string breaking at
-    split according to _format_line.  margins gives the corresponding
-    right breaking point.
+    """
+    Pretty prints text in columns, with each string breaking at split according to _format_line.
+    Margins gives the corresponding right breaking point.
+
+    The first string is the title which is usually ''.
+
+    The number of strings must match the number of widths.
+    Each width is the width of a column with the last number is the total width.
     """
     assert len(strings) == len(widths)
     strings = map(_nukenewlines, strings)
@@ -255,8 +288,8 @@ def _format_line(string, maxlen = 175, split = ' '):
     """Pretty prints the given string to break at an occurrence of
     split where necessary to avoid lines longer than maxlen.
 
-    This will overflow the line if no convenient occurrence of split
-    is found"""
+    This will overflow the line if no convenient occurrence of split is found.
+    """
     # Tack on the splitting character to guarantee a final match
     string += split
     lines = []
@@ -268,12 +301,18 @@ def _format_line(string, maxlen = 175, split = ' '):
         oldeol = eol + len(split)
     return lines
 
-def _nukenewlines(string):
-    """Strip newlines and any trailing/following whitespace; rejoin
-    with a single space where the newlines were.
+# def _split_long_lines(string, maxlen = 175):
+#    l_lines = _format_line(string, maxlen)
+#    return l_lines
+#    return '--'.join(l_line for l_line in l_lines)
 
-    Bug: This routine will completely butcher any whitespace-formatted
-    text."""
+def _nukenewlines(string):
+    """
+    Strip newlines and any trailing/following whitespace;
+    rejoin with a single space where the newlines were.
+
+    Bug: This routine will completely butcher any whitespace-formatted text.
+    """
     if not string: return ''
     lines = string.splitlines()
     return ' '.join([line.strip() for line in lines])
@@ -285,6 +324,21 @@ def _delchars(p_str, chars):
     # whip up a string that will leave all characters unmolested.
     identity = ''.join([chr(x) for x in range(256)])
     return p_str.translate(identity, chars)
+
+
+class GetPyhouse(object):
+
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+
+    def House(self, p_pyhouse):
+        return self.m_pyhouse.House
+
+    def Schedules(self):
+        return self.m_pyhouse_obj.House.RefOBJs.Schedules
+
+    def Location(self):
+        return self.m_pyhouse_obj.House.RefOBJs.Location
 
 
 class Lister():
@@ -310,10 +364,9 @@ def get_light_object(p_pyhouse_obj, name = None, key = None):
 
     @return: the Light object found or None.
     """
-    l_lights = p_pyhouse_obj.House.OBJs.Lights
+    l_lights = p_pyhouse_obj.House.DeviceOBJs.Lights
     if name != None:
         for l_obj in l_lights.itervalues():
-            # print('xxx {0:}'.format(l_obj.Name))
             if l_obj.Name == name:
                 return l_obj
         print('tools().GetLightObj using Name:{0:} - lookup failed'.format(name))
@@ -321,6 +374,7 @@ def get_light_object(p_pyhouse_obj, name = None, key = None):
         for l_obj in l_lights.itervalues():
             if l_obj.Key == key:
                 return l_obj
+        print('tools().GetLightObj using Key:{0:} - lookup failed'.format(key))
     print('tools().GetLightObj failed - arg error Name:{0:}, Key:{1:}'.format(name, key))
     return None
 

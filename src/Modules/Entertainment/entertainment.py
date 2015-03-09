@@ -18,11 +18,11 @@ Pandora (via pianobar) is one of the systems.
 # Import system type stuff
 # import xml.etree.ElementTree as ET
 # from Modules.entertain import pandora
-from Modules.utils import pyh_log
+from Modules.Computer import logging_pyh as Logger
 
 g_debug = 0
 
-LOG = pyh_log.getLogger('PyMh.Entertainment')
+LOG = Logger.getLogger('PyMh.Entertainment')
 g_upnp = None
 
 Entertainment_Data = {}

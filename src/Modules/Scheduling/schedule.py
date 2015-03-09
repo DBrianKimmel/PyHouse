@@ -1,9 +1,9 @@
 """
--*- test-case-name: PyHouse.src.Modules.scheduling.test.test_schedule -*-
+-*- test-case-name: PyHouse.src.Modules.Scheduling.test.test_schedule -*-
 
-@name: PyHouse/src/Modules/scheduling/schedule.py
+@name: PyHouse/src/Modules/Scheduling/schedule.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @Copyright (c) 2013-2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Apr 8, 2013
@@ -42,98 +42,230 @@ Operation:
 
   TODO: create a group of timers and cancel the changed ones when the schedules object is changed.
         Keep all times as UTC - display them as local time for editing.
+
+        Have modules that want schedule events to register with us.
 """
 
 # Import system type stuff
 import datetime
-import xml.etree.ElementTree as ET
+import dateutil.parser as dparser
 
 # Import PyMh files
-from Modules.Core.data_objects import ScheduleData
-from Modules.Scheduling import sunrisesunset
+from Modules.Scheduling import schedule_xml
 from Modules.Lighting import lighting
-from Modules.Hvac import thermostat
+from Modules.Hvac import thermostats
 from Modules.Irrigation import irrigation
-from Modules.Utilities import xml_tools
 from Modules.Utilities import tools
-from Modules.Utilities import pyh_log
-# from Modules.Utilities.tools import PrettyPrintAny
-
-g_debug = 1
-LOG = pyh_log.getLogger('PyHouse.Schedule    ')
+from Modules.Utilities.tools import GetPyhouse
+from Modules.Computer import logging_pyh as Logger
 
 
-class ReadWriteConfigXml(xml_tools.XmlConfigTools):
 
-    m_count = 0
+LOG = Logger.getLogger('PyHouse.Schedule       ')
+SECONDS_IN_DAY = 86400
+SECONDS_IN_WEEK = 604800  # 7 * 24 * 60 * 60
+INITIAL_DELAY = 5
+PAUSE_DELAY = 5
 
-    def read_one_schedule_xml(self, p_schedule_element):
-        """Extract schedule information from a schedule xml element.
+
+
+class Sch(object):
+
+    @staticmethod
+    def find_event(p_event):
+        if not p_event.Active:
+            return None
+        if not p_event.ScheduleType == 'LightingDevice':
+            return None
+        return p_event
+
+
+    @staticmethod
+    def _make_timedelta(p_datetime):
+        """Convert a datetime to a timedelta.
+
+        @param p_datetime: is a datetime of a time to convert
+        @return: a timedelta if the time to convert
         """
-        l_schedule_obj = ScheduleData()
-        self.read_base_object_xml(l_schedule_obj, p_schedule_element)
-        l_schedule_obj.Level = self.get_int_from_xml(p_schedule_element, 'Level')
-        l_schedule_obj.LightName = self.get_text_from_xml(p_schedule_element, 'LightName')
-        l_schedule_obj.Rate = self.get_int_from_xml(p_schedule_element, 'Rate')
-        l_schedule_obj.RoomName = self.get_text_from_xml(p_schedule_element, 'RoomName')
-        l_schedule_obj.ScheduleType = self.get_text_from_xml(p_schedule_element, 'ScheduleType')
-        l_schedule_obj.Time = self.get_text_from_xml(p_schedule_element, 'Time')
-        return l_schedule_obj
+        return datetime.timedelta(0, p_datetime.second, 0, 0, p_datetime.minute, p_datetime.hour)
 
-    def read_schedules_xml(self, p_pyhouse_obj):
+
+
+
+class ScheduleTimer(object):
+    """The timer for the next schedule execution.
+    """
+
+    m_schedule_timer = None
+
+
+    def start_schedule_timer(self, p_function, p_delay, p_list):
+        """Find out what schedules need to be done and how long to delay before they are due to be run.
         """
-        @param p_house_xml: is the e-tree XML house object
-        @return: a dict of the entry to be attached to a house object.
+        LOG.info('Delay: {0:} - List: {1:}'.format(p_delay, p_list))
+        self.m_schedule_timer = self.m_pyhouse_obj.Twisted.Reactor.callLater(p_delay, p_function, p_list)
+
+
+    def cancel_schedule_timer(self):
         """
-        l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
-        self.m_count = 0
-        l_dict = {}
+        Stop the current schedule timer.
+        """
         try:
-            l_schedules_xml = l_xml.find('ScheduleSection')
-            for l_entry in l_schedules_xml.iterfind('Schedule'):
-                l_schedule_obj = self.read_one_schedule_xml(l_entry)
-                l_schedule_obj.Key = self.m_count  # Renumber
-                l_dict[self.m_count] = l_schedule_obj
-                self.m_count += 1
-        except AttributeError as e_err:
-            LOG.error('ERROR in schedule.read_schedules_xml() - {0:}'.format(e_err))
-        return l_dict
+            self.m_schedule_timer.cancel()
+        except:
+            pass
+        self.m_schedule_timer = None
 
-    def write_one_schedule_xml(self, p_schedule_obj):
+
+
+class RiseSetData(object):
+    """
+    These fields are each an "aware" datetime.datetime
+    They were calculated by the sunrisesunset module for the house's location and timezone.
+    They are therefore, the local time of sunrise and sunset.
+    """
+    def __init__(self):
+        self.Sunrise = None
+        self.Sunset = None
+
+
+class ScheduleTime(object):
+    """
+    This class deals with extracting information from the time and dow fields of a schedule.
+
+    """
+
+    m_now = None
+
+    def _now_daytime(self):
         """
+        Freeze the current time into self.m_now.
+        This used in all calculations to avoid time jitter (seconds changing during the course of calculations)
+
+        @return: the current datetime.datetime local time.
         """
-        l_entry = self.write_base_object_xml('Schedule', p_schedule_obj)
-        self.put_int_element(l_entry, 'Key', self.m_count)
-        self.put_int_element(l_entry, 'Level', p_schedule_obj.Level)
-        self.put_text_element(l_entry, 'LightName', p_schedule_obj.LightName)
-        self.put_int_element(l_entry, 'Rate', p_schedule_obj.Rate)
-        self.put_text_element(l_entry, 'RoomName', p_schedule_obj.RoomName)
-        self.put_text_element(l_entry, 'ScheduleType', p_schedule_obj.ScheduleType)
-        self.put_text_element(l_entry, 'Time', p_schedule_obj.Time)
-        return l_entry
+        self.m_now = datetime.datetime.now()
+        return self.m_now
 
-    def write_schedules_xml(self, p_schedules_obj):
-        """Replace all the data in the 'Schedules' section with the current data.
-        @param p_parent: is the 'schedules' element
+    def _extract_time_or_offset(self, p_timefield):
         """
-        self.m_count = 0
-        l_xml = ET.Element('ScheduleSection')
-        # PrettyPrintAny(p_schedules_obj, 'Schedule - SchedulesObj')
-        for l_schedule_obj in p_schedules_obj.itervalues():
-            l_entry = self.write_one_schedule_xml(l_schedule_obj)
-            l_xml.append(l_entry)
-            self.m_count += 1
-        return l_xml
+        Extract the time or offset time from the timefield
+
+        @return: a datetime.timedelta of the time portion of the field
+        """
+        l_time = dparser.parse(p_timefield, fuzzy = True)
+        l_time2 = datetime.timedelta(0, l_time.second, 0, 0, l_time.minute, l_time.hour)
+        return l_time2
+
+    def _find_dow(self, p_datetime):
+        """
+        Find out the day of the week for a given date (in datetime)
+        """
+        return p_datetime.weekday()
+
+    def _is_dow(self, p_schedule_obj, p_dow):
+        """
+        test to see if the p_dow bit is set in DOW
+        """
+        l_dow = p_schedule_obj.DOW
+        l_is = 2 ** p_dow
+        l_ret = (l_dow & l_is) != 0
+        # print(l_dow, l_is, l_ret)
+        return l_ret
+
+    def _extract_time_of_day(self, p_schedule_obj, p_rise_set):
+        """
+        Get the time of day to execute the schedule.
+
+        The time field may be HH:MM or HH:MM:SS
+            sunrise/sunset  +/-  offset HH:MM:SS or HH:MM
+
+        @param p_schedule_obj: is a reference to the schedule we are working on.
+        @param p_rise_set: is a RiseSetData object containing sunrise and sunset datetime.datetimes
+        @return: a datetime.datetime of when this schedule is to be executed.
+        """
+        l_timefield = p_schedule_obj.Time.lower()
+        l_offset = self._extract_time_or_offset(l_timefield)
+        if 'sunrise' in l_timefield:
+            l_datetime = p_rise_set.Sunrise
+            if '-' in l_timefield:
+                l_datetime = l_datetime - l_offset
+            else:
+                l_datetime = l_datetime + l_offset
+        elif 'sunset' in l_timefield:
+            l_datetime = p_rise_set.Sunset
+            if '-' in l_timefield:
+                l_datetime = l_datetime - l_offset
+            else:
+                l_datetime = l_datetime + l_offset
+        else:
+            l_datetime = l_offset
+        return l_datetime
+
+    def _get_days(self, p_schedule_obj, p_now = m_now):
+        """
+        get days till a DOW time is selected
+
+        now = day 5
+        @return:the (int) number of days from now until an entry in the DOW is turned on.
+        """
+        l_count = 0
+        l_today_dow = p_now.weekday()
+        for l_x in range(7):  # 0-6
+            l_y = (l_x + l_today_dow) % 7
+            if self._is_dow(p_schedule_obj, l_y):
+                return l_count
+            l_count += 1
+        return None
+
+    def _find_diff(self, p_sched, p_now):
+        """
+        @param p_sched: is a datetime of the schedule start time
+        @param p_now: is a datetime of the chached current time.
+        @return: the number of seconds from now till the schedule entry
+        """
+        if type(p_sched) == datetime.timedelta:
+            l_sched = p_sched.total_seconds()
+        else:
+            l_sched = Sch._make_timedelta(p_sched).total_seconds()
+        if type(p_now) == datetime.timedelta:
+            l_now = p_now.total_seconds()
+        else:
+            l_now = Sch._make_timedelta(p_now).total_seconds()
+        l_diff = l_sched - l_now
+        if l_diff < 0:
+            l_diff = l_diff + 86400.0  # tomorrow
+        return l_diff
+
+    def _seconds_to_wait(self, p_now, p_schedule_obj, p_riseset):
+        """
+        Find the delay (number of seconds until the scheduled time)
+        Use self.m_now to ease testing and also to avoid jitter in times.
+        """
+        if not p_schedule_obj.Active:
+            return SECONDS_IN_WEEK
+        l_time_sch = self._extract_time_of_day(p_schedule_obj, p_riseset)
+        return self._find_diff(l_time_sch, p_now)
+
+    def _get_sunrise_sunset(self, p_pyhouse_obj):
+        """
+        The unit tests for this is in the sunrisesunset module.
+        this code just gets the values for this module
+        """
+        l_riseset = RiseSetData()
+        l_riseset.Sunrise = p_pyhouse_obj.House.RefOBJs.Location._Sunrise
+        l_riseset.Sunset = p_pyhouse_obj.House.RefOBJs.Location._Sunset
+        LOG.info("Sunrise:{0:}, Sunset:{1:}".format(l_riseset.Sunrise, l_riseset.Sunset))
+        return l_riseset
 
 
-
-class ScheduleExecution(ScheduleData):
+class ScheduleExecution(object):
 
     def dispatch_schedule(self, p_slot):
         """
         TODO: We need a small dispatch for the various schedule types (hvac, security, entertainment, lights, ...)
         """
-        l_schedule_obj = self.m_pyhouse_obj.House.OBJs.Schedules[p_slot]
+        l_schedule_obj = GetPyhouse(self.m_pyhouse_obj).Schedules[p_slot]
         if l_schedule_obj.ScheduleType == 'LightingDevice':
             pass
         elif l_schedule_obj.ScheduleType == 'Scene':
@@ -144,19 +276,16 @@ class ScheduleExecution(ScheduleData):
         """
         Send information to one device to execute a schedule.
         """
-        l_schedule_obj = self.m_pyhouse_obj.House.OBJs.Schedules[p_slot]
-        # PrettyPrintAny(l_schedule_obj, 'Schedule - ExecuteOneSchedule - ScheduleObject', 120)
-        # PrettyPrintAny(self.m_pyhouse_obj.House.OBJs, 'Schedule - ExecuteOneSchedule - PyHouseObj', 120)
-        # TODO: We need a small dispatch for the various schedule types (hvac, security, entertainment, lights, ...)
+        l_schedule_obj = self.m_pyhouse_obj.House.RefOBJs.Schedules[p_slot]
         if l_schedule_obj.ScheduleType == 'LightingDevice':
-            LOG.debug('Execute_one_schedule type = LightingDevice')
+            LOG.info('Execute_one_schedule type = LightingDevice')
             pass
         elif l_schedule_obj.ScheduleType == 'Scene':
-            LOG.debug('Execute_one_schedule type = Scene')
+            LOG.info('Execute_one_schedule type = Scene')
             pass
         l_light_obj = tools.get_light_object(self.m_pyhouse_obj, name = l_schedule_obj.LightName)
-        LOG.info("Executing one schedule Name:{0:}, Light:{1:}, Level:{2:}, Slot:{3:}".format(l_schedule_obj.Name, l_schedule_obj.LightName, l_schedule_obj.Level, p_slot))
-        self.m_pyhouse_obj.APIs.LightingAPI.ChangeLight(l_light_obj, l_schedule_obj.Level)
+        LOG.info("Name:{0:}, Light:{1:}, Level:{2:}, Slot:{3:}".format(l_schedule_obj.Name, l_schedule_obj.LightName, l_schedule_obj.Level, p_slot))
+        self.m_pyhouse_obj.APIs.House.LightingAPI.ChangeLight(l_light_obj, l_schedule_obj.Level)
 
     def execute_schedules_list(self, p_slot_list = []):
         """
@@ -169,192 +298,99 @@ class ScheduleExecution(ScheduleData):
         LOG.info("About to execute - Schedule:{0:}".format(p_slot_list))
         for l_slot in range(len(p_slot_list)):
             self.execute_one_schedule(p_slot_list[l_slot])
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(5, self.run_schedule, None)
+        self.m_schedule_timer = self.m_pyhouse_obj.Twisted.Reactor.callLater(PAUSE_DELAY, self.set_schedule_timer, None)
 
-    def run_schedule(self, _ignore):
+    def set_schedule_timer(self, _ignore):
         """Find out what schedules need to be done and how long to delay before they are due to be run.
+
+        This is called by callLater so an ignored parameter is required.
         """
-        l_seconds_to_delay, l_schedule_list = self.get_next_sched(self.m_pyhouse_obj)
-        if g_debug >= 1:
-            LOG.info('run_schedule delay: {0:} - List: {1:}'.format(l_seconds_to_delay, l_schedule_list))
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(l_seconds_to_delay, self.execute_schedules_list, l_schedule_list)
+        l_seconds_to_delay, l_schedule_list = self.find_next_scheduled_events(self.m_pyhouse_obj, self._now_daytime())
+        LOG.info('Delay: {0:} - List: {1:}'.format(l_seconds_to_delay, l_schedule_list))
+        self.m_schedule_timer = self.m_pyhouse_obj.Twisted.Reactor.callLater(l_seconds_to_delay, self.execute_schedules_list, l_schedule_list)
 
 
-class ScheduleUtility(ScheduleExecution):
 
-    def _substitute_time(self, p_timefield):
-        """Substitute for names in timefield.
-        Supported fields are: 'sunset'. 'sunrise'
-        Return the string timefield.
+class ScheduleUtility(ScheduleTime):
+
+    def find_next_scheduled_events(self, p_pyhouse_obj, p_now):
         """
-        if 'sunset' in p_timefield:
-            l_timefield = self.m_sunset.strftime('%H:%M')
-            p_timefield = p_timefield.replace('sunset', l_timefield)
-        elif 'sunrise' in p_timefield:
-            l_timefield = self.m_sunrise.strftime('%H:%M')
-            p_timefield = p_timefield.replace('sunrise', l_timefield)
-        return p_timefield
+        Get the current time
+        Go thru all the schedules and find the next schedules to run.
+            Note that there may be several scheduled events for that time
+        return the list and the delay time
 
-    def _extract_field(self, p_timefield):
-        """Extract a time of HH:MM[:ss]
-        @return: A datetime.time of the extracted time
-        clears the timestring from p_timefield to allow for offset type timestrings
-        returns 0 of no such field.
+        If the list is empty, wait a week.
         """
-        try:
-            while p_timefield[0] == ' ':
-                p_timefield = p_timefield[1:]
-        except IndexError:
-            pass
-        if ':' in p_timefield:
-            try :
-                l_ret = datetime.datetime.strptime(p_timefield[0:8], '%H:%M:%S')
-                p_timefield = p_timefield[8:]
-            except ValueError:
-                if g_debug >= 7:
-                    print("schedule._extract_field() not HH:MM:SS - try shorter")
-                try:
-                    l_ret = datetime.datetime.strptime(p_timefield[0:5], '%H:%M')
-                    p_timefield = p_timefield[5:]
-                except ValueError:
-                    if g_debug >= 7:
-                        print("schedule._extract_field() ERROR not HH:MM - using 00:00:00")
-                    l_ret = datetime.time(0, 0, 0)
-            try:
-                while p_timefield[0] == ' ':
-                    p_timefield = p_timefield[1:]
-            except IndexError:
-                pass
-            if g_debug >= 7:
-                print("schedule._extract_field() Exit - {0:}, '{1:}'".format(l_ret, p_timefield))
-        else:
-            l_ret = datetime.time(0, 0, 0)
-            if g_debug >= 7:
-                print("schedule._extract_field() No ':' - Exit - {0:}, '{1:}'".format(l_ret, p_timefield))
-        return l_ret, p_timefield
-
-    def _extract_time(self, p_timefield):
-        """Parse the schedule's time field.
-
-        Convert the schedule time to an actual time of day.
-        Sunset and sunrise are converted.
-        Arithmetic is performed.
-        seconds are forced to 00.
-
-        @param p_timefield: a text field containing time information.
-        @return: datetime.time of the time information.  Be careful of date wrapping!
-        """
-        if g_debug >= 7:
-            print("schedule._extract_time() - {0:}".format(p_timefield))
-        l_sub = False
-        p_timefield += ' '
-        if '-' in p_timefield:
-            l_sub = True
-            p_timefield = p_timefield.replace('-', ' ')
-        elif '+' in p_timefield:
-            p_timefield = p_timefield.replace('+', ' ')
-        p_timefield = self._substitute_time(p_timefield)
-        l_maintime, p_timefield = self._extract_field(p_timefield)
-        l_offsettime, p_timefield = self._extract_field(p_timefield)
-        if l_sub:
-            l_td = datetime.timedelta(hours = l_maintime.hour, minutes = l_maintime.minute) - datetime.timedelta(hours = l_offsettime.hour, minutes = l_offsettime.minute)
-        else:
-            l_td = datetime.timedelta(hours = l_maintime.hour, minutes = l_maintime.minute) + datetime.timedelta(hours = l_offsettime.hour, minutes = l_offsettime.minute)
-        l_timefield = datetime.time(hour = int(l_td.seconds / 3600), minute = int((l_td.seconds % 3600) / 60))
-        if g_debug >= 7:
-            print("schedule._extract_time({0:}) = {1:}".format(p_timefield, l_timefield))
-        return l_timefield
-
-    def _make_delta(self, p_time):
-        """Convert a datetime to a timedelta.
-
-        @param p_time: is a datetime if a time to convert
-        @return: a timedelta if the time to convert
-        """
-        return datetime.timedelta(0, p_time.second, 0, 0, p_time.minute, p_time.hour)
-
-    def _get_entries(self, p_schedules):
-        pass
-
-    def _sunrise_sunset(self):
-        self.m_sunrisesunset_api.Start(self.m_pyhouse_obj)
-        self.m_sunset = self.m_sunrisesunset_api.get_sunset()
-        self.m_sunrise = self.m_sunrisesunset_api.get_sunrise()
-        LOG.info("In get_next_sched - Sunrise:{0:}, Sunset:{1:}".format(self.m_sunrise, self.m_sunset))
-
-    def _find_diff(self, p_sched, p_now):
-        """
-        @param p_sched: is a datetime of the schedule start time
-        @param p_now: is a datetime of the chached current time.
-        """
-        l_diff = self._make_delta(p_sched).total_seconds() - self._make_delta(p_now).total_seconds()
-        if l_diff < 0:
-            l_diff = l_diff + 86400.0  # tomorrow
-        return l_diff
-
-    def get_next_sched(self, p_pyhouse_obj):
-        """Get the next schedule from the current time.
-        Be sure to get the next in a chain of things happening at the same time.
-        Establish a list of Names that have equal schedule times
-        """
-        self._sunrise_sunset()
-        l_now = datetime.datetime.now()
-        l_time_now = datetime.time(l_now.hour, l_now.minute, l_now.second)
-        l_time_scheduled = l_now
-        l_seconds_to_delay = 100000.0
+        l_riseset = self._get_sunrise_sunset(p_pyhouse_obj)
+        l_time_scheduled = p_now
+        # If nothing is found, use these defaults
+        l_seconds_to_delay = SECONDS_IN_WEEK
         l_schedule_list = []
-        for l_key, l_schedule_obj in p_pyhouse_obj.House.OBJs.Schedules.iteritems():
+
+        for l_key, l_schedule_obj in p_pyhouse_obj.House.RefOBJs.Schedules.iteritems():
             if not l_schedule_obj.Active:
                 continue
-            l_time_sch = self._extract_time(l_schedule_obj.Time)
+            l_time_sch = self._extract_time_of_day(l_schedule_obj, l_riseset)
             # now see if this is 1) part of a chain -or- 2) an earlier schedule
-            l_diff = self._find_diff(l_time_sch, l_time_now)
-            # earlier schedule upcoming.
-            if l_diff < l_seconds_to_delay:
+            l_diff = self._find_diff(l_time_sch, p_now)
+            # print('337 - Key:{} - Name:{}  Diff:{} '.format(l_key, l_schedule_obj.Name, l_diff))
+            if l_diff == l_seconds_to_delay:  # Add to lists for the given time.
+                l_schedule_list.append(l_key)
+            elif l_diff < l_seconds_to_delay:  # earlier schedule upcoming.
                 l_seconds_to_delay = l_diff
                 l_schedule_list = []
+                l_schedule_list.append(l_key)
                 l_time_scheduled = l_time_sch
             # add to a chain
-            if l_diff == l_seconds_to_delay:
-                l_schedule_list.append(l_key)
-        l_debug_msg = "Schedule - House:{0:}, delaying {1:} seconds until {2:} for list {3:}".format(self.m_pyhouse_obj.House.Name, l_seconds_to_delay, l_time_scheduled, l_schedule_list)
-        LOG.info("Get_next_schedule complete. {0:}".format(l_debug_msg))
+
+        l_debug_msg = "Delaying {0:} seconds until {1:} for list {2:}".format(l_seconds_to_delay, l_time_scheduled, l_schedule_list)
+        LOG.info("find_next_scheduled_events complete. {0:}".format(l_debug_msg))
         return l_seconds_to_delay, l_schedule_list
 
-    def add_api_references(self, p_pyhouse_obj):
-        p_pyhouse_obj.APIs.LightingAPI = lighting.API()
-        p_pyhouse_obj.APIs.HvacAPI = thermostat.API()
-        p_pyhouse_obj.APIs.IrrigationAPI = irrigation.API()
 
-    def start_scheduled_modules(self, p_pyhouse_obj):
+class UpdatePyhouse(object):
+
+    @staticmethod
+    def add_api_references(p_pyhouse_obj):
+        p_pyhouse_obj.APIs.House.LightingAPI = lighting.API()
+        p_pyhouse_obj.APIs.House.HvacAPI = thermostats.API()
+        p_pyhouse_obj.APIs.House.IrrigationAPI = irrigation.API()
+
+    @staticmethod
+    def start_scheduled_modules(p_pyhouse_obj):
         """
         TODO: Lighting must be first since it loads families etc.
         """
-        p_pyhouse_obj.APIs.LightingAPI.Start(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.HvacAPI.Start(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.IrrigationAPI.Start(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.House.LightingAPI.Start(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.House.HvacAPI.Start(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.House.IrrigationAPI.Start(p_pyhouse_obj)
 
-    def stop_scheduled_modules(self):
-        self.m_pyhouse_obj.APIs.HvacAPI.Stop()
-        self.m_pyhouse_obj.APIs.LightingAPI.Stop()
-        self.m_pyhouse_obj.APIs.IrrigationAPI.Stop()
+    @staticmethod
+    def stop_scheduled_modules(p_pyhouse_obj):
+        p_pyhouse_obj.APIs.House.HvacAPI.Stop()
+        p_pyhouse_obj.APIs.House.LightingAPI.Stop()
+        p_pyhouse_obj.APIs.House.IrrigationAPI.Stop()
 
-    def save_scheduled_modules(self, p_xml):
-        self.m_pyhouse_obj.APIs.HvacAPI.SaveXml(p_xml)
-        self.m_pyhouse_obj.APIs.LightingAPI.SaveXml(p_xml)
-        self.m_pyhouse_obj.APIs.IrrigationAPI.SaveXml(p_xml)
+    @staticmethod
+    def save_scheduled_modules(p_pyhouse_obj, p_xml):
+        p_pyhouse_obj.APIs.House.HvacAPI.SaveXml(p_xml)
+        p_pyhouse_obj.APIs.House.LightingAPI.SaveXml(p_xml)
+        p_pyhouse_obj.APIs.House.IrrigationAPI.SaveXml(p_xml)
         return p_xml
 
 
-class API(ScheduleUtility, ReadWriteConfigXml):
+class API(ScheduleUtility, ScheduleExecution):
     """Instantiated once for each house (active or not)
     """
 
     m_sunrisesunset_api = None
     m_pyhouse_obj = None
 
-    def __init__(self):
-        self.m_sunrisesunset_api = sunrisesunset.API()
+    def _fetch_sunrise_set(self):
+        l_sunrise = self.m_pyhouse_obj.House.RefOBJs.Location._Sunrise
+        l_sunset = self.m_pyhouse_obj.House.RefOBJs.Location._Sunset
+        LOG.info('Got Sunrise: {};   Sunset: {}'.format(l_sunrise, l_sunset))
 
     def Start(self, p_pyhouse_obj):
         """
@@ -364,26 +400,26 @@ class API(ScheduleUtility, ReadWriteConfigXml):
         @param p_house_obj: is a House object for the house being scheduled
         """
         LOG.info("Starting.")
-        self.add_api_references(p_pyhouse_obj)
+        UpdatePyhouse.add_api_references(p_pyhouse_obj)
         self.m_pyhouse_obj = p_pyhouse_obj
-        p_pyhouse_obj.House.OBJs.Schedules = self.read_schedules_xml(p_pyhouse_obj)
-        self.m_sunrisesunset_api.Start(p_pyhouse_obj)
-        self.start_scheduled_modules(p_pyhouse_obj)
-        if self.m_pyhouse_obj.House.Active:
-            self.m_pyhouse_obj.Twisted.Reactor.callLater(5, self.run_schedule, None)
-        else:
-            LOG.warning('No Schedules will be run because the house is NOT active.')
-        LOG.info("Started.")
+        p_pyhouse_obj.House.RefOBJs.Schedules = schedule_xml.ReadWriteConfigXml().read_schedules_xml(p_pyhouse_obj)
+        self._fetch_sunrise_set()
+        UpdatePyhouse.start_scheduled_modules(p_pyhouse_obj)
+        p_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self.set_schedule_timer, None)
 
     def Stop(self):
         """Stop everything under me.
         """
-        self.stop_scheduled_modules()
+        UpdatePyhouse.stop_scheduled_modules(self.m_pyhouse_obj)
         LOG.info("Stopped.")
 
-    def SaveXml(self, p_xml):
-        p_xml.append(self.write_schedules_xml(self.m_pyhouse_obj.House.OBJs.Schedules))
-        self.save_scheduled_modules(p_xml)
-        # LOG.info("Saved XML.")
+    def RestartSchedule(self):
+        LOG.info("Restart")
+        self.find_next_scheduled_events(self.m_pyhouse_obj, self._now_daytime())
+        pass
+
+    def WriteXml(self, p_xml):
+        p_xml.append(schedule_xml.ReadWriteConfigXml().write_schedules_xml(self.m_pyhouse_obj.House.RefOBJs.Schedules))
+        UpdatePyhouse.save_scheduled_modules(self.m_pyhouse_obj, p_xml)
 
 # ## END DBK

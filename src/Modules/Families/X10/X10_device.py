@@ -7,12 +7,10 @@
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
-from Modules.Core.data_objects import LightData
-from Modules.Lighting import lighting
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 
 g_debug = 0
-LOG = pyh_log.getLogger('PyHouse.Dev_X10     ')
+LOG = Logger.getLogger('PyHouse.Dev_X10     ')
 
 
 class ReadWriteXml(object):
@@ -58,11 +56,6 @@ class ReadWriteXml(object):
 
 class API(object):
 
-    def __init__(self):
-        """Constructor for the PLM.
-        """
-        pass
-
     def Start(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         # LOG.info('Started.')
@@ -70,8 +63,11 @@ class API(object):
     def Stop(self):
         pass
 
-    def SaveXml(self, p_xml):
+    def WriteXml(self, p_xml):
         return p_xml
+
+    def SaveXml(self, p_xml):
+        pass
 
     def ChangeLight(self, p_light_obj, p_level, p_rate = 0):
         pass

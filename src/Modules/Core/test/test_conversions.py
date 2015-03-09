@@ -1,7 +1,7 @@
 """
 @name: PyHouse/src/Modules/Core/test/test_conversions.py
 @author: briank
-@contact: <d.briankimmel@gmail.com>
+@contact: D.BrianKimmel@gmail.com>
 @Copyright: (c)  2014 by briank
 @license: MIT License
 @note: Created on Jul 14, 2014

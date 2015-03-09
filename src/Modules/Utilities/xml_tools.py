@@ -1,9 +1,9 @@
 """
--*- test-case-name: PyHouse.src.Modules.util.test.test_xml_tools -*-
+-*- test-case-name: PyHouse.src.Modules.Utilities.test.test_xml_tools -*-
 
-@name: PyHouse/src/Modules/utils/xml_tools.py
+@name: PyHouse/src/Modules/Utilities/xml_tools.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @copyright: 2012-2014 by D. Brian Kimmel
 @note: Created on Jun 2, 2012
 @license: MIT License
@@ -14,13 +14,12 @@
 # Import system type stuff
 import uuid
 from xml.etree import ElementTree as ET
+import dateutil.parser as dparser
 
 # Import PyMh files
-# from Modules.utils.tools import PrettyPrintAny
-# from Modules.utils import pyh_log
+from Modules.Utilities import convert
 
 g_debug = 0
-# LOG = pyh_log.getLogger('PyHouse.XMLTools     ')
 
 
 class PutGetXML(object):
@@ -44,15 +43,20 @@ class PutGetXML(object):
         return l_xml
 
     def _get_any_field(self, p_xml, p_name):
+        if p_xml == None:  # We were passed XML without a tag of p_name
+            return None
         l_xml = self._get_element_field(p_xml, p_name)
         if l_xml == None:
             l_xml = self._get_attribute_field(p_xml, p_name)
+        if l_xml == None:
+            if p_xml.tag == p_name:
+                l_xml = p_xml.text
         return l_xml
 
 #-----
 # Bool
 #-----
-    def get_bool_from_xml(self, p_xml, p_name, default = False):
+    def get_bool_from_xml(self, p_xml, p_name, _default = False):
         """Get a boolean from xml - element or attribute
 
         @param p_xml: is a parent element containing the item we are interested in.
@@ -65,7 +69,7 @@ class PutGetXML(object):
         if l_xml == "False" or l_xml == False:
             return False
         else:
-            print('XMLTools - GetBool - ERROR invalid bool value found for:{0:} - {1:}=>False'.format(p_name, l_xml))
+            print('XMLTools - GetBool - ERROR invalid bool value found for:{} - {}=>False  - {}'.format(p_name, l_xml, p_xml))
         return False
 
     def put_bool_attribute(self, p_xml_element, p_name, p_bool = 'False'):
@@ -117,7 +121,7 @@ class PutGetXML(object):
             l_var = int(l_xml)
         except (ValueError, TypeError):
             l_var = default
-            print('XMLTools - Getint - ERROR invalid  int found for:{0:} - {1:}=>False'.format(p_name, l_xml))
+            print('XMLTools - GetInt - ERROR - Invalid Int found for:{} - {}=>False'.format(p_name, l_xml))
         return l_var
 
     def put_int_attribute(self, p_xml_element, p_name, p_int):
@@ -177,7 +181,7 @@ class PutGetXML(object):
 
         UUIDs are always an element - None returned  an attribute
         """
-        l_xml = self._get_element_field(p_xml, p_name)
+        l_xml = self._get_any_field(p_xml, p_name)
         if l_xml == None:
             return None
         if len(l_xml) < 36:
@@ -191,6 +195,21 @@ class PutGetXML(object):
         @param p_text: is the value to set into this element.
         """
         self.put_text_element(p_parent_element, p_name, p_uuid)
+
+
+    def get_ip_from_xml(self, p_xml, p_name):
+        """
+        Get either IPv4 or IPv6 from the xml file
+        Return a (very) long Integer for the result
+        """
+        l_field = self._get_any_field(p_xml, p_name)
+        l_long = convert.str_to_long(l_field)
+        return l_long
+
+    def get_date_time_from_xml(self, p_xml, p_name):
+        l_field = self._get_any_field(p_xml, p_name)
+        l_ret = dparser.parse(l_field, fuzzy = True)
+        return l_ret
 
 
 class XmlConfigTools(PutGetXML):
@@ -209,6 +228,7 @@ class XmlConfigTools(PutGetXML):
             p_base_obj.UUID = self.get_uuid_from_xml(p_entry_element_xml, 'UUID')
         except Exception as e_err:
             print('ERROR in xml_tools.read_base_obj() - {0:}'.format(e_err))
+        return p_base_obj
 
     def write_base_object_xml(self, p_element_name, p_object):
         """
@@ -220,11 +240,9 @@ class XmlConfigTools(PutGetXML):
         self.put_bool_attribute(l_elem, 'Active', p_object.Active)
 
         try:
-            self.put_text_element(l_elem, 'UUID', p_object.UUID)
-        except AttributeError as e_err:
-            self.put_text_element(l_elem, 'UUID', 'No UUID Given')
-            # print('ERROR in writeBaseObj {0:} {1:}'.format(e_err, PrettyPrintAny(p_object, 'Error in writeBaseObj', 120)))
-            print('ERROR in writeBaseObj {0:}'.format(e_err))
+            self.put_uuid_element(l_elem, 'UUID', p_object.UUID)
+        except AttributeError:
+            self.put_uuid_element(l_elem, 'UUID', 'No UUID Given')
         return l_elem
 
 

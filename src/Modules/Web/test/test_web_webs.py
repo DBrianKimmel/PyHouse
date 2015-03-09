@@ -1,7 +1,7 @@
 """
 @name: PyHouse/src/Modules/web/test/test_web_webs.py
 @author: briank
-@contact: <d.briankimmel@gmail.com>
+@contact: D.BrianKimmel@gmail.com>
 @Copyright: (c)  2014 by briank
 @license: MIT License
 @note: Created on Jun 20, 2014

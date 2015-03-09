@@ -3,7 +3,7 @@
 
 @name: PyHouse/src/Modules/entertain/pandora.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
 @note: Created on Feb 27, 2014
 @license: MIT License
@@ -26,10 +26,10 @@ this module goes back to its initial state ready for another session.
 from twisted.internet import protocol
 
 # from Modules.Utilities.tools import PrintBytes
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 
 g_debug = 0
-LOG = pyh_log.getLogger('PyHouse.Pandora     ')
+LOG = Logger.getLogger('PyHouse.Pandora     ')
 
 PB_LOC = '/usr/bin/pianobar'
 

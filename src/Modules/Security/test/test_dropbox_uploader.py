@@ -1,7 +1,7 @@
 """
 @name: PyHouse/src/Modules/security/test/test_dropbox_uploader.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
 @note: Created on May 31, 2014
 @license: MIT License
@@ -16,7 +16,7 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import PyHouseData, CoreServicesInformation, NodeData
-from Modules.Core import node_local
+from Modules.Computer.Nodes import node_local
 from src.test import xml_data
 
 

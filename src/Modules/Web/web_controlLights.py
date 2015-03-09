@@ -3,7 +3,7 @@
 
 @name: PyHouse/src/Modules/web/web_controlLights.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @Copyright (c) 2013-2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Jun 3, 2013
@@ -19,7 +19,7 @@ from nevow import loaders
 # Import PyMh files and modules.
 from Modules.Core.data_objects import LightData
 from Modules.Web.web_utils import JsonUnicode, GetJSONHouseInfo
-from Modules.Utilities import pyh_log
+from Modules.Computer import logging_pyh as Logger
 # from Modules.Utilities.tools import PrettyPrintAny
 
 # Handy helper for finding external resources nearby.
@@ -27,7 +27,7 @@ webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
 
 g_debug = 0
-LOG = pyh_log.getLogger('PyHouse.webCtlLigt  ')
+LOG = Logger.getLogger('PyHouse.webCtlLigt  ')
 
 
 class ControlLightsElement(athena.LiveElement):
@@ -59,8 +59,9 @@ class ControlLightsElement(athena.LiveElement):
         l_light_obj.Name = l_json['Name']
         l_light_obj.Key = l_light_ix
         l_light_obj.CurLevel = l_level = l_json['Level']
+        l_light_obj.LightingType = 'Light'
         l_light_obj.UUID = l_json['UUID']
         LOG.info('Control Light via Web - Change {0:} device to level {1:}'.format(l_light_obj.Name, l_light_obj.CurLevel))
-        self.m_pyhouse_obj.APIs.LightingAPI.ChangeLight(l_light_obj, l_level)
+        self.m_pyhouse_obj.APIs.House.LightingAPI.ChangeLight(l_light_obj, l_level)
 
 # ## END DBK

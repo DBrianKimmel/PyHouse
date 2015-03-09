@@ -1,11 +1,10 @@
-'''
+"""
 Created on Mar 1, 2014
 
 @author: briank
-'''
-#!/usr/bin/env python
 
-"""Get the internet address and make reports available for web interface.
+
+Get the internet address and make reports available for web interface.
 
 Since PyHouse is always running (as a daemon) this module will get the IP-v4 address that is
 assigned to our router by the ISP.
@@ -25,9 +24,9 @@ from twisted.internet.defer import Deferred
 from twisted.web.client import Agent
 from twisted.web.http_headers import Headers
 
-from Modules.utils import xml_tools
-from Modules.utils import convert
-from Modules.utils import pyh_log
+from Modules.Utilities import xml_tools
+from Modules.Utilities import convert
+from Modules.Computer import logging_pyh as Logger
 
 g_debug = 1
 # 0 = off
@@ -37,7 +36,7 @@ g_debug = 1
 # 4 = External IP execution
 # 5 = Dump Objects
 # + = NOT USED HERE
-LOG = pyh_log.getLogger('PyHouse.Internet    ')
+LOG = Logger.getLogger('PyHouse.Internet    ')
 
 callLater = reactor.callLater
 
@@ -310,7 +309,7 @@ class FindExternalIpAddress(object):
         # This is for Shawn Powers page - http://snar.co/ip
         l_quad = p_ip_page
         self.m_house_obj.Internet.ExternalIP = l_quad
-        l_addr = convert.ConvertEthernet().dotted_quad2long(l_quad)
+        l_addr = convert.str_to_long(l_quad)
         LOG.info("Got External IP page for House:{0:}, Page:{1:}".format(self.m_house_obj.Name, p_ip_page))
         callLater(self.m_house_obj.Internet.ExternalDelay, self.get_public_ip)
         return l_addr

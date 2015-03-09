@@ -3,7 +3,7 @@
 
 @name: PyHouse/src/Modules/housing/rooms.py
 @author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
+@contact: D.BrianKimmel@gmail.com
 @Copyright (c) 2013-2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Apr 10, 2013
@@ -16,11 +16,12 @@ import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from Modules.Core.data_objects import RoomData
-from Modules.Housing import VALID_FLOORS
+# from Modules.Housing import VALID_FLOORS
 from Modules.Utilities import xml_tools
 
 g_debug = 0
 m_logger = None
+
 
 
 class ReadWriteConfigXml(xml_tools.XmlConfigTools):
