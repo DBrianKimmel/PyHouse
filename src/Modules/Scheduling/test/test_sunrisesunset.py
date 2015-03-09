@@ -7,9 +7,6 @@
 @license: MIT License
 @summary: Calculate the suns location at local noon, then calculate sunrise and sunset for the day.
 
-Created on Apr 7, 2013
-
-@author: briank
 """
 
 # Import system type stuff

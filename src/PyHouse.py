@@ -89,6 +89,7 @@ def daemonize():
                 raise
     os.close(null)
 
+
 def handle_signals():
     """
     typing the interrupt character (probably Ctrl-C) causes SIGINT to be sent
@@ -101,6 +102,7 @@ def handle_signals():
     signal.signal(signal.SIGINT, SigIntHandler)
     signal.signal(signal.SIGTERM, SigKillHandler)
 
+
 def SigHupHandler(signum, _stackframe):
     """
     """
@@ -108,6 +110,7 @@ def SigHupHandler(signum, _stackframe):
     LOG.debug('Hup Signal handler called with signal {0:}'.format(signum))
     g_API.Stop()
     g_API.Start()
+
 
 def SigIntHandler(signum, _stackframe):
     """interrupt character (probably Ctrl-C)
