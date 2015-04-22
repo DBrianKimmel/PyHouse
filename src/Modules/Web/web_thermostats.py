@@ -23,6 +23,7 @@ from Modules.Core import conversions
 from Modules.Core.data_objects import ThermostatData
 from Modules.Web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.Computer import logging_pyh as Logger
+from Modules.Families.Insteon import Insteon_utils
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -84,7 +85,7 @@ class ThermostatsElement(athena.LiveElement):
         l_obj.ThermostatMode = 'Cool'  # Cool | Heat | Auto | EHeat
         l_obj.ThermostatScale = 'F'  # F | C
         if l_obj.ControllerFamily == 'Insteon':
-            Insteon_utils.Util().get_jaon_data(l_obj, l_json)
+            Insteon_utils.Util.get_jaon_data(l_obj, l_json)
         elif l_obj.ControllerFamily == 'UPB':
             l_obj.UPBAddress = l_json['UPBAddress']
             l_obj.UPBPassword = l_json['UPBPassword']

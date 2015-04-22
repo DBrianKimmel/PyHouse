@@ -1,0 +1,131 @@
+<LocationSection>
+    <Street>Building </Street>6
+    <City>Waikoloa</City>
+    <State>Hawaii</State>
+    <ZipCode>34465</ZipCode>
+    <Phone>(352) 270-8096</Phone>
+    <Latitude>28.938448</Latitude>
+    <Longitude>-82.517208</Longitude>
+    <TimeZoneName>America/New_York</TimeZoneName>
+</LocationSection>
+
+Elev 23 ft
+19.95 °N, 155.78 °W 
+
+2015-04-07
+
+Actual rise set Time 6:12 AM HST 6:38 PM HST
+
+---------------------------------------------------------------------------------------------
+
+Today's sunrise/sunset calculation for 19.925567 °N, 155.867248 °W.
+
+Find today's Julian date (days since Jan 1, 2000 + 2451545):
+
+Julian date: 2457120
+Now, calculate Jtransit at longitude 155.867248, start with n:
+
+n* = (Jdate - 2451545 - 0.0009) - (lw/360)
+n = round(n*)
+n* = (2457120 - 2451545 - 0.0009) - (155.867248/360) = 5574.5661354222
+n = round(5574.5661354222) = 5575
+
+Now J*:
+J* = 2451545 + 0.0009 + (lw/360) + n
+J* = 2451545 + 0.0009 + (155.867248/360) + 5575 = 2457120.4338646
+
+Using J*, calculate M (mean anomaly) and then use that to calculate C and λ:
+M = [357.5291 + 0.98560028 * (J* - 2451545)] mod 360
+M = [357.5291 + 0.98560028 * (2457120.4338646 - 2451545)] mod 360 = 5852.6782780492 mod 360 = 92.678278049237
+
+We need to calculate the equation of center, C:
+C = (1.9148 * sin(M)) + (0.0200 * sin(2 * M)) + (0.0003 * sin(3 * M))
+C = 1.9148 * sin(92.678278049237) + 0.0200 * sin(2 * 92.678278049237) + 0.0003 * sin(3 * 92.678278049237) = 1.9105442682615
+
+We need λ which is the ecliptical longitude of the sun:
+λ = (M + 102.9372 + C + 180) mod 360
+λ = (92.678278049237 + 102.9372 + 1.9105442682615 + 180) mod 360 = 377.5260223175 mod 360 = 17.526022317498
+
+Finally, calculate Jtransit:
+Jtransit = J* + (0.0053 * sin(M)) - (0.0069 * sin(2 * λ))
+Jtransit = 2457120.4338646 + (0.0053 * sin(92.678278049237)) - (0.0069 * sin(2 * 17.526022317498)) = 2457120.435196
+
+Now, to get an even more accurate number, recursively recalculate M using Jtransit until it stops changing.
+Notice how close the approximation was.
+I1: M = 92.679590278492, C = 1.9105413093306, λ = 17.527331587822, Jtransit = 2457120.4351957
+I2: M = 92.679590018264, C = 1.9105413099175, λ = 17.527331328182, Jtransit = 2457120.4351957
+I3: M = 92.679590018264, C = 1.9105413099175, λ = 17.527331328182, Jtransit = 2457120.4351957
+
+Ok, translate this into something we understand. i.e. When is Solar Noon?
+Jtransit = 2457120.4351957 = 04/07/2015 at 13:26:40 -1000
+
+Alrighty, now calculate how long the sun is in the sky at latitude 19.925567:
+
+Now we need to calculate δ which is the declination of the sun:
+δ = arcsin( sin(λ) * sin(23.45) )
+δ = arcsin(sin(17.527331328182) * sin(23.45)) = 6.8832432780947
+
+Now we can go about calculating H (Hour angle):
+H = arccos( [sin(-0.83) - sin(ln) * sin(δ)] / [cos(ln) * cos(δ)] )
+H = arccos((sin(-0.83) - sin(19.925567) * sin(6.8832432780947))/(cos(19.925567) * cos(6.8832432780947))) = 93.398468942393
+
+Just as above, calculate J*, but this time using hour-angle:
+J** = 2451545 + 0.0009 + ((H + lw)/360) + n
+J** = 2451545 + 0.0009 + ((93.398468942393 + 155.867248)/360) + 5575 = 2457120.6933048
+
+We can use M from above because it really doesn't change that much over the course of a day, calculate Jset in the same way:
+Jset = J** + (0.0053 * sin(M)) - (0.0069 * sin(2 * λ))
+Jset = 2457120.6933048 + (0.0053 * sin(92.679590018264)) - (0.0069 * sin(2 * 17.527331328182)) = 2457120.6946359
+
+Now I'm going to cheat and calculate Jrise:
+Jrise = Jtransit - (Jset - Jtransit)
+Jrise = 2457120.4351957 - (2457120.6946359 - 2457120.4351957) = 2457120.1757555
+
+Using the same idea, figure out when sunrise and sunset are:
+Jrise = 2457120.1757555 = 04/07/2015 at 07:13:05 -1000 
+Jset = 2457120.6946359 = 04/07/2015 at 19:40:16 -1000
+
+========================================================================================================
+
+# Location Information
+T_LATITUDE = 19.925567
+T_LONGITUDE = -155.867248
+T_TIMEZONE_NAME = 'Pacific/Honolulu'
+T_TIMEZONE_OFFSET = '-10:00'
+T_DAYLIGHT_SAVINGS_TIME = '-10:00'
+T_TZ = sunrisesunset.LocationTz()
+
+# Date Information
+T_DATE = datetime.date(2015, 4, 7)
+T_J_DAY_NUMBER = 2457120
+T_J2K_DAY_NUMBER = 5575
+T_JULIAN_DAY = JDATE2000 + 5575
+T_JULIAN_DATE = (JDATE2000 - 0.5) + 5575
+T_J2K_CYCLE = 5575.0
+
+T_TRANSIT = 2457120.435196
+T_J2K_TRANSIT = 5575.4338646
+
+T_MEAN_ANOMALY = 92.678278049237
+T_EQUATION_CENTER = 1.9105442682615
+T_ECLIPTIC_LONGITUDE = 17.526022317498
+T_TRANSIT = 5574.435196  # 2457120.435196
+
+T_MEAN_ANOMALY_1 = 66.400026917619
+T_EQUATION_CENTER_1 = -1.6669112599272
+T_ECLIPTIC_LONGITUDE_1 = 162.82853385689
+T_TRANSIT_1 = 5361.2293465  # 2456906.2293467
+
+T_MEAN_ANOMALY_2 = 241.55824529581
+T_EQUATION_CENTER_2 = -1.6669112628416
+T_ECLIPTIC_LONGITUDE_2 = 162.82853403297
+T_TRANSIT_2 = 5361.2293467  # 2456906.2293467
+
+T_MEAN_ANOMALY_3 = 241.55824529581
+T_EQUATION_CENTER_3 = -1.6669112628416
+T_ECLIPTIC_LONGITUDE_3 = 162.82853403297
+T_TRANSIT_3 = 5361.22934672  # 456906.2293467
+
+T_DECLINATION = 6.7471083756717
+T_HOUR_ANGLE = 94.708153427328
+

@@ -62,7 +62,7 @@ def keep_disk_space_free(bytesToReserve):
 
 # Get available disk space
 def get_free_space():
-    st = os.statvfs(".")
+    st = os.statvfs_result(".")
     du = st.f_bavail * st.f_frsize
     return du
 

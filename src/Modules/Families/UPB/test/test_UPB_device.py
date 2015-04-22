@@ -33,7 +33,7 @@ class SetupMixin(object):
         # PrettyPrintAny(self.m_pyhouse_obj, 'SetupMixin.Setup - PyHouse_obj', 100)
         self.m_api = UPB_device.API()
         self.m_thermostat_api = thermostats.API()
-        self.m_light_api = lighting_lights.LightingLightsAPI(self.m_pyhouse_obj)
+        self.m_light_api = lighting_lights.LLApi(self.m_pyhouse_obj)
         return self.m_pyhouse_obj
 
 

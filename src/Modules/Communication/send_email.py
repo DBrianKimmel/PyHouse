@@ -19,9 +19,9 @@ If you don't have an account - get one or write another module to handle your ma
 # Import system type stuff
 import email.mime.application
 import xml.etree.ElementTree as ET
-# from openSSL.SSL import SSLv3_METHOD
+from OpenSSL.SSL import SSLv3_METHOD
 from twisted.internet.defer import Deferred
-# from twisted.internet.ssl import ClientContextFactory
+from twisted.internet.ssl import ClientContextFactory
 from twisted.mail.smtp import ESMTPSenderFactory
 
 try:

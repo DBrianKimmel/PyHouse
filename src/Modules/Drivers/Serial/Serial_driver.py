@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Drivers.Serial.test.test_Serial_driver -*-
 
-@name: PyHouse/src/Modules/Drivers/Serial/Serial_driver.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
+@name:      PyHouse/src/Modules/Drivers/Serial/Serial_driver.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
 @copyright: 2010-2015 by D. Brian Kimmel
-@note: Created on Feb 18, 2010
-@license: MIT License
-@summary: This module is for driving serial devices
+@note:      Created on Feb 18, 2010
+@license:   MIT License
+@summary:   This module is for driving serial devices
 
 
 This will interface various PyHouse modules to a serial device.
@@ -36,20 +36,18 @@ class SerialProtocol(Protocol):
         self.m_controller_obj = p_controller_obj
 
     def connectionLost(self, reason):
-        LOG.error('The serial driver connection was lost unexpectedly for controller {} - {}'.format(self.m_controller_obj.Name, reason))
+        LOG.error('Connection lost for controller {} - {}'.format(self.m_controller_obj.Name, reason))
 
     def connectionMade(self):
-        LOG.info('Connection Made to {}'.format(self.m_controller_obj.Name))
+        LOG.info('Connection made for controller {}'.format(self.m_controller_obj.Name))
 
     def dataReceived(self, p_data):
-        # LOG.info('Received {}'.format(PrintBytes(p_data)))
         self.m_controller_obj._Data += p_data
 
 
 class SerialAPI(object):
     """Contains all external commands.
     """
-    m_bytes = 0
     m_serial = None
 
     def open_serial_driver(self, p_pyhouse_obj, p_controller_obj):
@@ -62,7 +60,7 @@ class SerialAPI(object):
             self.m_serial = SerialPort(SerialProtocol(p_controller_obj), p_controller_obj.Port,
                     p_pyhouse_obj.Twisted.Reactor, baudrate = p_controller_obj.BaudRate)
         except Exception as e_err:
-            LOG.error("ERROR Open failed for Device:{0:}, Port:{1:} - {2:}".format(p_controller_obj.Name, p_controller_obj.Port, e_err))
+            LOG.error("ERROR Open failed for Device:{}, Port:{} - {}".format(p_controller_obj.Name, p_controller_obj.Port, e_err))
             return False
         LOG.info("Opened Device:{}, Port:{}".format(p_controller_obj.Name, p_controller_obj.Port))
         return True
@@ -70,10 +68,10 @@ class SerialAPI(object):
     def close_device(self, p_controller_obj):
         """Flush all pending output and close the serial port.
         """
-        LOG.info("Close Device {0:}".format(p_controller_obj.Name))
-        if self.m_serial == None:  #  not currently open
-            return
-        self.m_serial.close()
+        LOG.info("Close Device {}".format(p_controller_obj.Name))
+        if self.m_serial != None:  #  not currently open
+            self.m_serial.close()
+        self.m_serial = None
 
     def fetch_read_data(self, p_controller_obj):
         l_msg = p_controller_obj._Data

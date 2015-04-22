@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 """
 -*- test-case-name: PyHouse.src.Modules.utils.test.test_load_password -*-
 
@@ -29,7 +28,10 @@ passlib.hash.sha512_crypt - SHA-512 Crypt � Passlib v1.6.2 Documentation
 http://pythonhosted.org/passlib/lib/passlib.hash.sha512_crypt.html#passlib.hash.sha512_crypt
 """
 
-# import passlib.hash, crypt
+import passlib.hash
+
+# Crypt is unix only so this will error out on windows.
+import crypt
 
 ctype = "6"  # for sha512 (see man crypt)
 salt = "qwerty"

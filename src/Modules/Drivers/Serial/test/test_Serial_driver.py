@@ -1,11 +1,11 @@
 """
-@name: PyHouse/src/Modules/Drivers/Serial/test/test_Serial_driver.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
+@name:      PyHouse/src/Modules/Drivers/Serial/test/test_Serial_driver.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
 @copyright: 2013_2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on May 4, 2013
-@summary: This module is for testing local node data.
+@license:   MIT License
+@note:      Created on May 4, 2013
+@summary:   This module is for testing local node data.
 
 Passed 5 API tests - DBK - 2014-07-27
 """

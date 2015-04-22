@@ -1,0 +1,242 @@
+// ===================================================================================================================================================
+
+# Location Information
+
+T_LATITUDE = 28.938448
+T_LONGITUDE = -82.517208
+T_TIMEZONE_NAME = 'America/New_York'
+T_TIMEZONE_OFFSET = '-5:00'
+T_DAYLIGHT_SAVINGS_TIME = '-4:00'
+T_TZ = sunrisesunset.LocationTz()
+
+T_DATE = datetime.date(2014, 9, 5)
+T_MEAN_ANOMALY = 241.55900194059
+T_EQUATION_CENTER = -1.6669235826461
+T_ECLIPTIC_LONGITUDE = 162.82927835795
+T_MEAN_ANOMALY_1 = 66.400026917619
+T_EQUATION_CENTER_1 = -1.6669112599272
+T_ECLIPTIC_LONGITUDE_1 = 162.82853385689
+T_TRANSIT_1 = 5361.2293465  # 2456906.2293467
+T_MEAN_ANOMALY_2 = 241.55824529581
+T_EQUATION_CENTER_2 = -1.6669112628416
+T_ECLIPTIC_LONGITUDE_2 = 162.82853403297
+T_TRANSIT_2 = 5361.2293467  # 2456906.2293467
+T_MEAN_ANOMALY_3 = 241.55824529581
+T_EQUATION_CENTER_3 = -1.6669112628416
+T_ECLIPTIC_LONGITUDE_3 = 162.82853403297
+T_TRANSIT_3 = 5361.22934672  # 456906.2293467
+T_DECLINATION = 6.7471083756717
+T_HOUR_ANGLE = 94.708153427328
+
+
+"""  Date zero calculations
+
+Find today's Julian date (days since Jan 1, 2000 + 2451545):
+Julian date: 2456906
+
+Now, calculate Jtransit at longitude 82.51720, start with n:
+n* = (Jdate - 2451545 - 0.0009) - (lw/360)
+n = round(n*)
+n* = (2456906 - 2451545 - 0.0009) - (82.51720/360) = 5360.7698855556
+n = round(5360.7698855556) = 5361
+
+Now J*:
+J* = 2451545 + 0.0009 + (lw/360) + n
+J* = 2451545 + 0.0009 + (82.51720/360) + 5361 = 2456906.2301144
+
+Using J*, calculate M (mean anomaly) and then use that to calculate C and <lambda>:
+M = [357.5291 + 0.98560028 * (J* - 2451545)] mod 360
+M = [357.5291 + 0.98560028 * (2456906.2301144 - 2451545)] mod 360 = 5641.5590019406 mod 360 = 241.55900194059
+
+We need to calculate the equation of center, C:
+C = (1.9148 * sin(M)) + (0.0200 * sin(2 * M)) + (0.0003 * sin(3 * M))
+C = 1.9148 * sin(241.55900194059) + 0.0200 * sin(2 * 241.55900194059) + 0.0003 * sin(3 * 241.55900194059) = -1.6669235826461
+
+We need <lambda> which is the ecliptical longitude of the sun:
+<lambda> = (M + 102.9372 + C + 180) mod 360
+<lambda> = (241.55900194059 + 102.9372 + -1.6669235826461 + 180) mod 360 = 522.82927835795 mod 360 = 162.82927835795
+
+Finally, calculate Jtransit:
+Jtransit = J* + (0.0053 * sin(M)) - (0.0069 * sin(2 * <lambda>))
+Jtransit = 2456906.2301144 + (0.0053 * sin(241.55900194059)) - (0.0069 * sin(2 * 162.82927835795)) = 2456906.2293466
+
+Now, to get an even more accurate number, recursively recalculate M using Jtransit until it stops changing. Notice how close the approximation was.
+I1: M = 241.55824511682, C = -1.6669112599272, <lambda> = 162.82853385689, Jtransit = 2456906.2293467
+I2: M = 241.55824529581, C = -1.6669112628416, <lambda> = 162.82853403297, Jtransit = 2456906.2293467
+I3: M = 241.55824529581, C = -1.6669112628416, <lambda> = 162.82853403297, Jtransit = 2456906.2293467
+
+Ok, translate this into something we understand. i.e. When is Solar Noon?
+Jtransit = 2456906.2293467 = 09/05/2014 at 13:30:15 -0500
+
+Alrighty, now calculate how long the sun is in the sky at latitude 28.938464:
+
+Now we need to calculate <delta> which is the declination of the sun:
+<delta> = arcsin( sin(<lambda>) * sin(23.45) )
+<delta> = arcsin(sin(162.82853403297) * sin(23.45)) = 6.7471083756717
+
+Now we can go about calculating H (Hour angle):
+H = arccos( [sin(-0.83) - sin(ln) * sin(<delta>)] / [cos(ln) * cos(<delta>)] )
+H = arccos((sin(-0.83) - sin(28.938464) * sin(6.7471083756717))/(cos(28.938464) * cos(6.7471083756717))) = 94.708153427328
+
+Just as above, calculate J*, but this time using hour-angle:
+J** = 2451545 + 0.0009 + ((H + lw)/360) + n
+J** = 2451545 + 0.0009 + ((94.708153427328 + 82.51720)/360) + 5361 = 2456906.4931926
+
+We can use M from above because it really doesn't change that much over the course of a day, calculate Jset in the same way:
+Jset = J** + (0.0053 * sin(M)) - (0.0069 * sin(2 * <lambda>))
+Jset = 2456906.4931926 + (0.0053 * sin(241.55824529581)) - (0.0069 * sin(2 * 162.82853403297)) = 2456906.4924249
+
+Now I'm going to cheat and calculate Jrise:
+Jrise = Jtransit - (Jset - Jtransit)
+Jrise = 2456906.2293467 - (2456906.4924249 - 2456906.2293467) = 2456905.9662685
+
+Using the same idea, figure out when sunrise and sunset are:
+Jrise = 2456905.9662685 = 09/05/2014 at 07:11:25 -0500
+Jset = 2456906.4924249 = 09/05/2014 at 19:49:05 -0500
+"""
+
+
+
+
+
+// ===================================================================================================================================================
+
+# All Tests - Location Information
+T_LATITUDE = 28.938448
+T_LONGITUDE = -82.517208  # lon/360 = -0.2292144666666667
+T_TIMEZONE_NAME = 'America/New_York'
+T_TIMEZONE_OFFSET = '-5:00'
+T_DAYLIGHT_SAVINGS_TIME = '-4:00'
+T_TZ = sunrisesunset.LocationTz()
+
+T_DATE = datetime.date(2014, 9, 5)
+T_MEAN_ANOMALY = 241.55900194059
+T_EQUATION_CENTER = -1.6669235826461
+T_ECLIPTIC_LONGITUDE = 162.82927835795
+T_MEAN_ANOMALY_1 = 66.400026917619
+T_EQUATION_CENTER_1 = -1.6669112599272
+T_ECLIPTIC_LONGITUDE_1 = 162.82853385689
+T_TRANSIT_1 = 5361.2293465  # 2456906.2293467
+T_MEAN_ANOMALY_2 = 241.55824529581
+T_EQUATION_CENTER_2 = -1.6669112628416
+T_ECLIPTIC_LONGITUDE_2 = 162.82853403297
+T_TRANSIT_2 = 5361.2293467  # 2456906.2293467
+T_MEAN_ANOMALY_3 = 241.55824529581
+T_EQUATION_CENTER_3 = -1.6669112628416
+T_ECLIPTIC_LONGITUDE_3 = 162.82853403297
+T_TRANSIT_3 = 5361.22934672  # 456906.2293467
+T_DECLINATION = 6.7471083756717
+T_HOUR_ANGLE = 94.708153427328
+
+
+""" Date 1 Calculations
+
+datetime.date(2015, 3, 12)
+Today's sunrise/sunset calculation for 28.938448 N, 82.517208 E.
+
+Find today's Julian date (days since Jan 1, 2000 + 2451545):
+Julian date: 2457094
+
+Now, calculate Jtransit at longitude -82.517208, start with n:
+n* = (Jdate - 2451545 - 0.0009) - (lw/360)
+n = round(n*)
+n* = (2457094 - 2451545 - 0.0009) - (-82.517208/360) = 5549.2283144667
+n = round(5549.2283144667) = 5549
+
+Now J*:
+J* = 2451545 + 0.0009 + (lw/360) + n
+J* = 2451545 + 0.0009 + (-82.517208/360) + 5549 = 2457093.7716855
+
+Using J*, calculate M (mean anomaly) and then use that to calculate C and Lambda:
+M = [357.5291 + 0.98560028 * (J* - 2451545)] mod 360
+M = [357.5291 + 0.98560028 * (2457093.7716855 - 2451545)] mod 360 = 5826.4000269176 mod 360 = 66.400026917619
+
+We need to calculate the equation of center, C:
+C = (1.9148 * sin(M)) + (0.0200 * sin(2 * M)) + (0.0003 * sin(3 * M))
+C = 1.9148 * sin(66.400026917619) + 0.0200 * sin(2 * 66.400026917619) + 0.0003 * sin(3 * 66.400026917619) = 1.7692276388382
+
+We need Lambda which is the ecliptical longitude of the sun:
+Lambda = (M + 102.9372 + C + 180) mod 360
+Lambda = (66.400026917619 + 102.9372 + 1.7692276388382 + 180) mod 360 = 351.10645455646 mod 360 = 351.10645455646
+
+Finally, calculate Jtransit:
+Jtransit = J* + (0.0053 * sin(M)) - (0.0069 * sin(2 * Lambda))
+Jtransit = 2457093.7716855 + (0.0053 * sin(66.400026917619)) - (0.0069 * sin(2 * 351.10645455646)) = 2457093.7786501
+
+Now, to get an even more accurate number, recursively recalculate M using Jtransit until it stops changing.
+Notice how close the approximation was.
+I1: M = 66.406891170759, C = 1.7693161081250, Lambda = 351.11340727888, Jtransit = 2457093.7786487
+I2: M = 66.406889849884, C = 1.7693160911035, Lambda = 351.11340594099, Jtransit = 2457093.7786487
+I3: M = 66.406889850343, C = 1.7693160911095, Lambda = 351.11340594145, Jtransit = 2457093.7786487
+I4: M = 66.406889850343, C = 1.7693160911095, Lambda = 351.11340594145, Jtransit = 2457093.7786487
+
+Ok, translate this into something we understand. i.e. When is Solar Noon?
+Jtransit = 2457093.7786487 = 03/12/2015 at 13:41:15 +0600
+
+Alrighty, now calculate how long the sun is in the sky at latitude 28.938448:
+
+Now we need to calculate Delta which is the declination of the sun:
+Delta = arcsin( sin(Lambda) * sin(23.45) )
+Delta = arcsin(sin(351.11340594145) * sin(23.45)) = -3.5244685811301
+
+Now we can go about calculating H (Hour angle):
+H = arccos( [sin(-0.83) - sin(ln) * sin(Delta)] / [cos(ln) * cos(Delta)] )
+H = arccos((sin(-0.83) - sin(28.938448) * sin(-3.5244685811301))/(cos(28.938448) * cos(-3.5244685811301))) = 88.998972939736
+
+Just as above, calculate J*, but this time using hour-angle:
+J** = 2451545 + 0.0009 + ((H + lw)/360) + n
+J** = 2451545 + 0.0009 + ((88.998972939736 + -82.517208)/360) + 5549 = 2457094.0189049
+
+We can use M from above because it really doesn't change that much over the course of a day, calculate Jset in the same way:
+Jset = J** + (0.0053 * sin(M)) - (0.0069 * sin(2 * Lambda))
+Jset = 2457094.0189049 + (0.0053 * sin(66.406889850343)) - (0.0069 * sin(2 * 351.11340594145)) = 2457094.0258681
+
+Now I'm going to cheat and calculate Jrise:
+Jrise = Jtransit - (Jset - Jtransit)
+Jrise = 2457093.7786487 - (2457094.0258681 - 2457093.7786487) = 2457093.5314294
+
+Using the same idea, figure out when sunrise and sunset are:
+Jrise = 2457093.5314294 = 03/12/2015 at 07:45:15 +0600
+Jset = 2457094.0258681 = 03/12/2015 at 19:37:15 +0600
+"""
+# Test time 1
+T1_DATE = datetime.date(2015, 3, 12)
+T1_SUNRISE = datetime.datetime(2015, 3, 12, 7, 45, 15, 0, tzinfo = T_TZ)
+T1_SUNSET = datetime.datetime(2015, 3, 12, 19, 37, 15, 0, tzinfo = T_TZ)
+
+T1_JULIAN_DAY = JDATE2000 + 5549
+T1_JULIAN_DATE = (JDATE2000 - 0.5) + 5549
+T1_J2K_CYCLE = 5549.0
+T1_J2K_TRANSIT = 5549.23011446666667
+
+T1_MEAN_ANOMALY_0 = 66.400026917619
+T1_EQUATION_CENTER_0 = 1.7692276388382
+T1_ECLIPTIC_LONGITUDE_0 = 351.10645455646
+T1_TRANSIT_0 = 5548.7786501  # 2457093.7786501
+
+# I1: M = 66.406891170759, C = 1.7693161081250, Lambda = 351.11340727888, Jtransit = 2457093.7786487
+T1_MEAN_ANOMALY_1 = 66.406891170759
+T1_EQUATION_CENTER_1 = 1.7693161081250
+T1_ECLIPTIC_LONGITUDE_1 = 351.11340727888
+T1_TRANSIT_1 = 5548.7786487  # 2457093.7786487
+
+# I2: M = 66.406889849884, C = 1.7693160911035, Lambda = 351.11340594099, Jtransit = 2457093.7786487
+T1_MEAN_ANOMALY_2 = 66.406889849884
+T1_EQUATION_CENTER_2 = 1.7693160911035
+T1_ECLIPTIC_LONGITUDE_2 = 351.11340594099
+T1_TRANSIT_2 = 5548.7786487  # 2457093.7786487
+
+# I3: M = 66.406889850343, C = 1.7693160911095, Lambda = 351.11340594145, Jtransit = 2457093.7786487
+T1_MEAN_ANOMALY_3 = 66.406889850343
+T1_EQUATION_CENTER_3 = 1.7693160911095
+T1_ECLIPTIC_LONGITUDE_3 = 351.11340594145
+T1_TRANSIT_3 = 5548.7786487  # 2457093.7786487
+
+# I4: M = 66.406889850343, C = 1.7693160911095, Lambda = 351.11340594145, Jtransit = 2457093.7786487
+T1_MEAN_ANOMALY_4 = 66.406889850343
+T1_EQUATION_CENTER_4 = 1.7693160911095
+T1_ECLIPTIC_LONGITUDE_4 = 351.11340594145
+T1_TRANSIT_4 = 5548.7786487  # 2457093.7786487
+
+T1_DECLINATION = -3.5244685811301
+T1_HOUR_ANGLE = 88.998972939736

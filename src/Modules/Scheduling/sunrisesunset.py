@@ -60,10 +60,14 @@ class JulianParameters(object):
         # Julian - Jan 1 4713 BCE
         self.JulianDate = None  # (float) Number of days since Noon UT Jan 1, 4713 BC.
         self.JulianDayNumber = None  # (integer) Number of days since Jan 1, 4713 BC.
+        self.JStar = None
+        self.n = None
+        self.nstar = None
         # J2000 - Jan 1 2000 CE
-        self.J2K = None  # Julian Date since Noon Jan 1, 2000.
+        self.J2KDate = None  # Julian Date since Noon Jan 1, 2000.
         self.J2KCycle = None  # (floor float) Julian cycle since Jan 1st, 2000
         self.J2KTransit = None
+        self.J2KStar = None
 
 
 class EarthParameters(object):
@@ -71,8 +75,8 @@ class EarthParameters(object):
     """
 
     def __init__(self):
-        self.Latitude = 0.0
-        self.Longitude = 0.0
+        self.Latitude = None
+        self.Longitude = None
         self.Sunrise = None
         self.Sunset = None
         self.TimeZoneName = None
@@ -91,14 +95,14 @@ class SolarParameters(object):
         Usually epoch J2K.0 is taken, but the instantaneous equinox of the day (called the epoch of date) is possible too.
     """
     def __init__(self):
-        self.EclipticLatitude = 0.0
-        self.EclipticLongitude = 0.0
-        self.EquationCenter = 0.0
-        self.MeanAnomaly = 0.0
-        self.MeanLongitude = 0.0  # The mean longitude of the Sun, corrected for the aberration of light (Ecliptic coord).
-        self.SolarDeclination = 0.0
-        self.SolarHourAngle = 0.0
-        self.SolarTransit = 0.0  # The hour angle for solar transit (or solar noon)
+        self.EclipticLatitude = None
+        self.EclipticLongitude = None
+        self.EquationCenter = None
+        self.MeanAnomaly = None
+        self.MeanLongitude = None  # The mean longitude of the Sun, corrected for the aberration of light (Ecliptic coord).
+        self.SolarDeclination = None
+        self.SolarHourAngle = None
+        self.SolarTransit = None  # The hour angle for solar transit (or solar noon)
 
 
 class LocationTz(datetime.tzinfo):
@@ -180,7 +184,7 @@ class JDate(object):
         l_date = p_julian.GregorianDate
         l_year = l_date.year + 4800 - JDate._is_jan_feb(l_date)
         l_month = l_date.month + (12 * JDate._is_jan_feb(l_date)) - 3
-        l_day = (l_date.day + \
+        l_julian_day = (l_date.day + \
                  (((153 * l_month) + 2) // 5) + \
                  (365 * l_year) + \
                  (l_year // 4) - \
@@ -188,18 +192,36 @@ class JDate(object):
                  (l_year // 400) - \
                  (87 * 365) - \
                  290)  # integer
-        return l_day
+        return l_julian_day
 
     @staticmethod
     def _julian_date(p_julian):
         """
-        The astronomical julian date starts at Noon, Jan 1st 4713 BC
+        The astronomical julian date starts at Noon, Jan 1st 4713 BCE
         This is a floating point number 1/2 day less than the julian day
         """
         return p_julian.JulianDayNumber - 0.5
 
     @staticmethod
-    def _j2k(p_julian):
+    def _julian_nstar(p_julian, p_earth):
+        """Formula uses west long and we use east long so sign is reversed here.
+        """
+        l_nstar = p_julian.JulianDayNumber - JDATE2000_9
+        l_long = p_earth.Longitude / 360.0
+        l_n = l_nstar + l_long
+        return l_n
+
+    @staticmethod
+    def _julian_n(p_julian, p_earth):
+        """Formula uses west long and we use east long so sign is reversed here.
+        """
+        l_nstar = p_julian.JulianDayNumber - JDATE2000_9
+        l_long = p_earth.Longitude / 360.0
+        l_n = round(l_nstar + l_long)
+        return l_n
+
+    @staticmethod
+    def _j2k_date(p_julian):
         return p_julian.JulianDate - JDATE2000  # - 0.0009
 
     @staticmethod
@@ -212,6 +234,11 @@ class JDate(object):
         l_long = p_earth.Longitude / 360.0
         l_cycle = l_date - JDATE2000 - .0009 - l_long
         return round(l_cycle)
+
+    @staticmethod
+    def _jstar(p_julian, p_earth):
+        l_jstar = JDATE2000_9 - (p_earth.Longitude / 360.0) + p_julian.n
+        return l_jstar
 
     @staticmethod
     def _j2k_transit(p_julian, p_earth):
@@ -254,11 +281,16 @@ class JDate(object):
         That amounts to 77.76 seconds of correction.
         """
         l_julian = JulianParameters()
+        l_wlong = p_earth.Longitude / 360.0
         l_julian.GregorianDate = p_gregorian_date
         l_julian.JulianDayNumber = JDate._julian_day(l_julian)
         l_julian.JulianDate = JDate._julian_date(l_julian)
-        l_julian.J2K = JDate._j2k(l_julian)
+        l_julian.nstar = JDate._julian_nstar(l_julian, p_earth)
+        l_julian.n = JDate._julian_n(l_julian, p_earth)
+        l_julian.JStar = JDate._jstar(l_julian, p_earth)
+        l_julian.J2KDate = JDate._j2k_date(l_julian)
         l_julian.J2KCycle = JDate._j2k_cycle(l_julian, p_earth)
+        l_julian.J2KStar = .0009 + l_julian.J2KCycle + l_wlong
         l_julian.J2KTransit = JDate._j2k_transit(l_julian, p_earth)
         return l_julian
 
@@ -273,45 +305,44 @@ class SunCalcs(object):
 
     @staticmethod
     def _calc_ecliptic_latitude():
-        """
-        Calculate the Ecliptic Latitude - always 0.0
-        Symbol Beta
+        """ Ecliptic Latitude - Beta
+
+        always 0.0
         """
         l_elatitude = 0.0
         return l_elatitude
 
     @staticmethod
-    def _calc_mean_anomaly(p_julian):
-        """
+    def _calc_mean_anomaly(p_julian, p_solar):
+        """ Mean Anomaly - M
+
         The position that the planet would have relative to its perihelion if the orbit of the planet
          were a circle is called the mean anomaly.
-        Calculate the mean anomaly.
-        Symbol g
 
-        l_j_star2k = JDATE2000_9 - (l_e_long / 360.0) + p_julian.J2KCycle - JDATE2000
-        l_j_star2k = p_julian.J2KCycle + JDATE2000_9 - JDATE2000 - (l_e_long / 360.0)
-
+        M = [357.5291 + 0.98560028 * (J* - 2451545)] mod 360
         """
-        l_c1 = p_julian.J2KTransit
+        if p_solar.MeanAnomaly == None:
+            l_c1 = p_julian.J2KStar
+            print('Using J2KStar {}'.format(l_c1))
+        else:
+            l_c1 = p_solar.SolarTransit
+            print('Using Solar transit')
         l_mean_anomaly = Util._revolution(357.5291 + (0.98560028 * (l_c1))) * DEG2RAD
-        # print('CalcMeanAnomaly = {} >> {}'.format(l_c1, l_mean_anomaly * RAD2DEG))
         return l_mean_anomaly
 
     @staticmethod
     def _calc_equation_of_center(p_solar):
-        """
+        """ Equation of Center - C
+
         The orbits of the planets are not perfect circles but rather ellipses, so the speed of the planet
          in its orbit varies, and therefore the apparent speed of the Sun along the ecliptic also varies
           throughout the planet's year.
 
-        The true anomaly is the angular distance of the planet from the perihelion of
-         the planet, as seen from the Sun.
+        The true anomaly is the angular distance of the planet from the perihelion of the planet, as seen from the Sun.
         For a circular orbit, the mean anomaly and the true anomaly are the same.
-        The difference between the true anomaly and the mean anomaly is called the Equation of Center,
-         written here as C:
+        The difference between the true anomaly and the mean anomaly is called the Equation of Center.
 
-        Calculate the equation of center.
-        Symbol C.
+        C = (1.9148 * sin(M)) + (0.0200 * sin(2 * M)) + (0.0003 * sin(3 * M))
         """
         l_mean_anomaly = p_solar.MeanAnomaly
         l_equation_of_center = 1.91480 * math.sin(l_mean_anomaly) + \
@@ -323,9 +354,11 @@ class SunCalcs(object):
     @staticmethod
     def _calc_ecliptic_longitude(p_solar):
         """
-        Calculate the Ecliptic Longitude.
-        Symbol 'lambda'.
+        Ecliptic Longitude - lambda
+
         This is the position of the earth in its orbit around the sun with 0 degrees being the vernal equinox.
+
+        Lambda = (M + 102.9372 + C + 180) mod 360
         """
         l_mean_anomaly = p_solar.MeanAnomaly
         l_equation_of_center = p_solar.EquationCenter
@@ -336,16 +369,30 @@ class SunCalcs(object):
     @staticmethod
     def _calc_solar_transit(p_julian, p_solar):
         """
-        Calculate solar transit.
+        Solar Transit - Jtransit
+
+         Jtransit = J* + (0.0053 * sin(M)) - (0.0069 * sin(2 * Lambda))
         """
-        l_jstar = p_julian.J2KTransit
+        if p_solar.SolarTransit == None:
+            l_solar_transit = p_julian.J2KStar
+        else:
+            l_solar_transit = p_solar.SolarTransit
         l_mean_anomaly = p_solar.MeanAnomaly
         l_lambda = p_solar.EclipticLongitude
-        l_c1 = 0.0053 * math.sin(l_mean_anomaly)
-        l_c2 = 0.0069 * math.sin(2.0 * l_lambda)
-        l_transit = l_jstar + l_c1 - l_c2
-        # print l_c1, l_c2
+        l_term1 = 0.0053 * math.sin(l_mean_anomaly)
+        l_term2 = 0.0069 * math.sin(2.0 * l_lambda)
+        l_transit = l_solar_transit + l_term1 - l_term2
         return l_transit
+
+    @staticmethod
+    def _calc_initial_solar_params(p_julian):
+        l_solar = SolarParameters()
+        l_solar.EclipticLatitude = SunCalcs._calc_ecliptic_latitude()
+        l_solar.MeanAnomaly = SunCalcs._calc_mean_anomaly(p_julian, l_solar)
+        l_solar.EquationCenter = SunCalcs._calc_equation_of_center(l_solar)
+        l_solar.EclipticLongitude = SunCalcs._calc_ecliptic_longitude(l_solar)
+        l_solar.SolarTransit = SunCalcs._calc_solar_transit(p_julian, l_solar)
+        return l_solar
 
     @staticmethod
     def _calc_declination_of_sun(p_solar):
@@ -377,23 +424,21 @@ class SunriseSet(SunCalcs):
     """
 
     def _recursive_calcs(self, p_julian, p_solar):
-        p_solar.MeanAnomaly = self._calc_mean_anomaly(p_julian)
-        p_solar.EquationCenter = self._calc_equation_of_center(p_solar)
-        p_solar.EclipticLongitude = self._calc_ecliptic_longitude(p_solar)
-        p_solar.SolarTransit = self._calc_solar_transit(p_julian, p_solar)
-        p_julian.J2KTransit = p_solar.SolarTransit
-        return p_solar
+        l_solar = SolarParameters()
+        l_solar.MeanAnomaly = self._calc_mean_anomaly(p_julian, p_solar)
+        l_solar.EquationCenter = self._calc_equation_of_center(p_solar)
+        l_solar.EclipticLongitude = self._calc_ecliptic_longitude(p_solar)
+        l_solar.SolarTransit = self._calc_solar_transit(p_julian, p_solar)
+        return l_solar
 
     def _recursive_loop(self, p_julian, p_solar, p_ix):
+        l_test = p_solar.MeanAnomaly
         for _l_ix in range(p_ix):
-            l_test = p_solar.MeanAnomaly
             p_solar = self._recursive_calcs(p_julian, p_solar)
-            # print('iteration of recursive {}'.format(_l_ix))
-            # PrettyPrintAny(p_solar, 'After Recursive')
+            print('Iterated  {}'.format(p_solar.SolarTransit))
             if p_solar.MeanAnomaly == l_test:
                 return p_solar
         l_msg = 'Ran out of iterations without converging.'
-        # print('{}'.format(l_msg))
         LOG.info(l_msg)
         return p_solar
 
@@ -402,7 +447,7 @@ class SunriseSet(SunCalcs):
         """
         l_sun = SolarParameters()
         l_sun.EclipticLatitude = self._calc_ecliptic_latitude()
-        l_sun.MeanAnomaly = self._calc_mean_anomaly(p_julian)
+        l_sun.MeanAnomaly = self._calc_mean_anomaly(p_julian, l_sun)
         l_sun.EquationCenter = self._calc_equation_of_center(l_sun)
         l_sun.EclipticLongitude = self._calc_ecliptic_longitude(l_sun)
         l_sun.SolarTransit = self._calc_solar_transit(p_julian, l_sun)
@@ -411,10 +456,10 @@ class SunriseSet(SunCalcs):
         l_sun = self._recursive_calcs(p_julian, l_sun)
         l_sun.SolarDeclination = self._calc_declination_of_sun(l_sun)
         l_sun.SolarHourAngle = self._calc_hour_angle(p_earth, l_sun)
-        self._calcSolarTransit(p_earth, p_julian, l_sun)
+        self.calcSunriseSunset(p_earth, p_julian, l_sun)
         return l_sun
 
-    def _calcSolarTransit(self, p_earth, p_julian, p_sun):
+    def calcSunriseSunset(self, p_earth, p_julian, p_sun):
         """
         """
         l_transit = p_sun.SolarTransit
@@ -422,7 +467,6 @@ class SunriseSet(SunCalcs):
         l_j_starstar = ((-p_earth.Longitude + p_sun.SolarHourAngle * RAD2DEG) / 360.0) + l_N + 0.0009
         l_set = l_j_starstar + (0.0053 * math.sin(p_sun.MeanAnomaly)) - (0.0069 * math.sin(2.0 * p_sun.EclipticLongitude))
         l_rise = l_transit - (l_set - l_transit)
-        # print('xxxx', l_rise, l_set, l_transit)
         p_earth.Sunrise = l_rise
         p_earth.Sunset = l_set
         p_sun.Sunrise = l_rise

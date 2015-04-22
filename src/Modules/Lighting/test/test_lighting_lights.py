@@ -43,7 +43,7 @@ class C01_XML(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
         self.m_light_obj = LightData()
-        self.m_api = lighting_lights.LightingLightsAPI(self.m_pyhouse_obj)
+        self.m_api = lighting_lights.LLApi(self.m_pyhouse_obj)
 
     def test_01_find_xml(self):
         """ Be sure that the XML contains the right stuff.
@@ -66,7 +66,7 @@ class C02_Read(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
         self.m_light_obj = LightData()
-        self.m_api = lighting_lights.LightingLightsAPI(self.m_pyhouse_obj)
+        self.m_api = lighting_lights.LLApi(self.m_pyhouse_obj)
 
     def test_01_LightData(self):
         l_light_obj = self.m_api._read_light_data(self.m_xml.light)
@@ -119,7 +119,7 @@ class C03_Write(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
         self.m_light_obj = LightData()
-        self.m_api = lighting_lights.LightingLightsAPI(self.m_pyhouse_obj)
+        self.m_api = lighting_lights.LLApi(self.m_pyhouse_obj)
 
     def test_01_Base(self):
         l_light = self.m_api._read_one_light_xml(self.m_xml.light)
@@ -168,7 +168,7 @@ class C04_JSON(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
         self.m_light_obj = LightData()
-        self.m_api = lighting_lights.LightingLightsAPI(self.m_pyhouse_obj)
+        self.m_api = lighting_lights.LLApi(self.m_pyhouse_obj)
 
     def test_01_CreateJson(self):
         """ Create a JSON object for Location.

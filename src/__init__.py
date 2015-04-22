@@ -24,6 +24,11 @@ Requirements:
 Windows:
     pip install dateutils
     pip install netaddr
+    pip install netifaces
+    pip install pyusb
+    pip install jsonpickle
+    pip install passlib
+    pip install pyopenSSL
 
 
 

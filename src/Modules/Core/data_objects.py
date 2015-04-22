@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Core.test.test_data_objects -*-
 
-@Name: PyHouse/src/Modules/Core/data_objects.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
+@Name:      PyHouse/src/Modules/Core/data_objects.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
 @copyright: 2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Mar 20, 2014
-@summary: This module is the definition of major data objects.
+@license:   MIT License
+@note:      Created on Mar 20, 2014
+@summary:   This module is the definition of major data objects.
 
 self.Entry        This entry is stored in xml and memory when read in.
 self._Entry       This entry in NOT stored in XML but is stored in memory when read in.

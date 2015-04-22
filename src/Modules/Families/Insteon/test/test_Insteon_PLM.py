@@ -21,7 +21,7 @@ from twisted.trial import unittest
 from Modules.Core.data_objects import PyHouseData, ControllerData
 from Modules.Families.Insteon import Insteon_PLM
 from Modules.Families import family
-from Modules.Lighting.lighting_lights import LightingLightsAPI
+from Modules.Lighting.lighting_lights import LLApi
 from Modules.Lighting.lighting_controllers import LCApi
 from test.xml_data import *
 from test.testing_mixin import SetupPyHouseObj
@@ -48,7 +48,7 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
         self.m_api = Insteon_PLM.API()
-        self.m_llapi = LightingLightsAPI(self.m_pyhouse_obj)
+        self.m_llapi = LLApi(self.m_pyhouse_obj)
         self.m_lcapi = LCApi(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.DeviceOBJs.Lights = self.m_llapi.read_all_lights_xml(self.m_xml.light_sect)
         self.m_pyhouse_obj.House.DeviceOBJs.Controllers = self.m_lcapi.read_all_controllers_xml(self.m_xml.controller_sect)

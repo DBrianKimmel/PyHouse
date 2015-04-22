@@ -21,6 +21,7 @@ from Modules.Web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.Lighting import lighting_buttons
 from Modules.Computer import logging_pyh as Logger
 
+from Modules.Families.Insteon import Insteon_utils
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
@@ -57,6 +58,6 @@ class ButtonsElement(athena.LiveElement):
         l_obj.Key = l_json['Key']
         l_obj.Level = l_json['Level']
         if l_obj.ControllerFamily == 'Insteon':
-            Insteon_utils.Util().get_jaon_data(l_obj, l_json)
+            Insteon_utils.Util.get_jaon_data(l_obj, l_json)
 
 # ## END DBK
