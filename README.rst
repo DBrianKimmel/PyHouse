@@ -22,6 +22,34 @@ other nodes either in the same domain or in in affiliated domains.
 PyHouse attempts to avoid 'Islands of Automation' by integrating all the modules
 under one "Roof".
 
+The "Official" language of PyHouse is English.  All documents will be in this language
+but there may be translations to any other language.
+
+There is a hierarchy here.  At it's current level the Internet is the top level for
+control and logging of things in which PyHouse is interested.  The information scheme
+used by PyHouse is MQTT.
+
+The first level of MQTT topic is "PyHouse".  This will us to keep all the information
+in one virtual tree.  
+
+The second level is used by each person or group using PyHouse and is known as the
+"Domain" level.  Therefore the topic so far is "PyHouse/Domain/".  The domain name
+should probably be a UUID in order to keep from choosing a name and finding out that
+the name is already in use.  Each domain should have a scheme of encrypting the
+information within that domain to keep things private.
+
+The Third level is used by a person or group to designate a house or equivalent
+within the domain.  Now the MQTT topic is "PyHouse/Domain UUID/House UUID/".
+A UUID looks like "c15f7d76-092e-11e4-bffa-b827eb189eb4".
+
+
+Domains
+-------
+Domains are a group of nodes that are able to communicate with each other and
+have been given authentication tokens to allow them to share information.
+This will allow two adjacent Town Houses to be independent of each other and two houses
+separated by many miles to cooperate with each other.
+
 
 Nodes
 -----
@@ -31,14 +59,6 @@ each other using IP-V6 over some common media such as Ethernet or Wi-Fi.
 
 It is now (2013-06-06) running in a raspberry pi model B.  It has been turning
 lights on and off reliably for several weeks on this new platform.
-
-
-Domains
--------
-Domains are a group of nodes that are able to communicate with each other and
-have been given authentication tokens to allow them to share information.
-This will allow two adjacent Town Houses to be independent of each other and two houses
-separated by many miles to cooperate with each other.
 
 
 Configuration
@@ -142,4 +162,16 @@ The communication component will include telephone, cell phone, fax, email etc.
 
 
 
-### END
+2015-04-22 UPDATE.
+I am tired of some people and companies releasing individula moduses of something
+to do with Home Automation.
+
+We do NOT need more "Islands of Automation".
+
+I am, therefore, creating a bunch of small projects based on Arduino type microcontrollers to
+be interfaced easily into PyHouse.  It is my hope that a complete Home Automation system will
+be the result.
+
+
+
+### END DBK
