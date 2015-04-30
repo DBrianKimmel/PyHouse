@@ -128,7 +128,7 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 		else
 			Divmod.debug('---', 'ERROR - thermostats.buildEntry() Unknown Family = ' + p_obj.ControllerFamily);
 		l_html += buildLcarEntryButtons(p_handler);
-		return l_html
+		return l_html;
 	},
 	function buildThermostatEntry(self, p_obj, p_html, p_onchange){
 		p_html += buildLcarTextWidget(self, 'Comment', 'Comment', p_obj.Comment);
@@ -137,7 +137,7 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 		p_html += buildLcarFamilySelectWidget(self, 'ControllerFamily', 'Family', p_obj.ControllerFamily, 'familyChanged');
 		p_html += buildLcarHvacSliderWidget(self, 'CoolSetting', 'Cool', p_obj.CoolSetPoint, 'handleSliderChangeCool');
 		p_html += buildLcarHvacSliderWidget(self, 'HeatSetting', 'Heat', p_obj.HeatSetPoint, 'handleSliderChangeHeat');
-		return p_html
+		return p_html;
 	},
 	function handleSliderChangeCool(p_event){
 		// Divmod.debug('---', 'thermostats.handleSliderChangeCool() was called.');

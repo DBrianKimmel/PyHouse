@@ -1,11 +1,11 @@
 """
-@name: PyHouse/src/Modules/Computer/Nodes/inter_node_comm.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
+@name:      PyHouse/src/Modules/Computer/Nodes/inter_node_comm.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
 @Copyright: (c)  2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Sep 20, 2014
-@Summary:  Internode communications subsystem.
+@license:   MIT License
+@note:      Created on Sep 20, 2014
+@Summary:   Internode communications subsystem.
 
 This is the communication system that allows nodes to share information/
 Things like configuration information, Node lists and role information are passed around using this module.

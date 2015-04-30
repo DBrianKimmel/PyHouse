@@ -26,7 +26,7 @@ function hex2int(p_hex, p_bytes) {
 	var l_hex = '00';
 	var l_int = 0;
 	if (p_bytes === 2) {
-		l_hex = p_hex.slice(0, 2) + p_hex.slice(3)
+		l_hex = p_hex.slice(0, 2) + p_hex.slice(3);
 		l_int = parseInt(l_hex, 16).toString();
 	}
 	if (p_bytes === 3) {
@@ -40,13 +40,14 @@ function hex2int(p_hex, p_bytes) {
  */
 function int2hex(p_int, p_bytes) {
 	var l_hex = Number(p_int).toString(16);
+	var l_ret = 0;
 	if (p_bytes === 2) {
-		l_hex = ('0000' + l_hex).slice(-4)
-		var l_ret = l_hex.slice(0, 2) + '.' + l_hex.slice(2);
+		l_hex = ('0000' + l_hex).slice(-4);
+		l_ret = l_hex.slice(0, 2) + '.' + l_hex.slice(2);
 	}
 	if (p_bytes === 3) {
-		l_hex = ('000000' + l_hex).slice(-6)
-		var l_ret = l_hex.slice(0, 2) + '.' + l_hex.slice(2, 4) + '.' + l_hex.slice(4);
+		l_hex = ('000000' + l_hex).slice(-6);
+		l_ret = l_hex.slice(0, 2) + '.' + l_hex.slice(2, 4) + '.' + l_hex.slice(4);
 	}
 	return l_ret;
 }

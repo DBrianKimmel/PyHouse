@@ -206,7 +206,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
      */
     function handleDataOnClick(self, p_node) {
         function cb_handleDataOnClick(p_json) {
-        	self.startWidget()
+        	self.startWidget();
         }
         function eb_handleDataOnClick(p_reason){
             Divmod.debug('---', 'ERROR controllers.eb_handleDataOnClick() - ' + p_reason);
