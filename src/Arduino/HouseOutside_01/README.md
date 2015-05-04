@@ -9,6 +9,7 @@ It contains:
 - Light Level Sensor
 - DH22 Temperature / Humidity Sensor
 - PIR People Sensor
+- 433MHz Radio for fan control
 
 Like all other PyHouse sensors, it also has an MQTT component.
 
