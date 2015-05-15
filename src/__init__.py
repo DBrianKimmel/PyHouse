@@ -29,6 +29,7 @@ Windows:
     pip install jsonpickle
     pip install passlib
     pip install pyopenSSL
+    pip install paho-mqtt        (Windows linux)
 
 
 

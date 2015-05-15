@@ -11,6 +11,8 @@ SoftwareSerial monitor(0, 1); // RX, TX
 
 // Include various modules here
 
+// ========================================================
+
 // Module - IR_01 - Infrared Receiver using TSOP31238
 #include <DbkIRremote.h>    // C:\Program Files (x86)\Arduino\libraries\RobotIRremote
 
@@ -43,6 +45,7 @@ void ir_receive_loop() {
     delay(100);
 }
 
+// ========================================================
 
 // Standard setup and loop
 void setup() {

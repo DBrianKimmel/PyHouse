@@ -2,8 +2,10 @@
  * Home arduino package 01
  *
  * Arduino Uno
- * DHT11 Temperature Humidity Sensor
- * ESP
+ * Temperature Humidity Sensor DHT-11
+ * WiFi Adapter ESP-01
+ * Infrared Sensor - TSOP31238
+ * Light Sensor
  *
  */
 
@@ -17,18 +19,14 @@ unsigned long time_now;
 
 // Include various modules here
 
-
-
-
-
-
+// ========================================================
 
 // Module WiFi_01 - Connect to WiFi access point
 #include <ESP8266.h>    // C:\Users\briank\Downloads\Projects\libraries\ITEADLIB_Arduino_WeeESP8266-master (legacy)
 
 // Pins
-#define WIFI_TX  7
-#define WIFI_RX  5
+#define WIFI_TX  5
+#define WIFI_RX  6
 
 #define WIFI_SSID        "PINKPOPPY"
 #define WIFI_PASSWORD    "Koepfinger-59"
@@ -91,13 +89,14 @@ void wifi_loop() {
 }
 // Module END - WiFi
 
+// ========================================================
 
 // Module - Temperature_01 - DHT11 Temperature / Humidity Sensor
 #include <dht.h>    // C:\Users\briank\Downloads\Projects\libraries\DHTlib (legacy)
 #define LOOP_DELAY  06 * 1000    // seconds to delay
 dht Sensor;    // Instantiate
 // Pins
-#define DHT11_PIN  3
+#define DHT11_PIN  4
 void debug_PrintReading() {
     Serial.print("Humidity: ");
     Serial.print(Sensor.humidity);
@@ -142,7 +141,38 @@ void sensor_loop() {
 }
 // Module End
 
+// Module - IR_01 - Infrared Receiver using TSOP31238
+#include <DbkIRremote.h>    // C:\Program Files (x86)\Arduino\libraries\RobotIRremote
 
+// Pins
+#define IR_RECEIVE_PIN  8
+
+IRrecv ir_receive(IR_RECEIVE_PIN);
+decode_results ir_decoded;
+
+
+void ir_debug_print() {
+    Serial.print(" Bits: ");
+    Serial.print(ir_decoded.bits);
+    Serial.print("\t Raw Length: ");
+    Serial.print(ir_decoded.rawlen);
+    Serial.print("\t Decode Type: ");
+    Serial.print(ir_decoded.decode_type, DEC);
+    Serial.print("\t Decode Value: ");
+    Serial.println(ir_decoded.value, HEX);
+}
+void ir_receive_setup() {
+    ir_receive.enableIRIn();    // Initialize IR Receiver
+}
+void ir_receive_loop() {
+    int l_ret = ir_receive.decode(&ir_decoded);
+    if (l_ret) {
+        ir_debug_print();
+    }
+    ir_receive.resume();
+    delay(100);
+}
+// ========================================================
 
 void setup() {
     monitor.begin(9600);
@@ -154,12 +184,10 @@ void setup() {
     wifi_setup();
     sensor_setup();
 }
-
 void loop() {
     time_now = millis();
     // Include vaarious module loops here.
     wifi_loop();
     sensor_loop();
 }
-
 // ### END DBK

@@ -6,17 +6,17 @@
  *This is a base line project 
  */
 #include<stdlib.h>
-#include <SoftwareSerial.h>
-SoftwareSerial monitor(5, 7); // RX, TX
+#include <SoftwareSerial.h>    // C:\Users\briank\AppData\Roaming\Arduino15\packages\arduino\hardware\avr\1.6.2\libraries\SoftwareSerial
+SoftwareSerial monitor(5, 6); // RX, TX
 
 // Include various modules here
 // Module WiFi_01 - Connect to WiFi access point
 #include <ESP8266.h>    // C:\Users\briank\Downloads\Projects\libraries\ITEADLIB_Arduino_WeeESP8266-master (legacy)
 // Pins
-#define WIFI_TX  7
+#define WIFI_TX  6
 #define WIFI_RX  5
-#define WIFI_SSID        "SID_NAME"
-#define WIFI_PASSWORD    "123456789"
+#define WIFI_SSID        "PINKPOPPY"
+#define WIFI_PASSWORD    "Koepfinger-59"
 ESP8266 wifi(monitor);    // Instantiate
 void print_bool(char* p_name, bool p_value) {
 	Serial.print(p_name);
