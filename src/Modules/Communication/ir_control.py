@@ -16,6 +16,9 @@ Connect to the PyHouse node cluster port and pass all the IR codes on.
 
 Use irrecord to use
 
+Remote  |  Raw    |  App    |  App    |  Key    |
+Name    |  Code   |  Name   |  Action |  Name   |
+
 """
 
 # Import system type stuff
