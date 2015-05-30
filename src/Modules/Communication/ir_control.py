@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.communication.test.test_ir_control -*-
 
-@name: PyHouse/src/Modules/communication/ir_control.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2014 by D. Brian Kimmel
-@note: Created on Jan 26, 2014
-@license: MIT License
-@summary: Provides PyHouse IR service via a Lirc connection.
+@name:      PyHouse/src/Modules/communication/ir_control.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: 2014-2015 by D. Brian Kimmel
+@note:      Created on Jan 26, 2014
+@license:   MIT License
+@summary:   Provides PyHouse IR service via a Lirc connection.
 
 Allow various IR receivers to collect signals from various IR remotes.
 

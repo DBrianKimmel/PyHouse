@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Computer.Nodes.test.test_nodes -*-
 
-@name: PyHouse/src/Modules/Computer/Nodes/nodes.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Mar 6, 2014
-@summary: This module does everything for nodes.
+@name:      PyHouse/src/Modules/Computer/Nodes/nodes.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: 2014-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Mar 6, 2014
+@summary:   This module does everything for nodes.
 
 First, it uses node_local to gather the information about the node on which we are running.
 Second, it uses node_discovery to find all the running nodes in the domain.

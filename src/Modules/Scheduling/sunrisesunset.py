@@ -323,10 +323,10 @@ class SunCalcs(object):
         """
         if p_solar.MeanAnomaly == None:
             l_c1 = p_julian.J2KStar
-            print('Using J2KStar {}'.format(l_c1))
+            # print('Using J2KStar {}'.format(l_c1))
         else:
             l_c1 = p_solar.SolarTransit
-            print('Using Solar transit')
+            # print('Using Solar transit')
         l_mean_anomaly = Util._revolution(357.5291 + (0.98560028 * (l_c1))) * DEG2RAD
         return l_mean_anomaly
 
