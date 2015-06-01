@@ -214,8 +214,8 @@ class Utility(object):
             AddressV4 = p_node.ConnectionAddr_IPv4,
             AddressV6 = p_node.ConnectionAddr_IPv6,
             NodeRole = int(p_node.NodeRole),
-            # UUID = "01234567-1234-2345-3456-01234567890ab"
-            UUID = "309"
+            UUID = "01234567-1234-2345-3456-01234567890ab"
+            # UUID = "309"
             )
         return l_defer
 

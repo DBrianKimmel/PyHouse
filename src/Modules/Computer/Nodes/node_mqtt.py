@@ -5,21 +5,22 @@
 @Copyright: (c)  2015 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 28, 2015
-@Summary:   This creates the Twisted version of MQTT client.
+@Summary:   This creates the Twisted (Async) version of MQTT client.
 
 """
 
 # Import system type stuff
 # from paho.mqtt import client as mqtt
-import json
+import copy
 import random
-from twisted.internet import defer
+# from twisted.internet import defer
 from twisted.internet.protocol import ClientFactory, Protocol
 
 # Import PyMh files and modules.
 from Modules.Computer import logging_pyh as Logger
 from Modules.Computer.Nodes import nodes_xml
-from Modules.Utilities.tools import PrintBytes
+# from Modules.Utilities.tools import PrintBytes
+from Modules.Web import web_utils
 
 
 LOG = Logger.getLogger('PyHouse.NodeMqtt       ')
@@ -271,7 +272,7 @@ class MQTTProtocol(Protocol):
     def disconnectReceived(self):
         pass
 
-    # these are for something else
+    # these are for sending mqtt packets.
 
     def connect(self, p_clientID, keepalive = 3000, willTopic = None, willMessage = None, willQoS = 0, willRetain = False, cleanStart = True):
         print("Sending connect packet  ID: {}".format(p_clientID))
@@ -506,11 +507,11 @@ class MQTTClient(MQTTProtocol):
 
     def __init__(self, p_pyhouse_obj, p_clientID = None, keepalive = None, willQos = 0, willTopic = None, willMessage = None, willRetain = False):
         self.m_pyhouse_obj = p_pyhouse_obj
-        print("Client __init__  ID: {} {}".format(p_clientID, p_pyhouse_obj.Computer.Nodes[0].NodeId))
+        print("Client __init__  ID: {} {}".format(p_clientID, p_pyhouse_obj.Computer.Nodes[0].Name))
         if p_clientID is not None:
             self.m_clientID = p_clientID
         else:
-            self.m_clientID = "PyHouse%i" % random.randint(1, 0xFFFF)
+            self.m_clientID = p_pyhouse_obj.Computer.Nodes[0].Name
         if keepalive is not None:
             self.m_keepalive = keepalive
         else:
@@ -549,7 +550,7 @@ class MQTTClient(MQTTProtocol):
         """Override
         """
         print("Client subackReceived")
-        self.publish('pyhouse/startup', 'DBK_testing')
+        Util().doPyHouseLogin(self, self.m_pyhouse_obj)
 
     def pingrespReceived(self):
         LOG.info('Client pingrespReceived.')
@@ -560,7 +561,7 @@ class MQTTClient(MQTTProtocol):
         Call the dispatcher to send them on to the correct place.
         """
         print("Client publishReceived\n  Topic: {}\n  Message: {}".format(p_topic, p_message))
-        self.s
+        # self.MqttDispatch(p_topic, p_message)
 
 
 ###########################################
@@ -620,23 +621,7 @@ class Util(object):
     """
 
     def __init__(self):
-        # self.observation_url = observation_url
-        # A reference to the task that periodically requests an observation update.
-        # This is needed so the task can be stopped later.
-        self.periodicRetrievalTask = None
         self.mqttConnection = None
-        # This list is used to temporarily hold the list of publish messages.
-        self.publishQueue = []
-
-    # @defer.inlineCallbacks
-    # def Xstart(self, p_pyhouse_obj):
-    #    LOG.info('Observation Client starting')
-        # clientCreator = ClientCreator(p_pyhouse_obj.Twisted.Reactor, MQTTPublisher,
-        #            "BomAuPub", self.onMQTTBrokerCommunicationEstablished)
-        # LOG.info('Creating MQTT client')
-        # print("MQtt client created {}".format(clientCreator))
-        # self.mqttConnection = yield clientCreator.connectTCP('192.168.1.72', 1883)
-        # defer.returnValue(True)
 
     def mqtt_start(self, p_pyhouse_obj):
         """ Start the async connection process.
@@ -661,84 +646,30 @@ class Util(object):
         print("MQtt stopped.")
 
     def onMQTTBrokerCommunicationEstablished(self):
-        """
-        Upon connection to MQTT Broker begin periodic weather
-        observation retrievals.
-        """
         print("Communication established...")
-        self.retrieveObservations()
+        pass
 
-    @defer.inlineCallbacks
-    def retrieveObservations(self):
+    @staticmethod
+    def doPyHouseLogin(self, p_pyhouse_obj):
+        """Login to PyHouse via MQTT
         """
-        Retrieve the latest BoM observation and store it
-        """
-        observations = yield self.get_observations()
-        if observations:
-            LOG.info("BoM observations for %i regions retrieved successfully" % len(observations))
-            # convert observations into MQTT format messages and add them
-            # into a queue for publishing.
-            for state in observations:
-                # for this demonstration only publish stations for the
-                # state of South Australia.
-                if state in ['South Australia']:
-                    LOG.info("%s has %i stations" % (state, len(observations[state])))
-                    for station in observations[state]:
-                        # for this demonstration only publish the Adelaide
-                        # station data.
-                        if station == 'Adelaide':
-                            payload = json.dumps(observations[state][station])
-                            topic = 'bomau/%s/%s' % (state, station)
-                            self.publishQueue.append((topic, payload))
-            if self.publishQueue:
-                LOG.info("Beginning to publish %i updates to MQTT Broker" % len(self.publishQueue))
-                self.publishUpdates()
-        defer.returnValue(None)
-
-    @defer.inlineCallbacks
-    def get_observations(self):
-        """
-        Retrieve the latest observations from the BOM in JSON format.
-
-        Returns a deferred that will eventually return an Observation
-        object with attributes populated from parsing the JSON update.
-
-        @return: A deferred that returns an Observations object
-        @rtype: defer.Deferred
-        """
-        print("get_observations")
-        _d = {'updated' : 0}
-        observations = []
-        state = 0
-        LOG.debug("%s contained %i stations" % (state, len(observations[state])))
-        defer.returnValue(observations)
-
-    def publishUpdates(self):
-        """
-        Publish updates to MQTT Broker.
-
-        Publish one message from the queue at a time.
-        Reschedule calls back to this function until all messages are sent.
-        This approach gives some time back to the reactor to handle other things.
-        """
-        if self.publishQueue:
-            topic, message = self.publishQueue.pop()
-            self.mqttConnection.publish(topic, message)
-            if self.publishQueue:
-                self.m_pyhouse_obj.Twisted.Reactor.callLater(0.1, self.publishUpdates)
-            else:
-                LOG.info("Completed publishing observation updates.")
+        l_node = copy.deepcopy(p_pyhouse_obj.Computer.Nodes[0])
+        # print(" pyh = {}\n  {}\n  {}".format(l_node, l_node.__dict__, type(l_node)))
+        l_node.NodeInterfaces = None
+        l_json = web_utils.JsonUnicode().encode_json(l_node)
+        # print("PyHouse Login in with {}".format(l_json))
+        self.publish('pyhouse/login', l_json)
 
 
 class API(Util):
+    """This interfaces to all of PyHouse.
+    """
 
     m_pyhouse_obj = None
     m_client = None
 
     def Start(self, p_pyhouse_obj):
-        # print("API Start")
         self.m_pyhouse_obj = p_pyhouse_obj
-        # Read xml data
         self.mqtt_start(p_pyhouse_obj)
 
     def Stop(self):
@@ -748,33 +679,16 @@ class API(Util):
         p_xml.append(nodes_xml.Xml().write_nodes_xml(self.m_pyhouse_obj.Computer.Nodes))
         LOG.info("Saved XML.")
 
-    def PublishUpdates(self):
-        """
-        Publish updates to MQTT Broker.
-
-        Publish one message from the queue at a time. Reschedule
-        calls back to this function until all messages are sent.
-        This approach gives some time back to the reactor to handle
-        other things.
-        """
-        print("MQTT PublishUpdates")
-        if self.publishQueue:
-            topic, message = self.publishQueue.pop()
-            self.mqttConnection.publish(topic, message)
-            if self.publishQueue:
-                self.m_pyhouse_obj.Twisted.Reactor.callLater(0.1, self.publishUpdates)
-            else:
-                LOG.info("Completed publishing observation updates.")
-
     def MqttPublish(self, p_topic, p_message):
         """Send a topic, message to the broker for it to distribute to the subscription list
         """
         print("MqttPublish {} {}".format(p_topic, p_message))
         # self.m_client.publish(p_topic, p_message)
 
-    def MqttDispatch(self, p_topic, p_message):
+    def MqttDispatch(self, _p_topic, _p_message):
         """Dispatch a MQTT message according to the topic.
         """
+        print("MqttDispatch")
         pass
 
 # ## END DBK

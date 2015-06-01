@@ -143,6 +143,7 @@ class Utility(LircConnection):
         p_pyhouse_obj.Services.IrControlService.setName('IrControl')
         p_pyhouse_obj.Services.IrControlService.setServiceParent(p_pyhouse_obj.Twisted.Application)
 
+
 class API(Utility):
 
     def __init__(self):

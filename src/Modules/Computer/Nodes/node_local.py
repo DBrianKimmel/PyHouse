@@ -26,6 +26,7 @@ import fnmatch  # Filename matching with shell patterns
 import netifaces
 import os
 import platform
+import uuid
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData, NodeInterfaceData
@@ -204,9 +205,16 @@ class Util(object):
         return p_role
 
     def get_node_info(self, p_pyhouse_obj):
-        p_pyhouse_obj.Computer.Nodes[0].Name = platform.node()
+        l_name = platform.node()
+        p_pyhouse_obj.Computer.Nodes[0].Name = l_name
         p_pyhouse_obj.Computer.Nodes[0].Key = 0
         p_pyhouse_obj.Computer.Nodes[0].Active = True
+        if p_pyhouse_obj.Computer.Nodes[0].UUID == None:
+            print("---UUID Missing")
+            pass
+        else:
+            print("---UUID Present - {}".format(p_pyhouse_obj.Computer.Nodes[0].UUID))
+            pass
 
     def find_node_role(self):
         l_role = NODE_NOTHING
@@ -251,8 +259,8 @@ class Util(object):
             LOG.info('Nodes = {0:}'.format(p_pyhouse_obj.Compute.Nodes))
 
     @staticmethod
-    def create_local_node():
-        l_node = NodeData()
+    def create_local_node(p_pyhouse_obj):
+        l_node = p_pyhouse_obj.Computer.Nodes[0]
         l_api = GetAllInterfaceData()
         l_api.get_all_interfaces(l_node)
         return l_node
@@ -264,8 +272,9 @@ class API(Util):
 
     def Start(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        p_pyhouse_obj.Computer.Nodes[0] = Util.create_local_node()
+        p_pyhouse_obj.Computer.Nodes = nodes_xml.Xml().read_all_nodes_xml(p_pyhouse_obj)
         self.get_node_info(p_pyhouse_obj)
+        p_pyhouse_obj.Computer.Nodes[0] = Util.create_local_node(p_pyhouse_obj)
         p_pyhouse_obj.Computer.Nodes[0].NodeRole = self.find_node_role()
         self.init_node_type(p_pyhouse_obj)
 
