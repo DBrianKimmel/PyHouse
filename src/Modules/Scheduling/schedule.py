@@ -58,6 +58,7 @@ from Modules.Irrigation import irrigation
 from Modules.Utilities import tools
 from Modules.Utilities.tools import GetPyhouse
 from Modules.Computer import logging_pyh as Logger
+from Modules.Computer.Nodes import node_mqtt
 
 
 
@@ -391,6 +392,7 @@ class API(ScheduleUtility, ScheduleExecution):
         l_sunrise = self.m_pyhouse_obj.House.RefOBJs.Location._Sunrise
         l_sunset = self.m_pyhouse_obj.House.RefOBJs.Location._Sunset
         LOG.info('Got Sunrise: {};   Sunset: {}'.format(l_sunrise, l_sunset))
+        # node_mqtt.API().doPublishMessage(self.m_pyhouse_obj.Computer.Mqtt, "pyhouse/schedule/sunrise", l_sunrise)
 
     def Start(self, p_pyhouse_obj):
         """

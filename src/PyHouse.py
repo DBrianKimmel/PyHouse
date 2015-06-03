@@ -150,26 +150,26 @@ class API(Utilities):
     """
     m_pyhouse_obj = data_objects.PyHouseData()
 
-    def _setup_apis(self):
-        self.m_pyhouse_obj.APIs.Comp = data_objects.CompAPIs()
-        self.m_pyhouse_obj.APIs.House = data_objects.HouseAPIs()
-        self.m_pyhouse_obj.APIs.PyHouseAPI = self
-        self.m_pyhouse_obj.APIs.CoreSetupAPI = setup.API()
-        return self.m_pyhouse_obj
-
     def _create_pyhouse_obj(self):
-        self.m_pyhouse_obj = data_objects.PyHouseData()
-        self.m_pyhouse_obj.APIs = data_objects.PyHouseAPIs()
-        self.m_pyhouse_obj.Computer = data_objects.ComputerInformation()
-        self.m_pyhouse_obj.House = data_objects.HouseInformation()
-        self.m_pyhouse_obj.Services = data_objects.CoreServicesInformation()
-        self.m_pyhouse_obj.Twisted = data_objects.TwistedInformation()
-        self.m_pyhouse_obj.Xml = data_objects.XmlInformation()
+        """ Create the basic PyHouse Object.
+        Do some very basic initialization.
+        """
+        l_obj = data_objects.PyHouseData()
+        l_obj.APIs = data_objects.PyHouseAPIs()
+        l_obj.APIs.Comp = data_objects.CompAPIs()
+        l_obj.APIs.House = data_objects.HouseAPIs()
+        l_obj.APIs.PyHouseAPI = self
+        l_obj.APIs.CoreSetupAPI = setup.API()
+        l_obj.Computer = data_objects.ComputerInformation()
+        l_obj.House = data_objects.HouseInformation()
+        l_obj.Services = data_objects.CoreServicesInformation()
+        l_obj.Twisted = data_objects.TwistedInformation()
+        l_obj.Xml = data_objects.XmlInformation()
         #
-        self.m_pyhouse_obj.Twisted.Reactor = reactor
-        self.m_pyhouse_obj.Twisted.Application = Application('PyHouse')
-        self.m_pyhouse_obj.Xml.XmlFileName = '/etc/pyhouse/master.xml'
-        return self.m_pyhouse_obj
+        l_obj.Twisted.Reactor = reactor
+        l_obj.Twisted.Application = Application('PyHouse')
+        l_obj.Xml.XmlFileName = '/etc/pyhouse/master.xml'
+        return l_obj
 
 
     def __init__(self):
@@ -183,11 +183,12 @@ class API(Utilities):
         self.do_daemon_stuff()
         global g_API
         g_API = self
-        self._create_pyhouse_obj()
-        self._setup_apis()
+        self.m_pyhouse_obj = self._create_pyhouse_obj()
         self.m_pyhouse_obj.Twisted.Reactor.callWhenRunning(self.Start)
         self.m_pyhouse_obj.Twisted.Reactor.run()  # reactor never returns so must be last - Event loop will now run
+        #
         #  When the reactor stops we continue here
+        #
         LOG.info("PyHouse says Bye Now.\n")
         raise SystemExit("PyHouse says Bye Now.")
 

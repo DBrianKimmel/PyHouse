@@ -134,6 +134,7 @@ class ComputerInformation(object):
         self.Nodes = {}  # NodeData()
         self.Web = {}  # WebData()
         self.Domain = None
+        self.Mqtt = None
 
 
 class HouseInformation(ABaseObject):

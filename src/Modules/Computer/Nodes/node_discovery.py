@@ -7,8 +7,7 @@
 @copyright: 2014 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Apr 5, 2014
-@summary: This module provides a service for discovering all the PyHouse nodes in a domain,
-and in related domains.
+@summary: Provide a service for discovering all the PyHouse nodes in a domain, and in related domains.
 
 This service runs periodically to find any new nodes and any dropped nodes.
 

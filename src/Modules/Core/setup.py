@@ -33,6 +33,7 @@ import xml.etree.ElementTree as ET
 from Modules.Core import setup_logging
 from Modules.Computer import computer
 from Modules.Computer import logging_pyh as Logger
+from Modules.Core import mqtt
 from Modules.Housing import house
 from Modules.Utilities import xml_tools
 from Modules.Utilities.config_file import ConfigAPI
@@ -45,6 +46,8 @@ INTER_NODE = 'tcp:port=8581'
 INTRA_NODE = 'unix:path=/var/run/pyhouse/node:lockfile=1'
 INITIAL_DELAY = 2 * 60
 REPEAT_DELAY = 2 * 60 * 60  # 2 hours
+XML_FILE_NAME = '/etc/pyhouse/master.xml'
+
 
 
 
@@ -76,8 +79,9 @@ class Utility(ReadWriteConfigXml):
 
         """)
 
-    def load_xml_config_file(self, p_pyhouse_obj):
-        p_pyhouse_obj.Xml.XmlFileName = '/etc/pyhouse/master.xml'
+    def mqtt_start(self, p_pyhouse_obj):
+        self.m_mqtt = mqtt.API()
+        self.m_mqtt.Start(p_pyhouse_obj)
 
     def create_empty_xml_skeleton(self):
         l_xml = ET.Element("PyHouse")
@@ -106,14 +110,31 @@ class API(Utility):
         """
         The reactor is now running.
 
+        This controls the order that things are read-in and initialized.
+
         @param p_pyhouse_obj: is the skeleton Obj filled in some by PyHouse.py.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
+
+        # First is the PyHouse structure
         self._setup_apis(p_pyhouse_obj)
-        self.load_xml_config_file(p_pyhouse_obj)
+        print("APIs set up")
+
+        # Next is the XML file do things can be read in and customized
+        p_pyhouse_obj.Xml.XmlFileName = XML_FILE_NAME
         self.read_xml_config_info(p_pyhouse_obj)
+        print("XML loaded")
+
+        # Next is the logging system
         self.log_start()
         LOG.info("Starting.")
+        print("Log started")
+
+        # Next is MQTT
+        self.m_mqtt = mqtt.API()
+        self.m_mqtt.Start(p_pyhouse_obj)
+        print("MQTT Started.")
+
         # Logging system is now enabled
         p_pyhouse_obj.APIs.Comp.ComputerAPI.Start(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.HouseAPI.Start(p_pyhouse_obj)
@@ -122,6 +143,7 @@ class API(Utility):
 
     def Stop(self):
         self.WriteXml()
+        self.m_mqtt.Stop()
         self.m_pyhouse_obj.APIs.Comp.ComputerAPI.Stop()
         self.m_pyhouse_obj.APIs.House.HouseAPI.Stop()
         LOG.info("Stopped.")
@@ -131,6 +153,7 @@ class API(Utility):
         Take a snapshot of the current Configuration/Status and write out an XML file.
         """
         l_xml = self.create_empty_xml_skeleton()
+        self.m_mqtt.SaveXml(l_xml)
         self.m_pyhouse_obj.APIs.Comp.ComputerAPI.WriteXml(l_xml)
         self.m_pyhouse_obj.APIs.House.HouseAPI.WriteXml(l_xml)
         ConfigAPI().write_xml_config_file(self.m_pyhouse_obj, l_xml)

@@ -7,6 +7,11 @@
 @note:      Created on Apr 28, 2015
 @Summary:   This creates the Twisted (Async) version of MQTT client.
 
+Warning.  There are two things called connect in this module.
+
+The first is a TCP connection to the mqtt broker.
+The second is a MQTT connection to the broker that uses the first connection as a transport.
+
 """
 
 # Import system type stuff
@@ -23,7 +28,7 @@ from Modules.Computer.Nodes import nodes_xml
 from Modules.Web import web_utils
 
 
-LOG = Logger.getLogger('PyHouse.NodeMqtt       ')
+LOG = Logger.getLogger('PyHouse.Mqtt           ')
 
 BROKERv4 = '192.168.1.71'
 BROKERv4 = 'iot.eclipse.org'  # Sandbox Mosquitto broker
@@ -237,6 +242,7 @@ class MQTTProtocol(Protocol):
         pass
 
     def publishReceived(self, topic, message, qos = 0, dup = False, retain = False, messageId = None):
+        raise NotImplementedError, "Subclasses must implement this."
         pass
 
     def pubackReceived(self, messageId):
@@ -503,7 +509,7 @@ class MQTTProtocol(Protocol):
 
 class MQTTClient(MQTTProtocol):
 
-    m_pingPeriod = 2
+    m_pingPeriod = 5
 
     def __init__(self, p_pyhouse_obj, p_clientID = None, keepalive = None, willQos = 0, willTopic = None, willMessage = None, willRetain = False):
         self.m_pyhouse_obj = p_pyhouse_obj
@@ -527,6 +533,7 @@ class MQTTClient(MQTTProtocol):
         Now use MQTT connect packet to establish protocol connection.
         """
         print("Client connectionMade Keepalive: {}".format(self.m_keepalive))
+        LOG.info("Client TCP connectionMade Keepalive: {}".format(self.m_keepalive))
         self.connect(self.m_clientID, self.m_keepalive, self.willTopic, self.willMessage, self.willQos, self.willRetain, True)
         self.m_pyhouse_obj.Twisted.Reactor.callLater(self.m_pingPeriod, self.pingreq)
 
@@ -553,13 +560,14 @@ class MQTTClient(MQTTProtocol):
         Util().doPyHouseLogin(self, self.m_pyhouse_obj)
 
     def pingrespReceived(self):
-        LOG.info('Client pingrespReceived.')
+        # LOG.info('Client pingrespReceived.')
         self.m_pyhouse_obj.Twisted.Reactor.callLater(self.m_pingPeriod, self.pingreq)
 
     def publishReceived(self, p_topic, p_message, _qos = 0, _dup = False, _retain = False, _messageId = None):
         """ This is where we receive all the pyhouse messages.
         Call the dispatcher to send them on to the correct place.
         """
+        LOG.info("Client publishReceived\n  Topic: {}\n  Message: {}".format(p_topic, p_message))
         print("Client publishReceived\n  Topic: {}\n  Message: {}".format(p_topic, p_message))
         # self.MqttDispatch(p_topic, p_message)
 
@@ -568,14 +576,16 @@ class MQTTClient(MQTTProtocol):
 
 class MqttClientFactory(ClientFactory):
     """
-    Holds State info
+    Holds the persistent State info.
     """
-    m_pingPeriod = 2
+
+    m_pingPeriod = 5
 
     def __init__(self, p_pyhouse_obj, p_client_id, p_onBrokerConnected):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_clientID = p_client_id
         self.onBrokerConnected = p_onBrokerConnected
+        print("Factory __init__ {}".format(p_onBrokerConnected))
 
     def startedConnecting(self, _p_connector):
         """
@@ -593,8 +603,10 @@ class MqttClientFactory(ClientFactory):
         self.m_pyhouse_obj.Twisted.Reactor.callLater(self.m_pingPeriod, self.pingreq)
 
     def buildProtocol(self, p_addr):
-        print('Factory buildProtocol - Addr: {}'.format(p_addr))
-        return MQTTClient(self.m_pyhouse_obj)
+        l_client = MQTTClient(self.m_pyhouse_obj)
+        print('Factory buildProtocol - Addr: {} - {}'.format(p_addr, l_client))
+        self.m_pyhouse_obj.Computer.Mqtt = l_client
+        return l_client
 
     def clientConnectionLost(self, p_connector, p_reason):
         print('\nFactory clientConnectionLost.\n  Reason: {}\n  Connector: {}'.format(p_reason, p_connector))
@@ -646,19 +658,22 @@ class Util(object):
         print("MQtt stopped.")
 
     def onMQTTBrokerCommunicationEstablished(self):
-        print("Communication established...")
+        print("Communication established... {}".format(self))
         pass
 
     @staticmethod
-    def doPyHouseLogin(self, p_pyhouse_obj):
+    def doPyHouseLogin(p_client, p_pyhouse_obj):
         """Login to PyHouse via MQTT
         """
         l_node = copy.deepcopy(p_pyhouse_obj.Computer.Nodes[0])
-        # print(" pyh = {}\n  {}\n  {}".format(l_node, l_node.__dict__, type(l_node)))
         l_node.NodeInterfaces = None
         l_json = web_utils.JsonUnicode().encode_json(l_node)
-        # print("PyHouse Login in with {}".format(l_json))
-        self.publish('pyhouse/login', l_json)
+        p_client.publish('pyhouse/login', l_json)
+
+    @staticmethod
+    def doPublishMessage(p_client, p_topic, p_message):
+        print("MQTT PublishMessage {} {} {}".format(p_topic, p_message, p_client))
+        p_client.publish(p_topic, p_message)
 
 
 class API(Util):
@@ -670,7 +685,7 @@ class API(Util):
 
     def Start(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.mqtt_start(p_pyhouse_obj)
+        self.m_mqtt = self.mqtt_start(p_pyhouse_obj)
 
     def Stop(self):
         pass
@@ -683,7 +698,7 @@ class API(Util):
         """Send a topic, message to the broker for it to distribute to the subscription list
         """
         print("MqttPublish {} {}".format(p_topic, p_message))
-        # self.m_client.publish(p_topic, p_message)
+        Util().doPublishMessage(self.m_client, p_topic, p_message)
 
     def MqttDispatch(self, _p_topic, _p_message):
         """Dispatch a MQTT message according to the topic.

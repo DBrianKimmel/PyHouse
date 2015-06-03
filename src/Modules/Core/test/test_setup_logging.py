@@ -15,7 +15,6 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core import setup_logging
-from Modules.Computer import logging_pyh as Logger
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny

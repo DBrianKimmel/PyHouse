@@ -26,7 +26,7 @@ import fnmatch  # Filename matching with shell patterns
 import netifaces
 import os
 import platform
-import uuid
+# import uuid
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData, NodeInterfaceData

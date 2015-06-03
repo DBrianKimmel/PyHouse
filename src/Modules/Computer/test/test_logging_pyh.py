@@ -5,7 +5,7 @@
 @copyright: 2014 by D. Brian Kimmel
 @note: Created on Apr 30, 2014
 @license: MIT License
-@summary: This module is NO LONGER USED!
+@summary:
 
 """
 

@@ -9,8 +9,6 @@
 @license: MIT License
 @summary: Log Module.
 
-This is NO LONGER USED!.
-
 Isolates PyHouse from the logging libraries used.
 Provides a number of logging levels: Error, Warning, Info and Debug.
 Provides 'getLogger' to return the actual logger.

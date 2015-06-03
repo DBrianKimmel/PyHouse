@@ -11,6 +11,8 @@ Things that need to be done in no particular order:
 
     - Fix broken Sunrise and Sunset calculations.
     
+    - Abandon AMP and switch to MQTT
+    
     
 
 ### END DBK
