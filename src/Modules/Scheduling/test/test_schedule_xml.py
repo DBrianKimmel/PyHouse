@@ -1,10 +1,10 @@
 """
-@name: C:/Users/briank/Documents/GitHub/PyHouse/src/Modules/Scheduling/test/test_schedule_xml.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com>
-@Copyright: (c)  2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Sep 2, 2014
+@name:      PyHouse/src/Modules/Scheduling/test/test_schedule_xml.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com>
+@Copyright: (c)  2014-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Sep 2, 2014
 @Summary:
 
 """
@@ -52,7 +52,16 @@ class C01_XML(SetupMixin, unittest.TestCase):
         PrettyPrintAny(self.m_pyhouse_obj.Xml, 'XML')
         PrettyPrintAny(self.m_xml.schedule_sect, 'Schedule')
 
-    def test_02_ReadOneBase(self):
+
+class C02_Read(SetupMixin, unittest.TestCase):
+    """
+    This section tests the reading of XML used by schedules.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_01_OneBase(self):
         """ Read in the xml file and fill in x
         """
         l_schedule_obj = self.m_api._read_one_base_schedule(self.m_xml.schedule)
@@ -62,7 +71,7 @@ class C01_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_schedule_obj.Mode, 0, 'No Mode')
         self.assertEqual(l_schedule_obj.Mode, 0, 'No Mode')
 
-    def test_03_ReadOneLight(self):
+    def test_02_OneLight(self):
         # l_schedule_obj = self.m_api._read_one_base_schedule(self.m_xml.schedule)
         l_light = self.m_api._read_one_lighting_schedule(self.m_xml.schedule)
         PrettyPrintAny(l_light, 'Light part of schedule')
@@ -70,36 +79,45 @@ class C01_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_light.Rate, 0)
         self.assertEqual(l_light.RoomName, 'Living Room')
 
-    def test_04_ReadOneSchedule(self):
+    def test_03_OneSchedule(self):
         l_sched = self.m_api._read_one_schedule(self.m_xml.schedule)
         PrettyPrintAny(l_sched, 'Full Light Sched.')
         self.assertEqual(l_sched.Name, 'Evening 1')
         self.assertEqual(l_sched.LightName, 'lr_cans')
         self.assertEqual(l_sched.RoomName, 'Living Room')
 
-    def test_05_ReadAllSchedules(self):
+    def test_04_AllSchedules(self):
         l_schedules = self.m_api.read_schedules_xml(self.m_pyhouse_obj)
         PrettyPrintAny(l_schedules, 'All Schedules')
         PrettyPrintAny(l_schedules[1], 'Schedule 1')
-        self.assertEqual(len(l_schedules), 7)
+        self.assertEqual(len(l_schedules), 4)
 
-    def test_06_WriteOneBase(self):
+
+class C03_Write(SetupMixin, unittest.TestCase):
+    """
+    This section tests the reading and writing of XML used by schedules.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_01_OneBase(self):
         l_schedule = self.m_api._read_one_schedule(self.m_xml.schedule)
         l_xml = self.m_api._write_one_base_schedule(l_schedule)
         PrettyPrintAny(l_xml, 'Base Schedule XML')
 
-    def test_07_WriteOneLight(self):
+    def test_02_OneLight(self):
         l_schedule = self.m_api._read_one_schedule(self.m_xml.schedule)
         l_xml = self.m_api._write_one_base_schedule(l_schedule)
         self.m_api._write_one_light_schedule(l_schedule, l_xml)
         PrettyPrintAny(l_xml, 'Light schedule XML')
 
-    def test_08_WriteOneSchedule(self):
+    def test_03_OneSchedule(self):
         l_schedule = self.m_api._read_one_schedule(self.m_xml.schedule)
         l_xml = self.m_api._write_one_schedule(l_schedule)
         PrettyPrintAny(l_xml, 'One Schedule XML')
 
-    def test_09_WriteAllSchedules(self):
+    def test_04_AllSchedules(self):
         l_schedules = self.m_api.read_schedules_xml(self.m_pyhouse_obj)
         l_xml = self.m_api.write_schedules_xml(l_schedules)
         PrettyPrintAny(l_xml, 'All Schedules XML')
