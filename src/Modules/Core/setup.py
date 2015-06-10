@@ -3,11 +3,8 @@
 
 @name:      PyHouse/src/Modules/Core/setup.py
 @author:    D. Brian Kimmel
-@contact:   d.briankimmel@gmail.com
-@name: PyHouse/src/Modules/Core/setup.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2014 by D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2014-2015 by D. Brian Kimmel
 @note:      Created on Mar 1, 2014
 @license:   MIT License
 @summary:   This module sets up the Core part of PyHouse.
@@ -30,10 +27,9 @@ import datetime
 import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
-from Modules.Core import setup_logging
-from Modules.Computer import computer
+from Modules.Core import setup_logging  # This must be first as the import causes logging to be initialized
 from Modules.Computer import logging_pyh as Logger
-from Modules.Core import mqtt
+from Modules.Computer import computer
 from Modules.Housing import house
 from Modules.Utilities import xml_tools
 from Modules.Utilities.config_file import ConfigAPI
@@ -79,10 +75,6 @@ class Utility(ReadWriteConfigXml):
 
         """)
 
-    def mqtt_start(self, p_pyhouse_obj):
-        self.m_mqtt = mqtt.API()
-        self.m_mqtt.Start(p_pyhouse_obj)
-
     def create_empty_xml_skeleton(self):
         l_xml = ET.Element("PyHouse")
         xml_tools.PutGetXML().put_text_attribute(l_xml, 'Version', self.m_pyhouse_obj.Xml.XmlVersion)
@@ -98,7 +90,7 @@ class Utility(ReadWriteConfigXml):
         self.WriteXml()
 
     def _setup_apis(self, p_pyhouse_obj):
-        p_pyhouse_obj.APIs.Comp.ComputerAPI = computer.API()
+        # p_pyhouse_obj.APIs.Comp.ComputerAPI = computer.API()
         p_pyhouse_obj.APIs.House.HouseAPI = house.API()
         self.m_pyhouse_obj = p_pyhouse_obj
 
@@ -115,6 +107,7 @@ class API(Utility):
         @param p_pyhouse_obj: is the skeleton Obj filled in some by PyHouse.py.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
+        setup_logging.API()  # To eliminate Eclipse warning
 
         # First is the PyHouse structure
         self._setup_apis(p_pyhouse_obj)
@@ -128,22 +121,15 @@ class API(Utility):
         # Next is the logging system
         self.log_start()
         LOG.info("Starting.")
-        print("Log started")
-
-        # Next is MQTT
-        self.m_mqtt = mqtt.API()
-        self.m_mqtt.Start(p_pyhouse_obj)
-        print("MQTT Started.")
 
         # Logging system is now enabled
-        p_pyhouse_obj.APIs.Comp.ComputerAPI.Start(p_pyhouse_obj)
+        computer.API().Start(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.HouseAPI.Start(p_pyhouse_obj)
         p_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self._xml_save_loop, p_pyhouse_obj)
         LOG.info("Started.")
 
     def Stop(self):
         self.WriteXml()
-        self.m_mqtt.Stop()
         self.m_pyhouse_obj.APIs.Comp.ComputerAPI.Stop()
         self.m_pyhouse_obj.APIs.House.HouseAPI.Stop()
         LOG.info("Stopped.")
@@ -153,7 +139,6 @@ class API(Utility):
         Take a snapshot of the current Configuration/Status and write out an XML file.
         """
         l_xml = self.create_empty_xml_skeleton()
-        self.m_mqtt.SaveXml(l_xml)
         self.m_pyhouse_obj.APIs.Comp.ComputerAPI.WriteXml(l_xml)
         self.m_pyhouse_obj.APIs.House.HouseAPI.WriteXml(l_xml)
         ConfigAPI().write_xml_config_file(self.m_pyhouse_obj, l_xml)

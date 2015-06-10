@@ -44,6 +44,7 @@ class Xml(XmlConfigTools):
                 self.m_count += 1
         except AttributeError:
             l_ret = {}
+        LOG.info("XML Loaded")
         return l_ret
 
     def _read_one_node_xml(self, p_node_xml):

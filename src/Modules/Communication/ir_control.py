@@ -10,6 +10,7 @@
 @summary:   Provides PyHouse IR service via a Lirc connection.
 
 Allow various IR receivers to collect signals from various IR remotes.
+IR Receivers may be on nodes or on sensors.  All funnel thru MQTT to get dispatched.
 
 Connect to the LIRC daemon socket and listen to everything coming down that path.
 Connect to the PyHouse node cluster port and pass all the IR codes on.

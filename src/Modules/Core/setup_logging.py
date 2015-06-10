@@ -78,4 +78,8 @@ logging.info('PyHouse Starting\n')
 l_observer = log.PythonLoggingObserver(loggerName = LOGGER_NAME_TWISTED)
 l_observer.start()
 
+class API(object):  # To remove eclipse warnings.
+    def NotUsed(self):
+        pass
+
 # ## END DBK

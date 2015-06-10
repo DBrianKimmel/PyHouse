@@ -1,11 +1,11 @@
 """
-@name: PyHouse/src/Modules/Lighting/test/test_lighting_controllers.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Feb 21, 2014
-@summary: This module is for testing local node data.
+@name:      PyHouse/src/Modules/Lighting/test/test_lighting_controllers.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2014-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Feb 21, 2014
+@summary:   This module is for testing local node data.
 
 Passed all 10 tests - DBK - 2014-07-18
 """

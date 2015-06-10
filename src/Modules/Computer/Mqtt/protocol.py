@@ -1,5 +1,5 @@
 """
-@name:      C:/Users/briank/Documents/GitHub/PyHouse/src/Modules/Computer/Nodes/node_mqtt.py
+@name:      C:/Users/briank/workspace/PyHouse/src/Modules/Computer/Mqtt/protocol.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @Copyright: (c)  2015 by D. Brian Kimmel
@@ -9,35 +9,82 @@
 
 Warning.  There are two things called connect in this module.
 
-The first is a TCP connection to the mqtt broker.
+The first is a TCP connection to the Mqtt broker.
 The second is a MQTT connection to the broker that uses the first connection as a transport.
 
 """
 
 # Import system type stuff
-# from paho.mqtt import client as mqtt
-import copy
 import random
-# from twisted.internet import defer
 from twisted.internet.protocol import ClientFactory, Protocol
 
 # Import PyMh files and modules.
 from Modules.Computer import logging_pyh as Logger
-from Modules.Computer.Nodes import nodes_xml
-# from Modules.Utilities.tools import PrintBytes
-from Modules.Web import web_utils
 
 
-LOG = Logger.getLogger('PyHouse.Mqtt           ')
+LOG = Logger.getLogger('PyHouse.MqttProtocol   ')
 
-BROKERv4 = '192.168.1.71'
+# BROKERv4 = '192.168.1.71'
 BROKERv4 = 'iot.eclipse.org'  # Sandbox Mosquitto broker
 # BROKERv6 = '2604:8800:100:8268::1:1'    # Pink Poppy
 BROKERv6 = '2001:4830:1600:84ae::1'  # Cannon Trail
 PORT = 1883
 SUBSCRIBE = 'pyhouse/#'
 
-class MQTTProtocol(Protocol):
+
+class EncodeDecode(object):
+    # Encode and decode stuff - separate class???
+
+    def _encodeString(self, string):
+        encoded = bytearray()
+        encoded.append(len(string) >> 8)
+        encoded.append(len(string) & 0xFF)
+        for i in string:
+            encoded.append(i)
+        return encoded
+
+    def _decodeString(self, encodedString):
+        length = 256 * encodedString[0] + encodedString[1]
+        return str(encodedString[2:2 + length])
+
+    def _encodeLength(self, length):
+        encoded = bytearray()
+        while True:
+            digit = length % 128
+            length //= 128
+            if length > 0:
+                digit |= 128
+            encoded.append(digit)
+            if length <= 0:
+                break
+        return encoded
+
+    def _encodeValue(self, value):
+        encoded = bytearray()
+        encoded.append(value >> 8)
+        encoded.append(value & 0xFF)
+        return encoded
+
+    def _decodeLength(self, lengthArray):
+        length = 0
+        multiplier = 1
+        for i in lengthArray:
+            length += (i & 0x7F) * multiplier
+            multiplier *= 0x80
+            if (i & 0x80) != 0x80:
+                break
+        return length
+
+    def _decodeValue(self, valueArray):
+        value = 0
+        multiplier = 1
+        for i in valueArray[::-1]:
+            value += i * multiplier
+            multiplier = multiplier << 8
+        return value
+
+
+class MQTTProtocol(Protocol, EncodeDecode):
     """
     This protocol is used for communication with the MQTT broker.
     """
@@ -278,7 +325,7 @@ class MQTTProtocol(Protocol):
     def disconnectReceived(self):
         pass
 
-    # these are for sending mqtt packets.
+    # these are for sending Mqtt packets.
 
     def connect(self, p_clientID, keepalive = 3000, willTopic = None, willMessage = None, willQoS = 0, willRetain = False, cleanStart = True):
         print("Sending connect packet  ID: {}".format(p_clientID))
@@ -456,56 +503,6 @@ class MQTTProtocol(Protocol):
         header.extend(self._encodeLength(0))
         self.transport.write(str(header))
 
-# Encode and decode stuff - separate class???
-
-    def _encodeString(self, string):
-        encoded = bytearray()
-        encoded.append(len(string) >> 8)
-        encoded.append(len(string) & 0xFF)
-        for i in string:
-            encoded.append(i)
-        return encoded
-
-    def _decodeString(self, encodedString):
-        length = 256 * encodedString[0] + encodedString[1]
-        return str(encodedString[2:2 + length])
-
-    def _encodeLength(self, length):
-        encoded = bytearray()
-        while True:
-            digit = length % 128
-            length //= 128
-            if length > 0:
-                digit |= 128
-            encoded.append(digit)
-            if length <= 0:
-                break
-        return encoded
-
-    def _encodeValue(self, value):
-        encoded = bytearray()
-        encoded.append(value >> 8)
-        encoded.append(value & 0xFF)
-        return encoded
-
-    def _decodeLength(self, lengthArray):
-        length = 0
-        multiplier = 1
-        for i in lengthArray:
-            length += (i & 0x7F) * multiplier
-            multiplier *= 0x80
-            if (i & 0x80) != 0x80:
-                break
-        return length
-
-    def _decodeValue(self, valueArray):
-        value = 0
-        multiplier = 1
-        for i in valueArray[::-1]:
-            value += i * multiplier
-            multiplier = multiplier << 8
-        return value
-
 
 class MQTTClient(MQTTProtocol):
 
@@ -557,7 +554,7 @@ class MQTTClient(MQTTProtocol):
         """Override
         """
         print("Client subackReceived")
-        Util().doPyHouseLogin(self, self.m_pyhouse_obj)
+        self.m_pyhouse_obj.APIs.Comp.MqttAPI.doPyHouseLogin(self, self.m_pyhouse_obj)
 
     def pingrespReceived(self):
         # LOG.info('Client pingrespReceived.')
@@ -581,17 +578,17 @@ class MqttClientFactory(ClientFactory):
 
     m_pingPeriod = 5
 
-    def __init__(self, p_pyhouse_obj, p_client_id, p_onBrokerConnected):
+    def __init__(self, p_pyhouse_obj, p_client_id, p_broker):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_broker = p_broker
         self.m_clientID = p_client_id
-        self.onBrokerConnected = p_onBrokerConnected
-        print("Factory __init__ {}".format(p_onBrokerConnected))
+        print("Factory __init__ Broker: {}".format(self.m_broker))
 
     def startedConnecting(self, _p_connector):
         """
         p_connector is an instance of twisted.internet.tcp.Connector
         """
-        # print('Factory startedConnecting.')
+        print('Factory startedConnecting.')
         pass
 
     def connectionMade(self):
@@ -626,84 +623,5 @@ class MqttClientFactory(ClientFactory):
             print('Factory Connection to MQTT broker failed')
             LOG.info('Connection to MQTT broker failed')
 
-
-class Util(object):
-    """
-    The observations client allows a user to obtain BoM observations for a specified URL.
-    """
-
-    def __init__(self):
-        self.mqttConnection = None
-
-    def mqtt_start(self, p_pyhouse_obj):
-        """ Start the async connection process.
-
-        This is the twisted part.
-        The connection of the MQTT protocol is kicked off after the TCP connection is complete.
-        """
-        self.m_pyhouse_obj = p_pyhouse_obj
-        # print("mqtt_start")
-        p_pyhouse_obj.Twisted.Reactor.connectTCP(BROKERv4, PORT, MqttClientFactory(p_pyhouse_obj, "DBK1", self.onMQTTBrokerCommunicationEstablished))
-
-    def stop(self):
-        """
-        Stop monitoring sensors in and around the home environment
-        """
-        LOG.info('BoM Observation Client stopping')
-        if self.mqttConnection:
-            self.mqttConnection.transport.loseConnection()
-        if self.periodicRetrievalTask:
-            if self.periodicRetrievalTask.active():
-                self.periodicRetrievalTask.cancel()
-        print("MQtt stopped.")
-
-    def onMQTTBrokerCommunicationEstablished(self):
-        print("Communication established... {}".format(self))
-        pass
-
-    @staticmethod
-    def doPyHouseLogin(p_client, p_pyhouse_obj):
-        """Login to PyHouse via MQTT
-        """
-        l_node = copy.deepcopy(p_pyhouse_obj.Computer.Nodes[0])
-        l_node.NodeInterfaces = None
-        l_json = web_utils.JsonUnicode().encode_json(l_node)
-        p_client.publish('pyhouse/login', l_json)
-
-    @staticmethod
-    def doPublishMessage(p_client, p_topic, p_message):
-        print("MQTT PublishMessage {} {} {}".format(p_topic, p_message, p_client))
-        p_client.publish(p_topic, p_message)
-
-
-class API(Util):
-    """This interfaces to all of PyHouse.
-    """
-
-    m_pyhouse_obj = None
-    m_client = None
-
-    def Start(self, p_pyhouse_obj):
-        self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_mqtt = self.mqtt_start(p_pyhouse_obj)
-
-    def Stop(self):
-        pass
-
-    def SaveXml(self, p_xml):
-        p_xml.append(nodes_xml.Xml().write_nodes_xml(self.m_pyhouse_obj.Computer.Nodes))
-        LOG.info("Saved XML.")
-
-    def MqttPublish(self, p_topic, p_message):
-        """Send a topic, message to the broker for it to distribute to the subscription list
-        """
-        print("MqttPublish {} {}".format(p_topic, p_message))
-        Util().doPublishMessage(self.m_client, p_topic, p_message)
-
-    def MqttDispatch(self, _p_topic, _p_message):
-        """Dispatch a MQTT message according to the topic.
-        """
-        print("MqttDispatch")
-        pass
 
 # ## END DBK

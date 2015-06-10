@@ -1,11 +1,11 @@
 """
-@name: PyHouse/src/Modules/Computer/Nodes/test/test_nodes.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Mar 20, 2014
-@summary: This module tests everything for nodes.
+@name:      PyHouse/src/Modules/Computer/Nodes/test/test_nodes.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2014=2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Mar 20, 2014
+@summary:   This module tests everything for nodes.
 
 """
 

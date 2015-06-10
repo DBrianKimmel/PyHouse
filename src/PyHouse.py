@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 """
--*- test-case-name: PyHouse.src.Modules.test.test_PyHouse -*-
+-*- test-case-name: PyHouse.src.test.test_PyHouse -*-
 
-@name:     PyHouse/src/Modules/Pyhouse.py
+@name:     PyHouse/src/Pyhouse.py
 @author:   D. Brian Kimmel
 @contact:  D.BrianKimmel@gmail.com
 @Copyright (c) 2010-2015 by D. Brian Kimmel
+@note:     Created on Mar 1, 2014
 @license:  MIT License
+@summary:  This is the core of the PyHouse daemon.
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
@@ -67,6 +69,7 @@ from twisted.application.service import Application
 
 # Import PyMh files and modules.
 from Modules.Core import data_objects
+from Modules.Core.data_objects import PyHouseData, PyHouseAPIs
 from Modules.Core import setup
 from Modules.Computer import logging_pyh as Logger
 
@@ -148,19 +151,19 @@ class Utilities(object):
 class API(Utilities):
     """
     """
-    m_pyhouse_obj = data_objects.PyHouseData()
+    m_pyhouse_obj = PyHouseData()
 
     def _create_pyhouse_obj(self):
         """ Create the basic PyHouse Object.
         Do some very basic initialization.
         """
-        l_obj = data_objects.PyHouseData()
-        l_obj.APIs = data_objects.PyHouseAPIs()
-        l_obj.APIs.Comp = data_objects.CompAPIs()
+        l_obj = PyHouseData()
+        l_obj.APIs = PyHouseAPIs()
+        # l_obj.APIs.Comp = data_objects.CompAPIs()
         l_obj.APIs.House = data_objects.HouseAPIs()
         l_obj.APIs.PyHouseAPI = self
         l_obj.APIs.CoreSetupAPI = setup.API()
-        l_obj.Computer = data_objects.ComputerInformation()
+        # l_obj.Computer = data_objects.ComputerInformation()
         l_obj.House = data_objects.HouseInformation()
         l_obj.Services = data_objects.CoreServicesInformation()
         l_obj.Twisted = data_objects.TwistedInformation()

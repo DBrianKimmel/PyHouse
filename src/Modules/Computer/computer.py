@@ -11,7 +11,12 @@
 
 This handles the Computer part of the node.  (The other part is "house").
 
-This takes care of starting all the computer modules.
+This takes care of starting all the computer modules (In Order).
+    Logging
+    Mqtt Broker(s)
+    Nodes
+    Internet Connection(s)
+    Web Server(s)
 
 """
 
@@ -19,12 +24,13 @@ This takes care of starting all the computer modules.
 from xml.etree import ElementTree as ET
 
 # Import PyHouse files
-from Modules.Core.data_objects import ComputerInformation
-from Modules.Computer.Internet import internet
-from Modules.Computer.Nodes import nodes
+from Modules.Core.data_objects import CompAPIs, ComputerInformation, NodeData
 from Modules.Computer import logging_pyh as Logger
-from Modules.Utilities.xml_tools import XmlConfigTools
+from Modules.Computer.Mqtt import broker
+from Modules.Computer.Nodes import nodes
+from Modules.Computer.Internet import internet
 from Modules.Web import web_server
+from Modules.Utilities.xml_tools import XmlConfigTools
 # from Modules.Utilities.tools import PrettyPrintAny
 
 LOG = Logger.getLogger('PyHouse.Computer       ')
@@ -49,26 +55,34 @@ class Utility(ReadWriteConfigXml):
     """
     """
 
-    def update_pyhouse_obj(self, p_pyhouse_obj):
-        p_pyhouse_obj.Computer = ComputerInformation()
+    m_pyhouse_obj = None
 
     def add_api_references(self, p_pyhouse_obj):
+        p_pyhouse_obj.APIs.Comp = CompAPIs()
+        p_pyhouse_obj.APIs.Comp.ComputerAPI = self
+        p_pyhouse_obj.APIs.Comp.MqttAPI = broker.API()
+        p_pyhouse_obj.APIs.Comp.CommunicationsAPI = None
+        p_pyhouse_obj.APIs.Comp.EmailAPI = None
         p_pyhouse_obj.APIs.Comp.InternetAPI = internet.API()
         p_pyhouse_obj.APIs.Comp.NodesAPI = nodes.API()
+        p_pyhouse_obj.APIs.Comp.WeatherAPI = web_server.API()
         p_pyhouse_obj.APIs.Comp.WebAPI = web_server.API()
 
     def start_component_apis(self, p_pyhouse_obj):
+        p_pyhouse_obj.APIs.Comp.MqttAPI.Start(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Comp.InternetAPI.Start(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Comp.NodesAPI.Start(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Comp.WebAPI.Start(p_pyhouse_obj)
 
     def stop_component_apis(self, p_pyhouse_obj):
+        p_pyhouse_obj.APIs.Comp.MqttAPI.Stop()
         p_pyhouse_obj.APIs.Comp.InternetAPI.Stop()
         p_pyhouse_obj.APIs.Comp.NodesAPI.Stop()
         p_pyhouse_obj.APIs.Comp.WebAPI.Stop()
 
     def save_component_apis(self, p_pyhouse_obj):
         l_xml = self.write_computer_xml()
+        p_pyhouse_obj.APIs.Comp.MqttAPI.SaveXml(l_xml)
         p_pyhouse_obj.APIs.Comp.InternetAPI.SaveXml(l_xml)
         p_pyhouse_obj.APIs.Comp.NodesAPI.SaveXml(l_xml)
         p_pyhouse_obj.APIs.Comp.WebAPI.SaveXml(l_xml)
@@ -83,16 +97,16 @@ class API(Utility):
         """
         Start processing
         """
-        # LOG.info('Starting')
+        LOG.info('Starting')
+        p_pyhouse_obj.Computer = ComputerInformation()
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.update_pyhouse_obj(p_pyhouse_obj)
         self.add_api_references(p_pyhouse_obj)
         self.read_computer_xml(p_pyhouse_obj)
         self.start_component_apis(p_pyhouse_obj)
         LOG.info('Started')
 
     def Stop(self):
-        """Stop all houses.
+        """
         Append the house XML to the passed in xlm tree.
         """
         self.stop_component_apis(self.m_pyhouse_obj)

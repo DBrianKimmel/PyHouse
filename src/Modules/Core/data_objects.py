@@ -4,7 +4,7 @@
 @Name:      PyHouse/src/Modules/Core/data_objects.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: 2014 by D. Brian Kimmel
+@copyright: (c) 2014-2015 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Mar 20, 2014
 @summary:   This module is the definition of major data objects.
@@ -29,7 +29,9 @@ from twisted.internet import reactor
 
 
 class PyHouseData(object):
-    """The master object, contains all other 'configuration' objects.
+    """ ==> pyhouse_obj
+
+    The master object, contains all other 'configuration' objects.
 
     NOTE that the data entries need to be dicts so json encoding of the data works properly.
     """
@@ -131,10 +133,19 @@ class ComputerInformation(object):
     def __init__(self):
         self.InternetConnection = {}  # InternetConnectionData()
         self.Email = {}  # EmailData()
+        self.Mqtt = {}  # MqttBrokerData()
         self.Nodes = {}  # NodeData()
         self.Web = {}  # WebData()
         self.Domain = None
-        self.Mqtt = None
+
+
+class MqttBrokerData(ABaseObject):
+    """
+    """
+    def __init__(self):
+        super(MqttBrokerData, self).__init__()
+        self.BrokerAddress = None
+        self.BrokerPort = None
 
 
 class HouseInformation(ABaseObject):
@@ -309,7 +320,7 @@ class XmlInformation(object):
 
 
 class PyHouseAPIs(object):
-    """
+    """ ==> pyhouse_obj.APIs
     Most of these have a single entry.
     """
 
@@ -322,17 +333,22 @@ class PyHouseAPIs(object):
 
 
 class CompAPIs(object):
+    """ ==> pyhouse_obj.APIs.Comp
+    """
     def __init__(self):
         self.CommunicationsAPI = None
         self.ComputerAPI = None
         self.EmailAPI = None
         self.InternetAPI = None
+        self.MqttAPI = None
         self.NodesAPI = None
         self.WeatherAPI = None
         self.WebAPI = None
 
 
 class HouseAPIs(object):
+    """ ==> pyhouse_obj.APIs.House
+    """
     def __init__(self):
         self.Modules = {}  # A dict of ModuleName : Reference
         self.EntertainmentAPI = None

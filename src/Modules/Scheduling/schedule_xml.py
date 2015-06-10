@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Scheduling.test.test_schedule_xml -*-
 
-@name: PyHouse/src/Modules/Scheduling/schedule_xml.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@Copyright (c) 2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Sep 2, 2013
-@summary: Schedule events
+@name:     PyHouse/src/Modules/Scheduling/schedule_xml.py
+@author:   D. Brian Kimmel
+@contact:  D.BrianKimmel@gmail.com
+@Copyright (c) 2014-2015 by D. Brian Kimmel
+@license:  MIT License
+@note:     Created on Sep 2, 2013
+@summary:  Schedule events
 
 
 """

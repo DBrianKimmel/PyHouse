@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Comouter.Nodes.test.test_node_local -*-
 
-@name: PyHouse/src/Modules/Computer/Nodes/node_local.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2014 by D. Brian Kimmel
-@note: Created on Apr 2, 2014
-@license: MIT License
-@summary: Gather this node's information.
+@name:      PyHouse/src/Modules/Computer/Nodes/node_local.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2014 by D. Brian Kimmel
+@note:      Created on Apr 2, 2014
+@license:   MIT License
+@summary:   Gather this node's information.
 
 This module:
     Gathers information about the interfaces (ethernet, wifi etc.) on this node.

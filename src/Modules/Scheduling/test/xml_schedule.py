@@ -1,10 +1,10 @@
 """
-@name: C:/Users/briank/Documents/GitHub/PyHouse/src/Modules/Scheduling/test/xml_schedule.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@Copyright: (c)  2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Nov 7, 2014
+@name:      PyHouse/src/Modules/Scheduling/test/xml_schedule.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@Copyright: (c) 2014=2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Nov 7, 2014
 @Summary:
 
 """
@@ -72,6 +72,6 @@ SCHEDULE_XSD = """
       </xs:sequence>
     </xs:complexType>
   </xs:element>
-
-</xs:schema>"""
+</xs:schema>
+"""
 # ## END DBK

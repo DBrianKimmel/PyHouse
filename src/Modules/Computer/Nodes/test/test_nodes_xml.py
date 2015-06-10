@@ -16,7 +16,7 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData, NodeInterfaceData
 from Modules.Computer.Nodes import nodes_xml
-from test.xml_data import *
+# from test.xml_data import *
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
 

@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.test.test_testing_mixin -*-
 
-@name: PyHouse/src/test/testing_mixin.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@Copyright (c) 2013-2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Jun 40, 2013
-@summary: Test handling the information for a house.
+@name:     PyHouse/src/test/testing_mixin.py
+@author:   D. Brian Kimmel
+@contact:  D.BrianKimmel@gmail.com
+@Copyright (c) 2013-2015 by D. Brian Kimmel
+@license:  MIT License
+@note:     Created on Jun 40, 2013
+@summary:  Test handling the information for a house.
 
 """
 
@@ -51,6 +51,7 @@ class XmlData(object):
         self.computer_div = None
         self.internet_sect = None
         self.locater_sect = None
+        self.mqtt_sect = None
         self.updater_sect = None
         self.log_sect = None
         self.web_sect = None
@@ -127,6 +128,9 @@ class SetupPyHouseObj(object):
             l_xml.internet = l_xml.internet_sect.find('Internet')
             l_xml.locater_sect = l_xml.internet_sect.find('LocaterUrlSection')
             l_xml.updater_sect = l_xml.internet_sect.find('UpdaterUrlSection')
+            #
+            l_xml.mqtt_sect = l_xml.computer_div.find('MqttSection')
+            l_xml.broker = l_xml.mqtt_sect.find('Broker')
             #
             l_xml.web_sect = l_xml.computer_div.find('WebSection')
 

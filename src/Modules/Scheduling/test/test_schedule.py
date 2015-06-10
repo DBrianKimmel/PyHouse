@@ -1,11 +1,11 @@
 """
-@name: PyHouse/src/Modules/Scheduling/test/test_schedule.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@Copyright (c) 2013-2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Apr 8, 2013
-@summary: Test handling the schedule information for a house.
+@name:     PyHouse/src/Modules/Scheduling/test/test_schedule.py
+@author:   D. Brian Kimmel
+@contact:  D.BrianKimmel@gmail.com
+@Copyright (c) 2013-2015 by D. Brian Kimmel
+@license:  MIT License
+@note:     Created on Apr 8, 2013
+@summary:  Test handling the schedule information for a house.
 
 """
 
