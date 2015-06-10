@@ -58,8 +58,6 @@ from Modules.Irrigation import irrigation
 from Modules.Utilities import tools
 from Modules.Utilities.tools import GetPyhouse
 from Modules.Computer import logging_pyh as Logger
-from Modules.Computer.Nodes import node_mqtt
-
 
 
 LOG = Logger.getLogger('PyHouse.Schedule       ')
@@ -67,7 +65,6 @@ SECONDS_IN_DAY = 86400
 SECONDS_IN_WEEK = 604800  # 7 * 24 * 60 * 60
 INITIAL_DELAY = 5
 PAUSE_DELAY = 5
-
 
 
 class Sch(object):
