@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Core.test.test_data_objects -*-
 
-@name: PyHouse/src/Modules/Web/web_login.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2013-2014 by D. Brian Kimmel
-@note: Created on Jul 27, 2013
-@license: MIT License
-@summary: Handle the web server login.
+@name:      PyHouse/src/Modules/Web/web_login.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2013-2014 by D. Brian Kimmel
+@note:      Created on Jul 27, 2013
+@license:   MIT License
+@summary:   Handle the web server login.
 
 Server side code.
 
@@ -115,7 +115,10 @@ class LoginElement(athena.LiveElement):
             l_login_obj.LoginFullName = 'D. Brian Kimmel'
             l_login_obj.IsLoggedIn = True
             l_login_obj.ServerState = web_utils.WS_LOGGED_IN
-            # web_server.API().add_browser(p_login_obj)
+        elif l_login_obj.LoginName == 'admin' and l_login_obj.LoginEncryptedPassword == 'admin':
+            l_login_obj.LoginFullName = 'Administrator'
+            l_login_obj.IsLoggedIn = True
+            l_login_obj.ServerState = web_utils.WS_LOGGED_IN
         else:
             l_login_obj.IsLoggedIn = False
             l_login_obj.LoginFullName = 'Not logged In'

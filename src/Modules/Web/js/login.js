@@ -1,11 +1,11 @@
 /**
- * @name: PyHouse/src/Modules/Web/js/login.js
- * @author: D. Brian Kimmel
- * @contact: D.BrianKimmel@gmail.com
- * @Copyright (c) 2014 by D. Brian Kimmel
- * @license: MIT License
- * @note: Created on Mar 11, 2014
- * @summary: Displays the login element
+ * @name:      PyHouse/src/Modules/Web/js/login.js
+ * @author:    D. Brian Kimmel
+ * @contact:   D.BrianKimmel@gmail.com
+ * @Copyright: (c) 2014-2015 by D. Brian Kimmel
+ * @license:   MIT License
+ * @note:      Created on Mar 11, 2014
+ * @summary:   Displays the login element
  */
 // import Nevow.Athena
 // import globals

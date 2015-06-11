@@ -1,11 +1,11 @@
 /**
- * @name: PyHouse/src/Modules/Web/js/rooms.js
- * @author: D. Brian Kimmel
- * @contact: D.BrianKimmel@gmail.com
- * @Copyright (c) 2014 by D. Brian Kimmel
- * @license: MIT License
- * @note: Created on Mar 11, 2014
- * @summary: Displays the rooms
+ * @name:      PyHouse/src/Modules/Web/js/rooms.js
+ * @author:    D. Brian Kimmel
+ * @contact:   D.BrianKimmel@gmail.com
+ * @Copyright: (c) 2014 by D. Brian Kimmel
+ * @license:   MIT License
+ * @note:      Created on Mar 11, 2014
+ * @summary:   Displays the rooms
  */
 // import Nevow.Athena
 // import globals
@@ -105,7 +105,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	/**
 	 * Build a screen full of data entry fields.
 	 */
-	function buildLcarRoomDataEntryScreen(self, p_entry, p_handler){
+	function buildLcarDataEntryScreen(self, p_entry, p_handler){
 		var l_room = arguments[1];
 		var l_entry_html = "";
 		l_entry_html += buildLcarTextWidget(self, 'Name', 'Room Name', l_room.Name);
