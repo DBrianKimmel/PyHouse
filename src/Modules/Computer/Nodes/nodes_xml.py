@@ -106,9 +106,12 @@ class Xml(XmlConfigTools):
         l_xml = ET.Element('NodeSection')
         self.m_count1 = 0
         for l_node_obj in p_nodes_obj.itervalues():
-            l_entry = self._write_one_node_xml(l_node_obj)
-            l_xml.append(l_entry)
-            self.m_count1 += 1
+            try:
+                l_entry = self._write_one_node_xml(l_node_obj)
+                l_xml.append(l_entry)
+                self.m_count1 += 1
+            except AttributeError:
+                pass
         return l_xml
 
 # ## END DBK

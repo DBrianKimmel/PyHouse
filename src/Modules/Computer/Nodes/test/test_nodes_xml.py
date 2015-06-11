@@ -1,10 +1,10 @@
 """
-@name: PyHouse/src/Modules/Computer/Nodes/test/test_nodes_xml.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@Copyright: (c)  2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Dec 15, 2014
+@name:      PyHouse/src/Modules/Computer/Nodes/test/test_nodes_xml.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@Copyright: (c) 2014_2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Dec 15, 2014
 @Summary:
 
 """
@@ -56,7 +56,7 @@ class C01_Structure(SetupMixin, unittest.TestCase):
 
 
 
-class C02_ReadXml(SetupMixin, unittest.TestCase):
+class C02_Read(SetupMixin, unittest.TestCase):
     """
     This section tests the reading and writing of XML used by node_local.
     """
@@ -134,7 +134,7 @@ class C03_Write(SetupMixin, unittest.TestCase):
 
 
 
-class C04_ReadEmptyXML(SetupMixin, unittest.TestCase):
+class C04_ReadEmpty(SetupMixin, unittest.TestCase):
     """
     This section tests the reading and writing of XML used by node_local.
     """
@@ -163,7 +163,7 @@ class C04_ReadEmptyXML(SetupMixin, unittest.TestCase):
 
 
 
-class C05_WriteEmptyXML(SetupMixin, unittest.TestCase):
+class C05_WriteEmpty(SetupMixin, unittest.TestCase):
     """
     This section tests the reading and writing of XML used by node_local.
     """
@@ -186,7 +186,7 @@ class C05_WriteEmptyXML(SetupMixin, unittest.TestCase):
         l_xml = self.m_api.write_nodes_xml(l_nodes)
         PrettyPrintAny(l_xml)
 
-    def test_04_AllNodes(self):
+    def test_04_All(self):
         l_nodes = self.m_api.read_all_nodes_xml(self.m_pyhouse_obj)
         l_xml = self.m_api.write_nodes_xml(l_nodes)
         PrettyPrintAny(l_xml)

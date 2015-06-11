@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Utilities.test.test_xml_tools -*-
 
-@name: PyHouse/src/Modules/Utilities/xml_tools.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2012-2014 by D. Brian Kimmel
-@note: Created on Jun 2, 2012
-@license: MIT License
-@summary: Various XML functions and utility methods.
+@name:      PyHouse/src/Modules/Utilities/xml_tools.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2012-2014 by D. Brian Kimmel
+@note:      Created on Jun 2, 2012
+@license:   MIT License
+@summary:   Various XML functions and utility methods.
 
 """
 
@@ -238,13 +238,11 @@ class XmlConfigTools(PutGetXML):
         self.put_text_attribute(l_elem, 'Name', p_object.Name)
         self.put_int_attribute(l_elem, 'Key', p_object.Key)
         self.put_bool_attribute(l_elem, 'Active', p_object.Active)
-
         try:
             self.put_uuid_element(l_elem, 'UUID', p_object.UUID)
         except AttributeError:
             self.put_uuid_element(l_elem, 'UUID', 'No UUID Given')
         return l_elem
-
 
 def stuff_new_attrs(p_target_obj, p_data_obj):
     """Put the NEW information from the data object into the target object.
