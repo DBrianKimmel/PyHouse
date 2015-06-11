@@ -68,6 +68,10 @@ class Utility(ReadWriteConfigXml):
         p_pyhouse_obj.APIs.Comp.WeatherAPI = web_server.API()
         p_pyhouse_obj.APIs.Comp.WebAPI = web_server.API()
 
+    def initialize_data_structures(self, p_pyhouse_obj):
+        p_pyhouse_obj.Computer = ComputerInformation()
+        p_pyhouse_obj.Computer.Nodes[0] = NodeData()
+
     def start_component_apis(self, p_pyhouse_obj):
         p_pyhouse_obj.APIs.Comp.MqttAPI.Start(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Comp.InternetAPI.Start(p_pyhouse_obj)
@@ -98,7 +102,7 @@ class API(Utility):
         Start processing
         """
         LOG.info('Starting')
-        p_pyhouse_obj.Computer = ComputerInformation()
+        self.initialize_data_structures(p_pyhouse_obj)
         self.m_pyhouse_obj = p_pyhouse_obj
         self.add_api_references(p_pyhouse_obj)
         self.read_computer_xml(p_pyhouse_obj)

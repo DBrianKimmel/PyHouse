@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Computer/Nodes/node_local.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014 by D. Brian Kimmel
+@copyright: (c) 2014-2015  by D. Brian Kimmel
 @note:      Created on Apr 2, 2014
 @license:   MIT License
 @summary:   Gather this node's information.
@@ -29,7 +29,7 @@ import platform
 # import uuid
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import NodeData, NodeInterfaceData
+from Modules.Core.data_objects import NodeInterfaceData
 from Modules.Communication import ir_control
 from Modules.Computer import logging_pyh as Logger
 from Modules.Computer.Nodes import nodes_xml

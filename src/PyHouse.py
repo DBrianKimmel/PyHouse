@@ -163,7 +163,6 @@ class API(Utilities):
         l_obj.APIs.House = data_objects.HouseAPIs()
         l_obj.APIs.PyHouseAPI = self
         l_obj.APIs.CoreSetupAPI = setup.API()
-        # l_obj.Computer = data_objects.ComputerInformation()
         l_obj.House = data_objects.HouseInformation()
         l_obj.Services = data_objects.CoreServicesInformation()
         l_obj.Twisted = data_objects.TwistedInformation()

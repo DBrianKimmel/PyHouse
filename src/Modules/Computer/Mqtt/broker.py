@@ -13,9 +13,11 @@
 import copy
 
 # Import PyMh files and modules.
+from Modules.Core.data_objects import NodeData
 from Modules.Computer import logging_pyh as Logger
 from Modules.Computer.Mqtt import mqtt_xml, protocol
 from Modules.Web import web_utils
+from Modules.Core import data_objects
 
 
 LOG = Logger.getLogger('PyHouse.MqttBroker     ')
@@ -83,7 +85,10 @@ class API(Util):
     def doPyHouseLogin(self, p_client, p_pyhouse_obj):
         """Login to PyHouse via MQTT
         """
-        l_node = copy.deepcopy(p_pyhouse_obj.Computer.Nodes[0])
+        try:
+            l_node = copy.deepcopy(p_pyhouse_obj.Computer.Nodes[0])
+        except KeyError:
+            l_node = NodeData()
         l_node.NodeInterfaces = None
         l_json = web_utils.JsonUnicode().encode_json(l_node)
         print("Broker - send initial login.")

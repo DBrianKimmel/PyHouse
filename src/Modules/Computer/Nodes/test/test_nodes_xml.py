@@ -14,6 +14,7 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
+from test import xml_data
 from Modules.Core.data_objects import NodeData, NodeInterfaceData
 from Modules.Computer.Nodes import nodes_xml
 # from test.xml_data import *
@@ -42,7 +43,7 @@ class C01_Structure(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         self.m_interface_obj = NodeInterfaceData()
         self.m_node_obj = NodeData()
 
@@ -61,7 +62,7 @@ class C02_ReadXml(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
 
     def test_01_OneInterface(self):
         l_interface = self.m_api._read_one_interface_xml(self.m_xml.interface)
@@ -85,7 +86,7 @@ class C02_ReadXml(SetupMixin, unittest.TestCase):
     def test_03_OneNode(self):
         l_node = self.m_api._read_one_node_xml(self.m_xml.node)
         PrettyPrintAny(l_node, 'One Node', 105)
-        self.assertEqual(l_node.Name, TESTING_NODES_NODE_NAME_1, 'Bad Name')
+        self.assertEqual(l_node.Name, xml_data.TESTING_NODES_NODE_NAME_1, 'Bad Name')
         self.assertEqual(l_node.Key, 0, 'Bad Key')
         self.assertEqual(l_node.Active, True, 'Bad Active')
         self.assertEqual(l_node.NodeRole, 0, 'Bad NodeRole')
@@ -103,7 +104,7 @@ class C03_Write(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
 
     def test_01_OneInterface(self):
         l_interface = self.m_api._read_one_interface_xml(self.m_xml.interface)
@@ -139,7 +140,7 @@ class C04_ReadEmptyXML(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_EMPTY))
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_EMPTY))
 
     def test_01_OneInterface(self):
         l_interface = self.m_api._read_one_interface_xml(self.m_xml.interface)
@@ -168,7 +169,7 @@ class C05_WriteEmptyXML(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_EMPTY))
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_EMPTY))
 
     def test_01_OneInterface(self):
         l_nodes = self.m_api.read_all_nodes_xml(self.m_pyhouse_obj)

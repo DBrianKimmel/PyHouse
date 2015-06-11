@@ -73,6 +73,7 @@ class Xml(XmlConfigTools):
                 l_ret[self.m_count_nodes] = l_node
                 self.m_count_nodes += 1
         except AttributeError as e_err:
+            l_ret[0] = NodeData()  # Create an empty Nodes[0]
             print('ERROR - Node read error - {0:}'.format(e_err))
         return l_ret
 

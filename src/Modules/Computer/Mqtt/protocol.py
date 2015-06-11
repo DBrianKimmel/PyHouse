@@ -510,11 +510,15 @@ class MQTTClient(MQTTProtocol):
 
     def __init__(self, p_pyhouse_obj, p_clientID = None, keepalive = None, willQos = 0, willTopic = None, willMessage = None, willRetain = False):
         self.m_pyhouse_obj = p_pyhouse_obj
-        print("Client __init__  ID: {} {}".format(p_clientID, p_pyhouse_obj.Computer.Nodes[0].Name))
+        try:
+            l_name = p_pyhouse_obj.Computer.Nodes[0].Name
+        except KeyError:
+            l_name = "UnknownNode"
+        print("Client __init__  ID: {} {}".format(p_clientID, l_name))
         if p_clientID is not None:
             self.m_clientID = p_clientID
         else:
-            self.m_clientID = p_pyhouse_obj.Computer.Nodes[0].Name
+            self.m_clientID = l_name
         if keepalive is not None:
             self.m_keepalive = keepalive
         else:

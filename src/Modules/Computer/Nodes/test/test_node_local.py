@@ -1,11 +1,11 @@
 """
-@name: PyHouse/src/Modules/Core/test/test_node_local.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Apr 29, 2014
-@summary: This module is for testing local node data.
+@name:      PyHouse/src/Modules/Core/test/test_node_local.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2014-2015  by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Apr 29, 2014
+@summary:   This module is for testing local node data.
 
 """
 
@@ -15,6 +15,7 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData, NodeInterfaceData
+from Modules.Computer.Nodes import nodes_xml
 from Modules.Computer.Nodes import node_local
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
@@ -53,12 +54,18 @@ class C01_Structure(SetupMixin, unittest.TestCase):
         PrettyPrintAny(self.m_xml.node_sect, 'NodeSect XML')
         PrettyPrintAny(self.m_xml.node, 'Node XML')
 
+    def test_02_Data(self):
+        self.m_pyhouse_obj.Computer.Nodes = nodes_xml.Xml().read_all_nodes_xml(self.m_pyhouse_obj)
+        PrettyPrintAny(self.m_pyhouse_obj.Computer, 'Computer')
+        PrettyPrintAny(self.m_pyhouse_obj.Computer.Nodes, 'Nodes')
+        PrettyPrintAny(self.m_pyhouse_obj.Computer.Nodes[0], 'Node 0')
 
 
 class C02_Iface(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        self.m_pyhouse_obj.Computer.Nodes = nodes_xml.Xml().read_all_nodes_xml(self.m_pyhouse_obj)
         self.m_node = NodeData()
         self.m_api = node_local.API()
         self.m_iface_api = node_local.GetAllInterfaceData()
@@ -69,7 +76,7 @@ class C02_Iface(SetupMixin, unittest.TestCase):
         # self.assertEqual()
 
     def test_02_Node(self):
-        l_node = self.m_api.create_local_node()
+        l_node = self.m_api.create_local_node(self.m_pyhouse_obj)
         PrettyPrintAny(l_node, 'Local Node')
         PrettyPrintAny(l_node.NodeInterfaces[0], 'IFace 0')
 

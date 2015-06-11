@@ -14,7 +14,7 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import MqttBrokerData
+# from Modules.Core.data_objects import MqttBrokerData
 from test import xml_data
 # from test.xml_data import *
 from Modules.Computer.Mqtt import mqtt_xml
