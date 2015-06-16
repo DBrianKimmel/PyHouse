@@ -29,9 +29,10 @@
     THE SOFTWARE.
 
 
-                  cp   /c/Users/briank/Documents/GitHub/PyHouse/admin/config/cannontrail_master.xml   /c/etc//pyhouse//master.xml
-
-                  > error ; > debug ; clear ; tail -f debug
+        cp   /c/Users/briank/Documents/GitHub/PyHouse/admin/config/cannontrail_master.xml   /c/etc/pyhouse//master.xml
+        cd   /c/etc/pyhouse
+        cd   /c/var/log/pyhouse
+        > error; > debug; clear; tail -f debug
 
 Uses I{Epytext} mark-up for documentation.
 
