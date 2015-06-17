@@ -67,7 +67,7 @@ class C01_Util(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_ctrlr = ControllerData()
-        self.m_util = Insteon_decoder.Util
+        self.m_util = Insteon_decoder.D_Util
 
 
     def test_01_Drop1st(self):

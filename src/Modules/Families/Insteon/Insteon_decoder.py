@@ -140,7 +140,7 @@ class D_Util(object):
 
         @return: The object that contains the address -or- a dummy object with noname in Name
         """
-        l_id = D_Util.message2int(p_message, p_index)  # Extract the 3 byte address from the message and convert to an Int.
+        l_id = Util.message2int(p_message, p_index)  # Extract the 3 byte address from the message and convert to an Int.
         l_dotted = conversions.int2dotted_hex(l_id, 3)
         l_ret = self._find_addr(self.m_pyhouse_obj.House.DeviceOBJs.Lights, l_id)
         if l_ret == None:
@@ -167,7 +167,7 @@ class D_Util(object):
         return l_debug_msg
 
     @staticmethod
-    def get_product_code(p_obj, p_message, p_index):
+    def get_product_code(_p_obj, _p_message, _p_index):
         l_debug_msg = ''
         return l_debug_msg
 
