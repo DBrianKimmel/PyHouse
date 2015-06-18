@@ -90,10 +90,10 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 		globals.House.ThermostatIx = l_ix;
 		globals.House.ThermostatName = l_name;
 		if (l_ix <= 1000) {  // One of the Thermostat buttons.
+			showDataEntryFields(self);
 			var l_obj = globals.House.HouseObj.Thermostats[l_ix];
 			globals.House.ThermostatObj = l_obj;
 			globals.House.Self = self;
-			showDataEntryFields(self);
 			self.buildLcarDataEntryScreen(l_obj, 'handleDataOnClick');
 		} else if (l_ix == 10001) {  // The "Add" button
 			showDataEntryFields(self);
@@ -111,7 +111,7 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 	 * Build a screen full of data entry fields.
 	 */
 	function buildLcarDataEntryScreen(self, p_entry, p_handler){
-		var l_thermostat = arguments[1];
+		var l_obj = arguments[1];
 		var l_html = build_lcars_top('Thermostat Data', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(35, self.buildEntry(l_obj, p_handler));
 		l_html += build_lcars_bottom();
@@ -182,8 +182,9 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 		return p_data;
 	},
 	function createEntry(self) {
-		var l_data = createBaseEntry(self, l_data);
+		var l_data = createBaseEntry(self, Object.keys(globals.House.HouseObj.Thermostats).length);
 		l_data = createLightingCoreEntry(self, l_data);
+		l_data.ControllerFamily = "Insteon";
 		l_data = self.createThermostatEntry(l_data);
         if (l_data.ControllerFamily === 'Insteon')
         	l_data = createInsteonEntry(self, l_data);
@@ -197,9 +198,10 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 	    p_data.LightingType = 'Thermostat';
 		p_data.CoolSetPoint = 78;
 		p_data.HeatSetPoint = 70;
-		return p_Data;
+		// Divmod.debug('---', 'thermostats.createThermostatEntry() was called.');
+		// console.log("thermostats.createThermostatEntry() - p_data = %O", p_data);
+		return p_data;
 	},
-
 
 
 // ============================================================================

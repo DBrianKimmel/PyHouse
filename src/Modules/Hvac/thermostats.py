@@ -1,17 +1,14 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Hvac.test.test_thermostat -*-
 
-@name: PyHouse/src/Modules/Hvac/thermostats.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2013-2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Mar 27, 2013
-@summary: This module is for testing local node data.
+@name:      PyHouse/src/Modules/Hvac/thermostats.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: 2013-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Mar 27, 2013
+@summary:   This module is for testing local node data.
 
-Created on Mar 27, 2013
-
-@author: briank
 """
 
 # Import system type stuff

@@ -390,7 +390,7 @@ class DecodeResponses(D_Util):
         except AttributeError:
             pass
         l_ret = True
-        self.m_pyhouse_obj.APIs.Comp.MqttAPI.MqttPublish("pyhouse/lighting/{}/info".format(l_name_from), "Hello from InsteonDecoder ()".format(l_debug_msg))
+        self.m_pyhouse_obj.APIs.Comp.MqttAPI.MqttPublish("pyhouse/lighting/{}/info".format(l_name_from), "InsteonDecoder {}".format(l_debug_msg))
 
         LOG.info(l_debug_msg)
         return self.check_for_more_decoding(p_controller_obj, l_ret)

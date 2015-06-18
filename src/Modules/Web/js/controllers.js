@@ -160,7 +160,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 		Divmod.debug('---', 'controllers.interfaceChanged() was called.');
 		var l_obj = globals.House.ControllerObj;
 		var l_self = globals.House.Self;
-		console.log("controllers.interfaceChanged() - l_self = %O", l_self);
+		// console.log("controllers.interfaceChanged() - l_self = %O", l_self);
 		l_obj.InterfaceType = fetchSelectWidget(l_self, 'InterfaceType');
 		l_self.buildLcarDataEntryScreen(l_obj, 'handleDataOnClick');
 	},

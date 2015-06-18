@@ -19,11 +19,11 @@ from nevow import athena
 from nevow import loaders
 
 # Import PyMh files and modules.
-from Modules.Core import conversions
 from Modules.Core.data_objects import ThermostatData
 from Modules.Web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.Computer import logging_pyh as Logger
 from Modules.Families.Insteon import Insteon_utils
+from Modules.Utilities.tools import PrettyPrintAny
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -47,6 +47,7 @@ class ThermostatsElement(athena.LiveElement):
     @athena.expose
     def getHouseData(self):
         l_json = GetJSONHouseInfo(self.m_pyhouse_obj)
+        # PrettyPrintAny(l_json, "Json")
         return l_json
 
     @athena.expose

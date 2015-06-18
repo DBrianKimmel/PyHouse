@@ -150,7 +150,7 @@ function buildLcarButton(p_obj, p_handler, p_background_color, /* optional */ na
 
 function buildBaseEntry(self, p_obj) {
 	var l_html = '';
-	l_html += buildLcarTextWidget(self, 'Name', 'Light Name', p_obj.Name);
+	l_html += buildLcarTextWidget(self, 'Name', 'Device Name', p_obj.Name);
 	l_html += buildLcarTextWidget(self, 'Key', 'Index', p_obj.Key, 'size=10 disabled');
 	l_html += buildLcarTrueFalseWidget(self, 'Active', 'Active ?', p_obj.Active);
 	l_html += buildLcarTextWidget(self, 'UUID', 'UUID', p_obj.UUID, 'disabled');
@@ -171,9 +171,11 @@ function createBaseEntry(self, p_key) {
 		Delete : false
     };
 	l_data.Name = 'ChangeMe';
+	if (p_key === undefined) 
+		p_key = 0;
 	l_data.Key = p_key;
 	l_data.Active = true;
-	l_data.UUID = '123';
+	l_data.UUID = '';
 	return l_data;
 }
 

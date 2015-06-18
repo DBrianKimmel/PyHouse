@@ -2,7 +2,7 @@
  * @name:      PyHouse/src/Modules/Web/js/lights.js
  * @author:    D. Brian Kimmel
  * @contact:   D.BrianKimmel@gmail.com
- * @Copyright: (c) 2014 by D. Brian Kimmel
+ * @Copyright: (c) 2014-2015 by D. Brian Kimmel
  * @license:   MIT License
  * @note:      Created on Mar 11, 2014
  * @summary:   Displays the lights
@@ -207,6 +207,6 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
         return false;  // false stops the chain.
 	}
 );
-//Divmod.debug('---', 'lights.handleDataEntryOnClick(Change) was called.');
-//console.log("lights.handleDataEntryOnClick()  json  %O", l_json);
-//### END DBK
+// Divmod.debug('---', 'lights.handleDataEntryOnClick(Change) was called.');
+// console.log("lights.handleDataEntryOnClick()  json  %O", l_json);
+// ### END DBK
