@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Web.test.test_web_thermostats -*-
 
-@name: PyHouse/src/Modules/Web/web_thermostats.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@Copyright (c) 2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Jul 1, 2014
-@summary: Handle the Thermostat information for a house.
+@name:      PyHouse/src/Modules/Web/web_thermostats.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@Copyright: (c) 2014-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Jul 1, 2014
+@summary:   Handle the Thermostat information for a house.
 
 """
 
@@ -35,21 +35,18 @@ LOG = Logger.getLogger('PyHouse.webThermost ')
 
 
 class ThermostatsElement(athena.LiveElement):
-    """ a 'live' internet element.
+    """ a 'live' thermostat element.
     """
-    # print('ThermostatElement')
     docFactory = loaders.xmlfile(os.path.join(templatepath, 'thermostatElement.html'))
     jsClass = u'thermostats.ThermostatsWidget'
 
     def __init__(self, p_workspace_obj, _p_params):
         self.m_workspace_obj = p_workspace_obj
         self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
-        # print('thermostat.ThermostatElement.__init__()')
 
     @athena.expose
     def getHouseData(self):
         l_json = GetJSONHouseInfo(self.m_pyhouse_obj)
-        # LOG.info('Fetched {}'.format(l_json))
         return l_json
 
     @athena.expose
@@ -57,7 +54,6 @@ class ThermostatsElement(athena.LiveElement):
         """Thermostat data is returned, so update the info.
         """
         l_json = JsonUnicode().decode_json(p_json)
-        LOG.info('JSON {}'.format(l_json))
         l_delete = l_json['Delete']
         l_ix = int(l_json['Key'])
         if l_delete:
@@ -72,6 +68,7 @@ class ThermostatsElement(athena.LiveElement):
             LOG.warning('Creating a new Thermostat for Key:{}'.format(l_ix))
             l_obj = ThermostatData()
         #
+        LOG.info('JSON {}'.format(l_json))
         l_obj.Name = l_json['Name']
         l_obj.Active = l_json['Active']
         l_obj.Key = l_ix
@@ -85,7 +82,7 @@ class ThermostatsElement(athena.LiveElement):
         l_obj.ThermostatMode = 'Cool'  # Cool | Heat | Auto | EHeat
         l_obj.ThermostatScale = 'F'  # F | C
         if l_obj.ControllerFamily == 'Insteon':
-            Insteon_utils.Util.get_jaon_data(l_obj, l_json)
+            Insteon_utils.Util.get_json_data(l_obj, l_json)
         elif l_obj.ControllerFamily == 'UPB':
             l_obj.UPBAddress = l_json['UPBAddress']
             l_obj.UPBPassword = l_json['UPBPassword']

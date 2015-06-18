@@ -13,8 +13,6 @@ Things that need to be done in no particular order:
     
     - Abandon AMP and switch to MQTT,
     
-    - Add MQTT address to web interface.
-    
     - Add hostname to Web login screen, other screens so we can see which device to which we are connected.
     
     - Fix bug in UPB initialization - not found error

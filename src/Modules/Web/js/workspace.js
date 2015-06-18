@@ -1,5 +1,13 @@
 /**
- *  workspace.js
+ * @name:      PyHouse/src/Modules/Web/js/workspace.js
+ * @author:    D. Brian Kimmel
+ * @contact:   D.BrianKimmel@gmail.com
+ * @Copyright: (c) 2012-2015 by D. Brian Kimmel
+ * @license:   MIT License
+ * @note:      Created about 2012
+ * @summary:   Displays the Internet element
+ *
+ * This script is the live element functionality.
  * 
  * This is the client side part of the basis of this PyHouse controller.
  * 
@@ -78,6 +86,7 @@ helpers.Widget.subclass(workspace, 'Workspace').methods(
 				self.attachWidget('internet', 'dummy');
 				self.attachWidget('lights', 'dummy');
 				self.attachWidget('login', 'dummy');
+				self.attachWidget('mqtt', 'dummy');
 				self.attachWidget('nodes', 'dummy');
 				self.attachWidget('rooms', 'dummy');
 				self.attachWidget('rootMenu', 'dummy');

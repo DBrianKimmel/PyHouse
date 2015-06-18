@@ -1,11 +1,11 @@
 /**
- * @name: PyHouse/src/Modules/Web/js/thermostats.js
- * @author: D. Brian Kimmel
- * @contact: D.BrianKimmel@gmail.com
- * @Copyright (c) 2014 by D. Brian Kimmel
- * @license: MIT License
- * @note: Created on Sep 03, 2014
- * @summary: Displays the thermostat element
+ * @name:      PyHouse/src/Modules/Web/js/thermostats.js
+ * @author:    D. Brian Kimmel
+ * @contact:   D.BrianKimmel@gmail.com
+ * @Copyright: (c) 2014-2015 by D. Brian Kimmel
+ * @license:   MIT License
+ * @note:      Created on Sep 03, 2014
+ * @summary:   Displays the thermostat element
  *
  */
 
@@ -113,7 +113,7 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 	function buildLcarDataEntryScreen(self, p_entry, p_handler){
 		var l_thermostat = arguments[1];
 		var l_html = build_lcars_top('Thermostat Data', 'lcars-salmon-color');
-		l_html += build_lcars_middle_menu(25, self.buildEntry(l_obj, p_handler));
+		l_html += build_lcars_middle_menu(35, self.buildEntry(l_obj, p_handler));
 		l_html += build_lcars_bottom();
 		self.nodeById('DataEntryDiv').innerHTML = l_html;
 	},
@@ -121,7 +121,7 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 		var l_html = buildBaseEntry(self, p_obj);
 		// l_html = buildLightingCoreEntry(self, p_obj, l_html, p_onchange);
 		l_html = self.buildThermostatEntry(p_obj, l_html);
-		if (p_obj.ControllerFamily == 'Insteon')
+		if (p_obj.ControllerFamily === 'Insteon')
 			l_html = buildInsteonPart(self, p_obj, l_html);
 		else if (p_obj.ControllerFamily === 'UPB')
         	l_html = buildUpbPart(self, p_obj, l_html);

@@ -77,7 +77,7 @@ class Util(object):
         return l_house
 
     @staticmethod
-    def get_jaon_data(l_obj, l_json):
+    def get_json_data(l_obj, l_json):
         l_obj.DevCat = int(l_json['DevCat'])
         l_obj.GroupList = l_json['GroupList']
         l_obj.GroupNumber = l_json['GroupNumber']

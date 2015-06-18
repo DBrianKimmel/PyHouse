@@ -72,6 +72,7 @@ from Modules.Web import web_houseSelect
 from Modules.Web import web_internet
 from Modules.Web import web_lights
 from Modules.Web import web_login
+from Modules.Web import web_mqtt
 from Modules.Web import web_nodes
 from Modules.Web import web_rooms
 from Modules.Web import web_rootMenu
@@ -401,6 +402,15 @@ class Workspace(athena.LiveElement):
         """
         LOG.info("Login loaded into browser")
         l_element = web_login.LoginElement(self)
+        l_element.setFragmentParent(self)
+        return l_element
+
+    @athena.expose
+    def mqtt(self, p_params):
+        """ Place and display the mqtt widget.
+        """
+        LOG.info("Mqtt loaded into browser")
+        l_element = web_mqtt.MqttElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 

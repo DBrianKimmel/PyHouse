@@ -1,12 +1,11 @@
-/** helpers.js
- *
- * @name: PyHouse/src/Modules/Web/js/helpers.js
- * @author: D. Brian Kimmel
- * @contact: D.BrianKimmel@gmail.com
- * @Copyright (c) 2012-2014 by D. Brian Kimmel
- * @license: MIT License
- * @note: Created about 2012
- * @summary: Displays the Internet element
+/**
+ * @name:      PyHouse/src/Modules/Web/js/helpers.js
+ * @author:    D. Brian Kimmel
+ * @contact:   D.BrianKimmel@gmail.com
+ * @Copyright: (c) 2012-2015 by D. Brian Kimmel
+ * @license:   MIT License
+ * @note:      Created about 2012
+ * @summary:   Displays the Internet element
  * This script is the live element functionality.
  */
 // import Nevow.Athena

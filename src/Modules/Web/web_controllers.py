@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Web.test.test_web_controllers -*-
 
-@name: PyHouse/src/Modules/Web/web_controllers.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@Copyright (c) 2013-2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Apr 8, 2013
-@summary: Web interface to controllers for the selected house.
+@name:      PyHouse/src/Modules/Web/web_controllers.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@Copyright: (c) 2013-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Apr 8, 2013
+@summary:   Web interface to controllers for the selected house.
 
 """
 
@@ -43,8 +43,6 @@ class ControllersElement(athena.LiveElement):
     def __init__(self, p_workspace_obj, _p_params):
         self.m_workspace_obj = p_workspace_obj
         self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
-        if g_debug >= 2:
-            print("web_controllers.ControllersElement()")
 
     @athena.expose
     def getHouseData(self):
@@ -53,7 +51,7 @@ class ControllersElement(athena.LiveElement):
 
     @athena.expose
     def getInterfaceData(self):
-        """ A JS request for interface information has been received from the client.
+        """ A JS request for information has been received from the client.
         """
         l_interfaces = interface.VALID_INTERFACES
         l_obj = {}
@@ -75,9 +73,6 @@ class ControllersElement(athena.LiveElement):
             except AttributeError:
                 print("web_controllers - Failed to delete - JSON: {0:}".FORMAT(l_json))
             return
-        #
-        # Note - we don't want a plain controller here - we want a family controller with the proper interface.
-        #
         try:
             l_obj = self.m_pyhouse_obj.House.DeviceOBJs.Controllers[l_controller_ix]
         except KeyError:
@@ -95,7 +90,7 @@ class ControllersElement(athena.LiveElement):
         l_obj.InterfaceType = l_json['InterfaceType']
         l_obj.Port = l_json['Port']
         if l_obj.ControllerFamily == 'Insteon':
-            Insteon_utils.Util().get_jaon_data(l_obj, l_json)
+            Insteon_utils.Util().get_json_data(l_obj, l_json)
         elif l_obj.ControllerFamily == 'UPB':
             l_obj.UPBAddress = l_json['UPBAddress']
             l_obj.UPBPassword = l_json['UPBPassword']

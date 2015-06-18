@@ -61,7 +61,8 @@ class DeviceData(object):
     def __init__(self):
         self.UUID - None
         self.Name = None
-        self.DeviceType = None
+        self.DeviceType = 0
+        self.DeviceSubType = 0
         self.Key = 0  # Instance number
         self.Active = False
 

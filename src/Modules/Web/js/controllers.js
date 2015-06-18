@@ -1,11 +1,11 @@
 /**
- * @name: PyHouse/src/Modules/Web/js/controllers.js
- * @author: D. Brian Kimmel
- * @contact: D.BrianKimmel@gmail.com
- * @Copyright (c) 2014 by D. Brian Kimmel
- * @license: MIT License
- * @note: Created on Mar 11, 2014
- * @summary: Displays the controller element
+ * @name:      PyHouse/src/Modules/Web/js/controllers.js
+ * @author:    D. Brian Kimmel
+ * @contact:   D.BrianKimmel@gmail.com
+ * @Copyright: (c) 2014-2015 by D. Brian Kimmel
+ * @license:   MIT License
+ * @note:      Created on Mar 11, 2014
+ * @summary:   Displays the controller element
  *
  * Note that a controller contains common light info, controller info, family info and interface info.
  */
@@ -64,7 +64,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 
 // ============================================================================
 	/**
-	 * Build a screen full of buttons - One for each room and some actions.
+	 * Build a screen full of buttons - One for each controller and some actions.
 	 */
 	function buildLcarSelectScreen(self){
 		var l_button_html = buildLcarSelectionButtonsTable(globals.House.HouseObj.Controllers, 'handleMenuOnClick');

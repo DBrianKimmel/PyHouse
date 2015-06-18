@@ -101,6 +101,7 @@ def GetJSONComputerInfo(p_pyhouse_obj):
     """
     l_ret = ComputerInformation()
     l_ret.InternetConnection = p_pyhouse_obj.Computer.InternetConnection
+    l_ret.Mqtt = p_pyhouse_obj.Computer.Mqtt
     l_ret.Nodes = p_pyhouse_obj.Computer.Nodes
     l_ret.Web = p_pyhouse_obj.Computer.Web
     l_json = unicode(JsonUnicode().encode_json(l_ret))

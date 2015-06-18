@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.web.test.test_web_lights -*-
 
-@name: PyHouse/src/Modules/web/web_lights.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@Copyright (c) 2013-2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Jun 3, 2013
-@summary: Handle all of the lights information for a house.
+@name:      PyHouse/src/Modules/web/web_lights.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@Copyright: (c) 2013-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Jun 3, 2013
+@summary:   Handle all of the lights information for a house.
 
 TODO: Change all references to a light if name changes.
 
@@ -42,10 +42,6 @@ class LightsElement(athena.LiveElement):
     jsClass = u'lights.LightsWidget'
 
     def __init__(self, p_workspace_obj, _p_params):
-        """Called when connection is made to browser.
-
-        @param p_params: = 'dummy'
-        """
         self.m_workspace_obj = p_workspace_obj
         self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
 
@@ -86,7 +82,7 @@ class LightsElement(athena.LiveElement):
         if len(l_obj.UUID) < 8:
             l_obj.UUID = str(uuid.uuid1())
         if l_obj.ControllerFamily == 'Insteon':
-            Insteon_utils.Util().get_jaon_data(l_obj, l_json)
+            Insteon_utils.Util().get_json_data(l_obj, l_json)
         elif l_obj.ControllerFamily == 'UPB':
             l_obj.UPBAddress = l_json['UPBAddress']
             l_obj.UPBPassword = l_json['UPBPassword']

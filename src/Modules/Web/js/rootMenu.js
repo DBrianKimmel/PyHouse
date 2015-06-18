@@ -1,6 +1,11 @@
-/** rootMenu.js
- *
- * Displays the Root Menu section
+/**
+ * @name:      PyHouse/src/Modules/Web/js/rootMenu.js
+ * @author:    D. Brian Kimmel
+ * @contact:   D.BrianKimmel@gmail.com
+ * @Copyright: (c) 2013-2015 by D. Brian Kimmel
+ * @license:   MIT License
+ * @note:      Created on May 30, 2013
+ * @summary:   Displays the Main Menu
  */
 // import Nevow.Athena
 // import globals
@@ -43,12 +48,12 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 	},
 
 
-
 // ============================================================================
 	function menuItems(self){
 		var l_list = [
 		    // Key,           Caption,               Widget Name
 			['Select' ,      'Select House',        'Select'          ],
+			['Mqtt',		 'Mqtt Broker',			'Mqtt'			  ],
 			['House',        'House',               'House'           ],
 			['Web',          'Web',                 'Web'             ]
 			];
@@ -80,7 +85,7 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 			self.buildLcarSelectScreen();
 		}
 		function eb_fetchDataFromServer(p_reason) {
-			Divmod.debug('---', 'lights.eb_fetchDataFromServer() was called. ERROR: ' + p_reason);
+			Divmod.debug('---', 'mainMenu.eb_fetchDataFromServer() was called. ERROR: ' + p_reason);
 		}
 		self.buildLcarScreen();
         return false;
@@ -98,6 +103,9 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 		case 'Select':  // House Select
 			self.showWidget('HouseSelect');
 			break;
+		case 'Mqtt':
+			self.showWidget('Mqtt');
+			break
 		case 'House':
 			self.showWidget('House');
 			break;
