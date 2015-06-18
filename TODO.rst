@@ -23,6 +23,8 @@ Things that need to be done in no particular order:
     
     - Add client authentication to web server.
     
+    - Restart Serial Drivers if they loose connections.
+    
     
     
     

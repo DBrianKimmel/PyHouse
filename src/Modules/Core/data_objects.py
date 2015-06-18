@@ -48,12 +48,22 @@ class ABaseObject(object):
     """This data is in almost every other object.
     Do not use this object, derive objects from it.
     """
-
     def __init__(self):
         self.Name = 'Undefined ABaseObject'
         self.Key = 0
         self.Active = False
         self.UUID = None  # The UUID is optional, not all objects use this
+
+
+class DeviceData(object):
+    """
+    """
+    def __init__(self):
+        self.UUID - None
+        self.Name = None
+        self.DeviceType = None
+        self.Key = 0  # Instance number
+        self.Active = False
 
 
 class BaseLightingData(ABaseObject):
@@ -436,14 +446,6 @@ class  EthernetControllerData(object):
         self.InterfaceType = 'Ethernet'
         self.PortNumber = 0
         self.Protocol = 'TCP'
-
-
-# class LogData(object):
-#    """Locations of various logs
-#    """
-#    def __init__(self):
-#        self.Debug = None
-#        self.Error = None
 
 
 class WebData(object):

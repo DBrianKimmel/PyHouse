@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.Modules.computer.test.test_computer -*-
 
-@name: PyHouse/src/Modules/computer/computer.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2014 by D. Brian Kimmel
-@note: Created on Jun 24, 2014
-@license: MIT License
-@summary: Handle the computer information.
+@name:      PyHouse/src/Modules/computer/computer.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2014-2015 by D. Brian Kimmel
+@note:      Created on Jun 24, 2014
+@license:   MIT License
+@summary:   Handle the computer information.
 
 This handles the Computer part of the node.  (The other part is "house").
 

@@ -515,6 +515,7 @@ class MQTTClient(MQTTProtocol):
         except KeyError:
             l_name = "UnknownNode"
         print("Client __init__  ID: {} {}".format(p_clientID, l_name))
+        p_pyhouse_obj.Computer.Mqtt[0].Name = l_name
         if p_clientID is not None:
             self.m_clientID = p_clientID
         else:
@@ -533,7 +534,7 @@ class MQTTClient(MQTTProtocol):
         TCP Connected
         Now use MQTT connect packet to establish protocol connection.
         """
-        print("Client connectionMade Keepalive: {}".format(self.m_keepalive))
+        print("Client connectionMade Keepalive: {}  {}".format(self.m_keepalive, self))
         LOG.info("Client TCP connectionMade Keepalive: {}".format(self.m_keepalive))
         self.connect(self.m_clientID, self.m_keepalive, self.willTopic, self.willMessage, self.willQos, self.willRetain, True)
         self.m_pyhouse_obj.Twisted.Reactor.callLater(self.m_pingPeriod, self.pingreq)

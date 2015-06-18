@@ -363,6 +363,7 @@ class DecodeResponses(D_Util):
             elif l_obj_from._Command1 == MESSAGE_TYPES['engine_version']:  # 0x0D
                 l_engine_id = l_10
                 l_debug_msg += "Engine version From:{0:}, Sent to:{1:}, Id:{2:}; ".format(l_name_from, l_name_to, l_engine_id)
+
                 LOG.info("Got engine version from light:{0:}, To:{1:}, EngineID:{2:}".format(l_name_from, l_name_to, l_engine_id))
             elif l_obj_from._Command1 == MESSAGE_TYPES['id_request']:  # 0x10
                 l_debug_msg += "Request ID From:{0:}; ".format(l_name_from)
@@ -389,6 +390,8 @@ class DecodeResponses(D_Util):
         except AttributeError:
             pass
         l_ret = True
+        self.m_pyhouse_obj.APIs.Comp.MqttAPI.MqttPublish("pyhouse/lighting/{}/info".format(l_name_from), "Hello from InsteonDecoder ()".format(l_debug_msg))
+
         LOG.info(l_debug_msg)
         return self.check_for_more_decoding(p_controller_obj, l_ret)
 

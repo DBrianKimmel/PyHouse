@@ -17,7 +17,7 @@ from Modules.Core.data_objects import NodeData
 from Modules.Computer import logging_pyh as Logger
 from Modules.Computer.Mqtt import mqtt_xml, protocol
 from Modules.Web import web_utils
-from Modules.Core import data_objects
+# from Modules.Core import data_objects
 
 
 LOG = Logger.getLogger('PyHouse.MqttBroker     ')
@@ -45,8 +45,10 @@ class Util(object):
         The connection of the MQTT protocol is kicked off after the TCP connection is complete.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
-        # print("Broker mqtt_start")
-        p_pyhouse_obj.Twisted.Reactor.connectTCP(BROKERv4, PORT, protocol.MqttClientFactory(p_pyhouse_obj, "DBK1", self))
+        l_address = p_pyhouse_obj.Computer.Mqtt[0].BrokerAddress
+        l_port = p_pyhouse_obj.Computer.Mqtt[0].BrokerPort
+        print("About to connect to {} {}".format(l_address, l_port))
+        p_pyhouse_obj.Twisted.Reactor.connectTCP(l_address, l_port, protocol.MqttClientFactory(p_pyhouse_obj, "DBK1", self))
 
 
 class API(Util):
@@ -74,7 +76,7 @@ class API(Util):
         """Send a topic, message to the broker for it to distribute to the subscription list
         """
         print("Broker MqttPublish {} {}".format(p_topic, p_message))
-        Util().doPublishMessage(self.m_client, p_topic, p_message)
+        self.m_client.publish(p_topic, p_message)
 
     def MqttDispatch(self, _p_topic, _p_message):
         """Dispatch a MQTT message according to the topic.
@@ -85,6 +87,7 @@ class API(Util):
     def doPyHouseLogin(self, p_client, p_pyhouse_obj):
         """Login to PyHouse via MQTT
         """
+        self.m_client = p_client
         try:
             l_node = copy.deepcopy(p_pyhouse_obj.Computer.Nodes[0])
         except KeyError:

@@ -50,6 +50,7 @@ class ReadWriteConfigXml(XmlConfigTools):
                 self.m_count += 1
         except AttributeError as e_err:
             LOG.error('ERROR in mqtt_xml.read_xml() - {0:}'.format(e_err))
+        print("Mqtt XML read: {}".format(l_dict[0].Name))
         return l_dict
 
 

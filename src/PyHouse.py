@@ -2,13 +2,13 @@
 """
 -*- test-case-name: PyHouse.src.test.test_PyHouse -*-
 
-@name:     PyHouse/src/Pyhouse.py
-@author:   D. Brian Kimmel
-@contact:  D.BrianKimmel@gmail.com
-@Copyright (c) 2010-2015 by D. Brian Kimmel
-@note:     Created on Mar 1, 2014
-@license:  MIT License
-@summary:  This is the core of the PyHouse daemon.
+@name:      PyHouse/src/Pyhouse.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@Copyright: (c) 2010-2015 by D. Brian Kimmel
+@note:      Created on Mar 1, 2014
+@license:   MIT License
+@summary:   This is the core of the PyHouse daemon.
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
