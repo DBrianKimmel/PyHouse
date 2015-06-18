@@ -16,7 +16,6 @@ import xml.etree.ElementTree as ET
 from Modules.Core.data_objects import MqttBrokerData
 from Modules.Utilities.xml_tools import XmlConfigTools
 from Modules.Computer import logging_pyh as Logger
-# from Modules.Utilities.tools import PrettyPrintAny
 
 
 g_debug = 1
@@ -40,6 +39,7 @@ class ReadWriteConfigXml(XmlConfigTools):
         """
         self.m_count = 0
         l_dict = {}
+        l_dict[0] = MqttBrokerData()
         # PrettyPrintAny(l_dict, "l_dict")
         try:
             l_xml = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision').find('MqttSection')
@@ -55,8 +55,8 @@ class ReadWriteConfigXml(XmlConfigTools):
 
     def _write_one_broker(self, p_mqtt):
         l_entry = self.write_base_object_xml('Broker', p_mqtt)
-        self.put_text_element(l_entry, 'BrokerAddress', p_mqtt.ScheduleType)
-        self.put_text_element(l_entry, 'BrokerPort', p_mqtt.Time)
+        self.put_text_element(l_entry, 'BrokerAddress', p_mqtt.BrokerAddress)
+        self.put_text_element(l_entry, 'BrokerPort', p_mqtt.BrokerPort)
         return l_entry
 
     def write_mqtt_xml(self, p_pyhouse_obj):

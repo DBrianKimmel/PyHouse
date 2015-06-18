@@ -22,7 +22,7 @@ from Modules.Core import data_objects
 
 LOG = Logger.getLogger('PyHouse.MqttBroker     ')
 
-BROKERv4 = '192.168.1.71'
+BROKERv4 = '192.168.1.51'
 BROKERv4 = 'iot.eclipse.org'  # Sandbox Mosquitto broker
 # BROKERv6 = '2604:8800:100:8268::1:1'    # Pink Poppy
 BROKERv6 = '2001:4830:1600:84ae::1'  # Cannon Trail
@@ -45,7 +45,7 @@ class Util(object):
         The connection of the MQTT protocol is kicked off after the TCP connection is complete.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
-        print("Broker mqtt_start")
+        # print("Broker mqtt_start")
         p_pyhouse_obj.Twisted.Reactor.connectTCP(BROKERv4, PORT, protocol.MqttClientFactory(p_pyhouse_obj, "DBK1", self))
 
 
@@ -59,7 +59,7 @@ class API(Util):
     def Start(self, p_pyhouse_obj):
         p_pyhouse_obj.APIs.Comp.MqttAPI = self
         self.m_pyhouse_obj = p_pyhouse_obj
-        mqtt_xml.ReadWriteConfigXml().read_mqtt_xml(p_pyhouse_obj)
+        p_pyhouse_obj.Computer.Mqtt = mqtt_xml.ReadWriteConfigXml().read_mqtt_xml(p_pyhouse_obj)
         self.m_mqtt = self.mqtt_start(p_pyhouse_obj)
         LOG.info("Broker Started.")
 
@@ -67,7 +67,7 @@ class API(Util):
         pass
 
     def SaveXml(self, p_xml):
-        # p_xml.append(nodes_xml.Xml().write_nodes_xml(self.m_pyhouse_obj.Computer.Nodes))
+        p_xml.append(mqtt_xml.ReadWriteConfigXml().write_mqtt_xml(self.m_pyhouse_obj))
         LOG.info("Saved XML.")
 
     def MqttPublish(self, p_topic, p_message):

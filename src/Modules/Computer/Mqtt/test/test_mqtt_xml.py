@@ -87,11 +87,12 @@ class C03_Write(SetupMixin, unittest.TestCase):
     def test_01_Base(self):
         """ Read in the xml file and fill in x
         """
-        l_mqtt_obj = self.m_api._read_one_broker(self.m_xml.mqtt_sect)
+        l_mqtt_obj = self.m_api.read_mqtt_xml(self.m_pyhouse_obj)
+        # l_mqtt_obj = self.m_api._read_one_broker(self.m_xml.mqtt_sect)
         PrettyPrintAny(l_mqtt_obj)
-        self.assertEqual(l_mqtt_obj.Name, 'Evening 1')
-        self.assertEqual(l_mqtt_obj.Key, 0, 'No Key')
-        self.assertEqual(l_mqtt_obj.Active, 0, 'No Active')
+        self.assertEqual(l_mqtt_obj[0].Name, 'iot.eclipse.org')
+        self.assertEqual(l_mqtt_obj[0].Key, 0, 'No Key')
+        self.assertEqual(l_mqtt_obj[0].Active, True, 'No Active')
 
     def test_02_Broker(self):
         l_mqtt_obj = self.m_api.read_mqtt_xml(self.m_pyhouse_obj)

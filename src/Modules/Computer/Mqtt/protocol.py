@@ -586,13 +586,13 @@ class MqttClientFactory(ClientFactory):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_broker = p_broker
         self.m_clientID = p_client_id
-        print("Factory __init__ Broker: {}".format(self.m_broker))
+        # print("Factory __init__ Broker: {}".format(self.m_broker))
 
     def startedConnecting(self, _p_connector):
         """
         p_connector is an instance of twisted.internet.tcp.Connector
         """
-        print('Factory startedConnecting.')
+        # print('Factory startedConnecting.')
         pass
 
     def connectionMade(self):
@@ -605,8 +605,9 @@ class MqttClientFactory(ClientFactory):
 
     def buildProtocol(self, p_addr):
         l_client = MQTTClient(self.m_pyhouse_obj)
-        print('Factory buildProtocol - Addr: {} - {}'.format(p_addr, l_client))
-        self.m_pyhouse_obj.Computer.Mqtt = l_client
+        # print('Factory buildProtocol - Addr: {} - {}'.format(p_addr, l_client))
+        LOG.info("Mqtt broker address: {}".format(p_addr))
+        # self.m_pyhouse_obj.Computer.Mqtt[0] = l_client
         return l_client
 
     def clientConnectionLost(self, p_connector, p_reason):
