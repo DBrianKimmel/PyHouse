@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Core.test.test_setup_logging -*-
 
-@name: PyHouse/src/Modules/Core/setup_logging.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2014 by D. Brian Kimmel
-@note: Created on Aug 22, 2014
-@license: MIT License
-@summary: This module sets up logging.
+@name:      PyHouse/src/Modules/Core/setup_logging.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2014-2015 by D. Brian Kimmel
+@note:      Created on Aug 22, 2014
+@license:   MIT License
+@summary:   This module sets up logging.
 
 This needs to be run before anything else gets set up so everything can be logged.
 

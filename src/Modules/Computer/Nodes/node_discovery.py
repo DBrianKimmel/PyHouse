@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Computer/Nodes.test.test_node_discovery -*-
 
-@name: PyHouse/src/Modules/Computer/Nodes/node_discovery.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Apr 5, 2014
-@summary: Provide a service for discovering all the PyHouse nodes in a domain, and in related domains.
+@name:      PyHouse/src/Modules/Computer/Nodes/node_discovery.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2014-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Apr 5, 2014
+@summary:   Provide a service for discovering all the PyHouse nodes in a domain, and in related domains.
 
 This service runs periodically to find any new nodes and any dropped nodes.
 

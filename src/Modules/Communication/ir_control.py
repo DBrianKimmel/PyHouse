@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/communication/ir_control.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2015 by D. Brian Kimmel
 @note:      Created on Jan 26, 2014
 @license:   MIT License
 @summary:   Provides PyHouse IR service via a Lirc connection.

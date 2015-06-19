@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Families.Insteon.test.test_Insteon_PLM -*-
 
-@name: PyHouse/src/Modules/Families/Insteon/Insteon_PLM.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2010-2014 by D. Brian Kimmel
-@note: Created on Feb 18, 2010  Split into separate file Jul 9, 2014
-@license: MIT License
-@summary: This module decodes insteon PLM response messages
+@name:      PyHouse/src/Modules/Families/Insteon/Insteon_PLM.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2010-2015 by D. Brian Kimmel
+@note:      Created on Feb 18, 2010  Split into separate file Jul 9, 2014
+@license:   MIT License
+@summary:   This module decodes insteon PLM response messages
 
 For each message passed to this module:
     Decode message and extract information from the message.

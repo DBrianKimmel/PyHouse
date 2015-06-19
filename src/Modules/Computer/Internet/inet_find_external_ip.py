@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Computer.Internet.test.test_inet_find_external_ip -*-
 
-@Name: PyHouse/src/Modules/Computer/Internet/inet_find_external_ip.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2012-2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Jun 27, 2014
-@summary: This module determines our external IPv4 address asynchronously.
+@Name:      PyHouse/src/Modules/Computer/Internet/inet_find_external_ip.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2012-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Jun 27, 2014
+@summary:   This module determines our external IPv4 address asynchronously.
 
 We use an external site that sees the IP we are coming from and returns it to us as a web page.
 This module is for Shawn Powers page - http://snar.co/ip

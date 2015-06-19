@@ -1,11 +1,11 @@
 """
-@name: PyHouse/src/Modules/Core/test/test_setup.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2014 by D. Brian Kimmel
-@note: Created on Mar 2, 2014
-@license: MIT License
-@summary: This module sets up the Core part of PyHouse.
+@name:      PyHouse/src/Modules/Core/test/test_setup.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2014-2015 by D. Brian Kimmel
+@note:      Created on Mar 2, 2014
+@license:   MIT License
+@summary:   This module sets up the Core part of PyHouse.
 
 Passed all 4 tests - DBK - 2014-07-18
 """

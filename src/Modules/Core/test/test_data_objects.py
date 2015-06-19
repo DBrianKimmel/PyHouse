@@ -1,11 +1,11 @@
 """
-@name: PyHouse/src/Modules/Core/test/test_pyhouse_data.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2014 by D. Brian Kimmel
-@note: Created on Mar 22, 2014
-@license: MIT License
-@summary: test ?.
+@name:      PyHouse/src/Modules/Core/test/test_pyhouse_data.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2014-2015 by D. Brian Kimmel
+@note:      Created on Mar 22, 2014
+@license:   MIT License
+@summary:   test ?.
 
 """
 

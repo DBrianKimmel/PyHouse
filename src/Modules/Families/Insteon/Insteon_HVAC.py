@@ -1,19 +1,19 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Families.Insteon.test.test_Insteon_HVAC -*-
 
-@name: PyHouse/src/Modules/Families/Insteon/Insteon_HVAC.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2010-2014 by D. Brian Kimmel
-@note: Created on Feb 18, 2010  Split into separate file Jul 9, 2014
-@license: MIT License
-@summary: This module decodes Insteon PLM response messages
+@name:      PyHouse/src/Modules/Families/Insteon/Insteon_HVAC.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2010-2015 by D. Brian Kimmel
+@note:      Created on Feb 18, 2010  Split into separate file Jul 9, 2014
+@license:   MIT License
+@summary:   This module decodes Insteon PLM response messages
 
 Insteon HVAC module.
 
 Adds HVAC (Heating Ventilation Air Conditioning) to the Insteon suite.
 Specifically developed for the Venstar 1-day programmable digital thermostat.
-This contains an Insteon modem.
+This contains an Insteon radio odem.
 
 Models 2491T1E and 2491T7E = (2491TxE)
 

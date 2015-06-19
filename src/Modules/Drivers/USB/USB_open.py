@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Drivers.USB.test.test_usb_open -*-
 
-@name: PyHouse/src/Modules/Drivers/USB/usb_open.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2011-2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Mar 27, 2011
-@summary: This module is for communicating with USB devices.
+@name:      PyHouse/src/Modules/Drivers/USB/usb_open.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2011-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Mar 27, 2011
+@summary:   This module is for communicating with USB devices.
 
 
 This will interface various PyHouse modules to a USB device.

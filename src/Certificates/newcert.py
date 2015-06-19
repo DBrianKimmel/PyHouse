@@ -4,7 +4,7 @@
 @name:       PyHouse/src/Certificates/newcert.py
 @author:     D. Brian Kimmel
 @contact:    d.briankimmel@gmail.com
-@copyright:  2015 by D. Brian Kimmel
+@copyright:  (c) 2015 by D. Brian Kimmel
 @note:       Created on Feb 24, 2015
 @license:    MIT License
 @summary:

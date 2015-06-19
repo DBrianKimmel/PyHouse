@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Drivers/Serial/Serial_driver.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: 2010-2015 by D. Brian Kimmel
+@copyright: (c) 2010-2015 by D. Brian Kimmel
 @note:      Created on Feb 18, 2010
 @license:   MIT License
 @summary:   This module is for driving serial devices

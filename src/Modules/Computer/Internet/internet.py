@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Computer.Internet.test.test_internet -*-
 
-@Name: PyHouse/src/Modules/Computer/Internet/internet.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2012-2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Mar 20, 2012
-@summary: This module determines the IP address of the ISP connection.
+@Name:      PyHouse/src/Modules/Computer/Internet/internet.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2012-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Mar 20, 2012
+@summary:   This module determines the IP address of the ISP connection.
 
 
 All nodes currently run this.  This is overkill!

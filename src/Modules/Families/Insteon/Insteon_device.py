@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Families.Insteon.test.test_Insteon_device -*-
 
-@name: PyHouse/src/Modules/Families/Insteon/Insteon_device.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2011-2014 by D. Brian Kimmel
-@note: Created on Apr 3, 2011
-@license: MIT License
-@summary: This module is for Insteon
+@name:      PyHouse/src/Modules/Families/Insteon/Insteon_device.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2011-2015 by D. Brian Kimmel
+@note:      Created on Apr 3, 2011
+@license:   MIT License
+@summary:   This module is for Insteon
 
 This is the main module for the Insteon family of devices.
 it provides the single interface into the family.

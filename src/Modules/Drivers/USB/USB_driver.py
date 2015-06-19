@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Drivers/USB.test.test_USB_driver -*-
 
-@name: PyHouse/src/Modules/Drivers/USB/USB_driver.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2011-2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Mar 27, 2011
-@summary: This module is for interfacing to USB devices.
+@name:      PyHouse/src/Modules/Drivers/USB/USB_driver.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2011-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Mar 27, 2011
+@summary:   This module is for interfacing to USB devices.
 
 """
 
