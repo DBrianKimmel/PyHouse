@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.families.Null.test.test_Null_xml -*-
 
-@name: PyHouse/src/Modules/families/Null/Null_xml.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Aug 9, 2014
-@summary: This module is for communicating with invalid controllers.
+@name:      PyHouse/src/Modules/families/Null/Null_xml.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2014-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Aug 9, 2014
+@summary:   This module is for communicating with invalid controllers.
 
 """
 

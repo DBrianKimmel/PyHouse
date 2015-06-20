@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.Modules.Scheduling.test.test_auto_update -*-
 
-@name: PyHouse/src/Modules/Scheduling/auto_update.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2013-2014 by D. Brian Kimmel
-@note: Created on Dec 31, 2013
-@license: MIT License
-@summary: Handle the automatic updating of PyHouse
+@name:      PyHouse/src/Modules/Scheduling/auto_update.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2013-2015 by D. Brian Kimmel
+@note:      Created on Dec 31, 2013
+@license:   MIT License
+@summary:   Handle the automatic updating of PyHouse
 
 This module automatically updates PyHouse
 
@@ -27,16 +27,6 @@ import os.path
 
 
 class FindLocalVersion(object):
-
-    def _find_pyhouse_version_file(self):
-        """
-        Find the normalized VERSION file name
-        PyHouse/src/VERSION
-        """
-        l_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../VERSION')
-        l_filename = os.path.splitunc(l_filename)[1]
-        l_filename = os.path.normpath(l_filename)
-        return l_filename
 
     def __init__(self):
         self.m_version = 'latest'
@@ -65,6 +55,16 @@ class FindLocalVersion(object):
                         self.m_source = 'Git repository {0:}, {1:}'.format(l_out, l_ver)
             except OSError:
                 pass
+
+    def _find_pyhouse_version_file(self):
+        """
+        Find the normalized VERSION file name
+        PyHouse/src/VERSION
+        """
+        l_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../VERSION')
+        l_filename = os.path.splitunc(l_filename)[1]
+        l_filename = os.path.normpath(l_filename)
+        return l_filename
 
     def get_version(self):
         return (self.m_version, self.m_source, self.m_filename)

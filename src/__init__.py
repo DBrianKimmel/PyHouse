@@ -57,7 +57,7 @@ PyHouse is a Twisted Python Application - See twisted.application
 It runs a number of "services" within that application (e.g. web service)
 """
 
-__version_info__ = (1, 1, 0)
+__version_info__ = (1, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 # ## END DBK

@@ -1,11 +1,15 @@
 #! /usr/bin/env python
 # -*- coding: iso-8859-1 -*-
 """
-Created on Aug 3, 2013
+-*- test-case-name: PyHouse.src.test.test_setup -*-
 
-@author: briank
-
-Copyright (c) 2013 by D. Brian Kimmel
+@name:      PyHouse/src/setup.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2013-2015 by D. Brian Kimmel
+@note:      Created on Aug 3, 2013
+@license:   MIT License
+@summary:   This module is for Insteon
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,6 +28,8 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+
+
 
 This will take the distribution directory and move the needed files to the
 correct place for running.

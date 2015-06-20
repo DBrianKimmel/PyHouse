@@ -1,11 +1,11 @@
 """
-@name: PyHouse/src/Modules/Families/test/test_family.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2013-2014 by D. Brian Kimmel
-@note: Created on May 17, 2013
-@license: MIT License
-@summary: This module is for testing family.
+@name:      PyHouse/src/Modules/Families/test/test_family.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2013-2015 by D. Brian Kimmel
+@note:      Created on May 17, 2013
+@license:   MIT License
+@summary:   This module is for testing family.
 
 Passed all 12 tests.  DBK 2014-08-23
 """

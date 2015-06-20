@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Families.test.test_family_utils -*-
 
-@name: PyHouse/src/Modules/Families/family_utils.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2014 by D. Brian Kimmel
-@note: Created on Aug 9, 2011
-@license: MIT License
-@summary: This module
+@name:      PyHouse/src/Modules/Families/family_utils.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2014-2015 by D. Brian Kimmel
+@note:      Created on Aug 9, 2011
+@license:   MIT License
+@summary:   This module
 
 
 All device objects use 'ControllerFamily' to designate the family.

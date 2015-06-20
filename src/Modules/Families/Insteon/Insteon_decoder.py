@@ -185,7 +185,7 @@ class D_Util(object):
         @param p_message: is the byte array returned by the controller.
         @param p_index: is the offset into the message of a 3 byte field we will fetch and convert to an int
         """
-        l_id = D_Util.message2int(p_message, p_index)
+        l_id = Util.message2int(p_message, p_index)
         return l_id
 
     def _get_ack_nak(self, p_byte):

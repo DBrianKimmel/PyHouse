@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.Modules.Lighting.test.test_lighting -*-
 
-@name: PyHouse/src/Modules/Lighting/lighting.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2010-2014 by D. Brian Kimmel
-@note: Created on Apr 2, 2010
-@license: MIT License
-@summary: Handle the home lighting system automation.
+@name:      PyHouse/src/Modules/Lighting/lighting.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2010-2015 by D. Brian Kimmel
+@note:      Created on Apr 2, 2010
+@license:   MIT License
+@summary:   Handle the home lighting system automation.
 
 This is called from 'schedule' which is called from 'house' so there is one instance of this
 for every house.

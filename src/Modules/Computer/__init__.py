@@ -6,3 +6,7 @@ house itself.
 
 This components of this package run before any of the house components.
 """
+__version_info__ = (1, 6, 0)
+__version__ = '.'.join(map(str, __version_info__))
+
+# ## END DBK

@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.families.UPB.test.test_UPB_data -*-
 
-@name: PyHouse/src/Modules/families/UPB/UPB_data.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Aug 6, 2014
-@summary: This module is for communicating with UPB controllers.
+@name:      PyHouse/src/Modules/families/UPB/UPB_data.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2014-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Aug 6, 2014
+@summary:   This module is for communicating with UPB controllers.
 
 """
 

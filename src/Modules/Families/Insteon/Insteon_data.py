@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Families.Insteon.test.test_Insteon_data -*-
 
-@name: PyHouse/src/Modules/Families/Insteon/Insteon_data.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Aug 6, 2014
-@summary: This module is for communicating with Insteon controllers.
+@name:      PyHouse/src/Modules/Families/Insteon/Insteon_data.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2014-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Aug 6, 2014
+@summary:   This module is for communicating with Insteon controllers.
 
 """
 

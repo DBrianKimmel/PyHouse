@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Scheduling.test.test_sunrisesunset -*-
 
-@name: PyHouse/src/Modules/Scheduling/sunrisesunset.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2011-2014 by D. Brian Kimmel
-@note: Created on Mar 6, 2011
-@license: MIT License
-@summary: Calculate the suns location at local noon, then calculate sunrise and sunset for the day.
+@name:      PyHouse/src/Modules/Scheduling/sunrisesunset.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2011-2015 by D. Brian Kimmel
+@note:      Created on Mar 6, 2011
+@license:   MIT License
+@summary:   Calculate the suns location at local noon, then calculate sunrise and sunset for the day.
 
     In order to avoid loss of precision, all calculations are based on 2000 year epoch called J2K.
 

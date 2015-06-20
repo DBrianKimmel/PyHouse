@@ -1,15 +1,16 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Families.UPB.test.test_UPB_Pim -*-
 
-@name: PyHouse/src/Modules/Families/UPB/UPB_Pim.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2011-2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Mar 27, 2011
-@summary: This module is for communicating with UPB controllers.
+@name:      PyHouse/src/Modules/Families/UPB/UPB_Pim.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2011-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Mar 27, 2011
+@summary:   This module is for communicating with UPB controllers.
 
 /srv/backup/home/briank/svn/smarthouse/trunk/Modules/parts/upb/usbhidserial.cpp
+
 """
 
 # Import system type stuff

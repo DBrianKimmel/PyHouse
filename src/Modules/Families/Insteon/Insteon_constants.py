@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Families.Insteon.test.test_Insteon_constants -*-
 
-@name: PyHouse/src/Modules/Families/Insteon/Insteon_constants.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2013-2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Apr 19, 2013
-@summary: This module is for communicating with Insteon controllers.
+@name:      PyHouse/src/Modules/Families/Insteon/Insteon_constants.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2013-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Apr 19, 2013
+@summary:   This module is for communicating with Insteon controllers.
 
 Note! This is designed for 'from Insteon_constants import *'
 

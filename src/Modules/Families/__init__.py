@@ -42,7 +42,7 @@ Devices to control include Lights, Thermostat, Irrigation valves Pool Equipment 
 
 """
 
-__version_info__ = (1, 1, 0)
+__version_info__ = (1, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 VALID_FAMILIES = ['Insteon', 'UPB', 'X10', 'Null']

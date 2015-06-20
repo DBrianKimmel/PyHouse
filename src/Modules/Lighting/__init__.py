@@ -12,7 +12,7 @@ When adding a family of lighting devices:
 
 import sys
 
-__version_info__ = (1, 4, 0)
+__version_info__ = (1, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 VALID_LIGHTING_TYPE = ['Button', 'Controller', 'Light']

@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.lights.test.test_lighting_lights -*-
 
-@name: PyHouse/src/Modules/lights/lighting_lights.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2011-2014 by D. Brian Kimmel
-@note: Created on May 1, 2011
-@license: MIT License
-@summary: This module handles the lights component of the lighting system.
+@name:      PyHouse/src/Modules/lights/lighting_lights.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2011-2015 by D. Brian Kimmel
+@note:      Created on May 1, 2011
+@license:   MIT License
+@summary:   This module handles the lights component of the lighting system.
 
 Inherit from lighting_core.
 

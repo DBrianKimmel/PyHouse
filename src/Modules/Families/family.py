@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.families.test.test_family -*-
 
-@name: PyHouse/src/Modules/families/family.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2013-2014 by D. Brian Kimmel
-@note: Created on May 17, 2013
-@license: MIT License
-@summary: This module is for lighting families.
+@name:      PyHouse/src/Modules/families/family.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2013-2015 by D. Brian Kimmel
+@note:      Created on May 17, 2013
+@license:   MIT License
+@summary:   This module is for lighting families.
 
 It is called from lighting.py and allows any number of different lighting families to be used.
 So far Insteon and UPB are developed.  Many others may be added.

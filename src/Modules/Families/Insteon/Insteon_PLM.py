@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Families.Insteon.test.test_Insteon_PLM -*-
 
-@name: PyHouse/src/Modules/Families/Insteon/Insteon_PLM.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2010-2014 by D. Brian Kimmel
-@note: Created on Feb 18, 2010
-@license: MIT License
-@summary: This module is for sending commands to and receiving responses from an Insteon Controller.
+@name:      PyHouse/src/Modules/Families/Insteon/Insteon_PLM.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2010-2014 by D. Brian Kimmel
+@note:      Created on Feb 18, 2010
+@license:   MIT License
+@summary:   This module is for sending commands to and receiving responses from an Insteon Controller.
 
 Create commands and interpret results from any Insteon controller regardless of interface.
 This module carries state information about the controller.

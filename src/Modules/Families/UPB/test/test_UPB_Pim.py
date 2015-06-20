@@ -1,16 +1,13 @@
 """
-@name: PyHouse/src/Modules/Core/node_local.py
+-*- test-case-name: PyHouse.Modules.Core.test.test_node_local -*-
 
-# -*- test-case-name: PyHouse.Modules.Core.test.test_node_local -*-
-
-Created on Apr 8, 2013
-
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2013-2014 by D. Brian Kimmel
-@license: MIT License
-
-@summary: Test the UPB controller.
+@name:      PyHouse/src/Modules/Core/node_local.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2013-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Apr 8, 2013
+@summary:   Test the UPB controller.
 
 """
 

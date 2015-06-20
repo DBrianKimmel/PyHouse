@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.Modules.Lighting.test.test_lighting_core -*-
 
-@name: PyHouse/src/Modules/Lighting/lighting_core.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2013-2014 by D. Brian Kimmel
-@note: Created on Jun 13, 2013
-@license: MIT License
-@summary: A base class for all things lighting
+@name:      PyHouse/src/Modules/Lighting/lighting_core.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2013-2015 by D. Brian Kimmel
+@note:      Created on Jun 13, 2013
+@license:   MIT License
+@summary:   A base class for all things lighting
 
 This is for lighting type devices.
 """

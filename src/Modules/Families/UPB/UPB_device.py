@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.families.UPB.test.test_UPB_device -*-
 
-@name: PyHouse/src/Modules/families/UPB/UPB_device.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2011-2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Mar 27, 2011
-@summary: This module is for communicating with UPB controllers.
+@name:      PyHouse/src/Modules/families/UPB/UPB_device.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2011-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Mar 27, 2011
+@summary:   This module is for communicating with UPB controllers.
 
 Load the database with UPB devices.
 Start Active UPB Controllers.

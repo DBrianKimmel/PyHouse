@@ -1,11 +1,11 @@
 """
-@name: PyHouse/src/Modules/scheduling/sunrisesunset.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2011-2014 by D. Brian Kimmel
-@note: Created on Mar 6, 2011
-@license: MIT License
-@summary: Calculate the suns location at local noon, then calculate sunrise and sunset for the day.
+@name:      PyHouse/src/Modules/scheduling/sunrisesunset.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2011-2015 by D. Brian Kimmel
+@note:      Created on Mar 6, 2011
+@license:   MIT License
+@summary:   Calculate the suns location at local noon, then calculate sunrise and sunset for the day.
 
 http://en.wikipedia.org/wiki/Sunrise_equation
 

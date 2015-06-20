@@ -61,7 +61,7 @@ Modules desired are:
     Surveillance - allow remote control of video cameras etc.
 """
 
-__version_info__ = (1, 2, 0)
+__version_info__ = (1, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 # ## END DBK

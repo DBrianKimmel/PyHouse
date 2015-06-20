@@ -1,14 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.families.Insteon.test.test_Insteon_PLM -*-
 
-@name: PyHouse/src/Modules/families/Insteon/Insteon_PLM.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2013-2014 by D. Brian Kimmel
-@note: Created on Apr 8, 2013
-@license: MIT License
-@summary: This module is for driving serial devices
-
+@name:      PyHouse/src/Modules/families/Insteon/Insteon_PLM.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2013-2014 by D. Brian Kimmel
+@note:      Created on Apr 8, 2013
+@license:   MIT License
+@summary:   This module is for driving serial devices
 
 """
 

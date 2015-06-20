@@ -5,7 +5,7 @@
 @name:      PyHouse/src/Pyhouse.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@Copyright: (c) 2010-2015 by D. Brian Kimmel
+@copyright: (c) 2010-2015 by D. Brian Kimmel
 @note:      Created on Mar 1, 2014
 @license:   MIT License
 @summary:   This is the core of the PyHouse daemon.
@@ -57,7 +57,7 @@ The system is controlled via a browser connecting to a web server that will be i
 
 __author__ = "D. Brian Kimmel"
 __copyright__ = "2010-2014 by D. Brian Kimmel"
-__version_info__ = (1, 4, 0)
+__version_info__ = (1, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff
