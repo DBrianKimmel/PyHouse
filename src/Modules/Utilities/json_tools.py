@@ -1,8 +1,16 @@
-'''
-Created on Nov 6, 2013
+"""
+-*- test-case-name: PyHouse.src.Modules.Utilities.test.test_json_tools -*-
 
-@author: briank
-'''
+@name:      PyHouse/src/Modules/Utilities/json_tools.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@Copyright: (c) 2013-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Nov 6, 2013
+@Summary:   This module is not currently used
+
+
+"""
 
 class JsonDict(dict):
     """A dictionary with attribute-style access. It maps attribute access to the real dictionary.

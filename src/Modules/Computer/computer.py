@@ -21,33 +21,48 @@ This takes care of starting all the computer modules (In Order).
 """
 
 # Import system type stuff
+import platform
 from xml.etree import ElementTree as ET
 
 # Import PyHouse files
-from Modules.Core.data_objects import CompAPIs, ComputerInformation, NodeData
+from Modules.Core.data_objects import CompAPIs, ComputerInformation, NodeData, MqttBrokerData
 from Modules.Computer import logging_pyh as Logger
 from Modules.Computer.Mqtt import broker
 from Modules.Computer.Nodes import nodes
 from Modules.Computer.Internet import internet
 from Modules.Web import web_server
 from Modules.Utilities.xml_tools import XmlConfigTools
+from Modules.Utilities import uuid_tools
 # from Modules.Utilities.tools import PrettyPrintAny
 
 LOG = Logger.getLogger('PyHouse.Computer       ')
 
-MODULES = ['Communication', 'Internet' , 'Node', 'Weather', 'Web']
+MODULES = ['Communication', 'Mqtt', 'Internet' , 'Node', 'Weather', 'Web']
 
 
 class ReadWriteConfigXml(XmlConfigTools):
     """
     """
 
-    def read_computer_xml(self, p_pyhouse_obj):
-        l_xml = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
+    def _read_computer_base_xml(self, p_xml):
+        l_xml = ComputerInformation()
+        self.read_base_object_xml(l_xml, p_xml)
+        l_xml.Active = True
+        l_xml.Name = platform.node()
+        l_xml.UUID = uuid_tools.get_uuid(l_xml.UUID)
         return l_xml
 
-    def write_computer_xml(self):
-        l_xml = ET.Element('ComputerDivision')
+    def read_computer_xml(self, p_pyhouse_obj):
+        l_xml = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
+        l_comp = self._read_computer_base_xml(l_xml)
+        return l_comp
+
+    def _write_computer_base_xml(self, p_computer_obj):
+        l_xml = self.write_base_object_xml('ComputerDivision', p_computer_obj)
+        return l_xml
+
+    def write_computer_xml(self, p_pyhouse_obj):
+        l_xml = self._write_computer_base_xml(p_pyhouse_obj.Computer)
         return  l_xml
 
 
@@ -68,8 +83,9 @@ class Utility(ReadWriteConfigXml):
         p_pyhouse_obj.APIs.Comp.WeatherAPI = web_server.API()
         p_pyhouse_obj.APIs.Comp.WebAPI = web_server.API()
 
-    def initialize_data_structures(self, p_pyhouse_obj):
+    def update_data_structures(self, p_pyhouse_obj):
         p_pyhouse_obj.Computer = ComputerInformation()
+        p_pyhouse_obj.Computer.Mqtt[0] = MqttBrokerData()
         p_pyhouse_obj.Computer.Nodes[0] = NodeData()
 
     def start_component_apis(self, p_pyhouse_obj):
@@ -85,7 +101,7 @@ class Utility(ReadWriteConfigXml):
         p_pyhouse_obj.APIs.Comp.WebAPI.Stop()
 
     def save_component_apis(self, p_pyhouse_obj):
-        l_xml = self.write_computer_xml()
+        l_xml = self.write_computer_xml(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Comp.MqttAPI.SaveXml(l_xml)
         p_pyhouse_obj.APIs.Comp.InternetAPI.SaveXml(l_xml)
         p_pyhouse_obj.APIs.Comp.NodesAPI.SaveXml(l_xml)
@@ -102,10 +118,10 @@ class API(Utility):
         Start processing
         """
         LOG.info('Starting')
-        self.initialize_data_structures(p_pyhouse_obj)
+        self.update_data_structures(p_pyhouse_obj)
         self.m_pyhouse_obj = p_pyhouse_obj
         self.add_api_references(p_pyhouse_obj)
-        self.read_computer_xml(p_pyhouse_obj)
+        p_pyhouse_obj.Computer = self.read_computer_xml(p_pyhouse_obj)
         self.start_component_apis(p_pyhouse_obj)
         LOG.info('Started')
 

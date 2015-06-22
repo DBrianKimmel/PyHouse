@@ -1,4 +1,6 @@
 """
+-*- test-case-name: PyHouse.src.Modules.Computer.Mqtt.test.test_broker -*-
+
 @name:      PyHouse/src/Modules/Computer/Mqtt/broker.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
@@ -74,6 +76,9 @@ class API(Util):
 
     def MqttPublish(self, p_topic, p_message):
         """Send a topic, message to the broker for it to distribute to the subscription list
+
+        p_pyhouse_obj.APIs.Comp.MqttAPI.MqttPublish("pyhouse/testing", "<JSON>")
+
         """
         print("Broker MqttPublish {} {}".format(p_topic, p_message))
         self.m_client.publish(p_topic, p_message)

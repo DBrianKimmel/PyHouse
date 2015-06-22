@@ -58,6 +58,7 @@ from Modules.Irrigation import irrigation
 from Modules.Utilities import tools
 from Modules.Utilities.tools import GetPyhouse
 from Modules.Computer import logging_pyh as Logger
+from Modules.Web import web_utils
 
 
 LOG = Logger.getLogger('PyHouse.Schedule       ')
@@ -276,6 +277,7 @@ class ScheduleExecution(object):
         Send information to one device to execute a schedule.
         """
         l_schedule_obj = self.m_pyhouse_obj.House.RefOBJs.Schedules[p_slot]
+        l_schedule_json = web_utils.JsonUnicode().encode_json(l_schedule_obj)
         if l_schedule_obj.ScheduleType == 'LightingDevice':
             LOG.info('Execute_one_schedule type = LightingDevice')
             pass
@@ -285,6 +287,7 @@ class ScheduleExecution(object):
         l_light_obj = tools.get_light_object(self.m_pyhouse_obj, name = l_schedule_obj.LightName)
         LOG.info("Name:{0:}, Light:{1:}, Level:{2:}, Slot:{3:}".format(l_schedule_obj.Name, l_schedule_obj.LightName, l_schedule_obj.Level, p_slot))
         self.m_pyhouse_obj.APIs.House.LightingAPI.ChangeLight(l_light_obj, l_schedule_obj.Level)
+        self.m_pyhouse_obj.APIs.Comp.MqttAPI.MqttPublish("pyhouse/schedule/execute", l_schedule_json)
 
     def execute_schedules_list(self, p_slot_list = []):
         """

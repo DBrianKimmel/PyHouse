@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Drivers.test.test_interface -*-
 
-@name: PyHouse/src/Modules/Driveres/interface.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@Copyright (c) 2013-2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Mar 21, 2013
-@summary: Schedule events
+@name:      PyHouse/src/Modules/Driveres/interface.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@Copyright: (c) 2013-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Mar 21, 2013
+@summary:   Schedule events
 
 
 Controllers, which are attached to the server, communicate with the server via an interface.
@@ -68,7 +68,7 @@ class ReadWriteConfigXml(XmlConfigTools):
         elif p_controller_obj.InterfaceType == 'USB':
             l_interface = USB_xml.ReadWriteConfigXml().read_interface_xml(p_controller_xml)
         else:
-            LOG.error('For {} - Unknown InterfaceType - {}'.format(p_controller_obj.Name, p_controller_obj.InterfaceType))
+            LOG.error('Reading a controller driver interface section  For {} - Unknown InterfaceType - {}'.format(p_controller_obj.Name, p_controller_obj.InterfaceType))
             l_interface = None
         # Put the serial information into the controller object
         stuff_new_attrs(p_controller_obj, l_interface)
@@ -82,6 +82,6 @@ class ReadWriteConfigXml(XmlConfigTools):
         elif p_controller_obj.InterfaceType == 'USB':
             USB_xml.ReadWriteConfigXml().write_interface_xml(p_xml, p_controller_obj)
         else:
-            LOG.error('ERROR - Write - Unknown InterfaceType - {0:}'.format(p_controller_obj.InterfaceType))
+            LOG.error('ERROR - WriteDriverXml - Unknown InterfaceType - {} for {}'.format(p_controller_obj.InterfaceType, p_controller_obj.Name))
 
 # ## END DBK

@@ -30,17 +30,80 @@ class SetupMixin(object):
         self.m_api = computer.API()
 
 
-class Test_01_XML(SetupMixin, unittest.TestCase):
+class C01_Setup(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
 
-    def tearDown(self):
-        pass
+    def test_01_FindXML(self):
+        """ Be sure that the XML contains the right stuff.
+        """
+        # PrettyPrintAny(self.m_xml.root, 'XML')
+        self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
+        self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision', 'XML - No Computer Division')
+        PrettyPrintAny(self.m_pyhouse_obj.Xml, 'XML')
 
-    def test_0101_Update(self):
-        self.m_api.update_pyhouse_obj(self.m_pyhouse_obj)
+    def test_02_Update(self):
+        self.m_api.update_data_structures(self.m_pyhouse_obj)
         PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse')
+
+    def test_03_Update(self):
+        self.m_api.update_data_structures(self.m_pyhouse_obj)
         PrettyPrintAny(self.m_pyhouse_obj.Computer, 'Computer')
 
-# ## END DBK
+
+class C02_Read(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+
+    def test_01_Xml(self):
+        """ Be sure that the XML contains the right stuff.
+        """
+        self.m_api.update_data_structures(self.m_pyhouse_obj)
+        l_xml = self.m_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
+        PrettyPrintAny(l_xml, 'XML')
+
+    def test_02_Base(self):
+        """ Be sure that the XML contains the right stuff.
+        """
+        self.m_api.update_data_structures(self.m_pyhouse_obj)
+        l_xml = self.m_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
+        self.m_api._read_computer_base_xml(l_xml)
+        PrettyPrintAny(self.m_pyhouse_obj.Computer, 'Computer')
+
+    def test_03_All(self):
+        """ Be sure that the XML contains the right stuff.
+        """
+        self.m_api.update_data_structures(self.m_pyhouse_obj)
+        l_computer = self.m_api.read_computer_xml(self.m_pyhouse_obj)
+        PrettyPrintAny(l_computer, 'Computer')
+
+class C03_Write(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+
+    def test_01_Xml(self):
+        """ Be sure that the XML contains the right stuff.
+        """
+        self.m_api.update_data_structures(self.m_pyhouse_obj)
+        l_xml = self.m_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
+        PrettyPrintAny(l_xml, 'XML')
+
+    def test_02_Base(self):
+        """ Be sure that the XML contains the right stuff.
+        """
+        l_computer = self.m_api.read_computer_xml(self.m_pyhouse_obj)
+        l_xml = self.m_api._write_computer_base_xml(l_computer)
+        PrettyPrintAny(l_xml, 'Computer')
+
+    def test_03_All(self):
+        """ Be sure that the XML contains the right stuff.
+        """
+        l_computer = self.m_api.read_computer_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.Computer = l_computer
+        l_xml = self.m_api.write_computer_xml(self.m_pyhouse_obj)
+        PrettyPrintAny(l_xml, 'Computer XML')
+
+# # ## END DBK

@@ -138,10 +138,11 @@ class X10LightingData(LightData):
         self.X10HouseAddress = 0x0F
 
 
-class ComputerInformation(object):
+class ComputerInformation(ABaseObject):
     """
     """
     def __init__(self):
+        super(ComputerInformation, self).__init__()
         self.InternetConnection = {}  # InternetConnectionData()
         self.Email = {}  # EmailData()
         self.Mqtt = {}  # MqttBrokerData()
@@ -161,7 +162,7 @@ class MqttBrokerData(ABaseObject):
 
 class HouseInformation(ABaseObject):
     """The collection of information about a house.
-    Causes JSON errors
+    Causes JSON errors due to API type data methinks.
     """
     def __init__(self):
         super(HouseInformation, self).__init__()
