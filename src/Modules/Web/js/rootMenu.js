@@ -6,6 +6,11 @@
  * @license:   MIT License
  * @note:      Created on May 30, 2013
  * @summary:   Displays the Main Menu
+ * 
+ * To add another button:
+ *    - Add a line to the Menu Item array
+ *    - Add a case to doHandleOnClick
+ *    - Implement the widget
  */
 // import Nevow.Athena
 // import globals
@@ -51,11 +56,12 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 // ============================================================================
 	function menuItems(self){
 		var l_list = [
+		  	//		['Select' ,      'Select House',        'Select'          ],
+			//		['Mqtt',		 'Mqtt Broker',			'Mqtt'			  ],
+			//		['Web',          'Web',                 'Web'             ]
 		    // Key,           Caption,               Widget Name
-			['Select' ,      'Select House',        'Select'          ],
-			['Mqtt',		 'Mqtt Broker',			'Mqtt'			  ],
-			['House',        'House',               'House'           ],
-			['Web',          'Web',                 'Web'             ]
+			['House',        'House',               'HouseMenu'           ],
+			['Computer',     'Computer',            'ComputerMenu'        ]
 			];
 		return l_list;
 	},
@@ -100,17 +106,11 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 		var l_key = p_node.name;
 		var l_node;
 		switch (l_key) {
-		case 'Select':  // House Select
-			self.showWidget('HouseSelect');
-			break;
-		case 'Mqtt':
-			self.showWidget('Mqtt');
+		case 'Computer':
+			self.showWidget('ComputerMenu');
 			break
 		case 'House':
-			self.showWidget('House');
-			break;
-		case 'Web':
-			self.showWidget('Webs');
+			self.showWidget('HouseMenu');
 			break;
 		case 'Quit':  // Quit the browser by logging out
 			self.doRootQuit(p_node);

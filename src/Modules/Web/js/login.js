@@ -6,6 +6,9 @@
  * @license:   MIT License
  * @note:      Created on Mar 11, 2014
  * @summary:   Displays the login element
+ * 
+ * Validate the user/password in python code - then...
+ * Bring up the main menu next
  */
 // import Nevow.Athena
 // import globals
@@ -60,7 +63,6 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 	},
 
 
-
 // ============================================================================
 	/**
 	 * Fetch various valid things from server.
@@ -75,13 +77,14 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 		function eb_fetchValidLists(p_reason) {
 			Divmod.debug('---', 'ERROR - login.eb_fetchValidLists() - .' + p_reason);
 		}
-		// Divmod.debug('---', 'login.fetchValidLists() was called.');
         var l_defer = self.callRemote("getValidLists");  // @ web_login
 		l_defer.addCallback(cb_fetchValidLists);
 		l_defer.addErrback(eb_fetchValidLists);
 	},
 	/**
 	 * Build a screen for logging in.
+	 * Set the entry focus to the 'Name' Field
+	 * Set the enter key action to the 'Log In' button
 	 */
 	function buildLcarLoginScreen(self, p_handler){
 		var l_login_html = "";
@@ -93,7 +96,6 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 		l_html += build_lcars_bottom();
 		self.nodeById('SelectionButtonsDiv').innerHTML = l_html;
 	},
-
 
 
 // ============================================================================
@@ -128,7 +130,7 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 
 // ============================================================================
 	/**
-	 * Based on the login success - show the next screen.
+	 * Based on the login success - show the next screen >> RootMenu.
 	 */
 	function showNextScreen(self, p_obj) {
 		function cb_showNextScreen() {

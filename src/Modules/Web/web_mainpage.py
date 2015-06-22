@@ -62,23 +62,27 @@ from nevow.inevow import IRequest
 from twisted.internet import defer
 
 # Import PyMh files and modules.
-from Modules.Web import web_buttons
 from Modules.Web import web_clock
+from Modules.Web import web_login
+from Modules.Web import web_rootMenu
+from Modules.Web import web_computerMenu
+from Modules.Web import web_internet
+from Modules.Web import web_mqtt
+from Modules.Web import web_nodes
+from Modules.Web import web_update
+from Modules.Web import web_webs
+
+from Modules.Web import web_houseMenu
+
+from Modules.Web import web_buttons
 from Modules.Web import web_controllers
 from Modules.Web import web_controlLights
 from Modules.Web import web_house
-from Modules.Web import web_houseMenu
-from Modules.Web import web_houseSelect
-from Modules.Web import web_internet
 from Modules.Web import web_lights
-from Modules.Web import web_login
-from Modules.Web import web_mqtt
-from Modules.Web import web_nodes
 from Modules.Web import web_rooms
-from Modules.Web import web_rootMenu
 from Modules.Web import web_schedules
 from Modules.Web import web_thermostats
-from Modules.Web import web_webs
+# from Modules.Web import web_houseSelect
 from Modules.Computer import logging_pyh as Logger
 
 
@@ -376,11 +380,17 @@ class Workspace(athena.LiveElement):
         return l_element
 
     @athena.expose
-    def houseSelect(self, _p_params):
-        LOG.info("House Select loaded into browser")
-        l_element = web_houseSelect.HouseSelectElement(self)
+    def computerMenu(self, _p_params):
+        LOG.info("Computer Menu loaded into browser")
+        l_element = web_computerMenu.ComputerMenuElement(self)
         l_element.setFragmentParent(self)
         return l_element
+
+#    def houseSelect(self, _p_params):
+#        LOG.info("House Select loaded into browser")
+#        l_element = web_houseSelect.HouseSelectElement(self)
+#        l_element.setFragmentParent(self)
+#        return l_element
 
     @athena.expose
     def internet(self, p_params):
@@ -446,6 +456,13 @@ class Workspace(athena.LiveElement):
     def thermostats(self, p_params):
         LOG.info("Thermostats loaded into browser")
         l_element = web_thermostats.ThermostatsElement(self, p_params)
+        l_element.setFragmentParent(self)
+        return l_element
+
+    @athena.expose
+    def update(self, p_params):
+        LOG.info("Update loaded into browser")
+        l_element = web_update.UpdateElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 

@@ -6,6 +6,7 @@
  * @license:   MIT License
  * @note:      Created about 2012
  * @summary:   Displays the Internet element
+ * 
  * This script is the live element functionality.
  */
 // import Nevow.Athena

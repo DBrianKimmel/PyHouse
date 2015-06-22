@@ -1,11 +1,11 @@
 /**
- * @name: PyHouse/src/Modules/Web/js/houseMenu.js
- * @author: D. Brian Kimmel
- * @contact: D.BrianKimmel@gmail.com
- * @Copyright (c) 2012-2014 by D. Brian Kimmel
- * @license: MIT License
- * @note: Created about 2012
- * @summary: Displays the house menu element
+ * @name:      PyHouse/src/Modules/Web/js/houseMenu.js
+ * @author:    D. Brian Kimmel
+ * @contact:   D.BrianKimmel@gmail.com
+ * @Copyright: (c) 2012-2015 by D. Brian Kimmel
+ * @license:   MIT License
+ * @note:      Created about 2012
+ * @summary:   Displays the house menu element
  *
  */
 // import Nevow.Athena
@@ -31,7 +31,6 @@ helpers.Widget.subclass(houseMenu, 'HouseMenuWidget').methods(
      */
 	function ready(self) {
 		function cb_widgetready(res) {
-			// do whatever init needs here, show for the widget is handled in superclass
 			self.hideWidget();
 		}
 		var uris = collectIMG_src(self.node, null);
@@ -45,7 +44,6 @@ helpers.Widget.subclass(houseMenu, 'HouseMenuWidget').methods(
 	},
 
 
-
 // ============================================================================
 		/**
 		 * Build a screen full of buttons - One for each menu item and some actions.
@@ -53,17 +51,14 @@ helpers.Widget.subclass(houseMenu, 'HouseMenuWidget').methods(
 	function menuItems(self){
 		var l_list = [
 		    // Key,           Caption,               Widget Name
-			['Location' ,    'House Information',   'House'           ],
+			['Location',     'House Information',   'House'           ],
 			['Rooms',        'Rooms',               'Rooms'           ],
 			['Lights',       'Lights',              'Lights'          ],
 			['Buttons',      'Buttons',             'Buttons'         ],
 			['Controllers',  'Controllers',         'Controllers'     ],
 			['Schedules',    'Scheduling',          'Schedules'       ],
 			['Levels',       'Lighting Control',    'ControlLighting' ],
-			['Internet',     'Network Addressing',  'Internet'        ],
-			['Thermo',       'Thermostat',          'Thermostat'      ],
-			['Weather',      'Weather',             'Weather'         ],
-			['Nodes',        'Nodes',               'Nodes'           ]
+			['Thermo',       'Thermostat',          'Thermostat'      ]
 			];
 		return l_list;
 	},
@@ -81,7 +76,6 @@ helpers.Widget.subclass(houseMenu, 'HouseMenuWidget').methods(
 		l_html += build_lcars_bottom();
 		self.nodeById('SelectionButtonsDiv').innerHTML = l_html;
 	},
-
 
 
 // ============================================================================
@@ -110,12 +104,6 @@ helpers.Widget.subclass(houseMenu, 'HouseMenuWidget').methods(
 			break;
 		case 'Schedules':
 			self.showWidget('Schedules');
-			break;
-		case 'Internet':
-			self.showWidget('Internet');
-			break;
-		case 'Nodes':
-			self.showWidget('Nodes');
 			break;
 		case 'Rooms':
 			self.showWidget('Rooms');

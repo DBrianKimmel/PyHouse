@@ -1,11 +1,11 @@
 /**
- * @name: PyHouse/src/Modules/Web/js/globals.js
- * @author: D. Brian Kimmel
- * @contact: D.BrianKimmel@gmail.com
- * @Copyright (c) 2014 by D. Brian Kimmel
- * @license: MIT License
- * @note: Created on Mar 11, 2014
- * @summary: the global hook where we hang our coat and everything else
+ * @name:      PyHouse/src/Modules/Web/js/globals.js
+ * @author:    D. Brian Kimmel
+ * @contact:   D.BrianKimmel@gmail.com
+ * @Copyright: (c) 2014-2015 by D. Brian Kimmel
+ * @license:   MIT License
+ * @note:      Created on Mar 11, 2014
+ * @summary:   This is the global hook where we hang our coat and everything else
  *
  * A not so impressive way to get dynamic modules loading properly when inserting fragments at some later time into the webapp.
  * The most promising way is to preload although this could lead to quite some code clutter,
@@ -394,7 +394,8 @@ function findWidgetByClass(p_name) {
 		if (l_widget.node.className.toLowerCase() == p_name.toLowerCase())
 			return l_widget;
 	}
-	Divmod.debug('---', 'ERROR - findWidgetByClass failed for ' + p_name);
+	Divmod.debug('---', 'ERROR - globals.findWidgetByClass failed for ' + p_name);
+	console.log("globals.findWidgetByClass() - %O", globals.workspace.childWidgets);
 	return undefined;
 }
 
@@ -453,6 +454,8 @@ function showDataEntryFields(self) {
 
 /**
  * Build an athena qualified ID
+ * 
+ * Changes the supplied p_id from "LoginName" to "athenaid:11-LoginName" for example.
  */
 function buildAthenaId(self, p_id) {
 	l_id = self.node.id + '-' + p_id;
@@ -809,17 +812,21 @@ function buildLcarTextWidget(self, p_id, p_caption, p_value, p_options) {
 	// Divmod.debug('---', 'globals.buildLcarTextWidget() was called.');
 	var l_size = 40;
 	var l_options = p_options;
+	var l_id = buildAthenaId(self, p_id);
 	if (p_options === undefined)
 		l_options = '';
 	var l_html = buildTopDivs(p_caption);
 	l_html += "<input type='text' class='lcars-button-addition'";
-	l_html += setIdAttribute(buildAthenaId(self, p_id));
+	l_html += setIdAttribute(l_id);
 	l_html += setSizeOption(p_options);
 	l_html += setValueAttribute(p_value);
 	l_html += " ";
 	if (l_options.toLowerCase().indexOf('disable') > -1)
 		l_html += "disabled='disabled' ";
 	l_html += " />\n";
+	// Add some code to set the focus to this field.
+	if (l_options.toLowerCase().indexOf('focus') > -1)
+		l_html += " ";
 	l_html += buildBottomDivs();
 	return l_html;
 }

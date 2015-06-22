@@ -2,7 +2,7 @@
  * @name: PyHouse/src/Modules/Web/js/mainPage.js
  * @author: D. Brian Kimmel
  * @contact: D.BrianKimmel@gmail.com
- * @Copyright (c) 2012-2014 by D. Brian Kimmel
+ * @Copyright (c) 2012-2015 by D. Brian Kimmel
  * @license: MIT License
  * @note: Created about 2012
  * @summary:

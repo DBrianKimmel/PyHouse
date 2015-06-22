@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Web.test.test_web_rooms -*-
 
-@name: PyHouse/src/Modules/Web/web_rooms.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@Copyright (c) 2013-2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Jun 3, 2013
-@summary: Web interface to rooms for the selected house.
+@name:      PyHouse/src/Modules/Web/web_rooms.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@Copyright: (c) 2013-2014 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Jun 3, 2013
+@summary:   Web interface to house info for the selected house.
 
 """
 
@@ -44,10 +44,6 @@ class HouseElement(athena.LiveElement):
     @athena.expose
     def getHouseData(self):
         l_house = GetJSONHouseInfo(self.m_pyhouse_obj)
-        # try:
-        #    PrettyPrintAny(l_house, 'JSON send House Info')
-        # except:
-        #    pass
         return l_house
 
     @athena.expose

@@ -76,27 +76,30 @@ helpers.Widget.subclass(workspace, 'Workspace').methods(
 				globals.__init__();
 				globals.reqType = res[0];
 				globals.user = res[1];
-				self.attachWidget('buttons', 'dummy');
 				self.attachWidget('clock', 'dummy');
+				self.attachWidget('login', 'dummy');
+				self.attachWidget('rootMenu', 'dummy');
+				//
+				self.attachWidget('computerMenu', 'dummy');
+				self.attachWidget('internet', 'dummy');
+				self.attachWidget('mqtt', 'dummy');
+				self.attachWidget('nodes', 'dummy');
+				self.attachWidget('update', 'dummy');
+				self.attachWidget('webs', 'dummy');
+				//
+				self.attachWidget('houseMenu', 'dummy');
+				self.attachWidget('buttons', 'dummy');
 				self.attachWidget('controllers', 'dummy');
 				self.attachWidget('controlLights', 'dummy');
 				self.attachWidget('house', 'dummy');
-				self.attachWidget('houseMenu', 'dummy');
-				self.attachWidget('houseSelect', 'dummy');
-				self.attachWidget('internet', 'dummy');
 				self.attachWidget('lights', 'dummy');
-				self.attachWidget('login', 'dummy');
-				self.attachWidget('mqtt', 'dummy');
-				self.attachWidget('nodes', 'dummy');
 				self.attachWidget('rooms', 'dummy');
-				self.attachWidget('rootMenu', 'dummy');
 				self.attachWidget('schedules', 'dummy');
 				self.attachWidget('thermostats', 'dummy');
-				self.attachWidget('webs', 'dummy');
 				self.hideWaitRoller();
 			}
 			function eb_ready(p_reason) {
-				// Divmod.debug('---', 'ERROR - workspace.guiready.errback() - ' + p_reason );
+				Divmod.debug('---', 'ERROR - workspace.guiready.errback() - ' + p_reason );
 				self.node.appendChild(document.createTextNode('Error: ' + p_reason.error.message));
 			}
 			// Divmod.debug('---', 'workspace.appStartup.ready()');
