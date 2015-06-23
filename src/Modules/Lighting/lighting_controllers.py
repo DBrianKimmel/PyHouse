@@ -1,6 +1,14 @@
-#!/usr/bin/env python
+"""
+-*- test-case-name: PyHouse.Modules.Lighting.test.test_lighting_controllers -*-
 
-"""Handle the controller component of the lighting system.
+@name:      PyHouse/src/Modules/Lighting/lighting_controllers.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2010-2015 by D. Brian Kimmel
+@note:      Created on Apr 2, 2010
+@license:   MIT License
+@summary:   Handle the home lighting system automation.
+
 
 Note that controllers have common light info and also have controller info,
 family info, and interface info.
@@ -15,11 +23,10 @@ from Modules.Lighting.lighting_core import ReadWriteConfigXml
 from Modules.Families.family_utils import FamUtil
 from Modules.Computer import logging_pyh as Logger
 from Modules.Drivers import interface
-# from Modules.Utilities.tools import PrettyPrintAny
+from Modules.Core import data_objects
 
 g_debug = 1
 LOG = Logger.getLogger('PyHouse.Controller     ')
-
 
 
 class LCApi(ReadWriteConfigXml):
@@ -69,6 +76,9 @@ class LCApi(ReadWriteConfigXml):
             self._read_interface_data(l_obj, p_xml)
         except Exception as e_err:
             LOG.error('ERROR - ReadOneController - {0:}'.format(e_err))
+            l_obj = data_objects.ControllerData()
+        l_obj.DeviceType = 1
+        l_obj.DeviceSubType = 1
         return l_obj
 
     def read_all_controllers_xml(self, p_controller_sect_xml):

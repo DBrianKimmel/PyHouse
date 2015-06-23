@@ -1,8 +1,10 @@
 """
-@name:      PyHouse/src/Modules/Computer/Mqtt/broker.py
+-*- test-case-name: PyHouse.Modules.Computer.Mqtt.test.test_computer -*-
+
+@name:      PyHouse/src/Modules/Computer/Mqtt/mqtt_client.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@Copyright: (c)  2015 by D. Brian Kimmel
+@Copyright: (c) 2015 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 5, 2015
 @Summary:
@@ -17,22 +19,13 @@ from Modules.Core.data_objects import NodeData
 from Modules.Computer import logging_pyh as Logger
 from Modules.Computer.Mqtt import mqtt_xml, protocol
 from Modules.Web import web_utils
-from Modules.Utilities.tools import PrettyPrintAny
 
 
 LOG = Logger.getLogger('PyHouse.MqttBroker     ')
 
-BROKERv4 = '192.168.1.51'
-BROKERv4 = 'iot.eclipse.org'  # Sandbox Mosquitto broker
-# BROKERv6 = '2604:8800:100:8268::1:1'    # Pink Poppy
-BROKERv6 = '2001:4830:1600:84ae::1'  # Cannon Trail
-PORT = 1883
-SUBSCRIBE = 'pyhouse/#'
-
 
 class Util(object):
     """
-    The observations client allows a user to obtain BoM observations for a specified URL.
     """
 
     def __init__(self):
@@ -45,11 +38,10 @@ class Util(object):
         The connection of the MQTT protocol is kicked off after the TCP connection is complete.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
-        p_pyhouse_obj.Computer.Mqtt.BrokerAPI = self
+        p_pyhouse_obj.Computer.Mqtt.ClientAPI = self
         l_address = p_pyhouse_obj.Computer.Mqtt.BrokerAddress
         l_port = p_pyhouse_obj.Computer.Mqtt.BrokerPort
         print("About to connect to {} {}".format(l_address, l_port))
-        print("MqttBroker-1 {}".format(PrettyPrintAny(p_pyhouse_obj.Computer.Mqtt, "B1 PyHouse.Computer.Mqtt")))
         p_pyhouse_obj.Twisted.Reactor.connectTCP(l_address, l_port, protocol.MqttClientFactory(p_pyhouse_obj, "DBK1", self))
 
 
@@ -61,7 +53,7 @@ class API(Util):
     m_client = None
 
     def Start(self, p_pyhouse_obj):
-        p_pyhouse_obj.Computer.Mqtt.BrokerAPI = self
+        p_pyhouse_obj.Computer.Mqtt.ClientAPI = self
         p_pyhouse_obj.APIs.Comp.MqttAPI = self
         self.m_pyhouse_obj = p_pyhouse_obj
         p_pyhouse_obj.Computer.Mqtt = mqtt_xml.ReadWriteConfigXml().read_mqtt_xml(p_pyhouse_obj)

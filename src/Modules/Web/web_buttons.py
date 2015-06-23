@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.web.test.test_web_buttons -*-
 
-@name: PyHouse/src/Modules/web/web_buttons.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@Copyright (c) 2013-2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Jun 3, 2013
-@summary: Web interface to buttons for the selected house.
+@name:      PyHouse/src/Modules/web/web_buttons.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@Copyright: (c) 2013-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Jun 3, 2013
+@summary:   Web interface to buttons for the selected house.
 
 """
 
@@ -20,13 +20,12 @@ from nevow import athena
 from Modules.Web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.Lighting import lighting_buttons
 from Modules.Computer import logging_pyh as Logger
-
 from Modules.Families.Insteon import Insteon_utils
+
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
 
-g_debug = 0
 LOG = Logger.getLogger('PyHouse.webButton   ')
 
 
@@ -39,8 +38,6 @@ class ButtonsElement(athena.LiveElement):
     def __init__(self, p_workspace_obj, _p_params):
         self.m_workspace_obj = p_workspace_obj
         self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
-        if g_debug >= 2:
-            print("web_buttons.ButtonsElement()")
 
     @athena.expose
     def getHouseData(self):

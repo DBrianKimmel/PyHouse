@@ -34,6 +34,7 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         l_obj = ThermostatData()
         self.read_base_object_xml(l_obj, p_thermostat_element)
         l_obj.Key = self.m_count  # Renumber
+        l_obj.DeviceType = 2
         return l_obj
 
     def _read_thermostat_data(self, p_obj, p_xml):

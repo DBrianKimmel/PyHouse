@@ -20,7 +20,7 @@ from twisted.internet.protocol import ClientFactory, Protocol
 
 # Import PyMh files and modules.
 from Modules.Computer import logging_pyh as Logger
-from Modules.Utilities.tools import PrettyPrintAny
+# from Modules.Utilities.tools import PrettyPrintAny
 
 
 LOG = Logger.getLogger('PyHouse.MqttProtocol   ')
@@ -289,7 +289,7 @@ class MQTTProtocol(Protocol, EncodeDecode):
     def connackReceived(self, status):
         pass
 
-    def publishReceived(self, topic, message, qos = 0, dup = False, retain = False, messageId = None):
+    def publishReceived(self, _topic, _message, _qos = 0, _dup = False, _retain = False, _messageId = None):
         raise NotImplementedError, "Subclasses must implement this."
         pass
 
@@ -537,7 +537,7 @@ class MQTTClient(MQTTProtocol):
         print("Client connectionMade Keepalive: {}".format(self.m_keepalive))
         LOG.info("Client TCP connectionMade Keepalive: {}".format(self.m_keepalive))
         self.connect(self.m_clientID, self.m_keepalive, self.willTopic, self.willMessage, self.willQos, self.willRetain, True)
-        print("Mqtt-1 {}".format(PrettyPrintAny(self.m_pyhouse_obj, "P1 PyHouse")))
+        # print("Mqtt-1 {}".format(PrettyPrintAny(self.m_pyhouse_obj, "P1 PyHouse")))
         self.m_pyhouse_obj.Twisted.Reactor.callLater(self.m_pingPeriod, self.pingreq)
 
     def connectionLost(self, reason):
@@ -610,7 +610,7 @@ class MqttClientFactory(ClientFactory):
         # print('Factory buildProtocol - Addr: {} - {}'.format(p_addr, l_client))
         LOG.info("Mqtt broker address: {}".format(p_addr))
         self.m_pyhouse_obj.Computer.Mqtt.ProtocolAPI = l_client
-        print("Mqtt-2 {}".format(PrettyPrintAny(self.m_pyhouse_obj.Computer.Mqtt, "P2 PyHouse.Computer.Mqtt")))
+        # print("Mqtt-2 {}".format(PrettyPrintAny(self.m_pyhouse_obj.Computer.Mqtt, "P2 PyHouse.Computer.Mqtt")))
         return l_client
 
     def clientConnectionLost(self, p_connector, p_reason):

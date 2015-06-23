@@ -38,24 +38,23 @@ class Utility(LCApi, LBApi, LLApi):
         l_house_obj = p_pyhouse_obj.House.DeviceOBJs
         try:
             l_house_obj.Controllers = LCApi(p_pyhouse_obj).read_all_controllers_xml(l_house_xml.find('ControllerSection'))
-            l_house_obj.Buttons = LBApi(p_pyhouse_obj).read_all_buttons_xml(l_house_xml.find('ButtonSection'))
-            l_house_obj.Lights = LLApi(p_pyhouse_obj).read_all_lights_xml(l_house_xml.find('LightSection'))
         except AttributeError:
             l_house_obj.Controllers = {}
+        try:
+            l_house_obj.Buttons = LBApi(p_pyhouse_obj).read_all_buttons_xml(l_house_xml.find('ButtonSection'))
+        except AttributeError:
             l_house_obj.Buttons = {}
+        try:
+            l_house_obj.Lights = LLApi(p_pyhouse_obj).read_all_lights_xml(l_house_xml.find('LightSection'))
+        except AttributeError:
             l_house_obj.Lights = {}
 
     def _write_lighting_xml(self, p_house_objs, p_house_element):
         try:
-            # print('1')
             l_xml = self.write_all_lights_xml(p_house_objs.Lights)
-            # PrettyPrintAny(l_xml, 'Light Part')
             p_house_element.append(l_xml)
-            # print('2')
             p_house_element.append(self.write_buttons_xml(p_house_objs.Buttons))
-            # print('3')
             p_house_element.append(self.write_controllers_xml(p_house_objs.Controllers))
-            # print('4')
         except AttributeError as e_err:
             l_msg = 'ERROR in writing lighting {0:}'.format(e_err)
             LOG.error(l_msg)
@@ -117,7 +116,6 @@ class API(Utility):
             schedule
         """
         l_light_obj = self._find_full_obj(self.m_pyhouse_obj.House.DeviceOBJs.Lights, p_light_obj)
-
         try:
             LOG.info("Turn Light {} to level {}, ControllerFamily:{}".format(l_light_obj.Name, p_new_level, l_light_obj.ControllerFamily))
             l_api = self._get_api_for_family(self.m_pyhouse_obj, l_light_obj)

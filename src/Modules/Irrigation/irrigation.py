@@ -1,12 +1,12 @@
 """
--*- test-case-name: PyHouse.src.Modules.irrigation.test.test_irrigation -*-
+-*- test-case-name: PyHouse.src.Modules.Irrigation.test.test_irrigation -*-
 
-@name: PyHouse/src/Modules/irrigation/test/irrigation.py
-@author: briank
-@contact: D.BrianKimmel@gmail.com>
-@Copyright: (c)  2014 by briank
-@license: MIT License
-@note: Created on Jul 4, 2014
+@name:      PyHouse/src/Modules/Irrigation/irrigation.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com>
+@Copyright: (c) 2014-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Jul 4, 2014
 @Summary:
 
 """
@@ -18,7 +18,6 @@ import xml.etree.ElementTree as ET
 from Modules.Core.data_objects import IrrigationData
 from Modules.Utilities import xml_tools
 from Modules.Computer import logging_pyh as Logging
-# from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 0
 LOG = Logging.getLogger('PyHouse.Irrigation     ')

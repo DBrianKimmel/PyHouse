@@ -1,5 +1,5 @@
 """
-@name:      C:/Users/briank/workspace/PyHouse/src/Modules/Computer/Mqtt/test/test_broker.py
+@name:      PyHouse/src/Modules/Computer/Mqtt/test/test_mqtt_client.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @Copyright: (c)  2015 by D. Brian Kimmel
@@ -18,7 +18,7 @@ from twisted.trial import unittest
 # from Modules.Core.data_objects import MqttBrokerData
 from test import xml_data
 # from test.xml_data import *
-from Modules.Computer.Mqtt import broker
+from Modules.Computer.Mqtt import mqtt_client
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
 
@@ -30,7 +30,7 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_api = broker.API()
+        self.m_api = mqtt_client.API()
 
 
 class C01_API(SetupMixin, unittest.TestCase):

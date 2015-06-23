@@ -26,12 +26,11 @@ from xml.etree import ElementTree as ET
 # Import PyHouse files
 from Modules.Core.data_objects import CompAPIs, ComputerInformation, NodeData
 from Modules.Computer import logging_pyh as Logger
-from Modules.Computer.Mqtt import broker
+from Modules.Computer.Mqtt import mqtt_client
 from Modules.Computer.Nodes import nodes
 from Modules.Computer.Internet import internet
 from Modules.Web import web_server
 from Modules.Utilities.xml_tools import XmlConfigTools
-# from Modules.Utilities.tools import PrettyPrintAny
 
 LOG = Logger.getLogger('PyHouse.Computer       ')
 
@@ -60,7 +59,7 @@ class Utility(ReadWriteConfigXml):
     def add_api_references(self, p_pyhouse_obj):
         p_pyhouse_obj.APIs.Comp = CompAPIs()
         p_pyhouse_obj.APIs.Comp.ComputerAPI = self
-        p_pyhouse_obj.APIs.Comp.MqttAPI = broker.API()
+        p_pyhouse_obj.APIs.Comp.MqttAPI = mqtt_client.API()
         p_pyhouse_obj.APIs.Comp.CommunicationsAPI = None
         p_pyhouse_obj.APIs.Comp.EmailAPI = None
         p_pyhouse_obj.APIs.Comp.InternetAPI = internet.API()

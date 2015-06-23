@@ -1,10 +1,10 @@
 """
-@name: PyHouse/src/Modules/Core/test/test_setup_logging.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com>
+@name:      PyHouse/src/Modules/Core/test/test_setup_logging.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com>
 @Copyright: (c)  2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Aug 30, 2014
+@license:   MIT License
+@note:      Created on Aug 30, 2014
 @Summary:
 
 """
@@ -36,7 +36,7 @@ class C01_NoXML(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_EMPTY))
-        self.m_api = Logger.API()
+        # self.m_api = Logger.API()
 
     def test_01(self):
         PrettyPrintAny(setup_logging.LOGGING_DICT, 'Logging')

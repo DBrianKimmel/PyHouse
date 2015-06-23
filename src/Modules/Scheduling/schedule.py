@@ -56,7 +56,7 @@ from Modules.Lighting import lighting
 from Modules.Hvac import thermostats
 from Modules.Irrigation import irrigation
 from Modules.Utilities import tools
-from Modules.Utilities.tools import GetPyhouse, PrettyPrintAny
+from Modules.Utilities.tools import GetPyhouse  # , PrettyPrintAny
 from Modules.Computer import logging_pyh as Logger
 from Modules.Web import web_utils
 
@@ -364,11 +364,11 @@ class UpdatePyhouse(object):
         """
         TODO: Lighting must be first since it loads families etc.
         """
-        l_json = web_utils.JsonUnicode().encode_json(p_pyhouse_obj.House.RefOBJs.Schedules)
+        # l_json = web_utils.JsonUnicode().encode_json(p_pyhouse_obj.House.RefOBJs.Schedules)
         p_pyhouse_obj.APIs.House.LightingAPI.Start(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.HvacAPI.Start(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.IrrigationAPI.Start(p_pyhouse_obj)
-        print('schedule.atartScheduledModules {}'.format(PrettyPrintAny(p_pyhouse_obj.Computer, "schedule PyHouse.Computer")))
+        # print('schedule.atartScheduledModules {}'.format(PrettyPrintAny(p_pyhouse_obj.Computer, "schedule PyHouse.Computer")))
         # p_pyhouse_obj.APIs.Comp.MqttAPI.MqttPublish("pyhouse/schedule/start", l_json)
 
     @staticmethod

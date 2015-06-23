@@ -79,6 +79,8 @@ class BaseLightingData(ABaseObject):
         self.ControllerFamily = 'Null'
         self.RoomName = ''
         self.LightingType = ''  # VALID_LIGHTING_TYPE = Button | Light | Controller
+        self.DeviceType = 0
+        self.DeviceSubType = 0
 
 
 class ButtonData(BaseLightingData):
@@ -158,7 +160,7 @@ class MqttBrokerData(ABaseObject):
         super(MqttBrokerData, self).__init__()
         self.BrokerAddress = None
         self.BrokerPort = None
-        self.BrokerAPI = None
+        self.ClientAPI = None
         self.ProtocolAPI = None
 
 
@@ -279,6 +281,8 @@ class ThermostatData(ABaseObject):
         self.HeatSetPoint = 0
         self.ThermostatMode = 'Cool'  # Cool | Heat | Auto | EHeat
         self.ThermostatScale = 'F'  # F | C
+        self.DeviceType = 0
+        self.DeviceSubType = 0
 
 
 class ScheduleBaseData(ABaseObject):

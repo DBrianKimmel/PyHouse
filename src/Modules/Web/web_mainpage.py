@@ -1,7 +1,12 @@
 """
-Created on Jul 27, 2013
 
-@author: briank
+@name:      PyHouse/src/Modules/Web/web_mainpage.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@Copyright: (c) 2013-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Jul 27, 2013
+@Summary:
 
 When a user wants to connect to PyHouse to monitor or control the system, they open a browser to the configured port (default is 8580).
 Since internet access is possible, a login screen is presented first and authentication takes place.

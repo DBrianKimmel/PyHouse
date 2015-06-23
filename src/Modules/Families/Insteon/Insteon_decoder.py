@@ -97,9 +97,6 @@ class D_Util(object):
             l_message_length = 1
         return l_message_length
 
-
-
-
     def get_device_class(self, p_pyhouse_obj):
         """
         Return a class of objects (Lights, Thermostats) that may have an Insteon <ControllerFamily> within.
@@ -109,16 +106,13 @@ class D_Util(object):
             pass
         pass
 
-    def _find_addr(self, p_class, p_addr):
+    def _find_addr_one_class(self, p_class, p_addr):
         """
         Find the address of something Insteon.
-
         @param p_class: is an OBJ like p_pyhouse_obj.House.DeviceOBJs.Controllers that we will look thru to find the object.
         @param p_addr: is the address that we want to find.
-
-        @return: the object that has the adderss.  None if not found
+        @return: the object that has the address.  None if not found
         """
-
         for l_obj in p_class.itervalues():
             if l_obj.ControllerFamily != 'Insteon':
                 continue  # ignore any non-Insteon devices in the class
@@ -126,44 +120,49 @@ class D_Util(object):
                 return l_obj
         return None
 
-    def get_obj_from_message(self, p_message, p_index):
-        """Here we have a message from the PLM.  Find out what device has that address.
+    def _find_address_all_classes(self, p_address):
+        """ This will search thru all object groups that an inseton device could be in.
+        @return: the object that has the address or a dummy object if not found
+        """
+        l_ret = self._find_addr_one_class(self.m_pyhouse_obj.House.DeviceOBJs.Lights, p_address)
+        l_dotted = conversions.int2dotted_hex(p_address, 3)
+        if l_ret == None:
+            l_ret = self._find_addr_one_class(self.m_pyhouse_obj.House.DeviceOBJs.Controllers, p_address)
+        if l_ret == None:
+            l_ret = self._find_addr_one_class(self.m_pyhouse_obj.House.DeviceOBJs.Buttons, p_address)
+        if l_ret == None:
+            l_ret = self._find_addr_one_class(self.m_pyhouse_obj.House.DeviceOBJs.Thermostats, p_address)
+        # Add additional classes in here
+        if l_ret == None:
+            LOG.info("WARNING - Address {} ({}) *NOT* found.".format(l_dotted, p_address))
+            l_ret = InsteonData()  # an empty new object
+            l_ret.Name = '**NoName-' + l_dotted + '-**'
+        return l_ret
 
-        @param p_message: is the message from the plm we are extracting the Insteon address from.
+    def get_obj_from_message(self, p_message, p_index):
+        """ Here we have a message from the PLM.  Find out what device has that address.
+
+        @param p_message: is the message byte array from the PLM we are extracting the Insteon address from.
         @param p_index: is the index of the first byte in the message.
                 Various messages contain the address at different offsets.
-
-        We need to check:
-            Lighting devices
-            Thermostat devices
-            Add other devices if we add them.
-
         @return: The object that contains the address -or- a dummy object with noname in Name
         """
-        l_id = Util.message2int(p_message, p_index)  # Extract the 3 byte address from the message and convert to an Int.
-        l_dotted = conversions.int2dotted_hex(l_id, 3)
-        l_ret = self._find_addr(self.m_pyhouse_obj.House.DeviceOBJs.Lights, l_id)
-        if l_ret == None:
-            l_ret = self._find_addr(self.m_pyhouse_obj.House.DeviceOBJs.Controllers, l_id)
-        if l_ret == None:
-            l_ret = self._find_addr(self.m_pyhouse_obj.House.DeviceOBJs.Buttons, l_id)
-        if l_ret == None:
-            l_ret = self._find_addr(self.m_pyhouse_obj.House.DeviceOBJs.Thermostats, l_id)
-        if l_ret == None:
-            LOG.info("WARNING - Address {0:} NOT found".format(conversions.int2dotted_hex(l_id, 3)))
-            l_ret = InsteonData()  # an empty new object
-            l_ret.Name = '*NoName-' + l_dotted + '-**'
-        if g_debug >= 2:
-            LOG.info("Insteon_PLM.get_obj_from_message - Address:{0:}({1:}), found:{2:}".format(l_dotted, l_id, l_ret.Name))
-        return l_ret
+        l_address = Util.message2int(p_message, p_index)  # Extract the 3 byte address from the message and convert to an Int.
+        if l_address < (16386 * 16386):
+            l_dotted = str(l_address)
+            l_device_obj = InsteonData()  # an empty new object
+            l_device_obj.Name = '**Group: ' + l_dotted + ' **'
+        else:
+            l_device_obj = self._find_address_all_classes(l_address)
+        return l_device_obj
 
     @staticmethod
     def get_devcat(p_message, p_obj):
         l_devcat = p_message[5] * 256 + p_message[6]
         p_obj.DevCat = int(l_devcat)
         # self.update_object(p_obj)
-        l_debug_msg = "DevCat From={0:}, DevCat={1:#x}, flags={2:}".format(p_obj.Name, l_devcat, D_Util._decode_message_flag(p_message[8]))
-        LOG.info("Got DevCat from light:{0:}, DevCat:{1:}".format(p_obj.Name, conversions.int2dotted_hex(l_devcat, 2)))
+        l_debug_msg = "DevCat From={0:}, DevCat={1:#x}, flags={2:} ".format(p_obj.Name, l_devcat, D_Util._decode_message_flag(p_message[8]))
+        LOG.info("Got DevCat from light:{}, DevCat:{} ".format(p_obj.Name, conversions.int2dotted_hex(l_devcat, 2)))
         return l_debug_msg
 
     @staticmethod
@@ -202,24 +201,24 @@ class D_Util(object):
             l_debug_msg += " product data request. - Should never happen - S/B 51 response"
         elif l_obj_from._Command1 == MESSAGE_TYPES['engine_version']:  # 0x0D
             l_engine_id = l_10
-            l_debug_msg += "Engine version From:{0:}, Sent to:{1:}, Id:{2:}; ".format(l_name_from, l_name_to, l_engine_id)
-            LOG.info("Got engine version from light:{0:}, To:{1:}, EngineID:{2:}".format(l_name_from, l_name_to, l_engine_id))
+            l_debug_msg += "Engine version From:{}, Sent to:{}, Id:{}; ".format(l_name_from, l_name_to, l_engine_id)
+            LOG.info("Got engine version from light:{}, To:{}, EngineID:{} ".format(l_name_from, l_name_to, l_engine_id))
         elif l_obj_from._Command1 == MESSAGE_TYPES['id_request']:  # 0x10
-            l_debug_msg += "Request ID From:{0:}; ".format(l_name_from)
-            LOG.info("Got an ID request. Light:{0:}".format(l_name_from,))
+            l_debug_msg += "Request ID From:{}; ".format(l_name_from)
+            LOG.info("Got an ID request. Light:{} ".format(l_name_from,))
         elif l_obj_from._Command1 == MESSAGE_TYPES['on']:  # 0x11
             l_obj_from.CurLevel = 100
-            l_debug_msg += "Device:{0:} turned Full ON  ; ".format(l_name_from)
+            l_debug_msg += "Device:{} turned Full ON  ; ".format(l_name_from)
             self.update_object(l_obj_from)
         elif l_obj_from._Command1 == MESSAGE_TYPES['off']:  # 0x13
             l_obj_from.CurLevel = 0
-            l_debug_msg += "Light:{0:} turned Full OFF; ".format(l_name_from)
+            l_debug_msg += "Light:{} turned Full OFF; ".format(l_name_from)
             self.update_object(l_obj_from)
         elif l_obj_from._Command1 == MESSAGE_TYPES['status_request']:  # 0x19
             l_level = int(((l_10 + 2) * 100) / 256)
             l_obj_from.CurLevel = l_level
-            l_debug_msg += "Status of light:{0:} is level:{1:}; ".format(l_name_from, l_level)
-            LOG.info("Got Light Status From:{0:}, Level is:{1:}".format(l_name_from, l_level))
+            l_debug_msg += "Status of light:{} is level:{}; ".format(l_name_from, l_level)
+            LOG.info("Got Light Status From:{}, Level is:{} ".format(l_name_from, l_level))
             self.update_object(l_obj_from)
         elif l_obj_from._Command1 == MESSAGE_TYPES['thermostat_report']:  # 0x6e
             _l_ret1 = Insteon_HVAC.ihvac_utility().decode_50_record(l_obj_from, l_9, l_10)
@@ -362,25 +361,24 @@ class DecodeResponses(D_Util):
                 l_debug_msg += " product data request. - Should never happen - S/B 51 response"
             elif l_obj_from._Command1 == MESSAGE_TYPES['engine_version']:  # 0x0D
                 l_engine_id = l_10
-                l_debug_msg += "Engine version From:{0:}, Sent to:{1:}, Id:{2:}; ".format(l_name_from, l_name_to, l_engine_id)
-
-                LOG.info("Got engine version from light:{0:}, To:{1:}, EngineID:{2:}".format(l_name_from, l_name_to, l_engine_id))
+                l_debug_msg += "Engine version From:{}, Sent to:{}, Id:{}; ".format(l_name_from, l_name_to, l_engine_id)
+                LOG.info("Got engine version from light:{}, To:{}, EngineID:{}".format(l_name_from, l_name_to, l_engine_id))
             elif l_obj_from._Command1 == MESSAGE_TYPES['id_request']:  # 0x10
                 l_debug_msg += "Request ID From:{0:}; ".format(l_name_from)
                 LOG.info("Got an ID request. Light:{0:}".format(l_name_from,))
             elif l_obj_from._Command1 == MESSAGE_TYPES['on']:  # 0x11
                 l_obj_from.CurLevel = 100
-                l_debug_msg += "Device:{0:} turned Full ON  ; ".format(l_name_from)
+                l_debug_msg += "Device:{} turned Full ON  ; ".format(l_name_from)
                 self.update_object(l_obj_from)
             elif l_obj_from._Command1 == MESSAGE_TYPES['off']:  # 0x13
                 l_obj_from.CurLevel = 0
-                l_debug_msg += "Light:{0:} turned Full OFF; ".format(l_name_from)
+                l_debug_msg += "Light:{} turned Full OFF; ".format(l_name_from)
                 self.update_object(l_obj_from)
             elif l_obj_from._Command1 == MESSAGE_TYPES['status_request']:  # 0x19
                 l_level = int(((l_10 + 2) * 100) / 256)
                 l_obj_from.CurLevel = l_level
-                l_debug_msg += "Status of light:{0:} is level:{1:}; ".format(l_name_from, l_level)
-                LOG.info("PLM:{0:} Got Light Status From:{1:}, Level is:{2:}".format(p_controller_obj.Name, l_name_from, l_level))
+                l_debug_msg += "Status of light:{} is level:{}; ".format(l_name_from, l_level)
+                LOG.info("PLM:{} Got Light Status From:{}, Level is:{} ".format(p_controller_obj.Name, l_name_from, l_level))
                 self.update_object(l_obj_from)
             elif l_obj_from._Command1 == MESSAGE_TYPES['thermostat_report']:  # 0x6e
                 _l_ret1 = Insteon_HVAC.ihvac_utility().decode_50_record(l_obj_from, l_9, l_10)
@@ -391,7 +389,6 @@ class DecodeResponses(D_Util):
             pass
         l_ret = True
         self.m_pyhouse_obj.APIs.Comp.MqttAPI.MqttPublish("pyhouse/lighting/{}/info".format(l_name_from), "InsteonDecoder {}".format(l_debug_msg))
-
         LOG.info(l_debug_msg)
         return self.check_for_more_decoding(p_controller_obj, l_ret)
 

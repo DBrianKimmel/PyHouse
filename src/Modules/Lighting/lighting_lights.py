@@ -28,9 +28,7 @@ from Modules.Lighting.lighting_core import ReadWriteConfigXml
 from Modules.Families.family_utils import FamUtil
 from Modules.Computer import logging_pyh as Logging
 
-g_debug = 0
 LOG = Logging.getLogger('PyHouse.LightgLights   ')
-
 
 
 class LLApi(ReadWriteConfigXml):
@@ -61,6 +59,8 @@ class LLApi(ReadWriteConfigXml):
         # print('lighting_lights - read_one_light() - Light {0:}'.format(l_light_obj.Name))
         l_light_obj.Key = self.m_count  # Renumber
         self._read_family_data(l_light_obj, p_light_xml)
+        l_light_obj.DeviceType = 1
+        l_light_obj.DeviceSubType = 2
         return l_light_obj
 
     def read_all_lights_xml(self, p_light_sect_xml):
@@ -75,12 +75,10 @@ class LLApi(ReadWriteConfigXml):
             l_lights_dict = {}
         return l_lights_dict
 
-
     def _write_light_data(self, p_light_obj, l_light_xml):
         # self.put_text_element(l_light_xml, 'IsController', p_light_obj.IsController)
         self.put_text_element(l_light_xml, 'LightingType', p_light_obj.LightingType)
         self.put_text_element(l_light_xml, 'CurLevel', p_light_obj.CurLevel)
-        pass
 
     def _add_family_data(self, p_light_obj, p_light_xml):
         """

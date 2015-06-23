@@ -1,6 +1,14 @@
-#!/usr/bin/env python
+"""
+-*- test-case-name: PyHouse.Modules.Lighting.test.test_lighting_buttons -*-
 
-"""Handle the controller component of the lighting system.
+@name:      PyHouse/src/Modules/Lighting/lighting_buttons.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2010-2015 by D. Brian Kimmel
+@note:      Created on Apr 2, 2010
+@license:   MIT License
+@summary:   Handle the home lighting system automation.
+
 """
 
 # Import system type stuff
@@ -11,12 +19,10 @@ from Modules.Core.data_objects import ButtonData
 from Modules.Lighting.lighting_core import ReadWriteConfigXml
 from Modules.Families.family_utils import FamUtil
 from Modules.Computer import logging_pyh as Logging
-# from Modules.Utilities.tools import PrettyPrintAny
 
 
 g_debug = 0
 LOG = Logging.getLogger('PyHouse.LightgButton')
-
 
 
 class LBApi(ReadWriteConfigXml):
@@ -39,6 +45,8 @@ class LBApi(ReadWriteConfigXml):
         l_button_obj = self._read_button_data(p_button_xml)
         self._read_family_data(l_button_obj, p_button_xml)
         l_button_obj.Key = self.m_count  # Renumber
+        l_button_obj.DeviceType = 1
+        l_button_obj.DeviceSubType = 3
         return l_button_obj
 
     def read_all_buttons_xml(self, p_button_sect_xml):
@@ -67,6 +75,5 @@ class LBApi(ReadWriteConfigXml):
             l_buttons_xml.append(l_entry)
             self.m_count += 1
         return l_buttons_xml
-
 
 # ## END DBK
