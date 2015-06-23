@@ -148,7 +148,7 @@ class D_Util(object):
         @return: The object that contains the address -or- a dummy object with noname in Name
         """
         l_address = Util.message2int(p_message, p_index)  # Extract the 3 byte address from the message and convert to an Int.
-        if l_address < (16386 * 16386):
+        if l_address < (256 * 256):  # First byte zero ?
             l_dotted = str(l_address)
             l_device_obj = InsteonData()  # an empty new object
             l_device_obj.Name = '**Group: ' + l_dotted + ' **'
