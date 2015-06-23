@@ -63,11 +63,11 @@ class D_Util(object):
     @staticmethod
     def _decode_message_type_flag(p_type):
         TYPE_X = ['Direct', 'Direct_ACK', 'AllCleanup', 'All_Cleanup_ACK', 'Broadcast', 'Direct_NAK', 'All_Broadcast', 'All_Cleanup_NAK']
-        return TYPE_X[p_type] + ' Msg'
+        return TYPE_X[p_type] + ' Msg, '
 
     @staticmethod
     def _decode_extended_flag(p_extended):
-        TYPE_X = ['-Std-', '-Ext-']
+        TYPE_X = [' Standard,', ' Extended,']
         return TYPE_X[p_extended]
 
     @staticmethod
@@ -80,7 +80,7 @@ class D_Util(object):
         l_max_hops = (p_byte & 0x03)
         l_ret = D_Util._decode_message_type_flag(l_type)
         l_ret += D_Util._decode_extended_flag(l_extended)
-        l_ret += "{0:d}-{1:d}={2:#X}".format(l_hops_left, l_max_hops, p_byte)
+        l_ret += " HopsLeft:{0:d}, Hops:{1:d} ({2:#X}); ".format(l_hops_left, l_max_hops, p_byte)
         return l_ret
 
     @staticmethod
@@ -344,17 +344,17 @@ class DecodeResponses(D_Util):
         except IndexError:
             l_9 = 0
             l_10 = 0
-            LOG.warning("Short 50 message rxed - {0:}".format(PrintBytes(l_message)))
+            LOG.warning("Short 50 message rxed - {}".format(PrintBytes(l_message)))
         l_data = [l_9, l_10]
         l_debug_msg = 'Standard Message; '
-        l_flags = D_Util._decode_message_flag(l_message_flags) + ' From: {0:}'.format(l_obj_from.Name)
+        l_flags = D_Util._decode_message_flag(l_message_flags) + ' From: {}'.format(l_obj_from.Name)
         # Break down bits 7(msb), 6, 5 into message type
         if l_message_flags & 0xE0 == 0x80:  # Broadcast Message (100)
             l_debug_msg += D_Util.get_devcat(l_message, l_obj_from)
         elif l_message_flags & 0xE0 == 0xC0:  # (110) all link broadcast of group id
             l_group = l_7
-            l_debug_msg += "All-Link broadcast From:{0:}, Group:{1:}, Flags:{2:}, Data:{3:}; ".format(l_name_from, l_group, l_flags, l_data)
-            LOG.info("== 50B All-link Broadcast From:{0:}, Group:{1:}, Flags:{2:}, Data:{3:} ==".format(l_name_from, l_group, l_flags, l_data))
+            l_debug_msg += "All-Link broadcast From:{}, Group:{}, Flags:{}, Data:{}; ".format(l_name_from, l_group, l_flags, l_data)
+            LOG.info("== 50B All-link Broadcast From:{}, Group:{}, Flags:{}, Data:{} ==".format(l_name_from, l_group, l_flags, l_data))
         #
         try:
             if l_obj_from._Command1 == MESSAGE_TYPES['product_data_request']:  # 0x03
