@@ -49,7 +49,7 @@ class ReadWriteConfigXml(XmlConfigTools):
                 l_dict = l_obj
                 self.m_count += 1
         except AttributeError as e_err:
-            LOG.error('ERROR in mqtt_xml.read_xml() - {0:}'.format(e_err))
+            LOG.error('ERROR in mqtt_xml.read_xml() - {}'.format(e_err))
         return l_dict
 
 
@@ -60,7 +60,7 @@ class ReadWriteConfigXml(XmlConfigTools):
         return l_entry
 
     def write_mqtt_xml(self, p_pyhouse_obj):
-        l_mqtt = p_pyhouse_obj.Computer.Mqtt[0]
+        l_mqtt = p_pyhouse_obj.Computer.Mqtt
         self.m_count = 0
         l_xml = ET.Element('MqttSection')
         l_entry = self._write_one_broker(l_mqtt)
