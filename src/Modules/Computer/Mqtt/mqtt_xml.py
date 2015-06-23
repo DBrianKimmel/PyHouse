@@ -39,18 +39,17 @@ class ReadWriteConfigXml(XmlConfigTools):
         """
         self.m_count = 0
         l_dict = {}
-        l_dict[0] = MqttBrokerData()
+        l_dict = MqttBrokerData()
         # PrettyPrintAny(l_dict, "l_dict")
         try:
             l_xml = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision').find('MqttSection')
             for l_entry in l_xml.iterfind('Broker'):
                 l_obj = self._read_one_broker(l_entry)
                 l_obj.Key = self.m_count  # Renumber
-                l_dict[self.m_count] = l_obj
+                l_dict = l_obj
                 self.m_count += 1
         except AttributeError as e_err:
             LOG.error('ERROR in mqtt_xml.read_xml() - {0:}'.format(e_err))
-        print("Mqtt XML read: {}".format(l_dict[0].Name))
         return l_dict
 
 

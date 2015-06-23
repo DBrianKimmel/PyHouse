@@ -1,6 +1,4 @@
 """
--*- test-case-name: PyHouse.src.Modules.Computer.Mqtt.test.test_broker -*-
-
 @name:      PyHouse/src/Modules/Computer/Mqtt/broker.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
@@ -19,7 +17,7 @@ from Modules.Core.data_objects import NodeData
 from Modules.Computer import logging_pyh as Logger
 from Modules.Computer.Mqtt import mqtt_xml, protocol
 from Modules.Web import web_utils
-# from Modules.Core import data_objects
+from Modules.Utilities.tools import PrettyPrintAny
 
 
 LOG = Logger.getLogger('PyHouse.MqttBroker     ')
@@ -47,9 +45,11 @@ class Util(object):
         The connection of the MQTT protocol is kicked off after the TCP connection is complete.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
-        l_address = p_pyhouse_obj.Computer.Mqtt[0].BrokerAddress
-        l_port = p_pyhouse_obj.Computer.Mqtt[0].BrokerPort
+        p_pyhouse_obj.Computer.Mqtt.BrokerAPI = self
+        l_address = p_pyhouse_obj.Computer.Mqtt.BrokerAddress
+        l_port = p_pyhouse_obj.Computer.Mqtt.BrokerPort
         print("About to connect to {} {}".format(l_address, l_port))
+        print("MqttBroker-1 {}".format(PrettyPrintAny(p_pyhouse_obj.Computer.Mqtt, "B1 PyHouse.Computer.Mqtt")))
         p_pyhouse_obj.Twisted.Reactor.connectTCP(l_address, l_port, protocol.MqttClientFactory(p_pyhouse_obj, "DBK1", self))
 
 
@@ -61,6 +61,7 @@ class API(Util):
     m_client = None
 
     def Start(self, p_pyhouse_obj):
+        p_pyhouse_obj.Computer.Mqtt.BrokerAPI = self
         p_pyhouse_obj.APIs.Comp.MqttAPI = self
         self.m_pyhouse_obj = p_pyhouse_obj
         p_pyhouse_obj.Computer.Mqtt = mqtt_xml.ReadWriteConfigXml().read_mqtt_xml(p_pyhouse_obj)
@@ -77,11 +78,11 @@ class API(Util):
     def MqttPublish(self, p_topic, p_message):
         """Send a topic, message to the broker for it to distribute to the subscription list
 
-        p_pyhouse_obj.APIs.Comp.MqttAPI.MqttPublish("pyhouse/testing", "<JSON>")
+        self.m_pyhouse_obj.APIs.Comp.MqttAPI.MqttPublish("pyhouse/schedule/execute", l_schedule_json)
 
         """
         print("Broker MqttPublish {} {}".format(p_topic, p_message))
-        self.m_client.publish(p_topic, p_message)
+        self.m_pyhouse_obj.Computer.Mqtt.ProtocolAPI.publish(p_topic, p_message)
 
     def MqttDispatch(self, _p_topic, _p_message):
         """Dispatch a MQTT message according to the topic.

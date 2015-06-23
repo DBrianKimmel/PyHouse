@@ -85,7 +85,7 @@ helpers.Widget.subclass(mqtt, 'MqttWidget').methods(
 		globals.Computer.MqttIx = l_ix;
 		globals.Computer.MqttName = l_name;
 		if (l_ix <= 1000) {  // One of the mqtt buttons.
-			var l_obj = globals.Computer.Mqtt[l_ix];
+			var l_obj = globals.Computer.Mqtt;
 			globals.Computer.MqttObj = l_obj;
 			showDataEntryFields(self);
 			self.buildLcarDataEntryScreen(l_obj, 'handleDataEntryOnClick');

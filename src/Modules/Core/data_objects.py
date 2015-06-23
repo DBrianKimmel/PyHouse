@@ -145,7 +145,7 @@ class ComputerInformation(ABaseObject):
         super(ComputerInformation, self).__init__()
         self.InternetConnection = {}  # InternetConnectionData()
         self.Email = {}  # EmailData()
-        self.Mqtt = {}  # MqttBrokerData()
+        self.Mqtt = MqttBrokerData()
         self.Nodes = {}  # NodeData()
         self.Web = {}  # WebData()
         self.Domain = None
@@ -158,6 +158,8 @@ class MqttBrokerData(ABaseObject):
         super(MqttBrokerData, self).__init__()
         self.BrokerAddress = None
         self.BrokerPort = None
+        self.BrokerAPI = None
+        self.ProtocolAPI = None
 
 
 class HouseInformation(ABaseObject):

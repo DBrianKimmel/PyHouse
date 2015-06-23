@@ -20,6 +20,7 @@ from twisted.internet.protocol import ClientFactory, Protocol
 
 # Import PyMh files and modules.
 from Modules.Computer import logging_pyh as Logger
+from Modules.Utilities.tools import PrettyPrintAny
 
 
 LOG = Logger.getLogger('PyHouse.MqttProtocol   ')
@@ -515,7 +516,6 @@ class MQTTClient(MQTTProtocol):
         except KeyError:
             l_name = "UnknownNode"
         print("Client __init__  ID: {} {}".format(p_clientID, l_name))
-        p_pyhouse_obj.Computer.Mqtt[0].Name = l_name
         if p_clientID is not None:
             self.m_clientID = p_clientID
         else:
@@ -534,9 +534,10 @@ class MQTTClient(MQTTProtocol):
         TCP Connected
         Now use MQTT connect packet to establish protocol connection.
         """
-        print("Client connectionMade Keepalive: {}  {}".format(self.m_keepalive, self))
+        print("Client connectionMade Keepalive: {}".format(self.m_keepalive))
         LOG.info("Client TCP connectionMade Keepalive: {}".format(self.m_keepalive))
         self.connect(self.m_clientID, self.m_keepalive, self.willTopic, self.willMessage, self.willQos, self.willRetain, True)
+        print("Mqtt-1 {}".format(PrettyPrintAny(self.m_pyhouse_obj, "P1 PyHouse")))
         self.m_pyhouse_obj.Twisted.Reactor.callLater(self.m_pingPeriod, self.pingreq)
 
     def connectionLost(self, reason):
@@ -608,7 +609,8 @@ class MqttClientFactory(ClientFactory):
         l_client = MQTTClient(self.m_pyhouse_obj)
         # print('Factory buildProtocol - Addr: {} - {}'.format(p_addr, l_client))
         LOG.info("Mqtt broker address: {}".format(p_addr))
-        # self.m_pyhouse_obj.Computer.Mqtt[0] = l_client
+        self.m_pyhouse_obj.Computer.Mqtt.ProtocolAPI = l_client
+        print("Mqtt-2 {}".format(PrettyPrintAny(self.m_pyhouse_obj.Computer.Mqtt, "P2 PyHouse.Computer.Mqtt")))
         return l_client
 
     def clientConnectionLost(self, p_connector, p_reason):
