@@ -121,12 +121,12 @@ def PrintBytes(p_message):
     else:
         for l_x in range(l_len):
             try:
-                l_message += " {0:#04x}".format(int(p_message[l_x]))
+                l_message += " {:#04x}".format(int(p_message[l_x]))
             except ValueError:
                 try:
-                    l_message += " {0:#04X}".format(ord(p_message[l_x]))
+                    l_message += " {:#04X}".format(ord(p_message[l_x]))
                 except TypeError:  # Must be a string
-                    l_message += " {0:} ".format(p_message[l_x])
+                    l_message += " {} ".format(p_message[l_x])
     l_message += " <END>"
     return l_message
 
