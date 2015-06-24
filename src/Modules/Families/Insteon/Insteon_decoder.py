@@ -51,7 +51,7 @@ class D_Util(object):
         """The first byte is not legal, drop it and try again.
         Silently drop 1st byte if it is a NAK otherwise log it.
         """
-        l_msg = "Found a leading char {0:#x} - Rest. - {1:}".format(
+        l_msg = "Found a leading char {:#x} - Rest. - {1:}".format(
                 p_controller_obj._Message[0], PrintBytes(p_controller_obj._Message))
         if p_controller_obj._Message[0] != NAK:
             LOG.error(l_msg)
@@ -80,7 +80,7 @@ class D_Util(object):
         l_max_hops = (p_byte & 0x03)
         l_ret = D_Util._decode_message_type_flag(l_type)
         l_ret += D_Util._decode_extended_flag(l_extended)
-        l_ret += " HopsLeft:{0:d}, Hops:{1:d} ({2:#X}); ".format(l_hops_left, l_max_hops, p_byte)
+        l_ret += " HopsLeft:{}, Hops:{} ({:#X}); ".format(l_hops_left, l_max_hops, p_byte)
         return l_ret
 
     @staticmethod
@@ -161,7 +161,7 @@ class D_Util(object):
         l_devcat = p_message[5] * 256 + p_message[6]
         p_obj.DevCat = int(l_devcat)
         # self.update_object(p_obj)
-        l_debug_msg = "DevCat From={0:}, DevCat={1:#x}, flags={2:} ".format(p_obj.Name, l_devcat, D_Util._decode_message_flag(p_message[8]))
+        l_debug_msg = "DevCat From={}, DevCat={:#x}, flags={} ".format(p_obj.Name, l_devcat, D_Util._decode_message_flag(p_message[8]))
         LOG.info("Got DevCat from light:{}, DevCat:{} ".format(p_obj.Name, conversions.int2dotted_hex(l_devcat, 2)))
         return l_debug_msg
 
@@ -193,7 +193,7 @@ class D_Util(object):
         elif p_byte == 0x15:
             return 'NAK '
         else:
-            return "{0:#02X} ".format(p_byte)
+            return "{:#02X} ".format(p_byte)
 
     def decode_command1(self, l_obj_from, l_name_from, l_name_to, l_9, l_10, l_message):
         l_debug_msg = ''
@@ -224,7 +224,7 @@ class D_Util(object):
             _l_ret1 = Insteon_HVAC.ihvac_utility().decode_50_record(l_obj_from, l_9, l_10)
             pass
         else:
-            l_debug_msg += " unknown type - last command was {0:#x} - {1:}; ".format(l_obj_from._Command1, PrintBytes(l_message))
+            l_debug_msg += " unknown type - last command was {:#x} - {}; ".format(l_obj_from._Command1, PrintBytes(l_message))
 
     @staticmethod
     def get_next_message(p_controller_obj):
@@ -311,7 +311,7 @@ class DecodeResponses(D_Util):
         elif l_cmd == 0x6F: l_ret = self._decode_6F_record(p_controller_obj)
         elif l_cmd == 0x73: l_ret = self._decode_73_record(p_controller_obj)
         else:
-            LOG.error("Unknown message {0:}, Cmd:{1:}".format(PrintBytes(p_controller_obj._Message), l_cmd))
+            LOG.error("Unknown message {}, Cmd:{}".format(PrintBytes(p_controller_obj._Message), l_cmd))
             self.check_for_more_decoding(p_controller_obj, l_ret)
         return l_ret
 
@@ -326,46 +326,45 @@ class DecodeResponses(D_Util):
         """ Insteon Standard Message Received (11 bytes)
         A Standard-length INSTEON message is received from either a Controller or Responder that you are ALL-Linked to.
 
-        See p 231(244) of developers guide.
+        See p 233(246) of developers guide.
+        [0] = x02
+        [1] = 0x50
+        [2-4] = from address
+        [5-7] = to address / group
+        [8] = message flags
+        [9] = command 1
+        [10] = command 2
         """
         l_message = p_controller_obj._Message
         l_obj_from = self.get_obj_from_message(l_message, 2)
         l_name_from = l_obj_from.Name
         l_obj_to = self.get_obj_from_message(l_message, 5)
         l_name_to = l_obj_to.Name
-        try:
-            l_7 = l_message[7]
-        except IndexError:
-            l_7 = 0
+        l_mflags = l_message[8]
         l_message_flags = self.get_message_flags(p_controller_obj._Message, 8)
-        try:
-            l_9 = l_message[9]
-            l_10 = l_message[10]
-        except IndexError:
-            l_9 = 0
-            l_10 = 0
-            LOG.warning("Short 50 message rxed - {}".format(PrintBytes(l_message)))
-        l_data = [l_9, l_10]
-        l_debug_msg = 'Standard Message; '
-        l_flags = D_Util._decode_message_flag(l_message_flags) + ' From: {}'.format(l_obj_from.Name)
+        l_flags = D_Util._decode_message_flag(l_message_flags)
+        l_cmd1 = l_message[9]
+        l_cmd2 = l_message[10]
+        l_data = [l_cmd1, l_cmd2]
+        l_debug_msg = 'Standard Message from: {}; Flags:{}; Cmd1:{}, Cmd2:{}; '.format(l_name_from, l_flags, l_cmd1, l_cmd2)
         # Break down bits 7(msb), 6, 5 into message type
-        if l_message_flags & 0xE0 == 0x80:  # Broadcast Message (100)
+        if l_message_flags & 0xE0 == 0x80:  # Broadcast/NAK Message (100)
             l_debug_msg += D_Util.get_devcat(l_message, l_obj_from)
         elif l_message_flags & 0xE0 == 0xC0:  # (110) all link broadcast of group id
-            l_group = l_7
-            l_debug_msg += "All-Link broadcast From:{}, Group:{}, Flags:{}, Data:{}; ".format(l_name_from, l_group, l_flags, l_data)
-            LOG.info("== 50B All-link Broadcast From:{}, Group:{}, Flags:{}, Data:{} ==".format(l_name_from, l_group, l_flags, l_data))
+            l_group = l_message[7]
+            l_debug_msg += "All-Link broadcast - Group:{}, Data:{}; ".format(l_group, l_data)
+            LOG.info("== 50B All-link Broadcast Group:{}, Data:{} ==".format(l_group, l_data))
         #
         try:
             if l_obj_from._Command1 == MESSAGE_TYPES['product_data_request']:  # 0x03
                 l_debug_msg += " product data request. - Should never happen - S/B 51 response"
             elif l_obj_from._Command1 == MESSAGE_TYPES['engine_version']:  # 0x0D
-                l_engine_id = l_10
-                l_debug_msg += "Engine version From:{}, Sent to:{}, Id:{}; ".format(l_name_from, l_name_to, l_engine_id)
+                l_engine_id = l_cmd2
+                l_debug_msg += "Engine version Sent to:{}, Id:{}; ".format(l_name_to, l_engine_id)
                 LOG.info("Got engine version from light:{}, To:{}, EngineID:{}".format(l_name_from, l_name_to, l_engine_id))
             elif l_obj_from._Command1 == MESSAGE_TYPES['id_request']:  # 0x10
-                l_debug_msg += "Request ID From:{0:}; ".format(l_name_from)
-                LOG.info("Got an ID request. Light:{0:}".format(l_name_from,))
+                l_debug_msg += "Request ID From:{}; ".format(l_name_from)
+                LOG.info("Got an ID request. Light:{}".format(l_name_from,))
             elif l_obj_from._Command1 == MESSAGE_TYPES['on']:  # 0x11
                 l_obj_from.CurLevel = 100
                 l_debug_msg += "Device:{} turned Full ON  ; ".format(l_name_from)
@@ -375,16 +374,16 @@ class DecodeResponses(D_Util):
                 l_debug_msg += "Light:{} turned Full OFF; ".format(l_name_from)
                 self.update_object(l_obj_from)
             elif l_obj_from._Command1 == MESSAGE_TYPES['status_request']:  # 0x19
-                l_level = int(((l_10 + 2) * 100) / 256)
+                l_level = int(((l_cmd2 + 2) * 100) / 256)
                 l_obj_from.CurLevel = l_level
                 l_debug_msg += "Status of light:{} is level:{}; ".format(l_name_from, l_level)
                 LOG.info("PLM:{} Got Light Status From:{}, Level is:{} ".format(p_controller_obj.Name, l_name_from, l_level))
                 self.update_object(l_obj_from)
             elif l_obj_from._Command1 == MESSAGE_TYPES['thermostat_report']:  # 0x6e
-                _l_ret1 = Insteon_HVAC.ihvac_utility().decode_50_record(l_obj_from, l_9, l_10)
+                _l_ret1 = Insteon_HVAC.ihvac_utility().decode_50_record(l_obj_from, l_cmd1, l_cmd2)
                 pass
             else:
-                l_debug_msg += " Unknown type - last command was {0:#x} - {1:}; ".format(l_obj_from._Command1, PrintBytes(l_message))
+                l_debug_msg += " Unknown type - last command was {:#x} - {}; ".format(l_obj_from._Command1, PrintBytes(l_message))
         except AttributeError:
             pass
         l_ret = True
@@ -401,13 +400,13 @@ class DecodeResponses(D_Util):
         l_obj_to = self.get_obj_from_message(l_message, 5)
         l_flags = l_message[8]
         l_data = [l_message[9], l_message[10]]
-        l_extended = "{0:X}.{1:X}.{2:X}.{3:X}.{4:X}.{5:X}.{6:X}.{7:X}.{8:X}.{9:X}.{10:X}.{11:X}.{12:X}.{13:X}".format(
+        l_extended = "{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}".format(
                     l_message[11], l_message[12], l_message[13], l_message[14], l_message[15], l_message[16], l_message[17],
                     l_message[18], l_message[19], l_message[20], l_message[21], l_message[22], l_message[23], l_message[24])
         l_product_key = self._get_addr_from_message(l_message, 12)
         l_devcat = l_message[15] * 256 + l_message[16]
         self.update_object(l_obj_from)
-        LOG.info("== 51 From={0:}, To={1:}, Flags={2:#x}, Data={3:} Extended={4:} ==".format(l_obj_from.Name, l_obj_to.Name, l_flags, l_data, l_extended))
+        LOG.info("== 51 From={}, To={}, Flags={:#x}, Data={} Extended={} ==".format(l_obj_from.Name, l_obj_to.Name, l_flags, l_data, l_extended))
         l_obj_from.ProductKey = l_product_key
         l_obj_from.DevCat = l_devcat
         l_ret = True
@@ -469,7 +468,7 @@ class DecodeResponses(D_Util):
         l_type = 'Responder'
         if l_flag_control != 0:
             l_type = 'Controller'
-        LOG.info("All-Link response-57 - Group={0:#02X}, Name={1:}, Flags={2:#x}, Data={3:}, {4:}".format(l_group, l_obj.Name, l_flags, l_data, l_type))
+        LOG.info("All-Link response-57 - Group={:#02X}, Name={}, Flags={:#x}, Data={}, {}".format(l_group, l_obj.Name, l_flags, l_data, l_type))
         l_ret = True
         return self.check_for_more_decoding(p_controller_obj, l_ret)
 
@@ -490,11 +489,11 @@ class DecodeResponses(D_Util):
         l_devcat = l_message[5]
         l_devsubcat = l_message[6]
         l_firmver = l_message[7]
-        LOG.info("== 60 - Insteon Modem Info - DevCat={0:}, DevSubCat={1:}, Firmware={2:} - Name={3:}".format(l_devcat, l_devsubcat, l_firmver, l_obj.Name))
+        LOG.info("== 60 - Insteon Modem Info - DevCat={}, DevSubCat={}, Firmware={} - Name={}".format(l_devcat, l_devsubcat, l_firmver, l_obj.Name))
         if l_message[8] == ACK:
             l_ret = True
         else:
-            LOG.error("== 60 - No ACK - Got {0:#x}".format(l_message[8]))
+            LOG.error("== 60 - No ACK - Got {:#x}".format(l_message[8]))
             l_ret = False
         return self.check_for_more_decoding(p_controller_obj, l_ret)
 
@@ -507,11 +506,11 @@ class DecodeResponses(D_Util):
         l_cmd1 = l_message[3]
         l_cmd2 = l_message[4]
         l_ack = l_message[5]
-        LOG.info("All-Link Ack - Group:{0:}, Cmd:{1:}, Bcst:{2:}, Ack:{3:}".format(l_grp, l_cmd1, l_cmd2, l_ack))
+        LOG.info("All-Link Ack - Group:{}, Cmd:{}, Bcst:{}, Ack:{}".format(l_grp, l_cmd1, l_cmd2, l_ack))
         if l_ack == ACK:
             l_ret = True
         else:
-            LOG.error("== 61 - No ACK - Got {0:#x}".format(l_ack))
+            LOG.error("== 61 - No ACK - Got {:#x}".format(l_ack))
             l_ret = False
         return self.check_for_more_decoding(p_controller_obj, l_ret)
 
@@ -532,9 +531,9 @@ class DecodeResponses(D_Util):
             l_8 = 0
             LOG.warning("Short 62 message rxed - {p:}".format(PrintBytes(l_message)))
         l_ack = self._get_ack_nak(l_8)
-        l_debug_msg = "Device:{0:}, {1:}".format(l_obj.Name, l_ack)
+        l_debug_msg = "Device:{}, {}".format(l_obj.Name, l_ack)
         if g_debug >= 1:
-            LOG.info("Got ACK(62) {0:}".format(l_debug_msg))
+            LOG.info("Got ACK(62) {}".format(l_debug_msg))
         return self.check_for_more_decoding(p_controller_obj)
 
     def _decode_64_record(self, p_controller_obj):
@@ -545,11 +544,11 @@ class DecodeResponses(D_Util):
         l_grp = l_message[2]
         l_cmd1 = l_message[3]
         l_ack = l_message[4]
-        LOG.info("All-Link Ack - Group:{0:}, Cmd:{1:}, Ack:{2:}".format(l_grp, l_cmd1, l_ack))
+        LOG.info("All-Link Ack - Group:{}, Cmd:{}, Ack:{}".format(l_grp, l_cmd1, l_ack))
         if l_ack == ACK:
             l_ret = True
         else:
-            LOG.error("== 64 - No ACK - Got {0:#x}".format(l_ack))
+            LOG.error("== 64 - No ACK - Got {:#x}".format(l_ack))
             l_ret = False
         return self.check_for_more_decoding(p_controller_obj, l_ret)
 
@@ -559,8 +558,8 @@ class DecodeResponses(D_Util):
         """
         l_message = p_controller_obj._Message
         l_ack = self._get_ack_nak(l_message[2])
-        l_debug_msg = "Reset IM(PLM) {0:}".format(l_ack)
-        LOG.info("{0:}".format(l_debug_msg))
+        l_debug_msg = "Reset IM(PLM) {}".format(l_ack)
+        LOG.info("{}".format(l_debug_msg))
         return self.check_for_more_decoding(p_controller_obj)
 
     def _decode_69_record(self, p_controller_obj):
@@ -596,12 +595,12 @@ class DecodeResponses(D_Util):
         l_message = p_controller_obj._Message
         l_flag = l_message[2]
         l_ack = self._get_ack_nak(l_message[3])
-        l_debug_msg = "from PLM:{0:} - ConfigFlag:{1:#02X}, {2:}".format(p_controller_obj.Name, l_flag, l_ack)
-        LOG.info("Received from {0:}".format(l_debug_msg))
+        l_debug_msg = "from PLM:{} - ConfigFlag:{:#02X}, {}".format(p_controller_obj.Name, l_flag, l_ack)
+        LOG.info("Received from {}".format(l_debug_msg))
         if l_message[3] == ACK:
             l_ret = True
         else:
-            LOG.error("== 6B - NAK/Unknown message type {0:#x}".format(l_flag))
+            LOG.error("== 6B - NAK/Unknown message type {:#x}".format(l_flag))
             l_ret = False
         return self.check_for_more_decoding(p_controller_obj, l_ret)
 
@@ -621,9 +620,9 @@ class DecodeResponses(D_Util):
         if l_flag_control != 0:
             l_type = 'Controller'
         l_message = "Manage All-Link response(6F)"
-        l_message += " Group:{0:#02X}, Name:{1:}, Flags:{2:#02X}, Data:{3:}, CtlCode:{4:#02x},".format(l_group, l_obj.Name, l_flags, l_data, l_code)
-        l_message += " Ack:{0:}, Type:{1:}".format(l_ack, l_type)
-        LOG.info("{0:}".format(l_message))
+        l_message += " Group:{:#02X}, Name:{}, Flags:{:#02X}, Data:{}, CtlCode:{:#02x},".format(l_group, l_obj.Name, l_flags, l_data, l_code)
+        l_message += " Ack:{}, Type:{}".format(l_ack, l_type)
+        LOG.info("{}".format(l_message))
         l_ret = True
         return self.check_for_more_decoding(p_controller_obj, l_ret)
 
@@ -641,7 +640,7 @@ class DecodeResponses(D_Util):
         l_spare1 = l_message[3]
         l_spare2 = l_message[4]
         l_ack = self._get_ack_nak(l_5)
-        LOG.info("== 73 Get IM configuration Flags={0#x:}, Spare 1={1:#x}, Spare 2={2:#x} {3:} ".format(
+        LOG.info("== 73 Get IM configuration Flags={:#x}, Spare 1={:#x}, Spare 2={:#x} {} ".format(
                     l_flags, l_spare1, l_spare2, l_ack))
         return self.check_for_more_decoding(p_controller_obj)
 
@@ -656,7 +655,7 @@ class DecodeResponses(D_Util):
             p_controller_obj._Message = p_controller_obj._Message[l_chop:]
             l_ret = self.decode_message(p_controller_obj)
         else:
-            l_msg = "check_for_more_decoding() trying to chop an incomplete message - {0:}".format(
+            l_msg = "check_for_more_decoding() trying to chop an incomplete message - {}".format(
                     PrintBytes(p_controller_obj._Message))
             LOG.error(l_msg)
         return l_ret

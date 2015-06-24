@@ -278,7 +278,7 @@ class InsteonPlmCommands(Commands):
 
         @param p_name: is the key for the entry in Light_Data
         """
-        self.queue_62_command(p_controller_obj, p_name, MESSAGE_TYPES['product_data_request'], 0x00)
+        self.queue_62_command(p_controller_obj, p_name, MESSAGE_TYPES['product_data_request'], 0x00)  # 0x03
 
 
 class InsteonAllLinks(InsteonPlmCommands):
@@ -530,11 +530,11 @@ class API(Utility):
         """
         LOG.info("Device Name:{}; to level:{}; at rate:{};".format(p_device_obj.Name, p_level, p_rate))
         if int(p_level) == 0:
-            self.queue_62_command(self.m_controller_obj, p_device_obj, MESSAGE_TYPES['off'], 0)
+            self.queue_62_command(self.m_controller_obj, p_device_obj, MESSAGE_TYPES['off'], 0)  # 0x13
         elif int(p_level) == 100:
-            self.queue_62_command(self.m_controller_obj, p_device_obj, MESSAGE_TYPES['on'], 255)
+            self.queue_62_command(self.m_controller_obj, p_device_obj, MESSAGE_TYPES['on'], 255)  # 0x11
         else:
             l_level = int(p_level) * 255 / 100
-            self.queue_62_command(self.m_controller_obj, p_device_obj, MESSAGE_TYPES['on'], l_level)
+            self.queue_62_command(self.m_controller_obj, p_device_obj, MESSAGE_TYPES['on'], l_level)  # 0x11
 
 # ## END DBK

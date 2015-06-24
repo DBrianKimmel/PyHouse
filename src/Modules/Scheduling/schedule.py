@@ -254,7 +254,8 @@ class ScheduleTime(object):
         l_riseset = RiseSetData()
         l_riseset.Sunrise = p_pyhouse_obj.House.RefOBJs.Location._Sunrise
         l_riseset.Sunset = p_pyhouse_obj.House.RefOBJs.Location._Sunset
-        p_pyhouse_obj.APIs.Comp.MqttAPI.MqttPublish("pyhouse/testing", "Hello from schedule")
+        l_json = web_utils.JsonUnicode().encode_json(l_riseset)
+        p_pyhouse_obj.APIs.Comp.MqttAPI.MqttPublish("pyhouse/testing", l_json)
         LOG.info("Sunrise:{0:}, Sunset:{1:}".format(l_riseset.Sunrise, l_riseset.Sunset))
         return l_riseset
 
