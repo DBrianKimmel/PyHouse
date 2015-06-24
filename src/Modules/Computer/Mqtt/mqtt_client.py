@@ -73,8 +73,11 @@ class API(Util):
         self.m_pyhouse_obj.APIs.Comp.MqttAPI.MqttPublish("pyhouse/schedule/execute", l_schedule_json)
 
         """
-        print("Broker MqttPublish {} {}".format(p_topic, p_message))
-        self.m_pyhouse_obj.Computer.Mqtt.ProtocolAPI.publish(p_topic, p_message)
+        # print("Broker MqttPublish {} {}".format(p_topic, p_message))
+        try:
+            self.m_pyhouse_obj.Computer.Mqtt.ProtocolAPI.publish(p_topic, p_message)
+        except AttributeError as e_err:
+            LOG.error("{}\n   Topic:{}\n   Message:{}".format(e_err, p_topic, p_message))
 
     def MqttDispatch(self, _p_topic, _p_message):
         """Dispatch a MQTT message according to the topic.
