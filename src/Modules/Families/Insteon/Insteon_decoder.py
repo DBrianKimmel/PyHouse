@@ -51,7 +51,7 @@ class D_Util(object):
         """The first byte is not legal, drop it and try again.
         Silently drop 1st byte if it is a NAK otherwise log it.
         """
-        l_msg = "Found a leading char {:#x} - Rest. - {1:}".format(
+        l_msg = "Found a leading char {:#x} - Rest. - {}".format(
                 p_controller_obj._Message[0], PrintBytes(p_controller_obj._Message))
         if p_controller_obj._Message[0] != NAK:
             LOG.error(l_msg)
