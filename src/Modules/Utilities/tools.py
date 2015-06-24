@@ -158,7 +158,7 @@ def PrettyPrintCols(strings, widths, split = ' '):
 #######################################
 
 def PrettyPrint(p_title, p_str, maxlen = 150):
-    print('Title: {0:}\n'.format(p_title), '\n'.join(_format_line(str(p_str), maxlen, ' ')))
+    print('Title: {}\n'.format(p_title), '\n'.join(_format_line(str(p_str), maxlen, ' ')))
 
 def PrintObject(p_title, p_obj, suppressdoc = True, maxlen = 180, lindent = 24, maxspew = 2000):
     """Print a nicely formatted overview of an object.
@@ -243,7 +243,7 @@ def PrintObject(p_title, p_obj, suppressdoc = True, maxlen = 180, lindent = 24, 
     # Summary of introspection attributes
     if objclass == '':
         objclass = type(p_obj).__name__
-    intro = "\nInstance of class '{0:}' as defined in module {1:} with id {2:}".format(objclass, objmodule, id(p_obj))
+    intro = "\nInstance of class '{}' as defined in module {} with id {}".format(objclass, objmodule, id(p_obj))
     print('\nTitle:  ', p_title, '\n'.join(_format_line(intro, maxlen)))
     # Object's Docstring
     if not suppressdoc:
@@ -344,15 +344,15 @@ class GetPyhouse(object):
 class Lister():
 
     def __repr__(self):
-        return ("Lister:: <Instance of {0:}, Address {1:}:\n{2:}>\n".format(self.__class__.__name__, id(self), self.attrnames()))
+        return ("Lister:: <Instance of {}, Address {}:\n{}>\n".format(self.__class__.__name__, id(self), self.attrnames()))
 
     def attrnames(self):
         l_ret = ''
         for attr in self.__dict__.keys():
             if attr[:2] == '__':
-                l_ret = l_ret + "\tName: {0:}=<built-in>\n".format(attr)
+                l_ret = l_ret + "\tName: {}=<built-in>\n".format(attr)
             else:
-                l_ret = l_ret + "\tName: {0:}={1:}\n".format(attr, self.__dict__ [attr])
+                l_ret = l_ret + "\tName: {}={}\n".format(attr, self.__dict__ [attr])
         return l_ret
 
 def get_light_object(p_pyhouse_obj, name = None, key = None):
@@ -369,13 +369,13 @@ def get_light_object(p_pyhouse_obj, name = None, key = None):
         for l_obj in l_lights.itervalues():
             if l_obj.Name == name:
                 return l_obj
-        print('tools().GetLightObj using Name:{0:} - lookup failed'.format(name))
+        print('tools().GetLightObj using Name:{} - lookup failed'.format(name))
     elif key != None:
         for l_obj in l_lights.itervalues():
             if l_obj.Key == key:
                 return l_obj
-        print('tools().GetLightObj using Key:{0:} - lookup failed'.format(key))
-    print('tools().GetLightObj failed - arg error Name:{0:}, Key:{1:}'.format(name, key))
+        print('tools().GetLightObj using Key:{} - lookup failed'.format(key))
+    print('tools().GetLightObj failed - arg error Name:{}, Key:{}'.format(name, key))
     return None
 
 

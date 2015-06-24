@@ -80,7 +80,7 @@ class D_Util(object):
         l_max_hops = (p_byte & 0x03)
         l_ret = D_Util._decode_message_type_flag(l_type)
         l_ret += D_Util._decode_extended_flag(l_extended)
-        l_ret += " HopsLeft:{}, Hops:{} ({:#X}); ".format(l_hops_left, l_max_hops, p_byte)
+        l_ret += " HopsLeft:{:d}, Hops:{:d} ({:#X}); ".format(l_hops_left, l_max_hops, p_byte)
         return l_ret
 
     @staticmethod
@@ -158,11 +158,36 @@ class D_Util(object):
 
     @staticmethod
     def get_devcat(p_message, p_obj):
+        """
+            0x00    Generalized Controllers        ControLinc, RemoteLinc, SignaLinc, etc.
+            0x01    Dimmable Lighting Control      Dimmable Light Switches, Dimmable Plug-In Modules
+            0x02    Switched Lighting Control      Relay Switches, Relay Plug-In Modules
+            0x03    Network Bridges                PowerLinc Controllers, TRex, Lonworks, ZigBee, etc.
+            0x04    Irrigation Control             Irrigation Management, Sprinkler Controllers
+            0x05    Climate Control                Heating, Air conditioning, Exhausts Fans, Ceiling Fans, Indoor Air Quality
+            0x06    Pool and Spa Control           Pumps, Heaters, Chemicals
+            0x07    Sensors and Actuators          Sensors, Contact Closures
+            0x08    Home Entertainment             Audio/Video Equipment
+            0x09    Energy Management              Electricity, Water, Gas Consumption, Leak Monitors
+            0x0A    Built-In Appliance Control     White Goods, Brown Goods
+            0x0B    Plumbing                       Faucets, Showers, Toilets
+            0x0C    Communication                  Telephone System Controls, Intercoms
+            0x0D    Computer Control               PC On/Off, UPS Control, App Activation, Remote Mouse, Keyboards
+            0x0E    Window Coverings               Drapes, Blinds, Awnings
+            0x0F    Access Control                 Automatic Doors, Gates, Windows, Locks
+            0x10    Security, Health, Safety       Door and Window Sensors, Motion Sensors, Scales
+            0x11    Surveillance                   Video Camera Control, Time-lapse Recorders, Security System Links
+            0x12    Automotive                     Remote Starters, Car Alarms, Car Door Locks
+            0x13    Pet Care                       Pet Feeders, Trackers
+            0x14    Toys                           Model Trains, Robots
+            0x15    Timekeeping                    Clocks, Alarms, Timers
+            0x16    Holiday                        Christmas Lights, Displays
+        """
         l_devcat = p_message[5] * 256 + p_message[6]
         p_obj.DevCat = int(l_devcat)
         # self.update_object(p_obj)
         l_debug_msg = "DevCat From={}, DevCat={:#x}, flags={} ".format(p_obj.Name, l_devcat, D_Util._decode_message_flag(p_message[8]))
-        LOG.info("Got DevCat from light:{}, DevCat:{} ".format(p_obj.Name, conversions.int2dotted_hex(l_devcat, 2)))
+        # LOG.info("Got DevCat from light:{}, DevCat:{} ".format(p_obj.Name, conversions.int2dotted_hex(l_devcat, 2)))
         return l_debug_msg
 
     @staticmethod
@@ -338,8 +363,6 @@ class DecodeResponses(D_Util):
         l_message = p_controller_obj._Message
         l_obj_from = self.get_obj_from_message(l_message, 2)
         l_name_from = l_obj_from.Name
-        l_obj_to = self.get_obj_from_message(l_message, 5)
-        l_name_to = l_obj_to.Name
         l_mflags = l_message[8]
         l_message_flags = self.get_message_flags(p_controller_obj._Message, 8)
         l_flags = D_Util._decode_message_flag(l_message_flags)
@@ -360,11 +383,11 @@ class DecodeResponses(D_Util):
                 l_debug_msg += " product data request. - Should never happen - S/B 51 response"
             elif l_obj_from._Command1 == MESSAGE_TYPES['engine_version']:  # 0x0D
                 l_engine_id = l_cmd2
-                l_debug_msg += "Engine version Sent to:{}, Id:{}; ".format(l_name_to, l_engine_id)
-                LOG.info("Got engine version from light:{}, To:{}, EngineID:{}".format(l_name_from, l_name_to, l_engine_id))
+                l_debug_msg += "Engine version is:{}; ".format(l_engine_id)
+                # LOG.info("Got engine version from light:{}, is:{}, EngineID:{}".format(l_name_from, l_engine_id))
             elif l_obj_from._Command1 == MESSAGE_TYPES['id_request']:  # 0x10
                 l_debug_msg += "Request ID From:{}; ".format(l_name_from)
-                LOG.info("Got an ID request. Light:{}".format(l_name_from,))
+                # LOG.info("Got an ID request. Light:{}".format(l_name_from,))
             elif l_obj_from._Command1 == MESSAGE_TYPES['on']:  # 0x11
                 l_obj_from.CurLevel = 100
                 l_debug_msg += "Device:{} turned Full ON  ; ".format(l_name_from)
