@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Families/Insteon/Insteon_PLM.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2010-2014 by D. Brian Kimmel
+@copyright: (c) 2010-2015 by D. Brian Kimmel
 @note:      Created on Feb 18, 2010
 @license:   MIT License
 @summary:   This module is for sending commands to and receiving responses from an Insteon Controller.
@@ -73,9 +73,13 @@ class ControllerData(InsteonData):
     """
 
     def __init__(self):
+        """
+        Command 1 and 2 hold the values sent to the device.
+        This is so that the return values received later can be correlated to the command we last sent to the device.
+        """
         super(ControllerData, self).__init__()
-        self._Command1 = 0
-        self._Command2 = 0
+        self._Command1 = None
+        self._Command2 = None
 
 
 
@@ -408,6 +412,14 @@ class LightHandlerAPI(InsteonPlmAPI):
         self._get_id_request(p_controller_obj, p_obj)
         self._get_engine_version(p_controller_obj, p_obj)
 
+    def _get_thermostat_obj_info(self, p_controller_obj, p_obj):
+        if p_obj.ControllerFamily != 'Insteon':
+            return
+        if p_obj.Active != True:
+            return
+        self._get_id_request(p_controller_obj, p_obj)
+        self._get_engine_version(p_controller_obj, p_obj)
+
     def get_all_device_information(self, p_pyhouse_obj, p_controller_obj):
         """Get the status (current level) of all insteon devices.
         """
@@ -419,7 +431,7 @@ class LightHandlerAPI(InsteonPlmAPI):
         for l_obj in p_pyhouse_obj.House.DeviceOBJs.Controllers.itervalues():
             self._get_obj_info(p_controller_obj, l_obj)
         for l_obj in p_pyhouse_obj.House.DeviceOBJs.Thermostats.itervalues():
-            self._get_obj_info(p_controller_obj, l_obj)
+            self._get_thermostat_obj_info(p_controller_obj, l_obj)
 
 
 

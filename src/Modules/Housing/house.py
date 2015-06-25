@@ -1,15 +1,15 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Housing.test.test_house -*-
 
-@name: PyHouse/src/Modules/Housing/house.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@Copyright (c) 2013-2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Apr 10, 2013
-@summary: Handle all of the information for a house.
+@name:      PyHouse/src/Modules/Housing/house.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@Copyright: (c) 2013-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Apr 10, 2013
+@summary:   Handle all of the information for a house.
 
-This is one of two major Node functions (the other is computer).
+This is one of two major functions (the other is computer).
 
 House.py knows everything about a single house.
 
@@ -25,9 +25,8 @@ from Modules.Scheduling import schedule, sunrisesunset
 from Modules.Housing import location
 from Modules.Housing import rooms
 from Modules.Computer import logging_pyh as Logger
-from Modules.Utilities.tools import PrettyPrintAny
 
-g_debug = 1
+
 LOG = Logger.getLogger('PyHouse.House          ')
 
 MODULES = ['Entertainment', 'Hvac', 'Irrigation', 'Lighting', 'Pool', 'Scheduling', 'Security']
@@ -38,9 +37,6 @@ class HouseItems(object):
         Location (1)
         Rooms (0+)
         Schedule (0+)
-        Weather (1)
-
-        Communication (0+)
         Entertainment (0+)
         HVAC (0+)
         Irrigation (0+)
@@ -136,7 +132,6 @@ class Utility(ReadWriteConfigXml):
             Initialize an API reference and save it.
         """
         print('For Module {}'.format(p_module))
-        PrettyPrintAny(p_pyhouse_obj.APIs.House, 'HouseAPIs - Before')
         p_pyhouse_obj.APIs.Modules[p_module] = '123'
 
     def start_submodules(self):
@@ -145,9 +140,6 @@ class Utility(ReadWriteConfigXml):
 
     def _store_pyhouse_obj(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        # PrettyPrintAny(p_pyhouse_obj, 'PyHouse')
-        # PrettyPrintAny(p_pyhouse_obj.APIs, 'PyHouse.APIs')
-        # PrettyPrintAny(p_pyhouse_obj.APIs.House, 'PyHouse.APIs.House')
 
 
 class API(Utility):

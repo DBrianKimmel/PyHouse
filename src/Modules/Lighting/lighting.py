@@ -16,12 +16,10 @@ for every house.
 # Import system type stuff
 
 # Import PyHouse files
-from Modules.Families import family
 from Modules.Lighting.lighting_buttons import LBApi
 from Modules.Lighting.lighting_controllers import LCApi
 from Modules.Lighting.lighting_lights import LLApi
 from Modules.Computer import logging_pyh as Logger
-# from Modules.Utilities.tools import PrettyPrintAny
 
 LOG = Logger.getLogger('PyHouse.Lighting       ')
 
@@ -76,7 +74,8 @@ class Utility(LCApi, LBApi, LLApi):
 class API(Utility):
 
     def __init__(self):
-        self.m_family = family.API()
+        # self.m_family = family.API()
+        pass
 
     def Start(self, p_pyhouse_obj):
         """Allow loading of sub modules and drivers.
@@ -84,19 +83,19 @@ class API(Utility):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_house_obj = p_pyhouse_obj.House.DeviceOBJs
         self._read_lighting_xml(p_pyhouse_obj)
-        self.m_family.start_lighting_families(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.House.FamilyAPI.start_lighting_families(p_pyhouse_obj)
         LOG.info("Started.")
 
     def Stop(self):
         """Allow cleanup of all drivers.
         """
         LOG.info("Stopping all lighting families.")
-        self.m_family.stop_lighting_families(self.m_house_obj)
+        self.m_pyhouse_obj.APIs.House.FamilyAPI.stop_lighting_families(self.m_house_obj)
         LOG.info("Stopped.")
 
     def SaveXml(self, p_xml):
         LOG.info("Saving config info..")
-        self.m_family.save_lighting_families(p_xml, self.m_pyhouse_obj.House.RefOBJs)
+        self.m_pyhouse_obj.APIs.House.FamilyAPI.save_lighting_families(p_xml, self.m_pyhouse_obj.House.RefOBJs)
         self._write_lighting_xml(self.m_pyhouse_obj.House.DeviceOBJs, p_xml)
         LOG.info("Saved XML.")
 
@@ -111,6 +110,8 @@ class API(Utility):
 
     def ChangeLight(self, p_light_obj, p_new_level, _p_rate = None):
         """
+        Set an Insteon controlled light to a value - On, Off, or Dimmed.
+
         Called by:
             web_controlLights
             schedule

@@ -1,7 +1,7 @@
 """
--*- test-case-name: PyHouse.src.Modules.Families.Insteon.test.test_Insteon_PLM -*-
+-*- test-case-name: PyHouse.src.Modules.Families.Insteon.test.test_Insteon_decoder -*-
 
-@name:      PyHouse/src/Modules/Families/Insteon/Insteon_PLM.py
+@name:      PyHouse/src/Modules/Families/Insteon/Insteon_decoder.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2010-2015 by D. Brian Kimmel
@@ -185,9 +185,7 @@ class D_Util(object):
         """
         l_devcat = p_message[5] * 256 + p_message[6]
         p_obj.DevCat = int(l_devcat)
-        # self.update_object(p_obj)
-        l_debug_msg = "DevCat From={}, DevCat={:#x}, flags={} ".format(p_obj.Name, l_devcat, D_Util._decode_message_flag(p_message[8]))
-        # LOG.info("Got DevCat from light:{}, DevCat:{} ".format(p_obj.Name, conversions.int2dotted_hex(l_devcat, 2)))
+        l_debug_msg = " DevCat={:#x}, flags={} ".format(l_devcat, D_Util._decode_message_flag(p_message[8]))
         return l_debug_msg
 
     @staticmethod
@@ -220,14 +218,17 @@ class D_Util(object):
         else:
             return "{:#02X} ".format(p_byte)
 
-    def decode_command1(self, l_obj_from, l_name_from, l_name_to, l_9, l_10, l_message):
+    def decode_command1(self, l_obj_from, l_name_from, l_9, l_10, l_message):
+        """
+        Not used yet - being refactored out of the decode 50 command
+        """
         l_debug_msg = ''
         if l_obj_from._Command1 == MESSAGE_TYPES['product_data_request']:  # 0x03
             l_debug_msg += " product data request. - Should never happen - S/B 51 response"
         elif l_obj_from._Command1 == MESSAGE_TYPES['engine_version']:  # 0x0D
             l_engine_id = l_10
-            l_debug_msg += "Engine version From:{}, Sent to:{}, Id:{}; ".format(l_name_from, l_name_to, l_engine_id)
-            LOG.info("Got engine version from light:{}, To:{}, EngineID:{} ".format(l_name_from, l_name_to, l_engine_id))
+            l_debug_msg += "Engine version From:{}, EngineId:{}; ".format(l_name_from, l_engine_id)
+            LOG.info("Got engine version from light:{}, EngineID:{} ".format(l_name_from, l_engine_id))
         elif l_obj_from._Command1 == MESSAGE_TYPES['id_request']:  # 0x10
             l_debug_msg += "Request ID From:{}; ".format(l_name_from)
             LOG.info("Got an ID request. Light:{} ".format(l_name_from,))
@@ -363,13 +364,16 @@ class DecodeResponses(D_Util):
         l_message = p_controller_obj._Message
         l_obj_from = self.get_obj_from_message(l_message, 2)
         l_name_from = l_obj_from.Name
-        l_mflags = l_message[8]
         l_message_flags = self.get_message_flags(p_controller_obj._Message, 8)
         l_flags = D_Util._decode_message_flag(l_message_flags)
         l_cmd1 = l_message[9]
         l_cmd2 = l_message[10]
         l_data = [l_cmd1, l_cmd2]
-        l_debug_msg = 'Standard Message from: {}; Flags:{}; Cmd1:{}, Cmd2:{}; '.format(l_name_from, l_flags, l_cmd1, l_cmd2)
+        if l_obj_from.DeviceType == 2:
+            Insteon_HVAC.ihvac_utility().decode_50_record(l_obj_from, p_controller_obj)
+            return self.check_for_more_decoding(p_controller_obj, True)
+
+        l_debug_msg = 'Standard Message from: {}; Flags:{}; Cmd1:{:#x}, Cmd2:{:#x}; '.format(l_name_from, l_flags, l_cmd1, l_cmd2)
         # Break down bits 7(msb), 6, 5 into message type
         if l_message_flags & 0xE0 == 0x80:  # Broadcast/NAK Message (100)
             l_debug_msg += D_Util.get_devcat(l_message, l_obj_from)
@@ -411,7 +415,7 @@ class DecodeResponses(D_Util):
             pass
         l_ret = True
         self.m_pyhouse_obj.APIs.Comp.MqttAPI.MqttPublish("pyhouse/lighting/{}/info".format(l_name_from), "InsteonDecoder {}".format(l_debug_msg))
-        LOG.info(l_debug_msg)
+        # LOG.info(l_debug_msg)
         return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_51_record(self, p_controller_obj):

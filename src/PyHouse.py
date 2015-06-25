@@ -44,8 +44,12 @@ It is intended to run on everything from a small, low power bare bones system to
  houses in several, widespread locations.
 It now (2013) runs on Raspberry Pi so that is the primary target.
 
+The system is controlled via a browser connecting to a web server that is integrated into PyHouse.
 
-The system is controlled via a browser connecting to a web server that will be integrated into PyHouse.
+There are two components of this software.
+The first is "computer' and is started first.
+The second is 'house' and is started second.
+See those modules to find out what each does.
 
 @TODO:
         Find proper ports for controllers

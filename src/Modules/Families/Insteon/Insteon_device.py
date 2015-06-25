@@ -10,7 +10,7 @@
 @summary:   This module is for Insteon
 
 This is the main module for the Insteon family of devices.
-it provides the single interface into the family.
+It provides the single interface into the family.
 Several other Insteon modules are included by this and are invisible to the other families.
 
 This module loads the information about all the Insteon devices.
