@@ -22,6 +22,11 @@ see: 2441xxx pdf guides
 """
 
 
+# Import system type stuff
+
+# Import PyMh files
+from Modules.Utilities import json_tools
+
 
 class Util(object):
     """
@@ -39,6 +44,7 @@ class ihvac_utility(object):
         """
         @param p_device_obj: is the Device (light, thermostat...) we are decoding.
         """
+        l_mqtt_topic = 'pyhouse/thermostat/{}'.format(p_device_obj.Name)
         l_mqtt_message = "Thermostat: "
         l_message = p_controller_obj._Message
         l_cmd1 = l_message[9]
@@ -51,8 +57,11 @@ class ihvac_utility(object):
         if l_cmd1 == 0x13:
             l_mqtt_message += " Off; "
         if l_cmd1 == 0x6e:
+            p_device_obj.CurrentTemperature = l_cmd2
+            l_mqtt_topic += '/temperature'
             l_mqtt_message += ' temp = {}; '.format(l_cmd2)
-        p_pyhouse_obj.APIs.Comp.MqttAPI.MqttPublish("pyhouse/thermostat/{}/info".format(p_device_obj.Name), l_mqtt_message)
+        l_json = json_tools.encode_json(p_device_obj)
+        p_pyhouse_obj.APIs.Comp.MqttAPI.MqttPublish(l_mqtt_topic, l_mqtt_message)
         return
 
 # ## END DBK

@@ -9,40 +9,46 @@
 @note:      Created on Nov 6, 2013
 @Summary:   This module is not currently used
 
-
 """
 
-class JsonDict(dict):
-    """A dictionary with attribute-style access. It maps attribute access to the real dictionary.
+
+# Import system type stuff
+import jsonpickle
+
+# Import PyMh files
+
+
+def encode_json(p_obj):
+    """Convert a python object to a valid json object.
     """
-    def __init__(self, init = {}):
-        dict.__init__(self, init)
+    try:
+        l_json = jsonpickle.encode(p_obj, unpicklable = False, max_depth = 5)
+    except (TypeError, ValueError) as l_error:
+        print('web_utils.encode_json ERROR {0:}'.format(l_error))
+        l_json = u'{}'
+    return l_json
 
-    def __getstate__(self):
-        return self.__dict__.items()
+def decode_json_unicode(p_json):
+    """Convert a json object to a valid object.
+    The onject keys and values are all encoded in unicode
+    """
+    try:
+        l_json = jsonpickle.decode(p_json)
+    except (TypeError, ValueError) as l_error:
+        print('web_utils.encode_json ERROR {0:}'.format(l_error))
+        l_json = u'{}'
+    return l_json
 
-    def __setstate__(self, items):
-        for key, val in items:
-            self.__dict__[key] = val
-
-    def __repr__(self):
-        return "%s(%s)" % (self.__class__.__name__, dict.__repr__(self))
-
-    def __setitem__(self, key, value):
-        return super(JsonDict, self).__setitem__(key, value)
-
-    def __getitem__(self, name):
-        item = super(JsonDict, self).__getitem__(name)
-        return JsonDict(item) if type(item) == dict else item
-
-    def __delitem__(self, name):
-        return super(JsonDict, self).__delitem__(name)
-
-    __getattr__ = __getitem__
-    __setattr__ = __setitem__
-
-    def copy(self):
-        ch = JsonDict(self)
-        return ch
+def convert_from_unicode(p_input):
+    """Convert unicode strings to python 2 strings.
+    """
+    if isinstance(p_input, dict):
+        return {convert_from_unicode(key): convert_from_unicode(value) for key, value in p_input.iteritems()}
+    elif isinstance(p_input, list):
+        return [convert_from_unicode(element) for element in p_input]
+    elif isinstance(p_input, unicode):
+        return p_input.encode('ascii')
+    else:
+        return p_input
 
 # ## END DBK

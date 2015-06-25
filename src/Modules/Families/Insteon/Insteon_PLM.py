@@ -388,6 +388,13 @@ class LightHandlerAPI(InsteonPlmAPI):
         LOG.info('Request Status from device: {0:}'.format(p_obj.Name))
         self.queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['status_request'], 0)  # 0x19
 
+    def _get_one_thermostat_status(self, p_controller_obj, p_obj):
+        """
+        Get the status of a thermostat.
+        """
+        LOG.info('Request Status from thermostat device: {0:}'.format(p_obj.Name))
+        self.queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['thermostat_get_zone_temp'], 0)  # 0x6A
+
     def _get_engine_version(self, p_controller_obj, p_obj):
         """ i1 = pre 2007 I think
             i2 = no checksum - new commands
@@ -419,17 +426,22 @@ class LightHandlerAPI(InsteonPlmAPI):
             return
         self._get_id_request(p_controller_obj, p_obj)
         self._get_engine_version(p_controller_obj, p_obj)
+        self._get_one_thermostat_status(p_controller_obj, p_obj)
 
     def get_all_device_information(self, p_pyhouse_obj, p_controller_obj):
         """Get the status (current level) of all insteon devices.
         """
         LOG.info('Getting device information of all Insteon devices')
+        LOG.info('Getting device information of all Insteon Lights')
         for l_obj in p_pyhouse_obj.House.DeviceOBJs.Lights.itervalues():
             self._get_obj_info(p_controller_obj, l_obj)
+        LOG.info('Getting device information of all Insteon Buttons')
         for l_obj in p_pyhouse_obj.House.DeviceOBJs.Buttons.itervalues():
             self._get_obj_info(p_controller_obj, l_obj)
+        LOG.info('Getting device information of all Insteon Controllers')
         for l_obj in p_pyhouse_obj.House.DeviceOBJs.Controllers.itervalues():
             self._get_obj_info(p_controller_obj, l_obj)
+        LOG.info('Getting device information of all Insteon Thermostats')
         for l_obj in p_pyhouse_obj.House.DeviceOBJs.Thermostats.itervalues():
             self._get_thermostat_obj_info(p_controller_obj, l_obj)
 
