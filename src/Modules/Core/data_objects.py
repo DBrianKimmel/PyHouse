@@ -17,7 +17,7 @@ Specific data may be loaded into some attributes for unit testing.
 """
 from nevow.livepage import self
 
-__version_info__ = (1, 3, 2)
+__version_info__ = (1, 3, 3)
 __version__ = '.'.join(map(str, __version_info__))
 
 
@@ -281,6 +281,7 @@ class ThermostatData(ABaseObject):
         self.HeatSetPoint = 0
         self.ThermostatMode = 'Cool'  # Cool | Heat | Auto | EHeat
         self.ThermostatScale = 'F'  # F | C
+        self.ThermostatStatus = 'Off'  # On
         self.DeviceType = 0
         self.DeviceSubType = 0
 

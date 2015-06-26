@@ -21,6 +21,7 @@ class InsteonData(object):
     def __init__(self):
         self.ControllerFamily = 'Insteon'
         self.DevCat = 0  # DevCat and SubCat (2 bytes)
+        self.EngineID = 0
         self.GroupList = ''
         self.GroupNumber = 0
         self.InsteonAddress = 0  # Long integer internally - '1A.B3.3C' for external reaability

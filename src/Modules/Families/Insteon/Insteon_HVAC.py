@@ -53,15 +53,17 @@ class ihvac_utility(object):
         if l_cmd1 == 0x01:
             l_mqtt_message += " Set Mode; "
         if l_cmd1 == 0x11:
+            p_device_obj.ThermostatStatus = 'On'
             l_mqtt_message += " On; "
         if l_cmd1 == 0x13:
+            p_device_obj.ThermostatStatus = 'Off'
             l_mqtt_message += " Off; "
         if l_cmd1 == 0x6e:
             p_device_obj.CurrentTemperature = l_cmd2
             l_mqtt_topic += '/temperature'
             l_mqtt_message += ' temp = {}; '.format(l_cmd2)
         l_json = json_tools.encode_json(p_device_obj)
-        p_pyhouse_obj.APIs.Comp.MqttAPI.MqttPublish(l_mqtt_topic, l_mqtt_message)
+        p_pyhouse_obj.APIs.Comp.MqttAPI.MqttPublish(l_mqtt_topic, l_json)
         return
 
 # ## END DBK

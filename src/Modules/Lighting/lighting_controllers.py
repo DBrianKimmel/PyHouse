@@ -93,6 +93,7 @@ class LCApi(ReadWriteConfigXml):
                 self.m_count += 1
         except AttributeError as e_error:  # No Controller section
             LOG.warning('No Controllers found - {0:}'.format(e_error))
+        LOG.info("Loaded {} Controllers".format(self.m_count))
         return l_dict
 
 

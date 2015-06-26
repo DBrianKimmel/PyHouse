@@ -7,7 +7,9 @@
 @Copyright: (c) 2013-2015 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 6, 2013
-@Summary:   This module is not currently used
+@Summary:   This module is being phased in and web json is being phased out.
+
+Json is now used for Mqtt messages in addition to web browser.
 
 """
 
@@ -30,7 +32,7 @@ def encode_json(p_obj):
 
 def decode_json_unicode(p_json):
     """Convert a json object to a valid object.
-    The onject keys and values are all encoded in unicode
+    The object keys and values are all encoded in unicode
     """
     try:
         l_json = jsonpickle.decode(p_json)
@@ -40,7 +42,7 @@ def decode_json_unicode(p_json):
     return l_json
 
 def convert_from_unicode(p_input):
-    """Convert unicode strings to python 2 strings.
+    """Convert unicode strings to python 2.7 strings.
     """
     if isinstance(p_input, dict):
         return {convert_from_unicode(key): convert_from_unicode(value) for key, value in p_input.iteritems()}

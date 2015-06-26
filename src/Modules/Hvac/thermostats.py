@@ -76,6 +76,7 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         except AttributeError as e_err:
             l_msg = 'ReadAllThermostats AttributeError {0:}'.format(e_err)
             LOG.error(l_msg)
+        LOG.info("Loaded {} Thermostats".format(self.m_count))
         return l_ret
 
 

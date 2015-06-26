@@ -29,6 +29,7 @@ PLEASE REFACTOR ME!
 # Import PyMh files
 from Modules.Families.Insteon.Insteon_data import InsteonData
 from Modules.Core import conversions
+from Modules.Utilities import json_tools
 from Modules.Utilities.tools import PrintBytes
 from Modules.Families.Insteon.Insteon_constants import ACK, MESSAGE_TYPES, MESSAGE_LENGTH, NAK, STX
 from Modules.Families.Insteon.Insteon_utils import Util
@@ -362,60 +363,59 @@ class DecodeResponses(D_Util):
         [10] = command 2
         """
         l_message = p_controller_obj._Message
-        l_obj_from = self.get_obj_from_message(l_message, 2)
-        l_name_from = l_obj_from.Name
+        l_device_obj = self.get_obj_from_message(l_message, 2)
         l_message_flags = self.get_message_flags(p_controller_obj._Message, 8)
         l_flags = D_Util._decode_message_flag(l_message_flags)
         l_cmd1 = l_message[9]
         l_cmd2 = l_message[10]
         l_data = [l_cmd1, l_cmd2]
-        if l_obj_from.DeviceType == 2:
-            Insteon_HVAC.ihvac_utility().decode_50_record(self.m_pyhouse_obj, l_obj_from, p_controller_obj)
+        if l_device_obj.DeviceType == 2:
+            Insteon_HVAC.ihvac_utility().decode_50_record(self.m_pyhouse_obj, l_device_obj, p_controller_obj)
             return self.check_for_more_decoding(p_controller_obj, True)
 
-        l_debug_msg = 'Standard Message from: {}; Flags:{}; Cmd1:{:#x}, Cmd2:{:#x}; '.format(l_name_from, l_flags, l_cmd1, l_cmd2)
+        l_debug_msg = 'Standard Message from: {}; Flags:{}; Cmd1:{:#x}, Cmd2:{:#x}; '.format(l_device_obj.Name, l_flags, l_cmd1, l_cmd2)
         # Break down bits 7(msb), 6, 5 into message type
         if l_message_flags & 0xE0 == 0x80:  # Broadcast/NAK Message (100)
-            l_debug_msg += D_Util.get_devcat(l_message, l_obj_from)
+            l_debug_msg += D_Util.get_devcat(l_message, l_device_obj)
         elif l_message_flags & 0xE0 == 0xC0:  # (110) all link broadcast of group id
             l_group = l_message[7]
             l_debug_msg += "All-Link broadcast - Group:{}, Data:{}; ".format(l_group, l_data)
             LOG.info("== 50B All-link Broadcast Group:{}, Data:{} ==".format(l_group, l_data))
         #
         try:
-            if l_obj_from._Command1 == MESSAGE_TYPES['product_data_request']:  # 0x03
+            if l_device_obj._Command1 == MESSAGE_TYPES['product_data_request']:  # 0x03
                 l_debug_msg += " product data request. - Should never happen - S/B 51 response"
-            elif l_obj_from._Command1 == MESSAGE_TYPES['engine_version']:  # 0x0D
+            elif l_device_obj._Command1 == MESSAGE_TYPES['engine_version']:  # 0x0D
                 l_engine_id = l_cmd2
                 l_debug_msg += "Engine version is:{}; ".format(l_engine_id)
-                # LOG.info("Got engine version from light:{}, is:{}, EngineID:{}".format(l_name_from, l_engine_id))
-            elif l_obj_from._Command1 == MESSAGE_TYPES['id_request']:  # 0x10
-                l_debug_msg += "Request ID From:{}; ".format(l_name_from)
-                # LOG.info("Got an ID request. Light:{}".format(l_name_from,))
-            elif l_obj_from._Command1 == MESSAGE_TYPES['on']:  # 0x11
-                l_obj_from.CurLevel = 100
-                l_debug_msg += "Device:{} turned Full ON  ; ".format(l_name_from)
-                self.update_object(l_obj_from)
-            elif l_obj_from._Command1 == MESSAGE_TYPES['off']:  # 0x13
-                l_obj_from.CurLevel = 0
-                l_debug_msg += "Light:{} turned Full OFF; ".format(l_name_from)
-                self.update_object(l_obj_from)
-            elif l_obj_from._Command1 == MESSAGE_TYPES['status_request']:  # 0x19
+                # LOG.info("Got engine version from light:{}, is:{}, EngineID:{}".format(l_device_obj.Name, l_engine_id))
+            elif l_device_obj._Command1 == MESSAGE_TYPES['id_request']:  # 0x10
+                l_debug_msg += "Request ID From:{}; ".format(l_device_obj.Name)
+                # LOG.info("Got an ID request. Light:{}".format(l_device_obj.Name,))
+            elif l_device_obj._Command1 == MESSAGE_TYPES['on']:  # 0x11
+                l_device_obj.CurLevel = 100
+                l_debug_msg += "Device:{} turned Full ON  ; ".format(l_device_obj.Name)
+                self.update_object(l_device_obj)
+            elif l_device_obj._Command1 == MESSAGE_TYPES['off']:  # 0x13
+                l_device_obj.CurLevel = 0
+                l_debug_msg += "Light:{} turned Full OFF; ".format(l_device_obj.Name)
+                self.update_object(l_device_obj)
+            elif l_device_obj._Command1 == MESSAGE_TYPES['status_request']:  # 0x19
                 l_level = int(((l_cmd2 + 2) * 100) / 256)
-                l_obj_from.CurLevel = l_level
-                l_debug_msg += "Status of light:{} is level:{}; ".format(l_name_from, l_level)
-                LOG.info("PLM:{} Got Light Status From:{}, Level is:{} ".format(p_controller_obj.Name, l_name_from, l_level))
-                self.update_object(l_obj_from)
-            elif l_obj_from._Command1 == MESSAGE_TYPES['thermostat_report']:  # 0x6e
-                _l_ret1 = Insteon_HVAC.ihvac_utility().decode_50_record(l_obj_from, l_cmd1, l_cmd2)
+                l_device_obj.CurLevel = l_level
+                l_debug_msg += "Status of light:{} is level:{}; ".format(l_device_obj.Name, l_level)
+                LOG.info("PLM:{} Got Light Status From:{}, Level is:{} ".format(p_controller_obj.Name, l_device_obj.Name, l_level))
+                self.update_object(l_device_obj)
+            elif l_device_obj._Command1 == MESSAGE_TYPES['thermostat_report']:  # 0x6e
+                _l_ret1 = Insteon_HVAC.ihvac_utility().decode_50_record(l_device_obj, l_cmd1, l_cmd2)
                 pass
             else:
-                l_debug_msg += " Unknown type - last command was {:#x} - {}; ".format(l_obj_from._Command1, PrintBytes(l_message))
+                l_debug_msg += " Unknown type - last command was {:#x} - {}; ".format(l_device_obj._Command1, PrintBytes(l_message))
         except AttributeError:
             pass
         l_ret = True
-        self.m_pyhouse_obj.APIs.Comp.MqttAPI.MqttPublish("pyhouse/lighting/{}/info".format(l_name_from), "InsteonDecoder {}".format(l_debug_msg))
-        # LOG.info(l_debug_msg)
+        l_json = json_tools.encode_json(l_device_obj)
+        self.m_pyhouse_obj.APIs.Comp.MqttAPI.MqttPublish("pyhouse/lighting/{}/info".format(l_device_obj.Name), l_json)
         return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_51_record(self, p_controller_obj):

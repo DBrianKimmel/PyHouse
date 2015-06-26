@@ -59,6 +59,7 @@ class LBApi(ReadWriteConfigXml):
         except AttributeError as e_error:  # No Buttons
             LOG.warning('No Buttons defined - {0:}'.format(e_error))
             l_button_dict = {}
+        LOG.info("Loaded {} buttons".format(self.m_count))
         return l_button_dict
 
     def write_one_button_xml(self, p_button_obj):

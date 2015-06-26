@@ -73,6 +73,7 @@ class LLApi(ReadWriteConfigXml):
         except AttributeError as e_error:  # No Lights section
             LOG.warning('Lighting_Lights - No Lights defined - {0:}'.format(e_error))
             l_lights_dict = {}
+        LOG.info("Loaded {} Lights".format(self.m_count))
         return l_lights_dict
 
     def _write_light_data(self, p_light_obj, l_light_xml):
