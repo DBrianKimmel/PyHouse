@@ -410,7 +410,7 @@ class DecodeResponses(D_Util):
                 _l_ret1 = Insteon_HVAC.ihvac_utility().decode_50_record(l_device_obj, l_cmd1, l_cmd2)
                 pass
             else:
-                l_debug_msg += " Unknown type - last command was {:#x} - {}; ".format(l_device_obj._Command1, PrintBytes(l_message))
+                l_debug_msg += " Unknown type - last command was {} - {}; ".format(l_device_obj._Command1, PrintBytes(l_message))
         except AttributeError:
             pass
         l_ret = True
