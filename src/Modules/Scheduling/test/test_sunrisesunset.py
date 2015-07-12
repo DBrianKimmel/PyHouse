@@ -22,7 +22,6 @@ from math import pi
 # Import PyMh files
 from Modules.Scheduling import sunrisesunset
 from Modules.Scheduling.sunrisesunset import JDate, JulianParameters, JDATE2000
-
 from test.testing_mixin import SetupPyHouseObj
 from test import xml_data
 from Modules.Utilities.tools import PrettyPrintAny
@@ -166,7 +165,7 @@ class A02_Time(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
-        self.m_api = sunrisesunset.API()
+        self.m_api = sunrisesunset.API(self.m_pyhouse_obj)
 
     def test_01_TZ(self):
         pass
@@ -181,13 +180,13 @@ class E01_Results(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
-        self.m_api = sunrisesunset.API()
+        self.m_api = sunrisesunset.API(self.m_pyhouse_obj)
 
     def test_01_Sunrise(self):
         """
         Given a date, we should get a correct sunrise datetime
         """
-        self.m_api.Start(self.m_pyhouse_obj, T_DATE)
+        self.m_api.Start(T_DATE)
         self.m_earth = self.m_api._load_location(self.m_pyhouse_obj, T_DATE)
         l_result = self.m_api.get_sunrise_datetime()
         print('Sunrise for date {};  Calc: {};  S/B: {}'.format(T_DATE, l_result, T_SUNRISE))
@@ -198,7 +197,7 @@ class E01_Results(SetupMixin, unittest.TestCase):
         """
         Given a date, we should get a correct sunset datetime
         """
-        self.m_api.Start(self.m_pyhouse_obj, T_DATE)
+        self.m_api.Start(T_DATE)
         l_result = self.m_api.get_sunset_datetime()
         print('Sunset for date {};  Calc: {};  S/B: {}'.format(T_DATE, l_result, T_SUNSET))
         self.assertEqual(l_result, T_SUNSET)
@@ -211,7 +210,7 @@ class C01_ObserverEarth(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         self.m_earth = SetupMixin.load_earth(self.m_pyhouse_obj)
-        self.m_api = sunrisesunset.API()
+        self.m_api = sunrisesunset.API(self.m_pyhouse_obj)
 
     def test_01_Location(self):
         l_location = self.m_api._load_location(self.m_pyhouse_obj, T_DATE)
@@ -300,7 +299,7 @@ class D01_Sun(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
-        self.m_api = sunrisesunset.API()
+        self.m_api = sunrisesunset.API(self.m_pyhouse_obj)
         self.m_earth = SetupMixin.load_earth(self.m_pyhouse_obj)
         self.m_julian = JDate.calculate_all_julian_dates(self.test_date_1, self.m_earth)
         self.m_solar = sunrisesunset.SolarParameters()
@@ -417,16 +416,16 @@ class D01_Sun(SetupMixin, unittest.TestCase):
         PrettyPrintAny(l_ret, 'Result')
 
     def test_91_start(self):
-        self.m_api.Start(self.m_pyhouse_obj, self.test_date_1)
+        self.m_api.Start(self.test_date_1)
 
     def test_94_sunrise(self):
-        self.m_api.Start(self.m_pyhouse_obj, self.test_date_1)
+        self.m_api.Start(self.test_date_1)
         result = self.m_api.get_sunrise_datetime()
         print('  Sunrise: {0:}'.format(result))
         self.assertEqual(result, T_SUNRISE)
 
     def test_95_sunset(self):
-        self.m_api.Start(self.m_pyhouse_obj, self.test_date_1)
+        self.m_api.Start(self.test_date_1)
         result = self.m_api.get_sunset_datetime()
         print('   Sunset: {0:}  {1:}'.format(result, T_SUNSET))
         self.assertEqual(result, T_SUNSET)

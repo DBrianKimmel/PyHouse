@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Utilities.test.test_tools -*-
 
-@name: PyHouse/src/Modules/Utilities/tools.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2013-2014 by D. Brian Kimmel
-@note: Created on Apr 11, 2013
-@license: MIT License
-@summary: Various functions and utility methods.
+@name:      PyHouse/src/Modules/Utilities/tools.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2013-2015 by D. Brian Kimmel
+@note:      Created on Apr 11, 2013
+@license:   MIT License
+@summary:   Various functions and utility methods.
 
 Various tools that can be imported.  Named differently for recognition.
 
@@ -43,6 +43,8 @@ class PrettyPrintAny(object):
             self._print_unicode(p_any, maxlen = maxlen, indent = indent)
         elif isinstance(p_any, list):
             self._print_list(p_any, maxlen = maxlen, indent = indent + 4)
+        elif isinstance(p_any, type(None)):
+            self._print_none(p_any)
         else:  # Default to an object
             self._print_object(p_any, maxlen = maxlen, indent = indent)
         print('---------------------------------')
@@ -86,7 +88,6 @@ class PrettyPrintAny(object):
             print('{}\t{}'.format(l_ix, l_line))
             l_ix += 1
 
-
     def _print_object(self, p_obj, maxlen, indent = 24, maxspew = 2000):
         l_col_1_width = 28
         l_tab = 4
@@ -99,6 +100,9 @@ class PrettyPrintAny(object):
         l_attrs.sort()
         for (attr, l_val) in l_attrs:
             print(PrettyPrintCols(('', attr, truncstring(str(l_val), maxspew)), l_tabbedwidths, ' '))
+
+    def _print_none(self, p_obj):
+        print('Object is "None" {}'.format(p_obj))
 
 
 

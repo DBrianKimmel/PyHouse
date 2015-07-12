@@ -24,13 +24,13 @@ TODO:Round sunset and sunrise to the nearest minute.
 # Import system type stuff
 import datetime
 import dateutil.parser as dparser
-from dateutil.tz import *
+from dateutil.tz import gettz, tzlocal  # *
 import math
 from math import pi
 
 # Import PyMh files
+from Modules.Core.data_objects import LocationData
 from Modules.Computer import logging_pyh as Logger
-# from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 0
 LOG = Logger.getLogger('PyHouse.Sunrise        ')
@@ -257,12 +257,11 @@ class JDate(object):
         Convert days since Noon Jan 1 4000  to YMD-HMS.
 
         Remember that Julian here starts at noon so subtract 0.5 days
-
+        @param p_julian: is a float julian date
         @return: a datetime.date object
         """
         l_jd = int(p_julian - 0.5 + 730121)  # Days from 0 AD to 2000 AD
         l_date = datetime.date.fromordinal(l_jd)
-        # print('Date = {}'.format(l_date))
         l_tm = ((p_julian - 0.5) % 1.0)
         l_hr = int(l_tm * 24)
         l_min = int(l_tm * 1440 % 60)
@@ -270,7 +269,6 @@ class JDate(object):
         l_time = datetime.time(l_hr, l_min, l_sec, 0, tzinfo = LocationTz())
         l_dt = datetime.datetime.combine(l_date, l_time)
         l_dt = l_dt + l_time.utcoffset()
-        # print('DT {}'.format(l_dt))
         return l_dt
 
     @staticmethod
@@ -521,8 +519,6 @@ class Utility(SSAPI, SunriseSet):
         l_dst = datetime.datetime(l.year, l.month, l.day, 12, 0, 0).dst > 0
         p_earth_data._IsDaylightSavingsTime = l_dst
         p_earth_data._TimeZoneOffset = None  # l_zone._ttinfo_before
-        # if l_dst:
-        #    p_earth_data._TimeZoneOffset = l_zone._dstoffset
         l_ret = tzlocal()
         return p_earth_data, l_zone
 
@@ -530,14 +526,16 @@ class Utility(SSAPI, SunriseSet):
 
 class API(Utility):
 
-    def Start(self, p_pyhouse_obj, p_gregorian_date = datetime.date.today()):
+    def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_earth_data = self._load_location(p_pyhouse_obj, p_gregorian_date)
+
+    def Start(self, p_gregorian_date = datetime.date.today()):
+        self.m_earth_data = self._load_location(self.m_pyhouse_obj, p_gregorian_date)
         self.m_julian_data = JDate.calculate_all_julian_dates(p_gregorian_date, self.m_earth_data)
         self.m_solar_data = self._calculate_solar_params()
         self.m_solar_data = self.calcSolarNoonParams(self.m_earth_data, self.m_julian_data)
-        p_pyhouse_obj.House.RefOBJs.Location._Sunrise = self.m_solar_data.Sunrise
-        p_pyhouse_obj.House.RefOBJs.Location._Sunset = self.m_solar_data.Sunset
+        self.m_pyhouse_obj.House.RefOBJs.Location.RiseSet.SunRise = self.get_sunrise_datetime()
+        self.m_pyhouse_obj.House.RefOBJs.Location.RiseSet.SunSet = self.get_sunset_datetime()
         LOG.info('Started.')
 
     def Stop(self):

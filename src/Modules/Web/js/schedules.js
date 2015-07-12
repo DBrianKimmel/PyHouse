@@ -1,11 +1,11 @@
 /**
- * @name: PyHouse/src/Modules/Web/js/schedules.js
- * @author: D. Brian Kimmel
- * @contact: D.BrianKimmel@gmail.com
- * @Copyright (c) 2014 by D. Brian Kimmel
- * @license: MIT License
- * @note: Created on Mar 11, 2014
- * @summary: Displays the Schedule widget.
+ * @name:      PyHouse/src/Modules/Web/js/schedules.js
+ * @author:    D. Brian Kimmel
+ * @contact:   D.BrianKimmel@gmail.com
+ * @copyright: (c) 2014-2015 by D. Brian Kimmel
+ * @license:   MIT License
+ * @note:      Created on Mar 11, 2014
+ * @summary:   Displays the Schedule widget.
  *
  */
 // import Nevow.Athena

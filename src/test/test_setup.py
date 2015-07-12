@@ -1,8 +1,8 @@
 """
-@name:      C:/Users/briank/workspace/PyHouse/src/test/test_setup.py
+@name:      PyHouse/src/test/test_setup.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@Copyright: (c) 2015 by D. Brian Kimmel
+@copyright: (c) 2015-2015 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 19, 2015
 @Summary:

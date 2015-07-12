@@ -15,24 +15,19 @@
 
 # Import PyMh files
 from Modules.Families.Null.Null_data import NullData
-from Modules.Utilities.xml_tools import stuff_new_attrs
 from Modules.Computer import logging_pyh as Logger
 
-g_debug = 9
 LOG = Logger.getLogger('PyHouse.Null_xml    ')
 
+class API(object):
 
-def ReadXml(p_device_obj, _p_entry_xml):
-    """
-    @param p_entry_xml: is the e-tree XML house object
-    @param p_house: is the text name of the House.
-    @return: a dict of the entry to be attached to a house object.
-    """
-    l_obj = NullData()
-    stuff_new_attrs(p_device_obj, l_obj)
-    return p_device_obj
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
 
-def WriteXml(p_entry_xml, p_device_obj):
-    pass
+    def ReadXml(self, p_device_obj, _p_entry_xml):
+        return p_device_obj
+
+    def WriteXml(self, p_entry_xml, p_device_obj):
+        pass
 
 # ## END DBK

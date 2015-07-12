@@ -1,11 +1,11 @@
 """
-@name: PyHouse/src/Modules/web/test/test_web_clock.py
-@author: briank
-@contact: D.BrianKimmel@gmail.com>
-@Copyright: (c)  2014 by briank
-@license: MIT License
-@note: Created on Jun 29, 2013
-@Summary:  Test web utilities module
+@name:      PyHouse/src/Modules/web/test/test_web_clock.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com>
+@copyright: (c) 2014-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Jun 29, 2013
+@Summary:   Test web utilities module
 
 """
 

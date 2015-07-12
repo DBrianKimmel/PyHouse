@@ -1,11 +1,11 @@
 """
-@name: PyHouse/src/Modules/Computer/Internet/test/test_inet_find_external_ip.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com>
-@Copyright: (c)  2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Jun 27, 2014
-@Summary: Test finding an external IP address.
+@name:      PyHouse/src/Modules/Computer/Internet/test/test_inet_find_external_ip.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com>
+@copyright: (c) 2014-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Jun 27, 2014
+@Summary:   Test finding an external IP address.
 
 """
 

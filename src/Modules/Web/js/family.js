@@ -1,11 +1,11 @@
 /**
- * @name: PyHouse/src/Modules/Web/js/family.js
- * @author: D. Brian Kimmel
- * @contact: D.BrianKimmel@gmail.com
- * @Copyright (c) 2014 by D. Brian Kimmel
- * @license: MIT License
- * @note: Created on Dec 09, 2014
- * @summary: Lcars components to handle all the various device families.
+ * @name:      PyHouse/src/Modules/Web/js/family.js
+ * @author:    D. Brian Kimmel
+ * @contact:   D.BrianKimmel@gmail.com
+ * @copyright: (c) 2014-2015 by D. Brian Kimmel
+ * @license:   MIT License
+ * @note:      Created on Dec 09, 2014
+ * @summary:   Lcars components to handle all the various device families.
  * Currently:
  * 				Insteon
  * 				UPB

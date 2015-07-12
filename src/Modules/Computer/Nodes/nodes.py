@@ -30,20 +30,22 @@ This module will establish a domain network and use Twisted's AMP protocol to pa
 # Import system type stuff
 
 # Import PyMh files and modules.
-from Modules.Computer.Nodes import node_local, node_discovery
+from Modules.Computer.Nodes.node_discovery import API as discoveryAPI
+from Modules.Computer.Nodes.node_local import API as localAPI
 
 g_debug = 0
 
 
 class API(object):
 
-    def __init__(self):
-        self.m_local = node_local.API()
-        self.m_discovery = node_discovery.API()
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_local = localAPI(p_pyhouse_obj)
+        self.m_discovery = discoveryAPI(p_pyhouse_obj)
 
-    def Start(self, p_pyhouse_obj):
-        self.m_local.Start(p_pyhouse_obj)
-        self.m_discovery.Start(p_pyhouse_obj)
+    def Start(self):
+        self.m_local.Start()
+        self.m_discovery.Start()
 
     def Stop(self):
         self.m_discovery.Stop()
@@ -52,5 +54,6 @@ class API(object):
     def SaveXml(self, p_xml):
         self.m_discovery.SaveXml(p_xml)
         self.m_local.SaveXml(p_xml)
+        return p_xml
 
 # ## END DBK

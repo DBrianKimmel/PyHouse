@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse/src/Modules/Families/Insteon/test/test_Insteon_utils.py -*-
 
-@name: PyHouse/src/Modules/Families/Insteon/test/test_Insteon_utils.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@Copyright (c) 2013-2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Apr 27, 2013
-@summary: This module is for Insteon conversion routines.
+@name:      PyHouse/src/Modules/Families/Insteon/test/test_Insteon_utils.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2013-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Apr 27, 2013
+@summary:   This module is for Insteon conversion routines.
 
 This is a bunch of routines to deal with Insteon devices.
 Some convert things like addresses '14.22.A5' to a int for ease of handling.
@@ -20,9 +20,7 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 from Modules.Computer import logging_pyh as Logger
 from Modules.Families.Insteon.Insteon_constants import InsteonError
 
-
 LOG = Logger.getLogger('PyHouse.Insteon_Utils  ')
-
 
 
 class Util(object):
@@ -35,7 +33,7 @@ class Util(object):
         The message must exist and be long enough to include a 3 byte area for the address.
         """
         if p_int > 16777215 or p_int < 0:
-            l_msg = 'ERROR - Insteon_utils - trying to convert {0:} to message byte string.'.format(p_int)
+            l_msg = 'ERROR - Insteon_utils - trying to convert {} to message byte string.'.format(p_int)
             LOG.error(l_msg)
             print(l_msg)
             p_int = 12245933  # 0xBADBAD

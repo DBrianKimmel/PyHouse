@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/web/web_buttons.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@Copyright: (c) 2013-2015 by D. Brian Kimmel
+@copyright: (c) 2013-2015 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 3, 2013
 @summary:   Web interface to buttons for the selected house.
@@ -54,7 +54,7 @@ class ButtonsElement(athena.LiveElement):
         l_obj.Active = l_json['Active']
         l_obj.Key = l_json['Key']
         l_obj.Level = l_json['Level']
-        if l_obj.ControllerFamily == 'Insteon':
+        if l_obj.DeviceFamily == 'Insteon':
             Insteon_utils.Util.get_json_data(l_obj, l_json)
 
 # ## END DBK

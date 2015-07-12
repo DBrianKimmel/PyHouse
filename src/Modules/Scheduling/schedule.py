@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Scheduling.test.test_schedule -*-
 
-@name:     PyHouse/src/Modules/Scheduling/schedule.py
-@author:   D. Brian Kimmel
-@contact:  D.BrianKimmel@gmail.com
-@Copyright (c) 2013-2015 by D. Brian Kimmel
-@license:  MIT License
-@note:     Created on Apr 8, 2013
-@summary:  Schedule events
+@name:      PyHouse/src/Modules/Scheduling/schedule.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2013-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Apr 8, 2013
+@summary:   Schedule events
 
 
 Handle the home automation system schedule for a house.
@@ -51,12 +51,13 @@ import datetime
 import dateutil.parser as dparser
 
 # Import PyMh files
-from Modules.Scheduling import schedule_xml
-from Modules.Lighting import lighting
-from Modules.Hvac import thermostats
-from Modules.Irrigation import irrigation
+from Modules.Core.data_objects import RiseSetData
+from Modules.Scheduling.schedule_xml import ScheduleXmlAPI
+# from Modules.Lighting.lighting import API as lightingAPI
+# from Modules.Hvac.thermostats import API as hvacAPI
+# from Modules.Irrigation.irrigation import API as irrigationAPI
 from Modules.Utilities import tools
-from Modules.Utilities.tools import GetPyhouse  # , PrettyPrintAny
+from Modules.Utilities.tools import GetPyhouse
 from Modules.Computer import logging_pyh as Logger
 from Modules.Web import web_utils
 
@@ -116,18 +117,6 @@ class ScheduleTimer(object):
         self.m_schedule_timer = None
 
 
-
-class RiseSetData(object):
-    """
-    These fields are each an "aware" datetime.datetime
-    They were calculated by the sunrisesunset module for the house's location and timezone.
-    They are therefore, the local time of sunrise and sunset.
-    """
-    def __init__(self):
-        self.Sunrise = None
-        self.Sunset = None
-
-
 class ScheduleTime(object):
     """
     This class deals with extracting information from the time and dow fields of a schedule.
@@ -149,7 +138,7 @@ class ScheduleTime(object):
     def _extract_time_or_offset(self, p_timefield):
         """
         Extract the time or offset time from the timefield
-
+        @param p_timefield: is the text time field of the schedule.
         @return: a datetime.timedelta of the time portion of the field
         """
         l_time = dparser.parse(p_timefield, fuzzy = True)
@@ -186,13 +175,13 @@ class ScheduleTime(object):
         l_timefield = p_schedule_obj.Time.lower()
         l_offset = self._extract_time_or_offset(l_timefield)
         if 'sunrise' in l_timefield:
-            l_datetime = p_rise_set.Sunrise
+            l_datetime = p_rise_set.SunRise
             if '-' in l_timefield:
                 l_datetime = l_datetime - l_offset
             else:
                 l_datetime = l_datetime + l_offset
         elif 'sunset' in l_timefield:
-            l_datetime = p_rise_set.Sunset
+            l_datetime = p_rise_set.SunSet
             if '-' in l_timefield:
                 l_datetime = l_datetime - l_offset
             else:
@@ -251,12 +240,11 @@ class ScheduleTime(object):
         The unit tests for this is in the sunrisesunset module.
         this code just gets the values for this module
         """
-        l_riseset = RiseSetData()
-        l_riseset.Sunrise = p_pyhouse_obj.House.RefOBJs.Location._Sunrise
-        l_riseset.Sunset = p_pyhouse_obj.House.RefOBJs.Location._Sunset
+        # l_riseset = RiseSetData()
+        l_riseset = p_pyhouse_obj.House.RefOBJs.Location.RiseSet
         l_json = web_utils.JsonUnicode().encode_json(l_riseset)
-        p_pyhouse_obj.APIs.Comp.MqttAPI.MqttPublish("pyhouse/testing", l_json)
-        LOG.info("Sunrise:{0:}, Sunset:{1:}".format(l_riseset.Sunrise, l_riseset.Sunset))
+        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("pyhouse/testing", l_json)
+        LOG.info("Sunrise:{}, Sunset:{}".format(l_riseset.SunRise, l_riseset.SunSet))
         return l_riseset
 
 
@@ -288,7 +276,7 @@ class ScheduleExecution(object):
         l_light_obj = tools.get_light_object(self.m_pyhouse_obj, name = l_schedule_obj.LightName)
         LOG.info("Name:{0:}, Light:{1:}, Level:{2:}, Slot:{3:}".format(l_schedule_obj.Name, l_schedule_obj.LightName, l_schedule_obj.Level, p_slot))
         self.m_pyhouse_obj.APIs.House.LightingAPI.ChangeLight(l_light_obj, l_schedule_obj.Level)
-        self.m_pyhouse_obj.APIs.Comp.MqttAPI.MqttPublish("pyhouse/schedule/execute", l_schedule_json)
+        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("pyhouse/schedule/execute", l_schedule_json)
 
     def execute_schedules_list(self, p_slot_list = []):
         """
@@ -355,22 +343,13 @@ class ScheduleUtility(ScheduleTime):
 class UpdatePyhouse(object):
 
     @staticmethod
-    def add_api_references(p_pyhouse_obj):
-        p_pyhouse_obj.APIs.House.LightingAPI = lighting.API()
-        p_pyhouse_obj.APIs.House.HvacAPI = thermostats.API()
-        p_pyhouse_obj.APIs.House.IrrigationAPI = irrigation.API()
-
-    @staticmethod
     def start_scheduled_modules(p_pyhouse_obj):
         """
         TODO: Lighting must be first since it loads families etc.
         """
-        # l_json = web_utils.JsonUnicode().encode_json(p_pyhouse_obj.House.RefOBJs.Schedules)
-        p_pyhouse_obj.APIs.House.LightingAPI.Start(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.House.HvacAPI.Start(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.House.IrrigationAPI.Start(p_pyhouse_obj)
-        # print('schedule.atartScheduledModules {}'.format(PrettyPrintAny(p_pyhouse_obj.Computer, "schedule PyHouse.Computer")))
-        # p_pyhouse_obj.APIs.Comp.MqttAPI.MqttPublish("pyhouse/schedule/start", l_json)
+        p_pyhouse_obj.APIs.House.LightingAPI.Start()
+        p_pyhouse_obj.APIs.House.HvacAPI.Start()
+        p_pyhouse_obj.APIs.House.IrrigationAPI.Start()
 
     @staticmethod
     def stop_scheduled_modules(p_pyhouse_obj):
@@ -382,37 +361,44 @@ class UpdatePyhouse(object):
     def save_scheduled_modules(p_pyhouse_obj, p_xml):
         p_pyhouse_obj.APIs.House.HvacAPI.SaveXml(p_xml)
         p_pyhouse_obj.APIs.House.LightingAPI.SaveXml(p_xml)
-        p_pyhouse_obj.APIs.House.IrrigationAPI.SaveXml(p_xml)
         return p_xml
 
 
-class API(ScheduleUtility, ScheduleExecution):
+class Utility(ScheduleUtility, ScheduleExecution):
+
+    @staticmethod
+    def _init_component_apis(p_pyhouse_obj):
+        # p_pyhouse_obj.APIs.House.HvacAPI = hvacAPI(p_pyhouse_obj)
+        # p_pyhouse_obj.APIs.House.IrrigationAPI = irrigationAPI(p_pyhouse_obj)
+        pass
+
+
+class API(Utility):
     """Instantiated once for each house (active or not)
     """
 
     m_sunrisesunset_api = None
     m_pyhouse_obj = None
 
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        # Utility._init_component_apis(p_pyhouse_obj)
+
     def _fetch_sunrise_set(self):
-        l_sunrise = self.m_pyhouse_obj.House.RefOBJs.Location._Sunrise
-        l_sunset = self.m_pyhouse_obj.House.RefOBJs.Location._Sunset
+        l_sunrise = self.m_pyhouse_obj.House.RefOBJs.Location.RiseSet.SunRise
+        l_sunset = self.m_pyhouse_obj.House.RefOBJs.Location.RiseSet.SunSet
         LOG.info('Got Sunrise: {};   Sunset: {}'.format(l_sunrise, l_sunset))
         # node_mqtt.API().doPublishMessage(self.m_pyhouse_obj.Computer.Mqtt, "pyhouse/schedule/sunrise", l_sunrise)
 
-    def Start(self, p_pyhouse_obj):
+    def Start(self):
         """
         Extracts all from XML so an update will write correct info back out to the XML file.
-        Does not schedule a next entry for inactive houses.
-
-        @param p_house_obj: is a House object for the house being scheduled
         """
-        LOG.info("Starting.")
-        UpdatePyhouse.add_api_references(p_pyhouse_obj)
-        self.m_pyhouse_obj = p_pyhouse_obj
-        p_pyhouse_obj.House.RefOBJs.Schedules = schedule_xml.ReadWriteConfigXml().read_schedules_xml(p_pyhouse_obj)
+        self.m_pyhouse_obj.House.RefOBJs.Schedules = ScheduleXmlAPI().read_schedules_xml(self.m_pyhouse_obj)
         self._fetch_sunrise_set()
-        UpdatePyhouse.start_scheduled_modules(p_pyhouse_obj)
-        p_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self.set_schedule_timer, None)
+        UpdatePyhouse.start_scheduled_modules(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self.set_schedule_timer, None)
+        LOG.info("Started.")
 
     def Stop(self):
         """Stop everything under me.
@@ -425,8 +411,10 @@ class API(ScheduleUtility, ScheduleExecution):
         self.find_next_scheduled_events(self.m_pyhouse_obj, self._now_daytime())
         pass
 
-    def WriteXml(self, p_xml):
-        p_xml.append(schedule_xml.ReadWriteConfigXml().write_schedules_xml(self.m_pyhouse_obj.House.RefOBJs.Schedules))
+    def SaveXml(self, p_xml):
+        l_xml = ScheduleXmlAPI().write_schedules_xml(self.m_pyhouse_obj.House.RefOBJs.Schedules)
+        p_xml.append(l_xml)
         UpdatePyhouse.save_scheduled_modules(self.m_pyhouse_obj, p_xml)
+        LOG.info('Saved XML.')
 
 # ## END DBK

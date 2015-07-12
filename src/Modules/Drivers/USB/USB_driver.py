@@ -290,7 +290,6 @@ class API(UsbDriverAPI):
         if self.m_USB_obj.Device == None:
             LOG.debug('Message NOT written - No device.')
             return
-        # LOG.debug('Write - USB_obj {0:}'.format(PrettyPrintAny(self.m_USB_obj, 'USB_obj', 120)))
         self.write_usb(self.m_USB_obj, p_message)
 
 # ## END DBK

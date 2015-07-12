@@ -1,10 +1,10 @@
 """
-@name: PyHouse/src/Modules/Drivers/USB/test/test_USB_driver.py
-@author: briank
-@contact: D.BrianKimmel@gmail.com>
-@Copyright: (c)  2014 by briank
-@license: MIT License
-@note: Created on Jul 22, 2014
+@name:      PyHouse/src/Modules/Drivers/USB/test/test_USB_driver.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com>
+@copyright: (c) 2014-2015 by briank
+@license:   MIT License
+@note:      Created on Jul 22, 2014
 @Summary:
 
 """
@@ -19,6 +19,7 @@ RAW_01 = bytearray(b'\xF7\x50\x45\x0d\x45\x0d\x50\x45')
 RAW_02 = bytearray(b'\xF4\x0D\x50\x45\x0d\x00\x00\x00')
 RAW_03 = bytearray(b'\xF0\x00\x00\x00\x00\x00\x00\x00')
 RAW_04 = bytearray(0)
+
 
 class Test_01(unittest.TestCase):
 

@@ -2,7 +2,7 @@
 @name:      C:/Users/briank/workspace/PyHouse/src/Modules/Computer/Mqtt/test/xml_mqtt.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@Copyright: (c)  2015 by D. Brian Kimmel
+@copyright: (c) 2015-2015 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 3, 2015
 @Summary:
@@ -17,6 +17,9 @@
 TESTING_BROKER_NAME_1 = 'iot.eclipse.org'
 TESTING_BROKER_ADDRESS_1 = '1234:5678::dead.beef'
 TESTING_BROKER_PORT_1 = '1833'
+TESTING_BROKER_NAME_2 = 'PinkPoppy.pyhouse.org'
+TESTING_BROKER_ADDRESS_2 = '192.168.1.51'
+TESTING_BROKER_PORT_2 = '1833'
 
 
 MQTT_XML = """\
@@ -24,6 +27,10 @@ MQTT_XML = """\
         <Broker Name='""" + TESTING_BROKER_NAME_1 + """' Key='0' Active='True'>
             <BrokerAddress>""" + TESTING_BROKER_ADDRESS_1 + """</BrokerAddress>
             <BrokerPort>""" + TESTING_BROKER_PORT_1 + """</BrokerPort>
+        </Broker>
+        <Broker Name='""" + TESTING_BROKER_NAME_2 + """' Key='1' Active='True'>
+            <BrokerAddress>""" + TESTING_BROKER_ADDRESS_2 + """</BrokerAddress>
+            <BrokerPort>""" + TESTING_BROKER_PORT_2 + """</BrokerPort>
         </Broker>
     </MqttSection>
 """

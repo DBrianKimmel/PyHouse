@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Web.test.test_web_clock -*-
 
-@name: PyHouse/src/Modules/Web/web_clock.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@Copyright (c) 2013-2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Sep 5, 2013
-@summary: Display a clock on the web page.
+@name:      PyHouse/src/Modules/Web/web_clock.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2013-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Sep 5, 2013
+@summary:   Display a clock on the web page.
 
 """
 

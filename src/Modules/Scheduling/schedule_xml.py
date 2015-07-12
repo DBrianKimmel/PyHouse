@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Scheduling.test.test_schedule_xml -*-
 
-@name:     PyHouse/src/Modules/Scheduling/schedule_xml.py
-@author:   D. Brian Kimmel
-@contact:  D.BrianKimmel@gmail.com
-@Copyright (c) 2014-2015 by D. Brian Kimmel
-@license:  MIT License
-@note:     Created on Sep 2, 2013
-@summary:  Schedule events
+@name:      PyHouse/src/Modules/Scheduling/schedule_xml.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2014-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Sep 2, 2013
+@summary:   Schedule events
 
 
 """
@@ -17,16 +17,13 @@ import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from Modules.Core.data_objects import ScheduleBaseData, ScheduleLightData
-from Modules.Utilities.xml_tools import XmlConfigTools, stuff_new_attrs
+from Modules.Utilities.xml_tools import XmlConfigTools, PutGetXML, stuff_new_attrs
 from Modules.Computer import logging_pyh as Logger
-# from Modules.Utilities.tools import PrettyPrintAny
 
-g_debug = 1
 LOG = Logger.getLogger('PyHouse.ScheduleXml ')
 
 
-
-class ReadWriteConfigXml(XmlConfigTools):
+class ScheduleXmlAPI(object):
 
     m_count = 0
 
@@ -34,25 +31,25 @@ class ReadWriteConfigXml(XmlConfigTools):
         """Extract schedule information from a schedule xml element.
         """
         l_obj = ScheduleLightData()
-        l_obj.Level = self.get_int_from_xml(p_schedule_element, 'Level')
-        l_obj.LightName = self.get_text_from_xml(p_schedule_element, 'LightName')
-        l_obj.Rate = self.get_int_from_xml(p_schedule_element, 'Rate')
-        l_obj.RoomName = self.get_text_from_xml(p_schedule_element, 'RoomName')
+        l_obj.Level = PutGetXML.get_int_from_xml(p_schedule_element, 'Level')
+        l_obj.LightName = PutGetXML.get_text_from_xml(p_schedule_element, 'LightName')
+        l_obj.Rate = PutGetXML.get_int_from_xml(p_schedule_element, 'Rate')
+        l_obj.RoomName = PutGetXML.get_text_from_xml(p_schedule_element, 'RoomName')
         return l_obj  # for testing
 
     def _read_one_base_schedule(self, p_schedule_element):
         """Extract schedule information from a schedule xml element.
         """
         l_obj = ScheduleBaseData()
-        self.read_base_object_xml(l_obj, p_schedule_element)
-        l_obj.Time = self.get_text_from_xml(p_schedule_element, 'Time')
-        l_obj.ScheduleType = self.get_text_from_xml(p_schedule_element, 'ScheduleType')
+        XmlConfigTools.read_base_object_xml(l_obj, p_schedule_element)
+        l_obj.Time = PutGetXML.get_text_from_xml(p_schedule_element, 'Time')
+        l_obj.ScheduleType = PutGetXML.get_text_from_xml(p_schedule_element, 'ScheduleType')
         try:
-            l_obj.DOW = self.get_int_from_xml(l_obj, 'DayOfWeek', 0x7F)
+            l_obj.DOW = PutGetXML.get_int_from_xml(l_obj, 'DayOfWeek', 0x7F)
         except:
             l_obj.DOW = 0x7F
         try:
-            l_obj.Mode = self.get_int_from_xml(l_obj, 'Mode', 0)
+            l_obj.Mode = PutGetXML.get_int_from_xml(l_obj, 'Mode', 0)
         except:
             l_obj.Mode = 0
         return l_obj
@@ -86,24 +83,25 @@ class ReadWriteConfigXml(XmlConfigTools):
             LOG.error('ERROR in schedule.read_schedules_xml() - {0:}'.format(e_err))
         return l_dict
 
+
     def _write_one_base_schedule(self, p_schedule_obj):
         """
         """
-        l_entry = self.write_base_object_xml('Schedule', p_schedule_obj)
-        self.put_text_element(l_entry, 'ScheduleType', p_schedule_obj.ScheduleType)
-        self.put_text_element(l_entry, 'Time', p_schedule_obj.Time)
-        self.put_int_element(l_entry, 'DayOfWeek', int(p_schedule_obj.DOW))
-        self.put_int_element(l_entry, 'Mode', p_schedule_obj.Mode)
+        l_entry = XmlConfigTools().write_base_object_xml('Schedule', p_schedule_obj)
+        PutGetXML.put_text_element(l_entry, 'ScheduleType', p_schedule_obj.ScheduleType)
+        PutGetXML.put_text_element(l_entry, 'Time', p_schedule_obj.Time)
+        PutGetXML.put_int_element(l_entry, 'DayOfWeek', int(p_schedule_obj.DOW))
+        PutGetXML.put_int_element(l_entry, 'Mode', p_schedule_obj.Mode)
         return l_entry
 
     def _write_one_light_schedule(self, p_schedule_obj, p_entry):
         """
         Shove our entries in.
         """
-        self.put_int_element(p_entry, 'Level', p_schedule_obj.Level)
-        self.put_text_element(p_entry, 'LightName', p_schedule_obj.LightName)
-        self.put_int_element(p_entry, 'Rate', p_schedule_obj.Rate)
-        self.put_text_element(p_entry, 'RoomName', p_schedule_obj.RoomName)
+        PutGetXML.put_int_element(p_entry, 'Level', p_schedule_obj.Level)
+        PutGetXML.put_text_element(p_entry, 'LightName', p_schedule_obj.LightName)
+        PutGetXML.put_int_element(p_entry, 'Rate', p_schedule_obj.Rate)
+        PutGetXML.put_text_element(p_entry, 'RoomName', p_schedule_obj.RoomName)
 
     def _write_one_schedule(self, p_schedule_obj):
         """
@@ -119,13 +117,15 @@ class ReadWriteConfigXml(XmlConfigTools):
         """Replace all the data in the 'Schedules' section with the current data.
         @param p_parent: is the 'schedules' element
         """
-        self.m_count = 0
+        l_count = 0
         l_xml = ET.Element('ScheduleSection')
-        # PrettyPrintAny(p_schedules_obj, 'Schedule - SchedulesObj')
-        for l_schedule_obj in p_schedules_obj.itervalues():
-            l_entry = self._write_one_schedule(l_schedule_obj)
-            l_xml.append(l_entry)
-            self.m_count += 1
+        try:
+            for l_schedule_obj in p_schedules_obj.itervalues():
+                l_entry = self._write_one_schedule(l_schedule_obj)
+                l_xml.append(l_entry)
+                l_count += 1
+        except AttributeError as e_err:
+            LOG.error('Attr err {}'.format(e_err))
         return l_xml
 
 # ## END DBK

@@ -1,14 +1,13 @@
 """
-@name: C:/Users/briank/Documents/GitHub/PyHouse/src/Modules/Housing/test/xml_rooms.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@Copyright: (c)  2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Nov 22, 2014
+@name:      PyHouse/src/Modules/Housing/test/xml_rooms.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2014-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Nov 22, 2014
 @Summary:
 
 """
-
 
 
 ROOMS_XML = """
@@ -35,7 +34,6 @@ ROOMS_XML = """
     </Room>
 </RoomSection>
 """
-
 
 
 ROOMS_XSD = """
@@ -65,5 +63,4 @@ ROOMS_XSD = """
 
 </xs:schema>
 """
-
 # ## END DBK

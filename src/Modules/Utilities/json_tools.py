@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Utilities/json_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@Copyright: (c) 2013-2015 by D. Brian Kimmel
+@copyright: (c) 2013-2015 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 6, 2013
 @Summary:   This module is being phased in and web json is being phased out.

@@ -20,6 +20,8 @@ from Modules.Families.Insteon import Insteon_xml
 from Modules.Core import conversions
 from Modules.Lighting import lighting_core
 from test.xml_data import *
+from Modules.Lighting.test.xml_lights import TESTING_LIGHTING_LIGHTS_INSTEON_NAME
+from Modules.Families.Insteon.test.xml_insteon import TESTING_INSTEON_ADDRESS
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
 
@@ -32,29 +34,38 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+        self.m_api = Insteon_xml.API(self.m_pyhouse_obj)
+        self.m_core_api = lighting_core.LightingCoreXmlAPI()
+        self.m_device = LightData()
 
 
-
-class C01_Prep(SetupMixin, unittest.TestCase):
+class A1_Prep(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by node_local.
     """
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_api = Insteon_xml.ReadWriteConfigXml()
         self.m_device = None
-        # lighting_core.ReadWriteConfigXml().read_base_lighting_xml(self.m_device, self.m_xml.controller)
-
 
     def test_01_Setup(self):
         """ Did we get everything set up for the rest of the tests of this class.
         """
         PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse')
+        PrettyPrintAny(self.m_pyhouse_obj.Computer, 'Computer')
         PrettyPrintAny(self.m_pyhouse_obj.House, 'House')
+
+    def test_02_Setup(self):
+        """ Did we get everything set up for the rest of the tests of this class.
+        """
+        PrettyPrintAny(self.m_pyhouse_obj.House.DeviceOBJs, 'DeviceOBJs')
+        PrettyPrintAny(self.m_xml, 'XML')
+    def test_03_Setup(self):
+        """ Did we get everything set up for the rest of the tests of this class.
+        """
         PrettyPrintAny(self.m_pyhouse_obj.House.DeviceOBJs, 'DeviceOBJs')
         PrettyPrintAny(self.m_xml, 'XML')
 
-    def test_02_FindXml(self):
+    def test_04_FindXml(self):
         """ Be sure that the XML contains the right stuff.
         """
         PrettyPrintAny(self.m_xml, 'XML')
@@ -64,65 +75,56 @@ class C01_Prep(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.controller.tag, 'Controller', 'XML - No controller Entry')
 
 
-
-class C02_ReadXML(SetupMixin, unittest.TestCase):
+class B1_Read(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by node_local.
     """
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_api = Insteon_xml.ReadWriteConfigXml()
-        self.m_core_api = lighting_core.ReadWriteConfigXml()
-        self.m_device = LightData()
 
     def test_01_setup(self):
         PrettyPrintAny(self.m_xml.light, 'XML')
         PrettyPrintAny(self.m_device, 'Light Device')
 
     def test_02_Core(self):
-        l_light = self.m_core_api.read_base_lighting_xml(self.m_device, self.m_xml.light)
+        l_light = self.m_core_api.read_core_lighting_xml(self.m_device, self.m_xml.light)
         PrettyPrintAny(l_light, 'Light')
         PrettyPrintAny(self.m_device, 'Device')
         self.assertEqual(l_light.Name, TESTING_LIGHTING_LIGHTS_INSTEON_NAME)
-        self.assertEqual(l_light.ControllerFamily, 'Insteon')
+        self.assertEqual(l_light.DeviceFamily, 'Insteon')
 
     def test_03_InsteonLight(self):
-        l_light = self.m_core_api.read_base_lighting_xml(self.m_device, self.m_xml.light)
+        l_light = self.m_core_api.read_core_lighting_xml(self.m_device, self.m_xml.light)
         l_ret = self.m_api.ReadXml(l_light, self.m_xml.light)
         PrettyPrintAny(l_ret, 'Lret')
         PrettyPrintAny(l_light, 'Light Device 2')
         self.assertEqual(l_light.Name, TESTING_LIGHTING_LIGHTS_INSTEON_NAME)
-        self.assertEqual(l_light.ControllerFamily, 'Insteon')
+        self.assertEqual(l_light.DeviceFamily, 'Insteon')
         self.assertEqual(l_light.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS))
 
 
-
-class C03_WriteXML(SetupMixin, unittest.TestCase):
+class C01_Write(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by node_local.
     """
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_api = Insteon_xml.ReadWriteConfigXml()
-        self.m_core_api = lighting_core.ReadWriteConfigXml()
-        self.m_device = LightData()
 
     def test_01_setup(self):
         PrettyPrintAny(self.m_xml.light, 'XML')
 
     def test_02_Core(self):
-        l_light = self.m_core_api.read_base_lighting_xml(self.m_device, self.m_xml.light)
-        l_xml = self.m_core_api.write_base_lighting_xml(l_light)
+        l_light = self.m_core_api.read_core_lighting_xml(self.m_device, self.m_xml.light)
+        l_xml = self.m_core_api.write_base_lighting_xml('Light', l_light)
         PrettyPrintAny(l_xml, 'Lights XML')
 
     def test_03_InsteonLight(self):
-        l_light = self.m_core_api.read_base_lighting_xml(self.m_device, self.m_xml.light)
+        l_light = self.m_core_api.read_core_lighting_xml(self.m_device, self.m_xml.light)
         self.m_api.ReadXml(l_light, self.m_xml.light)
         PrettyPrintAny(l_light, 'Light Device 2')
-        l_xml = self.m_core_api.write_base_lighting_xml(l_light)
-        self.m_api.WriteXml(l_xml, l_light)
+        l_xml = self.m_core_api.write_base_lighting_xml('Light', l_light)
+        # self.m_api.SaveXml(l_xml, l_light)
         PrettyPrintAny(l_xml, 'Lights XML')
-
 
 
 def test_suite():

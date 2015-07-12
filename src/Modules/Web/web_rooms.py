@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/web/web_rooms.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@Copyright: (c) 2013-2014 by D. Brian Kimmel
+@copyright: (c) 2013-2015 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 3, 2013
 @summary:   Web interface to rooms for the selected house.

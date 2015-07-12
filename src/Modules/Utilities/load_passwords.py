@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/utils/load_passwords.py
 @author:    briank
 @contact:   D.BrianKimmel@gmail.com>
-@Copyright: (c) 2014-2015 by briank
+@copyright: (c) 2014-2015 by briank
 @license:   MIT License
 @note:      Created on Jul 5, 2014
 @Summary:

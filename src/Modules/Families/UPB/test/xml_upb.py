@@ -1,17 +1,17 @@
 """
-@name: C:/Users/briank/Documents/GitHub/PyHouse/src/Modules/Families/UPB/test/xml_upb.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@Copyright: (c)  2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Nov 9, 2014
+@name:      PyHouse/src/Modules/Families/UPB/test/xml_upb.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2014-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Nov 9, 2014
 @Summary:
 
 """
 
 
 UPB_XML = """\
-    <ControllerFamily>UPB</ControllerFamily>
+    <DeviceFamily>UPB</DeviceFamily>
     <UPBNetworkID>6</UPBNetworkID>
     <UPBPassword>1253</UPBPassword>
     <UPBAddress>255</UPBAddress>"""

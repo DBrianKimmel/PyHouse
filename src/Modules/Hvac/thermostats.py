@@ -16,16 +16,14 @@ import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from Modules.Core.data_objects import ThermostatData
-from Modules.Utilities import xml_tools
 from Modules.Families.family_utils import FamUtil
 from Modules.Computer import logging_pyh as Logger
+from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
 
-g_debug = 0
 LOG = Logger.getLogger('PyHouse.Thermostat     ')
 
 
-
-class ReadWriteConfigXml(xml_tools.XmlConfigTools):
+class ReadWriteConfigXml(object):
     """
     """
     m_count = 0
@@ -41,12 +39,12 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         """
         @return: a ThermostatData object.
         """
-        p_obj.ControllerFamily = self.get_text_from_xml(p_xml, 'ControllerFamily')
-        p_obj.CoolSetPoint = self.get_float_from_xml(p_xml, 'CoolSetPoint', 76.0)
-        p_obj.CurrentTemperature = self.get_float_from_xml(p_xml, 'CurrentTemperature')
-        p_obj.HeatSetPoint = self.get_float_from_xml(p_xml, 'HeatSetPoint', 68.0)
-        p_obj.ThermostatMode = self.get_text_from_xml(p_xml, 'ThermostatMode', 'Cool')
-        p_obj.ThermostatScale = self.get_text_from_xml(p_xml, 'ThermostatScale', 'F')
+        p_obj.DeviceFamily = PutGetXML.get_text_from_xml(p_xml, 'DeviceFamily')
+        p_obj.CoolSetPoint = PutGetXML.get_float_from_xml(p_xml, 'CoolSetPoint', 76.0)
+        p_obj.CurrentTemperature = PutGetXML.get_float_from_xml(p_xml, 'CurrentTemperature')
+        p_obj.HeatSetPoint = PutGetXML.get_float_from_xml(p_xml, 'HeatSetPoint', 68.0)
+        p_obj.ThermostatMode = PutGetXML.get_text_from_xml(p_xml, 'ThermostatMode', 'Cool')
+        p_obj.ThermostatScale = PutGetXML.get_text_from_xml(p_xml, 'ThermostatScale', 'F')
         return p_obj
 
     def _read_family_data(self, p_pyhouse_obj, p_obj, p_xml):
@@ -81,24 +79,24 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
 
 
     def _write_thermostat_base(self, p_thermostat_obj):
-        l_xml = self.write_base_object_xml('Thermostat', p_thermostat_obj)
+        l_xml = XmlConfigTools().write_base_object_xml('Thermostat', p_thermostat_obj)
         return l_xml
 
     def _write_thermostat_data(self, p_out_xml, p_obj):
-        self.put_float_element(p_out_xml, 'CoolSetPoint', p_obj.CoolSetPoint)
-        self.put_text_element(p_out_xml, 'ControllerFamily', p_obj.ControllerFamily)
-        self.put_float_element(p_out_xml, 'CurrentTemperature', p_obj.CurrentTemperature)
-        self.put_float_element(p_out_xml, 'HeatSetPoint', p_obj.HeatSetPoint)
-        self.put_text_element(p_out_xml, 'ThermostatMode', p_obj.ThermostatMode)
-        self.put_text_element(p_out_xml, 'ThermostatScale', p_obj.ThermostatScale)
+        PutGetXML.put_float_element(p_out_xml, 'CoolSetPoint', p_obj.CoolSetPoint)
+        PutGetXML.put_text_element(p_out_xml, 'DeviceFamily', p_obj.DeviceFamily)
+        PutGetXML.put_float_element(p_out_xml, 'CurrentTemperature', p_obj.CurrentTemperature)
+        PutGetXML.put_float_element(p_out_xml, 'HeatSetPoint', p_obj.HeatSetPoint)
+        PutGetXML.put_text_element(p_out_xml, 'ThermostatMode', p_obj.ThermostatMode)
+        PutGetXML.put_text_element(p_out_xml, 'ThermostatScale', p_obj.ThermostatScale)
         return p_out_xml
 
     def _write_thermostat_family(self, p_pyhouse_obj, p_out_xml, p_obj):
         try:
-            l_api = p_pyhouse_obj.House.RefOBJs.FamilyData[p_obj.ControllerFamily].FamilyModuleAPI
+            l_api = p_pyhouse_obj.House.RefOBJs.FamilyData[p_obj.DeviceFamily].FamilyModuleAPI
             l_api.WriteXml(p_out_xml, p_obj)
         except (KeyError, AttributeError) as e_err:
-            l_msg = 'Write Family Error {}  Family:{}'.format(e_err, p_obj.ControllerFamily)
+            l_msg = 'Write Family Error {}  Family:{}'.format(e_err, p_obj.DeviceFamily)
             LOG.error(l_msg)
 
     def _write_one_thermostat_xml(self, p_pyhouse_obj, p_thermostat_obj):
@@ -148,14 +146,12 @@ class API(Utility):
 
     m_pyhouse_obj = None
 
-    def __init__(self):
-        if g_debug >= 1:
-            LOG.info("Initialized.")
-
-    def Start(self, p_pyhouse_obj):
-        self.update_pyhouse_obj(p_pyhouse_obj)
+    def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        p_pyhouse_obj.House.DeviceOBJs.Thermostats = self.read_all_thermostats_xml(p_pyhouse_obj)
+
+    def Start(self):
+        self.update_pyhouse_obj(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.DeviceOBJs.Thermostats = self.read_all_thermostats_xml(self.m_pyhouse_obj)
         LOG.info("Started.")
 
     def Stop(self):

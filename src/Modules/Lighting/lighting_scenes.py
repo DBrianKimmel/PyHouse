@@ -1,6 +1,14 @@
-#!/usr/bin/env python
+"""
+@name:      PyHouse/src/Modules/Lighting/lighting_scenes.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2014-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Nov 11, 2014
+@Summary:
 
-"""Handle the scenes component of the lighting system.
+Handle the scenes component of the lighting system.
+
 """
 
 

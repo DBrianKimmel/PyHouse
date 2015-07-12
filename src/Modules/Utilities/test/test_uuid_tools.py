@@ -1,8 +1,8 @@
 """
-@name:      C:/Users/briank/workspace/PyHouse/src/Modules/Utilities/test/test_uuid_tools.py
+@name:      PyHouse/src/Modules/Utilities/test/test_uuid_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@Copyright: (c)  2015 by D. Brian Kimmel
+@copyright: (c) 2015-2015 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 22, 2015
 @Summary:

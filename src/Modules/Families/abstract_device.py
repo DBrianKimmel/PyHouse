@@ -1,10 +1,10 @@
 """
-@name: C:/Users/briank/Documents/GitHub/PyHouse/src/Modules/Families/abstract_device.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@Copyright: (c)  2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Nov 19, 2014
+@name:      PyHouse/src/Modules/Families/abstract_device.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2014-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Nov 19, 2014
 @Summary:
 
 """

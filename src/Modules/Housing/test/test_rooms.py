@@ -1,15 +1,15 @@
 """
-@name: PyHouse/src/housing/test/test_rooms.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@Copyright (c) 2013-2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Apr 10, 2013
-@summary: Test handling the rooms information for a house.
-
+@name:      PyHouse/src/housing/test/test_rooms.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2013-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Apr 10, 2013
+@summary:   Test handling the rooms information for a house.
 
 Tests all working OK - DBK 2014-05-22
 """
+
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -30,7 +30,7 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-class Test_02_XML(SetupMixin, unittest.TestCase):
+class A1_XML(SetupMixin, unittest.TestCase):
 
     def _pyHouses(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
@@ -39,12 +39,12 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
     def setUp(self):
         self._pyHouses()
 
-    def test_0201_BuildObjects(self):
+    def test_01_BuildObjects(self):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
         """
         self.assertEqual(self.m_pyhouse_obj.House.RefOBJs.Rooms, {}, 'No Rooms{}')
 
-    def test_0202_FindXml(self):
+    def test_02_FindXml(self):
         """ Be sure that the XML contains the right stuff.
         """
         self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
@@ -52,7 +52,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.room_sect.tag, 'RoomSection', 'XML - No Rooms section')
         self.assertEqual(self.m_xml.room.tag, 'Room', 'XML - No Room')
 
-    def test_0211_ReadOneRoom(self):
+    def test_03_ReadOneRoom(self):
         """ Read in the xml file and fill in the first room's dict
         """
         l_room = self.m_api.read_one_room(self.m_xml.room)
@@ -64,14 +64,14 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_room.Corner, '0.50, 10.50', 'Bad Corner')
         self.assertEqual(l_room.Size, '14.00, 13.50', 'Bad Size')
 
-    def test_0212_ReadAllRoomsXml(self):
+    def test_04_ReadAllRoomsXml(self):
         """ Read in the xml file and fill in the rooms dict
         """
         l_rooms = self.m_api.read_rooms_xml(self.m_xml.house_div)
         PrettyPrintAny(l_rooms, 'Rooms')
         self.assertEqual(l_rooms[0].Name, 'Master Bath', 'Bad Room')
 
-    def test_0221_WriteOneRoomXml(self):
+    def test_05_WriteOneRoomXml(self):
         """ Write out the XML file for the location section
         """
         l_room = self.m_api.read_one_room(self.m_xml.house_div)
@@ -79,7 +79,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         PrettyPrintAny(l_xml, 'One Room', 120)
 
 
-    def test_0222_WriteAllRoomsXml(self):
+    def test_06_WriteAllRoomsXml(self):
         """ Write out the XML file for the location section
         """
         l_rooms = self.m_api.read_rooms_xml(self.m_xml.house_div)
@@ -87,7 +87,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         PrettyPrintAny(l_xml, 'All Rooms', 120)
 
 
-    def test_0231_CreateJson(self):
+    def test_07_CreateJson(self):
         """ Create a JSON object for Rooms.
         """
         self.m_pyhouse_obj.House.RefOBJs.Rooms = l_rooms = self.m_api.read_rooms_xml(self.m_xml.house_div)

@@ -1,6 +1,6 @@
 """ drivers/__init__.py
 
-Copyright (C) 2012-2015 by D. Brian Kimmel
+@copyright: (C) 2012-2015 by D. Brian Kimmel
 
 The following terms apply to all files associated
  with the software unless explicitly disclaimed in individual files.

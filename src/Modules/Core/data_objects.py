@@ -17,13 +17,13 @@ Specific data may be loaded into some attributes for unit testing.
 """
 from nevow.livepage import self
 
-__version_info__ = (1, 3, 3)
+__version_info__ = (1, 4, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 
 # Import system type stuff
-from twisted.application.service import Application
-from twisted.internet import reactor
+# from twisted.application.service import Application
+# from twisted.internet import reactor
 
 # Import PyMh files and modules.
 
@@ -36,16 +36,18 @@ class PyHouseData(object):
     NOTE that the data entries need to be dicts so json encoding of the data works properly.
     """
     def __init__(self):
-        self.APIs = {}  # PyHouseAPIs()
-        self.Computer = {}  # ComputerInformation()
-        self.House = {}  # HouseInformation()
-        self.Services = {}  # CoreServicesInformation()
-        self.Twisted = {}  # TwistedInformation()
-        self.Xml = {}  # XmlInformation()
+        self.APIs = None  # PyHouseAPIs()
+        self.Computer = None  # ComputerInformation()
+        self.House = None  # HouseInformation()
+        self.Services = None  # CoreServicesInformation()
+        self.Twisted = None  # TwistedInformation()
+        self.Xml = None  # XmlInformation()
 
 
 class ABaseObject(object):
-    """This data is in almost every other object.
+    """
+    Depricated.
+    This data is in almost every other object.
     Do not use this object, derive objects from it.
     """
     def __init__(self):
@@ -55,32 +57,62 @@ class ABaseObject(object):
         self.UUID = None  # The UUID is optional, not all objects use this
 
 
-class DeviceData(object):
+class CoordinateData(object):
     """
+    If applied to components of a house (facing the 'Front' of a house:
+        X or the distance to the Right from the rooms Left side.
+        Y or the distance back from the Front of the room.
+        Z or the Height above the floor.
+    Preferably the distance is kept in Meters but for you die hard Imperial measurement people in Decimal feet (no inches)!
+
+    In case you need some hints:
+        Light switches are about 1.0 meters above the floor.
+        Outlets are about 0.2 meters above the floor.
     """
     def __init__(self):
-        self.UUID - None
-        self.Name = None
-        self.DeviceType = 0
-        self.DeviceSubType = 0
+        self.X_Easting = 0.0
+        self.Y_Northing = 0.0
+        self.Z_Height = 0.0
+
+class DeviceData(object):
+    """
+    This data is in almost every other object.
+    Do not use this object, derive objects from it.
+    """
+    def __init__(self):
+        self.Name = 'Undefined DeviceData Object'
         self.Key = 0  # Instance number
         self.Active = False
+        self.UUID = None
+        self.Comment = ''
+        self.DeviceFamily = 'Null'
+        self.DeviceType = 0
+        self.DeviceSubType = 0
+        self.RoomCoords = None  # CoordinateData()
+        self.RoomName = ''
 
 
-class BaseLightingData(ABaseObject):
+class SensorData(object):
+    """
+    This data is in almost every other object.
+    Do not use this object, derive objects from it.
+    """
+    def __init__(self):
+        self.Name = 'Undefined SensorData Object'
+        self.Key = 0  # Instance number
+        self.Active = False
+        self.UUID = None
+
+
+class BaseLightingData(DeviceData):
     """Basic information about some sort of lighting object.
     """
 
     def __init__(self):
         super(BaseLightingData, self).__init__()
-        self.Comment = ''
-        self.Coords = ''  # Room relative coords of the device
         self.IsDimmable = False
-        self.ControllerFamily = 'Null'
-        self.RoomName = ''
+        self.DeviceFamily = 'Null'
         self.LightingType = ''  # VALID_LIGHTING_TYPE = Button | Light | Controller
-        self.DeviceType = 0
-        self.DeviceSubType = 0
 
 
 class ButtonData(BaseLightingData):
@@ -126,16 +158,17 @@ class FamilyData(ABaseObject):
     def __init__(self):
         super(FamilyData, self).__init__()
         self.FamilyModuleAPI = None  # Insteon_device.API()
-        self.FamilyDeviceModuleName = ''  # Insteon_device
-        self.FamilyXmlModuleName = ''  # Insteon_device
-        self.FamilyPackageName = ''  # Modules.Families.Insteon
+        self.FamilyDeviceModuleName = None  # Insteon_device
+        self.FamilyXmlModuleName = None  # Insteon_xml
+        self.FamilyXmlModuleAPI = None  # Address of Insteon_xml
+        self.FamilyPackageName = None  # Modules.Families.Insteon
 
 
 class X10LightingData(LightData):
 
     def __init__(self):
         super(X10LightingData, self).__init__()
-        self.ControllerFamily = "X10"
+        self.DeviceFamily = "X10"
         self.X10UnitAddress = 'ab'
         self.X10HouseAddress = 0x0F
 
@@ -145,16 +178,16 @@ class ComputerInformation(ABaseObject):
     """
     def __init__(self):
         super(ComputerInformation, self).__init__()
-        self.InternetConnection = {}  # InternetConnectionData()
-        self.Email = {}  # EmailData()
-        self.Mqtt = MqttBrokerData()
-        self.Nodes = {}  # NodeData()
-        self.Web = {}  # WebData()
-        self.Domain = None
+        self.Communication = None
+        self.Email = None  # EmailData()
+        self.InternetConnection = None  # InternetConnectionData()
+        self.Mqtt = None  # MqttBrokerData()
+        self.Nodes = None  # NodeData()
+        self.Web = None  # WebData()
 
 
 class MqttBrokerData(ABaseObject):
-    """
+    """ 0-N
     """
     def __init__(self):
         super(MqttBrokerData, self).__init__()
@@ -171,8 +204,8 @@ class HouseInformation(ABaseObject):
     def __init__(self):
         super(HouseInformation, self).__init__()
         self.Name = 'New House'
-        self.RefOBJs = {}  # RefHouseObjs()
-        self.DeviceOBJs = {}  # DeviceHouseObjs()
+        self.RefOBJs = None  # RefHouseObjs()
+        self.DeviceOBJs = None  # DeviceHouseObjs()
 
 
 class RefHouseObjs(object):
@@ -191,7 +224,7 @@ class DeviceHouseObjs(object):
     def __init__(self):
         self.Buttons = {}  # ButtonData()
         self.Controllers = {}  # ControllerData()
-        self.Irrigation = {}  # IrrigationData()
+        self.Irrigation = None  # IrrigationData()
         self.Lights = {}  # LightData()
         self.Pools = {}  # PoolData()
         self.Thermostats = {}  # ThermostatData()
@@ -253,12 +286,29 @@ class NodeInterfaceData(ABaseObject):
         self.V6Address = []
 
 
-class IrrigationData(ABaseObject):
-    """
+class IrrigationData(DeviceData):
+    """Info about irrigation systems for a house.
     """
     def __init__(self):
         super(IrrigationData, self).__init__()
-        self.ControllerFamily = 'Null'
+        self.Systems = None
+
+
+class IrrigationSystemData(DeviceData):
+    """Info about an irrigation system (may have many zones).
+    """
+    def __init__(self):
+        super(IrrigationSystemData, self).__init__()
+        self.UsesMasterValve = False  # Master valve and/or Pump Relay
+        self.Zones = {}
+
+
+class IrrigationZoneData(DeviceData):
+    """Info about an irrigation zone
+    """
+    def __init__(self):
+        super(IrrigationZoneData, self).__init__()
+        self.Duration = 0  # On time in seconds
 
 
 class PoolData(ABaseObject):
@@ -266,7 +316,7 @@ class PoolData(ABaseObject):
     """
     def __init__(self):
         super(PoolData, self).__init__()
-        self.ControllerFamily = 'Null'
+        self.DeviceFamily = 'Null'
 
 
 class ThermostatData(ABaseObject):
@@ -276,7 +326,7 @@ class ThermostatData(ABaseObject):
         self.Comment = ''
         self.RoomName = ''
         self.CoolSetPoint = 0
-        self.ControllerFamily = 'Null'
+        self.DeviceFamily = 'Null'
         self.CurrentTemperature = 0
         self.HeatSetPoint = 0
         self.ThermostatMode = 'Cool'  # Cool | Heat | Auto | EHeat
@@ -333,30 +383,33 @@ class XmlInformation(object):
     """A collection of XLM data used for Configutation
     """
     def __init__(self):
-        self.XmlFileName = ''
+        self.XmlFileName = None
         self.XmlRoot = None
-        self.XmlVersion = __version__
+        self.XmlVersion = __version__  # Version from this module.
+        self.XmlOldVersion = None  # Version of the file read in at program start.
 
 
 class PyHouseAPIs(object):
-    """ ==> pyhouse_obj.APIs
+    """
+    ==> pyhouse_obj.APIs
+
     Most of these have a single entry.
     """
 
     def __init__(self):
-        self.Modules = {}  # A dict of ModuleName : Reference
-        self.Comp = {}  # CompAPIs()
-        self.House = {}  # HouseAPIs()
+        self.Computer = None  # ComputerAPIs()
+        self.House = None  # HouseAPIs()
         self.CoreSetupAPI = None
-        self.PyHouseAPI = None
+        self.PyHouseMainAPI = None
 
 
-class CompAPIs(object):
+class ComputerAPIs(object):
     """ ==> pyhouse_obj.APIs.Comp
     """
     def __init__(self):
-        self.CommunicationsAPI = None
         self.ComputerAPI = None
+        #
+        self.CommunicationsAPI = None
         self.EmailAPI = None
         self.InternetAPI = None
         self.MqttAPI = None
@@ -369,10 +422,10 @@ class HouseAPIs(object):
     """ ==> pyhouse_obj.APIs.House
     """
     def __init__(self):
-        self.Modules = {}  # A dict of ModuleName : Reference
+        self.HouseAPI = None
+        #
         self.EntertainmentAPI = None
         self.FamilyAPI = None
-        self.HouseAPI = None
         self.HvacAPI = None
         self.IrrigationAPI = None
         self.LightingAPI = None
@@ -386,8 +439,8 @@ class TwistedInformation(object):
     """Twisted info is kept in this class
     """
     def __init__(self):
-        self.Application = Application('PyHouse')
-        self.Reactor = reactor
+        self.Application = None  # Application('PyHouse')
+        self.Reactor = None  # reactor
 
 
 class CoreServicesInformation(object):
@@ -403,6 +456,17 @@ class CoreServicesInformation(object):
         self.WebServerService = None
 
 
+class RiseSetData(object):
+    """
+    These fields are each an "aware" datetime.datetime
+    They were calculated by the sunrisesunset module for the house's location and timezone.
+    They are therefore, the local time of sunrise and sunset.
+    """
+    def __init__(self):
+        self.SunRise = None
+        self.SunSet = None
+
+
 class LocationData(object):
     """Location of the houses
     Latitude and Longitude allow the computation of local sunrise and sunset
@@ -416,12 +480,14 @@ class LocationData(object):
         self.Longitude = -82.517208
         self.Phone = ''
         self.TimeZoneName = 'America/New_York'
+        #
         self.DomainID = None
+        self.RiseSet = None  # RiseSetData()
         self._TimeZoneOffset = '-5:00'
         self._IsDaylightSavingsTime = False
         # Computed at startup (refreshed periodically)
-        self._Sunrise = None
-        self._Sunset = None
+        # self._Sunrise = None
+        # self._Sunset = None
 
 
 class SerialControllerData(object):

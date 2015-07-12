@@ -1,5 +1,12 @@
 """
-hvac.__init__.py
+
+@name:      PyHouse/src/Modules/Hvac/__init__.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2013_2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Mar 27, 2013
+@Summary:
 
 This is the interface from HVAC to PyHouse.
 

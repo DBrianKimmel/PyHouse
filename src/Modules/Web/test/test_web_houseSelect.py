@@ -1,10 +1,10 @@
 """
-@name: PyHouse/src/Modules/web/test/test_web_houseSelect.py
-@author: briank
-@contact: D.BrianKimmel@gmail.com>
-@Copyright: (c)  2014 by briank
-@license: MIT License
-@note: Created on Jun 6, 2014
+@name:      PyHouse/src/Modules/web/test/test_web_houseSelect.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com>
+@copyright: (c) 2014-2015 by briank
+@license:   MIT License
+@note:      Created on Jun 6, 2014
 @Summary:
 
 """

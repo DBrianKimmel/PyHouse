@@ -24,14 +24,16 @@ import xml.etree.ElementTree as ET
 
 # Import PyHouse files
 from Modules.Core.data_objects import LightData
-from Modules.Lighting.lighting_core import ReadWriteConfigXml
+from Modules.Lighting.lighting_core import LightingCoreXmlAPI
 from Modules.Families.family_utils import FamUtil
 from Modules.Computer import logging_pyh as Logging
+from Modules.Utilities.xml_tools import PutGetXML
 
 LOG = Logging.getLogger('PyHouse.LightgLights   ')
+SECTION = 'LightSection'
 
 
-class LLApi(ReadWriteConfigXml):
+class LLApi(LightingCoreXmlAPI):
     """
     Get/Put all the information about one light:
         Base Light Data
@@ -39,15 +41,15 @@ class LLApi(ReadWriteConfigXml):
         Family Data
     """
 
-    m_count = 0
-
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def _read_light_data(self, p_xml):
+    @staticmethod
+    def _read_light_data(p_xml):
         l_light_obj = LightData()
-        l_light_obj = self.read_base_lighting_xml(l_light_obj, p_xml)
-        l_light_obj.CurLevel = self.get_int_from_xml(p_xml, 'CurLevel', 0)
+        l_light_obj = LightingCoreXmlAPI().read_core_lighting_xml(l_light_obj, p_xml)
+        l_light_obj.DeviceSubType = 2
+        l_light_obj.CurLevel = PutGetXML.get_int_from_xml(p_xml, 'CurLevel', 0)
         return l_light_obj
 
     def _read_family_data(self, p_obj, p_xml):
@@ -55,51 +57,61 @@ class LLApi(ReadWriteConfigXml):
         return l_api  # for testing
 
     def _read_one_light_xml(self, p_light_xml):
-        l_light_obj = self._read_light_data(p_light_xml)
-        # print('lighting_lights - read_one_light() - Light {0:}'.format(l_light_obj.Name))
-        l_light_obj.Key = self.m_count  # Renumber
+        l_light_obj = LLApi._read_light_data(p_light_xml)
+        l_light_obj.Key = 0
         self._read_family_data(l_light_obj, p_light_xml)
         l_light_obj.DeviceType = 1
         l_light_obj.DeviceSubType = 2
         return l_light_obj
 
     def read_all_lights_xml(self, p_light_sect_xml):
-        self.m_count = 0
+        """
+        @param p_light_sect_xml: the "LightSection" of the config
+        """
+        l_count = 0
         l_lights_dict = {}
         try:
             for l_light_xml in p_light_sect_xml.iterfind('Light'):
-                l_lights_dict[self.m_count] = self._read_one_light_xml(l_light_xml)
-                self.m_count += 1
+                l_light = self._read_one_light_xml(l_light_xml)
+                l_light.Key = l_count  # Renumber
+                l_lights_dict[l_count] = l_light
+                l_count += 1
         except AttributeError as e_error:  # No Lights section
             LOG.warning('Lighting_Lights - No Lights defined - {0:}'.format(e_error))
             l_lights_dict = {}
-        LOG.info("Loaded {} Lights".format(self.m_count))
+        LOG.info("Loaded {} Lights".format(l_count))
         return l_lights_dict
 
-    def _write_light_data(self, p_light_obj, l_light_xml):
-        # self.put_text_element(l_light_xml, 'IsController', p_light_obj.IsController)
-        self.put_text_element(l_light_xml, 'LightingType', p_light_obj.LightingType)
-        self.put_text_element(l_light_xml, 'CurLevel', p_light_obj.CurLevel)
 
-    def _add_family_data(self, p_light_obj, p_light_xml):
+    def _write_light_data(self, p_light_obj, l_light_xml):
+        PutGetXML.put_text_element(l_light_xml, 'LightingType', p_light_obj.LightingType)
+        PutGetXML.put_text_element(l_light_xml, 'CurLevel', p_light_obj.CurLevel)
+
+    def _add_family_data(self, p_light_obj, p_xml):
         """
-        Add the family specific information of the light to the XML.
+        Add the family specific information of the device to the XML.
         """
-        l_api = self.m_pyhouse_obj.House.RefOBJs.FamilyData[p_light_obj.ControllerFamily].FamilyModuleAPI
-        l_api.WriteXml(p_light_xml, p_light_obj)
+        try:
+            l_device_family = p_light_obj.DeviceFamily
+            l_family_obj = self.m_pyhouse_obj.House.RefOBJs.FamilyData[l_device_family]
+            l_api = l_family_obj.FamilyXmlModuleAPI
+            l_api.WriteXml(p_xml, p_light_obj)
+        except Exception as e_err:
+            LOG.error('Family:{}\n\t{}'.format(l_device_family, e_err))
 
     def write_one_light_xml(self, p_light_obj):
-        l_light_xml = self.write_base_lighting_xml(p_light_obj)
+        l_light_xml = self.write_base_lighting_xml('Light', p_light_obj)
         self._write_light_data(p_light_obj, l_light_xml)
         self._add_family_data(p_light_obj, l_light_xml)
         return l_light_xml
 
     def write_all_lights_xml(self, p_lights_obj):
-        l_xml = ET.Element('LightSection')
-        self.m_count = 0
+        l_xml = ET.Element(SECTION)
+        l_count = 0
         for l_light_obj in p_lights_obj.itervalues():
             l_xml.append(self.write_one_light_xml(l_light_obj))
-            self.m_count += 1
+            l_count += 1
+        LOG.info('Saved XML')
         return l_xml
 
 # ## END DBK

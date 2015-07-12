@@ -1,12 +1,12 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Computer.Internet.test.test_internet_xml -*-
 
-@name: PyHouse/src/Modules/Computer/Internet/internet_xml.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@Copyright: (c)  2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Sep 29, 2014
+@name:      PyHouse/src/Modules/Computer/Internet/internet_xml.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2014-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Sep 29, 2014
 @Summary:
 
 """
@@ -15,13 +15,11 @@ import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import InternetConnectionData
-from Modules.Utilities.xml_tools import XmlConfigTools
+from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
 from Modules.Computer import logging_pyh as Logger
 
 g_debug = 1
 LOG = Logger.getLogger('PyHouse.Internet_xml   ')
-
-
 
 
 class Util(XmlConfigTools):
@@ -58,9 +56,9 @@ class Util(XmlConfigTools):
     def _read_derived(self, p_internet_sect_xml):
         l_icd = InternetConnectionData()
         try:
-            l_icd.ExternalIPv4 = self.get_ip_from_xml(p_internet_sect_xml, 'ExternalIPv4')
-            l_icd.ExternalIPv6 = self.get_ip_from_xml(p_internet_sect_xml, 'ExternalIPv6')
-            l_icd.LastChanged = self.get_date_time_from_xml(p_internet_sect_xml, 'LastChanged')
+            l_icd.ExternalIPv4 = PutGetXML.get_ip_from_xml(p_internet_sect_xml, 'ExternalIPv4')
+            l_icd.ExternalIPv6 = PutGetXML.get_ip_from_xml(p_internet_sect_xml, 'ExternalIPv6')
+            l_icd.LastChanged = PutGetXML.get_date_time_from_xml(p_internet_sect_xml, 'LastChanged')
         except:
             pass
         return l_icd
@@ -69,19 +67,19 @@ class Util(XmlConfigTools):
     def _write_locates_xml(self, p_internet_obj):
         l_xml = ET.Element('LocaterUrlSection')
         for l_url in p_internet_obj.LocateUrls.itervalues():
-            self.put_text_element(l_xml, 'LocateUrl', l_url)
+            PutGetXML.put_text_element(l_xml, 'LocateUrl', l_url)
         return l_xml
 
     def _write_updates_xml(self, p_dns_obj):
         l_xml = ET.Element('UpdaterUrlSection')
         for l_url in p_dns_obj.UpdateUrls.itervalues():
-            self.put_text_element(l_xml, 'UpdateUrl', l_url)
+            PutGetXML.put_text_element(l_xml, 'UpdateUrl', l_url)
         return l_xml
 
     def _write_derived_xml(self, p_internet_obj, p_xml):
-        self.put_text_element(p_xml, 'ExternalIPv4', p_internet_obj.ExternalIPv4)
-        self.put_text_element(p_xml, 'ExternalIPv6', p_internet_obj.ExternalIPv6)
-        self.put_text_element(p_xml, 'LastChanged', p_internet_obj.LastChanged)
+        PutGetXML.put_text_element(p_xml, 'ExternalIPv4', p_internet_obj.ExternalIPv4)
+        PutGetXML.put_text_element(p_xml, 'ExternalIPv6', p_internet_obj.ExternalIPv6)
+        PutGetXML.put_text_element(p_xml, 'LastChanged', p_internet_obj.LastChanged)
 
 
 

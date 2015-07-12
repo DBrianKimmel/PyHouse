@@ -33,9 +33,7 @@ from twisted.internet.protocol import DatagramProtocol, ConnectedDatagramProtoco
 # Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData
 from Modules.Computer import logging_pyh as Logger
-# from Modules.Utilities.tools import PrettyPrintAny
 
-g_debug = 9
 LOG = Logger.getLogger('PyHouse.NodeDiscovery  ')
 
 
@@ -238,15 +236,19 @@ class API(Utility):
     Initiate and stop this service
     """
 
-    def Start(self, p_pyhouse_obj):
+    def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.create_discovery_service(p_pyhouse_obj)
-        self.start_node_discovery_service(p_pyhouse_obj)
+
+    def Start(self):
+        self.m_pyhouse_obj = self.m_pyhouse_obj
+        self.create_discovery_service(self.m_pyhouse_obj)
+        self.start_node_discovery_service(self.m_pyhouse_obj)
 
     def Stop(self):
         self.stop_node_discovery_service(self.m_pyhouse_obj)
 
     def SaveXml(self, p_xml):
+        LOG.info("Saved XML.")
         return p_xml
 
 __all__ = [

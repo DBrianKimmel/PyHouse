@@ -26,7 +26,6 @@ import fnmatch  # Filename matching with shell patterns
 import netifaces
 import os
 import platform
-# import uuid
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import NodeInterfaceData
@@ -270,19 +269,22 @@ class API(Util):
 
     m_pyhouse_obj = None
 
-    def Start(self, p_pyhouse_obj):
+    def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        p_pyhouse_obj.Computer.Nodes = nodes_xml.Xml().read_all_nodes_xml(p_pyhouse_obj)
-        self.get_node_info(p_pyhouse_obj)
-        p_pyhouse_obj.Computer.Nodes[0] = Util.create_local_node(p_pyhouse_obj)
-        p_pyhouse_obj.Computer.Nodes[0].NodeRole = self.find_node_role()
-        self.init_node_type(p_pyhouse_obj)
+
+    def Start(self):
+        self.m_pyhouse_obj.Computer.Nodes = nodes_xml.Xml().read_all_nodes_xml(self.m_pyhouse_obj)
+        self.get_node_info(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.Computer.Nodes[0] = Util.create_local_node(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.Computer.Nodes[0].NodeRole = self.find_node_role()
+        self.init_node_type(self.m_pyhouse_obj)
 
     def Stop(self):
         LOG.info("Stopped.")
 
     def SaveXml(self, p_xml):
-        p_xml.append(nodes_xml.Xml().write_nodes_xml(self.m_pyhouse_obj.Computer.Nodes))
+        l_xml = nodes_xml.Xml().write_nodes_xml(self.m_pyhouse_obj.Computer.Nodes)
+        p_xml.append(l_xml)
         LOG.info("Saved XML.")
 
 # ## END DBK

@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.web.test.test_web_schedules -*-
 
-@name: PyHouse/src/Modules/web/web_schedules.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@Copyright (c) 2013-2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Jun 3, 2013
-@summary: Web interface to schedules for the selected house.
+@name:      PyHouse/src/Modules/web/web_schedules.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2013-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Jun 3, 2013
+@summary:   Web interface to schedules for the selected house.
 
 """
 
@@ -21,7 +21,6 @@ from Modules.Core.data_objects import ScheduleBaseData
 from Modules.Web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.Computer import logging_pyh as Logger
 from Modules.Scheduling import schedule
-# from Modules.Utilities.tools import PrettyPrintAny
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -51,7 +50,6 @@ class SchedulesElement(athena.LiveElement):
         """A new/changed schedule is returned.  Process it and update the internal data via schedule.py
         """
         l_json = JsonUnicode().decode_json(p_json)
-        # PrettyPrintAny(l_json, 'JSON')
         l_delete = l_json['Delete']
         l_schedule_ix = int(l_json['Key'])
         if l_delete:

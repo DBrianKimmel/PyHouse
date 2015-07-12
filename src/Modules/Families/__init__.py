@@ -28,7 +28,7 @@ The UPB family is work in progress
 The X-10 family is mostly just a stub at present (2012)
 
 When PyHouse is reading in the configuration for various devices, a call to family.ReadXml() is made to
-add any family specific data for that device.  The data for the device MUST include a 'ControllerFamily'
+add any family specific data for that device.  The data for the device MUST include a 'DeviceFamily'
 attribute that is already initialized with the family name.
 
 Each family consists of four or more major areas:

@@ -24,7 +24,7 @@ from twisted.internet.defer import Deferred
 from twisted.web.client import Agent
 from twisted.web.http_headers import Headers
 
-from Modules.Utilities import xml_tools
+from Modules.Utilities.xml_tools import PutGetXML
 from Modules.Utilities import convert
 from Modules.Computer import logging_pyh as Logger
 
@@ -137,8 +137,8 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
     def extract_dyn_dns(self, p_internet_xml):
         l_dyndns_obj = DynDnsData()
         self.read_base_object_xml(l_dyndns_obj, p_internet_xml)
-        l_dyndns_obj.UpdateInterval = self.get_int_from_xml(p_internet_xml, 'UpdateInterval')
-        l_dyndns_obj.UpdateUrl = self.get_text_from_xml(p_internet_xml, 'UpdateUrl')
+        l_dyndns_obj.UpdateInterval = PutGetXML.get_int_from_xml(p_internet_xml, 'UpdateInterval')
+        l_dyndns_obj.UpdateUrl = PutGetXML.get_text_from_xml(p_internet_xml, 'UpdateUrl')
         if g_debug >= 1:
             LOG.debug("internet.extract_dyn_dns() - Name:{0:}, UpdateInterval:{1:}, UpdateUrl:{2:};".format(
                             l_dyndns_obj.Name, l_dyndns_obj.UpdateInterval, l_dyndns_obj.UpdateUrl))
@@ -153,8 +153,8 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         p_house_obj.Internet = InternetData()
         l_sect = p_house_xml.find('Internet')
         try:
-            self.m_external_ip = self.get_text_from_xml(p_house_xml, 'ExternalIP')
-            self.m_external_delay = self.get_int_from_xml(l_sect, 'ExternalDelay')
+            self.m_external_ip = PutGetXML.get_text_from_xml(p_house_xml, 'ExternalIP')
+            self.m_external_delay = PutGetXML.get_int_from_xml(l_sect, 'ExternalDelay')
         except AttributeError:
             LOG.error('internet section missing - using defaults.')
             self.m_external_ip = None
@@ -162,9 +162,9 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
             self.m_external_delay = 600
         # Design change - one of these two should work
         try:
-            self.m_external_url = self.get_text_from_xml(l_sect, 'ExternalUrl')
+            self.m_external_url = PutGetXML.get_text_from_xml(l_sect, 'ExternalUrl')
         except:
-            self.m_external_url = self.get_text_from_xml(l_sect, 'UrlExternalIP')
+            self.m_external_url = PutGetXML.get_text_from_xml(l_sect, 'UrlExternalIP')
         p_house_obj.Internet.ExternalIP = self.m_external_ip
         p_house_obj.Internet.ExternalUrl = self.m_external_url
         p_house_obj.Internet.ExternalDelay = self.m_external_delay
@@ -187,14 +187,14 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         @return: a sub tree ready to be appended to "something"
         """
         l_internet_xml = ET.Element('Internet')
-        self.put_text_attribute(l_internet_xml, 'ExternalIP', p_house_obj.Internet.ExternalIP)
-        self.put_int_attribute(l_internet_xml, 'ExternalDelay', p_house_obj.Internet.ExternalDelay)
-        self.put_text_attribute(l_internet_xml, 'ExternalUrl', p_house_obj.Internet.ExternalUrl)
+        PutGetXML.put_text_attribute(l_internet_xml, 'ExternalIP', p_house_obj.Internet.ExternalIP)
+        PutGetXML.put_int_attribute(l_internet_xml, 'ExternalDelay', p_house_obj.Internet.ExternalDelay)
+        PutGetXML.put_text_attribute(l_internet_xml, 'ExternalUrl', p_house_obj.Internet.ExternalUrl)
         try:
             for l_dyndns_obj in p_house_obj.Internet.DynDns.itervalues():
                 l_entry = self.write_base_object_xml('DynamicDNS', l_dyndns_obj)
-                self.put_int_element(l_entry, 'UpdateInterval', l_dyndns_obj.UpdateInterval)
-                self.put_text_element(l_entry, 'UpdateUrl', l_dyndns_obj.UpdateUrl)
+                PutGetXML.put_int_element(l_entry, 'UpdateInterval', l_dyndns_obj.UpdateInterval)
+                PutGetXML.put_text_element(l_entry, 'UpdateUrl', l_dyndns_obj.UpdateUrl)
                 l_internet_xml.append(l_entry)
         except AttributeError:
             pass

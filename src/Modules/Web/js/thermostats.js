@@ -2,7 +2,7 @@
  * @name:      PyHouse/src/Modules/Web/js/thermostats.js
  * @author:    D. Brian Kimmel
  * @contact:   D.BrianKimmel@gmail.com
- * @Copyright: (c) 2014-2015 by D. Brian Kimmel
+ * @copyright: (c) 2014-2015 by D. Brian Kimmel
  * @license:   MIT License
  * @note:      Created on Sep 03, 2014
  * @summary:   Displays the thermostat element
@@ -121,12 +121,12 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 		var l_html = buildBaseEntry(self, p_obj);
 		// l_html = buildLightingCoreEntry(self, p_obj, l_html, p_onchange);
 		l_html = self.buildThermostatEntry(p_obj, l_html);
-		if (p_obj.ControllerFamily === 'Insteon')
+		if (p_obj.DeviceFamily === 'Insteon')
 			l_html = buildInsteonPart(self, p_obj, l_html);
-		else if (p_obj.ControllerFamily === 'UPB')
+		else if (p_obj.DeviceFamily === 'UPB')
         	l_html = buildUpbPart(self, p_obj, l_html);
 		else
-			Divmod.debug('---', 'ERROR - thermostats.buildEntry() Unknown Family = ' + p_obj.ControllerFamily);
+			Divmod.debug('---', 'ERROR - thermostats.buildEntry() Unknown Family = ' + p_obj.DeviceFamily);
 		l_html += buildLcarEntryButtons(p_handler);
 		return l_html;
 	},
@@ -134,7 +134,7 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 		p_html += buildLcarTextWidget(self, 'Comment', 'Comment', p_obj.Comment);
 		p_html += buildLcarRoomSelectWidget(self, 'RoomName', 'Room', p_obj.RoomName);
 		p_html += buildLcarLightTypeSelectWidget(self, 'Type', 'Type', p_obj.LightingType, 'disabled');
-		p_html += buildLcarFamilySelectWidget(self, 'ControllerFamily', 'Family', p_obj.ControllerFamily, 'familyChanged');
+		p_html += buildLcarFamilySelectWidget(self, 'DeviceFamily', 'Family', p_obj.DeviceFamily, 'familyChanged');
 		p_html += buildLcarHvacSliderWidget(self, 'CoolSetting', 'Cool', p_obj.CoolSetPoint, 'handleSliderChangeCool');
 		p_html += buildLcarHvacSliderWidget(self, 'HeatSetting', 'Heat', p_obj.HeatSetPoint, 'handleSliderChangeHeat');
 		return p_html;
@@ -156,7 +156,7 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 	function familyChanged() {
 		var l_obj = globals.House.ThermostatObj;
 		var l_self = globals.House.Self;
-		l_obj.ControllerFamily = fetchSelectWidget(l_self, 'Family');;
+		l_obj.DeviceFamily = fetchSelectWidget(l_self, 'Family');;
 		l_self.buildLcarDataEntryScreen(l_obj, 'handleDataOnClick');
 	},
 
@@ -166,9 +166,9 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 	function fetchEntry(self) {
 		var l_data = fetchBaseEntry(self, l_data);
 		l_data = self.fetchThermostatEntry(l_data);
-        if (l_data.ControllerFamily === 'Insteon')
+        if (l_data.DeviceFamily === 'Insteon')
         	l_data = fetchInsteonEntry(self, l_data);
-        if (l_data.ControllerFamily === 'UPB')
+        if (l_data.DeviceFamily === 'UPB')
         	l_data = fetchUpbEntry(self, l_data);
 		return l_data;
 	},
@@ -176,7 +176,7 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 	    p_data.Comment = fetchTextWidget(self, 'Comment');
 	    p_data.RoomName = fetchTextWidget(self, 'RoomName');
 	    p_data.LightingType = 'Thermostat';
-	    p_data.ControllerFamily = fetchSelectWidget(self, 'ControllerFamily');
+	    p_data.DeviceFamily = fetchSelectWidget(self, 'DeviceFamily');
 		p_data.CoolSetPoint = fetchSliderWidget(self, 'CoolSetting');
 		p_data.HeatSetPoint = fetchSliderWidget(self, 'HeatSetting');
 		return p_data;
@@ -184,11 +184,11 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 	function createEntry(self) {
 		var l_data = createBaseEntry(self, Object.keys(globals.House.HouseObj.Thermostats).length);
 		l_data = createLightingCoreEntry(self, l_data);
-		l_data.ControllerFamily = "Insteon";
+		l_data.DeviceFamily = "Insteon";
 		l_data = self.createThermostatEntry(l_data);
-        if (l_data.ControllerFamily === 'Insteon')
+        if (l_data.DeviceFamily === 'Insteon')
         	l_data = createInsteonEntry(self, l_data);
-        if (l_data.ControllerFamily === 'UPB')
+        if (l_data.DeviceFamily === 'UPB')
         	l_data = createUpbEntry(self, l_data);
         return l_data;
 	},

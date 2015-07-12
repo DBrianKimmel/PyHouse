@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Scheduling/test/xml_schedule.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@Copyright: (c) 2014=2015 by D. Brian Kimmel
+@copyright: (c) 2014=2015 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 7, 2014
 @Summary:

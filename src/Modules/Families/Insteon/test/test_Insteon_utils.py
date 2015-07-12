@@ -1,11 +1,11 @@
 """
-@name: PyHouse/src/Modules/families/Insteon/test/test_Insteon_utils.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@Copyright (c) 2013-2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Apr 27, 2013
-@summary: This module is for testing Insteon conversion routines.
+@name:      PyHouse/src/Modules/families/Insteon/test/test_Insteon_utils.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2013-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Apr 27, 2013
+@summary:   This module is for testing Insteon conversion routines.
 
 """
 

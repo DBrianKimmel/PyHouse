@@ -1,11 +1,11 @@
 """
-@name: PyHouse/src/Computer/Internet/test/test_internet.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@Copyright (c) 2013-2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Apr 8, 2013
-@summary: Test handling the internet information for a computer.
+@name:      PyHouse/src/Computer/Internet/test/test_internet.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2013-2014 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Apr 8, 2013
+@summary:   Test handling the internet information for a computer.
 
 XML tests all run OK - DBK 2014-07-01
 """

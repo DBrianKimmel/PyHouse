@@ -2,7 +2,7 @@
 @name:      C:/Users/briank/workspace/PyHouse/src/Modules/Computer/Mqtt/protocol.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@Copyright: (c)  2015 by D. Brian Kimmel
+@copyright: (c) 2015-2015 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 28, 2015
 @Summary:   This creates the Twisted (Async) version of MQTT client.
@@ -20,7 +20,6 @@ from twisted.internet.protocol import ClientFactory, Protocol
 
 # Import PyMh files and modules.
 from Modules.Computer import logging_pyh as Logger
-# from Modules.Utilities.tools import PrettyPrintAny
 
 
 LOG = Logger.getLogger('PyHouse.MqttProtocol   ')
@@ -104,7 +103,6 @@ class MQTTProtocol(Protocol, EncodeDecode):
         It might be a portion of a message up to several messages.
         It is up to us to break it down to individual messages and then send the message on to be used.
         """
-        # print("dataReceived {}".format(PrintBytes(p_data)))
         self._accumulatePacket(p_data)
 
     def _accumulatePacket(self, p_data):
@@ -146,7 +144,7 @@ class MQTTProtocol(Protocol, EncodeDecode):
             retain = (packet[0] & 0x01) == 0x01
         except:
             # Invalid packet type, throw away this packet
-            print "Invalid packet type %x" % packet_type
+            LOG.error("Invalid packet type {:x}".format(packet_type))
             return
         # Strip the fixed header
         lenLen = 1
@@ -156,10 +154,9 @@ class MQTTProtocol(Protocol, EncodeDecode):
         # Get the appropriate handler function
         l_packetHandler = getattr(self, "_event_%s" % packet_type_name, None)
         if l_packetHandler:
-            # print("_processPacket {} - {}".format(l_packetHandler, PrintBytes(packet)))
             l_packetHandler(packet, qos, dup, retain)
         else:
-            print "Invalid packet handler for %s" % packet_type_name
+            LOG.error("Invalid packet handler for {}".format(packet_type_name))
             return
 
     # These are the events - one for each packet type
@@ -329,7 +326,7 @@ class MQTTProtocol(Protocol, EncodeDecode):
     # these are for sending Mqtt packets.
 
     def connect(self, p_clientID, keepalive = 3000, willTopic = None, willMessage = None, willQoS = 0, willRetain = False, cleanStart = True):
-        print("Sending connect packet  ID: {}".format(p_clientID))
+        LOG.info("Sending connect packet  ID: {}".format(p_clientID))
         header = bytearray()
         varHeader = bytearray()
         payload = bytearray()
@@ -353,7 +350,6 @@ class MQTTProtocol(Protocol, EncodeDecode):
         self.transport.write(str(payload))
 
     def connack(self, status):
-        print("Sending connack packet")
         header = bytearray()
         payload = bytearray()
         header.append(0x02 << 4)
@@ -363,7 +359,7 @@ class MQTTProtocol(Protocol, EncodeDecode):
         self.transport.write(str(payload))
 
     def publish(self, p_topic, p_message, qosLevel = 0, retain = False, dup = False, messageId = None):
-        print("Sending publish packet - Topic: {}  Message: {}".format(p_topic, p_message))
+        LOG.info("Sending publish packet - Topic: {}  Message: {}".format(p_topic, p_message))
         header = bytearray()
         varHeader = bytearray()
         payload = bytearray()
@@ -382,7 +378,6 @@ class MQTTProtocol(Protocol, EncodeDecode):
         self.transport.write(str(payload))
 
     def puback(self, messageId):
-        print("Sending puback packet")
         header = bytearray()
         varHeader = bytearray()
         header.append(0x04 << 4)
@@ -392,7 +387,6 @@ class MQTTProtocol(Protocol, EncodeDecode):
         self.transport.write(str(varHeader))
 
     def pubrec(self, messageId):
-        print("Sending pubrec packet")
         header = bytearray()
         varHeader = bytearray()
         header.append(0x05 << 4)
@@ -402,7 +396,6 @@ class MQTTProtocol(Protocol, EncodeDecode):
         self.transport.write(str(varHeader))
 
     def pubrel(self, messageId):
-        print("Sending pubrel packet")
         header = bytearray()
         varHeader = bytearray()
         header.append(0x06 << 4)
@@ -412,7 +405,6 @@ class MQTTProtocol(Protocol, EncodeDecode):
         self.transport.write(str(varHeader))
 
     def pubcomp(self, messageId):
-        print("Sending pubcomp packet")
         header = bytearray()
         varHeader = bytearray()
         header.append(0x07 << 4)
@@ -426,7 +418,7 @@ class MQTTProtocol(Protocol, EncodeDecode):
         Only supports QoS = 0 subscribes
         Only supports one subscription per message
         """
-        print("Sending subscribe packet - Topic: {}".format(p_topic))
+        LOG.info("Sending subscribe packet - Topic: {}".format(p_topic))
         header = bytearray()
         varHeader = bytearray()
         payload = bytearray()
@@ -444,7 +436,6 @@ class MQTTProtocol(Protocol, EncodeDecode):
         self.transport.write(str(payload))
 
     def suback(self, grantedQos, messageId):
-        print("Sending suback packet")
         header = bytearray()
         varHeader = bytearray()
         payload = bytearray()
@@ -458,7 +449,7 @@ class MQTTProtocol(Protocol, EncodeDecode):
         self.transport.write(str(payload))
 
     def unsubscribe(self, topic, messageId = None):
-        print("Sending unsubscribe packet")
+        LOG.info("Sending unsubscribe packet")
         header = bytearray()
         varHeader = bytearray()
         payload = bytearray()
@@ -474,7 +465,6 @@ class MQTTProtocol(Protocol, EncodeDecode):
         self.transport.write(str(payload))
 
     def unsuback(self, messageId):
-        print("Sending unsuback packet")
         header = bytearray()
         varHeader = bytearray()
         header.append(0x0B << 4)
@@ -484,21 +474,19 @@ class MQTTProtocol(Protocol, EncodeDecode):
         self.transport.write(str(varHeader))
 
     def pingreq(self):
-        # print("Sending pingreq packet")
         header = bytearray()
         header.append(0x0C << 4)
         header.extend(self._encodeLength(0))
         self.transport.write(str(header))
 
     def pingresp(self):
-        print("Sending pingresp packet")
         header = bytearray()
         header.append(0x0D << 4)
         header.extend(self._encodeLength(0))
         self.transport.write(str(header))
 
     def disconnect(self):
-        print("Sending disconnect packet")
+        LOG.info("Sending disconnect packet")
         header = bytearray()
         header.append(0x0E << 4)
         header.extend(self._encodeLength(0))
@@ -515,7 +503,6 @@ class MQTTClient(MQTTProtocol):
             l_name = p_pyhouse_obj.Computer.Nodes[0].Name
         except KeyError:
             l_name = "UnknownNode"
-        print("Client __init__  ID: {} {}".format(p_clientID, l_name))
         if p_clientID is not None:
             self.m_clientID = p_clientID
         else:
@@ -534,36 +521,31 @@ class MQTTClient(MQTTProtocol):
         TCP Connected
         Now use MQTT connect packet to establish protocol connection.
         """
-        print("Client connectionMade Keepalive: {}".format(self.m_keepalive))
         LOG.info("Client TCP connectionMade Keepalive: {}".format(self.m_keepalive))
         self.connect(self.m_clientID, self.m_keepalive, self.willTopic, self.willMessage, self.willQos, self.willRetain, True)
-        # print("Mqtt-1 {}".format(PrettyPrintAny(self.m_pyhouse_obj, "P1 PyHouse")))
         self.m_pyhouse_obj.Twisted.Reactor.callLater(self.m_pingPeriod, self.pingreq)
 
     def connectionLost(self, reason):
-        print("\nClient connectionLost\n  Disconnected from MQTT Broker\n  Reason: {}\n".format(reason))
         LOG.info("Disconnected from MQTT Broker: {}".format(reason))
 
     def mqttConnected(self):
-        print("Client mqttConnected")
+        LOG.info("Client mqttConnected")
         self.subscribe(SUBSCRIBE)
 
     def connackReceived(self, p_status):
-        print('Client conackReceived - Status: {}'.format(p_status))
+        LOG.info('Client conackReceived - Status: {}'.format(p_status))
         if p_status == 0:
             self.mqttConnected()
 
     def pubackReceived(self, _messageId):
-        print('Client pubackReceived {}')
+        pass
 
     def subackReceived(self, _grantedQos, _messageId):
         """Override
         """
-        print("Client subackReceived")
-        self.m_pyhouse_obj.APIs.Comp.MqttAPI.doPyHouseLogin(self, self.m_pyhouse_obj)
+        self.m_pyhouse_obj.APIs.Computer.MqttAPI.doPyHouseLogin(self, self.m_pyhouse_obj)
 
     def pingrespReceived(self):
-        # LOG.info('Client pingrespReceived.')
         self.m_pyhouse_obj.Twisted.Reactor.callLater(self.m_pingPeriod, self.pingreq)
 
     def publishReceived(self, p_topic, p_message, _qos = 0, _dup = False, _retain = False, _messageId = None):
@@ -571,7 +553,6 @@ class MQTTClient(MQTTProtocol):
         Call the dispatcher to send them on to the correct place.
         """
         LOG.info("Client publishReceived\n  Topic: {}\n  Message: {}".format(p_topic, p_message))
-        print("Client publishReceived\n  Topic: {}\n  Message: {}".format(p_topic, p_message))
         # self.MqttDispatch(p_topic, p_message)
 
 
@@ -585,42 +566,41 @@ class MqttClientFactory(ClientFactory):
     m_pingPeriod = 5
 
     def __init__(self, p_pyhouse_obj, p_client_id, p_broker):
+        """
+        @param p_pyhouse_obj: is the master information store
+        @param p_client_id: is the ID of this computer that will be supplied to the broker
+        @param p_broker: is ???
+        """
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_broker = p_broker
         self.m_clientID = p_client_id
-        # print("Factory __init__ Broker: {}".format(self.m_broker))
 
     def startedConnecting(self, _p_connector):
         """
         p_connector is an instance of twisted.internet.tcp.Connector
         """
-        # print('Factory startedConnecting.')
         pass
 
     def connectionMade(self):
         """ Physical connection made to broker, now perform protocol connection.
         """
-        print('Factory connectionMade to MQTT Broker')
         LOG.info('Connected to MQTT Broker')
         self.connect(self.m_clientID, keepalive = self.m_pingPeriod * 3000)
         self.m_pyhouse_obj.Twisted.Reactor.callLater(self.m_pingPeriod, self.pingreq)
 
     def buildProtocol(self, p_addr):
         l_client = MQTTClient(self.m_pyhouse_obj)
-        # print('Factory buildProtocol - Addr: {} - {}'.format(p_addr, l_client))
         LOG.info("Mqtt broker address: {}".format(p_addr))
-        self.m_pyhouse_obj.Computer.Mqtt.ProtocolAPI = l_client
-        # print("Mqtt-2 {}".format(PrettyPrintAny(self.m_pyhouse_obj.Computer.Mqtt, "P2 PyHouse.Computer.Mqtt")))
+        # self.m_pyhouse_obj.Computer.Mqtt.ProtocolAPI = l_client
         return l_client
 
     def clientConnectionLost(self, p_connector, p_reason):
-        print('\nFactory clientConnectionLost.\n  Reason: {}\n  Connector: {}'.format(p_reason, p_connector))
+        LOG.error('Connector{}\n  Err:{}'.format(p_connector, p_reason))
 
     def clientConnectionFailed(self, p_connector, p_reason):
-        print('Factory Connection failed. Reason: {} - {}'.format(p_reason, p_connector))
+        LOG.error('Connector{}\n  Err:{}'.format(p_connector, p_reason))
 
     def pingrespReceived(self):
-        print('Factory Ping received from MQTT broker')
         LOG.info('Ping received from MQTT broker')
         self.m_pyhouse_obj.Twisted.Reactor.callLater(self.m_pingPeriod, self.pingreq)
 
@@ -628,7 +608,6 @@ class MqttClientFactory(ClientFactory):
         if status == 0:
             self.onBrokerConnected()
         else:
-            print('Factory Connection to MQTT broker failed')
             LOG.info('Connection to MQTT broker failed')
 
 

@@ -1,11 +1,11 @@
 """
-@name: PyHouse/src/test/xml_data/__init__.py
-@author: D. Brian Kimmel
-@contact: <d.briankimmel@gmail.com
-@Copyright (c) 2010-2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Jan 20, 2010
-@summary: Handle all of the information for all houses.
+@name:      PyHouse/src/test/xml_data/__init__.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2010-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Jan 20, 2010
+@summary:   Handle all of the information for all houses.
 
 XML to define the PyHouse.xml file
 

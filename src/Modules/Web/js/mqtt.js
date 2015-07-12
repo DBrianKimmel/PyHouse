@@ -2,7 +2,7 @@
  * @name:      PyHouse/src/Modules/Web/js/mqtt.js
  * @author:    D. Brian Kimmel
  * @contact:   D.BrianKimmel@gmail.com
- * @Copyright: (c) 2015 by D. Brian Kimmel
+ * @copyright: (c) 2015 by D. Brian Kimmel
  * @license:   MIT License
  * @note:      Created on June 18, 2015
  * @summary:   Displays the Mqtt element

@@ -100,7 +100,7 @@ class D_Util(object):
 
     def get_device_class(self, p_pyhouse_obj):
         """
-        Return a class of objects (Lights, Thermostats) that may have an Insteon <ControllerFamily> within.
+        Return a class of objects (Lights, Thermostats) that may have an Insteon <DeviceFamily> within.
         """
         l_house = p_pyhouse_obj.House.DeviceOBJs
         for _l_class in l_house:
@@ -115,7 +115,7 @@ class D_Util(object):
         @return: the object that has the address.  None if not found
         """
         for l_obj in p_class.itervalues():
-            if l_obj.ControllerFamily != 'Insteon':
+            if l_obj.DeviceFamily != 'Insteon':
                 continue  # ignore any non-Insteon devices in the class
             if l_obj.InsteonAddress == p_addr:
                 return l_obj
@@ -414,8 +414,9 @@ class DecodeResponses(D_Util):
         except AttributeError:
             pass
         l_ret = True
+        l_topic = "pyhouse/lighting/{}/info".format(l_device_obj.Name)
         l_json = json_tools.encode_json(l_device_obj)
-        self.m_pyhouse_obj.APIs.Comp.MqttAPI.MqttPublish("pyhouse/lighting/{}/info".format(l_device_obj.Name), l_json)
+        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_json)
         return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_51_record(self, p_controller_obj):

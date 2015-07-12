@@ -1,7 +1,12 @@
 """
-Created on Mar 22, 2014
+@name:      PyHouse/src/Modules/communication/test/test_bluetooth.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2014-2015 by D. Brian Kimmel
+@note:      Created on Mar 22, 2014
+@license:   MIT License
+@summary:   Provides PyHouse IR service via a Lirc connection.
 
-@author: briank
 """
 import unittest
 

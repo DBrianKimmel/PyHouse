@@ -2,7 +2,7 @@
  * @name:      PyHouse/src/Modules/Web/js/lights.js
  * @author:    D. Brian Kimmel
  * @contact:   D.BrianKimmel@gmail.com
- * @Copyright: (c) 2014-2015 by D. Brian Kimmel
+ * @copyright: (c) 2014-2015 by D. Brian Kimmel
  * @license:   MIT License
  * @note:      Created on Mar 11, 2014
  * @summary:   Displays the lights
@@ -117,12 +117,12 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		var l_html = buildBaseEntry(self, p_obj);
 		l_html = buildLightingCoreEntry(self, p_obj, l_html, p_onchange);
 		l_html = self.buildLightEntry(p_obj, l_html);
-		if (p_obj.ControllerFamily === 'Insteon')
+		if (p_obj.DeviceFamily === 'Insteon')
 			l_html = buildInsteonPart(self, p_obj, l_html);
-		else if (p_obj.ControllerFamily === 'UPB')
+		else if (p_obj.DeviceFamily === 'UPB')
         	l_html = buildUpbPart(self, p_obj, l_html);
 		else
-			Divmod.debug('---', 'ERROR - lights.buildEntry() Unknown Family = ' + p_obj.ControllerFamily);
+			Divmod.debug('---', 'ERROR - lights.buildEntry() Unknown Family = ' + p_obj.DeviceFamily);
 		l_html += buildLcarEntryButtons(p_handler);
 		return l_html;
 	},
@@ -133,7 +133,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		var l_obj = globals.House.LightObj;
 		var l_self = globals.House.Self;
 		var l_family = fetchSelectWidget(l_self, 'Family');
-		l_obj.ControllerFamily = l_family;
+		l_obj.DeviceFamily = l_family;
 		l_self.buildLcarDataEntryScreen(l_obj, 'handleDataEntryOnClick');
 	},
  	/**
@@ -143,9 +143,9 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		var l_data = fetchBaseEntry(self, l_data);
 		l_data = fetchLightingCoreEntry(self, l_data);
 		l_data = self.fetchLightEntry(l_data);
-        if (l_data.ControllerFamily === 'Insteon')
+        if (l_data.DeviceFamily === 'Insteon')
         	l_data = fetchInsteonEntry(self, l_data);
-        if (l_data.ControllerFamily === 'UPB')
+        if (l_data.DeviceFamily === 'UPB')
         	l_data = fetchUpbEntry(self, l_data);
 		return l_data;
 	},
@@ -157,9 +157,9 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		var l_data = createBaseEntry(self, l_data);
 		l_data = createLightingCoreEntry(self, l_data);
 		l_data = self.createLightEntry(l_data);
-        if (l_data.ControllerFamily === 'Insteon')
+        if (l_data.DeviceFamily === 'Insteon')
         	l_data = createInsteonEntry(self, l_data);
-        if (l_data.ControllerFamily === 'UPB')
+        if (l_data.DeviceFamily === 'UPB')
         	l_data = createUpbEntry(self, l_data);
         return l_data;
 	},

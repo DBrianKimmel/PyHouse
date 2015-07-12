@@ -1,7 +1,13 @@
 """
-Created on Feb 13, 2014
 
-@author: briank
+@name:      PyHouse/src/Modules/housing/no_ip.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2014-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Feb 13, 2014
+@summary:
+
 
 """
 
@@ -2467,14 +2473,9 @@ void autoconf()
 
 
 # Import system type stuff
-
 from Modules.Computer import logging_pyh as Logger
 
 
-g_debug = 1
-# 0 = off
-# 1 = log extra info
-# + = NOT USED HERE
 LOG = Logger.getLogger('PyHouse.No-Ip       ')
 
 

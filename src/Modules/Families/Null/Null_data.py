@@ -24,6 +24,6 @@ class NullData(LightData):
 
     def __init__(self):
         super(NullData, self).__init__()
-        self.ControllerFamily = 'Null'
+        self.DeviceFamily = 'Null'
 
 # ## END DBK

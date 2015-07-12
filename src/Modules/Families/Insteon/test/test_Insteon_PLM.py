@@ -1,6 +1,4 @@
 """
--*- test-case-name: PyHouse.src.Modules.families.Insteon.test.test_Insteon_PLM -*-
-
 @name:      PyHouse/src/Modules/families/Insteon/Insteon_PLM.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com

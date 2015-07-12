@@ -1,13 +1,12 @@
 """
-entertainment.py
 
-@author: briank
-
-@copyright: 2010 - 2014 by D. Brian Kimmel
-
-@summary: Entertainment component access module.
-
-This is a Main Module - always present.
+@name:      PyHouse/src/Modules/Entertainment/entertainment.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2013-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Jun 3, 2013
+@summary:   Entertainment component access module.
 
 Depending on node type, start up entertainment systems.
 
@@ -16,21 +15,12 @@ Pandora (via pianobar) is one of the systems.
 """
 
 # Import system type stuff
-# import xml.etree.ElementTree as ET
-# from Modules.entertain import pandora
 from Modules.Computer import logging_pyh as Logger
 
-g_debug = 0
-
-LOG = Logger.getLogger('PyMh.Entertainment')
-g_upnp = None
-
-Entertainment_Data = {}
+LOG = Logger.getLogger('PyHouse.Entertainment  ')
 
 
 class Utility(object):
-    """
-    """
 
     def get_all_entertainment_slots(self):
         """
@@ -40,21 +30,18 @@ class Utility(object):
 
 
 class API(Utility):
-    def __init__(self):
-        # self.m_pandora = pandora.API()
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info("Initialized.")
 
-    def Start(self, p_pyhouse_obj):
-        self.m_pyhouse_obj = p_pyhouse_obj
-        # self.m_pandora.Start(p_pyhouse_obj)
+    def Start(self):
         LOG.info("Started.")
 
     def Stop(self):
-        # self.m_pandora.Stop()
         LOG.info("Stopped.")
 
-    def SaveXml(self, _p_xml):
-        # self.m_pandora.Stop()
+    def SaveXml(self, p_xml):
         LOG.info("Saved XML.")
+        return p_xml
 
 # ## END DBK

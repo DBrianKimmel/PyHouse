@@ -28,31 +28,58 @@ class Utility(LCApi, LBApi, LLApi):
     """Commands we can run from high places.
     """
 
+    def _setup_lighting(self, p_pyhouse_obj):
+        """
+        Find the lighting information
+        Config file version 1.4 moved the lighting information into a separate LightingSection
+        """
+        l_root = p_pyhouse_obj.Xml.XmlRoot
+        try:
+            l_house_xml = l_root.find('HouseDivision')
+        except AttributeError as e_err:
+            LOG.error('House Division is missing in Config file.  {}'.format(e_err))
+            l_house_xml = l_root
+        try:
+            l_lighting_xml = l_house_xml.find('LightingSection')
+        except AttributeError as e_err:
+            LOG.warning('Old version of Config file found.  No LightingSection {}'.format(e_err))
+        if l_lighting_xml == None:
+            l_lighting_xml = l_house_xml
+        return l_lighting_xml
+
     def _read_lighting_xml(self, p_pyhouse_obj):
         """
         Get all the lighting components for a house
+        Config file version 1.4 moved the lighting information into a separate LightingSection
         """
-        l_house_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
+        l_lighting_xml = self._setup_lighting(p_pyhouse_obj)
         l_house_obj = p_pyhouse_obj.House.DeviceOBJs
         try:
-            l_house_obj.Controllers = LCApi(p_pyhouse_obj).read_all_controllers_xml(l_house_xml.find('ControllerSection'))
-        except AttributeError:
+            l_xml = l_lighting_xml.find('ControllerSection')
+            l_house_obj.Controllers = LCApi(p_pyhouse_obj).read_all_controllers_xml(l_xml)
+        except AttributeError as e_err:
             l_house_obj.Controllers = {}
+            print('No Controllers found {}'.format(e_err))
         try:
-            l_house_obj.Buttons = LBApi(p_pyhouse_obj).read_all_buttons_xml(l_house_xml.find('ButtonSection'))
-        except AttributeError:
+            l_xml = l_lighting_xml.find('ButtonSection')
+            l_house_obj.Buttons = LBApi(p_pyhouse_obj).read_all_buttons_xml(l_xml)
+        except AttributeError as e_err:
             l_house_obj.Buttons = {}
+            print('No Controllers found {}'.format(e_err))
         try:
-            l_house_obj.Lights = LLApi(p_pyhouse_obj).read_all_lights_xml(l_house_xml.find('LightSection'))
-        except AttributeError:
+            l_xml = l_lighting_xml.find('LightSection')
+            l_house_obj.Lights = LLApi(p_pyhouse_obj).read_all_lights_xml(l_xml)
+        except AttributeError as e_err:
             l_house_obj.Lights = {}
+            print('No Lights found {}'.format(e_err))
+        return l_house_obj
 
     def _write_lighting_xml(self, p_house_objs, p_house_element):
         try:
             l_xml = self.write_all_lights_xml(p_house_objs.Lights)
             p_house_element.append(l_xml)
             p_house_element.append(self.write_buttons_xml(p_house_objs.Buttons))
-            p_house_element.append(self.write_controllers_xml(p_house_objs.Controllers))
+            p_house_element.append(self.write_all_controllers_xml(p_house_objs.Controllers))
         except AttributeError as e_err:
             l_msg = 'ERROR in writing lighting {0:}'.format(e_err)
             LOG.error(l_msg)
@@ -73,17 +100,16 @@ class Utility(LCApi, LBApi, LLApi):
 
 class API(Utility):
 
-    def __init__(self):
-        # self.m_family = family.API()
-        pass
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        LOG.info('Initialized')
 
-    def Start(self, p_pyhouse_obj):
+    def Start(self):
         """Allow loading of sub modules and drivers.
         """
-        self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_house_obj = p_pyhouse_obj.House.DeviceOBJs
-        self._read_lighting_xml(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.House.FamilyAPI.start_lighting_families(p_pyhouse_obj)
+        self.m_house_obj = self.m_pyhouse_obj.House.DeviceOBJs
+        self._read_lighting_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.APIs.House.FamilyAPI.start_lighting_families(self.m_pyhouse_obj)
         LOG.info("Started.")
 
     def Stop(self):
@@ -95,7 +121,7 @@ class API(Utility):
 
     def SaveXml(self, p_xml):
         LOG.info("Saving config info..")
-        self.m_pyhouse_obj.APIs.House.FamilyAPI.save_lighting_families(p_xml, self.m_pyhouse_obj.House.RefOBJs)
+        # self.m_pyhouse_obj.APIs.House.FamilyAPI.save_lighting_families(p_xml, self.m_pyhouse_obj.House.RefOBJs)
         self._write_lighting_xml(self.m_pyhouse_obj.House.DeviceOBJs, p_xml)
         LOG.info("Saved XML.")
 
@@ -104,7 +130,7 @@ class API(Utility):
         The light we are changing can be in any lighting family.
         Get the instance pointer for the proper family so we can deal with the proper light.
         """
-        l_ret = p_pyhouse_obj.House.RefOBJs.FamilyData[p_light_obj.ControllerFamily].FamilyModuleAPI
+        l_ret = p_pyhouse_obj.House.RefOBJs.FamilyData[p_light_obj.DeviceFamily].FamilyModuleAPI
         LOG.info('{}'.format(l_ret))
         return l_ret
 
@@ -118,7 +144,7 @@ class API(Utility):
         """
         l_light_obj = self._find_full_obj(self.m_pyhouse_obj.House.DeviceOBJs.Lights, p_light_obj)
         try:
-            LOG.info("Turn Light {} to level {}, ControllerFamily:{}".format(l_light_obj.Name, p_new_level, l_light_obj.ControllerFamily))
+            LOG.info("Turn Light {} to level {}, DeviceFamily:{}".format(l_light_obj.Name, p_new_level, l_light_obj.DeviceFamily))
             l_api = self._get_api_for_family(self.m_pyhouse_obj, l_light_obj)
             l_api.ChangeLight(l_light_obj, p_new_level)
         except Exception as e_err:

@@ -1,11 +1,11 @@
 /**
- * @name: PyHouse/src/Modules/Web/js/lcars.js
- * @author: D. Brian Kimmel
- * @contact: D.BrianKimmel@gmail.com
- * @Copyright (c) 2014 by D. Brian Kimmel
- * @license: MIT License
- * @note: Created on Sep 12, 2014
- * @summary: Lcars components.
+ * @name:      PyHouse/src/Modules/Web/js/lcars.js
+ * @author:    D. Brian Kimmel
+ * @contact:   D.BrianKimmel@gmail.com
+ * @copyright: (c) 2014-2015 by D. Brian Kimmel
+ * @license:   MIT License
+ * @note:      Created on Sep 12, 2014
+ * @summary:   Lcars components.
  */
 
 
@@ -184,26 +184,26 @@ function createBaseEntry(self, p_key) {
 
 function buildLightingCoreEntry(self, p_obj, p_html, p_onchange) {
 	p_html += buildLcarTextWidget(self, 'Comment', 'Comment', p_obj.Comment);
-	p_html += buildLcarTextWidget(self, 'Coords', 'Coords', p_obj.Coords);
+	p_html += buildLcarTextWidget(self, 'RoomCoords', 'RoomCoords', p_obj.RoomCoords);
 	p_html += buildLcarTrueFalseWidget(self, 'Dimmable', 'Light Dimmable ?', p_obj.IsDimmable);
-	p_html += buildLcarFamilySelectWidget(self, 'ControllerFamily', 'Family', p_obj.ControllerFamily, p_onchange);
+	p_html += buildLcarFamilySelectWidget(self, 'DeviceFamily', 'Family', p_obj.DeviceFamily, p_onchange);
 	p_html += buildLcarRoomSelectWidget(self, 'RoomName', 'Room', p_obj.RoomName);
 	p_html += buildLcarLightTypeSelectWidget(self, 'LightingType', 'Type', p_obj.LightingType);
 	return p_html;
 }
 function fetchLightingCoreEntry(self, p_data) {
-    p_data.ControllerFamily = fetchSelectWidget(self, 'ControllerFamily');
+    p_data.DeviceFamily = fetchSelectWidget(self, 'DeviceFamily');
     p_data.Comment = fetchTextWidget(self, 'Comment');
-    p_data.Coords = fetchTextWidget(self, 'Coords');
+    p_data.RoomCoords = fetchTextWidget(self, 'RoomCoords');
     p_data.IsDimmable = fetchTrueFalseWidget(self, 'Dimmable');
     p_data.RoomName = fetchTextWidget(self, 'RoomName');
     p_data.LightingType = fetchSelectWidget(self, 'LightingType');
 	return p_data;
 }
 function createLightingCoreEntry(self, p_data) {
-    p_data.ControllerFamily = 'Insteon';
+    p_data.DeviceFamily = 'Insteon';
     p_data.Comment = '';
-    p_data.Coords = "['0', '0']";
+    p_data.RoomCoords = "['0', '0', '0']";
     p_data.IsDimmable = true;
     p_data.RoomName = 'XXX Room';
     p_data.LightingType = 'Light';

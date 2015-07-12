@@ -2,7 +2,7 @@
  * @name:      PyHouse/src/Modules/Web/js/controllers.js
  * @author:    D. Brian Kimmel
  * @contact:   D.BrianKimmel@gmail.com
- * @Copyright: (c) 2014-2015 by D. Brian Kimmel
+ * @copyright: (c) 2014-2015 by D. Brian Kimmel
  * @license:   MIT License
  * @note:      Created on Mar 11, 2014
  * @summary:   Displays the controller element
@@ -133,12 +133,12 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 		var l_html = buildBaseEntry(self, p_obj);
 		l_html = buildLightingCoreEntry(self, p_obj, l_html, p_onchange);
 		l_html = self.buildControllerEntry(p_obj, l_html);
-		if (p_obj.ControllerFamily === 'Insteon')
+		if (p_obj.DeviceFamily === 'Insteon')
 			l_html = buildInsteonPart(self, p_obj, l_html);
-		else if (p_obj.ControllerFamily === 'UPB')
+		else if (p_obj.DeviceFamily === 'UPB')
         	l_html = buildUpbPart(self, p_obj, l_html);
 		else
-			Divmod.debug('---', 'ERROR - controllers.buildAllParts() Family = ' + p_obj.ControllerFamily);
+			Divmod.debug('---', 'ERROR - controllers.buildAllParts() Family = ' + p_obj.DeviceFamily);
 		if (p_obj.InterfaceType === 'Serial')
 			l_html = buildSerialPart(self, p_obj, l_html);
 		l_html += buildLcarEntryButtons(p_handler);
@@ -153,7 +153,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 		Divmod.debug('---', 'controllers.familyChanged() was called.');
 		var l_obj = globals.House.ControllerObj;
 		var l_self = globals.House.Self;
-		l_obj.ControllerFamily = fetchSelectWidget(l_self, 'ControllerFamily');
+		l_obj.DeviceFamily = fetchSelectWidget(l_self, 'DeviceFamily');
 		l_self.buildLcarDataEntryScreen(l_obj, 'handleDataOnClick');
 	},
 	function interfaceChanged() {
@@ -168,9 +168,9 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 		var l_data = fetchBaseEntry(self, l_data);
 		l_data = fetchLightingCoreEntry(self, l_data);
 		l_data = self.fetchControllerEntry(l_data);
-        if (l_data.ControllerFamily === 'Insteon')
+        if (l_data.DeviceFamily === 'Insteon')
         	l_data = fetchInsteonEntry(self, l_data);
-        if (l_data.ControllerFamily === 'UPB')
+        if (l_data.DeviceFamily === 'UPB')
         	l_data = fetchUpbEntry(self, l_data);
         if (l_data.InterfaceType === 'Serial')
         	l_data = fetchSerialEntry(self, l_data);
@@ -186,7 +186,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
         var l_data = createBaseEntry(self, Object.keys(globals.House.HouseObj.Controllers).length);
         l_data = createLightingCoreEntry(self, l_data);
         l_data.LightingType = 'Controller';
-        if (l_data.ControllerFamily === 'Insteon')
+        if (l_data.DeviceFamily === 'Insteon')
         	l_data = createInsteonEntry(self, l_data);
         if (l_data.InterfaceType === 'Serial')
         	l_data = createSerialEntry(self, l_data);

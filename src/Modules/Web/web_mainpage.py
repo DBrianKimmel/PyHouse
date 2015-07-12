@@ -3,7 +3,7 @@
 @name:      PyHouse/src/Modules/Web/web_mainpage.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@Copyright: (c) 2013-2015 by D. Brian Kimmel
+@copyright: (c) 2013-2015 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 27, 2013
 @Summary:

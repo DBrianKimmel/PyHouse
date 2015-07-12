@@ -63,7 +63,7 @@ class ihvac_utility(object):
             l_mqtt_topic += '/temperature'
             l_mqtt_message += ' temp = {}; '.format(l_cmd2)
         l_json = json_tools.encode_json(p_device_obj)
-        p_pyhouse_obj.APIs.Comp.MqttAPI.MqttPublish(l_mqtt_topic, l_json)
+        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_mqtt_topic, l_json)
         return
 
 # ## END DBK

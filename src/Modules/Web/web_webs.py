@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/web/web_webs.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@Copyright: (c) 2013-2015 by D. Brian Kimmel
+@copyright: (c) 2013-2015 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Sep 27, 2013
 @summary:   Handle all of the information for a house.
@@ -20,7 +20,6 @@ from nevow import loaders
 from Modules.Core.data_objects import WebData
 from Modules.Computer import logging_pyh as Logger
 from Modules.Web import web_utils
-from Modules.Utilities.tools import PrettyPrintAny
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -45,7 +44,6 @@ class WebsElement(athena.LiveElement):
         """ A JS client has requested all the webs information.
         """
         l_obj = self.m_pyhouse_obj.Computer.Web
-        PrettyPrintAny(l_obj, 'Web_webs Web_Obj')
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_obj))
         return l_json
 
@@ -56,6 +54,6 @@ class WebsElement(athena.LiveElement):
         l_json = web_utils.JsonUnicode().decode_json(p_json)
         l_obj = WebData()
         l_obj.Port = l_json['Port']
-        self.m_pyhouse_obj.APIs.Comp.WebAPI.SaveXml(l_obj)
+        self.m_pyhouse_obj.APIs.Computer.WebAPI.SaveXml(l_obj)
 
 # ## END DBK

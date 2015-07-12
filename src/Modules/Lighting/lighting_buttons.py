@@ -16,16 +16,15 @@ import xml.etree.ElementTree as ET
 
 # Import PyHouse files
 from Modules.Core.data_objects import ButtonData
-from Modules.Lighting.lighting_core import ReadWriteConfigXml
+from Modules.Lighting.lighting_core import LightingCoreXmlAPI
 from Modules.Families.family_utils import FamUtil
 from Modules.Computer import logging_pyh as Logging
+from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
 
-
-g_debug = 0
 LOG = Logging.getLogger('PyHouse.LightgButton')
 
 
-class LBApi(ReadWriteConfigXml):
+class LBApi(LightingCoreXmlAPI):
 
     m_count = 0
 
@@ -34,7 +33,8 @@ class LBApi(ReadWriteConfigXml):
 
     def _read_button_data(self, p_xml):
         l_obj = ButtonData()
-        l_obj = self.read_base_lighting_xml(l_obj, p_xml)
+        l_obj = self.read_core_lighting_xml(l_obj, p_xml)
+        l_obj.DeviceSubType = 3
         return l_obj
 
     def _read_family_data(self, p_obj, p_xml):
@@ -62,9 +62,9 @@ class LBApi(ReadWriteConfigXml):
         LOG.info("Loaded {} buttons".format(self.m_count))
         return l_button_dict
 
+
     def write_one_button_xml(self, p_button_obj):
-        # l_button_xml = self.write_base_object_xml('Button', p_button_obj)
-        l_button_xml = self.write_base_lighting_xml(p_button_obj)
+        l_button_xml = self.write_base_lighting_xml('Button', p_button_obj)
         self._add_family_data(p_button_obj, l_button_xml)
         return l_button_xml
 

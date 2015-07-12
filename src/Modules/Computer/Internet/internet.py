@@ -86,8 +86,31 @@ class API(Utility):
     """
     """
 
-    def _save_pyhouse_obj(self, p_pyhouse_obj):
+    def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+
+    def Start(self):
+        """
+        Start async operation of the Internet module.
+        """
+        self._read_xml_configuration(self.m_pyhouse_obj)
+        self._create_internet_discovery_service(self.m_pyhouse_obj)
+        self._start_internet_discovery(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self._internet_loop, self.m_pyhouse_obj)
+        LOG.info("Started.")
+
+    def Stop(self):
+        """
+        Stop async operations.
+        """
+        self._stop_internet_discovery(self.m_pyhouse_obj)
+        LOG.info("Stopped.")
+
+    def SaveXml(self, p_xml):
+        l_xml = self._write_xml_config(self.m_pyhouse_obj)
+        p_xml.append(l_xml)
+        LOG.info('Saved XML')
+        return p_xml
 
     @staticmethod
     def FindExternalIp(p_pyhouse_obj):
@@ -121,29 +144,5 @@ class API(Utility):
         l_defer.addCallback(cb_done_updating)
         l_defer.addErrback(eb_error)
         return l_defer
-
-    def Start(self, p_pyhouse_obj):
-        """
-        Start async operation of the Internet module.
-        """
-        self.m_pyhouse_obj = p_pyhouse_obj
-        self._read_xml_configuration(p_pyhouse_obj)
-        self._create_internet_discovery_service(p_pyhouse_obj)
-        self._start_internet_discovery(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self._internet_loop, p_pyhouse_obj)
-        LOG.info("Started.")
-
-    def Stop(self):
-        """
-        Stop async operations.
-        """
-        self._stop_internet_discovery(self.m_pyhouse_obj)
-        LOG.info("Stopped.")
-
-    def SaveXml(self, p_xml):
-        l_xml = self._write_xml_config(self.m_pyhouse_obj)
-        p_xml.append(l_xml)
-        LOG.info('Saved XML')
-        return p_xml
 
 # ## END DBK

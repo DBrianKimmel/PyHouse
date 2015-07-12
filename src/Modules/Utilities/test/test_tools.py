@@ -1,11 +1,11 @@
 """
-@name: PyHouse/src/Modules/Utilities/tools.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2013-2014 by D. Brian Kimmel
-@note: Created on Apr 11, 2013
-@license: MIT License
-@summary: Various functions and utility methods.
+@name:      PyHouse/src/Modules/Utilities/test_tools.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: 2013-2015 by D. Brian Kimmel
+@note:      Created on Apr 11, 2013
+@license:   MIT License
+@summary:   Various functions and utility methods.
 
 """
 
@@ -19,7 +19,7 @@ from twisted.trial import unittest
 from Modules.Core.setup_logging import LOGGING_DICT
 from Modules.Utilities import tools
 from Modules.Lighting.lighting_lights import LLApi
-from Modules.Families import family
+from Modules.Families.family import API as familyAPI
 from Modules.Computer import logging_pyh as Logger
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
@@ -78,7 +78,7 @@ class Test_02_Find(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         self.m_api = tools.GetPyhouse(self.m_pyhouse_obj)
         self.m_light_api = LLApi(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
+        self.m_pyhouse_obj.House.RefOBJs.FamilyData = familyAPI().build_lighting_family_info()
         self.m_pyhouse_obj.House.DeviceOBJs.Lights = self.m_light_api.read_all_lights_xml(self.m_xml.light_sect)
 
     def test_01_Setup(self):

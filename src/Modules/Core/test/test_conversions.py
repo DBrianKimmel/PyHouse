@@ -1,10 +1,10 @@
 """
-@name: PyHouse/src/Modules/Core/test/test_conversions.py
-@author: briank
-@contact: D.BrianKimmel@gmail.com>
-@Copyright: (c)  2014 by briank
-@license: MIT License
-@note: Created on Jul 14, 2014
+@name:      PyHouse/src/Modules/Core/test/test_conversions.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com>
+@copyright: (c) 2014-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Jul 14, 2014
 @Summary:
 
 

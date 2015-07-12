@@ -12,7 +12,7 @@
 
     Permission is hereby granted, free of charge, to any person obtaining a copy
     of this software and associated documentation files (the "Software"), to deal
-    in the Software without restriction, including without limitation the rights
+    in the Software without restriction, including without limitation the rights2
     to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
     copies of the Software, and to permit persons to whom the Software is
     furnished to do so, subject to the following conditions:
@@ -60,7 +60,7 @@ See those modules to find out what each does.
 """
 
 __author__ = "D. Brian Kimmel"
-__copyright__ = "2010-2014 by D. Brian Kimmel"
+__copyright__ = "(c) 2010-2015 by D. Brian Kimmel"
 __version_info__ = (1, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -73,8 +73,8 @@ from twisted.internet import reactor
 from twisted.application.service import Application
 
 # Import PyMh files and modules.
-from Modules.Core import data_objects
 from Modules.Core.data_objects import PyHouseData, PyHouseAPIs
+from Modules.Core.data_objects import CoreServicesInformation, TwistedInformation, XmlInformation
 from Modules.Core import setup
 from Modules.Computer import logging_pyh as Logger
 
@@ -148,36 +148,25 @@ class Utilities(object):
     """
     """
 
-    def do_daemon_stuff(self):
+    @staticmethod
+    def do_daemon_stuff():
         handle_signals()
-        pass
+
+    @staticmethod
+    def _create_pyhouse_obj():
+        l_pyhouse_obj = PyHouseData()
+        l_pyhouse_obj.APIs = PyHouseAPIs()
+        l_pyhouse_obj.Services = CoreServicesInformation()
+        l_pyhouse_obj.Xml = XmlInformation()
+        l_pyhouse_obj.Twisted = TwistedInformation()
+        l_pyhouse_obj.Twisted.Reactor = reactor
+        l_pyhouse_obj.Twisted.Application = Application('PyHouse')
+        return l_pyhouse_obj
 
 
-class API(Utilities):
+class API(object):
     """
     """
-    m_pyhouse_obj = PyHouseData()
-
-    def _create_pyhouse_obj(self):
-        """ Create the basic PyHouse Object.
-        Do some very basic initialization.
-        """
-        l_obj = PyHouseData()
-        l_obj.APIs = PyHouseAPIs()
-        # l_obj.APIs.Comp = data_objects.CompAPIs()
-        l_obj.APIs.House = data_objects.HouseAPIs()
-        l_obj.APIs.PyHouseAPI = self
-        l_obj.APIs.CoreSetupAPI = setup.API()
-        l_obj.House = data_objects.HouseInformation()
-        l_obj.Services = data_objects.CoreServicesInformation()
-        l_obj.Twisted = data_objects.TwistedInformation()
-        l_obj.Xml = data_objects.XmlInformation()
-        #
-        l_obj.Twisted.Reactor = reactor
-        l_obj.Twisted.Application = Application('PyHouse')
-        l_obj.Xml.XmlFileName = '/etc/pyhouse/master.xml'
-        return l_obj
-
 
     def __init__(self):
         """This is the startup of the entire system.
@@ -187,12 +176,15 @@ class API(Utilities):
         Notice that the reactor starts here as the very last step here and that
         call never returns until the reactor is stopped (permanent stoppage).
         """
-        self.do_daemon_stuff()
         global g_API
         g_API = self
-        self.m_pyhouse_obj = self._create_pyhouse_obj()
-        self.m_pyhouse_obj.Twisted.Reactor.callWhenRunning(self.Start)
-        self.m_pyhouse_obj.Twisted.Reactor.run()  # reactor never returns so must be last - Event loop will now run
+        Utilities.do_daemon_stuff()
+        p_pyhouse_obj = Utilities._create_pyhouse_obj()
+        self.m_pyhouse_obj = p_pyhouse_obj
+        p_pyhouse_obj.APIs.PyHouseMainAPI = self
+        p_pyhouse_obj.APIs.CoreSetupAPI = setup.API(p_pyhouse_obj)
+        p_pyhouse_obj.Twisted.Reactor.callWhenRunning(self.Start)
+        p_pyhouse_obj.Twisted.Reactor.run()  # reactor never returns so must be last - Event loop will now run
         #
         #  When the reactor stops we continue here
         #
@@ -202,7 +194,7 @@ class API(Utilities):
     def Start(self):
         """This is automatically invoked when the reactor starts from API().
         """
-        self.m_pyhouse_obj.APIs.CoreSetupAPI.Start(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.APIs.CoreSetupAPI.Start()
 
     def Stop(self):
         """Stop various modules to prepare for restarting them.
@@ -215,7 +207,7 @@ class API(Utilities):
         Keep on running after the snapshot.
         """
         LOG.info("Saving XML")
-        self.m_pyhouse_obj.APIs.CoreSetupAPI.WriteXml()
+        self.m_pyhouse_obj.APIs.CoreSetupAPI.SaveXml()
         LOG.info("Saved XML.\n")
 
     def Quit(self):

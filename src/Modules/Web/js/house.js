@@ -2,7 +2,7 @@
  * @name:      PyHouse/src/Modules/Web/js/house.js
  * @author:    D. Brian Kimmel
  * @contact:   D.BrianKimmel@gmail.com
- * @Copyright: (c) 2012-2015 by D. Brian Kimmel
+ * @copyright: (c) 2012-2015 by D. Brian Kimmel
  * @license:   MIT License
  * @note:      Created about 2012
  * @summary:   Displays the Internet element

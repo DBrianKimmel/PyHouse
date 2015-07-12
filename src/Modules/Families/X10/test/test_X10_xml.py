@@ -1,10 +1,10 @@
 """
-@name: C:/Users/briank/Documents/GitHub/PyHouse/src/Modules/families/X10/test/test_X10_xml.py
-@author: briank
-@contact: D.BrianKimmel@gmail.com>
-@Copyright: (c)  2014 by briank
-@license: MIT License
-@note: Created on Aug 6, 2014
+@name:      PyHouse/src/Modules/families/X10/test/test_X10_xml.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com>
+@copyright: (c) 2014-2015 by briank
+@license:   MIT License
+@note:      Created on Aug 6, 2014
 @Summary:
 
 """

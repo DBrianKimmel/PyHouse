@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/web/web_lights.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@Copyright: (c) 2013-2015 by D. Brian Kimmel
+@copyright: (c) 2013-2015 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 3, 2013
 @summary:   Handle all of the lights information for a house.
@@ -25,7 +25,6 @@ from Modules.Web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.Lighting import lighting_lights
 from Modules.Computer import logging_pyh as Logger
 from Modules.Families.Insteon import Insteon_utils
-# from Modules.Utilities.tools import PrettyPrintAny
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -73,17 +72,17 @@ class LightsElement(athena.LiveElement):
         l_obj.Active = l_json['Active']
         l_obj.Key = l_light_ix
         l_obj.Comment = l_json['Comment']
-        l_obj.Coords = l_json['Coords']
+        l_obj.RoomCoords = l_json['RoomCoords']
         l_obj.IsDimmable = l_json['IsDimmable']
-        l_obj.ControllerFamily = l_json['ControllerFamily']
+        l_obj.DeviceFamily = l_json['DeviceFamily']
         l_obj.RoomName = l_json['RoomName']
         l_obj.LightingType = l_json['LightingType']
         l_obj.UUID = l_json['UUID']
         if len(l_obj.UUID) < 8:
             l_obj.UUID = str(uuid.uuid1())
-        if l_obj.ControllerFamily == 'Insteon':
+        if l_obj.DeviceFamily == 'Insteon':
             Insteon_utils.Util().get_json_data(l_obj, l_json)
-        elif l_obj.ControllerFamily == 'UPB':
+        elif l_obj.DeviceFamily == 'UPB':
             l_obj.UPBAddress = l_json['UPBAddress']
             l_obj.UPBPassword = l_json['UPBPassword']
             l_obj.UPBNetworkID = l_json['UPBNetworkID']

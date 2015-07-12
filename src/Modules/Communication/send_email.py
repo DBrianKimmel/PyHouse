@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Communications.test.test_send_email -*-
 
-@name: PyHouse/src/Modules/Communication/send_email.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@Copyright (c) 2013-2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Jun 3, 2014
-@summary: Allow PyHouse to send email.
+@name:      PyHouse/src/Modules/Communication/send_email.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2013-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Jun 3, 2014
+@summary:   Allow PyHouse to send email.
 
 Fake out gmail.com and look like sendmail is connected.
 
@@ -19,11 +19,7 @@ If you don't have an account - get one or write another module to handle your ma
 # Import system type stuff
 import email.mime.application
 import xml.etree.ElementTree as ET
-from OpenSSL.SSL import SSLv3_METHOD
 from twisted.internet.defer import Deferred
-from twisted.internet.ssl import ClientContextFactory
-from twisted.mail.smtp import ESMTPSenderFactory
-
 try:
     from cStringIO import cStringIO as StringIO
 except ImportError:
@@ -34,9 +30,7 @@ from Modules.Core.data_objects import EmailData
 from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities.xml_tools import PutGetXML
 
-g_debug = 1
-LOG = Logger.getLogger('PyHouse.Email      ')
-
+LOG = Logger.getLogger('PyHouse.Email          ')
 
 
 class ApiXml(PutGetXML):
@@ -48,21 +42,27 @@ class ApiXml(PutGetXML):
         """
         @return: a EmailData object.
         """
-        l_div_xml = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
-        l_xml = l_div_xml.find('EmailSection')
-        l_obj = EmailData()
-        l_obj.EmailFromAddress = self.get_text_from_xml(l_xml, 'EmailFromAddress')
-        l_obj.EmailToAddress = self.get_text_from_xml(l_xml, 'EmailToAddress')
-        l_obj.GmailLogin = self.get_text_from_xml(l_xml, 'GmailLogin')
-        l_obj.GmailPassword = self.get_text_from_xml(l_xml, 'GmailPassword')
-        return l_obj
+        l_dict = EmailData()
+        try:
+            l_xml = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision').find('EmailSection')
+            l_dict.EmailFromAddress = PutGetXML.get_text_from_xml(l_xml, 'EmailFromAddress')
+            l_dict.EmailToAddress = PutGetXML.get_text_from_xml(l_xml, 'EmailToAddress')
+            l_dict.GmailLogin = PutGetXML.get_text_from_xml(l_xml, 'GmailLogin')
+            l_dict.GmailPassword = PutGetXML.get_text_from_xml(l_xml, 'GmailPassword')
+        except AttributeError as e_err:
+            LOG.error('ERROR in mqtt_xml.read_xml() - {}'.format(e_err))
+        return l_dict
 
     def write_xml(self, p_obj):
         l_xml = ET.Element('EmailSection')
-        self.put_text_element(l_xml, 'EmailFromAddress', p_obj.EmailFromAddress)
-        self.put_text_element(l_xml, 'EmailToAddress', p_obj.EmailToAddress)
-        self.put_text_element(l_xml, 'GmailLogin', p_obj.GmailLogin)
-        self.put_text_element(l_xml, 'GmailPassword', p_obj.GmailPassword)
+        try:
+            l_obj = p_obj.Computer.Email
+            PutGetXML.put_text_element(l_xml, 'EmailFromAddress', l_obj.EmailFromAddress)
+            PutGetXML.put_text_element(l_xml, 'EmailToAddress', l_obj.EmailToAddress)
+            PutGetXML.put_text_element(l_xml, 'GmailLogin', l_obj.GmailLogin)
+            PutGetXML.put_text_element(l_xml, 'GmailPassword', l_obj.GmailPassword)
+        except AttributeError as e_err:
+            LOG.error('ERROR in mqtt_xml.write_xml() - {}'.format(e_err))
         return l_xml
 
 
@@ -94,17 +94,17 @@ class Utility(ApiXml):
 
     def send_email_message(self, p_pyhouse_obj, p_smtp_server, p_smtp_port, p_username, p_password,
                            p_fromaddress, p_toaddress, p_message):
-        l_contextFactory = ClientContextFactory()
-        l_contextFactory.method = SSLv3_METHOD
+        # l_contextFactory = ClientContextFactory()
+        # l_contextFactory.method = None  # SSLv3_METHOD
         l_deferred = Deferred()
         _mime_obj = StringIO(str(p_message))
-        l_senderFactory = ESMTPSenderFactory(
-            p_username, p_password,
-            p_fromaddress, p_toaddress,
-            p_message,
-            l_deferred,
-            contextFactory = l_contextFactory)
-        p_pyhouse_obj.Twisted.Reactor.connectTCP(p_smtp_server, p_smtp_port, l_senderFactory)
+        # l_senderFactory = ESMTPSenderFactory(
+        #    p_username, p_password,
+        #    p_fromaddress, p_toaddress,
+        #    p_message,
+        #    l_deferred,
+        #    contextFactory = l_contextFactory)
+        # p_pyhouse_obj.Twisted.Reactor.connectTCP(p_smtp_server, p_smtp_port, l_senderFactory)
         print "Sending Email"
         return l_deferred
 
@@ -114,15 +114,17 @@ class API(Utility):
     """
     m_pyhouse_obj = None
 
-    def Start(self, p_pyhouse_obj):
+    def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        p_pyhouse_obj.Computer.Email = self.read_email_xml(p_pyhouse_obj)
+
+    def Start(self):
+        self.m_pyhouse_obj.Computer.Email = self.read_xml(self.m_pyhouse_obj)
 
     def Stop(self):
         LOG.info("Stopped.")
 
     def SaveXml(self, p_xml):
-        l_xml = self.write_email_xml(self.m_pyhouse_obj)
+        l_xml = self.write_xml(self.m_pyhouse_obj)
         p_xml.append(l_xml)
         LOG.info("Saved XML.")
         return p_xml
@@ -131,7 +133,7 @@ class API(Utility):
         """
         This is the main interface to email.
         """
-        l_email = self.create_email(self.m_pyhouse_obj, p_to_address, p_subject, p_message, p_attachment)
+        _l_email = self.create_email(self.m_pyhouse_obj, p_to_address, p_subject, p_message, p_attachment)
         # self.send_email(smtp_server, smtp_port, username, password, from_, to, msg)
 
 # ## END DBK

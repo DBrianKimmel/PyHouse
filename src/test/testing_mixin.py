@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.test.test_testing_mixin -*-
 
-@name:     PyHouse/src/test/testing_mixin.py
-@author:   D. Brian Kimmel
-@contact:  D.BrianKimmel@gmail.com
-@Copyright (c) 2013-2015 by D. Brian Kimmel
-@license:  MIT License
-@note:     Created on Jun 40, 2013
-@summary:  Test handling the information for a house.
+@name:      PyHouse/src/test/testing_mixin.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2013-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Jun 40, 2013
+@summary:   Test handling the information for a house.
 
 """
 
@@ -16,7 +16,7 @@
 # Import PyMh files and modules.
 from Modules.Core.data_objects import PyHouseData, PyHouseAPIs, \
             CoreServicesInformation, \
-            ComputerInformation, CompAPIs, \
+            ComputerInformation, ComputerAPIs, \
             HouseInformation, HouseAPIs, \
             LocationData, \
             TwistedInformation, \
@@ -66,11 +66,21 @@ class SetupPyHouseObj(object):
     """
     """
 
-    def _BuildComputer(self):
-        l_ret = ComputerInformation()
+    def _build_xml(self, p_root):
+        l_ret = XmlInformation()
+        l_ret.XmlRoot = p_root
+        l_ret.XmlFileName = '/etc/pyhouse/master.xml'
         return l_ret
 
-    def _BuildHouse(self):
+    def _build_twisted(self):
+        l_ret = TwistedInformation()
+        return l_ret
+
+    def _build_services(self):
+        l_ret = CoreServicesInformation()
+        return l_ret
+
+    def _build_house(self):
         l_ret = HouseInformation()
         l_ret.Name = 'Test House'
         l_ret.Active = True
@@ -80,19 +90,24 @@ class SetupPyHouseObj(object):
         l_ret.RefOBJs.Location = LocationData()
         return l_ret
 
-    def BuildPyHouseObj(self, p_root):
-        l_ret = PyHouseData()
-        l_ret.APIs = PyHouseAPIs()
-        l_ret.APIs.Comp = CompAPIs()
-        l_ret.APIs.House = HouseAPIs()
-        l_ret.Computer = self._BuildComputer()
-        l_ret.House = self._BuildHouse()
-        l_ret.Services = CoreServicesInformation()
-        l_ret.Twisted = TwistedInformation()
-        l_ret.Xml = XmlInformation()
-        l_ret.Xml.XmlRoot = p_root
-        l_ret.Xml.XmlFileName = '/etc/pyhouse/master.xml'
+    def _build_computer(self):
+        l_ret = ComputerInformation()
         return l_ret
+
+    def _build_apis(self):
+        l_apis = PyHouseAPIs()
+        l_apis.Comp = ComputerAPIs()
+        l_apis.House = HouseAPIs()
+
+    def BuildPyHouseObj(self, p_root):
+        l_pyhouse_obj = PyHouseData()
+        l_pyhouse_obj.APIs = self._build_apis()
+        l_pyhouse_obj.Computer = self._build_computer()
+        l_pyhouse_obj.House = self._build_house()
+        l_pyhouse_obj.Services = self._build_services()
+        l_pyhouse_obj.Twisted = self._build_twisted()
+        l_pyhouse_obj.Xml = self._build_xml(p_root)
+        return l_pyhouse_obj
 
     def BuildXml(self, p_root_xml):
         l_xml = XmlData()
@@ -100,16 +115,21 @@ class SetupPyHouseObj(object):
         try:
             l_xml.house_div = l_xml.root.find('HouseDivision')
             #
-            l_xml.button_sect = l_xml.house_div.find('ButtonSection')
-            l_xml.controller_sect = l_xml.house_div.find('ControllerSection')
-            l_xml.light_sect = l_xml.house_div.find('LightSection')
+            l_xml.irrigation_sect = l_xml.house_div.find('IrrigationSection')
             l_xml.location_sect = l_xml.house_div.find('LocationSection')
             l_xml.room_sect = l_xml.house_div.find('RoomSection')
             l_xml.schedule_sect = l_xml.house_div.find('ScheduleSection')
             l_xml.thermostat_sect = l_xml.house_div.find('ThermostatSection')
             #
+            l_xml.lighting_sect = l_xml.house_div.find('LightingSection')
+            l_xml.button_sect = l_xml.lighting_sect.find('ButtonSection')
+            l_xml.controller_sect = l_xml.lighting_sect.find('ControllerSection')
+            l_xml.light_sect = l_xml.lighting_sect.find('LightSection')
+            #
             l_xml.button = l_xml.button_sect.find('Button')
             l_xml.controller = l_xml.controller_sect.find('Controller')
+            l_xml.irrigation_system = l_xml.irrigation_sect.find('IrrigationSystem')
+            l_xml.irrigation_zone = l_xml.irrigation_system.find('Zone')
             l_xml.light = l_xml.light_sect.find('Light')
             l_xml.room = l_xml.room_sect.find('Room')
             l_xml.schedule = l_xml.schedule_sect.find('Schedule')

@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Computer/Mqtt/mqtt_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@Copyright: (c)  2015 by D. Brian Kimmel
+@copyright: (c) 2015-2015 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 4, 2015
 @Summary:
@@ -14,58 +14,79 @@ import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from Modules.Core.data_objects import MqttBrokerData
-from Modules.Utilities.xml_tools import XmlConfigTools
 from Modules.Computer import logging_pyh as Logger
+from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
 
-
-g_debug = 1
 LOG = Logger.getLogger('PyHouse.MqttXml        ')
+DIVISION = 'ComputerDivision'
+SECTION = 'MqttSection'
+BROKER = 'Broker'
 
 
-class ReadWriteConfigXml(XmlConfigTools):
+class MqttXmlAPI(object):
     """
     """
 
-    def _read_one_broker(self, p_broker_element):
+    def _read_one_broker(self, p_xml):
+        """
+        @param p_xml: XML information for one Broker.
+        @return: an IrrigationZone object filled in with data from the XML passed in
+        """
         l_obj = MqttBrokerData()
-        self.read_base_object_xml(l_obj, p_broker_element)
-        l_obj.BrokerAddress = self.get_text_from_xml(p_broker_element, 'BrokerAddress')
-        l_obj.BrokerPort = self.get_int_from_xml(p_broker_element, 'BrokerPort')
+        XmlConfigTools.read_base_object_xml(l_obj, p_xml)
+        l_obj.BrokerAddress = PutGetXML.get_text_from_xml(p_xml, 'BrokerAddress')
+        l_obj.BrokerPort = PutGetXML.get_int_from_xml(p_xml, 'BrokerPort')
         return l_obj
 
     def read_mqtt_xml(self, p_pyhouse_obj):
         """Read all the broker information.
         Allow for several brokers - Use the first one '[0]'.
+        @return: a dict of broker objects keys = 0, 1, 2...
         """
-        self.m_count = 0
-        l_dict = {}
-        l_dict = MqttBrokerData()
-        # PrettyPrintAny(l_dict, "l_dict")
+        l_obj = {}
+        l_count = 0
         try:
-            l_xml = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision').find('MqttSection')
-            for l_entry in l_xml.iterfind('Broker'):
-                l_obj = self._read_one_broker(l_entry)
-                l_obj.Key = self.m_count  # Renumber
-                l_dict = l_obj
-                self.m_count += 1
+            l_section = p_pyhouse_obj.Xml.XmlRoot.find(DIVISION).find(SECTION)
+            if l_section == None:
+                return l_obj
         except AttributeError as e_err:
-            LOG.error('ERROR in mqtt_xml.read_xml() - {}'.format(e_err))
-        return l_dict
+            LOG.error('Reading MQTT Configuration information - {}'.format(e_err))
+            l_section = None
+        try:
+            for l_xml in l_section.iterfind(BROKER):
+                l_broker = self._read_one_broker(l_xml)
+                l_broker.Key = l_count
+                l_obj[l_count] = l_broker
+                l_count += 1
+        except AttributeError as e_err:
+            LOG.error('Mqtt Errors: {}'.format(e_err))
+        return l_obj
 
 
     def _write_one_broker(self, p_mqtt):
-        l_entry = self.write_base_object_xml('Broker', p_mqtt)
-        self.put_text_element(l_entry, 'BrokerAddress', p_mqtt.BrokerAddress)
-        self.put_text_element(l_entry, 'BrokerPort', p_mqtt.BrokerPort)
+        """
+        @param p_obj: is one broker object.
+        @return: the XML for one Broker System
+        """
+        l_entry = XmlConfigTools().write_base_object_xml('Broker', p_mqtt)
+        PutGetXML().put_text_element(l_entry, 'BrokerAddress', p_mqtt.BrokerAddress)
+        PutGetXML().put_text_element(l_entry, 'BrokerPort', p_mqtt.BrokerPort)
         return l_entry
 
-    def write_mqtt_xml(self, p_pyhouse_obj):
-        l_mqtt = p_pyhouse_obj.Computer.Mqtt
-        self.m_count = 0
-        l_xml = ET.Element('MqttSection')
-        l_entry = self._write_one_broker(l_mqtt)
-        l_xml.append(l_entry)
-        self.m_count += 1
+    def write_mqtt_xml(self, p_obj):
+        """
+        @param p_obj: is the Mqtt sub-object in p_pyhouse_obj
+        @return:  XML for the MqttSection
+        """
+        l_xml = ET.Element(SECTION)
+        if p_obj == {}:
+            return l_xml
+        try:
+            for l_obj in p_obj.itervalues():
+                l_sys = self._write_one_broker(l_obj)
+                l_xml.append(l_sys)
+        except AttributeError as e_err:
+            LOG.error('{}'.format(e_err))
         return l_xml
 
 # ## END DBK

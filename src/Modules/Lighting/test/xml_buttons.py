@@ -1,10 +1,10 @@
 """
-@name: PyHouse/src/Modules/Lighting/test/xml_buttons.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@Copyright: (c)  2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Nov 22, 2014
+@name:      PyHouse/src/Modules/Lighting/test/xml_buttons.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2014-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Nov 22, 2014
 @Summary:
 
 2 *
@@ -27,13 +27,13 @@ BUTTON_BODY = '\n'.join([
     ])
 
 INSTEON_BUTTON_XML = '\n'.join([
-    '<Button Active="True" Key="0" Name="Insteon button">',
+    '<Button Active="True" Key="0" Name="Insteon Button">',
     BUTTON_BODY,
     INSTEON_XML,
     "</Button>"])
 
 UPB_BUTTON_XML = '\n'.join([
-    '<Button Active="True" Key="1" Name="UPB button">',
+    '<Button Active="True" Key="1" Name="UPB Button">',
     BUTTON_BODY,
     UPB_XML,
     "</Button>"])

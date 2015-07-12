@@ -1,11 +1,11 @@
 """
-@name: PyHouse/src/Modules/Web/test/test_root_menu.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
+@name:      PyHouse/src/Modules/Web/test/test_root_menu.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
 @copyright: 2013-2014 by D. Brian Kimmel
-@note: Created on Jul 12, 2013
-@license: MIT License
-@summary: Handle the home lighting system automation.
+@note:      Created on Jul 12, 2013
+@license:   MIT License
+@summary:   Handle the home lighting system automation.
 
 """
 
@@ -14,12 +14,9 @@ from twisted.trial import unittest
 import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
-# from Modules.Core.data_objects import LightData
-# from Modules.Lighting import lighting
-# from Modules.Families import family
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
-# from Modules.Utilities.tools import PrettyPrintAny
+from Modules.Utilities.tools import PrettyPrintAny
 
 
 class SetupMixin(object):

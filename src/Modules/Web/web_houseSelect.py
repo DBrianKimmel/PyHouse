@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.web.test.test_web_houseSelect -*-
 
-@name: PyHouse/src/Modules/web/web_houseSelect.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@Copyright (c) 2013-2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Jun 1, 2013
-@summary: Handle all of the information for a house.
+@name:      PyHouse/src/Modules/web/web_houseSelect.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2013-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Jun 1, 2013
+@summary:   Handle all of the information for a house.
 
 """
 

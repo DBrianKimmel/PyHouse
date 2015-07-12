@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Web.test.test_web_internet -*-
 
-@name: PyHouse/src/Modules/Web/web_internet.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@Copyright (c) 2013-2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Jun 3, 2013
-@summary: Handle the Internet information for a house.
+@name:      PyHouse/src/Modules/Web/web_internet.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2013-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Jun 3, 2013
+@summary:   Handle the Internet information for a house.
 
 """
 
@@ -20,7 +20,6 @@ from nevow import loaders
 from Modules.Core.data_objects import InternetConnectionData
 from Modules.Web.web_utils import JsonUnicode, GetJSONComputerInfo
 from Modules.Computer import logging_pyh as Logger
-from Modules.Utilities.tools import PrettyPrintAny
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])

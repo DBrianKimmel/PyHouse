@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Web/web_controllers.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@Copyright: (c) 2013-2015 by D. Brian Kimmel
+@copyright: (c) 2013-2015 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 8, 2013
 @summary:   Web interface to controllers for the selected house.
@@ -81,17 +81,17 @@ class ControllersElement(athena.LiveElement):
         l_obj.Active = l_json['Active']
         l_obj.Key = l_controller_ix
         l_obj.Comment = l_json['Comment']
-        l_obj.Coords = l_json['Coords']
+        l_obj.RoomCoords = l_json['RoomCoords']
         l_obj.IsDimmable = l_json['IsDimmable']
-        l_obj.ControllerFamily = l_json['ControllerFamily']
+        l_obj.DeviceFamily = l_json['DeviceFamily']
         l_obj.RoomName = l_json['RoomName']
         l_obj.LightingType = l_json['LightingType']
         l_obj.UUID = l_json['UUID']
         l_obj.InterfaceType = l_json['InterfaceType']
         l_obj.Port = l_json['Port']
-        if l_obj.ControllerFamily == 'Insteon':
+        if l_obj.DeviceFamily == 'Insteon':
             Insteon_utils.Util().get_json_data(l_obj, l_json)
-        elif l_obj.ControllerFamily == 'UPB':
+        elif l_obj.DeviceFamily == 'UPB':
             l_obj.UPBAddress = l_json['UPBAddress']
             l_obj.UPBPassword = l_json['UPBPassword']
             l_obj.UPBNetworkID = l_json['UPBNetworkID']

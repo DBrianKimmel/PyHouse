@@ -93,7 +93,7 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 			Key : fetchTextWidget(self, 'ButtonKey'),
 			Active : fetchTrueFalseWidget(self,'ButtonActive'),
 			Comment : fetchTextWidget(self, 'ButtonComment'),
-			Coords : fetchTextWidget(self, 'ButtonCoords'),
+			RoomCoords : fetchTextWidget(self, 'ButtonCoords'),
 			Family : fetchTextWidget(self, 'ButtonFamily'),
 			RoomName : fetchSelectWidget(self, 'ButtonRoomName'),
 			Type : fetchTextWidget(self, 'ButtonType'),

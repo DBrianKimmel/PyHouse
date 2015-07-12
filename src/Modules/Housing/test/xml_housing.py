@@ -1,18 +1,18 @@
 """
-@name: PyHouse/src/Modules/Housing/test/xml_housing.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@Copyright: (c)  2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Nov 7, 2014
-@Summary: XML data for house location
+@name:      PyHouse/src/Modules/Housing/test/xml_housing.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2014-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Nov 7, 2014
+@summary:   XML data for house location
 
 Here is the description of the various configuration entries.
 
 RoomName is the location of the device we are describing.  This could be something other than
 a room in the house such as front lawn, pool LivingRoom and so on.
 
-Coords are the X and Y offsets within the room for the device.
+Coords are the X, Y and Z offsets within the room for the device.
 
 Comments should not need explaining.  They are just present and can contain just about anything.
 """
@@ -23,10 +23,10 @@ Comments should not need explaining.  They are just present and can contain just
 from Modules.Housing.test.xml_location import LOCATION_XML
 from Modules.Housing.test.xml_rooms import ROOMS_XML
 from Modules.Scheduling.test.xml_schedule import SCHEDULE_XML
-from Modules.Lighting.test.xml_lighting import *
+from Modules.Lighting.test.xml_lighting import LIGHTING_XML
 from Modules.Hvac.test.xml_thermostat import THERMOSTAT_XML
 from Modules.Entertainment.test.xml_entertainment import ENTERTAINMENT_XML
-
+from Modules.Irrigation.test.xml_irrigation import IRRIGATION_XML
 
 
 HOUSE_DIVISION_XML = '\n'.join([
@@ -38,6 +38,7 @@ HOUSE_DIVISION_XML = '\n'.join([
     LIGHTING_XML,
     THERMOSTAT_XML,
     ENTERTAINMENT_XML,
+    IRRIGATION_XML,
     "</HouseDivision>"
 ])
 

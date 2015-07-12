@@ -1,10 +1,10 @@
 """
-@name: PyHouse/src/Modules/Housing/test/xml_location.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@Copyright: (c)  2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Nov 22, 2014
+@name:      PyHouse/src/Modules/Housing/test/xml_location.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2014_2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Nov 22, 2014
 @Summary:
 
 Notice that only TZ name is stored in the xml - offsets are derived on XML Read since they never change for a run.

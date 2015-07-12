@@ -3,7 +3,7 @@
 @name:      PyHouse/src/Modules/Web/web_rootMenu.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@Copyright: (c) 2013-2015 by D. Brian Kimmel
+@copyright: (c) 2013-2015 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on May 30, 2013
 @summary:   Handle the Main menu.
@@ -40,7 +40,7 @@ class RootMenuElement(athena.LiveElement):
         """ Process a message for a XML save/reload from the browser/client.
         """
         LOG.info("Self: {}".format(self))
-        self.m_pyhouse_obj.APIs.PyHouseAPI.SaveXml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.APIs.PyHouseMainAPI.SaveXml(self.m_pyhouse_obj)
 
     @athena.expose
     def doRootMenuQuit(self, p_json):

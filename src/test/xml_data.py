@@ -1,11 +1,11 @@
 """
-@name: PyHouse/src/test/xml_data.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@Copyright (c) 2010-2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Jan 20, 2010
-@summary: Handle all of the information for all houses.
+@name:      PyHouse/src/test/xml_data.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2010-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Jan 20, 2010
+@summary:   Handle all of the information for all houses.
 
 XML to define the PyHouse.xml file
 
@@ -34,7 +34,13 @@ XML_EMPTY = """
 
 
 XML_SHORT = """
-<PyHouse Version='2'>
+<PyHouse
+    Version='1.3.2'
+    xmlns:comp="http://PyHouse.Org/ComputerDiv"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://PyHouse.org schemas/PyHouse.xsd"
+>
+<!-- Updated by PyHouse 2001-12-23 12:23:34.0 -->
     <Web>
     </Web>
     <Nodes>

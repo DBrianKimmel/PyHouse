@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Web/web_rooms.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@Copyright: (c) 2013-2014 by D. Brian Kimmel
+@copyright: (c) 2013-2015 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 3, 2013
 @summary:   Web interface to house info for the selected house.
@@ -19,7 +19,6 @@ from nevow import loaders
 # Import PyMh files and modules.
 from Modules.Web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.Computer import logging_pyh as Logger
-from Modules.Utilities.tools import PrettyPrintAny
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])

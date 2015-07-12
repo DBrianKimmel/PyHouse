@@ -1,11 +1,11 @@
 """
-@name:     PyHouse/src/Modules/Scheduling/test/test_schedule.py
-@author:   D. Brian Kimmel
-@contact:  D.BrianKimmel@gmail.com
-@Copyright (c) 2013-2015 by D. Brian Kimmel
-@license:  MIT License
-@note:     Created on Apr 8, 2013
-@summary:  Test handling the schedule information for a house.
+@name:      PyHouse/src/Modules/Scheduling/test/test_schedule.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2013-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Apr 8, 2013
+@summary:   Test handling the schedule information for a house.
 
 """
 
@@ -15,8 +15,10 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import ScheduleBaseData
-from Modules.Scheduling import schedule, schedule_xml
+from Modules.Core.data_objects import ScheduleBaseData, RiseSetData
+from Modules.Computer.Mqtt.mqtt_client import API as mqttAPI
+from Modules.Scheduling.schedule import Sch, API as scheduleAPI
+from Modules.Scheduling.schedule_xml import ScheduleXmlAPI
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
@@ -34,7 +36,7 @@ class MockupRiseSet(object):
     Replaces sunrisesunset.py for testing purposes.
     """
     def mock(self):
-        l_ret = schedule.RiseSetData()
+        l_ret = RiseSetData()
         l_ret.Sunrise = T_SUNRISE
         l_ret.Sunset = T_SUNSET
         return l_ret
@@ -47,11 +49,11 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_api = schedule.API()
+        self.m_api = scheduleAPI(self.m_pyhouse_obj)
 
 
 
-class C01_Static(SetupMixin, unittest.TestCase):
+class C1_Static(SetupMixin, unittest.TestCase):
     """
     Test Staticmethods
     """
@@ -60,13 +62,13 @@ class C01_Static(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
 
     def test_01_MakeTimedelta(self):
-        l_delta = schedule.Sch._make_timedelta(T_NOW)
+        l_delta = Sch._make_timedelta(T_NOW)
         print('Now: {};   Delta: {}'.format(T_NOW, l_delta))
         self.assertEqual(l_delta, datetime.timedelta(0, 45296))
 
 
 
-class C02_Time(SetupMixin, unittest.TestCase):
+class C2_Time(SetupMixin, unittest.TestCase):
     """
     This section tests the schedule's time
     """
@@ -234,7 +236,7 @@ class C02_Time(SetupMixin, unittest.TestCase):
 
 
 
-class C03_Loc(SetupMixin, unittest.TestCase):
+class C3_Loc(SetupMixin, unittest.TestCase):
     """
     Test things to do with the house location.
     """
@@ -245,22 +247,23 @@ class C03_Loc(SetupMixin, unittest.TestCase):
         self.m_now = datetime.datetime(2014, 6, 6, 12, 15, 30)
 
     def test_01_LoadLocation(self):
-        self.m_pyhouse_obj.House.RefOBJs.Location._Sunrise = T_SUNRISE
-        self.m_pyhouse_obj.House.RefOBJs.Location._Sunset = T_SUNSET
-        PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs.Location, 'Location')
+        self.m_pyhouse_obj.House.RefOBJs.Location.RiseSet.SunRise = T_SUNRISE
+        self.m_pyhouse_obj.House.RefOBJs.Location.RiseSet.Sunset = T_SUNSET
+        PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs.Location.RiseSet, 'Location')
 
 
 
-class C04_Setup(SetupMixin, unittest.TestCase):
+class C4_Setup(SetupMixin, unittest.TestCase):
     """
     This section tests the Building of a schedule list
     """
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
-        self.m_pyhouse_obj.House.RefOBJs.Location._Sunrise = T_SUNRISE
-        self.m_pyhouse_obj.House.RefOBJs.Location._Sunset = T_SUNSET
-        self.m_pyhouse_obj.House.RefOBJs.Schedules = schedule_xml.ReadWriteConfigXml().read_schedules_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.RefOBJs.Location.RiseSet.SunRise = T_SUNRISE
+        self.m_pyhouse_obj.House.RefOBJs.Location.RiseSet.SunSet = T_SUNSET
+        self.m_pyhouse_obj.House.RefOBJs.Schedules = ScheduleXmlAPI().read_schedules_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.APIs.Computer.MqttAPI = mqttAPI(self.m_pyhouse_obj)
 
     def test_01_BuildSched(self):
         PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs, 'Schedules')
@@ -287,7 +290,7 @@ class C04_Setup(SetupMixin, unittest.TestCase):
 
 
 
-class C05_Utility(SetupMixin, unittest.TestCase):
+class C5_Utility(SetupMixin, unittest.TestCase):
     """
     This section tests the Building of a schedule list
     """

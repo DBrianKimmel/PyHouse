@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Web/web_thermostats.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@Copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2015 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 1, 2014
 @summary:   Handle the Thermostat information for a house.
@@ -23,7 +23,6 @@ from Modules.Core.data_objects import ThermostatData
 from Modules.Web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.Computer import logging_pyh as Logger
 from Modules.Families.Insteon import Insteon_utils
-from Modules.Utilities.tools import PrettyPrintAny
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -47,7 +46,6 @@ class ThermostatsElement(athena.LiveElement):
     @athena.expose
     def getHouseData(self):
         l_json = GetJSONHouseInfo(self.m_pyhouse_obj)
-        # PrettyPrintAny(l_json, "Json")
         return l_json
 
     @athena.expose
@@ -77,14 +75,14 @@ class ThermostatsElement(athena.LiveElement):
         if len(l_obj.UUID) < 8:
             l_obj.UUID = str(uuid.uuid1())
         l_obj.CoolSetPoint = l_json['CoolSetPoint']
-        l_obj.ControllerFamily = l_json['ControllerFamily']
+        l_obj.DeviceFamily = l_json['DeviceFamily']
         l_obj.CurrentTemperature = 0
         l_obj.HeatSetPoint = l_json['HeatSetPoint']
         l_obj.ThermostatMode = 'Cool'  # Cool | Heat | Auto | EHeat
         l_obj.ThermostatScale = 'F'  # F | C
-        if l_obj.ControllerFamily == 'Insteon':
+        if l_obj.DeviceFamily == 'Insteon':
             Insteon_utils.Util.get_json_data(l_obj, l_json)
-        elif l_obj.ControllerFamily == 'UPB':
+        elif l_obj.DeviceFamily == 'UPB':
             l_obj.UPBAddress = l_json['UPBAddress']
             l_obj.UPBPassword = l_json['UPBPassword']
             l_obj.UPBNetworkID = l_json['UPBNetworkID']

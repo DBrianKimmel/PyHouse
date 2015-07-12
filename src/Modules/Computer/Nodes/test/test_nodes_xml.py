@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Computer/Nodes/test/test_nodes_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@Copyright: (c) 2014_2015 by D. Brian Kimmel
+@copyright: (c) 2014-2015 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Dec 15, 2014
 @Summary:

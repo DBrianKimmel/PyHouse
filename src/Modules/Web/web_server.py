@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.Modules.Web.test.test_web_server -*-
 
-@name: PyHouse/src/Modules/Web/web_server.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
+@name:      PyHouse/src/Modules/Web/web_server.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
 @copyright: 2012-2014 by D. Brian Kimmel
-@note: Created on Apr 3, 2012
-@license: MIT License
-@summary: This module provides the web server service of PyHouse.
+@note:      Created on Apr 3, 2012
+@license:   MIT License
+@summary:   This module provides the web server service of PyHouse.
 
 This is a Main Module - always present.
 
@@ -28,19 +28,16 @@ Do not require reloads, auto change PyHouse on the fly.
 # Import system type stuff
 from twisted.application import service
 from nevow import appserver
-import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import WebData
+from Modules.Web.web_xml import WebXmlAPI
 from Modules.Web import web_utils
 from Modules.Web import web_mainpage
 from Modules.Computer import logging_pyh as Logger
-from Modules.Utilities.xml_tools import PutGetXML
-# from Modules.Utilities.tools import PrettyPrintAny
 
 ENDPOINT_WEB_SERVER = 'tcp:port=8580'
 
-g_debug = 9
 LOG = Logger.getLogger('PyHouse.WebServer      ')
 
 
@@ -57,26 +54,7 @@ class ClientConnections(object):
         self.ConnectedBrowsers.append(p_login)
 
 
-class ReadWriteConfigXml(PutGetXML):
-    """
-    """
-
-    def read_web_xml(self, p_pyhouse_obj):
-        l_ret = WebData()
-        try:
-            l_sect = p_pyhouse_obj.XmlRoot.find('WebSection')
-            l_ret.WebPort = self.get_int_from_xml(l_sect, 'WebPort')
-        except AttributeError:
-            l_ret.WebPort = 8580
-        return l_ret
-
-    def write_web_xml(self, p_web_obj):
-        l_web_xml = ET.Element("WebSection")
-        self.put_int_element(l_web_xml, 'WebPort', p_web_obj.WebPort)
-        return l_web_xml
-
-
-class Utility(ReadWriteConfigXml):
+class Utility(ClientConnections):
 
     def update_pyhouse_obj(self, p_pyhouse_obj):
         p_pyhouse_obj.Computer.Web = WebData()
@@ -106,14 +84,14 @@ class API(Utility, ClientConnections):
     def Start(self, p_pyhouse_obj):
         self.update_pyhouse_obj(p_pyhouse_obj)
         self.m_pyhouse_obj = p_pyhouse_obj
-        p_pyhouse_obj.Computer.Web = self.read_web_xml(p_pyhouse_obj)
+        p_pyhouse_obj.Computer.Web = WebXmlAPI().read_web_xml(p_pyhouse_obj)
         self.start_webserver(p_pyhouse_obj)
 
     def Stop(self):
         self.m_pyhouse_obj.Services.WebServerService.stopService()
 
     def SaveXml(self, p_xml):
-        p_xml.append(self.write_web_xml(self.m_pyhouse_obj.Computer.Web))
+        p_xml.append(WebXmlAPI().write_web_xml(self.m_pyhouse_obj.Computer.Web))
         LOG.info("Saved XML.")
 
 # ## END DBK

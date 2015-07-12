@@ -1,11 +1,11 @@
 """
-@name: PyHouse/src/test/test_xml_data.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@Copyright (c) 2010-2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on May 4, 2014
-@summary: Test the XML data for integrity.
+@name:      PyHouse/src/test/test_xml_data.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2010-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on May 4, 2014
+@summary:   Test the XML data for integrity.
 
 This test should always be run as the very first test.
 It will check the XML file for being fundamentally correct for all other tests that use the XML data.

@@ -1,11 +1,11 @@
 """
-@name: PyHouse/src/Modules/Families/Insteon/test/xml_insteon.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@Copyright: (c)  2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Nov 9, 2014
-@Summary:
+@name:      PyHouse/src/Modules/Families/Insteon/test/xml_insteon.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2014-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Nov 9, 2014
+@summary:
 
 """
 
@@ -16,7 +16,7 @@ TESTING_INSTEON_PRODUCT_KEY = "20.1A.35"
 
 
 INSTEON_XML = """
-    <ControllerFamily>Insteon</ControllerFamily>
+    <DeviceFamily>Insteon</DeviceFamily>
     <Address>""" + TESTING_INSTEON_ADDRESS + """</Address>
     <DevCat>""" + TESTING_INSTEON_DEVCAT + """</DevCat>
     <GroupList>All_Lights|Outside|Foyer(0;0)</GroupList>

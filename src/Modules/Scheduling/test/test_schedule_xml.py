@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Scheduling/test/test_schedule_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@Copyright: (c)  2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2015 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Sep 2, 2014
 @Summary:
@@ -16,7 +16,7 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import ScheduleBaseData
-from Modules.Scheduling import schedule_xml
+from Modules.Scheduling.schedule_xml import ScheduleXmlAPI
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
@@ -30,7 +30,7 @@ class SetupMixin(object):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_schedule_obj = ScheduleBaseData()
-        self.m_api = schedule_xml.ReadWriteConfigXml()
+        self.m_api = ScheduleXmlAPI()
 
 
 class C01_XML(SetupMixin, unittest.TestCase):

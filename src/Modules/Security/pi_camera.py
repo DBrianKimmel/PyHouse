@@ -1,13 +1,18 @@
-'''
-Created on Nov 18, 2013
+"""
 
-@author: briank
+@name:      PyHouse/src/Modules/Security/pi_camera.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2013_2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Nov 18, 2013
+@Summary:
 
 if this node is a raspberry pi and it has a camera attached, this will provide surveillance
 videos and alerts.
 
 If motion above a threshold is detected, it will trigger an alert and create a time lapse video
-'''
+"""
 
 # Motion detection settings:
 # Threshold (how much a pixel has to change by to be marked as "changed")

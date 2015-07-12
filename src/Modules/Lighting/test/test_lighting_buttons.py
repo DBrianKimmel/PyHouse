@@ -19,7 +19,8 @@ from Modules.Lighting import lighting_buttons
 from Modules.Families import family
 from Modules.Core import conversions
 from Modules.Web import web_utils
-from test.xml_data import *
+from test.xml_data import XML_LONG
+from Modules.Families.Insteon.test.xml_insteon import TESTING_INSTEON_ADDRESS
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
 
@@ -37,7 +38,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
+        self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API(self.m_pyhouse_obj).build_lighting_family_info()
         self.m_api = lighting_buttons.LBApi(self.m_pyhouse_obj)
         self.m_controller_obj = ButtonData()
 
@@ -57,7 +58,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_button.Name, 'kpl_1_A', 'Bad Name')
         self.assertEqual(l_button.Active, False, 'Bad Active')
         self.assertEqual(l_button.Comment, 'KeypadLink Button A', 'Bad Comment')
-        self.assertEqual(l_button.ControllerFamily, 'Insteon', 'Bad Controller Family')
+        self.assertEqual(l_button.DeviceFamily, 'Insteon', 'Bad Controller Family')
         self.assertEqual(l_button.LightingType, 'Button', 'Bad Lighting Type')
         self.assertEqual(l_button.RoomName, 'Master Bath', 'Bad Room Name')
 
@@ -70,7 +71,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_button.Active, False, 'Bad Active')
         self.assertEqual(l_button.Key, 0, 'Bad key')
         self.assertEqual(l_button.Name, 'kpl_1_A', 'Bad Name')
-        self.assertEqual(l_button.ControllerFamily, 'Insteon', 'Bad Lighting family')
+        self.assertEqual(l_button.DeviceFamily, 'Insteon', 'Bad Lighting family')
         self.assertEqual(l_button.LightingType, 'Button', 'Bad LightingType')
         self.assertEqual(l_button.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS))
 

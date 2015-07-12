@@ -1,6 +1,4 @@
 """
--*- test-case-name: PyHouse.Modules.Core.test.test_node_local -*-
-
 @name:      PyHouse/src/Modules/Core/node_local.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com

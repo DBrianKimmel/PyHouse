@@ -1,11 +1,11 @@
 """
-@name: PyHouse/src/Modules/communication/test/test_send_email.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@Copyright (c) 2013-2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Jun 3, 2014
-@summary: Send some email testing
+@name:      PyHouse/src/Modules/communication/test/test_send_email.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2013-2014 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Jun 3, 2014
+@summary:   Send some email testing
 
 
     From nobody Wed Jul 30 22:41:30 2014

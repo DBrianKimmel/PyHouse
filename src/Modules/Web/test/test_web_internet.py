@@ -1,10 +1,10 @@
 """
-@name: PyHouse/src/Modules/Web/test/test_web_internet.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com>
-@Copyright: (c)  2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Jun 20, 2014
+@name:      PyHouse/src/Modules/Web/test/test_web_internet.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com>
+@copyright: (c)  2014 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Jun 20, 2014
 @Summary:
 
 """
@@ -16,7 +16,7 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from Modules.Core.data_objects import ControllerData
 from Modules.Lighting import lighting_controllers
-from Modules.Families import family
+from Modules.Families.family import API as familyAPI
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
@@ -35,7 +35,7 @@ class C01_XML(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
+        self.m_pyhouse_obj.House.RefOBJs.FamilyData = familyAPI().build_lighting_family_info()
         self.m_api = lighting_controllers.LCApi(self.m_pyhouse_obj)
         self.m_controller_obj = ControllerData()
 

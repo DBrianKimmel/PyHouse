@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Web/web_update.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@Copyright: (c)  2015 by D. Brian Kimmel
+@copyright: (c) 2015-2015 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 21, 2015
 @Summary:
@@ -53,7 +53,7 @@ class UpdateElement(athena.LiveElement):
         l_json = web_utils.JsonUnicode().decode_json(p_json)
         # l_obj = UpdateData()
         # l_obj.Port = l_json['Port']
-        # self.m_pyhouse_obj.APIs.Comp.WebAPI.SaveXml(l_obj)
+        # self.m_pyhouse_obj.APIs.Computer.WebAPI.SaveXml(l_obj)
 
 
 # ## END DBK

@@ -1,10 +1,10 @@
 """
-@name: PyHouse/src/Modules/Families/Insteon/test/test_Insteon.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com>
-@Copyright: (c)  2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Aug 16, 2014
+@name:      PyHouse/src/Modules/Families/Insteon/test/test_Insteon.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com>
+@copyright: (c) 2014-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Aug 16, 2014
 @Summary:
 
 """

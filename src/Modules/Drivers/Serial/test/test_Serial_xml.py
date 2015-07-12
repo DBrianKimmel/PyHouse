@@ -1,10 +1,10 @@
 """
-@name: PyHouse/src/Modules/Drivers/Serial/test/test_serial_xml.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com>
-@Copyright: (c)  2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Aug 5, 2014
+@name:      PyHouse/src/Modules/Drivers/Serial/test/test_serial_xml.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com>
+@copyright: (c) 2014-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Aug 5, 2014
 @Summary:
 
 Passed 3 XML tests - DBK - 2014-08-05

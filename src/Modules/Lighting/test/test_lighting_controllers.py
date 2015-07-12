@@ -16,14 +16,15 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import ControllerData
-from Modules.Lighting import lighting_controllers
-from Modules.Families import family
+from Modules.Lighting.lighting_controllers import LCApi
+from Modules.Lighting.test.xml_core import TESTING_LIGHTING_CORE_COMMENT, TESTING_LIGHTING_CORE_ROOM
+from Modules.Families.family import API as familyAPI
+from Modules.Families.Insteon.test.xml_insteon import TESTING_INSTEON_ADDRESS
 from Modules.Core import conversions
 from Modules.Web import web_utils
-from test.xml_data import *
+from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
-
 
 
 class SetupMixin(object):
@@ -33,13 +34,14 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
-        self.m_api = lighting_controllers.LCApi(self.m_pyhouse_obj)
+        self.m_family = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
+        self.m_pyhouse_obj.House.RefOBJs.FamilyData = self.m_family
+        self.m_api = LCApi(self.m_pyhouse_obj)
         self.m_controller_obj = ControllerData()
 
 
 
-class C01_XML(SetupMixin, unittest.TestCase):
+class A1(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by lighting_controllers.
     """
 
@@ -57,38 +59,38 @@ class C01_XML(SetupMixin, unittest.TestCase):
     def test_02_Xml(self):
         PrettyPrintAny(self.m_xml.controller, 'Controller')
 
+    def test_03_Family(self):
+        PrettyPrintAny(self.m_family, 'Family')
 
 
-class C02_Read(SetupMixin, unittest.TestCase):
+class B1_Read(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by lighting_controllers.
     """
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_01_BaseData(self):
+    def test_01_Base(self):
         l_obj = self.m_api._read_base_data(self.m_xml.controller)
         PrettyPrintAny(l_obj, 'Base Data')
         self.assertEqual(l_obj.Name, 'Insteon Serial Controller')
         self.assertEqual(l_obj.Active, True)
         self.assertEqual(l_obj.LightingType, 'Controller')
         self.assertEqual(l_obj.Comment, TESTING_LIGHTING_CORE_COMMENT)
-        self.assertEqual(l_obj.Coords, TESTING_LIGHTING_CORE_COORDS)
         self.assertEqual(l_obj.RoomName, TESTING_LIGHTING_CORE_ROOM)
-        self.assertEqual(l_obj.IsDimmable, TESTING_LIGHTING_CORE_DIMMABLE)
 
-    def test_02_ControllerData(self):
+    def test_02_Controller(self):
         l_obj = self.m_api._read_base_data(self.m_xml.controller)
         l_obj = self.m_api._read_controller_data(l_obj, self.m_xml.controller)
         PrettyPrintAny(l_obj, 'Base+Controller Data')
         self.assertEqual(l_obj.InterfaceType, 'Serial')
         self.assertEqual(l_obj.Port, '/dev/ttyS0')
 
-    def test_03_InterfaceXml(self):
+    def test_03_Interface(self):
         l_obj = self.m_api._read_base_data(self.m_xml.controller)
-        l_obj = self.m_api._read_controller_data(l_obj, self.m_xml.controller)
-        l_interface = self.m_api._read_interface_data(l_obj, self.m_xml.controller)
-        PrettyPrintAny(l_interface, 'Base+Controller+Interface')
+        self.m_api._read_controller_data(l_obj, self.m_xml.controller)
+        self.m_api._read_interface_data(l_obj, self.m_xml.controller)
+        PrettyPrintAny(l_obj, 'Base+Controller+Interface')
         self.assertEqual(l_obj.BaudRate, 19200)
         self.assertEqual(l_obj.ByteSize, 8)
         self.assertEqual(l_obj.Parity, 'N')
@@ -97,10 +99,11 @@ class C02_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.Timeout, 1.0)
         self.assertEqual(l_obj.XonXoff, False)
 
-    def test_05_Family(self):
+    def test_04_Family(self):
         l_obj = self.m_api._read_base_data(self.m_xml.controller)
-        l_obj = self.m_api._read_controller_data(l_obj, self.m_xml.controller)
-        _l_family = self.m_api._read_family_data(l_obj, self.m_xml.controller)
+        self.m_api._read_controller_data(l_obj, self.m_xml.controller)
+        self.m_api._read_interface_data(l_obj, self.m_xml.controller)
+        self.m_api._read_family_data(l_obj, self.m_xml.controller)
         PrettyPrintAny(l_obj, 'Read Family', 100)
         self.assertEqual(l_obj.DevCat, conversions.dotted_hex2int('02.1C'))
         self.assertEqual(l_obj.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS))
@@ -109,49 +112,84 @@ class C02_Read(SetupMixin, unittest.TestCase):
         """ Read in the xml file and fill in the lights
         """
         l_controller = self.m_api.read_one_controller_xml(self.m_xml.controller)
-        self.assertEqual(l_controller.BaudRate, 19200, 'Bad BaudRate')
+        PrettyPrintAny(l_controller, 'OneController', 100)
+        self.assertEqual(l_controller.BaudRate, 19200)
         self.assertEqual(l_controller.ByteSize, 8, 'Bad Byte Size')
         self.assertEqual(l_controller.DsrDtr, False, 'Bad DsrDtr')
-        self.assertEqual(l_controller.ControllerFamily, 'Insteon', 'Bad ControllerFamily')
-        self.assertEqual(l_controller.InterfaceType, 'Serial', 'Bad InterfaceType')
-        self.assertEqual(l_controller.Parity, 'N', 'Bad Parity')
-        self.assertEqual(l_controller.RtsCts, False, 'Bad RtsCts')
-        self.assertEqual(l_controller.StopBits, 1.0, 'Bad Stop Bits')
-        self.assertEqual(l_controller.LightingType, 'Controller', 'Bad LightingType')
-        self.assertEqual(l_controller.XonXoff, False, 'Bad XonXoff')
-        self.assertEqual(l_controller.ControllerFamily, 'Insteon', 'Bad Lighting family')
-        self.assertEqual(l_controller.LightingType, 'Controller', 'Bad LightingType')
-        PrettyPrintAny(l_controller, 'OneController', 100)
+        self.assertEqual(l_controller.DeviceFamily, 'Insteon')
+        self.assertEqual(l_controller.InterfaceType, 'Serial')
+        self.assertEqual(l_controller.Parity, 'N')
+        self.assertEqual(l_controller.RtsCts, False)
+        self.assertEqual(l_controller.StopBits, 1.0)
+        self.assertEqual(l_controller.LightingType, 'Controller')
+        self.assertEqual(l_controller.XonXoff, False)
+        self.assertEqual(l_controller.DeviceFamily, 'Insteon')
+        self.assertEqual(l_controller.LightingType, 'Controller')
 
     def test_07_AllControllers(self):
         l_controllers = self.m_api.read_all_controllers_xml(self.m_xml.controller_sect)
         self.assertEqual(len(l_controllers), 2)
-        PrettyPrintAny(l_controllers, 'AllControllers', 100)
+        PrettyPrintAny(l_controllers, 'AllControllers')
 
-class C03_Write(SetupMixin, unittest.TestCase):
+
+class C1_Write(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by lighting_controllers.
     """
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_01_OneControllerXml(self):
-        """ Write out the XML file for the location section
+    def test_01_Base(self):
+        """ Write out the XML file for the Base controller
         """
-        l_controller = self.m_api.read_one_controller_xml(self.m_xml.controller)
-        l_xml = self.m_api.write_one_controller_xml(l_controller)
-        PrettyPrintAny(l_xml, 'OneController')
+        l_controllers = self.m_api.read_all_controllers_xml(self.m_xml.controller_sect)
+        l_xml = self.m_api._write_base_data(l_controllers[0])
+        PrettyPrintAny(l_xml, 'Base')
 
-    def test_02_ControllersXml(self):
+    def test_02_Controller(self):
+        """ Write out the XML file for the Base + Controller
+        """
+        l_controllers = self.m_api.read_all_controllers_xml(self.m_xml.controller_sect)
+        l_xml = self.m_api._write_base_data(l_controllers[0])
+        self.m_api._write_controller_data(l_controllers[0], l_xml)
+        PrettyPrintAny(l_xml, 'Controller')
+
+    def test_03_Interface(self):
         """ Write out the XML file for the location section
         """
         l_controllers = self.m_api.read_all_controllers_xml(self.m_xml.controller_sect)
-        l_xml = self.m_api.write_controllers_xml(l_controllers)
+        l_xml = self.m_api._write_base_data(l_controllers[0])
+        self.m_api._write_controller_data(l_controllers[0], l_xml)
+        self.m_api._write_interface_data(l_controllers[0], l_xml)
+        PrettyPrintAny(l_xml, 'Controller')
+
+    def test_04_Family(self):
+        """ Write out the XML file for the location section
+        """
+        l_controllers = self.m_api.read_all_controllers_xml(self.m_xml.controller_sect)
+        l_xml = self.m_api._write_base_data(l_controllers[0])
+        self.m_api._write_controller_data(l_controllers[0], l_xml)
+        self.m_api._write_interface_data(l_controllers[0], l_xml)
+        self.m_api._write_family_data(l_controllers[0], l_xml)
+        PrettyPrintAny(l_xml, 'Controller')
+
+    def test_04_OneXml(self):
+        """ Write out the XML file for the location section
+        """
+        l_controllers = self.m_api.read_all_controllers_xml(self.m_xml.controller_sect)
+        l_xml = self.m_api.write_one_controller_xml(l_controllers[0])
+        PrettyPrintAny(l_xml, 'OneController')
+
+    def test_05_AllXml(self):
+        """ Write out the XML file for the location section
+        """
+        l_controllers = self.m_api.read_all_controllers_xml(self.m_xml.controller_sect)
+        l_xml = self.m_api.write_all_controllers_xml(l_controllers)
         PrettyPrintAny(l_xml, 'AllControllers', 100)
 
 
 
-class C04_JSON(SetupMixin, unittest.TestCase):
+class C2_JSON(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by lighting_controllers.
     """
 

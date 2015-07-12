@@ -1,13 +1,13 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Utility.test.test_convert -*-
 
-@Name: PyHouse/src/Modules/Utilities/convert.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2012-2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Apr 3, 2013
-@summary: This module determines the IP address of the ISP connection.
+@Name:      PyHouse/src/Modules/Utilities/convert.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2012-2014 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Apr 3, 2013
+@summary:   This module determines the IP address of the ISP connection.
 
 
 Utility routines to convert external readable numbers to integers for

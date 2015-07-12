@@ -363,8 +363,8 @@ class LightHandlerAPI(InsteonPlmAPI):
     def start_controller_driver(self, p_pyhouse_obj, p_controller_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         l_msg = "Controller:{}, ".format(p_controller_obj.Name)
-        l_msg += "ControllerFamily:{}, InterfaceType:{}".format(
-                p_controller_obj.ControllerFamily, p_controller_obj.InterfaceType)
+        l_msg += "DeviceFamily:{}, InterfaceType:{}".format(
+                p_controller_obj.DeviceFamily, p_controller_obj.InterfaceType)
         LOG.info('Start Controller - {}'.format(l_msg))
         l_driver = FamUtil.get_device_driver_API(p_controller_obj)
         p_controller_obj._DriverAPI = l_driver
@@ -410,7 +410,7 @@ class LightHandlerAPI(InsteonPlmAPI):
         self.queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['id_request'], 0)  # 0x10
 
     def _get_obj_info(self, p_controller_obj, p_obj):
-        if p_obj.ControllerFamily != 'Insteon':
+        if p_obj.DeviceFamily != 'Insteon':
             return
         if p_obj.Active != True:
             return
@@ -420,7 +420,7 @@ class LightHandlerAPI(InsteonPlmAPI):
         self._get_engine_version(p_controller_obj, p_obj)
 
     def _get_thermostat_obj_info(self, p_controller_obj, p_obj):
-        if p_obj.ControllerFamily != 'Insteon':
+        if p_obj.DeviceFamily != 'Insteon':
             return
         if p_obj.Active != True:
             return

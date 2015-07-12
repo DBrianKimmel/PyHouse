@@ -21,32 +21,36 @@ Start Active UPB Controllers.
 from Modules.Families.UPB import UPB_Pim, UPB_xml
 from Modules.Computer import logging_pyh as Logger
 
-g_debug = 9
 LOG = Logger.getLogger('PyHouse.UPB_device     ')
 
 
-class API(object):
+class Util(object):
+    """
+    """
+
+
+class API(Util):
 
     def _is_upb_active(self, p_controller_obj):
-        if p_controller_obj.ControllerFamily != 'UPB':
+        if p_controller_obj.DeviceFamily != 'UPB':
             return False
         if p_controller_obj.Active:
             return True
 
-    def __init__(self):
+    def __init__(self, p_pyhouse_obj):
         """Constructor for the UPB.
         """
+        self.m_pyhouse_obj = p_pyhouse_obj
         pass
 
-    def Start(self, p_pyhouse_obj):
+    def Start(self):
         """For the given house, this will start all the controllers for family = UPB in that house.
         """
-        self.m_pyhouse_obj = p_pyhouse_obj
         l_count = 0
         for l_controller_obj in self.m_pyhouse_obj.House.DeviceOBJs.Controllers.itervalues():
             if self._is_upb_active(l_controller_obj):
                 l_controller_obj._HandlerAPI = UPB_Pim.API()
-                if l_controller_obj._HandlerAPI.Start(p_pyhouse_obj, l_controller_obj):
+                if l_controller_obj._HandlerAPI.Start(self.m_pyhouse_obj, l_controller_obj):
                     LOG.info('Controller {0:} Started.'.format(l_controller_obj.Name))
                     l_count += 1
                 else:
@@ -62,19 +66,12 @@ class API(object):
         except AttributeError as e_err:
             LOG.error('Stop ERROR {0:}'.format(e_err))
 
-
     def SaveXml(self, p_xml):
         return p_xml
 
     def ChangeLight(self, p_light_obj, p_level, _p_rate = 0):
-        LOG.debug('Change light Name:{0:}, ControllerFamily:{1:}'.format(p_light_obj.Name, p_light_obj.ControllerFamily))
-        _l_api = self.m_pyhouse_obj.House.RefOBJs.FamilyData[p_light_obj.ControllerFamily].FamilyModuleAPI
+        LOG.debug('Change light Name:{0:}, DeviceFamily:{1:}'.format(p_light_obj.Name, p_light_obj.DeviceFamily))
+        _l_api = self.m_pyhouse_obj.House.RefOBJs.FamilyData[p_light_obj.DeviceFamily].FamilyModuleAPI
         self.m_plm.ChangeLight(p_light_obj, p_level)
-
-    def ReadXml(self, p_device, p_xml):
-        UPB_xml.ReadXml(p_device, p_xml)
-
-    def WriteXml(self, p_out_xml, p_device_obj):
-        UPB_xml.WriteXml(p_out_xml, p_device_obj)
 
 # ## END

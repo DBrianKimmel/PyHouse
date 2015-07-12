@@ -90,7 +90,7 @@ class C02_Read(SetupMixin, unittest.TestCase):
         l_thermostat = self.m_api._read_thermostat_base(self.m_xml.thermostat)
         self.m_api._read_thermostat_data(l_thermostat, self.m_xml.thermostat)
         PrettyPrintAny(l_thermostat, 'ReadControllerData', 100)
-        self.assertEqual(l_thermostat.ControllerFamily, 'Insteon', 'Bad Controller Family')
+        self.assertEqual(l_thermostat.DeviceFamily, 'Insteon', 'Bad Controller Family')
         self.assertEqual(l_thermostat.CoolSetPoint, 78.0, 'Bad CoolSetPoint')
         self.assertEqual(l_thermostat.HeatSetPoint, 71.0, 'Bad HeatSetPoint')
         self.assertEqual(l_thermostat.ThermostatMode, 'Cool', 'Bad ThermostatMode')
@@ -105,7 +105,7 @@ class C02_Read(SetupMixin, unittest.TestCase):
         PrettyPrintAny(l_thermostat, 'Thermostat 1', 100)
         self.m_api._read_family_data(self.m_pyhouse_obj, l_thermostat, self.m_xml.thermostat)
         PrettyPrintAny(l_thermostat, 'Thermostat 2', 100)
-        self.assertEqual(l_thermostat.ControllerFamily, 'Insteon')
+        self.assertEqual(l_thermostat.DeviceFamily, 'Insteon')
         self.assertEqual(l_thermostat.InsteonAddress, conversions.dotted_hex2int('18.C9.4A'))
 
     def test_05_OneThermostat(self):

@@ -37,7 +37,7 @@ g_debug = 1
 LOG = Logger.getLogger('PyHouse.IrControl   ')
 
 g_pandora = None
-g_pyhouses_obj = None
+g_pyhouse_obj = None
 
 
 LIRC_SOCKET = 'unix:path=/var/run/lirc/lircd'
@@ -129,7 +129,7 @@ class IrDispatch(object):
     def pandora_ctl(self, p_command):
         LOG.debug('Pandora_ctl command - {0:}'.format(p_command))
         if p_command == 'start':
-            g_pandora.Start(g_pyhouses_obj)
+            g_pandora.Start(g_pyhouse_obj)
         elif p_command == 'stop':
             g_pandora.Stop()
 
@@ -155,8 +155,8 @@ class API(Utility):
         LOG.debug('Initialized')
 
     def Start(self, p_pyhouse_obj):
-        global g_pyhouses_obj
-        g_pyhouses_obj = p_pyhouse_obj
+        global g_pyhouse_obj
+        g_pyhouse_obj = p_pyhouse_obj
         self.start_lirc_connect(p_pyhouse_obj)
         self.start_AMP(p_pyhouse_obj)
         LOG.debug('Started')

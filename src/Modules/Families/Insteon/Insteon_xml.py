@@ -13,6 +13,10 @@ This is a module for the Insteon family of devices.
 it provides the single interface into the family.
 
 This module loads the Insteon specific information about an Insteon device.
+The data is contained in Insteon_data and is versioned.
+
+Write always outputs the current version.
+Read may need to check the version number to load the config information properly.
 
 """
 
@@ -21,14 +25,13 @@ This module loads the Insteon specific information about an Insteon device.
 # Import PyMh files
 from Modules.Families.Insteon.Insteon_data import InsteonData
 from Modules.Core import conversions
-from Modules.Utilities import xml_tools
+from Modules.Utilities.xml_tools import PutGetXML, stuff_new_attrs
 from Modules.Computer import logging_pyh as Logger
 
-g_debug = 0
 LOG = Logger.getLogger('PyHouse.Insteon_xml ')
 
 
-class ReadWriteConfigXml(xml_tools.XmlConfigTools):
+class API(object):
     """
     These routines are called from read_family_data in various modules.
     This is done so Lights, Thermostats, Irrigation and Pool devices can use the XML data for Insteon devices.
@@ -36,10 +39,13 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
     This class and methods are pointed to by family.py and must be the same in every Device package.
     """
 
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+
     def _read_product_key(self, p_entry_xml, p_default = '98.76.54'):
         l_ret = p_default
         try:
-            l_prod = self.get_text_from_xml(p_entry_xml, 'ProductKey', p_default)
+            l_prod = PutGetXML.get_text_from_xml(p_entry_xml, 'ProductKey', p_default)
             l_ret = conversions.dotted_hex2int(l_prod)
         except Exception:
             l_ret.ProductKey = p_default
@@ -57,27 +63,37 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         @return: a dict of the extracted Insteon Specific data.
         """
         l_insteon_obj = InsteonData()
-        l_insteon_obj.InsteonAddress = conversions.dotted_hex2int(self.get_text_from_xml(p_in_xml, 'Address', '99.88.77'))
-        l_insteon_obj.DevCat = conversions.dotted_hex2int(self.get_text_from_xml(p_in_xml, 'DevCat', 'A1.B2'))
-        l_insteon_obj.GroupList = self.get_text_from_xml(p_in_xml, 'GroupList')
-        l_insteon_obj.GroupNumber = self.get_int_from_xml(p_in_xml, 'GroupNumber', 0)
-        l_insteon_obj.IsController = self.get_bool_from_xml(p_in_xml, 'IsController')
-        l_insteon_obj.IsMaster = self.get_bool_from_xml(p_in_xml, 'IsMaster')
-        l_insteon_obj.IsResponder = self.get_bool_from_xml(p_in_xml, 'IsResponder')
+        l_insteon_obj.InsteonAddress = conversions.dotted_hex2int(PutGetXML.get_text_from_xml(p_in_xml, 'Address', '99.88.77'))
+        l_insteon_obj.DevCat = conversions.dotted_hex2int(PutGetXML.get_text_from_xml(p_in_xml, 'DevCat', 'A1.B2'))
+        # l_insteon_obj.DeviceFamily = PutGetXML.get_text_from_xml(p_in_xml, 'DeviceFamily')
+        l_insteon_obj.GroupList = PutGetXML.get_text_from_xml(p_in_xml, 'GroupList')
+        l_insteon_obj.GroupNumber = PutGetXML.get_int_from_xml(p_in_xml, 'GroupNumber', 0)
+        l_insteon_obj.IsController = PutGetXML.get_bool_from_xml(p_in_xml, 'IsController')
+        l_insteon_obj.IsMaster = PutGetXML.get_bool_from_xml(p_in_xml, 'IsMaster')
+        l_insteon_obj.IsResponder = PutGetXML.get_bool_from_xml(p_in_xml, 'IsResponder')
         l_insteon_obj.ProductKey = self._read_product_key(p_in_xml)
-        xml_tools.stuff_new_attrs(p_device_obj, l_insteon_obj)
+        try:
+            l_insteon_obj.Version = PutGetXML.get_int_from_xml(p_in_xml, 'Version', 1)
+        except Exception:
+            l_insteon_obj.Version = 1
+        stuff_new_attrs(p_device_obj, l_insteon_obj)
         return l_insteon_obj  # For testing only
 
 
     def WriteXml(self, p_out_xml, p_device):
-        self.put_text_element(p_out_xml, 'Address', conversions.int2dotted_hex(p_device.InsteonAddress, 3))
-        self.put_int_element(p_out_xml, 'DevCat', conversions.int2dotted_hex(p_device.DevCat, 2))
-        self.put_text_element(p_out_xml, 'GroupList', p_device.GroupList)
-        self.put_int_element(p_out_xml, 'GroupNumber', p_device.GroupNumber)
-        self.put_bool_element(p_out_xml, 'IsController', p_device.IsController)
-        self.put_bool_element(p_out_xml, 'IsMaster', p_device.IsMaster)
-        self.put_bool_element(p_out_xml, 'IsResponder', p_device.IsResponder)
-        self.put_text_element(p_out_xml, 'ProductKey', conversions.int2dotted_hex(p_device.ProductKey, 3))
+        """
+        @param p_xml_out: is a parent element to which the Insteon Specific information is appended.
+        """
+        PutGetXML.put_text_element(p_out_xml, 'Address', conversions.int2dotted_hex(p_device.InsteonAddress, 3))
+        PutGetXML.put_int_element(p_out_xml, 'DevCat', conversions.int2dotted_hex(p_device.DevCat, 2))
+        # PutGetXML.put_text_element(p_out_xml, 'DeviceFamily', p_device.DeviceFamily)
+        PutGetXML.put_text_element(p_out_xml, 'GroupList', p_device.GroupList)
+        PutGetXML.put_int_element(p_out_xml, 'GroupNumber', p_device.GroupNumber)
+        PutGetXML.put_bool_element(p_out_xml, 'IsController', p_device.IsController)
+        PutGetXML.put_bool_element(p_out_xml, 'IsMaster', p_device.IsMaster)
+        PutGetXML.put_bool_element(p_out_xml, 'IsResponder', p_device.IsResponder)
+        PutGetXML.put_text_element(p_out_xml, 'ProductKey', conversions.int2dotted_hex(p_device.ProductKey, 3))
+        PutGetXML.put_int_element(p_out_xml, 'Version', p_device.Version)
         return p_out_xml
 
 # ## END DBK

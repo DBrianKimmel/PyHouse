@@ -25,9 +25,7 @@ serial_port
 # Import PyMh files
 from Modules.Families.Insteon import Insteon_xml
 from Modules.Computer import logging_pyh as Logger
-# from Modules.Utilities.tools import PrettyPrintAny
 
-g_debug = 0
 LOG = Logger.getLogger('PyHouse.Insteon_Device ')
 
 
@@ -38,7 +36,7 @@ class Utility(object):
     @staticmethod
     def _is_insteon(p_obj):
         try:
-            return p_obj.ControllerFamily == 'Insteon'
+            return p_obj.DeviceFamily == 'Insteon'
         except AttributeError:
             return False
 
@@ -102,12 +100,12 @@ class API(object):
 
     m_plm = None
 
-    def __init__(self):
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info('Created an instance of Insteon_device.')
 
-    def Start(self, p_pyhouse_obj):
-        self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_plm = Utility._start_all_controllers(p_pyhouse_obj)
+    def Start(self):
+        self.m_plm = Utility._start_all_controllers(self.m_pyhouse_obj)
         LOG.info('Started the Insteon Controllers.')
 
     def Stop(self):
@@ -116,20 +114,11 @@ class API(object):
         except AttributeError as e_err:
             LOG.info('Stop Warning - {0:}'.format(e_err))  # no controllers for house(House is being added)
 
-    def SaveXml(self, p_xml):
-        return p_xml
-
     def ChangeLight(self, p_light_obj, p_level, p_rate = 0):
         """
         Do the Insteon thing to change the level of an Insteon light
         """
         LOG.info('Device Name:{}; to level:{}; via {}'.format(p_light_obj.Name, p_level, self.m_plm))
         self.m_plm.ChangeLight(p_light_obj, p_level, p_rate)
-
-    def ReadXml(self, p_device_obj, p_entry_xml):
-        Insteon_xml.ReadWriteConfigXml().ReadXml(p_device_obj, p_entry_xml)
-
-    def WriteXml(self, p_out_xml, p_device):
-        Insteon_xml.ReadWriteConfigXml().WriteXml(p_out_xml, p_device)
 
 # ## END DBK

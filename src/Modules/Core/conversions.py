@@ -1,13 +1,13 @@
 """
--*- test-case-name: PyHouse/src/Modules/Core/test/test_Insteon_utils.py -*-
+-*- test-case-name: PyHouse/src/Modules/Core/test/test_conversions.py -*-
 
-@name: PyHouse/src/Modules/Core/conversions.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@Copyright (c) 2014 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Jul 14, 2014
-@summary: This module is for conversion routines.
+@name:      PyHouse/src/Modules/Core/conversions.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2014-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Jul 14, 2014
+@summary:   This module is for conversion routines.
 
 """
 
@@ -47,6 +47,7 @@ def _get_int(p_str):
 def dotted_hex2int(p_hex):
     """
     @param p_hex: is a str like 'A1.B2.C3'
+    @return: an int
     """
     p_hex.replace(':', '.')
     l_ary = p_hex.split('.')
@@ -64,10 +65,10 @@ def int2dotted_hex(p_int, p_size):
     try:
         while l_ix > 0:
             l_byte, l_int = divmod(l_int, l_ix)
-            l_hex.append("{0:02X}".format(l_byte))
+            l_hex.append("{:02X}".format(l_byte))
             l_ix = l_ix / 256
         return str('.'.join(l_hex))
     except TypeError as e_err:
-        LOG.error('ERROR in converting int to dotted Hex {0:} - Type:{1:} - {2:}'.format(p_int, type(p_int), e_err))
+        LOG.error('ERROR in converting int to dotted Hex {} - Type:{} - {}'.format(p_int, type(p_int), e_err))
 
 # ## END DBK
