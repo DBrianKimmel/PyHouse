@@ -1,5 +1,5 @@
 """
-@name:      C:/Users/briank/workspace/PyHouse/src/Modules/Computer/Mqtt/test/xml_mqtt.py
+@name:      PyHouse/src/Modules/Computer/Mqtt/test/xml_mqtt.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2015-2015 by D. Brian Kimmel

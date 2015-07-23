@@ -97,8 +97,9 @@ class SetupPyHouseObj(object):
 
     def _build_apis(self):
         l_apis = PyHouseAPIs()
-        l_apis.Comp = ComputerAPIs()
+        l_apis.Computer = ComputerAPIs()
         l_apis.House = HouseAPIs()
+        return l_apis
 
     def BuildPyHouseObj(self, p_root):
         l_pyhouse_obj = PyHouseData()

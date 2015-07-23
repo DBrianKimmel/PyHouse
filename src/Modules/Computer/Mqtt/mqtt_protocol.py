@@ -512,62 +512,7 @@ class MQTTClient(MQTTProtocol):
 
 
 ###########################################
-'''
-class MqttClientFactory(ClientFactory):
-    """
-    #Holds the persistent State info.
-    """
 
-    m_pingPeriod = 5
-
-    def __init__(self, p_pyhouse_obj, p_client_id, p_broker):
-        """
-        @param p_pyhouse_obj: is the master information store
-        @param p_client_id: is the ID of this computer that will be supplied to the broker
-        @param p_broker: is ???
-        """
-        self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_broker = p_broker
-        self.m_clientID = p_client_id
-
-    def makeConnection(self, p_transport):
-        pass
-
-    def connectionLost(self, p_reason):
-        LOG.error('ConnectionLost Err:{}'.format(p_reason))
-
-    def startedConnecting(self, _p_connector):
-        """
-        p_connector is an instance of twisted.internet.tcp.Connector
-        """
-        pass
-
-    def connectionMade(self):
-        """ Physical connection made to broker, now perform protocol connection.
-        """
-        LOG.info('Connected to MQTT Broker')
-        self.connect(self.m_clientID, keepalive = self.m_pingPeriod * 3000)
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(self.m_pingPeriod, self.pingreq)
-
-    def buildProtocol(self, p_addr):
-        l_client = MQTTClient(self.m_pyhouse_obj)
-        LOG.info("Mqtt broker address: {}".format(p_addr))
-        # self.m_pyhouse_obj.Computer.Mqtt.ProtocolAPI = l_client
-        return l_client
-
-    def clientConnectionFailed(self, p_connector, p_reason):
-        LOG.error('Connector{}\n  Err:{}'.format(p_connector, p_reason))
-
-    def pingrespReceived(self):
-        LOG.info('Ping received from MQTT broker')
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(self.m_pingPeriod, self.pingreq)
-
-    def connackReceived(self, status):
-        if status == 0:
-            self.onBrokerConnected()
-        else:
-            LOG.info('Connection to MQTT broker failed')
-'''
 
 class MqttReconnectingClientFactory(ReconnectingClientFactory):
 
@@ -579,13 +524,15 @@ class MqttReconnectingClientFactory(ReconnectingClientFactory):
         """
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_broker = p_broker
+        p_broker.ProtocolAPI = self
         self.m_clientID = p_client_id
 
     def startedConnecting(self, _p_connector):
-        LOG.info('Started to connect.')
+        LOG.warn('Started to connect.')
 
     def buildProtocol(self, p_addr):
         l_client = MQTTClient(self.m_pyhouse_obj)
+        self.m_broker.ProtocolAPI = l_client
         LOG.info("Mqtt broker address: {}".format(p_addr))
         self.resetDelay()
         # self.m_pyhouse_obj.Computer.Mqtt.ProtocolAPI = l_client

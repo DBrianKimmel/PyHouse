@@ -7,6 +7,8 @@
 @note:      Created on Jun 4, 2015
 @Summary:   Test the read and write of MQTT sections of XML
 
+Passed all 5 tests - DBK - 2015-07-22
+
 """
 
 # Import system type stuff
@@ -14,7 +16,7 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Computer.Mqtt.mqtt_xml import MqttXmlAPI
+from Modules.Computer.Mqtt.mqtt_xml import Xml as mqttXML
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
@@ -25,7 +27,7 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_api = MqttXmlAPI()
+        self.m_api = mqttXML()
 
 
 class A1_XML(SetupMixin, unittest.TestCase):
@@ -33,14 +35,22 @@ class A1_XML(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_01_FindXML(self):
+    def test_01_PyHouse(self):
         """ Be sure that the XML contains the right stuff.
         """
+        # PrettyPrintAny(self.m_xml.root, 'XML')
+        PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse_obj')
+
+    def test_02_FindXML(self):
+        """ Be sure that the XML contains the right stuff.
+        """
+        PrettyPrintAny(self.m_pyhouse_obj.Xml, 'PyHouse XML')
         # PrettyPrintAny(self.m_xml.root, 'XML')
         self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
         self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision', 'XML - No Computer Division')
         self.assertEqual(self.m_xml.mqtt_sect.tag, 'MqttSection', 'XML - No Mqtt section')
-        PrettyPrintAny(self.m_pyhouse_obj.Xml, 'XML')
+
+    def test_03_Mqtt(self):
         PrettyPrintAny(self.m_xml.mqtt_sect, 'Mqtt')
 
 
@@ -87,8 +97,6 @@ class B2_Write(SetupMixin, unittest.TestCase):
     def test_02_Mqtt(self):
         l_mqtt_obj = self.m_api.read_mqtt_xml(self.m_pyhouse_obj)
         PrettyPrintAny(l_mqtt_obj, 'Obj')
-        # PrettyPrintAny(l_mqtt_obj[0], 'Obj 0')
-        # PrettyPrintAny(l_mqtt_obj[1], 'Obj 1')
         l_xml = self.m_api.write_mqtt_xml(l_mqtt_obj)
         PrettyPrintAny(l_xml, "XML")
         self.assertEqual(l_mqtt_obj[0].BrokerAddress, '1234:5678::dead.beef')

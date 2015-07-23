@@ -23,7 +23,7 @@ SECTION = 'MqttSection'
 BROKER = 'Broker'
 
 
-class MqttXmlAPI(object):
+class Xml(object):
     """
     """
 

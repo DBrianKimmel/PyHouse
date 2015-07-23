@@ -13,15 +13,13 @@
 
 # Import system type stuff
 import copy
-# from twisted.internet.endpoints import clientFromString, TCP4ClientEndpoint, connectProtocol
-# from twisted.internet.protocol import ReconnectingClientFactory
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData
-from Modules.Computer import logging_pyh as Logger
 from Modules.Computer.Mqtt import mqtt_protocol
-from Modules.Computer.Mqtt.mqtt_xml import MqttXmlAPI
+from Modules.Computer.Mqtt.mqtt_xml import Xml as mqttXML
 from Modules.Web import web_utils
+from Modules.Computer import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.Mqtt_Client    ')
 
@@ -33,31 +31,6 @@ class Util(object):
     def __init__(self):
         self.m_connection = None
 
-    '''
-    def mqtt_start(self, p_pyhouse_obj):
-        """ Start the async connection process.
-
-        This is the twisted part.
-        The connection of the MQTT protocol is kicked off after the TCP connection is complete.
-        """
-        l_count = 0
-        p_pyhouse_obj.Computer.Mqtt[0].ClientAPI = self
-        l_address = p_pyhouse_obj.Computer.Mqtt[0].BrokerAddress
-        l_port = p_pyhouse_obj.Computer.Mqtt[0].BrokerPort
-        if l_address == None or l_port == None:
-            LOG.error('Bad Mqtt broker Address: {}'.format(l_address))
-        else:
-            p_pyhouse_obj.Twisted.Reactor.connectTCP(l_address, l_port, mqtt_protocol.MqttClientFactory(p_pyhouse_obj, "DBK1", self))
-            l_count += 1
-        # Connect to each of the brokers in the config file.
-        # for l_broker in p_pyhouse_obj.Computer.Mqtt.itervalues():
-        #    p_pyhouse_obj.Twisted.Reactor.connectTCP(
-        #        l_address,
-        #        l_port,
-        #        protocol.MqttClientFactory(p_pyhouse_obj, "DBK1", self))
-        return l_count
-    '''
-
     def client_connect_all_brokers(self, p_pyhouse_obj):
         """
         This will create a connection for each broker in the config file.
@@ -65,6 +38,8 @@ class Util(object):
         """
         l_count = 0
         for l_broker in p_pyhouse_obj.Computer.Mqtt.itervalues():
+            if not l_broker.Active:
+                continue
             l_host = l_broker.BrokerAddress
             l_port = l_broker.BrokerPort
             l_broker.ClientAPI = self
@@ -72,15 +47,11 @@ class Util(object):
                 LOG.error('Bad Mqtt broker Address: {}'.format(l_host))
                 l_broker.ProtocolAPI = None
             else:
-                l_factory = mqtt_protocol.MqttReconnectingClientFactory(p_pyhouse_obj, "DBK1", self)
-                l_connector = p_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_factory)
-                l_broker.ProtocolAPI = l_factory.buildProtocol(l_connector)
-                # l_broker_ref = 'tcp:{}:{}'.format(l_host, l_port)
-                # l_endpoint = clientFromString(p_pyhouse_obj.Twisted.Reactor, l_broker_ref)
-                #    l_endpoint,
-                #    mqtt_protocol.MqttReconnectingClientFactory(p_pyhouse_obj, "DBK1", self))
-                # l_broker.ProtocolAPI = l_attempt
+                LOG.info('About to create factory ')
+                l_factory = mqtt_protocol.MqttReconnectingClientFactory(p_pyhouse_obj, "DBK1", l_broker)
+                _l_connector = p_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_factory)
                 l_count += 1
+        LOG.info('TCP Connected {} Brokers.'.format(l_count))
         return l_count
 
 
@@ -91,15 +62,14 @@ class API(Util):
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         p_pyhouse_obj.APIs.Computer.MqttAPI = self
+        LOG.info("Initialized.")
 
     def Start(self):
-        l_config_dict = MqttXmlAPI().read_mqtt_xml(self.m_pyhouse_obj)
+        l_config_dict = mqttXML().read_mqtt_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Computer.Mqtt = l_config_dict
         if l_config_dict != {}:
-            # l_count = self.mqtt_start(self.m_pyhouse_obj)
             l_count = self.client_connect_all_brokers(self.m_pyhouse_obj)
             LOG.info("Mqtt {} broker(s) Started.".format(l_count))
-
         else:
             LOG.info('No Mqtt brokers are configured.')
 
@@ -107,7 +77,7 @@ class API(Util):
         pass
 
     def SaveXml(self, p_xml):
-        l_xml = MqttXmlAPI().write_mqtt_xml(self.m_pyhouse_obj.Computer.Mqtt)
+        l_xml = mqttXML().write_mqtt_xml(self.m_pyhouse_obj.Computer.Mqtt)
         p_xml.append(l_xml)
         LOG.info("Saved Mqtt XML.")
         return p_xml
@@ -119,9 +89,11 @@ class API(Util):
 
         """
         for l_broker in self.m_pyhouse_obj.Computer.Mqtt.itervalues():
+            if not l_broker.Active:
+                continue
             try:
                 l_broker.ProtocolAPI.publish(p_topic, p_message)
-                LOG.info('Mqtt publishing:\n\t{}\n\t{}'.format(p_topic, p_message))
+                LOG.info('Mqtt publishing:\n\tBroker: {}\n\tTopic:{}\n\tMessage"{}'.format(l_broker.Name, p_topic, p_message))
             except AttributeError as e_err:
                 LOG.error("Mqtt Unpublished.\n\tERROR:{}\n\tTopic:{}\n\tMessage:{}".format(e_err, p_topic, p_message))
 
