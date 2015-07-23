@@ -7,8 +7,7 @@
 @copyright: (c) 2014-2015 by D. Brian Kimmel
 @note:      Created on Aug 9, 2011
 @license:   MIT License
-@summary:   This module is for using device families
-
+@summary:   This module is for *using* device families
 
 All device objects use 'DeviceFamily' to designate the family.
 This is because the things we wish to automate all have some controller that speaks to that
@@ -21,9 +20,7 @@ This is because the things we wish to automate all have some controller that spe
 # Import PyHouse files and modules.
 from Modules.Computer import logging_pyh as Logger
 
-
 LOG = Logger.getLogger('PyHouse.FamilyUtils ')
-
 
 
 class FamUtil(object):
@@ -36,22 +33,14 @@ class FamUtil(object):
         return p_device_obj.Name
 
     @staticmethod
-    def _get_family_name(p_device_obj):
-        """
-        Given some device object, extract the Family Name
-        """
-        return p_device_obj.DeviceFamily
-
-    @staticmethod
     def _get_family_obj(p_pyhouse_obj, p_device_obj):
         """
         Given some device object, extract the Family Name
         """
         try:
-            l_name = FamUtil._get_family_name(p_device_obj)
-            l_family_obj = p_pyhouse_obj.House.RefOBJs.FamilyData[l_name]
+            l_family_obj = p_pyhouse_obj.House.RefOBJs.FamilyData[p_device_obj.DeviceFamily]
         except Exception as e_err:
-            LOG.error('Could not get family object for Name:{}\n\t{}'.format(l_name, e_err))
+            LOG.error('Could not get family object for Name:{}\n\tFamily: {}\n\t{}'.format(p_device_obj.Name, p_device_obj.DeviceFamily, e_err))
             l_family_obj = p_pyhouse_obj.House.RefOBJs.FamilyData['Null']
         return l_family_obj
 
@@ -93,7 +82,6 @@ class FamUtil(object):
         except AttributeError as e_err:
             l_msg = 'ERROR - Device "{}" has no DeviceFamily Attribute - {}'.format(l_dev_name, e_err)
             LOG.error(l_msg)
-            print(l_msg)
             l_family = 'Null'
         return l_family
 
@@ -109,24 +97,25 @@ class FamUtil(object):
         except:
             l_msg = 'ERROR - Device:"{}"\n\tFamily:"{}"\n\tCannot find API info '.format(l_dev_name, l_family)
             LOG.error(l_msg)
-            print(l_msg)
             l_api = None
         return l_api
 
     @staticmethod
     def _get_family_xml_api(p_pyhouse_obj, p_device_obj):
         """
-        This will get the address where we can read or write family specific XML data
+        This will get the reference to a family which will read or write family specific XML data
+
+        @param p_pyhouse_obj: is the entire PyHouse Data
+        @param p_device_obj: is the device we will be outputting info for.
         @return: The XmlApi of the family specific data.
         """
-        l_dev_name = FamUtil._get_device_name(p_device_obj)
         l_family_obj = FamUtil._get_family_obj(p_pyhouse_obj, p_device_obj)
+        # LOG.warning('Name:{}, Family:{}'.format(l_dev_name, p_device_obj.DeviceFamily))
         try:
             l_xmlAPI = l_family_obj.FamilyXmlModuleAPI
         except:
-            l_msg = 'ERROR FamUtil-95 - Device:"{}"; Family:"{}" Cannot find XmlAPI info '.format(l_dev_name, l_family_obj.Name)
+            l_msg = 'ERROR FamUtil-95 - Device:"{}"; Family:"{}" Cannot find XmlAPI info '.format(p_device_obj.Name, l_family_obj.Name)
             LOG.error(l_msg)
-            print(l_msg)
             l_xmlAPI = None
         return l_xmlAPI
 
@@ -134,18 +123,18 @@ class FamUtil(object):
     def read_family_data(p_pyhouse_obj, p_device_obj, p_xml):
         """
         Get the family specific XML data for any device.
+
         @param p_pyhouse_obj: is the entire PyHouse Data
         @param p_device_obj: is the device we will be outputting info for.
         @param p_xml: is the XML data for the entire device.
         """
-        l_dev_name = FamUtil._get_device_name(p_device_obj)
         l_api = FamUtil._get_family_xml_api(p_pyhouse_obj, p_device_obj)
         try:
             l_ret = l_api.ReadXml(p_device_obj, p_xml)
         except Exception as e_err:
-            l_ret = 'ERROR family_utils-110  API:{}  Device:"{}"\n   {}'.format(l_api, l_dev_name, e_err)
-            LOG.error(l_ret)
-            print(l_ret)
+            l_ret = 'ERROR family_utils-110  API:{}  Device:"{}"\n   {}'.format(l_api, p_device_obj.Name, e_err)
+            LOG.error('ERROR - Unable to load family information for a device.'
+                      '\n\tDevice: {}\n\tFamily: {}\n\t{}'.format(p_device_obj.Name, p_device_obj.DeviceFamily, e_err))
         return l_ret  # for testing
 
     @staticmethod
@@ -163,7 +152,6 @@ class FamUtil(object):
         except Exception as e_err:
             l_ret = 'ERROR in family_utils.write_family_data.  Device:"{}"\n  Api:{}\n   Err:{}'.format(l_dev_name, l_api, e_err)
             LOG.error(l_ret)
-            print(l_ret)
         return l_ret  # for testing
 
 # ## END DBK

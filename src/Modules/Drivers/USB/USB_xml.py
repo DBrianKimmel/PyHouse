@@ -21,7 +21,7 @@ from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.UsbXml      ')
 
 
-class Xml(object):
+class XML(object):
     """Read and write the interface information based in the interface type.
     """
 

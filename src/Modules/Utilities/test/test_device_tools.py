@@ -28,7 +28,7 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_api = XmlConfigTools()
+        self.m_api = XmlConfigTools
         self.m_button_obj = ButtonData()
         self.m_controller_obj = ControllerData()
         self.m_light_obj = LightData()

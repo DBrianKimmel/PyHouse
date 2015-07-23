@@ -7,44 +7,53 @@
 @note:      Created on Nov 22, 2014
 @Summary:
 
+See PyHouse/src/test/xml_data.py for the entire hierarchy.
+
 """
 
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Lighting.test.xml_core import *
-from Modules.Families.Insteon.test.xml_insteon import INSTEON_XML
+from Modules.Families.Insteon.test.xml_insteon import XML_INSTEON
 from Modules.Families.UPB.test.xml_upb import UPB_XML
+from Modules.Core.test.xml_device import XML_DEVICE
 
 
 TESTING_LIGHTING_LIGHTS_INSTEON_NAME = "Insteon Light"
+TESTING_LIGHT_DIMMABLE = 'True'
 TESTING_LIGHTING_LIGHT_CUR_LEVEL = "12"
+TESTING_LIGHTING_TYPE = 'Light'
 
+L_LIGHT_TYPE = '    <LightingType>' + TESTING_LIGHTING_TYPE + '</LightingType>'
+L_DIMMABLE = '    <IsDimmable>' + TESTING_LIGHT_DIMMABLE + '</IsDimmable>'
+L_LEVEL = "    <CurLevel>" + TESTING_LIGHTING_LIGHT_CUR_LEVEL + "</CurLevel>"
 
-LIGHT_TYPE = "    <LightingType>Light</LightingType>"
-
-LIGHT_BODY = '\n'.join([
-    CORE_DEVICE,
-    LIGHT_TYPE,
-    "<CurLevel>" + TESTING_LIGHTING_LIGHT_CUR_LEVEL + "</CurLevel>"
+L_LIGHT_BODY = '\n'.join([
+    XML_DEVICE,
+    L_LIGHT_TYPE,
+    L_DIMMABLE,
+    L_LEVEL
     ])
 
-INSTEON_LIGHT_XML = '\n'.join([
+L_INSTEON_LIGHT_XML = '\n'.join([
     '<Light Name="' + TESTING_LIGHTING_LIGHTS_INSTEON_NAME + '" Key="0" Active="True">',
-    LIGHT_BODY,
-    INSTEON_XML,
-    "</Light>"])
+    L_LIGHT_BODY,
+    XML_INSTEON,
+    "</Light>"
+    ])
 
-UPB_LIGHT_XML = '\n'.join([
+L_UPB_LIGHT_XML = '\n'.join([
     '<Light Name="UPB Light" Key="1" Active="True">',
-    LIGHT_BODY,
+    L_LIGHT_BODY,
     UPB_XML,
-    "</Light>"])
+    "</Light>"
+    ])
 
-LIGHT_SECTION_XML = '\n'.join([
+XML_LIGHT_SECTION = '\n'.join([
     "<LightSection>",
-    INSTEON_LIGHT_XML,
-    UPB_LIGHT_XML,
-    "</LightSection>"])
+    L_INSTEON_LIGHT_XML,
+    L_UPB_LIGHT_XML,
+    "</LightSection>"
+    ])
 
 # ## END DBK

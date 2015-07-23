@@ -30,7 +30,7 @@ from Modules.Core import setup_logging  # This must be first as the import cause
 from Modules.Computer import logging_pyh as Logger
 from Modules.Computer.computer import API as computerAPI
 from Modules.Housing.house import API as houseAPI
-from Modules.Utilities.config_file import ConfigAPI
+from Modules.Utilities.config_file import API as configAPI
 
 LOG = Logger.getLogger('PyHouse.CoreSetup      ')
 
@@ -45,8 +45,7 @@ class Utility(object):
     """
 
     def log_start(self):
-        LOG.info("""
-        ------------------------------------------------------------------
+        LOG.info("""\n------------------------------------------------------------------
 
         """)
 
@@ -76,16 +75,17 @@ class API(Utility):
 
         @param p_pyhouse_obj: is the skeleton Obj filled in some by PyHouse.py.
         """
-        setup_logging.API()  # To eliminate Eclipse warning
+        l_log = setup_logging.API(self.m_pyhouse_obj)  # To eliminate Eclipse warning
+        l_log.Start()
 
         # Next is the XML file do things can be read in and customized
-        ConfigAPI().read_xml_config_file(self.m_pyhouse_obj)
-        print("XML loaded")
+        self.m_pyhouse_obj = configAPI(self.m_pyhouse_obj).read_xml_config_file(self.m_pyhouse_obj)
+        # print("XML loaded")
 
         # Next is the logging system
         self.log_start()
         LOG.info("Starting.")
-        print("Log Started")
+        # print("Log Started")
 
         # Logging system is now enabled
         # Starting the computer and House will load the respective divisions of the config file.
@@ -104,10 +104,10 @@ class API(Utility):
         """
         Take a snapshot of the current Configuration/Status and write out an XML file.
         """
-        l_xml = ConfigAPI().create_xml_config_foundation(self.m_pyhouse_obj)
+        l_xml = configAPI(self.m_pyhouse_obj).create_xml_config_foundation(self.m_pyhouse_obj)
         self.m_pyhouse_obj.APIs.Computer.ComputerAPI.SaveXml(l_xml)
         self.m_pyhouse_obj.APIs.House.HouseAPI.SaveXml(l_xml)
-        ConfigAPI().write_xml_config_file(self.m_pyhouse_obj, l_xml)
+        configAPI(self.m_pyhouse_obj).write_xml_config_file(self.m_pyhouse_obj, l_xml)
         LOG.info("Saved XML.")
 
 # ## END DBK

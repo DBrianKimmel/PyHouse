@@ -24,16 +24,16 @@ Reading the interface stuffs the interface XML data into the controller object.
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Drivers.Ethernet.Ethernet_xml import Xml as ethernetXML
-from Modules.Drivers.Serial.Serial_xml import Xml as serialXML
-from Modules.Drivers.USB.USB_xml import Xml as usbXML
-from Modules.Utilities.xml_tools import XmlConfigTools, stuff_new_attrs
+from Modules.Drivers.Ethernet.Ethernet_xml import XML as ethernetXML
+from Modules.Drivers.Null.Null_xml import XML as nullXML
+from Modules.Drivers.Serial.Serial_xml import XML as serialXML
+from Modules.Drivers.USB.USB_xml import XML as usbXML
+from Modules.Utilities.xml_tools import stuff_new_attrs
 from Modules.Computer import logging_pyh as Logger
+# from Modules.Drivers import VALID_INTERFACES
+# from Modules.Drivers import VALID_PROTOCOLS
 
 LOG = Logger.getLogger('PyHouse.Interface         ')
-
-from Modules.Drivers import VALID_INTERFACES
-# from Modules.Drivers import VALID_PROTOCOLS
 
 
 class Xml(object):

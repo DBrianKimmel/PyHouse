@@ -71,4 +71,9 @@ def int2dotted_hex(p_int, p_size):
     except TypeError as e_err:
         LOG.error('ERROR in converting int to dotted Hex {} - Type:{} - {}'.format(p_int, type(p_int), e_err))
 
+def getbool(p_bool):
+    if p_bool == 'True':
+        return True
+    return False
+
 # ## END DBK

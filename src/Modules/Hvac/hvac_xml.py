@@ -101,7 +101,7 @@ class ThermostatXML(object):
 
 
     def _write_thermostat_base(self, p_thermostat_obj):
-        l_xml = XmlConfigTools().write_base_object_xml('Thermostat', p_thermostat_obj)
+        l_xml = XmlConfigTools.write_base_object_xml('Thermostat', p_thermostat_obj)
         return l_xml
 
     def _write_thermostat_data(self, p_out_xml, p_obj):

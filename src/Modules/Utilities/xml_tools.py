@@ -12,7 +12,6 @@
 """
 
 # Import system type stuff
-import string
 import uuid
 from xml.etree import ElementTree as ET
 import dateutil.parser as dparser
@@ -21,7 +20,7 @@ import dateutil.parser as dparser
 from Modules.Core.data_objects import CoordinateData
 from Modules.Utilities import convert
 from Modules.Computer import logging_pyh as Logger
-from formless.annotate import String
+# from formless.annotate import String
 
 LOG = Logger.getLogger('PyHouse.XmlTools       ')
 
@@ -269,7 +268,7 @@ class PutGetXML(object):
             return l_flt
         l_ret = CoordinateData()
         l_raw = XML.get_any_field(p_xml, p_name)
-        LOG.info('Name:{};  Field:{}'.format(p_name, l_raw))
+        # LOG.info('Name:{};  Field:{}'.format(p_name, l_raw))
         try:
             l_raw = str.strip(l_raw, ' []')
             l_field = str.split(l_raw, ',')
@@ -309,7 +308,8 @@ class XmlConfigTools(object):
             print('Error: {}'.format(p_entry_element_xml))
         return p_base_obj
 
-    def write_base_object_xml(self, p_element_name, p_object):
+    @staticmethod
+    def write_base_object_xml(p_element_name, p_object):
         """
         Note that UUID is optional.
         @param p_element_name: is the name of the XML element (Light, Button, etc.)
@@ -330,9 +330,13 @@ class XmlConfigTools(object):
         return l_elem
 
 def stuff_new_attrs(p_target_obj, p_data_obj):
-    """Put the NEW information from the data object into the target object.
+    """
+    Put the NEW information from the data object into the target object.
     Preserve any attributes already in the target object.
     Skip system '__' and private '_' attributes
+
+    @param p_target_obj: is the object that eill receive the attrs
+    @param p_data_obj: is the obj whose public attrs will be pushed into the target obj
     """
     l_attrs = filter(lambda aname: not aname.startswith('_'), dir(p_data_obj))
     for l_attr in l_attrs:

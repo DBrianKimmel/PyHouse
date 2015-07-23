@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Core/test/test_pyhouse_data.py
+@name:      PyHouse/src/Modules/Core/test/test_data_objects.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2015 by D. Brian Kimmel

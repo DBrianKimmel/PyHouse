@@ -164,7 +164,6 @@ class C06_Modules(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         self.m_api = house.API()
-        self.m_api._store_pyhouse_obj(self.m_pyhouse_obj)
 
     def test_01_Api(self):
         self.m_api._module_api(self.m_pyhouse_obj, 'Hvac')

@@ -63,6 +63,15 @@ class IrrigationXmlAPI(object):
             LOG.error('Zone: {}'.format(e_err))
         return l_sys
 
+    def _setup_xml(self, p_pyhouse_obj):
+        l_xml = p_pyhouse_obj.Xml.XmlRoot
+        try:
+            l_xml = l_xml.find('HouseDivision')
+            l_xml = l_xml.find('IrrigationSection')
+        except AttributeError as e_err:
+            LOG.error('Error {}'.format(e_err))
+        return l_xml
+
     def read_irrigation_xml(self, p_pyhouse_obj):
         """
         May contain zero or more irrigation systems.
@@ -76,8 +85,7 @@ class IrrigationXmlAPI(object):
         try:
             l_section = p_pyhouse_obj.Xml.XmlRoot.find(DIVISION).find(SECTION)
         except AttributeError as e_err:
-            LOG.error('Reading irrigation information - {}'.format(e_err))
-            print('ERROR {}'.format(e_err))
+            LOG.error('ERROR Reading irrigation information - {}'.format(e_err))
             l_section = None
         try:
             for l_xml in l_section.iterfind(SYSTEM):
@@ -86,6 +94,7 @@ class IrrigationXmlAPI(object):
                 l_count += 1
         except AttributeError as e_err:
             LOG.error('irrigationSystem: {}'.format(e_err))
+        LOG.info('Loaded {} Irrigation Systems.'.format(l_count))
         return l_obj
 
 
@@ -95,7 +104,7 @@ class IrrigationXmlAPI(object):
         @param p_obj: is one zone object
         @return the XML for one Zone
         """
-        l_xml = XmlConfigTools().write_base_object_xml('Zone', p_obj)
+        l_xml = XmlConfigTools.write_base_object_xml('Zone', p_obj)
         PutGetXML.put_text_element(l_xml, 'Comment', p_obj.Comment)
         PutGetXML.put_int_element(l_xml, 'Duration', p_obj.Duration)
         return l_xml
@@ -105,7 +114,7 @@ class IrrigationXmlAPI(object):
         @param p_obj: is one irrigation system object.
         @return: the XML for one complete IrrigationSystem
         """
-        l_xml = XmlConfigTools().write_base_object_xml('IrrigationSystem', p_obj)
+        l_xml = XmlConfigTools.write_base_object_xml('IrrigationSystem', p_obj)
         PutGetXML.put_text_element(l_xml, 'Comment', p_obj.Comment)
         for l_obj in p_obj.Zones.itervalues():
             l_zone = self._write_one_zone(l_obj)
@@ -121,12 +130,12 @@ class IrrigationXmlAPI(object):
         l_count = 0
         try:
             for l_obj in p_obj.itervalues():
-                p_obj.Key = l_count
+                l_obj.Key = l_count
                 l_sys = self._write_one_system(l_obj)
                 l_xml.append(l_sys)
                 l_count += 1
         except AttributeError as e_err:
-            print('Err: {}'.format(e_err))
+            LOG.error('Err: {}'.format(e_err))
         return (l_xml, l_count)
 
 # ## END DBK

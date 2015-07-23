@@ -87,7 +87,7 @@ class ScheduleXmlAPI(object):
     def _write_one_base_schedule(self, p_schedule_obj):
         """
         """
-        l_entry = XmlConfigTools().write_base_object_xml('Schedule', p_schedule_obj)
+        l_entry = XmlConfigTools.write_base_object_xml('Schedule', p_schedule_obj)
         PutGetXML.put_text_element(l_entry, 'ScheduleType', p_schedule_obj.ScheduleType)
         PutGetXML.put_text_element(l_entry, 'Time', p_schedule_obj.Time)
         PutGetXML.put_int_element(l_entry, 'DayOfWeek', int(p_schedule_obj.DOW))
@@ -126,6 +126,6 @@ class ScheduleXmlAPI(object):
                 l_count += 1
         except AttributeError as e_err:
             LOG.error('Attr err {}'.format(e_err))
-        return l_xml
+        return l_xml, l_count
 
 # ## END DBK

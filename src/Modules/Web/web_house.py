@@ -1,7 +1,7 @@
 """
--*- test-case-name: PyHouse.src.Modules.Web.test.test_web_rooms -*-
+-*- test-case-name: PyHouse.src.Modules.Web.test.test_web_house -*-
 
-@name:      PyHouse/src/Modules/Web/web_rooms.py
+@name:      PyHouse/src/Modules/Web/web_house.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2015 by D. Brian Kimmel
@@ -24,7 +24,6 @@ from Modules.Computer import logging_pyh as Logger
 webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
 
-g_debug = 0
 LOG = Logger.getLogger('PyHouse.webHouse    ')
 
 
@@ -37,8 +36,6 @@ class HouseElement(athena.LiveElement):
     def __init__(self, p_workspace_obj):
         self.m_workspace_obj = p_workspace_obj
         self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
-        if g_debug >= 2:
-            print("web_house.HouseElement()")
 
     @athena.expose
     def getHouseData(self):
@@ -47,7 +44,7 @@ class HouseElement(athena.LiveElement):
 
     @athena.expose
     def saveHouseData(self, p_json):
-        """House data is returned, so update the house info.
+        """House data has been returned, so update the house info.
         """
         l_json = JsonUnicode().decode_json(p_json)
         LOG.info('Update House info - {}'.format(l_json))
@@ -56,7 +53,7 @@ class HouseElement(athena.LiveElement):
             try:
                 del self.m_pyhouse_obj.House
             except AttributeError:
-                print("web_lights - Failed to delete - JSON: {0:}".format(l_json))
+                LOG.error("Failed to delete - JSON: {}".format(l_json))
             return
         self.m_pyhouse_obj.House.Name = l_json['Name']
         self.m_pyhouse_obj.House.Key = int(l_json['Key'])

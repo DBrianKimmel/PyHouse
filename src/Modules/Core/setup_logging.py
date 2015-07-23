@@ -16,6 +16,17 @@ Log file paths are hard coded therefore.
 Log directories must exist and be writable by the PyHouse process as it begins.
 
 """
+# import time
+# from Modules.Utilities.tools import PrettyPrintAny
+
+LOGGER_NAME = 'PyHouse                '
+LOGGER_NAME_TWISTED = 'PyHouse.Twisted.....   '
+
+LOG_DIRECTORY = '/var/log/pyhouse/'
+DEBUG_LOG_NAME = 'debug'
+DEBUG_LOG_LOCTION = LOG_DIRECTORY + DEBUG_LOG_NAME
+ERROR_LOG_NAME = 'error'
+ERROR_LOG_LOCTION = LOG_DIRECTORY + ERROR_LOG_NAME
 
 LOGGING_DICT = {
     'version' : 1,
@@ -40,14 +51,14 @@ LOGGING_DICT = {
             'class':'logging.handlers.TimedRotatingFileHandler',
             'level' : 'DEBUG',
             'formatter' : 'verbose',
-            'filename' : '/var/log/pyhouse/debug',
+            'filename' : DEBUG_LOG_LOCTION,
             'when' : 'midnight',
         },
         'error' : {
             'class':'logging.handlers.TimedRotatingFileHandler',
             'level' : 'ERROR',
             'formatter' : 'standard',
-            'filename' : '/var/log/pyhouse/error',
+            'filename' : ERROR_LOG_LOCTION,
             'when' : 'midnight',
         },
     },
@@ -62,10 +73,8 @@ LOGGING_DICT = {
     },
 }
 
-LOGGER_NAME = 'PyHouse                '
-LOGGER_NAME_TWISTED = 'PyHouse.Twisted.....   '
-
 # Import system type stuff
+import datetime
 import logging.config
 from twisted.python import log
 
@@ -78,8 +87,35 @@ logging.info('PyHouse Starting\n')
 l_observer = log.PythonLoggingObserver(loggerName = LOGGER_NAME_TWISTED)
 l_observer.start()
 
+
+class DeleteOldLogs(object):
+    """
+    """
+
+    @staticmethod
+    def run_daily(p_pyhouse_obj):
+        l_delay = 60 * 60 * 24
+        p_pyhouse_obj.Twisted.Reactor.callLater(l_delay, DeleteOldLogs.run_daily, p_pyhouse_obj)
+        pass
+
+    @staticmethod
+    def run_at_12_05(p_pyhouse_obj):
+        l_now = datetime.datetime.now()
+        l_1205 = datetime.time(0, 5, 0)
+        if l_now == l_1205:
+            pass
+        l_delay = 1
+        p_pyhouse_obj.Twisted.Reactor.callLater(l_delay, DeleteOldLogs.run_daily, p_pyhouse_obj)
+
+
 class API(object):  # To remove eclipse warnings.
-    def NotUsed(self):
+
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+
+    def Start(self):
+        # PrettyPrintAny(self.m_pyhouse_obj.Twisted, 'PyHouseObj.Twisted')
+        DeleteOldLogs.run_at_12_05(self.m_pyhouse_obj)
         pass
 
 # ## END DBK

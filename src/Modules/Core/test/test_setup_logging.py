@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Core/test/test_setup_logging.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c)  2014 by D. Brian Kimmel
+@copyright: (c) 2014-2015 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Aug 30, 2014
 @Summary:
@@ -21,15 +21,13 @@ from Modules.Utilities.tools import PrettyPrintAny
 
 
 class SetupMixin(object):
-    """
-    """
 
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-class C01_NoXML(SetupMixin, unittest.TestCase):
+class A1_SetupL(SetupMixin, unittest.TestCase):
     """
     This section tests the reading and writing of XML used by node_local.
     """
@@ -38,7 +36,16 @@ class C01_NoXML(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_EMPTY))
         # self.m_api = Logger.API()
 
-    def test_01(self):
+    def test_01_XML(self):
         PrettyPrintAny(setup_logging.LOGGING_DICT, 'Logging')
+
+    def test_02_Handlers(self):
+        PrettyPrintAny(setup_logging.LOGGING_DICT['handlers'], 'Logging')
+
+    def test_03_Debug(self):
+        PrettyPrintAny(setup_logging.LOGGING_DICT['handlers']['debug'], 'Logging')
+
+    def test_04_Error(self):
+        PrettyPrintAny(setup_logging.LOGGING_DICT['handlers']['error'], 'Logging')
 
 # ## END DBK

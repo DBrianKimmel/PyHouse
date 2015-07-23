@@ -7,7 +7,7 @@
 @note:      Created on May 4, 2013
 @summary:   This module is for testing local node data.
 
-Passed 5 API tests - DBK - 2014-07-27
+Passed all 5 tests - DBK - 2014-07-27
 """
 
 # Import system type stuff
@@ -30,6 +30,7 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+        self.m_version = '1.4.0'
 
 
 class A01_API(SetupMixin, unittest.TestCase):
@@ -39,7 +40,6 @@ class A01_API(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
-        self.m_api = Serial_driver.API()
         self.m_controller_obj = self._fake_params()
         self.m_controller_obj.BaudRate = 19200
 

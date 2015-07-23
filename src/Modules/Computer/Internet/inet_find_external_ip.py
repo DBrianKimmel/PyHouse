@@ -27,8 +27,6 @@ from twisted.web.http_headers import Headers
 # Import PyMh files and modules.
 from Modules.Computer import logging_pyh
 from Modules.Utilities import convert
-# from Modules.Utilities.tools import PrettyPrintAny
-
 
 LOG = logging_pyh.getLogger('PyHouse.InternetFnd    ')
 
@@ -68,15 +66,6 @@ class Utility(FindExternalIpAddress):
     def _scrape_body(self, p_body):
         l_ip = re.compile(r'(\d+\.\d+\.\d+\.\d+)').search(p_body).group(1)
         return l_ip
-
-    def _print_responses(self, p_response):
-        print('Response received {}'.format(p_response))
-        print 'Response version:', p_response.version
-        print 'Response code:', p_response.code
-        print 'Response phrase:', p_response.phrase
-        print 'Response headers:'
-        print pformat(list(p_response.headers.getAllRawHeaders()))
-
 
     def _get_body(self, p_response):
         """

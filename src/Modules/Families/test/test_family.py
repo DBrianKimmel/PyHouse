@@ -7,7 +7,7 @@
 @license:   MIT License
 @summary:   This module is for testing family.
 
-Passed all 12 tests.  DBK 2014-08-23
+Passed all 12 tests.  DBK 2015-07-21
 """
 
 # Import system type stuff
@@ -16,6 +16,7 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Families import family
+from Modules.Families.family import Utility, API as familyAPI
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
@@ -26,7 +27,7 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_api = family.API(self.m_pyhouse_obj)
+        self.m_families = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
 
 
 class A1_Valid(SetupMixin, unittest.TestCase):
@@ -44,7 +45,27 @@ class A1_Valid(SetupMixin, unittest.TestCase):
 
     def test_02_PyHouseObj(self):
         PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse Obj')
-        PrettyPrintAny(self.m_pyhouse_obj.APIs, "PyHouse Obj API's")
+        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.controller_sect.tag, 'ControllerSection')
+        self.assertEqual(self.m_xml.controller.tag, 'Controller')
+
+    def test_03_XML(self):
+        PrettyPrintAny(self.m_xml, "XML")
+
+    def test_04_Families(self):
+        PrettyPrintAny(self.m_families, "m_families")
+
+    def test_05_FamiliesInsteon(self):
+        PrettyPrintAny(self.m_families['Insteon'], "m_families['Insteon']")
+
+    def test_06_FamiliesNull(self):
+        PrettyPrintAny(self.m_families['Null'], "m_families['Null']")
+
+    def test_07_FamiliesUPB(self):
+        PrettyPrintAny(self.m_families['UPB'], "m_families['UPB']")
+
+    def test_08_FamiliesX10(self):
+        PrettyPrintAny(self.m_families['X10'], "m_families['X10']")
 
 
 class B1_One(SetupMixin, unittest.TestCase):
@@ -53,7 +74,26 @@ class B1_One(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_family_obj = family.Utility._build_one_family_data('Insteon', 0)
+        self.m_family_obj = Utility._build_one_family_data(self.m_pyhouse_obj, 'Insteon')
+
+    def test_01_Import(self):
+        l_mod = Utility._do_import(self.m_family_obj, 'Insteon_xml')
+        PrettyPrintAny(self.m_family_obj, "FamilyObj")
+        self.assertEqual(self.m_family_obj.Name, 'Insteon')
+        self.assertEqual(self.m_family_obj.Key, 0)
+        self.assertEqual(self.m_family_obj.Active, True)
+        self.assertEqual(self.m_family_obj.FamilyDeviceModuleName, 'Insteon_device')
+        self.assertEqual(self.m_family_obj.FamilyPackageName, 'Modules.Families.Insteon')
+        self.assertEqual(self.m_family_obj.FamilyXmlModuleName, 'Insteon_xml')
+
+
+class B2_One(SetupMixin, unittest.TestCase):
+    """ This section tests the "Utility" class
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_family_obj = family.Utility._build_one_family_data(self.m_pyhouse_obj, 'Insteon')
 
     def test_01_BuildData(self):
         PrettyPrintAny(self.m_family_obj, "FamilyObj")
@@ -65,64 +105,22 @@ class B1_One(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_family_obj.FamilyXmlModuleName, 'Insteon_xml')
 
     def test_02_ImportOneMod(self):
-        l_module = family.Utility._import_one_module(self.m_family_obj)
+        l_module = family.Utility._init_component_apis(self.m_pyhouse_obj)
         PrettyPrintAny(l_module, "Module")
         PrettyPrintAny(self.m_family_obj, "Family")
 
-    def test_03_InitMod(self):
-        l_module = family.Utility._import_one_module(self.m_family_obj)
-        l_xxx = family.Utility._initialize_one_module(self.m_pyhouse_obj, l_module)
-        PrettyPrintAny(l_xxx, "xxx")
 
-    def test_04_ImportOneXml(self):
-        l_modXml = family.Utility._import_one_moduleXml(self.m_family_obj)
-        PrettyPrintAny(l_modXml, "ModuleXml")
-
-    def test_05_ImportOneXml(self):
-        l_modXml = family.Utility._import_one_moduleXml(self.m_family_obj)
-        PrettyPrintAny(l_modXml, "ModuleXml")
-
-
-class B2_One(SetupMixin, unittest.TestCase):
+class B3_One(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by lighting_controllers.
     """
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_family_obj = family.Utility._build_one_family_data('Insteon', 0)
+        self.m_family_obj = family.Utility._build_one_family_data(self.m_pyhouse_obj, 'Insteon')
 
     def test_01_Import(self):
-        l_obj = family.Utility._import_one_module(self.m_family_obj)
+        l_obj = family.Utility._init_component_apis(self.m_pyhouse_obj)
         # self.assertNotEqual(l_family_obj.API, None)
         PrettyPrintAny(l_obj, 'Insteon')
-
-    def test_02_ImportXml(self):
-        l_obj = family.Utility._import_one_moduleXml(self.m_family_obj)
-        PrettyPrintAny(l_obj, 'Insteon')
-
-
-class C1_API(SetupMixin, unittest.TestCase):
-    """ This section tests the reading and writing of XML used by lighting_controllers.
-    """
-
-    def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-
-    def test_01_BuildFamily(self):
-        l_family_obj = self.m_api.build_lighting_family_info(self.m_pyhouse_obj)
-        PrettyPrintAny(l_family_obj, 'Family_Obj')
-        l_ret = self.m_api._import_one_module(self.m_family_obj)
-        PrettyPrintAny(l_ret, '')
-        # PrettyPrintAny(l_family_obj['Insteon'], 'Family_Obj')
-        self.assertNotEqual(l_ret, None, 'Error importing module Insteon')
-
-    def test_02_start_family(self):
-        PrettyPrintAny(self.m_family_obj, 'Insteon_Obj')
-        l_ret = self.m_api._import_one_module(self.m_pyhouse_obj, self.m_family_obj)
-        self.assertNotEqual(l_ret, None, 'Error importing module Insteon')
-
-    def test_03_stop_family(self):
-        l_ret = self.m_api._import_one_module(self.m_pyhouse_obj, self.m_family_obj)
-        self.assertNotEqual(l_ret, None, 'Error importing module Insteon')
 
 # ## END DBK

@@ -7,7 +7,7 @@
 @note:      Created on Apr 10, 2013
 @summary:   This module is for testing driver interface data.
 
-Passed 0 tests - DBK - 2014-07-27
+Passed all 5 tests - DBK - 2015-07-21
 """
 
 # Import system type stuff
@@ -16,9 +16,8 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import ControllerData
-from Modules.Drivers import interface
-from Modules.Lighting import lighting_controllers
-from Modules.Utilities import xml_tools
+from Modules.Drivers.interface import Xml as interfaceXml
+from Modules.Lighting.lighting_controllers import API as controllerAPI
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
@@ -31,7 +30,8 @@ class SetupMixin(object):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_controller_obj = ControllerData()
-        self.m_ctlr_api = lighting_controllers.LCApi(self.m_pyhouse_obj)
+        self.m_ctlr_api = controllerAPI(self.m_pyhouse_obj)
+        self.m_version = '1.4.0'
 
 
 class C01_XML(SetupMixin, unittest.TestCase):
@@ -52,8 +52,8 @@ class C01_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.controller.tag, 'Controller', 'XML - No Controller section')
 
     def test_0211_ExtractXML(self):
-        l_controllers = self.m_ctlr_api.read_all_controllers_xml(self.m_xml.controller_sect)
-        l_interface = interface.ReadWriteConfigXml().read_interface_xml(self.m_controller_obj, l_controllers[0])
+        l_controllers = self.m_ctlr_api.read_all_controllers_xml(self.m_xml.controller_sect, self.m_version)
+        l_interface = interfaceXml.read_interface_xml(self.m_controller_obj, l_controllers[0])
         PrettyPrintAny(l_interface, 'Interface', 120)
 
 
@@ -65,12 +65,11 @@ class C02_Read(SetupMixin, unittest.TestCase):
         self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         SetupMixin.setUp(self, self.m_root_xml)
         SetupPyHouseObj().BuildXml(self.m_root_xml)
-        self.m_api = interface.ReadWriteConfigXml()
 
     def test_0202_All(self):
         """ Be sure that the XML contains the right stuff.
         """
-        self.m_api.read_interface_xml(p_controller_obj, p_controller_xml)
+        interfaceXml.read_interface_xml(self.m_controller_obj, self.m_xml.controller)
         PrettyPrintAny(self.m_pyhouse_obj, 'PyHouseData')
         self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
         self.assertEqual(self.m_xml.controller_sect.tag, 'ControllerSection', 'XML - No Controllers section')
@@ -85,7 +84,6 @@ class C03_Write(SetupMixin, unittest.TestCase):
         self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
         SetupMixin.setUp(self, self.m_root_xml)
         SetupPyHouseObj().BuildXml(self.m_root_xml)
-        self.m_api = interface.ReadWriteConfigXml()
 
     def test_0202_FindXml(self):
         """ Be sure that the XML contains the right stuff.
@@ -96,8 +94,8 @@ class C03_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.controller.tag, 'Controller', 'XML - No Controller section')
 
     def test_0211_ExtractXML(self):
-        l_controllers = self.m_ctlr_api.read_all_controllers_xml(self.m_xml.controller_sect)
-        l_interface = interface.ReadWriteConfigXml().read_interface_xml(self.m_controller_obj, l_controllers[0])
+        l_controllers = self.m_ctlr_api.read_all_controllers_xml(self.m_xml.controller_sect, self.m_version)
+        l_interface = interfaceXml.read_interface_xml(self.m_controller_obj, l_controllers[0])
         PrettyPrintAny(l_interface, 'Interface', 120)
 
 # ## END

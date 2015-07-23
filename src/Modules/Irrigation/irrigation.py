@@ -31,15 +31,6 @@ class Utility(object):
     def add_api_references(self, p_pyhouse_obj):
         pass
 
-    def setup_xml(self, p_pyhouse_obj):
-        l_xml = p_pyhouse_obj.Xml.XmlRoot
-        try:
-            l_xml = l_xml.find('HouseDivision')
-            l_xml = l_xml.find('IrrigationSection')
-        except AttributeError as e_err:
-            LOG.error('Error {}'.format(e_err))
-        return l_xml
-
 
 class API(Utility):
 

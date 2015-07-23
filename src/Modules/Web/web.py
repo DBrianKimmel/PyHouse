@@ -29,7 +29,7 @@ class API(object):
     def Start(self):
         l_obj = WebXmlAPI().read_web_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Computer.Web = l_obj
-        WebAPI().Start(self.m_pyhouse_obj)
+        WebAPI(self.m_pyhouse_obj).Start()
 
     def Stop(self):
         pass
@@ -37,6 +37,6 @@ class API(object):
     def SaveXml(self, p_xml):
         l_xml = WebXmlAPI().write_web_xml(self.m_pyhouse_obj.Computer.Web)
         p_xml.append(l_xml)
-        LOG.info("Saved XML.")
+        LOG.info("Saved Web XML.")
 
 # ## END DBK

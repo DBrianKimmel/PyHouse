@@ -14,7 +14,8 @@
 # Import system type stuff
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, PyHouseAPIs, \
+from Modules.Core.data_objects import \
+            PyHouseData, PyHouseAPIs, \
             CoreServicesInformation, \
             ComputerInformation, ComputerAPIs, \
             HouseInformation, HouseAPIs, \

@@ -41,10 +41,31 @@ Runs on:
     Linux (OpenSuse 12.3)
     Raspberry Pi w/ Wheezy
 
+PyHouse
+    admin
+    doc
+    PcDuino
+    src
+    README.rst
+    TODO.rst
 """
 
 import sys
+from distutils.core import setup
 
+
+setup(name = 'PyHouse',
+    version = '1.6',
+    description = 'Python Distribution Utilities',
+    author = 'D. Brian Kimmel',
+    author_email = 'D.BrianKimmel@gmail.com',
+    url = 'http://www.PyHouse.org',
+    py_modules = [
+        'PyHouse'
+    ],
+    package_dir = {'': 'PyHouse'},
+    packages = ['distutils', 'distutils.command'],
+)
 tests_passed = False
 
 
@@ -53,7 +74,7 @@ def FindOsRunning():
     """
     import platform
     l_platform = platform.platform(True, True)
-    print("Running on platform {0:}".format(l_platform))
+    print("Running on platform {}".format(l_platform))
 
 
 class TestInstalledSoftware(object):

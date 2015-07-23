@@ -53,7 +53,7 @@ class Util(object):
         try:
             l_file = open(p_pyhouse_obj.Xml.XmlFileName, mode = 'r')
         except IOError as e_err:
-            print(" -- Error in open_config_file {}".format(e_err))
+            LOG.error(" -- Error in open_config_file {}".format(e_err))
             l_file = None
         return l_file
 
@@ -68,9 +68,12 @@ class Util(object):
         return l_xml
 
 
-class ConfigAPI(object):
+class API(object):
 
     g_pyhouse_obj = None
+
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
 
     @staticmethod
     def get_xml_config_file_version(p_pyhouse_obj):
@@ -96,10 +99,14 @@ class ConfigAPI(object):
             Util()._create_empty_config_file(p_pyhouse_obj)
             l_xmltree = ET.parse(p_pyhouse_obj.Xml.XmlFileName)
             LOG.warning("No config file found - Error:{}\n   Empty config file created.".format(e_error))
+
         p_pyhouse_obj.Xml.XmlRoot = l_xmltree.getroot()
-        l_xml = p_pyhouse_obj.Xml.XmlRoot.find("PyHouse")
-        p_pyhouse_obj.Xml.XmlOldVersion = PutGetXML.get_text_from_xml(l_xml, 'Version')
-        return p_pyhouse_obj.Xml  # For testing only
+        l_version = p_pyhouse_obj.Xml.XmlRoot.attrib['Version']
+        if l_version == 'None':
+            l_version = '1.0'
+        p_pyhouse_obj.Xml.XmlOldVersion = l_version
+        LOG.info('Using Config File: {} - Version: {}'.format(p_pyhouse_obj.Xml.XmlFileName, l_version))
+        return p_pyhouse_obj  # For testing
 
     @staticmethod
     def create_xml_config_foundation(p_pyhouse_obj):

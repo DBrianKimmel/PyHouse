@@ -42,7 +42,8 @@ class API(object):
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def _read_product_key(self, p_entry_xml, p_default = '98.76.54'):
+    @staticmethod
+    def _read_product_key(p_entry_xml, p_default = '98.76.54'):
         l_ret = p_default
         try:
             l_prod = PutGetXML.get_text_from_xml(p_entry_xml, 'ProductKey', p_default)
@@ -51,8 +52,23 @@ class API(object):
             l_ret.ProductKey = p_default
         return l_ret
 
+    @staticmethod
+    def _read_insteon(p_in_xml):
+        l_insteon_obj = InsteonData()
+        try:
+            l_insteon_obj.InsteonAddress = conversions.dotted_hex2int(PutGetXML.get_text_from_xml(p_in_xml, 'Address', '99.88.77'))
+            l_insteon_obj.DevCat = conversions.dotted_hex2int(PutGetXML.get_text_from_xml(p_in_xml, 'DevCat', 'A1.B2'))
+            l_insteon_obj.GroupList = PutGetXML.get_text_from_xml(p_in_xml, 'GroupList')
+            l_insteon_obj.GroupNumber = PutGetXML.get_int_from_xml(p_in_xml, 'GroupNumber', 0)
+            l_insteon_obj.IsMaster = PutGetXML.get_bool_from_xml(p_in_xml, 'IsMaster')
+            l_insteon_obj.ProductKey = API._read_product_key(p_in_xml)
+            l_insteon_obj.Version = PutGetXML.get_int_from_xml(p_in_xml, 'Version', 1)
+        except Exception as e_err:
+            LOG.error('ERROR: {}'.format(e_err))
+        return l_insteon_obj  # For testing only
 
-    def ReadXml(self, p_device_obj, p_in_xml):
+    @staticmethod
+    def ReadXml(p_device_obj, p_in_xml):
         """
         A method to extract Insteon specific elements and insert them into an Insteon data object.
 
@@ -62,20 +78,7 @@ class API(object):
         @param p_device_obj : is the Basic Object that will have the extracted elements inserted into.
         @return: a dict of the extracted Insteon Specific data.
         """
-        l_insteon_obj = InsteonData()
-        l_insteon_obj.InsteonAddress = conversions.dotted_hex2int(PutGetXML.get_text_from_xml(p_in_xml, 'Address', '99.88.77'))
-        l_insteon_obj.DevCat = conversions.dotted_hex2int(PutGetXML.get_text_from_xml(p_in_xml, 'DevCat', 'A1.B2'))
-        # l_insteon_obj.DeviceFamily = PutGetXML.get_text_from_xml(p_in_xml, 'DeviceFamily')
-        l_insteon_obj.GroupList = PutGetXML.get_text_from_xml(p_in_xml, 'GroupList')
-        l_insteon_obj.GroupNumber = PutGetXML.get_int_from_xml(p_in_xml, 'GroupNumber', 0)
-        l_insteon_obj.IsController = PutGetXML.get_bool_from_xml(p_in_xml, 'IsController')
-        l_insteon_obj.IsMaster = PutGetXML.get_bool_from_xml(p_in_xml, 'IsMaster')
-        l_insteon_obj.IsResponder = PutGetXML.get_bool_from_xml(p_in_xml, 'IsResponder')
-        l_insteon_obj.ProductKey = self._read_product_key(p_in_xml)
-        try:
-            l_insteon_obj.Version = PutGetXML.get_int_from_xml(p_in_xml, 'Version', 1)
-        except Exception:
-            l_insteon_obj.Version = 1
+        l_insteon_obj = API._read_insteon(p_in_xml)
         stuff_new_attrs(p_device_obj, l_insteon_obj)
         return l_insteon_obj  # For testing only
 
@@ -89,9 +92,9 @@ class API(object):
         # PutGetXML.put_text_element(p_out_xml, 'DeviceFamily', p_device.DeviceFamily)
         PutGetXML.put_text_element(p_out_xml, 'GroupList', p_device.GroupList)
         PutGetXML.put_int_element(p_out_xml, 'GroupNumber', p_device.GroupNumber)
-        PutGetXML.put_bool_element(p_out_xml, 'IsController', p_device.IsController)
+        # PutGetXML.put_bool_element(p_out_xml, 'IsController', p_device.IsController)
         PutGetXML.put_bool_element(p_out_xml, 'IsMaster', p_device.IsMaster)
-        PutGetXML.put_bool_element(p_out_xml, 'IsResponder', p_device.IsResponder)
+        # PutGetXML.put_bool_element(p_out_xml, 'IsResponder', p_device.IsResponder)
         PutGetXML.put_text_element(p_out_xml, 'ProductKey', conversions.int2dotted_hex(p_device.ProductKey, 3))
         PutGetXML.put_int_element(p_out_xml, 'Version', p_device.Version)
         return p_out_xml

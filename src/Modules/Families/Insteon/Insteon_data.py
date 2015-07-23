@@ -25,10 +25,10 @@ class InsteonData(object):
         self.GroupList = ''
         self.GroupNumber = 0
         self.InsteonAddress = 0  # Long integer internally - '1A.B3.3C' for external reaability
-        self.IsController = False
+        # self.IsController = False
         self.IsMaster = False  # False is Slave
-        self.IsResponder = False
+        # self.IsResponder = False
         self.ProductKey = ''
-        self.Version = 1  # the version of this data object.
+        self.Version = '1.1'  # the version of this data object.
 
 # ## END DBK

@@ -18,7 +18,7 @@ from Modules.Core.data_objects import EthernetControllerData
 from Modules.Utilities.xml_tools import PutGetXML
 
 
-class Xml(object):
+class XML(object):
     """Read and write the interface information based in the interface type.
     """
 

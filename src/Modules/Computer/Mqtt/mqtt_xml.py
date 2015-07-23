@@ -17,7 +17,7 @@ from Modules.Core.data_objects import MqttBrokerData
 from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
 
-LOG = Logger.getLogger('PyHouse.MqttXml        ')
+LOG = Logger.getLogger('PyHouse.Mqtt_Xml       ')
 DIVISION = 'ComputerDivision'
 SECTION = 'MqttSection'
 BROKER = 'Broker'
@@ -43,12 +43,12 @@ class MqttXmlAPI(object):
         Allow for several brokers - Use the first one '[0]'.
         @return: a dict of broker objects keys = 0, 1, 2...
         """
-        l_obj = {}
+        l_dict = {}
         l_count = 0
         try:
             l_section = p_pyhouse_obj.Xml.XmlRoot.find(DIVISION).find(SECTION)
             if l_section == None:
-                return l_obj
+                return l_dict
         except AttributeError as e_err:
             LOG.error('Reading MQTT Configuration information - {}'.format(e_err))
             l_section = None
@@ -56,11 +56,11 @@ class MqttXmlAPI(object):
             for l_xml in l_section.iterfind(BROKER):
                 l_broker = self._read_one_broker(l_xml)
                 l_broker.Key = l_count
-                l_obj[l_count] = l_broker
+                l_dict[l_count] = l_broker
                 l_count += 1
         except AttributeError as e_err:
             LOG.error('Mqtt Errors: {}'.format(e_err))
-        return l_obj
+        return l_dict
 
 
     def _write_one_broker(self, p_mqtt):
@@ -68,7 +68,7 @@ class MqttXmlAPI(object):
         @param p_obj: is one broker object.
         @return: the XML for one Broker System
         """
-        l_entry = XmlConfigTools().write_base_object_xml('Broker', p_mqtt)
+        l_entry = XmlConfigTools.write_base_object_xml('Broker', p_mqtt)
         PutGetXML().put_text_element(l_entry, 'BrokerAddress', p_mqtt.BrokerAddress)
         PutGetXML().put_text_element(l_entry, 'BrokerPort', p_mqtt.BrokerPort)
         return l_entry

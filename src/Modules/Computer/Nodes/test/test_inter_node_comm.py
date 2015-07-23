@@ -77,7 +77,6 @@ class C02_Util(SetupMixin, unittest.TestCase):
 
 def TestSuite():
     suite = TestLoader().loadTestsFromTestCase(C01_Start)
-    # print('\nSuite {}'.format(suite))
     return suite
 
 # ## END DBK

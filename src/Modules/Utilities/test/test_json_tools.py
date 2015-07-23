@@ -44,10 +44,4 @@ class A01_Jsco(SetupMixin, unittest.TestCase):
         print(l_json)
         # PrettyPrintAny(l_json, "PyHouse_Obj")
 
-    def test_02_Decode(self):
-        l_json = json_tools.encode_json(self.m_pyhouse_obj)
-        l_pyhouse_obj = json_tools.decode_json(l_json)
-        # print(l_json)
-        PrettyPrintAny(l_pyhouse_obj, "PyHouse_Obj")
-
 # ## END DBK

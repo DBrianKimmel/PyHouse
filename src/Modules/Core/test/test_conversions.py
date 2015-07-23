@@ -32,7 +32,7 @@ MSG_50 = bytearray(b'\x02\x50\x16\xc9\xd0\x1b\x47\x81\x27\x09\x00')
 MSG_62 = bytearray(b'\x02\x62\x17\xc2\x72\x0f\x19\x00\x06')
 
 
-class Test_01_Cvrt(unittest.TestCase):
+class Test_A1_Cvrt(unittest.TestCase):
 
 
     def setUp(self):
@@ -43,14 +43,14 @@ class Test_01_Cvrt(unittest.TestCase):
         l_result = oper(p_args)
         self.assertEqual(l_result, r)
 
-    def test_0101_GetFactor(self):
+    def test_01_GetFactor(self):
         self.assertEqual(self.inst._get_factor(1), 0)
         self.assertEqual(self.inst._get_factor(2), 256)
         self.assertEqual(self.inst._get_factor(3), 256 * 256)
         self.assertEqual(self.inst._get_factor(4), 256 * 256 * 256)
         self.assertEqual(self.inst._get_factor(-1), 0)
 
-    def test_0102_int2dotted(self):
+    def test_02_int2dotted(self):
         l_res = self.inst.int2dotted_hex(10597059, 3)
         self.assertEqual(l_res, 'A1.B2.C3')
         l_res = self.inst.int2dotted_hex(ADDR_DR_SLAVE_INT, 3)
@@ -60,17 +60,20 @@ class Test_01_Cvrt(unittest.TestCase):
         l_res = self.inst.int2dotted_hex(41394, 2)
         self.assertEqual(l_res, 'A1.B2')
 
-    def test_0103_dotted2int(self):
+    def test_03_dotted2int(self):
         self._test(self.inst.dotted_hex2int, 'A1.B2.C3', 10597059)
         self._test(self.inst.dotted_hex2int, ADDR_DR_SLAVE_DOT, ADDR_DR_SLAVE_INT)
         self._test(self.inst.dotted_hex2int, ADDR_NOOK_DOT, ADDR_NOOK_INT)
         self._test(self.inst.dotted_hex2int, 'A1.B2', 41394)
         self._test(self.inst.dotted_hex2int, 'A1.B2.C3', 10597059)
 
-    def test_0110_GetFactor(self):
+    def test_04_GetFactor(self):
         self._test(self.inst.dotted_hex2int, 'A1.oB2.C3', 10551491)
         self._test(self.inst.dotted_hex2int, 'A1.0.C3', 10551491)
 
-        pass
+    def test_05_Bool(self):
+        self.assertEqual(self.inst.getbool('True'), True)
+        self.assertEqual(self.inst.getbool('None'), False)
+        self.assertEqual(self.inst.getbool('False'), False)
 
 # ## END DBL

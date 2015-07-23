@@ -38,7 +38,7 @@ class Util(XmlConfigTools):
                 l_dict[self.m_count] = l_url
                 self.m_count += 1
         except AttributeError as e_err:
-            print('ERROR in read_locates_xml - {}'.format(e_err))
+            LOG.error('ERROR in read_locates_xml - {}'.format(e_err))
         return l_dict
 
     def _read_updates_xml(self, p_updater_sect_xml):
@@ -50,7 +50,7 @@ class Util(XmlConfigTools):
                 l_dict[self.m_count] = l_url
                 self.m_count += 1
         except AttributeError as e_err:
-            print('ERROR in read_updates_xml - {}'.format(e_err))
+            LOG.error('ERROR in read_updates_xml - {}'.format(e_err))
         return l_dict
 
     def _read_derived(self, p_internet_sect_xml):

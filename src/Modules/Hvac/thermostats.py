@@ -79,7 +79,7 @@ class ReadWriteConfigXml(object):
 
 
     def _write_thermostat_base(self, p_thermostat_obj):
-        l_xml = XmlConfigTools().write_base_object_xml('Thermostat', p_thermostat_obj)
+        l_xml = XmlConfigTools.write_base_object_xml('Thermostat', p_thermostat_obj)
         return l_xml
 
     def _write_thermostat_data(self, p_out_xml, p_obj):
@@ -119,7 +119,6 @@ class ReadWriteConfigXml(object):
         except AttributeError as e_err:
             l_msg = 'ERROR writing all thermostats {0:}'.format(e_err)
             LOG.error(l_msg)
-            print(l_msg)
         return l_xml
 
 

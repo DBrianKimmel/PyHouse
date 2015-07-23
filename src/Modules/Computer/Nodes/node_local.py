@@ -103,7 +103,6 @@ class GetAllInterfaceData(object):
         l_interface.UUID = '123'
         l_interface.NodeInterfaceType = 'Other'
         for l_af in self._find_addr_lists(p_interface_name):
-            # print('l_af =', l_af)
             if self._find_addr_family_name(l_af) == 'AF_PACKET':
                 l_interface.MacAddress = self._get_address_list(self._find_addr_lists(p_interface_name)[l_af])
             if self._find_addr_family_name(l_af) == 'AF_INET':
@@ -208,12 +207,6 @@ class Util(object):
         p_pyhouse_obj.Computer.Nodes[0].Name = l_name
         p_pyhouse_obj.Computer.Nodes[0].Key = 0
         p_pyhouse_obj.Computer.Nodes[0].Active = True
-        if p_pyhouse_obj.Computer.Nodes[0].UUID == None:
-            print("---UUID Missing")
-            pass
-        else:
-            print("---UUID Present - {}".format(p_pyhouse_obj.Computer.Nodes[0].UUID))
-            pass
 
     def find_node_role(self):
         l_role = NODE_NOTHING

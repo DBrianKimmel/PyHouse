@@ -17,8 +17,8 @@ import xml.etree.ElementTree as ET
 from Modules.Core.data_objects import ControllerData
 from Modules.Families.Insteon import Insteon_decoder
 from Modules.Families import family
-from Modules.Lighting.lighting_lights import LLApi
-from Modules.Lighting.lighting_controllers import LCApi
+from Modules.Lighting.lighting_lights import API as lightsAPI
+from Modules.Lighting.lighting_controllers import API as controllerAPI
 from test.xml_data import *
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny, PrintBytes
@@ -49,8 +49,8 @@ class C00_Setup(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
-        self.m_pyhouse_obj.House.DeviceOBJs.Controllers = LCApi(self.m_pyhouse_obj).read_all_controllers_xml(self.m_xml.controller_sect)
-        self.m_pyhouse_obj.House.DeviceOBJs.Lights = LLApi(self.m_pyhouse_obj).read_all_lights_xml(self.m_xml.controller_sect)
+        self.m_pyhouse_obj.House.DeviceOBJs.Controllers = controllerAPI(self.m_pyhouse_obj).read_all_controllers_xml(self.m_xml.controller_sect)
+        self.m_pyhouse_obj.House.DeviceOBJs.Lights = lightsAPI.read_all_lights_xml(self.m_pyhouse_obj, self.m_xml.controller_sect)
 
     def test_01_PyHouse(self):
         PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse')

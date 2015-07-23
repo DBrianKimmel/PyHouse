@@ -44,17 +44,31 @@ class PyHouseData(object):
         self.Xml = None  # XmlInformation()
 
 
-class ABaseObject(object):
+class BaseObject(object):
     """
-    Depricated.
-    This data is in almost every other object.
+    This data for non device data.
     Do not use this object, derive objects from it.
     """
     def __init__(self):
         self.Name = 'Undefined ABaseObject'
         self.Key = 0
         self.Active = False
-        self.UUID = None  # The UUID is optional, not all objects use this
+
+
+class DeviceData(BaseObject):
+    """
+    This data is in every other device object.
+    Do not use this object, derive objects from it.
+    """
+    def __init__(self):
+        super(DeviceData, self).__init__()
+        self.Comment = ''
+        self.DeviceFamily = 'Null'
+        self.DeviceType = 0
+        self.DeviceSubType = 0
+        self.RoomCoords = None  # CoordinateData()
+        self.RoomName = ''
+        self.UUID = None
 
 
 class CoordinateData(object):
@@ -74,24 +88,6 @@ class CoordinateData(object):
         self.Y_Northing = 0.0
         self.Z_Height = 0.0
 
-class DeviceData(object):
-    """
-    This data is in almost every other object.
-    Do not use this object, derive objects from it.
-    """
-    def __init__(self):
-        self.Name = 'Undefined DeviceData Object'
-        self.Key = 0  # Instance number
-        self.Active = False
-        self.UUID = None
-        self.Comment = ''
-        self.DeviceFamily = 'Null'
-        self.DeviceType = 0
-        self.DeviceSubType = 0
-        self.RoomCoords = None  # CoordinateData()
-        self.RoomName = ''
-
-
 class SensorData(object):
     """
     This data is in almost every other object.
@@ -104,55 +100,54 @@ class SensorData(object):
         self.UUID = None
 
 
-class BaseLightingData(DeviceData):
+class CoreLightingData(DeviceData):
     """Basic information about some sort of lighting object.
     """
 
     def __init__(self):
-        super(BaseLightingData, self).__init__()
-        self.IsDimmable = False
+        super(CoreLightingData, self).__init__()
         self.DeviceFamily = 'Null'
         self.LightingType = ''  # VALID_LIGHTING_TYPE = Button | Light | Controller
 
 
-class ButtonData(BaseLightingData):
+class ButtonData(CoreLightingData):
     """A Lighting button.
     This is the wall switch and may control more than one light
     Also may control scenes.
     """
     def __init__(self):
         super(ButtonData, self).__init__()
-        self.LightingType = 'Button'
+        # self.LightingType = 'Button'
+        pass
 
 
-class ControllerData(BaseLightingData):
+class ControllerData(CoreLightingData):
     """This data is common to all lighting controllers.
     """
     def __init__(self):
         super(ControllerData, self).__init__()
-        self.LightingType = 'Controller'  # Override the Core definition
+        # self.LightingType = 'Controller'  # Override the Core definition
         self.InterfaceType = ''  # Serial | USB | Ethernet
         self.Port = ''
-        #
+        # The following are not in XML config file
         self._DriverAPI = None  # InterfaceType API() - Serial, USB etc.
         self._HandlerAPI = None  # PLM, PIM, etc (family controller device handler) API() address
-        #
         self._Data = None  # InterfaceType specific data
         self._Message = ''
         self._Queue = None
 
 
-class LightData(BaseLightingData):
+class LightData(CoreLightingData):
     """This is the light info.
-    Inherits from BaseLightingData and ABaseObject
     """
     def __init__(self):
         super(LightData, self).__init__()
         self.CurLevel = 0
-        self.LightingType = 'Light'
+        self.IsDimmable = False
+        # self.LightingType = 'Light'
 
 
-class FamilyData(ABaseObject):
+class FamilyData(BaseObject):
     """A container for every family that has been defined in modules.
     """
     def __init__(self):
@@ -164,16 +159,7 @@ class FamilyData(ABaseObject):
         self.FamilyPackageName = None  # Modules.Families.Insteon
 
 
-class X10LightingData(LightData):
-
-    def __init__(self):
-        super(X10LightingData, self).__init__()
-        self.DeviceFamily = "X10"
-        self.X10UnitAddress = 'ab'
-        self.X10HouseAddress = 0x0F
-
-
-class ComputerInformation(ABaseObject):
+class ComputerInformation(BaseObject):
     """
     """
     def __init__(self):
@@ -186,7 +172,7 @@ class ComputerInformation(ABaseObject):
         self.Web = None  # WebData()
 
 
-class MqttBrokerData(ABaseObject):
+class MqttBrokerData(BaseObject):
     """ 0-N
     """
     def __init__(self):
@@ -197,13 +183,13 @@ class MqttBrokerData(ABaseObject):
         self.ProtocolAPI = None
 
 
-class HouseInformation(ABaseObject):
+class HouseInformation(BaseObject):
     """The collection of information about a house.
     Causes JSON errors due to API type data methinks.
     """
     def __init__(self):
         super(HouseInformation, self).__init__()
-        self.Name = 'New House'
+        # self.Name = 'New House'
         self.RefOBJs = None  # RefHouseObjs()
         self.DeviceOBJs = None  # DeviceHouseObjs()
 
@@ -228,10 +214,12 @@ class DeviceHouseObjs(object):
         self.Lights = {}  # LightData()
         self.Pools = {}  # PoolData()
         self.Thermostats = {}  # ThermostatData()
+        self.Lighting = None
+        self.Hvac = None
 
 
 
-class JsonHouseData(ABaseObject):
+class JsonHouseData(BaseObject):
     """Simplified for JSON encoding.
     """
     def __init__(self):
@@ -245,7 +233,7 @@ class JsonHouseData(ABaseObject):
         self.Thermostats = {}
 
 
-class RoomData(ABaseObject):
+class RoomData(BaseObject):
     """A room of the house.
     Used to draw pictures of the house
     Used to define the location of switches, lights etc.
@@ -259,7 +247,7 @@ class RoomData(ABaseObject):
         self.RoomType = 'Room'
 
 
-class NodeData(ABaseObject):
+class NodeData(BaseObject):
     """Information about a single node.
     Name is the Node's HostName
     The interface info is only for the local node.
@@ -274,7 +262,7 @@ class NodeData(ABaseObject):
         self.NodeInterfaces = {}  # NodeInterfaceData()
 
 
-class NodeInterfaceData(ABaseObject):
+class NodeInterfaceData(BaseObject):
     """
     Holds information about each of the interfaces on the *local* node.
     """
@@ -311,7 +299,7 @@ class IrrigationZoneData(DeviceData):
         self.Duration = 0  # On time in seconds
 
 
-class PoolData(ABaseObject):
+class PoolData(DeviceData):
     """
     """
     def __init__(self):
@@ -319,7 +307,7 @@ class PoolData(ABaseObject):
         self.DeviceFamily = 'Null'
 
 
-class ThermostatData(ABaseObject):
+class ThermostatData(DeviceData):
 
     def __init__(self):
         super(ThermostatData, self).__init__()
@@ -336,7 +324,7 @@ class ThermostatData(ABaseObject):
         self.DeviceSubType = 0
 
 
-class ScheduleBaseData(ABaseObject):
+class ScheduleBaseData(BaseObject):
     """A schedule of when events happen.
     """
     def __init__(self):
@@ -380,7 +368,7 @@ class InternetConnectionData(object):
 
 
 class XmlInformation(object):
-    """A collection of XLM data used for Configutation
+    """A collection of XLM data used for Configuration
     """
     def __init__(self):
         self.XmlFileName = None
@@ -521,6 +509,13 @@ class  EthernetControllerData(object):
         self.InterfaceType = 'Ethernet'
         self.PortNumber = 0
         self.Protocol = 'TCP'
+
+
+class  NullControllerData(object):
+    """A lighting controller that is connected to the node via Nothing
+    """
+    def __init__(self):
+        self.InterfaceType = 'Null'
 
 
 class WebData(object):

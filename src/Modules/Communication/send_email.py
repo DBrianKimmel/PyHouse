@@ -105,7 +105,7 @@ class Utility(ApiXml):
         #    l_deferred,
         #    contextFactory = l_contextFactory)
         # p_pyhouse_obj.Twisted.Reactor.connectTCP(p_smtp_server, p_smtp_port, l_senderFactory)
-        print "Sending Email"
+        LOG.i("Sending Email")
         return l_deferred
 
 

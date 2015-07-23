@@ -7,7 +7,7 @@
 @license:   MIT License
 @summary:   This module test insteon xml
 
-Passed all 4 tests - DBK - 2014-07-18
+Passed all 11 tests - DBK - 2015-07-20
 """
 
 # Import system type stuff
@@ -16,12 +16,14 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import LightData
-from Modules.Families.Insteon import Insteon_xml
+from Modules.Core.test.xml_device import TESTING_DEVICE_FAMILY
+from Modules.Families.Insteon.Insteon_xml import API as InsteonXmlAPI
 from Modules.Core import conversions
 from Modules.Lighting import lighting_core
-from test.xml_data import *
+from test.xml_data import XML_LONG
 from Modules.Lighting.test.xml_lights import TESTING_LIGHTING_LIGHTS_INSTEON_NAME
-from Modules.Families.Insteon.test.xml_insteon import TESTING_INSTEON_ADDRESS
+from Modules.Families.Insteon.test.xml_insteon import TESTING_INSTEON_ADDRESS, TESTING_INSTEON_DEVCAT, \
+        TESTING_INSTEON_GROUP_LIST, TESTING_INSTEON_GROUP_NUM, TESTING_INSTEON_MASTER, TESTING_INSTEON_PRODUCT_KEY
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
 
@@ -34,8 +36,8 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_api = Insteon_xml.API(self.m_pyhouse_obj)
-        self.m_core_api = lighting_core.LightingCoreXmlAPI()
+        self.m_api = InsteonXmlAPI
+        self.m_core_api = lighting_core.API()
         self.m_device = LightData()
 
 
@@ -59,6 +61,7 @@ class A1_Prep(SetupMixin, unittest.TestCase):
         """
         PrettyPrintAny(self.m_pyhouse_obj.House.DeviceOBJs, 'DeviceOBJs')
         PrettyPrintAny(self.m_xml, 'XML')
+
     def test_03_Setup(self):
         """ Did we get everything set up for the rest of the tests of this class.
         """
@@ -82,24 +85,35 @@ class B1_Read(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_01_setup(self):
-        PrettyPrintAny(self.m_xml.light, 'XML')
-        PrettyPrintAny(self.m_device, 'Light Device')
+    def test_01_ProductKey(self):
+        l_product_key = InsteonXmlAPI._read_product_key(self.m_xml.light)
+        print('ProductKey: {}'.format(conversions.int2dotted_hex(l_product_key, 3)))
+        self.assertEqual(conversions.int2dotted_hex(l_product_key, 3), TESTING_INSTEON_PRODUCT_KEY)
 
-    def test_02_Core(self):
+    def test_02_Insteon(self):
+        l_insteon = InsteonXmlAPI._read_insteon(self.m_xml.light)
+        PrettyPrintAny(l_insteon, 'Insteon')
+        self.assertEqual(conversions.int2dotted_hex(l_insteon.InsteonAddress, 3), TESTING_INSTEON_ADDRESS)
+        self.assertEqual(conversions.int2dotted_hex(l_insteon.DevCat, 2), TESTING_INSTEON_DEVCAT)
+        self.assertEqual(l_insteon.GroupList, TESTING_INSTEON_GROUP_LIST)
+        self.assertEqual(l_insteon.GroupNumber, int(TESTING_INSTEON_GROUP_NUM))
+        self.assertEqual(l_insteon.IsMaster, conversions.getbool(TESTING_INSTEON_MASTER))
+        self.assertEqual(conversions.int2dotted_hex(l_insteon.ProductKey, 3), TESTING_INSTEON_PRODUCT_KEY)
+
+    def test_03_Core(self):
         l_light = self.m_core_api.read_core_lighting_xml(self.m_device, self.m_xml.light)
         PrettyPrintAny(l_light, 'Light')
         PrettyPrintAny(self.m_device, 'Device')
         self.assertEqual(l_light.Name, TESTING_LIGHTING_LIGHTS_INSTEON_NAME)
         self.assertEqual(l_light.DeviceFamily, 'Insteon')
 
-    def test_03_InsteonLight(self):
+    def test_04_InsteonLight(self):
         l_light = self.m_core_api.read_core_lighting_xml(self.m_device, self.m_xml.light)
         l_ret = self.m_api.ReadXml(l_light, self.m_xml.light)
         PrettyPrintAny(l_ret, 'Lret')
         PrettyPrintAny(l_light, 'Light Device 2')
         self.assertEqual(l_light.Name, TESTING_LIGHTING_LIGHTS_INSTEON_NAME)
-        self.assertEqual(l_light.DeviceFamily, 'Insteon')
+        self.assertEqual(l_light.DeviceFamily, TESTING_DEVICE_FAMILY)
         self.assertEqual(l_light.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS))
 
 

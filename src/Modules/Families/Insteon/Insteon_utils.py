@@ -35,7 +35,6 @@ class Util(object):
         if p_int > 16777215 or p_int < 0:
             l_msg = 'ERROR - Insteon_utils - trying to convert {} to message byte string.'.format(p_int)
             LOG.error(l_msg)
-            print(l_msg)
             p_int = 12245933  # 0xBADBAD
         l_ix = 256 * 256
         l_int = p_int
@@ -68,10 +67,6 @@ class Util(object):
         Return an objects (Lights, Thermostats) that has InsteonAddress.
         """
         l_house = p_pyhouse_obj.House.DeviceOBJs
-        print('Address: {}'.format(p_address))
-        print('Objs: {}'.format(l_house))
-        for l_obj in p_pyhouse_obj.House.DeviceOBJs.items():
-            print('Object {}'.format(l_obj))
         return l_house
 
     @staticmethod

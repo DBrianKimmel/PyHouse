@@ -15,11 +15,39 @@ from twisted.trial import unittest
 
 # Import PyMh files
 from Modules.Utilities.tools import PrettyPrintAny
-from test import xml_data
+from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 
 
-class C01_Build(unittest.TestCase):
+class SetupMixin(object):
+    """
+    """
+
+    def setUp(self, p_root):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
+        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+
+
+class A1_Setup(SetupMixin, unittest.TestCase):
+    """ This section tests the SetupMixin Class
+    """
+
+    def setUp(self):
+        # SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        pass
+
+    def test_01_RawXML(self):
+        """ Be sure that the XML contains the right stuff.
+        """
+        print(XML_LONG)
+
+    def test_02_XML(self):
+        """ Be sure that the XML contains the right stuff.
+        """
+        PrettyPrintAny(XML_LONG, 'XML', 90)
+
+
+class C01_Build(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by inernet.
     """
 
@@ -27,15 +55,15 @@ class C01_Build(unittest.TestCase):
         self.m_api = SetupPyHouseObj()
 
     def test_01_Computer(self):
-        l_config = self.m_api._BuildComputer()
+        l_config = self.m_api._build_computer()
         PrettyPrintAny(l_config, 'Config')
-        self.assertDictEqual(l_config.Email, {})
-        self.assertDictEqual(l_config.InternetConnection, {})
-        self.assertDictEqual(l_config.Nodes, {})
-        self.assertDictEqual(l_config.Web, {})
+        # self.assertDictEqual(l_config.Email, {})
+        # self.assertDictEqual(l_config.InternetConnection, {})
+        # self.assertDictEqual(l_config.Nodes, {})
+        # self.assertDictEqual(l_config.Web, {})
 
     def test_02_House(self):
-        l_config = self.m_api._BuildHouse()
+        l_config = self.m_api._build_house()
         PrettyPrintAny(l_config, 'Config')
         self.assertEqual(l_config.Key, 0)
 
@@ -45,11 +73,11 @@ class C01_Build(unittest.TestCase):
         PrettyPrintAny(l_config, 'Config')
 
     def test_04_Root(self):
-        l_root = ET.fromstring(xml_data.XML_LONG)
+        l_root = ET.fromstring(XML_LONG)
         PrettyPrintAny(l_root)
 
     def test_05_XML(self):
-        l_root = ET.fromstring(xml_data.XML_LONG)
+        l_root = ET.fromstring(XML_LONG)
         l_config = self.m_api.BuildXml(l_root)
         PrettyPrintAny(l_config, 'Config')
 

@@ -13,32 +13,32 @@
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Lighting.test.xml_core import *
-from Modules.Families.Insteon.test.xml_insteon import *
-from Modules.Families.UPB.test.xml_upb import *
+from Modules.Core.test.xml_device import XML_DEVICE
+from Modules.Families.Insteon.test.xml_insteon import XML_INSTEON
+from Modules.Families.UPB.test.xml_upb import UPB_XML
 
 
 
-BUTTON_TYPE = "    <LightingType>Button</LightingType>"
+L_BUTTON_TYPE = "    <LightingType>Button</LightingType>"
 
-BUTTON_BODY = '\n'.join([
-    CORE_DEVICE,
-    BUTTON_TYPE
+L_BUTTON_BODY = '\n'.join([
+    XML_DEVICE,
+    L_BUTTON_TYPE
     ])
 
 INSTEON_BUTTON_XML = '\n'.join([
     '<Button Active="True" Key="0" Name="Insteon Button">',
-    BUTTON_BODY,
-    INSTEON_XML,
+    L_BUTTON_BODY,
+    XML_INSTEON,
     "</Button>"])
 
 UPB_BUTTON_XML = '\n'.join([
     '<Button Active="True" Key="1" Name="UPB Button">',
-    BUTTON_BODY,
+    L_BUTTON_BODY,
     UPB_XML,
     "</Button>"])
 
-BUTTON_SECTION_XML = '\n'.join([
+XML_BUTTON_SECTION = '\n'.join([
     "<ButtonSection>",
     INSTEON_BUTTON_XML,
     UPB_BUTTON_XML,
@@ -46,7 +46,7 @@ BUTTON_SECTION_XML = '\n'.join([
 
 
 
-BUTTON_SECTION_XSD = """
+XSD_BUTTON_SECTION = """
 <xs:schema
     attributeFormDefault="unqualified"
     elementFormDefault="qualified"

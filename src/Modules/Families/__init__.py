@@ -1,5 +1,12 @@
 """
-families.__init__.py
+@name:      PyHouse/src/Modules/Families/__init__.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2013-2015 by D. Brian Kimmel
+@note:      Created on May 17, 2013
+@license:   MIT License
+@summary:
+
 
 Various families of lighting systems.
 

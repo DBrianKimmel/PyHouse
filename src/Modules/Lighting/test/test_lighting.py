@@ -5,8 +5,9 @@
 @copyright: (c) 2013-2015 by D. Brian Kimmel
 @note:      Created on Apr 9, 2013
 @license:   MIT License
-@summary:   Handle the home lighting system automation.
+@summary:   Test the home lighting system automation.
 
+Passed all 0 tests.  DBK 2015-07-21
 """
 
 # Import system type stuff
@@ -16,8 +17,7 @@ import xml.etree.ElementTree as ET
 # Import PyMh files and modules.
 from Modules.Core.data_objects import LightData
 from Modules.Lighting.lighting import API as lightingAPI
-from Modules.Families.family import API as familyAPI
-from test import xml_data
+from test.xml_data import XML_LONG, XML_LONG_1_3
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
 
@@ -31,15 +31,38 @@ class SetupMixin(object):
         self.m_api = lightingAPI(self.m_pyhouse_obj)
 
 
+class A1_Setup(SetupMixin, unittest.TestCase):
+    """ This section tests the master setup above this.
+    """
 
-class A1_XML(SetupMixin, unittest.TestCase):
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG_1_3))
+
+    def test_01_PyHouse(self):
+        PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse')
+
+    def test_02_XML(self):
+        PrettyPrintAny(self.m_xml, 'm_xml')
+
+    def test_03_Light(self):
+        PrettyPrintAny(self.m_light_obj, 'm_light_obj')
+
+    def test_04_Api(self):
+        PrettyPrintAny(self.m_api, 'm_api')
+
+
+class A2_XML_1_3(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by node_local.
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG_1_3))
 
-    def test_01_XmlTags(self):
+    def test_01_Version(self):
+        PrettyPrintAny(self.m_pyhouse_obj.Xml, 'PyHouse.Xml')
+        self.assertEqual(self.m_pyhouse_obj.Xml.XmlVersion, '1.4.0')
+
+    def test_02_XmlTags(self):
         """ Be sure that the XML contains the right stuff.
         """
         PrettyPrintAny(self.m_xml, 'Tags')
@@ -50,12 +73,34 @@ class A1_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.light.tag, 'Light', 'XML - No Light')
 
 
-class A2_Utility(SetupMixin, unittest.TestCase):
+class A3_XML_1_4(SetupMixin, unittest.TestCase):
+    """ This section tests the reading and writing of XML used by node_local.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_01_PyHouse(self):
+        PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse')
+        PrettyPrintAny(self.m_pyhouse_obj.Xml, 'PyHouse.Xml')
+
+    def test_02_XmlTags(self):
+        """ Be sure that the XML contains the right stuff.
+        """
+        PrettyPrintAny(self.m_xml, 'Tags')
+        self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
+        self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision')
+        self.assertEqual(self.m_xml.lighting_sect.tag, 'LightingSection')
+        self.assertEqual(self.m_xml.light_sect.tag, 'LightSection', 'XML - No Lights section')
+        self.assertEqual(self.m_xml.light.tag, 'Light', 'XML - No Light')
+
+
+class A4_Utility(SetupMixin, unittest.TestCase):
     """ This section tests the utility class
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_01_SetupLighting(self):
         l_xml = self.m_api._setup_lighting(self.m_pyhouse_obj)
@@ -64,8 +109,18 @@ class A2_Utility(SetupMixin, unittest.TestCase):
         self.assertTrue(l_xml.find('ControllerSection') is not None)
         self.assertTrue(l_xml.find('LightSection') is not None)
 
-    def test_02_ReadLighting(self):
+    def test_02_Controller(self):
+        l_xml = self.m_api._setup_lighting(self.m_pyhouse_obj)
+        l_version = '1.4.0'
+        PrettyPrintAny(l_xml, 'XML')
+        l_ret = self.m_api._read_controllers(self.m_pyhouse_obj, l_xml, l_version)
+        PrettyPrintAny(l_ret, 'Controllers')
+
+    def test_03_ReadLighting(self):
+        """Read all the lighting info (Buttons, Controllers, Lights)
+        """
         l_obj = self.m_api._read_lighting_xml(self.m_pyhouse_obj)
+        PrettyPrintAny(l_obj, 'ReadObj')
         PrettyPrintAny(self.m_pyhouse_obj.House.DeviceOBJs, 'Test 02 Read Lighting')
         self.assertEqual(l_obj.Buttons[0].Name, 'Insteon Button')
         self.assertEqual(l_obj.Buttons[1].Name, 'UPB Button')
@@ -74,7 +129,7 @@ class A2_Utility(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.Lights[0].Name, 'Insteon Light')
         self.assertEqual(l_obj.Lights[1].Name, 'UPB Light')
 
-    def test_04_Write(self):
+    def test_03_Write(self):
         self.m_api._read_lighting_xml(self.m_pyhouse_obj)
         l_obj = self.m_pyhouse_obj.House.DeviceOBJs
         l_xml = ET.Element('HouseDivision')
@@ -89,7 +144,7 @@ class A2_Utility(SetupMixin, unittest.TestCase):
 class B1_Utility(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_01_FindFull(self):
         l_web_obj = LightData()
@@ -109,9 +164,9 @@ class C1_Ops(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_01_GetApi(self):
+    def xxtest_01_GetApi(self):
         l_light = self.m_light_obj
         l_light.Name = 'Garage'
         l_light.DeviceFamily = 'Insteon'

@@ -20,18 +20,19 @@ import xml.etree.ElementTree as ET
 # Import PyMh files
 from Modules.Core.data_objects import LocationData, RiseSetData
 from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
+from Modules.Computer import logging_pyh as Logger
 
-m_logger = None
+LOG = Logger.getLogger('PyHouse.Location       ')
 
 
-class ReadWriteConfigXml(XmlConfigTools):
+class Xml(object):
     """Use the internal data to read / write an updated XML config file.
     """
 
-    def read_location_xml(self, p_house_xml):
+    @staticmethod
+    def read_location_xml(p_house_xml):
         """
-        @param p_house_obj: is p_pyhouse_obj.House.RefOBJs
-        @param p_house_xml: is one of 0+ 'House' elements
+        @param p_house_xml: is the config file xml for a house.
         """
         l_obj = LocationData()
         l_obj.RiseSet = RiseSetData()
@@ -45,11 +46,12 @@ class ReadWriteConfigXml(XmlConfigTools):
             l_obj.Latitude = PutGetXML.get_float_from_xml(l_location_xml, 'Latitude')
             l_obj.Longitude = PutGetXML.get_float_from_xml(l_location_xml, 'Longitude')
             l_obj.TimeZoneName = PutGetXML.get_text_from_xml(l_location_xml, 'TimeZoneName')
-        except AttributeError:
-            pass
+        except AttributeError as e_err:
+            LOG.error('ERROR if getting location Data - {}'.format(e_err))
         return l_obj
 
-    def write_location_xml(self, p_location_obj):
+    @staticmethod
+    def write_location_xml(p_location_obj):
         """Replace the data in the 'House/Location' section with the current data.
         """
         l_entry = ET.Element('LocationSection')
@@ -61,6 +63,7 @@ class ReadWriteConfigXml(XmlConfigTools):
         PutGetXML.put_float_element(l_entry, 'Latitude', p_location_obj.Latitude)
         PutGetXML.put_float_element(l_entry, 'Longitude', p_location_obj.Longitude)
         PutGetXML.put_text_element(l_entry, 'TimeZoneName', p_location_obj.TimeZoneName)
+        LOG.info('Saved Location XML')
         return l_entry
 
 # ## END DBK

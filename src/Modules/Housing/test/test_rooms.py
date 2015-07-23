@@ -7,7 +7,7 @@
 @note:      Created on Apr 10, 2013
 @summary:   Test handling the rooms information for a house.
 
-Tests all working OK - DBK 2014-05-22
+Passed all 7 tests - DBK 2015-07-22
 """
 
 
@@ -34,7 +34,7 @@ class A1_XML(SetupMixin, unittest.TestCase):
 
     def _pyHouses(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_api = rooms.ReadWriteConfigXml()
+        self.m_api = rooms.Xml
 
     def setUp(self):
         self._pyHouses()

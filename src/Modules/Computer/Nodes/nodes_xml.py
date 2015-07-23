@@ -78,7 +78,7 @@ class Xml(object):
 
 
     def _write_one_interface_xml(self, p_interface_obj):
-        l_entry = XmlConfigTools().write_base_object_xml('Interface', p_interface_obj)
+        l_entry = XmlConfigTools.write_base_object_xml('Interface', p_interface_obj)
         PutGetXML.put_text_element(l_entry, 'MacAddress', p_interface_obj.MacAddress)
         PutGetXML.put_text_element(l_entry, 'IPv4Address', p_interface_obj.V4Address)
         PutGetXML.put_text_element(l_entry, 'IPv6Address', p_interface_obj.V6Address)
@@ -94,7 +94,7 @@ class Xml(object):
         return l_xml
 
     def _write_one_node_xml(self, p_node_obj):
-        l_entry = XmlConfigTools().write_base_object_xml('Node', p_node_obj)
+        l_entry = XmlConfigTools.write_base_object_xml('Node', p_node_obj)
         PutGetXML.put_text_element(l_entry, 'ConnectionAddressV4', p_node_obj.ConnectionAddr_IPv4)
         PutGetXML.put_text_element(l_entry, 'ConnectionAddressV6', p_node_obj.ConnectionAddr_IPv6)
         PutGetXML.put_int_element(l_entry, 'NodeRole', p_node_obj.NodeRole)

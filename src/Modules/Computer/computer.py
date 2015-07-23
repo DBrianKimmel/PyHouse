@@ -53,7 +53,7 @@ class ReadWriteConfigXml(XmlConfigTools):
         p_pyhouse_obj.Computer.Name = platform.node()
         p_pyhouse_obj.Computer.Key = 0
         p_pyhouse_obj.Computer.Active = True
-        l_xml = XmlConfigTools().write_base_object_xml(DIVISION, p_pyhouse_obj.Computer)
+        l_xml = XmlConfigTools.write_base_object_xml(DIVISION, p_pyhouse_obj.Computer)
         return l_xml
 
 
@@ -96,7 +96,8 @@ class Utility(ReadWriteConfigXml):
         p_pyhouse_obj.APIs.Computer.WeatherAPI.Stopl()
         p_pyhouse_obj.APIs.Computer.WebAPI.Stop()
 
-    def save_component_apis(self, p_pyhouse_obj, p_xml):
+    @staticmethod
+    def _save_component_apis(p_pyhouse_obj, p_xml):
         p_pyhouse_obj.APIs.Computer.CommunicationsAPI.SaveXml(p_xml)
         p_pyhouse_obj.APIs.Computer.EmailAPI.SaveXml(p_xml)
         p_pyhouse_obj.APIs.Computer.InternetAPI.SaveXml(p_xml)
@@ -135,7 +136,7 @@ class API(Utility):
         Take a snapshot of the current Configuration/Status and write out an XML file.
         """
         l_xml = self.write_computer_xml(self.m_pyhouse_obj)
-        self.save_component_apis(self.m_pyhouse_obj, l_xml)
+        Utility._save_component_apis(self.m_pyhouse_obj, l_xml)
         p_xml.append(l_xml)
         LOG.info("Saved Computer XML.")
         return p_xml

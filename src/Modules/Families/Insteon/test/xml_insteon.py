@@ -10,22 +10,28 @@
 """
 
 
-TESTING_INSTEON_ADDRESS = "16.62.2D"
-TESTING_INSTEON_DEVCAT = "02.1C"
-TESTING_INSTEON_PRODUCT_KEY = "20.1A.35"
+TESTING_INSTEON_ADDRESS = '16.62.2D'
+TESTING_INSTEON_DEVCAT = '02.1C'
+TESTING_INSTEON_PRODUCT_KEY = '20.1A.35'
+TESTING_INSTEON_GROUP_NUM = '0'
+TESTING_INSTEON_GROUP_LIST = 'All_Lights|Outside|Foyer(0;0)'
+TESTING_INSTEON_MASTER = 'True'
+
+L_INSTEON_ADDRESS = '    <Address>' + TESTING_INSTEON_ADDRESS + '</Address>'
+L_INSTEON_DEVCAT = '    <DevCat>' + TESTING_INSTEON_DEVCAT + '</DevCat>'
+L_INSTEON_GROUP_NUM = '    <GroupNumber>' + TESTING_INSTEON_GROUP_NUM + '</GroupNumber>'
+L_INSTEON_GROUP_LIST = '    <GroupList>' + TESTING_INSTEON_GROUP_LIST + '</GroupList>'
+L_INSTEON_PRODUCT_KEY = '    <ProductKey>' + TESTING_INSTEON_PRODUCT_KEY + '</ProductKey>'
+L_INSTEON_MASTER = '    <IsMaster>' + TESTING_INSTEON_MASTER + '</IsMaster>'
 
 
-INSTEON_XML = """
-    <DeviceFamily>Insteon</DeviceFamily>
-    <Address>""" + TESTING_INSTEON_ADDRESS + """</Address>
-    <DevCat>""" + TESTING_INSTEON_DEVCAT + """</DevCat>
-    <GroupList>All_Lights|Outside|Foyer(0;0)</GroupList>
-    <GroupNumber>0</GroupNumber>
-    <IsController>False</IsController>
-    <IsMaster>False</IsMaster>
-    <IsResponder>False</IsResponder>
-    <ProductKey>30.1A.35</ProductKey>
-"""
+
+XML_INSTEON = L_INSTEON_ADDRESS + L_INSTEON_DEVCAT + \
+                L_INSTEON_GROUP_NUM + L_INSTEON_GROUP_LIST + \
+                L_INSTEON_PRODUCT_KEY + L_INSTEON_MASTER
+
+#    <IsController>False</IsController>
+#    <IsResponder>False</IsResponder>
 
 
 INSTEON_XSD = """

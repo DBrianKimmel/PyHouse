@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Web/web_server.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: 2012-2014 by D. Brian Kimmel
+@copyright: 2012-2015 by D. Brian Kimmel
 @note:      Created on Apr 3, 2012
 @license:   MIT License
 @summary:   This module provides the web server service of PyHouse.
@@ -70,28 +70,27 @@ class Utility(ClientConnections):
         l_site_dir = None
         l_site = appserver.NevowSite(web_mainpage.TheRoot(l_site_dir, p_pyhouse_obj))
         p_pyhouse_obj.Twisted.Reactor.listenTCP(p_pyhouse_obj.Computer.Web.WebPort, l_site)
-        l_msg = "Port:{0:}, Path:{1:}".format(p_pyhouse_obj.Computer.Web.WebPort, l_site_dir)
-        LOG.info("Started - {0:}".format(l_msg))
+        l_msg = "Port:{}, Path:{}".format(p_pyhouse_obj.Computer.Web.WebPort, l_site_dir)
+        LOG.info("Started - {}".format(l_msg))
 
 
 class API(Utility, ClientConnections):
 
-    def __init__(self):
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
         self.State = web_utils.WS_IDLE
-        # LOG.info("Initialized.\n")
         self.m_web_running = False
 
-    def Start(self, p_pyhouse_obj):
-        self.update_pyhouse_obj(p_pyhouse_obj)
-        self.m_pyhouse_obj = p_pyhouse_obj
-        p_pyhouse_obj.Computer.Web = WebXmlAPI().read_web_xml(p_pyhouse_obj)
-        self.start_webserver(p_pyhouse_obj)
+    def Start(self):
+        self.update_pyhouse_obj(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.Computer.Web = WebXmlAPI().read_web_xml(self.m_pyhouse_obj)
+        self.start_webserver(self.m_pyhouse_obj)
 
     def Stop(self):
         self.m_pyhouse_obj.Services.WebServerService.stopService()
 
     def SaveXml(self, p_xml):
         p_xml.append(WebXmlAPI().write_web_xml(self.m_pyhouse_obj.Computer.Web))
-        LOG.info("Saved XML.")
+        LOG.info("Saved WebServer XML.")
 
 # ## END DBK

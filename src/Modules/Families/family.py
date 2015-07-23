@@ -1,18 +1,18 @@
 """
--*- test-case-name: PyHouse.src.Modules.families.test.test_family -*-
+-*- test-case-name: PyHouse.src.Modules.Families.test.test_family -*-
 
-@name:      PyHouse/src/Modules/families/family.py
+@name:      PyHouse/src/Modules/Families/family.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2015 by D. Brian Kimmel
 @note:      Created on May 17, 2013
 @license:   MIT License
-@summary:   This module is for building device families.
+@summary:   This module is for *building/loading* device families.
 
-Families are a way of abstracting the difference between different "Devices Families".
-
+Families are a way of abstracting the difference between different "Device Families".
 Device families are things such as Insteon, X10, Zigby and many others.
-Each family has a different protocol for communicating with the various devices in that family.
+Each family has a different syntax for communicating with the various devices in that family.
+
 Insteon, for example, has light switches, dimmers, light bulbs, thermostats, cameras to name a few.
 
 So far Insteon and UPB are developed.  Many others may be added.
@@ -45,9 +45,19 @@ LOG = Logger.getLogger('PyHouse.Family         ')
 
 
 class Utility(object):
+    """
+    This will go thru every valid family and build a family entry for each one.
+    It also imports the _device and _xml for each family and stores their API reference in the family object.
+    """
 
     @staticmethod
     def _do_import(p_obj, p_module):
+        """
+        Import a module
+
+        @param p_obj: is a family Object.
+        @param p_module: is a name of a module that we want to import
+        """
         l_ret = None
         l_device = p_obj.FamilyPackageName + '.' + p_module
         try:
@@ -56,6 +66,22 @@ class Utility(object):
             l_msg = 'ERROR importing family:{} Module:{}\n   Err:{} .'.format(p_obj.Name, p_module, e_err)
             LOG.error(l_msg)
         return l_ret
+
+    @staticmethod
+    def _create_api_instance(p_pyhouse_obj, p_module_name, p_module_ref):
+        """
+        Hopefully, this will catch errors when addingf new families.
+        I had a very strange error when one module had a different number of params in the API.__init__ definition.
+
+        @param p_pyhouse_obj: is the entire PyHouse Data
+        @param p_module_name: is the name of the module for which we are creating the API instance.
+        @param p_module_ref: is the module we just imported.
+        """
+        try:
+            l_api = p_module_ref.API(p_pyhouse_obj)
+        except Exception as e_err:
+            LOG.error('ERROR - Module{} - {}'.format(p_module_name, e_err))
+        return l_api
 
     @staticmethod
     def _build_one_family_data(p_pyhouse_obj, p_name):
@@ -76,33 +102,11 @@ class Utility(object):
         l_family_obj.FamilyPackageName = 'Modules.Families.' + p_name
         l_family_obj.FamilyDeviceModuleName = p_name + '_device'
         l_family_obj.FamilyXmlModuleName = p_name + '_xml'
-        l_family_obj.FamilyModuleAPI = Utility._do_import(l_family_obj, l_family_obj.FamilyDeviceModuleName).API(p_pyhouse_obj)
-        l_family_obj.FamilyXmlModuleAPI = Utility._do_import(l_family_obj, l_family_obj.FamilyXmlModuleName).API(p_pyhouse_obj)
+        l_dev_mod = Utility._do_import(l_family_obj, l_family_obj.FamilyDeviceModuleName)
+        l_family_obj.FamilyModuleAPI = Utility._create_api_instance(p_pyhouse_obj, l_family_obj.FamilyDeviceModuleName, l_dev_mod)
+        l_xml_mod = Utility._do_import(l_family_obj, l_family_obj.FamilyXmlModuleName)
+        l_family_obj.FamilyXmlModuleAPI = Utility._create_api_instance(p_pyhouse_obj, l_family_obj.FamilyXmlModuleName, l_xml_mod)
         return l_family_obj
-
-    def start_lighting_families(self, p_pyhouse_obj):
-        """
-        Load and start the family if there is a controller in the house for the family.
-
-        Runs   <family>_device.API.Start  from Lighting/lighting.py
-        """
-        LOG.info("Starting lighting families.")
-        for l_family_obj in p_pyhouse_obj.House.RefOBJs.FamilyData.itervalues():
-            LOG.info('Starting Family {}'.format(l_family_obj.Name))
-            l_family_obj.FamilyModuleAPI.Start()  # will run <family>_device.API().Start()
-        LOG.info("Started all lighting families.")
-
-    def XXXstop_lighting_families(self, p_house_obj):
-        for l_family_obj in p_house_obj.FamilyData.itervalues():
-            l_family_obj.FamilyModuleAPI.Stop()
-
-    def XXXsave_lighting_families(self, p_xml, p_house_obj):
-        for l_family_obj in p_house_obj.FamilyData.itervalues():
-            l_family_obj.FamilyModuleAPI.SaveXml(p_xml)
-
-    def XXXReadXml(self, p_device_obj, _p_device_xml):
-        LOG.info('family ReadXml was called for device {}.'.format(p_device_obj.Name))
-        pass
 
     @staticmethod
     def _init_component_apis(p_pyhouse_obj):
@@ -127,7 +131,7 @@ class Utility(object):
         return l_family_data  # For testing
 
 
-class API(Utility):
+class API(object):
 
     m_count = 0
 
@@ -147,7 +151,7 @@ class API(Utility):
         """
         The family section is not saved.  it is rebuilt every Start() time from the lighting info
         """
-        LOG.info("Saved XML.")
+        # LOG.info("Saved XML.")
         return p_xml
 
     def LoadFamilyTesting(self):

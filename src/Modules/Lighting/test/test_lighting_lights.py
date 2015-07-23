@@ -15,12 +15,15 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import LightData
-from Modules.Lighting import lighting_lights
+from Modules.Lighting.lighting_lights import API as lightsAPI
 from Modules.Core import conversions
 from Modules.Families.family import API as familyAPI
 from Modules.Families.Insteon.test.xml_insteon import TESTING_INSTEON_ADDRESS
+from Modules.Core.test.xml_device import TESTING_DEVICE_COMMENT, TESTING_DEVICE_FAMILY, \
+        TESTING_DEVICE_ROOM_NAME, \
+        TESTING_DEVICE_ROOM_X
 from Modules.Web import web_utils
-from test.xml_data import *
+from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
 
@@ -34,7 +37,7 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_light_obj = LightData()
         self.m_pyhouse_obj.House.RefOBJs.FamilyData = familyAPI(self.m_pyhouse_obj)._init_component_apis(self.m_pyhouse_obj)
-        self.m_api = lighting_lights.LLApi(self.m_pyhouse_obj)
+        self.m_api = lightsAPI(self.m_pyhouse_obj)
 
 
 class A1_Setup(SetupMixin, unittest.TestCase):
@@ -89,21 +92,22 @@ class R1_Read(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_version = '1.4.0'
 
     def test_01_LightData(self):
-        l_light_obj = self.m_api._read_light_data(self.m_xml.light)
+        l_light_obj = self.m_api._read_light_data(self.m_xml.light, self.m_version)
         PrettyPrintAny(l_light_obj, 'Light_Obj R1-1', 120)
         self.assertEqual(l_light_obj.Name, 'Insteon Light')
         self.assertEqual(l_light_obj.Key, 0)
         self.assertEqual(l_light_obj.Active, True)
-        self.assertEqual(l_light_obj.Comment, 'SwitchLink On/Off')
-        self.assertEqual(l_light_obj.DeviceFamily, 'Insteon')
+        self.assertEqual(l_light_obj.Comment, TESTING_DEVICE_COMMENT)
+        self.assertEqual(l_light_obj.DeviceFamily, TESTING_DEVICE_FAMILY)
         self.assertEqual(l_light_obj.CurLevel, 12)
         self.assertEqual(l_light_obj.LightingType, 'Light')
-        self.assertEqual(l_light_obj.RoomName, 'Master Bath')
+        self.assertEqual(l_light_obj.RoomName, TESTING_DEVICE_ROOM_NAME)
 
     def test_02_FamilyData(self):
-        l_light_obj = self.m_api._read_light_data(self.m_xml.light)
+        l_light_obj = self.m_api._read_light_data(self.m_xml.light, self.m_version)
         PrettyPrintAny(l_light_obj, 'Light_Obj Before', 120)
         self.m_api._read_family_data(l_light_obj, self.m_xml.light)
         PrettyPrintAny(l_light_obj, 'Light_Obj After', 120)
@@ -112,21 +116,20 @@ class R1_Read(SetupMixin, unittest.TestCase):
     def test_03_OneLight(self):
         """ Read in the xml file and fill in the lights
         """
-        l_light = self.m_api._read_one_light_xml(self.m_xml.light)
+        l_light = self.m_api._read_one_light_xml(self.m_xml.light, self.m_version)
         PrettyPrintAny(l_light, 'ReadOneLight', 120)
         self.assertEqual(l_light.Name, 'Insteon Light')
         self.assertEqual(l_light.Key, 0)
         self.assertEqual(l_light.Active, True)
-        self.assertEqual(l_light.Comment, 'SwitchLink On/Off', 'Bad comment')
-        self.assertEqual(l_light.IsDimmable, True)
-        self.assertEqual(l_light.DeviceFamily, 'Insteon', 'Bad Lighting family')
-        self.assertEqual(l_light.RoomName, 'Master Bath')
-        self.assertEqual(l_light.LightingType, 'Light', 'Bad LightingType')
+        self.assertEqual(l_light.Comment, TESTING_DEVICE_COMMENT)
+        self.assertEqual(l_light.DeviceFamily, TESTING_DEVICE_FAMILY)
+        self.assertEqual(l_light.RoomName, TESTING_DEVICE_ROOM_NAME)
+        self.assertEqual(l_light.LightingType, 'Light')
         self.assertEqual(l_light.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS))
-        self.assertEqual(l_light.RoomCoords, "['0', '0', '0']", 'Bad coords')
+        self.assertEqual(l_light.RoomCoords.X_Easting, float(TESTING_DEVICE_ROOM_X))
 
     def test_04_AllLights(self):
-        l_lights = self.m_api.read_all_lights_xml(self.m_xml.light_sect)
+        l_lights = self.m_api.read_all_lights_xml(self.m_xml.light_sect, self.m_version)
         PrettyPrintAny(l_lights, 'All Lights')
         self.assertEqual(len(l_lights), 2)
 
@@ -139,9 +142,10 @@ class W1_Write(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_version = '1.4.0'
 
     def test_01_Base(self):
-        l_light = self.m_api._read_one_light_xml(self.m_xml.light)
+        l_light = self.m_api._read_one_light_xml(self.m_xml.light, self.m_version)
         l_xml = self.m_api.write_base_lighting_xml('Light', l_light)
         PrettyPrintAny(l_xml, 'Lights XML')
         PrettyPrintAny(l_xml.attrib, 'Attributes')
@@ -173,7 +177,7 @@ class W1_Write(SetupMixin, unittest.TestCase):
     def test_05_AllLights(self):
         l_lights = self.m_api.read_all_lights_xml(self.m_xml.light_sect)
         PrettyPrintAny(l_lights, 'Read all lights')
-        l_xml = self.m_api.write_all_lights_xml(l_lights)
+        l_xml = lightsAPI.write_all_lights_xml(l_lights)
         PrettyPrintAny(l_xml, 'Write All Lights')
 
 
@@ -185,6 +189,7 @@ class Z1_JSON(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_version = '1.4.0'
 
     def test_01_CreateJson(self):
         """ Create a JSON object for Location.

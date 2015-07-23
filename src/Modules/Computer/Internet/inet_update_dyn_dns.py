@@ -17,7 +17,6 @@ from twisted.internet.defer import Deferred
 
 # Import PyMh files and modules.
 from Modules.Computer import logging_pyh
-# from Modules.Utilities.tools import PrettyPrintAny
 
 g_debug = 1
 LOG = logging_pyh.getLogger('PyHouse.Internet    ')

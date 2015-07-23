@@ -53,9 +53,6 @@ import dateutil.parser as dparser
 # Import PyMh files
 from Modules.Core.data_objects import RiseSetData
 from Modules.Scheduling.schedule_xml import ScheduleXmlAPI
-# from Modules.Lighting.lighting import API as lightingAPI
-# from Modules.Hvac.thermostats import API as hvacAPI
-# from Modules.Irrigation.irrigation import API as irrigationAPI
 from Modules.Utilities import tools
 from Modules.Utilities.tools import GetPyhouse
 from Modules.Computer import logging_pyh as Logger
@@ -158,7 +155,6 @@ class ScheduleTime(object):
         l_dow = p_schedule_obj.DOW
         l_is = 2 ** p_dow
         l_ret = (l_dow & l_is) != 0
-        # print(l_dow, l_is, l_ret)
         return l_ret
 
     def _extract_time_of_day(self, p_schedule_obj, p_rise_set):
@@ -325,7 +321,6 @@ class ScheduleUtility(ScheduleTime):
             l_time_sch = self._extract_time_of_day(l_schedule_obj, l_riseset)
             # now see if this is 1) part of a chain -or- 2) an earlier schedule
             l_diff = self._find_diff(l_time_sch, p_now)
-            # print('337 - Key:{} - Name:{}  Diff:{} '.format(l_key, l_schedule_obj.Name, l_diff))
             if l_diff == l_seconds_to_delay:  # Add to lists for the given time.
                 l_schedule_list.append(l_key)
             elif l_diff < l_seconds_to_delay:  # earlier schedule upcoming.
@@ -347,9 +342,9 @@ class UpdatePyhouse(object):
         """
         TODO: Lighting must be first since it loads families etc.
         """
-        p_pyhouse_obj.APIs.House.LightingAPI.Start()
-        p_pyhouse_obj.APIs.House.HvacAPI.Start()
-        p_pyhouse_obj.APIs.House.IrrigationAPI.Start()
+        # p_pyhouse_obj.APIs.House.LightingAPI.Start()
+        # p_pyhouse_obj.APIs.House.HvacAPI.Start()
+        # p_pyhouse_obj.APIs.House.IrrigationAPI.Start()
 
     @staticmethod
     def stop_scheduled_modules(p_pyhouse_obj):
@@ -359,8 +354,8 @@ class UpdatePyhouse(object):
 
     @staticmethod
     def save_scheduled_modules(p_pyhouse_obj, p_xml):
-        p_pyhouse_obj.APIs.House.HvacAPI.SaveXml(p_xml)
-        p_pyhouse_obj.APIs.House.LightingAPI.SaveXml(p_xml)
+        # p_pyhouse_obj.APIs.House.HvacAPI.SaveXml(p_xml)
+        # p_pyhouse_obj.APIs.House.LightingAPI.SaveXml(p_xml)
         return p_xml
 
 
@@ -396,7 +391,7 @@ class API(Utility):
         """
         self.m_pyhouse_obj.House.RefOBJs.Schedules = ScheduleXmlAPI().read_schedules_xml(self.m_pyhouse_obj)
         self._fetch_sunrise_set()
-        UpdatePyhouse.start_scheduled_modules(self.m_pyhouse_obj)
+        # UpdatePyhouse.start_scheduled_modules(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self.set_schedule_timer, None)
         LOG.info("Started.")
 
@@ -412,9 +407,9 @@ class API(Utility):
         pass
 
     def SaveXml(self, p_xml):
-        l_xml = ScheduleXmlAPI().write_schedules_xml(self.m_pyhouse_obj.House.RefOBJs.Schedules)
+        l_xml, l_count = ScheduleXmlAPI().write_schedules_xml(self.m_pyhouse_obj.House.RefOBJs.Schedules)
         p_xml.append(l_xml)
-        UpdatePyhouse.save_scheduled_modules(self.m_pyhouse_obj, p_xml)
-        LOG.info('Saved XML.')
+        # UpdatePyhouse.save_scheduled_modules(self.m_pyhouse_obj, p_xml)
+        LOG.info('Saved {} Schedules XML.'.format(l_count))
 
 # ## END DBK

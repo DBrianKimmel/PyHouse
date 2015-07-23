@@ -15,9 +15,17 @@ used for testing
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Computer.test.xml_computer import *
-from Modules.Housing.test.xml_housing import *
+from Modules.Computer.test.xml_computer import COMPUTER_DIVISION_XML
+from Modules.Housing.test.xml_housing import HOUSE_DIVISION_XML, HOUSE_DIVISION_XML_1_3
 
+
+TESTING_VERSION = """
+    xmlns:comp="http://PyHouse.Org/ComputerDiv"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://PyHouse.org schemas/PyHouse.xsd"
+>
+<!-- Updated by PyHouse 2015-07-19 11:22:33.996000 -->
+"""
 
 
 # Missing
@@ -75,9 +83,16 @@ XML_SHORT = """
 
 
 
-PYHOUSE_HEADER_XML = """\
+PYHOUSE_HEADER_XML = """
 <PyHouse
-    Version='2'
+    Version='1.4.0'
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://PyHouse.org schemas/PyHouse.xsd">"""
+
+PYHOUSE_HEADER_XML_1_3 = """
+<PyHouse
+
+    Version='1.3.2'
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://PyHouse.org schemas/PyHouse.xsd">"""
 
@@ -86,6 +101,13 @@ XML_LONG = '\n'.join([
     PYHOUSE_HEADER_XML,
     COMPUTER_DIVISION_XML,
     HOUSE_DIVISION_XML,
+    "</PyHouse>"
+])
+
+XML_LONG_1_3 = '\n'.join([
+    PYHOUSE_HEADER_XML_1_3,
+    COMPUTER_DIVISION_XML,
+    HOUSE_DIVISION_XML_1_3,
     "</PyHouse>"
 ])
 

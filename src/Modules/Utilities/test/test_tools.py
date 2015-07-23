@@ -18,7 +18,7 @@ from twisted.trial import unittest
 # from Modules.Core.data_objects import PyHouseData
 from Modules.Core.setup_logging import LOGGING_DICT
 from Modules.Utilities import tools
-from Modules.Lighting.lighting_lights import LLApi
+from Modules.Lighting.lighting_lights import API as lightsAPI
 from Modules.Families.family import API as familyAPI
 from Modules.Computer import logging_pyh as Logger
 from test import xml_data
@@ -77,8 +77,8 @@ class Test_02_Find(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         self.m_api = tools.GetPyhouse(self.m_pyhouse_obj)
-        self.m_light_api = LLApi(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.RefOBJs.FamilyData = familyAPI().build_lighting_family_info()
+        self.m_light_api = lightsAPI(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.RefOBJs.FamilyData = familyAPI(self.m_pyhouse_obj).m_family
         self.m_pyhouse_obj.House.DeviceOBJs.Lights = self.m_light_api.read_all_lights_xml(self.m_xml.light_sect)
 
     def test_01_Setup(self):

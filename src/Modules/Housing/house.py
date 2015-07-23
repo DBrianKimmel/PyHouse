@@ -19,10 +19,9 @@ Rooms and lights and HVAC are associated with a particular house.
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Computer import logging_pyh as Logger
 from Modules.Core.data_objects import HouseAPIs, HouseInformation, RefHouseObjs, DeviceHouseObjs
-from Modules.Housing import location
-from Modules.Housing import rooms
+from Modules.Housing.location import Xml as locationXML
+from Modules.Housing.rooms import Xml as roomsXML
 from Modules.Entertainment.entertainment import API as entertainmentAPI
 from Modules.Families.family import API as familyAPI
 from Modules.Hvac.thermostats import API as hvacAPI
@@ -33,70 +32,45 @@ from Modules.Scheduling.schedule import API as scheduleAPI
 from Modules.Scheduling.sunrisesunset import API as sunriseAPI
 from Modules.Security.security import API as securityAPI
 from Modules.Utilities.xml_tools import XmlConfigTools
-
+from Modules.Computer import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.House          ')
 
 MODULES = ['Entertainment', 'Hvac', 'Irrigation', 'Lighting', 'Pool', 'Scheduling', 'Security']
 
-class HouseItems(object):
-    """
-    Process all the house based items:
-        Location (1)
-        Rooms (0+)
-        Schedule (0+)
-        Entertainment (0+)
-        HVAC (0+)
-        Irrigation (0+)
-        Lighting (0+)
-        Pools (0+)
-        Security (0+)
-    """
-
-class ReadWriteConfigXml(location.ReadWriteConfigXml, rooms.ReadWriteConfigXml):
+class Xml(object):
     """Use the internal data to read / write an updated config file.
 
     This is called from the web interface or the GUI when the data has been changed.
     """
 
-    def _get_house_xml(self, p_pyhouse_obj):
-        l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
-        return l_xml
-
     def _read_base(self, p_xml):
-        l_xml = HouseInformation()
-        l_xml.RefOBJs = RefHouseObjs()
-        l_xml.DeviceOBJs = DeviceHouseObjs()
-        self.read_base_object_xml(l_xml, p_xml)
-        return l_xml
-
-    def _read_location_xml(self, p_xml):
-        l_xml = self.read_location_xml(p_xml)
-        return l_xml
-
-    def _read_rooms_xml(self, p_xml):
-        l_xml = self.read_rooms_xml(p_xml)
-        return l_xml
+        l_obj = HouseInformation()
+        l_obj.RefOBJs = RefHouseObjs()
+        l_obj.DeviceOBJs = DeviceHouseObjs()
+        XmlConfigTools.read_base_object_xml(l_obj, p_xml)
+        return l_obj
 
     def read_house_xml(self, p_pyhouse_obj):
         """Read house information, location and rooms.
         """
-        l_xml = self._get_house_xml(p_pyhouse_obj)
+        l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
         l_house = self._read_base(l_xml)
-        l_house.RefOBJs.Location = self._read_location_xml(l_xml)
-        l_house.RefOBJs.Rooms = self._read_rooms_xml(l_xml)
+        l_house.RefOBJs.Location = locationXML.read_location_xml(l_xml)
+        l_house.RefOBJs.Rooms = roomsXML.read_rooms_xml(l_xml)
         return l_house
 
-    def write_house_xml(self, p_house_obj):
+    def write_house_xml(self, p_pyhouse_obj):
         """Replace the data in the 'Houses' section with the current data.
         """
-        l_house_xml = XmlConfigTools().write_base_object_xml('HouseDivision', p_house_obj)
-        l_house_xml.append(self.write_location_xml(p_house_obj.RefOBJs.Location))
-        l_house_xml.append(self.write_rooms_xml(p_house_obj.RefOBJs.Rooms))
+        l_house_obj = p_pyhouse_obj.House
+        l_house_xml = XmlConfigTools.write_base_object_xml('HouseDivision', l_house_obj)
+        l_house_xml.append(locationXML.write_location_xml(l_house_obj.RefOBJs.Location))
+        l_house_xml.append(roomsXML.write_rooms_xml(l_house_obj.RefOBJs.Rooms))
         return l_house_xml
 
 
-class Utility(ReadWriteConfigXml):
+class Utility(object):
     """
     """
 
@@ -129,7 +103,7 @@ class Utility(ReadWriteConfigXml):
         # These two must start before the other things
         p_pyhouse_obj.APIs.House.FamilyAPI.Start()
         p_pyhouse_obj.APIs.House.SunRiseSetAPI.Start()
-        # self.m_pyhouse_obj.House.RefOBJs.FamilyData = self.m_pyhouse_obj.APIs.House.FamilyAPI.Start()
+        #
         p_pyhouse_obj.APIs.House.EntertainmentAPI.Start()
         p_pyhouse_obj.APIs.House.HvacAPI.Start()
         p_pyhouse_obj.APIs.House.IrrigationAPI.Start()
@@ -141,6 +115,17 @@ class Utility(ReadWriteConfigXml):
     def stop_house_parts(self):
         self.m_pyhouse_obj.APIs.House.ScheduleAPI.Stop()
 
+    @staticmethod
+    def _save_component_apis(p_pyhouse_obj, p_xml):
+        p_pyhouse_obj.APIs.House.EntertainmentAPI.SaveXml(p_xml)
+        p_pyhouse_obj.APIs.House.HvacAPI.SaveXml(p_xml)
+        p_pyhouse_obj.APIs.House.IrrigationAPI.SaveXml(p_xml)
+        p_pyhouse_obj.APIs.House.LightingAPI.SaveXml(p_xml)
+        p_pyhouse_obj.APIs.House.PoolAPI.SaveXml(p_xml)
+        p_pyhouse_obj.APIs.House.ScheduleAPI.SaveXml(p_xml)
+        p_pyhouse_obj.APIs.House.SecurityAPI.SaveXml(p_xml)
+        return p_xml
+
     def get_sunrise_set(self, p_pyhouse_obj):
         """
         Retrieve datetime.datetime for sunrise and sunset.
@@ -149,9 +134,6 @@ class Utility(ReadWriteConfigXml):
         p_pyhouse_obj.House.RefOBJs.Location.RiseSet.SunRise = p_pyhouse_obj.APIs.House.SunRiseSetAPI.get_sunrise_datetime()
         p_pyhouse_obj.House.RefOBJs.Location.RiseSet.SunSet = p_pyhouse_obj.APIs.House.SunRiseSetAPI.get_sunset_datetime()
         pass
-
-    def _store_pyhouse_obj(self, p_pyhouse_obj):
-        self.m_pyhouse_obj = p_pyhouse_obj
 
 
 class API(Utility):
@@ -171,7 +153,7 @@ class API(Utility):
         May be stopped and then started anew to force reloading info.
         """
         LOG.info("Starting.")
-        self.m_pyhouse_obj.House = self.read_house_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House = Xml().read_house_xml(self.m_pyhouse_obj)
         self.get_sunrise_set(self.m_pyhouse_obj)
         self.start_house_parts(self.m_pyhouse_obj)
         LOG.info("Started House {0:}".format(self.m_pyhouse_obj.House.Name))
@@ -189,16 +171,11 @@ class API(Utility):
         Take a snapshot of the current Configuration/Status and write out an XML file.
         """
         # l_house_xml = ET.Element('HouseDivision')
-        l_house_xml = XmlConfigTools().write_base_object_xml('HouseDivision', self.m_pyhouse_obj.House)
-        l_location_xml = self.write_location_xml(self.m_pyhouse_obj.House.RefOBJs.Location)
-        l_house_xml.append(l_location_xml)
-        l_rooms_xml = self.write_rooms_xml(self.m_pyhouse_obj.House.RefOBJs.Rooms)
-        l_house_xml.append(l_rooms_xml)
-        self.m_pyhouse_obj.APIs.House.ScheduleAPI.SaveXml(l_house_xml)
-        # l_lighting_xml = ''
-        self.m_pyhouse_obj.APIs.House.IrrigationAPI.SaveXml(l_house_xml)
+        l_house_xml = Xml().write_house_xml(self.m_pyhouse_obj)
+        Utility._save_component_apis(self.m_pyhouse_obj, l_house_xml)
         p_xml.append(l_house_xml)
-        LOG.info("Saved XML.")
+        LOG.info("Saved House XML.")
+        print('House-178 Saved XML')
         return p_xml
 
 # ##  END DBK

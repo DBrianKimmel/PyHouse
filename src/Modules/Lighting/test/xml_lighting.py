@@ -7,6 +7,8 @@
 @note:      Created on Nov 17, 2014
 @Summary:
 
+See PyHouse/src/test/xml_data.py for the entire hierarchy.
+
 Config File Version 1.4 placed this entire section under a new LightingSection element.
 
 """
@@ -14,17 +16,24 @@ Config File Version 1.4 placed this entire section under a new LightingSection e
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Lighting.test.xml_buttons import BUTTON_SECTION_XML
-from Modules.Lighting.test.xml_lights import *
-from Modules.Lighting.test.xml_controllers import *
-
+from Modules.Lighting.test.xml_buttons import XML_BUTTON_SECTION
+from Modules.Lighting.test.xml_lights import XML_LIGHT_SECTION
+from Modules.Lighting.test.xml_controllers import XML_CONTROLLER_SECTION, XML_CONTROLLER_SECTION_1_3
 
 
 LIGHTING_XML = '\n'.join([
     '<LightingSection>',
-    BUTTON_SECTION_XML,
-    LIGHT_SECTION_XML,
-    CONTROLLER_SECTION_XML,
+    XML_BUTTON_SECTION,
+    XML_LIGHT_SECTION,
+    XML_CONTROLLER_SECTION,
+    '</LightingSection>'
+])
+
+LIGHTING_XML_1_3 = '\n'.join([
+    '<LightingSection>',
+    XML_BUTTON_SECTION,
+    XML_LIGHT_SECTION,
+    XML_CONTROLLER_SECTION_1_3,
     '</LightingSection>'
 ])
 

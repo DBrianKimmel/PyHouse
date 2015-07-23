@@ -6,8 +6,7 @@
 @license:   MIT License
 @note:      Created on Apr 11, 2013
 @summary:   This module is for testing XML tools.
-
-Tests all working OK - DBK 2014-05-28
+Passed all 49 testa - DBK 2015-07-20
 """
 
 # Import system type stuff
@@ -19,7 +18,7 @@ import datetime
 # Import PyMh files and modules.
 from Modules.Utilities.xml_tools import XML, PutGetXML, XmlConfigTools, stuff_new_attrs
 from Modules.Utilities import convert
-from Modules.Core.data_objects import BaseLightingData, ControllerData
+from Modules.Core.data_objects import CoreLightingData, ControllerData
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
@@ -426,7 +425,7 @@ class C3_Read(SetupMixin, unittest.TestCase):
         self.m_api = XmlConfigTools()
 
     def test_01_BaseObject(self):
-        l_base_obj = BaseLightingData()
+        l_base_obj = CoreLightingData()
         self.m_api.read_base_object_xml(l_base_obj, self.m_xml.light)
         PrettyPrintAny(l_base_obj, 'Light')
         self.assertEqual(l_base_obj.Name, 'Insteon Light')
@@ -435,7 +434,7 @@ class C3_Read(SetupMixin, unittest.TestCase):
         # self.assertEqual(l_base_obj.UUID, 'c15f7d76-092e-11e4-bffa-b827eb189eb4', 'Bad UUID')
 
     def test_02_readBaseObject(self):
-        l_base_obj = BaseLightingData()
+        l_base_obj = CoreLightingData()
         self.m_api.read_base_object_xml(l_base_obj, self.m_xml.controller)
         PrettyPrintAny(l_base_obj, 'Controller')
         self.assertEqual(l_base_obj.Name, 'Insteon Serial Controller')
@@ -454,7 +453,7 @@ class C4_ReadEmpty(SetupMixin, unittest.TestCase):
         self.m_api = XmlConfigTools()
 
     def test_01_BaseObject(self):
-        l_base_obj = BaseLightingData()
+        l_base_obj = CoreLightingData()
         self.m_api.read_base_object_xml(l_base_obj, self.m_xml.light)
         PrettyPrintAny(l_base_obj, 'Light')
         self.assertEqual(l_base_obj.Name, 'Missing Name')
@@ -471,15 +470,14 @@ class C5_WriteXml(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         self.m_pyhouse_obj = SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
-        self.m_api = XmlConfigTools()
 
     def test_01_BaseObject(self):
-        l_base_obj = BaseLightingData()
-        self.m_api.read_base_object_xml(l_base_obj, self.m_xml.light)
+        l_base_obj = CoreLightingData()
+        XmlConfigTools.read_base_object_xml(l_base_obj, self.m_xml.light)
         l_base_obj.Key = 43
         l_uuid = '12345678-fedc-1111-ffff-aaBBccDDeeFF'
         l_base_obj.UUID = l_uuid
-        l_xml = self.m_api.write_base_object_xml('Light', l_base_obj)
+        l_xml = XmlConfigTools.write_base_object_xml('Light', l_base_obj)
         PrettyPrintAny(l_xml, 'Base Object XML', 120)
         self.assertEqual(l_xml.attrib['Name'], 'Insteon Light')
         self.assertEqual(l_xml.attrib['Key'], '43')
@@ -497,14 +495,13 @@ class D1_NoClass(SetupMixin, unittest.TestCase):
 
     def test_01_StuffAttrs(self):
         # l_objA = lighting_lights.LightingLightsAPI(self.m_pyhouse_obj).read_one_light_xml(self.m_xml.light)
-        l_objA = BaseLightingData()
+        l_objA = CoreLightingData()
         PrettyPrintAny(l_objA, 'Obj A', 120)
-        # l_objB = lighting_controllers.LCApi(self.m_pyhouse_obj).read_one_controller_xml(self.m_xml.controller)
         l_objB = ControllerData()
         # l_objAdeep = copy.deepcopy(l_objA)
         PrettyPrintAny(l_objB, 'Obj B', 120)
         stuff_new_attrs(l_objA, l_objB)
         PrettyPrintAny(l_objA, 'Result B stuffed into A', 120)
-        self.assertEqual(l_objA.IsDimmable, l_objB.IsDimmable)
+        self.assertEqual(l_objA.InterfaceType, l_objB.InterfaceType)
 
 # ## END DBK

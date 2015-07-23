@@ -19,7 +19,7 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Utilities.tools import PrettyPrintAny
-from test.xml_data import XML_LONG
+from test.xml_data import XML_LONG, XML_LONG_1_3
 
 
 class C01_Raw(unittest.TestCase):
@@ -34,9 +34,13 @@ class C01_Raw(unittest.TestCase):
     def setUp(self):
         pass
 
-    def test_01_raw(self):
+    def test_01_raw_1_3(self):
+        l_str = XML_LONG_1_3.split('\n')
+        PrettyPrintAny(l_str, 'Raw XML 1.3', 50)
+
+    def test_02_raw_1_4(self):
         l_str = XML_LONG.split('\n')
-        PrettyPrintAny(l_str, 'Raw XML', 50)
+        PrettyPrintAny(l_str, 'Raw XML 1.4', 50)
 
 
 

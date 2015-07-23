@@ -15,7 +15,7 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import ButtonData
-from Modules.Lighting import lighting_buttons
+from Modules.Lighting.lighting_buttons import API as buttonsAPI
 from Modules.Families import family
 from Modules.Core import conversions
 from Modules.Web import web_utils
@@ -39,10 +39,10 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API(self.m_pyhouse_obj).build_lighting_family_info()
-        self.m_api = lighting_buttons.LBApi(self.m_pyhouse_obj)
+        self.m_api = buttonsAPI(self.m_pyhouse_obj)
         self.m_controller_obj = ButtonData()
 
-    def test_0202_find_xml(self):
+    def test_02_find_xml(self):
         """ Be sure that the XML contains the right stuff.
         """
         self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
@@ -50,7 +50,7 @@ class Test_02_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.button_sect.tag, 'ButtonSection', 'XML - No Buttons section')
         self.assertEqual(self.m_xml.button.tag, 'Button', 'XML - No Button section')
 
-    def test_0211_ReadButtonData(self):
+    def test_11_ReadButtonData(self):
         """ Read in the xml file and fill in the lights
         """
         l_button = self.m_api._read_button_data(self.m_xml.button)
