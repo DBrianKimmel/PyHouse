@@ -455,14 +455,10 @@ class MQTTClient(MQTTProtocol):
     def __init__(self, p_pyhouse_obj, p_broker, p_clientID = None, keepalive = None, willQos = 0, willTopic = None, willMessage = None, willRetain = False):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_broker = p_broker
-        # try:
-        #    l_name = p_pyhouse_obj.Computer.Nodes[0].Name
-        # except KeyError:
-        #    l_name = "UnknownNode"
         if p_clientID is not None:
             self.m_clientID = p_clientID
         else:
-            self.m_clientID = 'abc'
+            self.m_clientID = p_pyhouse_obj.Computer.Name
         if keepalive is not None:
             self.m_keepalive = keepalive
         else:
@@ -471,6 +467,7 @@ class MQTTClient(MQTTProtocol):
         self.willTopic = willTopic
         self.willMessage = willMessage
         self.willRetain = willRetain
+        LOG.info('Connection to broker set up for: {}'.format(self.m_clientID))
 
     def connectionMade(self):
         """
@@ -541,18 +538,18 @@ class MqttReconnectingClientFactory(ReconnectingClientFactory):
         return l_client
 
     def clientConnectionLost(self, p_connector, p_reason):
-        LOG.warn('Lost connection.  Reason:{}'.format(p_reason))
+        LOG.warn('Lost connection.\n\tReason:{}'.format(p_reason))
         ReconnectingClientFactory.clientConnectionLost(self, p_connector, p_reason)
 
     def clientConnectionFailed(self, p_connector, p_reason):
-        LOG.error('Connection failed. Reason:{}'.format(p_reason))
+        LOG.error('Connection failed.\n\tReason:{}'.format(p_reason))
         ReconnectingClientFactory.clientConnectionFailed(self, p_connector, p_reason)
 
     def connectionLost(self, p_reason):
         """
         Added to sample code - I don't know why it is required.
         """
-        LOG.error('ConnectionLost Err:{}'.format(p_reason))
+        LOG.error('ConnectionLost\\n\tErr:{}'.format(p_reason))
 
     def makeConnection(self, p_transport):
         """
