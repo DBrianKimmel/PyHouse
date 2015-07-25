@@ -519,12 +519,13 @@ class MqttReconnectingClientFactory(ReconnectingClientFactory):
         """
         @param p_pyhouse_obj: is the master information store
         @param p_client_id: is the ID of this computer that will be supplied to the broker
-        @param p_broker: is ???
+        @param p_broker: is the object for this broker
         """
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_broker = p_broker
         p_broker._ProtocolAPI = self
         self.m_clientID = p_client_id
+        self.m_prefix = 'pyhouse/' + p_pyhouse_obj.House.Name.lower()
 
     def startedConnecting(self, p_connector):
         # LOG.warn('Started to connect. {}'.format(p_connector))

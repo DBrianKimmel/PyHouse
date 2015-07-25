@@ -172,6 +172,11 @@ class ComputerInformation(BaseObject):
         self.Web = None  # WebData()
 
 
+class MqttInformation(object):
+    self.Prefix = ''
+    self.Brokers = None  # MqttBrokerData
+
+
 class MqttBrokerData(BaseObject):
     """ 0-N
     """

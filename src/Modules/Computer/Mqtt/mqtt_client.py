@@ -101,8 +101,6 @@ class API(Util):
         """Dispatch a received MQTT message according to the topic.
         """
         l_topic = p_topic.split('/')[1:]  # Drop the pyhouse as that is all we subscribed to.
-        if l_topic[0] != 'pyhouse':
-            return
         LOG.info('Dispatch\n\tTopic: {}'.format(l_topic))
 
     def doPyHouseLogin(self, p_client, p_pyhouse_obj):
