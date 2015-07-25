@@ -15,7 +15,6 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
     },
 
 
-
 // ============================================================================
 	/**
      * Startup - Place the widget in the workspace and hide it.
@@ -42,7 +41,6 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		var l_html = p_obj.Name + '<br>' + p_obj.RoomName;
 		return l_html;
 	},
-
 
 
 // ============================================================================

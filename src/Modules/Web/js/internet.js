@@ -126,25 +126,16 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 		var l_name = p_node.value;
 		globals.House.InternetIx = l_ix;
 		globals.House.InternetName = l_name;
-		if (l_ix <= 1000) {
-			// One of the Internet buttons.
-			var l_obj = globals.House.HouseObj.Internet;
-			// Divmod.debug('---', 'internet.handleMenuOnClick("Internet" Button) was called. ' + l_ix + ' ' + l_name);
-			// console.log("internet.handleMenuOnClick() - l_obj = %O", l_obj);
+		if (l_ix <= 1000) {  // One of the Internet buttons.
+			var l_obj = globals.House.HouseObj.Internet[l_ix];
 			showDataEntryFields(self);
 			self.fillEntry(l_obj, l_ix);
-		} else if (l_ix == 10001) {
-			// The "Add" button
-			// Divmod.debug('---', 'internet.handleMenuOnClick(Add Button) was called. ' + l_ix + ' ' + l_name);
+		} else if (l_ix == 10001) {  // The "Add" button
 			showDataEntryFields(self);
 			var l_ent = self.createEntry(globals.House.InternetIx);
 			self.fillEntry(l_ent);
-		} else if (l_ix == 10002) {
-			// The "Back" button
-			// Divmod.debug('---', 'internet.handleMenuOnClick(Back Button) was called. ' + l_ix + ' ' + l_name);
-			self.hideWidget();
-			var l_node = findWidgetByClass('HouseMenu');
-			l_node.showWidget('HouseMenu');
+		} else if (l_ix == 10002) {  // The "Back" button
+			self.showWidget('ComputerMenu');
 		}
 	},
 

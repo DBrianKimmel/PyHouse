@@ -42,10 +42,10 @@ class Util(object):
                 continue
             l_host = l_broker.BrokerAddress
             l_port = l_broker.BrokerPort
-            l_broker.ClientAPI = self
+            l_broker._ClientAPI = self
             if l_host == None or l_port == None:
                 LOG.error('Bad Mqtt broker Address: {}'.format(l_host))
-                l_broker.ProtocolAPI = None
+                l_broker._ProtocolAPI = None
             else:
                 LOG.info('About to create factory ')
                 l_factory = mqtt_protocol.MqttReconnectingClientFactory(p_pyhouse_obj, "DBK1", l_broker)
@@ -92,7 +92,7 @@ class API(Util):
             if not l_broker.Active:
                 continue
             try:
-                l_broker.ProtocolAPI.publish(p_topic, p_message)
+                l_broker._ProtocolAPI.publish(p_topic, p_message)
                 LOG.info('Mqtt publishing:\n\tBroker: {}\n\tTopic:{}\n\tMessage"{}'.format(l_broker.Name, p_topic, p_message))
             except AttributeError as e_err:
                 LOG.error("Mqtt Unpublished.\n\tERROR:{}\n\tTopic:{}\n\tMessage:{}".format(e_err, p_topic, p_message))

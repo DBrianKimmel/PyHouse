@@ -116,7 +116,8 @@ Nevow.Athena.Widget.subclass(helpers, 'Widget').methods(
 		}
 		function eb_add_child(p_reason) {  // addChildWidgetFromWidgetInfo failed
 			Divmod.debug('---', 'helpers.eb_add_child - ERROR - Reason = ' + p_reason);
-			self.eb_genericErrback('Error: ' + p_reason + ' in addChildWidgetFromWidgetInfo failed for Name: ' + p_name);
+			console.log("helpers.eb_add_child()  p_live_element:  %O", p_liveElement);
+			self.eb_genericErrback('Error: ' + p_reason + ' in addChildWidgetFromWidgetInfo failed ----');
 		}
 		var l_defer_2 = self.addChildWidgetFromWidgetInfo(p_liveElement);
 		l_defer_2.addCallback(cb_childAdded);
@@ -124,7 +125,7 @@ Nevow.Athena.Widget.subclass(helpers, 'Widget').methods(
 	},
 
 	function attachWidget(self, p_name, p_params, p_readyfunc) {
-		// Divmod.debug('---', 'attachWidget - "' + p_name + '" is being attached to:' + self.node.className + ', with params:'+ p_params);
+		// Divmod.debug('---', 'helpers.attachWidget() - "' + p_name + '" is being attached to:' + self.node.className + ', with params:'+ p_params);
 		function cb_call_remote(p_liveElement) {
 			self.liveElementReceived(p_liveElement, p_readyfunc);
 		}

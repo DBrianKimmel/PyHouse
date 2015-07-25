@@ -100,6 +100,8 @@ def GetJSONComputerInfo(p_pyhouse_obj):
     @param p_house_obj: is the complete information
     """
     l_ret = ComputerInformation()
+    l_ret.Communication = None
+    l_ret.Email = None
     l_ret.InternetConnection = p_pyhouse_obj.Computer.InternetConnection
     l_ret.Mqtt = p_pyhouse_obj.Computer.Mqtt
     l_ret.Nodes = p_pyhouse_obj.Computer.Nodes

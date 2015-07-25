@@ -14,10 +14,10 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 
     function __init__(self, node) {
         house.HouseWidget.upcall(self, "__init__", node);
-		//Divmod.debug('---', 'house.__init__() was called.');
     },
 
-	// ============================================================================
+    
+// ============================================================================
 	/**
      * Place the widget in the workspace.
 	 *
@@ -33,7 +33,9 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 		}
 		var uris = collectIMG_src(self.node, null);
 		var l_defer = loadImages(uris);
+		// Divmod.debug('---', 'house.ready() was called.');
 		l_defer.addCallback(cb_widgetready);
+		l_defer.addErrback(eb_widgetready);
 		return l_defer;
 	},
 	function startWidget(self) {
@@ -45,13 +47,13 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 
 // ============================================================================
 	/**
-	 * This triggers getting the house data from the server.
+	 * This triggers getting the data from the server.
 	 */
 	function fetchDataFromServer(self) {
 		function cb_fetchDataFromServer(p_json) {
-			globals.House.HouseObj.House = JSON.parse(p_json);
-			var l_obj = globals.House.HouseObj;
-			console.log("house.buildLcarRoomDataEntryScreen() - Fetched Data = %O", l_obj);
+			globals.House = JSON.parse(p_json);
+			var l_obj = globals.House;
+			// console.log("house.buildLcarRoomDataEntryScreen() - Fetched Data = %O", l_obj);
 			self.buildLcarDataEntryScreen(l_obj, 'handleDataEntryOnClick');
 		}
 		function eb_fetchDataFromServer(p_reason) {
@@ -63,75 +65,70 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
         return false;
 	},
 	function buildLcarDataEntryScreen(self, p_entry, p_handler){
-		var l_house = arguments[1];
-		var l_location = l_house.Location;
-		var l_entry_html = "";
-		l_entry_html += buildLcarTextWidget(self, 'Name', 'House Name', l_house.Name);
-		l_entry_html += buildLcarTextWidget(self, 'Key', 'House Index', l_house.Key, 'disabled');
-		l_entry_html += buildLcarTrueFalseWidget(self, 'Active', 'Active ?', l_house.Active);
-		l_entry_html += buildLcarTextWidget(self, 'UUID', 'UUID', l_house.UUID);
-		l_entry_html += buildLcarTextWidget(self, 'Street', 'Street', l_location.Street);
-		l_entry_html += buildLcarTextWidget(self, 'City', 'City', l_location.City);
-		l_entry_html += buildLcarTextWidget(self, 'State', 'State', l_location.State);
-		l_entry_html += buildLcarTextWidget(self, 'ZipCode', 'Zip Code', l_location.ZipCode);
-		l_entry_html += buildLcarTextWidget(self, 'Phone', 'Phone', l_location.Phone);
-		l_entry_html += buildLcarTextWidget(self, 'Latitude', 'Latitude', l_location.Latitude);
-		l_entry_html += buildLcarTextWidget(self, 'Longitude', 'Longitude', l_location.Longitude);
-		l_entry_html += buildLcarTextWidget(self, 'TimeZoneName', 'TimeZone Name', l_location.TimeZoneName);
-		l_entry_html += buildLcarEntryButtons(p_handler, 'NoDelete');
+		var l_obj = arguments[1];
+		// console.log("house.buildLcarDataEntryScreen() - Data = %O", l_obj);
 		var l_html = build_lcars_top('Enter House Data', 'lcars-salmon-color');
-		l_html += build_lcars_middle_menu(20, l_entry_html);
+		l_html += build_lcars_middle_menu(20, self.buildEntry(l_obj, p_handler));
 		l_html += build_lcars_bottom();
 		self.nodeById('DataEntryDiv').innerHTML = l_html;
 	},
-
-	function createEntry() {
-    	//Divmod.debug('---', 'house.createEntry() was called. ' + p_ix);
-        var l_loc = {
-				Street : '',
-				City : '',
-				State : '',
-				ZipCode : '',
-				Phone : '',
-				Latitude : '',
-				Longitude : '',
-				TimeZoneName : '',
-				DaylightSavingsTime : ''
-    		};
-        var l_data = {
-    			Name	: 'Change Me',
-    			Key		: 0,
-    			Active	: false,
-    			UUID	: '',
-    			Location : l_loc,
-    			Delete	: false
-    		};
-        //console.log("create House %O", l_data);
+	function buildEntry(self, p_obj, p_handler, p_onchange) {
+		var l_html = buildBaseEntry(self, p_obj);
+		l_html = self.buildLocationEntry(p_obj.Location, l_html);
+		l_html += buildLcarEntryButtons(p_handler);
+		return l_html;
+	},
+    function buildLocationEntry(self, p_obj, p_html) {
+		p_html += buildLcarTextWidget(self, 'Street', 'Street', p_obj.Street);
+		p_html += buildLcarTextWidget(self, 'City', 'City', p_obj.City);
+		p_html += buildLcarTextWidget(self, 'State', 'State', p_obj.State);
+		p_html += buildLcarTextWidget(self, 'ZipCode', 'Zip Code', p_obj.ZipCode);
+		p_html += buildLcarTextWidget(self, 'Phone', 'Phone', p_obj.Phone);
+		p_html += buildLcarTextWidget(self, 'Latitude', 'Latitude', p_obj.Latitude);
+		p_html += buildLcarTextWidget(self, 'Longitude', 'Longitude', p_obj.Longitude);
+		p_html += buildLcarTextWidget(self, 'TimeZoneName', 'TimeZone Name', p_obj.TimeZoneName);
+        return p_html;
+    },
+	function fetchEntry(self) {
+    	var l_data = fetchBaseEntry(self, l_data);
+		var l_loc = self.fetchLocationEntry(l_data);
+		l_data.Location = l_loc;
         return l_data;
 	},
-	function fetchEntry(self) {
-		//Divmod.debug('---', 'house.fetchEntry() was called. ');
-        var l_data = {
-            Name			: fetchTextWidget(self, 'Name'),
-            Key				: fetchTextWidget(self, 'Key'),
-			Active			: fetchTrueFalseWidget(self, 'Active'),
-			UUID			: fetchTextWidget(self, 'UUID'),
-			Delete			: false
-        };
-		var l_location = {
-			Street			: fetchTextWidget(self, 'Street'),
-			City			: fetchTextWidget(self, 'City'),
-			State			: fetchTextWidget(self, 'State'),
-			ZipCode			: fetchTextWidget(self, 'ZipCode'),
-			Phone			: fetchTextWidget(self, 'Phone'),
-			Latitude		: fetchTextWidget(self, 'Latitude'),
-			Longitude		: fetchTextWidget(self, 'Longitude'),
-			TimeZoneName	: fetchTextWidget(self, 'TimeZoneName'),
-        };
-        l_data.Location = l_location;
-		return l_data;
-	},
-
+    function fetchLocationEntry(self) {
+		var l_data = {
+				Street			: fetchTextWidget(self, 'Street'),
+				City			: fetchTextWidget(self, 'City'),
+				State			: fetchTextWidget(self, 'State'),
+				ZipCode			: fetchTextWidget(self, 'ZipCode'),
+				Phone			: fetchTextWidget(self, 'Phone'),
+				Latitude		: fetchTextWidget(self, 'Latitude'),
+				Longitude		: fetchTextWidget(self, 'Longitude'),
+				TimeZoneName	: fetchTextWidget(self, 'TimeZoneName')
+		}
+    	return l_data;
+    },
+    function createEntry(self) {
+        var l_data = createBaseEntry(self, 0);
+        l_data = self.createLocationEntry(l_data);
+        return l_data;
+    },
+    function createLocationEntry(self, p_data) {
+		p_data.Name = 'Change Me';
+		p_data.Key = 0;
+		p_data.Active = false;
+		p_data.UUID = '';
+		p_data.Location.Street = '';
+		p_data.Location.City = '';
+		p_data.Location.State = '';
+		p_data.Location.ZipCode = '';
+		p_data.Location.Phone = '';
+		p_data.Location.Latitude = '';
+		p_data.Location.Longitude = '';
+		p_data.Location.TimeZoneName = '';
+		p_data.Delete = false;
+        return p_data;
+    },
 
 
 // ============================================================================
@@ -149,9 +146,9 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 		var l_ix = p_node.name;
 		switch(l_ix) {
 		case '10003':  // Change Button
-			Divmod.debug('---', 'house.handleDataEntryOnClick() was called.');
+			// Divmod.debug('---', 'house.handleDataEntryOnClick() was called.');
 	    	var l_entry = self.fetchEntry();
-			globals.House.HouseObj.House = l_entry;
+			globals.House = l_entry;
 	    	var l_json = JSON.stringify(l_entry);
 	        var l_defer = self.callRemote("saveHouseData", l_json);  // @ web_house
 			l_defer.addCallback(cb_handleDataEntryOnClick);
@@ -167,6 +164,6 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
         return false;  // false stops the chain.
 	}
 );
-// Divmod.debug('---', 'house.cb_fetchDataFromServer() was called. ' + p_json);
+// Divmod.debug('---', 'house.cb_fetchDataFromServer() was called.');
 // console.log("house.buildLcarRoomDataEntryScreen() - self = %O", self);
 //### END DBK

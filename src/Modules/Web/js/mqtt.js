@@ -2,7 +2,7 @@
  * @name:      PyHouse/src/Modules/Web/js/mqtt.js
  * @author:    D. Brian Kimmel
  * @contact:   D.BrianKimmel@gmail.com
- * @copyright: (c) 2015 by D. Brian Kimmel
+ * @copyright: (c) 2015-2015 by D. Brian Kimmel
  * @license:   MIT License
  * @note:      Created on June 18, 2015
  * @summary:   Displays the Mqtt element
@@ -16,7 +16,6 @@ helpers.Widget.subclass(mqtt, 'MqttWidget').methods(
 	},
 
 
-
 // ============================================================================
 	/**
      * Place the widget in the workspace.
@@ -28,20 +27,20 @@ helpers.Widget.subclass(mqtt, 'MqttWidget').methods(
 		function cb_widgetready(res) {
 			self.hideWidget();
 		}
+		function eb_widgetready(p_reason) {
+			Divmod.debug('---', 'ERROR - mqtt.eb_widgetready() - ' + p_reason);
+		}
 		var uris = collectIMG_src(self.node, null);
 		var l_defer = loadImages(uris);
 		l_defer.addCallback(cb_widgetready);
+		l_defer.addErrback(eb_widgetready);
 		return l_defer;
 	},
-	/**
-	 * Show the self.mqtt widget - mqtt.MqttWidget -
-	 */
 	function startWidget(self) {
 		self.node.style.display = 'block';
 		showSelectionButtons(self);
 		self.fetchDataFromServer();
 	},
-
 
 
 // ============================================================================
@@ -62,7 +61,7 @@ helpers.Widget.subclass(mqtt, 'MqttWidget').methods(
         return false;
 	},
 	/**
-	 * Build a screen full of buttons - One for each room and some actions.
+	 * Build a screen full of buttons - One for each broker and some actions.
 	 */
 	function buildLcarSelectScreen(self){
 		var l_button_html = buildLcarSelectionButtonsTable(globals.Computer.Mqtt, 'handleMenuOnClick');
@@ -85,7 +84,7 @@ helpers.Widget.subclass(mqtt, 'MqttWidget').methods(
 		globals.Computer.MqttIx = l_ix;
 		globals.Computer.MqttName = l_name;
 		if (l_ix <= 1000) {  // One of the mqtt buttons.
-			var l_obj = globals.Computer.Mqtt;
+			var l_obj = globals.Computer.Mqtt[l_ix];
 			globals.Computer.MqttObj = l_obj;
 			showDataEntryFields(self);
 			self.buildLcarDataEntryScreen(l_obj, 'handleDataEntryOnClick');
@@ -94,7 +93,7 @@ helpers.Widget.subclass(mqtt, 'MqttWidget').methods(
 			var l_entry = self.createEntry();
 			self.buildLcarDataEntryScreen(l_entry, 'handleDataEntryOnClick');
 		} else if (l_ix == 10002) {  // The "Back" button
-			self.showWidget('HouseMenu');
+			self.showWidget('ComputerMenu');
 		}
 	},
 
@@ -112,39 +111,33 @@ helpers.Widget.subclass(mqtt, 'MqttWidget').methods(
 	},
 	function buildEntry(self, p_obj, p_handler, p_onchange) {
 		var l_html = buildBaseEntry(self, p_obj);
-		l_html = self.buildNodeEntry(p_obj, l_html);
+		l_html = self.buildMqttEntry(p_obj, l_html);
 		l_html += buildLcarEntryButtons(p_handler);
 		return l_html;
 	},
-    function buildNodeEntry(self, p_obj, p_html) {
-		// p_html += buildLcarTextWidget(self, 'Comment', 'Comment', p_obj.Comment);
+    function buildMqttEntry(self, p_obj, p_html) {
 		p_html += buildLcarTextWidget(self, 'Addr', 'Broker Address', p_obj.BrokerAddress);
 		p_html += buildLcarTextWidget(self, 'Port', 'Port', p_obj.BrokerPort);
-		// p_html += buildLcarTextWidget(self, 'Role', 'Node Role', p_obj.NodeRole);
         return p_html;
     },
 	function fetchEntry(self) {
     	var l_data = fetchBaseEntry(self, l_data);
-		l_data = self.fetchNodeEntry(l_data);
-        return l_data;
+		l_data = self.fetchMqttEntry(l_data);
+       return l_data;
 	},
-    function fetchNodeEntry(self, p_data) {
-        // p_data.Comment = fetchTextWidget(self, 'Comment');
+    function fetchMqttEntry(self, p_data) {
         p_data.BrokerAddress = fetchTextWidget(self, 'Addr');
         p_data.BrokerPort = fetchTextWidget(self, 'Port');
-        // p_data.NodeRole = fetchTextWidget(self, 'Role');
     	return p_data;
     },
     function createEntry(self) {
-        var l_data = createBaseEntry(self, Object.keys(globals.Computer.Nodes).length);
-        l_data = self.createNodeEntry(l_data);
+        var l_data = createBaseEntry(self, Object.keys(globals.Computer.Mqtt).length);
+        l_data = self.createMqttEntry(l_data);
         return l_data;
     },
-    function createNodeEntry(self, p_data) {
-		// p_data.Comment = '';
+    function createMqttEntry(self, p_data) {
 		p_data.BrokerAddress = '';
-		p_data.BrokerPort = '';
-		// p_data.NodeRoll = 0;
+		p_data.BrokerPort = '1883';
         return p_data;
     },
 

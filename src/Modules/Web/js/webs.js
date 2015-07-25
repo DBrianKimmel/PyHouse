@@ -1,24 +1,11 @@
 /**
- * webs.js
- * 
- * version 1.00
- * 
- * D. Brian Kimmel
- * 
-	ret = ret + '<form method="post" action="_submit!!post" enctype="multipart/form-data">\n';
-	ret = ret +	'  Web Port:';
-	ret = ret +	'    <input type = "text" name = "WebPort" value = "' + p_port + '" /><br />\n';
-	ret = ret +	'  <br />\n';
-	ret = ret + '  <input type="submit" name="post_btn" value="Change_Web Port" />\n';
-	ret = ret + '</form>\n';
- */
-
-// import Nevow.Athena
-// import globals
-// import helpers
-
-/**
- * The Logs widget.
+ * @name:      PyHouse/src/Modules/Web/js/web.js
+ * @author:    D. Brian Kimmel
+ * @contact:   D.BrianKimmel@gmail.com
+ * @copyright: (c) 2014-2015 by D. Brian Kimmel
+ * @license:   MIT License
+ * @note:      Created on June 18, 2014
+ * @summary:   Displays the Web element
  * 
  */
 
@@ -28,7 +15,7 @@ helpers.Widget.subclass(webs, 'WebsWidget').methods(
 		webs.WebsWidget.upcall(self, '__init__', node);
 	},
 
-	// ============================================================================
+// ============================================================================
 	/**
      * Place the widget in the workspace.
 	 * 
@@ -39,30 +26,32 @@ helpers.Widget.subclass(webs, 'WebsWidget').methods(
 		function cb_widgetready(res) {
 			self.hideWidget();
 		}
+		function eb_widgetready(p_reason) {
+			Divmod.debug('---', 'ERROR - webs.eb_widgetready() - ' + p_reason);
+		}
 		var uris = collectIMG_src(self.node, null);
 		var l_defer = loadImages(uris);
 		l_defer.addCallback(cb_widgetready);
+		l_defer.addErrback(eb_widgetready);
 		return l_defer;
 	},
 	function startWidget(self) {
 		self.node.style.display = 'block';
+		self.fetchDataFromServer();
 	},
 
-	// ============================================================================
+// ============================================================================
 	/**
-	 * Called from the root menu screen when the Web Server button was clicked.
+	 * Called from the computer menu screen when the Web Server button was clicked.
 	 */
 	function fetchDataFromServer(self) {
 		function cb_fetchDataFromServer(p_json) {
-			//Divmod.debug('---', 'webs.cb_fetchDataFromServer() was called.  JSON = ' + p_json);
 			var l_obj = JSON.parse(p_json);
 			self.fillEntry(l_obj);
 		}
 		function eb_fetchDataFromServer(res) {
 			Divmod.debug('---', 'webs.eb_fetchDataFromServer() was called. ERROR = ' + res);
 		}
-		//Divmod.debug('---', 'webs.fetchDataFromServer() was called.');
-		self.startWidget();
         var l_defer = self.callRemote("getWebsData");  // call server @ web_webs.py
 		l_defer.addCallback(cb_fetchDataFromServer);
 		l_defer.addErrback(eb_fetchDataFromServer);
@@ -106,9 +95,7 @@ helpers.Widget.subclass(webs, 'WebsWidget').methods(
 			l_defer.addErrback(eb_handleDataOnClick);
 			break;
 		case '10002':  // Back button
-			//Divmod.debug('---', 'webs.handleDataOnClick(Back) was called.  ');
-			var l_node = findWidgetByClass('RootMenu');
-			l_node.startWidget();
+			self.showWidget('ComputerMenu');
 			break;
 		default:
 			Divmod.debug('---', 'webs.handleDataOnClick(Default) was called. l_ix:' + l_ix);

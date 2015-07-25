@@ -94,7 +94,7 @@ helpers.Widget.subclass(nodes, 'NodesWidget').methods(
 			var l_entry = self.createEntry();
 			self.buildLcarDataEntryScreen(l_entry, 'handleDataEntryOnClick');
 		} else if (l_ix == 10002) {  // The "Back" button
-			self.showWidget('HouseMenu');
+			self.showWidget('ComputerMenu');
 		}
 	},
 

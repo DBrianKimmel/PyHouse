@@ -52,12 +52,12 @@ helpers.Widget.subclass(computerMenu, 'ComputerMenuWidget').methods(
 	function menuItems(self){
 		var l_list = [
 		    // Key,           Caption,               Widget Name
-			['Internet',     'Network Addressing',  'Internet'        ],
+			['Internet',     'Network Address',     'Internet'        ],
 			['Nodes',        'Nodes',               'Nodes'           ],
 			['Mqtt',		 'Mqtt Broker',			'Mqtt'			  ],
-			['Update',       'Update PyHouse',      'Update'          ],
-			['Weather',      'Weather',             'Weather'         ],
-			['Web',          'Web',                 'Web'             ]
+			//['Weather',      'Weather',             'Weather'         ],
+			//['Web',          'Web',                 'Web'             ]
+			['Update',       'Update PyHouse',      'Update'          ]
 			];
 		return l_list;
 	},

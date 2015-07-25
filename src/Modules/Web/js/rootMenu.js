@@ -56,9 +56,6 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 // ============================================================================
 	function menuItems(self){
 		var l_list = [
-		  	//		['Select' ,      'Select House',        'Select'          ],
-			//		['Mqtt',		 'Mqtt Broker',			'Mqtt'			  ],
-			//		['Web',          'Web',                 'Web'             ]
 		    // Key,           Caption,               Widget Name
 			['House',        'House',               'HouseMenu'           ],
 			['Computer',     'Computer',            'ComputerMenu'        ]
@@ -66,7 +63,6 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 		return l_list;
 	},
 	function buildLcarScreen(self) {
-		// Divmod.debug('---', 'rootMenu.buildLcarScreen was called.');
 		var l_menu_html = "<div class='lcars-row spaced'>\n";
 		l_menu_html += buildLcarMenuButtons(self.menuItems(), 'doHandleOnClick');
 		l_menu_html += "</div>\n";

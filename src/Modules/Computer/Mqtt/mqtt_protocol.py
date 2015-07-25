@@ -524,7 +524,7 @@ class MqttReconnectingClientFactory(ReconnectingClientFactory):
         """
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_broker = p_broker
-        p_broker.ProtocolAPI = self
+        p_broker._ProtocolAPI = self
         self.m_clientID = p_client_id
 
     def startedConnecting(self, _p_connector):
@@ -532,10 +532,9 @@ class MqttReconnectingClientFactory(ReconnectingClientFactory):
 
     def buildProtocol(self, p_addr):
         l_client = MQTTClient(self.m_pyhouse_obj)
-        self.m_broker.ProtocolAPI = l_client
+        self.m_broker._ProtocolAPI = l_client
         LOG.info("Mqtt broker address: {}".format(p_addr))
         self.resetDelay()
-        # self.m_pyhouse_obj.Computer.Mqtt.ProtocolAPI = l_client
         return l_client
 
     def clientConnectionLost(self, p_connector, p_reason):

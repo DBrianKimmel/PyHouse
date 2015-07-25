@@ -102,11 +102,10 @@ helpers.Widget.subclass(workspace, 'Workspace').methods(
 				Divmod.debug('---', 'ERROR - workspace.guiready.errback() - ' + p_reason );
 				self.node.appendChild(document.createTextNode('Error: ' + p_reason.error.message));
 			}
-			// Divmod.debug('---', 'workspace.appStartup.ready()');
 			var l_defer = self.callRemote('guiready');
 			l_defer.addCallback(cb_ready);
 			l_defer.addErrback(eb_ready);
-		} // ready
+		}
 
 		// Divmod.debug('---', 'workspace.appStartup()');
 		var d = Divmod.Defer.succeed();

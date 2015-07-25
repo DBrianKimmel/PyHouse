@@ -19,6 +19,8 @@ from Modules.Core.data_objects import MqttBrokerData
 from Modules.Web.web_utils import JsonUnicode, GetJSONComputerInfo
 from Modules.Computer import logging_pyh as Logger
 from Modules.Families.Insteon import Insteon_utils
+from Modules.Utilities.uuid_tools import Uuid
+from Modules.Core.setup_logging import l_observer
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -58,20 +60,18 @@ class MqttElement(athena.LiveElement):
                 LOG.error("web_mqtt - Failed to delete - JSON: {0:}".format(l_json))
             return
         try:
-            l_obj = self.m_pyhouse_obj.Computer.Mqtt
+            l_obj = self.m_pyhouse_obj.Computer.Mqtt[l_ix]
         except KeyError:
-            LOG.warning('Creating a new Mqtt Broker for Key:{}'.format(l_ix))
+            LOG.warning('Creating a new Mqtt Broker Key: {}'.format(l_ix))
             l_obj = MqttBrokerData()
         #
         LOG.info('JSON {}'.format(l_json))
         l_obj.Name = l_json['Name']
         l_obj.Active = l_json['Active']
         l_obj.Key = l_ix
-        l_obj.UUID = l_json['UUID']
-        if len(l_obj.UUID) < 8:
-            l_obj.UUID = str(uuid.uuid1())
+        l_obj.UUID = Uuid.make_valid(l_json['UUID'])
         l_obj.BrokerAddress = l_json['BrokerAddress']
         l_obj.BrokerPort = l_json['BrokerPort']
-        self.m_pyhouse_obj.Computer.Mqtt = l_obj
+        self.m_pyhouse_obj.Computer.Mqtt[l_obj.Key] = l_obj
 
 # ## END DBK

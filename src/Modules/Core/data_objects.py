@@ -179,8 +179,8 @@ class MqttBrokerData(BaseObject):
         super(MqttBrokerData, self).__init__()
         self.BrokerAddress = None
         self.BrokerPort = None
-        self.ClientAPI = None
-        self.ProtocolAPI = None
+        self._ClientAPI = None
+        self._ProtocolAPI = None
 
 
 class HouseInformation(BaseObject):
