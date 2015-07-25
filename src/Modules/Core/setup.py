@@ -36,7 +36,7 @@ LOG = Logger.getLogger('PyHouse.CoreSetup      ')
 
 INTER_NODE = 'tcp:port=8581'
 INTRA_NODE = 'unix:path=/var/run/pyhouse/node:lockfile=1'
-INITIAL_DELAY = 1 * 60
+INITIAL_DELAY = 3 * 60
 REPEAT_DELAY = 2 * 60 * 60  # 2 hours
 
 

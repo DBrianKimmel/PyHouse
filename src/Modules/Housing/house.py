@@ -102,7 +102,7 @@ class Utility(object):
     def start_house_parts(self, p_pyhouse_obj):
         # These two must start before the other things
         p_pyhouse_obj.APIs.House.FamilyAPI.Start()
-        p_pyhouse_obj.APIs.House.SunRiseSetAPI.Start()
+        # p_pyhouse_obj.APIs.House.SunRiseSetAPI.Start()
         #
         p_pyhouse_obj.APIs.House.EntertainmentAPI.Start()
         p_pyhouse_obj.APIs.House.HvacAPI.Start()

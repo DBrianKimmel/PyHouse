@@ -47,11 +47,11 @@ class Util(object):
                 LOG.error('Bad Mqtt broker Address: {}'.format(l_host))
                 l_broker._ProtocolAPI = None
             else:
-                LOG.info('About to create factory ')
                 l_factory = mqtt_protocol.MqttReconnectingClientFactory(p_pyhouse_obj, "DBK1", l_broker)
-                _l_connector = p_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_factory)
+                l_connector = p_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_factory)
+                LOG.info('Connected to broker: {}'.format(l_connector))
                 l_count += 1
-        LOG.info('TCP Connected {} Brokers.'.format(l_count))
+        LOG.info('TCP Connected to {} Broker(s).'.format(l_count))
         return l_count
 
 
@@ -93,14 +93,17 @@ class API(Util):
                 continue
             try:
                 l_broker._ProtocolAPI.publish(p_topic, p_message)
-                LOG.info('Mqtt publishing:\n\tBroker: {}\n\tTopic:{}\n\tMessage"{}'.format(l_broker.Name, p_topic, p_message))
+                LOG.info('Mqtt publishing:\n\tBroker: {}\n\tTopic:{}'.format(l_broker.Name, p_topic))
             except AttributeError as e_err:
                 LOG.error("Mqtt Unpublished.\n\tERROR:{}\n\tTopic:{}\n\tMessage:{}".format(e_err, p_topic, p_message))
 
-    def MqttDispatch(self, _p_topic, _p_message):
-        """Dispatch a MQTT message according to the topic.
+    def MqttDispatch(self, p_topic, _p_message):
+        """Dispatch a received MQTT message according to the topic.
         """
-        pass
+        l_topic = p_topic.split('/')[1:]  # Drop the pyhouse as that is all we subscribed to.
+        if l_topic[0] != 'pyhouse':
+            return
+        LOG.info('Dispatch\n\tTopic: {}'.format(l_topic))
 
     def doPyHouseLogin(self, p_client, p_pyhouse_obj):
         """Login to PyHouse via MQTT

@@ -123,11 +123,11 @@ class Utility(object):
         l_family_data = {}
         l_count = 0
         for l_name in VALID_FAMILIES:
-            LOG.info(' Building family {}'.format(l_name))
             l_family_obj = Utility._build_one_family_data(p_pyhouse_obj, l_name)
             l_family_obj.Key = l_count
             l_family_data[l_family_obj.Name] = l_family_obj
             l_count += 1
+        LOG.info('Built {} families'.format(l_count))
         return l_family_data  # For testing
 
 

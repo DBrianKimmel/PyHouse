@@ -156,7 +156,7 @@ class MQTTProtocol(Protocol):
         # Extract the message
         # Whatever remains is the message
         message = str(packet)
-        LOG.info('Mqtt Publish: {}\n\t{}'.format(topic, message))
+        # LOG.info('Mqtt Publish: {}\n\t{}'.format(topic, message))
         self.publishReceived(topic, message, qos, dup, retain, messageId)
 
     def _event_puback(self, packet, _qos, _dup, _retain):
@@ -314,7 +314,7 @@ class MQTTProtocol(Protocol):
         self.transport.write(str(payload))
 
     def publish(self, p_topic, p_message, qosLevel = 0, retain = False, dup = False, messageId = None):
-        LOG.info("Sending publish packet - Topic: {}  Message: {}".format(p_topic, p_message))
+        # LOG.info("Sending publish packet - Topic: {}".format(p_topic))
         header = bytearray()
         varHeader = bytearray()
         payload = bytearray()
@@ -452,8 +452,9 @@ class MQTTClient(MQTTProtocol):
 
     m_pingPeriod = 5
 
-    def __init__(self, p_pyhouse_obj, p_clientID = None, keepalive = None, willQos = 0, willTopic = None, willMessage = None, willRetain = False):
+    def __init__(self, p_pyhouse_obj, p_broker, p_clientID = None, keepalive = None, willQos = 0, willTopic = None, willMessage = None, willRetain = False):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_broker = p_broker
         # try:
         #    l_name = p_pyhouse_obj.Computer.Nodes[0].Name
         # except KeyError:
@@ -507,8 +508,9 @@ class MQTTClient(MQTTProtocol):
         """ This is where we receive all the pyhouse messages.
         Call the dispatcher to send them on to the correct place.
         """
-        LOG.info("Client publishReceived\n  Topic: {}\n  Message: {}".format(p_topic, p_message))
-        # self.MqttDispatch(p_topic, p_message)
+        # LOG.info("\n\tBroker: {}\n\tTopic: {}".format(self.m_broker.Name, p_topic))
+        # LOG.info(': {}'.format(self))
+        self.m_broker._ClientAPI.MqttDispatch(p_topic, p_message)
 
 
 ###########################################
@@ -527,11 +529,12 @@ class MqttReconnectingClientFactory(ReconnectingClientFactory):
         p_broker._ProtocolAPI = self
         self.m_clientID = p_client_id
 
-    def startedConnecting(self, _p_connector):
-        LOG.warn('Started to connect.')
+    def startedConnecting(self, p_connector):
+        # LOG.warn('Started to connect. {}'.format(p_connector))
+        pass
 
     def buildProtocol(self, p_addr):
-        l_client = MQTTClient(self.m_pyhouse_obj)
+        l_client = MQTTClient(self.m_pyhouse_obj, self.m_broker)
         self.m_broker._ProtocolAPI = l_client
         LOG.info("Mqtt broker address: {}".format(p_addr))
         self.resetDelay()
