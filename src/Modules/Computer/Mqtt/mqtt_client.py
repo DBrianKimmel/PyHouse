@@ -15,7 +15,7 @@
 import copy
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import NodeData
+from Modules.Core.data_objects import NodeData, MqttInformation
 from Modules.Computer.Mqtt import mqtt_protocol
 from Modules.Computer.Mqtt.mqtt_xml import Xml as mqttXML
 from Modules.Web import web_utils
@@ -37,7 +37,7 @@ class Util(object):
         These connections will automatically reconnect if the connection is broken (broker reboots e.g.)
         """
         l_count = 0
-        for l_broker in p_pyhouse_obj.Computer.Mqtt.itervalues():
+        for l_broker in p_pyhouse_obj.Computer.Mqtt.Brokers.itervalues():
             if not l_broker.Active:
                 continue
             l_host = l_broker.BrokerAddress
@@ -62,11 +62,13 @@ class API(Util):
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         p_pyhouse_obj.APIs.Computer.MqttAPI = self
+        p_pyhouse_obj.Computer
+        p_pyhouse_obj.Computer.Mqtt = MqttInformation()
         LOG.info("Initialized.")
 
     def Start(self):
         l_config_dict = mqttXML().read_mqtt_xml(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.Computer.Mqtt = l_config_dict
+        self.m_pyhouse_obj.Computer.Mqtt.Brokers = l_config_dict
         if l_config_dict != {}:
             l_count = self.client_connect_all_brokers(self.m_pyhouse_obj)
             LOG.info("Mqtt {} broker(s) Started.".format(l_count))
@@ -77,7 +79,7 @@ class API(Util):
         pass
 
     def SaveXml(self, p_xml):
-        l_xml = mqttXML().write_mqtt_xml(self.m_pyhouse_obj.Computer.Mqtt)
+        l_xml = mqttXML().write_mqtt_xml(self.m_pyhouse_obj.Computer.Mqtt.Brokers)
         p_xml.append(l_xml)
         LOG.info("Saved Mqtt XML.")
         return p_xml
@@ -85,23 +87,26 @@ class API(Util):
     def MqttPublish(self, p_topic, p_message):
         """Send a topic, message to the broker for it to distribute to the subscription list
 
-        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("pyhouse/schedule/execute", l_schedule_json)
+        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("schedule/execute", l_schedule_json)
 
         """
-        for l_broker in self.m_pyhouse_obj.Computer.Mqtt.itervalues():
+        l_topic = self.m_pyhouse_obj.Computer.Mqtt.Prefix + p_topic
+        for l_broker in self.m_pyhouse_obj.Computer.Mqtt.Brokers.itervalues():
             if not l_broker.Active:
                 continue
             try:
-                l_broker._ProtocolAPI.publish(p_topic, p_message)
-                LOG.info('Mqtt publishing:\n\tBroker: {}\n\tTopic:{}'.format(l_broker.Name, p_topic))
+                l_broker._ProtocolAPI.publish(l_topic, p_message)
+                LOG.info('Mqtt publishing:\n\tBroker: {}\n\tTopic:{}'.format(l_broker.Name, l_topic))
             except AttributeError as e_err:
-                LOG.error("Mqtt Unpublished.\n\tERROR:{}\n\tTopic:{}\n\tMessage:{}".format(e_err, p_topic, p_message))
+                LOG.error("Mqtt Unpublished.\n\tERROR:{}\n\tTopic:{}\n\tMessage:{}".format(e_err, l_topic, p_message))
 
-    def MqttDispatch(self, p_topic, _p_message):
+    def MqttDispatch(self, p_topic, p_message):
         """Dispatch a received MQTT message according to the topic.
         """
-        l_topic = p_topic.split('/')[1:]  # Drop the pyhouse as that is all we subscribed to.
+        l_topic = p_topic.split('/')[2:]  # Drop the pyhouse/housename/ as that is all we subscribed to.
         LOG.info('Dispatch\n\tTopic: {}'.format(l_topic))
+        if l_topic[0] == 'login':
+            LOG.info('Login: {}'.format(p_message))
 
     def doPyHouseLogin(self, p_client, p_pyhouse_obj):
         """Login to PyHouse via MQTT
@@ -113,6 +118,6 @@ class API(Util):
             l_node = NodeData()
         l_node.NodeInterfaces = None
         l_json = web_utils.JsonUnicode().encode_json(l_node)
-        self.MqttPublish('pyhouse/login/initial', l_json)
+        self.MqttPublish('login/initial', l_json)
 
 # ## END DBK
