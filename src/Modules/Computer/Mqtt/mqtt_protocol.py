@@ -453,6 +453,9 @@ class MQTTClient(MQTTProtocol):
     m_pingPeriod = 5
 
     def __init__(self, p_pyhouse_obj, p_broker, p_clientID = None, keepalive = None, willQos = 0, willTopic = None, willMessage = None, willRetain = False):
+        """
+        At this point all config has been read in and Set-up
+        """
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_broker = p_broker
         if p_clientID is not None:
@@ -467,6 +470,9 @@ class MQTTClient(MQTTProtocol):
         self.willTopic = willTopic
         self.willMessage = willMessage
         self.willRetain = willRetain
+        self.m_prefix = 'pyhouse/' + p_pyhouse_obj.House.Name.lower() + '/'
+        p_pyhouse_obj.Computer.Mqtt.Prefix = self.m_prefix
+        LOG.info('Prefix {}'.format(self.m_prefix))
         LOG.info('Connection to broker set up for: {}'.format(self.m_clientID))
 
     def connectionMade(self):
@@ -483,7 +489,8 @@ class MQTTClient(MQTTProtocol):
 
     def mqttConnected(self):
         LOG.info("Client mqttConnected")
-        self.subscribe(SUBSCRIBE)
+        l_topic = self.m_pyhouse_obj.Computer.Mqtt.Prefix + '#'
+        self.subscribe(l_topic)
 
     def connackReceived(self, p_status):
         LOG.info('Client conackReceived - Status: {}'.format(p_status))
@@ -525,7 +532,6 @@ class MqttReconnectingClientFactory(ReconnectingClientFactory):
         self.m_broker = p_broker
         p_broker._ProtocolAPI = self
         self.m_clientID = p_client_id
-        self.m_prefix = 'pyhouse/' + p_pyhouse_obj.House.Name.lower()
 
     def startedConnecting(self, p_connector):
         # LOG.warn('Started to connect. {}'.format(p_connector))

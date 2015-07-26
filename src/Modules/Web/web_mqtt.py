@@ -55,12 +55,12 @@ class MqttElement(athena.LiveElement):
         l_ix = int(l_json['Key'])
         if l_delete:
             try:
-                del self.m_pyhouse_obj.Computer.Mqtt
+                del self.m_pyhouse_obj.Computer.Mqtt.Brokers
             except AttributeError:
                 LOG.error("web_mqtt - Failed to delete - JSON: {0:}".format(l_json))
             return
         try:
-            l_obj = self.m_pyhouse_obj.Computer.Mqtt[l_ix]
+            l_obj = self.m_pyhouse_obj.Computer.Mqtt.Brokers[l_ix]
         except KeyError:
             LOG.warning('Creating a new Mqtt Broker Key: {}'.format(l_ix))
             l_obj = MqttBrokerData()
@@ -72,6 +72,6 @@ class MqttElement(athena.LiveElement):
         l_obj.UUID = Uuid.make_valid(l_json['UUID'])
         l_obj.BrokerAddress = l_json['BrokerAddress']
         l_obj.BrokerPort = l_json['BrokerPort']
-        self.m_pyhouse_obj.Computer.Mqtt[l_obj.Key] = l_obj
+        self.m_pyhouse_obj.Computer.Mqtt.Brokers[l_obj.Key] = l_obj
 
 # ## END DBK

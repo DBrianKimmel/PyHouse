@@ -44,7 +44,7 @@ class ihvac_utility(object):
         """
         @param p_device_obj: is the Device (light, thermostat...) we are decoding.
         """
-        l_mqtt_topic = 'pyhouse/thermostat/{}'.format(p_device_obj.Name)
+        l_mqtt_topic = 'thermostat/{}'.format(p_device_obj.Name)
         l_mqtt_message = "Thermostat: "
         l_message = p_controller_obj._Message
         l_cmd1 = l_message[9]

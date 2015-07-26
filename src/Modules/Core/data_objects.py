@@ -167,7 +167,7 @@ class ComputerInformation(BaseObject):
         self.Communication = None
         self.Email = None  # EmailData()
         self.InternetConnection = None  # InternetConnectionData()
-        self.Mqtt = None  # MqttBrokerData()
+        self.Mqtt = None  # MqttInformation()
         self.Nodes = None  # NodeData()
         self.Web = None  # WebData()
 

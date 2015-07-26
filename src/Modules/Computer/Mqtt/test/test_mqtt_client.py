@@ -89,8 +89,8 @@ class B1_Connect(SetupMixin, unittest.TestCase):
     def test_01_Broker(self):
         """ Be sure that the XML contains the right stuff.
         """
-        self.m_pyhouse_obj.Computer.Mqtt = {}
-        self.m_pyhouse_obj.Computer.Mqtt[0] = self.m_broker
+        self.m_pyhouse_obj.Computer.Mqtt.Brokers = {}
+        self.m_pyhouse_obj.Computer.Mqtt.Brokers[0] = self.m_broker
         PrettyPrintAny(self.m_broker, 'Broker')
         self.m_api.client_connect_all_brokers(self.m_pyhouse_obj)
 

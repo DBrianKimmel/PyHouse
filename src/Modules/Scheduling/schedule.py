@@ -239,7 +239,7 @@ class ScheduleTime(object):
         # l_riseset = RiseSetData()
         l_riseset = p_pyhouse_obj.House.RefOBJs.Location.RiseSet
         l_json = web_utils.JsonUnicode().encode_json(l_riseset)
-        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("pyhouse/testing", l_json)
+        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("testing", l_json)
         LOG.info("Sunrise:{}, Sunset:{}".format(l_riseset.SunRise, l_riseset.SunSet))
         return l_riseset
 
@@ -272,7 +272,7 @@ class ScheduleExecution(object):
         l_light_obj = tools.get_light_object(self.m_pyhouse_obj, name = l_schedule_obj.LightName)
         LOG.info("Name:{0:}, Light:{1:}, Level:{2:}, Slot:{3:}".format(l_schedule_obj.Name, l_schedule_obj.LightName, l_schedule_obj.Level, p_slot))
         self.m_pyhouse_obj.APIs.House.LightingAPI.ChangeLight(l_light_obj, l_schedule_obj.Level)
-        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("pyhouse/schedule/execute", l_schedule_json)
+        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("schedule/execute", l_schedule_json)
 
     def execute_schedules_list(self, p_slot_list = []):
         """
