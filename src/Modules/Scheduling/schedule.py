@@ -51,7 +51,7 @@ import datetime
 import dateutil.parser as dparser
 
 # Import PyMh files
-from Modules.Core.data_objects import RiseSetData
+# from Modules.Core.data_objects import RiseSetData
 from Modules.Scheduling.schedule_xml import ScheduleXmlAPI
 from Modules.Utilities import tools
 from Modules.Utilities.tools import GetPyhouse
@@ -271,7 +271,7 @@ class ScheduleExecution(object):
             pass
         l_light_obj = tools.get_light_object(self.m_pyhouse_obj, name = l_schedule_obj.LightName)
         LOG.info("Name:{0:}, Light:{1:}, Level:{2:}, Slot:{3:}".format(l_schedule_obj.Name, l_schedule_obj.LightName, l_schedule_obj.Level, p_slot))
-        self.m_pyhouse_obj.APIs.House.LightingAPI.ChangeLight(l_light_obj, l_schedule_obj.Level)
+        self.m_pyhouse_obj.APIs.House.LightingAPI.ChangeLight(l_light_obj, 'shedule', l_schedule_obj.Level)
         self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("schedule/execute", l_schedule_json)
 
     def execute_schedules_list(self, p_slot_list = []):

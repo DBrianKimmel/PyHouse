@@ -69,9 +69,9 @@ class API(Util):
     def SaveXml(self, p_xml):
         return p_xml
 
-    def ChangeLight(self, p_light_obj, p_level, _p_rate = 0):
+    def ChangeLight(self, p_light_obj, p_source, p_level, _p_rate = 0):
         LOG.debug('Change light Name:{0:}, DeviceFamily:{1:}'.format(p_light_obj.Name, p_light_obj.DeviceFamily))
         _l_api = self.m_pyhouse_obj.House.RefOBJs.FamilyData[p_light_obj.DeviceFamily].FamilyModuleAPI
-        self.m_plm.ChangeLight(p_light_obj, p_level)
+        self.m_plm.ChangeLight(p_light_obj, p_source, p_level)
 
 # ## END

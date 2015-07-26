@@ -135,7 +135,7 @@ class API(Utility):
         """Allow loading of sub modules and drivers.
         """
         self._read_lighting_xml(self.m_pyhouse_obj)
-        # self.m_pyhouse_obj.APIs.House.FamilyAPI.start_lighting_families(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.APIs.House.FamilyAPI.start_lighting_families(self.m_pyhouse_obj)
         LOG.info("Started.")
 
     def Stop(self):
@@ -154,7 +154,7 @@ class API(Utility):
         LOG.info("Saved Lighting XML.")
         return p_xml
 
-    def ChangeLight(self, p_light_obj, p_new_level, _p_rate = None):
+    def ChangeLight(self, p_light_obj, p_source, p_new_level, _p_rate = None):
         """
         Set an Insteon controlled light to a value - On, Off, or Dimmed.
 
@@ -165,8 +165,9 @@ class API(Utility):
         l_light_obj = Utility._find_full_obj(self.m_pyhouse_obj.House.DeviceOBJs.Lights, p_light_obj)
         try:
             LOG.info("Turn Light {} to level {}, DeviceFamily:{}".format(l_light_obj.Name, p_new_level, l_light_obj.DeviceFamily))
+
             l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, l_light_obj)
-            l_api.ChangeLight(l_light_obj, p_new_level)
+            l_api.ChangeLight(l_light_obj, p_source, p_new_level)
         except Exception as e_err:
             LOG.error('ERROR - {}'.format(e_err))
 

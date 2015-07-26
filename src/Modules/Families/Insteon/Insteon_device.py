@@ -60,10 +60,10 @@ class Utility(object):
         l_plmAPI = Insteon_PLM.API()
         p_controller_obj._HandlerAPI = l_plmAPI
         if l_plmAPI.Start(p_pyhouse_obj, p_controller_obj):
-            LOG.info('Successfully started Insteon controller {0:}'.format(p_controller_obj.Name))
+            LOG.info('Successfully started Insteon controller {}'.format(p_controller_obj.Name))
             return l_plmAPI
         else:
-            LOG.error('Controller {0:} failed to start.'.format(p_controller_obj.Name))
+            LOG.error('Controller {} failed to start.'.format(p_controller_obj.Name))
             p_controller_obj.Active = False
             return None
 
@@ -75,6 +75,7 @@ class Utility(object):
 
         Return the Insteon_PLM API reference if one is found:
         """
+        l_count = 0
         for l_controller_obj in p_pyhouse_obj.House.DeviceOBJs.Controllers.itervalues():
             if Utility._is_valid_controller(l_controller_obj):
                 LOG.info('Insteon Controller: {} - will be started.'.format(l_controller_obj.Name))
@@ -114,11 +115,11 @@ class API(object):
         except AttributeError as e_err:
             LOG.info('Stop Warning - {0:}'.format(e_err))  # no controllers for house(House is being added)
 
-    def ChangeLight(self, p_light_obj, p_level, p_rate = 0):
+    def ChangeLight(self, p_light_obj, p_source, p_level, p_rate = 0):
         """
         Do the Insteon thing to change the level of an Insteon light
         """
         LOG.info('Device Name:{}; to level:{}; via {}'.format(p_light_obj.Name, p_level, self.m_plm))
-        self.m_plm.ChangeLight(p_light_obj, p_level, p_rate)
+        self.m_plm.ChangeLight(p_light_obj, p_source, p_level, p_rate)
 
 # ## END DBK

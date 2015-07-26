@@ -16,7 +16,7 @@ Responses do not all have to follow the command that caused them.
 
 TODO:
     Work toward getting one instance per controller.
-        We will then need to assign lights to a particular controller if there is more than one in a house.
+        We may then need to assign lights to a particular controller if there is more than one in a house.
     implement all-links
 
 """
@@ -27,7 +27,7 @@ import Queue
 # Import PyMh files
 from Modules.Core import conversions
 from Modules.Families.Insteon.Insteon_data import InsteonData
-from Modules.Utilities.tools import PrintBytes
+# from Modules.Utilities.tools import PrintBytes
 from Modules.Families.Insteon.Insteon_constants import COMMAND_LENGTH, MESSAGE_LENGTH, MESSAGE_TYPES, PLM_COMMANDS, STX
 from Modules.Families.Insteon.Insteon_utils import Util
 from Modules.Families.Insteon import Insteon_decoder
@@ -548,7 +548,7 @@ class API(Utility):
         LOG.info('Stopped.')
 
 
-    def ChangeLight(self, p_device_obj, p_level, p_rate = 0):
+    def ChangeLight(self, p_device_obj, _p_source, p_level, p_rate = 0):
         """
         Send a command to change a device (light's level)
         """

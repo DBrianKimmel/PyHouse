@@ -160,5 +160,16 @@ class API(object):
         """
         return Utility._init_component_apis(self.m_pyhouse_obj)
 
+    def start_lighting_families(self, p_pyhouse_obj):
+        """
+        Load and start the family if there is a controller in the house for the family.
+        Runs Device_<family>.API.Start()
+        """
+        LOG.info("Starting lighting families.")
+        for l_family_obj in p_pyhouse_obj.House.RefOBJs.FamilyData.itervalues():
+            LOG.info('Starting Family {}'.format(l_family_obj.Name))
+            l_family_obj.FamilyModuleAPI.Start()  # will run <family>_device.API().Start()
+        LOG.info("Started all lighting families.")
+
 # ## END DBK
 

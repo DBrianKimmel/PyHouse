@@ -79,7 +79,7 @@ class API(object):
     def SaveXml(self, p_xml):
         pass
 
-    def ChangeLight(self, p_light_obj, p_level, p_rate = 0):
+    def ChangeLight(self, p_light_obj, p_source, p_level, p_rate = 0):
         pass
 
 # ## END
