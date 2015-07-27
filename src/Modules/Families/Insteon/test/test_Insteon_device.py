@@ -7,7 +7,7 @@
 @license:   MIT License
 @summary:   This module tests Insteon_device
 
-Passed all 4 tests - DBK - 2014-07-18
+Passed all 1 tests - DBK - 2015-07-26
 """
 
 # Import system type stuff
@@ -38,7 +38,7 @@ class C01_API(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
-        self.m_api = Insteon_device.API()
+        self.m_api = Insteon_device.API(self.m_pyhouse_obj)
         self.m_device = InsteonData()
 
     def test_01_Init(self):

@@ -24,8 +24,6 @@ LOG = Logger.getLogger('PyHouse.Insteon_Utils  ')
 
 
 class Util(object):
-    """
-    """
 
     @staticmethod
     def int2message(p_int, p_message, p_index = 3):
@@ -75,11 +73,8 @@ class Util(object):
         l_obj.GroupList = l_json['GroupList']
         l_obj.GroupNumber = l_json['GroupNumber']
         l_obj.InsteonAddress = int(l_json['InsteonAddress'])
-        l_obj.IsController = l_json['IsController']
         l_obj.IsMaster = l_json['IsMaster']
-        l_obj.IsResponder = l_json['IsResponder']
         l_obj.ProductKey = int(l_json['ProductKey'])
         return l_obj
-
 
 # ## END DBK

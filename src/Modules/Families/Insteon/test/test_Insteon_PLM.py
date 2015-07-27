@@ -16,7 +16,7 @@ from twisted.trial import unittest
 # Import PyMh files
 # from Modules.lights.lighting import LightData
 from Modules.Core.data_objects import PyHouseData, ControllerData
-from Modules.Families.Insteon import Insteon_PLM
+from Modules.Families.Insteon.Insteon_PLM import Utility, API as insteonPlmAPI
 from Modules.Families import family
 from Modules.Lighting.lighting_lights import API as lightsAPI
 from Modules.Lighting.lighting_controllers import API as controllefrAPI
@@ -37,33 +37,21 @@ STX = 0x02
 
 
 class SetupMixin(object):
-    """
-    """
 
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
-        self.m_api = Insteon_PLM.API()
-        self.m_llapi = lightsAPI(self.m_pyhouse_obj)
-        self.m_lcapi = controllefrAPI(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.DeviceOBJs.Lights = self.m_llapi.read_all_lights_xml(self.m_xml.light_sect)
-        self.m_pyhouse_obj.House.DeviceOBJs.Controllers = self.m_lcapi.read_all_controllers_xml(self.m_xml.controller_sect)
-        self.m_controller = ControllerData()
-
 
 
 class C01_Utility(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
-
 
     def test_01_MessageLength(self):
-        self.assertEqual(self.m_api._get_message_length(MSG_50), 11)
-        self.assertEqual(self.m_api._get_message_length(MSG_62), 9)
-        self.assertEqual(self.m_api._get_message_length(MSG_99), 1)
+        self.assertEqual(Utility._get_message_length(MSG_50), 11)
+        self.assertEqual(Utility._get_message_length(MSG_62), 9)
+        self.assertEqual(Utility._get_message_length(MSG_99), 1)
 
     def test_02_ExtractAddress(self):
         # self.assertEqual(self.m_api._get_addr_from_message(MSG_50, 2), conversions.dotted_hex2int(ADR_16C9D0))
@@ -86,7 +74,7 @@ class C02_Cmds(SetupMixin, unittest.TestCase):
     def setUp(self):
         # self.m_pyhouse_obj = PyHouseData()
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
+        # self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API(self.m_pyhouse_obj).build_lighting_family_info()
 
     def test_01_get_message_length(self):
         self.assertEqual(self.m_api._get_message_length(MSG_50), 11)

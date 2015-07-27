@@ -18,6 +18,7 @@ from twisted.trial import unittest, reporter, runner
 #        test_Insteon_utils, \
 #        test_Insteon_xml
 from Modules.Families.Insteon import test as I_test
+from Modules.Utilities.tools import PrettyPrintAny
 
 
 class C99_Family(unittest.TestCase):
@@ -25,12 +26,17 @@ class C99_Family(unittest.TestCase):
     def setUp(self):
         self.m_test = runner.TestLoader()
 
-    def test_9999_Insteon(self):
+    def test_99_Insteon(self):
         l_package = runner.TestLoader().loadPackage(I_test)
         l_ret = reporter.Reporter()
         l_package.run(l_ret)
         l_ret.done()
+        print('')
+        print(' ')
+        PrettyPrintAny(l_ret.errors, 'Test_Insteon-36 ')
         print('9999 Insteon', l_ret)
         l_ret.printErrors()
+        print(' TTTest {}'.format(l_package))
+        print(' ')
 
 # ## END DBK

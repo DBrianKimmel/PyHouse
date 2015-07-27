@@ -36,14 +36,11 @@ class ReadWriteXml(object):
     def insert_device_xml(self, p_entry_xml, p_device_obj):
         if p_device_obj.DeviceFamily == 'Insteon':
             ET.SubElement(p_entry_xml, 'Address').text = p_device_obj.Address
-            # ET.SubElement(p_entry_xml, 'IsController').text = self.put_bool(p_device_obj.IsController)
             ET.SubElement(p_entry_xml, 'GroupList').text = str(p_device_obj.GroupList)
             ET.SubElement(p_entry_xml, 'GroupNumber').text = str(p_device_obj.GroupNumber)
             ET.SubElement(p_entry_xml, 'IsMaster').text = str(p_device_obj.IsMaster)
-            # ET.SubElement(p_entry_xml, 'IsResponder').text = self.put_bool(p_device_obj.IsResponder)
         elif p_device_obj.DeviceFamily == 'UPB':
             try:
-                # ET.SubElement(p_entry_xml, 'X10UnitAddress').text = self.put_str(p_device_obj.X10UnitAddress)
                 ET.SubElement(p_entry_xml, 'Password').text = str(p_device_obj.Password)
                 ET.SubElement(p_entry_xml, 'UnitID').text = str(p_device_obj.UnitID)
             except AttributeError:

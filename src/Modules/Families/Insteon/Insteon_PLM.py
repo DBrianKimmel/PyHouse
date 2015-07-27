@@ -27,17 +27,13 @@ import Queue
 # Import PyMh files
 from Modules.Core import conversions
 from Modules.Families.Insteon.Insteon_data import InsteonData
-# from Modules.Utilities.tools import PrintBytes
 from Modules.Families.Insteon.Insteon_constants import COMMAND_LENGTH, MESSAGE_LENGTH, MESSAGE_TYPES, PLM_COMMANDS, STX
 from Modules.Families.Insteon.Insteon_utils import Util
 from Modules.Families.Insteon import Insteon_decoder
 from Modules.Computer import logging_pyh as Logger
 from Modules.Families.family_utils import FamUtil
 
-
 LOG = Logger.getLogger('PyHouse.Insteon_PLM    ')
-
-
 
 # Timeouts for send/receive delays
 SEND_TIMEOUT = 0.8
@@ -56,7 +52,6 @@ FLAG_ACKNOWLEDGEMENT = 0x20
 FLAG_EXTENDED_CMD = 0x10
 FLAG_HOPS_LEFT = 0x0C
 FLAG_MAX_HOPS = 0x03
-
 
 
 class ControllerData(InsteonData):

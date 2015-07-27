@@ -175,7 +175,7 @@ class W1_Write(SetupMixin, unittest.TestCase):
         PrettyPrintAny(l_xml, 'WriteOneLight')
 
     def test_05_AllLights(self):
-        l_lights = self.m_api.read_all_lights_xml(self.m_xml.light_sect)
+        l_lights = self.m_api.read_all_lights_xml(self.m_xml.light_sect, self.m_version)
         PrettyPrintAny(l_lights, 'Read all lights')
         l_xml = lightsAPI.write_all_lights_xml(l_lights)
         PrettyPrintAny(l_xml, 'Write All Lights')
@@ -194,7 +194,7 @@ class Z1_JSON(SetupMixin, unittest.TestCase):
     def test_01_CreateJson(self):
         """ Create a JSON object for Location.
         """
-        l_light = self.m_api.read_all_lights_xml(self.m_xml.light_sect)
+        l_light = self.m_api.read_all_lights_xml(self.m_xml.light_sect, self.m_version)
         print('Light: {0:}'.format(l_light))
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_light))
         PrettyPrintAny(l_json, 'JSON', 120)

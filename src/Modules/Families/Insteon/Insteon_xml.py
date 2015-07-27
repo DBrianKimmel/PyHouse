@@ -89,12 +89,9 @@ class API(object):
         """
         PutGetXML.put_text_element(p_out_xml, 'Address', conversions.int2dotted_hex(p_device.InsteonAddress, 3))
         PutGetXML.put_int_element(p_out_xml, 'DevCat', conversions.int2dotted_hex(p_device.DevCat, 2))
-        # PutGetXML.put_text_element(p_out_xml, 'DeviceFamily', p_device.DeviceFamily)
         PutGetXML.put_text_element(p_out_xml, 'GroupList', p_device.GroupList)
         PutGetXML.put_int_element(p_out_xml, 'GroupNumber', p_device.GroupNumber)
-        # PutGetXML.put_bool_element(p_out_xml, 'IsController', p_device.IsController)
         PutGetXML.put_bool_element(p_out_xml, 'IsMaster', p_device.IsMaster)
-        # PutGetXML.put_bool_element(p_out_xml, 'IsResponder', p_device.IsResponder)
         PutGetXML.put_text_element(p_out_xml, 'ProductKey', conversions.int2dotted_hex(p_device.ProductKey, 3))
         PutGetXML.put_int_element(p_out_xml, 'Version', p_device.Version)
         return p_out_xml

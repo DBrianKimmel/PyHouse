@@ -45,13 +45,11 @@ USB_XSD = """
 
 OTHER = """
     <xs:element type="xs:string" name="Address" minOccurs="0"/>
-    <xs:element type="xs:string" name="IsController" minOccurs="0"/>
     <xs:element type="xs:string" name="DevCat" minOccurs="0"/>
     <xs:element type="xs:string" name="GroupList" minOccurs="0"/>
     <xs:element type="xs:byte" name="GroupNumber" minOccurs="0"/>
     <xs:element type="xs:string" name="IsMaster" minOccurs="0"/>
     <xs:element type="xs:string" name="ProductKey" minOccurs="0"/>
-    <xs:element type="xs:string" name="IsResponder" minOccurs="0"/>
     <xs:element type="xs:byte" name="UPBNetworkID" minOccurs="0"/>
     <xs:element type="xs:short" name="UPBPassword" minOccurs="0"/>
     <xs:element type="xs:short" name="UPBAddress" minOccurs="0"/>

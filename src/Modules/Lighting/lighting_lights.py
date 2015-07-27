@@ -67,6 +67,7 @@ class API(object):
     @staticmethod
     def read_all_lights_xml(p_pyhouse_obj, p_light_sect_xml, p_version):
         """
+        @param p_pyhouse_obj: is the master information store
         @param p_light_sect_xml: the "LightSection" of the config
         """
         l_count = 0
@@ -94,6 +95,7 @@ class API(object):
     def _add_family_data(p_pyhouse_obj, p_light_obj, p_xml):
         """
         Add the family specific information of the device to the XML.
+        @param p_pyhouse_obj: is the master information store
         """
         try:
             l_device_family = p_light_obj.DeviceFamily

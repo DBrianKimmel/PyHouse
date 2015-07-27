@@ -39,21 +39,23 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+        self.m_version = '1.4.0'
 
 
-
-class C00_Setup(SetupMixin, unittest.TestCase):
+class A1_Setup(SetupMixin, unittest.TestCase):
     """
     """
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
-        self.m_pyhouse_obj.House.DeviceOBJs.Controllers = controllerAPI(self.m_pyhouse_obj).read_all_controllers_xml(self.m_xml.controller_sect)
-        self.m_pyhouse_obj.House.DeviceOBJs.Lights = lightsAPI.read_all_lights_xml(self.m_pyhouse_obj, self.m_xml.controller_sect)
+        # self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API(self.m_pyhouse_obj).build_lighting_family_info()
+        # self.m_pyhouse_obj.House.DeviceOBJs.Controllers = controllerAPI(self.m_pyhouse_obj).read_all_controllers_xml(self.m_xml.controller_sect)
+        self.m_pyhouse_obj.House.DeviceOBJs.Lights = lightsAPI.read_all_lights_xml(self.m_pyhouse_obj, self.m_xml.controller_sect, self.m_version)
 
     def test_01_PyHouse(self):
         PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse')
+
+    def test_02_House(self):
         l_house = self.m_pyhouse_obj.House
         PrettyPrintAny(l_house, 'House')
         l_devs = l_house.DeviceOBJs
@@ -62,7 +64,7 @@ class C00_Setup(SetupMixin, unittest.TestCase):
         PrettyPrintAny(l_refs, 'References')
 
 
-class C01_Util(SetupMixin, unittest.TestCase):
+class C1_Util(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))

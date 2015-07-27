@@ -7,6 +7,7 @@
 @note:      Created on Apr 27, 2013
 @summary:   This module is for testing Insteon conversion routines.
 
+Passed all 6 tests - DBL - 2015-07-26
 """
 
 # Import system type stuff
@@ -41,7 +42,6 @@ class SetupMixin(object):
         self.inst = Insteon_utils.Util
 
 
-
 class C01_Util(SetupMixin, unittest.TestCase):
     """
     """
@@ -63,12 +63,12 @@ class C01_Util(SetupMixin, unittest.TestCase):
 
 
 
-class C02_Conversions(unittest.TestCase):
+class C02_Conversions(SetupMixin, unittest.TestCase):
 
 
     def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.inst = Insteon_utils.Util
-        pass
 
     def test_01_Devices(self):
         l_objs = self.inst.get_device_objs(self.m_pyhouse_obj)
@@ -87,6 +87,7 @@ class C02_Conversions(unittest.TestCase):
         l_msg = MSG_62
         result = self.inst.int2message(ADDR_NOOK_INT, l_msg, 2)
         self.assertEqual(result[2:5], ADDR_NOOK_MSG)
+
 
 def suite():
     l_suite = unittest.TestSuite()

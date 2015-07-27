@@ -5,7 +5,10 @@
 @copyright: (c) 2014-2015 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 9, 2014
-@summary:
+@summary:   Insteon specific information.
+
+This information will be present in a device's XML for Insteon type devices.
+
 
 """
 
@@ -26,23 +29,20 @@ L_INSTEON_MASTER = '    <IsMaster>' + TESTING_INSTEON_MASTER + '</IsMaster>'
 
 
 
-XML_INSTEON = L_INSTEON_ADDRESS + L_INSTEON_DEVCAT + \
-                L_INSTEON_GROUP_NUM + L_INSTEON_GROUP_LIST + \
-                L_INSTEON_PRODUCT_KEY + L_INSTEON_MASTER
-
-#    <IsController>False</IsController>
-#    <IsResponder>False</IsResponder>
+XML_INSTEON = L_INSTEON_ADDRESS + \
+              L_INSTEON_DEVCAT + \
+              L_INSTEON_GROUP_NUM + \
+              L_INSTEON_GROUP_LIST + \
+              L_INSTEON_PRODUCT_KEY + \
+              L_INSTEON_MASTER
 
 
 INSTEON_XSD = """
 <xs:element type="xs:string" name="InsteonAddress"/>
-<xs:element type="xs:string" name="IsController"/>
 <xs:element type="xs:string" name="DevCat"/>
 <xs:element type="xs:string" name="GroupList"/>
 <xs:element type="xs:byte" name="GroupNumber"/>
-<xs:element type="xs:string" name="IsMaster"/>
 <xs:element type="xs:string" name="ProductKey"/>
-<xs:element type="xs:string" name="IsResponder"/>
 
 <xs:element type="xs:byte" name="UPBNetworkID" minOccurs="0"/>
 <xs:element type="xs:short" name="UPBPassword" minOccurs="0"/>
