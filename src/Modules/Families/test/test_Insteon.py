@@ -1,0 +1,33 @@
+"""
+@name:      PyHouse/src/Modules/Families/test/test_Insteon.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com>
+@copyright: (c) 2014-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Aug 16, 2014
+@Summary:
+
+"""
+
+# Import system type stuff
+from twisted.trial import unittest, reporter, runner
+
+from Modules.Families.Insteon import test as I_test
+# from Modules.Utilities.tools import PrettyPrintAny
+# from Modules.Computer import logging_pyh as Logger
+
+
+class Z_Insteon(unittest.TestCase):
+
+    def setUp(self):
+        self.m_test = runner.TestLoader()
+
+    def test_Insteon(self):
+        l_package = runner.TestLoader().loadPackage(I_test)
+        l_ret = reporter.Reporter()
+        l_package.run(l_ret)
+        l_ret.done()
+        #
+        print('\n====================\n*** test_Insteon ***\n{}\n'.format(l_ret))
+
+# ## END DBK

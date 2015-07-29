@@ -7,7 +7,7 @@
 @note:      Created on Apr 27, 2013
 @summary:   This module is for testing Insteon conversion routines.
 
-Passed all 6 tests - DBL - 2015-07-26
+Passed all 4 tests - DBL - 2015-07-28
 """
 
 # Import system type stuff
@@ -50,13 +50,9 @@ class C01_Util(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_controller_obj = self.m_pyhouse_obj.House.DeviceOBJs.Controllers
 
-    def test_01_Devices(self):
-        l_objs = self.inst.get_device_objs(self.m_pyhouse_obj)
-        PrettyPrintAny(l_objs, 'Device Objs')
-
     def test_02_DeviceClass(self):
         l_house = Insteon_utils.Util().get_device_class(self.m_pyhouse_obj, "xxx")
-        PrettyPrintAny(l_house, 'HouseOBJs')
+        # PrettyPrintAny(l_house, 'HouseOBJs')
 
     def test_03_iterate(self):
         pass
@@ -69,10 +65,6 @@ class C02_Conversions(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.inst = Insteon_utils.Util
-
-    def test_01_Devices(self):
-        l_objs = self.inst.get_device_objs(self.m_pyhouse_obj)
-        PrettyPrintAny(l_objs, 'Device Objs')
 
     def test_02_Message2int(self):
         result = self.inst.message2int(MSG_50, 2)

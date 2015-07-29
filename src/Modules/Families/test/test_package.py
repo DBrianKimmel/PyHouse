@@ -1,8 +1,14 @@
-'''
-Created on Apr 9, 2013
+"""
+@Name:      PyHouse/src/Modules/Family/test/test_package.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2013-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Apr 9, 2013
+@summary:   This module
 
-@author: briank
-'''
+Passed all 6 tests - DBK 2015-07-28
+"""
 
 # Import system type stuff
 import inspect

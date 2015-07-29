@@ -55,10 +55,6 @@ class Util(object):
         return l_int
 
     @staticmethod
-    def get_device_objs(p_pyhouse_obj):
-        pass
-
-    @staticmethod
     def get_device_class(p_pyhouse_obj, p_address):
         """
         Iterates over all the device objects in a given pyhouse_obj.

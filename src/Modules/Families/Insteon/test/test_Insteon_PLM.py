@@ -59,14 +59,19 @@ class C01_Utility(SetupMixin, unittest.TestCase):
         pass
 
     def test_03_Create(self):
-        l_cmd = self.m_api._create_command_message('insteon_send')
+        l_cmd = Utility._create_command_message('insteon_send')
         self.assertEqual(len(l_cmd), 8)
         self.assertEqual(l_cmd[0], STX)
         self.assertEqual(l_cmd[1], 0x62)
 
     def test_04_Obj(self):
-        PrettyPrintAny(self.m_pyhouse_obj.House, 'House')
-        PrettyPrintAny(self.m_pyhouse_obj.House.DeviceOBJs, 'Devices')
+        l_house = self.m_pyhouse_obj.House
+        # PrettyPrintAny(l_house, 'PLM - House')
+        self.assertEqual(l_house.Name, 'Test House')
+
+    def test_05_Obj(self):
+        # PrettyPrintAny(self.m_pyhouse_obj.House.DeviceOBJs, 'PLM - Devices')
+        pass
 
 
 class C02_Cmds(SetupMixin, unittest.TestCase):
@@ -77,21 +82,23 @@ class C02_Cmds(SetupMixin, unittest.TestCase):
         # self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API(self.m_pyhouse_obj).build_lighting_family_info()
 
     def test_01_get_message_length(self):
-        self.assertEqual(self.m_api._get_message_length(MSG_50), 11)
-        self.assertEqual(self.m_api._get_message_length(MSG_62), 9)
-        self.assertEqual(self.m_api._get_message_length(MSG_99), 1)
+        self.assertEqual(Utility._get_message_length(MSG_50), 11)
+        self.assertEqual(Utility._get_message_length(MSG_62), 9)
+        self.assertEqual(Utility._get_message_length(MSG_99), 1)
 
     def test_02_Command(self):
-        l_cmd = self.m_api._create_command_message('insteon_send')
-        print(PrintBytes(l_cmd))
+        l_cmd = Utility._create_command_message('insteon_send')
+        # print(PrintBytes(l_cmd))
         self.assertEqual(l_cmd[0], 0x02)
         self.assertEqual(l_cmd[1], 0x62)
 
     def test_03_63Cmd(self):
-        l_obj = self.m_pyhouse_obj.House.DeviceOBJs.Lights[0]
-        self.m_api._put_controller(self.m_controller)
-        PrettyPrintAny(l_obj, 'Lights')
-        l_cmd = self.m_api.queue_62_command(l_obj, 0x02, 0x04)
+        l_obj = self.m_pyhouse_obj.House.DeviceOBJs.Controllers
+        # PrettyPrintAny(l_obj, 'PLM - Controllers')
+        # insteonPlmAPI._put_controller(l_obj)
+        # PrettyPrintAny(l_obj, 'Lights')
+        # l_cmd = self.m_api.queue_62_command(l_obj, 0x02, 0x04)
+        pass
 
 
 class C03_Driver(SetupMixin, unittest.TestCase):
@@ -100,7 +107,6 @@ class C03_Driver(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         self.m_pyhouse_obj = PyHouseData()
-        self.m_api = Insteon_PLM. API()
 
     def test_01_Driver(self):
         pass

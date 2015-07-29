@@ -16,25 +16,18 @@ import xml.etree.ElementTree as ET
 # Import PyMh files
 from Modules.Core.data_objects import ControllerData
 from Modules.Families.Insteon import Insteon_decoder
-from Modules.Families import family
 from Modules.Lighting.lighting_lights import API as lightsAPI
-from Modules.Lighting.lighting_controllers import API as controllerAPI
-from test.xml_data import *
+# from Modules.Lighting.lighting_controllers import API as controllerAPI
+from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny, PrintBytes
-# from Modules.Computer.Internet.internet_xml import Util
-
-
 
 MSG_50 = bytearray(b'\x02\x50\x16\xc9\xd0\x1b\x47\x81\x27\x09\x00')
 MSG_62 = bytearray(b'\x02\x62\x17\xc2\x72\x0f\x19\x00\x06')
 MSG_99 = bytearray(b'\x02\x99')
 
 
-
 class SetupMixin(object):
-    """
-    """
 
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
@@ -43,8 +36,6 @@ class SetupMixin(object):
 
 
 class A1_Setup(SetupMixin, unittest.TestCase):
-    """
-    """
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
@@ -53,15 +44,26 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         self.m_pyhouse_obj.House.DeviceOBJs.Lights = lightsAPI.read_all_lights_xml(self.m_pyhouse_obj, self.m_xml.controller_sect, self.m_version)
 
     def test_01_PyHouse(self):
-        PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse')
+        # PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse')
+        self.assertEqual(self.m_pyhouse_obj.Xml.XmlFileName, '/etc/pyhouse/master.xml')
+        pass
 
     def test_02_House(self):
         l_house = self.m_pyhouse_obj.House
-        PrettyPrintAny(l_house, 'House')
+        # PrettyPrintAny(l_house, 'House')
+        pass
+
+    def test_03_Device(self):
+        l_house = self.m_pyhouse_obj.House
         l_devs = l_house.DeviceOBJs
-        PrettyPrintAny(l_devs, 'Devices')
+        # PrettyPrintAny(l_devs, 'Devices')
+        pass
+
+    def test_04_Refs(self):
+        l_house = self.m_pyhouse_obj.House
         l_refs = l_house.RefOBJs
-        PrettyPrintAny(l_refs, 'References')
+        # PrettyPrintAny(l_refs, 'References')
+        pass
 
 
 class C1_Util(SetupMixin, unittest.TestCase):
@@ -87,14 +89,14 @@ class C1_Util(SetupMixin, unittest.TestCase):
         self.assertEqual(l_msg, None)
         self.m_ctrlr._Message = MSG_62 + MSG_50
         l_msg = self.m_util.get_next_message(self.m_ctrlr)
-        print('Msg {}'.format(PrintBytes(l_msg)))
-        print('remaning: {}'.format(PrintBytes(self.m_ctrlr._Message)))
+        # print('Msg {}'.format(PrintBytes(l_msg)))
+        # print('remaning: {}'.format(PrintBytes(self.m_ctrlr._Message)))
         self.assertEqual(l_msg[1], 0x62)
         self.assertEqual(self.m_ctrlr._Message[1], 0x50)
 
-
     def test_03_GetObjFromMsg(self):
         pass
+
 
 def suite():
     suite = unittest.TestSuite()

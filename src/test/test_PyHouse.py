@@ -1,7 +1,12 @@
 """
-Created on May 29, 2014
+@name:      PyHouse/src/test/test_PyHouse.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2015-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on May 29, 2014
+@Summary:
 
-@author: briank
 """
 
 # Import system type stuff

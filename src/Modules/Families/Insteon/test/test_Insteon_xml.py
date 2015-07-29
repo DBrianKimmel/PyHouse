@@ -19,11 +19,16 @@ from Modules.Core.data_objects import LightData, HouseInformation
 from Modules.Core.test.xml_device import TESTING_DEVICE_FAMILY
 from Modules.Families.Insteon.Insteon_xml import API as InsteonXmlAPI
 from Modules.Core import conversions
-from Modules.Lighting import lighting_core
+from Modules.Lighting.lighting_core import API as lightingCoreAPI
 from test.xml_data import XML_LONG
 from Modules.Lighting.test.xml_lights import TESTING_LIGHTING_LIGHTS_INSTEON_NAME
-from Modules.Families.Insteon.test.xml_insteon import TESTING_INSTEON_ADDRESS, TESTING_INSTEON_DEVCAT, \
-        TESTING_INSTEON_GROUP_LIST, TESTING_INSTEON_GROUP_NUM, TESTING_INSTEON_MASTER, TESTING_INSTEON_PRODUCT_KEY
+from Modules.Families.Insteon.test.xml_insteon import \
+        TESTING_INSTEON_ADDRESS, \
+        TESTING_INSTEON_DEVCAT, \
+        TESTING_INSTEON_GROUP_LIST, \
+        TESTING_INSTEON_GROUP_NUM, \
+        TESTING_INSTEON_MASTER, \
+        TESTING_INSTEON_PRODUCT_KEY
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
 
@@ -37,7 +42,7 @@ class SetupMixin(object):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_api = InsteonXmlAPI
-        self.m_core_api = lighting_core.API()
+        self.m_core_api = lightingCoreAPI()
         self.m_device = LightData()
         self.m_version = '1.4.0'
 
@@ -53,7 +58,7 @@ class A1_Prep(SetupMixin, unittest.TestCase):
     def test_01_PyHouse(self):
         """ Did we get everything set up for the rest of the tests of this class.
         """
-        PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse')
+        PrettyPrintAny(self.m_pyhouse_obj, 'InsteonXML PyHouse')
         self.assertIsInstance(self.m_pyhouse_obj.House, HouseInformation)
 
     def test_02_Computer(self):

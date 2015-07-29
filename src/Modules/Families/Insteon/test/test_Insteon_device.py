@@ -18,14 +18,12 @@ from twisted.trial import unittest
 from Modules.Families.Insteon.Insteon_data import InsteonData
 from Modules.Families.Insteon import Insteon_device
 # from Modules.Core import conversions
-from test import xml_data
+from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
 
 
 class SetupMixin(object):
-    """
-    """
 
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
@@ -37,7 +35,7 @@ class C01_API(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_api = Insteon_device.API(self.m_pyhouse_obj)
         self.m_device = InsteonData()
 
