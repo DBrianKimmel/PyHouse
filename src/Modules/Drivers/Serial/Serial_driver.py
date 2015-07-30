@@ -29,6 +29,10 @@ LOG = Logger.getLogger('PyHouse.SerialDriver   ')
 
 
 class SerialProtocol(Protocol):
+    """
+    A very simple twisted protocol.
+    Addumulate the data receivess into a buffer for the controller.
+    """
 
     m_controller_obj = None
 
@@ -46,12 +50,15 @@ class SerialProtocol(Protocol):
 
 
 class SerialAPI(object):
-    """Contains all external commands.
+    """
+    This is a stateful factory for the serial protocol.
     """
     m_serial = None
 
     def open_serial_driver(self, p_pyhouse_obj, p_controller_obj):
         """
+        @param p_pyhouse_obj: is the entire PyHouse Data
+        @param p_controller_obj: is the controller information for the serial controller we are opening.
         @return: True if the driver opened OK and is usable
                  False if the driver is not functional for any reason.
         """
@@ -79,17 +86,20 @@ class SerialAPI(object):
         return l_msg
 
     def write_device(self, p_message):
-        """Send the command to the PLM and wait a very short time to be sure we sent it.
+        """Send the command to the PLM.
         """
         if self.m_active:
             try:
                 self.m_serial.writeSomeData(p_message)
-            except (AttributeError, TypeError) as e:
-                LOG.warning("Bad serial write - {0:} {1:}".format(e, PrintBytes(p_message)))
+            except (AttributeError, TypeError) as e_err:
+                LOG.warning("Bad serial write - {} {}".format(e_err, PrintBytes(p_message)))
         return
 
 
 class API(SerialAPI):
+    """
+    This is the standard Device Driver interface.
+    """
 
     def __init__(self):
         pass

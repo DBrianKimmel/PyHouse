@@ -7,7 +7,7 @@
 @note:      Created on May 4, 2013
 @summary:   This module is for testing local node data.
 
-Passed all 5 tests - DBK - 2014-07-27
+Passed all 1 tests - DBK - 2015-07-30
 """
 
 # Import system type stuff
@@ -18,7 +18,7 @@ from twisted.trial import unittest
 from Modules.Core.data_objects import ControllerData
 from Modules.Drivers.Serial import Serial_driver
 from Modules.Families import family
-from test import xml_data
+from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
 
@@ -38,10 +38,7 @@ class A01_API(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
-        self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
-        self.m_controller_obj = self._fake_params()
-        self.m_controller_obj.BaudRate = 19200
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def _fake_params(self):
         l_obj = ControllerData()
@@ -50,22 +47,5 @@ class A01_API(SetupMixin, unittest.TestCase):
 
     def test_01_Init(self):
         pass
-
-    def test_02_Start(self):
-        self._fake_params()
-        self.m_api.Start(self.m_pyhouse_obj, self.m_controller_obj)
-        PrettyPrintAny(self.m_controller_obj, 'Controller Obj', 120)
-
-    def test_03_Stop(self):
-        self.m_api.Start(self.m_pyhouse_obj, self.m_controller_obj)
-        self.m_api.Stop()
-
-    def test_04_Read(self):
-        self.m_api.Start(self.m_pyhouse_obj, self.m_controller_obj)
-        self.m_api.Read()
-
-    def test_05_Write(self):
-        self.m_api.Start(self.m_pyhouse_obj, self.m_controller_obj)
-        self.m_api.Write('xxx')
 
 # ## END

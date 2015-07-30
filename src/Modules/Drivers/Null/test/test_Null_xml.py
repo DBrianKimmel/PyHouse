@@ -7,17 +7,33 @@
 @note:      Created on Aug 23, 2014
 @Summary:
 
+Passed all 1 tests - DBK - 2015-07-30
+
 """
 
 # Import system type stuff
+import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
+# Import PyMh files and modules.
+from test.xml_data import XML_LONG
+from test.testing_mixin import SetupPyHouseObj
+# from Modules.Utilities.tools import PrettyPrintAny
 
 
-class Test(unittest.TestCase):
+class SetupMixin(object):
+
+    def setUp(self, p_root):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
+        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+
+
+class C01_API(SetupMixin, unittest.TestCase):
+    """ This section tests the reading and writing of XML used by node_local.
+    """
 
     def setUp(self):
-        pass
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def tearDown(self):
         pass

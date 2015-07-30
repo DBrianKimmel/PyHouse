@@ -21,13 +21,13 @@ RAW_03 = bytearray(b'\xF0\x00\x00\x00\x00\x00\x00\x00')
 RAW_04 = bytearray(0)
 
 
-class Test_01(unittest.TestCase):
+class B1(unittest.TestCase):
 
     def setUp(self):
         self.m_api = USB_driver.API()
         pass
 
-    def test_0101_Extract(self):
+    def test_01_Extract(self):
         l_ba = self.m_api._extract_hid_report(RAW_01)
         print('Test_0101 A ', PrintBytes(l_ba))
         self.assertEqual(l_ba, b'\x50\x45\x0d\x45\x0d\x50\x45')

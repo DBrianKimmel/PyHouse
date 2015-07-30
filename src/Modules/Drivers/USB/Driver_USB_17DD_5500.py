@@ -1,7 +1,12 @@
-'''
-Created on Dec 13, 2012
+"""
+@name:      PyHouse/src/Modules/Drivers/USB/Driver_USB_17DD_5500.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2012-2015 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Dec 13, 2012
+@summary:   This module is for
 
-@author: briank
 
 Created to handle the UPB PIM which is a HID device.
 
@@ -21,7 +26,8 @@ Device Descriptor:
   iProduct                2 USB to Serial
   iSerial                 0
   bNumConfigurations      1
-'''
+"""
+
 # import array
 from twisted.internet import reactor
 import usb

@@ -13,8 +13,6 @@
 
 # Import system type stuff
 import usb
-# import usb.core
-# import usb.util
 from twisted.internet.protocol import Protocol
 
 # Import PyHouse Modules
@@ -24,7 +22,6 @@ from Modules.Computer import logging_pyh as Logger
 
 g_debug = 1
 LOG = Logger.getLogger('PyHouse.USBDriver      ')
-
 
 # Timeouts for send/receive delays
 RECEIVE_TIMEOUT = 0.3
@@ -77,38 +74,6 @@ class SerialProtocol(Protocol):
 class UsbDriverAPI(UsbDeviceData):
 
     m_controller_obj = None
-
-    def _setup_hid_17DD_5500(self, p_USB_obj):
-        """Use the control endpoint to set up report descriptors for HID devices.
-
-        Much of this was determined empirically for a smarthome UPB PIM
-        """
-        l_report = bytearray(b'12345')
-        l_report[0] = 0xc0
-        l_report[1] = 0x12
-        l_report[2] = 0x00
-        l_report[3] = 0x00
-        l_report[4] = 0x03  # len ???
-        l_requestType = 0x21  # LIBUSB_ENDPOINT_OUT (0x00) | LIBUSB_REQUEST_TYPE_CLASS (0x20) | LIBUSB_RECIPIENT_DEVICE (0x00)
-        l_request = 0x09  # USB_driver.HID_SET_REPORT  # 0x09
-        l_value = 0x0003  # Report type & Report ID
-        l_index = 0  #
-        l_ret = (l_requestType,
-                l_request,
-                l_value,
-                l_index,
-                l_report)
-        p_USB_obj.Device.ctrl_transfer(l_requestType, l_request, l_value, l_index, l_report)
-        if g_debug >= 2:
-            l_msg = "_setup_hid_17DD_5500() ", l_ret
-            LOG.debug(l_msg)
-        return l_ret
-
-    def _format_vpn(self, p_USB_obj):
-        """Printable Vendor, Product and controller name
-        """
-        l_ret = "{0:#04x}:{1:#04x} {2:}".format(p_USB_obj.Vendor, p_USB_obj.Product, p_USB_obj.Name)
-        return l_ret
 
     def _is_hid(self, p_device):
         if p_device.bDeviceClass == 3:
@@ -245,8 +210,6 @@ class UsbDriverAPI(UsbDeviceData):
         l_len = p_USB_obj.Device.ctrl_transfer(0, p_message, timeout = 100)
         return l_len
 
-class API(UsbDriverAPI):
-
     def _get_usb_device_data(self, p_USB_obj):
         l_usb_device_obj = UsbDeviceData()
         l_usb_device_obj.Name = p_USB_obj.Name
@@ -255,11 +218,14 @@ class API(UsbDriverAPI):
         l_usb_device_obj.Product = p_USB_obj.Product
         return l_usb_device_obj
 
+
+class API(UsbDriverAPI):
+    """
+    This is the standard Device Driver API.
+    """
+
     def __init__(self):
-        """
-        """
-        if g_debug >= 1:
-            LOG.info('Initialized')
+        LOG.info('Initialized')
 
     def Start(self, p_pyhouse_obj, p_controller_obj):
         """
@@ -270,7 +236,7 @@ class API(UsbDriverAPI):
         self.m_USB_obj = self._get_usb_device_data(p_controller_obj)
         if USB_open.API().open_device(self.m_USB_obj):
             self.read_usb(p_pyhouse_obj)
-            LOG.info("Opened Controller:{0:}".format(self.m_USB_obj.Name))
+            LOG.info("Opened Controller:{}".format(self.m_USB_obj.Name))
             l_ret = True
         else:
             LOG.warning("Failed to open Controller:{0:}".format(self.m_USB_obj.Name))

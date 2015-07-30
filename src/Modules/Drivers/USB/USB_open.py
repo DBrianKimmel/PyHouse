@@ -23,6 +23,7 @@ import usb.core
 import usb.util
 
 # Import PyHouse modules
+from Modules.Utilities.tools import PrintBytes
 from Modules.Computer import logging_pyh as Logger
 
 g_debug = 0
@@ -36,8 +37,6 @@ RECEIVE_TIMEOUT = 0.3
 class UsbDeviceData(object):
     """
     This is the data object for one USB controller device.
-
-    Instance
     """
 
     def __init__(self):
@@ -56,24 +55,52 @@ class UsbDeviceData(object):
         self.message = ''
 
 
-class API(UsbDeviceData):
+class Utility(object):
 
-    m_controller_obj = None
-
-    def _format_vpn(self, p_USB_obj):
-        """Printable Vendor, Product and controller name
+    @staticmethod
+    def format_names(p_USB_obj):
+        """
+        Printable Vendor, Product and controller name
         """
         l_ret = "{0:#04x}:{1:#04x} {2:}".format(p_USB_obj.Vendor, p_USB_obj.Product, p_USB_obj.Name)
         return l_ret
 
-    def _is_hid(self, p_device):
+    @staticmethod
+    def is_hid(p_device):
         if p_device.bDeviceClass == 3:
             return True
+
+    @staticmethod
+    def setup_hid_17DD_5500(p_USB_obj):
+        """
+        Use the control endpoint to set up report descriptors for HID devices.
+        Much of this was determined empirically for a smarthome UPB PIM
+        """
+        l_report = bytearray(b'12345')
+        l_report[0] = 0xc0
+        l_report[1] = 0x12
+        l_report[2] = 0x00
+        l_report[3] = 0x00
+        l_report[4] = 0x03  # len ???
+        l_requestType = 0x21  # LIBUSB_ENDPOINT_OUT (0x00) | LIBUSB_REQUEST_TYPE_CLASS (0x20) | LIBUSB_RECIPIENT_DEVICE (0x00)
+        l_request = 0x09  # USB_driver.HID_SET_REPORT  # 0x09
+        l_value = 0x0003  # Report type & Report ID
+        l_index = 0  #
+        l_ret = (l_requestType, l_request, l_value, l_index, l_report)
+        p_USB_obj.Device.ctrl_transfer(l_requestType, l_request, l_value, l_index, l_report)
+        LOG.debug("setup_hid {}".format(PrintBytes(l_ret)))
+        return l_ret
+
+
+
+class API(UsbDeviceData):
+
+    m_controller_obj = None
 
     def _save_find_device(self, p_USB_obj, p_device):
         p_USB_obj.Device = p_device
         p_USB_obj.num_configs = p_device.bNumConfigurations
-        p_USB_obj.hid_device = self._is_hid(p_device)
+        p_USB_obj.hid_device = Utility.is_hid(p_device)
         p_USB_obj.configs = {}
         return p_USB_obj
 
@@ -83,18 +110,18 @@ class API(UsbDeviceData):
 
         @return:  None if no such device or a pyusb device object
         """
-        l_vpn = self._format_vpn(p_USB_obj)
+        l_vpn = Utility.format_names(p_USB_obj)
         l_device = None
         try:
             l_device = usb.core.find(idVendor = p_USB_obj.Vendor, idProduct = p_USB_obj.Product)
         except usb.USBError:
-            LOG.error("ERROR no such USB device for {0:}".format(l_vpn))
+            LOG.error("ERROR no such USB device for {}".format(l_vpn))
             return None
         if l_device == None:
-            LOG.error('ERROR - USB device not found  {0:}'.format(l_vpn))
+            LOG.error('ERROR - USB device not found  {}'.format(l_vpn))
             return None
         p_USB_obj.Device = self._save_find_device(p_USB_obj, l_device)
-        LOG.info('Found a device - HID: {0:}'.format(l_vpn))
+        LOG.info('Found a device - HID: {}'.format(l_vpn))
         return l_device
 
     def _setup_detach_kernel(self, p_USB_obj):
@@ -178,8 +205,8 @@ class API(UsbDeviceData):
 
     def open_device(self, p_USB_obj):
         p_USB_obj.message = bytearray()
-        l_vpn = self._format_vpn(p_USB_obj)
-        LOG.info("Opening USB device - {0:}".format(l_vpn))
+        l_vpn = Utility.format_names(p_USB_obj)
+        LOG.info("Opening USB device - {}".format(l_vpn))
         p_USB_obj.Device = self._open_find_device(p_USB_obj)
         if p_USB_obj.Device == None:
             LOG.error('ERROR - Setup Failed')
@@ -188,7 +215,7 @@ class API(UsbDeviceData):
         self._setup_configurations(p_USB_obj)
         self._setup_interfaces(p_USB_obj)
         self._setup_endpoints(p_USB_obj)
-        _l_msg = self._setup_hid_17DD_5500(p_USB_obj)
+        _l_msg = Utility.setup_hid_17DD_5500(p_USB_obj)
         return True
 
     def close_device(self, p_USB_obj):
