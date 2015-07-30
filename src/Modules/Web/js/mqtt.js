@@ -50,6 +50,7 @@ helpers.Widget.subclass(mqtt, 'MqttWidget').methods(
 	function fetchDataFromServer(self) {
 		function cb_fetchDataFromServer(p_json) {
 			globals.Computer = JSON.parse(p_json);
+			console.log("mqtt.fetchDataFromServer() - Computer = %O", globals.Computer);
 			self.buildLcarSelectScreen();
 		}
 		function eb_fetchDataFromServer(p_result) {
@@ -64,7 +65,7 @@ helpers.Widget.subclass(mqtt, 'MqttWidget').methods(
 	 * Build a screen full of buttons - One for each broker and some actions.
 	 */
 	function buildLcarSelectScreen(self){
-		var l_button_html = buildLcarSelectionButtonsTable(globals.Computer.Mqtt, 'handleMenuOnClick');
+		var l_button_html = buildLcarSelectionButtonsTable(globals.Computer.Mqtt.Brokers, 'handleMenuOnClick');
 		var l_html = build_lcars_top('Mqtt', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(15, l_button_html);
 		l_html += build_lcars_bottom();
@@ -84,7 +85,7 @@ helpers.Widget.subclass(mqtt, 'MqttWidget').methods(
 		globals.Computer.MqttIx = l_ix;
 		globals.Computer.MqttName = l_name;
 		if (l_ix <= 1000) {  // One of the mqtt buttons.
-			var l_obj = globals.Computer.Mqtt[l_ix];
+			var l_obj = globals.Computer.Mqtt.Brokers[l_ix];
 			globals.Computer.MqttObj = l_obj;
 			showDataEntryFields(self);
 			self.buildLcarDataEntryScreen(l_obj, 'handleDataEntryOnClick');
@@ -131,7 +132,7 @@ helpers.Widget.subclass(mqtt, 'MqttWidget').methods(
     	return p_data;
     },
     function createEntry(self) {
-        var l_data = createBaseEntry(self, Object.keys(globals.Computer.Mqtt).length);
+        var l_data = createBaseEntry(self, Object.keys(globals.Computer.Mqtt.Brokers).length);
         l_data = self.createMqttEntry(l_data);
         return l_data;
     },
