@@ -7,7 +7,6 @@
 @note:      Created on Nov 22, 2014
 @Summary:
 
-2 *
 """
 
 # Import system type stuff
@@ -19,7 +18,11 @@ from Modules.Families.UPB.test.xml_upb import UPB_XML
 
 
 
-L_BUTTON_TYPE = "    <LightingType>Button</LightingType>"
+TESTING_LIGHTING_BUTTON_TYPE = 'Button'
+TESTING_LIGHTING_BUTTON_NAME_1 = 'Insteon Button'
+TESTING_LIGHTING_BUTTON_NAME_2 = 'UPB Button'
+
+L_BUTTON_TYPE = '    <LightingType>' + TESTING_LIGHTING_BUTTON_TYPE + '</LightingType>'
 
 L_BUTTON_BODY = '\n'.join([
     XML_DEVICE,
@@ -27,13 +30,13 @@ L_BUTTON_BODY = '\n'.join([
     ])
 
 INSTEON_BUTTON_XML = '\n'.join([
-    '<Button Active="True" Key="0" Name="Insteon Button">',
+    '<Button Name="' + TESTING_LIGHTING_BUTTON_NAME_1 + '" Active="True" Key="0">',
     L_BUTTON_BODY,
     XML_INSTEON,
     "</Button>"])
 
 UPB_BUTTON_XML = '\n'.join([
-    '<Button Active="True" Key="1" Name="UPB Button">',
+    '<Button Name="' + TESTING_LIGHTING_BUTTON_NAME_2 + '" Active="True" Key="1">',
     L_BUTTON_BODY,
     UPB_XML,
     "</Button>"])

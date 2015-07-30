@@ -19,7 +19,7 @@ from Modules.Families.UPB.test.xml_upb import UPB_XML
 from Modules.Core.test.xml_device import XML_DEVICE
 
 
-TESTING_LIGHTING_LIGHTS_INSTEON_NAME = "Insteon Light"
+TESTING_LIGHTING_LIGHTS_INSTEON_NAME_1 = "Insteon Light"
 TESTING_LIGHT_DIMMABLE = 'True'
 TESTING_LIGHTING_LIGHT_CUR_LEVEL = "12"
 TESTING_LIGHTING_TYPE = 'Light'
@@ -36,7 +36,7 @@ L_LIGHT_BODY = '\n'.join([
     ])
 
 L_INSTEON_LIGHT_XML = '\n'.join([
-    '<Light Name="' + TESTING_LIGHTING_LIGHTS_INSTEON_NAME + '" Key="0" Active="True">',
+    '<Light Name="' + TESTING_LIGHTING_LIGHTS_INSTEON_NAME_1 + '" Key="0" Active="True">',
     L_LIGHT_BODY,
     XML_INSTEON,
     "</Light>"

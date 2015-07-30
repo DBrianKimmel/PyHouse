@@ -24,44 +24,30 @@ from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
 LOG = Logging.getLogger('PyHouse.LightingButton ')
 
 
-class API(object):
+class Utility(object):
 
     @staticmethod
-    def _read_button_data(p_xml, p_version):
-        l_obj = ButtonData()
+    def _read_base_device(p_xml, p_version):
+        """
+        @param p_xml: is the XML Element for the entire device
+        @param p_version: is some helper data to get the correct information from the config file.
+        @return: a Controller data object with the base info filled in
+        """
+        l_obj = ButtonData()  # Create an empty controller object.
         l_obj = LightingCoreAPI.read_core_lighting_xml(l_obj, p_xml, p_version)
         l_obj.DeviceSubType = 3
         return l_obj
 
     @staticmethod
-    def _read_family_data(p_pyhouse_obj, p_obj, p_xml):
+    def _write_base_device(p_obj):
+        l_xml = LightingCoreAPI.write_base_lighting_xml('Button', p_obj)
+        return l_xml
+
+
+    @staticmethod
+    def _read_family_data(p_pyhouse_obj, p_obj, p_xml, p_version):
         l_api = FamUtil.read_family_data(p_pyhouse_obj, p_obj, p_xml)
         return l_api  # for testing
-
-    @staticmethod
-    def read_one_button_xml(p_pyhouse_obj, p_button_xml, p_version):
-        l_button_obj = API._read_button_data(p_button_xml, p_version)
-        API._read_family_data(p_pyhouse_obj, l_button_obj, p_button_xml)
-        l_button_obj.DeviceType = 1
-        l_button_obj.DeviceSubType = 3
-        return l_button_obj
-
-    @staticmethod
-    def read_all_buttons_xml(p_pyhouse_obj, p_button_sect_xml, p_version):
-        l_count = 0
-        l_button_dict = {}
-        try:
-            for l_button_xml in p_button_sect_xml.iterfind('Button'):
-                l_obj = API.read_one_button_xml(p_pyhouse_obj, l_button_xml, p_version)
-                l_obj.Key = l_count  # Renumber
-                l_button_dict[l_count] = l_obj
-                l_count += 1
-        except AttributeError as e_error:  # No Buttons
-            LOG.warning('No Buttons defined - {0:}'.format(e_error))
-            l_button_dict = {}
-        LOG.info("Loaded {} buttons".format(l_count))
-        return l_button_dict
-
 
     @staticmethod
     def _write_family_data(p_pyhouse_obj, p_button_obj, p_xml):
@@ -73,11 +59,40 @@ class API(object):
         except Exception as e_err:
             LOG.error('ERROR - {}'.format(e_err))
 
+
     @staticmethod
-    def write_one_button_xml(p_pyhouse_obj, p_button_obj):
-        l_button_xml = LightingCoreAPI.write_base_lighting_xml('Button', p_button_obj)
-        API._write_family_data(p_pyhouse_obj, p_button_obj, l_button_xml)
+    def _read_one_button_xml(p_pyhouse_obj, p_button_xml, p_version):
+        l_button_obj = Utility._read_base_device(p_button_xml, p_version)
+        Utility._read_family_data(p_pyhouse_obj, l_button_obj, p_button_xml, p_version)
+        l_button_obj.DeviceType = 1
+        l_button_obj.DeviceSubType = 3
+        return l_button_obj
+
+    @staticmethod
+    def _write_one_button_xml(p_pyhouse_obj, p_button_obj):
+        l_button_xml = Utility._write_base_device(p_button_obj)
+        Utility._write_family_data(p_pyhouse_obj, p_button_obj, l_button_xml)
         return l_button_xml
+
+
+class API(object):
+
+    @staticmethod
+    def read_all_buttons_xml(p_pyhouse_obj, p_button_sect_xml, p_version):
+        l_count = 0
+        l_button_dict = {}
+        try:
+            for l_button_xml in p_button_sect_xml.iterfind('Button'):
+                l_obj = Utility._read_one_button_xml(p_pyhouse_obj, l_button_xml, p_version)
+                l_obj.Key = l_count  # Renumber
+                l_button_dict[l_count] = l_obj
+                l_count += 1
+        except AttributeError as e_error:  # No Buttons
+            LOG.warning('No Buttons defined - {0:}'.format(e_error))
+            l_button_dict = {}
+        LOG.info("Loaded {} buttons".format(l_count))
+        return l_button_dict
+
 
     @staticmethod
     def write_buttons_xml(p_pyhouse_obj):

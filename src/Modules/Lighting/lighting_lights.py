@@ -33,36 +33,80 @@ LOG = Logging.getLogger('PyHouse.LightgLights   ')
 SECTION = 'LightSection'
 
 
-class API(object):
-    """
-    Get/Put all the information about one light:
-        Base Light Data
-        Light Data
-        Family Data
-    """
+class Utility(object):
 
     @staticmethod
-    def _read_light_data(p_xml, p_version):
-        l_light_obj = LightData()
-        l_light_obj = LightingCoreAPI.read_core_lighting_xml(l_light_obj, p_xml, p_version)
-        l_light_obj.DeviceSubType = 2
-        l_light_obj.CurLevel = PutGetXML.get_int_from_xml(p_xml, 'CurLevel', 0)
-        l_light_obj.IsDimmable = PutGetXML.get_bool_from_xml(p_xml, 'IsDimmable', False)
-        return l_light_obj
+    def _read_base_device(p_xml, p_version):
+        """
+        @param p_xml: is the XML Element for the entire device
+        @param p_version: is some helper data to get the correct information from the config file.
+        @return: a Light data object with the base info filled in
+        """
+        l_obj = LightData()
+        l_obj = LightingCoreAPI.read_core_lighting_xml(l_obj, p_xml, p_version)
+        l_obj.DeviceType = 1
+        l_obj.DeviceSubType = 2
+        return l_obj
 
     @staticmethod
-    def _read_family_data(p_pyhouse_obj, p_obj, p_xml):
+    def _write_base_device(p_pyhouse_obj, p_light_obj):
+        l_xml = LightingCoreAPI.write_base_lighting_xml('Light', p_light_obj)
+        return l_xml
+
+
+    @staticmethod
+    def _read_light_data(p_obj, p_xml, p_version):
+        p_obj.CurLevel = PutGetXML.get_int_from_xml(p_xml, 'CurLevel', 0)
+        p_obj.IsDimmable = PutGetXML.get_bool_from_xml(p_xml, 'IsDimmable', False)
+        return p_obj  # for testing
+
+    @staticmethod
+    def _write_controller_data(p_obj, p_xml):
+        PutGetXML.put_text_element(p_xml, 'InterfaceType', p_obj.InterfaceType)
+        PutGetXML.put_text_element(p_xml, 'Port', p_obj.Port)
+        return p_xml
+
+
+    @staticmethod
+    def _read_family_data(p_pyhouse_obj, p_obj, p_xml, p_version):
         l_api = FamUtil.read_family_data(p_pyhouse_obj, p_obj, p_xml)
         return l_api  # for testing
 
     @staticmethod
-    def _read_one_light_xml(p_pyhouse_obj, p_light_xml, p_version):
-        l_light_obj = API._read_light_data(p_light_xml, p_version)
-        l_light_obj.Key = 0
-        API._read_family_data(p_pyhouse_obj, l_light_obj, p_light_xml)
-        l_light_obj.DeviceType = 1
-        l_light_obj.DeviceSubType = 2
-        return l_light_obj
+    def _write_family_data(p_pyhouse_obj, p_obj, p_xml):
+        try:
+            l_family = p_obj.DeviceFamily
+            l_family_obj = p_pyhouse_obj.House.RefOBJs.FamilyData[l_family]
+            l_api = l_family_obj.FamilyXmlModuleAPI
+            l_api.WriteXml(p_xml, p_obj)
+        except Exception as e_err:
+            LOG.error('ERROR - {}'.format(e_err))
+
+
+    @staticmethod
+    def _read_one_light_xml(p_pyhouse_obj, p_xml, p_version):
+        """
+        Load all the xml for one controller.
+        Base Device, Controller, Family and Interface
+        """
+        try:
+            l_obj = Utility._read_base_device(p_xml, p_version)
+            Utility._read_light_data(l_obj, p_xml, p_version)
+            Utility._read_family_data(p_pyhouse_obj, l_obj, p_xml, p_version)
+        except Exception as e_err:
+            LOG.error('ERROR - ReadOneController - {0:}'.format(e_err))
+            l_obj = LightData()
+        return l_obj
+
+    @staticmethod
+    def _write_one_light_xml(p_pyhouse_obj, p_controller_obj):
+        l_xml = Utility._write_base_device(p_controller_obj)
+        Utility._write_light_data(p_controller_obj, l_xml)
+        Utility._write_family_data(p_pyhouse_obj, p_controller_obj, l_xml)
+        return l_xml
+
+
+class API(object):
 
     @staticmethod
     def read_all_lights_xml(p_pyhouse_obj, p_light_sect_xml, p_version):
@@ -84,33 +128,6 @@ class API(object):
         LOG.info("Loaded {} Lights".format(l_count))
         return l_lights_dict
 
-
-    @staticmethod
-    def _write_light_data(p_light_obj, l_light_xml):
-        PutGetXML.put_text_element(l_light_xml, 'LightingType', p_light_obj.LightingType)
-        PutGetXML.put_text_element(l_light_xml, 'CurLevel', p_light_obj.CurLevel)
-        PutGetXML.put_bool_element(l_light_xml, 'IsDimmable', p_light_obj.IsDimmable)
-
-    @staticmethod
-    def _add_family_data(p_pyhouse_obj, p_light_obj, p_xml):
-        """
-        Add the family specific information of the device to the XML.
-        @param p_pyhouse_obj: is the master information store
-        """
-        try:
-            l_device_family = p_light_obj.DeviceFamily
-            l_family_obj = p_pyhouse_obj.House.RefOBJs.FamilyData[l_device_family]
-            l_api = l_family_obj.FamilyXmlModuleAPI
-            l_api.WriteXml(p_xml, p_light_obj)
-        except Exception as e_err:
-            LOG.error('Family:{}\n\t{}'.format(l_device_family, e_err))
-
-    @staticmethod
-    def write_one_light_xml(p_pyhouse_obj, p_light_obj):
-        l_light_xml = LightingCoreAPI.write_base_lighting_xml('Light', p_light_obj)
-        API._write_light_data(p_light_obj, l_light_xml)
-        API._add_family_data(p_pyhouse_obj, p_light_obj, l_light_xml)
-        return l_light_xml
 
     @staticmethod
     def write_all_lights_xml(p_pyhouse_obj):

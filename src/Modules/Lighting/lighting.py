@@ -20,8 +20,8 @@ import xml.etree.ElementTree as ET
 from Modules.Lighting.lighting_buttons import API as buttonsAPI
 from Modules.Lighting.lighting_controllers import API as controllersAPI
 from Modules.Lighting.lighting_lights import API as lightsAPI
-from Modules.Computer import logging_pyh as Logger
 from Modules.Families.family_utils import FamUtil
+from Modules.Computer import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.Lighting       ')
 

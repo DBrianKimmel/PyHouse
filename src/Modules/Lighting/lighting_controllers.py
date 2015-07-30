@@ -37,10 +37,17 @@ class Utility(object):
         """
         l_obj = ControllerData()  # Create an empty controller object.
         l_obj = LightingCoreAPI.read_core_lighting_xml(l_obj, p_xml, p_version)
+        l_obj.DeviceSubType = 1
         return l_obj
 
     @staticmethod
-    def _read_controller_data(p_obj, p_xml):
+    def _write_base_device(p_obj):
+        l_xml = LightingCoreAPI.write_base_lighting_xml('Controller', p_obj)
+        return l_xml
+
+
+    @staticmethod
+    def _read_controller_data(p_obj, p_xml, p_version):
         """
         There are extra fields for controllers - get them.
         See ControllerData()
@@ -50,76 +57,30 @@ class Utility(object):
         return p_obj  # for testing
 
     @staticmethod
-    def _read_interface_data(p_obj, p_xml):
+    def _write_controller_data(p_obj, p_xml):
+        PutGetXML.put_text_element(p_xml, 'InterfaceType', p_obj.InterfaceType)
+        PutGetXML.put_text_element(p_xml, 'Port', p_obj.Port)
+        return p_xml
+
+
+    @staticmethod
+    def _read_interface_data(p_obj, p_xml, p_version):
         try:
             interfaceXML.read_interface_xml(p_obj, p_xml)
         except Exception as e_err:  # DeviceFamily invalid or missing
             LOG.error('ERROR - Read Interface Data - {} - {} - {}'.format(e_err, p_obj.Name, p_obj.InterfaceType))
         return p_obj
 
+    @staticmethod
+    def _write_interface_data(p_obj, p_xml):
+        interfaceXML.write_interface_xml(p_obj, p_xml)
+        return p_xml
 
-class API(object):
-    """
-    Get/Put all the information about one controller:
-        Base Light Data
-        Controller Data
-        Family Data
-        Interface Data
-    """
 
     @staticmethod
-    def _read_family_data(p_pyhouse_obj, p_obj, p_xml):
+    def _read_family_data(p_pyhouse_obj, p_obj, p_xml, p_version):
         l_api = FamUtil.read_family_data(p_pyhouse_obj, p_obj, p_xml)
         return l_api  # for testing
-
-    @staticmethod
-    def read_one_controller_xml(p_pyhouse_obj, p_xml, p_version):
-        """
-        Load all the xml for one controller.
-        Base Device, Controller, Family and Interface
-        """
-        try:
-            l_obj = Utility._read_base_device(p_xml, p_version)
-            Utility._read_controller_data(l_obj, p_xml)
-            Utility._read_interface_data(l_obj, p_xml)
-            API._read_family_data(p_pyhouse_obj, l_obj, p_xml)
-        except Exception as e_err:
-            LOG.error('ERROR - ReadOneController - {0:}'.format(e_err))
-            l_obj = ControllerData()
-        l_obj.DeviceType = 1
-        l_obj.DeviceSubType = 1
-        return l_obj
-
-    @staticmethod
-    def read_all_controllers_xml(p_pyhouse_obj, p_controller_sect_xml, p_version):
-        """Called from lighting.
-
-        @param p_controller_section_xml: is the XML element containing all controllers. <ControllerSection>
-        @param p_version: is the old version of the XML Config file
-        """
-        l_count = 0
-        l_dict = {}
-        try:
-            for l_controller_xml in p_controller_sect_xml.iterfind('Controller'):
-                l_controller_obj = API.read_one_controller_xml(p_pyhouse_obj, l_controller_xml, p_version)
-                l_controller_obj.Key = l_count
-                l_dict[l_count] = l_controller_obj
-                l_count += 1
-        except AttributeError as e_error:  # No Controller section
-            LOG.warning('No Controllers found - {}'.format(e_error))
-        LOG.info("Loaded {} Controllers".format(l_count))
-        return l_dict
-
-
-    @staticmethod
-    def _write_base_data(p_obj):
-        l_xml = LightingCoreAPI.write_base_lighting_xml('Controller', p_obj)
-        return l_xml
-
-    @staticmethod
-    def _write_controller_data(p_obj, p_xml):
-        PutGetXML.put_text_element(p_xml, 'InterfaceType', p_obj.InterfaceType)
-        PutGetXML.put_text_element(p_xml, 'Port', p_obj.Port)
 
     @staticmethod
     def _write_family_data(p_pyhouse_obj, p_controller_obj, p_xml):
@@ -132,23 +93,64 @@ class API(object):
             LOG.error('ERROR - {}'.format(e_err))
 
     @staticmethod
-    def _write_interface_data(p_obj, p_xml):
-        interfaceXML.write_interface_xml(p_obj, p_xml)
+    def _read_one_controller_xml(p_pyhouse_obj, p_xml, p_version):
+        """
+        Load all the xml for one controller.
+        Base Device, Controller, Family and Interface
+        """
+        try:
+            l_obj = Utility._read_base_device(p_xml, p_version)
+            Utility._read_controller_data(l_obj, p_xml, p_version)
+            Utility._read_interface_data(l_obj, p_xml, p_version)
+            Utility._read_family_data(p_pyhouse_obj, l_obj, p_xml, p_version)
+        except Exception as e_err:
+            LOG.error('ERROR - ReadOneController - {0:}'.format(e_err))
+            l_obj = ControllerData()
+        l_obj.DeviceType = 1
+        l_obj.DeviceSubType = 1
+        return l_obj
 
     @staticmethod
-    def write_one_controller_xml(p_pyhouse_obj, p_controller_obj):
-        l_controller_xml = LightingCoreAPI.write_base_lighting_xml('Controller', p_controller_obj)
-        API._write_controller_data(p_controller_obj, l_controller_xml)
-        API._write_family_data(p_pyhouse_obj, p_controller_obj, l_controller_xml)
-        API._write_interface_data(p_controller_obj, l_controller_xml)
+    def _write_one_controller_xml(p_pyhouse_obj, p_controller_obj):
+        l_controller_xml = Utility._write_base_device(p_controller_obj)
+        Utility._write_controller_data(p_controller_obj, l_controller_xml)
+        Utility._write_interface_data(p_controller_obj, l_controller_xml)
+        Utility._write_family_data(p_pyhouse_obj, p_controller_obj, l_controller_xml)
         return l_controller_xml
+
+
+class API(object):
+
+    @staticmethod
+    def read_all_controllers_xml(p_pyhouse_obj, p_controller_sect_xml, p_version):
+        """Called from lighting.
+        Get the entire configuration of all the controllers and place them in a holding dict.
+
+        @param p_pyhouse_obj: is the entire PyHouse Data
+        @param p_controller_section_xml: is the XML element containing all controllers. <ControllerSection>
+        @param p_version: is the old version of the XML Config file
+        @return: a dict of all the controllers configured.
+        """
+        l_count = 0
+        l_dict = {}
+        try:
+            for l_controller_xml in p_controller_sect_xml.iterfind('Controller'):
+                l_controller_obj = Utility._read_one_controller_xml(p_pyhouse_obj, l_controller_xml, p_version)
+                l_controller_obj.Key = l_count
+                l_dict[l_count] = l_controller_obj
+                l_count += 1
+        except AttributeError as e_error:  # No Controller section
+            LOG.warning('No Controllers found - {}'.format(e_error))
+        LOG.info("Loaded {} Controllers".format(l_count))
+        return l_dict
+
 
     @staticmethod
     def write_all_controllers_xml(p_pyhouse_obj):
         l_count = 0
         l_controllers_xml = ET.Element('ControllerSection')
         for l_controller_obj in p_pyhouse_obj.House.DeviceOBJs.Controllers.itervalues():
-            l_controllers_xml.append(API.write_one_controller_xml(p_pyhouse_obj, l_controller_obj))
+            l_controllers_xml.append(Utility._write_one_controller_xml(p_pyhouse_obj, l_controller_obj))
             l_count += 1
         LOG.info('Saved {} Controllers XML'.format(l_count))
         return l_controllers_xml
