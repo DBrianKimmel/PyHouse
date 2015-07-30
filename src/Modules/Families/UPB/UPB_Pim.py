@@ -208,7 +208,7 @@ class DecodeResponses(object):
                 return ''  # Not a complete message yet.
         l_message = p_controller_obj._Message[l_start:l_end]
         p_controller_obj._Message = p_controller_obj._Message[l_end + 1:]
-        LOG.debug('Extracted message {0:}'.format(PrintBytes(l_message)))
+        LOG.debug('Extracted message {}'.format(PrintBytes(l_message)))
         return l_message
 
     def _dispatch_decode(self, p_message):
@@ -238,10 +238,10 @@ class DecodeResponses(object):
     def decode_response(self, p_controller_obj):
         """A response message starts with a 'P' (0x50) and ends with a '\r' (0x0D).
         """
-        LOG.debug('DecodeResponse A - {0:}'.format(PrintBytes(p_controller_obj._Message)))
+        LOG.debug('DecodeResponse A - {}'.format(PrintBytes(p_controller_obj._Message)))
         l_message = self._extract_one_message(p_controller_obj)
-        LOG.debug('DecodeResponse B - {0:}'.format(PrintBytes(l_message)))
-        if len(l_message) == 0:
+        LOG.debug('DecodeResponse B - {}'.format(PrintBytes(l_message)))
+        if len(l_message) < 2:
             return
         self._dispatch_decode(l_message)
         self.decode_response(p_controller_obj)

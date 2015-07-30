@@ -35,13 +35,33 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-class Print_01(SetupMixin, unittest.TestCase):
+class A_PB1(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_EMPTY))
+
+    def test_01_String(self):
+        """Testing PrintBytes.
+        """
+        l_str = bytearray('1234')
+        l_str[0] = 0x00
+        l_str[1] = 0x7f
+        l_str[2] = 0x80
+        l_str[3] = 0xff
+        l_ans = tools.PrintBytes(l_str)
+        self.assertEqual(l_ans, ' 0x00 0x7f 0x80 0xff <END>')
+        # PrettyPrintAny(l_ans, 'String')
+
+
+class B_PPA(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_EMPTY))
         self.m_api = Logger.API()
 
     def test_01_String(self):
+        """Test PrettyPrintAny.
+        """
         l_str = 'String A fairly long String that has no end, at least a fairly long one.'
         PrettyPrintAny(l_str, 'String')
         PrettyPrintAny(l_str, 'String', 15)
@@ -72,7 +92,7 @@ class Print_01(SetupMixin, unittest.TestCase):
         PrettyPrintAny(l_any)
 
 
-class Test_02_Find(SetupMixin, unittest.TestCase):
+class C_02_Find(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
