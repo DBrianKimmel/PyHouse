@@ -31,16 +31,13 @@ from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Insteon_xml ')
 
 
-class API(object):
+class Xml(object):
     """
     These routines are called from read_family_data in various modules.
     This is done so Lights, Thermostats, Irrigation and Pool devices can use the XML data for Insteon devices.
 
     This class and methods are pointed to by family.py and must be the same in every Device package.
     """
-
-    def __init__(self, p_pyhouse_obj):
-        self.m_pyhouse_obj = p_pyhouse_obj
 
     @staticmethod
     def _read_product_key(p_entry_xml, p_default = '98.76.54'):
@@ -61,7 +58,7 @@ class API(object):
             l_insteon_obj.GroupList = PutGetXML.get_text_from_xml(p_in_xml, 'GroupList')
             l_insteon_obj.GroupNumber = PutGetXML.get_int_from_xml(p_in_xml, 'GroupNumber', 0)
             l_insteon_obj.IsMaster = PutGetXML.get_bool_from_xml(p_in_xml, 'IsMaster')
-            l_insteon_obj.ProductKey = API._read_product_key(p_in_xml)
+            l_insteon_obj.ProductKey = Xml._read_product_key(p_in_xml)
             l_insteon_obj.Version = PutGetXML.get_int_from_xml(p_in_xml, 'Version', 1)
         except Exception as e_err:
             LOG.error('ERROR: {}'.format(e_err))
@@ -78,12 +75,12 @@ class API(object):
         @param p_device_obj : is the Basic Object that will have the extracted elements inserted into.
         @return: a dict of the extracted Insteon Specific data.
         """
-        l_insteon_obj = API._read_insteon(p_in_xml)
+        l_insteon_obj = Xml._read_insteon(p_in_xml)
         stuff_new_attrs(p_device_obj, l_insteon_obj)
         return l_insteon_obj  # For testing only
 
-
-    def WriteXml(self, p_out_xml, p_device):
+    @staticmethod
+    def WriteXml(p_out_xml, p_device):
         """
         @param p_xml_out: is a parent element to which the Insteon Specific information is appended.
         """

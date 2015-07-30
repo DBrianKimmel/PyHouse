@@ -21,7 +21,6 @@ from twisted.internet import error
 from Modules.Core.data_objects import NodeData
 from Modules.Computer.Nodes import node_discovery
 from test import xml_data
-# from Modules.Core.data_objects import PyHouseData
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
 
@@ -115,16 +114,16 @@ class C_01Creation(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         self.m_reactor = self.m_pyhouse_obj.Twisted.Reactor
-        self.m_api = node_discovery.API()
+        self.m_api = node_discovery.API(self.m_pyhouse_obj)
 
     def test_01_V4Server(self):
         l_server_v4 = TestServerV4Protocol()
-        PrettyPrintAny(l_server_v4, 'Server V4', 250)
+        # PrettyPrintAny(l_server_v4, 'Server V4', 250)
         self.assertIsNotNone(l_server_v4, 'V4 Server not created.')
 
     def test_03_V4Client(self):
         l_client_v4 = TestClientV4()
-        PrettyPrintAny(l_client_v4, 'Client V4')
+        # PrettyPrintAny(l_client_v4, 'Client V4')
         self.assertIsNotNone(l_client_v4, 'V4 Client not created.')
 
 
@@ -145,15 +144,15 @@ class C_02_V4(SetupMixin, unittest.TestCase):
 
     def test_01_Ports(self):
         self.m_serverV4 = TestServerV4Protocol()
-        PrettyPrintAny(self.m_serverV4, 'Server V4', 250)
+        # PrettyPrintAny(self.m_serverV4, 'Server V4', 250)
         self.m_clientV4 = TestClientV4()
-        PrettyPrintAny(self.m_clientV4, 'Client V4', 250)
+        # PrettyPrintAny(self.m_clientV4, 'Client V4', 250)
         # _l_x1 = self.m_serverV4.transport.getHost()
         # self.m_clientV4.transport.connect("127.0.0.1", self.m_serverV4.transport.getHost().port)
         self.m_port1 = self.m_reactor.listenMulticast(T_ALL_PORTS, self.m_serverV4)
-        PrettyPrintAny(self.m_port1, 'Server - Port 1 V4', 256)
+        # PrettyPrintAny(self.m_port1, 'Server - Port 1 V4', 256)
         self.m_port2 = self.m_reactor.listenMulticast(T_ALL_PORTS, self.m_clientV4)
-        PrettyPrintAny(self.m_port2, 'Client - Port 2 V4', 256)
+        # PrettyPrintAny(self.m_port2, 'Client - Port 2 V4', 256)
         return gatherResults([
                 maybeDeferred(self.m_port1.stopListening),
                 maybeDeferred(self.m_port2.stopListening)
@@ -177,7 +176,7 @@ class C_03_V4(SetupMixin, unittest.TestCase):
 
     def test_01_TTL(self):
         for l_obj in self.m_clientV4, self.m_serverV4:
-            PrettyPrintAny(l_obj, 'V4 Obj', 250)
+            # PrettyPrintAny(l_obj, 'V4 Obj', 250)
             self.assertEqual(l_obj.transport.getTTL(), 1)
             l_obj.transport.setTTL(2)
             self.assertEqual(l_obj.transport.getTTL(), 2)

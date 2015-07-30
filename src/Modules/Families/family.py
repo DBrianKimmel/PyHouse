@@ -84,6 +84,18 @@ class Utility(object):
         return l_api
 
     @staticmethod
+    def _create_xml_instance(p_module_name, p_module_ref):
+        """
+        @param p_module_name: is the name of the module for which we are creating the API instance.
+        @param p_module_ref: is the module we just imported.
+        """
+        try:
+            l_api = p_module_ref.Xml()
+        except Exception as e_err:
+            LOG.error('ERROR - Module{} - {}'.format(p_module_name, e_err))
+        return l_api
+
+    @staticmethod
     def _build_one_family_data(p_pyhouse_obj, p_name):
         """Build up the FamilyData names portion entry for a single family
 
@@ -105,7 +117,7 @@ class Utility(object):
         l_dev_mod = Utility._do_import(l_family_obj, l_family_obj.FamilyDeviceModuleName)
         l_family_obj.FamilyModuleAPI = Utility._create_api_instance(p_pyhouse_obj, l_family_obj.FamilyDeviceModuleName, l_dev_mod)
         l_xml_mod = Utility._do_import(l_family_obj, l_family_obj.FamilyXmlModuleName)
-        l_family_obj.FamilyXmlModuleAPI = Utility._create_api_instance(p_pyhouse_obj, l_family_obj.FamilyXmlModuleName, l_xml_mod)
+        l_family_obj.FamilyXmlModuleAPI = Utility._create_xml_instance(l_family_obj.FamilyXmlModuleName, l_xml_mod)
         return l_family_obj
 
     @staticmethod

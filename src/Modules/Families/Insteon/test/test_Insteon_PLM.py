@@ -7,6 +7,8 @@
 @license:   MIT License
 @summary:   This module is for driving serial devices
 
+Passed all 10 tests - DBK - 2015-07-29
+
 """
 
 # Import system type stuff
@@ -16,13 +18,9 @@ from twisted.trial import unittest
 # Import PyMh files
 # from Modules.lights.lighting import LightData
 from Modules.Core.data_objects import PyHouseData, ControllerData
-from Modules.Families.Insteon.Insteon_PLM import Utility, API as insteonPlmAPI
-from Modules.Families import family
-from Modules.Lighting.lighting_lights import API as lightsAPI
-from Modules.Lighting.lighting_controllers import API as controllefrAPI
+from Modules.Families.Insteon.Insteon_PLM import Utility
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.tools import PrettyPrintAny, PrintBytes
 
 
 ADR_16C9D0 = '16.C9.D0'

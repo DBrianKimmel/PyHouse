@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/families/UPB/test/test_Device_UPB.py
+@name:      PyHouse/src/Modules/families/UPB/test/test_UPB_device.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2015 by D. Brian Kimmel
@@ -14,54 +14,37 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Families.UPB import UPB_device, UPB_data
-from Modules.Lighting.lighting_lights import API as lightsAPI
-from Modules.Hvac import thermostats
-from Modules.Housing import house
-from test import xml_data
+from Modules.Families.UPB.UPB_device import API as upbDeviceAPI
+from test.xml_data import XML_LONG
+from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
 
 
 class SetupMixin(object):
-    """
-    """
 
-    def setUp(self):
-        self.m_pyhouse_obj.Xml.XmlRoot = self.m_root_xml
-        self.m_thermostat_obj = UPB_data()
-        self.m_pyhouse_obj = house.API().update_pyhouse_obj(self.m_pyhouse_obj)
-        # PrettyPrintAny(self.m_pyhouse_obj, 'SetupMixin.Setup - PyHouse_obj', 100)
-        self.m_api = UPB_device.API()
-        self.m_thermostat_api = thermostats.API()
-        self.m_light_api = lightsAPI(self.m_pyhouse_obj)
-        return self.m_pyhouse_obj
+    def setUp(self, p_root):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
+        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-class Test_02_ReadXML(SetupMixin, unittest.TestCase):
+class A1_SetupL(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by node_local.
     """
 
     def setUp(self):
-        self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
-        self.m_pyhouse_obj = SetupMixin.setUp(self)
-        house.API().update_pyhouse_obj(self.m_pyhouse_obj)
-        self.m_house_div_xml = self.m_root_xml.find('HouseDivision')
-        self.m_thermostat_sect_xml = self.m_house_div_xml.find('ThermostatSection')
-        self.m_thermostat_xml = self.m_thermostat_sect_xml.find('Thermostat')
-        self.m_light_sect_xml = self.m_house_div_xml.find('LightSection')
-        self.m_light_xml = self.m_light_sect_xml.find('Light')
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_api = upbDeviceAPI(self.m_pyhouse_obj)
 
-
-    def test_0202_FindXml(self):
+    def test_01_FindXml(self):
         """ Be sure that the XML contains the right stuff.
         """
-        self.assertEqual(self.m_root_xml.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
-        self.assertEqual(self.m_thermostat_sect_xml.tag, 'ThermostatSection', 'XML - No Thermostat section')
-        self.assertEqual(self.m_thermostat_xml.tag, 'Thermostat', 'XML - No Thermostat Entry')
-        self.assertEqual(self.m_light_sect_xml.tag, 'LightSection', 'XML - No Light section')
-        self.assertEqual(self.m_light_xml.tag, 'Light', 'XML - No Light Entry')
+        self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
+        self.assertEqual(self.m_xml.thermostat_sect.tag, 'ThermostatSection', 'XML - No Thermostat section')
+        self.assertEqual(self.m_xml.thermostat.tag, 'Thermostat', 'XML - No Thermostat Entry')
+        self.assertEqual(self.m_xml.light_sect.tag, 'LightSection', 'XML - No Light section')
+        self.assertEqual(self.m_xml.light.tag, 'Light', 'XML - No Light Entry')
 
-    def test_0203_ReadOneLightXml(self):
+    def Xtest_02_ReadOneLightXml(self):
         """ Read in the xml file and fill in the lights
         """
         l_entry = self.m_thermostat_api._read_one_thermostat_xml(self.m_thermostat_xml, self.m_pyhouse_obj)

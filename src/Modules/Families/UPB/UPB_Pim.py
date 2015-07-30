@@ -18,6 +18,7 @@ import Queue
 
 # Import PyMh files
 from Modules.Families.UPB.UPB_data import UPBData
+from Modules.Families.UPB.UPB_constants import pim_commands
 from Modules.Utilities.tools import PrintBytes
 from Modules.Computer import logging_pyh as Logger
 from Modules.Families.family_utils import FamUtil
@@ -44,51 +45,6 @@ RECEIVE_TIMEOUT = 0.9  # this is for fetching data in the RX buffer
 CTL_T = 0x14  # transmit a UPB Message
 CTL_R = 0x12  # Read PIM Registers
 CTL_W = 0x17  # Write PIM Registers
-
-
-pim_commands = {
-# Core commands
-'null'                      : 0X00,
-'write_enable'              : 0x01,
-'write_protect'             : 0x02,
-'start_setup_mode'          : 0x03,
-'stop_setup_mode'           : 0x04,
-'get_setup_time'            : 0x05,
-'auto_address'              : 0x06,
-'get_device_status'         : 0x07,
-'set_device_status'         : 0x08,
-'add_link'                  : 0x0B,
-'delete_link'               : 0x0C,
-'transmit_message'          : 0x0D,
-'device_reset'              : 0x0E,
-'get_device_signature'      : 0x0F,
-'get_register_value'        : 0x10,
-'set_register_value'        : 0x11,
-# Device Control commands
-'activate_link'             : 0x20,
-'deactivate_link'           : 0x21,
-'goto'                      : 0x22,
-'fade_start'                : 0x23,
-'fade_stop'                 : 0x24,
-'blink'                     : 0x25,
-'indicate'                  : 0x26,
-'toggle'                    : 0x27,
-'report_state'              : 0x30,
-'store_state'               : 0x31
-}
-
-
-class UpbPimData(object):
-    def __init__(self):
-        self.Name = 'Undefined Upb Pim'
-        self.InterfaceType = ''  # Serial | USB | Ethernet
-        self.UPBAddress = 0
-        self.UPBPassword = 0
-        self.UPBNetworkID = 0
-        #
-        self._Message = ''
-        self._Queue = None
-        self._DriverAPI = None  # InterfaceType API() - Serial, USB etc.
 
 
 class BuildCommand(object):
@@ -170,8 +126,7 @@ class BuildCommand(object):
             l_str = self._byte_to_2chars(l_byte)
             l_ret.append(l_str[0])
             l_ret.append(l_str[1])
-        if g_debug >= 1:
-            LOG.debug("Convert_pim - {0:}".format(PrintBytes(l_ret)))
+        LOG.debug("Convert_pim - {}".format(PrintBytes(l_ret)))
         return l_ret
 
     def _create_packet_header(self):
@@ -185,7 +140,7 @@ class BuildCommand(object):
 
     def _queue_pim_command(self, p_controller_obj, p_command):
         if g_debug >= 1:
-            l_msg = "Queue_pim_command {0:}".format(PrintBytes(p_command))
+            l_msg = "Queue_pim_command {}".format(PrintBytes(p_command))
             LOG.debug(l_msg)
         p_controller_obj._Queue.put(p_command)
 
@@ -221,11 +176,11 @@ class UpbPimUtility(object):
         for l_ix in range(len(p_args)):
             l_hdr[0 + l_ix] = p_args[l_ix]
         l_hdr = self._calculate_checksum(l_hdr)
-        l_msg = "Ctl:{0:#02x}  ".format(l_hdr[0])
+        l_msg = "Ctl:{:#02x}  ".format(l_hdr[0])
         if g_debug >= 1:
-            LOG.debug('Compose Command - {0:}'.format(l_msg))
+            LOG.debug('Compose Command - {}'.format(l_msg))
         # self.queue_pim_command(p_controller_obj, l_hdr)
-
+        pass
 
 
 class DecodeResponses(object):
@@ -245,7 +200,7 @@ class DecodeResponses(object):
         if l_end < 0:
             return ''  # Not a complete message yet.
         if l_start > 0:
-            LOG.warning('Decoding result - discarding leading junk {0:}'.format(PrintBytes(p_controller_obj._Message[0:l_start])))
+            LOG.warning('Decoding result - discarding leading junk {}'.format(PrintBytes(p_controller_obj._Message[0:l_start])))
             p_controller_obj._Message = p_controller_obj._Message[l_start:]
             l_start = 0
             l_end = p_controller_obj._Message.find('\r')
@@ -346,7 +301,7 @@ class PimDriverInterface(DecodeResponses):
             return
         if p_controller_obj._DriverAPI != None:
             if g_debug >= 1:
-                LOG.debug('Sending to controller:{0:}, Message: {1:} '.format(p_controller_obj.Name, PrintBytes(l_command)))
+                LOG.debug('Sending to controller:{}, Message: {} '.format(p_controller_obj.Name, PrintBytes(l_command)))
             p_controller_obj._DriverAPI.Write(l_command)
 
     def receive_loop(self, p_controller_obj):
@@ -358,7 +313,7 @@ class PimDriverInterface(DecodeResponses):
             if len(l_msg) == 0:
                 return
             if g_debug >= 2:
-                LOG.debug('Fetched message  {0:}'.format(PrintBytes(l_msg)))
+                LOG.debug('Fetched message  {}'.format(PrintBytes(l_msg)))
             p_controller_obj._Message += l_msg
             self.decode_response(p_controller_obj)
         else:
@@ -374,7 +329,7 @@ class CreateCommands(UpbPimUtility, PimDriverInterface, BuildCommand):
         """Set one of the device's registers.
         """
         if g_debug >= 1:
-            LOG.debug("Setting register {0:#0x} to value {1:}".format(p_register, p_values))
+            LOG.debug("Setting register {:#0x} to value {}".format(p_register, p_values))
         self.write_register_command(p_controller_obj, p_register, p_values)
         pass
 
@@ -410,7 +365,7 @@ class UpbPimAPI(CreateCommands):
         l_pim.UPBAddress = p_controller_obj.UPBAddress
         l_pim.UPBPassword = p_controller_obj.UPBPassword
         l_pim.UPBNetworkID = p_controller_obj.UPBNetworkID
-        LOG.info('Found UPB PIM named: {0:}, Type={1:}'.format(l_pim.Name, l_pim.InterfaceType))
+        LOG.info('Found UPB PIM named: {}, Type={}'.format(l_pim.Name, l_pim.InterfaceType))
         return l_pim
 
     def start_controller(self, p_pyhouse_obj, p_controller_obj):
@@ -435,7 +390,8 @@ class API(UpbPimAPI):
     m_pyhouse_obj = None
     m_controller_obj = None
 
-    def __init__(self):
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info('Initialized.')
 
     def Start(self, p_pyhouse_obj, p_controller_obj):
@@ -457,7 +413,7 @@ class API(UpbPimAPI):
             l_name = p_light_obj.Name
             if l_obj.Name == l_name:
                 l_id = self._get_id_from_name(l_name)
-                LOG.info('Change light {0:} to Level {1:}'.format(l_name, p_level))
+                LOG.info('Change light {} to Level {}'.format(l_name, p_level))
                 self._compose_command(self.m_controller_obj, pim_commands['goto'], l_id, p_level, 0x01)
                 return
 

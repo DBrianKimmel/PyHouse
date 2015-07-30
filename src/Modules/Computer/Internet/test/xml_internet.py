@@ -9,23 +9,40 @@
 
 """
 
+TESTING_INTERNET_LOCATE_URL_1 = 'http://snar.co/ip/'
+TESTING_INTERNET_LOCATE_URL_2 = 'http://checkip.dyndns.com/'
+TESTING_INTERNET_UPDATE_URL_1 = 'http://freedns.afraid.org/dynamic/update.php?12345'
+TESTING_INTERNET_IPv4 = '65.35.48.61'
+TESTING_INTERNET_IPv6 = '1234:5678::1'
+TESTING_INTERNET_LAST_CHANGED = '2014-10-02T12:34:56'
 
+L_INTERNET_LOCATE_URL_1 = '    <LocateUrl>' + TESTING_INTERNET_LOCATE_URL_1 + '</LocateUrl>'
+L_INTERNET_LOCATE_URL_2 = '    <LocateUrl>' + TESTING_INTERNET_LOCATE_URL_2 + '</LocateUrl>'
+L_INTERNET_UPDATE_URL_1 = '    <UpdateUrl>' + TESTING_INTERNET_UPDATE_URL_1 + '</UpdateUrl>'
+L_INTERNET_IPv4 = '    <ExternalIPv4>' + TESTING_INTERNET_IPv4 + '</ExternalIPv4>'
+L_INTERNET_IPv6 = '    <ExternalIPv6>' + TESTING_INTERNET_IPv6 + '</ExternalIPv6>'
+L_INTERNET_LAST_CHANGED = '    <LastChanged>' + TESTING_INTERNET_LAST_CHANGED + '</LastChanged>'
 
-INTERNET_XML = """
-        <InternetSection>
-            <LocaterUrlSection>
-                <LocateUrl>http://snar.co/ip/</LocateUrl>
-                <LocateUrl>http://checkip.dyndns.com/</LocateUrl>
-            </LocaterUrlSection>
-            <UpdaterUrlSection>
-                <UpdateUrl>http://freedns.afraid.org/dynamic/update.php?12345</UpdateUrl>
-            </UpdaterUrlSection>
-            <ExternalIPv4>65.35.48.61</ExternalIPv4>
-            <ExternalIPv6>1234:5678::1</ExternalIPv6>
-            <LastChanged>2014-10-02T12:34:56</LastChanged>
-        </InternetSection>
-"""
-
+XML_LOCATER_URL = '\n'.join([
+    '<LocaterUrlSection>',
+        L_INTERNET_LOCATE_URL_1,
+        L_INTERNET_LOCATE_URL_2,
+    '</LocaterUrlSection>'
+])
+XML_UPDATER_URL = '\n'.join([
+    '<UpdaterUrlSection>',
+        L_INTERNET_UPDATE_URL_1,
+    '</UpdaterUrlSection>'
+])
+XML_INTERNET = '\n'.join([
+    '<InternetSection>',
+        XML_LOCATER_URL,
+        XML_UPDATER_URL,
+        L_INTERNET_IPv4,
+        L_INTERNET_IPv6,
+        L_INTERNET_LAST_CHANGED,
+    '</InternetSection>'
+])
 
 
 INTERNET_XSD = """

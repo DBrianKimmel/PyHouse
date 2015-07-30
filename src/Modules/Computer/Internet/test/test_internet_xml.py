@@ -48,17 +48,17 @@ class C01_XML(SetupMixin, unittest.TestCase):
         """ Be sure that the XML contains the right stuff.
         """
         # self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
-        PrettyPrintAny(self.m_xml.root.tag)
+        # PrettyPrintAny(self.m_xml.root.tag)
         # self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision', 'XML - No Computer section')
         self.assertEqual(self.m_xml.internet_sect.tag, 'InternetSection', 'XML - No Internet section')
         self.assertEqual(self.m_xml.locater_sect.tag, 'LocaterUrlSection')
         self.assertEqual(self.m_xml.updater_sect.tag, 'UpdaterUrlSection')
-        PrettyPrintAny(self.m_xml.internet_sect, 'All Internet Section')
-        PrettyPrintAny(self.m_xml.locater_sect)
+        # PrettyPrintAny(self.m_xml.internet_sect, 'All Internet Section')
+        # PrettyPrintAny(self.m_xml.locater_sect)
 
     def test_01_ReadLocates(self):
         l_dict = self.m_api._read_locates_xml(self.m_xml.locater_sect)
-        PrettyPrintAny(l_dict, 'Locates')
+        # PrettyPrintAny(l_dict, 'Locates')
         self.assertEqual(len(l_dict), 2)
         self.assertEqual(l_dict[0], 'http://snar.co/ip/')
         self.assertEqual(l_dict[1], 'http://checkip.dyndns.com/')
@@ -67,18 +67,18 @@ class C01_XML(SetupMixin, unittest.TestCase):
         l_dict = self.m_api._read_updates_xml(self.m_xml.updater_sect)
         self.assertEqual(len(l_dict), 1)
         self.assertEqual(l_dict[0], 'http://freedns.afraid.org/dynamic/update.php?12345')
-        PrettyPrintAny(l_dict, 'Updates')
+        # PrettyPrintAny(l_dict, 'Updates')
 
     def test_03_ReadDerived(self):
         l_icd = self.m_api._read_derived(self.m_xml.internet_sect)
-        PrettyPrintAny(l_icd, 'ICD')
+        # PrettyPrintAny(l_icd, 'ICD')
         self.assertEqual(l_icd.ExternalIPv4, convert.str_to_long('65.35.48.61'))
         self.assertEqual(l_icd.ExternalIPv6, convert.str_to_long('1234:5678::1'))
         self.assertEqual(l_icd.LastChanged, DATETIME)
 
     def test_04_RedAllInternet(self):
         l_obj = self.m_api.read_internet_xml(self.m_pyhouse_obj)
-        PrettyPrintAny(l_obj, 'All Internet')
+        # PrettyPrintAny(l_obj, 'All Internet')
         self.assertEqual(l_obj.LocateUrls[0], 'http://snar.co/ip/')
         self.assertEqual(l_obj.UpdateUrls[0], 'http://freedns.afraid.org/dynamic/update.php?12345')
         self.assertEqual(l_obj.ExternalIPv4, convert.str_to_long('65.35.48.61'))
@@ -86,13 +86,13 @@ class C01_XML(SetupMixin, unittest.TestCase):
     def test_11_WriteLocates(self):
         l_internet_obj = self.m_api.read_internet_xml(self.m_pyhouse_obj)
         l_xml = self.m_api._write_locates_xml(l_internet_obj)
-        PrettyPrintAny(l_xml, 'Locates')
+        # PrettyPrintAny(l_xml, 'Locates')
         self.assertEqual(l_internet_obj.LocateUrls[0], 'http://snar.co/ip/')
 
     def test_12_WriteUpdates(self):
         l_internet_obj = self.m_api.read_internet_xml(self.m_pyhouse_obj)
         l_xml = self.m_api._write_updates_xml(l_internet_obj)
-        PrettyPrintAny(l_xml, 'Updatew')
+        # PrettyPrintAny(l_xml, 'Updatew')
 
     def test_13_WriteDerived(self):
         """ Write out the XML file for the location section
@@ -100,22 +100,21 @@ class C01_XML(SetupMixin, unittest.TestCase):
         l_internet = self.m_api.read_internet_xml(self.m_pyhouse_obj)
         l_xml = ET.Element('InternetSection')
         self.m_api._write_derived_xml(l_internet, l_xml)
-        PrettyPrintAny(l_xml, 'Write xml')
+        # PrettyPrintAny(l_xml, 'Write xml')
 
     def test_14_WriteAllInternetXml(self):
         """ Write out the XML file for the location section
         """
         l_internet = self.m_api.read_internet_xml(self.m_pyhouse_obj)
-        PrettyPrintAny(l_internet, 'Internet', 100)
+        # PrettyPrintAny(l_internet, 'Internet', 100)
         l_xml = self.m_api.write_internet_xml(l_internet)
-        PrettyPrintAny(l_xml, 'Write xml')
+        # PrettyPrintAny(l_xml, 'Write xml')
 
     def test_20_CreateJson(self):
         """ Create a JSON object for Rooms.
         """
         l_internet = self.m_api.read_internet_xml(self.m_pyhouse_obj)
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_internet))
-        PrettyPrintAny(l_json, 'JSON', 70)
-
+        # PrettyPrintAny(l_json, 'JSON', 70)
 
 # ## END DBK

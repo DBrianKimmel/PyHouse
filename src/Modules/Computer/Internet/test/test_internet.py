@@ -16,10 +16,12 @@ from twisted.trial import unittest
 
 # Import PyMh files
 from Modules.Core.data_objects import InternetConnectionData
-from Modules.Computer.Internet import internet
-from Modules.Utilities.tools import PrettyPrintAny
-from test import xml_data
+from Modules.Computer.Internet.internet import API as internetAPI
+from Modules.Computer.Internet.test.xml_internet import TESTING_INTERNET_IPv4
+from Modules.Utilities import convert
+from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
+from Modules.Utilities.tools import PrettyPrintAny
 
 
 class SetupMixin(object):
@@ -35,30 +37,31 @@ class C01_Util(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_internet_obj = InternetConnectionData()
         # self.m_dyn_dns_obj = InternetConnectionDynDnsData()
-        self.m_api = internet.API()
+        self.m_api = internetAPI(self.m_pyhouse_obj)
 
     def test_01_Config(self):
         l_config = self.m_api._read_xml_configuration(self.m_pyhouse_obj)
-        PrettyPrintAny(l_config, 'Config')
+        # PrettyPrintAny(l_config, 'Config')
+        self.assertEqual(l_config.ExternalIPv4, convert.str_to_long(TESTING_INTERNET_IPv4))
 
     def test_02_WriteConfig(self):
         _l_config = self.m_api._read_xml_configuration(self.m_pyhouse_obj)
         l_xml = self.m_api._write_xml_config(self.m_pyhouse_obj)
-        PrettyPrintAny(l_xml, 'XML')
+       # PrettyPrintAny(l_xml, 'XML')
 
     def test_03_SaveConfig(self):
-        self.m_api._save_pyhouse_obj(self.m_pyhouse_obj)
+        # self.m_api._save_pyhouse_obj(self.m_pyhouse_obj)
         l_comp = ET.Element('ComputerSection')
         _l_config = self.m_api._read_xml_configuration(self.m_pyhouse_obj)
         l_xml = self.m_api.SaveXml(l_comp)
-        PrettyPrintAny(l_xml, 'XML')
+        # PrettyPrintAny(l_xml, 'XML')
 
     def test_11_CreateService(self):
         self.m_api._create_internet_discovery_service(self.m_pyhouse_obj)
-        PrettyPrintAny(self.m_pyhouse_obj.Services, 'PyHouse')
+        # PrettyPrintAny(self.m_pyhouse_obj.Services, 'PyHouse')
         pass
 
     def test_12_StartService(self):

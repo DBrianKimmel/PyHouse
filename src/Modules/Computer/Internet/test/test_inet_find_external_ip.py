@@ -32,7 +32,7 @@ class SetupMixin(object):
         self.m_pyhouse_obj.Twisted.Reactor = reactor
 
 
-class C01_Util(SetupMixin, unittest.TestCase):
+class C1_Util(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
@@ -40,7 +40,8 @@ class C01_Util(SetupMixin, unittest.TestCase):
         self.m_api = inet_find_external_ip.API()
 
     def test_01_IPv4_addr(self):
-        PrettyPrintAny(self.m_reactor, 'Reactor')
+        # PrettyPrintAny(self.m_reactor, 'Reactor')
+        pass
 
     def test_02_scrape(self):
         l_body = 'Current IP Address: 216.16.166.42'

@@ -8,6 +8,7 @@
 @summary:   This module is for testing Insteon conversion routines.
 
 Passed all 4 tests - DBL - 2015-07-28
+
 """
 
 # Import system type stuff
@@ -18,9 +19,6 @@ import xml.etree.ElementTree as ET
 from Modules.Families.Insteon import Insteon_utils
 from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG
-from Modules.Utilities.tools import PrettyPrintAny
-
-
 
 ADDR_DR_SLAVE_MSG = bytearray(b'\x16\xc9\xd0')
 ADDR_DR_SLAVE_INT = 1493456
@@ -29,7 +27,6 @@ ADDR_NOOK_INT = 1557106
 
 MSG_50 = bytearray(b'\x02\x50\x16\xc9\xd0\x1b\x47\x81\x27\x09\x00')
 MSG_62 = bytearray(b'\x02\x62\x17\xc2\x72\x0f\x19\x00\x06')
-
 
 
 class SetupMixin(object):

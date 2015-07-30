@@ -13,20 +13,20 @@
 from twisted.trial import unittest, reporter, runner
 
 # Import PyMh files and modules.
-from Modules.Utilities import test
+from Modules.Utilities import test as I_test
 
 
-class Z_Null(unittest.TestCase):
+class Z_Suite(unittest.TestCase):
 
     def setUp(self):
         self.m_test = runner.TestLoader()
 
-    def test_Null(self):
+    def test_Utilities(self):
         l_package = runner.TestLoader().loadPackage(I_test)
         l_ret = reporter.Reporter()
         l_package.run(l_ret)
         l_ret.done()
         #
-        print('\n====================\n*** test_Null ***\n{}\n'.format(l_ret))
+        print('\n====================\n*** test_Utilities ***\n{}\n'.format(l_ret))
 
 # ## END DBK

@@ -24,7 +24,7 @@ COMPUTER_DIVISION_XML = '\n'.join([
     NODES_XML,
     COMMUNICATION_XML,
     WEB_SERVER_XML,
-    INTERNET_XML,
+    XML_INTERNET,
     MQTT_XML,
     "</ComputerDivision>",
     ''

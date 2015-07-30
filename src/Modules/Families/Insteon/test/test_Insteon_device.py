@@ -17,10 +17,8 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from Modules.Families.Insteon.Insteon_data import InsteonData
 from Modules.Families.Insteon import Insteon_device
-# from Modules.Core import conversions
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.tools import PrettyPrintAny
 
 
 class SetupMixin(object):

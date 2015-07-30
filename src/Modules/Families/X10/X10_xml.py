@@ -19,17 +19,14 @@ from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.X10_xml      ')
 
 
-class API(object):
-#    """Interface to the lights of this module.
-#    """
+class Xml(object):
 
-    def __init__(self, p_pyhouse_obj):
-        self.m_pyhouse_obj = p_pyhouse_obj
-
-    def ReadXml(self, p_device_obj, p_in_xml):
+    @staticmethod
+    def ReadXml(p_device_obj, p_in_xml):
         pass
 
-    def WriteXml(self, p_out_xml, p_device_obj):
+    @staticmethod
+    def WriteXml(p_out_xml, p_device_obj):
         return p_out_xml
 
 # ## END DBK

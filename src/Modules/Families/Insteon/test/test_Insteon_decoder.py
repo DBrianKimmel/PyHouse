@@ -7,6 +7,8 @@
 @note:      Created on Jul 18, 2014
 @Summary:
 
+Passed all 7 tests - DBK - 2015-07-29
+
 """
 
 # Import system type stuff
@@ -17,10 +19,9 @@ import xml.etree.ElementTree as ET
 from Modules.Core.data_objects import ControllerData
 from Modules.Families.Insteon import Insteon_decoder
 from Modules.Lighting.lighting_lights import API as lightsAPI
-# from Modules.Lighting.lighting_controllers import API as controllerAPI
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.tools import PrettyPrintAny, PrintBytes
+from Modules.Utilities.tools import PrintBytes
 
 MSG_50 = bytearray(b'\x02\x50\x16\xc9\xd0\x1b\x47\x81\x27\x09\x00')
 MSG_62 = bytearray(b'\x02\x62\x17\xc2\x72\x0f\x19\x00\x06')
@@ -49,19 +50,19 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         pass
 
     def test_02_House(self):
-        l_house = self.m_pyhouse_obj.House
+        # l_house = self.m_pyhouse_obj.House
         # PrettyPrintAny(l_house, 'House')
         pass
 
     def test_03_Device(self):
-        l_house = self.m_pyhouse_obj.House
-        l_devs = l_house.DeviceOBJs
+        # l_house = self.m_pyhouse_obj.House
+        # l_devs = l_house.DeviceOBJs
         # PrettyPrintAny(l_devs, 'Devices')
         pass
 
     def test_04_Refs(self):
-        l_house = self.m_pyhouse_obj.House
-        l_refs = l_house.RefOBJs
+        # l_house = self.m_pyhouse_obj.House
+        # l_refs = l_house.RefOBJs
         # PrettyPrintAny(l_refs, 'References')
         pass
 
@@ -82,7 +83,7 @@ class C1_Util(SetupMixin, unittest.TestCase):
     def test_02_NextMsg(self):
         self.m_ctrlr._Message = MSG_50
         l_msg = self.m_util.get_next_message(self.m_ctrlr)
-        print(PrintBytes(l_msg))
+        # print(PrintBytes(l_msg))
         self.assertEqual(l_msg[1], 0x50)
         self.m_ctrlr._Message = bytearray()
         l_msg = self.m_util.get_next_message(self.m_ctrlr)

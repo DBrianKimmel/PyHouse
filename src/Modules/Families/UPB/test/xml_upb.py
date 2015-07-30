@@ -9,35 +9,22 @@
 
 """
 
+TESTING_UPB_ADDRESS = '255'
+TESTING_UPB_NETWORK = '6'
+TESTING_UPB_PASSWORD = '1253'
 
-UPB_XML = """\
-    <DeviceFamily>UPB</DeviceFamily>
-    <UPBNetworkID>6</UPBNetworkID>
-    <UPBPassword>1253</UPBPassword>
-    <UPBAddress>255</UPBAddress>"""
+L_UPB_ADDRESS = '    <UPBAddress>' + TESTING_UPB_ADDRESS + '</UPBAddress>'
+L_UPB_NETWORK = '    <UPBNetworkID>' + TESTING_UPB_NETWORK + '</UPBNetworkID>'
+L_UPB_PASSWORD = '    <UPBPassword>' + TESTING_UPB_PASSWORD + '</UPBPassword>'
 
-
+UPB_XML = L_UPB_ADDRESS + \
+          L_UPB_NETWORK + \
+          L_UPB_PASSWORD
 
 UPB_XSD = """
               <xs:element type="xs:byte" name="UPBNetworkID" minOccurs="0"/>
               <xs:element type="xs:short" name="UPBPassword" minOccurs="0"/>
               <xs:element type="xs:short" name="UPBAddress" minOccurs="0"/>
-
-              <xs:element type="xs:string" name="InterfaceType"/>
-              <xs:element type="xs:string" name="Port"/>
-
-              <xs:element type="xs:short" name="BaudRate" minOccurs="0"/>
-              <xs:element type="xs:byte" name="ByteSize" minOccurs="0"/>
-              <xs:element type="xs:string" name="Parity" minOccurs="0"/>
-              <xs:element type="xs:float" name="StopBits" minOccurs="0"/>
-              <xs:element type="xs:float" name="Timeout" minOccurs="0"/>
-              <xs:element type="xs:string" name="DsrDtr" minOccurs="0"/>
-              <xs:element type="xs:string" name="RtsCts" minOccurs="0"/>
-              <xs:element type="xs:string" name="XonXoff" minOccurs="0"/>
-
-              <xs:element type="xs:short" name="Vendor" minOccurs="0"/>
-              <xs:element type="xs:short" name="Product" minOccurs="0"/>
-
 """
 
 # ## END DBK

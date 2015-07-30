@@ -26,7 +26,7 @@ class UPBData(LightData):
 
     def __init__(self):
         super(UPBData, self).__init__()
-        self.DeviceFamily = 'UPB'
+        # self.DeviceFamily = 'UPB'
         self.UPBAddress = 0
         self.UPBPassword = 0
         self.UPBNetworkID = 0

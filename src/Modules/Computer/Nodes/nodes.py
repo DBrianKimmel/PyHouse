@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.Computer.Nodes.test.test_nodes -*-
+-*- test-case-name: PyHouse.src.Modules.Computer.Nodes.XXtest_nodes -*-
 
 @name:      PyHouse/src/Modules/Computer/Nodes/nodes.py
 @author:    D. Brian Kimmel

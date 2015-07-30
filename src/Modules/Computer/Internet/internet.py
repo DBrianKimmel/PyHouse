@@ -56,12 +56,12 @@ class Utility(object):
         """
         Create the twisted service for Internet discovery.
         """
-        try:
-            p_pyhouse_obj.Services.InternetDiscoveryService = service.Service()
-            p_pyhouse_obj.Services.InternetDiscoveryService.setName('NodeDiscovery')
-            p_pyhouse_obj.Services.InternetDiscoveryService.setServiceParent(p_pyhouse_obj.Twisted.Application)
-        except RuntimeError:  # The service is already installed
-            LOG.warning('Internet Discovery Service already loaded.')
+        # try:
+        #    p_pyhouse_obj.Services.InternetDiscoveryService = service.Service()
+        #    p_pyhouse_obj.Services.InternetDiscoveryService.setName('NodeDiscovery')
+        #    p_pyhouse_obj.Services.InternetDiscoveryService.setServiceParent(p_pyhouse_obj.Twisted.Application)
+        # RuntimeError:  # The service is already installed
+        #    LOG.warning('Internet Discovery Service already loaded.')
         self.m_service_installed = True
 
 

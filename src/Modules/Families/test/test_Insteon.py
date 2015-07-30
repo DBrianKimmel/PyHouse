@@ -13,11 +13,9 @@
 from twisted.trial import unittest, reporter, runner
 
 from Modules.Families.Insteon import test as I_test
-# from Modules.Utilities.tools import PrettyPrintAny
-# from Modules.Computer import logging_pyh as Logger
 
 
-class Z_Insteon(unittest.TestCase):
+class Z_Suite(unittest.TestCase):
 
     def setUp(self):
         self.m_test = runner.TestLoader()

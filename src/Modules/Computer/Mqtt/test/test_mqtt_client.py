@@ -51,28 +51,29 @@ class A1_XML(SetupMixin, unittest.TestCase):
         """ Be sure that the XML contains the right stuff.
         """
         # PrettyPrintAny(self.m_xml.root, 'XML')
-        PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse_obj')
+        # PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse_obj')
+        pass
 
     def test_02_FindXML(self):
         """ Be sure that the XML contains the right stuff.
         """
-        PrettyPrintAny(self.m_pyhouse_obj.Xml, 'PyHouse XML')
+        # PrettyPrintAny(self.m_pyhouse_obj.Xml, 'PyHouse XML')
         # PrettyPrintAny(self.m_xml.root, 'XML')
         self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
         self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision', 'XML - No Computer Division')
         self.assertEqual(self.m_xml.mqtt_sect.tag, 'MqttSection', 'XML - No Mqtt section')
 
     def test_03_Mqtt(self):
-        PrettyPrintAny(self.m_xml.mqtt_sect, 'Mqtt')
-
-    def test_04_Mqtt(self):
-        PrettyPrintAny(self.m_pyhouse_obj.APIs.Computer.MqttAPI, 'Mqtt')
+        # PrettyPrintAny(self.m_pyhouse_obj.APIs.Computer.MqttAPI, 'Mqtt')
+        pass
 
     def test_05_Mqtt(self):
-        PrettyPrintAny(self.m_pyhouse_obj.Computer, 'Mqtt')
+        # PrettyPrintAny(self.m_pyhouse_obj.Computer, 'Mqtt')
+        pass
 
     def test_06_Broker(self):
-        PrettyPrintAny(self.m_broker, 'Broker')
+        # PrettyPrintAny(self.m_broker, 'Broker')
+        pass
 
 
 class B1_Connect(SetupMixin, unittest.TestCase):
@@ -91,7 +92,7 @@ class B1_Connect(SetupMixin, unittest.TestCase):
         """
         self.m_pyhouse_obj.Computer.Mqtt.Brokers = {}
         self.m_pyhouse_obj.Computer.Mqtt.Brokers[0] = self.m_broker
-        PrettyPrintAny(self.m_broker, 'Broker')
+        # PrettyPrintAny(self.m_broker, 'Broker')
         self.m_api.client_connect_all_brokers(self.m_pyhouse_obj)
 
 # ## END DBK

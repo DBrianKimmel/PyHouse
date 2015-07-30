@@ -19,15 +19,14 @@ from Modules.Computer import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.Null_xml    ')
 
-class API(object):
+class Xml(object):
 
-    def __init__(self, p_pyhouse_obj):
-        self.m_pyhouse_obj = p_pyhouse_obj
-
-    def ReadXml(self, p_device_obj, _p_entry_xml):
+    @staticmethod
+    def ReadXml(p_device_obj, _p_entry_xml):
         return p_device_obj
 
-    def WriteXml(self, p_entry_xml, p_device_obj):
+    @staticmethod
+    def WriteXml(p_entry_xml, p_device_obj):
         pass
 
 # ## END DBK

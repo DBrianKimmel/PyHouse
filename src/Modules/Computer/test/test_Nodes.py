@@ -1,32 +1,31 @@
 """
-@name:      PyHouse/src/Modules/Families/test/test_all.py
+@name:      C:/Users/briank/workspace/PyHouse/src/Modules/Computer/test/test_Nodes.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2015-2015 by D. Brian Kimmel
 @license:   MIT License
-@note:      Created on Jul 28, 2015
+@note:      Created on Jul 29, 2015
 @Summary:
 
 """
 
-# Import system type stuff
 from twisted.trial import unittest, reporter, runner
 
-from Modules.Families import test as I_test
-from Modules.Utilities.tools import PrettyPrintAny
+from Modules.Computer.Nodes import test as I_test
 
 
-class Z_All(unittest.TestCase):
+class Z_Suite(unittest.TestCase):
 
     def setUp(self):
         self.m_test = runner.TestLoader()
 
-    def test_AllFamilies(self):
+    def test_Nodes(self):
         l_package = runner.TestLoader().loadPackage(I_test)
         l_ret = reporter.Reporter()
         l_package.run(l_ret)
         l_ret.done()
         #
-        print('\n====================\n*** test_all ***\n{}\n'.format(l_ret))
+        print('\n====================\n*** test_Nodes ***\n{}\n'.format(l_ret))
+
 
 # ## END DBK
