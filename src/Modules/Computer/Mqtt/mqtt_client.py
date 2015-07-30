@@ -69,6 +69,7 @@ class API(Util):
     def Start(self):
         l_config_dict = mqttXML().read_mqtt_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Computer.Mqtt.Brokers = l_config_dict
+        self.m_pyhouse_obj.Computer.Mqtt.Prefix = 'None'
         if l_config_dict != {}:
             l_count = self.client_connect_all_brokers(self.m_pyhouse_obj)
             LOG.info("Mqtt {} broker(s) Started.".format(l_count))
