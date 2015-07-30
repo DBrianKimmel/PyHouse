@@ -88,7 +88,7 @@ class Utility(object):
         l_index = 0  #
         l_ret = (l_requestType, l_request, l_value, l_index, l_report)
         p_USB_obj.Device.ctrl_transfer(l_requestType, l_request, l_value, l_index, l_report)
-        LOG.debug("Type:{:#02x};  Req:{:#02x};  Value:{#04x};  Index{:02x];  Report:{}".format(l_requestType, l_request, l_value, l_index, PrintBytes(l_report)))
+        LOG.debug("Type:{:#02x};  Req:{:#02x};  Value:{:#04x};  Index{:02x];  Report:{}".format(l_requestType, l_request, l_value, l_index, PrintBytes(l_report)))
         return l_ret
 
 
