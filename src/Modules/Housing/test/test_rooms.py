@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/housing/test/test_rooms.py
+@name:      PyHouse/src/Housing/test/test_rooms.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2015 by D. Brian Kimmel
@@ -56,7 +56,7 @@ class A1_XML(SetupMixin, unittest.TestCase):
         """ Read in the xml file and fill in the first room's dict
         """
         l_room = self.m_api.read_one_room(self.m_xml.room)
-        PrettyPrintAny(l_room, 'Room')
+        # PrettyPrintAny(l_room, 'Room')
         self.assertEqual(l_room.Name, 'Master Bath', 'Bad Name')
         self.assertEqual(l_room.Key, 0, 'Bad Key')
         self.assertEqual(l_room.Active, True, 'Bad Active')
@@ -68,7 +68,7 @@ class A1_XML(SetupMixin, unittest.TestCase):
         """ Read in the xml file and fill in the rooms dict
         """
         l_rooms = self.m_api.read_rooms_xml(self.m_xml.house_div)
-        PrettyPrintAny(l_rooms, 'Rooms')
+        # PrettyPrintAny(l_rooms, 'Rooms')
         self.assertEqual(l_rooms[0].Name, 'Master Bath', 'Bad Room')
 
     def test_05_WriteOneRoomXml(self):
@@ -76,7 +76,7 @@ class A1_XML(SetupMixin, unittest.TestCase):
         """
         l_room = self.m_api.read_one_room(self.m_xml.house_div)
         l_xml = self.m_api.write_one_room(l_room)
-        PrettyPrintAny(l_xml, 'One Room', 120)
+        # PrettyPrintAny(l_xml, 'One Room', 120)
 
 
     def test_06_WriteAllRoomsXml(self):
@@ -84,7 +84,7 @@ class A1_XML(SetupMixin, unittest.TestCase):
         """
         l_rooms = self.m_api.read_rooms_xml(self.m_xml.house_div)
         l_xml = self.m_api.write_rooms_xml(l_rooms)
-        PrettyPrintAny(l_xml, 'All Rooms', 120)
+        # PrettyPrintAny(l_xml, 'All Rooms', 120)
 
 
     def test_07_CreateJson(self):
@@ -92,7 +92,7 @@ class A1_XML(SetupMixin, unittest.TestCase):
         """
         self.m_pyhouse_obj.House.RefOBJs.Rooms = l_rooms = self.m_api.read_rooms_xml(self.m_xml.house_div)
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_rooms))
-        print('JSON: {0:}'.format(l_json))
-        PrettyPrintAny(l_json, 'JSON', 120)
+        # print('JSON: {0:}'.format(l_json))
+        # PrettyPrintAny(l_json, 'JSON', 120)
 
 # ## END DBK

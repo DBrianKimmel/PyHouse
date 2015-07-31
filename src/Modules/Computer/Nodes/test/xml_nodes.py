@@ -18,7 +18,7 @@ TESTING_NODES_INTERFACE_NAME_1 = "eth0"
 TESTING_NODES_INTERFACE_NAME_2 = "wlan0"
 
 
-NODES_XML = """\
+XML_NODES = """\
         <NodeSection>
             <Node Name='""" + TESTING_NODES_NODE_NAME_1 + """' Key='0' Active='True'>
                 <UUID>87654321-1001-11e3-b583-082e5f899999</UUID>

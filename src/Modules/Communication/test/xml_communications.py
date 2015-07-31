@@ -23,7 +23,7 @@ EMAIL_XML = """
 
 
 
-COMMUNICATION_XML = '\n'.join([
+XML_COMMUNICATION = '\n'.join([
     EMAIL_XML
 ])
 

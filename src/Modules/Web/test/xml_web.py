@@ -11,7 +11,7 @@ If PasswordMethod is "UNIX" then the password is fetched from the system.
 """
 
 
-WEB_SERVER_XML = """
+XML_WEB_SERVER = """
     <WebSection>
         <WebPort>8580</WebPort>
         <LoginSection>

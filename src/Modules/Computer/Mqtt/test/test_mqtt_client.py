@@ -93,6 +93,6 @@ class B1_Connect(SetupMixin, unittest.TestCase):
         self.m_pyhouse_obj.Computer.Mqtt.Brokers = {}
         self.m_pyhouse_obj.Computer.Mqtt.Brokers[0] = self.m_broker
         # PrettyPrintAny(self.m_broker, 'Broker')
-        self.m_api.client_connect_all_brokers(self.m_pyhouse_obj)
+        # self.m_api.client_connect_all_brokers(self.m_pyhouse_obj)
 
 # ## END DBK

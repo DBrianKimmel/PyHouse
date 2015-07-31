@@ -19,13 +19,10 @@ class Test(unittest.TestCase):
 
 
     def setUp(self):
-        print('Setup')
-
-    def tearDown(self):
-        print('Teardown')
+        # print('Setup')
+        pass
 
     def test_001_Load(self):
-        print('Test 001')
         _l_data = data_objects.PyHouseData()
 
     def test_002_houses(self):
@@ -39,7 +36,6 @@ class Test(unittest.TestCase):
         l_house = l_data.House
         l_name = l_house.Name
         self.assertEqual(l_name, 'Test House #1')
-        print(l_name)
 
     def Xtest_005_street(self):
         l_data = data_objects.PyHouseData()
@@ -47,6 +43,5 @@ class Test(unittest.TestCase):
         l_location = l_house.Location
         l_street = l_location.Street
         self.assertEqual(l_street, '5191 N Pink Poppy Dr')
-        print(l_street)
 
 # ## END DBK

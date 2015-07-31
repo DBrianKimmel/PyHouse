@@ -8,19 +8,23 @@
 @Summary:
 
 """
-import unittest
+
+from twisted.trial import unittest, reporter, runner
+
+from Modules import test as I_test
 
 
-class Test(unittest.TestCase):
+class Z_Suite(unittest.TestCase):
 
     def setUp(self):
-        pass
+        self.m_test = runner.TestLoader()
 
-    def tearDown(self):
-        pass
-
-    def testModules(self):
-        from Modules import test
-        print('Ran Modules.test')
+    def test_Modules(self):
+        l_package = runner.TestLoader().loadPackage(I_test)
+        l_ret = reporter.Reporter()
+        l_package.run(l_ret)
+        l_ret.done()
+        #
+        print('\n====================\n*** test_Modules ***\n{}\n'.format(l_ret))
 
 # ## END DBK

@@ -50,7 +50,7 @@ class Utility(object):
 
     @staticmethod
     def _write_base_device(p_pyhouse_obj, p_light_obj):
-        l_xml = LightingCoreAPI.write_base_lighting_xml('Light', p_light_obj)
+        l_xml = LightingCoreAPI.write_core_lighting_xml('Light', p_light_obj)
         return l_xml
 
 
@@ -61,9 +61,9 @@ class Utility(object):
         return p_obj  # for testing
 
     @staticmethod
-    def _write_controller_data(p_obj, p_xml):
-        PutGetXML.put_text_element(p_xml, 'InterfaceType', p_obj.InterfaceType)
-        PutGetXML.put_text_element(p_xml, 'Port', p_obj.Port)
+    def _write_light_data(p_obj, p_xml):
+        PutGetXML.put_text_element(p_xml, 'CurLevel', p_obj.CurLevel)
+        PutGetXML.put_text_element(p_xml, 'IsDimmable', p_obj.IsDimmable)
         return p_xml
 
 
@@ -87,7 +87,7 @@ class Utility(object):
     def _read_one_light_xml(p_pyhouse_obj, p_xml, p_version):
         """
         Load all the xml for one controller.
-        Base Device, Controller, Family and Interface
+        Base Device, Light, Family
         """
         try:
             l_obj = Utility._read_base_device(p_xml, p_version)
@@ -100,7 +100,7 @@ class Utility(object):
 
     @staticmethod
     def _write_one_light_xml(p_pyhouse_obj, p_controller_obj):
-        l_xml = Utility._write_base_device(p_controller_obj)
+        l_xml = Utility._write_base_device(p_pyhouse_obj, p_controller_obj)
         Utility._write_light_data(p_controller_obj, l_xml)
         Utility._write_family_data(p_pyhouse_obj, p_controller_obj, l_xml)
         return l_xml
@@ -113,20 +113,23 @@ class API(object):
         """
         @param p_pyhouse_obj: is the master information store
         @param p_light_sect_xml: the "LightSection" of the config
+        @param p_version: is the XML version of the file to use.
+        @return: a dict of lights info
         """
         l_count = 0
-        l_lights_dict = {}
+        l_dict = {}
         try:
-            for l_light_xml in p_light_sect_xml.iterfind('Light'):
-                l_light = API._read_one_light_xml(p_pyhouse_obj, l_light_xml, p_version)
+            for l_xml in p_light_sect_xml.iterfind('Light'):
+                l_light = Utility._read_one_light_xml(p_pyhouse_obj, l_xml, p_version)
                 l_light.Key = l_count  # Renumber
-                l_lights_dict[l_count] = l_light
+                l_dict[l_count] = l_light
                 l_count += 1
-        except AttributeError as e_error:  # No Lights section
-            LOG.warning('Lighting_Lights - No Lights defined - {0:}'.format(e_error))
-            l_lights_dict = {}
+        except AttributeError as e_err:  # No Lights section
+            LOG.warning('Lighting_Lights - No Lights defined - {}'.format(e_err))
+            # print('XXX-1', e_err)
+            l_dict = {}
         LOG.info("Loaded {} Lights".format(l_count))
-        return l_lights_dict
+        return l_dict
 
 
     @staticmethod

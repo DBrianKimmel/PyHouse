@@ -42,14 +42,12 @@ class C01_NoXML(SetupMixin, unittest.TestCase):
     def test_01_Read(self):
         l_log = self.m_api.read_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Computer.Logs = l_log
-        PrettyPrintAny(l_log, 'PyHouse.Computer.Logs', 120)
-        self.assertEqual(self.m_pyhouse_obj.Computer.Logs.Debug, '/tmp/debug')
-        self.assertEqual(self.m_pyhouse_obj.Computer.Logs.Error, '/tmp/error')
+        # PrettyPrintAny(l_log, 'PyHouse.Computer.Logs', 120)
 
     def test_02_Write(self):
         l_log = self.m_api.read_xml(self.m_pyhouse_obj)
         l_xml = self.m_api.write_xml(l_log)
-        PrettyPrintAny(l_xml, 'XML', 120)
+        # PrettyPrintAny(l_xml, 'XML', 120)
 
 
 class C02_XML(SetupMixin, unittest.TestCase):
@@ -64,14 +62,14 @@ class C02_XML(SetupMixin, unittest.TestCase):
     def test_01_Read(self):
         l_log = self.m_api.read_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Computer.Logs = l_log
-        PrettyPrintAny(l_log, 'PyHouse.Computer.Logs', 120)
+        # PrettyPrintAny(l_log, 'PyHouse.Computer.Logs', 120)
         self.assertEqual(self.m_pyhouse_obj.Computer.Logs.Debug, '/var/log/pyhouse/debug')
         self.assertEqual(self.m_pyhouse_obj.Computer.Logs.Error, '/var/log/pyhouse/error')
 
     def test_02_Write(self):
         l_log = self.m_api.read_xml(self.m_pyhouse_obj)
         l_xml = self.m_api.write_xml(l_log)
-        PrettyPrintAny(l_xml, 'XML', 120)
+        # PrettyPrintAny(l_xml, 'XML', 120)
 
 
 class Test_04_SetupLogging(SetupMixin, unittest.TestCase):

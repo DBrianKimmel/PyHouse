@@ -40,7 +40,7 @@ class Utility(object):
 
     @staticmethod
     def _write_base_device(p_obj):
-        l_xml = LightingCoreAPI.write_base_lighting_xml('Button', p_obj)
+        l_xml = LightingCoreAPI.write_core_lighting_xml('Button', p_obj)
         return l_xml
 
 

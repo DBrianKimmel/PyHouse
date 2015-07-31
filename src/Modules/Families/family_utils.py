@@ -19,6 +19,7 @@ This is because the things we wish to automate all have some controller that spe
 
 # Import PyHouse files and modules.
 from Modules.Computer import logging_pyh as Logger
+from Modules.Utilities.tools import PrettyPrintAny
 
 LOG = Logger.getLogger('PyHouse.FamilyUtils ')
 
@@ -40,6 +41,7 @@ class FamUtil(object):
         try:
             l_family_obj = p_pyhouse_obj.House.RefOBJs.FamilyData[p_device_obj.DeviceFamily]
         except Exception as e_err:
+            # PrettyPrintAny(p_pyhouse_obj.House.RefOBJs.FamilyData, 'Fams')
             LOG.error('Could not get family object for Name:{}\n\tFamily: {}\n\t{}'.format(p_device_obj.Name, p_device_obj.DeviceFamily, e_err))
             l_family_obj = p_pyhouse_obj.House.RefOBJs.FamilyData['Null']
         return l_family_obj

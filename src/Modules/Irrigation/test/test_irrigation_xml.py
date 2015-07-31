@@ -37,7 +37,7 @@ class A1_XML(SetupMixin, unittest.TestCase):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
         """
         self.assertEqual(self.m_pyhouse_obj.House.DeviceOBJs.Irrigation, None)
-        PrettyPrintAny(self.m_pyhouse_obj.House.DeviceOBJs, 'Device Objs')
+        # PrettyPrintAny(self.m_pyhouse_obj.House.DeviceOBJs, 'Device Objs')
 
 
 class B1_Read(SetupMixin, unittest.TestCase):
@@ -50,8 +50,8 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """
         l_xml = self.m_xml.irrigation_zone
         l_obj = self.m_api._read_one_zone(l_xml)
-        PrettyPrintAny(l_xml, 'XML')
-        PrettyPrintAny(l_obj, 'Zone')
+        # PrettyPrintAny(l_xml, 'XML')
+        # PrettyPrintAny(l_obj, 'Zone')
         self.assertEqual(l_obj.Name, 'Front Rotors # 1')
 
     def test_02_System(self):
@@ -59,8 +59,8 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """
         l_xml = self.m_xml.irrigation_system
         l_obj = self.m_api._read_one_irrigation_system(l_xml)
-        PrettyPrintAny(l_xml, 'XML')
-        PrettyPrintAny(l_obj, 'System')
+        # PrettyPrintAny(l_xml, 'XML')
+        # PrettyPrintAny(l_obj, 'System')
         self.assertEqual(l_obj.Name, 'LawnSystem')
 
     def test_03_Irrigation(self):
@@ -68,8 +68,8 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """
         l_xml = self.m_xml.irrigation_sect
         l_obj = self.m_api.read_irrigation_xml(self.m_pyhouse_obj)
-        PrettyPrintAny(l_xml, 'XML')
-        PrettyPrintAny(l_obj, 'System')
+        # PrettyPrintAny(l_xml, 'XML')
+        # PrettyPrintAny(l_obj, 'System')
         self.assertEqual(len(l_obj), 2)
 
 
@@ -85,8 +85,8 @@ class C1_Write(SetupMixin, unittest.TestCase):
         l_sys = l_irr[0]
         l_obj = l_sys.Zones[0]
         l_xml = self.m_api._write_one_zone(l_obj)
-        PrettyPrintAny(l_obj, 'Zone')
-        PrettyPrintAny(l_xml, 'XML')
+        # PrettyPrintAny(l_obj, 'Zone')
+        # PrettyPrintAny(l_xml, 'XML')
         self.assertEqual(self.m_pyhouse_obj.House.DeviceOBJs.Irrigation, None)
 
     def test_02_System(self):
@@ -94,9 +94,9 @@ class C1_Write(SetupMixin, unittest.TestCase):
         """
         l_irr = self.m_api.read_irrigation_xml(self.m_pyhouse_obj)
         l_sys = l_irr[0]
-        PrettyPrintAny(l_sys, 'System')
+        # PrettyPrintAny(l_sys, 'System')
         l_xml = self.m_api._write_one_system(l_sys)
-        PrettyPrintAny(l_xml, 'XML')
+        # PrettyPrintAny(l_xml, 'XML')
         self.assertEqual(self.m_pyhouse_obj.House.DeviceOBJs.Irrigation, None)
 
     def test_03_Irrigation(self):
@@ -104,7 +104,7 @@ class C1_Write(SetupMixin, unittest.TestCase):
         """
         l_irr = self.m_api.read_irrigation_xml(self.m_pyhouse_obj)
         l_obj = self.m_api.write_irrigation_xml(l_irr)
-        PrettyPrintAny(l_obj, 'System')
+        # PrettyPrintAny(l_obj, 'System')
         self.assertEqual(self.m_pyhouse_obj.House.DeviceOBJs.Irrigation, None)
 
 # ## END DBK

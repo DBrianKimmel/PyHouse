@@ -229,12 +229,12 @@ class B04_Boolean(SetupMixin, unittest.TestCase):
     def test_07_PutElement(self):
         l_element = ET.Element('TestBoolElement_1')
         self.m_api.put_bool_element(l_element, 'Active', True)
-        PrettyPrintAny(l_element, 'bool', 120)
+        # PrettyPrintAny(l_element, 'bool', 120)
 
     def test_08_PutAttribute(self):
         l_element = ET.Element('TestBoolAttribute_2')
         self.m_api.put_bool_attribute(l_element, 'Active', True)
-        PrettyPrintAny(l_element, 'bool', 120)
+        # PrettyPrintAny(l_element, 'bool', 120)
 
 
 
@@ -259,12 +259,12 @@ class B05_Integer(SetupMixin, unittest.TestCase):
     def test_03_PutIntElement(self):
         l_element = ET.Element('TestIntElement_1')
         self.m_api.put_int_element(l_element, 'IntNumber', -57)
-        PrettyPrintAny(l_element, 'bool', 120)
+        # PrettyPrintAny(l_element, 'bool', 120)
 
     def test_04_PutIntAttribute(self):
         l_element = ET.Element('TestIntAttribute_2')
         self.m_api.put_int_attribute(l_element, 'IntNumber', 853)
-        PrettyPrintAny(l_element, 'bool', 120)
+        # PrettyPrintAny(l_element, 'bool', 120)
 
 
 
@@ -309,12 +309,12 @@ class B06_Text(SetupMixin, unittest.TestCase):
     def test_06_PutTextElement(self):
         l_element = ET.Element('TestTextElement_1')
         self.m_api.put_int_element(l_element, 'Comment', 'Arbitrary Comment')
-        PrettyPrintAny(l_element, 'XML A', 120)
+        # PrettyPrintAny(l_element, 'XML A', 120)
 
     def test_07_PutTextAttribute(self):
         l_element = ET.Element('TestTextAttribute_2')
         self.m_api.put_text_attribute(l_element, 'Name', 'Any old Name')
-        PrettyPrintAny(l_element, 'XML B', 120)
+        # PrettyPrintAny(l_element, 'XML B', 120)
 
 
 
@@ -408,11 +408,11 @@ class B11_Coords(SetupMixin, unittest.TestCase):
 
     def test_01_Coords(self):
         l_coords = self.m_api.get_coords_from_xml(self.m_fields, 'RoomCoords1')
-        PrettyPrintAny(l_coords, 'CoOrds')
+        # PrettyPrintAny(l_coords, 'CoOrds')
 
     def test_02_Coords(self):
         l_coords = self.m_api.get_coords_from_xml(self.m_fields, 'RoomCoords2')
-        PrettyPrintAny(l_coords, 'CoOrds')
+        # PrettyPrintAny(l_coords, 'CoOrds')
 
 
 class C3_Read(SetupMixin, unittest.TestCase):
@@ -427,7 +427,7 @@ class C3_Read(SetupMixin, unittest.TestCase):
     def test_01_BaseObject(self):
         l_base_obj = CoreLightingData()
         self.m_api.read_base_object_xml(l_base_obj, self.m_xml.light)
-        PrettyPrintAny(l_base_obj, 'Light')
+        # PrettyPrintAny(l_base_obj, 'Light')
         self.assertEqual(l_base_obj.Name, 'Insteon Light')
         self.assertEqual(l_base_obj.Key, 0)
         self.assertEqual(l_base_obj.Active, True)
@@ -436,7 +436,7 @@ class C3_Read(SetupMixin, unittest.TestCase):
     def test_02_readBaseObject(self):
         l_base_obj = CoreLightingData()
         self.m_api.read_base_object_xml(l_base_obj, self.m_xml.controller)
-        PrettyPrintAny(l_base_obj, 'Controller')
+        # PrettyPrintAny(l_base_obj, 'Controller')
         self.assertEqual(l_base_obj.Name, 'Insteon Serial Controller')
         self.assertEqual(l_base_obj.Key, 0)
         self.assertEqual(l_base_obj.Active, True)
@@ -455,7 +455,7 @@ class C4_ReadEmpty(SetupMixin, unittest.TestCase):
     def test_01_BaseObject(self):
         l_base_obj = CoreLightingData()
         self.m_api.read_base_object_xml(l_base_obj, self.m_xml.light)
-        PrettyPrintAny(l_base_obj, 'Light')
+        # PrettyPrintAny(l_base_obj, 'Light')
         self.assertEqual(l_base_obj.Name, 'Missing Name')
         self.assertEqual(l_base_obj.Key, 0)
         self.assertEqual(l_base_obj.Active, False)
@@ -478,7 +478,7 @@ class C5_WriteXml(SetupMixin, unittest.TestCase):
         l_uuid = '12345678-fedc-1111-ffff-aaBBccDDeeFF'
         l_base_obj.UUID = l_uuid
         l_xml = XmlConfigTools.write_base_object_xml('Light', l_base_obj)
-        PrettyPrintAny(l_xml, 'Base Object XML', 120)
+        # PrettyPrintAny(l_xml, 'Base Object XML', 120)
         self.assertEqual(l_xml.attrib['Name'], 'Insteon Light')
         self.assertEqual(l_xml.attrib['Key'], '43')
         self.assertEqual(l_xml.find('UUID').text, l_uuid)
@@ -496,12 +496,12 @@ class D1_NoClass(SetupMixin, unittest.TestCase):
     def test_01_StuffAttrs(self):
         # l_objA = lighting_lights.LightingLightsAPI(self.m_pyhouse_obj).read_one_light_xml(self.m_xml.light)
         l_objA = CoreLightingData()
-        PrettyPrintAny(l_objA, 'Obj A', 120)
+        # PrettyPrintAny(l_objA, 'Obj A', 120)
         l_objB = ControllerData()
         # l_objAdeep = copy.deepcopy(l_objA)
-        PrettyPrintAny(l_objB, 'Obj B', 120)
+        # PrettyPrintAny(l_objB, 'Obj B', 120)
         stuff_new_attrs(l_objA, l_objB)
-        PrettyPrintAny(l_objA, 'Result B stuffed into A', 120)
+        # PrettyPrintAny(l_objA, 'Result B stuffed into A', 120)
         self.assertEqual(l_objA.InterfaceType, l_objB.InterfaceType)
 
 # ## END DBK

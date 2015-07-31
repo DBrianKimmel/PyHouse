@@ -53,21 +53,25 @@ class A1_XML(SetupMixin, unittest.TestCase):
     def test_01_Setup(self):
         """ Did we get everything set up for the rest of the tests of this class.
         """
-        PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs, 'RefOBJs', 115)
-        PrettyPrintAny(self.m_xml, 'XML')
+        # PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs, 'RefOBJs', 115)
+        # PrettyPrintAny(self.m_xml, 'XML')
         # self.assertEqual(len(VALID_FAMILIES), len(self.m_pyhouse_obj.House.RefOBJs.FamilyData))
+        pass
 
     def test_02_Device(self):
         """ Did we get everything set up for the rest of the tests of this class.
         """
-        PrettyPrintAny(self.m_device_obj, 'Device')
+        # PrettyPrintAny(self.m_device_obj, 'Device')
         # self.assertEqual(len(VALID_FAMILIES), len(self.m_pyhouse_obj.House.RefOBJs.FamilyData))
+        pass
 
     def test_03_Families(self):
-        PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs.FamilyData, 'Families')
+        # PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs.FamilyData, 'Families')
+        pass
 
     def test_04_Family(self):
-        PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs.FamilyData['Insteon'], 'Families')
+        # PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs.FamilyData['Insteon'], 'Families')
+        pass
 
 
 class B1_Utils(SetupMixin, unittest.TestCase):
@@ -79,20 +83,20 @@ class B1_Utils(SetupMixin, unittest.TestCase):
 
     def test_01_GetDeviceName(self):
         l_device = FamUtil._get_device_name(self.m_device_obj)
-        print('Device Name: {}'.format(l_device))
+        # print('Device Name: {}'.format(l_device))
         self.assertEqual(l_device, 'Testing Device')
 
     def test_03_GetFamilyObj(self):
         l_obj = FamUtil._get_family_obj(self.m_pyhouse_obj, self.m_device_obj)
-        PrettyPrintAny(l_obj, 'Family')
+        # PrettyPrintAny(l_obj, 'Family')
         self.assertEqual(l_obj.Name, 'Insteon')
 
     def test_04_GetInsteon(self):
         """ Did we get a family?
         """
         l_family = FamUtil.get_family(self.m_device_obj)
-        PrettyPrintAny(self.m_device_obj, 'Device')
-        print('Testing - Family: "{}"'.format(l_family))
+        # PrettyPrintAny(self.m_device_obj, 'Device')
+        # print('Testing - Family: "{}"'.format(l_family))
         self.assertEqual(l_family, 'Insteon')
 
     def test_05_GetUPB(self):
@@ -100,13 +104,13 @@ class B1_Utils(SetupMixin, unittest.TestCase):
         """
         self.m_device_obj.DeviceFamily = 'UPB'
         l_family = FamUtil.get_family(self.m_device_obj)
-        PrettyPrintAny(self.m_device_obj, 'Device')
-        print('Testing - Family: "{}"'.format(l_family))
+        # PrettyPrintAny(self.m_device_obj, 'Device')
+        # print('Testing - Family: "{}"'.format(l_family))
         self.assertEqual(l_family, 'UPB')
 
     def test_06_GetApi(self):
         l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, self.m_device_obj)
-        PrettyPrintAny(l_api, 'API')
+        # PrettyPrintAny(l_api, 'API')
         self.assertNotEqual(l_api, None)
 
 
@@ -120,21 +124,22 @@ class C1_Read(SetupMixin, unittest.TestCase):
         self.m_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, self.m_device_obj)
 
     def test_01_Print(self):
-        PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs, 'Ref Objs')
-        PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs.FamilyData['Insteon'], 'Insteon Family Data')
-        PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs.FamilyData['Insteon'].FamilyModuleAPI, '')
+        # PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs, 'Ref Objs')
+        # PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs.FamilyData['Insteon'], 'Insteon Family Data')
+        # PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs.FamilyData['Insteon'].FamilyModuleAPI, '')
+        pass
 
     def test_02_Xml(self):
         """ Did we get the XML correctly
         """
         l_xml = self.m_xml.light
-        PrettyPrintAny(l_xml, 'XML')
+        # PrettyPrintAny(l_xml, 'XML')
 
     def test_03_Device(self):
         """ Did we get the Device correctly
         """
         l_device = self.m_device_obj
-        PrettyPrintAny(l_device, 'Device')
+        # PrettyPrintAny(l_device, 'Device')
         self.assertEqual(l_device.Name, 'Testing Device')
         self.assertEqual(l_device.Key, 0)
         self.assertEqual(l_device.Active, True)
@@ -149,7 +154,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         l_xml = self.m_xml.light
         l_device = self.m_device_obj
         l_light = FamUtil.read_family_data(self.m_pyhouse_obj, l_device, l_xml)
-        PrettyPrintAny(l_light, 'Light')
+        # PrettyPrintAny(l_light, 'Light')
 
     def test_05_Light(self):
         """ Did we get everything set up for the rest of the tests of this class.
@@ -157,7 +162,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         l_xml = self.m_xml.light
         l_device = self.m_device_obj
         l_light = LightingCoreAPI.read_core_lighting_xml(l_device, l_xml, self.m_version)
-        PrettyPrintAny(l_light, 'Light')
+        # PrettyPrintAny(l_light, 'Light')
         self.assertEqual(l_light.Name, 'Insteon Light')
         self.assertEqual(l_device.RoomName, 'Master Bath')
 
@@ -168,9 +173,9 @@ class C1_Read(SetupMixin, unittest.TestCase):
         l_device = self.m_device_obj
         #
         l_light = LightingCoreAPI.read_core_lighting_xml(l_device, l_xml, self.m_version)
-        PrettyPrintAny(l_light, 'Light w/o family data')
+        # PrettyPrintAny(l_light, 'Light w/o family data')
         FamUtil.read_family_data(self.m_pyhouse_obj, l_light, l_xml)
-        PrettyPrintAny(l_light, 'Light w/ family Data')
+        # PrettyPrintAny(l_light, 'Light w/ family Data')
         self.assertEqual(l_light.Name, 'Insteon Light')
         self.assertEqual(l_light.DeviceFamily, 'Insteon')
         self.assertEqual(l_light.InsteonAddress, conversions.dotted_hex2int('16.62.2D'))
@@ -189,7 +194,8 @@ class D1_Write(SetupMixin, unittest.TestCase):
         self.m_light = LightingCoreAPI.read_core_lighting_xml(self.m_device_obj, self.m_xml.controller, self.m_version)
 
     def test_01_Data(self):
-        PrettyPrintAny(self.m_light, 'Light Dtaa')
+        # PrettyPrintAny(self.m_light, 'Light Dtaa')
+        pass
 
     def test_03_All(self):
         """ Did we get everything set up for the rest of the tests of this class.
@@ -199,10 +205,10 @@ class D1_Write(SetupMixin, unittest.TestCase):
         l_light = LightingCoreAPI.read_core_lighting_xml(l_device, l_in_xml, self.m_version)
         FamUtil.read_family_data(self.m_pyhouse_obj, l_light, l_in_xml)
 
-        l_out_xml = LightingCoreAPI.write_base_lighting_xml('Light', l_light)
-        PrettyPrintAny(l_out_xml, 'xml 1')
+        l_out_xml = LightingCoreAPI.write_core_lighting_xml('Light', l_light)
+        # PrettyPrintAny(l_out_xml, 'xml 1')
         FamUtil.write_family_data(self.m_pyhouse_obj, l_out_xml, l_light)
-        PrettyPrintAny(l_out_xml, 'xml 2')
+        # PrettyPrintAny(l_out_xml, 'xml 2')
 
         self.assertEqual(l_light.Name, 'Insteon Light')
         self.assertEqual(l_light.DeviceFamily, 'Insteon')

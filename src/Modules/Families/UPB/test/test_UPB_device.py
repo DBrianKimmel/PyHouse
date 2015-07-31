@@ -53,7 +53,7 @@ class A1_SetupL(SetupMixin, unittest.TestCase):
 
         l_light = self.m_light_api.read_one_light_xml(self.m_light_xml)
         l_insteon_obj = self.m_api.extract_device_xml(l_light, self.m_light_xml)
-        PrettyPrintAny(l_insteon_obj)
+        # PrettyPrintAny(l_insteon_obj)
         self.assertEqual(l_light.Name, 'Test LR Overhead', 'Bad Name')
         self.assertEqual(l_light.Key, 0, 'Bad Key')
         self.assertEqual(l_light.Active, True, 'Bad Active')

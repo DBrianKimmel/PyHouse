@@ -19,6 +19,7 @@ It is compound since a controller will contain Light entries, controller entries
 from distutils.version import LooseVersion
 
 # Import PyHouse files
+from Modules.Utilities.device_tools import XML as deviceXML
 from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
 from Modules.Computer import logging_pyh as Logger
 
@@ -56,7 +57,7 @@ class API(object):
 
     @staticmethod
     def _read_versioned_device(p_device_obj, p_entry_xml, p_version):
-        if LooseVersion(p_version) < LooseVersion('1.4'):
+        if LooseVersion(str(p_version)) < LooseVersion('1.4'):
             return API._read_device_v1_3(p_device_obj, p_entry_xml)
         else:
             return API._read_device_latest(p_device_obj, p_entry_xml)
@@ -82,33 +83,13 @@ class API(object):
 
 
     @staticmethod
-    def _write_device(p_device_obj, p_xml):
-        try:
-            PutGetXML.put_text_element(p_xml, 'Comment', p_device_obj.Comment)
-            PutGetXML.put_text_element(p_xml, 'DeviceFamily', p_device_obj.DeviceFamily)
-            PutGetXML.put_int_element(p_xml, 'DeviceType', p_device_obj.DeviceType)
-            PutGetXML.put_int_element(p_xml, 'DeviceSubType', p_device_obj.DeviceSubType)
-            PutGetXML.put_text_element(p_xml, 'LightingType', p_device_obj.LightingType)
-            PutGetXML.put_coords_element(p_xml, 'RoomCoords', p_device_obj.RoomCoords)
-            PutGetXML.put_text_element(p_xml, 'RoomName', p_device_obj.RoomName)
-        except Exception as e_err:
-            LOG.error('ERROR: {}'.format(e_err))
-        return p_xml
-
-    @staticmethod
-    def _write_base(p_element_tag, p_device_obj):
-        l_xml = XmlConfigTools.write_base_object_xml(p_element_tag, p_device_obj)
-        return l_xml
-
-    @staticmethod
-    def write_base_lighting_xml(p_element_tag, p_device_obj):
+    def write_core_lighting_xml(p_element_tag, p_device_obj):
         """
         @param p_element_tag: is the tag/name of the element that will be created
         @param p_device_obj: is the device object that holds the device information.
         @return: the XML element for the device with some sub-elements already attached.
         """
-        l_xml = API._write_base(p_element_tag, p_device_obj)
-        API._write_device(p_device_obj, l_xml)
+        l_xml = deviceXML.write_base_device_object_xml(p_element_tag, p_device_obj)
         return l_xml
 
 # ## END DBK

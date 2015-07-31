@@ -223,11 +223,11 @@ class C2_Time(SetupMixin, unittest.TestCase):
         self.m_schedule_obj.Time = 'sunset - 00:43:18'
         l_time = self.m_api._extract_time_of_day(self.m_schedule_obj, l_riseset)
         print('Field: "{}";    Result: {}\n'.format(self.m_schedule_obj.Time, l_time))
-        PrettyPrintAny(l_time, 'ExtractTimeOdDay result')
+        # PrettyPrintAny(l_time, 'ExtractTimeOdDay result')
 
     def test_09_Seconds2Wait(self):
         l_riseset = MockupRiseSet().mock()
-        PrettyPrintAny(l_riseset, 'Mock RiseSet')
+        # PrettyPrintAny(l_riseset, 'Mock RiseSet')
         l_delay = self.m_api._seconds_to_wait(self.m_now, self.m_schedule_obj, l_riseset)
         self.assertEqual(l_delay, 41104.0)
 
@@ -249,7 +249,7 @@ class C3_Loc(SetupMixin, unittest.TestCase):
     def test_01_LoadLocation(self):
         self.m_pyhouse_obj.House.RefOBJs.Location.RiseSet.SunRise = T_SUNRISE
         self.m_pyhouse_obj.House.RefOBJs.Location.RiseSet.Sunset = T_SUNSET
-        PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs.Location.RiseSet, 'Location')
+        # PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs.Location.RiseSet, 'Location')
 
 
 
@@ -266,17 +266,19 @@ class C4_Setup(SetupMixin, unittest.TestCase):
         self.m_pyhouse_obj.APIs.Computer.MqttAPI = mqttAPI(self.m_pyhouse_obj)
 
     def test_01_BuildSched(self):
-        PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs, 'Schedules')
+        # PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs, 'Schedules')
 
         l_delay, l_list = self.m_api.find_next_scheduled_events(self.m_pyhouse_obj, T_NOW)
         print('Delay: {}'.format(l_delay))
-        PrettyPrintAny(l_list, 'List')
+        # PrettyPrintAny(l_list, 'List')
 
     def test_02_yyy(self):
-        PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse_obj')
+        # PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse_obj')
+        pass
 
     def Xtest_03_RunSchedule(self):
-        PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs, 'Schedules')
+        # PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs, 'Schedules')
+        pass
 
     def Xtest_05_SchedulesList(self):
         pass

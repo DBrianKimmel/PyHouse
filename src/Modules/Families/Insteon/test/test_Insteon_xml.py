@@ -144,7 +144,7 @@ class C01_Write(SetupMixin, unittest.TestCase):
 
     def test_02_Core(self):
         # l_light = self.m_core_api.read_core_lighting_xml(self.m_device, self.m_xml.light, self.m_version)
-        # l_xml = self.m_core_api.write_base_lighting_xml('Light', l_light)
+        # l_xml = self.m_core_api.write_core_lighting_xml('Light', l_light)
         # PrettyPrintAny(l_xml, 'Lights XML')
         pass
 
@@ -152,7 +152,7 @@ class C01_Write(SetupMixin, unittest.TestCase):
         l_light = self.m_core_api.read_core_lighting_xml(self.m_device, self.m_xml.light, self.m_version)
         self.m_api.ReadXml(l_light, self.m_xml.light)
         # PrettyPrintAny(l_light, 'Light Device 2')
-        # l_xml = self.m_core_api.write_base_lighting_xml('Light', l_light)
+        # l_xml = self.m_core_api.write_core_lighting_xml('Light', l_light)
         # self.m_api.SaveXml(l_xml, l_light)
         # PrettyPrintAny(l_xml, 'Lights XML')
 

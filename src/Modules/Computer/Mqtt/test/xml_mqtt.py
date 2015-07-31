@@ -22,7 +22,7 @@ TESTING_BROKER_ADDRESS_2 = '192.168.1.51'
 TESTING_BROKER_PORT_2 = '1833'
 
 
-MQTT_XML = """\
+XML_MQTT = """\
     <MqttSection>
         <Broker Name='""" + TESTING_BROKER_NAME_1 + """' Key='0' Active='True'>
             <BrokerAddress>""" + TESTING_BROKER_ADDRESS_1 + """</BrokerAddress>

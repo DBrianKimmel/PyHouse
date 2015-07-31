@@ -73,23 +73,23 @@ class B_PPA(SetupMixin, unittest.TestCase):
 
     def test_03_Dict(self):
         l_obj = LOGGING_DICT
-        PrettyPrintAny(l_obj, 'A Dict')
+        # PrettyPrintAny(l_obj, 'A Dict')
 
     def test_04_XML(self):
         l_xml = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
-        PrettyPrintAny(l_xml, 'XML')
+        # PrettyPrintAny(l_xml, 'XML')
 
     def test_05_Obj(self):
         l_obj = self.m_pyhouse_obj
-        PrettyPrintAny(l_obj, 'Obj')
+        # PrettyPrintAny(l_obj, 'Obj')
 
     def test_06_List(self):
         l_lst = [ 'AA', 1, {'a' : 1}, 'BB']
-        PrettyPrintAny(l_lst, 'List')
+        # PrettyPrintAny(l_lst, 'List')
 
     def test_11_any(self):
         l_any = {'abc': 'Long A B C', 'def' : 'Another long thing.'}
-        PrettyPrintAny(l_any)
+        # PrettyPrintAny(l_any)
 
 
 class C_02_Find(SetupMixin, unittest.TestCase):
@@ -103,18 +103,18 @@ class C_02_Find(SetupMixin, unittest.TestCase):
 
     def test_01_Setup(self):
         l_loc = self.m_api.Location().Latitude
-        print(l_loc)
-        PrettyPrintAny(self.m_pyhouse_obj.House.DeviceOBJs, 'Devices')
-        PrettyPrintAny(self.m_pyhouse_obj.House.DeviceOBJs.Lights, 'Lights')
+        # print(l_loc)
+        # PrettyPrintAny(self.m_pyhouse_obj.House.DeviceOBJs, 'Devices')
+        # PrettyPrintAny(self.m_pyhouse_obj.House.DeviceOBJs.Lights, 'Lights')
 
     def test_02_FindObj(self):
         l_obj = tools.get_light_object(self.m_pyhouse_obj, 'Insteon Light', None)
-        PrettyPrintAny(l_obj, 'Light Obj')
+        # PrettyPrintAny(l_obj, 'Light Obj')
         self.assertIsNotNone(l_obj, 'Must be a light obj')
 
     def test_03_FindBadObj(self):
         l_obj = tools.get_light_object(self.m_pyhouse_obj, 'NoSuchName', None)
-        PrettyPrintAny(l_obj, 'Light Obj')
+        # PrettyPrintAny(l_obj, 'Light Obj')
         self.assertIsNone(l_obj, 'Should be None')
 
 # ## END DBK

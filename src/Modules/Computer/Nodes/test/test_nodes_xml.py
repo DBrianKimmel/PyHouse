@@ -15,7 +15,7 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData, NodeInterfaceData
-from Modules.Computer.Nodes import nodes_xml
+from Modules.Computer.Nodes.nodes_xml import Xml as nodesXML
 from Modules.Computer.Nodes.test.xml_nodes import TESTING_NODES_NODE_NAME_1
 # from test.xml_data import *
 from test.testing_mixin import SetupPyHouseObj

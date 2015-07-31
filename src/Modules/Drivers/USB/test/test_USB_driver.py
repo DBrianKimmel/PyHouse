@@ -29,17 +29,17 @@ class B1(unittest.TestCase):
 
     def test_01_Extract(self):
         l_ba = self.m_api._extract_hid_report(RAW_01)
-        print('Test_0101 A ', PrintBytes(l_ba))
+        # print('Test_0101 A ', PrintBytes(l_ba))
         self.assertEqual(l_ba, b'\x50\x45\x0d\x45\x0d\x50\x45')
         self.assertEqual(type(l_ba), bytearray)
         l_ba = self.m_api._extract_hid_report(RAW_02)
-        print('Test_0101 B ', PrintBytes(l_ba))
+        # print('Test_0101 B ', PrintBytes(l_ba))
         self.assertEqual(l_ba, b'\x0D\x50\x45\x0d')
         l_ba = self.m_api._extract_hid_report(RAW_03)
-        print('Test_0101 C ', PrintBytes(l_ba))
+        # print('Test_0101 C ', PrintBytes(l_ba))
         self.assertEqual(l_ba, b'')
         l_ba = self.m_api._extract_hid_report(RAW_04)
-        print('Test_0101 D ', PrintBytes(l_ba))
+        # print('Test_0101 D ', PrintBytes(l_ba))
         self.assertEqual(l_ba, b'')
 
 # ## END DBK

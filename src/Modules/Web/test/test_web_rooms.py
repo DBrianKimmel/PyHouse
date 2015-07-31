@@ -48,7 +48,7 @@ class C01_XML(SetupMixin, unittest.TestCase):
     def test_01_FindXml(self):
         """ Be sure that the XML contains the right stuff.
         """
-        PrettyPrintAny(self.m_pyhouse_obj, 'PyHouseData')
+        # PrettyPrintAny(self.m_pyhouse_obj, 'PyHouseData')
         self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
         self.assertEqual(self.m_xml.controller_sect.tag, 'ControllerSection', 'XML - No Controllers section')
         self.assertEqual(self.m_xml.controller.tag, 'Controller', 'XML - No Controller section')
@@ -56,6 +56,6 @@ class C01_XML(SetupMixin, unittest.TestCase):
     def test_02_Json(self):
         l_api = web_rooms.RoomsElement(self.m_workspace_obj, None)
         l_json = l_api.getServerData()
-        PrettyPrintAny(l_json, 'JSON', 70)
+        # PrettyPrintAny(l_json, 'JSON', 70)
 
 # ## END DBK

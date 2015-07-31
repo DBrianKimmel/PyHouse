@@ -37,18 +37,18 @@ class C01_XML(SetupMixin, unittest.TestCase):
         """
         self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
         self.assertEqual(self.m_xml.web_sect.tag, 'WebSection', 'XML - No Web section')
-        PrettyPrintAny(self.m_xml.web_sect, 'Web Xml')
+        # PrettyPrintAny(self.m_xml.web_sect, 'Web Xml')
 
     def test_02_ReadXML(self):
         l_web = self.m_api.read_web_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Computer.Logs = l_web
-        PrettyPrintAny(l_web, 'Web Data')
+        # PrettyPrintAny(l_web, 'Web Data')
         self.assertEqual(l_web.WebPort, 8580, 'Bad WebPort')
 
     def test_03_WriteXML(self):
         l_web = self.m_api.read_web_xml(self.m_pyhouse_obj)
         l_xml = self.m_api.write_web_xml(l_web)
-        PrettyPrintAny(l_xml)
+        # PrettyPrintAny(l_xml)
 
 
 class C02(SetupMixin, unittest.TestCase):

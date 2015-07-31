@@ -48,12 +48,13 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     def test_01_PyHouse(self):
         """ Be sure that the XML contains the right stuff.
         """
-        PrettyPrintAny(self.m_pyhouse_obj, 'PyHouseData')
+        # PrettyPrintAny(self.m_pyhouse_obj, 'PyHouseData')
+        pass
 
     def test_02_Xml(self):
         """ Be sure that the XML contains the right stuff.
         """
-        PrettyPrintAny(self.m_xml, 'Xml')
+        # PrettyPrintAny(self.m_xml, 'Xml')
         self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
         self.assertEqual(self.m_xml.controller_sect.tag, 'ControllerSection', 'XML - No Controllers section')
         self.assertEqual(self.m_xml.controller.tag, 'Controller', 'XML - No Controller section')
@@ -61,7 +62,8 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     def test_03_Controller(self):
         """ Be sure that the XML contains the right stuff.
         """
-        PrettyPrintAny(self.m_controller_obj, 'Controller')
+        # PrettyPrintAny(self.m_controller_obj, 'Controller')
+        pass
 
 
 class B1_XML(SetupMixin, unittest.TestCase):
@@ -75,13 +77,14 @@ class B1_XML(SetupMixin, unittest.TestCase):
     def test_01_FindXml(self):
         """ Be sure that the XML contains the right stuff.
         """
-        PrettyPrintAny(self.m_pyhouse_obj, 'PyHouseData')
+        # PrettyPrintAny(self.m_pyhouse_obj, 'PyHouseData')
         self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
         self.assertEqual(self.m_xml.controller_sect.tag, 'ControllerSection', 'XML - No Controllers section')
         self.assertEqual(self.m_xml.controller.tag, 'Controller', 'XML - No Controller section')
 
     def test_02_ReadSerialXml(self):
         l_interface = serialXML.read_interface_xml(self.m_xml.controller)
+        # PrettyPrintAny(l_interface, 'Read Interface', 100)
         self.assertEqual(l_interface.BaudRate, 19200, 'Bad Baud Rate')
         self.assertEqual(l_interface.ByteSize, 8, 'Bad ByteSize')
         self.assertEqual(l_interface.DsrDtr, False, 'Bad DsrDtr')
@@ -90,7 +93,6 @@ class B1_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_interface.StopBits, 1.0, 'Bad StopBits')
         self.assertEqual(l_interface.Timeout, 1.0, 'Bad Timeout')
         self.assertEqual(l_interface.XonXoff, False, 'Bad XonXoff')
-        PrettyPrintAny(l_interface, 'Read Interface', 100)
 
 
 class B2_Write(SetupMixin, unittest.TestCase):
@@ -103,9 +105,9 @@ class B2_Write(SetupMixin, unittest.TestCase):
     def test_01_WriteSerialXml(self):
         l_interface = serialXML.read_interface_xml(self.m_xml.controller)
         stuff_new_attrs(self.m_controller_obj, l_interface)
-        PrettyPrintAny(self.m_controller_obj, 'Controller', 120)
+        # PrettyPrintAny(self.m_controller_obj, 'Controller', 120)
         l_xml = ET.Element('TestOutput')
         l_xml = serialXML.write_interface_xml(l_xml, self.m_controller_obj)
-        PrettyPrintAny(l_xml, 'Interface Xml', 120)
+        # PrettyPrintAny(l_xml, 'Interface Xml', 120)
 
 # ## END

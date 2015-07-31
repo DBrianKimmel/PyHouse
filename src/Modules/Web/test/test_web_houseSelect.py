@@ -38,7 +38,7 @@ class Test_10(SetupMixin, unittest.TestCase):
 
     def test_1011_getHousesToSelect(self):
         l_json = self.m_api.getHousesToSelect(None)
-        PrettyPrintAny(l_json, 'Houses to select')
+        # PrettyPrintAny(l_json, 'Houses to select')
 
     def test_1012_getSelectedHouseData(self):
         pass

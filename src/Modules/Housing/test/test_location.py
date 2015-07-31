@@ -36,7 +36,7 @@ class C01_XML(SetupMixin, unittest.TestCase):
     def _pyHouses(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_house_obj = LocationData()
-        self.m_api = location.ReadWriteConfigXml()
+        self.m_api = location.Xml()
 
     def setUp(self):
         self._pyHouses()
@@ -51,7 +51,7 @@ class C01_XML(SetupMixin, unittest.TestCase):
         """ Read in the xml file and fill in the location dict
         """
         l_location = self.m_api.read_location_xml(self.m_xml.house_div)
-        PrettyPrintAny(l_location, 'Location')
+        # PrettyPrintAny(l_location, 'Location')
         self.assertEqual(l_location.Street, '5191 N Pink Poppy Dr', 'Bad Address')
         self.assertEqual(l_location.City, 'Beverly Hills', 'Bad city')
         self.assertEqual(l_location.State, 'Florida', 'Bad state')
@@ -66,7 +66,7 @@ class C01_XML(SetupMixin, unittest.TestCase):
         """
         l_location = self.m_api.read_location_xml(self.m_xml.house_div)
         l_xml = self.m_api.write_location_xml(l_location)
-        PrettyPrintAny(l_xml, 'Location')
+        # PrettyPrintAny(l_xml, 'Location')
 
 
     def test_21_CreateJson(self):
@@ -74,6 +74,6 @@ class C01_XML(SetupMixin, unittest.TestCase):
         """
         l_location = self.m_api.read_location_xml(self.m_xml.house_div)
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_location))
-        PrettyPrintAny('JSON', l_json)
+        # PrettyPrintAny('JSON', l_json)
 
 # ## END DBK

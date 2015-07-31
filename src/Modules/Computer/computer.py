@@ -41,15 +41,15 @@ DIVISION = 'ComputerDivision'
 MODULES = ['Communication', 'Email', 'Internet' , 'Mqtt', 'Node', 'Weather', 'Web']
 
 
-class ReadWriteConfigXml(XmlConfigTools):
-    """
-    """
+class Xml(object):
 
-    def read_computer_xml(self, p_pyhouse_obj):
+    @staticmethod
+    def read_computer_xml(p_pyhouse_obj):
         l_xml = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
         return l_xml
 
-    def write_computer_xml(self, p_pyhouse_obj):
+    @staticmethod
+    def write_computer_xml(p_pyhouse_obj):
         p_pyhouse_obj.Computer.Name = platform.node()
         p_pyhouse_obj.Computer.Key = 0
         p_pyhouse_obj.Computer.Active = True
@@ -57,7 +57,7 @@ class ReadWriteConfigXml(XmlConfigTools):
         return l_xml
 
 
-class Utility(ReadWriteConfigXml):
+class Utility(object):
 
     m_pyhouse_obj = None
 
@@ -121,7 +121,7 @@ class API(Utility):
         Start processing
         """
         LOG.info('Starting')
-        self.read_computer_xml(self.m_pyhouse_obj)
+        Xml.read_computer_xml(self.m_pyhouse_obj)
         Utility._start_component_apis(self.m_pyhouse_obj)
         LOG.info('Started')
 
@@ -136,7 +136,7 @@ class API(Utility):
         """
         Take a snapshot of the current Configuration/Status and write out an XML file.
         """
-        l_xml = self.write_computer_xml(self.m_pyhouse_obj)
+        l_xml = Xml.write_computer_xml(self.m_pyhouse_obj)
         Utility._save_component_apis(self.m_pyhouse_obj, l_xml)
         p_xml.append(l_xml)
         LOG.info("Saved Computer XML.")

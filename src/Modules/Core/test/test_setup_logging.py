@@ -14,8 +14,7 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core import setup_logging
-from test import xml_data
+from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
 
@@ -33,19 +32,23 @@ class A1_SetupL(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_EMPTY))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         # self.m_api = Logger.API()
 
     def test_01_XML(self):
-        PrettyPrintAny(setup_logging.LOGGING_DICT, 'Logging')
+        # PrettyPrintAny(setup_logging.LOGGING_DICT, 'Logging')
+        pass
 
     def test_02_Handlers(self):
-        PrettyPrintAny(setup_logging.LOGGING_DICT['handlers'], 'Logging')
+        # PrettyPrintAny(setup_logging.LOGGING_DICT['handlers'], 'Logging')
+        pass
 
     def test_03_Debug(self):
-        PrettyPrintAny(setup_logging.LOGGING_DICT['handlers']['debug'], 'Logging')
+        # PrettyPrintAny(setup_logging.LOGGING_DICT['handlers']['debug'], 'Logging')
+        pass
 
     def test_04_Error(self):
-        PrettyPrintAny(setup_logging.LOGGING_DICT['handlers']['error'], 'Logging')
+        # PrettyPrintAny(setup_logging.LOGGING_DICT['handlers']['error'], 'Logging')
+        pass
 
 # ## END DBK

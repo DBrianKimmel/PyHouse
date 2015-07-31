@@ -91,12 +91,12 @@ class C02_XML(SetupMixin, unittest.TestCase):
     def test_11_ReadXML(self):
         l_web = self.m_api.read_web_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Computer.Logs = l_web
-        PrettyPrintAny(l_web, 'Web Data')
+        # PrettyPrintAny(l_web, 'Web Data')
         self.assertEqual(l_web.WebPort, 8580, 'Bad WebPort')
 
     def test_21_WriteXML(self):
         l_web = self.m_api.read_web_xml(self.m_pyhouse_obj)
         l_xml = self.m_api.write_web_xml(l_web)
-        PrettyPrintAny(l_xml)
+        # PrettyPrintAny(l_xml)
 
 # ## END DBK

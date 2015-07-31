@@ -14,7 +14,7 @@ from twisted.trial import unittest, reporter, runner
 import test as I_test
 
 
-class Z_All(unittest.TestCase):
+class Z_Suite(unittest.TestCase):
 
     def setUp(self):
         self.m_test = runner.TestLoader()

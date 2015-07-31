@@ -190,7 +190,7 @@ class E01_Results(SetupMixin, unittest.TestCase):
         self.m_earth = self.m_api._load_location(self.m_pyhouse_obj, T_DATE)
         l_result = self.m_api.get_sunrise_datetime()
         print('Sunrise for date {};  Calc: {};  S/B: {}'.format(T_DATE, l_result, T_SUNRISE))
-        PrettyPrintAny(self.m_earth, 'T_01, t_01, Params')
+        # PrettyPrintAny(self.m_earth, 'T_01, t_01, Params')
         self.assertEqual(l_result, T_SUNRISE)
 
     def test_02_Sunset(self):
@@ -214,16 +214,16 @@ class C01_ObserverEarth(SetupMixin, unittest.TestCase):
 
     def test_01_Location(self):
         l_location = self.m_api._load_location(self.m_pyhouse_obj, T_DATE)
-        PrettyPrintAny(l_location, 'Location')
+        # PrettyPrintAny(l_location, 'Location')
         self.assertEqual(l_location.Latitude, T_LATITUDE)
         self.assertEqual(l_location.Longitude, T_LONGITUDE)
 
     def test_02_TzParams(self):
         l_tz, l_x = self.m_api._get_tz_params(self.m_earth, T_DATE)
         l_ret = l_tz
-        PrettyPrintAny(l_ret, 'Misc')
-        PrettyPrintAny(l_tz, 'TZ')
-        PrettyPrintAny(l_x, 'rAW')
+        # PrettyPrintAny(l_ret, 'Misc')
+        # PrettyPrintAny(l_tz, 'TZ')
+        # PrettyPrintAny(l_x, 'rAW')
 
 
 class C02_Julian(SetupMixin, unittest.TestCase):
@@ -248,7 +248,7 @@ class C02_Julian(SetupMixin, unittest.TestCase):
         """ This is the int number of days since Jan 0, 4713 BCE.
         """
         self.m_julian.JulianDayNumber = self.m_api._julian_day(self.m_julian)
-        PrettyPrintAny(self.m_julian, 'Julian')
+        # PrettyPrintAny(self.m_julian, 'Julian')
         self.assertEqual(self.m_julian.JulianDayNumber, T_JULIAN_DAY)
 
     def test_03_JulianDate(self):
@@ -258,7 +258,7 @@ class C02_Julian(SetupMixin, unittest.TestCase):
         """
         self.m_julian.JulianDayNumber = self.m_api._julian_day(self.m_julian)
         self.m_julian.JulianDate = self.m_api._julian_date(self.m_julian)
-        PrettyPrintAny(self.m_julian, 'Julian')
+        # PrettyPrintAny(self.m_julian, 'Julian')
         self.assertEqual(self.m_julian.JulianDate, T_JULIAN_DATE)
 
     def test_04_JulianCycle(self):
@@ -268,7 +268,7 @@ class C02_Julian(SetupMixin, unittest.TestCase):
         self.m_julian.JulianDayNumber = self.m_api._julian_day(self.m_julian)
         self.m_julian.JulianDate = self.m_api._julian_date(self.m_julian)
         self.m_julian.J2KCycle = self.m_api._j2k_cycle(self.m_julian, self.m_earth)
-        PrettyPrintAny(self.m_julian, 'Julian')
+        # PrettyPrintAny(self.m_julian, 'Julian')
         self.assertEqual(self.m_julian.J2KCycle, T_J2K_CYCLE)
 
     def test_05_JulianTransit(self):
@@ -276,12 +276,12 @@ class C02_Julian(SetupMixin, unittest.TestCase):
         self.m_julian.JulianDate = self.m_api._julian_date(self.m_julian)
         self.m_julian.J2KCycle = self.m_api._j2k_cycle(self.m_julian, self.m_earth)
         self.m_julian.J2KTransit = self.m_api._j2k_transit(self.m_julian, self.m_earth)
-        PrettyPrintAny(self.m_julian, 'Julian')
+        # PrettyPrintAny(self.m_julian, 'Julian')
         self.assertAlmostEqual(self.m_julian.J2KTransit, T_J2K_TRANSIT, 6)
 
     def test_06_JulianParams(self):
         l_julian = self.m_api.calculate_all_julian_dates(self.test_date_1, self.m_earth)
-        PrettyPrintAny(l_julian, 'Julian Parameters')
+        # PrettyPrintAny(l_julian, 'Julian Parameters')
         self.assertEqual(l_julian.JulianDate, T_JULIAN_DATE)
         self.assertEqual(l_julian.JulianDayNumber, T_JULIAN_DAY)
 
@@ -310,29 +310,29 @@ class D01_Sun(SetupMixin, unittest.TestCase):
         self.m_solar.SolarTransit = self.m_api._calc_solar_transit(self.m_julian, self.m_solar)
 
     def test_01_EclipticLLatitude(self):
-        PrettyPrintAny(self.m_solar, 'Sun Parameters')
-        PrettyPrintAny(self.m_earth, 'Earth Parameters')
-        PrettyPrintAny(self.m_julian, 'Date Parameters')
+        # PrettyPrintAny(self.m_solar, 'Sun Parameters')
+        # PrettyPrintAny(self.m_earth, 'Earth Parameters')
+        # PrettyPrintAny(self.m_julian, 'Date Parameters')
         self.assertEqual(self.m_solar.EclipticLatitude, 0.0)
 
     def test_02_MeanAnomaly(self):
-        print('Mean Anomaly: {}'.format(self.m_solar.MeanAnomaly * RAD2DEG))
-        PrettyPrintAny(self.m_solar, 'Sun Parameters')
-        PrettyPrintAny(self.m_julian, 'Date Parameters')
+        # print('Mean Anomaly: {}'.format(self.m_solar.MeanAnomaly * RAD2DEG))
+        # PrettyPrintAny(self.m_solar, 'Sun Parameters')
+        # PrettyPrintAny(self.m_julian, 'Date Parameters')
         self.assertAlmostEqual(self.m_solar.MeanAnomaly * RAD2DEG, T_MEAN_ANOMALY, 6)
 
     def test_03_EquationOfCenter(self):
         self.m_solar.EquationCenter = self.m_api._calc_equation_of_center(self.m_solar)
-        print('Mean Anomaly: {}'.format(self.m_solar.MeanAnomaly * RAD2DEG))
-        print('Equation of Center: {}'.format(self.m_solar.EquationCenter * RAD2DEG))
-        PrettyPrintAny(self.m_solar, 'Sun Parameters')
+        # print('Mean Anomaly: {}'.format(self.m_solar.MeanAnomaly * RAD2DEG))
+        # print('Equation of Center: {}'.format(self.m_solar.EquationCenter * RAD2DEG))
+        # PrettyPrintAny(self.m_solar, 'Sun Parameters')
         self.assertAlmostEqual(self.m_solar.EquationCenter * RAD2DEG, T_EQUATION_CENTER, 8)
 
     def test_04_EclipticLongitude(self):
-        print('Mean Anomaly: {}'.format(self.m_solar.MeanAnomaly * RAD2DEG))
-        print('Equation of Center: {}'.format(self.m_solar.EquationCenter * RAD2DEG))
-        print('Ecliptic Longitude: {}'.format(self.m_solar.EclipticLongitude * RAD2DEG))
-        PrettyPrintAny(self.m_solar, 'Sun Parameters')
+        # print('Mean Anomaly: {}'.format(self.m_solar.MeanAnomaly * RAD2DEG))
+        # print('Equation of Center: {}'.format(self.m_solar.EquationCenter * RAD2DEG))
+        # print('Ecliptic Longitude: {}'.format(self.m_solar.EclipticLongitude * RAD2DEG))
+        # PrettyPrintAny(self.m_solar, 'Sun Parameters')
         self.assertAlmostEqual(self.m_solar.EclipticLongitude * RAD2DEG, T_ECLIPTIC_LONGITUDE, 7)
 
     def test_05_Transit(self):
@@ -340,8 +340,8 @@ class D01_Sun(SetupMixin, unittest.TestCase):
         print('Equation of Center: {}'.format(self.m_solar.EquationCenter * RAD2DEG))
         print('Ecliptic Longitude: {}'.format(self.m_solar.EclipticLongitude * RAD2DEG))
         print('Solar Transit: {}'.format(self.m_solar.SolarTransit))
-        PrettyPrintAny(self.m_solar, 'Sun Parameters')
-        PrettyPrintAny(self.m_julian, 'Julian Parameters')
+        # PrettyPrintAny(self.m_solar, 'Sun Parameters')
+        # PrettyPrintAny(self.m_julian, 'Julian Parameters')
         self.assertAlmostEqual(self.m_solar.SolarTransit, T_TRANSIT, 6)
 
     def test_06_Iter1(self):
@@ -351,8 +351,8 @@ class D01_Sun(SetupMixin, unittest.TestCase):
         print('Equation of Center: {}'.format(l_solar.EquationCenter * RAD2DEG))
         print('Ecliptic Longitude: {}'.format(l_solar.EclipticLongitude * RAD2DEG))
         print('Solar Transit: {}'.format(l_solar.SolarTransit))
-        PrettyPrintAny(l_solar, 'Sun Parameters 1')
-        PrettyPrintAny(l_solar, 'Sun Parameters 2')
+        # PrettyPrintAny(l_solar, 'Sun Parameters 1')
+        # PrettyPrintAny(l_solar, 'Sun Parameters 2')
         self.assertAlmostEqual(l_solar.MeanAnomaly * RAD2DEG, T_MEAN_ANOMALY_1, 7)
         self.assertAlmostEqual(l_solar.EquationCenter * RAD2DEG, T_EQUATION_CENTER_1, 8)
         self.assertAlmostEqual(l_solar.EclipticLongitude * RAD2DEG, T_ECLIPTIC_LONGITUDE_1, 7)
@@ -365,7 +365,7 @@ class D01_Sun(SetupMixin, unittest.TestCase):
         print('Equation of Center: {}'.format(l_solar.EquationCenter * RAD2DEG))
         print('Ecliptic Longitude: {}'.format(l_solar.EclipticLongitude * RAD2DEG))
         print('Solar Transit: {}'.format(l_solar.SolarTransit))
-        PrettyPrintAny(l_solar, 'Sun Params')
+        # PrettyPrintAny(l_solar, 'Sun Params')
         self.assertAlmostEqual(l_solar.MeanAnomaly * RAD2DEG, T_MEAN_ANOMALY_2, 7)
         self.assertAlmostEqual(l_solar.EquationCenter * RAD2DEG, T_EQUATION_CENTER_2, 8)
         self.assertAlmostEqual(l_solar.EclipticLongitude * RAD2DEG, T_ECLIPTIC_LONGITUDE_2, 7)
@@ -378,7 +378,7 @@ class D01_Sun(SetupMixin, unittest.TestCase):
         print('Equation of Center: {}'.format(self.m_solar.EquationCenter * RAD2DEG))
         print('Ecliptic Longitude: {}'.format(self.m_solar.EclipticLongitude * RAD2DEG))
         print('Solar Transit: {}'.format(self.m_solar.SolarTransit))
-        PrettyPrintAny(self.m_solar, 'Sun Params')
+        # PrettyPrintAny(self.m_solar, 'Sun Params')
         self.assertAlmostEqual(self.m_solar.MeanAnomaly * RAD2DEG, T_MEAN_ANOMALY_3, 7)
         self.assertAlmostEqual(self.m_solar.EquationCenter * RAD2DEG, T_EQUATION_CENTER_3, 8)
         self.assertAlmostEqual(self.m_solar.EclipticLongitude * RAD2DEG, T_ECLIPTIC_LONGITUDE_3, 7)
@@ -394,7 +394,7 @@ class D01_Sun(SetupMixin, unittest.TestCase):
         print('Equation of Center: {}'.format(self.m_solar.EquationCenter * RAD2DEG))
         print('Ecliptic Longitude: {}'.format(self.m_solar.EclipticLongitude * RAD2DEG))
         print('Solar Transit: {}'.format(self.m_solar.SolarTransit))
-        PrettyPrintAny(self.m_solar, 'Sun Params')
+        # PrettyPrintAny(self.m_solar, 'Sun Params')
         self.assertAlmostEqual(self.m_solar.SolarDeclination * RAD2DEG, T_DECLINATION, 7)
 
     def test_10_HourAngle(self):
@@ -404,16 +404,16 @@ class D01_Sun(SetupMixin, unittest.TestCase):
         self.m_solar = self.m_api._recursive_calcs(self.m_julian, self.m_solar)
         self.m_solar.SolarDeclination = self.m_api._calc_declination_of_sun(self.m_solar)
         self.m_solar.SolarHourAngle = self.m_api._calc_hour_angle(self.m_earth, self.m_solar)
-        PrettyPrintAny(self.m_solar, 'Sun Params')
+        # PrettyPrintAny(self.m_solar, 'Sun Params')
         self.assertAlmostEqual(self.m_solar.SolarHourAngle * RAD2DEG, T_HOUR_ANGLE, 7)
 
     def test_19_Params(self):
         l_solar = self.m_api.calcSolarNoonParams(self.m_earth, self.m_julian)
-        PrettyPrintAny(l_solar, 'Solar Params')
+        # PrettyPrintAny(l_solar, 'Solar Params')
 
     def test_90_RiseSet(self):
         l_ret = self.m_api.calcSolarNoonParams(self.m_earth, self.m_julian)
-        PrettyPrintAny(l_ret, 'Result')
+        # PrettyPrintAny(l_ret, 'Result')
 
     def test_91_start(self):
         self.m_api.Start(self.test_date_1)

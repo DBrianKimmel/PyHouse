@@ -110,7 +110,7 @@ class B1_Build(SetupMixin, unittest.TestCase):
 
     def test_08_Register(self):
         l_ba = self.m_api.write_register_command(self.m_controller_obj, b'\x70', b'\x03')
-        print('test_0106/ ', PrintBytes(l_ba), l_ba)
+        # print('test_0106/ ', PrintBytes(l_ba), l_ba)
         self.assertEqual(l_ba, (b'\x14\x37\x30\x30\x33\x38\x44\x0D'))
 
     def test_09_WritePim(self):
@@ -139,10 +139,10 @@ class B3_Decode(SetupMixin, unittest.TestCase):
         pass
 
     def test_02_ExtractMsg(self):
-        print('Before', PrintBytes(self.m_controller_obj._Message))
+        # print('Before', PrintBytes(self.m_controller_obj._Message))
         l_msg = self.m_api.decode_response(self.m_controller_obj)
-        print(l_msg)
-        print('After', PrintBytes(self.m_controller_obj._Message))
+        # print(l_msg)
+        # print('After', PrintBytes(self.m_controller_obj._Message))
 
     def test_03_DispatchDecode(self):
         pass
