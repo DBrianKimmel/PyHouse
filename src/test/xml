@@ -1,0 +1,311 @@
+<PyHouse
+    Version='1.4.0'
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://PyHouse.org schemas/PyHouse.xsd">
+<ComputerDivision>
+        <NodeSection>
+            <Node Name='pi-01' Key='0' Active='True'>
+                <UUID>87654321-1001-11e3-b583-082e5f899999</UUID>
+                <ConnectionAddressV4>192.168.1.123</ConnectionAddressV4>
+                <ConnectionAddressV6>1234:5678::dead.beef</ConnectionAddressV6>
+                <NodeRoll>123</NodeRoll>
+                <InterfaceSection>
+                    <Interface Name='eth0' Key="0" Active="True">
+                        <UUID>87654321-1001-11e3-b583-012300001111</UUID>
+                        <MacAddress>01:02:03:04:05:06</MacAddress>
+                        <IPv4Address>192.168.1.11</IPv4Address>
+                        <IPv6Address>2000:1D::1, 2000:1D::101</IPv6Address>
+                    </Interface>
+                    <Interface Name='wlan0' Key="1" Active="True">
+                        <UUID>87654321-1001-11e3-b583-012300002222</UUID>
+                        <MacAddress>01:02:03:04:05:06</MacAddress>
+                        <IPv4Address>192.168.1.22</IPv4Address>
+                        <IPv6Address>2000:1D::2, 2000:1D::202</IPv6Address>
+                    </Interface>
+                    <Interface Name='lo' Key="2" Active="True">
+                        <MacAddress>01:02:03:04:05:06</MacAddress>
+                        <IPv4Address>192.168.1.33</IPv4Address>
+                        <IPv6Address>2000:1D::3, 2000:1D::303</IPv6Address>
+                    </Interface>
+                </InterfaceSection>
+            </Node>
+            <Node Name='pi-02' Key='0' Active='True'>
+                <UUID>87654321-1001-11e3-b583-082e5f899999</UUID>
+                <ConnectionAddressV4>192.168.1.124</ConnectionAddressV4>
+                <NodeRoll>6</NodeRoll>
+            </Node>
+        </NodeSection>
+
+
+    <EmailSection>
+        <EmailFromAddress>mail.sender@Gmail.Com</EmailFromAddress>
+        <EmailToAddress>mail.receiver@Gmail.Com</EmailToAddress>
+        <GmailLogin>TestAccount@Gmail.Com</GmailLogin>
+        <GmailPassword>Test=!=Password</GmailPassword>
+    </EmailSection>
+    <CommunicationSection>
+    </CommunicationSection>
+
+
+    <WebSection>
+        <WebPort>8580</WebPort>
+        <LoginSection>
+            <Login Active="True" Key="0" Name="briank">
+                <PasswordMethod>UNIX</PasswordMethod>
+                <Password>123456789</Password>
+                <FullName>D. Brian Kimmel</FullName>
+            </Login>
+        </LoginSection>
+    </WebSection>
+
+<InternetSection>
+<LocaterUrlSection>
+    <LocateUrl>http://snar.co/ip/</LocateUrl>
+    <LocateUrl>http://checkip.dyndns.com/</LocateUrl>
+</LocaterUrlSection>
+<UpdaterUrlSection>
+    <UpdateUrl>http://freedns.afraid.org/dynamic/update.php?12345</UpdateUrl>
+</UpdaterUrlSection>
+    <ExternalIPv4>65.35.48.61</ExternalIPv4>
+    <ExternalIPv6>1234:5678::1</ExternalIPv6>
+    <LastChanged>2014-10-02T12:34:56</LastChanged>
+</InternetSection>
+    <MqttSection>
+        <Broker Name='iot.eclipse.org' Key='0' Active='True'>
+            <BrokerAddress>1234:5678::dead.beef</BrokerAddress>
+            <BrokerPort>1833</BrokerPort>
+        </Broker>
+        <Broker Name='PinkPoppy.pyhouse.org' Key='1' Active='True'>
+            <BrokerAddress>192.168.1.51</BrokerAddress>
+            <BrokerPort>1833</BrokerPort>
+        </Broker>
+    </MqttSection>
+
+</ComputerDivision>
+
+<HouseDivision Name='Pink Poppy' Key='0' Active='True'>
+    <UUID>12345678-1002-11e3-b583-333e5f8cdfd2</UUID>
+
+<LocationSection>
+    <Street>5191 N Pink Poppy Dr</Street>
+    <City>Beverly Hills</City>
+    <State>Florida</State>
+    <ZipCode>34465</ZipCode>
+    <Phone>(352) 270-8096</Phone>
+    <Latitude>28.938448</Latitude>
+    <Longitude>-82.517208</Longitude>
+    <TimeZoneName>America/New_York</TimeZoneName>
+</LocationSection>
+
+
+<RoomSection>
+    <Room Active="True" Key="0" Name="Master Bath">
+        <Comment>Test Comment</Comment>
+        <Corner>0.50, 10.50</Corner>
+        <Size>14.00, 13.50</Size>
+    </Room>
+    <Room Active="True" Key="1" Name="Master Bed Closet 1">
+        <Comment />
+        <Corner>0.83, 24.58</Corner>
+        <Size>6.91, 8.91</Size>
+    </Room>
+    <Room Active="False" Key="2" Name="Master Bedroom">
+        <Comment />
+        <Corner>0.83, 25.08</Corner>
+        <Size>14.00, 18.00</Size>
+    </Room>
+    <Room Active="False" Key="3" Name="Master Sitting Room">
+        <Comment />
+        <Corner>0.83, 54.16</Corner>
+        <Size>14.00, 8.00</Size>
+    </Room>
+</RoomSection>
+
+
+<ScheduleSection>
+    <Schedule Name="Evening 1" Key="0" Active="True">
+        <Level>100</Level>
+        <LightName>lr_cans</LightName>
+        <Rate>0</Rate>
+        <RoomName>Living Room</RoomName>
+        <Time>13:57</Time>
+        <ScheduleType>LightingDevice</ScheduleType>
+    </Schedule>
+    <Schedule Active="True" Key="1" Name="Evening 2">
+        <Level>100</Level>
+        <LightName>lr_rope</LightName>
+        <Rate>0</Rate>
+        <RoomName>Living Room</RoomName>
+        <Time>13:57</Time>
+        <ScheduleType>LightingDevice</ScheduleType>
+    </Schedule>
+    <Schedule Active="True" Key="2" Name="Evening 3">
+        <Level>100</Level>
+        <LightName>outside_gar</LightName>
+        <Rate>0</Rate>
+        <RoomName>Garage</RoomName>
+        <Time>sunset - 00:02</Time>
+        <ScheduleType>LightingDevice</ScheduleType>
+    </Schedule>
+    <Schedule Active="True" Key="3" Name="Evening 4">
+        <Level>100</Level>
+        <LightName>outside_front</LightName>
+        <Rate>0</Rate>
+        <RoomName>Foyer</RoomName>
+        <Time>sunset</Time>
+        <ScheduleType>LightingDevice</ScheduleType>
+    </Schedule>
+</ScheduleSection>
+
+<LightingSection>
+<ButtonSection>
+<Button Name="Insteon Button" Active="True" Key="0">
+    <!-- xml_device -->
+    <Comment>Test Comment Device 1234</Comment>
+    <DeviceFamily>Insteon</DeviceFamily>
+    <DeviceType>1</DeviceType>
+    <DeviceSubType>2</DeviceSubType>
+    <RoomCoords>[3.4, 5.6, 1.2]</RoomCoords>
+    <RoomName>Master Bath</RoomName>
+    <UUID>d60b1521-2db1-11e5-a943-082e5f8cdfd2</UUID>
+    <LightingType>Button</LightingType>
+    <Address>16.62.2D</Address>    <DevCat>02.1C</DevCat>    <GroupNumber>0</GroupNumber>    <GroupList>All_Lights|Outside|Foyer(0;0)</GroupList>    <ProductKey>20.1A.35</ProductKey>    <IsMaster>True</IsMaster>
+</Button>
+<Button Name="UPB Button" Active="True" Key="1">
+    <!-- xml_device -->
+    <Comment>Test Comment Device 1234</Comment>
+    <DeviceFamily>Insteon</DeviceFamily>
+    <DeviceType>1</DeviceType>
+    <DeviceSubType>2</DeviceSubType>
+    <RoomCoords>[3.4, 5.6, 1.2]</RoomCoords>
+    <RoomName>Master Bath</RoomName>
+    <UUID>d60b1521-2db1-11e5-a943-082e5f8cdfd2</UUID>
+    <LightingType>Button</LightingType>
+    <UPBAddress>255</UPBAddress>    <UPBNetworkID>6</UPBNetworkID>    <UPBPassword>1253</UPBPassword>
+</Button>
+</ButtonSection>
+<LightSection>
+<Light Name="Insteon Light" Key="0" Active="True">
+    <!-- xml_device -->
+    <Comment>Test Comment Device 1234</Comment>
+    <DeviceFamily>Insteon</DeviceFamily>
+    <DeviceType>1</DeviceType>
+    <DeviceSubType>2</DeviceSubType>
+    <RoomCoords>[3.4, 5.6, 1.2]</RoomCoords>
+    <RoomName>Master Bath</RoomName>
+    <UUID>d60b1521-2db1-11e5-a943-082e5f8cdfd2</UUID>
+    <LightingType>Light</LightingType>
+    <IsDimmable>True</IsDimmable>
+    <CurLevel>12</CurLevel>
+    <Address>16.62.2D</Address>    <DevCat>02.1C</DevCat>    <GroupNumber>0</GroupNumber>    <GroupList>All_Lights|Outside|Foyer(0;0)</GroupList>    <ProductKey>20.1A.35</ProductKey>    <IsMaster>True</IsMaster>
+</Light>
+<Light Name="UPB Light" Key="1" Active="True">
+    <!-- xml_device -->
+    <Comment>Test Comment Device 1234</Comment>
+    <DeviceFamily>Insteon</DeviceFamily>
+    <DeviceType>1</DeviceType>
+    <DeviceSubType>2</DeviceSubType>
+    <RoomCoords>[3.4, 5.6, 1.2]</RoomCoords>
+    <RoomName>Master Bath</RoomName>
+    <UUID>d60b1521-2db1-11e5-a943-082e5f8cdfd2</UUID>
+    <LightingType>Light</LightingType>
+    <IsDimmable>True</IsDimmable>
+    <CurLevel>12</CurLevel>
+    <UPBAddress>255</UPBAddress>    <UPBNetworkID>6</UPBNetworkID>    <UPBPassword>1253</UPBPassword>
+</Light>
+</LightSection>
+<ControllerSection>
+<Controller Active="True" Key="0" Name="Insteon Serial Controller">
+    <!-- xml_device -->
+    <Comment>Test Comment Device 1234</Comment>
+    <DeviceFamily>Insteon</DeviceFamily>
+    <DeviceType>1</DeviceType>
+    <DeviceSubType>2</DeviceSubType>
+    <RoomCoords>[3.4, 5.6, 1.2]</RoomCoords>
+    <RoomName>Master Bath</RoomName>
+    <UUID>d60b1521-2db1-11e5-a943-082e5f8cdfd2</UUID>
+    <LightingType>Controller</LightingType>
+    <Address>16.62.2D</Address>    <DevCat>02.1C</DevCat>    <GroupNumber>0</GroupNumber>    <GroupList>All_Lights|Outside|Foyer(0;0)</GroupList>    <ProductKey>20.1A.35</ProductKey>    <IsMaster>True</IsMaster>
+
+        <InterfaceType>Serial</InterfaceType>
+        <Port>/dev/ttyS0</Port>
+
+
+        <BaudRate>19200</BaudRate>
+        <ByteSize>8</ByteSize>
+        <Parity>N</Parity>
+        <StopBits>1.0</StopBits>
+        <Timeout>1.0</Timeout>
+        <DsrDtr>False</DsrDtr>
+        <RtsCts>False</RtsCts>
+        <XonXoff>False</XonXoff>
+
+</Controller>
+<Controller Active="True" Key="1" Name="UPB USB Controller">
+    <!-- xml_device -->
+    <Comment>Test Comment Device 1234</Comment>
+    <DeviceFamily>Insteon</DeviceFamily>
+    <DeviceType>1</DeviceType>
+    <DeviceSubType>2</DeviceSubType>
+    <RoomCoords>[3.4, 5.6, 1.2]</RoomCoords>
+    <RoomName>Master Bath</RoomName>
+    <UUID>d60b1521-2db1-11e5-a943-082e5f8cdfd2</UUID>
+    <LightingType>Controller</LightingType>
+    <UPBAddress>255</UPBAddress>    <UPBNetworkID>6</UPBNetworkID>    <UPBPassword>1253</UPBPassword>
+
+        <Vendor>6109</Vendor>
+        <Product>21760</Product>
+
+</Controller>
+</ControllerSection>
+</LightingSection>
+<ThermostatSection>
+  <Thermostat Name="Test Thermostat One" Active="True" Key="0">
+    <DeviceFamily>Insteon</DeviceFamily>
+    <CoolSetPoint>78.0</CoolSetPoint>
+    <HeatSetPoint>70.0</HeatSetPoint>
+    <ThermostatMode>Cool</ThermostatMode>
+    <ThermostatScale>F</ThermostatScale>
+    <Address>18.C9.4A</Address>
+    <CurrentTemperature>75.0</CurrentTemperature>
+  <\Thermostat>
+<\ThermostatSection>
+
+    <EntertainmentSection />
+
+
+<IrrigationSection>
+    <IrrigationSystem Name="LawnSystem" Key="0" Active="True">
+        <Comment>Main yard system with Well Relay and 13 zones</Comment>
+        <Zone Name="Front Rotors # 1" Key="0" Active="True">
+            <Comment>Rotors on the West corner of the yard,</Comment>
+            <Duration>2700</Duration>
+        </Zone>
+        <Zone Name="Front Rotors # 2" Key="1" Active="True">
+            <Comment>Rotors on the driveway side of the yard,</Comment>
+            <Duration>2700</Duration>
+        </Zone>
+        <Zone Name="Front Rotors # 3" Key="2" Active="True">
+        </Zone>
+        <Zone Name="Front Rotors # 4" Key="3" Active="True">
+        </Zone>
+        <Zone Name="Front Rotors # 5" Key="4" Active="True">
+        </Zone>
+        <Zone Name="Front Rotors # 6" Key="5" Active="True">
+        </Zone>
+        <Zone Name="Front Rotors # 7" Key="6" Active="True">
+        </Zone>
+    </IrrigationSystem>
+    <IrrigationSystem Name="Lanai Drip" Key="1" Active="True">
+        <Comment>Lanai area system</Comment>
+        <Zone Name="Flower Drips" Key="0" Active="True">
+        </Zone>
+        <Zone Name="Pool Filler" Key="1" Active="True">
+        </Zone>
+        <Zone Name="UnUsed" Key="2" Active="True">
+        </Zone>
+    </IrrigationSystem>
+</IrrigationSection>
+
+</HouseDivision>
+</PyHouse>

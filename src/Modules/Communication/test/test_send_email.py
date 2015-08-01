@@ -7,7 +7,6 @@
 @note:      Created on Jun 3, 2014
 @summary:   Send some email testing
 
-
     From nobody Wed Jul 30 22:41:30 2014
     Content-Type: multipart/mixed; boundary="===============1622763079=="
     MIME-Version: 1.0
@@ -39,7 +38,7 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from Modules.Core.data_objects import EmailData
 from Modules.Communication import send_email
-from test import xml_data
+from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
 
@@ -53,14 +52,10 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-
 class C01_Setup(SetupMixin, unittest.TestCase):
-    """
-    This section will verify the XML in the 'Modules.test.xml_data' file is correct and what the node_local module can read/write.
-    """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_api = send_email.API()
         self.m_email_obj = EmailData()
 
@@ -74,14 +69,10 @@ class C01_Setup(SetupMixin, unittest.TestCase):
         PrettyPrintAny(self.m_pyhouse_obj.House, 'Pyhouse', 120)
 
 
-
 class C02_Read(SetupMixin, unittest.TestCase):
-    """
-    This section will verify the XML in the 'Modules.test.xml_data' file is correct and what the node_local module can read/write.
-    """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_api = send_email.API()
         self.m_email_obj = EmailData()
 
@@ -94,14 +85,10 @@ class C02_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.GmailPassword, 'Test=!=Password', 'Bad Password')
 
 
-
 class C03_Write(SetupMixin, unittest.TestCase):
-    """
-    This section will verify the XML in the 'Modules.test.xml_data' file is correct and what the node_local module can read/write.
-    """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_api = send_email.API()
         self.m_email_obj = EmailData()
 
@@ -111,14 +98,10 @@ class C03_Write(SetupMixin, unittest.TestCase):
         PrettyPrintAny(l_ret, 'XML', 120)
 
 
-
 class C04_Send(SetupMixin, unittest.TestCase):
-    """
-    This section will verify the XML in the 'Modules.test.xml_data' file is correct and what the node_local module can read/write.
-    """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_api = send_email.API()
         self.m_email_obj = EmailData()
 
@@ -128,6 +111,5 @@ class C04_Send(SetupMixin, unittest.TestCase):
         l_ret = self.m_api.create_email_message(self.m_pyhouse_obj, l_xml.EmailToAddress, 'Test Subject', 'Test email Body', 'Test Attachment')
         PrettyPrintAny(l_xml, 'Parsed')
         PrettyPrintAny(l_ret, 'XML')
-
 
 # ## END DBK

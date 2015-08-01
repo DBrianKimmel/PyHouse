@@ -15,6 +15,7 @@ import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from Modules.Core.data_objects import ThermostatData
+from Modules.Utilities.device_tools import XML as deviceXML
 from Modules.Families.family_utils import FamUtil
 from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
@@ -26,7 +27,7 @@ T_SECTION = 'ThermostatSection'
 T_DEVICE = 'Thermostat'
 
 
-class ThermostatXML(object):
+class Xml(object):
     """
     """
     m_count = 0
@@ -34,7 +35,7 @@ class ThermostatXML(object):
     @staticmethod
     def _read_thermostat_base(p_thermostat_element):
         l_obj = ThermostatData()
-        XmlConfigTools.read_base_object_xml(l_obj, p_thermostat_element)
+        deviceXML.read_base_device_object_xml(l_obj, p_thermostat_element)
         l_obj.DeviceType = 2
         return l_obj
 
@@ -150,10 +151,10 @@ class XML(object):
     """
     """
 
-    def read_hvac_xml(self):
+    def read_hvac_xml(self, p_pyhouse_obj):
         pass
 
-    def write_hvac_xml(self):
+    def write_hvac_xml(self, p_xml):
         pass
 
 # ## END DBK

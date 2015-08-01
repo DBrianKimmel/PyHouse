@@ -16,6 +16,7 @@ This is the controlling portion of a complete HVAC system.
 
 # Import PyMh files
 from Modules.Core.data_objects import ThermostatData
+from Modules.Hvac.hvac_xml import XML as hvacXML
 from Modules.Computer import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.Hvac           ')
@@ -24,20 +25,6 @@ LOG = Logger.getLogger('PyHouse.Hvac           ')
 class Utility(object):
     """
     """
-
-    def update_pyhouse_obj(self, p_pyhouse_obj):
-        p_pyhouse_obj.House.DeviceOBJs.Thermostats = ThermostatData()
-
-    def add_api_references(self, p_pyhouse_obj):
-        pass
-
-    def setup_xml(self, p_pyhouse_obj):
-        try:
-            l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision').find('ThermostatSection')
-        except AttributeError as e_err:
-            LOG.error('SetupXML ERROR {0:}'.format(e_err))
-            l_xml = None
-        return l_xml
 
 
 class API(Utility):
@@ -48,8 +35,7 @@ class API(Utility):
         self.m_pyhouse_obj = p_pyhouse_obj
 
     def Start(self):
-        self.update_pyhouse_obj(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.DeviceOBJs.Thermostats = self.read_all_thermostats_xml(self.m_pyhouse_obj)
+        hvacXML.read_hvac_xml(self.m_pyhouse_obj)
         LOG.info("Started.")
 
     def Stop(self):

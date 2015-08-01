@@ -7,6 +7,8 @@
 @note:      Created on Oct 6, 2014
 @Summary:
 
+Passed all 7 tests - DBK - 2015-08-01
+
 """
 
 # Import system type stuff
@@ -20,8 +22,6 @@ from test.testing_mixin import SetupPyHouseObj
 
 
 class SetupMixin(object):
-    """
-    """
 
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)

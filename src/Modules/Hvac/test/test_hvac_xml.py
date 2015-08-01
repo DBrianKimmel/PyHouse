@@ -14,7 +14,11 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
-from Modules.Hvac.hvac_xml import ThermostatXML
+from Modules.Hvac.hvac_xml import Xml as hvacXML
+from Modules.Hvac.test.xml_thermostat import TESTING_THERMOSTAT_NAME, TESTING_THERMOSTAT_ACTIVE, TESTING_THERMOSTAT_KEY, \
+        TESTING_THERMOSTAT_ADDRESS, TESTING_THERMOSTAT_COOL_SETPOINT, TESTING_THERMOSTAT_CURRENT_TEMP, \
+        TESTING_THERMOSTAT_DEVICE_FAMILY, TESTING_THERMOSTAT_HEAT_SETPOINT, TESTING_THERMOSTAT_MODE, \
+        TESTING_THERMOSTAT_SCALE
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
@@ -36,7 +40,7 @@ class A1_XML(SetupMixin, unittest.TestCase):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
         """
         self.assertEqual(self.m_pyhouse_obj.House.DeviceOBJs.Irrigation, None)
-        PrettyPrintAny(self.m_pyhouse_obj.House.DeviceOBJs, 'Device Objs')
+        # PrettyPrintAny(self.m_pyhouse_obj.House.DeviceOBJs, 'Device Objs')
 
 
 class B1_Read(SetupMixin, unittest.TestCase):
@@ -44,22 +48,23 @@ class B1_Read(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_01_Zone(self):
+    def test_01_Base(self):
         """
         """
-        l_xml = self.m_xml.irrigation_zone
-        l_obj = self.m_api._read_one_zone(l_xml)
-        PrettyPrintAny(l_xml, 'XML')
-        PrettyPrintAny(l_obj, 'Zone')
-        self.assertEqual(l_obj.Name, 'Front Rotors # 1')
+        l_xml = self.m_xml.thermostat
+        l_obj = hvacXML._read_thermostat_base(l_xml)
+        # PrettyPrintAny(l_obj, 'Zone')
+        self.assertEqual(l_obj.Name, TESTING_THERMOSTAT_NAME)
+        self.assertEqual(l_obj.Active, TESTING_THERMOSTAT_ACTIVE)
+        self.assertEqual(l_obj.Key, TESTING_THERMOSTAT_KEY)
+        self.assertEqual(l_obj.DeviceFamily, TESTING_THERMOSTAT_DEVICE_FAMILY)
+        self.assertEqual(l_obj.Address, TESTING_THERMOSTAT_ADDRESS)
 
-    def test_02_System(self):
+    def test_02_Thermostat(self):
         """
         """
-        l_xml = self.m_xml.irrigation_system
-        l_obj = self.m_api._read_one_irrigation_system(l_xml)
-        PrettyPrintAny(l_xml, 'XML')
-        PrettyPrintAny(l_obj, 'System')
+        l_xml = self.m_xml.thermostat
+        l_obj = hvacXML._read_thermostat_base(l_xml)
         self.assertEqual(l_obj.Name, 'LawnSystem')
 
     def test_03_Irrigation(self):

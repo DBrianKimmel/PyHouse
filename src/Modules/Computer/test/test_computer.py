@@ -7,6 +7,8 @@
 @note:      Created on Jul 25, 2014
 @Summary:
 
+Passed all 3 tests - DBK - 2015-08-01
+
 """
 
 # Import system type stuff
@@ -14,11 +16,13 @@ from twisted.trial import unittest
 import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
-from Modules.Computer import computer
-from test import xml_data
+from Modules.Computer.computer import API as computerAPI, Xml as computerXML
+from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
 
+DIVISION = 'ComputerDivision'
+MQTT_SECTION = 'MqttSection'
 
 class SetupMixin(object):
     """
@@ -27,44 +31,48 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_api = computer.API(self.m_pyhouse_obj)
+        self.m_api = computerAPI(self.m_pyhouse_obj)
 
 
 class C01_Setup(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_01_FindXML(self):
         """ Be sure that the XML contains the right stuff.
+        Test some scattered things so we don't end up with hundreds of asserts.
         """
-        # PrettyPrintAny(self.m_xml.root, 'XML')
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
-        self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision', 'XML - No Computer Division')
-        # PrettyPrintAny(self.m_pyhouse_obj.Xml, 'XML')
+        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.computer_div.tag, DIVISION)
+        self.assertEqual(self.m_xml.mqtt_sect.tag, MQTT_SECTION)
 
 
-class C02_Read(SetupMixin, unittest.TestCase):
+class C2_Read(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_01_Xml(self):
+        """ Read the config - it is minimal.
+        """
+        l_xml = computerXML.read_computer_xml(self.m_pyhouse_obj)
+        self.assertEqual(l_xml.tag, DIVISION)
+        l_mqtt = l_xml.find(MQTT_SECTION)
+        self.assertNotEqual(l_mqtt, None)
+
+
+class C3_Write(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_01_Xml(self):
         """ Be sure that the XML contains the right stuff.
         """
-        l_xml = self.m_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
-        # PrettyPrintAny(l_xml, 'XML')
-
-
-class C03_Write(SetupMixin, unittest.TestCase):
-
-    def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
-
-    def test_01_Xml(self):
-        """ Be sure that the XML contains the right stuff.
-        """
-        l_xml = self.m_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
-        # PrettyPrintAny(l_xml, 'XML')
+        l_xml = computerXML.read_computer_xml(self.m_pyhouse_obj)
+        l_mqtt = l_xml.find(MQTT_SECTION)
+        # PrettyPrintAny(l_mqtt, 'XML')
+        self.assertNotEqual(l_mqtt, None)
 
 # # ## END DBK

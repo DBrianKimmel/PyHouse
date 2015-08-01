@@ -20,7 +20,6 @@ This takes care of starting all the computer modules (In Order).
 """
 
 # Import system type stuff
-from xml.etree import ElementTree as ET
 import platform
 
 # Import PyHouse files
@@ -45,6 +44,10 @@ class Xml(object):
 
     @staticmethod
     def read_computer_xml(p_pyhouse_obj):
+        """
+        The XML for all the sections within the division are read by the appropriate sub-module.
+        Therefore, there is not much to do here.
+        """
         l_xml = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
         return l_xml
 
@@ -93,7 +96,7 @@ class Utility(object):
         p_pyhouse_obj.APIs.Computer.InternetAPI.Stop()
         p_pyhouse_obj.APIs.Computer.MqttAPI.Stop()
         p_pyhouse_obj.APIs.Computer.NodesAPI.Stop()
-        p_pyhouse_obj.APIs.Computer.WeatherAPI.Stopl()
+        p_pyhouse_obj.APIs.Computer.WeatherAPI.Stop()
         p_pyhouse_obj.APIs.Computer.WebAPI.Stop()
 
     @staticmethod

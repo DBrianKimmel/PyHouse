@@ -16,7 +16,7 @@ from twisted.internet import reactor
 
 # Import PyMh files and modules.
 from Modules.Computer.Internet import inet_find_external_ip
-from test import xml_data
+from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
 
@@ -35,7 +35,7 @@ class SetupMixin(object):
 class C1_Util(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_reactor = self.m_pyhouse_obj.Twisted.Reactor
         self.m_api = inet_find_external_ip.API()
 

@@ -26,26 +26,25 @@ LOG = Logger.getLogger('PyHouse.DeviceTools    ')
 class XML(object):
 
     @staticmethod
-    def read_base_device_object_xml(p_entry_element_xml):
+    def read_base_device_object_xml(p_device_obj, p_entry_element_xml):
         """
         Get the BaseObject entries from the XML element.
         @param p_entry_element_xml: is the element we will extract data from (including children).
         """
-        l_obj = DeviceData()
         try:
-            l_obj.Name = PutGetXML.get_text_from_xml(p_entry_element_xml, 'Name', 'Missing Name')
-            l_obj.Key = PutGetXML.get_int_from_xml(p_entry_element_xml, 'Key', 0)
-            l_obj.Active = PutGetXML.get_bool_from_xml(p_entry_element_xml, 'Active', False)
-            l_obj.UUID = PutGetXML.get_uuid_from_xml(p_entry_element_xml, 'UUID')
-            l_obj.Comment = PutGetXML.get_text_from_xml(p_entry_element_xml, 'Comment')
-            l_obj.DeviceType = PutGetXML.get_int_from_xml(p_entry_element_xml, 'DeviceType')
-            l_obj.DeviceSubType = PutGetXML.get_int_from_xml(p_entry_element_xml, 'DeviceSubType')
-            l_obj.DeviceFamily = PutGetXML.get_text_from_xml(p_entry_element_xml, 'DeviceFamily')
-            l_obj.RoomName = PutGetXML.get_text_from_xml(p_entry_element_xml, 'RoomName')
-            l_obj.RoomCoords = PutGetXML.get_coords_from_xml(p_entry_element_xml, 'RoomCoords')
+            p_device_obj.Name = PutGetXML.get_text_from_xml(p_entry_element_xml, 'Name', 'Missing Name')
+            p_device_obj.Key = PutGetXML.get_int_from_xml(p_entry_element_xml, 'Key', 0)
+            p_device_obj.Active = PutGetXML.get_bool_from_xml(p_entry_element_xml, 'Active', False)
+            p_device_obj.UUID = PutGetXML.get_uuid_from_xml(p_entry_element_xml, 'UUID')
+            p_device_obj.Comment = PutGetXML.get_text_from_xml(p_entry_element_xml, 'Comment')
+            p_device_obj.DeviceType = PutGetXML.get_int_from_xml(p_entry_element_xml, 'DeviceType')
+            p_device_obj.DeviceSubType = PutGetXML.get_int_from_xml(p_entry_element_xml, 'DeviceSubType')
+            p_device_obj.DeviceFamily = PutGetXML.get_text_from_xml(p_entry_element_xml, 'DeviceFamily')
+            p_device_obj.RoomName = PutGetXML.get_text_from_xml(p_entry_element_xml, 'RoomName')
+            p_device_obj.RoomCoords = PutGetXML.get_coords_from_xml(p_entry_element_xml, 'RoomCoords')
         except Exception as e_err:
             LOG.warn('ERROR in xml_tools.read_base_obj_xml() - {}'.format(e_err))
-        return l_obj
+        return p_device_obj
 
     @staticmethod
     def write_base_device_object_xml(p_element_name, p_obj):

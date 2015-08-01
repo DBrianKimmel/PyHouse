@@ -17,7 +17,6 @@ from twisted.trial import unittest
 from Modules.Core.data_objects import ThermostatData
 from Modules.Core import conversions
 from Modules.Hvac import thermostats
-# from Modules.Housing import house
 from Modules.Families import family
 from Modules.Web import web_utils
 from test.xml_data import XML_LONG, XML_EMPTY
@@ -47,7 +46,6 @@ class C01_XML(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
-
 
     def test_01_FindXml(self):
         """ Be sure that the XML contains the right stuff.

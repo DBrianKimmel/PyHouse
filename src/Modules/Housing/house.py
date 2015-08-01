@@ -24,7 +24,7 @@ from Modules.Housing.location import Xml as locationXML
 from Modules.Housing.rooms import Xml as roomsXML
 from Modules.Entertainment.entertainment import API as entertainmentAPI
 from Modules.Families.family import API as familyAPI
-from Modules.Hvac.thermostats import API as hvacAPI
+from Modules.Hvac.hvac import API as hvacAPI
 from Modules.Irrigation.irrigation import API as irrigationAPI
 from Modules.Lighting.lighting import API as lightingAPI
 from Modules.Pool.pool import API as poolAPI
