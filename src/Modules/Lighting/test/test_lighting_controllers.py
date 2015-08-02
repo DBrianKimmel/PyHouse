@@ -7,7 +7,7 @@
 @note:      Created on Feb 21, 2014
 @summary:   This module is for testing local node data.
 
-Passed all 16 tests - DBK - 2015-07-30
+Passed all 19 tests - DBK - 2015-08-02
 """
 
 # Import system type stuff
@@ -16,11 +16,19 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import ControllerData
-from Modules.Core.test.xml_device import TESTING_DEVICE_COMMENT
+from Modules.Core.test.xml_device import TESTING_DEVICE_COMMENT, TESTING_DEVICE_FAMILY, TESTING_DEVICE_TYPE, TESTING_DEVICE_SUBTYPE, \
+    TESTING_DEVICE_ROOM_NAME
 from Modules.Lighting.lighting_controllers import Utility, API as controllerAPI
 from Modules.Lighting.test.xml_core import TESTING_LIGHTING_CORE_ROOM
 from Modules.Families.family import API as familyAPI
-from Modules.Families.Insteon.test.xml_insteon import TESTING_INSTEON_ADDRESS
+from Modules.Families.Insteon.test.xml_insteon import \
+        TESTING_INSTEON_ADDRESS, \
+        TESTING_INSTEON_DEVCAT, \
+        TESTING_INSTEON_GROUP_LIST, \
+        TESTING_INSTEON_GROUP_NUM, \
+        TESTING_INSTEON_MASTER, \
+        TESTING_INSTEON_PRODUCT_KEY
+
 from Modules.Core import conversions
 from Modules.Web import web_utils
 from test.xml_data import XML_LONG
@@ -75,14 +83,17 @@ class B1_Read(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_01_Base(self):
+    def test_01_BaseDevice(self):
         l_obj = Utility._read_base_device(self.m_xml.controller, self.m_version)
         # PrettyPrintAny(l_obj, 'Base Data')
         self.assertEqual(l_obj.Name, 'Insteon Serial Controller')
         self.assertEqual(l_obj.Active, True)
         self.assertEqual(l_obj.LightingType, 'Controller')
         self.assertEqual(l_obj.Comment, TESTING_DEVICE_COMMENT)
-        self.assertEqual(l_obj.RoomName, TESTING_LIGHTING_CORE_ROOM)
+        self.assertEqual(l_obj.DeviceFamily, TESTING_DEVICE_FAMILY)
+        self.assertEqual(l_obj.DeviceType, int(TESTING_DEVICE_TYPE))
+        self.assertEqual(l_obj.DeviceSubType, int(TESTING_DEVICE_SUBTYPE))
+        self.assertEqual(l_obj.RoomName, TESTING_DEVICE_ROOM_NAME)
 
     def test_02_Controller(self):
         l_obj = Utility._read_base_device(self.m_xml.controller, self.m_version)
@@ -110,8 +121,11 @@ class B1_Read(SetupMixin, unittest.TestCase):
         Utility._read_interface_data(l_obj, self.m_xml.controller, self.m_version)
         Utility._read_family_data(self.m_pyhouse_obj, l_obj, self.m_xml.controller, self.m_version)
         # PrettyPrintAny(l_obj, 'Read Family', 100)
-        self.assertEqual(l_obj.DevCat, conversions.dotted_hex2int('02.1C'))
         self.assertEqual(l_obj.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS))
+        self.assertEqual(l_obj.DevCat, conversions.dotted_hex2int(TESTING_INSTEON_DEVCAT))
+        self.assertEqual(l_obj.GroupList, TESTING_INSTEON_GROUP_LIST)
+        self.assertEqual(l_obj.GroupNumber, int(TESTING_INSTEON_GROUP_NUM))
+        self.assertEqual(l_obj.IsMaster, bool(TESTING_INSTEON_MASTER))
 
     def test_06_OneController(self):
         """ Read in the xml file and fill in the lights

@@ -76,6 +76,7 @@ class FamUtil(object):
     def get_family(p_device_obj):
         """
         @param p_device_obj: contains the info about the device we are working on.
+        @return: the DeviceFamily which is the Name of the family (e.g. Insteon)
         """
         l_dev_name = FamUtil._get_device_name(p_device_obj)
         # l_dev_family = FamUtil._get_device_family(p_device_obj)
@@ -130,11 +131,11 @@ class FamUtil(object):
         @param p_device_obj: is the device we will be outputting info for.
         @param p_xml: is the XML data for the entire device.
         """
-        l_api = FamUtil._get_family_xml_api(p_pyhouse_obj, p_device_obj)
+        l_xml_api = FamUtil._get_family_xml_api(p_pyhouse_obj, p_device_obj)
         try:
-            l_ret = l_api.ReadXml(p_device_obj, p_xml)
+            l_ret = l_xml_api.ReadXml(p_device_obj, p_xml)
         except Exception as e_err:
-            l_ret = 'ERROR family_utils-110  API:{}  Device:"{}"\n   {}'.format(l_api, p_device_obj.Name, e_err)
+            l_ret = 'ERROR family_utils-110  API:{}  Device:"{}"\n   {}'.format(l_xml_api, p_device_obj.Name, e_err)
             LOG.error('ERROR - Unable to load family information for a device.'
                       '\n\tDevice: {}\n\tFamily: {}\n\t{}'.format(p_device_obj.Name, p_device_obj.DeviceFamily, e_err))
         return l_ret  # for testing

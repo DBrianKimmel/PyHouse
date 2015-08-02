@@ -21,7 +21,7 @@ from Modules.Utilities import convert
 from Modules.Core.data_objects import CoreLightingData, ControllerData
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.tools import PrettyPrintAny
+# from Modules.Utilities.tools import PrettyPrintAny
 
 XML_INT = """
 <Test b1='True' f1='3.14158265' i1='371' t1='Test of text attribute' >
@@ -35,7 +35,7 @@ XML_INT = """
     <Part_3 b3='True' f3='3.14158265' i3='371' t3='Test of text'>
         <b4>True</b4>
     </Part_3>
-    <IPv4>98.76.0.123</IPv4>
+    <IPv4>98.76.45.123</IPv4>
     <IPv6>1234:dead::beef</IPv6>
     <ExternalIPv6>1234:5678::1</ExternalIPv6>
     <DateTime>2014-10-02T12:34:56</DateTime>
@@ -65,19 +65,15 @@ class A1_Compound(SetupMixin, unittest.TestCase):
 
     def test_01_GetIpV4(self):
         l_elem = self.m_api.get_ip_from_xml(self.m_fields, 'IPv4')
-        self.assertEqual(l_elem, convert.str_to_long('98.76.0.123'))
-        print('Element = {}'.format(l_elem))
+        self.assertEqual(l_elem, convert.str_to_long('98.76.45.123'))
 
     def test_02_GetIPv6(self):
         l_elem = self.m_api.get_ip_from_xml(self.m_fields, 'IPv6')
         self.assertEqual(l_elem, convert.str_to_long('1234:dead::beef'))
-        print('Element = {}'.format(l_elem))
 
     def test_03_GetDateTime(self):
         l_elem = self.m_api.get_date_time_from_xml(self.m_fields, 'DateTime')
         self.assertEqual(l_elem, datetime.datetime(2014, 10, 2, 12, 34, 56))
-        print('Element = {}'.format(l_elem))
-
 
 
 class A2_GetAnyField(SetupMixin, unittest.TestCase):
@@ -90,19 +86,15 @@ class A2_GetAnyField(SetupMixin, unittest.TestCase):
 
     def test_01_Missing(self):
         l_missing = XML.get_any_field(self.m_fields, 'NoValidName')
-        print l_missing
         self.assertIsNone(l_missing)
 
     def test_02_Element(self):
         l_result = XML.get_any_field(self.m_fields, 'IntField')
-        print l_result
         self.assertEqual(l_result, '246')
 
     def test_03_Attribute(self):
         l_result = XML.get_any_field(self.m_fields, 'i1')
-        print l_result
         self.assertEqual(l_result, '371')
-
 
 
 class B01_Attribute(SetupMixin, unittest.TestCase):
@@ -118,18 +110,14 @@ class B01_Attribute(SetupMixin, unittest.TestCase):
     def test_01_GetElement(self):
         l_elem = XML.get_element_field(self.m_fields, 'TextField1')
         self.assertEqual(l_elem, 'Test of text element')
-        print('Element = {}'.format(l_elem))
 
     def test_02_GetElement_attribute(self):
         l_elem = XML.get_element_field(self.m_fields, 't1')
         self.assertEqual(l_elem, None)
-        print('Element = {}'.format(l_elem))
 
     def test_03_GetElement_Missing(self):
         l_elem = XML.get_element_field(self.m_fields, 'MissingElement')
         self.assertEqual(l_elem, None)
-        print('Element = {}'.format(l_elem))
-
 
 
 class B02_Element(SetupMixin, unittest.TestCase):
@@ -145,18 +133,14 @@ class B02_Element(SetupMixin, unittest.TestCase):
     def test_01_GetAttribute(self):
         l_attr = XML.get_attribute_field(self.m_fields, 't1')
         self.assertEqual(l_attr, 'Test of text attribute')
-        print('Attribute = {}'.format(l_attr))
 
     def test_02_GetAttribute_element(self):
         l_attr = XML.get_attribute_field(self.m_fields, 'TextField1')
         self.assertEqual(l_attr, None)
-        print('Attribute = {0:}'.format(l_attr))
 
     def test_03_GetAttribute_Missing(self):
         l_attr = XML.get_attribute_field(self.m_fields, 'MissingAttribute')
         self.assertEqual(l_attr, None)
-        print('Attribute = {0:}'.format(l_attr))
-
 
 
 class B03_AnyField(SetupMixin, unittest.TestCase):
@@ -172,18 +156,14 @@ class B03_AnyField(SetupMixin, unittest.TestCase):
     def test_01_GetAnyField_Element(self):
         l_field = XML.get_any_field(self.m_fields, 'TextField1')
         self.assertEqual(l_field, 'Test of text element')
-        print('Element = {0:}'.format(l_field))
 
     def test_02_GetAnyField_Attribute(self):
         l_field = XML.get_any_field(self.m_fields, 't1')
         self.assertEqual(l_field, 'Test of text attribute')
-        print('Element = {0:}'.format(l_field))
 
     def test_03_GetAnyField_Missing(self):
         l_field = XML.get_any_field(self.m_fields, 'NoSuchField')
         self.assertEqual(l_field, None)
-        print('Element = {0:}'.format(l_field))
-
 
 
 class B04_Boolean(SetupMixin, unittest.TestCase):
@@ -229,13 +209,12 @@ class B04_Boolean(SetupMixin, unittest.TestCase):
     def test_07_PutElement(self):
         l_element = ET.Element('TestBoolElement_1')
         self.m_api.put_bool_element(l_element, 'Active', True)
-        # PrettyPrintAny(l_element, 'bool', 120)
+        self.assertEqual(bool(l_element._children[0].text), True)
 
     def test_08_PutAttribute(self):
         l_element = ET.Element('TestBoolAttribute_2')
         self.m_api.put_bool_attribute(l_element, 'Active', True)
-        # PrettyPrintAny(l_element, 'bool', 120)
-
+        self.assertEqual(l_element.attrib['Active'], 'True')
 
 
 class B05_Integer(SetupMixin, unittest.TestCase):
@@ -259,13 +238,12 @@ class B05_Integer(SetupMixin, unittest.TestCase):
     def test_03_PutIntElement(self):
         l_element = ET.Element('TestIntElement_1')
         self.m_api.put_int_element(l_element, 'IntNumber', -57)
-        # PrettyPrintAny(l_element, 'bool', 120)
+        self.assertEqual(int(l_element._children[0].text), -57)
 
     def test_04_PutIntAttribute(self):
         l_element = ET.Element('TestIntAttribute_2')
         self.m_api.put_int_attribute(l_element, 'IntNumber', 853)
-        # PrettyPrintAny(l_element, 'bool', 120)
-
+        self.assertEqual(int(l_element.attrib['IntNumber']), 853)
 
 
 class B06_Text(SetupMixin, unittest.TestCase):
@@ -281,7 +259,6 @@ class B06_Text(SetupMixin, unittest.TestCase):
     def test_01_GetTextElement(self):
         l_text = self.m_api.get_text_from_xml(self.m_fields, 'TextField1')
         self.assertEqual(l_text, 'Test of text element')
-        print('Text = {0:}'.format(l_text))
 
     def test_02_GetTextElement(self):
         """
@@ -289,33 +266,28 @@ class B06_Text(SetupMixin, unittest.TestCase):
         """
         l_text = self.m_api.get_text_from_xml(self.m_fields.find('TextField1'), 'TextField1')
         self.assertEqual(l_text, 'Test of text element')
-        print('Text = {0:}'.format(l_text))
 
     def test_03_GetTextAttribute(self):
         l_text = self.m_api.get_text_from_xml(self.m_fields, 't1')
         self.assertEqual(l_text, 'Test of text attribute')
-        print('Text = {0:}'.format(l_text))
 
     def test_04_GetTextInvalid(self):
         l_text = self.m_api.get_text_from_xml(self.m_fields, 'NoSuchField', '0223 No such field')
         self.assertEqual(l_text, '0223 No such field')
-        print('Text = {0:}'.format(l_text))
 
     def test_05_GetTextInvalid_NoDefault(self):
         l_text = self.m_api.get_text_from_xml(self.m_fields, 'NoSuchField')
         self.assertEqual(l_text, 'None')
-        print('Text = {0:}'.format(l_text))
 
     def test_06_PutTextElement(self):
         l_element = ET.Element('TestTextElement_1')
         self.m_api.put_int_element(l_element, 'Comment', 'Arbitrary Comment')
-        # PrettyPrintAny(l_element, 'XML A', 120)
+        self.assertEqual(l_element._children[0].text, 'Arbitrary Comment')
 
     def test_07_PutTextAttribute(self):
         l_element = ET.Element('TestTextAttribute_2')
         self.m_api.put_text_attribute(l_element, 'Name', 'Any old Name')
-        # PrettyPrintAny(l_element, 'XML B', 120)
-
+        self.assertEqual(l_element.attrib['Name'], 'Any old Name')
 
 
 class B07_Float(SetupMixin, unittest.TestCase):
@@ -337,7 +309,6 @@ class B07_Float(SetupMixin, unittest.TestCase):
         self.assertAlmostEqual(result, float(3.1415825435), places = 5, msg = 'get_float_from_xml failed')
 
 
-
 class B08_UUID(SetupMixin, unittest.TestCase):
     """
     This series tests the PutGetXML class methods
@@ -353,17 +324,10 @@ class B08_UUID(SetupMixin, unittest.TestCase):
         """
         l_uuid = self.m_api.get_uuid_from_xml(self.m_fields, 'UUIDField')
         self.assertEqual(l_uuid, '01234567-fedc-2468-7531-0123456789ab')
-        print('UUID = {}'.format(l_uuid))
 
-    def test_02_GetUuidAttribute(self):
-        l_uuid = self.m_api.get_uuid_from_xml(self.m_fields, 'IntField')
-        # self.assertNotEqual(l_uuid, None)
-        print('UUID = {}'.format(l_uuid))
-
-    def test_03_GetUuidMissing(self):
+    def test_02_GetUuidMissing(self):
         l_uuid = self.m_api.get_uuid_from_xml(self.m_fields, 'NoSuchField')
         self.assertEqual(l_uuid, None)
-        print('UUID = {}'.format(l_uuid))
 
 
 class B09_IP(SetupMixin, unittest.TestCase):
@@ -376,9 +340,13 @@ class B09_IP(SetupMixin, unittest.TestCase):
         self.m_fields = ET.fromstring(XML_INT)
         self.m_api = PutGetXML
 
-    def test_01_IP(self):
+    def test_01_IPv4(self):
         l_ip = self.m_api.get_ip_from_xml(self.m_fields, 'IPv4')
-        print('IP = {}'.format(l_ip))
+        self.assertEqual(l_ip, convert.str_to_long('98.76.45.123'))
+
+    def test_02_IPv6(self):
+        l_ip = self.m_api.get_ip_from_xml(self.m_fields, 'IPv6')
+        self.assertEqual(l_ip, convert.str_to_long('1234:dead::beef'))
 
 
 class B10_DateTime(SetupMixin, unittest.TestCase):
@@ -393,7 +361,8 @@ class B10_DateTime(SetupMixin, unittest.TestCase):
 
     def test_01_DateTime(self):
         l_date = self.m_api.get_date_time_from_xml(self.m_fields, 'DateTime')
-        print('Date = {}'.format(l_date))
+        l_dt = datetime.datetime(2014, 10, 2, 12, 34, 56)
+        self.assertEqual(l_date, l_dt)
 
 
 class B11_Coords(SetupMixin, unittest.TestCase):
@@ -408,11 +377,15 @@ class B11_Coords(SetupMixin, unittest.TestCase):
 
     def test_01_Coords(self):
         l_coords = self.m_api.get_coords_from_xml(self.m_fields, 'RoomCoords1')
-        # PrettyPrintAny(l_coords, 'CoOrds')
+        self.assertEqual(l_coords.X_Easting, 0.0)
+        self.assertEqual(l_coords.Y_Northing, 1.1)
+        self.assertEqual(l_coords.Z_Height, 2.2)
 
     def test_02_Coords(self):
         l_coords = self.m_api.get_coords_from_xml(self.m_fields, 'RoomCoords2')
-        # PrettyPrintAny(l_coords, 'CoOrds')
+        l_element = ET.Element('Test B11-02')
+        self.m_api.put_coords_element(l_element, 'CoOrds', l_coords)
+        self.assertEqual(l_element._children[0].text, '[0.0,1.1,2.2]')
 
 
 class C3_Read(SetupMixin, unittest.TestCase):
@@ -442,7 +415,6 @@ class C3_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_base_obj.Active, True)
 
 
-
 class C4_ReadEmpty(SetupMixin, unittest.TestCase):
     """
     This tests the ConfigTools section
@@ -455,12 +427,9 @@ class C4_ReadEmpty(SetupMixin, unittest.TestCase):
     def test_01_BaseObject(self):
         l_base_obj = CoreLightingData()
         self.m_api.read_base_object_xml(l_base_obj, self.m_xml.light)
-        # PrettyPrintAny(l_base_obj, 'Light')
         self.assertEqual(l_base_obj.Name, 'Missing Name')
         self.assertEqual(l_base_obj.Key, 0)
         self.assertEqual(l_base_obj.Active, False)
-        # self.assertEqual(l_base_obj.UUID, 'c15f7d76-092e-11e4-bffa-b827eb189eb4', 'Bad UUID')
-
 
 
 class C5_WriteXml(SetupMixin, unittest.TestCase):

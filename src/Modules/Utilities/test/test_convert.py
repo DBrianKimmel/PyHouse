@@ -7,8 +7,7 @@
 @note: Created on Apr 4, 2013
 @summary: This module is for testing conversion tools.
 
-
-Tests all working OK - DBK 2014-05-28
+Passed all 4 tests - DBK - 2015-08-01
 """
 
 # Import system type stuff

@@ -7,7 +7,7 @@
 @note:      Created on Nov 15, 2014
 @Summary:
 
-Passed all 18 tests.  DBK 2015-07-21
+Passed all 13 tests.  DBK 2015-08-02
 """
 
 # Import system type stuff
@@ -17,18 +17,19 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from Modules.Core.data_objects import LightData
 from Modules.Core import conversions
+from Modules.Families import VALID_FAMILIES
 from Modules.Families.family import API as familyAPI
 from Modules.Families.family_utils import FamUtil
 from Modules.Families.Insteon.test.xml_insteon import TESTING_INSTEON_PRODUCT_KEY
 from Modules.Lighting.lighting_core import API as LightingCoreAPI
+from Modules.Core.test.xml_device import TESTING_DEVICE_COMMENT, \
+    TESTING_DEVICE_ROOM_NAME
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
 
 
 class SetupMixin(object):
-    """
-    """
 
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
@@ -53,25 +54,7 @@ class A1_XML(SetupMixin, unittest.TestCase):
     def test_01_Setup(self):
         """ Did we get everything set up for the rest of the tests of this class.
         """
-        # PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs, 'RefOBJs', 115)
-        # PrettyPrintAny(self.m_xml, 'XML')
-        # self.assertEqual(len(VALID_FAMILIES), len(self.m_pyhouse_obj.House.RefOBJs.FamilyData))
-        pass
-
-    def test_02_Device(self):
-        """ Did we get everything set up for the rest of the tests of this class.
-        """
-        # PrettyPrintAny(self.m_device_obj, 'Device')
-        # self.assertEqual(len(VALID_FAMILIES), len(self.m_pyhouse_obj.House.RefOBJs.FamilyData))
-        pass
-
-    def test_03_Families(self):
-        # PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs.FamilyData, 'Families')
-        pass
-
-    def test_04_Family(self):
-        # PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs.FamilyData['Insteon'], 'Families')
-        pass
+        self.assertEqual(len(VALID_FAMILIES), len(self.m_pyhouse_obj.House.RefOBJs.FamilyData))
 
 
 class B1_Utils(SetupMixin, unittest.TestCase):
@@ -83,32 +66,27 @@ class B1_Utils(SetupMixin, unittest.TestCase):
 
     def test_01_GetDeviceName(self):
         l_device = FamUtil._get_device_name(self.m_device_obj)
-        # print('Device Name: {}'.format(l_device))
         self.assertEqual(l_device, 'Testing Device')
 
     def test_03_GetFamilyObj(self):
         l_obj = FamUtil._get_family_obj(self.m_pyhouse_obj, self.m_device_obj)
-        # PrettyPrintAny(l_obj, 'Family')
         self.assertEqual(l_obj.Name, 'Insteon')
+        self.assertEqual(l_obj.Active, True)
+        self.assertEqual(l_obj.Key, 0)
+        self.assertEqual(l_obj.FamilyDeviceModuleName, 'Insteon_device')
+        self.assertEqual(l_obj.FamilyPackageName, 'Modules.Families.Insteon')
+        self.assertEqual(l_obj.FamilyXmlModuleName, 'Insteon_xml')
 
     def test_04_GetInsteon(self):
         """ Did we get a family?
         """
         l_family = FamUtil.get_family(self.m_device_obj)
-        # PrettyPrintAny(self.m_device_obj, 'Device')
-        # print('Testing - Family: "{}"'.format(l_family))
         self.assertEqual(l_family, 'Insteon')
-
-    def test_05_GetUPB(self):
-        """ Did we get everything set up for the rest of the tests of this class.
-        """
         self.m_device_obj.DeviceFamily = 'UPB'
         l_family = FamUtil.get_family(self.m_device_obj)
-        # PrettyPrintAny(self.m_device_obj, 'Device')
-        # print('Testing - Family: "{}"'.format(l_family))
         self.assertEqual(l_family, 'UPB')
 
-    def test_06_GetApi(self):
+    def test_05_GetApi(self):
         l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, self.m_device_obj)
         # PrettyPrintAny(l_api, 'API')
         self.assertNotEqual(l_api, None)
@@ -164,7 +142,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         l_light = LightingCoreAPI.read_core_lighting_xml(l_device, l_xml, self.m_version)
         # PrettyPrintAny(l_light, 'Light')
         self.assertEqual(l_light.Name, 'Insteon Light')
-        self.assertEqual(l_device.RoomName, 'Master Bath')
+        self.assertEqual(l_device.RoomName, TESTING_DEVICE_ROOM_NAME)
 
     def test_06_All(self):
         """ Did we get everything set up for the rest of the tests of this class.

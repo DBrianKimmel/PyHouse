@@ -7,6 +7,8 @@
 @license:   MIT License
 @summary:   This module is for testing lighting data.
 
+Passed all 15 tests - DBK - 2015-08-02
+
 """
 
 # Import system type stuff

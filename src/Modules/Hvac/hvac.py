@@ -42,7 +42,7 @@ class API(Utility):
         LOG.info("Stopped.")
 
     def SaveXml(self, p_xml):
-        l_xml = self.write_all_thermostats_xml(self.m_pyhouse_obj)
+        l_xml = hvacXML.write_hvac_xml(self.m_pyhouse_obj, p_xml)
         p_xml.append(l_xml)
         LOG.info("Saved Hvac XML.")
         return l_xml

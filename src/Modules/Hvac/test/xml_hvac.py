@@ -9,42 +9,61 @@
 
 """
 
+# Import system type stuff
+
+# Import PyMh files
+from Modules.Core.test.xml_device import XML_DEVICE
+from Modules.Families.Insteon.test.xml_insteon import XML_INSTEON
+
 
 TESTING_THERMOSTAT_NAME = 'Test Thermostat One'
 TESTING_THERMOSTAT_ACTIVE = 'True'
 TESTING_THERMOSTAT_KEY = '0'
-TESTING_THERMOSTAT_DEVICE_FAMILY = 'Insteon'
+
+
+L_THERMOSTAT_NAME = '  <Thermostat Name="' + TESTING_THERMOSTAT_NAME + \
+                    '" Active="' + TESTING_THERMOSTAT_ACTIVE + \
+                    '" Key="' + TESTING_THERMOSTAT_KEY + '">'
+
 TESTING_THERMOSTAT_COOL_SETPOINT = '78.0'
 TESTING_THERMOSTAT_HEAT_SETPOINT = '70.0'
 TESTING_THERMOSTAT_SCALE = 'F'
 TESTING_THERMOSTAT_MODE = 'Cool'
-TESTING_THERMOSTAT_ADDRESS = '18.C9.4A'
-TESTING_THERMOSTAT_CURRENT_TEMP = '75.0'
-
-L_THERMOSTAT_BASE = '  <Thermostat Name="' + TESTING_THERMOSTAT_NAME + \
-                    '" Active="' + TESTING_THERMOSTAT_ACTIVE + \
-                    '" Key="' + TESTING_THERMOSTAT_KEY + '">'
-L_THERMOSTAT_DEVICE_FAMILY = '    <DeviceFamily>' + TESTING_THERMOSTAT_DEVICE_FAMILY + '</DeviceFamily>'
 L_THERMOSTAT_COOL_SETPOINT = '    <CoolSetPoint>' + TESTING_THERMOSTAT_COOL_SETPOINT + '</CoolSetPoint>'
 L_THERMOSTAT_HEAT_SETPOINT = '    <HeatSetPoint>' + TESTING_THERMOSTAT_HEAT_SETPOINT + '</HeatSetPoint>'
 L_THERMOSTAT_MODE = '    <ThermostatMode>' + TESTING_THERMOSTAT_MODE + '</ThermostatMode>'
 L_THERMOSTAT_SCALE = '    <ThermostatScale>' + TESTING_THERMOSTAT_SCALE + '</ThermostatScale>'
-L_THERMOSTAT_ADDRESS = '    <Address>' + TESTING_THERMOSTAT_ADDRESS + '</Address>'
+
+TESTING_THERMOSTAT_CURRENT_TEMP = '75.0'
 L_THERMOSTAT_CURRENT_TEMP = '    <CurrentTemperature>' + TESTING_THERMOSTAT_CURRENT_TEMP + '</CurrentTemperature>'
 
+L_THERMOSTAT_SETTINGS = '\n'.join([
+    L_THERMOSTAT_COOL_SETPOINT,
+    L_THERMOSTAT_HEAT_SETPOINT,
+    L_THERMOSTAT_MODE,
+    L_THERMOSTAT_SCALE
+    ])
+
+L_THERMOSTAT_STATUS = '\n'.join([
+    L_THERMOSTAT_CURRENT_TEMP
+    ])
+
+XML_INSTEON_THERMOSTAT = '\n'.join([
+    L_THERMOSTAT_NAME,
+    '<!-- ABC -->',
+    XML_DEVICE,
+    L_THERMOSTAT_SETTINGS,
+    L_THERMOSTAT_STATUS,
+    XML_INSTEON,
+    "</Thermostat>"
+    ])
 
 XML_THERMOSTAT = '\n'.join([
-        '<ThermostatSection>',
-        L_THERMOSTAT_BASE,
-        L_THERMOSTAT_DEVICE_FAMILY,
-        L_THERMOSTAT_COOL_SETPOINT,
-        L_THERMOSTAT_HEAT_SETPOINT,
-        L_THERMOSTAT_MODE,
-        L_THERMOSTAT_SCALE,
-        L_THERMOSTAT_ADDRESS,
-        L_THERMOSTAT_CURRENT_TEMP,
-        '  <\Thermostat>',
-        '<\ThermostatSection>'
+        ' <ThermostatSection>',
+        '    <!-- A1BC -->',
+        XML_INSTEON_THERMOSTAT,
+        '    <!-- A1ZY -->',
+        ' </ThermostatSection>'
 ])
 
 THERMOSTAT_XSD = """"

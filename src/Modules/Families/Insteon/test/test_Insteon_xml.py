@@ -22,7 +22,7 @@ from Modules.Families.Insteon.Insteon_xml import Xml as InsteonXmlAPI
 from Modules.Core import conversions
 from Modules.Lighting.lighting_core import API as lightingCoreAPI
 from test.xml_data import XML_LONG
-from Modules.Lighting.test.xml_lights import TESTING_LIGHTING_LIGHTS_INSTEON_NAME
+from Modules.Lighting.test.xml_lights import TESTING_LIGHTING_LIGHTS_INSTEON_NAME_1
 from Modules.Families.Insteon.test.xml_insteon import \
         TESTING_INSTEON_ADDRESS, \
         TESTING_INSTEON_DEVCAT, \

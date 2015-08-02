@@ -7,6 +7,8 @@
 @note:      Created on Sep 29, 2014
 @Summary:
 
+Passed all 10 tests - DBK - 2015-08-02
+
 """
 
 # Import system type stuff
@@ -23,9 +25,7 @@ from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities import convert
 
-
 DATETIME = datetime.datetime(2014, 10, 2, 12, 34, 56)
-
 
 
 class SetupMixin(object):
@@ -35,7 +35,7 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-class C01_XML(SetupMixin, unittest.TestCase):
+class B1_XML(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by inernet.
     """
 
@@ -86,13 +86,12 @@ class C01_XML(SetupMixin, unittest.TestCase):
     def test_11_WriteLocates(self):
         l_internet_obj = self.m_api.read_internet_xml(self.m_pyhouse_obj)
         l_xml = self.m_api._write_locates_xml(l_internet_obj)
-        # PrettyPrintAny(l_xml, 'Locates')
-        self.assertEqual(l_internet_obj.LocateUrls[0], 'http://snar.co/ip/')
+        self.assertEqual(l_xml._children[0].text, 'http://snar.co/ip/')
 
     def test_12_WriteUpdates(self):
         l_internet_obj = self.m_api.read_internet_xml(self.m_pyhouse_obj)
         l_xml = self.m_api._write_updates_xml(l_internet_obj)
-        # PrettyPrintAny(l_xml, 'Updatew')
+        self.assertEqual(l_xml._children[0].text, 'http://freedns.afraid.org/dynamic/update.php?12345')
 
     def test_13_WriteDerived(self):
         """ Write out the XML file for the location section
@@ -100,7 +99,9 @@ class C01_XML(SetupMixin, unittest.TestCase):
         l_internet = self.m_api.read_internet_xml(self.m_pyhouse_obj)
         l_xml = ET.Element('InternetSection')
         self.m_api._write_derived_xml(l_internet, l_xml)
-        # PrettyPrintAny(l_xml, 'Write xml')
+        self.assertEqual(int(l_xml._children[0].text), convert.str_to_long('65.35.48.61'))
+        self.assertEqual(int(l_xml._children[1].text), convert.str_to_long('1234:5678::1'))
+        self.assertEqual(l_xml._children[2].text, str(DATETIME))
 
     def test_14_WriteAllInternetXml(self):
         """ Write out the XML file for the location section

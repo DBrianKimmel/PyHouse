@@ -106,7 +106,7 @@ class Utility(object):
             l_lighting_xml.append(buttonsAPI.write_buttons_xml(p_pyhouse_obj))
             l_lighting_xml.append(controllersAPI.write_all_controllers_xml(p_pyhouse_obj))
         except AttributeError as e_err:
-            l_msg = 'ERROR in writing lighting {}'.format(e_err)
+            l_msg = 'ERROR: {}'.format(e_err)
             LOG.error(l_msg)
             p_house_element.append(l_lighting_xml)
         return l_lighting_xml

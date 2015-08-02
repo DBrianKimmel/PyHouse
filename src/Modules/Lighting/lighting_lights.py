@@ -137,7 +137,7 @@ class API(object):
         l_xml = ET.Element(SECTION)
         l_count = 0
         for l_light_obj in p_pyhouse_obj.House.DeviceOBJs.Lights.itervalues():
-            l_xml.append(API.write_one_light_xml(p_pyhouse_obj, l_light_obj))
+            l_xml.append(API._write_one_light_xml(p_pyhouse_obj, l_light_obj))
             l_count += 1
         LOG.info('Saved {} Lights XML'.format(l_count))
         return l_xml

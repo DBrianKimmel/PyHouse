@@ -29,7 +29,7 @@ from Modules.Lighting.lighting_core import API as LightingCoreAPI
 from Modules.Families import family
 from test.xml_data import XML_LONG, XML_LONG_1_3, XML_EMPTY
 from test.testing_mixin import SetupPyHouseObj
-# from Modules.Utilities.tools import PrettyPrintAny
+from Modules.Utilities.tools import PrettyPrintAny
 
 
 class SetupMixin(object):
@@ -56,9 +56,8 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     def test_01_PyHouse(self):
         """ Be sure that the XML contains the right stuff.
         """
-        # PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse_obj', 120)
-        # PrettyPrintAny(self.m_pyhouse_obj.Xml, 'PyHouse_obj XML', 120)
-        pass
+        self.assertNotEqual(self.m_pyhouse_obj.APIs, None)
+        self.assertNotEqual(self.m_pyhouse_obj.House.DeviceOBJs, None)
 
     def test_02_FindXml(self):
         """ Be sure that the XML contains the right stuff.
@@ -77,14 +76,15 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     def test_03_LightXML(self):
         """ Be sure that the XML contains the right stuff.
         """
-        # PrettyPrintAny(self.m_xml.light, 'Light XML')
-        pass
+        l_xml = self.m_xml.light
+        # PrettyPrintAny(l_xml, 'Light XML')
+        self.assertEqual(l_xml.attrib['Name'], 'Insteon Light')
 
     def test_04_Api(self):
         # PrettyPrintAny(self.m_api, 'API')
         pass
 
-    def test_05_CtlButLgt(self):
+    def test_05_CtlBtnLgt(self):
         # PrettyPrintAny(self.m_button_obj, 'Button')
         # PrettyPrintAny(self.m_controller_obj, 'Controller')
         # PrettyPrintAny(self.m_light_obj, 'Light')
@@ -106,7 +106,6 @@ class B1_Parts_1_4(SetupMixin, unittest.TestCase):
         """ Read in the xml file and fill in the lights
         """
         l_base = self.m_api._read_base(self.m_light_obj, self.m_xml.light)
-        # PrettyPrintAny(l_base, 'Base')
         self.assertEqual(l_base.Name, 'Insteon Light')
         self.assertEqual(l_base.Key, 0)
         self.assertEqual(l_base.Active, True)
@@ -114,7 +113,6 @@ class B1_Parts_1_4(SetupMixin, unittest.TestCase):
     def test_03_Device(self):
         l_device = self.m_api._read_base(self.m_light_obj, self.m_xml.light)
         l_device = self.m_api._read_versioned_device(l_device, self.m_xml.light, '1.4')
-        # PrettyPrintAny(l_device, 'Device')
         self.assertEqual(l_device.Comment, TESTING_DEVICE_COMMENT)
         self.assertEqual(l_device.DeviceFamily, TESTING_DEVICE_FAMILY)
         self.assertEqual(l_device.DeviceType, int(TESTING_DEVICE_TYPE))

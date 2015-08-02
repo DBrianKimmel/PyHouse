@@ -37,7 +37,7 @@ class Utility(object):
         """
         l_obj = ControllerData()  # Create an empty controller object.
         l_obj = LightingCoreAPI.read_core_lighting_xml(l_obj, p_xml, p_version)
-        l_obj.DeviceSubType = 1
+        # l_obj.DeviceSubType = 1
         return l_obj
 
     @staticmethod

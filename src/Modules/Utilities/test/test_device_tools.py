@@ -20,7 +20,7 @@ from Modules.Core.data_objects import LightData, ButtonData, ControllerData
 from Modules.Core.test.xml_device import TESTING_DEVICE_COMMENT, TESTING_DEVICE_FAMILY, \
             TESTING_DEVICE_ROOM_NAME, TESTING_DEVICE_ROOM_X
 from Modules.Utilities.device_tools import XML as deviceXML
-from test.xml_data import XML_LONG, XML_EMPTY
+from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
 
@@ -97,7 +97,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """
         l_obj = ControllerData()
         l_base = self.m_api.read_base_device_object_xml(l_obj, self.m_xml.controller)
-        # PrettyPrintAny(l_base, 'ReadBaseLighting', 120)
+        PrettyPrintAny(l_base, 'ReadBaseLighting', 120)
         self.assertEqual(l_base.Name, 'Insteon Serial Controller')
         self.assertEqual(l_base.Key, 0, 'Bad Key')
         self.assertEqual(l_base.Active, True)

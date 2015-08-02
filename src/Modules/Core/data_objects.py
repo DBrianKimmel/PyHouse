@@ -316,17 +316,12 @@ class ThermostatData(DeviceData):
 
     def __init__(self):
         super(ThermostatData, self).__init__()
-        self.Comment = ''
-        self.RoomName = ''
         self.CoolSetPoint = 0
-        self.DeviceFamily = 'Null'
         self.CurrentTemperature = 0
         self.HeatSetPoint = 0
         self.ThermostatMode = 'Cool'  # Cool | Heat | Auto | EHeat
         self.ThermostatScale = 'F'  # F | C
         self.ThermostatStatus = 'Off'  # On
-        self.DeviceType = 0
-        self.DeviceSubType = 0
 
 
 class ScheduleBaseData(BaseObject):
