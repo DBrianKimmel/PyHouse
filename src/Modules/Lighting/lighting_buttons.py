@@ -99,7 +99,7 @@ class API(object):
         l_count = 0
         l_buttons_xml = ET.Element('ButtonSection')
         for l_button_obj in p_pyhouse_obj.House.DeviceOBJs.Buttons.itervalues():
-            l_entry = API.write_one_button_xml(p_pyhouse_obj, l_button_obj)
+            l_entry = Utility._write_one_button_xml(p_pyhouse_obj, l_button_obj)
             l_buttons_xml.append(l_entry)
             l_count += 1
         LOG.info('Saved {} Buttons XML'.format(l_count))
