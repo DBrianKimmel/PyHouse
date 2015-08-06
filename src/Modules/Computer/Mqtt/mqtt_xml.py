@@ -40,7 +40,7 @@ class Xml(object):
 
     def read_mqtt_xml(self, p_pyhouse_obj):
         """Read all the broker information.
-        Allow for several brokers - Use the first one '[0]'.
+        Allow for several brokers.
         @return: a dict of broker objects keys = 0, 1, 2...
         """
         l_dict = {}

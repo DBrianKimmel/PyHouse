@@ -18,7 +18,7 @@ from twisted.trial import unittest
 from Modules.Core.data_objects import ScheduleBaseData, RiseSetData
 from Modules.Computer.Mqtt.mqtt_client import API as mqttAPI
 from Modules.Scheduling.schedule import Sch, API as scheduleAPI
-from Modules.Scheduling.schedule_xml import ScheduleXmlAPI
+from Modules.Scheduling.schedule_xml import Xml as scheduleXmlAPI
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
@@ -262,7 +262,7 @@ class C4_Setup(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         self.m_pyhouse_obj.House.RefOBJs.Location.RiseSet.SunRise = T_SUNRISE
         self.m_pyhouse_obj.House.RefOBJs.Location.RiseSet.SunSet = T_SUNSET
-        self.m_pyhouse_obj.House.RefOBJs.Schedules = ScheduleXmlAPI().read_schedules_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.RefOBJs.Schedules = scheduleXmlAPI().read_schedules_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.APIs.Computer.MqttAPI = mqttAPI(self.m_pyhouse_obj)
 
     def test_01_BuildSched(self):

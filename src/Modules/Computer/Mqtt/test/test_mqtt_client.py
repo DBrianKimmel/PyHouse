@@ -7,7 +7,7 @@
 @note:      Created on Jun 5, 2015
 @Summary:
 
-Passed all 2 tests - DBK - 2015-07-23
+Passed all 6 tests - DBK - 2015-07-23
 
 """
 
@@ -24,6 +24,8 @@ from Modules.Core.data_objects import MqttBrokerData
 from test.xml_data import XML_LONG
 from Modules.Computer.Mqtt.mqtt_client import API as mqttAPI
 from test.testing_mixin import SetupPyHouseObj
+from Modules.Computer.Mqtt.test.xml_mqtt import \
+    TESTING_BROKER_NAME_1
 from Modules.Utilities.tools import PrettyPrintAny
 
 BROKERv4 = 'iot.eclipse.org'  # Sandbox Mosquitto broker
@@ -59,9 +61,9 @@ class A1_XML(SetupMixin, unittest.TestCase):
         """
         # PrettyPrintAny(self.m_pyhouse_obj.Xml, 'PyHouse XML')
         # PrettyPrintAny(self.m_xml.root, 'XML')
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
-        self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision', 'XML - No Computer Division')
-        self.assertEqual(self.m_xml.mqtt_sect.tag, 'MqttSection', 'XML - No Mqtt section')
+        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
+        self.assertEqual(self.m_xml.mqtt_sect.tag, 'MqttSection')
 
     def test_03_Mqtt(self):
         # PrettyPrintAny(self.m_pyhouse_obj.APIs.Computer.MqttAPI, 'Mqtt')

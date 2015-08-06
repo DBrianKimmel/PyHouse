@@ -63,7 +63,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         l_xml = self.m_xml.thermostat
         l_obj = Utility._read_thermostat_base(l_xml)
         self.assertEqual(l_obj.Name, TESTING_THERMOSTAT_NAME)
-        self.assertEqual(l_obj.Active, bool(TESTING_THERMOSTAT_ACTIVE))
+        self.assertEqual(l_obj.Active, bool(TESTING_THERMOSTAT_ACTIVE == True))
         self.assertEqual(l_obj.Key, int(TESTING_THERMOSTAT_KEY))
         self.assertEqual(l_obj.Comment, TESTING_DEVICE_COMMENT)
         self.assertEqual(l_obj.DeviceFamily, TESTING_THERMOSTAT_DEVICE_FAMILY)

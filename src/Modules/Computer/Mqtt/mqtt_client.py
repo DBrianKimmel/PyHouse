@@ -28,9 +28,6 @@ class Util(object):
     """
     """
 
-    def __init__(self):
-        self.m_connection = None
-
     def client_connect_all_brokers(self, p_pyhouse_obj):
         """
         This will create a connection for each broker in the config file.
@@ -62,14 +59,13 @@ class API(Util):
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         p_pyhouse_obj.APIs.Computer.MqttAPI = self
-        p_pyhouse_obj.Computer
         p_pyhouse_obj.Computer.Mqtt = MqttInformation()
         LOG.info("Initialized.")
 
     def Start(self):
         l_config_dict = mqttXML().read_mqtt_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Computer.Mqtt.Brokers = l_config_dict
-        self.m_pyhouse_obj.Computer.Mqtt.Prefix = 'None'
+        self.m_pyhouse_obj.Computer.Mqtt.Prefix = 'ReSeT'
         if l_config_dict != {}:
             l_count = self.client_connect_all_brokers(self.m_pyhouse_obj)
             LOG.info("Mqtt {} broker(s) Started.".format(l_count))

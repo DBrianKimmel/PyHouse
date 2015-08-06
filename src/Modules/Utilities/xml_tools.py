@@ -290,7 +290,7 @@ class PutGetXML(object):
 class XmlConfigTools(object):
 
     @staticmethod
-    def read_base_object_xml(p_base_obj, p_entry_element_xml):
+    def read_base_object_xml(p_base_obj, p_entry_element_xml, p_default = 'Missing Name'):
         """Get the BaseObject entries from the XML element.
         Note that a UUID will be generated if one does not exist.
 
@@ -299,7 +299,7 @@ class XmlConfigTools(object):
         @return: A base object
         """
         try:
-            p_base_obj.Name = PutGetXML.get_text_from_xml(p_entry_element_xml, 'Name', 'Missing Name')
+            p_base_obj.Name = PutGetXML.get_text_from_xml(p_entry_element_xml, 'Name', p_default)
             p_base_obj.Key = PutGetXML.get_int_from_xml(p_entry_element_xml, 'Key', 0)
             p_base_obj.Active = PutGetXML.get_bool_from_xml(p_entry_element_xml, 'Active', False)
             p_base_obj.UUID = PutGetXML.get_uuid_from_xml(p_entry_element_xml, 'UUID')

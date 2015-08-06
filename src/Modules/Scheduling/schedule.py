@@ -52,7 +52,7 @@ import dateutil.parser as dparser
 
 # Import PyMh files
 # from Modules.Core.data_objects import RiseSetData
-from Modules.Scheduling.schedule_xml import ScheduleXmlAPI
+from Modules.Scheduling.schedule_xml import Xml as scheduleXmlAPI
 from Modules.Utilities import tools
 from Modules.Utilities.tools import GetPyhouse
 from Modules.Computer import logging_pyh as Logger
@@ -64,6 +64,15 @@ SECONDS_IN_DAY = 86400
 SECONDS_IN_WEEK = 604800  # 7 * 24 * 60 * 60
 INITIAL_DELAY = 5
 PAUSE_DELAY = 5
+
+
+class ScheduleObj(object):
+    """
+    This is the current schedule we are working on.
+    """
+
+    def __init__(self):
+        pass
 
 
 class Sch(object):
@@ -282,7 +291,7 @@ class ScheduleExecution(object):
 
         @param p_slot_list: a list of Slots in the next time schedule to be executed.
         """
-        LOG.info("About to execute - Schedule:{0:}".format(p_slot_list))
+        LOG.info("About to execute - Schedule:{}".format(p_slot_list))
         for l_slot in range(len(p_slot_list)):
             self.execute_one_schedule(p_slot_list[l_slot])
         self.m_schedule_timer = self.m_pyhouse_obj.Twisted.Reactor.callLater(PAUSE_DELAY, self.set_schedule_timer, None)
@@ -293,7 +302,7 @@ class ScheduleExecution(object):
         This is called by callLater so an ignored parameter is required.
         """
         l_seconds_to_delay, l_schedule_list = self.find_next_scheduled_events(self.m_pyhouse_obj, self._now_daytime())
-        LOG.info('Delay: {0:} - List: {1:}'.format(l_seconds_to_delay, l_schedule_list))
+        LOG.info('Delay: {} - List: {}'.format(l_seconds_to_delay, l_schedule_list))
         self.m_schedule_timer = self.m_pyhouse_obj.Twisted.Reactor.callLater(l_seconds_to_delay, self.execute_schedules_list, l_schedule_list)
 
 
@@ -377,6 +386,7 @@ class API(Utility):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        tools.GetPyhouse(p_pyhouse_obj).Schedules = {}
         # Utility._init_component_apis(p_pyhouse_obj)
 
     def _fetch_sunrise_set(self):
@@ -389,7 +399,7 @@ class API(Utility):
         """
         Extracts all from XML so an update will write correct info back out to the XML file.
         """
-        self.m_pyhouse_obj.House.RefOBJs.Schedules = ScheduleXmlAPI().read_schedules_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.RefOBJs.Schedules = scheduleXmlAPI().read_schedules_xml(self.m_pyhouse_obj)
         self._fetch_sunrise_set()
         # UpdatePyhouse.start_scheduled_modules(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self.set_schedule_timer, None)
@@ -407,7 +417,7 @@ class API(Utility):
         pass
 
     def SaveXml(self, p_xml):
-        l_xml, l_count = ScheduleXmlAPI().write_schedules_xml(self.m_pyhouse_obj.House.RefOBJs.Schedules)
+        l_xml, l_count = scheduleXmlAPI().write_schedules_xml(self.m_pyhouse_obj.House.RefOBJs.Schedules)
         p_xml.append(l_xml)
         # UpdatePyhouse.save_scheduled_modules(self.m_pyhouse_obj, p_xml)
         LOG.info('Saved {} Schedules XML.'.format(l_count))

@@ -7,6 +7,8 @@
 @note:      Created on Sep 2, 2014
 @Summary:
 
+Passed all 9 tests - DBK - 2015-08-06
+
 """
 
 
@@ -16,7 +18,7 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import ScheduleBaseData
-from Modules.Scheduling.schedule_xml import ScheduleXmlAPI
+from Modules.Scheduling.schedule_xml import Xml as scheduleXml
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
@@ -30,7 +32,7 @@ class SetupMixin(object):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_schedule_obj = ScheduleBaseData()
-        self.m_api = ScheduleXmlAPI()
+        self.m_api = scheduleXml()
 
 
 class C01_XML(SetupMixin, unittest.TestCase):
@@ -44,13 +46,10 @@ class C01_XML(SetupMixin, unittest.TestCase):
     def test_01_FindXML(self):
         """ Be sure that the XML contains the right stuff.
         """
-        # PrettyPrintAny(self.m_xml.root, 'XML')
         self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
         self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision', 'XML - No Houses section')
         self.assertEqual(self.m_xml.schedule_sect.tag, 'ScheduleSection', 'XML - No Schedules section')
         self.assertEqual(self.m_xml.schedule.tag, 'Schedule', 'XML - No Schedule section')
-        # PrettyPrintAny(self.m_pyhouse_obj.Xml, 'XML')
-        # PrettyPrintAny(self.m_xml.schedule_sect, 'Schedule')
 
 
 class C02_Read(SetupMixin, unittest.TestCase):
@@ -73,7 +72,7 @@ class C02_Read(SetupMixin, unittest.TestCase):
 
     def test_02_OneLight(self):
         # l_schedule_obj = self.m_api._read_one_base_schedule(self.m_xml.schedule)
-        l_light = self.m_api._read_one_lighting_schedule(self.m_xml.schedule)
+        l_light = scheduleXml._read_one_lighting_schedule(self.m_xml.schedule)
         # PrettyPrintAny(l_light, 'Light part of schedule')
         self.assertEqual(l_light.LightName, 'lr_cans')
         self.assertEqual(l_light.Rate, 0)

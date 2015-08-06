@@ -7,6 +7,8 @@
 @license:   MIT License
 @summary:   Various functions and utility methods.
 
+Passed all 13 tests - DBK - 2015-08-05
+
 """
 
 
@@ -21,7 +23,7 @@ from Modules.Utilities import tools
 from Modules.Lighting.lighting_lights import API as lightsAPI
 from Modules.Families.family import API as familyAPI
 from Modules.Computer import logging_pyh as Logger
-from test import xml_data
+from test.xml_data import XML_LONG, XML_EMPTY
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
 
@@ -33,12 +35,15 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+        self.m_version = '1.4.0'
 
 
 class A_PB1(SetupMixin, unittest.TestCase):
+    """Test PrintBytes functionality.
+    """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_EMPTY))
+        SetupMixin.setUp(self, ET.fromstring(XML_EMPTY))
 
     def test_01_String(self):
         """Testing PrintBytes.
@@ -54,9 +59,11 @@ class A_PB1(SetupMixin, unittest.TestCase):
 
 
 class B_PPA(SetupMixin, unittest.TestCase):
+    """Test PrettyPrintAny Functionality.
+    """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_EMPTY))
+        SetupMixin.setUp(self, ET.fromstring(XML_EMPTY))
         self.m_api = Logger.API()
 
     def test_01_String(self):
@@ -76,7 +83,7 @@ class B_PPA(SetupMixin, unittest.TestCase):
         # PrettyPrintAny(l_obj, 'A Dict')
 
     def test_04_XML(self):
-        l_xml = self.m_root_xml = ET.fromstring(xml_data.XML_LONG)
+        l_xml = self.m_root_xml = ET.fromstring(XML_LONG)
         # PrettyPrintAny(l_xml, 'XML')
 
     def test_05_Obj(self):
@@ -92,14 +99,14 @@ class B_PPA(SetupMixin, unittest.TestCase):
         # PrettyPrintAny(l_any)
 
 
-class C_02_Find(SetupMixin, unittest.TestCase):
+class C1_Find(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_api = tools.GetPyhouse(self.m_pyhouse_obj)
-        self.m_light_api = lightsAPI(self.m_pyhouse_obj)
+        self.m_light_api = lightsAPI()
         self.m_pyhouse_obj.House.RefOBJs.FamilyData = familyAPI(self.m_pyhouse_obj).m_family
-        self.m_pyhouse_obj.House.DeviceOBJs.Lights = self.m_light_api.read_all_lights_xml(self.m_xml.light_sect)
+        self.m_pyhouse_obj.House.DeviceOBJs.Lights = self.m_light_api.read_all_lights_xml(self.m_pyhouse_obj, self.m_xml.light_sect, self.m_version)
 
     def test_01_Setup(self):
         l_loc = self.m_api.Location().Latitude
@@ -116,5 +123,25 @@ class C_02_Find(SetupMixin, unittest.TestCase):
         l_obj = tools.get_light_object(self.m_pyhouse_obj, 'NoSuchName', None)
         # PrettyPrintAny(l_obj, 'Light Obj')
         self.assertIsNone(l_obj, 'Should be None')
+
+
+class D1_GetPyHouse(SetupMixin, unittest.TestCase):
+    """Test GetPyhouse class functionality
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_01_House(self):
+        l_pyh = tools.GetPyhouse(self.m_pyhouse_obj).House()
+        self.assertEqual(l_pyh.Name, 'Test House')
+        self.assertEqual(l_pyh.Key, 0)
+        self.assertEqual(l_pyh.Active, True)
+
+    def test_01_Schedules(self):
+        l_pyh = tools.GetPyhouse(self.m_pyhouse_obj).Schedules()
+        PrettyPrintAny(l_pyh, 'Schedules')
+        self.assertEqual(l_pyh.Schedules, {})
+        pass
 
 # ## END DBK

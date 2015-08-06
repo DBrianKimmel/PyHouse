@@ -55,6 +55,7 @@ class PrettyPrintAny(object):
 
 
     def _print_unicode(self, p_obj, maxlen, indent):
+        # print(dir(p_obj))
         print(PrettyPrintCols(('', p_obj), [indent, maxlen - indent], ' '))
 
 
@@ -335,8 +336,8 @@ class GetPyhouse(object):
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def House(self, p_pyhouse):
-        return self.m_pyhouse.House
+    def House(self):
+        return self.m_pyhouse_obj.House
 
     def Schedules(self):
         return self.m_pyhouse_obj.House.RefOBJs.Schedules

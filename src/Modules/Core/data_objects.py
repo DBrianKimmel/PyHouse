@@ -206,7 +206,7 @@ class RefHouseObjs(object):
         self.FamilyData = {}  # FamilyData('FamilyName')
         self.Location = {}  # LocationData() - one location per house.
         self.Rooms = {}  # RoomData()
-        self.Schedules = {}  # ScheduleBaseData()
+        self.Schedules = None  # ScheduleBaseData()
 
 
 class DeviceHouseObjs(object):

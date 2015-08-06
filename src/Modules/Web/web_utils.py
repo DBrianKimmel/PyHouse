@@ -16,7 +16,7 @@ import jsonpickle
 import json
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import JsonHouseData, ComputerInformation
+from Modules.Core.data_objects import JsonHouseData
 from Modules.Computer import logging_pyh as Logger
 
 
@@ -99,13 +99,7 @@ def GetJSONComputerInfo(p_pyhouse_obj):
 
     @param p_house_obj: is the complete information
     """
-    l_ret = ComputerInformation()
-    l_ret.Communication = None
-    l_ret.Email = None
-    l_ret.InternetConnection = p_pyhouse_obj.Computer.InternetConnection
-    l_ret.Mqtt = p_pyhouse_obj.Computer.Mqtt
-    l_ret.Nodes = p_pyhouse_obj.Computer.Nodes
-    l_ret.Web = p_pyhouse_obj.Computer.Web
+    l_ret = p_pyhouse_obj.Computer
     l_json = unicode(JsonUnicode().encode_json(l_ret))
     return l_json
 

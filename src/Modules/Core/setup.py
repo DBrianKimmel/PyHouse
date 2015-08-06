@@ -92,7 +92,7 @@ class API(Utility):
         self.m_pyhouse_obj.APIs.Computer.ComputerAPI.Start()
         self.m_pyhouse_obj.APIs.House.HouseAPI.Start()
         self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self._xml_save_loop, self.m_pyhouse_obj)
-        LOG.info("Started.")
+        LOG.info("Everything has been started.\n")
 
     def Stop(self):
         self.SaveXml()
@@ -108,6 +108,6 @@ class API(Utility):
         self.m_pyhouse_obj.APIs.Computer.ComputerAPI.SaveXml(l_xml)
         self.m_pyhouse_obj.APIs.House.HouseAPI.SaveXml(l_xml)
         configAPI(self.m_pyhouse_obj).write_xml_config_file(self.m_pyhouse_obj, l_xml)
-        LOG.info("Saved XML.")
+        LOG.info("Saved all XML sections to config file.\n")
 
 # ## END DBK

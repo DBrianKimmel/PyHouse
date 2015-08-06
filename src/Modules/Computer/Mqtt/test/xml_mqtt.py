@@ -14,28 +14,36 @@
 
 # Import PyMh files
 
-TESTING_BROKER_NAME_1 = 'iot.eclipse.org'
+TESTING_BROKER_NAME_1 = 'iot.eclipse'
+TESTING_BROKER_KEY_1 = '0'
+TESTING_BROKER_ACTIVE_1 = 'False'
 TESTING_BROKER_ADDRESS_1 = '1234:5678::dead.beef'
 TESTING_BROKER_PORT_1 = '1833'
-TESTING_BROKER_NAME_2 = 'PinkPoppy.pyhouse.org'
+TESTING_BROKER_NAME_2 = 'PinkPoppy'
+TESTING_BROKER_KEY_2 = '1'
+TESTING_BROKER_ACTIVE_2 = 'True'
 TESTING_BROKER_ADDRESS_2 = '192.168.1.51'
 TESTING_BROKER_PORT_2 = '1833'
 
+L_BROKER_MAIN_1 = '    <Broker Name="' + TESTING_BROKER_NAME_1 + '" Key="' + TESTING_BROKER_KEY_1 + '" Active="' + TESTING_BROKER_ACTIVE_1 + '">'
+L_BROKER_MAIN_2 = '    <Broker Name="' + TESTING_BROKER_NAME_2 + '" Key="' + TESTING_BROKER_KEY_2 + '" Active="' + TESTING_BROKER_ACTIVE_2 + '">'
+L_BROKER_ADDRESS_1 = '      <BrokerAddress>' + TESTING_BROKER_ADDRESS_1 + '</BrokerAddress>'
+L_BROKER_ADDRESS_2 = '      <BrokerAddress>' + TESTING_BROKER_ADDRESS_2 + '</BrokerAddress>'
+L_BROKER_PORT_1 = '      <BrokerPort>' + TESTING_BROKER_PORT_1 + '</BrokerPort>'
+L_BROKER_PORT_2 = '      <BrokerPort>' + TESTING_BROKER_PORT_2 + '</BrokerPort>'
 
-XML_MQTT = """\
-    <MqttSection>
-        <Broker Name='""" + TESTING_BROKER_NAME_1 + """' Key='0' Active='True'>
-            <BrokerAddress>""" + TESTING_BROKER_ADDRESS_1 + """</BrokerAddress>
-            <BrokerPort>""" + TESTING_BROKER_PORT_1 + """</BrokerPort>
-        </Broker>
-        <Broker Name='""" + TESTING_BROKER_NAME_2 + """' Key='1' Active='True'>
-            <BrokerAddress>""" + TESTING_BROKER_ADDRESS_2 + """</BrokerAddress>
-            <BrokerPort>""" + TESTING_BROKER_PORT_2 + """</BrokerPort>
-        </Broker>
-    </MqttSection>
-"""
-
-
+XML_MQTT = '\n'.join([
+    '  <MqttSection>',
+    L_BROKER_MAIN_1,
+    L_BROKER_ADDRESS_1,
+    L_BROKER_PORT_1,
+    '  </Broker>',
+    L_BROKER_MAIN_2,
+    L_BROKER_ADDRESS_2,
+    L_BROKER_PORT_2,
+    '  </Broker>',
+    '  </MqttSection>'
+    ])
 
 MQTT_XSD = """
 <xs:schema

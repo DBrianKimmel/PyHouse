@@ -21,7 +21,7 @@ class Z_Suite(unittest.TestCase):
 
     def test_Mqtt(self):
         l_package = runner.TestLoader().loadPackage(I_test)
-        l_ret = reporter.Reporter()
+        l_ret = reporter.Reporter(realtime = True)
         l_package.run(l_ret)
         l_ret.done()
         #

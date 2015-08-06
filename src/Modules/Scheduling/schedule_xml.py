@@ -9,7 +9,6 @@
 @note:      Created on Sep 2, 2013
 @summary:   Schedule events
 
-
 """
 
 # Import system type stuff
@@ -23,11 +22,10 @@ from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.ScheduleXml ')
 
 
-class ScheduleXmlAPI(object):
+class Xml(object):
 
-    m_count = 0
-
-    def _read_one_lighting_schedule(self, p_schedule_element):
+    @staticmethod
+    def _read_one_lighting_schedule(p_schedule_element):
         """Extract schedule information from a schedule xml element.
         """
         l_obj = ScheduleLightData()
@@ -57,7 +55,7 @@ class ScheduleXmlAPI(object):
     def _read_one_schedule(self, p_schedule_element):
         l_obj = self._read_one_base_schedule(p_schedule_element)
         if l_obj.ScheduleType == 'LightingDevice':
-            l_type = self._read_one_lighting_schedule(p_schedule_element)
+            l_type = Xml._read_one_lighting_schedule(p_schedule_element)
         else:
             LOG.error('ERROR - invalid device found - {} for {}'.format(l_obj.ScheduleType, l_obj.Name))
             l_type = {}
@@ -70,15 +68,15 @@ class ScheduleXmlAPI(object):
         @return: a dict of the entry to be attached to a house object.
         """
         l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
-        self.m_count = 0
+        l_count = 0
         l_dict = {}
         try:
             l_schedules_xml = l_xml.find('ScheduleSection')
             for l_entry in l_schedules_xml.iterfind('Schedule'):
                 l_schedule_obj = self._read_one_schedule(l_entry)
-                l_schedule_obj.Key = self.m_count  # Renumber
-                l_dict[self.m_count] = l_schedule_obj
-                self.m_count += 1
+                l_schedule_obj.Key = l_count  # Renumber
+                l_dict[l_count] = l_schedule_obj
+                l_count += 1
         except AttributeError as e_err:
             LOG.error('ERROR in schedule.read_schedules_xml() - {0:}'.format(e_err))
         return l_dict
