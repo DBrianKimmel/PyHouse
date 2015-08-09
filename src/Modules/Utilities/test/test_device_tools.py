@@ -97,7 +97,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """
         l_obj = ControllerData()
         l_base = self.m_api.read_base_device_object_xml(l_obj, self.m_xml.controller)
-        PrettyPrintAny(l_base, 'ReadBaseLighting', 120)
+        # PrettyPrintAny(l_base, 'ReadBaseLighting', 120)
         self.assertEqual(l_base.Name, 'Insteon Serial Controller')
         self.assertEqual(l_base.Key, 0, 'Bad Key')
         self.assertEqual(l_base.Active, True)

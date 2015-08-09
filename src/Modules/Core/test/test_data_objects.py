@@ -7,15 +7,30 @@
 @license:   MIT License
 @summary:   test ?.
 
+Passed all 2 tests - DBK - 2015-08-08
+
 """
 
 # Import system type stuff
 from twisted.trial import unittest
+import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
 from Modules.Core import data_objects
+from test.xml_data import XML_LONG
+from test.testing_mixin import SetupPyHouseObj
 
-class Test(unittest.TestCase):
+
+class SetupMixin(object):
+    """
+    """
+
+    def setUp(self, p_root):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
+        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+
+
+class Test(SetupMixin, unittest.TestCase):
 
 
     def setUp(self):
@@ -23,22 +38,21 @@ class Test(unittest.TestCase):
         pass
 
     def test_001_Load(self):
-        _l_data = data_objects.PyHouseData()
+        pass
 
     def test_002_houses(self):
-        l_data = data_objects.PyHouseData()
+        pass
 
     def Xtest_003_house(self):
-        l_data = data_objects.PyHouseData()
+        pass
 
     def Xtest_004_name(self):
-        l_data = data_objects.PyHouseData()
-        l_house = l_data.House
+        l_house = self.m_pyhouse_obj.House
         l_name = l_house.Name
         self.assertEqual(l_name, 'Test House #1')
 
     def Xtest_005_street(self):
-        l_data = data_objects.PyHouseData()
+        l_data = self.m_pyhouse_obj
         l_house = l_data.House
         l_location = l_house.Location
         l_street = l_location.Street

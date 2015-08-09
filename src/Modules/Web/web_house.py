@@ -58,7 +58,7 @@ class HouseElement(athena.LiveElement):
         self.m_pyhouse_obj.House.Name = l_json['Name']
         self.m_pyhouse_obj.House.Key = int(l_json['Key'])
         self.m_pyhouse_obj.House.Active = True
-        l_obj = self.m_pyhouse_obj.House.RefOBJs.Location
+        l_obj = self.m_pyhouse_obj.House.Location
         l_obj.Street = l_json['Location']['Street']
         l_obj.City = l_json['Location']['City']
         l_obj.State = l_json['Location']['State']
@@ -67,6 +67,6 @@ class HouseElement(athena.LiveElement):
         l_obj.Latitude = l_json['Location']['Latitude']
         l_obj.Longitude = l_json['Location']['Longitude']
         l_obj.TimeZoneName = l_json['Location']['TimeZoneName']
-        self.m_pyhouse_obj.House.RefOBJs.Location = l_obj
+        self.m_pyhouse_obj.House.Location = l_obj
 
 # ## END DBK

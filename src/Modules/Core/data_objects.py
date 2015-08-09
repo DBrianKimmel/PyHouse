@@ -50,7 +50,7 @@ class BaseObject(object):
     Do not use this object, derive objects from it.
     """
     def __init__(self):
-        self.Name = 'Undefined ABaseObject'
+        self.Name = 'Undefined BaseObject'
         self.Key = 0
         self.Active = False
 
@@ -88,15 +88,13 @@ class CoordinateData(object):
         self.Y_Northing = 0.0
         self.Z_Height = 0.0
 
-class SensorData(object):
+class SensorData(BaseObject):
     """
-    This data is in almost every other object.
+    This data is in almost every other Sensor object.
     Do not use this object, derive objects from it.
     """
     def __init__(self):
-        self.Name = 'Undefined SensorData Object'
-        self.Key = 0  # Instance number
-        self.Active = False
+        super(SensorData, self).__init__()
         self.UUID = None
 
 
@@ -194,34 +192,17 @@ class HouseInformation(BaseObject):
     """
     def __init__(self):
         super(HouseInformation, self).__init__()
-        # self.Name = 'New House'
-        self.RefOBJs = None  # RefHouseObjs()
-        self.DeviceOBJs = None  # DeviceHouseObjs()
-
-
-class RefHouseObjs(object):
-    """This is about a single House.
-    """
-    def __init__(self):
-        self.FamilyData = {}  # FamilyData('FamilyName')
-        self.Location = {}  # LocationData() - one location per house.
-        self.Rooms = {}  # RoomData()
-        self.Schedules = None  # ScheduleBaseData()
-
-
-class DeviceHouseObjs(object):
-    """This is about a single House.
-    """
-    def __init__(self):
         self.Buttons = {}  # ButtonData()
         self.Controllers = {}  # ControllerData()
+        self.FamilyData = {}  # FamilyData('FamilyName')
+        self.Hvac = None
         self.Irrigation = None  # IrrigationData()
         self.Lights = {}  # LightData()
+        self.Location = {}  # LocationData() - one location per house.
         self.Pools = {}  # PoolData()
+        self.Rooms = {}  # RoomData()
+        self.Schedules = None  # ScheduleBaseData()
         self.Thermostats = {}  # ThermostatData()
-        self.Lighting = None
-        self.Hvac = None
-
 
 
 class JsonHouseData(BaseObject):

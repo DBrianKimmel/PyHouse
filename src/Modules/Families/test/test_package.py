@@ -37,7 +37,7 @@ class Test_01(unittest.TestCase):
         l_dir_list = os.listdir(l_dir)
         for l_name in VALID_FAMILIES:
             self.assertTrue(l_name in l_dir_list)
-            print("found {0:}".format(l_name))
+            # print("found {0:}".format(l_name))
         # print(l_dir_list)
         # families = os.dirs
 
@@ -54,7 +54,7 @@ class Test_01(unittest.TestCase):
 class Test_02_Insteon(unittest.TestCase):
 
     def setUp(self):
-        print('Test Insteon')
+        # print('Test Insteon')
         pass
 
     def tearDown(self):
@@ -68,7 +68,7 @@ class Test_02_Insteon(unittest.TestCase):
         l_dir_list = os.listdir(l_dir)
         for l_name in VALID_FAMILIES:
             self.assertTrue(l_name in l_dir_list)
-            print("found {0:}".format(l_name))
+            # print("found {0:}".format(l_name))
 
     def test_0109_allDefined(self):
         pass

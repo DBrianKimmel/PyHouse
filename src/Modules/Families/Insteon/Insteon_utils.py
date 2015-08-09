@@ -55,15 +55,6 @@ class Util(object):
         return l_int
 
     @staticmethod
-    def get_device_class(p_pyhouse_obj, p_address):
-        """
-        Iterates over all the device objects in a given pyhouse_obj.
-        Return an objects (Lights, Thermostats) that has InsteonAddress.
-        """
-        l_house = p_pyhouse_obj.House.DeviceOBJs
-        return l_house
-
-    @staticmethod
     def get_json_data(l_obj, l_json):
         l_obj.DevCat = int(l_json['DevCat'])
         l_obj.GroupList = l_json['GroupList']

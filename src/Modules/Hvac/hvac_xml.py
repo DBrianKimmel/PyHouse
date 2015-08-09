@@ -36,7 +36,7 @@ class Utility(object):
         deviceXML.read_base_device_object_xml(l_obj, p_xml)
         l_obj.DeviceType = 2
         l_obj.DeviceSubType = 73
-        PrettyPrintAny(l_obj, 'Thermostat_base')
+        # PrettyPrintAny(l_obj, 'Thermostat_base')
         return l_obj
 
     @staticmethod
@@ -74,12 +74,13 @@ class Utility(object):
     @staticmethod
     def _read_family_data(p_pyhouse_obj, p_obj, p_xml):
         l_ret = FamUtil.read_family_data(p_pyhouse_obj, p_obj, p_xml)
+        PrettyPrintAny(l_ret, 'hvac_html-77')
         return l_ret
 
     @staticmethod
     def _write_family_data(p_pyhouse_obj, p_obj, p_xml):
         try:
-            l_api = p_pyhouse_obj.House.RefOBJs.FamilyData[p_obj.DeviceFamily].FamilyModuleAPI
+            l_api = p_pyhouse_obj.House.FamilyData[p_obj.DeviceFamily].FamilyModuleAPI
             l_api.WriteXml(p_xml, p_obj)
         except (KeyError, AttributeError) as e_err:
             l_msg = 'Write Family Error {}  Family:{}'.format(e_err, p_obj.DeviceFamily)
@@ -135,7 +136,7 @@ class XML(object):
         ET.SubElement(l_xml, T_SECTION)  # ThermostatSection
         l_count = 0
         try:
-            for l_obj in p_pyhouse_obj.House.DeviceOBJs.Thermostats.itervalues():
+            for l_obj in p_pyhouse_obj.House.Thermostats.itervalues():
                 l_entry = Utility._write_one_thermostat_xml(p_pyhouse_obj, l_obj)
                 l_xml.append(l_entry)
                 l_count += 1

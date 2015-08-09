@@ -45,7 +45,7 @@ class C01_Util(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_controller_obj = self.m_pyhouse_obj.House.DeviceOBJs.Controllers
+        self.m_controller_obj = self.m_pyhouse_obj.House.Controllers
 
     def test_02_DeviceClass(self):
         l_house = Insteon_utils.Util().get_device_class(self.m_pyhouse_obj, "xxx")

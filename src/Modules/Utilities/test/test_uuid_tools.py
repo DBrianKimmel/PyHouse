@@ -42,19 +42,19 @@ class A01_UUID(SetupMixin, unittest.TestCase):
     def test_01_None(self):
         l_test = None
         l_uuid = Uuid.make_valid(l_test)
-        print('UUID = {}'.format(l_uuid))
+        # print('UUID = {}'.format(l_uuid))
         self.assertNotEqual(l_uuid, l_test)
 
     def test_02_Invalid(self):
         l_test = '123456'
         l_uuid = Uuid.make_valid(l_test)
-        print('UUID = {}'.format(l_uuid))
+        # print('UUID = {}'.format(l_uuid))
         self.assertNotEqual(l_uuid, l_test)
 
     def test_03_Valid(self):
         l_test = '12345678-dead-beef-dead-fedcba987654'
         l_uuid = Uuid.make_valid(l_test)
-        print('UUID = {}'.format(l_uuid))
+        # print('UUID = {}'.format(l_uuid))
         self.assertEqual(l_uuid, l_test)
 
 # ## END DBK

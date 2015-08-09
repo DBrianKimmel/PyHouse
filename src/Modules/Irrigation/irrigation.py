@@ -26,7 +26,7 @@ class Utility(object):
     """
 
     def update_pyhouse_obj(self, p_pyhouse_obj):
-        p_pyhouse_obj.House.DeviceOBJs.Irrigation = IrrigationData()
+        p_pyhouse_obj.House.Irrigation = IrrigationData()
 
     def add_api_references(self, p_pyhouse_obj):
         pass
@@ -41,13 +41,13 @@ class API(Utility):
 
     def Start(self):
         l_obj = IrrigationXmlAPI().read_irrigation_xml(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.DeviceOBJs.Irrigation = l_obj
+        self.m_pyhouse_obj.House.Irrigation = l_obj
 
     def Stop(self):
         pass
 
     def SaveXml(self, p_xml):
-        (l_xml, l_count) = IrrigationXmlAPI().write_irrigation_xml(self.m_pyhouse_obj.House.DeviceOBJs.Irrigation)
+        (l_xml, l_count) = IrrigationXmlAPI().write_irrigation_xml(self.m_pyhouse_obj.House.Irrigation)
         p_xml.append(l_xml)
         LOG.info("Saved {} Irrigation XML.".format(l_count))
         return p_xml

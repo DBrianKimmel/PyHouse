@@ -91,7 +91,7 @@ class Utility(object):
         l_xml_version = p_pyhouse_obj.Xml.XmlOldVersion
         # l_xml_version = '1.4.0'
         l_lighting_xml = self._setup_lighting(p_pyhouse_obj)
-        l_house_obj = p_pyhouse_obj.House.DeviceOBJs
+        l_house_obj = p_pyhouse_obj.House
         l_house_obj.Controllers = self._read_controllers(p_pyhouse_obj, l_lighting_xml, l_xml_version)
         l_house_obj.Buttons = self._read_buttons(p_pyhouse_obj, l_lighting_xml, l_xml_version)
         l_house_obj.Lights = self._read_lights(p_pyhouse_obj, l_lighting_xml, l_xml_version)
@@ -162,7 +162,7 @@ class API(Utility):
             web_controlLights
             schedule
         """
-        l_light_obj = Utility._find_full_obj(self.m_pyhouse_obj.House.DeviceOBJs.Lights, p_light_obj)
+        l_light_obj = Utility._find_full_obj(self.m_pyhouse_obj.House.Lights, p_light_obj)
         try:
             LOG.info("Turn Light {} to level {}, DeviceFamily:{}".format(l_light_obj.Name, p_new_level, l_light_obj.DeviceFamily))
 

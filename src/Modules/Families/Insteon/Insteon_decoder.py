@@ -98,19 +98,10 @@ class D_Util(object):
             l_message_length = 1
         return l_message_length
 
-    def get_device_class(self, p_pyhouse_obj):
-        """
-        Return a class of objects (Lights, Thermostats) that may have an Insteon <DeviceFamily> within.
-        """
-        l_house = p_pyhouse_obj.House.DeviceOBJs
-        for _l_class in l_house:
-            pass
-        pass
-
     def _find_addr_one_class(self, p_class, p_addr):
         """
         Find the address of something Insteon.
-        @param p_class: is an OBJ like p_pyhouse_obj.House.DeviceOBJs.Controllers that we will look thru to find the object.
+        @param p_class: is an OBJ like p_pyhouse_obj.House.Controllers that we will look thru to find the object.
         @param p_addr: is the address that we want to find.
         @return: the object that has the address.  None if not found
         """
@@ -125,14 +116,14 @@ class D_Util(object):
         """ This will search thru all object groups that an inseton device could be in.
         @return: the object that has the address or a dummy object if not found
         """
-        l_ret = self._find_addr_one_class(self.m_pyhouse_obj.House.DeviceOBJs.Lights, p_address)
+        l_ret = self._find_addr_one_class(self.m_pyhouse_obj.House.Lights, p_address)
         l_dotted = conversions.int2dotted_hex(p_address, 3)
         if l_ret == None:
-            l_ret = self._find_addr_one_class(self.m_pyhouse_obj.House.DeviceOBJs.Controllers, p_address)
+            l_ret = self._find_addr_one_class(self.m_pyhouse_obj.House.Controllers, p_address)
         if l_ret == None:
-            l_ret = self._find_addr_one_class(self.m_pyhouse_obj.House.DeviceOBJs.Buttons, p_address)
+            l_ret = self._find_addr_one_class(self.m_pyhouse_obj.House.Buttons, p_address)
         if l_ret == None:
-            l_ret = self._find_addr_one_class(self.m_pyhouse_obj.House.DeviceOBJs.Thermostats, p_address)
+            l_ret = self._find_addr_one_class(self.m_pyhouse_obj.House.Thermostats, p_address)
         # Add additional classes in here
         if l_ret == None:
             LOG.info("WARNING - Address {} ({}) *NOT* found.".format(l_dotted, p_address))

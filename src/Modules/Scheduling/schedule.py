@@ -54,7 +54,7 @@ import dateutil.parser as dparser
 # from Modules.Core.data_objects import RiseSetData
 from Modules.Scheduling.schedule_xml import Xml as scheduleXmlAPI
 from Modules.Utilities import tools
-from Modules.Utilities.tools import GetPyhouse
+from Modules.Utilities.obj_defs import GetPyhouse
 from Modules.Computer import logging_pyh as Logger
 from Modules.Web import web_utils
 
@@ -246,7 +246,7 @@ class ScheduleTime(object):
         this code just gets the values for this module
         """
         # l_riseset = RiseSetData()
-        l_riseset = p_pyhouse_obj.House.RefOBJs.Location.RiseSet
+        l_riseset = p_pyhouse_obj.House.Location.RiseSet
         l_json = web_utils.JsonUnicode().encode_json(l_riseset)
         p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("testing", l_json)
         LOG.info("Sunrise:{}, Sunset:{}".format(l_riseset.SunRise, l_riseset.SunSet))
@@ -270,7 +270,7 @@ class ScheduleExecution(object):
         """
         Send information to one device to execute a schedule.
         """
-        l_schedule_obj = self.m_pyhouse_obj.House.RefOBJs.Schedules[p_slot]
+        l_schedule_obj = self.m_pyhouse_obj.House.Schedules[p_slot]
         l_schedule_json = web_utils.JsonUnicode().encode_json(l_schedule_obj)
         if l_schedule_obj.ScheduleType == 'LightingDevice':
             LOG.info('Execute_one_schedule type = LightingDevice')
@@ -324,7 +324,7 @@ class ScheduleUtility(ScheduleTime):
         l_seconds_to_delay = SECONDS_IN_WEEK
         l_schedule_list = []
 
-        for l_key, l_schedule_obj in p_pyhouse_obj.House.RefOBJs.Schedules.iteritems():
+        for l_key, l_schedule_obj in p_pyhouse_obj.House.Schedules.iteritems():
             if not l_schedule_obj.Active:
                 continue
             l_time_sch = self._extract_time_of_day(l_schedule_obj, l_riseset)
@@ -386,12 +386,12 @@ class API(Utility):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        tools.GetPyhouse(p_pyhouse_obj).Schedules = {}
+        GetPyhouse(p_pyhouse_obj).Schedules = {}
         # Utility._init_component_apis(p_pyhouse_obj)
 
     def _fetch_sunrise_set(self):
-        l_sunrise = self.m_pyhouse_obj.House.RefOBJs.Location.RiseSet.SunRise
-        l_sunset = self.m_pyhouse_obj.House.RefOBJs.Location.RiseSet.SunSet
+        l_sunrise = self.m_pyhouse_obj.House.Location.RiseSet.SunRise
+        l_sunset = self.m_pyhouse_obj.House.Location.RiseSet.SunSet
         LOG.info('Got Sunrise: {};   Sunset: {}'.format(l_sunrise, l_sunset))
         # node_mqtt.API().doPublishMessage(self.m_pyhouse_obj.Computer.Mqtt, "pyhouse/schedule/sunrise", l_sunrise)
 
@@ -399,7 +399,7 @@ class API(Utility):
         """
         Extracts all from XML so an update will write correct info back out to the XML file.
         """
-        self.m_pyhouse_obj.House.RefOBJs.Schedules = scheduleXmlAPI().read_schedules_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.Schedules = scheduleXmlAPI().read_schedules_xml(self.m_pyhouse_obj)
         self._fetch_sunrise_set()
         # UpdatePyhouse.start_scheduled_modules(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self.set_schedule_timer, None)
@@ -417,7 +417,7 @@ class API(Utility):
         pass
 
     def SaveXml(self, p_xml):
-        l_xml, l_count = scheduleXmlAPI().write_schedules_xml(self.m_pyhouse_obj.House.RefOBJs.Schedules)
+        l_xml, l_count = scheduleXmlAPI().write_schedules_xml(self.m_pyhouse_obj.House.Schedules)
         p_xml.append(l_xml)
         # UpdatePyhouse.save_scheduled_modules(self.m_pyhouse_obj, p_xml)
         LOG.info('Saved {} Schedules XML.'.format(l_count))

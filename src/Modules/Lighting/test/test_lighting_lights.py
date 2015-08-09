@@ -20,12 +20,21 @@ from Modules.Core.data_objects import LightData
 from Modules.Lighting.lighting_lights import Utility, API as lightsAPI
 from Modules.Core import conversions
 from Modules.Families.family import API as familyAPI
-from Modules.Lighting.test.xml_lights import TESTING_LIGHT_DIMMABLE, TESTING_LIGHTING_LIGHT_CUR_LEVEL, \
-        TESTING_LIGHTING_LIGHTS_INSTEON_NAME_1, TESTING_LIGHTING_TYPE
-from Modules.Families.Insteon.test.xml_insteon import TESTING_INSTEON_ADDRESS
+from Modules.Lighting.test.xml_lights import \
+        TESTING_LIGHT_DIMMABLE, \
+        TESTING_LIGHTING_LIGHT_CUR_LEVEL, \
+        TESTING_LIGHTING_LIGHTS_NAME_1, \
+        TESTING_LIGHTING_TYPE
+from Modules.Families.Insteon.test.xml_insteon import \
+        TESTING_INSTEON_ADDRESS
 from Modules.Core.test.xml_device import TESTING_DEVICE_COMMENT, TESTING_DEVICE_FAMILY, \
         TESTING_DEVICE_ROOM_NAME, \
-        TESTING_DEVICE_ROOM_X, TESTING_DEVICE_UUID, TESTING_DEVICE_TYPE, TESTING_DEVICE_SUBTYPE, TESTING_DEVICE_ROOM_Y, TESTING_DEVICE_ROOM_Z
+        TESTING_DEVICE_UUID, \
+        TESTING_DEVICE_TYPE, \
+        TESTING_DEVICE_SUBTYPE, \
+        TESTING_DEVICE_ROOM_X, \
+        TESTING_DEVICE_ROOM_Y, \
+        TESTING_DEVICE_ROOM_Z
 from Modules.Web import web_utils
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
@@ -40,7 +49,7 @@ class SetupMixin(object):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_family = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
-        self.m_pyhouse_obj.House.RefOBJs.FamilyData = self.m_family
+        self.m_pyhouse_obj.House.FamilyData = self.m_family
         self.m_api = lightsAPI()
         self.m_light_obj = LightData()
         self.m_version = '1.4.0'
@@ -59,14 +68,13 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         """
         # PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse', 120)
         # PrettyPrintAny(self.m_pyhouse_obj.House, 'House', 120)
-        # PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs, 'RefObjs', 120)
         pass
 
     def test_02_Family(self):
         """ Be sure that the XML contains the right stuff.
         """
-        # PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs.FamilyData, 'Families', 120)
-        # PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs.FamilyData['Insteon'], 'Insteon Family', 120)
+        # PrettyPrintAny(self.m_pyhouse_obj.House.FamilyData, 'Families', 120)
+        # PrettyPrintAny(self.m_pyhouse_obj.House.FamilyData['Insteon'], 'Insteon Family', 120)
         pass
 
 
@@ -105,7 +113,7 @@ class R1_Read(SetupMixin, unittest.TestCase):
     def test_01_Base(self):
         l_obj = Utility._read_base_device(self.m_xml.light, self.m_version)
         # PrettyPrintAny(l_obj, 'Base')
-        self.assertEqual(l_obj.Name, TESTING_LIGHTING_LIGHTS_INSTEON_NAME_1)
+        self.assertEqual(l_obj.Name, TESTING_LIGHTING_LIGHTS_NAME_1)
         self.assertEqual(l_obj.Key, 0)
         self.assertEqual(l_obj.Active, True)
         self.assertEqual(l_obj.Comment, TESTING_DEVICE_COMMENT)
@@ -135,7 +143,7 @@ class R1_Read(SetupMixin, unittest.TestCase):
         """
         l_obj = Utility._read_one_light_xml(self.m_pyhouse_obj, self.m_xml.light, self.m_version)
         # PrettyPrintAny(l_obj, 'ReadOneLight', 120)
-        self.assertEqual(l_obj.Name, TESTING_LIGHTING_LIGHTS_INSTEON_NAME_1)
+        self.assertEqual(l_obj.Name, TESTING_LIGHTING_LIGHTS_NAME_1)
         self.assertEqual(l_obj.Name, 'Insteon Light')
         self.assertEqual(l_obj.Key, 0)
         self.assertEqual(l_obj.Active, True)
@@ -165,10 +173,7 @@ class W1_Write(SetupMixin, unittest.TestCase):
     def test_01_Base(self):
         l_obj = Utility._read_one_light_xml(self.m_pyhouse_obj, self.m_xml.light, self.m_version)
         l_xml = Utility._write_base_device('Light', l_obj)
-        # PrettyPrintAny(l_xml, 'Lights XML')
-        # PrettyPrintAny(l_xml.attrib, 'Attributes')
-        # PrettyPrintAny(l_xml._children, 'Children')
-        self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHTING_LIGHTS_INSTEON_NAME_1)
+        self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHTING_LIGHTS_NAME_1)
         self.assertEqual(l_xml.attrib['Key'], '0')
         self.assertEqual(l_xml.attrib['Active'], 'True')
         self.assertEqual(l_xml.find('UUID').text, TESTING_DEVICE_UUID)

@@ -7,7 +7,7 @@
 @note:      Created on May 22, 2014
 @summary:   This module is for testing lighting buttons data.
 
-Passed all 9 tests - DBK - 2015-07-30
+Passed all 9 tests - DBK - 2015-08-07
 """
 
 # Import system type stuff
@@ -16,9 +16,14 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import ButtonData
-from Modules.Core.test.xml_device import TESTING_DEVICE_COMMENT
+from Modules.Core.test.xml_device import \
+        TESTING_DEVICE_COMMENT, \
+        TESTING_DEVICE_ROOM_NAME, \
+        TESTING_DEVICE_FAMILY
 from Modules.Lighting.lighting_buttons import Utility, API as buttonsAPI
-from Modules.Lighting.test.xml_buttons import TESTING_LIGHTING_BUTTON_NAME_1, TESTING_LIGHTING_BUTTON_NAME_2
+from Modules.Lighting.test.xml_buttons import \
+        TESTING_LIGHTING_BUTTON_NAME_1, \
+        TESTING_LIGHTING_BUTTON_NAME_2
 from Modules.Families.family import API as familyAPI
 from Modules.Core import conversions
 from Modules.Web import web_utils
@@ -34,7 +39,7 @@ class SetupMixin(object):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_family = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
-        self.m_pyhouse_obj.House.RefOBJs.FamilyData = self.m_family
+        self.m_pyhouse_obj.House.FamilyData = self.m_family
         self.m_api = buttonsAPI()
         self.m_button_obj = ButtonData()
         self.m_version = '1.4.0'
@@ -50,7 +55,6 @@ class A1(SetupMixin, unittest.TestCase):
     def test_01_FindXml(self):
         """ Be sure that the XML contains the right stuff.
         """
-        # PrettyPrintAny(self.m_pyhouse_obj, 'PyHouseData')
         self.assertEqual(self.m_xml.root.tag, 'PyHouse')
         self.assertEqual(self.m_xml.button_sect.tag, 'ButtonSection')
         self.assertEqual(self.m_xml.button.tag, 'Button')
@@ -80,9 +84,9 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_button.Name, TESTING_LIGHTING_BUTTON_NAME_1)
         self.assertEqual(l_button.Active, True)
         self.assertEqual(l_button.Comment, TESTING_DEVICE_COMMENT)
-        self.assertEqual(l_button.DeviceFamily, 'Insteon', 'Bad Controller Family')
+        self.assertEqual(l_button.DeviceFamily, TESTING_DEVICE_FAMILY)
         self.assertEqual(l_button.LightingType, 'Button', 'Bad Lighting Type')
-        self.assertEqual(l_button.RoomName, 'Master Bath', 'Bad Room Name')
+        self.assertEqual(l_button.RoomName, TESTING_DEVICE_ROOM_NAME)
 
     def test_02_ReadOneButtonXml(self):
         """ Read in the xml file and fill in the lights

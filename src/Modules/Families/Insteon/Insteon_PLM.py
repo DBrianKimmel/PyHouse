@@ -428,16 +428,16 @@ class LightHandlerAPI(InsteonPlmAPI):
         """
         LOG.info('Getting device information of all Insteon devices')
         LOG.info('Getting device information of all Insteon Lights')
-        for l_obj in p_pyhouse_obj.House.DeviceOBJs.Lights.itervalues():
+        for l_obj in p_pyhouse_obj.House.Lights.itervalues():
             self._get_obj_info(p_controller_obj, l_obj)
         LOG.info('Getting device information of all Insteon Buttons')
-        for l_obj in p_pyhouse_obj.House.DeviceOBJs.Buttons.itervalues():
+        for l_obj in p_pyhouse_obj.House.Buttons.itervalues():
             self._get_obj_info(p_controller_obj, l_obj)
         LOG.info('Getting device information of all Insteon Controllers')
-        for l_obj in p_pyhouse_obj.House.DeviceOBJs.Controllers.itervalues():
+        for l_obj in p_pyhouse_obj.House.Controllers.itervalues():
             self._get_obj_info(p_controller_obj, l_obj)
         LOG.info('Getting device information of all Insteon Thermostats')
-        for l_obj in p_pyhouse_obj.House.DeviceOBJs.Thermostats.itervalues():
+        for l_obj in p_pyhouse_obj.House.Thermostats.itervalues():
             self._get_thermostat_obj_info(p_controller_obj, l_obj)
 
 

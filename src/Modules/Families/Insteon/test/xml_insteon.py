@@ -29,12 +29,14 @@ L_INSTEON_MASTER = '    <IsMaster>' + TESTING_INSTEON_MASTER + '</IsMaster>'
 
 
 
-XML_INSTEON = L_INSTEON_ADDRESS + \
-              L_INSTEON_DEVCAT + \
-              L_INSTEON_GROUP_NUM + \
-              L_INSTEON_GROUP_LIST + \
-              L_INSTEON_PRODUCT_KEY + \
-              L_INSTEON_MASTER
+XML_INSTEON = '\n'.join([
+    L_INSTEON_ADDRESS,
+    L_INSTEON_DEVCAT + \
+    L_INSTEON_GROUP_NUM + \
+    L_INSTEON_GROUP_LIST + \
+    L_INSTEON_PRODUCT_KEY + \
+    L_INSTEON_MASTER
+    ])
 
 
 INSTEON_XSD = """

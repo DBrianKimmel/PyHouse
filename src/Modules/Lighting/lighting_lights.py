@@ -76,7 +76,7 @@ class Utility(object):
     def _write_family_data(p_pyhouse_obj, p_obj, p_xml):
         try:
             l_family = p_obj.DeviceFamily
-            l_family_obj = p_pyhouse_obj.House.RefOBJs.FamilyData[l_family]
+            l_family_obj = p_pyhouse_obj.House.FamilyData[l_family]
             l_api = l_family_obj.FamilyXmlModuleAPI
             l_api.WriteXml(p_xml, p_obj)
         except Exception as e_err:
@@ -136,7 +136,7 @@ class API(object):
     def write_all_lights_xml(p_pyhouse_obj):
         l_xml = ET.Element(SECTION)
         l_count = 0
-        for l_light_obj in p_pyhouse_obj.House.DeviceOBJs.Lights.itervalues():
+        for l_light_obj in p_pyhouse_obj.House.Lights.itervalues():
             l_xml.append(Utility._write_one_light_xml(p_pyhouse_obj, l_light_obj))
             l_count += 1
         LOG.info('Saved {} Lights XML'.format(l_count))

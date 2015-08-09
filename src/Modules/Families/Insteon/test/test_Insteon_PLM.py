@@ -7,7 +7,7 @@
 @license:   MIT License
 @summary:   This module is for driving serial devices
 
-Passed all 10 tests - DBK - 2015-07-29
+Passed all 10 tests - DBK - 2015-08-08
 
 """
 
@@ -17,7 +17,7 @@ from twisted.trial import unittest
 
 # Import PyMh files
 # from Modules.lights.lighting import LightData
-from Modules.Core.data_objects import PyHouseData, ControllerData
+from Modules.Core.data_objects import ControllerData
 from Modules.Families.Insteon.Insteon_PLM import Utility
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
@@ -68,16 +68,14 @@ class C01_Utility(SetupMixin, unittest.TestCase):
         self.assertEqual(l_house.Name, 'Test House')
 
     def test_05_Obj(self):
-        # PrettyPrintAny(self.m_pyhouse_obj.House.DeviceOBJs, 'PLM - Devices')
         pass
 
 
 class C02_Cmds(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        # self.m_pyhouse_obj = PyHouseData()
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        # self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API(self.m_pyhouse_obj).build_lighting_family_info()
+        # self.m_pyhouse_obj.House.FamilyData = family.API(self.m_pyhouse_obj).build_lighting_family_info()
 
     def test_01_get_message_length(self):
         self.assertEqual(Utility._get_message_length(MSG_50), 11)
@@ -91,7 +89,7 @@ class C02_Cmds(SetupMixin, unittest.TestCase):
         self.assertEqual(l_cmd[1], 0x62)
 
     def test_03_63Cmd(self):
-        l_obj = self.m_pyhouse_obj.House.DeviceOBJs.Controllers
+        l_obj = self.m_pyhouse_obj.House.Controllers
         # PrettyPrintAny(l_obj, 'PLM - Controllers')
         # insteonPlmAPI._put_controller(l_obj)
         # PrettyPrintAny(l_obj, 'Lights')
@@ -104,7 +102,7 @@ class C03_Driver(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        self.m_pyhouse_obj = PyHouseData()
+        pass
 
     def test_01_Driver(self):
         pass

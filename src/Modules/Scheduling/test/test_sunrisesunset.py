@@ -106,8 +106,8 @@ class SetupMixin(object):
         l_loc.TimeZoneName = T_TIMEZONE_NAME
         l_loc.TimeZoneOffset = T_TIMEZONE_OFFSET
         l_loc.DaylightSavingsTime = T_DAYLIGHT_SAVINGS_TIME
-        p_pyhouse_obj.House.RefOBJs.Location.Latitude = T_LATITUDE
-        p_pyhouse_obj.House.RefOBJs.Location.Longitude = T_LONGITUDE
+        p_pyhouse_obj.House.Location.Latitude = T_LATITUDE
+        p_pyhouse_obj.House.Location.Longitude = T_LONGITUDE
         return l_loc
 
 
@@ -232,7 +232,7 @@ class C02_Julian(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
-        self.m_pyhouse_obj.House.RefOBJs.Location.Latitude = T_LATITUDE
+        self.m_pyhouse_obj.House.Location.Latitude = T_LATITUDE
         self.m_api = JDate
         self.m_earth = SetupMixin.load_earth(self.m_pyhouse_obj)
         self.m_julian = JulianParameters

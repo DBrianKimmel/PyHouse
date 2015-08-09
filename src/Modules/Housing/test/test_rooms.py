@@ -42,14 +42,14 @@ class A1_XML(SetupMixin, unittest.TestCase):
     def test_01_BuildObjects(self):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
         """
-        self.assertEqual(self.m_pyhouse_obj.House.RefOBJs.Rooms, {}, 'No Rooms{}')
+        self.assertEqual(self.m_pyhouse_obj.House.Rooms, {}, 'No Rooms{}')
 
     def test_02_FindXml(self):
         """ Be sure that the XML contains the right stuff.
         """
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
-        self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision', 'XML - No Houses Division')
-        self.assertEqual(self.m_xml.room_sect.tag, 'RoomSection', 'XML - No Rooms section')
+        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision')
+        self.assertEqual(self.m_xml.room_sect.tag, 'RoomSection')
         self.assertEqual(self.m_xml.room.tag, 'Room', 'XML - No Room')
 
     def test_03_ReadOneRoom(self):
@@ -90,7 +90,7 @@ class A1_XML(SetupMixin, unittest.TestCase):
     def test_07_CreateJson(self):
         """ Create a JSON object for Rooms.
         """
-        self.m_pyhouse_obj.House.RefOBJs.Rooms = l_rooms = self.m_api.read_rooms_xml(self.m_xml.house_div)
+        self.m_pyhouse_obj.House.Rooms = l_rooms = self.m_api.read_rooms_xml(self.m_xml.house_div)
         l_json = unicode(web_utils.JsonUnicode().encode_json(l_rooms))
         # print('JSON: {0:}'.format(l_json))
         # PrettyPrintAny(l_json, 'JSON', 120)

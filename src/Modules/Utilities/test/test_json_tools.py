@@ -7,6 +7,8 @@
 @note:      Created on Jun 25, 2015
 @Summary:
 
+Passed all 1 tests - DBK - 2015-08-07
+
 """
 
 # Import system type stuff
@@ -41,7 +43,7 @@ class A01_Jsco(SetupMixin, unittest.TestCase):
 
     def test_01_Encode(self):
         l_json = json_tools.encode_json(self.m_pyhouse_obj)
-        print(l_json)
+        # print(l_json)
         # PrettyPrintAny(l_json, "PyHouse_Obj")
 
 # ## END DBK

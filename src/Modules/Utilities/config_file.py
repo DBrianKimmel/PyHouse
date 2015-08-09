@@ -76,6 +76,8 @@ class API(object):
 
     @staticmethod
     def get_xml_config_file_version(p_pyhouse_obj):
+        """Get the value of the Version attribute of ???
+        """
         l_root = p_pyhouse_obj.Xml.XmlRoot.find('.')
         l_ret = PutGetXML.get_text_from_xml(l_root, 'Version')
         return l_ret

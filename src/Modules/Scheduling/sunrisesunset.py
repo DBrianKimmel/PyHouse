@@ -506,9 +506,9 @@ class Utility(SSAPI, SunriseSet):
 
     def _load_location(self, p_pyhouse_obj, p_gregorian_date):
         l_earth_data = EarthParameters()
-        l_earth_data.Latitude = p_pyhouse_obj.House.RefOBJs.Location.Latitude
-        l_earth_data.Longitude = p_pyhouse_obj.House.RefOBJs.Location.Longitude
-        l_earth_data.TimeZoneName = p_pyhouse_obj.House.RefOBJs.Location.TimeZoneName
+        l_earth_data.Latitude = p_pyhouse_obj.House.Location.Latitude
+        l_earth_data.Longitude = p_pyhouse_obj.House.Location.Longitude
+        l_earth_data.TimeZoneName = p_pyhouse_obj.House.Location.TimeZoneName
         self._get_tz_params(l_earth_data, p_gregorian_date)
         return l_earth_data
 
@@ -534,8 +534,8 @@ class API(Utility):
         self.m_julian_data = JDate.calculate_all_julian_dates(p_gregorian_date, self.m_earth_data)
         self.m_solar_data = self._calculate_solar_params()
         self.m_solar_data = self.calcSolarNoonParams(self.m_earth_data, self.m_julian_data)
-        self.m_pyhouse_obj.House.RefOBJs.Location.RiseSet.SunRise = self.get_sunrise_datetime()
-        self.m_pyhouse_obj.House.RefOBJs.Location.RiseSet.SunSet = self.get_sunset_datetime()
+        self.m_pyhouse_obj.House.Location.RiseSet.SunRise = self.get_sunrise_datetime()
+        self.m_pyhouse_obj.House.Location.RiseSet.SunSet = self.get_sunset_datetime()
         LOG.info('Started.')
 
     def Stop(self):

@@ -42,13 +42,12 @@ class C01_XML(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        # self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
+        # self.m_pyhouse_obj.House.FamilyData = family.API().build_lighting_family_info()
         # self.m_controller_obj = ControllerData()
 
     def test_01_FindXml(self):
         """ Be sure that the XML contains the right stuff.
         """
-        # PrettyPrintAny(self.m_pyhouse_obj, 'PyHouseData')
         self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
         self.assertEqual(self.m_xml.controller_sect.tag, 'ControllerSection', 'XML - No Controllers section')
         self.assertEqual(self.m_xml.controller.tag, 'Controller', 'XML - No Controller section')

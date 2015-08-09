@@ -53,7 +53,7 @@ class Utility(object):
     def _write_family_data(p_pyhouse_obj, p_button_obj, p_xml):
         try:
             l_family = p_button_obj.DeviceFamily
-            l_family_obj = p_pyhouse_obj.House.RefOBJs.FamilyData[l_family]
+            l_family_obj = p_pyhouse_obj.House.FamilyData[l_family]
             l_api = l_family_obj.FamilyXmlModuleAPI
             l_api.WriteXml(p_xml, p_button_obj)
         except Exception as e_err:
@@ -98,7 +98,7 @@ class API(object):
     def write_buttons_xml(p_pyhouse_obj):
         l_count = 0
         l_buttons_xml = ET.Element('ButtonSection')
-        for l_button_obj in p_pyhouse_obj.House.DeviceOBJs.Buttons.itervalues():
+        for l_button_obj in p_pyhouse_obj.House.Buttons.itervalues():
             l_entry = Utility._write_one_button_xml(p_pyhouse_obj, l_button_obj)
             l_buttons_xml.append(l_entry)
             l_count += 1

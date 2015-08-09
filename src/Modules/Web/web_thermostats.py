@@ -57,12 +57,12 @@ class ThermostatsElement(athena.LiveElement):
         l_ix = int(l_json['Key'])
         if l_delete:
             try:
-                del self.m_pyhouse_obj.House.DeviceOBJs.Thermostats[l_ix]
+                del self.m_pyhouse_obj.House.Thermostats[l_ix]
             except AttributeError:
                 LOG.error("web_thermostats - Failed to delete - JSON: {0:}".format(l_json))
             return
         try:
-            l_obj = self.m_pyhouse_obj.House.DeviceOBJs.Thermostats[l_ix]
+            l_obj = self.m_pyhouse_obj.House.Thermostats[l_ix]
         except KeyError:
             LOG.warning('Creating a new Thermostat for Key:{}'.format(l_ix))
             l_obj = ThermostatData()
@@ -86,6 +86,6 @@ class ThermostatsElement(athena.LiveElement):
             l_obj.UPBAddress = l_json['UPBAddress']
             l_obj.UPBPassword = l_json['UPBPassword']
             l_obj.UPBNetworkID = l_json['UPBNetworkID']
-        self.m_pyhouse_obj.House.DeviceOBJs.Thermostats[l_ix] = l_obj
+        self.m_pyhouse_obj.House.Thermostats[l_ix] = l_obj
 
 # ## END DBK

@@ -331,21 +331,6 @@ def _delchars(p_str, chars):
     return p_str.translate(identity, chars)
 
 
-class GetPyhouse(object):
-
-    def __init__(self, p_pyhouse_obj):
-        self.m_pyhouse_obj = p_pyhouse_obj
-
-    def House(self):
-        return self.m_pyhouse_obj.House
-
-    def Schedules(self):
-        return self.m_pyhouse_obj.House.RefOBJs.Schedules
-
-    def Location(self):
-        return self.m_pyhouse_obj.House.RefOBJs.Location
-
-
 class Lister():
 
     def __repr__(self):
@@ -369,7 +354,7 @@ def get_light_object(p_pyhouse_obj, name = None, key = None):
 
     @return: the Light object found or None.
     """
-    l_lights = p_pyhouse_obj.House.DeviceOBJs.Lights
+    l_lights = p_pyhouse_obj.House.Lights
     if name != None:
         for l_obj in l_lights.itervalues():
             if l_obj.Name == name:

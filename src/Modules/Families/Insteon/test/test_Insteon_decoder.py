@@ -40,9 +40,9 @@ class A1_Setup(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        # self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API(self.m_pyhouse_obj).build_lighting_family_info()
-        # self.m_pyhouse_obj.House.DeviceOBJs.Controllers = controllerAPI(self.m_pyhouse_obj).read_all_controllers_xml(self.m_xml.controller_sect)
-        self.m_pyhouse_obj.House.DeviceOBJs.Lights = lightsAPI.read_all_lights_xml(self.m_pyhouse_obj, self.m_xml.controller_sect, self.m_version)
+        # self.m_pyhouse_obj.House.FamilyData = family.API(self.m_pyhouse_obj).build_lighting_family_info()
+        # self.m_pyhouse_obj.House.Controllers = controllerAPI(self.m_pyhouse_obj).read_all_controllers_xml(self.m_xml.controller_sect)
+        self.m_pyhouse_obj.House.Lights = lightsAPI.read_all_lights_xml(self.m_pyhouse_obj, self.m_xml.controller_sect, self.m_version)
 
     def test_01_PyHouse(self):
         # PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse')
@@ -56,14 +56,11 @@ class A1_Setup(SetupMixin, unittest.TestCase):
 
     def test_03_Device(self):
         # l_house = self.m_pyhouse_obj.House
-        # l_devs = l_house.DeviceOBJs
         # PrettyPrintAny(l_devs, 'Devices')
         pass
 
     def test_04_Refs(self):
         # l_house = self.m_pyhouse_obj.House
-        # l_refs = l_house.RefOBJs
-        # PrettyPrintAny(l_refs, 'References')
         pass
 
 

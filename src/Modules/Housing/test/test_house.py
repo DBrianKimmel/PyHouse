@@ -40,7 +40,7 @@ class C01_XML(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
         self.m_util = xml_tools.PutGetXML()
-        self.m_api = house.API()
+        self.m_api = house.API(self.m_pyhouse_obj)
 
     def test_01_read_xml(self):
         l_pyhouse = self.m_xml.root
@@ -66,13 +66,13 @@ class C02_ReadXML(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
-        self.m_api = house.API()
+        self.m_api = house.API(self.m_pyhouse_obj)
 
     def test_01_buildObjects(self):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
         """
         # PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse')
-        self.assertEqual(self.m_pyhouse_obj.House.RefOBJs.Rooms, {}, 'No Rooms{}')
+        self.assertEqual(self.m_pyhouse_obj.House.Rooms, {})
 
     def test_02_Xml(self):
         l_xml = self.m_api._get_house_xml(self.m_pyhouse_obj)
@@ -99,7 +99,7 @@ class C02_ReadXML(SetupMixin, unittest.TestCase):
         l_house_obj = self.m_api.read_house_xml(self.m_pyhouse_obj)
         # PrettyPrintAny(l_house_obj)
         self.assertEqual(l_house_obj.Name, 'Pink Poppy', 'Bad Name')
-        self.assertEqual(l_house_obj.RefOBJs.Location.Street, '5191 N Pink Poppy Dr', 'Bad Street')
+        self.assertEqual(l_house_obj.Location.Street, '5191 N Pink Poppy Dr', 'Bad Street')
 
 
 
@@ -110,7 +110,7 @@ class C03_WriteXML(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
-        self.m_api = house.API()
+        self.m_api = house.API(self.m_pyhouse_obj)
 
     def test_01_write_house_xml(self):
         l_house_obj = self.m_api.read_house_xml(self.m_pyhouse_obj)
@@ -126,7 +126,7 @@ class C04_JSON(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
-        self.m_api = house.API()
+        self.m_api = house.API(self.m_pyhouse_obj)
 
     def test_01_CreateJson(self):
         """ Create a JSON object for Location.5
@@ -142,7 +142,7 @@ class C05_Utilities(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
-        self.m_api = house.API()
+        self.m_api = house.API(self.m_pyhouse_obj)
 
     def test_01_findXml(self):
         l_xml = self.m_api._get_house_xml(self.m_pyhouse_obj)
@@ -163,7 +163,7 @@ class C06_Modules(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
-        self.m_api = house.API()
+        self.m_api = house.API(self.m_pyhouse_obj)
 
     def test_01_Api(self):
         self.m_api._module_api(self.m_pyhouse_obj, 'Hvac')

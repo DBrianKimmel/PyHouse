@@ -57,7 +57,6 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         """ Be sure that the XML contains the right stuff.
         """
         self.assertNotEqual(self.m_pyhouse_obj.APIs, None)
-        self.assertNotEqual(self.m_pyhouse_obj.House.DeviceOBJs, None)
 
     def test_02_FindXml(self):
         """ Be sure that the XML contains the right stuff.

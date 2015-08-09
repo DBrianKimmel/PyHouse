@@ -64,7 +64,7 @@ class API(object):
 
     @staticmethod
     def _read_base(p_device_obj, p_entry_xml):
-        XmlConfigTools.read_base_object_xml(p_device_obj, p_entry_xml)
+        deviceXML.read_base_device_object_xml(p_device_obj, p_entry_xml)
         return p_device_obj  # for testing
 
     @staticmethod

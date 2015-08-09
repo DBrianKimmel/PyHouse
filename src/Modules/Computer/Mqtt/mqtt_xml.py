@@ -24,18 +24,20 @@ BROKER = 'Broker'
 
 
 class Xml(object):
-    """
-    """
 
-    def _read_one_broker(self, p_xml):
+    @staticmethod
+    def _read_one_broker(p_xml):
         """
         @param p_xml: XML information for one Broker.
         @return: an IrrigationZone object filled in with data from the XML passed in
         """
         l_obj = MqttBrokerData()
-        XmlConfigTools.read_base_object_xml(l_obj, p_xml)
-        l_obj.BrokerAddress = PutGetXML.get_text_from_xml(p_xml, 'BrokerAddress')
-        l_obj.BrokerPort = PutGetXML.get_int_from_xml(p_xml, 'BrokerPort')
+        try:
+            XmlConfigTools.read_base_object_xml(l_obj, p_xml)
+            l_obj.BrokerAddress = PutGetXML.get_text_from_xml(p_xml, 'BrokerAddress')
+            l_obj.BrokerPort = PutGetXML.get_int_from_xml(p_xml, 'BrokerPort')
+        except Exception:
+            pass
         return l_obj
 
     def read_mqtt_xml(self, p_pyhouse_obj):
@@ -54,7 +56,7 @@ class Xml(object):
             l_section = None
         try:
             for l_xml in l_section.iterfind(BROKER):
-                l_broker = self._read_one_broker(l_xml)
+                l_broker = Xml._read_one_broker(l_xml)
                 l_broker.Key = l_count
                 l_dict[l_count] = l_broker
                 l_count += 1
@@ -63,7 +65,8 @@ class Xml(object):
         return l_dict
 
 
-    def _write_one_broker(self, p_mqtt):
+    @staticmethod
+    def _write_one_broker(p_mqtt):
         """
         @param p_obj: is one broker object.
         @return: the XML for one Broker System
@@ -83,7 +86,7 @@ class Xml(object):
             return l_xml
         try:
             for l_obj in p_obj.itervalues():
-                l_sys = self._write_one_broker(l_obj)
+                l_sys = Xml._write_one_broker(l_obj)
                 l_xml.append(l_sys)
         except AttributeError as e_err:
             LOG.error('{}'.format(e_err))

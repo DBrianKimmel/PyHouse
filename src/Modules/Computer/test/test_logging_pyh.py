@@ -16,7 +16,7 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 # from Modules.Core.data_objects import ComputerInformation
 from Modules.Computer import logging_pyh as Logger
-from test import xml_data
+from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
 
@@ -30,33 +30,13 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-class C01_NoXML(SetupMixin, unittest.TestCase):
-    """
-    This section tests the reading and writing of XML used by node_local.
-    """
-
-    def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_EMPTY))
-        self.m_api = Logger.API()
-
-    def test_01_Read(self):
-        l_log = self.m_api.read_xml(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.Computer.Logs = l_log
-        # PrettyPrintAny(l_log, 'PyHouse.Computer.Logs', 120)
-
-    def test_02_Write(self):
-        l_log = self.m_api.read_xml(self.m_pyhouse_obj)
-        l_xml = self.m_api.write_xml(l_log)
-        # PrettyPrintAny(l_xml, 'XML', 120)
-
-
 class C02_XML(SetupMixin, unittest.TestCase):
     """
     This section tests the reading and writing of XML used by node_local.
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_api = Logger.API()
 
     def test_01_Read(self):
@@ -78,7 +58,7 @@ class Test_04_SetupLogging(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_api = Logger.API()
         self.m_api.read_xml(self.m_pyhouse_obj)
         self.LOG = Logger.getLogger('PyHouse.test_logging_pyh ')

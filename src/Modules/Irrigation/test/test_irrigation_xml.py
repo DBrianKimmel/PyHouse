@@ -36,8 +36,7 @@ class A1_XML(SetupMixin, unittest.TestCase):
     def test_01_BuildObjects(self):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
         """
-        self.assertEqual(self.m_pyhouse_obj.House.DeviceOBJs.Irrigation, None)
-        # PrettyPrintAny(self.m_pyhouse_obj.House.DeviceOBJs, 'Device Objs')
+        self.assertEqual(self.m_pyhouse_obj.House.Irrigation, None)
 
 
 class B1_Read(SetupMixin, unittest.TestCase):
@@ -85,9 +84,7 @@ class C1_Write(SetupMixin, unittest.TestCase):
         l_sys = l_irr[0]
         l_obj = l_sys.Zones[0]
         l_xml = self.m_api._write_one_zone(l_obj)
-        # PrettyPrintAny(l_obj, 'Zone')
-        # PrettyPrintAny(l_xml, 'XML')
-        self.assertEqual(self.m_pyhouse_obj.House.DeviceOBJs.Irrigation, None)
+        self.assertEqual(self.m_pyhouse_obj.House.Irrigation, None)
 
     def test_02_System(self):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
@@ -97,7 +94,7 @@ class C1_Write(SetupMixin, unittest.TestCase):
         # PrettyPrintAny(l_sys, 'System')
         l_xml = self.m_api._write_one_system(l_sys)
         # PrettyPrintAny(l_xml, 'XML')
-        self.assertEqual(self.m_pyhouse_obj.House.DeviceOBJs.Irrigation, None)
+        self.assertEqual(self.m_pyhouse_obj.House.Irrigation, None)
 
     def test_03_Irrigation(self):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
@@ -105,6 +102,6 @@ class C1_Write(SetupMixin, unittest.TestCase):
         l_irr = self.m_api.read_irrigation_xml(self.m_pyhouse_obj)
         l_obj = self.m_api.write_irrigation_xml(l_irr)
         # PrettyPrintAny(l_obj, 'System')
-        self.assertEqual(self.m_pyhouse_obj.House.DeviceOBJs.Irrigation, None)
+        self.assertEqual(self.m_pyhouse_obj.House.Irrigation, None)
 
 # ## END DBK

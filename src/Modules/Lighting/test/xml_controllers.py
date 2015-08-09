@@ -21,6 +21,8 @@ from Modules.Drivers.USB.test.xml_usb import USB_XML
 
 
 TESTING_CONTROLLER_TYPE = 'Controller'
+TESTING_CONTROLLER_NAME_1 = 'Insteon Serial Controller'
+TESTING_CONTROLLER_NAME_2 = 'UPB USB Controller'
 
 L_CONTROLLER_TYPE = '    <LightingType>' + TESTING_CONTROLLER_TYPE + '</LightingType>'
 
@@ -35,7 +37,7 @@ L_CONTROLLER_BODY_1_3 = '\n'.join([
     ])
 
 INSTEON_CONTROLLER_XML = '\n'.join([
-    '<Controller Active="True" Key="0" Name="Insteon Serial Controller">',
+    '<Controller Active="True" Key="0" Name="' + TESTING_CONTROLLER_NAME_1 + '">',
     L_CONTROLLER_BODY,
     XML_INSTEON,
     INTERFACE_SERIAL_XML,
@@ -43,7 +45,7 @@ INSTEON_CONTROLLER_XML = '\n'.join([
     "</Controller>"])
 
 INSTEON_CONTROLLER_XML_1_3 = '\n'.join([
-    '<Controller Active="True" Key="0" Name="Insteon Serial Controller">',
+    '<Controller Active="True" Key="0" Name="' + TESTING_CONTROLLER_NAME_1 + '">',
     L_CONTROLLER_BODY_1_3,
     XML_INSTEON,
     INTERFACE_SERIAL_XML,
@@ -51,7 +53,7 @@ INSTEON_CONTROLLER_XML_1_3 = '\n'.join([
     "</Controller>"])
 
 UPB_CONTROLLER_XML = '\n'.join([
-    '<Controller Active="True" Key="1" Name="UPB USB Controller">',
+    '<Controller Active="True" Key="1" Name="' + TESTING_CONTROLLER_NAME_2 + '">',
     L_CONTROLLER_BODY,
     UPB_XML,
     USB_XML,

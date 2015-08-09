@@ -13,7 +13,7 @@ This module:
     Gathers information about the interfaces (ethernet, wifi etc.) on this node.
     Gathers information about the controller devices attached to this node.
     Gathers information about the specialized PyHouse software installed on this node.
-    Saves all the gathered information in PyHouseData.
+    Saves all the gathered information in p_pyhouse_obj.
     Starts services on the local node (i.e. ir_service).
 
 The discovered services may be fooled by non PyHouse devices plugged into the computer

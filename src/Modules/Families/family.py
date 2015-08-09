@@ -154,9 +154,9 @@ class API(object):
 
     def Start(self):
         """
-        Build p_pyhouse_obj.House.RefOBJs.FamilyData
+        Build p_pyhouse_obj.House.FamilyData
         """
-        self.m_pyhouse_obj.House.RefOBJs.FamilyData = self.m_family
+        self.m_pyhouse_obj.House.FamilyData = self.m_family
         return self.m_family
 
     def SaveXml(self, p_xml):
@@ -178,7 +178,7 @@ class API(object):
         Runs Device_<family>.API.Start()
         """
         LOG.info("Starting lighting families.")
-        for l_family_obj in p_pyhouse_obj.House.RefOBJs.FamilyData.itervalues():
+        for l_family_obj in p_pyhouse_obj.House.FamilyData.itervalues():
             LOG.info('Starting Family {}'.format(l_family_obj.Name))
             l_family_obj.FamilyModuleAPI.Start()  # will run <family>_device.API().Start()
         LOG.info("Started all lighting families.")

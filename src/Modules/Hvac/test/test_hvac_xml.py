@@ -51,7 +51,7 @@ class A1_XML(SetupMixin, unittest.TestCase):
     def test_01_BuildObjects(self):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
         """
-        self.assertEqual(self.m_pyhouse_obj.House.DeviceOBJs.Hvac, None)
+        self.assertEqual(self.m_pyhouse_obj.House.Hvac, None)
 
 
 class B1_Read(SetupMixin, unittest.TestCase):
@@ -62,8 +62,9 @@ class B1_Read(SetupMixin, unittest.TestCase):
     def test_01_BaseDevice(self):
         l_xml = self.m_xml.thermostat
         l_obj = Utility._read_thermostat_base(l_xml)
+        # PrettyPrintAny(l_obj, 'Thermostat')
         self.assertEqual(l_obj.Name, TESTING_THERMOSTAT_NAME)
-        self.assertEqual(l_obj.Active, bool(TESTING_THERMOSTAT_ACTIVE == True))
+        self.assertEqual(l_obj.Active, TESTING_THERMOSTAT_ACTIVE == 'True')
         self.assertEqual(l_obj.Key, int(TESTING_THERMOSTAT_KEY))
         self.assertEqual(l_obj.Comment, TESTING_DEVICE_COMMENT)
         self.assertEqual(l_obj.DeviceFamily, TESTING_THERMOSTAT_DEVICE_FAMILY)
@@ -81,12 +82,13 @@ class B1_Read(SetupMixin, unittest.TestCase):
 
     def test_03_Family(self):
         l_xml = self.m_xml.thermostat
+        # PrettyPrintAny(l_xml, 'XML')
         l_obj = Utility._read_thermostat_base(l_xml)
+        # PrettyPrintAny(l_obj, 'System')
         Utility._read_thermostat_data(l_obj, l_xml)
+        PrettyPrintAny(l_obj, 'System W/ data')
         l_ret = Utility._read_family_data(self.m_pyhouse_obj, l_obj, l_xml)
-        print(l_ret)
-        PrettyPrintAny(l_xml, 'XML')
-        PrettyPrintAny(l_obj, 'System')
+        PrettyPrintAny(l_ret, 'Family Info')
         self.assertEqual(l_obj.Address, '2')
 
     def test_04_AllThermostats(self):
@@ -106,7 +108,7 @@ class C1_Write(SetupMixin, unittest.TestCase):
         # PrettyPrintAny(l_xml, 'XML Thermostat Device')
         l_ret = Utility._write_thermostat_base('Thermostat', l_obj)
         # PrettyPrintAny(l_ret, 'Base Thermostat Device')
-        self.assertEqual(self.m_pyhouse_obj.House.DeviceOBJs.Hvac, None)
+        self.assertEqual(self.m_pyhouse_obj.House.Hvac, None)
 
     def test_02_Thermostat(self):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
@@ -118,7 +120,7 @@ class C1_Write(SetupMixin, unittest.TestCase):
         # PrettyPrintAny(l_sys, 'System')
         l_xml = self.m_api._write_one_system(l_sys)
         # PrettyPrintAny(l_xml, 'XML')
-        self.assertEqual(self.m_pyhouse_obj.House.DeviceOBJs.Irrigation, None)
+        self.assertEqual(self.m_pyhouse_obj.House.Irrigation, None)
 
     def test_03_Family(self):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
@@ -128,6 +130,6 @@ class C1_Write(SetupMixin, unittest.TestCase):
         l_irr = self.m_api.read_irrigation_xml(self.m_pyhouse_obj)
         l_obj = self.m_api.write_irrigation_xml(l_irr)
         # PrettyPrintAny(l_obj, 'System')
-        self.assertEqual(self.m_pyhouse_obj.House.DeviceOBJs.Irrigation, None)
+        self.assertEqual(self.m_pyhouse_obj.House.Irrigation, None)
 
 # ## END DBK

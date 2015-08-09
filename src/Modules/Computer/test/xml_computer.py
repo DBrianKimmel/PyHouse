@@ -19,7 +19,7 @@ from Modules.Computer.Nodes.test.xml_nodes import XML_NODES
 from Modules.Web.test.xml_web import XML_WEB_SERVER
 
 
-COMPUTER_DIVISION_XML = '\n'.join([
+XML_COMPUTER_DIVISION = '\n'.join([
     "<ComputerDivision>",
     XML_NODES,
     XML_COMMUNICATION,

@@ -22,6 +22,7 @@ from Modules.Families.family_utils import FamUtil
 from Modules.Computer import logging_pyh as Logger
 from Modules.Drivers.interface import Xml as interfaceXML
 from Modules.Utilities.xml_tools import PutGetXML
+from Modules.Utilities import debug_tools
 
 LOG = Logger.getLogger('PyHouse.LightController')
 
@@ -79,6 +80,10 @@ class Utility(object):
 
     @staticmethod
     def _read_family_data(p_pyhouse_obj, p_obj, p_xml, p_version):
+        """Read the family specific data for this controller.
+        """
+        # l_debug = debug_tools._format_object('Obj', p_obj, 100)
+        # print('Read controller {}'.format(l_debug))
         l_api = FamUtil.read_family_data(p_pyhouse_obj, p_obj, p_xml)
         return l_api  # for testing
 
@@ -86,7 +91,7 @@ class Utility(object):
     def _write_family_data(p_pyhouse_obj, p_controller_obj, p_xml):
         try:
             l_family = p_controller_obj.DeviceFamily
-            l_family_obj = p_pyhouse_obj.House.RefOBJs.FamilyData[l_family]
+            l_family_obj = p_pyhouse_obj.House.FamilyData[l_family]
             l_api = l_family_obj.FamilyXmlModuleAPI
             l_api.WriteXml(p_xml, p_controller_obj)
         except Exception as e_err:
@@ -149,7 +154,7 @@ class API(object):
     def write_all_controllers_xml(p_pyhouse_obj):
         l_count = 0
         l_controllers_xml = ET.Element('ControllerSection')
-        for l_controller_obj in p_pyhouse_obj.House.DeviceOBJs.Controllers.itervalues():
+        for l_controller_obj in p_pyhouse_obj.House.Controllers.itervalues():
             l_controllers_xml.append(Utility._write_one_controller_xml(p_pyhouse_obj, l_controller_obj))
             l_count += 1
         LOG.info('Saved {} Controllers XML'.format(l_count))

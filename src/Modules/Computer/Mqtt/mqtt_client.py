@@ -85,7 +85,6 @@ class API(Util):
         """Send a topic, message to the broker for it to distribute to the subscription list
 
         self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("schedule/execute", l_schedule_json)
-
         """
         l_topic = self.m_pyhouse_obj.Computer.Mqtt.Prefix + p_topic
         for l_broker in self.m_pyhouse_obj.Computer.Mqtt.Brokers.itervalues():

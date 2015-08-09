@@ -33,9 +33,8 @@ class Util(object):
     """
 
     def get_device_obj(self, p_pyhouse_obj, p_address):
-        l_ret = self._find_addr(p_pyhouse_obj.House.DeviceOBJs.Thermostats, p_address)
+        l_ret = self._find_addr(p_pyhouse_obj.House.Thermostats, p_address)
         return l_ret
-
 
 
 class ihvac_utility(object):

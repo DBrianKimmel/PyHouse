@@ -31,7 +31,7 @@ class SetupMixin(object):
 
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
-        self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
+        self.m_pyhouse_obj.House.FamilyData = family.API().build_lighting_family_info()
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_api = thermostats.API()
         self.m_thermostat_obj = ThermostatData()
@@ -42,7 +42,7 @@ class Test(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.House.RefOBJs.FamilyData = family.API().build_lighting_family_info()
+        self.m_pyhouse_obj.House.FamilyData = family.API().build_lighting_family_info()
 
     def tearDown(self):
         pass

@@ -16,7 +16,6 @@ from twisted.internet.defer import Deferred, gatherResults, maybeDeferred
 from twisted.internet import protocol, error, defer, udp
 
 # Import PyMh files and modules.
-# from Modules.Core.data_objects import PyHouseData
 from Modules.Computer.Nodes import nodes
 from Modules.Computer.Nodes.test import test_inter_node_comm
 from test import xml_data
@@ -174,7 +173,6 @@ class C_11(SetupMixin, unittest.TestCase):
     def test_03_StartClient(self):
         print("Test 003")
         # l_api = nodes.API()
-        # l_pyhouse_obj = PyHouseData()
         # self.m_api._start_discovery_client(self.m_pyhouse_obj)
 
     def test_04_oldAddress(self):

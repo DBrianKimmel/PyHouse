@@ -19,7 +19,7 @@ Rooms and lights and HVAC are associated with a particular house.
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Core.data_objects import HouseAPIs, HouseInformation, RefHouseObjs, DeviceHouseObjs
+from Modules.Core.data_objects import HouseAPIs, HouseInformation
 from Modules.Housing.location import Xml as locationXML
 from Modules.Housing.rooms import Xml as roomsXML
 from Modules.Entertainment.entertainment import API as entertainmentAPI
@@ -46,8 +46,6 @@ class Xml(object):
 
     def _read_base(self, p_xml):
         l_obj = HouseInformation()
-        l_obj.RefOBJs = RefHouseObjs()
-        l_obj.DeviceOBJs = DeviceHouseObjs()
         XmlConfigTools.read_base_object_xml(l_obj, p_xml)
         return l_obj
 
@@ -56,8 +54,8 @@ class Xml(object):
         """
         l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
         l_house = self._read_base(l_xml)
-        l_house.RefOBJs.Location = locationXML.read_location_xml(l_xml)
-        l_house.RefOBJs.Rooms = roomsXML.read_rooms_xml(l_xml)
+        l_house.Location = locationXML.read_location_xml(l_xml)
+        l_house.Rooms = roomsXML.read_rooms_xml(l_xml)
         return l_house
 
     def write_house_xml(self, p_pyhouse_obj):
@@ -65,8 +63,8 @@ class Xml(object):
         """
         l_house_obj = p_pyhouse_obj.House
         l_house_xml = XmlConfigTools.write_base_object_xml('HouseDivision', l_house_obj)
-        l_house_xml.append(locationXML.write_location_xml(l_house_obj.RefOBJs.Location))
-        l_house_xml.append(roomsXML.write_rooms_xml(l_house_obj.RefOBJs.Rooms))
+        l_house_xml.append(locationXML.write_location_xml(l_house_obj.Location))
+        l_house_xml.append(roomsXML.write_rooms_xml(l_house_obj.Rooms))
         return l_house_xml
 
 
@@ -96,8 +94,6 @@ class Utility(object):
     @staticmethod
     def _init_pyhouse_data(p_pyhouse_obj):
         p_pyhouse_obj.House = HouseInformation()
-        p_pyhouse_obj.House.RefOBJs = RefHouseObjs()
-        p_pyhouse_obj.House.DeviceOBJs = DeviceHouseObjs()
 
     def start_house_parts(self, p_pyhouse_obj):
         # These two must start before the other things
@@ -131,8 +127,8 @@ class Utility(object):
         Retrieve datetime.datetime for sunrise and sunset.
         """
         p_pyhouse_obj.APIs.House.SunRiseSetAPI.Start()
-        p_pyhouse_obj.House.RefOBJs.Location.RiseSet.SunRise = p_pyhouse_obj.APIs.House.SunRiseSetAPI.get_sunrise_datetime()
-        p_pyhouse_obj.House.RefOBJs.Location.RiseSet.SunSet = p_pyhouse_obj.APIs.House.SunRiseSetAPI.get_sunset_datetime()
+        p_pyhouse_obj.House.Location.RiseSet.SunRise = p_pyhouse_obj.APIs.House.SunRiseSetAPI.get_sunrise_datetime()
+        p_pyhouse_obj.House.Location.RiseSet.SunSet = p_pyhouse_obj.APIs.House.SunRiseSetAPI.get_sunset_datetime()
         pass
 
 

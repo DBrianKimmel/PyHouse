@@ -22,7 +22,7 @@ from Modules.Families.Insteon.Insteon_xml import Xml as InsteonXmlAPI
 from Modules.Core import conversions
 from Modules.Lighting.lighting_core import API as lightingCoreAPI
 from test.xml_data import XML_LONG
-from Modules.Lighting.test.xml_lights import TESTING_LIGHTING_LIGHTS_INSTEON_NAME_1
+from Modules.Lighting.test.xml_lights import TESTING_LIGHTING_LIGHTS_NAME_1
 from Modules.Families.Insteon.test.xml_insteon import \
         TESTING_INSTEON_ADDRESS, \
         TESTING_INSTEON_DEVCAT, \
@@ -76,7 +76,7 @@ class A1_Prep(SetupMixin, unittest.TestCase):
     def test_04_Objs(self):
         """ Did we get everything set up for the rest of the tests of this class.
         """
-        # PrettyPrintAny(self.m_pyhouse_obj.House.DeviceOBJs, 'DeviceOBJs')
+        pass
 
     def test_05_XML(self):
         """ Did we get everything set up for the rest of the tests of this class.
@@ -118,7 +118,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         l_light = self.m_core_api.read_core_lighting_xml(self.m_device, self.m_xml.light, self.m_version)
         # PrettyPrintAny(l_light, 'Light')
         # PrettyPrintAny(self.m_device, 'Device')
-        self.assertEqual(l_light.Name, TESTING_LIGHTING_LIGHTS_INSTEON_NAME)
+        self.assertEqual(l_light.Name, TESTING_LIGHTING_LIGHTS_NAME_1)
         self.assertEqual(l_light.DeviceFamily, 'Insteon')
 
     def test_04_InsteonLight(self):
@@ -126,7 +126,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         l_ret = self.m_api.ReadXml(l_light, self.m_xml.light)
         # PrettyPrintAny(l_ret, 'Lret')
         # PrettyPrintAny(l_light, 'Light Device 2')
-        self.assertEqual(l_light.Name, TESTING_LIGHTING_LIGHTS_INSTEON_NAME)
+        self.assertEqual(l_light.Name, TESTING_LIGHTING_LIGHTS_NAME_1)
         self.assertEqual(l_light.DeviceFamily, TESTING_DEVICE_FAMILY)
         self.assertEqual(l_light.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS))
 

@@ -39,11 +39,12 @@ class FamUtil(object):
         Given some device object, extract the Family Name
         """
         try:
-            l_family_obj = p_pyhouse_obj.House.RefOBJs.FamilyData[p_device_obj.DeviceFamily]
+            l_family_obj = p_pyhouse_obj.House.FamilyData[p_device_obj.DeviceFamily]
         except Exception as e_err:
-            # PrettyPrintAny(p_pyhouse_obj.House.RefOBJs.FamilyData, 'Fams')
-            LOG.error('Could not get family object for Name:{}\n\tFamily: {}\n\t{}'.format(p_device_obj.Name, p_device_obj.DeviceFamily, e_err))
-            l_family_obj = p_pyhouse_obj.House.RefOBJs.FamilyData['Null']
+            LOG.error('Could not get family object for Name:{}\n\tFamily: {}\n\t{}'.format(
+                        p_device_obj.Name,
+                        p_device_obj.DeviceFamily, e_err))
+            l_family_obj = p_pyhouse_obj.House.FamilyData['Null']
         return l_family_obj
 
     @staticmethod
@@ -95,7 +96,7 @@ class FamUtil(object):
         l_dev_name = FamUtil._get_device_name(p_device_obj)
         try:
             l_family = FamUtil.get_family(p_device_obj)
-            l_family_obj = p_pyhouse_obj.House.RefOBJs.FamilyData[l_family]
+            l_family_obj = p_pyhouse_obj.House.FamilyData[l_family]
             l_api = l_family_obj.FamilyModuleAPI
         except:
             l_msg = 'ERROR - Device:"{}"\n\tFamily:"{}"\n\tCannot find API info '.format(l_dev_name, l_family)
@@ -113,7 +114,6 @@ class FamUtil(object):
         @return: The XmlApi of the family specific data.
         """
         l_family_obj = FamUtil._get_family_obj(p_pyhouse_obj, p_device_obj)
-        # LOG.warning('Name:{}, Family:{}'.format(l_dev_name, p_device_obj.DeviceFamily))
         try:
             l_xmlAPI = l_family_obj.FamilyXmlModuleAPI
         except:
@@ -125,6 +125,9 @@ class FamUtil(object):
     @staticmethod
     def read_family_data(p_pyhouse_obj, p_device_obj, p_xml):
         """
+        This is a dispatch type routine.  It will use the DeviceFamily field contents to run the
+        appropiate family XML-read routine.
+
         Get the family specific XML data for any device.
 
         @param p_pyhouse_obj: is the entire PyHouse Data

@@ -112,7 +112,6 @@ class C03_House(SetupMixin, unittest.TestCase):
 
     def test_01_Before(self):
         # PrettyPrintAny(self.m_pyhouse_obj.House, 'PyHouse.House Before')
-        # PrettyPrintAny(self.m_pyhouse_obj.House.RefOBJs, 'PyHouse.House.RefOBJs Before')
         pass
 
     def test_02_Base(self):
@@ -143,8 +142,8 @@ class C04_Json(SetupMixin, unittest.TestCase):
     def test_01_HouseInfo(self):
         l_json = web_utils.GetJSONHouseInfo(self.m_pyhouse_obj)
         l_obj = jsonpickle.decode(l_json)
-        PrettyPrintAny(l_json, 'JSON', 60)
-        PrettyPrintAny(l_obj, 'Decoded', 60)
+        # PrettyPrintAny(l_json, 'JSON', 60)
+        # PrettyPrintAny(l_obj, 'Decoded', 60)
         self.assertEquals(l_obj['Name'], 'Test House')
         self.assertEquals(l_obj['Key'], 0)
         self.assertEquals(l_obj['Active'], True)
@@ -153,7 +152,7 @@ class C04_Json(SetupMixin, unittest.TestCase):
     def test_02_ComputerInfo(self):
         l_json = web_utils.GetJSONComputerInfo(self.m_pyhouse_obj)
         l_obj = jsonpickle.decode(l_json)
-        PrettyPrintAny(l_json, 'JSON', 60)
-        PrettyPrintAny(l_obj, 'Decoded', 60)
+        # PrettyPrintAny(l_json, 'JSON', 60)
+        # PrettyPrintAny(l_obj, 'Decoded', 60)
 
 # ## END DBK

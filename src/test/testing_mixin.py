@@ -21,7 +21,7 @@ from Modules.Core.data_objects import \
             HouseInformation, HouseAPIs, \
             LocationData, \
             TwistedInformation, \
-            XmlInformation, RefHouseObjs, DeviceHouseObjs
+            XmlInformation
 
 
 class XmlData(object):
@@ -86,9 +86,7 @@ class SetupPyHouseObj(object):
         l_ret.Name = 'Test House'
         l_ret.Active = True
         l_ret.Key = 0
-        l_ret.RefOBJs = RefHouseObjs()
-        l_ret.DeviceOBJs = DeviceHouseObjs()
-        l_ret.RefOBJs.Location = LocationData()
+        l_ret.Location = LocationData()
         return l_ret
 
     def _build_computer(self):

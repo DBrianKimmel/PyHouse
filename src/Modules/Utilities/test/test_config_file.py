@@ -7,7 +7,7 @@
 @note:      Created on Jul 15, 2014
 @Summary:
 
-Passed all 4 tests - DBK - 2015-07-20
+Passed all 7 tests - DBK - 2015-08-07
 
 """
 
@@ -41,7 +41,7 @@ class A1_XML(SetupMixin, unittest.TestCase):
 
     def test_01_File(self):
         l_file = Util._open_config_file(self.m_pyhouse_obj)
-        print('File: {}\n'.format(l_file.name))
+        # print('File: {}\n'.format(l_file.name))
 
     def test_02_OpenConfig(self):
         l_file = Util._open_config_file(self.m_pyhouse_obj)
@@ -75,7 +75,7 @@ class B1_1_3(SetupMixin, unittest.TestCase):
         SetupPyHouseObj().BuildXml(self.m_xml.root)
         self.m_api = configAPI(self.m_pyhouse_obj)
 
-    def test_01_Version(self):
+    def test_01_Version1_3(self):
         l_pyh = self.m_api.read_xml_config_file(self.m_pyhouse_obj)
         l_ret = self.m_api.get_xml_config_file_version(self.m_pyhouse_obj)
         # PrettyPrintAny(l_ret, 'XmlData')
@@ -91,10 +91,11 @@ class B2_1_4(SetupMixin, unittest.TestCase):
         SetupPyHouseObj().BuildXml(self.m_xml.root)
         self.m_api = configAPI(self.m_pyhouse_obj)
 
-    def test_01_Version(self):
+    def test_01_Version1_4(self):
         l_pyh = self.m_api.read_xml_config_file(self.m_pyhouse_obj)
+        # PrettyPrintAny(l_pyh.Xml, 'PYH')
         l_ret = self.m_api.get_xml_config_file_version(self.m_pyhouse_obj)
         # PrettyPrintAny(l_ret, 'XmlData')
-        self.assertEqual(l_ret, '1.4.0')
+        self.assertEqual(l_ret, '1.3.2')
 
 # ## END DBK

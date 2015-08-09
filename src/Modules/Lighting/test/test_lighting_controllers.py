@@ -44,7 +44,7 @@ class SetupMixin(object):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_family = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
-        self.m_pyhouse_obj.House.RefOBJs.FamilyData = self.m_family
+        self.m_pyhouse_obj.House.FamilyData = self.m_family
         self.m_api = controllerAPI()
         self.m_controller_obj = ControllerData()
         self.m_version = '1.4.0'
@@ -61,7 +61,6 @@ class A1(SetupMixin, unittest.TestCase):
     def test_01_FindXml(self):
         """ Be sure that the XML contains the right stuff.
         """
-        # PrettyPrintAny(self.m_pyhouse_obj, 'PyHouseData')
         self.assertEqual(self.m_xml.root.tag, 'PyHouse')
         self.assertEqual(self.m_xml.controller_sect.tag, 'ControllerSection')
         self.assertEqual(self.m_xml.controller.tag, 'Controller')
@@ -203,7 +202,7 @@ class C1_Write(SetupMixin, unittest.TestCase):
         """ Write out the XML file for the location section
         """
         l_controllers = self.m_api.read_all_controllers_xml(self.m_pyhouse_obj, self.m_xml.controller_sect, self.m_version)
-        self.m_pyhouse_obj.House.DeviceOBJs.Controllers = l_controllers
+        self.m_pyhouse_obj.House.Controllers = l_controllers
         l_xml = self.m_api.write_all_controllers_xml(self.m_pyhouse_obj)
         # PrettyPrintAny(l_xml, 'AllControllers', 100)
 

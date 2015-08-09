@@ -15,7 +15,7 @@ used for testing
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Computer.test.xml_computer import COMPUTER_DIVISION_XML
+from Modules.Computer.test.xml_computer import XML_COMPUTER_DIVISION
 from Modules.Housing.test.xml_housing import HOUSE_DIVISION_XML, HOUSE_DIVISION_XML_1_3
 
 
@@ -35,7 +35,13 @@ XML_MISSING = ''
 
 # No sections
 XML_EMPTY = """
-<PyHouse>
+<PyHouse
+    Version='1.3.2'
+    xmlns:comp="http://PyHouse.Org/ComputerDiv"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://PyHouse.org schemas/PyHouse.xsd"
+>
+<!-- Updated by PyHouse 2001-12-23 12:23:34.0 -->
 </PyHouse>
 """
 
@@ -83,13 +89,13 @@ XML_SHORT = """
 
 
 
-PYHOUSE_HEADER_XML = """
+L_PYHOUSE_HEADER_XML = """
 <PyHouse
     Version='1.4.0'
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://PyHouse.org schemas/PyHouse.xsd">"""
 
-PYHOUSE_HEADER_XML_1_3 = """
+L_PYHOUSE_HEADER_XML_1_3 = """
 <PyHouse
 
     Version='1.3.2'
@@ -98,15 +104,15 @@ PYHOUSE_HEADER_XML_1_3 = """
 
 # Everything as expected in a running system.
 XML_LONG = '\n'.join([
-    PYHOUSE_HEADER_XML,
-    COMPUTER_DIVISION_XML,
+    L_PYHOUSE_HEADER_XML,
+    XML_COMPUTER_DIVISION,
     HOUSE_DIVISION_XML,
     "</PyHouse>"
 ])
 
 XML_LONG_1_3 = '\n'.join([
-    PYHOUSE_HEADER_XML_1_3,
-    COMPUTER_DIVISION_XML,
+    L_PYHOUSE_HEADER_XML_1_3,
+    XML_COMPUTER_DIVISION,
     HOUSE_DIVISION_XML_1_3,
     "</PyHouse>"
 ])
@@ -114,6 +120,7 @@ XML_LONG_1_3 = '\n'.join([
 
 XSD_HEADER = """
 """
+
 XSD_LONG = XSD_HEADER
 
 # ## END DBK
