@@ -221,53 +221,59 @@ def _format_object(p_title, p_obj, suppressdoc = True, maxlen = 180, lindent = 2
 
 class PrettyFormatAny(object):
 
-    def __init__(self, p_any, title = '', maxlen = 120):
-        self.m_indent = 0
-        self.m_type = type(p_any)
-        print('===== ', title, '===== ', self.m_type)
-        self._type_dispatcher(p_any, maxlen, self.m_indent)
+    @staticmethod
+    def form(p_any, title, maxlen = 120):
+        l_indent = 0
+        l_type = type(p_any)
+        l_ret = '\n===== {} ===== {}\n'.format(title, l_type)
+        l_ret += PrettyFormatAny._type_dispatcher(p_any, maxlen, l_indent) + '\n'
+        return l_ret
 
-
-    def _type_dispatcher(self, p_any, maxlen, indent):
+    @staticmethod
+    def _type_dispatcher(p_any, maxlen, indent):
         if isinstance(p_any, dict):
-            self._print_dict(p_any, maxlen = maxlen, indent = indent)
+            l_ret = PrettyFormatAny._format_dict(p_any, maxlen = maxlen, indent = indent)
         elif isinstance(p_any, ET.Element):
-            self._print_XML(p_any, maxlen = maxlen, indent = indent)
+            l_ret = PrettyFormatAny._format_XML(p_any, maxlen = maxlen, indent = indent)
         elif isinstance(p_any, str):
-            self._format_string(p_any, maxlen = maxlen, indent = indent)
+            l_ret = PrettyFormatAny._format_string(p_any, maxlen = maxlen, indent = indent)
         elif isinstance(p_any, unicode):
-            self._print_unicode(p_any, maxlen = maxlen, indent = indent)
+            l_ret = PrettyFormatAny.format_unicode(p_any, maxlen = maxlen, indent = indent)
         elif isinstance(p_any, list):
-            self._print_list(p_any, maxlen = maxlen, indent = indent + 4)
+            l_ret = PrettyFormatAny._format_list(p_any, maxlen = maxlen, indent = indent + 4)
         elif isinstance(p_any, type(None)):
-            self._print_none(p_any)
+            l_ret = PrettyFormatAny._format_none(p_any)
         else:  # Default to an object
-            self._print_object(p_any, maxlen = maxlen, indent = indent)
-        print('---------------------------------')
-
+            l_ret = PrettyFormatAny._format_object(p_any, maxlen = maxlen, indent = indent)
+        l_ret += '---------------------------------'
+        return l_ret
 
     @staticmethod
     def _format_string(p_obj, maxlen, indent):
-        print(PrettyPrintCols(('', p_obj), [indent, maxlen - indent], ' '))
+        l_ret = _format_cols(('', p_obj), [indent, maxlen - indent], ' ')
+        return l_ret
 
+    @staticmethod
+    def _format_unicode(p_obj, maxlen, indent):
+        l_ret = _format_cols(('', p_obj), [indent, maxlen - indent], ' ')
+        return l_ret
 
-    def _print_unicode(self, p_obj, maxlen, indent):
-        # print(dir(p_obj))
-        print(PrettyPrintCols(('', p_obj), [indent, maxlen - indent], ' '))
-
-
-    def _print_dict(self, p_dict, maxlen, indent):
+    @staticmethod
+    def _format_dict(p_dict, maxlen, indent):
+        l_ret = ''
         l_tabbedwidths = [indent, 30, maxlen - 30]
         for key, val in p_dict.iteritems():
-            print(PrettyPrintCols(('', str(key), str(val)), l_tabbedwidths, ' '))
+            l_ret += _format_cols(('', str(key), str(val)), l_tabbedwidths, ' ')
+        return l_ret
 
-
-    def _print_XML(self, p_element, maxlen, indent):
+    @staticmethod
+    def _format_XML(p_element, maxlen, indent):
         """Return a pretty-printed XML string for the Element.
 
         @param p_element: an element to format as a readable XML tree.
         @return: a string formatted with indentation and newlines.
         """
+        l_ret = ''
         l_tabbedwidths = [indent, 30, maxlen - 30]
         l_rough_string = ET.tostring(p_element, 'utf-8')
         l_reparsed = minidom.parseString(l_rough_string)
@@ -275,32 +281,40 @@ class PrettyFormatAny(object):
         l_lines = l_doc.splitlines()
         for l_line in l_lines:
             if not l_line.isspace():
-                print(_format_line(l_line, maxlen = maxlen))
+                l_ret += _format_line(l_line, maxlen = maxlen)
+        return l_ret
 
-
-    def _print_list(self, p_obj, maxlen, indent):
+    @staticmethod
+    def _format_list(p_obj, maxlen, indent):
         maxlen = maxlen
         l_tabbedwidths = [indent, 30, maxlen - 30]
         l_ix = 1
+        l_ret = ''
         for l_line in p_obj:
-            print('{}\t{}'.format(l_ix, l_line))
+            l_ret += '{}\t{}\n'.format(l_ix, l_line)
             l_ix += 1
+        return l_ret
 
-    def _print_object(self, p_obj, maxlen, indent = 24, maxspew = 2000):
+    @staticmethod
+    def _format_object(p_obj, maxlen, indent = 24, maxspew = 2000):
         l_col_1_width = 28
         l_tab = 4
         l_attrs = []
         l_tabbedwidths = [indent, l_col_1_width - l_tab, maxlen - l_col_1_width - l_tab]
         l_filtered = filter(lambda aname: not aname.startswith('__'), dir(p_obj))
+        l_ret = ''
         for l_slot in l_filtered:
             l_attr = getattr(p_obj, l_slot)
             l_attrs.append((l_slot, l_attr))
         l_attrs.sort()
         for (attr, l_val) in l_attrs:
-            print(PrettyPrintCols(('', attr, truncstring(str(l_val), maxspew)), l_tabbedwidths, ' '))
+            l_ret += _format_cols(('', attr, _trunc_string(str(l_val), maxspew)), l_tabbedwidths, ' ') + '\n'
+        return l_ret
 
-    def _print_none(self, p_obj):
-        print('Object is "None" {}'.format(p_obj))
+    @staticmethod
+    def _format_none(p_obj):
+        l_ret = 'Object is "None" {}\n'.format(p_obj)
+        return l_ret
 
 
 
