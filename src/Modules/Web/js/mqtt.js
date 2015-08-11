@@ -134,7 +134,7 @@ helpers.Widget.subclass(mqtt, 'MqttWidget').methods(
     function createEntry(self) {
     	var l_ix = 0;
     	try {
-    		l_ix = Object.keys(globals.Computer.Mqtt.Brokers).length);
+    		l_ix = Object.keys(globals.Computer.Mqtt.Brokers).length;
     	}
     	catch(e_err) {
     		l_ix = 0;
