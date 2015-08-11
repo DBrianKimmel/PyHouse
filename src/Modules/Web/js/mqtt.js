@@ -132,13 +132,14 @@ helpers.Widget.subclass(mqtt, 'MqttWidget').methods(
     	return p_data;
     },
     function createEntry(self) {
-    	var l_data = 0;
+    	var l_ix = 0;
     	try {
-            l_data = createBaseEntry(self, Object.keys(globals.Computer.Mqtt.Brokers).length);    		
+    		l_ix = Object.keys(globals.Computer.Mqtt.Brokers).length);
     	}
     	catch(e_err) {
-    		l_data = 0
+    		l_ix = 0;
     	}
+        var l_data = createBaseEntry(self, l_ix);    		
         l_data = self.createMqttEntry(l_data);
         return l_data;
     },
