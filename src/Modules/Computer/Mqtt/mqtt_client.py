@@ -62,6 +62,7 @@ class API(Util):
         p_pyhouse_obj.APIs.Computer.MqttAPI = self
         p_pyhouse_obj.Computer.Mqtt = MqttInformation()
         p_pyhouse_obj.Computer.Mqtt.Prefix = 'ReSeT'
+        p_pyhouse_obj.Computer.Mqtt.Brokers = {}
         LOG.warn(PrettyFormatAny.form(p_pyhouse_obj.Computer, 'PyHouse Obj'))
         LOG.warn(PrettyFormatAny.form(p_pyhouse_obj.Computer.Mqtt, 'PyHouse Obj Mqtt'))
         LOG.info("Initialized.")
