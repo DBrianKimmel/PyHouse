@@ -186,6 +186,14 @@ class MqttBrokerData(BaseObject):
         self._ProtocolAPI = None
 
 
+class MqttJson(object):
+    """
+    """
+    def __init__(self):
+        self.Sender = ''  # The Mqtt name of the sending device.
+        self.DateTime = None  # The time on the sending device
+
+
 class HouseInformation(BaseObject):
     """The collection of information about a house.
     Causes JSON errors due to API type data methinks.

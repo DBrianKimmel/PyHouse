@@ -170,7 +170,9 @@ helpers.Widget.subclass(mqtt, 'MqttWidget').methods(
 		var l_json;
 		switch(l_ix) {
 		case '10003':  // Change Button
-	    	l_json = JSON.stringify(self.fetchEntry());
+			var l_entry = self.fetchEntry()
+			console.log("mqtt.handleDataEntryOnClick() - Entry = %O", l_entry);
+	    	l_json = JSON.stringify(l_entry);
 	        l_defer = self.callRemote("saveMqttData", l_json);  // @ web_schedule
 			l_defer.addCallback(cb_handleDataEntryOnClick);
 			l_defer.addErrback(eb_handleDataEntryOnClick);
