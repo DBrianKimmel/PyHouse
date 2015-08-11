@@ -172,7 +172,7 @@ class ComputerInformation(BaseObject):
 
 class MqttInformation(object):
     self.Prefix = ''
-    self.Brokers = None  # MqttBrokerData
+    self.Brokers = {}  # MqttBrokerData
 
 
 class MqttBrokerData(BaseObject):
