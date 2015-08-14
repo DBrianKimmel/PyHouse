@@ -18,6 +18,9 @@ Json is now used for Mqtt messages in addition to web browser.
 import jsonpickle
 
 # Import PyMh files
+from Modules.Computer import logging_pyh as Logger
+
+LOG = Logger.getLogger('PyHouse.Json_Tools     ')
 
 
 def encode_json(p_obj):
@@ -26,7 +29,7 @@ def encode_json(p_obj):
     try:
         l_json = jsonpickle.encode(p_obj, unpicklable = False, max_depth = 5)
     except (TypeError, ValueError) as l_error:
-        print('web_utils.encode_json ERROR {0:}'.format(l_error))
+        LOG.error('ERROR {}'.format(l_error))
         l_json = u'{}'
     return l_json
 

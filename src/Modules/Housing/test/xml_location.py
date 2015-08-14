@@ -13,19 +13,30 @@ The Olson Time Zone names are used and supported.
 
 """
 
+TESTING_LOCATION_STREET = '5191 N Pink Poppy Dr'
+TESTING_LOCATION_CITY = 'Beverly Hills'
+TESTING_LOCATION_STATE = 'Florida'
+TESTING_LOCATION_ZIP_CODE = '34465'
 
-LOCATION_XML = """
-<LocationSection>
-    <Street>5191 N Pink Poppy Dr</Street>
-    <City>Beverly Hills</City>
-    <State>Florida</State>
-    <ZipCode>34465</ZipCode>
+L_LOCATION_STREET = '     <Street>' + TESTING_LOCATION_STREET + '</Street>'
+L_LOCATION_CITY = '     <City>' + TESTING_LOCATION_CITY + '</City>'
+L_LOCATION_STATE = '     <State>' + TESTING_LOCATION_CITY + '</State>'
+L_LOCATION_ZIP_CODE = '     <ZipCode>' + TESTING_LOCATION_CITY + '</ZipCode>'
+
+XML_LOCATION = '\n'.join([
+    '  <LocationSection>',
+    L_LOCATION_STREET,
+    L_LOCATION_CITY,
+    L_LOCATION_STATE,
+    L_LOCATION_ZIP_CODE,
+    """
     <Phone>(352) 270-8096</Phone>
     <Latitude>28.938448</Latitude>
     <Longitude>-82.517208</Longitude>
     <TimeZoneName>America/New_York</TimeZoneName>
-</LocationSection>
-"""
+""",
+    '  </LocationSection>'
+])
 
 
 LOCATION_XSD = """

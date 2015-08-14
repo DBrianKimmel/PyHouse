@@ -13,16 +13,24 @@
 
 # Import system type stuff
 import copy
+import datetime
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import NodeData, MqttInformation
+from Modules.Core.data_objects import NodeData, MqttInformation, MqttJson
 from Modules.Computer.Mqtt import mqtt_protocol
 from Modules.Computer.Mqtt.mqtt_xml import Xml as mqttXML
 from Modules.Web import web_utils
-from Modules.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Utilities import json_tools, xml_tools
 from Modules.Computer import logging_pyh as Logger
+from collections import namedtuple
 
 LOG = Logger.getLogger('PyHouse.Mqtt_Client    ')
+
+
+class Struct:
+    def __init__(self, **args):
+        self.__dict__.update(args)
 
 
 class Util(object):
@@ -46,11 +54,50 @@ class Util(object):
                 l_broker._ProtocolAPI = None
             else:
                 l_factory = mqtt_protocol.MqttReconnectingClientFactory(p_pyhouse_obj, "DBK1", l_broker)
-                l_connector = p_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_factory)
+                _l_connector = p_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_factory)
                 LOG.info('Connected to broker: {}'.format(l_broker.Name))
                 l_count += 1
         LOG.info('TCP Connected to {} Broker(s).'.format(l_count))
         return l_count
+
+    @staticmethod
+    def _make_topic(p_pyhouse_obj, p_topic):
+        l_topic = p_pyhouse_obj.Computer.Mqtt.Prefix + p_topic
+        return l_topic
+
+    @staticmethod
+    def _dict2Obj(p_dict):
+        """Convert a dict to an Object.
+        """
+        l_obj = namedtuple('MyObj', p_dict)
+        return l_obj
+
+    @staticmethod
+    def _json2dict(p_json):
+        """Convert JSON to Obj.
+        """
+        l_ret = json_tools.decode_json_unicode(p_json)
+        return l_ret
+
+    @staticmethod
+    def _make_message(p_pyhouse_obj, message_json = None, message_obj = None):
+        """
+        @param p_pyhouse_obj: is the entire PyHouse Data tree.
+        @param message_json: is message that is already json encoded\
+        @param message_obj: is additional object that will be added into the meddage as Json.
+        """
+        l_message = MqttJson()
+        l_message.Sender = p_pyhouse_obj.Computer.Name
+        l_message.DateTime = datetime.datetime.now()
+        if message_json != None:
+            l_dict = Util._json2dict(message_json)
+            l_tmp = Struct(**l_dict)
+            xml_tools.stuff_new_attrs(l_message, l_tmp)
+            print(l_tmp)
+        if message_obj != None:
+            xml_tools.stuff_new_attrs(l_message, message_obj)
+        l_json = json_tools.encode_json(l_message)
+        return l_json
 
 
 class API(Util):
@@ -63,15 +110,11 @@ class API(Util):
         p_pyhouse_obj.Computer.Mqtt = MqttInformation()
         p_pyhouse_obj.Computer.Mqtt.Prefix = 'ReSeT'
         p_pyhouse_obj.Computer.Mqtt.Brokers = {}
-        LOG.warn(PrettyFormatAny.form(p_pyhouse_obj.Computer, 'PyHouse Obj'))
-        LOG.warn(PrettyFormatAny.form(p_pyhouse_obj.Computer.Mqtt, 'PyHouse Obj Mqtt'))
         LOG.info("Initialized.")
 
     def Start(self):
-        l_config_dict = mqttXML().read_mqtt_xml(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.Computer.Mqtt.Brokers = l_config_dict
-        self.m_pyhouse_obj.Computer.Mqtt.Prefix = 'ReSeT'
-        if l_config_dict != {}:
+        self.m_pyhouse_obj.Computer.Mqtt = self.LoadXml()
+        if self.m_pyhouse_obj.Computer.Mqtt.Brokers != {}:
             l_count = self.client_connect_all_brokers(self.m_pyhouse_obj)
             LOG.info("Mqtt {} broker(s) Started.".format(l_count))
         else:
@@ -80,28 +123,38 @@ class API(Util):
     def Stop(self):
         pass
 
+    def LoadXml(self):
+        """ Load the Mqtt xml info.
+        """
+        l_mqtt = MqttInformation()
+        l_mqtt.Prefix = self.m_pyhouse_obj.Computer.Name
+        l_mqtt.Brokers = mqttXML.read_mqtt_xml(self.m_pyhouse_obj)
+        return l_mqtt
+
     def SaveXml(self, p_xml):
         l_xml = mqttXML().write_mqtt_xml(self.m_pyhouse_obj.Computer.Mqtt.Brokers)
         p_xml.append(l_xml)
         LOG.info("Saved Mqtt XML.")
         return p_xml
 
-    def MqttPublish(self, p_topic, p_message):
+    def MqttPublish(self, p_topic, message_json = None, message_obj = None):
         """Send a topic, message to the broker for it to distribute to the subscription list
 
         self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("schedule/execute", l_schedule_json)
+        @param p_topic: is the partial topic, the prefix will be prepended.
+        @param message_json : is the json message we want to send
+        @param message_obj: is an additional object thhat we will convert to json and merge it into the message.
         """
-        l_topic = self.m_pyhouse_obj.Computer.Mqtt.Prefix + p_topic
-        LOG.warn(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'PyHouse Obj'))
-        LOG.warn(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Mqtt, 'PyHouse Obj Mqtt'))
+        l_topic = Util._make_topic(self.m_pyhouse_obj, p_topic)
+        l_message = Util._make_message(self.m_pyhouse_obj, message_json, message_obj)
         for l_broker in self.m_pyhouse_obj.Computer.Mqtt.Brokers.itervalues():
             if not l_broker.Active:
                 continue
             try:
-                l_broker._ProtocolAPI.publish(l_topic, p_message)
+                l_broker._ProtocolAPI.publish(l_topic, l_message)
                 LOG.info('Mqtt publishing:\n\tBroker: {}\n\tTopic:{}'.format(l_broker.Name, l_topic))
             except AttributeError as e_err:
-                LOG.error("Mqtt Unpublished.\n\tERROR:{}\n\tTopic:{}\n\tMessage:{}".format(e_err, l_topic, p_message))
+                LOG.error("Mqtt Unpublished.\n\tERROR:{}\n\tTopic:{}\n\tMessage:{}".format(e_err, l_topic, l_message))
 
     def MqttDispatch(self, p_topic, p_message):
         """Dispatch a received MQTT message according to the topic.

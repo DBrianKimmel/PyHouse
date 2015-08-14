@@ -250,12 +250,12 @@ class PrettyFormatAny(object):
 
     @staticmethod
     def _format_string(p_obj, maxlen, indent):
-        l_ret = _format_cols(('', p_obj), [indent, maxlen - indent], ' ')
+        l_ret = _format_cols(('', p_obj), [indent, maxlen - indent], ' ') + '\n'
         return l_ret
 
     @staticmethod
     def _format_unicode(p_obj, maxlen, indent):
-        l_ret = _format_cols(('', p_obj), [indent, maxlen - indent], ' ')
+        l_ret = _format_cols(('', p_obj), [indent, maxlen - indent], ' ') + '\n'
         return l_ret
 
     @staticmethod
@@ -263,7 +263,7 @@ class PrettyFormatAny(object):
         l_ret = ''
         l_tabbedwidths = [indent, 30, maxlen - 30]
         for key, val in p_dict.iteritems():
-            l_ret += _format_cols(('', str(key), str(val)), l_tabbedwidths, ' ')
+            l_ret += _format_cols(('', str(key), str(val)), l_tabbedwidths, ' ') + '\n'
         return l_ret
 
     @staticmethod
@@ -281,7 +281,7 @@ class PrettyFormatAny(object):
         l_lines = l_doc.splitlines()
         for l_line in l_lines:
             if not l_line.isspace():
-                l_ret += _format_line(l_line, maxlen = maxlen)
+                l_ret += _format_line(l_line, maxlen = maxlen) + '\n'
         return l_ret
 
     @staticmethod

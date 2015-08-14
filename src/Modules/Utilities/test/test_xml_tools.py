@@ -6,7 +6,9 @@
 @license:   MIT License
 @note:      Created on Apr 11, 2013
 @summary:   This module is for testing XML tools.
-Passed all 49 testa - DBK 2015-07-20
+
+Passed all 49 testa - DBK 2015-08-13
+
 """
 
 # Import system type stuff
@@ -18,10 +20,10 @@ import datetime
 # Import PyMh files and modules.
 from Modules.Utilities.xml_tools import XML, PutGetXML, XmlConfigTools, stuff_new_attrs
 from Modules.Utilities import convert
-from Modules.Core.data_objects import CoreLightingData, ControllerData
+from Modules.Core.data_objects import CoreLightingData, LocationData
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
-# from Modules.Utilities.tools import PrettyPrintAny
+# from Modules.Utilities.debug_tools import PrettyFormatAny
 
 XML_INT = """
 <Test b1='True' f1='3.14158265' i1='371' t1='Test of text attribute' >
@@ -463,14 +465,15 @@ class D1_NoClass(SetupMixin, unittest.TestCase):
         self.m_pyhouse_obj = SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
 
     def test_01_StuffAttrs(self):
-        # l_objA = lighting_lights.LightingLightsAPI(self.m_pyhouse_obj).read_one_light_xml(self.m_xml.light)
         l_objA = CoreLightingData()
-        # PrettyPrintAny(l_objA, 'Obj A', 120)
-        l_objB = ControllerData()
-        # l_objAdeep = copy.deepcopy(l_objA)
-        # PrettyPrintAny(l_objB, 'Obj B', 120)
+        l_objA.Name = 'Test 1A'
+        # print(PrettyFormatAny.form(l_objA, 'Obj A'))
+        l_objB = LocationData()
+        l_objB.Street = 'Some road'
+        # print(PrettyFormatAny.form(l_objB, 'Obj B', 120))
+        #
         stuff_new_attrs(l_objA, l_objB)
-        # PrettyPrintAny(l_objA, 'Result B stuffed into A', 120)
-        self.assertEqual(l_objA.InterfaceType, l_objB.InterfaceType)
+        # print(PrettyFormatAny.form(l_objA, 'Result B stuffed into A', 120))
+        self.assertEqual(l_objA.Street, 'Some road')
 
 # ## END DBK

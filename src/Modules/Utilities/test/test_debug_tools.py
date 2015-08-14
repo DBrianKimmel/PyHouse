@@ -7,6 +7,8 @@
 @note:      Created on Aug 8, 2015
 @Summary:
 
+Passed all 5 tests - DBK - 2015-08-11
+
 """
 
 # Import system type stuff
@@ -66,5 +68,20 @@ class A_Format(SetupMixin, unittest.TestCase):
         l_ret = debug_tools._format_object('PyHouse', self.m_pyhouse_obj, maxlen = 120, lindent = 20)
         print(l_ret)
 
+
+class B_PFA(SetupMixin, unittest.TestCase):
+    """
+    PrettyFormatAllj
+    """
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_01_String(self):
+        l_str = "The quick brown fox jumpped over the lazy dog's back"
+        l_len = len(l_str)
+        l_ret = debug_tools.PrettyFormatAny._format_string(l_str, maxlen = 40, indent = 10)
+        print l_ret
+        self.assertEqual(len(l_str), l_len)
+        self.assertEqual(len(l_ret), l_len + 20)
 
 # ## END DBK

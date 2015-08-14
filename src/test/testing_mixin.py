@@ -12,6 +12,9 @@
 """
 
 # Import system type stuff
+import platform
+import logging
+import sys
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import \
@@ -22,6 +25,9 @@ from Modules.Core.data_objects import \
             LocationData, \
             TwistedInformation, \
             XmlInformation
+from Modules.Utilities.tools import PrettyPrintAny
+from Modules.Computer import logging_pyh as Logger
+LOG = Logger.getLogger('PyHouse').addHandler(logging.StreamHandler(stream = sys.stderr))
 
 
 class XmlData(object):
@@ -107,6 +113,7 @@ class SetupPyHouseObj(object):
         l_pyhouse_obj.Services = self._build_services()
         l_pyhouse_obj.Twisted = self._build_twisted()
         l_pyhouse_obj.Xml = self._build_xml(p_root)
+        l_pyhouse_obj.Computer.Name = platform.node()
         return l_pyhouse_obj
 
     def BuildXml(self, p_root_xml):

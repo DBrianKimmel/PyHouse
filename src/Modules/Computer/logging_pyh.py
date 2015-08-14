@@ -33,6 +33,9 @@ import xml.etree.ElementTree as ET
 def getLogger(p_name):
     return logging.getLogger(p_name)
 
+def addHandler(p_handler):
+    logging.Logger.addHandler(p_handler)
+
 
 class ReadWriteConfigXml(object):
     """

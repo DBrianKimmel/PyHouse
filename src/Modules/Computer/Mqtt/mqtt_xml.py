@@ -40,7 +40,8 @@ class Xml(object):
             pass
         return l_obj
 
-    def read_mqtt_xml(self, p_pyhouse_obj):
+    @staticmethod
+    def read_mqtt_xml(p_pyhouse_obj):
         """Read all the broker information.
         Allow for several brokers.
         @return: a dict of broker objects keys = 0, 1, 2...

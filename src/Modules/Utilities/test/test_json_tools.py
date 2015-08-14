@@ -7,7 +7,7 @@
 @note:      Created on Jun 25, 2015
 @Summary:
 
-Passed all 1 tests - DBK - 2015-08-07
+Passed all 2 tests - DBK - 2015-08-07
 
 """
 
@@ -19,8 +19,7 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.tools import PrettyPrintAny
-from Modules.Utilities import json_tools
+from Modules.Utilities import json_tools, debug_tools
 
 
 
@@ -33,7 +32,7 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-class A01_Jsco(SetupMixin, unittest.TestCase):
+class A01_Json(SetupMixin, unittest.TestCase):
     """
     This series tests the complex PutGetXML class methods
     """
@@ -43,7 +42,15 @@ class A01_Jsco(SetupMixin, unittest.TestCase):
 
     def test_01_Encode(self):
         l_json = json_tools.encode_json(self.m_pyhouse_obj)
-        # print(l_json)
-        # PrettyPrintAny(l_json, "PyHouse_Obj")
+        print(l_json)
+        # PrettyFormatAny.form(l_json, "PyHouse_Obj")
+        self.assertSubstring('Xml', l_json)
+        self.assertSubstring('XmlOldVersion', l_json)
+
+    def test_02_Decode(self):
+        l_json = json_tools.encode_json(self.m_pyhouse_obj.Computer)
+        l_dict = json_tools.decode_json_unicode(l_json)
+        # print(debug_tools.PrettyFormatAny.form(l_dict, 'Decoded Inof'))
+        self.assertEqual(l_dict['Name'], self.m_pyhouse_obj.Computer.Name)
 
 # ## END DBK
