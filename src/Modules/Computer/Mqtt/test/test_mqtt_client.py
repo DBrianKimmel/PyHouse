@@ -146,7 +146,7 @@ class C1_Tools(SetupMixin, unittest.TestCase):
         l_json = json_tools.encode_json(l_obj)
         # print(PrettyFormatAny.form(l_json, 'Json', 80))
         l_ret = Util._json2dict(l_json)
-        print(PrettyFormatAny.form(l_ret, 'Json Decoded Object', 80))
+        # print(PrettyFormatAny.form(l_ret, 'Json Decoded Object', 80))
 
 
 class C2_Publish(SetupMixin, unittest.TestCase):
@@ -171,7 +171,7 @@ class C2_Publish(SetupMixin, unittest.TestCase):
         """ No payload
         """
         l_message = Util._make_message(self.m_pyhouse_obj)
-        print(l_message)
+        # print(l_message)
         self.assertEqual(self.jsonPair(l_message, 'Sender'), self.m_pyhouse_obj.Computer.Name)
         self.assertSubstring('DateTime', l_message)
 
@@ -183,7 +183,7 @@ class C2_Publish(SetupMixin, unittest.TestCase):
         l_data.Comment = 'The formal Living Room.'
         l_json = json_tools.encode_json(l_data)
         l_message = Util._make_message(self.m_pyhouse_obj, message_json = l_json)
-        print(PrettyFormatAny.form(l_message, 'Message', 80))
+        # print(PrettyFormatAny.form(l_message, 'Message', 80))
         self.assertEqual(self.jsonPair(l_message, 'Sender'), self.m_pyhouse_obj.Computer.Name)
         self.assertSubstring('DateTime', l_message)
         self.assertEqual(self.jsonPair(l_message, 'Name'), l_data.Name)
@@ -197,7 +197,7 @@ class C2_Publish(SetupMixin, unittest.TestCase):
         l_data.Name = 'Living Room'
         l_data.Comment = 'The formal Living Room.'
         l_message = Util._make_message(self.m_pyhouse_obj, message_obj = l_data)
-        print(l_message)
+        # print(l_message)
         self.assertEqual(self.jsonPair(l_message, 'Sender'), self.m_pyhouse_obj.Computer.Name)
         self.assertSubstring('DateTime', l_message)
         self.assertEqual(self.jsonPair(l_message, 'Name'), l_data.Name)
@@ -212,7 +212,7 @@ class C2_Publish(SetupMixin, unittest.TestCase):
         l_obj = LocationData()
         l_obj.City = 'Beverly Hills'
         l_message = Util._make_message(self.m_pyhouse_obj, message_json = l_json, message_obj = l_obj)
-        print(l_message)
+        # print(l_message)
         self.assertEqual(self.jsonPair(l_message, 'Sender'), self.m_pyhouse_obj.Computer.Name)
         self.assertSubstring('DateTime', l_message)
         self.assertEqual(self.jsonPair(l_message, 'Name'), l_data.Name)

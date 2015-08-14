@@ -54,9 +54,7 @@ class API(object):
                     LOG.info('Controller {} Started.'.format(l_controller_obj.Name))
                     l_count += 1
                     l_topic = l_controller_prefix + '/start'
-                    l_message = ''
-                    # mqttAPI(self.m_pyhouse_obj).MqttPublish(l_topic, l_message)
-                    self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_message)
+                    self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, message_obj = l_controller_obj)
                 else:
                     LOG.error('Controller {} failed to start.'.format(l_controller_obj.Name))
                     l_controller_obj.Active = False

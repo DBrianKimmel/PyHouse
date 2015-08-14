@@ -93,7 +93,7 @@ class Util(object):
             l_dict = Util._json2dict(message_json)
             l_tmp = Struct(**l_dict)
             xml_tools.stuff_new_attrs(l_message, l_tmp)
-            print(l_tmp)
+            # print(l_tmp)
         if message_obj != None:
             xml_tools.stuff_new_attrs(l_message, message_obj)
         l_json = json_tools.encode_json(l_message)
@@ -140,7 +140,7 @@ class API(Util):
     def MqttPublish(self, p_topic, message_json = None, message_obj = None):
         """Send a topic, message to the broker for it to distribute to the subscription list
 
-        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("schedule/execute", l_schedule_json)
+        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("schedule/execute", message-json = l_schedule_json)
         @param p_topic: is the partial topic, the prefix will be prepended.
         @param message_json : is the json message we want to send
         @param message_obj: is an additional object thhat we will convert to json and merge it into the message.
@@ -174,6 +174,6 @@ class API(Util):
             l_node = NodeData()
         l_node.NodeInterfaces = None
         l_json = web_utils.JsonUnicode().encode_json(l_node)
-        self.MqttPublish('login/initial', l_json)
+        self.MqttPublish('login/initial', message_json = l_json)
 
 # ## END DBK
