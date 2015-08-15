@@ -15,21 +15,13 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 # Import system type stuff
 import random
-# from twisted.internet.protocol import ClientFactory
 from twisted.internet.protocol import Protocol, ReconnectingClientFactory
 
 # Import PyMh files and modules.
 from Modules.Computer import logging_pyh as Logger
 from Modules.Computer.Mqtt.mqtt_util import EncodeDecode
 
-
 LOG = Logger.getLogger('PyHouse.Mqtt_Protocol  ')
-
-# BROKERv4 = '192.168.1.71'
-# BROKERv4 = 'iot.eclipse.org'  # Sandbox Mosquitto broker
-# BROKERv6 = '2604:8800:100:8268::1:1'    # Pink Poppy
-# BROKERv6 = '2001:4830:1600:84ae::1'  # Cannon Trail
-# PORT = 1883
 SUBSCRIBE = 'pyhouse/#'
 
 

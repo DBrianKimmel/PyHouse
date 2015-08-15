@@ -14,44 +14,60 @@
 # Import PyMh files
 
 TESTING_NODES_NODE_NAME_1 = "pi-01"
+TESTING_NODES_NODE_ACTIVE_1 = "True"
+TESTING_NODES_NODE_KEY_1 = "0"
+TESTING_NODES_NODE_UUID_1 = '87654321-1001-11e3-b583-082e5f899999'
+
+TESTING_NODES_NODE_NAME_2 = "pi-02"
+TESTING_NODES_NODE_ACTIVE_2 = "True"
+TESTING_NODES_NODE_KEY_2 = "0"
+
 TESTING_NODES_INTERFACE_NAME_1 = "eth0"
+
 TESTING_NODES_INTERFACE_NAME_2 = "wlan0"
 
+L_NODE_BASE_1 = '    <Node Name="' + TESTING_NODES_NODE_NAME_1 + '" Key="' + TESTING_NODES_NODE_KEY_1 + '" Active="' + TESTING_NODES_NODE_ACTIVE_1 + '">'
+L_NODE_UUID_1 = '<UUID>' + TESTING_NODES_NODE_UUID_1 + '</UUID>'
+L_NODE_BASE_2 = '    <Node Name="' + TESTING_NODES_NODE_NAME_2 + '" Key="' + TESTING_NODES_NODE_KEY_2 + '" Active="' + TESTING_NODES_NODE_ACTIVE_2 + '">'
 
-XML_NODES = """\
-        <NodeSection>
-            <Node Name='""" + TESTING_NODES_NODE_NAME_1 + """' Key='0' Active='True'>
-                <UUID>87654321-1001-11e3-b583-082e5f899999</UUID>
+XML_NODES = '\n'.join([
+        '   <NodeSection>',
+        L_NODE_BASE_1,
+        L_NODE_UUID_1,
+"""\
                 <ConnectionAddressV4>192.168.1.123</ConnectionAddressV4>
-                <ConnectionAddressV6>1234:5678::dead.beef</ConnectionAddressV6>
+                <ConnectionAddressV6>2001:db8::dead.beef</ConnectionAddressV6>
                 <NodeRoll>123</NodeRoll>
                 <InterfaceSection>
                     <Interface Name='""" + TESTING_NODES_INTERFACE_NAME_1 + """' Key="0" Active="True">
                         <UUID>87654321-1001-11e3-b583-012300001111</UUID>
                         <MacAddress>01:02:03:04:05:06</MacAddress>
                         <IPv4Address>192.168.1.11</IPv4Address>
-                        <IPv6Address>2000:1D::1, 2000:1D::101</IPv6Address>
+                        <IPv6Address>2001:db8::1, 2000:1D::101</IPv6Address>
                     </Interface>
                     <Interface Name='""" + TESTING_NODES_INTERFACE_NAME_2 + """' Key="1" Active="True">
                         <UUID>87654321-1001-11e3-b583-012300002222</UUID>
                         <MacAddress>01:02:03:04:05:06</MacAddress>
                         <IPv4Address>192.168.1.22</IPv4Address>
-                        <IPv6Address>2000:1D::2, 2000:1D::202</IPv6Address>
+                        <IPv6Address>2001:db8::2, 2000:1D::202</IPv6Address>
                     </Interface>
                     <Interface Name='lo' Key="2" Active="True">
                         <MacAddress>01:02:03:04:05:06</MacAddress>
                         <IPv4Address>192.168.1.33</IPv4Address>
-                        <IPv6Address>2000:1D::3, 2000:1D::303</IPv6Address>
+                        <IPv6Address>2001:db8::3, 2000:1D::303</IPv6Address>
                     </Interface>
                 </InterfaceSection>
-            </Node>
-            <Node Name='pi-02' Key='0' Active='True'>
+""",
+        '     </Node>',
+        L_NODE_BASE_2,
+        """
                 <UUID>87654321-1001-11e3-b583-082e5f899999</UUID>
                 <ConnectionAddressV4>192.168.1.124</ConnectionAddressV4>
                 <NodeRoll>6</NodeRoll>
-            </Node>
-        </NodeSection>
-"""
+""",
+        '     </Node>',
+        '   </NodeSection>'
+])
 
 
 

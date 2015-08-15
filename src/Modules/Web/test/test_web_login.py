@@ -14,9 +14,9 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
+from Modules.Web.web_xml import Xml as webXml
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.tools import PrettyPrintAny
 
 
 
@@ -40,14 +40,14 @@ class C01_XML(SetupMixin, unittest.TestCase):
         # PrettyPrintAny(self.m_xml.web_sect, 'Web Xml')
 
     def test_02_ReadXML(self):
-        l_web = self.m_api.read_web_xml(self.m_pyhouse_obj)
+        l_web = webXml.read_web_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Computer.Logs = l_web
         # PrettyPrintAny(l_web, 'Web Data')
         self.assertEqual(l_web.WebPort, 8580, 'Bad WebPort')
 
     def test_03_WriteXML(self):
-        l_web = self.m_api.read_web_xml(self.m_pyhouse_obj)
-        l_xml = self.m_api.write_web_xml(l_web)
+        l_web = webXml.read_web_xml(self.m_pyhouse_obj)
+        l_xml = webXml.write_web_xml(l_web)
         # PrettyPrintAny(l_xml)
 
 

@@ -7,6 +7,8 @@
 @note:      Created on Apr 29, 2014
 @summary:   This module is for testing local node data.
 
+Passed all 8 tests - DBK - 2015-08-14
+
 """
 
 # Import system type stuff
@@ -16,10 +18,10 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData, NodeInterfaceData
 from Modules.Computer.Nodes import nodes_xml
-from Modules.Computer.Nodes import node_local
+from Modules.Computer.Nodes.node_local import Interfaces
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.tools import PrettyPrintAny
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -48,18 +50,13 @@ class C01_Structure(SetupMixin, unittest.TestCase):
         self.m_node_obj = NodeData()
 
     def test_01_PyHouse(self):
-        # PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse')
-        # PrettyPrintAny(self.m_pyhouse_obj.Computer, 'Computer')
-        # PrettyPrintAny(self.m_xml.computer_div, 'ComputerDiv XML')
-        # PrettyPrintAny(self.m_xml.node_sect, 'NodeSect XML')
-        # PrettyPrintAny(self.m_xml.node, 'Node XML')
-        pass
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse'))
+        self.assertNotEqual(self.m_pyhouse_obj.Xml, None)
 
     def test_02_Data(self):
         self.m_pyhouse_obj.Computer.Nodes = nodes_xml.Xml().read_all_nodes_xml(self.m_pyhouse_obj)
-        # PrettyPrintAny(self.m_pyhouse_obj.Computer, 'Computer')
-        # PrettyPrintAny(self.m_pyhouse_obj.Computer.Nodes, 'Nodes')
-        # PrettyPrintAny(self.m_pyhouse_obj.Computer.Nodes[0], 'Node 0')
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'PyHouse Computer'))
+        self.assertEqual(len(self.m_pyhouse_obj.Computer.Nodes), 2)
 
 
 class C02_Iface(SetupMixin, unittest.TestCase):
@@ -69,25 +66,41 @@ class C02_Iface(SetupMixin, unittest.TestCase):
         self.m_pyhouse_obj.Computer.Nodes = nodes_xml.Xml().read_all_nodes_xml(self.m_pyhouse_obj)
         self.m_node = NodeData()
         # self.m_api = node_local.API()
-        self.m_iface_api = node_local.GetAllInterfaceData()
+        self.m_iface_api = Interfaces()
 
     def test_01_IfaceNames(self):
-        l_names = node_local.GetAllInterfaceData()._find_all_interface_names()
-        # PrettyPrintAny(l_names, 'Names')
-        # self.assertEqual()
+        l_names = Interfaces._find_all_interface_names()
+        # print(PrettyFormatAny.form(l_names, 'Names'))
+        self.assertGreater(len(l_names), 1)
 
-    def test_02_Node(self):
-        # l_node = self.m_api.create_local_node(self.m_pyhouse_obj)
-        # PrettyPrintAny(l_node, 'Local Node')
-        # PrettyPrintAny(l_node.NodeInterfaces[0], 'IFace 0')
-        pass
+    def test_02_AllInterfaces(self):
+        l_node = NodeData()
+        l_node = Interfaces.get_all_interfaces(l_node)
+        print(PrettyFormatAny.form(l_node.NodeInterfaces, 'Node Interfaces'))
 
-    def test_03_Node(self):
-        pass
+    def test_03_AddrLists(self):
+        l_names = Interfaces._find_all_interface_names()
+        l_ret = Interfaces._find_addr_lists(l_names[0])
+        print(PrettyFormatAny.form(l_ret, 'Address Lists'))
+        print(PrettyFormatAny.form(l_ret[23][1], 'Address Lists'))
 
-    def test_04_Node(self):
-        pass
+    def test_04_AddrFamilyName(self):
+        l_ret = Interfaces._find_addr_family_name(-1000)
+        print(PrettyFormatAny.form(l_ret, 'Address Lists'))
+        self.assertEqual(l_ret, 'AF_LINK')
+        l_ret = Interfaces._find_addr_family_name(2)
+        print(PrettyFormatAny.form(l_ret, 'Address Lists'))
+        self.assertEqual(l_ret, 'AF_INET')
+        l_ret = Interfaces._find_addr_family_name(23)
+        print(PrettyFormatAny.form(l_ret, 'Address Lists'))
+        self.assertEqual(l_ret, 'AF_INET6')
 
+    def test_05_GetAddrLists(self):
+        l_list = Interfaces._find_all_interface_names()
+        l_names = Interfaces._get_address_list(l_list)
+        l_ret = Interfaces._find_addr_lists(l_names[0])
+        print(PrettyFormatAny.form(l_ret, 'Address Lists'))
+        print(PrettyFormatAny.form(l_ret[23][1], 'Address Lists'))
 
 
 class C07_Api(SetupMixin, unittest.TestCase):

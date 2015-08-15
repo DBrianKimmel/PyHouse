@@ -7,6 +7,8 @@
 @license: MIT License
 @summary: This module is for AMP request/response protocol
 
+Passed all 3 tests - DBK - 2015-08-14
+
 """
 
 # Import system type stuff
@@ -17,11 +19,9 @@ from twisted.web import server
 from twisted.web.test.test_web import DummyRequest
 
 # Import PyMh files and modules.
-# from Modules.Web import web_server
+from Modules.Web.web_xml import Xml as webXml
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.tools import PrettyPrintAny
-
 
 
 class SetupMixin(object):
@@ -85,18 +85,16 @@ class C02_XML(SetupMixin, unittest.TestCase):
     def test_01_find_xml(self):
         """ Be sure that the XML contains the right stuff.
         """
-        self.assertEqual(self.m_root_xml.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
-        self.assertEqual(self.m_web_xml.tag, 'WebSection', 'XML - No Web section')
+        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.web_sect.tag, 'WebSection')
 
     def test_11_ReadXML(self):
-        l_web = self.m_api.read_web_xml(self.m_pyhouse_obj)
+        l_web = webXml.read_web_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Computer.Logs = l_web
-        # PrettyPrintAny(l_web, 'Web Data')
-        self.assertEqual(l_web.WebPort, 8580, 'Bad WebPort')
+        self.assertEqual(l_web.WebPort, 8580)
 
     def test_21_WriteXML(self):
-        l_web = self.m_api.read_web_xml(self.m_pyhouse_obj)
-        l_xml = self.m_api.write_web_xml(l_web)
-        # PrettyPrintAny(l_xml)
+        l_web = webXml.read_web_xml(self.m_pyhouse_obj)
+        l_xml = webXml.write_web_xml(l_web)
 
 # ## END DBK

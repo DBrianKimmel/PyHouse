@@ -20,11 +20,11 @@ from nevow import loaders
 from Modules.Web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.Computer import logging_pyh as Logger
 
+LOG = Logger.getLogger('PyHouse.webHouse    ')
+
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
-
-LOG = Logger.getLogger('PyHouse.webHouse    ')
 
 
 class HouseElement(athena.LiveElement):

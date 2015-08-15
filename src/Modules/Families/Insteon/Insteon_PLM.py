@@ -496,7 +496,6 @@ class Utility(LightHandlerAPI, PlmDriverProtocol):
     @staticmethod
     def _queue_command(p_controller, p_command):
         p_controller._Queue.put(p_command)
-        # LOG.info("Q-Size:{0:}, Command:{1:}".format(p_controller._Queue.qsize(), PrintBytes(p_command)))
 
 
 

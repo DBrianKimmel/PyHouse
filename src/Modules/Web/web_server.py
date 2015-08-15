@@ -31,7 +31,7 @@ from nevow import appserver
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import WebData
-from Modules.Web.web_xml import WebXmlAPI
+from Modules.Web.web_xml import Xml as webXml
 from Modules.Web import web_utils
 from Modules.Web import web_mainpage
 from Modules.Computer import logging_pyh as Logger
@@ -83,14 +83,14 @@ class API(Utility, ClientConnections):
 
     def Start(self):
         self.update_pyhouse_obj(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.Computer.Web = WebXmlAPI().read_web_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.Computer.Web = webXml.read_web_xml(self.m_pyhouse_obj)
         self.start_webserver(self.m_pyhouse_obj)
 
     def Stop(self):
         self.m_pyhouse_obj.Services.WebServerService.stopService()
 
     def SaveXml(self, p_xml):
-        p_xml.append(WebXmlAPI().write_web_xml(self.m_pyhouse_obj.Computer.Web))
+        p_xml.append(webXml.write_web_xml(self.m_pyhouse_obj.Computer.Web))
         LOG.info("Saved WebServer XML.")
 
 # ## END DBK

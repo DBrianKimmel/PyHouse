@@ -58,7 +58,8 @@ class BuildCommand(object):
     Finally the command becomes 14 37 30 30 33 38 44 0D and is queued for sending
     """
 
-    def _nibble_to_hex(self, p_nibble):
+    @staticmethod
+    def _nibble_to_hex(p_nibble):
         """
         Take the low order nibble and convert it to a single byte that is the ASCII code for the nibble.
         0x01 ==> 0x31 ('1')
@@ -70,7 +71,8 @@ class BuildCommand(object):
         l_ret = chr(l_ret)
         return ord(l_ret)
 
-    def _byte_to_2chars(self, p_byte):
+    @staticmethod
+    def _byte_to_2chars(p_byte):
         """
         Take a single byte and return 2 bytes that are the ascii hex equivalent.
 
@@ -79,29 +81,50 @@ class BuildCommand(object):
         @return: a 2 byte array of ints that are ASCII encoded.
         """
         l_ret = bytearray(2)
-        l_ret[0] = self._nibble_to_hex(p_byte / 16)
-        l_ret [1] = self._nibble_to_hex(p_byte % 16)
+        l_ret[0] = BuildCommand._nibble_to_hex(p_byte / 16)
+        l_ret [1] = BuildCommand._nibble_to_hex(p_byte % 16)
         return l_ret
 
-    def _calculate_checksum(self, p_ba):
+    @staticmethod
+    def _calculate_checksum(p_byteArray):
+        """Take a ByteArray of arbitrary length and return the checksum.
+        When added the total of the bytes should be b'\x00'
+
+        b'\x11' ==> b'\xEF'
+        b'\xD4' ==> b'\x2C'
+        b'\x70\x03' ==> b'\x8D'
+        b'\xA1\xA3' ==> b'\xBB'
+
+        b'\x35\x23\x24' ==> b'\x84'
+        b'\x11' ==> b'\xEF'
+        @param p_bytearray: is the byte array we will checksum.
+        @return: the checksum byte
+        """
+        l_cs = 0
+        for l_ix in range(len(p_byteArray)):
+            try:
+                l_byte = ord(p_byteArray[l_ix])
+            except:
+                l_byte = p_byteArray[l_ix]
+            l_cs = (l_cs + l_byte) % 256
+        l_cs = 256 - l_cs
+        return l_cs
+
+    @staticmethod
+    def _append_checksum(p_byteArray):
         """Take a ByteArray of arbitrary length and return a byte array with the checksum appended to the original.
 
         b'\x70\x03' ==> b'\x70\x03\x8D'
         @return: a bytearray with the checksum byte appended
         """
         l_out = bytearray(0)
-        l_cs = 0
-        for l_ix in range(len(p_ba)):
-            try:
-                l_byte = ord(p_ba[l_ix])
-            except:
-                l_byte = p_ba[l_ix]
-            l_cs = (l_cs + l_byte) % 256
-            l_out.append(l_byte)
-        l_out.append(int(256 - l_cs))
+        for l_ix in range(len(p_byteArray)):
+            l_out.append(p_byteArray[l_ix])
+        l_out.append(BuildCommand._calculate_checksum(p_byteArray))
         return l_out
 
-    def _assemble_regwrite(self, p_reg, p_args):
+    @staticmethod
+    def _assemble_regwrite(p_reg, p_args):
         """Take the command and the args and make a ByteArray with the checksum appended
 
         @param p_reg: is the register number where we will start writing.
@@ -112,50 +135,56 @@ class BuildCommand(object):
         l_cmd[0] = p_reg
         for l_ix in range(len(p_args)):
             l_cmd[1 + l_ix] = p_args[l_ix]
-        l_cmd = self._calculate_checksum(l_cmd)
+        l_cmd = BuildCommand._append_checksum(l_cmd)
         return l_cmd
 
-    def _convert_pim(self, p_array):
+    @staticmethod
+    def _convert_pim(p_array):
         """Take a command ByteArray and convert it for the serial interface of the pim.
 
         I think this means taking each nibble of the command and converting it to an ASCII byte.
 
         """
+        return p_array
         l_ret = bytearray(0)
         for l_byte in p_array:
-            l_str = self._byte_to_2chars(l_byte)
+            l_str = BuildCommand._byte_to_2chars(l_byte)
             l_ret.append(l_str[0])
             l_ret.append(l_str[1])
         LOG.debug("Convert_pim - {}".format(PrintBytes(l_ret)))
         return l_ret
 
-    def _create_packet_header(self):
+    @staticmethod
+    def XXX_create_packet_header(self, p_network_id, p_address):
         l_ph = bytearray(5)
         l_ph[0] = 0
         l_ph[1] = 0
-        l_ph[2] = self.m_pim.NetworkID
-        l_ph[3] = self.m_pim.UPBAddress
+        l_ph[2] = p_network_id
+        l_ph[3] = p_address
         l_ph[4] = 0xff
         return l_ph
 
-    def _queue_pim_command(self, p_controller_obj, p_command):
+    @staticmethod
+    def _queue_pim_command(p_controller_obj, p_command):
         if g_debug >= 1:
             l_msg = "Queue_pim_command {}".format(PrintBytes(p_command))
             LOG.debug(l_msg)
         p_controller_obj._Queue.put(p_command)
 
-    def write_register_command(self, p_controller_obj, p_reg, p_args):
+    @staticmethod
+    def write_register_command(p_controller_obj, p_reg, p_args):
         """Take a starting register and one or more values and write them into the controller.
         Use a 0x14 header to create the command
         """
-        l_cmd = self._assemble_regwrite(p_reg, p_args)
-        l_cmd[1:] = self._convert_pim(l_cmd)
+        l_cmd = BuildCommand._assemble_regwrite(p_reg, p_args)
+        l_cmd[1:] = BuildCommand._convert_pim(l_cmd)
         l_cmd[0] = CTL_W
         l_cmd.append(0x0d)
-        self._queue_pim_command(p_controller_obj, l_cmd)
+        BuildCommand._queue_pim_command(p_controller_obj, l_cmd)
         return l_cmd
 
-    def  write_pim_command(self, p_controller_obj, _p_command, _p_device_id, *p_args):
+    @staticmethod
+    def  write_pim_command(p_controller_obj, _p_command, _p_device_id, *p_args):
         """Send a command to some UPB device thru the controller
         """
         pass
@@ -233,7 +262,7 @@ class DecodeResponses(object):
         elif l_hdr == 0x55:  # 'U'
             self._decode_U()
         else:
-            LOG.error("UPB_Pim.decode_response() found unknown code {0:#x} {1:}".format(l_hdr, PrintBytes(p_message)))
+            LOG.error("UPB_Pim.decode_response() found unknown code {} {}".format(l_hdr, PrintBytes(p_message)))
 
     def decode_response(self, p_controller_obj):
         """A response message starts with a 'P' (0x50) and ends with a '\r' (0x0D).

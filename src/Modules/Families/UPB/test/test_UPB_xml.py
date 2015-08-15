@@ -38,16 +38,11 @@ class A1_XML(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def tearDown(self):
-        pass
-
     def test_01_Read(self):
         l_list = list(self.m_xml.controller_sect.iterfind('Controller'))
         l_xml = l_list[1]
         l_dev = ControllerData()
-        # PrettyPrintAny(l_xml, 'UPB Controller')
         upbXML.ReadXml(l_dev, l_xml)
-        # PrettyPrintAny(l_dev, 'Device')
         self.assertEqual(l_dev.UPBAddress, int(TESTING_UPB_ADDRESS))
         self.assertEqual(l_dev.UPBNetworkID, int(TESTING_UPB_NETWORK))
         self.assertEqual(l_dev.UPBPassword, int(TESTING_UPB_PASSWORD))
@@ -59,6 +54,5 @@ class A1_XML(SetupMixin, unittest.TestCase):
         upbXML.ReadXml(l_dev, l_xml)
         l_out = ET.Element('Testing')
         upbXML.WriteXml(l_out, l_dev)
-        # PrettyPrintAny(l_out, 'XML Out')
 
 # ## END DBK

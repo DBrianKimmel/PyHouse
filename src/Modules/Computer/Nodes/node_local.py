@@ -56,69 +56,75 @@ NODE_TUNNEL = 0x0040  # IPv6 Tunnel
 NODE_IR = 0x0080  # Infra-red receiver and optional transmitter
 
 
-class GetAllInterfaceData(object):
+class Interfaces(object):
     """
     Loop thru all the interfaces and extract the info.
-
-    Netifaces does not define the names we use ( interfaces(), address_families[], ifaddresses() ) so
-     we end up with import type errors in this class.
     """
 
-    def __init__(self):
+    @staticmethod
+    def _find_all_interface_names():
         """
-        @type p_node: C{NodeData}
-        @param p_node: the node information
-        """
-        self.m_count = 0
-        for l_interface_name in self._find_all_interface_names():
-            self._get_one_interface(l_interface_name, self.m_count)
-            self.m_count += 1
-
-    def _find_all_interface_names(self):
-        """
-        This returns a list of interface names.
+        Get the names of all the network interfaces on this computer.
+        Windows return an UUID as the name
+        Linux before about 2015 returned something like eth0, wlan0, or lo0.
+        Later Linuxes return a descriptive id that contains a physical slot.
+        @return: a list of interface names
         """
         l_interface_names = netifaces.interfaces()
         return l_interface_names
 
-    def _find_addr_family_name(self, p_ix):
+    @staticmethod
+    def _find_addr_family_name(p_ix):
+        """Returns the string of the family nemr for a given index.
+        -1000 = AF_LINK - The MAC address
+        2 = AF_INET - IPv4
+        23 = AF_INET6 - IPv6
+        """
         l_name = netifaces.address_families[p_ix]
         return l_name
 
-    def _find_addr_lists(self, p_interface_name):
+    @staticmethod
+    def _find_addr_lists(p_interface_name):
+        """This returns a dict with the key = interface type
+        (-1000 = MAC Addr, 2 = INET, 23 = INET6)
+        The values are a list of dicts of addresses.
+        """
         l_ret = netifaces.ifaddresses(p_interface_name)
         return l_ret
 
-    def _get_address_list(self, p_list):
+    @staticmethod
+    def _get_address_list(p_list):
         l_list = []
         for l_ent in p_list:
             l_list.append(l_ent['addr'])
         return l_list
 
-    def _get_one_interface(self, p_interface_name, p_ix):
+    @staticmethod
+    def _get_one_interface(p_interface_name):
         l_interface = NodeInterfaceData()
         l_interface.Name = p_interface_name
-        l_interface.Key = p_ix
         l_interface.Active = True
         l_interface.UUID = '123'
         l_interface.NodeInterfaceType = 'Other'
-        for l_af in self._find_addr_lists(p_interface_name):
-            if self._find_addr_family_name(l_af) == 'AF_PACKET':
-                l_interface.MacAddress = self._get_address_list(self._find_addr_lists(p_interface_name)[l_af])
-            if self._find_addr_family_name(l_af) == 'AF_INET':
-                l_interface.V4Address = self._get_address_list(self._find_addr_lists(p_interface_name)[l_af])
-            if self._find_addr_family_name(l_af) == 'AF_INET6':
-                l_interface.V6Address = self._get_address_list(self._find_addr_lists(p_interface_name)[l_af])
+        for l_af in Interfaces._find_addr_lists(p_interface_name):
+            if Interfaces._find_addr_family_name(l_af) == 'AF_PACKET':
+                l_interface.MacAddress = Interfaces._get_address_list(Interfaces._find_addr_lists(p_interface_name)[l_af])
+            if Interfaces._find_addr_family_name(l_af) == 'AF_INET':
+                l_interface.V4Address = Interfaces._get_address_list(Interfaces._find_addr_lists(p_interface_name)[l_af])
+            if Interfaces._find_addr_family_name(l_af) == 'AF_INET6':
+                l_interface.V6Address = Interfaces._get_address_list(Interfaces._find_addr_lists(p_interface_name)[l_af])
         if l_interface.V4Address == [] and l_interface.V6Address == []:
             return
         return l_interface
 
-    def get_all_interfaces(self, p_node):
-        self.m_count = 0
-        for l_interface_name in self._find_all_interface_names():
-            l_iface = self._get_one_interface(l_interface_name, self.m_count)
-            p_node.NodeInterfaces[self.m_count] = l_iface
-            self.m_count += 1
+    @staticmethod
+    def get_all_interfaces(p_node):
+        l_count = 0
+        for l_interface_name in Interfaces._find_all_interface_names():
+            l_iface = Interfaces._get_one_interface(l_interface_name)
+            l_iface.Key = l_count
+            p_node.NodeInterfaces[l_count] = l_iface
+            l_count += 1
         return p_node
 
 
@@ -253,8 +259,7 @@ class Util(object):
     @staticmethod
     def create_local_node(p_pyhouse_obj):
         l_node = p_pyhouse_obj.Computer.Nodes[0]
-        l_api = GetAllInterfaceData()
-        l_api.get_all_interfaces(l_node)
+        Interfaces.get_all_interfaces(l_node)
         return l_node
 
 

@@ -14,7 +14,7 @@
 
 # Import PyMh files and modules.
 from Modules.Computer import logging_pyh as Logger
-from Modules.Web.web_xml import WebXmlAPI
+from Modules.Web.web_xml import Xml as webXml
 from Modules.Web.web_server import API as WebAPI
 
 LOG = Logger.getLogger('PyHouse.Web            ')
@@ -27,7 +27,7 @@ class API(object):
         self.m_pyhouse_obj = p_pyhouse_obj
 
     def Start(self):
-        l_obj = WebXmlAPI().read_web_xml(self.m_pyhouse_obj)
+        l_obj = webXml.read_web_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Computer.Web = l_obj
         WebAPI(self.m_pyhouse_obj).Start()
 
@@ -35,7 +35,7 @@ class API(object):
         pass
 
     def SaveXml(self, p_xml):
-        l_xml = WebXmlAPI().write_web_xml(self.m_pyhouse_obj.Computer.Web)
+        l_xml = webXml().write_web_xml(self.m_pyhouse_obj.Computer.Web)
         p_xml.append(l_xml)
         LOG.info("Saved Web XML.")
 

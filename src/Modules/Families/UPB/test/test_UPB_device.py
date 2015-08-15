@@ -7,6 +7,8 @@
 @note:      Created on Apr 8, 2013
 @summary:   This module is for testing UPB devices.
 
+Passed all 1 tests - DBK - 2015-08-15
+
 """
 
 # Import system type stuff

@@ -10,7 +10,6 @@
 """
 # Import system type stuff
 import os
-import uuid
 from nevow import athena
 from nevow import loaders
 
@@ -18,17 +17,13 @@ from nevow import loaders
 from Modules.Core.data_objects import MqttBrokerData
 from Modules.Web.web_utils import JsonUnicode, GetJSONComputerInfo
 from Modules.Computer import logging_pyh as Logger
-from Modules.Families.Insteon import Insteon_utils
 from Modules.Utilities.uuid_tools import Uuid
-from Modules.Core.setup_logging import l_observer
+
+LOG = Logger.getLogger('PyHouse.webMqtt     ')
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
-
-g_debug = 0
-LOG = Logger.getLogger('PyHouse.webMqtt     ')
-
 
 
 class MqttElement(athena.LiveElement):
@@ -37,7 +32,7 @@ class MqttElement(athena.LiveElement):
     docFactory = loaders.xmlfile(os.path.join(templatepath, 'mqttElement.html'))
     jsClass = u'mqtt.MqttWidget'
 
-    def __init__(self, p_workspace_obj, p_params):
+    def __init__(self, p_workspace_obj, _p_params):
         self.m_workspace_obj = p_workspace_obj
         self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
 

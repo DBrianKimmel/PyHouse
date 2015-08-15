@@ -9,9 +9,7 @@
 
 This information will be present in a device's XML for Insteon type devices.
 
-
 """
-
 
 TESTING_INSTEON_ADDRESS = '16.62.2D'
 TESTING_INSTEON_DEVCAT = '02.1C'
@@ -26,8 +24,6 @@ L_INSTEON_GROUP_NUM = '    <GroupNumber>' + TESTING_INSTEON_GROUP_NUM + '</Group
 L_INSTEON_GROUP_LIST = '    <GroupList>' + TESTING_INSTEON_GROUP_LIST + '</GroupList>'
 L_INSTEON_PRODUCT_KEY = '    <ProductKey>' + TESTING_INSTEON_PRODUCT_KEY + '</ProductKey>'
 L_INSTEON_MASTER = '    <IsMaster>' + TESTING_INSTEON_MASTER + '</IsMaster>'
-
-
 
 XML_INSTEON = '\n'.join([
     L_INSTEON_ADDRESS,

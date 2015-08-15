@@ -23,11 +23,12 @@ from Modules.Utilities.xml_tools import PutGetXML
 LOG = Logger.getLogger('PyHouse.WebXml         ')
 
 
-class WebXmlAPI(object):
+class Xml(object):
     """
     """
 
-    def read_web_xml(self, p_pyhouse_obj):
+    @staticmethod
+    def read_web_xml(p_pyhouse_obj):
         l_obj = WebData()
         try:
             l_xml = p_pyhouse_obj.XmlRoot.find('WebSection')
@@ -36,7 +37,8 @@ class WebXmlAPI(object):
             l_obj.WebPort = 8580
         return l_obj
 
-    def write_web_xml(self, p_web_obj):
+    @staticmethod
+    def write_web_xml(p_web_obj):
         l_web_xml = ET.Element("WebSection")
         try:
             PutGetXML.put_int_element(l_web_xml, 'WebPort', p_web_obj.WebPort)

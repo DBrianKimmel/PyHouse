@@ -33,7 +33,7 @@ class Util(object):
         if p_int > 16777215 or p_int < 0:
             l_msg = 'ERROR - Insteon_utils - trying to convert {} to message byte string.'.format(p_int)
             LOG.error(l_msg)
-            p_int = 12245933  # 0xBADBAD
+            p_int = 0xBADBAD
         l_ix = 256 * 256
         l_int = p_int
         while l_ix > 0:
@@ -55,13 +55,13 @@ class Util(object):
         return l_int
 
     @staticmethod
-    def get_json_data(l_obj, l_json):
-        l_obj.DevCat = int(l_json['DevCat'])
-        l_obj.GroupList = l_json['GroupList']
-        l_obj.GroupNumber = l_json['GroupNumber']
-        l_obj.InsteonAddress = int(l_json['InsteonAddress'])
-        l_obj.IsMaster = l_json['IsMaster']
-        l_obj.ProductKey = int(l_json['ProductKey'])
-        return l_obj
+    def get_json_data(p_obj, p_json):
+        p_obj.DevCat = int(p_json['DevCat'])
+        p_obj.GroupList = p_json['GroupList']
+        p_obj.GroupNumber = p_json['GroupNumber']
+        p_obj.InsteonAddress = int(p_json['InsteonAddress'])
+        p_obj.IsMaster = p_json['IsMaster']
+        p_obj.ProductKey = int(p_json['ProductKey'])
+        return p_obj
 
 # ## END DBK

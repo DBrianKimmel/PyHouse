@@ -281,7 +281,9 @@ class PrettyFormatAny(object):
         l_lines = l_doc.splitlines()
         for l_line in l_lines:
             if not l_line.isspace():
-                l_ret += _format_line(l_line, maxlen = maxlen) + '\n'
+                l_list = _format_line(l_line, maxlen = maxlen)
+                for l_line in l_list:
+                    l_ret += l_line + '\n'
         return l_ret
 
     @staticmethod

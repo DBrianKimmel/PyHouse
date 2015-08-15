@@ -20,11 +20,17 @@ from Modules.Core.test.xml_device import XML_DEVICE
 
 
 TESTING_LIGHTING_LIGHTS_NAME_1 = "Insteon Light"
+TESTING_LIGHTING_LIGHTS_KEY_1 = '0'
+TESTING_LIGHTING_LIGHTS_ACTIVE_1 = 'True'
 TESTING_LIGHTING_LIGHTS_NAME_2 = "UPB Light"
+TESTING_LIGHTING_LIGHTS_KEY_2 = '1'
+TESTING_LIGHTING_LIGHTS_ACTIVE_2 = 'True'
 TESTING_LIGHT_DIMMABLE = 'True'
 TESTING_LIGHTING_LIGHT_CUR_LEVEL = "12"
 TESTING_LIGHTING_TYPE = 'Light'
 
+L_LIGHT_LIGHT_1 = '<Light Name="' + TESTING_LIGHTING_LIGHTS_NAME_1 + '" Key="' + TESTING_LIGHTING_LIGHTS_KEY_1 + '" Active="' + TESTING_LIGHTING_LIGHTS_ACTIVE_1 + '">'
+L_LIGHT_LIGHT_2 = '<Light Name="' + TESTING_LIGHTING_LIGHTS_NAME_2 + '" Key="' + TESTING_LIGHTING_LIGHTS_KEY_2 + '" Active="' + TESTING_LIGHTING_LIGHTS_ACTIVE_2 + '">'
 L_LIGHT_TYPE = '    <LightingType>' + TESTING_LIGHTING_TYPE + '</LightingType>'
 L_DIMMABLE = '    <IsDimmable>' + TESTING_LIGHT_DIMMABLE + '</IsDimmable>'
 L_LEVEL = "    <CurLevel>" + TESTING_LIGHTING_LIGHT_CUR_LEVEL + "</CurLevel>"
@@ -37,14 +43,14 @@ L_LIGHT_BODY = '\n'.join([
     ])
 
 L_INSTEON_LIGHT_XML = '\n'.join([
-    '<Light Name="' + TESTING_LIGHTING_LIGHTS_NAME_1 + '" Key="0" Active="True">',
+    L_LIGHT_LIGHT_1,
     L_LIGHT_BODY,
     XML_INSTEON,
     "</Light>"
     ])
 
 L_UPB_LIGHT_XML = '\n'.join([
-    '<Light Name="' + TESTING_LIGHTING_LIGHTS_NAME_2 + '" Key="1" Active="True">',
+    L_LIGHT_LIGHT_2,
     L_LIGHT_BODY,
     UPB_XML,
     "</Light>"

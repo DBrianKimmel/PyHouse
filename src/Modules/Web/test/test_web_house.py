@@ -17,8 +17,6 @@ from twisted.trial import unittest
 from Modules.Web import web_house
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.tools import PrettyPrintAny
-
 
 
 class Workspace(object):
@@ -26,14 +24,11 @@ class Workspace(object):
         self.m_pyhouse_obj = None
 
 
-
 class SetupMixin(object):
 
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_workspace_obj.m_pyhouse_obj = self.m_pyhouse_obj
-
 
 
 class C01_XML(SetupMixin, unittest.TestCase):
@@ -48,13 +43,12 @@ class C01_XML(SetupMixin, unittest.TestCase):
     def test_01_FindXml(self):
         """ Be sure that the XML contains the right stuff.
         """
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
-        self.assertEqual(self.m_xml.controller_sect.tag, 'ControllerSection', 'XML - No Controllers section')
-        self.assertEqual(self.m_xml.controller.tag, 'Controller', 'XML - No Controller section')
+        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.controller_sect.tag, 'ControllerSection')
+        self.assertEqual(self.m_xml.controller.tag, 'Controller')
 
     def test_02_Json(self):
         l_api = web_house.HouseElement(self.m_workspace_obj, None)
         l_json = l_api.getServerData()
-        # PrettyPrintAny(l_json, 'JSON', 70)
 
 # ## END DBK

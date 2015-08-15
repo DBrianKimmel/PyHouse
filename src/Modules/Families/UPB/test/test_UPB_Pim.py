@@ -7,6 +7,8 @@
 @note:      Created on Apr 8, 2013
 @summary:   Test the UPB controller.
 
+Passed all 30 tests - DBK - 2015-08-15
+
 """
 
 # Import system type stuff
@@ -15,13 +17,14 @@ import Queue
 import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
-from Modules.Families.UPB import UPB_Pim
+from Modules.Families.UPB.UPB_Pim import BuildCommand, DecodeResponses
 from Modules.Core.data_objects import ControllerData
-from Modules.Utilities.tools import PrintBytes  # , PrettyPrintAny
 from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG
 
 CHG_REG_CMD = b'\x70\x03'
+WE_SEND_CHREG = b'\x17\x70\x03\x8D\x0D'
+
 TEST_MESSAGE = b'\x15PE\r\x06'
 
 
@@ -46,81 +49,91 @@ class A1_Setup(SetupMixin, unittest.TestCase):
 class B1_Build(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        self.m_api = UPB_Pim.BuildCommand()
         self.m_controller_obj = ControllerData()
         self.m_controller_obj._Queue = Queue.Queue(300)
 
     def test_01_Nibble2Hex(self):
-        l_hex = self.m_api._nibble_to_hex(0x00)
+        """Convert nibbles to the hex char representation
+        """
+        l_hex = BuildCommand._nibble_to_hex(0x00)
         self.assertEqual(l_hex, ord('0'))
         #
-        l_hex = self.m_api._nibble_to_hex(0x07)
+        l_hex = BuildCommand._nibble_to_hex(0x07)
         self.assertEqual(l_hex, ord('7'))
         #
-        l_hex = self.m_api._nibble_to_hex(0x0A)
+        l_hex = BuildCommand._nibble_to_hex(0x0A)
         self.assertEqual(l_hex, 0x41)
         #
-        l_hex = self.m_api._nibble_to_hex(0x0F)
+        l_hex = BuildCommand._nibble_to_hex(0x0F)
         self.assertEqual(l_hex, 0x46)
 
     def test_02_Byte2Hex(self):
-        l_str = self.m_api._byte_to_2chars(0x00)
+        l_str = BuildCommand._byte_to_2chars(0x00)
         self.assertEqual(l_str, b'\x30\x30')
-        l_str = self.m_api._byte_to_2chars(0x08)
+        self.assertEqual(l_str, '00')
+        l_str = BuildCommand._byte_to_2chars(0x08)
         self.assertEqual(l_str, '08')
-        l_str = self.m_api._byte_to_2chars(0x0F)
+        l_str = BuildCommand._byte_to_2chars(0x0F)
         self.assertEqual(l_str, '0F')
-        l_str = self.m_api._byte_to_2chars(0x80)
+        l_str = BuildCommand._byte_to_2chars(0x80)
         self.assertEqual(l_str, '80')
-        l_str = self.m_api._byte_to_2chars(0x77)
+        l_str = BuildCommand._byte_to_2chars(0x77)
         self.assertEqual(l_str, '77')
-        l_str = self.m_api._byte_to_2chars(0xff)
+        l_str = BuildCommand._byte_to_2chars(0xff)
         self.assertEqual(l_str, 'FF')
 
-    def test_03_Checksum(self):
-        l_ba = self.m_api._calculate_checksum(CHG_REG_CMD)
+    def test_03_CalcChecksum(self):
+        l_ba = BuildCommand._calculate_checksum(b'\x11')
+        self.assertEqual(l_ba, ord(b'\xEF'))
+        #
+        l_ba = BuildCommand._calculate_checksum(b'\xD4')
+        self.assertEqual(l_ba, ord(b'\x2C'))
+        #
+        l_ba = BuildCommand._calculate_checksum(b'\x70\x03')
+        self.assertEqual(l_ba, ord(b'\x8D'))
+        #
+        l_ba = BuildCommand._calculate_checksum(b'\xA1\xA3')
+        self.assertEqual(l_ba, ord(b'\xBC'))
+        #
+        l_ba = BuildCommand._calculate_checksum(b'\x51\xA3\x6A')
+        # print('5 {} {:x}'.format(l_ba, l_ba))
+        self.assertEqual(l_ba, ord(b'\xA2'))
+        #
+        l_ba = BuildCommand._calculate_checksum(b'\x35\x23\x24\x9f')
+        # print('6 {} {:x}'.format(l_ba, l_ba))
+        self.assertEqual(l_ba, ord(b'\xE5'))
+
+    def test_04_AppendChecksum(self):
+        l_ba = BuildCommand._append_checksum(b'\x70\x03')
         self.assertEqual(l_ba, b'\x70\x03\x8D')
-        # print('test_0103-A/ Checksum {0:}'.format(PrintBytes(l_ba)))
-        l_ba = self.m_api._calculate_checksum(b'\x35\x23\x24')
-        self.assertEqual(l_ba, b'\x35\x23\x24\x84')
-        # print('test_0103-B/ Checksum {0:}'.format(PrintBytes(l_ba)))
-        l_ba = self.m_api._calculate_checksum(b'\x11')
-        self.assertEqual(l_ba, b'\x11\xEF')
-        # print('test_0103-C/ Checksum {0:}'.format(PrintBytes(l_ba)))
-        l_ba = self.m_api._calculate_checksum(b'\xEF')
-        self.assertEqual(l_ba, b'\xEF\x11')
-        # print('test_0103-D/ Checksum {0:}'.format(PrintBytes(l_ba)), l_ba)
 
-    def test_04_AssembleCommand(self):
-        l_ba = self.m_api._assemble_regwrite(b'\x70', b'\x03')
-        # print('test_0104/ {0:}'.format(PrintBytes(l_ba)), l_ba)
+    def test_05_AssembleCommand(self):
+        l_ba = BuildCommand._assemble_regwrite(0x70, b'\03')
         self.assertEqual(l_ba, b'\x70\x03\x8D')
 
-    def test_05_Convert(self):
-        l_ba = self.m_api._assemble_regwrite(b'\x70', b'\x03')
-        l_cv = self.m_api._convert_pim(l_ba)
-        # print('test_0105/ ', PrintBytes(l_cv), l_cv)
-        self.assertEqual(l_cv, (b'\x37\x30\x30\x33\x38\x44'))
+    def test_06_Convert(self):
+        l_ba = BuildCommand._assemble_regwrite(0x70, b'\x03')
+        l_cv = BuildCommand._convert_pim(l_ba)
+        self.assertEqual(l_cv, (b'\x70\x03\x8D'))
 
-    def test_06_CreateHeader(self):
+    def test_07_CreateHeader(self):
         pass
 
-    def test_07_QueueCommand(self):
+    def test_08_QueueCommand(self):
         pass
 
-    def test_08_Register(self):
-        l_ba = self.m_api.write_register_command(self.m_controller_obj, b'\x70', b'\x03')
-        # print('test_0106/ ', PrintBytes(l_ba), l_ba)
-        self.assertEqual(l_ba, (b'\x14\x37\x30\x30\x33\x38\x44\x0D'))
+    def test_09_Register(self):
+        l_ba = BuildCommand.write_register_command(self.m_controller_obj, b'\x70', b'\x03')
+        self.assertEqual(l_ba, (b'\x17\x70\x03\x8D\x0D'))
 
-    def test_09_WritePim(self):
+    def test_10_WritePim(self):
         pass
 
 
 class B2_Util(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        self.m_api = UPB_Pim.DecodeResponses()
+        self.m_api = DecodeResponses()
         self.m_controller_obj = ControllerData()
         self.m_controller_obj._Message = TEST_MESSAGE
 
@@ -131,7 +144,7 @@ class B2_Util(SetupMixin, unittest.TestCase):
 class B3_Decode(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        self.m_api = UPB_Pim.DecodeResponses()
+        self.m_api = DecodeResponses()
         self.m_controller_obj = ControllerData()
         self.m_controller_obj._Message = TEST_MESSAGE
 
@@ -175,7 +188,7 @@ class B3_Decode(SetupMixin, unittest.TestCase):
 class B4_Driver(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        self.m_api = UPB_Pim.DecodeResponses()
+        self.m_api = DecodeResponses()
         self.m_controller_obj = ControllerData()
         self.m_controller_obj._Message = TEST_MESSAGE
 

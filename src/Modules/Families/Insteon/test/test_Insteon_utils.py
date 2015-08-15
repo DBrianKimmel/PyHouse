@@ -7,7 +7,7 @@
 @note:      Created on Apr 27, 2013
 @summary:   This module is for testing Insteon conversion routines.
 
-Passed all 4 tests - DBL - 2015-07-28
+Passed all 3 tests - DBL - 2015-08-15
 
 """
 
@@ -39,23 +39,6 @@ class SetupMixin(object):
         self.inst = Insteon_utils.Util
 
 
-class C01_Util(SetupMixin, unittest.TestCase):
-    """
-    """
-
-    def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_controller_obj = self.m_pyhouse_obj.House.Controllers
-
-    def test_02_DeviceClass(self):
-        l_house = Insteon_utils.Util().get_device_class(self.m_pyhouse_obj, "xxx")
-        # PrettyPrintAny(l_house, 'HouseOBJs')
-
-    def test_03_iterate(self):
-        pass
-
-
-
 class C02_Conversions(SetupMixin, unittest.TestCase):
 
 
@@ -63,13 +46,13 @@ class C02_Conversions(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.inst = Insteon_utils.Util
 
-    def test_02_Message2int(self):
+    def test_01_Message2int(self):
         result = self.inst.message2int(MSG_50, 2)
         self.assertEqual(result, ADDR_DR_SLAVE_INT)
         result = self.inst.message2int(MSG_62, 2)
         self.assertEqual(result, ADDR_NOOK_INT)
 
-    def test_03_Int2message(self):
+    def test_02_Int2message(self):
         l_msg = MSG_50
         result = self.inst.int2message(ADDR_DR_SLAVE_INT, l_msg, 2)
         self.assertEqual(result[2:5], ADDR_DR_SLAVE_MSG)
@@ -77,10 +60,7 @@ class C02_Conversions(SetupMixin, unittest.TestCase):
         result = self.inst.int2message(ADDR_NOOK_INT, l_msg, 2)
         self.assertEqual(result[2:5], ADDR_NOOK_MSG)
 
-
-def suite():
-    l_suite = unittest.TestSuite()
-    # l_suite.addTest(C01_Conversions('test_01_message2int', 'test_02_int2message'))
-    return l_suite
+    def test_03_Json(self):
+        pass
 
 # ## END DBK

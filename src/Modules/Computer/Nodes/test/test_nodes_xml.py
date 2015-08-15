@@ -7,6 +7,8 @@
 @note:      Created on Dec 15, 2014
 @Summary:
 
+Passed all 17 tests - DBK - 2015-08-14
+
 """
 
 # Import system type stuff
@@ -20,7 +22,6 @@ from Modules.Computer.Nodes.test.xml_nodes import TESTING_NODES_NODE_NAME_1
 # from test.xml_data import *
 from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG, XML_EMPTY
-from Modules.Utilities.tools import PrettyPrintAny
 
 
 class SetupMixin(object):
@@ -30,7 +31,7 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_api = nodes_xml.Xml()
+        self.m_api = nodesXML()
 
 
 class FakeNetiface(object):
@@ -73,7 +74,7 @@ class C02_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_interface.Active, True, 'Bad Active')
         self.assertEqual(l_interface.MacAddress, '01:02:03:04:05:06', 'Bad MacAddress')
         self.assertEqual(l_interface.V4Address, "192.168.1.11", 'Bad V4Address')
-        self.assertEqual(l_interface.V6Address, '2000:1D::1, 2000:1D::101', 'Bad V6Address')
+        self.assertEqual(l_interface.V6Address, '2001:db8::1, 2000:1D::101')
 
     def test_02_AllInterfaces(self):
         l_interfaces = self.m_api._read_interfaces_xml(self.m_xml.interface_sect)
