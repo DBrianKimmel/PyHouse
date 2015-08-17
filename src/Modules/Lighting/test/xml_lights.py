@@ -15,8 +15,8 @@ See PyHouse/src/test/xml_data.py for the entire hierarchy.
 
 # Import PyMh files
 from Modules.Families.Insteon.test.xml_insteon import XML_INSTEON
-from Modules.Families.UPB.test.xml_upb import UPB_XML
-from Modules.Core.test.xml_device import XML_DEVICE
+from Modules.Families.UPB.test.xml_upb import XML_UPB
+from Modules.Core.test.xml_device import XML_DEVICE_INSTEON
 
 
 TESTING_LIGHTING_LIGHTS_NAME_1 = "Insteon Light"
@@ -36,7 +36,7 @@ L_DIMMABLE = '    <IsDimmable>' + TESTING_LIGHT_DIMMABLE + '</IsDimmable>'
 L_LEVEL = "    <CurLevel>" + TESTING_LIGHTING_LIGHT_CUR_LEVEL + "</CurLevel>"
 
 L_LIGHT_BODY = '\n'.join([
-    XML_DEVICE,
+    XML_DEVICE_INSTEON,
     L_LIGHT_TYPE,
     L_DIMMABLE,
     L_LEVEL
@@ -52,7 +52,7 @@ L_INSTEON_LIGHT_XML = '\n'.join([
 L_UPB_LIGHT_XML = '\n'.join([
     L_LIGHT_LIGHT_2,
     L_LIGHT_BODY,
-    UPB_XML,
+    XML_UPB,
     "</Light>"
     ])
 

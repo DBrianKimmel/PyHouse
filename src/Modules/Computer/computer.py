@@ -118,6 +118,7 @@ class API(Utility):
         p_pyhouse_obj.Computer = ComputerInformation()
         p_pyhouse_obj.Computer.Name = platform.node()
         Utility._init_component_apis(p_pyhouse_obj, self)
+        LOG.info('Initialized')
 
     def Start(self):
         """

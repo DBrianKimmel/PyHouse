@@ -27,17 +27,17 @@ PLEASE REFACTOR ME!
 # Import system type stuff
 
 # Import PyMh files
+from Modules.Families.Insteon.Insteon_constants import ACK, MESSAGE_TYPES, MESSAGE_LENGTH, NAK, STX
 from Modules.Families.Insteon.Insteon_data import InsteonData
+from Modules.Families.Insteon.Insteon_Link import Decode as linkDecode
+from Modules.Families.Insteon.Insteon_utils import Util, Decode as utilDecode
 from Modules.Core import conversions
 from Modules.Utilities import json_tools
 from Modules.Utilities.tools import PrintBytes
-from Modules.Families.Insteon.Insteon_constants import ACK, MESSAGE_TYPES, MESSAGE_LENGTH, NAK, STX
-from Modules.Families.Insteon.Insteon_utils import Util
 from Modules.Families.Insteon import Insteon_Link
 from Modules.Families.Insteon import Insteon_HVAC
 from Modules.Computer import logging_pyh as Logger
 
-g_debug = 0
 LOG = Logger.getLogger('PyHouse.Insteon_decode ')
 
 # OBJ_LIST = [Lights, Controllers, Buttons, Thermostats, Irrigation, Pool]
@@ -131,7 +131,7 @@ class D_Util(object):
             l_ret.Name = '**NoName-' + l_dotted + '-**'
         return l_ret
 
-    def get_obj_from_message(self, p_message, p_index):
+    def get_obj_from_message(self, p_message):
         """ Here we have a message from the PLM.  Find out what device has that address.
 
         @param p_message: is the message byte array from the PLM we are extracting the Insteon address from.
@@ -139,7 +139,7 @@ class D_Util(object):
                 Various messages contain the address at different offsets.
         @return: The object that contains the address -or- a dummy object with noname in Name
         """
-        l_address = Util.message2int(p_message, p_index)  # Extract the 3 byte address from the message and convert to an Int.
+        l_address = Util.message2int(p_message)  # Extract the 3 byte address from the message and convert to an Int.
         if l_address < (256 * 256):  # First byte zero ?
             l_dotted = str(l_address)
             l_device_obj = InsteonData()  # an empty new object
@@ -147,38 +147,6 @@ class D_Util(object):
         else:
             l_device_obj = self._find_address_all_classes(l_address)
         return l_device_obj
-
-    @staticmethod
-    def get_devcat(p_message, p_obj):
-        """
-            0x00    Generalized Controllers        ControLinc, RemoteLinc, SignaLinc, etc.
-            0x01    Dimmable Lighting Control      Dimmable Light Switches, Dimmable Plug-In Modules
-            0x02    Switched Lighting Control      Relay Switches, Relay Plug-In Modules
-            0x03    Network Bridges                PowerLinc Controllers, TRex, Lonworks, ZigBee, etc.
-            0x04    Irrigation Control             Irrigation Management, Sprinkler Controllers
-            0x05    Climate Control                Heating, Air conditioning, Exhausts Fans, Ceiling Fans, Indoor Air Quality
-            0x06    Pool and Spa Control           Pumps, Heaters, Chemicals
-            0x07    Sensors and Actuators          Sensors, Contact Closures
-            0x08    Home Entertainment             Audio/Video Equipment
-            0x09    Energy Management              Electricity, Water, Gas Consumption, Leak Monitors
-            0x0A    Built-In Appliance Control     White Goods, Brown Goods
-            0x0B    Plumbing                       Faucets, Showers, Toilets
-            0x0C    Communication                  Telephone System Controls, Intercoms
-            0x0D    Computer Control               PC On/Off, UPS Control, App Activation, Remote Mouse, Keyboards
-            0x0E    Window Coverings               Drapes, Blinds, Awnings
-            0x0F    Access Control                 Automatic Doors, Gates, Windows, Locks
-            0x10    Security, Health, Safety       Door and Window Sensors, Motion Sensors, Scales
-            0x11    Surveillance                   Video Camera Control, Time-lapse Recorders, Security System Links
-            0x12    Automotive                     Remote Starters, Car Alarms, Car Door Locks
-            0x13    Pet Care                       Pet Feeders, Trackers
-            0x14    Toys                           Model Trains, Robots
-            0x15    Timekeeping                    Clocks, Alarms, Timers
-            0x16    Holiday                        Christmas Lights, Displays
-        """
-        l_devcat = p_message[5] * 256 + p_message[6]
-        p_obj.DevCat = int(l_devcat)
-        l_debug_msg = " DevCat={:#x}, flags={} ".format(l_devcat, D_Util._decode_message_flag(p_message[8]))
-        return l_debug_msg
 
     @staticmethod
     def get_product_code(_p_obj, _p_message, _p_index):
@@ -190,7 +158,7 @@ class D_Util(object):
         # TODO: implement
         pass
 
-    def _get_addr_from_message(self, p_message, p_index):
+    def _get_addr_from_message(self, p_message):
         """Extract the address from a message.
 
         The message is a byte array returned from the PLM.
@@ -199,7 +167,7 @@ class D_Util(object):
         @param p_message: is the byte array returned by the controller.
         @param p_index: is the offset into the message of a 3 byte field we will fetch and convert to an int
         """
-        l_id = Util.message2int(p_message, p_index)
+        l_id = Util.message2int(p_message)
         return l_id
 
     def _get_ack_nak(self, p_byte):
@@ -323,9 +291,11 @@ class DecodeResponses(D_Util):
         elif l_cmd == 0x61: l_ret = self._decode_61_record(p_controller_obj)
         elif l_cmd == 0x62: l_ret = self._decode_62_record(p_controller_obj)
         elif l_cmd == 0x64: l_ret = self._decode_64_record(p_controller_obj)
+        elif l_cmd == 0x65: l_ret = self._decode_65_record(p_controller_obj)
         elif l_cmd == 0x69: l_ret = self._decode_69_record(p_controller_obj)
         elif l_cmd == 0x6A: l_ret = self._decode_6A_record(p_controller_obj)
         elif l_cmd == 0x6B: l_ret = self._decode_6B_record(p_controller_obj)
+        elif l_cmd == 0x6C: l_ret = self._decode_6C_record(p_controller_obj)
         elif l_cmd == 0x6F: l_ret = self._decode_6F_record(p_controller_obj)
         elif l_cmd == 0x73: l_ret = self._decode_73_record(p_controller_obj)
         else:
@@ -354,7 +324,7 @@ class DecodeResponses(D_Util):
         [10] = command 2
         """
         l_message = p_controller_obj._Message
-        l_device_obj = self.get_obj_from_message(l_message, 2)
+        l_device_obj = self.get_obj_from_message(l_message[2:5])
         l_message_flags = self.get_message_flags(p_controller_obj._Message, 8)
         l_flags = D_Util._decode_message_flag(l_message_flags)
         l_cmd1 = l_message[9]
@@ -367,7 +337,7 @@ class DecodeResponses(D_Util):
         l_debug_msg = 'Standard Message from: {}; Flags:{}; Cmd1:{:#x}, Cmd2:{:#x}; '.format(l_device_obj.Name, l_flags, l_cmd1, l_cmd2)
         # Break down bits 7(msb), 6, 5 into message type
         if l_message_flags & 0xE0 == 0x80:  # Broadcast/NAK Message (100)
-            l_debug_msg += D_Util.get_devcat(l_message, l_device_obj)
+            l_debug_msg += utilDecode._devcat(l_message[5:7], l_device_obj)
         elif l_message_flags & 0xE0 == 0xC0:  # (110) all link broadcast of group id
             l_group = l_message[7]
             l_debug_msg += "All-Link broadcast - Group:{}, Data:{}; ".format(l_group, l_data)
@@ -415,8 +385,8 @@ class DecodeResponses(D_Util):
         See p 247 of developers guide.
         """
         l_message = p_controller_obj._Message
-        l_obj_from = self.get_obj_from_message(l_message, 2)
-        l_obj_to = self.get_obj_from_message(l_message, 5)
+        l_obj_from = self.get_obj_from_message(l_message[2:5])
+        l_obj_to = self.get_obj_from_message(l_message[5:8])
         l_flags = l_message[8]
         l_data = [l_message[9], l_message[10]]
         l_extended = "{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}".format(
@@ -440,19 +410,11 @@ class DecodeResponses(D_Util):
         return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_53_record(self, p_controller_obj):
-        """Insteon All-Linking completed (10 bytes).
-        See p 260 of developers guide.
-        """
-        LOG.warning("== 53 Insteon All linking Completed - message not decoded yet.")
-        l_ret = False
+        l_ret = linkDecode.decode_53(p_controller_obj)
         return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_54_record(self, p_controller_obj):
-        """Insteon Button Press event (3 bytes).
-        See p 276 of developers guide.
-        """
-        LOG.warning("== 54 Insteon Button Press - message not decoded yet.")
-        l_ret = False
+        l_ret = linkDecode.decode_53(p_controller_obj)
         return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_55_record(self, p_controller_obj):
@@ -460,43 +422,20 @@ class DecodeResponses(D_Util):
         See p 269 of developers guide.
         """
         l_debug_msg = "User Reset Detected! "
-        l_ret = False
+        l_ret = linkDecode.decode_53(p_controller_obj)
         LOG.info("".format(l_debug_msg))
         return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_56_record(self, p_controller_obj):
-        """Insteon All-Link cleanup failure report (7 bytes).
-        See p 256 of developers guide.
-        """
-        LOG.warning("== 56 message not decoded yet.")
         l_ret = False
         return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_57_record(self, p_controller_obj):
-        """All-Link Record Response (10 bytes).
-        See p 264 of developers guide.
-        """
-        l_message = p_controller_obj._Message
-        l_obj = self.get_obj_from_message(l_message, 4)
-        l_link_obj = Insteon_Link.LinkData()
-        l_link_obj.Flag = l_flags = l_message[2]
-        l_link_obj.Group = l_group = l_message[3]
-        l_link_obj.InsteonAddess = l_obj.InsteonAddress
-        l_link_obj.Data = l_data = [l_message[7], l_message[8], l_message[9]]
-        l_flag_control = l_flags & 0x40
-        l_type = 'Responder'
-        if l_flag_control != 0:
-            l_type = 'Controller'
-        LOG.info("All-Link response-57 - Group={:#02X}, Name={}, Flags={:#x}, Data={}, {}".format(l_group, l_obj.Name, l_flags, l_data, l_type))
-        l_ret = True
+        l_ret = linkDecode.decode_57(p_controller_obj)
         return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_58_record(self, p_controller_obj):
-        """Insteon All-Link cleanup status report (3 bytes).
-        See p 257 of developers guide.
-        """
-        LOG.warning("== 58 message not decoded yet.")
-        l_ret = False
+        l_ret = linkDecode.decode_58(p_controller_obj)
         return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_60_record(self, p_controller_obj):
@@ -504,7 +443,7 @@ class DecodeResponses(D_Util):
         See p 273 of developers guide.
         """
         l_message = p_controller_obj._Message
-        l_obj = self.get_obj_from_message(l_message, 2)
+        l_obj = self.get_obj_from_message(l_message[2:5])
         l_devcat = l_message[5]
         l_devsubcat = l_message[6]
         l_firmver = l_message[7]
@@ -542,7 +481,7 @@ class DecodeResponses(D_Util):
         Depending on the command sent, another response MAY follow this message with further data.
         """
         l_message = p_controller_obj._Message
-        l_obj = self.get_obj_from_message(l_message, 2)
+        l_obj = self.get_obj_from_message(l_message[2:5])
         _l_msgflags = D_Util._decode_message_flag(l_message[5])
         try:
             l_8 = l_message[8]
@@ -551,24 +490,15 @@ class DecodeResponses(D_Util):
             LOG.warning("Short 62 message rxed - {p:}".format(PrintBytes(l_message)))
         l_ack = self._get_ack_nak(l_8)
         l_debug_msg = "Device:{}, {}".format(l_obj.Name, l_ack)
-        if g_debug >= 1:
-            LOG.info("Got ACK(62) {}".format(l_debug_msg))
+        # LOG.info("Got ACK(62) {}".format(l_debug_msg))
         return self.check_for_more_decoding(p_controller_obj)
 
     def _decode_64_record(self, p_controller_obj):
-        """Start All-Link ACK response (5 bytes).
-        See p 258 of developers guide.
-        """
-        l_message = p_controller_obj._Message
-        l_grp = l_message[2]
-        l_cmd1 = l_message[3]
-        l_ack = l_message[4]
-        LOG.info("All-Link Ack - Group:{}, Cmd:{}, Ack:{}".format(l_grp, l_cmd1, l_ack))
-        if l_ack == ACK:
-            l_ret = True
-        else:
-            LOG.error("== 64 - No ACK - Got {:#x}".format(l_ack))
-            l_ret = False
+        l_ret = linkDecode.decode_64(p_controller_obj)
+        return self.check_for_more_decoding(p_controller_obj, l_ret)
+
+    def _decode_65_record(self, p_controller_obj):
+        l_ret = linkDecode.decode_65(p_controller_obj)
         return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_67_record(self, p_controller_obj):
@@ -582,29 +512,11 @@ class DecodeResponses(D_Util):
         return self.check_for_more_decoding(p_controller_obj)
 
     def _decode_69_record(self, p_controller_obj):
-        """Get first All-Link record response (3 bytes).
-        See p 261 of developers guide.
-        """
-        l_message = p_controller_obj._Message
-        if l_message[2] == ACK:
-            l_ret = True
-            self.queue_6A_command()
-        else:
-            LOG.info("All-Link first record - NAK")
-            l_ret = False
+        l_ret = linkDecode.decode_69(p_controller_obj)
         return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_6A_record(self, p_controller_obj):
-        """Get next All-Link (3 bytes).
-        See p 262 of developers guide.
-        """
-        l_message = p_controller_obj._Message
-        if l_message[2] == ACK:
-            l_ret = True
-            self.queue_6A_command()
-        else:
-            LOG.info("All-Link Next record - NAK")
-            l_ret = False
+        l_ret = linkDecode.decode_6A(p_controller_obj)
         return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_6B_record(self, p_controller_obj):
@@ -623,6 +535,10 @@ class DecodeResponses(D_Util):
             l_ret = False
         return self.check_for_more_decoding(p_controller_obj, l_ret)
 
+    def _decode_6C_record(self, p_controller_obj):
+        l_ret = linkDecode.decode_6C(p_controller_obj)
+        return self.check_for_more_decoding(p_controller_obj, l_ret)
+
     def _decode_6F_record(self, p_controller_obj):
         """All-Link manage Record Response (12 bytes).
         See p 267 of developers guide.
@@ -632,7 +548,7 @@ class DecodeResponses(D_Util):
         l_flags = l_message[3]
         l_flag_control = l_flags & 0x40
         l_group = l_message[4]
-        l_obj = self.get_obj_from_message(l_message, 5)
+        l_obj = self.get_obj_from_message(l_message[5:8])
         l_data = [l_message[8], l_message[9], l_message[10]]
         l_ack = self._get_ack_nak(l_message[11])
         l_type = 'Responder'

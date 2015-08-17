@@ -20,7 +20,6 @@ from Modules.Drivers.USB import USB_open
 from Modules.Utilities.tools import PrintBytes
 from Modules.Computer import logging_pyh as Logger
 
-g_debug = 1
 LOG = Logger.getLogger('PyHouse.USBDriver      ')
 
 # Timeouts for send/receive delays
@@ -62,12 +61,10 @@ class SerialProtocol(Protocol):
         LOG.error("USB_driver.connectionFailed() - {0:}".format(self))
 
     def connectionMade(self):
-        if g_debug >= 2:
-            LOG.debug('USB_driver.connectionMade() - Connected to Serial Device')  # , dir(self), vars(self)
+        LOG.debug('USB_driver.connectionMade() - Connected to Serial Device')  # , dir(self), vars(self)
 
     def dataReceived(self, p_data):
-        if g_debug >= 2:
-            LOG.debug("USB_driver.dataReceived() - {0:}".format(PrintBytes(p_data)))
+        LOG.debug("USB_driver.dataReceived() - {0:}".format(PrintBytes(p_data)))
         self.m_USB_obj.message += p_data
 
 
@@ -103,8 +100,7 @@ class UsbDriverAPI(UsbDeviceData):
         """
         try:
             l_msg = p_USB_obj.Device.read(p_USB_obj.epi_addr, p_USB_obj.epi_packet_size, timeout = 100)  # Note - No device to test with
-            if g_debug >= 1:
-                LOG.debug("read_device() - Msg:{1:}".format(PrintBytes(l_msg)))
+            LOG.debug("read_device() - Msg:{1:}".format(PrintBytes(l_msg)))
         except usb.USBError as e_err:
             LOG.error("ERROR - read_device() got USBError - {0:}".format(e_err))
             l_msg = bytearray(0)
@@ -127,8 +123,7 @@ class UsbDriverAPI(UsbDeviceData):
             return l_ret
         l_len = p_message[0] & 0x0F
         if l_len > 0:
-            if g_debug >= 1:
-                LOG.debug("read_hid_report() A - Msg:{0:}".format(PrintBytes(p_message)))
+            LOG.debug("read_hid_report() A - Msg:{0:}".format(PrintBytes(p_message)))
             l_ret = p_message[1:l_len + 1]
         return l_ret
 
@@ -161,8 +156,7 @@ class UsbDriverAPI(UsbDeviceData):
         self.m_USB_obj.message = bytearray()
         if len(l_ret) == 0:
             return l_ret
-        if g_debug >= 1:
-            LOG.debug("fetch_read_data() - Msg:{0:}".format(PrintBytes(l_ret)))
+        LOG.debug("fetch_read_data() - Msg:{0:}".format(PrintBytes(l_ret)))
         return l_ret
 
     def write_usb(self, p_USB_obj, p_message):
@@ -172,8 +166,7 @@ class UsbDriverAPI(UsbDeviceData):
             self.write_device(p_USB_obj, p_message)
 
     def write_report(self, p_USB_obj, p_message):
-        if g_debug >= 1:
-            LOG.debug("Write Report - {0:}".format(PrintBytes(p_message)))
+        LOG.debug("Write Report - {0:}".format(PrintBytes(p_message)))
         self._write_bis_device(p_USB_obj, p_message)
 
     def write_device(self, p_USB_obj, p_message):
@@ -184,8 +177,7 @@ class UsbDriverAPI(UsbDeviceData):
 
         @return: the number of bytes written
         """
-        if g_debug >= 1:
-            LOG.debug("write_device() - {0:}".format(PrintBytes(p_message)))
+        LOG.debug("write_device() - {0:}".format(PrintBytes(p_message)))
         if p_USB_obj.epi_type == 0:
             self._write_control_device(p_USB_obj, p_message)
         else:
@@ -195,8 +187,7 @@ class UsbDriverAPI(UsbDeviceData):
         """Bulk, Interrupt, isoSynchronous
         """
         l_message = p_message
-        if g_debug >= 1:
-            LOG.debug("write_bis_device() - Ep_out: {0:#04X}, - {1:}".format(p_USB_obj.epo_addr, PrintBytes(l_message)))
+        LOG.debug("write_bis_device() - Ep_out: {0:#04X}, - {1:}".format(p_USB_obj.epo_addr, PrintBytes(l_message)))
         try:
             l_len = p_USB_obj.Device.write(p_USB_obj.epo_addr, l_message)
         except Exception as e:
@@ -205,8 +196,7 @@ class UsbDriverAPI(UsbDeviceData):
         return l_len
 
     def _write_control_device(self, p_USB_obj, p_message):
-        if g_debug >= 1:
-            LOG.debug("_write_control_device() {0:}".format(p_USB_obj.Device))
+        LOG.debug("_write_control_device() {0:}".format(p_USB_obj.Device))
         l_len = p_USB_obj.Device.ctrl_transfer(0, p_message, timeout = 100)
         return l_len
 
@@ -241,8 +231,7 @@ class API(UsbDriverAPI):
         else:
             LOG.warning("Failed to open Controller:{0:}".format(self.m_USB_obj.Name))
             l_ret = False
-        if g_debug >= 1:
-            LOG.info('Started')
+        LOG.info('Started')
         return l_ret
 
     def Stop(self):

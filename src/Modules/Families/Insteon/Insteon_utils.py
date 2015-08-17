@@ -17,8 +17,9 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Computer import logging_pyh as Logger
 from Modules.Families.Insteon.Insteon_constants import InsteonError
+from Modules.Families.Insteon.Insteon_data import InsteonData
+from Modules.Computer import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.Insteon_Utils  ')
 
@@ -43,15 +44,20 @@ class Util(object):
         return p_message
 
     @staticmethod
-    def message2int(p_message, p_index):
+    def message2int(p_message):
         """Extract the address (3 bytes) from a response message.
         The message is a byte array returned from the PLM.
         Return a 24 bit int that is the address.
         """
         try:
-            l_int = p_message[p_index] * 256 * 256 + p_message[p_index + 1] * 256 + p_message[p_index + 2]
-        except IndexError:
-            l_int = 0
+            l_int0 = ord(p_message[0])
+            l_int1 = ord(p_message[1])
+            l_int2 = ord(p_message[2])
+        except TypeError:
+            l_int0 = int(p_message[0])
+            l_int1 = int(p_message[1])
+            l_int2 = int(p_message[2])
+        l_int = ((l_int0 * 256) + l_int1) * 256 + l_int2
         return l_int
 
     @staticmethod
@@ -63,5 +69,100 @@ class Util(object):
         p_obj.IsMaster = p_json['IsMaster']
         p_obj.ProductKey = int(p_json['ProductKey'])
         return p_obj
+
+
+class Decode(object):
+
+    @staticmethod
+    def _devcat(p_message, p_obj):
+        """ Decode the DevCat and DevSubCat from a message.
+        @param p_message: is the message where the Devcat 2 bytes are located
+            0x00    Generalized Controllers        ControLinc, RemoteLinc, SignaLinc, etc.
+            0x01    Dimmable Lighting Control      Dimmable Light Switches, Dimmable Plug-In Modules
+            0x02    Switched Lighting Control      Relay Switches, Relay Plug-In Modules
+            0x03    Network Bridges                PowerLinc Controllers, TRex, Lonworks, ZigBee, etc.
+            0x04    Irrigation Control             Irrigation Management, Sprinkler Controllers
+            0x05    Climate Control                Heating, Air conditioning, Exhausts Fans, Ceiling Fans, Indoor Air Quality
+            0x06    Pool and Spa Control           Pumps, Heaters, Chemicals
+            0x07    Sensors and Actuators          Sensors, Contact Closures
+            0x08    Home Entertainment             Audio/Video Equipment
+            0x09    Energy Management              Electricity, Water, Gas Consumption, Leak Monitors
+            0x0A    Built-In Appliance Control     White Goods, Brown Goods
+            0x0B    Plumbing                       Faucets, Showers, Toilets
+            0x0C    Communication                  Telephone System Controls, Intercoms
+            0x0D    Computer Control               PC On/Off, UPS Control, App Activation, Remote Mouse, Keyboards
+            0x0E    Window Coverings               Drapes, Blinds, Awnings
+            0x0F    Access Control                 Automatic Doors, Gates, Windows, Locks
+            0x10    Security, Health, Safety       Door and Window Sensors, Motion Sensors, Scales
+            0x11    Surveillance                   Video Camera Control, Time-lapse Recorders, Security System Links
+            0x12    Automotive                     Remote Starters, Car Alarms, Car Door Locks
+            0x13    Pet Care                       Pet Feeders, Trackers
+            0x14    Toys                           Model Trains, Robots
+            0x15    Timekeeping                    Clocks, Alarms, Timers
+            0x16    Holiday                        Christmas Lights, Displays
+        """
+        try:
+            l_cat = ord(p_message[0])
+            l_sub = ord(p_message[1])
+        except TypeError:
+            l_cat = int(p_message[0])
+            l_sub = int(p_message[1])
+        l_devcat = int(l_cat) * 256 + int(l_sub)
+        p_obj.DevCat = l_devcat
+        l_debug_msg = " DevCat={:#x},".format(l_devcat)
+        return l_debug_msg
+
+    @staticmethod
+    def _find_addr_one_class(p_class, p_addr):
+        """
+        Find the address of something Insteon.
+        @param p_class: is an OBJ like p_pyhouse_obj.House.Controllers that we will look thru to find the object.
+        @param p_addr: is the address that we want to find.
+        @return: the object that has the address.  None if not found
+        """
+        for l_obj in p_class.itervalues():
+            if l_obj.DeviceFamily != 'Insteon':
+                continue  # ignore any non-Insteon devices in the class
+            if l_obj.InsteonAddress == p_addr:
+                return l_obj
+        return None
+
+    @staticmethod
+    def _find_address_all_classes(p_address):
+        """ This will search thru all object groups that an inseton device could be in.
+        @return: the object that has the address or a dummy object if not found
+        """
+        l_ret = Decode._find_addr_one_class(self.m_pyhouse_obj.House.Lights, p_address)
+        l_dotted = conversions.int2dotted_hex(p_address, 3)
+        if l_ret == None:
+            l_ret = DECIDE._find_addr_one_class(self.m_pyhouse_obj.House.Controllers, p_address)
+        if l_ret == None:
+            l_ret = Decode._find_addr_one_class(self.m_pyhouse_obj.House.Buttons, p_address)
+        if l_ret == None:
+            l_ret = Decode._find_addr_one_class(self.m_pyhouse_obj.House.Thermostats, p_address)
+        # Add additional classes in here
+        if l_ret == None:
+            LOG.info("WARNING - Address {} ({}) *NOT* found.".format(l_dotted, p_address))
+            l_ret = InsteonData()  # an empty new object
+            l_ret.Name = '**NoName-' + l_dotted + '-**'
+        return l_ret
+
+    @staticmethod
+    def get_obj_from_message(p_message):
+        """ Here we have a message from the PLM.  Find out what device has that address.
+
+        @param p_message: is the message byte array from the PLM we are extracting the Insteon address from.
+        @param p_index: is the index of the first byte in the message.
+                Various messages contain the address at different offsets.
+        @return: The object that contains the address -or- a dummy object with noname in Name
+        """
+        l_address = Util.message2int(p_message)  # Extract the 3 byte address from the message and convert to an Int.
+        if l_address < (256 * 256):  # First byte zero ?
+            l_dotted = str(l_address)
+            l_device_obj = InsteonData()  # an empty new object
+            l_device_obj.Name = '**Group: ' + l_dotted + ' **'
+        else:
+            l_device_obj = Decode._find_address_all_classes(l_address)
+        return l_device_obj
 
 # ## END DBK

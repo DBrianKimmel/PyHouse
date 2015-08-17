@@ -7,7 +7,7 @@
 @copyright: (c) 2014-2015 by D. Brian Kimmel
 @note:      Created on Aug 9, 2011
 @license:   MIT License
-@summary:   This module is for *using* device families
+@summary:   This module is for *USING* device families
 
 All device objects use 'DeviceFamily' to designate the family.
 This is because the things we wish to automate all have some controller that speaks to that

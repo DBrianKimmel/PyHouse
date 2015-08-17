@@ -12,7 +12,7 @@
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Core.test.xml_device import XML_DEVICE
+from Modules.Core.test.xml_device import XML_DEVICE_INSTEON
 from Modules.Families.Insteon.test.xml_insteon import XML_INSTEON
 
 
@@ -51,7 +51,7 @@ L_THERMOSTAT_STATUS = '\n'.join([
 XML_INSTEON_THERMOSTAT = '\n'.join([
     L_THERMOSTAT_NAME,
     '<!-- ABC -->',
-    XML_DEVICE,
+    XML_DEVICE_INSTEON,
     L_THERMOSTAT_SETTINGS,
     L_THERMOSTAT_STATUS,
     XML_INSTEON,

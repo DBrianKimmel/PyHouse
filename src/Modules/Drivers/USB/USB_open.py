@@ -26,7 +26,6 @@ import usb.util
 from Modules.Utilities.tools import PrintBytes
 from Modules.Computer import logging_pyh as Logger
 
-g_debug = 0
 LOG = Logger.getLogger('PyHouse.USBDriver_Open ')
 
 
@@ -176,13 +175,11 @@ class API(UsbDeviceData):
         """We will deal with 2 endpoints here - as that is what I expect a controller to have.
         No use in be too general if no device exists that is more complex.
         """
-        if g_debug >= 1:
-            LOG.debug("_setup_endpoints() - Name: {0:},  endpoint count: {1:}".format(p_USB_obj.Name, p_USB_obj.num_endpoints))
+        LOG.debug("_setup_endpoints() - Name: {0:},  endpoint count: {1:}".format(p_USB_obj.Name, p_USB_obj.num_endpoints))
         p_USB_obj.ep_out = usb.util.find_descriptor(
             p_USB_obj.interface,
             custom_match = lambda e: usb.util.endpoint_direction(e.bEndpointAddress) == usb.util.ENDPOINT_OUT)
-        if g_debug >= 1:
-            LOG.debug("  Ep_Out: {0:}".format(p_USB_obj.ep_out.__dict__))
+        LOG.debug("  Ep_Out: {0:}".format(p_USB_obj.ep_out.__dict__))
         p_USB_obj.epo_addr = p_USB_obj.ep_out.bEndpointAddress
         p_USB_obj.epo_type = p_USB_obj.ep_out.bmAttributes & 0x03
         p_USB_obj.epo_packet_size = p_USB_obj.ep_out.wMaxPacketSize
@@ -191,8 +188,7 @@ class API(UsbDeviceData):
             p_USB_obj.interface,
             custom_match = lambda e: usb.util.endpoint_direction(e.bEndpointAddress) == usb.util.ENDPOINT_IN
         )
-        if g_debug >= 1:
-            LOG.debug("  Ep_In: {0:}".format(p_USB_obj.ep_in.__dict__))
+        LOG.debug("  Ep_In: {0:}".format(p_USB_obj.ep_in.__dict__))
         p_USB_obj.epi_addr = p_USB_obj.ep_in.bEndpointAddress
         p_USB_obj.epi_type = p_USB_obj.ep_in.bmAttributes & 0x03
         p_USB_obj.epi_packet_size = p_USB_obj.ep_in.wMaxPacketSize

@@ -187,6 +187,12 @@ class BuildCommand(object):
     def  write_pim_command(p_controller_obj, _p_command, _p_device_id, *p_args):
         """Send a command to some UPB device thru the controller
         """
+        l_cmd = BuildCommand._assemble_regwrite(p_reg, p_args)
+        l_cmd[1:] = BuildCommand._convert_pim(l_cmd)
+        l_cmd[0] = CTL_T
+        l_cmd.append(0x0d)
+        BuildCommand._queue_pim_command(p_controller_obj, l_cmd)
+        return l_cmd
         pass
 
 
@@ -204,7 +210,7 @@ class UpbPimUtility(object):
         # l_hdr[0] = 0x14
         for l_ix in range(len(p_args)):
             l_hdr[0 + l_ix] = p_args[l_ix]
-        l_hdr = self._calculate_checksum(l_hdr)
+        l_hdr = self._append_checksum(l_hdr)
         l_msg = "Ctl:{:#02x}  ".format(l_hdr[0])
         if g_debug >= 1:
             LOG.debug('Compose Command - {}'.format(l_msg))

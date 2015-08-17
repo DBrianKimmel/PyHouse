@@ -16,7 +16,7 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import ControllerData
-from Modules.Core.test.xml_device import TESTING_DEVICE_COMMENT, TESTING_DEVICE_FAMILY, TESTING_DEVICE_TYPE, TESTING_DEVICE_SUBTYPE, \
+from Modules.Core.test.xml_device import TESTING_DEVICE_COMMENT, TESTING_DEVICE_FAMILY_INSTEON, TESTING_DEVICE_TYPE, TESTING_DEVICE_SUBTYPE, \
     TESTING_DEVICE_ROOM_NAME
 from Modules.Lighting.lighting_controllers import Utility, API as controllerAPI
 from Modules.Lighting.test.xml_core import TESTING_LIGHTING_CORE_ROOM
@@ -89,7 +89,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.Active, True)
         self.assertEqual(l_obj.LightingType, 'Controller')
         self.assertEqual(l_obj.Comment, TESTING_DEVICE_COMMENT)
-        self.assertEqual(l_obj.DeviceFamily, TESTING_DEVICE_FAMILY)
+        self.assertEqual(l_obj.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_obj.DeviceType, int(TESTING_DEVICE_TYPE))
         self.assertEqual(l_obj.DeviceSubType, int(TESTING_DEVICE_SUBTYPE))
         self.assertEqual(l_obj.RoomName, TESTING_DEVICE_ROOM_NAME)

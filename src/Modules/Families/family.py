@@ -7,7 +7,7 @@
 @copyright: (c) 2013-2015 by D. Brian Kimmel
 @note:      Created on May 17, 2013
 @license:   MIT License
-@summary:   This module is for *building/loading* device families.
+@summary:   This module is for *BUILDING/loading* device families.
 
 Families are a way of abstracting the difference between different "Device Families".
 Device families are things such as Insteon, X10, Zigby and many others.

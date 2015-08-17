@@ -25,7 +25,7 @@ from Modules.Lighting.test.xml_controllers import \
         TESTING_CONTROLLER_NAME_1, \
         TESTING_CONTROLLER_NAME_2
 from Modules.Core.test.xml_device import \
-        TESTING_DEVICE_FAMILY
+        TESTING_DEVICE_FAMILY_INSTEON
 from Modules.Lighting.test.xml_lights import \
         TESTING_LIGHTING_LIGHTS_NAME_1, \
         TESTING_LIGHTING_LIGHTS_NAME_2
@@ -102,7 +102,7 @@ class A3_Utility(SetupMixin, unittest.TestCase):
         self.assertEqual(len(l_dict), 2)
         # PrettyPrintAny(l_dict[0], 'Controllers')
         self.assertEqual(l_dict[0].Name, TESTING_CONTROLLER_NAME_1)
-        self.assertEqual(l_dict[0].DeviceFamily, TESTING_DEVICE_FAMILY)
+        self.assertEqual(l_dict[0].DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_dict[1].Name, TESTING_CONTROLLER_NAME_2)
 
     def test_03_ReadLighting(self):

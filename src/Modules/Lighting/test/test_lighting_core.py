@@ -22,7 +22,7 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import LightData, ButtonData, ControllerData
-from Modules.Core.test.xml_device import TESTING_DEVICE_COMMENT, TESTING_DEVICE_FAMILY, \
+from Modules.Core.test.xml_device import TESTING_DEVICE_COMMENT, TESTING_DEVICE_FAMILY_INSTEON, \
     TESTING_DEVICE_ROOM_X, TESTING_DEVICE_ROOM_Y, TESTING_DEVICE_ROOM_Z, TESTING_DEVICE_UUID, \
     TESTING_DEVICE_TYPE, TESTING_DEVICE_SUBTYPE, TESTING_DEVICE_ROOM_NAME
 from Modules.Lighting.lighting_core import API as LightingCoreAPI
@@ -113,7 +113,7 @@ class B1_Parts_1_4(SetupMixin, unittest.TestCase):
         l_device = self.m_api._read_base(self.m_light_obj, self.m_xml.light)
         l_device = self.m_api._read_versioned_device(l_device, self.m_xml.light, '1.4')
         self.assertEqual(l_device.Comment, TESTING_DEVICE_COMMENT)
-        self.assertEqual(l_device.DeviceFamily, TESTING_DEVICE_FAMILY)
+        self.assertEqual(l_device.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_device.DeviceType, int(TESTING_DEVICE_TYPE))
         self.assertEqual(l_device.DeviceSubType, int(TESTING_DEVICE_SUBTYPE))
         self.assertEqual(l_device.RoomName, TESTING_DEVICE_ROOM_NAME)
@@ -161,7 +161,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_core.Active, True)
         self.assertEqual(l_core.UUID, TESTING_DEVICE_UUID)
         self.assertEqual(l_core.Comment, TESTING_DEVICE_COMMENT)
-        self.assertEqual(l_core.DeviceFamily, TESTING_DEVICE_FAMILY)
+        self.assertEqual(l_core.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_core.DeviceType, int(TESTING_DEVICE_TYPE))
         self.assertEqual(l_core.DeviceSubType, int(TESTING_DEVICE_SUBTYPE))
         self.assertEqual(l_core.RoomName, TESTING_DEVICE_ROOM_NAME)
@@ -176,7 +176,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_base.Key, 0)
         self.assertEqual(l_base.Active, True)
         self.assertEqual(l_base.Comment, TESTING_DEVICE_COMMENT)
-        self.assertEqual(l_base.DeviceFamily, TESTING_DEVICE_FAMILY)
+        self.assertEqual(l_base.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_base.RoomName, TESTING_DEVICE_ROOM_NAME)
         self.assertEqual(l_base.RoomCoords.X_Easting, float(TESTING_DEVICE_ROOM_X))
 
@@ -190,7 +190,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_base.Active, True)
         self.assertEqual(l_base.Comment, TESTING_DEVICE_COMMENT)
         self.assertEqual(l_base.RoomCoords.X_Easting, float(TESTING_DEVICE_ROOM_X))
-        self.assertEqual(l_base.DeviceFamily, TESTING_DEVICE_FAMILY)
+        self.assertEqual(l_base.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_base.RoomName, TESTING_DEVICE_ROOM_NAME)
 
     def test_03_BaseButton(self):
@@ -202,7 +202,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_base.Key, 0)
         self.assertEqual(l_base.Active, True)
         self.assertEqual(l_base.Comment, TESTING_DEVICE_COMMENT)
-        self.assertEqual(l_base.DeviceFamily, TESTING_DEVICE_FAMILY)
+        self.assertEqual(l_base.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_base.RoomName, TESTING_DEVICE_ROOM_NAME)
         self.assertEqual(l_base.RoomCoords.X_Easting, float(TESTING_DEVICE_ROOM_X))
 

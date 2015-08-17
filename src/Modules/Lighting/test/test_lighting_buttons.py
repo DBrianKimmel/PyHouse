@@ -19,7 +19,7 @@ from Modules.Core.data_objects import ButtonData
 from Modules.Core.test.xml_device import \
         TESTING_DEVICE_COMMENT, \
         TESTING_DEVICE_ROOM_NAME, \
-        TESTING_DEVICE_FAMILY
+        TESTING_DEVICE_FAMILY_INSTEON
 from Modules.Lighting.lighting_buttons import Utility, API as buttonsAPI
 from Modules.Lighting.test.xml_buttons import \
         TESTING_LIGHTING_BUTTON_NAME_1, \
@@ -84,7 +84,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_button.Name, TESTING_LIGHTING_BUTTON_NAME_1)
         self.assertEqual(l_button.Active, True)
         self.assertEqual(l_button.Comment, TESTING_DEVICE_COMMENT)
-        self.assertEqual(l_button.DeviceFamily, TESTING_DEVICE_FAMILY)
+        self.assertEqual(l_button.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_button.LightingType, 'Button', 'Bad Lighting Type')
         self.assertEqual(l_button.RoomName, TESTING_DEVICE_ROOM_NAME)
 

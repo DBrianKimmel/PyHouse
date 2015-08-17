@@ -27,7 +27,7 @@ from Modules.Lighting.test.xml_lights import \
         TESTING_LIGHTING_TYPE
 from Modules.Families.Insteon.test.xml_insteon import \
         TESTING_INSTEON_ADDRESS
-from Modules.Core.test.xml_device import TESTING_DEVICE_COMMENT, TESTING_DEVICE_FAMILY, \
+from Modules.Core.test.xml_device import TESTING_DEVICE_COMMENT, TESTING_DEVICE_FAMILY_INSTEON, \
         TESTING_DEVICE_ROOM_NAME, \
         TESTING_DEVICE_UUID, \
         TESTING_DEVICE_TYPE, \
@@ -117,7 +117,7 @@ class R1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.Key, 0)
         self.assertEqual(l_obj.Active, True)
         self.assertEqual(l_obj.Comment, TESTING_DEVICE_COMMENT)
-        self.assertEqual(l_obj.DeviceFamily, TESTING_DEVICE_FAMILY)
+        self.assertEqual(l_obj.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_obj.DeviceType, int(TESTING_DEVICE_TYPE))
         self.assertEqual(l_obj.DeviceSubType, int(TESTING_DEVICE_SUBTYPE))
         self.assertEqual(l_obj.LightingType, TESTING_LIGHTING_TYPE)
@@ -148,7 +148,7 @@ class R1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.Key, 0)
         self.assertEqual(l_obj.Active, True)
         self.assertEqual(l_obj.Comment, TESTING_DEVICE_COMMENT)
-        self.assertEqual(l_obj.DeviceFamily, TESTING_DEVICE_FAMILY)
+        self.assertEqual(l_obj.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_obj.RoomName, TESTING_DEVICE_ROOM_NAME)
         self.assertEqual(l_obj.LightingType, 'Light')
         self.assertEqual(l_obj.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS))
@@ -178,7 +178,7 @@ class W1_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.attrib['Active'], 'True')
         self.assertEqual(l_xml.find('UUID').text, TESTING_DEVICE_UUID)
         self.assertEqual(l_xml.find('Comment').text, TESTING_DEVICE_COMMENT)
-        self.assertEqual(l_xml.find('DeviceFamily').text, TESTING_DEVICE_FAMILY)
+        self.assertEqual(l_xml.find('DeviceFamily').text, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_xml.find('RoomName').text, TESTING_DEVICE_ROOM_NAME)
         self.assertEqual(l_xml.find('UUID').text, TESTING_DEVICE_UUID)
         self.assertEqual(l_xml.find('UUID').text, TESTING_DEVICE_UUID)

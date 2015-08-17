@@ -17,7 +17,7 @@ from xml.etree import ElementTree as ET
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import LightData, ButtonData, ControllerData
-from Modules.Core.test.xml_device import TESTING_DEVICE_COMMENT, TESTING_DEVICE_FAMILY, \
+from Modules.Core.test.xml_device import TESTING_DEVICE_COMMENT, TESTING_DEVICE_FAMILY_INSTEON, \
             TESTING_DEVICE_ROOM_NAME, TESTING_DEVICE_ROOM_X
 from Modules.Utilities.device_tools import XML as deviceXML
 from test.xml_data import XML_LONG
@@ -88,7 +88,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_base.Key, 0)
         self.assertEqual(l_base.Active, True)
         self.assertEqual(l_base.Comment, TESTING_DEVICE_COMMENT)
-        self.assertEqual(l_base.DeviceFamily, TESTING_DEVICE_FAMILY)
+        self.assertEqual(l_base.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_base.RoomName, TESTING_DEVICE_ROOM_NAME)
         self.assertEqual(l_base.RoomCoords.X_Easting, float(TESTING_DEVICE_ROOM_X))
 
@@ -103,7 +103,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_base.Active, True)
         self.assertEqual(l_base.Comment, TESTING_DEVICE_COMMENT)
         self.assertEqual(l_base.RoomCoords.X_Easting, float(TESTING_DEVICE_ROOM_X))
-        self.assertEqual(l_base.DeviceFamily, TESTING_DEVICE_FAMILY)
+        self.assertEqual(l_base.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_base.RoomName, TESTING_DEVICE_ROOM_NAME)
 
     def test_03_ReadBaseButton(self):
@@ -117,7 +117,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_base.Active, True)
         self.assertEqual(l_base.Comment, TESTING_DEVICE_COMMENT)
         self.assertEqual(l_base.RoomCoords.X_Easting, float(TESTING_DEVICE_ROOM_X))
-        self.assertEqual(l_base.DeviceFamily, TESTING_DEVICE_FAMILY)
+        self.assertEqual(l_base.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_base.RoomName, TESTING_DEVICE_ROOM_NAME)
 
 

@@ -16,9 +16,9 @@ from twisted.trial import unittest
 # Import PyMh files
 from Modules.Hvac.hvac_xml import Utility, XML as hvacXML
 from Modules.Core.test.xml_device import \
-        XML_DEVICE, \
+        XML_DEVICE_INSTEON, \
         TESTING_DEVICE_COMMENT, \
-        TESTING_DEVICE_FAMILY, \
+        TESTING_DEVICE_FAMILY_INSTEON, \
         TESTING_DEVICE_ROOM_NAME
 from Modules.Hvac.test.xml_thermostat import \
         TESTING_THERMOSTAT_NAME, \

@@ -12,9 +12,9 @@
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Core.test.xml_device import XML_DEVICE
+from Modules.Core.test.xml_device import XML_DEVICE_INSTEON
 from Modules.Families.Insteon.test.xml_insteon import XML_INSTEON
-from Modules.Families.UPB.test.xml_upb import UPB_XML
+from Modules.Families.UPB.test.xml_upb import XML_UPB
 
 
 
@@ -25,7 +25,7 @@ TESTING_LIGHTING_BUTTON_NAME_2 = 'UPB Button'
 L_BUTTON_TYPE = '    <LightingType>' + TESTING_LIGHTING_BUTTON_TYPE + '</LightingType>'
 
 L_BUTTON_BODY = '\n'.join([
-    XML_DEVICE,
+    XML_DEVICE_INSTEON,
     L_BUTTON_TYPE
     ])
 
@@ -38,7 +38,7 @@ INSTEON_BUTTON_XML = '\n'.join([
 UPB_BUTTON_XML = '\n'.join([
     '<Button Name="' + TESTING_LIGHTING_BUTTON_NAME_2 + '" Active="True" Key="1">',
     L_BUTTON_BODY,
-    UPB_XML,
+    XML_UPB,
     "</Button>"])
 
 XML_BUTTON_SECTION = '\n'.join([

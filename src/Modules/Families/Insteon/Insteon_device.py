@@ -23,6 +23,7 @@ serial_port
 # Import system type stuff
 
 # Import PyMh files
+from Modules.Families.Insteon.Insteon_utils import Decode
 from Modules.Families.Insteon import Insteon_xml
 from Modules.Computer import logging_pyh as Logger
 

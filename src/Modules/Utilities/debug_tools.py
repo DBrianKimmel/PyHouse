@@ -322,7 +322,7 @@ class PrettyFormatAny(object):
 
 # ======================================================================
 
-def PrintBytes(p_message):
+def FormatBytes(p_message):
     """Print all the bytes of a message as hex bytes.
     """
     l_len = len(p_message)

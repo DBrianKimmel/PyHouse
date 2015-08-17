@@ -31,6 +31,8 @@ from Modules.Computer import logging_pyh as Logger
 from Modules.Computer.computer import API as computerAPI
 from Modules.Housing.house import API as houseAPI
 from Modules.Utilities.config_file import API as configAPI
+from Modules.Communication.ir_control import g_pyhouse_obj
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.CoreSetup      ')
 
@@ -38,6 +40,19 @@ INTER_NODE = 'tcp:port=8581'
 INTRA_NODE = 'unix:path=/var/run/pyhouse/node:lockfile=1'
 INITIAL_DELAY = 3 * 60
 REPEAT_DELAY = 2 * 60 * 60  # 2 hours
+
+
+class PyHouseObj(object):
+
+    m_pyhouse_obj = None
+
+    @classmethod
+    def SetObj(cls, p_pyhouse_obj):
+        cls.m_pyhouse_obj = p_pyhouse_obj
+
+    @classmethod
+    def GetObj(cls):
+        return cls.m_pyhouse_obj
 
 
 class Utility(object):
@@ -66,6 +81,7 @@ class API(Utility):
         self.m_pyhouse_obj = p_pyhouse_obj
         p_pyhouse_obj.APIs.Computer.ComputerAPI = computerAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.HouseAPI = houseAPI(p_pyhouse_obj)
+        PyHouseObj.SetObj(p_pyhouse_obj)
 
     def Start(self):
         """
@@ -92,6 +108,7 @@ class API(Utility):
         self.m_pyhouse_obj.APIs.Computer.ComputerAPI.Start()
         self.m_pyhouse_obj.APIs.House.HouseAPI.Start()
         self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self._xml_save_loop, self.m_pyhouse_obj)
+        LOG.debug(' PyHouseObj: {}'.format(PrettyFormatAny.form(PyHouseObj, 'PyHouseObj')))
         LOG.info("Everything has been started.\n")
 
     def Stop(self):

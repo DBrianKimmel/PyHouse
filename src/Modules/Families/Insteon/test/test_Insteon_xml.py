@@ -26,7 +26,7 @@ from Modules.Lighting.test.xml_lights import \
         TESTING_LIGHTING_LIGHTS_KEY_1, \
         TESTING_LIGHTING_LIGHTS_ACTIVE_1
 from Modules.Core.test.xml_device import \
-        TESTING_DEVICE_FAMILY, \
+        TESTING_DEVICE_FAMILY_INSTEON, \
         TESTING_DEVICE_COMMENT, \
         TESTING_DEVICE_ROOM_NAME, \
         TESTING_DEVICE_TYPE, \
@@ -134,7 +134,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         l_light = self.m_core_api.read_core_lighting_xml(self.m_device, self.m_xml.light, self.m_version)
         insteonXml.ReadXml(l_light, self.m_xml.light)
         self.assertEqual(l_light.Name, TESTING_LIGHTING_LIGHTS_NAME_1)
-        self.assertEqual(l_light.DeviceFamily, TESTING_DEVICE_FAMILY)
+        self.assertEqual(l_light.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_light.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS))
 
 
@@ -150,7 +150,7 @@ class C01_Write(SetupMixin, unittest.TestCase):
     def test_01_setup(self):
         print(PrettyFormatAny.form(self.m_light, 'Light Device 2'))
         self.assertEqual(self.m_light.Name, TESTING_LIGHTING_LIGHTS_NAME_1)
-        self.assertEqual(self.m_light.DeviceFamily, TESTING_DEVICE_FAMILY)
+        self.assertEqual(self.m_light.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(self.m_light.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS))
 
     def test_02_Core(self):
@@ -160,7 +160,7 @@ class C01_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.attrib['Key'], TESTING_LIGHTING_LIGHTS_KEY_1)
         self.assertEqual(l_xml.attrib['Active'], TESTING_LIGHTING_LIGHTS_ACTIVE_1)
         self.assertEqual(l_xml.find('Comment').text, TESTING_DEVICE_COMMENT)
-        self.assertEqual(l_xml.find('DeviceFamily').text, TESTING_DEVICE_FAMILY)
+        self.assertEqual(l_xml.find('DeviceFamily').text, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_xml.find('RoomName').text, TESTING_DEVICE_ROOM_NAME)
 
     def test_03_InsteonLight(self):

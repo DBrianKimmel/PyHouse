@@ -17,9 +17,11 @@ L_UPB_ADDRESS = '    <UPBAddress>' + TESTING_UPB_ADDRESS + '</UPBAddress>'
 L_UPB_NETWORK = '    <UPBNetworkID>' + TESTING_UPB_NETWORK + '</UPBNetworkID>'
 L_UPB_PASSWORD = '    <UPBPassword>' + TESTING_UPB_PASSWORD + '</UPBPassword>'
 
-UPB_XML = L_UPB_ADDRESS + \
-          L_UPB_NETWORK + \
-          L_UPB_PASSWORD
+XML_UPB = '\n'.join([
+    L_UPB_ADDRESS,
+    L_UPB_NETWORK,
+    L_UPB_PASSWORD
+    ])
 
 UPB_XSD = """
               <xs:element type="xs:byte" name="UPBNetworkID" minOccurs="0"/>

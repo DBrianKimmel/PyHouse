@@ -9,11 +9,16 @@
 
 """
 
+TESTING_USB_VENDOR = '6109'
+TESTING_USB_PRODUCT = '21760'
 
-USB_XML = """
-        <Vendor>6109</Vendor>
-        <Product>21760</Product>
-"""
+L_VENDOR = '    <Vendor>' + TESTING_USB_VENDOR + '</Vendor>'
+L_PRODUCT = '    <Product>' + TESTING_USB_PRODUCT + '</Product>'
+
+USB_XML = '\n'.join([
+        L_VENDOR,
+        L_PRODUCT
+])
 
 USB_XSD = """
 <?xml version="1.0" encoding="UTF-8"?>
