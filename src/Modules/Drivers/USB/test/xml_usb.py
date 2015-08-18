@@ -15,7 +15,7 @@ TESTING_USB_PRODUCT = '21760'
 L_VENDOR = '    <Vendor>' + TESTING_USB_VENDOR + '</Vendor>'
 L_PRODUCT = '    <Product>' + TESTING_USB_PRODUCT + '</Product>'
 
-USB_XML = '\n'.join([
+XML_USB = '\n'.join([
         L_VENDOR,
         L_PRODUCT
 ])
@@ -53,7 +53,6 @@ OTHER = """
     <xs:element type="xs:string" name="DevCat" minOccurs="0"/>
     <xs:element type="xs:string" name="GroupList" minOccurs="0"/>
     <xs:element type="xs:byte" name="GroupNumber" minOccurs="0"/>
-    <xs:element type="xs:string" name="IsMaster" minOccurs="0"/>
     <xs:element type="xs:string" name="ProductKey" minOccurs="0"/>
     <xs:element type="xs:byte" name="UPBNetworkID" minOccurs="0"/>
     <xs:element type="xs:short" name="UPBPassword" minOccurs="0"/>

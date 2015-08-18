@@ -25,9 +25,17 @@ from Modules.Core.data_objects import \
             LocationData, \
             TwistedInformation, \
             XmlInformation
-from Modules.Utilities.tools import PrettyPrintAny
 from Modules.Computer import logging_pyh as Logger
-LOG = Logger.getLogger('PyHouse').addHandler(logging.StreamHandler(stream = sys.stderr))
+# LOG = Logger.getLogger('PyHouse').addHandler(logging.StreamHandler(stream = sys.stderr))
+#
+# Different logging to cause testing logs to come out in red on the console.
+#
+l_format = '\n [%(levelname)s] %(name)s: %(funcName)s %(lineno)s:\n\t%(message)s'
+l_formatter = logging.Formatter(fmt = l_format)
+l_handler = logging.StreamHandler(stream = sys.stderr)
+l_handler.setFormatter(l_formatter)
+LOG = Logger.getLogger('PyHouse')
+LOG.addHandler(l_handler)
 
 
 class XmlData(object):
@@ -40,13 +48,16 @@ class XmlData(object):
     """
     def __init__(self):
         self.root = None
+        #
         self.house_div = None
+        self.lighting_sect = None
         self.button_sect = None
         self.button = None
         self.controller_sect = None
         self.controller = None
         self.light_sect = None
         self.light = None
+
         self.location_sect = None
         self.room_sect = None
         self.room = None

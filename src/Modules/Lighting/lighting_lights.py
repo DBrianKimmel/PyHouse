@@ -28,6 +28,7 @@ from Modules.Lighting.lighting_core import API as LightingCoreAPI
 from Modules.Families.family_utils import FamUtil
 from Modules.Computer import logging_pyh as Logging
 from Modules.Utilities.xml_tools import PutGetXML
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logging.getLogger('PyHouse.LightgLights   ')
 SECTION = 'LightSection'
@@ -137,9 +138,9 @@ class API(object):
         l_xml = ET.Element(SECTION)
         l_count = 0
         for l_light_obj in p_pyhouse_obj.House.Lights.itervalues():
-            l_xml.append(Utility._write_one_light_xml(p_pyhouse_obj, l_light_obj))
+            l_one = Utility._write_one_light_xml(p_pyhouse_obj, l_light_obj)
+            l_xml.append(l_one)
             l_count += 1
-        LOG.info('Saved {} Lights XML'.format(l_count))
         return l_xml
 
 # ## END DBK

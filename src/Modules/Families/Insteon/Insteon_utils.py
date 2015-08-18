@@ -66,7 +66,6 @@ class Util(object):
         p_obj.GroupList = p_json['GroupList']
         p_obj.GroupNumber = p_json['GroupNumber']
         p_obj.InsteonAddress = int(p_json['InsteonAddress'])
-        p_obj.IsMaster = p_json['IsMaster']
         p_obj.ProductKey = int(p_json['ProductKey'])
         return p_obj
 

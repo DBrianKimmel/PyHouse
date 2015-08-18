@@ -7,7 +7,7 @@
 @note:      Created on Feb 21, 2014
 @summary:   This module is for testing local node data.
 
-Passed all 19 tests - DBK - 2015-08-02
+Passed all 16 tests - DBK - 2015-08-17
 """
 
 # Import system type stuff
@@ -19,21 +19,22 @@ from Modules.Core.data_objects import ControllerData
 from Modules.Core.test.xml_device import TESTING_DEVICE_COMMENT, TESTING_DEVICE_FAMILY_INSTEON, TESTING_DEVICE_TYPE, TESTING_DEVICE_SUBTYPE, \
     TESTING_DEVICE_ROOM_NAME
 from Modules.Lighting.lighting_controllers import Utility, API as controllerAPI
-from Modules.Lighting.test.xml_core import TESTING_LIGHTING_CORE_ROOM
 from Modules.Families.family import API as familyAPI
 from Modules.Families.Insteon.test.xml_insteon import \
         TESTING_INSTEON_ADDRESS, \
         TESTING_INSTEON_DEVCAT, \
         TESTING_INSTEON_GROUP_LIST, \
         TESTING_INSTEON_GROUP_NUM, \
-        TESTING_INSTEON_MASTER, \
-        TESTING_INSTEON_PRODUCT_KEY
-
+        TESTING_INSTEON_MASTER
 from Modules.Core import conversions
 from Modules.Web import web_utils
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.tools import PrettyPrintAny
+from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Drivers.Serial.test.xml_serial import TESTING_SERIAL_BAUD_RATE, TESTING_SERIAL_BYTE_SIZE, TESTING_SERIAL_DSR_DTR
+from Modules.Drivers.USB.test.xml_usb import TESTING_USB_VENDOR, TESTING_USB_PRODUCT
+from Modules.Drivers.test.xml_interface import TESTING_INTERFACE_TYPE_SERIAL, TESTING_INTERFACE_PORT_SERIAL
+from Modules.Lighting.test.xml_controllers import TESTING_CONTROLLER_NAME_1, TESTING_CONTROLLER_ACTIVE_1, TESTING_CONTROLLER_TYPE
 
 
 class SetupMixin(object):
@@ -83,11 +84,12 @@ class B1_Read(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_01_BaseDevice(self):
+        """Read Base Device
+        """
         l_obj = Utility._read_base_device(self.m_xml.controller, self.m_version)
-        # PrettyPrintAny(l_obj, 'Base Data')
-        self.assertEqual(l_obj.Name, 'Insteon Serial Controller')
-        self.assertEqual(l_obj.Active, True)
-        self.assertEqual(l_obj.LightingType, 'Controller')
+        self.assertEqual(l_obj.Name, TESTING_CONTROLLER_NAME_1)
+        self.assertEqual(l_obj.Active, (TESTING_CONTROLLER_ACTIVE_1 == 'True'))
+        self.assertEqual(l_obj.LightingType, TESTING_CONTROLLER_TYPE)
         self.assertEqual(l_obj.Comment, TESTING_DEVICE_COMMENT)
         self.assertEqual(l_obj.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_obj.DeviceType, int(TESTING_DEVICE_TYPE))
@@ -95,18 +97,21 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.RoomName, TESTING_DEVICE_ROOM_NAME)
 
     def test_02_Controller(self):
+        """Read Controller 0 Serial
+        """
         l_obj = Utility._read_base_device(self.m_xml.controller, self.m_version)
         l_obj = Utility._read_controller_data(l_obj, self.m_xml.controller, self.m_version)
-        # PrettyPrintAny(l_obj, 'Base+Controller Data')
-        self.assertEqual(l_obj.InterfaceType, 'Serial')
-        self.assertEqual(l_obj.Port, '/dev/ttyS0')
+        self.assertEqual(l_obj.InterfaceType, TESTING_INTERFACE_TYPE_SERIAL)
+        self.assertEqual(l_obj.Port, TESTING_INTERFACE_PORT_SERIAL)
 
     def test_03_Interface(self):
+        """Read Controller Interface.
+        """
         l_obj = Utility._read_base_device(self.m_xml.controller, self.m_version)
         Utility._read_controller_data(l_obj, self.m_xml.controller, self.m_version)
         Utility._read_interface_data(l_obj, self.m_xml.controller, self.m_version)
         # PrettyPrintAny(l_obj, 'Base+Controller+Interface')
-        self.assertEqual(l_obj.BaudRate, 19200)
+        self.assertEqual(l_obj.BaudRate, int(TESTING_SERIAL_BAUD_RATE))
         self.assertEqual(l_obj.ByteSize, 8)
         self.assertEqual(l_obj.Parity, 'N')
         self.assertEqual(l_obj.RtsCts, False)
@@ -115,6 +120,8 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.XonXoff, False)
 
     def test_04_Family(self):
+        """Read controller family
+        """
         l_obj = Utility._read_base_device(self.m_xml.controller, self.m_version)
         Utility._read_controller_data(l_obj, self.m_xml.controller, self.m_version)
         Utility._read_interface_data(l_obj, self.m_xml.controller, self.m_version)
@@ -124,14 +131,13 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.DevCat, conversions.dotted_hex2int(TESTING_INSTEON_DEVCAT))
         self.assertEqual(l_obj.GroupList, TESTING_INSTEON_GROUP_LIST)
         self.assertEqual(l_obj.GroupNumber, int(TESTING_INSTEON_GROUP_NUM))
-        self.assertEqual(l_obj.IsMaster, bool(TESTING_INSTEON_MASTER))
 
     def test_06_OneController(self):
         """ Read in the xml file and fill in the lights
         """
         l_controller = Utility._read_one_controller_xml(self.m_pyhouse_obj, self.m_xml.controller, self.m_version)
         # PrettyPrintAny(l_controller, 'OneController', 100)
-        self.assertEqual(l_controller.BaudRate, 19200)
+        self.assertEqual(l_controller.BaudRate, int(TESTING_SERIAL_BAUD_RATE))
         self.assertEqual(l_controller.ByteSize, 8, 'Bad Byte Size')
         self.assertEqual(l_controller.DsrDtr, False, 'Bad DsrDtr')
         self.assertEqual(l_controller.DeviceFamily, 'Insteon')
@@ -145,9 +151,16 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_controller.LightingType, 'Controller')
 
     def test_07_AllControllers(self):
+        """Read all controllers.
+        """
         l_controllers = self.m_api.read_all_controllers_xml(self.m_pyhouse_obj, self.m_xml.controller_sect, self.m_version)
-        # PrettyPrintAny(l_controllers, 'AllControllers')
+        # print(PrettyFormatAny.form(l_controllers[1], 'AllControllers'))
         self.assertEqual(len(l_controllers), 2)
+        self.assertEqual(l_controllers[0].BaudRate, int(TESTING_SERIAL_BAUD_RATE))
+        self.assertEqual(l_controllers[0].ByteSize, int(TESTING_SERIAL_BYTE_SIZE))
+        self.assertEqual(l_controllers[0].DsrDtr, (TESTING_SERIAL_DSR_DTR == 'True'))
+        self.assertEqual(l_controllers[1].Vendor, int(TESTING_USB_VENDOR))
+        self.assertEqual(l_controllers[1].Product, int(TESTING_USB_PRODUCT))
 
 
 class C1_Write(SetupMixin, unittest.TestCase):

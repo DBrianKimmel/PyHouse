@@ -24,7 +24,6 @@ class InsteonData(object):
         self.GroupList = ''
         self.GroupNumber = 0
         self.InsteonAddress = 0  # Long integer internally - '1A.B3.3C' for external reaability
-        self.IsMaster = False  # False is Slave
         self.ProductKey = ''
         self.Version = '1.1'  # the version of this data object.
 

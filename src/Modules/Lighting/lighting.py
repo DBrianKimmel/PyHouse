@@ -106,19 +106,19 @@ class Utility(object):
             l_lighting_xml.append(buttonsAPI.write_buttons_xml(p_pyhouse_obj))
             l_lighting_xml.append(controllersAPI.write_all_controllers_xml(p_pyhouse_obj))
         except AttributeError as e_err:
-            l_msg = 'ERROR: {}'.format(e_err)
+            l_msg = 'ERROR-109: {}'.format(e_err)
             LOG.error(l_msg)
             p_house_element.append(l_lighting_xml)
         return l_lighting_xml
 
     @staticmethod
-    def _find_full_obj(p_lights, p_web_obj):
+    def _find_full_obj(p_pyhouse_obj, p_web_obj):
         """
         given the limited information from the web browser, look up and return the full object.
 
         If more than one light has the same name, return the first one found.
         """
-        for l_light in p_lights.itervalues():
+        for l_light in p_pyhouse_obj.House.Lights.itervalues():
             if p_web_obj.Name == l_light.Name:
                 return l_light
         LOG.error('ERROR - no light with name {} was found.'.format(p_web_obj.Name))
@@ -162,7 +162,7 @@ class API(Utility):
             web_controlLights
             schedule
         """
-        l_light_obj = Utility._find_full_obj(self.m_pyhouse_obj.House.Lights, p_light_obj)
+        l_light_obj = Utility._find_full_obj(self.m_pyhouse_obj, p_light_obj)
         try:
             LOG.info("Turn Light {} to level {}, DeviceFamily:{}".format(l_light_obj.Name, p_new_level, l_light_obj.DeviceFamily))
 

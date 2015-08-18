@@ -25,7 +25,7 @@ Comments should not need explaining.  They are just present and can contain just
 from Modules.Housing.test.xml_location import XML_LOCATION
 from Modules.Housing.test.xml_rooms import ROOMS_XML
 from Modules.Scheduling.test.xml_schedule import XML_SCHEDULE
-from Modules.Lighting.test.xml_lighting import LIGHTING_XML, LIGHTING_XML_1_3
+from Modules.Lighting.test.xml_lighting import LIGHTING_XML
 from Modules.Hvac.test.xml_hvac import XML_THERMOSTAT
 from Modules.Entertainment.test.xml_entertainment import ENTERTAINMENT_XML
 from Modules.Irrigation.test.xml_irrigation import IRRIGATION_XML
@@ -38,19 +38,6 @@ HOUSE_DIVISION_XML = '\n'.join([
     ROOMS_XML,
     XML_SCHEDULE,
     LIGHTING_XML,
-    XML_THERMOSTAT,
-    ENTERTAINMENT_XML,
-    IRRIGATION_XML,
-    "</HouseDivision>"
-])
-
-HOUSE_DIVISION_XML_1_3 = '\n'.join([
-    "<HouseDivision Name='Pink Poppy' Key='0' Active='True'>",
-    "    <UUID>12345678-1002-11e3-b583-333e5f8cdfd2</UUID>",
-    XML_LOCATION,
-    ROOMS_XML,
-    XML_SCHEDULE,
-    LIGHTING_XML_1_3,
     XML_THERMOSTAT,
     ENTERTAINMENT_XML,
     IRRIGATION_XML,

@@ -18,7 +18,7 @@ Config File Version 1.4 placed this entire section under a new LightingSection e
 # Import PyMh files
 from Modules.Lighting.test.xml_buttons import XML_BUTTON_SECTION
 from Modules.Lighting.test.xml_lights import XML_LIGHT_SECTION
-from Modules.Lighting.test.xml_controllers import XML_CONTROLLER_SECTION, XML_CONTROLLER_SECTION_1_3
+from Modules.Lighting.test.xml_controllers import XML_CONTROLLER_SECTION
 
 
 LIGHTING_XML = '\n'.join([
@@ -26,14 +26,6 @@ LIGHTING_XML = '\n'.join([
     XML_BUTTON_SECTION,
     XML_LIGHT_SECTION,
     XML_CONTROLLER_SECTION,
-    '</LightingSection>'
-])
-
-LIGHTING_XML_1_3 = '\n'.join([
-    '<LightingSection>',
-    XML_BUTTON_SECTION,
-    XML_LIGHT_SECTION,
-    XML_CONTROLLER_SECTION_1_3,
     '</LightingSection>'
 ])
 

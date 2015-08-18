@@ -23,15 +23,13 @@ L_INSTEON_DEVCAT = '    <DevCat>' + TESTING_INSTEON_DEVCAT + '</DevCat>'
 L_INSTEON_GROUP_NUM = '    <GroupNumber>' + TESTING_INSTEON_GROUP_NUM + '</GroupNumber>'
 L_INSTEON_GROUP_LIST = '    <GroupList>' + TESTING_INSTEON_GROUP_LIST + '</GroupList>'
 L_INSTEON_PRODUCT_KEY = '    <ProductKey>' + TESTING_INSTEON_PRODUCT_KEY + '</ProductKey>'
-L_INSTEON_MASTER = '    <IsMaster>' + TESTING_INSTEON_MASTER + '</IsMaster>'
 
 XML_INSTEON = '\n'.join([
     L_INSTEON_ADDRESS,
-    L_INSTEON_DEVCAT + \
-    L_INSTEON_GROUP_NUM + \
-    L_INSTEON_GROUP_LIST + \
-    L_INSTEON_PRODUCT_KEY + \
-    L_INSTEON_MASTER
+    L_INSTEON_DEVCAT,
+    L_INSTEON_GROUP_NUM,
+    L_INSTEON_GROUP_LIST,
+    L_INSTEON_PRODUCT_KEY
     ])
 
 
@@ -48,18 +46,6 @@ INSTEON_XSD = """
 
 <xs:element type="xs:string" name="InterfaceType"/>
 <xs:element type="xs:string" name="Port"/>
-
-<xs:element type="xs:short" name="BaudRate" minOccurs="0"/>
-<xs:element type="xs:byte" name="ByteSize" minOccurs="0"/>
-<xs:element type="xs:string" name="Parity" minOccurs="0"/>
-<xs:element type="xs:float" name="StopBits" minOccurs="0"/>
-<xs:element type="xs:float" name="Timeout" minOccurs="0"/>
-<xs:element type="xs:string" name="DsrDtr" minOccurs="0"/>
-<xs:element type="xs:string" name="RtsCts" minOccurs="0"/>
-<xs:element type="xs:string" name="XonXoff" minOccurs="0"/>
-
-<xs:element type="xs:short" name="Vendor" minOccurs="0"/>
-<xs:element type="xs:short" name="Product" minOccurs="0"/>
 """
 
 # ## END DBK

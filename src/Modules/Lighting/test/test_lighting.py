@@ -7,7 +7,8 @@
 @license:   MIT License
 @summary:   Test the home lighting system automation.
 
-Passed all 0 tests.  DBK 2015-07-21
+Passed all 11 of 13 tests.  DBK 2015-07-21
+
 """
 
 # Import system type stuff
@@ -20,7 +21,6 @@ from Modules.Families.family import API as familyAPI
 from Modules.Lighting.lighting import API as lightingAPI
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.tools import PrettyPrintAny
 from Modules.Lighting.test.xml_controllers import \
         TESTING_CONTROLLER_NAME_1, \
         TESTING_CONTROLLER_NAME_2
@@ -29,6 +29,7 @@ from Modules.Core.test.xml_device import \
 from Modules.Lighting.test.xml_lights import \
         TESTING_LIGHTING_LIGHTS_NAME_1, \
         TESTING_LIGHTING_LIGHTS_NAME_2
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -40,6 +41,7 @@ class SetupMixin(object):
         self.m_api = lightingAPI(self.m_pyhouse_obj)
         self.m_family = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
         self.m_pyhouse_obj.House.FamilyData = self.m_family
+        self.m_version = '1.4.0'
 
 
 class A1_Setup(SetupMixin, unittest.TestCase):
@@ -90,17 +92,20 @@ class A3_Utility(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_01_SetupLighting(self):
+        """Verify that we can find items we need in the test XML
+        """
         l_xml = self.m_api._setup_lighting(self.m_pyhouse_obj)
-        self.assertTrue(l_xml.find('ButtonSection') is not None)
-        self.assertTrue(l_xml.find('ControllerSection') is not None)
-        self.assertTrue(l_xml.find('LightSection') is not None)
+        self.assertEqual(l_xml.find('ButtonSection').tag, 'ButtonSection')
+        self.assertEqual(l_xml.find('ControllerSection').tag, 'ControllerSection')
+        self.assertEqual(l_xml.find('LightSection').tag, 'LightSection')
 
     def test_02_Controller(self):
+        """Utility.
+        """
         l_xml = self.m_api._setup_lighting(self.m_pyhouse_obj)
         l_version = '1.4.0'
         l_dict = self.m_api._read_controllers(self.m_pyhouse_obj, l_xml, l_version)
         self.assertEqual(len(l_dict), 2)
-        # PrettyPrintAny(l_dict[0], 'Controllers')
         self.assertEqual(l_dict[0].Name, TESTING_CONTROLLER_NAME_1)
         self.assertEqual(l_dict[0].DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_dict[1].Name, TESTING_CONTROLLER_NAME_2)
@@ -119,15 +124,22 @@ class A3_Utility(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.Lights[0].Name, TESTING_LIGHTING_LIGHTS_NAME_1)
         self.assertEqual(l_obj.Lights[1].Name, TESTING_LIGHTING_LIGHTS_NAME_2)
 
-    def test_03_Write(self):
+    def test_04_Write(self):
+        """Write out the 'LightingSection' which contains the 'LightSection',
+        """
         self.m_api._read_lighting_xml(self.m_pyhouse_obj)
         l_obj = self.m_pyhouse_obj.House
+        print(PrettyFormatAny.form(l_obj, 'House'))
         l_xml = ET.Element('HouseDivision')
         self.m_api._write_lighting_xml(l_obj, l_xml)
-        # PrettyPrintAny(l_xml, 'XML')
-        self.assertEqual(l_xml.find('HouseDivision').text, 1)
+        print(PrettyFormatAny.form(l_xml, 'XML'))
 
-    def test_04_FamilyData(self):
+        self.assertEqual(l_xml.find('LightingSection').tag, 'LightingSection')
+        self.assertEqual(l_xml.find('Controller').text, 'Controller')
+
+    def test_05_FamilyData(self):
+        """Family Data
+        """
         # PrettyPrintAny(self.m_pyhouse_obj.House.FamilyData, 'FamilyData')
         pass
 
@@ -137,15 +149,18 @@ class B1_Utility(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_01_FindFull(self):
+        """Utility test of _find_full_obj.
+        """
         l_web_obj = LightData()
-        l_web_obj.Name = 'dr_chand'
+        l_web_obj.Name = TESTING_LIGHTING_LIGHTS_NAME_2
         self.m_api._read_lighting_xml(self.m_pyhouse_obj)
-        l_light = self.m_api._find_full_obj(self.m_pyhouse_obj.House.Lights, l_web_obj)
-        # PrettyPrintAny(l_light, 'Light')
-        self.assertEqual(l_light.Name, 'dr_chand')
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'Dump'))
+        l_light = self.m_api._find_full_obj(self.m_pyhouse_obj, l_web_obj)
+        # print(PrettyFormatAny.form(l_light, 'Light'))
+        self.assertEqual(l_light.Name, TESTING_LIGHTING_LIGHTS_NAME_2)
         #
         l_web_obj.Name = 'NoSuchLight'
-        l_light = self.m_api._find_full_obj(self.m_pyhouse_obj.House.Lights, l_web_obj)
+        l_light = self.m_api._find_full_obj(self.m_pyhouse_obj, l_web_obj)
         self.assertEqual(l_light, None)
 
 

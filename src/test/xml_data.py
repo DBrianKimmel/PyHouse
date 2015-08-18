@@ -16,7 +16,7 @@ used for testing
 
 # Import PyMh files
 from Modules.Computer.test.xml_computer import XML_COMPUTER_DIVISION
-from Modules.Housing.test.xml_housing import HOUSE_DIVISION_XML, HOUSE_DIVISION_XML_1_3
+from Modules.Housing.test.xml_housing import HOUSE_DIVISION_XML
 
 
 TESTING_VERSION = """
@@ -107,13 +107,6 @@ XML_LONG = '\n'.join([
     L_PYHOUSE_HEADER_XML,
     XML_COMPUTER_DIVISION,
     HOUSE_DIVISION_XML,
-    "</PyHouse>"
-])
-
-XML_LONG_1_3 = '\n'.join([
-    L_PYHOUSE_HEADER_XML_1_3,
-    XML_COMPUTER_DIVISION,
-    HOUSE_DIVISION_XML_1_3,
     "</PyHouse>"
 ])
 

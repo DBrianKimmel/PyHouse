@@ -37,7 +37,6 @@ from Modules.Families.Insteon.test.xml_insteon import \
         TESTING_INSTEON_DEVCAT, \
         TESTING_INSTEON_GROUP_LIST, \
         TESTING_INSTEON_GROUP_NUM, \
-        TESTING_INSTEON_MASTER, \
         TESTING_INSTEON_PRODUCT_KEY
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.debug_tools import PrettyFormatAny
@@ -127,7 +126,6 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(conversions.int2dotted_hex(l_insteon.DevCat, 2), TESTING_INSTEON_DEVCAT)
         self.assertEqual(l_insteon.GroupList, TESTING_INSTEON_GROUP_LIST)
         self.assertEqual(l_insteon.GroupNumber, int(TESTING_INSTEON_GROUP_NUM))
-        self.assertEqual(l_insteon.IsMaster, conversions.getbool(TESTING_INSTEON_MASTER))
         self.assertEqual(conversions.int2dotted_hex(l_insteon.ProductKey, 3), TESTING_INSTEON_PRODUCT_KEY)
 
     def test_04_InsteonLight(self):
@@ -174,7 +172,6 @@ class C01_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.find('DevCat').text, TESTING_INSTEON_DEVCAT)
         self.assertEqual(l_xml.find('GroupList').text, TESTING_INSTEON_GROUP_LIST)
         self.assertEqual(l_xml.find('GroupNumber').text, TESTING_INSTEON_GROUP_NUM)
-        self.assertEqual(l_xml.find('IsMaster').text, TESTING_INSTEON_MASTER)
         self.assertEqual(l_xml.find('ProductKey').text, TESTING_INSTEON_PRODUCT_KEY)
 
 

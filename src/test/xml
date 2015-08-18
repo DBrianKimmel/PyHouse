@@ -173,7 +173,7 @@
 171     <RoomName>Testing Room Name ABDG</RoomName>
 172     <UUID>d60b1521-2db1-11e5-a943-082e5f8cdfd2</UUID>
 173     <LightingType>Button</LightingType>
-174     <Address>16.62.2D</Address>    <DevCat>02.1C</DevCat>    <GroupNumber>0</GroupNumber>    <GroupList>All_Lights|Outside|Foyer(0;0)</GroupList>    <ProductKey>20.1A.35</ProductKey>    <IsMaster>True</IsMaster>
+174     <Address>16.62.2D</Address>    <DevCat>02.1C</DevCat>    <GroupNumber>0</GroupNumber>    <GroupList>All_Lights|Outside|Foyer(0;0)</GroupList>    <ProductKey>20.1A.35</ProductKey>
 175 </Button>
 176 <Button Name="UPB Button" Active="True" Key="1">
 177     <!-- xml_device -->
@@ -201,7 +201,7 @@
 199     <LightingType>Light</LightingType>
 200     <IsDimmable>True</IsDimmable>
 201     <CurLevel>12</CurLevel>
-202     <Address>16.62.2D</Address>    <DevCat>02.1C</DevCat>    <GroupNumber>0</GroupNumber>    <GroupList>All_Lights|Outside|Foyer(0;0)</GroupList>    <ProductKey>20.1A.35</ProductKey>    <IsMaster>True</IsMaster>
+202     <Address>16.62.2D</Address>    <DevCat>02.1C</DevCat>    <GroupNumber>0</GroupNumber>    <GroupList>All_Lights|Outside|Foyer(0;0)</GroupList>    <ProductKey>20.1A.35</ProductKey>
 203 </Light>
 204 <Light Name="UPB Light" Key="1" Active="True">
 205     <!-- xml_device -->
@@ -223,7 +223,7 @@
 221     <!-- xml device 1.3 -->
 222 <Coords>[1, 3]</Coords>
 223     <LightingType>Controller</LightingType>
-224     <Address>16.62.2D</Address>    <DevCat>02.1C</DevCat>    <GroupNumber>0</GroupNumber>    <GroupList>All_Lights|Outside|Foyer(0;0)</GroupList>    <ProductKey>20.1A.35</ProductKey>    <IsMaster>True</IsMaster>
+224     <Address>16.62.2D</Address>    <DevCat>02.1C</DevCat>    <GroupNumber>0</GroupNumber>    <GroupList>All_Lights|Outside|Foyer(0;0)</GroupList>    <ProductKey>20.1A.35</ProductKey>
 225 
 226         <InterfaceType>Serial</InterfaceType>
 227         <Port>/dev/ttyS0</Port>
@@ -273,7 +273,6 @@
         <GroupNumber>0</GroupNumber>   
          <GroupList>All_Lights|Outside|Foyer(0;0)</GroupList>    
          <ProductKey>20.1A.35</ProductKey>    
-         <IsMaster>True</IsMaster>
 270 </Thermostat>
 271     <!-- A1ZY -->
 272  <\ThermostatSection>

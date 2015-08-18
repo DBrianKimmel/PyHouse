@@ -57,7 +57,6 @@ class Xml(object):
             l_insteon_obj.DevCat = conversions.dotted_hex2int(PutGetXML.get_text_from_xml(p_in_xml, 'DevCat', 'A1.B2'))
             l_insteon_obj.GroupList = PutGetXML.get_text_from_xml(p_in_xml, 'GroupList')
             l_insteon_obj.GroupNumber = PutGetXML.get_int_from_xml(p_in_xml, 'GroupNumber', 0)
-            l_insteon_obj.IsMaster = PutGetXML.get_bool_from_xml(p_in_xml, 'IsMaster')
             l_insteon_obj.ProductKey = Xml._read_product_key(p_in_xml)
             l_insteon_obj.Version = PutGetXML.get_int_from_xml(p_in_xml, 'Version', 1)
         except Exception as e_err:
@@ -88,7 +87,6 @@ class Xml(object):
         PutGetXML.put_int_element(p_out_xml, 'DevCat', conversions.int2dotted_hex(p_device.DevCat, 2))
         PutGetXML.put_text_element(p_out_xml, 'GroupList', p_device.GroupList)
         PutGetXML.put_int_element(p_out_xml, 'GroupNumber', p_device.GroupNumber)
-        PutGetXML.put_bool_element(p_out_xml, 'IsMaster', p_device.IsMaster)
         PutGetXML.put_text_element(p_out_xml, 'ProductKey', conversions.int2dotted_hex(p_device.ProductKey, 3))
         PutGetXML.put_int_element(p_out_xml, 'Version', p_device.Version)
         return p_out_xml

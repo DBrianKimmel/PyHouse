@@ -38,7 +38,6 @@ class ReadWriteXml(object):
             ET.SubElement(p_entry_xml, 'Address').text = p_device_obj.Address
             ET.SubElement(p_entry_xml, 'GroupList').text = str(p_device_obj.GroupList)
             ET.SubElement(p_entry_xml, 'GroupNumber').text = str(p_device_obj.GroupNumber)
-            ET.SubElement(p_entry_xml, 'IsMaster').text = str(p_device_obj.IsMaster)
         elif p_device_obj.DeviceFamily == 'UPB':
             try:
                 ET.SubElement(p_entry_xml, 'Password').text = str(p_device_obj.Password)
