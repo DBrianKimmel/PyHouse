@@ -121,6 +121,8 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_light.UUID, TESTING_DEVICE_UUID)
 
     def test_03_Insteon(self):
+        """Read the Insteon specific information.
+        """
         l_insteon = insteonXml._read_insteon(self.m_xml.light)
         self.assertEqual(conversions.int2dotted_hex(l_insteon.InsteonAddress, 3), TESTING_INSTEON_ADDRESS)
         self.assertEqual(conversions.int2dotted_hex(l_insteon.DevCat, 2), TESTING_INSTEON_DEVCAT)

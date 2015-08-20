@@ -222,7 +222,7 @@ def _format_object(p_title, p_obj, suppressdoc = True, maxlen = 180, lindent = 2
 class PrettyFormatAny(object):
 
     @staticmethod
-    def form(p_any, title, maxlen = 120):
+    def form(p_any, title = 'No Title Given', maxlen = 120):
         l_indent = 0
         l_type = type(p_any)
         l_ret = '\n===== {} ===== {}\n'.format(title, l_type)
@@ -238,7 +238,7 @@ class PrettyFormatAny(object):
         elif isinstance(p_any, str):
             l_ret = PrettyFormatAny._format_string(p_any, maxlen = maxlen, indent = indent)
         elif isinstance(p_any, unicode):
-            l_ret = PrettyFormatAny.format_unicode(p_any, maxlen = maxlen, indent = indent)
+            l_ret = PrettyFormatAny._format_unicode(p_any, maxlen = maxlen, indent = indent)
         elif isinstance(p_any, list):
             l_ret = PrettyFormatAny._format_list(p_any, maxlen = maxlen, indent = indent + 4)
         elif isinstance(p_any, type(None)):

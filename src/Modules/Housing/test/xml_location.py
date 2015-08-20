@@ -13,15 +13,23 @@ The Olson Time Zone names are used and supported.
 
 """
 
-TESTING_LOCATION_STREET = '5191 N Pink Poppy Dr'
+TESTING_LOCATION_STREET = '1234 N Gardinia Dr'
 TESTING_LOCATION_CITY = 'Beverly Hills'
 TESTING_LOCATION_STATE = 'Florida'
-TESTING_LOCATION_ZIP_CODE = '34465'
+TESTING_LOCATION_ZIP_CODE = '34123'
+TESTING_LOCATION_PHONE = '(800) 555-1212'
+TESTING_LOCATION_LATITUDE = '28.938448'
+TESTING_LOCATION_LONGITUDE = '-82.517208'
+TESTING_LOCATION_TIME_ZONE_NAME = 'America/New_York'
 
 L_LOCATION_STREET = '     <Street>' + TESTING_LOCATION_STREET + '</Street>'
 L_LOCATION_CITY = '     <City>' + TESTING_LOCATION_CITY + '</City>'
-L_LOCATION_STATE = '     <State>' + TESTING_LOCATION_CITY + '</State>'
-L_LOCATION_ZIP_CODE = '     <ZipCode>' + TESTING_LOCATION_CITY + '</ZipCode>'
+L_LOCATION_STATE = '     <State>' + TESTING_LOCATION_STATE + '</State>'
+L_LOCATION_ZIP_CODE = '     <ZipCode>' + TESTING_LOCATION_ZIP_CODE + '</ZipCode>'
+L_LOCATION_PHONE = '     <Phone>' + TESTING_LOCATION_PHONE + '</Phone>'
+L_LOCATION_LATITUDE = '     <Latitude>' + TESTING_LOCATION_LATITUDE + '</Latitude>'
+L_LOCATION_LONGITUDE = '     <Longitude>' + TESTING_LOCATION_LONGITUDE + '</Longitude>'
+L_LOCATION_TIME_ZONE_NAME = '     <TimeZoneName>' + TESTING_LOCATION_TIME_ZONE_NAME + '</TimeZoneName>'
 
 XML_LOCATION = '\n'.join([
     '  <LocationSection>',
@@ -29,12 +37,10 @@ XML_LOCATION = '\n'.join([
     L_LOCATION_CITY,
     L_LOCATION_STATE,
     L_LOCATION_ZIP_CODE,
-    """
-    <Phone>(352) 270-8096</Phone>
-    <Latitude>28.938448</Latitude>
-    <Longitude>-82.517208</Longitude>
-    <TimeZoneName>America/New_York</TimeZoneName>
-""",
+    L_LOCATION_PHONE,
+    L_LOCATION_LATITUDE,
+    L_LOCATION_LONGITUDE,
+    L_LOCATION_TIME_ZONE_NAME,
     '  </LocationSection>'
 ])
 

@@ -26,6 +26,7 @@ from Modules.Core.data_objects import \
             TwistedInformation, \
             XmlInformation
 from Modules.Computer import logging_pyh as Logger
+from Modules.Families.family import Utility as familyUtil
 # LOG = Logger.getLogger('PyHouse').addHandler(logging.StreamHandler(stream = sys.stderr))
 #
 # Different logging to cause testing logs to come out in red on the console.
@@ -98,12 +99,14 @@ class SetupPyHouseObj(object):
         l_ret = CoreServicesInformation()
         return l_ret
 
-    def _build_house(self):
+    def _build_house(self, p_pyhouse_obj):
         l_ret = HouseInformation()
         l_ret.Name = 'Test House'
         l_ret.Active = True
         l_ret.Key = 0
         l_ret.Location = LocationData()
+        # Added family build 2015-08-19
+        l_ret.FamilyData = familyUtil._init_component_apis(p_pyhouse_obj)
         return l_ret
 
     def _build_computer(self):
@@ -120,7 +123,7 @@ class SetupPyHouseObj(object):
         l_pyhouse_obj = PyHouseData()
         l_pyhouse_obj.APIs = self._build_apis()
         l_pyhouse_obj.Computer = self._build_computer()
-        l_pyhouse_obj.House = self._build_house()
+        l_pyhouse_obj.House = self._build_house(l_pyhouse_obj)
         l_pyhouse_obj.Services = self._build_services()
         l_pyhouse_obj.Twisted = self._build_twisted()
         l_pyhouse_obj.Xml = self._build_xml(p_root)

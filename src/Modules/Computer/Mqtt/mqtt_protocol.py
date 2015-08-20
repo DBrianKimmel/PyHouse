@@ -512,7 +512,9 @@ class MQTTClient(MQTTProtocol):
 ###########################################
 
 
-class MqttReconnectingClientFactory(ReconnectingClientFactory):
+class PyHouseMqttFactory(ReconnectingClientFactory):
+    """This factory holds the state for thhis broker (there may be more than one).
+    """
 
     def __init__(self, p_pyhouse_obj, p_client_id, p_broker):
         """
@@ -546,14 +548,14 @@ class MqttReconnectingClientFactory(ReconnectingClientFactory):
 
     def connectionLost(self, p_reason):
         """
-        Added to sample code - I don't know why it is required.
+        This is required.
         """
-        LOG.error('ConnectionLost\\n\tErr:{}'.format(p_reason))
+        LOG.error('ConnectionLost.\n\tReason: {}'.format(p_reason))
 
     def makeConnection(self, p_transport):
         """
-        Added to sample code - I don't know why it is required.
+        This is required.
         """
-        LOG.warn('makeConnection {}'.format(p_transport))
+        LOG.warn('makeConnection - Transport: {}'.format(p_transport))
 
 # ## END DBK

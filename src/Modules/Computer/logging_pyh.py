@@ -24,10 +24,8 @@ It configures PyHouse in the logging standard library module plus twisted loggin
 
 # Import system type stuff
 import logging
-import xml.etree.ElementTree as ET
 
 # Import PyMh files
-# from Modules.Utilities.xml_tools import XmlConfigTools
 
 
 def getLogger(p_name):
@@ -37,58 +35,36 @@ def addHandler(p_handler):
     logging.Logger.addHandler(p_handler)
 
 
-class ReadWriteConfigXml(object):
-    """
-    """
-
-    def read_xml(self, p_pyhouse_obj):
-        pass
-
-    def write_xml(self, p_log_data):
-        l_log_xml = ET.Element("LogSection")
-        self.put_text_element(l_log_xml, 'Debug', p_log_data.Debug)
-        self.put_text_element(l_log_xml, 'Error', p_log_data.Error)
-        return l_log_xml
-
-
 class Utility(object):
     """
     """
 
     def add_twisted_log_to_pyhouse_log(self):
-        # self.m_tw_log = log_twisted.PythonLoggingObserver(loggerName = 'PyHouse.tw          ')
-        # self.m_tw_log.start()
-        # log_twisted.startLoggingWithObserver(self.m_tw_log)
         pass
 
     def remove_twisted_log_to_pyhouse_log(self):
         self.m_tw_log.stop()
 
 
-class API(Utility, ReadWriteConfigXml):
+class API(Utility):
 
     m_pyhouse_obj = None
 
     def __init__(self):
-        # self.m_log_data = LogData()
         pass
 
     def Start(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        # self.add_twisted_log_to_pyhouse_log()
-        l_ret = self.read_xml(p_pyhouse_obj)
         try:
-            self.m_pyhouse_obj.Computer.Logs = l_ret
+            self.m_pyhouse_obj.Computer.Logs = None
         except AttributeError:
             pass
-        return l_ret
 
     def Stop(self):
         self.remove_twisted_log_to_pyhouse_log()
         pass
 
     def SaveXml(self, p_xml):
-        # p_xml.append(self.write_xml(self.m_pyhouse_obj.Computer.Logs))
         return p_xml
 
 
@@ -108,9 +84,6 @@ class Manager(object):
         if isinstance(p_name, unicode):
             p_name = p_name.encode("utf-8")
         logger = self.loggers.get(p_name)
-        # if logger is None:
-        #    logger = Logger(p_name)
-        #    self.loggers[p_name] = logger
         print('Logger name = {} = {}'.format(p_name, logger))
         return logger
 

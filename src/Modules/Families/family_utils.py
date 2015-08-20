@@ -40,8 +40,8 @@ class FamUtil(object):
         """
         try:
             l_family_obj = p_pyhouse_obj.House.FamilyData[p_device_obj.DeviceFamily]
-        except Exception as e_err:
-            LOG.error('Could not get family object for Name:{}\n\tFamily: {}\n\t{}'.format(
+        except KeyError as e_err:
+            LOG.error('Could not get family object for:\n\tDevice Name:\t{}\n\tFamily:\t{}\n\tError:\t{}'.format(
                         p_device_obj.Name,
                         p_device_obj.DeviceFamily, e_err))
             l_family_obj = p_pyhouse_obj.House.FamilyData['Null']

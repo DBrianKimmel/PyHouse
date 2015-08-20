@@ -18,10 +18,13 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from Modules.Core.data_objects import LocationData
 from Modules.Housing import location
-from Modules.Web import web_utils
+from Modules.Utilities.json_tools import encode_json, decode_json_unicode
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.tools import PrettyPrintAny
+from Modules.Housing.test.xml_location import TESTING_LOCATION_STREET, TESTING_LOCATION_CITY, TESTING_LOCATION_ZIP_CODE, TESTING_LOCATION_PHONE, \
+    TESTING_LOCATION_LATITUDE, TESTING_LOCATION_LONGITUDE, TESTING_LOCATION_STATE, TESTING_LOCATION_TIME_ZONE_NAME
+from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.setup_logging import l_observer
 
 
 class SetupMixin(object):
@@ -51,29 +54,38 @@ class C01_XML(SetupMixin, unittest.TestCase):
         """ Read in the xml file and fill in the location dict
         """
         l_location = self.m_api.read_location_xml(self.m_xml.house_div)
-        # PrettyPrintAny(l_location, 'Location')
-        self.assertEqual(l_location.Street, '5191 N Pink Poppy Dr', 'Bad Address')
-        self.assertEqual(l_location.City, 'Beverly Hills', 'Bad city')
-        self.assertEqual(l_location.State, 'Florida', 'Bad state')
-        self.assertEqual(l_location.ZipCode, '34465', 'Bad zip code')
-        self.assertEqual(l_location.Phone, '(352) 270-8096', 'Bad phone')
-        self.assertEqual(l_location.Latitude, 28.938448, 'Bad latitude')
-        self.assertEqual(l_location.Longitude, -82.517208, 'Bad longitude')
-        self.assertEqual(l_location.TimeZoneName, 'America/New_York', 'Bad time zone name')
+        self.assertEqual(l_location.Street, TESTING_LOCATION_STREET)
+        self.assertEqual(l_location.City, TESTING_LOCATION_CITY)
+        self.assertEqual(l_location.State, TESTING_LOCATION_STATE)
+        self.assertEqual(l_location.ZipCode, TESTING_LOCATION_ZIP_CODE)
+        self.assertEqual(l_location.Phone, TESTING_LOCATION_PHONE)
+        self.assertEqual(l_location.Latitude, float(TESTING_LOCATION_LATITUDE))
+        self.assertEqual(l_location.Longitude, float(TESTING_LOCATION_LONGITUDE))
+        self.assertEqual(l_location.TimeZoneName, TESTING_LOCATION_TIME_ZONE_NAME)
 
     def test_03_WriteXml(self):
         """ Write out the XML file for the location section
         """
         l_location = self.m_api.read_location_xml(self.m_xml.house_div)
         l_xml = self.m_api.write_location_xml(l_location)
-        # PrettyPrintAny(l_xml, 'Location')
-
+        # print(PrettyFormatAny.form(l_xml, 'Location'))
+        self.assertEqual(l_xml.find('Street').text, TESTING_LOCATION_STREET)
+        self.assertEqual(l_xml.find('City').text, TESTING_LOCATION_CITY)
+        self.assertEqual(l_xml.find('State').text, TESTING_LOCATION_STATE)
+        self.assertEqual(l_xml.find('ZipCode').text, TESTING_LOCATION_ZIP_CODE)
+        self.assertEqual(l_xml.find('Phone').text, TESTING_LOCATION_PHONE)
+        self.assertEqual(l_xml.find('Latitude').text, TESTING_LOCATION_LATITUDE)
+        self.assertEqual(l_xml.find('Longitude').text, TESTING_LOCATION_LONGITUDE)
+        self.assertEqual(l_xml.find('TimeZoneName').text, TESTING_LOCATION_TIME_ZONE_NAME)
 
     def test_21_CreateJson(self):
         """ Create a JSON object for Location.
         """
         l_location = self.m_api.read_location_xml(self.m_xml.house_div)
-        l_json = unicode(web_utils.JsonUnicode().encode_json(l_location))
-        # PrettyPrintAny('JSON', l_json)
+        l_json = encode_json(l_location)
+        l_obj = decode_json_unicode(l_json)
+        print(PrettyFormatAny.form(l_obj, 'JSON', 80))
+        self.assertEqual(l_obj['Street'], TESTING_LOCATION_STREET)
+        self.assertEqual(l_obj['City'], TESTING_LOCATION_CITY)
 
 # ## END DBK

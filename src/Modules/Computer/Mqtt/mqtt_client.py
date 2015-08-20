@@ -14,16 +14,16 @@
 # Import system type stuff
 import copy
 import datetime
+from collections import namedtuple
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData, MqttInformation, MqttJson
-from Modules.Computer.Mqtt import mqtt_protocol
+from Modules.Computer.Mqtt.mqtt_protocol import PyHouseMqttFactory
 from Modules.Computer.Mqtt.mqtt_xml import Xml as mqttXML
 from Modules.Web import web_utils
-# from Modules.Utilities.debug_tools import PrettyFormatAny
 from Modules.Utilities import json_tools, xml_tools
 from Modules.Computer import logging_pyh as Logger
-from collections import namedtuple
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.Mqtt_Client    ')
 
@@ -53,7 +53,7 @@ class Util(object):
                 LOG.error('Bad Mqtt broker Address: {}'.format(l_host))
                 l_broker._ProtocolAPI = None
             else:
-                l_factory = mqtt_protocol.MqttReconnectingClientFactory(p_pyhouse_obj, "DBK1", l_broker)
+                l_factory = PyHouseMqttFactory(p_pyhouse_obj, "DBK1", l_broker)
                 _l_connector = p_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_factory)
                 LOG.info('Connected to broker: {}'.format(l_broker.Name))
                 l_count += 1
@@ -137,6 +137,8 @@ class API(Util):
         LOG.info("Saved Mqtt XML.")
         return p_xml
 
+# ## The following are public commands that may be called from everywhere
+
     def MqttPublish(self, p_topic, message_json = None, message_obj = None):
         """Send a topic, message to the broker for it to distribute to the subscription list
 
@@ -160,9 +162,16 @@ class API(Util):
         """Dispatch a received MQTT message according to the topic.
         """
         l_topic = p_topic.split('/')[2:]  # Drop the pyhouse/housename/ as that is all we subscribed to.
+        l_message = json_tools.decode_json_unicode(p_message)
         LOG.info('Dispatch\n\tTopic: {}'.format(l_topic))
+        #
         if l_topic[0] == 'login':
             LOG.info('Login: {}'.format(p_message))
+        elif l_topic[0] == 'lighting':
+            LOG.info('Lighting: {}'.format(PrettyFormatAny.form(p_message, 'Message', 80)))
+        else:
+            LOG.info('OTHER: {}'.format(PrettyFormatAny.form(p_message, 'Message', 80)))
+
 
     def doPyHouseLogin(self, p_client, p_pyhouse_obj):
         """Login to PyHouse via MQTT
