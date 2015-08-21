@@ -189,14 +189,14 @@ class Decode(object):
         """ This will search thru all object groups that an inseton device could be in.
         @return: the object that has the address or a dummy object if not found
         """
-        l_ret = Decode._find_addr_one_class(p_pyhouse_obj.House.Lights, p_address)
+        l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Lights, p_address)
         l_dotted = conversions.int2dotted_hex(p_address, 3)
         if l_ret == None:
-            l_ret = Decode._find_addr_one_class(p_pyhouse_obj.House.Controllers, p_address)
+            l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Controllers, p_address)
         if l_ret == None:
-            l_ret = Decode._find_addr_one_class(p_pyhouse_obj.House.Buttons, p_address)
+            l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Buttons, p_address)
         if l_ret == None:
-            l_ret = Decode._find_addr_one_class(p_pyhouse_obj.House.Thermostats, p_address)
+            l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Thermostats, p_address)
         # Add additional classes in here
         if l_ret == None:
             LOG.info("WARNING - Address {} ({}) *NOT* found.".format(l_dotted, p_address))
