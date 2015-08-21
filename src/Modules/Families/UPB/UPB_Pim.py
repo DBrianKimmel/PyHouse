@@ -136,7 +136,7 @@ class BuildCommand(object):
         I think this means taking each nibble of the command and converting it to an ASCII byte.
 
         """
-        return p_array
+        # return p_array
         l_ret = bytearray(0)
         for l_byte in p_array:
             l_str = BuildCommand._byte_to_2chars(l_byte)
@@ -342,7 +342,7 @@ class CreateCommands(UpbPimUtility, PimDriverInterface, BuildCommand):
         """Set one of the device's registers.
         """
         LOG.debug("Setting register {:#0x} to value {}".format(p_register, p_values))
-        self.write_register_command(p_controller_obj, p_register, p_values)
+        BuildCommand.write_register_command(p_controller_obj, p_register, p_values)
         pass
 
     def set_pim_mode(self):
