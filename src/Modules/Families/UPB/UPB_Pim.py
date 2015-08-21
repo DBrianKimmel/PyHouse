@@ -23,7 +23,6 @@ from Modules.Utilities.tools import PrintBytes
 from Modules.Computer import logging_pyh as Logger
 from Modules.Families.family_utils import FamUtil
 
-g_debug = 9
 LOG = Logger.getLogger('PyHouse.UPB_PIM        ')
 
 
@@ -55,7 +54,7 @@ class BuildCommand(object):
     The command for changing register 70's value to 03 is  ==> 70 03.
     First we add a checksum (8D in this case) to the bytearray ==> 70 03 8D.
     next 70 03 8D is converted to 37 30 30 33 38 44 by converting each nibble to an ascii hex value.
-    Finally the command becomes 14 37 30 30 33 38 44 0D and is queued for sending
+    Finally the command becomes 14 37 30 30 33 38 44 0D and is queued for sending 14 '70038D' 0D
     """
 
     @staticmethod
@@ -89,14 +88,6 @@ class BuildCommand(object):
     def _calculate_checksum(p_byteArray):
         """Take a ByteArray of arbitrary length and return the checksum.
         When added the total of the bytes should be b'\x00'
-
-        b'\x11' ==> b'\xEF'
-        b'\xD4' ==> b'\x2C'
-        b'\x70\x03' ==> b'\x8D'
-        b'\xA1\xA3' ==> b'\xBB'
-
-        b'\x35\x23\x24' ==> b'\x84'
-        b'\x11' ==> b'\xEF'
         @param p_bytearray: is the byte array we will checksum.
         @return: the checksum byte
         """
@@ -166,9 +157,8 @@ class BuildCommand(object):
 
     @staticmethod
     def _queue_pim_command(p_controller_obj, p_command):
-        if g_debug >= 1:
-            l_msg = "Queue_pim_command {}".format(PrintBytes(p_command))
-            LOG.debug(l_msg)
+        l_msg = "Queue_pim_command {}".format(PrintBytes(p_command))
+        LOG.debug(l_msg)
         p_controller_obj._Queue.put(p_command)
 
     @staticmethod
@@ -183,17 +173,17 @@ class BuildCommand(object):
         BuildCommand._queue_pim_command(p_controller_obj, l_cmd)
         return l_cmd
 
-    @staticmethod
-    def  write_pim_command(p_controller_obj, _p_command, _p_device_id, *p_args):
-        """Send a command to some UPB device thru the controller
-        """
-        l_cmd = BuildCommand._assemble_regwrite(p_reg, p_args)
-        l_cmd[1:] = BuildCommand._convert_pim(l_cmd)
-        l_cmd[0] = CTL_T
-        l_cmd.append(0x0d)
-        BuildCommand._queue_pim_command(p_controller_obj, l_cmd)
-        return l_cmd
-        pass
+    # @staticmethod
+    # def  write_pim_command(p_controller_obj, _p_command, _p_device_id, *p_args):
+    #    """Send a command to some UPB device thru the controller
+    #    """
+    #    l_cmd = BuildCommand._assemble_regwrite(p_reg, p_args)
+    #    l_cmd[1:] = BuildCommand._convert_pim(l_cmd)
+    #    l_cmd[0] = CTL_T
+    #    l_cmd.append(0x0d)
+    #    BuildCommand._queue_pim_command(p_controller_obj, l_cmd)
+    #    return l_cmd
+    #    pass
 
 
 class UpbPimUtility(object):
@@ -212,8 +202,7 @@ class UpbPimUtility(object):
             l_hdr[0 + l_ix] = p_args[l_ix]
         l_hdr = self._append_checksum(l_hdr)
         l_msg = "Ctl:{:#02x}  ".format(l_hdr[0])
-        if g_debug >= 1:
-            LOG.debug('Compose Command - {}'.format(l_msg))
+        LOG.debug('Compose Command - {}'.format(l_msg))
         # self.queue_pim_command(p_controller_obj, l_hdr)
         pass
 
@@ -282,33 +271,26 @@ class DecodeResponses(object):
         self.decode_response(p_controller_obj)
 
     def _decode_A(self):
-        if g_debug >= 2:
-            LOG.error("UPB_Pim - Previous command was accepted")
+        LOG.error("UPB_Pim - Previous command was accepted")
 
     def _decode_B(self):
-        if g_debug >= 2:
-            LOG.error("UPB_Pim - Previous command was rejected because device is busy.")
+        LOG.error("UPB_Pim - Previous command was rejected because device is busy.")
 
     def _decode_E(self):
-        if g_debug >= 2:
-            LOG.error("UPB_Pim - Previous command was rejected with a command error.")
+        LOG.error("UPB_Pim - Previous command was rejected with a command error.")
 
     def _decode_K(self):
-        if g_debug >= 2:
-            LOG.error("UPB_Pim.decode_response() found 'K' (0x4b) - ACK pulse also received.")
+        LOG.error("UPB_Pim.decode_response() found 'K' (0x4b) - ACK pulse also received.")
 
     def _decode_N(self):
-        if g_debug >= 2:
-            LOG.error("UPB_Pim.decode_response() found 'N' (0x4E) - No ACK pulse received from device.")
+        LOG.error("UPB_Pim.decode_response() found 'N' (0x4E) - No ACK pulse received from device.")
 
     def _decode_R(self):
-        if g_debug >= 2:
-            LOG.error("UPB_Pim.decode_response() found 'R' (0x52) - Register report received")
+        LOG.error("UPB_Pim.decode_response() found 'R' (0x52) - Register report received")
         self._get_rest()
 
     def _decode_U(self):
-        if g_debug >= 2:
-            LOG.error("UPB_Pim.decode_response() found 'U' (0x55) - Message report received.")
+        LOG.error("UPB_Pim.decode_response() found 'U' (0x55) - Message report received.")
         self._get_rest()
 
 
@@ -323,9 +305,8 @@ class PimDriverInterface(DecodeResponses):
         self.receive_loop(p_controller_obj)
 
     def XXXqueue_pim_command(self, p_controller_obj, p_command):
-        if g_debug >= 1:
-            l_msg = "Queue_pim_command {0:}".format(PrintBytes(p_command))
-            LOG.debug(l_msg)
+        l_msg = "Queue_pim_command {0:}".format(PrintBytes(p_command))
+        LOG.debug(l_msg)
         p_controller_obj._Queue.put(p_command)
 
     def dequeue_and_send(self, p_controller_obj):
@@ -335,8 +316,7 @@ class PimDriverInterface(DecodeResponses):
         except  Queue.Empty:
             return
         if p_controller_obj._DriverAPI != None:
-            if g_debug >= 1:
-                LOG.debug('Sending to controller:{}, Message: {} '.format(p_controller_obj.Name, PrintBytes(l_command)))
+            LOG.debug('Sending to controller:{}, Message: {} '.format(p_controller_obj.Name, PrintBytes(l_command)))
             p_controller_obj._DriverAPI.Write(l_command)
 
     def receive_loop(self, p_controller_obj):
@@ -347,13 +327,11 @@ class PimDriverInterface(DecodeResponses):
             l_msg = p_controller_obj._DriverAPI.Read()
             if len(l_msg) == 0:
                 return
-            if g_debug >= 2:
-                LOG.debug('Fetched message  {}'.format(PrintBytes(l_msg)))
+            LOG.debug('Fetched message  {}'.format(PrintBytes(l_msg)))
             p_controller_obj._Message += l_msg
             self.decode_response(p_controller_obj)
         else:
-            if g_debug >= 1:
-                LOG.info('No driver defined ')
+            LOG.info('No driver defined ')
 
 
 class CreateCommands(UpbPimUtility, PimDriverInterface, BuildCommand):
@@ -363,8 +341,7 @@ class CreateCommands(UpbPimUtility, PimDriverInterface, BuildCommand):
     def set_register_value(self, p_controller_obj, p_register, p_values):
         """Set one of the device's registers.
         """
-        if g_debug >= 1:
-            LOG.debug("Setting register {:#0x} to value {}".format(p_register, p_values))
+        LOG.debug("Setting register {:#0x} to value {}".format(p_register, p_values))
         self.write_register_command(p_controller_obj, p_register, p_values)
         pass
 
@@ -386,14 +363,15 @@ class CreateCommands(UpbPimUtility, PimDriverInterface, BuildCommand):
         l_val[0] = 0x03
         self.set_register_value(0xFF, 0x70, l_val)
 
-    def null_command(self, p_controller_obj):
-        self.write_pim_command(p_controller_obj, pim_commands['null'], '0xFF')
-        pass
+    # def null_command(self, p_controller_obj):
+    #    self.write_pim_command(p_controller_obj, pim_commands['null'], '0xFF')
+    #    pass
 
 
 class UpbPimAPI(CreateCommands):
 
-    def _initilaize_pim(self, p_controller_obj):
+    @staticmethod
+    def _initilaize_pim(p_controller_obj):
         l_pim = UPBData()
         l_pim.InterfaceType = p_controller_obj.InterfaceType
         l_pim.Name = p_controller_obj.Name
@@ -408,13 +386,13 @@ class UpbPimAPI(CreateCommands):
         """
         p_controller_obj._Queue = Queue.Queue(300)
         LOG.info("start:{} - InterfaceType:{}".format(p_controller_obj.Name, p_controller_obj.InterfaceType))
-        self.m_pim = self._initilaize_pim(p_controller_obj)
+        self.m_pim = UpbPimAPI._initilaize_pim(p_controller_obj)
         l_driver = FamUtil.get_device_driver_API(p_controller_obj)
         p_controller_obj._DriverAPI = l_driver
         l_driver.Start(p_pyhouse_obj, p_controller_obj)
         self.m_pim._DriverAPI = l_driver
         self.set_register_value(p_controller_obj, 0x70, [0x03])
-        self.null_command(p_controller_obj)
+        # self.null_command(p_controller_obj)
         return True
 
     def get_response(self):

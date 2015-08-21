@@ -271,7 +271,7 @@ class API(Util):
         self.m_pyhouse_obj = p_pyhouse_obj
 
     def Start(self):
-        self.m_pyhouse_obj.Computer.Nodes = nodes_xml.Xml().read_all_nodes_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.Computer.Nodes = self.LoadXml()
         self.get_node_info(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Computer.Nodes[0] = Util.create_local_node(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Computer.Nodes[0].NodeRole = self.find_node_role()
@@ -279,6 +279,12 @@ class API(Util):
 
     def Stop(self):
         LOG.info("Stopped.")
+
+    def LoadXml(self):
+        """ Load the Mqtt xml info.
+        """
+        l_nodes = nodes_xml.Xml().read_all_nodes_xml(self.m_pyhouse_obj)
+        return l_nodes
 
     def SaveXml(self, p_xml):
         l_xml = nodes_xml.Xml().write_nodes_xml(self.m_pyhouse_obj.Computer.Nodes)
