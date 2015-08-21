@@ -7,7 +7,7 @@
 @note:      Created on Apr 27, 2013
 @summary:   This module is for testing Insteon conversion routines.
 
-Passed all 4 tests - DBK - 2015-08-16
+Passed all 4 tests - DBK - 2015-08-20
 
 """
 

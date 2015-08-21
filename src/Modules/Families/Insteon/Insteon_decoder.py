@@ -27,15 +27,12 @@ PLEASE REFACTOR ME!
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Families.Insteon.Insteon_constants import ACK, MESSAGE_TYPES, MESSAGE_LENGTH, NAK, STX
-from Modules.Families.Insteon.Insteon_data import InsteonData
+from Modules.Families.Insteon.Insteon_constants import ACK, MESSAGE_TYPES, NAK, STX
+from Modules.Families.Insteon import Insteon_HVAC
 from Modules.Families.Insteon.Insteon_Link import Decode as linkDecode
-from Modules.Families.Insteon.Insteon_utils import Util, Decode as utilDecode
-from Modules.Core import conversions
+from Modules.Families.Insteon.Insteon_utils import Decode as utilDecode, Util as utilUtil
 from Modules.Utilities import json_tools
 from Modules.Utilities.tools import PrintBytes
-from Modules.Families.Insteon import Insteon_Link
-from Modules.Families.Insteon import Insteon_HVAC
 from Modules.Computer import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.Insteon_decode ')
@@ -43,195 +40,7 @@ LOG = Logger.getLogger('PyHouse.Insteon_decode ')
 # OBJ_LIST = [Lights, Controllers, Buttons, Thermostats, Irrigation, Pool]
 
 
-class D_Util(object):
-    """
-    """
-
-    @staticmethod
-    def _drop_first_byte(p_controller_obj):
-        """The first byte is not legal, drop it and try again.
-        Silently drop 1st byte if it is a NAK otherwise log it.
-        """
-        l_msg = "Found a leading char {:#x} - Rest. - {}".format(
-                p_controller_obj._Message[0], PrintBytes(p_controller_obj._Message))
-        if p_controller_obj._Message[0] != NAK:
-            LOG.error(l_msg)
-        try:
-            p_controller_obj._Message = p_controller_obj._Message[1:]
-        except IndexError:
-            pass
-
-    @staticmethod
-    def _decode_message_type_flag(p_type):
-        TYPE_X = ['Direct', 'Direct_ACK', 'AllCleanup', 'All_Cleanup_ACK', 'Broadcast', 'Direct_NAK', 'All_Broadcast', 'All_Cleanup_NAK']
-        return TYPE_X[p_type] + ' Msg, '
-
-    @staticmethod
-    def _decode_extended_flag(p_extended):
-        TYPE_X = [' Standard,', ' Extended,']
-        return TYPE_X[p_extended]
-
-    @staticmethod
-    def _decode_message_flag(p_byte):
-        """ Get the message flag and convert it to a description of the message.
-        """
-        l_type = (p_byte & 0xE0) >> 5
-        l_extended = (p_byte & 0x10)
-        l_hops_left = (p_byte & 0x0C) >= 4
-        l_max_hops = (p_byte & 0x03)
-        l_ret = D_Util._decode_message_type_flag(l_type)
-        l_ret += D_Util._decode_extended_flag(l_extended)
-        l_ret += " HopsLeft:{:d}, Hops:{:d} ({:#X}); ".format(l_hops_left, l_max_hops, p_byte)
-        return l_ret
-
-    @staticmethod
-    def _get_message_length(p_message):
-        """ Get the documented length that the message is supposed to be.
-
-        Use the message type byte to find out how long the response from the PLM is supposed to be.
-        With asynchronous routines, we want to wait till the entire message is received before proceeding with its decoding.
-        """
-        l_id = p_message[1]
-        try:
-            l_message_length = MESSAGE_LENGTH[l_id]
-        except KeyError:
-            l_message_length = 1
-        return l_message_length
-
-    def _find_addr_one_class(self, p_class, p_addr):
-        """
-        Find the address of something Insteon.
-        @param p_class: is an OBJ like p_pyhouse_obj.House.Controllers that we will look thru to find the object.
-        @param p_addr: is the address that we want to find.
-        @return: the object that has the address.  None if not found
-        """
-        for l_obj in p_class.itervalues():
-            if l_obj.DeviceFamily != 'Insteon':
-                continue  # ignore any non-Insteon devices in the class
-            if l_obj.InsteonAddress == p_addr:
-                return l_obj
-        return None
-
-    def _find_address_all_classes(self, p_address):
-        """ This will search thru all object groups that an inseton device could be in.
-        @return: the object that has the address or a dummy object if not found
-        """
-        l_ret = self._find_addr_one_class(self.m_pyhouse_obj.House.Lights, p_address)
-        l_dotted = conversions.int2dotted_hex(p_address, 3)
-        if l_ret == None:
-            l_ret = self._find_addr_one_class(self.m_pyhouse_obj.House.Controllers, p_address)
-        if l_ret == None:
-            l_ret = self._find_addr_one_class(self.m_pyhouse_obj.House.Buttons, p_address)
-        if l_ret == None:
-            l_ret = self._find_addr_one_class(self.m_pyhouse_obj.House.Thermostats, p_address)
-        # Add additional classes in here
-        if l_ret == None:
-            LOG.info("WARNING - Address {} ({}) *NOT* found.".format(l_dotted, p_address))
-            l_ret = InsteonData()  # an empty new object
-            l_ret.Name = '**NoName-' + l_dotted + '-**'
-        return l_ret
-
-    def get_obj_from_message(self, p_message):
-        """ Here we have a message from the PLM.  Find out what device has that address.
-
-        @param p_message: is the message byte array from the PLM we are extracting the Insteon address from.
-        @param p_index: is the index of the first byte in the message.
-                Various messages contain the address at different offsets.
-        @return: The object that contains the address -or- a dummy object with noname in Name
-        """
-        l_address = Util.message2int(p_message)  # Extract the 3 byte address from the message and convert to an Int.
-        if l_address < (256 * 256):  # First byte zero ?
-            l_dotted = str(l_address)
-            l_device_obj = InsteonData()  # an empty new object
-            l_device_obj.Name = '**Group: ' + l_dotted + ' **'
-        else:
-            l_device_obj = self._find_address_all_classes(l_address)
-        return l_device_obj
-
-    @staticmethod
-    def get_product_code(_p_obj, _p_message, _p_index):
-        l_debug_msg = ''
-        return l_debug_msg
-
-    @staticmethod
-    def update_object(p_obj):
-        # TODO: implement
-        pass
-
-    def _get_addr_from_message(self, p_message):
-        """Extract the address from a message.
-
-        The message is a byte array returned from the PLM.
-        The address is 3 consecutive bytes starting at p_index.
-
-        @param p_message: is the byte array returned by the controller.
-        @param p_index: is the offset into the message of a 3 byte field we will fetch and convert to an int
-        """
-        l_id = Util.message2int(p_message)
-        return l_id
-
-    def _get_ack_nak(self, p_byte):
-        if p_byte == 0x06:
-            return 'ACK '
-        elif p_byte == 0x15:
-            return 'NAK '
-        else:
-            return "{:#02X} ".format(p_byte)
-
-    def decode_command1(self, l_obj_from, l_name_from, l_9, l_10, l_message):
-        """
-        Not used yet - being refactored out of the decode 50 command
-        """
-        l_debug_msg = ''
-        if l_obj_from._Command1 == MESSAGE_TYPES['product_data_request']:  # 0x03
-            l_debug_msg += " product data request. - Should never happen - S/B 51 response"
-        elif l_obj_from._Command1 == MESSAGE_TYPES['engine_version']:  # 0x0D
-            l_engine_id = l_10
-            l_debug_msg += "Engine version From:{}, EngineId:{}; ".format(l_name_from, l_engine_id)
-            LOG.info("Got engine version from light:{}, EngineID:{} ".format(l_name_from, l_engine_id))
-        elif l_obj_from._Command1 == MESSAGE_TYPES['id_request']:  # 0x10
-            l_debug_msg += "Request ID From:{}; ".format(l_name_from)
-            LOG.info("Got an ID request. Light:{} ".format(l_name_from,))
-        elif l_obj_from._Command1 == MESSAGE_TYPES['on']:  # 0x11
-            l_obj_from.CurLevel = 100
-            l_debug_msg += "Device:{} turned Full ON  ; ".format(l_name_from)
-            self.update_object(l_obj_from)
-        elif l_obj_from._Command1 == MESSAGE_TYPES['off']:  # 0x13
-            l_obj_from.CurLevel = 0
-            l_debug_msg += "Light:{} turned Full OFF; ".format(l_name_from)
-            self.update_object(l_obj_from)
-        elif l_obj_from._Command1 == MESSAGE_TYPES['status_request']:  # 0x19
-            l_level = int(((l_10 + 2) * 100) / 256)
-            l_obj_from.CurLevel = l_level
-            l_debug_msg += "Status of light:{} is level:{}; ".format(l_name_from, l_level)
-            LOG.info("Got Light Status From:{}, Level is:{} ".format(l_name_from, l_level))
-            self.update_object(l_obj_from)
-        elif l_obj_from._Command1 == MESSAGE_TYPES['thermostat_report']:  # 0x6e
-            _l_ret1 = Insteon_HVAC.ihvac_utility().decode_50_record(l_obj_from, l_9, l_10)
-            pass
-        else:
-            l_debug_msg += " unknown type - last command was {:#x} - {}; ".format(l_obj_from._Command1, PrintBytes(l_message))
-
-    @staticmethod
-    def get_next_message(p_controller_obj):
-        """ Get the next message from the controller.
-        Remove the message from the controller object.
-        Return None if there is not a full message left.
-        """
-        while len(p_controller_obj._Message) >= 2:
-            if p_controller_obj._Message[0] != STX:
-                D_Util._drop_first_byte(p_controller_obj)
-                continue  # Loop back for next try at a message
-            l_need_len = D_Util._get_message_length(p_controller_obj._Message)
-            l_cur_len = len(p_controller_obj._Message)
-            if l_cur_len >= l_need_len:
-                l_msg = p_controller_obj._Message[0:l_need_len]
-                p_controller_obj._Message = p_controller_obj._Message[l_need_len:]
-                return l_msg
-        return None
-
-
-class DecodeResponses(D_Util):
+class DecodeResponses(object):
 
     m_pyhouse_obj = None
     m_idex = 0
@@ -256,7 +65,7 @@ class DecodeResponses(D_Util):
             l_stx = p_controller_obj._Message[0]
             if l_stx == STX:
                 # LOG.info("{}".format(PrintBytes(p_controller_obj._Message)))
-                l_need_len = self._get_message_length(p_controller_obj._Message)
+                l_need_len = utilUtil.get_message_length(p_controller_obj._Message)
                 l_cur_len = len(p_controller_obj._Message)
                 if l_cur_len >= l_need_len:
                     self._decode_dispatch(p_controller_obj)
@@ -264,7 +73,23 @@ class DecodeResponses(D_Util):
                     LOG.warning('Message was too short - waiting for rest of message.')
                     return
             else:
-                D_Util._drop_first_byte(p_controller_obj)
+                utilDecode.drop_first_byte(p_controller_obj)
+
+    def check_for_more_decoding(self, p_controller_obj, p_ret = True):
+        """Chop off the current message from the head of the buffered response stream from the controller.
+        @param p_ret: is the result to return.
+        """
+        l_ret = p_ret
+        l_cur_len = len(p_controller_obj._Message)
+        l_chop = utilUtil.get_message_length(p_controller_obj._Message)
+        if l_cur_len >= l_chop:
+            p_controller_obj._Message = p_controller_obj._Message[l_chop:]
+            l_ret = self.decode_message(p_controller_obj)
+        else:
+            l_msg = "check_for_more_decoding() trying to chop an incomplete message - {}".format(
+                    PrintBytes(p_controller_obj._Message))
+            LOG.error(l_msg)
+        return l_ret
 
     def _decode_dispatch(self, p_controller_obj):
         """Decode a message that was ACKed / NAked.
@@ -303,12 +128,7 @@ class DecodeResponses(D_Util):
             self.check_for_more_decoding(p_controller_obj, l_ret)
         return l_ret
 
-    def get_message_flags(self, p_message, p_index):
-        try:
-            l_message_flags = p_message[p_index]
-        except IndexError:
-            l_message_flags = 0
-        return l_message_flags
+
 
     def _decode_50_record(self, p_controller_obj):
         """ Insteon Standard Message Received (11 bytes)
@@ -324,9 +144,8 @@ class DecodeResponses(D_Util):
         [10] = command 2
         """
         l_message = p_controller_obj._Message
-        l_device_obj = self.get_obj_from_message(l_message[2:5])
-        l_message_flags = self.get_message_flags(p_controller_obj._Message, 8)
-        l_flags = D_Util._decode_message_flag(l_message_flags)
+        l_device_obj = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_message[2:5])
+        l_flags = utilDecode._decode_message_flag(l_message[8])
         l_cmd1 = l_message[9]
         l_cmd2 = l_message[10]
         l_data = [l_cmd1, l_cmd2]
@@ -336,9 +155,9 @@ class DecodeResponses(D_Util):
 
         l_debug_msg = 'Standard Message from: {}; Flags:{}; Cmd1:{:#x}, Cmd2:{:#x}; '.format(l_device_obj.Name, l_flags, l_cmd1, l_cmd2)
         # Break down bits 7(msb), 6, 5 into message type
-        if l_message_flags & 0xE0 == 0x80:  # Broadcast/NAK Message (100)
+        if l_message[8] & 0xE0 == 0x80:  # Broadcast/NAK Message (100)
             l_debug_msg += utilDecode._devcat(l_message[5:7], l_device_obj)
-        elif l_message_flags & 0xE0 == 0xC0:  # (110) all link broadcast of group id
+        elif l_message[8] & 0xE0 == 0xC0:  # (110) all link broadcast of group id
             l_group = l_message[7]
             l_debug_msg += "All-Link broadcast - Group:{}, Data:{}; ".format(l_group, l_data)
             LOG.info("== 50B All-link Broadcast Group:{}, Data:{} ==".format(l_group, l_data))
@@ -356,17 +175,14 @@ class DecodeResponses(D_Util):
             elif l_device_obj._Command1 == MESSAGE_TYPES['on']:  # 0x11
                 l_device_obj.CurLevel = 100
                 l_debug_msg += "Device:{} turned Full ON  ; ".format(l_device_obj.Name)
-                self.update_object(l_device_obj)
             elif l_device_obj._Command1 == MESSAGE_TYPES['off']:  # 0x13
                 l_device_obj.CurLevel = 0
                 l_debug_msg += "Light:{} turned Full OFF; ".format(l_device_obj.Name)
-                self.update_object(l_device_obj)
             elif l_device_obj._Command1 == MESSAGE_TYPES['status_request']:  # 0x19
                 l_level = int(((l_cmd2 + 2) * 100) / 256)
                 l_device_obj.CurLevel = l_level
                 l_debug_msg += "Status of light:{} is level:{}; ".format(l_device_obj.Name, l_level)
                 LOG.info("PLM:{} Got Light Status From:{}, Level is:{} ".format(p_controller_obj.Name, l_device_obj.Name, l_level))
-                self.update_object(l_device_obj)
             elif l_device_obj._Command1 == MESSAGE_TYPES['thermostat_report']:  # 0x6e
                 _l_ret1 = Insteon_HVAC.ihvac_utility().decode_50_record(l_device_obj, l_cmd1, l_cmd2)
                 pass
@@ -385,18 +201,17 @@ class DecodeResponses(D_Util):
         See p 247 of developers guide.
         """
         l_message = p_controller_obj._Message
-        l_obj_from = self.get_obj_from_message(l_message[2:5])
-        l_obj_to = self.get_obj_from_message(l_message[5:8])
+        l_obj_from = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_message[2:5])
+        l_obj_to = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_message[5:8])
         l_flags = l_message[8]
         l_data = [l_message[9], l_message[10]]
         l_extended = "{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}".format(
                     l_message[11], l_message[12], l_message[13], l_message[14], l_message[15], l_message[16], l_message[17],
                     l_message[18], l_message[19], l_message[20], l_message[21], l_message[22], l_message[23], l_message[24])
-        l_product_key = self._get_addr_from_message(l_message, 12)
+        # l_product_key = self._get_addr_from_message(l_message, 12)
         l_devcat = l_message[15] * 256 + l_message[16]
-        self.update_object(l_obj_from)
         LOG.info("== 51 From={}, To={}, Flags={:#x}, Data={} Extended={} ==".format(l_obj_from.Name, l_obj_to.Name, l_flags, l_data, l_extended))
-        l_obj_from.ProductKey = l_product_key
+        # l_obj_from.ProductKey = l_product_key
         l_obj_from.DevCat = l_devcat
         l_ret = True
         return self.check_for_more_decoding(p_controller_obj, l_ret)
@@ -431,7 +246,7 @@ class DecodeResponses(D_Util):
         return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_57_record(self, p_controller_obj):
-        l_ret = linkDecode.decode_57(p_controller_obj)
+        l_ret = linkDecode.decode_57(self.m_pyhouse_obj, p_controller_obj)
         return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_58_record(self, p_controller_obj):
@@ -443,7 +258,7 @@ class DecodeResponses(D_Util):
         See p 273 of developers guide.
         """
         l_message = p_controller_obj._Message
-        l_obj = self.get_obj_from_message(l_message[2:5])
+        l_obj = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_message[2:5])
         l_devcat = l_message[5]
         l_devsubcat = l_message[6]
         l_firmver = l_message[7]
@@ -481,15 +296,10 @@ class DecodeResponses(D_Util):
         Depending on the command sent, another response MAY follow this message with further data.
         """
         l_message = p_controller_obj._Message
-        l_obj = self.get_obj_from_message(l_message[2:5])
-        _l_msgflags = D_Util._decode_message_flag(l_message[5])
-        try:
-            l_8 = l_message[8]
-        except IndexError:
-            l_8 = 0
-            LOG.warning("Short 62 message rxed - {p:}".format(PrintBytes(l_message)))
-        l_ack = self._get_ack_nak(l_8)
-        l_debug_msg = "Device:{}, {}".format(l_obj.Name, l_ack)
+        l_obj = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_message[2:5])
+        _l_msgflags = utilDecode._decode_message_flag(l_message[5])
+        l_ack = utilDecode.get_ack_nak(l_message[8])
+        # l_debug_msg = "Device:{}, {}".format(l_obj.Name, l_ack)
         # LOG.info("Got ACK(62) {}".format(l_debug_msg))
         return self.check_for_more_decoding(p_controller_obj)
 
@@ -506,7 +316,7 @@ class DecodeResponses(D_Util):
         See p 258 of developers guide.
         """
         l_message = p_controller_obj._Message
-        l_ack = self._get_ack_nak(l_message[2])
+        l_ack = utilDecode.get_ack_nak(l_message[2])
         l_debug_msg = "Reset IM(PLM) {}".format(l_ack)
         LOG.info("{}".format(l_debug_msg))
         return self.check_for_more_decoding(p_controller_obj)
@@ -525,7 +335,7 @@ class DecodeResponses(D_Util):
         """
         l_message = p_controller_obj._Message
         l_flag = l_message[2]
-        l_ack = self._get_ack_nak(l_message[3])
+        l_ack = utilDecode.get_ack_nak(l_message[3])
         l_debug_msg = "from PLM:{} - ConfigFlag:{:#02X}, {}".format(p_controller_obj.Name, l_flag, l_ack)
         LOG.info("Received from {}".format(l_debug_msg))
         if l_message[3] == ACK:
@@ -548,9 +358,9 @@ class DecodeResponses(D_Util):
         l_flags = l_message[3]
         l_flag_control = l_flags & 0x40
         l_group = l_message[4]
-        l_obj = self.get_obj_from_message(l_message[5:8])
+        l_obj = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_message[5:8])
         l_data = [l_message[8], l_message[9], l_message[10]]
-        l_ack = self._get_ack_nak(l_message[11])
+        l_ack = utilDecode.get_ack_nak(l_message[11])
         l_type = 'Responder'
         if l_flag_control != 0:
             l_type = 'Controller'
@@ -566,33 +376,12 @@ class DecodeResponses(D_Util):
         See p 270 of developers guide.
         """
         l_message = p_controller_obj._Message
-        try:
-            l_5 = l_message[5]
-        except IndexError:
-            l_5 = 0
-            LOG.warning("Short 73 message rxed - {p:}".format(PrintBytes(l_message)))
         l_flags = l_message[2]
         l_spare1 = l_message[3]
         l_spare2 = l_message[4]
-        l_ack = self._get_ack_nak(l_5)
+        l_ack = utilDecode.get_ack_nak(l_message[5])
         LOG.info("== 73 Get IM configuration Flags={:#x}, Spare 1={:#x}, Spare 2={:#x} {} ".format(
                     l_flags, l_spare1, l_spare2, l_ack))
         return self.check_for_more_decoding(p_controller_obj)
-
-    def check_for_more_decoding(self, p_controller_obj, p_ret = True):
-        """Chop off the current message from the head of the buffered response stream from the controller.
-        @param p_ret: is the result to return.
-        """
-        l_ret = p_ret
-        l_cur_len = len(p_controller_obj._Message)
-        l_chop = self._get_message_length(p_controller_obj._Message)
-        if l_cur_len >= l_chop:
-            p_controller_obj._Message = p_controller_obj._Message[l_chop:]
-            l_ret = self.decode_message(p_controller_obj)
-        else:
-            l_msg = "check_for_more_decoding() trying to chop an incomplete message - {}".format(
-                    PrintBytes(p_controller_obj._Message))
-            LOG.error(l_msg)
-        return l_ret
 
 # ## END DBK

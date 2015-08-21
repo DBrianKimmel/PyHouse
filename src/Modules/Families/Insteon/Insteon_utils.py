@@ -17,9 +17,11 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Families.Insteon.Insteon_constants import InsteonError
+from Modules.Core import conversions
 from Modules.Families.Insteon.Insteon_data import InsteonData
+from Modules.Families.Insteon.Insteon_constants import MESSAGE_LENGTH, NAK
 from Modules.Computer import logging_pyh as Logger
+from Modules.Utilities.tools import PrintBytes
 
 LOG = Logger.getLogger('PyHouse.Insteon_Utils  ')
 
@@ -61,6 +63,20 @@ class Util(object):
         return l_int
 
     @staticmethod
+    def get_message_length(p_message):
+        """ Get the documented length that the message is supposed to be.
+
+        Use the message type byte to find out how long the response from the PLM is supposed to be.
+        With asynchronous routines, we want to wait till the entire message is received before proceeding with its decoding.
+        """
+        l_id = p_message[1]
+        try:
+            l_message_length = MESSAGE_LENGTH[l_id]
+        except KeyError:
+            l_message_length = 1
+        return l_message_length
+
+    @staticmethod
     def get_json_data(p_obj, p_json):
         p_obj.DevCat = int(p_json['DevCat'])
         p_obj.GroupList = p_json['GroupList']
@@ -71,6 +87,48 @@ class Util(object):
 
 
 class Decode(object):
+
+    @staticmethod
+    def drop_first_byte(p_controller_obj):
+        """The first byte is not legal, drop it and try again.
+        Silently drop 1st byte if it is a NAK otherwise log it.
+        """
+        l_msg = "Found a leading char {:#x} - Rest. - {}".format(
+                p_controller_obj._Message[0], PrintBytes(p_controller_obj._Message))
+        if p_controller_obj._Message[0] != NAK:
+            LOG.error(l_msg)
+        try:
+            p_controller_obj._Message = p_controller_obj._Message[1:]
+        except IndexError:
+            pass
+
+    @staticmethod
+    def _decode_message_flag(p_byte):
+        """ Get the message flag and convert it to a description of the message.
+        """
+        def decode_message_type_flag(p_type):
+            TYPE_X = ['Direct', 'Direct_ACK', 'AllCleanup', 'All_Cleanup_ACK', 'Broadcast', 'Direct_NAK', 'All_Broadcast', 'All_Cleanup_NAK']
+            return TYPE_X[p_type] + ' Msg, '
+        def decode_extended_flag(p_extended):
+            TYPE_X = [' Standard,', ' Extended,']
+            return TYPE_X[p_extended]
+        l_type = (p_byte & 0xE0) >> 5
+        l_extended = (p_byte & 0x10)
+        l_hops_left = (p_byte & 0x0C) >= 4
+        l_max_hops = (p_byte & 0x03)
+        l_ret = decode_message_type_flag(l_type)
+        l_ret += decode_extended_flag(l_extended)
+        l_ret += " HopsLeft:{:d}, Hops:{:d} ({:#X}); ".format(l_hops_left, l_max_hops, p_byte)
+        return l_ret
+
+    @staticmethod
+    def get_ack_nak(p_byte):
+        if p_byte == 0x06:
+            return 'ACK '
+        elif p_byte == 0x15:
+            return 'NAK '
+        else:
+            return "{:#02X} ".format(p_byte)
 
     @staticmethod
     def _devcat(p_message, p_obj):
@@ -112,7 +170,7 @@ class Decode(object):
         return l_debug_msg
 
     @staticmethod
-    def _find_addr_one_class(p_class, p_addr):
+    def _find_addr_one_class(p_pyhouse_obj, p_class, p_addr):
         """
         Find the address of something Insteon.
         @param p_class: is an OBJ like p_pyhouse_obj.House.Controllers that we will look thru to find the object.
@@ -127,18 +185,18 @@ class Decode(object):
         return None
 
     @staticmethod
-    def _find_address_all_classes(p_address):
+    def find_address_all_classes(p_pyhouse_obj, p_address):
         """ This will search thru all object groups that an inseton device could be in.
         @return: the object that has the address or a dummy object if not found
         """
-        l_ret = Decode._find_addr_one_class(self.m_pyhouse_obj.House.Lights, p_address)
+        l_ret = Decode._find_addr_one_class(p_pyhouse_obj.House.Lights, p_address)
         l_dotted = conversions.int2dotted_hex(p_address, 3)
         if l_ret == None:
-            l_ret = DECIDE._find_addr_one_class(self.m_pyhouse_obj.House.Controllers, p_address)
+            l_ret = Decode._find_addr_one_class(p_pyhouse_obj.House.Controllers, p_address)
         if l_ret == None:
-            l_ret = Decode._find_addr_one_class(self.m_pyhouse_obj.House.Buttons, p_address)
+            l_ret = Decode._find_addr_one_class(p_pyhouse_obj.House.Buttons, p_address)
         if l_ret == None:
-            l_ret = Decode._find_addr_one_class(self.m_pyhouse_obj.House.Thermostats, p_address)
+            l_ret = Decode._find_addr_one_class(p_pyhouse_obj.House.Thermostats, p_address)
         # Add additional classes in here
         if l_ret == None:
             LOG.info("WARNING - Address {} ({}) *NOT* found.".format(l_dotted, p_address))
@@ -147,7 +205,7 @@ class Decode(object):
         return l_ret
 
     @staticmethod
-    def get_obj_from_message(p_message):
+    def get_obj_from_message(p_pyhouse_obj, p_message):
         """ Here we have a message from the PLM.  Find out what device has that address.
 
         @param p_message: is the message byte array from the PLM we are extracting the Insteon address from.
@@ -161,7 +219,7 @@ class Decode(object):
             l_device_obj = InsteonData()  # an empty new object
             l_device_obj.Name = '**Group: ' + l_dotted + ' **'
         else:
-            l_device_obj = Decode._find_address_all_classes(l_address)
+            l_device_obj = Util.find_address_all_classes(p_pyhouse_obj, l_address)
         return l_device_obj
 
 # ## END DBK

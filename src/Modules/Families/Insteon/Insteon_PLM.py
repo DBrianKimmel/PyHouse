@@ -262,7 +262,7 @@ class PlmDriverProtocol(Commands):
             if l_cur_len < 2:
                 return
             # LOG.info('Receive message is now {}'.format(PrintBytes(p_controller_obj._Message)))
-            l_response_len = Utility._get_message_length(p_controller_obj._Message)
+            l_response_len = Util.get_message_length(p_controller_obj._Message)
             if l_cur_len >= l_response_len:
                 self.m_decoder.decode_message(p_controller_obj)
         else:
@@ -442,7 +442,7 @@ class LightHandlerAPI(InsteonPlmAPI):
 
 
 
-class Utility(LightHandlerAPI, PlmDriverProtocol):
+class Utility(LightHandlerAPI):
     """
     """
 
@@ -478,25 +478,8 @@ class Utility(LightHandlerAPI, PlmDriverProtocol):
         return l_ret
 
     @staticmethod
-    def _get_message_length(p_message):
-        """Get the documented length that the message is supposed to be.
-
-        Use the message type byte to find out how long the response from the PLM
-        is supposed to be.
-        With asynchronous routines, we want to wait till the entire message is
-        received before proceeding with its decoding.
-        """
-        l_id = p_message[1]
-        try:
-            l_message_length = MESSAGE_LENGTH[l_id]
-        except KeyError:
-            l_message_length = 1
-        return l_message_length
-
-    @staticmethod
     def _queue_command(p_controller, p_command):
         p_controller._Queue.put(p_command)
-
 
 
 class API(Utility):

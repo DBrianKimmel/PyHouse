@@ -7,7 +7,7 @@
 @license:   MIT License
 @summary:   This module test insteon xml
 
-Passed all 13 tests - DBK - 2015-07-20
+Passed all 13 tests - DBK - 2015-08-20
 
 """
 
@@ -148,14 +148,14 @@ class C01_Write(SetupMixin, unittest.TestCase):
         insteonXml.ReadXml(self.m_light, self.m_xml.light)
 
     def test_01_setup(self):
-        print(PrettyFormatAny.form(self.m_light, 'Light Device 2'))
+        # print(PrettyFormatAny.form(self.m_light, 'Light Device 2'))
         self.assertEqual(self.m_light.Name, TESTING_LIGHTING_LIGHTS_NAME_1)
         self.assertEqual(self.m_light.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(self.m_light.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS))
 
     def test_02_Core(self):
         l_xml = self.m_core_api.write_core_lighting_xml('Light', self.m_light)
-        print(PrettyFormatAny.form(l_xml, 'Lights XML'))
+        # print(PrettyFormatAny.form(l_xml, 'Lights XML'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHTING_LIGHTS_NAME_1)
         self.assertEqual(l_xml.attrib['Key'], TESTING_LIGHTING_LIGHTS_KEY_1)
         self.assertEqual(l_xml.attrib['Active'], TESTING_LIGHTING_LIGHTS_ACTIVE_1)
@@ -166,7 +166,7 @@ class C01_Write(SetupMixin, unittest.TestCase):
     def test_03_InsteonLight(self):
         l_xml = self.m_core_api.write_core_lighting_xml('Light', self.m_light)
         insteonXml.WriteXml(l_xml, self.m_light)
-        print(PrettyFormatAny.form(l_xml, 'Lights XML'))
+        # print(PrettyFormatAny.form(l_xml, 'Lights XML'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHTING_LIGHTS_NAME_1)
         self.assertEqual(l_xml.attrib['Key'], TESTING_LIGHTING_LIGHTS_KEY_1)
         self.assertEqual(l_xml.attrib['Active'], TESTING_LIGHTING_LIGHTS_ACTIVE_1)
@@ -175,10 +175,5 @@ class C01_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.find('GroupList').text, TESTING_INSTEON_GROUP_LIST)
         self.assertEqual(l_xml.find('GroupNumber').text, TESTING_INSTEON_GROUP_NUM)
         self.assertEqual(l_xml.find('ProductKey').text, TESTING_INSTEON_PRODUCT_KEY)
-
-
-def test_suite():
-    suite = unittest.TestSuite()
-    return suite
 
 # ## END

@@ -14,7 +14,7 @@
 
 # Import PyMh files
 from Modules.Families.Insteon.Insteon_constants import ACK
-from Modules.Families.Insteon.Insteon_PLM import Utility as plmUtility
+# from Modules.Families.Insteon.Insteon_PLM import Utility as plmUtility
 from Modules.Families.Insteon.Insteon_utils import Decode as utilDecode
 from Modules.Computer import logging_pyh as Logger
 
@@ -37,13 +37,13 @@ class Send(object):
     """
 
     @staticmethod
-    def send_6a(p_controller_obj):
+    def XXsend_6a(p_controller_obj):
         """Get the next record - will get a NAK if no more (2 bytes).
         See p 247(260) of 2007 developers guide.
         """
         LOG.info("Command to get Next all-link record (6A).")
-        l_command = plmUtility._create_command_message('plm_next_all_link')
-        plmUtility._queue_command(p_controller_obj, l_command)
+        # l_command = plmUtility._create_command_message('plm_next_all_link')
+        # plmUtility._queue_command(p_controller_obj, l_command)
 
 
 class Decode(object):
@@ -87,12 +87,12 @@ class Decode(object):
         return False
 
     @staticmethod
-    def decode_57(p_controller_obj):
+    def decode_57(p_pyhouse_obj, p_controller_obj):
         """All-Link Record Response (10 bytes).
         See p 249)(262 of 2007 developers guide.
         """
         l_message = p_controller_obj._Message
-        l_obj = self.get_obj_from_message(l_message[4:7])
+        l_obj = utilDecode.get_obj_from_message(p_pyhouse_obj, l_message[4:7])
         l_link_obj = LinkData()
         l_link_obj.Flag = l_flags = l_message[2]
         l_link_obj.Group = l_group = l_message[3]

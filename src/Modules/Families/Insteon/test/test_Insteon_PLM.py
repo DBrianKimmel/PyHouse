@@ -18,7 +18,7 @@ from twisted.trial import unittest
 # Import PyMh files
 # from Modules.lights.lighting import LightData
 from Modules.Core.data_objects import ControllerData
-from Modules.Families.Insteon.Insteon_PLM import Utility
+# from Modules.Families.Insteon.Insteon_PLM import Utility as utilUtil
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 
@@ -46,21 +46,10 @@ class C01_Utility(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_01_MessageLength(self):
-        self.assertEqual(Utility._get_message_length(MSG_50), 11)
-        self.assertEqual(Utility._get_message_length(MSG_62), 9)
-        self.assertEqual(Utility._get_message_length(MSG_99), 1)
-
     def test_02_ExtractAddress(self):
         # self.assertEqual(self.m_api._get_addr_from_message(MSG_50, 2), conversions.dotted_hex2int(ADR_16C9D0))
         # self.assertEqual(self.m_api._get_addr_from_message(MSG_62, 2), conversions.dotted_hex2int(ADR_17C272))
         pass
-
-    def test_03_Create(self):
-        l_cmd = Utility._create_command_message('insteon_send')
-        self.assertEqual(len(l_cmd), 8)
-        self.assertEqual(l_cmd[0], STX)
-        self.assertEqual(l_cmd[1], 0x62)
 
     def test_04_Obj(self):
         l_house = self.m_pyhouse_obj.House
@@ -77,16 +66,15 @@ class C02_Cmds(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         # self.m_pyhouse_obj.House.FamilyData = family.API(self.m_pyhouse_obj).build_lighting_family_info()
 
-    def test_01_get_message_length(self):
-        self.assertEqual(Utility._get_message_length(MSG_50), 11)
-        self.assertEqual(Utility._get_message_length(MSG_62), 9)
-        self.assertEqual(Utility._get_message_length(MSG_99), 1)
+    # def test_01_get_message_length(self):
+    #    self.assertEqual(utilUtil._get_message_length(MSG_50), 11)
+    #    self.assertEqual(utilUtil._get_message_length(MSG_62), 9)
+    #    self.assertEqual(utilUtil._get_message_length(MSG_99), 1)
 
-    def test_02_Command(self):
-        l_cmd = Utility._create_command_message('insteon_send')
-        # print(PrintBytes(l_cmd))
-        self.assertEqual(l_cmd[0], 0x02)
-        self.assertEqual(l_cmd[1], 0x62)
+    # def test_02_Command(self):
+    #    l_cmd = utilUtil._create_command_message('insteon_send')
+    #    self.assertEqual(l_cmd[0], 0x02)
+    #    self.assertEqual(l_cmd[1], 0x62)
 
     def test_03_63Cmd(self):
         l_obj = self.m_pyhouse_obj.House.Controllers
