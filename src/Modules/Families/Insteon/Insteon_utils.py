@@ -219,7 +219,7 @@ class Decode(object):
             l_device_obj = InsteonData()  # an empty new object
             l_device_obj.Name = '**Group: ' + l_dotted + ' **'
         else:
-            l_device_obj = Util.find_address_all_classes(p_pyhouse_obj, l_address)
+            l_device_obj = Decode.find_address_all_classes(p_pyhouse_obj, l_address)
         return l_device_obj
 
 # ## END DBK
