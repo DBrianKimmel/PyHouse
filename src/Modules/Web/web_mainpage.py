@@ -20,8 +20,6 @@ The mainpage is an athena Live page and the workspace is a live element.
 This allows ajax/comet actions and also allows other live element pages to be added dynamically.
 
 
-
-
 Note - A big hunk of the Core was derived from code kindly sent to me by Werner Thie.
 This portion involves the creation of a mainpage and within it a workspace.
 All the rest of the web page are segments that appear when needed and are deleted
@@ -67,7 +65,7 @@ from nevow.inevow import IRequest
 from twisted.internet import defer
 
 # Import PyMh files and modules.
-from Modules.Web import web_clock
+from Modules.Web import web_clock, web_users, web_configMenu
 from Modules.Web import web_login
 from Modules.Web import web_rootMenu
 from Modules.Web import web_computerMenu
@@ -364,6 +362,13 @@ class Workspace(athena.LiveElement):
         return l_element
 
     @athena.expose
+    def configMenu(self, p_params):
+        LOG.info("Config Menu loaded into browser")
+        l_element = web_configMenu.ConfigMenuElement(self, p_params)
+        l_element.setFragmentParent(self)
+        return l_element
+
+    @athena.expose
     def controlLights(self, p_params):
         LOG.info("Control Lights loaded into browser")
         l_element = web_controlLights.ControlLightsElement(self, p_params)
@@ -390,12 +395,6 @@ class Workspace(athena.LiveElement):
         l_element = web_computerMenu.ComputerMenuElement(self)
         l_element.setFragmentParent(self)
         return l_element
-
-#    def houseSelect(self, _p_params):
-#        LOG.info("House Select loaded into browser")
-#        l_element = web_houseSelect.HouseSelectElement(self)
-#        l_element.setFragmentParent(self)
-#        return l_element
 
     @athena.expose
     def internet(self, p_params):
@@ -461,6 +460,13 @@ class Workspace(athena.LiveElement):
     def thermostats(self, p_params):
         LOG.info("Thermostats loaded into browser")
         l_element = web_thermostats.ThermostatsElement(self, p_params)
+        l_element.setFragmentParent(self)
+        return l_element
+
+    @athena.expose
+    def users(self, p_params):
+        LOG.info("Users loaded into browser")
+        l_element = web_users.UsersElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 

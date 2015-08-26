@@ -18,7 +18,6 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	},
 
 
-
 // ============================================================================
 	/**
      * Place the widget in the workspace.

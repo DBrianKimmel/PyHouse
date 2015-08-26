@@ -84,12 +84,12 @@ class A1_XML(SetupMixin, unittest.TestCase):
         pass
 
     def test_05_Mqtt(self):
-        l_mqtt = self.m_api.LoadXml()
+        l_mqtt = self.m_api.LoadXml(self.m_pyhouse_obj)
         self.assertEqual(l_mqtt.Prefix, platform.node())
         self.assertEqual(len(l_mqtt.Brokers), 2)
 
     def test_06_Broker(self):
-        l_mqtt = self.m_api.LoadXml()
+        l_mqtt = self.m_api.LoadXml(self.m_pyhouse_obj)
         self.assertEqual(l_mqtt.Brokers[0].Name, TESTING_BROKER_NAME_1)
         self.assertEqual(l_mqtt.Brokers[0].Key, int(TESTING_BROKER_KEY_1))
         self.assertEqual(l_mqtt.Brokers[0].Active, TESTING_BROKER_ACTIVE_1 == 'True')

@@ -13,7 +13,7 @@
 from twisted.trial import unittest
 
 # Import PyMh files
-from src.test import xml_data
+from test import xml_data
 
 XML = xml_data.XML_LONG
 

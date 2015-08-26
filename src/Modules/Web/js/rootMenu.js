@@ -29,7 +29,6 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
     },
 
 
-
 // ============================================================================
     /**
      * Startup - Place the widget in the workspace and hide it.
@@ -58,7 +57,8 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 		var l_list = [
 		    // Key,           Caption,               Widget Name
 			['House',        'House',               'HouseMenu'           ],
-			['Computer',     'Computer',            'ComputerMenu'        ]
+			['Computer',     'Computer',            'ComputerMenu'        ],
+			['Config',     	 'Config',              'ConfigMenu'          ]
 			];
 		return l_list;
 	},
@@ -78,6 +78,9 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 		l_html += build_lcars_bottom();
 		self.nodeById('SelectionButtonsDiv').innerHTML = l_html;
 	},
+
+
+// ============================================================================
 	/**
 	 * This triggers getting the data from the server.
 	 */
@@ -108,6 +111,9 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 		case 'House':
 			self.showWidget('HouseMenu');
 			break;
+		case 'Config':
+			self.showWidget('ConfigMenu');
+			break;
 		case 'Quit':  // Quit the browser by logging out
 			self.doRootQuit(p_node);
 			break;
@@ -130,6 +136,6 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 		l_node.showLoggingInDiv();
 	}
 );
-//Divmod.debug('---', 'rootMenu.doHandleOnClick was called for Web.');
-//console.log("rm_rq Node %O", p_node);
+// Divmod.debug('---', 'rootMenu.doHandleOnClick was called for Web.');
+// console.log("rootMenu  Node %O", p_node);
 //### END DBK

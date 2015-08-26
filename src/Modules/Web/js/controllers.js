@@ -91,7 +91,6 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
     },
 
 
-
 // ============================================================================
     /**
      * Event handler for controller selection buttons.
@@ -115,7 +114,6 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
             self.showWidget('HouseMenu');
         }
     },
-
 
 
 // ============================================================================

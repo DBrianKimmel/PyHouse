@@ -138,10 +138,6 @@ class C_01_xxx(SetupMixin, unittest.TestCase):
         # PrettyPrintAny(self.m_pyhouse_obj.Twisted, 'PyHouse.Twisted')
         pass
 
-    def test_02_InterNode(self):
-        suite = test_inter_node_comm.TestSuite()
-        # PrettyPrintAny(suite, 'Test Suite')
-        suite.runTest()
 
 class C_11(SetupMixin, unittest.TestCase):
 

@@ -36,9 +36,10 @@ class RoomsElement(athena.LiveElement):
     jsClass = u'rooms.RoomsWidget'
     docFactory = loaders.xmlfile(os.path.join(templatepath, 'roomsElement.html'))
 
-    def __init__(self, p_workspace_obj, _p_params):
+    def __init__(self, p_workspace_obj, p_params):
         self.m_workspace_obj = p_workspace_obj
         self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
+        self.m_params = p_params
 
     @athena.expose
     def getServerData(self):

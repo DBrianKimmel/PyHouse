@@ -142,7 +142,7 @@ class API(Utility):
         """Allow cleanup of all drivers.
         """
         LOG.info("Stopping all lighting families.")
-        self.m_pyhouse_obj.APIs.House.FamilyAPI.stop_lighting_families(self.m_pyhouse_obj)
+        # self.m_pyhouse_obj.APIs.House.FamilyAPI.stop_lighting_families(self.m_pyhouse_obj)
         LOG.info("Stopped.")
 
     def SaveXml(self, p_xml):

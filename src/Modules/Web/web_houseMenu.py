@@ -19,12 +19,11 @@ from nevow import athena
 # Import PyMh files and modules.
 from Modules.Computer import logging_pyh as Logger
 
+LOG = Logger.getLogger('PyHouse.webHMenu    ')
+
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
-
-g_debug = 0
-LOG = Logger.getLogger('PyHouse.webHMenu    ')
 
 
 class HouseMenuElement(athena.LiveElement):

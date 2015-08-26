@@ -522,6 +522,7 @@ class LoginData(object):
         self.LoginName = None
         self.LoginEncryptedPassword = None
         self.LoginFullName = 'Not logged in'
+        self.LoginRole = 'Guest'
         self.IsLoggedIn = False
         self.ServerState = None
 

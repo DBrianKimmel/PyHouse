@@ -87,6 +87,9 @@ helpers.Widget.subclass(workspace, 'Workspace').methods(
 				self.attachWidget('update', 'dummy');
 				self.attachWidget('webs', 'dummy');
 				//
+				self.attachWidget('configMenu', 'dummy');
+				self.attachWidget('users', 'dummy');
+				//
 				self.attachWidget('houseMenu', 'dummy');
 				self.attachWidget('buttons', 'dummy');
 				self.attachWidget('controllers', 'dummy');

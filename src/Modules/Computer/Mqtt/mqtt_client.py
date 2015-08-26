@@ -113,7 +113,7 @@ class API(Util):
         LOG.info("Initialized.")
 
     def Start(self):
-        self.m_pyhouse_obj.Computer.Mqtt = self.LoadXml()
+        self.m_pyhouse_obj.Computer.Mqtt = self.LoadXml(self.m_pyhouse_obj)
         if self.m_pyhouse_obj.Computer.Mqtt.Brokers != {}:
             l_count = self.client_connect_all_brokers(self.m_pyhouse_obj)
             LOG.info("Mqtt {} broker(s) Started.".format(l_count))
@@ -123,12 +123,12 @@ class API(Util):
     def Stop(self):
         pass
 
-    def LoadXml(self):
+    def LoadXml(self, p_pyhouse_obj):
         """ Load the Mqtt xml info.
         """
         l_mqtt = MqttInformation()
-        l_mqtt.Prefix = self.m_pyhouse_obj.Computer.Name
-        l_mqtt.Brokers = mqttXML.read_mqtt_xml(self.m_pyhouse_obj)
+        l_mqtt.Prefix = p_pyhouse_obj.Computer.Name
+        l_mqtt.Brokers = mqttXML.read_mqtt_xml(p_pyhouse_obj)
         return l_mqtt
 
     def SaveXml(self, p_xml):

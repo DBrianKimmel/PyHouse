@@ -35,13 +35,13 @@ function buildLcarStopBitsSelectWidget(self, p_id, p_caption, p_checked) {
  * Special - has onchange 
  */
 function buildLcarInterfaceTypeSelectWidget(self, p_id, p_caption, p_checked, p_onchange) {
-	Divmod.debug('---', 'interface.buildLcarInterfaceTypeSelectWidget() called.');
+	// Divmod.debug('---', 'interface.buildLcarInterfaceTypeSelectWidget() called.');
 	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.InterfaceType, p_checked, p_onchange);
 }
 
 
 function buildSerialPart(self, p_controller, p_html) {
-	Divmod.debug('---', 'interface.buildSerialPart() called.');
+	// Divmod.debug('---', 'interface.buildSerialPart() called.');
 	p_html += buildLcarBaudRateSelectWidget(self, 'BaudRate', 'Baud Rate', p_controller.BaudRate);
 	p_html += buildLcarByteSizeSelectWidget(self, 'ByteSize', 'Byte Size', p_controller.ByteSize);
 	p_html += buildLcarParitySelectWidget(self, 'Parity', 'Parity', p_controller.Parity);
@@ -49,7 +49,7 @@ function buildSerialPart(self, p_controller, p_html) {
 	return p_html;
 }
 function fetchSerialEntry(self, p_data) {
-	Divmod.debug('---', 'interface.fetchSerialEntry() was called.');
+	// Divmod.debug('---', 'interface.fetchSerialEntry() was called.');
     p_data.BaudRate = fetchSelectWidget(self, 'BaudRate');
     p_data.ByteSize = fetchSelectWidget(self, 'ByteSize');
     p_data.Parity = fetchSelectWidget(self, 'Parity');

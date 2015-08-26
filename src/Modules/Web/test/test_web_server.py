@@ -32,6 +32,7 @@ class SetupMixin(object):
 
 
 class SmartDummyRequest(DummyRequest):
+
     def __init__(self, method, url, args = None, headers = None):
         DummyRequest.__init__(self, url.split('/'))
         self.method = method
@@ -42,7 +43,6 @@ class SmartDummyRequest(DummyRequest):
         for k, v in args.items():
             self.addArg(k, v)
 
-
     def value(self):
         return "".join(self.written)
 
@@ -51,17 +51,14 @@ class DummySite(server.Site):
     def get(self, url, args = None, headers = None):
         return self._request("GET", url, args, headers)
 
-
     def post(self, url, args = None, headers = None):
         return self._request("POST", url, args, headers)
-
 
     def _request(self, method, url, args, headers):
         request = SmartDummyRequest(method, url, args, headers)
         resource = self.getResourceFor(request)
         result = resource.render(request)
         return self._resolveResult(request, result)
-
 
     def _resolveResult(self, request, result):
         if isinstance(result, str):
