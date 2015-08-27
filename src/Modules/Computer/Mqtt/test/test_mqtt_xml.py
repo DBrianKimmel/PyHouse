@@ -17,7 +17,7 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Computer.Mqtt.mqtt_xml import Xml as mqttXML
-from test.xml_data import XML_LONG, XML_EMPTY
+from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Computer.Mqtt.test.xml_mqtt import \
     TESTING_BROKER_NAME_1, \
@@ -107,6 +107,8 @@ class C1_Write(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_01_Broker(self):
+        """Write one broker
+        """
         l_mqtt_obj = self.m_api.read_mqtt_xml(self.m_pyhouse_obj)[0]
         l_xml = mqttXML._write_one_broker(l_mqtt_obj)
         self.assertEqual(l_mqtt_obj.BrokerAddress, TESTING_BROKER_ADDRESS_1)
@@ -117,6 +119,8 @@ class C1_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.find('BrokerPort').text, TESTING_BROKER_PORT_1)
 
     def test_02_Mqtt(self):
+        """Write entire Mqtt XML section
+        """
         l_mqtt_obj = self.m_api.read_mqtt_xml(self.m_pyhouse_obj)
         l_xml = self.m_api.write_mqtt_xml(l_mqtt_obj)
         # PrettyPrintAny(l_xml, 'XML')

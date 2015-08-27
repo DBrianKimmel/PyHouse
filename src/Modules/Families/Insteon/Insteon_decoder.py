@@ -168,7 +168,6 @@ class DecodeResponses(object):
             elif l_device_obj._Command1 == MESSAGE_TYPES['engine_version']:  # 0x0D
                 l_engine_id = l_cmd2
                 l_debug_msg += "Engine version is:{}; ".format(l_engine_id)
-                # LOG.info("Got engine version from light:{}, is:{}, EngineID:{}".format(l_device_obj.Name, l_engine_id))
             elif l_device_obj._Command1 == MESSAGE_TYPES['id_request']:  # 0x10
                 l_debug_msg += "Request ID From:{}; ".format(l_device_obj.Name)
                 # LOG.info("Got an ID request. Light:{}".format(l_device_obj.Name,))

@@ -31,6 +31,7 @@ from test.xml_data import XML_LONG
 from Modules.Families.Insteon.test.xml_insteon import TESTING_INSTEON_ADDRESS
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
+from Modules.Utilities import json_tools
 
 
 class SetupMixin(object):
@@ -142,7 +143,7 @@ class J1_Json(SetupMixin, unittest.TestCase):
         l_buttons = self.m_api.read_all_buttons_xml(self.m_pyhouse_obj, self.m_xml.button_sect, self.m_version)
         # print('ButtonsS: {0:}'.format(l_buttons))
         # print('Button 0: {0:}'.format(vars(l_buttons[0])))
-        l_json = unicode(web_utils.JsonUnicode().encode_json(l_buttons))
+        l_json = json_tools.encode_json(l_buttons)
         # print('JSON: {0:}'.format(l_json))
 
 # ## END DBK

@@ -53,7 +53,7 @@ import dateutil.parser as dparser
 # Import PyMh files
 # from Modules.Core.data_objects import RiseSetData
 from Modules.Scheduling.schedule_xml import Xml as scheduleXmlAPI
-from Modules.Utilities import tools
+from Modules.Utilities import tools, json_tools
 from Modules.Utilities.obj_defs import GetPyhouse
 from Modules.Computer import logging_pyh as Logger
 from Modules.Web import web_utils
@@ -247,7 +247,7 @@ class ScheduleTime(object):
         """
         # l_riseset = RiseSetData()
         l_riseset = p_pyhouse_obj.House.Location.RiseSet
-        l_json = web_utils.JsonUnicode().encode_json(l_riseset)
+        l_json = json_tools.encode_json(l_riseset)
         p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("testing", message_json = l_json)
         LOG.info("Sunrise:{}, Sunset:{}".format(l_riseset.SunRise, l_riseset.SunSet))
         return l_riseset
@@ -271,7 +271,7 @@ class ScheduleExecution(object):
         Send information to one device to execute a schedule.
         """
         l_schedule_obj = self.m_pyhouse_obj.House.Schedules[p_slot]
-        l_schedule_json = web_utils.JsonUnicode().encode_json(l_schedule_obj)
+        l_schedule_json = json_tools.encode_json(l_schedule_obj)
         if l_schedule_obj.ScheduleType == 'LightingDevice':
             LOG.info('Execute_one_schedule type = LightingDevice')
             pass

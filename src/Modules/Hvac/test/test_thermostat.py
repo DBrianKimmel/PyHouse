@@ -22,6 +22,7 @@ from Modules.Web import web_utils
 from test.xml_data import XML_LONG, XML_EMPTY
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
+from Modules.Utilities import json_tools
 
 
 
@@ -187,7 +188,7 @@ class C04_JSON(SetupMixin, unittest.TestCase):
         """ Create a JSON object for Location.
         """
         l_thermostat = self.m_api.read_all_thermostats_xml(self.m_pyhouse_obj)
-        l_json = unicode(web_utils.JsonUnicode().encode_json(l_thermostat))
+        l_json = json_tools.encode_json(l_thermostat)
         # PrettyPrintAny(l_json, 'JSON', 120)
 
 
@@ -220,7 +221,7 @@ class C05_Empty(SetupMixin, unittest.TestCase):
         """ Create a JSON object for Location.
         """
         l_thermostat = self.m_api.read_all_thermostats_xml(self.m_pyhouse_obj)
-        l_json = unicode(web_utils.JsonUnicode().encode_json(l_thermostat))
+        l_json = json_tools.encode_json(l_thermostat)
         # PrettyPrintAny(l_json, 'JSON', 120)
 
 

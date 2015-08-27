@@ -40,6 +40,7 @@ from Modules.Web import web_utils
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Utilities import json_tools
 
 
 class SetupMixin(object):
@@ -258,7 +259,7 @@ class Z1_JSON(SetupMixin, unittest.TestCase):
         """
         l_obj = lightsAPI.read_all_lights_xml(self.m_pyhouse_obj, self.m_xml.light_sect, self.m_version)
         # print('Light: {0:}'.format(l_obj))
-        l_json = unicode(web_utils.JsonUnicode().encode_json(l_obj))
+        l_json = json_tools.encode_json(l_obj)
         # PrettyPrintAny(l_json, 'JSON', 120)
         # self.assertEqual(l_json[0] ['Comment'], 'Switch')
 

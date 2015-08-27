@@ -22,7 +22,6 @@ from Modules.Core import conversions
 from Modules.Web import web_utils
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.test.xml_device import \
         TESTING_DEVICE_COMMENT, \
         TESTING_DEVICE_FAMILY_INSTEON, \
@@ -50,12 +49,13 @@ from Modules.Families.Insteon.test.xml_insteon import \
         TESTING_INSTEON_DEVCAT, \
         TESTING_INSTEON_GROUP_LIST, \
         TESTING_INSTEON_GROUP_NUM, \
-        TESTING_INSTEON_MASTER
+        TESTING_INSTEON_VERSION, \
+        TESTING_INSTEON_PRODUCT_KEY
+from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Utilities import json_tools
 
 
 class SetupMixin(object):
-    """
-    """
 
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
@@ -65,7 +65,6 @@ class SetupMixin(object):
         self.m_api = controllerAPI()
         self.m_controller_obj = ControllerData()
         self.m_version = '1.4.0'
-
 
 
 class A1(SetupMixin, unittest.TestCase):
@@ -145,38 +144,49 @@ class B1_Read(SetupMixin, unittest.TestCase):
         # PrettyPrintAny(l_obj, 'Read Family', 100)
         self.assertEqual(l_obj.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS))
         self.assertEqual(l_obj.DevCat, conversions.dotted_hex2int(TESTING_INSTEON_DEVCAT))
+        self.assertEqual(l_obj.ProductKey, conversions.dotted_hex2int(TESTING_INSTEON_PRODUCT_KEY))
         self.assertEqual(l_obj.GroupList, TESTING_INSTEON_GROUP_LIST)
         self.assertEqual(l_obj.GroupNumber, int(TESTING_INSTEON_GROUP_NUM))
+        self.assertEqual(l_obj.Version, int(TESTING_INSTEON_VERSION))
 
     def test_06_OneController(self):
         """ Read in the xml file and fill in the lights
         """
-        l_controller = Utility._read_one_controller_xml(self.m_pyhouse_obj, self.m_xml.controller, self.m_version)
-        # PrettyPrintAny(l_controller, 'OneController', 100)
-        self.assertEqual(l_controller.BaudRate, int(TESTING_SERIAL_BAUD_RATE))
-        self.assertEqual(l_controller.ByteSize, 8, 'Bad Byte Size')
-        self.assertEqual(l_controller.DsrDtr, False, 'Bad DsrDtr')
-        self.assertEqual(l_controller.DeviceFamily, 'Insteon')
-        self.assertEqual(l_controller.InterfaceType, 'Serial')
-        self.assertEqual(l_controller.Parity, 'N')
-        self.assertEqual(l_controller.RtsCts, False)
-        self.assertEqual(l_controller.StopBits, 1.0)
-        self.assertEqual(l_controller.LightingType, 'Controller')
-        self.assertEqual(l_controller.XonXoff, False)
-        self.assertEqual(l_controller.DeviceFamily, 'Insteon')
-        self.assertEqual(l_controller.LightingType, 'Controller')
+        l_obj = Utility._read_one_controller_xml(self.m_pyhouse_obj, self.m_xml.controller, self.m_version)
+        print(PrettyFormatAny.form(l_obj, 'OneController', 100))
+        self.assertEqual(l_obj.Name, TESTING_CONTROLLER_NAME_0)
+        self.assertEqual(l_obj.Active, (TESTING_CONTROLLER_ACTIVE_0 == 'True'))
+        self.assertEqual(l_obj.LightingType, TESTING_CONTROLLER_TYPE)
+        self.assertEqual(l_obj.Comment, TESTING_DEVICE_COMMENT)
+        self.assertEqual(l_obj.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
+        self.assertEqual(l_obj.DeviceType, int(TESTING_DEVICE_TYPE))
+        self.assertEqual(l_obj.DeviceSubType, int(TESTING_DEVICE_SUBTYPE))
+        self.assertEqual(l_obj.RoomName, TESTING_DEVICE_ROOM_NAME)
+        self.assertEqual(l_obj.InterfaceType, TESTING_INTERFACE_TYPE_SERIAL)
+        self.assertEqual(l_obj.Port, TESTING_INTERFACE_PORT_SERIAL)
+        self.assertEqual(l_obj.BaudRate, int(TESTING_SERIAL_BAUD_RATE))
+        self.assertEqual(l_obj.ByteSize, int(TESTING_SERIAL_BYTE_SIZE))
+        self.assertEqual(l_obj.Parity, TESTING_SERIAL_PARITY)
+        self.assertEqual(l_obj.RtsCts, TESTING_SERIAL_RTS_CTS == 'True')
+        self.assertEqual(l_obj.StopBits, float(TESTING_SERIAL_STOP_BITS))
+        self.assertEqual(l_obj.Timeout, float(TESTING_SERIAL_TIMEOUT))
+        self.assertEqual(l_obj.XonXoff, TESTING_SERIAL_XON_XOFF == 'True')
+        self.assertEqual(l_obj.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS))
+        self.assertEqual(l_obj.DevCat, conversions.dotted_hex2int(TESTING_INSTEON_DEVCAT))
+        self.assertEqual(l_obj.GroupList, TESTING_INSTEON_GROUP_LIST)
+        self.assertEqual(l_obj.GroupNumber, int(TESTING_INSTEON_GROUP_NUM))
 
     def test_07_AllControllers(self):
         """Read all controllers.
         """
-        l_controllers = self.m_api.read_all_controllers_xml(self.m_pyhouse_obj, self.m_xml.controller_sect, self.m_version)
-        # print(PrettyFormatAny.form(l_controllers[1], 'AllControllers'))
-        self.assertEqual(len(l_controllers), 2)
-        self.assertEqual(l_controllers[0].BaudRate, int(TESTING_SERIAL_BAUD_RATE))
-        self.assertEqual(l_controllers[0].ByteSize, int(TESTING_SERIAL_BYTE_SIZE))
-        self.assertEqual(l_controllers[0].DsrDtr, (TESTING_SERIAL_DSR_DTR == 'True'))
-        self.assertEqual(l_controllers[1].Vendor, int(TESTING_USB_VENDOR))
-        self.assertEqual(l_controllers[1].Product, int(TESTING_USB_PRODUCT))
+        l_objs = self.m_api.read_all_controllers_xml(self.m_pyhouse_obj, self.m_xml.controller_sect, self.m_version)
+        # print(PrettyFormatAny.form(l_objs[1], 'AllControllers'))
+        self.assertEqual(len(l_objs), 2)
+        self.assertEqual(l_objs[0].BaudRate, int(TESTING_SERIAL_BAUD_RATE))
+        self.assertEqual(l_objs[0].ByteSize, int(TESTING_SERIAL_BYTE_SIZE))
+        self.assertEqual(l_objs[0].DsrDtr, (TESTING_SERIAL_DSR_DTR == 'True'))
+        self.assertEqual(l_objs[1].Vendor, int(TESTING_USB_VENDOR))
+        self.assertEqual(l_objs[1].Product, int(TESTING_USB_PRODUCT))
 
 
 class C1_Write(SetupMixin, unittest.TestCase):
@@ -277,7 +287,7 @@ class C2_JSON(SetupMixin, unittest.TestCase):
         """ Create a JSON object for Location.
         """
         l_controller = self.m_api.read_all_controllers_xml(self.m_pyhouse_obj, self.m_xml.controller_sect, self.m_version)
-        l_json = unicode(web_utils.JsonUnicode().encode_json(l_controller))
+        l_json = json_tools.encode_json(l_controller)
         # PrettyPrintAny(l_json, 'JSON', 100)
 
 # ## END DBK

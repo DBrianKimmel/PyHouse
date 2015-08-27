@@ -23,7 +23,7 @@ from Modules.Web import web_utils
 from Modules.Utilities.tools import PrettyPrintAny
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities import convert
+from Modules.Utilities import convert, json_tools
 
 DATETIME = datetime.datetime(2014, 10, 2, 12, 34, 56)
 
@@ -115,7 +115,7 @@ class B1_XML(SetupMixin, unittest.TestCase):
         """ Create a JSON object for Rooms.
         """
         l_internet = self.m_api.read_internet_xml(self.m_pyhouse_obj)
-        l_json = unicode(web_utils.JsonUnicode().encode_json(l_internet))
+        l_json = json_tools.encode_json(l_internet)
         # PrettyPrintAny(l_json, 'JSON', 70)
 
 # ## END DBK

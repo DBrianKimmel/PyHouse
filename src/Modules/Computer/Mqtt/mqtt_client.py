@@ -182,7 +182,7 @@ class API(Util):
         except KeyError:
             l_node = NodeData()
         l_node.NodeInterfaces = None
-        l_json = web_utils.JsonUnicode().encode_json(l_node)
+        l_json = json_tools.encode_json(l_node)
         self.MqttPublish('login/initial', message_json = l_json)
 
 # ## END DBK

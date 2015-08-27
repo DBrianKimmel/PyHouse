@@ -12,20 +12,16 @@ Passed all 2 tests - DBK - 2015-08-07
 """
 
 # Import system type stuff
-# import copy
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities import json_tools, debug_tools
-
+from Modules.Utilities import json_tools
 
 
 class SetupMixin(object):
-    """
-    """
 
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)

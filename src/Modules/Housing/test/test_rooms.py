@@ -21,6 +21,7 @@ from Modules.Web import web_utils
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
+from Modules.Utilities import json_tools
 
 
 class SetupMixin(object):
@@ -91,7 +92,7 @@ class A1_XML(SetupMixin, unittest.TestCase):
         """ Create a JSON object for Rooms.
         """
         self.m_pyhouse_obj.House.Rooms = l_rooms = self.m_api.read_rooms_xml(self.m_xml.house_div)
-        l_json = unicode(web_utils.JsonUnicode().encode_json(l_rooms))
+        l_json = json_tools.encode_json(l_rooms)
         # print('JSON: {0:}'.format(l_json))
         # PrettyPrintAny(l_json, 'JSON', 120)
 

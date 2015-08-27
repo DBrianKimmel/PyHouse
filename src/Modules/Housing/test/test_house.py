@@ -18,7 +18,7 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from Modules.Housing import house
 from Modules.Web import web_utils
-from Modules.Utilities import xml_tools
+from Modules.Utilities import xml_tools, json_tools
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
@@ -133,7 +133,7 @@ class C04_JSON(SetupMixin, unittest.TestCase):
         """
         l_house = self.m_api.read_house_xml(self.m_pyhouse_obj)
         print('House: {0:}'.format(l_house))
-        l_json = unicode(web_utils.JsonUnicode().encode_json(l_house))
+        l_json = json_tools.encode_json(l_house)
         print('JSON: {0:}'.format(l_json))
 
 
