@@ -13,16 +13,12 @@
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
-
 # Import PyMh files and modules.
 from Modules.Core.data_objects import ThermostatData
-from Modules.Core import conversions
 from Modules.Hvac import thermostats
 from Modules.Families import family
-from Modules.Web import web_utils
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.tools import PrettyPrintAny
 
 
 class SetupMixin(object):

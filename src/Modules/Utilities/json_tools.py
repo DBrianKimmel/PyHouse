@@ -40,7 +40,7 @@ def decode_json_unicode(p_json):
     try:
         l_json = jsonpickle.decode(p_json)
     except (TypeError, ValueError) as l_error:
-        print('web_utils.encode_json ERROR {0:}'.format(l_error))
+        print('json_tools.encode_json ERROR {0:}'.format(l_error))
         l_json = u'{}'
     return l_json
 

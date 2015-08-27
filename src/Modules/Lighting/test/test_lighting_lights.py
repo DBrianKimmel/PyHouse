@@ -26,8 +26,11 @@ from Modules.Lighting.test.xml_lights import \
         TESTING_LIGHTING_LIGHTS_NAME_1, \
         TESTING_LIGHTING_TYPE
 from Modules.Families.Insteon.test.xml_insteon import \
-        TESTING_INSTEON_ADDRESS, TESTING_INSTEON_DEVCAT, TESTING_INSTEON_GROUP_LIST, TESTING_INSTEON_GROUP_NUM, TESTING_INSTEON_MASTER, \
-    TESTING_INSTEON_PRODUCT_KEY
+        TESTING_INSTEON_ADDRESS, \
+        TESTING_INSTEON_DEVCAT, \
+        TESTING_INSTEON_GROUP_LIST, \
+        TESTING_INSTEON_GROUP_NUM, \
+        TESTING_INSTEON_PRODUCT_KEY
 from Modules.Core.test.xml_device import TESTING_DEVICE_COMMENT, TESTING_DEVICE_FAMILY_INSTEON, \
         TESTING_DEVICE_ROOM_NAME, \
         TESTING_DEVICE_UUID, \
@@ -36,7 +39,6 @@ from Modules.Core.test.xml_device import TESTING_DEVICE_COMMENT, TESTING_DEVICE_
         TESTING_DEVICE_ROOM_X, \
         TESTING_DEVICE_ROOM_Y, \
         TESTING_DEVICE_ROOM_Z
-from Modules.Web import web_utils
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.debug_tools import PrettyFormatAny

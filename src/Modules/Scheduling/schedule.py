@@ -56,8 +56,6 @@ from Modules.Scheduling.schedule_xml import Xml as scheduleXmlAPI
 from Modules.Utilities import tools, json_tools
 from Modules.Utilities.obj_defs import GetPyhouse
 from Modules.Computer import logging_pyh as Logger
-from Modules.Web import web_utils
-
 
 LOG = Logger.getLogger('PyHouse.Schedule       ')
 SECONDS_IN_DAY = 86400

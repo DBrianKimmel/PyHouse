@@ -17,12 +17,9 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Housing import house
-from Modules.Web import web_utils
 from Modules.Utilities import xml_tools, json_tools
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.tools import PrettyPrintAny
-
 
 
 class SetupMixin(object):

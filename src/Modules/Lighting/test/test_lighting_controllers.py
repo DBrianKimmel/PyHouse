@@ -19,7 +19,6 @@ from Modules.Core.data_objects import ControllerData
 from Modules.Lighting.lighting_controllers import Utility, API as controllerAPI
 from Modules.Families.family import API as familyAPI
 from Modules.Core import conversions
-from Modules.Web import web_utils
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.test.xml_device import \

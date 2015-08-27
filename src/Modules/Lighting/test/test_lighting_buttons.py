@@ -22,15 +22,12 @@ from Modules.Core.test.xml_device import \
         TESTING_DEVICE_FAMILY_INSTEON
 from Modules.Lighting.lighting_buttons import Utility, API as buttonsAPI
 from Modules.Lighting.test.xml_buttons import \
-        TESTING_LIGHTING_BUTTON_NAME_1, \
-        TESTING_LIGHTING_BUTTON_NAME_2
+        TESTING_LIGHTING_BUTTON_NAME_1
 from Modules.Families.family import API as familyAPI
 from Modules.Core import conversions
-from Modules.Web import web_utils
 from test.xml_data import XML_LONG
 from Modules.Families.Insteon.test.xml_insteon import TESTING_INSTEON_ADDRESS
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.tools import PrettyPrintAny
 from Modules.Utilities import json_tools
 
 

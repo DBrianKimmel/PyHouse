@@ -20,7 +20,6 @@ from collections import namedtuple
 from Modules.Core.data_objects import NodeData, MqttInformation, MqttJson
 from Modules.Computer.Mqtt.mqtt_protocol import PyHouseMqttFactory
 from Modules.Computer.Mqtt.mqtt_xml import Xml as mqttXML
-from Modules.Web import web_utils
 from Modules.Utilities import json_tools, xml_tools
 from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities.debug_tools import PrettyFormatAny

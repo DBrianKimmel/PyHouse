@@ -19,8 +19,6 @@ from twisted.trial import unittest
 # Import PyMh files
 from Modules.Core.data_objects import InternetConnectionData
 from Modules.Computer.Internet import internet_xml
-from Modules.Web import web_utils
-from Modules.Utilities.tools import PrettyPrintAny
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities import convert, json_tools

@@ -17,10 +17,8 @@ from twisted.trial import unittest
 
 # Import PyMh files
 from Modules.Housing import rooms
-from Modules.Web import web_utils
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.tools import PrettyPrintAny
 from Modules.Utilities import json_tools
 
 
