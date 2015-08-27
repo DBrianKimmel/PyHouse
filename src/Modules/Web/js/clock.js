@@ -15,7 +15,7 @@
 
 
 helpers.Widget.subclass(clock, 'ClockWidget').methods(
-
+		
 	function __init__(self, node) {
 		clock.ClockWidget.upcall(self, '__init__', node);
 	},
@@ -45,14 +45,16 @@ helpers.Widget.subclass(clock, 'ClockWidget').methods(
 
 	/**
 	 * This sends a message to the server to get the servers time.
-	 * when the callback returns the time, it displays the time and schedules itself in 1 second.
+	 * when the callback returns the time, it displays the time and schedules itself in CLOCK_DISPLAY_INTERVAL seconds.
 	 *
 	 * @param self
 	 */
 	function getAndShowTime(self) {
 		function cb_showTime(p_time) {
+			var CLOCK_DISPLAY_INTERVAL = 5.0;
+
 			self.node.innerHTML = p_time;
-			self.callLater(10.0, function() {
+			self.callLater(CLOCK_DISPLAY_INTERVAL, function() {
 				self.getAndShowTime();
 				}
 			);

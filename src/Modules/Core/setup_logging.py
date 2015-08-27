@@ -28,9 +28,40 @@ DEBUG_LOG_LOCTION = LOG_DIRECTORY + DEBUG_LOG_NAME
 ERROR_LOG_NAME = 'error'
 ERROR_LOG_LOCTION = LOG_DIRECTORY + ERROR_LOG_NAME
 
+# Import system type stuff
+import datetime
+import logging.config
+from twisted.python import log
+
+
+
+class DropHttpFilter(object):
+    """This will filter out all the HTTP log messages added by twisted (Athena/Nevow).
+    """
+
+    def __init__(self, p_param = None):
+        self.m_param = p_param
+
+    def filter(self, p_record):
+        if self.m_param is None:
+            allow = True
+        else:
+            allow = self.m_param not in p_record.msg
+        if allow:
+            p_record.msg = 'changed: ' + p_record.msg
+        return allow
+
+
 LOGGING_DICT = {
     'version' : 1,
     'disable_existing_loggers' : False,
+
+    'filters': {
+        'http': {
+            '()': DropHttpFilter,
+            'p_param': '/transport ',
+        }
+    },
 
     'formatters' : {
         'standard' : {
@@ -50,6 +81,7 @@ LOGGING_DICT = {
         'debug' : {
             'class':'logging.handlers.TimedRotatingFileHandler',
             'level' : 'DEBUG',
+            'filters': ['http'],
             'formatter' : 'verbose',
             'filename' : DEBUG_LOG_LOCTION,
             'when' : 'midnight',
@@ -72,13 +104,6 @@ LOGGING_DICT = {
         'level' : 'DEBUG',
     },
 }
-
-# Import system type stuff
-import datetime
-import logging.config
-from twisted.python import log
-
-
 
 logging.getLogger(LOGGER_NAME)
 logging.config.dictConfig(LOGGING_DICT)
