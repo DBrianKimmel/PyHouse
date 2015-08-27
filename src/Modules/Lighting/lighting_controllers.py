@@ -65,7 +65,7 @@ class Utility(object):
 
 
     @staticmethod
-    def _read_interface_data(p_obj, p_xml, p_version):
+    def _read_interface_data(p_obj, p_xml, _p_version):
         try:
             interfaceXML.read_interface_xml(p_obj, p_xml)
         except Exception as e_err:  # DeviceFamily invalid or missing
@@ -74,12 +74,15 @@ class Utility(object):
 
     @staticmethod
     def _write_interface_data(p_obj, p_xml):
-        interfaceXML.write_interface_xml(p_obj, p_xml)
+        try:
+            interfaceXML.write_interface_xml(p_obj, p_xml)
+        except Exception:
+            pass
         return p_xml
 
 
     @staticmethod
-    def _read_family_data(p_pyhouse_obj, p_obj, p_xml, p_version):
+    def _read_family_data(p_pyhouse_obj, p_obj, p_xml, _p_version):
         """Read the family specific data for this controller.
         """
         # l_debug = debug_tools._format_object('Obj', p_obj, 100)
