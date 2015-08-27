@@ -89,8 +89,7 @@ class Utility(object):
         Config file version 1.4 moved the lighting information into a separate LightingSection
         """
         l_xml_version = p_pyhouse_obj.Xml.XmlOldVersion
-        # l_xml_version = '1.4.0'
-        l_lighting_xml = self._setup_lighting(p_pyhouse_obj)
+        l_lighting_xml = self._setup_lighting(p_pyhouse_obj)  # in case of old style file
         l_house_obj = p_pyhouse_obj.House
         l_house_obj.Controllers = self._read_controllers(p_pyhouse_obj, l_lighting_xml, l_xml_version)
         l_house_obj.Buttons = self._read_buttons(p_pyhouse_obj, l_lighting_xml, l_xml_version)
@@ -99,6 +98,10 @@ class Utility(object):
 
     @staticmethod
     def _write_lighting_xml(p_pyhouse_obj, p_house_element):
+        """
+        @param p_pyhouse_obj: is the whole PyHouse Object
+        @param p_house_element: is the XML
+        """
         l_lighting_xml = ET.Element('LightingSection')
         try:
             l_xml = lightsAPI.write_all_lights_xml(p_pyhouse_obj)
@@ -134,7 +137,8 @@ class API(Utility):
     def Start(self):
         """Allow loading of sub modules and drivers.
         """
-        self._read_lighting_xml(self.m_pyhouse_obj)
+        # self._read_lighting_xml(self.m_pyhouse_obj)
+        self.LoadXml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.APIs.House.FamilyAPI.start_lighting_families(self.m_pyhouse_obj)
         LOG.info("Started.")
 
@@ -144,6 +148,11 @@ class API(Utility):
         LOG.info("Stopping all lighting families.")
         # self.m_pyhouse_obj.APIs.House.FamilyAPI.stop_lighting_families(self.m_pyhouse_obj)
         LOG.info("Stopped.")
+
+    def LoadXml(self, p_pyhouse_obj):
+        """ Load the Lighting xml info.
+        """
+        self._read_lighting_xml(p_pyhouse_obj)
 
     def SaveXml(self, p_xml):
         """ Save the Lighting section.

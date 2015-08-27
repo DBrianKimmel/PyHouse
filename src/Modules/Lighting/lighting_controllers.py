@@ -111,8 +111,6 @@ class Utility(object):
         except Exception as e_err:
             LOG.error('ERROR - ReadOneController - {0:}'.format(e_err))
             l_obj = ControllerData()
-        l_obj.DeviceType = 1
-        l_obj.DeviceSubType = 1
         return l_obj
 
     @staticmethod

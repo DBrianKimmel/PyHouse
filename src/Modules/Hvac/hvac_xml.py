@@ -144,8 +144,9 @@ class XML(object):
                 l_xml.append(l_entry)
                 l_count += 1
         except AttributeError as e_err:
-            l_msg = 'ERROR writing all thermostats {}'.format(e_err)
-            LOG.error(l_msg)
+            # l_msg = 'ERROR writing all thermostats {}'.format(e_err)
+            # LOG.error(l_msg)
+            pass
         LOG.info("Saved {} Thermostats".format(l_count))
         return l_xml
 

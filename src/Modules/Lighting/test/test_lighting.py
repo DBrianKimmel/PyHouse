@@ -7,7 +7,7 @@
 @license:   MIT License
 @summary:   Test the home lighting system automation.
 
-Passed all 11 of 13 tests.  DBK 2015-07-21
+Passed all 13 tests.  DBK 2015-08-26
 
 """
 
@@ -22,8 +22,8 @@ from Modules.Lighting.lighting import API as lightingAPI
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Lighting.test.xml_controllers import \
-        TESTING_CONTROLLER_NAME_1, \
-        TESTING_CONTROLLER_NAME_2
+        TESTING_CONTROLLER_NAME_0, \
+        TESTING_CONTROLLER_NAME_1
 from Modules.Core.test.xml_device import \
         TESTING_DEVICE_FAMILY_INSTEON
 from Modules.Lighting.test.xml_lights import \
@@ -106,9 +106,9 @@ class A3_Utility(SetupMixin, unittest.TestCase):
         l_version = '1.4.0'
         l_dict = self.m_api._read_controllers(self.m_pyhouse_obj, l_xml, l_version)
         self.assertEqual(len(l_dict), 2)
-        self.assertEqual(l_dict[0].Name, TESTING_CONTROLLER_NAME_1)
+        self.assertEqual(l_dict[0].Name, TESTING_CONTROLLER_NAME_0)
         self.assertEqual(l_dict[0].DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
-        self.assertEqual(l_dict[1].Name, TESTING_CONTROLLER_NAME_2)
+        self.assertEqual(l_dict[1].Name, TESTING_CONTROLLER_NAME_1)
 
     def test_03_ReadLighting(self):
         """Read all the lighting info (Buttons, Controllers, Lights)
@@ -119,8 +119,8 @@ class A3_Utility(SetupMixin, unittest.TestCase):
         self.assertEqual(len(l_obj.Lights), 2)
         self.assertEqual(l_obj.Buttons[0].Name, 'Insteon Button')
         self.assertEqual(l_obj.Buttons[1].Name, 'UPB Button')
-        self.assertEqual(l_obj.Controllers[0].Name, TESTING_CONTROLLER_NAME_1)
-        self.assertEqual(l_obj.Controllers[1].Name, TESTING_CONTROLLER_NAME_2)
+        self.assertEqual(l_obj.Controllers[0].Name, TESTING_CONTROLLER_NAME_0)
+        self.assertEqual(l_obj.Controllers[1].Name, TESTING_CONTROLLER_NAME_1)
         self.assertEqual(l_obj.Lights[0].Name, TESTING_LIGHTING_LIGHTS_NAME_1)
         self.assertEqual(l_obj.Lights[1].Name, TESTING_LIGHTING_LIGHTS_NAME_2)
 
@@ -128,14 +128,14 @@ class A3_Utility(SetupMixin, unittest.TestCase):
         """Write out the 'LightingSection' which contains the 'LightSection',
         """
         self.m_api._read_lighting_xml(self.m_pyhouse_obj)
-        l_obj = self.m_pyhouse_obj.House
-        print(PrettyFormatAny.form(l_obj, 'House'))
+        # print(PrettyFormatAny.form(l_obj, 'House'))
         l_xml = ET.Element('HouseDivision')
-        self.m_api._write_lighting_xml(l_obj, l_xml)
-        print(PrettyFormatAny.form(l_xml, 'XML'))
-
-        self.assertEqual(l_xml.find('LightingSection').tag, 'LightingSection')
-        self.assertEqual(l_xml.find('Controller').text, 'Controller')
+        l_xml = self.m_api._write_lighting_xml(self.m_pyhouse_obj, l_xml)
+        # print(PrettyFormatAny.form(l_xml, 'XML'))
+        self.assertEqual(l_xml.find('LightSection').tag, 'LightSection')
+        self.assertEqual(l_xml.find('ButtonSection').tag, 'ButtonSection')
+        self.assertEqual(l_xml.find('ControllerSection').tag, 'ControllerSection')
+        self.assertEqual(l_xml.find('ControllerSection/Controller').tag, 'Controller')
 
     def test_05_FamilyData(self):
         """Family Data

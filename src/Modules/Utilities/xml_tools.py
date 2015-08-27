@@ -283,7 +283,10 @@ class PutGetXML(object):
 
     @staticmethod
     def put_coords_element(p_parent_element, p_name, p_coords):
-        l_coord = '[{},{},{}]'.format(p_coords.X_Easting, p_coords.Y_Northing, p_coords.Z_Height)
+        try:
+            l_coord = '[{},{},{}]'.format(p_coords.X_Easting, p_coords.Y_Northing, p_coords.Z_Height)
+        except Exception:
+            l_coord = '[0.0,0.0,0.0]'
         ET.SubElement(p_parent_element, p_name).text = l_coord
 
 

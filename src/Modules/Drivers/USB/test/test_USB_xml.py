@@ -25,7 +25,7 @@ from Modules.Core.data_objects import ControllerData
 from Modules.Utilities.debug_tools import PrettyFormatAny
 from Modules.Utilities.device_tools import stuff_new_attrs
 from Modules.Drivers.USB.test.xml_usb import TESTING_USB_VENDOR, TESTING_USB_PRODUCT
-from Modules.Lighting.test.xml_controllers import TESTING_CONTROLLER_NAME_2, TESTING_CONTROLLER_KEY_2, TESTING_CONTROLLER_ACTIVE_2
+from Modules.Lighting.test.xml_controllers import TESTING_CONTROLLER_NAME_1, TESTING_CONTROLLER_KEY_1, TESTING_CONTROLLER_ACTIVE_1
 
 
 class SetupMixin(object):
@@ -75,9 +75,9 @@ class B2_Write(SetupMixin, unittest.TestCase):
         l_xml = lightingcoreAPI.write_core_lighting_xml('TestController', l_obj)
         usbXML.write_interface_xml(l_xml, l_obj)
         print(PrettyFormatAny.form(l_xml, 'XML'))
-        self.assertEqual(l_xml.attrib['Name'], TESTING_CONTROLLER_NAME_2)
-        self.assertEqual(l_xml.attrib['Key'], TESTING_CONTROLLER_KEY_2)
-        self.assertEqual(l_xml.attrib['Active'], TESTING_CONTROLLER_ACTIVE_2)
+        self.assertEqual(l_xml.attrib['Name'], TESTING_CONTROLLER_NAME_1)
+        self.assertEqual(l_xml.attrib['Key'], TESTING_CONTROLLER_KEY_1)
+        self.assertEqual(l_xml.attrib['Active'], TESTING_CONTROLLER_ACTIVE_1)
         self.assertEqual(l_xml.find('Vendor').text, TESTING_USB_VENDOR)
         self.assertEqual(l_xml.find('Product').text, TESTING_USB_PRODUCT)
 
