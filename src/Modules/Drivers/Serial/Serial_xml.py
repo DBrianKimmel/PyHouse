@@ -37,14 +37,17 @@ class XML(object):
 
     @staticmethod
     def write_interface_xml(p_xml, p_controller_obj):
-        PutGetXML.put_int_element(p_xml, 'BaudRate', p_controller_obj.BaudRate)
-        PutGetXML.put_int_element(p_xml, 'ByteSize', p_controller_obj.ByteSize)
-        PutGetXML.put_text_element(p_xml, 'Parity', p_controller_obj.Parity)
-        PutGetXML.put_float_element(p_xml, 'StopBits', p_controller_obj.StopBits)
-        PutGetXML.put_bool_element(p_xml, 'DsrDtr', p_controller_obj.DsrDtr)
-        PutGetXML.put_bool_element(p_xml, 'RtsCts', p_controller_obj.RtsCts)
-        PutGetXML.put_float_element(p_xml, 'Timeout', p_controller_obj.Timeout)
-        PutGetXML.put_bool_element(p_xml, 'XonXoff', p_controller_obj.XonXoff)
+        try:
+            PutGetXML.put_int_element(p_xml, 'BaudRate', p_controller_obj.BaudRate)
+            PutGetXML.put_int_element(p_xml, 'ByteSize', p_controller_obj.ByteSize)
+            PutGetXML.put_text_element(p_xml, 'Parity', p_controller_obj.Parity)
+            PutGetXML.put_float_element(p_xml, 'StopBits', p_controller_obj.StopBits)
+            PutGetXML.put_bool_element(p_xml, 'DsrDtr', p_controller_obj.DsrDtr)
+            PutGetXML.put_bool_element(p_xml, 'RtsCts', p_controller_obj.RtsCts)
+            PutGetXML.put_float_element(p_xml, 'Timeout', p_controller_obj.Timeout)
+            PutGetXML.put_bool_element(p_xml, 'XonXoff', p_controller_obj.XonXoff)
+        except Exception:
+            pass
         return p_xml
 
 # ## END DBK

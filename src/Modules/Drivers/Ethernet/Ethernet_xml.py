@@ -31,8 +31,11 @@ class XML(object):
 
     @staticmethod
     def write_interface_xml(p_xml, p_controller_obj):
-        PutGetXML.put_int_element(p_xml, 'PortNumber', p_controller_obj.PortNumber)
-        PutGetXML.put_text_element(p_xml, 'Protocol', p_controller_obj.Protocol)
+        try:
+            PutGetXML.put_int_element(p_xml, 'PortNumber', p_controller_obj.PortNumber)
+            PutGetXML.put_text_element(p_xml, 'Protocol', p_controller_obj.Protocol)
+        except Exception:
+            pass
         return p_xml
 
 # ## END DBK
