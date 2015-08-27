@@ -16,6 +16,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 from nevow.livepage import self
+from __builtin__ import None
 
 __version_info__ = (1, 4, 0)
 __version__ = '.'.join(map(str, __version_info__))
@@ -209,6 +210,7 @@ class HouseInformation(BaseObject):
         self.Location = {}  # LocationData() - one location per house.
         self.Pools = {}  # PoolData()
         self.Rooms = {}  # RoomData()
+        self.Rules = {}  # RulesData()
         self.Schedules = None  # ScheduleBaseData()
         self.Thermostats = {}  # ThermostatData()
 
@@ -311,6 +313,15 @@ class ThermostatData(DeviceData):
         self.ThermostatMode = 'Cool'  # Cool | Heat | Auto | EHeat
         self.ThermostatScale = 'F'  # F | C
         self.ThermostatStatus = 'Off'  # On
+
+
+class RulesData(BaseObject):
+    """
+    """
+    def __init__(self):
+        self.Device = None
+        self.Condition = None
+        self.Action = None
 
 
 class ScheduleBaseData(BaseObject):
