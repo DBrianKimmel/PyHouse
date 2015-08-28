@@ -26,7 +26,7 @@ Do not require reloads, auto change PyHouse on the fly.
 """
 
 # Import system type stuff
-# from twisted.application import service
+import ssl
 from nevow import appserver
 # from twisted.internet import ssl
 from twisted.internet import protocol, defer
@@ -60,17 +60,7 @@ class ClientConnections(object):
 
 class Utility(ClientConnections):
 
-    def update_pyhouse_obj(self, p_pyhouse_obj):
-        p_pyhouse_obj.Computer.Web = WebData()
-
     def start_webserver(self, p_pyhouse_obj):
-        # try:
-        #    p_pyhouse_obj.Services.WebServerService = service.Service()
-        #    p_pyhouse_obj.Services.WebServerService.setName('WebServer')
-        #    p_pyhouse_obj.Services.WebServerService.setServiceParent(p_pyhouse_obj.Twisted.Application)
-        # except RuntimeError:  # The service is already installed
-        #    LOG.info('Service already installed.')
-        #
         l_site_dir = None
         l_site = appserver.NevowSite(web_mainpage.TheRoot(l_site_dir, p_pyhouse_obj))
         l_port = p_pyhouse_obj.Computer.Web.WebPort
@@ -93,11 +83,11 @@ class API(Utility, ClientConnections):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        p_pyhouse_obj.Computer.Web = WebData()
         self.State = web_utils.WS_IDLE
         self.m_web_running = False
 
     def Start(self):
-        self.update_pyhouse_obj(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Computer.Web = self.LoadXml(self.m_pyhouse_obj)
         self.start_webserver(self.m_pyhouse_obj)
 

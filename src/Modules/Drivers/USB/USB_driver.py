@@ -214,8 +214,9 @@ class API(UsbDriverAPI):
     This is the standard Device Driver API.
     """
 
-    def __init__(self):
-        LOG.info('Initialized')
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        LOG.info('Initialize USB Driver')
 
     def Start(self, p_pyhouse_obj, p_controller_obj):
         """
@@ -225,7 +226,7 @@ class API(UsbDriverAPI):
         self.m_controller_obj = p_controller_obj
         self.m_USB_obj = self._get_usb_device_data(p_controller_obj)
         if USB_open.API().open_device(self.m_USB_obj):
-            self.read_usb(p_pyhouse_obj)
+            self.read_usb(self.m_pyhouse_obj)
             LOG.info("Opened Controller:{}".format(self.m_USB_obj.Name))
             l_ret = True
         else:

@@ -101,8 +101,9 @@ class API(SerialAPI):
     This is the standard Device Driver interface.
     """
 
-    def __init__(self):
-        pass
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        LOG.info('Initialize Serial Driver')
 
     def Start(self, p_pyhouse_obj, p_controller_obj):
         """

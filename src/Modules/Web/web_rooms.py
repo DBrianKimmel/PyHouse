@@ -47,7 +47,7 @@ class RoomsElement(athena.LiveElement):
         Get a lot of server JSON data and pass it to the client browser.
         """
         l_json = GetJSONHouseInfo(self.m_pyhouse_obj)
-        LOG.info('Fetched {}'.format(l_json))
+        # y LOG.info('Fetched {}'.format(l_json))
         return l_json
 
     @athena.expose

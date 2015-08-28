@@ -9,11 +9,14 @@ Created on Aug 23, 2014
 # Import PyHouse Modules
 from Modules.Computer import logging_pyh as Logger
 
-g_debug = 1
 LOG = Logger.getLogger('PyHouse.NullDriver     ')
 
 
 class API(object):
+
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        LOG.info(" Initializing Null Driver.")
 
     def Start(self, p_pyhouse_obj, p_controller_obj):
         self.m_pyhouse_obj = p_pyhouse_obj

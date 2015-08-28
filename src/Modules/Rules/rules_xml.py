@@ -16,9 +16,14 @@ from Modules.Computer import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.RulesXml       ')
 
-class API (object):
+class Xml (object):
 
-    def __init__(self, p_pyhouse_obj):
-        self.m_pyhouse_obj = p_pyhouse_obj
+    @staticmethod
+    def read_rules_xml(p_pyhouse_obj):
+        pass
+
+    @staticmethod
+    def write_rules_xml(p_pyhouse_obj):
+        pass
 
 # ## END DBK

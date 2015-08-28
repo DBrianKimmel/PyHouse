@@ -361,7 +361,7 @@ class LightHandlerAPI(InsteonPlmAPI):
         l_msg += "DeviceFamily:{}, InterfaceType:{}".format(
                 p_controller_obj.DeviceFamily, p_controller_obj.InterfaceType)
         LOG.info('Start Controller - {}'.format(l_msg))
-        l_driver = FamUtil.get_device_driver_API(p_controller_obj)
+        l_driver = FamUtil.get_device_driver_API(p_pyhouse_obj, p_controller_obj)
         p_controller_obj._DriverAPI = l_driver
         l_ret = l_driver.Start(p_pyhouse_obj, p_controller_obj)
         return l_ret

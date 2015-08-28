@@ -13,17 +13,13 @@ This should also allow control of many different houses.
 # Import PyHouse modules
 from Modules.Computer import logging_pyh as Logger
 
-g_debug = 0
 LOG = Logger.getLogger('PyHouse.USBDriver')
 
 class API(object):
 
-    def __init__(self):
-        """
-        @param p_obj: is the Controller_Data object we are using.
-        """
-        LOG.info(" Initializing Ethernet port.")
-        return None
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        LOG.info(" Initializing Ethernet Driver.")
 
     def Start(self, p_pyhouse_obj, p_controller_obj):
         self.m_pyhouse_obj = p_pyhouse_obj

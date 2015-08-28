@@ -52,24 +52,24 @@ class FamUtil(object):
         return p_device_obj.DeviceFamily
 
     @staticmethod
-    def get_device_driver_API(p_controller_obj):
+    def get_device_driver_API(p_pyhouse_obj, p_controller_obj):
         """
         Based on the InterfaceType of the controller, load the appropriate driver and get its API().
         """
         l_dev_name = FamUtil._get_device_name(p_controller_obj)
         if p_controller_obj.InterfaceType.lower() == 'serial':
             from Modules.Drivers.Serial import Serial_driver
-            l_driver = Serial_driver.API()
+            l_driver = Serial_driver.API(p_pyhouse_obj)
         elif p_controller_obj.InterfaceType.lower() == 'ethernet':
             from Modules.Drivers.Ethernet import Ethernet_driver
-            l_driver = Ethernet_driver.API()
+            l_driver = Ethernet_driver.API(p_pyhouse_obj)
         elif p_controller_obj.InterfaceType.lower() == 'usb':
             from Modules.Drivers.USB import USB_driver
-            l_driver = USB_driver.API()
+            l_driver = USB_driver.API(p_pyhouse_obj)
         else:
             LOG.error('No driver for device: {} with interface type: {}'.format(l_dev_name, p_controller_obj.InterfaceType))
             from Modules.Drivers.Null import Null_driver
-            l_driver = Null_driver.API()
+            l_driver = Null_driver.API(p_pyhouse_obj)
         p_controller_obj._DriverAPI = l_driver
         return l_driver
 
