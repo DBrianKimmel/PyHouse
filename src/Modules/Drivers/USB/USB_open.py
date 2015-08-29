@@ -26,6 +26,7 @@ import usb.util
 from Modules.Drivers.USB.Driver_USB_17DD_5500 import API as usb5500API
 from Modules.Utilities.tools import PrintBytes
 from Modules.Computer import logging_pyh as Logger
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.USBDriver_Open ')
 
@@ -77,6 +78,8 @@ class API(object):
         if l_device == None:
             LOG.error('ERROR - USB device not found  {}'.format(l_vpn))
             return None
+        LOG.debug(PrettyFormatAny.form(l_device, 'Device'))
+        LOG.debug(PrettyFormatAny.form(p_USB_obj, 'pUSB_obj'))
         p_USB_obj.UsbDevice = API._save_find_device(p_USB_obj, l_device)
         LOG.info('Found a device - HID: {}'.format(l_vpn))
         return l_device
