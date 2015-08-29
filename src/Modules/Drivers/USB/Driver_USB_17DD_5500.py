@@ -12,67 +12,118 @@ Created to handle the UPB PIM which is a HID device.
 
 Bus xxx Device yyy: ID 17dd:5500
 Device Descriptor:
-  bLength                18
-  bDescriptorType         1
-  bcdUSB               1.00
-  bDeviceClass            0 (Defined at Interface level)
-  bDeviceSubClass         0
-  bDeviceProtocol         0
-  bMaxPacketSize0         8
-  idVendor           0x17dd
-  idProduct          0x5500
-  bcdDevice            0.00
-  iManufacturer           1 Simply Automated Inc.
-  iProduct                2 USB to Serial
-  iSerial                 0
-  bNumConfigurations      1
+  bLength                18  [0]
+  bDescriptorType         1  [1]
+  bcdUSB               1.00  [2:4]
+  bDeviceClass            0  [4] - (Defined at Interface level)
+  bDeviceSubClass         0  [5]
+  bDeviceProtocol         0  [6]
+  bMaxPacketSize0         8  [7]
+  idVendor           0x17dd  [8:10]
+  idProduct          0x5500  [10:12]
+  bcdDevice            0.00  [12:14]
+  iManufacturer           1  [14] - Simply Automated Inc.
+  iProduct                2  [15] - USB to Serial
+  iSerial                 0  [16]
+  bNumConfigurations      1  [17]
+
+    Configuration Descriptor:
+    bLength                 9
+    bDescriptorType         2
+    wTotalLength           41
+    bNumInterfaces          1
+    bConfigurationValue     1
+    iConfiguration          4 Sample HID
+    bmAttributes         0x80
+      (Bus Powered)
+    MaxPower              100mA
+
+    Interface Descriptor:
+      bLength                 9
+      bDescriptorType         4
+      bInterfaceNumber        0
+      bAlternateSetting       0
+      bNumEndpoints           2
+      bInterfaceClass         3 Human Interface Device
+      bInterfaceSubClass      0 No Subclass
+      bInterfaceProtocol      0 None
+      iInterface              0
+
+        HID Device Descriptor:
+          bLength                 9
+          bDescriptorType        33
+          bcdHID               1.00
+          bCountryCode            0 Not supported
+          bNumDescriptors         1
+          bDescriptorType        34 Report
+          wDescriptorLength      37
+
+         Report Descriptors:
+           ** UNAVAILABLE **
+
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x81  EP 1 IN
+        bmAttributes            3
+          Transfer Type            Interrupt
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0008  1x 8 bytes
+        bInterval              10
+
+      Endpoint Descriptor:
+        bLength                 7
+        bDescriptorType         5
+        bEndpointAddress     0x02  EP 2 OUT
+        bmAttributes            3
+          Transfer Type            Interrupt
+          Synch Type               None
+          Usage Type               Data
+        wMaxPacketSize     0x0008  1x 8 bytes
+        bInterval              10
+
 """
 
 # import array
-from twisted.internet import reactor
 import usb
-# Use USB package that was written by Wander Lairson Costa
-# PYUSB_DEBUG_LEVEL=debug
-# export PYUSB_DEBUG_LEVEL
 
 # Import PyMh files
-from Modules.Drivers.USB import USB_driver
+# from Modules.Drivers.USB import USB_driver
+from Modules.Computer import logging_pyh as Logger
 
-callLater = reactor.callLater
+LOG = Logger.getLogger('PyHouse.UPB_17DD_5500  ')
 
-# Timeouts for send/receive delays
-SEND_TIMEOUT = 0.8
-RECEIVE_TIMEOUT = 0.3  # this is for polling the usb device for data to be added to the rx buffer
-READ_TIMER = 0.100  # Every 100 miliseconds
 
-class UsbDriverAPI(USB_driver.UsbDriverAPI):
+class API(object):
 
-    def setup_hid_device(self):
+    @staticmethod
+    def Setup():
         """Use the control endpoint to set up report descriptors for HID devices.
 
         Much of this was determined empirically for a smarthome UPB PIM
         """
+        l_requestType = 0x21  # LIBUSB_ENDPOINT_OUT (0x00) | LIBUSB_REQUEST_TYPE_CLASS (0x20) | LIBUSB_RECIPIENT_DEVICE (0x00)
+        l_request = 0x09  #
+        l_value = 0x0003  # Report type & Report ID
+        l_index = 0
         l_report = bytearray(b'12345')
         l_report[0] = 0xc0
         l_report[1] = 0x12
         l_report[2] = 0x00
         l_report[3] = 0x00
         l_report[4] = 0x03
-        l_requestType = 0x21  # LIBUSB_ENDPOINT_OUT (0x00) | LIBUSB_REQUEST_TYPE_CLASS (0x20) | LIBUSB_RECIPIENT_DEVICE (0x00)
-        l_request = 0x09
-        l_value = 0x0003  # Report type & Report ID
-        l_index = 0
         l_ret = (l_requestType,
                 l_request,
                 l_value,
                 l_index,
                 l_report)
-        print("USB_driver_17DD_5500._setup_hid_device() {0:}".format(l_ret))
+        LOG.info("USB_driver_17DD_5500._setup_hid_device() {}".format(l_ret))
         return l_ret
 
-    def read_device(self, p_usb):
-        callLater(RECEIVE_TIMEOUT, lambda x = p_usb: self.read_device(x))
-        print("USB_driver_17DD_5500.read_device() - usb ={0:}".format(p_usb))
+    @staticmethod
+    def Read(self, p_usb):
+        print("USB_driver_17DD_5500.read_device() - usb ={}".format(p_usb))
         l_len = -1
         while l_len != 0:
             try:
@@ -80,31 +131,16 @@ class UsbDriverAPI(USB_driver.UsbDriverAPI):
                 # we seem to have actual length + 240 as 1st char
                 l_len = l_msg[0] - 240
                 if l_len > 0:
-                    print("USB_driver.read_device() {0:} - {1:}".format(l_len, l_msg))
+                    LOG.info("USB_driver.read_device() {} - {}".format(l_len, l_msg))
                     for l_x in range(l_len):
                         p_usb.message.append(l_msg[l_x + 1])
             except usb.USBError as e:
                 l_len = 0
                 break
             except Exception as e:
-                print(" -- Error in USB_driver_17DD_5500.read_device() ".format(e))
+                LOG.info(" -- Error in USB_driver_17DD_5500.read_device() ".format(e))
                 l_len = 0
                 break
 
-
-class API(UsbDriverAPI):
-
-    m_driver = None
-
-    def __init__(self):
-        """
-        """
-        self.m_driver = USB_driver.API()
-
-    def Start(self, p_controller_obj):
-        self.m_driver.Start(p_controller_obj)
-
-    def Stop(self, p_obj):
-        self.m_driver.Start(p_obj)
 
 # ## END DBK

@@ -25,7 +25,8 @@ address from some external device and check on the status of the house.
 from twisted.application import service
 
 # Import PyMh files and modules.
-from Modules.Computer.Internet import internet_xml, inet_find_external_ip, inet_update_dyn_dns
+from Modules.Computer.Internet.internet_xml import API as internetAPI
+from Modules.Computer.Internet import inet_find_external_ip, inet_update_dyn_dns
 from Modules.Computer import logging_pyh as Logger
 
 
@@ -72,12 +73,12 @@ class Utility(object):
 
 
     def _read_xml_configuration(self, p_pyhouse_obj):
-        l_config = internet_xml.API().read_internet_xml(p_pyhouse_obj)
+        l_config = internetAPI().read_internet_xml(p_pyhouse_obj)
         p_pyhouse_obj.Computer.InternetConnection = l_config
         return l_config
 
     def _write_xml_config(self, p_pyhouse_obj):
-        l_xml = internet_xml.API().write_internet_xml(p_pyhouse_obj.Computer.InternetConnection)
+        l_xml = internetAPI().write_internet_xml(p_pyhouse_obj.Computer.InternetConnection)
         return l_xml
 
 

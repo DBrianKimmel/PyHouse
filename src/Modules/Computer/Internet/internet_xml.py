@@ -15,45 +15,45 @@ import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import InternetConnectionData
-from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
+from Modules.Utilities.xml_tools import PutGetXML
 from Modules.Computer import logging_pyh as Logger
 
-g_debug = 1
 LOG = Logger.getLogger('PyHouse.Internet_xml   ')
 
 
-class Util(XmlConfigTools):
+class Util(object):
     """
     This section is fairly well tested by the unit test module.
     """
 
-    m_count = 0
-
-    def _read_locates_xml(self, p_locater_sect_xml):
+    @staticmethod
+    def _read_locates_xml(p_locater_sect_xml):
         l_dict = {}
-        self.m_count = 0
+        l_count = 0
         try:
             for l_xml in p_locater_sect_xml.iterfind('LocateUrl'):
                 l_url = str(l_xml.text)
-                l_dict[self.m_count] = l_url
-                self.m_count += 1
+                l_dict[l_count] = l_url
+                l_count += 1
         except AttributeError as e_err:
             LOG.error('ERROR in read_locates_xml - {}'.format(e_err))
         return l_dict
 
-    def _read_updates_xml(self, p_updater_sect_xml):
+    @staticmethod
+    def _read_updates_xml(p_updater_sect_xml):
         l_dict = {}
-        self.m_count = 0
+        l_count = 0
         try:
             for l_xml in p_updater_sect_xml.iterfind('UpdateUrl'):
                 l_url = str(l_xml.text)
-                l_dict[self.m_count] = l_url
-                self.m_count += 1
+                l_dict[l_count] = l_url
+                l_count += 1
         except AttributeError as e_err:
             LOG.error('ERROR in read_updates_xml - {}'.format(e_err))
         return l_dict
 
-    def _read_derived(self, p_internet_sect_xml):
+    @staticmethod
+    def _read_derived(p_internet_sect_xml):
         l_icd = InternetConnectionData()
         try:
             l_icd.ExternalIPv4 = PutGetXML.get_ip_from_xml(p_internet_sect_xml, 'ExternalIPv4')
@@ -64,26 +64,29 @@ class Util(XmlConfigTools):
         return l_icd
 
 
-    def _write_locates_xml(self, p_internet_obj):
+    @staticmethod
+    def _write_locates_xml(p_internet_obj):
         l_xml = ET.Element('LocaterUrlSection')
         for l_url in p_internet_obj.LocateUrls.itervalues():
             PutGetXML.put_text_element(l_xml, 'LocateUrl', l_url)
         return l_xml
 
-    def _write_updates_xml(self, p_dns_obj):
+    @staticmethod
+    def _write_updates_xml(p_dns_obj):
         l_xml = ET.Element('UpdaterUrlSection')
         for l_url in p_dns_obj.UpdateUrls.itervalues():
             PutGetXML.put_text_element(l_xml, 'UpdateUrl', l_url)
         return l_xml
 
-    def _write_derived_xml(self, p_internet_obj, p_xml):
+    @staticmethod
+    def _write_derived_xml(p_internet_obj, p_xml):
         PutGetXML.put_text_element(p_xml, 'ExternalIPv4', p_internet_obj.ExternalIPv4)
         PutGetXML.put_text_element(p_xml, 'ExternalIPv6', p_internet_obj.ExternalIPv6)
         PutGetXML.put_text_element(p_xml, 'LastChanged', p_internet_obj.LastChanged)
 
 
 
-class API(Util):
+class API(object):
 
     def read_internet_xml(self, p_pyhouse_obj):
         """Reads zero or more <Internet> entries within the <InternetSection>
@@ -97,9 +100,9 @@ class API(Util):
             l_internet_sect_xml = None
             LOG.error('Internet section missing from XML - {}'.format(e_err))
         try:
-            l_icd = self._read_derived(l_internet_sect_xml)
-            l_icd.LocateUrls = self._read_locates_xml(l_internet_sect_xml.find('LocaterUrlSection'))
-            l_icd.UpdateUrls = self._read_updates_xml(l_internet_sect_xml.find('UpdaterUrlSection'))
+            l_icd = Util._read_derived(l_internet_sect_xml)
+            l_icd.LocateUrls = Util._read_locates_xml(l_internet_sect_xml.find('LocaterUrlSection'))
+            l_icd.UpdateUrls = Util._read_updates_xml(l_internet_sect_xml.find('UpdaterUrlSection'))
         except AttributeError as e_err:
             LOG.error('ERROR ReadInternet - {}'.format(e_err))
         LOG.info('Loaded Internet XML')
@@ -112,9 +115,9 @@ class API(Util):
         @return: a sub tree ready to be appended to tree
         """
         l_xml = ET.Element('InternetSection')
-        self._write_derived_xml(p_internet_obj, l_xml)
-        l_xml.append(self._write_locates_xml(p_internet_obj))
-        l_xml.append(self._write_updates_xml(p_internet_obj))
+        Util._write_derived_xml(p_internet_obj, l_xml)
+        l_xml.append(Util._write_locates_xml(p_internet_obj))
+        l_xml.append(Util._write_updates_xml(p_internet_obj))
         return l_xml
 
 # ## END DBK

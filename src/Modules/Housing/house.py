@@ -142,6 +142,7 @@ class API(Utility):
         self.m_pyhouse_obj = p_pyhouse_obj
         Utility._init_component_apis(p_pyhouse_obj, self)
         Utility._init_pyhouse_data(p_pyhouse_obj)
+        LOG.info('Initialized')
 
     def Start(self):
         """Start processing for all things house.

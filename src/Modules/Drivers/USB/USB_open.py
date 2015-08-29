@@ -23,6 +23,7 @@ import usb.core
 import usb.util
 
 # Import PyHouse modules
+from Modules.Drivers.USB.Driver_USB_17DD_5500 import API as usb5500API
 from Modules.Utilities.tools import PrintBytes
 from Modules.Computer import logging_pyh as Logger
 
@@ -31,27 +32,6 @@ LOG = Logger.getLogger('PyHouse.USBDriver_Open ')
 
 # Timeouts for send/receive delays
 RECEIVE_TIMEOUT = 0.3
-
-
-class UsbDeviceData(object):
-    """
-    This is the data object for one USB controller device.
-    """
-
-    def __init__(self):
-        self.Device = None
-        self.Name = None
-        self.Port = None
-        self.Product = None
-        self.Vendor = None
-        self.ep_in = None
-        self.epi_addr = 0
-        self.epi_type = 0
-        self.epi_packet_size = 0
-        self.ep_out = None
-        self.epo_addr = 0
-        self.hid_device = False
-        self.message = ''
 
 
 class Utility(object):
@@ -66,77 +46,58 @@ class Utility(object):
 
     @staticmethod
     def is_hid(p_device):
-        if p_device.bDeviceClass == 3:
+        if p_device.bUsbDeviceClass == 3:
             return True
 
-    @staticmethod
-    def setup_hid_17DD_5500(p_USB_obj):
-        """
-        Use the control endpoint to set up report descriptors for HID devices.
-        Much of this was determined empirically for a smarthome UPB PIM
-        """
-        l_report = bytearray(b'12345')
-        l_report[0] = 0xc0
-        l_report[1] = 0x12
-        l_report[2] = 0x00
-        l_report[3] = 0x00
-        l_report[4] = 0x03  # len ???
-        l_requestType = 0x21  # LIBUSB_ENDPOINT_OUT (0x00) | LIBUSB_REQUEST_TYPE_CLASS (0x20) | LIBUSB_RECIPIENT_DEVICE (0x00)
-        l_request = 0x09  # USB_driver.HID_SET_REPORT  # 0x09
-        l_value = 0x0003  # Report type & Report ID
-        l_index = 0  #
-        l_ret = (l_requestType, l_request, l_value, l_index, l_report)
-        p_USB_obj.Device.ctrl_transfer(l_requestType, l_request, l_value, l_index, l_report)
-        LOG.debug("Type:{:#02x};  Req:{:#02x};  Value:{:#04x};  Index{:02x};  Report:{}".format(l_requestType, l_request, l_value, l_index, PrintBytes(l_report)))
-        return l_ret
 
-
-class API(UsbDeviceData):
+class API(object):
 
     m_controller_obj = None
 
-    def _save_find_device(self, p_USB_obj, p_device):
-        p_USB_obj.Device = p_device
+    @staticmethod
+    def _save_find_device(p_USB_obj, p_device):
+        p_USB_obj.UsbDevice = p_device
         p_USB_obj.num_configs = p_device.bNumConfigurations
         p_USB_obj.hid_device = Utility.is_hid(p_device)
         p_USB_obj.configs = {}
         return p_USB_obj
 
-    def _open_find_device(self, p_USB_obj):
+    @staticmethod
+    def _open_find_device(p_USB_obj):
         """First step in opening a USB device.
-        Get the number of configurations.
-
         @return:  None if no such device or a pyusb device object
         """
         l_vpn = Utility.format_names(p_USB_obj)
         l_device = None
         try:
             l_device = usb.core.find(idVendor = p_USB_obj.Vendor, idProduct = p_USB_obj.Product)
-        except usb.USBError:
+        except (usb.USBError, ValueError):
             LOG.error("ERROR no such USB device for {}".format(l_vpn))
             return None
         if l_device == None:
             LOG.error('ERROR - USB device not found  {}'.format(l_vpn))
             return None
-        p_USB_obj.Device = self._save_find_device(p_USB_obj, l_device)
+        p_USB_obj.UsbDevice = API._save_find_device(p_USB_obj, l_device)
         LOG.info('Found a device - HID: {}'.format(l_vpn))
         return l_device
 
-    def _setup_detach_kernel(self, p_USB_obj):
+    @staticmethod
+    def _setup_detach_kernel(p_USB_obj):
         """Get rid of any kernel device driver that is in our way.
         On a restart of PyHouse we expect no such kernel driver to exist.
         """
         try:
-            if not p_USB_obj.Device.is_kernel_driver_active(0):
+            if not p_USB_obj.UsbDevice.is_kernel_driver_active(0):
                 return
         except usb.USBError:
             pass
         try:
-            p_USB_obj.Device.detach_kernel_driver(0)
+            p_USB_obj.UsbDevice.detach_kernel_driver(0)
         except Exception as e:
-            LOG.error("Error in detaching_kernel_driver - {0:}".format(e))
+            LOG.error("ERROR in detaching_kernel_driver - {}".format(e))
 
-    def _setup_configurations(self, p_USB_obj):
+    @staticmethod
+    def _setup_configurations(p_USB_obj):
         """Now we deal with the USB configuration
 
         1. get all the configs
@@ -145,18 +106,19 @@ class API(UsbDeviceData):
         @param p_usb: is the 'found' device
         """
         # TODO don't do if not needed
-        p_USB_obj.Device.set_configuration()
-        p_USB_obj.configs = p_USB_obj.Device.get_active_configuration()
+        p_USB_obj.UsbDevice.set_configuration()
+        p_USB_obj.configs = p_USB_obj.UsbDevice.get_active_configuration()
         p_USB_obj.num_interfaces = p_USB_obj.configs.bNumInterfaces
         p_USB_obj.interfaces = {}
 
-    def _setup_interfaces(self, p_USB_obj):
+    @staticmethod
+    def _setup_interfaces(p_USB_obj):
         """
         """
         l_interface_number = p_USB_obj.configs[(0, 0)].bInterfaceNumber
         l_interface_class = p_USB_obj.configs[(0, 0)].bInterfaceClass
         try:
-            l_alternate_setting = usb.control.get_interface(p_USB_obj.Device, l_interface_number)
+            l_alternate_setting = usb.control.get_interface(p_USB_obj.UsbDevice, l_interface_number)
         except Exception as e:
             LOG.error("   -- Error in alt setting {0:}".format(e))
             l_alternate_setting = 0
@@ -169,9 +131,10 @@ class API(UsbDeviceData):
         p_USB_obj.interface = l_interface
         if l_interface_class == 3:
             p_USB_obj.hid_device = True
-            self._setup_reports(p_USB_obj)
+            API._setup_reports(p_USB_obj)
 
-    def _setup_endpoints(self, p_USB_obj):
+    @staticmethod
+    def _setup_endpoints(p_USB_obj):
         """We will deal with 2 endpoints here - as that is what I expect a controller to have.
         No use in be too general if no device exists that is more complex.
         """
@@ -193,27 +156,35 @@ class API(UsbDeviceData):
         p_USB_obj.epi_type = p_USB_obj.ep_in.bmAttributes & 0x03
         p_USB_obj.epi_packet_size = p_USB_obj.ep_in.wMaxPacketSize
 
-    def _setup_reports(self, p_USB_obj):
+    @staticmethod
+    def _setup_reports(p_USB_obj):
         _l_reports = usb.util.find_descriptor(
             p_USB_obj.interface,
             custom_match = lambda e: usb.util.endpoint_direction(e.bEndpointAddress) == usb.util.ENDPOINT_IN)
 
-    def open_device(self, p_USB_obj):
+    @staticmethod
+    def open_device(p_USB_obj):
         p_USB_obj.message = bytearray()
         l_vpn = Utility.format_names(p_USB_obj)
         LOG.info("Opening USB device - {}".format(l_vpn))
-        p_USB_obj.Device = self._open_find_device(p_USB_obj)
-        if p_USB_obj.Device == None:
+        p_USB_obj.UsbDevice = API._open_find_device(p_USB_obj)
+        if p_USB_obj.UsbDevice == None:
             LOG.error('ERROR - Setup Failed')
             return False
-        self._setup_detach_kernel(p_USB_obj)
-        self._setup_configurations(p_USB_obj)
-        self._setup_interfaces(p_USB_obj)
-        self._setup_endpoints(p_USB_obj)
-        _l_msg = Utility.setup_hid_17DD_5500(p_USB_obj)
+        API._setup_detach_kernel(p_USB_obj)
+        API._setup_configurations(p_USB_obj)
+        API._setup_interfaces(p_USB_obj)
+        API._setup_endpoints(p_USB_obj)
+        l_control = usb5500API.Setup()
+        # _l_msg = Utility.setup_hid_17DD_5500(p_USB_obj)
         return True
 
-    def close_device(self, p_USB_obj):
-        p_USB_obj.Device.reset()
+    def Setup(self, p_USB_obj):
+        l_control = usb5500API.Setup()
+        return l_control
+
+    @staticmethod
+    def close_device(p_USB_obj):
+        p_USB_obj.UsbDevice.reset()
 
 # ## END DBK

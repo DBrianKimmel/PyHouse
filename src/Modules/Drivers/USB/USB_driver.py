@@ -16,7 +16,8 @@ import usb
 from twisted.internet.protocol import Protocol
 
 # Import PyHouse Modules
-from Modules.Drivers.USB import USB_open
+from Modules.Drivers.USB.USB_data import UsbData
+from Modules.Drivers.USB.USB_open import API as usbopenAPI
 from Modules.Utilities.tools import PrintBytes
 from Modules.Computer import logging_pyh as Logger
 
@@ -24,29 +25,6 @@ LOG = Logger.getLogger('PyHouse.USBDriver      ')
 
 # Timeouts for send/receive delays
 RECEIVE_TIMEOUT = 0.3
-
-
-class UsbDeviceData(object):
-    """
-    This is the data object for one USB controller device.
-
-    Instance
-    """
-
-    def __init__(self):
-        self.Device = None
-        self.Name = None
-        self.Port = None
-        self.Product = None
-        self.Vendor = None
-        self.ep_in = None
-        self.epi_addr = 0
-        self.epi_type = 0
-        self.epi_packet_size = 0
-        self.ep_out = None
-        self.epo_addr = 0
-        self.hid_device = False
-        self.message = ''
 
 
 class SerialProtocol(Protocol):
@@ -68,7 +46,7 @@ class SerialProtocol(Protocol):
         self.m_USB_obj.message += p_data
 
 
-class UsbDriverAPI(UsbDeviceData):
+class UsbDriverAPI(object):
 
     m_controller_obj = None
 
@@ -99,7 +77,7 @@ class UsbDriverAPI(UsbDeviceData):
         @return: the number of bytes fetched from the controller
         """
         try:
-            l_msg = p_USB_obj.Device.read(p_USB_obj.epi_addr, p_USB_obj.epi_packet_size, timeout = 100)  # Note - No device to test with
+            l_msg = p_USB_obj.UsbDevice.read(p_USB_obj.epi_addr, p_USB_obj.epi_packet_size, timeout = 100)  # Note - No device to test with
             LOG.debug("read_device() - Msg:{1:}".format(PrintBytes(l_msg)))
         except usb.USBError as e_err:
             LOG.error("ERROR - read_device() got USBError - {0:}".format(e_err))
@@ -141,7 +119,7 @@ class UsbDriverAPI(UsbDeviceData):
         was available.
         """
         try:
-            l_msg = p_USB_obj.Device.read(p_USB_obj.epi_addr, p_USB_obj.epi_packet_size, timeout = 100)
+            l_msg = p_USB_obj.UsbDevice.read(p_USB_obj.epi_addr, p_USB_obj.epi_packet_size, timeout = 100)
         except usb.USBError as e_err:
             LOG.error("ERROR - read_hid_report() got USBError {0:}".format(e_err))
             l_msg = bytearray(0)
@@ -156,7 +134,7 @@ class UsbDriverAPI(UsbDeviceData):
         self.m_USB_obj.message = bytearray()
         if len(l_ret) == 0:
             return l_ret
-        LOG.debug("fetch_read_data() - Msg:{0:}".format(PrintBytes(l_ret)))
+        LOG.debug("Msg:{}".format(PrintBytes(l_ret)))
         return l_ret
 
     def write_usb(self, p_USB_obj, p_message):
@@ -189,24 +167,25 @@ class UsbDriverAPI(UsbDeviceData):
         l_message = p_message
         LOG.debug("write_bis_device() - Ep_out: {0:#04X}, - {1:}".format(p_USB_obj.epo_addr, PrintBytes(l_message)))
         try:
-            l_len = p_USB_obj.Device.write(p_USB_obj.epo_addr, l_message)
+            l_len = p_USB_obj.UsbDevice.write(p_USB_obj.epo_addr, l_message)
         except Exception as e:
             LOG.error("_write_bis_device() - Error in writing to USB device {0:}".format(e))
             l_len = 0
         return l_len
 
     def _write_control_device(self, p_USB_obj, p_message):
-        LOG.debug("_write_control_device() {0:}".format(p_USB_obj.Device))
-        l_len = p_USB_obj.Device.ctrl_transfer(0, p_message, timeout = 100)
+        LOG.debug("_write_control_device() {0:}".format(p_USB_obj.UsbDevice))
+        l_len = p_USB_obj.UsbDevice.ctrl_transfer(0, p_message, timeout = 100)
         return l_len
 
-    def _get_usb_device_data(self, p_USB_obj):
-        l_usb_device_obj = UsbDeviceData()
-        l_usb_device_obj.Name = p_USB_obj.Name
-        l_usb_device_obj.Port = p_USB_obj.Port
-        l_usb_device_obj.Vendor = p_USB_obj.Vendor
-        l_usb_device_obj.Product = p_USB_obj.Product
-        return l_usb_device_obj
+    @staticmethod
+    def _get_usb_device_data(p_USB_obj):
+        l_usb_data_obj = UsbData()
+        l_usb_data_obj.Name = p_USB_obj.Name
+        l_usb_data_obj.Port = p_USB_obj.Port
+        l_usb_data_obj.Vendor = p_USB_obj.Vendor
+        l_usb_data_obj.Product = p_USB_obj.Product
+        return l_usb_data_obj
 
 
 class API(UsbDriverAPI):
@@ -224,27 +203,28 @@ class API(UsbDriverAPI):
         """
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_controller_obj = p_controller_obj
-        self.m_USB_obj = self._get_usb_device_data(p_controller_obj)
-        if USB_open.API().open_device(self.m_USB_obj):
+        self.m_USB_obj = UsbDriverAPI._get_usb_device_data(p_controller_obj)
+        if usbopenAPI.open_device(self.m_USB_obj):
+            self._write_control_device(self.m_USB_obj, usbopenAPI.Setup(self.m_USB_obj))
             self.read_usb(self.m_pyhouse_obj)
             LOG.info("Opened Controller:{}".format(self.m_USB_obj.Name))
             l_ret = True
         else:
-            LOG.warning("Failed to open Controller:{0:}".format(self.m_USB_obj.Name))
+            LOG.error("Failed to open Controller:{}".format(self.m_USB_obj.Name))
             l_ret = False
         LOG.info('Started')
         return l_ret
 
     def Stop(self):
-        USB_open.API().close_device(self.m_USB_obj)
+        usbopenAPI.close_device(self.m_USB_obj)
 
     def Read(self):
         l_ret = self.fetch_read_data()
         return l_ret
 
     def Write(self, p_message):
-        if self.m_USB_obj.Device == None:
-            LOG.debug('Message NOT written - No device.')
+        if self.m_USB_obj.UsbDevice == None:
+            LOG.error('Message NOT written - No device.')
             return
         self.write_usb(self.m_USB_obj, p_message)
 

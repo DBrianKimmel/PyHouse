@@ -60,9 +60,8 @@ class Utility(object):
     """
 
     def log_start(self):
-        LOG.info("""\n------------------------------------------------------------------
-
-        """)
+        # LOG.info("\n------------------------------------------------------------------\n")
+        pass
 
     def _xml_save_loop(self, p_pyhouse_obj):
         p_pyhouse_obj.Twisted.Reactor.callLater(REPEAT_DELAY, self._xml_save_loop, p_pyhouse_obj)
@@ -75,13 +74,14 @@ class API(Utility):
     def __init__(self, p_pyhouse_obj):
         """
         This will initialize much (all?) of the API infrastructure.
-        Note that the Configuration file is read as part of the following Start() method.
+        Note that the Configuration file is NOT read until the following Start() method begins.
         Also note that the reactor is *NOT* running.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
         p_pyhouse_obj.APIs.Computer.ComputerAPI = computerAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.HouseAPI = houseAPI(p_pyhouse_obj)
         PyHouseObj.SetObj(p_pyhouse_obj)
+        LOG.info('Initialized\n------------------------------------------------------------------\n')
 
     def Start(self):
         """
