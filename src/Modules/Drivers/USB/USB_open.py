@@ -182,7 +182,8 @@ class API(object):
         # _l_msg = Utility.setup_hid_17DD_5500(p_USB_obj)
         return True
 
-    def Setup(self, p_USB_obj):
+    @staticmethod
+    def Setup(p_USB_obj):
         l_control = usb5500API.Setup()
         return l_control
 
