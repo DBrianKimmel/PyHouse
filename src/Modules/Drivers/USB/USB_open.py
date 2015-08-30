@@ -59,7 +59,7 @@ class API(object):
     def _save_find_device(p_USB_obj, p_device):
         p_USB_obj.UsbDevice = p_device
         p_USB_obj.num_configs = p_device.bNumConfigurations
-        p_USB_obj.hid_device = Utility.is_hid(p_device)
+        p_USB_obj.hid_device = True  # Utility.is_hid(p_device)
         p_USB_obj.configs = {}
         return p_USB_obj
 
