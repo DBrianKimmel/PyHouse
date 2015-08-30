@@ -91,6 +91,8 @@ import usb
 # Import PyMh files
 # from Modules.Drivers.USB import USB_driver
 from Modules.Computer import logging_pyh as Logger
+from _ctypes import Array
+from array import array
 
 LOG = Logger.getLogger('PyHouse.UPB_17DD_5500  ')
 
@@ -107,7 +109,8 @@ class API(object):
         l_request = 0x09  #
         l_value = 0x0003  # Report type & Report ID
         l_index = 0
-        l_report = bytearray(b'12345')
+        # l_report = bytearray(b'12345')
+        l_report = array.array('B', '\x00'.encode('utf-8') * 5)
         l_report[0] = 0xc0
         l_report[1] = 0x12
         l_report[2] = 0x00
