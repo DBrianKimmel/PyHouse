@@ -22,6 +22,7 @@ from Modules.Families.UPB.UPB_constants import pim_commands
 from Modules.Utilities.tools import PrintBytes
 from Modules.Computer import logging_pyh as Logger
 from Modules.Families.family_utils import FamUtil
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.UPB_PIM        ')
 
@@ -372,27 +373,33 @@ class UpbPimAPI(CreateCommands):
 
     @staticmethod
     def _initilaize_pim(p_controller_obj):
+        """Initialize a new UPBData object.
+        """
         l_pim = UPBData()
         l_pim.InterfaceType = p_controller_obj.InterfaceType
         l_pim.Name = p_controller_obj.Name
         l_pim.UPBAddress = p_controller_obj.UPBAddress
         l_pim.UPBPassword = p_controller_obj.UPBPassword
         l_pim.UPBNetworkID = p_controller_obj.UPBNetworkID
-        LOG.info('Found UPB PIM named: {}, Type={}'.format(l_pim.Name, l_pim.InterfaceType))
+        LOG.info('Initializing UPB PIM named: {}, Type={}'.format(l_pim.Name, l_pim.InterfaceType))
+        LOG.debug(PrettyFormatAny.form(l_pim, 'PIM data'))
         return l_pim
 
     def start_controller(self, p_pyhouse_obj, p_controller_obj):
-        """
+        """We must now find a driver for the type of PIM we have and initialize that driver
         """
         p_controller_obj._Queue = Queue.Queue(300)
         LOG.info("start:{} - InterfaceType:{}".format(p_controller_obj.Name, p_controller_obj.InterfaceType))
         self.m_pim = UpbPimAPI._initilaize_pim(p_controller_obj)
         l_driver = FamUtil.get_device_driver_API(p_pyhouse_obj, p_controller_obj)
         p_controller_obj._DriverAPI = l_driver
-        l_driver.Start(p_pyhouse_obj, p_controller_obj)
         self.m_pim._DriverAPI = l_driver
-        self.set_register_value(p_controller_obj, 0x70, [0x03])
-        # self.null_command(p_controller_obj)
+        try:
+            l_driver.Start(p_pyhouse_obj, p_controller_obj)
+            self.set_register_value(p_controller_obj, 0x70, [0x03])
+        except Exception as e_err:
+            LOG.error('Driver failed to load properly - {}'.format(e_err))
+            return False
         return True
 
     def get_response(self):

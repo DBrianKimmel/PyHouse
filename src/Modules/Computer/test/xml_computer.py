@@ -31,7 +31,7 @@ XML_COMPUTER_DIVISION = '\n'.join([
 ])
 
 
-COMPUTER_XSD = """
+XSD_COMPUTER_DIVISION = """
 """
 
 # ## END DBK

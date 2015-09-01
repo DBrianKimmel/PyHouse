@@ -30,15 +30,20 @@ helpers.Widget.subclass(users, 'UsersWidget').methods(
 		function cb_widgetready(res) {
 			self.hideWidget();
 		}
+		function eb_widgetready(p_result) {
+			Divmod.debug('---', 'users.eb_widgetready() was called. ERROR = ' + p_result);
+		}
 		var uris = collectIMG_src(self.node, null);
 		var l_defer = loadImages(uris);
 		l_defer.addCallback(cb_widgetready);
+		l_defer.addErrback(eb_widgetready);
 		return l_defer;
 	},
 	/**
 	 * Show the self.node widget - users.UsersWidget -
 	 */
 	function startWidget(self) {
+		Divmod.debug('---', 'users.startWidget() was called.');
 		self.node.style.display = 'block';
 		showSelectionButtons(self);
 		self.fetchDataFromServer();
@@ -52,13 +57,14 @@ helpers.Widget.subclass(users, 'UsersWidget').methods(
 	 */
 	function fetchDataFromServer(self) {
 		function cb_fetchDataFromServer(p_json) {
-			globals.Computer.Users = JSON.parse(p_json);
+			globals.Computer.Logins = JSON.parse(p_json);
+			console.log("users.fetchDataFromServer() - Data = %O", globals.Computer);
 			self.buildLcarSelectScreen();
 		}
 		function eb_fetchDataFromServer(p_result) {
 			Divmod.debug('---', 'users.eb_fetchDataFromServer() was called. ERROR = ' + p_result);
 		}
-        var l_defer = self.callRemote("getServerData");  // @ web_users.py
+        var l_defer = self.callRemote("getUsersData");  // @ web_users.py
 		l_defer.addCallback(cb_fetchDataFromServer);
 		l_defer.addErrback(eb_fetchDataFromServer);
         return false;
@@ -67,7 +73,7 @@ helpers.Widget.subclass(users, 'UsersWidget').methods(
 	 * Build a screen full of buttons - One for each room and some actions.
 	 */
 	function buildLcarSelectScreen(self){
-		var l_button_html = buildLcarSelectionButtonsTable(globals.House.HouseObj.Users, 'handleMenuOnClick');
+		var l_button_html = buildLcarSelectionButtonsTable(globals.Computer.Logins, 'handleMenuOnClick');
 		var l_html = build_lcars_top('Users', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(15, l_button_html);
 		l_html += build_lcars_bottom();
@@ -84,11 +90,11 @@ helpers.Widget.subclass(users, 'UsersWidget').methods(
 	function handleMenuOnClick(self, p_node) {
 		var l_ix = p_node.name;
 		var l_name = p_node.value;
-		globals.House.RoomIx = l_ix;
-		globals.House.RoomName = l_name;
+		globals.Computer.LoginIx = l_ix;
+		globals.Computer.LoginName = l_name;
 		if (l_ix <= 1000) {  // One of the users buttons.
-			var l_obj = globals.House.HouseObj.Users[l_ix];
-			globals.House.RoomObj = l_obj;
+			var l_obj = globals.Computer.Logins[l_ix];
+			globals.Computer.Logins = l_obj;
 			showDataEntryFields(self);
 			self.buildLcarDataEntryScreen(l_obj, 'handleDataEntryOnClick');
 		} else if (l_ix == 10001) {  // The "Add" button
@@ -111,9 +117,9 @@ helpers.Widget.subclass(users, 'UsersWidget').methods(
 		l_entry_html += buildLcarTextWidget(self, 'Name', 'User Name', l_data.Name);
 		l_entry_html += buildLcarTextWidget(self, 'Key', 'User Index', l_data.Key, 'disabled');
 		l_entry_html += buildLcarTrueFalseWidget(self, 'UserActive', 'Active ?', l_data.Active);
-		l_entry_html += buildLcarTextWidget(self, 'FullName', 'Full Name', l_data.Comment);
-		l_entry_html += buildLcarTextWidget(self, 'Password', 'Password', l_data.Corner);
-		l_entry_html += buildLcarTextWidget(self, 'Role', 'Role', l_data.Size);
+		l_entry_html += buildLcarTextWidget(self, 'FullName', 'Full Name', l_data.LoginFullName);
+		l_entry_html += buildLcarTextWidget(self, 'Password', 'Password', l_data.LoginEncryptedPassword);
+		l_entry_html += buildLcarTextWidget(self, 'Role', 'Role', l_data.LoginRole);
 		l_entry_html += buildLcarEntryButtons(p_handler);
 		var l_html = build_lcars_top('Enter User Data', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(15, l_entry_html);
@@ -123,7 +129,7 @@ helpers.Widget.subclass(users, 'UsersWidget').methods(
 	function createEntry(self) {
         var l_data = {
 			Name : 'Change Me',
-			Key : Object.keys(globals.House.HouseObj.Users).length,
+			Key : Object.keys(globals.Computer.Logins).length,
 			Active : true,
 			FullName : '',
 			Password : '',
@@ -136,10 +142,10 @@ helpers.Widget.subclass(users, 'UsersWidget').methods(
         var l_data = {
 			Name : fetchTextWidget(self, 'Name'),
 			Key : fetchTextWidget(self, 'Key'),
-			Active : fetchTrueFalseWidget(self, 'RoomActive'),
+			Active : fetchTrueFalseWidget(self, 'UserActive'),
 			FullName : fetchTextWidget(self, 'FullName'),
 			Password : fetchTextWidget(self, 'Password'),
-			Role : 'Guest',
+			Role : fetchTextWidget(self, 'Role'),
 			Delete : false
 		};
 		return l_data;
@@ -167,7 +173,7 @@ helpers.Widget.subclass(users, 'UsersWidget').methods(
 		switch(l_ix) {
 		case '10003':  // Change Button
 	    	l_json = JSON.stringify(self.fetchEntry());
-	        l_defer = self.callRemote("saveRoomData", l_json);  // @ web_schedule
+	        l_defer = self.callRemote("putUsersData", l_json);  // @ web_schedule
 			l_defer.addCallback(cb_handleDataEntryOnClick);
 			l_defer.addErrback(eb_handleDataEntryOnClick);
 			break;
@@ -178,7 +184,7 @@ helpers.Widget.subclass(users, 'UsersWidget').methods(
 			var l_obj = self.fetchEntry();
 			l_obj.Delete = true;
 	    	l_json = JSON.stringify(l_obj);
-	        l_defer = self.callRemote("saveRoomData", l_json);  // @ web_users
+	        l_defer = self.callRemote("putUsersData", l_json);  // @ web_users
 			l_defer.addCallback(cb_handleDataEntryOnClick);
 			l_defer.addErrback(eb_handleDataEntryOnClick);
 			break;

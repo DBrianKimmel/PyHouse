@@ -7,7 +7,7 @@
 @note:      Created on Apr 11, 2013
 @summary:   This module is for testing XML tools.
 
-Passed all 49 testa - DBK 2015-08-13
+Passed all 50 testa - DBK 2015-09-01
 
 """
 
@@ -23,6 +23,7 @@ from Modules.Utilities import convert
 from Modules.Core.data_objects import CoreLightingData, LocationData
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
+from Modules.Utilities.debug_tools import PrettyFormatAny
 # from Modules.Utilities.debug_tools import PrettyFormatAny
 
 XML_INT = """
@@ -434,7 +435,7 @@ class C4_ReadEmpty(SetupMixin, unittest.TestCase):
         self.assertEqual(l_base_obj.Active, False)
 
 
-class C5_WriteXml(SetupMixin, unittest.TestCase):
+class C5_Write(SetupMixin, unittest.TestCase):
     """
     This tests the ConfigTools section
     """
@@ -443,16 +444,29 @@ class C5_WriteXml(SetupMixin, unittest.TestCase):
         self.m_pyhouse_obj = SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
 
     def test_01_BaseObject(self):
+        """Write Base Object XML w/UUID
+        """
         l_base_obj = CoreLightingData()
         XmlConfigTools.read_base_object_xml(l_base_obj, self.m_xml.light)
         l_base_obj.Key = 43
         l_uuid = '12345678-fedc-1111-ffff-aaBBccDDeeFF'
         l_base_obj.UUID = l_uuid
         l_xml = XmlConfigTools.write_base_object_xml('Light', l_base_obj)
-        # PrettyPrintAny(l_xml, 'Base Object XML', 120)
+        print(PrettyFormatAny.form(l_xml, 'XML'))
         self.assertEqual(l_xml.attrib['Name'], 'Insteon Light')
         self.assertEqual(l_xml.attrib['Key'], '43')
         self.assertEqual(l_xml.find('UUID').text, l_uuid)
+
+    def test_02_BaseObject(self):
+        """Write Base Object XML w/ NO UUID
+        """
+        l_base_obj = CoreLightingData()
+        XmlConfigTools.read_base_object_xml(l_base_obj, self.m_xml.light)
+        l_base_obj.Key = 44
+        l_xml = XmlConfigTools.write_base_object_xml('Light', l_base_obj, no_uuid = True)
+        print(PrettyFormatAny.form(l_xml, 'XML'))
+        self.assertEqual(l_xml.attrib['Name'], 'Insteon Light')
+        self.assertEqual(l_xml.attrib['Key'], '44')
 
 
 

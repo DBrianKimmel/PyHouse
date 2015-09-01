@@ -2,28 +2,75 @@
 @name:      PyHouse/src/Modules/Web/test/xml_web.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2015-2015 by D. Brian Kimmel
 @license:   MIT License
-@note:      Created on Nov 17, 2014
+@note:      Created on Aug 30, 2015
 @Summary:
 
-If PasswordMethod is "UNIX" then the password is fetched from the system.
 """
 
+# Import system type stuff
 
-XML_WEB_SERVER = """
-    <WebSection>
-        <WebPort>8580</WebPort>
-        <LoginSection>
-            <Login Active="True" Key="0" Name="briank">
-                <PasswordMethod>UNIX</PasswordMethod>
-                <Password>123456789</Password>
-                <FullName>D. Brian Kimmel</FullName>
-            </Login>
-        </LoginSection>
-    </WebSection>
+# Import PyMh files
+
+
+TESTING_WEB_PORT = '8580'
+TESTING_LOGIN_NAME_0 = 'Admin'
+TESTING_LOGIN_KEY_0 = '0'
+TESTING_LOGIN_ACTIVE_0 = 'True'
+TESTING_LOGIN_FULL_NAME_0 = 'Administrator'
+TESTING_LOGIN_PASSWORD_0 = 'ChangeMe'
+TESTING_LOGIN_ROLE_0 = '1'
+TESTING_LOGIN_NAME_1 = 'User1'
+TESTING_LOGIN_KEY_1 = '1'
+TESTING_LOGIN_ACTIVE_1 = 'True'
+TESTING_LOGIN_FULL_NAME_1 = 'User One Name'
+TESTING_LOGIN_PASSWORD_1 = 'Pass1'
+TESTING_LOGIN_ROLE_1 = '4'
+
+L_WEB_PORT = '    <Port>' + TESTING_WEB_PORT + '</Port>'
+L_LOGIN_MAIN_0 = '      <Login Name="' + TESTING_LOGIN_NAME_0 + '" Key="' + TESTING_LOGIN_KEY_0 + '" Active="' + TESTING_LOGIN_ACTIVE_0 + '">'
+L_LOGIN_FULL_NAME_0 = '      <FullName>' + TESTING_LOGIN_FULL_NAME_0 + '</FullName>'
+L_LOGIN_PASSWORD_0 = '      <Password>' + TESTING_LOGIN_PASSWORD_0 + '</Password>'
+L_LOGIN_ROLE_0 = '      <Role>' + TESTING_LOGIN_ROLE_0 + '</Role>'
+L_LOGIN_USER_0 = '\n'.join([
+    L_LOGIN_MAIN_0,
+    L_LOGIN_FULL_NAME_0,
+    L_LOGIN_PASSWORD_0,
+    L_LOGIN_ROLE_0,
+    '      </Login>'
+])
+L_LOGIN_MAIN_1 = '      <Login Name="' + TESTING_LOGIN_NAME_1 + '" Key="' + TESTING_LOGIN_KEY_1 + '" Active="' + TESTING_LOGIN_ACTIVE_1 + '">'
+L_LOGIN_FULL_NAME_1 = '      <FullName>' + TESTING_LOGIN_FULL_NAME_1 + '</FullName>'
+L_LOGIN_PASSWORD_1 = '      <Password>' + TESTING_LOGIN_PASSWORD_1 + '</Password>'
+L_LOGIN_ROLE_1 = '      <Role>' + TESTING_LOGIN_ROLE_1 + '</Role>'
+L_LOGIN_USER_1 = '\n'.join([
+    L_LOGIN_MAIN_1,
+    L_LOGIN_FULL_NAME_1,
+    L_LOGIN_PASSWORD_1,
+    L_LOGIN_ROLE_1,
+    '      </Login>'
+])
+
+XML_WEB_SERVER = '\n'.join([
+    '  <WebSection>',
+    L_WEB_PORT,
+    '    <LoginSection>',
+    L_LOGIN_USER_0,
+    L_LOGIN_USER_1,
+    '    </LoginSection>',
+    '  </WebSection>'
+    ])
+
+XSD_WEB_SERVER = """
+<xs:schema
+    attributeFormDefault="unqualified"
+    elementFormDefault="qualified"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="WebSection">
+  </xs:element>
+</xs:schema>
 """
-
-
 
 # ## END DBK

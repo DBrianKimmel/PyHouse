@@ -154,7 +154,7 @@ class API(object):
             p_USB_obj.interface,
             custom_match = lambda e: usb.util.endpoint_direction(e.bEndpointAddress) == usb.util.ENDPOINT_IN
         )
-        LOG.debug("  Ep_In: {0:}".format(p_USB_obj.ep_in.__dict__))
+        LOG.debug("  Ep_In: {}".format(p_USB_obj.ep_in.__dict__))
         p_USB_obj.epi_addr = p_USB_obj.ep_in.bEndpointAddress
         p_USB_obj.epi_type = p_USB_obj.ep_in.bmAttributes & 0x03
         p_USB_obj.epi_packet_size = p_USB_obj.ep_in.wMaxPacketSize

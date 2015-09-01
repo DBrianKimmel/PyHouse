@@ -8,7 +8,6 @@
 @Summary:
 
 """
-# from Modules.Computer.Mqtt.test.xml_mqtt import TESTING_BROKER_NAME_1
 
 # Import system type stuff
 

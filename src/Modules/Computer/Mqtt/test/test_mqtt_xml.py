@@ -30,7 +30,6 @@ from Modules.Computer.Mqtt.test.xml_mqtt import \
     TESTING_BROKER_ACTIVE_2, \
     TESTING_BROKER_ADDRESS_2, \
     TESTING_BROKER_PORT_2
-from Modules.Utilities.tools import PrettyPrintAny
 
 
 class SetupMixin(object):
@@ -49,15 +48,11 @@ class A1_XML(SetupMixin, unittest.TestCase):
     def test_01_PyHouse(self):
         """ Be sure that the XML contains the right stuff.
         """
-        # PrettyPrintAny(self.m_xml.root, 'XML')
-        # PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse_obj')
         pass
 
     def test_02_FindXML(self):
         """ Be sure that the XML contains the right stuff.
         """
-        # PrettyPrintAny(self.m_pyhouse_obj.Xml, 'PyHouse XML')
-        # PrettyPrintAny(self.m_xml.root, 'XML')
         self.assertEqual(self.m_xml.root.tag, 'PyHouse')
         self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
         self.assertEqual(self.m_xml.mqtt_sect.tag, 'MqttSection')
@@ -123,7 +118,6 @@ class C1_Write(SetupMixin, unittest.TestCase):
         """
         l_mqtt_obj = self.m_api.read_mqtt_xml(self.m_pyhouse_obj)
         l_xml = self.m_api.write_mqtt_xml(l_mqtt_obj)
-        # PrettyPrintAny(l_xml, 'XML')
         self.assertEqual(l_mqtt_obj[0].BrokerAddress, TESTING_BROKER_ADDRESS_1)
         l_xml1 = l_xml.find('Broker')
         self.assertEqual(l_xml1.attrib['Name'], TESTING_BROKER_NAME_1)

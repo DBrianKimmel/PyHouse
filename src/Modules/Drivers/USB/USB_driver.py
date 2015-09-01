@@ -174,7 +174,7 @@ class UsbDriverAPI(object):
         return l_len
 
     def _write_control_device(self, p_USB_obj, p_message):
-        LOG.debug("_write_control_device() {0:}".format(p_USB_obj.UsbDevice))
+        LOG.debug("_write_control_device() {}".format(p_USB_obj.UsbDevice))
         l_len = p_USB_obj.UsbDevice.ctrl_transfer(0, p_message, timeout = 100)
         return l_len
 

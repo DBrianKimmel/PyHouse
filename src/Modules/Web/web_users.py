@@ -15,20 +15,17 @@ from nevow import loaders
 from nevow import athena
 
 # Import PyMh files and modules.
-from Modules.Web.web_utils import JsonUnicode, GetJSONHouseInfo
-from Modules.Housing import rooms
+from Modules.Web.web_utils import JsonUnicode
+from Modules.Core.data_objects import LoginData
 from Modules.Computer import logging_pyh as Logger
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
 
-g_debug = 0
 LOG = Logger.getLogger('PyHouse.webUsers       ')
 
-
-
-#==============================================================================
 
 class UsersElement(athena.LiveElement):
     jsClass = u'users.UsersWidget'
@@ -39,39 +36,47 @@ class UsersElement(athena.LiveElement):
         self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
 
     @athena.expose
-    def getServerData(self):
+    def getUsersData(self):
         """
         Get a lot of server JSON data and pass it to the client browser.
         """
         l_users = self.m_pyhouse_obj.Computer.Web.Logins
+        LOG.debug(PrettyFormatAny.form(l_users, 'Login users'))
+        if l_users == {}:
+            l_users[0] = LoginData()
+            l_users[0].Name = 'admin'
+            l_users[0].LoginEncryptedPassword = 'admin'
+            l_users[0].LoginFullName = 'Administrator'
+            l_users[0].LoginRole = 1
+            self.m_pyhouse_obj.Computer.Web.Logins = l_users
+            LOG.debug('Creating fake user since there was none')
         l_json = unicode(JsonUnicode().encode_json(l_users))
         LOG.info('Fetched {}'.format(l_json))
         return l_json
 
     @athena.expose
-    def saveData(self, p_json):
+    def putUsersData(self, p_json):
         """A new/changed/deleted user is returned.  Process it and update the internal data.
         """
         l_json = JsonUnicode().decode_json(p_json)
-        l_room_ix = int(l_json['Key'])
+        l_ix = int(l_json['Key'])
         l_delete = l_json['Delete']
         if l_delete:
             try:
-                del self.m_pyhouse_obj.House.Rooms[l_room_ix]
+                del self.m_pyhouse_obj.Computer.Web.Logins[l_ix]
             except AttributeError:
-                print("web_rooms - Failed to delete - JSON: {0:}".format(l_json))
+                LOG.error("Failed to delete user - JSON: {}".format(l_json))
             return
         try:
-            l_obj = self.m_pyhouse_obj.House.Rooms[l_room_ix]
+            l_obj = self.m_pyhouse_obj.Computer.Web.Logins[l_ix]
         except KeyError:
-            l_obj = rooms.RoomData()
+            l_obj = LoginData()
         l_obj.Name = l_json['Name']
         l_obj.Active = l_json['Active']
-        l_obj.Key = l_room_ix
-        l_obj.Comment = l_json['Comment']
-        l_obj.Corner = l_json['Corner']
-        l_obj.Size = l_json['Size']
-        l_obj.RoomType = 'Room'
-        self.m_pyhouse_obj.House.Rooms[l_room_ix] = l_obj
+        l_obj.Key = l_ix
+        l_obj.LoginFullName = l_json['FullName']
+        l_obj.LoginEncryptedPassword = l_json['Password']
+        l_obj.LoginRole = l_json['Role']
+        self.m_pyhouse_obj.Computer.Web.Logins[l_ix] = l_obj
 
 # ## END DBK

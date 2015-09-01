@@ -309,7 +309,7 @@ class XmlConfigTools(object):
         return p_base_obj
 
     @staticmethod
-    def write_base_object_xml(p_element_name, p_object):
+    def write_base_object_xml(p_element_name, p_object, no_uuid = False):
         """
         Note that UUID is optional.
         @param p_element_name: is the name of the XML element (Light, Button, etc.)
@@ -321,12 +321,13 @@ class XmlConfigTools(object):
             PutGetXML.put_text_attribute(l_elem, 'Name', p_object.Name)
             PutGetXML.put_int_attribute(l_elem, 'Key', p_object.Key)
             PutGetXML.put_bool_attribute(l_elem, 'Active', p_object.Active)
+        except AttributeError as e_err:
+            PutGetXML.put_text_attribute(l_elem, 'Error: ', e_err)
+        if not no_uuid:
             try:
                 PutGetXML.put_uuid_element(l_elem, 'UUID', p_object.UUID)
             except AttributeError:
                 PutGetXML.put_uuid_element(l_elem, 'UUID', 'No UUID Given')
-        except AttributeError as e_err:
-            PutGetXML.put_text_attribute(l_elem, 'Error: ', e_err)
         return l_elem
 
 def stuff_new_attrs(p_target_obj, p_data_obj):

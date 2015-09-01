@@ -24,6 +24,7 @@ After the user is authenticated, this element is converted to a "loged in as" en
 import os
 from nevow import loaders
 from nevow import athena
+# from passlib.hash import pbkdf2_sha256
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import LoginData
@@ -35,14 +36,13 @@ from Modules.Housing import VALID_FLOORS
 from Modules.Lighting import VALID_LIGHTING_TYPE
 from Modules.Scheduling import VALID_SCHEDULING_TYPES, VALID_SCHEDULE_MODES
 from Modules.Computer import logging_pyh as Logger
+from Modules.Utilities.debug_tools import PrettyFormatAny
+
+LOG = Logger.getLogger('PyHouse.webLogin       ')
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
-
-
-
-LOG = Logger.getLogger('PyHouse.webLogin       ')
 
 
 class LoginElement(athena.LiveElement):
@@ -65,7 +65,7 @@ class LoginElement(athena.LiveElement):
 
             @param p_json: is the username and password passed back by the client.
         """
-        LOG.info("doLogin called {}.".format(p_json))
+        LOG.info("doLogin called {}.".format(PrettyFormatAny.form(p_json, 'Login From Browser')))
         l_obj = web_utils.JsonUnicode().decode_json(p_json)
         l_login_obj = self.validate_user(l_obj)
         l_json = web_utils.JsonUnicode().encode_json(l_login_obj)
@@ -103,6 +103,34 @@ class LoginElement(athena.LiveElement):
         return unicode(l_json)
 
     def validate_user(self, p_obj):
+        """
+        @param p_obj: is from the browser login screen
+        """
+        l_login_obj = LoginData()
+        l_login_obj.LoginName = p_obj['LoginName']
+        l_login_obj.LoginEncryptedPassword = p_obj['Password']
+        LOG.info('Login Attempt using: {}'.format(PrettyFormatAny.form(l_login_obj, 'Login Obj')))
+        #
+        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Web.Logins, 'Logins'))
+        for l_user in self.m_pyhouse_obj.Computer.Web.Logins.itervalues():
+            LOG.debug(PrettyFormatAny.form(l_user, 'User Obj'))
+            if l_user.Name == l_login_obj.LoginName:
+                LOG.debug('User Matched')
+                if l_user.LoginEncryptedPassword == l_login_obj.LoginEncryptedPassword:
+                    LOG.debug('Password Matched')
+                    l_login_obj.IsLoggedIn = True
+                    l_login_obj.LoginRole = l_user.LoginRole
+                    l_login_obj.LoginFullName = l_user.LoginFullName
+                    # LOG.debug(PrettyFormatAny.form(l_login_obj, 'Login Obj'))
+                return l_login_obj
+            # pbkdf2_sha256.verify("password", hash)
+        # Default for development - allow us in.
+        l_login_obj.LoginFullName = 'Administrator'
+        l_login_obj.IsLoggedIn = True
+        l_login_obj.ServerState = web_utils.WS_LOGGED_IN
+        return l_login_obj
+
+    def XXvalidate_user(self, p_obj):
         """Validate the user and put all results into the LoginData object.
 
         TODO: validate user - add password check for security
