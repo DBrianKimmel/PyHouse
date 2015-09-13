@@ -133,7 +133,7 @@
 131         <Rate>0</Rate>
 132         <RoomName>Living Room</RoomName>
 133         <Time>13:57</Time>
-134         <ScheduleType>LightingDevice</ScheduleType>
+134         <ScheduleType>Lighting</ScheduleType>
 135     </Schedule>
 136     <Schedule Active="True" Key="1" Name="Evening 2">
 137         <Level>100</Level>
@@ -141,7 +141,7 @@
 139         <Rate>0</Rate>
 140         <RoomName>Living Room</RoomName>
 141         <Time>13:57</Time>
-142         <ScheduleType>LightingDevice</ScheduleType>
+142         <ScheduleType>Lighting</ScheduleType>
 143     </Schedule>
 144     <Schedule Active="True" Key="2" Name="Evening 3">
 145         <Level>100</Level>
@@ -149,7 +149,7 @@
 147         <Rate>0</Rate>
 148         <RoomName>Garage</RoomName>
 149         <Time>sunset - 00:02</Time>
-150         <ScheduleType>LightingDevice</ScheduleType>
+150         <ScheduleType>Lighting</ScheduleType>
 151     </Schedule>
 152     <Schedule Active="True" Key="3" Name="Evening 4">
 153         <Level>100</Level>
@@ -157,7 +157,7 @@
 155         <Rate>0</Rate>
 156         <RoomName>Foyer</RoomName>
 157         <Time>sunset</Time>
-158         <ScheduleType>LightingDevice</ScheduleType>
+158         <ScheduleType>Lighting</ScheduleType>
 159     </Schedule>
 160 </ScheduleSection>
 161 

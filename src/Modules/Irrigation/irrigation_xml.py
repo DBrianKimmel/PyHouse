@@ -29,11 +29,12 @@ SYSTEM = 'IrrigationSystem'
 ZONE = 'Zone'
 
 
-class IrrigationXmlAPI(object):
+class Xml(object):
     """
     """
 
-    def _read_one_zone(self, p_xml):
+    @staticmethod
+    def _read_one_zone(p_xml):
         """
         @param p_xml: XML information for one Zone.
         @return: an IrrigationZone object filled in with data from the XML passed in
@@ -45,7 +46,8 @@ class IrrigationXmlAPI(object):
         # Expand with much more control data
         return l_obj
 
-    def _read_one_irrigation_system(self, p_xml):
+    @staticmethod
+    def _read_one_irrigation_system(p_xml):
         """
         May contain zero or more zones.
         In general each zone is controlled by a solenoid controlled valve.
@@ -56,23 +58,15 @@ class IrrigationXmlAPI(object):
         try:
             l_sys.Comment = PutGetXML.get_text_from_xml(p_xml, 'Comment')
             for l_zone in p_xml.iterfind(ZONE):
-                l_obj = self._read_one_zone(l_zone)
+                l_obj = Xml._read_one_zone(l_zone)
                 l_sys.Zones[l_count] = l_obj
                 l_count += 1
         except AttributeError as e_err:
             LOG.error('Zone: {}'.format(e_err))
         return l_sys
 
-    def _setup_xml(self, p_pyhouse_obj):
-        l_xml = p_pyhouse_obj.Xml.XmlRoot
-        try:
-            l_xml = l_xml.find('HouseDivision')
-            l_xml = l_xml.find('IrrigationSection')
-        except AttributeError as e_err:
-            LOG.error('Error {}'.format(e_err))
-        return l_xml
-
-    def read_irrigation_xml(self, p_pyhouse_obj):
+    @staticmethod
+    def read_irrigation_xml(p_pyhouse_obj):
         """
         May contain zero or more irrigation systems.
         Each system may be controlled by a master valve (solenoid).
@@ -89,7 +83,7 @@ class IrrigationXmlAPI(object):
             l_section = None
         try:
             for l_xml in l_section.iterfind(SYSTEM):
-                l_system = self._read_one_irrigation_system(l_xml)
+                l_system = Xml._read_one_irrigation_system(l_xml)
                 l_obj[l_count] = l_system
                 l_count += 1
         except AttributeError as e_err:
@@ -99,7 +93,8 @@ class IrrigationXmlAPI(object):
 
 
 
-    def _write_one_zone(self, p_obj):
+    @staticmethod
+    def _write_one_zone(p_obj):
         """
         @param p_obj: is one zone object
         @return the XML for one Zone
@@ -109,7 +104,8 @@ class IrrigationXmlAPI(object):
         PutGetXML.put_int_element(l_xml, 'Duration', p_obj.Duration)
         return l_xml
 
-    def _write_one_system(self, p_obj):
+    @staticmethod
+    def _write_one_system(p_obj):
         """
         @param p_obj: is one irrigation system object.
         @return: the XML for one complete IrrigationSystem
@@ -117,11 +113,12 @@ class IrrigationXmlAPI(object):
         l_xml = XmlConfigTools.write_base_object_xml('IrrigationSystem', p_obj)
         PutGetXML.put_text_element(l_xml, 'Comment', p_obj.Comment)
         for l_obj in p_obj.Zones.itervalues():
-            l_zone = self._write_one_zone(l_obj)
+            l_zone = Xml._write_one_zone(l_obj)
             l_xml.append(l_zone)
         return l_xml
 
-    def write_irrigation_xml(self, p_obj):
+    @staticmethod
+    def write_irrigation_xml(p_obj):
         """
         @param p_obj: is the Irrigation sub-object in p_pyhouse_obj
         @return:  XML for the IrrigationSection
@@ -131,7 +128,7 @@ class IrrigationXmlAPI(object):
         try:
             for l_obj in p_obj.itervalues():
                 l_obj.Key = l_count
-                l_sys = self._write_one_system(l_obj)
+                l_sys = Xml._write_one_system(l_obj)
                 l_xml.append(l_sys)
                 l_count += 1
         except AttributeError as e_err:

@@ -35,13 +35,16 @@ class Xml(object):
         l_obj.RoomName = PutGetXML.get_text_from_xml(p_schedule_element, 'RoomName')
         return l_obj  # for testing
 
-    def _read_one_base_schedule(self, p_schedule_element):
+    @staticmethod
+    def _read_one_base_schedule(p_schedule_element):
         """Extract schedule information from a schedule xml element.
         """
         l_obj = ScheduleBaseData()
         XmlConfigTools.read_base_object_xml(l_obj, p_schedule_element)
         l_obj.Time = PutGetXML.get_text_from_xml(p_schedule_element, 'Time')
         l_obj.ScheduleType = PutGetXML.get_text_from_xml(p_schedule_element, 'ScheduleType')
+        if l_obj.ScheduleType == 'LightingDevice':
+            l_obj.ScheduleType = 'Lighting'
         try:
             l_obj.DOW = PutGetXML.get_int_from_xml(l_obj, 'DayOfWeek', 0x7F)
         except:
@@ -52,9 +55,10 @@ class Xml(object):
             l_obj.Mode = 0
         return l_obj
 
-    def _read_one_schedule(self, p_schedule_element):
-        l_obj = self._read_one_base_schedule(p_schedule_element)
-        if l_obj.ScheduleType == 'LightingDevice':
+    @staticmethod
+    def _read_one_schedule(p_schedule_element):
+        l_obj = Xml._read_one_base_schedule(p_schedule_element)
+        if l_obj.ScheduleType == 'Lighting':
             l_type = Xml._read_one_lighting_schedule(p_schedule_element)
         else:
             LOG.error('ERROR - invalid device found - {} for {}'.format(l_obj.ScheduleType, l_obj.Name))
@@ -62,7 +66,8 @@ class Xml(object):
         stuff_new_attrs(l_obj, l_type)
         return l_obj
 
-    def read_schedules_xml(self, p_pyhouse_obj):
+    @staticmethod
+    def read_schedules_xml(p_pyhouse_obj):
         """
         @param p_house_xml: is the e-tree XML house object
         @return: a dict of the entry to be attached to a house object.
@@ -73,7 +78,7 @@ class Xml(object):
         try:
             l_schedules_xml = l_xml.find('ScheduleSection')
             for l_entry in l_schedules_xml.iterfind('Schedule'):
-                l_schedule_obj = self._read_one_schedule(l_entry)
+                l_schedule_obj = Xml._read_one_schedule(l_entry)
                 l_schedule_obj.Key = l_count  # Renumber
                 l_dict[l_count] = l_schedule_obj
                 l_count += 1
@@ -82,7 +87,8 @@ class Xml(object):
         return l_dict
 
 
-    def _write_one_base_schedule(self, p_schedule_obj):
+    @staticmethod
+    def _write_one_base_schedule(p_schedule_obj):
         """
         """
         l_entry = XmlConfigTools.write_base_object_xml('Schedule', p_schedule_obj)
@@ -92,7 +98,8 @@ class Xml(object):
         PutGetXML.put_int_element(l_entry, 'Mode', p_schedule_obj.Mode)
         return l_entry
 
-    def _write_one_light_schedule(self, p_schedule_obj, p_entry):
+    @staticmethod
+    def _write_one_light_schedule(p_schedule_obj, p_entry):
         """
         Shove our entries in.
         """
@@ -101,17 +108,19 @@ class Xml(object):
         PutGetXML.put_int_element(p_entry, 'Rate', p_schedule_obj.Rate)
         PutGetXML.put_text_element(p_entry, 'RoomName', p_schedule_obj.RoomName)
 
-    def _write_one_schedule(self, p_schedule_obj):
+    @staticmethod
+    def _write_one_schedule(p_schedule_obj):
         """
         """
-        l_entry = self._write_one_base_schedule(p_schedule_obj)
-        if p_schedule_obj.ScheduleType == 'LightingDevice':
-            self._write_one_light_schedule(p_schedule_obj, l_entry)
+        l_entry = Xml._write_one_base_schedule(p_schedule_obj)
+        if p_schedule_obj.ScheduleType == 'Lighting':
+            Xml._write_one_light_schedule(p_schedule_obj, l_entry)
         else:
             LOG.error('ERROR - invalid schedule type {}'.format(p_schedule_obj.ScheduleType))
         return l_entry
 
-    def write_schedules_xml(self, p_schedules_obj):
+    @staticmethod
+    def write_schedules_xml(p_schedules_obj):
         """Replace all the data in the 'Schedules' section with the current data.
         @param p_parent: is the 'schedules' element
         """
@@ -119,7 +128,7 @@ class Xml(object):
         l_xml = ET.Element('ScheduleSection')
         try:
             for l_schedule_obj in p_schedules_obj.itervalues():
-                l_entry = self._write_one_schedule(l_schedule_obj)
+                l_entry = Xml._write_one_schedule(l_schedule_obj)
                 l_xml.append(l_entry)
                 l_count += 1
         except AttributeError as e_err:

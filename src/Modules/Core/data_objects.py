@@ -50,7 +50,7 @@ class BaseObject(object):
     Do not use this object, derive objects from it.
     """
     def __init__(self):
-        self.Name = 'Undefined BaseObject'
+        self.Name = 'undefined baseobject'
         self.Key = 0
         self.Active = False
 
@@ -182,6 +182,8 @@ class MqttBrokerData(BaseObject):
         super(MqttBrokerData, self).__init__()
         self.BrokerAddress = None
         self.BrokerPort = None
+        self.UserName = ''
+        self.Password = None
         self._ClientAPI = None
         self._ProtocolAPI = None
 
@@ -328,7 +330,7 @@ class ScheduleBaseData(BaseObject):
     """
     def __init__(self):
         super(ScheduleBaseData, self).__init__()
-        self.ScheduleType = 'Device'  # For future expansion into scenes, entertainment etc.
+        self.ScheduleType = ''
         self.Time = None
         self.DOW = None
         self.Mode = 0
@@ -344,7 +346,7 @@ class ScheduleLightData(object):
         self.LightName = None
         self.Rate = 0
         self.RoomName = None
-        self.ScheduleType = 'LightingDevice'  # For future expansion into scenes, entertainment etc.
+        self.ScheduleType = 'Lighting'  # For future expansion into scenes, entertainment etc.
 
 
 class ScheduleThermostatData(object):
@@ -469,7 +471,7 @@ class LocationData(object):
         self.TimeZoneName = 'America/New_York'
         #
         self.DomainID = None
-        self.RiseSet = None  # RiseSetData()
+        self.RiseSet = RiseSetData()  # RiseSetData()
         self._TimeZoneOffset = '-5:00'
         self._IsDaylightSavingsTime = False
         # Computed at startup (refreshed periodically)

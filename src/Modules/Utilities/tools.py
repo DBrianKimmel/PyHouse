@@ -345,36 +345,12 @@ class Lister():
                 l_ret = l_ret + "\tName: {}={}\n".format(attr, self.__dict__ [attr])
         return l_ret
 
-def get_light_object(p_pyhouse_obj, name = None, key = None):
-    """return the light object for a house using the given value.
-    Either a name or a key may be used to identify the light.
-
-    TODO: switch from key to UUID.
-    Add other devices
-
-    @return: the Light object found or None.
-    """
-    l_lights = p_pyhouse_obj.House.Lights
-    if name != None:
-        for l_obj in l_lights.itervalues():
-            if l_obj.Name == name:
-                return l_obj
-        print('tools().GetLightObj using Name:{} - lookup failed'.format(name))
-    elif key != None:
-        for l_obj in l_lights.itervalues():
-            if l_obj.Key == key:
-                return l_obj
-        print('tools().GetLightObj using Key:{} - lookup failed'.format(key))
-    print('tools().GetLightObj failed - arg error Name:{}, Key:{}'.format(name, key))
-    return None
-
 
 __all__ = [
            'PrettyPrintAny',
            'PrettyPrintCols',
            'PrettyPrintObject',
-           'PrettyPrintXML',
-           'get_light_object'
+           'PrettyPrintXML'
            ]
 
 

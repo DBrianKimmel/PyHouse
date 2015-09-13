@@ -7,18 +7,18 @@
 @note:      Created on Jun 27, 2014
 @Summary:   Test finding an external IP address.
 
+Passed all 3 tests - DBK - 2015-09-12
+
 """
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
-from twisted.internet import reactor
 
 # Import PyMh files and modules.
 from Modules.Computer.Internet import inet_find_external_ip
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.tools import PrettyPrintAny
 
 
 class SetupMixin(object):
@@ -29,7 +29,6 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_pyhouse_obj.Twisted.Reactor = reactor
 
 
 class C1_Util(SetupMixin, unittest.TestCase):

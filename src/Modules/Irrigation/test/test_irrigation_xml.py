@@ -14,7 +14,7 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
-from Modules.Irrigation.irrigation_xml import IrrigationXmlAPI
+from Modules.Irrigation.irrigation_xml import Xml as irrigationXml
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.tools import PrettyPrintAny
@@ -25,7 +25,7 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_api = IrrigationXmlAPI()
+        self.m_api = irrigationXml
 
 
 class A1_XML(SetupMixin, unittest.TestCase):

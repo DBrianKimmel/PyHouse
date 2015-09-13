@@ -7,7 +7,8 @@
 @license:   MIT License
 @summary:   Handle the automatic updating of PyHouse
 
-This module tests auto updating
+Passed all 4 tests - DBK - 2015-09-12
+
 """
 
 # Import system type stuff
@@ -15,10 +16,8 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-# from Modules.Core.data_objects import LightData
 from Modules.Scheduling import auto_update
-# from Modules.Utilities.tools import PrettyPrintAny
-from test import xml_data
+from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 
 
@@ -34,7 +33,7 @@ class C00_Base(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         SetupPyHouseObj().BuildXml(self.m_xml.root)
 
     def test_00_Setup(self):
@@ -53,7 +52,7 @@ class C02_Local(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         SetupPyHouseObj().BuildXml(self.m_xml.root)
 
     def test_01_PyHouse(self):
@@ -71,16 +70,11 @@ class C03_Repository(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         SetupPyHouseObj().BuildXml(self.m_xml.root)
 
     def test_01_Version(self):
         l_version = auto_update.FindRepositoryVersion().get_version()
         print(l_version)
-
-
-class C04_Compare(SetupMixin, unittest.TestCase):
-    """
-    """
 
 # ## END DBK

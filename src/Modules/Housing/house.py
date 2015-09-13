@@ -33,6 +33,7 @@ from Modules.Scheduling.sunrisesunset import API as sunriseAPI
 from Modules.Security.security import API as securityAPI
 from Modules.Utilities.xml_tools import XmlConfigTools
 from Modules.Computer import logging_pyh as Logger
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.House          ')
 
@@ -44,24 +45,29 @@ class Xml(object):
     This is called from the web interface or the GUI when the data has been changed.
     """
 
-    def _read_base(self, p_xml):
+    @staticmethod
+    def _read_base(p_xml):
         l_obj = HouseInformation()
         XmlConfigTools.read_base_object_xml(l_obj, p_xml)
         return l_obj
 
-    def read_house_xml(self, p_pyhouse_obj):
+    @staticmethod
+    def read_house_xml(p_pyhouse_obj):
         """Read house information, location and rooms.
         """
         l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
-        l_house = self._read_base(l_xml)
+        l_house = Xml._read_base(l_xml)
         l_house.Location = locationXML.read_location_xml(l_xml)
         l_house.Rooms = roomsXML.read_rooms_xml(l_xml)
         return l_house
 
-    def write_house_xml(self, p_pyhouse_obj):
+    @staticmethod
+    def write_house_xml(p_pyhouse_obj):
         """Replace the data in the 'Houses' section with the current data.
         """
+        # print(PrettyFormatAny.form(p_pyhouse_obj, 'PyHouse'))
         l_house_obj = p_pyhouse_obj.House
+        # print(PrettyFormatAny.form(l_house_obj, 'PyHouse'))
         l_house_xml = XmlConfigTools.write_base_object_xml('HouseDivision', l_house_obj)
         l_house_xml.append(locationXML.write_location_xml(l_house_obj.Location))
         l_house_xml.append(roomsXML.write_rooms_xml(l_house_obj.Rooms))
@@ -75,11 +81,15 @@ class Utility(object):
     m_pyhouse_obj = None
 
     @staticmethod
+    def _init_components(p_pyhouse_obj):
+        p_pyhouse_obj.House = HouseInformation()
+        p_pyhouse_obj.APIs.House = HouseAPIs()
+
+    @staticmethod
     def _init_component_apis(p_pyhouse_obj, p_api):
         """
         Initialize all the house APIs
         """
-        p_pyhouse_obj.APIs.House = HouseAPIs()
         p_pyhouse_obj.APIs.House.HouseAPI = p_api
         p_pyhouse_obj.APIs.House.EntertainmentAPI = entertainmentAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.FamilyAPI = familyAPI(p_pyhouse_obj)
@@ -90,10 +100,6 @@ class Utility(object):
         p_pyhouse_obj.APIs.House.ScheduleAPI = scheduleAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.SecurityAPI = securityAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.SunRiseSetAPI = sunriseAPI(p_pyhouse_obj)
-
-    @staticmethod
-    def _init_pyhouse_data(p_pyhouse_obj):
-        p_pyhouse_obj.House = HouseInformation()
 
     def start_house_parts(self, p_pyhouse_obj):
         # These two must start before the other things
@@ -140,8 +146,8 @@ class API(Utility):
         """
         """
         self.m_pyhouse_obj = p_pyhouse_obj
+        Utility._init_components(p_pyhouse_obj)
         Utility._init_component_apis(p_pyhouse_obj, self)
-        Utility._init_pyhouse_data(p_pyhouse_obj)
         LOG.info('Initialized')
 
     def Start(self):
@@ -150,7 +156,7 @@ class API(Utility):
         May be stopped and then started anew to force reloading info.
         """
         LOG.info("Starting.")
-        self.m_pyhouse_obj.House = Xml().read_house_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House = Xml.read_house_xml(self.m_pyhouse_obj)
         self.get_sunrise_set(self.m_pyhouse_obj)
         self.start_house_parts(self.m_pyhouse_obj)
         LOG.info("Started House {0:}".format(self.m_pyhouse_obj.House.Name))
@@ -168,7 +174,7 @@ class API(Utility):
         Take a snapshot of the current Configuration/Status and write out an XML file.
         """
         # l_house_xml = ET.Element('HouseDivision')
-        l_house_xml = Xml().write_house_xml(self.m_pyhouse_obj)
+        l_house_xml = Xml.write_house_xml(self.m_pyhouse_obj)
         Utility._save_component_apis(self.m_pyhouse_obj, l_house_xml)
         p_xml.append(l_house_xml)
         LOG.info("Saved House XML.")

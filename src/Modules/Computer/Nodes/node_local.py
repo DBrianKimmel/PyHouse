@@ -28,10 +28,11 @@ import os
 import platform
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import NodeInterfaceData
+from Modules.Core.data_objects import NodeData, NodeInterfaceData
 from Modules.Communication import ir_control
 from Modules.Computer import logging_pyh as Logger
 from Modules.Computer.Nodes import nodes_xml
+# from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 g_debug = 0
@@ -62,7 +63,7 @@ class Interfaces(object):
     """
 
     @staticmethod
-    def _find_all_interface_names():
+    def find_all_interface_names():
         """
         Get the names of all the network interfaces on this computer.
         Windows return an UUID as the name
@@ -85,15 +86,15 @@ class Interfaces(object):
 
     @staticmethod
     def _find_addr_lists(p_interface_name):
-        """This returns a dict with the key = interface type
-        (-1000 = MAC Addr, 2 = INET, 23 = INET6)
-        The values are a list of dicts of addresses.
+        """This returns a dict with the key = interface type (-1000 = MAC Addr, 2 = INET, 23 = INET6)
+        The values are a list of dicts of addresses for that interface.
         """
         l_ret = netifaces.ifaddresses(p_interface_name)
         return l_ret
 
     @staticmethod
     def _get_address_list(p_list):
+        # print(PrettyFormatAny.form(p_list, 'Address'))
         l_list = []
         for l_ent in p_list:
             l_list.append(l_ent['addr'])
@@ -108,7 +109,7 @@ class Interfaces(object):
         l_interface.NodeInterfaceType = 'Other'
         for l_af in Interfaces._find_addr_lists(p_interface_name):
             if Interfaces._find_addr_family_name(l_af) == 'AF_PACKET':
-                l_interface.MacAddress = Interfaces._get_address_list(Interfaces._find_addr_lists(p_interface_name)[l_af])
+                l_interface.MacAddress = Interfaces._find_addr_lists(p_interface_name)[l_af]
             if Interfaces._find_addr_family_name(l_af) == 'AF_INET':
                 l_interface.V4Address = Interfaces._get_address_list(Interfaces._find_addr_lists(p_interface_name)[l_af])
             if Interfaces._find_addr_family_name(l_af) == 'AF_INET6':
@@ -119,8 +120,11 @@ class Interfaces(object):
 
     @staticmethod
     def get_all_interfaces(p_node):
+        """
+        @return: a dict of interfaces for this node.
+        """
         l_count = 0
-        for l_interface_name in Interfaces._find_all_interface_names():
+        for l_interface_name in Interfaces.find_all_interface_names():
             l_iface = Interfaces._get_one_interface(l_interface_name)
             l_iface.Key = l_count
             p_node.NodeInterfaces[l_count] = l_iface
@@ -208,11 +212,13 @@ class Util(object):
         p_role |= self._is_tunnel_node()
         return p_role
 
-    def get_node_info(self, p_pyhouse_obj):
-        l_name = platform.node()
-        p_pyhouse_obj.Computer.Nodes[0].Name = l_name
-        p_pyhouse_obj.Computer.Nodes[0].Key = 0
-        p_pyhouse_obj.Computer.Nodes[0].Active = True
+    @staticmethod
+    def get_node_info():
+        l_node = NodeData
+        l_node.Name = platform.node()
+        l_node.Key = 0
+        l_node.Active = True
+        return l_node
 
     def find_node_role(self):
         l_role = NODE_NOTHING
@@ -272,7 +278,7 @@ class API(Util):
 
     def Start(self):
         self.m_pyhouse_obj.Computer.Nodes = self.LoadXml(self.m_pyhouse_obj)
-        self.get_node_info(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.Computer.Nodes[0] = Util.get_node_info()  # Name, Key Active for this node
         self.m_pyhouse_obj.Computer.Nodes[0] = Util.create_local_node(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Computer.Nodes[0].NodeRole = self.find_node_role()
         self.init_node_type(self.m_pyhouse_obj)

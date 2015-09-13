@@ -17,6 +17,7 @@ for every house.
 import xml.etree.ElementTree as ET
 
 # Import PyHouse files
+from Modules.Lighting.lighting_actions import Utility as actionUtility, API as actionAPI
 from Modules.Lighting.lighting_buttons import API as buttonsAPI
 from Modules.Lighting.lighting_controllers import API as controllersAPI
 from Modules.Lighting.lighting_lights import API as lightsAPI
@@ -114,19 +115,6 @@ class Utility(object):
             p_house_element.append(l_lighting_xml)
         return l_lighting_xml
 
-    @staticmethod
-    def _find_full_obj(p_pyhouse_obj, p_web_obj):
-        """
-        given the limited information from the web browser, look up and return the full object.
-
-        If more than one light has the same name, return the first one found.
-        """
-        for l_light in p_pyhouse_obj.House.Lights.itervalues():
-            if p_web_obj.Name == l_light.Name:
-                return l_light
-        LOG.error('ERROR - no light with name {} was found.'.format(p_web_obj.Name))
-        return None
-
 
 class API(Utility):
 
@@ -171,7 +159,7 @@ class API(Utility):
             web_controlLights
             schedule
         """
-        l_light_obj = Utility._find_full_obj(self.m_pyhouse_obj, p_light_obj)
+        l_light_obj = actionUtility._find_full_obj(self.m_pyhouse_obj, p_light_obj)
         try:
             LOG.info("Turn Light {} to level {}, DeviceFamily:{}".format(l_light_obj.Name, p_new_level, l_light_obj.DeviceFamily))
 

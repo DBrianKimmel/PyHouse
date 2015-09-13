@@ -7,7 +7,7 @@
 @note:      Created on Jun 5, 2015
 @Summary:
 
-Passed all 7 tests - DBK - 2015-08-12
+Passed all 12 tests - DBK - 2015-09-07
 
 """
 
@@ -24,16 +24,16 @@ from test.xml_data import XML_LONG
 from Modules.Computer.Mqtt.mqtt_client import Util, API as mqttAPI
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Computer.Mqtt.test.xml_mqtt import \
+    TESTING_BROKER_NAME_0, \
+    TESTING_BROKER_ACTIVE_0, \
+    TESTING_BROKER_KEY_0, \
+    TESTING_BROKER_ADDRESS_0, \
+    TESTING_BROKER_PORT_0, \
     TESTING_BROKER_NAME_1, \
-    TESTING_BROKER_ACTIVE_1, \
     TESTING_BROKER_KEY_1, \
     TESTING_BROKER_ADDRESS_1, \
     TESTING_BROKER_PORT_1, \
-    TESTING_BROKER_NAME_2, \
-    TESTING_BROKER_KEY_2, \
-    TESTING_BROKER_ADDRESS_2, \
-    TESTING_BROKER_PORT_2, \
-    TESTING_BROKER_ACTIVE_2
+    TESTING_BROKER_ACTIVE_1
 from Modules.Housing.test.xml_location import TESTING_LOCATION_CITY
 from Modules.Utilities.tools import PrettyPrintAny
 from Modules.Utilities import json_tools
@@ -90,16 +90,16 @@ class A1_XML(SetupMixin, unittest.TestCase):
 
     def test_06_Broker(self):
         l_mqtt = self.m_api.LoadXml(self.m_pyhouse_obj)
-        self.assertEqual(l_mqtt.Brokers[0].Name, TESTING_BROKER_NAME_1)
-        self.assertEqual(l_mqtt.Brokers[0].Key, int(TESTING_BROKER_KEY_1))
-        self.assertEqual(l_mqtt.Brokers[0].Active, TESTING_BROKER_ACTIVE_1 == 'True')
-        self.assertEqual(l_mqtt.Brokers[0].BrokerAddress, TESTING_BROKER_ADDRESS_1)
-        self.assertEqual(l_mqtt.Brokers[0].BrokerPort, int(TESTING_BROKER_PORT_1))
-        self.assertEqual(l_mqtt.Brokers[1].Name, TESTING_BROKER_NAME_2)
-        self.assertEqual(l_mqtt.Brokers[1].Key, int(TESTING_BROKER_KEY_2))
-        self.assertEqual(l_mqtt.Brokers[1].Active, TESTING_BROKER_ACTIVE_2 == 'True')
-        self.assertEqual(l_mqtt.Brokers[1].BrokerAddress, TESTING_BROKER_ADDRESS_2)
-        self.assertEqual(l_mqtt.Brokers[1].BrokerPort, int(TESTING_BROKER_PORT_2))
+        self.assertEqual(l_mqtt.Brokers[0].Name, TESTING_BROKER_NAME_0)
+        self.assertEqual(l_mqtt.Brokers[0].Key, int(TESTING_BROKER_KEY_0))
+        self.assertEqual(l_mqtt.Brokers[0].Active, TESTING_BROKER_ACTIVE_0 == 'True')
+        self.assertEqual(l_mqtt.Brokers[0].BrokerAddress, TESTING_BROKER_ADDRESS_0)
+        self.assertEqual(l_mqtt.Brokers[0].BrokerPort, int(TESTING_BROKER_PORT_0))
+        self.assertEqual(l_mqtt.Brokers[1].Name, TESTING_BROKER_NAME_1)
+        self.assertEqual(l_mqtt.Brokers[1].Key, int(TESTING_BROKER_KEY_1))
+        self.assertEqual(l_mqtt.Brokers[1].Active, TESTING_BROKER_ACTIVE_1 == 'True')
+        self.assertEqual(l_mqtt.Brokers[1].BrokerAddress, TESTING_BROKER_ADDRESS_1)
+        self.assertEqual(l_mqtt.Brokers[1].BrokerPort, int(TESTING_BROKER_PORT_1))
 
 
 class B1_Connect(SetupMixin, unittest.TestCase):

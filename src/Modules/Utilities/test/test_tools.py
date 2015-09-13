@@ -113,15 +113,4 @@ class C1_Find(SetupMixin, unittest.TestCase):
         # print(l_loc)
         # PrettyPrintAny(self.m_pyhouse_obj.House.Lights, 'Lights')
 
-    def test_02_FindObj(self):
-        l_obj = tools.get_light_object(self.m_pyhouse_obj, 'Insteon Light', None)
-        # PrettyPrintAny(l_obj, 'Light Obj')
-        self.assertIsNotNone(l_obj, 'Must be a light obj')
-
-    def test_03_FindBadObj(self):
-        l_obj = tools.get_light_object(self.m_pyhouse_obj, 'NoSuchName', None)
-        # PrettyPrintAny(l_obj, 'Light Obj')
-        self.assertIsNone(l_obj, 'Should be None')
-
-
 # ## END DBK

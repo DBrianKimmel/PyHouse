@@ -7,7 +7,7 @@
 @note:      Created on Apr 29, 2014
 @summary:   This module is for testing local node data.
 
-Passed all 8 tests - DBK - 2015-08-14
+Passed 0 of 10 tests - DBK - 2015-09-13
 
 """
 
@@ -39,7 +39,7 @@ class FakeNetiface(object):
     """
 
 
-class C01_Structure(SetupMixin, unittest.TestCase):
+class A1_Setup(SetupMixin, unittest.TestCase):
     """
     This section tests the reading and writing of XML used by node_local.
     """
@@ -59,7 +59,7 @@ class C01_Structure(SetupMixin, unittest.TestCase):
         self.assertEqual(len(self.m_pyhouse_obj.Computer.Nodes), 2)
 
 
-class C02_Iface(SetupMixin, unittest.TestCase):
+class B1_Iface(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
@@ -68,36 +68,55 @@ class C02_Iface(SetupMixin, unittest.TestCase):
         # self.m_api = node_local.API()
         self.m_iface_api = Interfaces()
 
-    def test_01_IfaceNames(self):
-        l_names = Interfaces._find_all_interface_names()
+    def test_01_AllIfaceNames(self):
+        """ This will be different on different computers
+
+        I don't know how to test the returned list for validity.
+        Uncomment the print to see what your computer returned.
+        """
+        l_names = Interfaces.find_all_interface_names()
         # print(PrettyFormatAny.form(l_names, 'Names'))
         self.assertGreater(len(l_names), 1)
 
-    def test_02_AllInterfaces(self):
+    def test_02_AddrFamilyName(self):
+        l_ret = Interfaces._find_addr_family_name(-1000)
+        # print(PrettyFormatAny.form(l_ret, 'Address Lists'))
+        self.assertEqual(l_ret, 'AF_LINK')
+        l_ret = Interfaces._find_addr_family_name(2)
+        # print(PrettyFormatAny.form(l_ret, 'Address Lists'))
+        self.assertEqual(l_ret, 'AF_INET')
+        l_ret = Interfaces._find_addr_family_name(23)
+        # print(PrettyFormatAny.form(l_ret, 'Address Lists'))
+        self.assertEqual(l_ret, 'AF_INET6')
+
+    def test_03_AddrLists(self):
+        """
+        I don't know how to test the returned list for validity.
+        Uncomment the print to see what your computer returned.
+        """
+        l_names = Interfaces.find_all_interface_names()
+        # On my laptop: returns 7 interfaces.
+        # print(PrettyFormatAny.form(l_names, 'Address Lists'))
+        l_ret = Interfaces._find_addr_lists(l_names[0])
+        print(PrettyFormatAny.form(l_ret, 'Address Lists'))
+
+    def test_04_OneInterfaces(self):
+        l_names = Interfaces.find_all_interface_names()
+        l_node = Interfaces._get_one_interface(l_names[1])
+        print(PrettyFormatAny.form(l_node, 'Node Interfaces'))
+
+    def test_05_AllInterfaces(self):
         l_node = NodeData()
         l_node = Interfaces.get_all_interfaces(l_node)
         print(PrettyFormatAny.form(l_node.NodeInterfaces, 'Node Interfaces'))
 
-    def test_03_AddrLists(self):
-        l_names = Interfaces._find_all_interface_names()
-        l_ret = Interfaces._find_addr_lists(l_names[0])
-        print(PrettyFormatAny.form(l_ret, 'Address Lists'))
-        print(PrettyFormatAny.form(l_ret[23][1], 'Address Lists'))
-
-    def test_04_AddrFamilyName(self):
-        l_ret = Interfaces._find_addr_family_name(-1000)
-        print(PrettyFormatAny.form(l_ret, 'Address Lists'))
-        self.assertEqual(l_ret, 'AF_LINK')
-        l_ret = Interfaces._find_addr_family_name(2)
-        print(PrettyFormatAny.form(l_ret, 'Address Lists'))
-        self.assertEqual(l_ret, 'AF_INET')
-        l_ret = Interfaces._find_addr_family_name(23)
-        print(PrettyFormatAny.form(l_ret, 'Address Lists'))
-        self.assertEqual(l_ret, 'AF_INET6')
-
-    def test_05_GetAddrLists(self):
-        l_list = Interfaces._find_all_interface_names()
-        l_names = Interfaces._get_address_list(l_list)
+    def test_06_GetAddrLists(self):
+        l_interfaces = Interfaces.find_all_interface_names()
+        print(PrettyFormatAny.form(l_interfaces, 'Interfaces'))
+        l_list = Interfaces._get_one_interface(l_interfaces[1])
+        print(PrettyFormatAny.form(l_list, 'Address Lists'))
+        l_names = Interfaces._get_address_list(l_list[2])
+        print(PrettyFormatAny.form(l_names, 'Names'))
         l_ret = Interfaces._find_addr_lists(l_names[0])
         print(PrettyFormatAny.form(l_ret, 'Address Lists'))
         print(PrettyFormatAny.form(l_ret[23][1], 'Address Lists'))

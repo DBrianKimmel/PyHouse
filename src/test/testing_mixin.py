@@ -15,6 +15,7 @@
 import platform
 import logging
 import sys
+from twisted.internet import reactor
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import \
@@ -93,6 +94,7 @@ class SetupPyHouseObj(object):
 
     def _build_twisted(self):
         l_ret = TwistedInformation()
+        l_ret.Reactor = reactor
         return l_ret
 
     def _build_services(self):

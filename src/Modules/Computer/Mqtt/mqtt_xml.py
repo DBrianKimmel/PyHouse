@@ -36,6 +36,8 @@ class Xml(object):
             XmlConfigTools.read_base_object_xml(l_obj, p_xml)
             l_obj.BrokerAddress = PutGetXML.get_text_from_xml(p_xml, 'BrokerAddress')
             l_obj.BrokerPort = PutGetXML.get_int_from_xml(p_xml, 'BrokerPort')
+            l_obj.UserName = PutGetXML.get_text_from_xml(p_xml, 'BrokerUser')
+            l_obj.Password = PutGetXML.get_text_from_xml(p_xml, 'BrokerPassword')
         except Exception:
             pass
         return l_obj
@@ -73,8 +75,10 @@ class Xml(object):
         @return: the XML for one Broker System
         """
         l_entry = XmlConfigTools.write_base_object_xml('Broker', p_mqtt)
-        PutGetXML().put_text_element(l_entry, 'BrokerAddress', p_mqtt.BrokerAddress)
-        PutGetXML().put_text_element(l_entry, 'BrokerPort', p_mqtt.BrokerPort)
+        PutGetXML().put_int_element(l_entry, 'BrokerAddress', p_mqtt.BrokerAddress)
+        PutGetXML().put_int_element(l_entry, 'BrokerPort', p_mqtt.BrokerPort)
+        PutGetXML().put_text_element(l_entry, 'BrokerUser', p_mqtt.UserName)
+        PutGetXML().put_text_element(l_entry, 'BrokerPassword', p_mqtt.Password)
         return l_entry
 
     def write_mqtt_xml(self, p_obj):

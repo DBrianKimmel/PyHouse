@@ -505,7 +505,7 @@ class MQTTClient(MQTTProtocol):
         Call the dispatcher to send them on to the correct place.
         """
         # LOG.info("\n\tBroker: {}\n\tTopic: {}".format(self.m_broker.Name, p_topic))
-        # LOG.info(': {}'.format(self))
+        # LOG.info('PublishReceived: {}'.format(p_topic))
         self.m_broker._ClientAPI.MqttDispatch(p_topic, p_message)
 
 
@@ -522,6 +522,7 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
         @param p_client_id: is the ID of this computer that will be supplied to the broker
         @param p_broker: is the object for this broker
         """
+        LOG.info('Mqtt Factory Initialized')
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_broker = p_broker
         p_broker._ProtocolAPI = self
@@ -534,7 +535,7 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
     def buildProtocol(self, p_addr):
         l_client = MQTTClient(self.m_pyhouse_obj, self.m_broker)
         self.m_broker._ProtocolAPI = l_client
-        LOG.info("Mqtt broker address: {}".format(p_addr))
+        LOG.info("Mqtt buildProtocol - broker address: {}".format(p_addr))
         self.resetDelay()
         return l_client
 

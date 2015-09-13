@@ -7,7 +7,7 @@
 @note:      Created on Apr 8, 2013
 @summary:   Test handling the internet information for a computer.
 
-XML tests all run OK - DBK 2014-07-01
+Passed all 5 tests - DBK - 2015-09-12
 """
 
 # Import system type stuff
@@ -21,7 +21,6 @@ from Modules.Computer.Internet.test.xml_internet import TESTING_INTERNET_IPv4
 from Modules.Utilities import convert
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.tools import PrettyPrintAny
 
 
 class SetupMixin(object):
@@ -50,7 +49,7 @@ class C01_Util(SetupMixin, unittest.TestCase):
     def test_02_WriteConfig(self):
         _l_config = self.m_api._read_xml_configuration(self.m_pyhouse_obj)
         l_xml = self.m_api._write_xml_config(self.m_pyhouse_obj)
-       # PrettyPrintAny(l_xml, 'XML')
+        # PrettyPrintAny(l_xml, 'XML')
 
     def test_03_SaveConfig(self):
         # self.m_api._save_pyhouse_obj(self.m_pyhouse_obj)

@@ -13,33 +13,41 @@
 
 # Import PyMh files
 
-TESTING_BROKER_NAME_1 = 'iot.eclipse'
-TESTING_BROKER_KEY_1 = '0'
-TESTING_BROKER_ACTIVE_1 = 'False'
-TESTING_BROKER_ADDRESS_1 = '2001:db8::dead.beef'
+TESTING_BROKER_NAME_0 = 'CannonTrail'
+TESTING_BROKER_KEY_0 = '0'
+TESTING_BROKER_ACTIVE_0 = 'True'
+TESTING_BROKER_ADDRESS_0 = '192.168.1.2'
+TESTING_BROKER_PORT_0 = '1883'
+TESTING_BROKER_NAME_1 = 'PinkPoppy'
+TESTING_BROKER_KEY_1 = '1'
+TESTING_BROKER_ACTIVE_1 = 'True'
+TESTING_BROKER_ADDRESS_1 = '192.168.1.2'
 TESTING_BROKER_PORT_1 = '1883'
-TESTING_BROKER_NAME_2 = 'PinkPoppy'
-TESTING_BROKER_KEY_2 = '1'
-TESTING_BROKER_ACTIVE_2 = 'True'
-TESTING_BROKER_ADDRESS_2 = '192.168.1.2'
-TESTING_BROKER_PORT_2 = '1883'
+TESTING_BROKER_USERNAME = 'pyhouse'
+TESTING_BROKER_PASSWORD = 'ChangeMeNow!'
 
+L_BROKER_MAIN_0 = '    <Broker Name="' + TESTING_BROKER_NAME_0 + '" Key="' + TESTING_BROKER_KEY_0 + '" Active="' + TESTING_BROKER_ACTIVE_0 + '">'
 L_BROKER_MAIN_1 = '    <Broker Name="' + TESTING_BROKER_NAME_1 + '" Key="' + TESTING_BROKER_KEY_1 + '" Active="' + TESTING_BROKER_ACTIVE_1 + '">'
-L_BROKER_MAIN_2 = '    <Broker Name="' + TESTING_BROKER_NAME_2 + '" Key="' + TESTING_BROKER_KEY_2 + '" Active="' + TESTING_BROKER_ACTIVE_2 + '">'
+L_BROKER_ADDRESS_0 = '      <BrokerAddress>' + TESTING_BROKER_ADDRESS_0 + '</BrokerAddress>'
 L_BROKER_ADDRESS_1 = '      <BrokerAddress>' + TESTING_BROKER_ADDRESS_1 + '</BrokerAddress>'
-L_BROKER_ADDRESS_2 = '      <BrokerAddress>' + TESTING_BROKER_ADDRESS_2 + '</BrokerAddress>'
+L_BROKER_PORT_0 = '      <BrokerPort>' + TESTING_BROKER_PORT_0 + '</BrokerPort>'
 L_BROKER_PORT_1 = '      <BrokerPort>' + TESTING_BROKER_PORT_1 + '</BrokerPort>'
-L_BROKER_PORT_2 = '      <BrokerPort>' + TESTING_BROKER_PORT_2 + '</BrokerPort>'
+L_BROKER_USER = '      <BrokerUser>' + TESTING_BROKER_USERNAME + '</BrokerUser>'
+L_BROKER_PASSWORD = '      <BrokerPassword>' + TESTING_BROKER_PASSWORD + '</BrokerPassword>'
 
 XML_MQTT = '\n'.join([
     '  <MqttSection>',
+    L_BROKER_MAIN_0,
+    L_BROKER_ADDRESS_0,
+    L_BROKER_PORT_0,
+    L_BROKER_USER,
+    L_BROKER_PASSWORD,
+    '  </Broker>',
     L_BROKER_MAIN_1,
     L_BROKER_ADDRESS_1,
     L_BROKER_PORT_1,
-    '  </Broker>',
-    L_BROKER_MAIN_2,
-    L_BROKER_ADDRESS_2,
-    L_BROKER_PORT_2,
+    L_BROKER_USER,
+    L_BROKER_PASSWORD,
     '  </Broker>',
     '  </MqttSection>'
     ])

@@ -29,17 +29,17 @@ There is a hierarchy here.  At it's current level the Internet is the top level 
 control and logging of things in which PyHouse is interested.  The information scheme
 used by PyHouse is MQTT.
 
-The first level of MQTT topic is "PyHouse".  This will us to keep all the information
+The first level of MQTT topic is "pyhouse".  This will us to keep all the information
 in one virtual tree.  
 
 The second level is used by each person or group using PyHouse and is known as the
-"Domain" level.  Therefore the topic so far is "PyHouse/Domain/".  The domain name
+"Domain" level.  Therefore the topic so far is "pyhouse/domain/".  The domain name
 should probably be a UUID in order to keep from choosing a name and finding out that
 the name is already in use.  Each domain should have a scheme of encrypting the
 information within that domain to keep things private.
 
 The Third level is used by a person or group to designate a house or equivalent
-within the domain.  Now the MQTT topic is "PyHouse/Domain UUID/House UUID/".
+within the domain.  Now the MQTT topic is "pyhouse/domain UUID/House UUID/".
 A UUID looks like "c15f7d76-092e-11e4-bffa-b827eb189eb4".
 
 

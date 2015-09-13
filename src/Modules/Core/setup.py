@@ -31,8 +31,7 @@ from Modules.Computer import logging_pyh as Logger
 from Modules.Computer.computer import API as computerAPI
 from Modules.Housing.house import API as houseAPI
 from Modules.Utilities.config_file import API as configAPI
-from Modules.Communication.ir_control import g_pyhouse_obj
-from Modules.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.CoreSetup      ')
 
@@ -67,6 +66,10 @@ class Utility(object):
         p_pyhouse_obj.Twisted.Reactor.callLater(REPEAT_DELAY, self._xml_save_loop, p_pyhouse_obj)
         self.SaveXml()
 
+    @staticmethod
+    def _init_components(p_pyhouse_obj):
+
+        pass
 
 
 class API(Utility):
@@ -78,6 +81,7 @@ class API(Utility):
         Also note that the reactor is *NOT* running.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
+        Utility._init_components(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.ComputerAPI = computerAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.HouseAPI = houseAPI(p_pyhouse_obj)
         PyHouseObj.SetObj(p_pyhouse_obj)

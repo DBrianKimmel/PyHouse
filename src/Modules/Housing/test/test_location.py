@@ -8,7 +8,7 @@
 @summary:   Test handling the rooms information for a house.
 
 
-Tests all working OK - DBK 2014-05-22
+All 4 tests working - DBK - 2015-09-08
 """
 
 # Import system type stuff
@@ -24,7 +24,6 @@ from test.testing_mixin import SetupPyHouseObj
 from Modules.Housing.test.xml_location import TESTING_LOCATION_STREET, TESTING_LOCATION_CITY, TESTING_LOCATION_ZIP_CODE, TESTING_LOCATION_PHONE, \
     TESTING_LOCATION_LATITUDE, TESTING_LOCATION_LONGITUDE, TESTING_LOCATION_STATE, TESTING_LOCATION_TIME_ZONE_NAME
 from Modules.Utilities.debug_tools import PrettyFormatAny
-from Modules.Core.setup_logging import l_observer
 
 
 class SetupMixin(object):

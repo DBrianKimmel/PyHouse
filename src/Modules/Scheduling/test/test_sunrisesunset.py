@@ -7,6 +7,8 @@
 @license:   MIT License
 @summary:   Calculate the suns location at local noon, then calculate sunrise and sunset for the day.
 
+Passed 17 of 30 tests - DBK - 2015-09-12
+
 http://en.wikipedia.org/wiki/Sunrise_equation
 
 http://users.electromagnetic.net/bu/astro/iyf-calc.php?lat=28.938464&long=82.51720
@@ -153,7 +155,7 @@ class A01_Utility(SetupMixin, unittest.TestCase):
     def test_03_Convert2DateTime(self):
         l_time = 32.55
         l_ret = self.m_api._convert_to_datetime(l_time)
-        print('Convert to datetime  {0:}->{1:}'.format(l_time, l_ret))
+        # print('Convert to datetime  {}->{}'.format(l_time, l_ret))
         self.assertEqual(l_ret, datetime.timedelta(1, 30780))
 
 

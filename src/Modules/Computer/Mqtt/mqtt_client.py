@@ -36,7 +36,7 @@ class Util(object):
     """
     """
 
-    def client_connect_all_brokers(self, p_pyhouse_obj):
+    def client_TCP_connect_all_brokers(self, p_pyhouse_obj):
         """
         This will create a connection for each broker in the config file.
         These connections will automatically reconnect if the connection is broken (broker reboots e.g.)
@@ -54,7 +54,7 @@ class Util(object):
             else:
                 l_factory = PyHouseMqttFactory(p_pyhouse_obj, "DBK1", l_broker)
                 _l_connector = p_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_factory)
-                LOG.info('Connected to broker: {}'.format(l_broker.Name))
+                LOG.info('TCP Connected to broker: {}'.format(l_broker.Name))
                 l_count += 1
         LOG.info('TCP Connected to {} Broker(s).'.format(l_count))
         return l_count
@@ -114,7 +114,7 @@ class API(Util):
     def Start(self):
         self.m_pyhouse_obj.Computer.Mqtt = self.LoadXml(self.m_pyhouse_obj)
         if self.m_pyhouse_obj.Computer.Mqtt.Brokers != {}:
-            l_count = self.client_connect_all_brokers(self.m_pyhouse_obj)
+            l_count = self.client_TCP_connect_all_brokers(self.m_pyhouse_obj)
             LOG.info("Mqtt {} broker(s) Started.".format(l_count))
         else:
             LOG.info('No Mqtt brokers are configured.')
@@ -128,6 +128,7 @@ class API(Util):
         l_mqtt = MqttInformation()
         l_mqtt.Prefix = p_pyhouse_obj.Computer.Name
         l_mqtt.Brokers = mqttXML.read_mqtt_xml(p_pyhouse_obj)
+        LOG.info("Loaded {} Brokers".format(len(l_mqtt.Brokers)))
         return l_mqtt
 
     def SaveXml(self, p_xml):

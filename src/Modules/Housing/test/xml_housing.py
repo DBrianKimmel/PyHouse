@@ -31,8 +31,14 @@ from Modules.Entertainment.test.xml_entertainment import ENTERTAINMENT_XML
 from Modules.Irrigation.test.xml_irrigation import IRRIGATION_XML
 
 
+TESTING_HOUSE_NAME = 'Pink Poppy'
+TESTING_HOUSE_KEY = '0'
+TESTING_HOUSE_ACTIVE = 'True'
+
+L_HOUSE_DIV = "<HouseDivision Name='" + TESTING_HOUSE_NAME + "' Key='" + TESTING_HOUSE_KEY + "' Active='" + TESTING_HOUSE_ACTIVE + "'>"
+
 HOUSE_DIVISION_XML = '\n'.join([
-    "<HouseDivision Name='Pink Poppy' Key='0' Active='True'>",
+    L_HOUSE_DIV,
     "    <UUID>12345678-1002-11e3-b583-333e5f8cdfd2</UUID>",
     XML_LOCATION,
     ROOMS_XML,

@@ -29,7 +29,7 @@ XML_SCHEDULE = """
         <Rate>0</Rate>
         <RoomName>Living Room</RoomName>
         <Time>13:57</Time>
-        <ScheduleType>LightingDevice</ScheduleType>
+        <ScheduleType>Lighting</ScheduleType>
     </Schedule>
     <Schedule Active="True" Key="1" Name="Evening 2">
         <Level>100</Level>
@@ -37,7 +37,7 @@ XML_SCHEDULE = """
         <Rate>0</Rate>
         <RoomName>Living Room</RoomName>
         <Time>13:57</Time>
-        <ScheduleType>LightingDevice</ScheduleType>
+        <ScheduleType>Lighting</ScheduleType>
     </Schedule>
     <Schedule Active="True" Key="2" Name="Evening 3">
         <Level>100</Level>
@@ -45,7 +45,7 @@ XML_SCHEDULE = """
         <Rate>0</Rate>
         <RoomName>Garage</RoomName>
         <Time>sunset - 00:02</Time>
-        <ScheduleType>LightingDevice</ScheduleType>
+        <ScheduleType>Lighting</ScheduleType>
     </Schedule>
     <Schedule Active="True" Key="3" Name="Evening 4">
         <Level>100</Level>
@@ -53,7 +53,7 @@ XML_SCHEDULE = """
         <Rate>0</Rate>
         <RoomName>Foyer</RoomName>
         <Time>sunset</Time>
-        <ScheduleType>LightingDevice</ScheduleType>
+        <ScheduleType>Lighting</ScheduleType>
     </Schedule>
 </ScheduleSection>
 """

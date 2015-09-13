@@ -143,26 +143,6 @@ class A3_Utility(SetupMixin, unittest.TestCase):
         # PrettyPrintAny(self.m_pyhouse_obj.House.FamilyData, 'FamilyData')
         pass
 
-class B1_Utility(SetupMixin, unittest.TestCase):
-
-    def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-
-    def test_01_FindFull(self):
-        """Utility test of _find_full_obj.
-        """
-        l_web_obj = LightData()
-        l_web_obj.Name = TESTING_LIGHTING_LIGHTS_NAME_2
-        self.m_api._read_lighting_xml(self.m_pyhouse_obj)
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'Dump'))
-        l_light = self.m_api._find_full_obj(self.m_pyhouse_obj, l_web_obj)
-        # print(PrettyFormatAny.form(l_light, 'Light'))
-        self.assertEqual(l_light.Name, TESTING_LIGHTING_LIGHTS_NAME_2)
-        #
-        l_web_obj.Name = 'NoSuchLight'
-        l_light = self.m_api._find_full_obj(self.m_pyhouse_obj, l_web_obj)
-        self.assertEqual(l_light, None)
-
 
 class C1_Ops(SetupMixin, unittest.TestCase):
     """ This section tests the operations
