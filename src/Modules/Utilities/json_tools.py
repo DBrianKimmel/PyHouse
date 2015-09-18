@@ -29,7 +29,7 @@ def encode_json(p_obj):
     try:
         l_json = jsonpickle.encode(p_obj, unpicklable = False, max_depth = 5)
     except (TypeError, ValueError) as l_error:
-        LOG.error('ERROR {}'.format(l_error))
+        LOG.error('ERROR encode_json{}'.format(l_error))
         l_json = u'{}'
     return l_json
 
@@ -40,7 +40,7 @@ def decode_json_unicode(p_json):
     try:
         l_json = jsonpickle.decode(p_json)
     except (TypeError, ValueError) as l_error:
-        print('json_tools.encode_json ERROR {0:}'.format(l_error))
+        print('json_tools.decode_json_unicode ERROR {}'.format(l_error))
         l_json = u'{}'
     return l_json
 

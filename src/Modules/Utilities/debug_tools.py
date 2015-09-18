@@ -274,7 +274,7 @@ class PrettyFormatAny(object):
         @return: a string formatted with indentation and newlines.
         """
         l_ret = ''
-        l_tabbedwidths = [indent, 30, maxlen - 30]
+        _l_tabbedwidths = [indent, 30, maxlen - 30]
         l_rough_string = ET.tostring(p_element, 'utf-8')
         l_reparsed = minidom.parseString(l_rough_string)
         l_doc = l_reparsed.toprettyxml()
@@ -289,11 +289,11 @@ class PrettyFormatAny(object):
     @staticmethod
     def _format_list(p_obj, maxlen, indent):
         maxlen = maxlen
-        l_tabbedwidths = [indent, 30, maxlen - 30]
-        l_ix = 1
-        l_ret = ''
+        _l_tabbedwidths = [indent, 30, maxlen - 30]
+        l_ix = 0
+        l_ret = 'Ix\tValue\n--\t-----\n'
         for l_line in p_obj:
-            l_ret += '{}\t{}\n'.format(l_ix, l_line)
+            l_ret += '{}\t"{}";\n'.format(l_ix, l_line)
             l_ix += 1
         return l_ret
 
@@ -317,7 +317,6 @@ class PrettyFormatAny(object):
     def _format_none(p_obj):
         l_ret = 'Object is "None" {}\n'.format(p_obj)
         return l_ret
-
 
 
 # ======================================================================

@@ -7,7 +7,7 @@
 @note:      Created on Apr 29, 2014
 @summary:   This module is for testing local node data.
 
-Passed 0 of 10 tests - DBK - 2015-09-13
+Passed all 9 tests - DBK - 2015-09-13
 
 """
 
@@ -25,13 +25,10 @@ from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
-    """
-    """
 
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        # self.m_api = node_local.API()
 
 
 class FakeNetiface(object):
@@ -41,7 +38,7 @@ class FakeNetiface(object):
 
 class A1_Setup(SetupMixin, unittest.TestCase):
     """
-    This section tests the reading and writing of XML used by node_local.
+    This section tests the setup of the test
     """
 
     def setUp(self):
@@ -54,7 +51,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         self.assertNotEqual(self.m_pyhouse_obj.Xml, None)
 
     def test_02_Data(self):
-        self.m_pyhouse_obj.Computer.Nodes = nodes_xml.Xml().read_all_nodes_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.Computer.Nodes = nodes_xml.Xml.read_all_nodes_xml(self.m_pyhouse_obj)
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'PyHouse Computer'))
         self.assertEqual(len(self.m_pyhouse_obj.Computer.Nodes), 2)
 
@@ -63,9 +60,8 @@ class B1_Iface(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
-        self.m_pyhouse_obj.Computer.Nodes = nodes_xml.Xml().read_all_nodes_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.Computer.Nodes = nodes_xml.Xml.read_all_nodes_xml(self.m_pyhouse_obj)
         self.m_node = NodeData()
-        # self.m_api = node_local.API()
         self.m_iface_api = Interfaces()
 
     def test_01_AllIfaceNames(self):
@@ -98,7 +94,7 @@ class B1_Iface(SetupMixin, unittest.TestCase):
         # On my laptop: returns 7 interfaces.
         # print(PrettyFormatAny.form(l_names, 'Address Lists'))
         l_ret = Interfaces._find_addr_lists(l_names[0])
-        print(PrettyFormatAny.form(l_ret, 'Address Lists'))
+        # print(PrettyFormatAny.form(l_ret, 'Address Lists'))
 
     def test_04_OneInterfaces(self):
         l_names = Interfaces.find_all_interface_names()
@@ -109,17 +105,6 @@ class B1_Iface(SetupMixin, unittest.TestCase):
         l_node = NodeData()
         l_node = Interfaces.get_all_interfaces(l_node)
         print(PrettyFormatAny.form(l_node.NodeInterfaces, 'Node Interfaces'))
-
-    def test_06_GetAddrLists(self):
-        l_interfaces = Interfaces.find_all_interface_names()
-        print(PrettyFormatAny.form(l_interfaces, 'Interfaces'))
-        l_list = Interfaces._get_one_interface(l_interfaces[1])
-        print(PrettyFormatAny.form(l_list, 'Address Lists'))
-        l_names = Interfaces._get_address_list(l_list[2])
-        print(PrettyFormatAny.form(l_names, 'Names'))
-        l_ret = Interfaces._find_addr_lists(l_names[0])
-        print(PrettyFormatAny.form(l_ret, 'Address Lists'))
-        print(PrettyFormatAny.form(l_ret[23][1], 'Address Lists'))
 
 
 class C07_Api(SetupMixin, unittest.TestCase):

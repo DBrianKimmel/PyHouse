@@ -124,7 +124,6 @@ class ControllerData(CoreLightingData):
     """
     def __init__(self):
         super(ControllerData, self).__init__()
-        # self.LightingType = 'Controller'  # Override the Core definition
         self.InterfaceType = ''  # Serial | USB | Ethernet
         self.Port = ''
         # The following are not in XML config file

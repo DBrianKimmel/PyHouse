@@ -9,6 +9,8 @@
 @note:      Created on Jun 5, 2015
 @Summary:   Connect this computer node to the household Mqtt Broker.
 
+Passed all 11 tests - DBK - 2015-09-18
+
 """
 
 # Import system type stuff
@@ -35,6 +37,21 @@ class Struct:
 class Util(object):
     """
     """
+
+    @staticmethod
+    def _dict2Obj(p_dict):
+        """Convert a dict to an Object.
+        """
+        l_obj = namedtuple('MyObj', p_dict)
+        return l_obj
+
+    @staticmethod
+    def _json2dict(p_json):
+        """Convert JSON to Obj.
+        """
+        l_ret = json_tools.decode_json_unicode(p_json)
+        # print((PrettyFormatAny.form(l_ret, 'mqtt_client dict ')))
+        return l_ret
 
     def client_TCP_connect_all_brokers(self, p_pyhouse_obj):
         """
@@ -65,21 +82,7 @@ class Util(object):
         return l_topic
 
     @staticmethod
-    def _dict2Obj(p_dict):
-        """Convert a dict to an Object.
-        """
-        l_obj = namedtuple('MyObj', p_dict)
-        return l_obj
-
-    @staticmethod
-    def _json2dict(p_json):
-        """Convert JSON to Obj.
-        """
-        l_ret = json_tools.decode_json_unicode(p_json)
-        return l_ret
-
-    @staticmethod
-    def _make_message(p_pyhouse_obj, message_json = None, message_obj = None):
+    def _make_message(p_pyhouse_obj, p_message = None):
         """
         @param p_pyhouse_obj: is the entire PyHouse Data tree.
         @param message_json: is message that is already json encoded\
@@ -88,13 +91,13 @@ class Util(object):
         l_message = MqttJson()
         l_message.Sender = p_pyhouse_obj.Computer.Name
         l_message.DateTime = datetime.datetime.now()
-        if message_json != None:
-            l_dict = Util._json2dict(message_json)
-            l_tmp = Struct(**l_dict)
-            xml_tools.stuff_new_attrs(l_message, l_tmp)
-            # print(l_tmp)
-        if message_obj != None:
-            xml_tools.stuff_new_attrs(l_message, message_obj)
+        if p_message == None:
+            pass
+        elif isinstance(p_message, object):
+            xml_tools.stuff_new_attrs(l_message, p_message)
+        else:
+            xml_tools.stuff_new_attrs(l_message, p_message)
+        # print(PrettyFormatAny.form(l_message, 'Mqtt Client - Message'))
         l_json = json_tools.encode_json(l_message)
         return l_json
 
@@ -139,7 +142,7 @@ class API(Util):
 
 # ## The following are public commands that may be called from everywhere
 
-    def MqttPublish(self, p_topic, message_json = None, message_obj = None):
+    def MqttPublish(self, p_topic, p_message):
         """Send a topic, message to the broker for it to distribute to the subscription list
 
         self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("schedule/execute", message-json = l_schedule_json)
@@ -148,7 +151,7 @@ class API(Util):
         @param message_obj: is an additional object thhat we will convert to json and merge it into the message.
         """
         l_topic = Util._make_topic(self.m_pyhouse_obj, p_topic)
-        l_message = Util._make_message(self.m_pyhouse_obj, message_json, message_obj)
+        l_message = Util._make_message(self.m_pyhouse_obj, p_message)
         for l_broker in self.m_pyhouse_obj.Computer.Mqtt.Brokers.itervalues():
             if not l_broker.Active:
                 continue

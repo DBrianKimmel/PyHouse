@@ -10,10 +10,18 @@
 @summary:   This module is for driving serial devices
 
 
-This will interface various PyHouse modules to a serial device.
+This will interface various PyHouse Device Family modules to a serial device.
 
 This may be instanced as many times as there are serial devices to control.
 Some serial USB Dongles also are controlled by this driver as they emulate a serial port.
+
+The overall logic is that:
+    the main lighting, irrigation, hvac, security etc logic needs to change some device so
+    it issues control messages.  These messages got to a family dispatcher and from there
+    go to a Family_device module (or submodule).  There it gets translated to a controller
+    specific emssage(s).  These Messages are then sent to a driver of the kind for that
+    physical controller.  This is the driver for a serial controller.  It presents a serial
+    interface reguardless of the electrical connection.
 
 """
 
@@ -24,6 +32,7 @@ from twisted.internet.serialport import SerialPort
 # Import PyMh files
 from Modules.Utilities.tools import PrintBytes
 from Modules.Computer import logging_pyh as Logger
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.SerialDriver   ')
 
@@ -36,11 +45,14 @@ class SerialProtocol(Protocol):
 
     m_controller_obj = None
 
-    def __init__(self, p_controller_obj):
+    def __init__(self, p_pyhouse_obj, p_controller_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
         self.m_controller_obj = p_controller_obj
 
     def connectionLost(self, reason):
         LOG.error('Connection lost for controller {} - {}'.format(self.m_controller_obj.Name, reason))
+        self.m_controller_obj.Stop()
+        self.m_controller_obj.Start(self.m_pyhouse_obj, self.m_controller_obj)
 
     def connectionMade(self):
         LOG.info('Connection made for controller {}'.format(self.m_controller_obj.Name))
@@ -64,12 +76,16 @@ class SerialAPI(object):
         """
         p_controller_obj._Data = ''
         try:
-            self.m_serial = SerialPort(SerialProtocol(p_controller_obj), p_controller_obj.Port,
-                    p_pyhouse_obj.Twisted.Reactor, baudrate = p_controller_obj.BaudRate)
+            self.m_serial = SerialPort(SerialProtocol(p_pyhouse_obj, p_controller_obj),
+                    p_controller_obj.Port,
+                    p_pyhouse_obj.Twisted.Reactor,
+                    baudrate = p_controller_obj.BaudRate)
         except Exception as e_err:
             LOG.error("ERROR Open failed for Device:{}, Port:{} - {}".format(p_controller_obj.Name, p_controller_obj.Port, e_err))
+            p_controller_obj.Active = False
             return False
         LOG.info("Opened Device:{}, Port:{}".format(p_controller_obj.Name, p_controller_obj.Port))
+        p_controller_obj.Active = True
         return True
 
     def close_device(self, p_controller_obj):
@@ -109,6 +125,7 @@ class API(SerialAPI):
         """
         @param p_controller_obj: is the Controller_Data object for a serial device to open.
         """
+        # print(PrettyFormatAny.form(p_controller_obj, 'Controller'))
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_controller_obj = p_controller_obj
         l_ret = self.open_serial_driver(p_pyhouse_obj, p_controller_obj)

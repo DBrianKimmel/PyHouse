@@ -31,11 +31,9 @@ import platform
 from Modules.Core.data_objects import NodeData, NodeInterfaceData
 from Modules.Communication import ir_control
 from Modules.Computer import logging_pyh as Logger
-from Modules.Computer.Nodes import nodes_xml
-# from Modules.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Computer.Nodes import nodes_xml
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
-
-g_debug = 0
 LOG = Logger.getLogger('PyHouse.NodeLocal      ')
 
 
@@ -69,6 +67,15 @@ class Interfaces(object):
         Windows return an UUID as the name
         Linux before about 2015 returned something like eth0, wlan0, or lo0.
         Later Linuxes return a descriptive id that contains a physical slot.
+
+            Windows 7
+                Ix    Value
+                --    -----
+                0    "{EF4795CF-8D57-463B-B8C2-10CD2804396D}";
+                1    "{59F2EEE3-780E-4B30-80B2-EB8216CC63B6}";
+                2    "{5A910E84-B99A-43FF-A257-67149139B4AF}";
+                3    "{EA594141-246C-4537-B0CF-DA1DDCDD956C}";
+
         @return: a list of interface names
         """
         l_interface_names = netifaces.interfaces()
@@ -86,8 +93,9 @@ class Interfaces(object):
 
     @staticmethod
     def _find_addr_lists(p_interface_name):
-        """This returns a dict with the key = interface type (-1000 = MAC Addr, 2 = INET, 23 = INET6)
-        The values are a list of dicts of addresses for that interface.
+        """
+        @return:  a dict with the key = interface type (-1000 = MAC Addr, 2 = INET, 23 = INET6)
+                    The values are a list of dicts of addresses for that interface.
         """
         l_ret = netifaces.ifaddresses(p_interface_name)
         return l_ret
@@ -102,12 +110,16 @@ class Interfaces(object):
 
     @staticmethod
     def _get_one_interface(p_interface_name):
+        """ Gather the information about a single interface given the interfave name.
+        """
         l_interface = NodeInterfaceData()
         l_interface.Name = p_interface_name
         l_interface.Active = True
         l_interface.UUID = '123'
         l_interface.NodeInterfaceType = 'Other'
-        for l_af in Interfaces._find_addr_lists(p_interface_name):
+        l_ifs = Interfaces._find_addr_lists(p_interface_name)
+        # print(PrettyFormatAny.form(l_ifs, 'Ifs'))
+        for l_af in Interfaces._find_addr_lists(p_interface_name).iterkeys():
             if Interfaces._find_addr_family_name(l_af) == 'AF_PACKET':
                 l_interface.MacAddress = Interfaces._find_addr_lists(p_interface_name)[l_af]
             if Interfaces._find_addr_family_name(l_af) == 'AF_INET':
@@ -119,17 +131,19 @@ class Interfaces(object):
         return l_interface
 
     @staticmethod
-    def get_all_interfaces(p_node):
+    def _get_all_interfaces():
         """
         @return: a dict of interfaces for this node.
         """
         l_count = 0
+        l_dict = {}
         for l_interface_name in Interfaces.find_all_interface_names():
             l_iface = Interfaces._get_one_interface(l_interface_name)
             l_iface.Key = l_count
-            p_node.NodeInterfaces[l_count] = l_iface
+            l_dict[l_count] = l_iface
             l_count += 1
-        return p_node
+        LOG.info('Added {} Interfaces to local node'.format(l_count))
+        return l_dict
 
 
 class HandleNodeType(object):
@@ -154,14 +168,16 @@ class HandleNodeType(object):
 
 class Util(object):
 
-    def _is_camera_node(self):
+    @staticmethod
+    def _is_camera_node():
         """
         Test to see if this node has a camera attached
         """
         l_ret = NODE_NOTHING
         return l_ret
 
-    def _is_controller_node(self):
+    @staticmethod
+    def _is_controller_node():
         """
         Test to see if this node has a controller attached
         """
@@ -173,7 +189,8 @@ class Util(object):
                 LOG.info('Lighting Node')
         return l_ret
 
-    def _is_ir_node(self):
+    @staticmethod
+    def _is_ir_node():
         """
         Test to see if this node has an IR sensor attached.
         I only have a PiFace-CAD attached
@@ -185,7 +202,8 @@ class Util(object):
                 LOG.info('Lirc Node')
         return l_ret
 
-    def _is_pandora_node(self):
+    @staticmethod
+    def _is_pandora_node():
         """
         Test to see if this node is a Pandora player
         """
@@ -195,35 +213,39 @@ class Util(object):
             LOG.info('This node is a Pandora Player Node')
         return l_ret
 
-    def _is_v6_router_node(self):
+    @staticmethod
+    def _is_v6_router_node():
         l_ret = NODE_NOTHING
         return l_ret
 
-    def _is_tunnel_node(self):
+    @staticmethod
+    def _is_tunnel_node():
         l_ret = NODE_NOTHING
         return l_ret
 
-    def _unix_node_test(self, p_role):
-        p_role |= self._is_camera_node()
-        p_role |= self._is_controller_node()
-        p_role |= self._is_ir_node()
-        p_role |= self._is_pandora_node()
-        p_role |= self._is_v6_router_node()
-        p_role |= self._is_tunnel_node()
+    @staticmethod
+    def _unix_node_test(p_role):
+        p_role |= Util._is_camera_node()
+        p_role |= Util._is_controller_node()
+        p_role |= Util._is_ir_node()
+        p_role |= Util._is_pandora_node()
+        p_role |= Util._is_v6_router_node()
+        p_role |= Util._is_tunnel_node()
         return p_role
 
     @staticmethod
-    def get_node_info():
+    def _get_node_info():
         l_node = NodeData
         l_node.Name = platform.node()
         l_node.Key = 0
         l_node.Active = True
         return l_node
 
-    def find_node_role(self):
+    @staticmethod
+    def find_node_role():
         l_role = NODE_NOTHING
         try:
-            self._unix_node_test(l_role)
+            Util._unix_node_test(l_role)
         except WindowsError:
             l_role |= NODE_WINDOWS
             LOG.info('Windows Node')
@@ -259,13 +281,13 @@ class Util(object):
         except AttributeError:
             pass
         p_pyhouse_obj.Computer.Nodes[l_max_key + 1] = p_node
-        if g_debug >= 1:
-            LOG.info('Nodes = {0:}'.format(p_pyhouse_obj.Compute.Nodes))
+        LOG.info('Nodes = {}'.format(p_pyhouse_obj.Compute.Nodes))
 
     @staticmethod
     def create_local_node(p_pyhouse_obj):
-        l_node = p_pyhouse_obj.Computer.Nodes[0]
-        Interfaces.get_all_interfaces(l_node)
+        l_node = Util._get_node_info()
+        l_node.NodeInterfaces = Interfaces._get_all_interfaces()
+        l_node.NodeRole = Util.find_node_role()
         return l_node
 
 
@@ -277,10 +299,8 @@ class API(Util):
         self.m_pyhouse_obj = p_pyhouse_obj
 
     def Start(self):
-        self.m_pyhouse_obj.Computer.Nodes = self.LoadXml(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.Computer.Nodes[0] = Util.get_node_info()  # Name, Key Active for this node
+        # self.m_pyhouse_obj.Computer.Nodes = self.LoadXml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Computer.Nodes[0] = Util.create_local_node(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.Computer.Nodes[0].NodeRole = self.find_node_role()
         self.init_node_type(self.m_pyhouse_obj)
 
     def Stop(self):
@@ -289,12 +309,9 @@ class API(Util):
     def LoadXml(self, p_pyhouse_obj):
         """ Load the Mqtt xml info.
         """
-        l_nodes = nodes_xml.Xml().read_all_nodes_xml(p_pyhouse_obj)
-        return l_nodes
+        pass
 
     def SaveXml(self, p_xml):
-        l_xml = nodes_xml.Xml().write_nodes_xml(self.m_pyhouse_obj.Computer.Nodes)
-        p_xml.append(l_xml)
-        LOG.info("Saved XML.")
+        pass
 
 # ## END DBK
