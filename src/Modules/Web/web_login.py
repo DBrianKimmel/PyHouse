@@ -111,7 +111,8 @@ class LoginElement(athena.LiveElement):
         l_login_obj.LoginEncryptedPassword = p_obj['Password']
         LOG.info('Login Attempt using: {}'.format(PrettyFormatAny.form(l_login_obj, 'Login Obj')))
         #
-        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Web.Logins, 'Logins'))
+        if l_login_obj.LoginName in self.m_pyhouse_obj.Computer.Web.Logins:
+            pass
         for l_user in self.m_pyhouse_obj.Computer.Web.Logins.itervalues():
             LOG.debug(PrettyFormatAny.form(l_user, 'User Obj'))
             if l_user.Name == l_login_obj.LoginName:
