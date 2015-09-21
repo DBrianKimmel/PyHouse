@@ -74,8 +74,7 @@ class API(object):
         l_light_obj = Utility.get_light_object(p_pyhouse_obj, name = p_schedule_obj.LightName)
         LOG.info("Name:{}, Light:{}, Level:{}".format(p_schedule_obj.Name, p_schedule_obj.LightName, p_schedule_obj.Level))
         API.ChangeLight(p_pyhouse_obj, l_light_obj, 'shedule', p_schedule_obj.Level)
-        l_schedule_json = json_tools.encode_json(p_schedule_obj)
-        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("schedule/execute", message_json = l_schedule_json)
+        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("schedule/execute", p_schedule_obj)
 
     @staticmethod
     def ChangeLight(p_pyhouse_obj, p_light_obj, p_source, p_new_level, _p_rate = None):
