@@ -15,6 +15,8 @@ Passed all 16 tests - DBK - 2015-09-10
 import datetime
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
+import twisted
+import time
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import RiseSetData
@@ -70,6 +72,7 @@ class SetupMixin(object):
         self.m_schedules = scheduleXml.read_schedules_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Schedule = self.m_schedules
         self.m_schedule_obj = self.m_schedules[0]
+        twisted.internet.base.DelayedCall.debug = True
 
 
 class A2_Utility(SetupMixin, unittest.TestCase):
@@ -241,15 +244,26 @@ class C4_Setup(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_pyhouse_obj.House.Schedules = scheduleXml.read_schedules_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.APIs.Computer.MqttAPI = mqttAPI(self.m_pyhouse_obj)
+        twisted.internet.base.DelayedCall.debug = True
+
+    def tearDown(self):
+        pass
 
     def test_01_BuildSched(self):
         l_delay, l_list = scheduleUtility.find_next_scheduled_events(self.m_pyhouse_obj, T_NOW)
-        print('Delay: {} {}'.format(l_delay, l_list))
+        # print('Delay: {} {}'.format(l_delay, l_list))
         self.assertEqual(len(l_list), 2)
+        self.assertEqual(l_delay, 50220)
+        self.assertEqual(l_list[0], 0)
+        self.assertEqual(l_list[1], 1)
 
-    def test_02_yyy(self):
+    def test_02_sched(self):
         # PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse_obj')
-        pass
+        l_delay = 1
+        l_list = [0, 1]
+        l_id = scheduleUtility.schedule_next_event(self.m_pyhouse_obj, l_delay)
+        time.sleep(2 * l_delay)
+        # l_id.cancel()
 
     def Xtest_03_RunSchedule(self):
         pass

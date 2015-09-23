@@ -44,6 +44,7 @@ Operation:
 # Import system type stuff
 import datetime
 import dateutil.parser as dparser
+import twisted
 
 # Import PyMh files
 from Modules.Hvac.hvac_actions import API as hvacActionsAPI
@@ -59,6 +60,8 @@ SECONDS_IN_WEEK = 7 * 24 * 60 * 60
 INITIAL_DELAY = 5  # Must be from 5 to 30 seconds.
 PAUSE_DELAY = 5
 
+
+twisted.internet.base.DelayedCall.debug = True
 
 class RiseSet(object):
     def __init__(self):
@@ -237,15 +240,18 @@ class Utility(object):
         return l_min_seconds, l_schedule_key_list
 
     @staticmethod
-    def run_timer(p_pyhouse_obj):
+    def schedule_next_event(p_pyhouse_obj, p_delay = 0):
         """ Find the list of schedules to run, call the timer to run at the time in the schedules.
         @param p_pyhouse_obj: is the grand repository of information
         @param p_delay: is the delay time for the timer.
         @param p_list: is a list of schedule keys for the next schedule execution.
         """
         l_delay, l_list = Utility.find_next_scheduled_events(p_pyhouse_obj, datetime.datetime.now())
+        if p_delay != 0:
+            l_delay = p_delay
         l_command = lambda l_pyh = p_pyhouse_obj, l_list = l_list: ScheduleExecution.execute_schedules_list(l_pyh, l_list)
-        l_runID = p_pyhouse_obj.Twisted.Reactor.callLater(l_delay, l_command, None)
+        # l_runID = p_pyhouse_obj.Twisted.Reactor.callLater(l_delay, l_command, None)
+        l_runID = p_pyhouse_obj.Twisted.Reactor.callLater(l_delay, ScheduleExecution.execute_schedules_list, p_pyhouse_obj, l_list)
         return l_runID
 
 
@@ -288,7 +294,6 @@ class API(object):
     def RestartSchedule(self):
         """ Anything that alters the schedules should call this to cause the new schedules to take effect.
         """
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, Utility.run_timer, self.m_pyhouse_obj)
-        # Utility.find_next_scheduled_events(self.m_pyhouse_obj, datetime.datetime.now())
+        self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, Utility.schedule_next_event, self.m_pyhouse_obj)
 
 # ## END DBK

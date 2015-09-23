@@ -71,7 +71,7 @@ class Util(object):
             else:
                 l_factory = PyHouseMqttFactory(p_pyhouse_obj, "DBK1", l_broker)
                 _l_connector = p_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_factory)
-                LOG.info('TCP Connected to broker: {}'.format(l_broker.Name))
+                LOG.info('TCP Connected to broker: {}; Host:{}'.format(l_broker.Name, l_host))
                 l_count += 1
         LOG.info('TCP Connected to {} Broker(s).'.format(l_count))
         return l_count

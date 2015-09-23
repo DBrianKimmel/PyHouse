@@ -305,7 +305,7 @@ class XmlConfigTools(object):
             p_base_obj.Active = PutGetXML.get_bool_from_xml(p_entry_element_xml, 'Active', False)
         except Exception as e_err:
             LOG.error('{}'.format(e_err))
-            print('Error: {}'.format(p_entry_element_xml))
+            # print('Error: {}'.format(p_entry_element_xml))
         return p_base_obj
 
     @staticmethod

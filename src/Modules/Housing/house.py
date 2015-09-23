@@ -33,7 +33,7 @@ from Modules.Scheduling.sunrisesunset import API as sunriseAPI
 from Modules.Security.security import API as securityAPI
 from Modules.Utilities.xml_tools import XmlConfigTools
 from Modules.Computer import logging_pyh as Logger
-from Modules.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.House          ')
 
@@ -168,6 +168,17 @@ class API(Utility):
         LOG.info("Stopping House.")
         self.stop_house_parts()
         LOG.info("Stopped.")
+
+    def LoadXml(self, p_pyhouse_obj):
+        l_house = Xml.read_house_xml(p_pyhouse_obj)
+        # p_pyhouse_obj.APIs.House.EntertainmentAPI.Start()
+        # p_pyhouse_obj.APIs.House.HvacAPI.Start()
+        # p_pyhouse_obj.APIs.House.IrrigationAPI.Start()
+        p_pyhouse_obj.APIs.House.LightingAPI.LoadXml(p_pyhouse_obj)
+        # p_pyhouse_obj.APIs.House.PoolAPI.Start()
+        # p_pyhouse_obj.APIs.House.ScheduleAPI.Start()
+        # p_pyhouse_obj.APIs.House.SecurityAPI.Start()
+        return
 
     def SaveXml(self, p_xml):
         """

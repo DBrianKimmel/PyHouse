@@ -184,4 +184,18 @@ class SetupPyHouseObj(object):
     def setUp(self):
         self.BuildPyHouseObj()
 
+
+class LoadPyHouse(object):
+    """
+    """
+
+    def __init__(self):
+        pass
+
+    def load_computer(self):
+        pass
+
+    def load_house(self):
+        pass
+
 # ## END DBK

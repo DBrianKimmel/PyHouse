@@ -522,14 +522,14 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
         @param p_client_id: is the ID of this computer that will be supplied to the broker
         @param p_broker: is the object for this broker
         """
-        LOG.info('Mqtt Factory Initialized')
+        LOG.info('Mqtt Factory Initialized.  Broker: {}'.format(p_broker.Name))
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_broker = p_broker
         p_broker._ProtocolAPI = self
         self.m_clientID = p_client_id
 
     def startedConnecting(self, p_connector):
-        # LOG.warn('Started to connect. {}'.format(p_connector))
+        LOG.info('Started to connect. {}'.format(p_connector))
         pass
 
     def buildProtocol(self, p_addr):
