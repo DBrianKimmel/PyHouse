@@ -23,7 +23,6 @@ import usb.util
 from twisted.internet import reactor
 
 # Import PyHouse modules
-# from Modules.Utilities.tools import PrintBytes
 from Modules.Computer import logging_pyh as Logger
 
 callLater = reactor.callLater

@@ -140,7 +140,7 @@ class A3_Utility(SetupMixin, unittest.TestCase):
     def test_05_FamilyData(self):
         """Family Data
         """
-        # PrettyPrintAny(self.m_pyhouse_obj.House.FamilyData, 'FamilyData')
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.House.FamilyData, 'FamilyData'))
         pass
 
 

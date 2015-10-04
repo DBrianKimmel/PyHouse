@@ -16,7 +16,7 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Housing.house import API, Xml as houseXml
+from Modules.Housing.house import API as houseAPI, Xml as houseXml
 from Modules.Utilities import xml_tools, json_tools
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
@@ -31,7 +31,7 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_api = API(self.m_pyhouse_obj)
+        self.m_api = houseAPI(self.m_pyhouse_obj)
 
 
 class A1_Setup(SetupMixin, unittest.TestCase):
@@ -82,6 +82,12 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_house_obj.Name, TESTING_HOUSE_NAME)
         self.assertEqual(l_house_obj.Location.Street, TESTING_LOCATION_STREET)
         self.assertEqual(l_house_obj.Rooms[0].Name, TESTING_ROOM_NAME_0)
+
+    def test_07_Load(self):
+        """ Load all the XML for a house
+        """
+        l_xml = self.m_api.LoadXml(self.m_pyhouse_obj)
+        print(PrettyFormatAny.form(l_xml, 'XML'))
 
 
 class C03_Write(SetupMixin, unittest.TestCase):

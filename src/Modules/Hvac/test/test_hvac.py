@@ -15,10 +15,12 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import ThermostatData
+from Modules.Hvac.hvac import API as hvacAPI
 from Modules.Hvac import thermostats
 from Modules.Families import family
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -27,23 +29,28 @@ class SetupMixin(object):
 
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
-        self.m_pyhouse_obj.House.FamilyData = family.API().build_lighting_family_info()
+        # self.m_pyhouse_obj.House.FamilyData = family.API().build_lighting_family_info()
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_api = thermostats.API()
+        self.m_api = hvacAPI(self.m_pyhouse_obj)
         self.m_thermostat_obj = ThermostatData()
 
 
-
-class Test(SetupMixin, unittest.TestCase):
+class A1_XML(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.House.FamilyData = family.API().build_lighting_family_info()
 
-    def tearDown(self):
-        pass
+    def test_01_BuildObjects(self):
+        """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
+        """
+        self.assertEqual(self.m_pyhouse_obj.House.Hvac, None)
+        # print(PrettyFormatAny.form(self.m_xml.thermostat_sect, 'Thermostat'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'Family'))
 
-    def testName(self):
-        pass
+    def test_02_Load(self):
+        """
+        """
+        l_obj = self.m_api.LoadXml(self.m_pyhouse_obj)
+        print(PrettyFormatAny.form(l_obj[0], 'Loaded'))
 
 # ## END DBK

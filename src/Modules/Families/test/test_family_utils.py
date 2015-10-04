@@ -33,6 +33,7 @@ from Modules.Families.Insteon.test.xml_insteon import \
 from Modules.Core.test.xml_device import \
         TESTING_DEVICE_ROOM_NAME, \
         TESTING_DEVICE_FAMILY_INSTEON
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -60,7 +61,12 @@ class A1_XML(SetupMixin, unittest.TestCase):
     def test_01_Setup(self):
         """ Did we get everything set up for the rest of the tests of this class.
         """
+        # print(PrettyFormatAny.form(VALID_FAMILIES, 'Valid'))
         self.assertEqual(len(VALID_FAMILIES), len(self.m_pyhouse_obj.House.FamilyData))
+        self.assertEqual(VALID_FAMILIES[0], 'Null')
+        self.assertEqual(VALID_FAMILIES[1], 'Insteon')
+        self.assertEqual(VALID_FAMILIES[2], 'UPB')
+        self.assertEqual(VALID_FAMILIES[3], 'X10')
 
 
 class B1_Utils(SetupMixin, unittest.TestCase):
@@ -76,10 +82,10 @@ class B1_Utils(SetupMixin, unittest.TestCase):
 
     def test_03_GetFamilyObj(self):
         l_obj = FamUtil._get_family_obj(self.m_pyhouse_obj, self.m_device_obj)
-        # PrettyPrintAny(l_obj, 'Family')
+        # print(PrettyFormatAny.form(l_obj, 'Family'))
         self.assertEqual(l_obj.Name, 'Insteon')
         self.assertEqual(l_obj.Active, True)
-        self.assertEqual(l_obj.Key, 0)
+        self.assertEqual(l_obj.Key, 1)
         self.assertEqual(l_obj.FamilyDeviceModuleName, 'Insteon_device')
         self.assertEqual(l_obj.FamilyPackageName, 'Modules.Families.Insteon')
         self.assertEqual(l_obj.FamilyXmlModuleName, 'Insteon_xml')
@@ -135,7 +141,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         l_xml = self.m_xml.light
         l_device = self.m_device_obj
         l_light = FamUtil.read_family_data(self.m_pyhouse_obj, l_device, l_xml)
-        PrettyPrintAny(l_light, 'Light')
+        # print(PrettyFormatAny.form(l_light, 'Light'))
         self.assertEqual(l_light.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS))
 
     def test_05_Light(self):

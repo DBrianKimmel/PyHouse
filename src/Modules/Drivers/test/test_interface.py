@@ -20,7 +20,6 @@ from Modules.Drivers.interface import Xml as interfaceXml
 from Modules.Lighting.lighting_controllers import API as controllerAPI
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.tools import PrettyPrintAny
 
 class SetupMixin(object):
     """

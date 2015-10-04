@@ -19,18 +19,21 @@ from twisted.internet import reactor
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import \
-            PyHouseData, PyHouseAPIs, \
+            PyHouseData, \
+            PyHouseAPIs, \
             CoreServicesInformation, \
-            ComputerInformation, ComputerAPIs, \
-            HouseInformation, HouseAPIs, \
+            ComputerInformation, \
+            ComputerAPIs, \
+            HouseInformation, \
+            HouseAPIs, \
             LocationData, \
             TwistedInformation, \
             XmlInformation
+from Modules.Families.family import Utility as familyUtil, API as familyAPI
+from Modules.Housing.house import API as housingAPI
 from Modules.Computer import logging_pyh as Logger
-from Modules.Families.family import Utility as familyUtil
-# LOG = Logger.getLogger('PyHouse').addHandler(logging.StreamHandler(stream = sys.stderr))
 #
-# Different logging to cause testing logs to come out in red on the console.
+# Different logging setup to cause testing logs to come out in red on the console.
 #
 l_format = '\n [%(levelname)s] %(name)s: %(funcName)s %(lineno)s:\n\t%(message)s'
 l_formatter = logging.Formatter(fmt = l_format)
@@ -43,10 +46,6 @@ LOG.addHandler(l_handler)
 class XmlData(object):
     """
     Testing XML infrastructure
-        PyHouse
-            Divisions
-                Sections
-                    Item XML
     """
     def __init__(self):
         self.root = None
@@ -59,12 +58,14 @@ class XmlData(object):
         self.controller = None
         self.light_sect = None
         self.light = None
-
         self.location_sect = None
+        self.pool_sect = None
+        self.pool = None
         self.room_sect = None
         self.room = None
         self.schedule_sect = None
         self.schedule = None
+        self.hvac_sect = None
         self.thermostat_sect = None
         self.thermostat = None
         #
@@ -75,11 +76,25 @@ class XmlData(object):
         self.updater_sect = None
         self.log_sect = None
         self.web_sect = None
-        #
         self.node_sect = None
         self.node = None
         self.interface_sect = None
         self.interface = None
+
+
+class LoadPyHouse(object):
+    """
+    """
+
+    def __init__(self):
+        pass
+
+    def load_computer(self):
+        pass
+
+    def load_house(self, p_pyhouse_obj):
+        housingAPI.LoadXml(p_pyhouse_obj)
+        return
 
 
 class SetupPyHouseObj(object):
@@ -121,6 +136,49 @@ class SetupPyHouseObj(object):
         l_apis.House = HouseAPIs()
         return l_apis
 
+    def _computer_xml(self, p_xml):
+        p_xml.computer_div = p_xml.root.find('ComputerDivision')
+        #
+        p_xml.node_sect = p_xml.computer_div.find('NodeSection')
+        p_xml.node = p_xml.node_sect.find('Node')
+        p_xml.interface_sect = p_xml.node.find('InterfaceSection')
+        p_xml.interface = p_xml.interface_sect.find('Interface')
+        #
+        p_xml.internet_sect = p_xml.computer_div.find('InternetSection')
+        p_xml.internet = p_xml.internet_sect.find('Internet')
+        p_xml.locater_sect = p_xml.internet_sect.find('LocaterUrlSection')
+        p_xml.updater_sect = p_xml.internet_sect.find('UpdaterUrlSection')
+        #
+        p_xml.mqtt_sect = p_xml.computer_div.find('MqttSection')
+        p_xml.broker = p_xml.mqtt_sect.find('Broker')
+        p_xml.web_sect = p_xml.computer_div.find('WebSection')
+
+    def _house_xml(self, p_xml):
+        p_xml.house_div = p_xml.root.find('HouseDivision')
+        #
+        p_xml.irrigation_sect = p_xml.house_div.find('IrrigationSection')
+        p_xml.location_sect = p_xml.house_div.find('LocationSection')
+        p_xml.pool_sect = p_xml.house_div.find('PoolSection')
+        p_xml.room_sect = p_xml.house_div.find('RoomSection')
+        p_xml.schedule_sect = p_xml.house_div.find('ScheduleSection')
+        p_xml.hvac_sect = p_xml.house_div.find('HvacSection')
+        #
+        p_xml.lighting_sect = p_xml.house_div.find('LightingSection')
+        p_xml.button_sect = p_xml.lighting_sect.find('ButtonSection')
+        p_xml.controller_sect = p_xml.lighting_sect.find('ControllerSection')
+        p_xml.light_sect = p_xml.lighting_sect.find('LightSection')
+        #
+        p_xml.button = p_xml.button_sect.find('Button')
+        p_xml.controller = p_xml.controller_sect.find('Controller')
+        p_xml.irrigation_system = p_xml.irrigation_sect.find('IrrigationSystem')
+        p_xml.irrigation_zone = p_xml.irrigation_system.find('Zone')
+        p_xml.light = p_xml.light_sect.find('Light')
+        p_xml.pool = p_xml.pool_sect.find('Pool')
+        p_xml.room = p_xml.room_sect.find('Room')
+        p_xml.schedule = p_xml.schedule_sect.find('Schedule')
+        p_xml.thermostat_sect = p_xml.hvac_sect.find('ThermostatSection')
+        p_xml.thermostat = p_xml.thermostat_sect.find('Thermostat')
+
     def BuildPyHouseObj(self, p_root):
         l_pyhouse_obj = PyHouseData()
         l_pyhouse_obj.APIs = self._build_apis()
@@ -135,67 +193,19 @@ class SetupPyHouseObj(object):
     def BuildXml(self, p_root_xml):
         l_xml = XmlData()
         l_xml.root = p_root_xml
-        try:
-            l_xml.house_div = l_xml.root.find('HouseDivision')
-            #
-            l_xml.irrigation_sect = l_xml.house_div.find('IrrigationSection')
-            l_xml.location_sect = l_xml.house_div.find('LocationSection')
-            l_xml.room_sect = l_xml.house_div.find('RoomSection')
-            l_xml.schedule_sect = l_xml.house_div.find('ScheduleSection')
-            l_xml.thermostat_sect = l_xml.house_div.find('ThermostatSection')
-            #
-            l_xml.lighting_sect = l_xml.house_div.find('LightingSection')
-            l_xml.button_sect = l_xml.lighting_sect.find('ButtonSection')
-            l_xml.controller_sect = l_xml.lighting_sect.find('ControllerSection')
-            l_xml.light_sect = l_xml.lighting_sect.find('LightSection')
-            #
-            l_xml.button = l_xml.button_sect.find('Button')
-            l_xml.controller = l_xml.controller_sect.find('Controller')
-            l_xml.irrigation_system = l_xml.irrigation_sect.find('IrrigationSystem')
-            l_xml.irrigation_zone = l_xml.irrigation_system.find('Zone')
-            l_xml.light = l_xml.light_sect.find('Light')
-            l_xml.room = l_xml.room_sect.find('Room')
-            l_xml.schedule = l_xml.schedule_sect.find('Schedule')
-            l_xml.thermostat = l_xml.thermostat_sect.find('Thermostat')
-            #
-            #
-            #
-            l_xml.computer_div = l_xml.root.find('ComputerDivision')
-            #
-            l_xml.node_sect = l_xml.computer_div.find('NodeSection')
-            l_xml.node = l_xml.node_sect.find('Node')
-            l_xml.interface_sect = l_xml.node.find('InterfaceSection')
-            l_xml.interface = l_xml.interface_sect.find('Interface')
-            #
-            l_xml.internet_sect = l_xml.computer_div.find('InternetSection')
-            l_xml.internet = l_xml.internet_sect.find('Internet')
-            l_xml.locater_sect = l_xml.internet_sect.find('LocaterUrlSection')
-            l_xml.updater_sect = l_xml.internet_sect.find('UpdaterUrlSection')
-            #
-            l_xml.mqtt_sect = l_xml.computer_div.find('MqttSection')
-            l_xml.broker = l_xml.mqtt_sect.find('Broker')
-            #
-            l_xml.web_sect = l_xml.computer_div.find('WebSection')
-
-        except AttributeError as e_err:
-            print('ERROR {}'.format(e_err))
+        self._computer_xml(l_xml)
+        self._house_xml(l_xml)
         return l_xml
+
+    def LoadComputer(self):
+        pass
+
+    def LoadHouse(self, p_pyhouse_obj):
+        p_pyhouse_obj.House.FamilyData = familyAPI(p_pyhouse_obj).LoadFamilyTesting()
+        housingAPI(p_pyhouse_obj).LoadXml(p_pyhouse_obj)
+        return
 
     def setUp(self):
         self.BuildPyHouseObj()
-
-
-class LoadPyHouse(object):
-    """
-    """
-
-    def __init__(self):
-        pass
-
-    def load_computer(self):
-        pass
-
-    def load_house(self):
-        pass
 
 # ## END DBK

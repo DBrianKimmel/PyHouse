@@ -71,8 +71,11 @@ class API(object):
 
     @staticmethod
     def DoSchedule(p_pyhouse_obj, p_schedule_obj):
+        """
+        """
         l_light_obj = Utility.get_light_object(p_pyhouse_obj, name = p_schedule_obj.LightName)
-        LOG.info("Name:{}, Light:{}, Level:{}".format(p_schedule_obj.Name, p_schedule_obj.LightName, p_schedule_obj.Level))
+        LOG.info("Name:{}, Light:{}, Level:{}  {}  {}".format(p_schedule_obj.Name, p_schedule_obj.LightName,
+                p_schedule_obj.Level, l_light_obj.Name, l_light_obj.Key))
         API.ChangeLight(p_pyhouse_obj, l_light_obj, 'shedule', p_schedule_obj.Level)
         p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("schedule/execute", p_schedule_obj)
 
@@ -88,9 +91,9 @@ class API(object):
             @param p_new_level: is the percent of light we are changing to
             @param p_rate: is the rate the change will ramp to.
         """
-        l_light_obj = Utility.get_light_object(p_pyhouse_obj, name = p_light_obj.LightName)  # web has some info missing - get all the object
+        l_light_obj = Utility.get_light_object(p_pyhouse_obj, name = p_light_obj.Name)  # web has some info missing - get all the object
         try:
-            LOG.info("Turn Light {} to level {}, DeviceFamily:{}".format(l_light_obj.Name, p_new_level, l_light_obj.DeviceFamily))
+            LOG.info('Turn Light: "{}" to level: "{}", DeviceFamily: "{}"'.format(l_light_obj.Name, p_new_level, l_light_obj.DeviceFamily))
             l_family_api = FamUtil._get_family_device_api(p_pyhouse_obj, l_light_obj)
             l_family_api.ChangeLight(l_light_obj, p_source, p_new_level)
         except Exception as e_err:

@@ -295,12 +295,13 @@ class IrrigationZoneData(DeviceData):
         self.Duration = 0  # On time in seconds
 
 
-class PoolData(DeviceData):
+class PoolData(BaseObject):
     """
     """
     def __init__(self):
         super(PoolData, self).__init__()
-        self.DeviceFamily = 'Null'
+        self.Comment = None
+        self.PoolType = None  # 'Pool', 'Pond', 'HotTub'
 
 
 class ThermostatData(DeviceData):
@@ -453,6 +454,8 @@ class RiseSetData(object):
     def __init__(self):
         self.SunRise = None
         self.SunSet = None
+        self.Dusk = None
+        self.Dawn = None
 
 
 class LocationData(object):
@@ -464,10 +467,19 @@ class LocationData(object):
         self.City = ''
         self.State = 'FL'
         self.ZipCode = '12345'
+        self.Region = 'America'
         self.Latitude = 28.938448
         self.Longitude = -82.517208
+        self.Elevation = 30
         self.Phone = ''
         self.TimeZoneName = 'America/New_York'
+        #
+        self._name = 'Greenwich'
+        self._region = 'England'
+        # self._latitude = 51.168
+        # self._longitude = 0
+        # self._elevation = 24
+
         #
         self.DomainID = None
         self.RiseSet = RiseSetData()  # RiseSetData()

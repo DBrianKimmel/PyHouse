@@ -7,6 +7,8 @@
 @note:      Created on Jul 12, 2015
 @Summary:
 
+Passed all 11 tests - DBK - 2015-09-24
+
 """
 
 # Import system type stuff
@@ -20,14 +22,14 @@ from Modules.Core.test.xml_device import \
         TESTING_DEVICE_ROOM_NAME, \
         TESTING_DEVICE_FAMILY_INSTEON
 from Modules.Hvac.test.xml_hvac import \
-        TESTING_THERMOSTAT_NAME, \
-        TESTING_THERMOSTAT_ACTIVE, \
-        TESTING_THERMOSTAT_KEY, \
-        TESTING_THERMOSTAT_COOL_SETPOINT, \
-        TESTING_THERMOSTAT_DEVICE_FAMILY, \
-        TESTING_THERMOSTAT_HEAT_SETPOINT, \
-        TESTING_THERMOSTAT_MODE, \
-        TESTING_THERMOSTAT_SCALE
+        TESTING_THERMOSTAT_NAME_0, \
+        TESTING_THERMOSTAT_ACTIVE_0, \
+        TESTING_THERMOSTAT_KEY_0, \
+        TESTING_THERMOSTAT_COOL_SETPOINT_0, \
+        TESTING_THERMOSTAT_DEVICE_FAMILY_0, \
+        TESTING_THERMOSTAT_HEAT_SETPOINT_0, \
+        TESTING_THERMOSTAT_MODE_0, \
+        TESTING_THERMOSTAT_SCALE_0
 from Modules.Families.Insteon.test.xml_insteon import \
         TESTING_INSTEON_ADDRESS, \
         TESTING_INSTEON_DEVCAT, \
@@ -36,9 +38,8 @@ from Modules.Families.Insteon.test.xml_insteon import \
         TESTING_INSTEON_PRODUCT_KEY
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core import conversions
-from Modules.Drivers import Ethernet
+# from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -71,11 +72,11 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """
         l_xml = self.m_xml.thermostat
         l_obj = Utility._read_thermostat_base(l_xml)
-        self.assertEqual(l_obj.Name, TESTING_THERMOSTAT_NAME)
-        self.assertEqual(l_obj.Active, TESTING_THERMOSTAT_ACTIVE == 'True')
-        self.assertEqual(l_obj.Key, int(TESTING_THERMOSTAT_KEY))
+        self.assertEqual(l_obj.Name, TESTING_THERMOSTAT_NAME_0)
+        self.assertEqual(l_obj.Active, TESTING_THERMOSTAT_ACTIVE_0 == 'True')
+        self.assertEqual(l_obj.Key, int(TESTING_THERMOSTAT_KEY_0))
         self.assertEqual(l_obj.Comment, TESTING_DEVICE_COMMENT)
-        self.assertEqual(l_obj.DeviceFamily, TESTING_THERMOSTAT_DEVICE_FAMILY)
+        self.assertEqual(l_obj.DeviceFamily, TESTING_THERMOSTAT_DEVICE_FAMILY_0)
         self.assertEqual(l_obj.RoomName, TESTING_DEVICE_ROOM_NAME)
 
     def test_02_Thermostat(self):
@@ -84,11 +85,11 @@ class B1_Read(SetupMixin, unittest.TestCase):
         l_xml = self.m_xml.thermostat
         l_obj = Utility._read_thermostat_base(l_xml)
         Utility._read_thermostat_data(l_obj, l_xml)
-        self.assertEqual(l_obj.Name, TESTING_THERMOSTAT_NAME)
-        self.assertEqual(l_obj.CoolSetPoint, float(TESTING_THERMOSTAT_COOL_SETPOINT))
-        self.assertEqual(l_obj.HeatSetPoint, float(TESTING_THERMOSTAT_HEAT_SETPOINT))
-        self.assertEqual(l_obj.ThermostatMode, TESTING_THERMOSTAT_MODE)
-        self.assertEqual(l_obj.ThermostatScale, TESTING_THERMOSTAT_SCALE)
+        self.assertEqual(l_obj.Name, TESTING_THERMOSTAT_NAME_0)
+        self.assertEqual(l_obj.CoolSetPoint, float(TESTING_THERMOSTAT_COOL_SETPOINT_0))
+        self.assertEqual(l_obj.HeatSetPoint, float(TESTING_THERMOSTAT_HEAT_SETPOINT_0))
+        self.assertEqual(l_obj.ThermostatMode, TESTING_THERMOSTAT_MODE_0)
+        self.assertEqual(l_obj.ThermostatScale, TESTING_THERMOSTAT_SCALE_0)
 
     def test_03_Family(self):
         """Read and add the family specific parts.
@@ -107,8 +108,8 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """Read one thermostat entirely.
         """
         l_obj = Utility._read_one_thermostat_xml(self.m_pyhouse_obj, self.m_xml.thermostat)
-        self.assertEqual(l_obj.Name, TESTING_THERMOSTAT_NAME)
-        self.assertEqual(l_obj.CoolSetPoint, float(TESTING_THERMOSTAT_COOL_SETPOINT))
+        self.assertEqual(l_obj.Name, TESTING_THERMOSTAT_NAME_0)
+        self.assertEqual(l_obj.CoolSetPoint, float(TESTING_THERMOSTAT_COOL_SETPOINT_0))
         self.assertEqual(conversions.int2dotted_hex(l_obj.InsteonAddress, 3), TESTING_INSTEON_ADDRESS)
 
     def test_05_AllThermostats(self):
@@ -117,8 +118,8 @@ class B1_Read(SetupMixin, unittest.TestCase):
         l_objs = hvacXML.read_hvac_xml(self.m_pyhouse_obj)
         # print(PrettyFormatAny.form(l_objs, 'All Thermostats'))
         self.assertEqual(len(l_objs), 1)
-        self.assertEqual(l_objs[0].Name, TESTING_THERMOSTAT_NAME)
-        self.assertEqual(l_objs[0].CoolSetPoint, float(TESTING_THERMOSTAT_COOL_SETPOINT))
+        self.assertEqual(l_objs[0].Name, TESTING_THERMOSTAT_NAME_0)
+        self.assertEqual(l_objs[0].CoolSetPoint, float(TESTING_THERMOSTAT_COOL_SETPOINT_0))
 
 
 class C1_Write(SetupMixin, unittest.TestCase):
@@ -133,9 +134,9 @@ class C1_Write(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(l_obj, 'Thermostat Base Obj'))
         l_xml = Utility._write_thermostat_base('Thermostat', l_obj)
         self.assertEqual(self.m_pyhouse_obj.House.Hvac, None)
-        self.assertEqual(l_xml.attrib['Name'], TESTING_THERMOSTAT_NAME)
-        self.assertEqual(l_xml.attrib['Key'], TESTING_THERMOSTAT_KEY)
-        self.assertEqual(l_xml.attrib['Active'], TESTING_THERMOSTAT_ACTIVE)
+        self.assertEqual(l_xml.attrib['Name'], TESTING_THERMOSTAT_NAME_0)
+        self.assertEqual(l_xml.attrib['Key'], TESTING_THERMOSTAT_KEY_0)
+        self.assertEqual(l_xml.attrib['Active'], TESTING_THERMOSTAT_ACTIVE_0)
         self.assertEqual(l_xml.find('Comment').text, TESTING_DEVICE_COMMENT)
         self.assertEqual(l_xml.find('DeviceFamily').text, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_xml.find('RoomName').text, TESTING_DEVICE_ROOM_NAME)
@@ -147,11 +148,11 @@ class C1_Write(SetupMixin, unittest.TestCase):
         l_xml = Utility._write_thermostat_base('Thermostat', l_obj)
         Utility._write_thermostat_data(l_xml, l_obj)
         self.assertEqual(self.m_pyhouse_obj.House.Hvac, None)
-        self.assertEqual(l_xml.attrib['Name'], TESTING_THERMOSTAT_NAME)
-        self.assertEqual(l_xml.attrib['Key'], TESTING_THERMOSTAT_KEY)
-        self.assertEqual(l_xml.attrib['Active'], TESTING_THERMOSTAT_ACTIVE)
+        self.assertEqual(l_xml.attrib['Name'], TESTING_THERMOSTAT_NAME_0)
+        self.assertEqual(l_xml.attrib['Key'], TESTING_THERMOSTAT_KEY_0)
+        self.assertEqual(l_xml.attrib['Active'], TESTING_THERMOSTAT_ACTIVE_0)
         self.assertEqual(l_xml.find('Comment').text, TESTING_DEVICE_COMMENT)
-        self.assertEqual(l_xml.find('CoolSetPoint').text, TESTING_THERMOSTAT_COOL_SETPOINT)
+        self.assertEqual(l_xml.find('CoolSetPoint').text, TESTING_THERMOSTAT_COOL_SETPOINT_0)
 
     def test_03_Family(self):
         """Write family data to XML
@@ -161,7 +162,7 @@ class C1_Write(SetupMixin, unittest.TestCase):
         Utility._write_thermostat_data(l_xml, l_obj)
         Utility._write_family_data(self.m_pyhouse_obj, l_obj, l_xml)
         # print(PrettyFormatAny.form(l_xml, 'W/ Family'))
-        self.assertEqual(l_xml.attrib['Name'], TESTING_THERMOSTAT_NAME)
+        self.assertEqual(l_xml.attrib['Name'], TESTING_THERMOSTAT_NAME_0)
         self.assertEqual(l_xml.find('Address').text, TESTING_INSTEON_ADDRESS)
         self.assertEqual(l_xml.find('DevCat').text, TESTING_INSTEON_DEVCAT)
         self.assertEqual(l_xml.find('GroupList').text, TESTING_INSTEON_GROUP_LIST)
@@ -174,11 +175,11 @@ class C1_Write(SetupMixin, unittest.TestCase):
         l_obj = Utility._read_one_thermostat_xml(self.m_pyhouse_obj, self.m_xml.thermostat)
         l_xml = Utility._write_one_thermostat_xml(self.m_pyhouse_obj, l_obj)
         self.assertEqual(self.m_pyhouse_obj.House.Hvac, None)
-        self.assertEqual(l_xml.attrib['Name'], TESTING_THERMOSTAT_NAME)
-        self.assertEqual(l_xml.attrib['Key'], TESTING_THERMOSTAT_KEY)
-        self.assertEqual(l_xml.attrib['Active'], TESTING_THERMOSTAT_ACTIVE)
+        self.assertEqual(l_xml.attrib['Name'], TESTING_THERMOSTAT_NAME_0)
+        self.assertEqual(l_xml.attrib['Key'], TESTING_THERMOSTAT_KEY_0)
+        self.assertEqual(l_xml.attrib['Active'], TESTING_THERMOSTAT_ACTIVE_0)
         self.assertEqual(l_xml.find('Comment').text, TESTING_DEVICE_COMMENT)
-        self.assertEqual(l_xml.find('CoolSetPoint').text, TESTING_THERMOSTAT_COOL_SETPOINT)
+        self.assertEqual(l_xml.find('CoolSetPoint').text, TESTING_THERMOSTAT_COOL_SETPOINT_0)
         self.assertEqual(l_xml.find('Address').text, TESTING_INSTEON_ADDRESS)
         self.assertEqual(l_xml.find('DevCat').text, TESTING_INSTEON_DEVCAT)
         self.assertEqual(l_xml.find('GroupList').text, TESTING_INSTEON_GROUP_LIST)

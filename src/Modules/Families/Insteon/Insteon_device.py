@@ -120,7 +120,7 @@ class API(object):
         """
         Do the Insteon thing to change the level of an Insteon light
         """
-        LOG.info('Device Name:{}; to level:{}; via {}'.format(p_light_obj.Name, p_level, self.m_plm))
+        LOG.info('Device Name: "{}"; to level: "{}:; via PLM: "{}"'.format(p_light_obj.Name, p_level, self.m_plm))
         self.m_plm.ChangeLight(p_light_obj, p_source, p_level, p_rate)
 
 # ## END DBK

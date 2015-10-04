@@ -18,7 +18,6 @@ from twisted.internet.base import DelayedCall
 from Modules.Computer.Nodes import inter_node_comm
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.tools import PrettyPrintAny
 
 
 

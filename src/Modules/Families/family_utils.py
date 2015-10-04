@@ -19,7 +19,7 @@ This is because the things we wish to automate all have some controller that spe
 
 # Import PyHouse files and modules.
 from Modules.Computer import logging_pyh as Logger
-from Modules.Utilities.tools import PrettyPrintAny
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.FamilyUtils ')
 
@@ -41,7 +41,9 @@ class FamUtil(object):
         try:
             l_family_obj = p_pyhouse_obj.House.FamilyData[p_device_obj.DeviceFamily]
         except KeyError as e_err:
-            LOG.error('Could not get family object for:\n\tDevice Name:\t{}\n\tFamily:\t{}\n\tError:\t{}'.format(
+            print(PrettyFormatAny.form(p_pyhouse_obj.House, 'FamilyData'))
+            LOG.error('Could not get family object for:\n\tDevice Name:\t{}\n\tFamily:\t\t{}\n\tKey Error:\t{}'\
+                    .format(
                         p_device_obj.Name,
                         p_device_obj.DeviceFamily, e_err))
             l_family_obj = p_pyhouse_obj.House.FamilyData['Null']
@@ -67,7 +69,8 @@ class FamUtil(object):
             from Modules.Drivers.USB import USB_driver
             l_driver = USB_driver.API(p_pyhouse_obj)
         else:
-            LOG.error('No driver for device: {} with interface type: {}'.format(l_dev_name, p_controller_obj.InterfaceType))
+            LOG.error('No driver for device: {} with interface type: {}'.format(
+                    l_dev_name, p_controller_obj.InterfaceType))
             from Modules.Drivers.Null import Null_driver
             l_driver = Null_driver.API(p_pyhouse_obj)
         p_controller_obj._DriverAPI = l_driver

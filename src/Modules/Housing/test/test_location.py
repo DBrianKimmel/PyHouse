@@ -22,7 +22,8 @@ from Modules.Utilities.json_tools import encode_json, decode_json_unicode
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Housing.test.xml_location import TESTING_LOCATION_STREET, TESTING_LOCATION_CITY, TESTING_LOCATION_ZIP_CODE, TESTING_LOCATION_PHONE, \
-    TESTING_LOCATION_LATITUDE, TESTING_LOCATION_LONGITUDE, TESTING_LOCATION_STATE, TESTING_LOCATION_TIME_ZONE_NAME
+    TESTING_LOCATION_LATITUDE, TESTING_LOCATION_LONGITUDE, TESTING_LOCATION_STATE, TESTING_LOCATION_TIME_ZONE_NAME, TESTING_LOCATION_ELEVATION, \
+    TESTING_LOCATION_REGION
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
@@ -57,9 +58,11 @@ class C01_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_location.City, TESTING_LOCATION_CITY)
         self.assertEqual(l_location.State, TESTING_LOCATION_STATE)
         self.assertEqual(l_location.ZipCode, TESTING_LOCATION_ZIP_CODE)
+        self.assertEqual(l_location.Region, TESTING_LOCATION_REGION)
         self.assertEqual(l_location.Phone, TESTING_LOCATION_PHONE)
         self.assertEqual(l_location.Latitude, float(TESTING_LOCATION_LATITUDE))
         self.assertEqual(l_location.Longitude, float(TESTING_LOCATION_LONGITUDE))
+        self.assertEqual(l_location.Elevation, float(TESTING_LOCATION_ELEVATION))
         self.assertEqual(l_location.TimeZoneName, TESTING_LOCATION_TIME_ZONE_NAME)
 
     def test_03_WriteXml(self):
@@ -72,9 +75,11 @@ class C01_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.find('City').text, TESTING_LOCATION_CITY)
         self.assertEqual(l_xml.find('State').text, TESTING_LOCATION_STATE)
         self.assertEqual(l_xml.find('ZipCode').text, TESTING_LOCATION_ZIP_CODE)
+        self.assertEqual(l_xml.find('Region').text, TESTING_LOCATION_REGION)
         self.assertEqual(l_xml.find('Phone').text, TESTING_LOCATION_PHONE)
         self.assertEqual(l_xml.find('Latitude').text, TESTING_LOCATION_LATITUDE)
         self.assertEqual(l_xml.find('Longitude').text, TESTING_LOCATION_LONGITUDE)
+        self.assertEqual(l_xml.find('Elevation').text, TESTING_LOCATION_ELEVATION)
         self.assertEqual(l_xml.find('TimeZoneName').text, TESTING_LOCATION_TIME_ZONE_NAME)
 
     def test_21_CreateJson(self):

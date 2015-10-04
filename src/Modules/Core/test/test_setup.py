@@ -20,7 +20,6 @@ from Modules.Core.data_objects import PyHouseAPIs, XmlInformation, ComputerInfor
     CoreServicesInformation, TwistedInformation
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.tools import PrettyPrintAny
 
 XML = xml_data.XML_LONG
 

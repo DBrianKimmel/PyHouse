@@ -21,7 +21,7 @@ from Modules.Lighting.test.xml_lights import XML_LIGHT_SECTION
 from Modules.Lighting.test.xml_controllers import XML_CONTROLLER_SECTION
 
 
-LIGHTING_XML = '\n'.join([
+XML_LIGHTING = '\n'.join([
     '<LightingSection>',
     XML_BUTTON_SECTION,
     XML_LIGHT_SECTION,

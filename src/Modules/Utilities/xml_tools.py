@@ -79,7 +79,8 @@ class PutGetXML(object):
         if l_xml == "False" or l_xml == False:
             return False
         else:
-            LOG.warning('invalid bool value found for:{} - {}=>False  - {}'.format(p_name, l_xml, p_xml))
+            LOG.warning('Invalid bool value found for Field:{}; Value: {}==>False; Element:{}'.format(
+                            p_name, l_xml, p_xml.tag))
         return False
 
     @staticmethod
@@ -106,7 +107,7 @@ class PutGetXML(object):
             l_var = float(l_xml)
         except (ValueError, TypeError):
             l_var = float(p_default)
-            LOG.warning('invalid  float found for:{} - {}=>False'.format(p_name, l_xml))
+            LOG.warning('invalid  float found for:{} - {}=>0.0'.format(p_name, l_xml))
         return l_var
 
     @staticmethod
@@ -305,7 +306,6 @@ class XmlConfigTools(object):
             p_base_obj.Active = PutGetXML.get_bool_from_xml(p_entry_element_xml, 'Active', False)
         except Exception as e_err:
             LOG.error('{}'.format(e_err))
-            # print('Error: {}'.format(p_entry_element_xml))
         return p_base_obj
 
     @staticmethod

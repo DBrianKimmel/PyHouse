@@ -83,9 +83,11 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 		p_html += buildLcarTextWidget(self, 'City', 'City', p_obj.City);
 		p_html += buildLcarTextWidget(self, 'State', 'State', p_obj.State);
 		p_html += buildLcarTextWidget(self, 'ZipCode', 'Zip Code', p_obj.ZipCode);
+		p_html += buildLcarTextWidget(self, 'Region', 'Region', p_obj.Region);
 		p_html += buildLcarTextWidget(self, 'Phone', 'Phone', p_obj.Phone);
 		p_html += buildLcarTextWidget(self, 'Latitude', 'Latitude', p_obj.Latitude);
 		p_html += buildLcarTextWidget(self, 'Longitude', 'Longitude', p_obj.Longitude);
+		p_html += buildLcarTextWidget(self, 'Elevation', 'Elevation', p_obj.Elevation);
 		p_html += buildLcarTextWidget(self, 'TimeZoneName', 'TimeZone Name', p_obj.TimeZoneName);
         return p_html;
     },
@@ -101,9 +103,11 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 				City			: fetchTextWidget(self, 'City'),
 				State			: fetchTextWidget(self, 'State'),
 				ZipCode			: fetchTextWidget(self, 'ZipCode'),
+				Region			: fetchTextWidget(self, 'Region'),
 				Phone			: fetchTextWidget(self, 'Phone'),
 				Latitude		: fetchTextWidget(self, 'Latitude'),
 				Longitude		: fetchTextWidget(self, 'Longitude'),
+				Elevation		: fetchTextWidget(self, 'Elevation'),
 				TimeZoneName	: fetchTextWidget(self, 'TimeZoneName')
 		}
     	return l_data;
@@ -122,9 +126,11 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 		p_data.Location.City = '';
 		p_data.Location.State = '';
 		p_data.Location.ZipCode = '';
+		p_data.Location.Region = '';
 		p_data.Location.Phone = '';
 		p_data.Location.Latitude = '';
 		p_data.Location.Longitude = '';
+		p_data.Location.Elevation = '';
 		p_data.Location.TimeZoneName = '';
 		p_data.Delete = false;
         return p_data;

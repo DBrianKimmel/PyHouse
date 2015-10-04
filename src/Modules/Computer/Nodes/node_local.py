@@ -235,7 +235,7 @@ class Util(object):
 
     @staticmethod
     def _get_node_info():
-        l_node = NodeData
+        l_node = NodeData()
         l_node.Name = platform.node()
         l_node.Key = 0
         l_node.Active = True

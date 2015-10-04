@@ -18,6 +18,7 @@
     Topocentric means that the sun position is calculated with respect to the observer local position at the Earth surface.
 
 
+
 TODO:Round sunset and sunrise to the nearest minute.
 """
 
@@ -27,6 +28,7 @@ import dateutil.parser as dparser
 from dateutil.tz import gettz, tzlocal  # *
 import math
 from math import pi
+import astral
 
 # Import PyMh files
 from Modules.Core.data_objects import LocationData
@@ -528,8 +530,18 @@ class API(Utility):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_astral = astral.Astral()
+        self.m_location = self.m_astral['New York']
+        # self.m_location = astral.Location()
 
     def Start(self, p_gregorian_date = datetime.date.today()):
+        l_name = self.m_pyhouse_obj.House.Name
+        l_reigon = self.m_pyhouse_obj.House.Location.Region
+        l_latitude = self.m_pyhouse_obj.House.Location.Latitude
+        l_longitude = self.m_pyhouse_obj.House.Location.Longitude
+        l_timezonename = self.m_pyhouse_obj.House.Location.TimeZoneName
+        l_elevation = self.m_pyhouse_obj.House.Location.Elevation
+        l_info = (l_name, l_reigon, l_latitude, l_longitude, l_timezonename, l_elevation)
         self.m_earth_data = self._load_location(self.m_pyhouse_obj, p_gregorian_date)
         self.m_julian_data = JDate.calculate_all_julian_dates(p_gregorian_date, self.m_earth_data)
         self.m_solar_data = self._calculate_solar_params()

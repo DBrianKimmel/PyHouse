@@ -185,7 +185,7 @@ class ScheduleExecution(object):
         """
         LOG.info("About to execute - Schedules:{}".format(p_key_list))
         for l_slot in range(len(p_key_list)):
-            l_schedule_obj = p_pyhouse_obj.House.Schedule[p_key_list[l_slot]]
+            l_schedule_obj = p_pyhouse_obj.House.Schedules[p_key_list[l_slot]]
             ScheduleExecution.execute_one_schedule(p_pyhouse_obj, l_schedule_obj)
 
 
@@ -243,15 +243,15 @@ class Utility(object):
     def schedule_next_event(p_pyhouse_obj, p_delay = 0):
         """ Find the list of schedules to run, call the timer to run at the time in the schedules.
         @param p_pyhouse_obj: is the grand repository of information
-        @param p_delay: is the delay time for the timer.
-        @param p_list: is a list of schedule keys for the next schedule execution.
+        @param p_delay: is the (forced) delay time for the timer.
         """
         l_delay, l_list = Utility.find_next_scheduled_events(p_pyhouse_obj, datetime.datetime.now())
         if p_delay != 0:
             l_delay = p_delay
-        l_command = lambda l_pyh = p_pyhouse_obj, l_list = l_list: ScheduleExecution.execute_schedules_list(l_pyh, l_list)
+        # l_command = lambda l_pyh = p_pyhouse_obj, l_list = l_list: ScheduleExecution.execute_schedules_list(l_pyh, l_list)
         # l_runID = p_pyhouse_obj.Twisted.Reactor.callLater(l_delay, l_command, None)
-        l_runID = p_pyhouse_obj.Twisted.Reactor.callLater(l_delay, ScheduleExecution.execute_schedules_list, p_pyhouse_obj, l_list)
+        l_pyhouse_obj = p_pyhouse_obj
+        l_runID = p_pyhouse_obj.Twisted.Reactor.callLater(l_delay, ScheduleExecution.execute_schedules_list, l_pyhouse_obj, l_list)
         return l_runID
 
 

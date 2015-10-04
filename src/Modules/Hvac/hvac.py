@@ -11,7 +11,6 @@ This is the controlling portion of a complete HVAC system.
 
 """
 
-
 # Import system type stuff
 
 # Import PyMh files
@@ -35,11 +34,15 @@ class API(Utility):
         self.m_pyhouse_obj = p_pyhouse_obj
 
     def Start(self):
-        hvacXML.read_hvac_xml(self.m_pyhouse_obj)
+        self.LoadXml(self.m_pyhouse_obj)
         LOG.info("Started.")
 
     def Stop(self):
         LOG.info("Stopped.")
+
+    def LoadXml(self, p_pyhouse_obj):
+        l_obj = hvacXML.read_hvac_xml(p_pyhouse_obj)
+        return l_obj
 
     def SaveXml(self, p_xml):
         l_xml = hvacXML.write_hvac_xml(self.m_pyhouse_obj, p_xml)

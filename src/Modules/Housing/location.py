@@ -42,9 +42,11 @@ class Xml(object):
             l_obj.City = PutGetXML.get_text_from_xml(l_xml, 'City')
             l_obj.State = PutGetXML.get_text_from_xml(l_xml, 'State')
             l_obj.ZipCode = PutGetXML.get_text_from_xml(l_xml, 'ZipCode')
+            l_obj.Region = PutGetXML.get_text_from_xml(l_xml, 'Region')
             l_obj.Phone = PutGetXML.get_text_from_xml(l_xml, 'Phone')
             l_obj.Latitude = PutGetXML.get_float_from_xml(l_xml, 'Latitude')
             l_obj.Longitude = PutGetXML.get_float_from_xml(l_xml, 'Longitude')
+            l_obj.Elevation = PutGetXML.get_float_from_xml(l_xml, 'Elevation')
             l_obj.TimeZoneName = PutGetXML.get_text_from_xml(l_xml, 'TimeZoneName')
         except AttributeError as e_err:
             LOG.error('ERROR if getting location Data - {}'.format(e_err))
@@ -59,9 +61,11 @@ class Xml(object):
         PutGetXML.put_text_element(l_entry, 'City', p_location_obj.City)
         PutGetXML.put_text_element(l_entry, 'State', p_location_obj.State)
         PutGetXML.put_text_element(l_entry, 'ZipCode', p_location_obj.ZipCode)
+        PutGetXML.put_text_element(l_entry, 'Region', p_location_obj.Region)
         PutGetXML.put_text_element(l_entry, 'Phone', p_location_obj.Phone)
         PutGetXML.put_float_element(l_entry, 'Latitude', p_location_obj.Latitude)
         PutGetXML.put_float_element(l_entry, 'Longitude', p_location_obj.Longitude)
+        PutGetXML.put_float_element(l_entry, 'Elevation', p_location_obj.Elevation)
         PutGetXML.put_text_element(l_entry, 'TimeZoneName', p_location_obj.TimeZoneName)
         LOG.info('Saved Location XML')
         return l_entry

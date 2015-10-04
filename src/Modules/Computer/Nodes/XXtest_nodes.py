@@ -20,7 +20,6 @@ from Modules.Computer.Nodes import nodes
 from Modules.Computer.Nodes.test import test_inter_node_comm
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.tools import PrettyPrintAny
 
 
 class SetupMixin(object):

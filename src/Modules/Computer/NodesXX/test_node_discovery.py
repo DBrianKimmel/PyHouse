@@ -22,7 +22,6 @@ from Modules.Core.data_objects import NodeData
 from Modules.Computer.Nodes import node_discovery
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.tools import PrettyPrintAny
 
 
 T_ALL_PORTS = 0

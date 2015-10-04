@@ -37,6 +37,7 @@ class Utility(object):
         Config file version 1.4 moved the lighting information into a separate LightingSection
         """
         l_root = p_pyhouse_obj.Xml.XmlRoot
+        l_lighting_xml = None
         try:
             l_house_xml = l_root.find('HouseDivision')
         except AttributeError as e_err:

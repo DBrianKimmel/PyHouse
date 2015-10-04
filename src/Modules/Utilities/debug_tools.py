@@ -262,8 +262,11 @@ class PrettyFormatAny(object):
     def _format_dict(p_dict, maxlen, indent):
         l_ret = ''
         l_tabbedwidths = [indent, 30, maxlen - 30]
-        for key, val in p_dict.iteritems():
-            l_ret += _format_cols(('', str(key), str(val)), l_tabbedwidths, ' ') + '\n'
+        for l_key, l_val in p_dict.iteritems():
+            if isinstance(l_val, dict):
+                l_ret += _format_cols(('', str(l_key), PrettyFormatAny._type_dispatcher(l_val, maxlen, indent + 4)), l_tabbedwidths, ' ') + '\n'
+            else:
+                l_ret += _format_cols(('', str(l_key), str(l_val)), l_tabbedwidths, ' ') + '\n'
         return l_ret
 
     @staticmethod
@@ -276,7 +279,11 @@ class PrettyFormatAny(object):
         l_ret = ''
         _l_tabbedwidths = [indent, 30, maxlen - 30]
         l_rough_string = ET.tostring(p_element, 'utf-8')
-        l_reparsed = minidom.parseString(l_rough_string)
+        try:
+            l_reparsed = minidom.parseString(l_rough_string)
+        except Exception as e_err:
+            l_ret = 'Error {}\n{}'.format(e_err, l_rough_string)
+            return l_ret
         l_doc = l_reparsed.toprettyxml()
         l_lines = l_doc.splitlines()
         for l_line in l_lines:

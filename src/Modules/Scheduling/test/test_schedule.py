@@ -7,7 +7,7 @@
 @note:      Created on Apr 8, 2013
 @summary:   Test handling the schedule information for a house.
 
-Passed all 16 tests - DBK - 2015-09-10
+Passed all 18 tests - DBK - 2015-09-10
 
 """
 
@@ -21,10 +21,15 @@ import time
 # Import PyMh files and modules.
 from Modules.Core.data_objects import RiseSetData
 from Modules.Computer.Mqtt.mqtt_client import API as mqttAPI
-from Modules.Scheduling.schedule import SchedTime, ScheduleExecution, API as scheduleAPI, Utility as scheduleUtility
+from Modules.Families.family import API as familyAPI
+from Modules.Scheduling.schedule import \
+        SchedTime, ScheduleExecution, \
+        API as scheduleAPI, \
+        Utility as scheduleUtility
 from Modules.Scheduling.schedule_xml import Xml as scheduleXml
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
+from Modules.Utilities.debug_tools import PrettyFormatAny
 # from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
@@ -73,6 +78,24 @@ class SetupMixin(object):
         self.m_pyhouse_obj.House.Schedule = self.m_schedules
         self.m_schedule_obj = self.m_schedules[0]
         twisted.internet.base.DelayedCall.debug = True
+        self.m_pyhouse_obj.House.FamilyData = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
+
+
+class A1_Setup(SetupMixin, unittest.TestCase):
+    """
+    Uses DOW and todays delay to get delay time in minutes.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_01_FamilyData(self):
+        """Date is in DOW
+        """
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.FamilyData, 'FamilyData'))
+        self.assertEqual(self.m_pyhouse_obj.House.FamilyData['Null'].Name, 'Null')
+        self.assertEqual(self.m_pyhouse_obj.House.FamilyData['Null'].Key, 0)
+        self.assertEqual(self.m_pyhouse_obj.House.FamilyData['Null'].Active, True)
 
 
 class A2_Utility(SetupMixin, unittest.TestCase):
@@ -235,7 +258,7 @@ class C1_Execute(SetupMixin, unittest.TestCase):
         self.assertEqual(True, True)
 
 
-class C4_Setup(SetupMixin, unittest.TestCase):
+class C2_Setup(SetupMixin, unittest.TestCase):
     """
     This section tests the Building of a schedule list
     """
@@ -257,15 +280,20 @@ class C4_Setup(SetupMixin, unittest.TestCase):
         self.assertEqual(l_list[0], 0)
         self.assertEqual(l_list[1], 1)
 
-    def test_02_sched(self):
-        # PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse_obj')
+    def test_02_Load(self):
+        SetupPyHouseObj().LoadHouse(self.m_pyhouse_obj)
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'PyHouse.House 1'))
+
+    def test_03_Sched(self):
+        SetupPyHouseObj().LoadHouse(self.m_pyhouse_obj)
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'PyHouse.House 1'))
         l_delay = 1
         l_list = [0, 1]
         l_id = scheduleUtility.schedule_next_event(self.m_pyhouse_obj, l_delay)
         time.sleep(2 * l_delay)
         # l_id.cancel()
 
-    def Xtest_03_RunSchedule(self):
+    def Xtest_04_RunSchedule(self):
         pass
 
     def Xtest_05_SchedulesList(self):

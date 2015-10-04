@@ -7,8 +7,7 @@
 @note:      Created on Aug 8, 2015
 @Summary:
 
-Passed all 5 tests - DBK - 2015-08-11
-
+Passed all 7 tests - DBK - 2015-09-11
 """
 
 # Import system type stuff
@@ -21,6 +20,14 @@ from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 
 STRING = 'Now is the time for all good men to come to the aid of something or other.'
+LISTS = [1, 2, 3, [4, 5, 6], 7, [8, 9, [10, 11], 12]]
+DICTS = {   'a' : '1',
+            'b' : '2',
+            'c' : {   'd' : '3',
+                'e' : 'hello' },
+            'f' : 55
+         }
+
 
 class SetupMixin(object):
 
@@ -71,7 +78,7 @@ class A_Format(SetupMixin, unittest.TestCase):
 
 class B_PFA(SetupMixin, unittest.TestCase):
     """
-    PrettyFormatAllj
+    PrettyFormatAll
     """
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
@@ -80,8 +87,16 @@ class B_PFA(SetupMixin, unittest.TestCase):
         l_str = "The quick brown fox jumpped over the lazy dog's back"
         l_len = len(l_str)
         l_ret = debug_tools.PrettyFormatAny._format_string(l_str, maxlen = 40, indent = 10)
-        print l_ret
+        print(l_ret)
         self.assertEqual(len(l_str), l_len)
-        self.assertEqual(len(l_ret), l_len + 20)
+        self.assertEqual(len(l_ret), l_len + 20 + 1)
+
+    def test_02_Lists(self):
+        l_ret = debug_tools.PrettyFormatAny._format_list(LISTS, 50, 0)
+        print(l_ret)
+
+    def test_03_Dicts(self):
+        l_ret = debug_tools.PrettyFormatAny._format_dict(DICTS, 50, 0)
+        print(l_ret)
 
 # ## END DBK

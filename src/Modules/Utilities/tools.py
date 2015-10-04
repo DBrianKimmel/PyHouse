@@ -19,9 +19,6 @@ from xml.dom import minidom
 
 # Import PyMh files
 
-g_debug = 1
-
-
 
 class PrettyPrintAny(object):
 

@@ -20,7 +20,6 @@ from Modules.Drivers.Serial import Serial_driver
 from Modules.Families import family
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.tools import PrettyPrintAny
 
 
 class SetupMixin(object):

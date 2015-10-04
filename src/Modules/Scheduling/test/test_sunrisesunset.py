@@ -27,6 +27,7 @@ from Modules.Scheduling.sunrisesunset import JDate, JulianParameters, JDATE2000
 from test.testing_mixin import SetupPyHouseObj
 from test import xml_data
 from Modules.Utilities.tools import PrettyPrintAny
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
 # Conversion constants.
 RAD2DEG = 180.0 / pi
@@ -113,8 +114,22 @@ class SetupMixin(object):
         return l_loc
 
 
+class A1_setup(SetupMixin, unittest.TestCase):
+    """
+    Be sure all our conversion routines work.
+    Test positive and negative conversions
+    """
 
-class A01_Utility(SetupMixin, unittest.TestCase):
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        self.m_api = sunrisesunset.API(self.m_pyhouse_obj)
+
+    def test_01_Degree360(self):
+        print(PrettyFormatAny.form(self.m_api.m_astral, 'Astral'))
+        print(PrettyFormatAny.form(self.m_api.m_location, 'Astral Location'))
+
+
+class A2_Utility(SetupMixin, unittest.TestCase):
     """
     Be sure all our conversion routines work.
     Test positive and negative conversions
@@ -160,7 +175,7 @@ class A01_Utility(SetupMixin, unittest.TestCase):
 
 
 
-class A02_Time(SetupMixin, unittest.TestCase):
+class A3_Time(SetupMixin, unittest.TestCase):
     """Testing time and timezone
     The user inputs a valid timezone and the web interface fills in the internal values
     """

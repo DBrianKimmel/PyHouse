@@ -17,6 +17,7 @@ import xml.etree.ElementTree as ET
 from Modules.Core.data_objects import NodeData, NodeInterfaceData
 from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
 from Modules.Computer import logging_pyh as Logger
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.Nodes_xml      ')
 
@@ -113,6 +114,7 @@ class Xml(object):
         l_count = 0
         try:
             for l_node_obj in p_nodes_obj.itervalues():
+                # print(PrettyFormatAny.form(l_node_obj, 'Node'))
                 l_node_obj.Key = l_count
                 l_entry = Xml._write_one_node_xml(l_node_obj)
                 l_xml.append(l_entry)

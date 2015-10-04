@@ -25,10 +25,11 @@ Comments should not need explaining.  They are just present and can contain just
 from Modules.Housing.test.xml_location import XML_LOCATION
 from Modules.Housing.test.xml_rooms import XML_ROOMS
 from Modules.Scheduling.test.xml_schedule import XML_SCHEDULE
-from Modules.Lighting.test.xml_lighting import LIGHTING_XML
-from Modules.Hvac.test.xml_hvac import XML_THERMOSTAT
+from Modules.Lighting.test.xml_lighting import XML_LIGHTING
+from Modules.Hvac.test.xml_hvac import XML_HVAC
 from Modules.Entertainment.test.xml_entertainment import ENTERTAINMENT_XML
-from Modules.Irrigation.test.xml_irrigation import IRRIGATION_XML
+from Modules.Irrigation.test.xml_irrigation import XML_IRRIGATION
+from Modules.Pool.test.xml_pool import XML_POOL
 
 
 TESTING_HOUSE_NAME = 'Pink Poppy'
@@ -43,10 +44,11 @@ HOUSE_DIVISION_XML = '\n'.join([
     XML_LOCATION,
     XML_ROOMS,
     XML_SCHEDULE,
-    LIGHTING_XML,
-    XML_THERMOSTAT,
+    XML_LIGHTING,
+    XML_HVAC,
     ENTERTAINMENT_XML,
-    IRRIGATION_XML,
+    XML_IRRIGATION,
+    XML_POOL,
     "</HouseDivision>"
 ])
 

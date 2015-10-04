@@ -9,10 +9,31 @@
 
 """
 
+TESTING_IRRIGATION_SYSTEM_NAME_0 = 'LawnSystem'
+TESTING_IRRIGATION_SYSTEM_KEY_0 = '0'
+TESTING_IRRIGATION_SYSTEM_ACTIVE_0 = 'True'
+TESTING_IRRIGATION_SYSTEM_COMMENT_0 = 'Main yard system with Well Relay and 13 zones'
 
-IRRIGATION_XML = """
-<IrrigationSection>
-    <IrrigationSystem Name="LawnSystem" Key="0" Active="True">
+TESTING_IRRIGATION_SYSTEM_NAME_1 = 'Lanai Drip'
+TESTING_IRRIGATION_SYSTEM_KEY_1 = '1'
+TESTING_IRRIGATION_SYSTEM_ACTIVE_1 = 'True'
+
+L_IRRIGATION_SECTION_START = '<IrrigationSection>'
+L_IRRIGATION_SECTION_END = '</IrrigationSection>'
+
+L_IRRIGATION_SYSTEM_START_0 = '<IrrigationSystem Name="' + TESTING_IRRIGATION_SYSTEM_NAME_0 + \
+        '" Key="' + TESTING_IRRIGATION_SYSTEM_KEY_0 + \
+        '" Active="' + TESTING_IRRIGATION_SYSTEM_ACTIVE_0 + \
+        '">'
+L_IRRIGATION_SYSTEM_COMMENT_0 = '<Comment>' + TESTING_IRRIGATION_SYSTEM_COMMENT_0 + '</Comment>'
+
+L_IRRIGATION_SYSTEM_START_1 = '<IrrigationSystem Name="' + TESTING_IRRIGATION_SYSTEM_NAME_1 + \
+        '" Key="' + TESTING_IRRIGATION_SYSTEM_KEY_1 + \
+        '" Active="' + TESTING_IRRIGATION_SYSTEM_ACTIVE_1 + \
+        '">'
+L_IRRIGATION_SYSTEM_END = '</IrrigationSystem>'
+
+XXX_0 = """
         <Comment>Main yard system with Well Relay and 13 zones</Comment>
         <Zone Name="Front Rotors # 1" Key="0" Active="True">
             <Comment>Rotors on the West corner of the yard,</Comment>
@@ -32,8 +53,8 @@ IRRIGATION_XML = """
         </Zone>
         <Zone Name="Front Rotors # 7" Key="6" Active="True">
         </Zone>
-    </IrrigationSystem>
-    <IrrigationSystem Name="Lanai Drip" Key="1" Active="True">
+"""
+XXX_1 = """
         <Comment>Lanai area system</Comment>
         <Zone Name="Flower Drips" Key="0" Active="True">
         </Zone>
@@ -41,9 +62,28 @@ IRRIGATION_XML = """
         </Zone>
         <Zone Name="UnUsed" Key="2" Active="True">
         </Zone>
-    </IrrigationSystem>
-</IrrigationSection>
 """
+
+L_IRRIGATION_SYSTEM_0 = '\n'.join([
+    L_IRRIGATION_SYSTEM_START_0,
+        L_IRRIGATION_SYSTEM_COMMENT_0,
+        XXX_0,
+    L_IRRIGATION_SYSTEM_END
+])
+
+L_IRRIGATION_SYSTEM_1 = '\n'.join([
+    L_IRRIGATION_SYSTEM_START_1,
+        XXX_1,
+    L_IRRIGATION_SYSTEM_END
+])
+
+XML_IRRIGATION = '\n'.join([
+    L_IRRIGATION_SECTION_START,
+        L_IRRIGATION_SYSTEM_0,
+        L_IRRIGATION_SYSTEM_1,
+    L_IRRIGATION_SECTION_END
+])
+
 
 
 IRRIGATION_XSD = """
@@ -53,22 +93,6 @@ IRRIGATION_XSD = """
     xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <xs:element name="IrrigationSection">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element name="IrrigationSystem" maxOccurs="unbounded" minOccurs="0">
-          <xs:complexType>
-            <xs:sequence>
-                <xs:element type="xs:string" name="Comment"/>
-                <xs:element type="xs:string" name="Corner"/>
-                xs:element type="xs:string" name="Size"/>
-            </xs:sequence>
-            <xs:attribute type="xs:string" name="Active" use="optional"/>
-            <xs:attribute type="xs:byte" name="Key" use="optional"/>
-            <xs:attribute type="xs:string" name="Name" use="optional"/>
-          </xs:complexType>
-        </xs:element>
-      </xs:sequence>
-    </xs:complexType>
   </xs:element>
 
 </xs:schema>

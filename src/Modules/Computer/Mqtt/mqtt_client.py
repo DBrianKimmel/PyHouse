@@ -184,7 +184,7 @@ class API(Util):
             l_node = copy.deepcopy(p_pyhouse_obj.Computer.Nodes[0])
         except KeyError:
             l_node = NodeData()
-        l_node.NodeInterfaces = None
+        l_node.NodeInterfaces = {}
         self.MqttPublish('login/initial', l_node)
 
 # ## END DBK

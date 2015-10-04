@@ -63,9 +63,11 @@ class HouseElement(athena.LiveElement):
         l_obj.City = l_json['Location']['City']
         l_obj.State = l_json['Location']['State']
         l_obj.ZipCode = l_json['Location']['ZipCode']
+        l_obj.Region = l_json['Location']['Region']
         l_obj.Phone = l_json['Location']['Phone']
         l_obj.Latitude = l_json['Location']['Latitude']
         l_obj.Longitude = l_json['Location']['Longitude']
+        l_obj.Elevation = l_json['Location']['Elevation']
         l_obj.TimeZoneName = l_json['Location']['TimeZoneName']
         self.m_pyhouse_obj.House.Location = l_obj
 

@@ -104,15 +104,16 @@ class Utility(object):
     def start_house_parts(self, p_pyhouse_obj):
         # These two must start before the other things
         p_pyhouse_obj.APIs.House.FamilyAPI.Start()
-        # p_pyhouse_obj.APIs.House.SunRiseSetAPI.Start()
         #
         p_pyhouse_obj.APIs.House.EntertainmentAPI.Start()
         p_pyhouse_obj.APIs.House.HvacAPI.Start()
         p_pyhouse_obj.APIs.House.IrrigationAPI.Start()
         p_pyhouse_obj.APIs.House.LightingAPI.Start()
         p_pyhouse_obj.APIs.House.PoolAPI.Start()
-        p_pyhouse_obj.APIs.House.ScheduleAPI.Start()
         p_pyhouse_obj.APIs.House.SecurityAPI.Start()
+        #  Last
+        p_pyhouse_obj.APIs.House.SunRiseSetAPI.Start()
+        p_pyhouse_obj.APIs.House.ScheduleAPI.Start()
 
     def stop_house_parts(self):
         self.m_pyhouse_obj.APIs.House.ScheduleAPI.Stop()
@@ -159,7 +160,7 @@ class API(Utility):
         self.m_pyhouse_obj.House = Xml.read_house_xml(self.m_pyhouse_obj)
         self.get_sunrise_set(self.m_pyhouse_obj)
         self.start_house_parts(self.m_pyhouse_obj)
-        LOG.info("Started House {0:}".format(self.m_pyhouse_obj.House.Name))
+        LOG.info("Started House {}".format(self.m_pyhouse_obj.House.Name))
 
     def Stop(self):
         """Stop all houses.
@@ -172,11 +173,11 @@ class API(Utility):
     def LoadXml(self, p_pyhouse_obj):
         l_house = Xml.read_house_xml(p_pyhouse_obj)
         # p_pyhouse_obj.APIs.House.EntertainmentAPI.Start()
-        # p_pyhouse_obj.APIs.House.HvacAPI.Start()
+        p_pyhouse_obj.APIs.House.HvacAPI.LoadXml(p_pyhouse_obj)
         # p_pyhouse_obj.APIs.House.IrrigationAPI.Start()
         p_pyhouse_obj.APIs.House.LightingAPI.LoadXml(p_pyhouse_obj)
         # p_pyhouse_obj.APIs.House.PoolAPI.Start()
-        # p_pyhouse_obj.APIs.House.ScheduleAPI.Start()
+        p_pyhouse_obj.APIs.House.ScheduleAPI.LoadXml(p_pyhouse_obj)
         # p_pyhouse_obj.APIs.House.SecurityAPI.Start()
         return
 
@@ -189,7 +190,6 @@ class API(Utility):
         Utility._save_component_apis(self.m_pyhouse_obj, l_house_xml)
         p_xml.append(l_house_xml)
         LOG.info("Saved House XML.")
-        print('House-178 Saved XML')
         return p_xml
 
 # ##  END DBK

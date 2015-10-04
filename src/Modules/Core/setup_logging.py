@@ -16,8 +16,6 @@ Log file paths are hard coded therefore.
 Log directories must exist and be writable by the PyHouse process as it begins.
 
 """
-# import time
-# from Modules.Utilities.tools import PrettyPrintAny
 
 LOGGER_NAME = 'PyHouse                '
 LOGGER_NAME_TWISTED = 'PyHouse.Twisted.....   '

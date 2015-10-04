@@ -108,13 +108,18 @@ class Xml(object):
         @param p_pyhouse_xml: is the entire PyHouse Object
         """
         l_obj = WebData()
-        l_xml = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision').find('WebSection')
+        l_obj.Logins = {}
+        try:
+            l_xml = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision').find('WebSection')
+            l_login_xml = l_xml.find('LoginSection')
+            l_obj.Logins = Xml._read_all_logins(l_login_xml)
+        except:
+            l_xml = None
+            l_login_xml = None
         if l_xml == None:
             l_obj.WebPort = 8581
         else:
             l_obj.WebPort = Xml._read_port(l_xml)
-        l_xml = l_xml.find('LoginSection')
-        l_obj.Logins = Xml._read_all_logins(l_xml)
         return l_obj
 
     @staticmethod

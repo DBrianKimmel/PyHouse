@@ -30,7 +30,6 @@ from twisted.internet.protocol import Protocol
 from twisted.internet.serialport import SerialPort
 
 # Import PyMh files
-from Modules.Utilities.tools import PrintBytes
 from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
