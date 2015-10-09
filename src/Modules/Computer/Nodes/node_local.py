@@ -31,8 +31,7 @@ import platform
 from Modules.Core.data_objects import NodeData, NodeInterfaceData
 from Modules.Communication import ir_control
 from Modules.Computer import logging_pyh as Logger
-# from Modules.Computer.Nodes import nodes_xml
-from Modules.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.NodeLocal      ')
 
@@ -98,6 +97,11 @@ class Interfaces(object):
                     The values are a list of dicts of addresses for that interface.
         """
         l_ret = netifaces.ifaddresses(p_interface_name)
+        return l_ret
+
+    @staticmethod
+    def _find_gateways():
+        l_ret = netifaces.gateways()
         return l_ret
 
     @staticmethod

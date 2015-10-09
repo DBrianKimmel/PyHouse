@@ -19,15 +19,24 @@ from Modules.Computer.Nodes.test.xml_nodes import XML_NODES
 from Modules.Web.test.xml_web import XML_WEB_SERVER
 
 
+TESTING_COMPUTER_NAME_0 = 'TestingComputer'
+TESTING_COMPUTER_KEY_0 = '0'
+TESTING_COMPUTER_ACTIVE_0 = 'True'
+TESTING_COMPUTER_UUID = '12345678-9ABC-DEFF-1001-123456789ABC'
+
+L_COMPUTER_DIV_START = '<ComputerDivision Name="' + TESTING_COMPUTER_NAME_0 + '" Key="' + TESTING_COMPUTER_KEY_0 + '" Active="' + TESTING_COMPUTER_ACTIVE_0 + '">'
+L_COMPUTER_DIV_END = '</ComputerDivision>'
+L_COMPUTER_UUID = '<UUID>' + TESTING_COMPUTER_UUID + '</UUID>'
+
 XML_COMPUTER_DIVISION = '\n'.join([
-    "<ComputerDivision>",
+    L_COMPUTER_DIV_START,
+    L_COMPUTER_UUID,
     XML_NODES,
     XML_COMMUNICATION,
     XML_WEB_SERVER,
     XML_INTERNET,
     XML_MQTT,
-    "</ComputerDivision>",
-    ''
+    L_COMPUTER_DIV_END
 ])
 
 

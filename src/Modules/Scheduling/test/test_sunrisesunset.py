@@ -22,11 +22,11 @@ from twisted.trial import unittest
 from math import pi
 
 # Import PyMh files
+from Modules.Housing.location import Xml as locationXml
 from Modules.Scheduling import sunrisesunset
-from Modules.Scheduling.sunrisesunset import JDate, JulianParameters, JDATE2000
+from Modules.Scheduling.sunrisesunset import JDate, JulianParameters, JDATE2000, AstralUtil
 from test.testing_mixin import SetupPyHouseObj
 from test import xml_data
-from Modules.Utilities.tools import PrettyPrintAny
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
 # Conversion constants.
@@ -125,8 +125,9 @@ class A1_setup(SetupMixin, unittest.TestCase):
         self.m_api = sunrisesunset.API(self.m_pyhouse_obj)
 
     def test_01_Degree360(self):
-        print(PrettyFormatAny.form(self.m_api.m_astral, 'Astral'))
-        print(PrettyFormatAny.form(self.m_api.m_location, 'Astral Location'))
+        # print(PrettyFormatAny.form(self.m_api.m_astral, 'Astral'))
+        # print(PrettyFormatAny.form(self.m_api.m_location, 'Astral Location'))
+        pass
 
 
 class A2_Utility(SetupMixin, unittest.TestCase):
@@ -187,6 +188,19 @@ class A3_Time(SetupMixin, unittest.TestCase):
     def test_01_TZ(self):
         pass
 
+
+class B1_Astral(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        self.m_api = sunrisesunset.API(self.m_pyhouse_obj)
+
+    def test_01_Loc(self):
+        locationXml.read_location_xml(self.m_pyhouse_obj)
+        l_a = AstralUtil.load_location(self.m_pyhouse_obj)
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Location, 'House.Location'))
+        print(l_a)
+        # print(PrettyFormatAny.form(l_a, 'astral'))
 
 
 class E01_Results(SetupMixin, unittest.TestCase):

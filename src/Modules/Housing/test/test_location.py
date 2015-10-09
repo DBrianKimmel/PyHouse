@@ -7,8 +7,7 @@
 @note:      Created on Apr 10, 2013
 @summary:   Test handling the rooms information for a house.
 
-
-All 4 tests working - DBK - 2015-09-08
+Passed all 4 tests - DBK - 2015-10-04
 """
 
 # Import system type stuff
@@ -21,9 +20,17 @@ from Modules.Housing import location
 from Modules.Utilities.json_tools import encode_json, decode_json_unicode
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Housing.test.xml_location import TESTING_LOCATION_STREET, TESTING_LOCATION_CITY, TESTING_LOCATION_ZIP_CODE, TESTING_LOCATION_PHONE, \
-    TESTING_LOCATION_LATITUDE, TESTING_LOCATION_LONGITUDE, TESTING_LOCATION_STATE, TESTING_LOCATION_TIME_ZONE_NAME, TESTING_LOCATION_ELEVATION, \
-    TESTING_LOCATION_REGION
+from Modules.Housing.test.xml_location import \
+        TESTING_LOCATION_STREET, \
+        TESTING_LOCATION_CITY, \
+        TESTING_LOCATION_ZIP_CODE, \
+        TESTING_LOCATION_PHONE, \
+        TESTING_LOCATION_LATITUDE, \
+        TESTING_LOCATION_LONGITUDE, \
+        TESTING_LOCATION_STATE, \
+        TESTING_LOCATION_TIME_ZONE_NAME, \
+        TESTING_LOCATION_ELEVATION, \
+        TESTING_LOCATION_REGION
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
@@ -53,7 +60,7 @@ class C01_XML(SetupMixin, unittest.TestCase):
     def test_02_ReadXml(self):
         """ Read in the xml file and fill in the location dict
         """
-        l_location = self.m_api.read_location_xml(self.m_xml.house_div)
+        l_location = self.m_api.read_location_xml(self.m_pyhouse_obj)
         self.assertEqual(l_location.Street, TESTING_LOCATION_STREET)
         self.assertEqual(l_location.City, TESTING_LOCATION_CITY)
         self.assertEqual(l_location.State, TESTING_LOCATION_STATE)
@@ -68,7 +75,7 @@ class C01_XML(SetupMixin, unittest.TestCase):
     def test_03_WriteXml(self):
         """ Write out the XML file for the location section
         """
-        l_location = self.m_api.read_location_xml(self.m_xml.house_div)
+        l_location = self.m_api.read_location_xml(self.m_pyhouse_obj)
         l_xml = self.m_api.write_location_xml(l_location)
         # print(PrettyFormatAny.form(l_xml, 'Location'))
         self.assertEqual(l_xml.find('Street').text, TESTING_LOCATION_STREET)
@@ -85,10 +92,10 @@ class C01_XML(SetupMixin, unittest.TestCase):
     def test_21_CreateJson(self):
         """ Create a JSON object for Location.
         """
-        l_location = self.m_api.read_location_xml(self.m_xml.house_div)
+        l_location = self.m_api.read_location_xml(self.m_pyhouse_obj)
         l_json = encode_json(l_location)
         l_obj = decode_json_unicode(l_json)
-        print(PrettyFormatAny.form(l_obj, 'JSON', 80))
+        # print(PrettyFormatAny.form(l_obj, 'JSON', 80))
         self.assertEqual(l_obj['Street'], TESTING_LOCATION_STREET)
         self.assertEqual(l_obj['City'], TESTING_LOCATION_CITY)
 

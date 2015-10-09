@@ -50,6 +50,7 @@ PyHouse
     TODO.rst
 """
 
+# Import system type stuff
 import sys
 from distutils.core import setup
 
@@ -65,6 +66,9 @@ setup(name = 'PyHouse',
     ],
     package_dir = {'': 'PyHouse'},
     packages = ['distutils', 'distutils.command'],
+    requires = ['twisted', 'nevow', 'athena', 'dateutil', 'netaddr',
+                'usb', 'jsonpickle', 'serial', 'netifaces', 'pyusb',
+                'pyopenSSL', 'passlib', 'astral']
 )
 tests_passed = False
 
@@ -75,6 +79,25 @@ def FindOsRunning():
     import platform
     l_platform = platform.platform(True, True)
     print("Running on platform {}".format(l_platform))
+
+
+class InitialInstall(object):
+    """
+    Must run as root on fresh install of raspbian jessie!
+
+    Add user pyhouse
+    Create /etc/pyhouse owned by pyhouse user
+    Create /var/log/pyhouse owned by pyhouse user
+    Create firewall, network config.
+    Add .ssh dir and initial credentials.
+    """
+
+
+class SoftwareInstall(object):
+    """
+    Add workspace and populate it with PyHouse git repository
+    Set up start/stop/update scripts.
+    """
 
 
 class TestInstalledSoftware(object):

@@ -83,7 +83,7 @@ class Utility(object):
                 l_ret = Utility._start_plm(p_pyhouse_obj, l_controller_obj)
                 return l_ret
             elif Utility._is_insteon(l_controller_obj):
-                LOG.info('Insteon Controller {} is NOT started per config file.'.format(l_controller_obj.Name))
+                LOG.warn('Insteon Controller {} is NOT started per config file.'.format(l_controller_obj.Name))
             else:
                 pass  # Not interested in this controller. (Non-Insteon)
         return None

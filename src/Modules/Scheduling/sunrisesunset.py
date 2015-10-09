@@ -525,6 +525,20 @@ class Utility(SSAPI, SunriseSet):
         return p_earth_data, l_zone
 
 
+class AstralUtil(object):
+
+    @staticmethod
+    def load_location(p_pyhouse_obj):
+        l_name = p_pyhouse_obj.House.Name
+        l_reigon = p_pyhouse_obj.House.Location.Region
+        l_latitude = p_pyhouse_obj.House.Location.Latitude
+        l_longitude = p_pyhouse_obj.House.Location.Longitude
+        l_timezonename = p_pyhouse_obj.House.Location.TimeZoneName
+        l_elevation = p_pyhouse_obj.House.Location.Elevation
+        l_info = (l_name, l_reigon, l_latitude, l_longitude, l_timezonename, l_elevation)
+        l_a = astral.Location(info = l_info)
+        return l_a
+
 
 class API(Utility):
 

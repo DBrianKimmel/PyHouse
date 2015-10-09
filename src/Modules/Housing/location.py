@@ -30,14 +30,15 @@ class Xml(object):
     """
 
     @staticmethod
-    def read_location_xml(p_house_xml):
+    def read_location_xml(p_pyhouse_obj):
         """
         @param p_house_xml: is the config file xml for a house.
         """
+        l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
         l_obj = LocationData()
         l_obj.RiseSet = RiseSetData()
         try:
-            l_xml = p_house_xml.find('LocationSection')
+            l_xml = l_xml.find('LocationSection')
             l_obj.Street = PutGetXML.get_text_from_xml(l_xml, 'Street')
             l_obj.City = PutGetXML.get_text_from_xml(l_xml, 'City')
             l_obj.State = PutGetXML.get_text_from_xml(l_xml, 'State')
@@ -49,7 +50,8 @@ class Xml(object):
             l_obj.Elevation = PutGetXML.get_float_from_xml(l_xml, 'Elevation')
             l_obj.TimeZoneName = PutGetXML.get_text_from_xml(l_xml, 'TimeZoneName')
         except AttributeError as e_err:
-            LOG.error('ERROR if getting location Data - {}'.format(e_err))
+            LOG.error('ERROR getting location Data - {}'.format(e_err))
+        p_pyhouse_obj.House.Location = l_obj
         return l_obj
 
     @staticmethod
