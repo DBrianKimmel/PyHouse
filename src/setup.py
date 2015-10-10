@@ -97,15 +97,15 @@ setup(
     #    'pyopenSSL', 'passlib', 'astral'
     # ]
     install_requires = [
-        'twisted >= 12.0',
+        'twisted >= 15.0',
         'nevow >= 0.0.0',
         'athena',
-#        'dateutil',
+        'dateutil',
         'netaddr',
-#        'usb',
-#        'serial',
-#        'astral'
-#        'netifaces',
+        'usb',
+        'serial',
+        'astral'
+        'netifaces',
         'pyusb',
         'pyopenSSL',
         'passlib',
