@@ -103,9 +103,12 @@ setup(
 #        'dateutil',
         'netaddr',
         'usb',
-        'serial',
+#        'serial',
 #        'astral'
 #        'netifaces',
+        'pyusb',
+        'pyopenSSL',
+        'passlib',
         'jsonpickle'
     ],
     # extras_require = EXTRA_REQUIRES
