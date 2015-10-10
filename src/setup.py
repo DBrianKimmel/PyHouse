@@ -96,9 +96,9 @@ setup(
     #    'usb', 'jsonpickle', 'serial', 'netifaces', 'pyusb',
     #    'pyopenSSL', 'passlib', 'astral'
     # ]
-    install_requires = INSTALL_REQUIRES,
-    extras_require = EXTRA_REQUIRES,
-    dependency_links = DEPENDENCY_LINKS
+    install_requires = INSTALL_REQUIRES
+    # extras_require = EXTRA_REQUIRES
+    # dependency_links = DEPENDENCY_LINKS
 )
 tests_passed = False
 
