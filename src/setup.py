@@ -60,8 +60,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "sr
 
 # Requirements for our application
 INSTALL_REQUIRES = [
-    "twisted>12.0",
-    "nevow>0.0.0",
+    "twisted >= 12.0",
+    "nevow >= 0.0.0",
     "astral"
 ]
 EXTRA_REQUIRES = {}
@@ -90,13 +90,17 @@ setup(
     ],
     package_dir = {'': 'src'},
     # packages = ['distutils', 'distutils.command'],
-    requires = INSTALL_REQUIRES,
+    # requires = INSTALL_REQUIRES,
     # [
     #    'twisted', 'nevow', 'athena', 'dateutil', 'netaddr',
     #    'usb', 'jsonpickle', 'serial', 'netifaces', 'pyusb',
     #    'pyopenSSL', 'passlib', 'astral'
     # ]
-    install_requires = INSTALL_REQUIRES
+    install_requires = [
+        'twisted >= 12.0',
+        'nevow >= 0.0.0',
+        'astral'
+    ]
     # extras_require = EXTRA_REQUIRES
     # dependency_links = DEPENDENCY_LINKS
 )
