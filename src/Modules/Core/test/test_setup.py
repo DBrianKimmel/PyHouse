@@ -15,7 +15,7 @@ from twisted.trial import unittest
 import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
-from Modules.Core import setup
+from Modules.Core import setup_pyhouse
 from Modules.Core.data_objects import PyHouseAPIs, XmlInformation, ComputerInformation, HouseInformation, \
     CoreServicesInformation, TwistedInformation
 from test import xml_data

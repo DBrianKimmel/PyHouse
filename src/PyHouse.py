@@ -75,7 +75,7 @@ from twisted.application.service import Application
 # Import PyMh files and modules.
 from Modules.Core.data_objects import PyHouseData, PyHouseAPIs
 from Modules.Core.data_objects import CoreServicesInformation, TwistedInformation, XmlInformation
-from Modules.Core import setup
+from Modules.Core import setup_pyhouse
 from Modules.Computer import logging_pyh as Logger
 
 g_debug = 0
@@ -183,7 +183,7 @@ class API(object):
         self.m_pyhouse_obj = p_pyhouse_obj
         print('PyHouse.')  # For development - so we  an see when we get to this point...
         p_pyhouse_obj.APIs.PyHouseMainAPI = self
-        p_pyhouse_obj.APIs.CoreSetupAPI = setup.API(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.CoreSetupAPI = setup_pyhouse.API(p_pyhouse_obj)
         p_pyhouse_obj.Twisted.Reactor.callWhenRunning(self.Start)
         p_pyhouse_obj.Twisted.Reactor.run()  # reactor never returns so must be last - Event loop will now run
         #

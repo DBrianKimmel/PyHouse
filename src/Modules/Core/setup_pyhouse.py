@@ -1,7 +1,7 @@
 """
--*- test-case-name: PyHouse.src.Modules.Core.test.test_setup -*-
+-*- test-case-name: PyHouse.src.Modules.Core.test.test_setup_pyhouse -*-
 
-@name:      PyHouse/src/Modules/Core/setup.py
+@name:      PyHouse/src/Modules/Core/setup_pyhouse.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2015 by D. Brian Kimmel
