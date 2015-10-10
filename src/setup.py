@@ -66,9 +66,11 @@ setup(name = 'PyHouse',
     ],
     package_dir = {'': 'PyHouse'},
     # packages = ['distutils', 'distutils.command'],
-    requires = ['twisted', 'nevow', 'athena', 'dateutil', 'netaddr',
-                'usb', 'jsonpickle', 'serial', 'netifaces', 'pyusb',
-                'pyopenSSL', 'passlib', 'astral']
+    requires = [
+        'twisted', 'nevow', 'athena', 'dateutil', 'netaddr',
+        'usb', 'jsonpickle', 'serial', 'netifaces', 'pyusb',
+        'pyopenSSL', 'passlib', 'astral'
+    ]
 )
 tests_passed = False
 
@@ -174,8 +176,9 @@ class Install(object):
 
 
 if __name__ == "__main__":
+    print('Main...')
     FindOsRunning()
-    TestAll()
+    # TestAll()
     if tests_passed:
         Install()
     else:
