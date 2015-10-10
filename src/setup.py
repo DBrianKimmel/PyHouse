@@ -65,7 +65,7 @@ setup(name = 'PyHouse',
         'PyHouse'
     ],
     package_dir = {'': 'PyHouse'},
-    packages = ['distutils', 'distutils.command'],
+    # packages = ['distutils', 'distutils.command'],
     requires = ['twisted', 'nevow', 'athena', 'dateutil', 'netaddr',
                 'usb', 'jsonpickle', 'serial', 'netifaces', 'pyusb',
                 'pyopenSSL', 'passlib', 'astral']
