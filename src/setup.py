@@ -103,7 +103,7 @@ setup(
         'dateutil',
         'netaddr',
         'usb',
-        'serial',
+        # 'serial',
         # 'astral',
         'netifaces',
         'pyusb',
