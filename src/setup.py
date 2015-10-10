@@ -99,10 +99,15 @@ setup(
     install_requires = [
         'twisted >= 12.0',
         'nevow >= 0.0.0',
+        'athena',
+        'dateutil',
+        'netaddr',
         'astral'
-    ]
+    ],
     # extras_require = EXTRA_REQUIRES
     # dependency_links = DEPENDENCY_LINKS
+    include_package_data = True,
+    zip_safe = False
 )
 tests_passed = False
 
