@@ -50,7 +50,7 @@ class Xml(object):
             l_obj.Elevation = PutGetXML.get_float_from_xml(l_xml, 'Elevation')
             l_obj.TimeZoneName = PutGetXML.get_text_from_xml(l_xml, 'TimeZoneName')
         except AttributeError as e_err:
-            LOG.error('ERROR getting location Data - {}'.format(e_err))`
+            LOG.error('ERROR getting location Data - {}'.format(e_err))
         p_pyhouse_obj.House.Location = l_obj
         return l_obj
 
