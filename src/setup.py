@@ -102,7 +102,8 @@ setup(
         'athena',
         'dateutil',
         'netaddr',
-        'astral'
+#        'astral'
+        'netifaces'
     ],
     # extras_require = EXTRA_REQUIRES
     # dependency_links = DEPENDENCY_LINKS
