@@ -102,7 +102,7 @@ setup(
         'athena',
 #        'dateutil',
         'netaddr',
-        'usb',
+#        'usb',
 #        'serial',
 #        'astral'
 #        'netifaces',
