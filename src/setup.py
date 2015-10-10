@@ -103,7 +103,8 @@ setup(
         'dateutil',
         'netaddr',
 #        'astral'
-        'netifaces'
+#        'netifaces',
+        'jsonpickle'
     ],
     # extras_require = EXTRA_REQUIRES
     # dependency_links = DEPENDENCY_LINKS
