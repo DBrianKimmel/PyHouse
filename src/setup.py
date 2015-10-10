@@ -101,6 +101,7 @@ setup(
         'nevow >= 0.0.0',
         'athena',
         'python-dateutil',
+        'service-identity',
         'netaddr',
         # 'serial',
         # 'astral',
