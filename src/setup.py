@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 """
 -*- test-case-name: PyHouse.src.test.test_setup -*-
 
@@ -52,15 +52,39 @@ PyHouse
 
 # Import system type stuff
 import sys
-from distutils.core import setup
+from setuptools import setup, find_packages
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "src"))
 
 
-setup(name = 'PyHouse',
-    version = '1.6',
-    description = 'Python Distribution Utilities',
+
+# Requirements for our application
+INSTALL_REQUIRES = [
+    "twisted>12.0",
+    "nevow>0.0.0",
+    "astral"
+]
+EXTRA_REQUIRES = {}
+# Dependency links for any of the aforementioned dependencies
+DEPENDENCY_LINKS = []
+
+
+setup(
+    name = 'PyHouse',
+    version = '1.6.0',
+    description = 'Pythone house automation',
     author = 'D. Brian Kimmel',
     author_email = 'D.BrianKimmel@gmail.com',
     url = 'http://www.PyHouse.org',
+    license = 'MIT',
+    classifiers = [
+        'Environment :: Web Environment',
+        'Intended Audience :: End Users/Desktop',
+        'Natural Language :: English',
+        'Operating System :: Linux',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: JavaScript'
+    ],
     py_modules = [
         'PyHouse'
     ],
@@ -177,11 +201,12 @@ class Install(object):
 
 if __name__ == "__main__":
     print('Main...')
-    FindOsRunning()
+    # FindOsRunning()
     # TestAll()
-    if tests_passed:
-        Install()
-    else:
-        print("Correct the above faults and rerun.")
+    # if tests_passed:
+        # Install()
+    #    pass
+    # else:
+    #    print("Correct the above faults and rerun.")
 
 # ## END DBK
