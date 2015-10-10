@@ -100,8 +100,10 @@ setup(
         'twisted >= 12.0',
         'nevow >= 0.0.0',
         'athena',
-        'dateutil',
+#        'dateutil',
         'netaddr',
+        'usb',
+        'serial',
 #        'astral'
 #        'netifaces',
         'jsonpickle'
