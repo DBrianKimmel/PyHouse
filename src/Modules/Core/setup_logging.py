@@ -44,7 +44,8 @@ class DropHttpFilter(object):
         if self.m_param is None:
             allow = True
         else:
-            allow = self.m_param not in p_record.msg
+            # allow = self.m_param not in p_record.msg
+            allow = False
         # if allow:
         #    p_record.msg = 'changed: ' + p_record.msg
         return allow

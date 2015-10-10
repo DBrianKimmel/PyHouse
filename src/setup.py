@@ -100,7 +100,7 @@ setup(
         'twisted >= 15.0',
         'nevow >= 0.0.0',
         'athena',
-        # 'dateutil',
+        'python-dateutil',
         'netaddr',
         # 'serial',
         # 'astral',
