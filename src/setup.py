@@ -104,7 +104,7 @@ setup(
         'netaddr',
         'usb',
         'serial',
-        'astral',
+        # 'astral',
         'netifaces',
         'pyusb',
         'pyopenSSL',
