@@ -57,7 +57,7 @@ class Xml(object):
         """
         l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
         p_pyhouse_obj.House = Xml._read_base(l_xml)
-        p_pyhouse_obj.House.Location = locationXML.read_location_xml(l_xml)
+        p_pyhouse_obj.House.Location = locationXML.read_location_xml(p_pyhouse_obj)
         p_pyhouse_obj.House.Rooms = roomsXML.read_rooms_xml(l_xml)
         return p_pyhouse_obj.House
 
