@@ -181,7 +181,7 @@ class API(object):
         Utilities.do_daemon_stuff()
         p_pyhouse_obj = Utilities._create_pyhouse_obj()
         self.m_pyhouse_obj = p_pyhouse_obj
-        print('PyHouse.')  # For development - so we  an see when we get to this point...
+        print('PyHouse.API()')  # For development - so we  an see when we get to this point...
         p_pyhouse_obj.APIs.PyHouseMainAPI = self
         p_pyhouse_obj.APIs.CoreSetupAPI = setup_pyhouse.API(p_pyhouse_obj)
         p_pyhouse_obj.Twisted.Reactor.callWhenRunning(self.Start)

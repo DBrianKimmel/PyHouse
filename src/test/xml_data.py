@@ -19,96 +19,41 @@ from Modules.Computer.test.xml_computer import XML_COMPUTER_DIVISION
 from Modules.Housing.test.xml_housing import HOUSE_DIVISION_XML
 
 
-TESTING_VERSION = """
-    xmlns:comp="http://PyHouse.Org/ComputerDiv"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://PyHouse.org schemas/PyHouse.xsd"
->
-<!-- Updated by PyHouse 2015-07-19 11:22:33.996000 -->
-"""
+TESTING_VERSION = '1.4.0'
+TESTING_XMLNS_COMP = 'http://PyHouse.Org/ComputerDiv'
+TESTING_XMLNS_XSI = 'http://www.w3.org/2001/XMLSchema-instance'
+TESTING_XSI_SCHEMA = 'http://PyHouse.org schemas/PyHouse.xsd'
+TESTING_UPDATE_COMMENT = '<!-- Updated by PyHouse 2015-07-19 11:22:33.996000 -->'
+
+L_VERSION = '   Version="' + TESTING_VERSION + '"'
+L_XMLNS_COMP = '    xmlns:comp="' + TESTING_XMLNS_COMP + '"'
+L_XMLNS_XSI = '    xmlns:xsi="' + TESTING_XMLNS_XSI + '"'
+L_XSI_SCHEMA = '    xsi:schemaLocation="' + TESTING_XSI_SCHEMA + '"'
+
+L_PYHOUSE_START = '\n'.join([
+    '<PyHouse',
+    L_VERSION,
+    L_XMLNS_COMP,
+    L_XMLNS_XSI,
+    L_XSI_SCHEMA,
+    '>',
+    TESTING_UPDATE_COMMENT
+])
+L_PYHOUSE_END = '</PyHouse>'
 
 
-# Missing
-XML_MISSING = ''
+XML_EMPTY = '\n'.join([
+    L_PYHOUSE_START,
+    L_PYHOUSE_END
+])
 
-
-
-# No sections
-XML_EMPTY = """
-<PyHouse
-    Version='1.3.2'
-    xmlns:comp="http://PyHouse.Org/ComputerDiv"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://PyHouse.org schemas/PyHouse.xsd"
->
-<!-- Updated by PyHouse 2001-12-23 12:23:34.0 -->
-</PyHouse>
-"""
-
-
-
-XML_SHORT = """
-<PyHouse
-    Version='1.3.2'
-    xmlns:comp="http://PyHouse.Org/ComputerDiv"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://PyHouse.org schemas/PyHouse.xsd"
->
-<!-- Updated by PyHouse 2001-12-23 12:23:34.0 -->
-    <Web>
-    </Web>
-    <Nodes>
-        <Node Name='PiNode-1' Key='0' Active='True'>
-            <UUID>ec955bcf-89c9-11e3-b583-082e5f8cdfd2</UUID>
-        </Node>
-    </Nodes>
-    <Houses>
-        <House Name='House_1' Key='0' Active='True'>
-            <Controllers>
-                <Controller Name='Serial_1' Key='0' Active='True'>
-                    <InterfaceType>Serial</InterfaceType>
-                    <BaudRate>19200</BaudRate>
-                    <ByteSize>8</ByteSize>
-                    <DsrDtr>False</DsrDtr>
-                    <Parity>N</Parity>
-                    <RtsCts>False</RtsCts>
-                    <StopBits>1.0</StopBits>
-                    <Timeout>0</Timeout>
-                    <XonXoff>False</XonXoff>
-                </Controller>
-                <Controller Name='USB_1' Key='1' Active='True'>
-                    <InterfaceType>USB</InterfaceType>
-                    <Vendor>12345</Vendor>
-                    <Product>9876</Product>
-                </Controller>
-            </Controllers>
-        </House>
-    </Houses>
-</PyHouse>
-"""
-
-
-
-L_PYHOUSE_HEADER_XML = """
-<PyHouse
-    Version='1.4.0'
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://PyHouse.org schemas/PyHouse.xsd">"""
-
-L_PYHOUSE_HEADER_XML_1_3 = """
-<PyHouse
-
-    Version='1.3.2'
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://PyHouse.org schemas/PyHouse.xsd">"""
-
-# Everything as expected in a running system.
 XML_LONG = '\n'.join([
-    L_PYHOUSE_HEADER_XML,
+    L_PYHOUSE_START,
     XML_COMPUTER_DIVISION,
     HOUSE_DIVISION_XML,
-    "</PyHouse>"
+    L_PYHOUSE_END
 ])
+
 
 
 XSD_HEADER = """

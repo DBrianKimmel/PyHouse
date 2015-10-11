@@ -465,22 +465,17 @@ class LocationData(object):
     def __init__(self):
         self.Street = ''
         self.City = ''
-        self.State = 'FL'
-        self.ZipCode = '12345'
-        self.Region = 'America'
-        self.Latitude = 28.938448
-        self.Longitude = -82.517208
-        self.Elevation = 30
+        self.State = ''  # 'FL'
+        self.ZipCode = ''  # '12345'
+        self.Region = ''  # 'America'
+        self.Latitude = 0.0  # 28.938448
+        self.Longitude = 0.0  # -82.517208
+        self.Elevation = 0.0  # 30
         self.Phone = ''
-        self.TimeZoneName = 'America/New_York'
+        self.TimeZoneName = ''  # 'America/New_York'
         #
-        self._name = 'Greenwich'
-        self._region = 'England'
-        # self._latitude = 51.168
-        # self._longitude = 0
-        # self._elevation = 24
-
-        #
+        self._name = ''  # 'Greenwich'
+        self._region = ''  # 'England'
         self.DomainID = None
         self.RiseSet = RiseSetData()  # RiseSetData()
         self._TimeZoneOffset = '-5:00'

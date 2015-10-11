@@ -7,7 +7,7 @@
 @note:      Created on Oct 6, 2014
 @Summary:
 
-Passed all 7 tests - DBK - 2015-08-01
+Passed all 11 tests - DBK - 2015-08-01
 
 """
 
@@ -16,7 +16,7 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
-from test.xml_data import XML_LONG
+from test.xml_data import XML_LONG, XML_EMPTY
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
@@ -25,6 +25,12 @@ class SetupMixin(object):
 
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
+        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+
+    def setUpObj(self, p_root):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
+
+    def setUpXml(self, p_root):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
@@ -47,7 +53,49 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         print(PrettyFormatAny.form(XML_LONG, 'XML', 90))
 
 
-class C01_Build(SetupMixin, unittest.TestCase):
+class B1_Empty(SetupMixin, unittest.TestCase):
+    """ This section tests the SetupMixin Class
+    """
+
+    def setUp(self):
+        SetupMixin.setUpObj(self, ET.fromstring(XML_EMPTY))
+        pass
+
+    def test_01_Obj(self):
+        print(PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse'))
+
+    def test_02_Computer(self):
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'PyHouse.Computer'))
+
+    def test_03_House(self):
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'PyHouse.House'))
+
+    def test_04_Location(self):
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Location, 'PyHouse.House.Location'))
+
+
+class B2_Long(SetupMixin, unittest.TestCase):
+    """ This section tests the SetupMixin Class
+    """
+
+    def setUp(self):
+        SetupMixin.setUpObj(self, ET.fromstring(XML_LONG))
+        pass
+
+    def test_01_Obj(self):
+        print(PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse'))
+
+    def test_02_Computer(self):
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'PyHouse.Computer'))
+
+    def test_03_House(self):
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'PyHouse.House'))
+
+    def test_04_Location(self):
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Location, 'PyHouse.House.Location'))
+
+
+class C1_Build(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by inernet.
     """
 

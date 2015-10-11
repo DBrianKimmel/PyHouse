@@ -56,10 +56,10 @@ class Xml(object):
         """Read house information, location and rooms.
         """
         l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
-        l_house = Xml._read_base(l_xml)
-        l_house.Location = locationXML.read_location_xml(l_xml)
-        l_house.Rooms = roomsXML.read_rooms_xml(l_xml)
-        return l_house
+        p_pyhouse_obj.House = Xml._read_base(l_xml)
+        p_pyhouse_obj.House.Location = locationXML.read_location_xml(l_xml)
+        p_pyhouse_obj.House.Rooms = roomsXML.read_rooms_xml(l_xml)
+        return p_pyhouse_obj.House
 
     @staticmethod
     def write_house_xml(p_pyhouse_obj):

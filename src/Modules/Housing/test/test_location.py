@@ -18,7 +18,7 @@ from twisted.trial import unittest
 from Modules.Core.data_objects import LocationData
 from Modules.Housing import location
 from Modules.Utilities.json_tools import encode_json, decode_json_unicode
-from test.xml_data import XML_LONG
+from test.xml_data import XML_LONG, XML_EMPTY
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Housing.test.xml_location import \
         TESTING_LOCATION_STREET, \
@@ -40,8 +40,14 @@ class SetupMixin(object):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
+    def setUpObj(self, p_root):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
 
-class C01_XML(SetupMixin, unittest.TestCase):
+    def setUpXml(self, p_root):
+        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+
+
+class A1_XML(SetupMixin, unittest.TestCase):
 
     def _pyHouses(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
@@ -98,5 +104,47 @@ class C01_XML(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(l_obj, 'JSON', 80))
         self.assertEqual(l_obj['Street'], TESTING_LOCATION_STREET)
         self.assertEqual(l_obj['City'], TESTING_LOCATION_CITY)
+
+
+class S1_PyHouse(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUpObj(self, ET.fromstring(XML_EMPTY))
+
+    def test_01_Obj(self):
+        print(PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse_obj'))
+
+    def test_02_House(self):
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'PyHouse_obj.House'))
+
+    def test_03_Location(self):
+       print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Location, 'PyHouse_obj.House.Location'))
+
+    def test_04_find_xml(self):
+        """ Be sure that the XML contains the right stuff.
+        """
+        l_location = location.Xml().read_location_xml(self.m_pyhouse_obj)
+        print(PrettyFormatAny.form(l_location, 'Location'))
+
+
+class S2_PyHouse(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_EMPTY))
+
+    def test_01_Obj(self):
+        print(PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse_obj'))
+
+    def test_02_House(self):
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'PyHouse_obj.House'))
+
+    def test_03_Location(self):
+       print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Location, 'PyHouse_obj.House.Location'))
+
+    def test_04_find_xml(self):
+        """ Be sure that the XML contains the right stuff.
+        """
+        l_location = location.Xml().read_location_xml(self.m_pyhouse_obj)
+        print(PrettyFormatAny.form(l_location, 'Location'))
 
 # ## END DBK

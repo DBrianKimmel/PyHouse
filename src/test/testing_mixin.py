@@ -59,6 +59,9 @@ class XmlData(object):
         self.light_sect = None
         self.light = None
         self.location_sect = None
+        self.location = None
+        self.irrigation_sect = None
+        self.irrigation = None
         self.pool_sect = None
         self.pool = None
         self.room_sect = None
@@ -72,8 +75,8 @@ class XmlData(object):
         self.computer_div = None
         self.internet_sect = None
         self.locater_sect = None
-        self.mqtt_sect = None
         self.updater_sect = None
+        self.mqtt_sect = None
         self.log_sect = None
         self.web_sect = None
         self.node_sect = None
@@ -116,11 +119,10 @@ class SetupPyHouseObj(object):
         l_ret = CoreServicesInformation()
         return l_ret
 
-    def _build_house(self, p_pyhouse_obj):
+    @staticmethod
+    def _build_house(p_pyhouse_obj):
         l_ret = HouseInformation()
         l_ret.Name = 'Test House'
-        l_ret.Active = True
-        l_ret.Key = 0
         l_ret.Location = LocationData()
         # Added family build 2015-08-19
         l_ret.FamilyData = familyUtil._init_component_apis(p_pyhouse_obj)
@@ -183,7 +185,7 @@ class SetupPyHouseObj(object):
         l_pyhouse_obj = PyHouseData()
         l_pyhouse_obj.APIs = self._build_apis()
         l_pyhouse_obj.Computer = self._build_computer()
-        l_pyhouse_obj.House = self._build_house(l_pyhouse_obj)
+        l_pyhouse_obj.House = SetupPyHouseObj._build_house(l_pyhouse_obj)
         l_pyhouse_obj.Services = self._build_services()
         l_pyhouse_obj.Twisted = self._build_twisted()
         l_pyhouse_obj.Xml = self._build_xml(p_root)

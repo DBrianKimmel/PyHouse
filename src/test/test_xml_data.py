@@ -19,24 +19,25 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Utilities.tools import PrettyPrintAny
-from test.xml_data import XML_LONG, XML_LONG_1_3
+from test.xml_data import XML_LONG, XML_EMPTY
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
-class C01_Raw(unittest.TestCase):
+class A1_Raw(unittest.TestCase):
     """
     This section will verify the XML in the 'Modules.test.xml_data' file is correct and what the log module can read/write.
     """
 
-    def s_compute(self):
-        self.m_root_element = ET.fromstring(XML_LONG)
-        self.m_division = self.m_root_element.find('ComputerDivision')
-
     def setUp(self):
         pass
 
-    def test_01_raw_1_3(self):
-        l_str = XML_LONG_1_3.split('\n')
-        PrettyPrintAny(l_str, 'Raw XML 1.3', 50)
+    def test_01_print(self):
+        print(XML_EMPTY)
+        print(PrettyFormatAny.form(XML_EMPTY, 'Root'))
+
+    def test_02_print(self):
+        print(XML_LONG)
+        print(PrettyFormatAny.form(XML_LONG, 'Root'))
 
     def test_02_raw_1_4(self):
         l_str = XML_LONG.split('\n')
@@ -44,7 +45,7 @@ class C01_Raw(unittest.TestCase):
 
 
 
-class C02_Parsed(unittest.TestCase):
+class A2_Parsed(unittest.TestCase):
     """
     This section will verify the XML in the 'Modules.test.xml_data' file is correct and what the log module can read/write.
     """
