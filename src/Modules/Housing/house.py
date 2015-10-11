@@ -68,9 +68,9 @@ class Xml(object):
         # print(PrettyFormatAny.form(p_pyhouse_obj, 'PyHouse'))
         l_house_obj = p_pyhouse_obj.House
         # print(PrettyFormatAny.form(l_house_obj, 'PyHouse'))
-        l_house_xml = XmlConfigTools.write_base_object_xml('HouseDivision', l_house_obj)
-        l_house_xml.append(locationXML.write_location_xml(l_house_obj.Location))
-        l_house_xml.append(roomsXML.write_rooms_xml(l_house_obj.Rooms))
+        l_house_xml = XmlConfigTools.write_base_object_xml('HouseDivision', p_pyhouse_obj.House)
+        l_house_xml.append(locationXML.write_location_xml(p_pyhouse_obj.House.Location))
+        l_house_xml.append(roomsXML.write_rooms_xml(p_pyhouse_obj.House.Rooms))
         return l_house_xml
 
 

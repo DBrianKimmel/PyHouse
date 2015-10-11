@@ -36,6 +36,7 @@ class Xml(object):
         """
         l_obj = LocationData()
         l_obj.RiseSet = RiseSetData()
+        p_pyhouse_obj.House.Location = l_obj
         try:
             l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
             l_xml = l_xml.find('LocationSection')
