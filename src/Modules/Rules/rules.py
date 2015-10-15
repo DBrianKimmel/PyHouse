@@ -41,5 +41,4 @@ class API (object):
         LOG.info("Saved Rules XML.")
         return p_xml
 
-
 # ## END DBK
