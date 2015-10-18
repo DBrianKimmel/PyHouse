@@ -12,13 +12,15 @@ There is a matrix of controllers to create here
 """
 
 # Import system type stuff
+import platform
 
 # Import PyMh files
 from Modules.Core.test.xml_device import \
         XML_DEVICE_INSTEON, \
         XML_DEVICE_UPB
 from Modules.Drivers.test.xml_interface import \
-        XML_SERIAL_INTERFACE, \
+        XML_SERIAL_LINUX_INTERFACE, \
+        XML_SERIAL_WINDOWS_INTERFACE, \
         XML_USB_INTERFACE
 from Modules.Families.Insteon.test.xml_insteon import \
         XML_INSTEON
@@ -29,6 +31,11 @@ from Modules.Drivers.Serial.test.xml_serial import \
 from Modules.Drivers.USB.test.xml_usb import \
         XML_USB
 
+
+if platform.uname()[0] == 'Windows':
+    L_SERIAL_INTERFACE = XML_SERIAL_WINDOWS_INTERFACE
+else:
+    L_SERIAL_INTERFACE = XML_SERIAL_LINUX_INTERFACE
 
 L_CONTROLLER_SECTION_START = '<ControllerSection>'
 L_CONTROLLER_SECTION_END = '</ControllerSection>'
@@ -48,7 +55,7 @@ L_CONTROLLER_0 = '\n'.join([
     L_CONTROLLER_TYPE_0,
     XML_DEVICE_INSTEON,
     XML_INSTEON,
-    XML_SERIAL_INTERFACE,
+    L_SERIAL_INTERFACE,
     XML_SERIAL,
     L_CONTROLLER_END
     ])

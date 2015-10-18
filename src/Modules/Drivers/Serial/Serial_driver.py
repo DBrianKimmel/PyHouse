@@ -32,6 +32,8 @@ from twisted.internet.serialport import SerialPort
 # Import PyMh files
 from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities.tools import PrintBytes
+from nevow.livepage import self
+# import serial
 # from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.SerialDriver   ')
@@ -50,9 +52,10 @@ class SerialProtocol(Protocol):
         self.m_controller_obj = p_controller_obj
 
     def connectionLost(self, reason):
-        LOG.error('Connection lost for controller {} - {}'.format(self.m_controller_obj.Name, reason))
-        self.m_controller_obj._DriverAPI.Stop()
-        self.m_controller_obj._DriverAPI.Start(self.m_pyhouse_obj, self.m_controller_obj)
+        LOG.error('Connection lost for controller {}\n\t{}'.format(self.m_controller_obj.Name, reason))
+        SerialAPI().try_restart(self.m_pyhouse_obj, self.m_controller_obj)
+        # self.m_controller_obj._DriverAPI.Stop()
+        # self.m_controller_obj._DriverAPI.Start(self.m_pyhouse_obj, self.m_controller_obj)
 
     def connectionMade(self):
         LOG.info('Connection made for controller {}'.format(self.m_controller_obj.Name))
@@ -74,20 +77,22 @@ class SerialAPI(object):
         @return: True if the driver opened OK and is usable
                  False if the driver is not functional for any reason.
         """
+        l_serial = None
         p_controller_obj._Data = ''
         try:
-            self.m_serial = \
+            l_serial = \
                 SerialPort(SerialProtocol(p_pyhouse_obj, p_controller_obj),  # Factory
                 p_controller_obj.Port,
                 p_pyhouse_obj.Twisted.Reactor,
                 baudrate = p_controller_obj.BaudRate)
+            LOG.info("Opened Device:{}, Port:{}".format(p_controller_obj.Name, p_controller_obj.Port))
+            p_controller_obj.Active = True
         except Exception as e_err:
-            LOG.error("ERROR Open failed for Device:{}, Port:{} - {}".format(p_controller_obj.Name, p_controller_obj.Port, e_err))
+            LOG.error("ERROR - Open failed for Device:{}, Port:{}\n\t{}".format(
+                        p_controller_obj.Name, p_controller_obj.Port, e_err))
             p_controller_obj.Active = False
-            return False
-        LOG.info("Opened Device:{}, Port:{}".format(p_controller_obj.Name, p_controller_obj.Port))
-        p_controller_obj.Active = True
-        return True
+        self.m_serial = l_serial
+        return l_serial
 
     def close_device(self, p_controller_obj):
         """Flush all pending output and close the serial port.
@@ -96,6 +101,13 @@ class SerialAPI(object):
         if self.m_serial != None:  #  not currently open
             self.m_serial.close()
         self.m_serial = None
+
+    def try_restart(self, p_pyhouse_obj, p_controller_obj):
+        try:
+            self.close_device(p_controller_obj)
+            self.open_serial_driver(p_pyhouse_obj, p_controller_obj)
+        except Exception as e_err:
+            LOG.error('ERROR Restart failed - Reason: {}'.format(e_err))
 
     def fetch_read_data(self, p_controller_obj):
         l_msg = p_controller_obj._Data
@@ -129,7 +141,7 @@ class API(SerialAPI):
         # print(PrettyFormatAny.form(p_controller_obj, 'Controller'))
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_controller_obj = p_controller_obj
-        l_ret = self.open_serial_driver(p_pyhouse_obj, p_controller_obj)
+        l_ret = self.open_serial_driver(self.m_pyhouse_obj, p_controller_obj)
         self.m_active = l_ret
         if l_ret:
             LOG.info("Started Serial controller {}".format(self.m_controller_obj.Name))

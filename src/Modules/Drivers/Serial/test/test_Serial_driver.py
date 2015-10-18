@@ -32,6 +32,7 @@ class SetupMixin(object):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_pyhouse_obj.House.FamilyData = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
+        #
         lightingAPI(self.m_pyhouse_obj).LoadXml(self.m_pyhouse_obj)
 
 
@@ -47,12 +48,49 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         l_obj.BaudRate = 19200
         return l_obj
 
-    def test_01_Controllers(self):
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Controllers, 'PyHouse Controllers'))
+    def test_01_PyHouse(self):
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse'))
+        self.assertEqual(len(self.m_pyhouse_obj.House.Controllers), 2)
+
+    def test_02_House(self):
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'House'))
+        self.assertEqual(len(self.m_pyhouse_obj.House.Controllers), 2)
+
+    def test_03_Controllers(self):
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Controllers, 'PyHouse Controllers'))
+        self.assertEqual(len(self.m_pyhouse_obj.House.Controllers), 2)
+
+    def test_04_Twisted(self):
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Twisted, 'Twisted'))
         self.assertEqual(len(self.m_pyhouse_obj.House.Controllers), 2)
 
 
-class B1_API(SetupMixin, unittest.TestCase):
+class B1_Serial(SetupMixin, unittest.TestCase):
+    """
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_api = Serial_driver.API(self.m_pyhouse_obj.House)
+
+    def test_01_Open(self):
+        l_controller = self.m_pyhouse_obj.House.Controllers[0]
+        l_ret = self.m_api.open_serial_driver(self.m_pyhouse_obj, l_controller)
+        print(PrettyFormatAny.form(l_ret, 'open'))
+
+
+class B2_API(SetupMixin, unittest.TestCase):
+    """
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_01_Start(self):
+        pass
+
+
+class B3_API(SetupMixin, unittest.TestCase):
     """
     """
 
