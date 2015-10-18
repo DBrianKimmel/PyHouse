@@ -132,7 +132,7 @@ class Interfaces(object):
             if Interfaces._find_addr_family_name(l_af) == 'AF_INET6':
                 l_interface.V6Address = Interfaces._get_address_list(Interfaces._find_addr_lists(p_interface_name)[l_af])
         if l_interface.V4Address == [] and l_interface.V6Address == []:
-            return
+            return l_interface
         return l_interface
 
     @staticmethod
