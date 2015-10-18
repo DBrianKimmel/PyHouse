@@ -30,7 +30,6 @@ from Modules.Scheduling.schedule_xml import Xml as scheduleXml
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.debug_tools import PrettyFormatAny
-# from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 T_NOW = datetime.datetime(2015, 6, 6, 12, 34, 56)

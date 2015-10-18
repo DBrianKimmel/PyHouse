@@ -17,9 +17,11 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from Modules.Core.data_objects import ControllerData
 from Modules.Drivers.Serial import Serial_driver
-from Modules.Families import family
+from Modules.Families.family import API as familyAPI
+from Modules.Lighting.lighting import API as lightingAPI
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -29,10 +31,11 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_version = '1.4.0'
+        self.m_pyhouse_obj.House.FamilyData = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
+        lightingAPI(self.m_pyhouse_obj).LoadXml(self.m_pyhouse_obj)
 
 
-class A01_API(SetupMixin, unittest.TestCase):
+class A1_Setup(SetupMixin, unittest.TestCase):
     """
     """
 
@@ -44,7 +47,19 @@ class A01_API(SetupMixin, unittest.TestCase):
         l_obj.BaudRate = 19200
         return l_obj
 
-    def test_01_Init(self):
+    def test_01_Controllers(self):
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Controllers, 'PyHouse Controllers'))
+        self.assertEqual(len(self.m_pyhouse_obj.House.Controllers), 2)
+
+
+class B1_API(SetupMixin, unittest.TestCase):
+    """
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_01_Start(self):
         pass
 
 # ## END

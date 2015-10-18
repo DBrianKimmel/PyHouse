@@ -31,15 +31,16 @@ from twisted.internet.serialport import SerialPort
 
 # Import PyMh files
 from Modules.Computer import logging_pyh as Logger
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Utilities.tools import PrintBytes
+# from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.SerialDriver   ')
 
 
 class SerialProtocol(Protocol):
     """
-    A very simple twisted protocol.
-    Addumulate the data receivess into a buffer for the controller.
+    A very simple protocol.
+    Accumulate the data received into a buffer for the controller.
     """
 
     m_controller_obj = None
@@ -50,8 +51,8 @@ class SerialProtocol(Protocol):
 
     def connectionLost(self, reason):
         LOG.error('Connection lost for controller {} - {}'.format(self.m_controller_obj.Name, reason))
-        self.m_controller_obj.Stop()
-        self.m_controller_obj.Start(self.m_pyhouse_obj, self.m_controller_obj)
+        self.m_controller_obj._DriverAPI.Stop()
+        self.m_controller_obj._DriverAPI.Start(self.m_pyhouse_obj, self.m_controller_obj)
 
     def connectionMade(self):
         LOG.info('Connection made for controller {}'.format(self.m_controller_obj.Name))
@@ -75,10 +76,11 @@ class SerialAPI(object):
         """
         p_controller_obj._Data = ''
         try:
-            self.m_serial = SerialPort(SerialProtocol(p_pyhouse_obj, p_controller_obj),
-                    p_controller_obj.Port,
-                    p_pyhouse_obj.Twisted.Reactor,
-                    baudrate = p_controller_obj.BaudRate)
+            self.m_serial = \
+                SerialPort(SerialProtocol(p_pyhouse_obj, p_controller_obj),  # Factory
+                p_controller_obj.Port,
+                p_pyhouse_obj.Twisted.Reactor,
+                baudrate = p_controller_obj.BaudRate)
         except Exception as e_err:
             LOG.error("ERROR Open failed for Device:{}, Port:{} - {}".format(p_controller_obj.Name, p_controller_obj.Port, e_err))
             p_controller_obj.Active = False

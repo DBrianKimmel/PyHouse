@@ -41,7 +41,7 @@ class FamUtil(object):
         try:
             l_family_obj = p_pyhouse_obj.House.FamilyData[p_device_obj.DeviceFamily]
         except KeyError as e_err:
-            print(PrettyFormatAny.form(p_pyhouse_obj.House, 'FamilyData'))
+            print(PrettyFormatAny.form(p_pyhouse_obj.House, 'ERROR FamilyData'))
             LOG.error('Could not get family object for:\n\tDevice Name:\t{}\n\tFamily:\t\t{}\n\tKey Error:\t{}'\
                     .format(
                         p_device_obj.Name,

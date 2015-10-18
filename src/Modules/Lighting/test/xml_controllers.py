@@ -9,7 +9,6 @@
 
 There is a matrix of controllers to create here
 
-
 """
 
 # Import system type stuff
@@ -31,53 +30,54 @@ from Modules.Drivers.USB.test.xml_usb import \
         XML_USB
 
 
-TESTING_CONTROLLER_TYPE = 'Controller'
+L_CONTROLLER_SECTION_START = '<ControllerSection>'
+L_CONTROLLER_SECTION_END = '</ControllerSection>'
+L_CONTROLLER_END = '</Controller>'
+
 
 TESTING_CONTROLLER_NAME_0 = 'Insteon Serial Controller'
 TESTING_CONTROLLER_KEY_0 = '0'
 TESTING_CONTROLLER_ACTIVE_0 = 'True'
+TESTING_CONTROLLER_TYPE_0 = 'Controller'
+
+L_CONTROLLER_START_0 = '  <Controller Name="' + TESTING_CONTROLLER_NAME_0 + '" Key="' + TESTING_CONTROLLER_KEY_0 + '" Active="' + TESTING_CONTROLLER_ACTIVE_0 + '">'
+L_CONTROLLER_TYPE_0 = '    <LightingType>' + TESTING_CONTROLLER_TYPE_0 + '</LightingType>'
+
+L_CONTROLLER_0 = '\n'.join([
+    L_CONTROLLER_START_0,
+    L_CONTROLLER_TYPE_0,
+    XML_DEVICE_INSTEON,
+    XML_INSTEON,
+    XML_SERIAL_INTERFACE,
+    XML_SERIAL,
+    L_CONTROLLER_END
+    ])
+
 
 TESTING_CONTROLLER_NAME_1 = 'UPB USB Controller'
 TESTING_CONTROLLER_KEY_1 = '1'
 TESTING_CONTROLLER_ACTIVE_1 = 'True'
+TESTING_CONTROLLER_TYPE_1 = 'Controller'
 
-L_CONTROLLER_LINE_1 = '  <Controller Name="' + TESTING_CONTROLLER_NAME_0 + '" Key="' + TESTING_CONTROLLER_KEY_0 + '" Active="' + TESTING_CONTROLLER_ACTIVE_0 + '">'
-L_CONTROLLER_LINE_2 = '  <Controller Name="' + TESTING_CONTROLLER_NAME_1 + '" Key="' + TESTING_CONTROLLER_KEY_1 + '" Active="' + TESTING_CONTROLLER_ACTIVE_1 + '">'
+L_CONTROLLER_START_1 = '  <Controller Name="' + TESTING_CONTROLLER_NAME_1 + '" Key="' + TESTING_CONTROLLER_KEY_1 + '" Active="' + TESTING_CONTROLLER_ACTIVE_1 + '">'
+L_CONTROLLER_TYPE_1 = '    <LightingType>' + TESTING_CONTROLLER_TYPE_1 + '</LightingType>'
 
-L_CONTROLLER_TYPE = '    <LightingType>' + TESTING_CONTROLLER_TYPE + '</LightingType>'
-
-L_CONTROLLER_BODY_INSTEON = '\n'.join([
-    XML_DEVICE_INSTEON,
-    L_CONTROLLER_TYPE
-    ])
-
-L_CONTROLLER_BODY_UPB = '\n'.join([
+L_CONTROLLER_1 = '\n'.join([
+    L_CONTROLLER_START_1,
+    L_CONTROLLER_TYPE_1,
     XML_DEVICE_UPB,
-    L_CONTROLLER_TYPE
-    ])
-
-INSTEON_CONTROLLER_XML = '\n'.join([
-    L_CONTROLLER_LINE_1,
-    L_CONTROLLER_BODY_INSTEON,
-    XML_INSTEON,
-    XML_SERIAL_INTERFACE,
-    XML_SERIAL,
-    "</Controller>"
-    ])
-
-UPB_CONTROLLER_XML = '\n'.join([
-    L_CONTROLLER_LINE_2,
-    L_CONTROLLER_BODY_UPB,
     XML_UPB,
     XML_USB_INTERFACE,
     XML_USB,
-    "</Controller>"])
+    L_CONTROLLER_END
+    ])
 
 
 XML_CONTROLLER_SECTION = '\n'.join([
-    "  <ControllerSection>",
-    INSTEON_CONTROLLER_XML,
-    UPB_CONTROLLER_XML,
-    "  </ControllerSection>"])
+    L_CONTROLLER_SECTION_START,
+    L_CONTROLLER_0,
+    L_CONTROLLER_1,
+    L_CONTROLLER_SECTION_END
+    ])
 
 # ## END DBK
