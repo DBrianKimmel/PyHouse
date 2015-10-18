@@ -93,8 +93,14 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         """Date is in DOW
         """
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.FamilyData, 'FamilyData'))
+        self.assertEqual(self.m_pyhouse_obj.House.FamilyData['Insteon'].Name, 'Insteon')
         self.assertEqual(self.m_pyhouse_obj.House.FamilyData['Null'].Name, 'Null')
+        self.assertEqual(self.m_pyhouse_obj.House.FamilyData['UPB'].Name, 'UPB')
+        self.assertEqual(self.m_pyhouse_obj.House.FamilyData['X10'].Name, 'X10')
+        self.assertEqual(self.m_pyhouse_obj.House.FamilyData['Insteon'].Key, 1)
         self.assertEqual(self.m_pyhouse_obj.House.FamilyData['Null'].Key, 0)
+        self.assertEqual(self.m_pyhouse_obj.House.FamilyData['UPB'].Key, 2)
+        self.assertEqual(self.m_pyhouse_obj.House.FamilyData['X10'].Key, 3)
         self.assertEqual(self.m_pyhouse_obj.House.FamilyData['Null'].Active, True)
 
 
@@ -107,7 +113,7 @@ class A2_Utility(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_01_Mins(self):
-        """Date is in DOW
+        """Convert a datetime to Minutes
         """
         l_minutes = scheduleUtility.to_mins(T_NOW)
         self.assertEqual(l_minutes, 12 * 60 + 34)
@@ -197,7 +203,7 @@ class B2_Time(SetupMixin, unittest.TestCase):
         self.m_schedule_obj.DOW = 1 + 2 + 4 + 8 + 16 + 32 + 64
 
     def test_01_TillSched(self):
-        """Date is
+        """ Extract Minutes from Midnight to schedule time
         """
         l_riseset = Mock.RiseSet()
         self.m_schedule_obj.Time = '01:02'
@@ -226,21 +232,26 @@ class B2_Time(SetupMixin, unittest.TestCase):
         self.m_schedule_obj.DOW = 1 + 2 + 4 + 8 + 16 + 32 + 64
         l_riseset = Mock.RiseSet()
         self.m_schedule_obj.Time = '01:02'
-        l_minutes = SchedTime.extract_time_to_go(self.m_schedule_obj, T_NOW, l_riseset)
-        self.assertEqual(l_minutes, (1 * 60 + 2) * 60)
+        l_time = datetime.datetime(2015, 6, 6, 0, 2, 0)
+        l_minutes = SchedTime.extract_time_to_go(self.m_schedule_obj, l_time, l_riseset)
+        self.assertEqual(l_minutes, 3600)
         #
-        self.m_schedule_obj.Time = 'dawn'
-        l_minutes = SchedTime.extract_time_to_go(self.m_schedule_obj, T_NOW, l_riseset)
-        self.assertEqual(l_minutes, (7 * 60 + 12) * 60)
+        self.m_schedule_obj.Time = 'dawn'  # 7:12:54
+        l_time = datetime.datetime(2015, 6, 6, 1, 2, 0)
+        l_minutes = SchedTime.extract_time_to_go(self.m_schedule_obj, l_time, l_riseset)
+        self.assertEqual(l_minutes, (6 * 60 + 10) * 60)
         #
-        self.m_schedule_obj.DOW = 1 + 2 + 4 + 8 + 16 + 0 + 64
+        self.m_schedule_obj.DOW = 1 + 2 + 4 + 8 + 16 + 0 + 64  # Not today
         l_riseset = Mock.RiseSet()
-        self.m_schedule_obj.Time = '01:02'
-        l_minutes = SchedTime.extract_time_to_go(self.m_schedule_obj, T_NOW, l_riseset)
-        self.assertEqual(l_minutes, (1 * 60 + 2 + 1440) * 60)
+        self.m_schedule_obj.Time = '03:02'
+        l_time = datetime.datetime(2015, 6, 6, 3, 2, 0)
+        l_minutes = SchedTime.extract_time_to_go(self.m_schedule_obj, l_time, l_riseset)
+        self.assertEqual(l_minutes, (0 * 60) + 1440 * 60)
 
 
 class C1_Execute(SetupMixin, unittest.TestCase):
+    """Testing class ScheduleExecution
+    """
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
@@ -248,12 +259,17 @@ class C1_Execute(SetupMixin, unittest.TestCase):
         self.m_pyhouse_obj.APIs.Computer.MqttAPI = mqttAPI(self.m_pyhouse_obj)
 
     def test_01_one(self):
+        """
+        """
+        self.m_pyhouse_obj.House.Schedules[0].ScheduleType = 'TeStInG14159'
+        l_schedule = self.m_pyhouse_obj.House.Schedules[0]
+        ScheduleExecution.dispatch_one_schedule(self.m_pyhouse_obj, l_schedule)
         self.assertEqual(True, True)
 
-    def test_01_All(self):
-        l_list = [1, 2]
-        self.m_pyhouse_obj.House.Schedule[1].ScheduleType = 'TeStInG14159'
-        self.m_pyhouse_obj.House.Schedule[2].ScheduleType = 'TeStInG14159'
+    def test_02_All(self):
+        l_list = [0, 1]
+        self.m_pyhouse_obj.House.Schedules[0].ScheduleType = 'TeStInG14159'
+        self.m_pyhouse_obj.House.Schedules[1].ScheduleType = 'TeStInG14159'
         ScheduleExecution.execute_schedules_list(self.m_pyhouse_obj, l_list)
         self.assertEqual(True, True)
 
@@ -269,14 +285,15 @@ class C2_Setup(SetupMixin, unittest.TestCase):
         self.m_pyhouse_obj.APIs.Computer.MqttAPI = mqttAPI(self.m_pyhouse_obj)
         twisted.internet.base.DelayedCall.debug = True
 
-    def tearDown(self):
-        pass
-
     def test_01_BuildSched(self):
+        l_riseset = Mock.RiseSet()
         l_delay, l_list = scheduleUtility.find_next_scheduled_events(self.m_pyhouse_obj, T_NOW)
-        # print('Delay: {} {}'.format(l_delay, l_list))
+        l_now_sec = scheduleUtility.to_mins(T_NOW) * 60
+        l_obj = self.m_pyhouse_obj.House.Schedules[l_list[0]]
+        l_sched_sec = SchedTime._extract_schedule_time(l_obj, l_riseset) * 60
+        # print('Delay: {}; List: {}; Now: {}; Sched: {}'.format(l_delay, l_list, l_now_sec, l_sched_sec))
         self.assertEqual(len(l_list), 2)
-        self.assertEqual(l_delay, 50220)
+        self.assertEqual(l_delay, l_sched_sec - l_now_sec)
         self.assertEqual(l_list[0], 0)
         self.assertEqual(l_list[1], 1)
 
@@ -301,7 +318,7 @@ class C2_Setup(SetupMixin, unittest.TestCase):
 
     def Xtest_07_OneSchedule(self):
         pass
-        self.m_api.execute_one_schedule(3)
+        self.m_api.dispatch_one_schedule(3)
 
     def Xtest_09_DispatchSchedule(self):
         pass

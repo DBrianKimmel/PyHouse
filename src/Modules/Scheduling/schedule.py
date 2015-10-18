@@ -138,18 +138,23 @@ class SchedTime(object):
     @staticmethod
     def extract_time_to_go(p_schedule_obj, p_now, p_rise_set):
         """Compute the seconds to go from now to the next scheduled time.
+        @param p_now: is the datetime for now
         """
-        l_dow = SchedTime._extract_days(p_schedule_obj, p_now) * 24 * 60
-        l_minutes = SchedTime._extract_schedule_time(p_schedule_obj, p_rise_set)
-        l_seconds = 60 * (l_dow + l_minutes)
+        l_dow_mins = SchedTime._extract_days(p_schedule_obj, p_now) * 24 * 60
+        l_sched_mins = SchedTime._extract_schedule_time(p_schedule_obj, p_rise_set)
+        l_sched_secs = 60 * (l_dow_mins + l_sched_mins)
         # print(l_dow, l_minutes, l_seconds)
+        l_now_secs = Utility.to_mins(p_now) * 60
+        l_seconds = l_sched_secs - l_now_secs
+        if l_seconds < 0:
+            l_seconds += SECONDS_IN_WEEK
         return l_seconds
 
 
 class ScheduleExecution(object):
 
     @staticmethod
-    def execute_one_schedule(p_pyhouse_obj, p_schedule_obj):
+    def dispatch_one_schedule(p_pyhouse_obj, p_schedule_obj):
         """
         Send information to one device to execute a schedule.
         """
@@ -186,7 +191,8 @@ class ScheduleExecution(object):
         LOG.info("About to execute - Schedules:{}".format(p_key_list))
         for l_slot in range(len(p_key_list)):
             l_schedule_obj = p_pyhouse_obj.House.Schedules[p_key_list[l_slot]]
-            ScheduleExecution.execute_one_schedule(p_pyhouse_obj, l_schedule_obj)
+            ScheduleExecution.dispatch_one_schedule(p_pyhouse_obj, l_schedule_obj)
+        Utility.find_next_scheduled_events(p_pyhouse_obj, datetime.datetime.now())
 
 
 class Utility(object):

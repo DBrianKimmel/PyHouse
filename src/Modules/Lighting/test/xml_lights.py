@@ -16,51 +16,60 @@ See PyHouse/src/test/xml_data.py for the entire hierarchy.
 # Import PyMh files
 from Modules.Families.Insteon.test.xml_insteon import XML_INSTEON
 from Modules.Families.UPB.test.xml_upb import XML_UPB
-from Modules.Core.test.xml_device import XML_DEVICE_INSTEON
 
 
-TESTING_LIGHTING_LIGHTS_NAME_1 = "Insteon Light"
-TESTING_LIGHTING_LIGHTS_KEY_1 = '0'
-TESTING_LIGHTING_LIGHTS_ACTIVE_1 = 'True'
-TESTING_LIGHTING_LIGHTS_NAME_2 = "UPB Light"
-TESTING_LIGHTING_LIGHTS_KEY_2 = '1'
-TESTING_LIGHTING_LIGHTS_ACTIVE_2 = 'True'
-TESTING_LIGHT_DIMMABLE = 'True'
-TESTING_LIGHTING_LIGHT_CUR_LEVEL = "12"
-TESTING_LIGHTING_TYPE = 'Light'
+L_LIGHT_SECTION_START = '<LightSection>'
+L_LIGHT_SECTION_END = '</LightSection>'
+L_LIGHT_END = '</Light>'
 
-L_LIGHT_LIGHT_1 = '<Light Name="' + TESTING_LIGHTING_LIGHTS_NAME_1 + '" Key="' + TESTING_LIGHTING_LIGHTS_KEY_1 + '" Active="' + TESTING_LIGHTING_LIGHTS_ACTIVE_1 + '">'
-L_LIGHT_LIGHT_2 = '<Light Name="' + TESTING_LIGHTING_LIGHTS_NAME_2 + '" Key="' + TESTING_LIGHTING_LIGHTS_KEY_2 + '" Active="' + TESTING_LIGHTING_LIGHTS_ACTIVE_2 + '">'
-L_LIGHT_TYPE = '    <LightingType>' + TESTING_LIGHTING_TYPE + '</LightingType>'
-L_DIMMABLE = '    <IsDimmable>' + TESTING_LIGHT_DIMMABLE + '</IsDimmable>'
-L_LEVEL = "    <CurLevel>" + TESTING_LIGHTING_LIGHT_CUR_LEVEL + "</CurLevel>"
+TESTING_LIGHT_NAME_0 = "Insteon Light"
+TESTING_LIGHT_KEY_0 = '0'
+TESTING_LIGHT_ACTIVE_0 = 'True'
+TESTING_LIGHT_DIMMABLE_0 = 'True'
+TESTING_LIGHT_CUR_LEVEL_0 = "12"
+TESTING_LIGHT_TYPE_0 = 'Light'
 
-L_LIGHT_BODY = '\n'.join([
-    XML_DEVICE_INSTEON,
-    L_LIGHT_TYPE,
-    L_DIMMABLE,
-    L_LEVEL
-    ])
+L_LIGHT_START_0 = '<Light Name="' + TESTING_LIGHT_NAME_0 + '" Key="' + TESTING_LIGHT_KEY_0 + '" Active="' + TESTING_LIGHT_ACTIVE_0 + '">'
+L_LIGHT_DIMMABLE_0 = '    <IsDimmable>' + TESTING_LIGHT_DIMMABLE_0 + '</IsDimmable>'
+L_LIGHT_TYPE_0 = '    <LightingType>' + TESTING_LIGHT_TYPE_0 + '</LightingType>'
+L_LIGHT_LEVEL_0 = "    <CurLevel>" + TESTING_LIGHT_CUR_LEVEL_0 + "</CurLevel>"
 
-L_INSTEON_LIGHT_XML = '\n'.join([
-    L_LIGHT_LIGHT_1,
-    L_LIGHT_BODY,
+L_LIGHT_0 = '\n'.join([
+    L_LIGHT_START_0,
+    L_LIGHT_DIMMABLE_0,
+    L_LIGHT_TYPE_0,
+    L_LIGHT_LEVEL_0,
     XML_INSTEON,
-    "</Light>"
+    L_LIGHT_END
     ])
 
-L_UPB_LIGHT_XML = '\n'.join([
-    L_LIGHT_LIGHT_2,
-    L_LIGHT_BODY,
+
+TESTING_LIGHT_NAME_1 = "UPB Light"
+TESTING_LIGHT_KEY_1 = '1'
+TESTING_LIGHT_ACTIVE_1 = 'True'
+TESTING_LIGHT_DIMMABLE_1 = 'True'
+TESTING_LIGHT_CUR_LEVEL_1 = "12"
+TESTING_LIGHT_TYPE_1 = 'Light'
+
+L_LIGHT_START_1 = '<Light Name="' + TESTING_LIGHT_NAME_1 + '" Key="' + TESTING_LIGHT_KEY_1 + '" Active="' + TESTING_LIGHT_ACTIVE_1 + '">'
+L_LIGHT_TYPE_1 = '    <LightingType>' + TESTING_LIGHT_TYPE_1 + '</LightingType>'
+L_LIGHT_DIMMABLE_1 = '    <IsDimmable>' + TESTING_LIGHT_DIMMABLE_1 + '</IsDimmable>'
+L_LIGHT_CUR_LEVEL_1 = "    <CurLevel>" + TESTING_LIGHT_CUR_LEVEL_1 + "</CurLevel>"
+
+L_LIGHT_1 = '\n'.join([
+    L_LIGHT_START_1,
+    L_LIGHT_DIMMABLE_1,
+    L_LIGHT_TYPE_1,
+    L_LIGHT_CUR_LEVEL_1,
     XML_UPB,
-    "</Light>"
+    L_LIGHT_END
     ])
 
 XML_LIGHT_SECTION = '\n'.join([
-    "<LightSection>",
-    L_INSTEON_LIGHT_XML,
-    L_UPB_LIGHT_XML,
-    "</LightSection>"
+    L_LIGHT_SECTION_START,
+    L_LIGHT_0,
+    L_LIGHT_1,
+    L_LIGHT_SECTION_END
     ])
 
 # ## END DBK
