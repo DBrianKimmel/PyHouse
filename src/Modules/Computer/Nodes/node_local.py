@@ -119,6 +119,7 @@ class Interfaces(object):
         l_interface = NodeInterfaceData()
         l_interface.Name = p_interface_name
         l_interface.Active = True
+        l_interface.Key = 0
         l_interface.UUID = '123'
         l_interface.NodeInterfaceType = 'Other'
         l_ifs = Interfaces._find_addr_lists(p_interface_name)
