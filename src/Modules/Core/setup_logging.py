@@ -115,11 +115,11 @@ LOGGING_DICT = {
 
 logging.getLogger(LOGGER_NAME)
 logging.config.dictConfig(LOGGING_DICT)
-logging.debug('PyHouse Debug Starting\n')
+# logging.debug('PyHouse Debug Starting\n')
 logging.info('PyHouse Info Starting\n')
-logging.warn('PyHouse Warn Starting\n')
-logging.error('PyHouse Error Starting\n')
-logging.critical('PyHouse Critical Starting\n')
+# logging.warn('PyHouse Warn Starting\n')
+# logging.error('PyHouse Error Starting\n')
+# logging.critical('PyHouse Critical Starting\n')
 print('setup_logging-109')
 print(PrettyFormatAny.form(logging, 'Logging'))
 

@@ -169,11 +169,12 @@ class API(Util):
         LOG.info('Dispatch\n\tTopic: {}'.format(l_topic))
         #
         if l_topic[0] == 'login':
-            LOG.info('Login: {}'.format(PrettyFormatAny.form(l_message, 'Message', 80)))
+            l_logmsg = 'Login: {}'.format(PrettyFormatAny.form(l_message, 'Message', 80))
         elif l_topic[0] == 'lighting':
-            LOG.info('Lighting: {}'.format(PrettyFormatAny.form(l_message, 'Message', 80)))
+            l_logmsg = '\n\tName: {}\n\tRoom: {}\n\tLevel: {}'.format(l_message.Name, l_message.RoomName, l_message.CurLevel)
         else:
-            LOG.info('OTHER: {}'.format(PrettyFormatAny.form(l_message, 'Message', 80)))
+            l_logmsg = 'OTHER: {}'.format(PrettyFormatAny.form(l_message, 'Message', 80))
+        LOG.info(l_logmsg)
 
 
     def doPyHouseLogin(self, p_client, p_pyhouse_obj):
