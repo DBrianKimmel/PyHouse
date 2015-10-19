@@ -33,7 +33,6 @@ from twisted.internet.serialport import SerialPort
 from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities.tools import PrintBytes
 from nevow.livepage import self
-# import serial
 # from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.SerialDriver   ')
