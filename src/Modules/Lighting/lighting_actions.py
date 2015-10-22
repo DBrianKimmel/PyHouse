@@ -20,7 +20,7 @@ from Modules.Families.family_utils import FamUtil
 from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities import tools, json_tools
 
-LOG = Logger.getLogger('PyHouse.LightAction ')
+LOG = Logger.getLogger('PyHouse.LightAction    ')
 
 SECONDS_IN_WEEK = 604800  # 7 * 24 * 60 * 60
 

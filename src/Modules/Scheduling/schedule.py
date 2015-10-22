@@ -235,6 +235,8 @@ class Utility(object):
             if not l_schedule_obj.Active:
                 continue
             l_seconds = SchedTime.extract_time_to_go(l_schedule_obj, p_now, l_riseset)
+            if l_seconds < 30:
+                continue
             if l_min_seconds == l_seconds:  # Add to lists for the given time.
                 l_schedule_key_list.append(l_key)
             elif l_seconds < l_min_seconds:  # earlier schedule - start new list
