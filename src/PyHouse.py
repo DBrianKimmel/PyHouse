@@ -78,7 +78,6 @@ from Modules.Core.data_objects import CoreServicesInformation, TwistedInformatio
 from Modules.Core import setup_pyhouse
 from Modules.Computer import logging_pyh as Logger
 
-g_debug = 0
 g_API = None
 LOG = Logger.getLogger('PyHouse                ')
 
@@ -86,8 +85,6 @@ LOG = Logger.getLogger('PyHouse                ')
 def daemonize():
     """Taken from twisted.scripts._twistd_unix.py
     """
-    if g_debug >= 1:
-        LOG.debug("PyHouse is making itself into a daemon !!")
     if os.fork():  # launch child and...
         os._exit(0)  # kill off parent
     os.setsid()
@@ -120,8 +117,7 @@ def handle_signals():
 def SigHupHandler(signum, _stackframe):
     """
     """
-    # if g_debug >= 1:
-    LOG.debug('Hup Signal handler called with signal {0:}'.format(signum))
+    LOG.debug('Hup Signal handler called with signal {}'.format(signum))
     g_API.Stop()
     g_API.Start()
 
@@ -129,8 +125,7 @@ def SigHupHandler(signum, _stackframe):
 def SigIntHandler(signum, _stackframe):
     """interrupt character (probably Ctrl-C)
     """
-    # if g_debug >= 1:
-    LOG.debug('SigInt - Signal handler called with signal {0:}'.format(signum))
+    LOG.debug('SigInt - Signal handler called with signal {}'.format(signum))
     LOG.info("Interrupted.\n\n\n")
     g_API.Stop()
     g_API.Quit()
@@ -139,7 +134,7 @@ def SigIntHandler(signum, _stackframe):
 def SigKillHandler(signum, _stackframe):
     """
     """
-    LOG.debug('SigInt - Signal handler called with signal {0:}'.format(signum))
+    LOG.debug('SigInt - Signal handler called with signal {}'.format(signum))
     LOG.info('SigKill \n')
     exit
 
@@ -149,7 +144,13 @@ class Utilities(object):
     """
 
     @staticmethod
-    def do_daemon_stuff():
+    def do_setup_stuff():
+        if platform.uname()[0] != 'Windows':
+            from Modules.Core import setup_windows
+            pass
+        else:
+            from Modules.Core.setup_linux import Linux
+            l_linux = Linux()
         handle_signals()
 
     @staticmethod
@@ -178,7 +179,7 @@ class API(object):
         """
         global g_API
         g_API = self
-        Utilities.do_daemon_stuff()
+        Utilities.do_setup_stuff()
         p_pyhouse_obj = Utilities._create_pyhouse_obj()
         self.m_pyhouse_obj = p_pyhouse_obj
         print('PyHouse.API()')  # For development - so we  an see when we get to this point...

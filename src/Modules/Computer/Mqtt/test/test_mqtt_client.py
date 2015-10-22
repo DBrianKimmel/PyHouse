@@ -7,7 +7,7 @@
 @note:      Created on Jun 5, 2015
 @Summary:
 
-Passed all 12 tests - DBK - 2015-09-07
+Passed all 11 tests - DBK - 2015-10-19
 
 """
 
