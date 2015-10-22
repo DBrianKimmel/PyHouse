@@ -192,7 +192,7 @@ class ScheduleExecution(object):
         for l_slot in range(len(p_key_list)):
             l_schedule_obj = p_pyhouse_obj.House.Schedules[p_key_list[l_slot]]
             ScheduleExecution.dispatch_one_schedule(p_pyhouse_obj, l_schedule_obj)
-        Utility.find_next_scheduled_events(p_pyhouse_obj, datetime.datetime.now())
+        Utility.schedule_next_event(p_pyhouse_obj)
 
 
 class Utility(object):
