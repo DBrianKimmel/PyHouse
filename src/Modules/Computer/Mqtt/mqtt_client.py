@@ -167,7 +167,8 @@ class API(Util):
         LOG.info('Dispatch\n\tTopic: {}'.format(l_topic))
         #
         if l_topic[0] == 'login':
-            l_logmsg = 'Login: {}'.format(PrettyFormatAny.form(l_message, 'Message', 80))
+            # l_logmsg = 'Login: {}'.format(PrettyFormatAny.form(l_message, 'Message', 80))
+            l_logmsg = '\n\tName: {}\n\tIPv4: {}'.format(l_message['Name'], l_message['ConnectionAddr_IPv4'])
         elif l_topic[0] == 'lighting':
             l_logmsg = '\n\tName: {}\n\tRoom: {}\n\tLevel: {}'.format(l_message['Name'], l_message['RoomName'], l_message['CurLevel'])
         elif l_topic[0] == 'schedule' and l_topic[1] == 'execute':
