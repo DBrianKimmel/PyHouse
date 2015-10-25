@@ -167,12 +167,14 @@ class API(Util):
         LOG.info('Dispatch\n\tTopic: {}'.format(l_topic))
         #
         if l_topic[0] == 'login':
-            # l_logmsg = 'Login: {}'.format(PrettyFormatAny.form(l_message, 'Message', 80))
-            l_logmsg = '\n\tName: {}\n\tIPv4: {}'.format(l_message['Name'], l_message['ConnectionAddr_IPv4'])
+            l_logmsg = 'Login:\n\tName: {}\n\tIPv4: {}'.format(
+                        l_message['Name'], l_message['ConnectionAddr_IPv4'])
         elif l_topic[0] == 'lighting':
-            l_logmsg = '\n\tName: {}\n\tRoom: {}\n\tLevel: {}'.format(l_message['Name'], l_message['RoomName'], l_message['CurLevel'])
+            l_logmsg = 'Lighting:\n\tName: {}\n\tRoom: {}\n\tLevel: {}'.format(
+                        l_message['Name'], l_message['RoomName'], l_message['CurLevel'])
         elif l_topic[0] == 'schedule' and l_topic[1] == 'execute':
-            l_logmsg = '\n\tType: {}\n\tRoom: {}\n\tLight: {}\n\tLevel: {}'.format(l_message['ScheduleType'], l_message['RoomName'], l_message['LightName'], l_message['Level'])
+            l_logmsg = 'Schedule:\n\tType: {}\n\tRoom: {}\n\tLight: {}\n\tLevel: {}'.format(
+                        l_message['ScheduleType'], l_message['RoomName'], l_message['LightName'], l_message['Level'])
         else:
             l_logmsg = 'OTHER: {}'.format(PrettyFormatAny.form(l_message, 'Message', 80))
         LOG.info(l_logmsg)
