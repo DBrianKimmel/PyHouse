@@ -191,7 +191,7 @@ class DecodeResponses(object):
             pass
         l_ret = True
         l_topic = "lighting/{}/info".format(l_device_obj.Name)
-        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_device_obj)
+        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_device_obj)  # /lighting/{}/info
         return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_51_record(self, p_controller_obj):

@@ -104,7 +104,7 @@ setup(
         'service-identity',
         'netaddr',
         # 'serial',
-        # 'astral',
+        'astral',
         'netifaces',
         'pyusb',
         'pyopenSSL',

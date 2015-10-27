@@ -61,7 +61,7 @@ class ControlLightsElement(athena.LiveElement):
         l_light_obj.UUID = l_json['UUID']
         LOG.info('Control Light via Web - Change {} device to level {}'.format(l_light_obj.Name, l_light_obj.CurLevel))
         l_topic = 'lighting/web/{}/control'.format(l_light_obj.Name)
-        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_light_obj)
+        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_light_obj)  # lighting/web/{}/control
         self.m_pyhouse_obj.APIs.House.LightingAPI.ChangeLight(l_light_obj, 'web', l_level)
 
 # ## END DBK

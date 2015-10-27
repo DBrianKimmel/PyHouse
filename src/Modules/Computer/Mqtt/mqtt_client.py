@@ -155,7 +155,7 @@ class API(Util):
                 continue
             try:
                 l_broker._ProtocolAPI.publish(l_topic, l_message)
-                LOG.info('Mqtt publishing:\n\tBroker: {}\n\tTopic:{}'.format(l_broker.Name, l_topic))
+                LOG.info('Mqtt publishing:\n\tBroker: {}\t\tTopic:{}'.format(l_broker.Name, l_topic))
             except AttributeError as e_err:
                 LOG.error("Mqtt Unpublished.\n\tERROR:{}\n\tTopic:{}\n\tMessage:{}".format(e_err, l_topic, l_message))
 
@@ -164,7 +164,7 @@ class API(Util):
         """
         l_topic = p_topic.split('/')[2:]  # Drop the pyhouse/housename/ as that is all we subscribed to.
         l_message = json_tools.decode_json_unicode(p_message)
-        LOG.info('Dispatch\n\tTopic: {}'.format(l_topic))
+        LOG.info('Dispatch\t\tTopic: {}'.format(l_topic))
         #
         if l_topic[0] == 'login':
             l_logmsg = 'Login:\n\tName: {}\n\tIPv4: {}'.format(
@@ -178,7 +178,6 @@ class API(Util):
         else:
             l_logmsg = 'OTHER: {}'.format(PrettyFormatAny.form(l_message, 'Message', 80))
         LOG.info(l_logmsg)
-
 
     def doPyHouseLogin(self, p_client, p_pyhouse_obj):
         """Login to PyHouse via MQTT

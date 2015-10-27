@@ -47,13 +47,12 @@ class DropHttpFilter(object):
         if self.m_param is None:
             return l_allow
         else:
-            for l_entry in self.m_param:
-                if l_entry in p_record.msg:
-                    l_allow = False
-            # l_allow = self.m_param not in p_record.msg
-            # allow = False
-        # if allow:
-        #    p_record.msg = 'changed: ' + p_record.msg
+            try:
+                for l_entry in self.m_param:
+                    if l_entry in p_record.msg:
+                        l_allow = False
+            except:
+                pass
         return l_allow
 
 
