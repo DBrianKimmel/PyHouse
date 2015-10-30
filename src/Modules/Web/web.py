@@ -27,8 +27,8 @@ class API(object):
         self.m_pyhouse_obj = p_pyhouse_obj
 
     def Start(self):
-        l_obj = self.LoadXml(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.Computer.Web = l_obj
+        # l_obj = self.LoadXml(self.m_pyhouse_obj)
+        # self.m_pyhouse_obj.Computer.Web = l_obj
         WebAPI(self.m_pyhouse_obj).Start()
 
     def Stop(self):
@@ -37,8 +37,9 @@ class API(object):
     def LoadXml(self, p_pyhouse_obj):
         """ Load the Mqtt xml info.
         """
-        l_obj = webXml.read_web_xml(self.m_pyhouse_obj)
-        return l_obj
+        # l_obj = webXml.read_web_xml(self.m_pyhouse_obj)
+        # return l_obj
+        pass
 
     def SaveXml(self, p_xml):
         l_xml = webXml.write_web_xml(self.m_pyhouse_obj)

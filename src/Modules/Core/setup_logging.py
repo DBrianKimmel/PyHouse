@@ -119,8 +119,8 @@ logging.info('PyHouse Info Starting\n')
 # logging.warn('PyHouse Warn Starting\n')
 # logging.error('PyHouse Error Starting\n')
 # logging.critical('PyHouse Critical Starting\n')
-print('setup_logging-109')
-print(PrettyFormatAny.form(logging, 'Logging'))
+# print('setup_logging-122')
+# print(PrettyFormatAny.form(logging, 'Logging'))
 
 l_observer = log.PythonLoggingObserver(loggerName = LOGGER_NAME_TWISTED)
 l_observer.start()
@@ -150,7 +150,7 @@ class API(object):  # To remove eclipse warnings.
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        print('setup_logging-138')
+        # print('setup_logging-153')
 
     def Start(self):
         # PrettyPrintAny(self.m_pyhouse_obj.Twisted, 'PyHouseObj.Twisted')

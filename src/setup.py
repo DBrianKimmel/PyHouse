@@ -98,16 +98,21 @@ setup(
     # ]
     install_requires = [
         'twisted >= 15.0',
+        'pyOpenSSL',
+        'service-identity',
+        'idna',
+        'gmpy',
+        'pyasn1',
+        'pycrypto',
+        # 'pypiwin32',  # for windows only
         'nevow >= 0.0.0',
         'athena',
         'python-dateutil',
-        'service-identity',
         'netaddr',
-        # 'serial',
+        'pyserial',
         'astral',
         'netifaces',
         'pyusb',
-        'pyopenSSL',
         'passlib',
         'jsonpickle'
     ],

@@ -167,8 +167,8 @@ class API(Util):
         LOG.info('Dispatch\t\tTopic: {}'.format(l_topic))
         #
         if l_topic[0] == 'login':
-            l_logmsg = 'Login:\n\tName: {}\n\tIPv4: {}'.format(
-                        l_message['Name'], l_message['ConnectionAddr_IPv4'])
+            l_logmsg = 'Login:\n\tName: {}'.format(
+                        l_message['Name'])
         elif l_topic[0] == 'lighting':
             l_logmsg = 'Lighting:\n\tName: {}\n\tRoom: {}\n\tLevel: {}'.format(
                         l_message['Name'], l_message['RoomName'], l_message['CurLevel'])

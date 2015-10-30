@@ -79,6 +79,7 @@ class XmlData(object):
         self.mqtt_sect = None
         self.log_sect = None
         self.web_sect = None
+        self.login_sect = None
         self.node_sect = None
         self.node = None
         self.interface_sect = None
@@ -154,6 +155,7 @@ class SetupPyHouseObj(object):
         p_xml.mqtt_sect = p_xml.computer_div.find('MqttSection')
         p_xml.broker = p_xml.mqtt_sect.find('Broker')
         p_xml.web_sect = p_xml.computer_div.find('WebSection')
+        p_xml.login_sect = p_xml.web_sect.find('LoginSection')
 
     def _house_xml(self, p_xml):
         p_xml.house_div = p_xml.root.find('HouseDivision')

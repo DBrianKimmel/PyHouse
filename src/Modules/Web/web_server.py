@@ -30,7 +30,6 @@ import ssl
 from nevow import appserver
 # from twisted.internet import ssl
 from twisted.internet import protocol, defer
-from twisted.internet import task
 from twisted.python.modules import getModule
 
 # Import PyMh files and modules.
@@ -88,6 +87,7 @@ class API(Utility, ClientConnections):
         self.m_web_running = False
 
     def Start(self):
+        LOG.info('Starting web server.')
         self.m_pyhouse_obj.Computer.Web = self.LoadXml(self.m_pyhouse_obj)
         self.start_webserver(self.m_pyhouse_obj)
 

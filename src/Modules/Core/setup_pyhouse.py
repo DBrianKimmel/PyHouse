@@ -114,7 +114,7 @@ class API(Utility):
         self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self._xml_save_loop, self.m_pyhouse_obj)
         # LOG.debug(' PyHouseObj: {}'.format(PrettyFormatAny.form(PyHouseObj, 'PyHouseObj')))
         LOG.info("Everything has been started.\n")
-        print('Everything Started setup_pyhouse-117')
+        # print('Everything Started setup_pyhouse-117')
 
     def Stop(self):
         self.SaveXml()

@@ -49,6 +49,15 @@ class A1_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.web_sect.tag, 'WebSection')
         # print(PrettyFormatAny.form(self.m_xml.web_sect, 'XML'))
 
+    def test_02_WebSection(self):
+        self.assertEqual(self.m_xml.web_sect.tag, 'WebSection')
+        # print(PrettyFormatAny.form(self.m_xml.web_sect, 'XML'))
+
+    def test_03_LoginSection(self):
+        self.assertEqual(self.m_xml.login_sect.tag, 'LoginSection')
+        # print(PrettyFormatAny.form(self.m_xml.login_sect, 'XML'))
+
+
 class B1_Read(SetupMixin, unittest.TestCase):
 
     def setUp(self):
@@ -63,10 +72,10 @@ class B1_Read(SetupMixin, unittest.TestCase):
     def test_02_OneLogin(self):
         """ Read one Login object.
         """
-        l_xml = self.m_xml.web_sect.find('LoginSection').find('Login')
+        l_xml = self.m_xml.login_sect.find('Login')
         l_obj = webXml._read_one_login(l_xml)
-        # print(PrettyFormatAny.form(l_xml, 'XML'))
-        # print(PrettyFormatAny.form(l_obj, 'One login'))
+        print(PrettyFormatAny.form(l_xml, 'XML'))
+        print(PrettyFormatAny.form(l_obj, 'One login'))
         self.assertEqual(l_obj.Name, TESTING_LOGIN_NAME_0)
         self.assertEqual(l_obj.LoginFullName, TESTING_LOGIN_FULL_NAME_0)
         self.assertEqual(l_obj.LoginEncryptedPassword, TESTING_LOGIN_PASSWORD_0)
@@ -75,10 +84,12 @@ class B1_Read(SetupMixin, unittest.TestCase):
     def test_03_AllLogins(self):
         """ Read all login objects.
         """
-        l_xml = self.m_xml.web_sect.find('LoginSection')
-        l_obj = webXml._read_all_logins(l_xml)
-        # print(PrettyFormatAny.form(l_xml, 'XML'))
-        # print(PrettyFormatAny.form(l_obj, 'One login'))
+        l_xml = self.m_xml.web_sect
+        l_obj, l_count = webXml._read_all_logins(l_xml)
+        print(PrettyFormatAny.form(l_xml, 'XML'))
+        print(PrettyFormatAny.form(l_obj, 'All login'))
+        print(PrettyFormatAny.form(l_obj[0], 'All login'))
+        self.assertEqual(l_count, 2)
         self.assertEqual(len(l_obj), 2)
 
     def test_04_Web(self):
@@ -86,7 +97,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """
         self.m_pyhouse_obj.Computer.Web = webXml.read_web_xml(self.m_pyhouse_obj)
         l_obj = webXml.read_web_xml(self.m_pyhouse_obj)
-        # print(PrettyFormatAny.form(l_obj, 'One login'))
+        print(PrettyFormatAny.form(l_obj, 'All Web'))
         self.assertEqual(l_obj.WebPort, int(TESTING_WEB_PORT))
         self.assertEqual(len(l_obj.Logins), 2)
 

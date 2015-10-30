@@ -20,6 +20,7 @@ from Modules.Core.data_objects import LoginData, WebData
 from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
 from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.setup_logging import l_observer
 
 LOG = Logger.getLogger('PyHouse.WebXml         ')
 
@@ -69,21 +70,41 @@ class Xml(object):
         return l_xml
 
     @staticmethod
+    def _add_default_login():
+        l_obj = LoginData()
+        l_obj.Name = 'admin'
+        l_obj.Key = 0
+        l_obj.Active = True
+        l_obj.LoginFullName = 'Administrator'
+        l_obj.LoginEncryptedPassword = 'admin'
+        l_obj.LoginRole = 1
+        return l_obj
+
+    @staticmethod
     def _read_all_logins(p_xml):
         """
-        @param p_xml: is the LoginSection XML element.
+        @param p_xml: is the WebSection XML element.
         @return: A dict of all logins.
         """
         l_dict = {}
         l_count = 0
+        l_xml = p_xml.find('LoginSection')
+        LOG.info('Reading Logins')
         try:
-            for l_log_xml in p_xml.iterfind('Login'):
+            for l_log_xml in l_xml.iterfind('Login'):
                 l_obj = Xml._read_one_login(l_log_xml)
+                LOG.debug('  Reading {}'.format(l_obj.Name))
                 l_dict[l_count] = l_obj
                 l_count += 1
         except:
-            pass
-        return l_dict
+            LOG.warn('No Logins found - Adding admin')
+            l_obj = Xml._add_default_login()
+            l_dict[l_count] = l_obj
+            l_count += 1
+        if l_count == 0:
+            l_dict[0] = Xml._add_default_login()
+            l_count += 1
+        return l_dict, l_count
 
     @staticmethod
     def _write_all_logins(p_obj):
@@ -111,15 +132,16 @@ class Xml(object):
         l_obj.Logins = {}
         try:
             l_xml = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision').find('WebSection')
-            l_login_xml = l_xml.find('LoginSection')
-            l_obj.Logins = Xml._read_all_logins(l_login_xml)
-        except:
+            l_obj.Logins, l_count = Xml._read_all_logins(l_xml)
+        except Exception as e_err:
+            LOG.error('ERROR reading web : {}'.format(e_err))
             l_xml = None
             l_login_xml = None
         if l_xml == None:
             l_obj.WebPort = 8581
         else:
             l_obj.WebPort = Xml._read_port(l_xml)
+        LOG.info('Loaded {} logins.'.format(l_count))
         return l_obj
 
     @staticmethod

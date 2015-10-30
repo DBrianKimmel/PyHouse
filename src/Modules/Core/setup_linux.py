@@ -10,12 +10,8 @@
 """
 
 # Import system type stuff
-import errno
-import os
 import platform
 import signal
-from twisted.internet import reactor
-from twisted.application.service import Application
 
 # Import PyMh files and modules.
 from Modules.Computer import logging_pyh as Logger
