@@ -172,7 +172,7 @@ class ScheduleExecution(object):
         #
         elif p_schedule_obj.ScheduleType == 'TeStInG14159':  # To allow a path for unit tests
             LOG.info('Execute_one_schedule type = Testing')
-            irrigationActionsAPI.DoSchedule(p_pyhouse_obj, p_schedule_obj)
+            # irrigationActionsAPI.DoSchedule(p_pyhouse_obj, p_schedule_obj)
         #
         else:
             LOG.error('Unknown schedule type: {}'.format(p_schedule_obj.ScheduleType))
@@ -248,6 +248,11 @@ class Utility(object):
         return l_min_seconds, l_schedule_key_list
 
     @staticmethod
+    def run_after_delay(p_pyhouse_obj, p_delay, p_list):
+        l_runID = p_pyhouse_obj.Twisted.Reactor.callLater(p_delay, ScheduleExecution.execute_schedules_list, p_pyhouse_obj, p_list)
+        return l_runID
+
+    @staticmethod
     def schedule_next_event(p_pyhouse_obj, p_delay = 0):
         """ Find the list of schedules to run, call the timer to run at the time in the schedules.
         @param p_pyhouse_obj: is the grand repository of information
@@ -256,11 +261,12 @@ class Utility(object):
         l_delay, l_list = Utility.find_next_scheduled_events(p_pyhouse_obj, datetime.datetime.now())
         if p_delay != 0:
             l_delay = p_delay
+        Utility.run_after_delay(p_pyhouse_obj, l_delay, l_list)
         # l_command = lambda l_pyh = p_pyhouse_obj, l_list = l_list: ScheduleExecution.execute_schedules_list(l_pyh, l_list)
         # l_runID = p_pyhouse_obj.Twisted.Reactor.callLater(l_delay, l_command, None)
-        l_pyhouse_obj = p_pyhouse_obj
-        l_runID = p_pyhouse_obj.Twisted.Reactor.callLater(l_delay, ScheduleExecution.execute_schedules_list, l_pyhouse_obj, l_list)
-        return l_runID
+        # l_pyhouse_obj = p_pyhouse_obj
+        # l_runID = p_pyhouse_obj.Twisted.Reactor.callLater(l_delay, ScheduleExecution.execute_schedules_list, l_pyhouse_obj, l_list)
+        # return l_runID
 
 
 class API(object):
@@ -286,7 +292,7 @@ class API(object):
         LOG.info("Stopped.")
 
     def LoadXml(self, p_pyhouse_obj):
-        """ Load the Mqtt xml info.
+        """ Load the Schedule xml info.
         """
         l_schedules = scheduleXml.read_schedules_xml(p_pyhouse_obj)
         self.m_pyhouse_obj.House.Schedules = l_schedules

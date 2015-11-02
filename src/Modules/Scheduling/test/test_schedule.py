@@ -22,11 +22,16 @@ import time
 from Modules.Core.data_objects import RiseSetData
 from Modules.Computer.Mqtt.mqtt_client import API as mqttAPI
 from Modules.Families.family import API as familyAPI
+from Modules.Scheduling.schedule_xml import Xml as scheduleXml
 from Modules.Scheduling.schedule import \
         SchedTime, ScheduleExecution, \
         API as scheduleAPI, \
         Utility as scheduleUtility
-from Modules.Scheduling.schedule_xml import Xml as scheduleXml
+from Modules.Scheduling.test.xml_schedule import \
+        TESTING_SCHEDULE_NAME_0, \
+        TESTING_SCHEDULE_NAME_1, \
+        TESTING_SCHEDULE_NAME_2, \
+        TESTING_SCHEDULE_NAME_3
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.debug_tools import PrettyFormatAny
@@ -89,9 +94,8 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_01_FamilyData(self):
-        """Date is in DOW
+        """ Just to be sure the family data is loaded properly.
         """
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.FamilyData, 'FamilyData'))
         self.assertEqual(self.m_pyhouse_obj.House.FamilyData['Insteon'].Name, 'Insteon')
         self.assertEqual(self.m_pyhouse_obj.House.FamilyData['Null'].Name, 'Null')
         self.assertEqual(self.m_pyhouse_obj.House.FamilyData['UPB'].Name, 'UPB')
@@ -103,9 +107,29 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_pyhouse_obj.House.FamilyData['Null'].Active, True)
 
 
-class A2_Utility(SetupMixin, unittest.TestCase):
+class A2_XML(SetupMixin, unittest.TestCase):
     """
-    Uses DOW and todays delay to get delay time in minutes.
+    Be sure that we load the data properly as a whole test.
+    Detailed test of xml is in the test_schedule_xml module.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_api = scheduleAPI(self.m_pyhouse_obj)
+
+    def test_01_Load(self):
+        """ Test loading of schedule data.
+        """
+        l_obj = self.m_api.LoadXml(self.m_pyhouse_obj)
+        self.assertEqual(l_obj[0].Name, TESTING_SCHEDULE_NAME_0)
+        self.assertEqual(l_obj[1].Name, TESTING_SCHEDULE_NAME_1)
+        self.assertEqual(l_obj[2].Name, TESTING_SCHEDULE_NAME_2)
+        self.assertEqual(l_obj[3].Name, TESTING_SCHEDULE_NAME_3)
+
+
+class A3_Utility(SetupMixin, unittest.TestCase):
+    """
+    Testing conversion and extraction
     """
 
     def setUp(self):
@@ -258,14 +282,16 @@ class C1_Execute(SetupMixin, unittest.TestCase):
         self.m_pyhouse_obj.APIs.Computer.MqttAPI = mqttAPI(self.m_pyhouse_obj)
 
     def test_01_one(self):
+        """ No way to test the dispatch routine
         """
-        """
-        self.m_pyhouse_obj.House.Schedules[0].ScheduleType = 'TeStInG14159'
+        self.m_pyhouse_obj.House.Schedules[0].ScheduleType = 'TeStInG14159'  # to set dispatch to testing
         l_schedule = self.m_pyhouse_obj.House.Schedules[0]
         ScheduleExecution.dispatch_one_schedule(self.m_pyhouse_obj, l_schedule)
         self.assertEqual(True, True)
 
     def test_02_All(self):
+        """ No way to thest this either.
+        """
         l_list = [0, 1]
         self.m_pyhouse_obj.House.Schedules[0].ScheduleType = 'TeStInG14159'
         self.m_pyhouse_obj.House.Schedules[1].ScheduleType = 'TeStInG14159'
@@ -273,7 +299,7 @@ class C1_Execute(SetupMixin, unittest.TestCase):
         self.assertEqual(True, True)
 
 
-class C2_Setup(SetupMixin, unittest.TestCase):
+class C2_List(SetupMixin, unittest.TestCase):
     """
     This section tests the Building of a schedule list
     """
@@ -285,6 +311,9 @@ class C2_Setup(SetupMixin, unittest.TestCase):
         twisted.internet.base.DelayedCall.debug = True
 
     def test_01_BuildSched(self):
+        """ Testing the build of a schedule list.
+        We should end up with 2 schedules in the list.
+        """
         l_riseset = Mock.RiseSet()
         l_delay, l_list = scheduleUtility.find_next_scheduled_events(self.m_pyhouse_obj, T_NOW)
         l_now_sec = scheduleUtility.to_mins(T_NOW) * 60
@@ -297,6 +326,8 @@ class C2_Setup(SetupMixin, unittest.TestCase):
         self.assertEqual(l_list[1], 1)
 
     def test_02_Load(self):
+        """ Test ???
+        """
         SetupPyHouseObj().LoadHouse(self.m_pyhouse_obj)
         print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'PyHouse.House 1'))
 
