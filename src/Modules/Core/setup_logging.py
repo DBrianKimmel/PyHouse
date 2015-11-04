@@ -48,7 +48,7 @@ class DropHttpFilter(object):
         l_allow = True
         if self.m_param is None:
             return True
-        l_list = self.m_param
+        # l_list = self.m_param
         try:
             if '/transport' in p_record.msg:
                 l_allow = False
