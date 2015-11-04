@@ -50,9 +50,8 @@ class DropHttpFilter(object):
             return l_allow
         else:
             try:
-                for l_entry in self.m_param:
-                    if l_entry in p_record.msg:
-                        l_allow = False
+                 if self.m_param[0] in p_record.msg:
+                    l_allow = False
             except Exception as e_err:
                 print('ERROR in setup_logging DropHttpFilter - {}'.format(e_err))
                 print(PrettyFormatAny.form(self.m_param, 'Params'))
@@ -66,7 +65,7 @@ LOGGING_DICT = {
     'filters' : {
         'http' : {
             '()'      : DropHttpFilter,
-            'p_param' : ['/transport', '/jsmodule/'],
+            'p_param' : ['/transport'],
         }
     },
 
