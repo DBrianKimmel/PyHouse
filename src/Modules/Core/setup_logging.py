@@ -53,8 +53,9 @@ class DropHttpFilter(object):
             if '/transport' in p_record.msg:
                 l_allow = False
         except Exception as e_err:
-            print('ERROR in setup_logging DropHttpFilter - {}'.format(e_err))
-            print(PrettyFormatAny.form(self.m_param, 'Params'))
+            pass
+            # print('ERROR in setup_logging DropHttpFilter - {}'.format(e_err))
+            # print(PrettyFormatAny.form(self.m_param, 'Params'))
         return l_allow
 
 
