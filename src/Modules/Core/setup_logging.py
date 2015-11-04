@@ -47,14 +47,14 @@ class DropHttpFilter(object):
         """
         l_allow = True
         if self.m_param is None:
-            return l_allow
-        else:
-            try:
-                 if self.m_param[0] in p_record.msg:
-                    l_allow = False
-            except Exception as e_err:
-                print('ERROR in setup_logging DropHttpFilter - {}'.format(e_err))
-                print(PrettyFormatAny.form(self.m_param, 'Params'))
+            return True
+        l_list = self.m_param
+        try:
+            if l_list in p_record.msg:
+                l_allow = False
+        except Exception as e_err:
+            print('ERROR in setup_logging DropHttpFilter - {}'.format(e_err))
+            print(PrettyFormatAny.form(self.m_param, 'Params'))
         return l_allow
 
 
