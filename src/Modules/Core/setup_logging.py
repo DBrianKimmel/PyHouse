@@ -50,7 +50,7 @@ class DropHttpFilter(object):
             return True
         l_list = self.m_param
         try:
-            if l_list in p_record.msg:
+            if '/transport' in p_record.msg:
                 l_allow = False
         except Exception as e_err:
             print('ERROR in setup_logging DropHttpFilter - {}'.format(e_err))
