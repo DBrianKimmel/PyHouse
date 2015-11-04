@@ -54,7 +54,8 @@ class DropHttpFilter(object):
                     if l_entry in p_record.msg:
                         l_allow = False
             except Exception as e_err:
-                print('ERROR in setup_logging GropHttpFilter - {}'.format(e_err))
+                print('ERROR in setup_logging DropHttpFilter - {}'.format(e_err))
+                print(PrettyFormatAny.form(self.m_param, 'Params'))
         return l_allow
 
 
