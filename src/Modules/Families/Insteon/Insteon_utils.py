@@ -166,7 +166,7 @@ class Decode(object):
             l_sub = int(p_message[1])
         l_devcat = int(l_cat) * 256 + int(l_sub)
         p_obj.DevCat = l_devcat
-        l_debug_msg = " DevCat={:#x},".format(l_devcat)
+        l_debug_msg = " DevCat={:#x}, ".format(l_devcat)
         return l_debug_msg
 
     @staticmethod

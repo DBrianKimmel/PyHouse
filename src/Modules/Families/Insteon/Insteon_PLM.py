@@ -395,13 +395,13 @@ class LightHandlerAPI(InsteonPlmAPI):
             i2 = no checksum - new commands
             i2cs = 2012 add checksums + new commands.
         """
-        LOG.info('Request Engine version from device: {0:}'.format(p_obj.Name))
+        LOG.info('Request Engine version from device: {}'.format(p_obj.Name))
         self.queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['engine_version'], 0)  # 0x0D
 
     def _get_id_request(self, p_controller_obj, p_obj):
         """Get the device DevCat
         """
-        LOG.info('Request ID(devCat) from device: {0:}'.format(p_obj.Name))
+        LOG.info('Request ID(devCat) from device: {}'.format(p_obj.Name))
         self.queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['id_request'], 0)  # 0x10
 
     def _get_obj_info(self, p_controller_obj, p_obj):
