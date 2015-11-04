@@ -142,6 +142,10 @@ class DecodeResponses(object):
         [9] = command 1
         [10] = command 2
         """
+        def _publish(p_device_obj):
+            l_topic = "lighting/{}/info".format(p_device_obj.Name)
+            self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_device_obj)  # /lighting/{}/info
+            return
         l_message = p_controller_obj._Message
         l_device_obj = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_message[2:5])
         l_flags = utilDecode._decode_message_flag(l_message[8])
@@ -166,7 +170,9 @@ class DecodeResponses(object):
                 l_debug_msg += " product data request. - Should never happen - S/B 51 response"
             elif l_cmd1 == MESSAGE_TYPES['engine_version']:  # 0x0D
                 l_engine_id = l_cmd2
+                l_device_obj.EngineVersion = l_engine_id
                 l_debug_msg += "Engine version is: {}; ".format(l_engine_id)
+                self._publish(l_device_obj)
             elif l_cmd1 == MESSAGE_TYPES['id_request']:  # 0x10
                 l_debug_msg += "Request ID From:{}; ".format(l_device_obj.Name)
                 # LOG.info("Got an ID request. Light:{}".format(l_device_obj.Name,))
@@ -184,14 +190,17 @@ class DecodeResponses(object):
             elif l_cmd1 == MESSAGE_TYPES['thermostat_report']:  # 0x6e
                 _l_ret1 = Insteon_HVAC.ihvac_utility().decode_50_record(l_device_obj, l_cmd1, l_cmd2)
                 pass
+
+            elif l_flags & 0xE0 == 0x80 and l_cmd1 == 01:
+                l_debug_msg += ' Set Button Pressed '
             else:
                 l_debug_msg += " Unknown type - last command was {} - {}; ".format(l_device_obj._Command1, PrintBytes(l_message))
         except AttributeError:
             pass
         l_ret = True
-        LOG.info(' 50 Response - {}'.format(l_debug_msg))
-        l_topic = "lighting/{}/info".format(l_device_obj.Name)
-        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_device_obj)  # /lighting/{}/info
+        LOG.info('==50 Response - {}'.format(l_debug_msg))
+        # l_topic = "lighting/{}/info".format(l_device_obj.Name)
+        # self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_device_obj)  # /lighting/{}/info
         return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_51_record(self, p_controller_obj):
@@ -208,7 +217,7 @@ class DecodeResponses(object):
                     l_message[18], l_message[19], l_message[20], l_message[21], l_message[22], l_message[23], l_message[24])
         # l_product_key = self._get_addr_from_message(l_message, 12)
         l_devcat = l_message[15] * 256 + l_message[16]
-        LOG.info("== 51 From={}, To={}, Flags={:#x}, Data={} Extended={} ==".format(l_obj_from.Name, l_obj_to.Name, l_flags, l_data, l_extended))
+        LOG.info("== 51 Response - From={}, To={}, Flags={:#x}, Data={} Extended={} ==".format(l_obj_from.Name, l_obj_to.Name, l_flags, l_data, l_extended))
         # l_obj_from.ProductKey = l_product_key
         l_obj_from.DevCat = l_devcat
         l_ret = True

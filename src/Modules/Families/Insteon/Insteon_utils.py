@@ -110,7 +110,7 @@ class Decode(object):
             TYPE_X = ['Direct', 'Direct_ACK', 'AllCleanup', 'All_Cleanup_ACK', 'Broadcast', 'Direct_NAK', 'All_Broadcast', 'All_Cleanup_NAK']
             return TYPE_X[p_type] + ' Msg, '
         def decode_extended_flag(p_extended):
-            TYPE_X = [' Standard,', ' Extended,']
+            TYPE_X = [' Standard Len,', ' Extended Len,']
             return TYPE_X[p_extended]
         l_type = (p_byte & 0xE0) >> 5
         l_extended = (p_byte & 0x10)

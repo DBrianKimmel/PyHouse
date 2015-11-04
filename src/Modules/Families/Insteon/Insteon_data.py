@@ -19,6 +19,7 @@
 class InsteonData(object):
     def __init__(self):
         self.DevCat = 0  # DevCat and SubCat (2 bytes)
+        self.EngineVersion = 0
         self.GroupList = ''
         self.GroupNumber = 0
         self.InsteonAddress = 0  # Long integer internally - '1A.B3.3C' for external reaability
