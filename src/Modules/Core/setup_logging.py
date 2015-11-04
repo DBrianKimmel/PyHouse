@@ -63,7 +63,7 @@ LOGGING_DICT = {
     'filters' : {
         'http' : {
             '()'      : DropHttpFilter,
-            'p_param' : ['/transport HTTP/', '/jsmodule/'],
+            'p_param' : ['publishToNewObserver'],
         }
     },
 

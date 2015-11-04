@@ -440,6 +440,10 @@ class MQTTProtocol(Protocol):
         self.transport.write(str(header))
 
 
+MQTT_FACTORY_START = 0
+MQTT_FACTORY_CONNECTING = 1
+MQTT_FACTORY_CONNECTED = 2
+
 class MQTTClient(MQTTProtocol):
 
     m_pingPeriod = 5
@@ -450,6 +454,7 @@ class MQTTClient(MQTTProtocol):
         """
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_broker = p_broker
+        self.m_state = MQTT_FACTORY_START
         if p_clientID is not None:
             self.m_clientID = p_clientID
         else:
@@ -464,8 +469,7 @@ class MQTTClient(MQTTProtocol):
         self.willRetain = willRetain
         self.m_prefix = 'pyhouse/' + p_pyhouse_obj.House.Name.lower() + '/'
         p_pyhouse_obj.Computer.Mqtt.Prefix = self.m_prefix
-        LOG.info('Prefix {}'.format(self.m_prefix))
-        LOG.info('Connection to broker set up for: {}'.format(self.m_clientID))
+        LOG.info('Client_Protocol\n\tPrefix: {}\n\tFrom: {}'.format(self.m_prefix, self.m_clientID))
 
     def connectionMade(self):
         """
@@ -473,16 +477,20 @@ class MQTTClient(MQTTProtocol):
         Now use MQTT connect packet to establish protocol connection.
         """
         LOG.info("Client TCP connectionMade Keepalive: {}".format(self.m_keepalive))
+        self.m_state = MQTT_FACTORY_CONNECTING
         self.connect(self.m_clientID, self.m_keepalive, self.willTopic, self.willMessage, self.willQos, self.willRetain, True)
         self.m_pyhouse_obj.Twisted.Reactor.callLater(self.m_pingPeriod, self.pingreq)
 
     def connectionLost(self, reason):
         LOG.info("Disconnected from MQTT Broker: {}".format(reason))
+        self.m_state = MQTT_FACTORY_START
 
     def mqttConnected(self):
         LOG.info("Client mqttConnected")
         l_topic = self.m_pyhouse_obj.Computer.Mqtt.Prefix + '#'
-        self.subscribe(l_topic)
+        if self.m_state == MQTT_FACTORY_CONNECTING:
+            self.subscribe(l_topic)
+            self.m_state = MQTT_FACTORY_CONNECTED
 
     def connackReceived(self, p_status):
         LOG.info('Client conackReceived - Status: {}'.format(p_status))
@@ -525,12 +533,11 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
         LOG.info('Mqtt Factory Initialized.  Broker: {}'.format(p_broker.Name))
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_broker = p_broker
-        p_broker._ProtocolAPI = self
         self.m_clientID = p_client_id
+        p_broker._ProtocolAPI = self
 
     def startedConnecting(self, p_connector):
         LOG.info('Started to connect. {}'.format(p_connector))
-        pass
 
     def buildProtocol(self, p_addr):
         l_client = MQTTClient(self.m_pyhouse_obj, self.m_broker)
