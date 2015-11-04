@@ -70,7 +70,7 @@ class DecodeResponses(object):
                 if l_cur_len >= l_need_len:
                     self._decode_dispatch(p_controller_obj)
                 else:
-                    LOG.warning('Message was too short - waiting for rest of message.')
+                    # LOG.warning('Message was too short - waiting for rest of message.')
                     return
             else:
                 utilDecode.drop_first_byte(p_controller_obj)
@@ -130,6 +130,10 @@ class DecodeResponses(object):
 
 
 
+    def _publish(self, p_pyhouse_obj, p_device_obj):
+        l_topic = "lighting/{}/info".format(p_device_obj.Name)
+        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_device_obj)  # /lighting/{}/info
+
     def _decode_50_record(self, p_controller_obj):
         """ Insteon Standard Message Received (11 bytes)
         A Standard-length INSTEON message is received from either a Controller or Responder that you are ALL-Linked to.
@@ -142,10 +146,6 @@ class DecodeResponses(object):
         [9] = command 1
         [10] = command 2
         """
-        def _publish(p_device_obj):
-            l_topic = "lighting/{}/info".format(p_device_obj.Name)
-            self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_device_obj)  # /lighting/{}/info
-            return
         l_message = p_controller_obj._Message
         l_device_obj = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_message[2:5])
         l_flags = utilDecode._decode_message_flag(l_message[8])
@@ -172,7 +172,7 @@ class DecodeResponses(object):
                 l_engine_id = l_cmd2
                 l_device_obj.EngineVersion = l_engine_id
                 l_debug_msg += "Engine version is: {}; ".format(l_engine_id)
-                self._publish(l_device_obj)
+                self._publish(self.m_pyhouse_obj, l_device_obj)
             elif l_cmd1 == MESSAGE_TYPES['id_request']:  # 0x10
                 l_debug_msg += "Request ID From:{}; ".format(l_device_obj.Name)
                 # LOG.info("Got an ID request. Light:{}".format(l_device_obj.Name,))
@@ -192,7 +192,9 @@ class DecodeResponses(object):
                 pass
 
             elif l_message[8] & 0xE0 == 0x80 and l_cmd1 == 01:
-                l_debug_msg += ' Set Button Pressed '
+                l_debug_msg += ' Device Set Button Pressed '
+            elif l_message[8] & 0xE0 == 0x80 and l_cmd1 == 02:
+                l_debug_msg += ' Controller Set Button Pressed '
             else:
                 l_debug_msg += " Unknown type - last command was {} - {}; ".format(l_device_obj._Command1, PrintBytes(l_message))
         except AttributeError:
