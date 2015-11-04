@@ -133,7 +133,6 @@ class DecodeResponses(object):
     def _decode_50_record(self, p_controller_obj):
         """ Insteon Standard Message Received (11 bytes)
         A Standard-length INSTEON message is received from either a Controller or Responder that you are ALL-Linked to.
-
         See p 233(246) of developers guide.
         [0] = x02
         [1] = 0x50
@@ -190,6 +189,7 @@ class DecodeResponses(object):
         except AttributeError:
             pass
         l_ret = True
+        LOG.info('--50 Response - {}'.format(l_debug_msg))
         l_topic = "lighting/{}/info".format(l_device_obj.Name)
         self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_device_obj)  # /lighting/{}/info
         return self.check_for_more_decoding(p_controller_obj, l_ret)
@@ -334,7 +334,7 @@ class DecodeResponses(object):
         l_message = p_controller_obj._Message
         l_flag = l_message[2]
         l_ack = utilDecode.get_ack_nak(l_message[3])
-        l_debug_msg = "from PLM:{} - ConfigFlag:{:#02X}, {}".format(p_controller_obj.Name, l_flag, l_ack)
+        l_debug_msg = "Config flag from PLM:{} - ConfigFlag:{:#02X}, {}".format(p_controller_obj.Name, l_flag, l_ack)
         LOG.info("Received from {}".format(l_debug_msg))
         if l_message[3] == ACK:
             l_ret = True
