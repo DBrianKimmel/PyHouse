@@ -179,9 +179,11 @@ class DecodeResponses(object):
             elif l_cmd1 == MESSAGE_TYPES['on']:  # 0x11
                 l_device_obj.CurLevel = 100
                 l_debug_msg += "Device:{} turned Full ON  ; ".format(l_device_obj.Name)
+                self._publish(self.m_pyhouse_obj, l_device_obj)
             elif l_cmd1 == MESSAGE_TYPES['off']:  # 0x13
                 l_device_obj.CurLevel = 0
                 l_debug_msg += "Light:{} turned Full OFF; ".format(l_device_obj.Name)
+                self._publish(self.m_pyhouse_obj, l_device_obj)
             elif l_cmd1 == MESSAGE_TYPES['status_request']:  # 0x19
                 l_level = int(((l_cmd2 + 2) * 100) / 256)
                 l_device_obj.CurLevel = l_level

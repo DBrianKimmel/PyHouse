@@ -34,7 +34,7 @@ from twisted.python import log
 
 
 class DropHttpFilter(object):
-    """This will filter out the HTTP log messages added by twisted (Athena/Nevow).
+    """ This will filter out the HTTP log messages added by twisted (Athena/Nevow).
     """
 
     def __init__(self, p_param = None):
@@ -43,6 +43,8 @@ class DropHttpFilter(object):
         self.m_param = p_param
 
     def filter(self, p_record):
+        """ Should we filter this record out of the logs?
+        """
         l_allow = True
         if self.m_param is None:
             return l_allow
@@ -51,8 +53,8 @@ class DropHttpFilter(object):
                 for l_entry in self.m_param:
                     if l_entry in p_record.msg:
                         l_allow = False
-            except:
-                pass
+            except Exception as e_err:
+                print('ERROR in setup_logging GropHttpFilter - {}'.format(e_err))
         return l_allow
 
 
@@ -63,7 +65,7 @@ LOGGING_DICT = {
     'filters' : {
         'http' : {
             '()'      : DropHttpFilter,
-            'p_param' : ['publishToNewObserver'],
+            'p_param' : ['/transport', '/jsmodule/'],
         }
     },
 
