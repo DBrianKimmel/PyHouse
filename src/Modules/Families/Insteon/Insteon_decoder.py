@@ -191,7 +191,7 @@ class DecodeResponses(object):
                 _l_ret1 = Insteon_HVAC.ihvac_utility().decode_50_record(l_device_obj, l_cmd1, l_cmd2)
                 pass
 
-            elif l_flags & 0xE0 == 0x80 and l_cmd1 == 01:
+            elif l_message[8] & 0xE0 == 0x80 and l_cmd1 == 01:
                 l_debug_msg += ' Set Button Pressed '
             else:
                 l_debug_msg += " Unknown type - last command was {} - {}; ".format(l_device_obj._Command1, PrintBytes(l_message))
