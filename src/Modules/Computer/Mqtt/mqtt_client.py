@@ -143,7 +143,7 @@ class API(Util):
     def MqttPublish(self, p_topic, p_message):
         """Send a topic, message to the broker for it to distribute to the subscription list
 
-        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("schedule/execute", l_schedule)
+        # self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("schedule/execute", l_schedule)
         @param p_topic: is the partial topic, the prefix will be prepended.
         @param message_json : is the json message we want to send
         @param message_obj: is an additional object thhat we will convert to json and merge it into the message.

@@ -250,6 +250,8 @@ class Utility(object):
     @staticmethod
     def run_after_delay(p_pyhouse_obj, p_delay, p_list):
         l_runID = p_pyhouse_obj.Twisted.Reactor.callLater(p_delay, ScheduleExecution.execute_schedules_list, p_pyhouse_obj, p_list)
+        l_datetime = datetime.datetime.fromtimestamp(l_runID.getTime())
+        LOG.info('Scheduled {} after delay of {} - Time: {}'.format(p_list, p_delay, l_datetime))
         return l_runID
 
     @staticmethod
