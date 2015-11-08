@@ -197,11 +197,13 @@ class Decode(object):
             l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Buttons, p_address)
         if l_ret == None:
             l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Thermostats, p_address)
+            l_ret.DeviceType = 2
         # Add additional classes in here
         if l_ret == None:
             LOG.info("WARNING - Address {} ({}) *NOT* found.".format(l_dotted, p_address))
             l_ret = InsteonData()  # an empty new object
             l_ret.Name = '**NoName-' + l_dotted + '-**'
+            l_ret.DeviceType = 9
         return l_ret
 
     @staticmethod
