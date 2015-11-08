@@ -270,6 +270,22 @@ class Utility(object):
         # l_runID = p_pyhouse_obj.Twisted.Reactor.callLater(l_delay, ScheduleExecution.execute_schedules_list, l_pyhouse_obj, l_list)
         # return l_runID
 
+class Timers(object):
+    """
+    """
+
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_timers = {}
+        self.m_count = 0
+
+    def set_one(self, p_pyhouse_obj, p_delay, p_list):
+        l_callback = ScheduleExecution.execute_schedules_list
+        l_runID = p_pyhouse_obj.Twisted.Reactor.callLater(p_delay, l_callback, p_pyhouse_obj, p_list)
+        l_datetime = datetime.datetime.fromtimestamp(l_runID.getTime())
+        LOG.info('Scheduled {} after delay of {} - Time: {}'.format(p_list, p_delay, l_datetime))
+        return l_runID
+
 
 class API(object):
 

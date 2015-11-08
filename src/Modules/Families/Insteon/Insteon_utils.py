@@ -208,7 +208,7 @@ class Decode(object):
     def get_obj_from_message(p_pyhouse_obj, p_message):
         """ Here we have a message from the PLM.  Find out what device has that address.
 
-        @param p_message: is the message byte array from the PLM we are extracting the Insteon address from.
+        @param p_message: is the address portion of the message byte array from the PLM we are extracting the Insteon address from.
         @param p_index: is the index of the first byte in the message.
                 Various messages contain the address at different offsets.
         @return: The object that contains the address -or- a dummy object with noname in Name
