@@ -34,6 +34,7 @@ from Modules.Families.Insteon.Insteon_utils import Decode as utilDecode, Util as
 from Modules.Utilities import json_tools
 from Modules.Utilities.tools import PrintBytes
 from Modules.Computer import logging_pyh as Logger
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.Insteon_decode ')
 
@@ -148,6 +149,7 @@ class DecodeResponses(object):
         """
         l_message = p_controller_obj._Message
         l_device_obj = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_message[2:5])
+        print(PrettyFormatAny.form(l_device_obj, 'Device'))
         l_flags = utilDecode._decode_message_flag(l_message[8])
         l_cmd1 = l_message[9]
         l_cmd2 = l_message[10]
