@@ -55,8 +55,10 @@ from Modules.Computer import logging_pyh as Logger
 # from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.Schedule       ')
-SECONDS_IN_DAY = 86400
-SECONDS_IN_WEEK = 7 * 24 * 60 * 60
+SECONDS_IN_MINUTE = 60
+SECONDS_IN_HOUR = SECONDS_IN_MINUTE * 60  # 3600
+SECONDS_IN_DAY = SECONDS_IN_HOUR * 24  # 86400
+SECONDS_IN_WEEK = SECONDS_IN_DAY * 7  # 604800
 INITIAL_DELAY = 5  # Must be from 5 to 30 seconds.
 PAUSE_DELAY = 5
 
@@ -71,7 +73,7 @@ class RiseSet(object):
 
 class SchedTime(object):
     """
-    Get the scheduled time.  It may be from about a minute to about 1 week.
+    Get the when scheduled time.  It may be from about a minute to about 1 week.
     If the schedule is not active return a None
     This class deals with extracting information from the time and DOW fields of a schedule.
 
@@ -264,11 +266,6 @@ class Utility(object):
         if p_delay != 0:
             l_delay = p_delay
         Utility.run_after_delay(p_pyhouse_obj, l_delay, l_list)
-        # l_command = lambda l_pyh = p_pyhouse_obj, l_list = l_list: ScheduleExecution.execute_schedules_list(l_pyh, l_list)
-        # l_runID = p_pyhouse_obj.Twisted.Reactor.callLater(l_delay, l_command, None)
-        # l_pyhouse_obj = p_pyhouse_obj
-        # l_runID = p_pyhouse_obj.Twisted.Reactor.callLater(l_delay, ScheduleExecution.execute_schedules_list, l_pyhouse_obj, l_list)
-        # return l_runID
 
 class Timers(object):
     """

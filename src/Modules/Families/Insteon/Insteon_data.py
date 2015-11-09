@@ -19,7 +19,6 @@
 class InsteonData(object):
     def __init__(self):
         self.DevCat = 0  # DevCat and SubCat (2 bytes)
-        self.DeviceType = 0
         self.EngineVersion = 0
         self.GroupList = ''
         self.GroupNumber = 0

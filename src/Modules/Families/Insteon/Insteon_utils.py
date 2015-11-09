@@ -22,6 +22,8 @@ from Modules.Families.Insteon.Insteon_data import InsteonData
 from Modules.Families.Insteon.Insteon_constants import MESSAGE_LENGTH, NAK
 from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities.tools import PrintBytes
+from Modules.Core.data_objects import DeviceData
+from Modules.Utilities import device_tools
 
 LOG = Logger.getLogger('PyHouse.Insteon_Utils  ')
 
@@ -200,7 +202,8 @@ class Decode(object):
         # Add additional classes in here
         if l_ret == None:
             LOG.info("WARNING - Address {} ({}) *NOT* found.".format(l_dotted, p_address))
-            l_ret = InsteonData()  # an empty new object
+            l_ret = DeviceData()
+            device_tools.stuff_new_attrs(l_ret, InsteonData())  # an empty new object
             l_ret.Name = '**NoName-' + l_dotted + '-**'
         return l_ret
 
@@ -216,7 +219,8 @@ class Decode(object):
         l_address = Util.message2int(p_message)  # Extract the 3 byte address from the message and convert to an Int.
         if l_address < (256 * 256):  # First byte zero ?
             l_dotted = str(l_address)
-            l_device_obj = InsteonData()  # an empty new object
+            l_device_obj = DeviceData()
+            device_tools.stuff_new_attrs(l_device_obj, InsteonData())  # an empty new object
             l_device_obj.Name = '**Group: ' + l_dotted + ' **'
         else:
             l_device_obj = Decode.find_address_all_classes(p_pyhouse_obj, l_address)

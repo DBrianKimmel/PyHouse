@@ -154,12 +154,9 @@ class DecodeResponses(object):
         l_cmd1 = l_message[9]
         l_cmd2 = l_message[10]
         l_data = [l_cmd1, l_cmd2]
-        try:
-            if l_device_obj.DeviceType == 2:
-                Insteon_HVAC.ihvac_utility().decode_50_record(self.m_pyhouse_obj, l_device_obj, p_controller_obj)
-                return self.check_for_more_decoding(p_controller_obj, True)
-        except Exception as e_err:
-            pass
+        if l_device_obj.DeviceType == 2:
+            Insteon_HVAC.ihvac_utility().decode_50_record(self.m_pyhouse_obj, l_device_obj, p_controller_obj)
+            return self.check_for_more_decoding(p_controller_obj, True)
         l_debug_msg = 'Standard Message from: {}; Flags:{}; Cmd1:{:#x}, Cmd2:{:#x}; '.format(l_device_obj.Name, l_flags, l_cmd1, l_cmd2)
         # Break down bits 7(msb), 6, 5 into message type
         if l_message[8] & 0xE0 == 0x80:  # Broadcast/NAK Message (100)

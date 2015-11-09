@@ -81,4 +81,11 @@ class D01_Decode(SetupMixin, unittest.TestCase):
         l_ret = utilDecode._devcat(l_dev[5:7], self.m_obj)
         self.assertEqual(self.m_obj.DevCat, 0x0204)
 
+    def test_02_GetObj(self):
+        """
+        """
+        l_msg = MSG_50
+        l_ret = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_msg)
+        print(PrettyFormatAny.form(l_ret, 'Combined Dicts'))
+
 # ## END DBK
