@@ -86,6 +86,6 @@ class ThermostatsElement(athena.LiveElement):
             l_obj.UPBAddress = l_json['UPBAddress']
             l_obj.UPBPassword = l_json['UPBPassword']
             l_obj.UPBNetworkID = l_json['UPBNetworkID']
-        self.m_pyhouse_obj.House.Thermostats[l_ix] = l_obj
+        self.m_pyhouse_obj.House.Thermostats[l_ix] = l_obj  # Put into internal data store
 
 # ## END DBK

@@ -18,14 +18,9 @@ from Modules.Families.family_utils import FamUtil
 from Modules.Utilities.device_tools import XML as deviceXML
 from Modules.Utilities.xml_tools import PutGetXML
 from Modules.Computer import logging_pyh as Logger
-from Modules.Utilities.tools import PrettyPrintAny
+# from Modules.Utilities.tools import PrettyPrintAny
 
 LOG = Logger.getLogger('PyHouse.Hvac_xml       ')
-
-DIVISION = 'HouseDivision'
-H_SECTION = 'HvacSection'
-T_SECTION = 'ThermostatSection'
-T_DEVICE = 'Thermostat'
 
 
 class Utility(object):
@@ -109,17 +104,19 @@ class XML(object):
         l_obj = {}
         l_count = 0
         try:
-            l_division = p_pyhouse_obj.Xml.XmlRoot.find(DIVISION)
-            # print(l_division)
-            l_section = l_division.find(H_SECTION)
-            # print(l_section)
-            if l_section == None:
-                l_section = l_division.find(T_SECTION)
+            l_division = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
+            # print(l_division.tag)
+            l_h_section = l_division.find('HvacSection')
+            # print(l_h_section.tag)
+            # if l_section == None:
+            l_section = l_h_section.find('ThermostatSection')
+            # print(l_section.tag)
         except AttributeError as e_err:
             LOG.error('Reading Hvac information - {}'.format(e_err))
             l_section = None
         try:
             for l_xml in l_section.iterfind('Thermostat'):
+                # print(l_xml.tag)
                 l_therm = Utility._read_one_thermostat_xml(p_pyhouse_obj, l_xml)
                 l_obj[l_count] = l_therm
                 l_count += 1
@@ -135,8 +132,8 @@ class XML(object):
         @param p_pyhouse_obj: is the mother data store
         @return: a sub tree ready to be appended to an element.
         """
-        l_xml = ET.Element(H_SECTION)  # HvacSection
-        ET.SubElement(l_xml, T_SECTION)  # ThermostatSection
+        l_xml = ET.Element('HvacSection')  # HvacSection
+        ET.SubElement(l_xml, 'ThermostatSection')  # ThermostatSection
         l_count = 0
         try:
             for l_obj in p_pyhouse_obj.House.Hvac.itervalues():

@@ -740,6 +740,10 @@ function buildLcarScheduleTypeSelectWidget(self, p_id, p_caption, p_checked) {
 	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.ScheduleType, p_checked);
 }
 
+function buildLcarThermostatTypeSelectWidget(self, p_id, p_caption, p_checked) {
+	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.LightType, p_checked);
+}
+
 
 
 //========== Slider Widgets ==================================================================

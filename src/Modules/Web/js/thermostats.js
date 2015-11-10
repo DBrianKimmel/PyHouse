@@ -50,7 +50,7 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 
 // ============================================================================
 	/**
-	 * Build a screen full of buttons - One for each room and some actions.
+	 * Build a screen full of buttons - One for each thermostat and some actions.
 	 */
 	function buildLcarSelectScreen(self){
 		var l_thermostat_html = buildLcarSelectionButtonsTable(globals.House.HouseObj.Thermostats, 'handleSelectButtonOnClick');
@@ -79,9 +79,9 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 	/**
 	 * Event handler for Thermostat selection buttons.
 	 * 
-	 * The user can click on a room button, the "Add" button or the "Back" button.
+	 * The user can click on a thermostat button, the "Add" button or the "Back" button.
 	 * 
-	 * @param self is    <"Instance" of undefined.schedules.SchedulesWidget>
+	 * @param self is    <"Instance" of undefined.thermostats.ThermostatsWidget>
 	 * @param p_node is  the node of the button that was clicked.
 	 */
 	function handleSelectButtonOnClick(self, p_node) {

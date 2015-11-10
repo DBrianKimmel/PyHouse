@@ -39,7 +39,7 @@ from Modules.Families.Insteon.test.xml_insteon import \
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Core import conversions
-# from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -55,11 +55,23 @@ class A1_XML(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_01_BuildObjects(self):
-        """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
+        """ Test to be sure the compound object was built correctly.
         """
         self.assertEqual(self.m_pyhouse_obj.House.Hvac, None)
         # print(PrettyFormatAny.form(self.m_xml.thermostat_sect, 'Thermostat'))
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'Family'))
+
+
+class A2_PyHouse(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_01_BaseDevice(self):
+        """Read the base device XML
+        """
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'PyH'))
+        self.assertNotEqual(self.m_pyhouse_obj.House.Hvac, None)
 
 
 class B1_Read(SetupMixin, unittest.TestCase):
@@ -117,7 +129,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """
         l_objs = hvacXML.read_hvac_xml(self.m_pyhouse_obj)
         # print(PrettyFormatAny.form(l_objs, 'All Thermostats'))
-        self.assertEqual(len(l_objs), 1)
+        self.assertEqual(len(l_objs), 2)
         self.assertEqual(l_objs[0].Name, TESTING_THERMOSTAT_NAME_0)
         self.assertEqual(l_objs[0].CoolSetPoint, float(TESTING_THERMOSTAT_COOL_SETPOINT_0))
 
