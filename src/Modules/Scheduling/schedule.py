@@ -149,7 +149,7 @@ class SchedTime(object):
         l_now_secs = Utility.to_mins(p_now) * 60
         l_seconds = l_sched_secs - l_now_secs
         if l_seconds < 0:
-            l_seconds += SECONDS_IN_WEEK
+            l_seconds += SECONDS_IN_DAY
         return l_seconds
 
 

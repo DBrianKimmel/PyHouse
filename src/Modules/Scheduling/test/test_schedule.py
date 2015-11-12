@@ -271,6 +271,17 @@ class B2_Time(SetupMixin, unittest.TestCase):
         l_minutes = SchedTime.extract_time_to_go(self.m_schedule_obj, l_time, l_riseset)
         self.assertEqual(l_minutes, (0 * 60) + 1440 * 60)
 
+    def test_03_ToGo(self):
+        """ Test next day 45 mins from now
+        """
+        self.m_schedule_obj.DOW = 1 + 2 + 4 + 8 + 16 + 32 + 64
+        l_riseset = Mock.RiseSet()
+        self.m_schedule_obj.Time = '00:15'
+        l_now = datetime.datetime(2015, 6, 6, 23, 30, 0)
+        l_minutes = SchedTime.extract_time_to_go(self.m_schedule_obj, l_now, l_riseset)
+        self.assertEqual(l_minutes, 45 * 60)
+        #
+
 
 class C1_Execute(SetupMixin, unittest.TestCase):
     """Testing class ScheduleExecution
