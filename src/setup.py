@@ -101,7 +101,7 @@ setup(
         'pyOpenSSL',
         'service-identity',
         'idna',
-        'gmpy',
+        # 'gmpy',
         'pyasn1',
         'pycrypto',
         # 'pypiwin32',  # for windows only
@@ -110,7 +110,7 @@ setup(
         'python-dateutil',
         'netaddr',
         'pyserial',
-        'astral',
+        # 'astral',
         'netifaces',
         'pyusb',
         'passlib',
