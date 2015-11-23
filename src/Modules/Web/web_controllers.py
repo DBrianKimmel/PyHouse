@@ -17,12 +17,12 @@ from nevow import loaders
 from nevow import athena
 
 # Import PyMh files and modules.
-from Modules.Core import conversions
-from Modules.Web.web_utils import JsonUnicode, GetJSONHouseInfo
-from Modules.Drivers import interface
+from Modules.Web.web_utils import GetJSONHouseInfo
+from Modules.Drivers import VALID_INTERFACES
 from Modules.Lighting import lighting_controllers
 from Modules.Computer import logging_pyh as Logger
 from Modules.Families.Insteon import Insteon_utils
+from Modules.Utilities import json_tools
 
 
 # Handy helper for finding external resources nearby.
@@ -53,18 +53,18 @@ class ControllersElement(athena.LiveElement):
     def getInterfaceData(self):
         """ A JS request for information has been received from the client.
         """
-        l_interfaces = interface.VALID_INTERFACES
+        l_interfaces = VALID_INTERFACES
         l_obj = {}
         for l_interface in l_interfaces:
             l_name = l_interface + 'Data'
-        l_json = JsonUnicode().encode_json(l_obj)
+        l_json = json_tools.encode_json(l_obj)
         return unicode(l_json)
 
     @athena.expose
     def saveControllerData(self, p_json):
         """A new/changed controller is returned.  Process it and update the internal data via controller.py
         """
-        l_json = JsonUnicode().decode_json(p_json)
+        l_json = json_tools.decode_json_unicode(p_json)
         l_controller_ix = int(l_json['Key'])
         l_delete = l_json['Delete']
         if l_delete:

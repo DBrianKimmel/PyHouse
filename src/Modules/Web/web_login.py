@@ -37,6 +37,8 @@ from Modules.Lighting import VALID_LIGHTING_TYPE
 from Modules.Scheduling import VALID_SCHEDULING_TYPES, VALID_SCHEDULE_MODES
 from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Web.web_users import VALID_USER_ROLES
+from Modules.Utilities import json_tools
 
 LOG = Logger.getLogger('PyHouse.webLogin       ')
 
@@ -63,12 +65,16 @@ class LoginElement(athena.LiveElement):
             If valid, display the user and then the root menu.
             If not - allow the user to retry the login.
 
+            also
+
+            allow user to check the change button and apply the change after logging in the user.
+
             @param p_json: is the username and password passed back by the client.
         """
         LOG.info("doLogin called {}.".format(PrettyFormatAny.form(p_json, 'Login From Browser')))
         l_obj = web_utils.JsonUnicode().decode_json(p_json)
         l_login_obj = self.validate_user(l_obj)
-        l_json = web_utils.JsonUnicode().encode_json(l_login_obj)
+        l_json = json_tools.encode_json(l_login_obj)
         return unicode(l_json)
 
     @athena.expose
@@ -97,18 +103,21 @@ class LoginElement(athena.LiveElement):
                      ScheduleType = VALID_SCHEDULING_TYPES,
                      ScheduleMode = VALID_SCHEDULE_MODES,
                      TempSystem = VALID_TEMP_SYSTEMS,
-                     ThermostatModes = VALID_THERMOSTAT_MODES
+                     ThermostatModes = VALID_THERMOSTAT_MODES,
+                     UserRoles = VALID_USER_ROLES
                      )
-        l_json = web_utils.JsonUnicode().encode_json(l_obj)
+        l_json = json_tools.encode_json(l_obj)
         return unicode(l_json)
 
     def validate_user(self, p_obj):
         """
+        TODO - swithc to twisted.cred and validate the user using twisted.
+                we will get an avatar (twisted definition)
         @param p_obj: is from the browser login screen
         """
         l_login_obj = LoginData()
         l_login_obj.LoginName = p_obj['LoginName']
-        l_login_obj.LoginEncryptedPassword = p_obj['Password']
+        l_login_obj.LoginPasswordCurrent = p_obj['PasswordCurrent']
         LOG.info('Login Attempt using: {}'.format(PrettyFormatAny.form(l_login_obj, 'Login Obj')))
         #
         if l_login_obj.LoginName in self.m_pyhouse_obj.Computer.Web.Logins:
@@ -117,7 +126,7 @@ class LoginElement(athena.LiveElement):
             LOG.debug(PrettyFormatAny.form(l_user, 'User Obj'))
             if l_user.Name == l_login_obj.LoginName:
                 LOG.debug('User Matched')
-                if l_user.LoginEncryptedPassword == l_login_obj.LoginEncryptedPassword:
+                if l_user.LoginPasswordCurrent == l_login_obj.LoginPasswordCurrent:
                     LOG.debug('Password Matched')
                     l_login_obj.IsLoggedIn = True
                     l_login_obj.LoginRole = l_user.LoginRole
@@ -126,32 +135,9 @@ class LoginElement(athena.LiveElement):
                 return l_login_obj
             # pbkdf2_sha256.verify("password", hash)
         # Default for development - allow us in.
-        l_login_obj.LoginFullName = 'Administrator'
-        l_login_obj.IsLoggedIn = True
-        l_login_obj.ServerState = web_utils.WS_LOGGED_IN
-        return l_login_obj
-
-    def XXvalidate_user(self, p_obj):
-        """Validate the user and put all results into the LoginData object.
-
-        TODO: validate user - add password check for security
-        """
-        l_login_obj = LoginData()
-        l_login_obj.LoginName = p_obj['LoginName']
-        l_login_obj.LoginEncryptedPassword = p_obj['Password']
-        # if p_login_obj.LoginName == 'briank' and p_login_obj.Password == 'nitt4agmtc':
-        if l_login_obj.LoginName == 'briank' and l_login_obj.LoginEncryptedPassword == 'd':
-            l_login_obj.LoginFullName = 'D. Brian Kimmel'
-            l_login_obj.IsLoggedIn = True
-            l_login_obj.ServerState = web_utils.WS_LOGGED_IN
-        elif l_login_obj.LoginName == 'admin' and l_login_obj.LoginEncryptedPassword == 'admin':
-            l_login_obj.LoginFullName = 'Administrator'
-            l_login_obj.IsLoggedIn = True
-            l_login_obj.ServerState = web_utils.WS_LOGGED_IN
-        else:
-            l_login_obj.IsLoggedIn = False
-            l_login_obj.LoginFullName = 'Not logged In'
-            l_login_obj.ServerState = 0
+        # l_login_obj.LoginFullName = 'Administrator'
+        # l_login_obj.IsLoggedIn = True
+        # l_login_obj.ServerState = web_utils.WS_LOGGED_IN
         return l_login_obj
 
 # ## END DBK

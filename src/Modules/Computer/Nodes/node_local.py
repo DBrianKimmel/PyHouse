@@ -289,7 +289,7 @@ class Util(object):
         LOG.info('Nodes = {}'.format(p_pyhouse_obj.Compute.Nodes))
 
     @staticmethod
-    def create_local_node(p_pyhouse_obj):
+    def create_local_node(_p_pyhouse_obj):
         l_node = Util._get_node_info()
         l_node.NodeInterfaces = Interfaces._get_all_interfaces()
         l_node.NodeRole = Util.find_node_role()

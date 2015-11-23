@@ -18,7 +18,6 @@ This is because most ISP's use NAT to expand the IPv4 address space.
 
 # Import system type stuff
 import re
-from pprint import pformat
 from twisted.internet.defer import Deferred
 from twisted.web.client import Agent, readBody
 from twisted.web.http_headers import Headers
@@ -99,7 +98,7 @@ class Utility(FindExternalIpAddress):
             l_body_defer = self._get_body(p_response)
             return l_body_defer
         def eb_response(p_reason):
-            LOG.error('ERROR  -failed to fetch Url - {}'.format(p_reason))
+            LOG.warn(' failed to fetch Url - {}'.format(p_reason))
         l_agent = Agent(p_pyhouse_obj.Twisted.Reactor)
         l_url = self._get_url(p_key)
         l_defer = l_agent.request(

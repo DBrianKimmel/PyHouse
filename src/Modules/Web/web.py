@@ -19,6 +19,10 @@ from Modules.Web.web_server import API as WebAPI
 
 LOG = Logger.getLogger('PyHouse.Web            ')
 
+class WorkspaceData(object):
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+
 
 class API(object):
     """

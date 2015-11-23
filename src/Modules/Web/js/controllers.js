@@ -125,7 +125,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 	 * Build a screen full of data entry fields.
 	 */
 	function buildLcarDataEntryScreen(self, p_entry, p_handler){
-		Divmod.debug('---', 'controllers.buildLcarDataEntryScreen() called ');
+		// Divmod.debug('---', 'controllers.buildLcarDataEntryScreen() called ');
 		var l_obj = arguments[1];
 		var l_html = build_lcars_top('Controller Data', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(40, self.buildEntry(l_obj, p_handler));
@@ -157,18 +157,18 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 		return p_html;
 	},
 	function familyChanged() {
-		Divmod.debug('---', 'controllers.familyChanged() was called.');
+		// Divmod.debug('---', 'controllers.familyChanged() was called.');
 		var l_obj = globals.House.ControllerObj;
 		var l_self = globals.House.Self;
 		l_obj.DeviceFamily = fetchSelectWidget(l_self, 'DeviceFamily');
 		l_self.buildLcarDataEntryScreen(l_obj, 'handleDataOnClick');
 	},
 	function interfaceChanged() {
-		Divmod.debug('---', 'controllers.interfaceChanged() was called.');
+		// Divmod.debug('---', 'controllers.interfaceChanged() was called.');
 		var l_obj = globals.House.ControllerObj;
 		var l_self = globals.House.Self;
-		console.log("controllers.interfaceChanged() - l_obj = %O", l_obj);
-		console.log("controllers.interfaceChanged() - l_self = %O", l_self);
+		// console.log("controllers.interfaceChanged() - l_obj = %O", l_obj);
+		// console.log("controllers.interfaceChanged() - l_self = %O", l_self);
 		l_obj.InterfaceType = fetchSelectWidget(l_self, 'InterfaceType');
 		l_self.buildLcarDataEntryScreen(l_obj, 'handleDataOnClick');
 	},

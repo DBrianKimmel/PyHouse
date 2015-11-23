@@ -6,7 +6,9 @@
  * @license:   MIT License
  * @note:      Created on Mar 11, 2014
  * @summary:   Displays the login element
- * 
+ *
+ * This is the first screen to show when a connection is made to the web server.
+ *
  * Validate the user/password in python code - then...
  * Bring up the main menu next
  */
@@ -24,17 +26,26 @@
  *  
  *  After successful login, the rootMenu is displayed.
  */
+var m_login_obj = {
+	Name : '',
+    LoginName : '',
+    PasswordCurrent : '',
+    PasswordNew: '',
+    PasswordVerify: '',
+    ChangeFlag : false
+}
+
 helpers.Widget.subclass(login, 'LoginWidget').methods(
 
     function __init__(self, node) {
         login.LoginWidget.upcall(self, "__init__", node);
+        globals.Login = m_login_obj;
     },
-
 
 
 // ============================================================================
     /**
-     * Startup - Place the widget in the workspace and hide it.
+     * Startup - Place the login widget in the workspace and hide it.
      * 
      * Override the ready function in C{ helpers.Widget.ready() }
      * 
@@ -72,29 +83,52 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 	function fetchValidLists(self) {
 		function cb_fetchValidLists(p_json) {
     		globals.Valid = JSON.parse(p_json);
-    		self.buildLcarLoginScreen('handleLoginButtonClick');
+    		self.buildLcarLoginScreen(globals.Login, 'handleLoginButtonClick');
 		}
 		function eb_fetchValidLists(p_reason) {
 			Divmod.debug('---', 'ERROR - login.eb_fetchValidLists() - .' + p_reason);
 		}
-        var l_defer = self.callRemote("getValidLists");  // @ web_login
+		Divmod.debug('---', 'login.fetchValidLists');
+		console.log("login.fetchValidLists() - Login = %O", globals.Login);
+
+		var l_defer = self.callRemote("getValidLists");  // @ web_login
 		l_defer.addCallback(cb_fetchValidLists);
 		l_defer.addErrback(eb_fetchValidLists);
 	},
+
+// ============================================================================
 	/**
 	 * Build a screen for logging in.
 	 * Set the entry focus to the 'Name' Field
 	 * Set the enter key action to the 'Log In' button
+	 * 
+	 * @param p_obj is m_login_obj that contains all the login info.
+	 * @param p_handler is the function to be called when the kogin button is clicked
 	 */
-	function buildLcarLoginScreen(self, p_handler){
+	function buildLcarLoginScreen(self, p_obj, p_handler) {
+		// Divmod.debug('---', 'login.buildLcarLoginScreen');
+		// console.log("login.buildLcarLoginScreen() - p_obj = %O", p_obj);
 		var l_login_html = "";
-		l_login_html += buildLcarTextWidget(self, 'LoginName', 'Name', '');
-		l_login_html += buildLcarPasswordWidget(self, 'LoginPassword', 'Password', 'size=20');
+		l_login_html += buildLcarTextWidget(self, 'LoginName', 'Name', p_obj.LoginName);
+		l_login_html += buildLcarPasswordWidget(self, 'PasswordCurrent', 'Current Password', 'size=20', p_obj.PasswordCurrent);
+		l_login_html += buildLcarTrueFalseWidget(self, 'ChangeFlag', 'Change Password ?', p_obj.ChangeFlag, 'handlePasswordChangeClick')
+		if (p_obj.ChangeFlag === true) {
+			l_login_html += buildLcarPasswordWidget(self, 'PasswordNew', 'New Password', 'size=20', p_obj.PasswordNew);
+			l_login_html += buildLcarPasswordWidget(self, 'PasswordVerify', 'Verify Password', 'size=20', p_obj.PasswordVerify);
+		}
 		l_login_html += buildLcarButton({'Name' : 'Login', 'Key' : 12345}, p_handler, 'lcars-salmon-bg');
 		var l_html = build_lcars_top('Login', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(10, l_login_html);
 		l_html += build_lcars_bottom();
 		self.nodeById('SelectionButtonsDiv').innerHTML = l_html;
+	},
+	function handlePasswordChangeClick(self) {
+		// Divmod.debug('---', 'login.handlePasswordChangeClick was called.');
+		var l_flag = fetchTrueFalseWidget(self, 'ChangeFlag');
+		globals.Login.ChangeFlag = l_flag;
+		//if (l_flag === true)
+		self.buildLcarLoginScreen(globals.Login, 'handleLoginButtonClick');
+		// console.log("login.handlePasswordChangeClick() - self = %O", self);
 	},
 
 
@@ -118,9 +152,18 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 		}
         var l_loginData = {
     		LoginName : fetchTextWidget(self, 'LoginName'),
-    		Password : fetchTextWidget(self, 'LoginPassword'),
+    		Password : fetchTextWidget(self, 'PasswordCurrent'),
+    		ChangeFlag : fetchTrueFalseWidget(self, 'ChangeFlag'),
+    		PasswordNew : fetchTextWidget(self, 'PasswordNew')
         };
-    	var l_json = JSON.stringify(l_loginData);
+        globals.Login.LoginName = fetchTextWidget(self, 'LoginName');
+        globals.Login.PasswordCurrent = fetchTextWidget(self, 'PasswordCurrent');
+        globals.Login.ChangeFlag = fetchTrueFalseWidget(self, 'ChangeFlag');
+        if (globals.Login.ChangeFlag === true)
+            globals.Login.PasswordNew = fetchTextWidget(self, 'PasswordNew');
+        else
+            globals.Login.PasswordNew = '';
+       	var l_json = JSON.stringify(globals.Login);
         var l_defer = self.callRemote("doLogin", l_json);  // @ web_login
 		l_defer.addCallback(cb_handleLoginButtonClick);
 		l_defer.addErrback(eb_handleLoginButtonClick);
@@ -143,7 +186,7 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 		// Divmod.debug('---', 'login.showNextScreen(2) was called.');
 		if (p_obj.IsLoggedIn === true) {
 			globals.User.ID = p_obj.Username;
-			globals.User.Password = p_obj.Password;
+			globals.User.Password = p_obj.PasswordCurrent;
 			globals.User.Fullname = p_obj.Fullname;
 			globals.User.LoggedIn = true;
 			self.hideLoggingInDiv(self);
@@ -154,10 +197,10 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 			Divmod.debug('---', 'login.showNextScreen(3) was called.');
 			globals.User.Fullname = 'Login Attempt failed!';
 			self.showLoggingInDiv(self);
-        	self.nodeById('LoginPassword').value = '';
+        	self.nodeById('PasswordCurrent').value = '';
 		}
 	}
 );
-//Divmod.debug('---', 'login.handleMenuOnClick(1) was called.');
-//console.log("login.handleMenuOnClick() - l_obj = %O", l_obj);
+// Divmod.debug('---', 'login.handleMenuOnClick(1) was called.');
+// console.log("login.handleMenuOnClick() - l_obj = %O", l_obj);
 //### END DBK

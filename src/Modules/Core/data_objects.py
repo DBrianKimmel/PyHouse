@@ -534,13 +534,15 @@ class WebData(object):
 
 
 class LoginData(BaseObject):
-    """A dict of login_names as keys and encrypted passwords as values - see web_login for details.
+    """ bout the Loggeed in useer
     """
     def __init__(self):
         super(LoginData, self).__init__()
-        self.LoginEncryptedPassword = None
         self.LoginFullName = 'Not logged in'
-        self.LoginRole = 'Guest'
+        self.LoginPasswordChangeFlag = True
+        self.LoginPasswordCurrent = None
+        self.LoginPasswordNew = None
+        self.LoginRole = 'None'
         self.IsLoggedIn = False
         self.ServerState = None
 

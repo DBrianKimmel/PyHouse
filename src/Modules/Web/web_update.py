@@ -17,7 +17,7 @@ from nevow import loaders
 # Import PyMh files and modules.
 # from Modules.Core.data_objects import WebData
 from Modules.Computer import logging_pyh as Logger
-from Modules.Web import web_utils
+from Modules.Utilities import json_tools
 # from Modules.Utilities.tools import PrettyPrintAny
 
 # Handy helper for finding external resources nearby.
@@ -43,14 +43,14 @@ class UpdateElement(athena.LiveElement):
         """ A JS client has requested all the webs information.
         """
         l_obj = self.m_pyhouse_obj.Computer.Web
-        l_json = unicode(web_utils.JsonUnicode().encode_json(l_obj))
+        l_json = unicode(json_tools.encode_json(l_obj))
         return l_json
 
     @athena.expose
     def saveUpdateData(self, p_json):
         """A new/changed web is returned.  Process it and update the internal data via ???.py
         """
-        l_json = web_utils.JsonUnicode().decode_json(p_json)
+        l_json = json_tools.decode_json_unicode(p_json)
         # l_obj = UpdateData()
         # l_obj.Port = l_json['Port']
         # self.m_pyhouse_obj.APIs.Computer.WebAPI.SaveXml(l_obj)

@@ -48,7 +48,9 @@ globals = {
 	Computer : {},
 	House : {},
 	List : {},  // List of houses to select from
+	Login : {},
 	Interface : {},
+	Server : {},
 	User : {},
 	Valid : {},
 
@@ -631,25 +633,31 @@ function buildLcarEntryButtons(p_handler, /* optional */ noOptions) {
  *   suggested values are like 'SchedActive', 'RoomActive'
  * @param p_value  is bool showing the current value .
  */
-function _buildLcarRadioButtonWidget(p_name, p_label, p_value, p_checkVal) {
+function _buildLcarRadioButtonWidget(p_name, p_label, p_value, p_checkVal, /* optional */ p_optionHandler) {
+	var l_option = p_optionHandler;
 	var l_html = "&nbsp;<input type='radio'";
 	l_html += setNameAttribute(p_name);
 	l_html += setValueAttribute(p_value);
+	if (l_option !== 'undefined') 
+		l_html += "onclick='return Nevow.Athena.Widget.handleEvent(this, \"onclick\", \"" + l_option + "\");' ";
 	l_html += setCheckedAttribute(p_value === p_checkVal);
 	l_html += "/>" + p_label + '&nbsp;\n';
 	return l_html;
 }
+
+
+//========== TrueFalse Widgets ==================================================================
 /**
  * Note the name is athenaid:xx-Name
  */
-function buildLcarTrueFalseWidget(self, p_id, p_caption, p_value) {
+function buildLcarTrueFalseWidget(self, p_id, p_caption, p_value, /* optional */ p_optionHandler) {
 	var l_html = '';
 	var l_name = buildAthenaId(self, p_id);
 	var l_value = p_value !== false;  // force to be a bool
 	l_html += buildTopDivs(p_caption);
 	l_html += "<span class='lcars-button-addition'>\n";
-	l_html += _buildLcarRadioButtonWidget(l_name, 'True',  true, l_value);
-	l_html += _buildLcarRadioButtonWidget(l_name, 'False', false, l_value);
+	l_html += _buildLcarRadioButtonWidget(l_name, 'True',  true, l_value, p_optionHandler);
+	l_html += _buildLcarRadioButtonWidget(l_name, 'False', false, l_value, p_optionHandler);
 	l_html += "</span>";
 	l_html += buildBottomDivs();
 	return l_html;
@@ -675,10 +683,10 @@ function fetchTrueFalseWidget(self, p_name) {
  * @param: p_id is the ID of the select field.
  * @param: p_list is the list of valid options to be added to the select box.
  * @param: p_checked is the text of the option list that is selected.
- * @param: p_optionChange is the optional onchange function name.
+ * @param: p_optionHandler is the optional onchange handler function name.
  */
-function buildLcarSelectWidget(self, p_id, p_caption, p_list, p_checked, /* optional */ p_optionChange) {
-	var l_option = p_optionChange;
+function buildLcarSelectWidget(self, p_id, p_caption, p_list, p_checked, /* optional */ p_optionHandler) {
+	var l_option = p_optionHandler;
 	var l_html = "";
 	l_html += buildTopDivs(p_caption);
 	l_html += "<select class='lcars-button-addition'";
@@ -739,11 +747,12 @@ function buildLcarScheduleModeSelectWidget(self, p_id, p_caption, p_checked) {
 function buildLcarScheduleTypeSelectWidget(self, p_id, p_caption, p_checked) {
 	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.ScheduleType, p_checked);
 }
-
 function buildLcarThermostatTypeSelectWidget(self, p_id, p_caption, p_checked) {
 	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.LightType, p_checked);
 }
-
+function buildLcarUserRoleSelectWidget(self, p_id, p_caption, p_checked) {
+	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.UserRoles, p_checked);
+}
 
 
 //========== Slider Widgets ==================================================================
@@ -802,7 +811,6 @@ function buildLcarHvacSliderWidget(self, p_name, p_caption, p_level, p_handler) 
 }
 
 
-
 //========== Text Widgets ==================================================================
 /**
  * Build a text widget
@@ -834,12 +842,12 @@ function buildLcarTextWidget(self, p_id, p_caption, p_value, p_options) {
 	l_html += buildBottomDivs();
 	return l_html;
 }
-function buildLcarPasswordWidget(self, p_id, p_caption) {
+function buildLcarPasswordWidget(self, p_id, p_caption, p_value) {
 	var l_html = buildTopDivs(p_caption);
 	l_html += "<input type='password' class='lcars-button-addition'";
 	l_html += setIdAttribute(buildAthenaId(self, p_id));
 	l_html += setSizeAttribute(20);
-	l_html += setValueAttribute('');
+	l_html += setValueAttribute(p_value);
 	l_html += " />\n";
 	l_html += buildBottomDivs();
 	return l_html;
@@ -848,7 +856,6 @@ function fetchTextWidget(self, p_id) {
 	var l_data = self.nodeById(p_id).value;
 	return l_data;
 }
-
 
 
 //========== DOW Widgets ==================================================================
@@ -906,7 +913,6 @@ function fetchDowWidget(self, p_id) {
 }
 
 
-
 //============================================================================
 /**
  * Startup
@@ -916,6 +922,7 @@ Divmod.Runtime.theRuntime.addLoadEvent(
 		globals.workspace.appStartup();
 	}
 );
+
 // Divmod.debug('---', 'globals.buildLcarTextWidget() was called.');
 // console.log("globals.build_lcars_middle() - %O", l_html);
 // END DBK

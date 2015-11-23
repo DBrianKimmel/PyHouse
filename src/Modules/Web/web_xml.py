@@ -54,7 +54,7 @@ class Xml(object):
         l_obj = LoginData()
         XmlConfigTools.read_base_object_xml(l_obj, p_xml)
         l_obj.LoginFullName = PutGetXML.get_text_from_xml(p_xml, 'FullName')
-        l_obj.LoginEncryptedPassword = PutGetXML.get_text_from_xml(p_xml, 'Password')
+        l_obj.LoginPasswordCurrent = PutGetXML.get_text_from_xml(p_xml, 'Password')
         l_obj.LoginRole = PutGetXML.get_text_from_xml(p_xml, 'Role')
         return l_obj
 
@@ -65,7 +65,7 @@ class Xml(object):
         """
         l_xml = XmlConfigTools.write_base_object_xml('Login', p_obj, no_uuid = True)
         PutGetXML().put_text_element(l_xml, 'FullName', p_obj.LoginFullName)
-        PutGetXML().put_text_element(l_xml, 'Password', p_obj.LoginEncryptedPassword)
+        PutGetXML().put_text_element(l_xml, 'Password', p_obj.LoginPasswordCurrent)
         PutGetXML().put_text_element(l_xml, 'Role', p_obj.LoginRole)
         return l_xml
 
@@ -76,7 +76,9 @@ class Xml(object):
         l_obj.Key = 0
         l_obj.Active = True
         l_obj.LoginFullName = 'Administrator'
-        l_obj.LoginEncryptedPassword = 'admin'
+        l_obj.LoginPasswordCurrent = 'admin'
+        l_obj.LoginPasswordNew = ''
+        l_obj.LoginPasswordChangeFlag = False
         l_obj.LoginRole = 1
         return l_obj
 
@@ -138,7 +140,7 @@ class Xml(object):
             l_xml = None
             l_login_xml = None
         if l_xml == None:
-            l_obj.WebPort = 8581
+            l_obj.WebPort = 8580
         else:
             l_obj.WebPort = Xml._read_port(l_xml)
         LOG.info('Loaded {} logins.'.format(l_count))

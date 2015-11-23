@@ -118,8 +118,8 @@ helpers.Widget.subclass(users, 'UsersWidget').methods(
 		l_entry_html += buildLcarTextWidget(self, 'Key', 'User Index', l_data.Key, 'disabled');
 		l_entry_html += buildLcarTrueFalseWidget(self, 'UserActive', 'Active ?', l_data.Active);
 		l_entry_html += buildLcarTextWidget(self, 'FullName', 'Full Name', l_data.LoginFullName);
-		l_entry_html += buildLcarTextWidget(self, 'Password', 'Password', l_data.LoginEncryptedPassword);
-		l_entry_html += buildLcarTextWidget(self, 'Role', 'Role', l_data.LoginRole);
+		l_entry_html += buildLcarTextWidget(self, 'Password', 'Password', l_data.LoginPasswordCurrent);
+		l_entry_html += buildLcarUserRoleSelectWidget(self, 'Role', 'Role', l_data.LoginRole);
 		l_entry_html += buildLcarEntryButtons(p_handler);
 		var l_html = build_lcars_top('Enter User Data', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(15, l_entry_html);
@@ -145,7 +145,7 @@ helpers.Widget.subclass(users, 'UsersWidget').methods(
 			Active : fetchTrueFalseWidget(self, 'UserActive'),
 			FullName : fetchTextWidget(self, 'FullName'),
 			Password : fetchTextWidget(self, 'Password'),
-			Role : fetchTextWidget(self, 'Role'),
+			Role : fetchSelectWidget(self, 'Role'),
 			Delete : false
 		};
 		return l_data;

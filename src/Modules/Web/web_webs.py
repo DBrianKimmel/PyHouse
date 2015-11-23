@@ -20,6 +20,7 @@ from nevow import loaders
 from Modules.Core.data_objects import WebData
 from Modules.Computer import logging_pyh as Logger
 from Modules.Web import web_utils
+from Modules.Utilities import json_tools
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -44,7 +45,7 @@ class WebsElement(athena.LiveElement):
         """ A JS client has requested all the webs information.
         """
         l_obj = self.m_pyhouse_obj.Computer.Web
-        l_json = unicode(web_utils.JsonUnicode().encode_json(l_obj))
+        l_json = unicode(json_tools.encode_json(l_obj))
         return l_json
 
     @athena.expose

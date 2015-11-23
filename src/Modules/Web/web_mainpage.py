@@ -348,9 +348,9 @@ class Workspace(athena.LiveElement):
         return l_element
 
     @athena.expose
-    def clock(self, _p_params):
+    def clock(self, p_params):
         LOG.info("Clock loaded into browser")
-        l_element = web_clock.ClockElement()
+        l_element = web_clock.ClockElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 

@@ -19,12 +19,19 @@ from Modules.Web.web_utils import JsonUnicode
 from Modules.Core.data_objects import LoginData
 from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Utilities import json_tools
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
 
 LOG = Logger.getLogger('PyHouse.webUsers       ')
+
+VALID_USER_ROLES = ['Admin', 'Adult', 'Child', 'Service']
+# Admin can create new users, devices + all others
+# Adult can change all schedules
+# Child can change only some lighting
+# Service is limited to turn on/off servicable items such as pool, irrigation
 
 
 class UsersElement(athena.LiveElement):
@@ -45,12 +52,12 @@ class UsersElement(athena.LiveElement):
         if l_users == {}:
             l_users[0] = LoginData()
             l_users[0].Name = 'admin'
-            l_users[0].LoginEncryptedPassword = 'admin'
+            l_users[0].LoginPasswordCurrent = 'admin'
             l_users[0].LoginFullName = 'Administrator'
             l_users[0].LoginRole = 1
             self.m_pyhouse_obj.Computer.Web.Logins = l_users
             LOG.debug('Creating fake user since there was none')
-        l_json = unicode(JsonUnicode().encode_json(l_users))
+        l_json = unicode(json_tools.encode_json(l_users))
         LOG.info('Fetched {}'.format(l_json))
         return l_json
 
@@ -75,7 +82,7 @@ class UsersElement(athena.LiveElement):
         l_obj.Active = l_json['Active']
         l_obj.Key = l_ix
         l_obj.LoginFullName = l_json['FullName']
-        l_obj.LoginEncryptedPassword = l_json['Password']
+        l_obj.LoginPasswordCurrent = l_json['Password']
         l_obj.LoginRole = l_json['Role']
         self.m_pyhouse_obj.Computer.Web.Logins[l_ix] = l_obj
 

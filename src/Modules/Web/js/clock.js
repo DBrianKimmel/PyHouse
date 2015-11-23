@@ -32,7 +32,7 @@ helpers.Widget.subclass(clock, 'ClockWidget').methods(
 		function cb_widgetready(res) {
 			// do whatever initialization needs here, show for the widget is handled in superclass
 			//Divmod.debug('---', 'clock.cb_widgready() was called. res = ' + res);
-			self.getAndShowTime();
+			self.fetchServerInfo();
 		}
 
 		//Divmod.debug('---', 'clock.ready() was called. ' + self);
@@ -40,6 +40,17 @@ helpers.Widget.subclass(clock, 'ClockWidget').methods(
 		var l_defer = loadImages(uris);
 		l_defer.addCallback(cb_widgetready);
 		return l_defer;
+	},
+	function fetchServerInfo(self) {
+		function cb_serverInfo(p_json) {
+			var l_obj = JSON.parse(p_json);
+			// Divmod.debug('---', 'clock.cb_serverInfo() was called.');
+			// console.log("clock.cb_serverInfo() - Server = %O", l_obj);
+			globals.Server = l_obj['ServerName'];
+			self.getAndShowTime();
+		}
+		var l_defer = self.callRemote('getServerInfo');
+		l_defer.addCallback(cb_serverInfo)
 	},
 
 
@@ -51,9 +62,10 @@ helpers.Widget.subclass(clock, 'ClockWidget').methods(
 	 */
 	function getAndShowTime(self) {
 		function cb_showTime(p_time) {
-			var CLOCK_DISPLAY_INTERVAL = 5.0;
-
-			self.node.innerHTML = p_time;
+			var CLOCK_DISPLAY_INTERVAL = 1.0;
+			self.node.innerHTML = p_time + ' ' + globals.Server.Name;
+			// Divmod.debug('---', 'clock.cb_showTime() was called.');
+			// console.log("clock.cb_showTime() - Server = %O", globals.Server);
 			self.callLater(CLOCK_DISPLAY_INTERVAL, function() {
 				self.getAndShowTime();
 				}
@@ -63,3 +75,7 @@ helpers.Widget.subclass(clock, 'ClockWidget').methods(
 		l_defer.addCallback(cb_showTime);
 	}
 );
+
+//Divmod.debug('---', 'clock.handleMenuOnClick(1) was called.');
+//console.log("clock.handleMenuOnClick() - l_obj = %O", l_obj);
+//### END DBK

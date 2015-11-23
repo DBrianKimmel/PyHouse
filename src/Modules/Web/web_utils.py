@@ -18,6 +18,7 @@ import json
 # Import PyMh files and modules.
 from Modules.Core.data_objects import JsonHouseData
 from Modules.Computer import logging_pyh as Logger
+from Modules.Utilities import json_tools
 
 
 g_debug = 0
@@ -88,7 +89,7 @@ def GetJSONHouseInfo(p_pyhouse_obj):
     This is simplified and customized so JSON encoding works.
     """
     l_ret = UtilJson._get_AllHouseObjs(p_pyhouse_obj)
-    l_json = unicode(JsonUnicode().encode_json(l_ret))
+    l_json = unicode(json_tools.encode_json(l_ret))
     return l_json
 
 
@@ -100,7 +101,7 @@ def GetJSONComputerInfo(p_pyhouse_obj):
     @param p_house_obj: is the complete information
     """
     l_ret = p_pyhouse_obj.Computer
-    l_json = unicode(JsonUnicode().encode_json(l_ret))
+    l_json = unicode(json_tools.encode_json(l_ret))
     return l_json
 
 
@@ -150,7 +151,7 @@ class JsonUnicode(object):
             l_obj = None
         return l_obj
 
-    def encode_json(self, p_obj):
+    def XXXencode_json(self, p_obj):
         """Convert a python object to a valid json object.
         """
         try:

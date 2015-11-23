@@ -7,7 +7,7 @@
 @note:      Created on Jun 27, 2015
 @Summary:
 
-Passed all 9 tests - DBK - 2015-09-01
+Passed all 11 tests - DBK - 2015-11-16
 
 """
 
@@ -78,7 +78,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         print(PrettyFormatAny.form(l_obj, 'One login'))
         self.assertEqual(l_obj.Name, TESTING_LOGIN_NAME_0)
         self.assertEqual(l_obj.LoginFullName, TESTING_LOGIN_FULL_NAME_0)
-        self.assertEqual(l_obj.LoginEncryptedPassword, TESTING_LOGIN_PASSWORD_0)
+        self.assertEqual(l_obj.LoginPasswordCurrent, TESTING_LOGIN_PASSWORD_0)
         self.assertEqual(l_obj.LoginRole, TESTING_LOGIN_ROLE_0)
 
     def test_03_AllLogins(self):

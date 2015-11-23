@@ -77,10 +77,8 @@ Nevow.Athena.Widget.subclass(helpers, 'Widget').methods(
 		var l_node = self.node;
 		var l_nodeName = l_node.nodeName;
 		var l_obj = l_node.attributes;
-		Divmod.debug('---', 'helpers.js - ERROR - attachWidget failed - Reason = ' + p_reason);
-		console.log("GenericErrBck - Self: %O", self);
-		console.log("GenericErrBck - Node: %O", l_node);
-		// console.log("GenericErrBck - Attributes: %O", l_obj);
+		Divmod.debug('---', 'helpers.js eb_genericErrback - ERROR - attachWidget failed\n\tReason = ' + p_reason);
+		console.log("    GenericErrBck - Node: %O", l_node);
 	},
 
 
@@ -116,6 +114,8 @@ Nevow.Athena.Widget.subclass(helpers, 'Widget').methods(
 		}
 		function eb_add_child(p_reason) {  // addChildWidgetFromWidgetInfo failed
 			Divmod.debug('---', 'helpers.eb_add_child - ERROR - Reason = ' + p_reason);
+			console.log("helpers.eb_add_child()  p_reason:  %O", p_reason);
+			console.log("helpers.eb_add_child()  p_readyfunc:  %O", p_readyfunc);
 			console.log("helpers.eb_add_child()  p_live_element:  %O", p_liveElement);
 			self.eb_genericErrback('Error: ' + p_reason + ' in addChildWidgetFromWidgetInfo failed ----');
 		}
@@ -137,55 +137,6 @@ Nevow.Athena.Widget.subclass(helpers, 'Widget').methods(
 		l_defer_1.addCallback(cb_call_remote);
 		l_defer_1.addErrback(eb_call_remote);
 	},
-
-
-	function WORKS_attachWidget(self, p_name, p_params, p_readyfunc) {
-		Divmod.debug('---', 'attachWidget - "' + p_name + '" is being attached to:' + self.node.className + ', with params:'+ p_params + ', ready_function:' + p_readyfunc);
-
-		function cb_call_remote(le) {
-		}
-		function eb_call_remote(p_reason) {
-			self.eb_genericErrback('Error: ' + p_reason + ' in addChildWidgetFromWidgetInfo failed for Name: ' + p_name);
-		}
-		var l_defer_1 = self.callRemote(p_name, p_params);
-
-		l_defer_1.addCallback(function liveElementReceived(le) {
-			var l_defer_2 = self.addChildWidgetFromWidgetInfo(le);
-			l_defer_2.addCallback(function childAdded(widget) {
-				self.node.appendChild(widget.node);
-				var l_defer_3 = widget.ready();
-
-				// Default readyfunc that shows the widget.
-				function isready() {
-					widget.show();
-				}
-
-				// If we did not call with a readyfunc, add a dummy function that is ready
-				if (!p_readyfunc)
-					p_readyfunc = isready;
-
-				l_defer_3.addCallback(p_readyfunc);
-				l_defer_3.addErrback(function(p_reason) {  // widget.ready failed
-					self.eb_genericErrback(p_reason + ' widget.ready failed for: ' + p_name );
-					}
-					);
-				}  // childAdded
-			); // add callback to d2
-			function eb_add_child(p_reason) {  // addChildWidgetFromWidgetInfo failed
-				self.eb_genericErrback('Error: ' + p_reason + ' in addChildWidgetFromWidgetInfo failed for Name: ' + p_name);
-				}
-			l_defer_2.addErrback(function(p_reason) {  // addChildWidgetFromWidgetInfo failed
-				self.eb_genericErrback('Error: ' + p_reason + ' in addChildWidgetFromWidgetInfo failed for Name: ' + p_name);
-				}
-			);
-		}  // liveElementReceived
-		);
-		l_defer_1.addErrback(function(p_reason) {  // callRemote failed
-			self.eb_genericErrback('Error: ' + p_reason + ' in callRemote failed for Name: ' + p_name);
-			}
-		);
-	},
-
 
 	function detached(self) {
 		Divmod.debug('---', self.node.className + ' object was detached cleanly.');

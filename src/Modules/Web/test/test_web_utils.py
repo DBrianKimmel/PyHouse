@@ -7,7 +7,7 @@
 @note:      Created on Jun 29, 2013
 @Summary:   Test web utilities module
 
-Passed all 12 tests - DBK - 2015-08-02
+Passed 14 of 15 tests - DBK - 2015-22-02
 
 """
 
@@ -21,7 +21,7 @@ from Modules.Web import web_utils
 from Modules.Housing.rooms import Xml as roomsXML
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.tools import PrettyPrintAny
+from Modules.Utilities import json_tools
 
 PY_DATA = [ { 'a123': u'A', 'b': (2, 4), 'c': 3.0 }, 'def D E F' ]
 JS_DATA = '{' + '}'
@@ -61,7 +61,7 @@ class C01_Json(SetupMixin, unittest.TestCase):
 
     def test_01_Json_Encode(self):
         x = PY_DATA
-        y = web_utils.JsonUnicode().encode_json(x)
+        y = json_tools.encode_json(x)
         # PrettyPrintAny(y, 'PY_DATA')
 
     def test_11_Json_Decode(self):
@@ -95,13 +95,13 @@ class C02_Rooms(SetupMixin, unittest.TestCase):
     def test_01_Room(self):
         l_rooms = self.m_api.read_one_room(self.m_xml.room)
         # PrettyPrintAny(l_rooms, 'Room')
-        l_json = unicode(web_utils.JsonUnicode().encode_json(l_rooms))
+        l_json = unicode(json_tools.encode_json(l_rooms))
         # PrettyPrintAny(l_json, 'JSON')
 
     def test_02_Rooms(self):
         l_rooms = self.m_api.read_rooms_xml(self.m_xml.house_div)
         # PrettyPrintAny(l_rooms, 'Rooms')
-        l_json = unicode(web_utils.JsonUnicode().encode_json(l_rooms))
+        l_json = unicode(json_tools.encode_json(l_rooms))
         # PrettyPrintAny(l_json, 'JSON')
 
 

@@ -16,7 +16,14 @@ Log file paths are hard coded therefore.
 Log directories must exist and be writable by the PyHouse process as it begins.
 
 """
-from Modules.Utilities.debug_tools import PrettyFormatAny
+
+# Import system type stuff
+import datetime
+import logging.config
+from twisted.python import log
+
+# Import PyMh files and modules.
+# from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOGGER_NAME = 'PyHouse                '
 LOGGER_NAME_TWISTED = 'PyHouse.Twisted.....   '
@@ -26,11 +33,6 @@ DEBUG_LOG_NAME = 'debug'
 DEBUG_LOG_LOCTION = LOG_DIRECTORY + DEBUG_LOG_NAME
 ERROR_LOG_NAME = 'error'
 ERROR_LOG_LOCTION = LOG_DIRECTORY + ERROR_LOG_NAME
-
-# Import system type stuff
-import datetime
-import logging.config
-from twisted.python import log
 
 
 class DropHttpFilter(object):
