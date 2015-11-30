@@ -51,7 +51,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	 */
 	function fetchDataFromServer(self) {
 		function cb_fetchDataFromServer(p_json) {
-			globals.House.HouseObj = JSON.parse(p_json);
+			globals.House = JSON.parse(p_json);
 			self.buildLcarSelectScreen();
 		}
 		function eb_fetchDataFromServer(p_result) {
@@ -66,7 +66,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	 * Build a screen full of buttons - One for each room and some actions.
 	 */
 	function buildLcarSelectScreen(self){
-		var l_button_html = buildLcarSelectionButtonsTable(globals.House.HouseObj.Rooms, 'handleMenuOnClick');
+		var l_button_html = buildLcarSelectionButtonsTable(globals.House.Rooms, 'handleMenuOnClick');
 		var l_html = build_lcars_top('Rooms', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(15, l_button_html);
 		l_html += build_lcars_bottom();
@@ -86,7 +86,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		globals.House.RoomIx = l_ix;
 		globals.House.RoomName = l_name;
 		if (l_ix <= 1000) {  // One of the rooms buttons.
-			var l_obj = globals.House.HouseObj.Rooms[l_ix];
+			var l_obj = globals.House.Rooms[l_ix];
 			globals.House.RoomObj = l_obj;
 			showDataEntryFields(self);
 			self.buildLcarDataEntryScreen(l_obj, 'handleDataEntryOnClick');
@@ -122,7 +122,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	function createEntry(self) {
         var l_data = {
 			Name : 'Change Me',
-			Key : Object.keys(globals.House.HouseObj.Rooms).length,
+			Key : Object.keys(globals.House.Rooms).length,
 			Active : true,
 			Comment : '',
 			Corner : '',

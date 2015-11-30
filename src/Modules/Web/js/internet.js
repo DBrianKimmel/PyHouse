@@ -103,7 +103,7 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 		// Divmod.debug('---', 'internet.createEntry() was called.');
         var l_Data = {
     			Name : 'Change Me',
-    			Key : Object.keys(globals.House.HouseObj.Internet).length,
+    			Key : Object.keys(globals.Computer.Internet).length,
     			Active : false,
     			Url : '',
     			Interval : 0,
@@ -124,15 +124,15 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 	function handleMenuOnClick(self, p_node) {
 		var l_ix = p_node.name;
 		var l_name = p_node.value;
-		globals.House.InternetIx = l_ix;
-		globals.House.InternetName = l_name;
+		globals.Computer.InternetIx = l_ix;
+		globals.Computer.InternetName = l_name;
 		if (l_ix <= 1000) {  // One of the Internet buttons.
-			var l_obj = globals.House.HouseObj.Internet[l_ix];
+			var l_obj = globals.Computer.Internet[l_ix];
 			showDataEntryFields(self);
 			self.fillEntry(l_obj, l_ix);
 		} else if (l_ix == 10001) {  // The "Add" button
 			showDataEntryFields(self);
-			var l_ent = self.createEntry(globals.House.InternetIx);
+			var l_ent = self.createEntry(globals.Computer.InternetIx);
 			self.fillEntry(l_ent);
 		} else if (l_ix == 10002) {  // The "Back" button
 			self.showWidget('ComputerMenu');

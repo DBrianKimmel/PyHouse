@@ -17,7 +17,6 @@ from twisted.trial import unittest
 from Modules.Irrigation.irrigation_xml import Xml as irrigationXml
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.tools import PrettyPrintAny
 
 
 class SetupMixin(object):
@@ -49,8 +48,6 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """
         l_xml = self.m_xml.irrigation_zone
         l_obj = self.m_api._read_one_zone(l_xml)
-        # PrettyPrintAny(l_xml, 'XML')
-        # PrettyPrintAny(l_obj, 'Zone')
         self.assertEqual(l_obj.Name, 'Front Rotors # 1')
 
     def test_02_System(self):
@@ -58,8 +55,6 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """
         l_xml = self.m_xml.irrigation_system
         l_obj = self.m_api._read_one_irrigation_system(l_xml)
-        # PrettyPrintAny(l_xml, 'XML')
-        # PrettyPrintAny(l_obj, 'System')
         self.assertEqual(l_obj.Name, 'LawnSystem')
 
     def test_03_Irrigation(self):
@@ -67,8 +62,6 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """
         l_xml = self.m_xml.irrigation_sect
         l_obj = self.m_api.read_irrigation_xml(self.m_pyhouse_obj)
-        # PrettyPrintAny(l_xml, 'XML')
-        # PrettyPrintAny(l_obj, 'System')
         self.assertEqual(len(l_obj), 2)
 
 
@@ -91,9 +84,7 @@ class C1_Write(SetupMixin, unittest.TestCase):
         """
         l_irr = self.m_api.read_irrigation_xml(self.m_pyhouse_obj)
         l_sys = l_irr[0]
-        # PrettyPrintAny(l_sys, 'System')
         l_xml = self.m_api._write_one_system(l_sys)
-        # PrettyPrintAny(l_xml, 'XML')
         self.assertEqual(self.m_pyhouse_obj.House.Irrigation, None)
 
     def test_03_Irrigation(self):
@@ -101,7 +92,6 @@ class C1_Write(SetupMixin, unittest.TestCase):
         """
         l_irr = self.m_api.read_irrigation_xml(self.m_pyhouse_obj)
         l_obj = self.m_api.write_irrigation_xml(l_irr)
-        # PrettyPrintAny(l_obj, 'System')
         self.assertEqual(self.m_pyhouse_obj.House.Irrigation, None)
 
 # ## END DBK

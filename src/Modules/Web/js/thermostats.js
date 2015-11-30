@@ -53,7 +53,7 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 	 * Build a screen full of buttons - One for each thermostat and some actions.
 	 */
 	function buildLcarSelectScreen(self){
-		var l_thermostat_html = buildLcarSelectionButtonsTable(globals.House.HouseObj.Thermostats, 'handleSelectButtonOnClick');
+		var l_thermostat_html = buildLcarSelectionButtonsTable(globals.House.Thermostats, 'handleSelectButtonOnClick');
 		var l_html = build_lcars_top('Thermostats', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(10, l_thermostat_html);
 		l_html += build_lcars_bottom();
@@ -65,7 +65,7 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 	 */
 	function fetchDataFromServer(self) {
 		function cb_fetchDataFromServer(p_json) {
-			globals.House.HouseObj = JSON.parse(p_json);
+			globals.House = JSON.parse(p_json);
 			self.buildLcarSelectScreen();
 		}
 		function eb_fetchDataFromServer(res) {
@@ -91,7 +91,7 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 		globals.House.ThermostatName = l_name;
 		if (l_ix <= 1000) {  // One of the Thermostat buttons.
 			showDataEntryFields(self);
-			var l_obj = globals.House.HouseObj.Thermostats[l_ix];
+			var l_obj = globals.House.Thermostats[l_ix];
 			globals.House.ThermostatObj = l_obj;
 			globals.House.Self = self;
 			self.buildLcarDataEntryScreen(l_obj, 'handleDataOnClick');
@@ -182,7 +182,7 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 		return p_data;
 	},
 	function createEntry(self) {
-		var l_data = createBaseEntry(self, Object.keys(globals.House.HouseObj.Thermostats).length);
+		var l_data = createBaseEntry(self, Object.keys(globals.House.Thermostats).length);
 		l_data = createLightingCoreEntry(self, l_data);
 		l_data.DeviceFamily = "Insteon";
 		l_data = self.createThermostatEntry(l_data);

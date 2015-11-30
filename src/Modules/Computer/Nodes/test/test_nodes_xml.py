@@ -55,11 +55,6 @@ class A1_Structure(SetupMixin, unittest.TestCase):
         self.m_node_obj = NodeData()
 
     def test_01_PyHouse(self):
-        # PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse')
-        # PrettyPrintAny(self.m_pyhouse_obj.Computer, 'Computer')
-        # PrettyPrintAny(self.m_xml.computer_div, 'ComputerDiv XML')
-        # PrettyPrintAny(self.m_xml.node_sect, 'NodeSect XML')
-        # PrettyPrintAny(self.m_xml.node, 'Node XML')
         pass
 
 

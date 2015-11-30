@@ -52,6 +52,7 @@ from Modules.Irrigation.irrigation_action import API as irrigationActionsAPI
 from Modules.Lighting.lighting_actions import API as lightActionsAPI
 from Modules.Scheduling.schedule_xml import Xml as scheduleXml
 from Modules.Computer import logging_pyh as Logger
+from Modules.Scheduling import sunrisesunset
 # from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.Schedule       ')
@@ -121,10 +122,14 @@ class SchedTime(object):
         l_time = dparser.parse(l_timefield, fuzzy = True)
         l_offset = l_time.hour * 60 + l_time.minute
         #
+        if 'dawn' in l_timefield:
+            l_base = Utility.to_mins(p_rise_set.Dawn)
         if 'sunrise' in l_timefield or 'dawn' in l_timefield:
             l_base = Utility.to_mins(p_rise_set.SunRise)
         elif 'sunset' in l_timefield or 'dusk' in l_timefield:
             l_base = Utility.to_mins(p_rise_set.SunSet)
+        elif 'dusk' in l_timefield:
+            l_base = Utility.to_mins(p_rise_set.Dusk)
         else:
             l_base = l_offset
         #
@@ -138,7 +143,7 @@ class SchedTime(object):
         return l_minutes
 
     @staticmethod
-    def extract_time_to_go(p_schedule_obj, p_now, p_rise_set):
+    def extract_time_to_go(p_pyhouse_obj, p_schedule_obj, p_now, p_rise_set):
         """Compute the seconds to go from now to the next scheduled time.
         @param p_now: is the datetime for now
         """
@@ -236,7 +241,7 @@ class Utility(object):
         for l_key, l_schedule_obj in p_pyhouse_obj.House.Schedules.iteritems():
             if not l_schedule_obj.Active:
                 continue
-            l_seconds = SchedTime.extract_time_to_go(l_schedule_obj, p_now, l_riseset)
+            l_seconds = SchedTime.extract_time_to_go(p_pyhouse_obj, l_schedule_obj, p_now, l_riseset)
             if l_seconds < 30:
                 continue
             if l_min_seconds == l_seconds:  # Add to lists for the given time.
@@ -297,7 +302,7 @@ class API(object):
         Extracts all from XML so an update will write correct info back out to the XML file.
         """
         self.LoadXml(self.m_pyhouse_obj)
-        self.m_riseset = Utility.fetch_sunrise_set(self.m_pyhouse_obj)
+        sunrisesunset.API(self.m_pyhouse_obj).Start()
         self.RestartSchedule()
         LOG.info("Started.")
 

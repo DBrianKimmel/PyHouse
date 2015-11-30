@@ -18,7 +18,6 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Utilities.tools import PrettyPrintAny
 from test.xml_data import XML_LONG, XML_EMPTY
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
@@ -41,8 +40,6 @@ class A1_Raw(unittest.TestCase):
 
     def test_02_raw_1_4(self):
         l_str = XML_LONG.split('\n')
-        PrettyPrintAny(l_str, 'Raw XML 1.4', 50)
-
 
 
 class A2_Parsed(unittest.TestCase):
@@ -54,22 +51,18 @@ class A2_Parsed(unittest.TestCase):
         self.m_root_element = ET.fromstring(XML_LONG)
 
     def test_01_All(self):
-        PrettyPrintAny(self.m_root_element, 'PyHouse')
         self.assertEqual(self.m_root_element.tag, 'PyHouse')
 
     def test_02_Computer(self):
         l_div = self.m_root_element.find('ComputerDivision')
-        PrettyPrintAny(l_div, 'Computer Div')
         self.assertEqual(self.m_root_element.tag, 'PyHouse')
 
     def test_03_House(self):
         l_div = self.m_root_element.find('HouseDivision')
-        PrettyPrintAny(l_div, 'House Div')
         self.assertEqual(self.m_root_element.tag, 'PyHouse')
 
     def test_03_ReadXML(self):
         l_pyhouse = self.m_root_element
-        # PrettyPrintAny(self.m_root_element, 'Root Element', 120)
         self.assertEqual(l_pyhouse.tag, 'PyHouse')
 
     def test_04_ComputerDivision(self):

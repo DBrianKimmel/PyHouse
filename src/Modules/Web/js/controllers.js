@@ -67,7 +67,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 	 * Build a screen full of buttons - One for each controller and some actions.
 	 */
 	function buildLcarSelectScreen(self){
-		var l_button_html = buildLcarSelectionButtonsTable(globals.House.HouseObj.Controllers, 'handleMenuOnClick');
+		var l_button_html = buildLcarSelectionButtonsTable(globals.House.Controllers, 'handleMenuOnClick');
 		var l_html = build_lcars_top('Controllers', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(10, l_button_html);
 		l_html += build_lcars_bottom();
@@ -78,7 +78,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
      */
     function fetchDataFromServer(self) {
         function cb_fetchDataFromServer(p_json) {
-			globals.House.HouseObj = JSON.parse(p_json);
+			globals.House = JSON.parse(p_json);
 			self.buildLcarSelectScreen();
         }
         function eb_fetchDataFromServer(p_reason) {
@@ -103,7 +103,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 		globals.House.ControllerName = l_name;
         if (l_ix <= 1000) {  // One of the controller buttons
             showDataEntryFields(self);
-			l_obj = globals.House.HouseObj.Controllers[l_ix];
+			l_obj = globals.House.Controllers[l_ix];
 			globals.House.ControllerObj = l_obj;
 			globals.House.Self = self;
             self.buildLcarDataEntryScreen(l_obj, 'handleDataOnClick');
@@ -191,7 +191,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
     	return p_data;
     },
     function createEntry(self) {
-        var l_data = createBaseEntry(self, Object.keys(globals.House.HouseObj.Controllers).length);
+        var l_data = createBaseEntry(self, Object.keys(globals.House.Controllers).length);
         l_data = createLightingCoreEntry(self, l_data);
         l_data.LightingType = 'Controller';
         if (l_data.DeviceFamily === 'Insteon')

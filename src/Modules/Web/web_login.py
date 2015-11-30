@@ -25,6 +25,10 @@ import os
 from nevow import loaders
 from nevow import athena
 # from passlib.hash import pbkdf2_sha256
+from zope.interface import implements
+from twisted.cred.portal import IRealm
+from twisted.cred import checkers, credentials, error as credError
+from twisted.internet import defer
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import LoginData
@@ -139,5 +143,38 @@ class LoginElement(athena.LiveElement):
         # l_login_obj.IsLoggedIn = True
         # l_login_obj.ServerState = web_utils.WS_LOGGED_IN
         return l_login_obj
+
+
+class PasswordDictChecker:
+    implements(checkers.ICredentialsChecker)
+    credentialInterfaces = (credentials.IUsernamePassword,)
+
+    def __init__(self, passwords):
+        "passwords: a dict-like object mapping usernames to passwords"
+        self.passwords = passwords
+
+    def requestAvatarId(self, credentials):
+        username = credentials.username
+        if self.passwords.has_key(username):
+            if credentials.password == self.passwords[username]:
+                return defer.succeed(username)
+            else:
+                return defer.fail(
+                    credError.UnauthorizedLogin("Bad password"))
+        else:
+            return defer.fail(
+                credError.UnauthorizedLogin("No such user"))
+
+
+class PyHouseRealm(object):
+    implements(IRealm)
+
+    def requestAvatar(self, avatarId, mind, *interfaces):
+        if pb.IPerspective in interfaces:
+            avatar = SimplePerspective()
+            return pb.IPerspective, avatar, avatar.logout
+        else:
+            LOG.error('No Interface.')
+
 
 # ## END DBK

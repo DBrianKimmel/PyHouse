@@ -53,7 +53,6 @@ class C01_Utility(SetupMixin, unittest.TestCase):
 
     def test_04_Obj(self):
         l_house = self.m_pyhouse_obj.House
-        # PrettyPrintAny(l_house, 'PLM - House')
         self.assertEqual(l_house.Name, 'Test House')
 
     def test_05_Obj(self):
@@ -78,9 +77,7 @@ class C02_Cmds(SetupMixin, unittest.TestCase):
 
     def test_03_63Cmd(self):
         l_obj = self.m_pyhouse_obj.House.Controllers
-        # PrettyPrintAny(l_obj, 'PLM - Controllers')
         # insteonPlmAPI._put_controller(l_obj)
-        # PrettyPrintAny(l_obj, 'Lights')
         # l_cmd = self.m_api.queue_62_command(l_obj, 0x02, 0x04)
         pass
 

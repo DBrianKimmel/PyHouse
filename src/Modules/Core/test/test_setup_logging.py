@@ -35,19 +35,15 @@ class A1_SetupL(SetupMixin, unittest.TestCase):
         # self.m_api = Logger.API()
 
     def test_01_XML(self):
-        # PrettyPrintAny(setup_logging.LOGGING_DICT, 'Logging')
         pass
 
     def test_02_Handlers(self):
-        # PrettyPrintAny(setup_logging.LOGGING_DICT['handlers'], 'Logging')
         pass
 
     def test_03_Debug(self):
-        # PrettyPrintAny(setup_logging.LOGGING_DICT['handlers']['debug'], 'Logging')
         pass
 
     def test_04_Error(self):
-        # PrettyPrintAny(setup_logging.LOGGING_DICT['handlers']['error'], 'Logging')
         pass
 
 # ## END DBK

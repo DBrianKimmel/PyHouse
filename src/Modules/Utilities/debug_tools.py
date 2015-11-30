@@ -210,15 +210,6 @@ def _format_object(p_title, p_obj, suppressdoc = True, maxlen = 180, lindent = 2
     return l_output
 
 
-
-
-
-
-
-
-
-
-
 class PrettyFormatAny(object):
 
     @staticmethod
@@ -241,6 +232,8 @@ class PrettyFormatAny(object):
             l_ret = PrettyFormatAny._format_unicode(p_any, maxlen = maxlen, indent = indent)
         elif isinstance(p_any, list):
             l_ret = PrettyFormatAny._format_list(p_any, maxlen = maxlen, indent = indent + 4)
+        elif isinstance(p_any, tuple):
+            l_ret = PrettyFormatAny._format_tuple(p_any, maxlen = maxlen, indent = indent + 4)
         elif isinstance(p_any, type(None)):
             l_ret = PrettyFormatAny._format_none(p_any)
         else:  # Default to an object
@@ -301,6 +294,17 @@ class PrettyFormatAny(object):
         l_ret = 'Ix\tValue\n--\t-----\n'
         for l_line in p_obj:
             l_ret += '{}\t"{}";\n'.format(l_ix, l_line)
+            l_ix += 1
+        return l_ret
+
+    @staticmethod
+    def _format_tuple(p_obj, maxlen, indent):
+        maxlen = maxlen
+        _l_tabbedwidths = [indent, 30, maxlen - 30]
+        l_ix = 0
+        l_ret = '{:<8} {:<}\n'.format('Ix', 'Value')
+        for l_line in p_obj:
+            l_ret += '{:<8}"{:}";\n'.format(l_ix, l_line)
             l_ix += 1
         return l_ret
 

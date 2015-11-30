@@ -43,13 +43,10 @@ class C01_Start(SetupMixin, unittest.TestCase):
 
 
     def test_01_Setup(self):
-        # PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse')
-        # PrettyPrintAny(self.m_pyhouse_obj.Twisted, 'PyHouse.Twisted')
         pass
 
     def test_02_StartServer(self):
         # l_defer = self.m_api._start_amp_server(self.m_pyhouse_obj)
-        # PrettyPrintAny(l_defer, 'Defer')
         # return l_defer
         pass
 
@@ -73,7 +70,6 @@ class C02_Util(SetupMixin, unittest.TestCase):
         NodeRole = 123
         UUID = '1-2-3-4 '
         # l_node = self.m_api.create_node_from_response(Name, Active, AddressV4, AddressV6, NodeRole, UUID)
-        # PrettyPrintAny(l_node, 'Node')
 
 
 # def TestSuite():

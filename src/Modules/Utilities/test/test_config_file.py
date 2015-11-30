@@ -19,7 +19,6 @@ from twisted.trial import unittest
 from Modules.Utilities.config_file import Util, API as configAPI
 from test.xml_data import XML_LONG, XML_LONG_1_3
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.tools import PrettyPrintAny
 
 
 class SetupMixin(object):
@@ -45,25 +44,20 @@ class A1_XML(SetupMixin, unittest.TestCase):
 
     def test_02_OpenConfig(self):
         l_file = Util._open_config_file(self.m_pyhouse_obj)
-        # PrettyPrintAny(self.m_pyhouse_obj.Xml, 'Xml', 120)
-        # PrettyPrintAny(self.m_pyhouse_obj.Xml.XmlRoot, 'XmlRoot', 120)
 
     def test_03_ReadConfig(self):
         Util._open_config_file(self.m_pyhouse_obj)
         l_xml = self.m_pyhouse_obj.Xml.XmlRoot
         l_pyh = self.m_api.read_xml_config_file(self.m_pyhouse_obj)
-        # PrettyPrintAny(l_pyh, 'XmlData')
 
     def test_04_Version(self):
         l_pyh = self.m_api.read_xml_config_file(self.m_pyhouse_obj)
         l_ret = self.m_api.get_xml_config_file_version(self.m_pyhouse_obj)
-        # PrettyPrintAny(l_ret, 'XmlData')
 
     def test_05_WriteConfig(self):
         Util._open_config_file(self.m_pyhouse_obj)
         l_xml = self.m_pyhouse_obj.Xml.XmlRoot
         self.m_api.write_xml_config_file(self.m_pyhouse_obj, l_xml)
-        # PrettyPrintAny(l_xml, 'XmlData')
 
 class B1_1_3(SetupMixin, unittest.TestCase):
     """
@@ -78,7 +72,6 @@ class B1_1_3(SetupMixin, unittest.TestCase):
     def test_01_Version1_3(self):
         l_pyh = self.m_api.read_xml_config_file(self.m_pyhouse_obj)
         l_ret = self.m_api.get_xml_config_file_version(self.m_pyhouse_obj)
-        # PrettyPrintAny(l_ret, 'XmlData')
         self.assertEqual(l_ret, '1.3.2')
 
 class B2_1_4(SetupMixin, unittest.TestCase):
@@ -93,9 +86,7 @@ class B2_1_4(SetupMixin, unittest.TestCase):
 
     def test_01_Version1_4(self):
         l_pyh = self.m_api.read_xml_config_file(self.m_pyhouse_obj)
-        # PrettyPrintAny(l_pyh.Xml, 'PYH')
         l_ret = self.m_api.get_xml_config_file_version(self.m_pyhouse_obj)
-        # PrettyPrintAny(l_ret, 'XmlData')
         self.assertEqual(l_ret, '1.3.2')
 
 # ## END DBK

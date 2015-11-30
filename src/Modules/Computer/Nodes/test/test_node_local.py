@@ -115,7 +115,6 @@ class C07_Api(SetupMixin, unittest.TestCase):
 
     def test_02_Start(self):
         # self.m_api.Start(self.m_pyhouse_obj)
-        # PrettyPrintAny(self.m_pyhouse_obj.Computer.Nodes[0], 'Nodes')
         pass
 
     def test_03_Stop(self):

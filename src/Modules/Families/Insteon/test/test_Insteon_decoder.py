@@ -44,18 +44,15 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         self.m_pyhouse_obj.House.Lights = lightsAPI.read_all_lights_xml(self.m_pyhouse_obj, self.m_xml.controller_sect, self.m_version)
 
     def test_01_PyHouse(self):
-        # PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse')
         self.assertEqual(self.m_pyhouse_obj.Xml.XmlFileName, '/etc/pyhouse/master.xml')
         pass
 
     def test_02_House(self):
         # l_house = self.m_pyhouse_obj.House
-        # PrettyPrintAny(l_house, 'House')
         pass
 
     def test_03_Device(self):
         # l_house = self.m_pyhouse_obj.House
-        # PrettyPrintAny(l_devs, 'Devices')
         pass
 
     def test_04_Refs(self):

@@ -88,9 +88,8 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 		function eb_fetchValidLists(p_reason) {
 			Divmod.debug('---', 'ERROR - login.eb_fetchValidLists() - .' + p_reason);
 		}
-		Divmod.debug('---', 'login.fetchValidLists');
-		console.log("login.fetchValidLists() - Login = %O", globals.Login);
-
+		// Divmod.debug('---', 'login.fetchValidLists');
+		// console.log("login.fetchValidLists() - Login = %O", globals.Login);
 		var l_defer = self.callRemote("getValidLists");  // @ web_login
 		l_defer.addCallback(cb_fetchValidLists);
 		l_defer.addErrback(eb_fetchValidLists);
@@ -150,12 +149,11 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 		function eb_handleLoginButtonClick(res){
 			Divmod.debug('---', 'login.eb_handleLoginButtonClick() was called.  ERROR = ' + res);
 		}
-        var l_loginData = {
-    		LoginName : fetchTextWidget(self, 'LoginName'),
-    		Password : fetchTextWidget(self, 'PasswordCurrent'),
-    		ChangeFlag : fetchTrueFalseWidget(self, 'ChangeFlag'),
-    		PasswordNew : fetchTextWidget(self, 'PasswordNew')
-        };
+        //var l_loginData = {
+    	//	LoginName : fetchTextWidget(self, 'LoginName'),
+    	//	Password : fetchTextWidget(self, 'PasswordCurrent'),
+    	//	ChangeFlag : fetchTrueFalseWidget(self, 'ChangeFlag'),
+        //};
         globals.Login.LoginName = fetchTextWidget(self, 'LoginName');
         globals.Login.PasswordCurrent = fetchTextWidget(self, 'PasswordCurrent');
         globals.Login.ChangeFlag = fetchTrueFalseWidget(self, 'ChangeFlag');

@@ -18,7 +18,6 @@ from nevow import loaders
 # from Modules.Core.data_objects import WebData
 from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities import json_tools
-# from Modules.Utilities.tools import PrettyPrintAny
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])

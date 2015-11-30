@@ -69,15 +69,11 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     def test_01_Objects(self):
         """ Be sure that the XML contains the right stuff.
         """
-        # PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse', 120)
-        # PrettyPrintAny(self.m_pyhouse_obj.House, 'House', 120)
         pass
 
     def test_02_Family(self):
         """ Be sure that the XML contains the right stuff.
         """
-        # PrettyPrintAny(self.m_pyhouse_obj.House.FamilyData, 'Families', 120)
-        # PrettyPrintAny(self.m_pyhouse_obj.House.FamilyData['Insteon'], 'Insteon Family', 120)
         pass
 
 
@@ -115,7 +111,6 @@ class R1_Read(SetupMixin, unittest.TestCase):
         """Test the Base read - the device information
         """
         l_obj = Utility._read_base_device(self.m_xml.light, self.m_version)
-        # PrettyPrintAny(l_obj, 'Base')
         self.assertEqual(l_obj.Name, TESTING_LIGHTING_LIGHTS_NAME_1)
         self.assertEqual(l_obj.Key, 0)
         self.assertEqual(l_obj.Active, True)
@@ -149,7 +144,6 @@ class R1_Read(SetupMixin, unittest.TestCase):
         """ Read everything about one light.
         """
         l_obj = Utility._read_one_light_xml(self.m_pyhouse_obj, self.m_xml.light, self.m_version)
-        # PrettyPrintAny(l_obj, 'ReadOneLight', 120)
         self.assertEqual(l_obj.Name, TESTING_LIGHTING_LIGHTS_NAME_1)
         self.assertEqual(l_obj.Name, 'Insteon Light')
         self.assertEqual(l_obj.Key, 0)
@@ -165,7 +159,6 @@ class R1_Read(SetupMixin, unittest.TestCase):
         """Read everything for all lights.
         """
         l_objs = lightsAPI.read_all_lights_xml(self.m_pyhouse_obj, self.m_xml.light_sect, self.m_version)
-        # PrettyPrintAny(l_objs, 'All Lights')
         self.assertEqual(len(l_objs), 2)
 
 
@@ -262,7 +255,6 @@ class Z1_JSON(SetupMixin, unittest.TestCase):
         l_obj = lightsAPI.read_all_lights_xml(self.m_pyhouse_obj, self.m_xml.light_sect, self.m_version)
         # print('Light: {0:}'.format(l_obj))
         l_json = json_tools.encode_json(l_obj)
-        # PrettyPrintAny(l_json, 'JSON', 120)
         # self.assertEqual(l_json[0] ['Comment'], 'Switch')
 
 # ## END DBK

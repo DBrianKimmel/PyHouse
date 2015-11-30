@@ -41,7 +41,7 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 	 */
 	function fetchDataFromServer(self) {
 		function cb_fetchDataFromServer(p_json) {
-			globals.House.HouseObj = JSON.parse(p_json);
+			globals.House = JSON.parse(p_json);
 			self.buildLcarSelectScreen();
 		}
 		function eb_fetchDataFromServer(res) {
@@ -56,7 +56,7 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 	 * Build a screen full of buttons - One for each light and some actions.
 	 */
 	function buildLcarSelectScreen(self){
-		var l_button_html = buildLcarSelectionButtonsTable(globals.House.HouseObj.Lights, 'handleMenuOnClick');
+		var l_button_html = buildLcarSelectionButtonsTable(globals.House.Lights, 'handleMenuOnClick');
 		var l_html = build_lcars_top('Control Lights', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(15, l_button_html);
 		l_html += build_lcars_bottom();
@@ -76,7 +76,7 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 		globals.House.LightIx = l_ix;
 		globals.House.LightName = l_name;
 		if (l_ix <= 1000) {  // One of the controlLights buttons.
-			var l_obj = globals.House.HouseObj.Lights[l_ix];
+			var l_obj = globals.House.Lights[l_ix];
 			globals.House.LightObj = l_obj;
 			globals.House.Self = self;
 			showDataEntryFields(self);

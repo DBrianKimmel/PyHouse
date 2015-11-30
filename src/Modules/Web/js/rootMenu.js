@@ -86,7 +86,7 @@ helpers.Widget.subclass(rootMenu, 'RootMenuWidget').methods(
 	 */
 	function fetchDataFromServer(self) {
 		function cb_fetchDataFromServer(p_json) {
-			globals.House.HouseObj = JSON.parse(p_json);
+			globals.House = JSON.parse(p_json);
 			self.buildLcarSelectScreen();
 		}
 		function eb_fetchDataFromServer(p_reason) {

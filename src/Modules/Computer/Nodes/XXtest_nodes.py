@@ -133,8 +133,6 @@ class C_01_xxx(SetupMixin, unittest.TestCase):
         pass
 
     def test_01_Setup(self):
-        # PrettyPrintAny(self.m_pyhouse_obj, 'PyHouse')
-        # PrettyPrintAny(self.m_pyhouse_obj.Twisted, 'PyHouse.Twisted')
         pass
 
 

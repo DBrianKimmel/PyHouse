@@ -62,7 +62,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 	 */
 	function buildLcarSelectScreen(self){
 		// Divmod.debug('---', 'schedules.buildLcarSelectScreen() was called.');
-		var l_button_html = buildLcarSelectionButtonsTable(globals.House.HouseObj.Schedules, 'handleMenuOnClick', self.buildButtonName);
+		var l_button_html = buildLcarSelectionButtonsTable(globals.House.Schedules, 'handleMenuOnClick', self.buildButtonName);
 		var l_html = build_lcars_top('Schedules', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(15, l_button_html);
 		l_html += build_lcars_bottom();
@@ -73,7 +73,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 	 */
 	function fetchDataFromServer(self) {
 		function cb_fetchDataFromServer(p_json) {
-			globals.House.HouseObj = JSON.parse(p_json);
+			globals.House = JSON.parse(p_json);
 			self.buildLcarSelectScreen();
 		}
 		function eb_fetchDataFromServer(res) {
@@ -101,7 +101,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 		globals.House.ScheduleIx = l_ix;
 		globals.House.ScheduleName = l_name;
 		if (l_ix <= 1000) {  // One of the schedule buttons.
-			var l_obj = globals.House.HouseObj.Schedules[l_ix];
+			var l_obj = globals.House.Schedules[l_ix];
 			globals.House.ScheduleObj = l_obj;
 			globals.House.Self = self;
 			showDataEntryFields(self);
@@ -176,7 +176,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 		//Divmod.debug('---', 'schedules.createEntry() was called.);
         var l_data = {
 			Name : 'Change Me',
-			Key : Object.keys(globals.House.HouseObj.Schedules).length,
+			Key : Object.keys(globals.House.Schedules).length,
 			Active : false,
 			UUID : '',
 			ScheduleType : 'LightingDevice',

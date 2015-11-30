@@ -447,15 +447,16 @@ class CoreServicesInformation(object):
 
 class RiseSetData(object):
     """
-    These fields are each an "aware" datetime.datetime
+    These fields are each a datetime.datetime
     They were calculated by the sunrisesunset module for the house's location and timezone.
     They are therefore, the local time of sunrise and sunset.
     """
     def __init__(self):
+        self.Dawn = None
         self.SunRise = None
+        self.Noon = None
         self.SunSet = None
         self.Dusk = None
-        self.Dawn = None
 
 
 class LocationData(object):

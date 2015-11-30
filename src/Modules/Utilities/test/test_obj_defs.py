@@ -17,7 +17,6 @@ from twisted.trial import unittest
 from Modules.Utilities.obj_defs import GetPyhouse
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.tools import PrettyPrintAny
 
 
 class SetupMixin(object):
@@ -45,7 +44,6 @@ class D1_GetPyHouse(SetupMixin, unittest.TestCase):
 
     def test_01_Schedules(self):
         l_pyh = GetPyhouse(self.m_pyhouse_obj).Schedules()
-        PrettyPrintAny(l_pyh, 'Schedules')
         self.assertEqual(l_pyh.Schedules, {})
         pass
 

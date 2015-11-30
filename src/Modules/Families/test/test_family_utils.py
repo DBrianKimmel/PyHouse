@@ -23,7 +23,6 @@ from Modules.Families.family_utils import FamUtil
 from Modules.Lighting.lighting_core import API as LightingCoreAPI
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.tools import PrettyPrintAny
 from Modules.Lighting.test.xml_lights import \
         TESTING_LIGHTING_LIGHTS_NAME_1
 from Modules.Families.Insteon.test.xml_insteon import \
@@ -101,7 +100,6 @@ class B1_Utils(SetupMixin, unittest.TestCase):
 
     def test_05_GetApi(self):
         l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, self.m_device_obj)
-        # PrettyPrintAny(l_api, 'API')
         self.assertNotEqual(l_api, None)
 
 
@@ -118,7 +116,6 @@ class C1_Read(SetupMixin, unittest.TestCase):
         """ Did we get the XML correctly
         """
         l_xml = self.m_xml.light
-        # PrettyPrintAny(l_xml, 'XML')
         self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHTING_LIGHTS_NAME_1)
         self.assertEqual(l_xml.find('DeviceFamily').text, TESTING_DEVICE_FAMILY_INSTEON)
 
@@ -126,7 +123,6 @@ class C1_Read(SetupMixin, unittest.TestCase):
         """ Did we get the Device correctly
         """
         l_device = self.m_device_obj
-        # PrettyPrintAny(l_device, 'Device')
         self.assertEqual(l_device.Name, TESTING_LIGHTING_LIGHTS_NAME_1)
         self.assertEqual(l_device.Key, 0)
         self.assertEqual(l_device.Active, True)
@@ -150,7 +146,6 @@ class C1_Read(SetupMixin, unittest.TestCase):
         l_xml = self.m_xml.light
         l_device = self.m_device_obj
         l_light = LightingCoreAPI.read_core_lighting_xml(l_device, l_xml, self.m_version)
-        # PrettyPrintAny(l_light, 'Light')
         self.assertEqual(l_light.Name, TESTING_LIGHTING_LIGHTS_NAME_1)
         self.assertEqual(l_device.RoomName, TESTING_DEVICE_ROOM_NAME)
 
@@ -161,9 +156,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         l_device = self.m_device_obj
         #
         l_light = LightingCoreAPI.read_core_lighting_xml(l_device, l_xml, self.m_version)
-        # PrettyPrintAny(l_light, 'Light w/o family data')
         FamUtil.read_family_data(self.m_pyhouse_obj, l_light, l_xml)
-        # PrettyPrintAny(l_light, 'Light w/ family Data')
         self.assertEqual(l_light.Name, TESTING_LIGHTING_LIGHTS_NAME_1)
         self.assertEqual(l_light.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_light.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS))
@@ -182,7 +175,6 @@ class D1_Write(SetupMixin, unittest.TestCase):
         self.m_light = LightingCoreAPI.read_core_lighting_xml(self.m_device_obj, self.m_xml.controller, self.m_version)
 
     def test_01_Data(self):
-        # PrettyPrintAny(self.m_light, 'Light Dtaa')
         pass
 
     def test_03_All(self):

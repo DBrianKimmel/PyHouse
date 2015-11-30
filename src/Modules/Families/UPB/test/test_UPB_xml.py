@@ -21,7 +21,6 @@ from Modules.Families.UPB.UPB_xml import Xml as upbXML
 from Modules.Families.UPB.test.xml_upb import TESTING_UPB_ADDRESS, TESTING_UPB_NETWORK, TESTING_UPB_PASSWORD
 from Modules.Core.data_objects import ControllerData
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.tools import PrettyPrintAny
 
 
 class SetupMixin(object):

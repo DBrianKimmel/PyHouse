@@ -81,12 +81,9 @@ class A1(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.controller.tag, 'Controller')
 
     def test_02_Xml(self):
-        # PrettyPrintAny(self.m_xml.controller, 'Controller')
         pass
 
     def test_03_Family(self):
-        # PrettyPrintAny(self.m_family, 'Family')
-        # PrettyPrintAny(self.m_family['Insteon'], 'Insteon Family')
         self.assertEqual(self.m_family['Insteon'].Name, 'Insteon')
 
 
@@ -124,7 +121,6 @@ class B1_Read(SetupMixin, unittest.TestCase):
         l_obj = Utility._read_base_device(self.m_xml.controller, self.m_version)
         Utility._read_controller_data(l_obj, self.m_xml.controller, self.m_version)
         Utility._read_interface_data(l_obj, self.m_xml.controller, self.m_version)
-        # PrettyPrintAny(l_obj, 'Base+Controller+Interface')
         self.assertEqual(l_obj.BaudRate, int(TESTING_SERIAL_BAUD_RATE))
         self.assertEqual(l_obj.ByteSize, int(TESTING_SERIAL_BYTE_SIZE))
         self.assertEqual(l_obj.Parity, TESTING_SERIAL_PARITY)
@@ -140,7 +136,6 @@ class B1_Read(SetupMixin, unittest.TestCase):
         Utility._read_controller_data(l_obj, self.m_xml.controller, self.m_version)
         Utility._read_interface_data(l_obj, self.m_xml.controller, self.m_version)
         Utility._read_family_data(self.m_pyhouse_obj, l_obj, self.m_xml.controller, self.m_version)
-        # PrettyPrintAny(l_obj, 'Read Family', 100)
         self.assertEqual(l_obj.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS))
         self.assertEqual(l_obj.DevCat, conversions.dotted_hex2int(TESTING_INSTEON_DEVCAT))
         self.assertEqual(l_obj.ProductKey, conversions.dotted_hex2int(TESTING_INSTEON_PRODUCT_KEY))
@@ -287,6 +282,5 @@ class C2_JSON(SetupMixin, unittest.TestCase):
         """
         l_controller = self.m_api.read_all_controllers_xml(self.m_pyhouse_obj, self.m_xml.controller_sect, self.m_version)
         l_json = json_tools.encode_json(l_controller)
-        # PrettyPrintAny(l_json, 'JSON', 100)
 
 # ## END DBK

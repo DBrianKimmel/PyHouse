@@ -43,24 +43,20 @@ class C01_Util(SetupMixin, unittest.TestCase):
 
     def test_01_Config(self):
         l_config = self.m_api._read_xml_configuration(self.m_pyhouse_obj)
-        # PrettyPrintAny(l_config, 'Config')
         self.assertEqual(l_config.ExternalIPv4, convert.str_to_long(TESTING_INTERNET_IPv4))
 
     def test_02_WriteConfig(self):
         _l_config = self.m_api._read_xml_configuration(self.m_pyhouse_obj)
         l_xml = self.m_api._write_xml_config(self.m_pyhouse_obj)
-        # PrettyPrintAny(l_xml, 'XML')
 
     def test_03_SaveConfig(self):
         # self.m_api._save_pyhouse_obj(self.m_pyhouse_obj)
         l_comp = ET.Element('ComputerSection')
         _l_config = self.m_api._read_xml_configuration(self.m_pyhouse_obj)
         l_xml = self.m_api.SaveXml(l_comp)
-        # PrettyPrintAny(l_xml, 'XML')
 
     def test_11_CreateService(self):
         self.m_api._create_internet_discovery_service(self.m_pyhouse_obj)
-        # PrettyPrintAny(self.m_pyhouse_obj.Services, 'PyHouse')
         pass
 
     def test_12_StartService(self):

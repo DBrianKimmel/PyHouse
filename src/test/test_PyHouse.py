@@ -18,7 +18,6 @@ from Modules.Housing.test import test_house
 import PyHouse
 from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG
-from Modules.Utilities.tools import PrettyPrintAny
 
 
 class SetupMixin(object):
@@ -37,6 +36,5 @@ class Test_01_API(SetupMixin, unittest.TestCase):
 
     def test_0101_Init(self):
         l_api = PyHouse.API()
-        PrettyPrintAny(l_api, 'Api')
 
 # ## END DBK

@@ -63,13 +63,10 @@ class B1_XML(SetupMixin, unittest.TestCase):
         """ Be sure that the XML contains the right stuff.
         """
         # self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
-        # PrettyPrintAny(self.m_xml.root.tag)
         # self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision', 'XML - No Computer section')
         self.assertEqual(self.m_xml.internet_sect.tag, 'InternetSection', 'XML - No Internet section')
         self.assertEqual(self.m_xml.locater_sect.tag, 'LocaterUrlSection')
         self.assertEqual(self.m_xml.updater_sect.tag, 'UpdaterUrlSection')
-        # PrettyPrintAny(self.m_xml.internet_sect, 'All Internet Section')
-        # PrettyPrintAny(self.m_xml.locater_sect)
 
     def test_02_ReadLocates(self):
         l_dict = internetUtil._read_locates_xml(self.m_xml.locater_sect)

@@ -47,12 +47,11 @@ globals = {
 
 	Computer : {},
 	House : {},
-	List : {},  // List of houses to select from
-	Login : {},
-	Interface : {},
-	Server : {},
-	User : {},
-	Valid : {},
+	Login : {},  // All users able to log in
+	Interface : {},  // controllers - interface data
+	Server : {},  // Clock module - Web server info
+	User : {},  // Logged in user info
+	Valid : {},  // All VALID_xxx data for use in creating selection lists.
 
 	__init__ : function() {
 		globals.appLoaded = false;
@@ -609,7 +608,7 @@ function buildLcarSelectionButtonsTable(p_obj, p_handler, p_nameFunction, p_noOp
  * @param: p_handler is the onclick event handler for the data entry buttons
  * @param: noOptions is the string that tells us not to build a button - 'NoDelete' means not to build a delete button
  */
-function buildLcarEntryButtons(p_handler, /* optional */ noOptions) {
+function buildLcarEntryButtons(p_handler, p_add_change, /* optional */ noOptions) {
 	// Divmod.debug('---', 'globals.buildLcarEntryButtons() called.  Handler=' + p_handler + '  ' + noOptions);
 	var l_options = noOptions;
 	if (l_options === undefined)
@@ -719,14 +718,14 @@ function _makeNamesList(p_obj) {
 	return l_list;
 }
 function buildLcarRoomSelectWidget(self, p_id, p_caption, p_checked) {
-	var l_obj = globals.House.HouseObj.Rooms;
+	var l_obj = globals.House.Rooms;
 	var l_list = [];
 	for (var ix = 0; ix < Object.keys(l_obj).length; ix++)
 		l_list[ix] = l_obj[ix].Name;
 	return buildLcarSelectWidget(self, p_id, p_caption, l_list, p_checked);
 }
 function buildLcarLightNameSelectWidget(self, p_id, p_caption, p_checked) {
-	var l_obj = globals.House.HouseObj.Lights;
+	var l_obj = globals.House.Lights;
 	var l_list = [];
 	for (var ix = 0; ix < Object.keys(l_obj).length; ix++)
 		l_list[ix] = l_obj[ix].Name;

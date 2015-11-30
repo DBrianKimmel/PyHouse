@@ -43,13 +43,13 @@ class Xml(object):
             l_obj.Street = PutGetXML.get_text_from_xml(l_xml, 'Street')
             l_obj.City = PutGetXML.get_text_from_xml(l_xml, 'City')
             l_obj.State = PutGetXML.get_text_from_xml(l_xml, 'State')
-            l_obj.ZipCode = PutGetXML.get_text_from_xml(l_xml, 'ZipCode')
-            l_obj.Region = PutGetXML.get_text_from_xml(l_xml, 'Region')
+            l_obj.ZipCode = PutGetXML.get_text_from_xml(l_xml, 'ZipCode', '99999')
+            l_obj.Region = PutGetXML.get_text_from_xml(l_xml, 'Region', 'America')
             l_obj.Phone = PutGetXML.get_text_from_xml(l_xml, 'Phone')
             l_obj.Latitude = PutGetXML.get_float_from_xml(l_xml, 'Latitude')
             l_obj.Longitude = PutGetXML.get_float_from_xml(l_xml, 'Longitude')
-            l_obj.Elevation = PutGetXML.get_float_from_xml(l_xml, 'Elevation')
-            l_obj.TimeZoneName = PutGetXML.get_text_from_xml(l_xml, 'TimeZoneName')
+            l_obj.Elevation = PutGetXML.get_float_from_xml(l_xml, 'Elevation', 10)
+            l_obj.TimeZoneName = PutGetXML.get_text_from_xml(l_xml, 'TimeZoneName', 'America/New_York')
         except AttributeError as e_err:
             LOG.error('ERROR getting location Data - {}'.format(e_err))
         p_pyhouse_obj.House.Location = l_obj

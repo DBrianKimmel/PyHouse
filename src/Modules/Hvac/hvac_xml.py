@@ -18,7 +18,6 @@ from Modules.Families.family_utils import FamUtil
 from Modules.Utilities.device_tools import XML as deviceXML
 from Modules.Utilities.xml_tools import PutGetXML
 from Modules.Computer import logging_pyh as Logger
-# from Modules.Utilities.tools import PrettyPrintAny
 
 LOG = Logger.getLogger('PyHouse.Hvac_xml       ')
 
@@ -31,7 +30,6 @@ class Utility(object):
         deviceXML.read_base_device_object_xml(l_obj, p_xml)
         l_obj.DeviceType = 2
         l_obj.DeviceSubType = 73
-        # PrettyPrintAny(l_obj, 'Thermostat_base')
         return l_obj
 
     @staticmethod
@@ -66,7 +64,6 @@ class Utility(object):
     @staticmethod
     def _read_family_data(p_pyhouse_obj, p_obj, p_xml):
         l_ret = FamUtil.read_family_data(p_pyhouse_obj, p_obj, p_xml)
-        # PrettyPrintAny(l_ret, 'hvac_html-77')
         return l_ret
 
     @staticmethod

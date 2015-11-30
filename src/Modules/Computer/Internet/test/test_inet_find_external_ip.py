@@ -39,7 +39,6 @@ class C1_Util(SetupMixin, unittest.TestCase):
         self.m_api = inet_find_external_ip.API()
 
     def test_01_IPv4_addr(self):
-        # PrettyPrintAny(self.m_reactor, 'Reactor')
         pass
 
     def test_02_scrape(self):
@@ -52,7 +51,6 @@ class C1_Util(SetupMixin, unittest.TestCase):
 
     def test_06_snar3(self):
         l_defer = self.m_api.get_public_ip(self.m_pyhouse_obj, 0)
-        # PrettyPrintAny(l_defer, 'Defer')
         return l_defer
 
 # ## END DBK

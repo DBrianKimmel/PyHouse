@@ -49,7 +49,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 	 */
 	function fetchDataFromServer(self) {
 		function cb_fetchDataFromServer(p_json) {
-			globals.House.HouseObj = JSON.parse(p_json);
+			globals.House = JSON.parse(p_json);
 			self.buildLcarSelectScreen();
 		}
 		function eb_fetchDataFromServer(res) {
@@ -64,7 +64,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 	 * Build a screen full of buttons - One for each light and some actions.
 	 */
 	function buildLcarSelectScreen(self){
-		var l_button_html = buildLcarSelectionButtonsTable(globals.House.HouseObj.Lights, 'handleMenuOnClick');
+		var l_button_html = buildLcarSelectionButtonsTable(globals.House.Lights, 'handleMenuOnClick');
 		var l_html = build_lcars_top('Lights', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(10, l_button_html);
 		l_html += build_lcars_bottom();
@@ -84,15 +84,15 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		globals.House.LightIx = l_ix;
 		globals.House.LightName = l_name;
 		if (l_ix <= 1000) {  // we clicked on one of the buttons, show the details for the light.
-			var l_obj = globals.House.HouseObj.Lights[l_ix];
+			var l_obj = globals.House.Lights[l_ix];
 			globals.House.LightObj = l_obj;
 			globals.House.Self = self;
 			showDataEntryFields(self);
-			self.buildLcarDataEntryScreen(l_obj, 'handleDataEntryOnClick');
+			self.buildLcarDataEntryScreen(l_obj, 'change', 'handleDataEntryOnClick');
 		} else if (l_ix == 10001) {  // The "Add" button
 			showDataEntryFields(self);
 			var l_ent = self.createEntry();
-			self.buildLcarDataEntryScreen(l_ent, 'handleDataEntryOnClick');
+			self.buildLcarDataEntryScreen(l_ent, 'add', 'handleDataEntryOnClick');
 		} else if (l_ix == 10002) {  // The "Back" button
 			self.showWidget('HouseMenu');
 		}
@@ -104,14 +104,14 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 	/**
 	 * Build a screen full of data entry fields.
 	 */
-	function buildLcarDataEntryScreen(self, p_entry, p_handler){
+	function buildLcarDataEntryScreen(self, p_entry, p_add_change, p_handler){
 		var l_obj = arguments[1];
 		var l_html = build_lcars_top('Light Data', 'lcars-salmon-color');
-		l_html += build_lcars_middle_menu(40, self.buildEntry(l_obj, p_handler));
+		l_html += build_lcars_middle_menu(40, self.buildEntry(l_obj, p_add_change, p_handler));
 		l_html += build_lcars_bottom();
 		self.nodeById('DataEntryDiv').innerHTML = l_html;
 	},
-	function buildEntry(self, p_obj, p_handler, p_onchange) {
+	function buildEntry(self, p_obj, p_add_change, p_handler, p_onchange) {
 		var l_html = buildBaseEntry(self, p_obj);
 		l_html = buildLightingCoreEntry(self, p_obj, l_html, p_onchange);
 		l_html = self.buildLightEntry(p_obj, l_html);
@@ -121,7 +121,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
         	l_html = buildUpbPart(self, p_obj, l_html);
 		else
 			Divmod.debug('---', 'ERROR - lights.buildEntry() Unknown Family = ' + p_obj.DeviceFamily);
-		l_html += buildLcarEntryButtons(p_handler);
+		l_html += buildLcarEntryButtons(p_handler, 1);
 		return l_html;
 	},
 	function buildLightEntry(self, p_obj, p_html, p_onchange) {
@@ -151,8 +151,17 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
     	return p_data;
     },
 	function createEntry(self) {
-		// Divmod.debug('---', 'lights.createEntry() was called.');
-		var l_data = createBaseEntry(self, l_data);
+    	var l_ix = 0;
+    	try {
+    		l_ix = Object.keys(globals.House.Lights).length;
+    	}
+    	catch(e_err) {
+    		Divmod.debug('---', 'ERROR lights.createEntry() ' + e_err);
+    		l_ix = 0;
+    	}
+    	
+		var l_data = createBaseEntry(self, l_ix);
+		Divmod.debug('---', 'lights.createEntry() was called ' + l_ix);
 		l_data = createLightingCoreEntry(self, l_data);
 		l_data = self.createLightEntry(l_data);
         if (l_data.DeviceFamily === 'Insteon')
@@ -181,7 +190,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		}
 		var l_ix = p_node.name;
 		switch(l_ix) {
-		case '10003':  // Change Button
+		case '10003':  // Change/Save Button
 	    	var l_json = JSON.stringify(self.fetchEntry());
 	        var l_defer = self.callRemote("saveLightData", l_json);
 			l_defer.addCallback(cb_handleDataEntryOnClick);

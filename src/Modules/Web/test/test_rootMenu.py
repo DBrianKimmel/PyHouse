@@ -16,7 +16,6 @@ import xml.etree.ElementTree as ET
 # Import PyMh files and modules.
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.tools import PrettyPrintAny
 
 
 class SetupMixin(object):

@@ -256,19 +256,19 @@ class B2_Time(SetupMixin, unittest.TestCase):
         l_riseset = Mock.RiseSet()
         self.m_schedule_obj.Time = '01:02'
         l_time = datetime.datetime(2015, 6, 6, 0, 2, 0)
-        l_minutes = SchedTime.extract_time_to_go(self.m_schedule_obj, l_time, l_riseset)
+        l_minutes = SchedTime.extract_time_to_go(self.m_pyhouse_obj, self.m_schedule_obj, l_time, l_riseset)
         self.assertEqual(l_minutes, 3600)
         #
         self.m_schedule_obj.Time = 'dawn'  # 7:12:54
         l_time = datetime.datetime(2015, 6, 6, 1, 2, 0)
-        l_minutes = SchedTime.extract_time_to_go(self.m_schedule_obj, l_time, l_riseset)
+        l_minutes = SchedTime.extract_time_to_go(self.m_pyhouse_obj, self.m_schedule_obj, l_time, l_riseset)
         self.assertEqual(l_minutes, (6 * 60 + 10) * 60)
         #
         self.m_schedule_obj.DOW = 1 + 2 + 4 + 8 + 16 + 0 + 64  # Not today
         l_riseset = Mock.RiseSet()
         self.m_schedule_obj.Time = '03:02'
         l_time = datetime.datetime(2015, 6, 6, 3, 2, 0)
-        l_minutes = SchedTime.extract_time_to_go(self.m_schedule_obj, l_time, l_riseset)
+        l_minutes = SchedTime.extract_time_to_go(self.m_pyhouse_obj, self.m_schedule_obj, l_time, l_riseset)
         self.assertEqual(l_minutes, (0 * 60) + 1440 * 60)
 
     def test_03_ToGo(self):
@@ -278,7 +278,7 @@ class B2_Time(SetupMixin, unittest.TestCase):
         l_riseset = Mock.RiseSet()
         self.m_schedule_obj.Time = '00:15'
         l_now = datetime.datetime(2015, 6, 6, 23, 30, 0)
-        l_minutes = SchedTime.extract_time_to_go(self.m_schedule_obj, l_now, l_riseset)
+        l_minutes = SchedTime.extract_time_to_go(self.m_pyhouse_obj, self.m_schedule_obj, l_now, l_riseset)
         self.assertEqual(l_minutes, 45 * 60)
         #
 

@@ -40,6 +40,7 @@ from Modules.Core.data_objects import EmailData
 from Modules.Communication import send_email
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -63,9 +64,9 @@ class C01_Setup(SetupMixin, unittest.TestCase):
         """
         self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
         self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision', 'XML - No House Division')
-        PrettyPrintAny(self.m_pyhouse_obj, 'Pyhouse', 120)
-        PrettyPrintAny(self.m_pyhouse_obj.Computer, 'Pyhouse', 120)
-        PrettyPrintAny(self.m_pyhouse_obj.House, 'Pyhouse', 120)
+        print(PrettyFormatAny.form(self.m_pyhouse_obj, 'Pyhouse', 120))
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'Pyhouse', 120))
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'Pyhouse', 120))
 
 
 class C02_Read(SetupMixin, unittest.TestCase):
@@ -77,7 +78,6 @@ class C02_Read(SetupMixin, unittest.TestCase):
 
     def test_01_All(self):
         l_xml = self.m_api.read_xml(self.m_pyhouse_obj)
-        PrettyPrintAny(l_xml, 'Xml', 120)
         self.assertEqual(l_xml.EmailFromAddress, 'mail.sender@Gmail.Com', 'Bad From Address')
         self.assertEqual(l_xml.EmailToAddress, 'mail.receiver@Gmail.Com', 'Bad To Address')
         self.assertEqual(l_xml.GmailLogin, 'TestAccount@Gmail.Com', 'Bad Login')
@@ -94,7 +94,6 @@ class C03_Write(SetupMixin, unittest.TestCase):
     def test_03_All(self):
         l_xml = self.m_api.read_xml(self.m_pyhouse_obj)
         l_ret = self.m_api.write_xml(l_xml)
-        PrettyPrintAny(l_ret, 'XML', 120)
 
 
 class C04_Send(SetupMixin, unittest.TestCase):
@@ -108,7 +107,5 @@ class C04_Send(SetupMixin, unittest.TestCase):
         l_xml = self.m_api.read_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Computer.Email = l_xml
         l_ret = self.m_api.create_email_message(self.m_pyhouse_obj, l_xml.EmailToAddress, 'Test Subject', 'Test email Body', 'Test Attachment')
-        PrettyPrintAny(l_xml, 'Parsed')
-        PrettyPrintAny(l_ret, 'XML')
 
 # ## END DBK

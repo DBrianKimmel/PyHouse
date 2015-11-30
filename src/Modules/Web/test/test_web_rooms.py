@@ -17,7 +17,6 @@ from twisted.trial import unittest
 from Modules.Web import web_rooms
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.tools import PrettyPrintAny
 
 
 class Workspace(object):
@@ -55,6 +54,5 @@ class C01_XML(SetupMixin, unittest.TestCase):
     def test_02_Json(self):
         l_api = web_rooms.RoomsElement(self.m_workspace_obj, None)
         l_json = l_api.getServerData()
-        # PrettyPrintAny(l_json, 'JSON', 70)
 
 # ## END DBK

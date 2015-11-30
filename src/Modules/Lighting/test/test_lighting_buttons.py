@@ -58,12 +58,9 @@ class A1(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.button.tag, 'Button')
 
     def test_02_Xml(self):
-        # PrettyPrintAny(self.m_xml.controller, 'Controller')
         pass
 
     def test_03_Family(self):
-        # PrettyPrintAny(self.m_family, 'Family')
-        # PrettyPrintAny(self.m_family['Insteon'], 'Insteon Family')
         self.assertEqual(self.m_family['Insteon'].Name, 'Insteon')
 
 
@@ -78,7 +75,6 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """ Read in the xml file and fill in the lights
         """
         l_button = Utility._read_base_device(self.m_xml.button, self.m_version)
-        # PrettyPrintAny(l_button, 'ButtonData', 120)
         self.assertEqual(l_button.Name, TESTING_LIGHTING_BUTTON_NAME_1)
         self.assertEqual(l_button.Active, True)
         self.assertEqual(l_button.Comment, TESTING_DEVICE_COMMENT)
@@ -90,7 +86,6 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """ Read in the xml file and fill in the lights
         """
         l_button = Utility._read_one_button_xml(self.m_pyhouse_obj, self.m_xml.button, self.m_version)
-        # PrettyPrintAny(l_button, 'ReadOneButton', 120)
         self.assertEqual(l_button.Name, TESTING_LIGHTING_BUTTON_NAME_1)
         self.assertEqual(l_button.Active, True)
         self.assertEqual(l_button.Key, 0, 'Bad key')
@@ -102,7 +97,6 @@ class B1_Read(SetupMixin, unittest.TestCase):
     def test_03_ReadAllButtonsXml(self):
         l_buttons = self.m_api.read_all_buttons_xml(self.m_pyhouse_obj, self.m_xml.button_sect, self.m_version)
         self.assertEqual(len(l_buttons), 2)
-        # PrettyPrintAny(l_buttons, 'ReadAllButton', 120)
 
 
 class B2_Write(SetupMixin, unittest.TestCase):
@@ -117,14 +111,12 @@ class B2_Write(SetupMixin, unittest.TestCase):
         """
         l_button = Utility._read_one_button_xml(self.m_pyhouse_obj, self.m_xml.button, self.m_version)
         l_xml = Utility._write_one_button_xml(self.m_pyhouse_obj, l_button)
-        # print('XML: {}'.format(PrettyPrintAny(l_xml)))
 
     def test_02_AllButtons(self):
         """ Write out the XML file for the Buttons section
         """
         l_button = self.m_api.read_all_buttons_xml(self.m_pyhouse_obj, self.m_xml.button_sect, self.m_version)
         l_xml = self.m_api.write_buttons_xml(self.m_pyhouse_obj)
-        # print('XML: {}'.format(PrettyPrintAny(l_xml)))
 
 
 class J1_Json(SetupMixin, unittest.TestCase):

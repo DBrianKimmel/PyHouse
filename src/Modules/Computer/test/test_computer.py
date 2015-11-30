@@ -71,7 +71,6 @@ class C3_Write(SetupMixin, unittest.TestCase):
         """
         l_xml = computerXML.read_computer_xml(self.m_pyhouse_obj)
         l_mqtt = l_xml.find(MQTT_SECTION)
-        # PrettyPrintAny(l_mqtt, 'XML')
         self.assertNotEqual(l_mqtt, None)
 
 # # ## END DBK

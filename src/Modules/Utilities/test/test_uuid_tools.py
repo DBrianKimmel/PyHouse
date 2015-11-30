@@ -19,7 +19,6 @@ import xml.etree.ElementTree as ET
 from Modules.Utilities.uuid_tools import Uuid
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.tools import PrettyPrintAny
 
 
 class SetupMixin(object):

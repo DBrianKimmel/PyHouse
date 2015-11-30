@@ -29,7 +29,7 @@ from Modules.Irrigation.irrigation import API as irrigationAPI
 from Modules.Lighting.lighting import API as lightingAPI
 from Modules.Pool.pool import API as poolAPI
 from Modules.Scheduling.schedule import API as scheduleAPI
-from Modules.Scheduling.sunrisesunset import API as sunriseAPI
+# from Modules.Scheduling.sunrisesunset import API as sunriseAPI
 from Modules.Security.security import API as securityAPI
 from Modules.Utilities.xml_tools import XmlConfigTools
 from Modules.Computer import logging_pyh as Logger
@@ -66,7 +66,7 @@ class Xml(object):
         """Replace the data in the 'Houses' section with the current data.
         """
         # print(PrettyFormatAny.form(p_pyhouse_obj, 'PyHouse'))
-        l_house_obj = p_pyhouse_obj.House
+        # l_house_obj = p_pyhouse_obj.House
         # print(PrettyFormatAny.form(l_house_obj, 'PyHouse'))
         l_house_xml = XmlConfigTools.write_base_object_xml('HouseDivision', p_pyhouse_obj.House)
         l_house_xml.append(locationXML.write_location_xml(p_pyhouse_obj.House.Location))
@@ -99,7 +99,7 @@ class Utility(object):
         p_pyhouse_obj.APIs.House.PoolAPI = poolAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.ScheduleAPI = scheduleAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.SecurityAPI = securityAPI(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.House.SunRiseSetAPI = sunriseAPI(p_pyhouse_obj)
+        # p_pyhouse_obj.APIs.House.SunRiseSetAPI = sunriseAPI(p_pyhouse_obj)
 
     def start_house_parts(self, p_pyhouse_obj):
         # These two must start before the other things
@@ -112,7 +112,7 @@ class Utility(object):
         p_pyhouse_obj.APIs.House.PoolAPI.Start()
         p_pyhouse_obj.APIs.House.SecurityAPI.Start()
         #  Last
-        p_pyhouse_obj.APIs.House.SunRiseSetAPI.Start()
+        # p_pyhouse_obj.APIs.House.SunRiseSetAPI.Start()
         p_pyhouse_obj.APIs.House.ScheduleAPI.Start()
 
     def stop_house_parts(self):
@@ -133,9 +133,9 @@ class Utility(object):
         """
         Retrieve datetime.datetime for sunrise and sunset.
         """
-        p_pyhouse_obj.APIs.House.SunRiseSetAPI.Start()
-        p_pyhouse_obj.House.Location.RiseSet.SunRise = p_pyhouse_obj.APIs.House.SunRiseSetAPI.get_sunrise_datetime()
-        p_pyhouse_obj.House.Location.RiseSet.SunSet = p_pyhouse_obj.APIs.House.SunRiseSetAPI.get_sunset_datetime()
+        # p_pyhouse_obj.APIs.House.SunRiseSetAPI.Start()
+        # p_pyhouse_obj.House.Location.RiseSet.SunRise = p_pyhouse_obj.APIs.House.SunRiseSetAPI.get_sunrise_datetime()
+        # p_pyhouse_obj.House.Location.RiseSet.SunSet = p_pyhouse_obj.APIs.House.SunRiseSetAPI.get_sunset_datetime()
         pass
 
 
@@ -158,7 +158,7 @@ class API(Utility):
         """
         LOG.info("Starting.")
         self.m_pyhouse_obj.House = Xml.read_house_xml(self.m_pyhouse_obj)
-        self.get_sunrise_set(self.m_pyhouse_obj)
+        # self.get_sunrise_set(self.m_pyhouse_obj)
         self.start_house_parts(self.m_pyhouse_obj)
         LOG.info("Started House {}".format(self.m_pyhouse_obj.House.Name))
 
@@ -179,7 +179,7 @@ class API(Utility):
         # p_pyhouse_obj.APIs.House.PoolAPI.Start()
         p_pyhouse_obj.APIs.House.ScheduleAPI.LoadXml(p_pyhouse_obj)
         # p_pyhouse_obj.APIs.House.SecurityAPI.Start()
-        return
+        return l_house
 
     def SaveXml(self, p_xml):
         """

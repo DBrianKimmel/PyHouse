@@ -403,7 +403,6 @@ class C3_Read(SetupMixin, unittest.TestCase):
     def test_01_BaseObject(self):
         l_base_obj = CoreLightingData()
         self.m_api.read_base_object_xml(l_base_obj, self.m_xml.light)
-        # PrettyPrintAny(l_base_obj, 'Light')
         self.assertEqual(l_base_obj.Name, 'Insteon Light')
         self.assertEqual(l_base_obj.Key, 0)
         self.assertEqual(l_base_obj.Active, True)
@@ -412,7 +411,6 @@ class C3_Read(SetupMixin, unittest.TestCase):
     def test_02_readBaseObject(self):
         l_base_obj = CoreLightingData()
         self.m_api.read_base_object_xml(l_base_obj, self.m_xml.controller)
-        # PrettyPrintAny(l_base_obj, 'Controller')
         self.assertEqual(l_base_obj.Name, 'Insteon Serial Controller')
         self.assertEqual(l_base_obj.Key, 0)
         self.assertEqual(l_base_obj.Active, True)

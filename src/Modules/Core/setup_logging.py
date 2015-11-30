@@ -158,7 +158,6 @@ class API(object):  # To remove eclipse warnings.
         # print('setup_logging-153')
 
     def Start(self):
-        # PrettyPrintAny(self.m_pyhouse_obj.Twisted, 'PyHouseObj.Twisted')
         DeleteOldLogs.run_at_12_05(self.m_pyhouse_obj)
         pass
 

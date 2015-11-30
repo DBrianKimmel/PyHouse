@@ -65,19 +65,17 @@ class A1_Prep(SetupMixin, unittest.TestCase):
     def test_01_PyHouse(self):
         """ Did we get everything set up for the rest of the tests of this class.
         """
-        # PrettyPrintAny(self.m_pyhouse_obj, 'InsteonXML PyHouse')
         self.assertIsInstance(self.m_pyhouse_obj.House, HouseInformation)
 
     def test_02_Computer(self):
         """ Did we get everything set up for the rest of the tests of this class.
         """
-        # PrettyPrintAny(self.m_pyhouse_obj.Computer, 'Computer')
         pass
 
     def test_03_House(self):
         """ Did we get everything set up for the rest of the tests of this class.
         """
-        # PrettyPrintAny(self.m_pyhouse_obj.House, 'House')
+        pass
 
     def test_04_Objs(self):
         """ Did we get everything set up for the rest of the tests of this class.
@@ -87,7 +85,7 @@ class A1_Prep(SetupMixin, unittest.TestCase):
     def test_05_XML(self):
         """ Did we get everything set up for the rest of the tests of this class.
         """
-        # PrettyPrintAny(self.m_xml, 'XML')
+        pass
 
     def test_06_Device(self):
         """ Be sure that the XML contains the right stuff.
