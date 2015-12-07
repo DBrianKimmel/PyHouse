@@ -79,7 +79,7 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 			var l_obj = globals.House.Lights[l_ix];
 			globals.House.LightObj = l_obj;
 			globals.House.Self = self;
-			showDataEntryFields(self);
+			showDataEntryScreen(self);
 			self.buildLcarDataEntryScreen(l_obj, 'handleDataEntryOnClick');
 		} else if (l_ix == 10002) {  // The "Back" button
 			self.showWidget('HouseMenu');

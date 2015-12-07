@@ -85,15 +85,16 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		var l_name = p_node.value;
 		globals.House.RoomIx = l_ix;
 		globals.House.RoomName = l_name;
+		//
 		if (l_ix <= 1000) {  // One of the rooms buttons.
 			var l_obj = globals.House.Rooms[l_ix];
 			globals.House.RoomObj = l_obj;
-			showDataEntryFields(self);
-			self.buildLcarDataEntryScreen(l_obj, 'handleDataEntryOnClick');
+			showDataEntryScreen(self);
+			self.buildLcarDataEntryScreen(l_obj, 'change', 'handleDataEntryOnClick');
 		} else if (l_ix == 10001) {  // The "Add" button
-			showDataEntryFields(self);
+			showDataEntryScreen(self);
 			var l_entry = self.createEntry();
-			self.buildLcarDataEntryScreen(l_entry, 'handleDataEntryOnClick');
+			self.buildLcarDataEntryScreen(l_entry, 'add', 'handleDataEntryOnClick');
 		} else if (l_ix == 10002) {  // The "Back" button
 			self.showWidget('HouseMenu');
 		}
@@ -104,20 +105,25 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	/**
 	 * Build a screen full of data entry fields.
 	 */
-	function buildLcarDataEntryScreen(self, p_entry, p_handler){
-		var l_room = arguments[1];
-		var l_entry_html = "";
-		l_entry_html += buildLcarTextWidget(self, 'Name', 'Room Name', l_room.Name);
-		l_entry_html += buildLcarTextWidget(self, 'Key', 'Room Index', l_room.Key, 'disabled');
-		l_entry_html += buildLcarTrueFalseWidget(self, 'RoomActive', 'Active ?', l_room.Active);
-		l_entry_html += buildLcarTextWidget(self, 'Comment', 'Comment', l_room.Comment);
-		l_entry_html += buildLcarTextWidget(self, 'Corner', 'Corner', l_room.Corner);
-		l_entry_html += buildLcarTextWidget(self, 'Size', 'Size', l_room.Size);
-		l_entry_html += buildLcarEntryButtons(p_handler);
-		var l_html = build_lcars_top('Enter Room Data', 'lcars-salmon-color');
-		l_html += build_lcars_middle_menu(15, l_entry_html);
+	function buildLcarDataEntryScreen(self, p_entry, p_add_change, p_handler){
+		var l_obj = arguments[1];
+		var l_html = build_lcars_top('Room Data', 'lcars-salmon-color');
+		l_html += build_lcars_middle_menu(15, self.buildEntry(l_obj, p_add_change, p_handler));
 		l_html += build_lcars_bottom();
 		self.nodeById('DataEntryDiv').innerHTML = l_html;
+	},
+	function buildEntry(self, p_obj, p_add_change, p_handler, p_onchange) {
+		var l_html = buildBaseEntry(self, p_obj, 'noUuid');
+		l_html = self.buildRoomEntry(p_obj, l_html);
+		l_html += buildLcarEntryButtons(p_handler, 1);
+		return l_html;
+	},
+	function buildRoomEntry(self, p_obj, p_html, p_onchange) {
+		p_html += buildLcarTextWidget(self, 'Comment', 'Comment', l_room.Comment);
+		p_html += buildLcarTextWidget(self, 'Corner', 'Corner', l_room.Corner);
+		p_html += buildLcarTextWidget(self, 'Size', 'Size', l_room.Size);
+		p_html += buildLcarEntryButtons(p_handler);
+		return p_html;
 	},
 	function createEntry(self) {
         var l_data = {

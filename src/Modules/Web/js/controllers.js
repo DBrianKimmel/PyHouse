@@ -102,7 +102,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 		globals.House.ControllerIx = l_ix;
 		globals.House.ControllerName = l_name;
         if (l_ix <= 1000) {  // One of the controller buttons
-            showDataEntryFields(self);
+            showDataEntryScreen(self);
 			l_obj = globals.House.Controllers[l_ix];
 			globals.House.ControllerObj = l_obj;
 			globals.House.Self = self;
@@ -111,7 +111,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
         	l_obj = self.createEntry()
 			globals.House.ControllerObj = l_obj;
 			globals.House.Self = self;
-            showDataEntryFields(self);
+            showDataEntryScreen(self);
 			var l_ent = self.createEntry();
 			self.buildLcarDataEntryScreen(l_ent, 'handleDataOnClick');
         } else if (l_ix == 10002) {  // The 'Back' button

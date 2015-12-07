@@ -8,11 +8,6 @@
  * @summary:   Displays the Schedule widget.
  *
  */
-// import Nevow.Athena
-// import globals
-// import helpers
-
-
 
 helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 
@@ -21,7 +16,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 	},
 
 
-
+// ============================================================================
 	/**
      * Place the widget in the workspace.
 	 * 
@@ -37,7 +32,6 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 		l_defer.addCallback(cb_widgetready);
 		return l_defer;
 	},
-
 	/**
 	 * routines for showing and hiding parts of the screen.
 	 */
@@ -53,7 +47,6 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 		l_html += '<br>' + p_obj.Level + '% ';
 		return l_html;
 	},
-
 
 
 // ============================================================================
@@ -104,10 +97,10 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 			var l_obj = globals.House.Schedules[l_ix];
 			globals.House.ScheduleObj = l_obj;
 			globals.House.Self = self;
-			showDataEntryFields(self);
+			showDataEntryScreen(self);
 			self.fillEntry(l_obj);
 		} else if (l_ix == 10001) {  // The "Add" button
-			showDataEntryFields(self);
+			showDataEntryScreen(self);
 			var l_ent = self.createEntry();
 			self.fillEntry(l_ent);
 		} else if (l_ix == 10002) {  // The "Back" button
@@ -117,27 +110,32 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 
 
 // ============================================================================
-
+	/**
+	 * Build a screen full of data entry fields.
+	 */
 	function buildLcarDataEntryScreen(self, p_entry, p_handler){
-		var l_schedule = arguments[1];
-		var l_entry_html = "";
-		l_entry_html += buildLcarTextWidget(self, 'Name', 'Name', l_schedule.Name);
-		l_entry_html += buildLcarTextWidget(self, 'Key', 'Key', l_schedule.Key, 'disabled, size=05');
-		l_entry_html += buildLcarTrueFalseWidget(self, 'ScheduleActive', 'Active', l_schedule.Active);
-		l_entry_html += buildLcarTextWidget(self, 'ScheduleUUID', 'UUID', l_schedule.UUID, 'disabled');
-		l_entry_html += buildLcarScheduleTypeSelectWidget(self, 'ScheduleType', 'Type', l_schedule.Type);
-		l_entry_html += buildLcarTextWidget(self, 'ScheduleTime', 'Time',  l_schedule.Time);
-		l_entry_html += buildLcarRoomSelectWidget(self, 'ScheduleRoomName', 'Room Name', l_schedule.RoomName);
-		l_entry_html += buildLcarLightNameSelectWidget(self, 'ScheduleLightName', 'Light Name', l_schedule.LightName);
-		l_entry_html += buildLcarLevelSliderWidget(self, 'ScheduleLevel', 'Level', l_schedule.Level, 'handleSliderChange');
-		l_entry_html += buildLcarTextWidget(self, 'ScheduleRate', 'Rate', l_schedule.Rate);
-		l_entry_html += buildLcarDowWidget(self, 'ScheduleDow', 'Day of Week', l_schedule.DOW);
-		l_entry_html += buildLcarScheduleModeSelectWidget(self, 'ScheduleMode', 'Mode', l_schedule.Mode);
-		l_entry_html += buildLcarEntryButtons(p_handler);
-		var l_html = build_lcars_top('Schedules', 'lcars-salmon-color');
-		l_html += build_lcars_middle_menu(30, l_entry_html);
+		var l_obj = arguments[1];
+		var l_html = build_lcars_top('Light Data', 'lcars-salmon-color');
+		l_html += build_lcars_middle_menu(40, self.buildEntry(l_obj, p_add_change, p_handler));
 		l_html += build_lcars_bottom();
 		self.nodeById('DataEntryDiv').innerHTML = l_html;
+	},
+	function buildEntry(self, p_obj, p_add_change, p_handler, p_onchange) {
+		var l_html = buildBaseEntry(self, p_obj);
+		l_html = self.buildScheduleEntry(p_obj, l_html);
+		l_html += buildLcarEntryButtons(p_handler, 1);
+		return l_html;
+	},
+	function buildScheduleEntry(self, p_obj, p_html, p_onchange) {
+		p_html += buildLcarScheduleTypeSelectWidget(self, 'ScheduleType', 'Type', p_obj.Type);
+		p_html += buildLcarTextWidget(self, 'ScheduleTime', 'Time',  p_obj.Time);
+		p_html += buildLcarRoomSelectWidget(self, 'ScheduleRoomName', 'Room Name', p_obj.RoomName);
+		p_html += buildLcarLightNameSelectWidget(self, 'ScheduleLightName', 'Light Name', p_obj.LightName);
+		p_html += buildLcarLevelSliderWidget(self, 'ScheduleLevel', 'Level', p_obj.Level, 'handleSliderChange');
+		p_html += buildLcarTextWidget(self, 'ScheduleRate', 'Rate', p_obj.Rate);
+		p_html += buildLcarDowWidget(self, 'ScheduleDow', 'Day of Week', p_obj.DOW);
+		p_html += buildLcarScheduleModeSelectWidget(self, 'ScheduleMode', 'Mode', p_obj.Mode);
+		return p_html;
 	},
 	function handleSliderChange(p_event){
 		var l_obj = globals.House.ScheduleObj;

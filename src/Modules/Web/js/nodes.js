@@ -87,10 +87,10 @@ helpers.Widget.subclass(nodes, 'NodesWidget').methods(
 		if (l_ix <= 1000) {  // One of the nodes buttons.
 			var l_obj = globals.Computer.Nodes[l_ix];
 			globals.Computer.NodeObj = l_obj;
-			showDataEntryFields(self);
+			showDataEntryScreen(self);
 			self.buildLcarDataEntryScreen(l_obj, 'handleDataEntryOnClick');
 		} else if (l_ix == 10001) {  // The "Add" button
-			showDataEntryFields(self);
+			showDataEntryScreen(self);
 			var l_entry = self.createEntry();
 			self.buildLcarDataEntryScreen(l_entry, 'handleDataEntryOnClick');
 		} else if (l_ix == 10002) {  // The "Back" button

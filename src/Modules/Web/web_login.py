@@ -27,7 +27,9 @@ from nevow import athena
 # from passlib.hash import pbkdf2_sha256
 from zope.interface import implements
 from twisted.cred.portal import IRealm
-from twisted.cred import checkers, credentials, error as credError
+from twisted.cred.checkers import ICredentialsChecker
+from twisted.cred.credentials import IUsernamePassword
+from twisted.cred.error import UnauthorizedLogin
 from twisted.internet import defer
 
 # Import PyMh files and modules.
@@ -145,9 +147,84 @@ class LoginElement(athena.LiveElement):
         return l_login_obj
 
 
+def verifyCryptedPassword(crypted, pw):
+    if crypted[0] == '$':  # md5_crypt encrypted
+        l_salt = '$1$' + crypted.split('$')[2]
+    else:
+        l_salt = crypted[:2]
+    try:
+        import crypt
+    except ImportError:
+        crypt = None
+
+    if crypt is None:
+        raise NotImplementedError("cred_unix not supported on this platform")
+    return crypt.crypt(pw, l_salt) == crypted
+
+
+class UnixChecker(object):
+    """
+    A credentials checker for a UNIX server. This will check that
+    an authenticating username/password is a valid user on the system.
+
+    Does not work on Windows.
+
+    Right now this supports Python's pwd and spwd modules, if they are
+    installed. It does not support PAM.
+    """
+    implements(ICredentialsChecker)
+    credentialInterfaces = (IUsernamePassword,)
+
+
+    def checkPwd(self, pwd, username, password):
+        try:
+            cryptedPass = pwd.getpwnam(username)[1]
+        except KeyError:
+            return defer.fail(UnauthorizedLogin())
+        else:
+            if cryptedPass in ('*', 'x'):
+                # Allow checkSpwd to take over
+                return None
+            elif verifyCryptedPassword(cryptedPass, password):
+                return defer.succeed(username)
+
+
+    def checkSpwd(self, spwd, username, password):
+        try:
+            cryptedPass = spwd.getspnam(username)[1]
+        except KeyError:
+            return defer.fail(UnauthorizedLogin())
+        else:
+            if verifyCryptedPassword(cryptedPass, password):
+                return defer.succeed(username)
+
+
+    def requestAvatarId(self, credentials):
+        username, password = credentials.username, credentials.password
+        try:
+            import pwd
+        except ImportError:
+            pwd = None
+        if pwd is not None:
+            checked = self.checkPwd(pwd, username, password)
+            if checked is not None:
+                return checked
+        try:
+            import spwd
+        except ImportError:
+            spwd = None
+        if spwd is not None:
+            checked = self.checkSpwd(spwd, username, password)
+            if checked is not None:
+                return checked
+        # TODO: check_pam?
+        # TODO: check_shadow?
+        return defer.fail(UnauthorizedLogin())
+
+
 class PasswordDictChecker:
-    implements(checkers.ICredentialsChecker)
-    credentialInterfaces = (credentials.IUsernamePassword,)
+    implements(ICredentialsChecker)
+    credentialInterfaces = (IUsernamePassword,)
 
     def __init__(self, passwords):
         "passwords: a dict-like object mapping usernames to passwords"
@@ -160,10 +237,10 @@ class PasswordDictChecker:
                 return defer.succeed(username)
             else:
                 return defer.fail(
-                    credError.UnauthorizedLogin("Bad password"))
+                    UnauthorizedLogin("Bad password"))
         else:
             return defer.fail(
-                credError.UnauthorizedLogin("No such user"))
+                UnauthorizedLogin("No such user"))
 
 
 class PyHouseRealm(object):
