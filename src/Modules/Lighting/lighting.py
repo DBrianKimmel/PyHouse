@@ -60,7 +60,6 @@ class Utility(object):
             l_ret = {}
             l_msg = 'No Buttons found {}'.format(e_err)
             LOG.warning(l_msg)
-            print(l_msg)
         return l_ret
 
     def _read_controllers(self, p_pyhouse_obj, p_xml, p_version):
@@ -71,7 +70,6 @@ class Utility(object):
             l_ret = {}
             l_msg = 'No Controllers found {}'.format(e_err)
             LOG.warning(l_msg)
-            print(l_msg)
         return l_ret
 
     def _read_lights(self, p_pyhouse_obj, p_xml, p_version):
@@ -82,7 +80,6 @@ class Utility(object):
             l_ret = {}
             l_msg = 'No Lights found: {}'.format(e_err)
             LOG.warning(l_msg)
-            print(l_msg)
         return l_ret
 
     def _read_lighting_xml(self, p_pyhouse_obj):

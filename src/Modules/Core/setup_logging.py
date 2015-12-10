@@ -46,18 +46,20 @@ class DropHttpFilter(object):
 
     def filter(self, p_record):
         """ Should we filter this record out of the logs?
+        @param p_record: is the message object 
         """
         l_allow = True
         if self.m_param is None:
             return True
         # l_list = self.m_param
         try:
-            if '/transport' in p_record.msg:
+            l_str = str(p_record.msg)
+            if l_str.find('/transport') > 0:
+                l_allow = False
+            elif l_str.find('/jsmodule/') > 0:
                 l_allow = False
         except Exception as e_err:
-            pass
-            # print('ERROR in setup_logging DropHttpFilter - {}'.format(e_err))
-            # print(PrettyFormatAny.form(self.m_param, 'Params'))
+            p_record.msg = '\n\n{}\n\t{}\n'.format(p_record.msg, e_err)
         return l_allow
 
 
@@ -89,7 +91,7 @@ LOGGING_DICT = {
             'filename'    : '/var/log/pyhouse/debug',
             'when'        : 'midnight',
             'filters'     : ['http'],
-            'backupCount' : '20',
+            'backupCount' : 20,
         },
         'error'   : {
             'class'       : 'logging.handlers.TimedRotatingFileHandler',
@@ -97,7 +99,7 @@ LOGGING_DICT = {
             'formatter'   : 'standard',
             'filename'    : ERROR_LOG_LOCTION,
             'when'        : 'midnight',
-            'backupCount' : '20',
+            'backupCount' : 20,
         },
         'console' : {
             'class'       : 'logging.StreamHandler',

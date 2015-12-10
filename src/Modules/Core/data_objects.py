@@ -473,7 +473,7 @@ class LocationData(object):
         self.Longitude = 0.0  # -82.517208
         self.Elevation = 0.0  # 30
         self.Phone = ''
-        self.TimeZoneName = ''  # 'America/New_York'
+        self.TimeZoneName = 'America/New_York'  # 'America/New_York'
         #
         self._name = ''  # 'Greenwich'
         self._region = ''  # 'England'

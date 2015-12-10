@@ -139,6 +139,7 @@ class Xml(object):
             LOG.error('ERROR reading web : {}'.format(e_err))
             l_xml = None
             l_login_xml = None
+            l_count = 0
         if l_xml == None:
             l_obj.WebPort = 8580
         else:

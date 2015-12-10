@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 -*- test-case-name: PyHouse.src.test.test_setup -*-
-b6
+
 @name:      PyHouse/src/setup.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
