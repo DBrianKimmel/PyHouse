@@ -78,10 +78,10 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 		globals.House.ButtonName = l_name;
 		if (l_ix <= 1000) {  // One of the button buttons.
 			var l_obj = globals.House.Buttons[l_ix];
-			showDataEntryFields(self);
+			showDataEntryScreen(self);
 			self.buildLcarSelectScreen(l_obj);
 		} else if (l_ix == 10001) {  // The "Add" button
-			showDataEntryFields(self);
+			showDataEntryScreen(self);
 		} else if (l_ix == 10002) {  // The "Back" button
 			self.showWidget('HouseMenu');
 		}

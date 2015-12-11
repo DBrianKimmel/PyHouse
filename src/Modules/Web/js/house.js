@@ -39,7 +39,7 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 		return l_defer;
 	},
 	function startWidget(self) {
-		showDataEntryFields(self);
+		showDataEntryScreen(self);
 		self.fetchDataFromServer();
 	},
 

@@ -87,7 +87,7 @@ helpers.Widget.subclass(update, 'UpdateWidget').methods(
 		if (l_ix <= 1000) {  // One of the update buttons.
 			var l_obj = globals.Computer.Version[l_ix];
 			globals.Computer.VersionObj = l_obj;
-			showDataEntryFields(self);
+			showDataEntryScreen(self);
 			self.buildLcarDataEntryScreen(l_obj, 'handleDataEntryOnClick');
 		} else if (l_ix == 10002) {  // The "Back" button
 			self.showWidget('HouseMenu');

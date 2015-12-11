@@ -129,7 +129,6 @@ function buildLcarMenuButtons(p_list, p_handler){
  */
 function buildLcarButton(p_obj, p_handler, p_background_color, /* optional */ nameFunction) {
 	var l_html = '';
-	//l_html += "<div class='lcars-button radius " + p_background_color + "'>";
 	l_html += "<button type='button' ";
 	l_html += setValueAttribute(p_obj.Name);
 	l_html += "class='lcars-button radius " + p_background_color + "' ";
@@ -141,19 +140,20 @@ function buildLcarButton(p_obj, p_handler, p_background_color, /* optional */ na
 	else
 		l_html += p_obj.Name;
 	l_html += "</button>\n";
-	// console.log("globals.buildLcarButton() - %O", l_html)
 	return l_html;
 }
 
 
 // Base entry data routines
 
-function buildBaseEntry(self, p_obj) {
+function buildBaseEntry(self, p_obj, /* optional */ noUuid) {
+	var l_uuid = noUuid;
 	var l_html = '';
 	l_html += buildLcarTextWidget(self, 'Name', 'Device Name', p_obj.Name);
 	l_html += buildLcarTextWidget(self, 'Key', 'Index', p_obj.Key, 'size=10 disabled');
 	l_html += buildLcarTrueFalseWidget(self, 'Active', 'Active ?', p_obj.Active);
-	l_html += buildLcarTextWidget(self, 'UUID', 'UUID', p_obj.UUID, 'disabled');
+	if (l_uuid === undefined)
+		l_html += buildLcarTextWidget(self, 'UUID', 'UUID', p_obj.UUID, 'disabled');
 	return l_html;
 }
 function fetchBaseEntry(self, p_data) {

@@ -128,10 +128,10 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 		globals.Computer.InternetName = l_name;
 		if (l_ix <= 1000) {  // One of the Internet buttons.
 			var l_obj = globals.Computer.Internet[l_ix];
-			showDataEntryFields(self);
+			showDataEntryScreen(self);
 			self.fillEntry(l_obj, l_ix);
 		} else if (l_ix == 10001) {  // The "Add" button
-			showDataEntryFields(self);
+			showDataEntryScreen(self);
 			var l_ent = self.createEntry(globals.Computer.InternetIx);
 			self.fillEntry(l_ent);
 		} else if (l_ix == 10002) {  // The "Back" button

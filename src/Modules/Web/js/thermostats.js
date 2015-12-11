@@ -90,13 +90,13 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 		globals.House.ThermostatIx = l_ix;
 		globals.House.ThermostatName = l_name;
 		if (l_ix <= 1000) {  // One of the Thermostat buttons.
-			showDataEntryFields(self);
+			showDataEntryScreen(self);
 			var l_obj = globals.House.Thermostats[l_ix];
 			globals.House.ThermostatObj = l_obj;
 			globals.House.Self = self;
 			self.buildLcarDataEntryScreen(l_obj, 'handleDataOnClick');
 		} else if (l_ix == 10001) {  // The "Add" button
-			showDataEntryFields(self);
+			showDataEntryScreen(self);
 			var l_ent = self.createEntry();
 			self.buildLcarDataEntryScreen(l_ent, 'handleDataOnClick');
 		} else if (l_ix == 10002) {  // The "Back" button

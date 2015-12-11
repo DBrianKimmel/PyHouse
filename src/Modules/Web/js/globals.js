@@ -441,9 +441,9 @@ function showSelectionButtons(self) {
 	self.nodeById('DataEntryDiv').style.display = 'none';
 	self.nodeById('SelectionButtonsDiv').style.display = 'block';
 }
-function showDataEntryFields(self) {
-	// Divmod.debug('---', 'globals.showDataEntryFields() was called.');
-	// console.log("globals.showDataEntryFields() - %O", self);
+function showDataEntryScreen(self) {
+	// Divmod.debug('---', 'globals.showDataEntryScreen() was called.');
+	// console.log("globals.showDataEntryScreen() - %O", self);
 	self.nodeById('SelectionButtonsDiv').style.display = 'none';
 	self.nodeById('DataEntryDiv').style.display = 'block';
 }
@@ -521,30 +521,16 @@ function buildBottomDivs() {
 /**
  * Build a LCAR style button
  */
-function XXXbuildLcarButton(p_obj, p_handler, p_background_color, /* optional */ nameFunction) {
-	var l_html = '';
-	//l_html += "<div class='lcars-button radius " + p_background_color + "'>";
-	l_html += "<button type='button' ";
-	l_html += setValueAttribute(p_obj.Name);
-	l_html += "class='lcars-button radius " + p_background_color + "' ";
-	l_html += setNameAttribute(p_obj.Key);
-	l_html += "onclick='return Nevow.Athena.Widget.handleEvent(this, \"onclick\", \""  + p_handler + "\" ";
-	l_html += ");' >\n";
-	if (typeof nameFunction === 'function')
-		l_html += nameFunction(p_obj);
-	else
-		l_html += p_obj.Name;
-	l_html += "</button>\n";
-	// console.log("globals.buildLcarButton() - %O", l_html)
-	return l_html;
-}
 function buildLcarAddButton(p_handler) {
 	return buildLcarButton({'Name' : 'Add', 'Key' : BUTTON_ADD}, p_handler, 'lcars-salmon-bg');
 }
 function buildLcarBackButton(p_handler) {
 	return buildLcarButton({'Name' : 'Back', 'Key' : BUTTON_BACK}, p_handler, 'lcars-salmon-bg');
 }
-function buildLcarChangeButton(p_handler) {
+function buildLcarChangeButton(p_handler, p_add_change) {
+	var l_name = 'Change';
+	if (p_add_change === 'add')
+		l_name = 'Add';
 	return buildLcarButton({'Name' : 'Change', 'Key' : BUTTON_CHANGE}, p_handler, 'lcars-salmon-bg');
 }
 function buildLcarDeleteButton(p_handler) {

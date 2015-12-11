@@ -87,17 +87,16 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 			var l_obj = globals.House.Lights[l_ix];
 			globals.House.LightObj = l_obj;
 			globals.House.Self = self;
-			showDataEntryFields(self);
+			showDataEntryScreen(self);
 			self.buildLcarDataEntryScreen(l_obj, 'change', 'handleDataEntryOnClick');
 		} else if (l_ix == 10001) {  // The "Add" button
-			showDataEntryFields(self);
+			showDataEntryScreen(self);
 			var l_ent = self.createEntry();
 			self.buildLcarDataEntryScreen(l_ent, 'add', 'handleDataEntryOnClick');
 		} else if (l_ix == 10002) {  // The "Back" button
 			self.showWidget('HouseMenu');
 		}
 	},
-
 
 
 // ============================================================================

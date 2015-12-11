@@ -87,10 +87,10 @@ helpers.Widget.subclass(mqtt, 'MqttWidget').methods(
 		if (l_ix <= 1000) {  // One of the mqtt buttons.
 			var l_obj = globals.Computer.Mqtt.Brokers[l_ix];
 			globals.Computer.MqttObj = l_obj;
-			showDataEntryFields(self);
+			showDataEntryScreen(self);
 			self.buildLcarDataEntryScreen(l_obj, 'handleDataEntryOnClick');
 		} else if (l_ix == 10001) {  // The "Add" button
-			showDataEntryFields(self);
+			showDataEntryScreen(self);
 			var l_entry = self.createEntry();
 			self.buildLcarDataEntryScreen(l_entry, 'handleDataEntryOnClick');
 		} else if (l_ix == 10002) {  // The "Back" button
