@@ -619,12 +619,12 @@ function buildLcarEntryButtons(p_handler, p_add_change, /* optional */ noOptions
  * @param p_value  is bool showing the current value .
  */
 function _buildLcarRadioButtonWidget(p_name, p_label, p_value, p_checkVal, /* optional */ p_optionHandler) {
-	var l_option = p_optionHandler;
+	//var l_option = p_optionHandler;
 	var l_html = "&nbsp;<input type='radio'";
 	l_html += setNameAttribute(p_name);
 	l_html += setValueAttribute(p_value);
-	if (l_option !== 'undefined') 
-		l_html += "onclick='return Nevow.Athena.Widget.handleEvent(this, \"onclick\", \"" + l_option + "\");' ";
+	//if (l_option !== 'undefined') 
+	//	l_html += "onclick='return Nevow.Athena.Widget.handleEvent(this, \"onclick\", \"" + l_option + "\");' ";
 	l_html += setCheckedAttribute(p_value === p_checkVal);
 	l_html += "/>" + p_label + '&nbsp;\n';
 	return l_html;

@@ -6,6 +6,8 @@
 .pydevproject
 .buildpath
 .settings
+build
+dist
 
 .SaveConfig/
 minimal
