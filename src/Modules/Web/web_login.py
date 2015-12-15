@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Web/web_login.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2014 by D. Brian Kimmel
+@copyright: (c) 2013-2015 by D. Brian Kimmel
 @note:      Created on Jul 27, 2013
 @license:   MIT License
 @summary:   Handle the web server login.
@@ -117,33 +117,27 @@ class LoginElement(athena.LiveElement):
 
     def validate_user(self, p_obj):
         """
-        TODO - swithc to twisted.cred and validate the user using twisted.
+        TODO - switch to twisted.cred and validate the user using twisted.
                 we will get an avatar (twisted definition)
         @param p_obj: is from the browser login screen
         """
         l_login_obj = LoginData()
-        l_login_obj.LoginName = p_obj['LoginName']
+        l_login_obj.LoginName = p_obj['Name']
         l_login_obj.LoginPasswordCurrent = p_obj['PasswordCurrent']
-        LOG.info('Login Attempt using: {}'.format(PrettyFormatAny.form(l_login_obj, 'Login Obj')))
+        #LOG.info('Login Attempt using: {}'.format(PrettyFormatAny.form(l_login_obj, 'Login Obj')))
         #
         if l_login_obj.LoginName in self.m_pyhouse_obj.Computer.Web.Logins:
             pass
         for l_user in self.m_pyhouse_obj.Computer.Web.Logins.itervalues():
-            LOG.debug(PrettyFormatAny.form(l_user, 'User Obj'))
+            #LOG.debug(PrettyFormatAny.form(l_user, 'User Obj'))
             if l_user.Name == l_login_obj.LoginName:
-                LOG.debug('User Matched')
+                #LOG.debug('User Matched')
                 if l_user.LoginPasswordCurrent == l_login_obj.LoginPasswordCurrent:
-                    LOG.debug('Password Matched')
+                    #LOG.debug('Password Matched')
                     l_login_obj.IsLoggedIn = True
                     l_login_obj.LoginRole = l_user.LoginRole
                     l_login_obj.LoginFullName = l_user.LoginFullName
-                    # LOG.debug(PrettyFormatAny.form(l_login_obj, 'Login Obj'))
                 return l_login_obj
-            # pbkdf2_sha256.verify("password", hash)
-        # Default for development - allow us in.
-        # l_login_obj.LoginFullName = 'Administrator'
-        # l_login_obj.IsLoggedIn = True
-        # l_login_obj.ServerState = web_utils.WS_LOGGED_IN
         return l_login_obj
 
 

@@ -43,7 +43,7 @@ helpers.Widget.subclass(users, 'UsersWidget').methods(
 	 * Show the self.node widget - users.UsersWidget -
 	 */
 	function startWidget(self) {
-		Divmod.debug('---', 'users.startWidget() was called.');
+		// Divmod.debug('---', 'users.startWidget() was called.');
 		self.node.style.display = 'block';
 		showSelectionButtons(self);
 		self.fetchDataFromServer();
@@ -58,7 +58,7 @@ helpers.Widget.subclass(users, 'UsersWidget').methods(
 	function fetchDataFromServer(self) {
 		function cb_fetchDataFromServer(p_json) {
 			globals.Computer.Logins = JSON.parse(p_json);
-			console.log("users.fetchDataFromServer() - Data = %O", globals.Computer);
+			// console.log("users.fetchDataFromServer() - Data = %O", globals.Computer);
 			self.buildLcarSelectScreen();
 		}
 		function eb_fetchDataFromServer(p_result) {
@@ -112,19 +112,29 @@ helpers.Widget.subclass(users, 'UsersWidget').methods(
 	 * Build a screen full of data entry fields.
 	 */
 	function buildLcarDataEntryScreen(self, p_entry, p_handler){
-		var l_data = arguments[1];
-		var l_entry_html = "";
-		l_entry_html += buildLcarTextWidget(self, 'Name', 'User Name', l_data.Name);
-		l_entry_html += buildLcarTextWidget(self, 'Key', 'User Index', l_data.Key, 'disabled');
-		l_entry_html += buildLcarTrueFalseWidget(self, 'UserActive', 'Active ?', l_data.Active);
-		l_entry_html += buildLcarTextWidget(self, 'FullName', 'Full Name', l_data.LoginFullName);
-		l_entry_html += buildLcarTextWidget(self, 'Password', 'Password', l_data.LoginPasswordCurrent);
-		l_entry_html += buildLcarUserRoleSelectWidget(self, 'Role', 'Role', l_data.LoginRole);
-		l_entry_html += buildLcarEntryButtons(p_handler);
-		var l_html = build_lcars_top('Enter User Data', 'lcars-salmon-color');
-		l_html += build_lcars_middle_menu(15, l_entry_html);
+		var l_obj = arguments[1];
+		var l_html = build_lcars_top('Login', 'lcars-salmon-color');
+		l_html += build_lcars_middle_menu(10, self.buildEntry(l_obj, 'change', p_handler));
 		l_html += build_lcars_bottom();
 		self.nodeById('DataEntryDiv').innerHTML = l_html;
+	},
+	function buildEntry(self, p_obj, p_add_change, p_handler, p_onchange) {
+		var l_html = '';
+		l_html = self.buildLoginEntry(p_obj, l_html, p_handler);
+		l_html += buildLcarEntryButtons(p_handler, 1);
+		// l_html += buildLcarButton({'Name' : 'Login', 'Key' : 12345}, p_handler, 'lcars-salmon-bg');
+		return l_html;
+	},
+	function buildLoginEntry(self, p_obj, p_html, p_handler) {
+		p_html += buildLcarTextWidget(self, 'Name', 'Name', p_obj.Name);
+		p_html += buildLcarTextWidget(self, 'Key', 'User Index', p_obj.Key, 'disabled');
+		p_html += buildLcarTrueFalseWidget(self, 'IsActive', 'Active ?', p_obj.Active);
+		p_html += buildLcarTextWidget(self, 'FullName', 'Full Name', p_obj.LoginFullName);
+		p_html += buildLcarPasswordWidget(self, 'Password_1', 'Password', p_obj.LoginPasswordCurrent);
+		p_html += buildLcarPasswordWidget(self, 'Password_2', 'Password Verify', p_obj.LoginPasswordCurrent);
+		p_html += buildLcarUserRoleSelectWidget(self, 'Role', 'Role', p_obj.LoginRole);
+		p_html += buildLcarEntryButtons(p_handler);
+		return p_html;
 	},
 	function createEntry(self) {
         var l_data = {
@@ -139,15 +149,21 @@ helpers.Widget.subclass(users, 'UsersWidget').methods(
 		return l_data;
 	},
 	function fetchEntry(self) {
-        var l_data = {
+		Divmod.debug('---', 'users.fetchEntry() was called. ');
+		var l_data = {
 			Name : fetchTextWidget(self, 'Name'),
 			Key : fetchTextWidget(self, 'Key'),
-			Active : fetchTrueFalseWidget(self, 'UserActive'),
+			Active : fetchTrueFalseWidget(self, 'IsActive'),
 			FullName : fetchTextWidget(self, 'FullName'),
-			Password : fetchTextWidget(self, 'Password'),
+			Password_1 : fetchTextWidget(self, 'Password_1'),
+			Password_2 : fetchTextWidget(self, 'Password_2'),
 			Role : fetchSelectWidget(self, 'Role'),
-			Delete : false
+			Delete : false,
+			IsValid : false
 		};
+        if ((l_data['Password_1'] == l_data['Password_2']) && (l_data['Password_1'].length > 7))
+        	l_data.IsValid = true;
+        console.log("users.fetchEntry() - l_data = %O", l_data);
 		return l_data;
 	},
 

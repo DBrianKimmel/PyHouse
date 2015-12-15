@@ -82,8 +82,9 @@ class UsersElement(athena.LiveElement):
         l_obj.Active = l_json['Active']
         l_obj.Key = l_ix
         l_obj.LoginFullName = l_json['FullName']
-        l_obj.LoginPasswordCurrent = l_json['Password']
+        l_obj.LoginPasswordCurrent = l_json['Password_1']
         l_obj.LoginRole = l_json['Role']
         self.m_pyhouse_obj.Computer.Web.Logins[l_ix] = l_obj
+
 
 # ## END DBK

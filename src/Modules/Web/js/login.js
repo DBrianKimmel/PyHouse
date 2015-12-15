@@ -28,11 +28,13 @@
  */
 var m_login_obj = {
 	Name : '',
-    LoginName : '',
+    FullName : '',
+    Role : 'Not logged in.',
     PasswordCurrent : '',
     PasswordNew: '',
     PasswordVerify: '',
-    ChangeFlag : false
+    ChangeFlag : false,
+    IsLoggedIn : false
 }
 
 helpers.Widget.subclass(login, 'LoginWidget').methods(
@@ -105,21 +107,30 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 	 * @param p_handler is the function to be called when the kogin button is clicked
 	 */
 	function buildLcarLoginScreen(self, p_obj, p_handler) {
-		// Divmod.debug('---', 'login.buildLcarLoginScreen');
-		// console.log("login.buildLcarLoginScreen() - p_obj = %O", p_obj);
-		var l_login_html = "";
-		l_login_html += buildLcarTextWidget(self, 'LoginName', 'Name', p_obj.LoginName);
-		l_login_html += buildLcarPasswordWidget(self, 'PasswordCurrent', 'Current Password', 'size=20', p_obj.PasswordCurrent);
-		l_login_html += buildLcarTrueFalseWidget(self, 'ChangeFlag', 'Change Password ?', p_obj.ChangeFlag, 'handlePasswordChangeClick')
-		if (p_obj.ChangeFlag === true) {
-			l_login_html += buildLcarPasswordWidget(self, 'PasswordNew', 'New Password', 'size=20', p_obj.PasswordNew);
-			l_login_html += buildLcarPasswordWidget(self, 'PasswordVerify', 'Verify Password', 'size=20', p_obj.PasswordVerify);
-		}
-		l_login_html += buildLcarButton({'Name' : 'Login', 'Key' : 12345}, p_handler, 'lcars-salmon-bg');
+		var l_obj = arguments[1];
 		var l_html = build_lcars_top('Login', 'lcars-salmon-color');
-		l_html += build_lcars_middle_menu(10, l_login_html);
+		l_html += build_lcars_middle_menu(10, self.buildEntry(l_obj, 'change', p_handler));
 		l_html += build_lcars_bottom();
 		self.nodeById('SelectionButtonsDiv').innerHTML = l_html;
+	},
+	function buildEntry(self, p_obj, p_add_change, p_handler, p_onchange) {
+		var l_html = '';
+		l_html = self.buildLoginEntry(p_obj, l_html, p_onchange);
+		//l_html += buildLcarEntryButtons(p_handler, 1);
+		l_html += buildLcarButton({'Name' : 'Login', 'Key' : 12345}, p_handler, 'lcars-salmon-bg');
+		return l_html;
+	},
+	function buildLoginEntry(self, p_obj, p_html, p_onchange) {
+		p_html += buildLcarTextWidget(self, 'LoginName', 'Name', p_obj.Name);
+		p_html += buildLcarPasswordWidget(self, 'PasswordCurrent', 'Current Password', 'size=20', p_obj.PasswordCurrent);
+		p_html += buildLcarTrueFalseWidget(self, 'ChangeFlag', 'Change Password ?', p_obj.ChangeFlag, 'handlePasswordChangeClick')
+		if (p_obj.ChangeFlag === true) {
+			p_html += buildLcarPasswordWidget(self, 'PasswordNew', 'New Password', 'size=20', p_obj.PasswordNew);
+			p_html += buildLcarPasswordWidget(self, 'PasswordVerify', 'Verify Password', 'size=20', p_obj.PasswordVerify);
+		}
+		p_html += buildLcarTextWidget(self, 'FullName', 'Full Name', p_obj.FullName, 'disable')
+		p_html += buildLcarTextWidget(self, 'Role', 'Role', p_obj.Role, 'disable');
+		return p_html;
 	},
 	function handlePasswordChangeClick(self) {
 		// Divmod.debug('---', 'login.handlePasswordChangeClick was called.');
@@ -143,18 +154,21 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 	 */
 	function handleLoginButtonClick(self) {
 		function cb_handleLoginButtonClick(p_json) {
+			var LOGIN_DISPLAY_INTERVAL = 2.0;
 			var l_obj = JSON.parse(p_json);
-			self.showNextScreen(l_obj);
+			// self.showNextScreen(l_obj);
+        	self.nodeById('FullName').value = l_obj.LoginFullName;
+        	globals.Login.FullName = l_obj.LoginFullName;
+        	self.nodeById('Role').value = l_obj.LoginRole;
+			self.callLater(LOGIN_DISPLAY_INTERVAL, function() {
+				self.showNextScreen(l_obj);
+				}
+			);
 		}
 		function eb_handleLoginButtonClick(res){
 			Divmod.debug('---', 'login.eb_handleLoginButtonClick() was called.  ERROR = ' + res);
 		}
-        //var l_loginData = {
-    	//	LoginName : fetchTextWidget(self, 'LoginName'),
-    	//	Password : fetchTextWidget(self, 'PasswordCurrent'),
-    	//	ChangeFlag : fetchTrueFalseWidget(self, 'ChangeFlag'),
-        //};
-        globals.Login.LoginName = fetchTextWidget(self, 'LoginName');
+        globals.Login.Name = fetchTextWidget(self, 'LoginName');
         globals.Login.PasswordCurrent = fetchTextWidget(self, 'PasswordCurrent');
         globals.Login.ChangeFlag = fetchTrueFalseWidget(self, 'ChangeFlag');
         if (globals.Login.ChangeFlag === true)
@@ -175,13 +189,11 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 	 */
 	function showNextScreen(self, p_obj) {
 		function cb_showNextScreen() {
-			// Divmod.debug('---', 'login.cb_showNextScreen(1) was called.');
 			self.showWidget('RootMenu');
 			}
 		function eb_showNextScreen(p_reason) {
 			Divmod.debug('---', 'ERROR = login.showNextScreen() - ' + p_reason);
 		}
-		// Divmod.debug('---', 'login.showNextScreen(2) was called.');
 		if (p_obj.IsLoggedIn === true) {
 			globals.User.ID = p_obj.Username;
 			globals.User.Password = p_obj.PasswordCurrent;
@@ -192,10 +204,12 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 			l_defer.addCallback(cb_showNextScreen);
 			l_defer.addErrback(eb_showNextScreen);
 		} else {
-			Divmod.debug('---', 'login.showNextScreen(3) was called.');
+			Divmod.debug('---', 'login.showNextScreen() was called.');
 			globals.User.Fullname = 'Login Attempt failed!';
+			globals.Login.FullName = 'Login Attempt failed!';
 			self.showLoggingInDiv(self);
         	self.nodeById('PasswordCurrent').value = '';
+        	self.nodeById('FullName').value = globals.Login.FullName;
 		}
 	}
 );

@@ -18,6 +18,7 @@ helpers.Widget.subclass(clock, 'ClockWidget').methods(
 		
 	function __init__(self, node) {
 		clock.ClockWidget.upcall(self, '__init__', node);
+		globals.Login.FullName = 'Nobody';
 	},
 
 
@@ -63,9 +64,7 @@ helpers.Widget.subclass(clock, 'ClockWidget').methods(
 	function getAndShowTime(self) {
 		function cb_showTime(p_time) {
 			var CLOCK_DISPLAY_INTERVAL = 1.0;
-			self.node.innerHTML = p_time + ' ' + globals.Server.Name;
-			// Divmod.debug('---', 'clock.cb_showTime() was called.');
-			// console.log("clock.cb_showTime() - Server = %O", globals.Server);
+			self.node.innerHTML = globals.Server.Name + ' ' + p_time + ' "' + globals.Login.FullName + '"';
 			self.callLater(CLOCK_DISPLAY_INTERVAL, function() {
 				self.getAndShowTime();
 				}
