@@ -23,22 +23,21 @@ This will set up this node and then find all other nodes in the same domain (Hou
 Then start the House and all the sub systems.
 """
 
-# Import system type stuff
+#  Import system type stuff
 
-# Import PyMh files and modules.
-from Modules.Core import setup_logging  # This must be first as the import causes logging to be initialized
+#  Import PyMh files and modules.
 from Modules.Computer import logging_pyh as Logger
 from Modules.Computer.computer import API as computerAPI
+from Modules.Core import setup_logging  #  This must be first as the import causes logging to be initialized
 from Modules.Housing.house import API as houseAPI
 from Modules.Utilities.config_file import API as configAPI
-# from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.CoreSetup      ')
 
 INTER_NODE = 'tcp:port=8581'
 INTRA_NODE = 'unix:path=/var/run/pyhouse/node:lockfile=1'
 INITIAL_DELAY = 3 * 60
-REPEAT_DELAY = 2 * 60 * 60  # 2 hours
+REPEAT_DELAY = 2 * 60 * 60  #  2 hours
 
 
 class PyHouseObj(object):
@@ -59,7 +58,6 @@ class Utility(object):
     """
 
     def log_start(self):
-        # LOG.info("\n------------------------------------------------------------------\n")
         pass
 
     def _xml_save_loop(self, p_pyhouse_obj):
@@ -68,11 +66,21 @@ class Utility(object):
 
     @staticmethod
     def _init_components(p_pyhouse_obj):
+        pass
 
+    @staticmethod
+    def init_uuids(p_pyhouse_obj):
+        """be sure that all the uuid files exist in /etc/pyhouse
+        Computer.uuid
+        House.uuid
+        Domain.uuid
+        """
         pass
 
 
 class API(Utility):
+    """ Now that any platform dependent initialization has been done, set up the rest of PyHouse
+    """
 
     def __init__(self, p_pyhouse_obj):
         """
@@ -82,6 +90,7 @@ class API(Utility):
         """
         self.m_pyhouse_obj = p_pyhouse_obj
         Utility._init_components(p_pyhouse_obj)
+        Utility.init_uuids(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.ComputerAPI = computerAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.HouseAPI = houseAPI(p_pyhouse_obj)
         PyHouseObj.SetObj(p_pyhouse_obj)
@@ -95,26 +104,24 @@ class API(Utility):
 
         @param p_pyhouse_obj: is the skeleton Obj filled in some by PyHouse.py.
         """
-        l_log = setup_logging.API(self.m_pyhouse_obj)  # To eliminate Eclipse warning
+        l_log = setup_logging.API(self.m_pyhouse_obj)  #  To eliminate Eclipse warning
         l_log.Start()
 
-        # Next is the XML file do things can be read in and customized
+        #  Next is the XML file do things can be read in and customized
         self.m_pyhouse_obj = configAPI(self.m_pyhouse_obj).read_xml_config_file(self.m_pyhouse_obj)
-        # print("XML loaded")
 
-        # Next is the logging system
+        #  Next is the logging system
         self.log_start()
         LOG.info("Starting.")
-        # print("Log Started")
 
-        # Logging system is now enabled
-        # Starting the computer and House will load the respective divisions of the config file.
+        #  Logging system is now enabled
+        #  Starting the computer and House will load the respective divisions of the config file.
         self.m_pyhouse_obj.APIs.Computer.ComputerAPI.Start()
         self.m_pyhouse_obj.APIs.House.HouseAPI.Start()
         self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self._xml_save_loop, self.m_pyhouse_obj)
-        # LOG.debug(' PyHouseObj: {}'.format(PrettyFormatAny.form(PyHouseObj, 'PyHouseObj')))
+        #  LOG.debug(' PyHouseObj: {}'.format(PrettyFormatAny.form(PyHouseObj, 'PyHouseObj')))
         LOG.info("Everything has been started.\n")
-        # print('Everything Started setup_pyhouse-117')
+        #  print('Everything Started setup_pyhouse-117')
 
     def Stop(self):
         self.SaveXml()
@@ -132,4 +139,4 @@ class API(Utility):
         configAPI(self.m_pyhouse_obj).write_xml_config_file(self.m_pyhouse_obj, l_xml)
         LOG.info("Saved all XML sections to config file.\n")
 
-# ## END DBK
+#  ## END DBK

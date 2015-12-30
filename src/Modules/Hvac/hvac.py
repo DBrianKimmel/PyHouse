@@ -11,12 +11,12 @@ This is the controlling portion of a complete HVAC system.
 
 """
 
-# Import system type stuff
+#  Import system type stuff
 
-# Import PyMh files
+#  Import PyMh files
+from Modules.Computer import logging_pyh as Logger
 from Modules.Core.data_objects import ThermostatData
 from Modules.Hvac.hvac_xml import XML as hvacXML
-from Modules.Computer import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.Hvac           ')
 
@@ -42,6 +42,7 @@ class API(Utility):
 
     def LoadXml(self, p_pyhouse_obj):
         l_obj = hvacXML.read_hvac_xml(p_pyhouse_obj)
+        p_pyhouse_obj.House.Hvac = l_obj
         return l_obj
 
     def SaveXml(self, p_xml):
@@ -50,4 +51,4 @@ class API(Utility):
         LOG.info("Saved Hvac XML.")
         return l_xml
 
-# ## END DBK
+#  ## END DBK

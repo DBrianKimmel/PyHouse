@@ -21,31 +21,34 @@ TODO:
 
 """
 
-# Import system type stuff
+#  Import system type stuff
 import Queue
 
-# Import PyMh files
-from Modules.Core import conversions
-from Modules.Families.Insteon.Insteon_data import InsteonData
-from Modules.Families.Insteon.Insteon_constants import COMMAND_LENGTH, MESSAGE_LENGTH, MESSAGE_TYPES, PLM_COMMANDS, STX
-from Modules.Families.Insteon.Insteon_utils import Util
-from Modules.Families.Insteon import Insteon_decoder
 from Modules.Computer import logging_pyh as Logger
+from Modules.Core import conversions
+from Modules.Families.Insteon import Insteon_decoder
+#  from Modules.Families.Insteon.Insteon_configure import Config as ConfigConfig
+from Modules.Families.Insteon.Insteon_constants import COMMAND_LENGTH, MESSAGE_TYPES, PLM_COMMANDS, STX
+from Modules.Families.Insteon.Insteon_data import InsteonData
+from Modules.Families.Insteon.Insteon_utils import Util
 from Modules.Families.family_utils import FamUtil
+from Modules.Utilities.tools import PrintBytes
 
+
+#  Import PyMh files
 LOG = Logger.getLogger('PyHouse.Insteon_PLM    ')
 
-# Timeouts for send/receive delays
+#  Timeouts for send/receive delays
 SEND_TIMEOUT = 0.8
-RECEIVE_TIMEOUT = 0.6  # this is for fetching data in the rx buffer
+RECEIVE_TIMEOUT = 0.6  #  this is for fetching data in the rx buffer
 
-# Modes for setting PLM mode
+#  Modes for setting PLM mode
 MODE_DISABLE_DEADMAN = 0x10
 MODE_DISABLE_AUTO_LED = 0x20
 MODE_MONITOR = 0x40
 MODE_DISABLE_AUTO_LINK = 0x80
 
-# Message flag bits (Page 55 of Developers Manual).
+#  Message flag bits (Page 55 of Developers Manual).
 FLAG_BROADCAST_NAK = 0x80
 FLAG_ALL_LINK = 0x40
 FLAG_ACKNOWLEDGEMENT = 0x20
@@ -80,22 +83,25 @@ class ControllerData(InsteonData):
 
 class Commands(object):
 
-    def queue_60_command(self):
+    @staticmethod
+    def queue_60_command(p_controller_obj):
         """Get IM info (2 bytes).
         See p 273 of developers guide.
         PLM will respond with a 0x60 response.
         """
         LOG.info("Command to get IM info (60)")
         l_command = Utility._create_command_message('plm_info')
-        Utility._queue_command(self.m_controller_obj, l_command)
+        Utility._queue_command(p_controller_obj, l_command)
 
-    def queue_61_command(self, p_controller_obj):
+    @staticmethod
+    def queue_61_command(p_controller_obj):
         """Send ALL-Link Command (5 bytes)
         See p 254 of developers guide.
         """
         pass
 
-    def queue_62_command(self, p_controller_obj, p_obj, p_cmd1, p_cmd2):
+    @staticmethod
+    def queue_62_command(p_controller_obj, p_obj, p_cmd1, p_cmd2):
         """Send Insteon Standard Length Message (8 bytes).
         See page 243 of Insteon Developers Guide.
 
@@ -105,24 +111,29 @@ class Commands(object):
         """
         l_command = Utility._create_command_message('insteon_send')
         Util.int2message(p_obj.InsteonAddress, l_command, 2)
-        l_command[5] = FLAG_MAX_HOPS + FLAG_HOPS_LEFT  # 0x0F
+        l_command[5] = FLAG_MAX_HOPS + FLAG_HOPS_LEFT  #  0x0F
         l_command[6] = p_obj._Command1 = p_cmd1
         l_command[7] = p_obj._Command2 = p_cmd2
         Utility._queue_command(p_controller_obj, l_command)
 
-    def queue_63_command(self, p_controller_obj):
+    @staticmethod
+    def queue_63_command(p_controller_obj):
         pass
 
-    def queue_64_command(self, p_controller_obj):
+    @staticmethod
+    def queue_64_command(p_controller_obj):
         pass
 
-    def queue_65_command(self, p_controller_obj):
+    @staticmethod
+    def queue_65_command(p_controller_obj):
         pass
 
-    def queue_66_command(self, p_controller_obj):
+    @staticmethod
+    def queue_66_command(p_controller_obj):
         pass
 
-    def queue_67_command(self, p_controller_obj):
+    @staticmethod
+    def queue_67_command(p_controller_obj):
         """Reset the PLM
         See p 268 of developers guide.
         """
@@ -130,10 +141,12 @@ class Commands(object):
         l_command = Utility._create_command_message('plm_reset')
         Utility._queue_command(p_controller_obj, l_command)
 
-    def queue_68_command(self, p_controller_obj):
+    @staticmethod
+    def queue_68_command(p_controller_obj):
         pass
 
-    def queue_69_command(self, p_controller_obj):
+    @staticmethod
+    def queue_69_command(p_controller_obj):
         """Get the first all-link record from the plm (2 bytes).
         See p 261 of developers guide.
         """
@@ -141,7 +154,8 @@ class Commands(object):
         l_command = Utility._create_command_message('plm_first_all_link')
         Utility._queue_command(p_controller_obj, l_command)
 
-    def queue_6A_command(self, p_controller_obj):
+    @staticmethod
+    def queue_6A_command(p_controller_obj):
         """Get the next record - will get a NAK if no more (2 bytes).
         See p 262 of developers guide.
         """
@@ -149,7 +163,8 @@ class Commands(object):
         l_command = Utility._create_command_message('plm_next_all_link')
         Utility._queue_command(p_controller_obj, l_command)
 
-    def queue_6B_command(self, p_controller_obj, p_flags):
+    @staticmethod
+    def queue_6B_command(p_controller_obj, p_flags):
         """Set IM configuration flags (3 bytes).
         See page 271  of Insteon Developers Guide.
         """
@@ -158,16 +173,20 @@ class Commands(object):
         l_command[2] = p_flags
         Utility._queue_command(p_controller_obj, l_command)
 
-    def queue_6C_command(self, p_controller_obj):
+    @staticmethod
+    def queue_6C_command(p_controller_obj):
         pass
 
-    def queue_6D_command(self, p_controller_obj):
+    @staticmethod
+    def queue_6D_command(p_controller_obj):
         pass
 
-    def queue_6E_command(self, p_controller_obj):
+    @staticmethod
+    def queue_6E_command(p_controller_obj):
         pass
 
-    def queue_6F_command(self, p_controller_obj, p_light_obj, p_code, p_flag, p_data):
+    @staticmethod
+    def queue_6F_command(p_controller_obj, p_light_obj, p_code, p_flag, p_data):
         """Manage All-Link Record (11 bytes)"""
         LOG.info("Command to manage all-link record (6F).")
         l_command = Utility._create_command_message('manage_all_link_record')
@@ -178,17 +197,21 @@ class Commands(object):
         l_command[8:11] = p_data
         Utility._queue_command(p_controller_obj, l_command)
 
-    def queue_70_command(self, p_controller_obj):
+    @staticmethod
+    def queue_70_command(p_controller_obj):
         pass
 
-    def queue_71_command(self, p_controller_obj):
+    @staticmethod
+    def queue_71_command(p_controller_obj):
         pass
 
-    def queue_72_command(self, p_controller_obj):
+    @staticmethod
+    def queue_72_command(p_controller_obj):
         """RF Sleep"""
         pass
 
-    def queue_73_command(self, p_controller_obj):
+    @staticmethod
+    def queue_73_command(p_controller_obj):
         """Send request for PLM configuration (2 bytes).
         See page 270 of Insteon Developers Guide.
         """
@@ -226,14 +249,14 @@ class PlmDriverProtocol(Commands):
         Uses twisted to get a callback when the timer expires.
         """
         self.m_pyhouse_obj.Twisted.Reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send, p_controller_obj)
-        # LOG.info('Within send loop.  Size: {}'.format(p_controller_obj._Queue.qsize()))
+        #  LOG.info('Within send loop.  Size: {}'.format(p_controller_obj._Queue.qsize()))
         try:
             l_command = p_controller_obj._Queue.get(False)
-            # LOG.info('Got command:  {}'.format(PrintBytes(l_command)))
+            #  LOG.info('Got command:  {}'.format(PrintBytes(l_command)))
         except Queue.Empty:
             return
         if p_controller_obj._DriverAPI != None:
-            # LOG.info("Send to controller:{}, Message:{}".format(p_controller_obj.Name, PrintBytes(l_command)))
+            #  LOG.info("Send to controller:{}, Message:{}".format(p_controller_obj.Name, PrintBytes(l_command)))
             p_controller_obj._Command1 = l_command
             p_controller_obj._DriverAPI.Write(l_command)
         else:
@@ -245,7 +268,7 @@ class PlmDriverProtocol(Commands):
         """
         l_msg = p_controller_obj._DriverAPI.Read()
         p_controller_obj._Message += l_msg
-        return p_controller_obj._Message  # For debugging
+        return p_controller_obj._Message  #  For debugging
 
     def receive_loop(self, p_controller_obj):
         """Check the driver to see if the controller returned any messages.
@@ -261,7 +284,7 @@ class PlmDriverProtocol(Commands):
             l_cur_len = len(p_controller_obj._Message)
             if l_cur_len < 2:
                 return
-            # LOG.info('Receive message is now {}'.format(PrintBytes(p_controller_obj._Message)))
+            LOG.info('Receive message is now {}'.format(PrintBytes(p_controller_obj._Message)))
             l_response_len = Util.get_message_length(p_controller_obj._Message)
             if l_cur_len >= l_response_len:
                 self.m_decoder.decode_message(p_controller_obj)
@@ -269,18 +292,18 @@ class PlmDriverProtocol(Commands):
             LOG.error('Driver missing for {}'.format(p_controller_obj.Name))
 
 
+class InsteonPlmCommands(object):
 
-class InsteonPlmCommands(Commands):
-
-    def scan_one_light(self, p_controller_obj, p_name):
+    @staticmethod
+    def scan_one_light(p_controller_obj, p_name):
         """Scan a light.  we are looking for DevCat and any other info about the device.
 
         @param p_name: is the key for the entry in Light_Data
         """
-        self.queue_62_command(p_controller_obj, p_name, MESSAGE_TYPES['product_data_request'], 0x00)  # 0x03
+        Commands.queue_62_command(p_controller_obj, p_name, MESSAGE_TYPES['product_data_request'], 0x00)  #  0x03
 
 
-class InsteonAllLinks(InsteonPlmCommands):
+class InsteonAllLinks(object):
 
     def get_all_allinks(self, p_controller_obj):
         """A command to fetch the all-link database from the PLM
@@ -294,13 +317,13 @@ class InsteonAllLinks(InsteonPlmCommands):
         """Get the first all-link record from the plm (69 command).
         See p 261 of developers guide.
         """
-        return self.queue_69_command(p_controller_obj)
+        return Commands.queue_69_command(p_controller_obj)
 
     def _get_next_allink(self, p_controller_obj):
         """Get the next record - will get a nak if no more (6A command).
         Returns True if more - False if no more.
         """
-        return self.queue_6A_command(p_controller_obj)
+        return Commands.queue_6A_command(p_controller_obj)
 
     def add_link(self, p_link):
         """Add an all link record.
@@ -310,28 +333,28 @@ class InsteonAllLinks(InsteonPlmCommands):
     def delete_link(self, p_controller_obj, p_address, p_group, p_flag):
         """Delete an all link record.
         """
-        # p_light_obj = LightData()
+        #  p_light_obj = LightData()
         p_light_obj = InsteonData()
         p_light_obj.InsteonAddress = conversions.dotted_hex2int(p_address)
         p_light_obj.GroupNumber = p_group
-        # p_code = 0x00  # Find First
-        p_code = 0x00  # Delete First Found record
-        # p_flag = 0xE2
+        #  p_code = 0x00  # Find First
+        p_code = 0x00  #  Delete First Found record
+        #  p_flag = 0xE2
         p_data = bytearray(b'\x00\x00\x00')
         LOG.info("Delete All-link record - Address:{0:}, Group:{1:#02X}".format(p_light_obj.InsteonAddress, p_group))
-        l_ret = self.queue_6F_command(p_controller_obj, p_light_obj, p_code, p_flag, p_data)
+        l_ret = Commands.queue_6F_command(p_controller_obj, p_light_obj, p_code, p_flag, p_data)
         return l_ret
 
     def reset_plm(self, p_controller_obj):
         """This will clear out the All-Links database.
         """
         l_debug_msg = "Resetting PLM - Name:{0:}".format(p_controller_obj)
-        self.queue_67_command(p_controller_obj)
+        Commands.queue_67_command(p_controller_obj)
         LOG.info(l_debug_msg)
 
 
 
-class InsteonPlmAPI(InsteonAllLinks):
+class InsteonPlmAPI(object):
     """
     """
 
@@ -344,14 +367,14 @@ class InsteonPlmAPI(InsteonAllLinks):
     def ping_plm(self, p_controller_obj):
         """Send a command to the plm and get its response.
         """
-        return self.queue_60_command(p_controller_obj)
+        return Commands.queue_60_command(p_controller_obj)
 
     def get_link_records(self, p_controller_obj):
         self.get_all_allinks(p_controller_obj)
 
 
 
-class LightHandlerAPI(InsteonPlmAPI):
+class LightHandlerAPI(object):
     """This is the API for light control.
     """
 
@@ -374,45 +397,54 @@ class LightHandlerAPI(InsteonPlmAPI):
         """Set the PLM to a mode
         """
         LOG.info('Setting mode of Insteon controller {0:}.'.format(p_controller_obj.Name))
-        self.queue_6B_command(p_controller_obj, MODE_MONITOR)
+        Commands.queue_6B_command(p_controller_obj, MODE_MONITOR)
 
-    def _get_one_light_status(self, p_controller_obj, p_obj):
+    @staticmethod
+    def _get_one_light_status(p_controller_obj, p_obj):
         """Get the status of a light.
         We will (apparently) get back a 62-ACK followed by a 50 with the level in the response.
         """
         LOG.info('Request Status from device: {0:}'.format(p_obj.Name))
-        self.queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['status_request'], 0)  # 0x19
+        Commands.queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['status_request'], 0)  #  0x19
 
-    def _get_one_thermostat_status(self, p_controller_obj, p_obj):
+    @staticmethod
+    def _get_one_thermostat_status(p_controller_obj, p_obj):
         """
         Get the status of a thermostat.
         """
         LOG.info('Request Status from thermostat device: {0:}'.format(p_obj.Name))
-        self.queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['thermostat_get_zone_temp'], 0)  # 0x6A
+        Commands.queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['thermostat_get_zone_temp'], 0)  #  0x6A
 
-    def _get_engine_version(self, p_controller_obj, p_obj):
+    @staticmethod
+    def _get_engine_version(p_controller_obj, p_obj):
         """ i1 = pre 2007 I think
             i2 = no checksum - new commands
             i2cs = 2012 add checksums + new commands.
         """
         LOG.info('Request Engine version from device: {}'.format(p_obj.Name))
-        self.queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['engine_version'], 0)  # 0x0D
+        Commands.queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['engine_version'], 0)  #  0x0D
 
-    def _get_id_request(self, p_controller_obj, p_obj):
+    @staticmethod
+    def _get_id_request(p_controller_obj, p_obj):
         """Get the device DevCat
         """
         LOG.info('Request ID(devCat) from device: {}'.format(p_obj.Name))
-        self.queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['id_request'], 0)  # 0x10
+        Commands.queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['id_request'], 0)  #  0x10
 
     def _get_obj_info(self, p_controller_obj, p_obj):
         if p_obj.DeviceFamily != 'Insteon':
             return
         if p_obj.Active != True:
             return
-        # LOG.info('Device:{}'.format(p_obj.Name))
+        #  LOG.info('Device:{}'.format(p_obj.Name))
         self._get_one_light_status(p_controller_obj, p_obj)
         self._get_id_request(p_controller_obj, p_obj)
         self._get_engine_version(p_controller_obj, p_obj)
+
+    def _get_controller_info(self, p_controller_obj, p_obj):
+        self._get_engine_version(p_controller_obj, p_obj)
+        self._get_one_light_status(p_controller_obj, p_obj)
+        pass
 
     def _get_thermostat_obj_info(self, p_controller_obj, p_obj):
         if p_obj.DeviceFamily != 'Insteon':
@@ -426,15 +458,17 @@ class LightHandlerAPI(InsteonPlmAPI):
     def get_all_device_information(self, p_pyhouse_obj, p_controller_obj):
         """Get the status (current level) of all insteon devices.
         """
-        LOG.info('Getting device information of all Insteon devices')
+        LOG.info('Getting information for all Insteon devices.')
+        LOG.info('Getting device information of all Insteon Controllers')
+        for l_obj in p_pyhouse_obj.House.Controllers.itervalues():
+            self._get_controller_info(p_controller_obj, l_obj)
+            self._get_obj_info(p_controller_obj, l_obj)
+        #
         LOG.info('Getting device information of all Insteon Lights')
         for l_obj in p_pyhouse_obj.House.Lights.itervalues():
             self._get_obj_info(p_controller_obj, l_obj)
         LOG.info('Getting device information of all Insteon Buttons')
         for l_obj in p_pyhouse_obj.House.Buttons.itervalues():
-            self._get_obj_info(p_controller_obj, l_obj)
-        LOG.info('Getting device information of all Insteon Controllers')
-        for l_obj in p_pyhouse_obj.House.Controllers.itervalues():
             self._get_obj_info(p_controller_obj, l_obj)
         LOG.info('Getting device information of all Insteon Thermostats')
         for l_obj in p_pyhouse_obj.House.Thermostats.itervalues():
@@ -457,8 +491,9 @@ class Utility(LightHandlerAPI):
         if l_ret:
             LOG.info('Controller Driver Start was OK.')
             self.m_protocol = PlmDriverProtocol(p_pyhouse_obj, p_controller_obj)
-            self.m_decoder = Insteon_decoder.DecodeResponses(p_pyhouse_obj, p_controller_obj)
+            #  self.m_decoder = Insteon_decoder.DecodeResponses(p_pyhouse_obj, p_controller_obj)
             self.set_plm_mode(p_controller_obj)
+            #  ConfigConfig(p_pyhouse_obj).get_config(p_controller_obj)
             self.get_all_device_information(p_pyhouse_obj, p_controller_obj)
         else:
             LOG.error('Insteon Controller start failed')
@@ -486,6 +521,9 @@ class API(Utility):
 
     m_controller_obj = None
 
+    def __init__(self):
+        pass
+
     def _put_controller(self, p_controller_obj):
         """ used in testing to load the controller info to be used in testing.
         """
@@ -496,10 +534,6 @@ class API(Utility):
         """ used in testing to load the controller info to be used in testing.
         """
         return self.m_controller_obj
-
-    def __init__(self):
-        pass
-
 
     def Start(self, p_pyhouse_obj, p_controller_obj):
         """
@@ -527,11 +561,11 @@ class API(Utility):
         """
         LOG.info("Device Name:{}; to level:{}; at rate:{};".format(p_device_obj.Name, p_level, p_rate))
         if int(p_level) == 0:
-            self.queue_62_command(self.m_controller_obj, p_device_obj, MESSAGE_TYPES['off'], 0)  # 0x13
+            Commands.queue_62_command(self.m_controller_obj, p_device_obj, MESSAGE_TYPES['off'], 0)  #  0x13
         elif int(p_level) == 100:
-            self.queue_62_command(self.m_controller_obj, p_device_obj, MESSAGE_TYPES['on'], 255)  # 0x11
+            Commands.queue_62_command(self.m_controller_obj, p_device_obj, MESSAGE_TYPES['on'], 255)  #  0x11
         else:
             l_level = int(p_level) * 255 / 100
-            self.queue_62_command(self.m_controller_obj, p_device_obj, MESSAGE_TYPES['on'], l_level)  # 0x11
+            Commands.queue_62_command(self.m_controller_obj, p_device_obj, MESSAGE_TYPES['on'], l_level)  #  0x11
 
-# ## END DBK
+#  ## END DBK

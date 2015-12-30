@@ -9,27 +9,28 @@
 
 """
 
-# Import system type stuff
-import xml.etree.ElementTree as ET
+#  Import system type stuff
 from twisted.trial import unittest
 
-# Import PyMh files and modules.
-from Modules.Core.data_objects import ThermostatData
 from Modules.Core import conversions
+from Modules.Core.data_objects import ThermostatData
+from Modules.Families.family import API as familyAPI
 from Modules.Hvac import thermostats
-from Modules.Families import family
-from test.xml_data import XML_LONG, XML_EMPTY
-from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities import json_tools
+from test.testing_mixin import SetupPyHouseObj
+from test.xml_data import XML_LONG, XML_EMPTY
+import xml.etree.ElementTree as ET
 
 
+#  Import PyMh files and modules.
+#  from Modules.Families import family
 class SetupMixin(object):
 
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
-        self.m_pyhouse_obj.House.FamilyData = family.API().build_lighting_family_info()
+        self.m_pyhouse_obj.House.FamilyData = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_api = thermostats.API()
+        self.m_api = thermostats.API(self.m_pyhouse_obj)
         self.m_thermostat_obj = ThermostatData()
 
 
@@ -40,7 +41,6 @@ class C01_XML(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.House.FamilyData = family.API().build_lighting_family_info()
 
     def test_01_FindXml(self):
         """ Be sure that the XML contains the right stuff.
@@ -59,7 +59,6 @@ class C02_Read(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.House.FamilyData = family.API().build_lighting_family_info()
 
     def test_01_xml(self):
         pass
@@ -116,7 +115,6 @@ class C03_Write(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.House.FamilyData = family.API().build_lighting_family_info()
 
     def test_01_Base(self):
         l_thermostat = self.m_api._read_one_thermostat_xml(self.m_pyhouse_obj, self.m_xml.thermostat)
@@ -155,7 +153,6 @@ class C04_JSON(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.House.FamilyData = family.API().build_lighting_family_info()
 
     def test_01_Create(self):
         """ Create a JSON object for Location.
@@ -171,7 +168,6 @@ class C05_Empty(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_EMPTY))
-        self.m_pyhouse_obj.House.FamilyData = family.API().build_lighting_family_info()
 
     def test_01_ReadAll(self):
         l_thermostats = self.m_api.read_all_thermostats_xml(self.m_pyhouse_obj)
@@ -198,10 +194,9 @@ class C06_Util(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.House.FamilyData = family.API().build_lighting_family_info()
 
     def test_01_Xml(self):
         l_xml = self.m_api.setup_xml(self.m_pyhouse_obj)
         self.assertEqual(l_xml.tag, 'ThermostatSection')
 
-# ## END DBK
+#  ## END DBK

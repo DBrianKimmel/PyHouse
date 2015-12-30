@@ -16,9 +16,7 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
-# from Modules.lights.lighting import LightData
 from Modules.Core.data_objects import ControllerData
-# from Modules.Families.Insteon.Insteon_PLM import Utility as utilUtil
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 

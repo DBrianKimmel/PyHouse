@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.Hvac.test.test_thermostat -*-
+-*- test-case-name: PyHouse.src.Modules.Hvac.test.XXXtest_thermostat -*-
 
 @name:      PyHouse/src/Modules/Hvac/thermostats.py
 @author:    D. Brian Kimmel
@@ -11,15 +11,15 @@
 
 """
 
-# Import system type stuff
-import xml.etree.ElementTree as ET
-
-# Import PyMh files
+#  Import system type stuff
+from Modules.Computer import logging_pyh as Logger
 from Modules.Core.data_objects import ThermostatData
 from Modules.Families.family_utils import FamUtil
-from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
+import xml.etree.ElementTree as ET
 
+
+#  Import PyMh files
 LOG = Logger.getLogger('PyHouse.Thermostat     ')
 
 
@@ -31,7 +31,6 @@ class ReadWriteConfigXml(object):
     def _read_thermostat_base(self, p_thermostat_element):
         l_obj = ThermostatData()
         self.read_base_object_xml(l_obj, p_thermostat_element)
-        l_obj.Key = self.m_count  # Renumber
         l_obj.DeviceType = 2
         return l_obj
 
@@ -65,16 +64,16 @@ class ReadWriteConfigXml(object):
         """
         l_xml_sect = self.setup_xml(p_pyhouse_obj)
         l_ret = {}
-        self.m_count = 0
+        l_count = 0
         try:
             for l_xml in l_xml_sect.iterfind('Thermostat'):
                 l_obj = self._read_one_thermostat_xml(p_pyhouse_obj, l_xml)
-                l_ret[self.m_count] = l_obj
-                self.m_count += 1
+                l_ret[l_count] = l_obj
+                l_count += 1
         except AttributeError as e_err:
             l_msg = 'ReadAllThermostats AttributeError {0:}'.format(e_err)
             LOG.error(l_msg)
-        LOG.info("Loaded {} Thermostats".format(self.m_count))
+        LOG.info("Loaded {} Thermostats".format(l_count))
         return l_ret
 
 
@@ -162,4 +161,4 @@ class API(Utility):
         LOG.info("Saved XML.")
         return l_xml
 
-# ## END DBK
+#  ## END DBK

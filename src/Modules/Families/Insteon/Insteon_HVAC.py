@@ -22,10 +22,11 @@ see: 2441xxx pdf guides
 """
 
 
-# Import system type stuff
+#  Import system type stuff
 
-# Import PyMh files
-from Modules.Utilities import json_tools
+#  Import PyMh files
+from Modules.Computer import logging_pyh as Logger
+LOG = Logger.getLogger('PyHouse.InsteonHVAC    ')
 
 
 class Util(object):
@@ -61,7 +62,8 @@ class ihvac_utility(object):
             p_device_obj.CurrentTemperature = l_cmd2
             l_mqtt_topic += '/temperature'
             l_mqtt_message += ' temp = {}; '.format(l_cmd2)
-        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_mqtt_topic, p_device_obj)  # /temperature
+        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_mqtt_topic, p_device_obj)  #  /temperature
+        LOG.info('HVAC {}'.format(l_mqtt_message))
         return
 
-# ## END DBK
+#  ## END DBK

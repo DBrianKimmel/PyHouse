@@ -8,16 +8,21 @@
 @note:      Created on Feb 18, 2010  Split into separate file Jul 9, 2014
 @license:   MIT License
 @summary:   Handle the all-link database(s) in Insteon devices.
+
+This will maintain the all-link database in all Insteon devices.
+
+Invoked periodically and when any Insteon device changes.
 """
 
-# Import system type stuff
+#  Import system type stuff
 
-# Import PyMh files
-from Modules.Families.Insteon.Insteon_constants import ACK
-# from Modules.Families.Insteon.Insteon_PLM import Utility as plmUtility
-from Modules.Families.Insteon.Insteon_utils import Decode as utilDecode
+#  Import PyMh files
 from Modules.Computer import logging_pyh as Logger
+from Modules.Families.Insteon.Insteon_constants import ACK
+from Modules.Families.Insteon.Insteon_utils import Decode as utilDecode
 
+
+#  from Modules.Families.Insteon.Insteon_PLM import Utility as plmUtility
 LOG = Logger.getLogger('PyHouse.Insteon_Link   ')
 
 
@@ -26,8 +31,9 @@ class LinkData(object):
     """
 
     def __init__(self):
-        self.InsteonAddess = 12345
-        self.Data = '00.00.00'
+        self.Addess = 12345  #  3 bytes
+        self.Control = 0x0000  #  2 Bytes
+        self.Data = '00.00.00'  #  3 bytes
         self.Flag = 0xC2
         self.Group = 0
 
@@ -42,8 +48,8 @@ class Send(object):
         See p 247(260) of 2007 developers guide.
         """
         LOG.info("Command to get Next all-link record (6A).")
-        # l_command = plmUtility._create_command_message('plm_next_all_link')
-        # plmUtility._queue_command(p_controller_obj, l_command)
+        #  l_command = plmUtility._create_command_message('plm_next_all_link')
+        #  plmUtility._queue_command(p_controller_obj, l_command)
 
 
 class Decode(object):
@@ -189,4 +195,4 @@ class API(object):
     """
 
 
-# ## END DBK
+#  ## END DBK

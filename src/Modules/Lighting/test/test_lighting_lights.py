@@ -26,11 +26,11 @@ from Modules.Lighting.test.xml_lights import \
         TESTING_LIGHTING_LIGHTS_NAME_1, \
         TESTING_LIGHTING_TYPE
 from Modules.Families.Insteon.test.xml_insteon import \
-        TESTING_INSTEON_ADDRESS, \
-        TESTING_INSTEON_DEVCAT, \
-        TESTING_INSTEON_GROUP_LIST, \
-        TESTING_INSTEON_GROUP_NUM, \
-        TESTING_INSTEON_PRODUCT_KEY
+        TESTING_INSTEON_ADDRESS_0, \
+        TESTING_INSTEON_DEVCAT_0, \
+        TESTING_INSTEON_GROUP_LIST_0, \
+        TESTING_INSTEON_GROUP_NUM_0, \
+        TESTING_INSTEON_PRODUCT_KEY_0
 from Modules.Core.test.xml_device import TESTING_DEVICE_COMMENT, TESTING_DEVICE_FAMILY_INSTEON, \
         TESTING_DEVICE_ROOM_NAME, \
         TESTING_DEVICE_UUID, \
@@ -138,7 +138,7 @@ class R1_Read(SetupMixin, unittest.TestCase):
         """
         l_obj = Utility._read_base_device(self.m_xml.light, self.m_version)
         Utility._read_family_data(self.m_pyhouse_obj, l_obj, self.m_xml.light, self.m_version)
-        self.assertEqual(l_obj.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS))
+        self.assertEqual(l_obj.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
 
     def test_04_OneLight(self):
         """ Read everything about one light.
@@ -152,7 +152,7 @@ class R1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_obj.RoomName, TESTING_DEVICE_ROOM_NAME)
         self.assertEqual(l_obj.LightingType, 'Light')
-        self.assertEqual(l_obj.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS))
+        self.assertEqual(l_obj.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
         self.assertEqual(l_obj.RoomCoords.X_Easting, float(TESTING_DEVICE_ROOM_X))
 
     def test_05_AllLights(self):
@@ -201,11 +201,11 @@ class W1_Write(SetupMixin, unittest.TestCase):
         l_xml = Utility._write_base_device('Light', l_obj)
         Utility._write_light_data(l_obj, l_xml)
         Utility._write_family_data(self.m_pyhouse_obj, l_obj, l_xml)
-        self.assertEqual(l_xml.find('Address').text, TESTING_INSTEON_ADDRESS)
-        self.assertEqual(l_xml.find('DevCat').text, TESTING_INSTEON_DEVCAT)
-        self.assertEqual(l_xml.find('GroupList').text, TESTING_INSTEON_GROUP_LIST)
-        self.assertEqual(l_xml.find('GroupNumber').text, TESTING_INSTEON_GROUP_NUM)
-        self.assertEqual(l_xml.find('ProductKey').text, TESTING_INSTEON_PRODUCT_KEY)
+        self.assertEqual(l_xml.find('Address').text, TESTING_INSTEON_ADDRESS_0)
+        self.assertEqual(l_xml.find('DevCat').text, TESTING_INSTEON_DEVCAT_0)
+        self.assertEqual(l_xml.find('GroupList').text, TESTING_INSTEON_GROUP_LIST_0)
+        self.assertEqual(l_xml.find('GroupNumber').text, TESTING_INSTEON_GROUP_NUM_0)
+        self.assertEqual(l_xml.find('ProductKey').text, TESTING_INSTEON_PRODUCT_KEY_0)
 
     def test_04_OneLight(self):
         """ Write out the XML file for the location section
@@ -224,11 +224,11 @@ class W1_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.find('UUID').text, TESTING_DEVICE_UUID)
         self.assertEqual(l_xml.find('CurLevel').text, TESTING_LIGHTING_LIGHT_CUR_LEVEL)
         self.assertEqual(l_xml.find('IsDimmable').text, TESTING_LIGHT_DIMMABLE)
-        self.assertEqual(l_xml.find('Address').text, TESTING_INSTEON_ADDRESS)
-        self.assertEqual(l_xml.find('DevCat').text, TESTING_INSTEON_DEVCAT)
-        self.assertEqual(l_xml.find('GroupList').text, TESTING_INSTEON_GROUP_LIST)
-        self.assertEqual(l_xml.find('GroupNumber').text, TESTING_INSTEON_GROUP_NUM)
-        self.assertEqual(l_xml.find('ProductKey').text, TESTING_INSTEON_PRODUCT_KEY)
+        self.assertEqual(l_xml.find('Address').text, TESTING_INSTEON_ADDRESS_0)
+        self.assertEqual(l_xml.find('DevCat').text, TESTING_INSTEON_DEVCAT_0)
+        self.assertEqual(l_xml.find('GroupList').text, TESTING_INSTEON_GROUP_LIST_0)
+        self.assertEqual(l_xml.find('GroupNumber').text, TESTING_INSTEON_GROUP_NUM_0)
+        self.assertEqual(l_xml.find('ProductKey').text, TESTING_INSTEON_PRODUCT_KEY_0)
 
     def test_05_AllLights(self):
         l_objs = lightsAPI.read_all_lights_xml(self.m_pyhouse_obj, self.m_xml.light_sect, self.m_version)

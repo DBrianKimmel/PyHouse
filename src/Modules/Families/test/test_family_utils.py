@@ -26,9 +26,9 @@ from test.testing_mixin import SetupPyHouseObj
 from Modules.Lighting.test.xml_lights import \
         TESTING_LIGHTING_LIGHTS_NAME_1
 from Modules.Families.Insteon.test.xml_insteon import \
-        TESTING_INSTEON_PRODUCT_KEY, \
-        TESTING_INSTEON_ADDRESS, \
-        TESTING_INSTEON_DEVCAT
+        TESTING_INSTEON_PRODUCT_KEY_0, \
+        TESTING_INSTEON_ADDRESS_0, \
+        TESTING_INSTEON_DEVCAT_0
 from Modules.Core.test.xml_device import \
         TESTING_DEVICE_ROOM_NAME, \
         TESTING_DEVICE_FAMILY_INSTEON
@@ -138,7 +138,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         l_device = self.m_device_obj
         l_light = FamUtil.read_family_data(self.m_pyhouse_obj, l_device, l_xml)
         # print(PrettyFormatAny.form(l_light, 'Light'))
-        self.assertEqual(l_light.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS))
+        self.assertEqual(l_light.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
 
     def test_05_Light(self):
         """ Did we get everything set up for the rest of the tests of this class.
@@ -159,9 +159,9 @@ class C1_Read(SetupMixin, unittest.TestCase):
         FamUtil.read_family_data(self.m_pyhouse_obj, l_light, l_xml)
         self.assertEqual(l_light.Name, TESTING_LIGHTING_LIGHTS_NAME_1)
         self.assertEqual(l_light.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
-        self.assertEqual(l_light.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS))
-        self.assertEqual(l_light.DevCat, conversions.dotted_hex2int(TESTING_INSTEON_DEVCAT))
-        self.assertEqual(conversions.int2dotted_hex(l_light.ProductKey, 3), TESTING_INSTEON_PRODUCT_KEY)
+        self.assertEqual(l_light.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
+        self.assertEqual(l_light.DevCat, conversions.dotted_hex2int(TESTING_INSTEON_DEVCAT_0))
+        self.assertEqual(conversions.int2dotted_hex(l_light.ProductKey, 3), TESTING_INSTEON_PRODUCT_KEY_0)
 
 
 class D1_Write(SetupMixin, unittest.TestCase):
@@ -188,6 +188,6 @@ class D1_Write(SetupMixin, unittest.TestCase):
         FamUtil.write_family_data(self.m_pyhouse_obj, l_out_xml, l_light)
         self.assertEqual(l_light.Name, TESTING_LIGHTING_LIGHTS_NAME_1)
         self.assertEqual(l_light.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
-        self.assertEqual(l_light.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS))
+        self.assertEqual(l_light.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
 
 # ## END DBK

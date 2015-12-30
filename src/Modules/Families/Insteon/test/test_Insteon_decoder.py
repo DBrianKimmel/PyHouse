@@ -9,20 +9,29 @@
 
 Passed all 7 tests - DBK - 2015-07-29
 
+This test needs the lighting controller data so it must be loaded,
+also Light data and Thermostat data.
 """
 
-# Import system type stuff
+#  Import system type stuff
+from Modules.Core.data_objects import ControllerData
+from Modules.Families.Insteon import Insteon_decoder
+from Modules.Families.family import API as familyAPI
+from Modules.Hvac.hvac_xml import XML as hvacXML
+from Modules.Lighting.lighting_controllers import API as controllerAPI
+from Modules.Lighting.lighting_lights import API as lightsAPI
+from Modules.Lighting.test.xml_controllers import TESTING_CONTROLLER_NAME_0
+from Modules.Utilities.debug_tools import PrettyFormatAny
+from test.testing_mixin import SetupPyHouseObj
+from test.xml_data import XML_LONG
 from twisted.trial import unittest
 import xml.etree.ElementTree as ET
 
-# Import PyMh files
-from Modules.Core.data_objects import ControllerData
-from Modules.Families.Insteon import Insteon_decoder
-from Modules.Lighting.lighting_lights import API as lightsAPI
-from test.xml_data import XML_LONG
-from test.testing_mixin import SetupPyHouseObj
 
+
+#  Import PyMh files
 MSG_50 = bytearray(b'\x02\x50\x16\xc9\xd0\x1b\x47\x81\x27\x09\x00')
+MSG_50T = bytearray(b'\x02\x50\x16\xc9\xd0\x1b\x47\x81\x27\x6e\x4f')
 MSG_62 = bytearray(b'\x02\x62\x17\xc2\x72\x0f\x19\x00\x06')
 MSG_99 = bytearray(b'\x02\x99')
 
@@ -31,70 +40,85 @@ class SetupMixin(object):
 
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
-        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_version = '1.4.0'
+        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+        self.m_pyhouse_obj.House.FamilyData = familyAPI(
+                            self.m_pyhouse_obj).LoadFamilyTesting()
+        self.m_pyhouse_obj.House.Controllers = controllerAPI().read_all_controllers_xml(
+                            self.m_pyhouse_obj, self.m_xml.controller_sect, self.m_version)
+        self.m_pyhouse_obj.House.Lights = lightsAPI.read_all_lights_xml(
+                            self.m_pyhouse_obj, self.m_xml.controller_sect, self.m_version)
+        self.m_pyhouse_obj.House.Hvac = hvacXML.read_hvac_xml(
+                            self.m_pyhouse_obj)
 
 
 class A1_Setup(SetupMixin, unittest.TestCase):
+    """Test that the Setup and the XML is correct for this test module.
+    """
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        # self.m_pyhouse_obj.House.FamilyData = family.API(self.m_pyhouse_obj).build_lighting_family_info()
-        # self.m_pyhouse_obj.House.Controllers = controllerAPI(self.m_pyhouse_obj).read_all_controllers_xml(self.m_xml.controller_sect)
-        self.m_pyhouse_obj.House.Lights = lightsAPI.read_all_lights_xml(self.m_pyhouse_obj, self.m_xml.controller_sect, self.m_version)
 
     def test_01_PyHouse(self):
+        """Test that PyHouse_obj has the needed info.
+        """
+        #  print(PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse'))
         self.assertEqual(self.m_pyhouse_obj.Xml.XmlFileName, '/etc/pyhouse/master.xml')
-        pass
 
     def test_02_House(self):
-        # l_house = self.m_pyhouse_obj.House
+        #  print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'PyHouse.House'))
         pass
 
-    def test_03_Device(self):
-        # l_house = self.m_pyhouse_obj.House
-        pass
-
-    def test_04_Refs(self):
-        # l_house = self.m_pyhouse_obj.House
-        pass
+    def test_03_Controller(self):
+        l_ctlr = self.m_pyhouse_obj.House.Controllers[0]
+        #  print(PrettyFormatAny.form(l_ctlr, 'PyHouse.House.Controllers[0]'))
+        self.assertEqual(l_ctlr.Name, TESTING_CONTROLLER_NAME_0)
 
 
 class C1_Util(SetupMixin, unittest.TestCase):
+    """This tests the utility section of decoding
+    """
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_ctrlr = ControllerData()
-        # self.m_util = Insteon_decoder.D_Util
 
-
-    # def test_01_Drop1st(self):
-    #    self.m_ctrlr._Message = bytearray(b'\x04')
-    #    self.m_util._drop_first_byte(self.m_ctrlr)
-    #    self.assertEqual(len(self.m_ctrlr._Message), 0)
+    def test_01_GetObjFromMsg(self):
+        self.m_ctrlr._Message = MSG_50
+        l_ctlr = self.m_pyhouse_obj.House.Controllers[0]
+        print(PrettyFormatAny.form(l_ctlr, 'C1-01 Controller'))
 
     def test_02_NextMsg(self):
         self.m_ctrlr._Message = MSG_50
-        # l_msg = self.m_util.get_next_message(self.m_ctrlr)
-        # print(PrintBytes(l_msg))
-        # self.assertEqual(l_msg[1], 0x50)
-        # self.m_ctrlr._Message = bytearray()
-        # l_msg = self.m_util.get_next_message(self.m_ctrlr)
-        # self.assertEqual(l_msg, None)
-        # self.m_ctrlr._Message = MSG_62 + MSG_50
-        # l_msg = self.m_util.get_next_message(self.m_ctrlr)
-        # print('Msg {}'.format(PrintBytes(l_msg)))
-        # print('remaning: {}'.format(PrintBytes(self.m_ctrlr._Message)))
-        # self.assertEqual(l_msg[1], 0x62)
+        #  l_msg = self.m_util.get_next_message(self.m_ctrlr)
+        #  print(PrintBytes(l_msg))
+        #  self.assertEqual(l_msg[1], 0x50)
+        #  self.m_ctrlr._Message = bytearray()
+        #  l_msg = self.m_util.get_next_message(self.m_ctrlr)
+        #  self.assertEqual(l_msg, None)
+        #  self.m_ctrlr._Message = MSG_62 + MSG_50
+        #  l_msg = self.m_util.get_next_message(self.m_ctrlr)
+        #  print('Msg {}'.format(PrintBytes(l_msg)))
+        #  print('remaning: {}'.format(PrintBytes(self.m_ctrlr._Message)))
+        #  self.assertEqual(l_msg[1], 0x62)
         self.assertEqual(self.m_ctrlr._Message[1], 0x50)
 
-    def test_03_GetObjFromMsg(self):
-        pass
 
+class T1_HVAC(SetupMixin, unittest.TestCase):
 
-def suite():
-    suite = unittest.TestSuite()
-    # suite.addTest(C01('test_01_FindAddress'))
-    return suite
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_ctrlr = self.m_pyhouse_obj.House
+        #  print(PrettyFormatAny.form(self.m_ctrlr, "Controlelrs"))
+        self.m_ctrlr = self.m_pyhouse_obj.House.Controllers[0]
+        #  print(PrettyFormatAny.form(self.m_ctrlr, "Controlelrs"))
+        self.m_decode = Insteon_decoder.DecodeResponses(self.m_pyhouse_obj, self.m_ctrlr)
 
-# ## END DBK
+    def test_01_x(self):
+        self.m_ctrlr._Message = MSG_50T
+        self.m_pyhouse_obj.House.Controllers[0]
+        self.m_decode.decode_message(self.m_ctrlr)
+        print(PrettyFormatAny.form(self.m_ctrlr, "Controller"))
+        self.assertEqual(len(self.m_ctrlr._Message), 0)
+
+#  ## END DBK

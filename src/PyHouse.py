@@ -64,20 +64,21 @@ __copyright__ = "(c) 2010-2015 by D. Brian Kimmel"
 __version_info__ = (1, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
-# Import system type stuff
+#  Import system type stuff
 import errno
 import os
 import platform
 import signal
-from twisted.internet import reactor
 from twisted.application.service import Application
+from twisted.internet import reactor
 
-# Import PyMh files and modules.
-from Modules.Core.data_objects import PyHouseData, PyHouseAPIs
-from Modules.Core.data_objects import CoreServicesInformation, TwistedInformation, XmlInformation
-from Modules.Core import setup_pyhouse
 from Modules.Computer import logging_pyh as Logger
+from Modules.Core import setup_pyhouse
+from Modules.Core.data_objects import CoreServicesInformation, TwistedInformation, XmlInformation
+from Modules.Core.data_objects import PyHouseData, PyHouseAPIs
 
+
+#  Import PyMh files and modules.
 g_API = None
 LOG = Logger.getLogger('PyHouse                ')
 
@@ -85,11 +86,11 @@ LOG = Logger.getLogger('PyHouse                ')
 def daemonize():
     """Taken from twisted.scripts._twistd_unix.py
     """
-    if os.fork():  # launch child and...
-        os._exit(0)  # kill off parent
+    if os.fork():  #  launch child and...
+        os._exit(0)  #  kill off parent
     os.setsid()
-    if os.fork():  # launch child and...
-        os._exit(0)  # kill off parent again.
+    if os.fork():  #  launch child and...
+        os._exit(0)  #  kill off parent again.
     os.umask(127)
     null = os.open('/dev/null', os.O_RDWR)
     for i in range(3):
@@ -127,7 +128,6 @@ def SigIntHandler(signum, _stackframe):
     """
     LOG.debug('SigInt - Signal handler called with signal {}'.format(signum))
     LOG.info("Interrupted.\n\n\n")
-    g_API.Stop()
     g_API.Quit()
     exit
 
@@ -144,8 +144,8 @@ class Utilities(object):
     """
 
     @staticmethod
-    def do_setup_stuff():
-        if platform.uname()[0] != 'Windows':
+    def do_setup_stuff(p_self):
+        if platform.uname()[0] == 'Windows':
             from Modules.Core import setup_windows
             pass
         else:
@@ -179,14 +179,14 @@ class API(object):
         """
         global g_API
         g_API = self
-        Utilities.do_setup_stuff()
+        Utilities.do_setup_stuff(self)
         p_pyhouse_obj = Utilities._create_pyhouse_obj()
         self.m_pyhouse_obj = p_pyhouse_obj
-        print('PyHouse.API()')  # For development - so we  an see when we get to this point...
+        print('PyHouse.API()')  #  For development - so we  an see when we get to this point...
         p_pyhouse_obj.APIs.PyHouseMainAPI = self
         p_pyhouse_obj.APIs.CoreSetupAPI = setup_pyhouse.API(p_pyhouse_obj)
         p_pyhouse_obj.Twisted.Reactor.callWhenRunning(self.Start)
-        p_pyhouse_obj.Twisted.Reactor.run()  # reactor never returns so must be last - Event loop will now run
+        p_pyhouse_obj.Twisted.Reactor.run()  #  reactor never returns so must be last - Event loop will now run
         #
         #  When the reactor stops we continue here
         #
@@ -222,4 +222,4 @@ class API(object):
 if __name__ == "__main__":
     API()
 
-# ## END DBK
+#  ## END DBK

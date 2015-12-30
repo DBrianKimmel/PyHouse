@@ -11,16 +11,16 @@
 
 """
 
-# Import system type stuff
-import uuid
-from xml.etree import ElementTree as ET
-import dateutil.parser as dparser
-
-# Import PyMh files
+#  Import system type stuff
+from Modules.Computer import logging_pyh as Logger
 from Modules.Core.data_objects import CoordinateData
 from Modules.Utilities import convert
-from Modules.Computer import logging_pyh as Logger
-# from formless.annotate import String
+from xml.etree import ElementTree as ET
+import dateutil.parser as dparser
+import uuid
+
+#  Import PyMh files
+#  from formless.annotate import String
 
 LOG = Logger.getLogger('PyHouse.XmlTools       ')
 
@@ -45,7 +45,7 @@ class XML(object):
 
     @staticmethod
     def get_any_field(p_xml, p_name):
-        if p_xml == None:  # We were passed XML without a tag of p_name
+        if p_xml == None:  #  We were passed XML without a tag of p_name
             return None
         l_xml = XML.get_element_field(p_xml, p_name)
         if l_xml == None:
@@ -62,7 +62,7 @@ class PutGetXML(object):
     Try to be safe if a user edits (and screws up) the XML file.
     """
 #-----
-# Bool
+#  Bool
 #-----
     @staticmethod
     def get_bool_from_xml(p_xml, p_name, _default = False):
@@ -98,7 +98,7 @@ class PutGetXML(object):
         ET.SubElement(p_parent_xml, p_name).text = l_bool
 
 #-----
-# float
+#  float
 #-----
     @staticmethod
     def get_float_from_xml(p_xml, p_name, p_default = 0.0):
@@ -107,7 +107,7 @@ class PutGetXML(object):
             l_var = float(l_xml)
         except (ValueError, TypeError):
             l_var = float(p_default)
-            LOG.warning('invalid  float found for:{} - {}=>0.0'.format(p_name, l_xml))
+            LOG.warning('invalid float: {}; {}=>0.0'.format(p_name, l_xml))
         return l_var
 
     @staticmethod
@@ -127,7 +127,7 @@ class PutGetXML(object):
         ET.SubElement(p_parent_element, p_name).text = l_var
 
 #-----
-# int
+#  int
 #-----
     @staticmethod
     def get_int_from_xml(p_xml, p_name, default = 0):
@@ -138,7 +138,7 @@ class PutGetXML(object):
             l_var = int(l_xml)
         except (ValueError, TypeError):
             l_var = int(default)
-            # LOG.warning('Invalid Int found for:{} - {}=>False'.format(p_name, l_xml))
+            #  LOG.warning('Invalid Int found for:{} - {}=>False'.format(p_name, l_xml))
         return l_var
 
     @staticmethod
@@ -159,7 +159,7 @@ class PutGetXML(object):
         ET.SubElement(p_parent_element, p_name).text = l_var
 
 #-----
-# text
+#  text
 #-----
     @staticmethod
     def get_text_from_xml(p_xml, p_name, default = None):
@@ -199,7 +199,7 @@ class PutGetXML(object):
         ET.SubElement(p_parent_element, p_name).text = l_var
 
 #-----
-# UUID
+#  UUID
 #-----
     @staticmethod
     def get_uuid_from_xml(p_xml, p_name):
@@ -228,7 +228,7 @@ class PutGetXML(object):
 
 
 #-----
-# IP
+#  IP
 #-----
     @staticmethod
     def get_ip_from_xml(p_xml, p_name):
@@ -245,7 +245,7 @@ class PutGetXML(object):
         pass
 
 #-----
-# DateTime
+#  DateTime
 #-----
     @staticmethod
     def get_date_time_from_xml(p_xml, p_name):
@@ -258,7 +258,7 @@ class PutGetXML(object):
         pass
 
 #-----
-# Coords
+#  Coords
 #-----
     @staticmethod
     def get_coords_from_xml(p_xml, p_name):
@@ -269,7 +269,7 @@ class PutGetXML(object):
             return l_flt
         l_ret = CoordinateData()
         l_raw = XML.get_any_field(p_xml, p_name)
-        # LOG.info('Name:{};  Field:{}'.format(p_name, l_raw))
+        #  LOG.info('Name:{};  Field:{}'.format(p_name, l_raw))
         try:
             l_raw = str.strip(l_raw, ' []')
             l_field = str.split(l_raw, ',')
@@ -360,4 +360,4 @@ def XXXstuff_new_attr_values(p_target_obj, p_data_obj):
         if not hasattr(p_target_obj, l_attr):
             setattr(p_target_obj, l_attr, getattr(p_data_obj, l_attr))
 
-# ## END
+#  ## END

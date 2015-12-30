@@ -11,19 +11,20 @@
 
 """
 
-# Import system type stuff
+#  Import system type stuff
 
-# Import PyMh files
+#  Import PyMh files
 
 
 class InsteonData(object):
     def __init__(self):
-        self.DevCat = 0  # DevCat and SubCat (2 bytes)
+        self.DevCat = 0  #  DevCat and SubCat (2 bytes)
         self.EngineVersion = 0
         self.GroupList = ''
         self.GroupNumber = 0
-        self.InsteonAddress = 0  # Long integer internally - '1A.B3.3C' for external reaability
+        self.InsteonAddress = 0  #  Long integer internally - '1A.B3.3C' for external reaability
         self.ProductKey = ''
-        self.Version = '1'  # the version of this data object.
+        self.Version = '2'  #  the version of this data object.
+        self.Links = {}
 
-# ## END DBK
+#  ## END DBK

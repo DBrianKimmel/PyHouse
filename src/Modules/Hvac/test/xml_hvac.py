@@ -9,9 +9,9 @@
 
 """
 
-# Import system type stuff
+#  Import system type stuff
 
-# Import PyMh files
+#  Import PyMh files
 from Modules.Core.test.xml_device import XML_DEVICE_INSTEON
 from Modules.Families.Insteon.test.xml_insteon import XML_INSTEON
 
@@ -48,14 +48,14 @@ L_THERMOSTAT_MODE_0 = '            <ThermostatMode>' + TESTING_THERMOSTAT_MODE_0
 L_THERMOSTAT_SCALE_0 = '            <ThermostatScale>' + TESTING_THERMOSTAT_SCALE_0 + '</ThermostatScale>'
 L_THERMOSTAT_CURRENT_TEMP_0 = '            <CurrentTemperature>' + TESTING_THERMOSTAT_CURRENT_TEMP_0 + '</CurrentTemperature>'
 
-L_THERMOSTAT_SETTINGS = '\n'.join([
+L_THERMOSTAT_SETTINGS_0 = '\n'.join([
     L_THERMOSTAT_COOL_SETPOINT_0,
     L_THERMOSTAT_HEAT_SETPOINT_0,
     L_THERMOSTAT_MODE_0,
     L_THERMOSTAT_SCALE_0
     ])
 
-L_THERMOSTAT_STATUS = '\n'.join([
+L_THERMOSTAT_STATUS_0 = '\n'.join([
     L_THERMOSTAT_CURRENT_TEMP_0
 ])
 
@@ -63,8 +63,8 @@ XML_INSTEON_THERMOSTAT_0 = '\n'.join([
     L_THERMOSTAT_START_0,
     '              <!-- ABC -->',
     XML_DEVICE_INSTEON,
-    L_THERMOSTAT_SETTINGS,
-    L_THERMOSTAT_STATUS,
+    L_THERMOSTAT_SETTINGS_0,
+    L_THERMOSTAT_STATUS_0,
     XML_INSTEON,
     L_THERMOSTAT_END
 ])
@@ -113,4 +113,4 @@ THERMOSTAT_XSD = """"
 
 </xs:schema>"""
 
-# ## END DBK
+#  ## END DBK

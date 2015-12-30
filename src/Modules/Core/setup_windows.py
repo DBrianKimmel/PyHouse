@@ -7,7 +7,23 @@
 @note:      Created on Oct 21, 2015
 @Summary:
 
+This is not really used - here for symmetery in case someone feels like making a windows version
+
 """
 
+#  Import system type stuff
+import platform
 
-# ## END DBK
+#  Import PyMh files and modules.
+from Modules.Computer import logging_pyh as Logger
+LOG = Logger.getLogger('PyHouse.WindowsSetup   ')
+
+
+class Windows(object):
+    """
+    """
+
+    def __init__(self):
+        pass
+
+#  ## END DBK

@@ -26,7 +26,7 @@ from Modules.Lighting.test.xml_buttons import \
 from Modules.Families.family import API as familyAPI
 from Modules.Core import conversions
 from test.xml_data import XML_LONG
-from Modules.Families.Insteon.test.xml_insteon import TESTING_INSTEON_ADDRESS
+from Modules.Families.Insteon.test.xml_insteon import TESTING_INSTEON_ADDRESS_0
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities import json_tools
 
@@ -92,7 +92,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_button.Name, TESTING_LIGHTING_BUTTON_NAME_1)
         self.assertEqual(l_button.DeviceFamily, 'Insteon', 'Bad Lighting family')
         self.assertEqual(l_button.LightingType, 'Button', 'Bad LightingType')
-        self.assertEqual(l_button.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS))
+        self.assertEqual(l_button.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
 
     def test_03_ReadAllButtonsXml(self):
         l_buttons = self.m_api.read_all_buttons_xml(self.m_pyhouse_obj, self.m_xml.button_sect, self.m_version)

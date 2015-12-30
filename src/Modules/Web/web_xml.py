@@ -12,16 +12,16 @@
 """
 
 
-# Import system type stuff
+#  Import system type stuff
+from Modules.Computer import logging_pyh as Logger
+from Modules.Core.data_objects import LoginData, WebData
+from Modules.Core.setup_logging import l_observer
+from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
 import xml.etree.ElementTree as ET
 
-# Import PyMh files and modules.
-from Modules.Core.data_objects import LoginData, WebData
-from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
-from Modules.Computer import logging_pyh as Logger
-from Modules.Utilities.debug_tools import PrettyFormatAny
-from Modules.Core.setup_logging import l_observer
 
+#  Import PyMh files and modules.
 LOG = Logger.getLogger('PyHouse.WebXml         ')
 
 
@@ -95,7 +95,7 @@ class Xml(object):
         try:
             for l_log_xml in l_xml.iterfind('Login'):
                 l_obj = Xml._read_one_login(l_log_xml)
-                LOG.debug('  Reading {}'.format(l_obj.Name))
+                #  LOG.debug('  Reading {}'.format(l_obj.Name))
                 l_dict[l_count] = l_obj
                 l_count += 1
         except:
@@ -138,7 +138,7 @@ class Xml(object):
         except Exception as e_err:
             LOG.error('ERROR reading web : {}'.format(e_err))
             l_xml = None
-            l_login_xml = None
+            #  l_login_xml = None
             l_count = 0
         if l_xml == None:
             l_obj.WebPort = 8580
@@ -154,11 +154,11 @@ class Xml(object):
         @return: the WebSection XNL element tree
         """
         l_obj = p_pyhouse_obj.Computer.Web
-        # print(PrettyFormatAny.form(l_obj, 'Obj'))
+        #  print(PrettyFormatAny.form(l_obj, 'Obj'))
         l_web_xml = ET.Element("WebSection")
         Xml._write_port(l_obj, l_web_xml)
         l_xml = Xml._write_all_logins(l_obj.Logins)
         l_web_xml.append(l_xml)
         return l_web_xml
 
-# ## END DBK
+#  ## END DBK

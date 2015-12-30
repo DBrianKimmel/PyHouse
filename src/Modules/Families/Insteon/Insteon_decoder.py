@@ -24,21 +24,21 @@ PLEASE REFACTOR ME!
 
 """
 
-# Import system type stuff
+#  Import system type stuff
 
-# Import PyMh files
-from Modules.Families.Insteon.Insteon_constants import ACK, MESSAGE_TYPES, NAK, STX
+#  Import PyMh files
+from Modules.Computer import logging_pyh as Logger
 from Modules.Families.Insteon import Insteon_HVAC
 from Modules.Families.Insteon.Insteon_Link import Decode as linkDecode
+from Modules.Families.Insteon.Insteon_constants import ACK, MESSAGE_TYPES, STX
 from Modules.Families.Insteon.Insteon_utils import Decode as utilDecode, Util as utilUtil
-from Modules.Utilities import json_tools
-from Modules.Utilities.tools import PrintBytes
-from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Utilities.tools import PrintBytes
+
 
 LOG = Logger.getLogger('PyHouse.Insteon_decode ')
 
-# OBJ_LIST = [Lights, Controllers, Buttons, Thermostats, Irrigation, Pool]
+#  OBJ_LIST = [Lights, Controllers, Buttons, Thermostats, Irrigation, Pool]
 
 
 class DecodeResponses(object):
@@ -61,17 +61,17 @@ class DecodeResponses(object):
 
         @return: a flag that is True for ACK and False for NAK/Invalid response.
         """
-        # LOG.info('Message = {}'.format(PrintBytes(p_controller_obj._Message)))
+        LOG.info('Message = {}'.format(PrintBytes(p_controller_obj._Message)))
         while len(p_controller_obj._Message) >= 2:
             l_stx = p_controller_obj._Message[0]
             if l_stx == STX:
-                # LOG.info("{}".format(PrintBytes(p_controller_obj._Message)))
+                #  LOG.info("{}".format(PrintBytes(p_controller_obj._Message)))
                 l_need_len = utilUtil.get_message_length(p_controller_obj._Message)
                 l_cur_len = len(p_controller_obj._Message)
                 if l_cur_len >= l_need_len:
                     self._decode_dispatch(p_controller_obj)
                 else:
-                    # LOG.warning('Message was too short - waiting for rest of message.')
+                    #  LOG.warning('Message was too short - waiting for rest of message.')
                     return
             else:
                 utilDecode.drop_first_byte(p_controller_obj)
@@ -133,7 +133,7 @@ class DecodeResponses(object):
 
     def _publish(self, p_pyhouse_obj, p_device_obj):
         l_topic = "lighting/{}/info".format(p_device_obj.Name)
-        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_device_obj)  # /lighting/{}/info
+        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_device_obj)  #  /lighting/{}/info
 
     def _decode_50_record(self, p_controller_obj):
         """ Insteon Standard Message Received (11 bytes)
@@ -149,48 +149,49 @@ class DecodeResponses(object):
         """
         l_message = p_controller_obj._Message
         l_device_obj = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_message[2:5])
-        print(PrettyFormatAny.form(l_device_obj, 'Device'))
         l_flags = utilDecode._decode_message_flag(l_message[8])
         l_cmd1 = l_message[9]
         l_cmd2 = l_message[10]
         l_data = [l_cmd1, l_cmd2]
+        print(PrettyFormatAny.form(l_device_obj, 'Insteon_decoder 156 - Device'))
         if l_device_obj.DeviceType == 2:
             Insteon_HVAC.ihvac_utility().decode_50_record(self.m_pyhouse_obj, l_device_obj, p_controller_obj)
             return self.check_for_more_decoding(p_controller_obj, True)
         l_debug_msg = 'Standard Message from: {}; Flags:{}; Cmd1:{:#x}, Cmd2:{:#x}; '.format(l_device_obj.Name, l_flags, l_cmd1, l_cmd2)
-        # Break down bits 7(msb), 6, 5 into message type
-        if l_message[8] & 0xE0 == 0x80:  # Broadcast/NAK Message (100)
+        #  Break down bits 7(msb), 6, 5 into message type
+        if l_message[8] & 0xE0 == 0x80:  #  Broadcast/NAK Message (100)
             l_debug_msg += utilDecode._devcat(l_message[5:7], l_device_obj)
-        elif l_message[8] & 0xE0 == 0xC0:  # (110) all link broadcast of group id
+        elif l_message[8] & 0xE0 == 0xC0:  #  (110) all link broadcast of group id
             l_group = l_message[7]
             l_debug_msg += "All-Link broadcast - Group:{}, Data:{}; ".format(l_group, l_data)
             LOG.info("== 50B All-link Broadcast Group:{}, Data:{} ==".format(l_group, l_data))
         #
         try:
-            if l_cmd1 == MESSAGE_TYPES['product_data_request']:  # 0x03
+            if l_cmd1 == MESSAGE_TYPES['product_data_request']:  #  0x03
                 l_debug_msg += " product data request. - Should never happen - S/B 51 response"
-            elif l_cmd1 == MESSAGE_TYPES['engine_version']:  # 0x0D
+            elif l_cmd1 == MESSAGE_TYPES['engine_version']:  #  0x0D
                 l_engine_id = l_cmd2
                 l_device_obj.EngineVersion = l_engine_id
                 l_debug_msg += "Engine version is: {}; ".format(l_engine_id)
                 self._publish(self.m_pyhouse_obj, l_device_obj)
-            elif l_cmd1 == MESSAGE_TYPES['id_request']:  # 0x10
+            elif l_cmd1 == MESSAGE_TYPES['id_request']:  #  0x10
                 l_debug_msg += "Request ID From:{}; ".format(l_device_obj.Name)
-                # LOG.info("Got an ID request. Light:{}".format(l_device_obj.Name,))
-            elif l_cmd1 == MESSAGE_TYPES['on']:  # 0x11
+                #  LOG.info("Got an ID request. Light:{}".format(l_device_obj.Name,))
+            elif l_cmd1 == MESSAGE_TYPES['on']:  #  0x11
                 l_device_obj.CurLevel = 100
                 l_debug_msg += "Device:{} turned Full ON  ; ".format(l_device_obj.Name)
                 self._publish(self.m_pyhouse_obj, l_device_obj)
-            elif l_cmd1 == MESSAGE_TYPES['off']:  # 0x13
+            elif l_cmd1 == MESSAGE_TYPES['off']:  #  0x13
                 l_device_obj.CurLevel = 0
                 l_debug_msg += "Light:{} turned Full OFF; ".format(l_device_obj.Name)
                 self._publish(self.m_pyhouse_obj, l_device_obj)
-            elif l_cmd1 == MESSAGE_TYPES['status_request']:  # 0x19
+            elif l_cmd1 == MESSAGE_TYPES['status_request']:  #  0x19
                 l_level = int(((l_cmd2 + 2) * 100) / 256)
                 l_device_obj.CurLevel = l_level
                 l_debug_msg += "Status of light:{} is level:{}; ".format(l_device_obj.Name, l_level)
                 LOG.info("PLM:{} Got Light Status From:{}, Level is:{} ".format(p_controller_obj.Name, l_device_obj.Name, l_level))
-            elif l_cmd1 == MESSAGE_TYPES['thermostat_report']:  # 0x6e
+
+            elif l_cmd1 >= MESSAGE_TYPES['thermostat_temp_up'] and l_cmd1 <= MESSAGE_TYPES['thermostat_report']:  #  0x6e
                 _l_ret1 = Insteon_HVAC.ihvac_utility().decode_50_record(l_device_obj, l_cmd1, l_cmd2)
                 pass
 
@@ -200,12 +201,13 @@ class DecodeResponses(object):
                 l_debug_msg += ' Controller Set Button Pressed '
             else:
                 l_debug_msg += " Unknown type - last command was {} - {}; ".format(l_device_obj._Command1, PrintBytes(l_message))
-        except AttributeError:
-            pass
+                LOG.warn('Decoding 50 tyoe {}'.format(l_debug_msg))
+        except AttributeError as e_err:
+            LOG.error('ERROR decoding 50 record {}'.format(e_err))
         l_ret = True
         LOG.info('==50 Response - {}'.format(l_debug_msg))
-        # l_topic = "lighting/{}/info".format(l_device_obj.Name)
-        # self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_device_obj)  # /lighting/{}/info
+        #  l_topic = "lighting/{}/info".format(l_device_obj.Name)
+        #  self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_device_obj)  # /lighting/{}/info
         return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_51_record(self, p_controller_obj):
@@ -220,10 +222,10 @@ class DecodeResponses(object):
         l_extended = "{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}".format(
                     l_message[11], l_message[12], l_message[13], l_message[14], l_message[15], l_message[16], l_message[17],
                     l_message[18], l_message[19], l_message[20], l_message[21], l_message[22], l_message[23], l_message[24])
-        # l_product_key = self._get_addr_from_message(l_message, 12)
+        #  l_product_key = self._get_addr_from_message(l_message, 12)
         l_devcat = l_message[15] * 256 + l_message[16]
         LOG.info("== 51 Response - From={}, To={}, Flags={:#x}, Data={} Extended={} ==".format(l_obj_from.Name, l_obj_to.Name, l_flags, l_data, l_extended))
-        # l_obj_from.ProductKey = l_product_key
+        #  l_obj_from.ProductKey = l_product_key
         l_obj_from.DevCat = l_devcat
         l_ret = True
         return self.check_for_more_decoding(p_controller_obj, l_ret)
@@ -311,8 +313,8 @@ class DecodeResponses(object):
         l_obj = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_message[2:5])
         _l_msgflags = utilDecode._decode_message_flag(l_message[5])
         l_ack = utilDecode.get_ack_nak(l_message[8])
-        # l_debug_msg = "Device:{}, {}".format(l_obj.Name, l_ack)
-        # LOG.info("Got ACK(62) {}".format(l_debug_msg))
+        l_debug_msg = "Device:{}, {}".format(l_obj.Name, l_ack)
+        LOG.info("Got ACK(62) {}".format(l_debug_msg))
         return self.check_for_more_decoding(p_controller_obj)
 
     def _decode_64_record(self, p_controller_obj):
@@ -396,4 +398,4 @@ class DecodeResponses(object):
                     l_flags, l_spare1, l_spare2, l_ack))
         return self.check_for_more_decoding(p_controller_obj)
 
-# ## END DBK
+#  ## END DBK

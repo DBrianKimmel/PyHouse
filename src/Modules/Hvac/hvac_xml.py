@@ -1,4 +1,6 @@
 """
+-*- test-case-name: PyHouse.src.Modules.Hvac.test.test_hvac_xml -*-
+
 @name:      PyHouse/src/Modules/Hvac/hvac_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
@@ -9,15 +11,15 @@
 
 """
 
-# Import system type stuff
-import xml.etree.ElementTree as ET
-
-# Import PyMh files
+#  Import system type stuff
+from Modules.Computer import logging_pyh as Logger
 from Modules.Core.data_objects import ThermostatData
 from Modules.Families.family_utils import FamUtil
 from Modules.Utilities.device_tools import XML as deviceXML
 from Modules.Utilities.xml_tools import PutGetXML
-from Modules.Computer import logging_pyh as Logger
+import xml.etree.ElementTree as ET
+
+#  Import PyMh files
 
 LOG = Logger.getLogger('PyHouse.Hvac_xml       ')
 
@@ -43,7 +45,7 @@ class Utility(object):
         """
         @return: a ThermostatData object.
         """
-        p_obj.CoolSetPoint = PutGetXML.get_float_from_xml(p_xml, 'CoolSetPoint', 76.0)
+        p_obj.CoolSetPoint = PutGetXML.get_float_from_xml(p_xml, 'CoolSetPoint', p_default = 76.0)
         p_obj.HeatSetPoint = PutGetXML.get_float_from_xml(p_xml, 'HeatSetPoint', 68.0)
         p_obj.ThermostatMode = PutGetXML.get_text_from_xml(p_xml, 'ThermostatMode', 'Cool')
         p_obj.ThermostatScale = PutGetXML.get_text_from_xml(p_xml, 'ThermostatScale', 'F')
@@ -102,24 +104,13 @@ class XML(object):
         l_count = 0
         try:
             l_division = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
-            # print(l_division.tag)
-            l_h_section = l_division.find('HvacSection')
-            # print(l_h_section.tag)
-            # if l_section == None:
-            l_section = l_h_section.find('ThermostatSection')
-            # print(l_section.tag)
-        except AttributeError as e_err:
-            LOG.error('Reading Hvac information - {}'.format(e_err))
-            l_section = None
-        try:
+            l_section = l_division.find('HvacSection').find('ThermostatSection')
             for l_xml in l_section.iterfind('Thermostat'):
-                # print(l_xml.tag)
                 l_therm = Utility._read_one_thermostat_xml(p_pyhouse_obj, l_xml)
                 l_obj[l_count] = l_therm
                 l_count += 1
-        except AttributeError as e_err:
-            # LOG.error('ERROR {}'.format(e_err))
-            pass
+        except AttributeError:
+            LOG.warn('Reading Hvac information - %s', exec_info = True)
         LOG.info("Loaded {} Thermostats".format(l_count))
         return l_obj
 
@@ -129,8 +120,8 @@ class XML(object):
         @param p_pyhouse_obj: is the mother data store
         @return: a sub tree ready to be appended to an element.
         """
-        l_xml = ET.Element('HvacSection')  # HvacSection
-        ET.SubElement(l_xml, 'ThermostatSection')  # ThermostatSection
+        l_xml = ET.Element('HvacSection')  #  HvacSection
+        ET.SubElement(l_xml, 'ThermostatSection')  #  ThermostatSection
         l_count = 0
         try:
             for l_obj in p_pyhouse_obj.House.Hvac.itervalues():
@@ -138,10 +129,10 @@ class XML(object):
                 l_xml.append(l_entry)
                 l_count += 1
         except AttributeError as e_err:
-            # l_msg = 'ERROR writing all thermostats {}'.format(e_err)
-            # LOG.error(l_msg)
+            #  l_msg = 'ERROR writing all thermostats {}'.format(e_err)
+            #  LOG.error(l_msg)
             pass
         LOG.info("Saved {} Thermostats".format(l_count))
         return l_xml
 
-# ## END DBK
+#  ## END DBK

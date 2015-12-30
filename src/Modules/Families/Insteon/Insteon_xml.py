@@ -61,7 +61,7 @@ class Xml(object):
             l_insteon_obj.Version = PutGetXML.get_int_from_xml(p_in_xml, 'Version', 1)
         except Exception as e_err:
             LOG.error('ERROR: {}'.format(e_err))
-        return l_insteon_obj  # For testing only
+        return l_insteon_obj
 
     @staticmethod
     def ReadXml(p_device_obj, p_in_xml):
