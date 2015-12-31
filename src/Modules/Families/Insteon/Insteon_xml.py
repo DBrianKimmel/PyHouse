@@ -20,13 +20,13 @@ Read may need to check the version number to load the config information properl
 
 """
 
-# Import system type stuff
+#  Import system type stuff
 
-# Import PyMh files
-from Modules.Families.Insteon.Insteon_data import InsteonData
-from Modules.Core import conversions
-from Modules.Utilities.xml_tools import PutGetXML, stuff_new_attrs
+#  Import PyMh files
 from Modules.Computer import logging_pyh as Logger
+from Modules.Core import conversions
+from Modules.Families.Insteon.Insteon_data import InsteonData
+from Modules.Utilities.xml_tools import PutGetXML, stuff_new_attrs
 
 LOG = Logger.getLogger('PyHouse.Insteon_xml ')
 
@@ -53,7 +53,10 @@ class Xml(object):
     def _read_insteon(p_in_xml):
         l_insteon_obj = InsteonData()
         try:
+            l_insteon_obj.InsteonAddress = conversions.dotted_hex2int(PutGetXML.get_text_from_xml(p_in_xml, 'InsteonAddress', '99.88.77'))
+        except AttributeError:
             l_insteon_obj.InsteonAddress = conversions.dotted_hex2int(PutGetXML.get_text_from_xml(p_in_xml, 'Address', '99.88.77'))
+        try:
             l_insteon_obj.DevCat = conversions.dotted_hex2int(PutGetXML.get_text_from_xml(p_in_xml, 'DevCat', 'A1.B2'))
             l_insteon_obj.GroupList = PutGetXML.get_text_from_xml(p_in_xml, 'GroupList')
             l_insteon_obj.GroupNumber = PutGetXML.get_int_from_xml(p_in_xml, 'GroupNumber', 0)
@@ -76,14 +79,14 @@ class Xml(object):
         """
         l_insteon_obj = Xml._read_insteon(p_in_xml)
         stuff_new_attrs(p_device_obj, l_insteon_obj)
-        return l_insteon_obj  # For testing only
+        return l_insteon_obj  #  For testing only
 
     @staticmethod
     def WriteXml(p_out_xml, p_device):
         """
         @param p_xml_out: is a parent element to which the Insteon Specific information is appended.
         """
-        PutGetXML.put_text_element(p_out_xml, 'Address', conversions.int2dotted_hex(p_device.InsteonAddress, 3))
+        PutGetXML.put_text_element(p_out_xml, 'InsteonAddress', conversions.int2dotted_hex(p_device.InsteonAddress, 3))
         PutGetXML.put_int_element(p_out_xml, 'DevCat', conversions.int2dotted_hex(p_device.DevCat, 2))
         PutGetXML.put_text_element(p_out_xml, 'GroupList', p_device.GroupList)
         PutGetXML.put_int_element(p_out_xml, 'GroupNumber', p_device.GroupNumber)
@@ -91,4 +94,4 @@ class Xml(object):
         PutGetXML.put_int_element(p_out_xml, 'Version', p_device.Version)
         return p_out_xml
 
-# ## END DBK
+#  ## END DBK
