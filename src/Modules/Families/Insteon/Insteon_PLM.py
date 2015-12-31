@@ -22,17 +22,18 @@ TODO:
 """
 
 #  Import system type stuff
-import Queue
-
 from Modules.Computer import logging_pyh as Logger
 from Modules.Core import conversions
 from Modules.Families.Insteon import Insteon_decoder
-#  from Modules.Families.Insteon.Insteon_configure import Config as ConfigConfig
 from Modules.Families.Insteon.Insteon_constants import COMMAND_LENGTH, MESSAGE_TYPES, PLM_COMMANDS, STX
 from Modules.Families.Insteon.Insteon_data import InsteonData
 from Modules.Families.Insteon.Insteon_utils import Util
 from Modules.Families.family_utils import FamUtil
+from Modules.Utilities.debug_tools import PrettyFormatAny
 from Modules.Utilities.tools import PrintBytes
+import Queue
+
+#  from Modules.Families.Insteon.Insteon_configure import Config as ConfigConfig
 
 
 #  Import PyMh files
@@ -109,12 +110,15 @@ class Commands(object):
         @param p_cmd1: is the first command byte
         @param p_cmd2: is the second command byte
         """
-        l_command = Utility._create_command_message('insteon_send')
-        Util.int2message(p_obj.InsteonAddress, l_command, 2)
-        l_command[5] = FLAG_MAX_HOPS + FLAG_HOPS_LEFT  #  0x0F
-        l_command[6] = p_obj._Command1 = p_cmd1
-        l_command[7] = p_obj._Command2 = p_cmd2
-        Utility._queue_command(p_controller_obj, l_command)
+        try:
+            l_command = Utility._create_command_message('insteon_send')
+            Util.int2message(p_obj.InsteonAddress, l_command, 2)
+            l_command[5] = FLAG_MAX_HOPS + FLAG_HOPS_LEFT  #  0x0F
+            l_command[6] = p_obj._Command1 = p_cmd1
+            l_command[7] = p_obj._Command2 = p_cmd2
+            Utility._queue_command(p_controller_obj, l_command)
+        except Exception as e_err:
+            LOG.error('Error creating command {}'.format(PrettyFormatAny.form(p_obj, 'Device')))
 
     @staticmethod
     def queue_63_command(p_controller_obj):
