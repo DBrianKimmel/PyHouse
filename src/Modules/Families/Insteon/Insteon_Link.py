@@ -42,15 +42,6 @@ class Send(object):
     """
     """
 
-    @staticmethod
-    def XXsend_6a(p_controller_obj):
-        """Get the next record - will get a NAK if no more (2 bytes).
-        See p 247(260) of 2007 developers guide.
-        """
-        LOG.info("Command to get Next all-link record (6A).")
-        #  l_command = plmUtility._create_command_message('plm_next_all_link')
-        #  plmUtility._queue_command(p_controller_obj, l_command)
-
 
 class Decode(object):
     """

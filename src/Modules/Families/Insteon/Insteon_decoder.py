@@ -195,6 +195,10 @@ class DecodeResponses(object):
                 _l_ret1 = Insteon_HVAC.ihvac_utility().decode_50_record(l_device_obj, l_cmd1, l_cmd2)
                 pass
 
+            elif l_cmd1 >= 0x68 and l_cmd1 <= 0x6f:  #  0x6e
+                _l_ret1 = Insteon_HVAC.ihvac_utility().decode_50_record(l_device_obj, l_cmd1, l_cmd2)
+                pass
+
             elif l_message[8] & 0xE0 == 0x80 and l_cmd1 == 01:
                 l_debug_msg += ' Device Set Button Pressed '
             elif l_message[8] & 0xE0 == 0x80 and l_cmd1 == 02:
