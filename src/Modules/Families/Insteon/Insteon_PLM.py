@@ -465,8 +465,9 @@ class LightHandlerAPI(object):
         LOG.info('Getting information for all Insteon devices.')
         LOG.info('Getting device information of all Insteon Controllers')
         for l_obj in p_pyhouse_obj.House.Controllers.itervalues():
-            self._get_controller_info(p_controller_obj, l_obj)
-            self._get_obj_info(p_controller_obj, l_obj)
+            if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
+                self._get_controller_info(p_controller_obj, l_obj)
+                self._get_obj_info(p_controller_obj, l_obj)
         #
         LOG.info('Getting device information of all Insteon Lights')
         for l_obj in p_pyhouse_obj.House.Lights.itervalues():
