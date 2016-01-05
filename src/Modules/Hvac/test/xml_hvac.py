@@ -18,6 +18,8 @@ from Modules.Families.Insteon.test.xml_insteon import XML_INSTEON
 TESTING_THERMOSTAT_NAME_0 = 'Test Thermostat Zero'
 TESTING_THERMOSTAT_ACTIVE_0 = 'True'
 TESTING_THERMOSTAT_KEY_0 = '0'
+
+TESTING_THERMOSTAT_DEVICE_COMMENT_0 = 'Comment zero'
 TESTING_THERMOSTAT_DEVICE_FAMILY_0 = 'Insteon'
 TESTING_THERMOSTAT_COOL_SETPOINT_0 = '78.0'
 TESTING_THERMOSTAT_HEAT_SETPOINT_0 = '70.0'
@@ -34,14 +36,13 @@ L_HVAC_SECTION_START = '<HvacSection>'
 L_HVAC_SECTION_END = '</HvacSection>'
 L_THERMOSTAT_SECTION_START = '    <ThermostatSection>'
 L_THERMOSTAT_SECTION_END = '      </ThermostatSection>'
+
+L_THERMOSTAT_END = '        </Thermostat>'
+
 L_THERMOSTAT_START_0 = '          <Thermostat Name="' + TESTING_THERMOSTAT_NAME_0 + \
                     '" Active="' + TESTING_THERMOSTAT_ACTIVE_0 + \
                     '" Key="' + TESTING_THERMOSTAT_KEY_0 + '">'
-L_THERMOSTAT_START_1 = '        <Thermostat Name="' + TESTING_THERMOSTAT_NAME_1 + \
-                    '" Active="' + TESTING_THERMOSTAT_ACTIVE_1 + \
-                    '" Key="' + TESTING_THERMOSTAT_KEY_1 + '">'
-L_THERMOSTAT_END = '        </Thermostat>'
-
+L_THERMOSTAT_DEVICE_COMMENT_0 = '            <Comment>' + TESTING_THERMOSTAT_DEVICE_COMMENT_0 + '</Comment>'
 L_THERMOSTAT_COOL_SETPOINT_0 = '            <CoolSetPoint>' + TESTING_THERMOSTAT_COOL_SETPOINT_0 + '</CoolSetPoint>'
 L_THERMOSTAT_HEAT_SETPOINT_0 = '            <HeatSetPoint>' + TESTING_THERMOSTAT_HEAT_SETPOINT_0 + '</HeatSetPoint>'
 L_THERMOSTAT_MODE_0 = '            <ThermostatMode>' + TESTING_THERMOSTAT_MODE_0 + '</ThermostatMode>'
@@ -61,15 +62,33 @@ L_THERMOSTAT_STATUS_0 = '\n'.join([
 
 XML_INSTEON_THERMOSTAT_0 = '\n'.join([
     L_THERMOSTAT_START_0,
-    '              <!-- ABC -->',
     XML_DEVICE_INSTEON,
     L_THERMOSTAT_SETTINGS_0,
     L_THERMOSTAT_STATUS_0,
     XML_INSTEON,
     L_THERMOSTAT_END
 ])
+
+
+L_THERMOSTAT_COOL_SETPOINT_1 = '            <CoolSetPoint>' + TESTING_THERMOSTAT_COOL_SETPOINT_0 + '</CoolSetPoint>'
+L_THERMOSTAT_HEAT_SETPOINT_1 = '            <HeatSetPoint>' + TESTING_THERMOSTAT_HEAT_SETPOINT_0 + '</HeatSetPoint>'
+L_THERMOSTAT_MODE_1 = '            <ThermostatMode>' + TESTING_THERMOSTAT_MODE_0 + '</ThermostatMode>'
+L_THERMOSTAT_SCALE_1 = '            <ThermostatScale>' + TESTING_THERMOSTAT_SCALE_0 + '</ThermostatScale>'
+L_THERMOSTAT_CURRENT_TEMP_1 = '            <CurrentTemperature>' + TESTING_THERMOSTAT_CURRENT_TEMP_0 + '</CurrentTemperature>'
+L_THERMOSTAT_START_1 = '        <Thermostat Name="' + TESTING_THERMOSTAT_NAME_1 + \
+                    '" Active="' + TESTING_THERMOSTAT_ACTIVE_1 + \
+                    '" Key="' + TESTING_THERMOSTAT_KEY_1 + '">'
+
+L_THERMOSTAT_STATUS_1 = '\n'.join([
+    L_THERMOSTAT_CURRENT_TEMP_1
+])
+
 XML_INSTEON_THERMOSTAT_1 = '\n'.join([
     L_THERMOSTAT_START_1,
+    XML_DEVICE_INSTEON,
+    L_THERMOSTAT_SETTINGS_0,
+    L_THERMOSTAT_STATUS_1,
+    XML_INSTEON,
     L_THERMOSTAT_END
 ])
 

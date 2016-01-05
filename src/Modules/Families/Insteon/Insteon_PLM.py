@@ -288,7 +288,7 @@ class PlmDriverProtocol(Commands):
             l_cur_len = len(p_controller_obj._Message)
             if l_cur_len < 2:
                 return
-            LOG.info('Receive message is now {}'.format(PrintBytes(p_controller_obj._Message)))
+            #  LOG.info('Receive message is now {}'.format(PrintBytes(p_controller_obj._Message)))
             l_response_len = Util.get_message_length(p_controller_obj._Message)
             if l_cur_len >= l_response_len:
                 self.m_decoder.decode_message(p_controller_obj)

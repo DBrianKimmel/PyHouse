@@ -179,6 +179,7 @@ class Decode(object):
         else:
             LOG.info("All-Link Record for sender record - NAK")
             l_ret = False
+        return l_ret
 
 
 class API(object):

@@ -27,18 +27,17 @@ LOG = Logger.getLogger('PyHouse.Hvac_xml       ')
 class Utility(object):
 
     @staticmethod
-    def _read_thermostat_base(p_xml):
+    def _read_base(p_xml):
         l_obj = ThermostatData()
         deviceXML.read_base_device_object_xml(l_obj, p_xml)
-        l_obj.DeviceType = 2
-        l_obj.DeviceSubType = 73
         return l_obj
 
     @staticmethod
-    def _write_thermostat_base(p_tag_name, p_obj):
-        l_xml = deviceXML.write_base_device_object_xml(p_tag_name, p_obj)
-        return l_xml
-
+    def _read_thermostat_base(p_xml):
+        l_obj = Utility._read_base(p_xml)
+        l_obj.DeviceType = 2
+        l_obj.DeviceSubType = 73
+        return l_obj
 
     @staticmethod
     def _read_thermostat_data(p_obj, p_xml):
@@ -54,29 +53,9 @@ class Utility(object):
         return p_obj
 
     @staticmethod
-    def _write_thermostat_data(p_out_xml, p_obj):
-        PutGetXML.put_float_element(p_out_xml, 'CoolSetPoint', p_obj.CoolSetPoint)
-        PutGetXML.put_float_element(p_out_xml, 'HeatSetPoint', p_obj.HeatSetPoint)
-        PutGetXML.put_text_element(p_out_xml, 'ThermostatMode', p_obj.ThermostatMode)
-        PutGetXML.put_text_element(p_out_xml, 'ThermostatScale', p_obj.ThermostatScale)
-        PutGetXML.put_float_element(p_out_xml, 'CurrentTemperature', p_obj.CurrentTemperature)
-        return p_out_xml
-
-
-    @staticmethod
     def _read_family_data(p_pyhouse_obj, p_obj, p_xml):
         l_ret = FamUtil.read_family_data(p_pyhouse_obj, p_obj, p_xml)
         return l_ret
-
-    @staticmethod
-    def _write_family_data(p_pyhouse_obj, p_obj, p_xml):
-        try:
-            l_api = p_pyhouse_obj.House.FamilyData[p_obj.DeviceFamily].FamilyXmlModuleAPI
-            l_api.WriteXml(p_xml, p_obj)
-        except (KeyError, AttributeError) as e_err:
-            l_msg = 'Write Family Error {}  Family:{}'.format(e_err, p_obj.DeviceFamily)
-            LOG.error(l_msg)
-
 
     @staticmethod
     def _read_one_thermostat_xml(p_pyhouse_obj, p_xml):
@@ -87,6 +66,30 @@ class Utility(object):
         Utility._read_thermostat_data(l_thermostat_obj, p_xml)
         Utility._read_family_data(p_pyhouse_obj, l_thermostat_obj, p_xml)
         return l_thermostat_obj
+
+
+    @staticmethod
+    def _write_thermostat_base(p_tag_name, p_obj):
+        l_xml = deviceXML.write_base_device_object_xml(p_tag_name, p_obj)
+        return l_xml
+
+    @staticmethod
+    def _write_thermostat_data(p_out_xml, p_obj):
+        PutGetXML.put_float_element(p_out_xml, 'CoolSetPoint', p_obj.CoolSetPoint)
+        PutGetXML.put_float_element(p_out_xml, 'HeatSetPoint', p_obj.HeatSetPoint)
+        PutGetXML.put_text_element(p_out_xml, 'ThermostatMode', p_obj.ThermostatMode)
+        PutGetXML.put_text_element(p_out_xml, 'ThermostatScale', p_obj.ThermostatScale)
+        PutGetXML.put_float_element(p_out_xml, 'CurrentTemperature', p_obj.CurrentTemperature)
+        return p_out_xml
+
+    @staticmethod
+    def _write_family_data(p_pyhouse_obj, p_obj, p_xml):
+        try:
+            l_api = p_pyhouse_obj.House.FamilyData[p_obj.DeviceFamily].FamilyXmlModuleAPI
+            l_api.WriteXml(p_xml, p_obj)
+        except (KeyError, AttributeError) as e_err:
+            l_msg = 'Write Family Error {}  Family:{}'.format(e_err, p_obj.DeviceFamily)
+            LOG.error(l_msg)
 
     @staticmethod
     def _write_one_thermostat_xml(p_pyhouse_obj, p_obj):
@@ -100,19 +103,20 @@ class XML(object):
 
     @staticmethod
     def read_hvac_xml(p_pyhouse_obj):
-        l_obj = {}
+        l_dict = {}
         l_count = 0
         try:
             l_division = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
             l_section = l_division.find('HvacSection').find('ThermostatSection')
             for l_xml in l_section.iterfind('Thermostat'):
                 l_therm = Utility._read_one_thermostat_xml(p_pyhouse_obj, l_xml)
-                l_obj[l_count] = l_therm
+                l_therm.Key = l_count
+                l_dict[l_count] = l_therm
                 l_count += 1
         except AttributeError:
             LOG.warn('Reading Hvac information - %s', exec_info = True)
         LOG.info("Loaded {} Thermostats".format(l_count))
-        return l_obj
+        return l_dict
 
     @staticmethod
     def write_hvac_xml(p_pyhouse_obj, p_xml):

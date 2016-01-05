@@ -118,11 +118,10 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		l_html += buildLcarEntryButtons(p_handler, 1);
 		return l_html;
 	},
-	function buildRoomEntry(self, p_obj, p_html, p_onchange) {
-		p_html += buildLcarTextWidget(self, 'Comment', 'Comment', l_room.Comment);
-		p_html += buildLcarTextWidget(self, 'Corner', 'Corner', l_room.Corner);
-		p_html += buildLcarTextWidget(self, 'Size', 'Size', l_room.Size);
-		p_html += buildLcarEntryButtons(p_handler);
+	function buildRoomEntry(self, p_obj, p_html) {
+		p_html += buildLcarTextWidget(self, 'Comment', 'Comment', p_obj.Comment);
+		p_html += buildLcarTextWidget(self, 'Corner', 'Corner', p_obj.Corner);
+		p_html += buildLcarTextWidget(self, 'Size', 'Size', p_obj.Size);
 		return p_html;
 	},
 	function createEntry(self) {
@@ -141,7 +140,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
         var l_data = {
 			Name : fetchTextWidget(self, 'Name'),
 			Key : fetchTextWidget(self, 'Key'),
-			Active : fetchTrueFalseWidget(self, 'RoomActive'),
+			Active : fetchTrueFalseWidget(self, 'Active'),
 			Comment : fetchTextWidget(self, 'Comment'),
 			Corner : fetchTextWidget(self, 'Corner'),
 			Type : 'Room',

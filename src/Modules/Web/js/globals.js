@@ -898,6 +898,56 @@ function fetchDowWidget(self, p_id) {
 }
 
 
+//========== CoOrdinates Widgets ==================================================================
+
+function buildLcarCoOrdinatesWidget(self, p_id, p_caption, p_value, /* optional */ p_options) {
+	Divmod.debug('---', 'globals.buildLcarCoOrdinatesWidget() was called.');
+	var l_size = 40;
+	var l_options = p_options;
+	var l_id = buildAthenaId(self, p_id);
+	if (p_options === undefined)
+		l_options = '';
+	var l_value = '[ ';
+	l_value += parseFloat(p_value['X_Easting']).toFixed(2);
+	l_value += ', ';
+	l_value += parseFloat(p_value['Y_Northing']).toFixed(2);
+	l_value += ', ';
+	l_value += parseFloat(p_value['Z_Height']).toFixed(2);
+	l_value += ' ]';
+	var l_html = buildTopDivs(p_caption);
+	console.log("globals.buildLcarCoOrdinatesWidget() - %O", p_value);
+	l_html += "<input type='text' class='lcars-button-addition'";
+	l_html += setIdAttribute(l_id);
+	l_html += setSizeOption(p_options);
+	l_html += setValueAttribute(l_value);
+	l_html += " ";
+	if (l_options.toLowerCase().indexOf('disable') > -1)
+		l_html += "disabled='disabled' ";
+	l_html += " />\n";
+	// Add some code to set the focus to this field.
+	if (l_options.toLowerCase().indexOf('focus') > -1)
+		l_html += " ";
+	l_html += buildBottomDivs();
+	return l_html;
+}
+function fetchCoOrdinatesWidget(self, p_id) {
+	Divmod.debug('---', 'globals.fetchCoOrdinatesWidget() was called.');
+	var l_coords = self.nodeById(p_id).value;
+	l_vals = l_coords.replace('[','').replace(' ', '').split(',');
+	console.log("globals.fetchCoOrdinatesWidget() - %O", l_vals);
+
+	var l_x = parseFloat(l_vals[0]);
+	var l_y = parseFloat(l_vals[1]);
+	var l_z = parseFloat(l_vals[2]);
+	var l_ret = [l_x, l_y, l_z];
+	console.log("globals.fetchCoOrdinatesWidget() - %O", l_ret);
+	// Divmod.debug('---', 'globals.fetchDowWidget() called.  FinalValue=' + l_ret);
+	// return l_x;
+	return l_ret;
+}
+
+	
+	
 //============================================================================
 /**
  * Startup
@@ -910,4 +960,6 @@ Divmod.Runtime.theRuntime.addLoadEvent(
 
 // Divmod.debug('---', 'globals.buildLcarTextWidget() was called.');
 // console.log("globals.build_lcars_middle() - %O", l_html);
+//### END DBK
+
 // END DBK

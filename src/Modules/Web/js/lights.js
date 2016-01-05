@@ -85,7 +85,14 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		globals.House.LightName = l_name;
 		if (l_ix <= 1000) {  // we clicked on one of the buttons, show the details for the light.
 			var l_obj = globals.House.Lights[l_ix];
+			console.log("lights.handleMenuOnClick()  Light  %O", l_obj);
 			globals.House.LightObj = l_obj;
+			try {
+				l_obj.RoomName = globals.House.Rooms[l_obj.RoomName].Name;
+			}
+			catch(err) {
+				l_obj.RoomName = l_obj.RoomName;
+			}
 			globals.House.Self = self;
 			showDataEntryScreen(self);
 			self.buildLcarDataEntryScreen(l_obj, 'change', 'handleDataEntryOnClick');
@@ -106,6 +113,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 	function buildLcarDataEntryScreen(self, p_entry, p_add_change, p_handler){
 		var l_obj = arguments[1];
 		var l_html = build_lcars_top('Light Data', 'lcars-salmon-color');
+		// console.log("lights.buildLcarDataEntryScreen()  Light  %O", l_obj);
 		l_html += build_lcars_middle_menu(40, self.buildEntry(l_obj, p_add_change, p_handler));
 		l_html += build_lcars_bottom();
 		self.nodeById('DataEntryDiv').innerHTML = l_html;

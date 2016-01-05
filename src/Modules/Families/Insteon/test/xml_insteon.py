@@ -21,7 +21,7 @@ TESTING_INSTEON_LINKS_0 = {}
 
 TESTING_INSTEON_VERSION = '2'
 
-L_INSTEON_ADDRESS_0 = '    <Address>' + TESTING_INSTEON_ADDRESS_0 + '</Address>'
+L_INSTEON_ADDRESS_0 = '    <InsteonAddress>' + TESTING_INSTEON_ADDRESS_0 + '</InsteonAddress>'
 L_INSTEON_DEVCAT_0 = '    <DevCat>' + TESTING_INSTEON_DEVCAT_0 + '</DevCat>'
 L_INSTEON_ENGINE_VERSION_0 = '    <EngineVersion>' + TESTING_INSTEON_ENGINE_VERSION_0 + '</EngineVersion>'
 L_INSTEON_GROUP_NUM_0 = '    <GroupNumber>' + TESTING_INSTEON_GROUP_NUM_0 + '</GroupNumber>'

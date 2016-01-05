@@ -15,9 +15,9 @@ This is because the things we wish to automate all have some controller that spe
 
 """
 
-# Import system type stuff.
+#  Import system type stuff.
 
-# Import PyHouse files and modules.
+#  Import PyHouse files and modules.
 from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
@@ -41,11 +41,11 @@ class FamUtil(object):
         try:
             l_family_obj = p_pyhouse_obj.House.FamilyData[p_device_obj.DeviceFamily]
         except KeyError as e_err:
-            print(PrettyFormatAny.form(p_pyhouse_obj.House, 'ERROR FamilyData'))
-            LOG.error('Could not get family object for:\n\tDevice Name:\t{}\n\tFamily:\t\t{}\n\tKey Error:\t{}'\
+            l_msg = PrettyFormatAny.form(p_pyhouse_obj.House.FamilyData, 'ERROR ')
+            LOG.error('Could not get family object for:\n\tDevice Name:\t{}\n\tFamily:\t\t{}\n\tKey Error:\t{}{}'\
                     .format(
                         p_device_obj.Name,
-                        p_device_obj.DeviceFamily, e_err))
+                        p_device_obj.DeviceFamily, e_err, l_msg))
             l_family_obj = p_pyhouse_obj.House.FamilyData['Null']
         return l_family_obj
 
@@ -83,7 +83,7 @@ class FamUtil(object):
         @return: the DeviceFamily which is the Name of the family (e.g. Insteon)
         """
         l_dev_name = FamUtil._get_device_name(p_device_obj)
-        # l_dev_family = FamUtil._get_device_family(p_device_obj)
+        #  l_dev_family = FamUtil._get_device_family(p_device_obj)
         try:
             l_family = p_device_obj.DeviceFamily
         except AttributeError as e_err:
@@ -144,7 +144,7 @@ class FamUtil(object):
             l_ret = 'ERROR family_utils-110  API:{}  Device:"{}"\n   {}'.format(l_xml_api, p_device_obj.Name, e_err)
             LOG.error('ERROR - Unable to load family information for a device.'
                       '\n\tDevice: {}\n\tFamily: {}\n\t{}'.format(p_device_obj.Name, p_device_obj.DeviceFamily, e_err))
-        return l_ret  # for testing
+        return l_ret  #  for testing
 
     @staticmethod
     def write_family_data(p_pyhouse_obj, p_out_xml, p_device_obj):
@@ -161,6 +161,6 @@ class FamUtil(object):
         except Exception as e_err:
             l_ret = 'ERROR in family_utils.write_family_data.  Device:"{}"\n  Api:{}\n   Err:{}'.format(l_dev_name, l_api, e_err)
             LOG.error(l_ret)
-        return l_ret  # for testing
+        return l_ret  #  for testing
 
-# ## END DBK
+#  ## END DBK

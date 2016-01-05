@@ -13,20 +13,22 @@ TODO: Change all references to a light if name changes.
 
 """
 
-# Import system type stuff
+#  Import system type stuff
 import os
 import uuid
 from nevow import loaders
 from nevow import athena
 
-# Import PyMh files and modules.
-# from Modules.Core import conversions
+#  Import PyMh files and modules.
+#  from Modules.Core import conversions
+from Modules.Core.data_objects import CoordinateData
 from Modules.Web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.Lighting import lighting_lights
 from Modules.Computer import logging_pyh as Logger
 from Modules.Families.Insteon import Insteon_utils
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
-# Handy helper for finding external resources nearby.
+#  Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
 
@@ -53,6 +55,7 @@ class LightsElement(athena.LiveElement):
         """A new/changed light is returned.  Process it and update the internal data via light_xxxx.py
         """
         l_json = JsonUnicode().decode_json(p_json)
+        print(PrettyFormatAny.form(l_json, 'JSON'))
         l_delete = l_json['Delete']
         l_light_ix = int(l_json['Key'])
         if l_delete:
@@ -71,7 +74,11 @@ class LightsElement(athena.LiveElement):
         l_obj.Active = l_json['Active']
         l_obj.Key = l_light_ix
         l_obj.Comment = l_json['Comment']
-        l_obj.RoomCoords = l_json['RoomCoords']
+        l_coords = CoordinateData()
+        l_coords.X_Easting = l_json['RoomCoords'][0]
+        l_coords.Y_Northing = l_json['RoomCoords'][1]
+        l_coords.Z_Height = l_json['RoomCoords'][2]
+        l_obj.RoomCoords = l_coords
         l_obj.IsDimmable = l_json['IsDimmable']
         l_obj.DeviceFamily = l_json['DeviceFamily']
         l_obj.RoomName = l_json['RoomName']
@@ -87,4 +94,4 @@ class LightsElement(athena.LiveElement):
             l_obj.UPBNetworkID = l_json['UPBNetworkID']
         self.m_pyhouse_obj.House.Lights[l_light_ix] = l_obj
 
-# ## END DBK
+#  ## END DBK

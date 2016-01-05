@@ -183,8 +183,9 @@ function createBaseEntry(self, p_key) {
 // Lighting Core entry data routines
 
 function buildLightingCoreEntry(self, p_obj, p_html, p_onchange) {
+	// console.log("lcars.buildLightingCoreEntry() - %O", p_obj);
 	p_html += buildLcarTextWidget(self, 'Comment', 'Comment', p_obj.Comment);
-	p_html += buildLcarTextWidget(self, 'RoomCoords', 'RoomCoords', p_obj.RoomCoords);
+	p_html += buildLcarCoOrdinatesWidget(self, 'RoomCoords', 'RoomCoords', p_obj.RoomCoords);
 	p_html += buildLcarTrueFalseWidget(self, 'Dimmable', 'Light Dimmable ?', p_obj.IsDimmable);
 	p_html += buildLcarFamilySelectWidget(self, 'DeviceFamily', 'Family', p_obj.DeviceFamily, p_onchange);
 	p_html += buildLcarRoomSelectWidget(self, 'RoomName', 'Room', p_obj.RoomName);
@@ -194,10 +195,12 @@ function buildLightingCoreEntry(self, p_obj, p_html, p_onchange) {
 function fetchLightingCoreEntry(self, p_data) {
     p_data.DeviceFamily = fetchSelectWidget(self, 'DeviceFamily');
     p_data.Comment = fetchTextWidget(self, 'Comment');
-    p_data.RoomCoords = fetchTextWidget(self, 'RoomCoords');
+    p_data.RoomCoords = fetchCoOrdinatesWidget(self, 'RoomCoords');
     p_data.IsDimmable = fetchTrueFalseWidget(self, 'Dimmable');
-    p_data.RoomName = fetchTextWidget(self, 'RoomName');
+    var l_ix = fetchTextWidget(self, 'RoomName');
+    p_data.RoomName = globals.House.Rooms[l_ix].Name
     p_data.LightingType = fetchSelectWidget(self, 'LightingType');
+    console.log("lcars.fetchLightingCoreEntry() - %O", p_data);
 	return p_data;
 }
 function createLightingCoreEntry(self, p_data) {

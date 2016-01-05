@@ -61,7 +61,7 @@ class DecodeResponses(object):
 
         @return: a flag that is True for ACK and False for NAK/Invalid response.
         """
-        LOG.info('Message = {}'.format(PrintBytes(p_controller_obj._Message)))
+        #  LOG.info('Message = {}'.format(PrintBytes(p_controller_obj._Message)))
         while len(p_controller_obj._Message) >= 2:
             l_stx = p_controller_obj._Message[0]
             if l_stx == STX:
@@ -153,7 +153,7 @@ class DecodeResponses(object):
         l_cmd1 = l_message[9]
         l_cmd2 = l_message[10]
         l_data = [l_cmd1, l_cmd2]
-        print(PrettyFormatAny.form(l_device_obj, 'Insteon_decoder 156 - Device'))
+        #  print(PrettyFormatAny.form(l_device_obj, 'Insteon_decoder 156 - Device'))
         if l_device_obj.DeviceType == 2:
             Insteon_HVAC.ihvac_utility().decode_50_record(self.m_pyhouse_obj, l_device_obj, p_controller_obj)
             return self.check_for_more_decoding(p_controller_obj, True)
@@ -309,7 +309,13 @@ class DecodeResponses(object):
         """Get response to Send Insteon standard-length message (9 bytes).
         Basically, a response to the 62 command.
         See p 243 of developers guide.
-
+        [0] = 0x02
+        [1] = 0x62
+        [2-4] = address
+        [5] = message flags
+        [6] = command 1
+        [7] = command 2
+        [8] = ACK/NAK
         This is an ack/nak of the command and generally is not very interesting by itself.
         Depending on the command sent, another response MAY follow this message with further data.
         """

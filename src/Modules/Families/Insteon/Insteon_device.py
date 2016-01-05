@@ -20,11 +20,11 @@ serial_port
 
 """
 
-# Import system type stuff
+#  Import system type stuff
 
-# Import PyMh files
-from Modules.Families.Insteon.Insteon_utils import Decode
-from Modules.Families.Insteon import Insteon_xml
+#  Import PyMh files
+#  from Modules.Families.Insteon.Insteon_utils import Decode
+#  from Modules.Families.Insteon import Insteon_xml
 from Modules.Computer import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.Insteon_Device ')
@@ -76,7 +76,7 @@ class Utility(object):
 
         Return the Insteon_PLM API reference if one is found:
         """
-        l_count = 0
+        #  l_count = 0
         for l_controller_obj in p_pyhouse_obj.House.Controllers.itervalues():
             if Utility._is_valid_controller(l_controller_obj):
                 LOG.info('Insteon Controller: {} - will be started.'.format(l_controller_obj.Name))
@@ -85,7 +85,7 @@ class Utility(object):
             elif Utility._is_insteon(l_controller_obj):
                 LOG.warn('Insteon Controller {} is NOT started per config file.'.format(l_controller_obj.Name))
             else:
-                pass  # Not interested in this controller. (Non-Insteon)
+                pass  #  Not interested in this controller. (Non-Insteon)
         return None
 
     @staticmethod
@@ -114,7 +114,7 @@ class API(object):
         try:
             Utility._stop_all_controllers(self.m_pyhouse_obj)
         except AttributeError as e_err:
-            LOG.info('Stop Warning - {0:}'.format(e_err))  # no controllers for house(House is being added)
+            LOG.info('Stop Warning - {0:}'.format(e_err))  #  no controllers for house(House is being added)
 
     def ChangeLight(self, p_light_obj, p_source, p_level, p_rate = 0):
         """
@@ -123,4 +123,4 @@ class API(object):
         LOG.info('Device Name: "{}"; to level: "{}:; via PLM: "{}"'.format(p_light_obj.Name, p_level, self.m_plm))
         self.m_plm.ChangeLight(p_light_obj, p_source, p_level, p_rate)
 
-# ## END DBK
+#  ## END DBK
