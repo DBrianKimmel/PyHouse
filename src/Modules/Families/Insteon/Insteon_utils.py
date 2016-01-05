@@ -14,9 +14,9 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
 
-# Import system type stuff
+#  Import system type stuff
 
-# Import PyMh files
+#  Import PyMh files
 from Modules.Core import conversions
 from Modules.Families.Insteon.Insteon_data import InsteonData
 from Modules.Families.Insteon.Insteon_constants import MESSAGE_LENGTH, NAK
@@ -181,7 +181,7 @@ class Decode(object):
         """
         for l_obj in p_class.itervalues():
             if l_obj.DeviceFamily != 'Insteon':
-                continue  # ignore any non-Insteon devices in the class
+                continue  #  ignore any non-Insteon devices in the class
             if l_obj.InsteonAddress == p_addr:
                 return l_obj
         return None
@@ -198,32 +198,32 @@ class Decode(object):
         if l_ret == None:
             l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Buttons, p_address)
         if l_ret == None:
-            l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Thermostats, p_address)
-        # Add additional classes in here
+            l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Hvac.Thermostats, p_address)
+        #  Add additional classes in here
         if l_ret == None:
             LOG.info("WARNING - Address {} ({}) *NOT* found.".format(l_dotted, p_address))
             l_ret = DeviceData()
-            device_tools.stuff_new_attrs(l_ret, InsteonData())  # an empty new object
+            device_tools.stuff_new_attrs(l_ret, InsteonData())  #  an empty new object
             l_ret.Name = '**NoName-' + l_dotted + '-**'
         return l_ret
 
     @staticmethod
-    def get_obj_from_message(p_pyhouse_obj, p_message):
+    def get_obj_from_message(p_pyhouse_obj, p_message_addr):
         """ Here we have a message from the PLM.  Find out what device has that address.
 
-        @param p_message: is the address portion of the message byte array from the PLM we are extracting the Insteon address from.
+        @param p_message_addr: is the address portion of the message byte array from the PLM we are extracting the Insteon address from.
         @param p_index: is the index of the first byte in the message.
                 Various messages contain the address at different offsets.
         @return: The object that contains the address -or- a dummy object with noname in Name
         """
-        l_address = Util.message2int(p_message)  # Extract the 3 byte address from the message and convert to an Int.
-        if l_address < (256 * 256):  # First byte zero ?
+        l_address = Util.message2int(p_message_addr)  #  Extract the 3 byte address from the message and convert to an Int.
+        if l_address < (256 * 256):  #  First byte zero ?
             l_dotted = str(l_address)
             l_device_obj = DeviceData()
-            device_tools.stuff_new_attrs(l_device_obj, InsteonData())  # an empty new object
+            device_tools.stuff_new_attrs(l_device_obj, InsteonData())  #  an empty new object
             l_device_obj.Name = '**Group: ' + l_dotted + ' **'
         else:
             l_device_obj = Decode.find_address_all_classes(p_pyhouse_obj, l_address)
         return l_device_obj
 
-# ## END DBK
+#  ## END DBK

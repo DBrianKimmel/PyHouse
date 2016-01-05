@@ -2,7 +2,7 @@
  * @name:      PyHouse/src/Modules/Web/js/thermostats.js
  * @author:    D. Brian Kimmel
  * @contact:   D.BrianKimmel@gmail.com
- * @copyright: (c) 2014-2015 by D. Brian Kimmel
+ * @copyright: (c) 2014-2016 by D. Brian Kimmel
  * @license:   MIT License
  * @note:      Created on Sep 03, 2014
  * @summary:   Displays the thermostat element
@@ -53,7 +53,7 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 	 * Build a screen full of buttons - One for each thermostat and some actions.
 	 */
 	function buildLcarSelectScreen(self){
-		var l_thermostat_html = buildLcarSelectionButtonsTable(globals.House.Thermostats, 'handleSelectButtonOnClick');
+		var l_thermostat_html = buildLcarSelectionButtonsTable(globals.House.Hvac.Thermostats, 'handleSelectButtonOnClick');
 		var l_html = build_lcars_top('Thermostats', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(10, l_thermostat_html);
 		l_html += build_lcars_bottom();
@@ -91,7 +91,7 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 		globals.House.ThermostatName = l_name;
 		if (l_ix <= 1000) {  // One of the Thermostat buttons.
 			showDataEntryScreen(self);
-			var l_obj = globals.House.Thermostats[l_ix];
+			var l_obj = globals.House.Hvac.Thermostats[l_ix];
 			globals.House.ThermostatObj = l_obj;
 			globals.House.Self = self;
 			self.buildLcarDataEntryScreen(l_obj, 'handleDataOnClick');
@@ -182,7 +182,7 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 		return p_data;
 	},
 	function createEntry(self) {
-		var l_data = createBaseEntry(self, Object.keys(globals.House.Thermostats).length);
+		var l_data = createBaseEntry(self, Object.keys(globals.House.Hvac.Thermostats).length);
 		l_data = createLightingCoreEntry(self, l_data);
 		l_data.DeviceFamily = "Insteon";
 		l_data = self.createThermostatEntry(l_data);

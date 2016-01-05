@@ -11,12 +11,12 @@
 
 """
 
-# Import system type stuff
+#  Import system type stuff
 import copy
 import datetime
 from collections import namedtuple
 
-# Import PyMh files and modules.
+#  Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData, MqttInformation, MqttJson
 from Modules.Computer.Mqtt.mqtt_protocol import PyHouseMqttFactory
 from Modules.Computer.Mqtt.mqtt_xml import Xml as mqttXML
@@ -48,7 +48,7 @@ class Util(object):
         """Convert JSON to Obj.
         """
         l_ret = json_tools.decode_json_unicode(p_json)
-        # print((PrettyFormatAny.form(l_ret, 'mqtt_client dict ')))
+        #  print((PrettyFormatAny.form(l_ret, 'mqtt_client dict ')))
         return l_ret
 
     def client_TCP_connect_all_brokers(self, p_pyhouse_obj):
@@ -95,7 +95,7 @@ class Util(object):
             xml_tools.stuff_new_attrs(l_message, p_message)
         else:
             xml_tools.stuff_new_attrs(l_message, p_message)
-        # print(PrettyFormatAny.form(l_message, 'Mqtt Client - Message'))
+        #  print(PrettyFormatAny.form(l_message, 'Mqtt Client - Message'))
         l_json = json_tools.encode_json(l_message)
         return l_json
 
@@ -138,7 +138,7 @@ class API(Util):
         LOG.info("Saved Mqtt XML.")
         return p_xml
 
-# ## The following are public commands that may be called from everywhere
+#  ## The following are public commands that may be called from everywhere
 
     def MqttPublish(self, p_topic, p_message):
         """Send a topic, message to the broker for it to distribute to the subscription list
@@ -162,7 +162,7 @@ class API(Util):
     def MqttDispatch(self, p_topic, p_message):
         """Dispatch a received MQTT message according to the topic.
         """
-        l_topic = p_topic.split('/')[2:]  # Drop the pyhouse/housename/ as that is all we subscribed to.
+        l_topic = p_topic.split('/')[2:]  #  Drop the pyhouse/housename/ as that is all we subscribed to.
         l_message = json_tools.decode_json_unicode(p_message)
         LOG.info('Dispatch\t\tTopic: {}'.format(l_topic))
         #
@@ -170,8 +170,11 @@ class API(Util):
             l_logmsg = 'Login:\n\tName: {}'.format(
                         l_message['Name'])
         elif l_topic[0] == 'lighting':
-            l_logmsg = 'Lighting:\n\tName: {}\n\tRoom: {}\n\tLevel: {}'.format(
-                        l_message['Name'], l_message['RoomName'], l_message['CurLevel'])
+            l_logmsg = 'Lighting:\n\tName: {}\n\tRoom: {}'.format(l_message['Name'], l_message['RoomName'])
+            try:
+                l_logmsg += '\n\tLevel: {}'.format(l_message['CurLevel'])
+            except:
+                pass
         elif l_topic[0] == 'schedule' and l_topic[1] == 'execute':
             l_logmsg = 'Schedule:\n\tType: {}\n\tRoom: {}\n\tLight: {}\n\tLevel: {}'.format(
                         l_message['ScheduleType'], l_message['RoomName'], l_message['LightName'], l_message['Level'])
@@ -190,4 +193,4 @@ class API(Util):
         l_node.NodeInterfaces = {}
         self.MqttPublish('login/initial', l_node)
 
-# ## END DBK
+#  ## END DBK

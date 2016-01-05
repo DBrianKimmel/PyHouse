@@ -476,7 +476,7 @@ class LightHandlerAPI(object):
         for l_obj in p_pyhouse_obj.House.Buttons.itervalues():
             self._get_obj_info(p_controller_obj, l_obj)
         LOG.info('Getting device information of all Insteon Thermostats')
-        for l_obj in p_pyhouse_obj.House.Thermostats.itervalues():
+        for l_obj in p_pyhouse_obj.House.Hvac.Thermostats.itervalues():
             self._get_thermostat_obj_info(p_controller_obj, l_obj)
 
 

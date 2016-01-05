@@ -28,11 +28,14 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
     THE SOFTWARE.
 
-
         cp   /c/Users/briank/Documents/GitHub/PyHouse/admin/config/cannontrail_master.xml   /c/etc/pyhouse//master.xml
         cd   /c/etc/pyhouse
         cd   /c/var/log/pyhouse
         > error; > debug; clear; tail -f debug
+
+PyHouse.
+        Computer
+        House
 
 Uses I{Epytext} mark-up for documentation.
 

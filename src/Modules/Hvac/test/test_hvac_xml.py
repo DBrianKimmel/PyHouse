@@ -2,12 +2,12 @@
 @name:      PyHouse/src/Modules/Hvac/test/test_hvac_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2015 by D. Brian Kimmel
+@copyright: (c) 2015-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 12, 2015
 @Summary:
 
-Passed all 11 tests - DBK - 2015-09-24
+Passed all 14 tests - DBK - 2016-01-05
 
 """
 
@@ -146,11 +146,11 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """Read all the thermostats on file.
         """
         #  print('B1-06')
-        l_objs = hvacXML.read_hvac_xml(self.m_pyhouse_obj)
+        l_obj = hvacXML.read_hvac_xml(self.m_pyhouse_obj)
         #  print(PrettyFormatAny.form(l_objs, 'All Thermostats'))
-        self.assertEqual(len(l_objs), 2)
-        self.assertEqual(l_objs[0].Name, TESTING_THERMOSTAT_NAME_0)
-        self.assertEqual(l_objs[0].CoolSetPoint, float(TESTING_THERMOSTAT_COOL_SETPOINT_0))
+        self.assertEqual(len(l_obj.Thermostats), 2)
+        self.assertEqual(l_obj.Thermostats[0].Name, TESTING_THERMOSTAT_NAME_0)
+        self.assertEqual(l_obj.Thermostats[0].CoolSetPoint, float(TESTING_THERMOSTAT_COOL_SETPOINT_0))
 
 
 class C1_Write(SetupMixin, unittest.TestCase):
@@ -248,7 +248,7 @@ class C1_Write(SetupMixin, unittest.TestCase):
         self.m_pyhouse_obj.House.Hvac = l_objs
         l_xml = ET.Element('HvacSection')
         l_xml = hvacXML.write_hvac_xml(self.m_pyhouse_obj, l_xml)
-        #  print(PrettyFormatAny.form(l_xml, 'All Thermostats'))
-        self.assertEqual(l_xml.find('Thermostat/Comment').text, TESTING_DEVICE_COMMENT)
+        print(PrettyFormatAny.form(l_xml, 'All Thermostats'))
+        self.assertEqual(l_xml.find('ThermostatSection/Thermostat/Comment').text, TESTING_DEVICE_COMMENT)
 
 #  ## END DBK

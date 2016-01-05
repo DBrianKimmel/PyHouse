@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Hvac/hvac_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2015 by D. Brian Kimmel
+@copyright: (c) 2015-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 12, 2015
 @Summary:
@@ -13,7 +13,7 @@
 
 #  Import system type stuff
 from Modules.Computer import logging_pyh as Logger
-from Modules.Core.data_objects import ThermostatData
+from Modules.Core.data_objects import HvacData, ThermostatData
 from Modules.Families.family_utils import FamUtil
 from Modules.Utilities.device_tools import XML as deviceXML
 from Modules.Utilities.xml_tools import PutGetXML
@@ -67,6 +67,21 @@ class Utility(object):
         Utility._read_family_data(p_pyhouse_obj, l_thermostat_obj, p_xml)
         return l_thermostat_obj
 
+    @staticmethod
+    def _read_all_thermostats_xml(p_pyhouse_obj, p_xml):
+        l_dict = {}
+        l_count = 0
+        try:
+            for l_xml in p_xml.iterfind('Thermostat'):
+                l_therm = Utility._read_one_thermostat_xml(p_pyhouse_obj, l_xml)
+                l_therm.Key = l_count
+                l_dict[l_count] = l_therm
+                l_count += 1
+        except AttributeError:
+            LOG.warn('Reading Hvac.Thermostat information - %s', exec_info = True)
+        LOG.info("Loaded {} Thermostats".format(l_count))
+        return l_dict
+
 
     @staticmethod
     def _write_thermostat_base(p_tag_name, p_obj):
@@ -98,25 +113,35 @@ class Utility(object):
         Utility._write_family_data(p_pyhouse_obj, p_obj, l_xml)
         return l_xml
 
+    @staticmethod
+    def _write_all_thermostats_xml(p_pyhouse_obj):
+        """Write the XML for all the thermostats.
+        """
+        l_count = 0
+        l_thermostats = p_pyhouse_obj.House.Hvac.Thermostats
+        l_xml = ET.Element('ThermostatSection')
+        try:
+            for l_obj in l_thermostats.itervalues():
+                l_entry = Utility._write_one_thermostat_xml(p_pyhouse_obj, l_obj)
+                l_xml.append(l_entry)
+                l_count += 1
+        except:
+            pass
+        LOG.info("Saved {} Thermostats".format(l_count))
+        return l_xml
+
 
 class XML(object):
 
     @staticmethod
     def read_hvac_xml(p_pyhouse_obj):
-        l_dict = {}
-        l_count = 0
-        try:
-            l_division = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
-            l_section = l_division.find('HvacSection').find('ThermostatSection')
-            for l_xml in l_section.iterfind('Thermostat'):
-                l_therm = Utility._read_one_thermostat_xml(p_pyhouse_obj, l_xml)
-                l_therm.Key = l_count
-                l_dict[l_count] = l_therm
-                l_count += 1
-        except AttributeError:
-            LOG.warn('Reading Hvac information - %s', exec_info = True)
-        LOG.info("Loaded {} Thermostats".format(l_count))
-        return l_dict
+        l_obj = HvacData()
+        l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision').find('HvacSection')
+        if l_xml == None:
+            return l_obj
+        l_thermostat_xml = l_xml.find('ThermostatSection')
+        l_obj.Thermostats = Utility._read_all_thermostats_xml(p_pyhouse_obj, l_thermostat_xml)
+        return l_obj
 
     @staticmethod
     def write_hvac_xml(p_pyhouse_obj, p_xml):
@@ -125,18 +150,7 @@ class XML(object):
         @return: a sub tree ready to be appended to an element.
         """
         l_xml = ET.Element('HvacSection')  #  HvacSection
-        ET.SubElement(l_xml, 'ThermostatSection')  #  ThermostatSection
-        l_count = 0
-        try:
-            for l_obj in p_pyhouse_obj.House.Hvac.itervalues():
-                l_entry = Utility._write_one_thermostat_xml(p_pyhouse_obj, l_obj)
-                l_xml.append(l_entry)
-                l_count += 1
-        except AttributeError as e_err:
-            #  l_msg = 'ERROR writing all thermostats {}'.format(e_err)
-            #  LOG.error(l_msg)
-            pass
-        LOG.info("Saved {} Thermostats".format(l_count))
+        l_xml.append(Utility._write_all_thermostats_xml(p_pyhouse_obj))
         return l_xml
 
 #  ## END DBK

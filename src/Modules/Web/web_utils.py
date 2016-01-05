@@ -11,11 +11,11 @@
 
 """
 
-# Import system type stuff
+#  Import system type stuff
 import jsonpickle
 import json
 
-# Import PyMh files and modules.
+#  Import PyMh files and modules.
 from Modules.Core.data_objects import JsonHouseData
 from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities import json_tools
@@ -24,21 +24,21 @@ from Modules.Utilities import json_tools
 g_debug = 0
 LOG = Logger.getLogger('PyHouse.webUtils       ')
 
-# Web States defined
+#  Web States defined
 #-------------------
-WS_IDLE = 0  # Starting state
-WS_LOGGED_IN = 1  # Successful login completed
+WS_IDLE = 0  #  Starting state
+WS_LOGGED_IN = 1  #  Successful login completed
 WS_ROOTMENU = 2
 WS_HOUSE_SELECTED = 3
-# global things
+#  global things
 WS_SERVER = 101
 WS_LOGS = 102
-# House things
+#  House things
 WS_HOUSE = 201
 WS_LOCATION = 202
 WS_ROOMS = 203
 WS_INTERNET = 204
-# Light things
+#  Light things
 WS_BUTTONS = 501
 WS_CONTROLLERS = 502
 WS_LIGHTS = 503
@@ -70,7 +70,7 @@ class UtilJson(object):
         p_ret.Controllers = p_pyhouse_obj.House.Controllers
         p_ret.Lights = p_pyhouse_obj.House.Lights
         p_ret.Schedules = p_pyhouse_obj.House.Schedules
-        p_ret.Thermostats = p_pyhouse_obj.House.Thermostats
+        p_ret.Hvac = p_pyhouse_obj.House.Hvac
 
 
     @staticmethod
@@ -161,4 +161,4 @@ class JsonUnicode(object):
             l_json = u'{}'
         return l_json
 
-# ## END DBK
+#  ## END DBK

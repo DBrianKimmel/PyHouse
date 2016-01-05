@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Hvac/hvac.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2015 by D. Brian Kimmel
+@copyright: (c) 2015-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 12, 2015
 @Summary:
