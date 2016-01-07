@@ -20,9 +20,6 @@ Invoked periodically and when any Insteon device changes.
 from Modules.Computer import logging_pyh as Logger
 from Modules.Families.Insteon.Insteon_constants import ACK
 from Modules.Families.Insteon.Insteon_utils import Decode as utilDecode
-
-
-#  from Modules.Families.Insteon.Insteon_PLM import Utility as plmUtility
 LOG = Logger.getLogger('PyHouse.Insteon_Link   ')
 
 
@@ -57,7 +54,7 @@ class Decode(object):
         l_link_group = l_message[3]
         l_from_id = l_message[4:7]
         utilDecode._devcat(l_message[7:9], p_controller_obj)
-        LOG.debug('All-Linking completed {}, Group:{}, From:{} '.format(l_link_code, l_link_group, l_from_id))
+        LOG.info('All-Linking completed {}, Group:{}, From:{} '.format(l_link_code, l_link_group, l_from_id))
         return False
 
     @staticmethod
@@ -68,7 +65,7 @@ class Decode(object):
         """
         l_message = p_controller_obj._Message
         l_event = l_message[2]
-        LOG.debug('The Set button was pressed {}'.format(l_event))
+        LOG.info('The Set button was pressed {}'.format(l_event))
         return False
 
     @staticmethod
@@ -80,7 +77,7 @@ class Decode(object):
         l_link_code = l_message[2]
         l_link_group = l_message[3]
         l_from_id = l_message[4:7]
-        LOG.debug('All-Linking failed {}, Group:{}, From:{} '.format(l_link_code, l_link_group, l_from_id))
+        LOG.info('All-Linking failed {}, Group:{}, From:{} '.format(l_link_code, l_link_group, l_from_id))
         return False
 
     @staticmethod
@@ -110,7 +107,7 @@ class Decode(object):
         """
         l_message = p_controller_obj._Message
         l_status = l_message[2]
-        LOG.debug('All-Linking cleanup {}, Group:{}, From:{} '.format(l_status))
+        LOG.info('All-Linking cleanup {}, Group:{}, From:{} '.format(l_status))
         return False
 
     @staticmethod
@@ -137,7 +134,7 @@ class Decode(object):
         """
         l_message = p_controller_obj._Message
         l_status = l_message[2]
-        LOG.debug('All-Linking cancel {}, Group:{}, From:{} '.format(l_status))
+        LOG.info('All-Linking cancel {}, Group:{}, From:{} '.format(l_status))
         return False
 
     @staticmethod
@@ -146,6 +143,7 @@ class Decode(object):
         See p 244(257) of 2007 developers guide.
         """
         l_message = p_controller_obj._Message
+        LOG.info("All-Link first record - ACK")
         if l_message[2] == ACK:
             l_ret = True
             Send.queue_6A_command(p_controller_obj)
@@ -160,6 +158,7 @@ class Decode(object):
         See p 247(260) of 2007 developers guide.
         """
         l_message = p_controller_obj._Message
+        LOG.info("All-Link Next record - ACK")
         if l_message[2] == ACK:
             l_ret = True
             Send.queue_6A_command()
@@ -174,6 +173,7 @@ class Decode(object):
         See p 248(261) of 2007 developers guide.
         """
         l_message = p_controller_obj._Message
+        LOG.info("All-Link Record for sender record - ACK")
         if l_message[2] == ACK:
             l_ret = True
         else:

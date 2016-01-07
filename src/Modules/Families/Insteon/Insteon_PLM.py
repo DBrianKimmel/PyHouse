@@ -385,8 +385,8 @@ class LightHandlerAPI(object):
     def start_controller_driver(self, p_pyhouse_obj, p_controller_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         l_msg = "Controller:{}, ".format(p_controller_obj.Name)
-        l_msg += "DeviceFamily:{}, InterfaceType:{}".format(
-                p_controller_obj.DeviceFamily, p_controller_obj.InterfaceType)
+        l_msg += "DeviceFamily:{}, ".format(p_controller_obj.DeviceFamily)
+        l_msg += "InterfaceType:{}".format(p_controller_obj.InterfaceType)
         LOG.info('Start Controller - {}'.format(l_msg))
         l_driver = FamUtil.get_device_driver_API(p_pyhouse_obj, p_controller_obj)
         p_controller_obj._DriverAPI = l_driver
@@ -504,6 +504,9 @@ class Utility(LightHandlerAPI):
             LOG.error('Insteon Controller start failed')
         return l_ret
 
+    def get_plm_info(self, p_pyhouse_obj, p_controller_obj):
+        pass
+
     @staticmethod
     def _create_command_message(p_command):
         l_cmd = PLM_COMMANDS[p_command]
@@ -550,6 +553,7 @@ class API(Utility):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_controller_obj = p_controller_obj
         l_ret = self.start_controller_and_driver(p_pyhouse_obj, p_controller_obj)
+        self.get_plm_info(p_pyhouse_obj, p_controller_obj)
         LOG.info('Started.')
         return l_ret
 

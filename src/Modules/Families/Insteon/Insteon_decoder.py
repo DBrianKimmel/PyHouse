@@ -157,7 +157,7 @@ class DecodeResponses(object):
         if l_device_obj.DeviceType == 2:
             Insteon_HVAC.ihvac_utility().decode_50_record(self.m_pyhouse_obj, l_device_obj, p_controller_obj)
             return self.check_for_more_decoding(p_controller_obj, True)
-        l_debug_msg = 'Standard Message from: {}; Flags:{}; Cmd1:{:#x}, Cmd2:{:#x}; '.format(l_device_obj.Name, l_flags, l_cmd1, l_cmd2)
+        l_debug_msg = 'Std Msg fm: {}; Cmd1:{:#x}, Cmd2:{:#x}; '.format(l_device_obj.Name, l_cmd1, l_cmd2)
         #  Break down bits 7(msb), 6, 5 into message type
         if l_message[8] & 0xE0 == 0x80:  #  Broadcast/NAK Message (100)
             l_debug_msg += utilDecode._devcat(l_message[5:7], l_device_obj)
@@ -195,7 +195,7 @@ class DecodeResponses(object):
                 _l_ret1 = Insteon_HVAC.ihvac_utility().decode_50_record(l_device_obj, l_cmd1, l_cmd2)
                 pass
 
-            elif l_cmd1 >= 0x68 and l_cmd1 <= 0x6f:  #  0x6e
+            elif l_cmd1 >= 0x68 and l_cmd1 <= 0x75:  #  0x6e
                 _l_ret1 = Insteon_HVAC.ihvac_utility().decode_50_record(l_device_obj, l_cmd1, l_cmd2)
                 pass
 
@@ -203,13 +203,14 @@ class DecodeResponses(object):
                 l_debug_msg += ' Device Set Button Pressed '
             elif l_message[8] & 0xE0 == 0x80 and l_cmd1 == 02:
                 l_debug_msg += ' Controller Set Button Pressed '
+
             else:
-                l_debug_msg += " Unknown type - last command was {} - {}; ".format(l_device_obj._Command1, PrintBytes(l_message))
+                l_debug_msg += "\n\tUnknown type - last command was {} - {}; ".format(l_device_obj._Command1, PrintBytes(l_message))
                 LOG.warn('Decoding 50 tyoe {}'.format(l_debug_msg))
         except AttributeError as e_err:
             LOG.error('ERROR decoding 50 record {}'.format(e_err))
         l_ret = True
-        LOG.info('==50 Response - {}'.format(l_debug_msg))
+        LOG.info('50 Resp; {}'.format(l_debug_msg))
         #  l_topic = "lighting/{}/info".format(l_device_obj.Name)
         #  self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_device_obj)  # /lighting/{}/info
         return self.check_for_more_decoding(p_controller_obj, l_ret)
@@ -228,7 +229,7 @@ class DecodeResponses(object):
                     l_message[18], l_message[19], l_message[20], l_message[21], l_message[22], l_message[23], l_message[24])
         #  l_product_key = self._get_addr_from_message(l_message, 12)
         l_devcat = l_message[15] * 256 + l_message[16]
-        LOG.info("== 51 Response - From={}, To={}, Flags={:#x}, Data={} Extended={} ==".format(l_obj_from.Name, l_obj_to.Name, l_flags, l_data, l_extended))
+        LOG.info("51 Resp: Fm={}, To={}, Flags={:#x}, Data={} Extended={} ==".format(l_obj_from.Name, l_obj_to.Name, l_flags, l_data, l_extended))
         #  l_obj_from.ProductKey = l_product_key
         l_obj_from.DevCat = l_devcat
         l_ret = True
@@ -238,7 +239,7 @@ class DecodeResponses(object):
         """Insteon X-10 message received (4 bytes).
         See p 253 of developers guide.
         """
-        LOG.warning("== 52 message not decoded yet.")
+        LOG.warning("52 Resp: not decoded yet.")
         l_ret = False
         return self.check_for_more_decoding(p_controller_obj, l_ret)
 
@@ -247,7 +248,7 @@ class DecodeResponses(object):
         return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_54_record(self, p_controller_obj):
-        l_ret = linkDecode.decode_53(p_controller_obj)
+        l_ret = linkDecode.decode_54(p_controller_obj)
         return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_55_record(self, p_controller_obj):
@@ -261,6 +262,7 @@ class DecodeResponses(object):
 
     def _decode_56_record(self, p_controller_obj):
         l_ret = False
+        l_ret = linkDecode.decode_56(p_controller_obj)
         return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_57_record(self, p_controller_obj):
@@ -323,8 +325,8 @@ class DecodeResponses(object):
         l_obj = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_message[2:5])
         _l_msgflags = utilDecode._decode_message_flag(l_message[5])
         l_ack = utilDecode.get_ack_nak(l_message[8])
-        l_debug_msg = "Device:{}, {}".format(l_obj.Name, l_ack)
-        LOG.info("Got ACK(62) {}".format(l_debug_msg))
+        l_debug_msg = "Device: {}, {}".format(l_obj.Name, l_ack)
+        LOG.info("Got ACK(62); {}".format(l_debug_msg))
         return self.check_for_more_decoding(p_controller_obj)
 
     def _decode_64_record(self, p_controller_obj):

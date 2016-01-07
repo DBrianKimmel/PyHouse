@@ -167,17 +167,22 @@ class API(Util):
         LOG.info('Dispatch\t\tTopic: {}'.format(l_topic))
         #
         if l_topic[0] == 'login':
-            l_logmsg = 'Login:\n\tName: {}'.format(
-                        l_message['Name'])
+            l_logmsg = 'Login:\n\tName: {}'.format(l_message['Name'])
         elif l_topic[0] == 'lighting':
-            l_logmsg = 'Lighting:\n\tName: {}\n\tRoom: {}'.format(l_message['Name'], l_message['RoomName'])
+            l_logmsg = 'Lighting:\n\tName: {}'.format(l_message['Name'])
+            l_logmsg += '\n\tRoom: {}'.format(l_message['RoomName'])
             try:
                 l_logmsg += '\n\tLevel: {}'.format(l_message['CurLevel'])
             except:
                 pass
         elif l_topic[0] == 'schedule' and l_topic[1] == 'execute':
-            l_logmsg = 'Schedule:\n\tType: {}\n\tRoom: {}\n\tLight: {}\n\tLevel: {}'.format(
-                        l_message['ScheduleType'], l_message['RoomName'], l_message['LightName'], l_message['Level'])
+            l_logmsg = 'Schedule:\n\tType: {}'.format(l_message['ScheduleType'])
+            l_logmsg += '\n\tRoom: {}'.format(l_message['RoomName'])
+            l_logmsg += '\n\tLight: {}'.format(l_message['LightName'])
+            l_logmsg += '\n\tLevel: {}'.format(l_message['Level'])
+        elif l_topic[0] == 'thermostat':
+            l_logmsg = 'Thermostat:\n\tName: {}'.format(l_message['Name'])
+            pass
         else:
             l_logmsg = 'OTHER: {}'.format(PrettyFormatAny.form(l_message, 'Message', 80))
         LOG.info(l_logmsg)
