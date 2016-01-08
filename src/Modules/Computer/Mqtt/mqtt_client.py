@@ -164,12 +164,14 @@ class API(Util):
         """
         l_topic = p_topic.split('/')[2:]  #  Drop the pyhouse/housename/ as that is all we subscribed to.
         l_message = json_tools.decode_json_unicode(p_message)
-        LOG.info('Dispatch\t\tTopic: {}'.format(l_topic))
+        LOG.info('Dispatch\n\tTopic: {}\n\tSender: {}'.format(l_topic, l_message['Sender']))
         #
         if l_topic[0] == 'login':
             l_logmsg = 'Login:\n\tName: {}'.format(l_message['Name'])
+            l_logmsg += '\n\tSender: {}'.format(l_message['Sender'])
         elif l_topic[0] == 'lighting':
             l_logmsg = 'Lighting:\n\tName: {}'.format(l_message['Name'])
+            l_logmsg += '\n\tSender: {}'.format(l_message['Sender'])
             l_logmsg += '\n\tRoom: {}'.format(l_message['RoomName'])
             try:
                 l_logmsg += '\n\tLevel: {}'.format(l_message['CurLevel'])
@@ -177,14 +179,19 @@ class API(Util):
                 pass
         elif l_topic[0] == 'schedule' and l_topic[1] == 'execute':
             l_logmsg = 'Schedule:\n\tType: {}'.format(l_message['ScheduleType'])
+            l_logmsg += '\n\tSender: {}'.format(l_message['Sender'])
             l_logmsg += '\n\tRoom: {}'.format(l_message['RoomName'])
             l_logmsg += '\n\tLight: {}'.format(l_message['LightName'])
             l_logmsg += '\n\tLevel: {}'.format(l_message['Level'])
         elif l_topic[0] == 'thermostat':
             l_logmsg = 'Thermostat:\n\tName: {}'.format(l_message['Name'])
-            pass
+            l_logmsg += '\n\tSender: {}'.format(l_message['Sender'])
+            l_logmsg += '\n\tRoom: {}'.format(l_message['RoomName'])
+            l_logmsg += '\n\tTemp: {}'.format(l_message['CurrentTemperature'])
         else:
-            l_logmsg = 'OTHER: {}'.format(PrettyFormatAny.form(l_message, 'Message', 80))
+            l_logmsg = 'OTHER: Unknown'
+            l_logmsg += '\n\tSender: {}'.format(l_message['Sender'])
+            l_logmsg += '\n\tSender: {}'.format(PrettyFormatAny.form(l_message, 'Message', 80))
         LOG.info(l_logmsg)
 
     def doPyHouseLogin(self, p_client, p_pyhouse_obj):

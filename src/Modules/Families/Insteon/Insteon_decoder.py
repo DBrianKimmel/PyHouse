@@ -175,7 +175,7 @@ class DecodeResponses(object):
                 l_debug_msg += "Engine version is: {}; ".format(l_engine_id)
                 self._publish(self.m_pyhouse_obj, l_device_obj)
             elif l_cmd1 == MESSAGE_TYPES['id_request']:  #  0x10
-                l_debug_msg += "Request ID From:{}; ".format(l_device_obj.Name)
+                l_debug_msg += "Request ID From: {}; ".format(l_device_obj.Name)
                 #  LOG.info("Got an ID request. Light:{}".format(l_device_obj.Name,))
             elif l_cmd1 == MESSAGE_TYPES['on']:  #  0x11
                 l_device_obj.CurLevel = 100
@@ -326,7 +326,8 @@ class DecodeResponses(object):
         _l_msgflags = utilDecode._decode_message_flag(l_message[5])
         l_ack = utilDecode.get_ack_nak(l_message[8])
         l_debug_msg = "Device: {}, {}".format(l_obj.Name, l_ack)
-        LOG.info("Got ACK(62); {}".format(l_debug_msg))
+        if l_ack == 'NAK':
+            LOG.info("Got ACK(62); {}".format(l_debug_msg))
         return self.check_for_more_decoding(p_controller_obj)
 
     def _decode_64_record(self, p_controller_obj):

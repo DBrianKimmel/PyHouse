@@ -404,7 +404,7 @@ class LightHandlerAPI(object):
         Commands.queue_6B_command(p_controller_obj, MODE_MONITOR)
 
     @staticmethod
-    def _get_one_light_status(p_controller_obj, p_obj):
+    def _get_one_device_status(p_controller_obj, p_obj):
         """Get the status of a light.
         We will (apparently) get back a 62-ACK followed by a 50 with the level in the response.
         """
@@ -441,20 +441,16 @@ class LightHandlerAPI(object):
         if p_obj.Active != True:
             return
         #  LOG.info('Device:{}'.format(p_obj.Name))
-        self._get_one_light_status(p_controller_obj, p_obj)
-        self._get_id_request(p_controller_obj, p_obj)
         self._get_engine_version(p_controller_obj, p_obj)
+        self._get_id_request(p_controller_obj, p_obj)
+        self._get_one_device_status(p_controller_obj, p_obj)
 
     def _get_controller_info(self, p_controller_obj, p_obj):
         self._get_engine_version(p_controller_obj, p_obj)
-        self._get_one_light_status(p_controller_obj, p_obj)
-        pass
+        self._get_id_request(p_controller_obj, p_obj)
+        self._get_one_device_status(p_controller_obj, p_obj)
 
     def _get_thermostat_obj_info(self, p_controller_obj, p_obj):
-        if p_obj.DeviceFamily != 'Insteon':
-            return
-        if p_obj.Active != True:
-            return
         self._get_id_request(p_controller_obj, p_obj)
         self._get_engine_version(p_controller_obj, p_obj)
         self._get_one_thermostat_status(p_controller_obj, p_obj)
@@ -467,17 +463,18 @@ class LightHandlerAPI(object):
         for l_obj in p_pyhouse_obj.House.Controllers.itervalues():
             if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
                 self._get_controller_info(p_controller_obj, l_obj)
-                self._get_obj_info(p_controller_obj, l_obj)
-        #
         LOG.info('Getting device information of all Insteon Lights')
         for l_obj in p_pyhouse_obj.House.Lights.itervalues():
-            self._get_obj_info(p_controller_obj, l_obj)
+            if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
+                self._get_obj_info(p_controller_obj, l_obj)
         LOG.info('Getting device information of all Insteon Buttons')
         for l_obj in p_pyhouse_obj.House.Buttons.itervalues():
-            self._get_obj_info(p_controller_obj, l_obj)
+            if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
+                self._get_obj_info(p_controller_obj, l_obj)
         LOG.info('Getting device information of all Insteon Thermostats')
         for l_obj in p_pyhouse_obj.House.Hvac.Thermostats.itervalues():
-            self._get_thermostat_obj_info(p_controller_obj, l_obj)
+            if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
+                self._get_thermostat_obj_info(p_controller_obj, l_obj)
 
 
 
