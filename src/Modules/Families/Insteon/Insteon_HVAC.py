@@ -69,19 +69,18 @@ class ihvac_utility(object):
             l_mqtt_message += " Off; "
 
         if l_cmd1 == 0x68:  #  Set thermostat temperature up (half degrees)
-            p_device_obj.CurrentTemperature = l_cmd2 * HALF
             l_mqtt_topic += '/temperature'
-            l_mqtt_message += ' temp = {}; '.format(l_cmd2)
+            l_mqtt_message += ' temp UP = {}; '.format(l_cmd2)
 
         if l_cmd1 == 0x69:  #  Set Thermostat temperature down (half degrees)
-            p_device_obj.CurrentTemperature = l_cmd2 * HALF
+            #  p_device_obj.CurrentTemperature = l_cmd2 * HALF
             l_mqtt_topic += '/temperature'
-            l_mqtt_message += ' temp = {}; '.format(l_cmd2)
+            l_mqtt_message += ' temp DOWN = {}; '.format(l_cmd2)
 
         if l_cmd1 == 0x6A:  #  Send request for thermostat status
-            p_device_obj.CurrentTemperature = l_cmd2 * HALF
+            #  p_device_obj.CurrentTemperature = l_cmd2 * HALF
             l_mqtt_topic += '/temperature'
-            l_mqtt_message += ' temp = {}; '.format(l_cmd2)
+            l_mqtt_message += ' Status = {}; '.format(l_cmd2)
 
         if l_cmd1 == 0x6B:  #  Response for thermostat status
             p_device_obj.CurrentTemperature = l_cmd2 * HALF
@@ -89,32 +88,33 @@ class ihvac_utility(object):
             l_mqtt_message += ' temp = {}; '.format(l_cmd2)
 
         if l_cmd1 == 0x6C:  #  Thermostat Set cool set point
-            p_device_obj.CurrentTemperature = l_cmd2 * HALF
-            l_mqtt_topic += '/temperature'
-            l_mqtt_message += ' temp = {}; '.format(l_cmd2)
+            #  p_device_obj.CurrentTemperature = l_cmd2 * HALF
+            l_mqtt_topic += '/ThermostatSetCoolSetpointCommand'
+            l_mqtt_message += ' cool set point = {}; '.format(l_cmd2)
 
         if l_cmd1 == 0x6D:  #  Set heat set point
-            p_device_obj.CurrentTemperature = l_cmd2 * HALF
-            l_mqtt_topic += '/temperature'
-            l_mqtt_message += ' temp = {}; '.format(l_cmd2)
+            #  p_device_obj.CurrentTemperature = l_cmd2 * HALF
+            l_mqtt_topic += '/ThermostatSetHeatSetpointCommand'
+            l_mqtt_message += ' Heat set point = {}; '.format(l_cmd2)
 
         if l_cmd1 == 0x6e:  #  Status report Temperature
             p_device_obj.CurrentTemperature = l_cmd2 * FACTOR
-            l_mqtt_topic += '/temperature'
+            l_mqtt_topic += '/ThermostatemperatureReport'
             l_mqtt_message += ' temp = {}; '.format(l_cmd2)
 
         if l_cmd1 == 0x6f:  #  Status Report Humidity
-            pass
+            l_mqtt_topic += '/ThermostatHumidityReport'
 
         if l_cmd1 == 0x70:  #  Status Report Mode / Fan Status
-            pass
+            l_mqtt_topic += '/ThermostatStatusReport'
 
         if l_cmd1 == 0x71:  #  Status Report Cool Set Point
             p_device_obj.CoolSetPoint = l_cmd2 * FACTOR
-            pass
+            l_mqtt_topic += '/ThermostatCoolSetPointReport'
 
         if l_cmd1 == 0x72:  #  Status Report Heat Set Point
             p_device_obj.HeatSetPoint = l_cmd2 * FACTOR
+            l_mqtt_topic += '/ThermostatHeatSetPointReport'
 
         LOG.info('HVAC {}'.format(l_mqtt_message))
         p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_mqtt_topic, p_device_obj)  #  /temperature
