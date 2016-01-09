@@ -121,7 +121,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 		self.nodeById('DataEntryDiv').innerHTML = l_html;
 	},
 	function buildEntry(self, p_obj, p_handler) {
-		var l_html = buildBaseEntry(self, p_obj, nouuid);
+		var l_html = buildBaseEntry(self, p_obj, nouuid); 
 		l_html = self.buildScheduleEntry(p_obj, l_html);
 		l_html += buildLcarEntryButtons(p_handler, 1);
 		return l_html;
