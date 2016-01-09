@@ -11,18 +11,18 @@
 
 """
 
-# Import system type stuff
+#  Import system type stuff
 import os
 from nevow import athena
 from nevow import loaders
 
-# Import PyMh files and modules.
+#  Import PyMh files and modules.
 from Modules.Core.data_objects import ScheduleBaseData
 from Modules.Web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.Computer import logging_pyh as Logger
 from Modules.Scheduling import schedule
 
-# Handy helper for finding external resources nearby.
+#  Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
 
@@ -65,7 +65,7 @@ class SchedulesElement(athena.LiveElement):
         l_obj.Name = l_json['Name']
         l_obj.Active = l_json['Active']
         l_obj.Key = l_schedule_ix
-        l_obj.UUID = l_json['UUID']
+        #  l_obj.UUID = l_json['UUID']
         #
         l_obj.ScheduleType = l_json['ScheduleType']
         l_obj.Time = l_json['Time']
@@ -81,4 +81,4 @@ class SchedulesElement(athena.LiveElement):
         self.m_pyhouse_obj.House.Schedules[l_schedule_ix] = l_obj
         self.m_pyhouse_obj.APIs.House.ScheduleAPI.RestartSchedule()
 
-# ## END DBK
+#  ## END DBK

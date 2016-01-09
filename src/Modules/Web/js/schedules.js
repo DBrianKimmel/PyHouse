@@ -156,7 +156,6 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
             Name      : fetchTextWidget(self, 'Name'),
             Key       : fetchTextWidget(self, 'Key'),
 			Active    : fetchTrueFalseWidget(self, 'ScheduleActive'),
-			UUID      : fetchTextWidget(self, 'ScheduleUUID'),
 			ScheduleType : fetchSelectWidget(self, 'ScheduleType'),
 			Time      : fetchTextWidget(self, 'ScheduleTime'),  // be sure to strip any leading or trailing white space and lower case text
 			DOW       : fetchDowWidget(self, 'ScheduleDow'),
@@ -176,7 +175,6 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 			Name : 'Change Me',
 			Key : Object.keys(globals.House.Schedules).length,
 			Active : false,
-			UUID : '',
 			ScheduleType : 'LightingDevice',
 			Time : '',
 			DOW : 127,
