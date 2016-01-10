@@ -16,10 +16,9 @@ import jsonpickle
 import json
 
 #  Import PyMh files and modules.
-from Modules.Core.data_objects import JsonHouseData
+from Modules.Core.data_objects import JsonHouseData, LightingData
 from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities import json_tools
-from src.Modules.Core.data_objects import LightingData
 
 
 g_debug = 0
