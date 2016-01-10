@@ -5,7 +5,7 @@
 @name:      PyHouse/src/Pyhouse.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2010-2015 by D. Brian Kimmel
+@copyright: (c) 2010-2016 by D. Brian Kimmel
 @note:      Created on Mar 1, 2014
 @license:   MIT License
 @summary:   This is the core of the PyHouse daemon.
@@ -28,14 +28,14 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
     THE SOFTWARE.
 
-        cp   /c/Users/briank/Documents/GitHub/PyHouse/admin/config/cannontrail_master.xml   /c/etc/pyhouse//master.xml
-        cd   /c/etc/pyhouse
-        cd   /c/var/log/pyhouse
-        > error; > debug; clear; tail -f debug
 
 PyHouse.
-        Computer
-        House
+        APIs            Internal
+        Computer        Configuration File
+        House           Configuration File
+        Services        Internal
+        Twisted         Internal
+        Xml             Internal
 
 Uses I{Epytext} mark-up for documentation.
 
@@ -63,7 +63,7 @@ See those modules to find out what each does.
 """
 
 __author__ = "D. Brian Kimmel"
-__copyright__ = "(c) 2010-2015 by D. Brian Kimmel"
+__copyright__ = "(c) 2010-2016 by D. Brian Kimmel"
 __version_info__ = (1, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
