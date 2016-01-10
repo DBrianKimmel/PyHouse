@@ -175,7 +175,7 @@ class Decode(object):
     def _find_addr_one_class(p_pyhouse_obj, p_class, p_addr):
         """
         Find the address of something Insteon.
-        @param p_class: is an OBJ like p_pyhouse_obj.House.Controllers that we will look thru to find the object.
+        @param p_class: is an OBJ like p_pyhouse_obj.House.Lighting.Controllers that we will look thru to find the object.
         @param p_addr: is the address that we want to find.
         @return: the object that has the address.  None if not found
         """
@@ -191,12 +191,12 @@ class Decode(object):
         """ This will search thru all object groups that an inseton device could be in.
         @return: the object that has the address or a dummy object if not found
         """
-        l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Lights, p_address)
+        l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Lighting.Lights, p_address)
         l_dotted = conversions.int2dotted_hex(p_address, 3)
         if l_ret == None:
-            l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Controllers, p_address)
+            l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Lighting.Controllers, p_address)
         if l_ret == None:
-            l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Buttons, p_address)
+            l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Lighting.Buttons, p_address)
         if l_ret == None:
             l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Hvac.Thermostats, p_address)
         #  Add additional classes in here

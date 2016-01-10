@@ -164,7 +164,7 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 
 // ============================================================================
 	function fetchEntry(self) {
-		var l_data = fetchBaseEntry(self, l_data);
+		var l_data = fetchBaseEntry(self);
 		l_data = self.fetchThermostatEntry(l_data);
         if (l_data.DeviceFamily === 'Insteon')
         	l_data = fetchInsteonEntry(self, l_data);

@@ -149,6 +149,7 @@ function buildLcarButton(p_obj, p_handler, p_background_color, /* optional */ na
 function buildBaseEntry(self, p_obj, /* optional */ noUuid) {
 	var l_uuid = noUuid;
 	var l_html = '';
+	// Divmod.debug('---', 'lcars.build_lcars_top() was called. ' + noUuid);
 	l_html += buildLcarTextWidget(self, 'Name', 'Device Name', p_obj.Name);
 	l_html += buildLcarTextWidget(self, 'Key', 'Index', p_obj.Key, 'size=10 disabled');
 	l_html += buildLcarTrueFalseWidget(self, 'Active', 'Active ?', p_obj.Active);
@@ -156,14 +157,19 @@ function buildBaseEntry(self, p_obj, /* optional */ noUuid) {
 		l_html += buildLcarTextWidget(self, 'UUID', 'UUID', p_obj.UUID, 'disabled');
 	return l_html;
 }
-function fetchBaseEntry(self, p_data) {
+function fetchBaseEntry(self) {
     var l_data = {
     		Delete : false
         };
 	l_data.Name = fetchTextWidget(self, 'Name');
 	l_data.Key = fetchTextWidget(self, 'Key');
 	l_data.Active = fetchTrueFalseWidget(self, 'Active');
-	l_data.UUID = fetchTextWidget(self, 'UUID');
+	try {
+		l_data.UUID = fetchTextWidget(self, 'UUID');
+	}
+	catch(err) {
+		;
+	}
 	return l_data;
 }
 function createBaseEntry(self, p_key) {

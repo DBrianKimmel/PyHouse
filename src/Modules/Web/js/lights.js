@@ -1,4 +1,4 @@
-/**
+ /**
  * @name:      PyHouse/src/Modules/Web/js/lights.js
  * @author:    D. Brian Kimmel
  * @contact:   D.BrianKimmel@gmail.com
@@ -64,7 +64,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 	 * Build a screen full of buttons - One for each light and some actions.
 	 */
 	function buildLcarSelectScreen(self){
-		var l_button_html = buildLcarSelectionButtonsTable(globals.House.Lights, 'handleMenuOnClick');
+		var l_button_html = buildLcarSelectionButtonsTable(globals.House.Lighting.Lights, 'handleMenuOnClick');
 		var l_html = build_lcars_top('Lights', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(10, l_button_html);
 		l_html += build_lcars_bottom();
@@ -84,7 +84,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		globals.House.LightIx = l_ix;
 		globals.House.LightName = l_name;
 		if (l_ix <= 1000) {  // we clicked on one of the buttons, show the details for the light.
-			var l_obj = globals.House.Lights[l_ix];
+			var l_obj = globals.House.Lighting.Lights[l_ix];
 			console.log("lights.handleMenuOnClick()  Light  %O", l_obj);
 			globals.House.LightObj = l_obj;
 			try {
@@ -145,7 +145,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 	 * Fetch the data we put out and the user updated.
 	 */
 	function fetchEntry(self) {
-		var l_data = fetchBaseEntry(self, l_data);
+		var l_data = fetchBaseEntry(self);
 		l_data = fetchLightingCoreEntry(self, l_data);
 		l_data = self.fetchLightEntry(l_data);
         if (l_data.DeviceFamily === 'Insteon')
@@ -160,7 +160,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 	function createEntry(self) {
     	var l_ix = 0;
     	try {
-    		l_ix = Object.keys(globals.House.Lights).length;
+    		l_ix = Object.keys(globals.House.Lighting.Lights).length;
     	}
     	catch(e_err) {
     		Divmod.debug('---', 'ERROR lights.createEntry() ' + e_err);

@@ -155,7 +155,7 @@ class API(object):
     def write_all_controllers_xml(p_pyhouse_obj):
         l_count = 0
         l_controllers_xml = ET.Element('ControllerSection')
-        for l_controller_obj in p_pyhouse_obj.House.Controllers.itervalues():
+        for l_controller_obj in p_pyhouse_obj.House.Lighting.Controllers.itervalues():
             l_controllers_xml.append(Utility._write_one_controller_xml(p_pyhouse_obj, l_controller_obj))
             l_count += 1
         LOG.info('Saved {} Controllers XML'.format(l_count))

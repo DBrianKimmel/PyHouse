@@ -99,7 +99,7 @@ class ihvac_utility(object):
 
         if l_cmd1 == 0x6e:  #  Status report Temperature
             p_device_obj.CurrentTemperature = l_cmd2 * FACTOR
-            l_mqtt_topic += '/ThermostatemperatureReport'
+            l_mqtt_topic += '/ThermostatTemperatureReport'
             l_mqtt_message += ' temp = {}; '.format(l_cmd2)
 
         if l_cmd1 == 0x6f:  #  Status Report Humidity

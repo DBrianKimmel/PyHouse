@@ -92,7 +92,7 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
         return p_html;
     },
 	function fetchEntry(self) {
-    	var l_data = fetchBaseEntry(self, l_data);
+    	var l_data = fetchBaseEntry(self);
 		var l_loc = self.fetchLocationEntry(l_data);
 		l_data.Location = l_loc;
         return l_data;

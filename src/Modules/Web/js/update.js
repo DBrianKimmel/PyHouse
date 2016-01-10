@@ -120,7 +120,7 @@ helpers.Widget.subclass(update, 'UpdateWidget').methods(
         return p_html;
     },
 	function fetchEntry(self) {
-    	var l_data = fetchBaseEntry(self, l_data);
+    	var l_data = fetchBaseEntry(self);
 		l_data = self.fetchNodeEntry(l_data);
         return l_data;
 	},

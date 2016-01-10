@@ -11,11 +11,11 @@ Passed all 15 tests - DBK - 2015-08-02
 
 """
 
-# Import system type stuff
+#  Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
-# Import PyMh files and modules.
+#  Import PyMh files and modules.
 from Modules.Core.data_objects import LightData
 from Modules.Lighting.lighting_lights import Utility, API as lightsAPI
 from Modules.Core import conversions
@@ -192,7 +192,7 @@ class W1_Write(SetupMixin, unittest.TestCase):
         l_obj = Utility._read_one_light_xml(self.m_pyhouse_obj, self.m_xml.light, self.m_version)
         l_xml = Utility._write_base_device('Light', l_obj)
         Utility._write_light_data(l_obj, l_xml)
-        # print(PrettyFormatAny.form(l_xml, 'Lights XML'))
+        #  print(PrettyFormatAny.form(l_xml, 'Lights XML'))
         self.assertEqual(l_xml.find('CurLevel').text, TESTING_LIGHTING_LIGHT_CUR_LEVEL)
         self.assertEqual(l_xml.find('IsDimmable').text, TESTING_LIGHT_DIMMABLE)
 
@@ -232,8 +232,8 @@ class W1_Write(SetupMixin, unittest.TestCase):
 
     def test_05_AllLights(self):
         l_objs = lightsAPI.read_all_lights_xml(self.m_pyhouse_obj, self.m_xml.light_sect, self.m_version)
-        self.m_pyhouse_obj.House.Lights = l_objs
-        # print(PrettyFormatAny.form(l_objs, 'Lights'))
+        self.m_pyhouse_obj.House.Lighting.Lights = l_objs
+        #  print(PrettyFormatAny.form(l_objs, 'Lights'))
         l_xml = lightsAPI.write_all_lights_xml(self.m_pyhouse_obj)
         print(PrettyFormatAny.form(l_xml, 'Lights XML'))
         l_xml0 = l_xml.find('Light')
@@ -253,8 +253,8 @@ class Z1_JSON(SetupMixin, unittest.TestCase):
         """ Create a JSON object for Location.
         """
         l_obj = lightsAPI.read_all_lights_xml(self.m_pyhouse_obj, self.m_xml.light_sect, self.m_version)
-        # print('Light: {0:}'.format(l_obj))
+        #  print('Light: {0:}'.format(l_obj))
         l_json = json_tools.encode_json(l_obj)
-        # self.assertEqual(l_json[0] ['Comment'], 'Switch')
+        #  self.assertEqual(l_json[0] ['Comment'], 'Switch')
 
-# ## END DBK
+#  ## END DBK

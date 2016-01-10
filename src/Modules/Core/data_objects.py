@@ -206,18 +206,24 @@ PyHouse.House.xxx as in the def below
     """
     def __init__(self):
         super(HouseInformation, self).__init__()
-        self.Buttons = {}  #  ButtonData()
-        self.Controllers = {}  #  ControllerData()
         self.FamilyData = {}  #  FamilyData('FamilyName')
         self.Hvac = None  #  HvacData()
         self.Irrigation = None  #  IrrigationData()
-        self.Lights = {}  #  LightData()
+        self.Lighting = {}  #  LightingData()
         self.Location = {}  #  LocationData() - one location per house.
         self.Pools = {}  #  PoolData()
         self.Rooms = {}  #  RoomData()
         self.Rules = {}  #  RulesData()
         self.Schedules = None  #  ScheduleBaseData()
-        #  self.Thermostats = {}  # ThermostatData()
+
+
+class LightingData(object):
+    """
+    """
+    def __init__(self):
+        self.Buttons = {}  #  ButtonData()
+        self.Controllers = {}  #  ControllerData()
+        self.Lights = {}  #  LightData()
 
 
 class JsonHouseData(BaseObject):
@@ -227,7 +233,7 @@ class JsonHouseData(BaseObject):
         super(JsonHouseData, self).__init__()
         self.Buttons = {}
         self.Controllers = {}
-        self.Lights = {}
+        self.Lighting = {}
         self.Location = {}
         self.Rooms = {}
         self.Schedules = {}

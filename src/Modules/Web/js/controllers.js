@@ -67,7 +67,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 	 * Build a screen full of buttons - One for each controller and some actions.
 	 */
 	function buildLcarSelectScreen(self){
-		var l_button_html = buildLcarSelectionButtonsTable(globals.House.Controllers, 'handleMenuOnClick');
+		var l_button_html = buildLcarSelectionButtonsTable(globals.House.Lighting.Controllers, 'handleMenuOnClick');
 		var l_html = build_lcars_top('Controllers', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(10, l_button_html);
 		l_html += build_lcars_bottom();
@@ -103,17 +103,16 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 		globals.House.ControllerName = l_name;
         if (l_ix <= 1000) {  // One of the controller buttons
             showDataEntryScreen(self);
-			l_obj = globals.House.Controllers[l_ix];
+			l_obj = globals.House.Lighting.Controllers[l_ix];
 			globals.House.ControllerObj = l_obj;
 			globals.House.Self = self;
             self.buildLcarDataEntryScreen(l_obj, 'handleDataOnClick');
         } else if (l_ix == 10001) {  // The 'Add' button
+            showDataEntryScreen(self);
         	l_obj = self.createEntry()
 			globals.House.ControllerObj = l_obj;
 			globals.House.Self = self;
-            showDataEntryScreen(self);
-			var l_ent = self.createEntry();
-			self.buildLcarDataEntryScreen(l_ent, 'handleDataOnClick');
+			self.buildLcarDataEntryScreen(l_obj, 'handleDataOnClick');
         } else if (l_ix == 10002) {  // The 'Back' button
             self.showWidget('HouseMenu');
         }
@@ -173,7 +172,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 		l_self.buildLcarDataEntryScreen(l_obj, 'handleDataOnClick');
 	},
     function fetchEntry(self) {
-		var l_data = fetchBaseEntry(self, l_data);
+		var l_data = fetchBaseEntry(self);
 		l_data = fetchLightingCoreEntry(self, l_data);
 		l_data = self.fetchControllerEntry(l_data);
         if (l_data.DeviceFamily === 'Insteon')
@@ -191,7 +190,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
     	return p_data;
     },
     function createEntry(self) {
-        var l_data = createBaseEntry(self, Object.keys(globals.House.Controllers).length);
+        var l_data = createBaseEntry(self, Object.keys(globals.House.Lighting.Controllers).length);
         l_data = createLightingCoreEntry(self, l_data);
         l_data.LightingType = 'Controller';
         if (l_data.DeviceFamily === 'Insteon')

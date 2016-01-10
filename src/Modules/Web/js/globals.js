@@ -711,7 +711,7 @@ function buildLcarRoomSelectWidget(self, p_id, p_caption, p_checked) {
 	return buildLcarSelectWidget(self, p_id, p_caption, l_list, p_checked);
 }
 function buildLcarLightNameSelectWidget(self, p_id, p_caption, p_checked) {
-	var l_obj = globals.House.Lights;
+	var l_obj = globals.House.Lighting.Lights;
 	var l_list = [];
 	for (var ix = 0; ix < Object.keys(l_obj).length; ix++)
 		l_list[ix] = l_obj[ix].Name;

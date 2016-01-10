@@ -11,10 +11,10 @@
 
 """
 
-# Import system type stuff
+#  Import system type stuff
 import xml.etree.ElementTree as ET
 
-# Import PyHouse files
+#  Import PyHouse files
 from Modules.Core.data_objects import ButtonData
 from Modules.Lighting.lighting_core import API as LightingCoreAPI
 from Modules.Families.family_utils import FamUtil
@@ -33,7 +33,7 @@ class Utility(object):
         @param p_version: is some helper data to get the correct information from the config file.
         @return: a Controller data object with the base info filled in
         """
-        l_obj = ButtonData()  # Create an empty controller object.
+        l_obj = ButtonData()  #  Create an empty controller object.
         l_obj = LightingCoreAPI.read_core_lighting_xml(l_obj, p_xml, p_version)
         l_obj.DeviceSubType = 3
         return l_obj
@@ -47,7 +47,7 @@ class Utility(object):
     @staticmethod
     def _read_family_data(p_pyhouse_obj, p_obj, p_xml, p_version):
         l_api = FamUtil.read_family_data(p_pyhouse_obj, p_obj, p_xml)
-        return l_api  # for testing
+        return l_api  #  for testing
 
     @staticmethod
     def _write_family_data(p_pyhouse_obj, p_button_obj, p_xml):
@@ -84,10 +84,10 @@ class API(object):
         try:
             for l_button_xml in p_button_sect_xml.iterfind('Button'):
                 l_obj = Utility._read_one_button_xml(p_pyhouse_obj, l_button_xml, p_version)
-                l_obj.Key = l_count  # Renumber
+                l_obj.Key = l_count  #  Renumber
                 l_button_dict[l_count] = l_obj
                 l_count += 1
-        except AttributeError as e_error:  # No Buttons
+        except AttributeError as e_error:  #  No Buttons
             LOG.warning('No Buttons defined - {0:}'.format(e_error))
             l_button_dict = {}
         LOG.info("Loaded {} buttons".format(l_count))
@@ -98,11 +98,11 @@ class API(object):
     def write_buttons_xml(p_pyhouse_obj):
         l_count = 0
         l_buttons_xml = ET.Element('ButtonSection')
-        for l_button_obj in p_pyhouse_obj.House.Buttons.itervalues():
+        for l_button_obj in p_pyhouse_obj.House.Lighting.Buttons.itervalues():
             l_entry = Utility._write_one_button_xml(p_pyhouse_obj, l_button_obj)
             l_buttons_xml.append(l_entry)
             l_count += 1
         LOG.info('Saved {} Buttons XML'.format(l_count))
         return l_buttons_xml
 
-# ## END DBK
+#  ## END DBK

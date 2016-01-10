@@ -74,7 +74,7 @@ class C02_Cmds(SetupMixin, unittest.TestCase):
     #    self.assertEqual(l_cmd[1], 0x62)
 
     def test_03_63Cmd(self):
-        l_obj = self.m_pyhouse_obj.House.Controllers
+        l_obj = self.m_pyhouse_obj.House.Lighting.Controllers
         # insteonPlmAPI._put_controller(l_obj)
         # l_cmd = self.m_api.queue_62_command(l_obj, 0x02, 0x04)
         pass

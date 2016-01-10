@@ -260,7 +260,7 @@ class C1_Write(SetupMixin, unittest.TestCase):
         """ Write out the XML file for the location section
         """
         l_controllers = self.m_api.read_all_controllers_xml(self.m_pyhouse_obj, self.m_xml.controller_sect, self.m_version)
-        self.m_pyhouse_obj.House.Controllers = l_controllers
+        self.m_pyhouse_obj.House.Lighting.Controllers = l_controllers
         l_xml = self.m_api.write_all_controllers_xml(self.m_pyhouse_obj)
         #  print(PrettyFormatAny.form(l_xml, 'AllControllers', 100))
         self.assertEqual(l_xml.find('Controller/Address').text, TESTING_INSTEON_ADDRESS_0)

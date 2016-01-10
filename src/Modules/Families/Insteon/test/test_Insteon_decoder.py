@@ -44,9 +44,9 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_pyhouse_obj.House.FamilyData = familyAPI(
                             self.m_pyhouse_obj).LoadFamilyTesting()
-        self.m_pyhouse_obj.House.Controllers = controllerAPI().read_all_controllers_xml(
+        self.m_pyhouse_obj.House.Lighting.Controllers = controllerAPI().read_all_controllers_xml(
                             self.m_pyhouse_obj, self.m_xml.controller_sect, self.m_version)
-        self.m_pyhouse_obj.House.Lights = lightsAPI.read_all_lights_xml(
+        self.m_pyhouse_obj.House.Lighting.Lights = lightsAPI.read_all_lights_xml(
                             self.m_pyhouse_obj, self.m_xml.controller_sect, self.m_version)
         self.m_pyhouse_obj.House.Hvac = hvacXML.read_hvac_xml(
                             self.m_pyhouse_obj)
@@ -70,8 +70,8 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         pass
 
     def test_03_Controller(self):
-        l_ctlr = self.m_pyhouse_obj.House.Controllers[0]
-        #  print(PrettyFormatAny.form(l_ctlr, 'PyHouse.House.Controllers[0]'))
+        l_ctlr = self.m_pyhouse_obj.House.Lighting.Controllers[0]
+        #  print(PrettyFormatAny.form(l_ctlr, 'PyHouse.House.Lighting.Controllers[0]'))
         self.assertEqual(l_ctlr.Name, TESTING_CONTROLLER_NAME_0)
 
 
@@ -85,7 +85,7 @@ class C1_Util(SetupMixin, unittest.TestCase):
 
     def test_01_GetObjFromMsg(self):
         self.m_ctrlr._Message = MSG_50
-        l_ctlr = self.m_pyhouse_obj.House.Controllers[0]
+        l_ctlr = self.m_pyhouse_obj.House.Lighting.Controllers[0]
         print(PrettyFormatAny.form(l_ctlr, 'C1-01 Controller'))
 
     def test_02_NextMsg(self):
@@ -110,13 +110,13 @@ class T1_HVAC(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_ctrlr = self.m_pyhouse_obj.House
         #  print(PrettyFormatAny.form(self.m_ctrlr, "Controlelrs"))
-        self.m_ctrlr = self.m_pyhouse_obj.House.Controllers[0]
+        self.m_ctrlr = self.m_pyhouse_obj.House.Lighting.Controllers[0]
         #  print(PrettyFormatAny.form(self.m_ctrlr, "Controlelrs"))
         self.m_decode = Insteon_decoder.DecodeResponses(self.m_pyhouse_obj, self.m_ctrlr)
 
     def test_01_x(self):
         self.m_ctrlr._Message = MSG_50T
-        self.m_pyhouse_obj.House.Controllers[0]
+        self.m_pyhouse_obj.House.Lighting.Controllers[0]
         self.m_decode.decode_message(self.m_ctrlr)
         print(PrettyFormatAny.form(self.m_ctrlr, "Controller"))
         self.assertEqual(len(self.m_ctrlr._Message), 0)

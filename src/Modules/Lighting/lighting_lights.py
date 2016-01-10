@@ -19,10 +19,10 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-# Import system type stuff
+#  Import system type stuff
 import xml.etree.ElementTree as ET
 
-# Import PyHouse files
+#  Import PyHouse files
 from Modules.Core.data_objects import LightData
 from Modules.Lighting.lighting_core import API as LightingCoreAPI
 from Modules.Families.family_utils import FamUtil
@@ -59,7 +59,7 @@ class Utility(object):
     def _read_light_data(p_obj, p_xml, p_version):
         p_obj.CurLevel = PutGetXML.get_int_from_xml(p_xml, 'CurLevel', 0)
         p_obj.IsDimmable = PutGetXML.get_bool_from_xml(p_xml, 'IsDimmable', False)
-        return p_obj  # for testing
+        return p_obj  #  for testing
 
     @staticmethod
     def _write_light_data(p_obj, p_xml):
@@ -71,7 +71,7 @@ class Utility(object):
     @staticmethod
     def _read_family_data(p_pyhouse_obj, p_obj, p_xml, p_version):
         l_api = FamUtil.read_family_data(p_pyhouse_obj, p_obj, p_xml)
-        return l_api  # for testing
+        return l_api  #  for testing
 
     @staticmethod
     def _write_family_data(p_pyhouse_obj, p_obj, p_xml):
@@ -122,12 +122,12 @@ class API(object):
         try:
             for l_xml in p_light_sect_xml.iterfind('Light'):
                 l_light = Utility._read_one_light_xml(p_pyhouse_obj, l_xml, p_version)
-                l_light.Key = l_count  # Renumber
+                l_light.Key = l_count  #  Renumber
                 l_dict[l_count] = l_light
                 l_count += 1
-        except AttributeError as e_err:  # No Lights section
+        except AttributeError as e_err:  #  No Lights section
             LOG.warning('Lighting_Lights - No Lights defined - {}'.format(e_err))
-            # print('XXX-1', e_err)
+            #  print('XXX-1', e_err)
             l_dict = {}
         LOG.info("Loaded {} Lights".format(l_count))
         return l_dict
@@ -137,11 +137,11 @@ class API(object):
     def write_all_lights_xml(p_pyhouse_obj):
         l_xml = ET.Element(SECTION)
         l_count = 0
-        for l_light_obj in p_pyhouse_obj.House.Lights.itervalues():
+        for l_light_obj in p_pyhouse_obj.House.Lighting.Lights.itervalues():
             l_one = Utility._write_one_light_xml(p_pyhouse_obj, l_light_obj)
             l_xml.append(l_one)
             l_count += 1
         LOG.info('Saved {} Lights XML'.format(l_count))
         return l_xml
 
-# ## END DBK
+#  ## END DBK

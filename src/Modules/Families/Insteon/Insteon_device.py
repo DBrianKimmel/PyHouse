@@ -77,7 +77,7 @@ class Utility(object):
         Return the Insteon_PLM API reference if one is found:
         """
         #  l_count = 0
-        for l_controller_obj in p_pyhouse_obj.House.Controllers.itervalues():
+        for l_controller_obj in p_pyhouse_obj.House.Lighting.Controllers.itervalues():
             if Utility._is_valid_controller(l_controller_obj):
                 LOG.info('Insteon Controller: {} - will be started.'.format(l_controller_obj.Name))
                 l_ret = Utility._start_plm(p_pyhouse_obj, l_controller_obj)
@@ -90,7 +90,7 @@ class Utility(object):
 
     @staticmethod
     def _stop_all_controllers(p_pyhouse_obj):
-        for l_controller_obj in p_pyhouse_obj.House.Controllers.itervalues():
+        for l_controller_obj in p_pyhouse_obj.House.Lighting.Controllers.itervalues():
             if Utility._is_valid_controller(l_controller_obj):
                 l_controller_obj._HandlerAPI.Stop(l_controller_obj)
 

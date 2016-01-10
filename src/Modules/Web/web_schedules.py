@@ -65,7 +65,6 @@ class SchedulesElement(athena.LiveElement):
         l_obj.Name = l_json['Name']
         l_obj.Active = l_json['Active']
         l_obj.Key = l_schedule_ix
-        #  l_obj.UUID = l_json['UUID']
         #
         l_obj.ScheduleType = l_json['ScheduleType']
         l_obj.Time = l_json['Time']

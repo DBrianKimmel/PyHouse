@@ -12,11 +12,11 @@ Passed all 13 tests - DBK - 2015-08-05
 """
 
 
-# Import system type stuff
+#  Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
-# Import PyMh files
+#  Import PyMh files
 from Modules.Core.setup_logging import LOGGING_DICT
 from Modules.Utilities.obj_defs import GetPyhouse
 from Modules.Utilities import tools
@@ -63,10 +63,10 @@ class C1_Find(SetupMixin, unittest.TestCase):
         self.m_api = GetPyhouse(self.m_pyhouse_obj)
         self.m_light_api = lightsAPI()
         self.m_pyhouse_obj.House.FamilyData = familyAPI(self.m_pyhouse_obj).m_family
-        self.m_pyhouse_obj.House.Lights = self.m_light_api.read_all_lights_xml(self.m_pyhouse_obj, self.m_xml.light_sect, self.m_version)
+        self.m_pyhouse_obj.House.Lighting.Lights = self.m_light_api.read_all_lights_xml(self.m_pyhouse_obj, self.m_xml.light_sect, self.m_version)
 
     def test_01_Setup(self):
         l_loc = self.m_api.Location().Latitude
-        # print(l_loc)
+        #  print(l_loc)
 
-# ## END DBK
+#  ## END DBK

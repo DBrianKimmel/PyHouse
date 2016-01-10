@@ -13,16 +13,16 @@ This is so other modules only need to dispatch to here for any lighting event - 
 
 """
 
-# Import system type stuff
+#  Import system type stuff
 
-# Import PyMh files
+#  Import PyMh files
 from Modules.Families.family_utils import FamUtil
 from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities import tools, json_tools
 
 LOG = Logger.getLogger('PyHouse.LightAction    ')
 
-SECONDS_IN_WEEK = 604800  # 7 * 24 * 60 * 60
+SECONDS_IN_WEEK = 604800  #  7 * 24 * 60 * 60
 
 
 class Utility(object):
@@ -34,7 +34,7 @@ class Utility(object):
         """ Given the limited information from the web browser, look up and return the full object.
         If more than one device has the same name, return the first one found.
         """
-        for l_light in p_pyhouse_obj.House.Lights.itervalues():
+        for l_light in p_pyhouse_obj.House.Lighting.Lights.itervalues():
             if p_web_obj.Name == l_light.Name:
                 return l_light
         LOG.error('ERROR - no light with name {} was found.'.format(p_web_obj.Name))
@@ -50,7 +50,7 @@ class Utility(object):
 
         @return: the Light object found or None.
         """
-        l_lights = p_pyhouse_obj.House.Lights
+        l_lights = p_pyhouse_obj.House.Lighting.Lights
         if name != None:
             for l_obj in l_lights.itervalues():
                 if l_obj.Name == name:
@@ -91,7 +91,7 @@ class API(object):
             @param p_new_level: is the percent of light we are changing to
             @param p_rate: is the rate the change will ramp to.
         """
-        l_light_obj = Utility.get_light_object(p_pyhouse_obj, name = p_light_obj.Name)  # web has some info missing - get all the object
+        l_light_obj = Utility.get_light_object(p_pyhouse_obj, name = p_light_obj.Name)  #  web has some info missing - get all the object
         try:
             LOG.info('Turn Light: "{}" to level: "{}", DeviceFamily: "{}"'.format(l_light_obj.Name, p_new_level, l_light_obj.DeviceFamily))
             l_family_api = FamUtil._get_family_device_api(p_pyhouse_obj, l_light_obj)
@@ -99,4 +99,4 @@ class API(object):
         except Exception as e_err:
             LOG.error('ERROR - {}'.format(e_err))
 
-# ## END DBK
+#  ## END DBK

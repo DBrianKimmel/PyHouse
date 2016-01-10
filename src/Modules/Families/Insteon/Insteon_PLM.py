@@ -460,15 +460,15 @@ class LightHandlerAPI(object):
         """
         LOG.info('Getting information for all Insteon devices.')
         LOG.info('Getting device information of all Insteon Controllers')
-        for l_obj in p_pyhouse_obj.House.Controllers.itervalues():
+        for l_obj in p_pyhouse_obj.House.Lighting.Controllers.itervalues():
             if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
                 self._get_controller_info(p_controller_obj, l_obj)
         LOG.info('Getting device information of all Insteon Lights')
-        for l_obj in p_pyhouse_obj.House.Lights.itervalues():
+        for l_obj in p_pyhouse_obj.House.Lighting.Lights.itervalues():
             if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
                 self._get_obj_info(p_controller_obj, l_obj)
         LOG.info('Getting device information of all Insteon Buttons')
-        for l_obj in p_pyhouse_obj.House.Buttons.itervalues():
+        for l_obj in p_pyhouse_obj.House.Lighting.Buttons.itervalues():
             if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
                 self._get_obj_info(p_controller_obj, l_obj)
         LOG.info('Getting device information of all Insteon Thermostats')

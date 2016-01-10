@@ -122,7 +122,7 @@ helpers.Widget.subclass(mqtt, 'MqttWidget').methods(
         return p_html;
     },
 	function fetchEntry(self) {
-    	var l_data = fetchBaseEntry(self, l_data);
+    	var l_data = fetchBaseEntry(self);
 		l_data = self.fetchMqttEntry(l_data);
        return l_data;
 	},

@@ -19,6 +19,7 @@ import json
 from Modules.Core.data_objects import JsonHouseData
 from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities import json_tools
+from src.Modules.Core.data_objects import LightingData
 
 
 g_debug = 0
@@ -57,27 +58,22 @@ class UtilJson(object):
         l_ret.Active = p_pyhouse_obj.House.Active
         return l_ret
 
-
     @staticmethod
-    def _get_LocRoom(p_pyhouse_obj, p_ret):
-        p_ret.Location = p_pyhouse_obj.House.Location
-        p_ret.Rooms = p_pyhouse_obj.House.Rooms
-
-
-    @staticmethod
-    def _get_Modules(p_pyhouse_obj, p_ret):
-        p_ret.Buttons = p_pyhouse_obj.House.Buttons
-        p_ret.Controllers = p_pyhouse_obj.House.Controllers
-        p_ret.Lights = p_pyhouse_obj.House.Lights
-        p_ret.Schedules = p_pyhouse_obj.House.Schedules
-        p_ret.Hvac = p_pyhouse_obj.House.Hvac
-
+    def _get_Lighting(p_pyhouse_obj):
+        l_ret = LightingData()
+        l_ret.Buttons = p_pyhouse_obj.House.Lighting.Buttons
+        l_ret.Controllers = p_pyhouse_obj.House.Lighting.Controllers
+        l_ret.Lights = p_pyhouse_obj.House.Lighting.Lights
+        return l_ret
 
     @staticmethod
     def _get_AllHouseObjs(p_pyhouse_obj):
         l_ret = UtilJson._getHouseBase(p_pyhouse_obj)
-        UtilJson._get_LocRoom(p_pyhouse_obj, l_ret)
-        UtilJson._get_Modules(p_pyhouse_obj, l_ret)
+        l_ret.Lighting = UtilJson._get_Lighting(p_pyhouse_obj)
+        l_ret.Location = p_pyhouse_obj.House.Location
+        l_ret.Rooms = p_pyhouse_obj.House.Rooms
+        l_ret.Schedules = p_pyhouse_obj.House.Schedules
+        l_ret.Hvac = p_pyhouse_obj.House.Hvac
         return l_ret
 
 

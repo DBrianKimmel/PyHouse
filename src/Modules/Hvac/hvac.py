@@ -9,6 +9,9 @@
 
 This is the controlling portion of a complete HVAC system.
 
+PyHouse.House.Hvac.
+                   Thermostats
+
 """
 
 #  Import system type stuff

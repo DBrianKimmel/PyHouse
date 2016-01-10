@@ -57,7 +57,7 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 	 * Build a screen full of buttons - One for each Button and some actions.
 	 */
 	function buildLcarSelectScreen(self){
-		var l_button_html = buildLcarSelectionButtonsTable(globals.House.Buttons, 'handleMenuOnClick');
+		var l_button_html = buildLcarSelectionButtonsTable(globals.House.Lighting.Buttons, 'handleMenuOnClick');
 		var l_html = build_lcars_top('Buttons', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(10, l_button_html);
 		l_html += build_lcars_bottom();
@@ -77,7 +77,7 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 		globals.House.ButtonIx = l_ix;
 		globals.House.ButtonName = l_name;
 		if (l_ix <= 1000) {  // One of the button buttons.
-			var l_obj = globals.House.Buttons[l_ix];
+			var l_obj = globals.House.Lighting.Buttons[l_ix];
 			showDataEntryScreen(self);
 			self.buildLcarSelectScreen(l_obj);
 		} else if (l_ix == 10001) {  // The "Add" button
