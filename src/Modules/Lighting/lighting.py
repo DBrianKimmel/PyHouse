@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Lighting/lighting.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2010-2015 by D. Brian Kimmel
+@copyright: (c) 2010-2016 by D. Brian Kimmel
 @note:      Created on Apr 2, 2010
 @license:   MIT License
 @summary:   Handle the home lighting system automation.
@@ -29,7 +29,7 @@ from Modules.Lighting.lighting_lights import API as lightsAPI
 from Modules.Families.family_utils import FamUtil
 from Modules.Computer import logging_pyh as Logger
 #  from Modules.Utilities.debug_tools import PrettyFormatAny
-from src.Modules.Core.data_objects import LightingData
+from Modules.Core.data_objects import LightingData
 
 LOG = Logger.getLogger('PyHouse.Lighting       ')
 
