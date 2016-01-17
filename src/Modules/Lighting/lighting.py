@@ -22,16 +22,15 @@ PyHouse.House.Lighting.
 import xml.etree.ElementTree as ET
 
 #  Import PyHouse files
+from Modules.Core.data_objects import LightingData
+from Modules.Families.family_utils import FamUtil
 from Modules.Lighting.lighting_actions import Utility as actionUtility
 from Modules.Lighting.lighting_buttons import API as buttonsAPI
 from Modules.Lighting.lighting_controllers import API as controllersAPI
 from Modules.Lighting.lighting_lights import API as lightsAPI
-from Modules.Families.family_utils import FamUtil
 from Modules.Computer import logging_pyh as Logger
-#  from Modules.Utilities.debug_tools import PrettyFormatAny
-from Modules.Core.data_objects import LightingData
-
 LOG = Logger.getLogger('PyHouse.Lighting       ')
+#  from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 class Utility(object):

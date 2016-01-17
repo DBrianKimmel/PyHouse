@@ -57,6 +57,7 @@ class Util(object):
         These connections will automatically reconnect if the connection is broken (broker reboots e.g.)
         """
         l_count = 0
+        l_clientID = 'PyH-' + p_pyhouse_obj.Computer.Name
         for l_broker in p_pyhouse_obj.Computer.Mqtt.Brokers.itervalues():
             if not l_broker.Active:
                 continue
@@ -67,7 +68,7 @@ class Util(object):
                 LOG.error('Bad Mqtt broker Address: {}'.format(l_host))
                 l_broker._ProtocolAPI = None
             else:
-                l_factory = PyHouseMqttFactory(p_pyhouse_obj, "DBK1", l_broker)
+                l_factory = PyHouseMqttFactory(p_pyhouse_obj, l_clientID, l_broker)
                 _l_connector = p_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_factory)
                 LOG.info('TCP Connected to broker: {}; Host:{}'.format(l_broker.Name, l_host))
                 l_count += 1

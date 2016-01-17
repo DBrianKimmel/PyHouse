@@ -13,11 +13,11 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
-# Import system type stuff
+#  Import system type stuff
 import random
 from twisted.internet.protocol import Protocol, ReconnectingClientFactory
 
-# Import PyMh files and modules.
+#  Import PyMh files and modules.
 from Modules.Computer import logging_pyh as Logger
 from Modules.Computer.Mqtt.mqtt_util import EncodeDecode
 
@@ -30,7 +30,7 @@ class MQTTProtocol(Protocol):
     This protocol is used for communication with the MQTT broker.
     """
 
-    # The first 4 bits of a MQTT packet are the packet type.
+    #  The first 4 bits of a MQTT packet are the packet type.
     _packetTypes = {0x00: "null", 0x01: "connect", 0x02: "connack",
                     0x03: "publish", 0x04: "puback", 0x05: "pubrec",
                     0x06: "pubrel", 0x07: "pubcomp", 0x08: "subscribe",
@@ -51,17 +51,17 @@ class MQTTProtocol(Protocol):
         l_length = None
         while len(self.m_buffer):
             if l_length is None:
-                # Start on a new packet
-                # Haven't got enough data to start a new packet, wait for some more
+                #  Start on a new packet
+                #  Haven't got enough data to start a new packet, wait for some more
                 if len(self.m_buffer) < 2:
                     break
                 lenLen = 1
-                # Calculate the length of the length field
+                #  Calculate the length of the length field
                 while lenLen < len(self.m_buffer):
                     if not self.m_buffer[lenLen] & 0x80:
                         break
                     lenLen += 1
-                # We still haven't got all of the remaining length field
+                #  We still haven't got all of the remaining length field
                 if lenLen < len(self.m_buffer) and self.m_buffer[lenLen] & 0x80:
                     return
                 l_length = EncodeDecode._decodeLength(self.m_buffer[1:])
@@ -84,15 +84,15 @@ class MQTTProtocol(Protocol):
             qos = (packet[0] & 0x06) >> 1
             retain = (packet[0] & 0x01) == 0x01
         except:
-            # Invalid packet type, throw away this packet
+            #  Invalid packet type, throw away this packet
             LOG.error("Invalid packet type {:x}".format(packet_type))
             return
-        # Strip the fixed header
+        #  Strip the fixed header
         lenLen = 1
         while packet[lenLen] & 0x80:
             lenLen += 1
         packet = packet[lenLen + 1:]
-        # Get the appropriate handler function
+        #  Get the appropriate handler function
         l_packetHandler = getattr(self, "_event_%s" % packet_type_name, None)
         if l_packetHandler:
             l_packetHandler(packet, qos, dup, retain)
@@ -100,32 +100,32 @@ class MQTTProtocol(Protocol):
             LOG.error("Invalid packet handler for {}".format(packet_type_name))
             return
 
-    # These are the events - one for each packet type
+    #  These are the events - one for each packet type
 
     def _event_connect(self, packet, _qos, _dup, _retain):
-        # Strip the protocol name and version number
+        #  Strip the protocol name and version number
         packet = packet[len("06MQisdp3"):]
-        # Extract the connect flags
+        #  Extract the connect flags
         willRetain = packet[0] & 0x20 == 0x20
         willQos = packet[0] & 0x18 >> 3
         willFlag = packet[0] & 0x04 == 0x04
         cleanStart = packet[0] & 0x02 == 0x02
         packet = packet[1:]
-        # Extract the keepalive period
+        #  Extract the keepalive period
         keepalive = EncodeDecode._decodeValue(packet[:2])
         packet = packet[2:]
-        # Extract the client id
+        #  Extract the client id
         clientID = EncodeDecode._decodeString(packet)
         packet = packet[len(clientID) + 2:]
-        # Extract the will topic and message, if applicable
+        #  Extract the will topic and message, if applicable
         willTopic = None
         willMessage = None
         if willFlag:
-            # Extract the will topic
+            #  Extract the will topic
             willTopic = EncodeDecode._decodeString(packet)
             packet = packet[len(willTopic) + 2:]
-            # Extract the will message
-            # Whatever remains is the will message
+            #  Extract the will message
+            #  Whatever remains is the will message
             willMessage = packet
         LOG.info('Mqtt Connected.')
         self.connectReceived(clientID, keepalive, willTopic,
@@ -133,26 +133,26 @@ class MQTTProtocol(Protocol):
                              cleanStart)
 
     def _event_connack(self, packet, _qos, _dup, _retain):
-        # Return the status field
+        #  Return the status field
         self.connackReceived(packet[0])
 
     def _event_publish(self, packet, qos, dup, retain):
-        # Extract the topic name
+        #  Extract the topic name
         topic = EncodeDecode._decodeString(packet)
         packet = packet[len(topic) + 2:]
-        # Extract the message ID if appropriate
+        #  Extract the message ID if appropriate
         messageId = None
         if qos > 0:
             messageId = EncodeDecode._decodeValue(packet[:2])
             packet = packet[2:]
-        # Extract the message
-        # Whatever remains is the message
+        #  Extract the message
+        #  Whatever remains is the message
         message = str(packet)
-        # LOG.info('Mqtt Publish: {}\n\t{}'.format(topic, message))
+        #  LOG.info('Mqtt Publish: {}\n\t{}'.format(topic, message))
         self.publishReceived(topic, message, qos, dup, retain, messageId)
 
     def _event_puback(self, packet, _qos, _dup, _retain):
-        # Extract the message ID
+        #  Extract the message ID
         messageId = EncodeDecode._decodeValue(packet[:2])
         self.pubackReceived(messageId)
 
@@ -177,7 +177,7 @@ class MQTTProtocol(Protocol):
             packet = packet[len(topic) + 2:]
             qos = packet[0]
             packet = packet[1:]
-            # Add them to the list of (topic, qos)s
+            #  Add them to the list of (topic, qos)s
             topics.append((topic, qos))
         LOG.info('Mqtt Subscribe: {}'.format(topics))
         self.subscribeReceived(topics, messageId)
@@ -185,7 +185,7 @@ class MQTTProtocol(Protocol):
     def _event_suback(self, packet, _qos, _dup, _retain):
         messageId = EncodeDecode._decodeValue(packet[:2])
         packet = packet[2:]
-        # Extract the granted QoS levels
+        #  Extract the granted QoS levels
         grantedQos = []
         while len(packet):
             grantedQos.append(packet[0])
@@ -195,7 +195,7 @@ class MQTTProtocol(Protocol):
     def _event_unsubscribe(self, packet, _qos, _dup, _retain):
         messageId = EncodeDecode._decodeValue(packet[:2])
         packet = packet[2:]
-        # Extract the unsubscribing topics
+        #  Extract the unsubscribing topics
         topics = []
         while len(packet):
             topic = EncodeDecode._decodeString(packet)
@@ -219,7 +219,7 @@ class MQTTProtocol(Protocol):
         LOG.info('Mqtt Disconnect:')
         self.disconnectReceived()
 
-    # these are to be overridden below
+    #  these are to be overridden below
 
     def connectionMade(self):
         pass
@@ -270,7 +270,7 @@ class MQTTProtocol(Protocol):
     def disconnectReceived(self):
         pass
 
-    # these are for sending Mqtt packets.
+    #  these are for sending Mqtt packets.
 
     def connect(self, p_clientID, keepalive = 3000, willTopic = None, willMessage = None, willQoS = 0, willRetain = False, cleanStart = True):
         LOG.info("Sending connect packet  ID: {}".format(p_clientID))
@@ -280,7 +280,7 @@ class MQTTProtocol(Protocol):
         varHeader.extend(EncodeDecode._encodeString("MQIsdp"))
         varHeader.append(3)
         if willMessage is None or willTopic is None:
-            # Clean start, no will message
+            #  Clean start, no will message
             varHeader.append(0 << 2 | cleanStart << 1)
         else:
             varHeader.append(willRetain << 5 | willQoS << 3
@@ -306,11 +306,11 @@ class MQTTProtocol(Protocol):
         self.transport.write(str(payload))
 
     def publish(self, p_topic, p_message, qosLevel = 0, retain = False, dup = False, messageId = None):
-        # LOG.info("Sending publish packet - Topic: {}".format(p_topic))
+        #  LOG.info("Sending publish packet - Topic: {}".format(p_topic))
         header = bytearray()
         varHeader = bytearray()
         payload = bytearray()
-        # Type = publish
+        #  Type = publish
         header.append(0x03 << 4 | dup << 3 | qosLevel << 1 | retain)
         varHeader.extend(EncodeDecode._encodeString(p_topic))
         if qosLevel > 0:
@@ -369,7 +369,7 @@ class MQTTProtocol(Protocol):
         header = bytearray()
         varHeader = bytearray()
         payload = bytearray()
-        # Type = subscribe, QoS = 1
+        #  Type = subscribe, QoS = 1
         header.append(0x08 << 4 | 0x01 << 1)
         if messageId is None:
             varHeader.extend(EncodeDecode._encodeValue(random.randint(1, 0xFFFF)))
@@ -512,8 +512,8 @@ class MQTTClient(MQTTProtocol):
         """ This is where we receive all the pyhouse messages.
         Call the dispatcher to send them on to the correct place.
         """
-        # LOG.info("\n\tBroker: {}\n\tTopic: {}".format(self.m_broker.Name, p_topic))
-        # LOG.info('PublishReceived: {}'.format(p_topic))
+        #  LOG.info("\n\tBroker: {}\n\tTopic: {}".format(self.m_broker.Name, p_topic))
+        #  LOG.info('PublishReceived: {}'.format(p_topic))
         self.m_broker._ClientAPI.MqttDispatch(p_topic, p_message)
 
 
@@ -540,7 +540,7 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
         LOG.info('Started to connect. {}'.format(p_connector))
 
     def buildProtocol(self, p_addr):
-        l_client = MQTTClient(self.m_pyhouse_obj, self.m_broker)
+        l_client = MQTTClient(self.m_pyhouse_obj, self.m_broker, self.m_clientID)
         self.m_broker._ProtocolAPI = l_client
         LOG.info("Mqtt buildProtocol - broker address: {}".format(p_addr))
         self.resetDelay()
@@ -566,4 +566,4 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
         """
         LOG.warn('makeConnection - Transport: {}'.format(p_transport))
 
-# ## END DBK
+#  ## END DBK

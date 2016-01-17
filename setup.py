@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-# -*- coding: utf-8 -*-
+#  -*- coding: utf-8 -*-
 """
 -*- test-case-name: PyHouse.src.test.test_setup -*-
 
@@ -50,7 +50,7 @@ PyHouse
     TODO.rst
 """
 
-# Import system type stuff
+#  Import system type stuff
 import sys
 from setuptools import setup, find_packages
 import os
@@ -58,14 +58,14 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "sr
 
 
 
-# Requirements for our application
+#  Requirements for our application
 INSTALL_REQUIRES = [
     "twisted >= 12.0",
     "nevow >= 0.0.0",
     "astral"
 ]
 EXTRA_REQUIRES = {}
-# Dependency links for any of the aforementioned dependencies
+#  Dependency links for any of the aforementioned dependencies
 DEPENDENCY_LINKS = []
 
 
@@ -89,35 +89,36 @@ setup(
         'PyHouse'
     ],
     package_dir = {'': 'src'},
-    # packages = ['distutils', 'distutils.command'],
-    # requires = INSTALL_REQUIRES,
-    # [
+    #  packages = ['distutils', 'distutils.command'],
+    #  requires = INSTALL_REQUIRES,
+    #  [
     #    'twisted', 'nevow', 'athena', 'dateutil', 'netaddr',
     #    'usb', 'jsonpickle', 'serial', 'netifaces', 'pyusb',
     #    'pyopenSSL', 'passlib', 'astral'
-    # ]
+    #  ]
     install_requires = [
         'twisted >= 15.0',
         'pyOpenSSL',
         'service-identity',
         'idna',
-        # 'gmpy',
+        #  'gmpy',
         'pyasn1',
         'pycrypto',
-        # 'pypiwin32',  # for windows only
+        #  'pypiwin32',  # for windows only
         'nevow >= 0.0.0',
         'athena',
         'python-dateutil',
         'netaddr',
         'pyserial',
-        # 'astral',
+        #  'astral',
         'netifaces',
+        'pyudev',
         'pyusb',
         'passlib',
         'jsonpickle'
     ],
-    # extras_require = EXTRA_REQUIRES
-    # dependency_links = DEPENDENCY_LINKS
+    #  extras_require = EXTRA_REQUIRES
+    #  dependency_links = DEPENDENCY_LINKS
     include_package_data = True,
     zip_safe = False
 )
@@ -226,12 +227,12 @@ class Install(object):
 
 if __name__ == "__main__":
     print('Main...')
-    # FindOsRunning()
-    # TestAll()
-    # if tests_passed:
-        # Install()
+    #  FindOsRunning()
+    #  TestAll()
+    #  if tests_passed:
+        #  Install()
     #    pass
-    # else:
+    #  else:
     #    print("Correct the above faults and rerun.")
 
-# ## END DBK
+#  ## END DBK

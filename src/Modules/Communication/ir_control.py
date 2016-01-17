@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/communication/ir_control.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2016 by D. Brian Kimmel
 @note:      Created on Jan 26, 2014
 @license:   MIT License
 @summary:   Provides PyHouse IR service via a Lirc connection.
@@ -22,18 +22,15 @@ Name    |  Code   |  Name   |  Action |  Name   |
 
 """
 
-# Import system type stuff
+#  Import system type stuff
 from twisted.application.internet import StreamServerEndpointService
 from twisted.internet.protocol import Factory, Protocol
 from twisted.internet.endpoints import TCP4ServerEndpoint, clientFromString
 from twisted.protocols.amp import AMP
 
-# Import PyMh files and modules.
+#  Import PyMh files and modules.
 from Modules.Entertainment import pandora
 from Modules.Computer import logging_pyh as Logger
-
-
-g_debug = 1
 LOG = Logger.getLogger('PyHouse.IrControl   ')
 
 g_pandora = None
@@ -42,7 +39,7 @@ g_pyhouse_obj = None
 
 LIRC_SOCKET = 'unix:path=/var/run/lirc/lircd'
 
-# KeyName, ModuleName, Action
+#  KeyName, ModuleName, Action
 IR_KEYS = [
            ('KEY_BD'        , 'pandora', 'stop'),
            ('KEY_DVD'       , 'pandora', 'stop'),
@@ -78,7 +75,7 @@ class LircFactory(Factory):
     """
 
     def buildProtocol(self, _addr):
-        # "LircFactory - connected"
+        #  "LircFactory - connected"
         return LircProtocol()
 
     def clientConnectionLost(self, _connector, p_reason):
@@ -117,8 +114,7 @@ class IrDispatch(object):
         KeyCode_________ KeyName_______ Remote_________
         00000000a55ad02f KEY_VOLUMEDOWN pioneer-AXD7595
         """
-        if g_debug >= 1:
-            LOG.debug("Received {0:} ({1:}) from {2:}".format(p_keycode, p_keyname, p_remote))
+        LOG.debug("Received {0:} ({1:}) from {2:}".format(p_keycode, p_keyname, p_remote))
         for l_dispatch in IR_KEYS:
             (l_keyname, l_module, l_command) = l_dispatch
             if p_keyname == l_keyname:
@@ -164,4 +160,4 @@ class API(Utility):
     def Stop(self):
         LOG.debug('Stopped')
 
-# ## END DBK
+#  ## END DBK

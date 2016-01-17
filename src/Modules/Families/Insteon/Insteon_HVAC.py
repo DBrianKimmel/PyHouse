@@ -100,21 +100,25 @@ class ihvac_utility(object):
         if l_cmd1 == 0x6e:  #  Status report Temperature
             p_device_obj.CurrentTemperature = l_cmd2 * FACTOR
             l_mqtt_topic += '/ThermostatTemperatureReport'
-            l_mqtt_message += ' temp = {}; '.format(l_cmd2)
+            l_mqtt_message += ' Temperature = {}; '.format(l_cmd2)
 
         if l_cmd1 == 0x6f:  #  Status Report Humidity
             l_mqtt_topic += '/ThermostatHumidityReport'
+            l_mqtt_message += ' Humidity = {}; '.format(l_cmd2)
 
         if l_cmd1 == 0x70:  #  Status Report Mode / Fan Status
             l_mqtt_topic += '/ThermostatStatusReport'
+            l_mqtt_message += ' StatusMode = {}; '.format(l_cmd2)
 
         if l_cmd1 == 0x71:  #  Status Report Cool Set Point
             p_device_obj.CoolSetPoint = l_cmd2 * FACTOR
             l_mqtt_topic += '/ThermostatCoolSetPointReport'
+            l_mqtt_message += ' CoolSetPoint = {}; '.format(l_cmd2)
 
         if l_cmd1 == 0x72:  #  Status Report Heat Set Point
             p_device_obj.HeatSetPoint = l_cmd2 * FACTOR
             l_mqtt_topic += '/ThermostatHeatSetPointReport'
+            l_mqtt_message += ' HeatSetPoint = {}; '.format(l_cmd2)
 
         LOG.info('HVAC {}'.format(l_mqtt_message))
         p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_mqtt_topic, p_device_obj)  #  /temperature

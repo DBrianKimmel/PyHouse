@@ -26,18 +26,27 @@ The overall logic is that:
 """
 
 #  Import system type stuff
-from nevow.livepage import self
+import pyudev
 from twisted.internet.protocol import Protocol
 from twisted.internet.serialport import SerialPort
 
-from Modules.Computer import logging_pyh as Logger
-#  from Modules.Utilities.debug_tools import PrettyFormatAny
-from Modules.Utilities.tools import PrintBytes
-
-
 #  Import PyMh files
-#  from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Utilities.tools import PrintBytes
+from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.SerialDriver   ')
+#  from Modules.Utilities.debug_tools import PrettyFormatAny
+
+class FindPort(object):
+    """
+    """
+    def __init__(self):
+        #  l_devices = subprocess.call(['lsusb'])
+        #  print l_devices
+        l_context = pyudev.Context()
+        for l_dev in l_context.list_devices(subsystem = 'tty'):
+            if 'ID_VENDOR' not in l_dev:
+                continue
+            print(l_dev.device_node)
 
 
 class SerialProtocol(Protocol):
@@ -142,6 +151,7 @@ class API(SerialAPI):
         #  print(PrettyFormatAny.form(p_controller_obj, 'Controller'))
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_controller_obj = p_controller_obj
+        FindPort()
         l_ret = self.open_serial_driver(self.m_pyhouse_obj, p_controller_obj)
         self.m_active = l_ret
         if l_ret:

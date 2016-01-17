@@ -17,11 +17,8 @@ import json
 
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import JsonHouseData, LightingData
-from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities import json_tools
-
-
-g_debug = 0
+from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.webUtils       ')
 
 #  Web States defined

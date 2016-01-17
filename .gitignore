@@ -2,6 +2,7 @@
 *.py[cod]
 
 # Project
+.directory
 .project
 .pydevproject
 .buildpath
