@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Computer/Mqtt/mqtt_client.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2015 by D. Brian Kimmel
+@copyright: (c) 2015-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 5, 2015
 @Summary:   Connect this computer node to the household Mqtt Broker.
@@ -15,6 +15,8 @@
 import copy
 import datetime
 from collections import namedtuple
+from twisted.internet import ssl
+from twisted.internet.ssl import Certificate
 
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData, MqttInformation, MqttJson
@@ -51,10 +53,20 @@ class Util(object):
         #  print((PrettyFormatAny.form(l_ret, 'mqtt_client dict ')))
         return l_ret
 
+    def client_to_one_broker(self, p_broker):
+        l_host = p_broker.BrokerAddress
+        l_port = p_broker.BrokerPort
+        l_username = p_broker.UserName
+        l_password = p_broker.Password
+        p_broker._ClientAPI = self
+        l_options = ssl.optionsForClientTLS(hostname = l_host.decode('utf-8'))
+        print(PrettyFormatAny.form(l_options, 'TLS Options'))
+
     def client_TCP_connect_all_brokers(self, p_pyhouse_obj):
         """
         This will create a connection for each broker in the config file.
         These connections will automatically reconnect if the connection is broken (broker reboots e.g.)
+        TODO: Switch from un-encrypted to TLS for encryption.
         """
         l_count = 0
         l_clientID = 'PyH-' + p_pyhouse_obj.Computer.Name
@@ -63,15 +75,21 @@ class Util(object):
                 continue
             l_host = l_broker.BrokerAddress
             l_port = l_broker.BrokerPort
+            l_username = l_broker.UserName
+            l_password = l_broker.Password
             l_broker._ClientAPI = self
             if l_host == None or l_port == None:
                 LOG.error('Bad Mqtt broker Address: {}'.format(l_host))
                 l_broker._ProtocolAPI = None
             else:
-                l_factory = PyHouseMqttFactory(p_pyhouse_obj, l_clientID, l_broker)
-                _l_connector = p_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_factory)
+                l_factory = PyHouseMqttFactory(
+                            p_pyhouse_obj, l_clientID, l_broker, l_username, l_password)
+                l_context_factory = ssl.CertificateOptions()
+                _l_connector = p_pyhouse_obj.Twisted.Reactor.connectSSL(
+                            l_host, l_port, l_factory, l_context_factory)
                 LOG.info('TCP Connected to broker: {}; Host:{}'.format(l_broker.Name, l_host))
                 l_count += 1
+                self.client_to_one_broker(l_broker)
         LOG.info('TCP Connected to {} Broker(s).'.format(l_count))
         return l_count
 

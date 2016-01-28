@@ -119,6 +119,8 @@ helpers.Widget.subclass(mqtt, 'MqttWidget').methods(
     function buildMqttEntry(self, p_obj, p_html) {
 		p_html += buildLcarTextWidget(self, 'Addr', 'Broker Address', p_obj.BrokerAddress);
 		p_html += buildLcarTextWidget(self, 'Port', 'Port', p_obj.BrokerPort);
+		p_html += buildLcarTextWidget(self, 'User', 'User Name', p_obj.UserName);
+		p_html += buildLcarPasswordWidget(self, 'Password', 'Password', p_obj.Password);
         return p_html;
     },
 	function fetchEntry(self) {
@@ -129,6 +131,8 @@ helpers.Widget.subclass(mqtt, 'MqttWidget').methods(
     function fetchMqttEntry(self, p_data) {
         p_data.BrokerAddress = fetchTextWidget(self, 'Addr');
         p_data.BrokerPort = fetchTextWidget(self, 'Port');
+        p_data.UserName = fetchTextWidget(self, 'User');
+        p_data.Password = fetchTextWidget(self, 'Password');
     	return p_data;
     },
     function createEntry(self) {
@@ -146,6 +150,8 @@ helpers.Widget.subclass(mqtt, 'MqttWidget').methods(
     function createMqttEntry(self, p_data) {
 		p_data.BrokerAddress = '';
 		p_data.BrokerPort = '1883';
+		p_data.UserName = 'pyhouse';
+		p_data.Password = 'ChangeMe';
         return p_data;
     },
 

@@ -189,7 +189,8 @@ class LocationData(object):
 class MqttInformation(object):
     def __init__(self):
         self.Prefix = ''
-        self.Brokers = {}  #  MqttBrokerData
+        self.Brokers = {}  #  MqttBrokerData()
+        self.ClientID = ''
 
 
 class MqttJson(object):
@@ -388,6 +389,7 @@ class LoginData(BaseObject):
     def __init__(self):
         super(LoginData, self).__init__()
         self.LoginFullName = 'Not logged in'
+        self.LoginIP = None
         self.LoginPasswordChangeFlag = True
         self.LoginPasswordCurrent = None
         self.LoginPasswordNew = None

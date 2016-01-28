@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Computer/Mqtt/protocol.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2015 by D. Brian Kimmel
+@copyright: (c) 2015-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 28, 2015
 @Summary:   This creates the Twisted (Async) version of MQTT client.
@@ -16,10 +16,14 @@ The second is a MQTT connection to the broker that uses the first connection as 
 #  Import system type stuff
 import random
 from twisted.internet.protocol import Protocol, ReconnectingClientFactory
+from twisted.internet import ssl
+from twisted.internet.ssl import Certificate
+from twisted.internet import error
 
 #  Import PyMh files and modules.
 from Modules.Computer import logging_pyh as Logger
 from Modules.Computer.Mqtt.mqtt_util import EncodeDecode
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.Mqtt_Protocol  ')
 SUBSCRIBE = 'pyhouse/#'
@@ -103,34 +107,46 @@ class MQTTProtocol(Protocol):
     #  These are the events - one for each packet type
 
     def _event_connect(self, packet, _qos, _dup, _retain):
+        """This will decode a received 'connect' packet.
+        """
         #  Strip the protocol name and version number
         packet = packet[len("06MQisdp3"):]
         #  Extract the connect flags
-        willRetain = packet[0] & 0x20 == 0x20
-        willQos = packet[0] & 0x18 >> 3
-        willFlag = packet[0] & 0x04 == 0x04
-        cleanStart = packet[0] & 0x02 == 0x02
+        f_username = packet[0] & 0x80 == 0x80
+        f_password = packet[0] & 0x40 == 0x40
+        f_willRetain = packet[0] & 0x20 == 0x20
+        l_willQos = packet[0] & 0x18 >> 3
+        f_willFlag = packet[0] & 0x04 == 0x04
+        f_cleanStart = packet[0] & 0x02 == 0x02
         packet = packet[1:]
-        #  Extract the keepalive period
-        keepalive = EncodeDecode._decodeValue(packet[:2])
+        keepalive = EncodeDecode._decodeValue(packet[:2])  #  Extract the keepalive period
         packet = packet[2:]
-        #  Extract the client id
-        clientID = EncodeDecode._decodeString(packet)
+        clientID = EncodeDecode._decodeString(packet)  #  Extract the client id
         packet = packet[len(clientID) + 2:]
         #  Extract the will topic and message, if applicable
-        willTopic = None
-        willMessage = None
-        if willFlag:
+        l_willTopic = None
+        l_willMessage = None
+        if f_willFlag:
             #  Extract the will topic
-            willTopic = EncodeDecode._decodeString(packet)
-            packet = packet[len(willTopic) + 2:]
+            l_willTopic = EncodeDecode._decodeString(packet)
+            packet = packet[len(l_willTopic) + 2:]
             #  Extract the will message
             #  Whatever remains is the will message
-            willMessage = packet
+            #  ##  l_willMessage = packet
+            l_willMessage = EncodeDecode._decodeString(packet)
+            packet = packet[len(l_willMessage) + 2:]
+        l_username = None
+        if f_username:  #  Extract user name if one is present.
+            l_username = EncodeDecode._decodeString(packet)
+            packet = packet[len(l_username) + 2:]
+        l_password = None
+        if f_password:  #  Extract password if one is present.
+            l_password = EncodeDecode._decodeString(packet)
+            packet = packet[len(l_password) + 2:]
         LOG.info('Mqtt Connected.')
-        self.connectReceived(clientID, keepalive, willTopic,
-                             willMessage, willQos, willRetain,
-                             cleanStart)
+        self.connectReceived(clientID, keepalive, l_willTopic,
+                             l_willMessage, l_willQos, f_willRetain,
+                             f_cleanStart, l_username, l_password)
 
     def _event_connack(self, packet, _qos, _dup, _retain):
         #  Return the status field
@@ -227,7 +243,7 @@ class MQTTProtocol(Protocol):
     def connectionLost(self, reason):
         pass
 
-    def connectReceived(self, clientID, keepalive, willTopic, willMessage, willQoS, willRetain, cleanStart):
+    def connectReceived(self, clientID, keepalive, willTopic, willMessage, willQoS, willRetain, cleanStart, userName, password):
         pass
 
     def connackReceived(self, status):
@@ -272,24 +288,41 @@ class MQTTProtocol(Protocol):
 
     #  these are for sending Mqtt packets.
 
-    def connect(self, p_clientID, keepalive = 3000, willTopic = None, willMessage = None, willQoS = 0, willRetain = False, cleanStart = True):
+    def connect(self, p_clientID, keepalive = 3000,
+                willTopic = None, willMessage = None, willQoS = 0, willRetain = False,
+                cleanStart = True,
+                username = None,
+                password = None
+                ):
+        """
+        DBK - Modified this packet to add username and password flags and fields (2016-01-22)
+        """
         LOG.info("Sending connect packet  ID: {}".format(p_clientID))
         header = bytearray()
         varHeader = bytearray()
         payload = bytearray()
         varHeader.extend(EncodeDecode._encodeString("MQIsdp"))
         varHeader.append(3)
+        varLogin = 0
+        if username is not None:
+            varLogin += 2
+        if password is not None:
+            varLogin += 1
         if willMessage is None or willTopic is None:
             #  Clean start, no will message
-            varHeader.append(0 << 2 | cleanStart << 1)
+            varHeader.append(varLogin << 6 | 0 << 2 | cleanStart << 1)
         else:
-            varHeader.append(willRetain << 5 | willQoS << 3
+            varHeader.append(varLogin << 6 | willRetain << 5 | willQoS << 3
                              | 1 << 2 | cleanStart << 1)
         varHeader.extend(EncodeDecode._encodeValue(keepalive / 1000))
         payload.extend(EncodeDecode._encodeString(p_clientID))
         if willMessage is not None and willTopic is not None:
             payload.extend(EncodeDecode._encodeString(willTopic))
             payload.extend(EncodeDecode._encodeString(willMessage))
+        if username is not None:
+            payload.extend(EncodeDecode._encodeString(username))
+        if password is not None:
+            payload.extend(EncodeDecode._encodeString(password))
         header.append(0x01 << 4)
         header.extend(EncodeDecode._encodeLength(len(varHeader) + len(payload)))
         self.transport.write(str(header))
@@ -446,9 +479,13 @@ MQTT_FACTORY_CONNECTED = 2
 
 class MQTTClient(MQTTProtocol):
 
-    m_pingPeriod = 5
+    m_pingPeriod = 95
 
-    def __init__(self, p_pyhouse_obj, p_broker, p_clientID = None, keepalive = None, willQos = 0, willTopic = None, willMessage = None, willRetain = False):
+    def __init__(self, p_pyhouse_obj, p_broker, p_clientID = None,
+                 userName = None, passWord = None,
+                 keepalive = None,
+                 willQos = 0, willTopic = None, willMessage = None, willRetain = False
+                 ):
         """
         At this point all config has been read in and Set-up
         """
@@ -462,11 +499,13 @@ class MQTTClient(MQTTProtocol):
         if keepalive is not None:
             self.m_keepalive = keepalive
         else:
-            self.m_keepalive = 60000
+            self.m_keepalive = 60 * 1000
         self.willQos = willQos
         self.willTopic = willTopic
         self.willMessage = willMessage
         self.willRetain = willRetain
+        self.UserName = userName
+        self.Password = passWord
         self.m_prefix = 'pyhouse/' + p_pyhouse_obj.House.Name.lower() + '/'
         p_pyhouse_obj.Computer.Mqtt.Prefix = self.m_prefix
         LOG.info('Client_Protocol\n\tPrefix: {}\n\tFrom: {}'.format(self.m_prefix, self.m_clientID))
@@ -476,14 +515,26 @@ class MQTTClient(MQTTProtocol):
         TCP Connected
         Now use MQTT connect packet to establish protocol connection.
         """
-        LOG.info("Client TCP connectionMade Keepalive: {}".format(self.m_keepalive))
+        LOG.info("Client TLS - Keepalive: {}".format(self.m_keepalive))
+
         self.m_state = MQTT_FACTORY_CONNECTING
-        self.connect(self.m_clientID, self.m_keepalive, self.willTopic, self.willMessage, self.willQos, self.willRetain, True)
+        self.connect(self.m_clientID, self.m_keepalive,
+                     self.willTopic, self.willMessage, self.willQos, self.willRetain, True,
+                     self.UserName, self.Password
+                     )
         self.m_pyhouse_obj.Twisted.Reactor.callLater(self.m_pingPeriod, self.pingreq)
 
     def connectionLost(self, reason):
+        l_msg = reason.check(error.ConnectionClosed)
+        #  print(PrettyFormatAny.form(reason, 'Reason'))
         LOG.info("Disconnected from MQTT Broker: {}".format(reason))
         self.m_state = MQTT_FACTORY_START
+
+    def dataReceived(self, p_data):
+        certificate = ssl.Certificate(self.transport.getPeerCertificate())
+        print(PrettyFormatAny.form(certificate, 'Certificate'))
+
+        pass
 
     def mqttConnected(self):
         LOG.info("Client mqttConnected")
@@ -524,23 +575,25 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
     """This factory holds the state for thhis broker (there may be more than one).
     """
 
-    def __init__(self, p_pyhouse_obj, p_client_id, p_broker):
+    def __init__(self, p_pyhouse_obj, p_client_id, p_broker, p_username, p_password):
         """
         @param p_pyhouse_obj: is the master information store
         @param p_client_id: is the ID of this computer that will be supplied to the broker
         @param p_broker: is the object for this broker
         """
-        LOG.info('Mqtt Factory Initialized.  Broker: {}'.format(p_broker.Name))
+        LOG.info('Mqtt Factory Initialized.  Broker: {};  Client: {}'.format(p_broker.Name, p_client_id))
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_broker = p_broker
         self.m_clientID = p_client_id
+        self.m_username = p_username
+        self.m_password = p_password
         p_broker._ProtocolAPI = self
 
     def startedConnecting(self, p_connector):
         LOG.info('Started to connect. {}'.format(p_connector))
 
     def buildProtocol(self, p_addr):
-        l_client = MQTTClient(self.m_pyhouse_obj, self.m_broker, self.m_clientID)
+        l_client = MQTTClient(self.m_pyhouse_obj, self.m_broker, self.m_clientID, self.m_username, self.m_password)
         self.m_broker._ProtocolAPI = l_client
         LOG.info("Mqtt buildProtocol - broker address: {}".format(p_addr))
         self.resetDelay()

@@ -19,12 +19,11 @@ After the user is authenticated, this element is converted to a "loged in as" en
 
 """
 
-
-# Import system type stuff
+#  Import system type stuff
 import os
 from nevow import loaders
 from nevow import athena
-# from passlib.hash import pbkdf2_sha256
+#  from passlib.hash import pbkdf2_sha256
 from zope.interface import implements
 from twisted.cred.portal import IRealm
 from twisted.cred.checkers import ICredentialsChecker
@@ -32,7 +31,7 @@ from twisted.cred.credentials import IUsernamePassword
 from twisted.cred.error import UnauthorizedLogin
 from twisted.internet import defer
 
-# Import PyMh files and modules.
+#  Import PyMh files and modules.
 from Modules.Core.data_objects import LoginData
 from Modules.Web import web_utils
 from Modules.Drivers import VALID_INTERFACES, VALID_PROTOCOLS
@@ -48,7 +47,7 @@ from Modules.Utilities import json_tools
 
 LOG = Logger.getLogger('PyHouse.webLogin       ')
 
-# Handy helper for finding external resources nearby.
+#  Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
 
@@ -124,16 +123,16 @@ class LoginElement(athena.LiveElement):
         l_login_obj = LoginData()
         l_login_obj.LoginName = p_obj['Name']
         l_login_obj.LoginPasswordCurrent = p_obj['PasswordCurrent']
-        #LOG.info('Login Attempt using: {}'.format(PrettyFormatAny.form(l_login_obj, 'Login Obj')))
+        #  LOG.info('Login Attempt using: {}'.format(PrettyFormatAny.form(l_login_obj, 'Login Obj')))
         #
         if l_login_obj.LoginName in self.m_pyhouse_obj.Computer.Web.Logins:
             pass
         for l_user in self.m_pyhouse_obj.Computer.Web.Logins.itervalues():
-            #LOG.debug(PrettyFormatAny.form(l_user, 'User Obj'))
+            #  LOG.debug(PrettyFormatAny.form(l_user, 'User Obj'))
             if l_user.Name == l_login_obj.LoginName:
-                #LOG.debug('User Matched')
+                #  LOG.debug('User Matched')
                 if l_user.LoginPasswordCurrent == l_login_obj.LoginPasswordCurrent:
-                    #LOG.debug('Password Matched')
+                    #  LOG.debug('Password Matched')
                     l_login_obj.IsLoggedIn = True
                     l_login_obj.LoginRole = l_user.LoginRole
                     l_login_obj.LoginFullName = l_user.LoginFullName
@@ -142,7 +141,7 @@ class LoginElement(athena.LiveElement):
 
 
 def verifyCryptedPassword(crypted, pw):
-    if crypted[0] == '$':  # md5_crypt encrypted
+    if crypted[0] == '$':  #  md5_crypt encrypted
         l_salt = '$1$' + crypted.split('$')[2]
     else:
         l_salt = crypted[:2]
@@ -177,7 +176,7 @@ class UnixChecker(object):
             return defer.fail(UnauthorizedLogin())
         else:
             if cryptedPass in ('*', 'x'):
-                # Allow checkSpwd to take over
+                #  Allow checkSpwd to take over
                 return None
             elif verifyCryptedPassword(cryptedPass, password):
                 return defer.succeed(username)
@@ -211,8 +210,8 @@ class UnixChecker(object):
             checked = self.checkSpwd(spwd, username, password)
             if checked is not None:
                 return checked
-        # TODO: check_pam?
-        # TODO: check_shadow?
+        #  TODO: check_pam?
+        #  TODO: check_shadow?
         return defer.fail(UnauthorizedLogin())
 
 
@@ -248,4 +247,4 @@ class PyHouseRealm(object):
             LOG.error('No Interface.')
 
 
-# ## END DBK
+#  ## END DBK
