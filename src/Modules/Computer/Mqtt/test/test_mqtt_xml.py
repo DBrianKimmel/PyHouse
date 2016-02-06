@@ -7,7 +7,7 @@
 @note:      Created on Jun 4, 2015
 @Summary:   Test the read and write of MQTT sections of XML
 
-Passed all 7 tests - DBK - 2016-01-22
+Passed all 8 tests - DBK - 2016-01-29
 
 """
 
@@ -17,7 +17,7 @@ from twisted.trial import unittest
 
 #  Import PyMh files and modules.
 from Modules.Computer.Mqtt.mqtt_xml import Xml as mqttXML
-from test.xml_data import XML_LONG
+from test.xml_data import XML_LONG, XML_EMPTY
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Computer.Mqtt.test.xml_mqtt import \
     TESTING_BROKER_NAME_0, \
@@ -100,6 +100,19 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj[1].BrokerPort, int(TESTING_BROKER_PORT_1))
         self.assertEqual(l_obj[1].UserName, TESTING_BROKER_USERNAME_1)
         self.assertEqual(l_obj[1].Password, TESTING_BROKER_PASSWORD_1)
+
+
+class B2_EmptyRead(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_EMPTY))
+
+    def test_01_Mqtt(self):
+        """Here we should get a dict of brokers
+        """
+        l_obj = self.m_api.read_mqtt_xml(self.m_pyhouse_obj)
+        #  print(PrettyFormatAny.form(l_obj, 'Mqtt'))
+        self.assertEqual(l_obj, {})
 
 
 class C1_Write(SetupMixin, unittest.TestCase):

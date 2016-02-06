@@ -297,7 +297,7 @@ class MQTTProtocol(Protocol):
         """
         DBK - Modified this packet to add username and password flags and fields (2016-01-22)
         """
-        LOG.info("Sending connect packet  ID: {}".format(p_clientID))
+        LOG.info("Sending 'connect' packet - ID: {}".format(p_clientID))
         header = bytearray()
         varHeader = bytearray()
         payload = bytearray()
@@ -317,11 +317,14 @@ class MQTTProtocol(Protocol):
         varHeader.extend(EncodeDecode._encodeValue(keepalive / 1000))
         payload.extend(EncodeDecode._encodeString(p_clientID))
         if willMessage is not None and willTopic is not None:
+            LOG.debug('Adding last will testiment {}'.format(willMessage + willTopic))
             payload.extend(EncodeDecode._encodeString(willTopic))
             payload.extend(EncodeDecode._encodeString(willMessage))
         if username is not None:
+            LOG.debug('Adding username {}'.format(username))
             payload.extend(EncodeDecode._encodeString(username))
         if password is not None:
+            LOG.debug('Adding password {}'.format(password))
             payload.extend(EncodeDecode._encodeString(password))
         header.append(0x01 << 4)
         header.extend(EncodeDecode._encodeLength(len(varHeader) + len(payload)))
@@ -508,14 +511,16 @@ class MQTTClient(MQTTProtocol):
         self.Password = passWord
         self.m_prefix = 'pyhouse/' + p_pyhouse_obj.House.Name.lower() + '/'
         p_pyhouse_obj.Computer.Mqtt.Prefix = self.m_prefix
-        LOG.info('Client_Protocol\n\tPrefix: {}\n\tFrom: {}'.format(self.m_prefix, self.m_clientID))
+        l_msg = 'MQTTClient(MQTTProtocol) \n\tPrefix: {}\n\tFrom: {}'.format(self.m_prefix, self.m_clientID)
+        l_msg += '\n\t User: {};  Pass: {}'.format(userName, passWord)
+        LOG.info(l_msg)
 
     def connectionMade(self):
         """
         TCP Connected
         Now use MQTT connect packet to establish protocol connection.
         """
-        LOG.info("Client TLS - Keepalive: {}".format(self.m_keepalive))
+        LOG.info("Client TCP or TLS - Keepalive: {}".format(self.m_keepalive))
 
         self.m_state = MQTT_FACTORY_CONNECTING
         self.connect(self.m_clientID, self.m_keepalive,
@@ -531,9 +536,9 @@ class MQTTClient(MQTTProtocol):
         self.m_state = MQTT_FACTORY_START
 
     def dataReceived(self, p_data):
-        certificate = ssl.Certificate(self.transport.getPeerCertificate())
-        print(PrettyFormatAny.form(certificate, 'Certificate'))
-
+        LOG.info('Data Rxed {}'.format(p_data))
+        #  certificate = ssl.Certificate(self.transport.getPeerCertificate())
+        #  print(PrettyFormatAny.form(certificate, 'Certificate'))
         pass
 
     def mqttConnected(self):
@@ -588,6 +593,7 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
         self.m_username = p_username
         self.m_password = p_password
         p_broker._ProtocolAPI = self
+        LOG.debug('ProtocolAPI: {}'.format(p_broker._ProtocolAPI))
 
     def startedConnecting(self, p_connector):
         LOG.info('Started to connect. {}'.format(p_connector))
@@ -595,6 +601,7 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
     def buildProtocol(self, p_addr):
         l_client = MQTTClient(self.m_pyhouse_obj, self.m_broker, self.m_clientID, self.m_username, self.m_password)
         self.m_broker._ProtocolAPI = l_client
+        LOG.debug('ProtocolAPI: {}'.format(l_client))
         LOG.info("Mqtt buildProtocol - broker address: {}".format(p_addr))
         self.resetDelay()
         return l_client

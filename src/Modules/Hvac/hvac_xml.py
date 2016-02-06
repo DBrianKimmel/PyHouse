@@ -136,11 +136,12 @@ class XML(object):
     @staticmethod
     def read_hvac_xml(p_pyhouse_obj):
         l_obj = HvacData()
-        l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision').find('HvacSection')
-        if l_xml == None:
-            return l_obj
-        l_thermostat_xml = l_xml.find('ThermostatSection')
-        l_obj.Thermostats = Utility._read_all_thermostats_xml(p_pyhouse_obj, l_thermostat_xml)
+        try:
+            l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision').find('HvacSection')
+            l_thermostat_xml = l_xml.find('ThermostatSection')
+            l_obj.Thermostats = Utility._read_all_thermostats_xml(p_pyhouse_obj, l_thermostat_xml)
+        except AttributeError:
+            pass
         return l_obj
 
     @staticmethod

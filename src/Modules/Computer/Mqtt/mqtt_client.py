@@ -15,7 +15,8 @@
 import copy
 import datetime
 from collections import namedtuple
-from twisted.internet import ssl
+from twisted.internet import defer, protocol, ssl
+from twisted.internet.endpoints import SSL4ClientEndpoint
 from twisted.internet.ssl import Certificate
 
 #  Import PyMh files and modules.
@@ -27,6 +28,8 @@ from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.Mqtt_Client    ')
+
+PEM_FILE = '/etc/pyhouse/ca_certs/rootCA.pem'
 
 
 class Struct:
@@ -62,12 +65,63 @@ class Util(object):
         l_options = ssl.optionsForClientTLS(hostname = l_host.decode('utf-8'))
         print(PrettyFormatAny.form(l_options, 'TLS Options'))
 
-    def client_TCP_connect_all_brokers(self, p_pyhouse_obj):
+    def connect_to_one_broker_TCP(self, p_pyhouse_obj, p_broker):
+        l_clientID = 'PyH-' + p_pyhouse_obj.Computer.Name
+        l_host = p_broker.BrokerAddress
+        l_port = p_broker.BrokerPort
+        l_username = None  #  p_broker.UserName
+        l_password = None  #  p_broker.Password
+        p_broker._ClientAPI = self
+        LOG.info('Connecting via TCP...')
+        if l_host == None or l_port == None:
+            LOG.error('Bad Mqtt broker Address: {}'.format(l_host))
+            p_broker._ProtocolAPI = None
+        else:
+            l_factory = PyHouseMqttFactory(
+                        p_pyhouse_obj, l_clientID, p_broker, l_username, l_password)
+            #  l_context_factory = ssl.CertificateOptions()
+            _l_connector = p_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_factory)
+            LOG.info('TCP Connected to broker: {}; Host:{}'.format(p_broker.Name, l_host))
+        pass
+
+    @defer.inlineCallbacks
+    def connect_to_one_broker_TLS(self, p_pyhouse_obj, p_broker):
+        l_host = p_broker.BrokerAddress
+        l_port = p_broker.BrokerPort
+        l_username = p_broker.UserName
+        l_password = p_broker.Password
+        l_clientID = 'PyH-' + p_pyhouse_obj.Computer.Name
+        LOG.info('Connecting via TLS...')
+        #  l_factory = protocol.Factory.forProtocol(echoclient.EchoClient)
+        l_factory = PyHouseMqttFactory(p_pyhouse_obj, l_clientID, p_broker, l_username, l_password)
+        l_certData = PEM_FILE.getContent()
+        l_authority = ssl.Certificate.loadPEM(l_certData)
+        l_options = ssl.optionsForClientTLS(l_host.decode('utf-8'), l_authority)
+        l_endpoint = SSL4ClientEndpoint(p_pyhouse_obj.Twisted.Reactor, l_host, l_port, l_options)
+        l_client = yield l_endpoint.connect(l_factory)
+        l_done = defer.Deferred()
+        l_client.connectionLost = lambda reason: l_done.callback(None)
+        yield l_done
+
+    def connect_to_all_brokers(self, p_pyhouse_obj):
         """
-        This will create a connection for each broker in the config file.
+        This will create a connection for each active broker in the config file.
         These connections will automatically reconnect if the connection is broken (broker reboots e.g.)
-        TODO: Switch from un-encrypted to TLS for encryption.
         """
+        l_count = 0
+        l_clientID = 'PyH-' + p_pyhouse_obj.Computer.Name
+        for l_broker in p_pyhouse_obj.Computer.Mqtt.Brokers.itervalues():
+            if not l_broker.Active:
+                continue
+            if l_broker.BrokerPort < 2000:
+                self.connect_to_one_broker_TCP(p_pyhouse_obj, l_broker)
+            else:
+                self.connect_to_one_broker_TLS(p_pyhouse_obj, l_broker)
+            l_count += 1
+        LOG.info('TCP Connected to {} Broker(s).'.format(l_count))
+        return l_count
+
+    def XXXclient_TCP_connect_all_brokers(self, p_pyhouse_obj):
         l_count = 0
         l_clientID = 'PyH-' + p_pyhouse_obj.Computer.Name
         for l_broker in p_pyhouse_obj.Computer.Mqtt.Brokers.itervalues():
@@ -134,7 +188,8 @@ class API(Util):
     def Start(self):
         self.m_pyhouse_obj.Computer.Mqtt = self.LoadXml(self.m_pyhouse_obj)
         if self.m_pyhouse_obj.Computer.Mqtt.Brokers != {}:
-            l_count = self.client_TCP_connect_all_brokers(self.m_pyhouse_obj)
+            LOG.info('Connecting to all MQTT Brokers.')
+            l_count = self.connect_to_all_brokers(self.m_pyhouse_obj)
             LOG.info("Mqtt {} broker(s) Started.".format(l_count))
         else:
             LOG.info('No Mqtt brokers are configured.')
@@ -164,8 +219,8 @@ class API(Util):
 
         # self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("schedule/execute", l_schedule)
         @param p_topic: is the partial topic, the prefix will be prepended.
-        @param message_json : is the json message we want to send
-        @param message_obj: is an additional object thhat we will convert to json and merge it into the message.
+        @param message_json : is the JSON message we want to send
+        @param message_obj: is an additional object that we will convert to JSON and merge it into the message.
         """
         l_topic = Util._make_topic(self.m_pyhouse_obj, p_topic)
         l_message = Util._make_message(self.m_pyhouse_obj, p_message)
@@ -183,6 +238,10 @@ class API(Util):
         """
         l_topic = p_topic.split('/')[2:]  #  Drop the pyhouse/housename/ as that is all we subscribed to.
         l_message = json_tools.decode_json_unicode(p_message)
+        print('  I Am: {}'.format(self.m_pyhouse_obj.Computer.Name))
+        print('Sender: {}'.format(l_message['Sendere']))
+        if self.m_pyhouse_obj.Computer.Name != l_message['Sender']:
+            print('From another computer')
         LOG.info('Dispatch\n\tTopic: {}\n\tSender: {}'.format(l_topic, l_message['Sender']))
         #
         if l_topic[0] == 'login':
@@ -222,6 +281,6 @@ class API(Util):
         except KeyError:
             l_node = NodeData()
         l_node.NodeInterfaces = {}
-        self.MqttPublish('login/initial', l_node)
+        self.MqttPublish('login/computer/initial', l_node)
 
 #  ## END DBK

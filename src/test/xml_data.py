@@ -12,9 +12,9 @@ XML to define the PyHouse.xml file
 used for testing
 """
 
-# Import system type stuff
+#  Import system type stuff
 
-# Import PyMh files
+#  Import PyMh files
 from Modules.Computer.test.xml_computer import XML_COMPUTER_DIVISION
 from Modules.Housing.test.xml_housing import HOUSE_DIVISION_XML
 
@@ -61,4 +61,4 @@ XSD_HEADER = """
 
 XSD_LONG = XSD_HEADER
 
-# ## END DBK
+#  ## END DBK

@@ -287,6 +287,17 @@ class USBControllerData(object):
         self.Vendor = 0
 
 
+class WeatherData(object):
+    """
+    """
+    def __init__(self):
+        self.Temperature = 0  #  Degrees C
+        self.Humidity = 0  #  Percent
+        self.DewPoint = 0  #  Degrees C
+        self.WindSpeed = 0  #  Meters / Second
+        self.WindDirection = 0  #  Degreed
+
+
 class WebData(object):
     """Information about the configuration and control web server
     """
@@ -409,6 +420,7 @@ class MqttBrokerData(BaseObject):
         self.Password = None
         self._ClientAPI = None
         self._ProtocolAPI = None
+        self._isTLS = False
 
 
 class NodeData(BaseObject):

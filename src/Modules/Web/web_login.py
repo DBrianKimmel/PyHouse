@@ -45,7 +45,7 @@ from Modules.Utilities.debug_tools import PrettyFormatAny
 from Modules.Web.web_users import VALID_USER_ROLES
 from Modules.Utilities import json_tools
 
-LOG = Logger.getLogger('PyHouse.webLogin       ')
+LOG = Logger.getLogger('PyHouse.WebLogin       ')
 
 #  Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -136,6 +136,8 @@ class LoginElement(athena.LiveElement):
                     l_login_obj.IsLoggedIn = True
                     l_login_obj.LoginRole = l_user.LoginRole
                     l_login_obj.LoginFullName = l_user.LoginFullName
+                    l_topic = 'login/browser'
+                    self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_login_obj)  #  lighting/web/{}/control
                 return l_login_obj
         return l_login_obj
 
@@ -240,11 +242,12 @@ class PyHouseRealm(object):
     implements(IRealm)
 
     def requestAvatar(self, avatarId, mind, *interfaces):
-        if pb.IPerspective in interfaces:
-            avatar = SimplePerspective()
-            return pb.IPerspective, avatar, avatar.logout
-        else:
-            LOG.error('No Interface.')
+        #  if pb.IPerspective in interfaces:
+        #    avatar = SimplePerspective()
+        #    return pb.IPerspective, avatar, avatar.logout
+        #  else:
+        #    LOG.error('No Interface.')
+        pass
 
 
 #  ## END DBK

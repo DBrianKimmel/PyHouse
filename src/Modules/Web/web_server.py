@@ -25,24 +25,24 @@ On initial startup allow a house to be created
 Do not require reloads, auto change PyHouse on the fly.
 """
 
-# Import system type stuff
+#  Import system type stuff
 import ssl
 from nevow import appserver
-# from twisted.internet import ssl
+#  from twisted.internet import ssl
 from twisted.internet import protocol, defer
 from twisted.python.modules import getModule
 
-# Import PyMh files and modules.
+#  Import PyMh files and modules.
 from Modules.Core.data_objects import WebData
 from Modules.Web.web_xml import Xml as webXml
 from Modules.Web import web_utils
 from Modules.Web import web_mainpage
 from Modules.Computer import logging_pyh as Logger
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
 ENDPOINT_WEB_SERVER = 'tcp:port=8580'
 
 LOG = Logger.getLogger('PyHouse.WebServer      ')
-
 
 
 class ClientConnections(object):
@@ -55,6 +55,7 @@ class ClientConnections(object):
 
     def add_browser(self, p_login):
         self.ConnectedBrowsers.append(p_login)
+        LOG.warn('Connected to: {}'.format(PrettyFormatAny.form(p_login, 'Login')))
 
 
 class Utility(ClientConnections):
@@ -65,7 +66,7 @@ class Utility(ClientConnections):
         l_port = p_pyhouse_obj.Computer.Web.WebPort
         p_pyhouse_obj.Twisted.Reactor.listenTCP(l_port, l_site)
         l_msg = "Port:{}, Path:{}".format(p_pyhouse_obj.Computer.Web.WebPort, l_site_dir)
-        LOG.info("Started - {}".format(l_msg))
+        LOG.warn("Started - {}".format(l_msg))
 
     def start_non_tls(self, p_pyhouse_obj, p_site, p_port):
         p_pyhouse_obj.Twisted.Reactor.listenTCP(p_port, p_site)
@@ -78,7 +79,7 @@ class Utility(ClientConnections):
         return defer.Deferred()
 
 
-class API(Utility, ClientConnections):
+class API(Utility):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
@@ -102,4 +103,4 @@ class API(Utility, ClientConnections):
         p_xml.append(webXml.write_web_xml(self.m_pyhouse_obj.Computer.Web))
         LOG.info("Saved WebServer XML.")
 
-# ## END DBK
+#  ## END DBK

@@ -11,13 +11,13 @@
 
 """
 
-# Import system type stuff
+#  Import system type stuff
 import platform
 import logging
 import sys
 from twisted.internet import reactor
 
-# Import PyMh files and modules.
+#  Import PyMh files and modules.
 from Modules.Core.data_objects import \
             PyHouseData, \
             PyHouseAPIs, \
@@ -33,7 +33,7 @@ from Modules.Families.family import Utility as familyUtil, API as familyAPI
 from Modules.Housing.house import API as housingAPI
 from Modules.Computer import logging_pyh as Logger
 #
-# Different logging setup to cause testing logs to come out in red on the console.
+#  Different logging setup to cause testing logs to come out in red on the console.
 #
 l_format = '\n [%(levelname)s] %(name)s: %(funcName)s %(lineno)s:\n\t%(message)s'
 l_formatter = logging.Formatter(fmt = l_format)
@@ -125,7 +125,7 @@ class SetupPyHouseObj(object):
         l_ret = HouseInformation()
         l_ret.Name = 'Test House'
         l_ret.Location = LocationData()
-        # Added family build 2015-08-19
+        #  Added family build 2015-08-19
         l_ret.FamilyData = familyUtil._init_component_apis(p_pyhouse_obj)
         return l_ret
 
@@ -141,8 +141,10 @@ class SetupPyHouseObj(object):
 
     def _computer_xml(self, p_xml):
         p_xml.computer_div = p_xml.root.find('ComputerDivision')
+        if p_xml.computer_div == None:
+            return
         #
-        p_xml.node_sect = p_xml.computer_div.find('NodeSection')
+        p_xml.node_sect = p_xml.root.find('ComputerDivision').find('NodeSection')
         p_xml.node = p_xml.node_sect.find('Node')
         p_xml.interface_sect = p_xml.node.find('InterfaceSection')
         p_xml.interface = p_xml.interface_sect.find('Interface')
@@ -159,6 +161,8 @@ class SetupPyHouseObj(object):
 
     def _house_xml(self, p_xml):
         p_xml.house_div = p_xml.root.find('HouseDivision')
+        if p_xml.house_div == None:
+            return
         #
         p_xml.irrigation_sect = p_xml.house_div.find('IrrigationSection')
         p_xml.location_sect = p_xml.house_div.find('LocationSection')
@@ -212,4 +216,4 @@ class SetupPyHouseObj(object):
     def setUp(self):
         self.BuildPyHouseObj()
 
-# ## END DBK
+#  ## END DBK
