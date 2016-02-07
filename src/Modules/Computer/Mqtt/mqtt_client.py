@@ -242,7 +242,7 @@ class API(Util):
         #  print('Sender: {}'.format(l_message['Sender']))
         #  if self.m_pyhouse_obj.Computer.Name != l_message['Sender']:
         #    print('From another computer')
-        #  LOG.info('Dispatch\n\tTopic: {}\n\tSender: {}'.format(l_topic, l_message['Sender']))
+        LOG.info('Dispatch\n\tTopic: {}'.format(l_topic))
         #
         if l_topic[0] == 'login':
             l_logmsg = 'Login:\n\tName: {}'.format(l_message['Name'])
