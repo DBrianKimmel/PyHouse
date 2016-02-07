@@ -246,10 +246,10 @@ class API(Util):
         #
         if l_topic[0] == 'login':
             l_logmsg = 'Login:\n\tName: {}'.format(l_message['Name'])
-            l_logmsg += '\n\tSender: {}'.format(l_message['Sender'])
+            #  l_logmsg += '\n\tSender: {}'.format(l_message['Sender'])
         elif l_topic[0] == 'lighting':
             l_logmsg = 'Lighting:\n\tName: {}'.format(l_message['Name'])
-            l_logmsg += '\n\tSender: {}'.format(l_message['Sender'])
+            #  l_logmsg += '\n\tSender: {}'.format(l_message['Sender'])
             l_logmsg += '\n\tRoom: {}'.format(l_message['RoomName'])
             try:
                 l_logmsg += '\n\tLevel: {}'.format(l_message['CurLevel'])
@@ -257,19 +257,19 @@ class API(Util):
                 pass
         elif l_topic[0] == 'schedule' and l_topic[1] == 'execute':
             l_logmsg = 'Schedule:\n\tType: {}'.format(l_message['ScheduleType'])
-            l_logmsg += '\n\tSender: {}'.format(l_message['Sender'])
+            #  l_logmsg += '\n\tSender: {}'.format(l_message['Sender'])
             l_logmsg += '\n\tRoom: {}'.format(l_message['RoomName'])
             l_logmsg += '\n\tLight: {}'.format(l_message['LightName'])
             l_logmsg += '\n\tLevel: {}'.format(l_message['Level'])
         elif l_topic[0] == 'thermostat':
             l_logmsg = 'Thermostat:\n\tName: {}'.format(l_message['Name'])
-            l_logmsg += '\n\tSender: {}'.format(l_message['Sender'])
+            #  l_logmsg += '\n\tSender: {}'.format(l_message['Sender'])
             l_logmsg += '\n\tRoom: {}'.format(l_message['RoomName'])
             l_logmsg += '\n\tTemp: {}'.format(l_message['CurrentTemperature'])
         else:
             l_logmsg = 'OTHER: Unknown'
-            l_logmsg += '\n\tSender: {}'.format(l_message['Sender'])
-            l_logmsg += '\n\tSender: {}'.format(PrettyFormatAny.form(l_message, 'Message', 80))
+            #  l_logmsg += '\n\tSender: {}'.format(l_message['Sender'])
+            l_logmsg += '\n\tMessage: {}'.format(PrettyFormatAny.form(l_message, 'Message', 80))
         LOG.info(l_logmsg)
 
     def doPyHouseLogin(self, p_client, p_pyhouse_obj):
