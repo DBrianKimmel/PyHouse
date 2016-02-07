@@ -211,8 +211,6 @@ class DecodeResponses(object):
             LOG.error('ERROR decoding 50 record {}'.format(e_err))
         l_ret = True
         LOG.info('50 Resp; {}'.format(l_debug_msg))
-        #  l_topic = "lighting/{}/info".format(l_device_obj.Name)
-        #  self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_device_obj)  # /lighting/{}/info
         return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_51_record(self, p_controller_obj):

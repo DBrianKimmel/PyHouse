@@ -195,7 +195,7 @@ class API(Util):
             LOG.info('No Mqtt brokers are configured.')
 
     def Stop(self):
-        pass
+        self.MqttPublish('computer/shutdown', '')
 
     def LoadXml(self, p_pyhouse_obj):
         """ Load the Mqtt xml info.
@@ -238,37 +238,32 @@ class API(Util):
         """
         l_topic = p_topic.split('/')[2:]  #  Drop the pyhouse/housename/ as that is all we subscribed to.
         l_message = json_tools.decode_json_unicode(p_message)
-        #  print('  I Am: {}'.format(self.m_pyhouse_obj.Computer.Name))
-        #  print('Sender: {}'.format(l_message['Sender']))
-        #  if self.m_pyhouse_obj.Computer.Name != l_message['Sender']:
-        #    print('From another computer')
-        LOG.info('Dispatch\n\tTopic: {}'.format(l_topic))
+        l_logmsg = 'Dispatch\n\tTopic: {}'.format(l_topic)
+        try:
+            l_logmsg += '\n\tSender: {}'.format(l_message['Sender'])
+        except AttributeError:
+            pass
         #
-        if l_topic[0] == 'login':
-            l_logmsg = 'Login:\n\tName: {}'.format(l_message['Name'])
-            #  l_logmsg += '\n\tSender: {}'.format(l_message['Sender'])
+        if l_topic[0] == 'computer':
+            l_logmsg += 'Computer:\n\tName: {}'.format(l_message['Name'])
         elif l_topic[0] == 'lighting':
-            l_logmsg = 'Lighting:\n\tName: {}'.format(l_message['Name'])
-            #  l_logmsg += '\n\tSender: {}'.format(l_message['Sender'])
+            l_logmsg += 'Lighting:\n\tName: {}'.format(l_message['Name'])
             l_logmsg += '\n\tRoom: {}'.format(l_message['RoomName'])
             try:
                 l_logmsg += '\n\tLevel: {}'.format(l_message['CurLevel'])
             except:
                 pass
         elif l_topic[0] == 'schedule' and l_topic[1] == 'execute':
-            l_logmsg = 'Schedule:\n\tType: {}'.format(l_message['ScheduleType'])
-            #  l_logmsg += '\n\tSender: {}'.format(l_message['Sender'])
+            l_logmsg += 'Schedule:\n\tType: {}'.format(l_message['ScheduleType'])
             l_logmsg += '\n\tRoom: {}'.format(l_message['RoomName'])
             l_logmsg += '\n\tLight: {}'.format(l_message['LightName'])
             l_logmsg += '\n\tLevel: {}'.format(l_message['Level'])
-        elif l_topic[0] == 'thermostat':
-            l_logmsg = 'Thermostat:\n\tName: {}'.format(l_message['Name'])
-            #  l_logmsg += '\n\tSender: {}'.format(l_message['Sender'])
+        elif l_topic[0] == 'hvac':
+            l_logmsg += 'Thermostat:\n\tName: {}'.format(l_message['Name'])
             l_logmsg += '\n\tRoom: {}'.format(l_message['RoomName'])
             l_logmsg += '\n\tTemp: {}'.format(l_message['CurrentTemperature'])
         else:
-            l_logmsg = 'OTHER: Unknown'
-            #  l_logmsg += '\n\tSender: {}'.format(l_message['Sender'])
+            l_logmsg += 'OTHER: Unknown'
             l_logmsg += '\n\tMessage: {}'.format(PrettyFormatAny.form(l_message, 'Message', 80))
         LOG.info(l_logmsg)
 
@@ -281,6 +276,6 @@ class API(Util):
         except KeyError:
             l_node = NodeData()
         l_node.NodeInterfaces = {}
-        self.MqttPublish('login/computer/initial', l_node)
+        self.MqttPublish('computer/startup', l_node)
 
 #  ## END DBK

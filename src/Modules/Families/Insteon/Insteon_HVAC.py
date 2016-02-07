@@ -20,10 +20,7 @@ Models 2491T1E and 2491T7E = (2491TxE)
 see: 2441xxx pdf guides
 
 My Device seems to put out codes 6E thru 72
-
-
 """
-
 
 #  Import system type stuff
 
@@ -50,7 +47,7 @@ class ihvac_utility(object):
         """
         @param p_device_obj: is the Device (light, thermostat...) we are decoding.
         """
-        l_mqtt_topic = 'thermostat/{}'.format(p_device_obj.Name)
+        l_mqtt_topic = 'hvac/{}'.format(p_device_obj.Name)
         l_mqtt_message = "Thermostat: "
         l_message = p_controller_obj._Message
         l_cmd1 = l_message[9]

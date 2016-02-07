@@ -539,45 +539,40 @@ class MQTTClient(MQTTProtocol):
 
     def connectionLost(self, reason):
         _l_msg = reason.check(error.ConnectionClosed)
-        #  print(PrettyFormatAny.form(reason, 'Reason'))
         LOG.info("Disconnected from MQTT Broker: {}".format(reason))
         self.m_state = MQTT_FACTORY_START
 
     def mqttConnected(self):
-        #  LOG.info("Client mqttConnected")
         l_topic = self.m_pyhouse_obj.Computer.Mqtt.Prefix + '#'
         if self.m_state == MQTT_FACTORY_CONNECTING:
             self.subscribe(l_topic)
             self.m_state = MQTT_FACTORY_CONNECTED
 
     def connackReceived(self, p_status):
-        #  LOG.info('Client conackReceived - Status: {}'.format(p_status))
+        """ Override """
         if p_status == 0:
             self.mqttConnected()
 
     def pubackReceived(self, _messageId):
+        """ Override """
         pass
 
     def subackReceived(self, _grantedQos, _messageId):
-        """Override
-        """
+        """ Override """
         self.m_pyhouse_obj.APIs.Computer.MqttAPI.doPyHouseLogin(self, self.m_pyhouse_obj)
 
     def pingrespReceived(self):
-        #  LOG.warn(' ########################################\n\n')
+        """ Override """
         self.m_pyhouse_obj.Twisted.Reactor.callLater(self.m_pingPeriod, self.pingreq)
 
     def publishReceived(self, p_topic, p_message, _qos = 0, _dup = False, _retain = False, _messageId = None):
-        """ This is where we receive all the pyhouse messages.
+        """ Override - This is where we receive all the pyhouse messages.
         Call the dispatcher to send them on to the correct place.
         """
-        #  LOG.info("\n\tBroker: {}\n\tTopic: {}".format(self.m_broker.Name, p_topic))
-        #  LOG.info('PublishReceived: {}'.format(p_topic))
         self.m_broker._ClientAPI.MqttDispatch(p_topic, p_message)
 
 
 ###########################################
-
 
 class PyHouseMqttFactory(ReconnectingClientFactory):
     """This factory holds the state for thhis broker (there may be more than one).

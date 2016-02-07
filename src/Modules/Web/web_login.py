@@ -136,7 +136,7 @@ class LoginElement(athena.LiveElement):
                     l_login_obj.IsLoggedIn = True
                     l_login_obj.LoginRole = l_user.LoginRole
                     l_login_obj.LoginFullName = l_user.LoginFullName
-                    l_topic = 'login/browser'
+                    l_topic = 'computer/login/browser'
                     self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_login_obj)  #  lighting/web/{}/control
                 return l_login_obj
         return l_login_obj
