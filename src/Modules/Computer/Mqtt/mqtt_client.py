@@ -238,11 +238,11 @@ class API(Util):
         """
         l_topic = p_topic.split('/')[2:]  #  Drop the pyhouse/housename/ as that is all we subscribed to.
         l_message = json_tools.decode_json_unicode(p_message)
-        print('  I Am: {}'.format(self.m_pyhouse_obj.Computer.Name))
-        print('Sender: {}'.format(l_message['Sendere']))
+        #  print('  I Am: {}'.format(self.m_pyhouse_obj.Computer.Name))
+        #  print('Sender: {}'.format(l_message['Sender']))
         if self.m_pyhouse_obj.Computer.Name != l_message['Sender']:
             print('From another computer')
-        LOG.info('Dispatch\n\tTopic: {}\n\tSender: {}'.format(l_topic, l_message['Sender']))
+        #  LOG.info('Dispatch\n\tTopic: {}\n\tSender: {}'.format(l_topic, l_message['Sender']))
         #
         if l_topic[0] == 'login':
             l_logmsg = 'Login:\n\tName: {}'.format(l_message['Name'])

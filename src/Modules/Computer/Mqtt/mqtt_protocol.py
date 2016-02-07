@@ -16,14 +16,15 @@ The second is a MQTT connection to the broker that uses the first connection as 
 #  Import system type stuff
 import random
 from twisted.internet.protocol import Protocol, ReconnectingClientFactory
-from twisted.internet import ssl
-from twisted.internet.ssl import Certificate
+#  from twisted.internet import ssl
+#  from twisted.internet.ssl import Certificate
 from twisted.internet import error
 
 #  Import PyMh files and modules.
 from Modules.Computer import logging_pyh as Logger
 from Modules.Computer.Mqtt.mqtt_util import EncodeDecode
-from Modules.Utilities.debug_tools import PrettyFormatAny
+#  from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Utilities.tools import PrintBytes
 
 LOG = Logger.getLogger('PyHouse.Mqtt_Protocol  ')
 SUBSCRIBE = 'pyhouse/#'
@@ -67,20 +68,24 @@ class MQTTProtocol(Protocol):
                     lenLen += 1
                 #  We still haven't got all of the remaining length field
                 if lenLen < len(self.m_buffer) and self.m_buffer[lenLen] & 0x80:
+                    #  LOG.warn('### Early return {}'.format(PrintBytes(self.m_buffer)))
                     return
                 l_length = EncodeDecode._decodeLength(self.m_buffer[1:])
+
             if len(self.m_buffer) >= l_length + lenLen + 1:
                 chunk = self.m_buffer[:l_length + lenLen + 1]
                 self._processPacket(chunk)
                 self.m_buffer = self.m_buffer[l_length + lenLen + 1:]
                 l_length = None
             else:
+                #  LOG.warn('### exit without processing {}'.format(PrintBytes(self.m_buffer)))
                 break
 
     def _processPacket(self, packet):
         """Handle the Header (2-5 bytes)
         See http://public.dhe.ibm.com/software/dw/webservices/ws-mqtt/mqtt-v3r1.html
         """
+        #  LOG.warn('Processing packet: {}'.format(PrintBytes(packet)))
         try:
             packet_type = (packet[0] & 0xF0) >> 4
             packet_type_name = self._packetTypes[packet_type]
@@ -333,6 +338,7 @@ class MQTTProtocol(Protocol):
         self.transport.write(str(payload))
 
     def connack(self, status):
+        LOG.warn('Got connect ack packet')
         header = bytearray()
         payload = bytearray()
         header.append(0x02 << 4)
@@ -457,12 +463,14 @@ class MQTTProtocol(Protocol):
         self.transport.write(str(varHeader))
 
     def pingreq(self):
+        #  LOG.warn('Sent ping packet')
         header = bytearray()
         header.append(0x0C << 4)
         header.extend(EncodeDecode._encodeLength(0))
         self.transport.write(str(header))
 
     def pingresp(self):
+        #  LOG.warn('Got ping ack packet')
         header = bytearray()
         header.append(0x0D << 4)
         header.extend(EncodeDecode._encodeLength(0))
@@ -482,7 +490,7 @@ MQTT_FACTORY_CONNECTED = 2
 
 class MQTTClient(MQTTProtocol):
 
-    m_pingPeriod = 95
+    m_pingPeriod = 50
 
     def __init__(self, p_pyhouse_obj, p_broker, p_clientID = None,
                  userName = None, passWord = None,
@@ -502,7 +510,7 @@ class MQTTClient(MQTTProtocol):
         if keepalive is not None:
             self.m_keepalive = keepalive
         else:
-            self.m_keepalive = 60 * 1000
+            self.m_keepalive = 120 * 1000
         self.willQos = willQos
         self.willTopic = willTopic
         self.willMessage = willMessage
@@ -530,26 +538,20 @@ class MQTTClient(MQTTProtocol):
         self.m_pyhouse_obj.Twisted.Reactor.callLater(self.m_pingPeriod, self.pingreq)
 
     def connectionLost(self, reason):
-        l_msg = reason.check(error.ConnectionClosed)
+        _l_msg = reason.check(error.ConnectionClosed)
         #  print(PrettyFormatAny.form(reason, 'Reason'))
         LOG.info("Disconnected from MQTT Broker: {}".format(reason))
         self.m_state = MQTT_FACTORY_START
 
-    def dataReceived(self, p_data):
-        LOG.info('Data Rxed {}'.format(p_data))
-        #  certificate = ssl.Certificate(self.transport.getPeerCertificate())
-        #  print(PrettyFormatAny.form(certificate, 'Certificate'))
-        pass
-
     def mqttConnected(self):
-        LOG.info("Client mqttConnected")
+        #  LOG.info("Client mqttConnected")
         l_topic = self.m_pyhouse_obj.Computer.Mqtt.Prefix + '#'
         if self.m_state == MQTT_FACTORY_CONNECTING:
             self.subscribe(l_topic)
             self.m_state = MQTT_FACTORY_CONNECTED
 
     def connackReceived(self, p_status):
-        LOG.info('Client conackReceived - Status: {}'.format(p_status))
+        #  LOG.info('Client conackReceived - Status: {}'.format(p_status))
         if p_status == 0:
             self.mqttConnected()
 
@@ -562,6 +564,7 @@ class MQTTClient(MQTTProtocol):
         self.m_pyhouse_obj.APIs.Computer.MqttAPI.doPyHouseLogin(self, self.m_pyhouse_obj)
 
     def pingrespReceived(self):
+        #  LOG.warn(' ########################################\n\n')
         self.m_pyhouse_obj.Twisted.Reactor.callLater(self.m_pingPeriod, self.pingreq)
 
     def publishReceived(self, p_topic, p_message, _qos = 0, _dup = False, _retain = False, _messageId = None):
