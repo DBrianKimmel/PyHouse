@@ -240,8 +240,8 @@ class API(Util):
         l_message = json_tools.decode_json_unicode(p_message)
         #  print('  I Am: {}'.format(self.m_pyhouse_obj.Computer.Name))
         #  print('Sender: {}'.format(l_message['Sender']))
-        if self.m_pyhouse_obj.Computer.Name != l_message['Sender']:
-            print('From another computer')
+        #  if self.m_pyhouse_obj.Computer.Name != l_message['Sender']:
+        #    print('From another computer')
         #  LOG.info('Dispatch\n\tTopic: {}\n\tSender: {}'.format(l_topic, l_message['Sender']))
         #
         if l_topic[0] == 'login':
