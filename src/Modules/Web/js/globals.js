@@ -527,11 +527,11 @@ function buildLcarAddButton(p_handler) {
 function buildLcarBackButton(p_handler) {
 	return buildLcarButton({'Name' : 'Back', 'Key' : BUTTON_BACK}, p_handler, 'lcars-salmon-bg');
 }
-function buildLcarChangeButton(p_handler, p_add_change) {
+function buildLcarChangeButton(p_handler) {
 	var l_name = 'Change';
-	if (p_add_change === 'add')
+	if (globals.Add === true)
 		l_name = 'Add';
-	return buildLcarButton({'Name' : 'Change', 'Key' : BUTTON_CHANGE}, p_handler, 'lcars-salmon-bg');
+	return buildLcarButton({'Name' : l_name, 'Key' : BUTTON_CHANGE}, p_handler, 'lcars-salmon-bg');
 }
 function buildLcarDeleteButton(p_handler) {
 	return buildLcarButton({'Name' : 'Delete', 'Key' : BUTTON_DELETE}, p_handler, 'lcars-salmon-bg');

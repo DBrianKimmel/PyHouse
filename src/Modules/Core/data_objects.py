@@ -21,9 +21,9 @@ __version__ = '.'.join(map(str, __version_info__))
 
 
 class PyHouseData(object):
-    """ ==> pyhouse_obj
+    """
 
-PyHouse.xxx as in the def below
+    ==> PyHouse.xxx as in the def below
 
     The master object, contains all other 'configuration' objects.
 
@@ -50,7 +50,8 @@ class BaseObject(object):
 
 
 class ComputerAPIs(object):
-    """ ==> pyhouse_obj.APIs.Comp
+    """
+    ==> pyhouse_obj.APIs.Comp
     """
     def __init__(self):
         self.ComputerAPI = None
@@ -115,7 +116,8 @@ class  EthernetControllerData(object):
 
 
 class HouseAPIs(object):
-    """ ==> pyhouse_obj.APIs.House
+    """
+==> PyHouse.APIs.House
     """
     def __init__(self):
         self.HouseAPI = None
@@ -133,7 +135,7 @@ class HouseAPIs(object):
 
 class HvacData(object):
     """
-PyHouse.House.Hvac.xxx as in the def below
+==> PyHouse.House.Hvac.xxx as in the def below
     """
     def __init__(self):
         self.Thermostats = {}  #  ThermostatData()
@@ -152,6 +154,7 @@ class InternetConnectionData(object):
 
 class LightingData(object):
     """
+==> PyHouse.House.Lighting.xxx as in the def below
     """
     def __init__(self):
         self.Buttons = {}  #  ButtonData()
@@ -187,6 +190,9 @@ class LocationData(object):
 
 
 class MqttInformation(object):
+    """
+==> PyHouse.Computer.Mqtt.xxx as in the def below
+    """
     def __init__(self):
         self.Prefix = ''
         self.Brokers = {}  #  MqttBrokerData()
@@ -337,6 +343,7 @@ class DeviceData(BaseObject):
 
 class ComputerInformation(BaseObject):
     """
+    ==> pyhouse_obj.Computer.xxx - as in the def below
     """
     def __init__(self):
         super(ComputerInformation, self).__init__()
@@ -364,8 +371,7 @@ class HouseInformation(BaseObject):
     """The collection of information about a house.
     Causes JSON errors due to API type data methinks.
 
-PyHouse.House.xxx as in the def below
-
+    ==> PyHouse.House.xxx as in the def below
     """
     def __init__(self):
         super(HouseInformation, self).__init__()
@@ -395,7 +401,7 @@ class JsonHouseData(BaseObject):
 
 
 class LoginData(BaseObject):
-    """ bout the Loggeed in useer
+    """ bout the Logged in user
     """
     def __init__(self):
         super(LoginData, self).__init__()
@@ -547,8 +553,7 @@ class IrrigationZoneData(DeviceData):
 
 class ThermostatData(DeviceData):
     """
-PyHouse.House.Hvac.Thermostats.xxx as in the def below
-
+    ==> PyHouse.House.Hvac.Thermostats.xxx as in the def below
     """
     def __init__(self):
         super(ThermostatData, self).__init__()
@@ -578,6 +583,8 @@ class ButtonData(CoreLightingData):
 
 class ControllerData(CoreLightingData):
     """This data is common to all lighting controllers.
+
+==> PyHouse.House.Lighting.Controllers.xxx as in the def below
     """
     def __init__(self):
         super(ControllerData, self).__init__()

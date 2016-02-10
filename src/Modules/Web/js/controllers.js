@@ -106,12 +106,14 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 			l_obj = globals.House.Lighting.Controllers[l_ix];
 			globals.House.ControllerObj = l_obj;
 			globals.House.Self = self;
+			globals.Add = false;
             self.buildLcarDataEntryScreen(l_obj, 'handleDataOnClick');
         } else if (l_ix == 10001) {  // The 'Add' button
             showDataEntryScreen(self);
         	l_obj = self.createEntry()
 			globals.House.ControllerObj = l_obj;
 			globals.House.Self = self;
+			globals.Add = true;
 			self.buildLcarDataEntryScreen(l_obj, 'handleDataOnClick');
         } else if (l_ix == 10002) {  // The 'Back' button
             self.showWidget('HouseMenu');
@@ -223,6 +225,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 		var l_obj = self.fetchEntry();
 		var l_json = '';
 		var l_defer = '';
+		l_obj.Add = globals.Add;
 		switch(l_ix) {
 		case '10003':  // The 'Change' Button
 			l_json = JSON.stringify(l_obj);

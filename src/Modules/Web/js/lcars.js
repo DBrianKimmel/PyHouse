@@ -174,7 +174,8 @@ function fetchBaseEntry(self) {
 }
 function createBaseEntry(self, p_key) {
     var l_data = {
-		Delete : false
+		Delete : false,
+		Add : false
     };
 	l_data.Name = 'ChangeMe';
 	if (p_key === undefined) 

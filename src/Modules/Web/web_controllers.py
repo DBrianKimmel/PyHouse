@@ -11,21 +11,21 @@
 
 """
 
-# Import system type stuff
+#  Import system type stuff
 import os
 from nevow import loaders
 from nevow import athena
 
-# Import PyMh files and modules.
+#  Import PyMh files and modules.
+from Modules.Core.data_objects import ControllerData
 from Modules.Web.web_utils import GetJSONHouseInfo
 from Modules.Drivers import VALID_INTERFACES
-from Modules.Lighting import lighting_controllers
 from Modules.Computer import logging_pyh as Logger
 from Modules.Families.Insteon import Insteon_utils
 from Modules.Utilities import json_tools
 
 
-# Handy helper for finding external resources nearby.
+#  Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
 
@@ -76,7 +76,7 @@ class ControllersElement(athena.LiveElement):
         try:
             l_obj = self.m_pyhouse_obj.House.Lighting.Controllers[l_controller_ix]
         except KeyError:
-            l_obj = lighting_controllers.ControllerData()
+            l_obj = ControllerData()
         l_obj.Name = l_json['Name']
         l_obj.Active = l_json['Active']
         l_obj.Key = l_controller_ix
@@ -100,4 +100,4 @@ class ControllersElement(athena.LiveElement):
         self.m_pyhouse_obj.House.Lighting.Controllers[l_controller_ix] = l_obj
         LOG.info('Controller Added - {}'.format(l_obj))
 
-# ## END DBK
+#  ## END DBK

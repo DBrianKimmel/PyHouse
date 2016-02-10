@@ -101,14 +101,9 @@ helpers.Widget.subclass(internet, 'InternetWidget').methods(
 
 	function createEntry(self) {
 		// Divmod.debug('---', 'internet.createEntry() was called.');
-        var l_Data = {
-    			Name : 'Change Me',
-    			Key : Object.keys(globals.Computer.Internet).length,
-    			Active : false,
-    			Url : '',
-    			Interval : 0,
-    			Delete : false
-                };
+        var l_data = createBaseEntry(self, Object.keys(globals.Computer.Internet).length);
+    	l_data.Url = '';
+    	l_data.Interval = 0;
 		return l_Data;
 	},
 
