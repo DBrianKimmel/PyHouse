@@ -262,6 +262,9 @@ class API(Util):
             l_logmsg += 'Thermostat:\n\tName: {}'.format(l_message['Name'])
             l_logmsg += '\n\tRoom: {}'.format(l_message['RoomName'])
             l_logmsg += '\n\tTemp: {}'.format(l_message['CurrentTemperature'])
+        elif l_topic[0] == 'weather':
+            l_logmsg += 'Weather:\n\tName: {}'.format(l_message['location'])
+            l_logmsg += '\n\tTemp: {}'.format(l_message['tempc'])
         else:
             l_logmsg += 'OTHER: Unknown'
             l_logmsg += '\n\tMessage: {}'.format(PrettyFormatAny.form(l_message, 'Message', 80))
