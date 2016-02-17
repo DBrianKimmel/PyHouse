@@ -74,12 +74,10 @@ class Util(object):
         p_broker._ClientAPI = self
         LOG.info('Connecting via TCP...')
         if l_host == None or l_port == None:
-            LOG.error('Bad Mqtt broker Address: {}'.format(l_host))
+            LOG.error('Bad Mqtt broker Address: {}  or Port: {}'.format(l_host, l_port))
             p_broker._ProtocolAPI = None
         else:
-            l_factory = PyHouseMqttFactory(
-                        p_pyhouse_obj, l_clientID, p_broker, l_username, l_password)
-            #  l_context_factory = ssl.CertificateOptions()
+            l_factory = PyHouseMqttFactory(p_pyhouse_obj, l_clientID, p_broker, l_username, l_password)
             _l_connector = p_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_factory)
             LOG.info('TCP Connected to broker: {}; Host:{}'.format(p_broker.Name, l_host))
         pass
@@ -238,9 +236,9 @@ class API(Util):
         """
         l_topic = p_topic.split('/')[2:]  #  Drop the pyhouse/housename/ as that is all we subscribed to.
         l_message = json_tools.decode_json_unicode(p_message)
-        l_logmsg = 'Dispatch\n\tTopic: {}'.format(l_topic)
+        l_logmsg = 'Dispatch\n\tTopic: {} '.format(l_topic)
         try:
-            l_logmsg += '\n\tSender: {}'.format(l_message['Sender'])
+            l_logmsg += '\n\tSender: {} '.format(l_message['Sender'])
         except AttributeError:
             pass
         #

@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.Computer.Nodes.XXtest_nodes -*-
+-*- test-case-name: PyHouse.src.Modules.Computer.Nodes.test.XXtest_nodes -*-
 
 @name:      PyHouse/src/Modules/Computer/Nodes/nodes.py
 @author:    D. Brian Kimmel
@@ -14,23 +14,12 @@ Second, it uses node_discovery to find all the running nodes in the domain.
     Nodes may come and go within the domain.
 Third, inter_node_comm is used to build up a model of all the nodes in a domain.
     It also tries to keep track of the active status of each node.
-
-Using a Raspberry Pi as a node works fine for about any function, but I expect that it will run out
-of capacity if too many services are attempted on one node.
-
-Therefore, a cluster of nodes (a domain), each one running a small number of tasks will probably be the norm.
-
-This design will then need a way for each node to discover all its neighbor nodes and establish a
-communication network so we can pass information between nodes.
-
-This module will establish a domain network and use Twisted's AMP protocol to pass messages around.
-
 """
 
-# Import system type stuff
+#  Import system type stuff
 
-# Import PyMh files and modules.
-from Modules.Computer.Nodes.node_discovery import API as discoveryAPI
+#  Import PyMh files and modules.
+#  from Modules.Computer.Nodes.node_discovery import API as discoveryAPI
 from Modules.Computer.Nodes.node_local import API as localAPI
 from Modules.Computer.Nodes.nodes_xml import Xml as nodesXml
 from Modules.Computer import logging_pyh as Logger
@@ -43,15 +32,14 @@ class API(object):
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_local = localAPI(p_pyhouse_obj)
-        self.m_discovery = discoveryAPI(p_pyhouse_obj)
 
     def Start(self):
         self.m_pyhouse_obj.Computer.Nodes = self.LoadXml(self.m_pyhouse_obj)
         self.m_local.Start()
-        # self.m_discovery.Start()
+        #  self.m_discovery.Start()
 
     def Stop(self):
-        # self.m_discovery.Stop()
+        #  self.m_discovery.Stop()
         self.m_local.Stop()
 
     def LoadXml(self, p_pyhouse_obj):
@@ -64,6 +52,6 @@ class API(object):
         l_xml = nodesXml.write_nodes_xml(self.m_pyhouse_obj.Computer.Nodes)
         p_xml.append(l_xml)
         LOG.info("Saved XML.")
-        return l_xml  # For testing
+        return l_xml  #  For testing
 
-# ## END DBK
+#  ## END DBK

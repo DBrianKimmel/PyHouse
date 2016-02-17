@@ -31,13 +31,12 @@ from Modules.Computer.computer import API as computerAPI
 from Modules.Core import setup_logging  #  This must be first as the import causes logging to be initialized
 from Modules.Housing.house import API as houseAPI
 from Modules.Utilities.config_file import API as configAPI
-
 LOG = Logger.getLogger('PyHouse.CoreSetup      ')
 
-INTER_NODE = 'tcp:port=8581'
-INTRA_NODE = 'unix:path=/var/run/pyhouse/node:lockfile=1'
-INITIAL_DELAY = 3 * 60
-REPEAT_DELAY = 2 * 60 * 60  #  2 hours
+MINUTES = 60  #  Seconds in a minute
+HOURS = 60 * MINUTES
+INITIAL_DELAY = 3 * MINUTES
+XML_SAVE_DELAY = 2 * HOURS  #  2 hours
 
 
 class PyHouseObj(object):
@@ -57,11 +56,8 @@ class Utility(object):
     """
     """
 
-    def log_start(self):
-        pass
-
     def _xml_save_loop(self, p_pyhouse_obj):
-        p_pyhouse_obj.Twisted.Reactor.callLater(REPEAT_DELAY, self._xml_save_loop, p_pyhouse_obj)
+        p_pyhouse_obj.Twisted.Reactor.callLater(XML_SAVE_DELAY, self._xml_save_loop, p_pyhouse_obj)
         self.SaveXml()
 
     @staticmethod
@@ -76,6 +72,16 @@ class Utility(object):
         Domain.uuid
         """
         pass
+
+    @staticmethod
+    def _sync_startup_logging(p_pyhouse_obj):
+        """Start up the logging system.
+        This is sync so that logging is up and running before proceeding with the rest of the initialization.
+        The logs are at a fixed place and are not configurable.
+        """
+        l_log = setup_logging.API(p_pyhouse_obj)  #  To eliminate Eclipse warning
+        l_log.Start()
+        LOG.info("Starting.")
 
 
 class API(Utility):
@@ -94,28 +100,19 @@ class API(Utility):
         p_pyhouse_obj.APIs.Computer.ComputerAPI = computerAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.HouseAPI = houseAPI(p_pyhouse_obj)
         PyHouseObj.SetObj(p_pyhouse_obj)
-        LOG.info('Initialized\n------------------------------------------------------------------\n')
+        LOG.info('Initialized\n==================================================================\n')
 
     def Start(self):
         """
         The reactor is now running.
 
-        This controls the order that Configuration things are read-in and initialized.
-
         @param p_pyhouse_obj: is the skeleton Obj filled in some by PyHouse.py.
         """
-        l_log = setup_logging.API(self.m_pyhouse_obj)  #  To eliminate Eclipse warning
-        l_log.Start()
-
+        #  First we start up the logging system - no need for XML yes as it is at a fixrd location
+        Utility._sync_startup_logging(self.m_pyhouse_obj)
         #  Next is the XML file do things can be read in and customized
         self.m_pyhouse_obj = configAPI(self.m_pyhouse_obj).read_xml_config_file(self.m_pyhouse_obj)
-
-        #  Next is the logging system
-        self.log_start()
-        LOG.info("Starting.")
-
-        #  Logging system is now enabled
-        #  Starting the computer and House will load the respective divisions of the config file.
+        #  next Starting the computer and House will load the respective divisions of the config file.
         self.m_pyhouse_obj.APIs.Computer.ComputerAPI.Start()
         self.m_pyhouse_obj.APIs.House.HouseAPI.Start()
         self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self._xml_save_loop, self.m_pyhouse_obj)

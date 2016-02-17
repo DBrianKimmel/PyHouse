@@ -19,10 +19,10 @@ This takes care of starting all the computer modules (In Order).
     Web Server(s)
 """
 
-# Import system type stuff
+#  Import system type stuff
 import platform
 
-# Import PyHouse files
+#  Import PyHouse files
 from Modules.Core.data_objects import ComputerAPIs, ComputerInformation
 from Modules.Computer import logging_pyh as Logger
 from Modules.Communication.communication import API as communicationAPI
@@ -71,20 +71,20 @@ class Utility(object):
         """
         p_pyhouse_obj.APIs.Computer = ComputerAPIs()
         p_pyhouse_obj.APIs.Computer.ComputerAPI = p_api
+        p_pyhouse_obj.APIs.Computer.MqttAPI = mqttAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.CommunicationsAPI = communicationAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.EmailAPI = emailAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.InternetAPI = internetAPI(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.Computer.MqttAPI = mqttAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.NodesAPI = nodesAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.WeatherAPI = weatherAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.WebAPI = webAPI(p_pyhouse_obj)
 
     @staticmethod
     def _start_component_apis(p_pyhouse_obj):
+        p_pyhouse_obj.APIs.Computer.MqttAPI.Start()  #  Start this first so we can send messages/
         p_pyhouse_obj.APIs.Computer.CommunicationsAPI.Start()
         p_pyhouse_obj.APIs.Computer.EmailAPI.Start()
         p_pyhouse_obj.APIs.Computer.InternetAPI.Start()
-        p_pyhouse_obj.APIs.Computer.MqttAPI.Start()
         p_pyhouse_obj.APIs.Computer.NodesAPI.Start()
         p_pyhouse_obj.APIs.Computer.WeatherAPI.Start()
         p_pyhouse_obj.APIs.Computer.WebAPI.Start()
@@ -136,6 +136,11 @@ class API(Utility):
         Utility._stop_component_apis(self.m_pyhouse_obj)
         LOG.info("Stopped.")
 
+    def LoadXml(self, p_pyhouse_obj):
+        """
+        """
+        pass
+
     def SaveXml(self, p_xml):
         """
         Take a snapshot of the current Configuration/Status and write out an XML file.
@@ -146,4 +151,4 @@ class API(Utility):
         LOG.info("Saved Computer XML.")
         return p_xml
 
-# ## END DBK
+#  ## END DBK

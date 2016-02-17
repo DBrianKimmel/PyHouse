@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Computer/Nodes/node_local.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2015  by D. Brian Kimmel
+@copyright: (c) 2014-2016  by D. Brian Kimmel
 @note:      Created on Apr 2, 2014
 @license:   MIT License
 @summary:   Gather this node's information.
@@ -21,17 +21,17 @@ The discovered services may be fooled by non PyHouse devices plugged into the co
 Once overridden the new role will "stick" by being written into the local XML file.
 """
 
-# Import system type stuff
-import fnmatch  # Filename matching with shell patterns
+#  Import system type stuff
+import fnmatch  #  Filename matching with shell patterns
 import netifaces
 import os
 import platform
 
-# Import PyMh files and modules.
+#  Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData, NodeInterfaceData
 from Modules.Communication import ir_control
 from Modules.Computer import logging_pyh as Logger
-# from Modules.Utilities.debug_tools import PrettyFormatAny
+#  from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.NodeLocal      ')
 
@@ -43,15 +43,15 @@ __all__ = ['NODE_NOTHING', 'NODE_LIGHTS',
            ]
 
 
-NODE_NOTHING = 0x0000  # a basic node with no special functions
-NODE_LIGHTS = 0x0001  # Node has an attached controller for Lights (optionally other stuff)
-NODE_PANDORA = 0x0002  # Node can use pianobar to receive Pandora streams
-NODE_CAMERA = 0x0004  # Pi with attached camera (not USB camera)
+NODE_NOTHING = 0x0000  #  a basic node with no special functions
+NODE_LIGHTS = 0x0001  #  Node has an attached controller for Lights (optionally other stuff)
+NODE_PANDORA = 0x0002  #  Node can use pianobar to receive Pandora streams
+NODE_CAMERA = 0x0004  #  Pi with attached camera (not USB camera)
 NODE_PIFACECAD = 0x0008  #
-NODE_V6ROUTER = 0x0010  # Iv6 Router node
-NODE_WINDOWS = 0x0020  # Windowd - not Linux
-NODE_TUNNEL = 0x0040  # IPv6 Tunnel
-NODE_IR = 0x0080  # Infra-red receiver and optional transmitter
+NODE_V6ROUTER = 0x0010  #  Iv6 Router node
+NODE_WINDOWS = 0x0020  #  Windowd - not Linux
+NODE_TUNNEL = 0x0040  #  IPv6 Tunnel
+NODE_IR = 0x0080  #  Infra-red receiver and optional transmitter
 
 
 class Interfaces(object):
@@ -82,8 +82,8 @@ class Interfaces(object):
 
     @staticmethod
     def _find_addr_family_name(p_ix):
-        """Returns the string of the family nemr for a given index.
-        -1000 = AF_LINK - The MAC address
+        """Returns the string of the family name for a given index.
+        -1000 = AF_LINK - The MAC address  (Windows only)
         2 = AF_INET - IPv4
         23 = AF_INET6 - IPv6
         """
@@ -106,7 +106,7 @@ class Interfaces(object):
 
     @staticmethod
     def _get_address_list(p_list):
-        # print(PrettyFormatAny.form(p_list, 'Address'))
+        #  print(PrettyFormatAny.form(p_list, 'Address'))
         l_list = []
         for l_ent in p_list:
             l_list.append(l_ent['addr'])
@@ -114,7 +114,7 @@ class Interfaces(object):
 
     @staticmethod
     def _get_one_interface(p_interface_name):
-        """ Gather the information about a single interface given the interfave name.
+        """ Gather the information about a single interface given the interface name.
         """
         l_interface = NodeInterfaceData()
         l_interface.Name = p_interface_name
@@ -123,7 +123,7 @@ class Interfaces(object):
         l_interface.UUID = '123'
         l_interface.NodeInterfaceType = 'Other'
         l_ifs = Interfaces._find_addr_lists(p_interface_name)
-        # print(PrettyFormatAny.form(l_ifs, 'Ifs'))
+        #  print(PrettyFormatAny.form(l_ifs, 'Ifs'))
         for l_af in Interfaces._find_addr_lists(p_interface_name).iterkeys():
             if Interfaces._find_addr_family_name(l_af) == 'AF_PACKET':
                 l_interface.MacAddress = Interfaces._find_addr_lists(p_interface_name)[l_af]
@@ -149,6 +149,31 @@ class Interfaces(object):
             l_count += 1
         LOG.info('Added {} Interfaces to local node'.format(l_count))
         return l_dict
+
+    @staticmethod
+    def _list_families():
+        """
+        @return: A dict of families for netifaces
+        """
+        l_ret = netifaces.address_families
+        return l_ret
+
+    @staticmethod
+    def _list_gateways():
+        """ A dict of gateways """
+        l_ret = netifaces.gateways()
+        return l_ret
+
+    @staticmethod
+    def _list_ifaddresses(p_if):
+        l_ret = netifaces.ifaddresses(p_if)
+        return l_ret
+
+    @staticmethod
+    def _list_interfaces():
+        """ Returns a list of interfaces. """
+        l_ret = netifaces.interfaces()
+        return l_ret
 
 
 class HandleNodeType(object):
@@ -188,7 +213,7 @@ class Util(object):
         """
         l_ret = NODE_NOTHING
         for l_file in os.listdir('/dev'):
-            # Test for lights
+            #  Test for lights
             if fnmatch.fnmatch(l_file, 'ttyUSB?'):
                 l_ret |= NODE_LIGHTS
                 LOG.info('Lighting Node')
@@ -251,7 +276,7 @@ class Util(object):
         l_role = NODE_NOTHING
         try:
             Util._unix_node_test(l_role)
-        except WindowsError:
+        except Exception:
             l_role |= NODE_WINDOWS
             LOG.info('Windows Node')
         return l_role
@@ -289,10 +314,11 @@ class Util(object):
         LOG.info('Nodes = {}'.format(p_pyhouse_obj.Compute.Nodes))
 
     @staticmethod
-    def create_local_node(_p_pyhouse_obj):
+    def create_local_node(p_pyhouse_obj):
         l_node = Util._get_node_info()
         l_node.NodeInterfaces = Interfaces._get_all_interfaces()
         l_node.NodeRole = Util.find_node_role()
+        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("node/local", l_node)
         return l_node
 
 
@@ -304,7 +330,7 @@ class API(Util):
         self.m_pyhouse_obj = p_pyhouse_obj
 
     def Start(self):
-        # self.m_pyhouse_obj.Computer.Nodes = self.LoadXml(self.m_pyhouse_obj)
+        #  self.m_pyhouse_obj.Computer.Nodes = self.LoadXml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Computer.Nodes[0] = Util.create_local_node(self.m_pyhouse_obj)
         self.init_node_type(self.m_pyhouse_obj)
 
@@ -312,11 +338,11 @@ class API(Util):
         LOG.info("Stopped.")
 
     def LoadXml(self, p_pyhouse_obj):
-        """ Load the Mqtt xml info.
+        """ Load the Node xml info.
         """
         pass
 
     def SaveXml(self, p_xml):
         pass
 
-# ## END DBK
+#  ## END DBK

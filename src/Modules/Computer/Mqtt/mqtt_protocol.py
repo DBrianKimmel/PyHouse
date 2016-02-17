@@ -25,6 +25,7 @@ from Modules.Computer import logging_pyh as Logger
 from Modules.Computer.Mqtt.mqtt_util import EncodeDecode
 #  from Modules.Utilities.debug_tools import PrettyFormatAny
 from Modules.Utilities.tools import PrintBytes
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.Mqtt_Protocol  ')
 SUBSCRIBE = 'pyhouse/#'
@@ -591,7 +592,6 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
         self.m_username = p_username
         self.m_password = p_password
         p_broker._ProtocolAPI = self
-        LOG.debug('ProtocolAPI: {}'.format(p_broker._ProtocolAPI))
 
     def startedConnecting(self, p_connector):
         LOG.info('Started to connect. {}'.format(p_connector))
@@ -599,7 +599,6 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
     def buildProtocol(self, p_addr):
         l_client = MQTTClient(self.m_pyhouse_obj, self.m_broker, self.m_clientID, self.m_username, self.m_password)
         self.m_broker._ProtocolAPI = l_client
-        LOG.debug('ProtocolAPI: {}'.format(l_client))
         LOG.info("Mqtt buildProtocol - broker address: {}".format(p_addr))
         self.resetDelay()
         return l_client
@@ -613,15 +612,11 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
         ReconnectingClientFactory.clientConnectionFailed(self, p_connector, p_reason)
 
     def connectionLost(self, p_reason):
-        """
-        This is required.
-        """
+        """ This is required. """
         LOG.error('ConnectionLost.\n\tReason: {}'.format(p_reason))
 
     def makeConnection(self, p_transport):
-        """
-        This is required.
-        """
+        """ This is required. """
         LOG.warn('makeConnection - Transport: {}'.format(p_transport))
 
 #  ## END DBK

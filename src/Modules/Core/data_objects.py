@@ -22,8 +22,7 @@ __version__ = '.'.join(map(str, __version_info__))
 
 class PyHouseData(object):
     """
-
-    ==> PyHouse.xxx as in the def below
+    ==> PyHouse.xxx as in the def below.
 
     The master object, contains all other 'configuration' objects.
 
@@ -51,7 +50,7 @@ class BaseObject(object):
 
 class ComputerAPIs(object):
     """
-    ==> pyhouse_obj.APIs.Comp
+    ==> PyHouse.APIs.Computer.xxx as in the def below.
     """
     def __init__(self):
         self.ComputerAPI = None
@@ -216,7 +215,7 @@ class  NullControllerData(object):
 
 class PyHouseAPIs(object):
     """
-    ==> pyhouse_obj.APIs
+    ==> PyHouse.APIs
 
     Most of these have a single entry.
     """
@@ -343,7 +342,7 @@ class DeviceData(BaseObject):
 
 class ComputerInformation(BaseObject):
     """
-    ==> pyhouse_obj.Computer.xxx - as in the def below
+    ==> PyHouse.Computer.xxx - as in the def below.
     """
     def __init__(self):
         super(ComputerInformation, self).__init__()
@@ -371,7 +370,7 @@ class HouseInformation(BaseObject):
     """The collection of information about a house.
     Causes JSON errors due to API type data methinks.
 
-    ==> PyHouse.House.xxx as in the def below
+    ==> PyHouse.House.xxx as in the def below.
     """
     def __init__(self):
         super(HouseInformation, self).__init__()
@@ -433,6 +432,8 @@ class NodeData(BaseObject):
     """Information about a single node.
     Name is the Node's HostName
     The interface info is only for the local node.
+
+    ==> PyHouse.Computer.Nodes[x].xxx - as in the def below.
     """
     def __init__(self):
         super(NodeData, self).__init__()
@@ -447,6 +448,8 @@ class NodeData(BaseObject):
 class NodeInterfaceData(BaseObject):
     """
     Holds information about each of the interfaces on the *local* node.
+
+    ==> PyHouse.Computer.Nodes[x].NodeInterfaces[x].xxx - as in the def below.
     """
     def __init__(self):
         super(NodeInterfaceData, self).__init__()

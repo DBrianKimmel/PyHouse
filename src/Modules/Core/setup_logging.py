@@ -17,13 +17,13 @@ Log directories must exist and be writable by the PyHouse process as it begins.
 
 """
 
-# Import system type stuff
+#  Import system type stuff
 import datetime
 import logging.config
 from twisted.python import log
 
-# Import PyMh files and modules.
-# from Modules.Utilities.debug_tools import PrettyFormatAny
+#  Import PyMh files and modules.
+#  from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOGGER_NAME = 'PyHouse                '
 LOGGER_NAME_TWISTED = 'PyHouse.Twisted.....   '
@@ -46,12 +46,12 @@ class DropHttpFilter(object):
 
     def filter(self, p_record):
         """ Should we filter this record out of the logs?
-        @param p_record: is the message object 
+        @param p_record: is the message object
         """
         l_allow = True
         if self.m_param is None:
             return True
-        # l_list = self.m_param
+        #  l_list = self.m_param
         try:
             l_str = str(p_record.msg)
             if l_str.find('/transport') > 0:
@@ -121,13 +121,7 @@ LOGGING_DICT = {
 
 logging.getLogger(LOGGER_NAME)
 logging.config.dictConfig(LOGGING_DICT)
-# logging.debug('PyHouse Debug Starting\n')
-logging.info('PyHouse Info Starting\n')
-# logging.warn('PyHouse Warn Starting\n')
-# logging.error('PyHouse Error Starting\n')
-# logging.critical('PyHouse Critical Starting\n')
-# print('setup_logging-122')
-# print(PrettyFormatAny.form(logging, 'Logging'))
+logging.info('PyHouse Logging Starting. (setup_logging.py)\n------------------------------------------------------------------\n')
 
 l_observer = log.PythonLoggingObserver(loggerName = LOGGER_NAME_TWISTED)
 l_observer.start()
@@ -153,14 +147,14 @@ class DeleteOldLogs(object):
         p_pyhouse_obj.Twisted.Reactor.callLater(l_delay, DeleteOldLogs.run_daily, p_pyhouse_obj)
 
 
-class API(object):  # To remove eclipse warnings.
+class API(object):  #  To remove eclipse warnings.
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        # print('setup_logging-153')
+        #  print('setup_logging-153')
 
     def Start(self):
         DeleteOldLogs.run_at_12_05(self.m_pyhouse_obj)
         pass
 
-# ## END DBK
+#  ## END DBK
