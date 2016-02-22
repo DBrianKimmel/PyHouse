@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Web/web_login.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2015 by D. Brian Kimmel
+@copyright: (c) 2013-2016 by D. Brian Kimmel
 @note:      Created on Jul 27, 2013
 @license:   MIT License
 @summary:   Handle the web server login.
@@ -136,8 +136,7 @@ class LoginElement(athena.LiveElement):
                     l_login_obj.IsLoggedIn = True
                     l_login_obj.LoginRole = l_user.LoginRole
                     l_login_obj.LoginFullName = l_user.LoginFullName
-                    l_topic = 'computer/login/browser'
-                    self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_login_obj)  #  lighting/web/{}/control
+                    self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish('computer/browser/login', l_login_obj)  #  lighting/web/{}/control
                 return l_login_obj
         return l_login_obj
 

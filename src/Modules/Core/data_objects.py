@@ -324,6 +324,20 @@ class XmlInformation(object):
 BaseObject dependent.
 """
 
+class ComputerInformation(BaseObject):
+    """
+    ==> PyHouse.Computer.xxx - as in the def below.
+    """
+    def __init__(self):
+        super(ComputerInformation, self).__init__()
+        self.Communication = None
+        self.Email = None  #  EmailData()
+        self.InternetConnection = None  #  InternetConnectionData()
+        self.Mqtt = None  #  MqttInformation()
+        self.Nodes = None  #  NodeData()
+        self.Web = None  #  WebData()
+
+
 class DeviceData(BaseObject):
     """
     This data is in every other device object.
@@ -338,20 +352,6 @@ class DeviceData(BaseObject):
         self.RoomCoords = None  #  CoordinateData()
         self.RoomName = ''
         self.UUID = None
-
-
-class ComputerInformation(BaseObject):
-    """
-    ==> PyHouse.Computer.xxx - as in the def below.
-    """
-    def __init__(self):
-        super(ComputerInformation, self).__init__()
-        self.Communication = None
-        self.Email = None  #  EmailData()
-        self.InternetConnection = None  #  InternetConnectionData()
-        self.Mqtt = None  #  MqttInformation()
-        self.Nodes = None  #  NodeData()
-        self.Web = None  #  WebData()
 
 
 class FamilyData(BaseObject):
@@ -432,6 +432,7 @@ class NodeData(BaseObject):
     """Information about a single node.
     Name is the Node's HostName
     The interface info is only for the local node.
+    Node[0] is always the local node (Myself)
 
     ==> PyHouse.Computer.Nodes[x].xxx - as in the def below.
     """
@@ -440,6 +441,8 @@ class NodeData(BaseObject):
         self.Comment = None
         self.ConnectionAddr_IPv4 = None
         self.ConnectionAddr_IPv6 = None
+        self.ControllerTypes = []  #  A list of controller types attached to this node
+        self.ControllerCount = 0  #  Number of USB controllers attached
         self.NodeId = None
         self.NodeRole = None
         self.NodeInterfaces = {}  #  NodeInterfaceData()

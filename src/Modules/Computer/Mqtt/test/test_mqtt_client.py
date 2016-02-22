@@ -154,12 +154,6 @@ class C1_Tools(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_01_Dict(self):
-        """ Be sure that the XML contains the right stuff.
-        """
-        l_dict = {'Name': 'Test Dict', 'Size': 4, 'Tuple':(1, 'two', True), 'List': [1, 2, 3.4, 5.6]}
-        l_obj = Util._dict2Obj(l_dict)
-
     def test_02_Obj(self):
         """ Be sure that the XML contains the right stuff.
         """
@@ -169,8 +163,6 @@ class C1_Tools(SetupMixin, unittest.TestCase):
         l_obj.State = 'Confusion'
         l_json = json_tools.encode_json(l_obj)
         #  print(PrettyFormatAny.form(l_json, 'Json', 80))
-        l_ret = Util._json2dict(l_json)
-        #  print(PrettyFormatAny.form(l_ret, 'Json Decoded Object', 80))
 
 
 class C2_Publish(SetupMixin, unittest.TestCase):

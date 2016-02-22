@@ -23,10 +23,8 @@ from twisted.internet import error
 #  Import PyMh files and modules.
 from Modules.Computer import logging_pyh as Logger
 from Modules.Computer.Mqtt.mqtt_util import EncodeDecode
+#  from Modules.Utilities.tools import PrintBytes
 #  from Modules.Utilities.debug_tools import PrettyFormatAny
-from Modules.Utilities.tools import PrintBytes
-from Modules.Utilities.debug_tools import PrettyFormatAny
-
 LOG = Logger.getLogger('PyHouse.Mqtt_Protocol  ')
 SUBSCRIBE = 'pyhouse/#'
 

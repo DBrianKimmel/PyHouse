@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/computer/computer.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2016 by D. Brian Kimmel
 @note:      Created on Jun 24, 2014
 @license:   MIT License
 @summary:   Handle the computer information.

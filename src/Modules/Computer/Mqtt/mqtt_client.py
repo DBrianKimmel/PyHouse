@@ -14,13 +14,13 @@
 #  Import system type stuff
 import copy
 import datetime
-from collections import namedtuple
-from twisted.internet import defer, protocol, ssl
+from twisted.internet import defer
 from twisted.internet.endpoints import SSL4ClientEndpoint
-from twisted.internet.ssl import Certificate
+from twisted.internet.ssl import Certificate, optionsForClientTLS
 
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData, MqttInformation, MqttJson
+from Modules.Computer.Mqtt.mqtt_actions import Actions
 from Modules.Computer.Mqtt.mqtt_protocol import PyHouseMqttFactory
 from Modules.Computer.Mqtt.mqtt_xml import Xml as mqttXML
 from Modules.Utilities import json_tools, xml_tools
@@ -40,30 +40,6 @@ class Struct:
 class Util(object):
     """
     """
-
-    @staticmethod
-    def _dict2Obj(p_dict):
-        """Convert a dict to an Object.
-        """
-        l_obj = namedtuple('MyObj', p_dict)
-        return l_obj
-
-    @staticmethod
-    def _json2dict(p_json):
-        """Convert JSON to Obj.
-        """
-        l_ret = json_tools.decode_json_unicode(p_json)
-        #  print((PrettyFormatAny.form(l_ret, 'mqtt_client dict ')))
-        return l_ret
-
-    def client_to_one_broker(self, p_broker):
-        l_host = p_broker.BrokerAddress
-        l_port = p_broker.BrokerPort
-        l_username = p_broker.UserName
-        l_password = p_broker.Password
-        p_broker._ClientAPI = self
-        l_options = ssl.optionsForClientTLS(hostname = l_host.decode('utf-8'))
-        print(PrettyFormatAny.form(l_options, 'TLS Options'))
 
     def connect_to_one_broker_TCP(self, p_pyhouse_obj, p_broker):
         l_clientID = 'PyH-' + p_pyhouse_obj.Computer.Name
@@ -93,8 +69,8 @@ class Util(object):
         #  l_factory = protocol.Factory.forProtocol(echoclient.EchoClient)
         l_factory = PyHouseMqttFactory(p_pyhouse_obj, l_clientID, p_broker, l_username, l_password)
         l_certData = PEM_FILE.getContent()
-        l_authority = ssl.Certificate.loadPEM(l_certData)
-        l_options = ssl.optionsForClientTLS(l_host.decode('utf-8'), l_authority)
+        l_authority = Certificate.loadPEM(l_certData)
+        l_options = optionsForClientTLS(l_host.decode('utf-8'), l_authority)
         l_endpoint = SSL4ClientEndpoint(p_pyhouse_obj.Twisted.Reactor, l_host, l_port, l_options)
         l_client = yield l_endpoint.connect(l_factory)
         l_done = defer.Deferred()
@@ -107,7 +83,6 @@ class Util(object):
         These connections will automatically reconnect if the connection is broken (broker reboots e.g.)
         """
         l_count = 0
-        l_clientID = 'PyH-' + p_pyhouse_obj.Computer.Name
         for l_broker in p_pyhouse_obj.Computer.Mqtt.Brokers.itervalues():
             if not l_broker.Active:
                 continue
@@ -116,32 +91,6 @@ class Util(object):
             else:
                 self.connect_to_one_broker_TLS(p_pyhouse_obj, l_broker)
             l_count += 1
-        LOG.info('TCP Connected to {} Broker(s).'.format(l_count))
-        return l_count
-
-    def XXXclient_TCP_connect_all_brokers(self, p_pyhouse_obj):
-        l_count = 0
-        l_clientID = 'PyH-' + p_pyhouse_obj.Computer.Name
-        for l_broker in p_pyhouse_obj.Computer.Mqtt.Brokers.itervalues():
-            if not l_broker.Active:
-                continue
-            l_host = l_broker.BrokerAddress
-            l_port = l_broker.BrokerPort
-            l_username = l_broker.UserName
-            l_password = l_broker.Password
-            l_broker._ClientAPI = self
-            if l_host == None or l_port == None:
-                LOG.error('Bad Mqtt broker Address: {}'.format(l_host))
-                l_broker._ProtocolAPI = None
-            else:
-                l_factory = PyHouseMqttFactory(
-                            p_pyhouse_obj, l_clientID, l_broker, l_username, l_password)
-                l_context_factory = ssl.CertificateOptions()
-                _l_connector = p_pyhouse_obj.Twisted.Reactor.connectSSL(
-                            l_host, l_port, l_factory, l_context_factory)
-                LOG.info('TCP Connected to broker: {}; Host:{}'.format(l_broker.Name, l_host))
-                l_count += 1
-                self.client_to_one_broker(l_broker)
         LOG.info('TCP Connected to {} Broker(s).'.format(l_count))
         return l_count
 
@@ -227,45 +176,19 @@ class API(Util):
                 continue
             try:
                 l_broker._ProtocolAPI.publish(l_topic, l_message)
-                LOG.info('Mqtt publishing:\n\tBroker: {}\t\tTopic:{}'.format(l_broker.Name, l_topic))
+                LOG.info('Mqtt publishing:\n\tBroker: {}\t\tTopic:{}\n'.format(l_broker.Name, l_topic))
             except AttributeError as e_err:
-                LOG.error("Mqtt Unpublished.\n\tERROR:{}\n\tTopic:{}\n\tMessage:{}".format(e_err, l_topic, l_message))
+                LOG.error("Mqtt Unpublished.\n\tERROR:{}\n\tTopic:{}\n\tMessage:{}\n".format(e_err, l_topic, l_message))
 
     def MqttDispatch(self, p_topic, p_message):
         """Dispatch a received MQTT message according to the topic.
+
+        TODO: This needs protection from poorly formed Mqtt messages.
         """
         l_topic = p_topic.split('/')[2:]  #  Drop the pyhouse/housename/ as that is all we subscribed to.
         l_message = json_tools.decode_json_unicode(p_message)
-        l_logmsg = 'Dispatch\n\tTopic: {} '.format(l_topic)
-        try:
-            l_logmsg += '\n\tSender: {} '.format(l_message['Sender'])
-        except AttributeError:
-            pass
-        #
-        if l_topic[0] == 'computer':
-            l_logmsg += 'Computer:\n\tName: {}'.format(l_message['Name'])
-        elif l_topic[0] == 'lighting':
-            l_logmsg += 'Lighting:\n\tName: {}'.format(l_message['Name'])
-            l_logmsg += '\n\tRoom: {}'.format(l_message['RoomName'])
-            try:
-                l_logmsg += '\n\tLevel: {}'.format(l_message['CurLevel'])
-            except:
-                pass
-        elif l_topic[0] == 'schedule' and l_topic[1] == 'execute':
-            l_logmsg += 'Schedule:\n\tType: {}'.format(l_message['ScheduleType'])
-            l_logmsg += '\n\tRoom: {}'.format(l_message['RoomName'])
-            l_logmsg += '\n\tLight: {}'.format(l_message['LightName'])
-            l_logmsg += '\n\tLevel: {}'.format(l_message['Level'])
-        elif l_topic[0] == 'hvac':
-            l_logmsg += 'Thermostat:\n\tName: {}'.format(l_message['Name'])
-            l_logmsg += '\n\tRoom: {}'.format(l_message['RoomName'])
-            l_logmsg += '\n\tTemp: {}'.format(l_message['CurrentTemperature'])
-        elif l_topic[0] == 'weather':
-            l_logmsg += 'Weather:\n\tName: {}'.format(l_message['location'])
-            l_logmsg += '\n\tTemp: {}'.format(l_message['tempc'])
-        else:
-            l_logmsg += 'OTHER: Unknown'
-            l_logmsg += '\n\tMessage: {}'.format(PrettyFormatAny.form(l_message, 'Message', 80))
+        l_logmsg = Actions(self.m_pyhouse_obj).dispatch(l_topic, l_message)
+        #  ##
         LOG.info(l_logmsg)
 
     def doPyHouseLogin(self, p_client, p_pyhouse_obj):

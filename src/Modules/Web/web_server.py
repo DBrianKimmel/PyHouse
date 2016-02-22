@@ -66,7 +66,7 @@ class Utility(ClientConnections):
         l_port = p_pyhouse_obj.Computer.Web.WebPort
         p_pyhouse_obj.Twisted.Reactor.listenTCP(l_port, l_site)
         l_msg = "Port:{}, Path:{}".format(p_pyhouse_obj.Computer.Web.WebPort, l_site_dir)
-        LOG.warn("Started - {}".format(l_msg))
+        LOG.info("Started - {}".format(l_msg))
 
     def start_non_tls(self, p_pyhouse_obj, p_site, p_port):
         p_pyhouse_obj.Twisted.Reactor.listenTCP(p_port, p_site)

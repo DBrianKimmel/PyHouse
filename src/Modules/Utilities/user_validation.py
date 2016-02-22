@@ -20,9 +20,9 @@ Resources
 
 """
 
-# Import system type stuff
+#  Import system type stuff
 
-# Import PyMh files and modules.
+#  Import PyMh files and modules.
 from twisted.cred import checkers, credentials, error as credError, portal
 from twisted.internet import defer, protocol
 from twisted.protocols import basic
@@ -34,7 +34,7 @@ LOG = Logger.getLogger('PyHouse.UserValidate   ')
 
 class PyHouseRealm(object):
     """
-    The realm is an interface which connects PyHouse's universe of “business objects” to the authentication system.
+    The realm is an interface which connects PyHouse's universe of ï¿½business objectsï¿½ to the authentication system.
 
     """
     implements(portal.IRealm)
@@ -44,7 +44,7 @@ class PyHouseRealm(object):
 
     def requestAvatar(self, p_avatarId, p_mind, *interfaces):
         """ The only method in the realm.
-        This method will typically be called from ‘Portal.login’. The avatarId is the one returned by a CredentialChecker.
+        This method will typically be called from "Portal.login". The avatarId is the one returned by a CredentialChecker.
 
         @param p_avatarId: is the one returned by a CredentialChecker
         """
@@ -130,23 +130,23 @@ class loginTestFactory(protocol.ServerFactory):
 
 
 def wrapAuthorized(site):
-    # force site to be nevow-compatible, using adapter for
-    # twisted.web sites...
+    #  force site to be nevow-compatible, using adapter for
+    #  twisted.web sites...
     site = inevow.IResource(site)
     realmObject = realm.CinemonRealm(site)
     portalObject = portal.Portal(realmObject)
     myChecker = checkers.InMemoryUsernamePasswordDatabaseDontUse()
     myChecker.addUser("user", "password")
     myChecker.addUser("fred", "flintstone")
-    # Allow anonymous access.  Needed for access to loginform
+    #  Allow anonymous access.  Needed for access to loginform
     portalObject.registerChecker(
         checkers.AllowAnonymousAccess(), credentials.IAnonymous
     )
-    # Allow users registered in the password file.
+    #  Allow users registered in the password file.
     portalObject.registerChecker(myChecker)
     site = appserver.NevowSite(
         resource = guard.SessionWrapper(portalObject)
     )
     return site
 
-# ## END DBK
+#  ## END DBK

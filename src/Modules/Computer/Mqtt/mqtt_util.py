@@ -10,7 +10,10 @@
 """
 
 class EncodeDecode(object):
-    # Encode and decode stuff - separate class???
+    """
+    Encode and decode portions of the message.
+    Part of the MQTT Protocol.
+    """
 
     @staticmethod
     def _encodeString(p_string):
@@ -40,13 +43,6 @@ class EncodeDecode(object):
         return l_encoded
 
     @staticmethod
-    def _encodeValue(p_value):
-        l_encoded = bytearray()
-        l_encoded.append(p_value >> 8)
-        l_encoded.append(p_value & 0xFF)
-        return l_encoded
-
-    @staticmethod
     def _decodeLength(p_lengthArray):
         l_length = 0
         l_multiplier = 1
@@ -58,6 +54,13 @@ class EncodeDecode(object):
         return l_length
 
     @staticmethod
+    def _encodeValue(p_value):
+        l_encoded = bytearray()
+        l_encoded.append(p_value >> 8)
+        l_encoded.append(p_value & 0xFF)
+        return l_encoded
+
+    @staticmethod
     def _decodeValue(p_valueArray):
         l_value = 0
         l_multiplier = 1
@@ -66,4 +69,4 @@ class EncodeDecode(object):
             multiplier = l_multiplier << 8
         return l_value
 
-# ## END DBK
+#  ## END DBK

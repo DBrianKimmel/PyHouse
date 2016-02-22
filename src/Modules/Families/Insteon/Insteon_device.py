@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Families/Insteon/Insteon_device.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2011-2015 by D. Brian Kimmel
+@copyright: (c) 2011-2016 by D. Brian Kimmel
 @note:      Created on Apr 3, 2011
 @license:   MIT License
 @summary:   This module is for Insteon
@@ -23,8 +23,7 @@ serial_port
 #  Import system type stuff
 
 #  Import PyMh files
-#  from Modules.Families.Insteon.Insteon_utils import Decode
-#  from Modules.Families.Insteon import Insteon_xml
+#  from Modules.Core.data_objects import NodeData
 from Modules.Computer import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.Insteon_Device ')
@@ -62,6 +61,8 @@ class Utility(object):
         p_controller_obj._HandlerAPI = l_plmAPI
         if l_plmAPI.Start(p_pyhouse_obj, p_controller_obj):
             LOG.info('Successfully started Insteon controller {}'.format(p_controller_obj.Name))
+            p_pyhouse_obj.Computer.Nodes[0].ControllerCount += 1
+            p_pyhouse_obj.Computer.Nodes[0].ControllerTypes.append('Insteon')
             return l_plmAPI
         else:
             LOG.error('Controller {} failed to start.'.format(p_controller_obj.Name))
