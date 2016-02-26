@@ -10,11 +10,11 @@
 """
 
 
-# Import system type stuff
+#  Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
-# Import PyMh files and modules.
+#  Import PyMh files and modules.
 from Modules.Core.data_objects import CoreServicesInformation, NodeData
 from Modules.Computer.Nodes import node_local
 from test import xml_data
@@ -39,7 +39,7 @@ class Test_02_ReadXML(unittest.TestCase):
     def setUp(self):
         self.m_pyhouse_obj.Xml.XmlRoot = ET.fromstring(xml_data.XML_LONG)
         self.m_pyhouse_obj.Services = CoreServicesInformation()
-        self.m_pyhouse_obj.Computer.Nodes[0] = NodeData()
+        self.m_pyhouse_obj.Computer.Nodes[self.m_pyhouse_obj.Computer.Name] = NodeData()
         self.m_api = node_local.API()
 
 
@@ -60,4 +60,4 @@ class Test_06_DropboxConnect(unittest.TestCase):
     def test_0601_connect(self):
         pass
 
-# ## END DBK
+#  ## END DBK

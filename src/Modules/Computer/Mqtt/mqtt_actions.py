@@ -18,6 +18,7 @@ class Actions(object):
     """
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_myname = p_pyhouse_obj.Computer.Name
 
     def _get_field(self, p_message, p_field):
         try:
@@ -32,28 +33,36 @@ class Actions(object):
             l_ip = self._get_field(p_message, 'ExternalIPv4Address')
             p_logmsg += '\tIPv4: {}'.format(l_ip)
         elif p_topic[1] == 'startup':
+            if self.m_myname == self.m_sender:
+                p_logmsg += '\tMy own startup of PyHouse\n'
+            else:
+                p_logmsg += '\tAnother computer started up: {}'.format(self.m_sender)
             pass
         elif p_topic[1] == 'shutdown':
+            p_logmsg += '\tSelf Shutdown {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
             pass
         else:
             p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
         return p_logmsg
 
     def _decode_hvac(self, p_logmsg, p_topic, p_message):
-        p_logmsg += '\tThermostat:\n\tName: {}'.format(self.m_name)
+        p_logmsg += '\tThermostat:\n'
+        p_logmsg += '\tName: {}'.format(self.m_name)
         p_logmsg += '\tRoom: {}\n'.format(self.m_room_name)
         p_logmsg += '\tTemp: {}'.format(self._get_field(p_message, 'CurrentTemperature'))
         return p_logmsg
 
     def _decode_lighting(self, p_logmsg, p_topic, p_message):
-        p_logmsg += '\tLighting:\n\tName: {}\n'.format(self.m_name)
+        p_logmsg += '\tLighting:\n'
+        p_logmsg += '\tName: {}\n'.format(self.m_name)
         p_logmsg += '\tRoom: {}\n'.format(self.m_room_name)
         p_logmsg += '\n\tLevel: {}'.format(self._get_field(p_message, 'CurLevel'))
         return p_logmsg
 
     def _decode_schedule(self, p_logmsg, p_topic, p_message):
+        p_logmsg += '\tSchedule:\n'
         if p_topic[1] == 'execute':
-            p_logmsg += '\tSchedule:\n\tType: {}\n'.format(self._get_field(p_message, 'ScheduleType'))
+            p_logmsg += '\tType: {}\n'.format(self._get_field(p_message, 'ScheduleType'))
             p_logmsg += '\tRoom: {}\n'.format(self.m_room_name)
             p_logmsg += '\tLight: {}\n'.format(self._get_field(p_message, 'LightName'))
             p_logmsg += '\tLevel: {}'.format(self._get_field(p_message, 'Level'))
@@ -62,18 +71,20 @@ class Actions(object):
         return p_logmsg
 
     def _decode_weather(self, p_logmsg, p_topic, p_message):
+        p_logmsg += '\tWeather:\n'
         l_temp = self._get_field(p_message, 'tempc')
-        p_logmsg += '\tWeather:\n\tName: {}\n'.format(self._get_field(p_message, 'location'))
-        p_logmsg += '\tTemp: {} ({})'.format(l_temp, l_temp / 5 * 9 + 32)
+        p_logmsg += '\tName: {}\n'.format(self._get_field(p_message, 'location'))
+        p_logmsg += '\tTemp: {} ({})'.format(l_temp, ((l_temp / 5.0) * 9.0) + 32.0)
         return p_logmsg
 
     def dispatch(self, p_topic, p_message):
         """
         """
-        l_logmsg = 'Dispatch\n\tTopic: {}\n'.format(p_topic)
-        l_logmsg += '\tSender: {}\n'.format(self._get_field(p_message, 'Sender'))
+        self.m_sender = self._get_field(p_message, 'Sender')
         self.m_name = self._get_field(p_message, 'Name')
         self.m_room_name = self._get_field(p_message, 'RoomName')
+        l_logmsg = 'Dispatch\n\tTopic: {}\n'.format(p_topic)
+        l_logmsg += '\tSender: {}\n'.format(self.m_sender)
         if p_topic[0] == 'computer':
             l_logmsg = self._decode_computer(l_logmsg, p_topic, p_message)
         elif p_topic[0] == 'hvac':

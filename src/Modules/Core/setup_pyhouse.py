@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Core/setup_pyhouse.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2016 by D. Brian Kimmel
 @note:      Created on Mar 1, 2014
 @license:   MIT License
 @summary:   This module sets up the Core part of PyHouse.
@@ -121,6 +121,7 @@ class API(Utility):
         #  print('Everything Started setup_pyhouse-117')
 
     def Stop(self):
+        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish('computer/shutdown', self.m_pyhouse_obj.Computer.Nodes[self.m_pyhouse_obj.Computer.Name])
         self.SaveXml()
         self.m_pyhouse_obj.APIs.Computer.ComputerAPI.Stop()
         self.m_pyhouse_obj.APIs.House.HouseAPI.Stop()

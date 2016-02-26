@@ -112,10 +112,11 @@ def handle_signals():
     hanging up the phone (modem) sends SIGHUP
     typing the stop character (probably Ctrl-Z) sends SIGSTOP.
     """
+    LOG.info('Setting up signal handlers.')
     if platform.uname()[0] != 'Windows':
         signal.signal(signal.SIGHUP, SigHupHandler)
     signal.signal(signal.SIGINT, SigIntHandler)
-    signal.signal(signal.SIGTERM, SigKillHandler)
+    signal.signal(signal.SIGTERM, SigTermHandler)
 
 
 def SigHupHandler(signum, _stackframe):
@@ -134,10 +135,17 @@ def SigIntHandler(signum, _stackframe):
     g_API.Quit()
     exit
 
+def SigTermHandler(signum, _stackframe):
+    """
+    """
+    LOG.debug('SigTerm - Signal handler called with signal {}'.format(signum))
+    LOG.info('SigTerm \n')
+    exit
+
 def SigKillHandler(signum, _stackframe):
     """
     """
-    LOG.debug('SigInt - Signal handler called with signal {}'.format(signum))
+    LOG.debug('SigKill - Signal handler called with signal {}'.format(signum))
     LOG.info('SigKill \n')
     exit
 
@@ -218,6 +226,7 @@ class API(object):
     def Quit(self):
         """Prepare to exit all of PyHouse.
         """
+        LOG.debug('Running Quit now.')
         self.Stop()
         self.m_pyhouse_obj.Twisted.Reactor.stop()
 

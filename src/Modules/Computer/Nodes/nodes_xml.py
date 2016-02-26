@@ -10,10 +10,10 @@
 """
 
 
-# Import system type stuff
+#  Import system type stuff
 import xml.etree.ElementTree as ET
 
-# Import PyMh files and modules.
+#  Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData, NodeInterfaceData
 from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
 from Modules.Computer import logging_pyh as Logger
@@ -44,7 +44,7 @@ class Xml(object):
                 l_count += 1
         except AttributeError:
             l_ret = {}
-        # LOG.info("XML Loaded")
+        #  LOG.info("XML Loaded")
         return l_ret
 
     @staticmethod
@@ -75,7 +75,7 @@ class Xml(object):
                 l_ret[l_count] = l_node
                 l_count += 1
         except AttributeError as e_err:
-            l_ret[0] = NodeData()  # Create an empty Nodes[0]
+            l_ret[0] = NodeData()  #  Create an empty Nodes[<name>]
             LOG.error('ERROR - Node read error - {}'.format(e_err))
         LOG.info('Stored {} Nodes'.format(l_count))
         return l_ret
@@ -114,7 +114,7 @@ class Xml(object):
         l_count = 0
         try:
             for l_node_obj in p_nodes_obj.itervalues():
-                # print(PrettyFormatAny.form(l_node_obj, 'Node'))
+                #  print(PrettyFormatAny.form(l_node_obj, 'Node'))
                 l_node_obj.Key = l_count
                 l_entry = Xml._write_one_node_xml(l_node_obj)
                 l_xml.append(l_entry)
@@ -123,4 +123,4 @@ class Xml(object):
             LOG.error('Error {}'.format(e_err))
         return l_xml
 
-# ## END DBK
+#  ## END DBK

@@ -282,7 +282,7 @@ class Util(object):
         return l_role
 
     def init_node_type(self, p_pyhouse_obj):
-        l_role = p_pyhouse_obj.Computer.Nodes[0].NodeRole
+        l_role = p_pyhouse_obj.Computer.Nodes[p_pyhouse_obj.Computer.Name].NodeRole
         if l_role & NODE_PIFACECAD:
             self._init_ir_control(p_pyhouse_obj)
         elif l_role & NODE_LIGHTS:
@@ -331,7 +331,7 @@ class API(Util):
 
     def Start(self):
         #  self.m_pyhouse_obj.Computer.Nodes = self.LoadXml(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.Computer.Nodes[0] = Util.create_local_node(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.Computer.Nodes[self.m_pyhouse_obj.Computer.Name] = Util.create_local_node(self.m_pyhouse_obj)
         self.init_node_type(self.m_pyhouse_obj)
 
     def Stop(self):

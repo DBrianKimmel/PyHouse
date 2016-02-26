@@ -48,7 +48,7 @@ import time
 from twisted.python import util
 from nevow import loaders
 from nevow import athena
-from Modules.Utilities.debug_tools import PrettyFormatAny
+#  from Modules.Utilities.debug_tools import PrettyFormatAny
 
 try:
     from twisted.web import http
@@ -151,19 +151,19 @@ class mainPageFactory:
         self.Clients = {}
         l_siteJSPackage = athena.AutoJSPackage(jspath)
         _l_siteCSSPackage = athena.AutoCSSPackage(csspath)
-        LOG.warn('CSS - {}'.format(_l_siteCSSPackage))
+        #  LOG.warn('CSS - {}'.format(_l_siteCSSPackage))
         athena.jsDeps.mapping.update(l_siteJSPackage.mapping)
 
     def addClient(self, client):
         l_clientID = self._newClientID()
         self.Clients[l_clientID] = client
-        LOG.warn('Add Client {}'.format(PrettyFormatAny.form(self, 'Self', 160)))
-        LOG.warn('Add Client {}'.format(PrettyFormatAny.form(l_clientID, 'l_clientID', 160)))
-        LOG.warn('Add Client {}'.format(PrettyFormatAny.form(client, 'Client', 160)))
-        LOG.info('Add Client {}'.format(PrettyFormatAny.form(client._transportResource, 'Client._transportResource')))
-        LOG.info('Add Client {}'.format(PrettyFormatAny.form(client.toremember, 'Client.toremember')))
-        LOG.warn('Add Client {}'.format(PrettyFormatAny.form(client.transportRoot, 'Client.transportRoot')))
-        LOG.warn('Add Client {}'.format(PrettyFormatAny.form(client.rootObject, 'Client.rootObject')))
+        #  LOG.warn('Add Client {}'.format(PrettyFormatAny.form(self, 'Self', 160)))
+        #  LOG.warn('Add Client {}'.format(PrettyFormatAny.form(l_clientID, 'l_clientID', 160)))
+        #  LOG.warn('Add Client {}'.format(PrettyFormatAny.form(client, 'Client', 160)))
+        #  LOG.info('Add Client {}'.format(PrettyFormatAny.form(client._transportResource, 'Client._transportResource')))
+        #  LOG.info('Add Client {}'.format(PrettyFormatAny.form(client.toremember, 'Client.toremember')))
+        #  LOG.warn('Add Client {}'.format(PrettyFormatAny.form(client.transportRoot, 'Client.transportRoot')))
+        #  LOG.warn('Add Client {}'.format(PrettyFormatAny.form(client.rootObject, 'Client.rootObject')))
         return l_clientID
 
     def getClient(self, p_clientID):
@@ -294,15 +294,15 @@ class MainPage(athena.LivePage):
         self.username = ''
         self.pageTitle = 'PyHouse Access'
         self.selectedHouse = -1
-        LOG.warn('Connection {}'.format(PrettyFormatAny.form(_ctx, 'Context', 160)))
-        LOG.warn('Connection {}'.format(PrettyFormatAny.form(_ctx.tag, 'Context.tag', 160)))
+        #  LOG.warn('Connection {}'.format(PrettyFormatAny.form(_ctx, 'Context', 160)))
+        #  LOG.warn('Connection {}'.format(PrettyFormatAny.form(_ctx.tag, 'Context.tag', 160)))
         l_defer = self.notifyOnDisconnect()
         l_defer.addErrback(self.eb_disconnect)
 
     def render_workspace(self, ctx, _data):
         f = Workspace(self.m_pyhouse_obj, self.uid)
         f.setFragmentParent(self)
-        LOG.warn('Rendering {}'.format(PrettyFormatAny.form(f, 'Workspace', 160)))
+        #  LOG.warn('Rendering {}'.format(PrettyFormatAny.form(f, 'Workspace', 160)))
         return ctx.tag[f]
 
     def eb_disconnect(self, reason):

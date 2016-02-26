@@ -11,17 +11,17 @@
 
 """
 
-# Import system type stuff
+#  Import system type stuff
 import os
 import time
 from nevow import loaders
 from nevow import athena
 
-# Import PyMh files and modules.
+#  Import PyMh files and modules.
 from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities import json_tools
 
-# Handy helper for finding external resources nearby.
+#  Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
 
@@ -46,10 +46,10 @@ class ClockElement(athena.LiveElement):
         """ A JS request
         """
         l_obj = dict(
-            ServerName = self.m_pyhouse_obj.Computer.Nodes[0]
+            ServerName = self.m_pyhouse_obj.Computer.Name
             )
         l_json = json_tools.encode_json(l_obj)
-        # print('Server   JSON {}'.format(l_json))
+        #  print('Server   JSON {}'.format(l_json))
         return unicode(l_json)
 
 def uc(msg):
@@ -58,4 +58,4 @@ def uc(msg):
     else:
         return msg
 
-# ## EBD DBK
+#  ## EBD DBK

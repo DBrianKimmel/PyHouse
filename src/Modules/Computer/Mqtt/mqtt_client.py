@@ -142,7 +142,8 @@ class API(Util):
             LOG.info('No Mqtt brokers are configured.')
 
     def Stop(self):
-        self.MqttPublish('computer/shutdown', '')
+        pass
+        #  self.MqttPublish('computer/shutdown', '')
 
     def LoadXml(self, p_pyhouse_obj):
         """ Load the Mqtt xml info.
@@ -196,7 +197,7 @@ class API(Util):
         """
         self.m_client = p_client
         try:
-            l_node = copy.deepcopy(p_pyhouse_obj.Computer.Nodes[0])
+            l_node = copy.deepcopy(p_pyhouse_obj.Computer.Nodes[p_pyhouse_obj.Computer.Name])
         except KeyError:
             l_node = NodeData()
         l_node.NodeInterfaces = {}

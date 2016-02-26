@@ -26,11 +26,11 @@ TODO: Mark Inactive nodes that have gone away.
       Inform domain module that something happened.
 """
 
-# Import system type stuff
+#  Import system type stuff
 from twisted.application import service
 from twisted.internet.protocol import DatagramProtocol, ConnectedDatagramProtocol
 
-# Import PyMh files and modules.
+#  Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData
 from Modules.Computer import logging_pyh as Logger
 
@@ -52,9 +52,9 @@ PYHOUSE_MULTICAST_IP_V4 = '234.35.36.37'
 PYHOUSE_MULTICAST_IP_V6 = 'ff05::35:3637'
 
 PYHOUSE_DISCOVERY_PORT = 8582
-WHOS_THERE = "Who's There?"  # Query
-I_AM = "I am."  # Response
-MAX_TTL = 4  # keep mostly local
+WHOS_THERE = "Who's There?"  #  Query
+I_AM = "I am."  #  Response
+MAX_TTL = 4  #  keep mostly local
 
 
 
@@ -87,7 +87,7 @@ class DGramUtil(object):
     def set_node_0_addr(self, p_address, p_pyhouse_obj):
         if p_pyhouse_obj.Computer.Nodes[0].ConnectionAddr_IPv4 == None:
             p_pyhouse_obj.Computer.Nodes[0].ConnectionAddr_IPv4 = p_address[0]
-            # LOG.info("Update our node (slot 0) address to {}".format(p_address[0]))
+            #  LOG.info("Update our node (slot 0) address to {}".format(p_address[0]))
 
     def _create_node(self, p_datagram, p_address, p_pyhouse_obj):
         l_node = NodeUtil().initialize_node(p_address[0], None)
@@ -114,7 +114,7 @@ class DGramUtil(object):
         """
         LOG.info('Send I_AM Response to {}'.format(p_transport.getHost()))
         self.set_node_0_addr(p_address, p_pyhouse_obj)
-        l_str = I_AM + ' ' + p_pyhouse_obj.Computer.Nodes[0].Name
+        l_str = I_AM + ' ' + p_pyhouse_obj.Computer.Name
         p_transport.write(l_str, p_address)
 
     def setup_multicast(self, p_transport, p_address):
@@ -254,4 +254,4 @@ class API(Utility):
 __all__ = [
            'API']
 
-# ## END DBK
+#  ## END DBK
