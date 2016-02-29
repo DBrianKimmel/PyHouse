@@ -130,7 +130,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 		p_html += buildLcarLightNameSelectWidget(self, 'ScheduleLightName', 'Light Name', p_obj.LightName);
 		p_html += buildLcarLevelSliderWidget(self, 'ScheduleLevel', 'Level', p_obj.Level, 'handleSliderChange');
 		p_html += buildLcarTextWidget(self, 'ScheduleRate', 'Rate', p_obj.Rate);
-		p_html += buildLcarDowWidget(self, 'ScheduleDow', 'Day of Week', p_obj.DOW);
+		p_html += buildLcarDowWidget(self, 'ScheduleDOW', 'Day of Week', p_obj.DOW);
 		p_html += buildLcarScheduleModeSelectWidget(self, 'ScheduleMode', 'Mode', p_obj.Mode);
 		return p_html;
 	},

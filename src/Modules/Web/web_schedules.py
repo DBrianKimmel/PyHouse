@@ -69,6 +69,7 @@ class SchedulesElement(athena.LiveElement):
         l_obj.ScheduleType = l_json['ScheduleType']
         l_obj.Time = l_json['Time']
         l_obj.DOW = l_json['DOW']
+        print('fetched DOW {}'.format(l_obj.DOW))
         l_obj.Mode = l_json['Mode']
         #
         l_obj.Level = int(l_json['Level'])

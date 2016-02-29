@@ -11,6 +11,7 @@
 
 
 from Modules.Utilities.debug_tools import PrettyFormatAny
+from src.Modules.Core.data_objects import NodeData
 
 
 class Actions(object):
@@ -27,18 +28,34 @@ class Actions(object):
             l_ret = 'The "{}" field was missing in the MQTT Message.'.format(p_field)
         return l_ret
 
+    def _extract_node(self, p_message):
+        l_node = NodeData()
+        l_node.Name = self._get_field(p_message, 'Name')
+        l_node.Key = l_node.Name
+        l_node.Active = True
+        l_node.Comment = ''
+        l_node.ConnectionAddr_IPv4 = self._get_field(p_message, 'ConnectionAddr_IPv4')
+        l_node.ConnectionAddr_IPv6 = self._get_field(p_message, 'ConnectionAddr_IPv6')
+        l_node.ControllerCount = self._get_field(p_message, 'ControllerCount')
+        l_node.ControllerTypes = self._get_field(p_message, 'ControllerTypes')
+        l_node.NodeId = self._get_field(p_message, 'NodeId')
+        l_node.NodeRole = self._get_field(p_message, 'NodeRole')
+
     def _decode_computer(self, p_logmsg, p_topic, p_message):
         p_logmsg += '\tComputer:\n'
         if p_topic[1] == 'ip':
             l_ip = self._get_field(p_message, 'ExternalIPv4Address')
             p_logmsg += '\tIPv4: {}'.format(l_ip)
         elif p_topic[1] == 'startup':
+            self._extract_node(p_message)
+            p_logmsg += '\tStartup {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
             if self.m_myname == self.m_sender:
                 p_logmsg += '\tMy own startup of PyHouse\n'
             else:
                 p_logmsg += '\tAnother computer started up: {}'.format(self.m_sender)
             pass
         elif p_topic[1] == 'shutdown':
+            del self.m_pyhouse_obj.Computer.Nodes[self.m_name]
             p_logmsg += '\tSelf Shutdown {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
             pass
         else:

@@ -848,6 +848,7 @@ function fetchTextWidget(self, p_id) {
  * Day of Week Widget
  */
 function buildLcarDowWidget(self, p_id, p_caption, p_value, /* optional */ p_options) {
+	// Divmod.debug('---', 'globals.buildLcarDowWidget() called.  p_id=' + p_id);
 	var l_html = buildTopDivs(p_caption);
 	l_html += "<span class='lcars-button-addition'";
 	l_html += setIdAttribute(buildAthenaId(self, p_id) + "Buttons");
@@ -882,13 +883,17 @@ function buildLcarDowWidget(self, p_id, p_caption, p_value, /* optional */ p_opt
 	l_html += ">Sun&nbsp\n";
 	l_html += "</span>\n";
 	l_html += buildBottomDivs();
+	// console.log("globals.buildLcarDowWidget() - %O", l_html);
 	return l_html;
 }
 function fetchDowWidget(self, p_id) {
 	var l_dow = document.getElementsByName(p_id);
+	// Divmod.debug('---', 'globals.fetchDowWidget() called.  p_id=' + p_id);
+	// Divmod.debug('---', 'globals.fetchDowWidget() called.  InitialValue=' + l_dow);
+	// console.log("globals.fetchDowWidget() - %O", l_dow);
 	var l_ret = 0;
 	for (var ix = 0; ix < l_dow.length; ix++) {
-		// Divmod.debug('---', 'globals.fetchDowWidget() called.  Name=' + p_id + '  Checked:' + l_dow[ix].checked + '  Val:' + l_dow[ix].value);
+		Divmod.debug('---', 'globals.fetchDowWidget() called.  Name=' + p_id + '  Checked:' + l_dow[ix].checked + '  Val:' + l_dow[ix].value);
 		if (l_dow[ix].checked) {
 			l_ret += parseInt(l_dow[ix].value);
 		}
@@ -901,7 +906,7 @@ function fetchDowWidget(self, p_id) {
 //========== CoOrdinates Widgets ==================================================================
 
 function buildLcarCoOrdinatesWidget(self, p_id, p_caption, p_value, /* optional */ p_options) {
-	Divmod.debug('---', 'globals.buildLcarCoOrdinatesWidget() was called.');
+	// Divmod.debug('---', 'globals.buildLcarCoOrdinatesWidget() was called.');
 	var l_size = 40;
 	var l_options = p_options;
 	var l_id = buildAthenaId(self, p_id);
@@ -915,7 +920,7 @@ function buildLcarCoOrdinatesWidget(self, p_id, p_caption, p_value, /* optional 
 	l_value += parseFloat(p_value['Z_Height']).toFixed(2);
 	l_value += ' ]';
 	var l_html = buildTopDivs(p_caption);
-	console.log("globals.buildLcarCoOrdinatesWidget() - %O", p_value);
+	// console.log("globals.buildLcarCoOrdinatesWidget() - %O", p_value);
 	l_html += "<input type='text' class='lcars-button-addition'";
 	l_html += setIdAttribute(l_id);
 	l_html += setSizeOption(p_options);
@@ -930,17 +935,18 @@ function buildLcarCoOrdinatesWidget(self, p_id, p_caption, p_value, /* optional 
 	l_html += buildBottomDivs();
 	return l_html;
 }
+
 function fetchCoOrdinatesWidget(self, p_id) {
-	Divmod.debug('---', 'globals.fetchCoOrdinatesWidget() was called.');
+	// Divmod.debug('---', 'globals.fetchCoOrdinatesWidget() was called.');
 	var l_coords = self.nodeById(p_id).value;
 	l_vals = l_coords.replace('[','').replace(' ', '').split(',');
-	console.log("globals.fetchCoOrdinatesWidget() - %O", l_vals);
+	// console.log("globals.fetchCoOrdinatesWidget() - %O", l_vals);
 
 	var l_x = parseFloat(l_vals[0]);
 	var l_y = parseFloat(l_vals[1]);
 	var l_z = parseFloat(l_vals[2]);
 	var l_ret = [l_x, l_y, l_z];
-	console.log("globals.fetchCoOrdinatesWidget() - %O", l_ret);
+	// console.log("globals.fetchCoOrdinatesWidget() - %O", l_ret);
 	// Divmod.debug('---', 'globals.fetchDowWidget() called.  FinalValue=' + l_ret);
 	// return l_x;
 	return l_ret;

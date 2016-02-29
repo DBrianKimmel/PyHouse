@@ -31,6 +31,7 @@ import platform
 from Modules.Core.data_objects import NodeData, NodeInterfaceData
 from Modules.Communication import ir_control
 from Modules.Computer import logging_pyh as Logger
+from src.Modules.Utilities.debug_tools import PrettyFormatAny
 #  from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.NodeLocal      ')
@@ -83,9 +84,16 @@ class Interfaces(object):
     @staticmethod
     def _find_addr_family_name(p_ix):
         """Returns the string of the family name for a given index.
+        Windows 7 (Laptop):
         -1000 = AF_LINK - The MAC address  (Windows only)
-        2 = AF_INET - IPv4
+        2  = AF_INET - IPv4
         23 = AF_INET6 - IPv6
+
+        Linux, Kubuntu (Laptop):
+        2  = AF_INET   - IPv4
+        10 = AF_INET6  - IPv6
+        17 = AF_PACKET - Link layer
+
         """
         l_name = netifaces.address_families[p_ix]
         return l_name
@@ -105,16 +113,27 @@ class Interfaces(object):
         return l_ret
 
     @staticmethod
-    def _get_address_list(p_list):
+    def _get_address_list_INET(p_list):
         #  print(PrettyFormatAny.form(p_list, 'Address'))
         l_list = []
         for l_ent in p_list:
             l_list.append(l_ent['addr'])
+        #  print('115 AddrList INET {}\n\t{}'.format(PrettyFormatAny.form(p_list, 'List', 150), l_list))
+        return l_list
+
+    @staticmethod
+    def _get_address_list_INET6(p_list):
+        #  print(PrettyFormatAny.form(p_list, 'Address'))
+        l_list = []
+        for l_ent in p_list:
+            l_list.append(l_ent['addr'])
+        #  print('125 AddrList INET6: {}\n\t{}'.format(PrettyFormatAny.form(p_list, 'List', 150), l_list))
         return l_list
 
     @staticmethod
     def _get_one_interface(p_interface_name):
         """ Gather the information about a single interface given the interface name.
+        Only UP interfaces return data, apparently,
         """
         l_interface = NodeInterfaceData()
         l_interface.Name = p_interface_name
@@ -122,17 +141,19 @@ class Interfaces(object):
         l_interface.Key = 0
         l_interface.UUID = '123'
         l_interface.NodeInterfaceType = 'Other'
-        l_ifs = Interfaces._find_addr_lists(p_interface_name)
+        #  l_ifs = Interfaces._find_addr_lists(p_interface_name)
         #  print(PrettyFormatAny.form(l_ifs, 'Ifs'))
-        for l_af in Interfaces._find_addr_lists(p_interface_name).iterkeys():
-            if Interfaces._find_addr_family_name(l_af) == 'AF_PACKET':
-                l_interface.MacAddress = Interfaces._find_addr_lists(p_interface_name)[l_af]
-            if Interfaces._find_addr_family_name(l_af) == 'AF_INET':
-                l_interface.V4Address = Interfaces._get_address_list(Interfaces._find_addr_lists(p_interface_name)[l_af])
-            if Interfaces._find_addr_family_name(l_af) == 'AF_INET6':
-                l_interface.V6Address = Interfaces._get_address_list(Interfaces._find_addr_lists(p_interface_name)[l_af])
-        if l_interface.V4Address == [] and l_interface.V6Address == []:
-            return l_interface
+        l_afList = Interfaces._find_addr_lists(p_interface_name)
+        for l_afID in l_afList.iterkeys():
+            l_afName = Interfaces._find_addr_family_name(l_afID)
+            #  print('141  l_afID: {} {}'.format(l_afID, l_afName))
+            if l_afName == 'AF_PACKET':
+                l_interface.MacAddress = l_afList[l_afID]
+            if l_afName == 'AF_INET':
+                l_interface.V4Address = Interfaces._get_address_list_INET(l_afList[l_afID])
+            if l_afName == 'AF_INET6':
+                l_interface.V6Address = Interfaces._get_address_list_INET6(l_afList[l_afID])
+        #  print('150 Jnterface  {}'.format(PrettyFormatAny.form(l_interface, 'Interface', 150)))
         return l_interface
 
     @staticmethod
@@ -143,6 +164,7 @@ class Interfaces(object):
         l_count = 0
         l_dict = {}
         for l_interface_name in Interfaces.find_all_interface_names():
+            #  print('\n160 All Interfaces: {}'.format(l_interface_name))
             l_iface = Interfaces._get_one_interface(l_interface_name)
             l_iface.Key = l_count
             l_dict[l_count] = l_iface

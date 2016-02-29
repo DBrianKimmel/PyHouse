@@ -142,8 +142,7 @@ class API(Util):
             LOG.info('No Mqtt brokers are configured.')
 
     def Stop(self):
-        pass
-        #  self.MqttPublish('computer/shutdown', '')
+        LOG.info("Stopped.")
 
     def LoadXml(self, p_pyhouse_obj):
         """ Load the Mqtt xml info.
