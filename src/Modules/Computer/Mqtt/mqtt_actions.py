@@ -11,7 +11,7 @@
 
 
 from Modules.Utilities.debug_tools import PrettyFormatAny
-from src.Modules.Core.data_objects import NodeData
+from Modules.Core.data_objects import NodeData
 
 
 class Actions(object):
