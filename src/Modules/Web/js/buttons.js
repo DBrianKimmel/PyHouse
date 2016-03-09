@@ -1,6 +1,12 @@
-/* buttons.js
- * 
- * Displays the buttons
+/*
+ * @name:      PyHouse/src/Modules/Web/js/buttons.js
+ * @author:    D. Brian Kimmel
+ * @contact:   D.BrianKimmel@gmail.com
+ * @copyright: (c) 2014-2016 by D. Brian Kimmel
+ * @license:   MIT License
+ * @note:      Created on Mar 11, 2014
+ * @summary:   Displays the buttons element
+ *
  */
 
 helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
@@ -76,11 +82,13 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 		var l_name = p_node.value;
 		globals.House.ButtonIx = l_ix;
 		globals.House.ButtonName = l_name;
+		globals.Add = false;
 		if (l_ix <= 1000) {  // One of the button buttons.
 			var l_obj = globals.House.Lighting.Buttons[l_ix];
 			showDataEntryScreen(self);
 			self.buildLcarSelectScreen(l_obj);
 		} else if (l_ix == 10001) {  // The "Add" button
+			globals.Add = true;
 			showDataEntryScreen(self);
 		} else if (l_ix == 10002) {  // The "Back" button
 			self.showWidget('HouseMenu');
@@ -118,6 +126,8 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 		var l_defer;
 		var l_ix = p_node.name;
 		var l_json;
+		var l_obj = self.fetchEntry();
+		l_obj.Add = globals.Add;
 		switch(l_ix) {
 		case '10003':  // Change Button
 	    	l_json = JSON.stringify(self.fetchEntry(self));
@@ -129,7 +139,6 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 			showSelectionButtons(self);
 			break;
 		case '10004':  // Delete button
-			var l_obj = self.fetchEntry();
 			l_obj.Delete = true;
 	    	l_json = JSON.stringify(l_obj);
 			//Divmod.debug('---', 'buttons.handleDataOnClick(Delete) was called. JSON:' + l_json);

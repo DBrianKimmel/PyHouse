@@ -340,7 +340,7 @@ class Util(object):
         l_node = Util._get_node_info()
         l_node.NodeInterfaces = Interfaces._get_all_interfaces()
         l_node.NodeRole = Util.find_node_role()
-        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("node/local", l_node)
+        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("computer/local", l_node)
         return l_node
 
 

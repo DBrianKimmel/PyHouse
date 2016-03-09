@@ -17,7 +17,6 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
     },
 
 
-
 // ============================================================================
     /**
      * Place the widget in the workspace.
@@ -89,21 +88,26 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 		var l_name = p_node.value;
 		globals.House.ThermostatIx = l_ix;
 		globals.House.ThermostatName = l_name;
+		globals.Add = false;
+		// Divmod.debug('---', 'thermostats.handleSelectButtonOnClick() was called. Ix = ' + l_ix);
 		if (l_ix <= 1000) {  // One of the Thermostat buttons.
 			showDataEntryScreen(self);
 			var l_obj = globals.House.Hvac.Thermostats[l_ix];
 			globals.House.ThermostatObj = l_obj;
 			globals.House.Self = self;
+			globals.Add = false;
 			self.buildLcarDataEntryScreen(l_obj, 'handleDataOnClick');
 		} else if (l_ix == 10001) {  // The "Add" button
 			showDataEntryScreen(self);
-			var l_ent = self.createEntry();
-			self.buildLcarDataEntryScreen(l_ent, 'handleDataOnClick');
+			var l_obj = self.createEntry();
+			globals.House.Self = self;
+			globals.Add = true;
+			// console.log("thermostats.handleSelectButtonOnClick() - l_obj = %O", l_obj);
+			self.buildLcarDataEntryScreen(l_obj, 'handleDataOnClick');
 		} else if (l_ix == 10002) {  // The "Back" button
 			self.showWidget('HouseMenu');
 		}
 	},
-
 
 
 // ============================================================================
@@ -221,7 +225,7 @@ helpers.Widget.subclass(thermostats, 'ThermostatsWidget').methods(
 		var l_json;
 		//Divmod.debug('---', 'thermostats.handleDataOnClick() was called. Node:' + l_ix);
 		switch(l_ix) {
-		case '10003':  // Change Button
+		case '10003':  // Add/Change Button
 	    	l_json = JSON.stringify(self.fetchEntry());
 	        l_defer = self.callRemote("saveThermostatsData", l_json);  // @ web_thermostat
 			l_defer.addCallback(cb_handleDataOnClick);

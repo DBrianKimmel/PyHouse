@@ -2,7 +2,7 @@
  * @name:      PyHouse/src/Modules/Web/js/schedules.js
  * @author:    D. Brian Kimmel
  * @contact:   D.BrianKimmel@gmail.com
- * @copyright: (c) 2014-2015 by D. Brian Kimmel
+ * @copyright: (c) 2014-2016 by D. Brian Kimmel
  * @license:   MIT License
  * @note:      Created on Mar 11, 2014
  * @summary:   Displays the Schedule widget.
@@ -88,6 +88,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 	    var l_obj;
 		globals.House.ScheduleIx = l_ix;
 		globals.House.ScheduleName = l_name;
+		globals.Add = false;
 		if (l_ix <= 1000) {  // One of the schedule buttons.
 			showDataEntryScreen(self);
 			l_obj = globals.House.Schedules[l_ix];
@@ -99,6 +100,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 			l_obj = self.createEntry();
 			globals.House.ScheduleObj = l_obj;
 			globals.House.Self = self;
+			globals.Add = true;
 			self.buildLcarDataEntryScreen(l_obj, 'handleDataEntryOnClick');
 		} else if (l_ix == 10002) {  // The "Back" button
 			self.showWidget('HouseMenu');
@@ -201,7 +203,8 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 		}
 		var l_ix = p_node.name;
 		var l_obj = self.fetchEntry();
-		// console.log("schedules.handleDataEntryOnClick()   p1 %O", l_obj);
+		l_obj.Add = globals.Add;
+		l_obj.Delete = false;
 		switch(l_ix) {
 		case '10003':  // Change Button
 	    	var l_json = JSON.stringify(l_obj);
@@ -213,7 +216,6 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 			showSelectionButtons(self);
 			break;
 		case '10004':  // Delete button
-			var l_obj = self.fetchEntry();
 			l_obj.Delete = true;
 	    	l_json = JSON.stringify(l_obj);
 	        l_defer = self.callRemote("saveScheduleData", l_json);  // @ web_rooms

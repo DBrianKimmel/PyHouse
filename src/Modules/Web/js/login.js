@@ -2,7 +2,7 @@
  * @name:      PyHouse/src/Modules/Web/js/login.js
  * @author:    D. Brian Kimmel
  * @contact:   D.BrianKimmel@gmail.com
- * @copyright: (c) 2014-2015 by D. Brian Kimmel
+ * @copyright: (c) 2014-2016 by D. Brian Kimmel
  * @license:   MIT License
  * @note:      Created on Mar 11, 2014
  * @summary:   Displays the login element
@@ -193,7 +193,7 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 			self.showWidget('RootMenu');
 			}
 		function eb_showNextScreen(p_reason) {
-			Divmod.debug('---', 'ERROR = login.showNextScreen() - ' + p_reason);
+			Divmod.debug('---', 'ERROR = login.eb_showNextScreen() - ' + p_reason);
 		}
 		if (p_obj.IsLoggedIn === true) {
 			globals.User.ID = p_obj.Username;
@@ -205,7 +205,7 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 			l_defer.addCallback(cb_showNextScreen);
 			l_defer.addErrback(eb_showNextScreen);
 		} else {
-			Divmod.debug('---', 'login.showNextScreen() was called.');
+			// Divmod.debug('---', 'login.showNextScreen() was called.');
 			globals.User.Fullname = 'Login Attempt failed!';
 			globals.Login.FullName = 'Login Attempt failed!';
 			self.showLoggingInDiv(self);

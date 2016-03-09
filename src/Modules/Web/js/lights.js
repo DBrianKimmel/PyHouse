@@ -2,7 +2,7 @@
  * @name:      PyHouse/src/Modules/Web/js/lights.js
  * @author:    D. Brian Kimmel
  * @contact:   D.BrianKimmel@gmail.com
- * @copyright: (c) 2014-2015 by D. Brian Kimmel
+ * @copyright: (c) 2014-2016 by D. Brian Kimmel
  * @license:   MIT License
  * @note:      Created on Mar 11, 2014
  * @summary:   Displays the lights
@@ -81,11 +81,14 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 	function handleMenuOnClick(self, p_node) {
 		var l_ix = p_node.name;
 		var l_name = p_node.value;
+        var l_obj;
 		globals.House.LightIx = l_ix;
 		globals.House.LightName = l_name;
+		globals.Add = false;
 		if (l_ix <= 1000) {  // we clicked on one of the buttons, show the details for the light.
-			var l_obj = globals.House.Lighting.Lights[l_ix];
-			console.log("lights.handleMenuOnClick()  Light  %O", l_obj);
+			showDataEntryScreen(self);
+			l_obj = globals.House.Lighting.Lights[l_ix];
+			// console.log("lights.handleMenuOnClick()  Light  %O", l_obj);
 			globals.House.LightObj = l_obj;
 			try {
 				l_obj.RoomName = globals.House.Rooms[l_obj.RoomName].Name;
@@ -94,12 +97,14 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 				l_obj.RoomName = l_obj.RoomName;
 			}
 			globals.House.Self = self;
-			showDataEntryScreen(self);
 			self.buildLcarDataEntryScreen(l_obj, 'change', 'handleDataEntryOnClick');
 		} else if (l_ix == 10001) {  // The "Add" button
 			showDataEntryScreen(self);
-			var l_ent = self.createEntry();
-			self.buildLcarDataEntryScreen(l_ent, 'add', 'handleDataEntryOnClick');
+			l_obj = self.createEntry();
+			globals.House.ControllerObj = l_obj;
+			globals.House.Self = self;
+			globals.Add = true;
+			self.buildLcarDataEntryScreen(l_obj, 'add', 'handleDataEntryOnClick');
 		} else if (l_ix == 10002) {  // The "Back" button
 			self.showWidget('HouseMenu');
 		}
@@ -196,9 +201,13 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 			Divmod.debug('---', 'lights.eb_handleDataEntryOnClick() was called. ERROR =' + res);
 		}
 		var l_ix = p_node.name;
+		var l_obj = self.fetchEntry();
+		var l_json = '';
+		var l_defer = '';
+		l_obj.Add = globals.Add;
 		switch(l_ix) {
 		case '10003':  // Change/Save Button
-	    	var l_json = JSON.stringify(self.fetchEntry());
+	    	var l_json = JSON.stringify(l_obj);
 	        var l_defer = self.callRemote("saveLightData", l_json);
 			l_defer.addCallback(cb_handleDataEntryOnClick);
 			l_defer.addErrback(eb_handleDataEntryOnClick);
@@ -207,7 +216,6 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 			showSelectionButtons(self);
 			break;
 		case '10004':  // Delete button
-			var l_obj = self.fetchEntry();
 			l_obj.Delete = true;
 	    	l_json = JSON.stringify(l_obj);
 	        l_defer = self.callRemote("saveLightData", l_json);

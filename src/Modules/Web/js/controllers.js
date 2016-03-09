@@ -2,7 +2,7 @@
  * @name:      PyHouse/src/Modules/Web/js/controllers.js
  * @author:    D. Brian Kimmel
  * @contact:   D.BrianKimmel@gmail.com
- * @copyright: (c) 2014-2015 by D. Brian Kimmel
+ * @copyright: (c) 2014-2016 by D. Brian Kimmel
  * @license:   MIT License
  * @note:      Created on Mar 11, 2014
  * @summary:   Displays the controller element
@@ -101,12 +101,12 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
         var l_obj;
 		globals.House.ControllerIx = l_ix;
 		globals.House.ControllerName = l_name;
-        if (l_ix <= 1000) {  // One of the controller buttons
+		globals.Add = false;
+		if (l_ix <= 1000) {  // One of the controller buttons
             showDataEntryScreen(self);
 			l_obj = globals.House.Lighting.Controllers[l_ix];
 			globals.House.ControllerObj = l_obj;
 			globals.House.Self = self;
-			globals.Add = false;
             self.buildLcarDataEntryScreen(l_obj, 'handleDataOnClick');
         } else if (l_ix == 10001) {  // The 'Add' button
             showDataEntryScreen(self);

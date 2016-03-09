@@ -14,7 +14,6 @@
 
 #  Import system type stuff
 import os
-import uuid
 from nevow import athena
 from nevow import loaders
 
@@ -68,18 +67,22 @@ class ThermostatsElement(athena.LiveElement):
             l_obj = ThermostatData()
         #
         LOG.info('JSON {}'.format(l_json))
-        l_obj.Name = l_json['Name']
         l_obj.Active = l_json['Active']
-        l_obj.Key = l_ix
-        l_obj.UUID = l_json['UUID']
-        if len(l_obj.UUID) < 8:
-            l_obj.UUID = str(uuid.uuid1())
+        l_obj.Comment = l_json['Comment']
         l_obj.CoolSetPoint = l_json['CoolSetPoint']
-        l_obj.DeviceFamily = l_json['DeviceFamily']
         l_obj.CurrentTemperature = 0
+        l_obj.DeviceFamily = l_json['DeviceFamily']
+        l_obj.DeviceSubType = ''
+        l_obj.DeviceType = 'Thermostat'
         l_obj.HeatSetPoint = l_json['HeatSetPoint']
+        l_obj.Key = l_ix
+        l_obj.Name = l_json['Name']
+        l_obj.RoomCoords = [0.0, 0.0, 0.0]
+        l_obj.RoomName = l_json['RoomName']
         l_obj.ThermostatMode = 'Cool'  #  Cool | Heat | Auto | EHeat
         l_obj.ThermostatScale = 'F'  #  F | C
+        l_obj.ThermostatStatus = 'Off'
+        l_obj.UUID = l_json['UUID']
         if l_obj.DeviceFamily == 'Insteon':
             Insteon_utils.Util.get_json_data(l_obj, l_json)
         elif l_obj.DeviceFamily == 'UPB':

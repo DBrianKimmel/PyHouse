@@ -182,7 +182,7 @@ function createBaseEntry(self, p_key) {
 		p_key = 0;
 	l_data.Key = p_key;
 	l_data.Active = true;
-	l_data.UUID = '';
+	l_data.UUID = generateUUID();
 	return l_data;
 }
 

@@ -247,6 +247,7 @@ class ScheduleLightData(object):
     def __init__(self):
         self.Level = 0
         self.LightName = None
+        self.LightUUID = None
         self.Rate = 0
         self.RoomName = None
         self.ScheduleType = 'Lighting'  #  For future expansion into scenes, entertainment etc.
