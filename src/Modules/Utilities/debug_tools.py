@@ -2,18 +2,18 @@
 @name:      PyHouse/src/Modules/Utilities/debug_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2015 by D. Brian Kimmel
+@copyright: (c) 2015-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Aug 8, 2015
 @Summary:
 
 """
 
-# Import system type stuff
+#  Import system type stuff
 from xml.etree import ElementTree as ET
 from xml.dom import minidom
 
-# Import PyMh files
+#  Import PyMh files
 
 
 def _trunc_string(s, maxlen = 2000):
@@ -34,7 +34,7 @@ def _format_line(string, maxlen = 175, split = ' '):
     @param split: is the character around which the split will ocur.
     @return: a list of strings
     """
-    # Tack on the splitting character to guarantee a final match
+    #  Tack on the splitting character to guarantee a final match
     string += split
     lines = []
     oldeol = 0
@@ -52,7 +52,8 @@ def _nuke_newlines(string):
 
     Bug: This routine will completely butcher any whitespace-formatted text.
     """
-    if not string: return ''
+    if not string:
+        return ''
     lines = string.splitlines()
     return ' '.join([line.strip() for line in lines])
 
@@ -72,15 +73,15 @@ def _format_cols(strings, widths, split = ' '):
     """
     assert len(strings) == len(widths)
     strings = map(_nuke_newlines, strings)
-    # pretty Print each column
+    #  pretty Print each column
     cols = [''] * len(strings)
     for i in range(len(strings)):
         cols[i] = _format_line(strings[i], widths[i], split)
-    # prepare a format line
+    #  prepare a format line
     l_format = ''.join(["%%-%ds" % width for width in widths[0:-1]]) + "%s"
     def formatline(*cols):
         return l_format % tuple(map(lambda s: (s or ''), cols))
-    # generate the formatted text
+    #  generate the formatted text
     return '\n'.join(map(formatline, *cols))
 
 
@@ -121,12 +122,12 @@ def _format_object(p_title, p_obj, suppressdoc = True, maxlen = 180, lindent = 2
 
     import types
     l_output = ''
-    # Formatting parameters.
-    ltab = 2  # initial tab in front of level 2 text
-    # There seem to be a couple of other types; gather templates of them
+    #  Formatting parameters.
+    ltab = 2  #  initial tab in front of level 2 text
+    #  There seem to be a couple of other types; gather templates of them
     MethodWrapperType = type(object().__hash__)
     #
-    # Gather all the attributes of the object
+    #  Gather all the attributes of the object
     objclass = None
     objdoc = None
     objmodule = '<None defined>'
@@ -150,28 +151,28 @@ def _format_object(p_title, p_obj, suppressdoc = True, maxlen = 180, lindent = 2
             classes.append((slot, attr))
         else:
             attrs.append((slot, attr))
-    # Organize them
+    #  Organize them
     methods.sort()
     builtins.sort()
     classes.sort()
     attrs.sort()
-    # Print a readable summary of those attributes
+    #  Print a readable summary of those attributes
     normalwidths = [lindent, maxlen - lindent]
     tabbedwidths = [ltab, lindent - ltab, maxlen - lindent - ltab]
 
-    # def truncstring(s, maxlen):
+    #  def truncstring(s, maxlen):
     #    if len(s) > maxlen:
     #        return s[0:maxlen] + ' ...(%d more chars)...' % (len(s) - maxlen)
     #    else:
     #        return s
 
-    # Summary of introspection attributes
+    #  Summary of introspection attributes
     if objclass == '':
         objclass = type(p_obj).__name__
     intro = "\nInstance of class '{}' as defined in module {} with id {}".format(objclass, objmodule, id(p_obj))
     l_output += '\nTitle:  {} {}'.format(p_title, '\n'.join(_format_line(intro, maxlen)))
-    # l_output += '\nTitle:  ', p_title, '\n'.join(_format_line(intro, maxlen))
-    # Object's Docstring
+    #  l_output += '\nTitle:  ', p_title, '\n'.join(_format_line(intro, maxlen))
+    #  Object's Docstring
     if not suppressdoc:
         if objdoc is None:
             objdoc = str(objdoc)
@@ -179,12 +180,12 @@ def _format_object(p_title, p_obj, suppressdoc = True, maxlen = 180, lindent = 2
             objdoc = ('"""' + objdoc.strip() + '"""')
         l_output += '\n'
         l_output += _format_cols(('Documentation string:', _trunc_string(objdoc, maxspew)), normalwidths, ' ')
-    # Built-in methods
+    #  Built-in methods
     if builtins:
         bi_str = _delchars(str(builtins), "[']") or str(None)
         l_output += '\n'
         l_output += _format_cols(('Built-in Methods:', _trunc_string(bi_str, maxspew)), normalwidths, ', ')
-    # Classes
+    #  Classes
     if classes:
         l_output += '\nClasses'
     for (classname, classtype) in classes:
@@ -192,7 +193,7 @@ def _format_object(p_title, p_obj, suppressdoc = True, maxlen = 180, lindent = 2
         if suppressdoc:
             classdoc = '<No documentation>'
         l_output += _format_cols(('', classname, _trunc_string(classdoc, maxspew)), tabbedwidths, ' ')
-    # User methods
+    #  User methods
     if methods:
         l_output += '\nMethods'
     for (methodname, method) in methods:
@@ -200,7 +201,7 @@ def _format_object(p_title, p_obj, suppressdoc = True, maxlen = 180, lindent = 2
         if suppressdoc:
             methoddoc = '<No documentation>'
         l_output += _format_cols(('', methodname, _trunc_string(methoddoc, maxspew)), tabbedwidths, ' ')
-    # Attributes
+    #  Attributes
     if attrs:
         l_output += '\nAttributes'
     for (attr, val) in attrs:
@@ -236,7 +237,7 @@ class PrettyFormatAny(object):
             l_ret = PrettyFormatAny._format_tuple(p_any, maxlen = maxlen, indent = indent + 4)
         elif isinstance(p_any, type(None)):
             l_ret = PrettyFormatAny._format_none(p_any)
-        else:  # Default to an object
+        else:  #  Default to an object
             l_ret = PrettyFormatAny._format_object(p_any, maxlen = maxlen, indent = indent)
         l_ret += '---------------------------------'
         return l_ret
@@ -346,7 +347,7 @@ def FormatBytes(p_message):
             except ValueError:
                 try:
                     l_message += " {:#04X}".format(ord(p_message[l_x]))
-                except TypeError:  # Must be a string
+                except TypeError:  #  Must be a string
                     l_message += " {} ".format(p_message[l_x])
     l_message += " <END>"
     return l_message
@@ -361,8 +362,8 @@ def PrettyPrint(p_title, p_str, maxlen = 150):
 def _delchars(p_str, chars):
     """Returns a string for which all occurrences of characters in
     chars have been removed."""
-    # Translate demands a mapping string of 256 characters;
-    # whip up a string that will leave all characters unmolested.
+    #  Translate demands a mapping string of 256 characters;
+    #  whip up a string that will leave all characters unmolested.
     identity = ''.join([chr(x) for x in range(256)])
     return p_str.translate(identity, chars)
 
@@ -381,4 +382,4 @@ class Lister():
                 l_ret = l_ret + "\tName: {}={}\n".format(attr, self.__dict__ [attr])
         return l_ret
 
-# ## END DBK
+#  ## END DBK

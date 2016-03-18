@@ -215,6 +215,7 @@ class PutGetXML(object):
             return None
         if len(l_xml) < 36:
             l_xml = str(uuid.uuid1())
+            LOG.error("A valid UUID was not found - generating a new one.")
         return l_xml
 
     @staticmethod

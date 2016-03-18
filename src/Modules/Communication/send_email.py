@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Communication/send_email.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 3, 2014
 @summary:   Allow PyHouse to send email.
@@ -16,7 +16,7 @@ If you don't have an account - get one or write another module to handle your ma
 
 """
 
-# Import system type stuff
+#  Import system type stuff
 import email.mime.application
 import xml.etree.ElementTree as ET
 from twisted.internet.defer import Deferred
@@ -25,7 +25,7 @@ try:
 except ImportError:
     from StringIO import StringIO
 
-# Import PyMh files
+#  Import PyMh files
 from Modules.Core.data_objects import EmailData
 from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities.xml_tools import PutGetXML
@@ -89,22 +89,22 @@ class Utility(ApiXml):
         l_att = email.mime.application.MIMEApplication(p_attachment, _subtype = "binary")
         l_att.add_header('Content-Disposition', 'attachment', filename = "data.bin")
         l_msg.attach(l_att)
-        # Create a context factory which only allows SSLv3 and does not verify the peer's certificate.
+        #  Create a context factory which only allows SSLv3 and does not verify the peer's certificate.
         return str(l_msg)
 
     def send_email_message(self, p_pyhouse_obj, p_smtp_server, p_smtp_port, p_username, p_password,
                            p_fromaddress, p_toaddress, p_message):
-        # l_contextFactory = ClientContextFactory()
-        # l_contextFactory.method = None  # SSLv3_METHOD
+        #  l_contextFactory = ClientContextFactory()
+        #  l_contextFactory.method = None  # SSLv3_METHOD
         l_deferred = Deferred()
         _mime_obj = StringIO(str(p_message))
-        # l_senderFactory = ESMTPSenderFactory(
+        #  l_senderFactory = ESMTPSenderFactory(
         #    p_username, p_password,
         #    p_fromaddress, p_toaddress,
         #    p_message,
         #    l_deferred,
         #    contextFactory = l_contextFactory)
-        # p_pyhouse_obj.Twisted.Reactor.connectTCP(p_smtp_server, p_smtp_port, l_senderFactory)
+        #  p_pyhouse_obj.Twisted.Reactor.connectTCP(p_smtp_server, p_smtp_port, l_senderFactory)
         LOG.i("Sending Email")
         return l_deferred
 
@@ -134,6 +134,6 @@ class API(Utility):
         This is the main interface to email.
         """
         _l_email = self.create_email(self.m_pyhouse_obj, p_to_address, p_subject, p_message, p_attachment)
-        # self.send_email(smtp_server, smtp_port, username, password, from_, to, msg)
+        #  self.send_email(smtp_server, smtp_port, username, password, from_, to, msg)
 
-# ## END DBK
+#  ## END DBK

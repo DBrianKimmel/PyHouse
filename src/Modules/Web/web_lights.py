@@ -10,12 +10,10 @@
 @summary:   Handle all of the lights information for a house.
 
 TODO: Change all references to a light if name changes.
-
 """
 
 #  Import system type stuff
 import os
-import uuid
 from nevow import loaders
 from nevow import athena
 
@@ -84,8 +82,8 @@ class LightsElement(athena.LiveElement):
         l_obj.RoomName = l_json['RoomName']
         l_obj.LightingType = l_json['LightingType']
         l_obj.UUID = l_json['UUID']
-        if len(l_obj.UUID) < 8:
-            l_obj.UUID = str(uuid.uuid1())
+        #  if len(l_obj.UUID) < 8:
+        #    l_obj.UUID = str(uuid.uuid1())
         if l_obj.DeviceFamily == 'Insteon':
             Insteon_utils.Util().get_json_data(l_obj, l_json)
         elif l_obj.DeviceFamily == 'UPB':

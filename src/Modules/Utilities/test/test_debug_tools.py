@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Utilities/test/test_debug_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2015 by D. Brian Kimmel
+@copyright: (c) 2015-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Aug 8, 2015
 @Summary:
@@ -10,11 +10,11 @@
 Passed all 7 tests - DBK - 2015-09-11
 """
 
-# Import system type stuff
+#  Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
-# Import PyMh files
+#  Import PyMh files
 from Modules.Utilities import debug_tools
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
@@ -27,6 +27,8 @@ DICTS = {   'a' : '1',
                 'e' : 'hello' },
             'f' : 55
          }
+LOTS_NLS = 'now\r' + 'is\n' + 'the\n\r' + 'time\r\n' + 'for\n' + 'all\n' \
+            'good\n' + 'men\n' + 'to\n' + 'leave.\n'
 
 
 class SetupMixin(object):
@@ -36,7 +38,27 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-class A_Format(SetupMixin, unittest.TestCase):
+class A_NL(SetupMixin, unittest.TestCase):
+    """Test PrintBytes functionality.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_long = "In order for your computers to be useful, they must be set up on a network.\n" \
+                        "That network could be a private network, a private network connected to the internet or the public internet itself. " \
+                        " With IPv4 (addresses like 123.45.67.89) you almost always have to have a private network, connected to the internet or not.  " \
+                        "With new IPv6 (addresses like 2001:db8::dead:beef) you will probably have an address on the public internet."
+
+    def test_01_Line(self):
+        """Testing _nuke_newlines().
+        """
+        print("A_01")
+        l_ret = debug_tools._nuke_newlines(LOTS_NLS)
+        print(l_ret)
+        self.assertEqual(len(l_ret), 43)
+
+
+class B_Format(SetupMixin, unittest.TestCase):
     """Test PrintBytes functionality.
     """
 
@@ -50,6 +72,7 @@ class A_Format(SetupMixin, unittest.TestCase):
     def test_01_Line(self):
         """Testing _format_line().
         """
+        print('B_01')
         l_ret = debug_tools._format_line(self.m_long, maxlen = 40)
         print(l_ret)
         self.assertEqual(len(l_ret), 12)
@@ -99,4 +122,4 @@ class B_PFA(SetupMixin, unittest.TestCase):
         l_ret = debug_tools.PrettyFormatAny._format_dict(DICTS, 50, 0)
         print(l_ret)
 
-# ## END DBK
+#  ## END DBK
