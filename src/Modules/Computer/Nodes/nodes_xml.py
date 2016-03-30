@@ -2,13 +2,12 @@
 @name:      PyHouse/src/Modules/Computer/Nodes/nodes_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Dec 15, 2014
 @Summary:
 
 """
-
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -17,7 +16,6 @@ import xml.etree.ElementTree as ET
 from Modules.Core.data_objects import NodeData, NodeInterfaceData
 from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
 from Modules.Computer import logging_pyh as Logger
-from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.Nodes_xml      ')
 
@@ -65,9 +63,11 @@ class Xml(object):
 
     @staticmethod
     def read_all_nodes_xml(p_pyhouse_obj):
-        l_comp = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
         l_count = 0
         l_ret = {}
+        l_comp = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
+        if l_comp == None:
+            return l_ret
         try:
             l_xml = l_comp.find('NodeSection')
             for l_node_xml in l_xml.iterfind('Node'):

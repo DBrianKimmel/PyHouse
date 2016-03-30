@@ -16,7 +16,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__version_info__ = (1, 4, 0)
+__version_info__ = (1, 7, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 
@@ -34,6 +34,7 @@ class PyHouseData(object):
         self.House = None  #  HouseInformation()
         self.Services = None  #  CoreServicesInformation()
         self.Twisted = None  #  TwistedInformation()
+        self.Uuid = {}
         self.Xml = None  #  XmlInformation()
 
 
@@ -380,6 +381,7 @@ class HouseInformation(BaseObject):
         self.Irrigation = None  #  IrrigationData()
         self.Lighting = {}  #  LightingData()
         self.Location = {}  #  LocationData() - one location per house.
+        self.Master = True  #  master or Clone
         self.Pools = {}  #  PoolData()
         self.Rooms = {}  #  RoomData()
         self.Rules = {}  #  RulesData()

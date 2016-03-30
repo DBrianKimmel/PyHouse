@@ -95,12 +95,20 @@ class API(Utility):
         Also note that the reactor is *NOT* running.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
-        Utility._init_components(p_pyhouse_obj)
-        Utility.init_uuids(p_pyhouse_obj)
+        #  Utility._init_components(p_pyhouse_obj)
+        #  Utility.init_uuids(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.ComputerAPI = computerAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.HouseAPI = houseAPI(p_pyhouse_obj)
         PyHouseObj.SetObj(p_pyhouse_obj)
+        Utility._sync_startup_logging(self.m_pyhouse_obj)
         LOG.info('Initialized\n==================================================================\n')
+
+    def LoadXml(self, p_pyhouse_obj):
+        LOG.info('Loading XML')
+        p_pyhouse_obj = configAPI(p_pyhouse_obj).read_xml_config_file(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.Computer.ComputerAPI.LoadXml(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.House.HouseAPI.LoadXml(p_pyhouse_obj)
+        LOG.info('Loaded XML')
 
     def Start(self):
         """
@@ -109,9 +117,6 @@ class API(Utility):
         @param p_pyhouse_obj: is the skeleton Obj filled in some by PyHouse.py.
         """
         #  First we start up the logging system - no need for XML yes as it is at a fixrd location
-        Utility._sync_startup_logging(self.m_pyhouse_obj)
-        #  Next is the XML file do things can be read in and customized
-        self.m_pyhouse_obj = configAPI(self.m_pyhouse_obj).read_xml_config_file(self.m_pyhouse_obj)
         #  next Starting the computer and House will load the respective divisions of the config file.
         self.m_pyhouse_obj.APIs.Computer.ComputerAPI.Start()
         self.m_pyhouse_obj.APIs.House.HouseAPI.Start()
@@ -119,13 +124,6 @@ class API(Utility):
         #  LOG.debug(' PyHouseObj: {}'.format(PrettyFormatAny.form(PyHouseObj, 'PyHouseObj')))
         LOG.info("Everything has been started.\n")
         #  print('Everything Started setup_pyhouse-117')
-
-    def Stop(self):
-        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish('computer/shutdown', self.m_pyhouse_obj.Computer.Nodes[self.m_pyhouse_obj.Computer.Name])
-        self.SaveXml()
-        self.m_pyhouse_obj.APIs.Computer.ComputerAPI.Stop()
-        self.m_pyhouse_obj.APIs.House.HouseAPI.Stop()
-        LOG.info("Stopped.")
 
     def SaveXml(self):
         """
@@ -136,5 +134,12 @@ class API(Utility):
         self.m_pyhouse_obj.APIs.House.HouseAPI.SaveXml(l_xml)
         configAPI(self.m_pyhouse_obj).write_xml_config_file(self.m_pyhouse_obj, l_xml)
         LOG.info("Saved all XML sections to config file.\n")
+
+    def Stop(self):
+        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish('computer/shutdown', self.m_pyhouse_obj.Computer.Nodes[self.m_pyhouse_obj.Computer.Name])
+        self.SaveXml()
+        self.m_pyhouse_obj.APIs.Computer.ComputerAPI.Stop()
+        self.m_pyhouse_obj.APIs.House.HouseAPI.Stop()
+        LOG.info("Stopped.")
 
 #  ## END DBK

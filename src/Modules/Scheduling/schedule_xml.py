@@ -4,17 +4,17 @@
 @name:      PyHouse/src/Modules/Scheduling/schedule_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Sep 2, 2013
 @summary:   Schedule events
 
 """
 
-# Import system type stuff
+#  Import system type stuff
 import xml.etree.ElementTree as ET
 
-# Import PyMh files
+#  Import PyMh files
 from Modules.Core.data_objects import ScheduleBaseData, ScheduleLightData
 from Modules.Utilities.xml_tools import XmlConfigTools, PutGetXML, stuff_new_attrs
 from Modules.Computer import logging_pyh as Logger
@@ -33,7 +33,7 @@ class Xml(object):
         l_obj.LightName = PutGetXML.get_text_from_xml(p_schedule_element, 'LightName')
         l_obj.Rate = PutGetXML.get_int_from_xml(p_schedule_element, 'Rate')
         l_obj.RoomName = PutGetXML.get_text_from_xml(p_schedule_element, 'RoomName')
-        return l_obj  # for testing
+        return l_obj  #  for testing
 
     @staticmethod
     def _read_one_base_schedule(p_schedule_element):
@@ -76,10 +76,12 @@ class Xml(object):
         l_count = 0
         l_dict = {}
         try:
-            l_schedules_xml = l_xml.find('ScheduleSection')
-            for l_entry in l_schedules_xml.iterfind('Schedule'):
+            l_xml = l_xml.find('ScheduleSection')
+            if l_xml == None:
+                return l_dict
+            for l_entry in l_xml.iterfind('Schedule'):
                 l_schedule_obj = Xml._read_one_schedule(l_entry)
-                l_schedule_obj.Key = l_count  # Renumber
+                l_schedule_obj.Key = l_count  #  Renumber
                 l_dict[l_count] = l_schedule_obj
                 l_count += 1
         except AttributeError as e_err:
@@ -135,4 +137,4 @@ class Xml(object):
             LOG.error('Attr err {}'.format(e_err))
         return l_xml, l_count
 
-# ## END DBK
+#  ## END DBK

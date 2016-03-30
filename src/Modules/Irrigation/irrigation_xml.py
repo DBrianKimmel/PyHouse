@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Irrigation/irrigation_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2015 by D. Brian Kimmel
+@copyright: (c) 2015-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 30, 2015
 @Summary:   Read/Write the Irrigation portions of the XML Configuration file.
@@ -13,11 +13,10 @@ This is a skeleton until we start the use of the data.  Things are just a placeh
 
 """
 
-
-# Import system type stuff
+#  Import system type stuff
 import xml.etree.ElementTree as ET
 
-# Import PyMh files and modules.
+#  Import PyMh files and modules.
 from Modules.Core.data_objects import IrrigationSystemData, IrrigationZoneData
 from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
@@ -43,7 +42,7 @@ class Xml(object):
         XmlConfigTools.read_base_object_xml(l_obj, p_xml)
         l_obj.Comment = PutGetXML.get_text_from_xml(p_xml, 'Comment')
         l_obj.Duration = PutGetXML.get_int_from_xml(p_xml, 'Duration', 0)
-        # Expand with much more control data
+        #  Expand with much more control data
         return l_obj
 
     @staticmethod
@@ -77,7 +76,12 @@ class Xml(object):
         l_obj = {}
         l_count = 0
         try:
-            l_section = p_pyhouse_obj.Xml.XmlRoot.find(DIVISION).find(SECTION)
+            l_section = p_pyhouse_obj.Xml.XmlRoot.find(DIVISION)
+            if l_section == None:
+                return l_obj
+            l_section = l_section.find(SECTION)
+            if l_section == None:
+                return l_obj
         except AttributeError as e_err:
             LOG.error('ERROR Reading irrigation information - {}'.format(e_err))
             l_section = None
@@ -135,4 +139,4 @@ class Xml(object):
             LOG.error('Err: {}'.format(e_err))
         return (l_xml, l_count)
 
-# ## END DBK
+#  ## END DBK

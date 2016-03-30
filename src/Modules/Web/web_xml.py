@@ -4,22 +4,18 @@
 @name:      PyHouse/src/Modules/Web/web_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 17, 2014
 @Summary:
 
 """
 
-
 #  Import system type stuff
 from Modules.Computer import logging_pyh as Logger
 from Modules.Core.data_objects import LoginData, WebData
-from Modules.Core.setup_logging import l_observer
-from Modules.Utilities.debug_tools import PrettyFormatAny
 from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
 import xml.etree.ElementTree as ET
-
 
 #  Import PyMh files and modules.
 LOG = Logger.getLogger('PyHouse.WebXml         ')
@@ -133,7 +129,12 @@ class Xml(object):
         l_obj = WebData()
         l_obj.Logins = {}
         try:
-            l_xml = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision').find('WebSection')
+            l_xml = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
+            if l_xml == None:
+                return l_obj
+            l_xml = l_xml.find('WebSection')
+            if l_xml == None:
+                return l_obj
             l_obj.Logins, l_count = Xml._read_all_logins(l_xml)
         except Exception as e_err:
             LOG.error('ERROR reading web : {}'.format(e_err))

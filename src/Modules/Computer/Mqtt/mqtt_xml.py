@@ -2,17 +2,17 @@
 @name:      PyHouse/src/Modules/Computer/Mqtt/mqtt_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2015 by D. Brian Kimmel
+@copyright: (c) 2015-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 4, 2015
 @Summary:
 
 """
 
-# Import system type stuff
+#  Import system type stuff
 import xml.etree.ElementTree as ET
 
-# Import PyMh files
+#  Import PyMh files
 from Modules.Core.data_objects import MqttBrokerData
 from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
@@ -51,7 +51,10 @@ class Xml(object):
         l_dict = {}
         l_count = 0
         try:
-            l_section = p_pyhouse_obj.Xml.XmlRoot.find(DIVISION).find(SECTION)
+            l_section = p_pyhouse_obj.Xml.XmlRoot.find(DIVISION)
+            if l_section == None:
+                return l_dict
+            l_section = l_section.find(SECTION)
             if l_section == None:
                 return l_dict
         except AttributeError as e_err:
@@ -86,15 +89,20 @@ class Xml(object):
         @param p_obj: is the Mqtt sub-object in p_pyhouse_obj
         @return:  XML for the MqttSection
         """
+        l_count = 0
         l_xml = ET.Element(SECTION)
         if p_obj == {}:
+            LOG.info('No MQTT congig to write.')
             return l_xml
         try:
             for l_obj in p_obj.itervalues():
                 l_sys = Xml._write_one_broker(l_obj)
                 l_xml.append(l_sys)
+                l_count += 1
         except AttributeError as e_err:
-            LOG.error('{}'.format(e_err))
+            LOG.error('Writing MQTT XML {}'.format(e_err))
+            return l_xml
+        LOG.info('Wrote {} Mqyy XML entries'.format(l_count))
         return l_xml
 
-# ## END DBK
+#  ## END DBK

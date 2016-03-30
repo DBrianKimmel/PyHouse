@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Utilities/xml_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2012-2015 by D. Brian Kimmel
+@copyright: (c) 2012-2016 by D. Brian Kimmel
 @note:      Created on Jun 2, 2012
 @license:   MIT License
 @summary:   Various XML functions and utility methods.

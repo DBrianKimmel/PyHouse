@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Utilities/config_file.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 15, 2014
 @Summary:   This handles creation, read and write of the XML Config file.
@@ -12,13 +12,13 @@
 """
 
 
-# Import system type stuff
+#  Import system type stuff
 import datetime
-# from distutils.version import Version
+#  from distutils.version import Version
 import os
 from xml.etree import ElementTree as ET
 
-# Import PyMh files
+#  Import PyMh files
 from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities.xml_tools import PutGetXML
 
@@ -107,7 +107,7 @@ class API(object):
             l_version = '1.0'
         p_pyhouse_obj.Xml.XmlOldVersion = l_version
         LOG.info('Using Config File: {} - Version: {}'.format(p_pyhouse_obj.Xml.XmlFileName, l_version))
-        return p_pyhouse_obj  # For testing
+        return p_pyhouse_obj  #  For testing
 
     @staticmethod
     def create_xml_config_foundation(p_pyhouse_obj):
@@ -136,4 +136,4 @@ class API(object):
         except AttributeError as e_err:
             LOG.error('Err:{}\n\t{}'.format(e_err, repr(p_xmltree)))
 
-# ## END DBK
+#  ## END DBK

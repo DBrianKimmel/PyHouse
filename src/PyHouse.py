@@ -64,7 +64,7 @@ See those modules to find out what each does.
 
 __author__ = "D. Brian Kimmel"
 __copyright__ = "(c) 2010-2016 by D. Brian Kimmel"
-__version_info__ = (1, 6, 0)
+__version_info__ = (1, 7, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -190,13 +190,13 @@ class API(object):
         """
         global g_API
         g_API = self
-        Utilities.do_setup_stuff(self)
+        #  Utilities.do_setup_stuff(self)
         p_pyhouse_obj = Utilities._create_pyhouse_obj()
         self.m_pyhouse_obj = p_pyhouse_obj
         print('PyHouse.API()')  #  For development - so we  an see when we get to this point...
         p_pyhouse_obj.APIs.PyHouseMainAPI = self
         p_pyhouse_obj.APIs.CoreSetupAPI = setup_pyhouse.API(p_pyhouse_obj)
-        p_pyhouse_obj.Twisted.Reactor.callWhenRunning(self.Start)
+        p_pyhouse_obj.Twisted.Reactor.callWhenRunning(self.LoadXml, p_pyhouse_obj)
         p_pyhouse_obj.Twisted.Reactor.run()  #  reactor never returns so must be last - Event loop will now run
         #
         #  When the reactor stops we continue here
@@ -204,16 +204,20 @@ class API(object):
         LOG.info("PyHouse says Bye Now.\n")
         raise SystemExit("PyHouse says Bye Now.")
 
-    def Start(self):
-        """This is automatically invoked when the reactor starts from API().
+    def LoadXml(self, p_pyhouse_obj):
+        """ This is automatically invoked when the reactor starts from API().
         """
-        self.m_pyhouse_obj.APIs.CoreSetupAPI.Start()
+        LOG.info('Loading XML')
+        p_pyhouse_obj.APIs.CoreSetupAPI.LoadXml(p_pyhouse_obj)
+        LOG.info('Loaded XML\n')
+        p_pyhouse_obj.Twisted.Reactor.callLater(5, self.Start)
 
-    def Stop(self):
-        """Stop various modules to prepare for restarting them.
+    def Start(self):
+        """ This is automatically invoked when the reactor starts from API().
         """
-        self.m_pyhouse_obj.APIs.CoreSetupAPI.Stop()
-        LOG.info("Stopped.\n")
+        LOG.info('Starting')
+        self.m_pyhouse_obj.APIs.CoreSetupAPI.Start()
+        LOG.info('Started\n')
 
     def SaveXml(self, _p_pyhouse_obj):
         """Update XML file with current info.
@@ -222,6 +226,12 @@ class API(object):
         LOG.info("Saving XML")
         self.m_pyhouse_obj.APIs.CoreSetupAPI.SaveXml()
         LOG.info("Saved XML.\n")
+
+    def Stop(self):
+        """Stop various modules to prepare for restarting them.
+        """
+        self.m_pyhouse_obj.APIs.CoreSetupAPI.Stop()
+        LOG.info("Stopped.\n")
 
     def Quit(self):
         """Prepare to exit all of PyHouse.

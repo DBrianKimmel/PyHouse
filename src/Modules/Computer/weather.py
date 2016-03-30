@@ -12,10 +12,10 @@
 
 """
 
-# Import system type stuff
+#  Import system type stuff
 import xml.etree.ElementTree as ET
 
-# Import PyMh files and modules.
+#  Import PyMh files and modules.
 from Modules.Computer import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.Weather        ')
@@ -25,6 +25,9 @@ class API(object):
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info("Initialized.")
+
+    def LoadXml(self, p_pyhouse_obj):
+        pass
 
     def Start(self):
         pass
@@ -38,4 +41,4 @@ class API(object):
         LOG.info('Saved XML.')
         return p_xml
 
-# ## END DBK
+#  ## END DBK
