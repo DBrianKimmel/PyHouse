@@ -34,7 +34,7 @@ class PyHouseData(object):
         self.House = None  #  HouseInformation()
         self.Services = None  #  CoreServicesInformation()
         self.Twisted = None  #  TwistedInformation()
-        self.Uuid = {}
+        self.Uuid = {}  #  UuidData
         self.Xml = None  #  XmlInformation()
 
 
@@ -207,7 +207,7 @@ class MqttJson(object):
         self.DateTime = None  #  The time on the sending device
 
 
-class  NullControllerData(object):
+class NullControllerData(object):
     """A lighting controller that is connected to the node via Nothing
     """
     def __init__(self):
@@ -294,6 +294,13 @@ class USBControllerData(object):
         self.Vendor = 0
 
 
+class UuidData(object):
+    """
+    """
+    def __init__(self):
+        self.UuidType = None
+
+
 class WeatherData(object):
     """
     """
@@ -321,6 +328,7 @@ class XmlInformation(object):
         self.XmlRoot = None
         self.XmlVersion = __version__  #  Version from this module.
         self.XmlOldVersion = None  #  Version of the file read in at program start.
+
 
 """
 BaseObject dependent.

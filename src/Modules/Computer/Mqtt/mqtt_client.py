@@ -134,14 +134,14 @@ class API(Util):
     def LoadXml(self, p_pyhouse_obj):
         """ Load the Mqtt xml info.
         """
-        LOG.info("Loading XML")
+        #  LOG.info("Loading XML")
         l_mqtt = MqttInformation()
         l_mqtt.Prefix = p_pyhouse_obj.Computer.Name
         l_mqtt.Brokers = mqttXML.read_mqtt_xml(p_pyhouse_obj)
         p_pyhouse_obj.Computer.Mqtt.Brokers = l_mqtt.Brokers
         LOG.info("Loaded {} Brokers".format(len(l_mqtt.Brokers)))
         if p_pyhouse_obj.Computer.Mqtt.Brokers != {}:
-            LOG.info('Connecting to all MQTT Brokers.')
+            #  LOG.info('Connecting to all MQTT Brokers.')
             l_count = self.connect_to_all_brokers(p_pyhouse_obj)
             LOG.info("Mqtt {} broker(s) Started.".format(l_count))
         else:

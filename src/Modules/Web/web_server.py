@@ -87,20 +87,20 @@ class API(Utility):
         self.State = web_utils.WS_IDLE
         self.m_web_running = False
 
-    def Start(self):
-        LOG.info('Starting web server.')
-        self.m_pyhouse_obj.Computer.Web = self.LoadXml(self.m_pyhouse_obj)
-        self.start_webserver(self.m_pyhouse_obj)
-
-    def Stop(self):
-        self.m_pyhouse_obj.Services.WebServerService.stopService()
-
     def LoadXml(self, p_pyhouse_obj):
         l_ret = webXml.read_web_xml(p_pyhouse_obj)
+        self.m_pyhouse_obj.Computer.Web = l_ret
         return l_ret
+
+    def Start(self):
+        LOG.info('Starting web server.')
+        self.start_webserver(self.m_pyhouse_obj)
 
     def SaveXml(self, p_xml):
         p_xml.append(webXml.write_web_xml(self.m_pyhouse_obj.Computer.Web))
         LOG.info("Saved WebServer XML.")
+
+    def Stop(self):
+        self.m_pyhouse_obj.Services.WebServerService.stopService()
 
 #  ## END DBK

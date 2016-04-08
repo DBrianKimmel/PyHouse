@@ -72,12 +72,12 @@ class Xml(object):
             l_xml = l_comp.find('NodeSection')
             for l_node_xml in l_xml.iterfind('Node'):
                 l_node = Xml._read_one_node_xml(l_node_xml)
-                l_ret[l_count] = l_node
+                l_ret[l_node.Name] = l_node
                 l_count += 1
         except AttributeError as e_err:
             l_ret[0] = NodeData()  #  Create an empty Nodes[<name>]
             LOG.error('ERROR - Node read error - {}'.format(e_err))
-        LOG.info('Stored {} Nodes'.format(l_count))
+        LOG.info('Loaded {} Nodes'.format(l_count))
         return l_ret
 
 

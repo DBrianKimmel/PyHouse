@@ -16,6 +16,7 @@ from Modules.Computer import logging_pyh as Logger
 from Modules.Core.data_objects import HvacData, ThermostatData
 from Modules.Families.family_utils import FamUtil
 from Modules.Utilities.device_tools import XML as deviceXML
+from Modules.Utilities.uuid_tools import Uuid as UtilUuid
 from Modules.Utilities.xml_tools import PutGetXML
 import xml.etree.ElementTree as ET
 
@@ -73,9 +74,10 @@ class Utility(object):
         l_count = 0
         try:
             for l_xml in p_xml.iterfind('Thermostat'):
-                l_therm = Utility._read_one_thermostat_xml(p_pyhouse_obj, l_xml)
-                l_therm.Key = l_count
-                l_dict[l_count] = l_therm
+                l_obj = Utility._read_one_thermostat_xml(p_pyhouse_obj, l_xml)
+                l_obj.Key = l_count
+                l_dict[l_count] = l_obj
+                p_pyhouse_obj.Uuid[l_obj.UUID] = UtilUuid.add_uuid(p_pyhouse_obj, 'Thermostat')
                 l_count += 1
         except AttributeError:
             LOG.warn('Reading Hvac.Thermostat information - %s', exec_info = True)

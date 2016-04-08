@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/lights/lighting_lights.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2011-2015 by D. Brian Kimmel
+@copyright: (c) 2011-2016 by D. Brian Kimmel
 @note:      Created on May 1, 2011
 @license:   MIT License
 @summary:   This module handles the lights component of the lighting system.
@@ -27,10 +27,11 @@ from Modules.Core.data_objects import LightData
 from Modules.Lighting.lighting_core import API as LightingCoreAPI
 from Modules.Families.family_utils import FamUtil
 from Modules.Computer import logging_pyh as Logging
+from Modules.Utilities.uuid_tools import Uuid as UtilUuid
 from Modules.Utilities.xml_tools import PutGetXML
-from Modules.Utilities.debug_tools import PrettyFormatAny
+#  from Modules.Utilities.debug_tools import PrettyFormatAny
 
-LOG = Logging.getLogger('PyHouse.LightgLights   ')
+LOG = Logging.getLogger('PyHouse.LightingLights ')
 SECTION = 'LightSection'
 
 
@@ -121,9 +122,10 @@ class API(object):
         l_dict = {}
         try:
             for l_xml in p_light_sect_xml.iterfind('Light'):
-                l_light = Utility._read_one_light_xml(p_pyhouse_obj, l_xml, p_version)
-                l_light.Key = l_count  #  Renumber
-                l_dict[l_count] = l_light
+                l_obj = Utility._read_one_light_xml(p_pyhouse_obj, l_xml, p_version)
+                l_obj.Key = l_count  #  Renumber
+                l_dict[l_count] = l_obj
+                p_pyhouse_obj.Uuid[l_obj.UUID] = UtilUuid.add_uuid(p_pyhouse_obj, 'Light')
                 l_count += 1
         except AttributeError as e_err:  #  No Lights section
             LOG.warning('Lighting_Lights - No Lights defined - {}'.format(e_err))

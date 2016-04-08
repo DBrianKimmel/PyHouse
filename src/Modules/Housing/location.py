@@ -57,6 +57,7 @@ class Xml(object):
         except AttributeError as e_err:
             LOG.error('ERROR getting location Data - {}'.format(e_err))
         p_pyhouse_obj.House.Location = l_obj
+        LOG.info('Loaded location information.')
         return l_obj
 
     @staticmethod

@@ -53,6 +53,7 @@ class Xml(object):
                 l_count += 1
         except AttributeError as e_err:
             LOG.error('ERROR if getting rooms Data - {}'.format(e_err))
+        LOG.info('Loaded {} rooms.'.format(l_count))
         return l_ret
 
 

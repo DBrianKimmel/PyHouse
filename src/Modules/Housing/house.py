@@ -118,18 +118,26 @@ class Utility(object):
         p_pyhouse_obj.APIs.House.SecurityAPI = securityAPI(p_pyhouse_obj)
         #  p_pyhouse_obj.APIs.House.SunRiseSetAPI = sunriseAPI(p_pyhouse_obj)
 
+    @staticmethod
+    def _load_component_xml(p_pyhouse_obj):
+        #  p_pyhouse_obj.APIs.House.EntertainmentAPI = entertainmentAPI(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.House.HvacAPI.LoadXml(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.House.IrrigationAPI.LoadXml(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.House.LightingAPI.LoadXml(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.House.PoolAPI.LoadXml(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.House.ScheduleAPI.LoadXml(p_pyhouse_obj)
+        #  p_pyhouse_obj.APIs.House.SecurityAPI = securityAPI(p_pyhouse_obj)
+        pass
+
     def start_house_parts(self, p_pyhouse_obj):
-        #  These two must start before the other things
+        #  This must start before the other things
         p_pyhouse_obj.APIs.House.FamilyAPI.Start()
-        #
         p_pyhouse_obj.APIs.House.EntertainmentAPI.Start()
         p_pyhouse_obj.APIs.House.HvacAPI.Start()
         p_pyhouse_obj.APIs.House.IrrigationAPI.Start()
         p_pyhouse_obj.APIs.House.LightingAPI.Start()
         p_pyhouse_obj.APIs.House.PoolAPI.Start()
         p_pyhouse_obj.APIs.House.SecurityAPI.Start()
-        #  Last
-        #  p_pyhouse_obj.APIs.House.SunRiseSetAPI.Start()
         p_pyhouse_obj.APIs.House.ScheduleAPI.Start()
 
     def stop_house_parts(self):
@@ -145,15 +153,6 @@ class Utility(object):
         p_pyhouse_obj.APIs.House.ScheduleAPI.SaveXml(p_xml)
         p_pyhouse_obj.APIs.House.SecurityAPI.SaveXml(p_xml)
         return p_xml
-
-    def get_sunrise_set(self, p_pyhouse_obj):
-        """
-        Retrieve datetime.datetime for sunrise and sunset.
-        """
-        #  p_pyhouse_obj.APIs.House.SunRiseSetAPI.Start()
-        #  p_pyhouse_obj.House.Location.RiseSet.SunRise = p_pyhouse_obj.APIs.House.SunRiseSetAPI.get_sunrise_datetime()
-        #  p_pyhouse_obj.House.Location.RiseSet.SunSet = p_pyhouse_obj.APIs.House.SunRiseSetAPI.get_sunset_datetime()
-        pass
 
 
 class API(Utility):
@@ -172,13 +171,8 @@ class API(Utility):
     def LoadXml(self, p_pyhouse_obj):
         LOG.info('Loading XML')
         l_house = Xml.read_house_xml(p_pyhouse_obj)
-        #  p_pyhouse_obj.APIs.House.EntertainmentAPI.Start()
-        p_pyhouse_obj.APIs.House.HvacAPI.LoadXml(p_pyhouse_obj)
-        #  p_pyhouse_obj.APIs.House.IrrigationAPI.Start()
-        p_pyhouse_obj.APIs.House.LightingAPI.LoadXml(p_pyhouse_obj)
-        #  p_pyhouse_obj.APIs.House.PoolAPI.Start()
-        p_pyhouse_obj.APIs.House.ScheduleAPI.LoadXml(p_pyhouse_obj)
-        #  p_pyhouse_obj.APIs.House.SecurityAPI.Start()
+        p_pyhouse_obj.House = l_house
+        Utility._load_component_xml(p_pyhouse_obj)
         LOG.info('Loaded XML')
         return l_house
 
@@ -188,8 +182,6 @@ class API(Utility):
         May be stopped and then started anew to force reloading info.
         """
         LOG.info("Starting.")
-        self.m_pyhouse_obj.House = Xml.read_house_xml(self.m_pyhouse_obj)
-        #  self.get_sunrise_set(self.m_pyhouse_obj)
         self.start_house_parts(self.m_pyhouse_obj)
         LOG.info("Started House {}".format(self.m_pyhouse_obj.House.Name))
 

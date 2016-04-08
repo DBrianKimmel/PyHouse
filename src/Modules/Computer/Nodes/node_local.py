@@ -31,8 +31,7 @@ import platform
 from Modules.Core.data_objects import NodeData, NodeInterfaceData
 from Modules.Communication import ir_control
 from Modules.Computer import logging_pyh as Logger
-#  from Modules.Utilities.debug_tools import PrettyFormatAny
-#  from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.NodeLocal      ')
 
@@ -141,19 +140,15 @@ class Interfaces(object):
         l_interface.Key = 0
         l_interface.UUID = '123'
         l_interface.NodeInterfaceType = 'Other'
-        #  l_ifs = Interfaces._find_addr_lists(p_interface_name)
-        #  print(PrettyFormatAny.form(l_ifs, 'Ifs'))
         l_afList = Interfaces._find_addr_lists(p_interface_name)
         for l_afID in l_afList.iterkeys():
             l_afName = Interfaces._find_addr_family_name(l_afID)
-            #  print('141  l_afID: {} {}'.format(l_afID, l_afName))
             if l_afName == 'AF_PACKET':
                 l_interface.MacAddress = l_afList[l_afID]
             if l_afName == 'AF_INET':
                 l_interface.V4Address = Interfaces._get_address_list_INET(l_afList[l_afID])
             if l_afName == 'AF_INET6':
                 l_interface.V6Address = Interfaces._get_address_list_INET6(l_afList[l_afID])
-        #  print('150 Jnterface  {}'.format(PrettyFormatAny.form(l_interface, 'Interface', 150)))
         return l_interface
 
     @staticmethod
@@ -351,20 +346,20 @@ class API(Util):
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def Start(self):
-        #  self.m_pyhouse_obj.Computer.Nodes = self.LoadXml(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.Computer.Nodes[self.m_pyhouse_obj.Computer.Name] = Util.create_local_node(self.m_pyhouse_obj)
-        self.init_node_type(self.m_pyhouse_obj)
-
-    def Stop(self):
-        LOG.info("Stopped.")
-
     def LoadXml(self, p_pyhouse_obj):
         """ Load the Node xml info.
         """
         pass
 
+    def Start(self):
+        LOG.warn('Starting')
+        self.m_pyhouse_obj.Computer.Nodes[self.m_pyhouse_obj.Computer.Name] = Util.create_local_node(self.m_pyhouse_obj)
+        self.init_node_type(self.m_pyhouse_obj)
+
     def SaveXml(self, p_xml):
         pass
+
+    def Stop(self):
+        LOG.info("Stopped.")
 
 #  ## END DBK

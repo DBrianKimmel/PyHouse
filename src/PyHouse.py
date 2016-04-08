@@ -154,15 +154,15 @@ class Utilities(object):
     """
     """
 
-    @staticmethod
-    def do_setup_stuff(p_self):
-        if platform.uname()[0] == 'Windows':
-            from Modules.Core import setup_windows
-            pass
-        else:
-            from Modules.Core.setup_linux import Linux
-            l_linux = Linux()
-        handle_signals()
+    #  @staticmethod
+    #  def do_setup_stuff(p_self):
+    #    if platform.uname()[0] == 'Windows':
+    #        from Modules.Core import setup_windows
+    #        pass
+    #    else:
+    #        from Modules.Core.setup_linux import Linux
+    #        l_linux = Linux()
+    #    handle_signals()
 
     @staticmethod
     def _create_pyhouse_obj():
@@ -209,15 +209,15 @@ class API(object):
         """
         LOG.info('Loading XML')
         p_pyhouse_obj.APIs.CoreSetupAPI.LoadXml(p_pyhouse_obj)
-        LOG.info('Loaded XML\n')
-        p_pyhouse_obj.Twisted.Reactor.callLater(5, self.Start)
+        p_pyhouse_obj.Twisted.Reactor.callLater(10, self.Start)
+        LOG.info('Loaded XML\n-----------------------------------------\n')
 
     def Start(self):
         """ This is automatically invoked when the reactor starts from API().
         """
         LOG.info('Starting')
         self.m_pyhouse_obj.APIs.CoreSetupAPI.Start()
-        LOG.info('Started\n')
+        LOG.info('Everything has been started\n-----------------------------------------\n')
 
     def SaveXml(self, _p_pyhouse_obj):
         """Update XML file with current info.

@@ -95,6 +95,7 @@ class API(Utility):
         Also note that the reactor is *NOT* running.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
+        LOG.info('Initializing')
         #  Utility._init_components(p_pyhouse_obj)
         #  Utility.init_uuids(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.ComputerAPI = computerAPI(p_pyhouse_obj)
@@ -122,7 +123,7 @@ class API(Utility):
         self.m_pyhouse_obj.APIs.House.HouseAPI.Start()
         self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self._xml_save_loop, self.m_pyhouse_obj)
         #  LOG.debug(' PyHouseObj: {}'.format(PrettyFormatAny.form(PyHouseObj, 'PyHouseObj')))
-        LOG.info("Everything has been started.\n")
+        LOG.info("Started.")
         #  print('Everything Started setup_pyhouse-117')
 
     def SaveXml(self):
