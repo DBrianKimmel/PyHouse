@@ -317,6 +317,7 @@ class WebData(object):
     """
     def __init__(self):
         self.WebPort = 8580
+        self.SecurePort = 8588
         self.Logins = {}  #  LoginData()
 
 

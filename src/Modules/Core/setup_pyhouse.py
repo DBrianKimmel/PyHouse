@@ -35,7 +35,7 @@ LOG = Logger.getLogger('PyHouse.CoreSetup      ')
 
 MINUTES = 60  #  Seconds in a minute
 HOURS = 60 * MINUTES
-INITIAL_DELAY = 3 * MINUTES
+INITIAL_DELAY = 1 * MINUTES
 XML_SAVE_DELAY = 2 * HOURS  #  2 hours
 
 

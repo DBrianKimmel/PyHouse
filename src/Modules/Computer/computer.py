@@ -17,6 +17,15 @@ This takes care of starting all the computer modules (In Order).
     Nodes
     Internet Connection(s)
     Web Server(s)
+
+PyHouse.Computer.
+            Communication
+            Internet
+            Mqtt
+            Nodes
+            Weather
+            Web
+
 """
 
 #  Import system type stuff
