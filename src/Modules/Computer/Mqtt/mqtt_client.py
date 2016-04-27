@@ -16,7 +16,7 @@ import copy
 import datetime
 from twisted.internet import defer
 from twisted.internet.endpoints import SSL4ClientEndpoint
-from twisted.internet.ssl import Certificate, optionsForClientTLS
+# from twisted.internet.ssl import Certificate, optionsForClientTLS
 
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData, MqttInformation, MqttJson

@@ -26,7 +26,6 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		function cb_widgetready(res) {
 			self.hideWidget();
 		}
-		// Divmod.debug('---', 'lights.ready() was called.');
 		var uris = collectIMG_src(self.node, null);
 		var l_defer = loadImages(uris);
 		l_defer.addCallback(cb_widgetready);
@@ -88,7 +87,6 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		if (l_ix <= 1000) {  // we clicked on one of the buttons, show the details for the light.
 			showDataEntryScreen(self);
 			l_obj = globals.House.Lighting.Lights[l_ix];
-			// console.log("lights.handleMenuOnClick()  Light  %O", l_obj);
 			globals.House.LightObj = l_obj;
 			try {
 				l_obj.RoomName = globals.House.Rooms[l_obj.RoomName].Name;

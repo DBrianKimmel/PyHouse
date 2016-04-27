@@ -2,7 +2,7 @@
  * @name:      PyHouse/src/Modules/Web/js/rooms.js
  * @author:    D. Brian Kimmel
  * @contact:   D.BrianKimmel@gmail.com
- * @copyright: (c) 2014-2015 by D. Brian Kimmel
+ * @copyright: (c) 2014-2016 by D. Brian Kimmel
  * @license:   MIT License
  * @note:      Created on Mar 11, 2014
  * @summary:   Displays the rooms
@@ -34,9 +34,6 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		l_defer.addCallback(cb_widgetready);
 		return l_defer;
 	},
-	/**
-	 * Show the self.node widget - rooms.RoomsWidget -
-	 */
 	function startWidget(self) {
 		self.node.style.display = 'block';
 		showSelectionButtons(self);
@@ -47,7 +44,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 
 // ============================================================================
 	/**
-	 * This triggers getting the data from the server.
+	 * This triggers getting the room data from the server.
 	 */
 	function fetchDataFromServer(self) {
 		function cb_fetchDataFromServer(p_json) {
@@ -83,18 +80,22 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	function handleMenuOnClick(self, p_node) {
 		var l_ix = p_node.name;
 		var l_name = p_node.value;
+        var l_obj;
 		globals.House.RoomIx = l_ix;
 		globals.House.RoomName = l_name;
-		//
+		globals.Add = false;
 		if (l_ix <= 1000) {  // One of the rooms buttons.
-			var l_obj = globals.House.Rooms[l_ix];
-			globals.House.RoomObj = l_obj;
 			showDataEntryScreen(self);
+			l_obj = globals.House.Rooms[l_ix];
+			globals.House.RoomObj = l_obj;
 			self.buildLcarDataEntryScreen(l_obj, 'change', 'handleDataEntryOnClick');
 		} else if (l_ix == 10001) {  // The "Add" button
 			showDataEntryScreen(self);
-			var l_entry = self.createEntry();
-			self.buildLcarDataEntryScreen(l_entry, 'add', 'handleDataEntryOnClick');
+			l_obj = self.createEntry();
+			globals.House.RoomObj = l_obj;
+			globals.House.Self = self;
+			globals.Add = true;
+			self.buildLcarDataEntryScreen(l_obj, 'add', 'handleDataEntryOnClick');
 		} else if (l_ix == 10002) {  // The "Back" button
 			self.showWidget('HouseMenu');
 		}

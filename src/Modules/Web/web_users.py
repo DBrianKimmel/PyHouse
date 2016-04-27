@@ -48,7 +48,7 @@ class UsersElement(athena.LiveElement):
         Get a lot of server JSON data and pass it to the client browser.
         """
         l_users = self.m_pyhouse_obj.Computer.Web.Logins
-        LOG.debug(PrettyFormatAny.form(l_users, 'Login users'))
+        # LOG.debug(PrettyFormatAny.form(l_users, 'Login users'))
         if l_users == {}:
             l_users[0] = LoginData()
             l_users[0].Name = 'admin'
@@ -56,9 +56,9 @@ class UsersElement(athena.LiveElement):
             l_users[0].LoginFullName = 'Administrator'
             l_users[0].LoginRole = 1
             self.m_pyhouse_obj.Computer.Web.Logins = l_users
-            LOG.debug('Creating fake user since there was none')
+            # LOG.debug('Creating fake user since there was none')
         l_json = unicode(json_tools.encode_json(l_users))
-        LOG.info('Fetched {}'.format(l_json))
+        # LOG.info('Fetched {}'.format(l_json))
         return l_json
 
     @athena.expose
