@@ -23,6 +23,10 @@ LOG = Logger.getLogger('PyHouse.UuidTools      ')
 class Uuid(object):
 
     @staticmethod
+    def create_uuid():
+        return str(uuid.uuid1())
+
+    @staticmethod
     def make_valid(p_uuid):
         """
         Preserve the UUID if it is present.
@@ -32,10 +36,10 @@ class Uuid(object):
         """
         try:
             if len(p_uuid) != 36:
-                p_uuid = str(uuid.uuid1())
+                p_uuid = Uuid.create_uuid()
                 LOG.error('Invalid UUID found (1) - Creating a new one.')
         except TypeError:
-            p_uuid = str(uuid.uuid1())
+            p_uuid = Uuid.create_uuid()
             LOG.error('Invalid UUID found (2) - Creating a new one.')
         return p_uuid
 

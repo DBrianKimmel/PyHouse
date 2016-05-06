@@ -83,18 +83,23 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	function handleMenuOnClick(self, p_node) {
 		var l_ix = p_node.name;
 		var l_name = p_node.value;
+        var l_obj;
 		globals.House.RoomIx = l_ix;
 		globals.House.RoomName = l_name;
+		globals.Add = false;
 		//
 		if (l_ix <= 1000) {  // One of the rooms buttons.
-			var l_obj = globals.House.Rooms[l_ix];
+			l_obj = globals.House.Rooms[l_ix];
 			globals.House.RoomObj = l_obj;
 			showDataEntryScreen(self);
-			self.buildLcarDataEntryScreen(l_obj, 'change', 'handleDataEntryOnClick');
+			self.buildLcarDataEntryScreen(l_obj, 'handleDataEntryOnClick');
 		} else if (l_ix == 10001) {  // The "Add" button
 			showDataEntryScreen(self);
-			var l_entry = self.createEntry();
-			self.buildLcarDataEntryScreen(l_entry, 'add', 'handleDataEntryOnClick');
+			l_obj = self.createEntry();
+			globals.House.RoomObj = l_obj;
+			globals.House.Self = self;
+			globals.Add = true;
+			self.buildLcarDataEntryScreen(l_obj, 'handleDataEntryOnClick');
 		} else if (l_ix == 10002) {  // The "Back" button
 			self.showWidget('HouseMenu');
 		}
@@ -105,15 +110,15 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	/**
 	 * Build a screen full of data entry fields.
 	 */
-	function buildLcarDataEntryScreen(self, p_entry, p_add_change, p_handler){
+	function buildLcarDataEntryScreen(self, p_entry, p_handler){
 		var l_obj = arguments[1];
 		var l_html = build_lcars_top('Room Data', 'lcars-salmon-color');
-		l_html += build_lcars_middle_menu(15, self.buildEntry(l_obj, p_add_change, p_handler));
+		l_html += build_lcars_middle_menu(15, self.buildEntry(l_obj, p_handler));
 		l_html += build_lcars_bottom();
 		self.nodeById('DataEntryDiv').innerHTML = l_html;
 	},
-	function buildEntry(self, p_obj, p_add_change, p_handler, p_onchange) {
-		var l_html = buildBaseEntry(self, p_obj, 'noUuid');
+	function buildEntry(self, p_obj, p_handler, p_onchange) {
+		var l_html = buildBaseEntry(self, p_obj);
 		l_html = self.buildRoomEntry(p_obj, l_html);
 		l_html += buildLcarEntryButtons(p_handler, 1);
 		return l_html;
@@ -124,32 +129,32 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		p_html += buildLcarTextWidget(self, 'Size', 'Size', p_obj.Size);
 		return p_html;
 	},
-	function createEntry(self) {
-        var l_data = {
-			Name : 'Change Me',
-			Key : Object.keys(globals.House.Rooms).length,
-			Active : true,
-			Comment : '',
-			Corner : '',
-			Size : '',
-			Delete : false
-		};
-		return l_data;
-	},
 	function fetchEntry(self) {
-        var l_data = {
-			Name : fetchTextWidget(self, 'Name'),
-			Key : fetchTextWidget(self, 'Key'),
-			Active : fetchTrueFalseWidget(self, 'Active'),
-			Comment : fetchTextWidget(self, 'Comment'),
-			Corner : fetchTextWidget(self, 'Corner'),
-			Type : 'Room',
-			Size : fetchTextWidget(self, 'Size'),
-			Delete : false
-		};
+		var l_data = fetchBaseEntry(self);
+		l_data = fetchRoomEntry(self, l_data);
 		return l_data;
 	},
-
+    function fetchRoomEntry(self, p_data) {
+        p_data.Comment = fetchTextWidget(self, 'Comment');
+        p_data.Corner = fetchTextWidget(self, 'Corner');
+        p_data.Size = fetchTextWidget(self, 'Size');
+    	return p_data;
+    },
+	function createEntry(self) {
+		var l_key = Object.keys(globals.House.Rooms).length;
+		// Divmod.debug('---', 'rooms.createEntry() was called.  Key = ' + l_key);
+		var l_data = createBaseEntry(self, l_key);
+		console.log("rooms.createEntry(1) - l_data = %O", l_data);
+		self.createRoomEntry(l_data);
+		console.log("rooms.createEntry(2) - l_data = %O", l_data);
+		return l_data;
+	},
+	function createRoomEntry(p_data) {
+		p_data.Comment = '';
+		p_data.Corner = [0.0, 0.0, 0.0];
+		p_data.Size = [ 0.0, 0.0, 0.0];
+		// return p_data
+	},
 
 // ============================================================================
 	/**

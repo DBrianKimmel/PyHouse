@@ -213,7 +213,7 @@ function fetchLightingCoreEntry(self, p_data) {
 function createLightingCoreEntry(self, p_data) {
     p_data.DeviceFamily = 'Insteon';
     p_data.Comment = '';
-    p_data.RoomCoords = "['0', '0', '0']";
+    p_data.RoomCoords = "[0.0, '0', '0']";
     p_data.IsDimmable = true;
     p_data.RoomName = 'XXX Room';
     p_data.LightingType = 'Light';

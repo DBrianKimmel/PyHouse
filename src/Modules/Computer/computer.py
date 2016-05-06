@@ -41,6 +41,7 @@ from Modules.Computer.Mqtt.mqtt_client import API as mqttAPI
 from Modules.Computer.Nodes.nodes import API as nodesAPI
 from Modules.Computer.weather import API as weatherAPI
 from Modules.Web.web import API as webAPI
+from Modules.Utilities.uuid_tools import Uuid
 from Modules.Utilities.xml_tools import XmlConfigTools
 
 LOG = Logger.getLogger('PyHouse.Computer       ')
@@ -52,13 +53,24 @@ MODULES = ['Communication', 'Email', 'Internet' , 'Mqtt', 'Node', 'Weather', 'We
 class Xml(object):
 
     @staticmethod
+    def create_computer(p_pyhouse_obj):
+        p_pyhouse_obj.Computer.Name = platform.node()
+        p_pyhouse_obj.Computer.Key = 0
+        p_pyhouse_obj.Computer.Active = True
+        p_pyhouse_obj.Computer.UUID = Uuid.create_uuid()
+
+    @staticmethod
     def read_computer_xml(p_pyhouse_obj):
         """
         The XML for all the sections within the division are read by the appropriate sub-module.
         Therefore, there is not much to do here.
         """
-        l_xml = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
-        return l_xml
+        l_xml = p_pyhouse_obj.Xml.XmlRoot.find(DIVISION)
+        if l_xml == None:
+            Xml.create_computer(p_pyhouse_obj)
+        else:
+            XmlConfigTools.read_base_object_xml(p_pyhouse_obj.Computer, l_xml)
+        return l_xml  #  For debugging/testing
 
     @staticmethod
     def write_computer_xml(p_pyhouse_obj):
@@ -144,8 +156,8 @@ class API(Utility):
         """
         """
         LOG.info('Loading XML')
-        Xml.read_computer_xml(self.m_pyhouse_obj)
-        Utility._load_component_xml(self.m_pyhouse_obj)
+        Xml.read_computer_xml(p_pyhouse_obj)
+        Utility._load_component_xml(p_pyhouse_obj)
         LOG.info('XML Loaded')
 
     def Start(self):

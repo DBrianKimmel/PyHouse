@@ -173,7 +173,7 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
     	}
     	
 		var l_data = createBaseEntry(self, l_ix);
-		Divmod.debug('---', 'lights.createEntry() was called ' + l_ix);
+		// Divmod.debug('---', 'lights.createEntry() was called ' + l_ix);
 		l_data = createLightingCoreEntry(self, l_data);
 		l_data = self.createLightEntry(l_data);
         if (l_data.DeviceFamily === 'Insteon')
