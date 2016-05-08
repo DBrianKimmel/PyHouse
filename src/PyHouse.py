@@ -135,12 +135,14 @@ def SigIntHandler(signum, _stackframe):
     g_API.Quit()
     exit
 
+
 def SigTermHandler(signum, _stackframe):
     """
     """
     LOG.debug('SigTerm - Signal handler called with signal {}'.format(signum))
     LOG.info('SigTerm \n')
     exit
+
 
 def SigKillHandler(signum, _stackframe):
     """
@@ -193,11 +195,11 @@ class API(object):
         Utilities.do_setup_stuff(self)
         p_pyhouse_obj = Utilities._create_pyhouse_obj()
         self.m_pyhouse_obj = p_pyhouse_obj
-        print('PyHouse.API()')  #  For development - so we  an see when we get to this point...
+        print('PyHouse.API()')  # For development - so we  an see when we get to this point...
         p_pyhouse_obj.APIs.PyHouseMainAPI = self
         p_pyhouse_obj.APIs.CoreSetupAPI = setup_pyhouse.API(p_pyhouse_obj)
         p_pyhouse_obj.Twisted.Reactor.callWhenRunning(self.Start)
-        p_pyhouse_obj.Twisted.Reactor.run()  #  reactor never returns so must be last - Event loop will now run
+        p_pyhouse_obj.Twisted.Reactor.run()  # reactor never returns so must be last - Event loop will now run
         #
         #  When the reactor stops we continue here
         #
@@ -209,12 +211,6 @@ class API(object):
         """
         self.m_pyhouse_obj.APIs.CoreSetupAPI.Start()
 
-    def Stop(self):
-        """Stop various modules to prepare for restarting them.
-        """
-        self.m_pyhouse_obj.APIs.CoreSetupAPI.Stop()
-        LOG.info("Stopped.\n")
-
     def SaveXml(self, _p_pyhouse_obj):
         """Update XML file with current info.
         Keep on running after the snapshot.
@@ -222,6 +218,12 @@ class API(object):
         LOG.info("Saving XML")
         self.m_pyhouse_obj.APIs.CoreSetupAPI.SaveXml()
         LOG.info("Saved XML.\n")
+
+    def Stop(self):
+        """Stop various modules to prepare for restarting them.
+        """
+        self.m_pyhouse_obj.APIs.CoreSetupAPI.Stop()
+        LOG.info("Stopped.\n")
 
     def Quit(self):
         """Prepare to exit all of PyHouse.

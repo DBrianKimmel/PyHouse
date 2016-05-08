@@ -19,7 +19,6 @@ Third, inter_node_comm is used to build up a model of all the nodes in a domain.
 #  Import system type stuff
 
 #  Import PyMh files and modules.
-#  from Modules.Computer.Nodes.node_discovery import API as discoveryAPI
 from Modules.Computer.Nodes.node_local import API as localAPI
 from Modules.Computer.Nodes.nodes_xml import Xml as nodesXml
 from Modules.Computer import logging_pyh as Logger
@@ -33,25 +32,25 @@ class API(object):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_local = localAPI(p_pyhouse_obj)
 
-    def Start(self):
-        self.m_pyhouse_obj.Computer.Nodes = self.LoadXml(self.m_pyhouse_obj)
-        self.m_local.Start()
-        #  self.m_discovery.Start()
-
-    def Stop(self):
-        #  self.m_discovery.Stop()
-        self.m_local.Stop()
-
     def LoadXml(self, p_pyhouse_obj):
         """ Load the Mqtt xml info.
         """
         l_nodes = nodesXml.read_all_nodes_xml(p_pyhouse_obj)
         return l_nodes
 
+    def Start(self):
+        self.m_pyhouse_obj.Computer.Nodes = self.LoadXml(self.m_pyhouse_obj)
+        self.m_local.Start()
+        #  self.m_discovery.Start()
+
     def SaveXml(self, p_xml):
         l_xml = nodesXml.write_nodes_xml(self.m_pyhouse_obj.Computer.Nodes)
         p_xml.append(l_xml)
         LOG.info("Saved XML.")
-        return l_xml  #  For testing
+        return l_xml  # For testing
+
+    def Stop(self):
+        #  self.m_discovery.Stop()
+        self.m_local.Stop()
 
 #  ## END DBK

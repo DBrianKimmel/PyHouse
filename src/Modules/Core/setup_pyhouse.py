@@ -28,15 +28,15 @@ Then start the House and all the sub systems.
 #  Import PyMh files and modules.
 from Modules.Computer import logging_pyh as Logger
 from Modules.Computer.computer import API as computerAPI
-from Modules.Core import setup_logging  #  This must be first as the import causes logging to be initialized
+from Modules.Core import setup_logging  # This must be first as the import causes logging to be initialized
 from Modules.Housing.house import API as houseAPI
 from Modules.Utilities.config_file import API as configAPI
 LOG = Logger.getLogger('PyHouse.CoreSetup      ')
 
-MINUTES = 60  #  Seconds in a minute
+MINUTES = 60  # Seconds in a minute
 HOURS = 60 * MINUTES
 INITIAL_DELAY = 3 * MINUTES
-XML_SAVE_DELAY = 2 * HOURS  #  2 hours
+XML_SAVE_DELAY = 2 * HOURS  # 2 hours
 
 
 class PyHouseObj(object):
@@ -79,7 +79,7 @@ class Utility(object):
         This is sync so that logging is up and running before proceeding with the rest of the initialization.
         The logs are at a fixed place and are not configurable.
         """
-        l_log = setup_logging.API(p_pyhouse_obj)  #  To eliminate Eclipse warning
+        l_log = setup_logging.API(p_pyhouse_obj)  # To eliminate Eclipse warning
         l_log.Start()
         LOG.info("Starting.")
 
@@ -120,13 +120,6 @@ class API(Utility):
         LOG.info("Everything has been started.\n")
         #  print('Everything Started setup_pyhouse-117')
 
-    def Stop(self):
-        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish('computer/shutdown', self.m_pyhouse_obj.Computer.Nodes[self.m_pyhouse_obj.Computer.Name])
-        self.SaveXml()
-        self.m_pyhouse_obj.APIs.Computer.ComputerAPI.Stop()
-        self.m_pyhouse_obj.APIs.House.HouseAPI.Stop()
-        LOG.info("Stopped.")
-
     def SaveXml(self):
         """
         Take a snapshot of the current Configuration/Status and write out an XML file.
@@ -137,4 +130,11 @@ class API(Utility):
         configAPI(self.m_pyhouse_obj).write_xml_config_file(self.m_pyhouse_obj, l_xml)
         LOG.info("Saved all XML sections to config file.\n")
 
-#  ## END DBK
+    def Stop(self):
+        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish('computer/shutdown', self.m_pyhouse_obj.Computer.Nodes[self.m_pyhouse_obj.Computer.Name])
+        self.SaveXml()
+        self.m_pyhouse_obj.APIs.Computer.ComputerAPI.Stop()
+        self.m_pyhouse_obj.APIs.House.HouseAPI.Stop()
+        LOG.info("Stopped.")
+
+# ## END DBK

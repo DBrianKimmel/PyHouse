@@ -351,20 +351,21 @@ class API(Util):
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def Start(self):
-        #  self.m_pyhouse_obj.Computer.Nodes = self.LoadXml(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.Computer.Nodes[self.m_pyhouse_obj.Computer.Name] = Util.create_local_node(self.m_pyhouse_obj)
-        self.init_node_type(self.m_pyhouse_obj)
-
-    def Stop(self):
-        LOG.info("Stopped.")
-
     def LoadXml(self, p_pyhouse_obj):
         """ Load the Node xml info.
         """
         pass
 
+    def Start(self):
+        #  self.m_pyhouse_obj.Computer.Nodes = self.LoadXml(self.m_pyhouse_obj)
+        l_local = Util.create_local_node(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.Computer.Nodes[l_local.UUID] = l_local
+        self.init_node_type(self.m_pyhouse_obj)
+
     def SaveXml(self, p_xml):
         pass
+
+    def Stop(self):
+        LOG.info("Stopped.")
 
 #  ## END DBK

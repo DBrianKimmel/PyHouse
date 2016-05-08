@@ -29,12 +29,12 @@ class PyHouseData(object):
     NOTE that the data entries need to be dicts so json encoding of the data works properly.
     """
     def __init__(self):
-        self.APIs = None  #  #  PyHouseAPIs()
-        self.Computer = None  #  ComputerInformation()
-        self.House = None  #  HouseInformation()
-        self.Services = None  #  CoreServicesInformation()
-        self.Twisted = None  #  TwistedInformation()
-        self.Xml = None  #  XmlInformation()
+        self.APIs = None  # PyHouseAPIs()
+        self.Computer = None  # ComputerInformation()
+        self.House = None  # HouseInformation()
+        self.Services = None  # CoreServicesInformation()
+        self.Twisted = None  # TwistedInformation()
+        self.Xml = None  # XmlInformation()
 
 
 class BaseObject(object):
@@ -105,7 +105,7 @@ class EmailData(object):
         self.GmailPassword = ''
 
 
-class  EthernetControllerData(object):
+class EthernetControllerData(object):
     """A lighting controller that is connected to the node via Ethernet
     """
     def __init__(self):
@@ -137,7 +137,7 @@ class HvacData(object):
 ==> PyHouse.House.Hvac.xxx as in the def below
     """
     def __init__(self):
-        self.Thermostats = {}  #  ThermostatData()
+        self.Thermostats = {}  # ThermostatData()
 
 
 class InternetConnectionData(object):
@@ -156,9 +156,9 @@ class LightingData(object):
 ==> PyHouse.House.Lighting.xxx as in the def below
     """
     def __init__(self):
-        self.Buttons = {}  #  ButtonData()
-        self.Controllers = {}  #  ControllerData()
-        self.Lights = {}  #  LightData()
+        self.Buttons = {}  # ButtonData()
+        self.Controllers = {}  # ControllerData()
+        self.Lights = {}  # LightData()
 
 
 class LocationData(object):
@@ -168,19 +168,19 @@ class LocationData(object):
     def __init__(self):
         self.Street = ''
         self.City = ''
-        self.State = ''  #  'FL'
-        self.ZipCode = ''  #  '12345'
-        self.Region = ''  #  'America'
-        self.Latitude = 0.0  #  28.938448
-        self.Longitude = 0.0  #  -82.517208
-        self.Elevation = 0.0  #  30
+        self.State = ''  # 'FL'
+        self.ZipCode = ''  # '12345'
+        self.Region = ''  # 'America'
+        self.Latitude = 0.0  # 28.938448
+        self.Longitude = 0.0  # 82.517208
+        self.Elevation = 0.0  # 30
         self.Phone = ''
-        self.TimeZoneName = 'America/New_York'  #  'America/New_York'
+        self.TimeZoneName = 'America/New_York'  # 'America/New_York'
         #
-        self._name = ''  #  'Greenwich'
-        self._region = ''  #  'England'
+        self._name = ''  # 'Greenwich'
+        self._region = ''  # 'England'
         self.DomainID = None
-        self.RiseSet = RiseSetData()  #  RiseSetData()
+        self.RiseSet = RiseSetData()  # RiseSetData()
         self._TimeZoneOffset = '-5:00'
         self._IsDaylightSavingsTime = False
         #  Computed at startup (refreshed periodically)
@@ -194,7 +194,7 @@ class MqttInformation(object):
     """
     def __init__(self):
         self.Prefix = ''
-        self.Brokers = {}  #  MqttBrokerData()
+        self.Brokers = {}  # MqttBrokerData()
         self.ClientID = ''
 
 
@@ -202,11 +202,11 @@ class MqttJson(object):
     """
     """
     def __init__(self):
-        self.Sender = ''  #  The Mqtt name of the sending device.
-        self.DateTime = None  #  The time on the sending device
+        self.Sender = ''  # The Mqtt name of the sending device.
+        self.DateTime = None  # The time on the sending device
 
 
-class  NullControllerData(object):
+class NullControllerData(object):
     """A lighting controller that is connected to the node via Nothing
     """
     def __init__(self):
@@ -221,8 +221,8 @@ class PyHouseAPIs(object):
     """
 
     def __init__(self):
-        self.Computer = None  #  ComputerAPIs()
-        self.House = None  #  HouseAPIs()
+        self.Computer = None  # ComputerAPIs()
+        self.House = None  # HouseAPIs()
         self.CoreSetupAPI = None
         self.PyHouseMainAPI = None
 
@@ -250,7 +250,7 @@ class ScheduleLightData(object):
         self.LightUUID = None
         self.Rate = 0
         self.RoomName = None
-        self.ScheduleType = 'Lighting'  #  For future expansion into scenes, entertainment etc.
+        self.ScheduleType = 'Lighting'  # For future expansion into scenes, entertainment etc.
 
 
 class ScheduleThermostatData(object):
@@ -280,8 +280,8 @@ class TwistedInformation(object):
     """Twisted info is kept in this class
     """
     def __init__(self):
-        self.Application = None  #  Application('PyHouse')
-        self.Reactor = None  #  reactor
+        self.Application = None  # Application('PyHouse')
+        self.Reactor = None  # reactor
 
 
 class USBControllerData(object):
@@ -297,11 +297,11 @@ class WeatherData(object):
     """
     """
     def __init__(self):
-        self.Temperature = 0  #  Degrees C
-        self.Humidity = 0  #  Percent
-        self.DewPoint = 0  #  Degrees C
-        self.WindSpeed = 0  #  Meters / Second
-        self.WindDirection = 0  #  Degreed
+        self.Temperature = 0  # Degrees C
+        self.Humidity = 0  # Percent
+        self.DewPoint = 0  # Degrees C
+        self.WindSpeed = 0  # Meters / Second
+        self.WindDirection = 0  # Degreed
 
 
 class WebData(object):
@@ -309,7 +309,7 @@ class WebData(object):
     """
     def __init__(self):
         self.WebPort = 8580
-        self.Logins = {}  #  LoginData()
+        self.Logins = {}  # LoginData()
 
 
 class XmlInformation(object):
@@ -318,12 +318,13 @@ class XmlInformation(object):
     def __init__(self):
         self.XmlFileName = None
         self.XmlRoot = None
-        self.XmlVersion = __version__  #  Version from this module.
-        self.XmlOldVersion = None  #  Version of the file read in at program start.
+        self.XmlVersion = __version__  # Version from this module.
+        self.XmlOldVersion = None  # Version of the file read in at program start.
 
 """
 BaseObject dependent.
 """
+
 
 class ComputerInformation(BaseObject):
     """
@@ -332,11 +333,12 @@ class ComputerInformation(BaseObject):
     def __init__(self):
         super(ComputerInformation, self).__init__()
         self.Communication = None
-        self.Email = None  #  EmailData()
-        self.InternetConnection = None  #  InternetConnectionData()
-        self.Mqtt = None  #  MqttInformation()
-        self.Nodes = None  #  NodeData()
-        self.Web = None  #  WebData()
+        self.Email = None  # EmailData()
+        self.InternetConnection = None  # InternetConnectionData()
+        self.Mqtt = None  # MqttInformation()
+        self.Nodes = None  # NodeData()
+        self.Primary = False
+        self.Web = None  # WebData()
 
 
 class DeviceData(BaseObject):
@@ -350,7 +352,7 @@ class DeviceData(BaseObject):
         self.DeviceFamily = 'Null'
         self.DeviceType = 0
         self.DeviceSubType = 0
-        self.RoomCoords = None  #  CoordinateData()
+        self.RoomCoords = None  # CoordinateData()
         self.RoomName = ''
         self.UUID = None
 
@@ -360,11 +362,11 @@ class FamilyData(BaseObject):
     """
     def __init__(self):
         super(FamilyData, self).__init__()
-        self.FamilyModuleAPI = None  #  Insteon_device.API()
-        self.FamilyDeviceModuleName = None  #  Insteon_device
-        self.FamilyXmlModuleName = None  #  Insteon_xml
-        self.FamilyXmlModuleAPI = None  #  Address of Insteon_xml
-        self.FamilyPackageName = None  #  Modules.Families.Insteon
+        self.FamilyModuleAPI = None  # Insteon_device.API()
+        self.FamilyDeviceModuleName = None  # Insteon_device
+        self.FamilyXmlModuleName = None  # Insteon_xml
+        self.FamilyXmlModuleAPI = None  # Address of Insteon_xml
+        self.FamilyPackageName = None  # Modules.Families.Insteon
 
 
 class HouseInformation(BaseObject):
@@ -375,15 +377,15 @@ class HouseInformation(BaseObject):
     """
     def __init__(self):
         super(HouseInformation, self).__init__()
-        self.FamilyData = {}  #  FamilyData('FamilyName')
-        self.Hvac = None  #  HvacData()
-        self.Irrigation = None  #  IrrigationData()
-        self.Lighting = {}  #  LightingData()
-        self.Location = {}  #  LocationData() - one location per house.
-        self.Pools = {}  #  PoolData()
-        self.Rooms = {}  #  RoomData()
-        self.Rules = {}  #  RulesData()
-        self.Schedules = None  #  ScheduleBaseData()
+        self.FamilyData = {}  # FamilyData('FamilyName')
+        self.Hvac = None  # HvacData()
+        self.Irrigation = None  # IrrigationData()
+        self.Lighting = {}  # LightingData()
+        self.Location = {}  # LocationData() - one location per house.
+        self.Pools = {}  # PoolData()
+        self.Rooms = {}  # RoomData()
+        self.Rules = {}  # RulesData()
+        self.Schedules = None  # ScheduleBaseData()
 
 
 class JsonHouseData(BaseObject):
@@ -442,11 +444,11 @@ class NodeData(BaseObject):
         self.Comment = None
         self.ConnectionAddr_IPv4 = None
         self.ConnectionAddr_IPv6 = None
-        self.ControllerTypes = []  #  A list of controller types attached to this node
-        self.ControllerCount = 0  #  Number of USB controllers attached
+        self.ControllerTypes = []  # A list of controller types attached to this node
+        self.ControllerCount = 0  # Number of USB controllers attached
         self.NodeId = None
         self.NodeRole = None
-        self.NodeInterfaces = {}  #  NodeInterfaceData()
+        self.NodeInterfaces = {}  # NodeInterfaceData()
 
 
 class NodeInterfaceData(BaseObject):
@@ -457,7 +459,7 @@ class NodeInterfaceData(BaseObject):
     """
     def __init__(self):
         super(NodeInterfaceData, self).__init__()
-        self.NodeInterfaceType = None  #  Ethernet | Wireless | Loop | Tunnel | Other
+        self.NodeInterfaceType = None  # Ethernet | Wireless | Loop | Tunnel | Other
         self.MacAddress = ''
         self.V4Address = []
         self.V6Address = []
@@ -469,7 +471,7 @@ class PoolData(BaseObject):
     def __init__(self):
         super(PoolData, self).__init__()
         self.Comment = None
-        self.PoolType = None  #  'Pool', 'Pond', 'HotTub'
+        self.PoolType = None  # 'Pool', 'Pond', 'HotTub'
 
 
 class RoomData(BaseObject):
@@ -481,7 +483,7 @@ class RoomData(BaseObject):
         super(RoomData, self).__init__()
         self.Comment = ''
         self.Corner = ''
-        self.Floor = '1st'  #  Outside | Basement | 1st | 2nd | 3rd | 4th | Attic | Roof
+        self.Floor = '1st'  # Outside | Basement | 1st | 2nd | 3rd | 4th | Attic | Roof
         self.Size = ''
         self.RoomType = 'Room'
 
@@ -518,10 +520,10 @@ class SensorData(BaseObject):
         self.UUID = None
 
 
-
 """
 DeviceData dependent.
 """
+
 
 class CoreLightingData(DeviceData):
     """Basic information about some sort of lighting object.
@@ -530,7 +532,7 @@ class CoreLightingData(DeviceData):
     def __init__(self):
         super(CoreLightingData, self).__init__()
         self.DeviceFamily = 'Null'
-        self.LightingType = ''  #  VALID_LIGHTING_TYPE = Button | Light | Controller
+        self.LightingType = ''  # VALID_LIGHTING_TYPE = Button | Light | Controller
 
 
 class IrrigationData(DeviceData):
@@ -546,7 +548,7 @@ class IrrigationSystemData(DeviceData):
     """
     def __init__(self):
         super(IrrigationSystemData, self).__init__()
-        self.UsesMasterValve = False  #  Master valve and/or Pump Relay
+        self.UsesMasterValve = False  # Master valve and/or Pump Relay
         self.Zones = {}
 
 
@@ -555,7 +557,7 @@ class IrrigationZoneData(DeviceData):
     """
     def __init__(self):
         super(IrrigationZoneData, self).__init__()
-        self.Duration = 0  #  On time in seconds
+        self.Duration = 0  # On time in seconds
 
 
 class ThermostatData(DeviceData):
@@ -567,15 +569,15 @@ class ThermostatData(DeviceData):
         self.CoolSetPoint = 0
         self.CurrentTemperature = 0
         self.HeatSetPoint = 0
-        self.ThermostatMode = 'Cool'  #  Cool | Heat | Auto | EHeat
-        self.ThermostatScale = 'F'  #  F | C
-        self.ThermostatStatus = 'Off'  #  On
-
+        self.ThermostatMode = 'Cool'  # Cool | Heat | Auto | EHeat
+        self.ThermostatScale = 'F'  # F | C
+        self.ThermostatStatus = 'Off'  # On
 
 
 """
 CoreLightingData dependent.
 """
+
 
 class ButtonData(CoreLightingData):
     """A Lighting button.
@@ -595,12 +597,12 @@ class ControllerData(CoreLightingData):
     """
     def __init__(self):
         super(ControllerData, self).__init__()
-        self.InterfaceType = ''  #  Serial | USB | Ethernet
+        self.InterfaceType = ''  # Serial | USB | Ethernet
         self.Port = ''
         #  The following are not in XML config file
-        self._DriverAPI = None  #  InterfaceType API() - Serial, USB etc.
-        self._HandlerAPI = None  #  PLM, PIM, etc (family controller device handler) API() address
-        self._Data = None  #  InterfaceType specific data
+        self._DriverAPI = None  # InterfaceType API() - Serial, USB etc.
+        self._HandlerAPI = None  # PLM, PIM, etc (family controller device handler) API() address
+        self._Data = None  # InterfaceType specific data
         self._Message = ''
         self._Queue = None
 

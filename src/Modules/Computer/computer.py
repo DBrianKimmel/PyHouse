@@ -36,8 +36,22 @@ from Modules.Utilities.xml_tools import XmlConfigTools
 
 LOG = Logger.getLogger('PyHouse.Computer       ')
 DIVISION = 'ComputerDivision'
+FILE_PATH = '/etc/pyhouse/computer_uuid'
 
-MODULES = ['Communication', 'Email', 'Internet' , 'Mqtt', 'Node', 'Weather', 'Web']
+# MODULES = ['Communication', 'Email', 'Internet' , 'Mqtt', 'Node', 'Weather', 'Web']
+
+
+class UuidFile(object):
+
+    def read_uuid_file(self):
+        try:
+            l_file = open(FILE_PATH, mode = 'r')
+        except IOError as e_err:
+            LOG.error(" -- Error in open_config_file {}".format(e_err))
+        pass
+
+    def write_uuid_file(self):
+        pass
 
 
 class Xml(object):
@@ -81,7 +95,7 @@ class Utility(object):
 
     @staticmethod
     def _start_component_apis(p_pyhouse_obj):
-        p_pyhouse_obj.APIs.Computer.MqttAPI.Start()  #  Start this first so we can send messages/
+        p_pyhouse_obj.APIs.Computer.MqttAPI.Start()  # Start this first so we can send messages/
         p_pyhouse_obj.APIs.Computer.CommunicationsAPI.Start()
         p_pyhouse_obj.APIs.Computer.EmailAPI.Start()
         p_pyhouse_obj.APIs.Computer.InternetAPI.Start()
@@ -110,6 +124,10 @@ class Utility(object):
         p_pyhouse_obj.APIs.Computer.WebAPI.SaveXml(p_xml)
         return p_xml
 
+    @staticmethod
+    def read_uuid_file():
+        pass
+
 
 class API(Utility):
 
@@ -120,6 +138,11 @@ class API(Utility):
         Utility._init_component_apis(p_pyhouse_obj, self)
         LOG.info('Initialized')
 
+    def LoadXml(self, p_pyhouse_obj):
+        """
+        """
+        pass
+
     def Start(self):
         """
         Start processing
@@ -128,18 +151,6 @@ class API(Utility):
         Xml.read_computer_xml(self.m_pyhouse_obj)
         Utility._start_component_apis(self.m_pyhouse_obj)
         LOG.info('Started')
-
-    def Stop(self):
-        """
-        Append the house XML to the passed in xlm tree.
-        """
-        Utility._stop_component_apis(self.m_pyhouse_obj)
-        LOG.info("Stopped.")
-
-    def LoadXml(self, p_pyhouse_obj):
-        """
-        """
-        pass
 
     def SaveXml(self, p_xml):
         """
@@ -151,4 +162,11 @@ class API(Utility):
         LOG.info("Saved Computer XML.")
         return p_xml
 
-#  ## END DBK
+    def Stop(self):
+        """
+        Append the house XML to the passed in xlm tree.
+        """
+        Utility._stop_component_apis(self.m_pyhouse_obj)
+        LOG.info("Stopped.")
+
+# ## END DBK

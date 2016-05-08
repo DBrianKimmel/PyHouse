@@ -25,7 +25,7 @@ from Modules.Computer.Mqtt.mqtt_protocol import PyHouseMqttFactory
 from Modules.Computer.Mqtt.mqtt_xml import Xml as mqttXML
 from Modules.Utilities import json_tools, xml_tools
 from Modules.Computer import logging_pyh as Logger
-from Modules.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.Mqtt_Client    ')
 
@@ -45,11 +45,11 @@ class Util(object):
         l_clientID = 'PyH-' + p_pyhouse_obj.Computer.Name
         l_host = p_broker.BrokerAddress
         l_port = p_broker.BrokerPort
-        l_username = None  #  p_broker.UserName
-        l_password = None  #  p_broker.Password
+        l_username = None  # p_broker.UserName
+        l_password = None  # p_broker.Password
         p_broker._ClientAPI = self
         LOG.info('Connecting via TCP...')
-        if l_host == None or l_port == None:
+        if l_host is None or l_port is None:
             LOG.error('Bad Mqtt broker Address: {}  or Port: {}'.format(l_host, l_port))
             p_broker._ProtocolAPI = None
         else:
@@ -109,7 +109,7 @@ class Util(object):
         l_message = MqttJson()
         l_message.Sender = p_pyhouse_obj.Computer.Name
         l_message.DateTime = datetime.datetime.now()
-        if p_message == None:
+        if p_message is None:
             pass
         elif isinstance(p_message, object):
             xml_tools.stuff_new_attrs(l_message, p_message)
@@ -159,7 +159,7 @@ class API(Util):
         LOG.info("Saved Mqtt XML.")
         return p_xml
 
-#  ## The following are public commands that may be called from everywhere
+# ## The following are public commands that may be called from everywhere
 
     def MqttPublish(self, p_topic, p_message):
         """Send a topic, message to the broker for it to distribute to the subscription list
@@ -185,7 +185,7 @@ class API(Util):
 
         TODO: This needs protection from poorly formed Mqtt messages.
         """
-        l_topic = p_topic.split('/')[2:]  #  Drop the pyhouse/housename/ as that is all we subscribed to.
+        l_topic = p_topic.split('/')[2:]  # Drop the pyhouse/housename/ as that is all we subscribed to.
         l_message = json_tools.decode_json_unicode(p_message)
         l_logmsg = Actions(self.m_pyhouse_obj).dispatch(l_topic, l_message)
         #  ##
@@ -202,4 +202,4 @@ class API(Util):
         l_node.NodeInterfaces = {}
         self.MqttPublish('computer/startup', l_node)
 
-#  ## END DBK
+# ## END DBK
