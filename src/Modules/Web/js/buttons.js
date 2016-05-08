@@ -80,11 +80,12 @@ helpers.Widget.subclass(buttons, 'ButtonsWidget').methods(
 	function handleMenuOnClick(self, p_node) {
 		var l_ix = p_node.name;
 		var l_name = p_node.value;
+        var l_obj;
 		globals.House.ButtonIx = l_ix;
 		globals.House.ButtonName = l_name;
 		globals.Add = false;
 		if (l_ix <= 1000) {  // One of the button buttons.
-			var l_obj = globals.House.Lighting.Buttons[l_ix];
+			l_obj = globals.House.Lighting.Buttons[l_ix];
 			showDataEntryScreen(self);
 			self.buildLcarSelectScreen(l_obj);
 		} else if (l_ix == 10001) {  // The "Add" button

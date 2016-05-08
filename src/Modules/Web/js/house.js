@@ -2,7 +2,7 @@
  * @name:      PyHouse/src/Modules/Web/js/house.js
  * @author:    D. Brian Kimmel
  * @contact:   D.BrianKimmel@gmail.com
- * @copyright: (c) 2012-2015 by D. Brian Kimmel
+ * @copyright: (c) 2012-2016 by D. Brian Kimmel
  * @license:   MIT License
  * @note:      Created about 2012
  * @summary:   Displays the House element
@@ -89,6 +89,7 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 		p_html += buildLcarTextWidget(self, 'Longitude', 'Longitude', p_obj.Longitude);
 		p_html += buildLcarTextWidget(self, 'Elevation', 'Elevation', p_obj.Elevation);
 		p_html += buildLcarTextWidget(self, 'TimeZoneName', 'TimeZone Name', p_obj.TimeZoneName);
+		p_html += buildLcarTrueFalseWidget(self, 'Master', 'Master', p_obj.Master);
         return p_html;
     },
 	function fetchEntry(self) {
@@ -108,7 +109,8 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 				Latitude		: fetchTextWidget(self, 'Latitude'),
 				Longitude		: fetchTextWidget(self, 'Longitude'),
 				Elevation		: fetchTextWidget(self, 'Elevation'),
-				TimeZoneName	: fetchTextWidget(self, 'TimeZoneName')
+				TimeZoneName	: fetchTextWidget(self, 'TimeZoneName'),
+				Master    		: fetchTrueFalseWidget(self, 'Master')
 		}
     	return l_data;
     },
@@ -132,6 +134,7 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 		p_data.Location.Longitude = '';
 		p_data.Location.Elevation = '';
 		p_data.Location.TimeZoneName = '';
+		p_data.Master = true;
 		p_data.Delete = false;
         return p_data;
     },

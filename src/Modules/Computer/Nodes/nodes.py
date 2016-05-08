@@ -36,10 +36,10 @@ class API(object):
         """ Load the Mqtt xml info.
         """
         l_nodes = nodesXml.read_all_nodes_xml(p_pyhouse_obj)
+        p_pyhouse_obj.Computer.Nodes = l_nodes
         return l_nodes
 
     def Start(self):
-        self.m_pyhouse_obj.Computer.Nodes = self.LoadXml(self.m_pyhouse_obj)
         self.m_local.Start()
         #  self.m_discovery.Start()
 

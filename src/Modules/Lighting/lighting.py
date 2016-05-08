@@ -127,21 +127,6 @@ class API(Utility):
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info('Initialized')
 
-    def Start(self):
-        """Allow loading of sub modules and drivers.
-        """
-        #  self._read_lighting_xml(self.m_pyhouse_obj)
-        self.LoadXml(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.APIs.House.FamilyAPI.start_lighting_families(self.m_pyhouse_obj)
-        LOG.info("Started.")
-
-    def Stop(self):
-        """Allow cleanup of all drivers.
-        """
-        LOG.info("Stopping all lighting families.")
-        #  self.m_pyhouse_obj.APIs.House.FamilyAPI.stop_lighting_families(self.m_pyhouse_obj)
-        LOG.info("Stopped.")
-
     def LoadXml(self, p_pyhouse_obj):
         """ Load the Lighting xml info.
         """
@@ -155,6 +140,20 @@ class API(Utility):
         p_xml.append(l_xml)
         LOG.info("Saved Lighting XML.")
         return p_xml
+
+    def Start(self):
+        """Allow loading of sub modules and drivers.
+        """
+        #  self._read_lighting_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.APIs.House.FamilyAPI.start_lighting_families(self.m_pyhouse_obj)
+        LOG.info("Started.")
+
+    def Stop(self):
+        """Allow cleanup of all drivers.
+        """
+        LOG.info("Stopping all lighting families.")
+        #  self.m_pyhouse_obj.APIs.House.FamilyAPI.stop_lighting_families(self.m_pyhouse_obj)
+        LOG.info("Stopped.")
 
     def ChangeLight(self, p_light_obj, p_source, p_new_level, _p_rate = None):
         """

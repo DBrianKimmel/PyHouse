@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Utilities/uuid_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c)  2015 by D. Brian Kimmel
+@copyright: (c) 2015-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 22, 2015
 @Summary:
@@ -15,11 +15,16 @@
 import uuid
 
 #  Import PyMh files
+from Modules.Core.data_objects import UuidData
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.UuidTools      ')
 
 
 class Uuid(object):
+
+    @staticmethod
+    def create_uuid():
+        return str(uuid.uuid1())
 
     @staticmethod
     def make_valid(p_uuid):
@@ -31,10 +36,17 @@ class Uuid(object):
         """
         try:
             if len(p_uuid) != 36:
-                p_uuid = str(uuid.uuid1())
+                p_uuid = Uuid.create_uuid()
+                LOG.error('Invalid UUID found (1) - Creating a new one.')
         except TypeError:
-            p_uuid = str(uuid.uuid1())
+            p_uuid = Uuid.create_uuid()
+            LOG.error('Invalid UUID found (2) - Creating a new one.')
         return p_uuid
+
+    @staticmethod
+    def add_uuid(p_pyhouse_obj, p_type):
+        l_obj = UuidData()
+        l_obj.UuidType = p_type
 
 
 class FileUuid(object):

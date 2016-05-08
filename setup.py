@@ -97,25 +97,24 @@ setup(
     #    'pyopenSSL', 'passlib', 'astral'
     #  ]
     install_requires = [
-        'twisted >= 15.0',
-        'pyOpenSSL',
-        'service-identity',
-        'idna',
-        #  'gmpy',
-        'pyasn1',
-        'pycrypto',
-        #  'pypiwin32',  # for windows only
-        'nevow >= 0.0.0',
-        'athena',
-        'python-dateutil',
-        'netaddr',
-        'pyserial',
         #  'astral',
+        #  'gmpy',
+        'athena',
+        'idna',
+        'jsonpickle',
+        'netaddr',
         'netifaces',
+        'nevow >= 0.0.0',
+        'passlib',
+        'pyasn1 >= 0.1.8',
+        'pycrypto',
+        'pyOpenSSL',
+        'python-dateutil',
+        'pyserial',
         'pyudev',
         'pyusb',
-        'passlib',
-        'jsonpickle'
+        'service-identity',
+        'twisted >= 15.0'
     ],
     #  extras_require = EXTRA_REQUIRES
     #  dependency_links = DEPENDENCY_LINKS

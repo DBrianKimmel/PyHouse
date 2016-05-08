@@ -95,12 +95,21 @@ class API(Utility):
         Also note that the reactor is *NOT* running.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
-        Utility._init_components(p_pyhouse_obj)
-        Utility.init_uuids(p_pyhouse_obj)
+        LOG.info('Initializing')
+        #  Utility._init_components(p_pyhouse_obj)
+        #  Utility.init_uuids(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.ComputerAPI = computerAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.HouseAPI = houseAPI(p_pyhouse_obj)
         PyHouseObj.SetObj(p_pyhouse_obj)
+        Utility._sync_startup_logging(self.m_pyhouse_obj)
         LOG.info('Initialized\n==================================================================\n')
+
+    def LoadXml(self, p_pyhouse_obj):
+        LOG.info('Loading XML')
+        p_pyhouse_obj = configAPI(p_pyhouse_obj).read_xml_config_file(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.Computer.ComputerAPI.LoadXml(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.House.HouseAPI.LoadXml(p_pyhouse_obj)
+        LOG.info('Loaded XML')
 
     def Start(self):
         """
@@ -109,15 +118,12 @@ class API(Utility):
         @param p_pyhouse_obj: is the skeleton Obj filled in some by PyHouse.py.
         """
         #  First we start up the logging system - no need for XML yes as it is at a fixrd location
-        Utility._sync_startup_logging(self.m_pyhouse_obj)
-        #  Next is the XML file do things can be read in and customized
-        self.m_pyhouse_obj = configAPI(self.m_pyhouse_obj).read_xml_config_file(self.m_pyhouse_obj)
         #  next Starting the computer and House will load the respective divisions of the config file.
         self.m_pyhouse_obj.APIs.Computer.ComputerAPI.Start()
         self.m_pyhouse_obj.APIs.House.HouseAPI.Start()
         self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self._xml_save_loop, self.m_pyhouse_obj)
         #  LOG.debug(' PyHouseObj: {}'.format(PrettyFormatAny.form(PyHouseObj, 'PyHouseObj')))
-        LOG.info("Everything has been started.\n")
+        LOG.info("Started.")
         #  print('Everything Started setup_pyhouse-117')
 
     def SaveXml(self):

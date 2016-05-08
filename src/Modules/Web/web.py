@@ -7,12 +7,16 @@
 @note:      Created on Jun 27, 2015
 @Summary:
 
+
+PyHouse.Computer.Web
+            Logins
+            Port
+
 """
 
+#  Import system type stuff
 
-# Import system type stuff
-
-# Import PyMh files and modules.
+#  Import PyMh files and modules.
 from Modules.Computer import logging_pyh as Logger
 from Modules.Web.web_xml import Xml as webXml
 from Modules.Web.web_server import API as WebAPI
@@ -29,25 +33,27 @@ class API(object):
     """
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-
-    def Start(self):
-        # l_obj = self.LoadXml(self.m_pyhouse_obj)
-        # self.m_pyhouse_obj.Computer.Web = l_obj
-        WebAPI(self.m_pyhouse_obj).Start()
-
-    def Stop(self):
-        pass
+        LOG.info('Initialized.')
 
     def LoadXml(self, p_pyhouse_obj):
         """ Load the Mqtt xml info.
         """
-        # l_obj = webXml.read_web_xml(self.m_pyhouse_obj)
-        # return l_obj
-        pass
+        l_ret = webXml.read_web_xml(p_pyhouse_obj)
+        p_pyhouse_obj.Computer.Web = l_ret
+        LOG.info('Loaded XML')
+
+    def Start(self):
+        #  l_obj = self.LoadXml(self.m_pyhouse_obj)
+        #  self.m_pyhouse_obj.Computer.Web = l_obj
+        WebAPI(self.m_pyhouse_obj).Start()
+        LOG.info('Started.')
 
     def SaveXml(self, p_xml):
         l_xml = webXml.write_web_xml(self.m_pyhouse_obj)
         p_xml.append(l_xml)
         LOG.info("Saved Web XML.")
 
-# ## END DBK
+    def Stop(self):
+        LOG.info('Stopped.')
+
+#  ## END DBK

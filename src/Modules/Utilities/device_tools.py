@@ -12,10 +12,10 @@
 """
 
 
-# Import system type stuff
+#  Import system type stuff
 from xml.etree import ElementTree as ET
 
-# Import PyHouse files
+#  Import PyHouse files
 from Modules.Utilities.xml_tools import PutGetXML
 from Modules.Core.data_objects import DeviceData
 from Modules.Computer import logging_pyh as Logger
@@ -44,7 +44,7 @@ class XML(object):
             p_obj.RoomName = PutGetXML.get_text_from_xml(p_xml, 'RoomName')
             p_obj.UUID = PutGetXML.get_uuid_from_xml(p_xml, 'UUID')
         except Exception as e_err:
-            LOG.warn('ERROR in xml_tools.read_base_obj_xml() - {}'.format(e_err))
+            LOG.error('ERROR in xml_tools.read_base_obj_xml() - {}'.format(e_err))
             print(e_err)
         return p_obj
 
@@ -59,7 +59,7 @@ class XML(object):
         PutGetXML.put_text_attribute(l_elem, 'Name', p_obj.Name)
         PutGetXML.put_int_attribute(l_elem, 'Key', p_obj.Key)
         PutGetXML.put_bool_attribute(l_elem, 'Active', p_obj.Active)
-        # add sub elements
+        #  add sub elements
         try:
             PutGetXML.put_uuid_element(l_elem, 'UUID', p_obj.UUID)
         except AttributeError:
@@ -82,4 +82,4 @@ def stuff_new_attrs(p_target_obj, p_data_obj):
         if not hasattr(p_target_obj, l_attr):
             setattr(p_target_obj, l_attr, getattr(p_data_obj, l_attr))
 
-# ## END DBK
+#  ## END DBK

@@ -16,7 +16,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__version_info__ = (1, 4, 0)
+__version_info__ = (1, 7, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 
@@ -293,6 +293,13 @@ class USBControllerData(object):
         self.Vendor = 0
 
 
+class UuidData(object):
+    """
+    """
+    def __init__(self):
+        self.UuidType = None
+
+
 class WeatherData(object):
     """
     """
@@ -309,6 +316,7 @@ class WebData(object):
     """
     def __init__(self):
         self.WebPort = 8580
+        self.SecurePort = 8588
         self.Logins = {}  # LoginData()
 
 
@@ -320,6 +328,7 @@ class XmlInformation(object):
         self.XmlRoot = None
         self.XmlVersion = __version__  # Version from this module.
         self.XmlOldVersion = None  # Version of the file read in at program start.
+
 
 """
 BaseObject dependent.

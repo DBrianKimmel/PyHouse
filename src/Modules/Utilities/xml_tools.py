@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Utilities/xml_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2012-2015 by D. Brian Kimmel
+@copyright: (c) 2012-2016 by D. Brian Kimmel
 @note:      Created on Jun 2, 2012
 @license:   MIT License
 @summary:   Various XML functions and utility methods.
@@ -15,6 +15,7 @@
 from Modules.Computer import logging_pyh as Logger
 from Modules.Core.data_objects import CoordinateData
 from Modules.Utilities import convert
+from Modules.Utilities.uuid_tools import Uuid
 from xml.etree import ElementTree as ET
 import dateutil.parser as dparser
 import uuid
@@ -204,18 +205,14 @@ class PutGetXML(object):
     @staticmethod
     def get_uuid_from_xml(p_xml, p_name):
         """
-        UUIDs are somewhat optional at this point.
-        Preserve the UUID if it is present; return None if it is missing.
-        If a fake UUID (not 36 bytes) is present, return a correctly generated one.
-
-        UUIDs are always an element - None returned  an attribute
+        UUIDs are always an element.
         """
         l_xml = XML.get_any_field(p_xml, p_name)
         if l_xml == None:
-            return None
+            return str(uuid.uuid1())
         if len(l_xml) < 36:
             l_xml = str(uuid.uuid1())
-            LOG.error("A valid UUID was not found - generating a new one.")
+            LOG.error("A valid UUID was not found - generating a new one. {}".format(p_xml))
         return l_xml
 
     @staticmethod
@@ -295,18 +292,24 @@ class PutGetXML(object):
 class XmlConfigTools(object):
 
     @staticmethod
-    def read_base_object_xml(p_base_obj, p_entry_element_xml, p_default = 'Missing Name'):
+    def read_base_object_xml(p_base_obj, p_entry_element_xml, no_uuid = False):
         """Get the BaseObject entries from the XML element.
         @param p_base_obj: is the object into which we will put the data.
         @param p_entry_element_xml: is the element we will extract data from (including children).
         @return: A base object
         """
         try:
-            p_base_obj.Name = PutGetXML.get_text_from_xml(p_entry_element_xml, 'Name', p_default)
+            p_base_obj.Name = PutGetXML.get_text_from_xml(p_entry_element_xml, 'Name')
             p_base_obj.Key = PutGetXML.get_int_from_xml(p_entry_element_xml, 'Key', 0)
             p_base_obj.Active = PutGetXML.get_bool_from_xml(p_entry_element_xml, 'Active', False)
         except Exception as e_err:
             LOG.error('{}'.format(e_err))
+        if no_uuid == False:
+            try:
+                p_base_obj.UUID = PutGetXML.get_uuid_from_xml(p_entry_element_xml, 'UUID')
+            except AttributeError:
+                LOG.error('UUID missing for {}'.format(p_base_obj.Name))
+                p_base_obj.pUUID = Uuid.make_valid('123')
         return p_base_obj
 
     @staticmethod
@@ -329,6 +332,9 @@ class XmlConfigTools(object):
                 PutGetXML.put_uuid_element(l_elem, 'UUID', p_object.UUID)
             except AttributeError:
                 PutGetXML.put_uuid_element(l_elem, 'UUID', 'No UUID Given')
+                LOG.error('UUID missing for {}'.format(p_object.Name))
+                l_UUID = Uuid.make_valid('123')
+                PutGetXML.put_uuid_element(l_elem, 'UUID', l_UUID)
         return l_elem
 
 def stuff_new_attrs(p_target_obj, p_data_obj):

@@ -4,16 +4,16 @@
 @name:      PyHouse/src/Modules/Computer/Internet/internet_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Sep 29, 2014
 @Summary:
 
 """
-# Import system type stuff
+#  Import system type stuff
 import xml.etree.ElementTree as ET
 
-# Import PyMh files and modules.
+#  Import PyMh files and modules.
 from Modules.Core.data_objects import InternetConnectionData
 from Modules.Utilities.xml_tools import PutGetXML
 from Modules.Computer import logging_pyh as Logger
@@ -92,9 +92,12 @@ class API(object):
         """Reads zero or more <Internet> entries within the <InternetSection>
         @param p_internet_section_xml: is the <InternetSection> element
         """
+        l_icd = InternetConnectionData()
         l_xml = p_pyhouse_obj.Xml.XmlRoot
         try:
             l_xml = l_xml.find('ComputerDivision')
+            if l_xml == None:
+                return l_icd
             l_internet_sect_xml = l_xml.find('InternetSection')
         except AttributeError as e_err:
             l_internet_sect_xml = None
@@ -120,4 +123,4 @@ class API(object):
         l_xml.append(Util._write_updates_xml(p_internet_obj))
         return l_xml
 
-# ## END DBK
+#  ## END DBK

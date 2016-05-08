@@ -21,10 +21,10 @@ It will then take that IP address and update our Dynamic DNS provider(s) so we m
 address from some external device and check on the status of the house.
 """
 
-# Import system type stuff
-from twisted.application import service
+#  Import system type stuff
+#  from twisted.application import service
 
-# Import PyMh files and modules.
+#  Import PyMh files and modules.
 from Modules.Computer.Internet.internet_xml import API as internetAPI
 from Modules.Computer.Internet import inet_find_external_ip, inet_update_dyn_dns
 from Modules.Computer import logging_pyh as Logger
@@ -57,11 +57,11 @@ class Utility(object):
         """
         Create the twisted service for Internet discovery.
         """
-        # try:
+        #  try:
         #    p_pyhouse_obj.Services.InternetDiscoveryService = service.Service()
         #    p_pyhouse_obj.Services.InternetDiscoveryService.setName('NodeDiscovery')
         #    p_pyhouse_obj.Services.InternetDiscoveryService.setServiceParent(p_pyhouse_obj.Twisted.Application)
-        # RuntimeError:  # The service is already installed
+        #  RuntimeError:  # The service is already installed
         #    LOG.warning('Internet Discovery Service already loaded.')
         self.m_service_installed = True
 
@@ -90,11 +90,13 @@ class API(Utility):
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
+    def LoadXml(self, p_pyhouse_obj):
+        self._read_xml_configuration(p_pyhouse_obj)
+
     def Start(self):
         """
         Start async operation of the Internet module.
         """
-        self._read_xml_configuration(self.m_pyhouse_obj)
         self._create_internet_discovery_service(self.m_pyhouse_obj)
         self._start_internet_discovery(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self._internet_loop, self.m_pyhouse_obj)
@@ -146,4 +148,4 @@ class API(Utility):
         l_defer.addErrback(eb_error)
         return l_defer
 
-# ## END DBK
+#  ## END DBK

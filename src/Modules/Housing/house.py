@@ -31,7 +31,7 @@ PyHouse.House.
 #  Import system type stuff
 
 #  Import PyMh files
-from Modules.Core.data_objects import HouseAPIs, HouseInformation
+from Modules.Core.data_objects import HouseAPIs, HouseInformation, LocationData
 from Modules.Housing.location import Xml as locationXML
 from Modules.Housing.rooms import Xml as roomsXML
 from Modules.Entertainment.entertainment import API as entertainmentAPI
@@ -67,7 +67,11 @@ class Xml(object):
     def read_house_xml(p_pyhouse_obj):
         """Read house information, location and rooms.
         """
+        p_pyhouse_obj.House.Location = LocationData()
+        p_pyhouse_obj.House.Rooms = {}
         l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
+        if l_xml == None:
+            return p_pyhouse_obj.House
         p_pyhouse_obj.House = Xml._read_base(l_xml)
         p_pyhouse_obj.House.Location = locationXML.read_location_xml(p_pyhouse_obj)
         p_pyhouse_obj.House.Rooms = roomsXML.read_rooms_xml(l_xml)
@@ -114,18 +118,26 @@ class Utility(object):
         p_pyhouse_obj.APIs.House.SecurityAPI = securityAPI(p_pyhouse_obj)
         #  p_pyhouse_obj.APIs.House.SunRiseSetAPI = sunriseAPI(p_pyhouse_obj)
 
+    @staticmethod
+    def _load_component_xml(p_pyhouse_obj):
+        #  p_pyhouse_obj.APIs.House.EntertainmentAPI = entertainmentAPI(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.House.HvacAPI.LoadXml(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.House.IrrigationAPI.LoadXml(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.House.LightingAPI.LoadXml(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.House.PoolAPI.LoadXml(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.House.ScheduleAPI.LoadXml(p_pyhouse_obj)
+        #  p_pyhouse_obj.APIs.House.SecurityAPI = securityAPI(p_pyhouse_obj)
+        pass
+
     def start_house_parts(self, p_pyhouse_obj):
-        #  These two must start before the other things
+        #  This must start before the other things
         p_pyhouse_obj.APIs.House.FamilyAPI.Start()
-        #
         p_pyhouse_obj.APIs.House.EntertainmentAPI.Start()
         p_pyhouse_obj.APIs.House.HvacAPI.Start()
         p_pyhouse_obj.APIs.House.IrrigationAPI.Start()
         p_pyhouse_obj.APIs.House.LightingAPI.Start()
         p_pyhouse_obj.APIs.House.PoolAPI.Start()
         p_pyhouse_obj.APIs.House.SecurityAPI.Start()
-        #  Last
-        #  p_pyhouse_obj.APIs.House.SunRiseSetAPI.Start()
         p_pyhouse_obj.APIs.House.ScheduleAPI.Start()
 
     def stop_house_parts(self):
@@ -142,15 +154,6 @@ class Utility(object):
         p_pyhouse_obj.APIs.House.SecurityAPI.SaveXml(p_xml)
         return p_xml
 
-    def get_sunrise_set(self, p_pyhouse_obj):
-        """
-        Retrieve datetime.datetime for sunrise and sunset.
-        """
-        #  p_pyhouse_obj.APIs.House.SunRiseSetAPI.Start()
-        #  p_pyhouse_obj.House.Location.RiseSet.SunRise = p_pyhouse_obj.APIs.House.SunRiseSetAPI.get_sunrise_datetime()
-        #  p_pyhouse_obj.House.Location.RiseSet.SunSet = p_pyhouse_obj.APIs.House.SunRiseSetAPI.get_sunset_datetime()
-        pass
-
 
 class API(Utility):
     """
@@ -159,10 +162,19 @@ class API(Utility):
     def __init__(self, p_pyhouse_obj):
         """
         """
+        LOG.info('Initializing')
         self.m_pyhouse_obj = p_pyhouse_obj
         Utility._init_components(p_pyhouse_obj)
         Utility._init_component_apis(p_pyhouse_obj, self)
         LOG.info('Initialized')
+
+    def LoadXml(self, p_pyhouse_obj):
+        LOG.info('Loading XML')
+        l_house = Xml.read_house_xml(p_pyhouse_obj)
+        p_pyhouse_obj.House = l_house
+        Utility._load_component_xml(p_pyhouse_obj)
+        LOG.info('Loaded XML')
+        return l_house
 
     def Start(self):
         """Start processing for all things house.
@@ -170,29 +182,8 @@ class API(Utility):
         May be stopped and then started anew to force reloading info.
         """
         LOG.info("Starting.")
-        self.m_pyhouse_obj.House = Xml.read_house_xml(self.m_pyhouse_obj)
-        #  self.get_sunrise_set(self.m_pyhouse_obj)
         self.start_house_parts(self.m_pyhouse_obj)
         LOG.info("Started House {}".format(self.m_pyhouse_obj.House.Name))
-
-    def Stop(self):
-        """Stop all houses.
-        Append the house XML to the passed in xlm tree.
-        """
-        LOG.info("Stopping House.")
-        self.stop_house_parts()
-        LOG.info("Stopped.")
-
-    def LoadXml(self, p_pyhouse_obj):
-        l_house = Xml.read_house_xml(p_pyhouse_obj)
-        #  p_pyhouse_obj.APIs.House.EntertainmentAPI.Start()
-        p_pyhouse_obj.APIs.House.HvacAPI.LoadXml(p_pyhouse_obj)
-        #  p_pyhouse_obj.APIs.House.IrrigationAPI.Start()
-        p_pyhouse_obj.APIs.House.LightingAPI.LoadXml(p_pyhouse_obj)
-        #  p_pyhouse_obj.APIs.House.PoolAPI.Start()
-        p_pyhouse_obj.APIs.House.ScheduleAPI.LoadXml(p_pyhouse_obj)
-        #  p_pyhouse_obj.APIs.House.SecurityAPI.Start()
-        return l_house
 
     def SaveXml(self, p_xml):
         """
@@ -204,5 +195,13 @@ class API(Utility):
         p_xml.append(l_house_xml)
         LOG.info("Saved House XML.")
         return p_xml
+
+    def Stop(self):
+        """Stop all houses.
+        Append the house XML to the passed in xlm tree.
+        """
+        LOG.info("Stopping House.")
+        self.stop_house_parts()
+        LOG.info("Stopped.")
 
 #  ##  END DBK

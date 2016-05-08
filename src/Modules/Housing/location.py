@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Housing/location.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2015 by D. Brian Kimmel
+@copyright: (c) 2013-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 10, 2013
 @summary:   Handle the location information for a house.
@@ -14,10 +14,10 @@ time of sunrise and sunset.  Additional calculations may be added such
 moon rise, tides, etc.
 """
 
-# Import system type stuff
+#  Import system type stuff
 import xml.etree.ElementTree as ET
 
-# Import PyMh files
+#  Import PyMh files
 from Modules.Core.data_objects import LocationData, RiseSetData
 from Modules.Utilities.xml_tools import PutGetXML
 from Modules.Computer import logging_pyh as Logger
@@ -39,7 +39,11 @@ class Xml(object):
         p_pyhouse_obj.House.Location = l_obj
         try:
             l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
+            if l_xml == None:
+                return l_obj
             l_xml = l_xml.find('LocationSection')
+            if l_xml == None:
+                return l_obj
             l_obj.Street = PutGetXML.get_text_from_xml(l_xml, 'Street')
             l_obj.City = PutGetXML.get_text_from_xml(l_xml, 'City')
             l_obj.State = PutGetXML.get_text_from_xml(l_xml, 'State')
@@ -53,6 +57,7 @@ class Xml(object):
         except AttributeError as e_err:
             LOG.error('ERROR getting location Data - {}'.format(e_err))
         p_pyhouse_obj.House.Location = l_obj
+        LOG.info('Loaded location information.')
         return l_obj
 
     @staticmethod
@@ -73,4 +78,4 @@ class Xml(object):
         LOG.info('Saved Location XML')
         return l_entry
 
-# ## END DBK
+#  ## END DBK

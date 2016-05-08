@@ -41,26 +41,26 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-# Import system type stuff
+#  Import system type stuff
 import datetime
 import dateutil.parser as dparser
 import twisted
 
-# Import PyMh files
+#  Import PyMh files
 from Modules.Hvac.hvac_actions import API as hvacActionsAPI
 from Modules.Irrigation.irrigation_action import API as irrigationActionsAPI
 from Modules.Lighting.lighting_actions import API as lightActionsAPI
 from Modules.Scheduling.schedule_xml import Xml as scheduleXml
 from Modules.Computer import logging_pyh as Logger
 from Modules.Scheduling import sunrisesunset
-# from Modules.Utilities.debug_tools import PrettyFormatAny
+#  from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.Schedule       ')
 SECONDS_IN_MINUTE = 60
-SECONDS_IN_HOUR = SECONDS_IN_MINUTE * 60  # 3600
-SECONDS_IN_DAY = SECONDS_IN_HOUR * 24  # 86400
-SECONDS_IN_WEEK = SECONDS_IN_DAY * 7  # 604800
-INITIAL_DELAY = 5  # Must be from 5 to 30 seconds.
+SECONDS_IN_HOUR = SECONDS_IN_MINUTE * 60  #  3600
+SECONDS_IN_DAY = SECONDS_IN_HOUR * 24  #  86400
+SECONDS_IN_WEEK = SECONDS_IN_DAY * 7  #  604800
+INITIAL_DELAY = 5  #  Must be from 5 to 30 seconds.
 PAUSE_DELAY = 5
 
 
@@ -99,7 +99,7 @@ class SchedTime(object):
         l_now_day = p_now.weekday()
         l_day = 2 ** l_now_day
         l_is_in_dow = (l_dow & l_day) != 0
-        # print("A ", l_dow, l_now_day, l_day, l_is_in_dow)
+        #  print("A ", l_dow, l_now_day, l_day, l_is_in_dow)
         if l_is_in_dow:
             return 0
         l_days = 1
@@ -107,7 +107,7 @@ class SchedTime(object):
             l_now_day = (l_now_day + 1) % 7
             l_day = 2 ** l_now_day
             l_is_in_dow = (l_dow & l_day) != 0
-            # print("B ", l_dow, l_now_day, l_day, l_is_in_dow)
+            #  print("B ", l_dow, l_now_day, l_day, l_is_in_dow)
             if l_is_in_dow:
                 return l_days
             l_days += 1
@@ -150,7 +150,7 @@ class SchedTime(object):
         l_dow_mins = SchedTime._extract_days(p_schedule_obj, p_now) * 24 * 60
         l_sched_mins = SchedTime._extract_schedule_time(p_schedule_obj, p_rise_set)
         l_sched_secs = 60 * (l_dow_mins + l_sched_mins)
-        # print(l_dow, l_minutes, l_seconds)
+        #  print(l_dow, l_minutes, l_seconds)
         l_now_secs = Utility.to_mins(p_now) * 60
         l_seconds = l_sched_secs - l_now_secs
         if l_seconds < 0:
@@ -177,9 +177,9 @@ class ScheduleExecution(object):
             LOG.info('Execute_one_schedule type = Hvac')
             irrigationActionsAPI.DoSchedule(p_pyhouse_obj, p_schedule_obj)
         #
-        elif p_schedule_obj.ScheduleType == 'TeStInG14159':  # To allow a path for unit tests
+        elif p_schedule_obj.ScheduleType == 'TeStInG14159':  #  To allow a path for unit tests
             LOG.info('Execute_one_schedule type = Testing')
-            # irrigationActionsAPI.DoSchedule(p_pyhouse_obj, p_schedule_obj)
+            #  irrigationActionsAPI.DoSchedule(p_pyhouse_obj, p_schedule_obj)
         #
         else:
             LOG.error('Unknown schedule type: {}'.format(p_schedule_obj.ScheduleType))
@@ -225,7 +225,7 @@ class Utility(object):
         l_riseset = RiseSet()
         l_riseset.SunRise = l_sunrise
         l_riseset.SunSet = l_sunset
-        # node_mqtt.API().doPublishMessage(p_pyhouse_obj.Computer.Mqtt, "pyhouse/schedule/sunrise", l_sunrise)
+        #  node_mqtt.API().doPublishMessage(p_pyhouse_obj.Computer.Mqtt, "pyhouse/schedule/sunrise", l_sunrise)
         return l_riseset
 
     @staticmethod
@@ -244,9 +244,9 @@ class Utility(object):
             l_seconds = SchedTime.extract_time_to_go(p_pyhouse_obj, l_schedule_obj, p_now, l_riseset)
             if l_seconds < 30:
                 continue
-            if l_min_seconds == l_seconds:  # Add to lists for the given time.
+            if l_min_seconds == l_seconds:  #  Add to lists for the given time.
                 l_schedule_key_list.append(l_key)
-            elif l_seconds < l_min_seconds:  # earlier schedule - start new list
+            elif l_seconds < l_min_seconds:  #  earlier schedule - start new list
                 l_min_seconds = l_seconds
                 l_schedule_key_list = []
                 l_schedule_key_list.append(l_key)
@@ -297,11 +297,18 @@ class API(object):
         self.m_pyhouse_obj = p_pyhouse_obj
         Utility._setup_components(p_pyhouse_obj)
 
+    def LoadXml(self, p_pyhouse_obj):
+        """ Load the Schedule xml info.
+        """
+        l_schedules = scheduleXml.read_schedules_xml(p_pyhouse_obj)
+        p_pyhouse_obj.House.Schedules = l_schedules
+        LOG.info('Loaded {} Schedules XML'.format(len(l_schedules)))
+        return l_schedules  #  for testing
+
     def Start(self):
         """
         Extracts all from XML so an update will write correct info back out to the XML file.
         """
-        self.LoadXml(self.m_pyhouse_obj)
         sunrisesunset.API(self.m_pyhouse_obj).Start()
         self.RestartSchedule()
         LOG.info("Started.")
@@ -311,23 +318,15 @@ class API(object):
         """
         LOG.info("Stopped.")
 
-    def LoadXml(self, p_pyhouse_obj):
-        """ Load the Schedule xml info.
-        """
-        l_schedules = scheduleXml.read_schedules_xml(p_pyhouse_obj)
-        self.m_pyhouse_obj.House.Schedules = l_schedules
-        LOG.info('Loaded {} Schedules XML'.format(len(l_schedules)))
-        return l_schedules  # for testing
-
     def SaveXml(self, p_xml):
         l_xml, l_count = scheduleXml.write_schedules_xml(self.m_pyhouse_obj.House.Schedules)
         p_xml.append(l_xml)
         LOG.info('Saved {} Schedules XML.'.format(l_count))
-        return l_xml  # for testing
+        return l_xml  #  for testing
 
     def RestartSchedule(self):
         """ Anything that alters the schedules should call this to cause the new schedules to take effect.
         """
         self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, Utility.schedule_next_event, self.m_pyhouse_obj)
 
-# ## END DBK
+#  ## END DBK

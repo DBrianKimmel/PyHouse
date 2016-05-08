@@ -11,10 +11,10 @@
 
 """
 
-# Import system type stuff
+#  Import system type stuff
 import xml.etree.ElementTree as ET
 
-# Import PyMh files
+#  Import PyMh files
 from Modules.Core.data_objects import RoomData
 from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
 from Modules.Computer import logging_pyh as Logger
@@ -43,14 +43,17 @@ class Xml(object):
         l_ret = {}
         l_count = 0
         try:
-            l_rooms_xml = p_house_xml.find('RoomSection')
-            for l_room_xml in l_rooms_xml.iterfind('Room'):
+            l_xml = p_house_xml.find('RoomSection')
+            if l_xml == None:
+                return l_ret
+            for l_room_xml in l_xml.iterfind('Room'):
                 l_room_obj = Xml.read_one_room(l_room_xml)
                 l_room_obj.Key = l_count
                 l_ret[l_count] = l_room_obj
                 l_count += 1
         except AttributeError as e_err:
-            LOG.error('ERROR if getting location Data - {}'.format(e_err))
+            LOG.error('ERROR if getting rooms Data - {}'.format(e_err))
+        LOG.info('Loaded {} rooms.'.format(l_count))
         return l_ret
 
 
@@ -76,4 +79,4 @@ class Xml(object):
         LOG.info('Saved {} Rooms XML'.format(l_count))
         return l_rooms_xml
 
-# ## END DBK
+#  ## END DBK

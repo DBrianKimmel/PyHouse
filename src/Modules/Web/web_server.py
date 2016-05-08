@@ -11,6 +11,10 @@
 
 This is a Main Module - always present.
 
+Open 2 web browaers.
+    open browser on port 8580.
+    Secure (TLS) browser on port 8588.
+
 Open a port (8580 default) that will allow web browsers to control the
 PyHouse system.  This will be an AJAX/COMET system using Nevow Athena.
 
@@ -83,24 +87,23 @@ class API(Utility):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        p_pyhouse_obj.Computer.Web = WebData()
         self.State = web_utils.WS_IDLE
         self.m_web_running = False
+        LOG.info('Initialized.')
+
+    def LoadXml(self, p_pyhouse_obj):
+        pass
 
     def Start(self):
         LOG.info('Starting web server.')
-        self.m_pyhouse_obj.Computer.Web = self.LoadXml(self.m_pyhouse_obj)
         self.start_webserver(self.m_pyhouse_obj)
+        LOG.info('Started.')
+
+    def SaveXml(self, p_xml):
+        pass
 
     def Stop(self):
         self.m_pyhouse_obj.Services.WebServerService.stopService()
-
-    def LoadXml(self, p_pyhouse_obj):
-        l_ret = webXml.read_web_xml(p_pyhouse_obj)
-        return l_ret
-
-    def SaveXml(self, p_xml):
-        p_xml.append(webXml.write_web_xml(self.m_pyhouse_obj.Computer.Web))
-        LOG.info("Saved WebServer XML.")
+        LOG.info('Stopped.')
 
 #  ## END DBK

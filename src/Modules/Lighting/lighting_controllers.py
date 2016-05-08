@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Lighting/lighting_controllers.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2010-2015 by D. Brian Kimmel
+@copyright: (c) 2010-2016 by D. Brian Kimmel
 @note:      Created on Apr 2, 2010
 @license:   MIT License
 @summary:   Handle the home lighting system automation.
@@ -12,17 +12,18 @@
 Note that controllers have common light info and also have controller info, family info, and interface info.
 """
 
-# Import system type stuff
+#  Import system type stuff
 import xml.etree.ElementTree as ET
 
-# Import PyMh files and modules.
+#  Import PyMh files and modules.
 from Modules.Core.data_objects import ControllerData
 from Modules.Lighting.lighting_core import API as LightingCoreAPI
 from Modules.Families.family_utils import FamUtil
 from Modules.Computer import logging_pyh as Logger
 from Modules.Drivers.interface import Xml as interfaceXML
+from Modules.Utilities.uuid_tools import Uuid as UtilUuid
 from Modules.Utilities.xml_tools import PutGetXML
-from Modules.Utilities import debug_tools
+#  from Modules.Utilities import debug_tools
 
 LOG = Logger.getLogger('PyHouse.LightController')
 
@@ -36,9 +37,9 @@ class Utility(object):
         @param p_version: is some helper data to get the correct information from the config file.
         @return: a Controller data object with the base info filled in
         """
-        l_obj = ControllerData()  # Create an empty controller object.
+        l_obj = ControllerData()  #  Create an empty controller object.
         l_obj = LightingCoreAPI.read_core_lighting_xml(l_obj, p_xml, p_version)
-        # l_obj.DeviceSubType = 1
+        #  l_obj.DeviceSubType = 1
         return l_obj
 
     @staticmethod
@@ -55,7 +56,7 @@ class Utility(object):
         """
         p_obj.InterfaceType = PutGetXML.get_text_from_xml(p_xml, 'InterfaceType')
         p_obj.Port = PutGetXML.get_text_from_xml(p_xml, 'Port')
-        return p_obj  # for testing
+        return p_obj  #  for testing
 
     @staticmethod
     def _write_controller_data(p_obj, p_xml):
@@ -68,7 +69,7 @@ class Utility(object):
     def _read_interface_data(p_obj, p_xml, _p_version):
         try:
             interfaceXML.read_interface_xml(p_obj, p_xml)
-        except Exception as e_err:  # DeviceFamily invalid or missing
+        except Exception as e_err:  #  DeviceFamily invalid or missing
             LOG.error('ERROR - Read Interface Data - {} - {} - {}'.format(e_err, p_obj.Name, p_obj.InterfaceType))
         return p_obj
 
@@ -85,10 +86,10 @@ class Utility(object):
     def _read_family_data(p_pyhouse_obj, p_obj, p_xml, _p_version):
         """Read the family specific data for this controller.
         """
-        # l_debug = debug_tools._format_object('Obj', p_obj, 100)
-        # print('Read controller {}'.format(l_debug))
+        #  l_debug = debug_tools._format_object('Obj', p_obj, 100)
+        #  print('Read controller {}'.format(l_debug))
         l_api = FamUtil.read_family_data(p_pyhouse_obj, p_obj, p_xml)
-        return l_api  # for testing
+        return l_api  #  for testing
 
     @staticmethod
     def _write_family_data(p_pyhouse_obj, p_controller_obj, p_xml):
@@ -141,11 +142,12 @@ class API(object):
         l_dict = {}
         try:
             for l_controller_xml in p_controller_sect_xml.iterfind('Controller'):
-                l_controller_obj = Utility._read_one_controller_xml(p_pyhouse_obj, l_controller_xml, p_version)
-                l_controller_obj.Key = l_count
-                l_dict[l_count] = l_controller_obj
+                l_obj = Utility._read_one_controller_xml(p_pyhouse_obj, l_controller_xml, p_version)
+                l_obj.Key = l_count
+                l_dict[l_count] = l_obj
+                p_pyhouse_obj.Uuid[l_obj.UUID] = UtilUuid.add_uuid(p_pyhouse_obj, 'Controller')
                 l_count += 1
-        except AttributeError as e_error:  # No Controller section
+        except AttributeError as e_error:  #  No Controller section
             LOG.warning('No Controllers found - {}'.format(e_error))
         LOG.info("Loaded {} Controllers".format(l_count))
         return l_dict
@@ -161,4 +163,4 @@ class API(object):
         LOG.info('Saved {} Controllers XML'.format(l_count))
         return l_controllers_xml
 
-# ## END DBK
+#  ## END DBK

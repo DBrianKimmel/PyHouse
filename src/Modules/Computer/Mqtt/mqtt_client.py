@@ -25,7 +25,6 @@ from Modules.Computer.Mqtt.mqtt_protocol import PyHouseMqttFactory
 from Modules.Computer.Mqtt.mqtt_xml import Xml as mqttXML
 from Modules.Utilities import json_tools, xml_tools
 from Modules.Computer import logging_pyh as Logger
-# from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.Mqtt_Client    ')
 
@@ -132,26 +131,34 @@ class API(Util):
         p_pyhouse_obj.Computer.Mqtt.Brokers = {}
         LOG.info("Initialized.")
 
+    def LoadXml(self, p_pyhouse_obj):
+        """ Load the Mqtt xml info.
+        """
+        #  LOG.info("Loading XML")
+        l_mqtt = MqttInformation()
+        l_mqtt.Prefix = p_pyhouse_obj.Computer.Name
+        l_mqtt.Brokers = mqttXML.read_mqtt_xml(p_pyhouse_obj)
+        p_pyhouse_obj.Computer.Mqtt.Brokers = l_mqtt.Brokers
+        LOG.info("Loaded {} Brokers".format(len(l_mqtt.Brokers)))
+        if p_pyhouse_obj.Computer.Mqtt.Brokers != {}:
+            #  LOG.info('Connecting to all MQTT Brokers.')
+            l_count = self.connect_to_all_brokers(p_pyhouse_obj)
+            LOG.info("Mqtt {} broker(s) Started.".format(l_count))
+        else:
+            LOG.info('No Mqtt brokers are configured.')
+        LOG.info("Loaded XML")
+        return l_mqtt
+
     def Start(self):
-        self.m_pyhouse_obj.Computer.Mqtt = self.LoadXml(self.m_pyhouse_obj)
+        """
         if self.m_pyhouse_obj.Computer.Mqtt.Brokers != {}:
             LOG.info('Connecting to all MQTT Brokers.')
             l_count = self.connect_to_all_brokers(self.m_pyhouse_obj)
             LOG.info("Mqtt {} broker(s) Started.".format(l_count))
         else:
             LOG.info('No Mqtt brokers are configured.')
-
-    def Stop(self):
-        LOG.info("Stopped.")
-
-    def LoadXml(self, p_pyhouse_obj):
-        """ Load the Mqtt xml info.
         """
-        l_mqtt = MqttInformation()
-        l_mqtt.Prefix = p_pyhouse_obj.Computer.Name
-        l_mqtt.Brokers = mqttXML.read_mqtt_xml(p_pyhouse_obj)
-        LOG.info("Loaded {} Brokers".format(len(l_mqtt.Brokers)))
-        return l_mqtt
+        pass
 
     def SaveXml(self, p_xml):
         l_xml = mqttXML().write_mqtt_xml(self.m_pyhouse_obj.Computer.Mqtt.Brokers)
@@ -159,7 +166,10 @@ class API(Util):
         LOG.info("Saved Mqtt XML.")
         return p_xml
 
-# ## The following are public commands that may be called from everywhere
+    def Stop(self):
+        LOG.info("Stopped.")
+
+#  ## The following are public commands that may be called from everywhere
 
     def MqttPublish(self, p_topic, p_message):
         """Send a topic, message to the broker for it to distribute to the subscription list
@@ -195,9 +205,10 @@ class API(Util):
         """Login to PyHouse via MQTT
         """
         self.m_client = p_client
+        l_name = p_pyhouse_obj.Computer.Name
         try:
-            l_node = copy.deepcopy(p_pyhouse_obj.Computer.Nodes[p_pyhouse_obj.Computer.Name])
-        except KeyError:
+            l_node = copy.deepcopy(p_pyhouse_obj.Computer.Nodes[l_name])
+        except (KeyError, TypeError):
             l_node = NodeData()
         l_node.NodeInterfaces = {}
         self.MqttPublish('computer/startup', l_node)

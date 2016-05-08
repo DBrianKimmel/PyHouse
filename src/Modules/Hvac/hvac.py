@@ -36,17 +36,16 @@ class API(Utility):
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def Start(self):
-        self.LoadXml(self.m_pyhouse_obj)
-        LOG.info("Started.")
-
-    def Stop(self):
-        LOG.info("Stopped.")
-
     def LoadXml(self, p_pyhouse_obj):
         l_obj = hvacXML.read_hvac_xml(p_pyhouse_obj)
         p_pyhouse_obj.House.Hvac = l_obj
         return l_obj
+
+    def Start(self):
+        LOG.info("Started.")
+
+    def Stop(self):
+        LOG.info("Stopped.")
 
     def SaveXml(self, p_xml):
         l_xml = hvacXML.write_hvac_xml(self.m_pyhouse_obj, p_xml)

@@ -44,7 +44,12 @@ class ApiXml(PutGetXML):
         """
         l_dict = EmailData()
         try:
-            l_xml = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision').find('EmailSection')
+            l_xml = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
+            if l_xml == None:
+                return l_dict
+            l_xml = l_xml.find('EmailSection')
+            if l_xml == None:
+                return l_dict
             l_dict.EmailFromAddress = PutGetXML.get_text_from_xml(l_xml, 'EmailFromAddress')
             l_dict.EmailToAddress = PutGetXML.get_text_from_xml(l_xml, 'EmailToAddress')
             l_dict.GmailLogin = PutGetXML.get_text_from_xml(l_xml, 'GmailLogin')
@@ -117,17 +122,22 @@ class API(Utility):
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def Start(self):
+    def LoadXml(self, p_pyhouse_obj):
         self.m_pyhouse_obj.Computer.Email = self.read_xml(self.m_pyhouse_obj)
+        pass
 
-    def Stop(self):
-        LOG.info("Stopped.")
+    def Start(self):
+        #  self.m_pyhouse_obj.Computer.Email = self.read_xml(self.m_pyhouse_obj)
+        pass
 
     def SaveXml(self, p_xml):
         l_xml = self.write_xml(self.m_pyhouse_obj)
         p_xml.append(l_xml)
         LOG.info("Saved XML.")
         return p_xml
+
+    def Stop(self):
+        LOG.info("Stopped.")
 
     def SendEmail(self, p_to_address, p_subject, p_message, p_attachment):
         """

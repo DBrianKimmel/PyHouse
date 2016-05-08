@@ -62,11 +62,6 @@ See those modules to find out what each does.
         Save house info for 'new' house.
 """
 
-__author__ = "D. Brian Kimmel"
-__copyright__ = "(c) 2010-2016 by D. Brian Kimmel"
-__version_info__ = (1, 6, 0)
-__version__ = '.'.join(map(str, __version_info__))
-
 #  Import system type stuff
 import errno
 import os
@@ -77,8 +72,12 @@ from twisted.internet import reactor
 
 from Modules.Computer import logging_pyh as Logger
 from Modules.Core import setup_pyhouse
-from Modules.Core.data_objects import CoreServicesInformation, TwistedInformation, XmlInformation
-from Modules.Core.data_objects import PyHouseData, PyHouseAPIs
+from Modules.Core.data_objects import PyHouseData, PyHouseAPIs, TwistedInformation, CoreServicesInformation, XmlInformation
+
+__author__ = "D. Brian Kimmel"
+__copyright__ = "(c) 2010-2016 by D. Brian Kimmel"
+__version_info__ = (1, 7, 1)
+__version__ = '.'.join(map(str, __version_info__))
 
 
 #  Import PyMh files and modules.
@@ -89,11 +88,11 @@ LOG = Logger.getLogger('PyHouse                ')
 def daemonize():
     """Taken from twisted.scripts._twistd_unix.py
     """
-    if os.fork():  #  launch child and...
-        os._exit(0)  #  kill off parent
+    if os.fork():  # launch child and...
+        os._exit(0)  # kill off parent
     os.setsid()
-    if os.fork():  #  launch child and...
-        os._exit(0)  #  kill off parent again.
+    if os.fork():  # launch child and...
+        os._exit(0)  # kill off parent again.
     os.umask(127)
     null = os.open('/dev/null', os.O_RDWR)
     for i in range(3):
@@ -156,15 +155,15 @@ class Utilities(object):
     """
     """
 
-    @staticmethod
-    def do_setup_stuff(p_self):
-        if platform.uname()[0] == 'Windows':
-            from Modules.Core import setup_windows
-            pass
-        else:
-            from Modules.Core.setup_linux import Linux
-            l_linux = Linux()
-        handle_signals()
+    #  @staticmethod
+    #  def do_setup_stuff(p_self):
+    #    if platform.uname()[0] == 'Windows':
+    #        from Modules.Core import setup_windows
+    #        pass
+    #    else:
+    #        from Modules.Core.setup_linux import Linux
+    #        l_linux = Linux()
+    #    handle_signals()
 
     @staticmethod
     def _create_pyhouse_obj():
@@ -192,24 +191,34 @@ class API(object):
         """
         global g_API
         g_API = self
-        Utilities.do_setup_stuff(self)
+        #  Utilities.do_setup_stuff(self)
         p_pyhouse_obj = Utilities._create_pyhouse_obj()
         self.m_pyhouse_obj = p_pyhouse_obj
         print('PyHouse.API()')  # For development - so we  an see when we get to this point...
         p_pyhouse_obj.APIs.PyHouseMainAPI = self
         p_pyhouse_obj.APIs.CoreSetupAPI = setup_pyhouse.API(p_pyhouse_obj)
-        p_pyhouse_obj.Twisted.Reactor.callWhenRunning(self.Start)
-        p_pyhouse_obj.Twisted.Reactor.run()  # reactor never returns so must be last - Event loop will now run
+        p_pyhouse_obj.Twisted.Reactor.callWhenRunning(self.LoadXml, p_pyhouse_obj)
+        p_pyhouse_obj.Twisted.Reactor.run()  #  reactor never returns so must be last - Event loop will now run
         #
         #  When the reactor stops we continue here
         #
         LOG.info("PyHouse says Bye Now.\n")
         raise SystemExit("PyHouse says Bye Now.")
 
-    def Start(self):
-        """This is automatically invoked when the reactor starts from API().
+    def LoadXml(self, p_pyhouse_obj):
+        """ This is automatically invoked when the reactor starts from API().
         """
+        LOG.info('Loading XML')
+        p_pyhouse_obj.APIs.CoreSetupAPI.LoadXml(p_pyhouse_obj)
+        p_pyhouse_obj.Twisted.Reactor.callLater(10, self.Start)
+        LOG.info('Loaded XML\n-----------------------------------------\n')
+
+    def Start(self):
+        """ This is automatically invoked when the reactor starts from API().
+        """
+        LOG.info('Starting')
         self.m_pyhouse_obj.APIs.CoreSetupAPI.Start()
+        LOG.info('Everything has been started\n-----------------------------------------\n')
 
     def SaveXml(self, _p_pyhouse_obj):
         """Update XML file with current info.
