@@ -22,7 +22,7 @@ Once overridden the new role will "stick" by being written into the local XML fi
 """
 
 #  Import system type stuff
-import fnmatch  #  Filename matching with shell patterns
+import fnmatch  # Filename matching with shell patterns
 import netifaces
 import os
 import platform
@@ -31,7 +31,7 @@ import platform
 from Modules.Core.data_objects import NodeData, NodeInterfaceData
 from Modules.Communication import ir_control
 from Modules.Computer import logging_pyh as Logger
-from Modules.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.NodeLocal      ')
 
@@ -43,15 +43,15 @@ __all__ = ['NODE_NOTHING', 'NODE_LIGHTS',
            ]
 
 
-NODE_NOTHING = 0x0000  #  a basic node with no special functions
-NODE_LIGHTS = 0x0001  #  Node has an attached controller for Lights (optionally other stuff)
-NODE_PANDORA = 0x0002  #  Node can use pianobar to receive Pandora streams
-NODE_CAMERA = 0x0004  #  Pi with attached camera (not USB camera)
+NODE_NOTHING = 0x0000  # a basic node with no special functions
+NODE_LIGHTS = 0x0001  # Node has an attached controller for Lights (optionally other stuff)
+NODE_PANDORA = 0x0002  # Node can use pianobar to receive Pandora streams
+NODE_CAMERA = 0x0004  # Pi with attached camera (not USB camera)
 NODE_PIFACECAD = 0x0008  #
-NODE_V6ROUTER = 0x0010  #  Iv6 Router node
-NODE_WINDOWS = 0x0020  #  Windowd - not Linux
-NODE_TUNNEL = 0x0040  #  IPv6 Tunnel
-NODE_IR = 0x0080  #  Infra-red receiver and optional transmitter
+NODE_V6ROUTER = 0x0010  # Iv6 Router node
+NODE_WINDOWS = 0x0020  # Windowd - not Linux
+NODE_TUNNEL = 0x0040  # IPv6 Tunnel
+NODE_IR = 0x0080  # Infra-red receiver and optional transmitter
 
 
 class Interfaces(object):
@@ -204,13 +204,11 @@ class HandleNodeType(object):
         if self.m_node & NODE_PIFACECAD:
             self._init_ir_control(p_pyhouse_obj)
 
-
     def _init_ir_control(self, p_pyhouse_obj):
         """This node has an IR receiver so set it up.
         """
         l_ir = ir_control.API()
         l_ir.Start(p_pyhouse_obj)
-
 
 
 class Util(object):
@@ -281,11 +279,12 @@ class Util(object):
         return p_role
 
     @staticmethod
-    def _get_node_info():
+    def _get_node_info(p_pyhouse_obj):
         l_node = NodeData()
         l_node.Name = platform.node()
         l_node.Key = 0
         l_node.Active = True
+        l_node.UUID = p_pyhouse_obj.Computer.UUID
         return l_node
 
     @staticmethod
@@ -332,7 +331,7 @@ class Util(object):
 
     @staticmethod
     def create_local_node(p_pyhouse_obj):
-        l_node = Util._get_node_info()
+        l_node = Util._get_node_info(p_pyhouse_obj)
         l_node.NodeInterfaces = Interfaces._get_all_interfaces()
         l_node.NodeRole = Util.find_node_role()
         p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("computer/local", l_node)
@@ -353,9 +352,10 @@ class API(Util):
 
     def Start(self):
         #  self.m_pyhouse_obj.Computer.Nodes = self.LoadXml(self.m_pyhouse_obj)
+        l_uuid = self.m_pyhouse_obj.Computer.UUID
         l_local = Util.create_local_node(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.Computer.Nodes[l_local.UUID] = l_local
-        LOG.warn('Starting')
+        self.m_pyhouse_obj.Computer.Nodes[l_uuid] = l_local
+        LOG.info('Starting')
         self.init_node_type(self.m_pyhouse_obj)
 
     def SaveXml(self, p_xml):

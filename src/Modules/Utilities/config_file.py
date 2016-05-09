@@ -47,7 +47,7 @@ class Util(object):
         """
         This is not really needed, it is here so we can test the file in unit testing (if needed).
         """
-        if p_pyhouse_obj.Xml.XmlFileName == None:
+        if p_pyhouse_obj.Xml.XmlFileName is None:
             p_pyhouse_obj.Xml.XmlFileName = XML_FILE_NAME
         try:
             l_file = open(p_pyhouse_obj.Xml.XmlFileName, mode = 'r')
@@ -92,7 +92,7 @@ class API(object):
         """
         global g_pyhouse_obj
         g_pyhouse_obj = p_pyhouse_obj
-        if p_pyhouse_obj.Xml.XmlFileName == None:
+        if p_pyhouse_obj.Xml.XmlFileName is None:
             p_pyhouse_obj.Xml.XmlFileName = XML_FILE_NAME
         try:
             l_xmltree = ET.parse(p_pyhouse_obj.Xml.XmlFileName)
@@ -107,7 +107,7 @@ class API(object):
             l_version = '1.0'
         p_pyhouse_obj.Xml.XmlOldVersion = l_version
         LOG.info('Using Config File: {} - Version: {}'.format(p_pyhouse_obj.Xml.XmlFileName, l_version))
-        return p_pyhouse_obj  #  For testing
+        return p_pyhouse_obj  # For testing
 
     @staticmethod
     def create_xml_config_foundation(p_pyhouse_obj):

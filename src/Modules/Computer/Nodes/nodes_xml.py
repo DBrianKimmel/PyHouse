@@ -66,7 +66,7 @@ class Xml(object):
         l_count = 0
         l_ret = {}
         l_comp = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
-        if l_comp == None:
+        if l_comp is None:
             return l_ret
         try:
             l_xml = l_comp.find('NodeSection')
@@ -75,11 +75,10 @@ class Xml(object):
                 l_ret[l_node.Name] = l_node
                 l_count += 1
         except AttributeError as e_err:
-            l_ret[0] = NodeData()  #  Create an empty Nodes[<name>]
+            l_ret[0] = NodeData()  # Create an empty Nodes[<name>]
             LOG.error('ERROR - Node read error - {}'.format(e_err))
         LOG.info('Loaded {} Nodes'.format(l_count))
         return l_ret
-
 
     @staticmethod
     def _write_one_interface_xml(p_interface_obj):

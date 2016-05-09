@@ -458,6 +458,7 @@ class NodeData(BaseObject):
         self.NodeId = None
         self.NodeRole = None
         self.NodeInterfaces = {}  # NodeInterfaceData()
+        self.UUID = None
 
 
 class NodeInterfaceData(BaseObject):

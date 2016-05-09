@@ -15,7 +15,7 @@
 import copy
 import datetime
 from twisted.internet import defer
-from twisted.internet.endpoints import SSL4ClientEndpoint
+# from twisted.internet.endpoints import SSL4ClientEndpoint
 # from twisted.internet.ssl import Certificate, optionsForClientTLS
 
 #  Import PyMh files and modules.
@@ -58,22 +58,22 @@ class Util(object):
         pass
 
     @defer.inlineCallbacks
-    def connect_to_one_broker_TLS(self, p_pyhouse_obj, p_broker):
-        l_host = p_broker.BrokerAddress
-        l_port = p_broker.BrokerPort
-        l_username = p_broker.UserName
-        l_password = p_broker.Password
-        l_clientID = 'PyH-' + p_pyhouse_obj.Computer.Name
+    def connect_to_one_broker_TLS(self, _p_pyhouse_obj, _p_broker):
+        # l_host = p_broker.BrokerAddress
+        # l_port = p_broker.BrokerPort
+        # l_username = p_broker.UserName
+        # l_password = p_broker.Password
+        # l_clientID = 'PyH-' + p_pyhouse_obj.Computer.Name
         LOG.info('Connecting via TLS...')
         #  l_factory = protocol.Factory.forProtocol(echoclient.EchoClient)
-        l_factory = PyHouseMqttFactory(p_pyhouse_obj, l_clientID, p_broker, l_username, l_password)
-        l_certData = PEM_FILE.getContent()
-        l_authority = Certificate.loadPEM(l_certData)
-        l_options = optionsForClientTLS(l_host.decode('utf-8'), l_authority)
-        l_endpoint = SSL4ClientEndpoint(p_pyhouse_obj.Twisted.Reactor, l_host, l_port, l_options)
-        l_client = yield l_endpoint.connect(l_factory)
+        # l_factory = PyHouseMqttFactory(p_pyhouse_obj, l_clientID, p_broker, l_username, l_password)
+        # l_certData = PEM_FILE.getContent()
+        # l_authority = Certificate.loadPEM(l_certData)
+        # l_options = optionsForClientTLS(l_host.decode('utf-8'), l_authority)
+        # l_endpoint = SSL4ClientEndpoint(p_pyhouse_obj.Twisted.Reactor, l_host, l_port, l_options)
+        # l_client = yield l_endpoint.connect(l_factory)
         l_done = defer.Deferred()
-        l_client.connectionLost = lambda reason: l_done.callback(None)
+        # l_client.connectionLost = lambda reason: l_done.callback(None)
         yield l_done
 
     def connect_to_all_brokers(self, p_pyhouse_obj):
@@ -169,7 +169,7 @@ class API(Util):
     def Stop(self):
         LOG.info("Stopped.")
 
-#  ## The following are public commands that may be called from everywhere
+# ## The following are public commands that may be called from everywhere
 
     def MqttPublish(self, p_topic, p_message):
         """Send a topic, message to the broker for it to distribute to the subscription list
@@ -198,7 +198,6 @@ class API(Util):
         l_topic = p_topic.split('/')[2:]  # Drop the pyhouse/housename/ as that is all we subscribed to.
         l_message = json_tools.decode_json_unicode(p_message)
         l_logmsg = Actions(self.m_pyhouse_obj).dispatch(l_topic, l_message)
-        #  ##
         LOG.info(l_logmsg)
 
     def doPyHouseLogin(self, p_client, p_pyhouse_obj):

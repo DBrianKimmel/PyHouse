@@ -198,7 +198,7 @@ class API(object):
         p_pyhouse_obj.APIs.PyHouseMainAPI = self
         p_pyhouse_obj.APIs.CoreSetupAPI = setup_pyhouse.API(p_pyhouse_obj)
         p_pyhouse_obj.Twisted.Reactor.callWhenRunning(self.LoadXml, p_pyhouse_obj)
-        p_pyhouse_obj.Twisted.Reactor.run()  #  reactor never returns so must be last - Event loop will now run
+        p_pyhouse_obj.Twisted.Reactor.run()  # reactor never returns so must be last - Event loop will now run
         #
         #  When the reactor stops we continue here
         #

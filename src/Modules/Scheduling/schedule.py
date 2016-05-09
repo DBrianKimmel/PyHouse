@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Scheduling/schedule.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2015 by D. Brian Kimmel
+@copyright: (c) 2013-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 8, 2013
 @summary:   Schedule events
@@ -57,14 +57,15 @@ from Modules.Scheduling import sunrisesunset
 
 LOG = Logger.getLogger('PyHouse.Schedule       ')
 SECONDS_IN_MINUTE = 60
-SECONDS_IN_HOUR = SECONDS_IN_MINUTE * 60  #  3600
-SECONDS_IN_DAY = SECONDS_IN_HOUR * 24  #  86400
-SECONDS_IN_WEEK = SECONDS_IN_DAY * 7  #  604800
-INITIAL_DELAY = 5  #  Must be from 5 to 30 seconds.
+SECONDS_IN_HOUR = SECONDS_IN_MINUTE * 60  # 3600
+SECONDS_IN_DAY = SECONDS_IN_HOUR * 24  # 86400
+SECONDS_IN_WEEK = SECONDS_IN_DAY * 7  # 604800
+INITIAL_DELAY = 5  # Must be from 5 to 30 seconds.
 PAUSE_DELAY = 5
 
 
 twisted.internet.base.DelayedCall.debug = True
+
 
 class RiseSet(object):
     def __init__(self):
@@ -143,7 +144,7 @@ class SchedTime(object):
         return l_minutes
 
     @staticmethod
-    def extract_time_to_go(p_pyhouse_obj, p_schedule_obj, p_now, p_rise_set):
+    def extract_time_to_go(_p_pyhouse_obj, p_schedule_obj, p_now, p_rise_set):
         """Compute the seconds to go from now to the next scheduled time.
         @param p_now: is the datetime for now
         """
@@ -177,7 +178,7 @@ class ScheduleExecution(object):
             LOG.info('Execute_one_schedule type = Hvac')
             irrigationActionsAPI.DoSchedule(p_pyhouse_obj, p_schedule_obj)
         #
-        elif p_schedule_obj.ScheduleType == 'TeStInG14159':  #  To allow a path for unit tests
+        elif p_schedule_obj.ScheduleType == 'TeStInG14159':  # To allow a path for unit tests
             LOG.info('Execute_one_schedule type = Testing')
             #  irrigationActionsAPI.DoSchedule(p_pyhouse_obj, p_schedule_obj)
         #
@@ -244,9 +245,9 @@ class Utility(object):
             l_seconds = SchedTime.extract_time_to_go(p_pyhouse_obj, l_schedule_obj, p_now, l_riseset)
             if l_seconds < 30:
                 continue
-            if l_min_seconds == l_seconds:  #  Add to lists for the given time.
+            if l_min_seconds == l_seconds:  # Add to lists for the given time.
                 l_schedule_key_list.append(l_key)
-            elif l_seconds < l_min_seconds:  #  earlier schedule - start new list
+            elif l_seconds < l_min_seconds:  # earlier schedule - start new list
                 l_min_seconds = l_seconds
                 l_schedule_key_list = []
                 l_schedule_key_list.append(l_key)
@@ -271,6 +272,7 @@ class Utility(object):
         if p_delay != 0:
             l_delay = p_delay
         Utility.run_after_delay(p_pyhouse_obj, l_delay, l_list)
+
 
 class Timers(object):
     """
@@ -303,7 +305,7 @@ class API(object):
         l_schedules = scheduleXml.read_schedules_xml(p_pyhouse_obj)
         p_pyhouse_obj.House.Schedules = l_schedules
         LOG.info('Loaded {} Schedules XML'.format(len(l_schedules)))
-        return l_schedules  #  for testing
+        return l_schedules  # for testing
 
     def Start(self):
         """
@@ -322,11 +324,11 @@ class API(object):
         l_xml, l_count = scheduleXml.write_schedules_xml(self.m_pyhouse_obj.House.Schedules)
         p_xml.append(l_xml)
         LOG.info('Saved {} Schedules XML.'.format(l_count))
-        return l_xml  #  for testing
+        return l_xml  # for testing
 
     def RestartSchedule(self):
         """ Anything that alters the schedules should call this to cause the new schedules to take effect.
         """
         self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, Utility.schedule_next_event, self.m_pyhouse_obj)
 
-#  ## END DBK
+# ## END DBK

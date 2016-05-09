@@ -12,6 +12,7 @@
 
 from Modules.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.data_objects import NodeData
+from Modules.Computer.Nodes.node_sync import API as syncAPI
 
 
 class Actions(object):
@@ -57,6 +58,8 @@ class Actions(object):
         elif p_topic[1] == 'shutdown':
             del self.m_pyhouse_obj.Computer.Nodes[self.m_name]
             p_logmsg += '\tSelf Shutdown {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
+        elif p_topic[1] == 'node':
+            p_logmsg += syncAPI(self.m_pyhouse_obj).DecodeMqttMessage(p_topic, p_message)
             pass
         else:
             p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
