@@ -37,7 +37,6 @@ correct place for running.
 This may be run at any time to put new versions of the files to be moved.
 
 Runs on:
-    Windows 7
     Linux (OpenSuse 12.3)
     Raspberry Pi w/ Wheezy
 
@@ -48,6 +47,10 @@ PyHouse
     src
     README.rst
     TODO.rst
+
+
+apt install:
+    python-dev
 """
 
 #  Import system type stuff
@@ -60,7 +63,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "sr
 
 #  Requirements for our application
 INSTALL_REQUIRES = [
-    "twisted >= 12.0",
+    "twisted >= 15.0",
     "nevow >= 0.0.0",
     "astral"
 ]
@@ -99,6 +102,7 @@ setup(
     install_requires = [
         #  'astral',
         #  'gmpy',
+        'astral',
         'athena',
         'idna',
         'jsonpickle',
