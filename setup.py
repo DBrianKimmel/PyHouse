@@ -115,6 +115,7 @@ setup(
         'pyOpenSSL',
         'python-dateutil',
         'pyserial',
+        'pytz',
         'pyudev',
         'pyusb',
         'service-identity',
