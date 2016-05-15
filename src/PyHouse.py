@@ -67,7 +67,7 @@ import errno
 import os
 import platform
 import signal
-from twisted.application.service import Application
+#  from twisted.application.service import Application
 from twisted.internet import reactor
 
 from Modules.Computer import logging_pyh as Logger
@@ -88,11 +88,11 @@ LOG = Logger.getLogger('PyHouse                ')
 def daemonize():
     """Taken from twisted.scripts._twistd_unix.py
     """
-    if os.fork():  # launch child and...
-        os._exit(0)  # kill off parent
+    if os.fork():  #  launch child and...
+        os._exit(0)  #  kill off parent
     os.setsid()
-    if os.fork():  # launch child and...
-        os._exit(0)  # kill off parent again.
+    if os.fork():  #  launch child and...
+        os._exit(0)  #  kill off parent again.
     os.umask(127)
     null = os.open('/dev/null', os.O_RDWR)
     for i in range(3):
@@ -173,7 +173,7 @@ class Utilities(object):
         l_pyhouse_obj.Xml = XmlInformation()
         l_pyhouse_obj.Twisted = TwistedInformation()
         l_pyhouse_obj.Twisted.Reactor = reactor
-        l_pyhouse_obj.Twisted.Application = Application('PyHouse')
+        #  l_pyhouse_obj.Twisted.Application = Application('PyHouse')
         return l_pyhouse_obj
 
 
@@ -194,11 +194,11 @@ class API(object):
         #  Utilities.do_setup_stuff(self)
         p_pyhouse_obj = Utilities._create_pyhouse_obj()
         self.m_pyhouse_obj = p_pyhouse_obj
-        print('PyHouse.API()')  # For development - so we  an see when we get to this point...
+        print('PyHouse.API()')  #  For development - so we  an see when we get to this point...
         p_pyhouse_obj.APIs.PyHouseMainAPI = self
         p_pyhouse_obj.APIs.CoreSetupAPI = setup_pyhouse.API(p_pyhouse_obj)
         p_pyhouse_obj.Twisted.Reactor.callWhenRunning(self.LoadXml, p_pyhouse_obj)
-        p_pyhouse_obj.Twisted.Reactor.run()  # reactor never returns so must be last - Event loop will now run
+        p_pyhouse_obj.Twisted.Reactor.run()  #  reactor never returns so must be last - Event loop will now run
         #
         #  When the reactor stops we continue here
         #
