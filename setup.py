@@ -79,13 +79,25 @@ INSTALL_REQUIRES = [
     'pyudev',
     'pyusb',
     'service-identity',
-    "twisted >= 15.0"
+    'twisted >= 15.0.0'
 ]
 
 EXTRA_REQUIRES = {}
 
 #  Dependency links for any of the aforementioned dependencies
 DEPENDENCY_LINKS = []
+
+CLASSIFIERS = [
+    'Development Status :: 5 - Production/Stable',
+    'Environment :: Web Environment',
+    'Intended Audience :: End Users/Desktop',
+    'License :: OSI Approved :: MIT License',
+    'Natural Language :: English',
+    'Operating System :: POSIX :: Linux',
+    'Programming Language :: Python :: 2.7',
+    'Programming Language :: JavaScript',
+    'Topic :: Home Automation'
+]
 
 
 setup(
@@ -96,24 +108,14 @@ setup(
     author_email = 'D.BrianKimmel@gmail.com',
     url = 'http://www.PyHouse.org',
     license = 'MIT',
-    classifiers = [
-        'Environment :: Web Environment',
-        'Intended Audience :: End Users/Desktop',
-        'Natural Language :: English',
-        'Operating System :: Linux',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: JavaScript'
-    ],
-    py_modules = [
-        'PyHouse'
-    ],
+    classifiers = CLASSIFIERS,
+    py_modules = [ 'PyHouse' ],
     package_dir = {'': 'src'},
-    #  packages = ['distutils', 'distutils.command'],
-    requires = INSTALL_REQUIRES,
-    #  extras_require = EXTRA_REQUIRES
-    #  dependency_links = DEPENDENCY_LINKS
+    extras_require = EXTRA_REQUIRES,
+    dependency_links = DEPENDENCY_LINKS,
     include_package_data = True,
-    zip_safe = False
+    zip_safe = False,
+    install_requires = INSTALL_REQUIRES
 )
 tests_passed = False
 
