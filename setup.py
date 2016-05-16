@@ -55,26 +55,42 @@ apt install:
 
 #  Import system type stuff
 import sys
-from setuptools import setup, find_packages
+from setuptools import setup
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "src"))
 
 
-
-#  Requirements for our application
+#  Requirements for the PyHouse application
 INSTALL_REQUIRES = [
-    "twisted >= 15.0",
-    "nevow >= 0.0.0",
-    "astral"
+    'astral',
+    'athena',
+    'idna',
+    'jsonpickle',
+    'netaddr',
+    'netifaces',
+    'nevow >= 0.0.0',
+    'passlib',
+    'pyasn1 >= 0.1.8',
+    'pycrypto',
+    'pyOpenSSL',
+    'python-dateutil',
+    'pyserial',
+    'pytz',
+    'pyudev',
+    'pyusb',
+    'service-identity',
+    "twisted >= 15.0"
 ]
+
 EXTRA_REQUIRES = {}
+
 #  Dependency links for any of the aforementioned dependencies
 DEPENDENCY_LINKS = []
 
 
 setup(
     name = 'PyHouse',
-    version = '1.6.0',
+    version = '1.7.0',
     description = 'Pythone house automation',
     author = 'D. Brian Kimmel',
     author_email = 'D.BrianKimmel@gmail.com',
@@ -93,34 +109,7 @@ setup(
     ],
     package_dir = {'': 'src'},
     #  packages = ['distutils', 'distutils.command'],
-    #  requires = INSTALL_REQUIRES,
-    #  [
-    #    'twisted', 'nevow', 'athena', 'dateutil', 'netaddr',
-    #    'usb', 'jsonpickle', 'serial', 'netifaces', 'pyusb',
-    #    'pyopenSSL', 'passlib', 'astral'
-    #  ]
-    install_requires = [
-        #  'astral',
-        #  'gmpy',
-        'astral',
-        'athena',
-        'idna',
-        'jsonpickle',
-        'netaddr',
-        'netifaces',
-        'nevow >= 0.0.0',
-        'passlib',
-        'pyasn1 >= 0.1.8',
-        'pycrypto',
-        'pyOpenSSL',
-        'python-dateutil',
-        'pyserial',
-        'pytz',
-        'pyudev',
-        'pyusb',
-        'service-identity',
-        'twisted >= 15.0'
-    ],
+    requires = INSTALL_REQUIRES,
     #  extras_require = EXTRA_REQUIRES
     #  dependency_links = DEPENDENCY_LINKS
     include_package_data = True,

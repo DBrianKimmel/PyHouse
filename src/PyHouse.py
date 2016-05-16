@@ -76,7 +76,7 @@ from Modules.Core.data_objects import PyHouseData, PyHouseAPIs, TwistedInformati
 
 __author__ = "D. Brian Kimmel"
 __copyright__ = "(c) 2010-2016 by D. Brian Kimmel"
-__version_info__ = (1, 7, 1)
+__version_info__ = (1, 7, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
 
