@@ -75,9 +75,11 @@ class Xml(object):
         l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
         l_count = 0
         l_dict = {}
+        if l_xml is None:
+            return l_dict
         try:
             l_xml = l_xml.find('ScheduleSection')
-            if l_xml == None:
+            if l_xml is None:
                 return l_dict
             for l_entry in l_xml.iterfind('Schedule'):
                 l_schedule_obj = Xml._read_one_schedule(l_entry)
@@ -85,7 +87,7 @@ class Xml(object):
                 l_dict[l_count] = l_schedule_obj
                 l_count += 1
         except AttributeError as e_err:
-            LOG.error('ERROR in schedule.read_schedules_xml() - {0:}'.format(e_err))
+            LOG.error('ERROR in schedule.read_schedules_xml() - {}'.format(e_err))
         return l_dict
 
 

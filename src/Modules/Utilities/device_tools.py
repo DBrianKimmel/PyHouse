@@ -26,7 +26,7 @@ LOG = Logger.getLogger('PyHouse.DeviceTools    ')
 class XML(object):
 
     @staticmethod
-    def read_base_device_object_xml(p_obj, p_xml):
+    def read_base_device_object_xml(p_pyhouse_obj, p_obj, p_xml):
         """
         Get the BaseObject entries from the XML element.
         @param p_obj: is the object we wish to populate with data

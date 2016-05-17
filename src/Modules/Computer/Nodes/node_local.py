@@ -22,7 +22,7 @@ Once overridden the new role will "stick" by being written into the local XML fi
 """
 
 #  Import system type stuff
-import fnmatch  # Filename matching with shell patterns
+import fnmatch  #  Filename matching with shell patterns
 import netifaces
 import os
 import platform
@@ -31,7 +31,7 @@ import platform
 from Modules.Core.data_objects import NodeData, NodeInterfaceData
 from Modules.Communication import ir_control
 from Modules.Computer import logging_pyh as Logger
-# from Modules.Utilities.debug_tools import PrettyFormatAny
+#  from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.NodeLocal      ')
 
@@ -43,15 +43,15 @@ __all__ = ['NODE_NOTHING', 'NODE_LIGHTS',
            ]
 
 
-NODE_NOTHING = 0x0000  # a basic node with no special functions
-NODE_LIGHTS = 0x0001  # Node has an attached controller for Lights (optionally other stuff)
-NODE_PANDORA = 0x0002  # Node can use pianobar to receive Pandora streams
-NODE_CAMERA = 0x0004  # Pi with attached camera (not USB camera)
+NODE_NOTHING = 0x0000  #  a basic node with no special functions
+NODE_LIGHTS = 0x0001  #  Node has an attached controller for Lights (optionally other stuff)
+NODE_PANDORA = 0x0002  #  Node can use pianobar to receive Pandora streams
+NODE_CAMERA = 0x0004  #  Pi with attached camera (not USB camera)
 NODE_PIFACECAD = 0x0008  #
-NODE_V6ROUTER = 0x0010  # Iv6 Router node
-NODE_WINDOWS = 0x0020  # Windowd - not Linux
-NODE_TUNNEL = 0x0040  # IPv6 Tunnel
-NODE_IR = 0x0080  # Infra-red receiver and optional transmitter
+NODE_V6ROUTER = 0x0010  #  Iv6 Router node
+NODE_WINDOWS = 0x0020  #  Windowd - not Linux
+NODE_TUNNEL = 0x0040  #  IPv6 Tunnel
+NODE_IR = 0x0080  #  Infra-red receiver and optional transmitter
 
 
 class Interfaces(object):
@@ -280,11 +280,12 @@ class Util(object):
 
     @staticmethod
     def _get_node_info(p_pyhouse_obj):
+        l_uuid = p_pyhouse_obj.Computer.UUID
         l_node = NodeData()
         l_node.Name = platform.node()
-        l_node.Key = 0
+        l_node.Key = l_uuid
         l_node.Active = True
-        l_node.UUID = p_pyhouse_obj.Computer.UUID
+        l_node.UUID = l_uuid
         return l_node
 
     @staticmethod
@@ -298,7 +299,7 @@ class Util(object):
         return l_role
 
     def init_node_type(self, p_pyhouse_obj):
-        l_role = p_pyhouse_obj.Computer.Nodes[p_pyhouse_obj.Computer.Name].NodeRole
+        l_role = p_pyhouse_obj.Computer.Nodes[p_pyhouse_obj.Computer.UUID].NodeRole
         if l_role & NODE_PIFACECAD:
             self._init_ir_control(p_pyhouse_obj)
         elif l_role & NODE_LIGHTS:

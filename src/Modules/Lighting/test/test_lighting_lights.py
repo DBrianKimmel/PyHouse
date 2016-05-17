@@ -129,7 +129,7 @@ class R1_Read(SetupMixin, unittest.TestCase):
         """Test the light information is read properly
         """
         l_obj = Utility._read_base_device(self.m_xml.light, self.m_version)
-        Utility._read_light_data(l_obj, self.m_xml.light, self.m_version)
+        Utility._read_light_data(l_obj, self.m_xml.light)
         self.assertEqual(l_obj.CurLevel, int(TESTING_LIGHTING_LIGHT_CUR_LEVEL))
         self.assertEqual(l_obj.IsDimmable, bool(TESTING_LIGHT_DIMMABLE))
 
@@ -137,7 +137,7 @@ class R1_Read(SetupMixin, unittest.TestCase):
         """Test the family data read.
         """
         l_obj = Utility._read_base_device(self.m_xml.light, self.m_version)
-        Utility._read_family_data(self.m_pyhouse_obj, l_obj, self.m_xml.light, self.m_version)
+        Utility._read_family_data(self.m_pyhouse_obj, l_obj, self.m_xml.light)
         self.assertEqual(l_obj.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
 
     def test_04_OneLight(self):

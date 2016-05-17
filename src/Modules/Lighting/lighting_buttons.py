@@ -45,7 +45,7 @@ class Utility(object):
 
 
     @staticmethod
-    def _read_family_data(p_pyhouse_obj, p_obj, p_xml, p_version):
+    def _read_family_data(p_pyhouse_obj, p_obj, p_xml):
         l_api = FamUtil.read_family_data(p_pyhouse_obj, p_obj, p_xml)
         return l_api  #  for testing
 
@@ -63,7 +63,7 @@ class Utility(object):
     @staticmethod
     def _read_one_button_xml(p_pyhouse_obj, p_button_xml, p_version):
         l_button_obj = Utility._read_base_device(p_button_xml, p_version)
-        Utility._read_family_data(p_pyhouse_obj, l_button_obj, p_button_xml, p_version)
+        Utility._read_family_data(p_pyhouse_obj, l_button_obj, p_button_xml)
         l_button_obj.DeviceType = 1
         l_button_obj.DeviceSubType = 3
         return l_button_obj

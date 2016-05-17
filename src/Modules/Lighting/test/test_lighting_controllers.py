@@ -135,7 +135,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         l_obj = Utility._read_base_device(self.m_xml.controller, self.m_version)
         Utility._read_controller_data(l_obj, self.m_xml.controller, self.m_version)
         Utility._read_interface_data(l_obj, self.m_xml.controller, self.m_version)
-        Utility._read_family_data(self.m_pyhouse_obj, l_obj, self.m_xml.controller, self.m_version)
+        Utility._read_family_data(self.m_pyhouse_obj, l_obj, self.m_xml.controller)
         self.assertEqual(l_obj.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
         self.assertEqual(l_obj.DevCat, conversions.dotted_hex2int(TESTING_INSTEON_DEVCAT_0))
         self.assertEqual(l_obj.ProductKey, conversions.dotted_hex2int(TESTING_INSTEON_PRODUCT_KEY_0))

@@ -16,19 +16,25 @@ the "Core" definitions.
 All 17 tests working - DBK 2015-08-17
 """
 
-# Import system type stuff
+#  Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
-# Import PyMh files and modules.
+#  Import PyMh files and modules.
 from Modules.Core.data_objects import LightData, ButtonData, ControllerData
-from Modules.Core.test.xml_device import TESTING_DEVICE_COMMENT, TESTING_DEVICE_FAMILY_INSTEON, \
-    TESTING_DEVICE_ROOM_X, TESTING_DEVICE_ROOM_Y, TESTING_DEVICE_ROOM_Z, TESTING_DEVICE_UUID, \
-    TESTING_DEVICE_TYPE, TESTING_DEVICE_SUBTYPE, TESTING_DEVICE_ROOM_NAME
+from Modules.Core.test.xml_device import TESTING_DEVICE_COMMENT, \
+    TESTING_DEVICE_FAMILY_INSTEON, \
+    TESTING_DEVICE_ROOM_X, \
+    TESTING_DEVICE_ROOM_Y, \
+    TESTING_DEVICE_ROOM_Z, \
+    TESTING_DEVICE_UUID, \
+    TESTING_DEVICE_TYPE, \
+    TESTING_DEVICE_SUBTYPE, \
+    TESTING_DEVICE_ROOM_NAME
 from Modules.Lighting.lighting_core import API as LightingCoreAPI
 from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG
-from Modules.Utilities.debug_tools import PrettyFormatAny
+#  from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -96,14 +102,14 @@ class B1_Parts_1_4(SetupMixin, unittest.TestCase):
     def test_01_Base(self):
         """ Read in the xml file and fill in the lights
         """
-        l_base = self.m_api._read_base(self.m_light_obj, self.m_xml.light)
+        l_base = self.m_api._read_base(self.m_pyhouse_obj, self.m_light_obj, self.m_xml.light)
         self.assertEqual(l_base.Name, 'Insteon Light')
         self.assertEqual(l_base.Key, 0)
         self.assertEqual(l_base.Active, True)
 
     def test_03_Device(self):
-        l_device = self.m_api._read_base(self.m_light_obj, self.m_xml.light)
-        l_device = self.m_api._read_versioned_device(l_device, self.m_xml.light, '1.4')
+        l_device = self.m_api._read_base(self.m_pyhouse_obj, self.m_light_obj, self.m_xml.light)
+        l_device = self.m_api._read_versioned_device(self.m_pyhouse_obj, l_device, self.m_xml.light)
         self.assertEqual(l_device.Comment, TESTING_DEVICE_COMMENT)
         self.assertEqual(l_device.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_device.DeviceType, int(TESTING_DEVICE_TYPE))
@@ -124,14 +130,14 @@ class B2_Parts_1_3(SetupMixin, unittest.TestCase):
     def test_01_Base(self):
         """ Read in the xml file and fill in the lights
         """
-        l_base = self.m_api._read_base(self.m_light_obj, self.m_xml.light)
+        l_base = self.m_api._read_base(self.m_pyhouse_obj, self.m_light_obj, self.m_xml.light)
         self.assertEqual(l_base.Name, 'Insteon Light')
         self.assertEqual(l_base.Key, 0)
         self.assertEqual(l_base.Active, True)
 
     def test_02_Device_1_3(self):
-        l_device = self.m_api._read_base(self.m_light_obj, self.m_xml.light)
-        l_device = self.m_api._read_versioned_device(l_device, self.m_xml.light, '1.3')
+        l_device = self.m_api._read_base(self.m_pyhouse_obj, self.m_light_obj, self.m_xml.light)
+        l_device = self.m_api._read_versioned_device(self.m_pyhouse_obj, l_device, self.m_xml.light)
         self.assertEqual(l_device.RoomName, TESTING_DEVICE_ROOM_NAME)
 
 
@@ -143,7 +149,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_01_Core(self):
-        l_core = self.m_api.read_core_lighting_xml(self.m_light_obj, self.m_xml.light, self.m_version)
+        l_core = self.m_api.read_core_lighting_xml(self.m_pyhouse_obj, self.m_light_obj, self.m_xml.light)
         self.assertEqual(l_core.Name, 'Insteon Light')
         self.assertEqual(l_core.Key, 0)
         self.assertEqual(l_core.Active, True)
@@ -158,7 +164,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
     def test_02_BaseLight(self):
         """ Read in the xml file and fill in the lights
         """
-        l_base = self.m_api.read_core_lighting_xml(self.m_light_obj, self.m_xml.light, self.m_version)
+        l_base = self.m_api.read_core_lighting_xml(self.m_pyhouse_obj, self.m_light_obj, self.m_xml.light)
         self.assertEqual(l_base.Name, 'Insteon Light')
         self.assertEqual(l_base.Key, 0)
         self.assertEqual(l_base.Active, True)
@@ -170,7 +176,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
     def test_03_BaseController(self):
         """ Read in the xml file and fill in the lights
         """
-        l_base = self.m_api.read_core_lighting_xml(self.m_light_obj, self.m_xml.controller, self.m_version)
+        l_base = self.m_api.read_core_lighting_xml(self.m_pyhouse_obj, self.m_light_obj, self.m_xml.controller)
         self.assertEqual(l_base.Name, 'Insteon Serial Controller')
         self.assertEqual(l_base.Key, 0)
         self.assertEqual(l_base.Active, True)
@@ -182,7 +188,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
     def test_04_BaseButton(self):
         """ Read in the xml file and fill in the lights
         """
-        l_base = self.m_api.read_core_lighting_xml(self.m_button_obj, self.m_xml.button, self.m_version)
+        l_base = self.m_api.read_core_lighting_xml(self.m_pyhouse_obj, self.m_button_obj, self.m_xml.button)
         self.assertEqual(l_base.Name, 'Insteon Button')
         self.assertEqual(l_base.Key, 0)
         self.assertEqual(l_base.Active, True)
@@ -202,9 +208,9 @@ class D1_Write(SetupMixin, unittest.TestCase):
     def test_01_BaseLight(self):
         """ Write the Core Light XML.
         """
-        l_base = self.m_api.read_core_lighting_xml(self.m_light_obj, self.m_xml.light, self.m_version)
+        l_base = self.m_api.read_core_lighting_xml(self.m_pyhouse_obj, self.m_light_obj, self.m_xml.light)
         l_xml = self.m_api.write_core_lighting_xml('Light', l_base)
-        # print(PrettyFormatAny.form(l_xml, 'Lighting Core'))
+        #  print(PrettyFormatAny.form(l_xml, 'Lighting Core'))
         self.assertEqual(l_xml.attrib['Name'], 'Insteon Light')
         self.assertEqual(l_xml.attrib['Key'], '0')
         self.assertEqual(l_xml.attrib['Active'], 'True')
@@ -217,7 +223,7 @@ class D1_Write(SetupMixin, unittest.TestCase):
     def test_02_BaseController(self):
         """ Write the Core Controller XML.
         """
-        l_base = self.m_api.read_core_lighting_xml(self.m_light_obj, self.m_xml.controller, self.m_version)
+        l_base = self.m_api.read_core_lighting_xml(self.m_pyhouse_obj, self.m_light_obj, self.m_xml.controller)
         l_xml = self.m_api.write_core_lighting_xml('Light', l_base)
         self.assertEqual(l_xml.attrib['Name'], 'Insteon Serial Controller')
         self.assertEqual(l_xml.attrib['Key'], '0')
@@ -231,7 +237,7 @@ class D1_Write(SetupMixin, unittest.TestCase):
     def test_03_BaseButton(self):
         """ Write the Core Button XML.
         """
-        l_base = self.m_api.read_core_lighting_xml(self.m_light_obj, self.m_xml.button, self.m_version)
+        l_base = self.m_api.read_core_lighting_xml(self.m_pyhouse_obj, self.m_light_obj, self.m_xml.button)
         l_xml = self.m_api.write_core_lighting_xml('Light', l_base)
         self.assertEqual(l_xml.attrib['Name'], 'Insteon Button')
         self.assertEqual(l_xml.attrib['Key'], '0')
@@ -242,4 +248,4 @@ class D1_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.find('DeviceSubType').text, TESTING_DEVICE_SUBTYPE)
         self.assertEqual(l_xml.find('RoomName').text, TESTING_DEVICE_ROOM_NAME)
 
-# ## END DBK
+#  ## END DBK

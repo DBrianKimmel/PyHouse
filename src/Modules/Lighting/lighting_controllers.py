@@ -31,14 +31,14 @@ LOG = Logger.getLogger('PyHouse.LightController')
 class Utility(object):
 
     @staticmethod
-    def _read_base_device(p_xml, p_version):
+    def _read_base_device(p_pyhouse_obj, p_xml, p_version):
         """
         @param p_xml: is the XML Element for the entire device
         @param p_version: is some helper data to get the correct information from the config file.
         @return: a Controller data object with the base info filled in
         """
         l_obj = ControllerData()  #  Create an empty controller object.
-        l_obj = LightingCoreAPI.read_core_lighting_xml(l_obj, p_xml, p_version)
+        l_obj = LightingCoreAPI.read_core_lighting_xml(p_pyhouse_obj, l_obj, p_xml, p_version)
         #  l_obj.DeviceSubType = 1
         return l_obj
 
@@ -83,7 +83,7 @@ class Utility(object):
 
 
     @staticmethod
-    def _read_family_data(p_pyhouse_obj, p_obj, p_xml, _p_version):
+    def _read_family_data(p_pyhouse_obj, p_obj, p_xml):
         """Read the family specific data for this controller.
         """
         #  l_debug = debug_tools._format_object('Obj', p_obj, 100)
@@ -108,10 +108,10 @@ class Utility(object):
         Base Device, Controller, Family and Interface
         """
         try:
-            l_obj = Utility._read_base_device(p_xml, p_version)
-            Utility._read_controller_data(l_obj, p_xml, p_version)
-            Utility._read_interface_data(l_obj, p_xml, p_version)
-            Utility._read_family_data(p_pyhouse_obj, l_obj, p_xml, p_version)
+            l_obj = Utility._read_base_device(p_pyhouse_obj, p_xml, p_version)
+            Utility._read_controller_data(p_pyhouse_obj, l_obj, p_xml, p_version)
+            Utility._read_interface_data(p_pyhouse_obj, l_obj, p_xml, p_version)
+            Utility._read_family_data(p_pyhouse_obj, l_obj, p_xml)
         except Exception as e_err:
             LOG.error('ERROR - ReadOneController - {0:}'.format(e_err))
             l_obj = ControllerData()

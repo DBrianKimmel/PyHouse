@@ -93,9 +93,16 @@ class Utility(object):
         Get all the lighting components for a house
         Config file version 1.4 moved the lighting information into a separate LightingSection
         """
+        l_xml = p_pyhouse_obj.Xml.XmlRoot
         l_xml_version = p_pyhouse_obj.Xml.XmlOldVersion
         l_lighting_xml = self._setup_lighting(p_pyhouse_obj)  #  in case of old style file
         p_pyhouse_obj.House.Lighting = LightingData()
+        l_xml = l_xml.find('HouseDivision')
+        if l_xml is None:
+            return p_pyhouse_obj.House.Lighting
+        l_xml = l_xml.find('LightingSection')
+        if l_xml is None:
+            return p_pyhouse_obj.House.Lighting
         p_pyhouse_obj.House.Lighting.Controllers = self._read_controllers(p_pyhouse_obj, l_lighting_xml, l_xml_version)
         p_pyhouse_obj.House.Lighting.Buttons = self._read_buttons(p_pyhouse_obj, l_lighting_xml, l_xml_version)
         p_pyhouse_obj.House.Lighting.Lights = self._read_lights(p_pyhouse_obj, l_lighting_xml, l_xml_version)

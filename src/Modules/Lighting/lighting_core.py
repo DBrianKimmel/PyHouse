@@ -15,10 +15,10 @@ Lighting devices are a compound entry in the XML config file.
 It is compound since a controller will contain Light entries, controller entries, interface entries etc.
 """
 
-# Import system type stuff
+#  Import system type stuff
 from distutils.version import LooseVersion
 
-# Import PyHouse files
+#  Import PyHouse files
 from Modules.Utilities.device_tools import XML as deviceXML
 from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
 from Modules.Computer import logging_pyh as Logger
@@ -56,19 +56,16 @@ class API(object):
         return p_device_obj
 
     @staticmethod
-    def _read_versioned_device(p_device_obj, p_entry_xml, p_version):
-        if LooseVersion(str(p_version)) < LooseVersion('1.4'):
-            return API._read_device_v1_3(p_device_obj, p_entry_xml)
-        else:
-            return API._read_device_latest(p_device_obj, p_entry_xml)
+    def _read_versioned_device(p_pyhouse_obj, p_device_obj, p_entry_xml):
+        return API._read_device_latest(p_device_obj, p_entry_xml)
 
     @staticmethod
-    def _read_base(p_device_obj, p_entry_xml):
-        deviceXML.read_base_device_object_xml(p_device_obj, p_entry_xml)
-        return p_device_obj  # for testing
+    def _read_base(p_pyhouse_obj, p_device_obj, p_entry_xml):
+        deviceXML.read_base_device_object_xml(p_pyhouse_obj, p_device_obj, p_entry_xml)
+        return p_device_obj  #  for testing
 
     @staticmethod
-    def read_core_lighting_xml(p_device_obj, p_entry_xml, p_version):
+    def read_core_lighting_xml(p_pyhouse_obj, p_device_obj, p_entry_xml):
         """
         This will read some of the lighting information (Core) from a "Lighting" type device.
         @param p_device_obj: is the device we are extracting information for
@@ -77,8 +74,8 @@ class API(object):
         @param p_version: is some helper data to get the correct information from the config file.
         @return: a dict of the entry to be attached to a higher object.
         """
-        API._read_base(p_device_obj, p_entry_xml)
-        API._read_versioned_device(p_device_obj, p_entry_xml, p_version)
+        API._read_base(p_pyhouse_obj, p_device_obj, p_entry_xml)
+        API._read_versioned_device(p_pyhouse_obj, p_device_obj, p_entry_xml)
         return p_device_obj
 
 
@@ -92,4 +89,4 @@ class API(object):
         l_xml = deviceXML.write_base_device_object_xml(p_element_tag, p_device_obj)
         return l_xml
 
-# ## END DBK
+#  ## END DBK

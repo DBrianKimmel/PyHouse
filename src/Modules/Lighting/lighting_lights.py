@@ -38,14 +38,14 @@ SECTION = 'LightSection'
 class Utility(object):
 
     @staticmethod
-    def _read_base_device(p_xml, p_version):
+    def _read_base_device(p_pyhouse_obj, p_xml):
         """
         @param p_xml: is the XML Element for the entire device
         @param p_version: is some helper data to get the correct information from the config file.
         @return: a Light data object with the base info filled in
         """
         l_obj = LightData()
-        l_obj = LightingCoreAPI.read_core_lighting_xml(l_obj, p_xml, p_version)
+        l_obj = LightingCoreAPI.read_core_lighting_xml(p_pyhouse_obj, l_obj, p_xml)
         l_obj.DeviceType = 1
         l_obj.DeviceSubType = 2
         return l_obj
@@ -57,7 +57,7 @@ class Utility(object):
 
 
     @staticmethod
-    def _read_light_data(p_obj, p_xml, p_version):
+    def _read_light_data(p_obj, p_xml):
         p_obj.CurLevel = PutGetXML.get_int_from_xml(p_xml, 'CurLevel', 0)
         p_obj.IsDimmable = PutGetXML.get_bool_from_xml(p_xml, 'IsDimmable', False)
         return p_obj  #  for testing
@@ -70,7 +70,7 @@ class Utility(object):
 
 
     @staticmethod
-    def _read_family_data(p_pyhouse_obj, p_obj, p_xml, p_version):
+    def _read_family_data(p_pyhouse_obj, p_obj, p_xml):
         l_api = FamUtil.read_family_data(p_pyhouse_obj, p_obj, p_xml)
         return l_api  #  for testing
 
@@ -92,9 +92,9 @@ class Utility(object):
         Base Device, Light, Family
         """
         try:
-            l_obj = Utility._read_base_device(p_xml, p_version)
-            Utility._read_light_data(l_obj, p_xml, p_version)
-            Utility._read_family_data(p_pyhouse_obj, l_obj, p_xml, p_version)
+            l_obj = Utility._read_base_device(p_pyhouse_obj, p_xml)
+            Utility._read_light_data(l_obj, p_xml)
+            Utility._read_family_data(p_pyhouse_obj, l_obj, p_xml)
         except Exception as e_err:
             LOG.error('ERROR - ReadOneController - {0:}'.format(e_err))
             l_obj = LightData()
