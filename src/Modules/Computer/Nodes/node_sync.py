@@ -36,7 +36,7 @@ class Util(object):
             LOG.error('No such node {}'.format(e_err))
             l_node = NodeData()
         p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_node)  # /lighting/{}/info
-        l_runID = p_pyhouse_obj.Twisted.Reactor.callLater(REPEAT_DELAY, Util.send_whose_there, p_pyhouse_obj)
+        _l_runID = p_pyhouse_obj.Twisted.Reactor.callLater(REPEAT_DELAY, Util.send_whose_there, p_pyhouse_obj)
 
     def send_i_am(self, p_pyhouse_obj):
         l_topic = "computer/node/iam"

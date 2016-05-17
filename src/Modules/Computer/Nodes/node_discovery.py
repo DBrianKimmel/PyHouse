@@ -37,7 +37,6 @@ from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.NodeDiscovery  ')
 
 
-
 """
 IPv6 first 16bit meaning:
 FF01::        Interface-local scope
@@ -52,10 +51,9 @@ PYHOUSE_MULTICAST_IP_V4 = '234.35.36.37'
 PYHOUSE_MULTICAST_IP_V6 = 'ff05::35:3637'
 
 PYHOUSE_DISCOVERY_PORT = 8582
-WHOS_THERE = "Who's There?"  #  Query
-I_AM = "I am."  #  Response
-MAX_TTL = 4  #  keep mostly local
-
+WHOS_THERE = "Who's There?"  # Query
+I_AM = "I am."  # Response
+MAX_TTL = 4  # keep mostly local
 
 
 class NodeUtil(object):
@@ -67,7 +65,6 @@ class NodeUtil(object):
         l_node.ConnectionAddr_IPv4 = p_addr_v4
         l_node.ConnectionAddr_IPv6 = p_addr_v6
         return l_node
-
 
 
 class DGramUtil(object):
@@ -85,7 +82,7 @@ class DGramUtil(object):
         LOG.info("Added node # {0:} - From Addr: {1:}, Named: {2:}".format(l_count, p_node.ConnectionAddr_IPv4, p_node.Name))
 
     def set_node_0_addr(self, p_address, p_pyhouse_obj):
-        if p_pyhouse_obj.Computer.Nodes[0].ConnectionAddr_IPv4 == None:
+        if p_pyhouse_obj.Computer.Nodes[0].ConnectionAddr_IPv4 is None:
             p_pyhouse_obj.Computer.Nodes[0].ConnectionAddr_IPv4 = p_address[0]
             #  LOG.info("Update our node (slot 0) address to {}".format(p_address[0]))
 
@@ -124,7 +121,6 @@ class DGramUtil(object):
         return l_interface
 
 
-
 class ServerProtocolV4(DatagramProtocol):
     """
     Listen for PyHouse nodes and respond to them.
@@ -155,7 +151,6 @@ class ServerProtocolV4(DatagramProtocol):
             DGramUtil()._create_node(p_datagram, p_address, self.m_pyhouse_obj)
 
 
-
 class ClientProtocolV4(ConnectedDatagramProtocol):
     """
     Find other PyHouse nodes within range.
@@ -182,7 +177,6 @@ class ClientProtocolV4(ConnectedDatagramProtocol):
         LOG.info('Discovery Client rxed: {0:} From: {1:}'.format(p_datagram, p_address[0]))
         if p_datagram.startswith(WHOS_THERE):
             DGramUtil().set_node_0_addr(p_address, self.m_pyhouse_obj)
-
 
 
 class Utility(object):
@@ -228,7 +222,6 @@ class Utility(object):
         except RuntimeError:
             LOG.info('Service already installed.')
         self.m_service_installed = True
-
 
 
 class API(Utility):
