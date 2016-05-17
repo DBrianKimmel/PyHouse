@@ -84,31 +84,19 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		globals.House.RoomIx = l_ix;
 		globals.House.RoomName = l_name;
 		globals.Add = false;
-<<<<<<< HEAD
-		if (l_ix <= 1000) {  // One of the rooms buttons.
-			showDataEntryScreen(self);
-			l_obj = globals.House.Rooms[l_ix];
-			globals.House.RoomObj = l_obj;
-			self.buildLcarDataEntryScreen(l_obj, 'change', 'handleDataEntryOnClick');
-=======
 		//
 		if (l_ix <= 1000) {  // One of the rooms buttons.
 			l_obj = globals.House.Rooms[l_ix];
 			globals.House.RoomObj = l_obj;
 			showDataEntryScreen(self);
 			self.buildLcarDataEntryScreen(l_obj, 'handleDataEntryOnClick');
->>>>>>> 26b6566197f6e87c6d99f699f650dc8677313345
 		} else if (l_ix == 10001) {  // The "Add" button
 			showDataEntryScreen(self);
 			l_obj = self.createEntry();
 			globals.House.RoomObj = l_obj;
 			globals.House.Self = self;
 			globals.Add = true;
-<<<<<<< HEAD
-			self.buildLcarDataEntryScreen(l_obj, 'add', 'handleDataEntryOnClick');
-=======
 			self.buildLcarDataEntryScreen(l_obj, 'handleDataEntryOnClick');
->>>>>>> 26b6566197f6e87c6d99f699f650dc8677313345
 		} else if (l_ix == 10002) {  // The "Back" button
 			self.showWidget('HouseMenu');
 		}
