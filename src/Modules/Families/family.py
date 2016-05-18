@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Families/family.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2015 by D. Brian Kimmel
+@copyright: (c) 2013-2016 by D. Brian Kimmel
 @note:      Created on May 17, 2013
 @license:   MIT License
 @summary:   This module is for *BUILDING/loading* device families.
@@ -39,9 +39,9 @@ import importlib
 # Import PyHouse files
 from Modules.Core.data_objects import FamilyData
 from Modules.Families import VALID_FAMILIES
-from Modules.Computer import logging_pyh as Logger
+from Modules.Computer import logging_pyh as Logging
 
-LOG = Logger.getLogger('PyHouse.Family         ')
+LOG = Logging.getLogger('PyHouse.Family         ')
 
 
 class Utility(object):
@@ -150,7 +150,13 @@ class API(object):
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_family = Utility._init_component_apis(p_pyhouse_obj)
-        LOG.info('Started')
+        LOG.info('Initialized')
+
+    def LoadFamilyTesting(self):
+        """
+        Load all the families for testing.
+        """
+        return Utility._init_component_apis(self.m_pyhouse_obj)
 
     def Start(self):
         """
@@ -165,12 +171,6 @@ class API(object):
         """
         # LOG.info("Saved XML.")
         return p_xml
-
-    def LoadFamilyTesting(self):
-        """
-        Load all the families for testing.
-        """
-        return Utility._init_component_apis(self.m_pyhouse_obj)
 
     def start_lighting_families(self, p_pyhouse_obj):
         """

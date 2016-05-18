@@ -41,7 +41,7 @@ function buildLcarInterfaceTypeSelectWidget(self, p_id, p_caption, p_checked, p_
 
 
 function buildSerialPart(self, p_controller, p_html) {
-	Divmod.debug('---', 'interface.buildSerialPart() called.');
+	// Divmod.debug('---', 'interface.buildSerialPart() called.');
 	p_html += buildLcarBaudRateSelectWidget(self, 'BaudRate', 'Baud Rate', p_controller.BaudRate);
 	p_html += buildLcarByteSizeSelectWidget(self, 'ByteSize', 'Byte Size', p_controller.ByteSize);
 	p_html += buildLcarParitySelectWidget(self, 'Parity', 'Parity', p_controller.Parity);

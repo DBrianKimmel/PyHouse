@@ -41,7 +41,6 @@ class Utility(object):
     def _read_base_device(p_pyhouse_obj, p_xml):
         """
         @param p_xml: is the XML Element for the entire device
-        @param p_version: is some helper data to get the correct information from the config file.
         @return: a Light data object with the base info filled in
         """
         l_obj = LightData()
@@ -51,16 +50,15 @@ class Utility(object):
         return l_obj
 
     @staticmethod
-    def _write_base_device(p_pyhouse_obj, p_light_obj):
+    def _write_base_device(_p_pyhouse_obj, p_light_obj):
         l_xml = LightingCoreAPI.write_core_lighting_xml('Light', p_light_obj)
         return l_xml
 
-
     @staticmethod
-    def _read_light_data(p_obj, p_xml):
+    def _read_light_data(_p_pyhouse_obj, p_obj, p_xml):
         p_obj.CurLevel = PutGetXML.get_int_from_xml(p_xml, 'CurLevel', 0)
         p_obj.IsDimmable = PutGetXML.get_bool_from_xml(p_xml, 'IsDimmable', False)
-        return p_obj  #  for testing
+        return p_obj  # for testing
 
     @staticmethod
     def _write_light_data(p_obj, p_xml):
@@ -68,11 +66,10 @@ class Utility(object):
         PutGetXML.put_text_element(p_xml, 'IsDimmable', p_obj.IsDimmable)
         return p_xml
 
-
     @staticmethod
     def _read_family_data(p_pyhouse_obj, p_obj, p_xml):
         l_api = FamUtil.read_family_data(p_pyhouse_obj, p_obj, p_xml)
-        return l_api  #  for testing
+        return l_api  # for testing
 
     @staticmethod
     def _write_family_data(p_pyhouse_obj, p_obj, p_xml):
@@ -84,16 +81,15 @@ class Utility(object):
         except Exception as e_err:
             LOG.error('ERROR - {}'.format(e_err))
 
-
     @staticmethod
-    def _read_one_light_xml(p_pyhouse_obj, p_xml, p_version):
+    def _read_one_light_xml(p_pyhouse_obj, p_xml):
         """
         Load all the xml for one controller.
         Base Device, Light, Family
         """
         try:
             l_obj = Utility._read_base_device(p_pyhouse_obj, p_xml)
-            Utility._read_light_data(l_obj, p_xml)
+            Utility._read_light_data(p_pyhouse_obj, l_obj, p_xml)
             Utility._read_family_data(p_pyhouse_obj, l_obj, p_xml)
         except Exception as e_err:
             LOG.error('ERROR - ReadOneController - {0:}'.format(e_err))
@@ -111,7 +107,7 @@ class Utility(object):
 class API(object):
 
     @staticmethod
-    def read_all_lights_xml(p_pyhouse_obj, p_light_sect_xml, p_version):
+    def read_all_lights_xml(p_pyhouse_obj, p_light_sect_xml):
         """
         @param p_pyhouse_obj: is the master information store
         @param p_light_sect_xml: the "LightSection" of the config
@@ -122,18 +118,17 @@ class API(object):
         l_dict = {}
         try:
             for l_xml in p_light_sect_xml.iterfind('Light'):
-                l_obj = Utility._read_one_light_xml(p_pyhouse_obj, l_xml, p_version)
-                l_obj.Key = l_count  #  Renumber
+                l_obj = Utility._read_one_light_xml(p_pyhouse_obj, l_xml)
+                l_obj.Key = l_count  # Renumber
                 l_dict[l_count] = l_obj
                 p_pyhouse_obj.Uuid[l_obj.UUID] = UtilUuid.add_uuid(p_pyhouse_obj, 'Light')
                 l_count += 1
-        except AttributeError as e_err:  #  No Lights section
+        except AttributeError as e_err:  # No Lights section
             LOG.warning('Lighting_Lights - No Lights defined - {}'.format(e_err))
             #  print('XXX-1', e_err)
             l_dict = {}
         LOG.info("Loaded {} Lights".format(l_count))
         return l_dict
-
 
     @staticmethod
     def write_all_lights_xml(p_pyhouse_obj):

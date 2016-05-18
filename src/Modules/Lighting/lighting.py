@@ -54,34 +54,34 @@ class Utility(object):
         except AttributeError as e_err:
             LOG.warning('Old version of Config file found.  No LightingSection {}'.format(e_err))
         #  We have an old version
-        if l_lighting_xml == None or l_lighting_xml == 'None':
+        if l_lighting_xml is None or l_lighting_xml == 'None':
             l_lighting_xml = l_house_xml
         return l_lighting_xml
 
-    def _read_buttons(self, p_pyhouse_obj, p_xml, p_version):
+    def _read_buttons(self, p_pyhouse_obj, p_xml):
         try:
             l_xml = p_xml.find('ButtonSection')
-            l_ret = buttonsAPI.read_all_buttons_xml(p_pyhouse_obj, l_xml, p_version)
+            l_ret = buttonsAPI.read_all_buttons_xml(p_pyhouse_obj, l_xml)
         except AttributeError as e_err:
             l_ret = {}
             l_msg = 'No Buttons found {}'.format(e_err)
             LOG.warning(l_msg)
         return l_ret
 
-    def _read_controllers(self, p_pyhouse_obj, p_xml, p_version):
+    def _read_controllers(self, p_pyhouse_obj, p_xml):
         try:
             l_xml = p_xml.find('ControllerSection')
-            l_ret = controllersAPI.read_all_controllers_xml(p_pyhouse_obj, l_xml, p_version)
+            l_ret = controllersAPI.read_all_controllers_xml(p_pyhouse_obj, l_xml)
         except AttributeError as e_err:
             l_ret = {}
             l_msg = 'No Controllers found {}'.format(e_err)
             LOG.warning(l_msg)
         return l_ret
 
-    def _read_lights(self, p_pyhouse_obj, p_xml, p_version):
+    def _read_lights(self, p_pyhouse_obj, p_xml):
         try:
             l_xml = p_xml.find('LightSection')
-            l_ret = lightsAPI.read_all_lights_xml(p_pyhouse_obj, l_xml, p_version)
+            l_ret = lightsAPI.read_all_lights_xml(p_pyhouse_obj, l_xml)
         except AttributeError as e_err:
             l_ret = {}
             l_msg = 'No Lights found: {}'.format(e_err)
@@ -94,8 +94,8 @@ class Utility(object):
         Config file version 1.4 moved the lighting information into a separate LightingSection
         """
         l_xml = p_pyhouse_obj.Xml.XmlRoot
-        l_xml_version = p_pyhouse_obj.Xml.XmlOldVersion
-        l_lighting_xml = self._setup_lighting(p_pyhouse_obj)  #  in case of old style file
+        # l_xml_version = p_pyhouse_obj.Xml.XmlOldVersion
+        l_lighting_xml = self._setup_lighting(p_pyhouse_obj)  # in case of old style file
         p_pyhouse_obj.House.Lighting = LightingData()
         l_xml = l_xml.find('HouseDivision')
         if l_xml is None:
@@ -103,9 +103,9 @@ class Utility(object):
         l_xml = l_xml.find('LightingSection')
         if l_xml is None:
             return p_pyhouse_obj.House.Lighting
-        p_pyhouse_obj.House.Lighting.Controllers = self._read_controllers(p_pyhouse_obj, l_lighting_xml, l_xml_version)
-        p_pyhouse_obj.House.Lighting.Buttons = self._read_buttons(p_pyhouse_obj, l_lighting_xml, l_xml_version)
-        p_pyhouse_obj.House.Lighting.Lights = self._read_lights(p_pyhouse_obj, l_lighting_xml, l_xml_version)
+        p_pyhouse_obj.House.Lighting.Controllers = self._read_controllers(p_pyhouse_obj, l_lighting_xml)
+        p_pyhouse_obj.House.Lighting.Buttons = self._read_buttons(p_pyhouse_obj, l_lighting_xml)
+        p_pyhouse_obj.House.Lighting.Lights = self._read_lights(p_pyhouse_obj, l_lighting_xml)
         #  print(PrettyFormatAny.form(p_pyhouse_obj.House.Lighting, 'Lighting'))
         return p_pyhouse_obj.House.Lighting
 

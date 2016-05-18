@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Families/family_utils.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2016 by D. Brian Kimmel
 @note:      Created on Aug 9, 2011
 @license:   MIT License
 @summary:   This module is for *USING* device families
@@ -42,7 +42,7 @@ class FamUtil(object):
             l_family_obj = p_pyhouse_obj.House.FamilyData[p_device_obj.DeviceFamily]
         except KeyError as e_err:
             l_msg = PrettyFormatAny.form(p_pyhouse_obj.House.FamilyData, 'ERROR ')
-            LOG.error('Could not get family object for:\n\tDevice Name:\t{}\n\tFamily:\t\t{}\n\tKey Error:\t{}{}'\
+            LOG.error('Could not get family object for:\n\tDevice Name:\t{}\n\tFamily:\t\t{}\n\tKey Error:\t{}{}'
                     .format(
                         p_device_obj.Name,
                         p_device_obj.DeviceFamily, e_err, l_msg))
@@ -144,7 +144,7 @@ class FamUtil(object):
             l_ret = 'ERROR family_utils-110  API:{}  Device:"{}"\n   {}'.format(l_xml_api, p_device_obj.Name, e_err)
             LOG.error('ERROR - Unable to load family information for a device.'
                       '\n\tDevice: {}\n\tFamily: {}\n\t{}'.format(p_device_obj.Name, p_device_obj.DeviceFamily, e_err))
-        return l_ret  #  for testing
+        return l_ret  # for testing
 
     @staticmethod
     def write_family_data(p_pyhouse_obj, p_out_xml, p_device_obj):
@@ -161,6 +161,6 @@ class FamUtil(object):
         except Exception as e_err:
             l_ret = 'ERROR in family_utils.write_family_data.  Device:"{}"\n  Api:{}\n   Err:{}'.format(l_dev_name, l_api, e_err)
             LOG.error(l_ret)
-        return l_ret  #  for testing
+        return l_ret  # for testing
 
 #  ## END DBK

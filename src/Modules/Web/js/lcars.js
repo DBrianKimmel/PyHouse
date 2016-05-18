@@ -2,7 +2,7 @@
  * @name:      PyHouse/src/Modules/Web/js/lcars.js
  * @author:    D. Brian Kimmel
  * @contact:   D.BrianKimmel@gmail.com
- * @copyright: (c) 2014-2015 by D. Brian Kimmel
+ * @copyright: (c) 2014-2016 by D. Brian Kimmel
  * @license:   MIT License
  * @note:      Created on Sep 12, 2014
  * @summary:   Lcars components.
@@ -207,7 +207,7 @@ function fetchLightingCoreEntry(self, p_data) {
     var l_ix = fetchTextWidget(self, 'RoomName');
     p_data.RoomName = globals.House.Rooms[l_ix].Name
     p_data.LightingType = fetchSelectWidget(self, 'LightingType');
-    console.log("lcars.fetchLightingCoreEntry() - %O", p_data);
+    // console.log("lcars.fetchLightingCoreEntry() - %O", p_data);
 	return p_data;
 }
 function createLightingCoreEntry(self, p_data) {

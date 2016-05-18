@@ -80,11 +80,18 @@ class Util(object):
 
     @staticmethod
     def get_json_data(p_obj, p_json):
-        p_obj.DevCat = int(p_json['DevCat'])
-        p_obj.GroupList = p_json['GroupList']
-        p_obj.GroupNumber = p_json['GroupNumber']
-        p_obj.InsteonAddress = int(p_json['InsteonAddress'])
-        p_obj.ProductKey = int(p_json['ProductKey'])
+        try:
+            p_obj.DevCat = int(p_json['DevCat'])
+            p_obj.GroupList = p_json['GroupList']
+            p_obj.GroupNumber = p_json['GroupNumber']
+            p_obj.InsteonAddress = int(p_json['InsteonAddress'])
+            p_obj.ProductKey = int(p_json['ProductKey'])
+        except KeyError:
+            p_obj.DevCat = 0
+            p_obj.GroupList = ''
+            p_obj.GroupNumber = 0
+            p_obj.InsteonAddress = 0
+            p_obj.ProductKey = 0
         return p_obj
 
 

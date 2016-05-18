@@ -21,7 +21,6 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
     },
 
 
-
 // ============================================================================
     /**
      * Place the widget in the workspace.
@@ -39,7 +38,6 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
         showSelectionButtons(self);
         self.fetchDataFromServer();
     },
-
 
 
 // ============================================================================
@@ -61,12 +59,12 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
     },
 
 
-
 // ============================================================================
 	/**
 	 * Build a screen full of buttons - One for each controller and some actions.
 	 */
 	function buildLcarSelectScreen(self){
+		Divmod.debug('---', 'controllers.buildLcarSelectScreen() called ');
 		var l_button_html = buildLcarSelectionButtonsTable(globals.House.Lighting.Controllers, 'handleMenuOnClick');
 		var l_html = build_lcars_top('Controllers', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(10, l_button_html);
@@ -129,7 +127,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 		// Divmod.debug('---', 'controllers.buildLcarDataEntryScreen() called ');
 		var l_obj = arguments[1];
 		var l_html = build_lcars_top('Controller Data', 'lcars-salmon-color');
-		l_html += build_lcars_middle_menu(40, self.buildEntry(l_obj, p_handler));
+		l_html += build_lcars_middle_menu(40, self.buildEntry(l_obj, p_handler      ));
 		l_html += build_lcars_bottom();
 		self.nodeById('DataEntryDiv').innerHTML = l_html;
 	},
@@ -142,12 +140,12 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 		else if (p_obj.DeviceFamily === 'UPB')
         	l_html = buildUpbPart(self, p_obj, l_html);
 		else
-			Divmod.debug('---', 'ERROR - controllers.buildEntry()  Family = ' + p_obj.DeviceFamily);
+			Divmod.debug('---', 'ERROR - controllers.buildEntry()  Invalid Family = ' + p_obj.DeviceFamily);
 		//
 		if (p_obj.InterfaceType === 'Serial')
 			l_html = buildSerialPart(self, p_obj, l_html);
 		else
-			Divmod.debug('---', 'ERROR - controllers.buildEntry()  Interface = ' + p_obj.InterfaceType);
+			Divmod.debug('---', 'ERROR - controllers.buildEntry()  Invalid Interface = ' + p_obj.InterfaceType);
 		//
 		l_html += buildLcarEntryButtons(p_handler);
 		return l_html;

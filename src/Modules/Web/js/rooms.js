@@ -128,7 +128,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	},
 	function fetchEntry(self) {
 		var l_data = fetchBaseEntry(self);
-		l_data = fetchRoomEntry(self, l_data);
+		l_data = self.fetchRoomEntry(l_data);
 		return l_data;
 	},
     function fetchRoomEntry(self, p_data) {
@@ -141,9 +141,9 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		var l_key = Object.keys(globals.House.Rooms).length;
 		// Divmod.debug('---', 'rooms.createEntry() was called.  Key = ' + l_key);
 		var l_data = createBaseEntry(self, l_key);
-		console.log("rooms.createEntry(1) - l_data = %O", l_data);
+		// console.log("rooms.createEntry(1) - l_data = %O", l_data);
 		self.createRoomEntry(l_data);
-		console.log("rooms.createEntry(2) - l_data = %O", l_data);
+		// console.log("rooms.createEntry(2) - l_data = %O", l_data);
 		return l_data;
 	},
 	function createRoomEntry(p_data) {

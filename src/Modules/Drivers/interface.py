@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Driveres/interface.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2015 by D. Brian Kimmel
+@copyright: (c) 2013-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Mar 21, 2013
 @summary:   Schedule events
@@ -29,11 +29,11 @@ from Modules.Drivers.Null.Null_xml import XML as nullXML
 from Modules.Drivers.Serial.Serial_xml import XML as serialXML
 from Modules.Drivers.USB.USB_xml import XML as usbXML
 from Modules.Utilities.xml_tools import stuff_new_attrs
-from Modules.Computer import logging_pyh as Logger
+from Modules.Computer import logging_pyh as Logging
 # from Modules.Drivers import VALID_INTERFACES
 # from Modules.Drivers import VALID_PROTOCOLS
 
-LOG = Logger.getLogger('PyHouse.Interface         ')
+LOG = Logging.getLogger('PyHouse.Interface      ')
 
 
 class Xml(object):
@@ -51,7 +51,8 @@ class Xml(object):
         elif p_controller_obj.InterfaceType == 'USB':
             l_interface = usbXML.read_interface_xml(p_controller_xml)
         else:
-            LOG.error('Reading a controller driver interface section  For {} - Unknown InterfaceType - {}'.format(p_controller_obj.Name, p_controller_obj.InterfaceType))
+            LOG.error('Reading a controller driver interface section  For {} - Unknown InterfaceType - {}'
+                      .format(p_controller_obj.Name, p_controller_obj.InterfaceType))
             l_interface = None
         stuff_new_attrs(p_controller_obj, l_interface)
         return l_interface  # for testing

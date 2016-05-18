@@ -2,7 +2,7 @@
  * @name:      PyHouse/src/Modules/Web/js/globals.js
  * @author:    D. Brian Kimmel
  * @contact:   D.BrianKimmel@gmail.com
- * @copyright: (c) 2014-2015 by D. Brian Kimmel
+ * @copyright: (c) 2014-2016 by D. Brian Kimmel
  * @license:   MIT License
  * @note:      Created on Mar 11, 2014
  * @summary:   This is the global hook where we hang our coat and everything else
@@ -586,7 +586,7 @@ function buildLcarSelectionButtonsTable(p_obj, p_handler, p_nameFunction, p_noOp
 		l_html += buildLcarButton(p_obj[l_item], p_handler, l_background, l_nameFunction);
 		l_count++;
 	    l_html += "</div>\n";  // column
-		if ((l_count > 0) & (l_count % l_cols === 0)) {
+		if ((l_count > 0) && (l_count % l_cols === 0)) {
 			l_html += "</div>\n";  // Row
 			l_html += "<div class='lcars-row spaced'>\n";
 		}
@@ -907,7 +907,7 @@ function fetchDowWidget(self, p_id) {
 	// console.log("globals.fetchDowWidget() - %O", l_dow);
 	var l_ret = 0;
 	for (var ix = 0; ix < l_dow.length; ix++) {
-		Divmod.debug('---', 'globals.fetchDowWidget() called.  Name=' + p_id + '  Checked:' + l_dow[ix].checked + '  Val:' + l_dow[ix].value);
+		// Divmod.debug('---', 'globals.fetchDowWidget() called.  Name=' + p_id + '  Checked:' + l_dow[ix].checked + '  Val:' + l_dow[ix].value);
 		if (l_dow[ix].checked) {
 			l_ret += parseInt(l_dow[ix].value);
 		}
@@ -919,20 +919,35 @@ function fetchDowWidget(self, p_id) {
 
 //========== CoOrdinates Widgets ==================================================================
 
+function _putFloat(p_float) {
+	var l_ret;
+	try {
+		l_ret = parseFloat(p_float).toFixed(2);
+	}
+	catch(err) {
+		l_ret = '0.00';
+	}
+	return l_ret;
+}
+
 function buildLcarCoOrdinatesWidget(self, p_id, p_caption, p_value, /* optional */ p_options) {
-	// Divmod.debug('---', 'globals.buildLcarCoOrdinatesWidget() was called.');
+	Divmod.debug('---', 'globals.buildLcarCoOrdinatesWidget() was called.');
 	var l_size = 40;
 	var l_options = p_options;
 	var l_id = buildAthenaId(self, p_id);
 	if (p_options === undefined)
 		l_options = '';
-	var l_value = '[ ';
-	l_value += parseFloat(p_value['X_Easting']).toFixed(2);
-	l_value += ', ';
-	l_value += parseFloat(p_value['Y_Northing']).toFixed(2);
-	l_value += ', ';
-	l_value += parseFloat(p_value['Z_Height']).toFixed(2);
-	l_value += ' ]';
+	if (p_value == undefined || p_value == null) {
+		l_value = '[0.00, 0.00, 0.00]';
+	} else {
+		var l_value = '[ ';
+		l_value += _putFloat(p_value['X_Easting']);
+		l_value += ', ';
+		l_value += _putFloat(p_value['Y_Northing']);
+		l_value += ', ';
+		l_value += _putFloat(p_value['Z_Height']);
+		l_value += ' ]';
+	}
 	var l_html = buildTopDivs(p_caption);
 	// console.log("globals.buildLcarCoOrdinatesWidget() - %O", p_value);
 	l_html += "<input type='text' class='lcars-button-addition'";

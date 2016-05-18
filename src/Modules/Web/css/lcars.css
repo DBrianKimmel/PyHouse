@@ -979,8 +979,8 @@ ul.lcars-menu li a {
 .lcars-row {
   width: 100%;
   padding: 0;
-  *zoom: 1;
-  zoom: 1;
+//  *zoom: 1;
+//  zoom: 1;
 }
 .lcars-row:before,
 .lcars-row:after {

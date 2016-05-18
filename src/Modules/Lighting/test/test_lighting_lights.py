@@ -20,11 +20,6 @@ from Modules.Core.data_objects import LightData
 from Modules.Lighting.lighting_lights import Utility, API as lightsAPI
 from Modules.Core import conversions
 from Modules.Families.family import API as familyAPI
-from Modules.Lighting.test.xml_lights import \
-        TESTING_LIGHT_DIMMABLE, \
-        TESTING_LIGHTING_LIGHT_CUR_LEVEL, \
-        TESTING_LIGHTING_LIGHTS_NAME_1, \
-        TESTING_LIGHTING_TYPE
 from Modules.Families.Insteon.test.xml_insteon import \
         TESTING_INSTEON_ADDRESS_0, \
         TESTING_INSTEON_DEVCAT_0, \
@@ -110,7 +105,7 @@ class R1_Read(SetupMixin, unittest.TestCase):
     def test_01_Base(self):
         """Test the Base read - the device information
         """
-        l_obj = Utility._read_base_device(self.m_xml.light, self.m_version)
+        l_obj = Utility._read_base_device(self.m_pyhouse_obj, self.m_xml.light)
         self.assertEqual(l_obj.Name, TESTING_LIGHTING_LIGHTS_NAME_1)
         self.assertEqual(l_obj.Key, 0)
         self.assertEqual(l_obj.Active, True)
@@ -127,8 +122,8 @@ class R1_Read(SetupMixin, unittest.TestCase):
 
     def test_02_LightData(self):
         """Test the light information is read properly
-        """
-        l_obj = Utility._read_base_device(self.m_xml.light, self.m_version)
+        """self.m_pyhouse_obj, 
+        l_obj = Utility._read_base_device(self.m_pyhouse_obj, self.m_xml.light)
         Utility._read_light_data(l_obj, self.m_xml.light)
         self.assertEqual(l_obj.CurLevel, int(TESTING_LIGHTING_LIGHT_CUR_LEVEL))
         self.assertEqual(l_obj.IsDimmable, bool(TESTING_LIGHT_DIMMABLE))
@@ -136,14 +131,14 @@ class R1_Read(SetupMixin, unittest.TestCase):
     def test_03_FamilyData(self):
         """Test the family data read.
         """
-        l_obj = Utility._read_base_device(self.m_xml.light, self.m_version)
+        l_obj = Utility._read_base_device(self.m_pyhouse_obj, self.m_xml.light)
         Utility._read_family_data(self.m_pyhouse_obj, l_obj, self.m_xml.light)
         self.assertEqual(l_obj.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
 
     def test_04_OneLight(self):
         """ Read everything about one light.
         """
-        l_obj = Utility._read_one_light_xml(self.m_pyhouse_obj, self.m_xml.light, self.m_version)
+        l_obj = Utility._read_one_light_xml(self.m_pyhouse_obj, self.m_xml.light)
         self.assertEqual(l_obj.Name, TESTING_LIGHTING_LIGHTS_NAME_1)
         self.assertEqual(l_obj.Name, 'Insteon Light')
         self.assertEqual(l_obj.Key, 0)
@@ -158,7 +153,7 @@ class R1_Read(SetupMixin, unittest.TestCase):
     def test_05_AllLights(self):
         """Read everything for all lights.
         """
-        l_objs = lightsAPI.read_all_lights_xml(self.m_pyhouse_obj, self.m_xml.light_sect, self.m_version)
+        l_objs = lightsAPI.read_all_lights_xml(self.m_pyhouse_obj, self.m_xml.light_sect)
         self.assertEqual(len(l_objs), 2)
 
 
@@ -174,7 +169,7 @@ class W1_Write(SetupMixin, unittest.TestCase):
     def test_01_Base(self):
         """Test the write for proper XML elements
         """
-        l_obj = Utility._read_one_light_xml(self.m_pyhouse_obj, self.m_xml.light, self.m_version)
+        l_obj = Utility._read_one_light_xml(self.m_pyhouse_obj, self.m_xml.light)
         l_xml = Utility._write_base_device('Light', l_obj)
         self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHTING_LIGHTS_NAME_1)
         self.assertEqual(l_xml.attrib['Key'], '0')
@@ -189,7 +184,7 @@ class W1_Write(SetupMixin, unittest.TestCase):
 
 
     def test_02_LightData(self):
-        l_obj = Utility._read_one_light_xml(self.m_pyhouse_obj, self.m_xml.light, self.m_version)
+        l_obj = Utility._read_one_light_xml(self.m_pyhouse_obj, self.m_xml.light)
         l_xml = Utility._write_base_device('Light', l_obj)
         Utility._write_light_data(l_obj, l_xml)
         #  print(PrettyFormatAny.form(l_xml, 'Lights XML'))
@@ -210,7 +205,7 @@ class W1_Write(SetupMixin, unittest.TestCase):
     def test_04_OneLight(self):
         """ Write out the XML file for the location section
         """
-        l_obj = Utility._read_one_light_xml(self.m_pyhouse_obj, self.m_xml.light, self.m_version)
+        l_obj = Utility._read_one_light_xml(self.m_pyhouse_obj, self.m_xml.light)
         l_xml = Utility._write_one_light_xml(self.m_pyhouse_obj, l_obj)
         self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHTING_LIGHTS_NAME_1)
         self.assertEqual(l_xml.attrib['Key'], '0')
