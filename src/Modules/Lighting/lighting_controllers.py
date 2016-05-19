@@ -96,7 +96,7 @@ class Utility(object):
             l_api = l_family_obj.FamilyXmlModuleAPI
             l_api.WriteXml(p_xml, p_controller_obj)
         except Exception as e_err:
-            LOG.error('ERROR - {}'.format(e_err))
+            LOG.error('ERROR - Family: {} - Err: {}'.format(l_family_obj.Name, e_err))
 
     @staticmethod
     def _read_one_controller_xml(p_pyhouse_obj, p_xml):

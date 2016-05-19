@@ -28,20 +28,20 @@ LOG = Logger.getLogger('PyHouse.Hvac_xml       ')
 class Utility(object):
 
     @staticmethod
-    def _read_base(p_xml):
+    def _read_base(p_pyhouse_obj, p_xml):
         l_obj = ThermostatData()
-        deviceXML.read_base_device_object_xml(l_obj, p_xml)
+        deviceXML.read_base_device_object_xml(p_pyhouse_obj, l_obj, p_xml)
         return l_obj
 
     @staticmethod
-    def _read_thermostat_base(p_xml):
-        l_obj = Utility._read_base(p_xml)
+    def _read_thermostat_base(p_pyhouse_obj, p_xml):
+        l_obj = Utility._read_base(p_pyhouse_obj, p_xml)
         l_obj.DeviceType = 2
         l_obj.DeviceSubType = 73
         return l_obj
 
     @staticmethod
-    def _read_thermostat_data(p_obj, p_xml):
+    def _read_thermostat_data(_p_pyhouse_obj, p_obj, p_xml):
         """
         @return: a ThermostatData object.
         """
@@ -63,8 +63,8 @@ class Utility(object):
         """
         @return: a ThermostatData object
         """
-        l_thermostat_obj = Utility._read_thermostat_base(p_xml)
-        Utility._read_thermostat_data(l_thermostat_obj, p_xml)
+        l_thermostat_obj = Utility._read_thermostat_base(p_pyhouse_obj, p_xml)
+        Utility._read_thermostat_data(p_pyhouse_obj, l_thermostat_obj, p_xml)
         Utility._read_family_data(p_pyhouse_obj, l_thermostat_obj, p_xml)
         return l_thermostat_obj
 
@@ -83,7 +83,6 @@ class Utility(object):
             LOG.warn('Reading Hvac.Thermostat information - %s', exec_info = True)
         LOG.info("Loaded {} Thermostats".format(l_count))
         return l_dict
-
 
     @staticmethod
     def _write_thermostat_base(p_tag_name, p_obj):
@@ -139,20 +138,21 @@ class XML(object):
     def read_hvac_xml(p_pyhouse_obj):
         l_obj = HvacData()
         try:
-            l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision').find('HvacSection')
-            l_thermostat_xml = l_xml.find('ThermostatSection')
-            l_obj.Thermostats = Utility._read_all_thermostats_xml(p_pyhouse_obj, l_thermostat_xml)
+            l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
+            l_xml = l_xml.find('HvacSection')
+            l_xml = l_xml.find('ThermostatSection')
+            l_obj.Thermostats = Utility._read_all_thermostats_xml(p_pyhouse_obj, l_xml)
         except AttributeError:
             pass
         return l_obj
 
     @staticmethod
-    def write_hvac_xml(p_pyhouse_obj, p_xml):
+    def write_hvac_xml(p_pyhouse_obj, _p_xml):
         """Create a v1.4 tree for HVAC
         @param p_pyhouse_obj: is the mother data store
         @return: a sub tree ready to be appended to an element.
         """
-        l_xml = ET.Element('HvacSection')  #  HvacSection
+        l_xml = ET.Element('HvacSection')  # HvacSection
         l_xml.append(Utility._write_all_thermostats_xml(p_pyhouse_obj))
         return l_xml
 

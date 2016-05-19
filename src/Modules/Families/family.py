@@ -40,7 +40,6 @@ import importlib
 from Modules.Core.data_objects import FamilyData
 from Modules.Families import VALID_FAMILIES
 from Modules.Computer import logging_pyh as Logging
-
 LOG = Logging.getLogger('PyHouse.Family         ')
 
 
@@ -65,6 +64,7 @@ class Utility(object):
         except ImportError as e_err:
             l_msg = 'ERROR importing family:{} Module:{}\n   Err:{} .'.format(p_obj.Name, p_module, e_err)
             LOG.error(l_msg)
+            l_ret = l_msg
         return l_ret
 
     @staticmethod
@@ -109,6 +109,7 @@ class Utility(object):
         """
         l_family_obj = FamilyData()
         l_family_obj.Name = p_name
+        LOG.info('Building Family: {}'.format(p_name))
         l_family_obj.Key = 0
         l_family_obj.Active = True
         l_family_obj.FamilyPackageName = 'Modules.Families.' + p_name
@@ -150,6 +151,7 @@ class API(object):
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_family = Utility._init_component_apis(p_pyhouse_obj)
+        p_pyhouse_obj.House.FamilyData = self.m_family
         LOG.info('Initialized')
 
     def LoadFamilyTesting(self):
@@ -184,4 +186,3 @@ class API(object):
         LOG.info("Started all lighting families.")
 
 # ## END DBK
-

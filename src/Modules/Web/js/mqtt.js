@@ -2,7 +2,7 @@
  * @name:      PyHouse/src/Modules/Web/js/mqtt.js
  * @author:    D. Brian Kimmel
  * @contact:   D.BrianKimmel@gmail.com
- * @copyright: (c) 2015-2015 by D. Brian Kimmel
+ * @copyright: (c) 2015-2016 by D. Brian Kimmel
  * @license:   MIT License
  * @note:      Created on June 18, 2015
  * @summary:   Displays the Mqtt element
@@ -50,7 +50,7 @@ helpers.Widget.subclass(mqtt, 'MqttWidget').methods(
 	function fetchDataFromServer(self) {
 		function cb_fetchDataFromServer(p_json) {
 			globals.Computer = JSON.parse(p_json);
-			console.log("mqtt.fetchDataFromServer() - Computer = %O", globals.Computer);
+			// console.log("mqtt.fetchDataFromServer() - Computer = %O", globals.Computer);
 			self.buildLcarSelectScreen();
 		}
 		function eb_fetchDataFromServer(p_result) {

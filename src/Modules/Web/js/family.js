@@ -2,7 +2,7 @@
  * @name:      PyHouse/src/Modules/Web/js/family.js
  * @author:    D. Brian Kimmel
  * @contact:   D.BrianKimmel@gmail.com
- * @copyright: (c) 2014-2015 by D. Brian Kimmel
+ * @copyright: (c) 2014-2016 by D. Brian Kimmel
  * @license:   MIT License
  * @note:      Created on Dec 09, 2014
  * @summary:   Lcars components to handle all the various device families.
@@ -59,6 +59,7 @@ function buildInsteonPart(self, p_obj, p_html) {
 	p_html += buildLcarTextWidget(self, 'GroupNumber', 'Group Number', p_obj.GroupNumber);
 	p_html += buildLcarTextWidget(self, 'GroupList', 'Group List', p_obj.GroupList);
 	p_html += buildLcarTextWidget(self, 'ProductKey', 'Product Key', int2hex(p_obj.ProductKey, 3));
+	p_html += buildLcarTextWidget(self, 'Version', 'Version', p_obj.Version);
 	return p_html;
 }
 function fetchInsteonEntry(self, p_data) {
@@ -69,11 +70,15 @@ function fetchInsteonEntry(self, p_data) {
 	    p_data.GroupNumber = fetchTextWidget(self, 'GroupNumber');
 	    p_data.GroupList = fetchTextWidget(self, 'GroupList');
 	    p_data.ProductKey = hex2int(fetchTextWidget(self, 'ProductKey'), 3);
+	    p_data.Version = fetchTextWidget(self, 'Version');
 	}
 	catch(err) {
 		p_data.InsteonAddress = hex2int('01.01.01', 3);
 		p_data.DevCat = hex2int('01.01', 2);
 		p_data.ProductKey = hex2int('01.01.01', 3);
+		p_data.GroupNumber = 0;
+		p_data.GroupList = '';
+		p_data.Version = 2;
 	}
 	return p_data;
 }
@@ -83,6 +88,7 @@ function createInsteonEntry(self, p_data) {
 	p_data.GroupNumber = 0;
 	p_data.GroupList = '';
 	p_data.ProductKey = 0;
+	p_data.Version = 2;
 	return p_data;
 }
 

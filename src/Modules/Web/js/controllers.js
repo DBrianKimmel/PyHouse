@@ -151,6 +151,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 		return l_html;
 	},
 	function buildControllerEntry(self, p_obj, p_html) {
+		p_html += buildLcarFamilySelectWidget(self, 'DeviceFamily', 'Family', p_obj.DeviceFamily, 'familyChanged');
 		p_html += buildLcarInterfaceTypeSelectWidget(self, 'InterfaceType', 'Interface Type', p_obj.InterfaceType, 'interfaceChanged');
 		p_html += buildLcarTextWidget(self, 'Port', 'Port', p_obj.Port);
 		return p_html;
@@ -171,6 +172,10 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 		l_obj.InterfaceType = fetchSelectWidget(l_self, 'InterfaceType');
 		l_self.buildLcarDataEntryScreen(l_obj, 'handleDataOnClick');
 	},
+	
+	
+	
+	
     function fetchEntry(self) {
 		var l_data = fetchBaseEntry(self);
 		l_data = fetchLightingCoreEntry(self, l_data);

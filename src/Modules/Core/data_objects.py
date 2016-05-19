@@ -386,7 +386,7 @@ class HouseInformation(BaseObject):
     """
     def __init__(self):
         super(HouseInformation, self).__init__()
-        self.FamilyData = {}  # FamilyData('FamilyName')
+        self.FamilyData = {}  # FamilyData['FamilyName']
         self.Hvac = None  # HvacData()
         self.Irrigation = None  # IrrigationData()
         self.Lighting = {}  # LightingData()

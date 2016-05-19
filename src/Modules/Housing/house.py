@@ -51,6 +51,7 @@ LOG = Logger.getLogger('PyHouse.House          ')
 
 MODULES = ['Entertainment', 'Hvac', 'Irrigation', 'Lighting', 'Pool', 'Scheduling', 'Security']
 
+
 class Xml(object):
     """Use the internal data to read / write an updated config file.
 
@@ -70,7 +71,7 @@ class Xml(object):
         p_pyhouse_obj.House.Location = LocationData()
         p_pyhouse_obj.House.Rooms = {}
         l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
-        if l_xml == None:
+        if l_xml is None:
             return p_pyhouse_obj.House
         p_pyhouse_obj.House = Xml._read_base(l_xml)
         p_pyhouse_obj.House.Location = locationXML.read_location_xml(p_pyhouse_obj)
@@ -82,9 +83,9 @@ class Xml(object):
     def write_house_xml(p_pyhouse_obj):
         """Replace the data in the 'Houses' section with the current data.
         """
-        #  print(PrettyFormatAny.form(p_pyhouse_obj, 'PyHouse'))
-        #  l_house_obj = p_pyhouse_obj.House
-        #  print(PrettyFormatAny.form(l_house_obj, 'PyHouse'))
+        # print(PrettyFormatAny.form(p_pyhouse_obj, 'PyHouse'))
+        # l_house_obj = p_pyhouse_obj.House
+        # print(PrettyFormatAny.form(l_house_obj, 'PyHouse'))
         l_house_xml = XmlConfigTools.write_base_object_xml('HouseDivision', p_pyhouse_obj.House)
         l_house_xml.append(locationXML.write_location_xml(p_pyhouse_obj.House.Location))
         l_house_xml.append(roomsXML.write_rooms_xml(p_pyhouse_obj.House.Rooms))
@@ -116,17 +117,17 @@ class Utility(object):
         p_pyhouse_obj.APIs.House.PoolAPI = poolAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.ScheduleAPI = scheduleAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.SecurityAPI = securityAPI(p_pyhouse_obj)
-        #  p_pyhouse_obj.APIs.House.SunRiseSetAPI = sunriseAPI(p_pyhouse_obj)
+        # p_pyhouse_obj.APIs.House.SunRiseSetAPI = sunriseAPI(p_pyhouse_obj)
 
     @staticmethod
     def _load_component_xml(p_pyhouse_obj):
-        #  p_pyhouse_obj.APIs.House.EntertainmentAPI = entertainmentAPI(p_pyhouse_obj)
+        # p_pyhouse_obj.APIs.House.EntertainmentAPI = entertainmentAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.HvacAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.IrrigationAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.LightingAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.PoolAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.ScheduleAPI.LoadXml(p_pyhouse_obj)
-        #  p_pyhouse_obj.APIs.House.SecurityAPI = securityAPI(p_pyhouse_obj)
+        # p_pyhouse_obj.APIs.House.SecurityAPI = securityAPI(p_pyhouse_obj)
         pass
 
     def start_house_parts(self, p_pyhouse_obj):

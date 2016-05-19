@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Lighting/lighting_core.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2015 by D. Brian Kimmel
+@copyright: (c) 2013-2016 by D. Brian Kimmel
 @note:      Created on Jun 13, 2013
 @license:   MIT License
 @summary:   A base class for all things lighting
@@ -16,11 +16,11 @@ It is compound since a controller will contain Light entries, controller entries
 """
 
 #  Import system type stuff
-from distutils.version import LooseVersion
+# from distutils.version import LooseVersion
 
 #  Import PyHouse files
 from Modules.Utilities.device_tools import XML as deviceXML
-from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
+from Modules.Utilities.xml_tools import PutGetXML
 from Modules.Computer import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.LightingCore   ')
@@ -56,13 +56,13 @@ class API(object):
         return p_device_obj
 
     @staticmethod
-    def _read_versioned_device(p_pyhouse_obj, p_device_obj, p_entry_xml):
+    def _read_versioned_device(_p_pyhouse_obj, p_device_obj, p_entry_xml):
         return API._read_device_latest(p_device_obj, p_entry_xml)
 
     @staticmethod
     def _read_base(p_pyhouse_obj, p_device_obj, p_entry_xml):
         deviceXML.read_base_device_object_xml(p_pyhouse_obj, p_device_obj, p_entry_xml)
-        return p_device_obj  #  for testing
+        return p_device_obj  # for testing
 
     @staticmethod
     def read_core_lighting_xml(p_pyhouse_obj, p_device_obj, p_entry_xml):
@@ -77,7 +77,6 @@ class API(object):
         API._read_base(p_pyhouse_obj, p_device_obj, p_entry_xml)
         API._read_versioned_device(p_pyhouse_obj, p_device_obj, p_entry_xml)
         return p_device_obj
-
 
     @staticmethod
     def write_core_lighting_xml(p_element_tag, p_device_obj):

@@ -19,6 +19,7 @@ This is because the things we wish to automate all have some controller that spe
 
 #  Import PyHouse files and modules.
 from Modules.Computer import logging_pyh as Logger
+from Modules.Core.data_objects import FamilyData
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.FamilyUtils ')
@@ -38,14 +39,16 @@ class FamUtil(object):
         """
         Given some device object, extract the Family Name
         """
+        l_dev = p_device_obj.DeviceFamily
         try:
-            l_family_obj = p_pyhouse_obj.House.FamilyData[p_device_obj.DeviceFamily]
+            l_family_obj = p_pyhouse_obj.House.FamilyData[l_dev]
         except KeyError as e_err:
-            l_msg = PrettyFormatAny.form(p_pyhouse_obj.House.FamilyData, 'ERROR ')
+            l_msg = PrettyFormatAny.form(p_pyhouse_obj.House, 'Families', 40)
             LOG.error('Could not get family object for:\n\tDevice Name:\t{}\n\tFamily:\t\t{}\n\tKey Error:\t{}{}'
-                    .format(
-                        p_device_obj.Name,
-                        p_device_obj.DeviceFamily, e_err, l_msg))
+                      .format(p_device_obj.Name, l_dev, e_err, l_msg))
+            if l_dev == 'Null':
+                p_pyhouse_obj.House.FamilyData['Null'] = FamilyData()
+                p_pyhouse_obj.House.FamilyData['Null'].Name = 'Null'
             l_family_obj = p_pyhouse_obj.House.FamilyData['Null']
         return l_family_obj
 

@@ -46,12 +46,12 @@ class XML(object):
 
     @staticmethod
     def get_any_field(p_xml, p_name):
-        if p_xml == None:  #  We were passed XML without a tag of p_name
+        if p_xml is None:  # We were passed XML without a tag of p_name
             return None
         l_xml = XML.get_element_field(p_xml, p_name)
-        if l_xml == None:
+        if l_xml is None:
             l_xml = XML.get_attribute_field(p_xml, p_name)
-        if l_xml == None:
+        if l_xml is None:
             if p_xml.tag == p_name:
                 l_xml = p_xml.text
         return l_xml
@@ -62,9 +62,10 @@ class PutGetXML(object):
 
     Try to be safe if a user edits (and screws up) the XML file.
     """
-#-----
+
+# -----
 #  Bool
-#-----
+# -----
     @staticmethod
     def get_bool_from_xml(p_xml, p_name, _default = False):
         """Get a boolean from xml - element or attribute
@@ -75,9 +76,9 @@ class PutGetXML(object):
         @return: A Bool value - True or False
         """
         l_xml = XML.get_any_field(p_xml, p_name)
-        if l_xml == 'True' or l_xml == True:
+        if l_xml == 'True' or l_xml is True:
             return True
-        if l_xml == "False" or l_xml == False:
+        if l_xml == "False" or l_xml is False:
             return False
         else:
             LOG.warning('Invalid bool value found for Field:{}; Value: {}==>False; Element:{}'.format(
@@ -87,20 +88,20 @@ class PutGetXML(object):
     @staticmethod
     def put_bool_attribute(p_xml_element, p_name, p_bool = 'False'):
         l_bool = 'False'
-        if p_bool == True or p_bool == 'True':
+        if p_bool is True or p_bool == 'True':
             l_bool = 'True'
         p_xml_element.set(p_name, l_bool)
 
     @staticmethod
     def put_bool_element(p_parent_xml, p_name, p_bool = 'False'):
         l_bool = 'False'
-        if p_bool == True or p_bool == 'True':
+        if p_bool is True or p_bool == 'True':
             l_bool = 'True'
         ET.SubElement(p_parent_xml, p_name).text = l_bool
 
-#-----
+# -----
 #  float
-#-----
+# -----
     @staticmethod
     def get_float_from_xml(p_xml, p_name, p_default = 0.0):
         l_xml = XML.get_any_field(p_xml, p_name)
@@ -127,13 +128,13 @@ class PutGetXML(object):
             l_var = '0.0'
         ET.SubElement(p_parent_element, p_name).text = l_var
 
-#-----
+# -----
 #  int
-#-----
+# -----
     @staticmethod
     def get_int_from_xml(p_xml, p_name, default = 0):
         l_xml = XML.get_any_field(p_xml, p_name)
-        if l_xml == None:
+        if l_xml is None:
             l_xml = default
         try:
             l_var = int(l_xml)
@@ -150,7 +151,6 @@ class PutGetXML(object):
             l_var = '0'
         p_xml_element.set(p_name, l_var)
 
-
     @staticmethod
     def put_int_element(p_parent_element, p_name, p_int):
         try:
@@ -159,9 +159,9 @@ class PutGetXML(object):
             l_var = '0'
         ET.SubElement(p_parent_element, p_name).text = l_var
 
-#-----
+# -----
 #  text
-#-----
+# -----
     @staticmethod
     def get_text_from_xml(p_xml, p_name, default = None):
         """
@@ -170,7 +170,7 @@ class PutGetXML(object):
         @return: the text contained in the field
         """
         l_xml = XML.get_any_field(p_xml, p_name)
-        if l_xml == None:
+        if l_xml is None:
             l_xml = default
         try:
             l_var = str(l_xml)
@@ -199,16 +199,16 @@ class PutGetXML(object):
             l_var = ''
         ET.SubElement(p_parent_element, p_name).text = l_var
 
-#-----
+# -----
 #  UUID
-#-----
+# -----
     @staticmethod
     def get_uuid_from_xml(p_xml, p_name):
         """
         UUIDs are always an element.
         """
         l_xml = XML.get_any_field(p_xml, p_name)
-        if l_xml == None:
+        if l_xml is None:
             return str(uuid.uuid1())
         if len(l_xml) < 36:
             l_xml = str(uuid.uuid1())
@@ -225,9 +225,9 @@ class PutGetXML(object):
         PutGetXML.put_text_element(p_parent_element, p_name, p_uuid)
 
 
-#-----
+# -----
 #  IP
-#-----
+# -----
     @staticmethod
     def get_ip_from_xml(p_xml, p_name):
         """
@@ -242,9 +242,9 @@ class PutGetXML(object):
     def put_ip_element(p_parent_element, p_name, p_ip):
         pass
 
-#-----
+# -----
 #  DateTime
-#-----
+# -----
     @staticmethod
     def get_date_time_from_xml(p_xml, p_name):
         l_field = XML.get_any_field(p_xml, p_name)
@@ -255,9 +255,9 @@ class PutGetXML(object):
     def put_date_time_element(p_parent_element, p_name, p_date_time):
         pass
 
-#-----
+# -----
 #  Coords
-#-----
+# -----
     @staticmethod
     def get_coords_from_xml(p_xml, p_name):
         def _get_float(p_field):
@@ -304,7 +304,7 @@ class XmlConfigTools(object):
             p_base_obj.Active = PutGetXML.get_bool_from_xml(p_entry_element_xml, 'Active', False)
         except Exception as e_err:
             LOG.error('{}'.format(e_err))
-        if no_uuid == False:
+        if no_uuid is False:
             try:
                 p_base_obj.UUID = PutGetXML.get_uuid_from_xml(p_entry_element_xml, 'UUID')
             except AttributeError:
@@ -337,6 +337,7 @@ class XmlConfigTools(object):
                 PutGetXML.put_uuid_element(l_elem, 'UUID', l_UUID)
         return l_elem
 
+
 def stuff_new_attrs(p_target_obj, p_data_obj):
     """
     Put the NEW information from the data object into the target object.
@@ -350,6 +351,7 @@ def stuff_new_attrs(p_target_obj, p_data_obj):
     for l_attr in l_attrs:
         if not hasattr(p_target_obj, l_attr):
             setattr(p_target_obj, l_attr, getattr(p_data_obj, l_attr))
+
 
 def XXXstuff_new_attr_values(p_target_obj, p_data_obj):
     """

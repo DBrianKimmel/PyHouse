@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Families/Insteon/Insteon_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2011-2015 by D. Brian Kimmel
+@copyright: (c) 2011-2016 by D. Brian Kimmel
 @note:      Created on Apr 3, 2011
 @license:   MIT License
 @summary:   This module is for Insteon
@@ -52,6 +52,7 @@ class Xml(object):
     @staticmethod
     def _read_insteon(p_in_xml):
         l_insteon_obj = InsteonData()
+        l_insteon_obj.ProductKey = Xml._read_product_key(p_in_xml)
         try:
             l_insteon_obj.InsteonAddress = conversions.dotted_hex2int(PutGetXML.get_text_from_xml(p_in_xml, 'InsteonAddress', '99.88.77'))
         except AttributeError:
@@ -60,10 +61,13 @@ class Xml(object):
             l_insteon_obj.DevCat = conversions.dotted_hex2int(PutGetXML.get_text_from_xml(p_in_xml, 'DevCat', 'A1.B2'))
             l_insteon_obj.GroupList = PutGetXML.get_text_from_xml(p_in_xml, 'GroupList')
             l_insteon_obj.GroupNumber = PutGetXML.get_int_from_xml(p_in_xml, 'GroupNumber', 0)
-            l_insteon_obj.ProductKey = Xml._read_product_key(p_in_xml)
+        except Exception as e_err:
+            LOG.error('ERROR: {}'.format(e_err))
+        try:
             l_insteon_obj.Version = PutGetXML.get_int_from_xml(p_in_xml, 'Version', 1)
         except Exception as e_err:
             LOG.error('ERROR: {}'.format(e_err))
+            l_insteon_obj.Version = 2
         return l_insteon_obj
 
     @staticmethod
@@ -79,7 +83,7 @@ class Xml(object):
         """
         l_insteon_obj = Xml._read_insteon(p_in_xml)
         stuff_new_attrs(p_device_obj, l_insteon_obj)
-        return l_insteon_obj  #  For testing only
+        return l_insteon_obj  # For testing only
 
     @staticmethod
     def WriteXml(p_out_xml, p_device):
