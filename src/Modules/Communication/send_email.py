@@ -20,7 +20,7 @@ If you don't have an account - get one or write another module to handle your ma
 import email.mime.application
 import xml.etree.ElementTree as ET
 from twisted.internet.defer import Deferred
-try:
+try: 
     from cStringIO import cStringIO as StringIO
 except ImportError:
     from StringIO import StringIO
