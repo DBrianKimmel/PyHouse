@@ -25,14 +25,16 @@ from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Lighting.test.xml_lights import \
         TESTING_LIGHT_NAME_0, \
-        TESTING_LIGHT_NAME_1
+        TESTING_LIGHT_NAME_1, \
+        TESTING_LIGHT_FAMILY_0, \
+        TESTING_LIGHT_ACTIVE_0, TESTING_LIGHT_KEY_0, TESTING_LIGHT_CUR_LEVEL_0
 from Modules.Families.Insteon.test.xml_insteon import \
         TESTING_INSTEON_PRODUCT_KEY_0, \
         TESTING_INSTEON_ADDRESS_0, \
         TESTING_INSTEON_DEVCAT_0
 from Modules.Core.test.xml_device import \
         TESTING_DEVICE_ROOM_NAME, \
-        TESTING_DEVICE_FAMILY_INSTEON
+        TESTING_DEVICE_FAMILY_INSTEON, TESTING_DEVICE_COMMENT, TESTING_DEVICE_ROOM_COORDS
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
@@ -44,10 +46,15 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_device_obj = LightData()
         self.m_device_obj.Name = TESTING_LIGHT_NAME_0
-        self.m_device_obj.DeviceFamily = TESTING_DEVICE_FAMILY_INSTEON
-        self.m_device_obj.Active = True
+        self.m_device_obj.Key = TESTING_LIGHT_KEY_0
+        self.m_device_obj.Active = TESTING_LIGHT_ACTIVE_0
+        self.m_device_obj.Comment = TESTING_DEVICE_COMMENT
+        self.m_device_obj.CurLevel = TESTING_LIGHT_CUR_LEVEL_0
+        self.m_device_obj.DeviceFamily = TESTING_LIGHT_FAMILY_0
         self.m_device_obj.DeviceType = 1
         self.m_device_obj.DeviceSubType = 234
+        self.m_device_obj.RoomCoords = TESTING_DEVICE_ROOM_COORDS
+        self.m_device_obj.RoomName = TESTING_DEVICE_ROOM_NAME
         self.m_version = '1.4.0'
 
 
@@ -68,6 +75,12 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         self.assertEqual(VALID_FAMILIES[2], 'UPB')
         self.assertEqual(VALID_FAMILIES[3], 'X10')
 
+    def test_02_Device(self):
+        """ Did we get everything set up for the rest of the tests of this class.
+        """
+        print(PrettyFormatAny.form(self.m_device_obj, 'Device'))
+        self.assertEqual(self.m_device_obj.Name, TESTING_LIGHT_NAME_0)
+
 
 class B1_Utils(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by node_local.
@@ -77,11 +90,13 @@ class B1_Utils(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_01_GetDeviceName(self):
-        l_device = FamUtil._get_device_name(self.m_device_obj)
-        # print(PrettyFormatAny.form(l_device, 'Family'))
-        self.assertEqual(l_device, TESTING_LIGHT_NAME_0)
+        """ Do we get back what we put in?
+        """
+        l_name = FamUtil._get_device_name(self.m_device_obj)
+        # print(PrettyFormatAny.form(l_name, 'Family'))
+        self.assertEqual(l_name, TESTING_LIGHT_NAME_0)
 
-    def test_03_GetFamilyObj(self):
+    def test_02_GetFamilyObj(self):
         l_obj = FamUtil._get_family_obj(self.m_pyhouse_obj, self.m_device_obj)
         print(PrettyFormatAny.form(l_obj, 'Family'))
         self.assertEqual(l_obj.Name, TESTING_LIGHT_NAME_0)

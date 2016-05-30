@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/communication/test/test_send_email.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2014 by D. Brian Kimmel
+@copyright: (c) 2013-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 3, 2014
 @summary:   Send some email testing
@@ -38,6 +38,11 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from Modules.Core.data_objects import EmailData
 from Modules.Communication import send_email
+from Modules.Communication.test.xml_communications import \
+        TESTING_EMAIL_FROM_ADDRESS, \
+        TESTING_EMAIL_TO_ADDRESS, \
+        TESTING_GMAIL_LOGIN, \
+        TESTING_GMAIL_PASSWORD
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.debug_tools import PrettyFormatAny
@@ -52,43 +57,45 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-class C01_Setup(SetupMixin, unittest.TestCase):
+class A1_Setup(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_api = send_email.API()
+        self.m_api = send_email.API(self.m_pyhouse_obj)
         self.m_email_obj = EmailData()
 
-    def test_01_FindXml(self):
+    def test_01_Xml(self):
         """ Be sure that the XML contains the right stuff.
         """
         self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
-        self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision', 'XML - No House Division')
-        print(PrettyFormatAny.form(self.m_pyhouse_obj, 'Pyhouse', 120))
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'Pyhouse', 120))
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'Pyhouse', 120))
+        self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
+        self.assertEqual(self.m_xml.communication_sect.tag, 'CommunicationSection')
+        self.assertEqual(self.m_xml.email_sect.tag, 'EmailSection')
+        self.assertEqual(self.m_xml.twitter_sect.tag, 'TwitterSection')
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'Pyhouse', 120))
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Comm, 'Pyhouse', 120))
 
 
 class C02_Read(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_api = send_email.API()
+        self.m_api = send_email.API(self.m_pyhouse_obj)
         self.m_email_obj = EmailData()
 
     def test_01_All(self):
         l_xml = self.m_api.read_xml(self.m_pyhouse_obj)
-        self.assertEqual(l_xml.EmailFromAddress, 'mail.sender@Gmail.Com', 'Bad From Address')
-        self.assertEqual(l_xml.EmailToAddress, 'mail.receiver@Gmail.Com', 'Bad To Address')
-        self.assertEqual(l_xml.GmailLogin, 'TestAccount@Gmail.Com', 'Bad Login')
-        self.assertEqual(l_xml.GmailPassword, 'Test=!=Password', 'Bad Password')
+        self.assertEqual(l_xml.EmailFromAddress, TESTING_EMAIL_FROM_ADDRESS)
+        self.assertEqual(l_xml.EmailToAddress, TESTING_EMAIL_TO_ADDRESS)
+        self.assertEqual(l_xml.GmailLogin, TESTING_GMAIL_LOGIN)
+        self.assertEqual(l_xml.GmailPassword, TESTING_GMAIL_PASSWORD)
 
 
 class C03_Write(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_api = send_email.API()
+        self.m_api = send_email.API(self.m_pyhouse_obj)
         self.m_email_obj = EmailData()
 
     def test_03_All(self):
@@ -100,7 +107,7 @@ class C04_Send(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_api = send_email.API()
+        self.m_api = send_email.API(self.m_pyhouse_obj)
         self.m_email_obj = EmailData()
 
     def test_01_One(self):

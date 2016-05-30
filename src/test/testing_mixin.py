@@ -4,7 +4,7 @@
 @name:      PyHouse/src/test/testing_mixin.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2015 by D. Brian Kimmel
+@copyright: (c) 2013-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 40, 2013
 @summary:   Test handling the information for a house.
@@ -73,6 +73,9 @@ class XmlData(object):
         self.thermostat = None
         #
         self.computer_div = None
+        self.communication_sect = None
+        self.email_sect = None
+        self.twitter_sect = None
         self.internet_sect = None
         self.locater_sect = None
         self.updater_sect = None
@@ -144,6 +147,9 @@ class SetupPyHouseObj(object):
         if p_xml.computer_div == None:
             return
         #
+        p_xml.communication_sect = p_xml.computer_div.find('CommunicationSection')
+        p_xml.email_sect = p_xml.communication_sect.find('EmailSection')
+        p_xml.twitter_sect = p_xml.communication_sect.find('TwitterSection')
         p_xml.node_sect = p_xml.root.find('ComputerDivision').find('NodeSection')
         p_xml.node = p_xml.node_sect.find('Node')
         p_xml.interface_sect = p_xml.node.find('InterfaceSection')

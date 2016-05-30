@@ -37,16 +37,16 @@ class FamUtil(object):
     @staticmethod
     def _get_family_obj(p_pyhouse_obj, p_device_obj):
         """
-        Given some device object, extract the Family Name
+        Given some device object, extract the Family object
         """
-        l_dev = p_device_obj.DeviceFamily
+        l_family_name = p_device_obj.DeviceFamily
         try:
-            l_family_obj = p_pyhouse_obj.House.FamilyData[l_dev]
+            l_family_obj = p_pyhouse_obj.House.FamilyData[l_family_name]
         except KeyError as e_err:
-            l_msg = PrettyFormatAny.form(p_pyhouse_obj.House, 'Families', 40)
+            l_msg = PrettyFormatAny.form(p_pyhouse_obj.House, ' House Information', 40)
             LOG.error('Could not get family object for:\n\tDevice Name:\t{}\n\tFamily:\t\t{}\n\tKey Error:\t{}{}'
-                      .format(p_device_obj.Name, l_dev, e_err, l_msg))
-            if l_dev == 'Null':
+                      .format(p_device_obj.Name, l_family_name, e_err, l_msg))
+            if l_family_name == 'Null':
                 p_pyhouse_obj.House.FamilyData['Null'] = FamilyData()
                 p_pyhouse_obj.House.FamilyData['Null'].Name = 'Null'
             l_family_obj = p_pyhouse_obj.House.FamilyData['Null']

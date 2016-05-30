@@ -122,6 +122,7 @@ class Utility(object):
     @staticmethod
     def _load_component_xml(p_pyhouse_obj):
         # p_pyhouse_obj.APIs.House.EntertainmentAPI = entertainmentAPI(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.House.FamilyAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.HvacAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.IrrigationAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.LightingAPI.LoadXml(p_pyhouse_obj)

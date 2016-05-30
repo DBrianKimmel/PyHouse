@@ -33,9 +33,9 @@ TESTING_LIGHT_TYPE_0 = 'Light'
 
 L_LIGHT_START_0 = '<Light Name="' + TESTING_LIGHT_NAME_0 + '" Key="' + TESTING_LIGHT_KEY_0 + '" Active="' + TESTING_LIGHT_ACTIVE_0 + '">'
 L_LIGHT_DIMMABLE_0 = '    <IsDimmable>' + TESTING_LIGHT_DIMMABLE_0 + '</IsDimmable>'
-L_LIGHT_TYPE_0 = '    <LightingType>' + TESTING_LIGHT_TYPE_0 + '</LightingType>'
-L_LIGHT_LEVEL_0 = "    <CurLevel>" + TESTING_LIGHT_CUR_LEVEL_0 + "</CurLevel>"
 L_LIGHT_FAMILY_0 = "    <DeviceFamily>" + TESTING_LIGHT_FAMILY_0 + "</DeviceFamily>"
+L_LIGHT_LEVEL_0 = "    <CurLevel>" + TESTING_LIGHT_CUR_LEVEL_0 + "</CurLevel>"
+L_LIGHT_TYPE_0 = '    <LightingType>' + TESTING_LIGHT_TYPE_0 + '</LightingType>'
 
 L_LIGHT_0 = '\n'.join([
     L_LIGHT_START_0,

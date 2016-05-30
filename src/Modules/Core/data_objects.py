@@ -48,15 +48,24 @@ class BaseObject(object):
         self.Active = False
 
 
+class CommunicationAPIs(object):
+    """
+    ==> PyHouse.APIs.Computer.Communication as in the def below.
+    """
+    def __init__(self):
+        self.BluetoothAPI = None
+        self.EmailAPI = None
+        self.PhoneAPI = None
+        self.TwitterAPI = None
+
+
 class ComputerAPIs(object):
     """
     ==> PyHouse.APIs.Computer.xxx as in the def below.
     """
     def __init__(self):
         self.ComputerAPI = None
-        #
-        self.CommunicationsAPI = None
-        self.EmailAPI = None
+        self.Communication = None  # CommunicationAPIs()
         self.InternetAPI = None
         self.MqttAPI = None
         self.NodesAPI = None
@@ -80,6 +89,14 @@ class CoordinateData(object):
         self.X_Easting = 0.0
         self.Y_Northing = 0.0
         self.Z_Height = 0.0
+
+
+class CommunicationData(object):
+    """Email information.
+    """
+    def __init__(self):
+        self.Email = None  # EmailData()
+        self.Twitter = None  # TwitterData()
 
 
 class CoreServicesInformation(object):
@@ -284,6 +301,16 @@ class TwistedInformation(object):
         self.Reactor = None  # reactor
 
 
+class TwitterData(object):
+    """Email information.
+    """
+    def __init__(self):
+        self.TwitterConsumerKey = ''
+        self.TwitterConsumerSecret = ''
+        self.TwitterAccessKey = ''
+        self.TwitterAccessSecret = ''
+
+
 class USBControllerData(object):
     """A lighting controller that is plugged into one of the nodes USB ports
     """
@@ -341,8 +368,8 @@ class ComputerInformation(BaseObject):
     """
     def __init__(self):
         super(ComputerInformation, self).__init__()
-        self.Communication = None
-        self.Email = None  # EmailData()
+        self.Comm = None  # CommunicationData()
+        # self.Email = None  # EmailData()
         self.InternetConnection = None  # InternetConnectionData()
         self.Mqtt = None  # MqttInformation()
         self.Nodes = None  # NodeData()
@@ -387,14 +414,14 @@ class HouseInformation(BaseObject):
     def __init__(self):
         super(HouseInformation, self).__init__()
         self.FamilyData = {}  # FamilyData['FamilyName']
-        self.Hvac = None  # HvacData()
-        self.Irrigation = None  # IrrigationData()
+        self.Hvac = {}  # HvacData()
+        self.Irrigation = {}  # IrrigationData()
         self.Lighting = {}  # LightingData()
         self.Location = {}  # LocationData() - one location per house.
         self.Pools = {}  # PoolData()
         self.Rooms = {}  # RoomData()
         self.Rules = {}  # RulesData()
-        self.Schedules = None  # ScheduleBaseData()
+        self.Schedules = {}  # ScheduleBaseData()
 
 
 class JsonHouseData(BaseObject):

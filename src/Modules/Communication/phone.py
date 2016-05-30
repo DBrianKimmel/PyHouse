@@ -1,16 +1,14 @@
 """
--*- test-case-name: PyHouse.src.Modules.communication.test.test_bluetooth -*-
+-*- test-case-name:  PyHouse/src/Modules/Communication/phone.py  -*-
 
-@name:      PyHouse/src/Modules/communication/bluteooth.py
-@author:    D. Brian Kimmel
-@contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2016 by D. Brian Kimmel
-@note:      Created on Nov 18, 2013
-@license:   MIT License
-@summary:   Provides PyHouse bluetooth.
+@name:       PyHouse/src/Modules/Communication/phone.py
+@author:     D. Brian Kimmel
+@contact:    d.briankimmel@gmail.com
+@copyright:  2016-2016 by D. Brian Kimmel
+@date:       Created on May 30, 2016
+@licencse:   MIT License
+@summary:
 
-
-interface a bluetooth usb dongle to connect with cell phones and other devices.
 """
 
 #  Import system type stuff

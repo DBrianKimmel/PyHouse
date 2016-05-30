@@ -32,6 +32,14 @@ class Xml(object):
         return l_interface_obj
 
     @staticmethod
+    def _write_one_interface_xml(p_interface_obj):
+        l_entry = XmlConfigTools.write_base_object_xml('Interface', p_interface_obj)
+        PutGetXML.put_text_element(l_entry, 'MacAddress', p_interface_obj.MacAddress)
+        PutGetXML.put_text_element(l_entry, 'IPv4Address', p_interface_obj.V4Address)
+        PutGetXML.put_text_element(l_entry, 'IPv6Address', p_interface_obj.V6Address)
+        return l_entry
+
+    @staticmethod
     def _read_interfaces_xml(p_interfaces_xml):
         l_count = 0
         l_ret = {}
@@ -79,14 +87,6 @@ class Xml(object):
             LOG.error('ERROR - Node read error - {}'.format(e_err))
         LOG.info('Loaded {} Nodes'.format(l_count))
         return l_ret
-
-    @staticmethod
-    def _write_one_interface_xml(p_interface_obj):
-        l_entry = XmlConfigTools.write_base_object_xml('Interface', p_interface_obj)
-        PutGetXML.put_text_element(l_entry, 'MacAddress', p_interface_obj.MacAddress)
-        PutGetXML.put_text_element(l_entry, 'IPv4Address', p_interface_obj.V4Address)
-        PutGetXML.put_text_element(l_entry, 'IPv6Address', p_interface_obj.V6Address)
-        return l_entry
 
     @staticmethod
     def _write_interfaces_xml(p_interfaces_obj):

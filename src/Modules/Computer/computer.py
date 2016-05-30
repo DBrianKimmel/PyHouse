@@ -35,7 +35,6 @@ import platform
 from Modules.Core.data_objects import ComputerAPIs, ComputerInformation
 from Modules.Computer import logging_pyh as Logger
 from Modules.Communication.communication import API as communicationAPI
-from Modules.Communication.send_email import API as emailAPI
 from Modules.Computer.Internet.internet import API as internetAPI
 from Modules.Computer.Mqtt.mqtt_client import API as mqttAPI
 from Modules.Computer.Nodes.nodes import API as nodesAPI
@@ -108,7 +107,6 @@ class Utility(object):
         p_pyhouse_obj.APIs.Computer.ComputerAPI = p_api
         p_pyhouse_obj.APIs.Computer.MqttAPI = mqttAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.CommunicationsAPI = communicationAPI(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.Computer.EmailAPI = emailAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.InternetAPI = internetAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.NodesAPI = nodesAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.WeatherAPI = weatherAPI(p_pyhouse_obj)
@@ -119,7 +117,6 @@ class Utility(object):
         p_pyhouse_obj.APIs.Computer.NodesAPI.LoadXml(p_pyhouse_obj)  # Nodes are sent in Mqtt open
         p_pyhouse_obj.APIs.Computer.MqttAPI.LoadXml(p_pyhouse_obj)  # Start this first so we can send messages/
         p_pyhouse_obj.APIs.Computer.CommunicationsAPI.LoadXml(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.Computer.EmailAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.InternetAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.WeatherAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.WebAPI.LoadXml(p_pyhouse_obj)
@@ -128,7 +125,6 @@ class Utility(object):
     def _start_component_apis(p_pyhouse_obj):
         p_pyhouse_obj.APIs.Computer.MqttAPI.Start()  # Start this first so we can send messages/
         p_pyhouse_obj.APIs.Computer.CommunicationsAPI.Start()
-        p_pyhouse_obj.APIs.Computer.EmailAPI.Start()
         p_pyhouse_obj.APIs.Computer.InternetAPI.Start()
         p_pyhouse_obj.APIs.Computer.NodesAPI.Start()
         p_pyhouse_obj.APIs.Computer.WeatherAPI.Start()
@@ -137,7 +133,6 @@ class Utility(object):
     @staticmethod
     def _stop_component_apis(p_pyhouse_obj):
         p_pyhouse_obj.APIs.Computer.CommunicationsAPI.Stop()
-        p_pyhouse_obj.APIs.Computer.EmailAPI.Stop()
         p_pyhouse_obj.APIs.Computer.InternetAPI.Stop()
         p_pyhouse_obj.APIs.Computer.MqttAPI.Stop()
         p_pyhouse_obj.APIs.Computer.NodesAPI.Stop()
@@ -147,7 +142,6 @@ class Utility(object):
     @staticmethod
     def _save_component_apis(p_pyhouse_obj, p_xml):
         p_pyhouse_obj.APIs.Computer.CommunicationsAPI.SaveXml(p_xml)
-        p_pyhouse_obj.APIs.Computer.EmailAPI.SaveXml(p_xml)
         p_pyhouse_obj.APIs.Computer.InternetAPI.SaveXml(p_xml)
         p_pyhouse_obj.APIs.Computer.MqttAPI.SaveXml(p_xml)
         p_pyhouse_obj.APIs.Computer.NodesAPI.SaveXml(p_xml)

@@ -154,17 +154,16 @@ class API(object):
         p_pyhouse_obj.House.FamilyData = self.m_family
         LOG.info('Initialized')
 
-    def LoadFamilyTesting(self):
+    def LoadXml(self, p_pyhouse_obj):
+        """ The actual loading of the Families section of PyHouse_Obj os done in the constructor.
         """
-        Load all the families for testing.
-        """
-        return Utility._init_component_apis(self.m_pyhouse_obj)
+        p_pyhouse_obj.House.FamilyData = self.m_family
 
     def Start(self):
         """
         Build p_pyhouse_obj.House.FamilyData
         """
-        self.m_pyhouse_obj.House.FamilyData = self.m_family
+        # self.m_pyhouse_obj.House.FamilyData = self.m_family
         return self.m_family
 
     def SaveXml(self, p_xml):
@@ -173,6 +172,12 @@ class API(object):
         """
         # LOG.info("Saved XML.")
         return p_xml
+
+    def LoadFamilyTesting(self):
+        """
+        Load all the families for testing.
+        """
+        return Utility._init_component_apis(self.m_pyhouse_obj)
 
     def start_lighting_families(self, p_pyhouse_obj):
         """

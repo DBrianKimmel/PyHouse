@@ -10,40 +10,53 @@
 """
 
 
-L_COMMUNICATION_START = '<CommunicationSection>'
-L_COMMUNICATION_END = '</CommunicationSection>'
-
 L_EMAIL_START = '<EmailSection>'
 L_EMAIL_END = '</EmailSection>'
+
+TESTING_EMAIL_FROM_ADDRESS = 'mail.sender@Gmail.Com'
+TESTING_EMAIL_TO_ADDRESS = 'mail.receiver@Gmail.Com'
+TESTING_GMAIL_LOGIN = 'TestAccount@Gmail.Com'
+TESTING_GMAIL_PASSWORD = 'Test=!=Password'
+
+L_EMAIL_FROM_ADDRESS = '<EmailFromAddress>' + TESTING_EMAIL_FROM_ADDRESS + '</EmailFromAddress>'
+L_EMAIL_TO_ADDRESS = '<EmailToAddress>' + TESTING_EMAIL_TO_ADDRESS + '</EmailToAddress>'
+L_GMAIL_LOGIN = '<GmailLogin>' + TESTING_GMAIL_LOGIN + '</GmailLogin>'
+L_GMAIL_PASSWORD = '<GmailPassword>' + TESTING_GMAIL_PASSWORD + '</GmailPassword>'
+
+XML_EMAIL = '\n'.join([
+    L_EMAIL_START,
+    L_EMAIL_FROM_ADDRESS,
+    L_EMAIL_TO_ADDRESS,
+    L_GMAIL_LOGIN,
+    L_GMAIL_PASSWORD,
+    L_EMAIL_END
+])
 
 L_TWITTER_START = '<TwitterSection>'
 L_TWITTER_END = '</TwitterSection>'
 
-XML_EMAIL = """
-    <EmailSection>
-        <EmailFromAddress>mail.sender@Gmail.Com</EmailFromAddress>
-        <EmailToAddress>mail.receiver@Gmail.Com</EmailToAddress>
-        <GmailLogin>TestAccount@Gmail.Com</GmailLogin>
-        <GmailPassword>Test=!=Password</GmailPassword>
-    </EmailSection>
-    <CommunicationSection>
-    </CommunicationSection>
-"""
-
-
 TESTING_CONSUMER_KEY = 'ABCDEFGHIJKLKMNOPQRSTUVWXYZ'
 TESTING_CONSUMER_SECRET = '1234567890ABCDEFGHIJKLKMNOPQRSTUVWXYZ'
-TESTING_ACCESS_TOKEN = 'ZYXWVUTSRQPONMLKJIHFEDCBA'
-TESTING_ACCESS_TOKEN_SECRET = '0987654321ZYXWVUTSRQPONMLKJIHFEDCBA'
+TESTING_ACCESS_KEY = 'ZYXWVUTSRQPONMLKJIHFEDCBA'
+TESTING_ACCESS_SECRET = '0987654321ZYXWVUTSRQPONMLKJIHFEDCBA'
 
 L_CONSUMER_KEY = '    <ConsumerKey>' + TESTING_CONSUMER_KEY + '</ConsumerKey>'
 L_CONSUMER_SECRET = '    <ConsumerSecret>' + TESTING_CONSUMER_SECRET + '</ConsumerSecret>'
+L_ACCESS_KEY = '    <AccessKey>' + TESTING_ACCESS_KEY + '</AccessKey>'
+L_ACCESS_SECRET = '    <AccessSecret>' + TESTING_ACCESS_SECRET + '</AccessSecret>'
 
 
 XML_TWITTER = '\n'.join([
     L_TWITTER_START,
+    L_CONSUMER_KEY,
+    L_CONSUMER_SECRET,
+    L_ACCESS_KEY,
+    L_ACCESS_SECRET,
     L_TWITTER_END
 ])
+
+L_COMMUNICATION_START = '<CommunicationSection>'
+L_COMMUNICATION_END = '</CommunicationSection>'
 
 XML_COMMUNICATION = '\n'.join([
     L_COMMUNICATION_START,

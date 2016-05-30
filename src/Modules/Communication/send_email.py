@@ -20,7 +20,7 @@ If you don't have an account - get one or write another module to handle your ma
 import email.mime.application
 import xml.etree.ElementTree as ET
 from twisted.internet.defer import Deferred
-try: 
+try:
     from cStringIO import cStringIO as StringIO
 except ImportError:
     from StringIO import StringIO
@@ -45,10 +45,13 @@ class ApiXml(PutGetXML):
         l_dict = EmailData()
         try:
             l_xml = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
-            if l_xml == None:
+            if l_xml is None:
+                return l_dict
+            l_xml = l_xml.find('CommunicationSection')
+            if l_xml is None:
                 return l_dict
             l_xml = l_xml.find('EmailSection')
-            if l_xml == None:
+            if l_xml is None:
                 return l_dict
             l_dict.EmailFromAddress = PutGetXML.get_text_from_xml(l_xml, 'EmailFromAddress')
             l_dict.EmailToAddress = PutGetXML.get_text_from_xml(l_xml, 'EmailToAddress')
@@ -97,8 +100,8 @@ class Utility(ApiXml):
         #  Create a context factory which only allows SSLv3 and does not verify the peer's certificate.
         return str(l_msg)
 
-    def send_email_message(self, p_pyhouse_obj, p_smtp_server, p_smtp_port, p_username, p_password,
-                           p_fromaddress, p_toaddress, p_message):
+    def send_email_message(self, _p_pyhouse_obj, _p_smtp_server, _p_smtp_port, _p_username, _p_password,
+                           _p_fromaddress, _p_toaddress, p_message):
         #  l_contextFactory = ClientContextFactory()
         #  l_contextFactory.method = None  # SSLv3_METHOD
         l_deferred = Deferred()
@@ -123,7 +126,7 @@ class API(Utility):
         self.m_pyhouse_obj = p_pyhouse_obj
 
     def LoadXml(self, p_pyhouse_obj):
-        self.m_pyhouse_obj.Computer.Email = self.read_xml(self.m_pyhouse_obj)
+        p_pyhouse_obj.Computer.Email = self.read_xml(p_pyhouse_obj)
         pass
 
     def Start(self):

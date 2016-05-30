@@ -79,8 +79,8 @@ class Utility(object):
                 l_dict[l_count] = l_obj
                 p_pyhouse_obj.Uuid[l_obj.UUID] = UtilUuid.add_uuid(p_pyhouse_obj, 'Thermostat')
                 l_count += 1
-        except AttributeError:
-            LOG.warn('Reading Hvac.Thermostat information - %s', exec_info = True)
+        except AttributeError as e_err:
+            LOG.error('Reading Hvac.Thermostat information - {}'.format(e_err))
         LOG.info("Loaded {} Thermostats".format(l_count))
         return l_dict
 

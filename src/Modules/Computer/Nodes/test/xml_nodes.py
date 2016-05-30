@@ -15,9 +15,12 @@
 
 L_NODE_SECTION_START = '  <NodeSection>'
 L_NODE_SECTION_END = '  </NodeSection>'
+
 L_NODE_INTERFACE_SECTION_START = '  <InterfaceSection>'
 L_NODE_INTERFACE_SECTION_END = '  </InterfaceSection>'
+
 L_NODE_END = '    </Node>'
+
 L_NODE_INTERFACE_END = '    </Interface>'
 
 TESTING_NODES_NODE_NAME_0 = "pi-01"
@@ -137,6 +140,7 @@ L_NODE_UUID_1 = '    <UUID>' + TESTING_NODES_NODE_UUID_1 + '</UUID>'
 L_NODE_CONNECTION_ADDRESS_V4_1 = '    <ConnectionAddressV4>' + TESTING_NODES_CONNECTION_ADDRESS_V4_1 + '</ConnectionAddressV4>'
 L_NODE_CONNECTION_ADDRESS_V6_1 = '    <ConnectionAddressV6>' + TESTING_NODES_CONNECTION_ADDRESS_V6_1 + '</ConnectionAddressV6>'
 L_NODE_ROLE_1 = '    <NodeRoll>' + TESTING_NODES_NODE_ROLL_1 + '</NodeRoll>'
+
 L_NODE_1 = '\n'.join([
     L_NODE_START_1,
     L_NODE_UUID_1,
