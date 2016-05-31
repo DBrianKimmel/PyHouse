@@ -31,6 +31,7 @@ import platform
 from Modules.Core.data_objects import NodeData, NodeInterfaceData
 from Modules.Communication import ir_control
 from Modules.Computer import logging_pyh as Logger
+from Modules.Utilities.uuid_tools import Uuid as toolUuid
 #  from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.NodeLocal      ')
@@ -138,7 +139,7 @@ class Interfaces(object):
         l_interface.Name = p_interface_name
         l_interface.Active = True
         l_interface.Key = 0
-        l_interface.UUID = '123'
+        l_interface.UUID = toolUuid.create_uuid()
         l_interface.NodeInterfaceType = 'Other'
         l_afList = Interfaces._find_addr_lists(p_interface_name)
         for l_afID in l_afList.iterkeys():

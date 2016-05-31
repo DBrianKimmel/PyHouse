@@ -77,7 +77,7 @@ class Utility(object):
                 l_obj = Utility._read_one_thermostat_xml(p_pyhouse_obj, l_xml)
                 l_obj.Key = l_count
                 l_dict[l_count] = l_obj
-                p_pyhouse_obj.Uuid[l_obj.UUID] = UtilUuid.add_uuid(p_pyhouse_obj, 'Thermostat')
+                p_pyhouse_obj.Uuids[l_obj.UUID] = UtilUuid.add_uuid(p_pyhouse_obj, 'Thermostat')
                 l_count += 1
         except AttributeError as e_err:
             LOG.error('Reading Hvac.Thermostat information - {}'.format(e_err))

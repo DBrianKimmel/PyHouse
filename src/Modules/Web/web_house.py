@@ -58,6 +58,7 @@ class HouseElement(athena.LiveElement):
         self.m_pyhouse_obj.House.Name = l_json['Name']
         self.m_pyhouse_obj.House.Key = int(l_json['Key'])
         self.m_pyhouse_obj.House.Active = True
+        self.m_pyhouse_obj.House.UUID
         l_obj = self.m_pyhouse_obj.House.Location
         l_obj.Street = l_json['Location']['Street']
         l_obj.City = l_json['Location']['City']

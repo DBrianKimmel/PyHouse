@@ -123,7 +123,7 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 		p_data.Name = 'Change Me';
 		p_data.Key = 0;
 		p_data.Active = false;
-		p_data.UUID = '';
+		// p_data.UUID = '';  Keep the UUID generated in createBaseEntry
 		p_data.Location.Street = '';
 		p_data.Location.City = '';
 		p_data.Location.State = '';

@@ -54,6 +54,16 @@ class Xml(object):
         return l_ret
 
     @staticmethod
+    def _write_interfaces_xml(p_interfaces_obj):
+        l_xml = ET.Element('InterfaceSection')
+        l_count = 0
+        for l_interface_obj in p_interfaces_obj.itervalues():
+            l_entry = Xml._write_one_interface_xml(l_interface_obj)
+            l_xml.append(l_entry)
+            l_count += 1
+        return l_xml
+
+    @staticmethod
     def _read_one_node_xml(p_node_xml):
         """
         Read the existing XML file (if it exists) and get the node info.
@@ -68,6 +78,15 @@ class Xml(object):
         except AttributeError as e_err:
             LOG.error('ERROR OneNodeRead error {}'.format(e_err))
         return l_node_obj
+
+    @staticmethod
+    def _write_one_node_xml(p_node_obj):
+        l_entry = XmlConfigTools.write_base_object_xml('Node', p_node_obj)
+        PutGetXML.put_text_element(l_entry, 'ConnectionAddressV4', p_node_obj.ConnectionAddr_IPv4)
+        PutGetXML.put_text_element(l_entry, 'ConnectionAddressV6', p_node_obj.ConnectionAddr_IPv6)
+        PutGetXML.put_int_element(l_entry, 'NodeRole', p_node_obj.NodeRole)
+        l_entry.append(Xml._write_interfaces_xml(p_node_obj.NodeInterfaces))
+        return l_entry
 
     @staticmethod
     def read_all_nodes_xml(p_pyhouse_obj):
@@ -87,25 +106,6 @@ class Xml(object):
             LOG.error('ERROR - Node read error - {}'.format(e_err))
         LOG.info('Loaded {} Nodes'.format(l_count))
         return l_ret
-
-    @staticmethod
-    def _write_interfaces_xml(p_interfaces_obj):
-        l_xml = ET.Element('InterfaceSection')
-        l_count = 0
-        for l_interface_obj in p_interfaces_obj.itervalues():
-            l_entry = Xml._write_one_interface_xml(l_interface_obj)
-            l_xml.append(l_entry)
-            l_count += 1
-        return l_xml
-
-    @staticmethod
-    def _write_one_node_xml(p_node_obj):
-        l_entry = XmlConfigTools.write_base_object_xml('Node', p_node_obj)
-        PutGetXML.put_text_element(l_entry, 'ConnectionAddressV4', p_node_obj.ConnectionAddr_IPv4)
-        PutGetXML.put_text_element(l_entry, 'ConnectionAddressV6', p_node_obj.ConnectionAddr_IPv6)
-        PutGetXML.put_int_element(l_entry, 'NodeRole', p_node_obj.NodeRole)
-        l_entry.append(Xml._write_interfaces_xml(p_node_obj.NodeInterfaces))
-        return l_entry
 
     @staticmethod
     def write_nodes_xml(p_nodes_obj):

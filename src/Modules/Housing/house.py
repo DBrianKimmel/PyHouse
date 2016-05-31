@@ -76,7 +76,6 @@ class Xml(object):
         p_pyhouse_obj.House = Xml._read_base(l_xml)
         p_pyhouse_obj.House.Location = locationXML.read_location_xml(p_pyhouse_obj)
         p_pyhouse_obj.House.Rooms = roomsXML.read_rooms_xml(l_xml)
-        #  print(PrettyFormatAny.form(p_pyhouse_obj.House, 'House-75'))
         return p_pyhouse_obj.House
 
     @staticmethod

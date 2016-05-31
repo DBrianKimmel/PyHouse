@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Housing/rooms.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2015 by D. Brian Kimmel
+@copyright: (c) 2013-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 10, 2013
 @summary:   Handle the rooms information for a house.
@@ -35,6 +35,15 @@ class Xml(object):
         return l_room_obj
 
     @staticmethod
+    def write_one_room(p_room_object):
+        l_entry = XmlConfigTools.write_base_object_xml('Room', p_room_object)
+        PutGetXML.put_text_element(l_entry, 'Comment', p_room_object.Comment)
+        PutGetXML.put_text_element(l_entry, 'Corner', p_room_object.Corner)
+        PutGetXML.put_text_element(l_entry, 'Floor', p_room_object.Floor)
+        PutGetXML.put_text_element(l_entry, 'Size', p_room_object.Size)
+        return l_entry
+
+    @staticmethod
     def read_rooms_xml(p_house_xml):
         """
         @param p_house_obj: is
@@ -44,7 +53,7 @@ class Xml(object):
         l_count = 0
         try:
             l_xml = p_house_xml.find('RoomSection')
-            if l_xml == None:
+            if l_xml is None:
                 return l_ret
             for l_room_xml in l_xml.iterfind('Room'):
                 l_room_obj = Xml.read_one_room(l_room_xml)
@@ -55,17 +64,6 @@ class Xml(object):
             LOG.error('ERROR if getting rooms Data - {}'.format(e_err))
         LOG.info('Loaded {} rooms.'.format(l_count))
         return l_ret
-
-
-    @staticmethod
-    def write_one_room(p_room_object):
-        l_entry = XmlConfigTools.write_base_object_xml('Room', p_room_object)
-        PutGetXML.put_text_element(l_entry, 'Comment', p_room_object.Comment)
-        PutGetXML.put_text_element(l_entry, 'Corner', p_room_object.Corner)
-        PutGetXML.put_text_element(l_entry, 'Floor', p_room_object.Floor)
-        PutGetXML.put_text_element(l_entry, 'Size', p_room_object.Size)
-        return l_entry
-
 
     @staticmethod
     def write_rooms_xml(p_rooms_obj):

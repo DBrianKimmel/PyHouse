@@ -12,17 +12,15 @@
 """
 
 #  Import system type stuff
-from Modules.Computer import logging_pyh as Logger
-from Modules.Core.data_objects import CoordinateData
-from Modules.Utilities import convert
-from Modules.Utilities.uuid_tools import Uuid
 from xml.etree import ElementTree as ET
 import dateutil.parser as dparser
 import uuid
 
 #  Import PyMh files
-#  from formless.annotate import String
-
+from Modules.Core.data_objects import CoordinateData
+from Modules.Utilities import convert
+from Modules.Utilities.uuid_tools import Uuid
+from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.XmlTools       ')
 
 
@@ -212,7 +210,7 @@ class PutGetXML(object):
             return str(uuid.uuid1())
         if len(l_xml) < 36:
             l_xml = str(uuid.uuid1())
-            LOG.error("A valid UUID was not found - generating a new one. {}".format(p_xml))
+            LOG.error("A valid UUID was not found - generating a new one. {}".format(l_xml))
         return l_xml
 
     @staticmethod
@@ -303,13 +301,15 @@ class XmlConfigTools(object):
             p_base_obj.Key = PutGetXML.get_int_from_xml(p_entry_element_xml, 'Key', 0)
             p_base_obj.Active = PutGetXML.get_bool_from_xml(p_entry_element_xml, 'Active', False)
         except Exception as e_err:
-            LOG.error('{}'.format(e_err))
+            LOG.error('Base Object - {}'.format(e_err))
         if no_uuid is False:
             try:
                 p_base_obj.UUID = PutGetXML.get_uuid_from_xml(p_entry_element_xml, 'UUID')
             except AttributeError:
                 LOG.error('UUID missing for {}'.format(p_base_obj.Name))
-                p_base_obj.pUUID = Uuid.make_valid('123')
+                p_base_obj.pUUID = Uuid.make_valid('246')
+        else:
+            LOG.warn('Not fetching uuid for {}'.format(p_base_obj.Name))
         return p_base_obj
 
     @staticmethod
@@ -333,7 +333,7 @@ class XmlConfigTools(object):
             except AttributeError:
                 PutGetXML.put_uuid_element(l_elem, 'UUID', 'No UUID Given')
                 LOG.error('UUID missing for {}'.format(p_object.Name))
-                l_UUID = Uuid.make_valid('123')
+                l_UUID = Uuid.make_valid('246')
                 PutGetXML.put_uuid_element(l_elem, 'UUID', l_UUID)
         return l_elem
 

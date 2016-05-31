@@ -34,6 +34,7 @@ class PyHouseData(object):
         self.House = None  # HouseInformation()
         self.Services = None  # CoreServicesInformation()
         self.Twisted = None  # TwistedInformation()
+        self.Uuids = {}  # UuidData()
         self.Xml = None  # XmlInformation()
 
 
@@ -324,7 +325,7 @@ class UuidData(object):
     """
     """
     def __init__(self):
-        self.UuidType = None
+        self.UuidType = None  # Light, Thermostat, Room ...
 
 
 class WeatherData(object):
@@ -374,6 +375,7 @@ class ComputerInformation(BaseObject):
         self.Mqtt = None  # MqttInformation()
         self.Nodes = None  # NodeData()
         self.Primary = False
+        self.UUID = None
         self.Web = None  # WebData()
 
 
@@ -422,6 +424,7 @@ class HouseInformation(BaseObject):
         self.Rooms = {}  # RoomData()
         self.Rules = {}  # RulesData()
         self.Schedules = {}  # ScheduleBaseData()
+        self.UUID = None
 
 
 class JsonHouseData(BaseObject):
@@ -523,6 +526,7 @@ class RoomData(BaseObject):
         self.Floor = '1st'  # Outside | Basement | 1st | 2nd | 3rd | 4th | Attic | Roof
         self.Size = ''
         self.RoomType = 'Room'
+        self.UUID = None
 
 
 class RulesData(BaseObject):
@@ -609,6 +613,7 @@ class ThermostatData(DeviceData):
         self.ThermostatMode = 'Cool'  # Cool | Heat | Auto | EHeat
         self.ThermostatScale = 'F'  # F | C
         self.ThermostatStatus = 'Off'  # On
+        self.UUID = None
 
 
 """
@@ -624,7 +629,7 @@ class ButtonData(CoreLightingData):
     def __init__(self):
         super(ButtonData, self).__init__()
         #  self.LightingType = 'Button'
-        pass
+        self.UUID = None
 
 
 class ControllerData(CoreLightingData):
@@ -636,6 +641,7 @@ class ControllerData(CoreLightingData):
         super(ControllerData, self).__init__()
         self.InterfaceType = ''  # Serial | USB | Ethernet
         self.Port = ''
+        self.UUID = None
         #  The following are not in XML config file
         self._DriverAPI = None  # InterfaceType API() - Serial, USB etc.
         self._HandlerAPI = None  # PLM, PIM, etc (family controller device handler) API() address

@@ -142,7 +142,7 @@ class API(object):
                 l_obj = Utility._read_one_controller_xml(p_pyhouse_obj, l_controller_xml)
                 l_obj.Key = l_count
                 l_dict[l_count] = l_obj
-                p_pyhouse_obj.Uuid[l_obj.UUID] = UtilUuid.add_uuid(p_pyhouse_obj, 'Controller')
+                p_pyhouse_obj.Uuids[l_obj.UUID] = UtilUuid.add_uuid(p_pyhouse_obj, 'Controller')
                 l_count += 1
         except AttributeError as e_error:  # No Controller section
             LOG.warning('No Controllers found - {}'.format(e_error))
