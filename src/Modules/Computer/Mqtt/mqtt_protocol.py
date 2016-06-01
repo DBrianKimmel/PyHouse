@@ -557,7 +557,7 @@ class MQTTClient(MQTTProtocol):
         pass
 
     def subackReceived(self, _grantedQos, _messageId):
-        """ Override """
+        """ Override for Subscribe Ack message """
         self.m_pyhouse_obj.APIs.Computer.MqttAPI.doPyHouseLogin(self, self.m_pyhouse_obj)
 
     def pingrespReceived(self):

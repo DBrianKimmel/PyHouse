@@ -64,9 +64,11 @@ See those modules to find out what each does.
 
 #  Import system type stuff
 import errno
+import fcntl
 import os
 import platform
 import signal
+import sys
 #  from twisted.application.service import Application
 from twisted.internet import reactor
 
@@ -83,6 +85,36 @@ __version__ = '.'.join(map(str, __version_info__))
 #  Import PyMh files and modules.
 g_API = None
 LOG = Logger.getLogger('PyHouse                ')
+LOCK_PATH = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), "lock")
+
+
+class Singleton:
+
+    def __init__(self):
+        self.fh = None
+        self.is_running = False
+        self.do_magic()
+
+    def do_magic(self):
+        try:
+            self.fh = open(LOCK_PATH, 'w')
+            fcntl.lockf(self.fh, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except EnvironmentError as e_err:
+            if self.fh is not None:
+                self.is_running = True
+            else:
+                raise
+
+    def clean_up(self):
+        # this is not really needed
+        try:
+            if self.fh is not None:
+                fcntl.lockf(self.fh, fcntl.LOCK_UN)
+                self.fh.close()  # ???
+                os.unlink(LOCK_PATH)
+        except Exception as e_err:
+            LOG.exception(e_err)
+            raise  # for debugging porpuses, do not raise it on production
 
 
 def daemonize():
@@ -243,6 +275,12 @@ class API(object):
 
 
 if __name__ == "__main__":
-    API()
+    si = Singleton()
+    try:
+        if si.is_running:
+            sys.exit("This app is already running!")
+        API()
+    finally:
+        si.clean_up()
 
 #  ## END DBK
