@@ -65,14 +65,14 @@ class Actions(object):
             p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
         return p_logmsg
 
-    def _decode_hvac(self, p_logmsg, p_topic, p_message):
+    def _decode_hvac(self, p_logmsg, _p_topic, p_message):
         p_logmsg += '\tThermostat:\n'
         p_logmsg += '\tName: {}'.format(self.m_name)
         p_logmsg += '\tRoom: {}\n'.format(self.m_room_name)
         p_logmsg += '\tTemp: {}'.format(self._get_field(p_message, 'CurrentTemperature'))
         return p_logmsg
 
-    def _decode_lighting(self, p_logmsg, p_topic, p_message):
+    def _decode_lighting(self, p_logmsg, _p_topic, p_message):
         p_logmsg += '\tLighting:\n'
         p_logmsg += '\tName: {}\n'.format(self.m_name)
         p_logmsg += '\tRoom: {}\n'.format(self.m_room_name)
@@ -90,7 +90,7 @@ class Actions(object):
             p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Schedule msg', 160))
         return p_logmsg
 
-    def _decode_weather(self, p_logmsg, p_topic, p_message):
+    def _decode_weather(self, p_logmsg, _p_topic, p_message):
         p_logmsg += '\tWeather:\n'
         l_temp = float(self._get_field(p_message, 'Temperature'))
         p_logmsg += '\tName: {}\n'.format(self._get_field(p_message, 'Location'))

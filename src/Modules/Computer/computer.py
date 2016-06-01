@@ -71,6 +71,7 @@ class Xml(object):
         p_pyhouse_obj.Computer.Key = 0
         p_pyhouse_obj.Computer.Active = True
         p_pyhouse_obj.Computer.UUID = Uuid.create_uuid()
+        LOG.warn('Created a new UUID for computer!')
 
     @staticmethod
     def read_computer_xml(p_pyhouse_obj):

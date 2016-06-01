@@ -7,7 +7,7 @@
 @note:      Created on Apr 29, 2014
 @summary:   This module is for testing local node data.
 
-Passed all 9 tests - DBK - 2015-09-13
+Passed all 13 tests - DBK - 2016-06-01
 
 """
 
@@ -22,6 +22,9 @@ from Modules.Computer.Nodes.node_local import Interfaces
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.debug_tools import PrettyFormatAny
+
+
+AF_INET = 2
 
 
 class SetupMixin(object):
@@ -68,31 +71,35 @@ class A2_Netiface(SetupMixin, unittest.TestCase):
 
     def test_01_Families(self):
         l_fam = Interfaces._list_families()
-        print(PrettyFormatAny.form(l_fam, 'A2-01 - Families', 170))
-        pass
+        # print(PrettyFormatAny.form(l_fam, 'A2-01 - Families', 170))
+        self.assertEqual(l_fam[2], 'AF_INET')
+        self.assertEqual(l_fam[10], 'AF_INET6')
 
     def test_02_Gateways(self):
         l_gate = Interfaces._list_gateways()
-        #  print(PrettyFormatAny.form(l_gate, 'A2-02 - Gateways', 170))
-        pass
+        # print(PrettyFormatAny.form(l_gate, 'A2-02 - Gateways', 170))
+        l_v4 = l_gate[2]
+        self.assertEqual(l_v4[0][0], '192.168.1.1')
 
     def test_03_Interfaces(self):
         l_int = Interfaces._list_interfaces()
-        #  print(PrettyFormatAny.form(l_int, 'A2-03 - Interfaces', 170))
-        pass
+        # print(PrettyFormatAny.form(l_int, 'A2-03 - Interfaces', 170))
+        self.assertEqual(l_int[0], 'lo')
 
     def test_04_Interfaces(self):
         l_int = Interfaces._list_interfaces()
+        # print(PrettyFormatAny.form(l_int, 'A2-04 A Interfaces', 170))
         for l_name in l_int:
             l_ifa = Interfaces._list_ifaddresses(l_name)
-            print(PrettyFormatAny.form(l_ifa, 'A2-04 Interface Addresses', 170))
-        l_all = Interfaces._get_all_interfaces()
-        print(PrettyFormatAny.form(l_int, 'A2-04 Interfaces', 170))
+            # print(PrettyFormatAny.form(l_ifa, 'A2-04 B Interface Addresses', 170))
+            self.assertEqual(len(l_ifa), 3)
+        l_all, _l_v4, _l_v6 = Interfaces._get_all_interfaces()
         for l_ix in l_all:
-            print('{} {}'.format(l_ix, PrettyFormatAny.form(l_all[l_ix], 'Interface', 170)))
-        print(PrettyFormatAny.form(l_all, 'A2-04 Interfaces', 170))
-        #  print(PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse'))
-        #  self.assertNotEqual(self.m_pyhouse_obj.Xml, None)
+            # print('{} {}'.format(l_ix, PrettyFormatAny.form(l_all[l_ix], 'Interface', 170)))
+            pass
+        # print(PrettyFormatAny.form(l_all, 'A2-04 D Interfaces', 170))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse'))
+        # self.assertNotEqual(self.m_pyhouse_obj.Xml, None)
 
 
 class B1_Iface(SetupMixin, unittest.TestCase):
@@ -109,9 +116,8 @@ class B1_Iface(SetupMixin, unittest.TestCase):
         I don't know how to test the returned list for validity.
         Uncomment the print to see what your computer returned.
         """
-        print('B1-01')
         l_names = Interfaces.find_all_interface_names()
-        print(PrettyFormatAny.form(l_names, 'B1-01 Names'))
+        # print(PrettyFormatAny.form(l_names, 'B1-01 Names'))
         self.assertGreater(len(l_names), 1)
 
     def test_02_AddrFamilyName(self):
@@ -121,15 +127,14 @@ class B1_Iface(SetupMixin, unittest.TestCase):
             IPv6 (AF_INET6)
             MAC  (AF_LINK)
         """
-        l_ret = Interfaces._find_addr_family_name(17)
-        print(PrettyFormatAny.form(l_ret, 'B1-02 Address Lists'))
-        self.assertEqual(l_ret, 'AF_PACKET')
-
+        # l_ret = Interfaces._find_addr_family_name(17)
+        # print(PrettyFormatAny.form(l_ret, 'B1-02 A  Address Lists'))
+        # self.assertEqual(l_ret, 'AF_PACKET')
         l_ret = Interfaces._find_addr_family_name(2)
-        print(PrettyFormatAny.form(l_ret, 'B1-02 Address Lists'))
+        # print(PrettyFormatAny.form(l_ret, 'B1-02 B Address Lists'))
         self.assertEqual(l_ret, 'AF_INET')
-        l_ret = Interfaces._find_addr_family_name(23)
-        print(PrettyFormatAny.form(l_ret, 'B1-02 Address Lists'))
+        l_ret = Interfaces._find_addr_family_name(10)
+        # print(PrettyFormatAny.form(l_ret, 'B1-02 C Address Lists'))
         self.assertEqual(l_ret, 'AF_INET6')
 
     def test_03_AddrLists(self):
@@ -139,19 +144,20 @@ class B1_Iface(SetupMixin, unittest.TestCase):
         """
         l_names = Interfaces.find_all_interface_names()
         #  On my laptop: returns 7 interfaces.
-        print(PrettyFormatAny.form(l_names, 'Address Lists'))
+        # print(PrettyFormatAny.form(l_names, 'Address Lists'))
         l_ret = Interfaces._find_addr_lists(l_names[0])
-        print(PrettyFormatAny.form(l_ret, 'Address Lists'))
+        # print(PrettyFormatAny.form(l_ret, 'Address Lists'))
 
     def test_04_OneInterfaces(self):
         l_names = Interfaces.find_all_interface_names()
         l_node = Interfaces._get_one_interface(l_names[1])
-        print(PrettyFormatAny.form(l_node, 'Node Interfaces'))
+        # print(PrettyFormatAny.form(l_node, 'Node Interfaces'))
 
     def test_05_AllInterfaces(self):
         l_node = NodeData()
-        l_node.NodeInterfaces = Interfaces._get_all_interfaces()
-        print(PrettyFormatAny.form(l_node.NodeInterfaces, 'Node Interfaces'))
+        l_if, _l_v4, _l_v6 = Interfaces._get_all_interfaces()
+        l_node.NodeInterfaces = l_if
+        # print(PrettyFormatAny.form(l_node.NodeInterfaces, 'Node Interfaces'))
 
 
 class C07_Api(SetupMixin, unittest.TestCase):

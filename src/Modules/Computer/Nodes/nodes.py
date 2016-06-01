@@ -23,7 +23,6 @@ from Modules.Computer.Nodes.node_local import API as localAPI
 from Modules.Computer.Nodes.node_sync import API as syncAPI
 from Modules.Computer.Nodes.nodes_xml import Xml as nodesXml
 from Modules.Computer import logging_pyh as Logger
-
 LOG = Logger.getLogger('PyHouse.Nodes          ')
 
 

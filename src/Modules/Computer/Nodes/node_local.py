@@ -147,10 +147,12 @@ class Interfaces(object):
             if l_afName == 'AF_PACKET':
                 l_interface.MacAddress = l_afList[l_afID]
             if l_afName == 'AF_INET':
-                l_interface.V4Address = Interfaces._get_address_list_INET(l_afList[l_afID])
+                l_v4 = Interfaces._get_address_list_INET(l_afList[l_afID])
+                l_interface.V4Address = l_v4
             if l_afName == 'AF_INET6':
-                l_interface.V6Address = Interfaces._get_address_list_INET6(l_afList[l_afID])
-        return l_interface
+                l_v6 = Interfaces._get_address_list_INET6(l_afList[l_afID])
+                l_interface.V6Address = l_v6
+        return l_interface, l_v4, l_v6
 
     @staticmethod
     def _get_all_interfaces():
@@ -159,14 +161,18 @@ class Interfaces(object):
         """
         l_count = 0
         l_dict = {}
+        l_ipv4 = []
+        l_ipv6 = []
         for l_interface_name in Interfaces.find_all_interface_names():
             #  print('\n160 All Interfaces: {}'.format(l_interface_name))
-            l_iface = Interfaces._get_one_interface(l_interface_name)
+            l_iface, l_v4, l_v6 = Interfaces._get_one_interface(l_interface_name)
+            l_ipv4.append(l_v4)
+            l_ipv6.append(l_v6)
             l_iface.Key = l_count
             l_dict[l_count] = l_iface
             l_count += 1
         LOG.info('Added {} Interfaces to local node'.format(l_count))
-        return l_dict
+        return l_dict, l_ipv4, l_ipv6
 
     @staticmethod
     def _list_families():
@@ -334,7 +340,10 @@ class Util(object):
     @staticmethod
     def create_local_node(p_pyhouse_obj):
         l_node = Util._get_node_info(p_pyhouse_obj)
-        l_node.NodeInterfaces = Interfaces._get_all_interfaces()
+        l_interf, l_v4, l_v6 = Interfaces._get_all_interfaces()
+        l_node.NodeInterfaces = l_interf
+        l_node.ConnectionAddr_IPv4 = l_v4
+        l_node.ConnectionAddr_IPv6 = l_v6
         l_node.NodeRole = Util.find_node_role()
         p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("computer/local", l_node)
         return l_node
@@ -353,7 +362,6 @@ class API(Util):
         pass
 
     def Start(self):
-        #  self.m_pyhouse_obj.Computer.Nodes = self.LoadXml(self.m_pyhouse_obj)
         l_uuid = self.m_pyhouse_obj.Computer.UUID
         l_local = Util.create_local_node(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Computer.Nodes[l_uuid] = l_local
