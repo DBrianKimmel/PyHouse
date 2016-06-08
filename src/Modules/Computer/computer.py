@@ -87,7 +87,9 @@ class Xml(object):
             p_pyhouse_obj.Computer = l_obj
         else:
             l_obj = XmlConfigTools.read_base_object_xml(p_pyhouse_obj.Computer, l_xml)
-        return l_obj  # For debugging/testing
+            l_msg = 'Resuming Computers UUID is {}'.format(l_obj.UUID)
+            LOG.warn(l_msg)
+        return l_obj
 
     @staticmethod
     def write_computer_xml(p_pyhouse_obj):
@@ -172,7 +174,8 @@ class API(Utility):
         """
         """
         LOG.info('Loading XML')
-        Xml.read_computer_xml(p_pyhouse_obj)
+        l_comp = Xml.read_computer_xml(p_pyhouse_obj)
+        p_pyhouse_obj.Computer.UUID = l_comp.UUID
         Utility._load_component_xml(p_pyhouse_obj)
         LOG.info('XML Loaded')
 

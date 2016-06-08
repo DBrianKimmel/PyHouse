@@ -120,6 +120,7 @@ class Xml(object):
     def write_nodes_xml(p_pyhouse_obj):
         l_xml = ET.Element('NodeSection')
         l_nodes = p_pyhouse_obj.Computer.Nodes
+        LOG.warn('About to write {} nodes'.format(len(l_nodes)))
         l_count = 0
         for l_node_obj in l_nodes.itervalues():
             try:

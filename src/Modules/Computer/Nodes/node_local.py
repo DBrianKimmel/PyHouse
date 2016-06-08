@@ -32,6 +32,7 @@ from Modules.Core.data_objects import NodeData, NodeInterfaceData
 from Modules.Communication import ir_control
 from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities.uuid_tools import Uuid as toolUuid
+from Modules.Utilities.debug_tools import PrettyFormatAny
 #  from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.NodeLocal      ')
@@ -366,7 +367,8 @@ class API(Util):
         l_uuid = self.m_pyhouse_obj.Computer.UUID
         l_local = Util.create_local_node(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Computer.Nodes[l_uuid] = l_local
-        LOG.info('Starting   {}'.format(l_uuid))
+        l_msg = PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Nodes, 'Nodes w/ local added')
+        LOG.info('Starting   {}\n{}'.format(l_uuid, l_msg))
         self.init_node_type(self.m_pyhouse_obj)
 
     def SaveXml(self, p_xml):

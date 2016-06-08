@@ -14,5 +14,6 @@ minimal
 src/Android
 src/Certificates
 src/PyHouse.egg-info
+src/lock
 
 ### END DBK
