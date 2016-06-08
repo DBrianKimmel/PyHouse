@@ -144,6 +144,8 @@ class Interfaces(object):
         l_interface.NodeInterfaceType = 'Other'
         l_afList = Interfaces._find_addr_lists(p_interface_name)
         for l_afID in l_afList.iterkeys():
+            l_v4 = []
+            l_v6 = []
             l_afName = Interfaces._find_addr_family_name(l_afID)
             if l_afName == 'AF_PACKET':
                 l_interface.MacAddress = l_afList[l_afID]
