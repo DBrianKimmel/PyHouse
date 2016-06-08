@@ -44,9 +44,11 @@ class Actions(object):
 
     def _decode_computer(self, p_logmsg, p_topic, p_message):
         p_logmsg += '\tComputer:\n'
+        #  computer/ip
         if p_topic[1] == 'ip':
             l_ip = self._get_field(p_message, 'ExternalIPv4Address')
             p_logmsg += '\tIPv4: {}'.format(l_ip)
+        #  computer/startup
         elif p_topic[1] == 'startup':
             self._extract_node(p_message)
             p_logmsg += '\tStartup {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
@@ -54,13 +56,14 @@ class Actions(object):
                 p_logmsg += '\tMy own startup of PyHouse\n'
             else:
                 p_logmsg += '\tAnother computer started up: {}'.format(self.m_sender)
-            pass
+        #  computer/shutdown
         elif p_topic[1] == 'shutdown':
             del self.m_pyhouse_obj.Computer.Nodes[self.m_name]
             p_logmsg += '\tSelf Shutdown {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
+        #  computer/node/???
         elif p_topic[1] == 'node':
             p_logmsg += syncAPI(self.m_pyhouse_obj).DecodeMqttMessage(p_topic, p_message)
-            pass
+        #  computer/***
         else:
             p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
         return p_logmsg
@@ -98,7 +101,7 @@ class Actions(object):
         p_logmsg += '\tWeather info {}'.format(PrettyFormatAny.form(p_message, 'Weather msg', 160))
         return p_logmsg
 
-    def dispatch(self, p_topic, p_message):
+    def mqtt_dispatch(self, p_topic, p_message):
         """
         """
         self.m_sender = self._get_field(p_message, 'Sender')

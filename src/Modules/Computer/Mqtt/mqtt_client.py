@@ -197,7 +197,7 @@ class API(Util):
         """
         l_topic = p_topic.split('/')[2:]  # Drop the pyhouse/housename/ as that is all we subscribed to.
         l_message = json_tools.decode_json_unicode(p_message)
-        l_logmsg = Actions(self.m_pyhouse_obj).dispatch(l_topic, l_message)
+        l_logmsg = Actions(self.m_pyhouse_obj).mqtt_dispatch(l_topic, l_message)
         LOG.info(l_logmsg)
 
     def doPyHouseLogin(self, p_client, p_pyhouse_obj):

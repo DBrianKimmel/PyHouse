@@ -321,27 +321,28 @@ class Util(object):
         l_ir.Start(p_pyhouse_obj)
 
     def insert_node(self, p_node, p_pyhouse_obj):
-        return
-        """The local node should always be node 0 - Do I want to force it ???
+        # return
         """
-        l_max_key = -1
-        try:
-            for l_node in p_pyhouse_obj.Computer.Nodes.itervalues():
-                if l_node.Name == p_node.Name:
-                    p_pyhouse_obj.Computer.Nodes[l_node.Key] = p_node
-                    return
-                if l_node.Key > l_max_key:
-                    l_max_key = l_node.Key
-        except AttributeError:
-            pass
-        p_pyhouse_obj.Computer.Nodes[l_max_key + 1] = p_node
+        """
+        # l_max_key = -1
+        # try:
+        #    for l_node in p_pyhouse_obj.Computer.Nodes.itervalues():
+        #        # if l_node.Name == p_node.Name:
+        #            p_pyhouse_obj.Computer.Nodes[p_node.Key] = p_node
+        #            LOG.info('Added node {}'.format(p_node.Name))
+        #        #    return
+        #        # if l_node.Key > l_max_key:
+        #        #    l_max_key = l_node.Key
+        # except AttributeError:
+        #    pass
+        p_pyhouse_obj.Computer.Nodes[p_node.UUID] = p_node
         LOG.info('Nodes = {}'.format(p_pyhouse_obj.Compute.Nodes))
 
     @staticmethod
     def create_local_node(p_pyhouse_obj):
         l_node = Util._get_node_info(p_pyhouse_obj)
-        l_interf, l_v4, l_v6 = Interfaces._get_all_interfaces()
-        l_node.NodeInterfaces = l_interf
+        l_interface, l_v4, l_v6 = Interfaces._get_all_interfaces()
+        l_node.NodeInterfaces = l_interface
         l_node.ConnectionAddr_IPv4 = l_v4
         l_node.ConnectionAddr_IPv6 = l_v6
         l_node.NodeRole = Util.find_node_role()
@@ -365,7 +366,7 @@ class API(Util):
         l_uuid = self.m_pyhouse_obj.Computer.UUID
         l_local = Util.create_local_node(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Computer.Nodes[l_uuid] = l_local
-        LOG.info('Starting')
+        LOG.info('Starting   {}'.format(l_uuid))
         self.init_node_type(self.m_pyhouse_obj)
 
     def SaveXml(self, p_xml):

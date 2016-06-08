@@ -7,6 +7,9 @@
 @note:      Created on Dec 15, 2014
 @Summary:
 
+PyHouse_obj.Computer.Nodes is a dict of nodes.
+
+
 """
 
 #  Import system type stuff
@@ -16,6 +19,7 @@ import xml.etree.ElementTree as ET
 from Modules.Core.data_objects import NodeData, NodeInterfaceData
 from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
 from Modules.Computer import logging_pyh as Logger
+# from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.Nodes_xml      ')
 
@@ -29,6 +33,7 @@ class Xml(object):
         l_interface_obj.MacAddress = PutGetXML.get_text_from_xml(p_interface_element, 'MacAddress')
         l_interface_obj.V4Address = PutGetXML.get_text_from_xml(p_interface_element, 'IPv4Address')
         l_interface_obj.V6Address = PutGetXML.get_text_from_xml(p_interface_element, 'IPv6Address')
+        l_interface_obj.NodeInterfaceType = PutGetXML.get_text_from_xml(p_interface_element, 'InterfaceType')
         return l_interface_obj
 
     @staticmethod
@@ -73,6 +78,8 @@ class Xml(object):
         l_node_obj.ConnectionAddr_IPv4 = PutGetXML.get_text_from_xml(p_node_xml, 'ConnectionAddressV4')
         l_node_obj.ConnectionAddr_IPv6 = PutGetXML.get_text_from_xml(p_node_xml, 'ConnectionAddressV6')
         l_node_obj.NodeRole = PutGetXML.get_int_from_xml(p_node_xml, 'NodeRole')
+        # print(PrettyFormatAny.form(l_node_obj, 'Node xxx'))
+        # print(PrettyFormatAny.form(p_node_xml, 'Node yyy'))
         try:
             l_node_obj.NodeInterfaces = Xml._read_interfaces_xml(p_node_xml.find('InterfaceSection'))
         except AttributeError as e_err:
@@ -94,6 +101,7 @@ class Xml(object):
         l_ret = {}
         l_comp = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
         if l_comp is None:
+            LOG.warn('No ComputerDivision')
             return l_ret
         try:
             l_xml = l_comp.find('NodeSection')
@@ -101,6 +109,7 @@ class Xml(object):
                 l_node = Xml._read_one_node_xml(l_node_xml)
                 l_ret[l_node.Name] = l_node
                 l_count += 1
+                LOG.info('Loaded Node {}'.format(l_node.Name))
         except AttributeError as e_err:
             l_ret[0] = NodeData()  # Create an empty Nodes[<name>]
             LOG.error('ERROR - Node read error - {}'.format(e_err))
@@ -108,18 +117,17 @@ class Xml(object):
         return l_ret
 
     @staticmethod
-    def write_nodes_xml(p_nodes_obj):
+    def write_nodes_xml(p_pyhouse_obj):
         l_xml = ET.Element('NodeSection')
+        l_nodes = p_pyhouse_obj.Computer.Nodes
         l_count = 0
-        try:
-            for l_node_obj in p_nodes_obj.itervalues():
-                #  print(PrettyFormatAny.form(l_node_obj, 'Node'))
-                l_node_obj.Key = l_count
+        for l_node_obj in l_nodes.itervalues():
+            try:
                 l_entry = Xml._write_one_node_xml(l_node_obj)
                 l_xml.append(l_entry)
                 l_count += 1
-        except AttributeError as e_err:
-            LOG.error('Error {}'.format(e_err))
-        return l_xml
+            except AttributeError as e_err:
+                LOG.error('Error {}'.format(e_err))
+        return l_xml, l_count
 
 #  ## END DBK

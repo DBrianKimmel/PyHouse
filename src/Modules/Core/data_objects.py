@@ -369,14 +369,13 @@ class ComputerInformation(BaseObject):
     """
     def __init__(self):
         super(ComputerInformation, self).__init__()
-        self.Comm = None  # CommunicationData()
-        # self.Email = None  # EmailData()
-        self.InternetConnection = None  # InternetConnectionData()
-        self.Mqtt = None  # MqttInformation()
-        self.Nodes = None  # NodeData()
+        self.Comm = {}  # CommunicationData()
+        self.InternetConnection = {}  # InternetConnectionData()
+        self.Mqtt = {}  # MqttInformation()
+        self.Nodes = {}  # NodeData()
         self.Primary = False
         self.UUID = None
-        self.Web = None  # WebData()
+        self.Web = {}  # WebData()
 
 
 class DeviceData(BaseObject):
@@ -499,7 +498,7 @@ class NodeInterfaceData(BaseObject):
     """
     def __init__(self):
         super(NodeInterfaceData, self).__init__()
-        self.NodeInterfaceType = None  # Ethernet | Wireless | Loop | Tunnel | Other
+        self.NodeInterfaceType = None  # Ethernet | Wireless | Loopback | Tunnel | Other
         self.MacAddress = ''
         self.V4Address = []
         self.V6Address = []

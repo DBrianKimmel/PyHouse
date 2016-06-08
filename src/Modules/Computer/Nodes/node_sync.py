@@ -47,7 +47,33 @@ class Util(object):
         l_topic = "computer/node/iam"
         l_uuid = p_pyhouse_obj.Computer.UUID
         l_node = p_pyhouse_obj.Computer.Nodes[l_uuid]
-        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_node)  # /lighting/{}/info
+        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_node)  # /computer/node/iam
+
+    @staticmethod
+    def add_node(p_pyhouse_obj, p_message_obj):
+        """ Add node (or update if alreeady present).
+        @param p_message_obj: is a decoded json message containing node information
+        """
+        l_nodes = p_pyhouse_obj.Computer.Nodes
+        l_uuid = p_message_obj['UUID']
+        if l_uuid in l_nodes:
+            LOG.info('Node already present {} '.format(p_message_obj['Name']))
+        else:
+            LOG.info('Node not present - Adding.')
+            l_obj = NodeData()
+            l_obj.Name = p_message_obj['Name']
+            l_obj.Key = l_uuid
+            l_obj.Active = p_message_obj['Active']
+            l_obj.Comment = p_message_obj['Comment']
+            l_obj.ConnectionAddr_IPv4 = p_message_obj['ConnectionAddr_IPv4']
+            l_obj.ConnectionAddr_IPv6 = p_message_obj['ConnectionAddr_IPv6']
+            l_obj.ControllerCount = p_message_obj['ControllerCount']
+            l_obj.ControllerTypes = p_message_obj['ControllerTypes']
+            l_obj.NodeId = p_message_obj['NodeId']
+            l_obj.NodeRole = p_message_obj['NodeRole']
+            l_obj.UUID = l_uuid
+            p_pyhouse_obj.Computer.Nodes[l_uuid] = l_obj
+        LOG.info('Contains {} Nodes'.format(len(p_pyhouse_obj.Computer.Nodes)))
 
 
 class API(object):
@@ -80,6 +106,7 @@ class API(object):
         elif p_topic[2] == 'iam':
             l_msg += '\tName {}  i am'.format(p_message['Name'])
             l_msg += '\t {}\n'.format(PrettyFormatAny.form(p_message, 'I Am Message', 160))
+            Util.add_node(self.m_pyhouse_obj, p_message)
         else:
             l_msg += '*** Unknown Message type {}'.format(p_topic)
         return l_msg

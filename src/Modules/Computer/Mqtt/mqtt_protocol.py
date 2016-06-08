@@ -123,11 +123,11 @@ class MQTTProtocol(Protocol):
         f_willFlag = packet[0] & 0x04 == 0x04
         f_cleanStart = packet[0] & 0x02 == 0x02
         packet = packet[1:]
-        keepalive = EncodeDecode._decodeValue(packet[:2])  #  Extract the keepalive period
+        keepalive = EncodeDecode._decodeValue(packet[:2])  # Extract the keepalive period
         packet = packet[2:]
-        clientID = EncodeDecode._decodeString(packet)  #  Extract the client id
+        clientID = EncodeDecode._decodeString(packet)  # Extract the client id
         packet = packet[len(clientID) + 2:]
-        #  Extract the will topic and message, if applicable
+        # Extract the will topic and message, if applicable
         l_willTopic = None
         l_willMessage = None
         if f_willFlag:
@@ -140,11 +140,11 @@ class MQTTProtocol(Protocol):
             l_willMessage = EncodeDecode._decodeString(packet)
             packet = packet[len(l_willMessage) + 2:]
         l_username = None
-        if f_username:  #  Extract user name if one is present.
+        if f_username:  # Extract user name if one is present.
             l_username = EncodeDecode._decodeString(packet)
             packet = packet[len(l_username) + 2:]
         l_password = None
-        if f_password:  #  Extract password if one is present.
+        if f_password:  # Extract password if one is present.
             l_password = EncodeDecode._decodeString(packet)
             packet = packet[len(l_password) + 2:]
         LOG.info('Mqtt Connected.')
@@ -224,7 +224,6 @@ class MQTTProtocol(Protocol):
         LOG.info('Mqtt UnSubscribe: {}'.format(topics))
         self.unsubscribeReceived(topics, messageId)
 
-
     def _event_unsuback(self, packet, _qos, _dup, _retain):
         messageId = EncodeDecode._decodeValue(packet[:2])
         self.unsubackReceived(messageId)
@@ -254,7 +253,7 @@ class MQTTProtocol(Protocol):
         pass
 
     def publishReceived(self, _topic, _message, _qos = 0, _dup = False, _retain = False, _messageId = None):
-        raise NotImplementedError, "Subclasses must implement this."
+        raise NotImplementedError  # Subclasses must implement this.
         pass
 
     def pubackReceived(self, messageId):
@@ -316,8 +315,8 @@ class MQTTProtocol(Protocol):
             #  Clean start, no will message
             varHeader.append(varLogin << 6 | 0 << 2 | cleanStart << 1)
         else:
-            varHeader.append(varLogin << 6 | willRetain << 5 | willQoS << 3
-                             | 1 << 2 | cleanStart << 1)
+            varHeader.append(varLogin << 6 | willRetain << 5 | willQoS << 3 |
+                             1 << 2 | cleanStart << 1)
         varHeader.extend(EncodeDecode._encodeValue(keepalive / 1000))
         payload.extend(EncodeDecode._encodeString(p_clientID))
         if willMessage is not None and willTopic is not None:
@@ -542,6 +541,9 @@ class MQTTClient(MQTTProtocol):
         self.m_state = MQTT_FACTORY_START
 
     def mqttConnected(self):
+        """ Now that er have a net connection to the broker, Subscribe.
+        """
+        LOG.info("Subscribing to MQTT Feed")
         l_topic = self.m_pyhouse_obj.Computer.Mqtt.Prefix + '#'
         if self.m_state == MQTT_FACTORY_CONNECTING:
             self.subscribe(l_topic)

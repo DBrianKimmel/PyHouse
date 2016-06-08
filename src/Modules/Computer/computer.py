@@ -54,7 +54,7 @@ class UuidFile(object):
 
     def read_uuid_file(self):
         try:
-            l_file = open(FILE_PATH, mode = 'r')
+            _l_file = open(FILE_PATH, mode = 'r')
         except IOError as e_err:
             LOG.error(" -- Error in open_config_file {}".format(e_err))
         pass
@@ -67,11 +67,13 @@ class Xml(object):
 
     @staticmethod
     def create_computer(p_pyhouse_obj):
-        p_pyhouse_obj.Computer.Name = platform.node()
-        p_pyhouse_obj.Computer.Key = 0
-        p_pyhouse_obj.Computer.Active = True
-        p_pyhouse_obj.Computer.UUID = Uuid.create_uuid()
+        l_xml = ComputerInformation()
+        l_xml.Name = platform.node()
+        l_xml.Key = 0
+        l_xml.Active = True
+        l_xml.UUID = Uuid.create_uuid()
         LOG.warn('Created a new UUID for computer!')
+        return l_xml
 
     @staticmethod
     def read_computer_xml(p_pyhouse_obj):
@@ -81,16 +83,17 @@ class Xml(object):
         """
         l_xml = p_pyhouse_obj.Xml.XmlRoot.find(DIVISION)
         if l_xml is None:
-            Xml.create_computer(p_pyhouse_obj)
+            l_obj = Xml.create_computer(p_pyhouse_obj)
+            p_pyhouse_obj.Computer = l_obj
         else:
-            XmlConfigTools.read_base_object_xml(p_pyhouse_obj.Computer, l_xml)
-        return l_xml  # For debugging/testing
+            l_obj = XmlConfigTools.read_base_object_xml(p_pyhouse_obj.Computer, l_xml)
+        return l_obj  # For debugging/testing
 
     @staticmethod
     def write_computer_xml(p_pyhouse_obj):
-        p_pyhouse_obj.Computer.Name = platform.node()
-        p_pyhouse_obj.Computer.Key = 0
-        p_pyhouse_obj.Computer.Active = True
+        # p_pyhouse_obj.Computer.Name = platform.node()
+        # p_pyhouse_obj.Computer.Key = 0
+        # p_pyhouse_obj.Computer.Active = True
         l_xml = XmlConfigTools.write_base_object_xml(DIVISION, p_pyhouse_obj.Computer)
         return l_xml
 

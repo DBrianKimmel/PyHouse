@@ -2,26 +2,31 @@
 @name:      PyHouse/src/Modules/Computer/test/test_computer.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 25, 2014
 @Summary:
 
-Passed all 3 tests - DBK - 2015-09-12
+Passed all 7 tests - DBK - 2016-06-07
 
 """
 
 # Import system type stuff
+import platform
 from twisted.trial import unittest
 import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
 from Modules.Computer.computer import API as computerAPI, Xml as computerXML
+
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
+from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Computer.test.xml_computer import TESTING_COMPUTER_NAME_0
 
 DIVISION = 'ComputerDivision'
 MQTT_SECTION = 'MqttSection'
+
 
 class SetupMixin(object):
     """
@@ -33,7 +38,7 @@ class SetupMixin(object):
         self.m_api = computerAPI(self.m_pyhouse_obj)
 
 
-class C01_Setup(SetupMixin, unittest.TestCase):
+class A1_Setup(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
@@ -42,26 +47,60 @@ class C01_Setup(SetupMixin, unittest.TestCase):
         """ Be sure that the XML contains the right stuff.
         Test some scattered things so we don't end up with hundreds of asserts.
         """
+        # print(PrettyFormatAny.form(self.m_xml, 'Xml'))
         self.assertEqual(self.m_xml.root.tag, 'PyHouse')
         self.assertEqual(self.m_xml.computer_div.tag, DIVISION)
         self.assertEqual(self.m_xml.mqtt_sect.tag, MQTT_SECTION)
 
+    def test_02_Computer(self):
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'PyHouse'))
+        self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
 
-class C2_Read(SetupMixin, unittest.TestCase):
+
+class B1_XML(SetupMixin, unittest.TestCase):
+    """ Be sure that the XXML was created
+    """
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_01_Xml(self):
+    def test_01_FindXML(self):
+        """ Be sure that the XML contains the right stuff.
+        Test some scattered things so we don't end up with hundreds of asserts.
+        """
+        # print(PrettyFormatAny.form(self.m_xml, 'Xml'))
+        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.computer_div.tag, DIVISION)
+        self.assertEqual(self.m_xml.mqtt_sect.tag, MQTT_SECTION)
+
+    def test_02_Computer(self):
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'PyHouse'))
+        self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
+
+
+class C1_Read(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_01_Create(self):
+        """
+        """
+        l_xml = computerXML.create_computer(self.m_pyhouse_obj)
+        print(PrettyFormatAny.form(l_xml, 'Computer Xml'))
+        self.assertEqual(l_xml.Name, platform.node())
+        self.assertEqual(l_xml.Key, 0)
+        self.assertEqual(l_xml.Active, True)
+
+    def test_02_Xml(self):
         """ Read the config - it is minimal.
         """
-        l_xml = computerXML.read_computer_xml(self.m_pyhouse_obj)
-        self.assertEqual(l_xml.tag, DIVISION)
-        l_mqtt = l_xml.find(MQTT_SECTION)
-        self.assertNotEqual(l_mqtt, None)
+        l_obj = computerXML.read_computer_xml(self.m_pyhouse_obj)
+        print(PrettyFormatAny.form(l_obj, 'Computer Xml'))
+        self.assertEqual(l_obj.Name, TESTING_COMPUTER_NAME_0)
 
 
-class C3_Write(SetupMixin, unittest.TestCase):
+class C2_Write(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
@@ -69,8 +108,9 @@ class C3_Write(SetupMixin, unittest.TestCase):
     def test_01_Xml(self):
         """ Be sure that the XML contains the right stuff.
         """
-        l_xml = computerXML.read_computer_xml(self.m_pyhouse_obj)
-        l_mqtt = l_xml.find(MQTT_SECTION)
-        self.assertNotEqual(l_mqtt, None)
+        _l_obj = computerXML.read_computer_xml(self.m_pyhouse_obj)
+        l_xml = computerXML.write_computer_xml(self.m_pyhouse_obj)
+        print(PrettyFormatAny.form(l_xml, 'Computer Xml'))
+        self.assertEqual(l_xml.attrib['Name'], TESTING_COMPUTER_NAME_0)
 
 # # ## END DBK

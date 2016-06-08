@@ -32,6 +32,7 @@ class API(object):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_local = localAPI(p_pyhouse_obj)
         self.m_sync = syncAPI(p_pyhouse_obj)
+        LOG.info('Initialized')
 
     def LoadXml(self, p_pyhouse_obj):
         """ Load the Mqtt xml info.
@@ -46,9 +47,9 @@ class API(object):
         #  self.m_discovery.Start()
 
     def SaveXml(self, p_xml):
-        l_xml = nodesXml.write_nodes_xml(self.m_pyhouse_obj.Computer.Nodes)
+        l_xml, l_count = nodesXml.write_nodes_xml(self.m_pyhouse_obj)
         p_xml.append(l_xml)
-        LOG.info("Saved XML.")
+        LOG.info("Saved XML for {} nodes.".format(l_count))
         return l_xml  # For testing
 
     def Stop(self):
