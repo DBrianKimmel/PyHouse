@@ -19,6 +19,7 @@ import xml.etree.ElementTree as ET
 from Modules.Core.data_objects import NodeData, NodeInterfaceData
 from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
 from Modules.Computer import logging_pyh as Logger
+from Modules.Utilities.debug_tools import PrettyFormatAny
 # from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.Nodes_xml      ')
@@ -78,6 +79,7 @@ class Xml(object):
         l_node_obj.ConnectionAddr_IPv4 = PutGetXML.get_text_from_xml(p_node_xml, 'ConnectionAddressV4')
         l_node_obj.ConnectionAddr_IPv6 = PutGetXML.get_text_from_xml(p_node_xml, 'ConnectionAddressV6')
         l_node_obj.NodeRole = PutGetXML.get_int_from_xml(p_node_xml, 'NodeRole')
+        l_node_obj.LastUpdate = PutGetXML.get_date_time_from_xml(p_node_xml, 'LastUpdate')
         # print(PrettyFormatAny.form(l_node_obj, 'Node xxx'))
         # print(PrettyFormatAny.form(p_node_xml, 'Node yyy'))
         try:
@@ -92,6 +94,7 @@ class Xml(object):
         PutGetXML.put_text_element(l_entry, 'ConnectionAddressV4', p_node_obj.ConnectionAddr_IPv4)
         PutGetXML.put_text_element(l_entry, 'ConnectionAddressV6', p_node_obj.ConnectionAddr_IPv6)
         PutGetXML.put_int_element(l_entry, 'NodeRole', p_node_obj.NodeRole)
+        PutGetXML.put_date_time_element(l_entry, 'LastUpdate', p_node_obj.LastUpdate)
         l_entry.append(Xml._write_interfaces_xml(p_node_obj.NodeInterfaces))
         return l_entry
 
@@ -120,7 +123,8 @@ class Xml(object):
     def write_nodes_xml(p_pyhouse_obj):
         l_xml = ET.Element('NodeSection')
         l_nodes = p_pyhouse_obj.Computer.Nodes
-        LOG.warn('About to write {} nodes'.format(len(l_nodes)))
+        l_msg = PrettyFormatAny.form(l_nodes, 'Nodes')
+        LOG.warn('About to write {} nodes  {}'.format(len(l_nodes), l_msg))
         l_count = 0
         for l_node_obj in l_nodes.itervalues():
             try:

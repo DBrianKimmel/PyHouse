@@ -210,6 +210,6 @@ class API(Util):
         except (KeyError, TypeError):
             l_node = NodeData()
         l_node.NodeInterfaces = {}
-        self.MqttPublish('computer/startup', l_node)
+        # self.MqttPublish('computer/startup', l_node)
 
 # ## END DBK

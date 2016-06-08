@@ -484,6 +484,7 @@ class NodeData(BaseObject):
         self.ConnectionAddr_IPv6 = None
         self.ControllerTypes = []  # A list of controller types attached to this node
         self.ControllerCount = 0  # Number of USB controllers attached
+        self.LastUpdate = None
         self.NodeId = None
         self.NodeRole = None
         self.NodeInterfaces = {}  # NodeInterfaceData()
