@@ -2,7 +2,7 @@
 @name:      PyHouse/src/test/xml_data.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2010-2015 by D. Brian Kimmel
+@copyright: (c) 2010-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jan 20, 2010
 @summary:   Handle all of the information for all houses.
@@ -53,7 +53,6 @@ XML_LONG = '\n'.join([
     HOUSE_DIVISION_XML,
     L_PYHOUSE_END
 ])
-
 
 
 XSD_HEADER = """

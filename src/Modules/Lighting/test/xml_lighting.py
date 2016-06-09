@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Lighting/test/xml_lighting.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 17, 2014
 @Summary:
@@ -21,12 +21,15 @@ from Modules.Lighting.test.xml_lights import XML_LIGHT_SECTION
 from Modules.Lighting.test.xml_controllers import XML_CONTROLLER_SECTION
 
 
+L_LIGHTING_SECTION_START = '<LightingSection>'
+L_LIGHTING_SECTION_END = '</LightingSection>'
+
 XML_LIGHTING = '\n'.join([
-    '<LightingSection>',
+    L_LIGHTING_SECTION_START,
     XML_BUTTON_SECTION,
-    XML_LIGHT_SECTION,
     XML_CONTROLLER_SECTION,
-    '</LightingSection>'
+    XML_LIGHT_SECTION,
+    L_LIGHTING_SECTION_END
 ])
 
 # ## END DBK

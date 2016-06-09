@@ -121,7 +121,7 @@ class API(object):
                 l_obj = Utility._read_one_light_xml(p_pyhouse_obj, l_xml)
                 l_obj.Key = l_count  # Renumber
                 l_dict[l_count] = l_obj
-                p_pyhouse_obj.Uuid[l_obj.UUID] = UtilUuid.add_uuid(p_pyhouse_obj, 'Light')
+                p_pyhouse_obj.Uuids[l_obj.UUID] = UtilUuid.add_uuid(p_pyhouse_obj, 'Light')
                 l_count += 1
         except AttributeError as e_err:  # No Lights section
             LOG.warning('Lighting_Lights - No Lights defined - {}'.format(e_err))

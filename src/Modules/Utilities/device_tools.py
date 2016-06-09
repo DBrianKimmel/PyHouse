@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Utilities/device_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2015 by D. Brian Kimmel
+@copyright: (c) 2015-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 26, 2015
 @Summary:   Routines to load and save basic Device Data
@@ -45,7 +45,7 @@ class XML(object):
             p_obj.UUID = PutGetXML.get_uuid_from_xml(p_xml, 'UUID')
         except Exception as e_err:
             LOG.error('ERROR in xml_tools.read_base_obj_xml() - {}'.format(e_err))
-            print(e_err)
+            print('Error 111', e_err)
         return p_obj
 
     @staticmethod

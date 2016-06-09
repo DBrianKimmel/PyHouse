@@ -2,12 +2,12 @@
 @name:      PyHouse/src/test/test_testing_mixin.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Oct 6, 2014
 @Summary:
 
-Passed all 11 tests - DBK - 2015-08-01
+Passed all 15 tests - DBK - 2016-06-09
 
 """
 
@@ -123,7 +123,7 @@ class C1_Build(SetupMixin, unittest.TestCase):
 
     def test_04_Root(self):
         l_root = ET.fromstring(XML_LONG)
-        print(PrettyFormatAny.form(l_root))
+        print(PrettyFormatAny.form(l_root, 'Root'))
 
     def test_05_XML(self):
         l_root = ET.fromstring(XML_LONG)

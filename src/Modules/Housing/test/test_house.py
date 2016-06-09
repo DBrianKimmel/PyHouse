@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/housing/test/test_house.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2015 by D. Brian Kimmel
+@copyright: (c) 2013-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 8, 2013
 @summary:   Test handling the information for a house.
@@ -17,7 +17,7 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Housing.house import API as houseAPI, Xml as houseXml
-from Modules.Utilities import xml_tools, json_tools
+from Modules.Utilities import json_tools
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.debug_tools import PrettyFormatAny

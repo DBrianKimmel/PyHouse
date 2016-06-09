@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/lights/test/test_lighting_core.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on May 4, 2014
 @summary:   This module is for testing lighting Core.
@@ -34,6 +34,7 @@ from Modules.Core.test.xml_device import TESTING_DEVICE_COMMENT, \
 from Modules.Lighting.lighting_core import API as LightingCoreAPI
 from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG
+from Modules.Utilities.debug_tools import PrettyFormatAny
 #  from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
@@ -66,29 +67,38 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     def test_02_FindXml(self):
         """ Be sure that the XML contains the right stuff.
         """
+        # print(PrettyFormatAny.form(self.m_xml, 'Tags'))
         self.assertEqual(self.m_xml.root.tag, 'PyHouse')
         self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision')
         self.assertEqual(self.m_xml.lighting_sect.tag, 'LightingSection')
         self.assertEqual(self.m_xml.light_sect.tag, 'LightSection')
-        self.assertEqual(self.m_xml.light.tag, 'Light', 'XML - No Light')
+        self.assertEqual(self.m_xml.light.tag, 'Light')
         self.assertEqual(self.m_xml.controller_sect.tag, 'ControllerSection')
         self.assertEqual(self.m_xml.controller.tag, 'Controller')
         self.assertEqual(self.m_xml.button_sect.tag, 'ButtonSection')
         self.assertEqual(self.m_xml.button.tag, 'Button')
 
-    def test_03_LightXML(self):
+
+class A2_Xml(SetupMixin, unittest.TestCase):
+    """ This section tests the SetupMixin Class
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_01_LightXML(self):
         """ Be sure that the XML contains the right stuff.
         """
         l_xml = self.m_xml.light
         self.assertEqual(l_xml.attrib['Name'], 'Insteon Light')
 
-    def test_04_Api(self):
+    def test_02_Api(self):
         pass
 
-    def test_05_CtlBtnLgt(self):
+    def test_03_CtlBtnLgt(self):
         pass
 
-    def test_06_Family(self):
+    def test_04_Family(self):
         pass
 
 
@@ -103,6 +113,7 @@ class B1_Parts_1_4(SetupMixin, unittest.TestCase):
         """ Read in the xml file and fill in the lights
         """
         l_base = self.m_api._read_base(self.m_pyhouse_obj, self.m_light_obj, self.m_xml.light)
+        print(PrettyFormatAny.form(l_base, 'Base'))
         self.assertEqual(l_base.Name, 'Insteon Light')
         self.assertEqual(l_base.Key, 0)
         self.assertEqual(l_base.Active, True)
@@ -210,7 +221,7 @@ class D1_Write(SetupMixin, unittest.TestCase):
         """
         l_base = self.m_api.read_core_lighting_xml(self.m_pyhouse_obj, self.m_light_obj, self.m_xml.light)
         l_xml = self.m_api.write_core_lighting_xml('Light', l_base)
-        #  print(PrettyFormatAny.form(l_xml, 'Lighting Core'))
+        # print(PrettyFormatAny.form(l_xml, 'Lighting Core'))
         self.assertEqual(l_xml.attrib['Name'], 'Insteon Light')
         self.assertEqual(l_xml.attrib['Key'], '0')
         self.assertEqual(l_xml.attrib['Active'], 'True')

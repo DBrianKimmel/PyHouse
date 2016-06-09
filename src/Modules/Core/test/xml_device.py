@@ -14,7 +14,6 @@ See PyHouse/src/test/xml_data.py for the entire hierarchy.
 # Import system type stuff
 
 # Import PyMh files
-# from Modules.Core.test.xml_device import xxx
 
 
 TESTING_DEVICE_COMMENT = 'Test Comment Device 1234'
@@ -58,11 +57,6 @@ XML_DEVICE_UPB = '\n'.join([
     L_ROOM_COORD,
     L_ROOM_NAME,
     L_UUID
-    ])
-
-XML_DEVICE_INSTEON_1_3 = '\n'.join([
-    '    <!-- xml device 1.3 -->',
-    '<Coords>[1, 3]</Coords>'
     ])
 
 # ## END DBK

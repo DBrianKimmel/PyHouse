@@ -31,6 +31,7 @@ from Modules.Core.data_objects import \
             XmlInformation
 from Modules.Families.family import Utility as familyUtil, API as familyAPI
 from Modules.Housing.house import API as housingAPI
+# from Modules.Housing.house import Xml as housingXML
 from Modules.Computer import logging_pyh as Logger
 #
 #  Different logging setup to cause testing logs to come out in red on the console.
@@ -144,7 +145,7 @@ class SetupPyHouseObj(object):
 
     def _computer_xml(self, p_xml):
         p_xml.computer_div = p_xml.root.find('ComputerDivision')
-        if p_xml.computer_div == None:
+        if p_xml.computer_div is None:
             return
         #
         p_xml.communication_sect = p_xml.computer_div.find('CommunicationSection')
@@ -167,7 +168,7 @@ class SetupPyHouseObj(object):
 
     def _house_xml(self, p_xml):
         p_xml.house_div = p_xml.root.find('HouseDivision')
-        if p_xml.house_div == None:
+        if p_xml.house_div is None:
             return
         #
         p_xml.irrigation_sect = p_xml.house_div.find('IrrigationSection')

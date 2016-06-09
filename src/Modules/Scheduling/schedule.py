@@ -64,7 +64,7 @@ INITIAL_DELAY = 5  # Must be from 5 to 30 seconds.
 PAUSE_DELAY = 5
 
 
-twisted.internet.base.DelayedCall.debug = True
+# twisted.internet.base.DelayedCall.debug = True
 
 
 class RiseSet(object):
