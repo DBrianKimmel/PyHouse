@@ -59,11 +59,12 @@ class Utility(object):
         from Modules.Families.Insteon import Insteon_PLM
         l_plmAPI = Insteon_PLM.API()
         l_name = p_pyhouse_obj.Computer.Name
+        l_uuid = p_pyhouse_obj.Computer.UUID
         p_controller_obj._HandlerAPI = l_plmAPI
         if l_plmAPI.Start(p_pyhouse_obj, p_controller_obj):
             LOG.info('Successfully started Insteon controller {}'.format(p_controller_obj.Name))
-            p_pyhouse_obj.Computer.Nodes[l_name].ControllerCount += 1
-            p_pyhouse_obj.Computer.Nodes[l_name].ControllerTypes.append('Insteon')
+            p_pyhouse_obj.Computer.Nodes[l_uuid].ControllerCount += 1
+            p_pyhouse_obj.Computer.Nodes[l_uuid].ControllerTypes.append('Insteon')
             return l_plmAPI
         else:
             LOG.error('Controller {} failed to start.'.format(p_controller_obj.Name))
