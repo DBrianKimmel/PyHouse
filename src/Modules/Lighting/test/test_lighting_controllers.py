@@ -141,7 +141,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.ProductKey, conversions.dotted_hex2int(TESTING_INSTEON_PRODUCT_KEY_0))
         self.assertEqual(l_obj.GroupList, TESTING_INSTEON_GROUP_LIST_0)
         self.assertEqual(l_obj.GroupNumber, int(TESTING_INSTEON_GROUP_NUM_0))
-        self.assertEqual(l_obj.Version, int(TESTING_INSTEON_VERSION))
+        self.assertEqual(l_obj.EngineVersion, int(TESTING_INSTEON_VERSION))
 
     def test_06_OneController(self):
         """ Read in the xml file and fill in the lights

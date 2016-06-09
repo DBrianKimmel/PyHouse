@@ -59,7 +59,7 @@ function buildInsteonPart(self, p_obj, p_html) {
 	p_html += buildLcarTextWidget(self, 'GroupNumber', 'Group Number', p_obj.GroupNumber);
 	p_html += buildLcarTextWidget(self, 'GroupList', 'Group List', p_obj.GroupList);
 	p_html += buildLcarTextWidget(self, 'ProductKey', 'Product Key', int2hex(p_obj.ProductKey, 3));
-	p_html += buildLcarTextWidget(self, 'Version', 'Version', p_obj.Version);
+	p_html += buildLcarTextWidget(self, 'Version', 'Version', p_obj.EngineVersion);
 	return p_html;
 }
 function fetchInsteonEntry(self, p_data) {
@@ -70,7 +70,7 @@ function fetchInsteonEntry(self, p_data) {
 	    p_data.GroupNumber = fetchTextWidget(self, 'GroupNumber');
 	    p_data.GroupList = fetchTextWidget(self, 'GroupList');
 	    p_data.ProductKey = hex2int(fetchTextWidget(self, 'ProductKey'), 3);
-	    p_data.Version = fetchTextWidget(self, 'Version');
+	    p_data.EngineVersion = fetchTextWidget(self, 'Version');
 	}
 	catch(err) {
 		p_data.InsteonAddress = hex2int('01.01.01', 3);
@@ -78,7 +78,7 @@ function fetchInsteonEntry(self, p_data) {
 		p_data.ProductKey = hex2int('01.01.01', 3);
 		p_data.GroupNumber = 0;
 		p_data.GroupList = '';
-		p_data.Version = 2;
+		p_data.EngineVersion = 2;
 	}
 	return p_data;
 }
@@ -88,7 +88,7 @@ function createInsteonEntry(self, p_data) {
 	p_data.GroupNumber = 0;
 	p_data.GroupList = '';
 	p_data.ProductKey = 0;
-	p_data.Version = 2;
+	p_data.EngineVersion = 2;
 	return p_data;
 }
 
