@@ -64,7 +64,7 @@ class Xml(object):
         except Exception as e_err:
             LOG.error('ERROR: {}'.format(e_err))
         try:
-            l_insteon_obj.EngineVersion = PutGetXML.get_int_from_xml(p_in_xml, 'Version', 1)
+            l_insteon_obj.EngineVersion = PutGetXML.get_int_from_xml(p_in_xml, 'EngineVersion', 1)
         except Exception as e_err:
             LOG.error('ERROR: {}'.format(e_err))
             l_insteon_obj.EngineVersion = 2
@@ -95,7 +95,7 @@ class Xml(object):
         PutGetXML.put_text_element(p_out_xml, 'GroupList', p_device.GroupList)
         PutGetXML.put_int_element(p_out_xml, 'GroupNumber', p_device.GroupNumber)
         PutGetXML.put_text_element(p_out_xml, 'ProductKey', conversions.int2dotted_hex(p_device.ProductKey, 3))
-        PutGetXML.put_int_element(p_out_xml, 'Version', p_device.EngineVersion)
+        PutGetXML.put_int_element(p_out_xml, 'EngineVersion', p_device.EngineVersion)
         return p_out_xml
 
 #  ## END DBK

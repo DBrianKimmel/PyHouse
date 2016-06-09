@@ -27,7 +27,6 @@ L_INSTEON_ENGINE_VERSION_0 = '    <EngineVersion>' + TESTING_INSTEON_ENGINE_VERS
 L_INSTEON_GROUP_NUM_0 = '    <GroupNumber>' + TESTING_INSTEON_GROUP_NUM_0 + '</GroupNumber>'
 L_INSTEON_GROUP_LIST_0 = '    <GroupList>' + TESTING_INSTEON_GROUP_LIST_0 + '</GroupList>'
 L_INSTEON_PRODUCT_KEY_0 = '    <ProductKey>' + TESTING_INSTEON_PRODUCT_KEY_0 + '</ProductKey>'
-# L_INSTEON_VERSION = '    <Version>' + TESTING_INSTEON_VERSION + '</Version>'
 
 XML_INSTEON = '\n'.join([
     L_INSTEON_ADDRESS_0,
@@ -36,7 +35,6 @@ XML_INSTEON = '\n'.join([
     L_INSTEON_GROUP_NUM_0,
     L_INSTEON_GROUP_LIST_0,
     L_INSTEON_PRODUCT_KEY_0,
-    # L_INSTEON_VERSION
     ])
 
 
