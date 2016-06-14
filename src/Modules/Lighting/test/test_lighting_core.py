@@ -35,6 +35,8 @@ from Modules.Lighting.lighting_core import API as LightingCoreAPI
 from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG
 from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Lighting.test.xml_lights import TESTING_LIGHT_NAME_0, TESTING_LIGHT_KEY_0, TESTING_LIGHT_ACTIVE_0, \
+    TESTING_LIGHT_UUID_0
 #  from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
@@ -102,7 +104,7 @@ class A2_Xml(SetupMixin, unittest.TestCase):
         pass
 
 
-class B1_Parts_1_4(SetupMixin, unittest.TestCase):
+class B1_Parts(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML.
     """
 
@@ -114,13 +116,28 @@ class B1_Parts_1_4(SetupMixin, unittest.TestCase):
         """
         l_base = self.m_api._read_base(self.m_pyhouse_obj, self.m_light_obj, self.m_xml.light)
         print(PrettyFormatAny.form(l_base, 'Base'))
-        self.assertEqual(l_base.Name, 'Insteon Light')
-        self.assertEqual(l_base.Key, 0)
-        self.assertEqual(l_base.Active, True)
+        self.assertEqual(l_base.Name, TESTING_LIGHT_NAME_0)
+        self.assertEqual(l_base.Key, int(TESTING_LIGHT_KEY_0))
+        self.assertEqual(l_base.Active, bool(TESTING_LIGHT_ACTIVE_0))
+        self.assertEqual(l_base.UUID, TESTING_LIGHT_UUID_0)
+
+    def test_02_Device(self):
+        l_device = self.m_api._read_base(self.m_pyhouse_obj, self.m_light_obj, self.m_xml.light)
+        l_device = self.m_api._read_device_latest(l_device, self.m_xml.light)
+        print(PrettyFormatAny.form(l_device, 'Base'))
+        self.assertEqual(l_device.Comment, TESTING_DEVICE_COMMENT)
+        self.assertEqual(l_device.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
+        self.assertEqual(l_device.DeviceType, int(TESTING_DEVICE_TYPE))
+        self.assertEqual(l_device.DeviceSubType, int(TESTING_DEVICE_SUBTYPE))
+        self.assertEqual(l_device.RoomName, TESTING_DEVICE_ROOM_NAME)
+        self.assertEqual(l_device.RoomCoords.X_Easting, float(TESTING_DEVICE_ROOM_X))
+        self.assertEqual(l_device.RoomCoords.Y_Northing, float(TESTING_DEVICE_ROOM_Y))
+        self.assertEqual(l_device.RoomCoords.Z_Height, float(TESTING_DEVICE_ROOM_Z))
 
     def test_03_Device(self):
         l_device = self.m_api._read_base(self.m_pyhouse_obj, self.m_light_obj, self.m_xml.light)
-        l_device = self.m_api._read_versioned_device(self.m_pyhouse_obj, l_device, self.m_xml.light)
+        l_device = self.m_api._read_device_latest(l_device, self.m_xml.light)
+        print(PrettyFormatAny.form(l_device, 'Base'))
         self.assertEqual(l_device.Comment, TESTING_DEVICE_COMMENT)
         self.assertEqual(l_device.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_device.DeviceType, int(TESTING_DEVICE_TYPE))
@@ -148,7 +165,7 @@ class B2_Parts_1_3(SetupMixin, unittest.TestCase):
 
     def test_02_Device_1_3(self):
         l_device = self.m_api._read_base(self.m_pyhouse_obj, self.m_light_obj, self.m_xml.light)
-        l_device = self.m_api._read_versioned_device(self.m_pyhouse_obj, l_device, self.m_xml.light)
+        l_device = self.m_api._read_device_latest(l_device, self.m_xml.light)
         self.assertEqual(l_device.RoomName, TESTING_DEVICE_ROOM_NAME)
 
 

@@ -20,6 +20,8 @@ from Modules.Utilities.xml_tools import XmlConfigTools, PutGetXML, stuff_new_att
 from Modules.Computer import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.ScheduleXml ')
+SCHEDULE_SECTION = 'ScheduleSection'
+SCHEDULE_ATTR = 'Schedule'
 
 
 class Xml(object):
@@ -31,9 +33,17 @@ class Xml(object):
         l_obj = ScheduleLightData()
         l_obj.Level = PutGetXML.get_int_from_xml(p_schedule_element, 'Level')
         l_obj.LightName = PutGetXML.get_text_from_xml(p_schedule_element, 'LightName')
+        try:
+            l_obj.LightUUID = PutGetXML.get_uuid_from_xml(p_schedule_element, 'LightUUID')
+        except:
+            l_obj.LightUUID = ''
         l_obj.Rate = PutGetXML.get_int_from_xml(p_schedule_element, 'Rate')
         l_obj.RoomName = PutGetXML.get_text_from_xml(p_schedule_element, 'RoomName')
-        return l_obj  #  for testing
+        try:
+            l_obj.RoomUUID = PutGetXML.get_uuid_from_xml(p_schedule_element, 'RoomUUID')
+        except:
+            l_obj.RoomUUID = ''
+        return l_obj  # for testing
 
     @staticmethod
     def _read_one_base_schedule(p_schedule_element):
@@ -41,18 +51,18 @@ class Xml(object):
         """
         l_obj = ScheduleBaseData()
         XmlConfigTools.read_base_object_xml(l_obj, p_schedule_element)
-        l_obj.Time = PutGetXML.get_text_from_xml(p_schedule_element, 'Time')
-        l_obj.ScheduleType = PutGetXML.get_text_from_xml(p_schedule_element, 'ScheduleType')
-        if l_obj.ScheduleType == 'LightingDevice':
-            l_obj.ScheduleType = 'Lighting'
         try:
             l_obj.DOW = PutGetXML.get_int_from_xml(l_obj, 'DayOfWeek', 0x7F)
         except:
             l_obj.DOW = 0x7F
         try:
-            l_obj.Mode = PutGetXML.get_int_from_xml(l_obj, 'Mode', 0)
+            l_obj.ScheduleMode = PutGetXML.get_text_from_xml(l_obj, 'ScheduleMode', 0)
         except:
-            l_obj.Mode = 0
+            l_obj.ScheduleMode = 'Home'
+        l_obj.ScheduleType = PutGetXML.get_text_from_xml(p_schedule_element, 'ScheduleType')
+        if l_obj.ScheduleType == 'LightingDevice':
+            l_obj.ScheduleType = 'Lighting'
+        l_obj.Time = PutGetXML.get_text_from_xml(p_schedule_element, 'Time')
         return l_obj
 
     @staticmethod
@@ -72,34 +82,34 @@ class Xml(object):
         @param p_house_xml: is the e-tree XML house object
         @return: a dict of the entry to be attached to a house object.
         """
-        l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
         l_count = 0
         l_dict = {}
+        l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
         if l_xml is None:
             return l_dict
         try:
-            l_xml = l_xml.find('ScheduleSection')
+            l_xml = l_xml.find(SCHEDULE_SECTION)
             if l_xml is None:
                 return l_dict
-            for l_entry in l_xml.iterfind('Schedule'):
+            # print(PrettyFormatAny.form(l_xml, 'Schedule Xml'))
+            for l_entry in l_xml.iterfind(SCHEDULE_ATTR):
                 l_schedule_obj = Xml._read_one_schedule(l_entry)
-                l_schedule_obj.Key = l_count  #  Renumber
+                l_schedule_obj.Key = l_count  # Renumber
                 l_dict[l_count] = l_schedule_obj
                 l_count += 1
         except AttributeError as e_err:
             LOG.error('ERROR in schedule.read_schedules_xml() - {}'.format(e_err))
         return l_dict
 
-
     @staticmethod
     def _write_one_base_schedule(p_schedule_obj):
         """
         """
-        l_entry = XmlConfigTools.write_base_object_xml('Schedule', p_schedule_obj)
+        l_entry = XmlConfigTools.write_base_object_xml(SCHEDULE_ATTR, p_schedule_obj)
+        PutGetXML.put_int_element(l_entry, 'DayOfWeek', int(p_schedule_obj.DOW))
+        PutGetXML.put_text_element(l_entry, 'ScheduleMode', p_schedule_obj.ScheduleMode)
         PutGetXML.put_text_element(l_entry, 'ScheduleType', p_schedule_obj.ScheduleType)
         PutGetXML.put_text_element(l_entry, 'Time', p_schedule_obj.Time)
-        PutGetXML.put_int_element(l_entry, 'DayOfWeek', int(p_schedule_obj.DOW))
-        PutGetXML.put_int_element(l_entry, 'Mode', p_schedule_obj.Mode)
         return l_entry
 
     @staticmethod
@@ -129,7 +139,7 @@ class Xml(object):
         @param p_parent: is the 'schedules' element
         """
         l_count = 0
-        l_xml = ET.Element('ScheduleSection')
+        l_xml = ET.Element(SCHEDULE_SECTION)
         try:
             for l_schedule_obj in p_schedules_obj.itervalues():
                 l_entry = Xml._write_one_schedule(l_schedule_obj)

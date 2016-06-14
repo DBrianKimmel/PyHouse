@@ -7,7 +7,7 @@
 @license:   MIT License
 @summary:   Test the home lighting system automation.
 
-Passed all 13 tests.  DBK 2015-08-26
+Passed all 12 tests.  DBK 2016-06-10
 
 """
 
@@ -26,10 +26,8 @@ from Modules.Lighting.test.xml_controllers import \
         TESTING_CONTROLLER_NAME_1
 from Modules.Core.test.xml_device import \
         TESTING_DEVICE_FAMILY_INSTEON
-from Modules.Lighting.test.xml_lights import \
-        TESTING_LIGHTING_LIGHTS_NAME_1, \
-        TESTING_LIGHTING_LIGHTS_NAME_2
 from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Lighting.test.xml_lights import TESTING_LIGHT_NAME_0, TESTING_LIGHT_NAME_1
 
 
 class SetupMixin(object):
@@ -58,7 +56,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         self.assertIsNotNone(self.m_xml.house_div)
 
     def test_03_Light(self):
-        self.assertEqual(self.m_light_obj.Name, 'Undefined BaseObject')
+        self.assertEqual(self.m_light_obj.Name, 'undefined baseobject')
 
     def test_04_Api(self):
         self.assertIsNotNone(self.m_api)
@@ -72,7 +70,7 @@ class A2_XML(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_01_Version(self):
-        self.assertEqual(self.m_pyhouse_obj.Xml.XmlVersion, '1.4.0')
+        self.assertGreater(self.m_pyhouse_obj.Xml.XmlVersion, '1.4.0')
 
     def test_02_XmlTags(self):
         """ Be sure that the XML contains the right stuff.
@@ -103,8 +101,7 @@ class A3_Utility(SetupMixin, unittest.TestCase):
         """Utility.
         """
         l_xml = self.m_api._setup_lighting(self.m_pyhouse_obj)
-        l_version = '1.4.0'
-        l_dict = self.m_api._read_controllers(self.m_pyhouse_obj, l_xml, l_version)
+        l_dict = self.m_api._read_controllers(self.m_pyhouse_obj, l_xml)
         self.assertEqual(len(l_dict), 2)
         self.assertEqual(l_dict[0].Name, TESTING_CONTROLLER_NAME_0)
         self.assertEqual(l_dict[0].DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
@@ -121,8 +118,8 @@ class A3_Utility(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.Buttons[1].Name, 'UPB Button')
         self.assertEqual(l_obj.Controllers[0].Name, TESTING_CONTROLLER_NAME_0)
         self.assertEqual(l_obj.Controllers[1].Name, TESTING_CONTROLLER_NAME_1)
-        self.assertEqual(l_obj.Lights[0].Name, TESTING_LIGHTING_LIGHTS_NAME_1)
-        self.assertEqual(l_obj.Lights[1].Name, TESTING_LIGHTING_LIGHTS_NAME_2)
+        self.assertEqual(l_obj.Lights[0].Name, TESTING_LIGHT_NAME_0)
+        self.assertEqual(l_obj.Lights[1].Name, TESTING_LIGHT_NAME_1)
 
     def test_04_Write(self):
         """Write out the 'LightingSection' which contains the 'LightSection',

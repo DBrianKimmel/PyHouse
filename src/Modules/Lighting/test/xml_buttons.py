@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Lighting/test/xml_buttons.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 22, 2014
 @Summary:
@@ -17,6 +17,9 @@ from Modules.Families.Insteon.test.xml_insteon import XML_INSTEON
 from Modules.Families.UPB.test.xml_upb import XML_UPB
 
 
+L_BUTTON_SECTION_START = '<ButtonSection>'
+L_BUTTON_SECTION_END = '</ButtonSection>'
+L_BUTTON_END = '</ButtonSection>'
 
 TESTING_LIGHTING_BUTTON_TYPE = 'Button'
 TESTING_LIGHTING_BUTTON_NAME_1 = 'Insteon Button'
@@ -42,10 +45,10 @@ UPB_BUTTON_XML = '\n'.join([
     "</Button>"])
 
 XML_BUTTON_SECTION = '\n'.join([
-    "<ButtonSection>",
+    L_BUTTON_SECTION_START,
     INSTEON_BUTTON_XML,
     UPB_BUTTON_XML,
-    "</ButtonSection>"])
+    L_BUTTON_SECTION_END])
 
 
 

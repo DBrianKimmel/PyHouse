@@ -7,7 +7,7 @@
 @note:      Created on Jun 26, 2015
 @Summary:
 
-Passed all 9 tests - DBK - 2016-06-09
+Passed all 9 tests - DBK - 2016-06-10
 
 """
 
@@ -25,7 +25,7 @@ from Modules.Core.test.xml_device import \
 from Modules.Lighting.test.xml_lights import \
         TESTING_LIGHT_NAME_0, \
         TESTING_LIGHT_KEY_0, \
-        TESTING_LIGHT_ACTIVE_0
+        TESTING_LIGHT_ACTIVE_0, TESTING_LIGHT_COMMENT_0, TESTING_LIGHT_ROOM_0
 from Modules.Utilities.device_tools import XML as deviceXML
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
@@ -87,12 +87,11 @@ class B1_Read(SetupMixin, unittest.TestCase):
         print(PrettyFormatAny.form(l_base, 'Base'))
         print(PrettyFormatAny.form(self.m_xml.light, 'Base'))
         self.assertEqual(l_base.Name, TESTING_LIGHT_NAME_0)
-        self.assertEqual(l_base.Key, TESTING_LIGHT_KEY_0)
-        self.assertEqual(l_base.Active, TESTING_LIGHT_ACTIVE_0)
-        self.assertEqual(l_base.Comment, TESTING_DEVICE_COMMENT)
+        self.assertEqual(l_base.Key, int(TESTING_LIGHT_KEY_0))
+        self.assertEqual(l_base.Active, bool(TESTING_LIGHT_ACTIVE_0))
+        self.assertEqual(l_base.Comment, TESTING_LIGHT_COMMENT_0)
         self.assertEqual(l_base.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
-        self.assertEqual(l_base.RoomName, TESTING_DEVICE_ROOM_NAME)
-        self.assertEqual(l_base.RoomCoords.X_Easting, float(TESTING_DEVICE_ROOM_X))
+        self.assertEqual(l_base.RoomName, TESTING_LIGHT_ROOM_0)
 
     def test_02_BaseController(self):
         """ Read in the xml file and fill in the lights

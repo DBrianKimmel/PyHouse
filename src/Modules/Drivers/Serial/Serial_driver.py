@@ -46,7 +46,8 @@ class FindPort(object):
         for l_dev in l_context.list_devices(subsystem = 'tty'):
             if 'ID_VENDOR' not in l_dev:
                 continue
-            print(l_dev.device_node)
+            # print(l_dev.device_node)
+            pass
 
 
 class SerialProtocol(Protocol):

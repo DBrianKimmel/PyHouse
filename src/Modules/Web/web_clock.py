@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Web/web_clock.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2015 by D. Brian Kimmel
+@copyright: (c) 2013-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Sep 5, 2013
 @summary:   Display a clock on the web page.
@@ -49,8 +49,8 @@ class ClockElement(athena.LiveElement):
             ServerName = self.m_pyhouse_obj.Computer.Name
             )
         l_json = json_tools.encode_json(l_obj)
-        #  print('Server   JSON {}'.format(l_json))
         return unicode(l_json)
+
 
 def uc(msg):
     if type(msg) == type(''):

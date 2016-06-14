@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/web/web_rooms.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2015 by D. Brian Kimmel
+@copyright: (c) 2013-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 3, 2013
 @summary:   Web interface to rooms for the selected house.
@@ -29,8 +29,7 @@ g_debug = 0
 LOG = Logger.getLogger('PyHouse.webRooms       ')
 
 
-
-#==============================================================================
+# ==============================================================================
 
 class RoomsElement(athena.LiveElement):
     jsClass = u'rooms.RoomsWidget'
@@ -61,7 +60,7 @@ class RoomsElement(athena.LiveElement):
             try:
                 del self.m_pyhouse_obj.House.Rooms[l_room_ix]
             except AttributeError:
-                print("web_rooms - Failed to delete - JSON: {0:}".format(l_json))
+                LOG.error("web_rooms - Failed to delete - JSON: {}".format(l_json))
             return
         try:
             l_obj = self.m_pyhouse_obj.House.Rooms[l_room_ix]

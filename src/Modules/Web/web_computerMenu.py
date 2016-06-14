@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Web/web_computerMenu.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2015 by D. Brian Kimmel
+@copyright: (c) 2015-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 21, 2015
 @Summary:
@@ -38,6 +38,5 @@ class ComputerMenuElement(athena.LiveElement):
     def __init__(self, p_workspace_obj):
         self.m_workspace_obj = p_workspace_obj
         self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
-        # print("web_computerMenu.ComputerMenuElement()")
 
 # ## END DBK

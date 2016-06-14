@@ -117,7 +117,6 @@ class Utility(object):
         p_pyhouse_obj.APIs.House.PoolAPI = poolAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.ScheduleAPI = scheduleAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.SecurityAPI = securityAPI(p_pyhouse_obj)
-        # p_pyhouse_obj.APIs.House.SunRiseSetAPI = sunriseAPI(p_pyhouse_obj)
 
     @staticmethod
     def _load_component_xml(p_pyhouse_obj):
@@ -128,7 +127,7 @@ class Utility(object):
         p_pyhouse_obj.APIs.House.LightingAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.PoolAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.ScheduleAPI.LoadXml(p_pyhouse_obj)
-        # p_pyhouse_obj.APIs.House.SecurityAPI = securityAPI(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.House.SecurityAPI.LoadXml(p_pyhouse_obj)
         pass
 
     def start_house_parts(self, p_pyhouse_obj):

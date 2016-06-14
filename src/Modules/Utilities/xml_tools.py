@@ -36,6 +36,8 @@ class XML(object):
 
     @staticmethod
     def get_attribute_field(p_xml, p_name):
+        """Attribute must be in the top element of the XML.
+        """
         try:
             l_xml = p_xml.get(p_name)
         except AttributeError:
@@ -251,7 +253,7 @@ class PutGetXML(object):
 
     @staticmethod
     def put_date_time_element(p_parent_element, p_name, p_date_time):
-        pass
+        PutGetXML.put_text_element(p_parent_element, p_name, p_date_time)
 
 # -----
 #  Coords

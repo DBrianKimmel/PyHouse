@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/web/web_schedules.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2015 by D. Brian Kimmel
+@copyright: (c) 2013-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 3, 2013
 @summary:   Web interface to schedules for the selected house.
@@ -20,7 +20,7 @@ from nevow import loaders
 from Modules.Core.data_objects import ScheduleBaseData
 from Modules.Web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.Computer import logging_pyh as Logger
-from Modules.Scheduling import schedule
+# from Modules.Scheduling import schedule
 
 #  Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -69,8 +69,8 @@ class SchedulesElement(athena.LiveElement):
         l_obj.ScheduleType = l_json['ScheduleType']
         l_obj.Time = l_json['Time']
         l_obj.DOW = l_json['DOW']
-        print('fetched DOW {}'.format(l_obj.DOW))
-        l_obj.Mode = l_json['Mode']
+        # print('fetched DOW {}'.format(l_obj.DOW))
+        l_obj.ScheduleMode = l_json['ScheduleMode']
         #
         l_obj.Level = int(l_json['Level'])
         l_obj.LightName = l_json['LightName']

@@ -140,14 +140,4 @@ class JsonUnicode(object):
             l_obj = None
         return l_obj
 
-    def XXXencode_json(self, p_obj):
-        """Convert a python object to a valid json object.
-        """
-        try:
-            l_json = jsonpickle.encode(p_obj, unpicklable = False, max_depth = 5)
-        except (TypeError, ValueError) as l_error:
-            print('web_utils.encode_json ERROR {0:}'.format(l_error))
-            l_json = u'{}'
-        return l_json
-
 #  ## END DBK

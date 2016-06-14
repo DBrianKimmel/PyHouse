@@ -36,13 +36,14 @@ class XML(object):
             p_obj.Name = PutGetXML.get_text_from_xml(p_xml, 'Name', 'Missing Name')
             p_obj.Key = PutGetXML.get_int_from_xml(p_xml, 'Key', 0)
             p_obj.Active = PutGetXML.get_bool_from_xml(p_xml, 'Active', False)
+            p_obj.UUID = PutGetXML.get_uuid_from_xml(p_xml, 'UUID')
             p_obj.Comment = PutGetXML.get_text_from_xml(p_xml, 'Comment')
             p_obj.DeviceFamily = PutGetXML.get_text_from_xml(p_xml, 'DeviceFamily')
             p_obj.DeviceType = PutGetXML.get_int_from_xml(p_xml, 'DeviceType')
             p_obj.DeviceSubType = PutGetXML.get_int_from_xml(p_xml, 'DeviceSubType')
             p_obj.RoomCoords = PutGetXML.get_coords_from_xml(p_xml, 'RoomCoords')
             p_obj.RoomName = PutGetXML.get_text_from_xml(p_xml, 'RoomName')
-            p_obj.UUID = PutGetXML.get_uuid_from_xml(p_xml, 'UUID')
+            p_obj.RoomUUID = PutGetXML.get_text_from_xml(p_xml, 'RoomUUID')
         except Exception as e_err:
             LOG.error('ERROR in xml_tools.read_base_obj_xml() - {}'.format(e_err))
             print('Error 111', e_err)
@@ -70,6 +71,7 @@ class XML(object):
         PutGetXML.put_int_element(l_elem, 'DeviceSubType', p_obj.DeviceSubType)
         PutGetXML.put_coords_element(l_elem, 'RoomCoords', p_obj.RoomCoords)
         PutGetXML.put_text_element(l_elem, 'RoomName', p_obj.RoomName)
+        PutGetXML.put_text_element(l_elem, 'RoomUID', p_obj.RoomUUID)
         return l_elem
 
 def stuff_new_attrs(p_target_obj, p_data_obj):

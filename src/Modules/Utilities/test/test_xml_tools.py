@@ -2,12 +2,12 @@
 @name:      PyHouse/src/Modules/Utilities/test/test_xml_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: 2013-2015 by D. Brian Kimmel
+@copyright: 2013-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 11, 2013
 @summary:   This module is for testing XML tools.
 
-Passed all 50 testa - DBK 2015-09-01
+Passed 49 of 49 testa - DBK 2016-06-12
 
 """
 
@@ -18,34 +18,38 @@ from twisted.trial import unittest
 import datetime
 
 # Import PyMh files and modules.
+from Modules.Core.data_objects import CoreLightingData, LocationData
 from Modules.Utilities.xml_tools import XML, PutGetXML, XmlConfigTools, stuff_new_attrs
 from Modules.Utilities import convert
-from Modules.Core.data_objects import CoreLightingData, LocationData
-from test import xml_data
+from Modules.Utilities.test.xml_xml_tools import \
+    TESTING_XML_BOOL_0, \
+    XML_TEST, \
+    TESTING_XML_INT_0, \
+    TESTING_XML_IPV4_0, \
+    TESTING_XML_IPV6_0, \
+    TESTING_XML_TEXT_0, \
+    TESTING_XML_TEXT_1, \
+    TESTING_XML_FLOAT_0, \
+    TESTING_XML_ROOM_X_0, \
+    TESTING_XML_ROOM_Y_0, \
+    TESTING_XML_ROOM_Z_0, \
+    TESTING_XML_BOOL_1, \
+    TESTING_XML_BOOL_2, \
+    TESTING_XML_UUID_0, \
+    TESTING_XML_YEAR_0, \
+    TESTING_XML_MONTH_0, \
+    TESTING_XML_DAY_0, \
+    TESTING_XML_HOUR_0, \
+    TESTING_XML_MINUTE_0, \
+    TESTING_XML_SECOND_0, \
+    TESTING_XML_TEXT_A0, \
+    TESTING_XML_BOOL_A0, \
+    TESTING_XML_FLOAT_A0, \
+    TESTING_XML_INT_A0, TESTING_XML_DATE_TIME_0
+from test.xml_data import XML_LONG, XML_EMPTY
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.debug_tools import PrettyFormatAny
-# from Modules.Utilities.debug_tools import PrettyFormatAny
 
-XML_INT = """
-<Test b1='True' f1='3.14158265' i1='371' t1='Test of text attribute' >
-    <BoolField1>True</BoolField1>
-    <BoolField2>False</BoolField2>
-    <BoolField3>Howdy</BoolField3>
-    <FloatField>3.14158265</FloatField>
-    <IntField>246</IntField>
-    <TextField1>Test of text element</TextField1>
-    <UUIDField>01234567-fedc-2468-7531-0123456789ab</UUIDField>
-    <Part_3 b3='True' f3='3.14158265' i3='371' t3='Test of text'>
-        <b4>True</b4>
-    </Part_3>
-    <IPv4>98.76.45.123</IPv4>
-    <IPv6>1234:dead::beef</IPv6>
-    <ExternalIPv6>1234:5678::1</ExternalIPv6>
-    <DateTime>2014-10-02T12:34:56</DateTime>
-    <RoomCoords1>[0.0, 1.1, 2.2]</RoomCoords1>
-    <RoomCoords2>['0', '1.1', "2.2"]</RoomCoords2>
-</Test>
-"""
 
 class SetupMixin(object):
     """
@@ -54,225 +58,227 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+        self.m_api = PutGetXML
 
 
-class A1_Compound(SetupMixin, unittest.TestCase):
+class A1_Setup(SetupMixin, unittest.TestCase):
     """
-    This series tests the complex PutGetXML class methods
+    This tests the setup to see if everything is there.
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
-        self.m_fields = ET.fromstring(XML_INT)
-        self.m_api = PutGetXML
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_fields = ET.fromstring(XML_TEST)
 
-    def test_01_GetIpV4(self):
-        l_elem = self.m_api.get_ip_from_xml(self.m_fields, 'IPv4')
-        self.assertEqual(l_elem, convert.str_to_long('98.76.45.123'))
-
-    def test_02_GetIPv6(self):
-        l_elem = self.m_api.get_ip_from_xml(self.m_fields, 'IPv6')
-        self.assertEqual(l_elem, convert.str_to_long('1234:dead::beef'))
-
-    def test_03_GetDateTime(self):
-        l_elem = self.m_api.get_date_time_from_xml(self.m_fields, 'DateTime')
-        self.assertEqual(l_elem, datetime.datetime(2014, 10, 2, 12, 34, 56))
+    def test_01_Setup(self):
+        l_xml = self.m_fields
+        # print(PrettyFormatAny.form(l_xml, 'Fields A1-1'))
+        self.assertEqual(l_xml.find('Int0').text, TESTING_XML_INT_0)
+        self.assertEqual(l_xml.find('IpV40').text, TESTING_XML_IPV4_0)
 
 
-class A2_GetAnyField(SetupMixin, unittest.TestCase):
+class A2_XML(SetupMixin, unittest.TestCase):
     """
+    This texts the XML to see if it is proper.
     """
+
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
-        self.m_fields = ET.fromstring(XML_INT)
-        self.m_api = PutGetXML
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_fields = ET.fromstring(XML_TEST)
 
-    def test_01_Missing(self):
-        l_missing = XML.get_any_field(self.m_fields, 'NoValidName')
-        self.assertIsNone(l_missing)
-
-    def test_02_Element(self):
-        l_result = XML.get_any_field(self.m_fields, 'IntField')
-        self.assertEqual(l_result, '246')
-
-    def test_03_Attribute(self):
-        l_result = XML.get_any_field(self.m_fields, 'i1')
-        self.assertEqual(l_result, '371')
+    def test_01_Setup(self):
+        l_xml = self.m_fields
+        # print(PrettyFormatAny.form(l_xml, 'Fields A2-1'))
+        self.assertEqual(l_xml.find('Int0').text, TESTING_XML_INT_0)
+        self.assertEqual(l_xml.find('IpV40').text, TESTING_XML_IPV4_0)
 
 
-class B01_Attribute(SetupMixin, unittest.TestCase):
+class B1_Element(SetupMixin, unittest.TestCase):
     """
     This series tests the PutGetXML class methods
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
-        self.m_fields = ET.fromstring(XML_INT)
-        self.m_api = PutGetXML
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_fields = ET.fromstring(XML_TEST)
 
-    def test_01_GetElement(self):
-        l_elem = XML.get_element_field(self.m_fields, 'TextField1')
-        self.assertEqual(l_elem, 'Test of text element')
+    def test_1_Text(self):
+        l_elem = XML.get_element_field(self.m_fields, 'Text0')
+        self.assertEqual(l_elem, TESTING_XML_TEXT_0)
 
-    def test_02_GetElement_attribute(self):
-        l_elem = XML.get_element_field(self.m_fields, 't1')
-        self.assertEqual(l_elem, None)
+    def test_2_Bool(self):
+        l_elem = XML.get_element_field(self.m_fields, 'Bool0')
+        self.assertEqual(l_elem, TESTING_XML_BOOL_0)
 
-    def test_03_GetElement_Missing(self):
-        l_elem = XML.get_element_field(self.m_fields, 'MissingElement')
-        self.assertEqual(l_elem, None)
+    def test_3_Int(self):
+        l_elem = XML.get_element_field(self.m_fields, 'Int0')
+        self.assertEqual(l_elem, TESTING_XML_INT_0)
+
+    def test_4_Float(self):
+        l_elem = XML.get_element_field(self.m_fields, 'Float0')
+        self.assertEqual(l_elem, TESTING_XML_FLOAT_0)
 
 
-class B02_Element(SetupMixin, unittest.TestCase):
+class B2_Attribute(SetupMixin, unittest.TestCase):
     """
     This series tests the PutGetXML class methods
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
-        self.m_fields = ET.fromstring(XML_INT)
-        self.m_api = PutGetXML
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_fields = ET.fromstring(XML_TEST)
 
     def test_01_GetAttribute(self):
-        l_attr = XML.get_attribute_field(self.m_fields, 't1')
-        self.assertEqual(l_attr, 'Test of text attribute')
+        l_attr = XML.get_attribute_field(self.m_fields, 'BoolA0')
+        self.assertEqual(l_attr, TESTING_XML_BOOL_A0)
 
     def test_02_GetAttribute_element(self):
-        l_attr = XML.get_attribute_field(self.m_fields, 'TextField1')
-        self.assertEqual(l_attr, None)
+        l_attr = XML.get_attribute_field(self.m_fields, 'FloatA0')
+        self.assertEqual(l_attr, TESTING_XML_FLOAT_A0)
 
-    def test_03_GetAttribute_Missing(self):
+    def test_03_GetAttribute_element(self):
+        l_attr = XML.get_attribute_field(self.m_fields, 'IntA0')
+        self.assertEqual(l_attr, TESTING_XML_INT_A0)
+
+    def test_04_GetAttribute_element(self):
+        l_attr = XML.get_attribute_field(self.m_fields, 'TextA0')
+        self.assertEqual(l_attr, TESTING_XML_TEXT_A0)
+
+    def test_05_GetAttribute_Missing(self):
         l_attr = XML.get_attribute_field(self.m_fields, 'MissingAttribute')
         self.assertEqual(l_attr, None)
 
 
-class B03_AnyField(SetupMixin, unittest.TestCase):
+class B3_AnyField(SetupMixin, unittest.TestCase):
     """
     This series tests the PutGetXML class methods
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
-        self.m_fields = ET.fromstring(XML_INT)
-        self.m_api = PutGetXML
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_fields = ET.fromstring(XML_TEST)
 
     def test_01_GetAnyField_Element(self):
-        l_field = XML.get_any_field(self.m_fields, 'TextField1')
-        self.assertEqual(l_field, 'Test of text element')
+        l_field = XML.get_any_field(self.m_fields, 'Text1')
+        self.assertEqual(l_field, TESTING_XML_TEXT_1)
 
     def test_02_GetAnyField_Attribute(self):
-        l_field = XML.get_any_field(self.m_fields, 't1')
-        self.assertEqual(l_field, 'Test of text attribute')
+        l_field = XML.get_any_field(self.m_fields, 'TextA0')
+        self.assertEqual(l_field, TESTING_XML_TEXT_A0)
 
     def test_03_GetAnyField_Missing(self):
         l_field = XML.get_any_field(self.m_fields, 'NoSuchField')
         self.assertEqual(l_field, None)
 
 
-class B04_Boolean(SetupMixin, unittest.TestCase):
+class C1_Boolean(SetupMixin, unittest.TestCase):
     """
     This series tests the PutGetXML class methods
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
-        self.m_fields = ET.fromstring(XML_INT)
-        self.m_api = PutGetXML
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_fields = ET.fromstring(XML_TEST)
 
-    def test_01_GetElement(self):
-        result = self.m_api.get_bool_from_xml(self.m_fields, 'BoolField1')
-        self.assertTrue(result)
+    def test_01_Element(self):
+        l_result = self.m_api.get_bool_from_xml(self.m_fields, 'Bool0')
+        self.assertEqual(str(l_result), TESTING_XML_BOOL_0)
 
-    def test_02_GetAttribute(self):
-        result = self.m_api.get_bool_from_xml(self.m_fields, 'b1')
-        self.assertTrue(result)
+    def test_02_Element(self):
+        l_result = self.m_api.get_bool_from_xml(self.m_fields, 'Bool1')
+        self.assertEqual(str(l_result), TESTING_XML_BOOL_1)
 
-    def test_03_GetPath(self):
+    def test_03_Attribute(self):
+        l_result = self.m_api.get_bool_from_xml(self.m_fields, 'BoolA1')
+        self.assertEqual(str(l_result), TESTING_XML_BOOL_0)
+
+    def test_04_Path(self):
         """This should find a path name field
         """
-        result = self.m_api.get_bool_from_xml(self.m_fields, './Part_3/b4')
-        self.assertTrue(result)
+        l_result = (self.m_api.get_bool_from_xml(self.m_fields, './SubTest/BoolA1') == True)
+        # print(PrettyFormatAny.form(l_result, 'Fields C1-3'))
+        self.assertEqual(str(l_result), TESTING_XML_BOOL_0)
 
-    def test_04_GetFalse(self):
-        result = self.m_api.get_bool_from_xml(self.m_fields, 'BoolField2')
+    def test_05_GetFalse(self):
+        l_result = self.m_api.get_bool_from_xml(self.m_fields, 'Bool2')
+        self.assertNotEqual(str(l_result), TESTING_XML_BOOL_2)
+
+    def test_06_FalseDirect(self):
+        result = PutGetXML.get_bool_from_xml(self.m_fields, 'Bool2')
         self.assertFalse(result)
 
-    def test_05_FalseDirect(self):
-        result = PutGetXML.get_bool_from_xml(self.m_fields, 'BoolField2')
-        self.assertFalse(result)
-
-    def test_05_GetInvalid(self):
+    def test_07_GetInvalid(self):
         result = self.m_api.get_bool_from_xml(self.m_fields, 'BoolField3')
         self.assertFalse(result)
 
-    def test_06_GetMissing(self):
-        result = self.m_api.get_bool_from_xml(self.m_fields, 'BoolField999')
-        self.assertFalse(result)
+    def test_08_GetMissing(self):
+        l_result = self.m_api.get_bool_from_xml(self.m_fields, 'BoolField999')
+        self.assertFalse(l_result)
 
-    def test_07_PutElement(self):
+    def test_09_PutElement(self):
         l_element = ET.Element('TestBoolElement_1')
         self.m_api.put_bool_element(l_element, 'Active', True)
         self.assertEqual(bool(l_element._children[0].text), True)
 
-    def test_08_PutAttribute(self):
+    def test_10_PutAttribute(self):
         l_element = ET.Element('TestBoolAttribute_2')
         self.m_api.put_bool_attribute(l_element, 'Active', True)
         self.assertEqual(l_element.attrib['Active'], 'True')
 
 
-class B05_Integer(SetupMixin, unittest.TestCase):
+class C2_Integer(SetupMixin, unittest.TestCase):
     """
     This series tests the PutGetXML class methods
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
-        self.m_fields = ET.fromstring(XML_INT)
-        self.m_api = PutGetXML
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_fields = ET.fromstring(XML_TEST)
 
-    def test_01_GetIntElement(self):
-        result = self.m_api.get_int_from_xml(self.m_fields, 'IntField')
-        self.assertEqual(result, 246)
+    def test_1_GetIntElement(self):
+        l_result = self.m_api.get_int_from_xml(self.m_fields, 'Int0')
+        self.assertEqual(l_result, int(TESTING_XML_INT_0))
 
-    def test_02_GetIntAttribute(self):
-        result = self.m_api.get_int_from_xml(self.m_fields, 'i1')
-        self.assertEqual(result, 371)
+    def test_2_GetIntAttribute(self):
+        l_result = self.m_api.get_int_from_xml(self.m_fields, 'IntA0')
+        print(PrettyFormatAny.form(l_result, 'Fields C2-2'))
+        self.assertEqual(l_result, int(TESTING_XML_INT_A0))
 
-    def test_03_PutIntElement(self):
+    def test_3_PutIntElement(self):
         l_element = ET.Element('TestIntElement_1')
+        # print(PrettyFormatAny.form(l_element, 'Fields C2-3'))
         self.m_api.put_int_element(l_element, 'IntNumber', -57)
         self.assertEqual(int(l_element._children[0].text), -57)
 
-    def test_04_PutIntAttribute(self):
+    def test_4_PutIntAttribute(self):
         l_element = ET.Element('TestIntAttribute_2')
         self.m_api.put_int_attribute(l_element, 'IntNumber', 853)
         self.assertEqual(int(l_element.attrib['IntNumber']), 853)
 
 
-class B06_Text(SetupMixin, unittest.TestCase):
+class C3_Text(SetupMixin, unittest.TestCase):
     """
     This series tests the PutGetXML class methods
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
-        self.m_fields = ET.fromstring(XML_INT)
-        self.m_api = PutGetXML
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_fields = ET.fromstring(XML_TEST)
 
     def test_01_GetTextElement(self):
-        l_text = self.m_api.get_text_from_xml(self.m_fields, 'TextField1')
-        self.assertEqual(l_text, 'Test of text element')
+        l_text = self.m_api.get_text_from_xml(self.m_fields, 'Text0')
+        self.assertEqual(l_text, TESTING_XML_TEXT_0)
 
     def test_02_GetTextElement(self):
         """
         we seem to not work if the field is the xml passed in.
         """
-        l_text = self.m_api.get_text_from_xml(self.m_fields.find('TextField1'), 'TextField1')
-        self.assertEqual(l_text, 'Test of text element')
+        l_text = self.m_api.get_text_from_xml(self.m_fields.find('Text0'), 'Text0')
+        self.assertEqual(l_text, TESTING_XML_TEXT_0)
 
     def test_03_GetTextAttribute(self):
-        l_text = self.m_api.get_text_from_xml(self.m_fields, 't1')
-        self.assertEqual(l_text, 'Test of text attribute')
+        l_text = self.m_api.get_text_from_xml(self.m_fields, 'TextA0')
+        self.assertEqual(l_text, TESTING_XML_TEXT_A0)
 
     def test_04_GetTextInvalid(self):
         l_text = self.m_api.get_text_from_xml(self.m_fields, 'NoSuchField', '0223 No such field')
@@ -293,111 +299,107 @@ class B06_Text(SetupMixin, unittest.TestCase):
         self.assertEqual(l_element.attrib['Name'], 'Any old Name')
 
 
-class B07_Float(SetupMixin, unittest.TestCase):
+class C4_Float(SetupMixin, unittest.TestCase):
     """
     This series tests the PutGetXML class methods
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
-        self.m_fields = ET.fromstring(XML_INT)
-        self.m_api = PutGetXML
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_fields = ET.fromstring(XML_TEST)
 
     def test_01_GetFloatElement(self):
-        result = self.m_api.get_float_from_xml(self.m_fields, 'FloatField')
-        self.assertAlmostEqual(result, float(3.1415825435), places = 5, msg = 'get_float_from_xml failed')
+        result = self.m_api.get_float_from_xml(self.m_fields, 'Float0')
+        self.assertAlmostEqual(result, float(TESTING_XML_FLOAT_0), places = 5)
 
     def test_02_GetFloatAttribute(self):
-        result = self.m_api.get_float_from_xml(self.m_fields, 'f1')
-        self.assertAlmostEqual(result, float(3.1415825435), places = 5, msg = 'get_float_from_xml failed')
+        result = self.m_api.get_float_from_xml(self.m_fields, 'FloatA0')
+        self.assertAlmostEqual(result, float(TESTING_XML_FLOAT_A0), places = 5, msg = 'get_float_from_xml failed')
 
 
-class B08_UUID(SetupMixin, unittest.TestCase):
+class D1_UUID(SetupMixin, unittest.TestCase):
     """
     This series tests the PutGetXML class methods
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
-        self.m_fields = ET.fromstring(XML_INT)
-        self.m_api = PutGetXML
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_fields = ET.fromstring(XML_TEST)
 
     def test_01_GetUuidElement(self):
         """UUID elements must be returned intact
         """
-        l_uuid = self.m_api.get_uuid_from_xml(self.m_fields, 'UUIDField')
-        self.assertEqual(l_uuid, '01234567-fedc-2468-7531-0123456789ab')
-
-    def test_02_GetUuidMissing(self):
-        l_uuid = self.m_api.get_uuid_from_xml(self.m_fields, 'NoSuchField')
-        self.assertEqual(l_uuid, None)
+        l_uuid = self.m_api.get_uuid_from_xml(self.m_fields, 'UUID0')
+        self.assertEqual(l_uuid, TESTING_XML_UUID_0)
 
 
-class B09_IP(SetupMixin, unittest.TestCase):
+class D2_IP(SetupMixin, unittest.TestCase):
     """
     This series tests the PutGetXML class methods
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
-        self.m_fields = ET.fromstring(XML_INT)
-        self.m_api = PutGetXML
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_fields = ET.fromstring(XML_TEST)
 
     def test_01_IPv4(self):
-        l_ip = self.m_api.get_ip_from_xml(self.m_fields, 'IPv4')
-        self.assertEqual(l_ip, convert.str_to_long('98.76.45.123'))
+        l_ip = self.m_api.get_ip_from_xml(self.m_fields, 'IpV40')
+        self.assertEqual(l_ip, convert.str_to_long(TESTING_XML_IPV4_0))
 
     def test_02_IPv6(self):
-        l_ip = self.m_api.get_ip_from_xml(self.m_fields, 'IPv6')
-        self.assertEqual(l_ip, convert.str_to_long('1234:dead::beef'))
+        l_ip = self.m_api.get_ip_from_xml(self.m_fields, 'IpV60')
+        self.assertEqual(l_ip, convert.str_to_long(TESTING_XML_IPV6_0))
 
 
-class B10_DateTime(SetupMixin, unittest.TestCase):
+class D3_DateTime(SetupMixin, unittest.TestCase):
     """
     This series tests the PutGetXML class methods
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
-        self.m_fields = ET.fromstring(XML_INT)
-        self.m_api = PutGetXML
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_fields = ET.fromstring(XML_TEST)
 
-    def test_01_DateTime(self):
-        l_date = self.m_api.get_date_time_from_xml(self.m_fields, 'DateTime')
-        l_dt = datetime.datetime(2014, 10, 2, 12, 34, 56)
-        self.assertEqual(l_date, l_dt)
+    def test_1_Read(self):
+        l_answer = datetime.datetime(int(TESTING_XML_YEAR_0), int(TESTING_XML_MONTH_0), int(TESTING_XML_DAY_0),
+                                     int(TESTING_XML_HOUR_0), int(TESTING_XML_MINUTE_0), int(TESTING_XML_SECOND_0))
+        # print(PrettyFormatAny.form(l_answer, 'DateTime D3-1 A'))
+        l_date = self.m_api.get_date_time_from_xml(self.m_fields, 'DateTime0')
+        self.assertEqual(l_date, l_answer)
+
+    def test_2_Write(self):
+        l_date = self.m_api.get_date_time_from_xml(self.m_fields, 'DateTime0')
+        l_element = ET.Element('TestDateTime')
+        self.m_api.put_date_time_element(l_element, 'TestField', l_date)
+        print(PrettyFormatAny.form(l_element, 'DateTime D3-2 A'))
+        self.assertEqual(l_element[0].text, TESTING_XML_DATE_TIME_0)
 
 
-class B11_Coords(SetupMixin, unittest.TestCase):
+class D4_Coords(SetupMixin, unittest.TestCase):
     """
     This series tests the PutGetXML class methods
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
-        self.m_fields = ET.fromstring(XML_INT)
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_fields = ET.fromstring(XML_TEST)
         self.m_api = PutGetXML
 
     def test_01_Coords(self):
-        l_coords = self.m_api.get_coords_from_xml(self.m_fields, 'RoomCoords1')
-        self.assertEqual(l_coords.X_Easting, 0.0)
-        self.assertEqual(l_coords.Y_Northing, 1.1)
-        self.assertEqual(l_coords.Z_Height, 2.2)
-
-    def test_02_Coords(self):
-        l_coords = self.m_api.get_coords_from_xml(self.m_fields, 'RoomCoords2')
-        l_element = ET.Element('Test B11-02')
-        self.m_api.put_coords_element(l_element, 'CoOrds', l_coords)
-        self.assertEqual(l_element._children[0].text, '[0.0,1.1,2.2]')
+        l_coords = self.m_api.get_coords_from_xml(self.m_fields, 'RoomCoords0')
+        print(PrettyFormatAny.form(l_coords, 'Coords D4-1 A'))
+        self.assertEqual(l_coords.X_Easting, float(TESTING_XML_ROOM_X_0))
+        self.assertEqual(l_coords.Y_Northing, float(TESTING_XML_ROOM_Y_0))
+        self.assertEqual(l_coords.Z_Height, float(TESTING_XML_ROOM_Z_0))
 
 
-class C3_Read(SetupMixin, unittest.TestCase):
+class E1_Read(SetupMixin, unittest.TestCase):
     """
     This tests the ConfigTools section
     """
 
     def setUp(self):
-        self.m_pyhouse_obj = SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        self.m_pyhouse_obj = SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_api = XmlConfigTools()
 
     def test_01_BaseObject(self):
@@ -416,30 +418,31 @@ class C3_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_base_obj.Active, True)
 
 
-class C4_ReadEmpty(SetupMixin, unittest.TestCase):
+class E2_ReadEmpty(SetupMixin, unittest.TestCase):
     """
     This tests the ConfigTools section
     """
 
     def setUp(self):
-        self.m_pyhouse_obj = SetupMixin.setUp(self, ET.fromstring(xml_data.XML_EMPTY))
+        self.m_pyhouse_obj = SetupMixin.setUp(self, ET.fromstring(XML_EMPTY))
         self.m_api = XmlConfigTools()
 
     def test_01_BaseObject(self):
         l_base_obj = CoreLightingData()
         self.m_api.read_base_object_xml(l_base_obj, self.m_xml.light)
-        self.assertEqual(l_base_obj.Name, 'Missing Name')
+        print(PrettyFormatAny.form(l_base_obj))
+        self.assertEqual(l_base_obj.Name, 'None')
         self.assertEqual(l_base_obj.Key, 0)
         self.assertEqual(l_base_obj.Active, False)
 
 
-class C5_Write(SetupMixin, unittest.TestCase):
+class E3_Write(SetupMixin, unittest.TestCase):
     """
     This tests the ConfigTools section
     """
 
     def setUp(self):
-        self.m_pyhouse_obj = SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        self.m_pyhouse_obj = SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_01_BaseObject(self):
         """Write Base Object XML w/UUID
@@ -467,14 +470,13 @@ class C5_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.attrib['Key'], '44')
 
 
-
-class D1_NoClass(SetupMixin, unittest.TestCase):
+class Z1_NoClass(SetupMixin, unittest.TestCase):
     """
     This tests the no class routines.
     """
 
     def setUp(self):
-        self.m_pyhouse_obj = SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        self.m_pyhouse_obj = SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_01_StuffAttrs(self):
         l_objA = CoreLightingData()

@@ -133,7 +133,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 		p_html += buildLcarLevelSliderWidget(self, 'ScheduleLevel', 'Level', p_obj.Level, 'handleSliderChange');
 		p_html += buildLcarTextWidget(self, 'ScheduleRate', 'Rate', p_obj.Rate);
 		p_html += buildLcarDowWidget(self, 'ScheduleDOW', 'Day of Week', p_obj.DOW);
-		p_html += buildLcarScheduleModeSelectWidget(self, 'ScheduleMode', 'Mode', p_obj.Mode);
+		p_html += buildLcarScheduleModeSelectWidget(self, 'ScheduleMode', 'ScheduleMode', p_obj.ScheduleMode);
 		return p_html;
 	},
 	function handleSliderChange(p_event){
@@ -162,7 +162,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
         p_data.ScheduleType = fetchSelectWidget(self, 'ScheduleType');
         p_data.Time = fetchTextWidget(self, 'ScheduleTime');
         p_data.DOW = fetchDowWidget(self, 'ScheduleDOW');
-        p_data.Mode = fetchSelectWidget(self, 'ScheduleMode');
+        p_data.ScheduleMode = fetchSelectWidget(self, 'ScheduleMode');
         p_data.Level = fetchSliderWidget(self, 'ScheduleLevel');
         p_data.Rate = fetchTextWidget(self, 'ScheduleRate');
         p_data.RoomName = fetchSelectWidget(self, 'ScheduleRoomName');
@@ -178,7 +178,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 			ScheduleType : 'LightingDevice',
 			Time : '',
 			DOW : 127,
-			Mode : 0,
+			ScheduleMode : 0,
 			Level : 0,
 			Rate : 0,
 			RoomName : '',

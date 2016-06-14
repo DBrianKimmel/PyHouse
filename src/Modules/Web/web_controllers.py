@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Web/web_controllers.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2015 by D. Brian Kimmel
+@copyright: (c) 2013-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 8, 2013
 @summary:   Web interface to controllers for the selected house.
@@ -31,7 +31,6 @@ templatepath = os.path.join(webpath, 'template')
 
 g_debug = 0
 LOG = Logger.getLogger('PyHouse.webCntlr    ')
-
 
 
 class ControllersElement(athena.LiveElement):
@@ -71,7 +70,7 @@ class ControllersElement(athena.LiveElement):
             try:
                 del self.m_pyhouse_obj.House.Lighting.Controllers[l_controller_ix]
             except AttributeError:
-                print("web_controllers - Failed to delete - JSON: {0:}".FORMAT(l_json))
+                LOG.error("web_controllers - Failed to delete - JSON: {}".FORMAT(l_json))
             return
         try:
             l_obj = self.m_pyhouse_obj.House.Lighting.Controllers[l_controller_ix]

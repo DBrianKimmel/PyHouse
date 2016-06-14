@@ -24,6 +24,10 @@ from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.Nodes_xml      ')
 
+COMPUTER_DIVISION = 'ComputerDivision'
+NODE_SECTION = 'NodeSection'
+NODE_ATTR = 'Node'
+
 
 class Xml(object):
 
@@ -90,7 +94,7 @@ class Xml(object):
 
     @staticmethod
     def _write_one_node_xml(p_node_obj):
-        l_entry = XmlConfigTools.write_base_object_xml('Node', p_node_obj)
+        l_entry = XmlConfigTools.write_base_object_xml(NODE_ATTR, p_node_obj)
         PutGetXML.put_text_element(l_entry, 'ConnectionAddressV4', p_node_obj.ConnectionAddr_IPv4)
         PutGetXML.put_text_element(l_entry, 'ConnectionAddressV6', p_node_obj.ConnectionAddr_IPv6)
         PutGetXML.put_int_element(l_entry, 'NodeRole', p_node_obj.NodeRole)
@@ -102,17 +106,19 @@ class Xml(object):
     def read_all_nodes_xml(p_pyhouse_obj):
         l_count = 0
         l_ret = {}
-        l_comp = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
-        if l_comp is None:
+        l_xml = p_pyhouse_obj.Xml.XmlRoot.find(COMPUTER_DIVISION)
+        if l_xml is None:
             LOG.warn('No ComputerDivision')
             return l_ret
         try:
-            l_xml = l_comp.find('NodeSection')
-            for l_node_xml in l_xml.iterfind('Node'):
-                l_node = Xml._read_one_node_xml(l_node_xml)
-                l_ret[l_node.Name] = l_node
+            l_xml = l_xml.find(NODE_SECTION)
+            # print(PrettyFormatAny.form(l_xml, 'Nodes Xml'))
+            for l_node_xml in l_xml.iterfind(NODE_ATTR):
+                l_node_obj = Xml._read_one_node_xml(l_node_xml)
+                LOG.warn('Found Node {}'.format(l_node_obj.Name))
+                l_ret[l_node_obj.Name] = l_node_obj
                 l_count += 1
-                LOG.info('Loaded Node {}'.format(l_node.Name))
+                LOG.info('Loaded Node {}'.format(l_node_obj.Name))
         except AttributeError as e_err:
             l_ret[0] = NodeData()  # Create an empty Nodes[<name>]
             LOG.error('ERROR - Node read error - {}'.format(e_err))
@@ -121,8 +127,9 @@ class Xml(object):
 
     @staticmethod
     def write_nodes_xml(p_pyhouse_obj):
-        l_xml = ET.Element('NodeSection')
+        l_xml = ET.Element(NODE_SECTION)
         l_nodes = p_pyhouse_obj.Computer.Nodes
+        # print(PrettyFormatAny.form(l_nodes[0], 'xxx'))
         l_msg = PrettyFormatAny.form(l_nodes, 'Nodes')
         LOG.warn('About to write {} nodes  {}'.format(len(l_nodes), l_msg))
         l_count = 0

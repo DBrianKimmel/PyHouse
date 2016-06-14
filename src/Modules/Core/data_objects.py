@@ -268,6 +268,7 @@ class ScheduleLightData(object):
         self.LightUUID = None
         self.Rate = 0
         self.RoomName = None
+        self.RoomUUID = None
         self.ScheduleType = 'Lighting'  # For future expansion into scenes, entertainment etc.
 
 
@@ -391,6 +392,7 @@ class DeviceData(BaseObject):
         self.DeviceSubType = 0
         self.RoomCoords = None  # CoordinateData()
         self.RoomName = ''
+        self.RoomUUID = None
         self.UUID = None
 
 
@@ -543,10 +545,10 @@ class ScheduleBaseData(BaseObject):
     """
     def __init__(self):
         super(ScheduleBaseData, self).__init__()
+        self.DOW = None
+        self.ScheduleMode = 'Home'  # Home, Away, Vacation,
         self.ScheduleType = ''
         self.Time = None
-        self.DOW = None
-        self.Mode = 0
         #  for use by web browser - not saved in xml
         self._DeleteFlag = False
 
@@ -628,7 +630,6 @@ class ButtonData(CoreLightingData):
     """
     def __init__(self):
         super(ButtonData, self).__init__()
-        #  self.LightingType = 'Button'
         self.UUID = None
 
 

@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Web/web_nodes.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Dec 11, 2014
 @Summary:
@@ -27,8 +27,7 @@ g_debug = 0
 LOG = Logger.getLogger('PyHouse.webNodes       ')
 
 
-
-#==============================================================================
+# ==============================================================================
 
 class NodesElement(athena.LiveElement):
     jsClass = u'nodes.NodesWidget'
@@ -58,7 +57,7 @@ class NodesElement(athena.LiveElement):
             try:
                 del self.m_pyhouse_obj.Computer.Nodes[l_ix]
             except AttributeError:
-                print("web_nodes - Failed to delete - JSON: {0:}".format(l_json))
+                LOG.error("web_nodes - Failed to delete - JSON: {0:}".format(l_json))
             return
         try:
             l_obj = self.m_pyhouse_obj.Computer.Nodes[l_ix]

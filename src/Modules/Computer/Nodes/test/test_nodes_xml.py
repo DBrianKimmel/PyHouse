@@ -126,7 +126,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_01_OneInterface(self):
+    def test_1_OneInterface(self):
         l_interface = nodesXml._read_one_interface_xml(self.m_xml.interface)
         # print(PrettyFormatAny.form(l_interface, 'Interface'))
         self.assertEqual(l_interface.Name, TESTING_NODES_INTERFACE_NAME_0_0)
@@ -138,7 +138,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_interface.V4Address, TESTING_NODES_INTERFACE_ADDRESS_V4_0_0)
         self.assertEqual(l_interface.V6Address, TESTING_NODES_INTERFACE_ADDRESS_V6_0_0)
 
-    def test_02_AllInterfaces(self):
+    def test_2_AllInterfaces(self):
         l_interfaces = nodesXml._read_interfaces_xml(self.m_xml.interface_sect)
         # print(PrettyFormatAny.form(l_interfaces, 'Interfaces'))
         self.assertEqual(len(l_interfaces), 3)
@@ -154,26 +154,26 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_interfaces[2].Name, TESTING_NODES_INTERFACE_NAME_0_2)
         self.assertEqual(len(l_interfaces), 3, 'Wrong interface count.')
 
-    def test_03_OneNode(self):
-        # print(PrettyFormatAny.form(self.m_xml.node, 'One Node'))
+    def test_3_OneNode(self):
+        # print(PrettyFormatAny.form(self.m_xml.node, 'B1-3-A One Node XML'))
         l_node = nodesXml._read_one_node_xml(self.m_xml.node)
-        print(PrettyFormatAny.form(l_node, 'One Node'))
+        # print(PrettyFormatAny.form(l_node, 'B1-3-B One Node'))
         self.assertEqual(l_node.Name, TESTING_NODES_NODE_NAME_0)
         self.assertEqual(l_node.Key, int(TESTING_NODES_NODE_KEY_0))
         self.assertEqual(l_node.Active, bool(TESTING_NODES_NODE_ACTIVE_0))
         self.assertEqual(l_node.NodeRole, int(TESTING_NODES_NODE_ROLL_0))
 
-    def test_04_AllNodes(self):
+    def test_4_AllNodes(self):
         l_nodes = nodesXml.read_all_nodes_xml(self.m_pyhouse_obj)
-        # print(PrettyFormatAny.form(l_nodes, 'All Nodes', 100))
-        print(PrettyFormatAny.form(l_nodes[TESTING_NODES_NODE_NAME_0], 'Node 0', 10))
+        # print(PrettyFormatAny.form(l_nodes, 'B1-4 All Nodes', 100))
+        # print(PrettyFormatAny.form(l_nodes[TESTING_NODES_NODE_NAME_0], 'Node 0', 10))
         # print(PrettyFormatAny.form(l_nodes[TESTING_NODES_NODE_NAME_0].NodeInterfaces, 'All Nodes', 10))
         self.assertEqual(len(l_nodes), 2)
         self.assertEqual(l_nodes[TESTING_NODES_NODE_NAME_0].Name, TESTING_NODES_NODE_NAME_0)
-        self.assertEqual(l_nodes[TESTING_NODES_NODE_NAME_1].Name, TESTING_NODES_NODE_NAME_1)
+        self.assertEqual(l_nodes[TESTING_NODES_NODE_UUID_1].Name, TESTING_NODES_NODE_NAME_1)
 
 
-class C03_Write(SetupMixin, unittest.TestCase):
+class C1_Write(SetupMixin, unittest.TestCase):
     """
     This section tests the reading and writing of XML used by node_local.
     """
@@ -181,10 +181,10 @@ class C03_Write(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_01_OneInterface(self):
+    def test_1_OneInterface(self):
         l_interface = nodesXml._read_one_interface_xml(self.m_xml.interface)
         l_xml = nodesXml._write_one_interface_xml(l_interface)
-        # print(PrettyFormatAny.form(l_xml, 'One Interface'))
+        # print(PrettyFormatAny.form(l_xml, 'C1-1 One Interface'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_NODES_INTERFACE_NAME_0_0)
         self.assertEqual(l_xml.attrib['Key'], TESTING_NODES_INTERFACE_KEY_0_0)
         self.assertEqual(l_xml.attrib['Active'], TESTING_NODES_INTERFACE_ACTIVE_0_0)
@@ -193,10 +193,10 @@ class C03_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml[2].text, TESTING_NODES_INTERFACE_ADDRESS_V4_0_0)
         self.assertEqual(l_xml[3].text, TESTING_NODES_INTERFACE_ADDRESS_V6_0_0)
 
-    def test_02_AllInterfaces(self):
+    def test_2_AllInterfaces(self):
         l_interfaces = nodesXml._read_interfaces_xml(self.m_xml.interface_sect)
         l_xml = nodesXml._write_interfaces_xml(l_interfaces)
-        # print(PrettyFormatAny.form(l_xml, 'All Interfaces'))
+        # print(PrettyFormatAny.form(l_xml, 'C1-2 All Interfaces'))
         self.assertEqual(l_xml[0].attrib['Name'], TESTING_NODES_INTERFACE_NAME_0_0)
         self.assertEqual(l_xml[0].attrib['Key'], TESTING_NODES_INTERFACE_KEY_0_0)
         self.assertEqual(l_xml[0].attrib['Active'], TESTING_NODES_INTERFACE_ACTIVE_0_0)
@@ -219,11 +219,11 @@ class C03_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml[2][2].text, TESTING_NODES_INTERFACE_ADDRESS_V4_0_2)
         self.assertEqual(l_xml[2][3].text, TESTING_NODES_INTERFACE_ADDRESS_V6_0_2)
 
-    def test_03_OneNode(self):
+    def test_3_OneNode(self):
         l_node = nodesXml._read_one_node_xml(self.m_xml.node)
         l_xml = nodesXml._write_one_node_xml(l_node)
-        print(PrettyFormatAny.form(l_xml, 'One Node'))
-        # print(PrettyFormatAny.form(l_xml[4][0], 'One Node 4-0'))
+        # print(PrettyFormatAny.form(l_xml, 'C1-3-A One Node'))
+        # print(PrettyFormatAny.form(l_xml[4][0], 'C1-3-B One Node 4-0'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_NODES_NODE_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], TESTING_NODES_NODE_KEY_0)
         self.assertEqual(l_xml.attrib['Active'], TESTING_NODES_NODE_ACTIVE_0)
@@ -231,6 +231,16 @@ class C03_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml[1].text, TESTING_NODES_CONNECTION_ADDRESS_V4_0)
         self.assertEqual(l_xml[2].text, TESTING_NODES_CONNECTION_ADDRESS_V6_0)
         self.assertEqual(l_xml[3].text, TESTING_NODES_NODE_ROLL_0)
+
+    def test_4_AllNodes(self):
+        l_nodes = nodesXml.read_all_nodes_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.Computer.Nodes = l_nodes
+        l_xml, l_count = nodesXml.write_nodes_xml(self.m_pyhouse_obj)
+        # print(PrettyFormatAny.form(l_xml, 'C1-4-A All Nodes'))
+        self.assertEqual(l_count, 2)
+        self.assertEqual(l_xml[1].attrib['Name'], TESTING_NODES_NODE_NAME_0)
+        self.assertEqual(l_xml[1].attrib['Key'], TESTING_NODES_NODE_KEY_0)
+        self.assertEqual(l_xml[1].attrib['Active'], TESTING_NODES_NODE_ACTIVE_0)
         self.assertEqual(l_xml[4][0].attrib['Name'], TESTING_NODES_INTERFACE_NAME_0_0)
         self.assertEqual(l_xml[4][0].attrib['Key'], TESTING_NODES_INTERFACE_KEY_0_0)
         self.assertEqual(l_xml[4][0].attrib['Active'], TESTING_NODES_INTERFACE_ACTIVE_0_0)
@@ -240,17 +250,6 @@ class C03_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml[4][2].attrib['Name'], TESTING_NODES_INTERFACE_NAME_0_2)
         self.assertEqual(l_xml[4][2].attrib['Key'], TESTING_NODES_INTERFACE_KEY_0_2)
         self.assertEqual(l_xml[4][2].attrib['Active'], TESTING_NODES_INTERFACE_ACTIVE_0_2)
-
-    def test_04_AllNodes(self):
-        l_nodes = nodesXml.read_all_nodes_xml(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.Computer.Nodes = l_nodes
-        l_xml, l_count = nodesXml.write_nodes_xml(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_xml, 'All Nodes'))
-        print(PrettyFormatAny.form(l_xml[1], 'All Nodes 4-0'))
-        self.assertEqual(l_count, 2)
-        self.assertEqual(l_xml[1].attrib['Name'], TESTING_NODES_NODE_NAME_0)
-        self.assertEqual(l_xml[1].attrib['Key'], TESTING_NODES_NODE_KEY_0)
-        self.assertEqual(l_xml[1].attrib['Active'], TESTING_NODES_NODE_ACTIVE_0)
         self.assertEqual(l_xml[1][0].text, TESTING_NODES_NODE_UUID_0)
 
 # ## END DBK

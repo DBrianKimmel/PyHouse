@@ -44,7 +44,7 @@ from Modules.Utilities.uuid_tools import Uuid
 from Modules.Utilities.xml_tools import XmlConfigTools
 
 LOG = Logger.getLogger('PyHouse.Computer       ')
-DIVISION = 'ComputerDivision'
+COMPUTER_DIVISION = 'ComputerDivision'
 FILE_PATH = '/etc/pyhouse/computer_uuid'
 
 # MODULES = ['Communication', 'Email', 'Internet' , 'Mqtt', 'Node', 'Weather', 'Web']
@@ -81,7 +81,7 @@ class Xml(object):
         The XML for all the sections within the division are read by the appropriate sub-module.
         Therefore, there is not much to do here.
         """
-        l_xml = p_pyhouse_obj.Xml.XmlRoot.find(DIVISION)
+        l_xml = p_pyhouse_obj.Xml.XmlRoot.find(COMPUTER_DIVISION)
         if l_xml is None:
             l_obj = Xml.create_computer(p_pyhouse_obj)
             p_pyhouse_obj.Computer = l_obj
@@ -96,7 +96,7 @@ class Xml(object):
         # p_pyhouse_obj.Computer.Name = platform.node()
         # p_pyhouse_obj.Computer.Key = 0
         # p_pyhouse_obj.Computer.Active = True
-        l_xml = XmlConfigTools.write_base_object_xml(DIVISION, p_pyhouse_obj.Computer)
+        l_xml = XmlConfigTools.write_base_object_xml(COMPUTER_DIVISION, p_pyhouse_obj.Computer)
         return l_xml
 
 

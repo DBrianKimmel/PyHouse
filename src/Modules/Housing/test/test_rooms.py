@@ -2,12 +2,12 @@
 @name:      PyHouse/src/Housing/test/test_rooms.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2015 by D. Brian Kimmel
+@copyright: (c) 2013-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 10, 2013
 @summary:   Test handling the rooms information for a house.
 
-Passed all 7 tests - DBK 2015-07-22
+Passed all 7 tests - DBK 2016-06-09
 """
 
 
@@ -20,6 +20,9 @@ from Modules.Housing import rooms
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities import json_tools
+from Modules.Housing.test.xml_rooms import TESTING_ROOM_NAME_0, TESTING_ROOM_COMMENT_0, TESTING_ROOM_CORNER_0, \
+    TESTING_ROOM_SIZE_0, TESTING_ROOM_ACTIVE_0, TESTING_ROOM_KEY_0, TESTING_ROOM_NAME_1
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -55,38 +58,41 @@ class A1_XML(SetupMixin, unittest.TestCase):
         """ Read in the xml file and fill in the first room's dict
         """
         l_room = self.m_api.read_one_room(self.m_xml.room)
-        self.assertEqual(l_room.Name, 'Master Bath', 'Bad Name')
-        self.assertEqual(l_room.Key, 0, 'Bad Key')
-        self.assertEqual(l_room.Active, True, 'Bad Active')
-        self.assertEqual(l_room.Comment, 'Test Comment', 'Bad Comment')
-        self.assertEqual(l_room.Corner, '0.50, 10.50', 'Bad Corner')
-        self.assertEqual(l_room.Size, '14.00, 13.50', 'Bad Size')
+        print(PrettyFormatAny.form(l_room, 'One Room'))
+        self.assertEqual(l_room.Name, TESTING_ROOM_NAME_0)
+        self.assertEqual(l_room.Key, int(TESTING_ROOM_KEY_0))
+        self.assertEqual(l_room.Active, bool(TESTING_ROOM_ACTIVE_0))
+        self.assertEqual(l_room.Comment, TESTING_ROOM_COMMENT_0)
+        self.assertEqual(l_room.Corner, TESTING_ROOM_CORNER_0)
+        self.assertEqual(l_room.Size, TESTING_ROOM_SIZE_0)
 
     def test_04_ReadAllRoomsXml(self):
         """ Read in the xml file and fill in the rooms dict
         """
         l_rooms = self.m_api.read_rooms_xml(self.m_xml.house_div)
-        self.assertEqual(l_rooms[0].Name, 'Master Bath', 'Bad Room')
+        print(PrettyFormatAny.form(l_rooms, 'All Room'))
+        self.assertEqual(l_rooms[0].Name, TESTING_ROOM_NAME_0)
+        self.assertEqual(l_rooms[1].Name, TESTING_ROOM_NAME_1)
 
     def test_05_WriteOneRoomXml(self):
         """ Write out the XML file for the location section
         """
         l_room = self.m_api.read_one_room(self.m_xml.house_div)
         l_xml = self.m_api.write_one_room(l_room)
-
+        print(PrettyFormatAny.form(l_xml, 'One Room'))
 
     def test_06_WriteAllRoomsXml(self):
         """ Write out the XML file for the location section
         """
         l_rooms = self.m_api.read_rooms_xml(self.m_xml.house_div)
         l_xml = self.m_api.write_rooms_xml(l_rooms)
-
+        print(PrettyFormatAny.form(l_xml, 'All Room'))
 
     def test_07_CreateJson(self):
         """ Create a JSON object for Rooms.
         """
         self.m_pyhouse_obj.House.Rooms = l_rooms = self.m_api.read_rooms_xml(self.m_xml.house_div)
         l_json = json_tools.encode_json(l_rooms)
-        # print('JSON: {0:}'.format(l_json))
+        print(PrettyFormatAny.form(l_json, 'JSON'))
 
 # ## END DBK

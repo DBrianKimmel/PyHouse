@@ -10,6 +10,7 @@
 """
 
 #  Import system type stuff
+import datetime
 
 #  Import PyMh files
 
@@ -30,6 +31,7 @@ TESTING_NODES_NODE_UUID_0 = '87654321-1001-11e3-b583-082e5f899999'
 TESTING_NODES_CONNECTION_ADDRESS_V4_0 = '192.168.1.123'
 TESTING_NODES_CONNECTION_ADDRESS_V6_0 = '2001:db8::dead:beef'
 TESTING_NODES_NODE_ROLL_0 = "1226"
+TESTING_NODES_LAST_UPDATE_0 = datetime.datetime(2016, 6, 6, 12, 34, 56)
 
 TESTING_NODES_INTERFACE_NAME_0_0 = "eth0"
 TESTING_NODES_INTERFACE_KEY_0_0 = '0'
@@ -62,6 +64,7 @@ L_NODE_START_0 = '    <Node Name="' + TESTING_NODES_NODE_NAME_0 + \
                     '" Key="' + TESTING_NODES_NODE_KEY_0 + \
                     '" Active="' + TESTING_NODES_NODE_ACTIVE_0 + '">'
 L_NODE_UUID_0 = '        <UUID>' + TESTING_NODES_NODE_UUID_0 + '</UUID>'
+L_NODE_LAST_UPDATE_0 = '    <LastUpdate>' + str(TESTING_NODES_LAST_UPDATE_0) + '</LastUpdate>'
 L_NODE_CONNECTION_ADDRESS_V4_0 = '        <ConnectionAddressV4>' + TESTING_NODES_CONNECTION_ADDRESS_V4_0 + '</ConnectionAddressV4>'
 L_NODE_CONNECTION_ADDRESS_V6_0 = '        <ConnectionAddressV6>' + TESTING_NODES_CONNECTION_ADDRESS_V6_0 + '</ConnectionAddressV6>'
 L_NODE_ROLE_0 = '        <NodeRole>' + TESTING_NODES_NODE_ROLL_0 + '</NodeRole>'
@@ -126,6 +129,7 @@ L_NODE_0 = '\n'.join([
     L_NODE_CONNECTION_ADDRESS_V4_0,
     L_NODE_CONNECTION_ADDRESS_V6_0,
     L_NODE_ROLE_0,
+        L_NODE_LAST_UPDATE_0,
         L_NODE_INTERFACE_SECTION_START,
         XML_NODE_INTERFACE_0_0,
         XML_NODE_INTERFACE_0_1,

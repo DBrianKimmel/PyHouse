@@ -29,20 +29,6 @@ LOG = Logger.getLogger('PyHouse.LightingCore   ')
 class API(object):
 
     @staticmethod
-    def _read_device_v1_3(p_device_obj, p_entry_xml):
-        """
-        Read the XML file version 1.3 - convert to 1.4
-        """
-        p_device_obj.Comment = ''
-        p_device_obj.DeviceFamily = PutGetXML.get_text_from_xml(p_entry_xml, 'ControllerFamily')
-        p_device_obj.DeviceType = 1
-        p_device_obj.DeviceSubType = 0
-        p_device_obj.LightingType = PutGetXML.get_text_from_xml(p_entry_xml, 'LightingType')
-        p_device_obj.RoomCoords = PutGetXML.get_coords_from_xml(p_entry_xml, 'Coords')
-        p_device_obj.RoomName = PutGetXML.get_text_from_xml(p_entry_xml, 'RoomName')
-        return p_device_obj
-
-    @staticmethod
     def _read_device_latest(p_device_obj, p_entry_xml):
         """
         """
@@ -54,10 +40,6 @@ class API(object):
         p_device_obj.RoomCoords = PutGetXML.get_coords_from_xml(p_entry_xml, 'RoomCoords')
         p_device_obj.RoomName = PutGetXML.get_text_from_xml(p_entry_xml, 'RoomName')
         return p_device_obj
-
-    @staticmethod
-    def _read_versioned_device(_p_pyhouse_obj, p_device_obj, p_entry_xml):
-        return API._read_device_latest(p_device_obj, p_entry_xml)
 
     @staticmethod
     def _read_base(p_pyhouse_obj, p_device_obj, p_entry_xml):
@@ -75,7 +57,7 @@ class API(object):
         @return: a dict of the entry to be attached to a higher object.
         """
         API._read_base(p_pyhouse_obj, p_device_obj, p_entry_xml)
-        API._read_versioned_device(p_pyhouse_obj, p_device_obj, p_entry_xml)
+        API._read_device_latest(p_device_obj, p_entry_xml)
         return p_device_obj
 
     @staticmethod
