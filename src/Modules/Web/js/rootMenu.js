@@ -2,7 +2,7 @@
  * @name:      PyHouse/src/Modules/Web/js/rootMenu.js
  * @author:    D. Brian Kimmel
  * @contact:   D.BrianKimmel@gmail.com
- * @copyright: (c) 2013-2015 by D. Brian Kimmel
+ * @copyright: (c) 2013-2016 by D. Brian Kimmel
  * @license:   MIT License
  * @note:      Created on May 30, 2013
  * @summary:   Displays the Main Menu

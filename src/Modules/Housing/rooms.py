@@ -32,6 +32,7 @@ class Xml(object):
         l_room_obj.Corner = PutGetXML.get_text_from_xml(p_room_element, 'Corner')
         l_room_obj.Floor = PutGetXML.get_text_from_xml(p_room_element, 'Floor', '1')
         l_room_obj.Size = PutGetXML.get_text_from_xml(p_room_element, 'Size')
+        l_room_obj.RoomType = PutGetXML.get_text_from_xml(p_room_element, 'RoomType')
         return l_room_obj
 
     @staticmethod
@@ -41,6 +42,7 @@ class Xml(object):
         PutGetXML.put_text_element(l_entry, 'Corner', p_room_object.Corner)
         PutGetXML.put_text_element(l_entry, 'Floor', p_room_object.Floor)
         PutGetXML.put_text_element(l_entry, 'Size', p_room_object.Size)
+        PutGetXML.put_text_element(l_entry, 'RoomType', p_room_object.RoomType)
         return l_entry
 
     @staticmethod
@@ -76,5 +78,22 @@ class Xml(object):
             l_count += 1
         LOG.info('Saved {} Rooms XML'.format(l_count))
         return l_rooms_xml
+
+
+class Maint(object):
+    """ Maintain the room internal database.
+    """
+
+    def add_room(self):
+        pass
+
+    def delete_room(self, p_pyhouse_obj, p_json):
+        l_room_ix = int(p_json['Key'])
+        try:
+            del p_pyhouse_obj.House.Rooms[l_room_ix]
+        except AttributeError:
+            LOG.error("web_rooms - Failed to delete - JSON: {}".format(p_json))
+        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("room/delete", p_json)
+        return
 
 #  ## END DBK

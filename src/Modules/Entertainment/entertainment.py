@@ -3,7 +3,7 @@
 @name:      PyHouse/src/Modules/Entertainment/entertainment.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2015 by D. Brian Kimmel
+@copyright: (c) 2013-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 3, 2013
 @summary:   Entertainment component access module.

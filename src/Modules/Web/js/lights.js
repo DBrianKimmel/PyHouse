@@ -205,8 +205,8 @@ helpers.Widget.subclass(lights, 'LightsWidget').methods(
 		l_obj.Add = globals.Add;
 		switch(l_ix) {
 		case '10003':  // Change/Save Button
-	    	var l_json = JSON.stringify(l_obj);
-	        var l_defer = self.callRemote("saveLightData", l_json);
+	    	l_json = JSON.stringify(l_obj);
+	        l_defer = self.callRemote("saveLightData", l_json);
 			l_defer.addCallback(cb_handleDataEntryOnClick);
 			l_defer.addErrback(eb_handleDataEntryOnClick);
 			break;

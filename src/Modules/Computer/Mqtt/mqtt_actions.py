@@ -44,8 +44,12 @@ class Actions(object):
 
     def _decode_computer(self, p_logmsg, p_topic, p_message):
         p_logmsg += '\tComputer:\n'
+        #  computer/browser/***
+        if p_topic[1] == 'browser':
+            l_name = 'unknown'
+            p_logmsg += '\tBrowser: Message {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
         #  computer/ip
-        if p_topic[1] == 'ip':
+        elif p_topic[1] == 'ip':
             l_ip = self._get_field(p_message, 'ExternalIPv4Address')
             p_logmsg += '\tIPv4: {}'.format(l_ip)
         #  computer/startup
@@ -82,6 +86,16 @@ class Actions(object):
         p_logmsg += '\n\tLevel: {}'.format(self._get_field(p_message, 'CurLevel'))
         return p_logmsg
 
+    def _decode_room(self, p_logmsg, p_topic, p_message):
+        p_logmsg += '\tRooms:\n'
+        if p_topic[1] == 'add':
+            p_logmsg += '\tName: {}\n'.format(self._get_field(p_message, 'Name'))
+        elif p_topic[1] == 'delete':
+            p_logmsg += '\tName: {}\n'.format(self._get_field(p_message, 'Name'))
+        else:
+            p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Rooms msg', 160))
+        return p_logmsg
+
     def _decode_schedule(self, p_logmsg, p_topic, p_message):
         p_logmsg += '\tSchedule:\n'
         if p_topic[1] == 'execute':
@@ -115,6 +129,8 @@ class Actions(object):
             l_logmsg = self._decode_hvac(l_logmsg, p_topic, p_message)
         elif p_topic[0] == 'lighting':
             l_logmsg = self._decode_lighting(l_logmsg, p_topic, p_message)
+        elif p_topic[0] == 'room':
+            l_logmsg = self._decode_room(l_logmsg, p_topic, p_message)
         elif p_topic[0] == 'schedule':
             l_logmsg = self._decode_schedule(l_logmsg, p_topic, p_message)
         elif p_topic[0] == 'weather':

@@ -18,7 +18,7 @@ from nevow import athena
 
 # Import PyMh files and modules.
 from Modules.Web.web_utils import JsonUnicode, GetJSONHouseInfo
-from Modules.Housing import rooms
+from Modules.Housing.rooms import Maint as roomMaint
 from Modules.Computer import logging_pyh as Logger
 
 # Handy helper for finding external resources nearby.
@@ -57,10 +57,12 @@ class RoomsElement(athena.LiveElement):
         l_room_ix = int(l_json['Key'])
         l_delete = l_json['Delete']
         if l_delete:
+            roomMaint.delete_room(self.m_pyhouse_obj, l_json)
             try:
                 del self.m_pyhouse_obj.House.Rooms[l_room_ix]
             except AttributeError:
                 LOG.error("web_rooms - Failed to delete - JSON: {}".format(l_json))
+            self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("room/delete", l_json)
             return
         try:
             l_obj = self.m_pyhouse_obj.House.Rooms[l_room_ix]
@@ -69,10 +71,13 @@ class RoomsElement(athena.LiveElement):
         l_obj.Name = l_json['Name']
         l_obj.Active = l_json['Active']
         l_obj.Key = l_room_ix
+        l_obj.UUID = l_json['UUID']
         l_obj.Comment = l_json['Comment']
         l_obj.Corner = l_json['Corner']
+        l_obj.Floor = l_json['Floor']
         l_obj.Size = l_json['Size']
         l_obj.RoomType = 'Room'
         self.m_pyhouse_obj.House.Rooms[l_room_ix] = l_obj
+        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("room/add", l_obj)
 
 # ## END DBK

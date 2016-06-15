@@ -201,14 +201,16 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 		function eb_handleDataEntryOnClick(res){
 			Divmod.debug('---', 'schedules.eb_handleDataEntryOnClick() was called. ERROR =' + res);
 		}
+		var l_json;
+		var l_defer;
 		var l_ix = p_node.name;
 		var l_obj = self.fetchEntry();
 		l_obj.Add = globals.Add;
 		l_obj.Delete = false;
 		switch(l_ix) {
 		case '10003':  // Change Button
-	    	var l_json = JSON.stringify(l_obj);
-	        var l_defer = self.callRemote("saveScheduleData", l_json);  // @ web_schedule
+	    	l_json = JSON.stringify(l_obj);
+	        l_defer = self.callRemote("saveScheduleData", l_json);  // @ web_schedule
 			l_defer.addCallback(cb_handleDataEntryOnClick);
 			l_defer.addErrback(eb_handleDataEntryOnClick);
 			break;

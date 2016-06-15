@@ -122,8 +122,10 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	},
 	function buildRoomEntry(self, p_obj, p_html) {
 		p_html += buildLcarTextWidget(self, 'Comment', 'Comment', p_obj.Comment);
-		p_html += buildLcarTextWidget(self, 'Corner', 'Corner', p_obj.Corner);
-		p_html += buildLcarTextWidget(self, 'Size', 'Size', p_obj.Size);
+		p_html += buildLcarCoOrdinatesWidget(self, 'Corner', 'Corner', p_obj.Corner);
+		p_html += buildLcarCoOrdinatesWidget(self, 'Size', 'Size', p_obj.Size);
+		p_html += buildLcarTextWidget(self, 'Floor', 'Floor', p_obj.Floor);
+		p_html += buildLcarTextWidget(self, 'Type', 'Type', p_obj.RoomType);
 		return p_html;
 	},
 	function fetchEntry(self) {
@@ -133,8 +135,10 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	},
     function fetchRoomEntry(self, p_data) {
         p_data.Comment = fetchTextWidget(self, 'Comment');
-        p_data.Corner = fetchTextWidget(self, 'Corner');
-        p_data.Size = fetchTextWidget(self, 'Size');
+        p_data.Corner = fetchCoOrdinatesWidget(self, 'Corner');
+        p_data.Size = fetchCoOrdinatesWidget(self, 'Size');
+        p_data.Floor = fetchTextWidget(self, 'Floor');
+        p_data.RoomType = fetchTextWidget(self, 'Type');
     	return p_data;
     },
 	function createEntry(self) {
@@ -150,6 +154,8 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		p_data.Comment = '';
 		p_data.Corner = [0.0, 0.0, 0.0];
 		p_data.Size = [ 0.0, 0.0, 0.0];
+		p_data.Floor = 1;
+		p_data.RoomType = 'Room';
 		// return p_data
 	},
 
@@ -168,13 +174,16 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		function eb_handleDataEntryOnClick(res){
 			Divmod.debug('---', 'rooms.eb_handleDataEntryOnClick() was called. ERROR =' + res);
 		}
-		var l_ix = p_node.name;
 		var l_defer;
 		var l_json;
+		var l_ix = p_node.name;
+		var l_obj = self.fetchEntry();
+		l_obj.Add = globals.Add;
+		l_obj.Delete = false;
 		switch(l_ix) {
 		case '10003':  // Change Button
-	    	l_json = JSON.stringify(self.fetchEntry());
-	        l_defer = self.callRemote("saveRoomData", l_json);  // @ web_schedule
+	    	l_json = JSON.stringify(l_obj);
+	        l_defer = self.callRemote("saveRoomData", l_json);  // @ web_rooms
 			l_defer.addCallback(cb_handleDataEntryOnClick);
 			l_defer.addErrback(eb_handleDataEntryOnClick);
 			break;
@@ -182,7 +191,6 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 			showSelectionButtons(self);
 			break;
 		case '10004':  // Delete button
-			var l_obj = self.fetchEntry();
 			l_obj.Delete = true;
 	    	l_json = JSON.stringify(l_obj);
 	        l_defer = self.callRemote("saveRoomData", l_json);  // @ web_rooms

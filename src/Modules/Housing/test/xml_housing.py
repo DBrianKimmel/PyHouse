@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Housing/test/xml_housing.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 7, 2014
 @summary:   XML data for house location
@@ -27,7 +27,7 @@ from Modules.Housing.test.xml_rooms import XML_ROOMS
 from Modules.Scheduling.test.xml_schedule import XML_SCHEDULE
 from Modules.Lighting.test.xml_lighting import XML_LIGHTING
 from Modules.Hvac.test.xml_hvac import XML_HVAC
-from Modules.Entertainment.test.xml_entertainment import ENTERTAINMENT_XML
+from Modules.Entertainment.test.xml_entertainment import XML_ENTERTAINMENT
 from Modules.Irrigation.test.xml_irrigation import XML_IRRIGATION
 from Modules.Pool.test.xml_pool import XML_POOL
 
@@ -49,7 +49,7 @@ HOUSE_DIVISION_XML = '\n'.join([
     XML_SCHEDULE,
     XML_LIGHTING,
     XML_HVAC,
-    ENTERTAINMENT_XML,
+    XML_ENTERTAINMENT,
     XML_IRRIGATION,
     XML_POOL,
     L_HOUSE_DIVISION_END

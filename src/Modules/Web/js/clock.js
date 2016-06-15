@@ -2,7 +2,7 @@
  * @name:      PyHouse/src/Modules/Web/js/clock.js
  * @author:    D. Brian Kimmel
  * @contact:   D.BrianKimmel@gmail.com
- * @copyright: (c) 2012-2015 by D. Brian Kimmel
+ * @copyright: (c) 2012-2016 by D. Brian Kimmel
  * @license:   MIT License
  * @note:      Created about 2012
  * @summary:   Displays the server time, polling from the client via nevow's RPC
