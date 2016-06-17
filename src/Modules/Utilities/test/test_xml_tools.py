@@ -7,7 +7,7 @@
 @note:      Created on Apr 11, 2013
 @summary:   This module is for testing XML tools.
 
-Passed 49 of 49 testa - DBK 2016-06-12
+Passed 54 of 54 testa - DBK 2016-06-17
 
 """
 
@@ -45,7 +45,8 @@ from Modules.Utilities.test.xml_xml_tools import \
     TESTING_XML_TEXT_A0, \
     TESTING_XML_BOOL_A0, \
     TESTING_XML_FLOAT_A0, \
-    TESTING_XML_INT_A0, TESTING_XML_DATE_TIME_0
+    TESTING_XML_INT_A0, TESTING_XML_DATE_TIME_0, TESTING_XML_ROOM_X_1, TESTING_XML_ROOM_Y_1, TESTING_XML_ROOM_Z_1, \
+    TESTING_XML_ROOM_COORDS_1, TESTING_XML_ROOM_COORDS_0, TESTING_XML_ROOM_COORDS_2
 from test.xml_data import XML_LONG, XML_EMPTY
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.debug_tools import PrettyFormatAny
@@ -371,13 +372,15 @@ class D3_DateTime(SetupMixin, unittest.TestCase):
         l_date = self.m_api.get_date_time_from_xml(self.m_fields, 'DateTime0')
         l_element = ET.Element('TestDateTime')
         self.m_api.put_date_time_element(l_element, 'TestField', l_date)
-        print(PrettyFormatAny.form(l_element, 'DateTime D3-2 A'))
+        # print(PrettyFormatAny.form(l_element, 'DateTime D3-2 A'))
         self.assertEqual(l_element[0].text, TESTING_XML_DATE_TIME_0)
 
 
 class D4_Coords(SetupMixin, unittest.TestCase):
     """
-    This series tests the PutGetXML class methods
+    This series test reeading and writing of CoOrdinates.
+    Since there are various input formats tested and the xml-tools output is always ideal,
+    we need to use string literals to test for correctness.
     """
 
     def setUp(self):
@@ -385,12 +388,53 @@ class D4_Coords(SetupMixin, unittest.TestCase):
         self.m_fields = ET.fromstring(XML_TEST)
         self.m_api = PutGetXML
 
-    def test_01_Coords(self):
+    def test_01_Read(self):
+        # print(PrettyFormatAny.form(self.m_fields, 'Coords D4-1 A'))
         l_coords = self.m_api.get_coords_from_xml(self.m_fields, 'RoomCoords0')
-        print(PrettyFormatAny.form(l_coords, 'Coords D4-1 A'))
+        # print(PrettyFormatAny.form(l_coords, 'Coords D4-1 B'))
         self.assertEqual(l_coords.X_Easting, float(TESTING_XML_ROOM_X_0))
         self.assertEqual(l_coords.Y_Northing, float(TESTING_XML_ROOM_Y_0))
         self.assertEqual(l_coords.Z_Height, float(TESTING_XML_ROOM_Z_0))
+
+    def test_02_Read(self):
+        # print(PrettyFormatAny.form(self.m_fields, 'Coords D4-2 A'))
+        l_coords = self.m_api.get_coords_from_xml(self.m_fields, 'RoomCoords1')
+        # print(PrettyFormatAny.form(l_coords, 'Coords D4-2 B'))
+        self.assertEqual(l_coords.X_Easting, float(TESTING_XML_ROOM_X_1))
+        self.assertEqual(l_coords.Y_Northing, float(TESTING_XML_ROOM_Y_1))
+        self.assertEqual(l_coords.Z_Height, float(TESTING_XML_ROOM_Z_1))
+
+    def test_03_Read(self):
+        # print(PrettyFormatAny.form(self.m_fields, 'Coords D4-3 A'))
+        l_coords = self.m_api.get_coords_from_xml(self.m_fields, 'RoomCoords2')
+        # print(PrettyFormatAny.form(l_coords, 'Coords D4-3 B'))
+        self.assertEqual(l_coords.X_Easting, 23.7)
+        self.assertEqual(l_coords.Y_Northing, 2.15)
+        self.assertEqual(l_coords.Z_Height, 3.33)
+
+    def test_04_Write(self):
+        l_coords = self.m_api.get_coords_from_xml(self.m_fields, 'RoomCoords0')
+        # print(PrettyFormatAny.form(l_coords, 'Coords D4-4 A'))
+        l_element = ET.Element('TestCoords')
+        self.m_api.put_coords_element(l_element, 'OutCoords', l_coords)
+        # print(PrettyFormatAny.form(l_element, 'Coords D4-4 B'))
+        self.assertEqual(l_element[0].text, '[3.4,5.6,1.2]')
+
+    def test_05_Write(self):
+        l_coords = self.m_api.get_coords_from_xml(self.m_fields, 'RoomCoords1')
+        # print(PrettyFormatAny.form(l_coords, 'Coords D4-5 A'))
+        l_element = ET.Element('TestCoords')
+        self.m_api.put_coords_element(l_element, 'OutCoords', l_coords)
+        # print(PrettyFormatAny.form(l_element, 'Coords D4-5 B'))
+        self.assertEqual(l_element[0].text, TESTING_XML_ROOM_COORDS_1)
+
+    def test_06_Write(self):
+        l_coords = self.m_api.get_coords_from_xml(self.m_fields, 'RoomCoords2')
+        # print(PrettyFormatAny.form(l_coords, 'Coords D4-6 A'))
+        l_element = ET.Element('TestCoords')
+        self.m_api.put_coords_element(l_element, 'OutCoords', l_coords)
+        # print(PrettyFormatAny.form(l_element, 'Coords D4-6 B'))
+        self.assertEqual(l_element[0].text, '[23.7,2.15,3.33]')
 
 
 class E1_Read(SetupMixin, unittest.TestCase):

@@ -50,8 +50,23 @@ L_DATE_TIME_0 = '<DateTime0>' + TESTING_XML_DATE_TIME_0 + '</DateTime0>'
 TESTING_XML_ROOM_X_0 = '3.4'
 TESTING_XML_ROOM_Y_0 = '5.6'
 TESTING_XML_ROOM_Z_0 = '1.2'
-TESTING_XML_ROOM_COORDS_0 = '[' + TESTING_XML_ROOM_X_0 + ', ' + TESTING_XML_ROOM_Y_0 + ', ' + TESTING_XML_ROOM_Z_0 + ']'
+TESTING_XML_ROOM_COORDS_0 = '[' + TESTING_XML_ROOM_X_0 + \
+                            ", '" + TESTING_XML_ROOM_Y_0 + \
+                            "', " + '"' + TESTING_XML_ROOM_Z_0 + \
+                            '"]'
 L_ROOM_COORDS_0 = '<RoomCoords0>' + TESTING_XML_ROOM_COORDS_0 + '</RoomCoords0>'
+
+TESTING_XML_ROOM_X_1 = '1.75'
+TESTING_XML_ROOM_Y_1 = '23.2'
+TESTING_XML_ROOM_Z_1 = '7.483'
+TESTING_XML_ROOM_COORDS_1 = '[' + TESTING_XML_ROOM_X_1 + \
+                            ',' + TESTING_XML_ROOM_Y_1 + \
+                            ',' + TESTING_XML_ROOM_Z_1 + \
+                            ']'
+L_ROOM_COORDS_1 = '<RoomCoords1>' + TESTING_XML_ROOM_COORDS_1 + '</RoomCoords1>'
+
+TESTING_XML_ROOM_COORDS_2 = '[23.7,2.15, 3.33]'
+L_ROOM_COORDS_2 = '<RoomCoords2>' + TESTING_XML_ROOM_COORDS_2 + '</RoomCoords2>'
 
 TESTING_XML_BOOL_A0 = 'True'
 TESTING_XML_FLOAT_A0 = '2.123456789'
@@ -92,6 +107,8 @@ XML_TEST = '\n'.join([
     L_UUID_0,
     L_DATE_TIME_0,
     L_ROOM_COORDS_0,
+    L_ROOM_COORDS_1,
+    L_ROOM_COORDS_2,
     L_TEST_0_END
 ])
 

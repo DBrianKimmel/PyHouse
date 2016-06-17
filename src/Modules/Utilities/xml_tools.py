@@ -261,30 +261,31 @@ class PutGetXML(object):
     @staticmethod
     def get_coords_from_xml(p_xml, p_name):
         def _get_float(p_field):
-            l_fld = str.strip(p_field, '" ')
-            l_fld = str.strip(l_fld, "' ")
+            l_fld = str.strip(p_field, '\"\' ')
             l_flt = float(l_fld)
             return l_flt
         l_ret = CoordinateData()
         l_raw = XML.get_any_field(p_xml, p_name)
         #  LOG.info('Name:{};  Field:{}'.format(p_name, l_raw))
         try:
-            l_raw = str.strip(l_raw, ' []')
+            l_raw = str.strip(l_raw, ' \"\'[]')
             l_field = str.split(l_raw, ',')
             l_ret.X_Easting = _get_float(l_field[0])
             l_ret.Y_Northing = _get_float(l_field[1])
             l_ret.Z_Height = _get_float(l_field[2])
-        except:
+        except Exception as e_err:
             l_ret.X_Easting = 0.0
             l_ret.Y_Northing = 0.0
             l_ret.Z_Height = 0.0
+            LOG.error('CoOrd Error {}'.format(e_err))
         return l_ret
 
     @staticmethod
     def put_coords_element(p_parent_element, p_name, p_coords):
         try:
-            l_coord = '[{},{},{}]'.format(p_coords.X_Easting, p_coords.Y_Northing, p_coords.Z_Height)
-        except Exception:
+            l_coord = "[{},{},{}]".format(p_coords.X_Easting, str(p_coords.Y_Northing), str(p_coords.Z_Height))
+        except Exception as e_err:
+            LOG.error('CoOrd Error - {}'.format(e_err))
             l_coord = '[0.0,0.0,0.0]'
         ET.SubElement(p_parent_element, p_name).text = l_coord
 

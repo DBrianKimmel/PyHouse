@@ -524,9 +524,9 @@ class RoomData(BaseObject):
     def __init__(self):
         super(RoomData, self).__init__()
         self.Comment = ''
-        self.Corner = ''
+        self.Corner = ''  # CoordinateData()
         self.Floor = '1st'  # Outside | Basement | 1st | 2nd | 3rd | 4th | Attic | Roof
-        self.Size = ''
+        self.Size = ''  # CoordinateData()
         self.RoomType = 'Room'
         self.UUID = None
 

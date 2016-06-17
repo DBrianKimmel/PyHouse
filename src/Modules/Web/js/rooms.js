@@ -41,7 +41,6 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 	},
 
 
-
 // ============================================================================
 	/**
 	 * This triggers getting the room data from the server.
@@ -115,6 +114,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		self.nodeById('DataEntryDiv').innerHTML = l_html;
 	},
 	function buildEntry(self, p_obj, p_handler, p_onchange) {
+		// console.log("rooms.buildEntry() - p_obj = %O", p_obj);
 		var l_html = buildBaseEntry(self, p_obj);
 		l_html = self.buildRoomEntry(p_obj, l_html);
 		l_html += buildLcarEntryButtons(p_handler, 1);
@@ -125,7 +125,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		p_html += buildLcarCoOrdinatesWidget(self, 'Corner', 'Corner', p_obj.Corner);
 		p_html += buildLcarCoOrdinatesWidget(self, 'Size', 'Size', p_obj.Size);
 		p_html += buildLcarTextWidget(self, 'Floor', 'Floor', p_obj.Floor);
-		p_html += buildLcarTextWidget(self, 'Type', 'Type', p_obj.RoomType);
+		p_html += buildLcarTextWidget(self, 'RoomType', 'RoomType', p_obj.RoomType);
 		return p_html;
 	},
 	function fetchEntry(self) {
@@ -138,25 +138,21 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
         p_data.Corner = fetchCoOrdinatesWidget(self, 'Corner');
         p_data.Size = fetchCoOrdinatesWidget(self, 'Size');
         p_data.Floor = fetchTextWidget(self, 'Floor');
-        p_data.RoomType = fetchTextWidget(self, 'Type');
+        p_data.RoomType = fetchTextWidget(self, 'RoomType');
     	return p_data;
     },
 	function createEntry(self) {
 		var l_key = Object.keys(globals.House.Rooms).length;
-		// Divmod.debug('---', 'rooms.createEntry() was called.  Key = ' + l_key);
 		var l_data = createBaseEntry(self, l_key);
-		// console.log("rooms.createEntry(1) - l_data = %O", l_data);
 		self.createRoomEntry(l_data);
-		// console.log("rooms.createEntry(2) - l_data = %O", l_data);
 		return l_data;
 	},
-	function createRoomEntry(p_data) {
+	function createRoomEntry(self, p_data) {
 		p_data.Comment = '';
-		p_data.Corner = [0.0, 0.0, 0.0];
-		p_data.Size = [ 0.0, 0.0, 0.0];
-		p_data.Floor = 1;
+		p_data.Corner = '[1.0, 2.0, 3.0]';
+		p_data.Size = '[ 4.0, 5.0, 6.0]';
+		p_data.Floor = '1';
 		p_data.RoomType = 'Room';
-		// return p_data
 	},
 
 // ============================================================================

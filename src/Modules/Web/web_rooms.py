@@ -29,8 +29,6 @@ g_debug = 0
 LOG = Logger.getLogger('PyHouse.webRooms       ')
 
 
-# ==============================================================================
-
 class RoomsElement(athena.LiveElement):
     jsClass = u'rooms.RoomsWidget'
     docFactory = loaders.xmlfile(os.path.join(templatepath, 'roomsElement.html'))
@@ -46,7 +44,7 @@ class RoomsElement(athena.LiveElement):
         Get a lot of server JSON data and pass it to the client browser.
         """
         l_json = GetJSONHouseInfo(self.m_pyhouse_obj)
-        # y LOG.info('Fetched {}'.format(l_json))
+        # LOG.warn('Fetched {}'.format(l_json))
         return l_json
 
     @athena.expose
@@ -54,30 +52,6 @@ class RoomsElement(athena.LiveElement):
         """A new/changed/deleted room is returned.  Process it and update the internal data.
         """
         l_json = JsonUnicode().decode_json(p_json)
-        l_room_ix = int(l_json['Key'])
-        l_delete = l_json['Delete']
-        if l_delete:
-            roomMaint.delete_room(self.m_pyhouse_obj, l_json)
-            try:
-                del self.m_pyhouse_obj.House.Rooms[l_room_ix]
-            except AttributeError:
-                LOG.error("web_rooms - Failed to delete - JSON: {}".format(l_json))
-            self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("room/delete", l_json)
-            return
-        try:
-            l_obj = self.m_pyhouse_obj.House.Rooms[l_room_ix]
-        except KeyError:
-            l_obj = rooms.RoomData()
-        l_obj.Name = l_json['Name']
-        l_obj.Active = l_json['Active']
-        l_obj.Key = l_room_ix
-        l_obj.UUID = l_json['UUID']
-        l_obj.Comment = l_json['Comment']
-        l_obj.Corner = l_json['Corner']
-        l_obj.Floor = l_json['Floor']
-        l_obj.Size = l_json['Size']
-        l_obj.RoomType = 'Room'
-        self.m_pyhouse_obj.House.Rooms[l_room_ix] = l_obj
-        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("room/add", l_obj)
+        roomMaint().from_web(self.m_pyhouse_obj, l_json)
 
 # ## END DBK

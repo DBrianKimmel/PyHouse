@@ -919,37 +919,60 @@ function fetchDowWidget(self, p_id) {
 
 //========== CoOrdinates Widgets ==================================================================
 
+var trim = (function () {
+    "use strict";
+    function escapeRegex(string) {
+        return string.replace(/[\[\](){}?*+\^$\\.|\-]/g, "\\$&");
+    }
+    return function trim(str, characters, flags) {
+        flags = flags || "g";
+        if (typeof str !== "string" || typeof characters !== "string" || typeof flags !== "string") {
+            throw new TypeError("argument must be string");
+        }
+        if (!/^[gi]*$/.test(flags)) {
+            throw new TypeError("Invalid flags supplied '" + flags.match(new RegExp("[^gi]*")) + "'");
+        }
+        characters = escapeRegex(characters);
+        return str.replace(new RegExp("^[" + characters + "]+|[" + characters + "]+$", flags), '');
+    };
+}());
+
 function _putFloat(p_float) {
-	var l_ret;
+	// Divmod.debug('---', 'globals._putFloat(A) was called. ' + p_float);
+	var l_ret = '0.02';
 	try {
 		l_ret = parseFloat(p_float).toFixed(2);
 	}
 	catch(err) {
-		l_ret = '0.00';
+		l_ret = '0.03';
 	}
 	return l_ret;
 }
 
 function buildLcarCoOrdinatesWidget(self, p_id, p_caption, p_value, /* optional */ p_options) {
-	Divmod.debug('---', 'globals.buildLcarCoOrdinatesWidget() was called.');
-	var l_size = 40;
-	var l_options = p_options;
+	// p_value is a string like '[ 1.2, 3.4, 5.6 ]'
+	// Divmod.debug('---', 'globals.buildLcarCoOrdinatesWidget(A) was called.');
+	// console.log("globals.buildLcarCoOrdinatesWidget(B) - %O", p_value);
 	var l_id = buildAthenaId(self, p_id);
+	var l_size = 40;
+	var l_value = '';
+	var l_options = p_options;
 	if (p_options === undefined)
 		l_options = '';
 	if (p_value == undefined || p_value == null) {
-		l_value = '[0.00, 0.00, 0.00]';
+		l_value = '[0.11, 0.22, 0.33]';
 	} else {
-		var l_value = '[ ';
-		l_value += _putFloat(p_value['X_Easting']);
+		var l_ary = trim(p_value, '\[\] ', 'g').split(',');
+		l_value = '[ ';
+		l_value += _putFloat(l_ary[0]);
 		l_value += ', ';
-		l_value += _putFloat(p_value['Y_Northing']);
+		l_value += _putFloat(l_ary[1]);
 		l_value += ', ';
-		l_value += _putFloat(p_value['Z_Height']);
+		l_value += _putFloat(l_ary[2]);
 		l_value += ' ]';
 	}
 	var l_html = buildTopDivs(p_caption);
-	// console.log("globals.buildLcarCoOrdinatesWidget() - %O", p_value);
+	// console.log("globals.buildLcarCoOrdinatesWidget(C) - %O", p_value);
 	l_html += "<input type='text' class='lcars-button-addition'";
 	l_html += setIdAttribute(l_id);
 	l_html += setSizeOption(p_options);
