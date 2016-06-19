@@ -39,7 +39,7 @@ from Modules.Lighting.test.xml_lights import \
         TESTING_LIGHT_NAME_1, \
         TESTING_LIGHT_CUR_LEVEL_1, \
         TESTING_LIGHT_DIMMABLE_1, TESTING_LIGHT_KEY_0, TESTING_LIGHT_ACTIVE_0, TESTING_LIGHT_COMMENT_0, \
-        TESTING_LIGHT_ROOM_0, TESTING_LIGHT_UUID_0, \
+        TESTING_LIGHT_ROOM_NAME_0, TESTING_LIGHT_UUID_0, \
         TESTING_LIGHT_ROOM_X, TESTING_LIGHT_ROOM_Y, \
         TESTING_LIGHT_ROOM_Z, TESTING_LIGHT_DEVICE_TYPE_0, TESTING_LIGHT_DEVICE_SUBTYPE_0, TESTING_LIGHT_DEVICE_FAMILY_0
 from test.xml_data import XML_LONG
@@ -138,7 +138,7 @@ class R1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.DeviceSubType, int(TESTING_LIGHT_DEVICE_SUBTYPE_0))
         self.assertEqual(l_obj.IsDimmable, TESTING_LIGHT_IS_DIMMABLE_0)
         self.assertEqual(l_obj.LightingType, TESTING_LIGHT_TYPE_0)
-        self.assertEqual(l_obj.RoomName, TESTING_LIGHT_ROOM_0)
+        self.assertEqual(l_obj.RoomName, TESTING_LIGHT_ROOM_NAME_0)
         self.assertEqual(l_obj.UUID, TESTING_LIGHT_UUID_0)
         self.assertEqual(l_obj.RoomCoords.X_Easting, float(TESTING_LIGHT_ROOM_X))
         self.assertEqual(l_obj.RoomCoords.Y_Northing, float(TESTING_LIGHT_ROOM_Y))
@@ -168,7 +168,7 @@ class R1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.Active, bool(TESTING_LIGHT_ACTIVE_0))
         self.assertEqual(l_obj.Comment, TESTING_LIGHT_COMMENT_0)
         self.assertEqual(l_obj.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
-        self.assertEqual(l_obj.RoomName, TESTING_LIGHT_ROOM_0)
+        self.assertEqual(l_obj.RoomName, TESTING_LIGHT_ROOM_NAME_0)
         self.assertEqual(l_obj.LightingType, TESTING_LIGHT_TYPE_0)
         self.assertEqual(l_obj.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
 

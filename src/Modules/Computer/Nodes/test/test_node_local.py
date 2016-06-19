@@ -7,7 +7,7 @@
 @note:      Created on Apr 29, 2014
 @summary:   This module is for testing local node data.
 
-Passed all 14 tests - DBK - 2016-06-07
+Passed all 16 tests - DBK - 2016-06-17
 
 """
 

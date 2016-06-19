@@ -475,7 +475,6 @@ class NodeData(BaseObject):
     """Information about a single node.
     Name is the Node's HostName
     The interface info is only for the local node.
-    Node[0] is always the local node (Myself)
 
     ==> PyHouse.Computer.Nodes[x].xxx - as in the def below.
     """

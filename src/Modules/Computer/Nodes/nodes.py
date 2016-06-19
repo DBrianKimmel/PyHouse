@@ -9,11 +9,6 @@
 @note:      Created on Mar 6, 2014
 @summary:   This module does everything for nodes.
 
-First, it uses node_local to gather the information about the node on which we are running.
-Second, it uses node_discovery to find all the running nodes in the domain.
-    Nodes may come and go within the domain.
-Third, inter_node_comm is used to build up a model of all the nodes in a domain.
-    It also tries to keep track of the active status of each node.
 """
 
 #  Import system type stuff
@@ -37,6 +32,7 @@ class API(object):
     def LoadXml(self, p_pyhouse_obj):
         """ Load the Mqtt xml info.
         """
+        self.m_pyhouse_obj = p_pyhouse_obj
         l_nodes = nodesXml.read_all_nodes_xml(p_pyhouse_obj)
         p_pyhouse_obj.Computer.Nodes = l_nodes
         return l_nodes
@@ -44,7 +40,6 @@ class API(object):
     def Start(self):
         self.m_local.Start()
         self.m_sync.Start()
-        #  self.m_discovery.Start()
 
     def SaveXml(self, p_xml):
         l_xml, l_count = nodesXml.write_nodes_xml(self.m_pyhouse_obj)
@@ -53,7 +48,6 @@ class API(object):
         return l_xml  # For testing
 
     def Stop(self):
-        #  self.m_discovery.Stop()
         self.m_local.Stop()
         self.m_sync.Stop()
 

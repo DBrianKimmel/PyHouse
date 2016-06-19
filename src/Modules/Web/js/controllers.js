@@ -64,7 +64,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 	 * Build a screen full of buttons - One for each controller and some actions.
 	 */
 	function buildLcarSelectScreen(self){
-		Divmod.debug('---', 'controllers.buildLcarSelectScreen() called ');
+		// Divmod.debug('---', 'controllers.buildLcarSelectScreen() called ');
 		var l_button_html = buildLcarSelectionButtonsTable(globals.House.Lighting.Controllers, 'handleMenuOnClick');
 		var l_html = build_lcars_top('Controllers', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(10, l_button_html);
@@ -94,6 +94,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
      * Event handler for controller selection buttons.
      */
     function handleMenuOnClick(self, p_node) {
+		Divmod.debug('---', 'controllers.handleMenuOnClick() called ');
         var l_ix = p_node.name;
         var l_name = p_node.value;
         var l_obj;
@@ -124,7 +125,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 	 * Build a screen full of data entry fields.
 	 */
 	function buildLcarDataEntryScreen(self, p_entry, p_handler){
-		// Divmod.debug('---', 'controllers.buildLcarDataEntryScreen() called ');
+		Divmod.debug('---', 'controllers.buildLcarDataEntryScreen() called ');
 		var l_obj = arguments[1];
 		var l_html = build_lcars_top('Controller Data', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(40, self.buildEntry(l_obj, p_handler      ));
@@ -132,6 +133,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 		self.nodeById('DataEntryDiv').innerHTML = l_html;
 	},
 	function buildEntry(self, p_obj, p_handler, p_onchange) {
+		Divmod.debug('---', 'controllers.buildEntry() called ');
 		var l_html = buildBaseEntry(self, p_obj);
 		l_html = buildLightingCoreEntry(self, p_obj, l_html, p_onchange);
 		l_html = self.buildControllerEntry(p_obj, l_html);

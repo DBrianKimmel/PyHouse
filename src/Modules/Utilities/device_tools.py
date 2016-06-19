@@ -71,7 +71,7 @@ class XML(object):
         PutGetXML.put_int_element(l_elem, 'DeviceSubType', p_obj.DeviceSubType)
         PutGetXML.put_coords_element(l_elem, 'RoomCoords', p_obj.RoomCoords)
         PutGetXML.put_text_element(l_elem, 'RoomName', p_obj.RoomName)
-        PutGetXML.put_text_element(l_elem, 'RoomUID', p_obj.RoomUUID)
+        PutGetXML.put_text_element(l_elem, 'RoomUUID', p_obj.RoomUUID)
         return l_elem
 
 def stuff_new_attrs(p_target_obj, p_data_obj):

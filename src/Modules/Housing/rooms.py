@@ -61,6 +61,7 @@ class Xml(object):
                 l_room_obj = Xml.read_one_room(l_room_xml)
                 l_room_obj.Key = l_count
                 l_ret[l_count] = l_room_obj
+                LOG.info('Loaded room {}'.format(l_room_obj.Name))
                 l_count += 1
         except AttributeError as e_err:
             LOG.error('ERROR if getting rooms Data - {}'.format(e_err))
@@ -85,23 +86,41 @@ class Maint(object):
     """
 
     @staticmethod
-    def _get_coords(p_list):
+    def _get_coords(p_coords):
         """
         @param p_str: Json returns a list of X, Y and Z values.
                         It should look like >> [ 1, 2.2, 33.44 ] but it could be deformed by the user.
         @return: a CoordinateData() object filled in.
         """
         l_ret = CoordinateData()
+        if isinstance(p_coords, list):
+            l_list = p_coords
+        else:
+            l_list = p_coords.strip('\[\]')
+            l_list = l_list.split(',')
         try:
-            l_ret.X_Easting = float(p_list[0])
-            l_ret.Y_Northing = float(p_list[1])
-            l_ret.Z_Height = float(p_list[2])
+            l_ret.X_Easting = float(l_list[0])
+            l_ret.Y_Northing = float(l_list[1])
+            l_ret.Z_Height = float(l_list[2])
         except Exception as e_err:
             print('Error {}'.format(e_err))
             l_ret.X_Easting = 0.0
             l_ret.Y_Northing = 0.0
             l_ret.Z_Height = 0.0
         return l_ret
+
+    def _extract_json(self, p_json):
+        l_obj = RoomData()
+        l_obj.Name = p_json['Name']
+        l_obj.Active = p_json['Active']
+        l_obj.Key = 0
+        l_obj.UUID = p_json['UUID']
+        l_obj.Comment = p_json['Comment']
+        l_obj.Corner = Maint._get_coords(p_json['Corner'])
+        l_obj.Floor = p_json['Floor']
+        l_obj.Size = Maint._get_coords(p_json['Size'])
+        l_obj.RoomType = p_json['RoomType']
+        return l_obj
 
     def from_web(self, p_pyhouse_obj, p_json):
         LOG.warn('Room debug {}'.format(p_json))
@@ -112,6 +131,10 @@ class Maint(object):
             self._add_room(p_pyhouse_obj, p_json)
 
     def _add_room(self, p_pyhouse_obj, p_json):
+        l_rooms = p_pyhouse_obj.House.Rooms
+        l_key = len(l_rooms)
+        l_uuid = p_json['UUID']
+
         l_room_ix = int(p_json['Key'])
         try:
             l_obj = p_pyhouse_obj.House.Rooms[l_room_ix]
@@ -125,10 +148,9 @@ class Maint(object):
         l_obj.Corner = Maint._get_coords(p_json['Corner'])
         l_obj.Floor = p_json['Floor']
         l_obj.Size = Maint._get_coords(p_json['Size'])
-        # l_obj.Size = p_json['Size']
         l_obj.RoomType = p_json['RoomType']
         p_pyhouse_obj.House.Rooms[l_room_ix] = l_obj
-        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("room/add", l_obj)
+        # p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("room/add", l_obj)
 
     def _delete_room(self, p_pyhouse_obj, p_json):
         l_room_ix = int(p_json['Key'])

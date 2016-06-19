@@ -7,7 +7,7 @@
 @note:      Created on Jun 26, 2015
 @Summary:
 
-Passed all 9 tests - DBK - 2016-06-10
+Passed all 10 tests - DBK - 2016-06-18
 
 """
 
@@ -25,7 +25,13 @@ from Modules.Core.test.xml_device import \
 from Modules.Lighting.test.xml_lights import \
         TESTING_LIGHT_NAME_0, \
         TESTING_LIGHT_KEY_0, \
-        TESTING_LIGHT_ACTIVE_0, TESTING_LIGHT_COMMENT_0, TESTING_LIGHT_ROOM_0
+        TESTING_LIGHT_ACTIVE_0, \
+        TESTING_LIGHT_COMMENT_0, \
+        TESTING_LIGHT_ROOM_NAME_0, \
+        TESTING_LIGHT_UUID_0, \
+        TESTING_LIGHT_ROOM_UUID_0, \
+        TESTING_LIGHT_DEVICE_SUBTYPE_0, \
+        TESTING_LIGHT_DEVICE_TYPE_0, TESTING_LIGHT_ROOM_COORDS_0
 from Modules.Utilities.device_tools import XML as deviceXML
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
@@ -45,7 +51,7 @@ class SetupMixin(object):
         self.m_light_obj = LightData()
 
 
-class A1_XML(SetupMixin, unittest.TestCase):
+class A1_Setup(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by node_local.
     """
 
@@ -69,7 +75,19 @@ class A1_XML(SetupMixin, unittest.TestCase):
         """ Be sure that the XML contains the right stuff.
         """
         print(PrettyFormatAny.form(self.m_xml.light, 'Base'))
-        pass
+
+
+class A2_XML(SetupMixin, unittest.TestCase):
+    """ This section tests the reading and writing of XML used by node_local.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_01_Light(self):
+        """ Be sure that the XML contains the right stuff.
+        """
+        print(PrettyFormatAny.form(self.m_xml.light, 'Light'))
 
 
 class B1_Read(SetupMixin, unittest.TestCase):
@@ -85,13 +103,18 @@ class B1_Read(SetupMixin, unittest.TestCase):
         l_obj = LightData()
         l_base = self.m_api.read_base_device_object_xml(self.m_pyhouse_obj, l_obj, self.m_xml.light)
         print(PrettyFormatAny.form(l_base, 'Base'))
-        print(PrettyFormatAny.form(self.m_xml.light, 'Base'))
+        print(PrettyFormatAny.form(l_base.RoomCoords, 'Base Coords'))
         self.assertEqual(l_base.Name, TESTING_LIGHT_NAME_0)
         self.assertEqual(l_base.Key, int(TESTING_LIGHT_KEY_0))
         self.assertEqual(l_base.Active, bool(TESTING_LIGHT_ACTIVE_0))
+        self.assertEqual(l_base.UUID, TESTING_LIGHT_UUID_0)
         self.assertEqual(l_base.Comment, TESTING_LIGHT_COMMENT_0)
         self.assertEqual(l_base.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
-        self.assertEqual(l_base.RoomName, TESTING_LIGHT_ROOM_0)
+        self.assertEqual(l_base.DeviceSubType, int(TESTING_LIGHT_DEVICE_SUBTYPE_0))
+        self.assertEqual(l_base.DeviceType, int(TESTING_LIGHT_DEVICE_TYPE_0))
+        # self.assertEqual(l_base.RoomCoords, TESTING_LIGHT_ROOM_COORDS_0)
+        self.assertEqual(l_base.RoomName, TESTING_LIGHT_ROOM_NAME_0)
+        self.assertEqual(l_base.RoomUUID, TESTING_LIGHT_ROOM_UUID_0)
 
     def test_02_BaseController(self):
         """ Read in the xml file and fill in the lights
@@ -127,17 +150,25 @@ class C1_Write(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_01_BaseLight(self):
+    def test_1_BaseLight(self):
         """ Read in the xml file and fill in the lights
         """
         l_obj = LightData()
         l_base = self.m_api.read_base_device_object_xml(self.m_pyhouse_obj, l_obj, self.m_xml.light)
         l_xml = self.m_api.write_base_device_object_xml('Light', l_base)
-        self.assertEqual(l_xml.attrib['Name'], 'Insteon Light')
-        self.assertEqual(l_xml.attrib['Key'], '0')
-        self.assertEqual(l_xml.attrib['Active'], 'True')
+        print(PrettyFormatAny.form(l_xml, 'Base'))
+        self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHT_NAME_0)
+        self.assertEqual(l_xml.attrib['Key'], TESTING_LIGHT_KEY_0)
+        self.assertEqual(l_xml.attrib['Active'], TESTING_LIGHT_ACTIVE_0)
+        self.assertEqual(l_xml.find('UUID').text, TESTING_LIGHT_UUID_0)
+        self.assertEqual(l_xml.find('Comment').text, TESTING_LIGHT_COMMENT_0)
+        self.assertEqual(l_xml.find('DeviceSubType').text, TESTING_LIGHT_DEVICE_SUBTYPE_0)
+        self.assertEqual(l_xml.find('DeviceType').text, TESTING_LIGHT_DEVICE_TYPE_0)
+        self.assertEqual(l_xml.find('RoomCoords').text, TESTING_LIGHT_ROOM_COORDS_0)
+        self.assertEqual(l_xml.find('RoomName').text, TESTING_LIGHT_ROOM_NAME_0)
+        self.assertEqual(l_xml.find('RoomUUID').text, TESTING_LIGHT_ROOM_UUID_0)
 
-    def test_02_BaseController(self):
+    def test_2_BaseController(self):
         """ Read in the xml file and fill in the lights
         """
         l_obj = ControllerData()
@@ -147,7 +178,7 @@ class C1_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.attrib['Key'], '0')
         self.assertEqual(l_xml.attrib['Active'], 'True')
 
-    def test_03_BaseButton(self):
+    def test_3_BaseButton(self):
         """ Read in the xml file and fill in the lights
         """
         l_obj = ButtonData()

@@ -290,10 +290,10 @@ class Util(object):
 
     @staticmethod
     def _get_node_info(p_pyhouse_obj):
-        l_uuid = p_pyhouse_obj.Computer.UUID
         l_node = NodeData()
+        l_uuid = p_pyhouse_obj.Computer.UUID
         l_node.Name = platform.node()
-        l_node.Key = l_uuid
+        l_node.Key = 0  # l_uuid
         l_node.Active = True
         l_node.UUID = l_uuid
         return l_node
@@ -369,8 +369,7 @@ class API(Util):
         l_uuid = self.m_pyhouse_obj.Computer.UUID
         l_local = Util.create_local_node(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Computer.Nodes[l_uuid] = l_local
-        l_msg = PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Nodes, 'Nodes w/ local added')
-        LOG.info('Starting   {}\n{}'.format(l_uuid, l_msg))
+        LOG.info('Adding node  {} {}'.format(l_local.Name, l_uuid))
         self.init_node_type(self.m_pyhouse_obj)
 
     def SaveXml(self, p_xml):

@@ -10,10 +10,10 @@
 Despite its name as "Lighting" this module is also capable of reading and writing
 other devices such as thermostats, irrigation systems and pool systems to name a few.
 
-Notice that devices have a lot of configuration entries is XML.  This module only deals with
-the "Core" definitions.
+Notice that devices have a lot of configuration entries in XML.
+This module only deals with the "Core" definitions.
 
-All 17 tests working - DBK 2015-08-17
+All 18 tests working - DBK 2016-06-18
 """
 
 #  Import system type stuff
@@ -22,21 +22,25 @@ from twisted.trial import unittest
 
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import LightData, ButtonData, ControllerData
-from Modules.Core.test.xml_device import TESTING_DEVICE_COMMENT, \
-    TESTING_DEVICE_FAMILY_INSTEON, \
-    TESTING_DEVICE_ROOM_X, \
-    TESTING_DEVICE_ROOM_Y, \
-    TESTING_DEVICE_ROOM_Z, \
-    TESTING_DEVICE_UUID, \
-    TESTING_DEVICE_TYPE, \
-    TESTING_DEVICE_SUBTYPE, \
-    TESTING_DEVICE_ROOM_NAME
+from Modules.Core.test.xml_device import \
+        TESTING_DEVICE_COMMENT, \
+        TESTING_DEVICE_FAMILY_INSTEON, \
+        TESTING_DEVICE_ROOM_X, \
+        TESTING_DEVICE_ROOM_Y, \
+        TESTING_DEVICE_ROOM_Z, \
+        TESTING_DEVICE_UUID, \
+        TESTING_DEVICE_TYPE, \
+        TESTING_DEVICE_SUBTYPE, \
+        TESTING_DEVICE_ROOM_NAME
 from Modules.Lighting.lighting_core import API as LightingCoreAPI
 from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG
 from Modules.Utilities.debug_tools import PrettyFormatAny
 from Modules.Lighting.test.xml_lights import TESTING_LIGHT_NAME_0, TESTING_LIGHT_KEY_0, TESTING_LIGHT_ACTIVE_0, \
-    TESTING_LIGHT_UUID_0
+    TESTING_LIGHT_UUID_0, TESTING_LIGHT_COMMENT_0, TESTING_LIGHT_DEVICE_TYPE_0, TESTING_LIGHT_DEVICE_SUBTYPE_0, \
+    TESTING_LIGHT_ROOM_NAME_0, TESTING_LIGHT_ROOM_X
+from Modules.Lighting.test.xml_buttons import TESTING_LIGHTING_BUTTON_NAME_1
+from Modules.Lighting.test.xml_controllers import TESTING_CONTROLLER_NAME_0
 #  from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
@@ -51,7 +55,6 @@ class SetupMixin(object):
         self.m_controller_obj = ControllerData()
         self.m_light_obj = LightData()
         self.m_api = LightingCoreAPI()
-        self.m_version = '1.4.0'
 
 
 class A1_Setup(SetupMixin, unittest.TestCase):
@@ -88,20 +91,27 @@ class A2_Xml(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_01_LightXML(self):
+    def test_1_LighTING(self):
         """ Be sure that the XML contains the right stuff.
         """
-        l_xml = self.m_xml.light
-        self.assertEqual(l_xml.attrib['Name'], 'Insteon Light')
+        l_xml = self.m_xml.lighting_sect
+        # print(PrettyFormatAny.form(l_xml, 'Lighting Core'))
+        self.assertEqual(l_xml[0][0].attrib['Name'], TESTING_LIGHTING_BUTTON_NAME_1)
 
-    def test_02_Api(self):
-        pass
+    def test_2_Button(self):
+        l_xml = self.m_xml.button_sect
+        # print(PrettyFormatAny.form(l_xml, 'Lighting Core'))
+        self.assertEqual(l_xml[0].attrib['Name'], TESTING_LIGHTING_BUTTON_NAME_1)
 
-    def test_03_CtlBtnLgt(self):
-        pass
+    def test_3_Controller(self):
+        l_xml = self.m_xml.controller_sect
+        # print(PrettyFormatAny.form(l_xml, 'Lighting Core'))
+        self.assertEqual(l_xml[0].attrib['Name'], TESTING_CONTROLLER_NAME_0)
 
-    def test_04_Family(self):
-        pass
+    def test_4_Light(self):
+        l_xml = self.m_xml.light_sect
+        print(PrettyFormatAny.form(l_xml, 'Lighting Core'))
+        self.assertEqual(l_xml[0].attrib['Name'], TESTING_LIGHT_NAME_0)
 
 
 class B1_Parts(SetupMixin, unittest.TestCase):
@@ -111,30 +121,35 @@ class B1_Parts(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_01_Base(self):
+    def test_1_Base(self):
         """ Read in the xml file and fill in the lights
         """
-        l_base = self.m_api._read_base(self.m_pyhouse_obj, self.m_light_obj, self.m_xml.light)
-        print(PrettyFormatAny.form(l_base, 'Base'))
-        self.assertEqual(l_base.Name, TESTING_LIGHT_NAME_0)
-        self.assertEqual(l_base.Key, int(TESTING_LIGHT_KEY_0))
-        self.assertEqual(l_base.Active, bool(TESTING_LIGHT_ACTIVE_0))
-        self.assertEqual(l_base.UUID, TESTING_LIGHT_UUID_0)
+        l_xml = self.m_xml.light
+        l_obj = LightData()
+        l_obj = self.m_api._read_base(self.m_pyhouse_obj, l_obj, l_xml)
+        print(PrettyFormatAny.form(l_obj, 'Base'))
+        self.assertEqual(l_obj.Name, TESTING_LIGHT_NAME_0)
+        self.assertEqual(l_obj.Key, int(TESTING_LIGHT_KEY_0))
+        self.assertEqual(l_obj.Active, bool(TESTING_LIGHT_ACTIVE_0))
+        self.assertEqual(l_obj.UUID, TESTING_LIGHT_UUID_0)
+        self.assertEqual(l_obj.Comment, TESTING_LIGHT_COMMENT_0)
+        self.assertEqual(l_obj.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
+        self.assertEqual(l_obj.DeviceType, int(TESTING_LIGHT_DEVICE_TYPE_0))
+        # self.assertEqual(l_obj.DeviceSubType, int(TESTING_LIGHT_DEVICE_SUBTYPE_0))
+        # self.assertEqual(l_obj.RoomCoords.X_Easting, float(TESTING_LIGHT_ROOM_X))
+        self.assertEqual(l_obj.RoomName, TESTING_LIGHT_ROOM_NAME_0)
+        self.assertEqual(l_obj.RoomUUID, TESTING_LIGHT_ROOM_NAME_0)
 
-    def test_02_Device(self):
+    def test_2_Device(self):
         l_device = self.m_api._read_base(self.m_pyhouse_obj, self.m_light_obj, self.m_xml.light)
         l_device = self.m_api._read_device_latest(l_device, self.m_xml.light)
-        print(PrettyFormatAny.form(l_device, 'Base'))
-        self.assertEqual(l_device.Comment, TESTING_DEVICE_COMMENT)
-        self.assertEqual(l_device.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
-        self.assertEqual(l_device.DeviceType, int(TESTING_DEVICE_TYPE))
-        self.assertEqual(l_device.DeviceSubType, int(TESTING_DEVICE_SUBTYPE))
-        self.assertEqual(l_device.RoomName, TESTING_DEVICE_ROOM_NAME)
-        self.assertEqual(l_device.RoomCoords.X_Easting, float(TESTING_DEVICE_ROOM_X))
+        print(PrettyFormatAny.form(l_device, 'Base+Device'))
+        self.assertEqual(l_device.RoomName, TESTING_LIGHT_ROOM_NAME_0)
+        self.assertEqual(l_device.RoomCoords.X_Easting, float(TESTING_LIGHT_ROOM_X))
         self.assertEqual(l_device.RoomCoords.Y_Northing, float(TESTING_DEVICE_ROOM_Y))
         self.assertEqual(l_device.RoomCoords.Z_Height, float(TESTING_DEVICE_ROOM_Z))
 
-    def test_03_Device(self):
+    def test_3_Device(self):
         l_device = self.m_api._read_base(self.m_pyhouse_obj, self.m_light_obj, self.m_xml.light)
         l_device = self.m_api._read_device_latest(l_device, self.m_xml.light)
         print(PrettyFormatAny.form(l_device, 'Base'))

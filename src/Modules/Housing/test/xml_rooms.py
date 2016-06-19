@@ -108,24 +108,10 @@ TESTING_ROOM_KEY_3 = '0'
 TESTING_ROOM_ACTIVE_3 = 'True'
 TESTING_ROOM_COMMENT_3 = 'Room comment # 3'
 TESTING_ROOM_CORNER_3 = '[12.0,14.0,0.5]'
-TESTING_ROOM_SIZE_3 = '[3.0,5.5,3.0]'
-TESTING_ROOM_UUID_3 = '51c03dcc-2e69-Room-0003-Room33333333'
-
-L_ROOM_START_3 = '  <Room Name="' + TESTING_ROOM_NAME_3 + '" Key="' + TESTING_ROOM_KEY_3 + '" Active="' + \
-        TESTING_ROOM_ACTIVE_3 + '">'
-L_ROOM_COMMENT_3 = '  <Comment>' + TESTING_ROOM_COMMENT_3 + '</Comment>'
-L_ROOM_CORNER_3 = '  <Corner>' + TESTING_ROOM_CORNER_3 + '</Corner>'
-L_ROOM_SIZE_3 = '  <Size>' + TESTING_ROOM_SIZE_3 + '</Size>'
-L_ROOM_UUID_3 = '    <UUID>' + TESTING_ROOM_UUID_3 + '</UUID>'
-
-L_ROOM_3 = '\n'.join([
-    L_ROOM_START_3,
-    L_ROOM_COMMENT_3,
-    L_ROOM_CORNER_3,
-    L_ROOM_SIZE_3,
-    L_ROOM_UUID_3,
-    L_ROOM_END
-])
+TESTING_ROOM_FLOOR_3 = '1'
+TESTING_ROOM_SIZE_3 = '[ 3.0,5.5,3.0]'
+TESTING_ROOM_TYPE_3 = 'Room'
+TESTING_ROOM_UUID_3 = 'Room.dcc-2e69-Room-0003-Room33333333'
 
 
 XML_ROOMS = '\n'.join([
@@ -133,15 +119,9 @@ XML_ROOMS = '\n'.join([
     L_ROOM_0,
     L_ROOM_1,
     L_ROOM_2,
-    L_ROOM_3,
     L_ROOM_SECTION_END
 ])
 
-__XML_ROOMS = '\n'.join([
-    L_ROOM_SECTION_START,
-    L_ROOM_0,
-    L_ROOM_SECTION_END
-])
 
 ROOMS_XSD = """
 <xs:schema

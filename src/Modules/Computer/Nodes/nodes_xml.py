@@ -14,13 +14,12 @@ PyHouse_obj.Computer.Nodes is a dict of nodes.
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
+import datetime
 
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData, NodeInterfaceData
 from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
 from Modules.Computer import logging_pyh as Logger
-from Modules.Utilities.debug_tools import PrettyFormatAny
-# from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.Nodes_xml      ')
 
@@ -83,7 +82,10 @@ class Xml(object):
         l_node_obj.ConnectionAddr_IPv4 = PutGetXML.get_text_from_xml(p_node_xml, 'ConnectionAddressV4')
         l_node_obj.ConnectionAddr_IPv6 = PutGetXML.get_text_from_xml(p_node_xml, 'ConnectionAddressV6')
         l_node_obj.NodeRole = PutGetXML.get_int_from_xml(p_node_xml, 'NodeRole')
-        l_node_obj.LastUpdate = PutGetXML.get_date_time_from_xml(p_node_xml, 'LastUpdate')
+        try:
+            l_node_obj.LastUpdate = PutGetXML.get_date_time_from_xml(p_node_xml, 'LastUpdate')
+        except AttributeError:
+            l_node_obj.LastUpdate = datetime.datetime.now()
         # print(PrettyFormatAny.form(l_node_obj, 'Node xxx'))
         # print(PrettyFormatAny.form(p_node_xml, 'Node yyy'))
         try:
@@ -104,6 +106,10 @@ class Xml(object):
 
     @staticmethod
     def read_all_nodes_xml(p_pyhouse_obj):
+        """ The key on disk is an integer 0,1,2...
+        The Key in PyHouse_obj is the UUID.
+        Be careful of confusing the two.
+        """
         l_count = 0
         l_ret = {}
         l_xml = p_pyhouse_obj.Xml.XmlRoot.find(COMPUTER_DIVISION)
@@ -115,14 +121,16 @@ class Xml(object):
             # print(PrettyFormatAny.form(l_xml, 'Nodes Xml'))
             for l_node_xml in l_xml.iterfind(NODE_ATTR):
                 l_node_obj = Xml._read_one_node_xml(l_node_xml)
-                LOG.warn('Found Node {}'.format(l_node_obj.Name))
-                l_ret[l_node_obj.Name] = l_node_obj
+                # l_node_obj.Key = l_count
+                # LOG.warn('Found Node {}'.format(l_node_obj.Name))
+                l_ret[l_node_obj.UUID] = l_node_obj
                 l_count += 1
-                LOG.info('Loaded Node {}'.format(l_node_obj.Name))
+                LOG.info('Loaded Node for {} '.format(l_node_obj.Name))
         except AttributeError as e_err:
-            l_ret[0] = NodeData()  # Create an empty Nodes[<name>]
+            # l_ret[0] = NodeData()  # Create an empty Nodes[<name>]
             LOG.error('ERROR - Node read error - {}'.format(e_err))
         LOG.info('Loaded {} Nodes'.format(l_count))
+        p_pyhouse_obj.Computer.Nodes = l_ret
         return l_ret
 
     @staticmethod
@@ -130,13 +138,13 @@ class Xml(object):
         l_xml = ET.Element(NODE_SECTION)
         l_nodes = p_pyhouse_obj.Computer.Nodes
         # print(PrettyFormatAny.form(l_nodes[0], 'xxx'))
-        l_msg = PrettyFormatAny.form(l_nodes, 'Nodes')
-        LOG.warn('About to write {} nodes  {}'.format(len(l_nodes), l_msg))
         l_count = 0
         for l_node_obj in l_nodes.itervalues():
             try:
+                l_node_obj.Key = l_count
                 l_entry = Xml._write_one_node_xml(l_node_obj)
                 l_xml.append(l_entry)
+                LOG.info('Wrote entry for node {}'.format(l_node_obj.Name))
                 l_count += 1
             except AttributeError as e_err:
                 LOG.error('Error {}'.format(e_err))
