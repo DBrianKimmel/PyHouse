@@ -13,9 +13,11 @@
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
+import datetime
 
 #  Import PyMh files
 from Modules.Core.data_objects import RoomData, CoordinateData
+from Modules.Utilities.coordinate_tools import Coords
 from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
 from Modules.Computer import logging_pyh as Logger
 
@@ -86,39 +88,16 @@ class Maint(object):
     """
 
     @staticmethod
-    def _get_coords(p_coords):
-        """
-        @param p_str: Json returns a list of X, Y and Z values.
-                        It should look like >> [ 1, 2.2, 33.44 ] but it could be deformed by the user.
-        @return: a CoordinateData() object filled in.
-        """
-        l_ret = CoordinateData()
-        if isinstance(p_coords, list):
-            l_list = p_coords
-        else:
-            l_list = p_coords.strip('\[\]')
-            l_list = l_list.split(',')
-        try:
-            l_ret.X_Easting = float(l_list[0])
-            l_ret.Y_Northing = float(l_list[1])
-            l_ret.Z_Height = float(l_list[2])
-        except Exception as e_err:
-            print('Error {}'.format(e_err))
-            l_ret.X_Easting = 0.0
-            l_ret.Y_Northing = 0.0
-            l_ret.Z_Height = 0.0
-        return l_ret
-
-    def _extract_json(self, p_json):
+    def _extract_json(p_json):
         l_obj = RoomData()
         l_obj.Name = p_json['Name']
         l_obj.Active = p_json['Active']
         l_obj.Key = 0
         l_obj.UUID = p_json['UUID']
         l_obj.Comment = p_json['Comment']
-        l_obj.Corner = Maint._get_coords(p_json['Corner'])
+        l_obj.Corner = Coords._get_coords(p_json['Corner'])
         l_obj.Floor = p_json['Floor']
-        l_obj.Size = Maint._get_coords(p_json['Size'])
+        l_obj.Size = Coords._get_coords(p_json['Size'])
         l_obj.RoomType = p_json['RoomType']
         return l_obj
 
@@ -128,29 +107,28 @@ class Maint(object):
         if l_delete:
             self._delete_room(p_pyhouse_obj, p_json)
         else:
-            self._add_room(p_pyhouse_obj, p_json)
+            l_rooms = self._add_room(p_pyhouse_obj, p_json)
+            p_pyhouse_obj.House.Rooms = l_rooms
 
     def _add_room(self, p_pyhouse_obj, p_json):
         l_rooms = p_pyhouse_obj.House.Rooms
-        l_key = len(l_rooms)
-        l_uuid = p_json['UUID']
-
-        l_room_ix = int(p_json['Key'])
-        try:
-            l_obj = p_pyhouse_obj.House.Rooms[l_room_ix]
-        except KeyError:
-            l_obj = RoomData()
-        l_obj.Name = p_json['Name']
-        l_obj.Active = p_json['Active']
-        l_obj.Key = l_room_ix
-        l_obj.UUID = p_json['UUID']
-        l_obj.Comment = p_json['Comment']
-        l_obj.Corner = Maint._get_coords(p_json['Corner'])
-        l_obj.Floor = p_json['Floor']
-        l_obj.Size = Maint._get_coords(p_json['Size'])
-        l_obj.RoomType = p_json['RoomType']
-        p_pyhouse_obj.House.Rooms[l_room_ix] = l_obj
+        l_len = len(l_rooms)
+        l_obj = Maint._extract_json(p_json)
+        for l_key, l_val in l_rooms.iteritems():
+            if l_val.UUID == l_obj.UUID:
+                LOG.info('Updating room {}'.format(l_obj.Name))
+                l_rooms[l_key] = l_val
+                l_rooms[l_key].LastUpda = datetime.datetime.now()
+                return
+        l_msg = 'Adding room {} {}'.format(l_obj.Name, l_obj.Key)
+        l_obj.Key = l_len
+        l_obj.LastUpdate = datetime.datetime.now()
+        l_rooms[len(l_rooms)] = l_obj
+        print l_msg
+        LOG.info(l_msg)
+        p_pyhouse_obj.House.Rooms = l_rooms
         # p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("room/add", l_obj)
+        return l_rooms
 
     def _delete_room(self, p_pyhouse_obj, p_json):
         l_room_ix = int(p_json['Key'])

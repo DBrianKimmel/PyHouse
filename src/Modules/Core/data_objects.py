@@ -525,6 +525,7 @@ class RoomData(BaseObject):
         self.Comment = ''
         self.Corner = ''  # CoordinateData()
         self.Floor = '1st'  # Outside | Basement | 1st | 2nd | 3rd | 4th | Attic | Roof
+        self.LastUpdate = None
         self.Size = ''  # CoordinateData()
         self.RoomType = 'Room'
         self.UUID = None

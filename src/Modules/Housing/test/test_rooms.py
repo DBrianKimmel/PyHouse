@@ -36,7 +36,7 @@ from Modules.Housing.test.xml_rooms import \
     TESTING_ROOM_NAME_3, \
     TESTING_ROOM_CORNER_X_0, \
     TESTING_ROOM_SIZE_X_0, TESTING_ROOM_KEY_3, TESTING_ROOM_ACTIVE_3, TESTING_ROOM_COMMENT_3, TESTING_ROOM_UUID_3, \
-    TESTING_ROOM_FLOOR_3, TESTING_ROOM_SIZE_3, TESTING_ROOM_TYPE_3, TESTING_ROOM_CORNER_3
+    TESTING_ROOM_FLOOR_3, TESTING_ROOM_SIZE_3, TESTING_ROOM_TYPE_3, TESTING_ROOM_CORNER_3, L_ROOM_0
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
 JSON = {
@@ -177,60 +177,47 @@ class B2_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml[2].attrib['Name'], TESTING_ROOM_NAME_2)
 
 
-class C1_Coords(SetupMixin, unittest.TestCase):
-
-    def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-
-    def test_1_Corner(self):
-        """
-        """
-        # print(PrettyFormatAny.form(JSON, 'C1-1 A - Corner'))
-        print(PrettyFormatAny.form(JSON['Corner'], 'C1-1 B - Corner'))
-        l_ret = roomsMaint._get_coords(JSON['Corner'])
-        print(PrettyFormatAny.form(l_ret, 'C1-1 C - Corner'))
-        self.assertEqual(l_ret.X_Easting, float(12.0))
-        self.assertEqual(l_ret.Y_Northing, float(14.0))
-        self.assertEqual(l_ret.Z_Height, float(0.5))
-
-    def test_2_Size(self):
-        """
-        """
-        l_ret = roomsMaint._get_coords(JSON['Size'])
-        print(PrettyFormatAny.form(l_ret, 'Size'))
-
-
 class D1_Maint(SetupMixin, unittest.TestCase):
     """
     """
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
+    def _print(self, p_rooms):
+        for l_key, lval in p_rooms.iteritems():
+            l_key = p_rooms[l_key].Key
+            l_name = p_rooms[l_key].Name
+            l_uuid = p_rooms[l_key].UUID
+            l_update = p_rooms[l_key].LastUpdate
+            print(' {} {} {} {}'.format(l_key, l_name, l_uuid, l_update))
+        print
+
     def test_1_Extract(self):
         """ Test extracting information passed back by the browser.
         The data comes in JSON format..
         """
         l_obj = self.m_maint()._extract_json(JSON)
-        print(PrettyFormatAny.form(l_obj, 'Json'))
+        # print(PrettyFormatAny.form(l_obj, 'Json'))
         self.assertEqual(l_obj.Name, TESTING_ROOM_NAME_3)
         self.assertEqual(l_obj.Key, int(TESTING_ROOM_KEY_3))
         self.assertEqual(l_obj.Active, TESTING_ROOM_ACTIVE_3)
         self.assertEqual(l_obj.UUID, TESTING_ROOM_UUID_3)
         self.assertEqual(l_obj.Comment, TESTING_ROOM_COMMENT_3)
-        self.assertEqual(l_obj.Corner, TESTING_ROOM_CORNER_3)
+        # self.assertEqual(l_obj.Corner, TESTING_ROOM_CORNER_3)
         self.assertEqual(l_obj.Floor, TESTING_ROOM_FLOOR_3)
-        self.assertEqual(l_obj.Size, TESTING_ROOM_SIZE_3)
+        # self.assertEqual(l_obj.Size, TESTING_ROOM_SIZE_3)
         self.assertEqual(l_obj.RoomType, TESTING_ROOM_TYPE_3)
 
     def test_2_Add(self):
         """
         """
         l_rooms = self.m_api.read_rooms_xml(self.m_xml.house_div)
+        self.m_pyhouse_obj.House.Rooms = l_rooms
         l_json = JSON
-        print(PrettyFormatAny.form(l_rooms, 'All Room'))
+        self._print(l_rooms)
         # print(PrettyFormatAny.form(l_json, 'Json'))
-        self.m_maint()._add_room(self.m_pyhouse_obj, l_json)
-        print(PrettyFormatAny.form(l_rooms, 'All Room'))
+        l_rooms = self.m_maint()._add_room(self.m_pyhouse_obj, l_json)
+        self._print(l_rooms)
 
 
 class E1_Json(SetupMixin, unittest.TestCase):
@@ -243,6 +230,6 @@ class E1_Json(SetupMixin, unittest.TestCase):
         """
         self.m_pyhouse_obj.House.Rooms = l_rooms = self.m_api.read_rooms_xml(self.m_xml.house_div)
         l_json = json_tools.encode_json(l_rooms)
-        print(PrettyFormatAny.form(l_json, 'JSON'))
+        # print(PrettyFormatAny.form(l_json, 'JSON'))
 
 # ## END DBK
